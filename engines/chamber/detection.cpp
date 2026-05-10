@@ -21,6 +21,7 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "chamber/detection.h"
 
 namespace Chamber {
 static const PlainGameDescriptor ChamberGames[] = {
@@ -33,21 +34,34 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("ere.pxi", "5aa5bd2d79eefde70675b0b6734944f2", 134358),
+		AD_ENTRY2s("ere.pxi",  "5aa5bd2d79eefde70675b0b6734944f2", 134358,
+		           "PRES.BIN", "b8376a81d9ef6d9c5f783c64f718a782",   8005),
 		Common::UNK_LANG, // EN/FR/DE
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO0()
+		ADGF_UNSTABLE | GF_SPLASH_PRES | GF_SPLASH2_DRAP,
+		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("kult1.pxi", "fc0bd31a3c380338f76ff53e421e47b6", 140537),
+		AD_ENTRY2s("kult1.pxi",   "fc0bd31a3c380338f76ff53e421e47b6", 140537,
+		           "PRESCGA.BIN", "664a75a95340bde200a2752f54ba7aa7",   5105),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO0()
+		ADGF_UNSTABLE | GF_SPLASH_PRESCGA,
+		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
+	},
+
+	{
+		"chamber",
+		"EGA",
+		AD_ENTRY2s("Kult2.pxi",   "2f5cea29072e8c16bf4724a0d0a2201d", 142658,
+		           "PRESEGA.EGA", "b0a6474fa95276255f8eb85c12aab031",  32000),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
+		GUIO4(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDEREGA)
 	},
 
 	AD_TABLE_END_MARKER

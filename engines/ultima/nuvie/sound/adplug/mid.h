@@ -35,20 +35,20 @@ public:
 
 	bool load(const Common::Path &filename) override;
 	bool load(const Common::Path &filename, int song_index);
-	//bool load(const Std::string &filename, const CFileProvider &fp);
+	//bool load(const Common::String &filename, const CFileProvider &fp);
 	bool update() override;
 	void rewind(int subsong) override;
 	float getrefresh() override;
 
-	Std::string gettype() override;
-	Std::string gettitle() override {
-		return Std::string(title);
+	Common::String gettype() override;
+	Common::String gettitle() override {
+		return Common::String(title);
 	}
-	Std::string getauthor() override {
-		return Std::string(author);
+	Common::String getauthor() override {
+		return Common::String(author);
 	}
-	Std::string getdesc() override {
-		return Std::string(remarks);
+	Common::String getdesc() override {
+		return Common::String(remarks);
 	}
 	unsigned int getinstruments() override {
 		return tins;

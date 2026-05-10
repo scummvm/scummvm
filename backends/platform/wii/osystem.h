@@ -51,7 +51,7 @@ extern void wii_memstats(void);
 }
 #endif
 
-class OSystem_Wii final : public EventsBaseBackend, public PaletteManager {
+class OSystem_Wii final : virtual public BaseBackend, public Common::EventSource, public PaletteManager {
 private:
 	s64 _startup_time;
 

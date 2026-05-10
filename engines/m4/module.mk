@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	m4.o \
 	console.o \
 	metaengine.o \
+	subtitles.o \
 	vars.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_background.o \
@@ -75,7 +76,6 @@ MODULE_OBJS = \
 	wscript/ws_load.o \
 	wscript/ws_machine.o \
 	wscript/ws_timer.o \
-	wscript/wscript.o \
 	wscript/wst_regs.o \
 	burger/core/conv.o \
 	burger/core/play_break.o \

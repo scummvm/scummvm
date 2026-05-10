@@ -153,6 +153,7 @@ struct SaveFilePath {
 	const char *path;
 } const saveFilePaths[] = {
 	{ "darkeye", Common::kPlatformWindows, "SAVEDDKY/" },
+	{ "missionplanetx", Common::kPlatformWindows, "" },
 	{"simpsonsstudio", Common::kPlatformWindows, "SIMPSONS/SUPPORT/TOONDATA/"},
 	{"simpsonsstudio", Common::kPlatformMacintosh, "SIMPSONS/SUPPORT/TOONDATA/"},
 	{ nullptr, Common::kPlatformUnknown, nullptr },
@@ -292,12 +293,16 @@ const struct Quirk {
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
 
 	// Some games pop up a nag mesasage if the color depth isn't exactly 16 bit.
+	{ "badday", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "badday", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "vnc", Common::kPlatformWindows, &quirkPretend16Bit },
 	{ "vnc", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "finkletimes", Common::kPlatformWindows, &quirkPretend16Bit },
 	{ "finkletimes", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "flipper", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "flipper", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "incarnatia", Common::kPlatformMacintosh, &quirkPretend16Bit },
+	{ "incarnatia", Common::kPlatformWindows, &quirkPretend16Bit },
 
 	// The standard FileIO xlib exists as both an XObject and Xtra version, with similar functionality
 	// but incompatible APIs.
@@ -306,6 +311,11 @@ const struct Quirk {
 	// in the projector as a resource. New edition expects Xtra, old edition is D4 and won't be affected.
 	{ "puppetmotel", Common::kPlatformWindows, &quirkForceFileIOXtra },
 	{ "puppetmotel", Common::kPlatformMacintosh, &quirkForceFileIOXtra },
+
+	// Stay Tooned is D5, but expects the XObject version to be used.
+	{ "staytooned", Common::kPlatformWindows, &quirkForceFileIOXObj },
+	{ "staytooned", Common::kPlatformMacintosh, &quirkForceFileIOXObj },
+
 	// Ingenious bundles both the Xtra and XObject editions in the Xtra folder, but expects the XObject
 	// version to be available.
 	{ "ingenious", Common::kPlatformWindows, &quirkForceFileIOXObj },

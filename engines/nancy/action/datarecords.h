@@ -127,8 +127,9 @@ public:
 
 	bool _isCursor;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
+
+protected:
 	Common::String getRecordTypeName() const override { return _isCursor ? (_isTerse ? "EventFlagsHSTerse" : "EventFlagsCursorHS") : "EventFlagsMultiHS"; }
 };
 

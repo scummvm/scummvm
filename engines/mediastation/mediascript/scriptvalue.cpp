@@ -21,6 +21,9 @@
 
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/function.h"
+#include "mediastation/mediastation.h"
+
+#define VALUETYPEMISMATCH(expectedType) warning("%s: Script value type mismatch: Expected %s, got %s", __func__, scriptValueTypeToStr(expectedType), scriptValueTypeToStr(_type))
 
 namespace MediaStation {
 
@@ -73,7 +76,7 @@ ScriptValue::ScriptValue(ParameterReadStream *stream) {
 
 	case kScriptValueTypeCollection: {
 		uint totalItems = stream->readTypedUint16();
-		Common::SharedPtr<Collection> collection(new Collection);
+		Collection *collection = new Collection;
 		for (uint i = 0; i < totalItems; i++) {
 			ScriptValue collectionValue = ScriptValue(stream);
 			collection->push_back(collectionValue);
@@ -99,6 +102,79 @@ ScriptValue::ScriptValue(ParameterReadStream *stream) {
 	}
 }
 
+void ScriptValue::clearCollection() {
+	if (_collection) {
+		delete _collection;
+		_collection = nullptr;
+	}
+}
+
+ScriptValue::~ScriptValue() {
+	clearCollection();
+}
+
+ScriptValue::ScriptValue(const ScriptValue &other) {
+	clearCollection();
+	copyFrom(other);
+}
+
+void ScriptValue::operator=(const ScriptValue &other) {
+	clearCollection();
+	copyFrom(other);
+}
+
+void ScriptValue::copyFrom(const ScriptValue &other) {
+	_type = other._type;
+
+	switch (_type) {
+	case kScriptValueTypeEmpty:
+		// Nothing to copy for empty type.
+		break;
+
+	case kScriptValueTypeFloat:
+		_u.d = other._u.d;
+		break;
+
+	case kScriptValueTypeBool:
+		_u.b = other._u.b;
+		break;
+
+	case kScriptValueTypeTime:
+		_u.d = other._u.d;
+		break;
+
+	case kScriptValueTypeParamToken:
+		_u.paramToken = other._u.paramToken;
+		break;
+
+	case kScriptValueTypeActorId:
+		_u.actorId = other._u.actorId;
+		break;
+
+	case kScriptValueTypeString:
+		_string = other._string;
+		break;
+
+	case kScriptValueTypeCollection:
+		if (other._collection) {
+			// We always need a deep copy.
+			_collection = new Collection(*other._collection);
+		}
+		break;
+
+	case kScriptValueTypeFunctionId:
+		_u.functionId = other._u.functionId;
+		break;
+
+	case kScriptValueTypeMethodId:
+		_u.methodId = other._u.methodId;
+		break;
+
+	default:
+		error("%s: Got unknown script value type %s", __func__, scriptValueTypeToStr(_type));
+	}
+}
+
 void ScriptValue::setToFloat(uint i) {
 	setToFloat(static_cast<double>(i));
 }
@@ -116,7 +192,18 @@ double ScriptValue::asFloat() const {
 	if (_type == kScriptValueTypeFloat) {
 		return _u.d;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeFloat);
+		VALUETYPEMISMATCH(kScriptValueTypeFloat);
+		return 0.0;
+	}
+}
+
+double ScriptValue::asFloatOrTime() const {
+	if (_type == kScriptValueTypeFloat || _type == kScriptValueTypeTime) {
+		return _u.d;
+	} else {
+		// Times usually appear as floats (not the other way around), so
+		// for the one log we will use the time type.
+		VALUETYPEMISMATCH(kScriptValueTypeTime);
 		return 0.0;
 	}
 }
@@ -130,7 +217,7 @@ bool ScriptValue::asBool() const {
 	if (_type == kScriptValueTypeBool) {
 		return _u.b;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeBool);
+		VALUETYPEMISMATCH(kScriptValueTypeBool);
 		return false;
 	}
 }
@@ -144,7 +231,7 @@ double ScriptValue::asTime() const {
 	if (_type == kScriptValueTypeTime) {
 		return _u.d;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeTime);
+		VALUETYPEMISMATCH(kScriptValueTypeTime);
 		return 0.0;
 	}
 }
@@ -158,7 +245,7 @@ uint ScriptValue::asParamToken() const {
 	if (_type == kScriptValueTypeParamToken) {
 		return _u.paramToken;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeParamToken);
+		VALUETYPEMISMATCH(kScriptValueTypeParamToken);
 		return 0;
 	}
 }
@@ -172,7 +259,7 @@ uint ScriptValue::asActorId() const {
 	if (_type == kScriptValueTypeActorId) {
 		return _u.actorId;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeActorId);
+		VALUETYPEMISMATCH(kScriptValueTypeActorId);
 		return 0;
 	}
 }
@@ -190,16 +277,17 @@ Common::String ScriptValue::asString() const {
 	}
 }
 
-void ScriptValue::setToCollection(Common::SharedPtr<Collection> collection) {
+void ScriptValue::setToCollection(Collection *collection) {
 	_type = kScriptValueTypeCollection;
+	clearCollection();
 	_collection = collection;
 }
 
-Common::SharedPtr<Collection> ScriptValue::asCollection() const {
+Collection *ScriptValue::asCollection() const {
 	if (_type == kScriptValueTypeCollection) {
 		return _collection;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeCollection);
+		VALUETYPEMISMATCH(kScriptValueTypeCollection);
 		return nullptr;
 	}
 }
@@ -213,7 +301,7 @@ uint ScriptValue::asFunctionId() const {
 	if (_type == kScriptValueTypeFunctionId) {
 		return _u.functionId;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeFunctionId);
+		VALUETYPEMISMATCH(kScriptValueTypeFunctionId);
 		return 0;
 	}
 }
@@ -227,59 +315,110 @@ BuiltInMethod ScriptValue::asMethodId() const {
 	if (_type == kScriptValueTypeMethodId) {
 		return _u.methodId;
 	} else {
-		issueValueMismatchWarning(kScriptValueTypeMethodId);
+		VALUETYPEMISMATCH(kScriptValueTypeMethodId);
 		return kInvalidMethod;
+	}
+}
+
+Common::String ScriptValue::getDebugString() const {
+	switch (getType()) {
+	case kScriptValueTypeEmpty:
+		return "empty";
+
+	case kScriptValueTypeBool:
+		return Common::String::format("bool: %s", asBool() ? "TRUE" : "FALSE");
+
+	case kScriptValueTypeFloat:
+		return Common::String::format("float: %f", asFloat());
+
+	case kScriptValueTypeActorId: {
+		Common::String actorName = g_engine->formatActorName(asActorId(), true);
+		return Common::String::format("actor: %s", actorName.c_str());
+	}
+
+	case kScriptValueTypeTime:
+		return Common::String::format("time: %f", asTime());
+
+	case kScriptValueTypeParamToken: {
+		Common::String tokenName = g_engine->formatParamTokenName(asParamToken());
+		return Common::String::format("token: %s", tokenName.c_str());
+	}
+
+	case kScriptValueTypeString:
+		return Common::String::format("string: \"%s\"", asString().c_str());
+
+	case kScriptValueTypeCollection: {
+		Collection *collection = asCollection();
+		uint itemCount = collection ? collection->size() : 0;
+		return Common::String::format("collection: [%d items]", itemCount);
+	}
+
+	case kScriptValueTypeFunctionId: {
+		Common::String functionName = g_engine->formatFunctionName(asFunctionId());
+		return Common::String::format("function: %s", functionName.c_str());
+	}
+
+	case kScriptValueTypeMethodId: {
+		return Common::String::format("method: %s", builtInMethodToStr(asMethodId()));
+	}
+
+	default:
+		return Common::String::format("arg type %s", scriptValueTypeToStr(getType()));
 	}
 }
 
 bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
 	if (lhs.getType() != rhs.getType()) {
-		error("%s: Attempt to compare mismatched types %s and %s", __func__, scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
+		warning("%s: Attempt to compare mismatched values: %s; %s",
+			__func__, lhs.getDebugString().c_str(), rhs.getDebugString().c_str());
 	}
 
+	bool result = false;
 	switch (lhs.getType()) {
 	case kScriptValueTypeEmpty:
-		return compareEmptyValues(op);
+		result = compareEmptyValues(op);
+		break;
 
 	case kScriptValueTypeFloat:
-		return compare(op, lhs.asFloat(), rhs.asFloat());
+		result = compare(op, lhs.asFloatOrTime(), rhs.asFloatOrTime());
 		break;
 
 	case kScriptValueTypeBool:
-		return compare(op, lhs.asBool(), rhs.asBool());
+		result = compare(op, lhs.asBool(), rhs.asBool());
 		break;
 
 	case kScriptValueTypeTime:
-		return compare(op, lhs.asTime(), rhs.asTime());
+		result = compare(op, lhs.asFloatOrTime(), rhs.asFloatOrTime());
 		break;
 
 	case kScriptValueTypeParamToken:
-		return compare(op, lhs.asParamToken(), rhs.asParamToken());
+		result = compare(op, lhs.asParamToken(), rhs.asParamToken());
 		break;
 
 	case kScriptValueTypeActorId:
-		return compare(op, lhs.asActorId(), rhs.asActorId());
+		result = compare(op, lhs.asActorId(), rhs.asActorId());
 		break;
 
 	case kScriptValueTypeString:
-		return compareStrings(op, lhs.asString(), rhs.asString());
+		result = compareStrings(op, lhs.asString(), rhs.asString());
 		break;
 
 	case kScriptValueTypeCollection:
-		return compare(op, lhs.asCollection(), rhs.asCollection());
+		result = compare(op, lhs.asCollection(), rhs.asCollection());
 		break;
 
 	case kScriptValueTypeFunctionId:
-		return compare(op, lhs.asFunctionId(), rhs.asFunctionId());
+		result = compare(op, lhs.asFunctionId(), rhs.asFunctionId());
 		break;
 
 	case kScriptValueTypeMethodId:
-		return compare(op, static_cast<uint>(lhs.asMethodId()), static_cast<uint>(rhs.asMethodId()));
+		result = compare(op, static_cast<uint>(lhs.asMethodId()), static_cast<uint>(rhs.asMethodId()));
 		break;
 
 	default:
 		error("%s: Got unknown script value type %d", __func__, lhs.getType());
 	}
+	return result;
 }
 
 bool ScriptValue::compareEmptyValues(Opcode op) {
@@ -292,7 +431,8 @@ bool ScriptValue::compareEmptyValues(Opcode op) {
 		return false;
 
 	default:
-		error("%s: Got invalid empty value operation %s", __func__, opcodeToStr(op));
+		warning("%s: Got invalid empty value operation %s", __func__, opcodeToStr(op));
+		return false;
 	}
 }
 
@@ -372,7 +512,7 @@ bool ScriptValue::compare(Opcode op, double left, double right) {
 	}
 }
 
-bool ScriptValue::compare(Opcode op, Common::SharedPtr<Collection> left, Common::SharedPtr<Collection> right) {
+bool ScriptValue::compare(Opcode op, Collection *left, Collection *right) {
 	switch (op) {
 	case kOpcodeEquals:
 		return (left == right);
@@ -539,13 +679,6 @@ ScriptValue ScriptValue::operator-() const {
 		error("%s: Attempted to negate type %s", __func__, scriptValueTypeToStr(getType()));
 	}
 	return returnValue;
-}
-
-void ScriptValue::issueValueMismatchWarning(ScriptValueType expectedType) const {
-	// The original just blithely returns 0 (or equivalent) when you call a
-	// getter for the wrong type (for instance, calling asFloat() on a bool),
-	// but for debugging purposes we'll issue a warning.
-	warning("%s: Script value type mismatch: Expected %s, got %s", __func__, scriptValueTypeToStr(expectedType), scriptValueTypeToStr(_type));
 }
 
 } // End of namespace MediaStation

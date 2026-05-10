@@ -246,6 +246,53 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
+	// Elvira 1 - French Atari ST Floppy
+	// Suppliedd by Parotaku in bug report #16707
+	{
+		{
+			"elvira1",
+			"Floppy",
+
+			{
+				{"gamest", 		GAME_BASEFILE, 	"39bb4399d1b79a9c9d60279237a856f9", 120990},
+				{"icon.dat", 	GAME_ICONFILE, 	"2db931e84f1ca01f0816dddfae3f49e1", 36573},
+				{"tbllist", 	GAME_TBLFILE, 	"5b6ff494bf7e24213758598ef4ac0a8b", 476},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
+	// Elvira 1 - German Atari ST Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+
+			{
+				{ "gamest",		GAME_BASEFILE,	"8942859018fcfb2dbed13e83d974d1ab", 121266},
+				{ "icon.dat",	GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", 36573},
+				{ "tbllist",	GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", 476},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
 	// Elvira 1 - English Atari ST Floppy alternative?
 	{
 		{
@@ -610,6 +657,34 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GID_ELVIRA2,
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
+
+	// Elvira 2 - German Atari ST Floppy
+	// Suppliedd by Eli0rZeR70 in bug report #16679
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+				{"gamest", 			GAME_BASEFILE, 	"43cb10d38af2b4a0c707965c83431f4c", 137609},
+				{"icon.dat", 		GAME_ICONFILE, 	"9a4eaf4df0cdf5cc85a5134150f96589", 69538},
+				{"menus.dat",		GAME_MENUFILE, 	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+				{"start", 			GAME_RESTFILE, 	"8cddf461f418ea12f711fda3d3dd62fe", 27752},
+				{"stripped.txt", 	GAME_STRFILE, 	"41c975a9c1106cb5298a0bc3df0a266e", 72},
+				{"tbllist", 		GAME_TBLFILE, 	"177f5f2640e80ef92d1421d32de06a5e", 272},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
 
 
 	// Elvira 2 - English DOS Floppy
@@ -1083,7 +1158,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAcorn,
 			ADGF_DEMO,
-			GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_DISABLE_FADE_EFFECTS)
+			GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_DISABLE_FADE_EFFECTS, GAMEOPTION_USE_SYSTEM_CURSOR)
 		},
 
 		GType_SIMON1,
@@ -1107,7 +1182,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAcorn,
 			ADGF_NO_FLAGS,
-			GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_DISABLE_FADE_EFFECTS, GAMEOPTION_COPY_PROTECTION)
+			GUIO5(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_DISABLE_FADE_EFFECTS, GAMEOPTION_COPY_PROTECTION, GAMEOPTION_USE_SYSTEM_CURSOR)
 		},
 
 		GType_SIMON1,
@@ -1132,7 +1207,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAcorn,
 			ADGF_DEMO,
-			GUIO3(GUIO_NOSUBTITLES, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+			GUIO4(GUIO_NOSUBTITLES, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS, GAMEOPTION_USE_SYSTEM_CURSOR)
 		},
 
 		GType_SIMON1,
@@ -1157,7 +1232,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAcorn,
 			ADGF_CD,
-			GUIO3(GUIO_NOSUBTITLES, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+			GUIO4(GUIO_NOSUBTITLES, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS, GAMEOPTION_USE_SYSTEM_CURSOR)
 		},
 
 		GType_SIMON1,
@@ -2975,6 +3050,59 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_SIMON2,
 		GID_SIMON2,
 		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
+	},
+
+	// Simon the Sorcerer 2 - Amiga CD (Initial Release)
+	{
+		{
+			"simon2",
+			"Amiga CD - Original Release",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d", 58652},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+				{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04", 20046789},
+				{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+				{ "simon2.german",	GAME_LANGFILE,	"c8c76cac47aced88ac1fe79f4f499914", 216945},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Mac/Amiga CD (Update 5)
+	// kPlatformUnknown because Mac/Amiga(update 5) are identical.
+	{
+		{
+			"simon2",
+			"Mac/Amiga(Update 5)",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d", 58652},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+				{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04", 20046789},
+				{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+				{ "simon2.german",	GAME_LANGFILE,	"011bb9cb526bf30a11f3b1fd3b6682fe", 213383},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_CD,
+			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
 	},
 
 	// The Feeble Files - English DOS Demo

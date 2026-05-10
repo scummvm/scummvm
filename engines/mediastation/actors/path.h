@@ -28,32 +28,46 @@
 
 namespace MediaStation {
 
+enum PathPlayState {
+	kPathStopped = 1,
+	kPathPlaying = 2,
+	kPathPaused = 3,
+};
+
 class PathActor : public Actor {
 public:
 	PathActor() : Actor(kActorTypePath) {};
 
-	virtual void process() override;
-
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
+	virtual void onEvent(const ActorEvent &event) override;
+	virtual void timerEvent(const TimerEvent &event) override;
+
 private:
-	double _percentComplete = 0.0;
-	uint _totalSteps = 0;
-	uint _currentStep = 0;
-	uint _nextPathStepTime = 0;
+	PathPlayState _playState = kPathStopped;
+	bool _useTimeForCompletion = false;
+	double _duration = 0.0;
+	double _stepRate = 0.0;
 	uint _stepDurationInMilliseconds = 0;
-	bool _isPlaying = false;
+	uint _currentStep = 0;
+	uint _startTime = 0;
+	uint _pauseTime = 0;
+	uint _totalSteps = 0;
+	uint _nextPathStepTime = 0;
 
 	Common::Point _startPoint;
 	Common::Point _endPoint;
-	uint32 _stepRate = 0;
-	uint32 _duration = 0;
+	Common::Point _currentPoint;
 
-	// Method implementations.
-	void timePlay();
-	void setDuration(uint durationInMilliseconds);
-	double percentComplete();
+	void startPath();
+	void stopPath();
+	void pausePath();
+	void resumePath(bool shouldRestart);
+
+	double getPercentComplete();
+	bool step();
+	void scheduleNextTimerEvent();
 };
 
 } // End of namespace MediaStation

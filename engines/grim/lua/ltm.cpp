@@ -188,7 +188,7 @@ void luaT_setfallback() {
 	TObject oldfunc;
 	lua_CFunction replace;
 	if (!tmFBAdded) {
-		luaL_addlibtolist(tmFB, (sizeof(tmFB) / sizeof(tmFB[0])));
+		luaL_addlibtolist(tmFB, ARRAYSIZE(tmFB));
 		tmFBAdded = true;
 	}
 	const char *name = luaL_check_string(1);

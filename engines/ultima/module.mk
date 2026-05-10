@@ -4,8 +4,38 @@ MODULE_OBJS := \
 	metaengine.o \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
-	shared/engine/data_archive.o \
-	shared/engine/events.o
+	shared/engine/data_archive.o
+
+ifdef ENABLE_AKALABETH
+MODULE_OBJS += \
+	ultima0/ultima0.o \
+	ultima0/console.o \
+	ultima0/events.o \
+	ultima0/messages.o \
+	ultima0/metaengine.o \
+	ultima0/music.o \
+	ultima0/data/data.o \
+	ultima0/data/monster_logic.o \
+	ultima0/gfx/dungeon.o \
+	ultima0/gfx/font.o \
+	ultima0/gfx/gfx_surface.o \
+	ultima0/gfx/map.o \
+	ultima0/gfx/monster.o \
+	ultima0/views/view.o \
+	ultima0/views/acknowledgements.o \
+	ultima0/views/attack.o \
+	ultima0/views/castle.o \
+	ultima0/views/create_character.o \
+	ultima0/views/dead.o \
+	ultima0/views/dungeon.o \
+	ultima0/views/info.o \
+	ultima0/views/intro.o \
+	ultima0/views/startup.o \
+	ultima0/views/status.o \
+	ultima0/views/title.o \
+	ultima0/views/town.o \
+	ultima0/views/world_map.o
+endif
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
@@ -29,6 +59,7 @@ MODULE_OBJS += \
 	shared/early/game.o \
 	shared/early/game_base.o \
 	shared/early/ultima_early.o \
+	shared/engine/events.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \
@@ -53,9 +84,6 @@ MODULE_OBJS += \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	ultima0/core/resources.o \
-	ultima0/game.o \
-	ultima0/resources.o \
 	ultima1/actions/action.o \
 	ultima1/actions/attack.o \
 	ultima1/actions/move.o \

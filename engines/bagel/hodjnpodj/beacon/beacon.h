@@ -89,21 +89,21 @@ namespace Beacon {
 #define MIN_SWEEPS            5
 
 // Sound files
-#define MID_SOUND   ".\\sound\\bong.wav"
-#define PICK_SOUND  ".\\sound\\pick.wav"
-#define LOSE_SOUND  ".\\sound\\buzzer.wav"
-#define WIN_SOUND   ".\\SOUND\\SOUNDWON.WAV"
+#define MID_SOUND   "sound\\bong.wav"
+#define PICK_SOUND  "sound\\pick.wav"
+#define LOSE_SOUND  "sound\\buzzer.wav"
+#define WIN_SOUND   "sound\\SOUNDWON.WAV"
 
-#define GAME_THEME  ".\\sound\\beacon.mid"
-#define RULES_WAV   ".\\SOUND\\BEACON.WAV"
+#define GAME_THEME  "sound\\beacon.mid"
+#define RULES_WAV   "sound\\BEACON.WAV"
 #define RULES_TEXT  "BEACON.TXT"
 
 // Backdrop bitmaps
-#define MAINSCREEN  ".\\ART\\BEACBRDR.BMP"
-#define BEAMSCREEN  ".\\ART\\BEAMS3.BMP"
+#define MAINSCREEN  "art\\BEACBRDR.BMP"
+#define BEAMSCREEN  "art\\BEAMS3.BMP"
 
 // Artwork data file constants
-#define DATA_FILE   ".\\BEACON.DAT"
+#define DATA_FILE   "BEACON.DAT"
 #define MAX_FILE_LENGTH      20
 
 // New Game button area

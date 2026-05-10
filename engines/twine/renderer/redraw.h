@@ -141,6 +141,8 @@ private:
 	void renderOverlays();
 	void renderText();
 
+	void fillBackground(uint8 color);
+
 public:
 	Redraw(TwinEEngine *engine);
 

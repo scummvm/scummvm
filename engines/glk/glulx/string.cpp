@@ -695,7 +695,6 @@ void Glulx::buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mask
 }
 
 #if 0
-#include <stdio.h>
 void Glulx::dumpcache(cacheblock_t *cablist, int count, int indent) {
 	int ix, jx;
 

@@ -654,12 +654,10 @@ uint32 RIFXArchive::getKeyTableResourceSize() {
 		for (auto &parentIndex : keyMap) {
 			KeyArray keyArray = parentIndex._value;
 
-			for (auto _ : keyArray) {
-				size += 12;
-			}
+			size += keyArray.size() * 12u;
 		}
 	}
-	return size + 12;
+	return size + 12u;
 }
 
 void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize) {

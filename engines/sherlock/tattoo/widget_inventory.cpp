@@ -54,7 +54,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 	Common::String line1 = str, line2;
 
 	// See if we need to split it into two lines
-	if (width > 150) {
+	if (width > kMaxTooltipWidth) {
 		// Yes, we do
 		const char *s = str.c_str();
 		const char *space = nullptr;
@@ -63,7 +63,14 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 		while (*s) {
 			s = strchr(s, ' ');
 
-			if (!s) {
+			// Some constructed sentences end with a trailing space character,
+			// eg. "Show Permission to Dressing Screen "
+			// so we need to check for that case here too and end the line splitting iterations.
+			// Any line splitting should have been made by now anyway.
+			// Note that it should be valid to look at the character after the space *(s+1),
+			// since if the space was a trailing space, it *should* be followed by a null terminator.
+			// Fixes bug #16580
+			if (!s || !(*(s + 1))) {
 				if (!space) {
 					height = _surface.stringHeight(str) + 2;
 				} else {

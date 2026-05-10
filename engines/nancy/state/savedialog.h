@@ -22,6 +22,7 @@
 #ifndef NANCY_STATE_SAVEDIALOG_H
 #define NANCY_STATE_SAVEDIALOG_H
 
+#include "common/ptr.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/state/state.h"
@@ -40,8 +41,7 @@ namespace State {
 
 class SaveDialog : public State, public Common::Singleton<SaveDialog> {
 public:
-	SaveDialog() : _state(kInit), _yesButton(nullptr), _noButton(nullptr), _cancelButton(nullptr), _selected(-1), _dialogData(nullptr) {}
-	virtual ~SaveDialog();
+	SaveDialog() : _state(kInit), _selected(-1), _dialogData(nullptr) {}
 
 	// State API
 	void process() override;
@@ -61,9 +61,9 @@ private:
 	State _state;
 	int _selected;
 
-	UI::Button *_yesButton;
-	UI::Button *_noButton;
-	UI::Button *_cancelButton;
+	Common::ScopedPtr<UI::Button> _yesButton;
+	Common::ScopedPtr<UI::Button> _noButton;
+	Common::ScopedPtr<UI::Button> _cancelButton;
 
 	const SDLG::Dialog *_dialogData;
 };

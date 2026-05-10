@@ -34,13 +34,13 @@ namespace Nuvie {
  */
 class SeekPath: public Path {
 protected:
-	Std::vector<MapCoord> A_scan, B_scan; // nodes of a line scanned by trace_obstacle()
+	Common::Array<MapCoord> A_scan, B_scan; // nodes of a line scanned by trace_obstacle()
 
 	void create_path(const MapCoord &start, const MapCoord &goal);
-	Std::vector<MapCoord> *get_best_scan(const MapCoord &start, const MapCoord &goal);
+	Common::Array<MapCoord> *get_best_scan(const MapCoord &start, const MapCoord &goal);
 	void delete_nodes();
-	bool trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Std::vector<MapCoord> *scan);
-	void trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Std::vector<MapCoord> *scan);
+	bool trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Common::Array<MapCoord> *scan);
+	void trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Common::Array<MapCoord> *scan);
 
 public:
 	SeekPath();
@@ -55,7 +55,7 @@ public:
 	}
 
 	/* Trace obstacle towards xdir,ydir for a possible opening. */
-	bool trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, Std::vector<MapCoord> *scan);
+	bool trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, Common::Array<MapCoord> *scan);
 	/* Get two relative directions that a line can travel to trace around an
 	   obstacle towards `xdir',`ydir'. */
 	bool get_obstacle_tracer(const MapCoord &start, sint32 xdir, sint32 ydir,

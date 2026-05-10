@@ -22,10 +22,9 @@
 #ifndef ULTIMA8_GFX_FONTS_FONT_H
 #define ULTIMA8_GFX_FONTS_FONT_H
 
+#include "common/list.h"
 #include "common/rect.h"
-
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/misc/encoding.h"
 
 namespace Ultima {
@@ -34,9 +33,9 @@ namespace Ultima8 {
 class RenderedText;
 
 struct PositionedText {
-	Std::string _text;
+	Common::String _text;
 	Common::Rect32 _dims;
-	Std::string::size_type _cursor;
+	Common::String::size_type _cursor;
 };
 
 class Font {
@@ -63,7 +62,7 @@ public:
 	//! \param text The string
 	//! \param width Returns the width
 	//! \param height Returns the height
-	virtual void getStringSize(const Std::string &text,
+	virtual void getStringSize(const Common::String &text,
 		int32 &width, int32 &height) = 0;
 
 	//! render a string
@@ -75,11 +74,11 @@ public:
 	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \param pagebreaks If true (and u8specials too), stop at U8 pagebreaks
 	//! \return the rendered text in a RenderedText object
-	virtual RenderedText *renderText(const Std::string &text,
+	virtual RenderedText *renderText(const Common::String &text,
 	    unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
 		bool pagebreaks = false,
-		Std::string::size_type cursor = Std::string::npos) = 0;
+		Common::String::size_type cursor = Common::String::npos) = 0;
 
 	//! get the dimensions of a rendered string
 	//! \param text The text
@@ -91,7 +90,7 @@ public:
 	//! \param align Alignment of the text (left, right, center)
 	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \param pagebreaks If true (and u8specials too), stop at U8 pagebreaks
-	virtual void getTextSize(const Std::string &text,
+	virtual void getTextSize(const Common::String &text,
 		int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
 		int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
 		bool u8specials = false, bool pagebreaks = false);
@@ -107,54 +106,54 @@ protected:
 	bool _highRes;
 
 	struct Traits {
-		static bool isSpace(Std::string::const_iterator &i, bool u8specials) {
+		static bool isSpace(Common::String::const_iterator &i, bool u8specials) {
 			char c = *i;
 			return (c == ' ' || c == '\t' || c == '\n' || c == '\r' ||
 			        (u8specials && (c == '%' || c == '~' || c == '*' || c == '^')));
 		}
-		static bool isTab(Std::string::const_iterator &i, bool u8specials) {
+		static bool isTab(Common::String::const_iterator &i, bool u8specials) {
 			char c = *i;
 			return (c == '\t' ||
 			        (u8specials && (c == '\t' || c == '%')));
 		}
-		static bool isBreak(Std::string::const_iterator &i, bool u8specials) {
+		static bool isBreak(Common::String::const_iterator &i, bool u8specials) {
 			char c = *i;
 			return (c == '\n' ||
 			        (u8specials && (c == '\n' || c == '~' || c == '*')));
 		}
-		static bool isPageBreak(Std::string::const_iterator &i, bool u8specials) {
+		static bool isPageBreak(Common::String::const_iterator &i, bool u8specials) {
 			char c = *i;
 			return (u8specials && c == '*');
 		}
-		static bool canBreakAfter(Std::string::const_iterator &i);
-		static void advance(Std::string::const_iterator &i) {
+		static bool canBreakAfter(Common::String::const_iterator &i);
+		static void advance(Common::String::const_iterator &i) {
 			++i;
 		}
-		static Std::string::size_type length(const Std::string &t) {
+		static Common::String::size_type length(const Common::String &t) {
 			return t.size();
 		}
-		static uint32 unicode(Std::string::const_iterator &i) {
+		static uint32 unicode(Common::String::const_iterator &i) {
 			return encoding[static_cast<uint8>(*i++)];
 		}
 	};
 	struct SJISTraits : public Traits {
-		static bool canBreakAfter(Std::string::const_iterator &i);
-		static void advance(Std::string::const_iterator &i) {
+		static bool canBreakAfter(Common::String::const_iterator &i);
+		static void advance(Common::String::const_iterator &i) {
 			// FIXME: this can advance past the end of a malformed string
 			uint8 c = *i;
 			i++;
 			if (c >= 0x80) i++;
 		}
-		static Std::string::size_type length(const Std::string &t) {
-			Std::string::size_type l = 0;
-			Std::string::const_iterator iter = t.begin();
+		static Common::String::size_type length(const Common::String &t) {
+			Common::String::size_type l = 0;
+			Common::String::const_iterator iter = t.begin();
 			while (iter != t.end()) {
 				advance(iter);
 				l++;
 			}
 			return l;
 		}
-		static uint32 unicode(Std::string::const_iterator &i) {
+		static uint32 unicode(Common::String::const_iterator &i) {
 			uint16 s = static_cast<uint8>(*i);
 			i++;
 			if (s >= 0x80) {
@@ -167,12 +166,12 @@ protected:
 };
 
 template<class T>
-Std::list<PositionedText> typesetText(Font *font,
-	const Std::string &text, unsigned int &remaining,
+Common::List<PositionedText> typesetText(Font *font,
+	const Common::String &text, unsigned int &remaining,
 	int32 width, int32 height, Font::TextAlign align,
 	bool u8specials, bool pagebreaks,
 	int32 &resultwidth, int32 &resultheight,
-	Std::string::size_type cursor = Std::string::npos);
+	Common::String::size_type cursor = Common::String::npos);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

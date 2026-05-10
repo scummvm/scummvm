@@ -1,0 +1,166 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#ifndef PELROCK_ROOM_H
+#define PELROCK_ROOM_H
+
+#include "common/array.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+
+#include "pelrock/types.h"
+
+namespace Pelrock {
+
+const int kRoomStructSize = 104;
+
+#define PERSIST_TEMP 1
+#define PERSIST_PERM 2
+#define PERSIST_BOTH 3
+
+class RoomManager {
+public:
+	RoomManager();
+	~RoomManager();
+	void clearTalkingAnims();
+	void clearAnims();
+	void clearRoomStickerPixels();
+	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
+	/**
+	 * Passer by animations are animations of characters that merely traverse the scene as ambient
+	 */
+	RoomPasserBys *loadPasserByAnims(int roomNumber);
+	/**
+	 * Treats sprites and hotspots the same.
+	 */
+	Common::Array<HotSpot> unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots);
+	void loadRoomTalkingAnimations(int roomNumber);
+	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
+	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+	void loadWaterPaletteRemap();
+
+	/** Methods to modify room data at runtime **/
+	void addSticker(int stickerId, int persist = PERSIST_BOTH);
+	void addStickerToRoom(byte room, int stickerId, int persist = PERSIST_BOTH);
+
+	void removeSticker(int stickerId);
+	void removeStickerFromRoom(byte room, int stickerId);
+
+	bool hasSticker(int index);
+	bool hasSticker(byte room, int index);
+
+	void changeExit(byte index, bool enabled, int persist = PERSIST_BOTH);
+	void changeExit(byte room, byte index, bool enabled, int persist = PERSIST_BOTH);
+
+	void disableExit(byte index, int persist = PERSIST_BOTH);
+	void disableExit(byte room, byte index, int persist = PERSIST_BOTH);
+	void enableExit(byte index, int persist = PERSIST_BOTH);
+	void enableExit(byte room, byte index, int persist = PERSIST_BOTH);
+
+	void changeWalkBox(WalkBox walkbox, int persist = PERSIST_BOTH);
+	void changeWalkbox(byte room, WalkBox walkbox, int persist = PERSIST_BOTH);
+
+	void changeHotSpot(HotSpot hotspot, int persist = PERSIST_BOTH);
+	void changeHotspot(byte room, HotSpot hotspot, int persist = PERSIST_BOTH);
+
+	void disableSprite(byte spriteIndex, int persist = PERSIST_BOTH);
+	void disableSprite(byte roomNumber, byte spriteIndex, int persist = PERSIST_BOTH);
+	void enableSprite(byte spriteIndex, byte zOrder, int persist = PERSIST_BOTH);
+	void enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist = PERSIST_BOTH);
+	/**
+	 * Utility function to enable or disable a hotspot, with an option to persist the change.
+	 */
+	void enableHotspot(HotSpot *hotspot, int persist = PERSIST_BOTH);
+	void enableHotspot(byte room, HotSpot *hotspot, int persist = PERSIST_BOTH);
+
+	void disableHotspot(HotSpot *hotspot, int persist = PERSIST_BOTH);
+	void disableHotspot(byte room, HotSpot *hotspot, int persist = PERSIST_BOTH);
+
+	void moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, int persist = PERSIST_BOTH);
+	void moveHotspot(byte room, HotSpot *hotspot, int16 newX, int16 newY, int persist = PERSIST_BOTH);
+	void setActionMask(HotSpot *hotspot, byte actionMask, int persist = PERSIST_BOTH);
+
+	void addWalkbox(WalkBox walkbox, int persist = PERSIST_BOTH);
+	void addWalkbox(byte room, WalkBox walkbox, int persist = PERSIST_BOTH);
+
+	void applyDisabledChoices(byte roomNumber, byte *conversationData, size_t conversationDataSize);
+	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
+	void addDisabledChoice(ChoiceOption choice);
+
+	/**
+	 * Will apply the default "take item with given extra" handler if returns true
+	 */
+	bool isPickableByExtra(uint16 extra);
+
+	Sprite *findSpriteByIndex(byte index);
+	Sprite *findSpriteByExtra(int16 extra);
+	HotSpot *findHotspotByIndex(byte index);
+	HotSpot *findHotspotByExtra(uint16 extra);
+	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
+
+	byte _currentRoomNumber = 0;
+	int _prevRoomNumber = -1;
+	Common::Array<HotSpot> _currentRoomHotspots;
+	Common::Array<Sprite> _currentRoomAnims;
+	Common::Array<Exit> _currentRoomExits;
+	Common::Array<WalkBox> _currentRoomWalkboxes;
+	Common::Array<Description> _currentRoomDescriptions;
+
+	TalkingAnims _talkingAnims;
+	ScalingParams _scaleParams;
+	byte *_pixelsShadows = nullptr;
+	byte _roomPalette[768];
+	byte _paletteRemaps[5][256];
+	byte _musicTrack = 0;
+	Common::Array<byte> _roomSfx;
+	PaletteAnim *_currentPaletteAnim = nullptr;
+	RoomPasserBys *_passerByAnims = nullptr;
+	byte *_conversationData = nullptr;
+	size_t _conversationDataSize = 0;
+	Common::Array<Sticker> _roomStickers;
+	Common::Array<byte *> _roomStickerPixelData;
+	uint32 _conversationOffset;
+
+private:
+	void init();
+	void loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize);
+	void loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size);
+	void loadHotspots(byte *data, size_t size);
+	void loadExits(byte *data, size_t size);
+	ScalingParams loadScalingParams(byte *data, size_t size);
+	void loadWalkboxes(byte *data, size_t size);
+	uint32 loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions);
+	void loadConversationData(byte *pair12data, size_t pair12size, uint32 startPos, size_t &outConversationDataSize, byte *&outConversationData);
+	void resetConversationStates(byte roomNumber, byte *conversationData, size_t conversationDataSize);
+	void resetMetadataDefaults(byte room, byte *&data, size_t size);
+
+	byte *loadShadowMap(int roomNumber);
+	void loadRemaps(int roomNumber);
+	Common::StringArray loadRoomNames();
+	byte loadMusicTrackForRoom(Common::File *roomFile, int roomOffset);
+	Common::Array<byte> loadRoomSfx(Common::File *roomFile, int roomOffset);
+
+	byte *_resetData = nullptr;
+	Common::Array<HotSpot> _staticHotspots;
+};
+
+} // End of namespace Pelrock
+
+#endif

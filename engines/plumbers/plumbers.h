@@ -92,7 +92,7 @@ protected:
 	virtual bool handlePlatformJoyButton(int button) { return false; }
 	virtual bool handlePlatformKeyDown(int button) { return false; }
 	virtual void loadImage(const Common::String &name);
-	virtual void startGraphics() = 0;
+	virtual Common::Error startGraphics() = 0;
 	void blitImageSurface(const Graphics::Surface *surface);
 	virtual void blitImage();
 	virtual void handleEvent(const Common::Event &event);
@@ -164,7 +164,7 @@ public:
 protected:
 	void readTables() override;
 	void postSceneBitmaps() override;
-	void startGraphics() override;
+	Common::Error startGraphics() override;
 	void handleEvent(const Common::Event &event) override;
 	void blitImage() override;
 	int getSceneNumb(const Common::String &sName) override;
@@ -195,7 +195,7 @@ protected:
 	void readTables() override;
 	void postSceneBitmaps() override;
 	void loadImage(const Common::String &name) override;
-	void startGraphics() override;
+	Common::Error startGraphics() override;
 
 private:
 	bool _halfSize;

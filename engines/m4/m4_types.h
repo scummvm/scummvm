@@ -26,7 +26,6 @@
 
 namespace M4 {
 
-#define MAX_STRING_SIZE 144
 #define MAX_STRING_LEN 144
 #define MAX_FILENAME_SIZE 144
 #define MIN_VIDEO_X 0
@@ -46,18 +45,6 @@ typedef void *Handle;
 typedef intptr frac16;
 
 typedef uint32 ulong;
-typedef uint32 quadchar;
-typedef uint32 trigraph;
-
-typedef byte Bit;
-typedef byte Bool;
-typedef byte boolean;
-typedef byte Boolean;
-typedef byte byte;
-typedef byte Byte;
-typedef uint16 word;
-typedef uint16 Word;
-typedef uint32 DWord;
 
 enum {
 	TRIG_INV_CLICK = 32000,
@@ -65,11 +52,14 @@ enum {
 };
 
 struct Buffer {
-	int32 w;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
+	int32 w = 0;
+	int32 h = 0;
+	uint8 *data = nullptr;
+	uint8 encoding = 0;
+	int32 stride = 0;
+
+	constexpr Buffer() = default;
+	constexpr Buffer(int32 _w, int32 _h, uint8 *_data, uint8 _encoding, int32 _stride) : w(_w), h(_h), data(_data), encoding(_encoding), stride(_stride) {}
 
 	uint8 *getBasePtr(int x, int y) {
 		return data + y * w + x;
@@ -80,8 +70,8 @@ struct Buffer {
 };
 
 struct token {
-	char *sym_name;
-	int32 tag;
+	char *sym_name = nullptr;
+	int32 tag = 0;
 };
 
 #include "common/pack-start.h"  // START STRUCT PACKING
@@ -93,11 +83,7 @@ struct RGB8 {
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-typedef void (*FuncPtr)();
-typedef bool (*FuncPtr_b_l)(int32);
 typedef void (*FuncPtr_v_vv)(void *, void *);
-
-typedef FuncPtr_b_l ExceptionPtr;
 
 typedef FuncPtr_v_vv M4CALLBACK;
 

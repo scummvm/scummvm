@@ -199,7 +199,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 				// Ignore non-tokens when they're between braces. This fixes nancy6 scenes 1953 & 1954,
 				// where some sound names slipped through into the text data.
-				debugC(Nancy::kDebugHypertext, "Unrecognized hypertext tag <%s>", curToken.c_str());
+				debugC(kDebugHypertext, "Unrecognized hypertext tag <%s>", curToken.c_str());
 				continue;
 			}
 

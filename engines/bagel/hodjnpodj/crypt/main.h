@@ -38,29 +38,29 @@ namespace Crypt {
 #define PAUSE_TIME      15000               // Pause for 15 seconds -- allows user to read quote
 
 // Game theme song
-#define GAME_THEME      ".\\sound\\crypt.mid"
+#define GAME_THEME      "sound\\crypt.mid"
 // Rules files
 #define RULES_TEXT      "CRYPTRUL.TXT"
-#define RULES_WAV       ".\\SOUND\\CRYPT.WAV"
+#define RULES_WAV       "sound\\CRYPT.WAV"
 
 ///////////////////////////////////////////
 // EASTER EGG AND SOUND HOTSPOT DATA:
 //
-#define WAV_TIMEOUT ".\\SOUND\\BUZZER.WAV"
-#define WAV_WON     ".\\SOUND\\SOUNDWON.WAV"
-#define WAV_URN1    ".\\SOUND\\OUTTHERE.WAV"
-#define WAV_URN2    ".\\SOUND\\SPOOKMUS.WAV"
-#define WAV_URN3    ".\\SOUND\\BUTFLIES.WAV"
-#define WAV_JOKE1   ".\\SOUND\\JOKE1.WAV"
-#define WAV_JOKE2   ".\\SOUND\\JOKE2.WAV"
-#define WAV_JOKE3   ".\\SOUND\\JOKE3.WAV"
-#define WAV_JOKE4   ".\\SOUND\\JOKE4.WAV"
-#define WAV_JOKE5   ".\\SOUND\\JOKE5.WAV"
-#define WAV_JOKE6   ".\\SOUND\\JOKE6.WAV"
-#define WAV_TORCH   ".\\SOUND\\FIREENG.WAV"
-#define WAV_GRYPH   ".\\SOUND\\GRYPHON.WAV"
-#define WAV_STEPS   ".\\SOUND\\STAIRS.WAV"
-#define WAV_HOUR    ".\\SOUND\\SANDTIME.WAV"
+#define WAV_TIMEOUT "sound\\BUZZER.WAV"
+#define WAV_WON     "sound\\SOUNDWON.WAV"
+#define WAV_URN1    "sound\\OUTTHERE.WAV"
+#define WAV_URN2    "sound\\SPOOKMUS.WAV"
+#define WAV_URN3    "sound\\BUTFLIES.WAV"
+#define WAV_JOKE1   "sound\\JOKE1.WAV"
+#define WAV_JOKE2   "sound\\JOKE2.WAV"
+#define WAV_JOKE3   "sound\\JOKE3.WAV"
+#define WAV_JOKE4   "sound\\JOKE4.WAV"
+#define WAV_JOKE5   "sound\\JOKE5.WAV"
+#define WAV_JOKE6   "sound\\JOKE6.WAV"
+#define WAV_TORCH   "sound\\FIREENG.WAV"
+#define WAV_GRYPH   "sound\\GRYPHON.WAV"
+#define WAV_STEPS   "sound\\STAIRS.WAV"
+#define WAV_HOUR    "sound\\SANDTIME.WAV"
 
 #define NUM_SKULL_SOUNDS        6
 

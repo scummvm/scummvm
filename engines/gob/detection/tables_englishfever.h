@@ -60,5 +60,33 @@
 	kFeatures800x600,
 	"L_Module_Start.itk", "L_Module_Start.obc", 0
 },
+// -- English Fever Funny Camp
+{
+	{	// Supplied by Indy4-Fan
+		"englishfever",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // English Fever Funny Camp 1.00 (Engine: DEV7 version 1.30)
+		AD_ENTRY1s("L_Module_Start.itk", "6090620324734b17fe8b591852b693df", 747551),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"L_Module_Start.itk", "L_Module_Start.obc", 0
+},
+// -- English Fever Extreme Summer
+{
+	{	// Supplied by Indy4-Fan
+		"englishfever",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // English Fever Extreme Summer 1.00 (Engine: DEV7 version 1.30)
+		AD_ENTRY1s("L_Module_Start.itk", "d89ba463c0d7fc2f6e008360644ac305", 747586),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"L_Module_Start.itk", "L_Module_Start.obc", 0
+},
 
 #endif // GOB_DETECTION_TABLES_ENGLISHFEVER_H

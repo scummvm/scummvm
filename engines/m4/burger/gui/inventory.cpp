@@ -48,7 +48,7 @@ Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cell
 
 	// If requested cell configuration doesn't fit, blow up.
 	if ((cells_h * cell_w > (_x2 - _x1)) || (cells_v * cell_h > (_y2 - _y1))) {
-		error_show(FL, 'CGIC');
+		error_show(FL, "requested cell configuration doesn't fit");
 	}
 
 	_highlight = -1;
@@ -70,8 +70,7 @@ bool Inventory::add(const Common::String &name, const Common::String &verb, int3
 	}
 
 	if (_num_cells >= INVENTORY_CELLS_COUNT) {
-		error_show(FL, 'CGIA');
-		return false;
+		error_show(FL, "too many cells");
 	}
 
 	// Shift existing items up by one
@@ -145,19 +144,19 @@ int16 Inventory::inside(int16 x, int16 y) const {
 int16 Inventory::cell_pos_x(int16 index) {
 	if (_cells_h > _cells_v) {				// Horizontal orientation, fill left to right
 		return (int16)((index / _cells_v) * _cell_w);
-	} else {								// Vertical orientation, fill top to bottom
-		return (int16)((index / _cells_h) * _cell_w);
 	}
+
+	return (int16)((index / _cells_h) * _cell_w);
 }
 
 int16 Inventory::cell_pos_y(int16 index) {
 	if (_cells_h > _cells_v) {
 		// Horizontal orientation, fill left to right
 		return (int16)((index % _cells_v) * _cell_h);
-	} else {
-		// Vertical orientation, fill top to bottom
-		return (int16)((index % _cells_h) * _cell_h);
 	}
+
+	// Vertical orientation, fill top to bottom
+	return (int16)((index % _cells_h) * _cell_h);
 }
 
 void Inventory::highlight_part(int16 index) {
@@ -234,10 +233,10 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 	if (!_GI(visible))
 		return NOTHING;
 
-	ControlStatus result = NOTHING;
+	ControlStatus result;
 
-	int16 over = inside(x, y);
-	bool button_clicked = eventType == _ME_L_click || eventType == _ME_L_hold || eventType == _ME_L_drag;
+	const int16 over = inside(x, y);
+	const bool button_clicked = eventType == _ME_L_click || eventType == _ME_L_hold || eventType == _ME_L_drag;
 
 	// If Button is pressed
 	if (button_clicked) {

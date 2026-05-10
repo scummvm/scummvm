@@ -63,7 +63,7 @@ static CColorButton    *pCancelButton = nullptr;
  *
  ****************************************************************/
 CSetAmountDlg::CSetAmountDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	:  CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	CDC *pDC = GetDC();
 
 	pSetAmountPalette = pPalette;

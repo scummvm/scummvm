@@ -111,6 +111,8 @@ Y[A-Z0-9]					HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return YXTOK;
 
 namespace Hypno {
 
+extern Shoot *shoot;
+
 int parse_arc(const char *code) {
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
@@ -118,6 +120,8 @@ int parse_arc(const char *code) {
 	yy_switch_to_buffer(bp);
 	HYPNO_ARC_parse();
 	yy_delete_buffer(bp);
+	delete shoot;
+	shoot = nullptr;
 	return 0;
 }
 

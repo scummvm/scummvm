@@ -160,7 +160,7 @@ private:
 	bool _widescreen;
 
 public:
-	void initialize(bool hiRes = false);
+	Common::Error initialize(bool hiRes = false);
 
 	/**
 	 * Renders the scene to the screen

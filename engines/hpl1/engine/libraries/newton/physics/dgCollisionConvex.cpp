@@ -99,8 +99,7 @@ dgCollisionConvex::dgCollisionConvex(dgMemoryAllocator *const allocator,
 	m_boxMaxRadius = dgFloat32(0.0f);
 	m_isTriggerVolume = false;
 
-	for (dgUnsigned32 i = 0;
-	        i < sizeof(m_supportVertexStarCuadrant) / sizeof(m_supportVertexStarCuadrant[0]); i++) {
+	for (dgUnsigned32 i = 0; i < ARRAYSIZE(m_supportVertexStarCuadrant); i++) {
 		m_supportVertexStarCuadrant[i] = NULL;
 	}
 }
@@ -127,8 +126,7 @@ dgCollisionConvex::dgCollisionConvex(dgWorld *const world,
 	deserialization(userData, &isTrigger, sizeof(dgInt32));
 	m_isTriggerVolume = dgUnsigned32(isTrigger ? true : false);
 
-	for (dgUnsigned32 i = 0;
-	        i < sizeof(m_supportVertexStarCuadrant) / sizeof(m_supportVertexStarCuadrant[0]); i++) {
+	for (dgUnsigned32 i = 0; i < ARRAYSIZE(m_supportVertexStarCuadrant); i++) {
 		m_supportVertexStarCuadrant[i] = NULL;
 	}
 }
@@ -175,7 +173,7 @@ void dgCollisionConvex::SetVolumeAndCG() {
 				edgeMarks[dgInt32(edge - m_simplex)] = '1';
 				faceVertex[count] = m_vertex[edge->m_vertex];
 				count++;
-				NEWTON_ASSERT(count < dgInt32(sizeof(faceVertex) / sizeof(faceVertex[0])));
+				NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(faceVertex)));
 				edge = edge->m_next;
 			} while (edge != face);
 
@@ -192,7 +190,7 @@ void dgCollisionConvex::SetVolumeAndCG() {
 	m_simplexVolume = m_volume.m_w;
 
 	// set the table for quick calculation of support vertex
-	dgInt32 count = sizeof(m_supportVertexStarCuadrant) / sizeof(m_supportVertexStarCuadrant[0]);
+	dgInt32 count = ARRAYSIZE(m_supportVertexStarCuadrant);
 	for (dgInt32 i = 0; i < count; i++) {
 		m_supportVertexStarCuadrant[i] = GetSupportEdge(m_multiResDir[i]);
 	}
@@ -770,7 +768,7 @@ dgVector dgCollisionConvex::CalculateVolumeIntegral(const dgPlane &plane) const 
 					    m_vertex[edge->m_vertex] - m_vertex[edge->m_prev->m_vertex]);
 					faceVertex[count] = m_vertex[edge->m_prev->m_vertex] - dp.Scale(size0 / (plane % dp));
 					count++;
-					NEWTON_ASSERT(count < dgInt32(sizeof(faceVertex) / sizeof(faceVertex[0])));
+					NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(faceVertex)));
 				}
 
 				if (!capEdge) {
@@ -858,13 +856,13 @@ dgVector dgCollisionConvex::SupportVertex(const dgVector &direction) const {
 	index = edge->m_vertex;
 	side0 = m_vertex[index] % dir;
 
-	cache[index & (sizeof(cache) / sizeof(cache[0]) - 1)] = dgInt16(index);
+	cache[index & (ARRAYSIZE(cache) - 1)] = dgInt16(index);
 	dgConvexSimplexEdge *ptr = edge;
 	dgInt32 maxCount = 128;
 	do {
 		dgInt32 index1 = ptr->m_twin->m_vertex;
-		if (cache[index1 & (sizeof(cache) / sizeof(cache[0]) - 1)] != index1) {
-			cache[index1 & (sizeof(cache) / sizeof(cache[0]) - 1)] = dgInt16(index1);
+		if (cache[index1 & (ARRAYSIZE(cache) - 1)] != index1) {
+			cache[index1 & (ARRAYSIZE(cache) - 1)] = dgInt16(index1);
 			dgFloat32 side1 = m_vertex[index1] % dir;
 			if (side1 > side0) {
 				index = index1;
@@ -916,14 +914,14 @@ dgVector dgCollisionConvex::SupportVertexSimd(const dgVector &direction) const {
 
 	dgInt16 cache[16];
 	memset(cache, -1, sizeof(cache));
-	cache[index & (sizeof(cache) / sizeof(cache[0]) - 1)] = dgInt16(index);
+	cache[index & (ARRAYSIZE(cache) - 1)] = dgInt16(index);
 
 	dgConvexSimplexEdge *ptr = edge;
 	dgInt32 maxCount = 128;
 	do {
 		dgInt32 index1 = ptr->m_twin->m_vertex;
-		if (cache[index1 & (sizeof(cache) / sizeof(cache[0]) - 1)] != index1) {
-			cache[index1 & (sizeof(cache) / sizeof(cache[0]) - 1)] = dgInt16(index1);
+		if (cache[index1 & (ARRAYSIZE(cache) - 1)] != index1) {
+			cache[index1 & (ARRAYSIZE(cache) - 1)] = dgInt16(index1);
 			NEWTON_ASSERT(m_vertex[index1].m_w == dgFloat32(1.0f));
 			simd_type side1 = simd_mul_v(*(simd_type *)&m_vertex[index1], dir);
 			side1 = simd_add_s(simd_add_v(side1, simd_move_hl_v(side1, side1)), simd_permut_v(side1, side1, PURMUT_MASK(3, 3, 3, 1)));
@@ -1001,7 +999,7 @@ dgInt32 dgCollisionConvex::SimplifyClipPolygon(dgInt32 count,
 	dgInt8 buffer[8 * DG_MAX_VERTEX_CLIP_FACE * (sizeof(dgInt32) + sizeof(dgFloat32))];
 	for (uint i = 0; i < ARRAYSIZE(buffer); i++) buffer[i] = 0;
 
-	NEWTON_ASSERT(count < dgInt32(sizeof(mark) / sizeof(mark[0])));
+	NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(mark)));
 	dgUpHeap<dgInt32, dgFloat32> sortHeap(buffer, sizeof(buffer));
 
 	while (count > DG_MAX_VERTEX_CLIP_FACE) {

@@ -64,7 +64,7 @@ bool Dither::load_data() {
 }
 
 void Dither::set_mode() {
-	Std::string str_dither_mode;
+	Common::String str_dither_mode;
 
 	config->value("config/general/dither_mode", str_dither_mode);
 

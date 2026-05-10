@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section8/room818.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -132,8 +133,7 @@ void Room818::daemon() {
 		break;
 
 	case 30:
-		_G(game).new_section = 9;
-		_G(game).new_room = 917;
+		_G(game).setRoom(917);
 
 		break;
 

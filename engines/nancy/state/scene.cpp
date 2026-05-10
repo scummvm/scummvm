@@ -39,6 +39,7 @@
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
 #include "engines/nancy/ui/clock.h"
+#include "engines/nancy/ui/taskbar.h"
 
 #include "engines/nancy/misc/lightning.h"
 #include "engines/nancy/misc/specialeffect.h"
@@ -121,6 +122,7 @@ Scene::Scene() :
 		_inventoryBox(),
 		_menuButton(nullptr),
 		_helpButton(nullptr),
+		_taskbar(nullptr),
 		_viewportOrnaments(nullptr),
 		_textboxOrnaments(nullptr),
 		_inventoryBoxOrnaments(nullptr),
@@ -137,6 +139,7 @@ Scene::Scene() :
 Scene::~Scene() {
 	delete _helpButton;
 	delete _menuButton;
+	delete _taskbar;
 	delete _viewportOrnaments;
 	delete _textboxOrnaments;
 	delete _inventoryBoxOrnaments;
@@ -344,7 +347,11 @@ void Scene::addItemToInventory(int16 id) {
 
 		g_nancy->_sound->playSound("BUOK");
 
-		_inventoryBox.addItem(id);
+		if (g_nancy->getGameType() <= kGameTypeNancy9) {
+			_inventoryBox.addItem(id);
+		} else if (_inventoryPopup.isOpen()) {
+			_inventoryPopup.refreshGrid();
+		}
 	}
 }
 
@@ -364,7 +371,11 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 
 		g_nancy->_sound->playSound("BUOK");
 
-		_inventoryBox.removeItem(id);
+		if (g_nancy->getGameType() <= kGameTypeNancy9) {
+			_inventoryBox.removeItem(id);
+		} else if (_inventoryPopup.isOpen()) {
+			_inventoryPopup.refreshGrid();
+		}
 	}
 }
 
@@ -587,8 +598,25 @@ void Scene::useHint(uint16 characterID, uint16 hintID) {
 void Scene::registerGraphics() {
 	_frame.registerGraphics();
 	_viewport.registerGraphics();
-	_textbox.registerGraphics();
-	_inventoryBox.registerGraphics();
+
+	// Pre-Nancy 10: legacy textbox is the on-screen subtitle/conversation
+	// strip. Nancy 10+: that role moves to the UICO popup; the legacy
+	// textbox is kept around in memory (other code still calls clear() /
+	// addTextLine() on it) but stays unregistered so its surface is
+	// never blitted to the screen.
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		_textbox.registerGraphics();
+	}
+
+	// Pre-Nancy 10: inventory box is always-on-screen.
+	// Nancy 10+: a separate popup widget driven by UIIV (initially hidden).
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		_inventoryBox.registerGraphics();
+	} else {
+		_inventoryPopup.registerGraphics();
+		_notebookPopup.registerGraphics();
+	}
+
 	_hotspotDebug.registerGraphics();
 
 	if (_menuButton) {
@@ -599,6 +627,10 @@ void Scene::registerGraphics() {
 	if (_helpButton) {
 		_helpButton->registerGraphics();
 		_helpButton->setVisible(false);
+	}
+
+	if (_taskbar) {
+		_taskbar->registerGraphics();
 	}
 
 	if (_viewportOrnaments) {
@@ -666,9 +698,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint32LE((uint32 &)_flags.logicConditions[i].timestamp);
 	}
 
-	auto &order = getInventoryBox()._order;
-	uint prevSize = getInventoryBox()._order.size();
-	getInventoryBox()._order.resize(g_nancy->getStaticData().numItems);
+	auto &order = getInventoryBox().getOrder();
+	uint prevSize = order.size();
+	order.resize(g_nancy->getStaticData().numItems);
 
 	if (ser.isSaving()) {
 		for (uint i = prevSize; i < order.size(); ++i) {
@@ -682,7 +714,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		order.pop_back();
 	}
 
-	if (ser.isLoading()) {
+	if (ser.isLoading() && g_nancy->getGameType() <= kGameTypeNancy9) {
 		// Make sure the shades are open if we have items
 		getInventoryBox().onReorder();
 	}
@@ -835,9 +867,13 @@ void Scene::init() {
 
 		// Remove key so clicking on "New Game" in start menu doesn't just reload the save
 		ConfMan.removeKey("save_slot", Common::ConfigManager::kTransientDomain);
+		// Retain the last slot used so the nancy8+ save menu shows its name on top
+		ConfMan.setInt("display_slot", saveSlot, Common::ConfigManager::kTransientDomain);
 	} else {
 		// Normal boot, load default first scene
 		_state = kLoad;
+		// Make sure the nancy8+ save menu doesn't display a save name on new game
+		ConfMan.removeKey("display_slot", Common::ConfigManager::kTransientDomain);
 	}
 
 	// Set relevant event flag when player has won the game at least once
@@ -1104,7 +1140,12 @@ void Scene::handleInput() {
 	// We handle the textbox and inventory box first because of their scrollbars, which
 	// need to take highest priority
 	_textbox.handleInput(input);
-	_inventoryBox.handleInput(input);
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		_inventoryBox.handleInput(input);
+	} else {
+		_inventoryPopup.handleInput(input);
+		_notebookPopup.handleInput(input);
+	}
 
 	// Handle invisible map button
 	// We do this before the viewport since TVD's map button overlaps the viewport's right hotspot
@@ -1146,6 +1187,31 @@ void Scene::handleInput() {
 
 	// Menu/help are disabled when a movie is active
 	if (!_activeMovie) {
+		if (_taskbar) {
+			_taskbar->handleInput(input);
+
+			int clicked = _taskbar->getClickedButton();
+			switch (clicked) {
+			case kTaskButtonMenu:
+				requestStateChange(NancyState::kMainMenu);
+				break;
+			case kTaskButtonInventory:
+				_inventoryPopup.toggle();
+				break;
+			case kTaskButtonNotebook:
+				_notebookPopup.toggle();
+				break;
+			case kTaskButtonCellphone:
+				// TODO: open cell-phone popup (UICL)
+				break;
+			case kTaskButtonHelp:
+				requestStateChange(NancyState::kHelp);
+				break;
+			default:
+				break;
+			}
+		}
+
 		if (_menuButton) {
 			_menuButton->handleInput(input);
 
@@ -1188,15 +1254,26 @@ void Scene::initStaticData() {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	const ImageChunk *fr0 = (const ImageChunk *)g_nancy->getEngineData("FR0");
-	assert(fr0);
+	Common::Path imageName = "FRAME";
+
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		const ImageChunk *fr0 = (const ImageChunk *)g_nancy->getEngineData("FR0");
+		assert(fr0);
+		imageName = fr0->imageName;
+	}
 
 	auto *mapData = GetEngineData(MAP);
 
-	_frame.init(fr0->imageName);
+	_frame.init(imageName);
 	_viewport.init();
 	_textbox.init();
-	_inventoryBox.init();
+
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		_inventoryBox.init();
+	} else {
+		_inventoryPopup.init();
+		_notebookPopup.init();
+	}
 
 	// Init buttons
 	if (g_nancy->getGameType() == kGameTypeVampire) {
@@ -1205,8 +1282,18 @@ void Scene::initStaticData() {
 		_mapHotspot = mapData->buttonDest;
 	}
 
-	_menuButton = new UI::Button(5, g_nancy->_graphics->_object0, bootSummary->menuButtonSrc, bootSummary->menuButtonDest, bootSummary->menuButtonHighlightSrc);
-	_helpButton = new UI::Button(5, g_nancy->_graphics->_object0, bootSummary->helpButtonSrc, bootSummary->helpButtonDest, bootSummary->helpButtonHighlightSrc);
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		// Pre-Nancy 10: free-floating MENU and HELP buttons whose
+		// rects come from BSUM. Replaced in Nancy 10+ by the taskbar.
+		_menuButton = new UI::Button(5, g_nancy->_graphics->_object0, bootSummary->menuButtonSrc, bootSummary->menuButtonDest, bootSummary->menuButtonHighlightSrc);
+		_helpButton = new UI::Button(5, g_nancy->_graphics->_object0, bootSummary->helpButtonSrc, bootSummary->helpButtonDest, bootSummary->helpButtonHighlightSrc);
+	} else {
+		// Nancy 10+: bottom-of-screen taskbar holds MENU / inventory /
+		// notebook / cellphone / HELP buttons. Built from the TASK chunk.
+		_taskbar = new UI::Taskbar();
+		_taskbar->init();
+	}
+
 	g_nancy->setMouseEnabled(true);
 
 	// Init ornaments and clock (TVD only)

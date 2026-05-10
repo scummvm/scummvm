@@ -42,7 +42,6 @@ class NancyConsole;
 class NancyEngine;
 
 class SoundManager {
-	friend class NancyConsole;
 public:
 	// Settings for playing a sound, used in nancy3 and up
 	// Older versions had a different, non-bitflag enum, but testing
@@ -113,6 +112,9 @@ public:
 
 	void soundEffectMaintenance();
 	void recalculateSoundEffects();
+
+	Math::Vector3d &getOrientation() { return _orientation; }
+	Common::String getChannelInfo(uint16 channelID);
 
 	// Used when changing scenes
 	void stopAndUnloadSceneSpecificSounds();

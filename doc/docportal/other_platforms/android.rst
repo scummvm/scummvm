@@ -12,7 +12,7 @@ What you'll need
 
 .. note::
 
-    ScummVM has been tested to work up to Android 12.
+    ScummVM has been tested to work up to Android 16.
 
 Installing ScummVM
 ====================================
@@ -95,6 +95,18 @@ To add more games, repeat Steps 1 and 6.
         Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.
 
         If existing added games or custom paths no longer work, go to **Game Options > Paths**, select the path to update, then follow steps 2 through 6 above.
+
+.. _addSAFpathRestrictedFilesProfile:
+
+    .. note::
+        If the Android device's **Files** app has been manually deactivated, please re-activate it, if possible, because it is used by ScummVM as the native File explorer.
+
+        Furthermore, an Android user with a **restricted profile** might not be able to run the device's **Files** app with full access rights, so it will be impossible to browse the list of folders and files on external storage (SD Card) of their device to choose a folder to grant ScummVM the SAF access permission.
+
+.. _addSAFpathAndroidStudioDeviceExplorerKnownIssue:
+
+    .. note::
+        On a few devices it was observed that when Android Studio's "Device Explorer" utility is used to browse the device's folders and upload files from a PC to the Android device then, upon re-launching ScummVM on that device, it may behave as all granted SAF access permissions are lost and cannot be granted again. In this case, a device restart should fix this odd "hiccup"; after the restart, ScummVM will properly acknowledge any previously configured SAF-accessible folders.
 
 Removing permissions
 ************************
@@ -221,4 +233,4 @@ For more information, see the :doc:`../use_scummvm/LAN` page.
 Known issues
 ===============
 
-- If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep saved games use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card.
+- If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep the saved games, use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card.

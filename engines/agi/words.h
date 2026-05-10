@@ -27,6 +27,8 @@ namespace Agi {
 #define DICTIONARY_RESULT_UNKNOWN -1
 #define DICTIONARY_RESULT_IGNORE   0
 
+#define EXTENDED_DICTIONARY_FILENAME "words.tok.extended"
+
 struct WordEntry {
 	uint16 id;
 	Common::String word;
@@ -48,6 +50,7 @@ private:
 	WordEntry _egoWords[MAX_WORDS];
 	uint16  _egoWordCount;
 
+	bool _hasExtendedCharacters; // true on WORDS.TOK.EXTENDED
 public:
 	uint16 getEgoWordCount() const;
 	const char *getEgoWord(int16 wordNr) const;

@@ -19,8 +19,7 @@
  *
  */
 
-#include "alcachofa/common.h"
-#include "alcachofa/detection.h"
+#include "alcachofa/alcachofa.h"
 
 using namespace Common;
 using namespace Math;
@@ -161,7 +160,11 @@ bool readBool(ReadStream &stream) {
 	return stream.readByte() != 0;
 }
 
-Point readPoint(ReadStream &stream) {
+Point readPoint16(ReadStream &stream) {
+	return { stream.readSint16LE(), stream.readSint16LE() };
+}
+
+Point readPoint32(ReadStream &stream) {
 	return { (int16)stream.readSint32LE(), (int16)stream.readSint32LE() };
 }
 
@@ -198,6 +201,32 @@ void skipVarString(SeekableReadStream &stream) {
 void syncPoint(Serializer &serializer, Point &point) {
 	serializer.syncAsSint32LE(point.x);
 	serializer.syncAsSint32LE(point.y);
+}
+
+static constexpr Direction kV1Directions[] = {
+	Direction::Up,
+	Direction::UpRight,
+	Direction::Right,
+	Direction::DownRight,
+	Direction::Down,
+	Direction::DownLeft,
+	Direction::Left,
+	Direction::UpLeft
+};
+
+Direction intToDirection(int32 rawValue) {
+	if (g_engine->isV1()) {
+		scumm_assert(rawValue >= 0 && rawValue < kFullDirectionCount);
+		return kV1Directions[rawValue];
+	} else {
+		scumm_assert(rawValue >= 0 && rawValue < kDirectionCount);
+		return (Direction)rawValue;
+	}
+}
+
+Direction readDirection(Common::ReadStream &stream) {
+	int32 rawValue = stream.readSint32LE();
+	return intToDirection(rawValue);
 }
 
 }

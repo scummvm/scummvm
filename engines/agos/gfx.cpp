@@ -32,6 +32,29 @@
 
 namespace AGOS {
 
+static void remapElvira2AtariSTUIPaletteRect(Graphics::Surface *screen, uint16 x, uint16 y, uint16 w, uint16 h) {
+	byte *dst = (byte *)screen->getBasePtr(x, y);
+	while (h--) {
+		for (uint16 i = 0; i < w; i++)
+			dst[i] = (dst[i] & 0x0F) | 0xD0;
+		dst += screen->pitch;
+	}
+}
+
+static inline uint8 atariSTColorNibbleToComponent(uint8 v) {
+	v &= 0x07;
+	return v * 32;
+}
+
+void AGOSEngine::remapElvira2AtariSTUIRegions(Graphics::Surface *screen) {
+	if (getGameType() != GType_ELVIRA2 || getPlatform() != Common::kPlatformAtariST)
+		return;
+
+	remapElvira2AtariSTUIPaletteRect(screen, 0, 0, 48, 136);
+	remapElvira2AtariSTUIPaletteRect(screen, 272, 0, 48, 136);
+	remapElvira2AtariSTUIPaletteRect(screen, 0, 132, 320, 68);
+}
+
 byte *vc10_depackColumn(VC10_state * vs) {
 	int8 a = vs->depack_cont;
 	const byte *src = vs->srcPtr;
@@ -952,13 +975,43 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		state->palette = state->surf_addr[0] & 0xF0;
 
-	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && yoffs > 133)
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && _windowNum == 4) {
+		_displayPalette[0 * 3 + 0] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[0 * 3 + 1] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[0 * 3 + 2] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[1 * 3 + 0] = atariSTColorNibbleToComponent(0x7);
+		_displayPalette[1 * 3 + 1] = atariSTColorNibbleToComponent(0x7);
+		_displayPalette[1 * 3 + 2] = atariSTColorNibbleToComponent(0x5);
+		_displayPalette[2 * 3 + 0] = atariSTColorNibbleToComponent(0x5);
+		_displayPalette[2 * 3 + 1] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[2 * 3 + 2] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[15 * 3 + 0] = atariSTColorNibbleToComponent(0x7);
+		_displayPalette[15 * 3 + 1] = atariSTColorNibbleToComponent(0x5);
+		_displayPalette[15 * 3 + 2] = atariSTColorNibbleToComponent(0x0);
+		_paletteFlag = 1;
+	}
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			_windowNum == 3 && yoffs < 136 && xoffs < 48 && xmax > 48) {
+		state->palette = 0;
+		state->paletteMod = 0;
+	}
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			((yoffs >= 132 && _windowNum != 3) || ((_windowNum == 1 || _windowNum == 2) && yoffs < 136))) {
 		state->palette = 208;
+		if (_backFlag || (state->flags & kDFNonTrans))
+			state->paletteMod = 208;
+	}
 
 	if (_backFlag) {
 		drawBackGroundImage(state);
 	} else {
 		drawVertImage(state);
+	}
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+		if (_windowNum == 1 || _windowNum == 2)
+			remapElvira2AtariSTUIRegions(screen);
 	}
 
 	Common::Rect dirtyRect(xoffs, yoffs, xmax, ymax);
@@ -1035,7 +1088,9 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 }
 
 Graphics::Surface *AGOSEngine::getBackendSurface() const {
-	return (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) ? _backBuf : _system->lockScreen();
+	if ((getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) || isPnAmiga())
+		return _backBuf;
+	return _system->lockScreen();
 }
 
 void AGOSEngine::updateBackendSurface(Common::Rect *area) const {
@@ -1083,6 +1138,42 @@ void AGOSEngine::updateBackendSurface(Common::Rect *area) const {
 			src11 += src1Pitch;
 			dst10 += dst1Pitch;
 			dst11 += dst1Pitch;
+		}
+	} else if (isPnAmiga()) {
+		int x = 0;
+		int y = 0;
+		int w = _screenWidth;
+		int h = _screenHeight;
+
+		if (area) {
+			x = area->left;
+			y = area->top;
+			w = area->width();
+			h = area->height();
+		}
+
+		Graphics::Surface *screen = _system->lockScreen();
+		for (int row = y; row < y + h; ++row) {
+			const int dstRow = row << 1;
+			const bool usePnAmigaTextPane = _pnAmigaUiVisible && row >= 136;
+			if (!usePnAmigaTextPane) {
+				const byte *src = (const byte *)_backBuf->getBasePtr(x, row);
+				byte *dst0 = (byte *)screen->getBasePtr(x << 1, dstRow);
+				byte *dst1 = (byte *)screen->getBasePtr(x << 1, dstRow + 1);
+				for (int i = 0; i < w; ++i) {
+					const uint8 v = *src++;
+					*dst0++ = v;
+					*dst0++ = v;
+					*dst1++ = v;
+					*dst1++ = v;
+				}
+			} else {
+				const byte *src = (const byte *)_scaleBuf->getBasePtr(x << 1, row);
+				byte *dst0 = (byte *)screen->getBasePtr(x << 1, dstRow);
+				byte *dst1 = (byte *)screen->getBasePtr(x << 1, dstRow + 1);
+				memcpy(dst0, src, w << 1);
+				memcpy(dst1, src, w << 1);
+			}
 		}
 	}
 
@@ -1553,7 +1644,41 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 }
 
 // Personal Nightmare specific
+void AGOSEngine::drawPnAmigaTextWindowBorders() {
+	if (_scaleBuf == nullptr)
+		return;
+
+	Graphics::Surface *screen = _scaleBuf;
+	const byte color = 14;
+	byte *dst = (byte *)screen->getBasePtr(0, 136);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 223);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 136);
+	for (int y = 136; y <= 223; ++y) {
+		dst[0] = color;
+		dst[screen->w - 1] = color;
+		dst += screen->pitch;
+	}
+	dst = (byte *)screen->getBasePtr(0, 224);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 239);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 224);
+	for (int y = 224; y <= 239; ++y) {
+		dst[0] = color;
+		dst[screen->w - 1] = color;
+		dst += screen->pitch;
+	}
+	Common::Rect dirtyRect(0, 136, 320, _screenHeight);
+	updateBackendSurface(&dirtyRect);
+}
+
 void AGOSEngine::drawEdging() {
+	if (isPnAmiga()) {
+		drawPnAmigaTextWindowBorders();
+		return;
+	}
 	byte *dst;
 	uint8 color = (getPlatform() == Common::kPlatformDOS) ? 7 : 15;
 

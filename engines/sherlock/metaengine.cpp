@@ -447,7 +447,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping(getKey(kFixedText_Game_Hotkeys, curLanguageEntry, target, 8));
 		scalpelKeymap->addAction(act);
 
-		act = new Action("SETUP", _("Setup"));
+		act = new Action("SETUP", _("Settings"));
 		act->setCustomEngineActionEvent(kActionScalpelSetup);
 		act->addDefaultInputMapping(getKey(kFixedText_Game_Hotkeys, curLanguageEntry, target, 11));
 		scalpelKeymap->addAction(act);
@@ -504,7 +504,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		scalpelJournalKeymap->addAction(act);
 
 		// I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
-		act = new Action("AHEAD10", _("Go ahead 10 pages"));
+		act = new Action("AHEAD10", _("Go forward 10 pages"));
 		act->setCustomEngineActionEvent(kActionScalpelJournalAhead10);
 		act->addDefaultInputMapping(getKey(kFixedText_Journal_Ahead10, curLanguageEntry, target));
 		act->addDefaultInputMapping("JOY_RIGHT");
@@ -569,7 +569,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		scalpelInvKeymap->addAction(act);
 
 		// I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
-		act = new Action("PAGE_LEFT", _("Go back a page"));
+		act = new Action("PAGE_LEFT", _("Previous page"));
 		act->setCustomEngineActionEvent(kActionScalpelInvPageLeft);
 		act->addDefaultInputMapping("COMMA");
 		act->addDefaultInputMapping("JOY_UP");
@@ -581,14 +581,14 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		scalpelInvKeymap->addAction(act);
 
-		act = new Action("RIGHT", _("Scroll Right"));
+		act = new Action("RIGHT", _("Scroll right"));
 		act->setCustomEngineActionEvent(kActionScalpelInvRight);
 		act->addDefaultInputMapping("PLUS");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		scalpelInvKeymap->addAction(act);
 
 		// I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
-		act = new Action("PAGE_RIGHT", _("Go ahead a page"));
+		act = new Action("PAGE_RIGHT", _("Next page"));
 		act->setCustomEngineActionEvent(kActionScalpelInvPageRight);
 		act->addDefaultInputMapping("PERIOD");
 		act->addDefaultInputMapping("JOY_DOWN");
@@ -662,6 +662,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
 		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("JOY_A");
 		scalpelMapKeymap->addAction(act);
 
 		//
@@ -673,6 +674,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
 		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("JOY_A");
 		scalpelSettingsKeymap->addAction(act);
 
 		act = new Action("SETTINGSEXIT", _("Exit"));
@@ -779,7 +781,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		Keymap *tattooDartsKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-darts", _("Darts minigame keymappings"));
 		Keymap *tattooMapKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-map", _("Map keymappings"));
 		Keymap *tattooScrollingKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-scrolling", _("Menu scrolling keymappings"));
-		Keymap *tattooFilesKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-files", _("save / load menu keymappings"));
+		Keymap *tattooFilesKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-files", _("Save / load menu keymappings"));
 		Keymap *tattooFilesNameKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-files-name", _("Save files name editing keymappings"));
 		Keymap *tattooFoolscapKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-foolscap", _("Foolscap puzzle keymappings"));
 		Keymap *tattooInvKeymap = new Keymap(Keymap::kKeymapTypeGame, "tattoo-inv", _("Inventory keymappings"));
@@ -794,7 +796,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		engineKeymap->addAction(act);
 
-		act = new Common::Action(kStandardActionRightClick, _("Open verb menu / close menu"));
+		act = new Common::Action(kStandardActionRightClick, _("Open action menu / Close menu"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
@@ -841,7 +843,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_DOWN");
 		tattooKeymap->addAction(act);
 
-		act = new Action("OPTIONS", _("Open options"));
+		act = new Action("OPTIONS", _("Open options menu"));
 		act->setCustomEngineActionEvent(kActionTattooOptions);
 		act->addDefaultInputMapping("F4");
 		act->addDefaultInputMapping("JOY_LEFT");
@@ -867,7 +869,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		// Prolog keymap
 		//
 
-		act = new Action("SKIPPROLOG", _("Skip prolog"));
+		act = new Action("SKIPPROLOG", _("Skip intro"));
 		act->setCustomEngineActionEvent(kActionTattooSkipProlog);
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_Y");
@@ -897,7 +899,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		tattooJournalKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
-		act = new Action("PAGEFORWARD1", _("Go forward 1 page"));
+		act = new Action("PAGEFORWARD1", _("Next page"));
 		act->setCustomEngineActionEvent(kActionTattooJournalForward1);
 		act->addDefaultInputMapping("PAGEDOWN");
 		act->addDefaultInputMapping("KP3");
@@ -912,21 +914,21 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		tattooJournalKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
-		act = new Action("PAGEBACK1", _("Go back 1 page"));
+		act = new Action("PAGEBACK1", _("Previous page"));
 		act->setCustomEngineActionEvent(kActionTattooJournalBack1);
 		act->addDefaultInputMapping("PAGEUP");
 		act->addDefaultInputMapping("KP9");
 		act->addDefaultInputMapping("JOY_UP");
 		tattooJournalKeymap->addAction(act);
 
-		act = new Action("GOSTART", _("Go to start of journal"));
+		act = new Action("GOSTART", _("First page"));
 		act->setCustomEngineActionEvent(kActionTattooJournalStart);
 		act->addDefaultInputMapping("HOME");
 		act->addDefaultInputMapping("KP7");
 		act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 		tattooJournalKeymap->addAction(act);
 
-		act = new Action("GOEND", _("Go to end of journal"));
+		act = new Action("GOEND", _("Last page"));
 		act->setCustomEngineActionEvent(kActionTattooJournalEnd);
 		act->addDefaultInputMapping("END");
 		act->addDefaultInputMapping("KP1");
@@ -1036,14 +1038,14 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		tattooScrollingKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
-		act = new Action("SCROLLPGUP", _("Scroll page up"));
+		act = new Action("SCROLLPGUP", _("Previous page"));
 		act->setCustomEngineActionEvent(kActionTattooWidgetScrollPageUp);
 		act->addDefaultInputMapping("PAGEUP");
 		act->addDefaultInputMapping("KP9");
 		tattooScrollingKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
-		act = new Action("SCROLLPGDOWN", _("Scroll page down"));
+		act = new Action("SCROLLPGDOWN", _("Next page"));
 		act->setCustomEngineActionEvent(kActionTattooWidgetScrollPageDown);
 		act->addDefaultInputMapping("PAGEDOWN");
 		act->addDefaultInputMapping("KP3");
@@ -1105,14 +1107,14 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		tattooFilesNameKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
-		act = new Action("GOSTART", _("Go to the line start"));
+		act = new Action("GOSTART", _("Go to start of line"));
 		act->setCustomEngineActionEvent(kActionTattooFilesNameStart);
 		act->addDefaultInputMapping("HOME");
 		act->addDefaultInputMapping("KP7");
 		tattooFilesNameKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
-		act = new Action("GOEND", _("Go to the line end"));
+		act = new Action("GOEND", _("Go to end of line"));
 		act->setCustomEngineActionEvent(kActionTattooFilesNameEnd);
 		act->addDefaultInputMapping("END");
 		act->addDefaultInputMapping("KP1");
@@ -1210,14 +1212,14 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		tattooPasswordKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-		act = new Action("GOSTART", _("Go to the line start"));
+		act = new Action("GOSTART", _("Go to start of line"));
 		act->setCustomEngineActionEvent(kActionTattooPasswordStart);
 		act->addDefaultInputMapping("HOME");
 		act->addDefaultInputMapping("KP7");
 		tattooPasswordKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-		act = new Action("GOEND", _("Go to the line end"));
+		act = new Action("GOEND", _("Go to end of line"));
 		act->setCustomEngineActionEvent(kActionTattooPasswordEnd);
 		act->addDefaultInputMapping("END");
 		act->addDefaultInputMapping("KP1");

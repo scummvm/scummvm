@@ -236,11 +236,11 @@ public:
 	DirectorEngine *_vm;
 };
 
-void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
-void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
-void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
-void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
-void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition);
+void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition);
+void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition);
+void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition);
+void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition);
 
 void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite);
 void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite);

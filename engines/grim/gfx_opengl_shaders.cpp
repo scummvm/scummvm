@@ -43,6 +43,7 @@
 
 #if defined(USE_OPENGL_SHADERS)
 
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/context.h"
 
@@ -403,7 +404,7 @@ void GfxOpenGLS::setupScreen(int screenW, int screenH) {
 	_scaleW = _screenWidth / (float)_gameWidth;
 	_scaleH = _screenHeight / (float)_gameHeight;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	setupZBuffer();
 	setupShaders();
@@ -990,10 +991,6 @@ void GfxOpenGLS::clearShadowMode() {
 	glDepthMask(GL_TRUE);
 }
 
-bool GfxOpenGLS::isShadowModeActive() {
-	return false;
-}
-
 void GfxOpenGLS::setShadowColor(byte r, byte g, byte b) {
 	_shadowColorR = r;
 	_shadowColorG = g;
@@ -1058,7 +1055,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 		glEnable(GL_BLEND);
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	OpenGL::Shader *actorShader;
-	if ((face->_flags & EMIMeshFace::kNoLighting) ? false : _lightsEnabled)
+	if ((face->_flags & EMIMeshFace::kNoLighting || isShadowModeActive()) ? false : _lightsEnabled)
 		actorShader = mud->_shaderLights;
 	else
 		actorShader = mud->_shader;
@@ -1176,7 +1173,13 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	// FIXME: Currently vertex-specific colors are not supported for sprites.
 	// It is unknown at this time if this is really needed anywhere.
 	Math::Vector4d color(sprite->_red[0] / 255.0f, sprite->_green[0] / 255.0f, sprite->_blue[0] / 255.0f, sprite->_alpha[0] / 255.0f);
-	_spriteProgram->setUniform("uniformColor", color);
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Don't overwrite the actor's alpha value  which is set via uniformColor in startActorDraw()
+		_spriteProgram->setUniform("spriteColor", color);
+	} else {
+		// No need to set spriteColor for GRIM, it is specific to the EMI sprite shader program
+		_spriteProgram->setUniform("uniformColor", color);
+	}
 
 	float sprite_textured_quad[] = {
 	//	 X   ,  Y   , Z   , S   , T

@@ -55,11 +55,6 @@ void Series::show(const char *series1, const char *series2, int layer) {
 	_seriesS = M4::series_show(series2, layer + 1);
 }
 
-void Series::show_index2(const char *series1, const char *series2, int layer, int index1, int index2) {
-	_series = M4::series_show(series1, layer, 0, -1, -1, index1);
-	_seriesS = M4::series_show(series2, layer + 1, 0, -1, -1, index1 + 1);
-}
-
 void Series::series_play(const char *seriesName, frac16 layer, uint32 flags,
 		int16 triggerNum, int32 frameRate, int32 loopCount, int32 s,
 		int32 x, int32 y, int32 firstFrame, int32 lastFrame) {
@@ -92,7 +87,7 @@ int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal) {
 	const int32 myAssetIndex = AddWSAssetCELS(seriesName, assetIndex, myPal);
 
 	if ((myAssetIndex < 0) || (myAssetIndex >= 256))
-		error_show(FL, 'SPNF', seriesName);
+		error_show(FL, seriesName);
 
 	return myAssetIndex;
 }
@@ -106,13 +101,13 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 	M4Rect clipRect, updateRect;
 
 	if (!destBuff) {
-		error_show(FL, 'BUF!');
-		return false;
+		error_show(FL, "series_draw_sprite");
 	}
 
 	M4sprite *srcSpritePtr = &srcSprite;
-	if ((srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr)) == nullptr)
-		error_show(FL, 'SPNF', "hash: %d, index: %d", spriteHash, index);
+	srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr);
+	if (srcSpritePtr == nullptr)
+		error_show(FL, "hash: %d, index: %d", spriteHash, index);
 
 	HLock(srcSpritePtr->sourceHandle);
 	//gr_pal_interface(&master_palette[0]);
@@ -195,9 +190,9 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 }
 
 void series_set_frame_rate(machine *m, int32 newFrameRate) {
-	if ((!m) || (!m->myAnim8) || !verifyMachineExists(m)) {
+	if (!m || !m->myAnim8 || !verifyMachineExists(m)) {
 		if (g_engine->getGameType() == GType_Burger)
-			error_show(FL, 'SSFR');
+			error_show(FL, "CHECK_SERIES");
 		return;
 	}
 
@@ -215,7 +210,7 @@ machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 t
 		tempPalettePtr = &_G(master_palette)[0];
 
 	if ((myAssetIndex = AddWSAssetCELS(seriesName, -1, tempPalettePtr)) < 0)
-		error_show(FL, 'SPNF', seriesName);
+		error_show(FL, seriesName);
 
 	_G(globals)[GLB_TEMP_1] = (frac16)myAssetIndex << 24;			// cels hash
 	_G(globals)[GLB_TEMP_2] = layer << 16;							// layer
@@ -235,7 +230,7 @@ machine *series_show(const char *seriesName, frac16 layer, uint32 flags, int16 t
 	machine *m = kernel_spawn_machine(seriesName, HASH_SERIES_SHOW_MACHINE, series_trigger_dispatch_callback);
 
 	if (!m)
-		error_show(FL, 'WSMF', seriesName);
+		error_show(FL, seriesName);
 
 	return m;
 }
@@ -260,7 +255,7 @@ machine *series_play(const char *seriesName, frac16 layer, uint32 flags, int16 t
 		tempPalettePtr = &_G(master_palette)[0];
 
 	if ((myAssetIndex = AddWSAssetCELS(seriesName, -1, tempPalettePtr)) < 0)
-		error_show(FL, 'SPNF', seriesName);
+		error_show(FL, seriesName);
 
 	_G(globals)[GLB_TEMP_1] = (frac16)myAssetIndex << 24;			// cels hash
 	_G(globals)[GLB_TEMP_2] = layer << 16;							// layer
@@ -287,7 +282,7 @@ machine *series_play(const char *seriesName, frac16 layer, uint32 flags, int16 t
 	machine *m = kernel_spawn_machine(seriesName, HASH_SERIES_PLAY_MACHINE, series_trigger_dispatch_callback);
 
 	if (!m)
-		error_show(FL, 'WSMF', seriesName);
+		error_show(FL, seriesName);
 
 	return m;
 }

@@ -21,8 +21,10 @@
 
 #include "common/system.h"
 #include "common/unicode-bidi.h"
+#include "common/translation.h"
 
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "gui/gui-manager.h"
 
@@ -31,6 +33,7 @@
 
 #include "gui/widgets/richtext.h"
 #include "gui/widgets/scrollbar.h"
+#include "gui/animation/FluidScroll.h"
 
 namespace GUI {
 
@@ -63,7 +66,7 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
 
 	_type = kRichTextWidget;
 
@@ -79,6 +82,10 @@ void RichTextWidget::init() {
 	_textHeight = MAX(1, _h - 2 * _innerMargin);
 
 	_limitH = 140;
+
+	_scrollPos = 0.0f;
+	_fluidScroller = new FluidScroller();
+	_isDragging = false;
 }
 
 
@@ -87,27 +94,41 @@ RichTextWidget::~RichTextWidget() {
 
 	if (_surface)
 		_surface->free();
-
 	delete _surface;
+
+	if (_cachedTextSurface)
+		_cachedTextSurface->free();
+	delete _cachedTextSurface;
+	delete _fluidScroller;
 }
 
 void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
-	_verticalScroll->handleMouseWheel(x, y, direction);
+	_fluidScroller->handleMouseWheel(direction);
+	applyScrollPos();
 }
 
 void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	_mouseDownY = _mouseDownStartY = y;
+	_fluidScroller->stopAnimation();
 }
 
 void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (_isDragging)
+		_fluidScroller->startFling();
+
 	// Allow some tiny finger slipping
-	if (ABS(_mouseDownY - _mouseDownStartY) > 5) {
+	if (ABS(_mouseDownY - _mouseDownStartY) > 5 || _isDragging) {
 		_mouseDownY = _mouseDownStartY = 0;
+		_isDragging = false;
 
 		return;
 	}
 
 	_mouseDownY = _mouseDownStartY = 0;
+	_isDragging = false;
+
+	if (!_txtWnd)
+		return;
 
 	Common::String link = _txtWnd->getMouseLink(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY).encode();
 
@@ -116,25 +137,50 @@ void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void RichTextWidget::handleMouseMoved(int x, int y, int button) {
-	if (_mouseDownStartY == 0 || _mouseDownY == y)
+	if (_txtWnd) {
+		Common::String link = _txtWnd->getMouseLink(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY).encode();
+
+		if (!link.empty() && link.hasPrefixIgnoreCase("http"))
+			g_gui.theme()->setActiveCursor(GUI::ThemeEngine::kCursorIndex);
+		else
+			g_gui.theme()->setActiveCursor(GUI::ThemeEngine::kCursorNormal);
+	}
+
+	if (_mouseDownStartY == 0 || _mouseDownY == y || !_txtWnd)
 		return;
 
-	int h = _txtWnd->getTextHeight();
-	int prevScrolledY = _scrolledY;
+	int deltaY = _mouseDownY - y;
 
-	_scrolledY = CLIP(_scrolledY - (y - _mouseDownY), 0, h);
+	if (!_isDragging && ABS(deltaY) > 5)
+		_isDragging = true;
 
-	_mouseDownY = y;
+	if (_isDragging) {
+		_mouseDownY = y;
+		if (deltaY != 0) {
+			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+			applyScrollPos();
+		}
+	}
+}
 
-	if (_scrolledY == prevScrolledY)
-		return;
+void RichTextWidget::handleTickle() {
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+		applyScrollPos();
+}
 
-	recalc();
+void RichTextWidget::applyScrollPos() {
+	_scrollPos = _fluidScroller->getVisualPosition();
+	_scrolledY = (int)_scrollPos;
+	int maxScroll = MAX(0, _txtWnd->getTextHeight() - _limitH);
+	_verticalScroll->_currentPos = CLIP((int)_scrolledY, 0, (int)maxScroll);
 	_verticalScroll->recalc();
 	markAsDirty();
 }
 
 void RichTextWidget::handleTooltipUpdate(int x, int y) {
+	if (!_txtWnd)
+		return;
+
 	_tooltip = _txtWnd->getMouseLink(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY);
 }
 
@@ -143,6 +189,9 @@ void RichTextWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kSetPositionCmd:
 		_scrolledY = _verticalScroll->_currentPos;
+		_scrollPos = _scrolledY;
+		_fluidScroller->stopAnimation();
+		_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 		reflowLayout();
 		g_gui.scheduleTopDialogRedraw();
 		break;
@@ -169,42 +218,73 @@ void RichTextWidget::recalc() {
 //	} else {
 //		createWidget();
 //	}
+
 	if (!_surface || _surface->w != _textWidth) {
+		if (_surface) {
+			_surface->free();
+			delete _surface;
+			_surface = nullptr;
+		}
 		delete _txtWnd;
-		createWidget();
-	} else if (_surface->h != _textHeight)
+		_txtWnd = nullptr;
+		if (_cachedTextSurface) {
+			_cachedTextSurface->free();
+			delete _cachedTextSurface;
+			_cachedTextSurface = nullptr;
+		}
+	} else if (_surface->h != _textHeight) {
 		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
 
-	int h = _txtWnd->getTextHeight();
-
-	if (h <= _limitH) _scrolledY = 0;
-	if (_scrolledY > h - _limitH) _scrolledY = MAX(0, h - _limitH);
-
-	_verticalScroll->_numEntries = h;
-	_verticalScroll->_currentPos = _scrolledY;
-	_verticalScroll->_entriesPerPage = _limitH;
-	_verticalScroll->_singleStep = _h / 4;
-	_verticalScroll->setPos(_w - _scrollbarWidth, 0);
-	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
+		int h = _txtWnd->getTextHeight();
+		int maxScroll = MAX(0, h - _limitH);
+		_verticalScroll->_numEntries = h;
+		_verticalScroll->_currentPos = CLIP((int)_scrolledY, 0, (int)maxScroll);
+		_verticalScroll->_entriesPerPage = _limitH;
+		_verticalScroll->_singleStep = _h / 4;
+		_verticalScroll->setPos(_w - _scrollbarWidth, 0);
+		_verticalScroll->setSize(_scrollbarWidth, _h - 1);
+		_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+		_verticalScroll->recalc();
+		_fluidScroller->setBounds((float)maxScroll, (float)_limitH, (float)_verticalScroll->_singleStep);
+	}
 }
 
 void RichTextWidget::createWidget() {
 	Graphics::MacWindowManager *wm = g_gui.getWM();
 
-	uint32 bg = wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); // transparent
+	uint8 bgR, bgG, bgB;
+	uint32 bg;
+	if (g_gui.theme()->getDrawDataColor(kDDWidgetBackgroundDefault, bgR, bgG, bgB))
+		bg = wm->_pixelformat.ARGBToColor(255, bgR, bgG, bgB);
+	else
+		bg = wm->_pixelformat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
+
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
 	uint32 fg = wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
 	const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
 
 	int newId;
-	if (ConfMan.hasKey("gui_language") && !ConfMan.get("gui_language").empty())
-		// MacFONTs do not contain diacritic marks or non-English characters, so we have to use TTF instead
+	bool useTTF = false; // For English we use MacFONTs
+
+#ifdef USE_TRANSLATION
+	// MacFONTs do not contain diacritic marks or non-English characters, so we have to use TTF instead
+	if (TransMan.getCurrentLanguage() != "en")
+		useTTF = true;
+#endif
+
+	if (useTTF)
 		newId = wm->_fontMan->registerTTFFont(ttfFamily);
 	else
 		newId = Graphics::kMacFontNewYork;
-	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 
+#ifdef USE_FREETYPE2
+		// Use anti-aliased (light) rendering for the GUI help text.
+		Graphics::TTFRenderMode prevRenderMode = wm->_fontMan->getTTFRenderMode();
+		wm->_fontMan->setTTFRenderMode(Graphics::kTTFRenderModeLight);
+#endif
+
+	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 
 	if (!_imageArchive.empty())
@@ -212,32 +292,86 @@ void RichTextWidget::createWidget() {
 
 	_txtWnd->setMarkdownText(_text);
 
-	if (_surface)
-		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
-	else
-		_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
+#ifdef USE_FREETYPE2
+	// Restore previous render mode now that all fonts have been loaded
+	wm->_fontMan->setTTFRenderMode(prevRenderMode);
+#endif
+
+	int textHeight = _txtWnd->getTextHeight();
+
+	if (textHeight > 0) {
+		if (!_cachedTextSurface || _cachedTextSurface->w != _textWidth || _cachedTextSurface->h != textHeight) {
+			if (_cachedTextSurface) {
+				_cachedTextSurface->free();
+				delete _cachedTextSurface;
+			}
+			_cachedTextSurface = new Graphics::ManagedSurface(_textWidth, textHeight, wm->_pixelformat);
+		}
+		_cachedTextSurface->clear(bg);
+		_txtWnd->draw(_cachedTextSurface, 0, 0, _textWidth, textHeight, 0, 0);
+	}
+
+	if (!_surface || _surface->w != _textWidth || _surface->h != _textHeight) {
+    	if (_surface)
+        	_surface->create(_textWidth, _textHeight, wm->_pixelformat);
+    	else
+        	_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
+	}
+
+	int h = _txtWnd->getTextHeight();
+	int maxScroll = MAX(0, h - _limitH);
+	_verticalScroll->_numEntries = h;
+	_verticalScroll->_currentPos = CLIP((int)_scrolledY, 0, (int)maxScroll);
+	_verticalScroll->_entriesPerPage = _limitH;
+	_verticalScroll->_singleStep = _h / 4;
+	_verticalScroll->setPos(_w - _scrollbarWidth, 0);
+	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
+	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+	_verticalScroll->recalc();
+	_fluidScroller->setBounds((float)maxScroll, (float)_limitH, (float)_verticalScroll->_singleStep);
 }
 
 void RichTextWidget::reflowLayout() {
 	Widget::reflowLayout();
 
 	recalc();
+}
 
-	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
-	_verticalScroll->recalc();
+void RichTextWidget::ensureWidget() {
+	if (_txtWnd)
+		return;
+	createWidget();
 }
 
 void RichTextWidget::drawWidget() {
+	ensureWidget();
+
 	if (!_txtWnd)
 		recalc();
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
-	_surface->clear(g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
+	uint8 bgR, bgG, bgB;
+	uint32 bg;
+	if (g_gui.theme()->getDrawDataColor(kDDWidgetBackgroundDefault, bgR, bgG, bgB))
+		bg = g_gui.getWM()->_pixelformat.ARGBToColor(255, bgR, bgG, bgB);
+	else
+		bg = g_gui.getWM()->_pixelformat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
-	_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
+	_surface->clear(bg);
 
-	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_FULL);
+	if (_cachedTextSurface) {
+		int cachedHeight = _cachedTextSurface->h;
+		int srcY = _scrolledY < 0 ? 0 : (int)_scrolledY;
+		int destY = _scrolledY < 0 ? -(int)_scrolledY : 0;
+
+		if (srcY < cachedHeight)
+			_surface->simpleBlitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth,
+			MIN(srcY + _textHeight - destY, cachedHeight)), Common::Point(0, destY));
+	} else
+		_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
+
+	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_OPAQUE);
 }
 
 void RichTextWidget::draw() {

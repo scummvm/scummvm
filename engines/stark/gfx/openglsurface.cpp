@@ -20,21 +20,13 @@
  */
 
 #include "engines/stark/gfx/openglsurface.h"
-#include "engines/stark/gfx/bitmap.h"
+#include "engines/stark/gfx/openglbitmap.h"
 #include "engines/stark/gfx/color.h"
 
 #if defined(USE_OPENGL_GAME)
 
 namespace Stark {
 namespace Gfx {
-
-static const GLfloat textCords[] = {
-	// S   T
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-};
 
 OpenGLSurfaceRenderer::OpenGLSurfaceRenderer(OpenGLDriver *gfx) :
 		SurfaceRenderer(),
@@ -71,7 +63,7 @@ void OpenGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &de
 	glDisableClientState(GL_NORMAL_ARRAY);
 
 	glVertexPointer(2, GL_FLOAT, sizeof(SurfaceVertex), &vertices[0].x);
-	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(float), textCords);
+	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(float), ((const OpenGlBitmap *)bitmap)->getTexCoords());
 	glColor4f(1.0f - _fadeLevel, 1.0f - _fadeLevel, 1.0f - _fadeLevel, 1.0f);
 
 	bitmap->bind();

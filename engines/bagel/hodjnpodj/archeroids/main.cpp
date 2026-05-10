@@ -45,7 +45,7 @@ namespace Archeroids {
 //
 // This mini-game's main screen bitmap
 //
-#define MINI_GAME_MAP  ".\\ART\\FIELD.BMP"
+#define MINI_GAME_MAP  "art\\FIELD.BMP"
 const char *INI_SECTION = "Archeroids";
 
 //
@@ -130,11 +130,11 @@ const char *INI_SECTION = "Archeroids";
 
 // Game Sounds
 //
-#define WAV_DEATH               ".\\SOUND\\DEATH.WAV"
-#define WAV_GAMEOVER            ".\\SOUND\\GAMEOVER.WAV"
-#define WAV_WINWAVE             ".\\SOUND\\WINWAVE.WAV"
-#define WAV_NARRATION           ".\\SOUND\\ARCH.WAV"
-#define MID_SOUNDTRACK          ".\\SOUND\\ARCH.MID"
+#define WAV_DEATH               "sound\\DEATH.WAV"
+#define WAV_GAMEOVER            "sound\\GAMEOVER.WAV"
+#define WAV_WINWAVE             "sound\\WINWAVE.WAV"
+#define WAV_NARRATION           "sound\\ARCH.WAV"
+#define MID_SOUNDTRACK          "sound\\ARCH.MID"
 
 // Local prototypes
 //
@@ -2289,10 +2289,12 @@ bool CMainWindow::MoveBadGuys(CDC *pDC) {
 	CSprite *pSprite;
 	int i, n;
 
+	if (!m_bGameActive)
+		return true;
+
 	// can't access a null pointer
 	assert(pDC != nullptr);
 	assert(m_bTimerActive);
-	assert(m_bGameActive);
 
 	if (!m_bPause && (m_nBadGuys > 0) && (m_pBadGuyList != nullptr) && !m_bNewGame) {
 

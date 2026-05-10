@@ -152,7 +152,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	// It is never disabled and it is not game specific
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "agos-main", _("AGOS main"));
 	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
-	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No keymapping"));
+	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No keymappings"));
 	Action *act;
 
 	act = new Action(kStandardActionLeftClick, _("Left click"));
@@ -191,17 +191,17 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("PLUS");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MUTEMSC", _("Toggle music on / off"));
+	act = new Action("MUTEMSC", _("Toggle music"));
 	act->setCustomEngineActionEvent(kActionToggleMusic);
 	act->addDefaultInputMapping("m");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SNDEFFECT", _("Toggle sound effects on / off"));
+	act = new Action("SNDEFFECT", _("Toggle sound effects"));
 	act->setCustomEngineActionEvent(kActionToggleSoundEffects);
 	act->addDefaultInputMapping("s");
 	gameKeyMap->addAction(act);
 
-	act = new Action("FSTMODE", _("Toggle fast mode on / off"));
+	act = new Action("FSTMODE", _("Toggle fast mode"));
 	act->setCustomEngineActionEvent(kActionToggleFastMode);
 	act->addDefaultInputMapping("C+f");
 	gameKeyMap->addAction(act);
@@ -269,7 +269,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		gameKeyMap->addAction(act);
 
 		if (gameId == "simon2") {
-			act = new Action("BACKGRNDSND", _("Toggle background sounds on / off"));
+			act = new Action("BACKGRNDSND", _("Toggle background sounds"));
 			act->setCustomEngineActionEvent(kActionToggleBackgroundSound);
 			act->addDefaultInputMapping("b");
 			gameKeyMap->addAction(act);
@@ -284,7 +284,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_X");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TOGGLEHITBOX", _("Toggle hitbox names on / off"));
+		act = new Action("TOGGLEHITBOX", _("Toggle hitbox names"));
 		act->setCustomEngineActionEvent(kActionToggleHitboxName);
 		act->addDefaultInputMapping("F9");
 		gameKeyMap->addAction(act);
@@ -307,6 +307,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	if (gameId == "swampy" ||
 			gameId == "puzzle" ||
 			gameId == "jumble") {
+		// I18N: Swampy Adventures is the name of the game
 		act = new Action("HIGHSPEED", _("High speed mode on/off in Swampy Adventures"));
 		act->setCustomEngineActionEvent(kActionSpeed_GTYPEPP);
 		act->addDefaultInputMapping("F12");
@@ -370,6 +371,13 @@ uint32 AGOSEngine::getFeatures() const {
 
 const char *AGOSEngine::getExtra() const {
 	return _gameDescription->desc.extra;
+}
+
+// The Mac release of Simon 2 uses identical data to the Amiga release with update 5.
+// It is still distinct from the Original Amiga release (simon2.german is different)
+bool AGOSEngine::isSimon2MacAmiga() const {
+	return getGameType() == GType_SIMON2 &&
+		getPlatform() == Common::kPlatformUnknown;
 }
 
 Common::Language AGOSEngine::getLanguage() const {

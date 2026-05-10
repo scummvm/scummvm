@@ -87,6 +87,17 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_USE_SYSTEM_CURSOR,
+		{
+			_s("Use original Acorn system cursor"),
+			_s("Toggle between the system cursor and the default cursor."),
+			"use_system_cursor",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

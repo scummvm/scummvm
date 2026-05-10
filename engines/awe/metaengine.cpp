@@ -58,9 +58,9 @@ static const KeybindingRecord GAME_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", nullptr, "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", nullptr, "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", nullptr, "JOY_RIGHT"},
-	{ KEYBIND_SELECT, "SELECT", _s("Select/Kick/Run"), "SPACE", "RETURN", "JOY_A" },
+	{ KEYBIND_SELECT, "SELECT", _s("Select / Kick / Run"), "SPACE", "RETURN", "JOY_A" },
 	{ KEYBIND_JUMP, "JUMP", _s("Jump"), "LSHIFT", "RSHIFT", "JOY_B" },
-	{ KEYBIND_CODE, "CODE", _s("Enter Level Code"), "c", nullptr, "JOY_X" },
+	{ KEYBIND_CODE, "CODE", _s("Enter level code"), "c", nullptr, "JOY_X" },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 

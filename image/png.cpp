@@ -299,6 +299,7 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const Gr
 
 bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette, uint paletteCount) {
 #ifdef USE_PNG
+	const Graphics::PixelFormat requiredFormat_1byte = Graphics::PixelFormat::createFormatCLUT8();
 	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatRGB24();
 	const Graphics::PixelFormat requiredFormat_4byte = Graphics::PixelFormat::createFormatRGBA32();
 
@@ -306,15 +307,20 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 	Graphics::Surface *tmp = NULL;
 	const Graphics::Surface *surface;
 
-	if (input.format == requiredFormat_3byte) {
+	if (input.format == requiredFormat_1byte) {
+		surface = &input;
+		colorType = PNG_COLOR_TYPE_PALETTE;
+	} else if (input.format == requiredFormat_3byte) {
 		surface = &input;
 		colorType = PNG_COLOR_TYPE_RGB;
+	} else if (input.format == requiredFormat_4byte) {
+		surface = &input;
+		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
+	} else if (input.format.aBits() == 0) {
+		surface = tmp = input.convertTo(requiredFormat_3byte, palette, paletteCount);
+		colorType = PNG_COLOR_TYPE_RGB;
 	} else {
-		if (input.format == requiredFormat_4byte) {
-			surface = &input;
-		} else {
-			surface = tmp = input.convertTo(requiredFormat_4byte, palette, paletteCount);
-		}
+		surface = tmp = input.convertTo(requiredFormat_4byte, palette, paletteCount);
 		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
 	}
 
@@ -340,6 +346,17 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 	// TODO: The manual says errors should be handled via setjmp
 
 	png_set_write_fn(pngPtr, &out, pngWriteToStream, pngFlushStream);
+
+	Common::Array<png_color> colorPtr;
+	if (colorType == PNG_COLOR_TYPE_PALETTE) {
+		colorPtr.resize(paletteCount);
+		for (uint i = 0; i < paletteCount; i++) {
+			colorPtr[i].red   = palette[i * 3 + 0];
+			colorPtr[i].green = palette[i * 3 + 1];
+			colorPtr[i].blue  = palette[i * 3 + 2];
+		}
+		png_set_PLTE(pngPtr, infoPtr, colorPtr.data(), paletteCount);
+	}
 
 	png_set_IHDR(pngPtr, infoPtr, surface->w, surface->h, 8, colorType, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 

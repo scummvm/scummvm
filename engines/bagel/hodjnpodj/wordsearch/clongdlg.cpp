@@ -52,7 +52,7 @@ extern  int     nWordList;                                      // Which is the 
 CLongDialog::CLongDialog(CWnd *pParent, CPalette *pPalette,
                          const char *pszButton1Text, const char *pszText1,
                          const char *pszText2)
-	: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\WLSTSCRL.BMP", 16, 25) {
+	: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, "art\\WLSTSCRL.BMP", 16, 25) {
 	assert(pParent != nullptr);
 	assert(pPalette != nullptr);
 	assert(pszText1 != nullptr);

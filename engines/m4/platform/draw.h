@@ -32,13 +32,8 @@ namespace M4 {
 void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch);
 
 /**
- * Given RLE data, skips over a given number of encoded lines
- */
-uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData);
-
-/**
  * Returns the size of an RLE encoded image
- * @param data		RLE data
+ * @param src		RLE data
  * @param pitch		Image pitch
  * @returns			Decoded image's size in bytes
  */

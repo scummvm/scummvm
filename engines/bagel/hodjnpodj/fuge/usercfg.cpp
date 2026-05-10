@@ -50,7 +50,7 @@ static  CColorButton *pDefaultsButton = nullptr;               // Defaults butto
 
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	// Inits
 	//
 	m_pScrollBar1 = nullptr;

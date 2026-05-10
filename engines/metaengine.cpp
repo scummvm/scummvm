@@ -72,7 +72,7 @@ Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) 
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymap"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
 
 	// Default keymap for engines should not match partial as it may hide intended input handling.
 	engineKeyMap->setPartialMatchAllowed(false);
@@ -483,7 +483,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, Common::U32String());
+		SaveStateDescriptor desc(this, slot);
 		parseSavegameHeader(&header, &desc);
 		desc.setThumbnail(header.thumbnail);
 		desc.setAutosave(header.isAutosave);

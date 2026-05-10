@@ -22,7 +22,6 @@
 #ifndef AGS_ENGINE_AC_STRING_H
 #define AGS_ENGINE_AC_STRING_H
 
-//include <stdarg.h>
 #include "ags/engine/ac/dynobj/cc_script_object.h"
 #include "ags/shared/util/string.h"
 

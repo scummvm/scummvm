@@ -68,6 +68,9 @@ const char gScummVMCompiler[] = ""
 #elif defined(__INTEL_COMPILER)
 	"ICC " STR(__INTEL_COMPILER) "." STR(__INTEL_COMPILER_UPDATE)
 #elif defined(__clang__)
+#  if defined(__apple_build_version__)
+	"Apple "
+#  endif
 	"Clang " STR(__clang_major__) "." STR(__clang_minor__) "." STR(__clang_patchlevel__)
 #elif defined(__GNUC__)
 	"GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
@@ -77,7 +80,13 @@ const char gScummVMCompiler[] = ""
 #undef STR
 #undef STR_HELPER
 	;
-const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+
+#ifdef RELEASE_BUILD
+	const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION;
+#else
+	const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+#endif
+
 const char gScummVMFeatures[] = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default
@@ -211,7 +220,9 @@ const char gScummVMFeatures[] = ""
 #endif
 
 #ifdef SDL_BACKEND
-#  ifdef USE_SDL2
+#  ifdef USE_SDL3
+	"SDL3 "
+#  elif USE_SDL2
 	"SDL2 "
 #  else
 	"SDL1.2 "

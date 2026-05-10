@@ -4,8 +4,6 @@
 
 OUTPUT_FORMAT("elf32-powerpc", "elf32-powerpc", "elf32-powerpc");
 OUTPUT_ARCH(powerpc:common);
-EXTERN(_start);
-ENTRY(_start);
 
 PHDRS
 {
@@ -14,26 +12,14 @@ PHDRS
 
 SECTIONS
 {
-	/* stub is loaded at physical address 0x00003400 (though both 0x80003400 and 0x00003400 are equivalent for IOS) */
-	/* This can also be used to load an arbitrary standalone stub at an arbitrary address in memory, for any purpose */
-	/* Use -Wl,--section-start,.stub=0xADDRESS to change */
-	. = 0x00003400;
-
-	.stub :
-	{
-		KEEP(*(.stub))
-	} :plugin = 0
-
-	/* default base address */
-	/* use -Wl,--section-start,.init=0xADDRESS to change */
-	. = 0x80004000;
+	. = 0x81000000;
 
 	/* Program */
 	.init          :
 	{
 		KEEP (*crt0.o(*.init))
 		KEEP (*(.init))
-	} = 0
+	} :plugin = 0
 	.plt      : { *(.plt)	}
 	.interp			: { *(.interp) 	}
 	.hash			: { *(.hash) }
@@ -99,12 +85,7 @@ SECTIONS
 
 	.rodata   : { *(.rodata) *(.rodata.*) *(.gnu.linkonce.r.*) }
 	.rodata1   : { *(.rodata1) }
-	.sdata2   : {
-		PROVIDE(_SDA2_BASE_ = .);
-		*(.sdata2)
-		*(.sdata2.*)
-		*(.gnu.linkonce.s2.*)
-	}
+	.sdata2   : { *(.sdata2) *(.sdata2.*) *(.gnu.linkonce.s2.*) }
 	.sbss2   : { *(.sbss2) *(.sbss2.*) *(.gnu.linkonce.sb2.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
@@ -147,7 +128,6 @@ SECTIONS
 		KEEP (*(SORT(.ctors.*)))
 		KEEP (*(.ctors))
 		___plugin_ctors_end = .;
-		. += 10;   /* fix for linker false error message */
 		. = ALIGN(32);   /* REQUIRED. LD is flaky without it. */
 	}
 
@@ -170,7 +150,6 @@ SECTIONS
 
 	.sdata     :
 	{
-		PROVIDE(_SDA_BASE_ = .);
 		*(.sdata)
 		*(.sdata.*)
 		*(.gnu.linkonce.s.*)
@@ -259,7 +238,7 @@ __stack_end = (__bss_start + SIZEOF(.bss));
 __intrstack_addr = (__stack_addr + 0x4000);
 __intrstack_end = (__stack_addr);
 __Arena1Lo = (__intrstack_addr + 31) & (-32);
-__Arena1Hi = (0x817FEFF0);
+__Arena1Hi = (0x816ffff0);
 __Arena2Lo = (0x90002000);
 __Arena2Hi = (0x933E0000);
 
@@ -268,7 +247,7 @@ __ipcbufferLo = (0x933e0000);
 __ipcbufferHi = (0x93400000);
 
 /* for backward compatibility with old crt0 */
-PROVIDE (__stack = (0x817FEFF0));
+PROVIDE (__stack = (0x816ffff0));
 
 PROVIDE(__isIPL = __isIPL);
 PROVIDE(__stack_addr = __stack_addr);

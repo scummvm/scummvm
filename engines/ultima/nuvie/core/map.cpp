@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
@@ -451,7 +451,7 @@ bool Map::has_roof(uint16 x, uint16 y, uint8 level) const {
 }
 
 Common::Path Map::getRoofDataFilename() const {
-	Std::string game_type, tmp;
+	Common::String game_type, tmp;
 	Common::Path datadir, path, mapfile;
 
 	config->value("config/datadir", tmp, "");
@@ -468,7 +468,7 @@ Common::Path Map::getRoofDataFilename() const {
 }
 
 Common::Path Map::getRoofTilesetFilename() const {
-	Std::string tmp;
+	Common::String tmp;
 	Common::Path datadir;
 	Common::Path imagefile;
 	Common::Path path;

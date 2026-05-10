@@ -22,15 +22,14 @@
 #ifndef M4_BURGER_VARS_H
 #define M4_BURGER_VARS_H
 
-#include "common/textconsole.h"
 #include "m4/vars.h"
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
 #include "m4/burger/gui/gui.h"
 #include "m4/burger/gui/gui_gizmo.h"
+#include "m4/burger/gui/interface.h"
 #include "m4/burger/flags.h"
 #include "m4/burger/hotkeys.h"
-#include "m4/burger/inventory.h"
 #include "m4/burger/series_player.h"
 #include "m4/burger/walker.h"
 

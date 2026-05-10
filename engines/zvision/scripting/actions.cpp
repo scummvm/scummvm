@@ -1140,6 +1140,7 @@ bool ActionStreamVideo::execute() {
 	_engine->getCursorManager()->showMouse(false);
 
 	if (switchToHires) {
+		// TODO: Check if 800x600 is supported, and fall back if not
 		_engine->getRenderManager()->initialize(true);
 		srcRect = Common::Rect(Common::Point(0, 69), 720, 344);
 		// ZGI hi-res video resolution = 720x480, with baked-in letterboxing around content at 720x344 (origin 0,69), interestingly conforming to playfield vertical resolution of 344

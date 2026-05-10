@@ -289,7 +289,10 @@ bool VideoTheoraPlayer::update() {
 
 	if (_theoraDecoder) {
 		if (_subtitler && _foundSubtitles && _game->_subtitles) {
-			_subtitler->update(_theoraDecoder->getCurFrame());
+			int curFrame = _theoraDecoder->getCurFrame();
+			if (curFrame != -1) { // passing UINT32_MAX would skip all subtitles!
+				_subtitler->update(curFrame);
+			}
 		}
 
 		if (_theoraDecoder->endOfVideo() && _looping) {

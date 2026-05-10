@@ -338,6 +338,7 @@ public:
 	class CGtlDoc *m_xpcGtlDoc = nullptr; // document pointer
 
 private:
+	bool bFirstTime = true;
 	CGenUtil m_cGenUtil;       // general utility object
 	CBgbMgr m_cBgbMgr;         // Boffo Game Object manager
 	CBbtMgr m_cBbtMgr;         // Boffo Games button manager

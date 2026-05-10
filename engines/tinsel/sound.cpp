@@ -188,7 +188,7 @@ void SoundManager::playDW1MacMusic(Common::File &s, uint32 length) {
 	if (s.read(soundData, length) != length)
 		error(FILE_IS_CORRUPT, MIDI_FILE);
 
-	Common::SeekableReadStream *memStream = new Common::MemoryReadStream(soundData, length);
+	Common::SeekableReadStream *memStream = new Common::MemoryReadStream(soundData, length, DisposeAfterUse::YES);
 
 	Audio::SoundHandle *handle = &_channels[kChannelDW1MacMusic].handle;
 
@@ -486,7 +486,7 @@ void SoundManager::setSFXVolumes(uint8 volume) {
 void SoundManager::showSoundError(const char *errorMsg, const char *soundFile) {
 	Common::String msg;
 	msg = Common::String::format(errorMsg, soundFile);
-	GUI::MessageDialog dialog(msg.c_str(), "OK");
+	GUI::MessageDialog dialog(msg.c_str());
 	dialog.runModal();
 
 	error("%s", msg.c_str());

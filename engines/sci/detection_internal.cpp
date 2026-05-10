@@ -98,6 +98,7 @@ const GameIdStrToEnum gameIdStrToEnum[] = {
 	{ "qfg4demo",        "",                GID_QFG4DEMO,         false, SCI_VERSION_NONE },	// Sierra ID is "glory", distinguished by resources
 	{ "rama",            "rama",            GID_RAMA,             true,  SCI_VERSION_NONE },
 	{ "sci-fanmade",     "",                GID_FANMADE,          false, SCI_VERSION_NONE },
+	{ "shield",          "archive",         GID_SHIELD,           true,  SCI_VERSION_NONE },
 	{ "shivers",         "",                GID_SHIVERS,          true,  SCI_VERSION_NONE },
 	//{ "shivers2",        "shivers2",        GID_SHIVERS2,       true,  SCI_VERSION_NONE },	// Not SCI
 	{ "slater",          "thegame",         GID_SLATER,           false, SCI_VERSION_NONE },

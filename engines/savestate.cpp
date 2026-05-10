@@ -34,13 +34,18 @@ SaveStateDescriptor::SaveStateDescriptor()
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 
+SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot)
+	: _slot(slot), _description(), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
+	initSaveSlot(metaEngine);
+}
+
 SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d)
-	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
+	: _slot(slot), _description(d.encode()), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
 	initSaveSlot(metaEngine);
 }
 
 SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::String &d)
-	: _slot(slot), _description(Common::U32String(d)), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
+	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
 	initSaveSlot(metaEngine);
 }
 
@@ -96,15 +101,16 @@ bool SaveStateDescriptor::isAutosave() const {
 bool SaveStateDescriptor::hasAutosaveName() const
 {
 	const Common::U32String &autosave = _("Autosave");
+	const Common::U32String description32 = _description.decode();
 
 	// if the save file name is long enough, just check if it starts with "Autosave"
-	if (_description.size() >= autosave.size())
-		return _description.substr(0, autosave.size()) == autosave;
+	if (description32.size() >= autosave.size())
+		return description32.substr(0, autosave.size()) == autosave;
 
 	// if the save name has been trimmed, as long as it isn't too short, use fallback logic
-	if (_description.size() < 14)
+	if (description32.size() < 14)
 		return false;
-	return autosave.substr(0, _description.size()) == _description;
+	return autosave.substr(0, description32.size()) == description32;
 }
 
 bool SaveStateDescriptor::isValid() const

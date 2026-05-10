@@ -22,8 +22,7 @@
 #ifndef ULTIMA8_GFX_FONTS_FONTMANAGER_H
 #define ULTIMA8_GFX_FONTS_FONTMANAGER_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/hashmap.h"
 #include "common/path.h"
 #include "graphics/font.h"
 
@@ -73,9 +72,9 @@ private:
 	//! Override fontnum with specified font
 	void setOverride(unsigned int fontnum, Font *newFont);
 
-	Std::vector<Font *> _overrides;
+	Common::Array<Font *> _overrides;
 
-	Std::vector<Font *> _ttFonts;
+	Common::Array<Font *> _ttFonts;
 
 	static FontManager *_fontManager;
 public:

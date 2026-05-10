@@ -22,6 +22,8 @@
  *
  */
 
+#ifndef DISABLE_MAME_OPL
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1253,3 +1255,5 @@ FM_OPL *makeAdLibOPL(int rate) {
 
 } // End of namespace MAME
 } // End of namespace OPL
+
+#endif // !DISABLE_MAME_OPL

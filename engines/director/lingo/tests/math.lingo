@@ -11,6 +11,10 @@ put cos(z2)
 set x = 2 + 3 * (4 / 2)
 put x
 
+set x = .5 + .5 + 1.5
+put x
+scummvmAssertEqual(x, 2.5)
+
 put power(2, 8)
 put power(2, 8, 0)
 put power(2)

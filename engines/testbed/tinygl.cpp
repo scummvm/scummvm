@@ -283,7 +283,7 @@ TestExitStatus TinyGLTests::runTexEnvTest(
 			testImage.pitch,
 			converted.pitch,
 			testImage.w, testImage.h,
-			converted.w, converted.h,
+			subRect.width(), subRect.height(),
 			converted.format);
 	}
 	Graphics::ManagedSurface readBack(testImage.w, testImage.h, testImage.format);

@@ -37,6 +37,11 @@ private:
 	 */
 	void startSlideshow();
 
+	/**
+	 * Advances to the next scene screen
+	 */
+	void advanceSlideshow();
+
 protected:
 	Graphics::ManagedSurface _screens[SCREENS_COUNT];
 	int _screenNum = -1;
@@ -75,6 +80,11 @@ public:
 	 * Handle actions
 	 */
 	bool msgAction(const ActionMessage &msg) override;
+
+	/**
+	 * Mouse up handler
+	 */
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace Views

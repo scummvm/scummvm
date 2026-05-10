@@ -24,13 +24,13 @@
 #include "m4/wscript/wst_regs.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
-#include "m4/dbg/debug.h"
+#include "m4/dbg/dbg_wscript.h"
 #include "m4/mem/mem.h"
 #include "m4/vars.h"
 
 namespace M4 {
 
-#define VERIFY_INTIALIZED(s) if (!_GWS(cruncherInitialized)) error_show(FL, 'WSCI', "%s failed.", s);
+#define VERIFY_INTIALIZED(s) if (!_GWS(cruncherInitialized)) error_show(FL, "%s failed.", s);
 
 static int32 dataFormats[] = { 0, 5, 8, 12, 16 };
 
@@ -124,18 +124,15 @@ int32 *ws_GetDataFormats() {
 	return &dataFormats[0];
 }
 
-bool ws_InitCruncher(void) {
+bool ws_InitCruncher() {
 	// Make sure the cruncher has not been initialized
 	if (_GWS(cruncherInitialized))
-		error_show(FL, 'WSCR');
+		error_show(FL,"cruncher not initialized");
 
 	// Register the end of sequence struct with the stash manager
 	mem_register_stash_type(&_GWS(memtypeEOS), sizeof(EOSreq), 32, "+EOS");
-	if (_GWS(memtypeEOS) < 0)
-		error_show(FL, 'WSCE');
 
-	if ((_GWS(myCruncher) = (cruncher *)mem_alloc(sizeof(cruncher), "cruncher")) == nullptr)
-		error_show(FL, 'OOM!', "%d bytes.", sizeof(cruncher));
+	_GWS(myCruncher) = (cruncher *)mem_alloc(sizeof(cruncher), "cruncher");
 
 	_GWS(myCruncher)->backLayerAnim8 = nullptr;
 	_GWS(myCruncher)->frontLayerAnim8 = nullptr;
@@ -144,9 +141,8 @@ bool ws_InitCruncher(void) {
 
 	// Set up stack
 	_GWS(stackSize) = 2048;
-	if ((_GWS(stackBase) = (uint32 *)mem_alloc(_GWS(stackSize), "crunchstack")) == nullptr) {
-		error_show(FL, 'OOM!', "%d bytes.", _GWS(stackSize));
-	}
+	_GWS(stackBase) = (uint32 *)mem_alloc(_GWS(stackSize), "crunchstack");
+
 	_GWS(stackTop) = _GWS(stackBase);
 	_GWS(stackLimit) = (uint32 *)((byte *)_GWS(stackBase) + (uint32)_GWS(stackSize));
 
@@ -181,10 +177,6 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 
 	// Allocate an anim8 structure
 	Anim8 *myAnim8 = (Anim8 *)mem_alloc(sizeof(Anim8), "Anim8");
-	if (myAnim8 == nullptr) {
-		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(Anim8));
-		return nullptr;
-	}
 
 	// Find the sequence
 	int32 numLocalVars;
@@ -196,10 +188,6 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 
 	// Allocate an array of registers
 	frac16 *my_regs = (frac16 *)mem_alloc(sizeof(frac16) * (IDX_COUNT + numLocalVars), "Anim8 regs");
-	if (my_regs == nullptr) {
-		ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(frac16) * (IDX_COUNT + numLocalVars));
-		return nullptr;
-	}
 
 	// Initialize the Anim8 structure
 	myAnim8->active = true;
@@ -254,8 +242,8 @@ bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 	VERIFY_INTIALIZED("ws_ChangeAnim8Program()");
 
 	// Parameter verification
-	if ((!m) || (!m->myAnim8)) {
-		error_show(FL, 'WSMI');
+	if (!m || !m->myAnim8) {
+		error_show(FL, "myAnim8 not set");
 	}
 
 	Anim8 *myAnim8 = m->myAnim8;
@@ -273,7 +261,7 @@ bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 		return false;
 	}
 
-	// Intialize the Anim8
+	// Initialize the Anim8
 	myAnim8->switchTime = 0;
 	myAnim8->active = true;
 	myAnim8->eosReqOffset = -1;
@@ -288,7 +276,7 @@ void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8) {
 	VERIFY_INTIALIZED("ws_RemoveAnim8FromCruncher()");
 
 	if (!myAnim8)
-		error_show(FL, 'WSAI');
+		error_show(FL, "myAnim8 not set");
 
 	// In case we are crunching the current list of EOS requests, remove any for this machine
 	EOSreq *tempEOSreq = _GWS(EOSreqList);
@@ -309,7 +297,7 @@ void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8) {
 		mem_free_to_stash((void *)tempEOSreq, _GWS(memtypeEOS));
 	}
 
-	// Incase we are in the middle of crunching
+	// In case we are in the middle of crunching
 	if (myAnim8 == _GWS(crunchNext)) {
 		_GWS(crunchNext) = myAnim8->next;
 	}
@@ -358,7 +346,7 @@ bool ws_PauseAnim8(Anim8 *myAnim8) {
 	VERIFY_INTIALIZED("ws_PauseAnim8()");
 
 	if (!myAnim8)
-		error_show(FL, 'WSAI');
+		error_show(FL, "myAnim8 not set");
 
 	myAnim8->active = false;
 	HideCCB(myAnim8->myCCB);
@@ -371,7 +359,7 @@ bool ws_ResumeAnim8(Anim8 *myAnim8) {
 	VERIFY_INTIALIZED("ws_PauseAnim8()");
 
 	if (!myAnim8)
-		error_show(FL, 'WSAI');
+		error_show(FL, "myAnim8 not set");
 
 	myAnim8->active = true;
 	if (myAnim8->myCCB) {
@@ -410,7 +398,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 			parentAnim8 = myAnim8->myParent;
 
 			// Range check to make sure we don't index off into hyperspace
-			if ((!parentAnim8) || (myIndex >= IDX_COUNT + parentAnim8->numLocalVars)) {
+			if (!parentAnim8 || (myIndex >= IDX_COUNT + parentAnim8->numLocalVars)) {
 				if (!parentAnim8) {
 					ws_LogErrorMsg(FL, "Trying to access a parent register - no parent exists");
 				} else {
@@ -442,7 +430,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 				return false;
 			}
 
-			// Dereferrence the dataHandle, add the offset to find the array of data for this anim8
+			// Dereference the dataHandle, add the offset to find the array of data for this anim8
 			dataArray = (uint32 *)((intptr)*(myAnim8->dataHandle) + myAnim8->dataOffset);
 
 			// Copy the data field into dataArg1, and set myArg1 to point to this location
@@ -576,7 +564,7 @@ static void op_CLEAR(Anim8 *myAnim8) {
 
 static void op_SET(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = arg2  or  arg1 = rand(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = arg2  or  arg1 = rand(arg2, arg3)");
 	}
 	if (_GWS(myArg3)) {
 		*_GWS(myArg1) = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -588,7 +576,7 @@ static void op_SET(Anim8 *myAnim8) {
 static void op_COMPARE(Anim8 *myAnim8) {
 	frac16 myArg;
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: cmp arg1, arg2  or  cmp arg1, rand(arg2, arg3) **sets CCR");
+		ws_Error(myAnim8->myMachine, "functionality: cmp arg1, arg2  or  cmp arg1, rand(arg2, arg3) **sets CCR");
 	}
 	if (_GWS(myArg3)) {
 		myArg = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -606,7 +594,7 @@ static void op_COMPARE(Anim8 *myAnim8) {
 
 static void op_ADD(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 += arg2  or  arg1 += rand(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 += arg2  or  arg1 += rand(arg2, arg3)");
 	}
 	if (_GWS(myArg3)) {
 		*_GWS(myArg1) += imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -617,7 +605,7 @@ static void op_ADD(Anim8 *myAnim8) {
 
 static void op_SUB(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 -= arg2  or  arg1 -= rand(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 -= arg2  or  arg1 -= rand(arg2, arg3)");
 	}
 	if (_GWS(myArg3)) {
 		*_GWS(myArg1) -= imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -628,7 +616,7 @@ static void op_SUB(Anim8 *myAnim8) {
 
 static void op_MULT(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 *= arg2  or  arg1 *= rand(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 *= arg2  or  arg1 *= rand(arg2, arg3)");
 	}
 	if (_GWS(myArg3)) {
 		*_GWS(myArg1) = MulSF16(*_GWS(myArg1), imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3)));
@@ -640,7 +628,7 @@ static void op_MULT(Anim8 *myAnim8) {
 static void op_DIV(Anim8 *myAnim8) {
 	frac16	divisor;
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 /= arg2  or  arg1 /= rand(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 /= arg2  or  arg1 /= rand(arg2, arg3)");
 	}
 	if (_GWS(myArg3)) {
 		divisor = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -648,7 +636,7 @@ static void op_DIV(Anim8 *myAnim8) {
 		divisor = *_GWS(myArg2);
 	}
 	if (divisor == 0) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0253, nullptr);
+		ws_Error(myAnim8->myMachine, nullptr);
 	} else {
 		*_GWS(myArg1) = DivSF16(*_GWS(myArg1), divisor);
 	}
@@ -658,7 +646,7 @@ static void op_SIN(Anim8 *myAnim8) {
 	int32 tempAngle;
 
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = sin(arg2)  or  arg1 = sin(rand(arg2, arg3))");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = sin(arg2)  or  arg1 = sin(rand(arg2, arg3))");
 	}
 	if (_GWS(myArg3)) {
 		tempAngle = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3)) >> 16;
@@ -678,7 +666,7 @@ static void op_COS(Anim8 *myAnim8) {
 	int32 tempAngle;
 
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = cos(arg2)  or  arg1 = cos(rand(arg2, arg3))");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = cos(arg2)  or  arg1 = cos(rand(arg2, arg3))");
 	}
 	if (_GWS(myArg3)) {
 		tempAngle = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3)) >> 16;
@@ -698,7 +686,7 @@ static void op_AND(Anim8 *myAnim8) {
 	frac16 myArg;
 
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 &= arg2  or  arg1 &= rand(arg2, arg3) **also sets CCR");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 &= arg2  or  arg1 &= rand(arg2, arg3) **also sets CCR");
 	}
 	if (_GWS(myArg3)) {
 		myArg = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -718,7 +706,7 @@ static void op_OR(Anim8 *myAnim8) {
 	frac16	myArg;
 
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 |= arg2  or  arg1 |= rand(arg2, arg3) **also sets CCR");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 |= arg2  or  arg1 |= rand(arg2, arg3) **also sets CCR");
 	}
 	if (_GWS(myArg3)) {
 		myArg = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -736,7 +724,7 @@ static void op_OR(Anim8 *myAnim8) {
 
 static void op_NOT(Anim8 *myAnim8) {
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: arg1 = (arg1 ? 0 : 1) **also sets CCR");
+		ws_Error(myAnim8->myMachine,"functionality: arg1 = (arg1 ? 0 : 1) **also sets CCR");
 	}
 	if (*_GWS(myArg1) == 0) {
 		*_GWS(myArg1) = 0x10000;
@@ -749,7 +737,7 @@ static void op_NOT(Anim8 *myAnim8) {
 
 static void op_ABS(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = abs(arg2)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = abs(arg2)");
 	}
 	if (*_GWS(myArg2) < 0) {
 		*_GWS(myArg1) = -(int)(*_GWS(myArg2));
@@ -760,7 +748,7 @@ static void op_ABS(Anim8 *myAnim8) {
 
 static void op_MIN(Anim8 *myAnim8) {
 	if (!_GWS(myArg3)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0252, "functionality: arg1 = min(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = min(arg2, arg3)");
 	}
 	if (*_GWS(myArg2) < *_GWS(myArg3)) {
 		*_GWS(myArg1) = *_GWS(myArg2);
@@ -771,7 +759,7 @@ static void op_MIN(Anim8 *myAnim8) {
 
 static void op_MAX(Anim8 *myAnim8) {
 	if (!_GWS(myArg3)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0252, "functionality: arg1 = max(arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = max(arg2, arg3)");
 	}
 	if (*_GWS(myArg2) < *_GWS(myArg3)) {
 		*_GWS(myArg1) = *_GWS(myArg3);
@@ -782,7 +770,7 @@ static void op_MAX(Anim8 *myAnim8) {
 
 static void op_MOD(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 %= arg2  or  arg1 = arg2%arg3");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 %= arg2  or  arg1 = arg2%arg3");
 	}
 	if (_GWS(myArg3)) {
 		*_GWS(myArg1) = (*_GWS(myArg1)) % (imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3)));
@@ -793,7 +781,7 @@ static void op_MOD(Anim8 *myAnim8) {
 
 static void op_FLOOR(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = floor(arg2)  or  arg1 = floor(rand(arg2,arg3))");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = floor(arg2)  or  arg1 = floor(rand(arg2,arg3))");
 	}
 	if (_GWS(myArg3)) {
 		*_GWS(myArg1) = (imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3)) >> 16) << 16;
@@ -805,7 +793,7 @@ static void op_FLOOR(Anim8 *myAnim8) {
 static void op_ROUND(Anim8 *myAnim8) {
 	frac16 myArg;
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = round(arg2)  or  arg1 = round(rand(arg2,arg3))");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = round(arg2)  or  arg1 = round(rand(arg2,arg3))");
 	}
 	if (_GWS(myArg3)) {
 		myArg = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -822,7 +810,7 @@ static void op_ROUND(Anim8 *myAnim8) {
 static void op_CEIL(Anim8 *myAnim8) {
 	frac16 myArg;
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = ceil(arg2)  or  arg1 = ceil(rand(arg2,arg3))");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = ceil(arg2)  or  arg1 = ceil(rand(arg2,arg3))");
 	}
 	if (_GWS(myArg3)) {
 		myArg = imath_ranged_rand16(*_GWS(myArg2), *_GWS(myArg3));
@@ -838,14 +826,14 @@ static void op_CEIL(Anim8 *myAnim8) {
 
 static void op_POINT(Anim8 *myAnim8) {
 	if (!_GWS(myArg3)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0252, "functionality: arg1 = angle of line segment (x, y) , (arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = angle of line segment (x, y) , (arg2, arg3)");
 	}
 	*_GWS(myArg1) = Atan2F16(-(int)(*_GWS(myArg3)) + myAnim8->myRegs[IDX_Y], *_GWS(myArg2) - myAnim8->myRegs[IDX_X]);
 }
 
 static void op_DIST2D(Anim8 *myAnim8) {
 	if (!_GWS(myArg3)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0252, "functionality: arg1 = distance from (x, y) to (arg2, arg3)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = distance from (x, y) to (arg2, arg3)");
 	}
 	int32 temp1 = (int32)(imath_abs(*_GWS(myArg2) - myAnim8->myRegs[IDX_X]));
 	int32 temp2 = (int32)(imath_abs(*_GWS(myArg3) - myAnim8->myRegs[IDX_Y]));
@@ -881,7 +869,7 @@ static void op_CRUNCH(Anim8 *myAnim8) {
 
 static void op_BRANCH(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "check the CCR, arg1 is the branch type, arg2 is the PC offset");
+		ws_Error(myAnim8->myMachine, "check the CCR, arg1 is the branch type, arg2 is the PC offset");
 	}
 	const int32 myOffset = *_GWS(myArg2) >> 14;
 	switch (*_GWS(myArg1) >> 16) {
@@ -915,7 +903,7 @@ static void op_SETCEL(Anim8 *myAnim8) {
 	int32 myIndex;
 
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "setcel(arg1, arg2)  or  setcel(arg1, rand(arg2, arg3))");
+		ws_Error(myAnim8->myMachine, "setcel(arg1, arg2)  or  setcel(arg1, rand(arg2, arg3))");
 	}
 	if (_GWS(myArg3)) {
 		myIndex = imath_ranged_rand(*_GWS(myArg2) >> 16, *_GWS(myArg3) >> 16);
@@ -927,13 +915,8 @@ static void op_SETCEL(Anim8 *myAnim8) {
 
 	if (!myAnim8->myCCB) {
 		// Allocate and initialize a CCB structure
-		if ((myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes.", sizeof(CCB));
-			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x02fe, "setcel() failed.");
-		}
-		if (!InitCCB(myAnim8->myCCB)) {
-			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025d, "setcel() failed.");
-		}
+		myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB");
+		InitCCB(myAnim8->myCCB);
 	}
 
 	CCB *myCCB = myAnim8->myCCB;
@@ -943,7 +926,7 @@ static void op_SETCEL(Anim8 *myAnim8) {
 	ShowCCB(myCCB);
 	myCCB->flags |= CCB_SKIP;
 	if ((myAnim8->myCCB = GetWSAssetCEL((uint32)(*_GWS(myArg1)) >> 24, (uint32)myIndex, myCCB)) == nullptr) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025b, "setcel() failed.");
+		ws_Error(myAnim8->myMachine, "setcel() failed.");
 	}
 	frac16 *myRegs = myAnim8->myRegs;
 	if (myRegs[IDX_W] < 0) {
@@ -962,7 +945,7 @@ static void op_SEQ_SEND_MSG(Anim8 *myAnim8) {
 
 	//_GWS(myArg1) is the recipient machine hash, _GWS(myArg2) is the msg hash, _GWS(myArg3) (if exists) is the msg value
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: send to machine arg1, the message arg2 or the message arg2, arg3");
+		ws_Error(myAnim8->myMachine, "functionality: send to machine arg1, the message arg2 or the message arg2, arg3");
 	}
 
 	if (_GWS(myArg3)) {
@@ -980,11 +963,12 @@ static void op_PUSH(Anim8 *myAnim8) {
 	int32 numOfArgs;
 
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: push arg1  or start with arg1, and push a total of arg2 values");
+		ws_Error(myAnim8->myMachine, "functionality: push arg1  or start with arg1, and push a total of arg2 values");
 	}
 	int32 direction = 1;
 	if (_GWS(myArg2)) {
-		if (*_GWS(myArg2) > 0) numOfArgs = (*_GWS(myArg2)) >> 16;
+		if (*_GWS(myArg2) > 00)
+			numOfArgs = (*_GWS(myArg2)) >> 16;
 		else {
 			numOfArgs = -(int)(*_GWS(myArg2)) >> 16;
 			direction = -1;
@@ -994,7 +978,7 @@ static void op_PUSH(Anim8 *myAnim8) {
 	}
 
 	if (((byte *)_GWS(stackLimit) - (byte *)_GWS(stackTop)) < (numOfArgs << 2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0254, "overflow during push instruction");
+		ws_Error(myAnim8->myMachine,"overflow during push instruction");
 		return;
 	}
 	if (_GWS(myArg2)) {
@@ -1012,11 +996,12 @@ static void op_POP(Anim8 *myAnim8) {
 	int32 numOfArgs;
 
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: pop into arg1  or start with arg1, and pop a total of arg2 values");
+		ws_Error(myAnim8->myMachine, "functionality: pop into arg1  or start with arg1, and pop a total of arg2 values");
 	}
 	int32 direction = 1;
 	if (_GWS(myArg2)) {
-		if (*_GWS(myArg2) > 0) numOfArgs = (*_GWS(myArg2)) >> 16;
+		if (*_GWS(myArg2) > 0)
+			numOfArgs = (*_GWS(myArg2)) >> 16;
 		else {
 			numOfArgs = -(int)(*_GWS(myArg2)) >> 16;
 			direction = -1;
@@ -1024,7 +1009,7 @@ static void op_POP(Anim8 *myAnim8) {
 	} else
 		numOfArgs = 1;
 	if (((byte *)_GWS(stackTop) - (byte *)_GWS(stackBase)) < (numOfArgs << 2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0255, "underflow during pop instruction");
+		ws_Error(myAnim8->myMachine, "underflow during pop instruction");
 	}
 	if (_GWS(myArg2)) {
 		uint32 *data = (uint32 *)_GWS(myArg1);
@@ -1040,7 +1025,7 @@ static void op_POP(Anim8 *myAnim8) {
 static void op_JSR(Anim8 *myAnim8) {
 	if (myAnim8->returnStackIndex >= JSR_STACK_MAX) {
 		ws_LogErrorMsg(FL, "Max number of nested jsr instructions is: %d", JSR_STACK_MAX);
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0256, "jsr() failed");
+		ws_Error(myAnim8->myMachine, "jsr() failed");
 	}
 	myAnim8->returnHashes[myAnim8->returnStackIndex] = myAnim8->sequHash;
 	myAnim8->returnOffsets[myAnim8->returnStackIndex] = myAnim8->pcOffset;
@@ -1050,11 +1035,9 @@ static void op_JSR(Anim8 *myAnim8) {
 	int32 dummy;
 	myAnim8->sequHandle = ws_GetSEQU((uint32)*_GWS(myArg1) >> 16, &dummy, &myAnim8->pcOffset);
 	if (myAnim8->sequHandle == nullptr) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025f, "jsr() failed");
+		ws_Error(myAnim8->myMachine, "jsr() failed");
 	}
 	myAnim8->sequHash = (uint32)*_GWS(myArg1) >> 16;
-
-	dbg_LaunchSequence(myAnim8);
 }
 
 static void op_RETURN(Anim8 *myAnim8) {
@@ -1071,38 +1054,36 @@ static void op_RETURN(Anim8 *myAnim8) {
 	int32 dummy, dummy2;
 	myAnim8->sequHandle = ws_GetSEQU((uint32)returnSequHash, &dummy, &dummy2);
 	if (myAnim8->sequHandle == nullptr) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025f, "return() failed");
+		ws_Error(myAnim8->myMachine, "return() failed");
 	}
 	myAnim8->sequHash = returnSequHash;
 	myAnim8->pcOffset = returnOffset;
-
-	dbg_LaunchSequence(myAnim8);
 }
 
 static void op_GET_CELS_COUNT(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = series_count(arg2)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = series_count(arg2)");
 	}
 	*_GWS(myArg1) = GetWSAssetCELCount((uint32)(*_GWS(myArg2)) >> 24) << 16;
 }
 
 static void op_GET_CELS_FRAME_RATE(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = series_frame_rate(arg2)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = series_frame_rate(arg2)");
 	}
 	*_GWS(myArg1) = GetWSAssetCELFrameRate((uint32)(*_GWS(myArg2)) >> 24);
 }
 
 static void op_GET_CELS_PIX_SPEED(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: arg1 = series_pix_speed(arg2)");
+		ws_Error(myAnim8->myMachine, "functionality: arg1 = series_pix_speed(arg2)");
 	}
 	*_GWS(myArg1) = GetWSAssetCELPixSpeed((uint32)(*_GWS(myArg2)) >> 24);
 }
 
 static void op_SET_INDEX(Anim8 *myAnim8) {
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: index_reg = arg1");
+		ws_Error(myAnim8->myMachine, "functionality: index_reg = arg1");
 	}
 	_GWS(indexReg) = *_GWS(myArg1) >> 16;
 }
@@ -1110,7 +1091,7 @@ static void op_SET_INDEX(Anim8 *myAnim8) {
 static void op_SET_LAYER(Anim8 *myAnim8) {
 	Anim8 *tempAnim8;
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: set_layer(arg1)");
+		ws_Error(myAnim8->myMachine, "functionality: set_layer(arg1)");
 	}
 
 	const int32 newLayer = *_GWS(myArg1) >> 16;
@@ -1204,13 +1185,14 @@ static void op_SET_LAYER(Anim8 *myAnim8) {
 static void op_SET_DEPTH(Anim8 *myAnim8) {
 	int32 myDepth;
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: set_depth(arg1)");
+		ws_Error(myAnim8->myMachine, "functionality: set_depth(arg1)");
 	}
 	if (!_GWS(myDepthTable)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x02ff, "op_SET_DEPTH() failed - no depth table.");
+		ws_Error(myAnim8->myMachine, "op_SET_DEPTH() failed - no depth table.");
 	}
 	for (myDepth = 0; myDepth < 15; myDepth++) {
-		if (_GWS(myDepthTable)[myDepth + 1] < (int)(*_GWS(myArg1) >> 16)) break;
+		if (_GWS(myDepthTable)[myDepth + 1] < (int)(*_GWS(myArg1) >> 16))
+			break;
 	}
 	_GWS(dataArg1) = (myAnim8->myRegs[IDX_LAYER] & 0xffffff) + (myDepth << 24);
 	_GWS(myArg1) = &_GWS(dataArg1);
@@ -1219,27 +1201,22 @@ static void op_SET_DEPTH(Anim8 *myAnim8) {
 
 static void op_SET_DATA(Anim8 *myAnim8) {
 	if (!_GWS(myArg2)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "functionality: set_data(arg1, arg2)");
+		ws_Error(myAnim8->myMachine, "functionality: set_data(arg1, arg2)");
 	}
 	if ((myAnim8->dataHandle = ws_GetDATA(*_GWS(myArg1) >> 16, *_GWS(myArg2) >> 16, &myAnim8->dataOffset)) == nullptr) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025f, "set_data() failed.");
+		ws_Error(myAnim8->myMachine, "set_data() failed.");
 	}
 }
 
 static void op_OPEN_STREAM_SS(Anim8 *myAnim8) {
 	if (!_GWS(myArg1)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: stream_series(arg1)");
+		ws_Error(myAnim8->myMachine, "functionality: stream_series(arg1)");
 	}
 
 	if (!myAnim8->myCCB) {
 		// Allocate and initialize a CCB structure
-		if ((myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(CCB));
-			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x02fe, "open_ss_stream() failed.");
-		}
-		if (!InitCCB(myAnim8->myCCB)) {
-			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025d, "open_ss_stream() failed.");
-		}
+		myAnim8->myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB");
+		InitCCB(myAnim8->myCCB);
 	}
 
 	CCB *myCCB = myAnim8->myCCB;
@@ -1247,7 +1224,7 @@ static void op_OPEN_STREAM_SS(Anim8 *myAnim8) {
 	myCCB->flags |= CCB_SKIP;
 
 	if (!ws_OpenSSstream((SysFile *)(*_GWS(myArg1)), myAnim8)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0258, "open_ss_stream() failed.");
+		ws_Error(myAnim8->myMachine, "open_ss_stream() failed.");
 	}
 
 	if (myAnim8->myRegs[IDX_W] < 0)
@@ -1261,12 +1238,12 @@ static void op_OPEN_STREAM_SS(Anim8 *myAnim8) {
 
 static void op_NEXT_STREAM_SS(Anim8 *myAnim8) {
 	if (!myAnim8->myCCB) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0253, "next_ss_stream() failed.");
+		ws_Error(myAnim8->myMachine, "next_ss_stream() failed.");
 	}
 	CCB *myCCB = myAnim8->myCCB;
 	myCCB->flags |= CCB_SKIP;
 	if (!ws_GetNextSSstreamCel(myAnim8)) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0259, "next_ss_stream() failed.");
+		ws_Error(myAnim8->myMachine, "next_ss_stream() failed.");
 	}
 	if (myAnim8->myRegs[IDX_W] < 0) {
 		myAnim8->myRegs[IDX_W] = -myCCB->source->w << 16;
@@ -1279,7 +1256,7 @@ static void op_NEXT_STREAM_SS(Anim8 *myAnim8) {
 
 static void op_CLOSE_STREAM_SS(Anim8 *myAnim8) {
 	if (!myAnim8->myCCB) {
-		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x02f3, "close_ss_stream() failed.");
+		ws_Error(myAnim8->myMachine, "close_ss_stream() failed.");
 	}
 	CCB *myCCB = myAnim8->myCCB;
 	ws_CloseSSstream(myCCB);
@@ -1365,8 +1342,6 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 
 	// Interpret pCode instructions until we hit something signalling to stop
 	while (_GWS(keepProcessing)) {
-		dbg_SetCurrSequInstr(myAnim8, _GWS(compareCCR));
-
 		myPC = (uint32 *)((intptr)*(myAnim8->sequHandle) + myAnim8->pcOffset);
 		uint32 *oldPC = myPC;
 		_GWS(pcOffsetOld) = myAnim8->pcOffset;
@@ -1375,7 +1350,7 @@ bool CrunchAnim8(Anim8 *myAnim8) {
 
 		const int32 myInstruction = ws_PreProcessPcode(&myPC, myAnim8);
 		if (myInstruction < 0 || myInstruction > 39) {
-			ws_Error(myAnim8->myMachine, ERR_SEQU, 0x025c, nullptr);
+			ws_Error(myAnim8->myMachine, nullptr);
 		}
 
 		dbg_EndCurrMachInstr();
@@ -1543,7 +1518,7 @@ void ws_CrunchAnim8s(int16 *depth_table) {
 	_GWS(crunchNext) = nullptr;
 }
 
-void ws_CrunchEOSreqs(void) {
+void ws_CrunchEOSreqs() {
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_CrunchEOSreqs()");
 

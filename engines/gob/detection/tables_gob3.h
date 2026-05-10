@@ -180,7 +180,7 @@
 	0, 0, 0
 },
 {
-	{
+	{ // Used by ADI4 unlockable games
 		"gob3",
 		"v1.00",
 		AD_ENTRY2s("intro.stk",   "16b014bf32dbd6ab4c5163c44f56fed1", 445104,
@@ -249,7 +249,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+{ // Found in french ADI 2.5 Anglais Multimedia 5e
 	{
 		"gob3",
 		"v1.00",
@@ -460,7 +460,7 @@
 {
 	{
 		"gob3",
-		"Non-interactive Demo",
+		"Non-interactive Demo (v1.0)",
 		AD_ENTRY1s("intro.stk", "b9b898fccebe02b69c086052d5024a55", 600143),
 		FR_FRA,
 		kPlatformDOS,

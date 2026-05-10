@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	object.o \
 	options.o \
 	predictivedialog.o \
+	printing-dialog.o \
 	saveload.o \
 	saveload-dialog.o \
 	shaderbrowser-dialog.o \
@@ -35,6 +36,7 @@ MODULE_OBJS := \
 	unknown-game-dialog.o \
 	widget.o \
 	animation/Animation.o \
+	animation/FluidScroll.o \
 	animation/RepeatAnimationWrapper.o \
 	animation/SequenceAnimationComposite.o \
 	widgets/editable.o \

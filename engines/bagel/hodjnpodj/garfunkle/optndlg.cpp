@@ -45,7 +45,7 @@ CText   *m_pSpeedText = nullptr;
 
 
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, "art\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_nSpeed = MIN_SPEED;
 	m_nNumButtons = MAX_BUTTONS;

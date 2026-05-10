@@ -62,7 +62,7 @@ Flags::Flags() {
 }
 
 void Flags::sync(Common::Serializer &s) {
-	size_t count = size();
+	const size_t count = size();
 	for (uint i = 0; i < count; ++i)
 		s.syncAsSint32LE(_flags[i]);
 }
@@ -74,9 +74,9 @@ void Flags::reset() {
 int32 Flags::get_boonsville_time_and_display(bool showTime) {
 	if (showTime) {
 		int time = (*this)[kBoonsvilleTime];
-		int seconds = time % 60;
+		const int seconds = time % 60;
 		time /= 60;
-		int minutes = time % 60;
+		const int minutes = time % 60;
 		time /= 60;
 
 		term_message("Boonsville time: %d:%d:%d", time, minutes, seconds);
@@ -94,21 +94,19 @@ bool Flags::advance_boonsville_time_and_check_schedule(int32 time) {
 	if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 		(*this)[kBoonsvillePriorTime] = (*this)[kBoonsvilleTime];
 		(*this)[kBoonsvilleTime] += time;
-		return dispatch_scheduled_boonsville_time_trigger(
-			get_boonsville_time_and_display());
-	} else {
-		return false;
+		return dispatch_scheduled_boonsville_time_trigger(get_boonsville_time_and_display());
 	}
+
+	return false;
 }
 
 bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
 	bool result = false;
 
 	for (const BoonsvilleEvent *rec = EVENTS; rec->_time; ++rec) {
-		if ((*this)[kBoonsvilleTime] >= rec->_time &&
-				(*this)[kBoonsvillePriorTime] < rec->_time) {
+		if ((*this)[kBoonsvilleTime] >= rec->_time && (*this)[kBoonsvillePriorTime] < rec->_time) {
 			result = true;
 			term_message("Time for: %s", rec->_text);
 			schedule_boonsville_time();
@@ -121,18 +119,18 @@ bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
 }
 
 void Flags::schedule_boonsville_time() {
-	int theTime = get_boonsville_time_and_display();
-	int hours = theTime / 216000;
-	int minutes = (theTime % 216000) / 3600;
-	int seconds = (theTime % 3600) / 60;
+	const int theTime = get_boonsville_time_and_display();
+	const int hours = theTime / 216000;
+	const int minutes = (theTime % 216000) / 3600;
+	const int seconds = (theTime % 3600) / 60;
 	bool flag = false;
 
 	term_message("************  Schedule  ************");
 
 	for (const auto &te : EVENTS) {
-		int teHours = te._time / 216000;
-		int teMinutes = (te._time % 216000) / 3600;
-		int teSeconds = (te._time % 3600) / 60;
+		const int teHours = te._time / 216000;
+		const int teMinutes = (te._time % 216000) / 3600;
+		const int teSeconds = (te._time % 3600) / 60;
 
 		if (te._time <= theTime) {
 			term_message("done    %1d:%2d:%2d  %s", teHours, teMinutes, teSeconds, te._text);

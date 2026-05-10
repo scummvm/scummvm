@@ -221,13 +221,13 @@ void Room301::daemon() {
 
 	case 17:
 		pal_fade_set_start(0);
-		pal_mirror_colours(120, 122);
+		pal_mirror_colours(120, 122, _G(master_palette));
 		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, 14);
 		break;
 
 	case 18:
 		pal_fade_set_start(0);
-		pal_mirror_colours(32, 39);
+		pal_mirror_colours(32, 39, _G(master_palette));
 		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, 19);
 		break;
 

@@ -42,20 +42,20 @@ namespace PDQ {
 //
 // This mini-game's main screen bitmap
 //
-#define MINI_GAME_MAP  ".\\ART\\CORRAL.BMP"
+#define MINI_GAME_MAP  "art\\CORRAL.BMP"
 
 //
 // Button ID constants
 //
 #define IDC_MENU    100
 
-#define WAV_NARRATION   ".\\SOUND\\TGG.WAV"
+#define WAV_NARRATION   "sound\\TGG.WAV"
 
 STATIC const char *pszCategoryBitmaps[N_CATEGORIES] = {
-	".\\ART\\PERSON.BMP",
-	".\\ART\\PLACE.BMP",
-	".\\ART\\PHRASE.BMP",
-	".\\ART\\TITLE.BMP"
+	"art\\PERSON.BMP",
+	"art\\PLACE.BMP",
+	"art\\PHRASE.BMP",
+	"art\\TITLE.BMP"
 };
 
 

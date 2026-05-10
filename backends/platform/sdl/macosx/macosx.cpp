@@ -33,7 +33,11 @@
 #include "backends/platform/sdl/macosx/macosx-window.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#ifdef USE_NS_SPEECH_SYNTHESIZER
 #include "backends/text-to-speech/macosx/macosx-text-to-speech.h"
+#else
+#include "backends/text-to-speech/avfaudio/avfaudio-text-to-speech.h"
+#endif
 #include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 #include "backends/fs/posix/posix-fs.h"
@@ -114,7 +118,11 @@ void OSystem_MacOSX::initBackend() {
 
 #ifdef USE_TTS
 	// Initialize Text to Speech manager
+#ifdef USE_NS_SPEECH_SYNTHESIZER
 	_textToSpeechManager = new MacOSXTextToSpeechManager();
+#else
+	_textToSpeechManager = new AVFAudioTextToSpeechManager();
+#endif
 #endif
 
 	// Migrate savepath.

@@ -45,10 +45,10 @@ public:
 	Common::Array<Common::Rect> _upHotspots;
 	Common::Array<Common::Rect> _downHotspots;
 	Common::Array<byte> _correctSequence;
-	Nancy::SoundDescription _clickSound;
+	SoundDescription _clickSound;
 	SceneChangeWithFlag _solveExitScene;
 	uint16 _solveSoundDelay = 0;
-	Nancy::SoundDescription _solveSound;
+	SoundDescription _solveSound;
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 
@@ -57,9 +57,10 @@ public:
 	Common::Array<byte> _currentSequence;
 	Time _solveSoundPlayTime;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "RotatingLockPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawDial(uint id);
 };

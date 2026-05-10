@@ -53,7 +53,16 @@ static void fChgMode(ArgArray args) {
 
 	if (args.size() == 3) {
 		Symbol *location = g_private->maps.lookupLocation(args[2].u.sym->name);
-		setSymbol(location, true);
+		g_private->setLocationAsVisited(location);
+
+		// set a game flag when visiting the police station.
+		if (!g_private->isDemo()) {
+			if (*(args[2].u.sym->name) == g_private->getPoliceStationLocation()) {
+				Common::String beenDowntownName = g_private->getBeenDowntownVariable();
+				Symbol *beenDowntown = g_private->maps.lookupVariable(&beenDowntownName);
+				setSymbol(beenDowntown, 1);
+			}
+		}
 	}
 
 	if (g_private->_mode == 0) {
@@ -61,7 +70,7 @@ static void fChgMode(ArgArray args) {
 		if (g_private->_noStopSounds) {
 			g_private->_noStopSounds = false;
 		} else {
-			g_private->stopSound(true);
+			g_private->stopSounds();
 		}
 	}
 }
@@ -122,7 +131,7 @@ static void fDiaryPageTurn(ArgArray args) {
 	if (args[0].u.val == 1) {
 		e.cursor = "kTurnRight";
 
-		if ((uint)g_private->_currentDiaryPage == g_private->_diaryPages.size() - 1) {
+		if (g_private->_currentDiaryPage >= (int)g_private->_diaryPages.size() - 1) {
 			e.nextSetting = g_private->getDiaryLastPageSetting();
 		}
 
@@ -130,7 +139,7 @@ static void fDiaryPageTurn(ArgArray args) {
 	} else {
 		e.cursor = "kTurnLeft";
 
-		if (g_private->_currentDiaryPage == 0) {
+		if (g_private->_currentDiaryPage <= 0) {
 			e.nextSetting = g_private->getDiaryTOCSetting();
 		}
 
@@ -170,13 +179,11 @@ static void fSyncSound(ArgArray args) {
 	Common::String s = args[0].u.str;
 
 	if (s != "\"\"") {
-		g_private->playSound(s, 1, true, false);
-		while (g_private->isSoundActive())
-			g_private->ignoreEvents();
+		g_private->drawScreen();
 
-		uint32 i = 100;
-		while (i--) // one second extra
-			g_private->ignoreEvents();
+		g_private->stopSounds();
+		g_private->playForegroundSound(s);
+		g_private->waitForSoundsToStop();
 	}
 }
 
@@ -222,48 +229,39 @@ static void fRestartGame(ArgArray args) {
 static void fPoliceBust(ArgArray args) {
 	// assert types
 	assert(args.size() == 1 || args.size() == 2);
-	g_private->_policeBustEnabled = args[0].u.val;
-	//debug("Number of clicks %d", g_private->computePoliceIndex());
-
-	if (g_private->_policeBustEnabled)
-		g_private->startPoliceBust();
-
-	if (args.size() == 2) {
-		if (args[1].u.val == 2) {
-			// Unclear what it means
-		} else if (args[1].u.val == 3) {
-			g_private->_nextSetting = g_private->getMainDesktopSetting();
-			g_private->_mode = 0;
-			g_private->_origin = Common::Point(kOriginZero[0], kOriginZero[1]);
-		} else
-			assert(0);
+	int mode = (args.size() == 2) ? args[1].u.val : 0;
+	debugC(1, kPrivateDebugScript, "PoliceBust(%d, %d)", args[0].u.val, mode);
+	
+	if (mode == 3) {
+		g_private->completePoliceBust();
+		return;
 	}
-	debugC(1, kPrivateDebugScript, "PoliceBust(%d, ..)", args[0].u.val);
-	debugC(1, kPrivateDebugScript, "WARNING: PoliceBust partially implemented");
+	if (mode == 2) {
+		g_private->wallSafeAlarm();
+		return;
+	}
+	if (mode == 1) {
+		// Not implemented: a special mode for police busts
+		// in Marlowe's office that was removed from the game.
+		return;
+	}
+
+	if (args[0].u.val) {
+		g_private->startPoliceBust();
+	} else {
+		g_private->stopPoliceBust();
+	}
 }
 
 static void fBustMovie(ArgArray args) {
 	// assert types
 	assert(args.size() == 1);
 	debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.sym->name->c_str());
-	uint policeIndex = g_private->maps.variables.getVal(g_private->getPoliceIndexVariable())->u.val;
-	int videoIndex = policeIndex / 2 - 1;
-	if (videoIndex < 0)
-		videoIndex = 0;
-	assert(videoIndex <= 5);
-	Common::String pv =
-		Common::String::format("po/animatio/spoc%02dxs.smk",
-							   kPoliceBustVideos[videoIndex]);
 
-	if (kPoliceBustVideos[videoIndex] == 2) {
-		Common::String s("global/transiti/audio/spoc02VO.wav");
-		g_private->playSound(s, 1, false, false);
-	}
-
-	g_private->_nextMovie = pv;
+	g_private->_nextMovie = g_private->_policeBustMovie;
 	g_private->_nextSetting = args[0].u.sym->name->c_str();
 
-	Common::String memoryPath = pv;
+	Common::String memoryPath = g_private->_policeBustMovie;
 	memoryPath.replace('/', '\\');
 	g_private->addMemory(memoryPath);
 }
@@ -294,6 +292,11 @@ static void fDossierChgSheet(ArgArray args) {
 	Common::String s(args[0].u.str);
 	MaskInfo m;
 
+	// do nothing if suspect only has one sheet
+	if (g_private->_dossiers[g_private->_dossierSuspect].page2.empty()) {
+		return;
+	}
+
 	int p = args[1].u.val;
 	int x = args[2].u.val;
 	int y = args[3].u.val;
@@ -318,6 +321,10 @@ static void fDossierPrevSuspect(ArgArray args) {
 	Common::String s(args[0].u.str);
 	MaskInfo m;
 
+	if (g_private->_dossierSuspect == 0) {
+		return;
+	}
+
 	int x = args[1].u.val;
 	int y = args[2].u.val;
 
@@ -334,6 +341,10 @@ static void fDossierNextSuspect(ArgArray args) {
 	assert(args.size() == 3);
 	Common::String s(args[0].u.str);
 	MaskInfo m;
+
+	if ((g_private->_dossierSuspect + 1) >= g_private->_dossiers.size()) {
+		return;
+	}
 
 	int x = args[1].u.val;
 	int y = args[2].u.val;
@@ -355,8 +366,9 @@ static void fNoStopSounds(ArgArray args) {
 
 static void fLoseInventory(ArgArray args) {
 	assert(args.size() == 0);
-	debugC(1, kPrivateDebugScript, "LoveInventory()");
-	g_private->inventory.clear();
+	debugC(1, kPrivateDebugScript, "LoseInventory()");
+
+	g_private->removeRandomInventory();
 }
 
 static void fInventory(ArgArray args) {
@@ -367,7 +379,14 @@ static void fInventory(ArgArray args) {
 	Datum e = args[3];
 	Datum i = args[4];
 	Datum c = args[5];
-	Datum snd = args[8];
+
+	Datum snd;
+	if (args.size() >= 9)
+		snd = args[8];
+	else {
+		snd.type = STRING;
+		snd.u.str = "\"\"";
+	}
 
 	assert(v1.type == STRING || v1.type == NAME);
 	assert(b1.type == STRING);
@@ -384,6 +403,10 @@ static void fInventory(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "Inventory(...)");
 	Common::String mask(b1.u.str);
 	if (mask != "\"\"") {
+		if (bmp != "\"\"" && g_private->inInventory(bmp)) {
+			return;
+		}
+
 		MaskInfo m;
 		m.surf = g_private->loadMask(mask, 0, 0, true);
 
@@ -411,26 +434,21 @@ static void fInventory(ArgArray args) {
 		g_private->_toTake = true;
 		Common::String sound(snd.u.str);
 
-		if (sound != "\"\"") {
-			g_private->playSound(sound, 1, false, false);
-		} else {
-			g_private->playSound(g_private->getTakeLeaveSound(), 1, false, false);
+		if (sound == "\"\"") {
+			sound = g_private->getTakeLeaveSound();
 		}
+		g_private->playForegroundSound(g_private->_takeLeaveSound, sound);
 	} else {
+		Common::String flag;
 		if (v1.type == NAME) {
-			v1.u.sym = g_private->maps.lookupVariable(v1.u.sym->name);
 			if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
-				v1.u.sym->u.val = 0;
-				if (g_private->inInventory(bmp))
-					g_private->inventory.remove(bmp);
+				g_private->removeInventory(bmp);
 			} else {
-				v1.u.sym->u.val = 1;
-				if (!g_private->inInventory(bmp))
-					g_private->inventory.push_back(bmp);
+				flag = *(v1.u.sym->name);
+				g_private->addInventory(bmp, flag);
 			}
 		} else {
-			if (!g_private->inInventory(bmp))
-				g_private->inventory.push_back(bmp);
+			g_private->addInventory(bmp, flag);
 		}
 		if (v2.type == NAME) {
 			v2.u.sym = g_private->maps.lookupVariable(v2.u.sym->name);
@@ -482,7 +500,7 @@ static void fSetModifiedFlag(ArgArray args) {
 static void fPaperShuffleSound(ArgArray args) {
 	assert(args.size() == 0);
 	debugC(1, kPrivateDebugScript, "PaperShuffleSound()");
-	g_private->playSound(g_private->getPaperShuffleSound(), 1, false, false);
+	g_private->playForegroundSound(g_private->getPaperShuffleSound());
 }
 
 static void fSoundEffect(ArgArray args) {
@@ -490,9 +508,9 @@ static void fSoundEffect(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
 	Common::String s(args[0].u.str);
 	if (s != "\"\"") {
-		g_private->playSound(s, 1, false, false);
+		g_private->playForegroundSound(s);
 	} else {
-		g_private->stopSound(true);
+		g_private->stopSounds();
 	}
 }
 
@@ -505,18 +523,18 @@ static void fSound(ArgArray args) {
 		int c = args[3].u.val;
 
 		if (!b1 && !b2 && c == 1) {
-			g_private->stopSound(true);
+			g_private->stopSounds();
 		} else if (!b1 && !b2 && c == 2) {
-			g_private->stopSound(false);
+			g_private->stopForegroundSounds();
 		} else
 			assert(0);
 	}
 
 	Common::String s(args[0].u.str);
 	if (s != "\"\"") {
-		g_private->playSound(s, 1, false, false);
+		g_private->playForegroundSound(s);
 	} else {
-		g_private->stopSound(true);
+		g_private->stopSounds();
 	}
 }
 
@@ -527,9 +545,9 @@ static void fLoopedSound(ArgArray args) {
 	Common::String s(args[0].u.str);
 
 	if (s != "\"\"") {
-		g_private->playSound(s, 0, false, true);
+		g_private->playBackgroundSound(s);
 	} else {
-		g_private->stopSound(true);
+		g_private->stopSounds();
 	}
 }
 
@@ -642,47 +660,64 @@ static void fMaskDrawn(ArgArray args) {
 	_fMask(args, true);
 }
 
-static void fAddSound(Common::String sound, const char *t, Symbol *flag = nullptr, int val = 0) {
-	if (sound == "\"\"")
-		return;
-
-	if (strcmp(t, "AMRadioClip") == 0)
-		g_private->_AMRadio.push_back(sound);
-	else if (strcmp(t, "PoliceClip") == 0)
-		g_private->_policeRadio.push_back(sound);
-	else if (strcmp(t, "PhoneClip") == 0) {
-		// This condition will avoid adding the same phone call twice,
-		// it is unclear why this could be useful, but it looks like a bug
-		// in the original scripts
-		if (g_private->_playedPhoneClips.contains(sound))
-			return;
-
-		g_private->_playedPhoneClips.setVal(sound, true);
-		PhoneInfo p;
-		p.sound = sound;
-		p.flag = flag;
-		p.val = val;
-		g_private->_phone.push_back(p);
-	} else
-		error("error: invalid sound type %s", t);
-}
-
 static void fAMRadioClip(ArgArray args) {
 	assert(args.size() <= 4);
-	fAddSound(args[0].u.str, "AMRadioClip");
+	debugC(1, kPrivateDebugScript, "AMRadioClip(%s,%d,...)", args[0].u.str, args[1].u.val);
+
+	const char *name = args[0].u.str;
+	if (strcmp(name, "\"\"") == 0) {
+		int clipCount = args[1].u.val;
+		g_private->initializeAMRadioChannels(clipCount);
+		return;
+	}
+
+	int priority = args[1].u.val;
+
+	// The third and fourth parameters are numbers followed by an optional '+' character.
+	// Each number is a priority and the '+' indicates that it is to be treated as a range
+	// instead of the default behavior of requiring an exact match.
+	int disabledPriority1 = (args.size() >= 3) ? args[2].u.val : 0;
+	bool exactPriorityMatch1 = (args.size() >= 3) ? (args[2].type != NUM_PLUS) : true;
+	int disabledPriority2 = (args.size() >= 4) ? args[3].u.val : 0;
+	bool exactPriorityMatch2 = (args.size() >= 4) ? (args[3].type != NUM_PLUS) : true;
+
+	Common::String flagName = (args.size() >= 6) ? *(args[4].u.sym->name) : "";
+	int flagValue = (args.size() >= 6) ? args[5].u.val : 0;
+
+	g_private->addRadioClip(g_private->_AMRadio, name, priority,
+		disabledPriority1, exactPriorityMatch1,
+		disabledPriority2, exactPriorityMatch2,
+		flagName, flagValue);
 }
 
 static void fPoliceClip(ArgArray args) {
 	assert(args.size() <= 4 || args.size() == 6);
-	fAddSound(args[0].u.str, "PoliceClip");
-	// In the original, the variable is updated when the clip is played, but here we just update
-	// the variable when the clip is added to play. The effect for the player, is mostly the same.
-	if (args.size() == 6) {
-		assert(args[4].type == NAME);
-		assert(args[5].type == NUM);
-		Symbol *flag = g_private->maps.lookupVariable(args[4].u.sym->name);
-		setSymbol(flag, args[5].u.val);
+	debugC(1, kPrivateDebugScript, "PoliceClip(%s,%d,...)", args[0].u.str, args[1].u.val);
+
+	const char *name = args[0].u.str;
+	if (strcmp(name, "\"\"") == 0) {
+		g_private->initializePoliceRadioChannels();
+		return;
 	}
+	
+	int priority = args[1].u.val;
+	if (strcmp(name, "\"DISABLE_ONLY\"") == 0) {
+		g_private->disableRadioClips(g_private->_policeRadio, priority);
+		return;
+	}
+
+	// The third and fourth parameters are numbers followed by an optional '+' character.
+	// Each number is a priority and the '+' indicates that it is to be treated as a range
+	// instead of the default behavior of requiring an exact match.
+	int disabledPriority1 = (args.size() >= 3) ? args[2].u.val : 0;
+	bool exactPriorityMatch1 = (args.size() >= 3) ? (args[2].type != NUM_PLUS) : true;
+	int disabledPriority2 = (args.size() >= 4) ? args[3].u.val : 0;
+	bool exactPriorityMatch2 = (args.size() >= 4) ? (args[3].type != NUM_PLUS) : true;
+
+	g_private->addRadioClip(g_private->_policeRadio, name, priority,
+		disabledPriority1, exactPriorityMatch1,
+		disabledPriority2, exactPriorityMatch2,
+		"", 0);
 }
 
 static void fPhoneClip(ArgArray args) {
@@ -690,17 +725,19 @@ static void fPhoneClip(ArgArray args) {
 		debugC(1, kPrivateDebugScript, "Unimplemented PhoneClip special case");
 		return;
 	}
-	int i = args[2].u.val;
-	int j = args[3].u.val;
-	Symbol *flag = g_private->maps.lookupVariable(args[4].u.sym->name);
+	assert(args.size() == 6);
+	debugC(1, kPrivateDebugScript, "PhoneClip(%s,%d,%d,%d,%s,%d)",
+		args[0].u.str, args[1].u.val, args[2].u.val, args[3].u.val, args[4].u.sym->name->c_str(), args[5].u.val);
 
-	if (i == j)
-		fAddSound(args[0].u.str, "PhoneClip", flag, args[5].u.val);
-	else {
-		assert(i < j);
-		Common::String sound = g_private->getRandomPhoneClip(args[0].u.str, i, j);
-		fAddSound(sound, "PhoneClip", flag, args[5].u.val);
-	}
+	const char *name = args[0].u.str;
+	bool once = (args[1].u.val != 0);
+	int startIndex = args[2].u.val;
+	int endIndex = args[3].u.val;
+	Common::String *flagName = args[4].u.sym->name;
+	int flagValue = args[5].u.val;
+	assert(startIndex <= endIndex);
+
+	g_private->addPhone(name, once, startIndex, endIndex, *flagName, flagValue);
 }
 
 static void fSoundArea(ArgArray args) {
@@ -742,7 +779,7 @@ static void fSoundArea(ArgArray args) {
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
 		g_private->_phoneArea = m;
-		g_private->_masks.push_front(m);
+		g_private->initializePhoneOnDesktop();
 	} else
 		error("Invalid type for SoundArea");
 }
@@ -768,10 +805,13 @@ static void fTimer(ArgArray args) {
 	else
 		debugC(1, kPrivateDebugScript, "Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
-	int32 delay = 1000000 * args[0].u.val;
+	int32 delay = args[0].u.val * 1000; // seconds => milliseconds
 	if (delay > 0) {
-		if (!g_private->installTimer(delay, args[1].u.sym->name))
-			error("Timer installation failed!");
+		Common::String skipSetting;
+		if (args.size() == 3) {
+			skipSetting = *(args[2].u.sym->name);
+		}
+		g_private->setTimer(delay, *(args[1].u.sym->name), skipSetting);
 	} else if (delay == 0) {
 		g_private->_nextSetting = *(args[1].u.sym->name);
 	} else {

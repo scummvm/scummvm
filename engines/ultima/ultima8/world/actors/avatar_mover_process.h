@@ -25,7 +25,6 @@
 #include "ultima/ultima8/metaengine.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {
 namespace Ultima8 {

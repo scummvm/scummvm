@@ -34,10 +34,12 @@
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
 #include "tinsel/palette.h"
+#include "tinsel/psx_japan_font.h"
 #include "tinsel/sched.h"
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
+#include "tinsel/strres.h"
 #include "tinsel/noir/lzss.h"
 
 namespace Tinsel {
@@ -66,7 +68,8 @@ enum {
 #define MEMFLAGS(x) ((TinselVersion == 3) ? x->flags2 : x->filesize)
 #define MEMFLAGSET(x, mask) ((TinselVersion == 3) ? x->flags2 |= mask : x->filesize |= mask)
 
-Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr) {
+Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr),
+	_dw1TitleSceneHandle(0) {
 }
 
 Handle::~Handle() {
@@ -163,6 +166,19 @@ void Handle::SetupHandleTable() {
 
 			// make sure memory allocated
 			assert(pH->_node);
+		}
+	}
+
+	// Detect DW1 title scene handle for introduction skipping
+	if (TinselVersion == 1) {
+		// PSX versions swapped the title and turtle scene order
+		const char *titleSceneName = TinselV1PSX ? "turtle." : "title.";
+		const int sceneNameLength = strlen(titleSceneName);
+		for (i = 0; i < _numHandles; i++) {
+			if (!scumm_strnicmp(_handleTable[i].szName, titleSceneName, sceneNameLength)) {
+				_dw1TitleSceneHandle = i << SCNHANDLE_SHIFT;
+				break;
+			}
 		}
 	}
 }
@@ -314,7 +330,8 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 FONT *Handle::GetFont(SCNHANDLE offset) {
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
-	const uint32 size = ((TinselVersion == 3) ? 12 * 4 : 11 * 4) + 300 * 4;	// FONT struct size
+	const uint32 characterCount = GetFontCharacterCount(data);
+	const uint32 size = ((TinselVersion == 3) ? 12 * 4 : 11 * 4) + characterCount * 4;	// FONT struct size
 	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
 
 	FONT *font = new FONT();
@@ -330,12 +347,32 @@ FONT *Handle::GetFont(SCNHANDLE offset) {
 	font->fontInit.objX = stream->readSint32();
 	font->fontInit.objY = stream->readSint32();
 	font->fontInit.objZ = stream->readSint32();
-	for (int i = 0; i < 300; i++)
-		font->fontDef[i] = stream->readUint32();
+	font->fontDef.resize(characterCount);
+	if (!TinselV1PSXJapan) {
+		for (uint32 i = 0; i < characterCount; i++) {
+			font->fontDef[i] = stream->readUint32();
+		}
+	} else {
+		for (uint32 i = 0; i < characterCount; i++) {
+			font->fontDef[i] = GetPsxJapanFontCharHandle(i);
+		}
+	}
 
 	delete stream;
 
 	return font;
+}
+
+uint32 Handle::GetFontCharacterCount(const byte *fontData) const {
+	// Multibyte fonts have variable numbers of characters, others have 256.
+	if (!g_bMultiByte) {
+		return 256;
+	} else {
+		// The first entry in the multibyte font character table is the
+		// maximum character index, instead of an image handle.
+		uint32 maxCharIndex = READ_32(fontData + 44);
+		return maxCharIndex + 1;
+	}
 }
 
 /**
@@ -374,6 +411,10 @@ PALETTE *Handle::GetPalette(SCNHANDLE offset) {
  * @return IMAGE structure
 */
 const IMAGE *Handle::GetImage(SCNHANDLE offset) {
+	if (TinselV1PSXJapan && IsPsxJapanFontChar(offset)) {
+		return GetPsxJapanFontCharImage(offset);
+	}
+
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
 	const uint32 size = 16; // IMAGE struct size
@@ -480,7 +521,7 @@ const PROCESS_STRUC *Handle::GetProcessData(SCNHANDLE offset, uint32 count) {
  */
 byte *Handle::LockMem(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
-	//debug("Locking offset of type %d (%x), offset %d, handle %d", (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, offset & OFFSETMASK, handle);
+	debug(8, "Locking offset of type %ld (%lx), offset %ld, handle %d", (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, offset & OFFSETMASK, handle);
 	MEMHANDLE *pH;			// points to table entry
 
 	// range check the memory handle
@@ -592,6 +633,28 @@ bool Handle::ValidHandle(SCNHANDLE offset) {
 	return (pH->filesize & FSIZE_MASK) != 8;
 }
 #endif
+
+/**
+ * Get number of scenes. Used by debugger.
+ */
+int Handle::GetSceneCount() {
+	return _numHandles;
+}
+
+/**
+ * Get scene file name. Used by debugger.
+ */
+Common::String Handle::GetSceneName(int index) {
+	if (0 <= index && index < (int)_numHandles) {
+		// extract and zero terminate the filename
+		const MEMHANDLE *handle = &_handleTable[index];
+		char szFilename[sizeof(handle->szName) + 1];
+		memcpy(szFilename, handle->szName, sizeof(handle->szName));
+		szFilename[sizeof(handle->szName)] = 0;
+		return szFilename;
+	}
+	return "";
+}
 
 /**
  * TouchMem

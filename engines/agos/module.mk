@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	drivers/accolade/driverfile.o \
 	drivers/accolade/pc98.o \
 	drivers/accolade/mt32.o \
+	drivers/elvira_atarist.o \
 	drivers/simon1/adlib.o \
 	agos.o \
 	charset.o \

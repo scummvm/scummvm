@@ -96,7 +96,7 @@ void drawCharIntern(byte *ptr, uint pitch, const byte *src, int h, int width, in
 				data = *src++;
 
 			if (x >= minX && x <= maxX && (data & 0x80))
-				dst[x] = color;
+				dst[x - minX] = color;
 
 			data <<= 1;
 		}

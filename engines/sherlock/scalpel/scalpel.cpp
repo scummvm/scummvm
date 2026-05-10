@@ -21,7 +21,6 @@
 
 #include "engines/util.h"
 #include "gui/saveload.h"
-#include "common/translation.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
@@ -1247,7 +1246,7 @@ void ScalpelEngine::flushBrumwellMirror() {
 
 
 void ScalpelEngine::showScummVMSaveDialog() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
@@ -1260,7 +1259,7 @@ void ScalpelEngine::showScummVMSaveDialog() {
 }
 
 void ScalpelEngine::showScummVMRestoreDialog() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {

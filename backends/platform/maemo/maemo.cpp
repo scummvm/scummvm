@@ -158,15 +158,15 @@ Common::KeymapArray OSystem_SDL_Maemo::getGlobalKeymaps() {
 	act->setCustomBackendActionEvent(Maemo::kEventClickMode);
 	globalMap->addAction(act);
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	globalMap->addAction(act);
 
-	act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+	act = new Action(kStandardActionMiddleClick, _("Middle click"));
 	act->setMiddleClickEvent();
 	globalMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	globalMap->addAction(act);
 

@@ -29,8 +29,8 @@
 
 namespace CreateProjectTool {
 
-CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version)
-	: ProjectProvider(global_warnings, project_warnings, global_errors, version) {
+CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors)
+	: ProjectProvider(global_warnings, project_warnings, global_errors) {
 }
 
 const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature, SDLVersion useSDL) const {
@@ -68,11 +68,11 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("mpc", "mpcdec").Libraries("mpcdec")
 	};
 
-	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
-		bool matchingSDL = (s_libraries[i].sdlVersion == kSDLVersionAny)
-		                   || (s_libraries[i].sdlVersion == useSDL);
-		if (std::strcmp(feature, s_libraries[i].feature) == 0 && matchingSDL) {
-			return &s_libraries[i];
+	for (const auto &library : s_libraries) {
+		bool matchingSDL = (library.sdlVersion == kSDLVersionAny)
+		                   || (library.sdlVersion == useSDL);
+		if (std::strcmp(feature, library.feature) == 0 && matchingSDL) {
+			return &library;
 		}
 	}
 
@@ -90,22 +90,20 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 
 	workspace << R"EOS(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11) # Globally enable C++11
-string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-if(NOT uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-	add_definitions(-DRELEASE_BUILD -UNDEBUG)
+add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:RELEASE_BUILD>)
+add_compile_options($<$<NOT:$<CONFIG:Debug>>:-UNDEBUG>)
 
-	# Also remove /D NDEBUG to avoid MSVC warnings about conflicting defines.
-	foreach (flags_var_to_scrub
-			CMAKE_CXX_FLAGS_RELEASE
-			CMAKE_CXX_FLAGS_RELWITHDEBINFO
-			CMAKE_CXX_FLAGS_MINSIZEREL
-			CMAKE_C_FLAGS_RELEASE
-			CMAKE_C_FLAGS_RELWITHDEBINFO
-			CMAKE_C_FLAGS_MINSIZEREL)
-		string (REGEX REPLACE "(^| )[/-]D *NDEBUG($| )" " "
-			"${flags_var_to_scrub}" "${${flags_var_to_scrub}}")
-	endforeach()
-endif()
+# Remove /D NDEBUG to avoid MSVC warnings about conflicting defines.
+foreach (flags_var_to_scrub
+		CMAKE_CXX_FLAGS_RELEASE
+		CMAKE_CXX_FLAGS_RELWITHDEBINFO
+		CMAKE_CXX_FLAGS_MINSIZEREL
+		CMAKE_C_FLAGS_RELEASE
+		CMAKE_C_FLAGS_RELWITHDEBINFO
+		CMAKE_C_FLAGS_MINSIZEREL)
+	string (REGEX REPLACE "(^| )[/-]D *NDEBUG($| )" " "
+		"${flags_var_to_scrub}" "${${flags_var_to_scrub}}")
+endforeach()
 
 find_package(PkgConfig QUIET)
 include(CMakeParseArguments)
@@ -198,8 +196,8 @@ if (TARGET SDL2::SDL2)
 endif()
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Explicitly support MacPorts (hopefully harmless on other platforms)
-link_directories(/opt/local/lib)
+# Explicitly support MacPorts and Homebrew (hopefully harmless on other platforms)
+link_directories(/opt/local/lib /opt/homebrew/lib)
 
 )";
 

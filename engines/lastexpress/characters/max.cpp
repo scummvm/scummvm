@@ -132,7 +132,7 @@ void LogicManager::CONS_Max_DoSeqOtis(CONS_PARAMS) {
 
 void LogicManager::HAND_Max_DoSeqOtis(HAND_PARAMS) {
 	switch (msg->action) {
-	case 2:
+	case 3:
 		getCharacter(kCharacterMax).currentCall--;
 		_engine->getMessageManager()->setMessageHandle(kCharacterMax, _functionsMax[getCharacter(kCharacterMax).callbacks[getCharacter(kCharacterMax).currentCall]]);
 		fedEx(kCharacterMax, kCharacterMax, 18, 0);

@@ -98,16 +98,20 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		kernel_trigger_dispatchx(myMessage);
 }
 
-bool Walker::walk_load_walker_and_shadow_series() {
+void Walker::walk_load_walker_and_shadow_series() {
 	switch (_G(player).walker_type) {
 	case 0:
-		return ws_walk_load_walker_series(RIPLEY_SERIES_DIRS, RIPLEY_SERIES, true) &&
-			ws_walk_load_shadow_series(RIPLEY_SHADOWS_DIRS, RIPLEY_SHADOWS);
+		ws_walk_load_walker_series(RIPLEY_SERIES_DIRS, RIPLEY_SERIES, false);
+		ws_walk_load_shadow_series(RIPLEY_SHADOWS_DIRS, RIPLEY_SHADOWS);
+		break;
+
 	case 1:
-		return ws_walk_load_walker_series(SAFARI_SERIES_DIRS, SAFARI_SERIES, true) &&
-			ws_walk_load_shadow_series(SAFARI_SHADOWS_DIRS, SAFARI_SHADOWS);
+		ws_walk_load_walker_series(SAFARI_SERIES_DIRS, SAFARI_SERIES, false);
+		ws_walk_load_shadow_series(SAFARI_SHADOWS_DIRS, SAFARI_SHADOWS);
+		break;
+		
 	default:
-		return false;
+		error_show(FL, "walk_load_walker_and_shadow_series");
 	}
 }
 
@@ -123,7 +127,7 @@ machine *Walker::walk_initialize_walker() {
 	_G(globals)[GLB_TEMP_3] = *RIPLEY_SHADOWS_DIRS << 24;	// Starting series hash of default walker shadows
 
 	// initialize with bogus data (this is for the real walker)
-	int32 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	const int32 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 	_G(globals)[GLB_TEMP_4] = 320 << 16;
 	_G(globals)[GLB_TEMP_5] = 400 << 16;
 	_G(globals)[GLB_TEMP_6] = s;

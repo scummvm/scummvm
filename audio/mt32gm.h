@@ -111,6 +111,7 @@
 class MidiDriver_MT32GM : public MidiDriver_Multisource {
 public:
 	static const byte MT32_DEFAULT_INSTRUMENTS[8];
+	static const int16 MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS[16];
 	static const byte MT32_DEFAULT_PANNING[8];
 	static const uint8 MT32_DEFAULT_CHANNEL_VOLUME = 102;
 	static const uint8 GM_DEFAULT_CHANNEL_VOLUME = 100;

@@ -36,7 +36,7 @@ void mem_stash_init(int16 num_types);
  */
 void mem_stash_shutdown();
 
-bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const Common::String &name);
+void mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const Common::String &name);
 
 /**
  * To free a memory block whose size has been previously registered.

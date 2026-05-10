@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_USECODE_REMORSEINTRINSICS_H
 #define ULTIMA8_USECODE_REMORSEINTRINSICS_H
 
+#include "ultima/ultima8/gumps/weasel_gump.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/world/item.h"
 

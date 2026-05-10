@@ -1520,10 +1520,10 @@ void Menu::updateSettings() {
 		animationsSpeed = "Vitesse d'animations";
 		break;
 	case Common::IT_ITA:
-		animationsSpeed = "Velocità di animazioni";
+		animationsSpeed = "Velocit\xc3\xa0 di animazioni";
 		break;
 	case Common::PL_POL:
-		animationsSpeed = "Szybkość animacji";
+		animationsSpeed = "Szybko\xc5\x9b\xc4\x87 animacji";
 		break;
 	case Common::RU_RUS:
 		animationsSpeed = "\x91\xaa\xae\xe0\xae\xe1\xe2\xec\x20\xa0\xad\xa8\xac\xa0\xe6\xa8\xa9";

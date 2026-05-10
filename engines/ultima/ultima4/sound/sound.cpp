@@ -55,7 +55,7 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 	_soundFilenames.reserve(SOUND_MAX);
 	_sounds.resize(SOUND_MAX);
 
-	Std::vector<ConfigElement> soundConfs = config->getElement("sound").getChildren();
+	Common::Array<ConfigElement> soundConfs = config->getElement("sound").getChildren();
 	for (const auto &s : soundConfs) {
 		if (s.getName() != "track")
 			continue;

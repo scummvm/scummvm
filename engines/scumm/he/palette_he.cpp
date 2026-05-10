@@ -261,18 +261,22 @@ void ScummEngine_v99he::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		g = *ptr++;
 		b = *ptr++;
 
-		if (i == 15 || !(i > 10 && i < 246) || r < 252 || g < 252 || b < 252) {
-			*dest++ = r;
-			*dest++ = g;
-			*dest++ = b;
-
-			if (_game.features & GF_16BIT_COLOR) {
-				WRITE_LE_UINT16(_hePalettes + 2048 + i * 2, get16BitColor(r, g, b));
-			} else {
-				_hePalettes[1792 + i] = i;
-			}
-		} else {
+		if (i != 15 && i > 10 && i < 246 && r >= 252 && g >= 252 && b >= 252) {
 			dest += 3;
+		} else {
+			if (_game.heversion < 80 || ((i == 15) || !(r >= 252 && g >= 252 && b >= 252))) {
+				*dest++ = r;
+				*dest++ = g;
+				*dest++ = b;
+
+				if (_game.features & GF_16BIT_COLOR) {
+					WRITE_LE_UINT16(_hePalettes + 2048 + i * 2, get16BitColor(r, g, b));
+				} else {
+					_hePalettes[1792 + i] = i;
+				}
+			} else {
+				dest += 3;
+			}
 		}
 	}
 

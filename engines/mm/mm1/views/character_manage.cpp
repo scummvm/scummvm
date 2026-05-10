@@ -69,7 +69,7 @@ bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
 			redraw();
 		}
 		if (msg.keycode == Common::KEYCODE_RETURN || _newName.size() == 15) {
-			strncpy(g_globals->_currCharacter->_name, _newName.c_str(), 16);
+			Common::strlcpy(g_globals->_currCharacter->_name, _newName.c_str(), 16);
 			_state = DISPLAY;
 			redraw();
 		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&

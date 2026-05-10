@@ -920,20 +920,20 @@ TODO (medusa quest):
 
 		g_vm->getHeroBelt()->setColour(HeroBelt::kCool);
 
-		for (unsigned i = 0; i < sizeof(ambientsLeft) / sizeof(ambientsLeft[0]); i++) {
+		for (unsigned i = 0; i < ARRAYSIZE(ambientsLeft); i++) {
 			AmbientAnim(ambientsLeft[i].image, "", ambientsLeft[i].zVal,
 				    ambientsLeft[i].minint, ambientsLeft[i].maxint,
 				    AmbientAnim::DISAPPEAR, Common::Point(0, 0), AmbientAnim::PAN_LEFT).start();
 		}
 
-		for (unsigned i = 0; i < sizeof(ambientsLeftSnakesAndRats) / sizeof(ambientsLeftSnakesAndRats[0]); i++) {
+		for (unsigned i = 0; i < ARRAYSIZE(ambientsLeftSnakesAndRats); i++) {
 			AmbientAnim(ambientsLeftSnakesAndRats[i].image, ambientsLeftSnakesAndRats[i].sound, ambientsLeftSnakesAndRats[i].zVal,
 				    ambientsLeftSnakesAndRats[i].minint, ambientsLeftSnakesAndRats[i].maxint,
 				    ambientsLeftSnakesAndRats[i].keep ? AmbientAnim::KEEP_LOOP : AmbientAnim::DISAPPEAR,
 				    Common::Point(0, 0), AmbientAnim::PAN_LEFT).start();
 		}
 
-		for (unsigned i = 0; i < sizeof(ambientsRight) / sizeof(ambientsRight[0]); i++) {
+		for (unsigned i = 0; i < ARRAYSIZE(ambientsRight); i++) {
 			AmbientAnim(ambientsRight[i].image, "", ambientsRight[i].zVal,
 				    ambientsRight[i].minint, ambientsRight[i].maxint,
 				    AmbientAnim::KEEP_LOOP, kOffsetRightRoom, AmbientAnim::PAN_RIGHT).start();

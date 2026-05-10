@@ -194,4 +194,93 @@ Common::String objectType2str(int fl) {
 	return res;
 }
 
+Common::String paletteType2str(PaletteType value) {
+	switch (value) {
+	case kClutSystemMac:
+		return "systemMac";
+		break;
+	case kClutSystemWin:
+		return "systemWinDir4";
+		break;
+	case kClutSystemWinD5:
+		return "systemWin";
+		break;
+	case kClutGrayscale:
+		return "grayscale";
+		break;
+	case kClutMetallic:
+		return "metallic";
+		break;
+	case kClutNTSC:
+		return "NTSC";
+		break;
+	case kClutPastels:
+		return "pastels";
+		break;
+	case kClutRainbow:
+		return "rainbow";
+		break;
+	case kClutVivid:
+		return "vivid";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
+Common::String textAlignType2str(TextAlignType value) {
+	switch (value) {
+	case kTextAlignLeft:
+		return "left";
+		break;
+	case kTextAlignCenter:
+		return "center";
+		break;
+	case kTextAlignRight:
+		return "right";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
+Common::String shapeType2str(ShapeType value) {
+	switch (value) {
+	case kShapeRectangle:
+		return "rect";
+		break;
+	case kShapeRoundRect:
+		return "roundRect";
+		break;
+	case kShapeOval:
+		return "oval";
+		break;
+	case kShapeLine:
+		return "line";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
+Common::String textType2str(TextType value) {
+	switch (value) {
+	case kTextTypeAdjustToFit:
+		return "adjust";
+		break;
+	case kTextTypeScrolling:
+		return "scroll";
+		break;
+	case kTextTypeFixed:
+		return "fixed";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
 } // End of namespace Director

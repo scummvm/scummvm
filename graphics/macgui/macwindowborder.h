@@ -70,6 +70,7 @@ struct BorderOffsets {
 	int resizeButtonHeight;
 	int upperScrollHeight;
 	int lowerScrollHeight;
+	int titlePadding;
 };
 
 /**
@@ -140,7 +141,7 @@ public:
 	 * @param border type that you want to draw
 	 * @param wm The window manager.
 	 */
-	void blitBorderInto(ManagedSurface &destination, uint32 flags);
+	void blitBorderInto(ManagedSurface &destination, uint32 flags, bool maskOnly = false, uint32 maskColor = 0);
 
 	void setTitle(const Common::String& title, int width);
 

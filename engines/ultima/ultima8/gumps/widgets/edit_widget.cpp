@@ -20,18 +20,18 @@
  */
 
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
-#include "ultima/ultima8/gfx/fonts/rendered_text.h"
-#include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/gfx/fonts/font_manager.h"
-#include "common/system.h"
+
 #include "common/events.h"
+#include "common/system.h"
+#include "ultima/ultima8/gfx/fonts/font_manager.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget)
 
-EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont, int font,
+EditWidget::EditWidget(int x, int y, Common::String txt, bool gamefont, int font,
 					   int w, int h, unsigned int maxlength, bool multiline)
 	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont), _fontNum(font),
 	  _maxLength(maxlength), _multiLine(multiline),
@@ -66,7 +66,7 @@ Font *EditWidget::getFont() const {
 		return FontManager::get_instance()->getTTFont(_fontNum);
 }
 
-void EditWidget::setText(const Std::string &t) {
+void EditWidget::setText(const Common::String &t) {
 	_text = t;
 	_cursor = _text.size();
 	delete _cachedText;
@@ -78,7 +78,7 @@ void EditWidget::ensureCursorVisible() {
 	_cursorChanged = g_system->getMillis();
 }
 
-bool EditWidget::textFits(Std::string &t) {
+bool EditWidget::textFits(Common::String &t) {
 	Font *font = getFont();
 
 	unsigned int remaining;
@@ -148,7 +148,7 @@ void EditWidget::renderText() {
 		                               max_width, max_height,
 		                               Font::TEXT_LEFT,
 		                               false, false,
-		                               cv ? _cursor : Std::string::npos);
+		                               cv ? _cursor : Common::String::npos);
 
 		// Trim text to fit
 		if (remaining < _text.size()) {
@@ -252,7 +252,7 @@ bool EditWidget::OnTextInput(int unicode) {
 		c = reverse_encoding[unicode];
 	if (!c) return true;
 
-	Std::string newtext = _text;
+	Common::String newtext = _text;
 	newtext.insertChar(c, _cursor);
 
 	if (textFits(newtext)) {

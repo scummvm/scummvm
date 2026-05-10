@@ -77,6 +77,7 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 		_wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7), _gamma(1.0),
 		_borderColor(0), _borderSave(0),
 		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
+		_windowColorOverride(false),
 		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
 		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
 		_scrollWidth(0), _safeClicks(false) {
@@ -192,8 +193,24 @@ void Conf::synchronize() {
 
 	syncAsColor("bordercolor", _borderColor);
 	syncAsColor("bordercolor", _borderSave);
+	syncAsBool("bordercolor_override", _borderColorOverride);
+
+	if (_isLoading && !_borderColorOverride && _borderColor != parseColor(WHITE))
+		_borderColorOverride = true;
+
+	if (_borderColorOverride)
+		Windows::_overrideBgSet = true;
+
+	syncAsBool("windowcolor_override", _windowColorOverride);
 	syncAsColor("windowcolor", _windowColor);
 	syncAsColor("windowcolor", _windowSave);
+
+	// if we read a colour but no explicit override flag was present, pretend the user meant to force that colour.
+	if (_isLoading && !_windowColorOverride && _windowColor != parseColor(WHITE))
+		_windowColorOverride = true;
+
+	if (_windowColorOverride)
+		Windows::_overrideBgSet = true;
 
 	syncAsColor("caretcolor", _propInfo._caretColor);
 	syncAsInt("caretshape", _propInfo._caretShape);
@@ -371,6 +388,11 @@ void Conf::syncAsFont(const Common::String &name, FACES &val) {
 		val = Screen::getFontId(ConfMan.get(name));
 	else if (!_isLoading)
 		ConfMan.set(name, Screen::getFontName(val));
+}
+
+Conf::~Conf() {
+    if (g_conf == this)
+        g_conf = nullptr;
 }
 
 } // End of namespace Glk

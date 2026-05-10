@@ -73,8 +73,6 @@ class State;
 
 class NancyEngine : public Engine {
 public:
-	friend class NancyConsole;
-
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
 
@@ -83,6 +81,7 @@ public:
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
 
+	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;

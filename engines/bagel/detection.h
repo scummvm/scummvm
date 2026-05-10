@@ -26,6 +26,10 @@
 
 namespace Bagel {
 
+enum BagelDebugChannels {
+	kDebugRandom = 1
+};
+
 extern const PlainGameDescriptor bagelGames[];
 
 extern const ADGameDescription gameDescriptions[];
@@ -35,6 +39,7 @@ extern const ADGameDescription gameDescriptions[];
 } // End of namespace Bagel
 
 class BagelMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+	static const DebugChannelDef debugFlagList[];
 
 public:
 	BagelMetaEngineDetection();
@@ -50,6 +55,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Copyright(C) 1996 Boffo Games, Inc.";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

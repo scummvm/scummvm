@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_AUDIO_SONARCAUDIOSAMPLE_H
 #define ULTIMA8_AUDIO_SONARCAUDIOSAMPLE_H
 
+#include "common/scummsys.h"
 #include "ultima/ultima8/audio/audio_sample.h"
 
 namespace Ultima {

@@ -20,9 +20,10 @@
  */
 
 #include "m4/riddle/rooms/section8/room809.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -168,7 +169,7 @@ void Room809::parser() {
 			int32 destY;
 			player_update_info(_G(my_walker), &_G(player_info));
 			if (_G(player_info).x >= _G(player).click_x) {
-				destX = imath_min(145, _G(player).x + 20);
+				destX = imath_min(_G(player_info).x, _G(player).click_x + 20);
 				destX = imath_max(destX, 145);
 				if (_G(player).click_y < 315) {
 					if (_playerFacing < 0)
@@ -210,7 +211,7 @@ void Room809::parser() {
 
 	case 1: {
 		player_update_info();
-		if (_G(player_info).x < 1340 && -_G(game_buff_ptr)->x1 < 1259) {
+		if (_G(player_info).x >= 1340 && -_G(game_buff_ptr)->x1 < 1259) {
 			g_engine->camera_shift_xy(1259, 0);
 		}
 
@@ -567,7 +568,7 @@ void Room809::parser() {
 		break;
 
 	case 58:
-		_G(game).new_room = 810;
+		_G(game).setRoom(810);
 		break;
 
 	case 59:
@@ -613,7 +614,7 @@ void Room809::parser() {
 		break;
 
 	case 67:
-		_G(game).new_room = 808;
+		_G(game).setRoom(808);
 		break;
 
 	default:

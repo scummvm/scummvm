@@ -49,6 +49,7 @@ public:
 	void execute() override;
 
 	virtual bool isVideoDonePlaying() { return true; }
+	bool isViewportRelative() const override { return true; }
 
 protected:
 	struct ConversationFlag {
@@ -98,7 +99,6 @@ protected:
 	static const byte kNoPopNextScene			= 2;
 
 	Common::String getRecordTypeName() const override { return "ConversationSound"; }
-	bool isViewportRelative() const override { return true; }
 
 	// Functions for reading captions are virtual to allow easier support for the terse Conversation variants
 	virtual void readCaptionText(Common::SeekableReadStream &stream);
@@ -161,7 +161,6 @@ class ConversationCelLoader;
 // Conversation with separate cels for the body and head of the character.
 // Cels are separate images bundled inside a .cal file
 class ConversationCel : public ConversationSound {
-	friend class ConversationCelLoader;
 public:
 	ConversationCel() {}
 	virtual ~ConversationCel();
@@ -171,6 +170,9 @@ public:
 	void updateGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
+
+	bool load();
+	uint getCurFrame() const { return _curFrame; }
 
 protected:
 	Common::String getRecordTypeName() const override { return "ConversationCel"; }
@@ -182,7 +184,6 @@ protected:
 	};
 
 	class RenderedCel : public RenderObject {
-		friend class ConversationCel;
 	public:
 		RenderedCel() : RenderObject(9) {}
 		bool isViewportRelative() const override { return true; }

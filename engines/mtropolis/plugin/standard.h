@@ -439,7 +439,7 @@ private:
 
 	Event _executeWhen;
 	Common::String _pathOrUrl;
-	bool _addToReturnList;
+	//bool _addToReturnList;
 };
 
 class OpenAppModifier : public Modifier {
@@ -465,7 +465,7 @@ private:
 
 	Event _executeWhen;
 	Common::String _pathOrUrl;
-	bool _addToReturnList;
+	//bool _addToReturnList;
 };
 
 class StandardPlugIn : public MTropolis::PlugIn {

@@ -20,14 +20,13 @@
  */
 
 #include "ultima/ultima8/metaengine.h"
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/filesys/savegame.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/standard-actions.h"
+#include "ultima/ultima8/filesys/savegame.h"
 
 namespace Ultima {
 namespace Ultima8 {

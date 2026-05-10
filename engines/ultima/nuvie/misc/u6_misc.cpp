@@ -31,16 +31,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-using namespace Std;
-
-void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char delimiter = ' ') {
-	Std::string delimiters(delimiter);
+void Tokenise(const Common::String &str, Common::Array<Common::String> &tokens, char delimiter = ' ') {
+	Common::String delimiters(delimiter);
 
 	// Skip delimiters at beginning.
-	string::size_type lastPos = str.findFirstNotOf(delimiters, 0);
+	Common::String::size_type lastPos = str.findFirstNotOf(delimiters, 0);
 
-	for (string::size_type pos = str.findFirstOf(delimiters, lastPos) ;
-	        string::npos != pos || string::npos != lastPos ;
+	for (Common::String::size_type pos = str.findFirstOf(delimiters, lastPos) ;
+	        Common::String::npos != pos || Common::String::npos != lastPos ;
 	        pos = str.findFirstOf(delimiters, lastPos)) {
 		// Found a token, add it to the vector.
 		tokens.push_back(str.substr(lastPos, pos - lastPos));
@@ -49,8 +47,8 @@ void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char del
 	}
 }
 
-Std::string config_get_game_key(const Configuration *config) {
-	Std::string game_key, game_name;
+Common::String config_get_game_key(const Configuration *config) {
+	Common::String game_key, game_name;
 
 	config->value("config/GameName", game_name);
 
@@ -73,8 +71,8 @@ const char *get_game_tag(int game_type) {
 	return "";
 }
 
-void config_get_path(const Configuration *config, const Std::string &filename, Common::Path &path) {
-	Std::string key, game_name;
+void config_get_path(const Configuration *config, const Common::String &filename, Common::Path &path) {
+	Common::String key, game_name;
 	Common::Path game_dir, tmp_path;
 
 	config->value("config/GameName", game_name);
@@ -92,8 +90,8 @@ void config_get_path(const Configuration *config, const Std::string &filename, C
 
 int mkdir_recursive(const Common::Path &path, int mode) {
 #ifdef TODO
-	vector<string> directories;
-	string tmp_path;
+	Common::Array<Common::String> directories;
+	Common::String tmp_path;
 
 	Tokenise(path, directories, U6PATH_DELIMITER);
 
@@ -143,12 +141,12 @@ nuvie_game_t get_game_type(const Configuration *config) {
 	return (nuvie_game_t)game_type;
 }
 
-void build_path(const Common::Path &path, const Std::string &filename, Common::Path &full_path) {
+void build_path(const Common::Path &path, const Common::String &filename, Common::Path &full_path) {
 	full_path = path.appendComponent(filename);
 }
 
 bool has_fmtowns_support(const Configuration *config) {
-	Std::string townsdir;
+	Common::String townsdir;
 	config->value("config/townsdir", townsdir, "");
 	if (townsdir != "" && directory_exists(townsdir.c_str()))
 		return true;
@@ -207,7 +205,7 @@ void print_bool(DebugLevelType level, bool state, const char *yes, const char *n
 
 
 void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
-	Std::string complete_flags = "";
+	Common::String complete_flags = "";
 	print_b(level, num);
 	if (num != 0)
 		complete_flags += "(";
@@ -583,7 +581,7 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 
 }
 
-bool string_i_compare(const Std::string &s1, const Std::string &s2) {
+bool string_i_compare(const Common::String &s1, const Common::String &s2) {
 	return scumm_stricmp(s1.c_str(), s2.c_str()) == 0;
 }
 
@@ -695,8 +693,8 @@ sint8 get_wrapped_rel_dir(sint16 p1, sint16 p2, uint8 level) {
 	return ret;
 }
 
-Std::string encode_xml_entity(const Std::string &s) {
-	string  ret;
+Common::String encode_xml_entity(const Common::String &s) {
+	Common::String  ret;
 
 	for (const auto &c : s) {
 		switch (c) {

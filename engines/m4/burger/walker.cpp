@@ -36,11 +36,11 @@ namespace Burger {
 #define NUM_SHADOW_SERIES  5
 
 // These are the walker types
-#define WALKER_PLAYER          0
+#define WALKER_PLAYER       0
 #define WALKER_ALT          1
 
 // These are the shadow types
-#define SHADOW_PLAYER          0
+#define SHADOW_PLAYER       0
 #define SHADOW_ALT          1
 
 static const char *WILBUR_SERIES[8] = {
@@ -60,9 +60,9 @@ static const int16 WILBUR_SHADOWS_DIRS[6] = {
 };
 
 void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
-	int32 triggerType, soundNumber;
+	int32 soundNumber;
 
-	triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	const int32 triggerType = _G(globals)[GLB_TEMP_1] >> 16;
 
 	switch (triggerType) {
 	case 0:
@@ -138,14 +138,13 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 	}
 }
 
-bool Walker::walk_load_walker_and_shadow_series() {
-	return ws_walk_load_walker_series(WILBUR_SERIES_DIRS, WILBUR_SERIES, true) &&
-		ws_walk_load_shadow_series(WILBUR_SHADOWS_DIRS, WILBUR_SHADOWS);
+void Walker::walk_load_walker_and_shadow_series() {
+	ws_walk_load_walker_series(WILBUR_SERIES_DIRS, WILBUR_SERIES, true);
+	ws_walk_load_shadow_series(WILBUR_SHADOWS_DIRS, WILBUR_SHADOWS);
 }
 
 machine *Walker::walk_initialize_walker() {
 	machine *m;
-	int32 s;
 
 	if (!_G(player).walker_in_this_scene) {
 		_G(player).walker_visible = false;
@@ -163,7 +162,7 @@ machine *Walker::walk_initialize_walker() {
 		_G(globals)[GLB_TEMP_3] = SHADOW_SERIES_HASH << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
 
 		// initialize with bogus data (this is for the real walker)
-		s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+		const int32 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 		_G(globals)[GLB_TEMP_4] = static_cast<uint32>(-320) << 16;
 		_G(globals)[GLB_TEMP_5] = 400 << 16;
 		_G(globals)[GLB_TEMP_6] = s;
@@ -210,7 +209,7 @@ void Walker::unloadSprites() {
 }
 
 void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, int vol, int channel) {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_name = name;
 	_channel = channel;
 	_room = room;
@@ -224,7 +223,7 @@ void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, 
 }
 
 void Walker::wilbur_say() {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
 	if (_animateLips && _G(player).walker_in_this_scene && _G(player).walker_visible)
 		sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);

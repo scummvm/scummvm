@@ -109,7 +109,7 @@ int32 SaveLoad_Adibou1::SpriteHandler::getSize() {
 }
 
 bool SaveLoad_Adibou1::SpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
-	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
+	if (!TempSpriteHandler::createFromSprite(size, offset))
 		return false;
 
 	Common::String fileName = _file.build();
@@ -177,8 +177,8 @@ int32 SaveLoad_Adibou1::DrawingWithThumbnailHandler::getSize() {
 	return header1.getSize() + header2.getSize();
 }
 
-bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::load(int16 dataVar, int32 size, int32 offset) {
-	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
+bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::load(int16 dataVar, int32 index_as_size, int32 offset) {
+	if (!TempSpriteHandler::createFromSprite(index_as_size, offset))
 		return false;
 
 	Common::String fileName = _file.build();
@@ -192,11 +192,11 @@ bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::load(int16 dataVar, int32 si
 	if (!_reader->readPart(part, _sprite))
 		return false;
 
-	return TempSpriteHandler::load(dataVar, size, offset);
+	return TempSpriteHandler::load(dataVar, index_as_size, offset);
 }
 
-bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::save(int16 dataVar, int32 size, int32 offset) {
-	if (!TempSpriteHandler::save(dataVar, size, offset))
+bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::save(int16 dataVar, int32 index_as_size, int32 offset) {
+	if (!TempSpriteHandler::save(dataVar, index_as_size, offset))
 		return false;
 
 	Common::String fileName = _file.build();

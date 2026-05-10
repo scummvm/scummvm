@@ -144,14 +144,14 @@ public:
 	~TempSpriteHandler() override;
 
 	int32 getSize() override;
-	bool load(int16 dataVar, int32 size, int32 offset) override;
-	bool save(int16 dataVar, int32 size, int32 offset) override;
+	bool load(int16 dataVar, int32 index_as_size, int32 offset) override;
+	bool save(int16 dataVar, int32 index_as_size, int32 offset) override;
 
 	bool loadToRaw(byte *ptr, int32 size, int32 offset) override;
 	bool saveFromRaw(const byte *ptr, int32 size, int32 offset) override;
 
 	bool create(uint32 width, uint32 height, bool trueColor);
-	bool createFromSprite(int16 dataVar, int32 size, int32 offset);
+	bool createFromSprite(int32 index_as_size, int32 offset);
 
 protected:
 	SavePartSprite *_sprite;
@@ -165,7 +165,7 @@ protected:
 	/** Determine whether the palette should be used too. */
 	static bool usesPalette(int32 size);
 
-	SurfacePtr createSprite(int16 dataVar, int32 size, int32 offset);
+	SurfacePtr createSprite(int32 index_as_size, int32 offset);
 };
 
 /** A handler for notes. */

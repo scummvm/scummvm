@@ -27,6 +27,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
+#include "director/castmember/digitalvideo.h"
 #include "director/castmember/shape.h"
 #include "director/castmember/text.h"
 
@@ -44,6 +45,7 @@ Sprite::Sprite(Frame *frame) {
 }
 
 void Sprite::reset() {
+	_copyBackMask = static_cast<uint32>(kSCBNoMask);
 	_scriptId = CastMemberID(0, 0);
 	_colorcode = 0;
 	_blendAmount = 0;
@@ -90,6 +92,7 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 		return *this;
 	}
 
+	_copyBackMask = sprite._copyBackMask;
 	_frame = sprite._frame;
 	_score = sprite._score;
 	_movie = sprite._movie;
@@ -365,8 +368,8 @@ bool Sprite::isActive() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
-	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr
-			|| _movie->getScriptContext(kCastScript, _castId) != nullptr;
+	return (_movie->getScriptContext(kScoreScript, _scriptId) != nullptr)
+			|| (_movie->getScriptContext(kCastScript, _castId) != nullptr);
 }
 
 bool Sprite::shouldHilite() {
@@ -599,5 +602,104 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 			warning("Sprite::setCast(): %s is null", memberID.asString().c_str());
 	}
 }
+
+
+Common::String Sprite::formatInfo() {
+	return Common::String::format("castId: %s, [inkData: 0x%02x [ink: %s, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %08x bg: %08x], script: %s, colorcode: 0x%x, blendAmount: 0x%x, unk3: 0x%x, puppet: %d, moveable: %d",
+		_castId.asString().c_str(), _inkData,
+		inkType2str(_ink), _trails, _stretch, _thickness,
+		_width, _height, _startPoint.x, _startPoint.y,
+		_spriteType, spriteType2str(_spriteType), _foreColor, _backColor,
+		_scriptId.asString().c_str(), _colorcode, _blendAmount, _unk3,
+		_puppet, _moveable);
+}
+
+void Sprite::replaceFrom(Sprite *nextSprite) {
+	if (!nextSprite)
+		return;
+
+	if (nextSprite->_copyBackMask & kSCBScriptId)
+		_scriptId = nextSprite->_scriptId;
+	// Copy all the behavior scripts
+	_behaviors = nextSprite->_behaviors;
+	_spriteInfo = nextSprite->_spriteInfo;
+	if (nextSprite->_copyBackMask & kSCBSpriteListIdx)
+		_spriteListIdx = nextSprite->_spriteListIdx;
+
+	if (_puppet) {
+		// Whole sprite is in puppet mode.
+		// The only thing we want to copy over is the script ID.
+		return;
+	}
+
+	// If the cast member is the same, persist the editable flag
+	bool editable = nextSprite->_editable;
+	if (_castId == nextSprite->_castId) {
+		editable = _editable;
+	}
+
+	bool immediate = _immediate;
+
+	// Copy over all the sprite fields from one to another.
+	// For D6+, exclude individual fields with autopuppet switched on
+	if (nextSprite->_copyBackMask & kSCBSpriteType)
+		_spriteType = nextSprite->_spriteType;
+
+	if (nextSprite->_copyBackMask & kSCBEnabled)
+		_enabled = nextSprite->_enabled;
+
+	if (!getAutoPuppet(kAPInk) && (nextSprite->_copyBackMask & kSCBInk)) {
+		_inkData = nextSprite->_inkData;
+		_ink = nextSprite->_ink;
+		_trails = nextSprite->_trails;
+		_stretch = nextSprite->_stretch;
+	}
+	if (!getAutoPuppet(kAPForeColor) && (nextSprite->_copyBackMask & kSCBForeColor)) {
+		_foreColor = nextSprite->_foreColor;
+		_fgColorB = nextSprite->_fgColorB;
+		_fgColorG = nextSprite->_fgColorG;
+	}
+	if (!getAutoPuppet(kAPBackColor) && (nextSprite->_copyBackMask & kSCBBackColor)) {
+		_backColor = nextSprite->_backColor;
+		_bgColorB = nextSprite->_bgColorB;
+		_bgColorG = nextSprite->_bgColorG;
+	}
+	if (!getAutoPuppet(kAPCast)) {
+		if (nextSprite->_copyBackMask & kSCBCastId) {
+			_castId = nextSprite->_castId;
+			_cast = nextSprite->_cast;
+		}
+		if (nextSprite->_copyBackMask & kSCBSpriteListIdx)
+			_spriteListIdx = nextSprite->_spriteListIdx;
+	}
+	if (!getAutoPuppet(kAPLoc) && (nextSprite->_copyBackMask & kSCBStartPoint)) {
+		_startPoint = nextSprite->_startPoint;
+	}
+	// height and width seem to be copied back if the cast ID changes (e.g. intro of sabotenman)
+	if (!getAutoPuppet(kAPHeight) && ((nextSprite->_copyBackMask & kSCBCastId) || (nextSprite->_copyBackMask & kSCBHeight))) {
+		_height = nextSprite->_height;
+	}
+	if (!getAutoPuppet(kAPWidth) && ((nextSprite->_copyBackMask & kSCBCastId) || (nextSprite->_copyBackMask & kSCBWidth))) {
+		_width = nextSprite->_width;
+	}
+	if (!getAutoPuppet(kAPMoveable) && (nextSprite->_copyBackMask & kSCBMoveable)) {
+		_colorcode = nextSprite->_colorcode;
+		_editable = nextSprite->_editable;
+		_moveable = nextSprite->_moveable;
+	}
+	if (nextSprite->_copyBackMask & kSCBBlendAmount)
+		_blendAmount = nextSprite->_blendAmount;
+	if (nextSprite->_copyBackMask & kSCBThickness)
+		_thickness = nextSprite->_thickness;
+	if (nextSprite->_copyBackMask & kSCBPattern)
+		_pattern = nextSprite->_pattern;
+
+	// Persist the immediate flag
+	_immediate = immediate;
+
+	_editable = editable;
+
+}
+
 
 } // End of namespace Director

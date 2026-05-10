@@ -786,45 +786,47 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			continue;
 		}
 
-		int x = text._x;
-		int y = text._y;
+		if (ConfMan.getBool("subtitles")) {
+			int x = text._x;
+			int y = text._y;
 
-		if (!_showInventoryFlag) {
-			x -= _picWindowX;
-			y -= _picWindowY;
-		}
-
-		Common::Array<Common::String> lines;
-		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
-
-		int wideLine = 0;
-		for (uint i = 0; i < lines.size(); i++) {
-			int textLen = getTextWidth(lines[i].c_str());
-			if (textLen > wideLine) {
-				wideLine = textLen;
+			if (!_showInventoryFlag) {
+				x -= _picWindowX;
+				y -= _picWindowY;
 			}
-		}
 
-		int leftBorderText = 6;
-		if (x + wideLine / 2 >  kNormalWidth - leftBorderText) {
-			x = kNormalWidth - leftBorderText - wideLine / 2;
-		}
+			Common::Array<Common::String> lines;
+			_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
-		if (x - wideLine / 2 < leftBorderText) {
-			x = leftBorderText + wideLine / 2;
-		}
-
-		int textSkip = 2;
-		for (uint i = 0; i < lines.size(); i++) {
-			int drawX = x - getTextWidth(lines[i].c_str()) / 2;
-			int drawY = y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
-			if (drawX < 0) {
-				drawX = 0;
+			int wideLine = 0;
+			for (uint i = 0; i < lines.size(); i++) {
+				int textLen = getTextWidth(lines[i].c_str());
+				if (textLen > wideLine) {
+					wideLine = textLen;
+				}
 			}
-			if (drawY < 0) {
-				drawY = 0;
+
+			int leftBorderText = 6;
+			if (x + wideLine / 2 >  kNormalWidth - leftBorderText) {
+				x = kNormalWidth - leftBorderText - wideLine / 2;
 			}
-			_font->drawString(screen, lines[i], drawX, drawY, screen->w, text._color);
+
+			if (x - wideLine / 2 < leftBorderText) {
+				x = leftBorderText + wideLine / 2;
+			}
+
+			int textSkip = 2;
+			for (uint i = 0; i < lines.size(); i++) {
+				int drawX = x - getTextWidth(lines[i].c_str()) / 2;
+				int drawY = y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
+				if (drawX < 0) {
+					drawX = 0;
+				}
+				if (drawY < 0) {
+					drawY = 0;
+				}
+				_font->drawString(screen, lines[i], drawX, drawY, screen->w, text._color);
+			}
 		}
 
 		text._time--;

@@ -27,7 +27,7 @@ namespace Burger {
 namespace Rooms {
 
 const seriesPlayBreak Room204::PLAY1[] = {
-	{ 0, 2, 0, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 0, 2, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 

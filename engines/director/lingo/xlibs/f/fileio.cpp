@@ -188,12 +188,6 @@ static const BuiltinProto xlibBuiltins[] = {
 
 void FileIO::open(ObjectType type, const Common::Path &path) {
 	FileObject::initMethods(xlibMethods);
-	// manual override for game quirks
-	if (g_director->_fileIOType == kXtraObj && g_director->getVersion() >= 500) {
-		type = kXtraObj;
-	} else if (g_director->_fileIOType == kXObj) {
-		type = kXObj;
-	}
 	FileObject *xobj = new FileObject(type);
 	if (type == kXtraObj) {
 		g_lingo->_openXtras.push_back(xlibName);
@@ -214,7 +208,6 @@ FileObject::FileObject(ObjectType objType) : Object<FileObject>("FileIO") {
 	_objType = objType;
 	_filename = nullptr;
 	_inStream = nullptr;
-	_outFile = nullptr;
 	_outStream = nullptr;
 	_lastError = kErrorNone;
 }
@@ -223,7 +216,6 @@ FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
 	_objType = obj.getObjType();
 	_filename = nullptr;
 	_inStream = nullptr;
-	_outFile = nullptr;
 	_outStream = nullptr;
 	_lastError = kErrorNone;
 }
@@ -294,12 +286,8 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 		}
 	} else if (option.equalsIgnoreCase("write")) {
 		// OutSaveFile is not seekable so create a separate seekable stream
-		// which will be written to the _outFile upon disposal
-		_outFile = saves->openForSaving(filename, false);
+		// which will be written to the save file upon disposal
 		_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-		if (!_outFile) {
-			return saveFileError();
-		}
 	} else if (option.equalsIgnoreCase("append")) {
 		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
 		if (!inFile) {
@@ -317,10 +305,6 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 			b = inFile->readByte();
 		}
 		delete inFile;
-		_outFile = saves->openForSaving(filename, false);
-		if (!_outFile) {
-			return saveFileError();
-		}
 	} else {
 		error("Unsupported FileIO option: '%s'", option.c_str());
 	}
@@ -330,6 +314,21 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 }
 
 void FileObject::clear() {
+	if (_outStream) {
+		// When opening a file in write mode with FileIO, any existing data is only destroyed
+		// after the first write. In order to be compatible with the POSIX expectation that
+		// opening a write handle destroys the file, we need to defer the actual save operation
+		// until after we know data has been written.
+		if (_outStream->size()) {
+			Common::SaveFileManager *saves = g_system->getSavefileManager();
+			Common::OutSaveFile *outFile = saves->openForSaving(*_filename, false);
+			outFile->write(_outStream->getData(), _outStream->size());
+			outFile->finalize();
+			delete outFile;
+		}
+		delete _outStream;
+		_outStream = nullptr;
+	}
 	if (_filename) {
 		delete _filename;
 		_filename = nullptr;
@@ -337,14 +336,6 @@ void FileObject::clear() {
 	if (_inStream) {
 		delete _inStream;
 		_inStream = nullptr;
-	}
-	if (_outFile) {
-		_outFile->write(_outStream->getData(), _outStream->size());
-		_outFile->finalize();
-		delete _outFile;
-		delete _outStream;
-		_outFile = nullptr;
-		_outStream = nullptr;
 	}
 }
 

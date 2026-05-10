@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm-tools
-Version		: 3.0.0git
+Version		: 2026.2.1git
 Release		: 1
 Summary		: ScummVM-related tools
 Group		: Interpreters

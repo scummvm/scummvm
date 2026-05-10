@@ -47,7 +47,7 @@ C2ButtonDialog::C2ButtonDialog(CWnd *pParent, CPalette *pPalette,
                                const char *pszButton1Text, const char *pszButton2Text,
                                const char *pszText1, const char *pszText2,
                                const char *pszText3)
-	: CBmpDialog(pParent, pPalette, IDD_2BTNDLG, ".\\ART\\MSSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, IDD_2BTNDLG, "art\\MSSCROLL.BMP") {
 	assert(pParent != nullptr);
 	assert(pPalette != nullptr);
 	assert(pszText1 != nullptr);

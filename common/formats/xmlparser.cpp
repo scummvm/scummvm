@@ -27,6 +27,53 @@
 
 namespace Common {
 
+static Common::String convertEntities(const Common::String &escaped) {
+	const char *begin = escaped.c_str();
+	const char *nextAmp = strchr(begin, '&');
+	if (!nextAmp) {
+		return escaped;
+	}
+
+	Common::String result;
+	while (nextAmp) {
+		result.append(begin, nextAmp);
+
+		const char *p = nextAmp + 1;
+		while (*p && *p != ';') {
+			p++;
+		}
+		if (!*p) {
+			// Unfinished entity: paste what we got
+			result.append(nextAmp, p);
+			return result;
+		}
+
+		// TODO: implement &#....; form if needed
+
+		Common::String entity(nextAmp + 1, p);
+		if (entity == "quot") {
+			result.append(1, '"');
+		} else if (entity == "apos") {
+			result.append(1, '\'');
+		} else if (entity == "amp") {
+			result.append(1, '&');
+		} else if (entity == "lt") {
+			result.append(1, '<');
+		} else if (entity == "gt") {
+			result.append(1, '>');
+		} else {
+			// Unknown entity: paste it
+			result.append(nextAmp, p + 1);
+		}
+
+		begin = p + 1;
+		nextAmp = strchr(begin, '&');
+	}
+
+	result.append(begin);
+	return result;
+}
+
 XMLParser::~XMLParser() {
 	while (!_activeKey.empty())
 		freeNode(_activeKey.pop());
@@ -244,7 +291,7 @@ bool XMLParser::parseKeyValue(String keyName) {
 		return false;
 	}
 
-	_activeKey.top()->values[keyName] = _token;
+	_activeKey.top()->values[keyName] = convertEntities(_token);
 	return true;
 }
 
@@ -351,6 +398,7 @@ bool XMLParser::parse() {
 						parserError("Unexpected end of file.");
 						break;
 					}
+					text = convertEntities(text);
 					if (!textCallback(text)) {
 						parserError("Failed to process text segment.");
 						break;

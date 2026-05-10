@@ -1,0 +1,768 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#ifndef PELROCK_TYPES_H
+#define PELROCK_TYPES_H
+
+#include "common/debug.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/types.h"
+
+namespace Pelrock {
+
+/**
+ * Cursor types when hovering over hotspots
+ */
+enum Cursor {
+	DEFAULT,
+	HOTSPOT,
+	EXIT,
+	ALFRED,
+	COMBINATION
+};
+
+/**
+ * Actions masks on hotspots, matching against these gives us the available actions.
+ */
+const byte kActionMaskNone = 0;
+const byte kActionMaskOpen = 1;
+const byte kActionMaskClose = 2;
+const byte kActionMaskUnknown = 4;
+const byte kActionMaskPickup = 8;
+const byte kActionMaskTalk = 16;
+const byte kActionMaskPush = 32;
+const byte kActionMaskPull = 128;
+
+enum VerbIcon {
+	PICKUP,
+	TALK,
+	WALK,
+	LOOK,
+	PUSH,
+	PULL,
+	OPEN,
+	CLOSE,
+	ITEM,
+	UNKNOWN,
+	NO_ACTION
+};
+
+const int kCursorWidth = 16;
+const int kCursorHeight = 18;
+const int kCursorSize = 288; // 16 * 18
+
+const int kVerbIconWidth = 60;
+const int kVerbIconHeight = 60;
+const int kNumVerbIcons = 9;
+
+const int kBalloonWidth = 247;
+const int kBalloonHeight = 112;
+const int kBalloonFrames = 4;
+
+const int kAlfredFrameWidth = 51;
+const int kAlfredFrameHeight = 102;
+
+const int kTalkAnimationSpeed = 2;   // Frames per update
+const int kAlfredAnimationSpeed = 2; // Frames per update
+
+const int kAlfredIdleAnimationFrameCount = 300; // comb animation plays every ~16 seconds of idle alfred
+const int kAlfredIdleScreenSaverFrameCount = 1090; // screen saver shows up after 60 seconds
+
+const int kInventoryPageSize = 10;
+
+const int kAlfredInitialPosX = 235;
+const int kAlfredInitialPosY = 279;
+
+// Direction flags (bit-packed)
+const byte kMoveRight = 0x01; // Move right (positive X)
+const byte kMoveLeft = 0x02;  // Move left (negative X)
+const byte kMoveHoriz = 0x03; // Horizontal movement mask
+const byte kMoveDown = 0x04;  // Move down (positive Y)
+const byte kMoveUp = 0x08;    // Move up (negative Y)
+const byte kMoveVert = 0x0C;  // Vertical movement mask
+const int kMaxPathLength = 100;
+const int kMaxMovementSteps = 100; // 500 bytes / 5 bytes per step
+const byte kPathEnd = 0xFF;        // End of path marker
+
+const byte kAlfredColor = 0x0D;
+
+enum OverlayMode {
+	OVERLAY_NONE = 0,
+	OVERLAY_CHOICES = 1,
+	OVERLAY_PICKUP_ICON = 2,
+	OVERLAY_ACTION = 3
+};
+
+// Passerby direction constants
+const byte kPasserbyRight = 0;
+const byte kPasserbyLeft = 1;
+const byte kPasserbyDown = 2;
+
+const byte kIconBlinkPeriod = 4;
+
+enum AlfredAnimState {
+	ALFRED_IDLE,
+	ALFRED_WALKING,
+	ALFRED_TALKING,
+	ALFRED_INTERACTING,
+	ALFRED_COMB,
+	ALFRED_SPECIAL_ANIM,
+	ALFRED_SKIP_DRAWING
+};
+
+enum AlfredDirection {
+	ALFRED_RIGHT = 0,
+	ALFRED_LEFT = 1,
+	ALFRED_DOWN = 2,
+	ALFRED_UP = 3
+};
+
+struct AlfredSpecialAnim {
+	byte *animData = nullptr;
+	int w = 0;
+	int h = 0;
+	int numFrames = 0;
+	int loopCount = 0;
+	uint32 stride = 0;
+	int curFrame = 0;
+	int curLoop = 0;
+	uint32 size = 0;
+	int speed = 2;
+	AlfredSpecialAnim(int nF, int width, int height, int nBudas, uint32 off, int lCount, uint32 sz, int spd = 2)
+		: numFrames(nF), w(width), h(height), loopCount(lCount), size(sz), speed(spd) {
+		stride = w * h;
+	}
+
+	~AlfredSpecialAnim() {
+		if (animData) {
+			delete[] animData;
+			animData = nullptr;
+		}
+	}
+};
+
+struct ActionPopupState {
+	bool isActive = false;
+	int curFrame = 0;
+	int x = 0;
+	int y = 0;
+	int displayTime = 0;
+	bool isAlfredUnder = false;
+};
+
+struct InventoryOverlayState {
+	bool isActive = false;
+	int invStartingPos = 0;
+	int flashingIconIndex = -1;
+	Common::Rect inventorySelectionArea = Common::Rect(0, 340, 640, 400);
+	Common::Rect ballonInventoryPath = Common::Rect(0, 0, kBalloonWidth, kBalloonHeight);
+	byte *arrows[2] = {nullptr, nullptr};
+
+	bool posInInventorySelectionArea(int x, int y) {
+		return inventorySelectionArea.contains(x, y);
+	}
+};
+
+struct AlfredState {
+	AlfredAnimState animState = ALFRED_IDLE;
+	AlfredDirection direction = ALFRED_DOWN;
+	int curFrame = 0;
+	uint16 movementSpeedX = 6; // pixels per frame
+	uint16 movementSpeedY = 5; // pixels per frame
+	uint16 x = kAlfredInitialPosX;
+	uint16 y = kAlfredInitialPosY;
+	byte w = kAlfredFrameWidth;
+	byte h = kAlfredFrameHeight;
+	int idleFrameCounter = 0;
+	int screenSaverFrameCounter = 0;
+	bool isWalkingCancelable = true;
+
+	void setState(AlfredAnimState nextState) {
+		animState = nextState;
+		curFrame = 0;
+	}
+
+	void resetIdles() {
+		idleFrameCounter = 0;
+		screenSaverFrameCounter = 0;
+	}
+};
+
+struct ShakeEffectState {
+	bool enabled = false;
+	int shakeX = 0;
+	int shakeY = 0;
+
+	void enable() {
+		enabled = true;
+	}
+
+	void disable() {
+		enabled = false;
+		shakeX = 0;
+		shakeY = 0;
+		g_system->setShakePos(0, 0);
+	}
+};
+
+struct MovementStep {
+	byte flags;       /* Direction flags (see kMove* constants) */
+	uint16 distanceX; // Horizontal distance to move
+	uint16 distanceY; // Vertical distance to move
+};
+
+/**
+ * Pathfinding context
+ */
+struct PathContext {
+	byte *pathBuffer;             // Sequence of walkbox indices
+	MovementStep *movementBuffer; // Array of movement steps
+	uint16 pathLength;
+	uint16 movementCount;
+	uint16 compressed_length;
+};
+
+struct ExtraScreen {
+	uint32 offset;
+	uint32 paletteOffset;
+	byte numChunks;
+};
+
+/**
+ * Struct for special or one-off animations that replace Alfred's regular animations.
+ */
+struct AlfredSpecialAnimOffset {
+	int numFrames;
+	int w;
+	int h;
+	int numBudas;
+	int numAlfred;
+	uint32 offset;
+	int loops;
+	int speed;
+	uint32 size; // 0 = compute from numFrames * w * h
+};
+
+/**
+ * Each Anim has its own speed, loopCount and movement!
+ */
+struct Anim {
+	int nframes;
+	int curFrame = 0;
+	int curLoop = 0;
+	byte **animData;
+	byte loopCount;
+	byte speed;
+	byte elpapsedFrames = 0;
+	uint16 movementFlags = 0;
+};
+
+struct Exit {
+	byte index;
+	int16 x;
+	int16 y;
+	byte w;
+	byte h;
+	uint16 targetRoom;
+	int16 targetX;
+	int16 targetY;
+	AlfredDirection dir;
+	byte isEnabled;
+};
+
+struct Sprite {
+	byte index;    // number of the animation in the rooms
+	int16 x;       // 0
+	int16 y;       // 2
+	int w;         // 4
+	int h;         // 5
+	uint16 stride; // 6-7
+	int numAnims;  // 8
+	int curAnimIndex = 0;
+	byte zOrder;                       // byte at file offset 23
+	byte actionFlags;                  // 34
+	bool isHotspotDisabled;            // 38
+	bool disableAfterSequence = false; // 39
+	bool isTalking = false;
+	byte talkingAnimIndex = 0;
+	Anim *animData;
+	int16 extra;
+};
+
+struct HotSpot {
+	byte index = 0;
+	byte innerIndex = 0;
+	int id = 0;
+	int16 x = 0;
+	int16 y = 0;
+	int w = 0;
+	int h = 0;
+	byte actionFlags = 0;
+	int16 extra = 0;
+	bool isEnabled = true;
+	bool isSprite = false;
+	byte zOrder = 0;
+};
+
+struct TalkingAnims {
+	uint32 spritePointer = 0;
+
+	byte unknown2[3];
+
+	int8 offsetXAnimA = 0;
+	int8 offsetYAnimA = 0;
+
+	byte wAnimA = 0;
+	byte hAnimA = 0;
+	byte unknown3[2];
+	byte numFramesAnimA = 0;
+	byte unknown4[4]; // slot 0 data pointer (unused in ScummVM)
+	byte speedByteA = 0;  // slot 0 offset 0x12: controls NPC talk render rate (original: 2+speedByte ticks per render)
+
+	int8 offsetXAnimB = 0;
+	int8 offsetYAnimB = 0;
+
+	byte wAnimB = 0;
+	byte hAnimB = 0;
+	byte unknown5[2]; // slot 1 stride (unused in ScummVM)
+	byte numFramesAnimB = 0;
+	byte unknown7[4];  // slot 1 data pointer (unused in ScummVM)
+	byte speedByteB = 0;   // slot 1 speed byte at file offset 30
+	byte unknown6[24]; // slots 2-3 (unused)
+
+	// Runtime fields (not read from file)
+	byte currentFrameAnimA = 0;
+	byte currentFrameAnimB = 0;
+
+	byte **animA = nullptr;
+	byte **animB = nullptr;
+};
+
+struct Description {
+	byte itemId;
+	byte index;
+	bool isAction = false;
+	uint16 actionTrigger;
+	Common::String text;
+};
+
+struct WalkBox {
+	byte index;
+	int16 x;
+	int16 y;
+	int16 w;
+	int16 h;
+	byte flags;
+};
+
+struct QueuedAction {
+	VerbIcon verb;
+	int hotspotIndex;
+	bool isQueued;       // Alfred is walking/interacting toward the target
+	bool readyToExecute; // Animation done - execute after the current renderScene
+};
+
+struct ScalingParams {
+	int16 yThreshold;
+	byte scaleDivisor;
+	byte scaleMode;
+};
+
+struct ScaleCalculation {
+	int scaledWidth;
+	int scaledHeight;
+	int scaleX; // Amount to subtract from width (was scaleUp)
+	int scaleY; // Amount to subtract from height (was scaleDown)
+};
+
+enum GameState {
+	GAME = 100,
+	CREDITS = 101,
+	SETTINGS = 102,
+	INTRO = 103,
+	COMPUTER = 104
+};
+
+struct SpriteChange {
+	byte roomNumber;
+	byte spriteIndex;
+	byte zIndex;
+};
+
+struct HotSpotChange {
+	byte roomNumber;
+	byte hotspotIndex;
+	HotSpot hotspot;
+};
+
+struct ExitChange {
+	byte roomNumber;
+	byte exitIndex;
+	bool enabled;
+};
+
+struct WalkBoxChange {
+	byte roomNumber;
+	byte walkboxIndex;
+	WalkBox walkbox;
+};
+
+struct InventoryObject {
+	byte index;
+	Common::String description;
+	byte iconData[60 * 60];
+};
+
+struct PaletteAnimFade {
+	byte startIndex;
+	byte paletteMode;
+	byte currentR;
+	byte currentG;
+	byte currentB;
+	byte minR;
+	byte minG;
+	byte minB;
+	byte maxR;
+	byte maxG;
+	byte maxB;
+	byte speed;
+	bool downDirection;
+	byte curFrameCount = 0;
+};
+
+struct Sticker {
+	int stickerIndex;
+	uint16 x;
+	uint16 y;
+	byte w;
+	byte h;
+};
+
+struct PaletteAnimRotate {
+	byte startIndex;
+	byte paletteMode;
+	byte unknown;
+	byte delay;
+	byte unknownBytes[7];
+	byte flags;
+	byte curFrameCount = 0;
+};
+
+struct PaletteAnim {
+	byte startIndex;
+	byte paletteMode;
+	byte data[10]; // Based on mode its a rotate or fade
+	byte curFrame = 0;
+	byte tickCount = 0;
+};
+
+struct PasserByAnim {
+	uint32 frameTrigger = 0x3FF;
+	int16 startX;
+	int16 startY;
+	int16 resetCoord;
+	byte dir;
+	byte spriteIndex;
+	byte targetZIndex;
+
+	PasserByAnim() = default;
+	PasserByAnim(byte spriteIndex_, int16 startX_, int16 startY_, byte dir_, int16 resetCoord_, byte targetZIndex_, uint32 frameTrigger_)
+	    : frameTrigger(frameTrigger_), startX(startX_), startY(startY_), resetCoord(resetCoord_), dir(dir_), spriteIndex(spriteIndex_), targetZIndex(targetZIndex_) {}
+};
+
+struct RoomPasserBys {
+	byte roomNumber;
+	PasserByAnim passerByAnims[2];
+	byte currentAnimIndex = 0;
+	byte numAnims = 0;
+	bool latch = false;
+	RoomPasserBys(byte roomNum, byte nAnims) : roomNumber(roomNum), numAnims(nAnims) {}
+};
+
+/**
+ * Structure to hold a parsed choice option
+ */
+struct ChoiceOption {
+	byte room;
+	int choiceIndex;
+	Common::String text;
+	uint32 dataOffset;
+	bool isDisabled = false;
+	bool shouldDisableOnSelect = false;
+	bool hasConversationEndMarker = false;
+	bool isTerminator = false;
+	uint charOffset = 0;
+
+	ChoiceOption() : choiceIndex(-1), dataOffset(0) {}
+};
+
+struct ResetEntry {
+	uint16 room;
+	uint16 offset;
+	byte dataSize;
+	byte *data = nullptr;
+};
+
+#define FLAG_BOSS_WIRED_MONEY 0
+#define FLAG_BOSS_IN_JAIL 1
+#define FLAG_SPICY_SAUCE_PLACED 2
+#define FLAG_BROKEN_GLASS 3
+#define FLAG_FIRST_TIME_IN_SHOP 4
+#define FLAG_ELECTROSHOCK 5
+#define FLAG_CABLES_PLACED 6
+#define FLAG_DOORMAN_BRIBED 7
+#define FLAG_BOOK_MEMORIZED 8
+#define FLAG_ALFRED_SMART 9
+#define FLAG_ALFRED_SPEAKS_EGYPTIAN 10
+#define FLAG_SALESMAN_LEAVES_ALFRED_ALONE 11
+#define FLAG_TRAVEL_TO_EGYPT 12
+#define FLAG_SOLVED_PARADOX 13
+#define FLAG_CROCODILE_ON 14
+#define FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR 15
+#define FLAG_SECRET_DOOR_OPEN 16
+#define FLAG_STOLE_PRINCESS_HAIR 17
+#define FLAG_TO_JAIL 18
+#define FLAG_SAFE_COMBINATION 19
+#define FLAG_DOLL_PLACED 20
+#define FLAG_GUARD_WATER_DRINKED 21
+#define FLAG_GUARD_PEEING 22
+#define FLAG_PYRAMID_COLLAPSED 23
+#define FLAG_PYRAMID_COLLAPSED2 24
+#define FLAG_GUARD_HAVINGFUN 25
+#define FLAG_MAGIC_FORMULA 26
+#define FLAG_TIME_TRAVEL 27
+#define FLAG_EUNUCH_APPEARS 28
+#define FLAG_PHARAOH_VIEWING 29
+#define FLAG_TO_WORK 30
+#define FLAG_STONE_GIVEN 31
+#define FLAG_COLLECTED_STONES 32
+#define FLAG_DRUNK_GUARDS 33
+#define FLAG_FAKE_STONE_WET 34
+#define FLAG_CORRECT_DOOR 35
+#define FLAG_TRAPDOOR_OPEN 36
+#define FLAG_PRINCESS_ROOM 37
+#define FLAG_GET_THE_PRINCESS 38
+#define FLAG_GAME_RESTART 39
+#define FLAG_CORRIDORS 40
+#define FLAG_GODS_STANCES 41
+#define FLAG_END_OF_GAME 42
+#define FLAG_FROM_INTRO 43
+#define FLAG_STONE_THROWN 44
+#define FLAG_USED_WATER 45
+#define FLAG_OPEN_SHOP 46
+#define FLAG_DRINKS_NUMBER 47
+#define FLAG_COLLECTED_INGREDIENTS 48
+#define FLAG_GUARD_ASKS_FOR_STUFF 49
+#define FLAG_GUARD_ID_DELIVERED 50
+#define FLAG_TRAVELAGENCY_OPEN 51
+#define FLAG_MERCHANT_SLOGANS 52
+#define FLAG_HOOKER_250_TIMES 53
+#define FLAG_CORRECT_ANSWERS 54
+#define FLAG_CHEAT_CODE_ENABLED 55
+#define FLAG_RIDDLE_PRESENTED 56
+#define FLAG_SYMBOLS_PUSHED 57
+#define FLAG_MERCHANT_GIVENITEMS 58
+#define FLAG_CORRECT_DOOR_CHOSEN 59
+#define FLAG_SKELETON_RECOGNIZES 60
+#define FLAG_PIGEON_DEAD 61
+#define FLAG_RECIPE_TAKEN 62
+
+const int kNumGameFlags = 63;
+
+struct GameStateData {
+	byte flags[kNumGameFlags];
+
+	GameState stateGame = INTRO;
+
+	Common::Array<byte> inventoryItems;
+	int16 selectedInventoryItem = -1;
+
+	int libraryShelf = -1;
+	int selectedBookIndex = -1;
+	char bookLetter = '\0';
+	Common::HashMap<byte, Common::Array<Sticker>> stickersPerRoom;
+	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
+	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
+	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
+	Common::HashMap<byte, Common::Array<ResetEntry>> disabledBranches;
+	Common::HashMap<byte, Common::Array<SpriteChange>> spriteChanges;
+
+	GameStateData() {
+		clear();
+	}
+
+	~GameStateData() {
+		clearBranches();
+		delete[] conversationCurrentRoot;
+		conversationCurrentRoot = nullptr;
+	}
+
+	void clear() {
+		memset(conversationCurrentRoot, 0xFF, 112); // Initialize all to 0xFF (not set)
+		for (int i = 0; i < kNumGameFlags; i++)
+			flags[i] = 0;
+		flags[FLAG_FIRST_TIME_IN_SHOP] = true;
+		inventoryItems.clear();
+		stickersPerRoom.clear();
+		roomExitChanges.clear();
+		roomWalkBoxChanges.clear();
+		roomHotSpotChanges.clear();
+		spriteChanges.clear();
+		clearBranches();
+		libraryShelf = -1;
+		selectedBookIndex = -1;
+		bookLetter = '\0';
+		stateGame = GAME;
+	}
+
+	void clearBranches() {
+		for(auto &entry : disabledBranches) {
+			for (ResetEntry &resetEntry : entry._value) {
+				if (resetEntry.data) {
+					delete[] resetEntry.data;
+					resetEntry.data = nullptr;
+				}
+			}
+		}
+		disabledBranches.clear();
+	}
+
+	void addDisabledBranch(ResetEntry entry) {
+		disabledBranches[entry.room].push_back(entry);
+	}
+
+	byte getFlag(int flagIndex) const {
+		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
+			return false;
+		return flags[flagIndex];
+	}
+
+	bool getBoolFlag(int flagIndex) const {
+		return getFlag(flagIndex) != 0;
+	}
+
+	void setFlag(int flagIndex, byte value) {
+		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
+			return;
+		flags[flagIndex] = value;
+	}
+
+	void addInventoryItem(int id) {
+		inventoryItems.push_back(id);
+	}
+
+	void clearInventory() {
+		inventoryItems.clear();
+		selectedInventoryItem = -1;
+	}
+
+	void removeInventoryItem(int id) {
+		for (uint i = 0; i < inventoryItems.size(); i++) {
+			if (inventoryItems[i] == id) {
+				inventoryItems.remove_at(i);
+				break;
+			}
+		}
+		if (selectedInventoryItem == id) {
+			if (inventoryItems.size() > 0) {
+				selectedInventoryItem = inventoryItems[0];
+			} else {
+				selectedInventoryItem = -1;
+			}
+		}
+	}
+
+	bool hasInventoryItem(int id) const {
+		for (uint i = 0; i < inventoryItems.size(); i++) {
+			if (inventoryItems[i] == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Store current root index for each room (0xFF = not set, use findRoot logic)
+	byte *conversationCurrentRoot = new byte[112];
+
+	int getCurrentRoot(byte room, int npc) const {
+		if (room >= 56)
+			return -1;
+		return (conversationCurrentRoot[room * 2 + npc] == 0xFF) ? -1 : conversationCurrentRoot[room * 2 + npc];
+	}
+
+	void setCurrentRoot(byte room, int root, int npc) {
+		if (room >= 56)
+			return;
+		if (root < 0 || root > 254) {
+			conversationCurrentRoot[room * 2 + npc] = 0xFF; // Reset to auto-select
+		} else {
+			conversationCurrentRoot[room * 2 + npc] = (byte)root;
+		}
+	}
+
+	int findFirstBookIndex() {
+		for (uint i = 0; i < inventoryItems.size(); i++) {
+			int x = inventoryItems[i];
+			if ((x >= 11) && (x <= 58))
+				return x;
+		}
+		return -1;
+	}
+
+	int booksInInventory() {
+		int l = inventoryItems.size();
+		int count = 0;
+		for (int i = 0; i < l; i++) {
+			int x = inventoryItems[i];
+			if ((x >= 11) && (x <= 58))
+				count++;
+		}
+		return count;
+	}
+};
+
+struct SaveGameData {
+	byte currentRoom = 0;
+	uint16 alfredX = 0;
+	uint16 alfredY = 0;
+	AlfredDirection alfredDir = ALFRED_DOWN;
+	GameStateData *gameState = nullptr;
+};
+
+struct FightRoomCfg {
+	int roomNumber;
+	int spriteIdx;
+	int appearFrames;
+	int spellFrames;
+	int spellPage;
+};
+
+static const FightRoomCfg kFightRooms[] = {
+	{51, 1, 31, 17, 8}, // room 51
+	{52, 0, 30, 13, 4}, // room 52
+	{53, 1, 30, 13, 0}, // room 53
+	{54, 1, 38, 11, 2}, // room 54
+};
+
+} // End of namespace Pelrock
+
+#endif

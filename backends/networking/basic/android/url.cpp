@@ -55,7 +55,6 @@ URL *URL::parseURL(const Common::String &url) {
 
 URL *AndroidURL::parseURL(const Common::String &url) {
 	JNIEnv *env = JNI::getEnv();
-	NetJNI::init(env);
 
 	jstring url_sobj = env->NewStringUTF(url.c_str());
 	jobject url_obj = env->NewObject(NetJNI::_CLS_URL, NetJNI::_MID_url_init, url_sobj);

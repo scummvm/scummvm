@@ -476,7 +476,7 @@ static const char *const fixedTextFR[] = {
 	"An", // ???
 	"Quitter",
 	"Voulez-vous quitter?",
-	"Sind Sie sicher ?", // ???
+	"", // ???
 	"Oui",
 	"Non",
 	"Entrez le mot de passe",
@@ -663,10 +663,10 @@ static const char *const fixedTextES[] = {
 	"Off", // ???
 	"On", // ???
 	"Salir",
-	"quieres salir?",
 	"\250Est\240s seguro de que",
+	"quieres salir?",
 	"Si",
-	"Non",
+	"No",
 	"Introducir Palabra Clave",
 	"Vas al Este", // correct password, was translated in Spanish version (???)
 	"Diario de Watson",

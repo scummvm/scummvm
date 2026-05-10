@@ -47,8 +47,17 @@ namespace Saves {
 STATIC const char *gpszTitle = "Save Game";
 extern char szDescBuf[40];
 
+// Message Map
+BEGIN_MESSAGE_MAP(CSaveDlg, CBmpDialog)
+	//{{AFX_MSG_MAP(CSaveDlg)
+	ON_WM_PAINT()
+	ON_WM_DESTROY()
+	ON_COMMAND(IDOK, CSaveDlg::OnOK)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
 CSaveDlg::CSaveDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
-	: CBmpDialog(pWnd, pPalette, 2000, ".\\ART\\MLSCROLL.BMP") {
+	: CBmpDialog(pWnd, pPalette, 2000, "art\\MLSCROLL.BMP") {
 	int i;
 
 	// Inits
@@ -89,13 +98,6 @@ bool CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			EditDescription((int)wParam - IDC_SLOT1);
 			return true;
 
-		case IDOK:
-			m_pSlotText[m_nCurSlot]->GetWindowText(szDescBuf, MAX_BUTTON_TEXT);
-			ClearDialogImage();
-			assert(m_nCurSlot != -1);
-			EndDialog(m_nCurSlot);
-			return true;
-
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(-1);
@@ -106,6 +108,12 @@ bool CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
+void CSaveDlg::OnOK() {
+	m_pSlotText[m_nCurSlot]->GetWindowText(szDescBuf, MAX_BUTTON_TEXT);
+	ClearDialogImage();
+	assert(m_nCurSlot != -1);
+	EndDialog(m_nCurSlot);
+}
 
 void CSaveDlg::OnCancel() {
 	ClearDialogImage();
@@ -259,15 +267,6 @@ void CSaveDlg::OnDestroy() {
 
 	CBmpDialog::OnDestroy();
 }
-
-
-// Message Map
-BEGIN_MESSAGE_MAP(CSaveDlg, CBmpDialog)
-	//{{AFX_MSG_MAP(CSaveDlg)
-	ON_WM_PAINT()
-	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
 
 } // namespace Saves
 } // namespace Metagame

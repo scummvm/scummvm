@@ -44,61 +44,73 @@ ScriptInstruction::ScriptInstruction(ReadStream &stream)
 	, _arg(stream.readSint32LE()) {}
 
 Script::Script() {
-	File file;
-	if (!file.open("script/SCRIPT.COD"))
+	auto file = g_engine->world().openFileRef(g_engine->world().scriptFileRef());
+	if (!file)
 		error("Could not open script");
 
-	uint32 stringBlobSize = file.readUint32LE();
-	uint32 memorySize = file.readUint32LE();
+	uint32 stringBlobSize = file->readUint32LE();
+	uint32 memorySize = g_engine->isV1() ? 0 : file->readUint32LE();
 	_strings = SpanOwner<Span<char>>({ new char[stringBlobSize], stringBlobSize });
-	if (file.read(&_strings[0], stringBlobSize) != stringBlobSize)
+	if (file->read(&_strings[0], stringBlobSize) != stringBlobSize)
 		error("Could not read script string blob");
 	if (_strings[stringBlobSize - 1] != 0)
 		error("String blob does not end with null terminator");
 
-	if (memorySize % sizeof(int32) != 0)
-		error("Unexpected size of script memory");
-	_variables.resize(memorySize / sizeof(int32), 0);
-
-	uint32 variableCount = file.readUint32LE();
+	uint32 variableCount = file->readUint32LE();
 	for (uint32 i = 0; i < variableCount; i++) {
-		String name = readVarString(file);
-		uint32 offset = file.readUint32LE();
+		String name = readVarString(*file);
+		uint32 offset = file->readUint32LE();
 		if (offset % sizeof(int32) != 0)
 			error("Unaligned variable offset");
 		_variableNames[name] = offset / 4;
 	}
 
-	uint32 procedureCount = file.readUint32LE();
+	if (memorySize == 0) {
+		// in V1 the memory size is implicitly stored in the variables
+		for (const auto &variable : _variableNames)
+			memorySize = MAX(memorySize, variable._value + 1);
+		memorySize *= sizeof(int32); // _variableNames already works with indices
+	}
+	if (memorySize % sizeof(int32) != 0)
+		error("Unexpected size of script memory");
+	_variables.resize(memorySize / sizeof(int32), 0);
+
+	uint32 procedureCount = file->readUint32LE();
 	for (uint32 i = 0; i < procedureCount; i++) {
-		String name = readVarString(file);
-		uint32 offset = file.readUint32LE();
-		file.skip(sizeof(uint32));
-		_procedures[name] = offset - 1; // originally one-based, but let's not.
+		String name = readVarString(*file);
+		uint32 offset = file->readUint32LE();
+		file->skip(sizeof(uint32));
+		_procedures[name] = offset; 
 	}
 
-	uint32 behaviorCount = file.readUint32LE();
+	uint32 behaviorCount = file->readUint32LE();
 	for (uint32 i = 0; i < behaviorCount; i++) {
-		String behaviorName = readVarString(file) + '/';
-		variableCount = file.readUint32LE(); // not used by the original game
+		String behaviorName = readVarString(*file) + '/';
+		variableCount = file->readUint32LE(); // not used by the original game
 		assert(variableCount == 0);
-		procedureCount = file.readUint32LE();
+		procedureCount = file->readUint32LE();
 		for (uint32 j = 0; j < procedureCount; j++) {
-			String name = behaviorName + readVarString(file);
-			uint32 offset = file.readUint32LE();
-			file.skip(sizeof(uint32));
-			_procedures[name] = offset - 1;
+			String name = behaviorName + readVarString(*file);
+			uint32 offset = file->readUint32LE();
+			file->skip(sizeof(uint32));
+			uint32 &storedOffset = _procedures.getOrCreateVal(name);
+			if (storedOffset == 0) // keep the offset one-based so we can detect previous procedures and not override them
+				storedOffset = offset;
 		}
 	}
 
-	uint32 instructionCount = file.readUint32LE();
+	uint32 instructionCount = file->readUint32LE();
 	_instructions.reserve(instructionCount);
 	for (uint32 i = 0; i < instructionCount; i++)
-		_instructions.push_back(ScriptInstruction(file));
+		_instructions.push_back(ScriptInstruction(*file));
 }
 
 static void syncAsSint32LE(Serializer &s, int32 &value) {
 	s.syncAsSint32LE(value);
+}
+
+static void syncAsUint32LE(Serializer &s, uint32 &value) {
+	s.syncAsUint32LE(value);
 }
 
 void Script::syncGame(Serializer &s) {
@@ -130,6 +142,30 @@ bool Script::hasProcedure(const Common::String &procedure) const {
 	return _procedures.contains(procedure);
 }
 
+String Script::procedureAt(uint32 pc) const {
+	// this method is very inefficient but it is only used for debugging
+	typedef Pair<String, uint32> Node;
+	Array<Node> sorted;
+	sorted.reserve(_procedures.size());
+	for (const auto &proc : _procedures)
+		sorted.emplace_back(proc._key, proc._value);
+	sort(sorted.begin(), sorted.end(),
+		[ ] (const Node &a, const Node &b) { return a.second < b.second; });
+
+	// next lowest procedure
+	uint min = 0, max = sorted.size() - 1;
+	while (min < max) {
+		uint center = (min + max + 1) / 2;
+		if (sorted[center].second == pc)
+			min = max = center;
+		else if (sorted[center].second > pc)
+			max = center - 1;
+		else
+			min = center;
+	}
+	return sorted[min].first;
+}
+
 struct ScriptTimerTask final : public Task {
 	ScriptTimerTask(Process &process, int32 durationSec)
 		: Task(process)
@@ -143,12 +179,20 @@ struct ScriptTimerTask final : public Task {
 	TaskReturn run() override {
 		TASK_BEGIN;
 		{
-			uint32 timeSinceTimer = g_engine->script()._scriptTimer == 0 ? 0
-				: (g_engine->getMillis() - g_engine->script()._scriptTimer) / 1000;
+			_didPressMouse |= g_engine->input().wasAnyMousePressed();
+
+			// only in V31 there is the variable "CalcularTiempoSinPulsarRaton" which controls
+			// resetting the timer, for all other versions we have to do it implicitly anyways
+			if (g_engine->script()._scriptTimer == 0)
+				g_engine->script()._scriptTimer = g_engine->getMillis();
+
+			uint32 timeSinceTimer =  (g_engine->getMillis() - g_engine->script()._scriptTimer) / 1000;
 			if (_durationSec >= (int32)timeSinceTimer)
-				_result = g_engine->script().variable("SeHaPulsadoRaton") ? 0 : 2;
-			else
+				_result = _didPressMouse ? 0 : 2;
+			else {
 				_result = 1;
+				g_engine->script()._scriptTimer = 0;
+			}
 			g_engine->player().drawCursor();
 		}
 		TASK_YIELD(1); // Wait a frame to not produce an endless loop
@@ -164,6 +208,7 @@ struct ScriptTimerTask final : public Task {
 		Task::syncGame(s);
 		s.syncAsSint32LE(_durationSec);
 		s.syncAsSint32LE(_result);
+		s.syncAsByte(_didPressMouse, SaveVersion::kWithEngineV10);
 	}
 
 	const char *taskName() const override;
@@ -171,6 +216,7 @@ struct ScriptTimerTask final : public Task {
 private:
 	int32 _durationSec = 0;
 	int32 _result = 1;
+	bool _didPressMouse = false;
 };
 DECLARE_TASK(ScriptTimerTask)
 
@@ -207,7 +253,7 @@ struct ScriptTask final : public Task {
 		, _script(g_engine->script())
 		, _name(name)
 		, _pc(pc)
-		, _lock(Common::move(lock)) {
+		, _characterLock(Common::move(lock)) {
 		pushInstruction(UINT_MAX);
 		debugC(SCRIPT_DEBUG_LVL_TASKS, kDebugScript, "%u: Script start at %u", process.pid(), pc);
 	}
@@ -217,9 +263,9 @@ struct ScriptTask final : public Task {
 		, _script(g_engine->script())
 		, _name(forkParent._name + " FORKED")
 		, _pc(forkParent._pc)
-		, _lock(forkParent._lock) {
-		for (uint i = 0; i < forkParent._stack.size(); i++)
-			_stack.push(forkParent._stack[i]);
+		, _characterLock(forkParent._characterLock) {
+		for (uint i = 0; i < forkParent._valueStack.size(); i++)
+			_valueStack.push(forkParent._valueStack[i]);
 		pushNumber(1); // this task is the forked one
 		debugC(SCRIPT_DEBUG_LVL_TASKS, kDebugScript, "%u: Script fork from %u at %u", process.pid(), forkParent.process().pid(), _pc);
 	}
@@ -231,6 +277,8 @@ struct ScriptTask final : public Task {
 	}
 
 	TaskReturn run() override {
+		if (_isFirstExecution)
+			process().lockInteraction();
 		if (_isFirstExecution || _returnsFromKernelCall)
 			setCharacterVariables();
 		if (_returnsFromKernelCall) {
@@ -244,29 +292,39 @@ struct ScriptTask final : public Task {
 				error("Script process reached instruction out-of-bounds");
 			const auto &instruction = _script._instructions[_pc++];
 			if (debugChannelSet(SCRIPT_DEBUG_LVL_INSTRUCTIONS, kDebugScript)) {
-				debugN("%u: %5u %-12s %8d Stack: ",
-					process().pid(), _pc - 1, ScriptOpNames[(int)instruction._op], instruction._arg);
-				if (_stack.empty())
+				const char *opName = "<invalid>";
+				if (instruction._op >= 0 && (uint32)instruction._op < opMap.size())
+					opName = ScriptOpNames[(int)opMap[(uint32)instruction._op]];
+
+				debugN("%u: %5u %-12s %8d Stack(%u): ",
+					process().pid(), _pc - 1, opName, instruction._arg, _valueStack.size());
+				if (_valueStack.empty())
 					debug("empty");
 				else {
-					const auto &top = _stack.top();
-					switch (top._type) {
-					case StackEntryType::Number:
-						debug("Number %d", top._number);
-						break;
-					case StackEntryType::Variable:
-						debug("Var %u (%d)", top._index, _script._variables[top._index]);
-						break;
-					case StackEntryType::Instruction:
-						debug("Instr %u", top._index);
-						break;
-					case StackEntryType::String:
-						debug("String %u (\"%s\")", top._index, getStringArg(0));
-						break;
-					default:
-						debug("INVALID");
-						break;
+					uint count = MIN(uint(3), _valueStack.size());
+					for (uint i = 0; i < count; i++) {
+						if (i != 0)
+							debugN(", ");
+						const auto &top = _valueStack[_valueStack.size() - 1 - i];
+						switch (top._type) {
+						case StackEntryType::Number:
+							debugN("Number %d", top._number);
+							break;
+						case StackEntryType::Variable:
+							debugN("Var %u (%d)", top._index, _script._variables[top._index]);
+							break;
+						case StackEntryType::Instruction:
+							debugN("Instr %u", top._index);
+							break;
+						case StackEntryType::String:
+							debugN("String %u (\"%s\")", top._index, getStringArg(0));
+							break;
+						default:
+							debugN("INVALID");
+							break;
+						}
 					}
+					debug("%s", "");
 				}
 			}
 
@@ -277,18 +335,30 @@ struct ScriptTask final : public Task {
 			switch (opMap[instruction._op]) {
 			case ScriptOp::Nop: break;
 			case ScriptOp::Dup:
-				if (_stack.empty())
+				if (_valueStack.empty())
 					error("Script tried to duplicate stack top, but stack is empty");
-				_stack.push(_stack.top());
+				_valueStack.push(_valueStack.top());
 				break;
 			case ScriptOp::PushAddr:
 				pushVariable(instruction._arg);
 				break;
+			case ScriptOp::PushDynAddr: {
+				int32 address = popNumber();
+				if (address < 0 || (uint32)address >= _script._strings->size())
+					error("Script tried to push invalid address: %d", address);
+				else if ((uint32)address < _script._variables.size() * 4)
+					pushVariable(address);
+				else
+					pushString((uint32)address);
+			}break;
 			case ScriptOp::PushValue:
 				pushNumber(instruction._arg);
 				break;
 			case ScriptOp::Deref:
 				pushNumber(popVariable());
+				break;
+			case ScriptOp::Pop1:
+				popN(1);
 				break;
 			case ScriptOp::PopN:
 				popN(instruction._arg);
@@ -364,6 +434,12 @@ struct ScriptTask final : public Task {
 			case ScriptOp::BitOr:
 				pushNumber(popNumber() | popNumber()); //-V501
 				break;
+			case ScriptOp::ReturnVoid: {
+				_pc = popInstruction();
+				pushNumber(instruction._arg); // this does not seem to be original, but it works..
+				if (_pc == UINT_MAX)
+					return TaskReturn::finish(0);
+			}break;
 			case ScriptOp::ReturnValue: {
 				int32 returnValue = popNumber();
 				_pc = popInstruction();
@@ -384,49 +460,67 @@ struct ScriptTask final : public Task {
 	}
 
 	void syncGame(Serializer &s) override {
-		assert(s.isSaving() || (_lock.isReleased() && _stack.empty()));
+		assert(s.isSaving() || (
+			_characterLock.isReleased() && _valueStack.empty() && _callStack.empty()));
 
 		s.syncString(_name);
 		s.syncAsUint32LE(_pc);
 		s.syncAsByte(_returnsFromKernelCall);
 		s.syncAsByte(_isFirstExecution);
 
-		uint count = _stack.size();
+		uint count = _valueStack.size();
 		s.syncAsUint32LE(count);
 		if (s.isLoading()) {
-			for (uint i = 0; i < count; i++)
-				_stack.push(StackEntry(s));
+			for (uint i = 0; i < count; i++) {
+				const StackEntry entry(s);
+				if (entry._type == StackEntryType::Instruction)
+					// we still have to support old saves
+					_callStack.push(entry._index);
+				else
+					_valueStack.push(entry);
+			}
 		} else {
 			for (uint i = 0; i < count; i++)
-				_stack[i].syncGame(s);
+				_valueStack[i].syncGame(s);
 		}
 
-		bool hasLock = !_lock.isReleased();
+		syncStack(s, _callStack, syncAsUint32LE, SaveVersion::kWithEngineV10);
+
+		bool hasLock = !_characterLock.isReleased();
 		s.syncAsByte(hasLock);
 		if (s.isLoading() && hasLock)
-			_lock = FakeLock("script", g_engine->player().semaphoreFor(process().character()));
+			_characterLock = FakeLock("script-character", g_engine->player().semaphoreFor(process().character()));
 	}
 
 	const char *taskName() const override;
 
 private:
 	void setCharacterVariables() {
-		_script.variable("m_o_f") = (int32)process().character();
-		_script.variable("m_o_f_real") = (int32)g_engine->player().activeCharacterKind();
+		if (g_engine->isV3() || g_engine->isV2()) {
+			_script.variable("m_o_f") = (int32)process().character();
+			_script.variable("m_o_f_real") = (int32)g_engine->player().activeCharacterKind();
+		} else
+			_script.variable("m_o_f") = (int32)g_engine->player().activeCharacterKind() - 1; // there is no "None" character kind in V1
 	}
 
 	void handleReturnFromKernelCall(int32 returnValue) {
-		// this is also original done, every KernelCall is followed by a PopN of the arguments
-		// only *after* the PopN the return value is pushed so that the following script can use it
-		scumm_assert(
-			_pc < _script._instructions.size() &&
-			g_engine->game().getScriptOpMap()[_script._instructions[_pc]._op] == ScriptOp::PopN);
-		popN(_script._instructions[_pc++]._arg);
+		// before pushing the return value the arguments have to be popped
+		// in V3 this is "by the script" by having a special PopN op
+		// in V1 we have to know the proper number of arguments per kernel call, so we do it in kernelCall
+
+		if (g_engine->isV1()) {
+			popN(g_engine->game().getKernelTaskArgCount(_lastKernelTaskI));
+		} else {
+			scumm_assert(
+				_pc < _script._instructions.size() &&
+				g_engine->game().getScriptOpMap()[_script._instructions[_pc]._op] == ScriptOp::PopN);
+			popN(_script._instructions[_pc++]._arg);
+		}
 		pushNumber(returnValue);
 	}
 
 	void pushNumber(int32 value) {
-		_stack.push({ StackEntryType::Number, value });
+		_valueStack.push({ StackEntryType::Number, value });
 	}
 
 	// For the following methods error recovery is not really viable
@@ -435,23 +529,23 @@ private:
 		uint32 index = offset / sizeof(int32);
 		if (offset % sizeof(int32) != 0 || index >= _script._variables.size())
 			error("Script tried to push invalid variable offset");
-		_stack.push({ StackEntryType::Variable, index });
+		_valueStack.push({ StackEntryType::Variable, index });
 	}
 
 	void pushString(uint32 offset) {
 		if (offset >= _script._strings->size())
 			error("Script tried to push invalid string offset");
-		_stack.push({ StackEntryType::String, offset });
+		_valueStack.push({ StackEntryType::String, offset });
 	}
 
 	void pushInstruction(uint32 pc) {
-		_stack.push({ StackEntryType::Instruction, pc });
+		_callStack.push(pc);
 	}
 
 	StackEntry pop() {
-		if (_stack.empty())
+		if (_valueStack.empty())
 			error("Script tried to pop empty stack");
-		return _stack.pop();
+		return _valueStack.pop();
 	}
 
 	int32 popNumber() {
@@ -476,37 +570,66 @@ private:
 	}
 
 	uint32 popInstruction() {
-		auto entry = pop();
-		if (entry._type != StackEntryType::Instruction)
-			error("Script tried to pop but top of stack is not an instruction");
-		return entry._index;
+		if (_callStack.empty()) {
+			warning("Script tried to pop empty call stack");
+			return UINT_MAX; // this will just exit script execution
+		}
+		return _callStack.pop();
 	}
 
 	void popN(int32 count) {
-		if (count < 0 || (uint)count > _stack.size())
+		if (count < 0 || (uint)count > _valueStack.size())
 			error("Script tried to pop more entries than are available on the stack");
 		for (int32 i = 0; i < count; i++)
-			_stack.pop();
+			_valueStack.pop();
 	}
 
 	StackEntry getArg(uint argI) {
-		if (_stack.size() < argI + 1)
+		if (_valueStack.size() < argI + 1)
 			error("Script did not supply enough arguments for kernel call");
-		return _stack[_stack.size() - 1 - argI];
+		return _valueStack[_valueStack.size() - 1 - argI];
 	}
 
 	int32 getNumberArg(uint argI) {
 		auto entry = getArg(argI);
-		if (entry._type != StackEntryType::Number)
+		switch (entry._type) {
+		case StackEntryType::Number:
+			return entry._number;
+		case StackEntryType::Variable:
+			warning("Misuse of variable address as number for arg %u at %u", argI, _pc);
+			return entry._number;
+		default:
 			error("Expected number in argument %u for kernel call", argI);
-		return entry._number;
+		}
+	}
+
+	MainCharacterKind getMainCharacterKindArg(uint argI) {
+		int32 value = getNumberArg(argI);
+		if (g_engine->isV1()) {
+			if (value < 0 || value > 1)
+				error("Unexpected value for main character kind: %d", value);
+			return value == 0
+				? MainCharacterKind::Mortadelo
+				: MainCharacterKind::Filemon;
+		} else {
+			if (value < 0 || value > 2)
+				error("Unexpected value for main character kind: %d", value);
+			else
+				return (MainCharacterKind)value;
+		}
 	}
 
 	const char *getStringArg(uint argI) {
 		auto entry = getArg(argI);
-		if (entry._type != StackEntryType::String)
+		switch (entry._type) {
+		case StackEntryType::String:
+			return &_script._strings[entry._index];
+		case StackEntryType::Variable:
+			warning("Misuse of variable address as string for arg %u at %u", argI, _pc);
+			return "";
+		default:
 			error("Expected string in argument %u for kernel call", argI);
-		return &_script._strings[entry._index];
+		}
 	}
 
 	int32 getNumberOrStringArg(uint argI) {
@@ -535,8 +658,29 @@ private:
 		return dynamic_cast<TObject *>(object);
 	}
 
+	const Point kInvalidPoint = { INT16_MIN, INT16_MIN };
+	Point getCamLerpTargetArg(const char *action, uint argI) {
+		auto *pointObject = getObjectArg<PointObject>(argI);
+		if (pointObject != nullptr)
+			return pointObject->position();
+
+		// in V2 a main character (we can reduce to walking character) can be used instead
+		auto *character = getObjectArg<WalkingCharacter>(argI);
+		if (character != nullptr)
+			return character->position();
+
+		pointObject = g_engine->game().unknownCamLerpTarget(action, getStringArg(argI));
+		return pointObject == nullptr ? kInvalidPoint : pointObject->position();
+	}
+
 	MainCharacter &relatedCharacter() {
-		if (process().character() == MainCharacterKind::None)
+		if (g_engine->isV1()) {
+			auto character = g_engine->player().activeCharacter();
+			if (character == nullptr)
+				error("Script tried to use character before setting an active character");
+			return *character;
+		}
+		if (process().character() == MainCharacterKind::None) 
 			error("Script tried to use character from non-character-related process");
 		return g_engine->world().getMainCharacterByKind(process().character());
 	}
@@ -552,6 +696,7 @@ private:
 			g_engine->game().unknownKernelTask(taskI);
 			return TaskReturn::finish(-1);
 		}
+		_lastKernelTaskI = taskI;
 		const auto task = taskMap[taskI];
 
 		debugC(SCRIPT_DEBUG_LVL_KERNELCALLS, kDebugScript, "%u: %5u Kernel %-25s",
@@ -587,32 +732,34 @@ private:
 			return getNumberArg(0) <= 0
 				? TaskReturn::finish(0)
 				: TaskReturn::waitFor(delay((uint32)getNumberArg(0)));
-		case ScriptKernelTask::HadNoMousePressFor:
-			return TaskReturn::waitFor(new ScriptTimerTask(process(), getNumberArg(0)));
+		case ScriptKernelTask::HadNoMousePressFor: {
+			auto duration = g_engine->isV1() ? 60 : getNumberArg(0);
+			return TaskReturn::waitFor(new ScriptTimerTask(process(), duration));
+		}
 		case ScriptKernelTask::Fork:
 			g_engine->scheduler().createProcess<ScriptTask>(process().character(), *this);
 			return TaskReturn::finish(0); // 0 means this is the forking process
 		case ScriptKernelTask::KillProcesses:
-			killProcessesFor((MainCharacterKind)getNumberArg(0));
+			killProcessesFor(getMainCharacterKindArg(0));
 			return TaskReturn::finish(1);
 
 		// player/world state changes
 		case ScriptKernelTask::ChangeCharacter: {
-			MainCharacterKind kind = (MainCharacterKind)getNumberArg(0);
-			killProcessesFor(MainCharacterKind::None); // yes, kill for all characters
-			auto &camera = g_engine->camera();
+			MainCharacterKind kind = getMainCharacterKindArg(0);
 			auto &player = g_engine->player();
-			camera.resetRotationAndScale();
-			camera.backup(0);
 			if (kind != MainCharacterKind::None) {
 				player.setActiveCharacter(kind);
 				player.heldItem() = nullptr;
-				camera.setFollow(player.activeCharacter());
-				camera.backup(0);
 			}
-			process().character() = MainCharacterKind::None;
-			assert(player.semaphore().isReleased());
-			_lock = FakeLock("script", player.semaphore());
+			g_engine->camera().onScriptChangedCharacter(kind);
+
+			if (g_engine->game().shouldChangeCharacterUseGameLock()) {
+				killProcessesFor(MainCharacterKind::None); // yes, kill for all characters
+				kind = MainCharacterKind::None;
+			}
+			process().character() = kind;
+			_characterLock = FakeLock("script", player.semaphoreFor(kind));
+			
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ChangeRoom:
@@ -627,12 +774,16 @@ private:
 					error("Invalid room name: %s\n", getStringArg(0));
 				if (process().isActiveForPlayer()) {
 					g_engine->player().heldItem() = nullptr;
-					if (g_engine->player().currentRoom() == &g_engine->world().inventory())
+					bool isTemporaryRoom = false;
+					if (g_engine->player().currentRoom() == &g_engine->world().inventory()) {
+						isTemporaryRoom = true; // see changeRoom, this fixes a bug on looking at items in the inventory
+						// this is also why we do not exit the inventory room here (like when the user closes the inventory)
 						g_engine->world().inventory().close();
+					}
 					if (targetRoom == &g_engine->world().inventory())
 						g_engine->world().inventory().open();
 					else
-						g_engine->player().changeRoom(targetRoom->name(), true);
+						g_engine->player().changeRoom(targetRoom->name(), true, isTemporaryRoom);
 					g_engine->sounds().setMusicToRoom(targetRoom->musicID());
 				}
 				g_engine->script().createProcess(process().character(), "ENTRAR_" + targetRoom->name(), ScriptFlags::AllowMissing);
@@ -673,11 +824,11 @@ private:
 			if (character == nullptr)
 				g_engine->game().unknownScriptCharacter("stop-and-turn", getStringArg(0));
 			else
-				character->stopWalking((Direction)getNumberArg(1));
+				character->stopWalking(intToDirection(getNumberArg(1)));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::StopAndTurnMe: {
-			relatedCharacter().stopWalking((Direction)getNumberArg(0));
+			relatedCharacter().stopWalking(intToDirection(getNumberArg(0)));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::Go: {
@@ -727,6 +878,12 @@ private:
 			}
 			character->resetTalking();
 			character->room() = targetRoom;
+			if (g_engine->isV2() && character == g_engine->player().activeCharacter()) {
+				// this mechanic also exists in V1 but does not seem to be used
+				// as the script also changes the room to the target when placing characters
+				g_engine->player().changeRoom(getStringArg(1), true);
+				g_engine->sounds().setMusicToRoom(targetRoom->musicID());
+			}
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::LerpCharacterLodBias: {
@@ -780,10 +937,10 @@ private:
 			Character *_character = strcmp(characterName, "AMBOS") == 0
 				? &relatedCharacter()
 				: getObjectArg<Character>(0);
-			if (_character == nullptr) {
-				g_engine->game().unknownSayTextCharacter(characterName, dialogId);
+			if (_character == nullptr)
+				_character = g_engine->game().unknownSayTextCharacter(characterName, dialogId);
+			if (_character == nullptr)
 				return TaskReturn::finish(1);
-			}
 			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
 		};
 		case ScriptKernelTask::SetDialogLineReturn:
@@ -794,23 +951,32 @@ private:
 
 		// Inventory control
 		case ScriptKernelTask::Pickup:
-			relatedCharacter().pickup(getStringArg(0), !getNumberArg(1));
+			if (process().character() == MainCharacterKind::None) {
+				// This happens in Secta, the original game just ignores this case
+				// A ChangeCharacter(0) is executed right before so this is actually just a script bug
+				warning("Tried to drop from none-character-process: %s at %u", getStringArg(0), _pc);
+			} else
+				relatedCharacter().pickup(getStringArg(0), !getNumberArg(1));
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::CharacterPickup: {
-			auto &character = g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(1));
+			auto &character = g_engine->world().getMainCharacterByKind(getMainCharacterKindArg(1));
 			character.pickup(getStringArg(0), !getNumberArg(2));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::Drop:
-			relatedCharacter().drop(getStringArg(0));
+			if (process().character() == MainCharacterKind::None) {
+				// This happens in Secta, the original game just ignores this case
+				warning("Tried to drop from none-character-process: %s at %u", getStringArg(0), _pc);
+			} else
+				relatedCharacter().drop(getStringArg(0));
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::CharacterDrop: {
-			auto &character = g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(1));
+			auto &character = g_engine->world().getMainCharacterByKind(getMainCharacterKindArg(1));
 			character.drop(getOptionalStringArg(0));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ClearInventory:
-			switch ((MainCharacterKind)getNumberArg(0)) {
+			switch (getMainCharacterKindArg(0)) {
 			case MainCharacterKind::Mortadelo:
 				g_engine->world().mortadelo().clearInventory();
 				break;
@@ -825,76 +991,88 @@ private:
 
 		// Camera tasks
 		case ScriptKernelTask::WaitCamStopping:
-			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
+			return TaskReturn::waitFor(g_engine->cameraV3().waitToStop(process()));
 		case ScriptKernelTask::CamFollow: {
 			WalkingCharacter *target = nullptr;
-			if (getNumberArg(0) != 0)
-				target = &g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(0));
-			g_engine->camera().setFollow(target, getNumberArg(1) != 0);
+			auto kind = getMainCharacterKindArg(0);
+			if (kind != MainCharacterKind::None)
+				target = &g_engine->world().getMainCharacterByKind(kind);
+			g_engine->cameraV3().setFollow(target, getNumberArg(1) != 0);
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::CamShake:
-			return TaskReturn::waitFor(g_engine->camera().shake(process(),
+			return TaskReturn::waitFor(g_engine->cameraV3().shake(process(),
 				Vector2d(getNumberArg(1), getNumberArg(2)),
 				Vector2d(getNumberArg(3), getNumberArg(4)),
 				getNumberArg(0)));
 		case ScriptKernelTask::LerpCamXY:
-			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
+			return TaskReturn::waitFor(g_engine->cameraV3().lerpPos(process(),
 				Vector2d(getNumberArg(0), getNumberArg(1)),
 				getNumberArg(2), (EasingType)getNumberArg(3)));
 		case ScriptKernelTask::LerpCamXYZ:
-			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
+			return TaskReturn::waitFor(g_engine->cameraV3().lerpPos(process(),
 				Vector3d(getNumberArg(0), getNumberArg(1), getNumberArg(2)),
 				getNumberArg(3), (EasingType)getNumberArg(4)));
 		case ScriptKernelTask::LerpCamZ:
-			return TaskReturn::waitFor(g_engine->camera().lerpPosZ(process(),
+			return TaskReturn::waitFor(g_engine->cameraV3().lerpPosZ(process(),
 				getNumberArg(0),
 				getNumberArg(1), (EasingType)getNumberArg(2)));
 		case ScriptKernelTask::LerpCamScale:
-			return TaskReturn::waitFor(g_engine->camera().lerpScale(process(),
+			return TaskReturn::waitFor(g_engine->cameraV3().lerpScale(process(),
 				getNumberArg(0) * 0.01f,
 				getNumberArg(1), (EasingType)getNumberArg(2)));
 		case ScriptKernelTask::LerpCamRotation:
-			return TaskReturn::waitFor(g_engine->camera().lerpRotation(process(),
+			return TaskReturn::waitFor(g_engine->cameraV3().lerpRotation(process(),
 				getNumberArg(0),
 				getNumberArg(1), (EasingType)getNumberArg(2)));
 		case ScriptKernelTask::LerpCamToObjectKeepingZ: {
 			if (!process().isActiveForPlayer())
 				return TaskReturn::finish(0); // contrary to ...ResettingZ this one does not delay if not active
-			auto pointObject = getObjectArg<PointObject>(0);
-			if (pointObject == nullptr) {
-				g_engine->game().unknownCamLerpTarget("LerpCamToObjectKeepingZ", getStringArg(0));
+			auto target = getCamLerpTargetArg("LerpCamToObjectKeepingZ", 0);
+			if (target == kInvalidPoint)
 				return TaskReturn::finish(1);
-			}
-			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
-				as2D(pointObject->position()),
-				getNumberArg(1), EasingType::Linear));
+			return TaskReturn::waitFor(
+				g_engine->cameraV3().lerpPos(process(), as2D(target), getNumberArg(1), EasingType::Linear));
 		}
 		case ScriptKernelTask::LerpCamToObjectResettingZ: {
 			if (!process().isActiveForPlayer())
 				return TaskReturn::waitFor(delay(getNumberArg(1)));
-			auto pointObject = getObjectArg<PointObject>(0);
-			if (pointObject == nullptr) {
-				g_engine->game().unknownCamLerpTarget("LerpCamToObjectResettingZ", getStringArg(0));
+			auto target = getCamLerpTargetArg("LerpCamToObjectResettingZ", 0);
+			if (target == kInvalidPoint)
 				return TaskReturn::finish(1);
-			}
-			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
-				as3D(pointObject->position()),
-				getNumberArg(1), (EasingType)getNumberArg(2)));
+			return TaskReturn::waitFor(
+				g_engine->cameraV3().lerpPos(process(), as3D(target), getNumberArg(1), (EasingType)getNumberArg(2)));
 		}
 		case ScriptKernelTask::LerpCamToObjectWithScale: {
 			float targetScale = getNumberArg(1) * 0.01f;
 			if (!process().isActiveForPlayer())
 				// the scale will wait then snap the scale
-				return TaskReturn::waitFor(g_engine->camera().lerpScale(process(), targetScale, getNumberArg(2), EasingType::Linear));
-			auto pointObject = getObjectArg<PointObject>(0);
-			if (pointObject == nullptr) {
-				g_engine->game().unknownCamLerpTarget("LerpCamToObjectWithScale", getStringArg(0));
+				return TaskReturn::waitFor(g_engine->cameraV3().lerpScale(process(), targetScale, getNumberArg(2), EasingType::Linear));
+			auto target = getCamLerpTargetArg("LerpCamToObjectWithScale", 0);
+			if (target == kInvalidPoint)
 				return TaskReturn::finish(1);
-			}
-			return TaskReturn::waitFor(g_engine->camera().lerpPosScale(process(),
-				as3D(pointObject->position()), targetScale,
+			return TaskReturn::waitFor(g_engine->cameraV3().lerpPosScale(process(),
+				as3D(target), targetScale,
 				getNumberArg(2), (EasingType)getNumberArg(3), (EasingType)getNumberArg(4)));
+		}
+		case ScriptKernelTask::LerpOrSetCam: {
+			if (process().isActiveForPlayer()) {
+				auto target = getCamLerpTargetArg("LerpOrSetCam", 0);
+				if (target == kInvalidPoint)
+					return TaskReturn::finish(1);
+				g_engine->cameraV1().lerpOrSet(target, getNumberArg(1));
+				// cameraV1 could also be the inherited cameraV2 here
+			}
+			return TaskReturn::finish(0);
+		}
+		case ScriptKernelTask::Disguise: {
+			// a somewhat bouncy vertical camera movement used in V1
+			// in V2 this would be a linear vertical shake, but only the waitForInput part is used
+			// or waiting for user to click
+			const auto duration = getNumberArg(0);
+			return TaskReturn::waitFor(duration == 0
+				? g_engine->input().waitForInput(process())
+				: g_engine->cameraV1().disguise(process(), duration));
 		}
 
 		// Fades
@@ -955,19 +1133,23 @@ private:
 		g_engine->scheduler().killAllProcessesFor(kind);
 		g_engine->sounds().fadeOutVoiceAndSFX(200);
 		g_engine->player().stopLastDialogCharacters();
-		_lock.release(); // yes this seems dangerous, but it is original..
+		_characterLock.release(); // yes this seems dangerous, but it is original..
 		auto &character = g_engine->world().getMainCharacterByKind(kind);
 		character.resetUsingObjectAndDialogMenu();
 		assert(character.semaphore().isReleased()); // this process should be the last to hold a lock if at all...
 	}
 
 	Script &_script;
-	Stack<StackEntry> _stack;
+	// in V3 value and call return addresses used the same stack
+	// in V1 they are separate, but the two-stack-solution should be compatible with V3
+	Stack<StackEntry> _valueStack;
+	Stack<uint32> _callStack;
 	String _name;
 	uint32 _pc = 0;
+	int32 _lastKernelTaskI = 0;
 	bool _returnsFromKernelCall = false;
 	bool _isFirstExecution = true;
-	FakeLock _lock;
+	FakeLock _characterLock;
 };
 DECLARE_TASK(ScriptTask)
 
@@ -984,10 +1166,11 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 		g_engine->game().unknownScriptProcedure(procedure);
 		return nullptr;
 	}
+	assert(offset > 0); // offsets are stored one-based to simplify loading
 	FakeLock lock;
 	if (!(flags & ScriptFlags::IsBackground))
 		lock = FakeLock("script", g_engine->player().semaphoreFor(character));
-	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset, Common::move(lock));
+	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset - 1, Common::move(lock));
 	process->name() = procedure;
 	return process;
 }
@@ -998,6 +1181,25 @@ void Script::setScriptTimer(bool reset) {
 		_scriptTimer = 0;
 	else if (_scriptTimer == 0)
 		_scriptTimer = g_engine->getMillis();
+}
+
+void Script::fixNestedMenuPop(uint32 pc) {
+	/* There seems to have been a script compiler bug related to nested dialog menus,
+	 * where an additional PopN 1 is called underflowing the value stack.
+	 * I see no good way to fix in the script interpreter so instead we patch the script
+	 *
+	 * This happens in:
+	 *   aventuradecine-cd-remastered-win-es
+	 *   secta-win-es
+	 *   escarabajo-win-es
+	 *   moscu-win-es
+	 */
+	scumm_assert(pc < _instructions.size());
+	auto &instr = _instructions[pc];
+	scumm_assert(g_engine->game().getScriptOpMap()[instr._op] == ScriptOp::PopN && instr._arg == 1);
+
+	// the additional pop is a fallback for a switch that is never called, so just not popping is fine
+	instr._arg = 0;
 }
 
 }

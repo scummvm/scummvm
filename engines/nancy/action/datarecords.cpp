@@ -86,7 +86,7 @@ void TableIndexSetValueHS::execute() {
 		// Check for correctness...
 
 		// ...of current index only...
-		if (playerTable->singleValues[_tableIndex] == tabl->correctIDs[_tableIndex]) {
+		if (playerTable->singleValues[_tableIndex - 1] == tabl->correctIDs[_tableIndex - 1]) {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_true);
 		} else {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_false);
@@ -176,14 +176,14 @@ void SetValueCombo::execute() {
 			} else {
 				if (_indices[i] < numSingleValues) {
 					// Add a single value
-					if (playerTable->singleValues[_indices[i]] != kNoTableValue) {
-						valueToAdd = playerTable->singleValues[_indices[i]];
+					if (playerTable->getSingleValue(_indices[i]) != kNoTableValue) {
+						valueToAdd = playerTable->getSingleValue(_indices[i]);
 						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
 					}
 				} else {
 					// Add another combo value
-					if (playerTable->comboValues[_indices[i] - numSingleValues] != kNoTableValue) {
-						valueToAdd = playerTable->comboValues[_indices[i] - numSingleValues];
+					if (playerTable->getComboValue(_indices[i] - numSingleValues) != (float)kNoTableValue) {
+						valueToAdd = playerTable->getComboValue(_indices[i] - numSingleValues);
 						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
 					}
 				}
@@ -407,13 +407,19 @@ void ModifyListEntry::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _stringID);
 	_mark = stream.readUint16LE();
 
-	if (g_nancy->getGameType() >= kGameTypeNancy9 && _mark >= 10) {
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Nancy 10+: the trailing sceneID is always present
+		_sceneID = stream.readUint16LE();
+		if (_mark < 10 && _mark != 7)
+			_sceneID = kNoScene;
+	} else if (g_nancy->getGameType() >= kGameTypeNancy9 && _mark >= 10) {
+		// Nancy 9: the trailing sceneID is only present when mark >= 10.
 		_sceneID = stream.readUint16LE();
 	}
 }
 
 void ModifyListEntry::execute() {
-	JournalData *journalData = (Nancy::JournalData *)NancySceneState.getPuzzleData(Nancy::JournalData::getTag());
+	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
 	assert(journalData);
 
 	Common::Array<JournalData::Entry> &array = journalData->journalEntries[_surfaceID];

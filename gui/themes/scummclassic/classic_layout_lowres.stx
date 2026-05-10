@@ -32,6 +32,8 @@
 
 		<def var = 'Layout.Spacing' value = '8' scalable = 'yes'/>
 
+		<def var = 'GlkOptionsDialog.HeadingMinGap' value = '2'/>
+
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
@@ -39,7 +41,8 @@
 		<def var = 'ShowChooserPics' value = '0'/>
 		<def var = 'ShowChooserPageDisplay' value = '0'/>
 
-		<def var = 'Launcher.HelpButton.Width' value = '16'  scalable = 'yes'/> <!-- Button.Width -->
+		<def var = 'Launcher.HelpButton.Width' value = '16' scalable = 'yes'/> <!-- Button.Width -->
+		<def var = 'Launcher.ShowMainHelp' value = '0'/>
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '0'/>
 		<def var = 'RecorderDialog.ExtInfo.Visible' value = '0'/>
@@ -248,9 +251,14 @@
 
 	<dialog name = 'Browser' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 0, 4'>
-			<widget name = 'Headline'
-					height = 'Globals.Line.Height'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'Headline'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'Help'
+						type = 'Button'
+				/>
+			</layout>
 			<widget name = 'Path'
 					height = 'Globals.Line.Height'
 			/>
@@ -1543,10 +1551,16 @@
 						width = '120'
 						height = '12'
 				/>
+			<layout type = 'horizontal' padding = '4, 4, 4, 4' align = 'center' spacing='2'>
 				<widget name = 'Help'
-						width = '120'
+						width = '60'
 						height = '12'
 				/>
+				<widget name = 'MainHelp'
+						width = '60'
+						height = '12'
+				/>
+			</layout>
 				<widget name = 'About'
 						width = '120'
 						height = '12'
@@ -2499,6 +2513,60 @@
 				<widget name = 'CopyButton'
 						type = 'Button'
 				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'PrintingDialog' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'horizontal' padding = '8, 8, 8, 8' spacing = '8'>
+			<widget name = 'Preview'
+					width = '100'
+					height = '133'
+			/>
+			<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '8'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+					<widget name = 'PrintersListDesc'
+						type = 'OptionsLabel'
+					/>
+					<space/>
+					<widget name = 'PrintersList'
+						type = 'PopUp'
+						width = '140'
+					/>
+				</layout>
+				<space/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+					<widget name = 'OrientationDesc'
+						type = 'OptionsLabel'
+					/>
+					<space/>
+					<widget name = 'Orientation'
+						type = 'PopUp'
+						width = '100'
+					/>
+				</layout>
+				<widget name = 'SaveAsImage'
+						type = 'Checkbox'
+						width = '140'
+				/>
+				<widget name = 'FitToPage'
+						type = 'Checkbox'
+						width = '140'
+				/>
+				<widget name = 'Center'
+						type = 'Checkbox'
+						width = '140'
+				/>
+				<space/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+					<widget name = 'Cancel'
+							type = 'Button'
+					/>
+					<space/>
+					<widget name = 'Print'
+							type = 'Button'
+					/>
+				</layout>
 			</layout>
 		</layout>
 	</dialog>

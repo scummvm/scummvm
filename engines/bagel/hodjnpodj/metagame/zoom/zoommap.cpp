@@ -29,7 +29,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Zoom {
 
-#define SPLASHSPEC  ".\\ART\\ZOOMMAP.BMP"
+#define SPLASHSPEC  "art\\ZOOMMAP.BMP"
 
 #define IDC_LEAVE		999
 

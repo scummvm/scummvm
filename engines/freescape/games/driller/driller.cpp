@@ -93,14 +93,19 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_endArea = 127;
 	_endEntrance = 0;
+	_finalAreaWinConditionIndex = -1;
+	_amigaAtariEndGameStep = -1;
 
 	_borderExtra = nullptr;
 	_borderExtraTexture = nullptr;
-	_playerSid = nullptr;
+	_playerMusic = nullptr;
+	_playerC64Sfx = nullptr;
+	_c64UseSFX = false;
 }
 
 DrillerEngine::~DrillerEngine() {
-	delete _playerSid;
+	delete _playerMusic;
+	delete _playerC64Sfx;
 	delete _drillBase;
 
 	if (_borderExtra) {
@@ -135,46 +140,46 @@ void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 			act->addDefaultInputMapping("ESCAPE");
 		infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+		act = new Common::Action("TOGGLESOUND", _("Toggle sound"));
 		act->setCustomEngineActionEvent(kActionToggleSound);
 		act->addDefaultInputMapping("t");
 		infoScreenKeyMap->addAction(act);
 	}
 
-	act = new Common::Action("ROTL", _("Rotate Left"));
+	act = new Common::Action("ROTL", _("Rotate left"));
 	act->setCustomEngineActionEvent(kActionRotateLeft);
 	act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("ROTR", _("Rotate Right"));
+	act = new Common::Action("ROTR", _("Rotate right"));
 	act->setCustomEngineActionEvent(kActionRotateRight);
 	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	// I18N: Illustrates the angle at which you turn left or right.
-	act = new Common::Action("INCANGLE", _("Increase Turn Angle"));
+	act = new Common::Action("INCANGLE", _("Increase turn angle"));
 	act->setCustomEngineActionEvent(kActionIncreaseAngle);
 	act->addDefaultInputMapping("a");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("DECANGLE", _("Decrease Turn Angle"));
+	act = new Common::Action("DECANGLE", _("Decrease turn angle"));
 	act->setCustomEngineActionEvent(kActionDecreaseAngle);
 	act->addDefaultInputMapping("z");
 	engineKeyMap->addAction(act);
 
 	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
+	act = new Common::Action("INCSTEPSIZE", _("Increase step size"));
 	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
 	act->addDefaultInputMapping("s");
 	engineKeyMap->addAction(act);
 
 	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-	act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
+	act = new Common::Action("DECSTEPSIZE", _("Decrease step size"));
 	act->setCustomEngineActionEvent(kActionDecreaseStepSize);
 	act->addDefaultInputMapping("x");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("RISE", _("Rise/Fly up"));
+	act = new Common::Action("RISE", _("Rise / Fly up"));
 	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
 	act->addDefaultInputMapping("JOY_B");
 	act->addDefaultInputMapping("r");
@@ -190,7 +195,7 @@ void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	act->addDefaultInputMapping("m");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("LOWER", _("Lower/Fly down"));
+	act = new Common::Action("LOWER", _("Lower / Fly down"));
 	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
 	act->addDefaultInputMapping("JOY_Y");
 	act->addDefaultInputMapping("f");
@@ -262,9 +267,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		if (isC64())
-			_playerSid->startMusic();
-		else {
+		if (isC64()) {
+			if (!_c64UseSFX && _playerMusic)
+				_playerMusic->startMusic();
+			playSound(_soundIndexStart, true, _soundFxHandle);
+		} else {
 			playSound(_soundIndexStart, true, _soundFxHandle);
 			// Start playing music, if any, in any supported format
 			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
@@ -275,13 +282,13 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_pitch = 335;
 		_flyMode = true; // Avoid falling
 		// Show the number of completed areas
-		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", _gameStateVars[32]));
+		_areaMap[127]->_name.replace(0, isAmiga() || isAtariST() ? 4 : 3, Common::String::format("%4d", _gameStateVars[32]));
 	} else
 		playSound(_soundIndexAreaChange, false, _soundFxHandle);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
-	// Ignore sky/ground fields
+	// DOS/Amiga/Atari ST ignore the area sky/background fields here.
 	_gfx->_keyColor = 0;
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
@@ -291,8 +298,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_currentArea->_skyColor = 0;
 		_currentArea->_usualBackgroundColor = 0;
 	} else if (isCPC()) {
-		_currentArea->_usualBackgroundColor = 1;
-		_currentArea->_skyColor = 1;
+		// The CPC loader still uses the generic area header parser, but the
+		// original Driller code does not use the first header byte as split
+		// sky/ground colors. Keep the real per-area background ink and reuse it
+		// for the viewport fill instead of interpreting the flag nibble as a sky.
+		_currentArea->_skyColor = _currentArea->_usualBackgroundColor;
 	}
 
 	resetInput();
@@ -300,6 +310,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 void DrillerEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
+	_finalAreaWinConditionIndex = -1;
 	if (_areaMap.contains(18)) {
 		/*
 		We are going to inject a small script in the
@@ -323,6 +334,7 @@ void DrillerEngine::loadAssets() {
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		_areaMap[18]->_conditions.push_back(instructions);
 		_areaMap[18]->_conditionSources.push_back(conditionSource);
+		_finalAreaWinConditionIndex = _areaMap[18]->_conditions.size() - 1;
 	}
 
 	_timeoutMessage = _messagesList[14];
@@ -423,8 +435,12 @@ void DrillerEngine::drawInfoMenu() {
 	} else if (isSpectrum()) {
 		drawStringInSurface("l-load s-save 1-abort", 76, 97, front, black, surface);
 		drawStringInSurface("any other key-continue", 76, 105, front, black, surface);
-	} else if (isAmiga() || isAtariST())
+	} else if (isAmiga() || isAtariST()) {
 		drawStringInSurface("press any key to continue", 66, 97, front, black, surface);
+	} else if (isC64())	{
+		drawStringInSurface("l-load s-save run/stop-abort", 76, 97, front, black, surface);
+		drawStringInSurface("t-toggle effect/music", 76, 105, front, black, surface);
+	}
 
 	Texture *menuTexture = _gfx->createTexture(surface);
 	Common::Event event;
@@ -445,6 +461,8 @@ void DrillerEngine::drawInfoMenu() {
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
+				} else if (isC64() && event.customType == kActionToggleSound) {
+					toggleC64Sound();
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
 				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
@@ -463,7 +481,7 @@ void DrillerEngine::drawInfoMenu() {
 			case Common::EVENT_RBUTTONDOWN:
 			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
-				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
+				if (isTouchscreenActive())
 					cont = false;
 				break;
 			default:
@@ -498,6 +516,11 @@ Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vect
 }
 
 void DrillerEngine::pressedKey(const int keycode) {
+	// Any key press during quit confirmation cancels it
+	if ((isAmiga() || isAtariST()) && _quitConfirmCounter > 0) {
+		_quitConfirmCounter = 0;
+	}
+
 	if (keycode == kActionIncreaseStepSize) {
 		increaseStepSize();
 	} else if (keycode == kActionDecreaseStepSize) {
@@ -727,7 +750,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 
 void DrillerEngine::addSkanner(Area *area) {
 	debugC(1, kFreescapeDebugParser, "Adding skanner to area: %d", area->getAreaID());
-	GeometricObject *obj = nullptr;
+	Object *obj = nullptr;
 	int16 id;
 
 	id = 248;
@@ -736,25 +759,25 @@ void DrillerEngine::addSkanner(Area *area) {
 		return;
 
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	obj = _areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
+	obj = obj->duplicate();
 	obj->makeInvisible();
 	area->addObject(obj);
 
 	id = 249;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	obj = _areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
+	obj = obj->duplicate();
 	obj->makeInvisible();
 	area->addObject(obj);
 
 	id = 250;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	obj = _areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
+	obj = obj->duplicate();
 	obj->makeInvisible();
 	area->addObject(obj);
 }
@@ -858,6 +881,9 @@ void DrillerEngine::removeDrill(Area *area) {
 
 void DrillerEngine::initGameState() {
 	FreescapeEngine::initGameState();
+	_quitConfirmCounter = 0;
+	_quitStartTicks = 0;
+	_amigaAtariEndGameStep = -1;
 
 	for (auto &it : _areaMap) {
 		if (_drillStatusByArea[it._key] != kDrillerNoRig)
@@ -892,26 +918,64 @@ bool DrillerEngine::checkIfGameEnded() {
 		if (_demoData[_demoIndex + 1] == 0x5f)
 			return true;
 
-	FreescapeEngine::checkIfGameEnded();
-	return false;
+	if (_currentArea && _currentArea->getAreaID() == _endArea && 
+	    _gameStateControl == kFreescapeGameStatePlaying       &&
+		_gameStateVars[32] == 18
+	) { 
+		_gameStateControl = kFreescapeGameStateEnd;
+		return true;
+	}
+
+	return FreescapeEngine::checkIfGameEnded();
+}
+
+bool DrillerEngine::triggerWinCondition() {
+	_gameStateVars[32] = 18;
+
+	stopMovement();
+	if (!_currentArea || _currentArea->getAreaID() != 18)
+		gotoArea(18, 20);
+
+	return true;
 }
 
 void DrillerEngine::endGame() {
-	FreescapeEngine::endGame();
+	if (!_currentArea || _currentArea->getAreaID() != _endArea)
+		gotoArea(_endArea, _endEntrance);
 
-	if (!_endGamePlayerEndArea)
-		return;
+	_shootingFrames = 0;
+	_delayedShootObject = nullptr;
 
-	if (_gameStateVars[32] == 18) { // All areas are complete
-		insertTemporaryMessage(_messagesList[19], _countdown - 2);
-		_gameStateVars[32] = 0;  // Avoid repeating the message
+	if (isAmiga() || isAtariST()) {
+		if (_amigaAtariEndGameStep < 0) {
+			stopMovement();
+
+			// ENDGAME on Amiga/Atari ST switches to set 127 and then runs a 21-step
+			// flythrough. The original Amiga coordinates are stored at twice the engine
+			// position scale, so convert the CMVY/CMVZ deltas before applying them.
+			// The original routine is blocking, so keep the redraw pacing in the
+			// engine's wait loop instead of stretching it across separate frames.
+			const int areaScale = MAX<int>(_currentArea ? _currentArea->getScale() : 1, 1);
+			playSound(11, false, _soundFxHandle);
+			_position.z() -= 8000.0f / areaScale;
+			_position.y() += 3000.0f / areaScale;
+			_lastPosition = _position;
+			_endGamePlayerEndArea = false;
+			_amigaAtariEndGameStep = 0;
+
+			for (int step = 0; step < 20; step++) {
+				_position.z() += 400.0f / areaScale;
+				_position.y() -= 140.0f / areaScale;
+				_lastPosition = _position;
+				waitInLoop(5);
+			}
+			waitInLoop(102);
+		}
+	} else {
+		waitInLoop(100);
 	}
 
-	if (_endGameKeyPressed) {
-		_gameStateControl = kFreescapeGameStateRestart;
-	}
-
-	_endGameKeyPressed = false;
+	_gameStateControl = kFreescapeGameStateRestart;
 }
 
 bool DrillerEngine::onScreenControls(Common::Point mouse) {
@@ -948,6 +1012,14 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 		_gfx->setViewport(_fullscreenViewArea);
 		loadGameDialog();
 		_gfx->setViewport(_viewArea);
+		return true;
+	} else if ((isAmiga() || isAtariST()) && !_quitSprites.empty() && _quitArea.contains(mouse)) {
+		if (_quitConfirmCounter == 0)
+			_quitStartTicks = _ticks;
+		_quitConfirmCounter++;
+		if (_quitConfirmCounter > 4) {
+			_gameStateControl = kFreescapeGameStateEnd;
+		}
 		return true;
 	}
 	return false;

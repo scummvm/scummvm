@@ -61,6 +61,12 @@ private:
 	 */
 	void showLocation(int locationId);
 
+protected:
+	/**
+	 * Draws the dialog message
+	 */
+	void drawDialogMessage() override;
+
 public:
 	GameView(UIElement *owner) : Views::GameView(owner) {}
 	virtual ~GameView() {

@@ -42,7 +42,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ 0, 0 }
 };
 
-#define SUPPORT_STATUS ADGF_TESTING
+#define SUPPORT_STATUS ADGF_NO_FLAGS
 
 #define GAMEelf(id,extra,md5,size,exefile,exemd5,exesize,lang,flags) { \
         id, \
@@ -69,8 +69,6 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAMEl("karliknos", "89077e9322d92b080406d3807f548fe2", 3225327,
 			"qd_game.exe", "607fa1a3b2c2b7810a5de49b5e7c1521", 917504, Common::LT_LTU),
 
-#undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_NO_FLAGS
 	// Ну, погоди! Выпуск 3. Песня для зайца
 	// 2003/12/11. K D-Lab
 	GAME("nupogodi3", "7394a5d28590680cfeb6a037101a9c81", 1675230,
@@ -84,9 +82,6 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// No počkaj! 3: Pieseň pre zajaca
 	//GAMEl("nupogodi3", "???", 1674743,
 	//		"qd_game.exe", "???", 909312, Common::SK_SVK),
-
-#undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
 
 	// Братья Пилоты. Обратная сторона Земли
 	// 2004/06/11. K D-Lab / Pipe Studio
@@ -118,8 +113,6 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAMEd("mng", "da3a6e591d4896ca3176c5866aef278f", 2541094,
 			"qd_game.exe", "233ac221814568e5c278f952e76495ce", 757760),
 
-#undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_NO_FLAGS
 	// Маски-шоу
 	// 2005/12/16. Lazy Games
 	GAME("maski", "9a40b7491cac0dd80657cfe52e28ea74", 23128230,
@@ -145,16 +138,11 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAME("shveik", "3877afbb780996a5608a5b358dd59726", 30233418,
 			"shveik.exe", "a56cb058b46e47754019652d27d974b3", 962560),
 
-#undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
-
 	// Клёпа: Символические Заклепки
 	// 2007/10/19. K-D Logic
 	GAME("klepa", "a09e1f072942d88c06abccfb820f46a9", 20260975,
 			"qd_game.exe", "a56cb058b46e47754019652d27d974b3", 962560),
 
-#undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_NO_FLAGS
 	// Три маленькие белые мышки. День рождения морской крысы
 	// 2007/12/27. Lazy Games
 	GAME("3mice2", "93d8311ff9c00453f25192743c9e98d9", 8176962,
@@ -195,8 +183,6 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-#undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
 	// Агентство "КотоПес": По следам невиданных зверей
 	// 2008/03/21 KD Vision Games
 	GAME("dogncat", "db4e0081fdaf575e82910cf7399cef62", 17759363,

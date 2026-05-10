@@ -36,15 +36,6 @@ DECLARE_SINGLETON(Nancy::State::Help);
 namespace Nancy {
 namespace State {
 
-Help::Help() :
-		_state(kInit),
-		_image(),
-		_button(nullptr) {}
-
-Help::~Help() {
-	delete _button;
-}
-
 void Help::process() {
 	switch (_state) {
 	case kInit:
@@ -85,7 +76,7 @@ void Help::init() {
 
 	_image.init(helpData->imageName);
 
-	_button = new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest, helpData->buttonHoverSrc);
+	_button.reset(new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest, helpData->buttonHoverSrc));
 	_button->init();
 
 	_state = kBegin;

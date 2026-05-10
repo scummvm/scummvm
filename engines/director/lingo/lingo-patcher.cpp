@@ -170,6 +170,9 @@ struct ScriptPatch {
 			191, "set the castnum of sprite 19 to the number of cast \"Description\"", "updateStage"},
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, DEFAULT_CAST_LIB,
 			192, "updateStage", "set the trails of sprite 19 to 0"},
+	// FIXME: the Lingo parser treats ".5" as "5"
+	{"jman", "v1.2", kPlatformMacintosh, "Support Files:Mars ESG 07", kMovieScript, 129, DEFAULT_CAST_LIB,
+			169, "LoopIt .5", ""},
 
 
 	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, DEFAULT_CAST_LIB,
@@ -321,6 +324,29 @@ end \r\
 ";
 
 /*
+ * The Virtual Nightclub codebase is a large mass of spaghetti.
+ * All VNC/VNC.EXE is meant to do is play the Thumb Candy logo,
+ * then kick over to VNC2/_VNC.DXR which boots the game.
+ *
+ * However, VNC/VNC.EXE contains an internal copy of the SHARED.DXR similar
+ * to the main game in VNC2/SHARED.DXR. The game handles pretty much
+ * everything with an event loop in "idle", which (amongst other things)
+ * assumes if certain stuff hasn't been initialised, the game has been
+ * restarted and it should try and init -some- things (but not call init(),
+ * which inits everything).
+ *
+ * This doesn't really work, as several of the subsystems don't have checks for
+ * e.g. "mmxobj", a global object used for controlling the custom movie player.
+ * As such, running the game in strict mode will crash on startup.
+ * Instead of divining the exact order of operations which narrowly avoids a crash,
+ * we can say "idle" isn't needed for the intro and nop it out.
+ */
+const char *const vncFixIntro = " \
+on idle \r\
+end \r\
+";
+
+/*
  * Virtual Nightclub will try and list all the files from all 26 drive letters
  * to determine which has the CD. This works, but takes forever.
  */
@@ -368,6 +394,14 @@ end\r\
 const char *const amberDriveDetectionFix = " \
 on GetCDLetter tagFile, discNumber\r\
   return \"D:\"\r\
+end \r\
+";
+
+/* Elroy Hits the Pavement has a missing mouseUp script for clicking on the map when
+ * you game over in the gangster's hideout. */
+const char *const elroypaveMapFix = " \
+on mouseUp\r\
+  handleMapClick()\r\
 end \r\
 ";
 
@@ -491,6 +525,20 @@ on checkFiles\r\
 end\r\
 ";
 
+/*
+ * Journeyman Project has inventory scroll buttons which repeat while the mouse button
+ * is held down. On fast systems (i.e. us) this is quite unpleasant to use.
+ */
+const char *const jmanInventory = "\
+macro InventoryArrowsClicked\r\
+  if the castnum of sprite 9 = the number of cast \"MsgBoxGraphic\" then\r\
+    CloseMessageBox\r\
+  end if\r\
+  ScrollIt\r\
+  set the castnum of sprite 13 to the number of cast \"InventoryArrows\"\r\
+  updateStage\r\
+";
+
 struct ScriptHandlerPatch {
 	const char *gameId;
 	const char *extra;
@@ -513,8 +561,13 @@ struct ScriptHandlerPatch {
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"elroypave", nullptr, kPlatformWindows, "P04\\P04HAZ\\ENDING.DXR", kScoreScript, 27, DEFAULT_CAST_LIB, &elroypaveMapFix},
+	{"elroypave", nullptr, kPlatformWindows, "P04\\P04HAZ\\ENDING.DXR", kScoreScript, 29, DEFAULT_CAST_LIB, &elroypaveMapFix},
+	{"elroypave", nullptr, kPlatformMacintosh, "P04:p04Haz:ending.Dxr", kScoreScript, 27, DEFAULT_CAST_LIB, &elroypaveMapFix},
+	{"elroypave", nullptr, kPlatformMacintosh, "P04:p04Haz:ending.Dxr", kScoreScript, 29, DEFAULT_CAST_LIB, &elroypaveMapFix},
 	{"vnc", nullptr, kPlatformWindows, "VNC\\VNC.EXE", kMovieScript, 57, DEFAULT_CAST_LIB, &vncSkipDetection},
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
+	{"vnc", nullptr, kPlatformWindows, "VNC\\Shared.DXR", kMovieScript, 1562, DEFAULT_CAST_LIB, &vncFixIntro},
 	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, &amberDriveDetectionFix},
 	{"frankenstein", nullptr, kPlatformWindows, "FRANKIE.EXE", kScoreScript, 21, DEFAULT_CAST_LIB, &frankensteinSwapFix},
 	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\DISKCNG.DIR", kScoreScript, 2, DEFAULT_CAST_LIB, &gadgetPafDetectionFixAlert},
@@ -534,6 +587,7 @@ struct ScriptHandlerPatch {
 	{"mcmillennium", nullptr, kPlatformWindows, "PC\\SHARED.DXR", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:SHARED.Dxr", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{"gordak", nullptr, kPlatformWindows, "GORDAKCD.EXE", kMovieScript, 2, DEFAULT_CAST_LIB, &gordakDetectionFix},
+	{"jman", "v1.2", kPlatformMacintosh, "Support Files:Mars ESG Upper 03", kMovieScript, 322, DEFAULT_CAST_LIB, &jmanInventory},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };

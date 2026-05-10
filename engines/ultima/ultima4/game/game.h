@@ -145,7 +145,7 @@ void gameSetActivePlayer(int player);
  * fails.  If a tile is blocked, that tile is included in the path
  * only if includeBlocked is true.
  */
-Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked);
+Common::Array<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked);
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

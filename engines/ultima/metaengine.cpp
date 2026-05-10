@@ -27,6 +27,10 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/translation.h"
+#ifdef ENABLE_AKALABETH
+#include "ultima/ultima0/ultima0.h"
+#include "ultima/ultima0/metaengine.h"
+#endif
 #ifdef ENABLE_ULTIMA1
 #include "ultima/shared/early/ultima_early.h"
 #endif
@@ -181,6 +185,11 @@ const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const
 
 Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Ultima::UltimaGameDescription *gd) const {
 	switch (gd->gameId) {
+#ifdef ENABLE_AKALABETH
+	case Ultima::GAME_AKALABETH:
+		*engine = new Ultima::Ultima0::Ultima0Engine(syst, gd);
+		break;
+#endif
 #ifdef ENABLE_ULTIMA1
 	case Ultima::GAME_ULTIMA1:
 		*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
@@ -235,7 +244,7 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 		Common::String gameId = getGameId(target);
 		if (gameId == "ultima8") {
 			Common::String filename = getSavegameFile(slot, target);
-			desc = SaveStateDescriptor(this, slot, Common::U32String());
+			desc = SaveStateDescriptor(this, slot);
 			if (!Ultima::Ultima8::MetaEngine::querySaveMetaInfos(filename, desc))
 				return SaveStateDescriptor();
 		}
@@ -246,10 +255,14 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
-#if defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
+#if defined(ENABLE_AKALABETH) || defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
 	const Common::String gameId = getGameId(target);
 #endif
 
+#ifdef ENABLE_AKALABETH
+	if (gameId == "akalabeth")
+		return Ultima::Ultima0::MetaEngine::initKeymaps();
+#endif
 #ifdef ENABLE_ULTIMA4
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();

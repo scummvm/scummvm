@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section5/room502.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -165,10 +167,10 @@ const seriesPlayBreak Room502::PLAY7[] = {
 };
 
 const seriesPlayBreak Room502::PLAY8[] = {
-	{ 28, 29, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 30, 35, "502_008b", 1, 100, -1, 0, 0, 0, 0 },
-	{ 36, 40, "502_008a", 1, 100, -1, 0, 0, 0, 0 },
-	{ 41, -1, "502_008b", 1, 100, -1, 0, 0, 0, 0 },
+	{ 28, 29, 0, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 30, 35, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 36, 40, "502_008a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 41, -1, "502_008b", 1, 100, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -816,10 +818,10 @@ void Room502::pre_parser() {
 
 void Room502::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool railing = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
-	bool takeKindling = player_said("KINDLING ") && player_said("TAKE");
-	bool gearKindling = player_said("KINDLING ") && player_said("GEAR");
-	bool fireplace = player_said("FIREPLACE") && _G(flags)[kFireplaceHasFire] != 0;
+	const bool railing = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
+	const bool takeKindling = player_said("KINDLING ") && player_said("TAKE");
+	const bool gearKindling = player_said("KINDLING ") && player_said("GEAR");
+	const bool fireplace = player_said("FIREPLACE") && _G(flags)[kFireplaceHasFire] != 0;
 
 	if (player_said("LOOK AT", "FRONT DOOR") && _G(flags)[V195]) {
 		wilbur_speech("502w004");

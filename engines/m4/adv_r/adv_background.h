@@ -23,8 +23,6 @@
 #ifndef M4_ADV_R_ADV_BACKGROUND_H
 #define M4_ADV_R_ADV_BACKGROUND_H
 
-#include "m4/m4_types.h"
-
 namespace M4 {
 
 void adv_freeCodes();

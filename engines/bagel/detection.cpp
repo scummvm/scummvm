@@ -22,6 +22,11 @@
 #include "bagel/detection.h"
 #include "bagel/detection_tables.h"
 
+const DebugChannelDef BagelMetaEngineDetection::debugFlagList[] = {
+	{ Bagel::kDebugRandom, "Random", "Random number generation debug level" },
+	DEBUG_CHANNEL_END
+};
+
 BagelMetaEngineDetection::BagelMetaEngineDetection() : AdvancedMetaEngineDetection(Bagel::gameDescriptions, Bagel::bagelGames) {
 	_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	_flags = kADFlagMatchFullPaths;

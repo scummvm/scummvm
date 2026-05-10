@@ -63,7 +63,7 @@ CColorButton    *pPRCancelButton = nullptr;
  *
  ****************************************************************/
 CPackRatOptDlg::CPackRatOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID) :
-		CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
+		CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP"),
 		rectDisplayLevel(43, 60, 174, 73),
 		rectDisplayLives(43, 101, 174, 114) {
 	CDC     *pDC = GetDC();

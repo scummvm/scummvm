@@ -40,42 +40,37 @@ Resources::~Resources() {
 
 
 Resources::Entry *Resources::findAndSetResEntry(const Common::String &resourceName) {
-	int orig_hash_val;
 	int hash_val;
 	Entry *res = nullptr;
 
 	Common::String resName = resourceName;
 	if (_useLowercase)
 		resName.toLowercase();
-	orig_hash_val = hash_val = hash(resName);
+	const int orig_hash_val = hash_val = hash(resName);
 
 	// If empty slot at this hash, then we're done
-	if (!_resources[hash_val].Flags)
-		goto got_one;
+	if (_resources[hash_val].Flags) {
+		// Flags is set, so scan until Flags is clear, or the resource name strings match
+		while ((_resources[hash_val].Flags & FULLY_BUFFERED)
+				&& !resName.equals(_resources[hash_val].name)) {
+			// if we searched every entry to no avail:
+			if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
+				hash_val = orig_hash_val;
+				while (!(_resources[hash_val].Flags & MARKED_PURGE)) {
+					// if we searched every entry to no avail:
+					if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
+						error("Out of resource space");
+					}
+				}
 
-	// Flags is set, so scan until Flags is clear, or the resource name strings match
-	while ((_resources[hash_val].Flags & FULLY_BUFFERED)
-			&& !resName.equals(_resources[hash_val].name)) {
-		// if we searched every entry to no avail:
-		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val)
-			goto test4;
+				res = &_resources[hash_val];
+				delete[] res->RHandle;
+				res->RHandle = nullptr;
+				break;
+			}
+		}
 	}
 
-	goto got_one;
-
-test4:
-	hash_val = orig_hash_val;
-	while (!(_resources[hash_val].Flags & MARKED_PURGE))
-		// if we searched every entry to no avail:
-		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
-			error("Out of resource space");
-		}
-
-	res = &_resources[hash_val];
-	delete[] res->RHandle;
-	res->RHandle = nullptr;
-
-got_one:
 	res = &_resources[hash_val];
 	res->name = resName;
 	res->Flags = FULLY_BUFFERED;
@@ -96,12 +91,11 @@ int Resources::hash(const Common::String &sym) const {
 }
 
 MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSize) {
-	Entry *resEntry;
-
 	if (resourceSize)
 		*resourceSize = 0;
 
-	if (!(resEntry = findAndSetResEntry(resourceName))) {
+	Entry *resEntry = findAndSetResEntry(resourceName);
+	if (!resEntry) {
 		term_message("rget:%s  -> failed!", resourceName.c_str());
 		return nullptr;
 	}
@@ -152,13 +146,12 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 }
 
 void Resources::rtoss(const Common::String &resourceName) {
-	int hash_val;
 	Entry *resEntry = nullptr;
 	Common::String resName = resourceName;
 
 	if (_useLowercase)
 		resName.toLowercase();
-	hash_val = hash(resName);
+	int hash_val = hash(resName);
 
 	// Check if resource is in resource table
 	if (_resources[hash_val].Flags) {
@@ -172,8 +165,9 @@ void Resources::rtoss(const Common::String &resourceName) {
 	}
 
 	if (!resEntry)
-		error_show(FL, 'RIOU', "rtoss: %s", resourceName.c_str());
-	else if (!(resEntry->Flags & FULLY_BUFFERED))
+		error_show(FL, "rtoss: %s", resourceName.c_str());
+
+	if (!(resEntry->Flags & FULLY_BUFFERED))
 		return;
 
 	if (!resEntry || !*resEntry->RHandle) {

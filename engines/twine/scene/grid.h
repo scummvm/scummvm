@@ -22,7 +22,7 @@
 #ifndef TWINE_SCENE_GRID_H
 #define TWINE_SCENE_GRID_H
 
-#define WATER_BRICK (0xF1)
+#define WATER_BRICK (0xF1) // CJ_WATER
 
 #include "common/scummsys.h"
 #include "twine/parser/blocklibrary.h"
@@ -198,6 +198,8 @@ public:
 
 	/** Current grid camera x, y and z coordinates */
 	IVec3 _worldCube; // WorldXCube WorldYCube
+
+	int32 _addBetaCam = 0;
 
 	/** Flag to know if the engine is using celling grids */
 	int16 _zoneGrm = 0;

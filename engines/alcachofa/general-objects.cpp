@@ -41,11 +41,11 @@ ObjectBase::ObjectBase(Room *room, const char *name)
 	assert(room != nullptr);
 }
 
-ObjectBase::ObjectBase(Room *room, ReadStream &stream)
+ObjectBase::ObjectBase(Room *room, SeekableReadStream &stream)
 	: _room(room) {
 	assert(room != nullptr);
 	_name = readVarString(stream);
-	_isEnabled = readBool(stream);
+	_isEnabled = g_engine->isV1() ? true : readBool(stream);
 }
 
 void ObjectBase::toggle(bool isEnabled) {
@@ -76,18 +76,25 @@ Shape *ObjectBase::shape() {
 
 const char *PointObject::typeName() const { return "PointObject"; }
 
-PointObject::PointObject(Room *room, ReadStream &stream)
+PointObject::PointObject(Room *room, SeekableReadStream &stream)
 	: ObjectBase(room, stream) {
 	_pos = Shape(stream).firstPoint();
 }
 
 const char *GraphicObject::typeName() const { return "GraphicObject"; }
 
-GraphicObject::GraphicObject(Room *room, ReadStream &stream)
-	: ObjectBase(room, stream)
-	, _graphic(stream)
-	, _type((GraphicObjectType)stream.readSint32LE())
-	, _posterizeAlpha(100 - stream.readSint32LE()) {
+GraphicObject::GraphicObject(Room *room, SeekableReadStream &stream)
+	: ObjectBase(room, stream) {
+	if (g_engine->isV1())
+		toggle(readBool(stream));
+
+	_graphic = Graphic(stream);
+
+	if (g_engine->isV3()) {
+		_type = (GraphicObjectType)stream.readSint32LE();
+		_posterizeAlpha = 100 - stream.readSint32LE();
+	}
+
 	_graphic.start(true);
 }
 
@@ -203,7 +210,7 @@ Task *GraphicObject::animate(Process &process) {
 
 const char *SpecialEffectObject::typeName() const { return "SpecialEffectObject"; }
 
-SpecialEffectObject::SpecialEffectObject(Room *room, ReadStream &stream)
+SpecialEffectObject::SpecialEffectObject(Room *room, SeekableReadStream &stream)
 	: GraphicObject(room, stream) {
 	_topLeft = Shape(stream).firstPoint();
 	_bottomRight = Shape(stream).firstPoint();
@@ -231,10 +238,12 @@ void SpecialEffectObject::draw() {
 
 const char *ShapeObject::typeName() const { return "ShapeObject"; }
 
-ShapeObject::ShapeObject(Room *room, ReadStream &stream)
+ShapeObject::ShapeObject(Room *room, SeekableReadStream &stream)
 	: ObjectBase(room, stream)
-	, _shape(stream)
-	, _cursorType((CursorType)stream.readSint32LE()) {}
+	, _shape(stream) {
+	if (g_engine->isV3())
+		_cursorType = (CursorType)stream.readSint32LE();
+}
 
 void ShapeObject::update() {
 	if (isEnabled())
@@ -302,8 +311,10 @@ void ShapeObject::updateSelection() {
 
 const char *PhysicalObject::typeName() const { return "PhysicalObject"; }
 
-PhysicalObject::PhysicalObject(Room *room, ReadStream &stream)
+PhysicalObject::PhysicalObject(Room *room, SeekableReadStream &stream)
 	: ShapeObject(room, stream) {
+	if (g_engine->isV1())
+		toggle(readBool(stream));
 	_order = stream.readSByte();
 }
 

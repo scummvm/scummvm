@@ -376,14 +376,12 @@ static void warnTransactionFailures(OSystem::TransactionError gfxError, int widt
 	}
 
 	// Just show warnings then these occur:
-#ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
 		Common::U32String message = _("Could not initialize color format.");
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
-#endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::U32String message;
@@ -434,16 +432,12 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 	for (candidate = start; candidate < (int)modes.size(); candidate++) {
 		g_system->beginGFXTransaction();
 		initCommonGFX(false);
-#ifdef USE_RGB_COLOR
 		if (modes[candidate].hasFormat)
 			g_system->initSize(modes[candidate].width, modes[candidate].height, &modes[candidate].format);
 		else {
 			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
 			g_system->initSize(modes[candidate].width, modes[candidate].height, &bestFormat);
 		}
-#else
-		g_system->initSize(modes[candidate].width, modes[candidate].height);
-#endif
 		last_width = modes[candidate].width;
 		last_height = modes[candidate].height;
 
@@ -482,14 +476,12 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
  *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
 inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
-#ifdef USE_RGB_COLOR
 	for (const auto &back : backend) {
 		for (auto &front : frontend) {
 			if (back == front)
 				return back;
 		}
 	}
-#endif
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
@@ -600,7 +592,7 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the documentation (CD audio) for details."), _("OK"));
+			"See the documentation (CD audio) for details."));
 		dialog.runModal();
 		return true;
 	}
@@ -623,7 +615,7 @@ void Engine::warnMissingExtractedCDAudio() {
 		"tracks need to be ripped from the CD using\n"
 		"an appropriate CD audio extracting tool in\n"
 		"order to listen to the game's music.\n"
-		"See the documentation (CD audio) for details."), _("OK"));
+		"See the documentation (CD audio) for details."));
 	dialog.runModal();
 }
 
@@ -649,7 +641,7 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	altButtons.push_back(_("Delete"));
 	altButtons.push_back(_("Skip autosave"));
 	const Common::U32String message = Common::U32String::format(
-				_("WARNING: The autosave slot contains a saved game named %S, and an autosave is pending.\n"
+				_("WARNING: The autosave slot contains a saved game named %s, and an autosave is pending.\n"
 				  "Please move this saved game to a new slot, or delete it if it's no longer needed.\n"
 				  "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."), desc.getDescription().c_str());
 	GUI::MessageDialog warn(message, _("Move"), altButtons);
@@ -1016,7 +1008,7 @@ bool Engine::loadGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 
 	int slotNum;
 	{
@@ -1045,7 +1037,7 @@ bool Engine::saveGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 	int slotNum;
 	{
 		PauseToken pt = pauseEngine();

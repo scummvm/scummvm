@@ -58,7 +58,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
 	  _countdown(0), _timerStarted(false), _score(0), _bonus(0), _lives(0),
 	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
-	  _background(nullptr), _masks(nullptr),
+	  _background(nullptr), _masks(nullptr), _useSubtitles(false),
 	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
 	  _screenW(0), _screenH(0), // Every games initializes its own resolution
 	  _keepTimerDuringScenes(false), _subtitles(nullptr) {
@@ -89,14 +89,17 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 
 	if (!Common::parseBool(ConfMan.get("restored"), _restoredContentEnabled))
 		error("Failed to parse bool from restored options");
+
+	// Only enable if subtitles are available
+	if (!Common::parseBool(ConfMan.get("subtitles"), _useSubtitles))
+		warning("Failed to parse bool from subtitles options");
+
 	// Add quit level
 	Hotspot q(MakeMenu);
 	Action *a = new Quit();
 	q.actions.push_back(a);
 	Scene *quit = new Scene();
-	Hotspots hs;
-	hs.push_back(q);
-	quit->hots = hs;
+	quit->hots.push_back(q);
 	quit->resolution = "320x200";
 	_levels["<quit>"] = quit;
 	resetStatistics();
@@ -304,6 +307,12 @@ void HypnoEngine::runIntros(Videos &videos) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+
+	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+		delete it->decoder;
+		it->decoder = nullptr;
+	}
+
 	keymapper->getKeymap("intro")->setEnabled(false);
 	enableGameKeymaps();
 }
@@ -317,7 +326,20 @@ void HypnoEngine::runIntro(MVideo &video) {
 
 	delete _subtitles;
 	_subtitles = nullptr;
-	g_system->clearOverlay();
+	g_system->hideOverlay();
+}
+
+void HypnoEngine::runIntrosWithSubtitles(Videos &videos) {
+	if (videos.empty())
+		return;
+
+	loadSubtitles(Common::Path(videos[0].path));
+	if (!_subtitles)
+		warning("Conversation: failed to load subtitles for video '%s'", videos[0].path.c_str());
+	runIntros(videos);
+	delete _subtitles;
+	_subtitles = nullptr;
+	g_system->hideOverlay();
 }
 
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
@@ -565,19 +587,35 @@ void HypnoEngine::drawScreen() {
 void HypnoEngine::adjustSubtitleSize() {
 	debugC(1, kHypnoDebugMedia, "%s()", __FUNCTION__);
 	if (_subtitles) {
+		// Subtitle positioning constants (as percentages of screen height)
+		const int HORIZONTAL_MARGIN = 20;
+		const float BOTTOM_MARGIN_PERCENT = 0.009f;  // ~20px at 2160p
+		const float SUBTITLE_HEIGHT_PERCENT = 0.102f;  // ~220px at 2160p
+
+		// Font sizing constants (as percentage of screen height)
+		const int MIN_FONT_SIZE = 8;
+		const float BASE_FONT_SIZE_PERCENT = 0.023f;  // ~50px at 2160p
+
 		int16 h = g_system->getOverlayHeight();
 		int16 w = g_system->getOverlayWidth();
-		float scale = h / 2160.f;
-		_subtitles->setBBox(Common::Rect(20, h - 160 * scale, w - 20, h - 20));
-		int fontSize = MAX(8, int(50 * scale));
+
+		int bottomMargin = int(h * BOTTOM_MARGIN_PERCENT);
+		int topOffset = int(h * SUBTITLE_HEIGHT_PERCENT);
+
+		_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN, h - topOffset, w - HORIZONTAL_MARGIN, h - bottomMargin));
+
+		int fontSize = MAX(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
 		_subtitles->setColor(0xff, 0xff, 0x80);
-		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, "regular");
-		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
+		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
 	}
 }
 
 void HypnoEngine::loadSubtitles(const Common::Path &path) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, path.toString().c_str());
+	if (!_useSubtitles)
+		return;
+
 	debug("Subtitle path: %s", path.toString().c_str());
 	Common::String subPathStr = path.toString() + ".srt";
 	subPathStr.toLowercase();
@@ -591,16 +629,24 @@ void HypnoEngine::loadSubtitles(const Common::Path &path) {
 	subPath = subPath.appendComponent(language);
 	subPath = subPath.appendComponent(subPathStr);
 	debugC(1, kHypnoDebugMedia, "Loading subtitles from %s", subPath.toString().c_str());
-	if (Common::File::exists(subPath)) {
-		_subtitles = new Video::Subtitles();
-		_subtitles->loadSRTFile(subPath);
-		g_system->showOverlay(false);
-		adjustSubtitleSize();
-	} else {
+
+	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->clearOverlay();
+		g_system->hideOverlay();
 	}
+
+	_subtitles = new Video::Subtitles();
+	_subtitles->loadSRTFile(subPath);
+	if (!_subtitles->isLoaded()) {
+		delete _subtitles;
+		_subtitles = nullptr;
+		return;
+	}
+
+	g_system->showOverlay(false);
+	g_system->clearOverlay();
+	adjustSubtitleSize();
 }
 
 

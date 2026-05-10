@@ -77,12 +77,9 @@ public:
 	Common::String _unknown;
 	bool _isMoving = false;
 	Common::Rect _dest;
-	void center(int16 cx, int16 cy, int16 w, int16 h) {
-		right = cx + (w / 2);
-		left = cx - (w / 2);
-		top = cy - (h / 2);
-		bottom = cy + (h / 2);
-	}
+	void center(int16 cx, int16 cy, int16 w, int16 h);
+	Common::Rect getInterpolatedRect(uint32 startFrame, uint32 endFrame, uint32 currentFrame);
+	Rect *clone();
 };
 
 class Zone {
@@ -96,13 +93,15 @@ public:
 	Common::String _ptrfb;
 	Common::Array<Rect *> _rects;
 	Common::String _next;
-	void addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String &scene, uint32 score, const Common::String &rectHit, const Common::String &unknown);
+	uint8 _difficulty = 0;
+	void addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String scene, uint32 score, const Common::String rectHit, const Common::String unknown);
+	Zone *clone();
 };
 
 class Scene {
 public:
 	Scene(const Common::String &name, uint32 startFrame, uint32 endFrame);
-	~Scene() = default;
+	~Scene();
 	Common::String _name;
 	uint32 _startFrame;
 	uint32 _endFrame;

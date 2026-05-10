@@ -46,9 +46,9 @@ bool adv_restoreBackground() {
 	if (load_background(&sysFile, &_G(game_bgBuff), myPalette)) {
 		sysFile.close();
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 bool adv_restoreCodes() {
@@ -58,11 +58,9 @@ bool adv_restoreCodes() {
 	if (_G(screenCodeBuff)) {
 		sysFile.close();
 		return true;
-	} else {
-		return false;
 	}
 
-	return true;
+	return false;
 }
 
 } // End of namespace M4

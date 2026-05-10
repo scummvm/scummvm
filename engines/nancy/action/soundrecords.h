@@ -119,8 +119,9 @@ public:
 	FlagDescription _flag; // 0x2A
 	Common::Array<HotspotDescription> _hotspots; // 0x31
 
-protected:
 	bool canHaveHotspot() const override { return true; }
+
+protected:
 	Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
 };
 

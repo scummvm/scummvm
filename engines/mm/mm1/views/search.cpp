@@ -400,6 +400,7 @@ void Search::drawTreasure() {
 void Search::drawItem() {
 	Treasure &treasure = g_globals->_treasure;
 	int itemId = treasure.removeItem();
+	_lineNum = 0;
 
 	// Iterate through any treasure items
 	if (itemId != 0) {
@@ -421,8 +422,13 @@ void Search::drawItem() {
 				item->_name.c_str()
 			));
 
-			delaySeconds(2);
-			return;
+			if (treasure.hasItems()) {
+				delaySeconds(2);
+				return;
+			} else {
+				// Finished final item, so go down below to switch to items done
+				break;
+			}
 		}
 	}
 

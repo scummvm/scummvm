@@ -27,6 +27,7 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "common/textconsole.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
@@ -56,7 +57,7 @@ byte IntroHandler::getIntroSize() const {
 }
 
 /**
- * Read _introX and _introY from hugo.dat
+ * Read _introX and _introY and _logo_v1d from hugo.dat
  */
 void IntroHandler::loadIntroData(Common::SeekableReadStream &in) {
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
@@ -73,12 +74,68 @@ void IntroHandler::loadIntroData(Common::SeekableReadStream &in) {
 			in.skip(numRows * 2);
 		}
 	}
+
+	int logo_v1d_size = in.readUint16BE();
+	_logo_v1d = (byte *)malloc(sizeof(byte) * logo_v1d_size);
+	for (int i = 0; i < logo_v1d_size; i++) {
+		_logo_v1d[i] = in.readByte();
+	}
 }
 
 void IntroHandler::freeIntroData() {
 	free(_introX);
 	free(_introY);
 	_introX = _introY = nullptr;
+	free(_logo_v1d);
+	_logo_v1d = nullptr;
+}
+
+/**
+ * Load a font from a Windows .FON file. Used only by DOS versions.
+ * Original DOS versions used the Microsoft QuickC runtime for this.
+ */
+void IntroHandler::loadFont(const char *fileName, const char *faceName, uint16 sizeInPoints) {
+	if (!_font.loadFromFON(fileName, Graphics::WinFontDirEntry(faceName, sizeInPoints))) {
+		error("Unable to load font %s, face '%s', size %d", fileName, faceName, sizeInPoints);
+	}
+}
+
+/**
+ * Wait for a delay in milliseconds while processing events.
+ * This keeps the program window responsive during long delays.
+ * Returns false if interrupted by a quit event or the Escape key.
+ */
+bool IntroHandler::wait(uint32 delay) {
+	const uint32 startTime = _vm->_system->getMillis();
+
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+		while (_vm->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+			case Common::EVENT_QUIT:
+				return false; // interrupted by quit
+
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionEscape) {
+					return false; // interrupted by Escape
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (_vm->_system->getMillis() - startTime >= delay) {
+			return true; // delay completed
+		}
+
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(10);
+	}
+
+	return false; // interrupted by quit
 }
 
 intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
@@ -112,6 +169,9 @@ bool intro_v1d::introPlay() {
 
 	Common::String ttsMessage;
 #endif
+
+	Common::String copyright;
+
 	if (_introTicks < introSize) {
 		switch (_introState++) {
 		case 0:
@@ -124,8 +184,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
 
 			// TROMAN, size 10-5
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+			loadFont("TMSRB.FON", "Tms Rmn", 8);
 
 			char buffer[80];
 			if (_vm->_boot._registered == kRegRegistered)
@@ -138,13 +197,16 @@ bool intro_v1d::introPlay() {
 				error("Unknown registration flag in hugo.bsf: %d", _vm->_boot._registered);
 
 			_font.drawString(&_surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
-			_font.drawString(&_surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			copyright = Common::String::format("%s %s", _vm->getCopyrightString1(), _vm->getCopyrightString2());
+			_font.drawString(&_surf, copyright, 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
 #ifdef USE_TTS
 			ttsMessage = "Hugo's House of Horrors\n\n";
 			ttsMessage += buffer;
 			ttsMessage += '\n';
-			ttsMessage += _vm->getCopyrightString();
+			ttsMessage += _vm->getCopyrightString1();
+			ttsMessage += ' ';
+			ttsMessage += _vm->getCopyrightString2();
 #endif
 
 			if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
@@ -158,19 +220,10 @@ bool intro_v1d::introPlay() {
 			}
 
 			// SCRIPT, size 24-16
-			Common::strcpy_s(buffer, "Hugo's");
-
-			if (_font.loadFromFON("SCRIPT.FON")) {
-				_font.drawString(&_surf, buffer, 0, 20, 320, _TMAGENTA, Graphics::kTextAlignCenter);
-			} else {
-				// Workaround: SCRIPT.FON doesn't load properly at the moment
-				_vm->_screen->loadFont(2);
-				_vm->_screen->writeStr(kCenter, 20, buffer, _TMAGENTA);
-			}
+			drawLogo(119, 22, _TMAGENTA); // "Hugo's"
 
 			// TROMAN, size 30-24
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 24)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 24");
+			loadFont("TMSRB.FON", "Tms Rmn", 24);
 
 			Common::strcpy_s(buffer, "House of Horrors !");
 			_font.drawString(&_surf, buffer, 0, 50, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
@@ -179,8 +232,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+			loadFont("TMSRB.FON", "Tms Rmn", 14);
 
 			Common::strcpy_s(buffer, "S t a r r i n g :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
@@ -190,8 +242,7 @@ bool intro_v1d::introPlay() {
 			break;
 		case 3:
 			// TROMAN, size 20-9
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+			loadFont("TMSRB.FON", "Tms Rmn", 18);
 
 			Common::strcpy_s(buffer, "Hugo !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
@@ -203,8 +254,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+			loadFont("TMSRB.FON", "Tms Rmn", 14);
 
 			Common::strcpy_s(buffer, "P r o d u c e d  b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
@@ -260,8 +310,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 20-14
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+			loadFont("TMSRB.FON", "Tms Rmn", 18);
 
 			Common::strcpy_s(buffer, "E n j o y !");
 			_font.drawString(&_surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
@@ -278,11 +327,31 @@ bool intro_v1d::introPlay() {
 #endif
 
 		_vm->_screen->displayBackground();
-		g_system->updateScreen();
-		g_system->delayMillis(1000);
+		if (!wait(1000)) {
+			// Wait was interrupted by quit event or Escape.
+			// Skip the rest of the introduction.
+			return true;
+		}
 	}
 
 	return (++_introTicks >= introSize);
+}
+
+void intro_v1d::drawLogo(int left, int top, int color) {
+	const int width = 11;
+	const int height = 22;
+
+	int logoIndex = 0;
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			byte b = _logo_v1d[logoIndex++];
+			for (int i = 0; i < 8; i++) {
+				if (b & (1 << (7 - i))) {
+					_surf.setPixel(left + (x * 8) + i, top + y, color);
+				}
+			}
+		}
+	}
 }
 
 intro_v2d::intro_v2d(HugoEngine *vm) : IntroHandler(vm) {
@@ -302,13 +371,12 @@ void intro_v2d::introInit() {
 	char buffer[128];
 
 	// TROMAN, size 10-5
-	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
-		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+	loadFont("TMSRB.FON", "Tms Rmn", 8);
 
 	if (_vm->_boot._registered)
-		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s %s  Registered Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 	else
-		Common::sprintf_s(buffer, "%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s %s  Shareware Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 
 	_font.drawString(&_surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
@@ -331,8 +399,7 @@ void intro_v2d::introInit() {
 #endif
 
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(5000);
+	wait(5000);
 
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -362,13 +429,12 @@ void intro_v3d::introInit() {
 
 	char buffer[128];
 	if (_vm->_boot._registered)
-		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s %s  Registered Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 	else
-		Common::sprintf_s(buffer,"%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer,"%s %s  Shareware Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 
 	// TROMAN, size 10-5
-	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
-		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+	loadFont("TMSRB.FON", "Tms Rmn", 8);
 
 	_font.drawString(&_surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
@@ -390,8 +456,7 @@ void intro_v3d::introInit() {
 #endif
 
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(5000);
+	wait(5000);
 
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -415,19 +480,19 @@ bool intro_v3d::introPlay() {
 		return true;
 
 	if (_introTicks < getIntroSize()) {
-		_font.drawString(&_surf, ".", _introX[_introTicks], _introY[_introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
+		_surf.setPixel(_introX[_introTicks], _introY[_introTicks] - kDibOffY, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
 		switch (_introTicks) {
 		case 4:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro1));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro1), true);
 			break;
 		case 9:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro2));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro2), true);
 			break;
 		case 35:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro3));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro3), true);
 			break;
 		default:
 			break;
@@ -467,8 +532,7 @@ void intro_v2w::introInit() {
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(3000);
+	wait(3000);
 }
 
 bool intro_v2w::introPlay() {
@@ -491,12 +555,13 @@ void intro_v3w::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(3000);
+	wait(3000);
 	_vm->_file->readBackground(22); // display screen MAP_3w
 	_vm->_screen->displayBackground();
 	_introTicks = 0;
-	_vm->_screen->loadFont(0);
+	// WORKAROUND: The original used Windows GDI to draw "X" on the map
+	// using the "Small Fonts" font. We use the game's smallest font.
+	_vm->_screen->loadFont(U_FONT5);
 }
 
 /**
@@ -509,19 +574,23 @@ bool intro_v3w::introPlay() {
 
 	if (_introTicks < getIntroSize()) {
 		// Scale viewport x_intro,y_intro to screen (offsetting y)
-		_vm->_screen->writeStr(_introX[_introTicks], _introY[_introTicks] - kDibOffY, "x", _TBRIGHTWHITE);
+		// WORKAROUND: We apply our own additional offset to adjust
+		// for using a different font than the original. The original
+		// used Windows GDI to draw "X" with the "Small Font" font.
+		const int kMapFontOffset = 4;
+		_vm->_screen->writeStr(_introX[_introTicks], _introY[_introTicks] - kDibOffY - kMapFontOffset, "x", _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
 		switch (_introTicks) {
 		case 4:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro1));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro1), true);
 			break;
 		case 9:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro2));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro2), true);
 			break;
 		case 35:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro3));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro3), true);
 			break;
 		default:
 			break;

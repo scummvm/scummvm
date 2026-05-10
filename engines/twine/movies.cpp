@@ -377,6 +377,9 @@ void Movies::playGIFMovie(const char *flaName) {
 bool Movies::playMovie(const char *name) { // PlayAnimFla
 	if (_engine->isLBA2()) {
 		const int index = _engine->_resources->findSmkMovieIndex(name);
+		if (index == -1) {
+			return false;
+		}
 		return playSmkMovie(name, index);
 	}
 

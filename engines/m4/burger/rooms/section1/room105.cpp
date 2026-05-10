@@ -21,8 +21,11 @@
 
 #include "m4/burger/rooms/section1/room105.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -1046,6 +1049,7 @@ void Room105::daemon() {
 
 	case 5:
 	case 6:
+	case 26:
 		player_set_commands_allowed(true);
 		break;
 
@@ -1159,11 +1163,8 @@ void Room105::daemon() {
 		break;
 
 	case 25:
+	case 46:
 		ws_unhide_walker();
-		break;
-
-	case 26:
-		player_set_commands_allowed(true);
 		break;
 
 	case 27:
@@ -1282,10 +1283,6 @@ void Room105::daemon() {
 
 	case 45:
 		terminateMachineAndNull(_series5);
-		break;
-
-	case 46:
-		ws_unhide_walker();
 		break;
 
 	case kCHANGE_WILBUR_ANIMATION:

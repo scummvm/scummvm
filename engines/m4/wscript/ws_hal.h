@@ -36,10 +36,6 @@ namespace M4 {
 
 #define CCB_NO_DRAW			(CCB_SKIP | CCB_HIDE)
 
-#define ERR_INTERNAL		0
-#define ERR_SEQU			1
-#define ERR_MACH			2
-
 struct WSHal_Globals {
 	RectList *_deadRectList = nullptr;
 };
@@ -53,18 +49,15 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 	int16 *depth_table, Buffer *screenCodes, uint8 *myPalette, uint8 *ICT);
 void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs);
 void GetBezPoint(frac16 *x, frac16 *y, frac16 *coeffs, frac16 tVal);
-bool InitCCB(CCB *myCCB);
+void InitCCB(CCB *myCCB);
 void HideCCB(CCB *myCCB);
 void ShowCCB(CCB *myCCB);
-//void SetLastCCB(CCB *myCCB);
-void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY);
+
 void KillCCB(CCB *myCCB, bool restoreFlag);
 void Cel_msr(Anim8 *myAnim8);
 void ws_OverrideCrunchTime(machine *m);
 
-bool CheckAddr();
-void ws_Error(machine *m, int32 errorType, quadchar errorCode, const char *errMsg);
-void ws_DumpMachine(machine *m);
+void ws_Error(machine *m, const char *errMsg);
 void ws_LogErrorMsg(const char *sourceFile, uint32 lineNum, const char *fmt, ...);
 
 } // End of namespace M4

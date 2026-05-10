@@ -45,17 +45,18 @@ static bool applyStipplePattern(int x, int y, const byte *stipple) {
 	return (stipple[byteIndex] & bitmask);
 }
 
-template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
+template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
                                     int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
                                     int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
-                                    uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
+                                    uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx,
+                                    bool stippleEnabled) {
 	bool useStippleColor = false;
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		goto end;
 	}
 
-	if (kStippleEnabled && applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
+	if (stippleEnabled && applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
 		if (_twoColorStippleEnabled)
 			useStippleColor = true;
 		else 
@@ -104,8 +105,9 @@ end:
 	}
 }
 
-template <bool kDepthWrite, FrameBuffer::ColorMode kColorMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
+                                  FrameBuffer::ColorMode colorMode,
                                   uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
                                   int x, int y, uint &z, int &t, int &s,
                                   uint &r, uint &g, uint &b, uint &a,
@@ -134,7 +136,7 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
 	if (depthTestResult) {
 		uint8 c_a, c_r, c_g, c_b;
 		texture->getARGBAt(wrap_s, wrap_t, s, t, c_a, c_r, c_g, c_b);
-		switch (kColorMode) {
+		switch (colorMode) {
 		case ColorMode::NoInterpolation:
 			break;
 		case ColorMode::Default:
@@ -168,13 +170,13 @@ end:
 	}
 }
 
-template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
-void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx) {
+template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
+void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx, bool stippleEnabled) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		goto end;
 	}
 
-	/*if (kStippleEnabled && !applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
+	/*if (stippleEnabled && !applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
 		return;
 	}*/
 
@@ -201,11 +203,12 @@ end:
 	z += dzdx;
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
-          bool kBlendingEnabled, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	const TexelBuffer *texture;
+template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
+          bool kBlendingEnabled, bool kStencilEnabled, bool kDepthTestEnabled>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+                               FrameBuffer::ColorMode colorMode, bool kInterpZ,
+                               bool kInterpST, bool kInterpSTZ, bool stippleEnabled) {
+	const TexelBuffer *texture = nullptr;
 	float fdzdx = 0, fndzdx = 0, ndszdx = 0, ndtzdx = 0;
 
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
@@ -269,7 +272,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	fdx2 *= fz0;
 	fdy2 *= fz0;
 
-	if (kColorMode != ColorMode::NoInterpolation && kFogMode) {
+	if (colorMode != ColorMode::NoInterpolation && kFogMode) {
 		fog_r = _fogColorR * 255;
 		fog_g = _fogColorG * 255;
 		fog_b = _fogColorB * 255;
@@ -286,7 +289,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		dzdy = (int)(fdx1 * d2 - fdx2 * d1);
 	}
 
-	if (kColorMode != ColorMode::NoInterpolation && kSmoothMode) {
+	if (colorMode != ColorMode::NoInterpolation && kSmoothMode) {
 		d1 = (float)(p1->r - p0->r);
 		d2 = (float)(p2->r - p0->r);
 		drdx = (int)(fdy2 * d1 - fdy1 * d2);
@@ -341,7 +344,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	}
 
 	int polyOffset = 0;
-	if (kInterpZ && kColorMode != ColorMode::NoInterpolation && (_offsetStates & TGL_OFFSET_FILL)) {
+	if (kInterpZ && colorMode != ColorMode::NoInterpolation && (_offsetStates & TGL_OFFSET_FILL)) {
 		int m = MAX(ABS(dzdx), ABS(dzdy));
 		polyOffset = -m * _offsetFactor + -_offsetUnits * (1 << 6);
 	}
@@ -354,14 +357,14 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		ps1 = _sbuf + p0->y * _pbufWidth;
 	}
 
-	if (kColorMode != ColorMode::NoInterpolation && !kSmoothMode) {
+	if (colorMode != ColorMode::NoInterpolation && !kSmoothMode) {
 		r1 = p2->r;
 		g1 = p2->g;
 		b1 = p2->b;
 		a1 = p2->a;
 	}
 
-	if (kColorMode != ColorMode::NoInterpolation && (kInterpST || kInterpSTZ)) {
+	if (colorMode != ColorMode::NoInterpolation && (kInterpST || kInterpSTZ)) {
 		texture = _currentTexture;
 		fdzdx = (float)dzdx;
 		fndzdx = NB_INTERP * fdzdx;
@@ -418,7 +421,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			dxdy_min = tmp >> 16;
 			dxdy_max = dxdy_min + 1;
 
-			if (kColorMode != ColorMode::NoInterpolation && kFogMode) {
+			if (colorMode != ColorMode::NoInterpolation && kFogMode) {
 				f1 = l1->f;
 				dfdl_min = (dfdy + dfdx * dxdy_min);
 				dfdl_max = dfdl_min + dfdx;
@@ -430,7 +433,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				dzdl_max = dzdl_min + dzdx;
 			}
 
-			if (kColorMode != ColorMode::NoInterpolation && kSmoothMode) {
+			if (colorMode != ColorMode::NoInterpolation && kSmoothMode) {
 				r1 = l1->r;
 				drdl_min = (drdy + drdx * dxdy_min);
 				drdl_max = drdl_min + drdx;
@@ -480,11 +483,11 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		// we draw all the scan line of the part
 		while (nb_lines > 0) {
 			int x = x1;
-			if (kColorMode == ColorMode::NoInterpolation) {
+			if (colorMode == ColorMode::NoInterpolation) {
 				int n;
-				uint *pz;
+				uint *pz = nullptr;
 				byte *ps = nullptr;
-				uint z;
+				uint z = 0;
 				n = (x2 >> 16) - x1;
 				if (kInterpZ) {
 					pz = pz1 + x1;
@@ -494,10 +497,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					ps = ps1 + x1;
 				}
 				while (n >= 3) {
-					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>(pz, ps, 0, x, y, z, dzdx);
-					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>(pz, ps, 1, x, y, z, dzdx);
-					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>(pz, ps, 2, x, y, z, dzdx);
-					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>(pz, ps, 3, x, y, z, dzdx);
+					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kDepthTestEnabled>(pz, ps, 0, x, y, z, dzdx, stippleEnabled);
+					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kDepthTestEnabled>(pz, ps, 1, x, y, z, dzdx, stippleEnabled);
+					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kDepthTestEnabled>(pz, ps, 2, x, y, z, dzdx, stippleEnabled);
+					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kDepthTestEnabled>(pz, ps, 3, x, y, z, dzdx, stippleEnabled);
 					if (kInterpZ) {
 						pz += 4;
 					}
@@ -508,7 +511,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					x += 4;
 				}
 				while (n >= 0) {
-					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>(pz, ps, 0, x, y, z, dzdx);
+					putPixelDepth<kDepthWrite, kEnableScissor, kStencilEnabled, kDepthTestEnabled>(pz, ps, 0, x, y, z, dzdx, stippleEnabled);
 					if (kInterpZ) {
 						pz += 1;
 					}
@@ -519,10 +522,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					x += 1;
 				}
 			} else if (!(kInterpST || kInterpSTZ)) {
-				uint *pz;
+				uint *pz = nullptr;
 				byte *ps = nullptr;
 				int pp;
-				uint z, r, g, b, a, fog;
+				uint z = 0, r, g, b, a, fog;
 				int n = (x2 >> 16) - x1;
 				pp = pp1 + x1;
 				r = r1;
@@ -540,14 +543,14 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					ps = ps1 + x1;
 				}
 				while (n >= 3) {
-					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
-					                 (pp, pz, ps, 0, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
-					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
-					                 (pp, pz, ps, 1, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
-					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
-					                 (pp, pz, ps, 2, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
-					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
-					                 (pp, pz, ps, 3, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
+					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+					                 (pp, pz, ps, 0, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx, stippleEnabled);
+					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+					                 (pp, pz, ps, 1, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx, stippleEnabled);
+					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+					                 (pp, pz, ps, 2, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx, stippleEnabled);
+					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+					                 (pp, pz, ps, 3, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx, stippleEnabled);
 					pp += 4;
 					if (kInterpZ) {
 						pz += 4;
@@ -559,8 +562,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					x += 4;
 				}
 				while (n >= 0) {
-					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kStippleEnabled, kDepthTestEnabled>
-					                 (pp, pz, ps, 0, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
+					putPixelNoTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+					                 (pp, pz, ps, 0, x, y, z, r, g, b, a, dzdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx, stippleEnabled);
 					pp += 1;
 					if (kInterpZ) {
 						pz += 1;
@@ -572,10 +575,10 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					x += 1;
 				}
 			} else if (kInterpST || kInterpSTZ) {
-				uint *pz;
+				uint *pz = nullptr;
 				byte *ps = nullptr;
 				int s, t;
-				uint z, r, g, b, a, fog;
+				uint z = 0, r, g, b, a, fog;
 				int n, pp;
 				float sz, tz, fz, zinv;
 				int dsdx, dtdx;
@@ -614,8 +617,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						zinv = (float)(1.0 / fz);
 					}
 					for (int _a = 0; _a < NB_INTERP; _a++) {
-						putPixelTexture<kDepthWrite, kColorMode, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
-						               (pp, texture, _wrapS, _wrapT, pz, ps, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
+						putPixelTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+						               (pp, texture, colorMode, _wrapS, _wrapT, pz, ps, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
 					}
 					pp += NB_INTERP;
 					if (kInterpZ) {
@@ -641,8 +644,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 
 				while (n >= 0) {
-					putPixelTexture<kDepthWrite, kColorMode, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
-					               (pp, texture, _wrapS, _wrapT, pz, ps, 0, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
+					putPixelTexture<kDepthWrite, kSmoothMode, kFogMode, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled, kStencilEnabled, kDepthTestEnabled>
+					               (pp, texture, colorMode, _wrapS, _wrapT, pz, ps, 0, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx, fog, fog_r, fog_g, fog_b, dfdx);
 					pp += 1;
 					if (kInterpZ) {
 						pz += 1;
@@ -660,13 +663,13 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			if (error > 0) {
 				error -= 0x10000;
 				x1 += dxdy_max;
-				if (kColorMode != ColorMode::NoInterpolation && kFogMode) {
+				if (colorMode != ColorMode::NoInterpolation && kFogMode) {
 					f1 += dfdl_max;
 				}
 				if (kInterpZ) {
 					z1 += dzdl_max;
 				}
-				if (kColorMode != ColorMode::NoInterpolation && kSmoothMode) {
+				if (colorMode != ColorMode::NoInterpolation && kSmoothMode) {
 					r1 += drdl_max;
 					g1 += dgdl_max;
 					b1 += dbdl_max;
@@ -678,13 +681,13 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				}
 			} else {
 				x1 += dxdy_min;
-				if (kColorMode != ColorMode::NoInterpolation && kFogMode) {
+				if (colorMode != ColorMode::NoInterpolation && kFogMode) {
 					f1 += dfdl_min;
 				}
 				if (kInterpZ) {
 					z1 += dzdl_min;
 				}
-				if (kColorMode != ColorMode::NoInterpolation && kSmoothMode) {
+				if (colorMode != ColorMode::NoInterpolation && kSmoothMode) {
 					r1 += drdl_min;
 					g1 += dgdl_min;
 					b1 += dbdl_min;
@@ -700,7 +703,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 			x2 += dx2dy2;
 
 			// screen coordinates
-			if (kColorMode != ColorMode::NoInterpolation) {
+			if (colorMode != ColorMode::NoInterpolation) {
 				pp1 += _pbufWidth;
 			}
 			if (kInterpZ) {
@@ -716,76 +719,67 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	}
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kStippleEnabled>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, FrameBuffer::ColorMode colorMode, bool interpZ, bool interpST, bool interpSTZ) {
 	if (_depthTestEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, kStencilEnabled, kStippleEnabled, true>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, kStencilEnabled, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ, _polygonStippleEnabled);
 	} else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, kStencilEnabled, kStippleEnabled, false>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, kStencilEnabled, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ, _polygonStippleEnabled);
 	}
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	if (_polygonStippleEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, kStencilEnabled, true>(p0, p1, p2);
-	} else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, kStencilEnabled, false>(p0, p1, p2);
-	}
-}
-
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, FrameBuffer::ColorMode colorMode, bool interpZ, bool interpST, bool interpSTZ) {
 	if (_sbuf && _stencilTestEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, true>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	} else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, false>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, kEnableBlending, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	}
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, FrameBuffer::ColorMode colorMode, bool interpZ, bool interpST, bool interpSTZ) {
 	if (_blendingEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, true>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	} else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, false>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, kEnableScissor, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	}
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, FrameBuffer::ColorMode colorMode, bool interpZ, bool interpST, bool interpSTZ) {
 	if (_clippingEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, true>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	} else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, false>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, kEnableAlphaTest, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	}
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite, bool kFogMode>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite, bool kFogMode>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, FrameBuffer::ColorMode colorMode, bool interpZ, bool interpST, bool interpSTZ) {
 	if (_alphaTestEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, true>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	} else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, kFogMode, false>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, kFogMode, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	}
 }
 
-template <FrameBuffer::ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite>
-void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite>
+void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, FrameBuffer::ColorMode colorMode, bool interpZ, bool interpST, bool interpSTZ) {
 	if (_fogEnabled) {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, true>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	}  else {
-		fillTriangle<kColorMode, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite, false>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	}
 }
 
-template <bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite>
-void FrameBuffer::fillTriangleTextureMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+template <bool kSmoothMode, bool kDepthWrite>
+void FrameBuffer::fillTriangleTextureMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2, bool interpZ, bool interpST, bool interpSTZ) {
 	// some color interpolation is implied by the texture mapping
 	if (_textureEnv->isDefault())
-		fillTriangle<ColorMode::Default, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite>(p0, p1, p2, ColorMode::Default, interpZ, interpST, interpSTZ);
 	else
-		fillTriangle<ColorMode::CustomTexEnv, kInterpZ, kInterpST, kInterpSTZ, kSmoothMode, kDepthWrite>(p0, p1, p2);
+		fillTriangle<kSmoothMode, kDepthWrite>(p0, p1, p2, ColorMode::CustomTexEnv, interpZ, interpST, interpSTZ);
 }
 
 void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -795,9 +789,9 @@ void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	const bool interpSTZ = false;
 	const bool smoothMode = false;
 	if (_depthWrite && _depthTestEnabled)
-		fillTriangle<colorMode, interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
+		fillTriangle<smoothMode, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	else
-		fillTriangle<colorMode, interpZ, interpST, interpSTZ, smoothMode, false>(p0, p1, p2);
+		fillTriangle<smoothMode, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 }
 
 void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -807,9 +801,9 @@ void FrameBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPo
 	const bool interpSTZ = false;
 	const bool smoothMode = false;
 	if (_depthWrite && _depthTestEnabled)
-		fillTriangle<colorMode, interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
+		fillTriangle<smoothMode, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	else
-		fillTriangle<colorMode, interpZ, interpST, interpSTZ, smoothMode, false>(p0, p1, p2);
+		fillTriangle<smoothMode, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 }
 
 // Smooth filled triangle.
@@ -820,9 +814,9 @@ void FrameBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBuffer
 	const bool interpSTZ = false;
 	const bool smoothMode = true;
 	if (_depthWrite && _depthTestEnabled)
-		fillTriangle<colorMode, interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
+		fillTriangle<smoothMode, true>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 	else
-		fillTriangle<colorMode, interpZ, interpST, interpSTZ, smoothMode, false>(p0, p1, p2);
+		fillTriangle<smoothMode, false>(p0, p1, p2, colorMode, interpZ, interpST, interpSTZ);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -831,9 +825,9 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveSmooth(ZBufferPoint *p0, 
 	const bool interpSTZ = true;
 	const bool smoothMode = true;
 	if (_depthWrite && _depthTestEnabled)
-		fillTriangleTextureMapping<interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
+		fillTriangleTextureMapping<smoothMode, true>(p0, p1, p2, interpZ, interpST, interpSTZ);
 	else
-		fillTriangleTextureMapping<interpZ, interpST, interpSTZ, smoothMode, false>(p0, p1, p2);
+		fillTriangleTextureMapping<smoothMode, false>(p0, p1, p2, interpZ, interpST, interpSTZ);
 }
 
 void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -842,9 +836,9 @@ void FrameBuffer::fillTriangleTextureMappingPerspectiveFlat(ZBufferPoint *p0, ZB
 	const bool interpSTZ = true;
 	const bool smoothMode = false;
 	if (_depthWrite && _depthTestEnabled)
-		fillTriangleTextureMapping<interpZ, interpST, interpSTZ, smoothMode, true>(p0, p1, p2);
+		fillTriangleTextureMapping<smoothMode, true>(p0, p1, p2, interpZ, interpST, interpSTZ);
 	else
-		fillTriangleTextureMapping<interpZ, interpST, interpSTZ, smoothMode, false>(p0, p1, p2);
+		fillTriangleTextureMapping<smoothMode, false>(p0, p1, p2, interpZ, interpST, interpSTZ);
 }
 
 } // end of namespace TinyGL

@@ -242,6 +242,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			if ((*(const byte *)(textPtr + 1)) == 0xA) {
 				curCharCount++; textPtr++;
 			}
+			// 'J'
 			// fall through
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well (was added for SCI1/PC98)
@@ -593,10 +594,31 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 
 	maxTextWidth = 0;
 	while (*curTextPos) {
-		// We need to check for Shift-JIS every line
-		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
-		if (g_sci->getLanguage() == Common::JA_JPN)
-			doubleByteMode = SwitchToFont900OnSjis(curTextPos, languageSplitter);
+		//  We need to check for Shift-JIS every line. Police Quest 2 PC-9801 often draws English + Japanese text into the same box.
+		if (g_sci->getLanguage() == Common::JA_JPN) {
+			doubleByteMode = SwitchToFont900OnSjis(curTextPos, languageSplitter) ||
+
+			// Ignore leading space characters for PQ2 PC-9801, so as not to break the Japanese F1 help screen. These text lines
+			// start with a normal (single-byte) space character which is followed by SJIS text.
+			// 
+			// The original PQ 2 PC-9801 interpreter's SJIS text drawing method is less sophisticated than what the other PC-9801
+			// interpreters do. It doesn't even do this font change. It just keeps the English font and uses that to (wrongfully)
+			// measure the width of the Japanese text. This appears to be the main reason why the text layout looks different in
+			// the original and in ScummVM in some places (first obvious example: the copy protection dialogs; also, in the
+			// Japanese F1 help box, the headline is not centered at the exact same position as with the original interpreter).
+			// 
+			// Also, the original PQ 2 PC-9801 interpreter doesn't need to prevent background graphics updates, since the SJIS
+			// text is drawn in PC-9801 text mode and the text mode layer is always displayed on top of the graphics layer, so it
+			// can never get corrupted by graphics updates (with an emulator you can see how even the mouse cursor is drawn under
+			// the Japanese text).
+			// 
+			// In contrast to that, we do the font switching for PQ2 (we could eventually try to aim for a faithful text measuring
+			// and positioning, but it is more complex than just dropping the font switching) and we also need to prevent graphics
+			// updates for SJIS lines, since we don't emulate the PC-9801 text mode layer to that extent (could be done, but I
+			// don't see why we should). So, here we ignore leading space characters and determine the ASCII or SJIS text line type
+			// by the character after that...
+				(g_sci->getGameId() == GID_PQ2 && *curTextPos == ' ' && curTextPos[1] != '\0' && SwitchToFont900OnSjis(curTextPos + 1, languageSplitter));
+		}
 
 		int16 charCount = GetLongest(curTextPos, rect.width(), fontId);
 		if (charCount == 0)
@@ -644,9 +666,10 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 			curTextLine = textString.c_str();
 		}
 
-		// This seems to be the method used by the original PC-98 interpreters. They will set the `show`
-		// argument (only) for the SCI_CONTROLS_TYPE_TEXT, but then there is a separate code path for
-		// the SJIS characters, which will not get the screen surface update (since they get drawn directly).
+		// This seems to be the method used by the original (non-PQ2) PC-9801 interpreters. They will set
+		// the `show` argument (only) for the SCI_CONTROLS_TYPE_TEXT, but then there is a separate code
+		// path for the SJIS characters, which will not get the screen surface update (since they get
+		// rendered directly into the video memory). We handle PQ2 the same way as the other PC-9801 targets.
 		if (show && !doubleByteMode) {
 			Show(curTextLine, 0, charCount, fontId, previousPenColor);
 		} else {

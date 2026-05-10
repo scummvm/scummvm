@@ -51,6 +51,13 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("tp", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("toggleRoomFloor", WRAP_METHOD(Console, cmdToggleRoomFloor));
 	registerCmd("playVideo", WRAP_METHOD(Console, cmdPlayVideo));
+	registerCmd("script", WRAP_METHOD(Console, cmdScript));
+	registerCmd("toggleObject", WRAP_METHOD(Console, cmdToggleObject));
+	registerCmd("playVoice", WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("playSFX", WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("dumpFile", WRAP_METHOD(Console, cmdDumpFile));
+	registerCmd("procedureAt", WRAP_METHOD(Console, cmdProcedureAt));
+	registerCmd("pa", WRAP_METHOD(Console, cmdProcedureAt));
 }
 
 Console::~Console() {}
@@ -291,6 +298,103 @@ bool Console::cmdPlayVideo(int argc, const char **args) {
 		return false;
 	} else
 		debugPrintf("usage: playVideo <id>\n");
+	return true;
+}
+
+bool Console::cmdScript(int argc, const char **args) {
+	if (argc != 2) {
+		debugPrintf("usage: %s <procedure name>\n", args[0]);
+		return true;
+	}
+
+	auto process = g_engine->script().createProcess(
+		g_engine->player().activeCharacterKind(),
+		args[1],
+		ScriptFlags::AllowMissing);
+	if (process == nullptr) {
+		debugPrintf("No such procedure exists\n");
+		return true;
+	} else {
+		process->name() += " (Console)";
+		return false;
+	}
+}
+
+bool Console::cmdToggleObject(int argc, const char **args) {
+	if (argc < 2) {
+		debugPrintf("usage: %s <object> [<object> ...]\n", args[0]);
+		return true;
+	}
+
+	for (int i = 1; i < argc; i++) {
+		auto object = g_engine->world().getObjectByName(args[i]);
+		if (object == nullptr)
+			object = g_engine->world().getObjectByNameFromAnyRoom(args[i]);
+		if (object == nullptr)
+			debugPrintf("No such object: %s\n", args[i]);
+		else
+			object->toggle(!object->isEnabled());
+	}
+	return true;
+}
+
+bool Console::cmdPlaySound(int argc, const char **args) {
+	if (argc != 2) {
+		debugPrintf("usage: %s <sound-name>\n", args[0]);
+		return true;
+	}
+
+	if (tolower(args[0][5]) == 'V')
+		g_engine->sounds().playVoice(args[1]);
+	else
+		g_engine->sounds().playSFX(args[1]);
+	return false;
+}
+
+bool Console::cmdDumpFile(int argc, const char **args) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("usage: %s <input-path> [<output-path>]\n", args[0]);
+		return true;
+	}
+
+	File input;
+	if (!input.open(args[1])) {
+		debugPrintf("Could not find input file: %s\n", args[1]);
+		return true;
+	}
+
+	const char *outputPath = argc == 2 ? args[1] : args[2];
+	DumpFile output;
+	if (!output.open(outputPath)) {
+		debugPrintf("Could not open output file: %s\n", outputPath);
+		return true;
+	}
+
+	constexpr const uint kBufferSize = 1024;
+	uint32 read;
+	byte buffer[kBufferSize];
+	do {
+		read = input.read(buffer, kBufferSize);
+		output.write(buffer, read);
+	} while (read == kBufferSize);
+	return true;
+}
+
+bool Console::cmdProcedureAt(int argc, const char **args) {
+	if (argc != 2) {
+		debugPrintf("usage: %s pc\n", args[0]);
+		return true;
+	}
+
+	char *end = nullptr;
+	uint32 pc = (uint32)strtoul(args[1], &end, 10);
+	if (end == nullptr || *end != '\0') {
+		debugPrintf("pc has to be an unsigned integer\n");
+		return true;
+	}
+
+	auto procedure = g_engine->script().procedureAt(pc);
+	debugPrintf("%u is part of %s\n", pc, procedure.c_str());
 	return true;
 }
 

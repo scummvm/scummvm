@@ -31,7 +31,7 @@ namespace Saves {
 static const char *gpszTitle = "Restore Game";
 
 CRestoreDlg::CRestoreDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
-	: CBmpDialog(pWnd, pPalette, IDD_RESTORE, ".\\ART\\MLSCROLL.BMP", -1, -1, true) {
+	: CBmpDialog(pWnd, pPalette, IDD_RESTORE, "art\\MLSCROLL.BMP", -1, -1, true) {
 	int i;
 
 	// Inits

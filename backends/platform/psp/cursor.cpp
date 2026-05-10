@@ -105,7 +105,9 @@ void Cursor::clearKeyColor() {
 		if (_palette.isAllocated())
 			_palette.setColorPositionAlpha(_keyColor, false);
 	} else {	// 16bit
-		_renderer.setKeyColor(_keyColor);
+		byte a, r, g, b;
+		_srcFormat.colorToARGB(_keyColor, a, r, g, b);
+		_renderer.setKeyColor((b << 16) | (g << 8) | (r << 0) | (a << 24));
 	}
 	setDirty();
 }
@@ -138,7 +140,15 @@ void Cursor::copyFromArray(const byte *array) {
 		_buffer.allocate();
 	}
 
-	_buffer.copyFromArray(array, _buffer.getSourceWidthInBytes());	// pitch is source width
+	if (_blitFunc) {
+		_blitFunc(_buffer.getPixels(), array,
+		          _buffer.getWidthInBytes(), _buffer.getSourceWidthInBytes(),
+		          _buffer.getWidth(), _buffer.getHeight());
+	} else {
+		Graphics::crossBlit(_buffer.getPixels(), array,
+		                    _buffer.getWidthInBytes(), _buffer.getSourceWidthInBytes(),
+		                    _buffer.getWidth(), _buffer.getHeight(), _dstFormat, _srcFormat);
+	}
 	setDirty();
 
 	// debug
@@ -221,10 +231,10 @@ void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *for
 
 	PSPPixelFormat::Type bufferType = PSPPixelFormat::Type_Unknown;
 	PSPPixelFormat::Type paletteType = PSPPixelFormat::Type_Unknown;
-	bool swapRedBlue = false;
+	bool fakeAlpha = false;
 
 	// Convert Scummvm Pixel Format to PSPPixelFormat
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType, swapRedBlue);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType, fakeAlpha);
 
 	if (paletteType == PSPPixelFormat::Type_None) {
 		//_screenPalette.deallocate();		// leave palette for default CLUT8
@@ -251,10 +261,12 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 
 	PSPPixelFormat::Type bufferType = PSPPixelFormat::Type_Unknown;
 	PSPPixelFormat::Type paletteType = PSPPixelFormat::Type_Unknown;
-	bool swapRedBlue = false;
+	bool fakeAlpha = false;
 
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType, swapRedBlue);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType, fakeAlpha);
 	PSP_DEBUG_PRINT("bufferType[%u], paletteType[%u]\n", bufferType, paletteType);
+
+	_srcFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 
 	// Check if we need to set new pixel format
 	if (_buffer.getPixelFormat() != bufferType) {
@@ -271,15 +283,15 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 	PSP_DEBUG_PRINT("palette pixel format[%u]\n", paletteType);
 
 	if (paletteType == PSPPixelFormat::Type_None) {
+		_dstFormat = PSPPixelFormat::convertToScummvmPixelFormat(bufferType, fakeAlpha);
+		_blitFunc = Graphics::getFastBlitFunc(_dstFormat, _srcFormat);
+		_fakeAlpha = fakeAlpha;
 		setRendererModePalettized(false);	// use non-palettized mechanism
-		if (format) {
-			if (format->aBits() == 0)
-				_fakeAlpha = true;		// we are treating e.g. 555 as 5551
-			else
-				_fakeAlpha = false;		// we have a genuine alpha channel
-		}
 	} else {	// We have a palette
 		_palette.setPixelFormats(paletteType, bufferType);
+		_dstFormat = Graphics::PixelFormat::createFormatCLUT8();
+		_blitFunc = nullptr;
+		_fakeAlpha = false;
 		setRendererModePalettized(true);	// use palettized mechanism
 	}
 
@@ -319,9 +331,6 @@ inline void Cursor::setRendererModePalettized(bool palettized) {
 		// Pixel formats without alpha (5650) are considered to have their alpha set.
 		// Since pixel formats like 555 are treated as 5551 on PSP, we reverse
 		// the alpha format for them so that 0 alpha is 1.
-		if (_buffer.getPixelFormat() != PSPPixelFormat::Type_5650 && _fakeAlpha)
-			_renderer.setAlphaReverse(true);
-		else
-			_renderer.setAlphaReverse(false);
+		_renderer.setAlphaReverse(_fakeAlpha);
 	}
 }

@@ -30,6 +30,7 @@
 
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "nancy/ui/taskbar.h"
 
 namespace Nancy {
 namespace Action {
@@ -141,6 +142,102 @@ void TextboxClear::readData(Common::SeekableReadStream &stream) {
 
 void TextboxClear::execute() {
 	NancySceneState.getTextbox().clear();
+	finishExecution();
+}
+
+void FrameTextBox::readData(Common::SeekableReadStream &stream) {
+	const int16 size = stream.readSint16LE();
+
+	if (size > 10000)
+		error("FrameTextBox: too many text characters: %d", size);
+
+	if (size == -1) {
+		// CVTX-keyed lookup, same as the Nancy 6+ TextBoxWrite path.
+		Common::String stringID;
+		readFilename(stream, stringID);
+
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		assert(autotext);
+
+		// TODO: we probably ought to be doing something more robust here
+		// to detect missing keys, but for now just return an empty string
+		// if the key isn't found.
+		_text = autotext->texts.getValOrDefault(stringID, "");
+	} else if (size > 0) {
+		char *buf = new char[size];
+		stream.read(buf, size);
+		buf[size - 1] = '\0';
+
+		assembleTextLine(buf, _text, size);
+
+		delete[] buf;
+	}
+
+	// Trailing two int16 fields: meaning differs slightly between the
+	// three opcodes that reuse this layout, but are safe to capture as a
+	// pair until UICO conversation rendering is wired up.
+	_flags = stream.readSint16LE();
+	_slot  = stream.readSint16LE();
+}
+
+void FrameTextBox::execute() {
+	// TODO: UICO-driven conversation rendering isn't ready yet; route the
+	// line into the legacy textbox so subtitles still surface (the textbox
+	// is kept off-screen on Nancy 10+ but addTextLine is harmless).
+	auto &tb = NancySceneState.getTextbox();
+	tb.clear();
+	if (!_text.empty()) {
+		tb.addTextLine(_text);
+	}
+	finishExecution();
+}
+
+void ControlUIItems::readData(Common::SeekableReadStream &stream) {
+	_uiButton = stream.readUint16LE();
+	_flagA = stream.readByte();
+	_flagB  = stream.readByte();
+	_scene1 = stream.readSint16LE();
+	_scene2 = stream.readSint16LE();
+}
+
+void ControlUIItems::execute() {
+	// TODO: finish this
+
+	NancySceneState.getTaskbar()->toggleButton(_uiButton, _flagA != 0);
+	debug("ControlUIItems: UIButton=%d, flagA=%d, flagB=%d, scene1=%d, scene2=%d", _uiButton, _flagA, _flagB, _scene1, _scene2);
+
+	finishExecution();
+}
+
+void UIPopupPrepScene::readData(Common::SeekableReadStream &stream) {
+	_uiType      = stream.readSint32LE();
+	_signalValue = stream.readSint32LE();
+}
+
+void UIPopupPrepScene::execute() {
+	// TODO: finish this
+
+	debug("UIPopupPrepScene: UIType=%d, signalValue=%d", _uiType, _signalValue);
+
+	finishExecution();
+}
+
+void AddSearchLink::readData(Common::SeekableReadStream &stream) {
+	_mode = stream.readSint16LE();
+
+	readFilename(stream, _key);
+	readFilename(stream, _value);
+
+	_extra  = stream.readSint16LE();
+	_flag = stream.readSint16LE();
+	_scene = stream.readSint16LE();
+}
+
+void AddSearchLink::execute() {
+	// TODO: finish this
+
+	debug("AddSearchLink: mode=%d, key=%s, value=%s, extra=%d, scene1=%d, scene2=%d", _mode, _key.c_str(), _value.c_str(), _extra, _flag, _scene);
+
 	finishExecution();
 }
 

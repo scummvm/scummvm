@@ -97,18 +97,23 @@ struct retro_core_option_v2_category option_cats_us[] = {
 
 struct retro_core_option_v2_definition option_defs_us[] = {
 	{
-		"scummvm_gamepad_cursor_only",
-		"Cursor > Exclusive cursor control with RetroPad",
-		"Exclusive cursor control with RetroPad",
-		"Allows the use of RetroPad only to control mouse cursor, excluding the other inputs (e.g. physical mouse, touch screen).",
+		"scummvm_pointer_device",
+		"Cursor > Pointer Device",
+		"Pointer Device",
+		"Select which device controls the cursor.",
 		NULL,
 		"cursor",
 		{
-			{"disabled", NULL},
-			{"enabled", NULL},
+			{"retropad", "RetroPad only"},
+			{"mouse", "RetroPad + RetroMouse"},
+			{"pointer", "RetroPad + Pointer"},
 			{NULL, NULL},
 		},
-		"disabled"
+#if defined(WIIU) || defined(__SWITCH__)
+		"pointer"
+#else
+		"mouse"
+#endif
 	},
 	{
 		"scummvm_gamepad_cursor_speed",

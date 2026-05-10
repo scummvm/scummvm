@@ -105,7 +105,7 @@ USE_JPEG          = 1
 
 USE_FREETYPE2     = 1
 
-USE_CLOUD        ?= 0
+USE_CLOUD        ?=
 
 # Components (defines handled by engines.awk)
 USE_THEORADEC    ?= 1
@@ -136,7 +136,7 @@ else
 DEFINES += -DUSE_IMGUI
 endif
 
-USE_MPEG2         ?= 0
+USE_MPEG2         ?= 1
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_MPEG2), component_mpeg2)
 ifneq ($(USE_MPEG2),1)
 USE_MPEG2=
@@ -144,7 +144,7 @@ else
 DEFINES += -DUSE_MPEG2
 endif
 
-USE_GIF         ?= 0
+USE_GIF         ?= 1
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_GIF), component_gif)
 ifneq ($(USE_GIF),1)
 USE_GIF=
@@ -173,6 +173,36 @@ DEFINES += -DUSE_TINYGL
 
 USE_LUA           = 1
 DEFINES += -DUSE_LUA
+
+USE_INDEO3        = 1
+DEFINES += -DUSE_INDEO3
+
+USE_INDEO45       = 1
+DEFINES += -DUSE_INDEO45
+
+USE_CDTOONS       = 1
+DEFINES += -DUSE_CDTOONS
+
+USE_JYV1          = 1
+DEFINES += -DUSE_JYV1
+
+USE_TRUEMOTION1   = 1
+DEFINES += -DUSE_TRUEMOTION1
+
+USE_XAN           = 1
+DEFINES += -DUSE_XAN
+
+USE_FMTOWNS_PC98_AUDIO = 1
+DEFINES += -DUSE_FMTOWNS_PC98_AUDIO
+
+USE_SID_AUDIO     = 1
+DEFINES += -DUSE_SID_AUDIO
+
+USE_VGMTRANS_AUDIO = 1
+DEFINES += -DUSE_VGMTRANS_AUDIO
+
+USE_MIDI         = 1
+DEFINES += -DUSE_MIDI
 
 # Paths
 SCUMMVM_PATH         := $(ROOT_PATH)/../../..
@@ -250,7 +280,8 @@ LIBRETRO_OBJS := $(CORE_PATH)/libretro-core.o \
 	$(CORE_PATH)/libretro-timer.o \
 	$(CORE_PATH)/libretro-mapper.o \
 	$(CORE_PATH)/libretro-options-widget.o \
-	$(CORE_PATH)/libretro-graphics-surface.o
+	$(CORE_PATH)/libretro-graphics-surface.o \
+	$(CORE_PATH)/libretro-midi.o
 
 ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
 	LIBRETRO_OBJS += $(CORE_PATH)/libretro-graphics-opengl.o

@@ -56,6 +56,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_TEXTURE_FILTER,
+		{
+			_s("Filter textures"),
+			_s("Whether textures should be linearly filtered"),
+			"tex_filter",
+			false, // it is used for V1 where textures are normally not filtered, V3 originally always filters
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -105,7 +116,12 @@ KeymapArray AlcachofaMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("INVENTORY", _("Inventory"));
 	act->setCustomEngineActionEvent((CustomEventType)EventAction::InputInventory);
 	act->addDefaultInputMapping("SPACE");
-	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("JOY_X");
+	keymap->addAction(act);
+
+	act = new Action("SUBTITLES", _("Toggle subtitles"));
+	act->setCustomEngineActionEvent((CustomEventType)EventAction::InputSubtitles);
+	act->addDefaultInputMapping("C+t");
 	keymap->addAction(act);
 
 	return Keymap::arrayOf(keymap);

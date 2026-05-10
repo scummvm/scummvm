@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/list.h"
 #include "common/mutex.h"
+#include "common/printman.h"
 
 #include "gui/ThemeEngine.h"
 #include "gui/widget.h"
@@ -63,6 +64,7 @@ enum {
 class Dialog;
 class ThemeEval;
 class GuiObject;
+class Tooltip;
 
 #define g_gui	(GUI::GuiManager::instance())
 
@@ -155,9 +157,15 @@ public:
 
 	Graphics::MacWindowManager *getWM();
 
+	// Defined in printing-dialog.cpp
+	void printImage(const Graphics::ManagedSurface &surf, bool defaultFitToPage, bool defaultCenter, PageOrientation defaultOrientation);
+	void printImage(const Graphics::ManagedSurface &surf);
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
+		kRedrawOpenTooltip,
+		kRedrawCloseTooltip,
 		kRedrawOpenDialog,
 		kRedrawCloseDialog,
 		kRedrawTopDialog,
@@ -198,11 +206,12 @@ protected:
 	} _lastClick, _lastMousePosition, _globalMousePosition;
 
 	struct TooltipData {
-		TooltipData() : x(-1), y(-1) { time = 0; wdg = nullptr; }
+		TooltipData() : x(-1), y(-1), wdg(nullptr) { time = 0; }
 		uint32 time; // Time
 		Widget *wdg; // Widget that had its tooltip shown
 		int16 x, y;  // Position of mouse before tooltip was focused
 	} _lastTooltipShown;
+	Tooltip *_tooltip;
 
 	// mouse cursor state
 	uint32	_cursorAnimateCounter;

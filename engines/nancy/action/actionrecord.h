@@ -95,9 +95,6 @@ struct DependencyRecord {
 // Does _not_ support drawing to screen, records that need this functionality
 // will have to subclass RenderActionRecord.
 class ActionRecord {
-	friend class ActionManager;
-	friend class Nancy::NancyConsole;
-
 public:
 	enum ExecutionState { kBegin, kRun, kActionTrigger };
 	enum ExecutionType { kOneShot = 1, kRepeating = 2 };
@@ -119,12 +116,14 @@ public:
 	virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
 	virtual void handleInput(NancyInput &input) {}
 
-protected:
-	void finishExecution();
-	virtual bool canHaveHotspot() const { return false; } // Used for handling kCursorType dependency
-
 	// Used for debugging
 	virtual Common::String getRecordTypeName() const = 0;
+
+	// Used for handling kCursorType dependency
+	virtual bool canHaveHotspot() const { return false; }
+
+protected:
+	void finishExecution();
 
 public:
 	Common::String _description;
@@ -150,6 +149,8 @@ class RenderActionRecord : public virtual ActionRecord, public RenderObject {
 public:
 	RenderActionRecord(uint zOrder) : RenderObject(zOrder) {}
 	virtual ~RenderActionRecord() {}
+
+	RenderActionRecord(RenderActionRecord &&) = default;
 
 	// This makes sure the AR is re-added to the render system
 	// when returning from a different state (e.g. the Help screen)

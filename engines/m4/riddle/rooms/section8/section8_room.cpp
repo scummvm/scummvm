@@ -24,6 +24,7 @@
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/rooms/section8/section8.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng.h"
 
@@ -292,7 +293,7 @@ void Section8Room::parser() {
 
 			case 70:
 				_G(flags)[V270] = 805;
-				_G(game).new_room = 805;
+				_G(game).setRoom(805);
 				adv_kill_digi_between_rooms(false);
 				digi_preload("950_s29", -1);
 				digi_play_loop("950_s29", 3, 96, -1, -1);
@@ -639,7 +640,7 @@ void Section8Room::parser() {
 			break;
 
 		case 20:
-			_G(game).new_room = _savedNextRoom;
+			_G(game).setRoom(_savedNextRoom);
 			adv_kill_digi_between_rooms(false);
 			digi_preload("950_s29", -1);
 			digi_play_loop("950_s29", 3, 255, -1, -1);

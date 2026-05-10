@@ -51,6 +51,7 @@
 #ifdef USE_SDL_NET
 #include "testbed/webserver.h"
 #endif
+#include "testbed/printing.h"
 #ifdef USE_TTS
 #include "testbed/speech.h"
 #endif
@@ -108,7 +109,7 @@ void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		ConfParams.setRerunFlag(true);
 		cmd = GUI::kCloseCmd;
 		break;
-	case kViewLogCmd: 
+	case kViewLogCmd:
 		Common::Path logPath = Common::Path(ConfParams.getLogDirectory());
 		GUI::TextViewerDialog viewer(logPath.appendComponent(ConfParams.getLogFilename()));
 		viewer.runModal();
@@ -171,6 +172,9 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	testsuiteList.push_back(ts);
 	// Networking
 	ts = new NetworkingTestSuite();
+	testsuiteList.push_back(ts);
+	// Printing
+	ts = new PrintingTestSuite();
 	testsuiteList.push_back(ts);
 #ifdef USE_TTS
 	// TextToSpeech

@@ -155,7 +155,6 @@ public:
 	void updateEvents();
 
 	Graphics::ManagedSurface _backgroundSurface;
-	Graphics::PixelFormat _origFormat;
 
 	Common::ScopedPtr<GameLoader> _gameLoader;
 	GameProject *_gameProject;

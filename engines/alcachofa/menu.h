@@ -38,7 +38,9 @@ enum class MainMenuAction : int32 {
 	NextSave,
 	PrevSave,
 	NewGame,
-	AlsoExit // there seems to be no difference to Exit
+	AlsoExit, // there seems to be no difference to Exit
+
+	ConfirmSavestate, // only used in V1
 };
 
 enum class OptionsMenuAction : int32 {
@@ -59,18 +61,18 @@ enum class OptionsMenuValue : int32 {
 class Menu {
 public:
 	Menu();
+	virtual ~Menu();
 
 	inline bool isOpen() const { return _isOpen; }
 	inline uint32 millisBeforeMenu() const { return _millisBeforeMenu; }
 	inline Room *previousRoom() { return _previousRoom; }
 	inline FakeSemaphore &interactionSemaphore() { return _interactionSemaphore; }
 
-	void resetAfterLoad();
-	void updateOpeningMenu();
-	void triggerMainMenuAction(MainMenuAction action);
 	void triggerLoad();
+	void resetAfterLoad();
+	virtual void updateOpeningMenu();
 
-	void openOptionsMenu();
+	virtual void triggerMainMenuAction(MainMenuAction action);
 	void triggerOptionsAction(OptionsMenuAction action);
 	void triggerOptionsValue(OptionsMenuValue valueId, float value);
 
@@ -79,13 +81,16 @@ public:
 	// as such - may return nullptr
 	const Graphics::Surface *getBigThumbnail() const;
 
-private:
+protected:
+	inline bool isOnNewSlot() const { return _selectedSavefileI >= _savefiles.size(); }
+	virtual void updateSelectedSavefile(bool hasJustSaved);
+	virtual void setOptionsState() = 0;
+
+	void openOptionsMenu();
 	void triggerSave();
-	void updateSelectedSavefile(bool hasJustSaved);
 	bool tryReadOldSavefile();
 	void continueGame();
 	void continueMainMenu();
-	void setOptionsState();
 
 	bool
 		_isOpen = false,
@@ -101,6 +106,31 @@ private:
 		_bigThumbnail, // big because it is for the in-game menu, not for ScummVM
 		_selectedThumbnail;
 	Common::SaveFileManager *_saveFileMgr;
+};
+
+class MenuV3 : public Menu {
+public:
+	void triggerMainMenuAction(MainMenuAction action) override;
+
+protected:
+	void updateSelectedSavefile(bool hasJustSaved) override;
+	void setOptionsState() override;
+};
+
+class MenuV1 : public Menu {
+public:
+	void updateOpeningMenu() override;
+	void triggerMainMenuAction(MainMenuAction action) override;
+
+protected:
+	void updateSelectedSavefile(bool hasJustSaved) override;
+	void setOptionsState() override;
+
+private:
+	friend class ButtonV1;
+	void switchToState(MainMenuAction state);
+
+	MainMenuAction _currentState = MainMenuAction::ConfirmSavestate;
 };
 
 }

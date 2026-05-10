@@ -105,9 +105,25 @@
 	{
 		"adibou2",
 		"ADIBOU 2.12 Environnement",
-		AD_ENTRY2s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
-				   "BECBF212.CD1",	"bc828c320908a5eaa349956d396bd8e1", 8),
+		AD_ENTRY3s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
+				   "BECBF212.CD1", "bc828c320908a5eaa349956d396bd8e1", 8,
+				   "intro.itk", "610b4ade4912442f42f342594c654226", 13592576),
 		FR_FRA,
+		kPlatformWindows,
+		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2",
+		"ADIBOU 2.12 Environnement",
+		AD_ENTRY3s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
+				   "BECBF212.CD1", "bc828c320908a5eaa349956d396bd8e1", 8,
+				   "intro.itk", "269fc5814db277b5a18d748e7ed55e90", 15079424),
+		FR_CAN,
 		kPlatformWindows,
 		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
 		GUIO0()
@@ -135,6 +151,19 @@
 		"ADIBOO 2.14 Environnement",
 		AD_ENTRY1s("intro.stk", "ff63637e3cb7f0a457edf79457b1c6b3", 9333874),
 		FR_FRA,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2",
+		"ADIBOU Environnement",
+		AD_ENTRY1s("intro.stk", "5606ff29ef33ef423519eb24e8096afc", 8737284),
+		FR_CAN,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO0()
@@ -293,6 +322,22 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
+{
+	{
+		"adibou2readcount45",
+		"", // "Lecture/Calcul 4-5 ans"
+		AD_ENTRY2s("intro_ap.stk", "8f9dcb2fe953b1e031563307eae19a77", 40835810,
+				   "appli_01.vmd", "d5f26306952d2ffbbadbb2b7d6cb3299", 41806),
+		FR_CAN,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 {
 	{
 		"adibou2readcount45",
@@ -344,7 +389,7 @@
 		"adibou2readcount67",
 		"", // "Lecture/Calcul 6-7 ans"
 		AD_ENTRY2s("intro_ap.stk", "0e91d0d693d5731353ad4738f4aa065c", 36540132,
-				   "appli_03.vmd", "6bf95a48f366bdf8af3a198c7b723c77", 58858),
+				   "appli_03.vmd", "d037d75824a033a5de4a45b9c02419ee", 58858),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_ADDON,
@@ -353,12 +398,44 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
+
+{
+	{
+		"adibou2readcount67",
+		"", // "Lecture/Calcul 6-7 ans"
+		AD_ENTRY2s("intro_ap.stk", "82ec211d2f0cb3430d8f1eb80c949f41", 36540108,
+				   "appli_03.vmd", "2ec3177c0f1b4ef326cc663834003eb4", 38062),
+		FR_CAN,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 {
 	{
 		"adibou2readcount67",
 		"", // "Lesen/Rechnen 6-7 Jahre"
 		AD_ENTRY2s("intro_ap.stk", "5b83051c6d123fe0c506fd1ee17a73da", 36132776,
 				   "appli_03.vmd", "462cd55c0759c1bd097b379995342b24", 65454),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+{
+	{ // Supplied by Indy4-Fan
+		"adibou2readcount67",
+		"", // "Lesen/Rechnen 6-7 Jahre"
+		AD_ENTRY2s("intro_ap.stk", "4f475d2ad1aec64bafd17c971768dbce", 36084716,
+			   	   "appli_03.vmd", "462cd55c0759c1bd097b379995342b24", 65454),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_ADDON,
@@ -388,8 +465,9 @@
 	{
 		"adibou2sciences",
 		"", // "Je découvre la nature et les sciences"
-		AD_ENTRY2s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
-				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920),
+		AD_ENTRY3s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
+				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920,
+				   "APPBOFR1.ITK", "b5354d97e1115ad337de55410dae82f7", 129994752),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_ADDON,
@@ -398,6 +476,23 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
+{
+	{
+		"adibou2sciences",
+		"", // "Je découvre la nature et les sciences"
+		AD_ENTRY3s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
+				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920,
+				   "APPBOFR1.ITK", "8bd95ce195278a29f0375ca2e2f3475d", 139196416),
+		FR_CAN,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 {
 	{
 		"adibou2sciences",

@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	file_nes.o \
 	gfx_gui.o \
 	gfx_mac.o \
+	gfx_nes.o \
 	gfx_towns.o \
 	gfx.o \
 	he/mixer_he.o \
@@ -53,6 +54,7 @@ MODULE_OBJS := \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
+	playback.o \
 	players/player_ad.o \
 	players/player_apple2.o \
 	players/player_he.o \
@@ -94,9 +96,13 @@ MODULE_OBJS := \
 	vars.o \
 	verbs.o
 
-ifdef USE_ARM_COSTUME_ASM
+ifdef USE_IMGUI
 MODULE_OBJS += \
-	proc3ARM.o
+	debugger/debugtools.o \
+	debugger/editor.o \
+	debugger/explorer.o \
+	debugger/file.o \
+	debugger/resource.o
 endif
 
 ifdef ENABLE_SCUMM_7_8
@@ -169,6 +175,7 @@ MODULE_OBJS += \
 	he/basketball/shooting.o \
 	he/basketball/trajectory.o \
 	he/cup_player_he.o \
+	he/font_he.o \
 	he/gfx_comp/aux_comp.o \
 	he/gfx_comp/mrle_comp.o \
 	he/gfx_comp/trle_comp.o \

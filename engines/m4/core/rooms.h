@@ -24,8 +24,6 @@
 
 #include "common/hashmap.h"
 #include "common/serializer.h"
-#include "m4/adv_r/adv.h"
-#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_hotspot.h"
 
 namespace M4 {

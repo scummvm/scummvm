@@ -136,6 +136,7 @@
 	scrollView.autoresizingMask = toolbar.autoresizingMask;
 	scrollView.showsVerticalScrollIndicator = false;
 	scrollView.showsHorizontalScrollIndicator = false;
+	scrollView.bounces = false;
 	toolbar.autoresizingMask = UIViewAutoresizingNone;
 	[scrollView addSubview:toolbar];
 	self.inputAccessoryView = nil;

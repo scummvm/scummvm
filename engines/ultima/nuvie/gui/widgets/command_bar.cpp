@@ -44,8 +44,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
-
 static const Tile placeholder_tile = {
 	0,
 	false,
@@ -103,7 +101,7 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
 
 	if (!game->is_orig_style()) {
 		cfg = game->get_config();
-		Std::string pos_str;
+		Common::String pos_str;
 		cfg->value(config_get_game_key(cfg) + "/cb_position", pos_str, "default");
 		if (pos_str == "default")
 			right_pos_cb = !game->is_new_style();
@@ -267,7 +265,7 @@ void CommandBar::select_action(sint8 activate) {
 		set_selected_action(activate);
 }
 
-GUI_status CommandBar::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status CommandBar::MouseDown(int x, int y, Events::MouseButton button) {
 	x -= area.left;
 	y -= area.top;
 
@@ -459,7 +457,7 @@ void CommandBar::Display(bool full_redraw) {
 }
 
 void CommandBar::display_information() {
-	string infostring(game->get_clock()->get_date_string());
+	Common::String infostring(game->get_clock()->get_date_string());
 	infostring += " Wind:";
 	infostring += wind;
 	font->drawString(screen, infostring.c_str(), area.left + 8, area.top, font_color, font_color);

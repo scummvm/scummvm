@@ -24,7 +24,13 @@
 #if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(OPENDINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(NINTENDO_SWITCH)  && !defined(__EMSCRIPTEN__) && !defined(MIYOO) && !defined(MIYOOMINI) && !defined(SAILFISH)
 
 #include "backends/platform/sdl/posix/posix.h"
+#ifdef USE_ATARI_PLUGIN_PROVIDER
+#include "backends/plugins/atari/atari-provider.h"
+#elif defined(USE_FIREBEE_PLUGIN_PROVIDER)
+#include "backends/plugins/firebee/firebee-provider.h"
+#else
 #include "backends/plugins/sdl/sdl-provider.h"
+#endif
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
@@ -37,7 +43,13 @@ int main(int argc, char *argv[]) {
 	g_system->init();
 
 #ifdef DYNAMIC_MODULES
+#if defined(USE_ATARI_PLUGIN_PROVIDER)
+	PluginManager::instance().addPluginProvider(new AtariPluginProvider());
+#elif defined(USE_FIREBEE_PLUGIN_PROVIDER)
+	PluginManager::instance().addPluginProvider(new FireBeePluginProvider());
+#else
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+#endif
 #endif
 
 	// Invoke the actual ScummVM main entry point:

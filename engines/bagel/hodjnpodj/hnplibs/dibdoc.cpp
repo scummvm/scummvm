@@ -147,13 +147,7 @@ bool CDibDoc::OpenDocument(const char *pszPathName) {
 	CFileException fe;
 
 	if (!file.Open(pszPathName, CFile::modeRead | CFile::shareDenyWrite, &fe)) {
-		char buf[128];
-
-		Common::sprintf_s(buf, "Unable to open artwork file: %s", pszPathName);
-		ShowMemoryInfo(buf, "Internal Problem");
-
-		ReportSaveLoadException(pszPathName, &fe,
-		                        false, AFX_IDP_FAILED_TO_OPEN_DOC);
+		error("Unable to open artwork file: %s", pszPathName);
 		return false;
 	}
 

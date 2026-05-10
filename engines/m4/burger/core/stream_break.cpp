@@ -48,7 +48,7 @@ static void set_next_series_stream_break() {
 }
 
 void handle_series_stream_break() {
-	int32 thisFrame = _GB(my_stream_break)->frame;
+	const int32 thisFrame = _GB(my_stream_break)->frame;
 	auto &streamBreak = _GB(my_stream_break);
 
 	// Handle all breaks for this frame number (only one series break can occur on each frame)

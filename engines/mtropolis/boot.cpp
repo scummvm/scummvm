@@ -1130,7 +1130,8 @@ public:
 	void bootFTTSWin();
 	void bootArchitectureWin();
 	void bootDrawMarvelWin();
-	void bootDinosaurFinderWin();
+	void bootWannaBeADinoFinderWin();
+	void bootICanBeADinosaurFinderWin();
 	void bootAnimalDoctorWin();
 	void bootIvoclarWin();
 	void bootBeatrixWin();
@@ -1508,7 +1509,13 @@ void BootScriptContext::bootDrawMarvelWin() {
 	setMainSegmentFile("workspace/MDRAW.C9A");
 }
 
-void BootScriptContext::bootDinosaurFinderWin() {
+void BootScriptContext::bootWannaBeADinoFinderWin() {
+	addPlugIn(kPlugInStandard);
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
+	setMainSegmentFile("workspace/WBDF.C9A");
+}
+
+void BootScriptContext::bootICanBeADinosaurFinderWin() {
 	addPlugIn(kPlugInStandard);
 	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
 	setMainSegmentFile("workspace/WBDFR1.C9A");
@@ -2167,10 +2174,15 @@ const Game games[] = {
 		MTBOOT_HERCULES_WIN_EN,
 	 	&BootScriptContext::bootHerculesWin
 	},
+	// Wanna-Be a Dinosaur Finder - Retail - Windows - English
+	{
+		MTBOOT_WANNADINO_RETAIL_EN,
+	 	&BootScriptContext::bootWannaBeADinoFinderWin
+	},
 	// I Can Be a Dinosaur Finder - Retail - Windows - English
 	{
 		MTBOOT_IDINO_RETAIL_EN,
-	 	&BootScriptContext::bootDinosaurFinderWin
+	 	&BootScriptContext::bootICanBeADinosaurFinderWin
 	},
 	// I Can Be an Animal Doctor - Retail - Windows - English
 	{
@@ -2232,7 +2244,7 @@ const Game games[] = {
 		MTBOOT_BABE_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
-	// Biologia Cellulare Evoluzione E Variet� Della Vita - Windows - Italian
+	// Biologia Cellulare Evoluzione E Varietà Della Vita - Windows - Italian
 	{
 		MTBOOT_BIOCELLEVO_WIN_IT,
 		&BootScriptContext::bootGeneric
@@ -2252,7 +2264,7 @@ const Game games[] = {
 		MTBOOT_GREVEHOLM2_WIN_SE,
 		&BootScriptContext::bootGeneric
 	},
-	// Itacante: La Cit� des Robots - Windows - French
+	// Itacante: La Cité des Robots - Windows - French
 	{
 		MTBOOT_ITACANTE_WIN_FR,
 		&BootScriptContext::bootGeneric
@@ -2657,14 +2669,21 @@ void findWindowsMainSegment(Common::Archive &fs, const BootScriptContext &bootSc
 	if (bootScriptContext.getMainSegmentFileOverride().empty()) {
 		fs.listMembers(allFiles);
 
+		const Common::Path copyingPath("workspace/LICENSES/COPYING.MPL");
+
 		for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
 			Common::String fileName = archiveMember->getFileName();
 
 			for (const char *suffix : mainSegmentSuffixes) {
 				if (fileName.hasSuffixIgnoreCase(suffix)) {
-					filteredFiles.push_back(archiveMember);
-					debug(4, "Identified possible main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
-					break;
+					// Ignore LICENSES/COPYING.MPL from the ScummVM source tree
+					if (archiveMember->getPathInArchive() != copyingPath) {
+						filteredFiles.push_back(archiveMember);
+						debug(4, "Identified possible main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+						break;
+					} else {
+						debug(4, "Ignoring unlikely main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+					}
 				}
 			}
 		}

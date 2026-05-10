@@ -1367,7 +1367,7 @@ private:
 	void CONS_Anna_Concert(CONS_PARAMS);
 	void HAND_Anna_Concert(HAND_PARAMS);
 
-	void COND_Anna_LeaveConcert(CONS_PARAMS);
+	void CONS_Anna_LeaveConcert(CONS_PARAMS);
 	void HAND_Anna_LeaveConcert(HAND_PARAMS);
 
 	void CONS_Anna_LeaveConcertCathInComp(CONS_PARAMS);

@@ -28,8 +28,6 @@
 #include <mint/osbind.h>
 #include <unistd.h>	// getcwd
 
-#if defined(ATARI)
-
 AtariFilesystemFactory::AtariFilesystemFactory() {
 	_fileHashMap["cryomni3.dat"] = "cryomni3d.dat";
 	_fileHashMap["neverhoo.dat"] = "neverhood.dat";
@@ -76,5 +74,3 @@ AbstractFSNode *AtariFilesystemFactory::makeFileNodePath(const Common::String &p
 	assert(!path.empty());
 	return new AtariFilesystemNode(path, _config, _fileHashMap);
 }
-
-#endif	// ATARI

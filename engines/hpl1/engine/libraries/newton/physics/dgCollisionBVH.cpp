@@ -67,7 +67,7 @@ void dgCollisionBVH::AddFace(dgInt32 vertexCount,
 	dgInt32 indexList[256];
 
 	faceArray = vertexCount;
-	NEWTON_ASSERT(vertexCount < dgInt32(sizeof(indexList) / sizeof(indexList[0])));
+	NEWTON_ASSERT(vertexCount < dgInt32(ARRAYSIZE(indexList)));
 	for (dgInt32 i = 0; i < vertexCount; i++) {
 		indexList[i] = i;
 	}

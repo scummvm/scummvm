@@ -49,7 +49,7 @@ namespace Frame {
 // Sound File Identifiers
 
 // Bitmap Identifiers
-#define MAINSCROLL  ".\\ART\\MLSCROLL.BMP"
+#define MAINSCROLL  "art\\MLSCROLL.BMP"
 
 extern CBfcMgr *lpMetaGame;
 

@@ -111,6 +111,7 @@ class MacTextCanvas {
 public:
 	Common::Array<MacTextLine> _text;
 	ManagedSurface *_surface = nullptr, *_shadowSurface = nullptr;
+	ManagedSurface *_glyphMask = nullptr, *_charBoxMask = nullptr;
 	int _maxWidth = 0;
 	int _textMaxWidth = 0;
 	int _textMaxHeight = 0;
@@ -131,7 +132,7 @@ public:
 	void recalcDims();
 	void reallocSurface();
 	void render(int from, int to);
-	void render(int from, int to, int shadow);
+	void render(int from, int to, ManagedSurface *targeet, uint32 fillColor = 0, bool bboxesOnly = false);
 	int getAlignOffset(int row);
 
 	/**

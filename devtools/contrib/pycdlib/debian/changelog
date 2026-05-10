@@ -1,0 +1,113 @@
+pycdlib (1.15.0-1) UNRELEASED; urgency=low
+
+  * Release 1.15.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sun, 02 Mar 2025 21:00:00 -0500
+
+pycdlib (1.14.0-1) UNRELEASED; urgency=low
+
+  * Release 1.14.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sat, 14 Jan 2023 21:00:00 -0500
+
+pycdlib (1.13.0-1) UNRELEASED; urgency=low
+
+  * Release 1.13.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Mon, 20 Jun 2022 21:00:00 -0500
+
+pycdlib (1.12.0-1) UNRELEASED; urgency=low
+
+  * Release 1.12.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Tue, 10 Aug 2021 21:00:00 -0500
+
+pycdlib (1.11.0-1) UNRELEASED; urgency=low
+
+  * Release 1.11.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Wed, 07 Oct 2020 21:00:00 -0500
+
+pycdlib (1.10.0-1) UNRELEASED; urgency=low
+
+  * Release 1.10.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sun, 24 May 2020 21:00:00 -0500
+
+pycdlib (1.9.0-1) UNRELEASED; urgency=low
+
+  * Release 1.9.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Fri, 20 Aug 2019 21:00:00 -0500
+
+pycdlib (1.8.0-1) UNRELEASED; urgency=low
+
+  * Release 1.8.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sat, 10 Aug 2019 21:00:00 -0500
+
+pycdlib (1.7.0-1) UNRELEASED; urgency=low
+
+  * Release 1.7.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Wed, 27 Feb 2019 21:00:00 -0500
+
+pycdlib (1.6.0-1) UNRELEASED; urgency=low
+
+  * Release 1.6.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sun, 29 Jul 2018 21:00:00 -0500
+
+pycdlib (1.5.0-1) UNRELEASED; urgency=low
+
+  * Release 1.5.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sat, 23 Jun 2018 21:00:00 -0500
+
+pycdlib (1.4.0-1) UNRELEASED; urgency=low
+
+  * Release 1.4.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Fri, 04 May 2018 21:00:00 -0500
+
+pycdlib (1.3.2-1) UNRELEASED; urgency=low
+
+  * Release 1.3.2 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Mon, 20 Nov 2017 21:00:00 -0500
+
+pycdlib (1.3.1-1) UNRELEASED; urgency=low
+
+  * Release 1.3.1 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Mon, 20 Nov 2017 19:00:00 -0500
+
+pycdlib (1.3.0-1) UNRELEASED; urgency=low
+
+  * Release 1.3.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Sun, 19 Nov 2017 21:00:00 -0500
+
+pycdlib (1.2.0-1) UNRELEASED; urgency=low
+
+  * Release 1.2.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Tue, 03 Oct 2017 21:00:00 -0500
+
+pycdlib (1.1.0-1) UNRELEASED; urgency=low
+
+  * Release 1.1.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Tue, 31 Jan 2017 21:00:00 -0500
+
+pycdlib (1.0.0-1) UNRELEASED; urgency=low
+
+  * Release 1.0.0 of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Tue, 25 Oct 2016 21:00:00 -0500
+
+pycdlib (0.1.0-1) UNRELEASED; urgency=low
+
+  * Initial release of pycdlib
+
+ -- Chris Lalancette <clalancette@gmail.com>  Thu, 19 Nov 2015 21:00:00 -0500

@@ -47,6 +47,13 @@ enum class Direction {
 	Down,
 	Left,
 
+	// V1 has some fields with these additional directions
+	// but they are largely irrelevant so we map them to the main four
+	UpRight,
+	DownRight,
+	DownLeft,
+	UpLeft,
+
 	Invalid = -1
 };
 
@@ -64,6 +71,7 @@ enum class EasingType {
 };
 
 constexpr const int32 kDirectionCount = 4;
+constexpr const int32 kFullDirectionCount = 8; ///< only to be used for IO or mapping V1 values
 constexpr const int8 kOrderCount = 70;
 constexpr const int8 kForegroundOrderCount = 10;
 
@@ -129,10 +137,13 @@ Math::Vector2d as2D(const Math::Vector3d &v);
 Math::Vector2d as2D(Common::Point p);
 
 bool readBool(Common::ReadStream &stream);
-Common::Point readPoint(Common::ReadStream &stream);
+Common::Point readPoint16(Common::ReadStream &stream);
+Common::Point readPoint32(Common::ReadStream &stream);
 Common::String readVarString(Common::ReadStream &stream);
 void skipVarString(Common::SeekableReadStream &stream);
 void syncPoint(Common::Serializer &serializer, Common::Point &point);
+Direction intToDirection(int32 value);
+Direction readDirection(Common::ReadStream &stream);
 
 template<typename T>
 inline void syncArray(Common::Serializer &serializer, Common::Array<T> &array, void (*serializeFunction)(Common::Serializer &, T &)) {
@@ -143,12 +154,19 @@ inline void syncArray(Common::Serializer &serializer, Common::Array<T> &array, v
 }
 
 template<typename T>
-inline void syncStack(Common::Serializer &serializer, Common::Stack<T> &stack, void (*serializeFunction)(Common::Serializer &, T &)) {
+inline void syncStack(
+	Common::Serializer &serializer,
+	Common::Stack<T> &stack,
+	void (*serializeFunction)(Common::Serializer &, T &),
+	Common::Serializer::Version minVersion = 0) {
+	if (serializer.getVersion() < minVersion)
+		return;
+
 	auto size = stack.size();
 	serializer.syncAsUint32LE(size);
 	if (serializer.isLoading()) {
 		for (uint i = 0; i < size; i++) {
-			T value;
+			T value = {};
 			serializeFunction(serializer, value);
 			stack.push(value);
 		}
@@ -165,6 +183,44 @@ inline void syncEnum(Common::Serializer &serializer, T &enumValue) {
 	serializer.syncAsSint32LE(intValue);
 	enumValue = static_cast<T>(intValue);
 }
+
+/**
+ * @brief References a game file either as path or as embedded byte range
+ *
+ * In V1 all files (except videos) are stored within the EMC file. Some of
+ * those are within an embedded archive, most animations however are stored
+ * at their graphics and have their original filenames. We reference them
+ * by their byte range.
+ *
+ * V2/V3 store files outside with normal paths to use
+ */
+struct GameFileReference {
+	Common::String _path;
+	uint32
+		_fileIndex = UINT32_MAX,
+		_position = UINT32_MAX,
+		_size = 0;
+
+	GameFileReference() {}
+
+	explicit GameFileReference(const Common::String &path)
+		: _path(path) {}
+
+	// in this case, path is only for debugging purposes
+	GameFileReference(const Common::String &path, uint32 fileIndex, int64 position, uint32 size)
+		: _path(path)
+		, _fileIndex(fileIndex)
+		, _position(position)
+		, _size(size) {}
+
+	inline bool isValid() const {
+		return !_path.empty() || _fileIndex != UINT32_MAX;
+	}
+
+	inline bool isEmbedded() const {
+		return _fileIndex != UINT32_MAX;
+	}
+};
 
 }
 

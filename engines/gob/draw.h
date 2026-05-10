@@ -35,6 +35,10 @@ namespace Common {
 class WinResources;
 }
 
+namespace Image {
+class AniDecoder;
+}
+
 namespace Gob {
 
 #define RENDERFLAG_NOINVALIDATE      0x0001
@@ -225,6 +229,7 @@ public:
 	virtual void blitCursor() = 0;
 
 	virtual void animateCursor(int16 cursor) = 0;
+	virtual void updateAnimatedCursor() {}
 	virtual void printTotText(int16 id) = 0;
 	virtual void spriteOperation(int16 operation, bool ttsAddHotspotText = true) = 0;
 
@@ -338,10 +343,20 @@ public:
 
 	void initScreen() override;
 	void animateCursor(int16 cursor) override;
+	void updateAnimatedCursor() override;
 
 
 private:
 	Common::WinResources *_cursors;
+
+	// Animated cursor (.ANI) state
+	Image::AniDecoder *_aniDecoder;
+	uint16 _aniCurrentFrame;
+	uint32 _aniLastFrameTime;
+
+	void clearAniCursor();
+	bool loadAniCursor(Common::SeekableReadStream *stream);
+	bool updateAniCursorFrame();
 
 	bool loadCursorFile();
 	bool loadCursorFromFile(Common::String filename);

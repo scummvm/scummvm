@@ -38,12 +38,6 @@ DECLARE_SINGLETON(Nancy::State::SaveDialog);
 namespace Nancy {
 namespace State {
 
-SaveDialog::~SaveDialog() {
-	delete _yesButton;
-	delete _noButton;
-	delete _cancelButton;
-}
-
 void SaveDialog::process() {
 	if (g_nancy->_sound->isSoundPlaying("BUOK")) {
 		return;
@@ -97,9 +91,9 @@ void SaveDialog::init() {
 
 	_background.init(_dialogData->imageName);
 
-	_yesButton = new UI::Button(1, _background._drawSurface, _dialogData->yesDownSrc, _dialogData->yesDest, _dialogData->yesHighlightSrc);
-	_noButton = new UI::Button(1, _background._drawSurface, _dialogData->noDownSrc, _dialogData->noDest, _dialogData->noHighlightSrc);
-	_cancelButton = new UI::Button(1, _background._drawSurface, _dialogData->cancelDownSrc, _dialogData->cancelDest, _dialogData->cancelHighlightSrc);
+	_yesButton.reset(new UI::Button(1, _background._drawSurface, _dialogData->yesDownSrc, _dialogData->yesDest, _dialogData->yesHighlightSrc));
+	_noButton.reset(new UI::Button(1, _background._drawSurface, _dialogData->noDownSrc, _dialogData->noDest, _dialogData->noHighlightSrc));
+	_cancelButton.reset(new UI::Button(1, _background._drawSurface, _dialogData->cancelDownSrc, _dialogData->cancelDest, _dialogData->cancelHighlightSrc));
 
 	registerGraphics();
 
@@ -138,4 +132,3 @@ void SaveDialog::stop() {
 
 } // End of namespace State
 } // End of namespace Nancy
-

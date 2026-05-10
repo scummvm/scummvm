@@ -422,7 +422,7 @@ Common::String Lingo::formatStack() {
 
 	for (uint i = 0; i < _state->stack.size(); i++) {
 		Datum d = _state->stack[i];
-		stack += Common::String::format("<%s> ", d.asString(true).c_str());
+		stack += Common::String::format("<%s> ", formatStringForDump(d.asString(true)).c_str());
 	}
 	return stack;
 }
@@ -722,6 +722,10 @@ bool Lingo::execute(int targetFrame) {
 		while (_state->callstack.size()) {
 			popContext(true);
 		}
+		if (_playDone) {
+			_playDone = false;
+			requeuePlayState();
+		}
 	}
 	_abort = false;
 	_freezeState = false;
@@ -760,10 +764,9 @@ void Lingo::executeScript(ScriptType type, CastMemberID id) {
 
 void Lingo::executeHandler(const Common::String &name, int numargs) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
-	Symbol sym = getHandler(name);
 
 	int frame = _state->callstack.size();
-	LC::call(sym, numargs, false);
+	LC::call(name, numargs, false);
 	execute(frame);
 }
 
@@ -1734,6 +1737,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 		// So while we require other variable types to be initialized before assigning to them,
 		// let's not enforce that for globals.
 		_globalvars[*var.u.s] = value;
+		g_debugger->varWriteHook(*var.u.s);
 		break;
 	case LOCALREF:
 		{

@@ -63,7 +63,7 @@ extern const char *gpszSaveGameFile;
  *
  ****************************************************************/
 CMainGameDlg::CMainGameDlg(CWnd *pParent, CPalette *pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_MAIN_SCROLL, ".\\ART\\MLSCROLL.BMP", -1, -1, false) {
+	: CBmpDialog(pParent, pPalette, IDD_MAIN_SCROLL, "art\\MLSCROLL.BMP", -1, -1, false) {
 	// Inits
 	m_pPlayMetaButton = nullptr;
 	m_pPlayMiniButton = nullptr;

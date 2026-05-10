@@ -22,6 +22,7 @@
 #ifndef NANCY_STATE_MAP_H
 #define NANCY_STATE_MAP_H
 
+#include "common/ptr.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/sound.h"
@@ -55,7 +56,7 @@ public:
 	const SoundDescription &getSound();
 
 protected:
-	class MapViewport : public Nancy::RenderObject {
+	class MapViewport : public RenderObject {
 	public:
 		MapViewport() : RenderObject(6) {}
 		virtual ~MapViewport() = default;
@@ -93,14 +94,12 @@ protected:
 };
 
 class TVDMap : public Map {
-	friend class MapGlobe;
-
 public:
 	TVDMap();
 	virtual ~TVDMap() = default;
 
 private:
-	class MapGlobe : public Nancy::UI::AnimatedButton {
+	class MapGlobe : public UI::AnimatedButton {
 	public:
 		MapGlobe(uint zOrder, TVDMap *owner) : AnimatedButton(zOrder), _gargoyleEyes(zOrder), _owner(owner) {}
 		virtual ~MapGlobe() = default;
@@ -127,10 +126,6 @@ private:
 };
 
 class Nancy1Map : public Map {
-public:
-	Nancy1Map();
-	virtual ~Nancy1Map();
-
 private:
 	void init() override;
 	void load() override;
@@ -139,10 +134,10 @@ private:
 
 	bool onStateExit(const NancyState::NancyState next) override;
 
-	UI::Button *_button;
+	Common::ScopedPtr<UI::Button> _button;
 };
 
-#define NancyMapState Nancy::State::Map::instance()
+#define NancyMapState State::Map::instance()
 
 } // End of namespace State
 } // End of namespace Nancy

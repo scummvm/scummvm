@@ -37,7 +37,7 @@ static struct {
 
 void luaX_init() {
 	uint32 i;
-	for (i = 0; i < (sizeof(reserved) / sizeof(reserved[0])); i++) {
+	for (i = 0; i < ARRAYSIZE(reserved); i++) {
 		TaggedString *ts = luaS_new(reserved[i].name);
 		ts->head.marked = reserved[i].token;  /* reserved word  (always > 255) */
 	}

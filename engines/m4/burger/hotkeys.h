@@ -23,9 +23,7 @@
 #ifndef M4_BURGER_HOTKEYS_H
 #define M4_BURGER_HOTKEYS_H
 
-#include "m4/m4_types.h"
 #include "m4/gui/hotkeys.h"
-#include "m4/core/mouse.h"
 
 namespace M4 {
 namespace Burger {

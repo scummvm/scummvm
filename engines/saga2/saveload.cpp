@@ -566,12 +566,6 @@ void cleanupGameState() {
 	cleanupGlobals();
 }
 
-//#define DEBUG_FILETIME
-
-#ifdef DEBUG_FILETIME
-#include <time.h>
-#endif
-
 void checkRestartGame(const char *exeName) {
 	Common::String saveRestart = g_vm->getSavegameFile(999);
 	g_vm->saveGameState(999, saveRestart, true);

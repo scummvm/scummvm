@@ -22,6 +22,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
 #include "graphics/pixelformat.h"
+#include "graphics/managed_surface.h"
 #include "common/endian.h"
 #include "common/algorithm.h"
 #include "common/system.h"
@@ -146,7 +147,8 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	return true;
 }
 
-bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail) {
+template<class T>
+bool loadThumbnailImpl(Common::SeekableReadStream &in, T *&thumbnail, bool skipThumbnail) {
 	if (skipThumbnail) {
 		thumbnail = nullptr;
 		return Graphics::skipThumbnail(in);
@@ -175,7 +177,7 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 		return false;
 	}
 
-	thumbnail = new Graphics::Surface();
+	thumbnail = new T();
 	thumbnail->create(header.width, header.height, header.format);
 
 	for (int y = 0; y < thumbnail->h; ++y) {
@@ -199,6 +201,14 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 		}
 	}
 	return true;
+}
+
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail) {
+	return loadThumbnailImpl(in, thumbnail, skipThumbnail);
+}
+
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::ManagedSurface *&thumbnail, bool skipThumbnail) {
+	return loadThumbnailImpl(in, thumbnail, skipThumbnail);
 }
 
 bool createThumbnail(Graphics::Surface &thumb) {
@@ -280,57 +290,6 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	}
 
 	return true;
-}
-
-
-/**
- * Returns an array indicating which pixels of a source image horizontally or vertically get
- * included in a scaled image
- */
-int *scaleLine(int size, int srcSize) {
-	int scale = 100 * size / srcSize;
-	assert(scale > 0);
-	int *v = new int[size];
-	Common::fill(v, v + size, 0);
-
-	int distCtr = 0;
-	int *destP = v;
-	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
-		distCtr += scale;
-		while (distCtr >= 100) {
-			assert(destP < &v[size]);
-			*destP++ = distIndex;
-			distCtr -= 100;
-		}
-	}
-
-	return v;
-}
-
-Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(xSize, ySize, srcImage.format);
-
-	int *horizUsage = scaleLine(xSize, srcImage.w);
-	int *vertUsage = scaleLine(ySize, srcImage.h);
-
-	// Loop to create scaled version
-	for (int yp = 0; yp < ySize; ++yp) {
-		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
-		byte *destP = (byte *)s->getBasePtr(0, yp);
-
-		for (int xp = 0; xp < xSize; ++xp) {
-			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
-			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
-				*destP++ = *tempSrcP++;
-			}
-		}
-	}
-
-	// Delete arrays and return surface
-	delete[] horizUsage;
-	delete[] vertUsage;
-	return s;
 }
 
 } // End of namespace Graphics

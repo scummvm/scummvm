@@ -177,6 +177,8 @@ public:
 	TaskReturnType run();
 	void debugPrint();
 	void syncGame(Common::Serializer &s);
+	void lockInteraction();
+	void unlockInteraction();
 
 private:
 	friend class Scheduler;
@@ -185,6 +187,7 @@ private:
 	Common::Stack<Task *> _tasks;
 	Common::String _name;
 	int32 _lastReturnValue = 0;
+	FakeLock _interactionLock;
 };
 
 class Scheduler {

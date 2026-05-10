@@ -192,7 +192,7 @@ GUI_status View::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	return GUI_PASS;
 }
 
-GUI_Button *View::loadButton(const Common::Path &dir, Std::string name, uint16 x, uint16 y) {
+GUI_Button *View::loadButton(const Common::Path &dir, Common::String name, uint16 x, uint16 y) {
 	GUI_Button *button;
 	Common::Path imagefile;
 

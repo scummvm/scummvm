@@ -310,13 +310,14 @@ static const SherlockGameDescription gameDescriptions[] = {
 
 	{
 		// Case of the Rose Tattoo - Chinese CD
+		// TODO: Fix Inventory Item context menus: https://bugs.scummvm.org/ticket/16497
 		{
 			"rosetattoo",
 			"CD",
 			AD_ENTRY1s("talk.lib", "dfd699efdce02a045f46d15da2d44b76", 582381),
 			Common::ZH_CHN,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
 		},
 		GType_RoseTattoo,

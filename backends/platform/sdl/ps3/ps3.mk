@@ -31,4 +31,10 @@ ps3run: $(EXECUTABLE)
 	make_self $(EXECUTABLE) $(EXECUTABLE).self
 	ps3load $(EXECUTABLE).self
 
-.PHONY: ps3pkg ps3run
+ps3dbg: $(EXECUTABLE)
+	cp $(EXECUTABLE) $(EXECUTABLE).elf
+	$(STRIP) $(EXECUTABLE).elf
+	sprxlinker $(EXECUTABLE).elf
+	fself.py $(EXECUTABLE).elf $(EXECUTABLE).self
+
+.PHONY: ps3pkg ps3run ps3dbg

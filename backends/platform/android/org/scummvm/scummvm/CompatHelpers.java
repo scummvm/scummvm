@@ -1,8 +1,31 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.scummvm.scummvm;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
@@ -261,86 +284,6 @@ class CompatHelpers {
 		}
 	}
 
-	static class AudioTrackCompat {
-		public static class AudioTrackCompatReturn {
-			public AudioTrack audioTrack;
-			public int bufferSize;
-		}
-
-		public static AudioTrackCompatReturn make(int sample_rate, int buffer_size) {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-				return AudioTrackCompatM.make(sample_rate, buffer_size);
-			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-				return AudioTrackCompatLollipop.make(sample_rate, buffer_size);
-			} else {
-				return AudioTrackCompatOld.make(sample_rate, buffer_size);
-			}
-		}
-
-		/**
-		 * Support for Android KitKat or lower
-		 */
-		@SuppressWarnings("deprecation")
-		private static class AudioTrackCompatOld {
-			public static AudioTrackCompatReturn make(int sample_rate, int buffer_size) {
-				AudioTrackCompatReturn ret = new AudioTrackCompatReturn();
-				ret.audioTrack = new AudioTrack(
-					AudioManager.STREAM_MUSIC,
-					sample_rate,
-					AudioFormat.CHANNEL_OUT_STEREO,
-					AudioFormat.ENCODING_PCM_16BIT,
-					buffer_size,
-					AudioTrack.MODE_STREAM);
-				ret.bufferSize = buffer_size;
-				return ret;
-			}
-		}
-
-		@RequiresApi(android.os.Build.VERSION_CODES.LOLLIPOP)
-		private static class AudioTrackCompatLollipop {
-			public static AudioTrackCompatReturn make(int sample_rate, int buffer_size) {
-				AudioTrackCompatReturn ret = new AudioTrackCompatReturn();
-				ret.audioTrack = new AudioTrack(
-					new AudioAttributes.Builder()
-						.setUsage(AudioAttributes.USAGE_GAME)
-						.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-						.build(),
-					new AudioFormat.Builder()
-						.setSampleRate(sample_rate)
-						.setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-						.setChannelMask(AudioFormat.CHANNEL_OUT_STEREO).build(),
-					buffer_size,
-					AudioTrack.MODE_STREAM,
-					AudioManager.AUDIO_SESSION_ID_GENERATE);
-				ret.bufferSize = buffer_size;
-				return ret;
-			}
-		}
-
-		@RequiresApi(android.os.Build.VERSION_CODES.M)
-		private static class AudioTrackCompatM {
-			public static AudioTrackCompatReturn make(int sample_rate, int buffer_size) {
-				AudioTrackCompatReturn ret = new AudioTrackCompatReturn();
-				ret.audioTrack = new AudioTrack(
-					new AudioAttributes.Builder()
-						.setUsage(AudioAttributes.USAGE_GAME)
-						.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-						.build(),
-					new AudioFormat.Builder()
-						.setSampleRate(sample_rate)
-						.setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-						.setChannelMask(AudioFormat.CHANNEL_OUT_STEREO).build(),
-					buffer_size,
-					AudioTrack.MODE_STREAM,
-					AudioManager.AUDIO_SESSION_ID_GENERATE);
-				// Keep track of the actual obtained audio buffer size, if supported.
-				// We just requested 16 bit PCM stereo pcm so there are 4 bytes per frame.
-				ret.bufferSize = ret.audioTrack.getBufferSizeInFrames() * 4;
-				return ret;
-			}
-		}
-	}
-
 	static class AccessibilityEventConstructor {
 		public static AccessibilityEvent make(int eventType) {
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -560,6 +503,54 @@ class CompatHelpers {
 			@SuppressLint("UseCompatLoadingForDrawables")
 			public static Drawable getDrawable(@NonNull Context context, @DrawableRes int id) throws Resources.NotFoundException {
 				return context.getResources().getDrawable(id);
+			}
+		}
+	}
+
+	static class ReceiverCompat {
+		public static Intent registerReceiver(Context context, BroadcastReceiver receiver, IntentFilter filter) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+				return ReceiverCompat.ReceiverCompatTiramisu.registerReceiver(context, receiver, filter);
+			} else {
+				return ReceiverCompat.ReceiverCompatOld.registerReceiver(context, receiver, filter);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU)
+		private static class ReceiverCompatTiramisu {
+			public static Intent registerReceiver(Context context, BroadcastReceiver receiver, IntentFilter filter) {
+				return context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+			}
+		}
+
+		private static class ReceiverCompatOld {
+			@SuppressLint("UnspecifiedRegisterReceiverFlag")
+			public static Intent registerReceiver(Context context, BroadcastReceiver receiver, IntentFilter filter) {
+				return context.registerReceiver(receiver, filter);
+			}
+		}
+	}
+
+	static class IntentCompat {
+		public static <T extends android.os.Parcelable> T getParcelableExtra(Intent i, String extra, Class<T> clazz) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+				return IntentCompat.IntentCompatTiramisu.getParcelableExtra(i, extra, clazz);
+			} else {
+				return IntentCompat.IntentCompatOld.getParcelableExtra(i, extra, clazz);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU)
+		private static class IntentCompatTiramisu {
+			public static <T extends android.os.Parcelable> T getParcelableExtra(Intent i, String extra, Class<T> clazz) {
+				return i.getParcelableExtra(extra, clazz);
+			}
+		}
+
+		@SuppressWarnings("deprecation")
+		private static class IntentCompatOld {
+			public static <T extends android.os.Parcelable> T getParcelableExtra(Intent i, String extra, Class<T> clazz) {
+				return i.getParcelableExtra(extra);
 			}
 		}
 	}

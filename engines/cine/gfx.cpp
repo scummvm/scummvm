@@ -162,35 +162,35 @@ static const char *copyProtectionTextsOSEnglish[] = {
 // Used by the GB Amiga/Atari versions
 static const char *copyProtectionTextsOSEnglishAlt[] = {
 	"Operation Stealth",
-	"The information enclosed in this file is classified: "
+	"The information enclosed in this file is classified: ",
 	"Secret Defense",
 	"Please check with the color codes card to confirm your habilitation."
 };
 
 static const char *copyProtectionTextsOSFrench[] = {
 	"Operation Stealth",
-	"Les informations contenues dans ce dossier sont classees: "
+	"Les informations contenues dans ce dossier sont classees: ",
 	"Secret Defense",
 	"Veuillez vous referer a la carte des codes de couleurs pour confirmer votre habilitation."
 };
 
 static const char *copyProtectionTextsOSGerman[] = {
 	"Operation Stealth",
-	"Die Informationen dieses Dossiers sind: "
+	"Die Informationen dieses Dossiers sind: ",
 	"Streng Geheim",
 	"Bitte entnehmen Sie der Codekarte die zugeh\224rige Farbe, um Ihre Zugriffsberechtigung zu best\204tigen."
 };
 
 static const char *copyProtectionTextsOSSpanish[] = {
 	"Operation Stealth",
-	"Las informaciones contenidas en este dossier son claves: "
+	"Las informaciones contenidas en este dossier son claves: ",
 	"Secretas",
 	"Consulta la carta de colores para confirmar tu autorizacion."
 };
 
 static const char *copyProtectionTextsOSItalian[] = {
 	"Operation Stealth",
-	"Le informazioni contenute in questo incartamento sono classificate: "
+	"Le informazioni contenute in questo incartamento sono classificate: ",
 	"Segreto Difesa",
 	"Vogliate fare riferimento alla scheda dei codici colori per confermare la vostra abilitazione."
 };
@@ -1093,7 +1093,7 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		remaskSprite(mask, it);
 
 #ifdef USE_TTS
-		if (g_cine->getGameType() == GType_FW) { 
+		if (g_cine->getGameType() == GType_FW) {
 			// "The End" that appears at the end of the game
 			if (it->objIdx == 209 && scumm_stricmp(_bgName, "THE_END2.PI1") == 0) {
 				g_cine->sayText(theEndTexts[g_cine->_ttsLanguage], Common::TextToSpeechManager::INTERRUPT);
@@ -1409,7 +1409,7 @@ void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 		g_cine->sayText(text, Common::TextToSpeechManager::QUEUE);
 		g_cine->_copyProtectionTextScreen = true;
 		g_cine->_copyProtectionColorScreen = false;
-	} else if ((g_cine->getPlatform() == Common::kPlatformDOS || g_cine->getLanguage() == Common::EN_USA) && 
+	} else if ((g_cine->getPlatform() == Common::kPlatformDOS || g_cine->getLanguage() == Common::EN_USA) &&
 					scumm_stricmp(name, "FW.PI1") == 0) {	// Second copy protection screen
 		g_cine->_copyProtectionTextScreen = false;
 		g_cine->_copyProtectionColorScreen = true;
@@ -1807,7 +1807,7 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 				// In the USE menu (playerCommand 3), queue up the first inventory item after opening the menu
 				// This allows the USE command to be spoken if the player opens the use menu using F3
 				// Also queue up the first item when the save input menu is open, so that the player input will be voiced
-				if ((g_cine->_previousSaid == defaultActionCommand[3] && playerCommand == 3) 
+				if ((g_cine->_previousSaid == defaultActionCommand[3] && playerCommand == 3)
 					|| (g_cine->_saveInputMenuOpen && _elements[i] == confirmMenu[0])) {
 					g_cine->sayText(_elements[i], Common::TextToSpeechManager::QUEUE);
 					g_cine->_saveInputMenuOpen = false;
@@ -2101,7 +2101,7 @@ void OSRenderer::incrustSprite(const BGIncrust &incrust) {
 				index = 1;
 			} else if (incrust.frame == 204) {
 				if (g_cine->getLanguage() == Common::EN_USA && (g_cine->getPlatform() == Common::kPlatformAmiga ||
-						(g_cine->getPlatform() == Common::kPlatformDOS && 
+						(g_cine->getPlatform() == Common::kPlatformDOS &&
 						scumm_stricmp(g_cine->_gameDescription->desc.extra, "256 colors")))) {
 					index = 3;
 				} else {

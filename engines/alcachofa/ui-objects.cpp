@@ -30,15 +30,159 @@ using namespace Common;
 
 namespace Alcachofa {
 
+const char *ButtonV1::typeName() const { return "ButtonV1"; }
+
+ButtonV1::ButtonV1(Room *room, Common::SeekableReadStream &stream)
+	: PhysicalObject(room, stream) {
+	byte actionId = stream.readByte();
+	_graphicName = readVarString(stream);
+
+	switch (actionId) {
+	case 0:
+		_action = MainMenuAction::Save;
+		break;
+	case 1:
+		_action = MainMenuAction::Load;
+		break;
+	case 2:
+		_action = MainMenuAction::ContinueGame;
+		break;
+	case 3:
+		_action = MainMenuAction::Exit;
+		break;
+	case 4:
+		_action = MainMenuAction::InternetMenu;
+		break;
+	case 5:
+		_action = MainMenuAction::OptionsMenu;
+		break;
+	case 6:
+		_action = MainMenuAction::PrevSave;
+		break;
+	case 7:
+		_action = MainMenuAction::NextSave;
+		break;
+	case 10:
+		_action = MainMenuAction::ConfirmSavestate;
+		break;
+	default:
+		g_engine->game().unknownMenuAction(actionId);
+		break;
+	}
+}
+
+void ButtonV1::loadResources() {
+	if (!_graphicName.empty()) {
+		_graphicObject = room()->getObjectByName(_graphicName.c_str());
+		scumm_assert(_graphicObject != nullptr);
+		_graphicObject->toggle(false);
+	}
+}
+
+void ButtonV1::draw() {
+	if (menu()._currentState != _action)
+		return;
+
+	static constexpr uint kBufferSize = 32;
+	static char buffer[kBufferSize];
+	const char *text = nullptr;
+	switch (_action) {
+	case MainMenuAction::Save:
+		if (menu().isOnNewSlot())
+			text = "ENTRAR VACIA";
+		break;
+	case MainMenuAction::OptionsMenu:
+	{
+		int volumePercent = g_engine->config().musicVolume() * 10 / Audio::Mixer::kMaxChannelVolume;
+		snprintf(buffer, kBufferSize, "%s: %d", "VOLUMEN", volumePercent * 10);
+		text = buffer;
+		break;
+	}
+	default:
+		break;
+	}
+	if (text != nullptr) {
+		g_engine->drawQueue().add<TextDrawRequest>(
+			g_engine->globalUI().dialogFont(),
+			text,
+			Point(300, 250),
+			200,
+			true,
+			kWhite,
+			1
+		);
+	}
+}
+
+void ButtonV1::update() {
+	PhysicalObject::update();
+
+	if (_graphicObject != nullptr)
+		_graphicObject->toggle(_isHovered || menu()._currentState == _action);
+	_isHovered = false;
+
+	if (_action == MainMenuAction::ContinueGame && g_engine->input().wasMenuKeyPressed())
+		onClick();
+}
+
+void ButtonV1::onHoverUpdate() {
+	// we mainly override this function to disable drawing the object name
+
+	// only savegame selection buttons highlight on hover
+	if (_action == MainMenuAction::PrevSave || _action == MainMenuAction::NextSave)
+		_isHovered = true;
+}
+
+void ButtonV1::onClick() {
+	auto &menuState = menu()._currentState;
+	switch (_action) {
+	case MainMenuAction::Save:
+	case MainMenuAction::Load:
+	case MainMenuAction::OptionsMenu:
+		g_engine->config().saveToScummVM();
+		menu().switchToState(_action);
+		break;
+	case MainMenuAction::NextSave:
+	case MainMenuAction::PrevSave:
+		if (menuState == MainMenuAction::Load ||
+			menuState == MainMenuAction::Save ||
+			menuState == MainMenuAction::OptionsMenu)
+			g_engine->menu().triggerMainMenuAction(_action);
+		break;
+	case MainMenuAction::ContinueGame:
+	case MainMenuAction::InternetMenu:
+	case MainMenuAction::Exit:
+		g_engine->config().saveToScummVM();
+		g_engine->menu().triggerMainMenuAction(_action);
+		break;
+	case MainMenuAction::ConfirmSavestate:
+		if (menuState == MainMenuAction::Load ||
+			menuState == MainMenuAction::Save)
+			g_engine->menu().triggerMainMenuAction(menuState);
+		break;
+	default:
+		assert(false && "Unimplemented ButtonV1 action");
+		break;
+	}
+}
+
+MenuV1 &ButtonV1::menu() {
+	auto menuPtr = dynamic_cast<MenuV1 *>(&g_engine->menu());
+	assert(menuPtr != nullptr);
+	return *menuPtr;
+}
+
 const char *MenuButton::typeName() const { return "MenuButton"; }
 
-MenuButton::MenuButton(Room *room, ReadStream &stream)
+MenuButton::MenuButton(Room *room, SeekableReadStream &stream)
 	: PhysicalObject(room, stream)
 	, _actionId(stream.readSint32LE())
 	, _graphicNormal(stream)
 	, _graphicHovered(stream)
-	, _graphicClicked(stream)
-	, _graphicDisabled(stream) {}
+	, _graphicClicked(stream) {
+	if (g_engine->isV3())
+		_graphicDisabled = Graphic(stream);
+}
 
 void MenuButton::draw() {
 	if (!isEnabled())
@@ -105,12 +249,12 @@ void MenuButton::trigger() {
 
 const char *InternetMenuButton::typeName() const { return "InternetMenuButton"; }
 
-InternetMenuButton::InternetMenuButton(Room *room, ReadStream &stream)
+InternetMenuButton::InternetMenuButton(Room *room, SeekableReadStream &stream)
 	: MenuButton(room, stream) {}
 
 const char *OptionsMenuButton::typeName() const { return "OptionsMenuButton"; }
 
-OptionsMenuButton::OptionsMenuButton(Room *room, ReadStream &stream)
+OptionsMenuButton::OptionsMenuButton(Room *room, SeekableReadStream &stream)
 	: MenuButton(room, stream) {}
 
 void OptionsMenuButton::update() {
@@ -126,7 +270,7 @@ void OptionsMenuButton::trigger() {
 
 const char *MainMenuButton::typeName() const { return "MainMenuButton"; }
 
-MainMenuButton::MainMenuButton(Room *room, ReadStream &stream)
+MainMenuButton::MainMenuButton(Room *room, SeekableReadStream &stream)
 	: MenuButton(room, stream) {}
 
 void MainMenuButton::update() {
@@ -143,7 +287,7 @@ void MainMenuButton::trigger() {
 
 const char *PushButton::typeName() const { return "PushButton"; }
 
-PushButton::PushButton(Room *room, ReadStream &stream)
+PushButton::PushButton(Room *room, SeekableReadStream &stream)
 	: PhysicalObject(room, stream)
 	, _alwaysVisible(readBool(stream))
 	, _graphic1(stream)
@@ -152,16 +296,31 @@ PushButton::PushButton(Room *room, ReadStream &stream)
 
 const char *EditBox::typeName() const { return "EditBox"; }
 
-EditBox::EditBox(Room *room, ReadStream &stream)
-	: PhysicalObject(room, stream)
-	, i1(stream.readSint32LE())
-	, p1(Shape(stream).firstPoint())
-	, _labelId(readVarString(stream))
-	, b1(readBool(stream))
-	, i3(stream.readSint32LE())
-	, i4(stream.readSint32LE())
-	, i5(stream.readSint32LE())
-	, _fontId(0) {
+EditBox::EditBox(Room *room, SeekableReadStream &stream)
+	: PhysicalObject(room, stream) {
+}
+
+EditBoxV2::EditBoxV2(Room *room, SeekableReadStream &stream)
+	: EditBox(room, stream) {
+	p1 = Shape(stream).firstPoint();
+	auto p2 = Shape(stream).firstPoint();
+	i1 = p2.x - p1.x;
+	_labelId = readVarString(stream);
+	b1 = readBool(stream);
+	i3 = stream.readSint32LE();
+	i4 = stream.readSint32LE();
+	i5 = stream.readSint32LE();
+}
+
+EditBoxV3::EditBoxV3(Room *room, SeekableReadStream &stream)
+	: EditBox(room, stream) {
+	i1 = stream.readSint32LE();
+	p1 = Shape(stream).firstPoint();
+	_labelId = readVarString(stream);
+	b1 = readBool(stream);
+	i3 = stream.readSint32LE();
+	i4 = stream.readSint32LE();
+	i5 = stream.readSint32LE();
 
 	if (g_engine->version() == EngineVersion::V3_1)
 		_fontId = stream.readSint32LE();
@@ -169,7 +328,7 @@ EditBox::EditBox(Room *room, ReadStream &stream)
 
 const char *CheckBox::typeName() const { return "CheckBox"; }
 
-CheckBox::CheckBox(Room *room, ReadStream &stream)
+CheckBox::CheckBox(Room *room, SeekableReadStream &stream)
 	: PhysicalObject(room, stream)
 	, _isChecked(readBool(stream))
 	, _graphicUnchecked(stream)
@@ -234,21 +393,36 @@ void CheckBox::trigger() {
 
 const char *CheckBoxAutoAdjustNoise::typeName() const { return "CheckBoxAutoAdjustNoise"; }
 
-CheckBoxAutoAdjustNoise::CheckBoxAutoAdjustNoise(Room *room, ReadStream &stream)
+CheckBoxAutoAdjustNoise::CheckBoxAutoAdjustNoise(Room *room, SeekableReadStream &stream)
 	: CheckBox(room, stream) {
 	stream.readByte(); // unused and ignored byte
 }
 
 const char *SlideButton::typeName() const { return "SlideButton"; }
 
-SlideButton::SlideButton(Room *room, ReadStream &stream)
-	: ObjectBase(room, stream)
-	, _valueId(stream.readSint32LE())
-	, _minPos(Shape(stream).firstPoint())
-	, _maxPos(Shape(stream).firstPoint())
-	, _graphicIdle(stream)
-	, _graphicHovered(stream)
-	, _graphicClicked(stream) {}
+SlideButton::SlideButton(Room *room, SeekableReadStream &stream)
+	: ObjectBase(room, stream) {
+}
+
+SlideButtonV2::SlideButtonV2(Room *room, SeekableReadStream &stream)
+	: SlideButton(room, stream) {
+	_valueId = stream.readSint32LE();
+	_minPos = Shape(stream).firstPoint();
+	_maxPos = Shape(stream).firstPoint();
+	_graphicIdle = Graphic(stream);
+	_graphicHovered = _graphicIdle;
+	_graphicClicked = Graphic(stream);
+}
+
+SlideButtonV3::SlideButtonV3(Room *room, SeekableReadStream &stream)
+	: SlideButton(room, stream) {
+	_valueId = stream.readSint32LE();
+	_minPos = Shape(stream).firstPoint();
+	_maxPos = Shape(stream).firstPoint();
+	_graphicIdle = Graphic(stream);
+	_graphicHovered = Graphic(stream);
+	_graphicClicked = Graphic(stream);
+}
 
 void SlideButton::draw() {
 	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
@@ -313,14 +487,14 @@ bool SlideButton::isMouseOver() const {
 
 const char *IRCWindow::typeName() const { return "IRCWindow"; }
 
-IRCWindow::IRCWindow(Room *room, ReadStream &stream)
+IRCWindow::IRCWindow(Room *room, SeekableReadStream &stream)
 	: ObjectBase(room, stream)
 	, _p1(Shape(stream).firstPoint())
 	, _p2(Shape(stream).firstPoint()) {}
 
 const char *MessageBox::typeName() const { return "MessageBox"; }
 
-MessageBox::MessageBox(Room *room, ReadStream &stream)
+MessageBox::MessageBox(Room *room, SeekableReadStream &stream)
 	: ObjectBase(room, stream)
 	, _graph1(stream)
 	, _graph2(stream)
@@ -336,7 +510,7 @@ MessageBox::MessageBox(Room *room, ReadStream &stream)
 
 const char *VoiceMeter::typeName() const { return "VoiceMeter"; }
 
-VoiceMeter::VoiceMeter(Room *room, ReadStream &stream)
+VoiceMeter::VoiceMeter(Room *room, SeekableReadStream &stream)
 	: GraphicObject(room, stream) {
 	stream.readByte(); // unused and ignored byte
 }

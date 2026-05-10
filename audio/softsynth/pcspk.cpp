@@ -43,7 +43,7 @@ PCSpeakerStream::PCSpeakerStream(int rate) {
 	_oscSamples = 0;
 	_remainingSamples = 0;
 	_mixedSamples = 0;
-	_volume = 255;
+	_volume = 20; // The maximum volume is 255
 	_commandQueue = new Common::Queue<Command>();
 	_commandActive = false;
 }
@@ -96,10 +96,6 @@ void PCSpeakerStream::stop(int32 delay) {
 	_playForever = false;
 }
 
-void PCSpeakerStream::setVolume(byte volume) {
-	_volume = volume;
-}
-
 bool PCSpeakerStream::isPlaying() const {
 	Common::StackLock lock(_mutex);
 
@@ -122,7 +118,7 @@ int PCSpeakerStream::readBuffer(int16 *buffer, const int numSamples) {
 			// Note that this will end playback started by the play method.
 			Command command = _commandQueue->pop();
 			_wave = command.waveForm;
-			_oscLength = (uint32)(_rate / command.frequency);
+			_oscLength = command.frequency > 0 ? (uint32)(_rate / command.frequency) : 0;
 			_oscSamples = 0;
 			// Length is in microseconds.
 			_remainingSamples = ((uint64)_rate * (uint64)command.length) / 1000000;

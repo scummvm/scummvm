@@ -19,85 +19,73 @@
  *
  */
 
+#include "ultima/ultima8/ultima8.h"
+
 #include "common/file.h"
 #include "common/rational.h"
 #include "common/translation.h"
 #include "common/compression/unzip.h"
-#include "gui/saveload.h"
-#include "image/png.h"
 #include "engines/dialogs.h"
 #include "engines/util.h"
+#include "image/png.h"
 #include "ultima/ultima.h"
-
-// TODO: !! a lot of these includes are just for some hacks... clean up sometime
+#include "ultima/ultima8/audio/audio_mixer.h"
+#include "ultima/ultima8/audio/cru_music_process.h"
+#include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/audio/u8_music_process.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
-#include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/games/start_u8_process.h"
-#include "ultima/ultima8/games/start_crusader_process.h"
+#include "ultima/ultima8/filesys/savegame.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/gfx/cycle_process.h"
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
 #include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/inverter_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/gumps/minimap_gump.h"
-#include "ultima/ultima8/gumps/cru_status_gump.h"
-#include "ultima/ultima8/gumps/movie_gump.h"
-#include "ultima/ultima8/gumps/weasel_gump.h"
-
-// For gump positioning... perhaps shouldn't do it this way....
 #include "ultima/ultima8/gumps/message_box_gump.h"
-#include "ultima/ultima8/gumps/keypad_gump.h"
-#include "ultima/ultima8/gumps/computer_gump.h"
-#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/battery_charger_process.h"
-#include "ultima/ultima8/world/actors/cru_healer_process.h"
-#include "ultima/ultima8/world/actors/targeted_anim_process.h"
-#include "ultima/ultima8/usecode/u8_intrinsics.h"
-#include "ultima/ultima8/usecode/remorse_intrinsics.h"
-#include "ultima/ultima8/usecode/regret_intrinsics.h"
-
-#include "ultima/ultima8/gfx/cycle_process.h"
-#include "ultima/ultima8/world/actors/scheduler_process.h"
-#include "ultima/ultima8/world/egg_hatcher_process.h" // for a hack
-#include "ultima/ultima8/usecode/uc_process.h" // more hacking
-#include "ultima/ultima8/world/actors/actor_bark_notify_process.h" // guess
+#include "ultima/ultima8/gumps/minimap_gump.h"
+#include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/world/actors/avatar_gravity_process.h"
-#include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
-#include "ultima/ultima8/world/item_selection_process.h"
-#include "ultima/ultima8/world/split_item_process.h"
-#include "ultima/ultima8/world/target_reticle_process.h"
-#include "ultima/ultima8/world/snap_process.h"
-#include "ultima/ultima8/world/crosshair_process.h"
-#include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/cru_pathfinder_process.h"
-#include "ultima/ultima8/world/actors/resurrection_process.h"
-#include "ultima/ultima8/world/actors/clear_feign_death_process.h"
-#include "ultima/ultima8/world/actors/loiter_process.h"
-#include "ultima/ultima8/world/actors/avatar_death_process.h"
-#include "ultima/ultima8/world/actors/surrender_process.h"
-#include "ultima/ultima8/world/actors/combat_process.h"
-#include "ultima/ultima8/world/actors/guard_process.h"
+#include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/usecode/regret_intrinsics.h"
+#include "ultima/ultima8/usecode/remorse_intrinsics.h"
+#include "ultima/ultima8/usecode/u8_intrinsics.h"
+#include "ultima/ultima8/usecode/uc_process.h"
+#include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
+#include "ultima/ultima8/world/actors/ambush_process.h"
 #include "ultima/ultima8/world/actors/attack_process.h"
 #include "ultima/ultima8/world/actors/auto_firer_process.h"
+#include "ultima/ultima8/world/actors/avatar_death_process.h"
+#include "ultima/ultima8/world/actors/avatar_gravity_process.h"
+#include "ultima/ultima8/world/actors/battery_charger_process.h"
+#include "ultima/ultima8/world/actors/clear_feign_death_process.h"
+#include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/cru_healer_process.h"
+#include "ultima/ultima8/world/actors/cru_pathfinder_process.h"
+#include "ultima/ultima8/world/actors/guard_process.h"
+#include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/pace_process.h"
+#include "ultima/ultima8/world/actors/pathfinder_process.h"
+#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/resurrection_process.h"
 #include "ultima/ultima8/world/actors/rolling_thunder_process.h"
+#include "ultima/ultima8/world/actors/scheduler_process.h"
+#include "ultima/ultima8/world/actors/surrender_process.h"
+#include "ultima/ultima8/world/actors/targeted_anim_process.h"
+#include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
+#include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
 #include "ultima/ultima8/world/bobo_boomer_process.h"
-#include "ultima/ultima8/world/super_sprite_process.h"
+#include "ultima/ultima8/world/crosshair_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
-#include "ultima/ultima8/world/actors/ambush_process.h"
-#include "ultima/ultima8/audio/audio_mixer.h"
-#include "ultima/ultima8/audio/u8_music_process.h"
-#include "ultima/ultima8/audio/cru_music_process.h"
-#include "ultima/ultima8/audio/midi_player.h"
-#include "ultima/ultima8/gumps/shape_viewer_gump.h"
-#include "ultima/ultima8/metaengine.h"
+#include "ultima/ultima8/world/egg_hatcher_process.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item_selection_process.h"
+#include "ultima/ultima8/world/snap_process.h"
+#include "ultima/ultima8/world/split_item_process.h"
+#include "ultima/ultima8/world/super_sprite_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
+
 #ifdef USE_IMGUI
 #include "ultima/ultima8/debugtools.h"
 #endif
@@ -108,8 +96,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-
-using Std::string;
 
 // a bit of a hack to prevent having to write a load function for
 // every process
@@ -507,7 +493,7 @@ bool Ultima8Engine::setupGame() {
 	}
 
 	// output detected game info
-	Std::string details = info->getPrintDetails();
+	Common::String details = info->getPrintDetails();
 	debug(1, "%s: %s", info->_name.c_str(), details.c_str());
 
 	_gameInfo = info;
@@ -531,7 +517,9 @@ Common::Error Ultima8Engine::startupGame() {
 
 	int width = ConfMan.getInt("width");
 	int height = ConfMan.getInt("height");
-	changeVideoMode(width, height);
+	Common::Error err = changeVideoMode(width, height);
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	// Show the splash screen immediately now that the screen has been set up
 	_mouse->setMouseCursor(Mouse::MOUSE_NONE);
@@ -747,31 +735,25 @@ void Ultima8Engine::paint() {
 		screen->update();
 }
 
-void Ultima8Engine::changeVideoMode(int width, int height) {
+Common::Error Ultima8Engine::changeVideoMode(int width, int height) {
 	if (_screen) {
 		Common::Rect32 old_dims = _screen->getSurfaceDims();
 		if (width == old_dims.width() && height == old_dims.height())
-			return;
-
-		delete _screen;
+			return Common::kNoError;
 	}
 
 	// Set Screen Resolution
 	debug(1, "Setting Video Mode %dx%d...", width, height);
 
-	Common::List<Graphics::PixelFormat> tryModes = g_system->getSupportedFormats();
-	for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
-		if (g->bytesPerPixel != 2 && g->bytesPerPixel != 4) {
-			g = tryModes.reverse_erase(g);
-		}
-	}
-
-	initGraphics(width, height, tryModes);
+	initGraphics(width, height, nullptr);
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4) {
-		error("Only 16 bit and 32 bit video modes supported");
+		return Common::kUnsupportedColorMode;
 	}
+
+	if (_screen)
+		delete _screen;
 
 	// Set up blitting surface
 	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, format);
@@ -793,6 +775,8 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 	}
 
 	paint();
+
+	return Common::kNoError;
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
@@ -1505,7 +1489,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	}
 
 	if (!_gameInfo->match(saveinfo, true)) {
-		Std::string message = "Game mismatch\n";
+		Common::String message = "Game mismatch\n";
 		message += "Running _game: " + _gameInfo->getPrintDetails()  + "\n";
 		message += "Savegame    : " + saveinfo.getPrintDetails();
 
@@ -1532,7 +1516,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	// expected - anything else suggests a corrupt save (or a bug)
 	bool totalok = true;
 
-	Std::string message;
+	Common::String message;
 
 	// UCSTRINGS, UCGLOBALS, UCLISTS don't depend on anything else,
 	// so load these first

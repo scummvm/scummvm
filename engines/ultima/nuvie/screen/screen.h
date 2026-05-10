@@ -22,7 +22,7 @@
 #ifndef NUVIE_SCREEN_SCREEN_H
 #define NUVIE_SCREEN_SCREEN_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/screen/surface.h"
 #include "graphics/screen.h"

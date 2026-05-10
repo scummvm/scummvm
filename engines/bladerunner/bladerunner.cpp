@@ -94,6 +94,7 @@
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
 
 namespace BladeRunner {
@@ -386,7 +387,7 @@ Common::Error BladeRunnerEngine::run() {
 	_screenPixelFormat = g_system->getScreenFormat();
 	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
 
-	_system->showMouse(_isNonInteractiveDemo ? false : true);
+	CursorMan.showMouse(_isNonInteractiveDemo ? false : true);
 
 	bool hasSavegames = !SaveFileManager::list(getMetaEngine(), _targetName).empty();
 

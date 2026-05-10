@@ -183,42 +183,42 @@ void Creature::load(const ConfigElement &conf) {
 	_leavesTile = conf.getBool("leavestile");
 
 	/* get effects that this creature is immune to */
-	for (idx = 0; idx < sizeof(effects) / sizeof(effects[0]); idx++) {
+	for (idx = 0; idx < ARRAYSIZE(effects); idx++) {
 		if (conf.getString("resists") == effects[idx].name) {
 			_resists = effects[idx].effect;
 		}
 	}
 
 	/* Load creature attributes */
-	for (idx = 0; idx < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); idx++) {
+	for (idx = 0; idx < ARRAYSIZE(booleanAttributes); idx++) {
 		if (conf.getBool(booleanAttributes[idx].name)) {
 			_mAttr = static_cast<CreatureAttrib>(_mAttr | booleanAttributes[idx].mask);
 		}
 	}
 
 	/* Load boolean attributes that affect movement */
-	for (idx = 0; idx < sizeof(movementBoolean) / sizeof(movementBoolean[0]); idx++) {
+	for (idx = 0; idx < ARRAYSIZE(movementBoolean); idx++) {
 		if (conf.getBool(movementBoolean[idx].name)) {
 			_movementAttr = static_cast<CreatureMovementAttrib>(_movementAttr | movementBoolean[idx].mask);
 		}
 	}
 
 	/* steals="" */
-	for (idx = 0; idx < sizeof(steals) / sizeof(steals[0]); idx++) {
+	for (idx = 0; idx < ARRAYSIZE(steals); idx++) {
 		if (conf.getString("steals") == steals[idx].name) {
 			_mAttr = static_cast<CreatureAttrib>(_mAttr | steals[idx].mask);
 		}
 	}
 
 	/* casts="" */
-	for (idx = 0; idx < sizeof(casts) / sizeof(casts[0]); idx++) {
+	for (idx = 0; idx < ARRAYSIZE(casts); idx++) {
 		if (conf.getString("casts") == casts[idx].name) {
 			_mAttr = static_cast<CreatureAttrib>(_mAttr | casts[idx].mask);
 		}
 	}
 
 	/* movement="" */
-	for (idx = 0; idx < sizeof(movement) / sizeof(movement[0]); idx++) {
+	for (idx = 0; idx < ARRAYSIZE(movement); idx++) {
 		if (conf.getString("movement") == movement[idx].name) {
 			_movementAttr = static_cast<CreatureMovementAttrib>(_movementAttr | movement[idx].mask);
 		}
@@ -333,7 +333,7 @@ bool Creature::specialAction() {
 		   Note: Monsters in settlements in U3 do fire on party
 		*/
 		if (mapdist <= 3 && xu4_random(2) == 0 && (g_context->_location->_context & CTX_CITY) == 0) {
-			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
+			Common::Array<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
 			                           1, 3, nullptr, false);
 			for (const auto &coords : path) {
 				if (creatureRangeAttack(coords, this))
@@ -354,7 +354,7 @@ bool Creature::specialAction() {
 		        ((broadsidesDirs & dir) > 0)) { /* pirate ship is firing broadsides */
 
 			// nothing (not even mountains!) can block cannonballs
-			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
+			Common::Array<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
 			                           1, 3, nullptr, false);
 			for (const auto &coords : path) {
 				if (fireAt(coords, false))
@@ -595,7 +595,7 @@ void Creature::act(CombatController *controller) {
 
 		soundPlay(SOUND_NPC_ATTACK, false);                                    // NPC_ATTACK, ranged
 
-		Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, m_coords,
+		Common::Array<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, m_coords,
 		                           1, 11, &Tile::canAttackOverTile, false);
 		bool hit = false;
 		for (const auto &coords : path) {
@@ -891,7 +891,7 @@ CreatureMgr *CreatureMgr::getInstance() {
 
 void CreatureMgr::loadAll() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> creatureConfs = config->getElement("creatures").getChildren();
+	Common::Array<ConfigElement> creatureConfs = config->getElement("creatures").getChildren();
 
 	for (const auto &i : creatureConfs) {
 		if (i.getName() != "creature")

@@ -66,7 +66,8 @@ struct Action {
 
 const char *const appendAltCodeActionStr = "ALT_CODE";
 const char *const toggleAltCodeModeActionStr = "TOGGLE_ALT_CODE_MODE";
-const uint toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr); // to identify END (KEYUP) events for alt-code mode toggle action
+// toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr)
+const uint toggleAltCodeModeEventID = 1810543662; // to identify END (KEYUP) events for alt-code mode toggle action
 
 const Action NuvieActions[] = {
 	{ "WALK_WEST", ActionWalkWest, Action::KeyNormal, true, WEST_KEY  },
@@ -292,7 +293,7 @@ const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, Action::KeyNotSh
 KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 	FillParseMaps();
 
-	Std::string keyfilename, dir;
+	Common::String keyfilename, dir;
 	config->value("config/keys", keyfilename, "(default)");
 	bool key_file_exists = fileExists(keyfilename.c_str());
 
@@ -353,6 +354,8 @@ KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 	next_axes_pair4_update = next_joy_repeat_time = 0;
     
     AddIosBindings();
+
+	assert(toggleAltCodeModeEventID == Common::hashit(toggleAltCodeModeActionStr));
 }
 
 void KeyBinder::AddIosBindings()
@@ -535,9 +538,9 @@ void KeyBinder::ParseText(char *text, int len) {
 	}
 }
 
-static void skipspace(string &s) {
+static void skipspace(Common::String &s) {
 	size_t i = s.findFirstNotOf(whitespace);
-	if (i && i != string::npos)
+	if (i && i != Common::String::npos)
 		s.erase(0, i);
 }
 
@@ -545,8 +548,8 @@ static void skipspace(string &s) {
 void KeyBinder::ParseLine(const char *line) {
 	size_t i;
 	Common::KeyState k(Common::KEYCODE_INVALID);
-	string s = line;
-	string keycode;
+	Common::String s = line;
+	Common::String keycode;
 
 	skipspace(s);
 
@@ -554,7 +557,7 @@ void KeyBinder::ParseLine(const char *line) {
 	if (s.empty() || s.hasPrefix("#"))
 		return;
 
-	string u = s;
+	Common::String u = s;
 	u.toUppercase();
 
 	// get key
@@ -576,7 +579,7 @@ void KeyBinder::ParseLine(const char *line) {
 			i = s.findFirstOf(whitespace);
 			keycode = s.substr(0, i);
 			s.erase(0, i);
-			string t = keycode;
+			Common::String t = keycode;
 			t.toUppercase();
 
 			if (t.empty()) {
@@ -612,7 +615,7 @@ void KeyBinder::ParseLine(const char *line) {
 	skipspace(s);
 
 	i = s.findFirstOf(whitespace);
-	string t = s.substr(0, i);
+	Common::String t = s.substr(0, i);
 	s.erase(0, i);
 	t.toUppercase();
 
@@ -632,7 +635,7 @@ void KeyBinder::ParseLine(const char *line) {
 	a.param = -1;
 	if (!s.empty() && s[0] != '#') {
 		i = s.findFirstOf(whitespace);
-		string tmp = s.substr(0, i);
+		Common::String tmp = s.substr(0, i);
 		s.erase(0, i);
 		skipspace(s);
 
@@ -670,8 +673,8 @@ void KeyBinder::LoadFromFile(const char *filename) {
 }
 
 void KeyBinder::LoadGameSpecificKeys() {
-	string key_path_str;
-	string default_key_path;
+	Common::String key_path_str;
+	Common::String default_key_path;
 	const Configuration *config = Game::get_game()->get_config();
 	config->value("config/datadir", default_key_path, "./data");
 	nuvie_game_t game_type = get_game_type(config);
@@ -697,7 +700,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 }
 
 void KeyBinder::LoadFromPatch() { // FIXME default should probably be system specific
-	string PATCH_KEYS;
+	Common::String PATCH_KEYS;
 	const Configuration *config = Game::get_game()->get_config();
 
 	config->value(config_get_game_key(config) + "/patch_keys", PATCH_KEYS, "./patchkeys.txt");

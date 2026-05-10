@@ -27,9 +27,17 @@
 
 namespace MediaStation {
 
-ScriptValue Collection::callMethod(BuiltInMethod method, Common::Array<ScriptValue> &args) {
+ScriptValue Collection::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	// Debug print the collection contents.
+	debugC(7, kDebugScript, "	COLLECTION: [");
+	for (uint i = 0; i < size(); i++) {
+		const ScriptValue &rhs = operator[](i);
+		debugC(7, kDebugScript, "		%d of %d: %s", i, size(), rhs.getDebugString().c_str());
+	}
+	debugC(7, kDebugScript, "	]");
+
 	ScriptValue returnValue;
-	switch (method) {
+	switch (methodId) {
 	case kAppendMethod:
 		for (ScriptValue value : args) {
 			push_back(value);
@@ -41,85 +49,114 @@ ScriptValue Collection::callMethod(BuiltInMethod method, Common::Array<ScriptVal
 		break;
 
 	case kCountMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToFloat(size());
 		break;
 
 	case kDeleteFirstMethod:
-		assert(args.empty());
-		returnValue = remove_at(0);
+		ARGCOUNTCHECK(0);
+		if (size() > 0) {
+			returnValue = remove_at(0);
+			debugC(7, kDebugScript, "%s: %s", __func__, returnValue.getDebugString().c_str());
+		} else {
+			warning("%s: Array is empty", __func__);
+		}
 		break;
 
 	case kDeleteLastMethod:
-		assert(args.empty());
-		returnValue = remove_at(size() - 1);
+		ARGCOUNTCHECK(0);
+		if (size() > 0) {
+			returnValue = remove_at(size() - 1);
+			debugC(7, kDebugScript, "%s: %s", __func__, returnValue.getDebugString().c_str());
+		} else {
+			warning("%s: Array is empty", __func__);
+		}
 		break;
 
 	case kEmptyMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		clear();
 		break;
 
 	case kGetAtMethod: {
-		assert(args.size() == 1);
+		ARGCOUNTCHECK(1);
 		uint index = static_cast<uint>(args[0].asFloat());
-		returnValue = operator[](index);
+		if (index < size()) {
+			returnValue = operator[](index);
+		} else {
+			warning("%s: Index %d out of bounds %d", __func__, index, size());
+		}
 		break;
 	}
 
 	case kIsEmptyMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToBool(empty());
 		break;
 
 	case kJumbleMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		jumble();
 		break;
 
 	case kSeekMethod: {
-		assert(args.size() == 1);
+		ARGCOUNTCHECK(1);
 		int index = seek(args[0]);
 		returnValue.setToFloat(index);
 		break;
 	}
 
 	case kSendMethod:
+		ARGCOUNTMIN(1);
 		send(args);
 		break;
 
 	case kDeleteAtMethod: {
-		assert(args.size() == 1);
+		ARGCOUNTCHECK(1);
 		uint index = static_cast<uint>(args[0].asFloat());
-		returnValue = remove_at(index);
+		if (index < size()) {
+			returnValue = remove_at(index);
+			debugC(7, kDebugScript, "%s: %s", __func__, returnValue.getDebugString().c_str());
+		} else {
+			warning("%s: Index %d out of bounds %d", __func__, index, size());
+		}
 		break;
 	}
 
 	case kInsertAtMethod: {
-		assert(args.size() == 2);
+		ARGCOUNTCHECK(2);
 		uint index = static_cast<uint>(args[1].asFloat());
-		insert_at(index, args[0]);
+		if (index <= size()) {
+			insert_at(index, args[0]);
+		} else {
+			warning("%s: Index %d out of bounds %d", __func__, index, size());
+		}
 		break;
 	}
 
 	case kReplaceAtMethod: {
-		assert(args.size() == 2);
+		ARGCOUNTCHECK(2);
 		uint index = static_cast<uint>(args[1].asFloat());
-		operator[](index) = args[0];
+		if (index < size()) {
+			operator[](index) = args[0];
+		} else {
+			warning("%s: Index %d out of bounds %d", __func__, index, size());
+		}
 		break;
 	}
 
 	case kPrependListMethod:
+		ARGCOUNTMIN(1);
 		insert_at(0, args);
 		break;
 
 	case kSortMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		Common::sort(begin(), end());
 		break;
 
 	default:
-		error("%s: Attempt to call unimplemented method %s (%d)", __func__, builtInMethodToStr(method), static_cast<uint>(method));
+		error("%s: Attempt to call unimplemented method %s (%d)", __func__, builtInMethodToStr(methodId), static_cast<uint>(methodId));
 	}
 	return returnValue;
 }
@@ -130,8 +167,8 @@ void Collection::apply(const Common::Array<ScriptValue> &args) {
 	uint functionId = args[0].asFunctionId();
 	for (const ScriptValue &item : *this) {
 		argsToApply[0] = item;
-		// TODO: Need to create and call FunctionManager.
-		warning("%s: Applying function %d not implemented", __func__, functionId);
+		debugC(7, kDebugScript, "%s: %s: %s", __func__, g_engine->formatFunctionName(functionId).c_str(), item.getDebugString().c_str());
+		g_engine->getFunctionManager()->call(functionId, argsToApply);
 	}
 }
 
@@ -147,17 +184,23 @@ void Collection::send(const Common::Array<ScriptValue> &args) {
 	Common::Array<ScriptValue> sendArgs;
 	for (const ScriptValue &item : *this) {
 		uint actorId = item.asActorId();
-		Actor *targetActor = g_engine->getActorById(actorId);
+		Actor *targetActor = g_engine->getImtGod()->getActorById(actorId);
 		if (targetActor != nullptr) {
+			debugC(7, kDebugScript, "%s: %s: %s", __func__, builtInMethodToStr(methodToSend), targetActor->debugName());
 			targetActor->callMethod(methodToSend, argsToSend);
 		}
 	}
 }
 
-int Collection::seek(const ScriptValue &item) {
+int Collection::seek(const ScriptValue &lhs) {
 	// Search from back to front.
 	for (int i = size() - 1; i >= 0; i--) {
-		if (item == operator[](i)) {
+		const ScriptValue &rhs = operator[](i);
+		debugC(7, kDebugScript, "%s: %d of %d: Checking (%s) == (%s)",
+			__func__, i, size(), lhs.getDebugString().c_str(), rhs.getDebugString().c_str());
+
+		// Only compare values if types match.
+		if (lhs.getType() == rhs.getType() && lhs == rhs) {
 			return i;
 		}
 	}
@@ -165,9 +208,11 @@ int Collection::seek(const ScriptValue &item) {
 }
 
 void Collection::jumble() {
-	for (uint i = size() - 1; i > 0; --i) {
-		uint j = g_engine->_randomSource.getRandomNumber(size() - 1);
-		SWAP(operator[](i), operator[](j));
+	if (!empty()) {
+		for (uint i = size() - 1; i > 0; --i) {
+			uint j = g_engine->_randomSource.getRandomNumber(size() - 1);
+			SWAP(operator[](i), operator[](j));
+		}
 	}
 }
 

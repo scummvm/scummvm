@@ -20,8 +20,9 @@
  */
 
 #include "ultima/ultima8/gfx/palette.h"
+
+#include "common/stream.h"
 #include "ultima/ultima8/gfx/texture.h"
-#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {

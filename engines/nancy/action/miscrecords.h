@@ -109,6 +109,84 @@ protected:
 	Common::String getRecordTypeName() const override { return "TextboxClear"; }
 };
 
+// Nancy 10+ replacement for TextBoxWrite. Pushes a line of conversation
+// text into the new (UICO-driven) textbox
+class FrameTextBox : public ActionRecord {
+public:
+	enum Variant {
+		kVariant74 = 74,
+		kVariant75 = 75,
+		kVariant81 = 81
+	};
+
+	FrameTextBox(Variant variant) : _variant(variant), _flags(0), _slot(0) {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Variant _variant;
+	Common::String _text;
+	int16 _flags;
+	int16 _slot;
+
+protected:
+	Common::String getRecordTypeName() const override { return "FrameTextBox"; }
+};
+
+// Nancy 10+ opcode 29. Toggles whether one of the taskbar popups
+// (inventory / notebook / cellphone) is enabled.
+class ControlUIItems : public ActionRecord {
+public:
+	enum UIType {
+		kUITypeInventory = 1,
+		kUITypeNotebook  = 2,
+		kUITypeCellphone = 3
+	};
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint16 _uiButton = 0;
+	byte _flagA = 0;    // 0, 1 or 10
+	byte _flagB = 0;    // 0 = clear, 1 = enable+remember scene
+	int16 _scene1 = 0;  // start scene id (9999 = none)
+	int16 _scene2 = 0;  // end scene id (9999 = none)
+
+protected:
+	Common::String getRecordTypeName() const override { return "ControlUIItems"; }
+};
+
+// Nancy 10+ opcode 32. Prepares a UI popup
+class UIPopupPrepScene : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	int32 _uiType = 0;
+	int32 _signalValue = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "UIPopupPrepScene"; }
+};
+
+// Nancy 10+ opcode 131. Pushes a new entry into either the cellphone
+// search-results list (mode 0) or the URL link list (mode 1).
+class AddSearchLink : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	int16 _mode = 0;
+	Common::String _key;
+	Common::String _value;
+	int16 _extra = 0;
+	int16 _flag = 0;
+	int16 _scene = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "AddSearchLink"; }
+};
+
 // Changes the in-game time. Used prior to the introduction of SetPlayerClock.
 class BumpPlayerClock : public ActionRecord {
 public:

@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	osd_message_queue.o \
 	path.o \
 	platform.o \
+	printman.o \
 	punycode.o \
 	random.o \
 	rational.o \

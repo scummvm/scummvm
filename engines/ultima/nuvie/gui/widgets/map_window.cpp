@@ -948,7 +948,7 @@ inline void MapWindow::drawActor(const Actor *actor) {
 			drawTile(tile, wrapped_x, actor->y - cur_y, false);
 			drawTile(tile, wrapped_x, actor->y - cur_y, true);
 			if (game->get_clock()->get_timer(GAMECLOCK_TIMER_U6_INFRAVISION) != 0) {
-				const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+				const Common::List<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
 				for (Obj *obj : surrounding_objs) {
 					const Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 					uint16 wrapped_obj_x = WRAP_VIEWP(cur_x, obj->x, map_width);
@@ -1725,7 +1725,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	return MSG_NOT_POSSIBLE;
 }
 
-void MapWindow::display_can_drop_or_move_msg(CanDropOrMoveMsg msg, string msg_text) {
+void MapWindow::display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Common::String msg_text) {
 	if (msg == MSG_NOT_POSSIBLE)
 		msg_text += "Not possible\n";
 	else if (msg == MSG_BLOCKED)
@@ -1945,7 +1945,7 @@ bool MapWindow::move_on_drop(Obj *obj) {
 }
 
 void MapWindow::set_interface() {
-	Std::string interface_str;
+	Common::String interface_str;
 	config->value("config/input/interface", interface_str, "normal");
 	if (interface_str == "ignore_block" ||  Game::get_game()->using_hackmove()) // game variable is not initialized
 		interface = INTERFACE_IGNORE_BLOCK;
@@ -1974,7 +1974,7 @@ GUI_status MapWindow::Idle(void) {
 
 
 // single-click (press and release button)
-GUI_status MapWindow::MouseClick(int x, int y, Shared::MouseButton button) {
+GUI_status MapWindow::MouseClick(int x, int y, Events::MouseButton button) {
 	if (button == USE_BUTTON && look_on_left_click) {
 		wait_for_mouseclick(button); // see MouseDelayed
 	}
@@ -1982,7 +1982,7 @@ GUI_status MapWindow::MouseClick(int x, int y, Shared::MouseButton button) {
 }
 
 // single-click; waited for double-click
-GUI_status MapWindow::MouseDelayed(int x, int y, Shared::MouseButton button) {
+GUI_status MapWindow::MouseDelayed(int x, int y, Events::MouseButton button) {
 	Events *event = game->get_event();
 	if (!looking || game->user_paused() || event->cursor_mode
 	        || (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)) {
@@ -2000,7 +2000,7 @@ GUI_status MapWindow::MouseDelayed(int x, int y, Shared::MouseButton button) {
 }
 
 // MouseDown; waited for MouseUp
-GUI_status MapWindow::MouseHeld(int x, int y, Shared::MouseButton button) {
+GUI_status MapWindow::MouseHeld(int x, int y, Events::MouseButton button) {
 	looking = false;
 	if (walk_with_left_button)
 		set_walking(true);
@@ -2008,7 +2008,7 @@ GUI_status MapWindow::MouseHeld(int x, int y, Shared::MouseButton button) {
 }
 
 // double-click
-GUI_status MapWindow::MouseDouble(int x, int y, Shared::MouseButton button) {
+GUI_status MapWindow::MouseDouble(int x, int y, Events::MouseButton button) {
 	Events *event = game->get_event();
 
 	// only USE if not doing anything in event
@@ -2038,7 +2038,7 @@ GUI_status MapWindow::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status MapWindow::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status MapWindow::MouseDown(int x, int y, Events::MouseButton button) {
 	//DEBUG(0,LEVEL_DEBUGGING,"MapWindow::MouseDown, button = %i\n", button);
 	Events *event = game->get_event();
 	Actor *player = actor_manager->get_player();
@@ -2116,7 +2116,7 @@ GUI_status MapWindow::MouseDown(int x, int y, Shared::MouseButton button) {
 	return  GUI_PASS;
 }
 
-GUI_status MapWindow::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status MapWindow::MouseUp(int x, int y, Events::MouseButton button) {
 	// cancel dragging and movement no matter what button is released
 	if (selected_obj) {
 		selected_obj = nullptr;

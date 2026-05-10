@@ -32,26 +32,26 @@ namespace HodjNPodj {
 namespace Life {
 
 static const char *curly[5] = {
-	".\\art\\Colony1.BMP",
-	".\\art\\Colony2.BMP",
-	".\\art\\Colony3.BMP",
-	".\\art\\Colony4.BMP",
-	".\\art\\Colony5.BMP"
+	"art\\Colony1.BMP",
+	"art\\Colony2.BMP",
+	"art\\Colony3.BMP",
+	"art\\Colony4.BMP",
+	"art\\Colony5.BMP"
 };
 
 static const char *months[12] = {
-	".\\art\\jan.BMP",
-	".\\art\\feb.BMP",
-	".\\art\\mar.BMP",
-	".\\art\\apr.BMP",
-	".\\art\\may.BMP",
-	".\\art\\jun.BMP",
-	".\\art\\jul.BMP",
-	".\\art\\aug.BMP",
-	".\\art\\sep.BMP",
-	".\\art\\oct.BMP",
-	".\\art\\nov.BMP",
-	".\\art\\dec.BMP"
+	"art\\jan.BMP",
+	"art\\feb.BMP",
+	"art\\mar.BMP",
+	"art\\apr.BMP",
+	"art\\may.BMP",
+	"art\\jun.BMP",
+	"art\\jul.BMP",
+	"art\\aug.BMP",
+	"art\\sep.BMP",
+	"art\\oct.BMP",
+	"art\\nov.BMP",
+	"art\\dec.BMP"
 };
 
 // Globals!
@@ -323,10 +323,10 @@ void CLife::evolution(CDC *pDC) {
 	CPoint sprite_loc;                  // center location of sprite on board
 	int i;                              // used to gen random village
 	int row, col;                           // indexs help find board cell
-	colony pColonyCopy((*pColony).row(), (*pColony).col());
+	colony colonyCopy((*pColony).row(), (*pColony).col());
 
 	// make copy of original pColony for later ref
-	pColonyCopy = (*pColony);
+	colonyCopy = (*pColony);
 	// Update stats
 	if (m_nYears == 0) //just starting evolution?
 		m_nCumLife = (*pColony).m_nColony_count;
@@ -337,7 +337,7 @@ void CLife::evolution(CDC *pDC) {
 	m_dScore = ((double) m_nCumLife) / ((double) m_nYears);
 
 	//Evolve internal board
-	(*pColony).evolve(*pColony);
+	(*pColony).evolve(colonyCopy);
 
 	// update score
 	if (m_nCumLife > LARGE && bIsInfiniteTurns) { // This prevents int overflow
@@ -350,13 +350,13 @@ void CLife::evolution(CDC *pDC) {
 	gMainWnd->RefreshStats();
 
 	//Update visual board
-	if (pColonyCopy != (*pColony))
+	if (colonyCopy != (*pColony))
 		for (row = 0; row < (*pColony).row(); row++)
 			for (col = 0; col < (*pColony).col(); col++) {
 				pSprite = CSprite::GetSpriteChain();
 
 				// Any change for this particular cell?
-				if (pColonyCopy.islife(row, col) == (*pColony).islife(row, col))
+				if (colonyCopy.islife(row, col) == (*pColony).islife(row, col))
 					continue;  // no change -- loop
 
 				if ((*pColony).islife(row, col)) { //Need to put a sprite there?

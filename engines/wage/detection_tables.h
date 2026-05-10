@@ -23,7 +23,7 @@
 
 namespace Wage {
 
-#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK|ADGF_TESTING)
+#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK)
 #define ADGF_GENERIC (ADGF_DEFAULT|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET)
 
 #define FANGAME(n,m,s) { "wage",n,AD_ENTRY1s(n,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0() }
@@ -73,6 +73,18 @@ static const ADGameDescription gameDescriptions[] = {
 	//FANGAME("Filled Polygon", "2d5a3c952c6c43c0456eae9bbc52867d", 38310),
 	//FANGAME("Ovals", "9b5e3d5afe3b4c46e506216a5ae16e14", 38194),
 	//FANGAME("Filled Ovals", "6990174e0b39d85f3069f98511bb0074", 38194),
+
+	// Game series:
+	//
+	// The Axe-orcist
+	// Jamie the Demon Slayer
+	//
+	// Brownie’s Time Travels
+	// SparGate
+	// Brownie’s Dream
+	// Who Shot Brownie Dog?
+	// The Time Squisher
+	// Brownie Saves the Day
 
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281153),
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
@@ -145,6 +157,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408657),
 	FANGAMEN("Escape!", "xn--Escape!-z46c", "28a9658ee846a34f133df29b54cf255a", 64819), // Original file name "Escape!†"
 	FANGAMEN("Escape!", "xn--Escape!-lha", "63378d6b032d4337b7e74759337eceaa", 64805), // Original file name " Escape!", alt version
+	FANGAMEN("Escape from Inaka", "Escape from Inaka - 1.0b1", "a1a91e9b7b6ad01d779993dab24fd080", 1112974),
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 49849),
 	FANGAMEN("Escape from School!", "xn--Escape from School!-3g6k", "fcc581e52d1fc8ea4603d7c953fa935a", 49863), // Original file name "Escape from School!†", alt version
 	FANGAME("Escape From Saecvrom", "ab401f96ca0755bf5fb849f71cc47d83", 588982),
@@ -157,7 +170,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("Explorer", "Explorer DEMO", "0ae79f48754466c4cd65137c7f186384", 460972),
 	FANGAMEND("Explorer", "Explorer DEMO", "6b22972808630201ece7cc96a0ef17f7", 460959), // alt version
 	FANGAME("Fantasy Quest", "b52d3e2680a76c23b2791e2c87f6b6bd", 762498),
-	FANGAME("Finding D - concept demo", "3657a0483c70a1b44641e62120290574", 55723),
+	FANGAMEND("Finding D", "Finding D - concept demo", "3657a0483c70a1b44641e62120290574", 55723),
 	FANGAME("Find the Heart", "0c0c282649597ea1ac82d97c8d4029a2", 105979), // From Joshua's Worlds 1.0
 	FANGAME("Find the Heart", "6fb8c6b8bc2287ba225b0ac6580dc073", 105675), // From Joshua's Worlds 1.0, alt version
 	FANGAME("Find the Heart", "08de3248b8c691d9a08af984bdcfa872", 105629), // From Joshua's Worlds, alt version
@@ -184,7 +197,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("The Hotel Caper",		"Hotel Caper V1.0", "138e89e5d5bcac6aba222cf33677bcec", 231127),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V2.0", "eed79653ca95f4e953aa0ff41e8c8034", 260418),
 	FANGAMEN(".i.f.", "xn--.i.f.-", "575fc0c25e9823dd742de1acdcaac325", 183221),
-	FANGAMEN("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
+	FANGAMEND("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
 	FANGAMEN("Intruder", "INTRUDER 1.1", "7d819891784c79fef66ff3bd9d946d6d", 203105),
 	FANGAMEN("Intruder", "INTRUDER v1.2", "a7df3f4196e922153cd4345def774c29", 241007),
 	FANGAME("Intruder ][", "r:a35a5e110bb5e4a3a3b91db26deaa881", 697570),
@@ -312,9 +325,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Schmoozer", "db31e320f286a5f4ab2c70022d24dcb2", 221244), // alt version
 	FANGAME("sMythWorld", "8224b15a910c9e7515923107d138de77", 472101),
 	FANGAME("Sorceror's Quest (Demo)", "r:ee8efbccea0807674af2bb53e6edf338", 531622),
-	FANGAMEN("Space Adventure", "SpaceAdventure", "3908c75d639989a28993c59931fbe1ec", 155100),
-	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
-	FANGAMEN("Space Adventure", "SpaceAdventure", "6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // alt version
+	FANGAMEND("Space Adventure", "SpaceAdventure", "3908c75d639989a28993c59931fbe1ec", 155100),
+	FANGAMEND("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
+	FANGAMEND("Space Adventure", "SpaceAdventure", "6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // alt version
 	FANGAME("Space Adventure", "6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // identical to the above, different file name
 	FANGAME("SpaceAdventure (Demo)", "r:6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // identical to the above, different file name
 	FANGAMEN("SparGate", "SparGate- vNC.1", "a7a7bfc1825011c2df8b7a03b57fcac9", 611991),
@@ -342,7 +355,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Time Bomb", "976180f9be0d1029aaba7774fec9767c", 64322), // alt version
 	FANGAMEN("The Time Squisher", "Time Squisher v 1.1", "3e296141e7a7c9b05e0dde779d9bb50d", 463526),
 	FANGAMEND("Time Star", "xn--Time Star-eh2e", "761e91f3da7217dc9516879a8ba08fd9", 210562), // Original file name "Time Star™"
-	FANGAMEN("Time Streak!!", "xn--Time Streak!!-8q9g", "e90f123a113e38c83c205b5fe50521fb", 483488), // Original file name "Time Streak!!™"
+	FANGAMEND("Time Streak!!", "xn--Time Streak!!-8q9g", "e90f123a113e38c83c205b5fe50521fb", 483488), // Original file name "Time Streak!!™"
 	FANGAME("The Tower", "4cd8755ccb5bbeaf2e5f7848a8daa033", 556283),
 	FANGAME("The Tower", "r:a79282051dd190bb8d41c7600bdc157e", 733539), // alt version
 	FANGAMEND("Tombworld", "xn--Demo TombWorld-8ra", "695734292024290d5d0aa6a66ff628f6", 663996), // Original file name "Demo TombWorld©"

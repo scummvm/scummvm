@@ -437,6 +437,7 @@ void EventManager::updateScreen() {
 		// (EventManager::shouldQuit() and EventManager::shouldReturnToLauncher()),
 		// which is very expensive to invoke constantly without any
 		// throttling at all.
+		// The SCI32 version of this check is in GfxFrameout::updateScreen().
 		if (g_engine->shouldQuit())
 			s->abortScriptProcessing = kAbortQuitGame;
 	}

@@ -1,17 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Moteur de jeux d\'aventure graphiques</string>
   <string name="ok">OK</string>
   <string name="quit">Quitter</string>
+  <string name="no_log_file_title">Erreur de fichier journal</string>
+  <string name="no_log_file">Impossible de lire le fichier journal de ScummVM ou d\'en créer un nouveau !</string>
   <string name="no_config_file_title">Erreur de fichier de configuration</string>
   <string name="no_config_file">Impossible de lire le fichier de configuration de ScummVM ou d\'en créer un nouveau !</string>
   <string name="no_save_path_title">Erreur de chemin de sauvegarde</string>
   <string name="no_save_path_configured">Impossible de créer ou d\'accéder au chemin de sauvegarde par défaut !</string>
   <string name="no_icons_path_title">Erreur de chemin d\'icônes</string>
-  <string name="no_icons_path_configured">Impossible de créer ou d\'accéder au chemin d\'icônes et de shadders par défaut !</string>
-  <string name="bad_explicit_save_path_configured">Impossible d\'accéder au chemin de sauvegarde défini globalement ! Veuillez rétablir le chemin par défaut à partir des options de ScummVM</string>
-  <string name="keyboard_toggle_btn_desc">Act./Désact. Clavier virtuel</string>
+  <string name="no_icons_path_configured">Impossible de créer ou d\'accéder au chemin d\'icônes et de shaders par défaut !</string>
+  <string name="bad_explicit_save_path_configured">Impossible d\'accéder au chemin de sauvegarde défini globalement ! Veuillez rétablir le chemin par défaut dans les options de ScummVM</string>
+  <string name="keyboard_toggle_btn_desc">Act. / Désact. clavier virtuel</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Annuler</string>
   <string name="customkeyboardview_keycode_delete">Supprimer</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Fermer popup</string>
   <string name="saf_request_prompt">Veuillez sélectionner la *racine* de votre carte SD externe (physique). Cette sélection est nécessaire pour que ScummVM puisse accéder à ce chemin : </string>
   <string name="saf_revoke_done">Les permissions de Storage Access Framework pour ScummVM ont été révoquées !</string>
+  <string name="ini_parsing_error">Le fichier de configuration n\'a pu être analysé</string>
+  <string name="shortcut_creator_title">Lancer un jeu</string>
+  <string name="shortcut_creator_search_game">Chercher un jeu</string>
+  <string name="shortcut_creator_game_item_icon">Icône du jeu</string>
+  <string name="shortcut_creator_customize_game_name_hint">Libellé du raccourci</string>
+  <string name="shortcut_creator_customize_game_icon_description">Icône du raccourci</string>
 </resources>

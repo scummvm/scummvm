@@ -36,6 +36,13 @@ void CharacterView::draw() {
 	writeString(120, 174, STRING["dialogs.misc.go_back"]);
 }
 
+bool CharacterView::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_RIGHT)
+		return true;
+
+	return CharacterBase::msgMouseUp(msg);
+}
+
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

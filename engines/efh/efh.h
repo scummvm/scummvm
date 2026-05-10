@@ -264,7 +264,8 @@ enum TTSMenuRestriction {
 	kMenu
 };
 
-enum EFHAction {
+/* typed enum to match unsignedness of Common::CustomEventType */
+enum EFHAction : Common::CustomEventType {
 	kActionNone,
 	kActionQuit,
 	kActionSkipVideo,

@@ -35,6 +35,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_INTERACTIVE_MODE,
 		{
+			// I18N: Runs tests in interactive mode
 			_s("Run in interactive mode"),
 			_s("Run in interactive mode"),
 			"interactive-mode",

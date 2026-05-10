@@ -114,8 +114,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"miskatonic1",     "Miskatonic. Part One"},
-	{"msos",            "Monday Starts on Saturday"},
-	{"mukhtar",         "Mukhtar and his Team"},
+	{"msos",            "Monday Starts on Saturday"},  // Понедельник начинается в субботу
+	{"mukhtar",         "Mukhtar and his Team"},  // Мухтар и его команда
 	{"mystictriddle",   "Mystic Triddle"},
 	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nightinthefog",   "Night in the Fog"},
@@ -130,12 +130,12 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"paintaria",       "Paintaria"},
 	{"palladion",       "Palladion"},
 	{"pangea",          "Pangea 1/2"},
-	{"papasdaughters1", "Papa's Daughters"},
-	{"papasdaughters2", "Papa's Daughters Go to the Sea"},
-	{"petka02",         "Red Comrades 0.2: Operation F."},
+	{"papasdaughters1", "Papa's Daughters"},  // Папины дочки
+	{"papasdaughters2", "Papa's Daughters Go to the Sea"},  // Папины дочки 2
+	{"petka02",         "Red Comrades 0.2: Operation F."},  // Петька и Василий Иванович 0.2: Операция Ф
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
-	{"polechudes",      "Pole Chudes"},
+	{"polechudes",      "Pole Chudes"},  // По́ле Чуде́с
 	{"preciouspills",   "Precious Pills, Blasting Bacon and Mowing Minds"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
@@ -166,10 +166,10 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"strangechange",   "Strange Change"},
 	{"sunny",           "Sunny"},
 	{"sunrise",         "Sunrise: The game"},
-	{"susanrose1",      "Susan Rose: Mysterious Child"},
-	{"susanrose2",      "Susan Rose: Delicate Murder"},
-	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
-	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
+	{"susanrose1",      "Susan Rose: Mysterious Child"},  // Даша Васильева: Личное дело Женщины-кошки
+	{"susanrose2",      "Susan Rose: Delicate Murder"},  // Евлампия Романова: Нежный Cупруг Oлигарха
+	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},  // Таня Гроттер и магический контрабас
+	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},  // Таня Гроттер и исчезающий этаж
 	{"tehran1933",      "Murder In Tehran's Alleys 1933"},
 	{"tehran2016",      "Murder In Tehran's Alleys 2016"},
 	{"theancientmark1", "The Ancient Mark - Episode 1"},
@@ -178,8 +178,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"thekite",         "The Kite"},
 	{"thelastcrownmh",  "The Last Crown - Midnight Horror"},
 	{"thelostcrowngha", "The Lost Crown - A Ghost-Hunting Adventure"},
-	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
-	{"todaymama",       "Today, Mama!"},
+	{"tib",             "Fairy Tales About Toshechka and Boshechka"},  // Сказки про Тошечку и Бошечку
+	{"todaymama",       "Today, Mama!"},  // Сегодня, мама!
 	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "The White Chamber"},
 	{"war",             "War"},
@@ -224,6 +224,21 @@ static const PlainGameDescriptor wintermuteGames[] = {
 			Common::kPlatformWindows, \
 			status, \
 			GUIO0(), \
+		}, \
+		version \
+	}
+
+// sotv1 and sotv2 need some extra gui options
+#define WME_SOTVENTRY(shortName, extraName, hashEntry, lang, status, version) \
+	{ \
+		{ \
+			shortName, \
+			extraName, \
+			hashEntry, \
+			lang, \
+			Common::kPlatformWindows, \
+			status, \
+			GUIO2(GAMEOPTION_USE_IT_VOICES, GAMEOPTION_USE_SD_ASSETS), \
 		}, \
 		version \
 	}
@@ -865,9 +880,16 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("actors.dcp", "170c7ade10edd7ff6d24b16f2eecd818", 453328582,
 					"stageplay.dcp", "ed67b4d6e35c19597241eb1d863aa315", 226453373), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
 
+	// Dark Fall: Lost Souls (German)
 	WME_WINENTRY("darkfallls", "",
 		WME_ENTRY2s("actors.dcp", "17df9d381d49100d2bd79c5f3eefe53c", 454049405,
 					"stageplay.dcp", "037dcab0c7204a8c09f12aec4c4dd5e7", 198193043), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
+
+	// Dark Fall: Lost Souls (Russian)
+	// TRAC report #16527
+	WME_WINENTRY("darkfallls", "",
+		WME_ENTRY2s("actors.dcp", "7201589b7cea09ec2554e9ce5aea826c", 385862728,
+					"stageplay.dcp", "1e434d76c15336c7463e0f30aa82ffc0", 183937509), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_10),
 
 	// Twilight: Dark Summer (Ario) (Persian)
 	WME_WINENTRY("darksummer", "",
@@ -979,7 +1001,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dreams (Demo)
-	WME_WINENTRY("dreams", "Demo",
+	WME_WINENTRY("dreams", "Unsupported WME version (1.0)",
 		WME_ENTRY1s("data.dcp", "1c620f51bef1faffbeebb6253542f834", 23622097), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_26),
 
 	// Dreamscape (Beta)
@@ -1378,12 +1400,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_DEMO, WME_1_8_11),
 
 	// Fred (English) (PreAlpha)
-	WME_WINENTRY("fred", "PreAlpha",
+	WME_WINENTRY("fred", "Unsupported WME version (1.0)",
 		WME_ENTRY2s("string.tab", "76b48c26e611071810d8182fc27f7d0e", 12590,
 					"data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Fred (French) (PreAlpha)
-	WME_WINENTRY("fred", "PreAlpha",
+	WME_WINENTRY("fred", "Unsupported WME version (1.0)",
 		WME_ENTRY1s("data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::FR_FRA, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Ghost in the Sheet (English, v1.00)
@@ -1951,6 +1973,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Papa's Daughters
 	WME_WINENTRY("papasdaughters1", "",
 		WME_ENTRY1s("data.dcp", "5d801bc95f28e64c33918380f961f454", 80569934), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
+
+	// Papa's Daughters (Alawar)
+	// TRAC report #16523
+	WME_WINENTRY("papasdaughters1", "",
+		WME_ENTRY1s("data.dcp", "772e4702ef20e146fe1dc6ba0c6aa882", 80342874), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
 
 	// Papa's Daughters 2
 	WME_WINENTRY("papasdaughters2", "",
@@ -4820,6 +4847,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY1s("default.game", "2631e8ba12cdd7ef08c5ee72391ad703", 968), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
+	// Shadows on the Vatican - Act I: Greed (SD/HD Combo Version) (Steam) (Multi-language)
+	WME_SOTVENTRY("sotv1", "SD/HD Combo Version",
+		WME_ENTRY1s("SotV1.exe", "c7302599bcd570cfb8bdb9027e0ad344", 2335232), Common::UNK_LANG, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+
 	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (English)
 	WME_WINENTRY("sotv2", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
@@ -5456,6 +5487,10 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
 					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
+	// Shadows on the Vatican - Act II: Wrath (SD/HD Combo Version) (Steam) (Multi-language)
+	WME_SOTVENTRY("sotv2", "SD/HD Combo Version",
+		WME_ENTRY1s("SotV2.exe", "c7302599bcd570cfb8bdb9027e0ad344", 2335232), Common::UNK_LANG, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+
 	// Shelter (Demo)
 	WME_WINENTRY("shelter", "Demo",
 		WME_ENTRY1s("data.dcp", "789f15a26fc06a814cfca723e33fc5f7", 5417715), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_6_2),
@@ -5500,12 +5535,16 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, GF_3D, WME_1_8_6),
 
 	// Sunny (Demo)
-	WME_WINENTRY("sunny", "Demo",
+	WME_WINENTRY("sunny", "Unsupported WME version (1.0)",
 		WME_ENTRY1s("data.dcp", "685f4db26ed8134aa82bf5b6bae3963e", 4745194), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Sunrise: The game (German)
 	WME_WINENTRY("sunrise", "",
 		WME_ENTRY1s("data.dcp", "d06744fc60982a30e82d96075698c8bc", 134409552), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
+
+	// Sunrise: The game (Russian)
+	WME_WINENTRY("sunrise", "",
+		WME_ENTRY1s("data.dcp", "d0c9ac5a61b37ae9fcedb58fa1c98cd5", 135504102), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
 	// Sunrise: The game (Spanish fanmade)
 	WME_WINENTRY("sunrise", "",
@@ -5688,6 +5727,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The White Chamber (Version 1.7 - Definitive Edition) (built 2008.06.29) (multi-language)
 	WME_WINENTRY("twc", "Definitive Edition",
 		WME_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_8_6),
+
+	// The White Chamber (Version 1.7 - Definitive Edition) (multi-language + Spanish fanmade translation)
+	WME_WINENTRY("twc", "Spanish fanmade",
+		WME_ENTRY1s("data.dcp", "969a3c3025f6654fa26002e1ecb83662", 186452619), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// The White Chamber (Steam Anniversary Edition) (multi-language) (2023.09.07)
+	WME_WINENTRY("twc", "Anniversary Edition",
+		WME_ENTRY1s("data.dcp", "54f9d04ae5a416c573c650fdf93b4220", 219157795), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// The White Chamber (Steam Anniversary Edition) (multi-language) (2023.09.11)
+	WME_WINENTRY("twc", "Anniversary Edition",
+		WME_ENTRY1s("data.dcp", "a2731946082eb06211ec978c339592c0", 219157885), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// The White Chamber (Steam Anniversary Edition) (multi-language) (2023.09.13)
+	WME_WINENTRY("twc", "Anniversary Edition",
+		WME_ENTRY1s("data.dcp", "a77666061dc778992508c685997de840", 219837795), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Today, Mama!
 	WME_WINENTRY("todaymama", "",

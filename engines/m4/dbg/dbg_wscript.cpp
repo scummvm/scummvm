@@ -250,34 +250,4 @@ void dbg_EndCurrMachInstr() {
 	debugC(1, kDebugScripts, "%s", g_instructionText);
 }
 
-void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR) {
-	// No implementation
-}
-
-
-void dbg_ws_update() {
-	// No implementation
-}
-
-void dbg_LaunchSequence(Anim8 *myAnim8) {
-	// No implementation
-}
-
-void dbg_DebugWSMach(machine *m, bool debug) {
-	// No implementation
-}
-
-void dbg_DebugNextCycle() {
-	// No implementation
-}
-
-void dbg_RemoveWSMach(machine *m) {
-	// No implementation
-}
-
-void dbg_WSError(Common::WriteStream *logFile, machine *m, int32 errorType,
-		const char *errDesc, const char *errMsg, int32 pcOffset) {
-	// No implementation
-}
-
 } // namespace M4

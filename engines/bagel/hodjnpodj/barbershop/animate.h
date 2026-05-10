@@ -31,19 +31,19 @@ namespace Barbershop {
 //
 // animation sounds
 //
-#define CLOWN_WAV       ".\\sound\\horns.wav"
-#define SPACESHIP_WAV   ".\\sound\\spaceshp.wav"
-#define SPACERAY_WAV    ".\\sound\\spaceray.wav"
-#define CUT_WAV         ".\\sound\\haircut.wav"
-#define BRAT_WAV        ".\\sound\\doneyet.wav"
-#define LOLLI_A_WAV     ".\\sound\\lollipop.wav"
-#define LOLLI_B_WAV     ".\\sound\\hairpop.wav"
+#define CLOWN_WAV       "sound\\horns.wav"
+#define SPACESHIP_WAV   "sound\\spaceshp.wav"
+#define SPACERAY_WAV    "sound\\spaceray.wav"
+#define CUT_WAV         "sound\\haircut.wav"
+#define BRAT_WAV        "sound\\doneyet.wav"
+#define LOLLI_A_WAV     "sound\\lollipop.wav"
+#define LOLLI_B_WAV     "sound\\hairpop.wav"
 
 
 //
 // Clown animation
 //
-#define CLOWN_BMP       ".\\art\\gum.bmp"
+#define CLOWN_BMP       "art\\gum.bmp"
 
 #define CLOWN_FRAMES    24          // Clown morph frames
 
@@ -60,8 +60,8 @@ namespace Barbershop {
 //
 // UFO beam up animation
 //
-#define UFOA_BMP        ".\\art\\ufo1a.bmp"
-#define UFOB_BMP        ".\\art\\ufo1b.bmp"
+#define UFOA_BMP        "art\\ufo1a.bmp"
+#define UFOB_BMP        "art\\ufo1b.bmp"
 
 #define UFOA_FRAMES     16              // UFOa frames
 #define UFOB_FRAMES     14              // UFOa frames

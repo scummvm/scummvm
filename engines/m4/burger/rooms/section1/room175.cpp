@@ -56,7 +56,7 @@ static const seriesPlayBreak PLAY2[] = {
 };
 
 static const seriesPlayBreak PLAY3[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 

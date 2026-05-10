@@ -109,11 +109,11 @@ namespace Packrat {
 #define SSPACEBMP           "ART\\SEMPTY.BMP"
 #define LSPACEBMP           "ART\\LEMPTY.BMP"
 
-#define BADGUYSOUND         ".\\SOUND\\GULP.WAV"
-#define PLAYERSOUND         ".\\SOUND\\SORRY2.WAV"
-#define SUPERSOUND          ".\\SOUND\\POWER.WAV"
+#define BADGUYSOUND         "sound\\GULP.WAV"
+#define PLAYERSOUND         "sound\\SORRY2.WAV"
+#define SUPERSOUND          "sound\\POWER.WAV"
 
-#define NEWLIFE_WAV         ".\\SOUND\\NEWLIFE.WAV"
+#define NEWLIFE_WAV         "sound\\NEWLIFE.WAV"
 
 #define BG1     1
 #define BG2     2
@@ -3133,7 +3133,7 @@ void CMainPackRatWindow::MainLoop() {
 						                    CSound  *pSound = nullptr;
 						                        CSound::StopWaveSounds();
 						                        sndPlaySound( nullptr, SND_ASYNC);
-						                        pSound = new CSound((CWnd *)this, ".\\SOUND\\NEWLIFE.WAV", SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE );
+						                        pSound = new CSound((CWnd *)this, "sound\\NEWLIFE.WAV", SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE );
 						                        pSound->play();
 						*/
 						sndPlaySound(nullptr, SND_ASYNC);

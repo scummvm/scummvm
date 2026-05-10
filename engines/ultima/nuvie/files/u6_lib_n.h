@@ -23,14 +23,11 @@
 #define NUVIE_FILES_U6LIB_N_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "common/stream.h"
 
 namespace Ultima {
 namespace Nuvie {
-
-using Std::string;
-//using Std::vector;
 
 class NuvieIO;
 
@@ -39,7 +36,7 @@ struct U6LibItem {
 	uint8 flag;
 	uint32 uncomp_size;
 	uint32 size;
-	string *name;
+	Common::String *name;
 	unsigned char *data; // for writing or cache
 };
 
@@ -94,7 +91,7 @@ protected:
 class U6ConverseLib: U6Lib_n {
 private:
 	uint32 zero_offset_count;
-	string *conversefile;
+	Common::String *conversefile;
 };
 #endif
 } // End of namespace Nuvie

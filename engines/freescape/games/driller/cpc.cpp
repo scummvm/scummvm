@@ -30,6 +30,24 @@ namespace Freescape {
 
 void DrillerEngine::initCPC() {
 	_viewArea = Common::Rect(36, 16, 284, 117);
+	// Sound mappings from DRILL.BIN disassembly (sub_4760h call sites)
+	_soundIndexShoot = 1;            // 0x5BBC: LD A,01h; CALL 4760h
+	_soundIndexCollide = 19;         // 0x4CE6/0x5AE4: LD A,13h; CALL 4760h
+	_soundIndexStepUp = 3;           // 0x5025: deferred via (3B63h)
+	_soundIndexStepDown = 4;         // 0x4FB2: deferred via (3B63h)
+	_soundIndexFall = 9;             // long dur=24 falling sound
+	_soundIndexStart = 6;            // 0x4906/0x4C84: game start transition
+	_soundIndexMenu = 6;             // reuse start/transition sound
+	_soundIndexAreaChange = 10;      // TODO: verify this
+	_soundIndexHit = 2;              // 0x6801: LD A,02h; drill/hit destruction
+	_soundIndexFallen = 9;           // long dur=24 tone sweep
+	_soundIndexNoShield = 9;         // game-over conditions reuse fallen sound
+	_soundIndexNoEnergy = 9;
+	_soundIndexTimeout = 9;
+	_soundIndexForceEndGame = 9;
+	_soundIndexCrushed = 9;
+	_soundIndexMissionComplete = 13; // via object handler at 0x61E4
+	// Sound 5 is used when deploying or recalling the drill, but these are not currently implemented yet
 }
 
 byte kCPCPaletteTitleData[4][3] = {
@@ -46,45 +64,7 @@ byte kCPCPaletteBorderData[4][3] = {
 	{0x00, 0x80, 0x00},
 };
 
-byte getCPCPixelMode1(byte cpc_byte, int index) {
-	if (index == 0)
-		return ((cpc_byte & 0x08) >> 2) | ((cpc_byte & 0x80) >> 7);
-	else if (index == 1)
-		return ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6);
-	else if (index == 2)
-		return (cpc_byte & 0x02)        | ((cpc_byte & 0x20) >> 5);
-	else if (index == 3)
-		return ((cpc_byte & 0x01) << 1) | ((cpc_byte & 0x10) >> 4);
-	else
-		error("Invalid index %d requested", index);
-}
-
-byte getCPCPixelMode0(byte cpc_byte, int index) {
-    if (index == 0) {
-        // Extract Pixel 0 from the byte
-        return ((cpc_byte & 0x02) >> 1) |  // Bit 1 -> Bit 3 (MSB)
-               ((cpc_byte & 0x20) >> 4) |  // Bit 5 -> Bit 2
-               ((cpc_byte & 0x08) >> 1) |  // Bit 3 -> Bit 1
-               ((cpc_byte & 0x80) >> 7);   // Bit 7 -> Bit 0 (LSB)
-    }
-    else if (index == 2) {
-        // Extract Pixel 1 from the byte
-        return ((cpc_byte & 0x01) << 3) |  // Bit 0 -> Bit 3 (MSB)
-               ((cpc_byte & 0x10) >> 2) |  // Bit 4 -> Bit 2
-               ((cpc_byte & 0x04) >> 1) |  // Bit 2 -> Bit 1
-               ((cpc_byte & 0x40) >> 6);   // Bit 6 -> Bit 0 (LSB)
-    }
-    else {
-        error("Invalid index %d requested", index);
-    }
-}
-
-byte getCPCPixel(byte cpc_byte, int index, bool mode1) {
-	if (mode1)
-		return getCPCPixelMode1(cpc_byte, index);
-	else
-		return getCPCPixelMode0(cpc_byte, index);
-}
+// getCPCPixelMode1, getCPCPixelMode0, and getCPCPixel moved to freescape.cpp
 
 Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode1) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
@@ -159,16 +139,33 @@ void DrillerEngine::loadAssetsCPCFullGame() {
 	if (!file.isOpen())
 		error("Failed to open DRILL.BIN");
 
+	loadSoundsCPC(&file, 0x23D2 + 0x80, 68, 0x2416 + 0x80, 104, 0x247E + 0x80, 140);
 	loadMessagesFixedSize(&file, 0x214c, 14, 20);
 	loadFonts(&file, 0x5b69);
 	loadGlobalObjects(&file, 0x1d07, 8);
 	load8bitBinary(&file, 0x5ccb, 16);
 }
 
+void FreescapeEngine::loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef) {
+	_soundsCPCToneTable.resize(sizeTone);
+	file->seek(offsetTone);
+	file->read(_soundsCPCToneTable.data(), sizeTone);
+
+	_soundsCPCEnvelopeTable.resize(sizeEnvelope);
+	file->seek(offsetEnvelope);
+	file->read(_soundsCPCEnvelopeTable.data(), sizeEnvelope);
+
+	_soundsCPCSoundDefTable.resize(sizeSoundDef);
+	file->seek(offsetSoundDef);
+	file->read(_soundsCPCSoundDefTable.data(), sizeSoundDef);
+}
+
 void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	uint32 color = _currentArea->_underFireBackgroundColor;
 	uint8 r, g, b;
 
+	if (isEncodedCPCDirectColor(color))
+		color = decodeCPCDirectColor(color);
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
@@ -177,6 +174,8 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 		color = (*_gfx->_colorRemaps)[color];
 	}
 
+	if (isEncodedCPCDirectColor(color))
+		color = decodeCPCDirectColor(color);
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 

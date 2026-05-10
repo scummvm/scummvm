@@ -59,6 +59,8 @@ Common::String centerAndPadString(const Common::String &str, int size) {
 Font::Font() {
 	_backgroundColor = 0;
 	_secondaryColor = 0;
+	_tertiaryColor = 0;
+	_quaternaryColor = 0;
 	_kerningOffset = 0;
 	_charWidth = 0;
 	_chars.clear();
@@ -68,6 +70,8 @@ Font::Font(Common::Array<Graphics::ManagedSurface *> &chars) {
 	_chars = chars;
 	_backgroundColor = 0;
 	_secondaryColor = 0;
+	_tertiaryColor = 0;
+	_quaternaryColor = 0;
 	_kerningOffset = 0;
 	_charWidth = 8;
 }
@@ -95,6 +99,14 @@ void Font::setSecondaryColor(uint32 color) {
 	_secondaryColor = color;
 }
 
+void Font::setTertiaryColor(uint32 color) {
+	_tertiaryColor = color;
+}
+
+void Font::setQuaternaryColor(uint32 color) {
+	_quaternaryColor = color;
+}
+
 void Font::setBackground(uint32 color) {
 	_backgroundColor = color;
 }
@@ -118,19 +130,25 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 	uint8 rb, gb, bb;
 	uint8 rp, gp, bp;
 	uint8 rs, gs, bs;
+	uint8 rt, gt, bt;
+	uint8 rq, gq, bq;
 
 	dst->format.colorToRGB(color, rp, gp, bp);
 	dst->format.colorToRGB(_secondaryColor, rs, gs, bs);
 	dst->format.colorToRGB(_backgroundColor, rb, gb, bb);
+	dst->format.colorToRGB(_tertiaryColor, rt, gt, bt);
+	dst->format.colorToRGB(_quaternaryColor, rq, gq, bq);
 
-	byte palette[3][3] = {
+	byte palette[5][3] = {
 		{ rb, gb, bb },
 		{ rp, gp, bp },
 		{ rs, gs, bs },
+		{ rt, gt, bt },
+		{ rq, gq, bq },
 	};
 
 	if (surface.format != dst->format)
-		surface.convertToInPlace(dst->format, (byte *)palette, 3);
+		surface.convertToInPlace(dst->format, (byte *)palette, 5);
 
 	if (_backgroundColor == dst->format.ARGBToColor(0x00, 0x00, 0x00, 0x00))
 		dst->copyRectToSurfaceWithKey(surface, x, y, Common::Rect(0, 0, MIN(int(surface.w), _charWidth), surface.h), dst->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
@@ -206,6 +224,40 @@ Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getCharsAmigaAtariInt
 					surface->setPixel(7 - i, j, 1);
 				} else
 					surface->setPixel(7 - i, j, 0);
+			}
+		}
+		chars.push_back(surface);
+	}
+	free(fontBuffer);
+	return chars;
+}
+
+Common::Array<Graphics::ManagedSurface *> FreescapeEngine::getChars4Plane(Common::SeekableReadStream *file, int offset, int charsNumber) {
+	// 4-bitplane font: each glyph = 8 rows x 4 planes x 2 bytes = 64 bytes
+	// Used by Eclipse Atari ST for the bordered/embossed UI font
+	int glyphSize = 64;
+	int fontSize = glyphSize * charsNumber;
+	byte *fontBuffer = (byte *)malloc(fontSize);
+	file->seek(offset);
+	file->read(fontBuffer, fontSize);
+
+	Common::Array<Graphics::ManagedSurface *> chars;
+	for (int c = 0; c < charsNumber - 1; c++) {
+		Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+		surface->create(8, 8, Graphics::PixelFormat::createFormatCLUT8());
+		for (int row = 0; row < 8; row++) {
+			int rowOff = c * glyphSize + row * 8;
+			uint16 p0 = READ_BE_UINT16(&fontBuffer[rowOff + 0]);
+			uint16 p1 = READ_BE_UINT16(&fontBuffer[rowOff + 2]);
+			uint16 p2 = READ_BE_UINT16(&fontBuffer[rowOff + 4]);
+			uint16 p3 = READ_BE_UINT16(&fontBuffer[rowOff + 6]);
+			for (int col = 0; col < 8; col++) {
+				int bit = 15 - col; // MSB = leftmost pixel
+				byte color = ((p0 >> bit) & 1)
+				           | (((p1 >> bit) & 1) << 1)
+				           | (((p2 >> bit) & 1) << 2)
+				           | (((p3 >> bit) & 1) << 3);
+				surface->setPixel(col, row, color);
 			}
 		}
 		chars.push_back(surface);

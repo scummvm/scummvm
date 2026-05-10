@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/array.h"
 #include "common/language.h"
+#include "common/path.h"
 #include "common/str.h"
 #include "math/vector3d.h"
 
@@ -346,6 +347,71 @@ struct StaticData {
 	Common::Array<Common::String> eventFlagNames;
 
 	void readData(Common::SeekableReadStream &stream, Common::Language language, uint32 endPos, int8 majorVersion, int8 minorVersion);
+};
+
+// Reusable button widget embedded in Nancy 10+ popup UIs.
+struct UIButtonRecord {
+	static const uint kRecordSize = 239;
+	Common::Path primaryImageName;
+	Common::Path secondaryImageName;
+	uint32 id = 0;
+	Common::Rect sourceRects[4];
+	Common::Rect srcBackgroundRestore;
+	Common::Rect destRect;
+	uint32 destUsesGameFrameOffset = 0; // translate dest by game-frame origin when non-zero
+	uint32 hoverEnableFlag = 0;
+	uint32 hoverCursorFlag = 0; // swap cursor sprite on hover when set
+	uint32 secondaryStateField = 0;
+	uint32 initialState = 0; // 0=idle, 1=hover, 2=pressed, 3/4=disabled
+	uint32 reservedField = 0;
+	SoundDescription clickSound;
+};
+
+// A UIButton slot. Used for the notebook tab strip (UINB) and the
+// inventory category-filter strip (UIIV).
+struct UIButtonSlot {
+	static const uint kRecordSize = 247;
+	uint32 enabled = 0;
+	uint32 id = 0;         // slot identifier (filter category / tab)
+	UIButtonRecord button;
+};
+
+// Reusable slider widget embedded in Nancy 10+ popup UIs.
+struct UISliderRecord {
+	static const uint kRecordSize = 198;
+	Common::Path primaryImageName;
+	Common::Path secondaryImageName;
+	uint32 id = 0;
+	Common::Rect sourceRects[4];
+	Common::Rect srcBackgroundRestore;
+	Common::Rect destRect;
+	uint32 destUsesGameFrameOffset = 0; // translate dest by game-frame origin when non-zero
+	uint32 unknownA = 0;
+	uint32 isDraggable = 0; // when zero, the slider stays at its current value on click
+	uint32 unknownC = 0;
+	uint32 orientation = 0;  // 0 = horizontal, 1 = vertical
+	uint32 positionHint = 0; // 0/1 left/right for horiz, 2/3 top/bottom for vert
+	uint32 secondaryStateField = 0;
+	uint32 initialState = 0; // 0=idle, 1=hover, 2=dragging
+};
+
+// Common header shared by all Nancy 10 popup-UI chunks
+// (UIIV, UICO, UICL, UINB).
+struct UIPopupHeader {
+	Common::Path imageName;         // background image
+	uint32 unknownHeaderField = 0;  // chunk version
+	int16 linkbackScene = 9999;     // return scene; 9999 = none
+	Common::Rect normalSrcRect;     // SRC rect on the popup overlay image when in state 2 (normal size)
+	Common::Rect maximizedSrcRect;  // SRC rect on the popup overlay image when in state 3 (maximized size)
+	Common::Rect normalDestRect;    // DEST rect on screen for state 2 (normal size)
+	Common::Rect maximizedDestRect; // DEST rect on screen for state 3 (maximized size)
+	uint32 overlayInGameFrame = 0;  // if non-zero, both dest rects are translated during initialization
+	SoundDescription sounds[4];     // open/close/button-click sound slots
+
+	uint32 secondaryButtonEnabled = 0;
+	UIButtonRecord secondaryButton;
+	uint32 sliderEnabled = 0;
+	UISliderRecord slider;
 };
 
 } // End of namespace Nancy

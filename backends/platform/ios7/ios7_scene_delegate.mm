@@ -29,7 +29,11 @@ API_AVAILABLE(ios(13.0))
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
 
 	UIWindowScene *windowScene = (UIWindowScene *)scene;
-	[iOS7AppDelegate setKeyWindow:[[UIWindow alloc] initWithWindowScene:windowScene]];
+	// External displays should not get assigned a window.
+	// When a window isn't assigned, the default behavior is mirroring.
+	if (session.role != UIWindowSceneSessionRoleExternalDisplay) {
+		[iOS7AppDelegate setKeyWindow:[[UIWindow alloc] initWithWindowScene:windowScene]];
+	}
 }
 
 - (void)sceneDidDisconnect:(UIScene *)scene {

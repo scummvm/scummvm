@@ -25,7 +25,6 @@
 
 #include "common/str.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/m4_types.h"
 
 namespace M4 {
 namespace GUI {
@@ -72,7 +71,7 @@ public:
 	~TextField();
 
 	void set_string(const char *string);
-	void draw(GrBuff *interface_buffer);
+	void draw(GrBuff *myBuffer);
 };
 
 class ButtonClass : public RectClass {
@@ -104,7 +103,7 @@ public:
 		int16 relaxed, int16 over, int16 picked, int sprite);
 	~ButtonClass();
 
-	void draw(GrBuff *interface_buffer);
+	void draw(GrBuff *myBuffer);
 	int16 inside(int16 x, int16 y) const override;
 	virtual ControlStatus track(int32 eventType, int16 x, int16 y);
 
@@ -147,12 +146,11 @@ public:
 	InterfaceBox(const RectClass &r);
 	~InterfaceBox();
 
-	void draw(GrBuff *interface_buffer);
+	void draw(GrBuff *myBuffer);
 	int16 inside(int16 x, int16 y) const override;
 	ControlStatus track(int32 eventType, int16 x, int16 y);
 
 	void add(ButtonClass *b);
-	int16 check_inventory(int16 x, int16 y);
 	void highlight_button(int16 index);
 	void set_selected(bool);
 

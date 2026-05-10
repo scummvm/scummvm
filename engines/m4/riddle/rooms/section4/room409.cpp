@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section4/room409.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -251,7 +252,7 @@ void Room409::daemon() {
 		digi_play("409_s03", 2);
 		inv_give_to_player("KEY");
 		kernel_examine_inventory_object("PING KEY", _G(master_palette),
-			5, 1, 270, 150, -1, 0, -1);
+			5, 1, 270, 150, -1, nullptr, -1);
 		digi_play("409r03a", 1, 255, 406);
 		break;
 

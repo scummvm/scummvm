@@ -43,7 +43,7 @@ public:
 	Common::Rect32 *getGumpItemArea(uint32 shapenum);
 
 protected:
-	Std::vector<Common::Rect32 *> _gumpItemArea;
+	Common::Array<Common::Rect32 *> _gumpItemArea;
 };
 
 } // End of namespace Ultima8

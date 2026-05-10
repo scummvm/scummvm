@@ -20,9 +20,10 @@
  */
 
 #include "m4/riddle/rooms/section7/room704.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
-#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
@@ -571,7 +572,7 @@ void Room704::parser() {
 			player_set_commands_allowed(true);
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 707;
+			_G(game).setRoom(707);
 
 			break;
 
@@ -589,7 +590,7 @@ void Room704::parser() {
 		case 4:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 705;
+			_G(game).setRoom(705);
 
 			break;
 
@@ -605,7 +606,7 @@ void Room704::parser() {
 		case 4:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 703;
+			_G(game).setRoom(703);
 
 			break;
 
@@ -1090,7 +1091,7 @@ void Room704::useWheelOnNiche(int32 trigger, int val1) {
 	case 112:
 		adv_kill_digi_between_rooms(false);
 		digi_play_loop("950_s39", 3, 255, -1, -1);
-		_G(game).new_room = 705;
+		_G(game).setRoom(705);
 
 		break;
 

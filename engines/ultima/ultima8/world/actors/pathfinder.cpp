@@ -19,6 +19,8 @@
  *
  */
 
+#include "ultima/ultima8/world/actors/pathfinder.h"
+
 #include "common/system.h"
 #include "ultima/ultima.h"
 #include "ultima/ultima8/misc/direction_util.h"
@@ -165,7 +167,7 @@ void Pathfinder::setTarget(Item *item, bool hit) {
 }
 
 bool Pathfinder::canReach() {
-	Std::vector<PathfindingAction> path;
+	Common::Array<PathfindingAction> path;
 	return pathfind(path);
 }
 
@@ -491,7 +493,7 @@ void Pathfinder::expandNode(PathNode *node) {
 	}
 }
 
-bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
+bool Pathfinder::pathfind(Common::Array<PathfindingAction> &path) {
 	if (_targetItem) {
 		debugC(kDebugPath, "Actor %u pathfinding to item %u", _actor->getObjId(), _targetItem->getObjId());
 		debugC(kDebugPath, "Target Item: %s", _targetItem->dumpInfo().c_str());

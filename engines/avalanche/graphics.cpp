@@ -28,6 +28,7 @@
 #include "avalanche/graphics.h"
 
 #include "common/system.h"
+#include "common/random.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "math/utils.h"
@@ -872,13 +873,6 @@ void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::
 	drawBigText(_menu, text, font, 14, x, y, color);
 }
 
-void GraphicManager::menuDrawIndicator(int x) { // TODO: Implement striped pattern for the indicator.
-	if (x > 0)
-		_menu.fillRect(Common::Rect(x - 1, 330, x, 337), kColorBlack);
-	_menu.fillRect(Common::Rect(x, 330, x + 1, 337), kColorWhite);
-	menuRefreshScreen();
-}
-
 /**
  * This function is for skipping the difference between a stored 'size' value associated with a picture
  * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.
@@ -995,6 +989,53 @@ void GraphicManager::drawWinningPic() {
 
 	winning.free();
 	file.close();
+}
+
+void GraphicManager::drawQuittingPic() {
+	// Nag screen text "joke".
+    static const char *nouns[] = {
+		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
+		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
+	};
+
+	static const char *verbs[] = {
+		"haunt", "daunt", "tickle", "gobble", "erase", "provoke", "surprise",
+		"ignore", "stare at", "shriek at", "frighten", "quieten"
+	};
+
+	Common::String result = Common::String(nouns[_vm->_rnd->getRandomNumber(11)]) + " will " + Common::String(verbs[_vm->_rnd->getRandomNumber(11)]) + " you.";
+
+	Common::File file;
+	Common::Path filename("text3.scr");
+
+	if (!file.open(filename))
+		error("AVALANCHE: Timer: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
+
+	uint32 fileSize = file.size();
+	byte *buffer = new byte[fileSize];
+	file.read(buffer, fileSize);
+	file.close();
+
+	// Write the joke string at position 1628 (from source code)
+	// Side note: I added 2 because there was no space between the first word of the joke and last letter of the original file
+	// Each cell is 2 bytes: char, attribute 
+	for (uint i = 0; i < result.size(); i++) {
+		buffer[1628 * 2 + i * 2 + 2] = (byte)result[i];
+		// skip attribute byte
+	}
+
+	// The text3.scr file is DOS text-mode screen dump, 80 x 24
+	for (int i = 0; i < 24; i++) {
+		for (int j = 0; j < 80; j++) {
+			byte pixel = buffer[(i * 80 + j) * 2];
+			byte colorByte = buffer[(i * 80 + j) * 2 + 1];
+
+			for (int row = 0; row < 8; row++) {
+				byte rowPixel = _vm->_font[pixel][row];
+				drawChar(rowPixel, 8 * j, 8 * i + row, (Color)colorByte);
+			}
+		}
+	}
 }
 
 void GraphicManager::clearAlso() {
@@ -1180,6 +1221,7 @@ void GraphicManager::drawChar(byte ander, int x, int y, Color color) {
 			*(byte *)_surface.getBasePtr(x + 7 - bit, y) = color;
 	}
 }
+
 void GraphicManager::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	for (uint16 y = 0; y < _screen.h / 2; y++) {

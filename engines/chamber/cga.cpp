@@ -20,13 +20,18 @@
  */
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
+#include "graphics/surface.h"
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/input.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
+#include "chamber/ega_resource.h"
+#include "chamber/renderer.h"
 
 #include "common/debug.h"
 
@@ -62,9 +67,9 @@ uint16 HGA_CalcXY(uint16 x, uint16 y) {
 	return HGA_CalcXY_p(x / 4, y);
 }
 
-extern byte backbuffer[0xB800]; ///< CGA: 0x4000, HGS: 0xB800
-byte CGA_SCREENBUFFER[0xB800];
-byte scrbuffer[720*348];		///< Screen buffer for blitting, it is intentionally left larger instead of dynamic memory allocation
+extern byte backbuffer[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
+byte SCREENBUFFER[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
+Graphics::Surface *mainSurface = nullptr;
 
 extern byte *scratch_mem2;
 
@@ -118,8 +123,14 @@ static const uint8 PALETTE_CGA2[4 * 3] = {
 /*
   Switch to CGA 320x200x2bpp mode
 */
-void switchToGraphicsMode(void) {
-	g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
+void CGARenderer::switchToGraphicsMode() {
+	if (g_vm->_renderMode == Common::kRenderHercG) {
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
+	} else if (g_vm->_renderMode == Common::kRenderHercA) {
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_A_PALETTE, 0, 2);
+	} else {
+		g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
+	}
 }
 
 /*
@@ -131,74 +142,140 @@ void switchToTextMode(void) {
 
 void waitVBlank(void) {
 	pollInput();
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		g_vm->_renderer->blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 	g_system->delayMillis(10);
+	g_system->updateScreen();
 }
 
-void cga_ColorSelect(byte csel) {
-	const byte *pal;
-	if (csel & 0x10)
-		pal = PALETTE_CGA;
-	else
-		pal = PALETTE_CGA2;
+void CGARenderer::colorSelect(byte csel) {
+	// TODO: Replace use of cursor palettes
+	if (g_vm->_renderMode == Common::kRenderHercG) {
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
+		CursorMan.replaceCursorPalette(Graphics::HGC_G_PALETTE, 0, 2);
+	} else if (g_vm->_renderMode == Common::kRenderHercA) {
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_A_PALETTE, 0, 2);
+		CursorMan.replaceCursorPalette(Graphics::HGC_A_PALETTE, 0, 2);
+	} else {
+		const byte *pal;
+		if (csel & 0x10)
+			pal = PALETTE_CGA;
+		else
+			pal = PALETTE_CGA2;
 
-	g_system->getPaletteManager()->setPalette(pal, 0, 4);
-	g_system->setCursorPalette(pal, 0, 4);
+		g_system->getPaletteManager()->setPalette(pal, 0, 4);
+		CursorMan.replaceCursorPalette(pal, 0, 4);
+	}
 }
 
-void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
-	dx = dy = 0;
-	w = g_vm->_screenW; h = g_vm->_screenH;
+void CGARenderer::blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
+	if (!mainSurface) {
+		mainSurface = new Graphics::Surface();
+	}
+	if (g_vm->_renderMode == Common::kRenderCGA) {
+		if (mainSurface->w != g_vm->_screenW) {
+			mainSurface->free();
+			mainSurface->create(g_vm->_screenW, g_vm->_screenH, Graphics::PixelFormat::createFormatCLUT8());
+		}
+		dx = dy = 0;
+		w = g_vm->_screenW; h = g_vm->_screenH;
 
-	int16 align = dx & (0x8 / g_vm->_screenBits - 1);
+		int16 align = dx & (0x8 / g_vm->_screenBits - 1);
 
-	dx -= align;
-	w += align;
+		dx -= align;
+		w += align;
 
-	if (dy + h >= g_vm->_screenH)
-		h = g_vm->_screenH - dy;
+		if (dy + h >= g_vm->_screenH)
+			h = g_vm->_screenH - dy;
 
-	if (dx + w >= g_vm->_screenW)
-		w = g_vm->_screenW - dx;
+		if (dx + w >= g_vm->_screenW)
+			w = g_vm->_screenW - dx;
 
-	w = (w + (0x8 / g_vm->_screenBits - 1)) / (0x8 / g_vm->_screenBits);
+		w = (w + (0x8 / g_vm->_screenBits - 1)) / (0x8 / g_vm->_screenBits);
 
-	for (int16 y = 0; y < h; y++) {
-		byte *src = CGA_SCREENBUFFER + CalcXY(dx, dy + y);
-		byte *dst = scrbuffer + (y + dy) * g_vm->_screenW + dx;
+		for (int16 y = 0; y < h; y++) {
+			uint16 line_start = calcXY(dx, dy + y);
+			byte *src = SCREENBUFFER + line_start;
+			byte *dst = (byte *)mainSurface->getBasePtr(dx, y + dy);
 
-		for (int16 x = 0; x < w; x++) {
-			byte colors = *src++;
-			if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
+			for (int16 x = 0; x < w; x++) {
+				byte colors = *src++;
 				for (int16 c = 0; c < 4; c++) {
 					byte color = (colors & 0xC0) >> 6;
 					colors <<= 2;
 					*dst++ = color;
 				}
-			} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
-				for (int16 c = 0; c < 8; c++) {
-					byte color = (colors & 0x80) >> 7;
-					colors <<= 1;
-					*dst++ = color;
-				}
+			}
+        }
+
+		g_system->copyRectToScreen((const byte *)mainSurface->getBasePtr(dx, dy), mainSurface->pitch, dx, dy, w * (0x8 / g_vm->_screenBits), h);
+		g_system->updateScreen();
+		return;
+	}
+	dx = 0;
+	dy = 0;
+	w = 320;
+	h = 200;
+
+	if (mainSurface->w != 720) {
+		mainSurface->free();
+		mainSurface->create(720, 348, Graphics::PixelFormat::createFormatCLUT8());
+		memset(mainSurface->getPixels(), 0, 720 * 348);
+	}
+
+	int16 startY = dy;
+	int16 endY = dy + h;
+
+	if (endY > 200)
+		endY = 200;
+
+	int16 startX_bytes = dx / 4;
+	int16 endX_bytes = (dx + w + 3) / 4;
+
+	if (endX_bytes > 80)
+		endX_bytes = 80;
+
+	for (int y = startY; y < endY; y++) {
+		uint16 bank = (y % 2) * 8192;
+		uint16 line = (y / 2) * 80;
+
+		int destY = y + 74;
+		int destX = 40 + (startX_bytes * 8);
+
+		byte *dst = (byte *)mainSurface->getBasePtr(destX, destY);
+
+		for (int x_bytes = startX_bytes; x_bytes < endX_bytes; x_bytes++) {
+			byte cga_byte = SCREENBUFFER[bank + line + x_bytes];
+			for (int p = 0; p < 4; p++) {
+				byte color = (cga_byte >> (6 - p * 2)) & 3;
+				byte finalColor = (color == 0) ? 0 : 1;
+				*dst++ = finalColor;
+				*dst++ = finalColor;
 			}
 		}
 	}
 
-	g_system->copyRectToScreen(scrbuffer + dy * g_vm->_screenW + dx, g_vm->_screenW, dx, dy, w * (0x8 / g_vm->_screenBits), h);
+	int renderX = 40 + (startX_bytes * 8);
+	int renderY = startY + 74;
+	int renderW = (endX_bytes - startX_bytes) * 8;
+	int renderH = endY - startY;
+
+	g_system->copyRectToScreen((const byte *)mainSurface->getBasePtr(renderX, renderY), mainSurface->pitch, renderX, renderY, renderW, renderH);
 	g_system->updateScreen();
+	return;
 }
 
-void cga_blitToScreen(int16 ofs, int16 w, int16 h) {
+void CGARenderer::blitToScreen(int16 ofs, int16 w, int16 h) {
 	uint16 byte_per_line = w / (0x8 / g_vm->_screenBits);
 	int16 dy = ofs / byte_per_line;
 	int16 dx = (ofs % byte_per_line) * (0x8 / g_vm->_screenBits);
 
-	cga_blitToScreen(dx, dy, w, h);
+	blitToScreen(dx, dy, w, h);
 }
 
-void cga_BackBufferToRealFull(void) {
+void CGARenderer::backBufferToRealFull() {
 	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
-		memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+		memcpy(SCREENBUFFER, backbuffer, sizeof(backbuffer));
 
 	} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
 		byte tempBackbuffer[0x4000];
@@ -218,26 +295,26 @@ void cga_BackBufferToRealFull(void) {
 			odd += 2 * CGA_BYTES_PER_LINE;
 		}
 
-		const int16 START_X_PIXELS = (HGA_WIDTH - (2 * CGA_WIDTH)) / 4;
-		const int16 START_Y = (HGA_HEIGHT - CGA_HEIGHT) / 2;
+		//const int16 START_X_PIXELS = (HGA_WIDTH - (2 * CGA_WIDTH)) / 4;
+		//const int16 START_Y = (HGA_HEIGHT - CGA_HEIGHT) / 2;
 
 		byte *srcPtr = tempBackbuffer;
 		for (int16 row = 0; row < CGA_HEIGHT; row++) {
-			byte *destPtr = CGA_SCREENBUFFER + HGA_CalcXY(START_X_PIXELS, START_Y + row);
+			byte *destPtr = SCREENBUFFER + HGA_CalcXY(0, row);
 			memmove(destPtr, srcPtr, CGA_BYTES_PER_LINE);
 			srcPtr += CGA_BYTES_PER_LINE;
 		}
 	}
-	cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+	blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 }
 
-void cga_RealBufferToBackFull(void) {
-	memcpy(backbuffer, CGA_SCREENBUFFER, sizeof(backbuffer));
+void CGARenderer::realBufferToBackFull() {
+	memcpy(backbuffer, SCREENBUFFER, sizeof(backbuffer));
 }
 
 /*Copy interlaced screen data to another screen*/
 /*NB! w is in bytes*/
-void cga_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void CGARenderer::copyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	uint16 oh = h;
 	uint16 oofs = ofs;
 	while (h--) {
@@ -247,18 +324,18 @@ void cga_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
+	if (target == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
 }
 
 /*
 Flip screen and backbuffer
 */
-void cga_SwapRealBackBuffer(void) {
+void CGARenderer::swapRealBackBuffer() {
 	uint16 i;
 	uint16 *s, *d;
 	waitVBlank();
-	s = (uint16 *)CGA_SCREENBUFFER;
+	s = (uint16 *)SCREENBUFFER;
 	d = (uint16 *)backbuffer;
 	for (i = 0; i < sizeof(backbuffer) / 2; i++) {
 		uint16 t = *s;
@@ -266,14 +343,14 @@ void cga_SwapRealBackBuffer(void) {
 		*d++ = t;
 	}
 
-	cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+	blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 }
 
 
 /*
 Copy current screen's pixels to scratch mem, put new pixels to screen
 */
-void cga_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::swapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte *old = scratch_mem2;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -288,8 +365,8 @@ void cga_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 o
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
 }
 
 /*
@@ -297,34 +374,19 @@ Calc screen offset from normal pixel coordinates
 Out:
   screen offset
 */
-uint16 cga_CalcXY(uint16 x, uint16 y) {
-	return CalcXY_p(x / 4, y);
+uint16 CGARenderer::calcXY(uint16 x, uint16 y) {
+	return calcXY_p(x / 4, y);
 }
 
-uint16 CalcXY(uint16 x, uint16 y) {
-	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA)
-		return cga_CalcXY(x, y);
-	else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG)
-		return HGA_CalcXY(x, y);
-	else
-		return 0;
-}
-
-uint16 CalcXY_p(uint16 x, uint16 y) {
-	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA)
-		return cga_CalcXY_p(x, y);
-	else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG)
-		return HGA_CalcXY_p(x, y);
-	else
-		return 0;
-}
 
 /*
 Calc screen offset from packed pixel coordinates
 Out:
   screen offset
 */
-uint16 cga_CalcXY_p(uint16 x, uint16 y) {
+uint16 CGARenderer::calcXY_p(uint16 x, uint16 y) {
+	if (g_vm->_videoMode == Common::RenderMode::kRenderHercG)
+		return HGA_CalcXY_p(x, y);
 	uint16 ofs = 0;
 	if (y & 1)
 		ofs += g_vm->_line_offset;
@@ -338,7 +400,7 @@ backup screen rect to a buffer
 Out:
   next buffer ptr
 */
-byte *cga_BackupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer) {
+byte *CGARenderer::backupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer) {
 	*(byte *)(buffer + 0) = h;
 	*(byte *)(buffer + 1) = w;
 	*(uint16 *)(buffer + 2) = ofs;
@@ -354,14 +416,14 @@ byte *cga_BackupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer
 }
 
 byte *cga_BackupImageReal(uint16 ofs, uint16 w, uint16 h) {
-	return cga_BackupImage(CGA_SCREENBUFFER, ofs, w, h, scratch_mem2);
+	return g_vm->_renderer->backupImage(SCREENBUFFER, ofs, w, h, scratch_mem2);
 }
 
 /*
 Blit progressive image to interlaced screen buffer
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void cga_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte *src = pixels;
 	uint16 oofs = ofs;
 	for (int16 y = 0; y < h; y++) {
@@ -372,20 +434,20 @@ void cga_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), h);
 }
 
 /*
 Blit progressive image to interlaced screen buffer, then wait for VBlank
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void cga_BlitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
-	cga_Blit(pixels, pw, w, h, screen, ofs);
+void CGARenderer::blitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+	blit(pixels, pw, w, h, screen, ofs);
 	waitVBlank();
 }
 
-void cga_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 oofs = ofs;
 	for (int16 y = 0; y < h; y++) {
 		memset(screen + ofs, pixel, w);
@@ -394,19 +456,19 @@ void cga_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), h);
 }
 
-void cga_FillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
-	cga_Fill(pixel, w, h, screen, ofs);
+void CGARenderer::fillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+	fill(pixel, w, h, screen, ofs);
 	waitVBlank();
 }
 
 /*
 Restore saved image to target screen buffer
 */
-void cga_RestoreImage(byte *buffer, byte *target) {
+void CGARenderer::restoreImage(byte *buffer, byte *target) {
 	uint16 w, h;
 	uint16 ofs;
 
@@ -418,20 +480,20 @@ void cga_RestoreImage(byte *buffer, byte *target) {
 	ofs = *(uint16 *)(buffer + 2);
 	buffer += 4;    /*TODO: fix me for large int*/
 
-	cga_Blit(buffer, w, w, h, target, ofs);
+	blit(buffer, w, w, h, target, ofs);
 }
 
 /*
 Restore saved image from scratch mem to target screen buffer
 */
-void cga_RestoreBackupImage(byte *target) {
-	cga_RestoreImage(scratch_mem2, target);
+void CGARenderer::restoreBackupImage(byte *target) {
+	restoreImage(scratch_mem2, target);
 }
 
 /*
 Copy image's real screen data to backbuffer
 */
-void cga_RefreshImageData(byte *buffer) {
+void CGARenderer::refreshImageData(byte *buffer) {
 	uint16 w, h;
 	uint16 ofs;
 
@@ -442,14 +504,14 @@ void cga_RefreshImageData(byte *buffer) {
 	w = *(byte *)(buffer + 1);
 	ofs = *(uint16 *)(buffer + 2);
 
-	cga_CopyScreenBlock(CGA_SCREENBUFFER, w, h, backbuffer, ofs);
+	copyScreenBlock(SCREENBUFFER, w, h, backbuffer, ofs);
 }
 
 /*
 Draw a vertical line with origin x:y and length l, using color
 NB! Line must not wrap around the edge
 */
-void cga_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
+void CGARenderer::drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	uint16 mask = 0;
 	/*pixels are starting from top bits of byte*/
@@ -463,7 +525,7 @@ void cga_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	mask >>= (x % g_vm->_screenPPB) * g_vm->_screenPPB;
 	pixel >>= (x % g_vm->_screenPPB) * g_vm->_screenPPB;
 
-	ofs = CalcXY_p(x / g_vm->_screenPPB, y);
+	ofs = calcXY_p(x / g_vm->_screenPPB, y);
 
 	uint16 ol = l;
 	while (l--) {
@@ -473,15 +535,15 @@ void cga_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen(x, y, 1, ol);
+	if (target == SCREENBUFFER)
+		blitToScreen(x, y, 1, ol);
 }
 
 /*
 Draw a horizontal line with origin x:y and length l, using color
 NB! Line must not wrap around the edge
 */
-void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
+void CGARenderer::drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	uint16 mask = 0;
 	/*pixels are starting from top bits of byte*/
@@ -496,7 +558,7 @@ void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	mask >>= (x % g_vm->_screenPPB) * g_vm->_screenPPB;
 	pixel >>= (x % g_vm->_screenPPB) * g_vm->_screenPPB;
 
-	ofs = CalcXY_p(x / g_vm->_screenPPB, y);
+	ofs = calcXY_p(x / g_vm->_screenPPB, y);
 
 	uint16 ol = l;
 	while (l--) {
@@ -513,8 +575,8 @@ void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 			pixel = color << ((g_vm->_screenPPB - 1) * g_vm->_screenPPB);
 		}
 	}
-	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen(x, y, ol, 1);
+	if (target == SCREENBUFFER)
+		blitToScreen(x, y, ol, 1);
 }
 
 /*
@@ -522,7 +584,7 @@ Draw horizontal line of length l with color, add surrounding pixels (bmask, bpix
 Return next line screen offset
 NB! Length specifies byte length of inner segment, not amount of pixels
  */
-uint16 cga_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) {
+uint16 CGARenderer::drawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) {
 	target[ofs] = (target[ofs] & (bmask >> 8)) | (bpix >> 8);
 	memset(target + ofs + 1, color, l);
 	target[ofs + 1 + l] = (target[ofs + 1 + l] & (bmask & 255)) | (bpix & 255);
@@ -531,8 +593,8 @@ uint16 cga_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, by
 	if ((ofs & g_vm->_line_offset) == 0)
 		ofs += g_vm->_screenBPL;
 
-	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, l * 4 + 2, 1);
+	if (target == SCREENBUFFER)
+		blitToScreen(oofs, l * 4 + 2, 1);
 
 	return ofs;
 }
@@ -540,12 +602,12 @@ uint16 cga_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, by
 /*
 Print a character at current cursor pos, then advance
 */
-void cga_PrintChar(byte c, byte *target) {
+void CGARenderer::printChar(byte c, byte *target) {
 	uint16 i;
 	byte *font = carpc_data + c * g_vm->_fontHeight;
 
 	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
-		uint16 ofs = cga_CalcXY_p(char_draw_coords_x++, char_draw_coords_y);
+		uint16 ofs = calcXY_p(char_draw_coords_x++, char_draw_coords_y);
 		for (i = 0; i < g_vm->_fontHeight; i++) {
 			c = *font++;
 			c = char_xlat_table[c];
@@ -555,12 +617,12 @@ void cga_PrintChar(byte c, byte *target) {
 				ofs += g_vm->_screenBPL;
 		}
 
-		if (target == CGA_SCREENBUFFER)
-			cga_blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth, char_draw_coords_y,  g_vm->_fontWidth, g_vm->_fontHeight);
+		if (target == SCREENBUFFER)
+			blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth, char_draw_coords_y,  g_vm->_fontWidth, g_vm->_fontHeight);
 
 	} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
-		const int16 START_X = char_draw_coords_x++ + (HGA_WIDTH / 8 - (2 * CGA_WIDTH) / 8) / 2; // x + 5
-		const int16 START_Y = char_draw_coords_y + (HGA_HEIGHT - CGA_HEIGHT) / 2;               // y + 74
+		const int16 START_X = char_draw_coords_x++;
+		const int16 START_Y = char_draw_coords_y;
 		for (i = 0; i < g_vm->_fontHeight; i++) {
 			uint16 ofs = HGA_CalcXY_p(START_X, START_Y + i);
 			c = *font++;
@@ -568,8 +630,8 @@ void cga_PrintChar(byte c, byte *target) {
 			target[ofs] = c;
 		}
 
-		if (target == CGA_SCREENBUFFER)
-			cga_blitToScreen(START_X, START_Y, g_vm->_fontWidth, g_vm->_fontHeight);
+		if (target == SCREENBUFFER)
+			blitToScreen(START_X, START_Y, g_vm->_fontWidth, g_vm->_fontHeight);
 	}
 }
 
@@ -579,7 +641,7 @@ Blit progressive sprite (mask+pixel) from scratch buffer to interlaced screen bu
 NB! width specify a number of bytes, not count of pixels
 TODO: generalize/merge me with BlitSprite
 */
-void cga_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::blitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte x;
 	byte *pixels = scratch_mem2 + 2 + sprofs;
 	uint16 oh = h;
@@ -593,19 +655,19 @@ void cga_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, 
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
 }
 
-void cga_BlitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) {
-	cga_CopyScreenBlock(backbuffer, w, h, screen, ofs);
+void CGARenderer::blitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) {
+	copyScreenBlock(backbuffer, w, h, screen, ofs);
 }
 
 /*
 Blit progressive sprite (mask+pixel) to interlaced screen buffer
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void cga_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::blitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte x;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -618,15 +680,15 @@ void cga_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, ui
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
 }
 
 /*
 Blit progressive sprite (mask+pixel) to interlaced screen buffer. Flip the sprite horizontally
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void cga_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::blitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte x;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -639,8 +701,8 @@ void cga_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
 }
 
 /*
@@ -651,7 +713,7 @@ Used to draw mouse cursor and backup what's under it
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 NB! pixel+mask comes in reversed order, compared to regular BlitSprite
 */
-void cga_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) {
+void CGARenderer::blitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) {
 	byte x;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -666,29 +728,31 @@ void cga_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen,
 			ofs += g_vm->_screenBPL;
 	}
 
-	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs, w * (0x8 / g_vm->_screenBits), oh);
 }
 
 
 /*
-Blit progressive sprite (w+h+mask+pixel) to interlaced screen buffer
+Blit progressive sprite (w+h+mask+pixel) to interlaced screen buffer.
+In EGA mode sprite is a decoded CLUT8 Graphics::Surface; w and h come from it.
 */
-void drawSprite(byte *sprite, byte *screen, uint16 ofs) {
+void CGARenderer::drawSprite(byte *sprite, byte *screen, uint16 ofs) {
 	byte w, h;
 	w = *sprite++;
 	h = *sprite++;
-	cga_BlitSprite(sprite, w * 2, w, h, screen, ofs);
+	blitSprite(sprite, w * 2, w, h, screen, ofs);
 }
 
 /*
-Blit progressive sprite (w+h+mask+pixel) to interlaced screen buffer, horizontally flipped
+Blit progressive sprite (w+h+mask+pixel) to interlaced screen buffer, horizontally flipped.
+In EGA mode sprite is a decoded CLUT8 Graphics::Surface.
 */
-void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
+void CGARenderer::drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
 	byte w, h;
 	w = *sprite++;
 	h = *sprite++;
-	cga_BlitSpriteFlip(sprite, w * 2, w, h, screen, ofs);
+	blitSpriteFlip(sprite, w * 2, w, h, screen, ofs);
 }
 
 /*
@@ -774,14 +838,14 @@ byte *loadSprite(byte index, byte *bank, byte *buffer, byte header_only) {
 
 extern byte sprit_data[RES_SPRIT_MAX];
 
-byte sprit_load_buffer[1290];
+byte sprit_load_buffer[8192];
 
-byte *loadSprit(byte index) {
+byte *CGARenderer::loadSprit(byte index) {
 	loadSprite(index, sprit_data + 4, sprit_load_buffer, 0);
 	return sprit_load_buffer;
 }
 
-byte *loadPersSprit(byte index) {
+byte *CGARenderer::loadPersSprit(byte index) {
 #if 1
 	/*Use separate memory for pers1/pers2*/
 	if (index < 61)
@@ -800,28 +864,27 @@ byte *loadPersSprit(byte index) {
 void drawSpriteN(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
-	sprite = loadSprit(index);
-	ofs = CalcXY_p(x, y);
-	drawSprite(sprite, target, ofs);
+	sprite = g_vm->_renderer->loadSprit(index);
+	ofs = g_vm->_renderer->calcXY_p(x, y);
+	g_vm->_renderer->drawSprite(sprite, target, ofs);
 }
 
 void drawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
-	sprite = loadSprit(index);
-	ofs = CalcXY_p(x, y);
-	drawSpriteFlip(sprite, target, ofs);
+	sprite = g_vm->_renderer->loadSprit(index);
+	ofs = g_vm->_renderer->calcXY_p(x, y);
+	g_vm->_renderer->drawSpriteFlip(sprite, target, ofs);
 }
 
-void backupAndShowSprite(byte index, byte x, byte y) {
-	byte w, h;
-	uint16 ofs;
+void CGARenderer::backupAndShowSprite(byte index, byte x, byte y) {
 	byte *sprite = loadSprit(index);
-	ofs = CalcXY_p(x, y);
-	w = sprite[0];
-	h = sprite[1];
+	uint16 ofs = calcXY_p(x, y);
+
+	byte w = sprite[0];
+	byte h = sprite[1];
 	cga_BackupImageReal(ofs, w, h);
-	drawSprite(sprite, CGA_SCREENBUFFER, ofs);  /*DrawSpriteN(index, x, y, CGA_SCREENBUFFER);*/
+	drawSprite(sprite, SCREENBUFFER, ofs);
 }
 
 /*
@@ -829,11 +892,11 @@ Blit progressive image to interlaced screen buffer, then wait for VBlank
 Push image from the top to down
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void cga_AnimLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::animLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 i;
 	pixels += pw * (h - 1);
 	for (i = 1; i <= h; i++) {
-		cga_BlitAndWait(pixels, pw, w, i, screen, ofs);
+		blitAndWait(pixels, pw, w, i, screen, ofs);
 		pixels -= pw;
 	}
 }
@@ -844,10 +907,10 @@ Pull and expand image from the right to left
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 NB! ofs specifies top-right corner of the image
 */
-void cga_AnimLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::animLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 i;
 	for (i = 0; i < n; i++) {
-		cga_BlitAndWait(pixels, pw, w + i, h, screen, ofs);
+		blitAndWait(pixels, pw, w + i, h, screen, ofs);
 		ofs -= 1;
 	}
 }
@@ -857,10 +920,10 @@ Blit progressive image to interlaced screen buffer, then wait for VBlank
 Push image from the left to right
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void cga_AnimLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void CGARenderer::animLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 i;
 	for (i = 0; i < n; i++) {
-		cga_BlitAndWait(pixels, pw, w + i, h, screen, ofs);
+		blitAndWait(pixels, pw, w + i, h, screen, ofs);
 		pixels -= 1;
 	}
 }
@@ -871,10 +934,10 @@ Push image from the down to up
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 NB! x:y specifies left-bottom coords
 */
-void cga_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) {
+void CGARenderer::animLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) {
 	uint16 i;
 	for (i = 1; i <= h; i++) {
-		cga_BlitAndWait(pixels, pw, w, i, screen, cga_CalcXY_p(x, y));
+		blitAndWait(pixels, pw, w, i, screen, calcXY_p(x, y));
 		y -= 1;
 	}
 }
@@ -883,7 +946,7 @@ void cga_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen,
 /*Fill gap with source screen data*/
 /*offs points to block's bottom most line, data will be shifted to next line*/
 /*NB! w is in bytes*/
-void cga_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void CGARenderer::hideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -912,8 +975,8 @@ void cga_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 
 		/*fill just freed line with new pixels*/
 		memcpy(target + tofs, source + tofs, w);
 
-		if (screen == CGA_SCREENBUFFER) {
-			cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenW);
+		if (screen == SCREENBUFFER) {
+			blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenW);
 		}
 
 		waitVBlank();
@@ -928,7 +991,7 @@ void cga_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 
 /*Fill gap with source screen data*/
 /*offs points to block's top most line, data will be shifted to previous line*/
 /*NB! w is in bytes*/
-void cga_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void CGARenderer::hideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -957,8 +1020,8 @@ void cga_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w,
 		/*fill just freed line with new pixels*/
 		memcpy(target + tofs, source + tofs, w);
 
-		if (screen == CGA_SCREENBUFFER) {
-			cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+		if (screen == SCREENBUFFER) {
+			blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 		}
 
 		waitVBlank();
@@ -973,7 +1036,7 @@ void cga_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w,
 /*Fill gap with source screen data*/
 /*offs points to block's left most column, data will be shifted to previous column*/
 /*NB! w is in bytes*/
-void cga_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void CGARenderer::hideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -996,8 +1059,8 @@ void cga_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 
 				sofs += g_vm->_screenBPL;
 		}
 
-		if (screen == CGA_SCREENBUFFER) {
-			cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+		if (screen == SCREENBUFFER) {
+			blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 		}
 
 		waitVBlank();
@@ -1010,7 +1073,7 @@ void cga_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 
 /*Fill gap with source screen data*/
 /*offs points to block's right most column, data will be shifted to next column*/
 /*NB! w is in bytes*/
-void cga_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void CGARenderer::hideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -1033,8 +1096,8 @@ void cga_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16
 				sofs += g_vm->_screenBPL;
 		}
 
-		if (screen == CGA_SCREENBUFFER) {
-			cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+		if (screen == SCREENBUFFER) {
+			blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 		}
 
 		waitVBlank();
@@ -1176,8 +1239,8 @@ static void fallPieces(scrpiece_t *pieces, byte *source, byte *target) {
 			again = 1;
 		}
 
-		if (target == CGA_SCREENBUFFER) {
-			cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+		if (target == SCREENBUFFER) {
+			g_vm->_renderer->blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 		}
 
 		waitVBlank();
@@ -1185,13 +1248,13 @@ static void fallPieces(scrpiece_t *pieces, byte *source, byte *target) {
 	} while (again);
 }
 
-void cga_HideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void CGARenderer::hideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	scrpiece_t *pieces = (scrpiece_t *)scratch_mem2;
 	screenToPieces(w, h, screen, ofs, pieces);
 	fallPieces(pieces, source, target);
 }
 
-void cga_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target) {
+void CGARenderer::traceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target) {
 	byte b0 = 0;
 	byte b1 = 0;
 	byte mask;
@@ -1217,15 +1280,15 @@ void cga_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byt
 	dy = h * 2;
 
 	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
-		ofs = CalcXY_p(sx / 4, sy);
+		ofs = calcXY_p(sx / 4, sy);
 		mask = 0xC0 >> ((sx % 4) * 2);
 	} else {
-		ofs = CalcXY_p(sx / 8, sy);
+		ofs = calcXY_p(sx / 8, sy);
 		mask = 0x80 >> (sx % 8); // TODO: check this
 	}
 
 	/*
-	ofs = CalcXY_p(sx / 4, sy);
+	ofs = calcXY_p(sx / 4, sy);
 	mask = 0xC0 >> ((sx % 4) * 2);
 	*/
 
@@ -1268,8 +1331,8 @@ void cga_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byt
 		target[ofs] = (target[ofs] & ~mask) | (source[ofs] & mask);
 	}
 
-	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
+	if (target == SCREENBUFFER)
+		blitToScreen(0, 0, g_vm->_screenW, g_vm->_screenH);
 }
 
 /*TODO: get rid of this structure and pass everything relevant as arguments?*/
@@ -1379,7 +1442,7 @@ static void cga_Zoom(zoom_t *params, byte tw, byte th, byte *source, byte *targe
 			params->yval_l = params->eh;
 	}
 
-	cga_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
+	g_vm->_renderer->blitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
 }
 #endif
 
@@ -1447,7 +1510,7 @@ static void cga_ZoomOpt(zoom_t *params, byte tw, byte th, byte *source, byte *ta
 			yval = params->eh << 8;
 	}
 
-	cga_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
+	g_vm->_renderer->blitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
 }
 
 /*
@@ -1455,7 +1518,7 @@ Draw image zoomed from w:h to nw:nx to target at specified ofs
 Use backbuffer pixels to fill sides
 NB! w/nw are the number of bytes, not pixels
 */
-void cga_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) {
+void CGARenderer::zoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) {
 	zoom_t zoom;
 
 	zoom.pixels = pixels;
@@ -1521,7 +1584,7 @@ Use backbuffer pixels to fill sides
 NB! w is the number of bytes, not pixels
 NB! ofs is the final image top left corner, not the zoom origin
 */
-void cga_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
+void CGARenderer::animZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
 	uint16 finofs = ofs;
 	byte x, y, maxside;
 
@@ -1550,7 +1613,7 @@ void cga_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
 
 	cga_AnimZoomOpt(&zoom, w * 4 * 2, h * 2, maxside, target, ofs);
 
-	cga_BlitAndWait(pixels, w, w, h, target, finofs);
+	blitAndWait(pixels, w, w, h, target, finofs);
 }
 
 /*
@@ -1624,7 +1687,7 @@ void cga_ZoomInplace(zoom_t *params, byte tw, byte th, byte *source, byte *targe
 	}
 }
 
-void cga_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target) {
+void CGARenderer::zoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target) {
 	zoom_t zoom;
 
 	zoom.pixels = pixels;
@@ -1634,7 +1697,7 @@ void cga_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x,
 	zoom.eh = h - 1;
 	zoom.xbase = x % 4;
 
-	cga_ZoomInplace(&zoom, nw, nh, target, target, CalcXY_p(x, y));
+	cga_ZoomInplace(&zoom, nw, nh, target, target, calcXY_p(x, y));
 }
 
 } // End of namespace Chamber

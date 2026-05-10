@@ -149,6 +149,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"realm",           "The Realm"},
+	{"shield",          "Behind the Developer's Shield"},
 	{"shivers",         "Shivers"},
 	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},
@@ -234,8 +235,14 @@ DetectedGames SciMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 				break;
 		}
 
+		// Save the language info from the options string, since it will be overwritten in the next step.
+		Common::List<Common::Language> langList = Common::parseLanguagesFromGameGUIOptionsString(game.getGUIOptions());
+
 		game.setGUIOptions(customizeGuiOptions(fslist.begin()->getParent().getPath(), parseGameGUIOptions(game.getGUIOptions()), game.platform, g->gameidStr, g->version));
-		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(game.language));
+
+		// Restore the language info to the options string.
+		for (const Common::Language &lang : langList)
+			game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(lang));
 	}
 
 	return games;

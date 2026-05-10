@@ -43,17 +43,15 @@ enum {
 };
 
 class Walker : public M4::Walker {
-	// Strangerke : I turned the callback from private to public as it's called by room 803. TODO: Check if it's correct, then update the description accordingly
-public:
-	/**
-	 * This is called when PLAYER walker code sends system message back to C (used by MAIN PLAYER WALKER ONLY)
-	 */
-	static void player_walker_callback(frac16 myMessage, machine *sender);
-
 public:
 	~Walker() override {}
 
-	bool walk_load_walker_and_shadow_series() override;
+	/**
+	 * This is called when PLAYER walker code sends system message back to C
+	 */
+	static void player_walker_callback(frac16 myMessage, machine *sender);
+
+	void walk_load_walker_and_shadow_series() override;
 	machine *walk_initialize_walker() override;
 
 	static void unloadSprites();

@@ -22,9 +22,13 @@
 #ifndef ULTIMA8_KERNEL_KERNEL_H
 #define ULTIMA8_KERNEL_KERNEL_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+
+namespace Common {
+class ReadStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,8 +38,8 @@ class Process;
 class idMan;
 
 typedef Process *(*ProcessLoadFunc)(Common::ReadStream *rs, uint32 version);
-typedef Std::list<Process *>::const_iterator ProcessIter;
-typedef Std::list<Process *>::iterator ProcessIterator;
+typedef Common::List<Process *>::const_iterator ProcessIter;
+typedef Common::List<Process *>::iterator ProcessIterator;
 
 
 class Kernel {
@@ -91,13 +95,7 @@ public:
 	//! \param fail if true, fail the processes instead of terminating them
 	void killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fail);
 
-	//! get an iterator of the process list.
-	ProcessIter getProcessBeginIterator() {
-		return _processes.begin();
-	}
-	ProcessIter getProcessEndIterator() {
-		return _processes.end();
-	}
+	const Common::List<Process *> &getProcesses() const { return  _processes; }
 
 	void kernelStats();
 	void processTypes();
@@ -124,7 +122,7 @@ public:
 		return _frameByFrame;
 	}
 
-	void addProcessLoader(Std::string classname, ProcessLoadFunc func) {
+	void addProcessLoader(Common::String classname, ProcessLoadFunc func) {
 		_processLoaders[classname] = func;
 	}
 
@@ -135,9 +133,9 @@ public:
 		return _tickNum;
 	};
 
-	static const uint32 TICKS_PER_FRAME;
-	static const uint32 TICKS_PER_SECOND;
-	static const uint32 FRAMES_PER_SECOND;
+	static constexpr uint32 TICKS_PER_FRAME = 2;
+	static constexpr uint32 TICKS_PER_SECOND = 60;
+	static constexpr uint32 FRAMES_PER_SECOND = TICKS_PER_SECOND / TICKS_PER_FRAME;
 
 	// A special process type which means kill all the processes.
 	static const uint16 PROC_TYPE_ALL;
@@ -147,10 +145,10 @@ public:
 private:
 	Process *loadProcess(Common::ReadStream *rs, uint32 version);
 
-	Std::list<Process *> _processes;
+	Common::List<Process *> _processes;
 	idMan   *_pIDs;
 
-	Std::list<Process *>::iterator _currentProcess;
+	Common::List<Process *>::iterator _currentProcess;
 
 	Common::HashMap<Common::String, ProcessLoadFunc> _processLoaders;
 

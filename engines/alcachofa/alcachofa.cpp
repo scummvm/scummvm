@@ -25,6 +25,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "graphics/framelimiter.h"
 #include "graphics/thumbnail.h"
@@ -76,24 +77,28 @@ Common::String AlcachofaEngine::getGameId() const {
 }
 
 Common::Error AlcachofaEngine::run() {
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	setDebugger(_console);
-	_game.reset(Game::createForMovieAdventure());
-	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
+	_game.reset(Game::create());
+	Config::registerDefaults();
+	_config.loadFromScummVM();
+	_world.load();
+	_renderer.reset(IRenderer::createOpenGLRenderer(game().getResolution()));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
-	_world.reset(new World());
+	_camera.reset(Camera::create());
 	_script.reset(new Script());
 	_player.reset(new Player());
-	_globalUI.reset(new GlobalUI());
-	_menu.reset(new Menu());
+	_globalUI.reset(isV1() || isV2() ? static_cast<GlobalUI *>(new GlobalUIV1()) : new GlobalUIV3());
+	_menu.reset(isV1() ? static_cast<Menu *>(new MenuV1()) : new MenuV3());
 	setMillis(0);
 	game().onLoadedGameFiles();
 
 	if (!tryLoadFromLauncher()) {
-		_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
+		_script->createProcess(MainCharacterKind::None, _game->getInitScriptName());
 		_scheduler.run();
 		// we run once to set the initial room, otherwise we could run into currentRoom == nullptr
 	}
+	assert(_player->currentRoom() != nullptr);
 
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
@@ -110,7 +115,7 @@ Common::Error AlcachofaEngine::run() {
 		_sounds.update();
 		_renderer->begin();
 		_drawQueue->clear();
-		_camera.shake() = Vector2d();
+		_camera->preUpdate();
 		_player->preUpdate();
 		if (_player->currentRoom() != nullptr)
 			_player->currentRoom()->update();
@@ -144,7 +149,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 	// Video files are either MPEG PS or AVI
 	FakeLock lock("playVideo", _eventLoopSemaphore);
 	File *file = new File();
-	if (!file->open(Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1)))) {
+	if (!file->open(game().getVideoPath(videoId))) {
 		delete file;
 		game().invalidVideo(videoId, "open file");
 		return;
@@ -310,6 +315,8 @@ void AlcachofaEngine::pauseEngineIntern(bool pause) {
 }
 
 bool AlcachofaEngine::canLoadGameStateCurrently(U32String *msg) {
+	if (_menu == nullptr)
+		return false; // the autosave wants to trigger even during error() while starting the game
 	if (!_eventLoopSemaphore.isReleased())
 		return false;
 	return
@@ -412,7 +419,8 @@ void AlcachofaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
 	}
 
 	// otherwise we have to rerender
-	thumbnail.create(kBigThumbnailWidth, kBigThumbnailHeight, g_engine->renderer().getPixelFormat());
+	auto size = g_engine->game().getThumbnailResolution();
+	thumbnail.create(size.x, size.y, g_engine->renderer().getPixelFormat());
 	if (g_engine->player().currentRoom() == nullptr)
 		return; // but without a room we would render only black anyway
 
@@ -437,8 +445,15 @@ bool AlcachofaEngine::tryLoadFromLauncher() {
 	return result;
 }
 
-Config::Config() {
-	loadFromScummVM();
+void Config::registerDefaults() {
+	Config c;
+	ConfMan.registerDefault("subtitles", c._subtitles);
+	ConfMan.registerDefault("high_quality", c._highQuality);
+	ConfMan.registerDefault("32_bits", c._bits32);
+	ConfMan.registerDefault("tex_filter", g_engine->game().shouldFilterTexturesByDefault());
+	ConfMan.registerDefault("music_volume", c._musicVolume);
+	ConfMan.registerDefault("speech_volume", c._speechVolume);
+	ConfMan.registerDefault("sfx_volume", c._speechVolume);
 }
 
 void Config::loadFromScummVM() {
@@ -447,12 +462,14 @@ void Config::loadFromScummVM() {
 	_subtitles = ConfMan.getBool("subtitles");
 	_highQuality = ConfMan.getBool("high_quality");
 	_bits32 = ConfMan.getBool("32_bits");
+	_texFilter = ConfMan.getBool("tex_filter");
 }
 
 void Config::saveToScummVM() {
 	ConfMan.setBool("subtitles", _subtitles);
 	ConfMan.setBool("high_quality", _highQuality);
 	ConfMan.setBool("32_bits", _bits32);
+	ConfMan.setBool("tex_filter", _texFilter);
 	ConfMan.setInt("music_volume", _musicVolume);
 	ConfMan.setInt("speech_volume", _speechVolume);
 	ConfMan.setInt("sfx_volume", _speechVolume);

@@ -88,7 +88,7 @@ public:
 	NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap, int titlePos = 0);
 	~NinePatchBitmap();
 
-	void blit(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh, MacWindowManager *wm = NULL);
+	void blit(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh, MacWindowManager *wm = NULL, bool maskOnly = false, uint32 maskColor = 0);
 	void modifyTitleWidth(int titleWidth);
 
 	int getWidth() { return _width; }

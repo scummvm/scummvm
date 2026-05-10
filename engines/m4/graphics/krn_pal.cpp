@@ -64,17 +64,17 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 	for (int i = 1; i < steps; i++) {
 		for (int j = from; j <= to; j++) {
 			if (to_from_flag == TO_GREY) {      	// fade to grey from full color
-				working[j].r = (Byte)((int)pal[j].r + ((((int)_GP(fadeToMe)[j].r - (int)pal[j].r) * i) / steps));
-				working[j].g = (Byte)((int)pal[j].g + ((((int)_GP(fadeToMe)[j].g - (int)pal[j].g) * i) / steps));
-				working[j].b = (Byte)((int)pal[j].b + ((((int)_GP(fadeToMe)[j].b - (int)pal[j].b) * i) / steps));
+				working[j].r = (byte)((int)pal[j].r + ((((int)_GP(fadeToMe)[j].r - (int)pal[j].r) * i) / steps));
+				working[j].g = (byte)((int)pal[j].g + ((((int)_GP(fadeToMe)[j].g - (int)pal[j].g) * i) / steps));
+				working[j].b = (byte)((int)pal[j].b + ((((int)_GP(fadeToMe)[j].b - (int)pal[j].b) * i) / steps));
 			} else if (to_from_flag == TO_COLOR) {  // fade from grey to full color
-				working[j].r = (Byte)((int)_GP(fadeToMe)[j].r + ((((int)pal[j].r - (int)_GP(fadeToMe)[j].r) * i) / steps));
-				working[j].g = (Byte)((int)_GP(fadeToMe)[j].g + ((((int)pal[j].g - (int)_GP(fadeToMe)[j].g) * i) / steps));
-				working[j].b = (Byte)((int)_GP(fadeToMe)[j].b + ((((int)pal[j].b - (int)_GP(fadeToMe)[j].b) * i) / steps));
+				working[j].r = (byte)((int)_GP(fadeToMe)[j].r + ((((int)pal[j].r - (int)_GP(fadeToMe)[j].r) * i) / steps));
+				working[j].g = (byte)((int)_GP(fadeToMe)[j].g + ((((int)pal[j].g - (int)_GP(fadeToMe)[j].g) * i) / steps));
+				working[j].b = (byte)((int)_GP(fadeToMe)[j].b + ((((int)pal[j].b - (int)_GP(fadeToMe)[j].b) * i) / steps));
 			} else {											//fade from grey to black
-				working[j].r = (Byte)((int)_GP(fadeToMe)[j].r - ((((int)_GP(fadeToMe)[j].r) * i) / steps));
-				working[j].g = (Byte)((int)_GP(fadeToMe)[j].g - ((((int)_GP(fadeToMe)[j].g) * i) / steps));
-				working[j].b = (Byte)((int)_GP(fadeToMe)[j].b - ((((int)_GP(fadeToMe)[j].b) * i) / steps));
+				working[j].r = (byte)((int)_GP(fadeToMe)[j].r - ((((int)_GP(fadeToMe)[j].r) * i) / steps));
+				working[j].g = (byte)((int)_GP(fadeToMe)[j].g - ((((int)_GP(fadeToMe)[j].g) * i) / steps));
+				working[j].b = (byte)((int)_GP(fadeToMe)[j].b - ((((int)_GP(fadeToMe)[j].b) * i) / steps));
 			}
 		}
 
@@ -107,7 +107,7 @@ static void grey_fade(RGB8 *pal, int32 to_from_flag, int32 from, int32 to, int32
 
 static void create_luminance_map(RGB8 *pal) {
 	for (int i = GREY_START; i <= FREE_END; i++) {
-		const Byte luminance = (Byte)((pal[i].r + pal[i].g + pal[i].b) / 3);
+		const byte luminance = (byte)((pal[i].r + pal[i].g + pal[i].b) / 3);
 		_GP(fadeToMe)[i].g = luminance;
 		// Orion Burger uses green shading, Riddle uses grey shading
 		_GP(fadeToMe)[i].r = _GP(fadeToMe)[i].b = IS_RIDDLE ? luminance : 0;
@@ -305,7 +305,7 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 	// Play the sprite series as a loop
 	int32 status;
 	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
-	_GP(seriesAnim8) = series_play_xy(picName, -1, FORWARD,
+	_GP(seriesAnim8) = series_play_xy(picName, -1, SERIES_FORWARD,
 		x - game_buff_ptr->x1, y - game_buff_ptr->y1, 100, 0, 7, -1);
 
 	if (digiName) {
@@ -326,12 +326,6 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 	_G(game_bgBuff)->release();
 
 	pauseEngines();
-}
-
-void kernel_examine_inventory_object(const char *picName, int steps, int delay,
-		int32 x, int32 y, int32 triggerNum, const char *digiName, int32 digiTrigger) {
-	kernel_examine_inventory_object(picName, _G(master_palette), steps, delay,
-		x, y, triggerNum, digiName, digiTrigger);
 }
 
 void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
@@ -372,7 +366,8 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 // This is an inplace remap
 // fadeToMe must already have been set up to correspond to the image on the screen
 void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2) {
-	if ((!src) || (!src->data)) return;
+	if ((!src) || (!src->data))
+		return;
 
 	// WORKAROUND: Fix original bounding that could result in buffer overruns on final y2 line
 	if (x1 < 0) x1 = 0;
@@ -582,9 +577,9 @@ static void pal_fade_update(RGB8 *origPalette) {
 		_GP(myFadeCurrPercentFrac) = tempFrac2;
 
 		for (int32 i = _GP(myFadeStartIndex); i <= _GP(myFadeEndIndex); i++) {
-			_GP(myFXPalette)[i].r = (Byte)(MulSF16(origPalette[i].r << 16, tempFrac2) >> 16);
-			_GP(myFXPalette)[i].g = (Byte)(MulSF16(origPalette[i].g << 16, tempFrac2) >> 16);
-			_GP(myFXPalette)[i].b = (Byte)(MulSF16(origPalette[i].b << 16, tempFrac2) >> 16);
+			_GP(myFXPalette)[i].r = (byte)(MulSF16(origPalette[i].r << 16, tempFrac2) >> 16);
+			_GP(myFXPalette)[i].g = (byte)(MulSF16(origPalette[i].g << 16, tempFrac2) >> 16);
+			_GP(myFXPalette)[i].b = (byte)(MulSF16(origPalette[i].b << 16, tempFrac2) >> 16);
 		}
 
 		// Recalculate the end delay time again
@@ -710,7 +705,8 @@ static void pal_cycle_update() {
 }
 
 void pal_fx_update() {
-	int32 startA = 0, endA = 0, startB = 0, endB = 0, startDAC = 0, endDAC = 0;
+	int32 startA = 0, endA = 0, startB = 0, endB = 0;
+	int32 startDAC, endDAC;
 
 	if (!_GP(myCycleReq) && !_GP(myFadeReq))
 		// Crap out quickly if no effects required
@@ -852,11 +848,6 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 			gr_pal_set_entry(i, &color); // Set new colors to DAC.
 		}
 	}
-}
-
-void DAC_restore() {
-	term_message("DAC restored");
-	gr_pal_set_range(&_G(master_palette)[0], 0, 256);
 }
 
 } // namespace M4

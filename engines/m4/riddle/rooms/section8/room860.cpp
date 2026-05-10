@@ -19,11 +19,12 @@
  *
  */
 
-#include "m4/m4.h"
 #include "m4/riddle/rooms/section8/room860.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
 #include "m4/riddle/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Riddle {
@@ -145,7 +146,7 @@ void Room860::daemon() {
 
 		digi_play_loop("950_s45", 3, 80, -1, 950);
 
-		_G(game).new_room = 811;
+		_G(game).setRoom(811);
 		break;
 
 	case 1000:

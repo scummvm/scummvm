@@ -41,6 +41,7 @@ public:
 
 private:
 	int32  _framesCount;
+	int32  _frame;
 	int32  _cycle;
 	int32  _cyclesCount;
 	Video::VideoDecoder *_animation;

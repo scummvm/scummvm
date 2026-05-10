@@ -47,7 +47,11 @@ struct sPlane4f {
 		A = (b.y - a.y) * (c.z - a.z) - (c.y - a.y) * (b.z - a.z);
 		B = (b.z - a.z) * (c.x - a.x) - (c.z - a.z) * (b.x - a.x);
 		C = (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
-		GetNormal().normalize();
+		Vect3f vect(A, B, C);
+		vect.normalize();
+		A = vect.x;
+		B = vect.y;
+		C = vect.z;
 		D = -A * a.x - B * a.y - C * a.z;
 	}
 	inline void Set(const Vect3f &a, const Vect3f &b, const Vect3f &c) {
@@ -55,7 +59,11 @@ struct sPlane4f {
 		A = (b.y - a.y) * (c.z - a.z) - (c.y - a.y) * (b.z - a.z);
 		B = (b.z - a.z) * (c.x - a.x) - (c.z - a.z) * (b.x - a.x);
 		C = (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
-		GetNormal().normalize();
+		Vect3f vect(A, B, C);
+		vect.normalize();
+		A = vect.x;
+		B = vect.y;
+		C = vect.z;
 		D = -A * a.x - B * a.y - C * a.z;
 	}
 	inline float GetDistance(const Vect3f &a) {
@@ -71,8 +79,8 @@ struct sPlane4f {
 		t = (A * a.x + B * a.y + C * a.z + D) / t;
 		return t;
 	}
-	inline Vect3f &GetNormal()                           {
-		return *(Vect3f *)&A;
+	inline Vect3f GetNormal() const {
+		return Vect3f(A, B, C);
 	}
 	inline void GetReflectionVector(const Vect3f &in, Vect3f &out) {
 		// out - поиск отражение вектора от плоскости

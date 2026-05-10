@@ -55,12 +55,13 @@ public:
 	GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameBountyHunter() override;
 	Common::Error run() override;
-	void debugWarpTo(int val);
+	void debug_warpTo(int val);
 
 private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	BHScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	BHScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
 	void callScriptFunctionRectHit(Common::String name, Rect *rect);
@@ -76,22 +77,29 @@ private:
 	BHScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_liveIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_diffIcon;
-	Graphics::Surface *_bulletholeIcon;
-	Graphics::Surface *_playersIcon1;
-	Graphics::Surface *_playersIcon2;
-	Graphics::Surface *_textScoreIcon;
-	Graphics::Surface *_textMenuIcon;
-	Graphics::Surface *_textBlackBarIcon;
-	Common::Array<Graphics::Surface *> *_bagsIcons;
-	Common::Array<Graphics::Surface *> *_shotgun;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_shellIcon = nullptr;
+	Graphics::Surface *_liveIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_playersIcon1 = nullptr;
+	Graphics::Surface *_playersIcon2 = nullptr;
+	Graphics::Surface *_textScoreIcon = nullptr;
+	Graphics::Surface *_textMenuIcon = nullptr;
+	Graphics::Surface *_textBlackBarIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
+	Common::Array<Graphics::Surface *> *_bagsIcons = nullptr;
+	Common::Array<Graphics::Surface *> *_bulletHoleIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_shotgunHoleIcon = nullptr;
 
 	// sounds
+	Audio::SeekableAudioStream *_saveSound = nullptr;
+	Audio::SeekableAudioStream *_loadSound = nullptr;
+	Audio::SeekableAudioStream *_skullSound = nullptr;
+	Audio::SeekableAudioStream *_shotSound = nullptr;
 	Audio::SeekableAudioStream *_shotgunSound = nullptr;
+	Audio::SeekableAudioStream *_emptySound = nullptr;
 
 	// constants
 	uint16 _randomHarry1[7] = {0x01B9, 0x01B7, 0x01B5, 0x01B3, 0x01AF, 0x01AD, 0};
@@ -118,36 +126,44 @@ private:
 	const uint8 _mainLevelMasks[5] = {2, 4, 8, 0x10, 0x80};
 	const uint8 _gunfightCountDown[15] = {5, 4, 3, 3, 3, 4, 3, 3, 2, 1, 3, 2, 2, 2, 1};
 
-	// const uint16 _firstSceneInScenario[4] = {4, 0x36, 0x36, 0x66};
+	// const uint16 _firstSceneInScenario[4] = {0x04, 0x36, 0x36, 0x66};
 	const uint16 _moneyScenes[4] = {0x017D, 0x013C, 0xC3, 0x69};
-	const uint16 _gunfightScenarios[18] = {0x0116, 0x0118, 0x011B, 0x011D, 0x011F, 0x0121, 0x0123, 0x0125, 0x0127,
-										   0x0129, 0x012B, 0x012D, 0x012F, 0x0131, 0x0133, 0x0135, 0x0137, 0x0139};
+	const uint16 _gunfightScenarios[19] = {0x0116, 0x0118, 0x011B, 0x011D, 0x011F, 0x0121, 0x0123, 0x0125, 0x0127,
+										   0x0129, 0x012B, 0x012D, 0x012F, 0x0131, 0x0133, 0x0135, 0x0137, 0x0139, 0};
 	const uint16 _innocentScenarios[5] = {0x0110, 0x010F, 0x010C, 0x010B, 0};
 	const uint16 _deathScenarios[9] = {0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0};
 	const uint16 _onePlayerOfTwoDead[2] = {0x0109, 0x010A};
 	const uint16 _allPlayersDead = 0x108;
-
+	const uint16 _selectOpponentScreen = 0x017B;
 	// gamestate
-	uint16 _restartScene = 0;
-	uint8 _numPlayers = 1;
-	uint8 _player = 0;
-	uint8 _playerLives[2] = {0, 0};
-	uint8 _playerGun[2] = {1, 1};
-	uint8 _playerShots[2] = {0, 0};
-	uint32 _playerScore[2] = {0, 0};
-
+	uint8 _continuesUsed = 0;
 	uint8 _currentLevel = 0;
 	uint16 _currentSubLevelSceneId = 0;
-	uint8 _numLevelsDone = 0;
+	uint8 _difficulty = 0;
+	uint32 _firstDrawFrame = 0;
+	int8 _gunfightCount = 0;
+	uint8 _kill3Count = 0;
+	uint32 _lastShotTime = 0;
 	uint8 _levelDoneMask = 0;
+	uint16 _mainWounds = 0;
+	uint8 _numLevelsDone = 0;
 	uint8 _numSubLevelsDone = 0;
+	uint8 _numPlayers = 1;
+	uint8 _player = 0;
+	int8 _playerLives[2] = {3, 3};
+	int8 _oldLives[2] = {0, 0};
+	uint8 _playerGun[2] = {1, 1};
+	uint8 _playerShots[2] = {6, 6};
+	uint8 _oldShots[2] = {0, 0};
+	uint32 _playerScore[2] = {0, 0};
+	uint32 _oldScore[2] = {1, 1};
+	uint32 _pointsSinceLastBonus[2] = {0, 0};
+	uint16 _restartScene = 0;
+	uint8 _whichGun = 0;
+	uint8 _oldWhichGun = 0xFF;
+	bool _wounded = false;
 
-	// uint16 _usedScenes = 0;
-	// int16 _lastPick = -1;
-	// int16 _initted = 0;
-	// int16 _sceneCount = 0;
-
-	uint16 *_randomSceneList;
+	uint16 *_randomSceneList = nullptr;
 	uint8 _randomMax = 0;
 	uint16 _randomMask = 0;
 	int16 _randomPicked = 0;
@@ -165,18 +181,23 @@ private:
 	int16 _deathPicked = 0;
 	uint8 _deathSceneCount = 0;
 
-	uint8 _continuesUsed = 0;
-	bool _wounded = false;
-	uint16 _mainWounds = 0;
-	int8 _gunfightCount = 0;
-	bool _given = false;
-	uint32 _firstDrawFrame = 0;
-	uint8 _count = 0;
+	uint8 _iconOrder[4] = {0, 0, 0, 0};
+	uint32 _iconOffset = 0;
+	uint32 _iconCounter = 0;
+	bool _bagAnimToggle = false;
+	Rect _bagRect;
+	bool _bagActive = false;
+	uint8 _playerWhoHitBag = 0;
 
-	uint8 _unk_2ADA6 = 0;
+	bool _bulletsGiven = false;
+	bool _moneyGiven = false;
+	bool _shotgunGiven = false;
+	bool _bagDropped = false;
 
 	// base functions
-	void newGame();
+	void updateScreen() override;
+	uint16 startMyGame();
+	void initGameStatus();
 	void doMenu();
 	void updateCursor();
 	void updateMouse();
@@ -185,30 +206,41 @@ private:
 	void displayScores(uint8 player);
 	void displayShotsLeft(uint8 player);
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
+	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
+	Rect *checkZone(Zone *zone, Common::Point *point);
 
 	// misc game functions
 	void setNextScene(uint16 sceneId);
 	void displayShotFiredImage(Common::Point *point);
 	void enableVideoFadeIn();
+	void iconBags();
+	void iconBullets();
+	void iconMoney();
 	void iconShotgun();
 	void iconReset();
+	void iconSetup();
+	void iconHitGeneric(uint8 type);
+	void displayCurrentBag();
+	void moveCurrentBag();
 	uint16 beginLevel(uint8 levelNumber);
+	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	uint16 pickRandomScene(uint16 *sceneList, uint8 max);
 	uint16 pickGunfightScene();
 	uint16 pickInnocentScene();
 	uint16 pickDeathScene();
 	uint16 timeForGunfight();
 	void waitingForShootout(uint32 drawFrame);
-	void doShotgunSound();
 
 	// Script functions: RectHit
+	void rectNewScene(Rect *rect);
 	void rectShotMenu(Rect *rect);
 	void rectSave(Rect *rect);
 	void rectLoad(Rect *rect);
 	void rectContinue(Rect *rect);
 	void rectStart(Rect *rect);
+	void rectExit(Rect *rect);
 	void rectTogglePlayers(Rect *rect);
 	void rectHitIconJug(Rect *rect);
 	void rectHitIconLantern(Rect *rect);
@@ -270,6 +302,12 @@ private:
 
 	// Script functions: Scene WepDwn
 	void sceneDefaultWepdwn(Scene *scene);
+
+	// Script functions: ScnScr
+	void sceneDefaultScore(Scene *scene);
+
+	// debug methods
+	void debug_drawZoneRects() override;
 };
 
 class DebuggerBountyHunter : public GUI::Debugger {

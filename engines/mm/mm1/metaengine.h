@@ -30,6 +30,8 @@ namespace MM1 {
 enum KeybindingAction {
 	KEYBIND_ESCAPE,
 	KEYBIND_SELECT,
+	KEYBIND_KEY_N,
+	KEYBIND_KEY_Y,
 
 	KEYBIND_FORWARDS,
 	KEYBIND_BACKWARDS,
@@ -99,12 +101,17 @@ public:
 	/**
 	 * Initialize keymaps
 	 */
-	static Common::KeymapArray initKeymaps(KeybindingMode mode = KBMODE_MENUS);
+	static Common::KeymapArray initKeymaps();
 
 	/**
 	 * Execute an engine keymap action
 	 */
 	static void executeAction(KeybindingAction keyAction);
+
+	/**
+	 * Return the keypress represented by a keymap action, if any
+	 */
+	static Common::KeyState getActionKeyState(KeybindingAction keyAction);
 
 	/**
 	 * Sets the current set of actions which are active

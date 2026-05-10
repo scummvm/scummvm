@@ -129,7 +129,7 @@ private:
 	int initCompressedChunkFromConf(const ConfigElement &compressedChunkConf);
 
 	static MapMgr *_instance;
-	Std::vector<Map *> _mapList;
+	Common::Array<Map *> _mapList;
 };
 
 #define mapMgr (MapMgr::getInstance())

@@ -38,6 +38,7 @@ private:
 	int _alignmentCost = 0, _donateCost = 0;
 private:
 	void updateCosts();
+	void writeOption(int row, char c, const Common::String &text, const Common::String &cost);
 	void restoreHealth();
 	void uncurseItems();
 	void restoreAlignment();

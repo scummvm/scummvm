@@ -169,9 +169,11 @@ public:
 
 	void glk_put_char_uni(uint32 ch);
 	void glk_put_string_uni(const uint32 *s);
+	void glk_put_string_uni(const Common::U32String &s);
 	void glk_put_buffer_uni(const uint32 *buf, uint len);
 	void glk_put_char_stream_uni(strid_t str, uint32 ch);
 	void glk_put_string_stream_uni(strid_t str, const uint32 *s);
+	void glk_put_string_stream_uni(strid_t str, const Common::U32String &s);
 	void glk_put_buffer_stream_uni(strid_t str, const uint32 *buf, uint len);
 
 	int glk_get_char_stream_uni(strid_t str);

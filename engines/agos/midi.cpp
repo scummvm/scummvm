@@ -250,10 +250,7 @@ int MidiPlayer::open() {
 			_driverMsMusic = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
 			if (_vm->getGameType() == GType_WW) {
 				// WORKAROUND See above.
-				int16 defaultInstruments[16];
-				Common::fill(defaultInstruments, defaultInstruments + ARRAYSIZE(defaultInstruments), -1);
-				Common::copy(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS + ARRAYSIZE(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS), defaultInstruments + 1);
-				_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, defaultInstruments);
+				_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS);
 			}
 			if (usesMidiSfx) {
 				if (ConfMan.getBool("multi_midi")) {
@@ -316,8 +313,7 @@ int MidiPlayer::open() {
 							_("Could not find AdLib instrument definition file\n"
 							  "%s. Without this file,\n"
 							  "the music will not sound the same as the original game."),
-							"MT_FM.IBK"),
-						_("OK"));
+							"MT_FM.IBK"));
 					dialog.runModal();
 
 					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
@@ -356,10 +352,7 @@ int MidiPlayer::open() {
 			_driverMsMusic = new MidiDriver_MT32GM(_dataType);
 
 			// WORKAROUND See above.
-			int16 defaultInstruments[16];
-			Common::fill(defaultInstruments, defaultInstruments + ARRAYSIZE(defaultInstruments), -1);
-			Common::copy(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS + ARRAYSIZE(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS), defaultInstruments + 1);
-			_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, defaultInstruments);
+			_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS);
 
 			if (_vm->getPlatform() == Common::kPlatformDOS && !(_vm->getFeatures() & GF_TALKIE) &&
 					ConfMan.getBool("multi_midi")) {
@@ -374,8 +367,7 @@ int MidiPlayer::open() {
 							_("Could not find AdLib instrument definition file\n"
 							  "%s. Without this file,\n"
 							  "the sound effects will not sound the same as the original game."),
-							"MT_FM.IBK"),
-						_("OK"));
+							"MT_FM.IBK"));
 					dialog.runModal();
 
 					_driverMsSfx = new MidiDriver_ADLIB_Multisource(oplType);
@@ -453,8 +445,7 @@ int MidiPlayer::open() {
 							_("Could not find AdLib instrument definition file\n"
 							  "%s or %s. Without one of these files,\n"
 							  "the music will not sound the same as the original game."),
-							"MIDPAK.AD", "SETUP.SHR"),
-						_("OK"));
+							"MIDPAK.AD", "SETUP.SHR"));
 					dialog.runModal();
 
 					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);

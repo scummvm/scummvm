@@ -86,10 +86,16 @@ void BaseSurface::SHoverrideBlitFrom(const Graphics::Surface &src, const Common:
 
 	for (int y = 0; y < destRect.height(); y++) {
 		for (int x = 0; x < destRect.width(); x++) {
-			const uint8 srcVal = src.getPixel(srcRect.left + x, srcRect.top + y);
+			const uint32 srcVal = src.getPixel(srcRect.left + x, srcRect.top + y);
 			if (srcVal == transColor)
 				continue;
-			setPixel(destRect.left + x, destRect.top + y, overrideColor);
+			if (!IS_3DO) {
+				setPixel(destRect.left + x, destRect.top + y, overrideColor);
+			} else {
+				// TODO: actually override the color properly, by mixing it
+				// with the source color
+				setPixel(destRect.left + x, destRect.top + y, srcVal);
+			}
 		}
 	}
 }

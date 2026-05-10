@@ -22,6 +22,8 @@
 #ifndef NANCY_ACTION_SECONDARYMOVIE_H
 #define NANCY_ACTION_SECONDARYMOVIE_H
 
+#include "common/ptr.h"
+
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Video {
@@ -42,7 +44,6 @@ class InteractiveVideo;
 // - changing the scene after playback ends
 // Mostly used for cinematics, with some occasional uses for background animations
 class PlaySecondaryMovie : public RenderActionRecord {
-	friend class InteractiveVideo;
 public:
 	static const byte kMovieSceneChange			= 5;
 	static const byte kMovieNoSceneChange		= 6;
@@ -67,6 +68,8 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	bool getIsFinished() const { return _isFinished; }
+
 	Common::Path _videoName;
 	Common::Path _paletteName;
 	Common::Path _bitmapOverlayName;
@@ -86,11 +89,12 @@ public:
 	SceneChangeDescription _sceneChange;
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
-	Video::VideoDecoder *_decoder = nullptr;
+	Common::ScopedPtr<Video::VideoDecoder> _decoder;
+
+	bool isViewportRelative() const override { return true; }
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
-	bool isViewportRelative() const override { return true; }
 
 	Graphics::ManagedSurface _fullFrame;
 	int _curViewportFrame = -1;

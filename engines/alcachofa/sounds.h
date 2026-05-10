@@ -72,7 +72,7 @@ private:
 		Common::Array<int16> _samples; ///< might not be filled, only voice samples are preloaded for lip-sync
 	};
 	Playback *getPlaybackById(SoundHandle id);
-	SoundHandle playSoundInternal(const char *fileName, byte volume, Audio::Mixer::SoundType type);
+	SoundHandle playSoundInternal(const Common::String &path, byte volume, Audio::Mixer::SoundType type);
 
 	Common::Array<Playback> _playbacks;
 	Audio::Mixer *_mixer;

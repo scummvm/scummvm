@@ -31,23 +31,6 @@ namespace M4 {
 static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2);
 static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool deltaMove);
 
-bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2) {
-	ScreenContext *myScreen = vmng_screen_find(scrnContent, nullptr);
-	if (myScreen == nullptr)
-		return false;
-
-	if (x1)
-		*x1 = myScreen->x1;
-	if (y1)
-		*y1 = myScreen->y1;
-	if (x2)
-		*x2 = myScreen->x2;
-	if (y2)
-		*y2 = myScreen->y2;
-
-	return true;
-}
-
 void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 updateY2) {
 	RectList *updateRectList, *scrnUpdateList, *tempRect;
 
@@ -213,49 +196,6 @@ static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2) {
 	g_system->fillScreen(r, 0);
 }
 
-bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback) {
-	ScreenContext *myScreen = vmng_screen_find(scrnContent, nullptr);
-	if (myScreen == nullptr)
-		return false;
-
-	Hotkey *myHotkey = (Hotkey *)mem_alloc(sizeof(Hotkey), "hotkey");
-	if (myHotkey == nullptr)
-		return false;
-
-	myHotkey->myKey = myKey;
-	myHotkey->callback = callback;
-	myHotkey->next = myScreen->scrnHotkeys;
-	myScreen->scrnHotkeys = myHotkey;
-	return true;
-}
-
-bool RemoveScreenHotkey(void *scrnContent, int32 myKey) {
-	ScreenContext *myScreen = vmng_screen_find(scrnContent, nullptr);
-	if (myScreen == nullptr)
-		return false;
-
-	Hotkey *myHotkey = myScreen->scrnHotkeys;
-
-	if (myHotkey->myKey == myKey) {
-		myScreen->scrnHotkeys = myHotkey->next;
-		mem_free(myHotkey);
-
-	} else {
-		while (myHotkey->next && (myHotkey->next->myKey != myKey)) {
-			myHotkey = myHotkey->next;
-		}
-		if (myHotkey->next) {
-			Hotkey *tempHotkey = myHotkey->next;
-			myHotkey->next = tempHotkey->next;
-			mem_free(tempHotkey);
-		} else {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY) {
 	return MoveScreen(myScreen, parmX, parmY, false);
 }
@@ -270,7 +210,9 @@ bool MoveScreenDelta(int32 parmX, int32 parmY) {
 
 void vmng_screen_to_back(void *scrnContent) {
 	ScreenContext *myScreen = ExtractScreen(scrnContent, SCRN_ANY);
-	if (myScreen == nullptr) return;
+	if (myScreen == nullptr)
+		return;
+
 	if (!_G(backScreen)) {
 		myScreen->infront = nullptr;
 		myScreen->behind = nullptr;

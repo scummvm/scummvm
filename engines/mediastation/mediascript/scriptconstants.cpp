@@ -112,18 +112,86 @@ const char *variableScopeToStr(VariableScope scope) {
 	}
 }
 
-const char *builtInFunctionToStr(BuiltInFunction function) {
+const char *builtInFunctionToStr(uint function) {
 	switch (function) {
-	case kUnk1Function:
-		return "Unk1Function";
+	case kRandomFunction:
+		return "Random";
+	case kTimeOfDayFunction:
+		return "TimeOfDay";
 	case kEffectTransitionFunction:
 		return "EffectTransition";
 	case kEffectTransitionOnSyncFunction:
 		return "EffectTransitionOnSync";
+	case kPlatformFunction:
+		return "Platform";
+	case kSquareRootFunction:
+		return "SquareRoot";
+	case kGetUniqueRandomFunction:
+		return "GetUniqueRandom";
+	case kCurrentRunTimeFunction:
+		return "CurrentRunTime";
+	case kSetGammaCorrectionFunction:
+		return "SetGammaCorrection";
+	case kGetDefaultGammaCorrectionFunction:
+		return "GetDefaultGammaCorrection";
+	case kGetCurrentGammaCorrectionFunction:
+		return "GetCurrentGammaCorrection";
+	case kSetAudioVolumeFunction:
+		return "SetAudioVolume";
+	case kGetAudioVolumeFunction:
+		return "GetAudioVolume";
+	case kSystemLanguagePreferenceFunction:
+		return "SystemLanguagePreference";
+	case kSetRegistryFunction:
+		return "SetRegistry";
+	case kGetRegistryFunction:
+		return "GetRegistry";
+	case kSetProfileFunction:
+		return "SetProfile";
+	case kMazeGenerateFunction:
+		return "MazeGenerate";
+	case kMazeApplyMoveMaskFunction:
+		return "MazeApplyMoveMask";
+	case kMazeSolveFunction:
+		return "MazeSolve";
+	case kBeginTimedIntervalFunction:
+		return "BeginTimedInterval";
+	case kEndTimedIntervalFunction:
+		return "EndTimedInterval";
+	case kCheckersFunction:
+		return "Checkers";
 	case kDrawingFunction:
 		return "Drawing";
-	case kDebugPrintFunction:
+	case kLegacy_RandomFunction:
+		return "Legacy Random";
+	case kLegacy_TimeOfDayFunction:
+		return "Legacy TimeOfDay";
+	case kLegacy_EffectTransitionFunction:
+		return "Legacy EffectTransition";
+	case kLegacy_EffectTransitionOnSyncFunction:
+		return "Legacy EffectTransitionOnSync";
+	case kLegacy_PlatformFunction:
+		return "Legacy Platform";
+	case kLegacy_SquareRootFunction:
+		return "Legacy SquareRoot";
+	case kLegacy_GetUniqueRandomFunction:
+		return "Legacy GetUniqueRandom";
+	case kLegacy_GetCurrentRunTimeFunction:
+		return "Legacy GetCurrentRunTime";
+	case kLegacy_SetGammaCorrectionFunction:
+		return "Legacy SetGammaCorrection";
+	case kLegacy_GetDefaultGammaCorrectionFunction:
+		return "Legacy GetDefaultGammaCorrection";
+	case kLegacy_GetCurrentGammaCorrectionFunction:
+		return "Legacy GetCurrentGammaCorrection";
+	case kLegacy_DebugPrintFunction:
 		return "DebugPrint";
+	case kLegacy_SetAudioVolumeFunction:
+		return "Legacy SetAudioVolume";
+	case kLegacy_GetAudioVolumeFunction:
+		return "Legacy GetAudioVolume";
+	case kLegacy_SystemLanguagePreferenceFunction:
+		return "Legacy SystemLanguagePreference";
 	default:
 		return "UNKNOWN";
 	}
@@ -131,6 +199,8 @@ const char *builtInFunctionToStr(BuiltInFunction function) {
 
 const char *builtInMethodToStr(BuiltInMethod method) {
 	switch (method) {
+	case kInvalidMethod:
+		return "Invalid";
 	case kCursorSetMethod:
 		return "CursorSet";
 	case kSpatialHideMethod:
@@ -149,14 +219,19 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "TimePlay";
 	case kTimeStopMethod:
 		return "TimeStop";
+	case kTimePauseMethod:
+		return "Pause";
+	case kTimeResumeMethod:
+		return "Resume";
 	case kIsPlayingMethod:
-		return "IsPlaying";
+		return "IsPlaying/SetMultipleStreams";
 	case kSetDissolveFactorMethod:
 		return "SetDissolveFactor";
+	// NOTE: IDs 0xD2 and 0xD3 are double-assigned between hotspot, stage, and text methods.
 	case kMouseActivateMethod:
-		return "MouseActivate";
+		return "Activate";
 	case kMouseDeactivateMethod:
-		return "MouseDeactivate";
+		return "Deactivate";
 	case kGetLeftXMethod:
 		return "GetLeftX";
 	case kGetTopYMethod:
@@ -165,8 +240,9 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "TriggerAbsXPosition";
 	case kTriggerAbsYPositionMethod:
 		return "TriggerAbsYPosition";
+	// NOTE: ID 0x173 is double-assigned between hotspot and text methods.
 	case kIsActiveMethod:
-		return "IsActive";
+		return "IsActive/IsEditable";
 	case kGetWidthMethod:
 		return "GetWidth";
 	case kGetHeightMethod:
@@ -183,21 +259,31 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "GetMouseXOffset";
 	case kGetMouseYOffsetMethod:
 		return "GetMouseYOffset";
+	case kStreamMovieSetProxyZIndex:
+		return "SetProxyZIndex";
+	case kStreamMovieGetProxyZIndex:
+		return "GetProxyZIndex";
 	case kIsVisibleMethod:
 		return "IsVisible";
+	case kStartCachingMethod:
+		return "StartCaching";
+	case kIsCachingMethod:
+		return "IsCaching";
+	case kIsPausedMethod:
+		return "SetMultipleSounds/IsPaused";
 	case kSetMousePositionMethod:
 		return "SetMousePosition";
-	case kGetXScaleMethod1:
-	case kGetXScaleMethod2:
-		return "GetXScale";
-	case kSetScaleMethod:
-		return "SetScale";
-	case kSetXScaleMethod:
-		return "SetXScale";
-	case kGetYScaleMethod:
-		return "GetYScale";
-	case kSetYScaleMethod:
-		return "SetYScale";
+	case kGetParallaxFactorXMethod1:
+	case kGetParallaxFactorXMethod2:
+		return "GetParallaxFactorX";
+	case kSetParallaxFactorMethod:
+		return "SetParallaxFactor";
+	case kSetParallaxFactorXMethod:
+		return "SetParallaxFactorX";
+	case kGetParallaxFactorYMethod:
+		return "GetParallaxFactorY";
+	case kSetParallaxFactorYMethod:
+		return "SetParallaxFactorY";
 	case kMovieResetMethod:
 		return "MovieReset";
 	case kSetCurrentClipMethod:
@@ -216,34 +302,114 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "StageGetWidth";
 	case kStageGetHeightMethod:
 		return "StageGetHeight";
+	case kAddToStageMethod:
+	case kAddActorToStageMethod2:
+		return "AddToStage\\OpenLens";
+	case kRemoveFromStageMethod:
+	case kRemoveActorFromStageMethod2:
+		return "RemoveFromStage\\CloseLens";
+	case kAddedToStageMethod:
+		return "AddedToStage";
+	case kStartPanMethod:
+		return "StartPan";
 	case kStopPanMethod:
 		return "StopPan";
+	case kIsPanningMethod:
+		return "IsPanning";
 	case kViewportMoveToMethod:
 		return "ViewportMoveTo";
+	case kAdjustCameraViewportMethod:
+		return "AdjustCameraViewport";
+	case kAdjustCameraViewportSpatialCenterMethod:
+		return "AdjustCameraViewportSpatialCenter";
+	case kSetCameraBoundsMethod:
+		return "SetCameraBounds";
+	case kXViewportPositionMethod:
+		return "XViewportPosition";
 	case kYViewportPositionMethod:
 		return "YViewportPosition";
 	case kPanToMethod:
-		return "PanTo";
-	case kClearToPaletteMethod:
+		return "PanTo/CanvasClearToTransparency";
+	case kCanvasStampImageMethod:
+		return "CanvasStampImage";
+	case kCanvasCopyScreenToMethod:
+		return "CanvasCopyScreenTo";
+	case kCanvasClearToPaletteMethod:
 		return "ClearToPalette";
-	case kLoadContextMethod:
+	case kStreamMovieMoveProxyToStageMethod:
+		return "MoveProxyToStage";
+	case kStreamMovieMoveProxyToRootStageMethod:
+		return "MoveProxyToRootStage";
+	case kDocumentLoadContextMethod:
 		return "LoadContext";
-	case kReleaseContextMethod:
+	case kDocumentReleaseContextMethod:
 		return "ReleaseContext";
-	case kBranchToScreenMethod:
+	case kDocumentBranchToScreenMethod:
 		return "BranchToScreen";
-	case kIsLoadedMethod:
+	case kDocumentQuitMethod:
+		return "Quit";
+	case kIsLoadingMethod:
+		return "IsLoading";
+	case kDocumentContextIsLoadedMethod:
 		return "IsLoaded";
-	case kSetDurationMethod:
+	case kPathSetDurationMethod:
 		return "SetDuration";
-	case kPercentCompleteMethod:
+	case kPathGetPercentCompleteMethod:
 		return "PercentComplete";
-	case kTextMethod:
+	case kPathSetStartPointMethod:
+		return "SetStartPoint";
+	case kPathSetEndPointMethod:
+		return "SetEndPoint";
+	case kPathSetTotalStepsMethod:
+		return "SetTotalSteps";
+	case kPathSetStepRateMethod:
+		return "SetStepRate";
+	case kTextGetFontActorMethod:
+		return "GetFontActor";
+	case kTextSetFontActorMethod:
+		return "SetFontActor";
+	case kTextGetTextMethod:
 		return "Text";
-	case kSetTextMethod:
+	case kTextSetTextMethod:
 		return "SetText";
-	case kSetMaximumTextLengthMethod:
-		return "SetMaximumTextLength";
+	case kTextGetMaxLengthMethod:
+		return "GetMaxLength";
+	case kTextSetMaxLengthMethod:
+		return "SetMaxLength";
+	case kGetLastPressedCharCodeMethod:
+		return "GetLastPressedCharCode";
+	case kTextGetCursorPositionMethod:
+		return "GetCursorPosition";
+	case kTextSetCursorPositionMethod:
+		return "SetCursorPosition";
+	case kTextGetJustificationMethod:
+		return "GetJustification";
+	case kTextSetJustificationMethod:
+		return "SetJustification";
+	case kTextGetPositionMethod:
+		return "GetPosition";
+	case kTextSetPositionMethod:
+		return "SetPosition";
+	case kTextGetConstrainToWidthMethod:
+		return "GetConstrainToWidth";
+	case kTextSetConstrainToWidthMethod:
+		return "SetConstrainToWidth";
+	case kTextGetCursorIsVisibleMethod:
+		return "GetCursorIsVisible";
+	case kTextSetCursorIsVisibleMethod:
+		return "SetCursorIsVisible";
+	case kTextGetOverwriteModeMethod:
+		return "GetOverwriteMode";
+	case kTextSetOverwriteModeMethod:
+		return "SetOverwriteMode";
+	case kTextGetTranslatedCharCode:
+		return "GetTranslatedCharCode";
+	case kTextAddAcceptedCharsMethod:
+		return "AddAcceptedChars";
+	case kTextIsCharacterAcceptedMethod:
+		return "IsCharacterAccepted";
+	case kTextEnableDisableCharacterMethod:
+		return "EnableDisableCharacter";
 	case kAppendMethod:
 		return "Append";
 	case kApplyMethod:
@@ -276,10 +442,14 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "PrependList";
 	case kSortMethod:
 		return "Sort";
-	case kOpenLensMethod:
-		return "OpenLens";
-	case kCloseLensMethod:
-		return "CloseLens";
+	case kPreloadMethod:
+		return "Preload";
+	case kPurgeMethod:
+		return "Purge";
+	case kStopLoadMethod:
+		return "StopLoad";
+	case kIsRectInMemoryMethod:
+		return "IsRectInMemory";
 	default:
 		return "UNKNOWN";
 	}
@@ -287,8 +457,16 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 
 const char *eventTypeToStr(EventType type) {
 	switch (type) {
-	case kTimerEvent:
-		return "Timer";
+	case kEventTypeInvalid:
+		return "Invalid";
+	case kDisplayAutoUpdateEvent:
+		return "DisplayAutoUpdate";
+	case kDisplayEnableAutoUpdateEvent:
+		return "DisplayEnableAutoUpdate";
+	case kTimerServiceAlarmEvent:
+		return "TimerServiceAlarm";
+	case kTimerScriptEvent:
+		return "ScriptTimer";
 	case kMouseDownEvent:
 		return "MouseDown";
 	case kMouseUpEvent:
@@ -299,52 +477,78 @@ const char *eventTypeToStr(EventType type) {
 		return "MouseEntered";
 	case kMouseExitedEvent:
 		return "MouseExited";
+	case kMouseEnterExitEvent:
+		return "MouseEnterExit";
+	case kMouseOutOfFocusEvent:
+		return "MouseOutOfFocus";
 	case kKeyDownEvent:
 		return "KeyDown";
 	case kSoundEndEvent:
 		return "SoundEnd";
+	case kMovieEndEvent:
+		return "MovieEnd";
+	case kPathEndEvent:
+		return "PathEnd";
+	case kScreenEntryEvent:
+		return "ScreenEntry";
+	case kScreenBranchEvent:
+		return "ScreenBranch";
 	case kSoundAbortEvent:
 		return "SoundAbort";
 	case kSoundFailureEvent:
 		return "SoundFailure";
-	case kSoundStoppedEvent:
-		return "SoundStopped";
-	case kSoundBeginEvent:
-		return "SoundBegin";
-	case kMovieEndEvent:
-		return "MovieEnd";
 	case kMovieAbortEvent:
 		return "MovieAbort";
 	case kMovieFailureEvent:
 		return "MovieFailure";
+	case kSpriteMovieEndEvent:
+		return "SpriteMovieEnd";
+	case kScreenExitEvent:
+		return "ScreenExit";
+	case kPathStepEvent:
+		return "PathStep";
+	case kSoundStoppedEvent:
+		return "SoundStopped";
+	case kSoundBeginEvent:
+		return "SoundBegin";
 	case kMovieStoppedEvent:
 		return "MovieStopped";
 	case kMovieBeginEvent:
 		return "MovieBegin";
-	case kSpriteMovieEndEvent:
-		return "SpriteMovieEnd";
-	case kEntryEvent:
-		return "EntryEvent";
-	case kExitEvent:
-		return "ExitEvent";
-	case kLoadCompleteEvent:
-		return "LoadComplete";
-	case kInputEvent:
-		return "Input";
-	case kErrorEvent:
-		return "Error";
-	case kPanAbortEvent:
-		return "PanAbort";
-	case kPanEndEvent:
-		return "PanEnd";
-	case kStepEvent:
-		return "StepEvent";
 	case kPathStoppedEvent:
 		return "PathStopped";
-	case kPathEndEvent:
-		return "PathEnd";
+	case kCachingFailureEvent:
+		return "CachingFailure";
+	case kCachingEndedEvent:
+		return "CachingEnded";
+	case kCachingStartedEvent:
+		return "CachingStarted";
+	case kTextInputEvent:
+		return "TextInput";
+	case kTextErrorEvent:
+		return "TextError";
+	case kDiskImageActorStepEvent:
+		return "DiskImageActorStep";
+	case kDiskImageActorEndEvent:
+		return "DiskImageActorEnd";
+	case kCameraPanStepEvent:
+		return "CameraPanStep";
+	case kCameraPanEndEvent:
+		return "CameraPanEnd";
+	case kCameraPanAbortEvent:
+		return "CameraPanAbort";
+	case kContextLoadCompleteEvent:
+	case kContextAlreadyLoadedEvent:
+		return "ContextLoadComplete";
+	case kContextReleaseCompleteEvent:
+	case kContextAlreadyReleasedEvent:
+		return "ContextReleaseComplete";
+	case kContextLoadStartEvent:
+		return "ContextLoadStart";
+	case kContextReleaseStartEvent:
+		return "ContextReleaseStart";
 	default:
-		return "UNKNOWN";
+		return "UNKNOWN EVENT TYPE";
 	}
 }
 
@@ -361,7 +565,7 @@ const char *operandTypeToStr(OperandType type) {
 	case kOperandTypeString:
 		return "String";
 	case kOperandTypeParamToken:
-		return "DollarSignVariable";
+		return "ParamToken";
 	case kOperandTypeActorId:
 		return "ActorId";
 	case kOperandTypeTime:

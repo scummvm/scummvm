@@ -784,7 +784,7 @@ bool CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint 
 		// delay 30 ms
 		if (!lpMetaGameStruct->m_bScrolling)
 			Sleep(30);
-		if (app->isQuitting())
+		if (app->shouldQuit())
 			break;
 	}
 

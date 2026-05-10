@@ -346,11 +346,11 @@ bool Cast::loadConfig() {
 		return false;
 	}
 	Common::SeekableReadStreamEndian *stream = nullptr;
-	const char *chunkTag = "VWCF";
-	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
+	const char *chunkTag = "DRCF";
+	stream = _castArchive->getMovieResourceIfPresent(MKTAG('D', 'R', 'C', 'F'));
 	if (!stream) {
-		stream = _castArchive->getMovieResourceIfPresent(MKTAG('D', 'R', 'C', 'F'));
-		chunkTag = "DRCF";
+		chunkTag = "VWCF";
+		stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 	}
 	if (!stream) {
 		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
@@ -386,8 +386,20 @@ bool Cast::loadConfig() {
 	else
 		_movieRect = g_director->_fixStageRect;
 
-	_castArrayStart = stream->readUint16();
-	_castArrayEnd = stream->readUint16();
+	if (_isExternal || (g_director->getVersion() < 500)) {
+		// For D4 and below, and for external castlibs,
+		// the config chunk is the source of truth about
+		// where the members start and end.
+		_castArrayStart = stream->readUint16();
+		_castArrayEnd = stream->readUint16();
+	} else {
+		// castArrayStart and castArrayEnd are defined
+		// in the MCsL chunk read by Movie::loadCastLibMapping,
+		// the one in the config chunk is likely to be incorrect
+		// (e.g. multiple internal casts)
+		stream->readUint16();
+		stream->readUint16();
+	}
 
 	// D3 and below use this, override for D4 and over
 	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
@@ -563,8 +575,8 @@ bool Cast::loadConfig() {
 		_vm->setVersion(humanVer);
 	}
 
-	if (_movieDepth > 0) {
-		warning("STUB: loadConfig(): Movie bit depth is %d", _movieDepth);
+	if (_movieDepth != _vm->_colorDepth) {
+		warning("STUB: loadConfig(): Movie bit depth is %d, but set to %d", _movieDepth, _vm->_colorDepth);
 	}
 
 	delete stream;
@@ -1838,6 +1850,7 @@ void Cast::loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		dumpScript(script.c_str(), kMovieScript, id);
 
 	_lingoArchive->addCode(script.decode(Common::kMacRoman), kMovieScript, id, nullptr, kLPPForceD2|kLPPTrimGarbage);
+	_lingoArchive->patchScriptHandler(kMovieScript, CastMemberID(id, _castLibID));
 }
 
 void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {

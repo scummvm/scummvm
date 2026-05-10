@@ -27,6 +27,7 @@
 
 namespace Alcachofa {
 
+class Graphic;
 class WalkingCharacter;
 class Process;
 struct Task;
@@ -36,22 +37,100 @@ static constexpr const float kInvBaseScale = 1.0f / kBaseScale;
 
 class Camera {
 public:
-	inline Math::Angle rotation() const { return _cur._rotation; }
-	inline Math::Vector2d &shake() { return _shake; }
-	inline WalkingCharacter *followTarget() { return _followTarget; }
+	static Camera *create();
+	virtual ~Camera();
+	virtual Math::Angle rotation() const = 0;
+	virtual float scale() const = 0;
 
-	void update();
+	virtual void preUpdate() = 0;
+	virtual void update() = 0;
+	virtual void setRoomBounds(Graphic &background) = 0;
+	virtual void setFollow(WalkingCharacter *target) = 0;
+	virtual void onChangedRoom(bool resetCamera) = 0;
+	virtual void onTriggeredDoor(WalkingCharacter *target) = 0;
+	virtual void onTriggeredDoor(Common::Point fixedPosition) = 0;
+	virtual void onScriptChangedCharacter(MainCharacterKind kind) = 0;
+	virtual void onUserChangedCharacter() = 0;
+	virtual void onOpenMenu() = 0;
+	virtual void onCloseMenu() = 0;
+	virtual void syncGame(Common::Serializer &s) = 0;
+
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
 	Math::Vector3d transform3Dto2D(Math::Vector3d v) const;
 	Common::Point transform3Dto2D(Common::Point p) const;
-	void resetRotationAndScale();
-	void setRoomBounds(Common::Point bgSize, int16 bgScale);
-	void setFollow(WalkingCharacter *target, bool catchUp = false);
-	void setPosition(Math::Vector2d v);
-	void setPosition(Math::Vector3d v);
-	void backup(uint slot);
-	void restore(uint slot);
-	void syncGame(Common::Serializer &s);
+
+protected:
+	Math::Vector3d setAppliedCenter(Math::Vector3d center);
+	void setupMatricesAround(Math::Vector3d center);
+
+	float _roomScale = 1.0f;
+	Math::Vector2d
+		_roomMin = Math::Vector2d(-10000, -10000),
+		_roomMax = Math::Vector2d(10000, 10000);
+	Math::Vector3d _appliedCenter;
+	Math::Matrix4
+		_mat3Dto2D,
+		_mat2Dto3D;
+};
+
+class CameraV1 : public Camera {
+public:
+	Math::Angle rotation() const override;
+	float scale() const override;
+
+	void preUpdate() override;
+	void update() override;
+	void setRoomBounds(Graphic &background) override;
+	void setFollow(WalkingCharacter *target) override;
+	void onChangedRoom(bool resetCamera) override;
+	void onTriggeredDoor(WalkingCharacter *target) override;
+	void onTriggeredDoor(Common::Point fixedPosition) override;
+	void onScriptChangedCharacter(MainCharacterKind kind) override;
+	void onUserChangedCharacter() override;
+	void onOpenMenu() override;
+	void onCloseMenu() override;
+	void syncGame(Common::Serializer &s) override;
+	void lerpOrSet(Common::Point target, int32 mode);
+
+	Task *disguise(Process &process, int32 duration);
+
+protected:
+	friend struct CamV1DisguiseTask;
+	void updateLerping(Math::Vector3d &newCenter, float deltaTime, float speed);
+
+	WalkingCharacter *_followTarget = nullptr;
+	Math::Vector3d _target;
+	bool _isLerping = false;
+	float _lerpSpeed = 0.0f;
+	uint32 _lastUpdateTime = 0;
+};
+
+// V2 is so similar that most can be reused from V1
+class CameraV2 final : public CameraV1 {
+public:
+	void update() override;
+	void setRoomBounds(Graphic &background) override;
+	void setFollow(WalkingCharacter *target) override;
+};
+
+class CameraV3 final : public Camera {
+public:
+	Math::Angle rotation() const override;
+	float scale() const override;
+
+	void preUpdate() override;
+	void update() override;
+	void setRoomBounds(Graphic &background) override;
+	void setFollow(WalkingCharacter *target) override;
+	void setFollow(WalkingCharacter *target, bool catchup);
+	void onChangedRoom(bool resetCamera) override;
+	void onTriggeredDoor(WalkingCharacter *target) override;
+	void onTriggeredDoor(Common::Point fixedPosition) override;
+	void onScriptChangedCharacter(MainCharacterKind kind) override;
+	void onUserChangedCharacter() override;
+	void onOpenMenu() override;
+	void onCloseMenu() override;
+	void syncGame(Common::Serializer &s) override;
 
 	Task *lerpPos(Process &process,
 		Math::Vector2d targetPos,
@@ -83,8 +162,12 @@ private:
 	friend struct CamShakeTask;
 	friend struct CamWaitToStopTask;
 	friend struct CamSetInactiveAttributeTask;
-	Math::Vector3d setAppliedCenter(Math::Vector3d center);
-	void setupMatricesAround(Math::Vector3d center);
+
+	void resetRotationAndScale();
+	void setPosition(Math::Vector2d v);
+	void setPosition(Math::Vector3d v);
+	void backup(uint slot);
+	void restore(uint slot);
 	void updateFollowing(float deltaTime);
 
 	struct State {
@@ -106,15 +189,7 @@ private:
 	uint32 _lastUpdateTime = 0;
 	bool _isChanging = false,
 		_catchUp = false;
-	float _roomScale = 1.0f;
-	Math::Vector2d
-		_roomMin = Math::Vector2d(-10000, -10000),
-		_roomMax = Math::Vector2d(10000, 10000),
-		_shake;
-	Math::Vector3d _appliedCenter;
-	Math::Matrix4
-		_mat3Dto2D,
-		_mat2Dto3D;
+	Math::Vector2d _shake;
 };
 
 }

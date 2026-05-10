@@ -57,14 +57,15 @@ namespace RetroWaveOPL3 {
 // Config implementation
 
 enum OplEmulator {
-	kAuto = 0,
-	kMame = 1,
-	kDOSBox = 2,
-	kALSA = 3,
-	kNuked = 4,
-	kOPL2LPT = 5,
-	kOPL3LPT = 6,
-	kRWOPL3 = 7
+	kNull = 0,
+	kAuto = 1,
+	kMame = 2,
+	kDOSBox = 3,
+	kALSA = 4,
+	kNuked = 5,
+	kOPL2LPT = 6,
+	kOPL3LPT = 7,
+	kRWOPL3 = 8
 };
 
 OPL::OPL() {
@@ -79,7 +80,10 @@ OPL::OPL() {
 
 const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+	{ "null", _s("None"), kNull, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#ifndef DISABLE_MAME_OPL
 	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
+#endif
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
@@ -164,7 +168,7 @@ Config::DriverId Config::detect(OplType type) {
 	// Detect the first matching emulator
 	drv = -1;
 
-	for (int i = 1; _drivers[i].name; ++i) {
+	for (int i = 2; _drivers[i].name; ++i) {
 		if (_drivers[i].flags & flags) {
 			drv = _drivers[i].id;
 			break;
@@ -199,12 +203,14 @@ OPL *Config::create(DriverId driver, OplType type) {
 	}
 
 	switch (driver) {
+#ifndef DISABLE_MAME_OPL
 	case kMame:
 		if (type == kOpl2)
 			return new MAME::OPL();
 		else
 			warning("MAME OPL emulator only supports OPL2 emulation");
 		return nullptr;
+#endif
 
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
@@ -238,10 +244,11 @@ OPL *Config::create(DriverId driver, OplType type) {
 		return RetroWaveOPL3::create(type);
 #endif
 
+	case kNull:
+		return new NullOPL();
+
 	default:
 		warning("Unsupported OPL emulator %d", driver);
-		// TODO: Maybe we should add some dummy emulator too, which just outputs
-		// silence as sound?
 		return nullptr;
 	}
 }

@@ -26,6 +26,8 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define FIRST_SCENE_SCREEN 2
+
 bool Title::msgFocus(const FocusMessage &msg) {
 	Views::Title::msgFocus(msg);
 	g_engine->_sound->playSong("inn.m");
@@ -35,6 +37,21 @@ bool Title::msgFocus(const FocusMessage &msg) {
 bool Title::msgUnfocus(const UnfocusMessage &msg) {
 	g_engine->_sound->stopSong();
 	return Views::Title::msgUnfocus(msg);
+}
+
+bool Title::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_RIGHT) {
+		if (_screenNum >= FIRST_SCENE_SCREEN) {
+			_screenNum = -1;
+			_fadeIndex = 0;
+			cancelDelay();
+			redraw();
+		}
+
+		return true;
+	}
+
+	return Views::Title::msgMouseUp(msg);
 }
 
 } // namespace ViewsEnh

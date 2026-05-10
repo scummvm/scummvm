@@ -201,7 +201,7 @@ static const BuiltinProto builtins[] = {
 	{ "puppetTempo",	LB::b_puppetTempo,	1, 1, 200, CBLTIN },	// D2 c
 	{ "puppetTransition",LB::b_puppetTransition,-1,0,200, CBLTIN },	// D2 c
 	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, 300, FBLTIN },	//		D3.1 f
-	{ "rollOver",		LB::b_rollOver,		1, 1, 200, FBLTIN },	// D2 f
+	{ "rollOver",		LB::b_rollOver,		0, 1, 200, FBLTIN },	// D2 f
 	{ "sendAllSprites",	LB::b_sendAllSprites,-1,0,600, CBLTIN },	// 					D6 c
 	{ "sendSprite",		LB::b_sendSprite,	-1,0, 600, CBLTIN },	// 					D6 c
 	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
@@ -802,8 +802,8 @@ void LB::b_offset(int nargs) {
 		b_offsetRect(nargs);
 		return;
 	}
-	Common::String source = g_lingo->pop().asString();
-	Common::String target = g_lingo->pop().asString();
+	Common::String source = Common::U32String(g_lingo->pop().asString()).encode(g_director->getPlatformEncoding());
+	Common::String target = Common::U32String(g_lingo->pop().asString()).encode(g_director->getPlatformEncoding());
 
 	const char *str = d_strstr(source.c_str(), target.c_str());
 
@@ -832,11 +832,81 @@ void LB::b_value(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
+
+	bool maybeExpression = false;
+
+	// First, let's check that it is a number
+	if (expr[0] == '-' || expr[0] == '+' || (expr[0] >= '0' && expr[0] <= '9') ||
+			(expr[0] == '.' && expr.size() > 1 && expr[1] >= '0' && expr[1] <= '9')) {
+		char *endPtr = nullptr;
+		double result = strtof(expr.c_str(), &endPtr);
+
+		// Maybe it is part of an expression?
+		if (endPtr && *endPtr) {
+			while (*endPtr && Common::isSpace(*endPtr))
+				endPtr++;
+
+			if (strchr("-+*/%^:,()><&|", *endPtr) != NULL) {
+				maybeExpression = true;
+			}
+		}
+
+		if (!maybeExpression) {
+			if (result < INT_MAX && floor(result) == result) {
+				g_lingo->push(Datum((int)result));
+			} else {
+				g_lingo->push(Datum(result));
+			}
+			return;
+		}
+	}
+
+	// Or maybe it is a string with quotes around it?
+	if (expr.size() >= 2 && expr[0] == '"') {
+		// scan for the end quote, ignoring escaped quotes
+		bool escaped = false;
+		size_t i;
+		for (i = 1; i < expr.size(); i++) {
+			if (expr[i] == '"' && !escaped) {
+				break;
+			}
+			escaped = (expr[i] == '\\' && !escaped);
+		}
+		if (i == expr.size()) {
+			// No closing quote found, push void
+			g_lingo->pushVoid();
+			return;
+		}
+
+		if (i + 1 < expr.size()) {
+			// There are extra characters after the closing quote, this is not a simple string
+			size_t j = i + 1;
+			while (expr[j] && Common::isSpace(expr[j]))
+				j++;
+
+			if (strchr("&", expr[j]) != NULL) {
+				maybeExpression = true;
+			}
+		}
+
+		if (!maybeExpression) {
+			g_lingo->push(expr.substr(1, i - 1));
+			return;
+		}
+	}
+
+	// There is no simple way, feed it to the Lingo parser
+
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code, kLPPTrimGarbage);
 	if (!sc) {
 		warning("b_value(): Failed to parse expression \"%s\", returning void", expr.c_str());
+
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Uncaught Lingo error");
+		}
+
 		g_lingo->pushVoid();
 		return;
 	}
@@ -1715,7 +1785,7 @@ void LB::b_open(int nargs) {
 	if (!debugChannelSet(-1, kDebugFewFramesOnly) &&
 		!(g_director->getGameGID() == GID_TEST || g_director->getGameGID() == GID_TESTALL)) {
 		Common::U32String message = Common::String::format("Unsupported command open encountered -> The movie tried to execute open %s %s!", ex.asString().c_str(), d.type != VOID ? d.asString().c_str() : "");
-		GUI::MessageDialog dialog(message, _("Ok"));
+		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
 }
@@ -1911,6 +1981,11 @@ void LB::b_do(int nargs) {
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
 	if (!sc) {
 		warning("b_do(): compilation failed, ignoring");
+
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Uncaught Lingo error");
+		}
+
 		return;
 	} else if (!sc->_eventHandlers.contains(kEventGeneric)) {
 		warning("b_do(): compiled code did not return handler, ignoring");
@@ -2471,7 +2546,7 @@ void LB::b_alert(int nargs) {
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
 		g_director->_wm->clearHandlingWidgets();
-		GUI::MessageDialog dialog(alert.c_str(), _("OK"));
+		GUI::MessageDialog dialog(alert.c_str());
 		dialog.runModal();
 	}
 
@@ -2793,12 +2868,11 @@ void LB::b_installMenu(int nargs) {
 	// Menu definitions use the character 0xc5 to denote a code separator.
 	// For Mac D4 and below, this is ≈. For Windows D4 and below, this is Å.
 	char CODE_SEPARATOR_CHAR = '\xC5';
-	char CODE_SEPARATOR_CHAR_2 = '\xC5';
+	// FIXME: For some reason there are games which use º (Mac) or ¼ (Win) and it works too?
+	char CODE_SEPARATOR_CHAR_2 = '\xBC';
 	if (g_director->getVersion() >= 500) {
 		// D5 changed this to be the pipe | character, the same in Windows and Mac.
 		CODE_SEPARATOR_CHAR = '\x7C';
-		// FIXME: For some reason there are games which use º (Mac) or ¼ (Win) and it works too?
-		CODE_SEPARATOR_CHAR_2 = '\xBC';
 	}
 	// Continuation character is 0xac to denote a line running over.
 	// For Mac, this is ¨. For Windows, this is ¬.
@@ -3213,7 +3287,8 @@ void LB::b_immediateSprite(int nargs) {
 }
 
 void LB::b_puppetSprite(int nargs) {
-	Score *sc = g_director->getCurrentMovie()->getScore();
+	Movie *movie = g_director->getCurrentMovie();
+	Score *sc = movie->getScore();
 	if (!sc) {
 		warning("b_puppetSprite: no score");
 		g_lingo->dropStack(nargs);
@@ -3225,7 +3300,19 @@ void LB::b_puppetSprite(int nargs) {
 		Datum sprite = g_lingo->pop();
 
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
-			 sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
+			int spriteId = sprite.asInt();
+			Sprite *target = sc->getSpriteById(spriteId);
+			bool val = (bool)state.asInt();
+			bool refresh = (!val) && (target->_puppet);
+			target->_puppet = val;
+			if (refresh) {
+				// puppetSprite set to FALSE, copy back sprite data from frame cache
+				Channel *chan = sc->getChannelById(spriteId);
+				movie->getWindow()->addDirtyRect(chan->getBbox());
+				chan->_dirty = true;
+				chan->setClean(sc->_currentFrame->_sprites[spriteId]);
+				chan->_dirty = true;
+			}
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
@@ -3313,7 +3400,10 @@ void LB::b_ramNeeded(int nargs) {
 }
 
 void LB::b_rollOver(int nargs) {
-	Datum d = g_lingo->pop();
+	Datum d(0);
+	if (nargs == 1) {
+		d = g_lingo->pop();
+	}
 	Datum res(0);
 	int arg = 0;
 	if (d.type == SPRITEREF) {
@@ -3329,12 +3419,24 @@ void LB::b_rollOver(int nargs) {
 		return;
 	}
 
-	if (arg >= (int32) score->_channels.size()) {
-		g_lingo->push(res);
+	if ((arg >= (int32) score->_channels.size()) || (arg < 0)) {
+		g_lingo->lingoError("b_rollOver: Sprite number %d out of range", arg);
 		return;
 	}
 
 	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+
+	if (arg == 0) {
+		if (g_director->getVersion() >= 500) {
+			// return the channel ID under the pointer, or 0 for no match
+			res.u.i = score->getRollOverSpriteIDFromPos(pos);
+			g_lingo->push(res);
+			return;
+		} else {
+			g_lingo->lingoError("b_rollOver: 0 not supported as an argument in D4 or lower");
+			return;
+		}
+	}
 
 	if (score->checkSpriteRollOver(arg, pos))
 		res.u.i = 1; // TRUE
@@ -3966,9 +4068,9 @@ void LB::b_member(int nargs) {
 	}
 
 	if (res.member > g_lingo->getMembersNum(res.castLib)) {
+		// D6 and up does not error on non-existing cast members
 		if (g_director->getVersion() < 600) {
 			g_lingo->lingoError("b_member: Cast member ID out of range");
-			return;
 		}
 	}
 	g_lingo->push(res);
@@ -4206,6 +4308,9 @@ void LB::b_scummvmassertequal(int nargs) {
 		result = LC::eqData(d1, d2).u.i;
 	} else if (d1.type == PARRAY && d2.type == PARRAY) {
 		result = LC::eqData(d1, d2).u.i;
+	} else if (d1.type == FLOAT && d2.type == FLOAT) {
+		// Use tolerance
+		result = (ABS(d1.asFloat() - d2.asFloat()) < 0.000001) ? 1 : 0;
 	} else {
 		result = (d1 == d2);
 	}

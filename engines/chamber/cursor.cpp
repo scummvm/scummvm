@@ -26,6 +26,10 @@
 #include "chamber/cursor.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
+#include "chamber/renderer.h"
+#include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 
 namespace Chamber {
@@ -63,13 +67,14 @@ byte cursorImage[CURSOR_WIDTH * CURSOR_HEIGHT];
 /*
 Select cursor shape and its hotspot
 */
-void selectCursor(uint16 num) {
+void CGARenderer::selectCursor(uint16 num) {
 	cursor_x_shift = cursor_shifts[num][0];
 	cursor_y_shift = cursor_shifts[num][1];
-	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / g_vm->_screenPPB;
 
-	byte *src = cursor_shape;
 	byte *dst = cursorImage;
+
+	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / 4;
+	byte *src = cursor_shape;
 	for (int16 y = 0; y < CURSOR_HEIGHT; y++) {
 		for (int16 x = 0; x < CURSOR_HEIGHT / 4; x++) {
 			byte colors = *src;
@@ -90,8 +95,43 @@ void selectCursor(uint16 num) {
 		}
 	}
 
-	g_system->setMouseCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
-	g_system->showMouse(true);
+	CursorMan.replaceCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
+	CursorMan.showMouse(true);
+}
+
+void EGARenderer::selectCursor(uint16 num) {
+	cursor_x_shift = cursor_shifts[num][0];
+	cursor_y_shift = cursor_shifts[num][1];
+
+	byte *dst = cursorImage;
+
+	/*EGA SOURI.EGA: 64 bytes/cursor, 4 bytes per row.
+	  Each row = two little-endian 16-bit planes:
+	    planeA (bytes 0,1): black mask  (bit set = black pixel)
+	    planeB (bytes 2,3): white mask  (bit set = white pixel)
+	  A=0,B=0 -> transparent; A=1,B=0 -> black; B=1 -> white.*/
+	cursor_shape = souri_data + num * (CURSOR_WIDTH * CURSOR_HEIGHT / 4);
+	byte *src = cursor_shape;
+	for (int16 y = 0; y < CURSOR_HEIGHT; y++) {
+		uint16 planeA = (uint16)src[0] | ((uint16)src[1] << 8);
+		uint16 planeB = (uint16)src[2] | ((uint16)src[3] << 8);
+		src += 4;
+		for (int16 x = 0; x < CURSOR_WIDTH; x++) {
+			byte bitA = (planeA >> (CURSOR_WIDTH - 1 - x)) & 1;
+			byte bitB = (planeB >> (CURSOR_WIDTH - 1 - x)) & 1;
+			if (!bitA && !bitB)
+				*dst++ = 255; /*transparent*/
+			else if (bitB)
+				*dst++ = 15;  /*white*/
+			else
+				*dst++ = 0;   /*black*/
+		}
+	}
+
+	CursorMan.replaceCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
+	// TODO: Replace use of cursor palettes
+	CursorMan.replaceCursorPalette(Graphics::Palette::createEGAPalette().data(), 0, 16);
+	CursorMan.showMouse(true);
 }
 
 /*

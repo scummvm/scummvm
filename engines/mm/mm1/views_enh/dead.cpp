@@ -63,6 +63,15 @@ bool Dead::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
+bool Dead::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_LEFT || msg._button == MouseMessage::MB_RIGHT) {
+		msgAction(ActionMessage(KEYBIND_SELECT));
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM

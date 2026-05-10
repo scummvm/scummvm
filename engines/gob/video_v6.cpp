@@ -45,7 +45,15 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
-		drawPacked(sprBuf, x, y, destDesc);
+		if (transp != 0) {
+			int16 width = READ_LE_UINT16(sprBuf + 2);
+			int16 height = READ_LE_UINT16(sprBuf + 4);
+			Surface tempSurf(width, height, destDesc.getBPP());
+			drawPacked(sprBuf, 0, 0, tempSurf);
+			destDesc.blit(tempSurf, 0, 0, width - 1, height - 1, x, y, 0);
+		} else {
+			drawPacked(sprBuf, x, y, destDesc);
+		}
 		return 1;
 	}
 
@@ -90,7 +98,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 		int32 uncompresedSize = 0;
 		byte *uncompressedData = DataIO::unpack(srcData, INT32_MAX, uncompresedSize, 1);
 		drawYUVData(uncompressedData, surfDesc, width, height, x, y);
-		delete uncompressedData;
+		delete[] uncompressedData;
 	} else if (dataType == 3) {
 		// Compressed high-color RGB data
 		int32 uncompresesSize = 0;
@@ -119,7 +127,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 		if (!conversionOk)
 			warning("drawPacked: error when cross-blitting from compressed RGB high-color data");
 
-		delete uncompressedData;
+		delete[] uncompressedData;
 	} else {
 		warning("drawPacked: unknown compression type %d", dataType);
 	}

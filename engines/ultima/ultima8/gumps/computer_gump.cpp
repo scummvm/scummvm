@@ -19,19 +19,18 @@
  *
  */
 
-#include "common/keyboard.h"
-
-#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/gumps/computer_gump.h"
-#include "ultima/ultima8/games/game_data.h"
+
+#include "common/keyboard.h"
+#include "common/str.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/gfx/shape.h"
-#include "ultima/ultima8/gfx/gump_shape_archive.h"
-#include "ultima/ultima8/gfx/shape_frame.h"
-#include "ultima/ultima8/gfx/fonts/rendered_text.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/fonts/font.h"
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
-#include "ultima/ultima8/gfx/fonts/shape_font.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
+#include "ultima/ultima8/gfx/gump_shape_archive.h"
+#include "ultima/ultima8/gfx/shape.h"
+#include "ultima/ultima8/gfx/shape_frame.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 
 namespace Ultima {
@@ -54,7 +53,7 @@ ComputerGump::ComputerGump()
 	}
 }
 
-ComputerGump::ComputerGump(const Std::string &msg) :
+ComputerGump::ComputerGump(const Common::String &msg) :
 	ModalGump(0, 0, 100, 100), _curTextLine(0), _curDisplayLine(0),
 	_charOff(0), _nextCharTick(0), _paused(false), _tick(0) {
 	for (int i = 0; i < ARRAYSIZE(_renderedLines); i++) {

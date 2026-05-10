@@ -22,10 +22,6 @@
 #ifndef ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 #define ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 
-#include "ultima/ultima8/misc/common_types.h"
-#include "ultima/shared/std/containers.h"
-#include "common/debug.h"
-#include "common/stream.h"
 #include "gui/debugger.h"
 
 namespace Ultima {

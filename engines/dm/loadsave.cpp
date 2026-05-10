@@ -26,7 +26,6 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
@@ -184,7 +183,7 @@ void DMEngine::saveGame() {
 	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->getChoice(4, kDMDialogCommandSetViewport, 0, kDMDialogChoiceNone);
 
 	if (saveAndPlayChoice == kLoad) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 		int loadSlot = dialog->runModalWithCurrentTarget();
 		delete dialog;
 		if (loadSlot >= 0) {
@@ -196,7 +195,7 @@ void DMEngine::saveGame() {
 	}
 
 	if (saveAndPlayChoice == kSaveAndQuit || saveAndPlayChoice == kSaveAndPlay) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		int16 saveSlot = dialog->runModalWithCurrentTarget();
 		Common::String saveDescription = dialog->getResultString();
 		if (saveDescription.empty())

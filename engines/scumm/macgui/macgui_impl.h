@@ -299,6 +299,7 @@ public:
 
 		virtual void getFocus() { setRedraw(); }
 		virtual void loseFocus() { setRedraw(); }
+		virtual bool keepFocus(int x, int y) { return false; }
 
 		virtual void setRedraw(bool fullRedraw = false);
 
@@ -630,6 +631,10 @@ public:
 		int _selected;
 		Graphics::Surface _popUpBackground;
 		Common::Rect _popUpBounds;
+		bool _floating;
+		bool _enhUIUX;
+
+		void close();
 
 	public:
 		MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled);
@@ -641,6 +646,9 @@ public:
 		void handleMouseDown(Common::Event &event) override;
 		bool handleMouseUp(Common::Event &event) override;
 		void handleMouseMove(Common::Event &event) override;
+
+		void loseFocus() override;
+		bool keepFocus(int x, int y) override;
 	};
 
 	enum MacDialogEventType {
@@ -692,7 +700,6 @@ public:
 		MacWidget *_defaultWidget = nullptr;
 
 		MacWidget *_focusedWidget = nullptr;
-		Common::Point _focusClick;
 		Common::Point _oldMousePos;
 		Common::Point _mousePos;
 		Common::Point _realMousePos;
@@ -735,7 +742,6 @@ public:
 		void setFocusedWidget(int x, int y);
 		void clearFocusedWidget();
 		MacWidget *getFocusedWidget() const { return _focusedWidget; }
-		Common::Point getFocusClick() const { return _focusClick; }
 		Common::Point getMousePos() const { return _mousePos; }
 
 		int findWidget(int x, int y) const;

@@ -43,6 +43,9 @@ typedef Common::HashMap<int, int> ColorReMap;
 class Renderer;
 
 const Graphics::PixelFormat getRGBAPixelFormat();
+byte getCPCPixelMode1(byte cpc_byte, int index);
+byte getCPCPixelMode0(byte cpc_byte, int index);
+byte getCPCPixel(byte cpc_byte, int index, bool mode1);
 
 class Texture {
 public:
@@ -74,7 +77,7 @@ public:
 	 */
 	virtual void flipBuffer() {}
 	virtual void useColor(uint8 r, uint8 g, uint8 b) = 0;
-	virtual void depthTesting(bool enabled) {};
+	virtual void enableCulling(bool enabled) {};
 	virtual void polygonOffset(bool enabled) = 0;
 
 	virtual Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) = 0;
@@ -193,6 +196,28 @@ public:
 		{ 0.4f, 2.0f }, //4
 	};
 
+	float _skyUvs672[16][2] = {
+		{ 0.0f, 0.0f }, //1
+		{ 0.0f, 2.0f }, //2
+		{ 0.6f, 2.0f }, //3
+		{ 0.6f, 0.0f }, //front //4
+
+		{ 0.0f, 2.0f }, //back //1
+		{ 0.6f, 2.0f }, //2
+		{ 0.6f, 0.0f }, //3
+		{ 0.0f, 0.0f }, //4
+
+		{ 0.0f, 0.0f }, //left //1
+		{ 0.6f, 0.0f }, //2
+		{ 0.6f, 2.0f }, //3
+		{ 0.0f, 2.0f }, //4
+
+		{ 0.6f, 0.0f }, //right //1
+		{ 0.0f, 0.0f }, //2
+		{ 0.0f, 2.0f }, //3
+		{ 0.6f, 2.0f }, //4
+	};
+
 	float _skyUvs128[16][2] = {
 		{ 0.0f, 0.0f }, //1
 		{ 0.0f, 2.0f }, //2
@@ -265,7 +290,27 @@ public:
 	Common::Point _shakeOffset;
 	byte _stipples[16][128];
 
+	// Amiga/Atari hardware palette cycling for pulsating surfaces.
+	// Castle Master: COLOR15, every 4 frames, per-area gated.
+	// Dark Side: COLOR5, every 2 frames, always active.
+	Common::Array<uint16> _colorCyclingTable;
+	int _colorCyclingIndex;
+	int _colorCyclingTimer;     // -1 = disabled, >=0 = active
+	int _colorCyclingPaletteIndex; // which palette entry to cycle (5 or 15)
+	int _colorCyclingSpeed;     // frames between changes (2 or 4)
+	void updateColorCycling();
+
 	int _scale;
+
+	// debug flags
+	bool _debugRenderBoundingBoxes;
+	bool _debugRenderOcclusionBoxes;
+	bool _debugRenderWireframe;
+	bool _debugRenderNormals;
+	Common::Array<uint8> _debugHighlightObjectIDs;
+
+	// for drawing bounding boxes
+	virtual void drawAABB(const Math::AABB &aabb, uint8 r, uint8 g, uint8 b) {}
 
 	/**
 	 * Select the window where to render

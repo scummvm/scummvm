@@ -41,14 +41,14 @@ static uint32 g_t3fontBaseColor;
  */
 int StringLengthPix(char *szStr, const FONT *pFont) {
 	int strLen;	// accumulated length of string
-	byte	c;
+	uint16	c;
 	SCNHANDLE	hImg;
 
 	// while not end of string or end of line
-	for (strLen = 0; (c = *szStr) != EOS_CHAR && c != LF_CHAR; szStr++) {
+	for (strLen = 0; (c = (byte)*szStr) != EOS_CHAR && c != LF_CHAR; szStr++) {
 		if (g_bMultiByte) {
 			if (c & 0x80)
-				c = ((c & ~0x80) << 8) + *++szStr;
+				c = ((c & ~0x80) << 8) | (byte)*++szStr;
 		}
 		hImg = pFont->fontDef[c];
 
@@ -116,7 +116,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 	int yOffset;	// offset to next line of text
 	OBJECT *pFirst;	// head of multi-object text list
 	OBJECT *pChar = 0;	// object ptr for the character
-	byte c;
+	uint16 c;
 	SCNHANDLE hImg;
 
 	// make sure there is a linked list to add text to
@@ -143,10 +143,10 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 		xJustify = JustifyText(szStr, xPos, pFont, mode);
 
 		// repeat until end of string or end of line
-		while ((c = *szStr) != EOS_CHAR && c != LF_CHAR) {
+		while ((c = (byte)*szStr) != EOS_CHAR && c != LF_CHAR) {
 			if (g_bMultiByte) {
 				if (c & 0x80)
-					c = ((c & ~0x80) << 8) + *++szStr;
+					c = ((c & ~0x80) << 8) | (byte)*++szStr;
 			}
 			hImg = pFont->fontDef[c];
 

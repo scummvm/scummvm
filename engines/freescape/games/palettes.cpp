@@ -56,6 +56,20 @@ byte kCGAPaletteRedGreen[4][3] = {
 	{0xaa, 0x55, 0x00},
 };
 
+byte kCGAPalettePinkBlueBright[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+byte kCGAPaletteRedGreenBright[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0xff, 0xff, 0x55},
+};
+
 byte kHerculesPaletteGreen[2][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0xff, 0x00},
@@ -93,38 +107,38 @@ byte kDrillerZXPalette[9][3] = {
 };
 
 byte kDrillerCPCPalette[32][3] = {
-	{0x80, 0x80, 0x80}, // 0: special case?
-	{0x00, 0x00, 0x00}, // 1: used in dark only?
-	{0x00, 0x80, 0xff}, // 2
-	{0xff, 0xff, 0x80}, // 3
-	{0x00, 0x00, 0x80}, // 4
-	{0xff, 0x00, 0x80}, // 5
-	{0x00, 0x80, 0x80}, // 6
-	{0xff, 0x80, 0x80}, // 7
-	{0x11, 0x22, 0x33},
-	{0x00, 0x80, 0x00}, // 9
-	{0xff, 0xff, 0x00}, // 10
-	{0xff, 0xff, 0xff}, // 11
-	{0xff, 0x00, 0x00}, // 12
-	{0x11, 0x22, 0x33},
-	{0xff, 0x80, 0x00}, // 14
-	{0x11, 0x22, 0x33},
-	{0x11, 0x22, 0x33},
-	{0x00, 0xff, 0x80}, // 17
-	{0x00, 0xff, 0x00}, // 18
-	{0x80, 0xff, 0xff}, // 19
-	{0x80, 0x80, 0x80}, // 20
-	{0x00, 0x00, 0xff}, // 21
-	{0x00, 0x80, 0x00}, // 22
-	{0x00, 0x80, 0xff}, // 23
-	{0x80, 0x00, 0x80}, // 24
-	{0x80, 0xff, 0x80}, // 25
-	{0x80, 0xff, 0x00}, // 26
-	{0x00, 0xff, 0xff}, // 27
-	{0x80, 0x00, 0x00}, // 28
-	{0x11, 0x22, 0x33},
-	{0x80, 0x80, 0x00}, // 30
-	{0x80, 0x80, 0xff}, // 31
+	{0x80, 0x80, 0x80}, // 0: white
+	{0x80, 0x80, 0x80}, // 1: white
+	{0x00, 0xff, 0x80}, // 2: sea green
+	{0xff, 0xff, 0x80}, // 3: pastel yellow
+	{0x00, 0x00, 0x80}, // 4: blue
+	{0xff, 0x00, 0x80}, // 5: purple
+	{0x00, 0x80, 0x80}, // 6: cyan
+	{0xff, 0x80, 0x80}, // 7: pink
+	{0xff, 0x00, 0x80}, // 8: purple
+	{0xff, 0xff, 0x80}, // 9: pastel yellow
+	{0xff, 0xff, 0x00}, // 10: bright yellow
+	{0xff, 0xff, 0xff}, // 11: bright white
+	{0xff, 0x00, 0x00}, // 12: bright red
+	{0xff, 0x00, 0xff}, // 13: bright magenta
+	{0xff, 0x80, 0x00}, // 14: orange
+	{0xff, 0x80, 0xff}, // 15: pastel magenta
+	{0x00, 0x00, 0x80}, // 16: blue
+	{0x00, 0xff, 0x80}, // 17: sea green
+	{0x00, 0xff, 0x00}, // 18: bright green
+	{0x00, 0xff, 0xff}, // 19: bright cyan
+	{0x00, 0x00, 0x00}, // 20: black
+	{0x00, 0x00, 0xff}, // 21: bright blue
+	{0x00, 0x80, 0x00}, // 22: green
+	{0x00, 0x80, 0xff}, // 23: sky blue
+	{0x80, 0x00, 0x80}, // 24: magenta
+	{0x80, 0xff, 0x80}, // 25: pastel green
+	{0x80, 0xff, 0x00}, // 26: lime
+	{0x80, 0xff, 0xff}, // 27: pastel cyan
+	{0x80, 0x00, 0x00}, // 28: red
+	{0x80, 0x00, 0xff}, // 29: mauve
+	{0x80, 0x80, 0x00}, // 30: yellow
+	{0x80, 0x80, 0xff}, // 31: pastel blue
 };
 
 void FreescapeEngine::loadColorPalette() {
@@ -181,6 +195,8 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 		numberOfAreas += 5;
 	else if (isCastle())
 		numberOfAreas += 20;
+	else if (isEclipse())
+		numberOfAreas += 2;
 
 	for (uint i = 0; i < numberOfAreas; i++) {
 		int label = readField(file, 8);
@@ -201,7 +217,12 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 			palette[c][2] = b & 0xff;
 			debugC(1, kFreescapeDebugParser, "Color %d: (%04x) %02x %02x %02x", c, v, palette[c][0], palette[c][1], palette[c][2]);
 		}
-		assert(!_paletteByArea.contains(label));
+		if (_paletteByArea.contains(label)) {
+			// Eclipse Atari ST / Amiga has a duplicate palette entry for area 42
+			assert(isEclipse() && (isAtariST() || isAmiga()));
+			delete[] palette;
+			continue;
+		}
 		_paletteByArea[label] = (byte *)palette;
 	}
 }
@@ -217,6 +238,15 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		_gfx->_inkColor = _areaMap[levelID]->_inkColor;
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
+
+		if (isCPC()) {
+			if (isEncodedCPCDirectColor(_gfx->_inkColor))
+				_gfx->_inkColor = decodeCPCDirectColor(_gfx->_inkColor);
+			if (isEncodedCPCDirectColor(_gfx->_paperColor))
+				_gfx->_paperColor = decodeCPCDirectColor(_gfx->_paperColor);
+			if (isEncodedCPCDirectColor(_gfx->_underFireBackgroundColor))
+				_gfx->_underFireBackgroundColor = decodeCPCDirectColor(_gfx->_underFireBackgroundColor);
+		}
 
 		if (isC64()) {
 			_gfx->_inkColor %= 16;
@@ -256,10 +286,22 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 }
 
 byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
-	if (levelID % 2 == 0)
-		return (byte *)&kCGAPalettePinkBlue;
-	else
-		return (byte *)&kCGAPaletteRedGreen;
+	if (isDriller() || isDark() || isCastle()) {
+		if (levelID % 2 == 0)
+			return (byte *)&kCGAPalettePinkBlue;
+		else
+			return (byte *)&kCGAPaletteRedGreen;
+	}
+	if (isEclipse()) {
+		if (_areaMap.contains(levelID)) {
+			if (_areaMap[levelID]->_extraColor[0] & 0x01) {
+				return (byte *)&kCGAPaletteRedGreenBright;
+			} else {
+				return (byte *)&kCGAPalettePinkBlueBright;
+			}
+		}
+	}
+	return (byte *)&kCGAPaletteRedGreenBright;
 }
 
 } // End of namespace Freescape

@@ -23,8 +23,6 @@
 #ifndef M4_ADV_R_ADV_GAME_H
 #define M4_ADV_R_ADV_GAME_H
 
-#include "common/serializer.h"
-#include "m4/adv_r/adv.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -37,8 +35,6 @@ struct GameControl {
 	int16 new_section = 0;
 	int16 previous_room = 0;
 
-	int32 digi_overall_volume_percent = 100;
-	int32 midi_overall_volume_percent = 100;
 	bool camera_pan_instant = false;
 
 	/**

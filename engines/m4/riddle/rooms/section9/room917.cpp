@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section9/room917.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -78,7 +79,7 @@ void Room917::daemon() {
 		digi_stop(1);
 		digi_stop(2);
 		digi_unload("907R02");
-		_G(game).new_room = 918;
+		_G(game).setRoom(918);
 		break;
 
 	case 11:
@@ -152,8 +153,7 @@ void Room917::daemon() {
 		digi_unload("950_S48b");
 		digi_unload("950_S48c");
 		digi_unload("950_S50");
-		_G(game).new_room = 493;
-		_G(game).new_section = 4;
+		_G(game).setRoom(493);
 		break;
 
 	default:

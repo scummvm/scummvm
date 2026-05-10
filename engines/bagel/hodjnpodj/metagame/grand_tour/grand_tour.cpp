@@ -34,7 +34,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace GrandTour {
 
-#define SPLASHSPEC  ".\\ART\\MLSCROLL.BMP"
+#define SPLASHSPEC  "art\\MLSCROLL.BMP"
 
 // Button positioning constants
 

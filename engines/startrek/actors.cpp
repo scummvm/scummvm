@@ -21,6 +21,7 @@
 
 #include "common/stream.h"
 #include "common/memstream.h"
+#include "graphics/surface.h"
 
 #include "startrek/iwfile.h"
 #include "startrek/resource.h"

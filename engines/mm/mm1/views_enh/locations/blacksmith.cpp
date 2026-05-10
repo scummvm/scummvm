@@ -30,6 +30,8 @@ namespace ViewsEnh {
 namespace Locations {
 
 Blacksmith::Blacksmith() : Location("Blacksmith", LOC_BLACKSMITH) {
+	_browseSprite.load("buy.icn");
+	addButton(&_browseSprite, Common::Point(7, 52), 0, Common::KEYCODE_b, true);
 	addButton(&g_globals->_escSprites, Common::Point(24, 100), 0, KEYBIND_ESCAPE);
 }
 
@@ -43,7 +45,7 @@ void Blacksmith::draw() {
 	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
 	writeLine(3, c._name, ALIGN_MIDDLE);
 
-	writeLine(5, STRING["enhdialogs.blacksmith.browse"], ALIGN_LEFT, 10);
+	writeLine(6, STRING["enhdialogs.blacksmith.browse"], ALIGN_LEFT, 23);
 
 	writeLine(10, STRING["enhdialogs.location.gold"]);
 	writeLine(10, Common::String::format("%d",

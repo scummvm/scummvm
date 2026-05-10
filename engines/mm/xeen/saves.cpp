@@ -256,7 +256,7 @@ void SavesManager::newGame() {
 }
 
 bool SavesManager::loadGame() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 	int slotNum = dialog->runModalWithCurrentTarget();
 	delete dialog;
 
@@ -277,7 +277,7 @@ bool SavesManager::saveGame() {
 	} else if (!g_vm->canSaveGameStateCurrently()) {
 		return false;
 	} else {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		int slotNum = dialog->runModalWithCurrentTarget();
 		Common::String saveName = dialog->getResultString();
 		delete dialog;

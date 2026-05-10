@@ -355,6 +355,7 @@ struct DirectorPlotData {
 	Common::Point srcPoint;
 
 	Graphics::ManagedSurface *srf = nullptr;
+	Graphics::ManagedSurface *srfMask = nullptr;
 	MacShape *ms = nullptr;
 
 	SpriteType sprite = kInactiveSprite;

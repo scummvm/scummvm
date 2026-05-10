@@ -21,8 +21,9 @@
 
 #include "m4/riddle/rooms/section2/room201.h"
 #include "m4/riddle/rooms/section2/section2.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -59,11 +60,6 @@ static const char *USE[][2] = {
 	{ "PHONE",            "201r45" },
 	{ nullptr, nullptr }
 };
-
-Room201::Room201() : Section2Room() {
-	Common::fill(_items, _items + 12, 0);
-	Common::fill(_itemFlags, _itemFlags + 12, 0);
-}
 
 void Room201::preload() {
 	Section2Room::preload();

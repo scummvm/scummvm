@@ -52,7 +52,7 @@ endif
 endif
 
 ifeq "$(HAVE_CLANG)" "1"
-	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
+	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-four-char-constants
 	# We use a anonymous nested type declaration in an anonymous union in
 	# common/str.h. This is no standard construct and clang warns about it.
 	# It works for all our target systems though, thus we simply disable that
@@ -97,7 +97,7 @@ include $(srcdir)/Makefile.common
 ENGINE_SUBDIRS_CONFIGURE := $(wildcard $(srcdir)/engines/*/configure.engine)
 
 config.h:
-SAVED_ENV_VARS = AR AS ASFLAGS CPPFLAGS CXX CXXFLAGS LD LDFLAGS RANLIB SDL_CONFIG STRIP WINDRES WINDRESFLAGS
+SAVED_ENV_VARS = AR AS ASFLAGS CPPFLAGS CXX CXXFILT CXXFLAGS LD LDFLAGS NM RANLIB SDL_CONFIG STRIP WINDRES WINDRESFLAGS
 
 # The environment variable PKG_CONFIG_LIBDIR has a different meaning
 # for pkg-config when it is empty and when it is not defined.
@@ -155,3 +155,6 @@ CMakeLists.txt: devtools/create_project/cmake/build/create_project config.mk
 cmake: CMakeLists.txt
 	cmake -H. -Bbuild
 	cmake --build build
+
+test-games: $(EXECUTABLE)
+	devtools/run_event_recorder_tests.py --xunit-output=$(EXECUTABLE).test-results.xml

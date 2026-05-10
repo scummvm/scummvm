@@ -903,7 +903,7 @@ class dgContactSolver {
 
 					output += 2;
 					edgeIndex++;
-					NEWTON_ASSERT(edgeIndex < dgInt32(sizeof(subdivision) / sizeof(subdivision[0])));
+					NEWTON_ASSERT(edgeIndex < dgInt32(ARRAYSIZE(subdivision)));
 					//NEWTON_ASSERT (CheckNormal (poly, shapeNormal));
 				}
 			}
@@ -1081,7 +1081,7 @@ class dgContactSolver {
 
 					output += 2;
 					edgeIndex++;
-					NEWTON_ASSERT(edgeIndex < dgInt32(sizeof(subdivision) / sizeof(subdivision[0])));
+					NEWTON_ASSERT(edgeIndex < dgInt32(ARRAYSIZE(subdivision)));
 					//NEWTON_ASSERT (CheckNormal (poly, shapeNormal));
 				}
 			}
@@ -1887,7 +1887,7 @@ class dgContactSolver {
 					dgInt32 best = 0;
 					dgFloat32 maxErr = dgFloat32(0.0f);
 					dgInt32 j = 0;
-					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
+					for (; j < dgInt32(ARRAYSIZE(m_dir)); j++) {
 						// dgFloat32 error2;
 						CalcSupportVertex(m_dir[j], 1);
 						dgVector e(m_hullVertex[1] - m_hullVertex[0]);
@@ -1901,7 +1901,7 @@ class dgContactSolver {
 						}
 					}
 
-					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(ARRAYSIZE(m_dir))) {
 						NEWTON_ASSERT(maxErr > dgFloat32(0.0f));
 						CalcSupportVertex(m_dir[best], 1);
 					}
@@ -1915,7 +1915,7 @@ class dgContactSolver {
 					dgFloat32 maxErr = dgFloat32(0.0f);
 					dgVector e0(m_hullVertex[1] - m_hullVertex[0]);
 					dgInt32 j = 0;
-					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
+					for (; j < dgInt32(ARRAYSIZE(m_dir)); j++) {
 						CalcSupportVertex(m_dir[j], 2);
 						dgVector e1(m_hullVertex[2] - m_hullVertex[0]);
 						dgVector n(e0 * e1);
@@ -1929,7 +1929,7 @@ class dgContactSolver {
 						}
 					}
 
-					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(ARRAYSIZE(m_dir))) {
 						NEWTON_ASSERT(maxErr > dgFloat32(0.0f));
 						CalcSupportVertex(m_dir[best], 2);
 					}
@@ -2252,7 +2252,7 @@ class dgContactSolver {
 					dgInt32 best = 0;
 					dgFloat64 maxErr = dgFloat64(0.0f);
 					dgInt32 j = 0;
-					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
+					for (; j < dgInt32(ARRAYSIZE(m_dir)); j++) {
 						dgFloat64 error2;
 						CalcSupportVertexLarge(m_dir[j], 1);
 						dgBigVector e(m_hullVertexLarge[1] - m_hullVertexLarge[0]);
@@ -2266,7 +2266,7 @@ class dgContactSolver {
 						}
 					}
 
-					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(ARRAYSIZE(m_dir))) {
 						NEWTON_ASSERT(maxErr > dgFloat64(0.0f));
 						CalcSupportVertexLarge(m_dir[best], 1);
 					}
@@ -2280,7 +2280,7 @@ class dgContactSolver {
 					dgFloat64 maxErr = dgFloat64(0.0f);
 					dgBigVector e0(m_hullVertexLarge[1] - m_hullVertexLarge[0]);
 					dgInt32 j = 0;
-					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
+					for (; j < dgInt32(ARRAYSIZE(m_dir)); j++) {
 						dgFloat64 error2;
 						CalcSupportVertexLarge(m_dir[j], 2);
 						dgBigVector e1(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
@@ -2295,7 +2295,7 @@ class dgContactSolver {
 						}
 					}
 
-					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(ARRAYSIZE(m_dir))) {
 						NEWTON_ASSERT(maxErr > dgFloat64(0.0f));
 						CalcSupportVertexLarge(m_dir[best], 2);
 					}
@@ -3166,7 +3166,7 @@ class dgContactSolver {
 		CalcSupportVertexSimd(m_dir[0], 0);
 
 		dgInt32 i = 1;
-		for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertexSimd(m_dir[i], 1);
 			e1 = m_hullVertex[1] - m_hullVertex[0];
 			error2 = e1 % e1;
@@ -3175,7 +3175,7 @@ class dgContactSolver {
 			}
 		}
 
-		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (i++; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertexSimd(m_dir[i], 2);
 			e2 = m_hullVertex[2] - m_hullVertex[0];
 			normal = e1 * e2;
@@ -3186,7 +3186,7 @@ class dgContactSolver {
 		}
 
 		error2 = dgFloat32(0.0f);
-		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (i++; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertexSimd(m_dir[i], 3);
 
 			e3 = m_hullVertex[3] - m_hullVertex[0];
@@ -3196,10 +3196,10 @@ class dgContactSolver {
 			}
 		}
 
-		if (i >= dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+		if (i >= dgInt32(ARRAYSIZE(m_dir))) {
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertexSimd(m_dir[i], 1);
 				e1 = m_hullVertex[1] - m_hullVertex[0];
 				error2 = e1 % e1;
@@ -3213,7 +3213,7 @@ class dgContactSolver {
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertexSimd(m_dir[i], 2);
 				e2 = m_hullVertex[2] - m_hullVertex[0];
 				normal = e1 * e2;
@@ -3230,7 +3230,7 @@ class dgContactSolver {
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertexSimd(m_dir[i], 3);
 
 				e3 = m_hullVertex[3] - m_hullVertex[0];
@@ -3313,7 +3313,7 @@ class dgContactSolver {
 
 		CalcSupportVertex(m_dir[0], 0);
 		dgInt32 i = 1;
-		for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertex(m_dir[i], 1);
 			e1 = m_hullVertex[1] - m_hullVertex[0];
 			error2 = e1 % e1;
@@ -3322,7 +3322,7 @@ class dgContactSolver {
 			}
 		}
 
-		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (i++; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertex(m_dir[i], 2);
 			e2 = m_hullVertex[2] - m_hullVertex[0];
 			normal = e1 * e2;
@@ -3333,7 +3333,7 @@ class dgContactSolver {
 		}
 
 		error2 = dgFloat32(0.0f);
-		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (i++; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertex(m_dir[i], 3);
 			e3 = m_hullVertex[3] - m_hullVertex[0];
 			error2 = normal % e3;
@@ -3342,10 +3342,10 @@ class dgContactSolver {
 			}
 		}
 
-		if (i >= dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+		if (i >= dgInt32(ARRAYSIZE(m_dir))) {
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertex(m_dir[i], 1);
 				e1 = m_hullVertex[1] - m_hullVertex[0];
 				error2 = e1 % e1;
@@ -3359,7 +3359,7 @@ class dgContactSolver {
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertex(m_dir[i], 2);
 				e2 = m_hullVertex[2] - m_hullVertex[0];
 				normal = e1 * e2;
@@ -3376,7 +3376,7 @@ class dgContactSolver {
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertex(m_dir[i], 3);
 
 				e3 = m_hullVertex[3] - m_hullVertex[0];
@@ -3452,7 +3452,7 @@ class dgContactSolver {
 
 		CalcSupportVertexLarge(m_dir[0], 0);
 		dgInt32 i = 1;
-		for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			dgFloat64 error3;
 			CalcSupportVertexLarge(m_dir[i], 1);
 			e1 = m_hullVertexLarge[1] - m_hullVertexLarge[0];
@@ -3462,7 +3462,7 @@ class dgContactSolver {
 			}
 		}
 
-		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (i++; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			dgFloat64 error3;
 			CalcSupportVertexLarge(m_dir[i], 2);
 			e2 = m_hullVertexLarge[2] - m_hullVertexLarge[0];
@@ -3474,7 +3474,7 @@ class dgContactSolver {
 		}
 
 		error2 = dgFloat32(0.0f);
-		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+		for (i++; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 			CalcSupportVertexLarge(m_dir[i], 3);
 			e3 = m_hullVertexLarge[3] - m_hullVertexLarge[0];
 			error2 = normal % e3;
@@ -3483,13 +3483,13 @@ class dgContactSolver {
 			}
 		}
 
-		if (i >= dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+		if (i >= dgInt32(ARRAYSIZE(m_dir))) {
 			dgInt32 best;
 			dgFloat64 maxErr;
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertexLarge(m_dir[i], 1);
 				e1 = m_hullVertexLarge[1] - m_hullVertexLarge[0];
 				error2 = e1 % e1;
@@ -3503,7 +3503,7 @@ class dgContactSolver {
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertexLarge(m_dir[i], 2);
 				dgBigVector e4(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
 				normal = e1 * e4;
@@ -3520,7 +3520,7 @@ class dgContactSolver {
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
-			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+			for (i = 1; i < dgInt32(ARRAYSIZE(m_dir)); i++) {
 				CalcSupportVertexLarge(m_dir[i], 3);
 
 				dgBigVector e5(m_hullVertexLarge[3] - m_hullVertexLarge[0]);
@@ -3696,7 +3696,7 @@ class dgContactSolver {
 		} else {
 			face = &m_simplex[m_planeIndex];
 			m_planeIndex++;
-			NEWTON_ASSERT(m_planeIndex < dgInt32(sizeof(m_simplex) / sizeof(m_simplex[0])));
+			NEWTON_ASSERT(m_planeIndex < dgInt32(ARRAYSIZE(m_simplex)));
 		}
 		return face;
 	}
@@ -3882,8 +3882,8 @@ class dgContactSolver {
 									deadFaces[deadCount] = adjacent;
 									stack++;
 									deadCount++;
-									NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
-									NEWTON_ASSERT(deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
+									NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(stackPool)));
+									NEWTON_ASSERT(deadCount < dgInt32(ARRAYSIZE(deadFaces)));
 
 								} else {
 									silhouette = adjacent;
@@ -3930,7 +3930,7 @@ class dgContactSolver {
 					    &silhouette->m_adjancentFace[adjacentIndex];
 					silhouetteCapCount = 1;
 					NEWTON_ASSERT(
-					    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+					    silhouetteCapCount < dgInt32(ARRAYSIZE(sillueteCap)));
 					do {
 						silhouette = &m_simplex[silhouette->m_adjancentFace[adjacentIndex]];
 						adjacentIndex = (DG_GETADJACENTINDEX_VERTEX(silhouette, i0));
@@ -3973,7 +3973,7 @@ class dgContactSolver {
 						    &silhouette->m_adjancentFace[adjacentIndex];
 						silhouetteCapCount++;
 						NEWTON_ASSERT(
-						    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+						    silhouetteCapCount < dgInt32(ARRAYSIZE(sillueteCap)));
 
 						do {
 							silhouette =
@@ -4196,9 +4196,9 @@ class dgContactSolver {
 									deadFaces[deadCount] = adjacent;
 									stack++;
 									deadCount++;
-									NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
+									NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(stackPool)));
 									NEWTON_ASSERT(
-									    deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
+									    deadCount < dgInt32(ARRAYSIZE(deadFaces)));
 
 								} else {
 									silhouette = adjacent;
@@ -4243,7 +4243,7 @@ class dgContactSolver {
 					sillueteCap[0].m_faceCopling =
 					    &silhouette->m_adjancentFace[adjacentIndex];
 					silhouetteCapCount = 1;
-					NEWTON_ASSERT(silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+					NEWTON_ASSERT(silhouetteCapCount < dgInt32(ARRAYSIZE(sillueteCap)));
 					do {
 						silhouette = &m_simplex[silhouette->m_adjancentFace[adjacentIndex]];
 						adjacentIndex = (DG_GETADJACENTINDEX_VERTEX(silhouette, i0));
@@ -4286,7 +4286,7 @@ class dgContactSolver {
 						sillueteCap[silhouetteCapCount].m_faceCopling =
 						    &silhouette->m_adjancentFace[adjacentIndex];
 						silhouetteCapCount++;
-						NEWTON_ASSERT(silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+						NEWTON_ASSERT(silhouetteCapCount < dgInt32(ARRAYSIZE(sillueteCap)));
 
 						do {
 							silhouette =
@@ -4513,8 +4513,8 @@ class dgContactSolver {
 									deadFaces[deadCount] = adjacent;
 									stack++;
 									deadCount++;
-									NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
-									NEWTON_ASSERT(deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
+									NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(stackPool)));
+									NEWTON_ASSERT(deadCount < dgInt32(ARRAYSIZE(deadFaces)));
 
 								} else {
 									silhouette = adjacent;
@@ -4560,7 +4560,7 @@ class dgContactSolver {
 					    &silhouette->m_adjancentFace[adjacentIndex];
 					silhouetteCapCount = 1;
 					NEWTON_ASSERT(
-					    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+					    silhouetteCapCount < dgInt32(ARRAYSIZE(sillueteCap)));
 					do {
 						silhouette = &m_simplex[silhouette->m_adjancentFace[adjacentIndex]];
 						adjacentIndex = (DG_GETADJACENTINDEX_VERTEX(silhouette, i0));
@@ -4604,7 +4604,7 @@ class dgContactSolver {
 						    &silhouette->m_adjancentFace[adjacentIndex];
 						silhouetteCapCount++;
 						NEWTON_ASSERT(
-						    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+						    silhouetteCapCount < dgInt32(ARRAYSIZE(sillueteCap)));
 
 						do {
 							silhouette =
@@ -5458,10 +5458,7 @@ void dgWorld::InitConvexCollision() {
 	dgContactSolver::m_dir[13] = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
 	                                      -dgFloat32(1.0f), dgFloat32(0.0f));
 
-	for (i = 0;
-	        i < dgInt32(
-	            sizeof(dgContactSolver::m_dir) / sizeof(dgContactSolver::m_dir[0]));
-	        i++) {
+	for (i = 0; i < dgInt32(ARRAYSIZE(dgContactSolver::m_dir)); i++) {
 		dgVector dir(dgContactSolver::m_dir[i]);
 		dgContactSolver::m_dir[i] = dir.Scale(dgFloat32(1.0f) / dgSqrt(dir % dir));
 	}
@@ -5546,16 +5543,10 @@ void dgWorld::InitConvexCollision() {
 #endif
 
 #ifdef _DEBUG
-	for (i = 0;
-	        i < dgInt32(
-	            sizeof(dgContactSolver::m_dir) / sizeof(dgContactSolver::m_dir[0]));
-	        i++) {
+	for (i = 0; i < dgInt32(ARRAYSIZE(dgContactSolver::m_dir)); i++) {
 		NEWTON_ASSERT(
 		    dgContactSolver::m_dir[i] % dgContactSolver::m_dir[i] > dgFloat32(0.9999f));
-		for (dgInt32 j = i + 1;
-		        j < dgInt32(
-		            sizeof(dgContactSolver::m_dir) / sizeof(dgContactSolver::m_dir[0]));
-		        j++) {
+		for (dgInt32 j = i + 1; j < dgInt32(ARRAYSIZE(dgContactSolver::m_dir)); j++) {
 			NEWTON_ASSERT(
 			    dgContactSolver::m_dir[i] % dgContactSolver::m_dir[j] < dgFloat32(0.9999f));
 		}

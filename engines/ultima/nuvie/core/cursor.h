@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_CURSOR_H
 #define NUVIE_CORE_CURSOR_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 
 
@@ -48,7 +48,7 @@ class Cursor {
 	Screen *screen;
 	const Configuration *config;
 	sint32 cur_x, cur_y; // location on screen, unused normally
-	Std::vector<MousePointer *> cursors; // pointer list
+	Common::Array<MousePointer *> cursors; // pointer list
 	uint8 cursor_id; // which pointer is active
 
 	unsigned char *cleanup; // restore image behind cursor

@@ -163,12 +163,22 @@ void Dialog::markWidgetsAsDirty() {
 	}
 }
 
-void Dialog::drawDialog(DrawLayer layerToDraw) {
+Common::Rect Dialog::getMaxDirtyRect() const {
+	int16 x = _x;
+	if (g_gui.useRTL()) {
+		x = g_system->getOverlayWidth() - _x - _w;
+	}
+	return g_gui.theme()->getDialogDirtyRect(Common::Rect(x, _y, x + _w, _y + _h), _backgroundType);
+}
+
+void Dialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
 
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->disableClipRect();
+	if (resetClipping) {
+		g_gui.theme()->disableClipRect();
+	}
 	g_gui.theme()->_layerToDraw = layerToDraw;
 	int16 x = _x;
 	if (g_gui.useRTL()) {

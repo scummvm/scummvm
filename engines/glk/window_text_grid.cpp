@@ -79,6 +79,12 @@ void TextGridWindow::rearrange(const Rect &box) {
 	_height = newhgt;
 }
 
+void TextGridWindow::refreshStyles() {
+	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], _styles);
+	_font = g_conf->_monoInfo;
+	rearrange(_bbox);
+}
+
 void TextGridWindow::touch(int line) {
 	int y = _bbox.top + line * _font._leading;
 	_lines[line].dirty = true;
@@ -658,7 +664,7 @@ void TextGridWindow::redraw() {
 
 					for (k = a, o = x; k < b; k++, o += _font._cellW) {
 						screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
-											 fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
+											 fgcolor, Common::U32String(ln->_chars[k]), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + _font._baseLine + 1, w,
@@ -687,7 +693,7 @@ void TextGridWindow::redraw() {
 			// Write out the text
 			for (k = a, o = x; k < b; k++, o += _font._cellW) {
 				screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
-									 fgcolor, Common::U32String(&ln->_chars[k], 1));
+									 fgcolor, Common::U32String(ln->_chars[k]));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + _font._baseLine + 1, w, _font._linkStyle), _font._linkColor);

@@ -37,6 +37,8 @@ public:
 
 	void setBackground(uint32 color);
 	void setSecondaryColor(uint32 color);
+	void setTertiaryColor(uint32 color);
+	void setQuaternaryColor(uint32 color);
 	int getFontHeight() const override;
 	int getMaxCharWidth() const override;
 	int getCharWidth(uint32 chr) const override;
@@ -51,6 +53,8 @@ private:
 	Common::Array<Graphics::ManagedSurface *> _chars;
 	uint32 _backgroundColor;
 	uint32 _secondaryColor;
+	uint32 _tertiaryColor;
+	uint32 _quaternaryColor;
 	int _kerningOffset;
 	int _charWidth;
 };

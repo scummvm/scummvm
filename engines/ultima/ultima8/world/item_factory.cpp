@@ -19,16 +19,15 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
-
 #include "ultima/ultima8/world/item_factory.h"
+
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/main_shape_archive.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/glob_egg.h"
 #include "ultima/ultima8/world/monster_egg.h"
 #include "ultima/ultima8/world/teleport_egg.h"
-#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {

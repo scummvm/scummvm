@@ -22,7 +22,6 @@
 #include "base/plugins.h"
 
 #include "common/system.h"
-#include "common/translation.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
@@ -48,23 +47,24 @@ public:
 	}
 
 	Common::KeymapArray initKeymaps(const char *target) const override {
-		Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "playground3d", _("Default keymappings"));
+		Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "playground3d", Common::U32String("Default keymappings"));
 
 		Common::Action *act;
 
-		act = new Common::Action(Common::kStandardActionLeftClick, _("Switch test"));
+		// We intentionally do not translate these
+		act = new Common::Action(Common::kStandardActionLeftClick, Common::U32String("Switch test"));
 		act->setCustomEngineActionEvent(Playground3d::kActionSwitchTest);
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
 		keymap->addAction(act);
 
-		act = new Common::Action("FOG", _("Enable/Disable fog"));
+		act = new Common::Action("FOG", Common::U32String("Enable / Disable fog"));
 		act->setCustomEngineActionEvent(Playground3d::kActionEnableFog);
 		act->addDefaultInputMapping("f");
 		act->addDefaultInputMapping("JOY_X");
 		keymap->addAction(act);
 
-		act = new Common::Action("SCISSOR", _("Enable/Disable scissor"));
+		act = new Common::Action("SCISSOR", Common::U32String("Enable / Disable scissor"));
 		act->setCustomEngineActionEvent(Playground3d::kActionEnableScissor);
 		act->addDefaultInputMapping("s");
 		act->addDefaultInputMapping("JOY_Y");

@@ -427,7 +427,17 @@ void KyraEngine_HoF::startSceneScript(int unk1) {
 	_sceneCommentString = "Undefined scene comment string!";
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
-	filename = Common::String(_sceneList[sceneId].filename1) + "." + _scriptLangExt[(_flags.platform == Common::kPlatformDOS && !_flags.isTalkie) ? 0 : _lang];
+	// Korean fan translation uses .KMC scripts (Korean-patched EMC files).
+	// Fall back to .EMC if .KMC is not available. Other langs clamp to valid range.
+	if (_flags.lang == Common::KO_KOR) {
+		filename = Common::String(_sceneList[sceneId].filename1) + ".KMC";
+		if (!_res->exists(filename.c_str())) {
+			filename = Common::String(_sceneList[sceneId].filename1) + ".EMC";
+		}
+	} else {
+		int scriptLangIdx = (_flags.platform == Common::kPlatformDOS && !_flags.isTalkie) ? 0 : (_lang > 3 ? 0 : _lang);
+		filename = Common::String(_sceneList[sceneId].filename1) + "." + _scriptLangExt[scriptLangIdx];
+	}
 	_res->exists(filename.c_str(), true);
 	_emc->load(filename.c_str(), &_sceneScriptData, &_opcodes);
 	runSceneScript7();

@@ -50,7 +50,7 @@ extern  CText   *atxtDisplayWord[WORDSPERLIST];
 
 
 C1ButtonDialog::C1ButtonDialog(CWnd *pParent, CPalette *pPalette, char *pszButton1Text, char *pszText1, char *pszText2)
-	: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, ".\\ART\\WLSTSCRL.BMP", 16, 25) {
+	: CBmpDialog(pParent, pPalette, IDD_1BTNDLG, "art\\WLSTSCRL.BMP", 16, 25) {
 	assert(pParent != nullptr);
 	assert(pPalette != nullptr);
 	assert(pszText1 != nullptr);

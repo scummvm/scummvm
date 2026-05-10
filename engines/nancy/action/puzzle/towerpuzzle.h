@@ -43,9 +43,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "TowerPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawRing(uint poleID, uint position, uint ringID, bool clear = false);
 

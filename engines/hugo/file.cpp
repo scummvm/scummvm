@@ -31,7 +31,6 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
@@ -294,7 +293,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	Common::String savegameDescription;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
@@ -396,7 +395,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	int16 savegameId;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {
@@ -434,16 +433,19 @@ bool FileManager::restoreGame(const int16 slot) {
 
 	// If hero image is currently swapped, swap it back before restore
 	if (_vm->_heroImage != kHeroIndex)
-		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage);
+		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage, true);
 
 	_vm->_object->restoreObjects(in);
 
 	_vm->_heroImage = in->readByte();
 
+	// Restore ptrs to currently loaded objects
+	_vm->_object->restoreAllSeq();
+
 	// If hero swapped in saved game, swap it
 	byte heroImg = _vm->_heroImage;
 	if (heroImg != kHeroIndex)
-		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage);
+		_vm->_object->swapImages(kHeroIndex, _vm->_heroImage, true);
 	_vm->_heroImage = heroImg;
 
 	Status &gameStatus = _vm->getGameStatus();
@@ -506,14 +508,14 @@ void FileManager::readBootFile() {
 			_vm->_boot._registered = kRegShareware;
 			return;
 		} else {
-			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
+			_vm->notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
 			_vm->getGameStatus()._doQuitFl = true;
 			return;
 		}
 	}
 
 	if (ofp.size() < (int32)sizeof(_vm->_boot)) {
-		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
 		_vm->getGameStatus()._doQuitFl = true;
 		return;
 	}
@@ -534,7 +536,7 @@ void FileManager::readBootFile() {
 	}
 
 	if (checksum) {
-		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
 		_vm->getGameStatus()._doQuitFl = true;
 	}
 }

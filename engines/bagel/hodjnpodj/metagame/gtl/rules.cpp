@@ -34,10 +34,10 @@ namespace Gtl {
 #define COLOR_BUTTONS       true
 
 #define SCROLL_PIECES       6                       // number of mid-scroll segments
-#define SCROLL_SPEC     ".\\art\\lscroll.bmp"       // path for scroll DIB on disk
-#define SCROLL_TOP_SPEC ".\\art\\lscrollt.bmp"      // path for scroll's top section DIB on disk
-#define SCROLL_BOT_SPEC ".\\art\\lscrollb.bmp"      // path for scroll's bottom section DIB on disk
-#define SCROLL_MID_SPEC ".\\art\\lscrollm.bmp"      // path for scroll's middle section DIB on disk
+#define SCROLL_SPEC     "art\\lscroll.bmp"       // path for scroll DIB on disk
+#define SCROLL_TOP_SPEC "art\\lscrollt.bmp"      // path for scroll's top section DIB on disk
+#define SCROLL_BOT_SPEC "art\\lscrollb.bmp"      // path for scroll's bottom section DIB on disk
+#define SCROLL_MID_SPEC "art\\lscrollm.bmp"      // path for scroll's middle section DIB on disk
 
 #define BUTTON_DY           15                      // offset for Okay button from scroll base
 
@@ -378,7 +378,7 @@ void CRules::OnPaint() {
 	CPalette    *pPalOld = nullptr;
 	CDibDoc     *pDibDoc;
 
-	DoWaitCursor();                                 // put up the hourglass cursor
+	ShowWaitCursor();                                 // put up the hourglass cursor
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = dc.SelectPalette(pScrollPalette, false);
@@ -1437,7 +1437,7 @@ bool CRules::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message
 }
 
 
-void CRules::DoWaitCursor() {
+void CRules::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

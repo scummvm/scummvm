@@ -28,6 +28,7 @@
 #include "osys_n64.h"
 #include "pakfs_save_manager.h"
 #include "framfs_save_manager.h"
+#include "backends/events/default/default-events.h"
 #include "backends/fs/n64/n64-fs-factory.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
@@ -188,13 +189,14 @@ void OSystem_N64::initBackend() {
 		_savefileManager = new PAKSaveManager();
 	}
 
+	_eventManager = new DefaultEventManager(this);
 	_timerManager = new DefaultTimerManager();
 
 	setTimerCallback(&timer_handler, 10);
 
 	setupMixer();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_N64::hasFeature(Feature f) {

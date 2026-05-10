@@ -23,14 +23,18 @@
 #define M4_MEM_MEMMAN_H
 
 #include "common/algorithm.h"
+#include "m4/core/errors.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
 #define _MEMTYPE_LIMIT 33
 
-inline Handle mem_alloc(size_t size, const char *) {
+inline Handle mem_alloc(size_t size, const char *detail) {
 	byte *ptr = (byte *)malloc(size);
+	if (!ptr)
+		error_show(FL, "mem_alloc() - couldn't allocate %ld bytes - %s", size, detail);
+	
 	Common::fill(ptr, ptr + size, 0);
 	return (Handle)ptr;
 }

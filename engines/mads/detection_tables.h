@@ -146,17 +146,32 @@ static const MADSGameDescription gameDescriptions[] = {
 		GType_RexNebular,
 		0
 	},
-
+#ifdef ENABLE_MADSV2
 	{
 		// Return of the Phantom DOS English
 		{
 			"phantom",
 			0,
-			AD_ENTRY1s("section1.hag", "76e2d47a7aebafe48edc9884b3d91782", 1130939),
+			AD_ENTRY1s("global.hag", "bdce9ca93a015f0883d1bc0fabd0cdfa", 812150),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GAMEOPTION_EASY_MOUSE)
+			GUIO4(GUIO_NOMIDI, GAMEOPTION_EASY_MOUSE, GAMEOPTION_COPY_PROTECTION, GAMEOPTION_ORIGINAL_SAVELOAD)
+		},
+		GType_Phantom,
+		0
+	},
+
+	{
+		// Return of the Phantom GOG DOS English
+		{
+			"phantom",
+			"CD",
+			AD_ENTRY1s("global.hag", "8a51c984eb4c64e8b30a7e6670f6bddb", 101154000),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_CD,
+			GUIO4(GUIO_NOMIDI, GAMEOPTION_EASY_MOUSE, GAMEOPTION_COPY_PROTECTION, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		GType_Phantom,
 		0
@@ -171,7 +186,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_DEMO,
-			GUIO1(GAMEOPTION_EASY_MOUSE)
+			GUIO5(GUIO_NOMIDI, GAMEOPTION_EASY_MOUSE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_COPY_PROTECTION, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		GType_Phantom,
 		0
@@ -221,8 +236,8 @@ static const MADSGameDescription gameDescriptions[] = {
 		GType_Forest,
 		0
 	},
-
+#endif
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-} // End of namespace MADS
+} // namespace MADS

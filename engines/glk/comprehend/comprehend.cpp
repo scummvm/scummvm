@@ -140,7 +140,7 @@ void Comprehend::print_u32_internal(const Common::U32String *fmt, ...) {
 	Common::U32String::vformat(fmt->begin(), fmt->end(), outputMsg, argp);
 	va_end(argp);
 
-	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow), outputMsg.u32_str());
+	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow), outputMsg);
 }
 
 void Comprehend::printRoomDesc(const Common::String &desc) {

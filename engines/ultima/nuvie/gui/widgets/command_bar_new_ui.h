@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_COMMAND_BAR_NEW_UI_H
 #define NUVIE_CORE_COMMAND_BAR_NEW_UI_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"
@@ -53,8 +53,8 @@ public:
 
 	void Display(bool full_redraw) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 
 private:
 	const char *get_command_name(sint8 command_num) const;

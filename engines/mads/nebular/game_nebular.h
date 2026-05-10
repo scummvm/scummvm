@@ -23,12 +23,11 @@
 #define MADS_GAME_NEBULAR_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/globals.h"
+#include "mads/nebular/core/game.h"
+#include "mads/nebular/core/globals.h"
 #include "mads/nebular/globals_nebular.h"
 
 namespace MADS {
-
 namespace Nebular {
 
 enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
@@ -42,7 +41,7 @@ enum ProtectionResult {
 	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
 };
 
-enum InventoryObject {
+enum {
 	OBJ_NONE = -1,
 	OBJ_BINOCULARS = 0,
 	OBJ_BURGER = 1,
@@ -105,7 +104,7 @@ class GameNebular : public Game {
 private:
 	ProtectionResult checkCopyProtection();
 protected:
-	GameNebular(MADSEngine *vm);
+	GameNebular(RexNebularEngine *vm);
 
 	void startGame() override;
 
@@ -138,7 +137,7 @@ public:
 // Section handlers aren't needed in ScummVM implementation
 class Section1Handler : public SectionHandler {
 public:
-	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
+	Section1Handler(RexNebularEngine *vm) : SectionHandler(vm) {}
 
 	void preLoadSection() override {}
 	void sectionPtr2() override {}
@@ -153,8 +152,7 @@ typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
 typedef Section1Handler Section8Handler;
 
-} // End of namespace Nebular
+} // namespace Nebular
+} // namespace MADS
 
-} // End of namespace MADS
-
-#endif /* MADS_GAME_NEBULAR_H */
+#endif

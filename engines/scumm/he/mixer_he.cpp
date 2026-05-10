@@ -588,7 +588,7 @@ bool HEMixer::mixerStartChannel(
 		// data over, instead of using the original buffer.
 		if (!(_mixerChannels[channel].flags & CHANNEL_LOOPING)) {
 			const int rampUpSampleCount = !is3DOMusic ? 64 : 128;
-            int samplesSize = _mixerChannels[channel].sampleLen;
+			int samplesSize = _mixerChannels[channel].sampleLen;
 
 			data = (byte *)malloc(samplesSize);
 
@@ -608,7 +608,7 @@ bool HEMixer::mixerStartChannel(
 			// Fade-in to avoid possible sound popping...
 			byte *dataTmp = data;
 
-            // Do the fade-in only if there's enough samples to do so...
+			// Do the fade-in only if there's enough samples to do so...
 			if (!is3DOMusic && samplesSize >= rampUpSampleCount) {
 				for (int i = 0; i < rampUpSampleCount; i++) {
 					*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);

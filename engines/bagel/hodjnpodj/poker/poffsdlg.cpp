@@ -52,7 +52,7 @@ static CRadioButton    *pKuwaitiButton = nullptr;
 static CRadioButton    *pMartianButton = nullptr;
 
 CSetPayoffsDlg::CSetPayoffsDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID, int nOdds, bool bJustDisplay)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\MSCROLL.BMP"),
+	:  CBmpDialog(pParent, pPalette, nID, "art\\MSCROLL.BMP"),
 		crectRedraw(10, 140, 44, 290),
 		rectPair(10, 131, 80, 146),
 		rectPairJacks(10, 145, 80, 160),

@@ -202,6 +202,7 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return (isDemo() ? false : true); }
 	Common::String _checkpoint;
 
+	bool _useSubtitles;
 	Video::Subtitles *_subtitles;
 	void adjustSubtitleSize();
 	void loadSubtitles(const Common::Path &path);
@@ -267,6 +268,7 @@ public:
 	// intros
 	void runIntro(MVideo &video);
 	void runIntros(Videos &videos);
+	void runIntrosWithSubtitles(Videos &videos);
 	Common::HashMap<Filename, bool> _intros;
 
 	// levels

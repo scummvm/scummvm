@@ -50,26 +50,32 @@ struct transSprite {
 
 
 struct M4Rect {
-	int32 x1, y1, x2, y2;
+	int32 x1 = 0;
+	int32 y1 = 0;
+	int32 x2 = 0;
+	int32 y2 = 0;
 };
 
 struct RectList {
-	RectList *next;
-	RectList *prev;
-	int32 x1, y1, x2, y2;
+	RectList *next = nullptr;
+	RectList *prev = nullptr;
+	int32 x1 = 0;
+	int32 y1 = 0;
+	int32 x2 = 0;
+	int32 y2 = 0;
 };
 
 struct matte {
-	matte *nextMatte;
-	void *myScreen;
-	int32 x1;
-	int32 y1;
-	int32 x2;
-	int32 y2;
-	int32 w;
-	int32 h;
-	uint8 *SrcBuffer;
-	uint32 SrcPitch;
+	matte *nextMatte = nullptr;
+	void *myScreen = nullptr;
+	int32 x1 = 0;
+	int32 y1 = 0;
+	int32 x2 = 0;
+	int32 y2 = 0;
+	int32 w = 0;
+	int32 h = 0;
+	uint8 *SrcBuffer = nullptr;
+	uint32 SrcPitch = 0;
 };
 
 } // End of namespace M4

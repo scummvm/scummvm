@@ -60,7 +60,7 @@ MapMgr::MapMgr() {
 	const Config *config = Config::getInstance();
 	Map *map;
 
-	Std::vector<ConfigElement> maps = config->getElement("maps").getChildren();
+	Common::Array<ConfigElement> maps = config->getElement("maps").getChildren();
 	for (const auto &i : maps) {
 		map = initMapFromConf(i);
 
@@ -77,7 +77,7 @@ MapMgr::~MapMgr() {
 void MapMgr::unloadMap(MapId id) {
 	delete _mapList[id];
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> maps = config->getElement("maps").getChildren();
+	Common::Array<ConfigElement> maps = config->getElement("maps").getChildren();
 
 	for (const auto &i : maps) {
 		if (id == static_cast<MapId>(i.getInt("id"))) {
@@ -187,7 +187,7 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	map->_tileSet = g_tileSets->get(mapConf.getString("tileset"));
 	map->_tileMap = g_tileMaps->get(mapConf.getString("tilemap"));
 
-	Std::vector<ConfigElement> children = mapConf.getChildren();
+	Common::Array<ConfigElement> children = mapConf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() == "city") {
 			City *city = dynamic_cast<City *>(map);
@@ -221,7 +221,7 @@ void MapMgr::initCityFromConf(const ConfigElement &cityConf, City *city) {
 	city->_type = cityConf.getString("type");
 	city->_tlkFname = cityConf.getString("tlk_fname");
 
-	Std::vector<ConfigElement> children = cityConf.getChildren();
+	Common::Array<ConfigElement> children = cityConf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() == "personrole")
 			city->_personRoles.push_back(initPersonRoleFromConf(i));
@@ -309,7 +309,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	// for new/fan maps being added to the overworld
 	portal->_tile = portalConf.exists("tile") ? portalConf.getInt("tile") : -1;
 
-	Std::vector<ConfigElement> children = portalConf.getChildren();
+	Common::Array<ConfigElement> children = portalConf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() == "retroActiveDest") {
 			portal->_retroActiveDest = new PortalDestination();

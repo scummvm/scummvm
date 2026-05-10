@@ -87,7 +87,7 @@ Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &de
 bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	if (!isSave) {
 		// do loading
-		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(Common::String("Load game:"), Common::String("Load"), false);
+		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(false);
 		int slot = dialog.runModalWithCurrentTarget();
 
 		if (slot < 0)
@@ -97,7 +97,7 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	}
 
 	// do saving
-	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(Common::String("Save game:"), Common::String("Save"), true);
+	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(true);
 	int slot = dialog.runModalWithCurrentTarget();
 	Common::String desc = dialog.getResultString();
 

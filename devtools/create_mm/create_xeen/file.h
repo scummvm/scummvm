@@ -246,7 +246,7 @@ public:
 			_f = fopen(filename, "rb");
 		} else {
 			char fname[256];
-			sprintf(fname, "../files/xeen/%s", filename);
+			snprintf(fname, ARRAYSIZE(fname), "../files/xeen/%s", filename);
 			_f = fopen(fname, "wb+");
 		}
 

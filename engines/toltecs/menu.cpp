@@ -23,7 +23,6 @@
 
 #include "common/savefile.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 #include "gui/saveload.h"
 
@@ -275,7 +274,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 			loadSavegamesList();
 			setSavegameCaptions(true);
 		} else {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -305,7 +304,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 			_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %04d", _savegames.size())));
 			setSavegameCaptions(true);
 		} else {
-			GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser dialog(true);
 			int slot = dialog.runModalWithCurrentTarget();
 			Common::String desc = dialog.getResultString();
 			if (desc.empty()) {

@@ -79,8 +79,14 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	_lang = 0;
 	_scriptLang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
-			lang = _flags.replacedLang;
+
+	// Korean fan translation: always use KO_KOR regardless of config value,
+	// so that _lang is set to 5 and Korean file extensions are selected.
+	if (_flags.fanLang == Common::KO_KOR) {
+		lang = Common::KO_KOR;
+	} else if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG) {
+		lang = _flags.replacedLang;
+	}
 
 	if (_flags.extraLang == Common::ZH_TWN)
 		_langIntern = 1;
@@ -113,6 +119,10 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	case Common::PL_POL:
 		_lang = 4;
+		break;
+
+	case Common::KO_KOR:
+		_lang = 5;
 		break;
 
 	default:

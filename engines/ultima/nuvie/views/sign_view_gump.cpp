@@ -112,7 +112,7 @@ void SignViewGump::Display(bool full_redraw) {
 	return;
 }
 
-GUI_status SignViewGump::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status SignViewGump::MouseDown(int x, int y, Events::MouseButton button) {
 	Game::get_game()->get_view_manager()->close_gump(this);
 	return GUI_YUM;
 }

@@ -39,7 +39,8 @@ ImageArchive::~ImageArchive() {
 void ImageArchive::reset() {
 #ifdef USE_PNG
 	for (auto &i : _imageCache) {
-		i._value->free();
+		if (i._value)
+			i._value->free();
 		delete i._value;
 	}
 	_imageCache.clear();
@@ -102,9 +103,9 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 
 	const Graphics::Surface *surf = decoder.getSurface();
 
-	// Disable filtering when surface dimensions are not changed to improve performance
+	// Disable filtering when surface dimensions are not changed to improve performance, unless filtering is manually disable
 	if (w && h) {
-		_imageCache[fname] = surf->scale(w, h, true);
+		_imageCache[fname] = surf->scale(w, h, _filtering);
 	}
 	else {
 		_imageCache[fname] = surf->scale(surf->w, surf->h, false);
@@ -115,4 +116,3 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 }
 
 } // End of namespace Graphics
-

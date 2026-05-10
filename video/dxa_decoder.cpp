@@ -402,6 +402,14 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 
 						uint8 *b1 = (uint8 *)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
 						for (int yc = 0; yc < BLOCKH / 2; yc++) {
+							if (sy + yc + my >= _curHeight) {
+								warning("DXA decode13: Motion vector (%d, %d) out of bounds (y direction)", mx, my);
+								break;
+							}
+							if (sx + BLOCKW / 2 + mx > _width) {
+								warning("DXA decode13: Motion vector (%d, %d) out of bounds (x direction)", mx, my);
+								break;
+							}
 							memcpy(b2, b1, BLOCKW / 2);
 							b1 += _width;
 							b2 += _width;

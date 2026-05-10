@@ -22,16 +22,15 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
 
 #include "gui/saveload.h"
 
-#include "mads/mads.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/staticres.h"
+#include "mads/nebular/nebular.h"
+#include "mads/nebular/core/screen.h"
+#include "mads/nebular/core/msurface.h"
+#include "mads/nebular/core/staticres.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/menu_nebular.h"
@@ -289,7 +288,7 @@ void DialogsNebular::showDialog() {
 		_pendingDialog = DIALOG_NONE;
 
 		Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
-		if (dialogId == MADS::DIALOG_MAIN_MENU) {
+		if (dialogId == DIALOG_MAIN_MENU) {
 			keymapper->getKeymap("menu-shortcuts")->setEnabled(true);
 		} else {
 			keymapper->getKeymap("menu-shortcuts")->setEnabled(false);
@@ -355,7 +354,7 @@ void DialogsNebular::showDialog() {
 void DialogsNebular::showScummVMSaveDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 	Scene &scene = game._scene;
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
@@ -382,7 +381,7 @@ void DialogsNebular::showScummVMSaveDialog() {
 
 void DialogsNebular::showScummVMRestoreDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 	Scene &scene = game._scene;
 
 	int slot = dialog->runModalWithCurrentTarget();
@@ -400,7 +399,7 @@ void DialogsNebular::showScummVMRestoreDialog() {
 
 /*------------------------------------------------------------------------*/
 
-CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong) :
+CopyProtectionDialog::CopyProtectionDialog(RexNebularEngine *vm, bool priorAnswerWrong) :
 TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	getHogAnusEntry(_hogEntry);
 
@@ -522,7 +521,7 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 
 /*------------------------------------------------------------------------*/
 
-PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
+PictureDialog::PictureDialog(RexNebularEngine *vm, const Common::Point &pos,
 		int maxChars, int objectId) :
 		TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
 	// Turn off cycling if active
@@ -641,7 +640,7 @@ GameDialog::DialogLine::DialogLine(const Common::String &s) {
 
 /*------------------------------------------------------------------------*/
 
-GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
+GameDialog::GameDialog(RexNebularEngine *vm) : FullScreenDialog(vm) {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
 
@@ -998,7 +997,7 @@ void GameDialog::refreshText() {
 
 /*------------------------------------------------------------------------*/
 
-DifficultyDialog::DifficultyDialog(MADSEngine *vm) : GameDialog(vm) {
+DifficultyDialog::DifficultyDialog(RexNebularEngine *vm) : GameDialog(vm) {
 	setLines();
 	_vm->_palette->resetGamePalette(18, 10);
 }
@@ -1042,7 +1041,7 @@ void DifficultyDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-GameMenuDialog::GameMenuDialog(MADSEngine *vm) : GameDialog(vm) {
+GameMenuDialog::GameMenuDialog(RexNebularEngine *vm) : GameDialog(vm) {
 	setLines();
 }
 
@@ -1093,7 +1092,7 @@ void GameMenuDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-OptionsDialog::OptionsDialog(MADSEngine *vm) : GameDialog(vm) {
+OptionsDialog::OptionsDialog(RexNebularEngine *vm) : GameDialog(vm) {
 	setLines();
 }
 
@@ -1211,6 +1210,6 @@ void OptionsDialog::show() {
 	}
 }
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS

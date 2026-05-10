@@ -194,7 +194,7 @@ static void gizmo_digi_wait(int spriteIndex1, int spriteIndex2) {
 		gizmo_restore_sprite(spriteNum);
 		spriteNum = (spriteNum == spriteIndex2) ? spriteIndex1 : spriteNum + 1;
 
-		uint32 timer = timer_read_60();
+		const uint32 timer = timer_read_60();
 
 		while (!g_engine->shouldQuit() && (timer_read_60() - timer) < 6)
 			gizmo_sound();
@@ -330,12 +330,12 @@ static void gizmo_restore_interface(bool fade) {
 
 		if (_GIZMO(lowMemory2)) {
 			if (!adv_restoreBackground())
-				error_show(FL, 0, "unable to restore background");
+				error_show(FL, "unable to restore background");
 		}
 
 		if (_GIZMO(lowMemory1)) {
 			if (!adv_restoreCodes())
-				error_show(FL, 0, "unable to restore screen codes");
+				error_show(FL, "unable to restore screen codes");
 		}
 
 		krn_fade_from_grey(_GIZMO(palette), 5, 1, fade ? 1 : 2);
@@ -368,8 +368,7 @@ static void gizmo_free_gui(Gizmo *gizmo) {
 	}
 
 	GrBuff *grBuff = gizmo->_grBuff;
-	if (grBuff)
-		delete grBuff;
+	delete grBuff;
 
 	mem_free(gizmo);
 }
@@ -379,7 +378,6 @@ static bool gizmo_load_sprites(const char *name, size_t count) {
 			&_GIZMO(palOffset), _GIZMO(palette)) > 0) {
 		gr_pal_set_range(_GIZMO(palette), 64, 192);
 		_GIZMO(assetName) = mem_strdup(name);
-
 		_GIZMO(spriteCount) = count;
 		_GIZMO(sprites) = (M4sprite **)mem_alloc(count * sizeof(M4sprite *), "*sprites array");
 
@@ -797,8 +795,6 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 
 	// Create new item
 	GizmoItem *item = (GizmoItem *)mem_alloc(sizeof(GizmoItem), "*gui gizmo item");
-	if (!item)
-		error("gizmo_add_item - Not enough emory to create item (%zu bytes)", sizeof(GizmoItem));
 
 	// Put the new item at the head of the list
 	item->_next = gizmo->_items;
@@ -824,9 +820,6 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	}
 
 	GizmoButton *btn = (GizmoButton *)mem_alloc(sizeof(GizmoButton), "*gizmo button");
-	if (!btn)
-		error("gizmo_add_item - Not enough emory to create btn (%zu bytes)", sizeof(GizmoButton));
-
 	btn->_state = selected ? SELECTED : NOTHING;
 	btn->_index = btnIndex;
 	btn->_field8 = arg9;
@@ -854,8 +847,6 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 		return nullptr;
 
 	Gizmo *gui = (Gizmo *)mem_alloc(sizeof(Gizmo), "*gui gizmo");
-	if (!gui)
-		return nullptr;
 
 	GrBuff *grBuff = new GrBuff(sprite->w, sprite->h);
 	gui->_grBuff = grBuff;

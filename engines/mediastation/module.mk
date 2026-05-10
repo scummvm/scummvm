@@ -2,7 +2,10 @@ MODULE := engines/mediastation
 
 MODULE_OBJS = \
 	actor.o \
+	actors/camera.o \
 	actors/canvas.o \
+	actors/cursor.o \
+	actors/diskimage.o \
 	actors/document.o \
 	actors/font.o \
 	actors/hotspot.o \
@@ -23,15 +26,17 @@ MODULE_OBJS = \
 	context.o \
 	cursors.o \
 	datafile.o \
+	events.o \
 	graphics.o \
 	mediascript/codechunk.o \
 	mediascript/collection.o \
-	mediascript/eventhandler.o \
 	mediascript/function.o \
 	mediascript/scriptconstants.o \
+	mediascript/scriptresponse.o \
 	mediascript/scriptvalue.o \
 	mediastation.o \
-	metaengine.o
+	metaengine.o \
+	profile.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MEDIASTATION), DYNAMIC_PLUGIN)

@@ -72,7 +72,7 @@ struct Cursor {
 		return Common::Point(_x, _y);
 	}
 	void setPosition(int x, int y) {
-		//atari_debug("Cursor::setPosition: %d, %d", x, y);
+		//debug("Cursor::setPosition: %d, %d", x, y);
 
 		if (_x == x && _y == y)
 			return;

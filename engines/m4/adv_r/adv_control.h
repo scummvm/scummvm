@@ -24,7 +24,6 @@
 #define M4_ADV_R_ADV_CONTROL_H
 
 #include "common/stream.h"
-#include "m4/m4_types.h"
 
 namespace M4 {
 

@@ -22,18 +22,41 @@
 #ifndef MEDIASTATION_CANVAS_H
 #define MEDIASTATION_CANVAS_H
 
+#include "common/rect.h"
+
 #include "mediastation/actor.h"
+#include "mediastation/graphics.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class CanvasActor : public SpatialEntity {
+struct ImageAsset;
+
+class CanvasActor : public SpatialEntity, public ChannelClient {
 public:
-	CanvasActor() : SpatialEntity(kActorTypeCanvas) {};
+	CanvasActor() : SpatialEntity(kActorTypeCanvas) {
+		_dissolveFactor = 1.0;
+		_isVisible = true;
+		_hasTransparency = true;
+	}
 
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual void loadIsComplete() override;
+	virtual void draw(DisplayContext &displayContext) override;
+
+private:
+	Common::Point _offset;
+	Common::SharedPtr<ImageAsset> _image;
+	DisplayContext _displayContext;
+
+	void setVisibility(bool visibility);
+	void fillCanvas(uint paletteIndex);
+	void clearToTransparency();
+	void stampImage(const Common::Point &dest, uint actorId);
+	void copyScreenTo(const Common::Point &dest);
+	void clearToPalette(uint colorIndex);
 };
 
 } // End of namespace MediaStation

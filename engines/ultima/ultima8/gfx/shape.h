@@ -22,8 +22,7 @@
 #ifndef ULTIMA8_GFX_SHAPE_H
 #define ULTIMA8_GFX_SHAPE_H
 
-#include "ultima/shared/std/containers.h"
-
+#include "common/array.h"
 #include "common/stream.h"
 
 namespace Ultima {

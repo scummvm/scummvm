@@ -99,7 +99,8 @@ void Widget::draw() {
 	if (!isVisible() || !_boss->isVisible())
 		return;
 
-	if (_needsRedraw) {
+	bool needsRedraw = _needsRedraw;
+	if (needsRedraw) {
 		int oldX = _x, oldY = _y;
 
 		// Account for our relative position in the dialog
@@ -108,14 +109,11 @@ void Widget::draw() {
 
 		Common::Rect activeRect = g_gui.theme()->getClipRect();
 		Common::Rect clip = _boss->getClipRect().findIntersectingRect(activeRect);
-		oldClip = g_gui.theme()->swapClipRect(clip);
-
 		if (g_gui.useRTL()) {
 			_x = g_system->getOverlayWidth() - _x - _w;
-
 			clip.moveTo(_x, clip.top);
-			g_gui.theme()->swapClipRect(clip);
 		}
+		oldClip = g_gui.theme()->swapClipRect(clip);
 
 		// Draw border
 		if (_flags & WIDGET_BORDER) {
@@ -151,7 +149,7 @@ void Widget::draw() {
 		w->draw();
 		w = w->_next;
 	}
-	if (!oldClip.isEmpty()) {
+	if (needsRedraw) {
 		g_gui.theme()->swapClipRect(oldClip);
 	}
 }
@@ -213,7 +211,8 @@ bool Widget::isEnabled() const {
 }
 
 void Widget::setVisible(bool e) {
-	if (!(_flags & WIDGET_INVISIBLE) != e) {
+	bool currentlyVisible = !(_flags & WIDGET_INVISIBLE);
+	if (currentlyVisible != e) {
 		if (e) {
 			clearFlags(WIDGET_INVISIBLE);
 			markAsDirty();
@@ -466,7 +465,7 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 			button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
 		else
 			button = new PicButtonWidget(boss, x, y, w, h, scale, _("Clear value"), cmd);
-		((PicButtonWidget *)button)->setGfxFromTheme(ThemeEngine::kImageEraser, kPicButtonStateEnabled, false);
+		((PicButtonWidget *)button)->setGfxFromTheme(ThemeEngine::kImageEraser);
 	} else
 #endif
 		if (!name.empty())
@@ -605,30 +604,9 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
-const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h, bool filtering) {
-	int nw = w, nh = h;
-
-	// Maintain aspect ratio
-	float xRatio = 1.0f * w / gfx->w;
-	float yRatio = 1.0f * h / gfx->h;
-
-	if (xRatio < yRatio)
-		nh = gfx->h * xRatio;
-	else
-		nw = gfx->w * yRatio;
-
-	if (nw == gfx->w && nh == gfx->h)
-		return gfx;
-
-	w = nw;
-	h = nh;
-
-	return gfx->scale(w, h, filtering);
-}
-
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, scale, Common::U32String(), tooltip, cmd, hotkey),
-	  _showButton(true), _gfx{} {
+	  _showButton(true) {
 	Common::fill(_alphaType, _alphaType + ARRAYSIZE(_alphaType), Graphics::ALPHA_OPAQUE);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -640,21 +618,17 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, co
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, Common::U32String(), tooltip, cmd, hotkey),
-	  _showButton(true), _gfx{} {
+	  _showButton(true) {
 	Common::fill(_alphaType, _alphaType + ARRAYSIZE(_alphaType), Graphics::ALPHA_OPAQUE);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::~PicButtonWidget() {
-	for (int i = 0; i < kPicButtonStateMax + 1; i++) {
-		delete _gfx[i];
-	}
 }
 
-void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, bool scale) {
-	delete _gfx[statenum];
-	_gfx[statenum] = nullptr;
+void PicButtonWidget::setGfx(Common::SharedPtr<Graphics::ManagedSurface> &gfx, int statenum) {
+	_gfx[statenum].reset();
 
 	if (!gfx || !gfx->getPixels())
 		return;
@@ -663,14 +637,7 @@ void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, 
 		return;
 
 	_alphaType[statenum] = gfx->detectAlpha();
-
-	float sf = g_gui.getScaleFactor();
-	if (scale && sf != 1.0) {
-		_gfx[statenum] = gfx->scale(gfx->w * sf, gfx->h * sf, false);
-	} else {
-		_gfx[statenum] = new Graphics::ManagedSurface();
-		_gfx[statenum]->copyFrom(*gfx);
-	}
+	_gfx[statenum] = gfx;
 }
 
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
@@ -679,23 +646,31 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool sc
 		return;
 	}
 
-	Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface();
-	tmpGfx->copyFrom(*gfx);
-	setGfx(tmpGfx, statenum, scale);
-	delete tmpGfx;
+	Common::SharedPtr<Graphics::ManagedSurface> tmpGfx(new Graphics::ManagedSurface());
+
+	float sf = g_gui.getScaleFactor();
+	if (scale && sf != 1.0) {
+		Graphics::Surface *scaled = gfx->scale(gfx->w * sf, gfx->h * sf, false);
+		tmpGfx->copyFrom(*scaled);
+		scaled->free();
+		delete scaled;
+	} else {
+		tmpGfx->copyFrom(*gfx);
+	}
+
+	setGfx(tmpGfx, statenum);
 }
 
-void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale) {
-	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
+void PicButtonWidget::setGfxFromTheme(const char *name, int statenum) {
+	Common::SharedPtr<Graphics::ManagedSurface> gfx = g_gui.theme()->getImageSurface(name);
 
-	setGfx(gfx, statenum, scale);
+	setGfx(gfx, statenum);
 
 	return;
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
-	delete _gfx[statenum];
-	_gfx[statenum] = nullptr;
+	_gfx[statenum].reset();
 
 	if (!isVisible() || !_boss->isVisible())
 		return;
@@ -707,7 +682,7 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx[statenum] = new Graphics::ManagedSurface();
+	_gfx[statenum].reset(new Graphics::ManagedSurface());
 	_gfx[statenum]->create(w, h, requiredFormat);
 	_gfx[statenum]->fillRect(Common::Rect(0, 0, w, h), _gfx[statenum]->format.RGBToColor(r, g, b));
 	_alphaType[statenum] = Graphics::ALPHA_OPAQUE;
@@ -717,7 +692,7 @@ void PicButtonWidget::drawWidget() {
 	if (_showButton)
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(), _state, getFlags());
 
-	Graphics::ManagedSurface *gfx;
+	Common::SharedPtr<Graphics::ManagedSurface> gfx;
 	Graphics::AlphaType alphaType;
 
 	if (_state == ThemeEngine::kStateHighlight) {
@@ -960,7 +935,7 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip)
-	: Widget(boss, x, y, w, h, scale, tooltip), _gfx(nullptr), _alphaType(Graphics::ALPHA_OPAQUE) {
+	: Widget(boss, x, y, w, h, scale, tooltip), _alphaType(Graphics::ALPHA_OPAQUE) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
@@ -970,42 +945,28 @@ GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, cons
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip)
-	: Widget(boss, name, tooltip), _gfx(nullptr), _alphaType(Graphics::ALPHA_OPAQUE) {
+	: Widget(boss, name, tooltip), _alphaType(Graphics::ALPHA_OPAQUE) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
 GraphicsWidget::~GraphicsWidget() {
-	delete _gfx;
 }
 
-void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
-	delete _gfx;
-	_gfx = nullptr;
+void GraphicsWidget::setGfx(Common::SharedPtr<Graphics::ManagedSurface> &gfx) {
+	_gfx.reset();
 
 	if (!gfx || !gfx->getPixels())
 		return;
 
-	if (!isVisible() || !_boss->isVisible())
+	if (!isVisible())
 		return;
 
-	float sf = g_gui.getScaleFactor();
-	if (scale && sf != 1.0) {
-		_w = gfx->w * sf;
-		_h = gfx->h * sf;
-	} else {
-		_w = gfx->w;
-		_h = gfx->h;
-	}
+	_w = gfx->w;
+	_h = gfx->h;
 
 	_alphaType = gfx->detectAlpha();
-
-	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
-		_gfx = gfx->scale(_w, _h, false);
-	} else {
-		_gfx = new Graphics::ManagedSurface();
-		_gfx->copyFrom(*gfx);
-	}
+	_gfx = gfx;
 }
 
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
@@ -1014,17 +975,25 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
 		return;
 	}
 
-	Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface();
-	tmpGfx->copyFrom(*gfx);
-	setGfx(tmpGfx, scale);
-	delete tmpGfx;
+	Common::SharedPtr<Graphics::ManagedSurface> tmpGfx(new Graphics::ManagedSurface());
+
+	float sf = g_gui.getScaleFactor();
+	if (scale && sf != 1.0) {
+		Graphics::Surface *scaled = gfx->scale(gfx->w * sf, gfx->h * sf, false);
+		tmpGfx->copyFrom(*scaled);
+		scaled->free();
+		delete scaled;
+	} else {
+		tmpGfx->copyFrom(*gfx);
+	}
+
+	setGfx(tmpGfx);
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
-	delete _gfx;
-	_gfx = nullptr;
+	_gfx.reset();
 
-	if (!isVisible() || !_boss->isVisible())
+	if (!isVisible())
 		return;
 
 	if (w == -1)
@@ -1034,16 +1003,16 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx = new Graphics::ManagedSurface();
+	_gfx.reset(new Graphics::ManagedSurface());
 	_gfx->create(w, h, requiredFormat);
 	_gfx->fillRect(Common::Rect(0, 0, w, h), _gfx->format.RGBToColor(r, g, b));
 	_alphaType = Graphics::ALPHA_OPAQUE;
 }
 
 void GraphicsWidget::setGfxFromTheme(const char *name) {
-	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
+	Common::SharedPtr<Graphics::ManagedSurface> gfx = g_gui.theme()->getImageSurface(name);
 
-	setGfx(gfx, false);
+	setGfx(gfx);
 }
 
 void GraphicsWidget::drawWidget() {
@@ -1140,6 +1109,12 @@ void OptionsContainerWidget::reflowLayout() {
 		w = w->next();
 	}
 	_h = maxY - minY;
+}
+
+Common::Rect OptionsContainerWidget::getClipRect() const {
+	// Use boss clipping rectangle to avoid drawing issues on checkboxes
+	// which stick out of their rectangle due to their bevel.
+	return _boss->getClipRect();
 }
 
 bool OptionsContainerWidget::containsWidget(Widget *widget) const {

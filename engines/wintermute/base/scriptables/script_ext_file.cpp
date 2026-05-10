@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -730,7 +731,9 @@ bool SXFile::setPos(uint32 pos, int whence) {
 	if (_mode == 1 && _readFile) {
 		return _readFile->seek(pos, whence);
 	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
-		error("SXFile - seeking in WriteFile not supported");
+		if (BaseEngine::instance().getGameId() != "royalmahjong") {
+			error("SXFile - seeking in WriteFile not supported");
+		}
 		return false;
 //		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
 	} else {

@@ -803,11 +803,12 @@ static void trleFLIPDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const
 			if (wiz->_uses16BitColor) {
 				dest16 -= runCount;
 				destPtr = (WizRawPixel *)dest16;
+				TRLEFLIP_MEMSET(destPtr + 1, *dataStream, runCount);
 			} else {
 				dest8 -= runCount;
 				destPtr = (WizRawPixel *)dest8;
+				TRLEFLIP_MEMSET((WizRawPixel *)(dest8 + 1), *dataStream, runCount);
 			}
-			TRLEFLIP_MEMSET(destPtr + 1, *dataStream, runCount);
 		},
 		{
 			wiz->trleFLIPBackwardsPixelCopy(destPtr, dataStream, runCount, conversionTable);
@@ -891,11 +892,12 @@ static void trleFLIPLookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr,
 			if (wiz->_uses16BitColor) {
 				dest16 -= runCount;
 				destPtr = (WizRawPixel *)dest16;
+				TRLEFLIP_MEMSET(destPtr + 1, *(lookupTable + *dataStream), runCount);
 			} else {
 				dest8 -= runCount;
 				destPtr = (WizRawPixel *)dest8;
+				TRLEFLIP_MEMSET((WizRawPixel *)(dest8 + 1), *(lookupTable + *dataStream), runCount);
 			}
-			TRLEFLIP_MEMSET(destPtr + 1, *(lookupTable + *dataStream), runCount);
 		},
 		{
 			wiz->trleFLIPBackwardsLookupPixelCopy(destPtr, dataStream, runCount, lookupTable, conversionTable);
@@ -983,7 +985,7 @@ static void trleFLIPMixDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, co
 			if (!wiz->_uses16BitColor) {
 				dest8 -= runCount;
 				destPtr = (WizRawPixel *)dest8;
-				wiz->trleFLIPRemapDestPixels(destPtr + 1, runCount, lookupTable + (*dataStream * 256));
+				wiz->trleFLIPRemapDestPixels((WizRawPixel *)(dest8 + 1), runCount, lookupTable + (*dataStream * 256));
 			} else {
 				dest16 -= runCount;
 				destPtr = (WizRawPixel *)dest16;

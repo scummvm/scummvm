@@ -23,6 +23,7 @@
 #define MOUSE_H
 
 #include "backends/platform/psp/default_display_client.h"
+#include "graphics/blit.h"
 
 class Cursor : public DefaultDisplayClient {
 private:
@@ -36,6 +37,9 @@ private:
 	int32	_x, _y;
 	Palette _screenPalette;			// separate palette for screen. default 'palette' is cursor palette.
 	bool _fakeAlpha;			// true if treating e.g. 555 as 5551, false if there's a genuine alpha channel
+	Graphics::PixelFormat _srcFormat;
+	Graphics::PixelFormat _dstFormat;
+	Graphics::FastBlitFunc _blitFunc;
 
 	void updateRendererOffset();
 

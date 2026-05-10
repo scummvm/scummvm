@@ -78,6 +78,7 @@ public:
 
 	Resource *loadSound(int fileNum, int subfile);
 	void loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds);
+	void syncVolume();
 
 	void stopSound();
 	void freeSounds();

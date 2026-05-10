@@ -193,7 +193,7 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 		Close();
 }
 
-Gump *WeaselGump::playMovie(const Std::string &filename) {
+Gump *WeaselGump::playMovie(const Common::String &filename) {
 	MovieGump *gump = MovieGump::CruMovieViewer(filename, 600, 450, nullptr, this, 0);
 	if (!gump) {
 		warning("Couldn't load flic %s", filename.c_str());
@@ -410,7 +410,7 @@ void WeaselGump::checkBuyMore() {
 	setYesNoQuestion(buymore);
 }
 
-void WeaselGump::setYesNoQuestion(const Std::string &msg) {
+void WeaselGump::setYesNoQuestion(const Common::String &msg) {
 	browsingMode(false);
 	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtQuestion>));
 	TextWidget *textWidget = new TextWidget(30, 100, msg, true, WEASEL_FONT, 150);
@@ -480,7 +480,7 @@ int WeaselGump::purchasedCount(uint16 shape) const {
 }
 
 void WeaselGump::updateItemDisplay() {
-	const Std::vector<WeaselDat::WeaselEntry> &items = _weaselDat->getItems();
+	const Common::Array<WeaselDat::WeaselEntry> &items = _weaselDat->getItems();
 
 	// should always have the item..
 	assert(_curItem < (int)items.size());
@@ -502,7 +502,7 @@ void WeaselGump::updateItemDisplay() {
 	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtItemOwned>));
 	_closeIfExists(_ui->FindGump(&FindByIndex<kIconItem>));
 
-	Std::string credstr = Std::string::format("Credits:%d", _credits);
+	Common::String credstr = Common::String::format("Credits:%d", _credits);
 	TextWidget *textWidget = new TextWidget(30, 57, credstr, true, WEASEL_FONT);
 	textWidget->InitGump(_ui);
 	textWidget->SetIndex(kTxtCredits);
@@ -515,8 +515,8 @@ void WeaselGump::updateItemDisplay() {
 	icon->InitGump(_ui, false);
 	icon->SetIndex(kIconItem);
 
-	Std::string coststr = Std::string::format("Cost:%d", _curItemCost);
-	Std::string purchstr = Std::string::format("Purchased:%02d", purchasedCount(_curItemShape));
+	Common::String coststr = Common::String::format("Cost:%d", _curItemCost);
+	Common::String purchstr = Common::String::format("Purchased:%02d", purchasedCount(_curItemShape));
 
 	MainActor *av = getMainActor();
 	const Item *item = av->getFirstItemWithShape(_curItemShape, true);
@@ -528,7 +528,7 @@ void WeaselGump::updateItemDisplay() {
 			count = item->getQuality();
 		}
 	}
-	Std::string ownedstr = Std::string::format("Owned:%02d", count);
+	Common::String ownedstr = Common::String::format("Owned:%02d", count);
 
 	TextWidget *nametxt = new TextWidget(27, 161, shapeinfo->_weaponInfo->_name, true, WEASEL_FONT);
 	nametxt->InitGump(_ui, false);

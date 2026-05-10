@@ -147,8 +147,8 @@ void SceneInfo::parseScene(const Common::String &sceneName, uint32 startFrame, u
 			scene->_dataParam2 = atoi(tokenizer.nextToken().c_str());
 			scene->_dataParam3 = atoi(tokenizer.nextToken().c_str());
 			scene->_dataParam4 = atoi(tokenizer.nextToken().c_str());
-			scene->_dataParam5 = atoi(tokenizer.nextToken().c_str());
-			scene->_dataParam6 = atoi(tokenizer.nextToken().c_str());
+			scene->_dataParam5 = tokenizer.nextToken().c_str();
+			scene->_dataParam6 = tokenizer.nextToken().c_str();
 			break;
 		case 11: // DIFF
 			scene->_diff = atoi(tokenizer.nextToken().c_str());
@@ -249,35 +249,56 @@ void SceneInfo::addZonesToScenes() {
 	for (auto &scene : _scenes) {
 		if (!scene->_zonesStart.empty()) {
 			Zone *zone = findZone(scene->_zonesStart);
-			scene->_zones.push_back(zone);
-			while (!zone->_next.empty()) {
-				zone = findZone(zone->_next);
-				if (zone == nullptr) {
-					break;
+			while (true) {
+				if (zone != nullptr) {
+					zone = zone->clone();
+					zone->_difficulty = 0;
+					scene->_zones.push_back(zone);
+					if (zone->_next.empty()) {
+						break;
+					} else {
+						zone = findZone(zone->_next);
+						if (zone == nullptr) {
+							break;
+						}
+					}
 				}
-				scene->_zones.push_back(zone);
 			}
 		}
-		if (!scene->_zonesStart2.empty() && scene->_zonesStart2 != scene->_zonesStart) {
-			Zone *zone = findZone(scene->_zonesStart2);
-			scene->_zones.push_back(zone);
-			while (!zone->_next.empty()) {
-				zone = findZone(zone->_next);
-				if (zone == nullptr) {
-					break;
+		if (!scene->_zonesStart2.empty()) {
+			Zone *zone = findZone(scene->_zonesStart);
+			while (true) {
+				if (zone != nullptr) {
+					zone = zone->clone();
+					zone->_difficulty = 1;
+					scene->_zones.push_back(zone);
+					if (zone->_next.empty()) {
+						break;
+					} else {
+						zone = findZone(zone->_next);
+						if (zone == nullptr) {
+							break;
+						}
+					}
 				}
-				scene->_zones.push_back(zone);
 			}
 		}
-		if (!scene->_zonesStart3.empty() && scene->_zonesStart3 != scene->_zonesStart2) {
-			Zone *zone = findZone(scene->_zonesStart3);
-			scene->_zones.push_back(zone);
-			while (!zone->_next.empty()) {
-				zone = findZone(zone->_next);
-				if (zone == nullptr) {
-					break;
+		if (!scene->_zonesStart3.empty()) {
+			Zone *zone = findZone(scene->_zonesStart);
+			while (true) {
+				if (zone != nullptr) {
+					zone = zone->clone();
+					zone->_difficulty = 2;
+					scene->_zones.push_back(zone);
+					if (zone->_next.empty()) {
+						break;
+					} else {
+						zone = findZone(zone->_next);
+						if (zone == nullptr) {
+							break;
+						}
+					}
 				}
-				scene->_zones.push_back(zone);
 			}
 		}
 	}
@@ -341,7 +362,6 @@ Scene::Scene(const Common::String &name, uint32 startFrame, uint32 endFrame) {
 	_nxtfrm = "DEFAULT";
 	_nxtscn = "DEFAULT";
 	_missedRects = "DEFAULT";
-	_missedRects = "DEFAULT";
 	_scnscrParam = 0;
 	_dataParam1 = 0;
 	_dataParam2 = 0;
@@ -353,6 +373,13 @@ Scene::Scene(const Common::String &name, uint32 startFrame, uint32 endFrame) {
 	_endFrame = endFrame;
 	_diff = 0;
 	_difficultyMod = 0;
+}
+
+Scene::~Scene() {
+	for (auto zone : _zones) {
+		delete zone;
+	}
+	_zones.clear();
 }
 
 Zone::Zone(const Common::String &name, const Common::String &ptrfb) {
@@ -370,9 +397,10 @@ Zone::~Zone() {
 	for (auto rect : _rects) {
 		delete rect;
 	}
+	_rects.clear();
 }
 
-void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String &scene, uint32 score, const Common::String &rectHit, const Common::String &unknown) {
+void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String scene, uint32 score, const Common::String rectHit, const Common::String unknown) {
 	Rect *rect = new Rect();
 	rect->left = left;
 	rect->top = top;
@@ -383,6 +411,67 @@ void Zone::addRect(int16 left, int16 top, int16 right, int16 bottom, const Commo
 	rect->_rectHit = rectHit;
 	rect->_unknown = unknown;
 	_rects.push_back(rect);
+}
+
+Zone *Zone::clone() {
+	Zone *clone = new Zone(_name, _startFrame, _endFrame);
+	clone->_ptrfb = _ptrfb;
+	clone->_next = _next;
+	for (auto rect : _rects) {
+		Rect *cloneRect = rect->clone();
+		clone->_rects.push_back(cloneRect);
+	}
+	return clone;
+}
+
+void Rect::center(int16 cx, int16 cy, int16 w, int16 h) {
+	right = cx + (w / 2);
+	left = cx - (w / 2);
+	top = cy - (h / 2);
+	bottom = cy + (h / 2);
+}
+
+Common::Rect Rect::getInterpolatedRect(uint32 startFrame, uint32 endFrame, uint32 currentFrame) {
+	if (_isMoving && currentFrame >= startFrame && currentFrame < endFrame) {
+		Rect interpolated;
+		uint32 totalFrames = endFrame - startFrame;
+		uint32 relativeFrame = currentFrame - startFrame;
+		double percentage = relativeFrame * 100.0f / totalFrames;
+		interpolated.top = top + ((_dest.top - top) / 100.0f * percentage);
+		interpolated.left = left + ((_dest.left - left) / 100.0f * percentage);
+		interpolated.bottom = bottom + ((_dest.bottom - bottom) / 100.0f * percentage);
+		interpolated.right = right + ((_dest.right - right) / 100.0f * percentage);
+		return interpolated;
+	} else if (_isMoving && currentFrame >= endFrame) {
+		Rect finished;
+		finished.top = _dest.top;
+		finished.left = _dest.left;
+		finished.bottom = _dest.bottom;
+		finished.right = _dest.right;
+		return finished;
+	} else {
+		Rect normal;
+		normal.top = top;
+		normal.left = left;
+		normal.bottom = bottom;
+		normal.right = right;
+		return normal;
+	}
+}
+
+Rect *Rect::clone() {
+	Rect *clone = new Rect();
+	clone->top = top;
+	clone->left = left;
+	clone->bottom = bottom;
+	clone->right = right;
+	clone->_scene = _scene;
+	clone->_score = _score;
+	clone->_rectHit = _rectHit;
+	clone->_unknown = _unknown;
+	clone->_isMoving = _isMoving;
+	clone->_dest = _dest;
+	return clone;
 }
 
 } // End of namespace Alg

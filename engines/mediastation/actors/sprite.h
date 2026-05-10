@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/array.h"
+#include "common/ptr.h"
 
 #include "mediastation/actor.h"
 #include "mediastation/datafile.h"
@@ -33,65 +34,64 @@
 
 namespace MediaStation {
 
-struct SpriteClip {
+struct SpriteMovieClip {
+	SpriteMovieClip() = default;
+	SpriteMovieClip(uint clipId, int first, int last);
+	Common::String getDebugString() const;
+
 	uint id = 0;
-	uint firstFrameIndex = 0;
-	uint lastFrameIndex = 0;
+	int firstFrameIndex = 0;
+	int lastFrameIndex = 0;
 };
 
-class SpriteFrameHeader : public BitmapHeader {
+class SpriteFrame : public PixMapImage {
 public:
-	SpriteFrameHeader(Chunk &chunk);
+	SpriteFrame(Chunk &chunk, uint index, Common::Point origin, const ImageInfo &imageInfo, bool decompressInPlace);
 
-	uint _index;
-	Common::Point _boundingBox;
+	int _index = 0;
+	Common::Point _origin;
 };
 
-class SpriteFrame : public Bitmap {
-public:
-	SpriteFrame(Chunk &chunk, SpriteFrameHeader *header);
-	virtual ~SpriteFrame() override;
+// The original had a separate class that did reference counting,
+// for sharing an asset across actors, but we can just use a SharedPtr.
+struct SpriteAsset {
+	~SpriteAsset();
 
-	uint32 left();
-	uint32 top();
-	Common::Point topLeft();
-	Common::Rect boundingBox();
-	uint32 index();
-
-private:
-	SpriteFrameHeader *_bitmapHeader = nullptr;
+	uint frameCount = 0;
+	Common::Array<SpriteFrame *> frames;
 };
 
 // Sprites are somewhat like movies, but they strictly show one frame at a time
 // and don't have sound. They are intended for background/recurrent animations.
-class SpriteMovieActor : public SpatialEntity {
-friend class Context;
-
+class SpriteMovieActor : public SpatialEntity, public ChannelClient {
 public:
 	SpriteMovieActor() : SpatialEntity(kActorTypeSprite) {};
 	~SpriteMovieActor();
 
-	virtual void process() override;
-	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
-
-	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-
-	virtual bool isVisible() const override { return _isVisible; }
+	virtual void draw(DisplayContext &displayContext) override;
 
 	virtual void readChunk(Chunk &chunk) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
+	virtual void loadIsComplete() override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+	virtual void onEvent(const ActorEvent &event) override;
+	virtual void timerEvent(const TimerEvent &event) override;
 
 private:
-	static const uint DEFAULT_CLIP_ID = 1200;
-	uint _loadType = 0;
+	const uint DEFAULT_FORWARD_CLIP_ID = 0x4B0;
+	const uint DEFAULT_BACKWARD_CLIP_ID = 0x4B1;
+
+	bool _decompressInPlace = false;
 	uint _frameRate = 0;
-	uint _frameCount = 0;
-	Common::HashMap<uint, SpriteClip> _clips;
-	Common::Array<SpriteFrame *> _frames;
+	uint _actorReference = 0;
+	Common::HashMap<uint, SpriteMovieClip> _clips;
+	Common::SharedPtr<SpriteAsset> _asset;
 	bool _isPlaying = false;
-	uint _currentFrameIndex = 0;
+	int _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;
-	SpriteClip _activeClip;
+	uint _defaultClipId = DEFAULT_FORWARD_CLIP_ID;
+	SpriteMovieClip _activeClip;
 
 	void play();
 	void stop();
@@ -108,9 +108,6 @@ private:
 	void scheduleNextTimerEvent();
 	void postMovieEndEventIfNecessary();
 	void setVisibility(bool visibility);
-
-	void updateFrameState();
-	void timerEvent();
 };
 
 } // End of namespace MediaStation

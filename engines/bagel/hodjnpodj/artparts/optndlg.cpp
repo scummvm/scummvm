@@ -51,7 +51,7 @@ int m_nTimeScale[12] =  {15, 30, 45, 60, 75, 90, 120, 180, 240, 300, 600, 700};
 
 
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, "art\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_nTime = MIN_TIME;
 	m_nColumns = MIN_COLUMNS;

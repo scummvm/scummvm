@@ -40,6 +40,8 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	enum BulAction { kNone, kRoll, kPass, kReset, kCapture };
 
@@ -47,7 +49,6 @@ protected:
 	void reset(bool capture);
 
 	Common::String getRecordTypeName() const override { return "BulPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	Common::Path _imageName;
 

@@ -60,32 +60,29 @@ struct CifInfo {
 
 // Wrapper for a single file. Exclusively used for scene IFFs, though it can contain anything.
 class CifFile {
-private:
-friend class ResourceManager;
-	CifFile() : _stream(nullptr) {}
 public:
+	CifFile() : _stream(nullptr) {}
+	CifFile(const CifInfo &info) : _stream(nullptr), _info(info) {}
 	CifFile(Common::SeekableReadStream *stream, const Common::Path &name);
 	~CifFile();
 
 	Common::SeekableReadStream *createReadStream() const;
+	Common::SeekableReadStream *createReadStreamRaw() const;
+	bool sync(Common::Serializer &ser);
+	CifInfo getInfo() const { return _info; }
 
 private:
-	bool sync(Common::Serializer &ser);
-	Common::SeekableReadStream *createReadStreamRaw() const;
-
 	Common::SeekableReadStream *_stream;
 	CifInfo _info;
 };
 
 // Container type comprising of multiple CIF files. Contrary to its name it contains no tree structure.
 class CifTree : public Common::Archive {
-protected:
-friend class ResourceManager;
+public:
 	CifTree() : _stream(nullptr) {}
 	CifTree(Common::SeekableReadStream *stream, const Common::Path &name);
 	virtual ~CifTree();
 
-public:
 	// Used for extracting additional image data for conversation cels (nancy2 and up)
 	const CifInfo &getCifInfo(const Common::Path &name) const;
 
@@ -99,11 +96,17 @@ public:
 	Common::Path getName() const { return _name; }
 
 	static CifTree *makeCifTreeArchive(const Common::String &name, const Common::String &ext);
+	Common::SeekableReadStream *createReadStreamRaw(const Common::Path &path) const;
+	bool sync(Common::Serializer &ser);
+
+	void addInfo(const CifInfo &info) { _writeFileMap.push_back(info); }
+	uint writeFileMapSize() const { return _writeFileMap.size(); }
+	uint32 getDataOffset(uint i) const { return _writeFileMap[i].dataOffset; }
+	void setDataOffset(uint i, uint32 offset) { _writeFileMap[i].dataOffset = offset; }
+
+	Common::Array<Common::Path> getPathsForType(CifInfo::ResType type = CifInfo::kResTypeAny) const;
 
 private:
-	bool sync(Common::Serializer &ser);
-	Common::SeekableReadStream *createReadStreamRaw(const Common::Path &path) const;
-
 	Common::Path _name;
 	Common::SeekableReadStream *_stream;
 	Common::HashMap<Common::Path, CifInfo, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _fileMap;

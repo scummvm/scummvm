@@ -78,8 +78,10 @@ public:
 	float _nearClipPlane;
 	float _farClipPlane;
 	float _fov;
+#endif
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
+#ifdef ENABLE_WME3D
 	Light3D *getActiveLight();
 #endif
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);

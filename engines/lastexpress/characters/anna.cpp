@@ -964,6 +964,7 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 
 			if (getCharacter(kCharacterAnna).direction != 1) {
 				bumpCathRx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position + 750);
+				break;
 			}
 		} else {
 			if (getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall + 8] != 2)
@@ -984,6 +985,7 @@ void LogicManager::HAND_Anna_DoWalkP1(HAND_PARAMS) {
 
 			if (getCharacter(kCharacterAnna).direction != 1) {
 				bumpCathRx(getCharacter(kCharacterAnna).characterPosition.car, getCharacter(kCharacterAnna).characterPosition.position + 750);
+				break;
 			}
 		}
 
@@ -3368,11 +3370,11 @@ void LogicManager::HAND_Anna_GiveMaxToCond2(HAND_PARAMS) {
 		case 9:
 			softReleaseAtDoor(kCharacterAnna, 37);
 			endGraphics(kCharacterAnna);
-			getCharacter(kCharacterAnna).characterPosition.location = kCharacterAnna;
+			getCharacter(kCharacterAnna).characterPosition.location = 1;
 			getCharacter(kCharacterAnna).characterPosition.position = 4070;
-			getCharacterCurrentParams(kCharacterAnna)[2] = kCharacterAnna;
+			getCharacterCurrentParams(kCharacterAnna)[2] = 1;
 			setDoor(45, kCharacterCath, 0, 255, 255);
-			setDoor(53, kCharacterAnna, kCharacterAnna, 10, 9);
+			setDoor(53, kCharacterAnna, 1, 10, 9);
 
 			if (checkCathDir(kCarRedSleeping, 78))
 				bumpCath(kCarRedSleeping, 49, 255);
@@ -3457,14 +3459,14 @@ void LogicManager::HAND_Anna_Concert(HAND_PARAMS) {
 		getCharacter(kCharacterAnna).characterPosition.location = 1;
 		break;
 	case 191668032:
-		COND_Anna_LeaveConcert(0, 0, 0, 0);
+		CONS_Anna_LeaveConcert(0, 0, 0, 0);
 		break;
 	default:
 		break;
 	}
 }
 
-void LogicManager::COND_Anna_LeaveConcert(CONS_PARAMS) {
+void LogicManager::CONS_Anna_LeaveConcert(CONS_PARAMS) {
 	CharacterCallParams *params = &getCharacter(kCharacterAnna).callParams[getCharacter(kCharacterAnna).currentCall];
 	_engine->getMessageManager()->setMessageHandle(kCharacterAnna, &LogicManager::HAND_Anna_LeaveConcert);
 	getCharacter(kCharacterAnna).callbacks[getCharacter(kCharacterAnna).currentCall] = 57;
@@ -3491,7 +3493,7 @@ void LogicManager::HAND_Anna_LeaveConcert(HAND_PARAMS) {
 			AnnaCall(&LogicManager::CONS_Anna_DoWalk, 4, 4070, 0, 0);
 			break;
 		case 2:
-			setDoor(37, kCharacterAlexei, 1, 0, 0);
+			setDoor(37, kCharacterCath, 1, 0, 0);
 			send(kCharacterAnna, kCharacterCond2, 205033696, 0);
 			startCycOtis(kCharacterAnna, "625Ef");
 			softBlockAtDoor(kCharacterAnna, 37);

@@ -129,7 +129,6 @@ public:
 
 public:
 	const Graphics::PixelFormat _resourcePixelFormat;
-	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
 	const ZVisionGameDescription *_gameDescription;
@@ -285,7 +284,7 @@ public:
 	}
 
 private:
-	void initialize();
+	Common::Error initialize();
 	void initFonts();
 
 	void initializePath(const Common::FSNode &gamePath) override;

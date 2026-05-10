@@ -118,14 +118,11 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 			// Not fast, ignore
 			if (!map->isChunkFast(cx, cy)) continue;
 
-			const Std::list<Item *> *items = map->getItemList(cx, cy);
+			const Common::List<Item *> *items = map->getItemList(cx, cy);
 
 			if (!items) continue;
 
-			Std::list<Item *>::const_iterator it = items->begin();
-			Std::list<Item *>::const_iterator end = items->end();
-			for (; it != end; ++it) {
-				Item *item = *it;
+			for (auto item : *items) {
 				if (!item) continue;
 
 				item->setupLerp(gametick);

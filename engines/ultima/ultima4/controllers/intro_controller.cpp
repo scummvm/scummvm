@@ -571,7 +571,7 @@ void IntroController::drawMapAnimated() {
 	// draw animated objects
 	for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++)
 		if (_objectStateTable[i].tile != 0) {
-			Std::vector<MapTile> tiles;
+			Common::Array<MapTile> tiles;
 			tiles.push_back(_objectStateTable[i].tile);
 			tiles.push_back(_binData->_introMap[_objectStateTable[i].x + (_objectStateTable[i].y * INTRO_MAP_WIDTH)]);
 			_mapArea.drawTile(tiles, false, _objectStateTable[i].x, _objectStateTable[i].y);
@@ -1459,7 +1459,7 @@ void IntroController::addTitle(int x, int y, int w, int h, AnimType method, uint
 		duration,           // total animation time
 		nullptr,               // storage for the source image
 		nullptr,               // storage for the animation frame
-		Std::vector<AnimPlot>(),
+		Common::Array<AnimPlot>(),
 		false
 	};             // prescaled
 	_titles.push_back(data);

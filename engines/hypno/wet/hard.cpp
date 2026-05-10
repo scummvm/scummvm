@@ -373,6 +373,8 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 			return "ENERGIE";
 		case Common::ES_ESP:
 			return "ENERGIA";
+		case Common::KO_KOR:
+			return "\xb5\x41\x90\xe1\xbb\xa1"; // 체력 (health)
 		default:
 			return "ENERGY";
 		}
@@ -382,6 +384,8 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 			return "OBJ.";
 		case Common::ES_ESP:
 			return "O. M.";
+		case Common::KO_KOR:
+			return "\xa1\xa2\xce\x61"; // 목표 (objective)
 		default:
 			return "M. O.";
 		}
@@ -389,6 +393,8 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 		switch (_language) {
 		case Common::ES_ESP:
 			return "PUNTOS";
+		case Common::KO_KOR:
+			return "\xb8\xf1\xae\x81"; // 점수 (score) 
 		default:
 			return "SCORE";
 		}
@@ -398,6 +404,8 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 			return "VERROUILLAGE";
 		case Common::ES_ESP:
 			return "BLANCO FIJADO";
+		case Common::KO_KOR:
+			return "\xa1\xa2\xce\x61\x20\xbb\xe1\xaf\x81"; // 목표물포착 (target acquired)
 		default:
 			return "TARGET ACQUIRED";
 		}
@@ -407,6 +415,8 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 			return "DIRECTION ?";
 		case Common::ES_ESP:
 			return "ELIGE DIRECCION";
+		case Common::KO_KOR:
+			return "\xa4\x77\xd0\xb7\xac\xe5\x00\x00\xc8\x82"; // 전향선택 (choose direction)
 		default:
 			return "CHOOSE DIRECTION";
 		}

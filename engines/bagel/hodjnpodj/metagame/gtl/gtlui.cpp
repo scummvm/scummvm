@@ -35,15 +35,15 @@ namespace Gtl {
 
 #define STARTING_LOCATION   "Castle"
 
-#define HODJS_WALKING_SOUND ".\\SOUND\\HODJST.MID"
+#define HODJS_WALKING_SOUND "sound\\HODJST.MID"
 #define HODJ_SOUND_START    2000
 #define HODJ_SOUND_END      63000
-#define HODJS_STARS_FILE    ".\\ART\\HSTAR.BMP"
+#define HODJS_STARS_FILE    "art\\HSTAR.BMP"
 
-#define PODJS_WALKING_SOUND ".\\SOUND\\PODJST.MID"
+#define PODJS_WALKING_SOUND "sound\\PODJST.MID"
 #define PODJ_SOUND_START    1000
 #define PODJ_SOUND_END      64000
-#define PODJS_STARS_FILE    ".\\ART\\PSTAR.BMP"
+#define PODJS_STARS_FILE    "art\\PSTAR.BMP"
 
 extern uint32 GetPhysicalMemory();
 

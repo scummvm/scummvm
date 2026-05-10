@@ -51,6 +51,8 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 			if (asciiLine.empty()) {
 				continue;
 			}
+			if (engine->getLanguage() == Common::RU_RUS)
+				fixPseudo1251(&asciiLine);
 			_txtbuf += asciiLine;
 		}
 
@@ -59,7 +61,7 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 	_isRTL = Common::convertBiDiU32String(_txtbuf).visual != _txtbuf;
 	_img.create(_r.width(), _r.height(), _engine->_resourcePixelFormat);
 	_state._sharp = true;
-	_state.readAllStyles(_txtbuf.encode());
+	_state.readAllStyles(_txtbuf);
 	_state.updateFontWithTextState(_fnt);
 	_engine->getScriptManager()->setStateValue(_key, 1);
 }
@@ -180,7 +182,7 @@ void ttyTextNode::newline() {
 	_startX = _dx;
 }
 
-void ttyTextNode::outchar(uint16 chr) {
+void ttyTextNode::outchar(uint32 chr) {
 	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(_state._red, _state._green, _state._blue);
 
 	if (_dx + _fnt.getCharWidth(chr) > _r.width())

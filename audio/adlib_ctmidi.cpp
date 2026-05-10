@@ -565,7 +565,7 @@ uint8 MidiDriver_ADLIB_CTMIDI::calculateUnscaledVolume(uint8 channel, uint8 sour
 	// based on the note velocity and MIDI channel volume
 	uint16 volumeModifierIndex = (((velocity << 1) | 1) * (_controlData[source][channel].volume << 1)) >> 11;
 	volumeModifierIndex = (volumeModifierIndex >> 1) + (volumeModifierIndex & 0x1);
-	assert(volumeModifierIndex >= 0 && volumeModifierIndex < 18);
+	assert(volumeModifierIndex < 18); // (volumeModifierIndex >= 0 implied by uint16)
 	int8 volumeModifier = NOTE_VOLUME_MODIFIER_VALUES[volumeModifierIndex];
 
 	uint8 operatorVolume = 0x3F - (instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F);

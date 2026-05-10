@@ -129,8 +129,6 @@ public:
 	void playQueue(PCSpeaker::WaveForm wave, float freq, uint32 lengthus);
 	/** Stop the currently playing note after delay ms. */
 	void stop(int32 delay = 0);
-	/** Adjust the volume. */
-	void setVolume(byte volume);
 
 	bool isPlaying() const;
 

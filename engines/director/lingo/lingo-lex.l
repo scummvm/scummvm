@@ -157,7 +157,7 @@ static Common::String *readUntilNewline(const char **ptr) {
 %}
 
 identifier [_[:alpha:]][_\.[:alnum:]]*
-constfloat [[:digit:]]+\.[[:digit:]]*
+constfloat [[:digit:]]*\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"
 operator [-+*/%^:,()><&\[\]]

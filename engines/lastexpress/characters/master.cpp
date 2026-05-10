@@ -1375,7 +1375,7 @@ void LogicManager::HAND_Master_MovingDay(HAND_PARAMS) {
 				getCharacterCurrentParams(kCharacterMaster)[1] = 0x7FFFFFFF;
 			}
 
-			switch (rnd(15)) {
+			switch (rnd(5)) {
 			case 0:
 				playDialog(kCharacterCath, "ZFX1005", rnd(15) + 2, 0);
 				break;
@@ -1849,7 +1849,7 @@ void LogicManager::HAND_Master_EndVienna(HAND_PARAMS) {
 			} else {
 				if (_globals[kGlobalRegisteredTimeAtWhichCathGaveFirebirdToKronos]) {
 					if (_doneNIS[kEventKronosReturnBriefcase]) {
-						endGame(1, 61, 61, true);
+						endGame(1, _globals[kGlobalRegisteredTimeAtWhichCathGaveFirebirdToKronos], 61, true);
 						return;
 					} else {
 						endGame(1, 2155500, 59, true);

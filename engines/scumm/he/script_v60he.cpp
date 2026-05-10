@@ -225,8 +225,9 @@ Common::SeekableReadStream *ScummEngine_v60he::openSaveFileForReading(const byte
 }
 
 Common::SeekableWriteStream *ScummEngine_v60he::openSaveFileForWriting(const byte *fileName) {
-	// HACK: Disable compression for Moonbase.  Fixes custom map saving.
-	return _saveFileMan->openForSaving(convertSavePath(fileName), _game.id != GID_MOONBASE);
+	// HACK: Disable compression for games which need seeking operations
+	bool gameCanCompress = _game.id != GID_MOONBASE && _game.id != GID_FUNSHOP;
+	return _saveFileMan->openForSaving(convertSavePath(fileName), gameCanCompress);
 }
 
 void ScummEngine_v60he::deleteSaveFile(const byte *fileName) {

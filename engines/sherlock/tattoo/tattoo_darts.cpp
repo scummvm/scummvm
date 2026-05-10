@@ -89,7 +89,7 @@ void Darts::playDarts(GameType gameType) {
 	_gameType = gameType;
 
 	screen.setFont(7);
-	_spacing = screen.fontHeight() + 2;
+	_spacing = screen.fontHeight() - 3;
 
 	// Load dart graphics and initialize values
 	loadDarts();
@@ -109,25 +109,35 @@ void Darts::playDarts(GameType gameType) {
 		_roundScore = 0;
 
 		for (int idx = 0; idx < 3 && !_vm->shouldQuit(); ++idx) {
-			if (_compPlay == 1)
+			switch (_compPlay) {
+			case 1:
+				// one computer player
 				lastDart = throwDart(idx + 1, playerNum * 2);  /* Throw one dart */
-			else
-				if (_compPlay == 2)
-					lastDart = throwDart(idx + 1, playerNum + 1);  /* Throw one dart */
-				else
-					lastDart = throwDart(idx + 1, 0);    /* Throw one dart */
+				break;
+
+			case 2:
+				// two computer players
+				lastDart = throwDart(idx + 1, playerNum + 1);  /* Throw one dart */
+				break;
+
+			default:
+				// no computer players (both are user controlled)
+				lastDart = throwDart(idx + 1, 0);    /* Throw one dart */
+				break;
+			}
 
 			if (_gameType == GAME_301) {
 				score -= lastDart;
 				_roundScore += lastDart;
 			} else {
+				// Cricket
 				numHits = lastDart >> 16;
 				if (numHits == 0)
 					numHits = 1;
 				if (numHits > 3)
 					numHits = 3;
 
-				lastDart = lastDart & 0xffff;
+				lastDart = lastDart & 0x00ff;
 				updateCricketScore(playerNum, lastDart, numHits);
 				score = (playerNum == 0) ? _score1 : _score2;
 			}
@@ -185,6 +195,7 @@ void Darts::playDarts(GameType gameType) {
 
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, "%s", scoredPoints.c_str());
 			} else {
+				// Cricket
 				Common::String hitText;
 
 				if (lastDart != 25) {
@@ -212,6 +223,8 @@ void Darts::playDarts(GameType gameType) {
 						hitText = Common::String(FIXED(DartsHitDoubleBullseye));
 						break;
 					case 3:
+						// TODO Does this case actually happen in practice?
+						// The manual does not mention this at all, and a triple bullseye is not something that can be "scored" in darts
 						hitText = Common::String(FIXED(DartsHitTripleBullseye));
 						break;
 					default:
@@ -419,6 +432,7 @@ void Darts::showStatus(int playerNum) {
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
 		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
 		STATUS_INFO_Y + STATUS_INFO_HEIGHT - 10));
+	// Printing of overall scores on top of the board under each player's name
 	screen.print(Common::Point(STATUS_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score1);
 
 	screen.print(Common::Point(STATUS2_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score2);
@@ -439,12 +453,12 @@ void Darts::showStatus(int playerNum) {
 			screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 40 + x * _spacing), 0, "%s:", CRICKET_SCORE_NAME[x]);
 
 			for (int y = 0; y < 2; ++y) {
-				switch (CRICKET_SCORE_NAME[y][x]) {
+				switch (_cricketScore[y][x]) {
 				case 1:
-					screen.print(Common::Point(STATUS_INFO_X + 38 + y*STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "/");
+					screen.print(Common::Point(STATUS_INFO_X + 38 + y * STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "/");
 					break;
 				case 2:
-					screen.print(Common::Point(STATUS_INFO_X + 38 + y*STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "X");
+					screen.print(Common::Point(STATUS_INFO_X + 38 + y * STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "X");
 					break;
 				case 3:
 					screen.print(Common::Point(STATUS_INFO_X + 38 + y * STATUS2_X_ADD - 1, STATUS_INFO_Y + 40 + x * _spacing), 0, "X");
@@ -478,9 +492,8 @@ bool Darts::dartHit() {
 
 	// Keyboard check
 	if (events.kbHit() || events.actionHit()) {
-		if (events.getAction() == kActionTattooSkipDarts)
+		if (events.actionHit() && events.getAction() == kActionTattooSkipDarts)
 			_escapePressed = true;
-
 		events.clearEvents();
 		return true;
 	}
@@ -589,17 +602,32 @@ int Darts::dartScore(const Common::Point &pt) {
 				if (score <= 120)
 					// Hit a double
 					score = (score - 100) * 2;
-				else
+				else if (score <= 140)
 					// Hit a triple
 					score = (score - 120) * 3;
+				else
+					// prevent awry pixel case of invalid "254" score at dart map coordinates (4, 146)
+					score = 0;
 			}
-		} else if (score >= 100) {
-			if (score >= 120)
-				// Hit a double
-				score = (2 << 16) + (score - 100);
-			else
-				// Hit a triple
-				score = (3 << 16) + (score - 120);
+		} else {
+			// Cricket
+			if (score >= 100) {
+				if (score <= 120)
+					// Hit a double
+					score = (2 << 16) + (score - 100);
+				else if (score <= 140)
+					// Hit a triple
+					score = (3 << 16) + (score - 120);
+				else
+					// prevent awry pixel case of invalid "254" score at dart map coordinates (4, 146)
+					score = 0;
+			} else if (score == 50) {
+				// Hit a double bullseye
+				// This counts as two marks for the bullseye in cricket
+				// We set the score to 25 (standard bullseye score) and will handle the doubling,
+				// if applicable for scoring, later in doCricketScoreHits()
+				score = (2 << 16) + 25;
+			}
 		}
 	} else {
 		score = 0;

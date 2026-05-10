@@ -20,16 +20,18 @@
  */
 
 #include "common/file.h"
+#include "graphics/surface.h"
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/resdata.h"
 #include "chamber/decompr.h"
+#include "chamber/ega.h"
 
 namespace Chamber {
 
 extern void askDisk2(void);
-extern int16 loadSplash(const char *filename);
+extern Graphics::Surface *loadSplash(const char *filename);
 
 /*
 Get bank entry
@@ -130,6 +132,24 @@ ResEntry_tp res_static[] = {
 	{"$", NULL}
 };
 
+/*EGA uses SOURI.EGA / GAUSS.EGA; script template is "kultega.bin" not TEMPL.BIN*/
+ResEntry_tp res_static_ega[] = {
+	{"ARPLA.BIN", &arpla_data},
+	{"ALEAT.BIN", &aleat_data},
+	{"ICONE.BIN", &icone_data},
+	{"SOUCO.BIN", &souco_data},
+	{"CARPC.BIN", &carpc_data},
+	{"SOURI.EGA", &souri_data},
+	{"kultega.bin", &templ_data},
+	{"MURSM.BIN", &mursm_data},
+	{"GAUSS.EGA", &gauss_data},
+	{"LUTIN.BIN", &lutin_data},
+	{"ANIMA.BIN", &anima_data},
+	{"ANICO.BIN", &anico_data},
+	{"ZONES.BIN", &zones_data},
+	{"$", NULL}
+};
+
 /*
 Load resident data files. Original game has all these data files embedded in the executable.
 NB! Static data includes the font file, don't use any text print routines before it's loaded.
@@ -137,7 +157,9 @@ NB! Static data includes the font file, don't use any text print routines before
 int16 loadStaticData() {
 	Common::File pxi;
 
-	if (g_vm->getLanguage() == Common::EN_USA)
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		pxi.open("Kult2.pxi");
+	else if (g_vm->getLanguage() == Common::EN_USA)
 		pxi.open("kult1.pxi");
 	else
 		pxi.open("ere.pxi");
@@ -205,23 +227,25 @@ int16 loadStaticData() {
 
 		warning("%s : %X", resName.c_str(), ress * 16 + reso);
 
+		ResEntry_tp *table = (g_vm->_videoMode == Common::kRenderEGA) ? res_static_ega : res_static;
 		int i;
-		for (i = 0; res_static[i].name[0] != '$'; i++) { // Yeah, linear search
-			if (!strcmp(res_static[i].name, resName.c_str())) {
-				*res_static[i].buffer = rawData + off + ress * 16 + reso;
+		for (i = 0; table[i].name[0] != '$'; i++) { // Yeah, linear search
+			if (!strcmp(table[i].name, resName.c_str())) {
+				*table[i].buffer = rawData + off + ress * 16 + reso;
 				break;
 			}
 		}
 
-		if (res_static[i].name[0] == '$')
+		if (table[i].name[0] == '$')
 			warning("loadStaticData(): Extra resource %s", resName.c_str());
 	}
 
 	// And now check that everything was loaded
+	ResEntry_tp *table = (g_vm->_videoMode == Common::kRenderEGA) ? res_static_ega : res_static;
 	bool missing = false;
-	for (int i = 0; res_static[i].name[0] != '$'; i++) {
-		if (*res_static[i].buffer == NULL) {
-			warning("loadStaticData(): Resource %s is not present", res_static[i].name);
+	for (int i = 0; table[i].name[0] != '$'; i++) {
+		if (*table[i].buffer == NULL) {
+			warning("loadStaticData(): Resource %s is not present", table[i].name);
 			missing = true;
 		}
 	}
@@ -244,7 +268,9 @@ int16 loadVepciData() {
 	return loadFilesList(res_texts);
 }
 
-int16 loadFond(void) {
+Graphics::Surface *loadFond(void) {
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		return ega_loadFond("FOND.EGA");
 	return loadSplash("FOND.BIN");
 }
 

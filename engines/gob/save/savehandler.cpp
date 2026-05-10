@@ -255,8 +255,8 @@ int32 TempSpriteHandler::getSize() {
 	return _sprite->getSize();
 }
 
-bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
-	if (isDummy(size))
+bool TempSpriteHandler::load(int16 dataVar, int32 index_as_size, int32 offset) {
+	if (isDummy(index_as_size))
 		return true;
 
 	// Sprite available?
@@ -264,11 +264,11 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 		return false;
 
 	// Sprite requested?
-	if (!isSprite(size))
+	if (!isSprite(index_as_size))
 		return false;
 
 	// Index sane?
-	int index = getIndex(size);
+	int index = getIndex(index_as_size);
 	if ((index < 0) || (index >= Draw::kSpriteCount))
 		return false;
 
@@ -283,7 +283,7 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 		return false;
 
 	// Handle palette
-	if (usesPalette(size)) {
+	if (usesPalette(index_as_size)) {
 		if (!_sprite->writePalette((byte *)_vm->_global->_pPaletteDesc->vgaPal))
 			return false;
 
@@ -301,11 +301,11 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 	return true;
 }
 
-bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
-	if (isDummy(size))
+bool TempSpriteHandler::save(int16 dataVar, int32 index_as_size, int32 offset) {
+	if (isDummy(index_as_size))
 		return true;
 
-	SurfacePtr sprite = createSprite(dataVar, size, offset);
+	SurfacePtr sprite = createSprite(index_as_size, offset);
 	if (!sprite)
 		return false;
 
@@ -314,7 +314,7 @@ bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 		return false;
 
 	// Handle palette
-	if (usesPalette(size))
+	if (usesPalette(index_as_size))
 		if (!_sprite->readPalette((const byte *)_vm->_global->_pPaletteDesc->vgaPal))
 			return false;
 
@@ -359,19 +359,19 @@ bool TempSpriteHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
 	return true;
 }
 
-bool TempSpriteHandler::createFromSprite(int16 dataVar, int32 size, int32 offset) {
-	return createSprite(dataVar, size, offset) != nullptr;
+bool TempSpriteHandler::createFromSprite(int32 index_as_size, int32 offset) {
+	return createSprite(index_as_size, offset) != nullptr;
 }
 
-SurfacePtr TempSpriteHandler::createSprite(int16 dataVar, int32 size, int32 offset) {
+SurfacePtr TempSpriteHandler::createSprite(int32 index_as_size, int32 offset) {
 	SurfacePtr sprt;
 
 	// Sprite requested?
-	if (!isSprite(size))
+	if (!isSprite(index_as_size))
 		return sprt;
 
 	// Index sane?
-	int index = getIndex(size);
+	int index = getIndex(index_as_size);
 	if ((index < 0) || (index >= Draw::kSpriteCount))
 		return sprt;
 

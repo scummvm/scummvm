@@ -269,13 +269,35 @@ void CodeWriterVisitor::visit(const CaseLabelNode &node) {
 void CodeWriterVisitor::visit(const ChunkExprNode &node) {
 	write(StandardNames::chunkTypeNames[node.type]);
 	write(" ");
+	bool parenFirst = node.first->hasSpaces(_dot);
+	if (parenFirst) {
+		write("(");
+	}
 	node.first->accept(*this);
+	if (parenFirst) {
+		write(")");
+	}
 	if (!(node.last->type == kLiteralNode && node.last->getValue()->type == kDatumInt && node.last->getValue()->i == 0)) {
 		write(" to ");
+		bool parenLast = node.last->hasSpaces(_dot);
+		if (parenLast) {
+			write("(");
+		}
 		node.last->accept(*this);
+		if (parenLast) {
+			write(")");
+		}
 	}
 	write(" of ");
+	bool stringIsBiggerChunk = node.string->type == kChunkExprNode && static_cast<ChunkExprNode *>(node.string.get())->type > node.type;
+	bool parenString = !stringIsBiggerChunk && node.string->hasSpaces(_dot);
+	if (parenString) {
+		write("(");
+	}
 	node.string->accept(*this); // TODO: we want the string to always be verbose
+	if (parenString) {
+		write(")");
+	}
 }
 void CodeWriterVisitor::visit(const InverseOpNode &node) {
 	write("-");

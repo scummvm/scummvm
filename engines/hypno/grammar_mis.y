@@ -36,9 +36,11 @@
 extern int HYPNO_MIS_lex();
 extern int yylineno;
 
+namespace Hypno {
 Common::Array<uint32> *smenu_idx = nullptr;
-Hypno::HotspotsStack *stack = nullptr;
-Hypno::Talk *talk_action = nullptr;
+HotspotsStack *stack = nullptr;
+Talk *talk_action = nullptr;
+}
 
 void HYPNO_MIS_xerror(const char *str) {
 	error("ERROR: %s", str);
@@ -57,13 +59,14 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND WALNTOK ENCTOK
+%token<s> NAME FILENAME FLAG GSSWITCH WALNTOK ENCTOK
 %token<i> NUM
-%token HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK MICETOK SONDTOK PLAYTOK ENDTOK
+%token COMMENT HOTSTOK CUTSTOK BACKTOK INTRTOK RETTOK TIMETOK PALETOK BBOXTOK OVERTOK MICETOK SONDTOK PLAYTOK ENDTOK
 %token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK SWPTTOK MPTRTOK
 %token GLOBTOK TONTOK TOFFTOK
 %token TALKTOK INACTOK FDTOK BOXXTOK ESCAPETOK SECONDTOK INTROTOK DEFAULTTOK
-%token<s> PG PA PD PH PF PE PP PI PL PS
+%token<s> PG PA PD PH PF PP PI PS
+%token PE PL
 
 %type<s> gsswitch flag mflag
 
@@ -103,6 +106,9 @@ line: MENUTOK mflag mflag mflag {
 		idx++;
 		smenu_idx->pop_back();
 		smenu_idx->push_back(idx);
+		free($2);
+		free($3);
+		free($4);
 	}
 	| MENUTOK FILENAME {
 		Hotspot hot(MakeMenu);
@@ -117,6 +123,7 @@ line: MENUTOK mflag mflag mflag {
 		idx++;
 		smenu_idx->pop_back();
 		smenu_idx->push_back(idx);
+		free($2);
 	}
 	| HOTSTOK BBOXTOK NUM NUM NUM NUM  {
 		Hotspot hot(MakeHotspot, Common::Rect($3, $4, $5, $6));
@@ -150,7 +157,9 @@ line: MENUTOK mflag mflag mflag {
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "TIME %d %s", $2, $3); }
+		debugC(1, kHypnoDebugParser, "TIME %d %s", $2, $3);
+		free($3);
+	}
 	|  SWPTTOK NUM {
 		SwapPointer *a = new SwapPointer($2);
 		Hotspots *cur = stack->back();
@@ -163,6 +172,10 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "BACK");
+		free($2);
+		free($5);
+		free($6);
+		free($7);
 	}
 	|  GLOBTOK GSSWITCH NAME  {
 		Global *a = new Global($2, $3);
@@ -170,36 +183,52 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "GLOB");
+		free($2);
+		free($3);
 	}
 	|  AMBITOK FILENAME NUM NUM flag {
 		Ambient *a = new Ambient($2, Common::Point($3, $4), $5);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "AMBI %d %d", $3, $4); }
+		debugC(1, kHypnoDebugParser, "AMBI %d %d", $3, $4);
+		free($2);
+		free($5);
+	}
 	|  PLAYTOK FILENAME NUM NUM gsswitch flag {
 		Play *a = new Play($2, Common::Point($3, $4), $5, $6);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "PLAY %s.", $2); }
+		debugC(1, kHypnoDebugParser, "PLAY %s.", $2);
+		free($2);
+		free($5);
+		free($6);
+	}
 	|  SONDTOK FILENAME ENCTOK {
 		//Play *a = new Play($2, Common::Point($3, $4), $5, $6);
 		//Hotspots *cur = stack->back();
 		//Hotspot *hot = &cur->back();
 		//hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "SOND %s.", $2); }
+		debugC(1, kHypnoDebugParser, "SOND %s.", $2);
+		free($2);
+		free($3);
+	}
 	|  SONDTOK FILENAME {
 		//Play *a = new Play($2, Common::Point($3, $4), $5, $6);
 		//Hotspots *cur = stack->back();
 		//Hotspot *hot = &cur->back();
 		//hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "SOND %s.", $2); }
+		debugC(1, kHypnoDebugParser, "SOND %s.", $2);
+		free($2);
+	}
 	|  OVERTOK FILENAME NUM NUM flag {
 		Overlay *a = new Overlay($2, Common::Point($3, $4), $5);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
+		free($2);
+		free($5);
 	}
 	|  PALETOK FILENAME {
 		Palette *a = new Palette($2);
@@ -207,6 +236,7 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "PALE");
+		free($2);
 	}
 	|  INTRTOK FILENAME NUM NUM {
 		Intro *a = new Intro(Common::String("cine/") + $2);
@@ -214,6 +244,7 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4);
+		free($2);
 	}
 	|  INTRTOK FILENAME {
 		Intro *a = new Intro(Common::String("cine/") + $2);
@@ -221,6 +252,7 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "INTRO %s", $2);
+		free($2);
 	}
 	|  CUTSTOK FILENAME {
 		Cutscene *a = new Cutscene($2);
@@ -228,21 +260,29 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "CUTS %s", $2);
+		free($2);
 	}
 	|  WALNTOK FILENAME NUM NUM gsswitch flag  {
 		WalN *a = new WalN($1, $2, Common::Point($3, $4), $5, $6);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "WALN %s %d %d", $2, $3, $4); }
+		debugC(1, kHypnoDebugParser, "WALN %s %d %d", $2, $3, $4);
+		free($1);
+		free($2);
+		free($5);
+		free($6);
+	}
 	|  MICETOK FILENAME NUM {
 		Mice *a = new Mice($2, $3-1);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
+		free($2);
 	}
 	|  MPTRTOK FILENAME NUM NUM NUM NUM NUM {
 		debugC(1, kHypnoDebugParser, "MPTR %s %d %d %d %d %d", $2, $3, $4, $5, $6, $7);
+		free($2);
 	}
 	|  TALKTOK alloctalk talk {
 		Hotspots *cur = stack->back();
@@ -259,7 +299,7 @@ line: MENUTOK mflag mflag mflag {
 	|	RETTOK { debugC(1, kHypnoDebugParser, "implicit END"); }
 	;
 
-anything: NAME anything
+anything: NAME anything { free($1); }
 	|  // nothing
 	;
 
@@ -277,7 +317,11 @@ talk: INACTOK talk {
 	| BACKTOK FILENAME NUM NUM gsswitch flag {
 		talk_action->background = $2;
 		talk_action->backgroundPos = Common::Point($3, $4);
-		debugC(1, kHypnoDebugParser, "BACK in TALK"); }
+		debugC(1, kHypnoDebugParser, "BACK in TALK");
+		free($2);
+		free($5);
+		free($6);
+	}
 	| BOXXTOK NUM NUM {
 		talk_action->boxPos = Common::Point($2, $3);
 		debugC(1, kHypnoDebugParser, "BOXX %d %d", $2, $3); }
@@ -287,66 +331,92 @@ talk: INACTOK talk {
 	| SECONDTOK FILENAME NUM NUM flag {
 		talk_action->second = $2;
 		talk_action->secondPos = Common::Point($3, $4);
-		debugC(1, kHypnoDebugParser, "SECOND %s %d %d '%s'", $2, $3, $4, $5); }
+		debugC(1, kHypnoDebugParser, "SECOND %s %d %d '%s'", $2, $3, $4, $5);
+		free($2);
+		free($5);
+	}
 	| INTROTOK FILENAME NUM NUM {
 		talk_action->intro = $2;
 		talk_action->introPos = Common::Point($3, $4);
-		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4); }
+		debugC(1, kHypnoDebugParser, "INTRO %s %d %d", $2, $3, $4);
+		free($2);
+	}
 	| DEFAULTTOK FILENAME NUM NUM {
 		// Unsure how this is different from second
 		talk_action->second = $2;
 		talk_action->secondPos = Common::Point($3, $4);
-		debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", $2, $3, $4); }
+		debugC(1, kHypnoDebugParser, "DEFAULT %s %d %d", $2, $3, $4);
+		free($2);
+	}
 	| PG talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "G";
 		talk_cmd.path = $1+2;
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "%s", $1); }
-	| PH talk { debugC(1, kHypnoDebugParser, "%s", $1); }
+		debugC(1, kHypnoDebugParser, "%s", $1);
+		free($1);
+	}
+	| PH talk {
+		debugC(1, kHypnoDebugParser, "%s", $1);
+		free($1);
+	}
 	| PF talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "F";
 		talk_cmd.num = atoi($1+2)-1;
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "%s", $1); }
+		debugC(1, kHypnoDebugParser, "%s", $1);
+		free($1);
+	}
 	| PA talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "A";
 		talk_cmd.num = atoi($1+2)-1;
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "|A%d", talk_cmd.num); }
+		debugC(1, kHypnoDebugParser, "|A%d", talk_cmd.num);
+		free($1);
+	}
 	| PD talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "D";
 		talk_cmd.num = atoi($1+2)-1;
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "%s", $1); }
+		debugC(1, kHypnoDebugParser, "%s", $1);
+		free($1);
+	}
 	| PP NUM NUM flag talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "P";
 		talk_cmd.path = $1+2;
 		talk_cmd.position = Common::Point($2, $3);
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "%s %d %d '%s'", $1, $2, $3, $4); }
+		debugC(1, kHypnoDebugParser, "%s %d %d '%s'", $1, $2, $3, $4);
+		free($1);
+		free($4);
+	}
 	| PI NUM NUM talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "I";
 		talk_cmd.path = $1+2;
 		talk_cmd.position = Common::Point($2, $3);
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "%s %d %d", $1, $2, $3); }
+		debugC(1, kHypnoDebugParser, "%s %d %d", $1, $2, $3);
+		free($1);
+	}
 	| PS talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "S";
 		talk_cmd.variable = $1+2;
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "%s", $1); }
+		debugC(1, kHypnoDebugParser, "%s", $1);
+		free($1);
+	}
 	| PL talk {
 		TalkCommand talk_cmd;
 		talk_cmd.command = "L";
 		talk_action->commands.push_back(talk_cmd);
-		debugC(1, kHypnoDebugParser, "|L"); }
+		debugC(1, kHypnoDebugParser, "|L");
+	}
 	| PE { debugC(1, kHypnoDebugParser, "|E"); }
 	| /*nothing*/
 	;

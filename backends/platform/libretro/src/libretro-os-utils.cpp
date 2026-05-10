@@ -207,11 +207,13 @@ void OSystem_libretro::applyBackendSettings() {
 	//Register default paths
 	if (! s_homeDir.empty()) {
 		ConfMan.registerDefault("browser_lastpath", s_homeDir);
-		retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
 	}
 	if (! s_saveDir.empty()) {
 		ConfMan.registerDefault("savepath", s_saveDir);
-		retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
 	}
 
 	//Check current path settings
@@ -280,4 +282,7 @@ Common::String OSystem_libretro::getSaveDir(void) {
 void OSystem_libretro::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	if (!s_systemDir.empty())
 		s.add("systemDir", new Common::FSDirectory(Common::FSNode(Common::Path(s_systemDir))), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }

@@ -122,6 +122,33 @@ public:
 	}
 };
 
+// as futureoptimization one could actually store these instead of converting to a surface
+// this will reduce memory usage and might reduce render times on software renderers
+class ImageV1 {
+public:
+	ImageV1(Common::SeekableReadStream &stream);
+
+	inline Common::Point drawOffset() const { return _drawOffset; }
+
+	void render(Graphics::ManagedSurface &target, Common::Point offset, byte alpha = 255) const;
+	Graphics::ManagedSurface *render(byte alpha = 255) const;
+	
+private:
+	struct Segment {
+		uint16 _xOffset, _width;
+		uint32 _dataOffset;
+	};
+	struct Line { // indices into _segments
+		uint _start, _end;
+	};
+
+	Common::Point _drawOffset, _size;
+	Common::Array<byte> _pixels;
+	Common::Array<byte> _palette;
+	Common::Array<Segment> _segments;
+	Common::Array<Line> _lines;
+};
+
 enum class AnimationFolder {
 	Animations,
 	Masks,
@@ -148,13 +175,18 @@ struct AnimationFrame {
  */
 class AnimationBase {
 protected:
-	AnimationBase(Common::String fileName, AnimationFolder folder = AnimationFolder::Animations);
+	AnimationBase(GameFileReference fileRef, AnimationFolder folder = AnimationFolder::Animations);
 	~AnimationBase();
 
 	void load();
-	void loadMissingAnimation();
 	void freeImages();
-	Graphics::ManagedSurface *readImage(Common::SeekableReadStream &stream) const;
+	void setToEmpty();
+	void readV1(Common::SeekableReadStream &stream);
+	void readV2(Common::SeekableReadStream &stream);
+	void readV3(Common::SeekableReadStream &stream);
+	void createIndexMappingV1and2(const Common::Array<byte> &spriteOrder);
+	void readFramesV1and2(Common::SeekableReadStream &stream, uint frameCount, uint spriteCount);
+	Graphics::ManagedSurface *readImageV3(Common::SeekableReadStream &stream) const;
 	Common::Point imageSize(int32 imageI) const;
 	inline bool isLoaded() const { return _isLoaded; }
 
@@ -165,15 +197,17 @@ protected:
 		int offsetY);
 
 	static constexpr const uint kMaxSpriteIDs = 256;
-	Common::String _fileName;
+	static constexpr const uint kMaxSpriteIDsV1 = 8;
+	GameFileReference _fileRef;
 	AnimationFolder _folder;
 	bool _isLoaded = false;
 	uint32 _totalDuration = 0;
 
-	int32 _spriteIndexMapping[kMaxSpriteIDs] = { 0 };
-	Common::Array<uint32>
+	int32 _spriteIndexMapping[kMaxSpriteIDs] = { 0 }; ///< establishes render order back-to-front
+	Common::Array<int32>
 		_spriteOffsets, ///< index offset per sprite and animation frame
 		_spriteBases; ///< base index per sprite
+	Common::Array<bool> _spriteEnabled;
 	Common::Array<AnimationFrame> _frames;
 	Common::Array<Graphics::ManagedSurface *> _images; ///< will contain nullptr for fake images
 	Common::Array<Common::Point> _imageOffsets;
@@ -185,7 +219,7 @@ protected:
  */
 class Animation : private AnimationBase {
 public:
-	Animation(Common::String fileName, AnimationFolder folder = AnimationFolder::Animations);
+	Animation(GameFileReference fileRef, AnimationFolder folder = AnimationFolder::Animations);
 
 	void load();
 	void freeImages();
@@ -241,17 +275,21 @@ private:
 
 class Font : private AnimationBase {
 public:
-	Font(Common::String fileName);
+	Font(GameFileReference fileRef);
 
 	void load();
 	void freeImages();
-	void drawCharacter(int32 imageI, Common::Point center, Color color);
+	void drawCharacter(byte ch, Common::Point center, Color color);
 
 	using AnimationBase::isLoaded;
 	using AnimationBase::imageSize;
+	bool isVisibleChar(byte ch) const;
+	Common::Point characterSize(byte ch) const;
+	Common::Point spaceSize() const;
 	inline uint imageCount() const { return _images.size(); }
 
 private:
+	const byte _charToImage, _spaceImageI, _charSpacing;
 	Common::Array<Math::Vector2d> _texMins, _texMaxs;
 	Common::ScopedPtr<ITexture> _texture;
 };
@@ -259,9 +297,11 @@ private:
 class Graphic {
 public:
 	Graphic();
-	Graphic(Common::ReadStream &stream);
+	Graphic(Common::SeekableReadStream &stream);
 	Graphic(const Graphic &other); // animation reference is taken, so keep other alive
-	Graphic &operator= (const Graphic &other);
+	Graphic(Graphic &&other) = default;
+	Graphic &operator=(const Graphic &other);
+	Graphic &operator=(Graphic &&other) = default;
 
 	inline Common::Point &topLeft() { return _topLeft; }
 	inline int8 &order() { return _order; }
@@ -287,7 +327,7 @@ public:
 	void start(bool looping);
 	void pause();
 	void reset();
-	void setAnimation(const Common::String &fileName, AnimationFolder folder);
+	void setAnimation(const GameFileReference &fileRef, AnimationFolder folder);
 	void setAnimation(Animation *animation); ///< no memory ownership is given, but for prerendering it has to be mutable
 	void syncGame(Common::Serializer &serializer);
 
@@ -387,12 +427,12 @@ private:
 	using TextLine = Common::Span<const byte>; ///< byte to convert 128+ characters to image indices
 
 	Font &_font;
-	int _posY, _height, _width;
+	int _posY = 0, _height = 0, _width = 0;
 	Color _color;
 	Common::Span<TextLine> _lines;
 	Common::Span<int> _posX;
 	TextLine _allLines[kMaxLines];
-	int _allPosX[kMaxLines];
+	int _allPosX[kMaxLines] = { 0 };
 };
 
 enum class FadeType {

@@ -1,0 +1,555 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2015-2021  Chris Lalancette <clalancette@gmail.com>
+
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation;
+# version 2.1 of the License.
+
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+"""
+The main code for the pycdlib-explorer tool, which can open, read, write,
+and otherwise manipulate ISOs in an interactive way.
+"""
+
+import cmd
+import collections
+import os
+import shlex
+import sys
+
+import pycdlib
+
+
+class PyCdlibCmdLoop(cmd.Cmd):
+    """The main class dealing with the pycdlib-explorer command loop."""
+    PRINT_MODES = ('iso9660', 'rr', 'joliet', 'udf')
+
+    def __init__(self, iso):
+        cmd.Cmd.__init__(self)
+        self.iso = iso
+        self.cwds = {}
+        for mode in self.PRINT_MODES:
+            self.cwds[mode] = '/'
+        self.print_mode = 'iso9660'
+        self.encoding = 'utf-8'
+        self.pathname = 'iso_path'
+
+    prompt = '(pycdlib) '
+
+    def help_exit(self):
+        """The help method for the 'exit' command."""
+        print('> exit')
+        print('Exit the program.')
+
+    def do_exit(self, line):
+        """The command to quit the program."""
+        if line:
+            print('No parameters allowed for exit')
+            return False
+        return True
+
+    def help_quit(self):
+        """The help method for the 'quit' command."""
+        print('> quit')
+        print('Exit the program.')
+
+    def do_quit(self, line):
+        """The other command to quit the program."""
+        if line:
+            self.help_quit()
+            return False
+        return True
+
+    def do_EOF(self, line):  # pylint: disable=unused-argument
+        """Handle EOF on the terminal."""
+        print()
+        return True
+
+    def help_print_mode(self):
+        """The help method for the 'print_mode' command."""
+        print('> print_mode [iso9660|rr|joliet|udf]')
+        print("Change which 'mode' of filenames are printed out.  There are four main\n"
+              'modes: ISO9660 (iso9660, the default), Rock Ridge (rr), Joliet (joliet), and\n'
+              'UDF (udf).  The original iso9660 mode only allows filenames of 8 characters,\n'
+              'plus 3 for the extension.  The Rock Ridge extensions allow much longer\n'
+              'filenames and much deeper directory structures.  The Joliet extensions also\n'
+              'allow longer filenames and deeper directory structures, but in an entirely\n'
+              'different namespace (though in most circumstances, the Joliet namespace will\n'
+              'mirror the ISO9660/Rock Ridge namespace).  The UDF Bridge extensions add an\n'
+              'entirely parallel UDF namespace to the ISO as well.  Any given ISO will always\n'
+              'have ISO9660 mode, but may have any combination of Rock Ridge, Joliet, and UDF\n'
+              '(including none of them).  Running this command with no arguments prints out\n'
+              "the current mode.  Passing 'iso9660' as an argument sets it to the original\n"
+              "ISO9660 mode.  Passing 'rr' as an argument sets it to Rock Ridge mode.  Passing\n"
+              "'joliet' as an argument sets it to Joliet mode.  Passing 'udf' as an argument\n"
+              'sets it to UDF mode.')
+
+    def do_print_mode(self, line):
+        """
+        The command to change whether the explorer is printing in iso9660,
+        joliet, rr, or udf (see help for more details).
+        """
+        split = shlex.split(line)
+        splitlen = len(split)
+        if splitlen == 0:
+            print(self.print_mode)
+            return False
+        if splitlen != 1:
+            self.help_print_mode()
+            return False
+
+        if split[0] not in self.PRINT_MODES:
+            print("Parameter for print_mode must be one of '" + "', ".join(self.PRINT_MODES) + "'")
+            return False
+
+        if split[0] == 'rr' and not self.iso.has_rock_ridge():
+            print('Can only enable Rock Ridge names for Rock Ridge ISOs')
+            return False
+
+        if split[0] == 'joliet' and not self.iso.has_joliet():
+            print('Can only enable Joliet names for Joliet ISOs')
+            return False
+
+        if split[0] == 'udf' and not self.iso.has_udf():
+            print('Can only enable UDF names for UDF ISOs')
+            return False
+
+        self.print_mode = split[0]
+
+        pathstart = split[0]
+        if split[0] == 'iso9660':
+            pathstart = 'iso'
+
+        self.pathname = pathstart + '_path'
+
+        self.encoding = 'utf-8'
+        if split[0] == 'joliet':
+            self.encoding = 'utf-16_be'
+
+        return False
+
+    def help_ls(self):
+        """The help method for the 'ls' command."""
+        print('> ls')
+        print('Show the contents of the current working directory. The format of the output is:\n')
+        print('TYPE(F=file, D=directory) NAME SIZE')
+
+    def do_ls(self, line):
+        """The command to list the contents of a directory."""
+        if line:
+            self.help_ls()
+            return False
+
+        diriter = self.iso.list_children(**{self.pathname: self.cwds[self.print_mode]})
+
+        for child in diriter:
+            if child is None:
+                prefix = 'D'
+                name = '..'
+            else:
+                prefix = 'F'
+                if child.is_dir():
+                    prefix = 'D'
+                name = child.file_identifier().decode(self.encoding)
+                if self.print_mode == 'rr':
+                    name = ''
+                    if child.is_dot():
+                        name = '.'
+                    elif child.is_dotdot():
+                        name = '..'
+                    else:
+                        if child.rock_ridge is not None and child.rock_ridge.name() != '':
+                            name = child.rock_ridge.name().decode('utf-8')
+                            if child.rock_ridge.is_symlink():
+                                name += ' -> %s' % (child.rock_ridge.symlink_path())
+                                prefix += 'S'
+
+            size = ''
+            if child is not None and child.is_file():
+                if isinstance(child, pycdlib.udf.UDFFileEntry):
+                    size = child.info_len
+                else:
+                    size = child.data_length
+
+            print('%2s %s %s' % (prefix, name, size))
+
+        return False
+
+    def help_cd(self):
+        """The help method for the 'cd' command."""
+        print('> cd <iso_dir>')
+        print('Change directory to <iso_dir> on the ISO.')
+
+    def do_cd(self, line):
+        """
+        The command to change the current working directory.
+        """
+        split = shlex.split(line)
+        if len(split) != 1:
+            self.help_cd()
+            return False
+
+        directory = split[0]
+
+        if directory[0] != '/':
+            tmp = self.cwds[self.print_mode] + '/' + directory
+            directory = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        rec = self.iso.get_record(**{self.pathname: directory})
+
+        if not rec.is_dir():
+            print('Entry %s is not a directory' % (directory))
+            return False
+        self.cwds[self.print_mode] = directory
+
+        return False
+
+    def help_get(self):
+        """The help method for the 'get' command."""
+        print('> get <iso_file> <out_file>')
+        print('Get the contents of <iso_file> from the ISO and write them to <out_file>.')
+
+    def do_get(self, line):
+        """
+        The command to extract a file from the ISO.
+        """
+        split = shlex.split(line)
+        if len(split) != 2:
+            self.help_get()
+            return False
+
+        iso_file = split[0]
+        outfile = split[1]
+
+        if iso_file[0] != '/':
+            tmp = self.cwds[self.print_mode] + '/' + iso_file
+            iso_file = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        self.iso.get_file_from_iso(outfile, **{self.pathname: iso_file})
+
+        return False
+
+    def help_cwd(self):
+        """The help method for the 'cwd' command."""
+        print('> cwd')
+        print('Show the current working directory.')
+
+    def do_cwd(self, line):
+        """The command to find out what the current working directory is."""
+        if line:
+            self.help_cwd()
+            return False
+
+        print(self.cwds[self.print_mode])
+
+        return False
+
+    def help_tree(self):
+        """The help method for the 'tree' command."""
+        print('> tree')
+        print("Print all files and subdirectories below the current directory (similar to the Unix 'tree' command).")
+
+    def do_tree(self, line):
+        """
+        The command to print out all of the files and directories below the
+        current working directory in a convenient tree-like form.
+        """
+        if line:
+            self.help_tree()
+            return False
+
+        utf8_corner = '└──'
+        utf8_middlebar = '├──'
+        utf8_vertical_line = '│'
+
+        entry = self.iso.get_record(**{self.pathname: self.cwds[self.print_mode]})
+
+        dirs = collections.deque([(entry, [])])
+        while dirs:
+            dir_record, lasts = dirs.popleft()
+            prefix = ''
+            if lasts:
+                for last in lasts[:-1]:
+                    if last:
+                        prefix += '    '
+                    else:
+                        prefix += utf8_vertical_line + '   '
+
+                if lasts[-1]:
+                    prefix += utf8_corner + ' '
+                else:
+                    prefix += utf8_middlebar + ' '
+
+            name = dir_record.file_identifier()
+            if self.print_mode == 'rr':
+                if dir_record.rock_ridge is not None and dir_record.rock_ridge.name() != '':
+                    name = dir_record.rock_ridge.name()
+
+            print('%s%s' % (prefix, name.decode('utf-8')))
+
+            if not dir_record.is_dir():
+                continue
+
+            tmp = collections.deque()
+            new_lasts = lasts + [False]
+            if self.print_mode == 'udf':
+                for d in dir_record.fi_descs:
+                    child = d.file_entry
+                    if child is None:
+                        continue
+                    tmp.appendleft((child, new_lasts))
+            else:
+                for child in dir_record.children:
+                    if child.is_dot() or child.is_dotdot():
+                        continue
+                    tmp.appendleft((child, new_lasts))
+            if tmp:
+                tmp.popleft()
+                tmp.appendleft((child, lasts + [True]))
+            dirs.extendleft(tmp)
+
+        return False
+
+    def help_write(self):
+        """The help method for the 'write' command."""
+        print('> write <out_file>')
+        print('Write the current ISO contents to <out_file>.')
+
+    def do_write(self, line):
+        """
+        The command to write the ISO out to a new file.
+        """
+        split = shlex.split(line)
+        if len(split) != 1:
+            self.help_write()
+            return False
+
+        self.iso.write(split[0])
+
+        return False
+
+    def help_add_file(self):
+        """The help method for the 'add_file' command."""
+        print('> add_file <iso_path> <src_filename> [rr_name=<rr_name>] [joliet_path=<joliet_path>] [udf_path=<udf_path>]')
+        print('Add the contents of <src_filename> to the ISO at the location specified in <iso_path>.')
+        print('If the ISO is a Rock Ridge ISO, <rr_name> must be specified; otherwise, it must not be.')
+        print('If the ISO is not a Joliet ISO, <joliet_path> must not be specified.  If the ISO is a')
+        print('Joliet ISO, <joliet_path> is optional, but highly recommended.')
+        print('If the ISO is not a UDF ISO, <udf_path> must not be specified.  If the ISO is a')
+        print('UDF ISO, <udf_path> is optional, but highly recommended.')
+
+    def do_add_file(self, line):
+        """
+        The command to add a new file to the ISO from the local filesystem.
+        """
+        split = shlex.split(line)
+
+        if len(split) < 2 or len(split) > 4:
+            self.help_add_file()
+            return False
+
+        iso_path = split[0]
+        src_path = split[1]
+        rr_name = None
+        joliet_path = None
+        udf_path = None
+
+        for arg in split[2:]:
+            keyval = arg.split('=')
+            if len(keyval) != 2:
+                print('Invalid key/val pair, must be rr_name=<rr_name>, joliet_path=<joliet_path>, or udf_path=<udf_path>')
+                return False
+
+            key = keyval[0]
+            val = keyval[1]
+
+            if key == 'rr_name':
+                rr_name = val
+            elif key == 'joliet_path':
+                joliet_path = val
+            elif key == 'udf_path':
+                udf_path = val
+            else:
+                print('Unknown key, must be rr_name=<rr_name>, joliet_path=<joliet_path>, or udf_path=<udf_path>')
+                return False
+
+        if self.iso.has_rock_ridge() and rr_name is None:
+            print('The ISO is Rock Ridge, so a <rr_name> parameter must be specified.')
+            return False
+
+        if iso_path[0] != '/':
+            tmp = self.cwds['iso9660'] + '/' + iso_path
+            iso_path = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        self.iso.add_file(src_path, iso_path, rr_name=rr_name, joliet_path=joliet_path, udf_path=udf_path)
+
+        return False
+
+    def help_modify_file_in_place(self):
+        '''
+        The help method for the 'modify_file_in_place' command.
+        '''
+        print('> modify_file_in_place <iso_path> <src_filename>')
+        print('Replace the contents of the file within the ISO specified in <iso_path> with that of <src_filename>.')
+        print('Warning: This command modifies the opened ISO file in-place.')
+        print('<src_filename> must occupy the same number of extents as the original file.')
+
+    def do_modify_file_in_place(self, line):
+        '''
+        The command to replace an existing file in the ISO from the local filesystem.
+        '''
+        split = shlex.split(line)
+
+        if len(split) != 2:
+            self.help_modify_file_in_place()
+            return False
+
+        iso_path = split[0]
+        src_path = split[1]
+
+        if iso_path[0] != '/':
+            tmp = self.cwds['iso9660'] + '/' + iso_path
+            iso_path = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        with open(src_path, 'rb') as src_fp:
+            self.iso.modify_file_in_place(src_fp, os.stat(src_path).st_size, iso_path)
+
+        return False
+
+    def help_rm_file(self):
+        """The help method for the 'rm_file' command."""
+        print('> rm_file <iso_path>')
+        print('Remove the contents of <iso_path> from the ISO.')
+
+    def do_rm_file(self, line):
+        """
+        The command to remove a file from the ISO.
+        """
+        split = shlex.split(line)
+        if len(split) != 1:
+            self.help_rm_file()
+            return False
+
+        iso_path = split[0]
+
+        if iso_path[0] != '/':
+            tmp = self.cwds['iso9660'] + '/' + iso_path
+            iso_path = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        self.iso.rm_file(iso_path)
+
+        return False
+
+    def help_mkdir(self):
+        """The help method for the 'mkdir' command."""
+        print('> mkdir <iso_path> [rr_name=<rr_name>] [joliet_path=<joliet_path>]')
+        print('Make a new directory called <iso_path>.')
+        print('If the ISO is a Rock Ridge ISO, <rr_name> must be specified; otherwise, it must not be.')
+        print('If the ISO is not a Joliet ISO, <joliet_path> must not be specified.  If the ISO is a')
+        print('Joliet ISO, <joliet_path> is optional, but highly recommended to supply.')
+
+    def do_mkdir(self, line):
+        """
+        The command to make a new directory on the ISO.
+        """
+        split = shlex.split(line)
+
+        if not split or len(split) > 3:
+            self.help_mkdir()
+            return False
+
+        iso_path = split[0]
+        rr_name = None
+        joliet_path = None
+
+        for arg in split[1:]:
+            keyval = arg.split('=')
+            if len(keyval) != 2:
+                print('Invalid key/val pair, must be rr_name=<rr_name> or joliet_path=<joliet_path>')
+                return False
+
+            key = keyval[0]
+            val = keyval[1]
+
+            if key == 'rr_name':
+                rr_name = val
+            elif key == 'joliet_path':
+                joliet_path = val
+            else:
+                print('Unknown key, must be rr_name=<rr_name> or joliet_path=<joliet_path>')
+                return False
+
+        if self.iso.has_rock_ridge() and rr_name is None:
+            print('The ISO is Rock Ridge, so a <rr_name> parameter must be specified.')
+            return False
+
+        if iso_path[0] != '/':
+            tmp = self.cwds['iso9660'] + '/' + iso_path
+            iso_path = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        self.iso.add_directory(iso_path, rr_name=rr_name, joliet_path=joliet_path)
+
+        return False
+
+    def help_rmdir(self):
+        """The help method for the 'rmdir' command."""
+        print('> rmdir <iso_path>')
+        print('Remove the directory at <iso_path>.  Note that the directory must be empty for the command to succeed.')
+
+    def do_rmdir(self, line):
+        """
+        The command to remove a directory from the ISO.
+        """
+        split = shlex.split(line)
+        if len(split) != 1:
+            self.help_rmdir()
+            return False
+
+        iso_path = split[0]
+
+        if iso_path[0] != '/':
+            tmp = self.cwds['iso9660'] + '/' + iso_path
+            iso_path = pycdlib.utils.normpath(tmp).decode('ascii')
+
+        self.iso.rm_directory(iso_path)
+
+        return False
+
+
+def main():
+    """
+    The main function.
+    """
+
+    if len(sys.argv) != 2:
+        print('Usage: %s <isofile>' % (sys.argv[0]))
+        sys.exit(1)
+
+    iso = pycdlib.PyCdlib()
+    with open(sys.argv[1], 'r+b') as fp:
+        iso.open_fp(fp)
+
+        done = False
+        cmdloop = PyCdlibCmdLoop(iso)
+        while not done:
+            try:
+                cmdloop.cmdloop()
+                done = True
+            except Exception as e:  # pylint: disable=broad-except
+                print(e)
+
+        iso.close()
+
+
+if __name__ == '__main__':
+    main()

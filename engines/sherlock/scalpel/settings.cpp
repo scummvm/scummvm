@@ -460,7 +460,7 @@ void Settings::show(SherlockEngine *vm) {
 	ui._actionPress = kActionNone;
 	ui._actionInput = false;
 	ui._windowBounds.top = CONTROLS_Y1;
-	ui._action = -1;
+	ui._action = (Common::CustomEventType) -1;
 }
 
 } // End of namespace Scalpel

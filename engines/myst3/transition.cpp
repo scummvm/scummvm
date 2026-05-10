@@ -80,7 +80,6 @@ void Transition::draw(TransitionType type) {
 
 	// Capture a screenshot of the destination node
 	_vm->drawFrame(true);
-	g_system->presentBuffer();
 	Texture *targetScreenshot = _vm->_gfx->copyScreenshotToTexture();
 
 	// Compute the start and end frames for the animation

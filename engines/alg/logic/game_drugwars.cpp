@@ -36,6 +36,7 @@ GameDrugWars::GameDrugWars(AlgEngine *vm, const AlgGameDescription *gd) : Game(v
 }
 
 GameDrugWars::~GameDrugWars() {
+	unregisterScriptFunctions();
 	if (_shotIcon) {
 		_shotIcon->free();
 		delete _shotIcon;
@@ -60,6 +61,19 @@ GameDrugWars::~GameDrugWars() {
 		_bulletholeIcon->free();
 		delete _bulletholeIcon;
 	}
+	for (auto item : *_gun) {
+		item->free();
+		delete item;
+	}
+	for (auto item : *_numbers) {
+		item->free();
+		delete item;
+	}
+	delete _saveSound;
+	delete _loadSound;
+	delete _skullSound;
+	delete _shotSound;
+	delete _emptySound;
 }
 
 void GameDrugWars::init() {
@@ -82,18 +96,18 @@ void GameDrugWars::init() {
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone("MainMenu", "GLOBALHIT");
-	_menuzone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
+	_menuZone = new Zone("MainMenu", "GLOBALHIT");
+	_menuZone->addRect(0x0C, 0xAA, 0x38, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone("SubMenu", "GLOBALHIT");
-	_submenzone->addRect(0x1C, 0x13, 0x5D, 0x22, nullptr, 0, "STARTMENU", "0");
-	_submenzone->addRect(0x1C, 0x33, 0x5D, 0x42, nullptr, 0, "RECTLOAD", "0");
-	_submenzone->addRect(0x1C, 0x53, 0x5D, 0x62, nullptr, 0, "RECTSAVE", "0");
-	_submenzone->addRect(0x1C, 0x73, 0x5D, 0x82, nullptr, 0, "CONTMENU", "0");
-	_submenzone->addRect(0x1C, 0x93, 0x5D, 0xA2, nullptr, 0, "EXITMENU", "0");
-	_submenzone->addRect(0xDD, 0x34, 0x10A, 0x43, nullptr, 0, "RECTEASY", "0");
-	_submenzone->addRect(0xDD, 0x55, 0x10A, 0x64, nullptr, 0, "RECTAVG", "0");
-	_submenzone->addRect(0xDD, 0x75, 0x10A, 0x84, nullptr, 0, "RECTHARD", "0");
+	_subMenuZone = new Zone("SubMenu", "GLOBALHIT");
+	_subMenuZone->addRect(0x1C, 0x13, 0x5D, 0x22, nullptr, 0, "STARTMENU", "0");
+	_subMenuZone->addRect(0x1C, 0x33, 0x5D, 0x42, nullptr, 0, "RECTLOAD", "0");
+	_subMenuZone->addRect(0x1C, 0x53, 0x5D, 0x62, nullptr, 0, "RECTSAVE", "0");
+	_subMenuZone->addRect(0x1C, 0x73, 0x5D, 0x82, nullptr, 0, "CONTMENU", "0");
+	_subMenuZone->addRect(0x1C, 0x93, 0x5D, 0xA2, nullptr, 0, "EXITMENU", "0");
+	_subMenuZone->addRect(0xDD, 0x34, 0x10A, 0x43, nullptr, 0, "RECTEASY", "0");
+	_subMenuZone->addRect(0xDD, 0x55, 0x10A, 0x64, nullptr, 0, "RECTAVG", "0");
+	_subMenuZone->addRect(0xDD, 0x75, 0x10A, 0x84, nullptr, 0, "RECTHARD", "0");
 
 	_shotSound = loadSoundFile("blow.8b");
 	_emptySound = loadSoundFile("empty.8b");
@@ -118,6 +132,11 @@ void GameDrugWars::init() {
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
 	moveMouse();
+
+	delete bullets;
+	delete lives;
+	delete difficlt;
+	delete hole;
 }
 
 void GameDrugWars::registerScriptFunctions() {
@@ -197,6 +216,41 @@ void GameDrugWars::verifyScriptFunctions() {
 			}
 		}
 	}
+}
+
+void GameDrugWars::unregisterScriptFunctions() {
+	for (auto &func : _rectHitFuncs) {
+		delete func._value;
+	}
+	for (auto &func : _scenePreOps) {
+		delete func._value;
+	}
+	for (auto &func : _sceneShowMsg) {
+		delete func._value;
+	}
+	for (auto &func : _sceneInsOps) {
+		delete func._value;
+	}
+	for (auto &func : _sceneWepDwn) {
+		delete func._value;
+	}
+	for (auto &func : _sceneScnScr) {
+		delete func._value;
+	}
+	for (auto &func : _sceneNxtFrm) {
+		delete func._value;
+	}
+	for (auto &func : _sceneNxtScn) {
+		delete func._value;
+	}
+	_rectHitFuncs.clear();
+	_scenePreOps.clear();
+	_sceneShowMsg.clear();
+	_sceneInsOps.clear();
+	_sceneWepDwn.clear();
+	_sceneScnScr.clear();
+	_sceneNxtFrm.clear();
+	_sceneNxtScn.clear();
 }
 
 DWScriptFunctionRect GameDrugWars::getScriptFunctionRectHit(const Common::String &name) {
@@ -283,7 +337,7 @@ Common::Error GameDrugWars::run() {
 			Common::Point firedCoords;
 			if (fired(&firedCoords)) {
 				if (!_holster) {
-					Rect *hitGlobalRect = checkZone(_menuzone, &firedCoords);
+					Rect *hitGlobalRect = checkZone(_menuZone, &firedCoords);
 					if (hitGlobalRect != nullptr) {
 						callScriptFunctionRectHit(hitGlobalRect->_rectHit, hitGlobalRect);
 					} else if (_shots > 0) {
@@ -291,9 +345,9 @@ Common::Error GameDrugWars::run() {
 							_shots--;
 						}
 						displayShotFiredImage(&firedCoords);
-						doShot();
+						playSound(_shotSound);
 						Rect *hitRect = nullptr;
-						Zone *hitSceneZone = checkZonesV2(scene, hitRect, &firedCoords);
+						Zone *hitSceneZone = checkZones(scene, hitRect, &firedCoords);
 						if (hitSceneZone != nullptr) {
 							callScriptFunctionRectHit(hitRect->_rectHit, hitRect);
 						} else {
@@ -384,7 +438,7 @@ void GameDrugWars::doMenu() {
 	while (_inMenu && !_vm->shouldQuit()) {
 		Common::Point firedCoords;
 		if (fired(&firedCoords)) {
-			Rect *hitMenuRect = checkZone(_submenzone, &firedCoords);
+			Rect *hitMenuRect = checkZone(_subMenuZone, &firedCoords);
 			if (hitMenuRect != nullptr) {
 				callScriptFunctionRectHit(hitMenuRect->_rectHit, hitMenuRect);
 			}
@@ -527,13 +581,7 @@ bool GameDrugWars::weaponDown() {
 	return false;
 }
 
-bool GameDrugWars::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameDrugWars::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameDrugWars::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeSByte(_stage);
@@ -548,18 +596,10 @@ bool GameDrugWars::saveState() {
 	outSaveFile->writeByte(_difficulty);
 	outSaveFile->writeString(_curScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->finalize();
-	delete outSaveFile;
 	return true;
 }
 
-bool GameDrugWars::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameDrugWars::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameDrugWars::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameDrugWars::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -577,18 +617,33 @@ bool GameDrugWars::loadState() {
 	_score = inSaveFile->readSint32LE();
 	_difficulty = inSaveFile->readByte();
 	_curScene = inSaveFile->readString();
-	delete inSaveFile;
 	_gameInProgress = true;
 	changeDifficulty(_difficulty);
 	return true;
 }
 
+Zone *GameDrugWars::checkZones(Scene *scene, Rect *&hitRect, Common::Point *point) {
+	for (auto &zone : scene->_zones) {
+		uint32 startFrame = zone->_startFrame - (_videoFrameSkip + 1) + ((_difficulty - 1) * _videoFrameSkip);
+		uint32 endFrame = zone->_endFrame + (_videoFrameSkip - 1) - ((_difficulty - 1) * _videoFrameSkip);
+		if (_currentFrame >= startFrame && _currentFrame <= endFrame) {
+			hitRect = checkZone(zone, point);
+			if (hitRect != nullptr) {
+				return zone;
+			}
+		}
+	}
+	return nullptr;
+}
+
 // misc game functions
 void GameDrugWars::displayShotFiredImage(Common::Point *point) {
 	if (point->x >= _videoPosX && point->x <= (_videoPosX + _videoDecoder->getWidth()) && point->y >= _videoPosY && point->y <= (_videoPosY + _videoDecoder->getHeight())) {
-		uint16 targetX = point->x - _videoPosX;
-		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
+		int32 targetX = point->x - _videoPosX;
+		int32 targetY = point->y - _videoPosY;
+		if (targetX > 0 && targetY > 0) {
+			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
+		}
 	}
 }
 
@@ -596,8 +651,32 @@ void GameDrugWars::enableVideoFadeIn() {
 	// TODO implement
 }
 
-uint16 GameDrugWars::sceneToNumber(Scene *scene) {
-	return atoi(scene->_name.substr(5).c_str());
+uint16 GameDrugWars::sceneToNumber(Common::String sceneName) {
+	return atoi(sceneName.substr(5).c_str());
+}
+
+uint16 GameDrugWars::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude) {
+	if (max == 1) {
+		return 0;
+	}
+	// reset mask if full
+	uint16 fullMask = 0xFFFF >> (16 - max);
+	if (*mask == fullMask) {
+		*mask = 0;
+	}
+	uint16 randomNum = 0;
+	// find an unused random number
+	while (true) {
+		randomNum = _rnd->getRandomNumber(max - 1);
+		// check if bit is already used
+		uint16 bit = 1 << randomNum;
+		if (!((*mask & bit) || randomNum == exclude)) {
+			// set the bit in mask
+			*mask |= bit;
+			break;
+		}
+	}
+	return randomNum;
 }
 
 uint16 GameDrugWars::pickRandomScene(uint8 index, uint8 max) {
@@ -635,41 +714,6 @@ uint16 GameDrugWars::pickDeathScene() {
 	return _diedScenesByStage[_stage][_deathPicked];
 }
 
-void GameDrugWars::sceneNxtscnGeneric(uint8 index) {
-	uint16 nextSceneId = 0;
-	_gotTo[index] = 0;
-	if (_gotTo[0] || _gotTo[1] || _gotTo[3] || _gotTo[2]) {
-		nextSceneId = 0x26;
-	} else if (_gotTo[4] || _gotTo[5] || _gotTo[6]) {
-		if (_stage == 1) {
-			nextSceneId = 0x52;
-		} else {
-			_stage = 1;
-			nextSceneId = 0x50;
-		}
-	} else if (_gotTo[7] || _gotTo[8] || _gotTo[9]) {
-		if (_stage == 2) {
-			nextSceneId = 0x9A;
-		} else {
-			_stage = 2;
-			nextSceneId = 0x81;
-		}
-	} else if (_gotTo[10] || _gotTo[11] || _gotTo[12]) {
-		if (_stage == 3) {
-			nextSceneId = 0xDF;
-		} else {
-			_stage = 3;
-			nextSceneId = 0x14B;
-		}
-	} else if (_gotTo[13]) {
-		_stage = 4;
-		nextSceneId = 0x18F;
-	} else {
-		nextSceneId = 0x21;
-	}
-	_curScene = Common::String::format("scene%d", nextSceneId);
-}
-
 void GameDrugWars::rectSelectGeneric(uint8 index) {
 	if (_gotTo[index] > 0) {
 		_curScene = Common::String::format("scene%d", _gotTo[index]);
@@ -678,19 +722,26 @@ void GameDrugWars::rectSelectGeneric(uint8 index) {
 }
 
 // Script functions: RectHit
+void GameDrugWars::rectNewScene(Rect *rect) {
+	_score += rect->_score;
+	if (!rect->_scene.empty()) {
+		_curScene = rect->_scene;
+	}
+}
+
 void GameDrugWars::rectShotMenu(Rect *rect) {
 	doMenu();
 }
 
 void GameDrugWars::rectSave(Rect *rect) {
-	if (saveState()) {
-		doSaveSound();
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
+		playSound(_saveSound);
 	}
 }
 
 void GameDrugWars::rectLoad(Rect *rect) {
-	if (loadState()) {
-		doLoadSound();
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
+		playSound(_loadSound);
 	}
 }
 
@@ -718,6 +769,22 @@ void GameDrugWars::rectStart(Rect *rect) {
 	}
 	resetParams();
 	newGame();
+}
+
+void GameDrugWars::rectEasy(Rect *rect) {
+	_difficulty = 1;
+}
+
+void GameDrugWars::rectAverage(Rect *rect) {
+	_difficulty = 2;
+}
+
+void GameDrugWars::rectHard(Rect *rect) {
+	_difficulty = 3;
+}
+
+void GameDrugWars::rectExit(Rect *rect) {
+	shutdown();
 }
 
 void GameDrugWars::rectSelectTargetPractice(Rect *rect) {
@@ -778,10 +845,10 @@ void GameDrugWars::rectSelectVillage(Rect *rect) {
 
 // Script functions: Scene PreOps
 void GameDrugWars::scenePsoGotTo(Scene *scene) {
-	uint16 sceneId = sceneToNumber(scene);
+	uint16 sceneId = sceneToNumber(scene->_name);
 	_gotTo[_gotToIndex] = sceneId;
 	if (_gotToIndex == 13) {
-		_finalStageScene = sceneToNumber(scene);
+		_finalStageScene = sceneToNumber(scene->_name);
 	}
 	enableVideoFadeIn();
 }
@@ -964,7 +1031,6 @@ void GameDrugWars::sceneNxtscnFinishScenario(Scene *scene) {
 			picked = 0x0109;
 		}
 	} else if (_gotTo[13] != 0) {
-		_stage = 13;
 		_stage = 4;
 		picked = 0x017F;
 	} else {
@@ -978,9 +1044,27 @@ void GameDrugWars::sceneDefaultWepdwn(Scene *scene) {
 	_shots = 10;
 }
 
+// Script functions: ScnScr
+void GameDrugWars::sceneDefaultScore(Scene *scene) {
+	if (scene->_scnscrParam > 0) {
+		_score += scene->_scnscrParam;
+	}
+}
+
 // Debug methods
-void GameDrugWars::debugWarpTo(int val) {
-	// TODO implement
+void GameDrugWars::debug_warpTo(int val) {
+	if (_vm->isDemo()) {
+		return;
+	}
+	resetParams();
+	if (val > 0 && val <= 14) {
+		for (uint8 i = 0; i < val; i++) {
+			_gotTo[i] = 0;
+			sceneNxtscnFinishScenario(nullptr);
+		}
+	} else if (val == 0) {
+		_curScene = Common::String::format("scene%d", _stageStartScenes[0]);
+	}
 }
 
 // Debugger methods
@@ -995,11 +1079,11 @@ DebuggerDrugWars::DebuggerDrugWars(GameDrugWars *game) {
 
 bool DebuggerDrugWars::cmdWarpTo(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: warp <int>");
+		debugPrintf("Usage: warp <int>\n");
 		return true;
 	} else {
 		int val = atoi(argv[1]);
-		_game->debugWarpTo(val);
+		_game->debug_warpTo(val);
 		return false;
 	}
 }

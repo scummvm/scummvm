@@ -705,7 +705,7 @@ bool U6Actor::weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hi
 		return true;
 	}
 
-	const Std::list<Obj *> &surrounding_objs = target->get_surrounding_obj_list();
+	const Common::List<Obj *> &surrounding_objs = target->get_surrounding_obj_list();
 	for (Obj *obj : surrounding_objs) {
 		if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
 			*hit_x = obj->x;
@@ -1066,7 +1066,7 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 	if (surrounding_objects.empty())
 		return;
 
-	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
+	Common::List<Obj *>::iterator obj = surrounding_objects.begin();
 
 	sint8 new_pos = 2 + rel_x + (rel_y * 2);
 
@@ -1131,7 +1131,7 @@ inline void U6Actor::set_direction_of_surrounding_objs(NuvieDir new_direction) {
 }
 
 inline void U6Actor::set_direction_of_surrounding_ship_objs(NuvieDir new_direction) {
-	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
+	Common::List<Obj *>::iterator obj = surrounding_objects.begin();
 	if (obj == surrounding_objects.end())
 		return;
 
@@ -1268,7 +1268,7 @@ inline void U6Actor::set_direction_of_surrounding_splitactor_objs(NuvieDir new_d
 }
 
 inline void U6Actor::set_direction_of_surrounding_dragon_objs(NuvieDir new_direction) {
-	Std::list<Obj *>::iterator obj;
+	Common::List<Obj *>::iterator obj;
 	uint8 frame_offset = (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	Obj *head, *tail, *wing1, *wing2;
 
@@ -1351,7 +1351,7 @@ inline void U6Actor::twitch_surrounding_dragon_objs() {
 }
 
 inline void U6Actor::twitch_surrounding_hydra_objs() {
-	Std::list<Obj *>::iterator obj;
+	Common::List<Obj *>::iterator obj;
 	int i;
 
 	//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()

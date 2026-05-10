@@ -93,7 +93,7 @@ void Fonts::setFont(int fontNum) {
 		}
 	}
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC
 		// use FONT[number].VGS, which is a regular sherlock graphic file
 		fontFilename = Common::Path(Common::String::format("FONT%d.VGS", fontNum + 1));
@@ -314,18 +314,18 @@ void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 			curChar = '?';
 		}
 		
-		curChar = translateChar(curChar);
+		byte translCurChar = translateChar(curChar);
 
-		if (curChar < _charCount) {
-			ImageFrame &frame = (*_font)[curChar];
+		if (translCurChar < _charCount) {
+			ImageFrame &frame = (*_font)[translCurChar];
 			if (overrideColor) {
-				surface->SHoverrideBlitFrom(frame, Common::Point(charPos.x, charPos.y + _yOffsets[curChar]), overrideColor);
+				surface->SHoverrideBlitFrom(frame, Common::Point(charPos.x, charPos.y - _yOffsets[curChar]), overrideColor);
 			} else {
-				surface->SHtransBlitFrom(frame, Common::Point(charPos.x, charPos.y + _yOffsets[curChar]));
+				surface->SHtransBlitFrom(frame, Common::Point(charPos.x, charPos.y - _yOffsets[curChar]));
 			}
 			charPos.x += frame._frame.w + 1;
 		} else {
-			warning("Invalid character encountered - %d", (int)curChar);
+			warning("Invalid character encountered - %d translated from %d", (int)translCurChar, (int)curChar);
 		}
 	}
 }

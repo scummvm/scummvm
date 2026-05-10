@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_USECODE_USECODE_H
 #define ULTIMA8_USECODE_USECODE_H
 
+#include  "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

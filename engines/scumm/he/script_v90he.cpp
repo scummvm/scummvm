@@ -24,6 +24,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/animation_he.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/object.h"
@@ -1332,8 +1333,6 @@ void ScummEngine_v90he::o90_getWizData() {
 		push(_wiz->dwGetImageGeneralProperty(resId, state, type));
 		break;
 	case SO_FONT_START: // 141
-		// TODO: Implement...
-
 		fontProperty = pop();
 		copyScriptString(filename, sizeof(filename));
 		fontImageNum = pop();
@@ -1341,13 +1340,11 @@ void ScummEngine_v90he::o90_getWizData() {
 		if (fontImageNum) {
 			switch (fontProperty) {
 			case 2: // PFONT_EXTENT_X
-				//push(PFONT_GetStringWidth(iImage, szResultString));
-				push(0);
+				push(((ScummEngine_v99he *)this)->_heFont->getStringWidth(fontImageNum, Common::String((char *)filename).c_str()));
 				break;
 
 			case 3: // PFONT_EXTENT_Y
-				//push(PFONT_GetStringHeight(iImage, szResultString));
-				push(0);
+				push(((ScummEngine_v99he *)this)->_heFont->getStringHeight(fontImageNum, Common::String((char *)filename).c_str()));
 				break;
 			default:
 				// No default case in the original...
@@ -1357,7 +1354,6 @@ void ScummEngine_v90he::o90_getWizData() {
 			push(0);
 		}
 
-		debug(0, "o90_getWizData() case SO_FONT_START unhandled");
 		break;
 	default:
 		error("o90_getWizData: Unknown case %d", subOp);
@@ -2347,28 +2343,38 @@ void ScummEngine_v90he::o90_paletteOps() {
 }
 
 void ScummEngine_v90he::o90_fontEnum() {
-	byte string[80];
+	byte resultString[80];
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case ScummEngine_v100he::SO_INIT: // HE100
 	case SO_INIT:
-		push(1);
+		push(((ScummEngine_v99he *)this)->_heFont->enumInit());
 		break;
 	case ScummEngine_v100he::SO_PROPERTY:	// HE100
 	case SO_PROPERTY:
 		switch (pop()) {
 		case 1: // FONT_ENUM_GET
-			pop();
-			writeVar(0, 0);
-			defineArray(0, kStringArray, 0, 0, 0, 0);
-			writeArray(0, 0, 0, 0);
-			push(readVar(0));
+		{
+			_scummVars[0] = 0;
+			const char *fontName = ((ScummEngine_v99he *)this)->_heFont->enumGet(pop());
+			if (!fontName) {
+				fontName = "";
+			}
+
+			int len = strlen(fontName);
+			byte *ptr = defineArray(0, kStringArray, 0, 0, 0, len);
+			if (ptr) {
+				memcpy(ptr, fontName, len);
+			}
+
+			push(_scummVars[0]);
 			break;
+		}
 		case 2: // FONT_ENUM_FIND
-			copyScriptString(string, sizeof(string));
-			push(-1);
+			copyScriptString(resultString, sizeof(resultString));
+			push(((ScummEngine_v99he *)this)->_heFont->enumFind((char *)resultString));
 			break;
 		}
 
@@ -2376,8 +2382,6 @@ void ScummEngine_v90he::o90_fontEnum() {
 	default:
 		error("o90_fontEnum: Unknown case %d", subOp);
 	}
-
-	debug(1, "o90_fontEnum stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getActorAnimProgress() {

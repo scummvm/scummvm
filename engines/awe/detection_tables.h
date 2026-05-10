@@ -36,7 +36,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
@@ -48,7 +48,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("memlist.bin", "f2bf61fe20c98108b2256e96d57d3fe0", 2940),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
@@ -63,7 +63,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("memlist.bin", "63675fdb53dd4a2b8d72182bbee47592", 2940),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
@@ -77,7 +77,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("memlist.bin", "4605962431175a5b961f6db4041adcff", 2940),
 			Common::EN_USA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
@@ -91,7 +91,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("memlist.bin", "ee9e67fcaace0300fec4e619299e6e0e", 2940),
 			Common::EN_USA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
@@ -104,7 +104,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("memlist.bin", "11e0cc58aeb47ad1dfc1c4dae8dcd9ee", 2940),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO3(GUIO_RENDEREGA, GUIO_RENDERVGA, GAMEOPTION_COPY_PROTECTION)
 		},
 		DT_DOS
@@ -117,7 +117,7 @@ const AweGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("bank", "30fb99cb4cbd812273d0b54b7b4a18ca", 987462),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
 		DT_WIN31

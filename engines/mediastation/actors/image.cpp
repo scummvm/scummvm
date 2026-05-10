@@ -25,19 +25,21 @@
 
 namespace MediaStation {
 
+ImageAsset::~ImageAsset() {
+	delete bitmap;
+	bitmap = nullptr;
+}
+
 ImageActor::~ImageActor() {
-	if (_actorReference == 0) {
-		// If we're just referencing another actor's bitmap,
-		// don't delete that bitmap.
-		delete _bitmap;
-	}
-	_bitmap = nullptr;
+	unregisterWithStreamManager();
 }
 
 void ImageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
+		_asset = Common::SharedPtr<ImageAsset>(new ImageAsset);
 		break;
 
 	case kActorHeaderStartup:
@@ -45,7 +47,7 @@ void ImageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		break;
 
 	case kActorHeaderLoadType:
-		_loadType = chunk.readTypedByte();
+		_decompressInPlace = chunk.readTypedByte();
 		break;
 
 	case kActorHeaderX:
@@ -56,6 +58,13 @@ void ImageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		_yOffset = chunk.readTypedUint16();
 		break;
 
+	case kActorHeaderActorReference: {
+		_actorReference = chunk.readTypedUint16();
+		ImageActor *referencedImage = static_cast<ImageActor *>(g_engine->getImtGod()->getActorByIdAndType(_actorReference, kActorTypeImage));
+		_asset = referencedImage->_asset;
+		break;
+	}
+
 	default:
 		SpatialEntity::readParameter(chunk, paramType);
 	}
@@ -65,31 +74,28 @@ ScriptValue ImageActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptV
 	ScriptValue returnValue;
 	switch (methodId) {
 	case kSpatialShowMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		spatialShow();
-		return returnValue;
+		break;
 	}
 
 	case kSpatialHideMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		spatialHide();
-		return returnValue;
+		break;
 	}
 
 	default:
 		return SpatialEntity::callMethod(methodId, args);
 	}
+	return returnValue;
 }
 
-void ImageActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void ImageActor::draw(DisplayContext &displayContext) {
 	if (_isVisible) {
 		Common::Point origin = getBbox().origin();
-		g_engine->getDisplayManager()->imageBlit(origin, _bitmap, _dissolveFactor, dirtyRegion);
+		g_engine->getDisplayManager()->imageBlit(origin, _asset->bitmap, _dissolveFactor, &displayContext);
 	}
-}
-
-void ImageActor::invalidateLocalBounds() {
-	g_engine->addDirtyRect(getBbox());
 }
 
 void ImageActor::spatialShow() {
@@ -104,13 +110,13 @@ void ImageActor::spatialHide() {
 
 Common::Rect ImageActor::getBbox() const {
 	Common::Point origin(_xOffset + _boundingBox.left, _yOffset + _boundingBox.top);
-	Common::Rect bbox(origin, _bitmap->width(), _bitmap->height());
+	Common::Rect bbox(origin, _asset->bitmap->width(), _asset->bitmap->height());
 	return bbox;
 }
 
 void ImageActor::readChunk(Chunk &chunk) {
-	BitmapHeader *bitmapHeader = new BitmapHeader(chunk);
-	_bitmap = new Bitmap(chunk, bitmapHeader);
+	ImageInfo bitmapHeader = ImageInfo(chunk);
+	_asset->bitmap = new PixMapImage(chunk, bitmapHeader, _decompressInPlace);
 }
 
 } // End of namespace MediaStation

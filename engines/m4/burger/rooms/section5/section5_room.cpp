@@ -42,7 +42,7 @@ void Section5Room::init() {
 		kernel_timing_trigger(120, 5004);
 	}
 
-	if (Section5::_digiName != 0) {
+	if (Section5::_digiName != nullptr) {
 		digi_stop(3);
 		digi_unload(Section5::_digiName);
 	}
@@ -61,7 +61,12 @@ void Section5Room::init() {
 		break;
 
 	case 506:
-		Section5::_digiName = _G(flags)[V218] == 5003 ? "500_002" : "506_005";
+		if (_G(flags)[V218] == 5003) {
+			Section5::_digiName = "500_002";
+		} else {
+			Section5::_digiName = "506_005";
+			vol = 50;
+		}
 		break;
 
 	case 508:
@@ -85,10 +90,10 @@ HotSpotRec *Section5Room::custom_hotspot_which(int32 x, int32 y) {
 		return hotspot;
 
 	assert(_borkTable);
-	int index = _borkStairs.regs()[IDX_CELS_INDEX];
-	int x1 = _borkTable[index]._x;
-	int y1 = _borkTable[index]._y;
-	int total = (x - x1) * (x - x1) + (y - y1) * (y - y1);
+	const int index = _borkStairs.regs()[IDX_CELS_INDEX];
+	const int x1 = _borkTable[index]._x;
+	const int y1 = _borkTable[index]._y;
+	const int total = (x - x1) * (x - x1) + (y - y1) * (y - y1);
 
 	return (total < _borkThreshold) ? &_borkHotspot : nullptr;
 }

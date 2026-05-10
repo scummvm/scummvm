@@ -60,6 +60,7 @@ public:
 	bool isActiveText();
 	CollisionTest isMouseIn(const Common::Point &pos);
 	bool isMatteIntersect(Channel *channel);
+	bool isMatteBoxIntersect(Channel *channel);
 	bool isMatteWithin(Channel *channel);
 	bool isActiveVideo();
 	bool isVideoDirectToStage();
@@ -98,6 +99,8 @@ public:
 	CastMemberID getSubChannelSound1();
 	CastMemberID getSubChannelSound2();
 
+	Common::String formatInfo();
+
 public:
 	Sprite *_sprite;
 	Cursor _cursor;
@@ -105,6 +108,7 @@ public:
 
 	bool _dirty;
 	bool _visible;
+	bool _hideFromStage; // Used in DT for hiding the channel from rendering
 	uint _constraint;
 	Graphics::ManagedSurface *_mask;
 

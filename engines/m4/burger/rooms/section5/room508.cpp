@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section5/room508.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -202,7 +204,7 @@ void Room508::init() {
 		kernel_trigger_dispatch_now(5);
 	} else {
 		_val4 = 22;
-		kernel_trigger_dispatch_now(22);
+		kernel_trigger_dispatch_now(5);
 	}
 
 	if (_G(flags)[V228] == 1) {

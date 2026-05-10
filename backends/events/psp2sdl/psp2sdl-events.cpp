@@ -34,7 +34,7 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 
-#include "math.h"
+#include <math.h>
 
 void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 

@@ -1689,7 +1689,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
 #ifdef USE_HTTP
+#ifndef EMSCRIPTEN // No shader updates on Emscripten, they are always loaded directly from server
 	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Download Shaders"), _("Check on the scummvm.org website for updates of shader packs"), kUpdateShadersCmd);
+#endif
 #endif
 
 	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
@@ -1861,7 +1863,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 }
 
 void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefix) {
-	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 Device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
+	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
 	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
 
 	// Native mt32 setting
@@ -2957,7 +2959,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 				  "will be prompted when autosave is about to overwrite a save).\n"
 				  "List of games:\n");
 		for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it)
-			message += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+			message += Common::U32String(it->target + ": " + it->desc.getDescription() + "\n");
 		message.deleteLastChar();
 		if (hasMore)
 			message += _("\nAnd more...");
@@ -2982,7 +2984,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 			if (!failedSaves.empty()) {
 				Common::U32String failMessage = _("ERROR: Failed to move the following saved games:\n");
 				for (ExistingSaveList::const_iterator it = failedSaves.begin(), end = failedSaves.end(); it != end; ++it)
-					failMessage += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+					failMessage += Common::U32String(it->target + ": " + it->desc.getDescription() + "\n");
 				failMessage.deleteLastChar();
 				GUI::MessageDialog(failMessage).runModal();
 			}

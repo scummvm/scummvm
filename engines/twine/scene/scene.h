@@ -177,6 +177,7 @@ public:
 	uint8 _island = 0;
 	uint8 _shadowLevel = 0; // lba2
 	uint8 _modeLabyrinthe = 0; // lba2
+	uint8 _cinemaMode = 0; // lba2
 	uint8 _currentCubeX = 0; // lba2
 	uint8 _currentCubeY = 0; // lba2
 

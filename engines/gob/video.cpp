@@ -105,6 +105,9 @@ void Font::drawLetterRaw(Surface &surf, uint8 c, uint16 x, uint16 y,
 	if (c == '\r' || c == '\n')
 		return;
 
+	if (x >= surf.getWidth() || y >= surf.getHeight())
+		return;
+
 	const byte *src = getCharData(c);
 	if (!src) {
 		warning("Font::drawLetter(): getCharData() == 0");

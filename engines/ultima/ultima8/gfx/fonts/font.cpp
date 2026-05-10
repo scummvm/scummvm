@@ -19,10 +19,10 @@
  *
  */
 
+#include "ultima/ultima8/gfx/fonts/font.h"
+
 #include "ultima/ultima.h"
 #include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/gfx/fonts/font.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,12 +35,12 @@ Font::~Font() {
 }
 
 
-void Font::getTextSize(const Std::string &text,
+void Font::getTextSize(const Common::String &text,
 					   int32 &resultwidth, int32 &resultheight,
 					   unsigned int &remaining,
 					   int32 width, int32 height, TextAlign align,
 					   bool u8specials, bool pagebreaks) {
-	Std::list<PositionedText> tmp;
+	Common::List<PositionedText> tmp;
 	tmp = typesetText<Traits>(this, text, remaining,
 	                          width, height, align, u8specials, pagebreaks,
 	                          resultwidth, resultheight);
@@ -48,7 +48,7 @@ void Font::getTextSize(const Std::string &text,
 
 
 //static
-bool Font::Traits::canBreakAfter(Std::string::const_iterator &i) {
+bool Font::Traits::canBreakAfter(Common::String::const_iterator &i) {
 	// It's not really relevant what we do here, because this probably will
 	// not be used at normal font sizes.
 	return true;
@@ -56,8 +56,8 @@ bool Font::Traits::canBreakAfter(Std::string::const_iterator &i) {
 
 
 //static
-bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
-	Std::string::const_iterator j = i;
+bool Font::SJISTraits::canBreakAfter(Common::String::const_iterator &i) {
+	Common::String::const_iterator j = i;
 	uint32 u1 = unicode(j);
 
 	// See: https://wiki.wesnoth.org/index.php?title=JapaneseTranslation&oldid=23480#Word-Wrapping
@@ -145,8 +145,8 @@ bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
 }
 
 template<class T>
-static void findWordEnd(const Std::string &text,
-						Std::string::const_iterator &iter, bool u8specials) {
+static void findWordEnd(const Common::String &text,
+						Common::String::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
 		if (T::isSpace(iter, u8specials)) return;
 		T::advance(iter);
@@ -154,8 +154,8 @@ static void findWordEnd(const Std::string &text,
 }
 
 template<class T>
-static void passSpace(const Std::string &text,
-					  Std::string::const_iterator &iter, bool u8specials) {
+static void passSpace(const Common::String &text,
+					  Common::String::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
 		if (!T::isSpace(iter, u8specials)) return;
 		T::advance(iter);
@@ -178,28 +178,28 @@ CHECKME: any others? (page breaks for books?)
 */
 
 template<class T>
-Std::list<PositionedText> typesetText(Font *font,
-	const Std::string &text, unsigned int &remaining, int32 width, int32 height,
+Common::List<PositionedText> typesetText(Font *font,
+	const Common::String &text, unsigned int &remaining, int32 width, int32 height,
 	Font::TextAlign align, bool u8specials, bool pagebreaks, int32 &resultwidth,
-	int32 &resultheight, Std::string::size_type cursor) {
+	int32 &resultheight, Common::String::size_type cursor) {
 
 	debugC(kDebugGraphics, "typeset (%d, %d) %s", width, height, text.c_str());
 
 	// be optimistic and assume everything will fit
 	remaining = text.size();
 
-	Std::string curline;
+	Common::String curline;
 
 	int totalwidth = 0;
 	int totalheight = 0;
 
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	PositionedText line;
 
-	Std::string::const_iterator iter = text.begin();
-	Std::string::const_iterator cursoriter = text.begin();
-	if (cursor != Std::string::npos) cursoriter += cursor;
-	Std::string::const_iterator curlinestart = text.begin();
+	Common::String::const_iterator iter = text.begin();
+	Common::String::const_iterator cursoriter = text.begin();
+	if (cursor != Common::String::npos) cursoriter += cursor;
+	Common::String::const_iterator curlinestart = text.begin();
 
 	bool breakhere = false;
 	while (true) {
@@ -213,8 +213,8 @@ Std::list<PositionedText> typesetText(Font *font,
 			line._dims.setWidth(stringwidth);
 			line._dims.setHeight(stringheight);
 			line._text = curline;
-			line._cursor = Std::string::npos;
-			if (cursor != Std::string::npos && cursoriter >= curlinestart &&
+			line._cursor = Common::String::npos;
+			if (cursor != Common::String::npos && cursoriter >= curlinestart &&
 			        (cursoriter < iter || (!breakhere && cursoriter == iter))) {
 				line._cursor = cursoriter - curlinestart;
 				if (line._dims.width() == 0) {
@@ -249,12 +249,12 @@ Std::list<PositionedText> typesetText(Font *font,
 		} else {
 
 			// see if next word still fits on the current line
-			Std::string::const_iterator nextword = iter;
+			Common::String::const_iterator nextword = iter;
 			passSpace<T>(text, nextword, u8specials);
 
 			// process spaces
 			bool foundLF = false;
-			Std::string spaces;
+			Common::String spaces;
 			for (; iter < nextword; T::advance(iter)) {
 				if (T::isBreak(iter, u8specials)) {
 					foundLF = true;
@@ -271,10 +271,10 @@ Std::list<PositionedText> typesetText(Font *font,
 			if (foundLF || nextword == text.end()) continue;
 
 			// process word
-			Std::string::const_iterator endofnextword = iter;
+			Common::String::const_iterator endofnextword = iter;
 			findWordEnd<T>(text, endofnextword, u8specials);
 			int32 stringwidth = 0, stringheight = 0;
-			Std::string newline = curline + spaces +
+			Common::String newline = curline + spaces +
 			                      text.substr(nextword - text.begin(), endofnextword - nextword);
 			font->getStringSize(newline, stringwidth, stringheight);
 
@@ -287,9 +287,9 @@ Std::list<PositionedText> typesetText(Font *font,
 					// FIXME: this is rather inefficient; binary search?
 					// FIXME: clean up...
 					iter = nextword;
-					Std::string::const_iterator saveiter = nextword;	// Dummy initialization
-					Std::string::const_iterator saveiter_fail;
-					Std::string curline_fail;
+					Common::String::const_iterator saveiter = nextword;	// Dummy initialization
+					Common::String::const_iterator saveiter_fail;
+					Common::String curline_fail;
 					newline = spaces;
 					bool breakok = true;
 					int breakcount = -1;
@@ -366,18 +366,18 @@ Std::list<PositionedText> typesetText(Font *font,
 
 // explicit instantiations
 template
-Std::list<PositionedText> typesetText<Font::Traits>
-(Font *font, const Std::string &text,
+Common::List<PositionedText> typesetText<Font::Traits>
+(Font *font, const Common::String &text,
  unsigned int &remaining, int32 width, int32 height,
  Font::TextAlign align, bool u8specials, bool pagebreaks,
- int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
+ int32 &resultwidth, int32 &resultheight, Common::String::size_type cursor);
 
 template
-Std::list<PositionedText> typesetText<Font::SJISTraits>
-(Font *font, const Std::string &text,
+Common::List<PositionedText> typesetText<Font::SJISTraits>
+(Font *font, const Common::String &text,
  unsigned int &remaining, int32 width, int32 height,
  Font::TextAlign align, bool u8specials, bool pagebreaks,
- int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
+ int32 &resultwidth, int32 &resultheight, Common::String::size_type cursor);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

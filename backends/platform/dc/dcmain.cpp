@@ -29,6 +29,7 @@
 #include "dcutils.h"
 #include "icon.h"
 #include "DCLauncherDialog.h"
+#include "backends/events/default/default-events.h"
 #include "backends/mutex/null/null-mutex.h"
 #include <common/config-manager.h>
 #include <common/memstream.h>
@@ -56,6 +57,7 @@ OSystem_Dreamcast::OSystem_Dreamcast()
 void OSystem_Dreamcast::initBackend()
 {
   ConfMan.setInt("autosave_period", 0);
+  _eventManager = new DefaultEventManager(this);
   _savefileManager = createSavefileManager();
   _timerManager = new DefaultTimerManager();
 
@@ -65,7 +67,7 @@ void OSystem_Dreamcast::initBackend()
 
   _audiocdManager = new DCCDManager();
 
-  EventsBaseBackend::initBackend();
+  BaseBackend::initBackend();
 }
 
 

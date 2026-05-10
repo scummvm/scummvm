@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/gui/gui.h"
@@ -76,7 +76,7 @@ void GUI_Scroller::update_viewport(bool update_slider) {
 		scroll_bar->set_slider_position(s_pos);
 	}
 
-	Std::list<GUI_Widget *>::iterator child = children.begin();
+	Common::List<GUI_Widget *>::iterator child = children.begin();
 	child++; // skip the scroll_bar widget. This is a bit evil.
 
 	for (i = 0; child != children.end(); child++, i++) {
@@ -107,13 +107,13 @@ void GUI_Scroller:: Display(bool full_redraw) {
 	return;
 }
 
-GUI_status GUI_Scroller::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_Scroller::MouseDown(int x, int y, Events::MouseButton button) {
 //grab_focus();
 
 	return GUI_YUM;
 }
 
-GUI_status GUI_Scroller::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_Scroller::MouseUp(int x, int y, Events::MouseButton button) {
 
 // release_focus();
 

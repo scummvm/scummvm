@@ -29,7 +29,7 @@ namespace Metagame {
 namespace Gtl {
 
 CTurnDialog::CTurnDialog(CWnd* pParent, CPalette *pPalette, bool bHodj, bool bGain, bool bTurn)
-	: CBmpDialog(pParent, pPalette, IDD_TURNDLG, ".\\art\\msscroll.bmp") {
+	: CBmpDialog(pParent, pPalette, IDD_TURNDLG, "art\\msscroll.bmp") {
 	// Initialize all members
 	//
 	m_pPalette = pPalette;
@@ -128,10 +128,10 @@ void CTurnDialog::OnPaint() {
 
 	if (m_bTurn) {
 		Common::sprintf_s(msgBuf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "gains a turn." : "loses a turn.");
-		Common::sprintf_s(artBuf, "%s", m_bGain ? ".\\art\\freeturn.bmp" : ".\\art\\loseturn.bmp");
+		Common::sprintf_s(artBuf, "%s", m_bGain ? "art\\freeturn.bmp" : "art\\loseturn.bmp");
 	} else {
 		Common::sprintf_s(msgBuf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "wins the game!" : "loses the game.");
-		Common::sprintf_s(artBuf, "%s", m_bGain ? ".\\art\\wingame.bmp" : ".\\art\\losegame.bmp");
+		Common::sprintf_s(artBuf, "%s", m_bGain ? "art\\wingame.bmp" : "art\\losegame.bmp");
 	}
 
 	bSuccess = (*m_pTextMessage).DisplayString(pDC, msgBuf, 20, FW_BOLD, TEXT_COLOR);

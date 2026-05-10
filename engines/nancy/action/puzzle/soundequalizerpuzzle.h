@@ -86,9 +86,10 @@ public:
 
 	SoundEqualizerPuzzleData *_puzzleState = nullptr;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "SoundEqualizerPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void updateSlider(uint sliderID);
 };

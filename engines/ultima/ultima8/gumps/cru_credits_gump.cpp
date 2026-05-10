@@ -19,21 +19,21 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "image/bmp.h"
-
 #include "ultima/ultima8/gumps/cru_credits_gump.h"
 
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/gfx/palette_manager.h"
-#include "ultima/ultima8/gfx/texture.h"
-#include "ultima/ultima8/gfx/fonts/rendered_text.h"
+#include "common/config-manager.h"
+#include "common/stream.h"
+#include "image/bmp.h"
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/gfx/fonts/font.h"
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
-#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
+#include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/texture.h"
+#include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {

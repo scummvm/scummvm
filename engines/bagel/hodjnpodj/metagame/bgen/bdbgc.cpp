@@ -328,9 +328,6 @@ int kybrd(void) {
 /* Copyright (C) 1984 by John J. Xenakis Company */
 // Modified by John J. Xenakis for Papyrus
 
-#include <conio.h>
-#include <dos.h>
-
 #define INTKYB 0x16 /* keyboard interrupt code */
 #define QSIZE 100   /* input queue size */
 

@@ -21,26 +21,30 @@
 
 #include "mediastation/debugchannels.h"
 #include "mediastation/actors/font.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
-FontGlyph::FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapHeader *header) : Bitmap(chunk, header) {
-	_asciiCode = asciiCode;
-	_unk1 = unk1;
-	_unk2 = unk2;
+FontCharacter::FontCharacter(Chunk &chunk, uint charCode, int horizontalSpacing, int baselineOffset, const ImageInfo &header) :
+	PixMapImage(chunk, header),
+	_charCode(charCode),
+	_horizontalSpacing(horizontalSpacing),
+	_baselineOffset(baselineOffset) {
 }
 
 FontActor::~FontActor() {
-	for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
+	unregisterWithStreamManager();
+	for (auto it = _characters.begin(); it != _characters.end(); ++it) {
 		delete it->_value;
 	}
-	_glyphs.clear();
+	_characters.clear();
 }
 
 void FontActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
 		break;
 
 	default:
@@ -49,16 +53,35 @@ void FontActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 }
 
 void FontActor::readChunk(Chunk &chunk) {
-	debugC(5, kDebugLoading, "FontActor::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
-	uint asciiCode = chunk.readTypedUint16();
-	int unk1 = chunk.readTypedUint16();
-	int unk2 = chunk.readTypedUint16();
-	BitmapHeader *header = new BitmapHeader(chunk);
-	FontGlyph *glyph = new FontGlyph(chunk, asciiCode, unk1, unk2, header);
-	if (_glyphs.getValOrDefault(asciiCode) != nullptr) {
-		error("%s: Glyph for ASCII code 0x%x already exists", __func__, asciiCode);
+	// This is always 16-bit because there are some special char codes above 0xFF,
+	// such as the cursor and arrow keys.
+	uint charCode = chunk.readTypedUint16();
+	int16 horizontalSpacing = static_cast<int16>(chunk.readTypedUint16());
+	int16 baselineOffset = static_cast<int16>(chunk.readTypedUint16());
+	ImageInfo header(chunk);
+	FontCharacter *glyph = new FontCharacter(chunk, charCode, horizontalSpacing, baselineOffset, header);
+	if (_characters.getValOrDefault(charCode) != nullptr) {
+		warning("[%s] %s: Glyph for char code 0x%x already exists", debugName(), __func__, charCode);
 	}
-	_glyphs.setVal(asciiCode, glyph);
+	_characters.setVal(charCode, glyph);
+	_totalHeightOfAllChars += glyph->height();
+	_totalWidthOfAllChars += glyph->width();
+
+	// Track the maximum ascent across all glyphs.
+	// The ascent is either the specified baseline offset, or the full glyph height if not specified.
+	_maxAscent = MAX(_maxAscent, glyph->ascent());
+
+	// Calculate descent (distance from baseline to bottom of glyph)
+	int16 charDescent = glyph->height() - glyph->ascent();
+	_maxDescent = MAX(_maxDescent, charDescent);
+}
+
+void FontActor::loadIsComplete() {
+	if (_characters.size() > 0) {
+		_averageCharWidth = _totalWidthOfAllChars / _characters.size();
+		_averageCharHeight = _totalHeightOfAllChars / _characters.size();
+	}
+	Actor::loadIsComplete();
 }
 
 } // End of namespace MediaStation

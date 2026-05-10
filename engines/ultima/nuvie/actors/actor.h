@@ -23,17 +23,13 @@
 #define NUVIE_ACTORS_ACTOR_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/misc/actor_list.h"
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/obj_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
-
-using Std::list;
-using Std::string;
-using Std::vector;
 
 #define ACTOR_NO_READIABLE_LOCATION -1
 #define ACTOR_HEAD   0
@@ -268,7 +264,7 @@ protected:
 
 	sint8 moves; // number of moves actor has this turn
 	uint8 light; // level of light around actor (normally 0)
-	vector<uint8> light_source;
+	Common::Array<uint8> light_source;
 
 	ActorError error_struct; // error/status; result of previous action
 
@@ -285,7 +281,7 @@ protected:
 	uint8 body_armor_class;
 	uint8 readied_armor_class;
 
-	string name;
+	Common::String name;
 
 	ReadiedObj *readied_objects[ACTOR_MAX_READIED_OBJECTS];
 
@@ -297,7 +293,7 @@ protected:
 //current schedule pos;
 	uint16 sched_pos;
 
-	list<Obj *> surrounding_objects; //used for multi-tile actors.
+	Common::List<Obj *> surrounding_objects; //used for multi-tile actors.
 	Common::HashMap<uint16, uint16> *custom_tile_tbl;
 
 public:
@@ -580,7 +576,7 @@ public:
 	void clear_error();
 	ActorError *get_error();
 
-	const list<Obj *> &get_surrounding_obj_list() const {
+	const Common::List<Obj *> &get_surrounding_obj_list() const {
 		return surrounding_objects;
 	}
 	void add_surrounding_obj(Obj *obj);

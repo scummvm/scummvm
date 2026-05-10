@@ -36,7 +36,7 @@ public:
 
 	PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, bool rgbRendering, bool needsUnditheringPalette);
 	~PC98Gfx16ColorsDriver() override;
-	void initScreen(const Graphics::PixelFormat *format) override;
+	bool initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	byte remapTextColor(byte color) const override;
@@ -137,8 +137,9 @@ void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPit
 	}
 }
 
-void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
-	UpscaledGfxDriver::initScreen(format);
+bool PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	if (!UpscaledGfxDriver::initScreen(format))
+		return false;
 
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 256, true, nullptr, nullptr);
@@ -147,9 +148,11 @@ void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 		_renderGlyph = &SciGfxDrvInternal::renderPC98GlyphFat;
 
 	if (_fontStyle != kFontStyleSpecialSCI1)
-		return;
+		return true;
 
 	_renderGlyph = &renderPC98GlyphSpecial;
+
+	return true;
 }
 
 void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {

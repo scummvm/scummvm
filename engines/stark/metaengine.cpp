@@ -277,7 +277,7 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_STICK");
 	gameKeyMap->addAction(act);
 
-	act = new Action("EXITGAME", _("Exit game"));
+	act = new Action("EXITGAME", _("Quit game"));
 	act->setCustomEngineActionEvent(kActionExitGame);
 	act->addDefaultInputMapping("A+x");
 	act->addDefaultInputMapping("A+q");
@@ -289,27 +289,27 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_LEFT_STICK");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLUPINV", _("Scroll up in inventory"));
+	act = new Action("SCROLLUPINV", _("Scroll inventory up"));
 	act->setCustomEngineActionEvent(kActionInventoryScrollUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLDOWNINV", _("Scroll down in inventory"));
+	act = new Action("SCROLLDOWNINV", _("Scroll inventory down"));
 	act->setCustomEngineActionEvent(kActionInventoryScrollDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLUPDILOG", _("Scroll up in your dialogs"));
+	act = new Action("SCROLLUPDILOG", _("Scroll dialogs up"));
 	act->setCustomEngineActionEvent(kActionDialogueScrollUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SCROLLDOWNDILOG", _("Scroll down in your dialogs"));
+	act = new Action("SCROLLDOWNDILOG", _("Scroll dialogs down"));
 	act->setCustomEngineActionEvent(kActionDialogueScrollDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");

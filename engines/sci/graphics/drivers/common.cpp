@@ -82,7 +82,7 @@ void SCI0_DOSPreVGADriver::assignPalette(const byte *colors) {
 	_colors = colors;
 }
 
-void SCI0_DOSPreVGADriver::initScreen(const Graphics::PixelFormat*) {
+bool SCI0_DOSPreVGADriver::initScreen(const Graphics::PixelFormat*) {
 	Graphics::PixelFormat format(Graphics::PixelFormat::createFormatCLUT8());
 	initGraphics(_screenW, _screenH, _requestRGBMode ? nullptr : &format);
 	format = g_system->getScreenFormat();
@@ -119,6 +119,8 @@ void SCI0_DOSPreVGADriver::initScreen(const Graphics::PixelFormat*) {
 	setupRenderProc();
 
 	_ready = true;
+
+	return true;
 }
 
 void SCI0_DOSPreVGADriver::replaceMacCursor(const Graphics::Cursor*) {

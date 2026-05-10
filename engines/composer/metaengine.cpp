@@ -99,7 +99,8 @@ Common::Error ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine,
 }
 
 bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return ((f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup));
+	// FIXME: Disabled loading from launcher currently due to issues with loading Darby The Dragon (and probably others) savegames. See bug #16432
+	return ((f == kSupportsListSaves) /*|| (f == kSupportsLoadingDuringStartup)*/);
 }
 
 Common::KeymapArray ComposerMetaEngine::initKeymaps(const char *target) const {

@@ -27,19 +27,25 @@
 
 namespace TwinE {
 
+#define MAX_RAIN 200
+
 class Rain {
 private:
-	//TwinEEngine *_engine;
+	TwinEEngine *_engine;
+	int32 LastTimer = 0;
+	int32 DeltaRain = 0;
 
 public:
 	struct T_RAIN {
-		int32 XRain;
-		int32 YRain;
-		int32 ZRain;
-		int32 Timer;
+		int32 XRain = 0;
+		int32 YRain = 0;
+		int32 ZRain = 0;
+		int32 Timer = 0;
 	};
 
-	Rain(TwinEEngine *engine) /*: _engine(engine) */ {}
+	T_RAIN TabRain[MAX_RAIN];
+
+	Rain(TwinEEngine *engine);
 
 	void InitOneRain(T_RAIN *pt);
 	void InitRain();

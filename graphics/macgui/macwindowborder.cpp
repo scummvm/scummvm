@@ -164,13 +164,13 @@ int MacWindowBorder::getMinHeight(uint32 flags) const {
 void MacWindowBorder::setTitle(const Common::String& title, int width) {
 	_title = title;
 	const Graphics::Font *font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
-	int titleWidth = font->getStringWidth(_title) + 8;
+	int titleWidth = font->getStringWidth(_title) + getOffset().titlePadding;
 
 	// if titleWidth is changed, then we modify it
 	// here, we change all the border that has title
 	for (uint32 i = 0; i < kWindowBorderMaxFlag; i++) {
 		if ((_border[i] != nullptr) && (i & kWindowBorderTitle)) {
-			int maxWidth = MAX<int>(width - _border[i]->getMinWidth() - 7, 0);
+			int maxWidth = MAX<int>(width - _border[i]->getMinWidth() + getOffset().titlePadding, 0);
 			if (titleWidth > maxWidth)
 				titleWidth = maxWidth;
 			_border[i]->modifyTitleWidth(titleWidth);
@@ -258,8 +258,10 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 		if (i < palette.size())
 			surface->setTransparentColor(i);
 	} else {
-		const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		surface->convertToInPlace(requiredFormat_4byte);
+		if (_window->_wm->_pixelformat.isCLUT8())
+			surface->convertToInPlace(Graphics::PixelFormat::createFormatRGBA32());
+		else
+			surface->convertToInPlace(_window->_wm->_pixelformat);
 		surface->setTransparentColor(surface->format.RGBToColor(255, 0, 255));
 	}
 
@@ -314,7 +316,7 @@ void MacWindowBorder::loadInternalBorder(uint32 flags) {
 	}
 }
 
-void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags) {
+void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, bool maskOnly, uint32 maskColor) {
 	if (flags >= kWindowBorderMaxFlag) {
 		warning("Accessing non-existed border type");
 		return;
@@ -337,12 +339,12 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags) 
 		setTitle(_title, destination.w);
 	}
 
-	src->blit(destination, 0, 0, destination.w, destination.h, _wm);
+	src->blit(destination, 0, 0, destination.w, destination.h, _wm, maskOnly, maskColor);
 
-	if (flags & kWindowBorderTitle)
+	if (flags & kWindowBorderTitle && !maskOnly)
 		drawTitle(&destination, src->getTitleOffset(), _border[flags]->getMinWidth());
 
-	if (flags & kWindowBorderScrollbar)
+	if (flags & kWindowBorderScrollbar && !maskOnly)
 		drawScrollBar(&destination);
 }
 

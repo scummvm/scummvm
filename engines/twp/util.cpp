@@ -61,8 +61,6 @@ Facing getFacingToFaceTo(Common::SharedPtr<Object> actor, Common::SharedPtr<Obje
 static float parseFps(const Common::JSONValue &jFps) {
 	if (jFps.isNumber())
 		return jFps.asNumber();
-	if (jFps.isIntegerNumber())
-		return jFps.asIntegerNumber();
 	error("fps should be a number: %s", jFps.stringify().c_str());
 }
 

@@ -34,7 +34,7 @@ int32 kernel_trigger_create(int32 trigger_num) {
 		return (trigger_num);
 
 	if (trigger_num > 0xffff) {		// If room changed, this is an invalid trigger 
-		error_show(FL, 'BADT', "bad trigger. %d > 0xffff", trigger_num);
+		error_show(FL, "bad trigger. %d > 0xffff", trigger_num);
 	}
 
 	const int32 new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);

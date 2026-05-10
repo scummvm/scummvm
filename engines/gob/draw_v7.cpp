@@ -30,6 +30,7 @@
 #include "graphics/blit.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+#include "image/ani.h"
 #include "image/icocur.h"
 
 #include "gob/dataio.h"
@@ -44,11 +45,65 @@
 
 namespace Gob {
 
-Draw_v7::Draw_v7(GobEngine *vm) : Draw_Playtoons(vm), _cursors(nullptr)  {
+Draw_v7::Draw_v7(GobEngine *vm) : Draw_Playtoons(vm), _cursors(nullptr),
+	_aniDecoder(nullptr), _aniCurrentFrame(0), _aniLastFrameTime(0) {
 }
 
 Draw_v7::~Draw_v7() {
+	clearAniCursor();
 	delete _cursors;
+}
+
+void Draw_v7::clearAniCursor() {
+	delete _aniDecoder;
+	_aniDecoder = nullptr;
+	_aniCurrentFrame = 0;
+	_aniLastFrameTime = 0;
+}
+
+bool Draw_v7::loadAniCursor(Common::SeekableReadStream *stream) {
+	clearAniCursor();
+
+	_aniDecoder = new Image::AniDecoder();
+	if (!_aniDecoder->open(*stream, DisposeAfterUse::YES) || _aniDecoder->getMetadata().numFrames == 0) {
+		clearAniCursor();
+		return false;
+	}
+
+	_aniCurrentFrame = 0;
+	_aniLastFrameTime = _vm->_util->getTimeKey();
+
+	return updateAniCursorFrame();
+}
+
+bool Draw_v7::updateAniCursorFrame() {
+	if (!_aniDecoder)
+		return false;
+
+	const Image::AniDecoder::Metadata &meta = _aniDecoder->getMetadata();
+	Image::AniDecoder::FrameDef frameDef = _aniDecoder->getSequenceFrame(_aniCurrentFrame);
+
+	Graphics::Cursor *cursor = nullptr;
+
+	if (meta.isCURFormat) {
+		Common::SeekableReadStream *frameStream = _aniDecoder->openImageStream(frameDef.imageIndex);
+		if (frameStream) {
+			Image::IcoCurDecoder cursorDecoder;
+			cursorDecoder.open(*frameStream);
+			if (cursorDecoder.numItems() > 0)
+				cursor = cursorDecoder.loadItemAsCursor(0);
+			delete frameStream;
+		}
+	}
+
+	if (!cursor)
+		cursor = Graphics::makeDefaultWinCursor();
+
+	CursorMan.replaceCursor(cursor);
+	CursorMan.disableCursorPalette(false);
+	delete cursor;
+
+	return true;
 }
 
 bool Draw_v7::loadCursorFile() {
@@ -78,23 +133,35 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	const Graphics::Cursor *cursor = nullptr;
 
 	if (cursorName.hasPrefix("*")) {
-		// Load from an external .CUR file
+		// Load from an external .CUR or .ANI file
 		cursorName = cursorName.substr(1);
 		Common::SeekableReadStream *cursorStream = _vm->_dataIO->getFile(cursorName);
 
 		if (cursorStream) {
-			Image::IcoCurDecoder cursorDecoder;
-			cursorDecoder.open(*cursorStream);
-
-			if (cursorDecoder.numItems() > 0) {
-				cursor = cursorDecoder.loadItemAsCursor(0);
+			if (cursorName.hasSuffixIgnoreCase(".ANI")) {
+				// Animated cursor
+				if (loadAniCursor(cursorStream)) {
+					return true;
+				}
+				warning("Failed to open ANI file '%s'", cursorName.c_str());
 			} else {
-				warning("No cursor item found in file '%s'", cursorName.c_str());
+				Image::IcoCurDecoder cursorDecoder;
+				cursorDecoder.open(*cursorStream);
+
+				if (cursorDecoder.numItems() > 0) {
+					cursor = cursorDecoder.loadItemAsCursor(0);
+				} else {
+					warning("No cursor item found in file '%s'", cursorName.c_str());
+				}
+
+				delete cursorStream;
+				clearAniCursor();
 			}
 		} else {
 			warning("External cursor file '%s' not found", cursorName.c_str());
 		}
 	} else {
+		clearAniCursor();
 		// Load from a .DLL cursor file and cursor group
 		if (loadCursorFile())
 			cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
@@ -141,6 +208,24 @@ void Draw_v7::initScreen() {
 	_spritesArray[kBackSurface ] = _backSurface;
 
 	_vm->_video->dirtyRectsAll();
+}
+
+void Draw_v7::updateAnimatedCursor() {
+	if (!_aniDecoder)
+		return;
+
+	const Image::AniDecoder::Metadata &metaData = _aniDecoder->getMetadata();
+	if (metaData.numSteps <= 1)
+		return;
+
+	Image::AniDecoder::FrameDef frameDef = _aniDecoder->getSequenceFrame(_aniCurrentFrame);
+	uint32 delayMs = frameDef.delay * 1000 / 60;
+	uint32 now = _vm->_util->getTimeKey();
+	if (now - _aniLastFrameTime >= delayMs) {
+		_aniCurrentFrame = (_aniCurrentFrame + 1) % metaData.numSteps;
+		_aniLastFrameTime = now;
+		updateAniCursorFrame();
+	}
 }
 
 void Draw_v7::animateCursor(int16 cursor) {

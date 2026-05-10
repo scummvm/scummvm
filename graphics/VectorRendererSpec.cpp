@@ -803,11 +803,7 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 		np = p;
 	}
 
-	if (alphaType != Graphics::ALPHA_OPAQUE) {
-		_activeSurface->transBlitFrom(*source, drawRect, np);
-	} else {
-		_activeSurface->simpleBlitFrom(*source, drawRect, np);
-	}
+	_activeSurface->simpleBlitFrom(*source, drawRect, np, Graphics::FLIP_NONE, alphaType != Graphics::ALPHA_OPAQUE);
 }
 
 template<typename PixelType>

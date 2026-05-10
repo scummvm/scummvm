@@ -93,7 +93,7 @@ public:
 	TileRules *_tileRules;
 	TileSets *_tileSets;
 	Weapons *_weapons;
-	Std::vector<Common::String> _hawkwindText;
+	Common::Array<Common::String> _hawkwindText;
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima4Engine() override;

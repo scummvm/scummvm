@@ -20,6 +20,8 @@
  */
 
 #include "common/config-manager.h"
+#include "common/array.h"
+#include "common/compression/packice.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -29,13 +31,203 @@
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
+#include "drivers/elvira_atarist.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/audiostream.h"
 #include "audio/mods/protracker.h"
+#include "audio/mods/desktoptracker.h"
 
 namespace AGOS {
+
+
+static Common::Array<byte> unsquashAcornDesktopTracker(const byte *data, uint32 compLen) {
+
+	const byte mode = data[0];
+
+	uint32 pos = 4;
+	uint32 r6 = 4;
+
+	Common::Array<byte> out;
+
+	if (mode == 1) {
+		out.resize(compLen - 4);
+		if (compLen > 4)
+			memcpy(out.begin(), data + 4, compLen - 4);
+		return out;
+	}
+
+	uint16 bitbuf = 0;
+	uint32 bitsLeft = 0;
+
+	for (;;) {
+		if (r6 == compLen)
+			return out;
+
+		if (bitsLeft == 0) {
+
+			const byte lo = data[pos];
+			const byte hi = data[pos + 1];
+			pos += 2;
+			r6 += 2;
+
+			bitbuf = (uint16)(lo | (hi << 8));
+			bitsLeft = 16;
+
+			if (r6 == compLen)
+				return out;
+		}
+
+		const uint16 carry = (bitbuf & 1);
+		bitbuf >>= 1;
+		--bitsLeft;
+
+		if (carry == 0) {
+			if (r6 == compLen)
+				return out;
+
+			out.push_back(data[pos]);
+			++pos;
+			++r6;
+		} else {
+			if (r6 == compLen)
+				return out;
+
+			const byte b1 = data[pos];
+			const byte b2 = data[pos + 1];
+			pos += 2;
+			r6 += 2;
+
+			const uint32 length = (uint32)((b1 & 0x0F) + 1);
+			const uint32 offset = (uint32)(((b1 & 0xF0) << 4) + b2);
+
+			for (uint32 i = 0; i < length; ++i)
+				out.push_back(out[out.size() - offset]);
+		}
+
+		if (r6 >= compLen)
+			return out;
+	}
+}
+
+static bool isElvira1PackIcePrg(const Common::Array<byte> &data) {
+	return data.size() >= 0x26 && !memcmp(data.begin() + 0x1E, "Pack-Ice", 8);
+}
+
+static bool depackElvira1PackIcePrg(const Common::Array<byte> &packedData, Common::Array<byte> &unpackedData) {
+	enum {
+		kPackedStreamStart = 0x021C,
+		kPackedStreamEnd = 0xAFE2,
+		kRawSize = 0x1694C
+	};
+
+	if (!isElvira1PackIcePrg(packedData) || packedData.size() < kPackedStreamEnd)
+		return false;
+
+	return Common::decompressPackIceStream(packedData.begin(), packedData.size(), kPackedStreamStart,
+			kPackedStreamEnd, kRawSize, unpackedData, false) &&
+			unpackedData.size() >= 28 && READ_BE_UINT16(unpackedData.begin()) == 0x601A;
+}
+
+static bool extractEmbeddedTosPrg(const Common::Array<byte> &containerPrg, Common::Array<byte> &innerPrg) {
+	if (containerPrg.size() < 28)
+		return false;
+
+	const byte *prg = containerPrg.begin();
+	if (READ_BE_UINT16(prg) != 0x601A)
+		return false;
+
+	const uint32 outerTextSize = READ_BE_UINT32(prg + 2);
+	const uint32 outerRelOffset = 28 + outerTextSize + READ_BE_UINT32(prg + 6) + READ_BE_UINT32(prg + 14);
+	if (containerPrg.size() < outerRelOffset + 4)
+		return false;
+
+	for (uint32 off = 30; off + 28 <= 28 + outerTextSize; off += 2) {
+		if (READ_BE_UINT16(prg + off) != 0x601A)
+			continue;
+
+		const uint32 textSize = READ_BE_UINT32(prg + off + 2);
+		const uint32 dataSize = READ_BE_UINT32(prg + off + 6);
+		const uint32 bssSize = READ_BE_UINT32(prg + off + 10);
+		const uint32 symSize = READ_BE_UINT32(prg + off + 14);
+		const uint32 innerOffText = off + 28;
+		const uint32 innerOffData = innerOffText + textSize;
+		const uint32 innerOffSym = innerOffData + dataSize;
+		const uint32 innerOffRel = innerOffSym + symSize;
+		if (innerOffText < off || innerOffData < innerOffText || innerOffSym < innerOffData || innerOffRel < innerOffSym)
+			continue;
+		if (innerOffRel + 4 > containerPrg.size())
+			continue;
+
+		const uint32 firstRel = READ_BE_UINT32(prg + innerOffRel);
+		if (firstRel >= textSize + dataSize + bssSize && firstRel != 0)
+			continue;
+
+		uint32 pos = innerOffRel + 4;
+		while (pos < containerPrg.size()) {
+			if (containerPrg[pos++] == 0)
+				break;
+		}
+		if (containerPrg[pos - 1] != 0)
+			continue;
+
+		innerPrg.resize(pos - off);
+		memcpy(innerPrg.begin(), prg + off, pos - off);
+		debug(1, "AGOS: Found embedded Atari ST PRG at 0x%X (text=0x%X, data=0x%X, bss=0x%X)",
+			off, textSize, dataSize, bssSize);
+		return true;
+	}
+
+	return false;
+}
+
+static Common::SeekableReadStream *openElvira1AtariSTPrg() {
+	const char *const prgNames[] = {
+		"ELVIRA.PRG",
+		"ELVIRA+.PRG",
+		"RUNENG.PRG",
+		"RUNFRNCH.PRG",
+		"AUTO/RUNENG.PRG",
+		"AUTO/ADEMO.PRG",
+		"ADEMO.PRG"
+	};
+
+	Common::File file;
+	for (uint i = 0; i < ARRAYSIZE(prgNames); ++i) {
+		const char *prgName = prgNames[i];
+		if (!file.open(Common::Path(prgName)))
+			continue;
+
+		Common::Array<byte> prgData;
+		prgData.resize((uint32)file.size());
+		if (!prgData.empty() && file.read(prgData.begin(), prgData.size()) != prgData.size()) {
+			warning("playMusic: Failed to read Atari ST Elvira 1 PRG '%s'", prgName);
+			return nullptr;
+		}
+
+		if (isElvira1PackIcePrg(prgData)) {
+			Common::Array<byte> unpackedOuterPrg;
+			if (!depackElvira1PackIcePrg(prgData, unpackedOuterPrg)) {
+				warning("playMusic: Failed to depack Atari ST Elvira 1 Pack-Ice PRG '%s'", prgName);
+				return nullptr;
+			}
+			if (!extractEmbeddedTosPrg(unpackedOuterPrg, prgData)) {
+				warning("playMusic: Failed to locate embedded Atari ST PRG inside depacked Elvira 1 wrapper '%s'", prgName);
+				return nullptr;
+			}
+		}
+
+		byte *buf = nullptr;
+		if (!prgData.empty()) {
+			buf = new byte[prgData.size()];
+			memcpy(buf, prgData.begin(), prgData.size());
+		}
+		return new Common::MemoryReadStream(buf, prgData.size(), DisposeAfterUse::YES);
+	}
+
+	return nullptr;
+}
 
 // This data is hardcoded in the executable.
 const int AGOSEngine_Simon1::SIMON1_GMF_SIZE[] = {
@@ -334,9 +526,38 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		_midi->play();
 	} else if (getPlatform() == Common::kPlatformAcorn) {
 		// Acorn floppy version.
+		// Music resources are Squash-compressed Desktop Tracker modules.
+		char filename[16];
+		Common::File f;
+		Common::sprintf_s(filename, "%dTUNE", music);
+		
+		f.open(filename);
+		if (!f.isOpen())
+			debug("playMusic(Acorn): Can't load mod from '%s'", filename);
 
-		// TODO: Add support for Desktop Tracker format in Acorn disk version
+		const uint32 compressedSize = (uint32)f.size();
+		Common::Array<byte> compresedBuffer;
+		compresedBuffer.resize(compressedSize);
+		f.read(compresedBuffer.begin(), compressedSize);
+
+		Common::Array<byte> moduleData;
+		
+		moduleData = unsquashAcornDesktopTracker(compresedBuffer.begin(), compressedSize);
+		
+		if (moduleData.size() < 4 || memcmp(moduleData.begin(), "DskT", 4) != 0)
+			debug("playMusic(Acorn): Unsquashed mod does not begin with 'DskT'");
+
+		byte *modBuffer = nullptr;
+		if (!moduleData.empty()) {
+			modBuffer = new byte[moduleData.size()];
+			memcpy(modBuffer, moduleData.begin(), moduleData.size());
+		}
+
+		Common::SeekableReadStream *memStream = new Common::MemoryReadStream(modBuffer, moduleData.size(), DisposeAfterUse::YES);
+		Audio::AudioStream *audioStream = Audio::makeDesktopTrackerStream(memStream, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
 	}
+
 }
 
 void AGOSEngine_Simon1::playMidiSfx(uint16 sound) {
@@ -386,7 +607,68 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 	if (getPlatform() == Common::kPlatformAmiga) {
 		playModule(music);
 	} else if (getPlatform() == Common::kPlatformAtariST) {
-		// TODO: Add support for music formats used
+		if (getGameType() == GType_ELVIRA2) {
+			Common::File *file = new Common::File();
+			if (!file->open(Common::Path(Common::String::format("%dTUNE.PKD", music))))
+				error("playMusic: Can't load music from '%dTUNE.PKD'", music);
+
+			delete _elviraAtariSTPlayer;
+			_elviraAtariSTPlayer = nullptr;
+
+			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(file);
+		} else if (getGameType() == GType_ELVIRA1) {
+			// Elvira 1 Atari ST scripts do not pass direct driver tune numbers.
+			// The original prg remaps the script music IDs to PRG subtunes:
+			//   1 -> 4
+			//   4 -> 2
+			//   7 -> 5
+			//   8 -> 7
+			//   9 -> 7
+			//  10 -> 6
+			//  14 -> 7
+			// 1 and 3 appear to be unused by the
+			// game's script-level music requests.
+			uint16 prgTune = 0;
+			switch (music) {
+			case 1:
+				prgTune = 4;
+				break;
+			case 4:
+				prgTune = 2;
+				break;
+			case 7:
+				prgTune = 5;
+				break;
+			case 8:
+			case 9:
+			case 14:
+				prgTune = 7;
+				break;
+			case 10:
+				prgTune = 6;
+				break;
+			default:
+				warning("playMusic: unsupported Elvira 1 Atari ST music id %d", music);
+				return;
+			}
+
+			Common::SeekableReadStream *stream = openElvira1AtariSTPrg();
+			if (!stream) {
+				warning("playMusic: Can't load Atari ST Elvira 1 PRG for music id %d", music);
+				return;
+			}
+
+			delete _elviraAtariSTPlayer;
+			_elviraAtariSTPlayer = nullptr;
+
+			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(stream, prgTune);
+			if (!_elviraAtariSTPlayer->isValid()) {
+				warning("playMusic: Unsupported or unreadable Atari ST Elvira 1 PRG, skipping music id %d", music);
+				delete _elviraAtariSTPlayer;
+				_elviraAtariSTPlayer = nullptr;
+				return;
+			}
+		}
 	} else {
 		_midi->setLoop(true); // Must do this BEFORE loading music.
 
@@ -415,6 +697,9 @@ void AGOSEngine::stopMusic() {
 	}
 	_mixer->stopHandle(_modHandle);
 	_mixer->stopHandle(_digitalMusicHandle);
+
+	delete _elviraAtariSTPlayer;
+	_elviraAtariSTPlayer = nullptr;
 
 	debug(1, "AGOSEngine::stopMusic()");
 }

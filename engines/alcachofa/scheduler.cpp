@@ -188,6 +188,25 @@ void Process::syncGame(Serializer &s) {
 			_tasks[i]->syncGame(s);
 		}
 	}
+
+	bool hasLock = !_interactionLock.isReleased();
+	s.syncAsByte(hasLock, SaveVersion::kWithEngineV10);
+	if (s.isLoading() && hasLock)
+		_interactionLock = FakeLock("process-interaction", g_engine->player().semaphore());
+}
+
+void Process::lockInteraction() {
+	if (!g_engine->game().shouldScriptLockInteraction())
+		return;
+	assert(_interactionLock.isReleased());
+	_interactionLock = FakeLock("process-interaction", g_engine->player().semaphore());
+}
+
+void Process::unlockInteraction() {
+	if (!g_engine->game().shouldScriptLockInteraction())
+		return;
+	assert(!_interactionLock.isReleased());
+	_interactionLock.release();
 }
 
 static void killProcessesForIn(MainCharacterKind characterKind, Array<Process *> &processes, uint firstIndex) {

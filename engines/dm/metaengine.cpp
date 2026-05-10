@@ -223,7 +223,7 @@ Common::KeymapArray DMMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_LEFT");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVEBACKWARD", _("Move backward"));
+	act = new Action("MOVEBACKWARD", _("Move backwards"));
 	act->setCustomEngineActionEvent(kActionMoveBackward);
 	act->addDefaultInputMapping("KP2"); // Numeric pad 2 Atari ST: Code = 0x5000
 	act->addDefaultInputMapping("s"); // Added for convenience

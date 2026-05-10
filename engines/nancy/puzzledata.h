@@ -114,6 +114,19 @@ struct AssemblyPuzzleData : public SimplePuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('A', 'S', 'M', 'B'); }
 };
 
+struct QuizPuzzleData : public PuzzleData {
+	QuizPuzzleData() {}
+	virtual ~QuizPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('Q', 'U', 'I', 'Z'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	// Keyed by solve-scene ID so that multiple QuizPuzzle instances
+	// (e.g. a two-page Nancy 9 puzzle) each maintain their own state.
+	Common::HashMap<uint16, Common::Array<bool>> boxCorrect;
+	Common::HashMap<uint16, Common::Array<Common::String>> typedText;
+};
+
 struct JournalData : public PuzzleData {
 	JournalData() {}
 	virtual ~JournalData() {}

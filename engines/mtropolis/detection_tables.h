@@ -2223,6 +2223,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_UTS_SHADOW_WARRIOR_WIN_EN,
 	},
 
+	{ // Wanne-Be a Dino Finder (English, Windows)
+	  // Published by Cloud 9 Interactive, 1996
+		{
+			"wannadino",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "WBDF.C9A", 0, "6186fc0971507fb3fd98ef928e388826", 574456708 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_WANNADINO,
+		0,
+		MTBOOT_WANNADINO_RETAIL_EN,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 

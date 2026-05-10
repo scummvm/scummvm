@@ -68,10 +68,11 @@ public:
 
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
 	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
 
 	Graphics::ManagedSurface _fullFrame;
 	HoverState _hoverState = kNoHover;

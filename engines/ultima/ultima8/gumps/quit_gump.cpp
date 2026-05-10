@@ -102,7 +102,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 		if (askshape._shapeNum == 0) {
 			// In JP U8, the ask gump is replaced with text
 			// confirming quit
-			Std::string askstr = _TL_("Quit the game?");
+			Common::String askstr = _TL_("Quit the game?");
 			Gump *widget = new TextWidget(0, 0, askstr, true, 6); // CONSTANT!
 			widget->InitGump(this, false);
 			widget->setRelativePosition(TOP_CENTER, 0, 13);
@@ -177,9 +177,9 @@ void QuitGump::ChildNotify(Gump *child, uint32 message) {
 bool QuitGump::OnTextInput(int unicode) {
 	if (!(unicode & 0xFF80)) {
 		char c = unicode & 0x7F;
-		if (_TL_("Yy").find(c) != Std::string::npos) {
+		if (_TL_("Yy").find(c) != Common::String::npos) {
 			Ultima8Engine::get_instance()->quitGame();
-		} else if (_TL_("Nn").find(c) != Std::string::npos) {
+		} else if (_TL_("Nn").find(c) != Common::String::npos) {
 			Close();
 		}
 	}

@@ -661,6 +661,8 @@ protected:
 	void o6_fillRect(OpFuncParams &params);
 
 	void probe16bitMusic(Common::String &fileName);
+
+	Common::String getFile(const char *path, bool stripPath = true, bool *isCd = nullptr);
 };
 
 class Inter_Playtoons : public Inter_v6 {
@@ -679,6 +681,7 @@ protected:
 	void oPlaytoons_freeSprite(OpFuncParams &params);
 	void oPlaytoons_checkData(OpFuncParams &params);
 	void oPlaytoons_readData(OpFuncParams &params);
+	void oPlaytoons_writeData(OpFuncParams &params);
 
 	void oPlaytoons_loadMultObject();
 	void oPlaytoons_getObjAnimSize();
@@ -686,8 +689,6 @@ protected:
 	void oPlaytoons_CD_25();
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
-
-	Common::String getFile(const char *path, bool stripPath = true, bool *isCd = nullptr);
 
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };
@@ -730,6 +731,7 @@ protected:
 	void o7_findNextFile();
 	void o7_getFileInfo();
 	void o7_getSystemProperty();
+	void o7_getVmdCurrentFrameRect();
 	void o7_loadImage();
 	void o7_copyDataToClipboard();
 	void o7_setVolume();
@@ -779,6 +781,7 @@ protected:
 	void o7_vmdGetSoundBuffer();
 	void o7_vmdReleaseSoundBuffer();
 
+	void o7_keyFunc(OpFuncParams &params);
 	void o7_loadCursor(OpFuncParams &params);
 	void o7_printText(OpFuncParams &params);
 	void o7_fillRect(OpFuncParams &params);
@@ -786,7 +789,6 @@ protected:
 	void o7_invalidate(OpFuncParams &params);
 	void o7_checkData(OpFuncParams &params);
 	void o7_readData(OpFuncParams &params);
-	void o7_writeData(OpFuncParams &params);
 	void o7_manageDataFile(OpFuncParams &params);
 
 	bool readAdi4InfDataForChild(Common::Array<byte> &dest, uint32 childNumber, uint32 offset, uint32 size);
@@ -814,6 +816,7 @@ protected:
 	void o7_setDBStringEncoding(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
 	void o7_getFreeDiskSpace(OpGobParams &params);
+	void o7_calculator(OpGobParams &params);
 	void o7_dummy(OpGobParams &params);
 
 private:

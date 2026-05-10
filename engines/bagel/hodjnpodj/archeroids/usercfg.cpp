@@ -61,7 +61,7 @@ static  CColorButton *pCancelButton = nullptr;                 // Cancel button 
 static  CColorButton *pDefaultsButton = nullptr;               // Defaults button on scroll
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	m_nInitGameSpeed = DEFAULT_GAME_SPEED;
 	m_nInitArcherLevel = DEFAULT_ARCHER_LEVEL;
 	m_nInitNumLives = DEFAULT_LIVES;

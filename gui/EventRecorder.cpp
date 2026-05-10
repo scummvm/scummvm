@@ -232,7 +232,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 }
 
 bool EventRecorder::processDelayMillis() {
-	return _fastPlayback;
+	return !_fastPlayback;
 }
 
 bool EventRecorder::processAutosave() {
@@ -379,6 +379,9 @@ Common::String EventRecorder::generateRecordFileName(const Common::String &targe
 	return "";
 }
 
+void EventRecorder::setFastPlayback(bool fastPlayback) {
+	_fastPlayback = fastPlayback;
+}
 
 void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) {
 	_fakeMixerManager = new NullMixerManager();
@@ -389,6 +392,7 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 	_lastScreenshotTime = 0;
 	_recordMode = mode;
 	_needcontinueGame = false;
+	_fastPlayback = false;
 	if (ConfMan.hasKey("disable_display")) {
 		DebugMan.enableDebugChannel("EventRec");
 		gDebugLevel = 1;

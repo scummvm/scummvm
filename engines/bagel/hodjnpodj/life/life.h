@@ -38,11 +38,11 @@ namespace Life {
 #define LARGE       32468   //= 2^15 - 300
 //  when to reset counter increments
 
-#define WAV_EVOLVE      ".\\sound\\sound178.wav"    // Wave sounds
-#define WAV_GAMEOVER    ".\\sound\\sound283.wav"
-#define WAV_NEWVILLAGE  ".\\sound\\colony.wav"
-#define WAV_DEATH       ".\\sound\\sound259.wav"
-#define WAV_CANTDO      ".\\sound\\sorry.wav"
+#define WAV_EVOLVE      "sound\\sound178.wav"    // Wave sounds
+#define WAV_GAMEOVER    "sound\\sound283.wav"
+#define WAV_NEWVILLAGE  "sound\\colony.wav"
+#define WAV_DEATH       "sound\\sound259.wav"
+#define WAV_CANTDO      "sound\\sorry.wav"
 
 class CCalendar {
 public:

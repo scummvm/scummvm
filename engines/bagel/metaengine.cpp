@@ -61,7 +61,7 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 };
 
 static const KeybindingRecord NORMAL_KEYS[] = {
-	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "RETURN", "JOY_A" },
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", nullptr, "JOY_A" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", nullptr, "JOY_UP"},
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", nullptr, "JOY_DOWN"},

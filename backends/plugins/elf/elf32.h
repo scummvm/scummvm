@@ -81,6 +81,7 @@ typedef struct {
 #define ET_CORE		4			/* core file */
 
 // e_machine values
+#define EM_68K		4
 #define EM_MIPS		8
 #define EM_PPC		20
 #define EM_ARM		40
@@ -244,6 +245,15 @@ typedef struct {
 #define R_PPC_ADDR16_HA		6
 #define R_PPC_REL24			10
 #define R_PPC_REL32			26
+
+// m68k relocation types
+#define R_68K_NONE			0
+#define R_68K_32			1
+#define R_68K_16			2
+#define R_68K_8				3
+#define R_68K_PC32			4
+#define R_68K_PC16			5
+#define R_68K_PC8			6
 
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 

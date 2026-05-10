@@ -50,7 +50,8 @@ namespace ImGuiEx {
 
 bool InputIVec3(const char *label, TwinE::IVec3 &v, ImGuiInputTextFlags flags = 0) {
 	int tmp[3] = {v.x, v.y, v.z};
-	if (ImGui::InputInt3(label, tmp, flags)) {
+	ImGui::InputInt3(label, tmp, flags);
+	if (ImGui::IsItemDeactivatedAfterEdit()) {
 		v.x = tmp[0];
 		v.y = tmp[1];
 		v.z = tmp[2];
@@ -72,14 +73,14 @@ bool InputAngle(const char *label, int32 *v, int step = 1, int step_fast = 100, 
 bool InputBoundingBox(ImGuiID id, const char *prefixLabel, TwinE::BoundingBox &bbox) {
 	TwinE::BoundingBox copy = bbox;
 	Common::String idStr = Common::String::format("%s mins##mins%u", prefixLabel, id);
-	if (ImGuiEx::InputIVec3(idStr.c_str(), copy.mins, ImGuiInputTextFlags_EnterReturnsTrue)) {
+	if (ImGuiEx::InputIVec3(idStr.c_str(), copy.mins)) {
 		if (copy.isValid()) {
 			bbox.mins = copy.mins;
 		}
 		return true;
 	}
 	idStr = Common::String::format("%s maxs##maxs%u", prefixLabel, id);
-	if (ImGuiEx::InputIVec3(idStr.c_str(), copy.maxs, ImGuiInputTextFlags_EnterReturnsTrue)) {
+	if (ImGuiEx::InputIVec3(idStr.c_str(), copy.maxs)) {
 		if (copy.isValid()) {
 			bbox.maxs = copy.maxs;
 		}

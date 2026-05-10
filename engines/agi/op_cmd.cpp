@@ -35,6 +35,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/cursorman.h"
+
 namespace Agi {
 
 void cmdIncrement(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -996,7 +998,7 @@ void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (state->mouseEnabled) {
 		state->mouseHidden = false;
 
-		vm->_system->showMouse(true);
+		CursorMan.showMouse(true);
 	}
 }
 
@@ -1019,7 +1021,7 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (state->mouseEnabled) {
 		state->mouseHidden = true;
 
-		vm->_system->showMouse(false);
+		CursorMan.showMouse(false);
 	}
 }
 

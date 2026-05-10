@@ -101,7 +101,7 @@ protected:
 	//
 	// protected data members
 	//
-	CRect        m_rNewGameButton = nullptr;
+	CRect       m_rNewGameButton;
 	CPalette    *m_pGamePalette = nullptr;
 	CSprite     *m_pMasterBadArrow = nullptr;
 	CSprite     *m_pMasterGoodArrow = nullptr;

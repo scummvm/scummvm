@@ -50,12 +50,12 @@ namespace Battlefish {
 //
 // This mini-game's main screen bitmap
 //
-#define MINI_GAME_MAP   ".\\ART\\BFISH.BMP"
+#define MINI_GAME_MAP   "art\\BFISH.BMP"
 
 //
 // Game theme song
 //
-#define MID_SOUNDTRACK  ".\\SOUND\\BFISH.MID"
+#define MID_SOUNDTRACK  "sound\\BFISH.MID"
 
 //
 // Button ID constants
@@ -106,28 +106,28 @@ namespace Battlefish {
 //
 // .WAV sounds for Battle Fish
 //
-#define WAV_PLACESHIP   ".\\SOUND\\PUTFISH.WAV"
-#define WAV_ROTATESHIP  ".\\SOUND\\TURNFISH.WAV"
-#define WAV_MYTURN1     ".\\SOUND\\IGO1.WAV"
-#define WAV_MYTURN2     ".\\SOUND\\IGO2.WAV"
-#define WAV_YOURTURN1   ".\\SOUND\\YOUGO1.WAV"
-#define WAV_YOURTURN2   ".\\SOUND\\YOUGO2.WAV"
-#define WAV_SHOOT       ".\\SOUND\\SHOOT.WAV"
-#define WAV_YOUMISS     ".\\SOUND\\MISS.WAV"
-#define WAV_YOUHIT      ".\\SOUND\\HIT.WAV"
-#define WAV_BADSINK1    ".\\SOUND\\SANK1.WAV"
-#define WAV_BADSINK2    ".\\SOUND\\SANK2.WAV"
-#define WAV_BADSINK3    ".\\SOUND\\SANK3.WAV"
-#define WAV_BADSINK4    ".\\SOUND\\SANK4.WAV"
-#define WAV_BADSINK5    ".\\SOUND\\SANK5.WAV"
-#define WAV_BADSINK6    ".\\SOUND\\SANK6.WAV"
-#define WAV_BADSINK7    ".\\SOUND\\SANK7.WAV"
-#define WAV_BADSINK8    ".\\SOUND\\SANK8.WAV"
-#define WAV_YOUSINK     ".\\SOUND\\SINKFISH.WAV"
-#define WAV_YOUWIN      ".\\SOUND\\FANFARE2.WAV"
-#define WAV_GAMEOVER    ".\\SOUND\\SOSORRY.WAV"
-#define WAV_INVALID     ".\\SOUND\\INVALID.WAV"
-#define WAV_NARRATION   ".\\SOUND\\BFISH.WAV"               // Rules wav file
+#define WAV_PLACESHIP   "sound\\PUTFISH.WAV"
+#define WAV_ROTATESHIP  "sound\\TURNFISH.WAV"
+#define WAV_MYTURN1     "sound\\IGO1.WAV"
+#define WAV_MYTURN2     "sound\\IGO2.WAV"
+#define WAV_YOURTURN1   "sound\\YOUGO1.WAV"
+#define WAV_YOURTURN2   "sound\\YOUGO2.WAV"
+#define WAV_SHOOT       "sound\\SHOOT.WAV"
+#define WAV_YOUMISS     "sound\\MISS.WAV"
+#define WAV_YOUHIT      "sound\\HIT.WAV"
+#define WAV_BADSINK1    "sound\\SANK1.WAV"
+#define WAV_BADSINK2    "sound\\SANK2.WAV"
+#define WAV_BADSINK3    "sound\\SANK3.WAV"
+#define WAV_BADSINK4    "sound\\SANK4.WAV"
+#define WAV_BADSINK5    "sound\\SANK5.WAV"
+#define WAV_BADSINK6    "sound\\SANK6.WAV"
+#define WAV_BADSINK7    "sound\\SANK7.WAV"
+#define WAV_BADSINK8    "sound\\SANK8.WAV"
+#define WAV_YOUSINK     "sound\\SINKFISH.WAV"
+#define WAV_YOUWIN      "sound\\FANFARE2.WAV"
+#define WAV_GAMEOVER    "sound\\SOSORRY.WAV"
+#define WAV_INVALID     "sound\\INVALID.WAV"
+#define WAV_NARRATION   "sound\\BFISH.WAV"               // Rules wav file
 
 #define NUM_SINK_WAVS   8                                   // Number of "You sank my.." sounds
 #define NUM_TURN_WAVS   2
@@ -136,10 +136,10 @@ namespace Battlefish {
 //
 // Audio easter eggs
 //
-#define WAV_WINDOW      ".\\SOUND\\WINDOW.WAV"
-#define WAV_TRAWLER     ".\\SOUND\\FOGHORN.WAV"
-#define WAV_ROWBOAT     ".\\SOUND\\ROWBOAT.WAV"
-#define WAV_SAILBOAT    ".\\SOUND\\ANCHORS.WAV"
+#define WAV_WINDOW      "sound\\WINDOW.WAV"
+#define WAV_TRAWLER     "sound\\FOGHORN.WAV"
+#define WAV_ROWBOAT     "sound\\ROWBOAT.WAV"
+#define WAV_SAILBOAT    "sound\\ANCHORS.WAV"
 //
 // Audio easter egg locations
 //

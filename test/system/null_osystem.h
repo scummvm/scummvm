@@ -3,6 +3,7 @@
 namespace Common {
 #if defined(POSIX) || defined(WIN32)
 void install_null_g_system();
+void uninstall_null_g_system();
 #define NULL_OSYSTEM_IS_AVAILABLE 1
 #else
 #define NULL_OSYSTEM_IS_AVAILABLE 0

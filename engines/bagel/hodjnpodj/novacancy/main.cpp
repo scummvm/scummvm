@@ -1205,7 +1205,7 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 	case VK_F1: {
 		GamePause();
 		CSound::waitWaveSounds();
-		CRules  RulesDlg(this, ".\\novac.txt", m_pGamePalette, \
+		CRules  RulesDlg(this, "novac.txt", m_pGamePalette, \
 		                 (pGameParams->bSoundEffectsEnabled) ? GetStringFromResource(IDS_RULES_WAV) : nullptr);
 		RulesDlg.DoModal();
 		GameResume();

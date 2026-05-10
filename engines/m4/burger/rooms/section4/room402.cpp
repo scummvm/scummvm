@@ -21,7 +21,10 @@
 
 #include "m4/burger/rooms/section4/room402.h"
 #include "m4/burger/rooms/section4/section4.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -873,7 +876,7 @@ void Room402::pre_parser() {
 }
 
 void Room402::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (_G(walker).wilbur_said(SAID)) {
@@ -1079,9 +1082,9 @@ void Room402::parser() {
 }
 
 void Room402::conv84() {
-	int who = conv_whos_talking();
-	int entry = conv_current_entry();
-	int node = conv_current_node();
+	const int who = conv_whos_talking();
+	const int entry = conv_current_entry();
+	const int node = conv_current_node();
 	const char *sound = conv_sound_to_play();
 	_G(kernel).trigger_mode = KT_PARSE;
 

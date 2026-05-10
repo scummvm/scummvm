@@ -20,22 +20,21 @@
  */
 
 #include "ultima/ultima8/debugtools.h"
+
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_utils.h"
 #include "ultima/ultima.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/item_relative_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/usecode.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {

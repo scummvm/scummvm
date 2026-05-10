@@ -35,6 +35,8 @@ struct BagelGameDescription;
 class BagelEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
+
+protected:
 	Common::RandomSource _randomSource;
 
 public:
@@ -77,9 +79,7 @@ public:
 	/**
 	 * Gets a random number
 	 */
-	uint32 getRandomNumber(uint maxNum = 0x7fffffff) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
+	uint32 getRandomNumber(uint maxNum = 0x7fffffff);
 
 	bool hasFeature(EngineFeature f) const override {
 		return

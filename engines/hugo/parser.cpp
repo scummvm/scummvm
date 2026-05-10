@@ -264,8 +264,13 @@ void Parser::charHandler() {
 	}
 
 	// See if time to blink cursor, set cursor character
-	if ((_cmdLineTick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
-		_cmdLineCursor = (_cmdLineCursor == '_') ? ' ' : '_';
+	if (_vm->useWindowsInterface()) {
+		if ((_cmdLineTick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
+			_cmdLineCursor = (_cmdLineCursor == '_') ? ' ' : '_';
+	} else {
+		// DOS: No blinking cursor
+		_cmdLineCursor = ' ';
+	}
 
 	// See if recall button pressed
 	if (gameStatus._recallFl) {
@@ -275,8 +280,8 @@ void Parser::charHandler() {
 		_cmdLineIndex = strlen(_cmdLine);
 	}
 
-	Common::sprintf_s(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
-	Common::sprintf_s(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off");
+	_vm->_screen->updateStatusText();
+	_vm->_screen->updatePromptText(_cmdLine, _cmdLineCursor);
 
 #ifdef USE_TTS
 	if (_vm->_previousScore != _vm->getScore()) {
@@ -285,18 +290,23 @@ void Parser::charHandler() {
 	}
 
 	if (_vm->_voiceScoreLine) {
-		_vm->sayText(Common::String::format("F1: Help\n%s\nScore: %d of %d\nSound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off"));
+		_vm->sayText(Common::String::format("F1: Help\n%s\nScore: %d of %d\nSound %s",
+			(_vm->_config._turboFl) ? "T" : " ",
+			_vm->getScore(),
+			_vm->getMaxScore(),
+			(_vm->_config._soundFl) ? "On" : "Off"));
 		_vm->_voiceScoreLine = false;
 	}
 
 	if (_vm->_voiceSoundSetting) {
 		_vm->sayText(Common::String::format("Sound %s", (_vm->_config._soundFl) ? "On" : "Off"));
 
-		// If the mouse is in the top menu range, the top menu will close and reopen after the sound setting is changed,
-		// causing the new sound setting voicing to be interrupted. Therefore, keep trying to voice the new sound setting
-		// as long as the top menu can be opened
+		// If the mouse is in the top menu range, the top menu will close and
+		// reopen after the sound setting is changed, causing the new sound
+		// setting voicing to be interrupted. Therefore, keep trying to voice
+		// the new sound setting as long as the top menu can be opened
 		int mouseY = _vm->_mouse->getMouseY();
-		if (mouseY <= 0 || mouseY >= 5) {
+		if (!(0 <= mouseY && mouseY < 5)) {
 			_vm->_voiceSoundSetting = false;
 		}
 	}
@@ -337,11 +347,17 @@ void Parser::actionHandler(Common::Event event) {
 
 	switch (event.customType) {
 	case kActionUserHelp:
-		if (_checkDoubleF1Fl)
-			gameStatus._helpFl = true;
-		else
+		if (_vm->useWindowsInterface()) {
+			// Windows: Track double-F1 with a flag
+			if (_checkDoubleF1Fl)
+				gameStatus._helpFl = true;
+			else
+				_vm->_screen->userHelp();
+			_checkDoubleF1Fl = !_checkDoubleF1Fl;
+		} else {
+			// DOS: userHelp() handles double-F1
 			_vm->_screen->userHelp();
-		_checkDoubleF1Fl = !_checkDoubleF1Fl;
+		}
 		break;
 	case kActionToggleSound:
 		_vm->_sound->toggleSound();
@@ -361,10 +377,15 @@ void Parser::actionHandler(Common::Event event) {
 	case kActionRestoreGame:
 		_vm->_file->restoreGame(-1);
 		break;
-	case kActionNewGame:
-		if (Utils::yesNoBox("Are you sure you want to start a new game?"))
+	case kActionNewGame: {
+		// DOS requires shorter text for message boxes
+		const char *message = _vm->useWindowsInterface() ?
+			                  "Are you sure you want to start a new game?" :
+		                      "Are you sure you want to RESTART?";
+		if (_vm->yesNoBox(message, true))
 			_vm->_file->restoreGame(99);
 		break;
+	}
 	case kActionInventory:
 		showInventory();
 		break;
@@ -372,24 +393,47 @@ void Parser::actionHandler(Common::Event event) {
 		switchTurbo();
 		break;
 	case kActionEscape: // Escape key, may want to QUIT
-		if (gameStatus._viewState == kViewIntro)
+		if (gameStatus._viewState == kViewIntro) {
 			gameStatus._skipIntroFl = true;
-		else {
+		} else if (gameStatus._viewState == kViewPlay) {
+			endGamePrompt();
+		} else {
 			if (_vm->_inventory->getInventoryState() == kInventoryActive) // Remove inventory, if displayed
 				_vm->_inventory->setInventoryState(kInventoryUp);
 			_vm->_screen->resetInventoryObjId();
 		}
 		break;
 	case kActionMoveTop:
+		_vm->_route->resetRoute();                   // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_UP);    // Direction of hero travel
+		break;
 	case kActionMoveBottom:
+		_vm->_route->resetRoute();                   // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_DOWN);  // Direction of hero travel
+		break;
 	case kActionMoveLeft:
+		_vm->_route->resetRoute();                   // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_LEFT);  // Direction of hero travel
+		break;
 	case kActionMoveRight:
+		_vm->_route->resetRoute();                   // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_RIGHT); // Direction of hero travel
+		break;
 	case kActionMoveTopLeft:
+		_vm->_route->resetRoute();                  // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_KP7);  // Direction of hero travel
+		break;
 	case kActionMoveTopRight:
+		_vm->_route->resetRoute();                  // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_KP9);  // Direction of hero travel
+		break;
 	case kActionMoveBottomLeft:
+		_vm->_route->resetRoute();                  // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_KP1);  // Direction of hero travel
+		break;
 	case kActionMoveBottomRight:
-		_vm->_route->resetRoute();              // Stop any automatic route
-		_vm->_route->setWalk(event.customType); // Direction of hero travel
+		_vm->_route->resetRoute();                  // Stop any automatic route
+		_vm->_route->setWalk(Common::KEYCODE_KP3);  // Direction of hero travel
 		break;
 	default:
 		break;
@@ -412,6 +456,10 @@ void Parser::command(const char *format, ...) {
 	va_end(marker);
 
 	lineHandler();
+}
+
+void Parser::resetCommandLine() {
+	_cmdLine[_cmdLineIndex = 0] = '\0';
 }
 
 /**
@@ -466,53 +514,83 @@ void Parser::showDosInventory() const {
 	debugC(1, kDebugParser, "showDosInventory()");
 	static const char *const blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
+	const char *intro = _vm->_text->getTextParser(kTBIntro);
+	const char *outro = _vm->_text->getTextParser(kTBOutro);
+	if (_vm->getGameType() == kGameTypeHugo3) {
+		outro = "\nPress any key to continue";
+	}
+	const int nounIndex2 = (_vm->getGameType() <= kGameTypeHugo2) ? 0 : 1;
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
-			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2));
+			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, nounIndex2));
 			if (index++ & 1)                        // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
 				len1 = (len > len1) ? len : len1;
 		}
 	}
-	len1 += 1;                                      // For gap between columns
-
-	if (len1 + len2 < (uint16)strlen(_vm->_text->getTextParser(kTBOutro)))
-		len1 = strlen(_vm->_text->getTextParser(kTBOutro));
 
 	Common::String buffer;
-	assert(len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro)) / 2 < strlen(blanks));
-	buffer = Common::String(blanks, (len1 + len2 - strlen(_vm->_text->getTextParser(kTBIntro))) / 2);
+	if (_vm->getGameType() <= kGameTypeHugo2) {
+		len1 += 1;                                  // For gap between columns
+		if (len1 + len2 < (uint16)strlen(outro)) {
+			len1 = strlen(outro);
+		}
+		assert(len1 + len2 - strlen(intro) / 2 < strlen(blanks));
+		buffer = Common::String(blanks, (len1 + len2 - strlen(intro)) / 2);
+	} else {
+		len1 += 4;                                  // For gap between columns
+		if (len1 + len2 > (uint16)strlen(intro)) {
+			assert(len1 + len2 - strlen(intro) / 2 < strlen(blanks));
+			buffer = Common::String(blanks, (len1 + len2 - strlen(intro)) / 2);
+		}
+	}
 
-	buffer += Common::String(_vm->_text->getTextParser(kTBIntro)) + "\n";
+	buffer += intro;
+	buffer += '\n';
 	index = 0;
-#ifdef USE_TTS
-	Common::String ttsMessage = buffer;
-#endif
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
+			const char *objectName = _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, nounIndex2);
+			buffer += objectName;
 			if (index++ & 1) {
-				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n";
-#ifdef USE_TTS
-				ttsMessage += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n";
-#endif
+				buffer += '\n';
 			} else {
-				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)));
-#ifdef USE_TTS
-				ttsMessage += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n" + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)));
-#endif
+				buffer += Common::String(blanks, len1 - strlen(objectName));
 			}
 		}
 	}
 	if (index & 1)
-		buffer += "\n";
-	buffer += Common::String(_vm->_text->getTextParser(kTBOutro));
+		buffer += '\n';
+	buffer += outro;
+
 #ifdef USE_TTS
-	ttsMessage += Common::String(_vm->_text->getTextParser(kTBOutro));
-	_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+	sayInventory(intro, outro, nounIndex2);
 #endif
-	Utils::notifyBox(buffer.c_str(), false);
+
+	_vm->notifyBox(buffer, false, kTtsNoSpeech);
+}
+
+#ifdef USE_TTS
+void Parser::sayInventory(const char *intro, const char *outro, int nounIndex2) const {
+	Common::String text = intro;
+	for (int i = 0; i < _vm->_object->_numObj; i++) {
+		if (_vm->_object->isCarried(i)) {
+			text += '\n';
+			text += _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, nounIndex2);
+		}
+	}
+	text += '\n';
+	text += outro;
+	_vm->sayText(text, Common::TextToSpeechManager::INTERRUPT);
+}
+#endif
+
+void Parser::endGamePrompt() {
+	if (_vm->yesNoBox(_vm->_text->getTextParser(kTBExit_1d), true)) {
+		_vm->endGame();
+	}
 }
 
 } // End of namespace Hugo

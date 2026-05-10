@@ -22,6 +22,8 @@
 #ifndef AUDIO_MIDI_H
 #define AUDIO_MIDI_H
 
+#define FORCE_TEXT_CONSOLE
+
 #include "audio/mt32gm.h"
 
 #include "common/config-manager.h"
@@ -39,6 +41,11 @@ const uint8 MidiDriver_BASE::GM_PITCH_BEND_SENSITIVITY_DEFAULT;
 // These are the power-on default instruments of the Roland MT-32 family.
 const byte MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS[8] = {
 	0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A
+};
+
+// Same as above, now numbered by MIDI channel. For use with setControllerDefaults.
+const int16 MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS[16] = {
+	-1, 0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A, -1, -1, -1, -1, -1, -1, -1
 };
 
 // These are the power-on default panning settings for channels 2-9 of the Roland MT-32 family.
@@ -219,7 +226,7 @@ void MidiDriver_MT32GM::initMT32(bool initForGM) {
 	if (initForGM) {
 		// Set up MT-32 for GM data.
 		// This is based on Roland's GM settings for MT-32.
-		debug("Initializing MT-32 for General MIDI data");
+		debugC(kDebugLevelGAudio, "Initializing MT-32 for General MIDI data");
 
 		byte buffer[17];
 
@@ -263,6 +270,8 @@ void MidiDriver_MT32GM::initMT32(bool initForGM) {
 			setPitchBendRange(i, 2);
 		}
 		setPitchBendRange(MIDI_RHYTHM_CHANNEL, 2);
+	} else {
+		debugC(kDebugLevelGAudio, "Initializing MT-32");
 	}
 }
 
@@ -272,7 +281,7 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 	if (initForMT32) {
 		// Set up the GM device for MT-32 MIDI data.
 		// Based on iMuse implementation (which is based on Roland's MT-32 settings for GS)
-		debug("Initializing GM device for MT-32 MIDI data");
+		debugC(kDebugLevelGAudio, "Initializing GM device for MT-32 MIDI data");
 
 		// The MT-32 has reversed stereo panning compared to the MIDI spec.
 		// GM does use panning as specified by the MIDI spec.
@@ -302,7 +311,7 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 
 		if (enableGS) {
 			// GS specific settings for MT-32 instrument mapping.
-			debug("Additional initialization of GS device for MT-32 MIDI data");
+			debugC(kDebugLevelGAudio, "Additional initialization of GS device for MT-32 MIDI data");
 
 			// Note: All Roland GS devices support CM-64/32L maps
 
@@ -371,6 +380,8 @@ void MidiDriver_MT32GM::initGM(bool initForMT32, bool enableGS) {
 		// apparently due to a firmware bug the master tune was actually 440 kHz for
 		// all models (see MUNT source code for more details). So master tune is left
 		// at 440 kHz for GM devices playing MT-32 MIDI data.
+	} else {
+		debugC(kDebugLevelGAudio, "Initializing GM device");
 	}
 }
 
@@ -589,7 +600,7 @@ void MidiDriver_MT32GM::controlChange(byte outputChannel, byte controllerNumber,
 				controllerValue = 0;
 			} else {
 				// Scale to user volume
-				uint16 userVolume = _sources[source].type == SOURCE_TYPE_SFX ? _userSfxVolume : _userMusicVolume; // Treat SOURCE_TYPE_UNDEFINED as music
+				uint16 userVolume = (source >= 0 && _sources[source].type == SOURCE_TYPE_SFX) ? _userSfxVolume : _userMusicVolume; // Treat SOURCE_TYPE_UNDEFINED as music
 				controllerValue = (controllerValue * userVolume) >> 8;
 			}
 		}

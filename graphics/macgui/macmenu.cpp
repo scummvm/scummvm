@@ -1094,22 +1094,37 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			_font->drawString(s, utxt.visual, tx, ty, it->bbox.width(), color, _align, 0, true);
 			underlineAccelerator(s, _font, utxt, tx + accOff, ty, it->shortcutPos, color);
 		} else {
-			const Font *font = getMenuFont(it->style);
-			font->drawString(s, it->text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
+            const Font *font = nullptr;
+            Common::String text = it->text;
+
+            if (text == "\xf0") {
+                font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSymbol, 12, 0));
+
+                if (_wm->_fontMan->hasBuiltInFonts()) // Replace with (c) symbol if we have built-in fonts
+                    text = "\xa9";
+
+            } else {
+                font = getMenuFont(it->style);
+            }
+
+           font->drawString(s, text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
 		}
 
 		if (!it->enabled) {
 			if (_wm->_pixelformat.bytesPerPixel == 1) {
 				drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+				drawMenuPattern<uint16>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
 			} else {
 				drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
 			}
 		}
 	}
 
-	if ((_wm->_mode & kWMModalMenuMode) || !_wm->_screen)
-		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
-
+	if (!(_wm->_mode & kWMModeNoSystemRedraw)) {
+		if ((_wm->_mode & kWMModalMenuMode) || !_wm->_screen)
+			g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
+	}
 
 	for (uint i = 0; i < _menustack.size(); i++) {
 		renderSubmenu(_menustack[i], (i == _menustack.size() - 1));
@@ -1118,7 +1133,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	if (g)
 		g->transBlitFrom(_screen, _wm->_colorGreen);
 
-	if (!(_wm->_mode & kWMModalMenuMode) && g)
+	if (!(_wm->_mode & kWMModeNoSystemRedraw) && !(_wm->_mode & kWMModalMenuMode) && g)
 		g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
 
 	return true;
@@ -1241,6 +1256,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			if (!topMenuEnabled || !menu->items[i]->enabled) {
 				if (_wm->_pixelformat.bytesPerPixel == 1) {
 					drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
+				} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+					drawMenuPattern<uint16>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				} else {
 					drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				}
@@ -1249,6 +1266,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		} else { // Delimiter
 			if (_wm->_pixelformat.bytesPerPixel == 1) {
 				drawMenuDelimiter<byte>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
+			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+				drawMenuDelimiter<uint16>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			} else {
 				drawMenuDelimiter<uint32>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			}

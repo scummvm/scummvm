@@ -27,7 +27,7 @@
 
 namespace Grim {
 
-#if defined(SYSTEM_NEED_ALIGNMENT)
+#if defined(SCUMM_NEED_ALIGNMENT)
 
 #define COPY_4X1_LINE(dst, src)			\
 	do {					\
@@ -44,7 +44,7 @@ namespace Grim {
 	} while (0)
 
 
-#else /* SYSTEM_NEED_ALIGNMENT */
+#else /* SCUMM_NEED_ALIGNMENT */
 
 #define COPY_4X1_LINE(dst, src)			\
 	*(uint32 *)(dst) = *(const uint32 *)(src)

@@ -40,7 +40,7 @@ int32 conv_ops_text_strlen(char *s) {
 void conv_ops_unknown_chunk(int32 tag, const char *s) {
 	char *tag_name = (char *)&tag;
 
-	error_show(FL, 'PARS', "'%s' What type is this chunk: %c%c%c%c ?", s, tag_name[3], tag_name[2], tag_name[1], tag_name[0]);
+	error_show(FL, "'%s' What type is this chunk: %c%c%c%c ?", s, tag_name[3], tag_name[2], tag_name[1], tag_name[0]);
 }
 
 /*
@@ -56,7 +56,7 @@ char *conv_ops_get_entry(int32 i, int32 *next, int32 *tag, Conv *c) {
 	conv_chunk *CC;
 
 	if ((i + c->myCNode) > c->chunkSize) {
-		error_show(FL, 'PARS', "Conv pointer skipped past chunk EOF. Please check script and make sure HAG is up to date");
+		error_show(FL, "Conv pointer skipped past chunk EOF. Please check script and make sure HAG is up to date");
 	}
 
 	char *outChunk = &(c->conv[c->myCNode]);
@@ -172,7 +172,7 @@ char *conv_ops_get_entry(int32 i, int32 *next, int32 *tag, Conv *c) {
 		break;
 
 	default:
-		error_show(FL, 'PARS', "Tag: %d (%x) Node: %d (%x hex)", *tag, *tag, c->myCNode, c->myCNode);
+		error_show(FL, "Tag: %d (%x) Node: %d (%x hex)", *tag, *tag, c->myCNode, c->myCNode);
 		break;
 	}
 
@@ -449,7 +449,11 @@ int conv_ops_cond_successful(int32 l_op, int32 op, int32 r_op) {
 
 	case OROR:
 		return l_op || r_op;
+
+	default:
+		break;
 	}
+	
 	return 0;
 }
 
@@ -476,7 +480,7 @@ int32 conv_ops_process_asgn(int32 val, int32 oprtr, int32 opnd) {
 		break;
 
 	default:
-		error_show(FL, 'PARS', "Operator must be a +,-,*,/,=, Please check tag type: %d in token header file", oprtr);
+		error_show(FL, "Operator must be a +,-,*,/,=, Please check tag type: %d in token header file", oprtr);
 		break;
 	}
 	return val;

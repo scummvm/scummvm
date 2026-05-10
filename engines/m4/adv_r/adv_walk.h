@@ -23,7 +23,6 @@
 #ifndef M4_ADV_R_ADV_WALK_H
 #define M4_ADV_R_ADV_WALK_H
 
-#include "m4/m4_types.h"
 #include "m4/adv_r/adv.h"
 #include "m4/wscript/ws_machine.h"
 
@@ -33,7 +32,7 @@ class Walker {
 public:
 	virtual ~Walker() {}
 
-	virtual bool walk_load_walker_and_shadow_series() = 0;
+	virtual void walk_load_walker_and_shadow_series() = 0;
 	virtual machine *walk_initialize_walker() = 0;
 };
 
@@ -59,11 +58,11 @@ void ws_walk(int32 x, int32 y, GrBuff **buffer, int16 trigger, int32 finalFacing
 
 void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing);
 
-bool ws_walk_init_system();
+void ws_walk_init_system();
 
-bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette);
-bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette = false);
-bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]);
+void ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette);
+void ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette = false);
+void ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]);
 
 void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define ws_walk_dump_walker_series(xx, yy) (ws_walk_dump_series (xx, yy))
@@ -90,7 +89,6 @@ void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool co
 #define adv_walker_move(ww, xx, yy)          (ws_demand_location(ww, xx, yy))
 #define adv_walker_hide(ww)                  (ws_hide_walker(ww))
 #define adv_walker_unhide(ww)                (ws_unhide_walker(ww))
-bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y);
 
 void adv_hyperwalk_to_final_destination(void *, void *);
 

@@ -25,56 +25,39 @@
 
 namespace MediaStation {
 
-SpriteFrameHeader::SpriteFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
-	_index = chunk.readTypedUint16();
-	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _index = 0x%x (@0x%llx)", _index, static_cast<long long int>(chunk.pos()));
-	_boundingBox = chunk.readTypedPoint();
-	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _boundingBox (@0x%llx)", static_cast<long long int>(chunk.pos()));
+SpriteMovieClip::SpriteMovieClip(uint clipId, int first, int last) :
+	id(clipId), firstFrameIndex(first), lastFrameIndex(last) {
 }
 
-SpriteFrame::SpriteFrame(Chunk &chunk, SpriteFrameHeader *header) : Bitmap(chunk, header) {
-	_bitmapHeader = header;
+Common::String SpriteMovieClip::getDebugString() const {
+	return Common::String::format("%s: [%d, %d]", g_engine->formatParamTokenName(id).c_str(), firstFrameIndex, lastFrameIndex);
 }
 
-SpriteFrame::~SpriteFrame() {
-	// The base class destructor takes care of deleting the bitmap header.
+SpriteFrame::SpriteFrame(Chunk &chunk, uint index, Common::Point offset, const ImageInfo &imageInfo, bool decompressInPlace) :
+	PixMapImage(chunk, imageInfo, decompressInPlace), _index(index), _origin(offset) {
+	debugC(5, kDebugLoading, "%s: frame 0x%x", __func__, _index);
 }
 
-uint32 SpriteFrame::left() {
-	return _bitmapHeader->_boundingBox.x;
-}
-
-uint32 SpriteFrame::top() {
-	return _bitmapHeader->_boundingBox.y;
-}
-
-Common::Point SpriteFrame::topLeft() {
-	return Common::Point(left(), top());
-}
-
-Common::Rect SpriteFrame::boundingBox() {
-	return Common::Rect(topLeft(), width(), height());
-}
-
-uint32 SpriteFrame::index() {
-	return _bitmapHeader->_index;
+SpriteAsset::~SpriteAsset() {
+	for (SpriteFrame *frame : frames) {
+		delete frame;
+	}
 }
 
 SpriteMovieActor::~SpriteMovieActor() {
-	// If we're just referencing another actor's frames,
-	// don't delete those frames.
-	if (_actorReference == 0) {
-		for (SpriteFrame *frame : _frames) {
-			delete frame;
-		}
-	}
-	_frames.clear();
+	unregisterWithStreamManager();
 }
 
 void SpriteMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
+		_asset = Common::SharedPtr<SpriteAsset>(new SpriteAsset);
+		break;
+
+	case kActorHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
 	case kActorHeaderFrameRate:
@@ -82,38 +65,30 @@ void SpriteMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 		break;
 
 	case kActorHeaderLoadType:
-		_loadType = chunk.readTypedByte();
+		_decompressInPlace = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kActorHeaderStartup:
-		_isVisible = static_cast<bool>(chunk.readTypedByte());
+	case kActorHeaderSpriteChunkCount:
+		_asset->frameCount = chunk.readTypedUint16();
 		break;
-
-	case kActorHeaderSpriteChunkCount: {
-		_frameCount = chunk.readTypedUint16();
-
-		// Set the default clip.
-		SpriteClip clip;
-		clip.id = DEFAULT_CLIP_ID;
-		clip.firstFrameIndex = 0;
-		clip.lastFrameIndex = _frameCount - 1;
-		_clips.setVal(clip.id, clip);
-		setCurrentClip(clip.id);
-		break;
-	}
 
 	case kActorHeaderSpriteClip: {
-		SpriteClip spriteClip;
-		spriteClip.id = chunk.readTypedUint16();
-		spriteClip.firstFrameIndex = chunk.readTypedUint16();
-		spriteClip.lastFrameIndex = chunk.readTypedUint16();
-		_clips.setVal(spriteClip.id, spriteClip);
+		SpriteMovieClip clip;
+		clip.id = chunk.readTypedUint16();
+		clip.firstFrameIndex = chunk.readTypedUint16();
+		clip.lastFrameIndex = chunk.readTypedUint16();
+		_clips.setVal(clip.id, clip);
 		break;
 	}
 
-	case kActorHeaderCurrentSpriteClip: {
-		uint clipId = chunk.readTypedUint16();
-		setCurrentClip(clipId);
+	case kActorHeaderDefaultSpriteClip:
+		_defaultClipId = chunk.readTypedUint16();
+		break;
+
+	case kActorHeaderActorReference: {
+		_actorReference = chunk.readTypedUint16();
+		SpriteMovieActor *referencedSprite = static_cast<SpriteMovieActor *>(g_engine->getImtGod()->getActorByIdAndType(_actorReference, kActorTypeSprite));
+		_asset = referencedSprite->_asset;
 		break;
 	}
 
@@ -122,52 +97,69 @@ void SpriteMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 	}
 }
 
+void SpriteMovieActor::loadIsComplete() {
+	// This clip goes forward through all the sprite's frames.
+	SpriteMovieClip forwardClip(DEFAULT_FORWARD_CLIP_ID, 0, _asset->frameCount - 1);
+	if (!_clips.contains(DEFAULT_FORWARD_CLIP_ID)) {
+		_clips.setVal(forwardClip.id, forwardClip);
+	}
+
+	// This clip goes backward through all the sprite's frames.
+	SpriteMovieClip backwardClip(DEFAULT_BACKWARD_CLIP_ID, _asset->frameCount - 1, 0);
+	if (!_clips.contains(DEFAULT_BACKWARD_CLIP_ID)) {
+		_clips.setVal(backwardClip.id, backwardClip);
+	}
+
+	SpatialEntity::loadIsComplete();
+	setCurrentClip(_defaultClipId);
+}
+
 ScriptValue SpriteMovieActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
 	case kSpatialShowMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		setVisibility(true);
-		return returnValue;
+		break;
 	}
 
 	case kSpatialHideMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		setVisibility(false);
-		return returnValue;
+		break;
 	}
 
 	case kTimePlayMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		play();
-		return returnValue;
+		break;
 	}
 
 	case kTimeStopMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		stop();
-		return returnValue;
+		break;
 	}
 
 	case kMovieResetMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		setCurrentFrameToInitial();
-		return returnValue;
+		break;
 	}
 
 	case kSetCurrentClipMethod: {
-		assert(args.size() <= 1);
-		uint clipId = DEFAULT_CLIP_ID;
+		ARGCOUNTRANGE(0, 1);
+		uint clipId = DEFAULT_FORWARD_CLIP_ID;
 		if (args.size() == 1) {
 			clipId = args[0].asParamToken();
 		}
 		setCurrentClip(clipId);
-		return returnValue;
+		break;
 	}
 
 	case kIncrementFrameMethod: {
-		assert(args.size() <= 1);
+		ARGCOUNTRANGE(0, 1);
 		bool loopAround = false;
 		if (args.size() == 1) {
 			loopAround = args[0].asBool();
@@ -179,7 +171,7 @@ ScriptValue SpriteMovieActor::callMethod(BuiltInMethod methodId, Common::Array<S
 				setCurrentFrameToInitial();
 			}
 		}
-		return returnValue;
+		break;
 	}
 
 	case kDecrementFrameMethod: {
@@ -194,38 +186,84 @@ ScriptValue SpriteMovieActor::callMethod(BuiltInMethod methodId, Common::Array<S
 				setCurrentFrameToFinal();
 			}
 		}
-		return returnValue;
+		break;
 	}
 
 	case kGetCurrentClipIdMethod: {
 		returnValue.setToParamToken(_activeClip.id);
-		return returnValue;
+		break;
 	}
 
 	case kIsPlayingMethod: {
 		returnValue.setToBool(_isPlaying);
-		return returnValue;
+		break;
 	}
 
 	default:
-		return SpatialEntity::callMethod(methodId, args);
+		returnValue = SpatialEntity::callMethod(methodId, args);
+	}
+	return returnValue;
+}
+
+void SpriteMovieActor::onEvent(const ActorEvent &event) {
+	switch (event.type) {
+	case kSpriteMovieEndEvent:
+		runScriptResponseIfExists(kSpriteMovieEndEvent, event.arg);
+		break;
+
+	default:
+		Actor::onEvent(event);
 	}
 }
 
 bool SpriteMovieActor::activateNextFrame() {
-	if (_currentFrameIndex < _activeClip.lastFrameIndex) {
-		_currentFrameIndex++;
-		dirtyIfVisible();
-		return true;
+	bool clipMovesForward = _activeClip.firstFrameIndex <= _activeClip.lastFrameIndex;
+	if (clipMovesForward) {
+		debugC(3, kDebugSpriteMovie, "[%s] %s: FORWARD: currentFrameIndex: %d; activeClip.lastFrameIndex: %d",
+			debugName(), __func__, _currentFrameIndex, _activeClip.lastFrameIndex);
+
+		bool canMoveForward = _currentFrameIndex < _activeClip.lastFrameIndex;
+		if (canMoveForward) {
+			dirtyIfVisible();
+			_currentFrameIndex++;
+			dirtyIfVisible();
+			return true;
+		}
+
+	} else {
+		debugC(3, kDebugSpriteMovie, "[%s] %s: BACKWARD: currentFrameIndex: %d; activeClip.lastFrameIndex: %d",
+			debugName(), __func__, _currentFrameIndex, _activeClip.lastFrameIndex);
+
+		bool canMoveBackward = _currentFrameIndex > _activeClip.lastFrameIndex;
+		if (canMoveBackward) {
+			dirtyIfVisible();
+			_currentFrameIndex--;
+			dirtyIfVisible();
+			return true;
+		}
 	}
 	return false;
 }
 
 bool SpriteMovieActor::activatePreviousFrame() {
-	if (_currentFrameIndex > _activeClip.firstFrameIndex) {
-		_currentFrameIndex--;
-		dirtyIfVisible();
-		return true;
+	bool clipMovesBackward = _activeClip.lastFrameIndex < _activeClip.firstFrameIndex;
+	if (clipMovesBackward) {
+		bool canMoveTowardFirst = _currentFrameIndex < _activeClip.firstFrameIndex;
+		if (canMoveTowardFirst) {
+			dirtyIfVisible();
+			_currentFrameIndex++;
+			dirtyIfVisible();
+			return true;
+		}
+
+	} else {
+		bool canMoveTowardFirst = _activeClip.firstFrameIndex < _currentFrameIndex;
+		if (canMoveTowardFirst) {
+			dirtyIfVisible();
+			_currentFrameIndex--;
+			dirtyIfVisible();
+			return true;
+		}
 	}
 	return false;
 }
@@ -245,61 +283,69 @@ void SpriteMovieActor::setVisibility(bool visibility) {
 
 void SpriteMovieActor::play() {
 	_isPlaying = true;
-	_startTime = g_system->getMillis();
+	_startTime = g_engine->getTotalPlayTime();
 	_lastProcessedTime = 0;
-	_nextFrameTime = 0;
+	_nextFrameTime = _startTime;
 
 	scheduleNextFrame();
+	debugC(3, kDebugSpriteMovie, "[%s] %s", debugName(), __func__);
 }
 
 void SpriteMovieActor::stop() {
 	_nextFrameTime = 0;
 	_isPlaying = false;
+	g_engine->getTimerService()->stopTimer(_timer);
+	debugC(3, kDebugSpriteMovie, "[%s] %s", debugName(), __func__);
 }
 
 void SpriteMovieActor::setCurrentClip(uint clipId) {
 	if (_activeClip.id != clipId) {
 		if (_clips.contains(clipId)) {
+			SpriteMovieClip newClip = _clips.getVal(clipId);
+			debugC(3, kDebugSpriteMovie, "[%s] %s: (frameCount: %d) activeClip: %s; newClip: %s",
+				debugName(), __func__, _asset->frameCount, _activeClip.getDebugString().c_str(), newClip.getDebugString().c_str());
 			_activeClip = _clips.getVal(clipId);
 		} else {
 			_activeClip.id = clipId;
-			warning("%s: Sprite clip %d not found in sprite %d", __func__, clipId, _id);
+			warning("[%s] %s: Clip %s not found", debugName(), __func__, _activeClip.getDebugString().c_str());
 		}
-	}
 
-	setCurrentFrameToInitial();
+		setCurrentFrameToInitial();
+	}
 }
 
 void SpriteMovieActor::setCurrentFrameToInitial() {
+	debugC(3, kDebugSpriteMovie, "[%s] %s: currentFrameIndex: %d, activeClip.firstFrameIndex: %d",
+		debugName(), __func__, _currentFrameIndex, _activeClip.firstFrameIndex);
 	if (_currentFrameIndex != _activeClip.firstFrameIndex) {
+		dirtyIfVisible();
 		_currentFrameIndex = _activeClip.firstFrameIndex;
 		dirtyIfVisible();
 	}
 }
 
 void SpriteMovieActor::setCurrentFrameToFinal() {
+	debugC(3, kDebugSpriteMovie, "[%s] %s: currentFrameIndex: %d, activeClip.lastFrameIndex: %d",
+		debugName(), __func__, _currentFrameIndex, _activeClip.lastFrameIndex);
 	if (_currentFrameIndex != _activeClip.lastFrameIndex) {
+		dirtyIfVisible();
 		_currentFrameIndex = _activeClip.lastFrameIndex;
 		dirtyIfVisible();
 	}
 }
 
-void SpriteMovieActor::process() {
-	updateFrameState();
-	// Sprites don't have time event handlers, separate timers do time handling.
-}
-
 void SpriteMovieActor::readChunk(Chunk &chunk) {
-	// Reads one frame from the sprite.
-	debugC(5, kDebugLoading, "Sprite::readFrame(): Reading sprite frame (@0x%llx)", static_cast<long long int>(chunk.pos()));
-	SpriteFrameHeader *header = new SpriteFrameHeader(chunk);
-	SpriteFrame *frame = new SpriteFrame(chunk, header);
-	_frames.push_back(frame);
+	// Read one frame from the sprite.
+	ImageInfo imageInfo(chunk);
+	uint index = chunk.readTypedUint16();
+	Common::Point offset = chunk.readTypedPoint();
+	SpriteFrame *frame = new SpriteFrame(chunk, index, offset, imageInfo, _decompressInPlace);
+	_asset->frames.push_back(frame);
 
 	// TODO: Are these in exactly reverse order? If we can just reverse the
 	// whole thing once.
-	Common::sort(_frames.begin(), _frames.end(), [](SpriteFrame *a, SpriteFrame *b) {
-		return a->index() < b->index();
+	Common::sort(_asset->frames.begin(), _asset->frames.end(), [](SpriteFrame *a, SpriteFrame *b) {
+		return a->_index < b->_index;
 	});
 }
 
@@ -308,43 +354,52 @@ void SpriteMovieActor::scheduleNextFrame() {
 		return;
 	}
 
-	if (_currentFrameIndex < _activeClip.lastFrameIndex) {
-		scheduleNextTimerEvent();
+	debugC(3, kDebugSpriteMovie, "[%s] %s: currentFrame: %d; activeClip: [%d, %d]",
+		debugName(), __func__, _currentFrameIndex,
+		_activeClip.firstFrameIndex, _activeClip.lastFrameIndex);
+	int firstFrameIndex = _activeClip.firstFrameIndex;
+	int lastFrameIndex = _activeClip.lastFrameIndex;
+
+	// For backward clips, we've "passed" the last frame when currentFrameIndex <= lastFrameIndex.
+	bool clipMovesBackward = lastFrameIndex < firstFrameIndex;
+	bool currentIsAtOrBeyondLast = lastFrameIndex <= _currentFrameIndex;
+	bool needsStopEvaluation = clipMovesBackward || currentIsAtOrBeyondLast;
+	bool backwardClipContinues = clipMovesBackward && currentIsAtOrBeyondLast;
+
+	if (needsStopEvaluation) {
+		if (backwardClipContinues) {
+			// Backward clip still has frames to show (current > last).
+			scheduleNextTimerEvent();
+		} else {
+			// We reached the end of the clip, regardless of which direction we were moving.
+			stop();
+		}
 	} else {
-		stop();
+		// The forward clip still in progress.
+		scheduleNextTimerEvent();
 	}
 }
 
 void SpriteMovieActor::scheduleNextTimerEvent() {
-	uint frameDuration = 1000 / _frameRate;
-	_nextFrameTime += frameDuration;
+	uint32 frameDurationInMilliseconds = 1000 / _frameRate;
+	// Catch up if we are behind.
+	_nextFrameTime += frameDurationInMilliseconds;
+	uint32 currentTime = g_engine->getTotalPlayTime();
+	if (_nextFrameTime < currentTime) {
+		_nextFrameTime = currentTime;
+	}
+	uint32 delayUntilNextFrameInMilliseconds = _nextFrameTime - currentTime;
+	debugC(3, kDebugSpriteMovie, "[%s] %s: next frame in %d ms", debugName(), __func__, delayUntilNextFrameInMilliseconds);
+	g_engine->getTimerService()->startTimer(_timer, delayUntilNextFrameInMilliseconds);
 }
 
-void SpriteMovieActor::updateFrameState() {
-	if (!_isPlaying) {
-		return;
-	}
-
-	uint currentTime = g_system->getMillis() - _startTime;
-	bool drawNextFrame = currentTime >= _nextFrameTime;
-	debugC(kDebugGraphics, "nextFrameTime: %d; startTime: %d, currentTime: %d", _nextFrameTime, _startTime, currentTime);
-	if (drawNextFrame) {
-		timerEvent();
-	}
-}
-
-void SpriteMovieActor::timerEvent() {
-	if (!_isPlaying) {
-		error("%s: Attempt to activate sprite frame when sprite is not playing", __func__);
-		return;
-	}
-
-	bool result = activateNextFrame();
-	if (!result) {
-		stop();
-	} else {
+void SpriteMovieActor::timerEvent(const TimerEvent &event) {
+	bool moreFramesToShow = activateNextFrame();
+	if (moreFramesToShow) {
 		postMovieEndEventIfNecessary();
 		scheduleNextFrame();
+	} else {
+		stop();
 	}
 }
 
@@ -356,18 +411,27 @@ void SpriteMovieActor::postMovieEndEventIfNecessary() {
 	_isPlaying = false;
 	_startTime = 0;
 	_nextFrameTime = 0;
+	debugC(3, kDebugSpriteMovie, "[%s] %s: Posting movie end", debugName(), __func__);
 
 	ScriptValue value;
 	value.setToParamToken(_activeClip.id);
-	runEventHandlerIfExists(kSpriteMovieEndEvent, value);
+	ActorEvent actorEvent(_id, kSpriteMovieEndEvent, value);
+	g_engine->getEventLoop()->queueEvent(actorEvent);
 }
 
-void SpriteMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
-	SpriteFrame *activeFrame = _frames[_currentFrameIndex];
+void SpriteMovieActor::draw(DisplayContext &displayContext) {
+	if (static_cast<uint>(_currentFrameIndex) >= _asset->frames.size()) {
+		warning("[%s] %s: Requested frame %d, but we only have %d frames. Showing last frame",
+			debugName(), __func__, _currentFrameIndex, _asset->frames.size());
+		_currentFrameIndex = _asset->frames.size() - 1;
+	}
+
+	SpriteFrame *activeFrame = _asset->frames[_currentFrameIndex];
 	if (_isVisible) {
-		Common::Rect frameBbox = activeFrame->boundingBox();
-		frameBbox.translate(_boundingBox.left, _boundingBox.top);
-		g_engine->getDisplayManager()->imageBlit(frameBbox.origin(), activeFrame, _dissolveFactor, dirtyRegion);
+		Common::Point originToDraw = _boundingBox.origin() + activeFrame->_origin;
+		debugC(7, kDebugSpriteMovie, "[%s] %s: frame %d (%d, %d)",
+			debugName(), __func__, activeFrame->_index, originToDraw.x, originToDraw.y);
+		g_engine->getDisplayManager()->imageBlit(originToDraw, activeFrame, _dissolveFactor, &displayContext);
 	}
 }
 

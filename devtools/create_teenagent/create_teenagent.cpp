@@ -42,7 +42,7 @@ void writeStringsBlock(FILE *fd, const char **stringArr, uint size) {
 	}
 }
 
-void writeCombinations(FILE *fd, Common::Language language) {
+void writeCombinations(FILE *fd, Language language) {
 	const char **combineMessages = englishCombineMessages;
 	if (language == CS_CZE)
 		combineMessages = czechCombineMessages;
@@ -64,7 +64,7 @@ void writeCombinations(FILE *fd, Common::Language language) {
 	}
 }
 
-void writeDialogStacks(FILE *fd, Common::Language language) {
+void writeDialogStacks(FILE *fd, Language language) {
 	const char ***dialogs = englishDialogs;
 	if (language == CS_CZE)
 		dialogs = czechDialogs;
@@ -108,7 +108,7 @@ void writeDialogStacks(FILE *fd, Common::Language language) {
 	}
 }
 
-void writeDialogs(FILE *fd, Common::Language language) {
+void writeDialogs(FILE *fd, Language language) {
 	const char ***dialogs = englishDialogs;
 	if (language == CS_CZE)
 		dialogs = czechDialogs;
@@ -153,7 +153,7 @@ void writeDialogs(FILE *fd, Common::Language language) {
 	}
 }
 
-void writeItems(FILE *fd, Common::Language language) {
+void writeItems(FILE *fd, Language language) {
 	const char ***items = englishItems;
 	if (language == CS_CZE)
 		items = czechItems;
@@ -195,7 +195,7 @@ void writeItems(FILE *fd, Common::Language language) {
 	}
 }
 
-void writeSceneObjects(FILE *fd, Common::Language language) {
+void writeSceneObjects(FILE *fd, Language language) {
 	Common::Array<Common::Array<ObjectNameDesc>> *objNamesDescs = &englishSceneObjectNamesDescs;
 	SettableObjectName *settableSceneObjects = englishSettableObjectNames;
 
@@ -311,7 +311,7 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 	fseek(fd, pos, SEEK_SET);
 }
 
-uint32 writeResource(FILE *fd, ResourceType resType, Common::Language language) {
+uint32 writeResource(FILE *fd, ResourceType resType, Language language) {
 	uint prevFilePos = ftell(fd);
 
 	switch (resType) {
@@ -401,7 +401,7 @@ int main(int argc, char *argv[]) {
 
 		writeUint32LE(fout, 0);
 	}
-	writeByte(fout, (byte)Common::Language::UNK_LANG);
+	writeByte(fout, (byte)0xff);
 
 	for (uint lang = 0; lang < NUM_LANGS; lang++) {
 		// Write offset to data

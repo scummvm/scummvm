@@ -21,48 +21,77 @@
 
 #include "mediastation/bitmap.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
-BitmapHeader::BitmapHeader(Chunk &chunk) {
-	uint headerSizeInBytes = chunk.readTypedUint16();
+ImageInfo::ImageInfo(Chunk &chunk) {
+	_imageDataStartOffset = chunk.readTypedUint16();
 	_dimensions = chunk.readTypedGraphicSize();
 	_compressionType = static_cast<BitmapCompressionType>(chunk.readTypedUint16());
 	_stride = chunk.readTypedUint16();
-	debugC(5, kDebugLoading, "BitmapHeader::BitmapHeader(): headerSize: %d, _compressionType = 0x%x, _stride = %d",
-		headerSizeInBytes, static_cast<uint>(_compressionType), _stride);
+	debugC(5, kDebugLoading, "%s: imageDataStartOffset: 0x%x, _compressionType: 0x%x, _stride: %d",
+		__func__, _imageDataStartOffset, static_cast<uint>(_compressionType), _stride);
 }
 
-Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) : _bitmapHeader(bitmapHeader) {
+PixMapImage::PixMapImage(Chunk &chunk, const ImageInfo &imageInfo, bool decompressInPlace) : _imageInfo(imageInfo) {
 	if (stride() < width()) {
 		warning("%s: Got stride less than width", __func__);
 	}
 
-	_unk1 = chunk.readUint16LE();
+	// Make sure we are at the start of the image data.
+	uint imageDataStartPos = chunk.startPos() + _imageInfo._imageDataStartOffset;
+	chunk.seek(imageDataStartPos);
+
 	if (chunk.bytesRemaining() > 0) {
 		if (isCompressed()) {
 			_compressedStream = chunk.readStream(chunk.bytesRemaining());
+			if (decompressInPlace) {
+				decompress();
+			}
 		} else {
-			_image.create(width(), height(), Graphics::PixelFormat::createFormatCLUT8());
+			_image.create(stride(), height(), Graphics::PixelFormat::createFormatCLUT8());
 			if (getCompressionType() == kUncompressedTransparentBitmap)
 				_image.setTransparentColor(0);
 			byte *pixels = static_cast<byte *>(_image.getPixels());
-			chunk.read(pixels, chunk.bytesRemaining());
+
+			chunk.read(pixels, stride() * height());
+			if (chunk.bytesRemaining() > 0) {
+				warning("%s: %d bytes remaining in bitmap chunk after reading image data", __func__, chunk.bytesRemaining());
+				chunk.skip(chunk.bytesRemaining());
+			}
 		}
 	}
 }
 
-Bitmap::~Bitmap() {
-	delete _bitmapHeader;
-	_bitmapHeader = nullptr;
+PixMapImage::PixMapImage(const ImageInfo &imageInfo, bool decompressInPlace) : _imageInfo(imageInfo) {
+	_image.create(stride(), height(), Graphics::PixelFormat::createFormatCLUT8());
+}
 
+PixMapImage::~PixMapImage() {
 	delete _compressedStream;
 	_compressedStream = nullptr;
 }
 
-bool Bitmap::isCompressed() const {
+bool PixMapImage::isCompressed() const {
 	return (getCompressionType() != kUncompressedBitmap) && \
 		(getCompressionType() != kUncompressedTransparentBitmap);
+}
+
+void PixMapImage::decompress() {
+	if (getCompressionType() != kRle8BitmapCompression) {
+		return;
+	} else if (_compressedStream == nullptr) {
+		warning("%s: No compressed data to decompress", __func__);
+		return;
+	}
+
+	// Decompress the image and then delete the compressed stream.
+	_image = g_engine->getDisplayManager()->decompressRle8Bitmap(this, nullptr, nullptr);
+	delete _compressedStream;
+	_compressedStream = nullptr;
+
+	_imageInfo._compressionType = kUncompressedBitmap;
 }
 
 } // End of namespace MediaStation

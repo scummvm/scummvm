@@ -74,11 +74,34 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	// cursor code in later games.
 
 	uint numCursors = _numCursorTypes * (g_nancy->getGameType() == kGameTypeVampire ? 2 : 3) + g_nancy->getStaticData().numItems * _numCursorTypes;
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && g_nancy->getGameType() <= kGameTypeNancy12) {
+		_numCursorTypes = 37;
+		numCursors = _numCursorTypes * 2 + g_nancy->getStaticData().numItems * 2;
+	} else if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		_numCursorTypes = 37;
+		numCursors = 174;
+	}
+
 	_cursors.resize(numCursors);
+
+	Common::Path uiCursorsImageName;
+	Common::Path inventoryCursorsImageName;
+
+	if (g_nancy->getGameType() <= kGameTypeNancy12) {
+		auto *inventoryData = GetEngineData(INV)
+		assert(inventoryData);
+		inventoryCursorsImageName = inventoryData->inventoryCursorsImageName;
+	} else {
+		readFilename(*chunkStream, uiCursorsImageName);
+		readFilename(*chunkStream, inventoryCursorsImageName);
+	}
 
 	for (uint i = 0; i < numCursors; ++i) {
 		readRect(*chunkStream, _cursors[i].bounds);
 	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && g_nancy->getGameType() <= kGameTypeNancy12)
+		chunkStream->skip(numCursors * 4 * 4);	// TODO
 
 	for (uint i = 0; i < numCursors; ++i) {
 		_cursors[i].hotspot.x = chunkStream->readUint32LE();
@@ -89,10 +112,10 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	_primaryVideoInitialPos.x = chunkStream->readUint16LE();
 	_primaryVideoInitialPos.y = chunkStream->readUint16LE();
 
-	auto *inventoryData = GetEngineData(INV);
-	assert(inventoryData);
+	if (g_nancy->getGameType() >= kGameTypeNancy13)
+		g_nancy->_resource->loadImage(uiCursorsImageName, _uiCursorsSurface);
 
-	g_nancy->_resource->loadImage(inventoryData->inventoryCursorsImageName, _invCursorsSurface);
+	g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
 	setCursor(kNormalArrow, -1);
 	showCursor(false);
@@ -109,7 +132,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		return;
 	}
 
-	Nancy::GameType gameType = g_nancy->getGameType();
+	GameType gameType = g_nancy->getGameType();
 
 	if (type == _curCursorType && itemID == _curItemID) {
 		return;
@@ -127,15 +150,15 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	// value of the CursorType enum.
 	switch (type) {
 	case kNormalArrow:
-		_curCursorID = _numCursorTypes;
+		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewNormalArrow: _numCursorTypes;
 		return;
 	case kHotspotArrow:
-		_curCursorID = _numCursorTypes + 1;
+		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewHotspotArrow : _numCursorTypes + 1;
 		return;
 	case kInvertedRotateLeft:
 		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = kInvertedRotateLeft;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewInvertedRotateLeft : kInvertedRotateLeft;
 			return;
 		}
 
@@ -143,7 +166,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kRotateLeft:
 		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = kRotateLeft;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateLeft : kRotateLeft;
 			return;
 		}
 
@@ -151,7 +174,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kMoveLeft:
 		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
-			_curCursorID = kMoveLeft;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveLeft : kMoveLeft;
 			return;
 		} else {
 			type = kMove;
@@ -161,7 +184,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kInvertedRotateRight:
 		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = kInvertedRotateRight;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewInvertedRotateRight : kInvertedRotateRight;
 			return;
 		}
 
@@ -169,7 +192,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kRotateRight:
 		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = kRotateRight;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateRight : kRotateRight;
 			return;
 		}
 
@@ -177,7 +200,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kMoveRight:
 		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
-			_curCursorID = kMoveRight;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveRight : kMoveRight;
 			return;
 		} else {
 			type = kMove;
@@ -187,7 +210,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kMoveUp:
 		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = kMoveUp;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveUp : kMoveUp;
 			return;
 		} else {
 			type = kMove;
@@ -197,7 +220,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kMoveDown:
 		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = kMoveDown;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveDown : kMoveDown;
 			return;
 		} else {
 			type = kMove;
@@ -207,7 +230,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kMoveForward:
 		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = kMoveForward;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveForward : kMoveForward;
 			return;
 		} else {
 			type = kHotspot;
@@ -217,7 +240,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kMoveBackward:
 		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = kMoveBackward;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveBackward : kMoveBackward;
 			return;
 		} else {
 			type = kHotspot;
@@ -227,16 +250,16 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kExit:
 		// Not valid in TVD
 		if (gameType != kGameTypeVampire) {
-			_curCursorID = 3;
+			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewExit : kExit;
 			return;
 		}
 
 		break;
 	case kRotateCW:
-		_curCursorID = kRotateCW;
+		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateCW : kRotateCW;
 		return;
 	case kRotateCCW:
-		_curCursorID = kRotateCCW;
+		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateCCW : kRotateCCW;
 		return;
 	default:
 		break;
@@ -275,12 +298,10 @@ void CursorManager::applyCursor() {
 		Common::Rect bounds = _cursors[_curCursorID].bounds;
 		Common::Point hotspot = _cursors[_curCursorID].hotspot;
 
-		if (_hasItem) {
+		if (_hasItem)
 			surf = &_invCursorsSurface;
-
-		} else {
-			surf = &g_nancy->_graphics->_object0;
-		}
+		else
+			surf = g_nancy->getGameType() <= kGameTypeNancy12 ? &g_nancy->_graphics->_object0 : &_uiCursorsSurface;
 
 		Graphics::ManagedSurface temp(*surf, bounds);
 

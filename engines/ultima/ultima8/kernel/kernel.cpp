@@ -23,16 +23,13 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/set.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 Kernel *Kernel::_kernel = nullptr;
-
-const uint32 Kernel::TICKS_PER_FRAME = 2;
-const uint32 Kernel::TICKS_PER_SECOND = 60;
-const uint32 Kernel::FRAMES_PER_SECOND = Kernel::TICKS_PER_SECOND / Kernel::TICKS_PER_FRAME;
 
 // A special proc type which means "all"
 const uint16 Kernel::PROC_TYPE_ALL = 6;
@@ -390,11 +387,10 @@ void Kernel::save(Common::WriteStream *ws) {
 	_pIDs->save(ws);
 	ws->writeUint32LE(_processes.size());
 	for (auto *p : _processes) {
-		const Std::string & classname = p->GetClassType()._className; // virtual
+		const Common::String & classname = p->GetClassType()._className; // virtual
 		assert(classname.size());
 
-		Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
-		iter = _processLoaders.find(classname);
+		auto iter = _processLoaders.find(classname);
 
 		if (iter == _processLoaders.end()) {
 			error("Process class cannot save without registered loader: %s", classname.c_str());
@@ -420,7 +416,7 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 	}
 
 	// Integrity check for processes
-	Std::set<ProcId> procs;
+	Set<ProcId> procs;
 	for (const auto *p : _processes) {
 		if (!_pIDs->isIDUsed(p->getPid())) {
 			warning("Process id %d exists but not marked used.  Corrupt save?", p->getPid());
@@ -454,11 +450,10 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
-	Std::string classname = buf;
+	Common::String classname = buf;
 	delete[] buf;
 
-	Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
-	iter = _processLoaders.find(classname);
+	const auto iter = _processLoaders.find(classname);
 
 	if (iter == _processLoaders.end()) {
 		warning("Unknown Process class: %s", classname.c_str());

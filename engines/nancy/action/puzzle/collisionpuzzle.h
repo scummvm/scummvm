@@ -49,6 +49,8 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	// numbers 1-5 are home IDs, 0 is empty cell
 	enum WallType { kWallLeft = 6, kWallUp = 7, kWallDown = 8, kWallRight = 9, kBlock = 10 };
@@ -58,16 +60,16 @@ protected:
 		Piece() : RenderObject(9) {}
 		virtual ~Piece() {}
 
+		Piece(Piece &&) = default;
+
 		Common::Point _gridPos;
 		uint _w = 1;
 		uint _h = 1;
 
-	protected:
 		bool isViewportRelative() const override { return true; }
 	};
 
 	Common::String getRecordTypeName() const override { return _puzzleType == kCollision ? "CollisionPuzzle" : "TileMovePuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	Common::Point movePiece(uint pieceID, WallType direction);
 	Common::Rect getScreenPosition(Common::Point gridPos);

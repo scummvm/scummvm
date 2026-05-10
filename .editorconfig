@@ -11,3 +11,6 @@ end_of_line = crlf
 
 [*.lingo]
 charset = macroman
+
+[*.md]
+trim_trailing_whitespace = false

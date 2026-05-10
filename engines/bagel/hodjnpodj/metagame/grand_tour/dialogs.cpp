@@ -43,7 +43,7 @@ BEGIN_MESSAGE_MAP(CTop10Dlg, CBmpDialog)
 END_MESSAGE_MAP()
 
 CTop10Dlg::CTop10Dlg(CWnd *pParent, CPalette *pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_TOP10_SCROLL, ".\\ART\\MLSCROLL.BMP", -1, -1, false) {
+	: CBmpDialog(pParent, pPalette, IDD_TOP10_SCROLL, "art\\MLSCROLL.BMP", -1, -1, false) {
 	// Inits
 	m_pOKButton = NULL;
 	pTop10Palette = pPalette;

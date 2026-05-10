@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section9/room918.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -235,7 +236,7 @@ void Room918::daemon() {
 		digi_unload("950_s48f");
 		digi_unload("950_s48a");
 		digi_unload("950_s47");
-		_G(game).new_room = 917;
+		_G(game).setRoom(917);
 		break;
 	default:
 		break;

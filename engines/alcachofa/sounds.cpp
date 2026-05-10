@@ -30,6 +30,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/mp3.h"
 
 using namespace Common;
 using namespace Audio;
@@ -81,8 +82,47 @@ void Sounds::update() {
 	}
 }
 
+class XORReadStream final : public SeekableReadStream {
+public:
+	XORReadStream(SeekableReadStream *parent, byte key, DisposeAfterUse::Flag disposeAfterUse)
+		: _parent(parent, disposeAfterUse)
+		, _key(key) {}
+
+	uint32 read(void *dataPtr, uint32 maxSize) override {
+		uint32 size = _parent->read(dataPtr, maxSize);
+		byte *bytePtr = (byte *)dataPtr;
+		for (uint32 i = 0; i < size; i++)
+			*(bytePtr++) ^= _key;
+		return size;
+	}
+
+	bool eos() const override {
+		return _parent->eos();
+	}
+
+	int64 pos() const override {
+		return _parent->pos();
+	}
+
+	int64 size() const override {
+		return _parent->size();
+	}
+
+	bool seek(int64 offset, int whence) override {
+		return _parent->seek(offset, whence);
+	}
+
+private:
+	DisposablePtr<SeekableReadStream> _parent;
+	const byte _key;
+};
+
 static AudioStream *loadSND(File *file) {
-	// SND files are just WAV files with removed headers
+	// in V2 SND files are raw U8 PCM in mono 22100 encrypted with XOR
+	if (g_engine->isV2())
+		return makeRawStream(new XORReadStream(file, 0x55, DisposeAfterUse::YES), 22100, FLAG_UNSIGNED);
+
+	// in V1/V3 SND files are just WAV files with removed headers
 	const uint32 endOfFormat = file->readUint32LE() + 2 * sizeof(uint32);
 	if (endOfFormat < 24)
 		error("Invalid SND format size");
@@ -112,26 +152,42 @@ static AudioStream *loadSND(File *file) {
 	}
 }
 
-static AudioStream *openAudio(const char *fileName) {
-	String path = String::format("Sonidos/%s.SND", fileName);
+static AudioStream *openAudio(const String &basePath) {
 	File *file = new File();
+	if (file->open(basePath.c_str())) // only very rarely the basePath already has the extension
+		return makeWAVStream(file, DisposeAfterUse::YES);
+
+	String path = basePath + ".SND";
 	if (file->open(path.c_str()))
 		return file->size() == 0 // Movie Adventure has some null-size audio files, they are treated like infinite silence
 			? makeSilentAudioStream(8000, false) 
 			: loadSND(file);
+
 	path.setChar('W', path.size() - 3);
 	path.setChar('A', path.size() - 2);
 	path.setChar('V', path.size() - 1);
 	if (file->open(path.c_str()))
 		return makeWAVStream(file, DisposeAfterUse::YES);
-	delete file;
 
-	g_engine->game().missingSound(fileName);
+	// Steam releases of V2 games use mp3 files
+	path.setChar('M', path.size() - 3);
+	path.setChar('P', path.size() - 2);
+	path.setChar('3', path.size() - 1);
+	if (file->open(path.c_str())) {
+#ifdef USE_MAD
+		return makeMP3Stream(file, DisposeAfterUse::YES);
+#else
+		return nullptr;
+#endif
+	}
+
+	delete file;
+	g_engine->game().missingSound(basePath);
 	return nullptr;
 }
 
-SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::SoundType type) {
-	AudioStream *stream = openAudio(fileName);
+SoundHandle Sounds::playSoundInternal(const String &path, byte volume, Mixer::SoundType type) {
+	AudioStream *stream = openAudio(path);
 	if (stream == nullptr && (type == Mixer::kSpeechSoundType || type == Mixer::kMusicSoundType)) {
 		/* If voice files are missing, the player could still read the subtitle
 		 * For this we return infinite silent audio which the user has to skip
@@ -199,12 +255,14 @@ SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::
 
 SoundHandle Sounds::playVoice(const String &fileName, byte volume) {
 	debugC(1, kDebugSounds, "Play voice: %s at %d", fileName.c_str(), (int)volume);
-	return playSoundInternal(fileName.c_str(), volume, Mixer::kSpeechSoundType);
+	auto path = g_engine->game().getSoundPath(fileName.c_str());
+	return playSoundInternal(path.c_str(), volume, Mixer::kSpeechSoundType);
 }
 
 SoundHandle Sounds::playSFX(const String &fileName, byte volume) {
 	debugC(1, kDebugSounds, "Play SFX: %s at %d", fileName.c_str(), (int)volume);
-	return playSoundInternal(fileName.c_str(), volume, Mixer::kSFXSoundType);
+	auto path = g_engine->game().getSoundPath(fileName.c_str());
+	return playSoundInternal(path.c_str(), volume, Mixer::kSFXSoundType);
 }
 
 void Sounds::stopAll() {
@@ -305,10 +363,10 @@ void Sounds::startMusic(int musicId) {
 	debugC(2, kDebugSounds, "startMusic %d", musicId);
 	assert(musicId >= 0);
 	fadeMusic();
-	constexpr size_t kBufferSize = 16;
-	char filenameBuffer[kBufferSize];
-	snprintf(filenameBuffer, kBufferSize, "T%d", musicId);
-	_musicSoundID = playSoundInternal(filenameBuffer, Mixer::kMaxChannelVolume, Mixer::kMusicSoundType);
+	if (musicId == 0)
+		return;
+	auto path = g_engine->game().getMusicPath(musicId);
+	_musicSoundID = playSoundInternal(path, Mixer::kMaxChannelVolume, Mixer::kMusicSoundType);
 	_isMusicPlaying = true;
 	_nextMusicID = musicId;
 }

@@ -53,10 +53,11 @@ protected:
 		Piece(uint z) : RenderObject(z) {}
 		virtual ~Piece() {}
 
+		Piece(Piece &&) = default;
+
 		Common::Point _gridPos;
 		Common::Point _lastPos;
 
-	protected:
 		bool isViewportRelative() const override { return true; }
 	};
 

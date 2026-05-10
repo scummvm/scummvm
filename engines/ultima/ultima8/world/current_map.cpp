@@ -19,9 +19,10 @@
  *
  */
 
-#include "ultima/ultima.h"
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/world/current_map.h"
+
+#include "common/stream.h"
+#include "ultima/ultima.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/world.h"
@@ -46,7 +47,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::list<Item *> item_list;
+typedef Common::List<Item *> item_list;
 
 const int INT_MAX_VALUE = 0x7fffffff;
 const int INT_MIN_VALUE = -INT_MAX_VALUE - 1;
@@ -156,7 +157,7 @@ void CurrentMap::writeback() {
 	_eggHatcher = 0;
 }
 
-void CurrentMap::loadItems(const Std::list<Item *> &itemlist, bool callCacheIn) {
+void CurrentMap::loadItems(const Common::List<Item *> &itemlist, bool callCacheIn) {
 	for (auto *item : itemlist) {
 		item->assignObjId();
 
@@ -513,7 +514,7 @@ void CurrentMap::setChunkFast(int32 cx, int32 cy) {
 void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	_fast[cy][cx / 32] &= ~(1 << (cx & 31));
 
-	item_list::iterator iter = _items[cx][cy].begin();
+	auto iter = _items[cx][cy].begin();
 	while (iter != _items[cx][cy].end()) {
 		Item *item = *iter;
 		++iter;
@@ -673,7 +674,7 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 	return nullptr;
 }
 
-const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
+const Common::List<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
 	if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
 		return nullptr;
 	return &_items[gx][gy];
@@ -952,7 +953,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 						   const int32 dims[3], uint32 shapeflags,
 						   ObjId item, bool blocking_only,
-						   Std::list<SweepItem> *hit) const {
+						   Common::List<SweepItem> *hit) const {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND);
 
 	int minx = ((start.x - dims[0]) / _mapChunkSize) - 1;
@@ -1000,8 +1001,9 @@ bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 		   vel[0] - ext[0], vel[1] - ext[1], vel[2] - ext[2],
 		   vel[0] + ext[0], vel[1] + ext[1], vel[2] + ext[2]);
 
-	Std::list<SweepItem>::iterator sw_it;
-	if (hit) sw_it = hit->end();
+	Common::List<SweepItem>::iterator sw_it;
+	if (hit)
+		sw_it = hit->end();
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {

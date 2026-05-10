@@ -68,7 +68,7 @@ public:
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _flagsOnTrigger;
 
-	Nancy::SoundDescription _sound;
+	SoundDescription _sound;
 
 	// Describes a single frame in this animation
 	Common::Array<Common::Rect> _srcRects;
@@ -82,10 +82,11 @@ public:
 	bool _isInterruptible;
 	bool _usesAutotext;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override;
 
 	Graphics::ManagedSurface _fullSurface;
 };

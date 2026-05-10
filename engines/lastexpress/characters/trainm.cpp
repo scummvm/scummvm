@@ -2750,11 +2750,9 @@ void LogicManager::HAND_TrainM_InCharge(HAND_PARAMS) {
 	case 18:
 		switch (getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8]) {
 		case 1:
+			startCycOtis(kCharacterTrainM, "620E");
+			// fall through
 		case 2:
-			if (msg->action == 1) {
-				startCycOtis(kCharacterTrainM, "620E");
-			}
-
 			if (whoRunningDialog(kCharacterTrainM)) {
 				getCharacter(kCharacterTrainM).callbacks[getCharacter(kCharacterTrainM).currentCall + 8] = 2;
 				TrainMCall(&LogicManager::CONS_TrainM_DoWait, 225, 0, 0, 0);

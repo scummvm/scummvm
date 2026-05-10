@@ -40,6 +40,7 @@
 #include "backends/platform/android/jni-android.h"
 #include "backends/fs/android/android-fs-factory.h"
 #include "backends/fs/android/android-saf-fs.h"
+#include "backends/graphics/android/android-graphics.h"
 
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
@@ -74,6 +75,7 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
+	GUI::CheckboxWidget *_ignoreGameSafeAreaCheckbox;
 	GUI::StaticTextWidget *_preferredTouchModeDesc;
 	GUI::StaticTextWidget *_preferredTMMenusDesc;
 	GUI::PopUpWidget *_preferredTMMenusPopUp;
@@ -133,6 +135,7 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);;
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
+	_ignoreGameSafeAreaCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.IgnoreGameSafeArea", _("Ignore safe areas in-game"));
 	_preferredTouchModeDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.PreferredTouchModeText", _("Choose the preferred touch mode:"));
 	if (inAppDomain) {
 		_preferredTMMenusDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.TMMenusText", _("In menus"));
@@ -208,6 +211,7 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
+	            .addWidget("IgnoreGameSafeArea", "Checkbox")
 	            .addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
 
 	if (inAppDomain) {
@@ -360,6 +364,7 @@ void AndroidOptionsWidget::load() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
+	_ignoreGameSafeAreaCheckbox->setState(ConfMan.getBool("ignore_game_safe_area", _domain));
 
 	// When in application domain, we don't have default entry so we must have a value
 	if (inAppDomain) {
@@ -415,6 +420,7 @@ bool AndroidOptionsWidget::save() {
 
 	if (_enabled) {
 		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
+		ConfMan.setBool("ignore_game_safe_area", _ignoreGameSafeAreaCheckbox->getState(), _domain);
 
 		if (inAppDomain) {
 			saveTouchMode("touch_mode_menus", _preferredTMMenusPopUp->getSelectedTag());
@@ -428,6 +434,7 @@ bool AndroidOptionsWidget::save() {
 		saveOrientation("orientation_games", _orientationGamesPopUp->getSelectedTag());
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
+		ConfMan.removeKey("ignore_game_safe_area", _domain);
 
 		if (inAppDomain) {
 			ConfMan.removeKey("touch_mode_menus", _domain);
@@ -446,6 +453,7 @@ bool AndroidOptionsWidget::save() {
 
 bool AndroidOptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
+	       ConfMan.hasKey("ignore_game_safe_area", _domain) ||
 	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("touch_mode_menus", _domain)) ||
 	       ConfMan.hasKey("touch_mode_2d_games", _domain) ||
 	       ConfMan.hasKey("touch_mode_3d_games", _domain) ||
@@ -459,6 +467,7 @@ void AndroidOptionsWidget::setEnabled(bool e) {
 	_enabled = e;
 
 	_onscreenCheckbox->setEnabled(e);
+	_ignoreGameSafeAreaCheckbox->setEnabled(e);
 
 	if (inAppDomain) {
 		_preferredTMMenusDesc->setEnabled(e);
@@ -483,6 +492,7 @@ GUI::OptionsContainerWidget *OSystem_Android::buildBackendOptionsWidget(GUI::Gui
 
 void OSystem_Android::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("onscreen_control", true);
+	ConfMan.registerDefault("ignore_game_safe_area", false);
 	ConfMan.registerDefault("touch_mode_menus", "mouse");
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
 	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
@@ -543,6 +553,9 @@ void OSystem_Android::applyOrientationSettings() {
 
 void OSystem_Android::applyBackendSettings() {
 	updateOnScreenControls();
+	if (_graphicsManager) {
+		dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->setIgnoreGameSafeArea(ConfMan.getBool("ignore_game_safe_area"));
+	}
 }
 
 SAFRemoveDialog::SAFRemoveDialog() : GUI::Dialog("SAFBrowser") {

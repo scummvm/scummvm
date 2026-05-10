@@ -71,7 +71,7 @@ void onImGuiRender() {
 	if (_state->_engine->shouldQuit() || _state->_engine->_exitFromMenuButton)
 		return;
 
-	if (!debugChannelSet(-1, kDebugConsole)) {
+	if (!debugChannelSet(-1, kDebugImGui)) {
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
 		return;
 	}
@@ -519,7 +519,6 @@ void LogicManager::renderCurrentSceneDebugger() {
 
 			// Draw collision lines...
 			Line7 *currentLine = currentLink->lineList;
-			int lineIndex = 0;
 			while (currentLine) {
 				ImU32 lineColor = IM_COL32(0, 255, 255, 255);
 
@@ -580,7 +579,6 @@ void LogicManager::renderCurrentSceneDebugger() {
 				}
 
 				currentLine = currentLine->next;
-				lineIndex++;
 			}
 
 			currentLink = currentLink->next;

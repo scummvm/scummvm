@@ -131,12 +131,12 @@ int Net::hostGame(char *sessionName, char *userName) {
 			_userIdToPeerIndex[_myUserId] = -1;
 			return 1;
 		} else {
-			_vm->displayMessage(0, "Error Adding User \"%s\" to Session \"%s\"", userName, sessionName);
+			_vm->displayMessage("Error Adding User \"%s\" to Session \"%s\"", userName, sessionName);
 			endSession();
 			closeProvider();
 		}
 	} else {
-		_vm->displayMessage(0, "Error creating session \"%s\"", userName );
+		_vm->displayMessage("Error creating session \"%s\"", userName );
 
 		closeProvider();
 	}
@@ -453,7 +453,7 @@ int Net::doJoinSession(Session session) {
 					return true;
 			}
 		}
-		_vm->displayMessage(0, "Unable to join game session with address \"%s:%d\"", session.host.c_str(), session.port);
+		_vm->displayMessage("Unable to join game session with address \"%s:%d\"", session.host.c_str(), session.port);
 		return false;
 	}
 
@@ -768,7 +768,7 @@ bool Net::initProvider() {
 		return true;
 	_enet = new Networking::ENet::ENet();
 	if (!_enet->initialize()) {
-		_vm->displayMessage(0, "Unable to initialize ENet library.");
+		_vm->displayMessage("Unable to initialize ENet library.");
 		Net::closeProvider();
 		return false;
 	}
@@ -1243,7 +1243,7 @@ void Net::remoteReceiveData() {
 			if (_gameName == "moonbase") {
 				// TODO: Host migration
 				if (!_isHost && _vm->_currentRoom == 2) {
-					_vm->displayMessage(0, "You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
+					_vm->displayMessage("You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
 					_vm->VAR(253) = 26; // gGameMode = GAME-OVER
 					_vm->runScript(2104, 1, 0, 0); // leave-game
 				}
@@ -1404,7 +1404,7 @@ void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 				if (paramsArray[0]->asIntegerNumber() == 145 && _fromUserId == 1) {
 					if (!_isHost && _vm->_currentRoom == 2) {
 						// TODO: Host migration
-						_vm->displayMessage(0, "You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
+						_vm->displayMessage("You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
 						_vm->VAR(253) = 26; // GAME-OVER
 						_vm->runScript(2104, 1, 0, 0); // leave-game
 						return;

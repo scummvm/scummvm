@@ -40,59 +40,213 @@ void AngleTossPuzzle::init() {
 	setVisible(true);
 	moveTo(screenBounds);
 
-	// TODO
-}
+	g_nancy->_resource->loadImage(_imageName, _image);
+	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
-void AngleTossPuzzle::execute() {
-	if (_state == kBegin) {
-		init();
-		registerGraphics();
-		_state = kRun;
-	}
-
-	// TODO
-	// Stub - return to the winning screen
-	warning("STUB - Nancy 8 Squid Toss game");
-	SceneChangeDescription scene;
-	scene.sceneID = 4465;
-	NancySceneState.resetStateToInit();
-	NancySceneState.changeScene(scene);
+	// Draw the initial angle and power indicators.
+	// The throw button sprite is NOT drawn here — the static background already shows the
+	// idle button state. The sprite (data+0x4d) is the launched/pressed overlay, drawn
+	// only when LAUNCH is clicked (mirroring the DAT_0059bfbd conditional in FUN_0044b1fa).
+	_drawSurface.blitFrom(_image, _angleSprites[_curAngle], _angleDisplay);
+	_drawSurface.blitFrom(_image, _powerSprites[_curPower], _powerDisplay);
 }
 
 void AngleTossPuzzle::readData(Common::SeekableReadStream &stream) {
-	Common::Path tmp;
-	readFilename(stream, tmp);
-	stream.skip(12);	// TODO
+	readFilename(stream, _imageName);
 
-	for (uint i = 0; i < 22; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
+	// data+0x21..0x2c: 6 × uint16.
+	// _initialPower/_initialAngle: starting player position (copied to object+0x24/0x26 in original).
+	// _numPowers/_numAngles: UI control bounds.
+	// _targetPower/_targetAngle: the correct answer for this round (compared in FUN_0044a6be).
+	_initialPower = stream.readUint16LE();
+	_initialAngle = stream.readUint16LE();
+	_numPowers    = stream.readUint16LE();
+	_numAngles    = stream.readUint16LE();
+	_targetPower  = stream.readUint16LE();
+	_targetAngle  = stream.readUint16LE();
 
-		/*
-		Common::String desc = Common::String::format("AngleTossPuzzle rect %d", i);
-		debug("%s %d, %d, %d, %d", desc.c_str(), r.left, r.top, r.right, r.bottom);
+	// 22 rects — see header for full mapping.
+	readRect(stream, _throwHotspot);					// Rect  0 — data+0x2d
+	readRect(stream, _throwDisplay);					// Rect  1 — data+0x3d
+	readRect(stream, _throwSprite);					// Rect  2 — data+0x4d
+	readRect(stream, _aimLeftHotspot);				// Rect  3 — data+0x5d
+	readRect(stream, _aimRightHotspot);				// Rect  4 — data+0x6d
+	readRect(stream, _angleDisplay);					// Rect  5 — data+0x7d
+	readRectArray(stream, _angleSprites, 5);		// Rects 6-10 — data+0x8d
+	readRect(stream, _powerDisplay);					// Rect 11 — data+0xdd
+	readRectArray(stream, _powerHotspots, 5);		// Rects 12-16 — data+0xed
+	readRectArray(stream, _powerSprites, 5);		// Rects 17-21 — data+0x13d
 
-		Graphics::Surface *s = g_system->lockScreen();
-		s->fillRect(r, 255);
-		g_system->unlockScreen();
-		g_system->updateScreen();
-		g_system->delayMillis(1000);
-		*/
+	_powerSound.readNormal(stream);		// data+0x18d
+	_squeakSound.readNormal(stream);	// data+0x1be
+	_chainSound.readNormal(stream);		// data+0x1ef
+
+	_throwSquidScene.readData(stream);	// data+0x220, ends at data+0x238
+
+	// HACK: We've skipped some of the flag data at this point,
+	// so go back to read them correctly
+	_throwSquidScene._flag.label = kEvNoEvent;
+	_throwSquidScene._flag.flag = 0;
+	stream.seek(-3, SEEK_CUR);
+
+	_powerTooStrongFlag = stream.readSint16LE();
+	_powerTooWeakFlag = stream.readSint16LE();
+	_angleTooLeftFlag = stream.readSint16LE();
+	_angleTooRightFlag = stream.readSint16LE();
+	_winFlag = stream.readSint16LE();
+
+	_exitScene.readData(stream);		// data+0x240
+	readRect(stream, _exitHotspot);		// data+0x259
+}
+
+void AngleTossPuzzle::execute() {
+	switch (_state) {
+	case kBegin:
+		// Restore the player selection to the starting position for this round.
+		_curPower = _initialPower;
+		_curAngle = _initialAngle;
+
+		init();
+		registerGraphics();
+
+		g_nancy->_sound->loadSound(_powerSound);
+		g_nancy->_sound->loadSound(_squeakSound);
+		g_nancy->_sound->loadSound(_chainSound);
+
+		// FUN_0044a526: clear all result/hint flags before the player starts.
+		NancySceneState.setEventFlag(_powerTooStrongFlag, g_nancy->_false);
+		NancySceneState.setEventFlag(_powerTooWeakFlag, g_nancy->_false);
+		NancySceneState.setEventFlag(_angleTooLeftFlag, g_nancy->_false);
+		NancySceneState.setEventFlag(_angleTooRightFlag, g_nancy->_false);
+		NancySceneState.setEventFlag(_winFlag, g_nancy->_false);
+
+		_state = kRun;
+		break;
+
+	case kRun:
+		// Wait for the chain sound to finish, then evaluate the throw (FUN_0044a6be)
+		// and always transition to _throwSquidScene so the animation plays.
+		if (_isThrown && !g_nancy->_sound->isSoundPlaying(_chainSound)) {
+			_isThrown = false;
+
+			// FUN_0044a6be: set exactly one result flag based on how accurate the throw was.
+			// The animation scene reads these flags to decide what to show.
+			if (_curPower == _targetPower && _curAngle == _targetAngle) {
+				// Exact match of power and angle — player wins round!
+				NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
+			} else if (_curPower > _targetPower) {
+				// Power too strong
+				NancySceneState.setEventFlag(_powerTooStrongFlag, g_nancy->_true);
+			} else if (_curPower < _targetPower) {
+				// Power too weak
+				NancySceneState.setEventFlag(_powerTooWeakFlag, g_nancy->_true);
+			} else if (_curAngle > _targetAngle) {
+				// Angle too far right
+				NancySceneState.setEventFlag(_angleTooRightFlag, g_nancy->_true);
+			} else if (_curAngle < _targetAngle) {
+				// Angle too far left
+				NancySceneState.setEventFlag(_angleTooLeftFlag, g_nancy->_true);
+			}
+
+			_state = kActionTrigger;
+		}
+		break;
+
+	case kActionTrigger:
+		g_nancy->_sound->stopSound(_powerSound);
+		g_nancy->_sound->stopSound(_squeakSound);
+		g_nancy->_sound->stopSound(_chainSound);
+
+		if (_exitPressed) {
+			_exitScene.execute();
+		} else {
+			_throwSquidScene.execute();
+		}
+
+		finishExecution();
+		break;
 	}
-
-	_powerSound.readNormal(stream);
-	_squeakSound.readNormal(stream);
-	_chainSound.readNormal(stream);
-
-	_throwSquidScene.readData(stream);
-	stream.skip(7); // TODO
-	_exitScene.readData(stream);
-
-	stream.skip(16); // TODO
 }
 
 void AngleTossPuzzle::handleInput(NancyInput &input) {
-	// TODO
+	if (_state != kRun || _isThrown) {
+		return;
+	}
+
+	// All rects are in viewport-local coordinates.
+	Common::Point localMousePos = input.mousePos;
+	Common::Rect vpPos = NancySceneState.getViewport().getScreenPosition();
+	localMousePos -= Common::Point(vpPos.left, vpPos.top);
+
+	// Exit button
+	if (_exitHotspot.contains(localMousePos)) {
+		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			_exitPressed = true;
+			_state = kActionTrigger;
+		}
+		return;
+	}
+
+	// Aim left arrow — always show hotspot cursor; only act when not already at min
+	if (_aimLeftHotspot.contains(localMousePos)) {
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+		if (_curAngle > 0 && (input.input & NancyInput::kLeftMouseButtonUp)) {
+			--_curAngle;
+			_drawSurface.fillRect(_angleDisplay, _drawSurface.getTransparentColor());
+			_drawSurface.blitFrom(_image, _angleSprites[_curAngle], _angleDisplay);
+			g_nancy->_sound->playSound(_squeakSound);
+			_needsRedraw = true;
+		}
+		return;
+	}
+
+	// Aim right arrow — always show hotspot cursor; only act when not already at max
+	if (_aimRightHotspot.contains(localMousePos)) {
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+		if (_curAngle + 1 < _numAngles && (input.input & NancyInput::kLeftMouseButtonUp)) {
+			++_curAngle;
+			_drawSurface.fillRect(_angleDisplay, _drawSurface.getTransparentColor());
+			_drawSurface.blitFrom(_image, _angleSprites[_curAngle], _angleDisplay);
+			g_nancy->_sound->playSound(_squeakSound);
+			_needsRedraw = true;
+		}
+		return;
+	}
+
+	// Power-level buttons — direct selection (Whale = 0, Dolphin = 1, Trout = 2, Shrimp = 3, Fish Fry = 4)
+	for (uint i = 0; i < _powerHotspots.size(); ++i) {
+		if (_powerHotspots[i].contains(localMousePos)) {
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+			if ((input.input & NancyInput::kLeftMouseButtonUp) && _curPower != i) {
+				_curPower = i;
+				_drawSurface.fillRect(_powerDisplay, _drawSurface.getTransparentColor());
+				_drawSurface.blitFrom(_image, _powerSprites[_curPower], _powerDisplay);
+				g_nancy->_sound->playSound(_powerSound);
+				_needsRedraw = true;
+			}
+			return;
+		}
+	}
+
+	// LAUNCH button — hotspot is rect 0 (_throwHotspot), sprite is drawn at rect 1 (_throwDisplay)
+	if (_throwHotspot.contains(localMousePos)) {
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			g_nancy->_sound->playSound(_chainSound);
+			_isThrown = true;
+
+			// Show the launched/pressed overlay sprite (DAT_0059bfbd != 0 path in FUN_0044b1fa).
+			_drawSurface.blitFrom(_image, _throwSprite, _throwDisplay);
+			_needsRedraw = true;
+		}
+		return;
+	}
 }
 
 } // End of namespace Action

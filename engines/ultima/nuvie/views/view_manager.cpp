@@ -407,7 +407,7 @@ void ViewManager::open_sign_gump(const char *sign_text, uint16 length) {
 void ViewManager::open_scroll_gump(const char *text, uint16 length) {
 	if (Game::get_game()->is_using_text_gumps()) { // check should be useless
 		ScrollViewGump *view = new ScrollViewGump(config);
-		view->init(Game::get_game()->get_screen(), this, font, party, tile_manager, obj_manager, string(text, length));
+		view->init(Game::get_game()->get_screen(), this, font, party, tile_manager, obj_manager, Common::String(text, length));
 		add_view((View *)view);
 		add_gump(view);
 		view->grab_focus();

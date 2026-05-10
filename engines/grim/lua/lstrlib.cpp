@@ -497,7 +497,7 @@ static struct luaL_reg strlib[] = {
 ** Open string library
 */
 void strlib_open() {
-	luaL_openlib(strlib, (sizeof(strlib) / sizeof(strlib[0])));
+	luaL_openlib(strlib, ARRAYSIZE(strlib));
 }
 
 } // end of namespace Grim

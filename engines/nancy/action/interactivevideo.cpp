@@ -87,7 +87,7 @@ void InteractiveVideo::execute() {
 
 		break;
 	case kRun:
-		if (_movieAR->_state == kActionTrigger || _movieAR->_isFinished) {
+		if (_movieAR->_state == kActionTrigger || _movieAR->getIsFinished()) {
 			_state = kActionTrigger;
 		}
 

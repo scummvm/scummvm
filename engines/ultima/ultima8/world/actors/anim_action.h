@@ -22,7 +22,7 @@
 #ifndef WORLD_ACTORS_ANIMACTION_H
 #define WORLD_ACTORS_ANIMACTION_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
 #include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
@@ -174,7 +174,7 @@ private:
 	uint32 _shapeNum;
 	uint32 _action;
 
-	Std::vector<AnimFrame> _frames[16]; // 8 or 16 directions
+	Common::Array<AnimFrame> _frames[16]; // 8 or 16 directions
 	unsigned int _size;
 	int _frameRepeat;
 	AnimActionFlags _flags;

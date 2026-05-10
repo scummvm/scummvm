@@ -22,6 +22,7 @@
 #ifndef PETKA_SCREEN_H
 #define PETKA_SCREEN_H
 
+#include "graphics/dirtyrects.h"
 #include "graphics/screen.h"
 
 namespace Petka {
@@ -46,7 +47,7 @@ public:
 
 	void setShake(bool shake);
 
-	const Common::List<Common::Rect> &rects() const;
+	const Graphics::DirtyRectList &rects() const;
 
 private:
 	PetkaEngine &_vm;

@@ -38,7 +38,7 @@ void HotSpotRec::clear() {
 	feet_x = feet_y = 0;
 	facing = 0;
 	active = false;
-	cursor_number = 0;
+	cursor_number = kArrowCursor;
 	syntax = 0;
 	vocabID = verbID = 0;
 	vocab = verb = prep = nullptr;
@@ -89,8 +89,6 @@ void hotspot_newPrep(HotSpotRec *h, const char *prep) {
 
 HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 	HotSpotRec *newSpot = (HotSpotRec *)mem_alloc(sizeof(HotSpotRec), STR_HOT_SPOT);
-	if (!newSpot)
-		return newSpot;
 
 	newSpot->ul_x = x1;
 	newSpot->ul_y = y1;
@@ -101,7 +99,7 @@ HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 	newSpot->verb = nullptr;
 	newSpot->prep = nullptr;
 	newSpot->syntax = 0;		// Unused field
-	newSpot->cursor_number = 0;
+	newSpot->cursor_number = kArrowCursor;
 	newSpot->facing = 5;
 	newSpot->feet_x = 32767;
 	newSpot->feet_y = 32767;
@@ -112,8 +110,6 @@ HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 
 HotSpotRec *hotspot_duplicate(HotSpotRec *dupMe) {
 	HotSpotRec *newSpot = (HotSpotRec *)mem_alloc(sizeof(HotSpotRec), STR_HOT_SPOT);
-	if (!newSpot)
-		return newSpot;
 
 	newSpot->ul_x = dupMe->ul_x;
 	newSpot->ul_y = dupMe->ul_y;
@@ -318,7 +314,7 @@ static HotSpotRec *saved_hotspots = nullptr;
 
 void hotspot_hide_all() {
 	if (saved_hotspots)
-		error_show(FL, 'HNST');
+		error_show(FL, "Cannot nest hotspots_hide_all()");
 
 	saved_hotspots = _G(currentSceneDef).hotspots;
 	_G(currentSceneDef).hotspots = nullptr;
@@ -326,7 +322,7 @@ void hotspot_hide_all() {
 
 void hotspot_restore_all() {
 	if (!saved_hotspots) {
-		error_show(FL, 'HNON');
+		error_show(FL, "No saved hotspots to restore");
 	}
 
 	if (_G(currentSceneDef).hotspots)

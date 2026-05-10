@@ -26,6 +26,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/endian.h"
 #include "common/punycode.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
@@ -35,7 +36,7 @@ namespace Scumm {
 #define ASC_DEVICE_RATE		0x56EE8BA3
 #define PCM_BUFFER_SIZE		1024
 
-class MacSndLoader{
+class MacSndLoader {
 protected:
 	MacSndLoader(bool useInstrTag);
 public:
@@ -203,7 +204,7 @@ bool LoomMacSndLoader::init() {
 }
 
 bool LoomMacSndLoader::checkResource(const byte *data, uint32 dataSize) const {
-	return (dataSize >= 14 && READ_BE_UINT16(data + 4) == 'so' && !READ_BE_UINT32(data + 10));
+	return (dataSize >= 14 && READ_BE_UINT16(data + 4) == MKTAG16('s','o') && !READ_BE_UINT32(data + 10));
 }
 
 bool LoomMacSndLoader::loadSound(const byte *data, uint32 dataSize) {

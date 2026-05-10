@@ -459,8 +459,15 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	bool canClick = true;
-	if ((_itemsStayDown || _puzzleType == kPiano) && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+	if (_itemsStayDown && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
 		canClick = false;
+	} else if (_puzzleType == kPiano) {
+		for (uint i = 0; i < _hotspots.size(); ++i) {
+			if (_downItems[i]) {
+				canClick = false;
+				break;
+			}
+		}
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
@@ -477,6 +484,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_checkButtonPressed = true;
+			g_nancy->_sound->loadSound(_pushDownSound);
 			g_nancy->_sound->playSound(_pushDownSound);
 			Common::Rect destRect = _checkButtonDest;
 			destRect.translate(-_screenPosition.left, -_screenPosition.top);
@@ -572,6 +580,7 @@ void OrderingPuzzle::pushDown(uint id) {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		g_nancy->_sound->playSound("BUOK");
 	} else {
+		g_nancy->_sound->loadSound(_pushDownSound);
 		g_nancy->_sound->playSound(_pushDownSound);
 	}
 
@@ -584,6 +593,7 @@ void OrderingPuzzle::pushDown(uint id) {
 }
 
 void OrderingPuzzle::setToSecondState(uint id) {
+	g_nancy->_sound->loadSound(_itemSound);
 	g_nancy->_sound->playSound(_itemSound);
 
 	_secondStateItems[id] = true;

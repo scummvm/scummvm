@@ -202,7 +202,9 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		bool shouldClear = true;
 		Channel *trailChannel = nullptr;
 		for (auto &j : _dirtyChannels) {
-			if (j->_visible && r == j->getBbox() && j->isTrail()) {
+			bool isHidden = false;
+			isHidden = j->_hideFromStage;
+			if (j->_visible && !isHidden && r == j->getBbox() && j->isTrail()) {
 				shouldClear = false;
 				trailChannel = j;
 				break;
@@ -226,6 +228,9 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 					if (pass == 1)
 						continue;
 				}
+
+				if (j->_hideFromStage)
+					continue;
 
 				if (j->_visible) {
 					if (j->hasSubChannels()) {
@@ -383,9 +388,10 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	pd.destRect = destRect;
 	pd.dst = blitTo;
 
+	CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
+
 	uint32 renderStartTime = 0;
 	if (debugChannelSet(8, kDebugImages)) {
-		CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
 		debugC(8, kDebugImages, "Window::inkBlitFrom(): updating %dx%d @ %d,%d -> %dx%d @ %d,%d, type: %s, cast: %s, ink: %d",
 				srcRect.width(), srcRect.height(), srcRect.left, srcRect.top,
 				destRect.width(), destRect.height(), destRect.left, destRect.top,
@@ -400,7 +406,6 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 		pd.inkBlitSurface(srcRect, channel->getMask());
 	} else {
 		if (debugChannelSet(4, kDebugImages)) {
-			CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
 			warning("Window::inkBlitFrom(): No source surface: spriteType: %d (%s), castType: %d (%s), castId: %s",
 				channel->_sprite->_spriteType, spriteType2str(channel->_sprite->_spriteType), castType, castType2str(castType),
 				channel->_sprite->_castId.asString().c_str());
@@ -413,6 +418,10 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 }
 
 Common::Point Window::getMousePos() {
+	if (Director::DT::isMouseInputIgnored() && _currentMovie) {
+		return _currentMovie->_lastMousePos;
+	}
+
 	Common::Rect innerDims = _window->getInnerDimensions();
 	return g_system->getEventManager()->getMousePos() - Common::Point(innerDims.left, innerDims.top);
 }
@@ -594,8 +603,8 @@ bool Window::step() {
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
 		// attempt to thaw the lingo play state, if required
 		// For movie switches, we want to run it in the context of the new movie.
-		if (_nextMovie.movie.empty())
-			_currentMovie->getScore()->processFrozenPlayScript();
+		if (_nextMovie.movie.empty() && getLingoPlayState())
+			requeueLingoPlayState();
 		debugC(5, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		debugC(5, kDebugEvents, "@@@@   Finishing movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 		debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
@@ -722,9 +731,12 @@ Common::Path Window::getSharedCastPath() {
 
 	Common::Path result;
 	for (uint i = 0; i < namesToTry.size(); i++) {
-		result = findMoviePath(namesToTry[i]);
-		if (!result.empty())
+		debugC(2, kDebugPaths, "getSharedCastPath(): trying '%s'", namesToTry[i].c_str());
+		result = findMoviePath(namesToTry[i], true, true, _currentPath);
+		if (!result.empty()) {
+			debugC(2, kDebugPaths, "getSharedCastPath(): found '%s'", result.toString().c_str());
 			return result;
+		}
 	}
 
 	return result;
@@ -751,6 +763,12 @@ void Window::thawLingoState() {
 	_frozenLingoStates.pop_back();
 }
 
+// When "play frame x" or "play frame movie" is called, something special happens.
+// The current Lingo state is frozen, in a different buffer to the normal frozen states.
+// That state is resumed if the Score play head reaches the end of the movie, or "play done"
+// is called. At that point, the current Lingo execution state is obliterated, and the
+// play state is introduced as the very first frozen state to process.
+
 void Window::freezeLingoPlayState() {
 	if (_lingoPlayState) {
 		warning("FIXME: Just clobbered the play state");
@@ -761,18 +779,12 @@ void Window::freezeLingoPlayState() {
 	debugC(3, kDebugLingoExec, "Freezing Lingo play state");
 }
 
-bool Window::thawLingoPlayState() {
+bool Window::requeueLingoPlayState() {
 	if (!_lingoPlayState) {
-		warning("Tried to thaw when there's no frozen play state, ignoring");
+		warning("Tried to requeue when there's no frozen play state, ignoring");
 		return false;
 	}
-	if (!_lingoState->callstack.empty()) {
-		warning("Can't thaw a Lingo state in mid-execution, ignoring");
-		return false;
-	}
-	delete _lingoState;
-	debugC(3, kDebugLingoExec, "Thawing Lingo play state");
-	_lingoState = _lingoPlayState;
+	_frozenLingoStates.insert_at(0, _lingoPlayState);
 	_lingoPlayState = nullptr;
 	return true;
 }

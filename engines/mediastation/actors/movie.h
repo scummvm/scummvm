@@ -39,29 +39,19 @@ enum MovieBlitType {
 	kCompressedDeltaMovieBlit = 3,
 };
 
-class MovieFrameHeader : public BitmapHeader {
+class MovieFrameImage : public PixMapImage {
 public:
-	MovieFrameHeader(Chunk &chunk);
+	MovieFrameImage(Chunk &chunk, uint index, uint keyframeEndInMilliseconds, const ImageInfo &imageInfo);
 
 	uint _index = 0;
 	uint _keyframeEndInMilliseconds = 0;
 };
 
-class MovieFrameImage : public Bitmap {
-public:
-	MovieFrameImage(Chunk &chunk, MovieFrameHeader *header);
-	virtual ~MovieFrameImage() override;
-
-	uint32 index() { return _bitmapHeader->_index; }
-
-private:
-	MovieFrameHeader *_bitmapHeader = nullptr;
-};
-
 enum MovieSectionType {
 	kMovieRootSection = 0x06a8,
 	kMovieImageDataSection = 0x06a9,
-	kMovieFrameDataSection = 0x06aa
+	kMovieFrameDataSection = 0x06aa,
+	kMovieChunkMarkerSection = 0x06ab
 };
 
 struct MovieFrame {
@@ -82,53 +72,117 @@ struct MovieFrame {
 	MovieFrameImage *keyframeImage = nullptr;
 };
 
-class StreamMovieActor : public SpatialEntity {
+class StreamMovieActor;
+
+// Represents an individually controllable layer of a stream movie that is its own spatial entity
+// and can be in a different stage than its parent stream movie, but which references the parent's
+// frames at all times. Only frames with a layer ID matching a proxy's layer ID will be drawn when
+// that proxy is drawn. For example, this is used in the last section of the Dalmatians hide-and-seek
+// minigame to show a "light" layer that only appears when the player shines a flashlight on an area,
+// while a "dark" layer seamlessly displays otherwise.
+class StreamMovieProxy : public SpatialEntity {
+friend class StreamMovieActor;
+
 public:
-	StreamMovieActor() : _framesOnScreen(StreamMovieActor::compareFramesByZIndex), SpatialEntity(kActorTypeMovie) {}
-	virtual ~StreamMovieActor() override;
+	StreamMovieProxy(Chunk &chunk, StreamMovieActor *parent);
+	virtual void draw(DisplayContext &displayContext) override;
+	virtual bool isVisible() const override;
 
-	virtual void readChunk(Chunk &chunk) override;
-	virtual void readSubfile(Subfile &subfile, Chunk &chunk) override;
-
-	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void process() override;
-
-	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
-
-	virtual bool isVisible() const override { return _isVisible; }
-
-	uint32 _audioChunkReference = 0;
-	uint32 _animationChunkReference = 0;
+	uint _layerId = 0;
+	uint _scriptId = 0;
 
 private:
-	AudioSequence _audioSequence;
-	uint _audioChunkCount = 0;
-	uint _fullTime = 0;
+	StreamMovieActor *_parent = nullptr;
+};
 
-	uint _loadType = 0;
-	bool _isPlaying = false;
-	bool _hasStill = false;
+// This is called `RT_stmvFrames` in the original.
+class StreamMovieActorFrames : public ChannelClient {
+public:
+	StreamMovieActorFrames(StreamMovieActor *parent) : ChannelClient(), _parent(parent) {}
+	~StreamMovieActorFrames();
+
+	virtual void readChunk(Chunk &chunk) override;
 
 	Common::Array<MovieFrame *> _frames;
 	Common::Array<MovieFrameImage *> _images;
 
+private:
+	StreamMovieActor *_parent = nullptr;
+
+	void readImageData(Chunk &chunk);
+	void readFrameData(Chunk &chunk);
+};
+
+// This is called `RT_stmvSound` in the original.
+class StreamMovieActorSound : public ChannelClient, public SoundClient {
+public:
+	StreamMovieActorSound(StreamMovieActor *parent) : ChannelClient(), _audioSequence(this), _parent(parent) {}
+	~StreamMovieActorSound();
+	virtual void readChunk(Chunk &chunk) override;
+	virtual void soundPlayStateChanged(SoundPlayState state, SoundStopReason why) override;
+
+	AudioSequence &getAudioSequence() { return _audioSequence; }
+
+private:
+	AudioSequence _audioSequence;
+	StreamMovieActor *_parent = nullptr;
+};
+
+class StreamMovieActor : public SpatialEntity, public ChannelClient, public PreDisplaySyncClient {
+friend class StreamMovieActorFrames;
+friend class StreamMovieActorSound;
+
+public:
+	StreamMovieActor();
+	virtual ~StreamMovieActor() override;
+
+	virtual void readChunk(Chunk &chunk) override;
+	virtual void loadIsComplete() override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+	virtual PreDisplaySyncState preDisplaySync() override;
+	virtual void onEvent(const ActorEvent &event) override;
+	virtual void timerEvent(const TimerEvent &event) override;
+
+	virtual void draw(DisplayContext &displayContext) override;
+	void drawLayer(DisplayContext &displayContext, uint layerId);
+	virtual void invalidateLocalBounds() override;
+	bool isLayerInSeparateZPlane(uint layerId);
+
+private:
+	ImtStreamFeed *_streamFeed = nullptr;
+	uint _fullTime = 0;
+	uint _chunkCount = 0;
+	double _frameRate = 0;
+	uint _disableScreenAutoUpdateToken = 0;
+
+	bool _shouldCache = false;
+	bool _isPlaying = false;
+	bool _hasStill = false;
+
+	StreamMovieActorFrames *_streamFrames = nullptr;
+	StreamMovieActorSound *_streamSound = nullptr;
+
 	Common::Array<MovieFrame *> _framesNotYetShown;
+	Common::Array<StreamMovieProxy *> _proxies;
 	Common::SortedArray<MovieFrame *, const MovieFrame *> _framesOnScreen;
 
 	// Script method implementations.
 	void timePlay();
-	void timeStop();
+	void timeStop(bool isMovieEnd);
 
 	void setVisibility(bool visibility);
 	void updateFrameState();
 	void invalidateRect(const Common::Rect &rect);
 	void decompressIntoAuxImage(MovieFrame *frame);
 
-	void readImageData(Chunk &chunk);
-	void readFrameData(Chunk &chunk);
+	void parseMovieHeader(Chunk &chunk);
+	void parseMovieChunkMarker(Chunk &chunk);
 
 	Common::Rect getFrameBoundingBox(MovieFrame *frame);
+	StreamMovieProxy *proxyOfId(uint layerId);
+	StreamMovieProxy *proxyOfScriptId(uint scriptId);
 	static int compareFramesByZIndex(const MovieFrame *a, const MovieFrame *b);
 };
 

@@ -145,7 +145,7 @@ int StyledTTFont::getMaxCharWidth() {
 	return 0;
 }
 
-int StyledTTFont::getCharWidth(uint16 chr) {
+int StyledTTFont::getCharWidth(uint32 chr) {
 	if (_font)
 		return _font->getCharWidth(chr);
 
@@ -159,7 +159,7 @@ int StyledTTFont::getKerningOffset(byte left, byte right) {
 	return 0;
 }
 
-void StyledTTFont::drawChar(Graphics::Surface *dst, uint16 chr, int x, int y, uint32 color) {
+void StyledTTFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) {
 	if (_font) {
 		_font->drawChar(dst, chr, x, y, color);
 		if (_style & TTF_STYLE_UNDERLINE) {
@@ -175,13 +175,12 @@ void StyledTTFont::drawChar(Graphics::Surface *dst, uint16 chr, int x, int y, ui
 	}
 }
 
-void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
+void StyledTTFont::drawString(Graphics::Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
 	if (_font) {
-		Common::U32String u32str = Common::convertUtf8ToUtf32(str);
-		_font->drawString(dst, Common::convertBiDiU32String(u32str).visual, x, y, w, color, align);
+		_font->drawString(dst, Common::convertBiDiU32String(str).visual, x, y, w, color, align);
 		if (_style & TTF_STYLE_UNDERLINE) {
 			int16 pos = (int16)floor(_font->getFontHeight() * 0.87);
-			int16 wd = MIN(_font->getStringWidth(u32str), w);
+			int16 wd = MIN(_font->getStringWidth(str), w);
 			int16 stX = x;
 			if (align == Graphics::kTextAlignCenter)
 				stX += (w - wd) / 2;
@@ -194,7 +193,7 @@ void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str,
 		}
 		if (_style & TTF_STYLE_STRIKETHROUGH) {
 			int16 pos = (int16)floor(_font->getFontHeight() * 0.60);
-			int16 wd = MIN(_font->getStringWidth(u32str), w);
+			int16 wd = MIN(_font->getStringWidth(str), w);
 			int16 stX = x;
 			if (align == Graphics::kTextAlignCenter)
 				stX += (w - wd) / 2;
@@ -208,13 +207,13 @@ void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str,
 	}
 }
 
-int StyledTTFont::getStringWidth(const Common::String &str) {
+int StyledTTFont::getStringWidth(const Common::U32String &str) {
 	if (_font)
 		return _font->getStringWidth(str);
 	return 0;
 }
 
-Graphics::Surface *StyledTTFont::renderSolidText(const Common::String &str, uint32 color) {
+Graphics::Surface *StyledTTFont::renderSolidText(const Common::U32String &str, uint32 color) {
 	Graphics::Surface *tmp = new Graphics::Surface;
 	if (_font) {
 		int16 w = _font->getStringWidth(str);

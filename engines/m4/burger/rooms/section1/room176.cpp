@@ -69,11 +69,18 @@ void Room176::init() {
 		break;
 	}
 
-	if (inv_player_has("PUZ DISPENSER") || inv_player_has("BROKEN PUZ DISPENSER")) {
-		hotspot_set_active("PUZ DISPENSER ", false);
-	} else {
+	/* Original code to initialize the presence of the Puz Dispenser.
+	 * Replaced by the code hereunder in order to fix an original duplication bug (after you give it to Odie) */
+	// if (inv_player_has("PUZ DISPENSER") || inv_player_has("BROKEN PUZ DISPENSER")) {
+	//	hotspot_set_active("PUZ DISPENSER ", false);
+	// } else {
+	//	_puzDispenser = series_show("176pez", 0x500);
+	// }
+
+	if (inv_object_in_scene("BROKEN PUZ DISPENSER", 176))
 		_puzDispenser = series_show("176pez", 0x500);
-	}
+	else
+		hotspot_set_active("PUZ DISPENSER ", false);
 }
 
 void Room176::daemon() {

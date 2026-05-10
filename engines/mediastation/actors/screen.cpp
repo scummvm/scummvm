@@ -39,4 +39,40 @@ void ScreenActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) 
 	}
 }
 
+void ScreenActor::onEvent(const ActorEvent &event) {
+	switch (event.type) {
+	case kScreenEntryEvent:
+		g_engine->getImtGod()->clearAllContextLocks();
+		runScriptResponseIfExists(event.type);
+		break;
+
+
+	case kScreenExitEvent:
+		runScriptResponseIfExists(event.type);
+		break;
+
+	case kContextLoadCompleteEvent:
+	case kContextAlreadyLoadedEvent: {
+		uint contextId = event.arg.asActorId();
+		Context *context = g_engine->getImtGod()->getContextById(contextId);
+		if (context != nullptr) {
+			runScriptResponseIfExists(event.type, event.arg);
+		}
+		break;
+	}
+
+	case kContextReleaseCompleteEvent:
+	case kContextAlreadyReleasedEvent: {
+		uint contextId = event.arg.asActorId();
+		Context *context = g_engine->getImtGod()->getContextById(contextId);
+		if (context == nullptr) {
+			runScriptResponseIfExists(event.type, event.arg);
+		}
+		break;
+	}
+
+	default:
+		Actor::onEvent(event);
+	}
+}
 } // End of namespace MediaStation

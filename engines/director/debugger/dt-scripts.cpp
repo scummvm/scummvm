@@ -60,34 +60,34 @@ static void renderCastScript(Symbol &sym) {
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 		Common::String bpName = Common::String::format("%s-%d", handlerName.c_str(), pc);
 
-		color = _state->_colors._bp_color_disabled;
+		color = _state->theme->bp_color_disabled;
 
 		Director::Breakpoint *bp = getBreakpoint(handlerName, sym.ctx->_id, pc);
 		if (bp)
-			color = _state->_colors._bp_color_enabled;
+			color = _state->theme->bp_color_enabled;
 
 		ImGui::PushID(pc);
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
 			if (bp) {
 				g_lingo->delBreakpoint(bp->id);
-				color = _state->_colors._bp_color_disabled;
+				color = _state->theme->bp_color_disabled;
 			} else {
 				Director::Breakpoint newBp;
 				newBp.type = kBreakpointFunction;
 				newBp.funcName = handlerName;
 				newBp.funcOffset = pc;
 				g_lingo->addBreakpoint(newBp);
-				color = _state->_colors._bp_color_enabled;
+				color = _state->theme->bp_color_enabled;
 			}
 		}
 
-		if (color == _state->_colors._bp_color_disabled && ImGui::IsItemHovered()) {
-			color = _state->_colors._bp_color_hover;
+		if (color == _state->theme->bp_color_disabled && ImGui::IsItemHovered()) {
+			color = _state->theme->bp_color_hover;
 		}
 
 		dl->AddCircleFilled(mid, 4.0f, ImColor(color));
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->_colors._line_color));
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->theme->line_color));
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
 
@@ -219,11 +219,6 @@ void showScriptCasts() {
 		else
 			scr++;
 	}
-}
-
-static void addToOpenHandlers(ImGuiScript handler) {
-	_state->_openHandlers.erase(handler.id.member);
-	_state->_openHandlers[handler.id.member] = handler;
 }
 
 static bool showHandler(ImGuiScript handler) {
@@ -553,7 +548,7 @@ void showExecutionContext() {
 	Window *currentWindow = g_director->getCurrentWindow();
 	bool scriptsRendered = false;
 
-	if (ImGui::Begin("Execution Context", &_state->_w.executionContext, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
 		Window *stage = g_director->getStage();
 		g_director->setCurrentWindow(stage);
 		g_lingo->switchStateFromWindow();
@@ -562,7 +557,7 @@ void showExecutionContext() {
 		ImGui::PushID(windowID);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-		ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f));
+		ImGui::BeginChild("Window##", ImGui::GetContentRegionAvail());
 		ImGui::Text("%s", stage->asString().c_str());
 		ImGui::Text("%s", stage->getCurrentMovie()->getMacName().c_str());
 
@@ -579,6 +574,10 @@ void showExecutionContext() {
 		updateCurrentScript();
 
 		if (scriptData->_showScript) {
+			// disable highlighting while rendering scripts in Execution Context
+			bool oldSuppress = _state->_dbg._suppressHighlight;
+			_state->_dbg._suppressHighlight = true;
+
 			ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
 			// Get all the handlers from the script
@@ -591,6 +590,7 @@ void showExecutionContext() {
 			ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 			if (ImGui::Button(ICON_MS_ARROW_BACK)) {
 				scriptData->_current--;
+				_state->_dbg._goToDefinition = true;
 			}
 			ImGui::EndDisabled();
 			ImGui::SetItemTooltip("Backward");
@@ -599,6 +599,7 @@ void showExecutionContext() {
 			ImGui::BeginDisabled(scriptData->_current >= scriptData->_scripts.size() - 1);
 			if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
 				scriptData->_current++;
+				_state->_dbg._goToDefinition = true;
 			}
 			ImGui::EndDisabled();
 			ImGui::SetItemTooltip("Forward");
@@ -614,9 +615,11 @@ void showExecutionContext() {
 				for (uint i = 0; i < scriptData->_scripts.size(); i++) {
 					auto &script = scriptData->_scripts[i];
 					bool selected = i == scriptData->_current;
+					ImGui::PushID(i);
 					if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
 						scriptData->_current = i;
 					}
+					ImGui::PopID();
 				}
 				ImGui::EndCombo();
 			}
@@ -655,6 +658,7 @@ void showExecutionContext() {
 			scriptsRendered = true;
 
 			ImGui::EndChild();
+			_state->_dbg._suppressHighlight = oldSuppress;
 		}
 
 		ImGui::EndChild();
@@ -690,6 +694,8 @@ void showExecutionContext() {
 			updateCurrentScript();
 
 			if (scriptData->_showScript) {
+				bool oldSuppress = _state->_dbg._suppressHighlight;
+				_state->_dbg._suppressHighlight = true;
 				ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
 				// Get all the handlers from the script
@@ -771,6 +777,7 @@ void showExecutionContext() {
 
 				scriptsRendered = true;
 				ImGui::EndChild();
+				_state->_dbg._suppressHighlight = oldSuppress;
 			}
 
 			ImGui::EndChild();

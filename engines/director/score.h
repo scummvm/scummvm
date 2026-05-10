@@ -65,12 +65,12 @@ struct Label {
 
 class Score {
 public:
-	Score(Movie *movie);
+	Score(Movie *movie, bool haveInteractivity);
 	~Score();
 
 	Movie *getMovie() const { return _movie; }
 
-	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
+	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version, bool loadSprites = false);
 	bool loadFrame(int frame, bool loadCast);
 	bool readOneFrame();
 	void updateFrame(Frame *frame);
@@ -142,7 +142,6 @@ public:
 	void playSoundChannel(bool puppetOnly, bool sound1Changed = true, bool sound2Changed = true);
 
 	Common::String formatChannelInfo();
-	bool processFrozenPlayScript();
 
 	Common::MemoryReadStreamEndian *getSpriteDetailsStream(int spriteIdx);
 
@@ -235,6 +234,8 @@ public:
 	Common::Array<bool> _spriteDetailAccessed;
 
 	bool _disableGoPlayUpdateStage;
+
+	bool _haveInteractivity;
 
 private:
 	DirectorEngine *_vm;

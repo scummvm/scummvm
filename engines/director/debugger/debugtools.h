@@ -28,6 +28,8 @@ void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
 int getSelectedChannel();
+void setSelectedChannel(int channel);
+bool isMouseInputIgnored();
 } // namespace DT
 } // namespace Director
 

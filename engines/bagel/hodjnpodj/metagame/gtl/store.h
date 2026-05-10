@@ -30,7 +30,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#define STORE_SPEC  ".\\art\\mlscroll.bmp"      // path for store's DIB on disk
+#define STORE_SPEC  "art\\mlscroll.bmp"      // path for store's DIB on disk
 #define STORE_DX            502
 #define STORE_DY            395
 #define STORE_CURL_DX       500
@@ -69,6 +69,9 @@ namespace Gtl {
 
 class CGeneralStore : public CDialog {
 // Construction
+private:
+	bool bFirstTime = true;
+
 public:
 	CGeneralStore(CWnd* pParent, CPalette *pPalette, CInventory *pStore, CInventory *pInventory);
 
@@ -81,7 +84,7 @@ public:
 	static  void UpdateCrowns(CDC *pDC);
 	static  void ClearDialogImage();
 	static  void RefreshBackground();
-	static  void DoWaitCursor();
+	static  void ShowWaitCursor();
 	static  void DoArrowCursor();
 
 private:

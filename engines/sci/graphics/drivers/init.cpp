@@ -116,10 +116,11 @@ Common::RenderMode getRenderMode() {
 	SciVersion version = getSciVersion();
 
 	// No extra modes supported for the Korean fan-patched games.
-	// Also set default mode if undithering is enabled for a SCI0 game and the render mode is either set to kRenderEGA
-	// or kRenderPC98_16c (probably redundant nowadays, but why not make sure everything works as intended).
-	if (lang == Common::KO_KOR || (undither && ((selectedMode == Common::kRenderEGA && (version <= SCI_VERSION_0_LATE || version == SCI_VERSION_1_EGA_ONLY)) || selectedMode == Common::kRenderPC98_16c)))
-		result = Common::kRenderDefault;
+	// Also set default mode if undithering is enabled for a 16 colors game and the render mode is not set to CGA, Hercules
+	// or PC-98 8 colors.
+	if (lang == Common::KO_KOR || (undither && version <= SCI_VERSION_1_EGA_ONLY && selectedMode != Common::kRenderCGA &&
+		selectedMode != Common::kRenderCGA_BW && selectedMode != Common::kRenderHercA && selectedMode != Common::kRenderHercG && selectedMode != Common::kRenderPC98_8c))
+			result = Common::kRenderDefault;
 
 	if (result == Common::kRenderDefault)
 		return result;

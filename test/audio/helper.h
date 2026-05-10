@@ -40,7 +40,7 @@ static Audio::SeekableAudioStream *createSineStream(const int sampleRate, const 
 			if (is16Bits)
 				(*comp)[i] = sine[i] ^ xorMask;
 			else
-				(*comp)[i] = (sine[i] ^ xorMask) << 8;
+				(*comp)[i] = (sine[i] ^ xorMask) * 256;
 		}
 	}
 

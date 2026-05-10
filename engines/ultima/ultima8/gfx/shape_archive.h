@@ -52,7 +52,7 @@ protected:
 	uint16 _id;
 	const ConvertShapeFormat *_format;
 	const Palette *_palette;
-	Std::vector<Shape *> _shapes;
+	Common::Array<Shape *> _shapes;
 };
 
 } // End of namespace Ultima8

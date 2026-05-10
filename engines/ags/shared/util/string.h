@@ -45,8 +45,6 @@
 #ifndef AGS_SHARED_UTIL_STRING_H
 #define AGS_SHARED_UTIL_STRING_H
 
-//include <stdarg.h>
-
 #include "common/str.h"
 
 #include "common/std/vector.h"
@@ -361,7 +359,7 @@ public:
 	// characters (space, tabs, CRLF) are removed.
 	// Remove heading and trailing characters from the string
 	void    Trim(char c = 0);
-	// Remove heading characters from the string; 
+	// Remove heading characters from the string;
 	void    TrimLeft(char c = 0);
 	// Remove trailing characters from the string
 	void    TrimRight(char c = 0);

@@ -341,7 +341,7 @@ void Lobby::openUrl(const char *url) {
 	    urlString == "http://www.humongoussports.com/backyard/registration/register.asp") {
 		if (_vm->displayMessageYesNo("Online Play for this game is provided by Backyard Sports Online, which is a\nservice provided by the ScummVM project.\nWould you like to go to their registration page?")) {
 			if (!g_system->openUrl("https://backyardsports.online/register")) {
-				_vm->displayMessage(0, "Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
+				_vm->displayMessage("Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
 			}
 		}
 	} else {

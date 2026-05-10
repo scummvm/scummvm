@@ -84,20 +84,14 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return checkExtendedSaves(f) ||
+		   (f == kSupportsLoadingDuringStartup);
 }
 
 bool Access::AccessEngine::hasFeature(EngineFeature f) const {
@@ -139,7 +133,11 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				if (Access::AccessEngine::readSavegameHeader(in, header))
 					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
-
+				else {
+					ExtendedSavegameHeader eHeader;
+					if (MetaEngine::readSavegameHeader(in, &eHeader))
+						saveList.push_back(SaveStateDescriptor(this, slot, eHeader.description));
+				}
 				delete in;
 			}
 		}
@@ -150,40 +148,55 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int AccessMetaEngine::getMaximumSaveSlot() const {
-	return MAX_SAVES;
-}
-
-bool AccessMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	return g_system->getSavefileManager()->removeSavefile(filename);
-}
-
 SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (f) {
-		Access::AccessSavegameHeader header;
-		if (!Access::AccessEngine::readSavegameHeader(f, header, false)) {
+
+		ExtendedSavegameHeader eHeader;
+		if (MetaEngine::readSavegameHeader(f, &eHeader, false)) {
 			delete f;
-			return SaveStateDescriptor();
+
+			SaveStateDescriptor desc(this, slot, eHeader.description);
+			desc.setThumbnail(eHeader.thumbnail);
+
+			uint16 year;
+			uint8 month;
+			uint8 day;
+
+			decodeSavegameDate(&eHeader, year, month, day);
+			desc.setSaveDate(year,month,day);
+
+			uint8 hour;
+			uint8 minute;
+
+			decodeSavegameTime(&eHeader, hour, minute);
+			desc.setSaveTime(hour, minute);
+
+			desc.setPlayTime(eHeader.playtime);
+			return desc;
+		}
+			
+		Access::AccessSavegameHeader header;
+		if (Access::AccessEngine::readSavegameHeader(f, header, false)) {
+			delete f;
+			SaveStateDescriptor desc(this, slot, header._saveName);
+			desc.setThumbnail(header._thumbnail);
+			desc.setSaveDate(header._year, header._month, header._day);
+			desc.setSaveTime(header._hour, header._minute);
+
+			return desc;
 		}
 
 		delete f;
 
-		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
-
-		return desc;
+		return SaveStateDescriptor();				
 	}
 
 	return SaveStateDescriptor();
 }
+
 
 Common::KeymapArray AccessMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;

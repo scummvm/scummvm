@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/core/imath.h"
 #include "m4/m4.h"
@@ -111,55 +112,55 @@ void Section1::daemon() {
 	case 1005:
 	case 1006:
 	case 1007:
-		_G(game).new_room = _G(kernel).trigger - 1000 + 100;
+		_G(game).setRoom(_G(kernel).trigger - 1000 + 100);
 		break;
 	case 1008:
-		_G(game).new_room = _G(flags)[V000] == 1002 ? 134 : 135;
+		_G(game).setRoom(_G(flags)[V000] == 1002 ? 134 : 135);
 		break;
 	case 1009:
-		_G(game).new_room = _G(flags)[V000] == 1002 ? 133 : 136;
+		_G(game).setRoom(_G(flags)[V000] == 1002 ? 133 : 136);
 		break;
 	case 1010:
-		_G(game).new_room = 137;
+		_G(game).setRoom(137);
 		break;
 	case 1011:
-		_G(game).new_room = 138;
+		_G(game).setRoom(138);
 		break;
 	case 1012:
-		_G(game).new_room = _G(flags)[V000] == 1002 ? 144 : 139;
+		_G(game).setRoom(_G(flags)[V000] == 1002 ? 144 : 139);
 		break;
 	case 1013:
-		_G(game).new_room = _G(flags)[V000] == 1002 ? 141 : 140;
+		_G(game).setRoom(_G(flags)[V000] == 1002 ? 141 : 140);
 		break;
 	case 1014:
-		_G(game).new_room = 142;
+		_G(game).setRoom(142);
 		break;
 	case 1015:
-		_G(game).new_room = 143;
+		_G(game).setRoom(143);
 		break;
 	case 1016:
-		_G(game).new_room = 145;
+		_G(game).setRoom(145);
 		break;
 	case 1017:
-		_G(game).new_room = 170;
+		_G(game).setRoom(170);
 		break;
 	case 1018:
-		_G(game).new_room = 171;
+		_G(game).setRoom(171);
 		break;
 	case 1019:
-		_G(game).new_room = 172;
+		_G(game).setRoom(172);
 		break;
 	case 1020:
-		_G(game).new_room = 173;
+		_G(game).setRoom(173);
 		break;
 	case 1021:
-		_G(game).new_room = 174;
+		_G(game).setRoom(174);
 		break;
 	case 1022:
-		_G(game).new_room = 175;
+		_G(game).setRoom(175);
 		break;
 	case 1023:
-		_G(game).new_room = 176;
+		_G(game).setRoom(176);
 		break;
 	case 1024:
 		pal_fade_init(_G(master_palette), 0, 255, 100, 0, -1);
@@ -181,7 +182,7 @@ void Section1::daemon() {
 		break;
 	case 1029:
 		if (_state1 == 2) {
-			int frame = imath_ranged_rand(9, 12);
+			const int frame = imath_ranged_rand(9, 12);
 			series_play("110bu01", 0, 0, 1029, 5, 0, 100, 0, 0, frame, frame);
 		} else {
 			pal_fade_set_start(_G(master_palette), 0);
@@ -205,7 +206,7 @@ void Section1::daemon() {
 		break;
 	case 1033:
 		if (_state1 == 2) {
-			int frame = imath_ranged_rand(0, 4);
+			const int frame = imath_ranged_rand(0, 4);
 			series_play("110bu02", 0, 0, 1033, 5, 0, 100, 0, 0, frame, frame);
 		} else {
 			series_play("110bu02", 0, 0, 1035, 5, 0, 100, 0, 0, 5, 16);

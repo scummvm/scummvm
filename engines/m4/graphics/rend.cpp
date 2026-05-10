@@ -69,7 +69,9 @@ static RenderResult r_0() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
+			}
+
+			while (code--) {
 				uint8 data = *from++;
 
 				if (data)
@@ -77,7 +79,7 @@ static RenderResult r_0() {
 				++to;
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			if (!data)
 				to += runLength;
@@ -124,7 +126,9 @@ static RenderResult r_0_5() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
+			}
+
+			while (code--) {
 				uint8 data = *from++;
 
 				if (data)
@@ -132,7 +136,7 @@ static RenderResult r_0_5() {
 				--to;
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			if (!data)
 				to -= runLength;
@@ -169,8 +173,8 @@ static RenderResult r_1() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	uint8 *depth = _GR(depthAddress);
-	uint8 sdepth = _GR(spriteDepth);
-	long Inc = _GR(Increment);
+	const uint8 sdepth = _GR(spriteDepth);
+	const long Inc = _GR(Increment);
 
 	int32 myWidth = 0;
 
@@ -184,7 +188,9 @@ static RenderResult r_1() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
+			}
+
+			while (code--) {
 				++myWidth;
 
 				uint8 data = *from++;
@@ -210,7 +216,7 @@ static RenderResult r_1() {
 				}
 			} else {
 				while (runLength--) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (!ddepth || sdepth < ddepth)
 						*to = data;
@@ -221,7 +227,7 @@ static RenderResult r_1() {
 		}
 
 		if (myWidth > 666) {
-			error_show(FL, 0);
+			error_show(FL, "myWidth too large");
 		}
 	}
 }
@@ -230,8 +236,8 @@ static RenderResult r_2() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	int32 Error = _GR(X_error);
-	uint32 scaleX = _GR(X_scale);
-	long Inc = _GR(Increment);
+	const uint32 scaleX = _GR(X_scale);
+	const long Inc = _GR(Increment);
 
 	for (;;) {
 		// Assume that the first byte is a run-length counter followed by pix data
@@ -243,7 +249,9 @@ static RenderResult r_2() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
+			}
+
+			while (code--) {
 				uint8 data = *from++;
 
 				Error -= scaleX;
@@ -280,10 +288,10 @@ static RenderResult r_3() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	uint8 *depth = _GR(depthAddress);
-	uint8 sdepth = _GR(spriteDepth);
+	const uint8 sdepth = _GR(spriteDepth);
 	int32 Error = _GR(X_error);
-	uint32 scaleX = _GR(X_scale);
-	long Inc = _GR(Increment);
+	const uint32 scaleX = _GR(X_scale);
+	const long Inc = _GR(Increment);
 
 	for (;;) {
 		// Assume that the first byte is a run-length counter followed by pix data
@@ -295,8 +303,10 @@ static RenderResult r_3() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
 
 				Error -= scaleX;
 
@@ -313,13 +323,13 @@ static RenderResult r_3() {
 				}
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			while (runLength--) {
 				Error -= scaleX;
 
 				while (Error < 0) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (data && (!ddepth || sdepth < ddepth))
 						*to = data;
@@ -338,7 +348,7 @@ static RenderResult r_4() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	int32 PixelPos = _GR(StartingPixelPos);
-	long Inc = _GR(Increment);
+	const long Inc = _GR(Increment);
 
 	for (;;) {
 #ifdef OPTIMIZE_CLIP
@@ -362,8 +372,10 @@ static RenderResult r_4() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
 
 				if (data && PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch))
 					*to = data;
@@ -371,7 +383,7 @@ static RenderResult r_4() {
 				PixelPos += Inc;
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			if (!data) {
 				if (Inc == 1) {
@@ -395,9 +407,9 @@ static RenderResult r_5() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	uint8 *depth = _GR(depthAddress);
-	uint8 sdepth = _GR(spriteDepth);
+	const uint8 sdepth = _GR(spriteDepth);
 	int32 PixelPos = _GR(StartingPixelPos);
-	long Inc = _GR(Increment);
+	const long Inc = _GR(Increment);
 
 	for (;;) {
 #ifdef OPTIMIZE_CLIP
@@ -421,9 +433,11 @@ static RenderResult r_5() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
-				uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
+				const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 				if (data && PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch) && (!ddepth || sdepth < ddepth))
 					*to = data;
@@ -432,7 +446,7 @@ static RenderResult r_5() {
 				PixelPos += Inc;
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			if (!data)
 				if (Inc == 1) {
@@ -444,7 +458,7 @@ static RenderResult r_5() {
 					depth -= runLength;
 					PixelPos -= runLength;
 				} else while (runLength--) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch) && (!ddepth || sdepth < ddepth))
 						*to = data;
@@ -460,8 +474,8 @@ static RenderResult r_6() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	int32 PixelPos = _GR(StartingPixelPos), Error = _GR(X_error);
-	uint32 scaleX = _GR(X_scale);
-	long Inc = _GR(Increment);
+	const uint32 scaleX = _GR(X_scale);
+	const long Inc = _GR(Increment);
 
 	for (;;) {
 #ifdef OPTIMIZE_CLIP
@@ -485,8 +499,10 @@ static RenderResult r_6() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
 
 				Error -= scaleX;
 
@@ -500,7 +516,7 @@ static RenderResult r_6() {
 				}
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			while (runLength--) {
 				Error -= scaleX;
@@ -522,10 +538,10 @@ static RenderResult r_7() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	uint8 *depth = _GR(depthAddress);
-	uint8 sdepth = _GR(spriteDepth);
+	const uint8 sdepth = _GR(spriteDepth);
 	int32 PixelPos = _GR(StartingPixelPos), Error = _GR(X_error);
-	uint32 scaleX = _GR(X_scale);
-	long Inc = _GR(Increment);
+	const uint32 scaleX = _GR(X_scale);
+	const long Inc = _GR(Increment);
 
 	for (;;) {
 #ifdef OPTIMIZE_CLIP
@@ -549,13 +565,15 @@ static RenderResult r_7() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
 
 				Error -= scaleX;
 
 				while (Error < 0) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (data && PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch) && (!ddepth || sdepth < ddepth))
 						*to = data;
@@ -567,13 +585,13 @@ static RenderResult r_7() {
 				}
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			while (runLength--) {
 				Error -= scaleX;
 
 				while (Error < 0) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (data && PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch) && (!ddepth || sdepth < ddepth))
 						*to = data;
@@ -594,8 +612,8 @@ static RenderResult r_8() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	int32 PixelPos = _GR(StartingPixelPos), Error = _GR(X_error);
-	uint32 scaleX = _GR(X_scale);
-	long Inc = _GR(Increment);
+	const uint32 scaleX = _GR(X_scale);
+	const long Inc = _GR(Increment);
 	uint32 r, g, b;
 
 	for (;;) {
@@ -620,8 +638,10 @@ static RenderResult r_8() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
 
 				Error -= scaleX;
 
@@ -655,7 +675,7 @@ static RenderResult r_8() {
 				}
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			while (runLength--) {
 				Error -= scaleX;
@@ -697,10 +717,10 @@ static RenderResult r_9() {
 	uint8 *from = _GR(sourceAddress);
 	uint8 *to = _GR(destinationAddress);
 	uint8 *depth = _GR(depthAddress);
-	uint8 sdepth = _GR(spriteDepth);
+	const uint8 sdepth = _GR(spriteDepth);
 	int32 PixelPos = _GR(StartingPixelPos), Error = _GR(X_error);
-	uint32 scaleX = _GR(X_scale);
-	long Inc = _GR(Increment);
+	const uint32 scaleX = _GR(X_scale);
+	const long Inc = _GR(Increment);
 	uint32 r, g, b;
 
 	for (;;) {
@@ -725,13 +745,15 @@ static RenderResult r_9() {
 			if (code <= kJumpXY) {
 				_GR(sourceAddress) = from;
 				return (RenderResult)code;
-			} else while (code--) {
-				uint8 data = *from++;
+			}
+
+			while (code--) {
+				const uint8 data = *from++;
 
 				Error -= scaleX;
 
 				while (Error < 0) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (data != 128 && PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch) && (!ddepth || sdepth < ddepth)) {
 						// Handle pixel
@@ -764,13 +786,13 @@ static RenderResult r_9() {
 				}
 			}
 		} else {
-			uint8 data = *from++;
+			const uint8 data = *from++;
 
 			while (runLength--) {
 				Error -= scaleX;
 
 				while (Error < 0) {
-					uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
+					const uint8 ddepth = (uint8)(*depth & DEPTH_MASK);
 
 					if (data != 128 && PixelPos >= _GR(LeftPorch) && PixelPos < _GR(RightPorch) && (!ddepth || sdepth < ddepth)) {
 						// Handle pixel
@@ -830,7 +852,7 @@ int32 scale_this(int32 Value, int32 Scaler, int32 Error) {
 }
 
 void GetUpdateRectangle(int32 x, int32 y, int32 hot_x, int32 hot_y, int32 scale_x, int32 scale_y, int32 Width, int32 Height, M4Rect *UpdateRect) {
-	int errY = hot_y * scale_y % 100;
+	const int errY = hot_y * scale_y % 100;
 
 	UpdateRect->y1 = y - hot_y * scale_y / 100;
 	UpdateRect->y2 = UpdateRect->y1 + scale_this(Height, scale_y, errY);

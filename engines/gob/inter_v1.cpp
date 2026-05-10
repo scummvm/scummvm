@@ -736,10 +736,16 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		return;
 	}
 
+	_vm->_game->pushOnGlobalCallStack(kCallSub,
+									  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+									  _vm->_game->_curTotFile, offset);
+
 	_vm->_game->_script->call(offset);
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 		_vm->_game->_script->pop(false);
+		if (!_vm->_game->_globalFuncCallStack.empty())
+			_vm->_game->_globalFuncCallStack.top().tailCall = true;
 		params.doReturn = true;
 		return;
 	}
@@ -747,6 +753,7 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 	callSub(2);
 
 	_vm->_game->_script->pop();
+	_vm->_game->popGlobalCallStack();
 }
 
 void Inter_v1::o1_printTotText(OpFuncParams &params) {
@@ -1341,11 +1348,6 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_keyFunc(OpFuncParams &params) {
-	if (!_vm->_vidPlayer->isPlayingLive()) {
-		_vm->_draw->forceBlit();
-		_vm->_video->retrace();
-	}
-
 	animPalette();
 	_vm->_draw->blitInvalidated();
 
@@ -1379,25 +1381,11 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	case -1:
-		if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
-			break;
-		// fall through
-	case 1:
-		if (_vm->getGameType() != kGameTypeFascination &&
-				_vm->getGameType() != kGameTypeAdibou2 &&
-				_vm->getGameType() != kGameTypeAdi4)
-			_vm->_util->forceMouseUp(true);
+		break;
 
-		// FIXME This is a hack to fix an issue with "text" tool in Adibou2 paint game.
-		// keyFunc() is called twice in a loop before testing its return value.
-		// If the first keyFunc call catches the key event, the second call will reset
-		// the key buffer, and the loop continues.
-		// Strangely in the original game it seems that the event is always caught by the
-		// second keyFunc.
-		if (_vm->getGameType() == kGameTypeAdibou2 &&
-				(_vm->_game->_script->pos() == 18750 || _vm->_game->_script->pos() == 18955) &&
-				_vm->isCurrentTot("palette.tot"))
-			break;
+	case 1:
+		if (_vm->getGameType() != kGameTypeFascination)
+			_vm->_util->forceMouseUp(true);
 
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
@@ -1429,15 +1417,6 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 			_vm->_util->delay(cmd);
 			_noBusyWait = true;
 		} else {
-			if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
-				// The engine calls updateLive() every 100ms while waiting there
-				while (cmd > 100) {
-					_vm->_vidPlayer->updateLive();
-					_vm->_util->longDelay(100);
-					cmd -= 100;
-				}
-			}
-
 			_vm->_util->longDelay(cmd);
 		}
 		break;
@@ -1910,9 +1889,18 @@ void Inter_v1::o1_setMousePos(OpFuncParams &params) {
 	_vm->_draw->adjustCoords(0, &_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY);
 	_vm->_global->_inter_mouseX -= _vm->_video->_scrollOffsetX;
 	_vm->_global->_inter_mouseY -= _vm->_video->_scrollOffsetY;
-	if (_vm->_global->_useMouse != 0)
+	if (_vm->_global->_useMouse != 0) {
 		_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
 				_vm->_global->_inter_mouseY);
+		if (_vm->getGameType() == kGameTypeAdi4) {
+			// WORKAROUND: setMousePos() calls g_system->warpMouse() which calls purgeMouseEvents(),
+			// which will eat any pending mouse up event. This lead to a lock in Adi4 "cereal farm"
+			// simulation activity, where the script is waiting for a mouse up event that gets intercepted
+			// by the purge, if the click was fast enough.
+			// Force syncing with the EventManager's mouse state to recover from this as a workaround.
+			_vm->_util->forceMouseButtonsSync();
+		}
+	}
 }
 
 void Inter_v1::o1_setFrameRate(OpFuncParams &params) {

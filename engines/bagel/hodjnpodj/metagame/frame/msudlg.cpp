@@ -76,7 +76,7 @@ static CRadioButton *pPHButton = nullptr;   // Podj is Human High Radio Button
  *      n/a
  *
  ****************************************************************/
-CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, ".\\ART\\MLSCROLL.BMP", -1, -1, false) {
+CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, "art\\MLSCROLL.BMP", -1, -1, false) {
 	pMainPalette = pPalette;
 	m_lpMetaGameStruct = nullptr;
 	m_nHodjSkillLevel = SKILLLEVEL_LOW;

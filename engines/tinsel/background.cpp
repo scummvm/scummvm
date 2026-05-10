@@ -40,10 +40,16 @@ Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0)
 	}
 }
 
+Background::~Background() {
+	ResetBackground();
+}
+
 /**
  * Called to initialize a background.
  */
 void Background::InitBackground() {
+	ResetBackground();
+
 	// set current background
 	_pCurBgnd = new BACKGND();
 	_pCurBgnd->rgbSkyColor = BLACK;

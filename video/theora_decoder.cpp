@@ -303,24 +303,29 @@ TheoraDecoder::TheoraVideoTrack::~TheoraVideoTrack() {
 }
 
 bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
-	if (th_decode_packetin(_theoraDecode, &oggPacket, 0) == 0) {
-		_curFrame++;
+	int decodeRes = th_decode_packetin(_theoraDecode, &oggPacket, 0);
 
-		// Convert YUV data to RGB data
-		th_ycbcr_buffer yuv;
-		th_decode_ycbcr_out(_theoraDecode, yuv);
-		translateYUVtoRGBA(yuv);
+	bool gotNewFrame = decodeRes == 0;           // new frame, decoding needed
+	bool gotDupFrame = decodeRes == TH_DUPFRAME; // no decoding needed, just update timing
+	
+	if (gotNewFrame || gotDupFrame) {
+		if (gotNewFrame) {
+			// Convert YUV data to RGB data
+			th_ycbcr_buffer yuv;
+			th_decode_ycbcr_out(_theoraDecode, yuv);
+			translateYUVtoRGBA(yuv);
+		}
 
-		double time = th_granule_time(_theoraDecode, oggPacket.granulepos);
-
-		// We need to calculate when the next frame should be shown
-		// This is all in floating point because that's what the Ogg code gives us
-		// Ogg is a lossy container format, so it doesn't always list the time to the
-		// next frame. In such cases, we need to calculate it ourselves.
-		if (time == -1.0)
+		// If we have a valid granule position for this packet, use it to calculate the next
+		// frame information. If we don't have a valid granule position, we need to do our
+		// calculation for the frame number and timing.
+		if (oggPacket.granulepos >= 0) {
+			_curFrame = (int)th_granule_frame(_theoraDecode, oggPacket.granulepos);
+			_nextFrameStartTime = th_granule_time(_theoraDecode, oggPacket.granulepos);
+		} else {
+			_curFrame++;
 			_nextFrameStartTime += _frameRate.getInverse().toDouble();
-		else
-			_nextFrameStartTime = time;
+		}
 
 		return true;
 	}

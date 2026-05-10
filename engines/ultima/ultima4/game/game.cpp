@@ -475,8 +475,8 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 	return false;
 }
 
-Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked) {
-	Std::vector<Coords> path;
+Common::Array<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked) {
+	Common::Array<Coords> path;
 	Direction dirx = DIR_NONE,
 	          diry = DIR_NONE;
 
@@ -744,7 +744,7 @@ void mixReagentsSuper() {
 		{ "Paws", {3, 4, 2, 8, 6, 7} },
 		{ "SkaraBr", {2, 4, 9, 6, 4, 8} },
 	};
-	const int shopcount = sizeof(shops) / sizeof(shops[0]);
+	const int shopcount = ARRAYSIZE(shops);
 
 	int oldlocation = g_context->_location->_viewMode;
 	g_context->_location->_viewMode = VIEW_MIXTURES;

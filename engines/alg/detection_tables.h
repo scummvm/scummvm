@@ -95,7 +95,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("BHDS.LIB", "6fad52a6a72830ab3373cbe3e0a3a779", 281473503),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GType_LAST_BOUNTY_HUNTER,
@@ -108,7 +108,7 @@ static const AlgGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("BHDEMO.LIB", "af5fbbd5e18d96225077eb6bf2cac680", 28368775),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_DEMO,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_SINGLE_SPEED_VERSION)
 		},
 		GType_LAST_BOUNTY_HUNTER,

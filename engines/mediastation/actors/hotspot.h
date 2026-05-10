@@ -23,6 +23,7 @@
 #define MEDIASTATION_HOTSPOT_H
 
 #include "mediastation/actor.h"
+#include "mediastation/events.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
@@ -31,9 +32,8 @@ namespace MediaStation {
 class HotspotActor : public SpatialEntity {
 public:
 	HotspotActor() : SpatialEntity(kActorTypeHotspot) {};
-	virtual ~HotspotActor() { _mouseActiveArea.clear(); }
 
-	bool isInside(const Common::Point &pointToCheck);
+	bool inBounds(const Common::Point &point);
 	virtual bool isVisible() const override { return false; }
 	bool isActive() const { return _isActive; }
 	virtual bool interactsWithMouse() const override { return isActive(); }
@@ -45,22 +45,23 @@ public:
 		const Common::Point &point,
 		uint16 eventMask,
 		MouseActorState &state,
-		bool inBounds) override;
+		bool clipMouseEvents) override;
 
 	void activate();
 	void deactivate();
 
-	virtual void mouseDownEvent(const Common::Event &event) override;
-	virtual void mouseUpEvent(const Common::Event &event) override;
-	virtual void mouseEnteredEvent(const Common::Event &event) override;
-	virtual void mouseExitedEvent(const Common::Event &event) override;
-	virtual void mouseMovedEvent(const Common::Event &event) override;
+	virtual void mouseDownEvent(const MouseEvent &event) override;
+	virtual void mouseUpEvent(const MouseEvent &event) override;
+	virtual void mouseEnteredEvent(const MouseEvent &event) override;
+	virtual void mouseExitedEvent(const MouseEvent &event) override;
+	virtual void mouseMovedEvent(const MouseEvent &event) override;
 
 	uint _cursorResourceId = 0;
-	Common::Array<Common::Point> _mouseActiveArea;
 
 private:
 	bool _isActive = false;
+	bool _getOffstageEvents = false;
+	Polygon _mouseActiveArea;
 };
 
 } // End of namespace MediaStation

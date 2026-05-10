@@ -27,6 +27,7 @@
 #include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/animation/FluidScroll.h"
 
 #include "gui/ThemeEval.h"
 
@@ -51,6 +52,8 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_numberingMode = kListNumberingOne;
 	_currentPos = 0;
 	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
+	_multiSelectEnabled = false;
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -77,6 +80,12 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_leftPadding = _rightPadding = 0;
 	_topPadding = _bottomPadding = 0;
 	_itemSpacing = 0;
+
+	_scrollPos = 0.0f;
+	_fluidScroller = new FluidScroller();
+	_isMouseDown = false;
+	_isDragging = false;
+	_dragStartY = _dragLastY = 0;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd)
@@ -88,12 +97,14 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
 	_currentPos = 0;
 	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
+	_multiSelectEnabled = false;
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -122,6 +133,16 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_itemSpacing = 0;
 
 	_scrollBarWidth = 0;
+
+	_scrollPos = 0.0f;
+	_fluidScroller = new FluidScroller();
+	_isMouseDown = false;
+	_isDragging = false;
+	_dragStartY = _dragLastY = 0;
+}
+
+ListWidget::~ListWidget() {
+	delete _fluidScroller;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
@@ -156,42 +177,102 @@ Widget *ListWidget::findWidget(int x, int y) {
 	return this;
 }
 
+int ListWidget::findDataIndex(int dataIndex) const {
+	// The given index is an index in the _dataList.
+	// We want the index in the current _list (which may be filtered) for this data.
+	// Sanity check to avoid iterating on the _listIndex if we know the given index is invalid.
+	if (dataIndex < -1 || dataIndex >= (int)_dataList.size())
+		return -1;
+	for (uint i = 0; i < _listIndex.size(); ++i) {
+		if (_listIndex[i] == dataIndex)
+			return i;
+	}
+	return -1;
+}
+
 void ListWidget::setSelected(int item) {
-	// HACK/FIXME: If our _listIndex has a non zero size,
-	// we will need to look up, whether the user selected
-	// item is present in that list
-	if (!_filter.empty()) {
-		int filteredItem = -1;
-
-		for (uint i = 0; i < _listIndex.size(); ++i) {
-			if (_listIndex[i] == item) {
-				filteredItem = i;
-				break;
-			}
-		}
-
-		item = filteredItem;
+	if (item == -1) {
+		// Clear selection
+		clearSelection();
+		_selectedItem = -1;
+		markAsDirty();
+		return;
 	}
 
-	assert(item >= -1 && item < (int)_list.size());
+	if (item < 0 || item >= (int)_list.size())
+		return;
 
 	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && _selectedItem != item) {
+	if (isEnabled() && (_selectedItem == -1 || _selectedItem >= (int)_list.size() || _listIndex[_selectedItem] != item)) {
 		if (_editMode)
 			abortEditMode();
 
-		_selectedItem = item;
+		_selectedItem = findDataIndex(item);
+
+		// Clear previous selections and mark only this item
+		if (_multiSelectEnabled) {
+			clearSelection();
+		}
+		markSelectedItem(_selectedItem, true);
 
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
-		if (!isItemVisible(_selectedItem)) {
+		if (_selectedItem != -1 && !isItemVisible(_selectedItem)) {
 			// scroll selected item to center if possible
 			_currentPos = _selectedItem - _entriesPerPage / 2;
 			scrollToCurrent();
 		}
 		markAsDirty();
 	}
+}
+
+bool ListWidget::isItemSelected(int item) const {
+	// Convert to actual item index if filtering is active
+	int actualItem = item;
+	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
+		actualItem = _listIndex[item];
+	}
+
+	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
+		return _selectedItems[actualItem];
+	}
+	return false;
+}
+
+void ListWidget::markSelectedItem(int item, bool state) {
+	// Initialize _lastSelectionStartItem if not already set
+	if (state && _lastSelectionStartItem == -1) {
+		_lastSelectionStartItem = item;
+	}
+
+	// Convert to actual item index if filtering is active
+	int actualItem = item;
+	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
+		actualItem = _listIndex[item];
+	}
+
+	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
+		_selectedItems[actualItem] = state;
+		markAsDirty();
+	}
+}
+
+void ListWidget::clearSelection() {
+	// Fill all with false to clear selection
+	Common::fill(_selectedItems.begin(), _selectedItems.end(), false);
+	_lastSelectionStartItem = -1;
+	markAsDirty();
+}
+
+void ListWidget::selectItemRange(int from, int to) {
+	if (from > to)
+		SWAP(from, to);
+
+	for (int i = from; i <= to; ++i) {
+		markSelectedItem(i, true);
+	}
+	markAsDirty();
 }
 
 void ListWidget::setList(const Common::U32StringArray &list) {
@@ -210,6 +291,10 @@ void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_currentPos < 0)
 		_currentPos = 0;
 	_selectedItem = -1;
+	// Resize and clear bool array
+	_selectedItems.clear();
+	_selectedItems.resize(size, false);
+	_lastSelectionStartItem = -1;
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	scrollBarRecalc();
@@ -226,6 +311,23 @@ void ListWidget::append(const Common::String &s) {
 	scrollBarRecalc();
 }
 
+int ListWidget::getVisualPos(int dataIndex) const {
+	// If no filtering, visual index equals data index
+	if (_listIndex.empty()) {
+		return dataIndex;
+	}
+
+	// Find visual index by searching _listIndex for dataIndex
+	for (uint i = 0; i < _listIndex.size(); ++i) {
+		if (_listIndex[i] == dataIndex) {
+			return i;
+		}
+	}
+
+	// Not found
+	return -1;
+}
+
 void ListWidget::scrollTo(int item) {
 	int size = _list.size();
 	if (item >= size)
@@ -235,50 +337,119 @@ void ListWidget::scrollTo(int item) {
 
 	if (_currentPos != item) {
 		_currentPos = item;
+		_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
+		_fluidScroller->setPosition(_scrollPos, false);
 		checkBounds();
 		scrollBarRecalc();
+		markAsDirty();
 	}
 }
 
 void ListWidget::scrollBarRecalc() {
+	const int lineHeight = kLineHeight + _itemSpacing;
 	_scrollBar->_numEntries = _list.size();
 	_scrollBar->_entriesPerPage = _entriesPerPage;
-	_scrollBar->_currentPos = _currentPos;
+	int maxIndex = MAX(0, (int)_list.size() - _entriesPerPage);
+	_scrollBar->_currentPos = CLIP<int>(_currentPos, 0, maxIndex);
+	_scrollBar->_singleStep = lineHeight;
 	_scrollBar->recalc();
+
+	int maxScroll = MAX(0, (int)(_scrollBar->_numEntries - _scrollBar->_entriesPerPage) * lineHeight);
+	_fluidScroller->setBounds((float)maxScroll, _h - _topPadding - _bottomPadding, (float)_scrollBar->_singleStep);
 }
 
 void ListWidget::handleTickle() {
 	if (_editMode)
 		EditableWidget::handleTickle();
 	_scrollBar->handleTickle();
+
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
+		applyScrollPos();
+	}
+}
+
+void ListWidget::applyScrollPos() {
+	const int lineHeight = kLineHeight + _itemSpacing;
+	_currentPos = (int)(_scrollPos / lineHeight);
+	scrollBarRecalc();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
 
-	// First check whether the selection changed
-	int newSelectedItem = findItem(x, y);
+	_isMouseDown = true;
+	_isDragging = false;
+	_dragLastY = 0;
+	_fluidScroller->stopAnimation();
 
-	if (_selectedItem != newSelectedItem && newSelectedItem != -1) {
-		if (_editMode)
-			abortEditMode();
-		_selectedItem = newSelectedItem;
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
+	if (button == 1) {
+		_dragStartY = y;
+		_dragLastY = y;
 	}
 
-	// Notify clients if an item was clicked
-	if (newSelectedItem >= 0) {
-		sendCommand(kListItemSingleClickedCmd, _selectedItem);
-	}
+	if (_editMode)
+		abortEditMode();
+}
+
+void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (button == 1 || button == 2) {
+		if (_isMouseDown && button == 1 && _isDragging)
+			_fluidScroller->startFling();
+
+		if (_isMouseDown && !_isDragging) {
+			// Perform selection
+			int newSelectedItem = findItem(x, y);
+			if (newSelectedItem != -1) {
+				// Get modifier keys
+				int modifiers = g_system->getEventManager()->getModifierState();
+				bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
+				bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
+
+				// Only handle multi-select if it's enabled
+				if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
+					if (shiftClick && _lastSelectionStartItem != -1) {
+						// Shift+Click: Select range from last selection start to current item
+						_selectedItem = newSelectedItem;
+						selectItemRange(_lastSelectionStartItem, newSelectedItem);
+						_lastSelectionStartItem = newSelectedItem;
+						sendCommand(kListSelectionChangedCmd, _selectedItem);
+					} else if (ctrlClick) {
+						// Ctrl+Click: Add/remove from selection
+						if (isItemSelected(newSelectedItem)) {
+							markSelectedItem(newSelectedItem, false);
+						} else {
+							markSelectedItem(newSelectedItem, true);
+							_selectedItem = newSelectedItem;
+							_lastSelectionStartItem = newSelectedItem;
+						}
+						sendCommand(kListSelectionChangedCmd, _selectedItem);
+					}
+				} else {
+					// Regular click: Clear previous selection and select only this item
+					clearSelection();
+					_selectedItem = newSelectedItem;
+					markSelectedItem(newSelectedItem, true);
+					sendCommand(kListSelectionChangedCmd, _selectedItem);
+				}
+
+				// Notify clients if an item was clicked
+				if (newSelectedItem >= 0) {
+					sendCommand(kListItemSingleClickedCmd, _selectedItem);
+				}
 
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
-	markAsDirty();
-}
+				markAsDirty();
+			}
+		}
 
-void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+		_isMouseDown = false;
+		_isDragging = false;
+	}
+
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
@@ -288,12 +459,30 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
-	_scrollBar->handleMouseWheel(x, y, direction);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {
 	if (!isEnabled())
 		return;
+
+	if (_isMouseDown && _dragLastY != 0) {
+		if (!_isDragging && ABS(y - _dragStartY) > kDragThreshold)
+			_isDragging = true;
+
+		if (_isDragging) {
+			int deltaY = _dragLastY - y;
+			_dragLastY = y;
+
+			if (deltaY != 0) {
+				_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+				_scrollPos = _fluidScroller->getVisualPosition();
+
+				applyScrollPos();
+			}
+			return;
+		}
+	}
 
 	// Determine if we are inside the widget
 	if (x < 0 || x > _w)
@@ -318,9 +507,12 @@ void ListWidget::handleMouseLeft(int button) {
 
 
 int ListWidget::findItem(int x, int y) const {
-	if (y < _topPadding) return -1;
-	int item = (y - _topPadding) / (kLineHeight + _itemSpacing) + _currentPos;
-	if (isItemVisible(item) && item < (int)_list.size())
+	if (y < _topPadding || y >= _h - _bottomPadding)
+		return -1;
+
+	int item = (y - _topPadding + (int)_scrollPos) / (kLineHeight + _itemSpacing);
+
+	if (item >= 0 && item < (int)_list.size())
 		return item;
 	else
 		return -1;
@@ -341,6 +533,16 @@ static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop, b
 	return match;
 }
 
+int ListWidget::findSelectableItem(int item, int direction) const {
+	int newItem = item;
+	while (newItem >= 0 && newItem < (int)_list.size()) {
+		if (isItemSelectable(newItem))
+			return newItem;
+		newItem += direction;
+	}
+	return -1;
+}
+
 bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
@@ -359,6 +561,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
 		if (_quickSelect) {
+			clearSelection();
+			markSelectedItem(_selectedItem, false);
+
 			// FIXME: This is bad slow code (it scans the list linearly each time a
 			// key is pressed); it could be much faster. Only of importance if we have
 			// quite big lists to deal with -- so for now we can live with this lazy
@@ -377,6 +582,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				newSelectedItem++;
 			}
 
+			markSelectedItem(_selectedItem, true);
 			scrollToCurrent();
 		} else {
 			sendCommand(_cmd, 0);
@@ -389,7 +595,15 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 
 		switch (state.keycode) {
 		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_KP_ENTER: {
+			// Disable activation if multi-select is enabled and multiple items are selected
+			int selectedCount = 0;
+			for (int i = 0; i < (int)_selectedItems.size(); ++i) {
+				if (_selectedItems[i]) selectedCount++;
+			}
+			if (_multiSelectEnabled && selectedCount > 1) {
+					break;
+			}
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
 				if (_editable && (_currentKeyDown != Common::KEYCODE_RETURN && _currentKeyDown != Common::KEYCODE_KP_ENTER)) {
@@ -398,7 +612,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				} else
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
+			scrollToCurrent();
 			break;
+		}
 
 		// Keypad & special keys
 		//   - if num lock is set, we do not handle the keypress
@@ -416,6 +632,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			if (_selectedItem >= 0) {
 				sendCommand(kListItemRemovalRequestCmd, _selectedItem);
 			}
+			scrollToCurrent();
 			break;
 
 		case Common::KEYCODE_KP1:
@@ -425,9 +642,12 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_END:
-			_selectedItem = _list.size() - 1;
+			clearSelection();
+			scrollTo((int)_list.size() - 1);
+			_selectedItem = findSelectableItem((int)_list.size() - 1, -1);
+			markSelectedItem(_selectedItem, true);
+			scrollToCurrent();
 			break;
-
 
 		case Common::KEYCODE_KP2:
 			if (state.flags & Common::KBD_NUM) {
@@ -436,8 +656,39 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_DOWN:
-			if (_selectedItem < (int)_list.size() - 1)
-				_selectedItem++;
+			// Down: Add next item to selection (Ctrl+Click logic without toggle)
+			if (_selectedItem < (int)_list.size() - 1) {
+				int newItem = _selectedItem + 1;
+				bool scrolled = false;
+				if (_multiSelectEnabled && g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
+					// Skip selecting Group Headers
+					newItem = findSelectableItem(newItem, 1);
+
+					if (newItem != -1) {
+						if (_lastSelectionStartItem < newItem)
+							markSelectedItem(newItem, true);
+						else
+							markSelectedItem(_selectedItem, false);
+						_selectedItem = newItem;
+						scrolled = true;
+					}
+				} else {
+					clearSelection();
+					// Skip selecting Group Headers
+					newItem = findSelectableItem(newItem, 1);
+					if (newItem != -1) {
+						_selectedItem = newItem;
+						scrolled = true;
+					}
+					// If dead end, restore the previous selection
+					markSelectedItem(_selectedItem, true);
+				}
+				if (_selectedItem < (int)_list.size() && !isItemVisible(_selectedItem))
+					scrollToCurrent();
+				// If there are no selectable items, Scroll to Bottom
+				if (!scrolled)
+					scrollTo((int)_list.size() - 1);
+			}
 			break;
 
 		case Common::KEYCODE_KP3:
@@ -447,10 +698,23 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_PAGEDOWN:
-			_selectedItem += _entriesPerPage - 1;
-			if (_selectedItem >= (int)_list.size() )
-				_selectedItem = _list.size() - 1;
-			break;
+			{
+				int newItem = _selectedItem + _entriesPerPage - 1;
+				if (newItem >= (int)_list.size()) {
+					newItem = _list.size() - 1;
+					scrollTo((int)_list.size() - 1);
+				}
+
+				newItem = findSelectableItem(newItem, -1);
+
+				if (newItem != -1) {
+					clearSelection();
+					_selectedItem = newItem;
+					markSelectedItem(_selectedItem, true);
+					scrollToCurrent();
+				}
+				break;
+			}
 
 		case Common::KEYCODE_KP7:
 			if (state.flags & Common::KBD_NUM) {
@@ -459,7 +723,11 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_HOME:
-			_selectedItem = 0;
+			clearSelection();
+			scrollTo(0);
+			_selectedItem = findSelectableItem(0, 1);
+			markSelectedItem(_selectedItem, true);
+			scrollToCurrent();
 			break;
 
 		case Common::KEYCODE_KP8:
@@ -469,8 +737,38 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_UP:
-			if (_selectedItem > 0)
-				_selectedItem--;
+			// Up: Add previous item to selection (Ctrl+Click logic without toggle)
+			if (_selectedItem > 0) {
+				int newItem = _selectedItem - 1;
+				bool scrolled = false;
+				if (_multiSelectEnabled && g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
+					// Skip selecting Group Headers
+					newItem = findSelectableItem(newItem, -1);
+					if (newItem != -1) {
+						if (_lastSelectionStartItem > newItem)
+							markSelectedItem(newItem, true);
+						else
+							markSelectedItem(_selectedItem, false);
+						_selectedItem = newItem;
+						scrolled = true;
+					}
+				} else {
+					clearSelection();
+					// Skip selecting Group Headers
+					newItem = findSelectableItem(newItem, -1);
+					if (newItem != -1) {
+						_selectedItem = newItem;
+						scrolled = true;
+					}
+					// If dead end, restore the previous selection
+					markSelectedItem(_selectedItem, true);
+				}
+				if (_selectedItem >= 0 && !isItemVisible(_selectedItem))
+					scrollToCurrent();
+				// If there are no selectable items, Scroll to Top
+				if (!scrolled)
+					scrollTo(0);
+			}
 			break;
 
 		case Common::KEYCODE_KP9:
@@ -480,16 +778,26 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_PAGEUP:
-			_selectedItem -= _entriesPerPage - 1;
-			if (_selectedItem < 0)
-				_selectedItem = 0;
-			break;
+			{
+				int newItem = _selectedItem - _entriesPerPage + 1;
+				if (newItem < 0) {
+					newItem = 0;
+					scrollTo(0);
+				}
 
+				newItem = findSelectableItem(newItem, 1);
+
+				if (newItem != -1) {
+					clearSelection();
+					_selectedItem = newItem;
+					markSelectedItem(_selectedItem, true);
+					scrollToCurrent();
+				}
+				break;
+			}
 		default:
 			handled = false;
 		}
-
-		scrollToCurrent();
 	}
 
 	if (dirty || _selectedItem != oldSelectedItem)
@@ -531,9 +839,10 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
-			_currentPos = data;
-			checkBounds();
-			markAsDirty();
+			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+			_fluidScroller->stopAnimation();
+			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
+			applyScrollPos();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
 			// NOTE: ListWidget's boss is always GUI::Dialog
@@ -555,12 +864,18 @@ void ListWidget::drawWidget() {
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
-	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + _topPadding + lineHeight * i;
+	const int firstItem = MAX(0, (int)(_scrollPos / lineHeight));
+	const int offset = _scrollPos < 0 ? (int)_scrollPos : (int)_scrollPos % lineHeight;
+
+	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);
+	Common::Rect oldClip = g_gui.theme()->swapClipRect(innerRect.findIntersectingRect(g_gui.theme()->getClipRect()));
+
+	for (i = 0, pos = firstItem; i <= _entriesPerPage && pos < len; i++, pos++) {
+		const int y = _y + _topPadding + lineHeight * i - offset;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos)
+		if (isItemSelected(pos))
 			inverted = _inversion;
 
 		// Get state for drawing the item text
@@ -614,6 +929,8 @@ void ListWidget::drawWidget() {
 			g_gui.theme()->drawText(r2, buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
+
+	g_gui.theme()->swapClipRect(oldClip);
 
 	if (_editMode) {
 		EditableWidget::drawWidget();
@@ -674,8 +991,10 @@ void ListWidget::scrollToCurrent() {
 	}
 
 	checkBounds();
+	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
+	_fluidScroller->setPosition(_scrollPos, false);
 }
 
 void ListWidget::scrollToEnd() {
@@ -879,7 +1198,8 @@ Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
 			break;
 
 		default:
-			error("Wrong string format (%c)", *s);
+			warning("Wrong string format (%c)", *s ? *s : '?');
+			break;
 		}
 	}
 
@@ -953,7 +1273,8 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 			break;
 
 		default:
-			error("ListWidget::drawFormattedText(): Wrong string format (\\001%c)", *s);
+			warning("ListWidget::drawFormattedText(): Wrong string format (\\001%c)", *s ? *s : '?');
+			break;
 		}
 	}
 

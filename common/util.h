@@ -177,25 +177,25 @@ struct Pair {
 	T1 first;
 	T2 second;
 
-	Pair() {
+	constexpr Pair() {
 	}
 
-	Pair(const Pair &other) : first(other.first), second(other.second) {
+	constexpr Pair(const Pair &other) : first(other.first), second(other.second) {
 	}
 
-	Pair(Pair &&other) : first(Common::move(other.first)), second(Common::move(other.second)) {
+	constexpr Pair(Pair &&other) : first(Common::move(other.first)), second(Common::move(other.second)) {
 	}
 
-	Pair(const T1 &first_, const T2 &second_) : first(first_), second(second_) {
+	constexpr Pair(const T1 &first_, const T2 &second_) : first(first_), second(second_) {
 	}
 
-	Pair(T1 &&first_, T2 &&second_) : first(Common::move(first_)), second(Common::move(second_)) {
+	constexpr Pair(T1 &&first_, T2 &&second_) : first(Common::move(first_)), second(Common::move(second_)) {
 	}
 
-	Pair(T1 &&first_, const T2 &second_) : first(Common::move(first_)), second(second_) {
+	constexpr Pair(T1 &&first_, const T2 &second_) : first(Common::move(first_)), second(second_) {
 	}
 
-	Pair(const T1 &first_, T2 &&second_) : first(first_), second(Common::move(second_)) {
+	constexpr Pair(const T1 &first_, T2 &&second_) : first(first_), second(Common::move(second_)) {
 	}
 
 	Pair &operator=(const Pair &other) {

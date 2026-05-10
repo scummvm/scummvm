@@ -1,0 +1,51 @@
+
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef PELROCK_CONSOLE_H
+#define PELROCK_CONSOLE_H
+
+#include "gui/debugger.h"
+
+#include "pelrock/pelrock.h"
+
+namespace Pelrock {
+
+class PelrockConsole : public GUI::Debugger {
+private:
+	PelrockEngine *_engine;
+	bool cmdLoadRoom(int argc, const char **argv);
+	bool cmdGiveItems(int argc, const char **argv);
+	bool cmdToJail(int argc, const char **argv);
+	bool cmdTest(int argc, const char **argv);
+	bool cmdSetRoot(int argc, const char **argv);
+	bool cmdSetFlag(int argc, const char **argv);
+	bool cmdGetFlag(int argc, const char **argv);
+	bool cmdRemoveSticker(int argc, const char **argv);
+
+public:
+	PelrockConsole(PelrockEngine *engine);
+	~PelrockConsole() override;
+};
+
+} // End of namespace Pelrock
+
+#endif // PELROCK_CONSOLE_H

@@ -19,10 +19,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
-#include "common/memstream.h"
+
 #include "audio/decoders/raw.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {

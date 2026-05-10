@@ -189,7 +189,7 @@ private:
 		setBlendFunc(_currentBlendMode);
 		_shader.setUniform("projection", _projection);
 		_shader.setUniform("blendMode", _currentTexture == nullptr ? 5 : (int)_currentBlendMode);
-		_shader.setUniform("posterize", g_engine->config().highQuality() ? 1 : 0);
+		_shader.setUniform("posterize", g_engine->config().bits32() ? 0 : 1);
 		_shader.setUniform1f("lodBias", _currentLodBias);
 		_shader.setUniform("texture", 0);
 		_batchTexture = _currentTexture;
@@ -248,7 +248,7 @@ private:
 				gl_FragColor = var_color;
 			}
 
-			if (posterize == 0) {
+			if (posterize == 1) {
 				// shave off 3 bits for that 16-bit look
 				gl_FragColor = floor(gl_FragColor * (256.0 / 8.0)) / (256.0 / 8.0);
 			}

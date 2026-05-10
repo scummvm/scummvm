@@ -36,9 +36,10 @@ class Door;
 class Room;
 class Process;
 struct ScriptInstruction;
+class GlobalUI;
 
 /**
- * @brief Provides functionality specific to a game title.
+ * @brief Provides functionality specific to a game title / engine version.
  * Also includes all exemptions to inconsistencies in the original games.
  *
  * If an error is truly unrecoverable or a warning never an engine bug, no method is necessary here
@@ -51,12 +52,33 @@ public:
 
 	virtual void onLoadedGameFiles();
 	virtual Common::Point getResolution() = 0;
+	virtual Common::Point getThumbnailResolution() = 0;
 	virtual const char *const *getMapFiles() = 0; ///< Returns a nullptr-terminated list
+	virtual GameFileReference getScriptFileRef() = 0;
 	virtual Common::Span<const ScriptOp> getScriptOpMap() = 0;
 	virtual Common::Span<const ScriptKernelTask> getScriptKernelTaskMap() = 0;
 	virtual void updateScriptVariables() = 0;
-	virtual bool shouldClipCamera() = 0;
 	virtual void drawScreenStates();
+	virtual Common::String reencodePath(const Common::String &path);
+	virtual const char *getDialogFileName() = 0;
+	virtual const char *getObjectFileName() = 0;
+	virtual char getTextFileKey() = 0;
+	virtual Common::Point getSubtitlePos() = 0;
+	virtual const char *getMenuRoom() = 0;
+	virtual const char *getInitScriptName() = 0;
+	virtual int32 getKernelTaskArgCount(int32 kernelTaskI); // only necessary for V1
+	virtual Common::Path getVideoPath(int32 videoId) = 0;
+	virtual Common::String getSoundPath(const char *filename) = 0; ///< Without file-extension
+	virtual Common::String getMusicPath(int32 trackId) = 0; ///< Without file-extension
+	virtual int32 getCharacterJingle(MainCharacterKind kind) = 0;
+	virtual bool shouldFilterTexturesByDefault() = 0;
+	virtual bool shouldClipCamera() = 0;
+	virtual bool isAllowedToInteract() = 0;
+	virtual bool isAllowedToOpenMenu() = 0; ///< only the game-specific condition
+	virtual bool shouldScriptLockInteraction() = 0;
+	virtual bool shouldChangeCharacterUseGameLock() = 0;
+	virtual bool shouldAvoidCollisions() = 0;
+	virtual Common::Point getMainCharacterSize() = 0;
 
 	virtual bool doesRoomHaveBackground(const Room *room);
 	virtual void unknownRoomObject(const Common::String &type);
@@ -85,12 +107,13 @@ public:
 	virtual PointObject *unknownGoPutTarget(const Process &process, const char *action, const char *name); ///< May return an alternative target to use
 	virtual void unknownChangeCharacterRoom(const char *name);
 	virtual void unknownAnimateCharacterObject(const char *name);
-	virtual void unknownSayTextCharacter(const char *name, int32 dialogId);
+	virtual Character *unknownSayTextCharacter(const char *name, int32 dialogId);
 	virtual void unknownAnimateTalkingObject(const char *name);
 	virtual void unknownClearInventoryTarget(int characterKind);
-	virtual void unknownCamLerpTarget(const char *action, const char *name);
+	virtual PointObject *unknownCamLerpTarget(const char *action, const char *name);
 	virtual void unknownKernelTask(int task);
 	virtual void unknownScriptProcedure(const Common::String &procedure);
+	virtual void unknownMenuAction(int32 actionId);
 
 	virtual void missingAnimation(const Common::String &fileName);
 	virtual void missingSound(const Common::String &fileName);
@@ -100,7 +123,14 @@ public:
 	virtual bool isKnownBadVideo(int32 videoId);
 	virtual void invalidVideo(int32 videoId, const char *context);
 
-	static Game *createForMovieAdventure();
+	static Game *create();
+	static Game *createForMovieAdventureSpecial(); // V3
+	static Game *createForMovieAdventureOriginal(); // V1
+	static Game *createForTerror(); // V1
+	static Game *createForVaqueros(); // V1
+	static Game *createForSecta(); // V2
+	static Game *createForMoscu(); // V2
+	static Game *createForEscarabajo(); // V2
 
 	const Message _message;
 };

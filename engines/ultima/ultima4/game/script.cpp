@@ -645,7 +645,7 @@ void Script::translate(Common::String *text) {
 			provider = item.substr(0, index);
 			to_find = item.substr(index + 1);
 			if (_providers.find(provider) != _providers.end()) {
-				Std::vector<Common::String> parts = split(to_find, ":");
+				Common::Array<Common::String> parts = split(to_find, ":");
 				Provider *p = _providers[provider];
 				prop = p->translate(parts);
 			}

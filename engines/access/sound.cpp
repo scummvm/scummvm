@@ -187,6 +187,11 @@ bool SoundManager::isSFXPlaying() {
 	return _mixer->isSoundHandleActive(*_effectsHandle);
 }
 
+void SoundManager::syncVolume() {
+	int sfxVol = CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfxVol);
+}
+
 void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds) {
 	debugC(1, kDebugSound, "loadSounds");
 
@@ -316,7 +321,7 @@ void MusicManager::midiPlay() {
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
 		_parser->property(MidiParser::mpAutoLoop, _isLooping);
-		setVolume(127);
+		syncVolume();
 		_isPlaying = true;
 	} else if (magic == MKTAG('F', 'O', 'R', 'M')) {
 		_parser = MidiParser::createParser_XMIDI();
@@ -332,8 +337,7 @@ void MusicManager::midiPlay() {
 
 		// Handle music looping
 		_parser->property(MidiParser::mpAutoLoop, _isLooping);
-
-		setVolume(127);
+		syncVolume();
 		_isPlaying = true;
 	} else {
 		warning("midiPlay() Unexpected signature 0x%08x, expected 'FORM'", magic);

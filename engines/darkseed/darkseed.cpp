@@ -341,8 +341,7 @@ void DarkseedEngine::gameLoop() {
 //				zeroMouseButtons();
 //			}
 			if (_player->_isAutoWalkingToBed ||
-				(_room->_roomNumber == 10 && _player->_position.x < 369 &&
-				  ((_currentDay == 3 && _currentTimeInSeconds > 43200) || _objectVar[88] != 0))) {
+				(_room->_roomNumber == 10 && _player->_position.x < 369 && _objectVar[88] != 0)) {
 				zeroMouseButtons();
 			}
 			if ((_objectVar[141] > 0 && _objectVar[141] < 4) ||

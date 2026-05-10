@@ -52,7 +52,7 @@ END_MESSAGE_MAP()
 CMainMenu::CMainMenu(CWnd *pParent, CPalette *pPalette,
         unsigned int nFlags, FPFUNC pOptionsFunc, const char *pRulesFileName,
         const char *pWavFileName, LPGAMESTRUCT pGameParams)
-		: CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, ".\\ART\\OSCROLL.BMP") {
+		: CBmpDialog(pParent, pPalette, IDD_OPTIONS_DIALOG, "art\\OSCROLL.BMP") {
 	// Can't access null pointers
 	assert(pParent != nullptr);
 	assert(pPalette != nullptr);

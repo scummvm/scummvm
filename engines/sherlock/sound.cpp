@@ -242,7 +242,6 @@ void Sound::setVolume(int volume) {
 	_soundVolume = volume;
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void Sound::playSpeech(const Common::Path &name) {

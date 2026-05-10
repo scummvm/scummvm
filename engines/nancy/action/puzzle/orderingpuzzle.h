@@ -49,9 +49,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override;
-	bool isViewportRelative() const override { return true; }
 
 	void pushDown(uint id);
 	void setToSecondState(uint id);
@@ -83,13 +84,13 @@ protected:
 	Common::Array<Common::Rect> _overlaySrcs;
 	Common::Array<Common::Rect> _overlayDests;
 
-	Nancy::SoundDescription _pushDownSound;
-	Nancy::SoundDescription _itemSound;
-	Nancy::SoundDescription _popUpSound;
+	SoundDescription _pushDownSound;
+	SoundDescription _itemSound;
+	SoundDescription _popUpSound;
 
 	SceneChangeWithFlag _solveExitScene;
 	uint16 _solveSoundDelay = 0;
-	Nancy::SoundDescription _solveSound;
+	SoundDescription _solveSound;
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 

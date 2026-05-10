@@ -209,7 +209,7 @@ bool CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
-	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Sfinx", _("Game Keymappings"));
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Sfinx", _("Game keymappings"));
 
 	Common::Action *act;
 

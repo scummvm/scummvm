@@ -19,13 +19,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-
 #include "ultima/ultima8/audio/sound_flex.h"
+
+#include "common/debug.h"
+#include "common/memstream.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
-
-#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -49,7 +48,7 @@ SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nul
 		// some info about how to play back the raw sounds (eg, loop points?)
 		while (!st.eos() && _index.size() < _count) {
 			uint32 data = st.readUint32LE();
-			Std::string str;
+			Common::String str;
 			char c = st.readByte();
 			while (c != 0 && !st.eos()) {
 				str.push_back(c);

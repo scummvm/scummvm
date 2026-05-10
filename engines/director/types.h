@@ -475,7 +475,11 @@ const char *spriteType2str(SpriteType type);
 const char *inkType2str(InkType type);
 const char *symbolType2str(SymbolType type);
 Common::String objectType2str(int fl);
-\
+Common::String paletteType2str(PaletteType value);
+Common::String textAlignType2str(TextAlignType value);
+Common::String shapeType2str(ShapeType value);
+Common::String textType2str(TextType value);
+
 enum CollisionTest {
 	kCollisionNo = 0,
 	kCollisionYes,

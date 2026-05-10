@@ -108,7 +108,23 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// For some reason, DIB cast members have the palette indices reversed
-	if (_bitsPerPixel == 8) {
+	if (_bitsPerPixel == 2) {
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				// We're not su[pposed to modify the image that is coming from the decoder
+				// However, in this case, we know what we're doing.
+				*const_cast<byte *>((const byte *)_surface->getBasePtr(x, y)) = 3 - *(const byte *)_surface->getBasePtr(x, y);
+			}
+		}
+	} else if (_bitsPerPixel == 4) {
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				// We're not su[pposed to modify the image that is coming from the decoder
+				// However, in this case, we know what we're doing.
+				*const_cast<byte *>((const byte *)_surface->getBasePtr(x, y)) = 15 - *(const byte *)_surface->getBasePtr(x, y);
+			}
+		}
+	} else if (_bitsPerPixel == 8) {
 		for (int y = 0; y < _surface->h; y++) {
 			for (int x = 0; x < _surface->w; x++) {
 				// We're not su[pposed to modify the image that is coming from the decoder
@@ -149,8 +165,8 @@ BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const 
 		format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		break;
 	case 4:
-		// RGB888
-		format = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
+		// RGB8888
+		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		break;
 	default:
 		warning("BITDDecoder::BITDDecoder(): unsupported bpp %d", bitsPerPixel);
@@ -160,8 +176,8 @@ BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const 
 	_surface->create(w, h, format);
 
 	// TODO: Bring this in from the main surface?
-	_palette.resize(255, false);
-	_palette.set(palette, 0, 255);
+	_palette.resize(256, false);
+	_palette.set(palette, 0, 256);
 
 	_bitsPerPixel = bitsPerPixel;
 }
@@ -309,7 +325,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 							pixels[(((y * _surface->w * 4)) + (x + 2 * _surface->w))] << 8 |
 							pixels[(((y * _surface->w * 4)) + (x + 3 * _surface->w))];
 					}
-					*((uint32 *)_surface->getBasePtr(x, y)) = color;
+					*((uint32 *)_surface->getBasePtr(x, y)) = (color << 8) | 0xff;
 					x++;
 					break;
 

@@ -125,8 +125,15 @@ bool AniDecoder::parseRIFFChunks(Common::SeekableReadStream &stream, const RIFFC
 
 		int64 chunkAvailable = stream.size() - stream.pos();
 		if (chunkAvailable < actualChunkSize) {
-			warning("AniDecoder::parseRIFFChunk: RIFF chunk is too large");
-			return false;
+			if (chunkAvailable == chunkSize - 8) {
+				// Some ANI files wrongly include the 8-byte chunk header size in the chunk size field, tolerate that
+				warning("AniDecoder::parseRIFFChunks: Chunk size seems to include header size, clamping");
+				chunkSize = static_cast<uint32>(chunkAvailable);
+				actualChunkSize = chunkSize;
+			} else {
+				warning("AniDecoder::parseRIFFChunk: RIFF chunk is too large");
+				return false;
+			}
 		}
 
 		RIFFChunkDef chunkDef;

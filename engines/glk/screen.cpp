@@ -170,10 +170,18 @@ int Screen::drawStringUni(const Point &pos, int fontIdx, uint color, const Commo
 	int baseLine = (fontIdx >= PROPR) ? g_conf->_propInfo._baseLine : g_conf->_monoInfo._baseLine;
 	Point pt(pos.x / GLI_SUBPIX, pos.y - baseLine);
 	const Graphics::Font *font = _fonts[fontIdx];
-	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);
-
-	pt.x += font->getStringWidth(text);
-	return MIN((int)pt.x, (int)w) * GLI_SUBPIX;
+	
+	int xSub = pos.x;
+	for (auto c : text) {
+		int xPix = xSub / GLI_SUBPIX;
+		font->drawString(this, Common::U32String(1, c), xPix, pt.y, w - xPix, color);
+		int charWidthPx = font->getStringWidth(Common::U32String(1, c));
+		xSub += charWidthPx * GLI_SUBPIX;
+		if (spw > 0 && c == ' ')
+			xSub += spw;
+	}
+	int xFinalPix = MIN(xSub / GLI_SUBPIX, (int)w);
+	return xFinalPix * GLI_SUBPIX;
 }
 
 size_t Screen::stringWidth(int fontIdx, const Common::String &text, int spw) {
@@ -183,7 +191,17 @@ size_t Screen::stringWidth(int fontIdx, const Common::String &text, int spw) {
 
 size_t Screen::stringWidthUni(int fontIdx, const Common::U32String &text, int spw) {
 	const Graphics::Font *font = _fonts[fontIdx];
-	return font->getStringWidth(text) * GLI_SUBPIX;
+	size_t width = font->getStringWidth(text)*GLI_SUBPIX;
+
+	if (spw > 0) {
+        int spaces = 0;
+        for (auto c : text)
+            if (c == ' ')
+                spaces++;
+
+        width += (size_t)spaces * (size_t)spw;
+    }
+    return width;
 }
 
 } // End of namespace Glk

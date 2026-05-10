@@ -51,7 +51,7 @@ public:
 	};
 };
 
-class OSystem_libretro : public EventsBaseBackend, public ModularGraphicsBackend {
+class OSystem_libretro : virtual public BaseBackend, public Common::EventSource, public ModularGraphicsBackend {
 private:
 	int _relMouseX;
 	int _relMouseY;

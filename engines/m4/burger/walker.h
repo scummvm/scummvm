@@ -23,7 +23,6 @@
 #ifndef M4_BURGER_WALKER_H
 #define M4_BURGER_WALKER_H
 
-#include "common/array.h"
 #include "m4/adv_r/adv_walk.h"
 
 namespace M4 {
@@ -70,7 +69,7 @@ private:
 public:
 	~Walker() override {}
 
-	bool walk_load_walker_and_shadow_series() override;
+	void walk_load_walker_and_shadow_series() override;
 	machine *walk_initialize_walker() override;
 
 	void reset_walker_sprites();

@@ -68,8 +68,8 @@ private:
 	bool Cmd_soundInfo(int argc, const char **argv);
 	bool Cmd_showHotspots(int argc, const char **argv);
 
-	void printActionRecord(const Nancy::Action::ActionRecord *record, bool noDependencies = false);
-	void recursePrintDependencies(const Nancy::Action::DependencyRecord &record);
+	void printActionRecord(const Action::ActionRecord *record, bool noDependencies = false);
+	void recursePrintDependencies(const Action::DependencyRecord &record);
 
 	Common::Path _videoFile;
 	Common::Path _imageFile;

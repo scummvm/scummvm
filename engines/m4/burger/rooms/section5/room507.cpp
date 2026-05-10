@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section5/room507.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -186,7 +188,7 @@ const seriesPlayBreak Room507::PLAY14[] = {
 };
 
 const seriesPlayBreak Room507::PLAY15[] = {
-	{ 0, -1, "507b013", 2, 255, -1, 0, 0, 0, 0 },
+	{ 0, -1, "507b013", 2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -225,6 +227,9 @@ Room507::Room507() : Section5Room() {
 	_state3 = 0;
 	_state4 = 0;
 	_state5 = 0;
+
+	for (int i = 0; i < 5; ++i)
+		_triggers[i] = -1;
 }
 
 void Room507::init() {
@@ -685,7 +690,7 @@ void Room507::pre_parser() {
 
 void Room507::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool tubFlag = player_said("TUB") && _G(flags)[V223] != 0;
+	const bool tubFlag = player_said("TUB") && _G(flags)[V223] != 0;
 
 	if (player_said("LOOK AT", "BORK") && _G(flags)[V223] == 1) {
 		wilbur_speech("507w003");

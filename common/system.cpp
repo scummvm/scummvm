@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/file.h"
+#include "common/printman.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/taskbar.h"
@@ -47,6 +48,7 @@ OSystem::OSystem() {
 	_eventManager = nullptr;
 	_timerManager = nullptr;
 	_savefileManager = nullptr;
+	_printingManager = nullptr;
 #if defined(USE_TASKBAR)
 	_taskbarManager = nullptr;
 #endif
@@ -71,6 +73,9 @@ OSystem::~OSystem() {
 
 	delete _timerManager;
 	_timerManager = nullptr;
+
+	delete _printingManager;
+	_printingManager = nullptr;
 
 #if defined(USE_TASKBAR)
 	delete _taskbarManager;
@@ -239,6 +244,12 @@ void OSystem::fatalError() {
 FilesystemFactory *OSystem::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
+}
+
+void OSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 Common::SeekableReadStream *OSystem::createConfigReadStream() {

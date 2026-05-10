@@ -40,6 +40,17 @@ namespace Hugo {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_WINDOWS_INTERFACE,
+		{
+			_s("Use Windows interface"),
+			_s("Use mouse and toolbar from Windows version"),
+			"use_windows_interface",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_TTS,
 		{
 			_s("Enable Text to Speech"),
@@ -185,7 +196,7 @@ Common::KeymapArray HugoMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action("ESC", _("Escape"));
 	act->setCustomEngineActionEvent(kActionEscape);
-	act->addDefaultInputMapping("Escape");
+	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");
 	engineKeyMap->addAction(act);
 

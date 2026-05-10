@@ -60,6 +60,8 @@ private:
 	bool cmd_cheat(int argc, const char **argv);
 
 	bool cmd_listArchives(int argc, const char **argv);
+
+	bool cmd_gobStack(int argc, const char **argv);
 };
 
 } // End of namespace Gob

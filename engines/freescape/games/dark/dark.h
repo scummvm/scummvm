@@ -20,6 +20,10 @@
  */
 
 #include "audio/mixer.h"
+#include "common/array.h"
+#include "freescape/music.h"
+#include "freescape/games/dark/c64.music.h"
+#include "freescape/games/dark/c64.sfx.h"
 
 namespace Freescape {
 
@@ -48,6 +52,7 @@ enum DarkFontSize {
 class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
+	~DarkEngine();
 
 	uint32 _initialEnergy;
 	uint32 _initialShield;
@@ -57,6 +62,7 @@ public:
 	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void borderScreen() override;
+	bool triggerWinCondition() override;
 	bool checkIfGameEnded() override;
 	void endGame() override;
 
@@ -96,13 +102,57 @@ public:
 	void drawZXUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
+	void drawC64Compass(Graphics::Surface *surface);
 
 	Font _fontBig;
 	Font _fontMedium;
 	Font _fontSmall;
+	Common::Array<Graphics::ManagedSurface *> _cpcIndicators;
+	Common::Array<Graphics::ManagedSurface *> _cpcJetpackIndicators;
+	Common::Array<Graphics::ManagedSurface *> _cpcActionIndicators;
+	uint32 _cpcActionIndicatorUntilMillis;
+	Common::Array<Graphics::ManagedSurface *> _c64ModeFrames;
+
+	// Dark Side Amiga stores the grounded jetpack indicator states as raw
+	// 4-plane bitplane data. The executable drives those frames through a tiny
+	// fixed color ramp, so the renderer keeps the raw planes and applies a
+	// hardcoded palette at draw time.
+	Common::Array<Common::Array<byte>> _jetpackTransitionFrames;
+	Common::Array<byte> _jetpackCrouchFrame;
+	Common::Array<Graphics::ManagedSurface *> _amigaCompassYawFrames;
+	Graphics::ManagedSurface *_amigaCompassPitchMarker;
+	Common::Array<Graphics::ManagedSurface *> _amigaCompassNeedleFrames;
+	Common::Array<Graphics::ManagedSurface *> _amigaCompassLeftFrames;
+	Common::Array<Graphics::ManagedSurface *> _amigaCompassRightFrames;
+	bool _amigaCompassYawPhaseInitialized;
+	int _amigaCompassYawPhase;
+	int _amigaCompassYawLastUpdateTick;
+	bool _jetpackIndicatorStateInitialized;
+	bool _jetpackIndicatorLastFlyMode;
+	int _jetpackIndicatorTransitionFrame;
+	int _jetpackIndicatorTransitionDirection;
+	uint32 _jetpackIndicatorNextFrameMillis;
+	void loadJetpackRawFrames(Common::SeekableReadStream *file);
+	void loadAmigaIndicatorSprites(Common::SeekableReadStream *file, byte *palette);
+	void loadAmigaCompass(Common::SeekableReadStream *file, byte *palette);
+	void drawAmigaCompass(Graphics::Surface *surface);
+	void drawAmigaAmbientIndicators(Graphics::Surface *surface);
+	void drawJetpackIndicator(Graphics::Surface *surface);
+
 	int _soundIndexRestoreECD;
 	int _soundIndexDestroyECD;
 	Audio::SoundHandle _soundFxHandleJetpack;
+
+	DarkSideC64SFXPlayer *_playerC64Sfx;
+	MusicPlayer *_playerMusic;
+	bool _c64UseSFX;
+	bool _c64CompassInitialized;
+	int _c64CompassPosition;
+	Common::Array<byte> _c64CompassTable;
+	void playSoundC64(int index) override;
+	void toggleC64Sound();
+
+	Common::Array<byte> _musicData; // HDSMUSIC.AM TEXT segment (Amiga)
 
 	void drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
 	void drawInfoMenu() override;
@@ -118,6 +168,12 @@ private:
 	bool tryDestroyECD(int index);
 	bool tryDestroyECDFullGame(int index);
 	void addWalls(Area *area);
+	void loadCPCIndicator(Common::SeekableReadStream *file, uint32 offset, Common::Array<Graphics::ManagedSurface *> &target);
+	void loadCPCIndicatorData(const byte *data, int widthBytes, int height, Common::Array<Graphics::ManagedSurface *> &target);
+	void loadCPCIndicators(Common::SeekableReadStream *file);
+	void drawC64ModeIndicator(Graphics::Surface *surface);
+	void drawCPCSprite(Graphics::Surface *surface, const Graphics::ManagedSurface *indicator, int xPosition, int yPosition);
+	void drawCPCIndicator(Graphics::Surface *surface, int xPosition, int yPosition);
 	void drawVerticalCompass(Graphics::Surface *surface, int x, int y, float angle, uint32 color);
 	void drawHorizontalCompass(int x, int y, float angle, uint32 front, uint32 back, Graphics::Surface *surface);
 };

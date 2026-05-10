@@ -252,9 +252,10 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 	}
 
 	if (foundLanguage == requestedLanguage) {
-		if (curChar2 == 'J') {
+		if (curChar2 == 'J' && g_sci->getGameId() != GID_PQ2) {
 			// Japanese including Kanji, displayed with system font
-			// Convert half-width characters to full-width equivalents
+			// Convert half-width characters to full-width equivalents.
+			// PQ2 does not do this.
 			Common::String fullWidth;
 
 			textPtr += 2; // skip over language splitter

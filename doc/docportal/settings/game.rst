@@ -204,6 +204,22 @@ High Quality
 
 ,,,,,,
 
+.. _ALG:
+
+ALG
+******************
+
+.. _single_speed_videos:
+
+Use lower quality single speed CD-ROM video
+	Some games come with videos in single and double CD-ROM speed.
+	The double CD-ROM speed videos are of slightly higher quality and bandwith.
+	By default the double speed videos are used, this toggle changes to single speed videos.
+
+	*single_speed_videos*
+
+,,,,,,
+
 .. _BLADERUNNER:
 
 Bladerunner
@@ -442,6 +458,170 @@ Disable falling
 	Stops player from falling over edges.
 
 	*disable_falling*
+
+,,,,,,,,,
+
+.. _GLK:
+
+GLK
+***********
+
+Font
+	Changes the font style for text/grid.
+
+	*tfont_[0-10]*
+
+	*gfont_[0-10]*
+
+Color
+	Changes the color of text, grid, window, border, cursor, hypertext links and the 'more...' marker.
+
+	*tcolor_[0-10]*
+
+	*gcolor_[0-10]*
+
+	*windowcolor*
+
+	*bordercolor*
+
+	*caretcolor*
+
+	*linkcolor*
+
+	*morecolor*
+
+Border
+	Modifies the size of the window borders.
+
+	*wborderx*
+
+	*wbordery*
+
+Window margin
+	Modifies the window margin.
+
+	*wmarginx*
+
+	*wmarginy*
+
+Text margin
+	Modifies the text margin.
+
+	*tmarginx*
+
+	*tmarginy*
+
+Window padding
+	Modifies the window padding.
+
+	*wpaddingx*
+
+	*wpaddingy*
+
+More align
+	Changes the alignment of the 'More...' marker.
+
+	*morealign*
+
+More font
+	Changes the font style of the 'More...' marker.
+
+	*morefont*
+
+Link style
+	Style for URLs if they appear in game.
+
+	*linkstyle*
+
+Caret shape
+	Changes shape of the cursor.
+
+	*caretshape*
+
+More prompt
+	Implements custom marker in place of the 'More...' marker. For example, 'continue'.
+
+	*moreprompt*
+
+Leading
+	Changes the vertical distance between text rows.
+
+	*leading*
+
+Baseline
+	Changes the vertical distance between text rows.
+
+	*baseline*
+
+Monosize
+	Changes the font size scaling of the monospace text font.
+
+	*monosize*
+
+Propsize
+	Changes the font size scaling of the proportional text font.
+
+	*propsize*
+
+Caps
+	Forces uppercase input.
+
+	*caps*
+
+Typographic quotes
+	Changes typographic quotes.
+
+	*quotes*
+
+Dashes
+	Changes the type of dashes.
+
+	*dashes*
+
+Spaces
+	Changes the type of spaces.
+
+	*spaces*
+
+Style hints
+	Lets the game suggest text styling options.
+
+	*stylehint*
+
+Safe clicks
+	Enables the safe application of clicks while input is pending.
+
+	*safeclicks*
+
+Column count
+	Changes the number of columns.
+
+	*cols*
+
+Lock columns
+	Enables the manual changing of column count.
+
+	*lockcols*
+
+Row count
+	Changes the number of rows.
+
+	*rows*
+
+Lock rows
+	Enables the manual changing of row count.
+
+	*lockrows*
+
+Justify
+	Enables text justification.
+
+	*justify*
+
+Graphics
+	Toggles graphics
+
+	*graphics*
 
 ,,,,,,,,,
 

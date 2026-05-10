@@ -108,7 +108,8 @@ bool FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 		_syncSound = false;
 		_objExecutingCodeSize = collided ? obj->getSize() : Math::Vector3d();
 		if (collided) {
-			clearGameBit(31); // We collided with something that has code
+			if (!isCastle())
+				clearGameBit(31); // We collided with something that has code
 			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
 		} else if (shot)
 			debugC(1, kFreescapeDebugCode, "Executing with shot flag: %s", obj->_conditionSource.c_str());
@@ -354,6 +355,15 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	if (isEclipse2() && _currentArea->getAreaID() == _startArea && _gameStateControl == kFreescapeGameStateStart)
 		delay = delay * 10;
 
+	if (isCastle() && (isSpectrum() || isCPC() || isC64()) && getGameBit(31))
+		delay = delay * 15; // Slow down redraws when the final cutscene is playing
+
+	if (isDriller() && (isSpectrum() || isCPC() || isC64()) && _gameStateVars[32] == 18)
+		delay = delay * 15; // Slow down redraws when the final cutscene is playing
+
+	if (isEclipse() && _currentArea->getAreaID() == 37 && getGameBit(6))
+		delay = delay * 10; // Slow down redraws in the final area of Eclipse
+
 	waitInLoop(delay);
 }
 
@@ -368,7 +378,7 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
 			if (!obj) {
 				debugC(1, kFreescapeDebugCode, "WARNING: executing instructions from a non-existent object %d", objId);
 				return;
-			} 
+			}
 			assert(obj);
 			FCLInstructionVector &condition = ((Entrance *)obj)->_condition;
 			executeCode(condition, true, true, true, true);
@@ -660,6 +670,12 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 		if (!obj) {
 			obj = _areaMap[255]->objectWithID(objectID);
 			if (!obj) {
+				if (isCastleMaster2()) {
+					// CM2 Z80 code (Lb286_find_object_by_id) returns silently
+					// when object is not found — the caller skips the rule.
+					debugC(1, kFreescapeDebugCode, "obj %d not found in area %d nor in global area, skipping", objectID, areaID);
+					return;
+				}
 				if (!isCastle() || !isDemo())
 					error("obj %d does not exists in area %d nor in the global one!", objectID, areaID);
 				return;

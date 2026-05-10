@@ -39,7 +39,7 @@ public:
 		SceneChangeWithFlag sceneChange;
 
 		// NewPhone members
-		int16 eventFlagCondition = -1;
+		int16 directoryDisplayCondition = -1;
 		Common::Rect displaySrc;
 	};
 
@@ -62,9 +62,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return _isNewPhone ? "NewPhone" : "Telephone"; }
-	bool isViewportRelative() const override { return true; }
 
 	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;

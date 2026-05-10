@@ -1910,6 +1910,8 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 	}
 
 	if (currentChapter == 1 && objectNum[doorNumber] == 105 && flags[0] == 0) {
+		_characterMoved = false;
+		doBreak = 1;
 		talk(442);
 		return false;
 	}

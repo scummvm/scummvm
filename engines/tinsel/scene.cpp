@@ -131,7 +131,7 @@ struct LIGHT_STRUC {
 static bool g_ShowPosition = false;	// Set when showpos() has been called
 #endif
 
-int g_sceneCtr = 0;
+static bool g_dw1Intro = true;
 static int g_initialMyEscape = 0;
 
 static SCNHANDLE g_SceneHandle = 0;	// Current scene handle - stored in case of Save_Scene()
@@ -146,8 +146,7 @@ struct TP_INIT {
 };
 
 void ResetVarsScene() {
-	g_sceneCtr = 0;
-	g_initialMyEscape = 0;
+	ResetDw1Intro();
 
 	g_SceneHandle = 0;
 	g_isViewSet = false;
@@ -235,15 +234,29 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	// The following myEscape value setting is used for enabling title screen skipping in DW1
-	if ((TinselVersion == 1) && (g_sceneCtr == 1)) g_initialMyEscape = GetEscEvents();
-	// DW1 PSX, Saturn and Mac has its own scene skipping script code for scenes 2 and 3 (bug #6094).
-	_ctx->myEscape = ((TinselVersion == 1) && (g_sceneCtr < ((TinselV1PSX || TinselV1Saturn || TinselV1Mac) ? 2 : 4))) ? g_initialMyEscape : 0;
-
 	// get the stuff copied to process when it was created
 	_ctx->pInit = (const TP_INIT *)param;
 	assert(_ctx->pInit);
 	assert(_ctx->pInit->hTinselCode);		// Must have some code to run
+
+	// Handle DW1 introduction skipping
+	if (InDw1Intro()) {
+		// Record initial escape events so that Escape can be detected after a scene
+		if (g_initialMyEscape == 0) {
+			g_initialMyEscape = GetEscEvents();
+		}
+		SCNHANDLE sceneHandle = FROM_32(_ctx->pInit->hTinselCode) & HANDLEMASK;
+		if (sceneHandle == _vm->_handle->GetDw1TitleSceneHandle()) {
+			// Title screen reached; introduction has ended
+			EndDw1Intro();
+			_ctx->myEscape = 0;
+		} else {
+			// Enable Escape mode during introduction
+			_ctx->myEscape = GetEscEvents();
+		}
+	} else {
+		_ctx->myEscape = 0;
+	}
 
 	_ctx->pic = InitInterpretContext(GS_SCENE,
 		FROM_32(_ctx->pInit->hTinselCode),
@@ -576,6 +589,63 @@ void SetView(int sceneId, int scale) {
 	}
 
 	// TODO: Update the ground plane
+}
+
+// DW1 Introduction Skipping
+//
+// The DW1 intro has many logos that cannot be skipped with the Escape key.
+// Later versions added limited ability to use Escape on some logos, but only 
+// after a long delay. Other versions added even more logos.
+// We allow users to press Escape during any of these logos to skip straight
+// to the title scene. On PSX this is the turtle scene, as they swapped orders.
+//
+// 1. The title scene handle is detected by name in Handle::SetupHandleTable()
+// 2. We assume we are in the DW1 intro until the title scene is reached, or
+//    until a game is restored from launcher or the debugger sets a scene.
+// 3. We manually enable Escape mode at the start of intro scenes by initializing
+//    ctx->myEscape to GetEscEvents() in SceneTinselProcess().
+// 4. We detect if Escape was pressed during a previous scene by comparing
+//    GetEscEvents() with g_initialMyEscape in SetNewScene().
+//    If Escape was pressed, we set the next scene to the title scene.
+// 5. We disable the escape opcodes (OP_ESCON, OP_ESCOFF) during the intro,
+//    so that the versions that added these calls do not conflict.
+
+/**
+ * Returns true if DW1 is in one of its introduction scenes.
+ * This allows implementing skipping the entire introduction with the Escape key
+ * by initializing ctx->myEscape and ignoring EscapeOn during introduction scenes.
+ */
+bool InDw1Intro() {
+	// Fail-safe: Disable introduction detection if we were
+	// unable to detect the DW1 title scene handle.
+	return (TinselVersion == 1) && g_dw1Intro &&
+		(_vm->_handle->GetDw1TitleSceneHandle() != 0);
+}
+
+/**
+ * Clears the DW1 introduction flag. Called when the title screen is started,
+ * a game is restored, or when loading a scene from the debugger.
+ */
+void EndDw1Intro() {
+	g_dw1Intro = false;
+}
+
+/**
+ * Resets the DW1 introduction state. Called when restarting the game or
+ * destroying the engine.
+ */
+void ResetDw1Intro() {
+	g_dw1Intro = true;
+	g_initialMyEscape = 0;
+}
+
+/**
+ * Returns true if Escape was pressed during the DW1 introduction.
+ * Used to override the scene passed by the script to NewScene()
+ * with the title scene instead.
+ */
+bool WasDw1IntroSkipped() {
+	return InDw1Intro() && g_initialMyEscape != 0 && g_initialMyEscape != GetEscEvents();
 }
 
 } // End of namespace Tinsel

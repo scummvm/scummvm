@@ -29,6 +29,10 @@
 #include "common/queue.h"
 #include "common/mutex.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Common {
 
 /**
@@ -50,13 +54,19 @@ public:
 	void registerEventSource();
 
 	enum {
-		kMinimumDelay = 1000 /** < Minimum delay between two OSD messages (in milliseconds) */
+		kMinimumDelay = 1000, /** < Minimum delay between two OSD messages (in milliseconds) */
+		kIconCleanupDelay = 2 * 1000, /** < Delay after which an OSD icon is removed if it hasn't been shown (in milliseconds) */
 	};
 
 	/**
 	 * Add a message to the OSD message queue.
 	 */
 	void addMessage(const Common::U32String &msg);
+
+	/**
+	 * Add an image to the OSD message queue.
+	 */
+	void addImage(const Graphics::Surface *surface);
 
 	/**
 	 * Common::EventSource interface
@@ -70,9 +80,19 @@ public:
 	bool pollEvent(Common::Event &event) override;
 
 private:
+	struct OSDQueueEntry {
+		Common::U32String *_text;
+		Graphics::Surface *_image;
+
+		OSDQueueEntry(const Common::U32String &msg);
+		OSDQueueEntry(const Graphics::Surface *surface);
+		~OSDQueueEntry();
+	};
+
 	Mutex _mutex;
-	Queue<U32String> _messages;
+	Queue<OSDQueueEntry *> _messages;
 	uint32 _lastUpdate;
+	bool _iconWasShown;
 };
 
 /** @} */

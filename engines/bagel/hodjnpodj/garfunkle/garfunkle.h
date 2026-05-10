@@ -46,8 +46,8 @@ namespace Garkfunkle {
 #define HIGH_WIN        12      //...when playing from the metagame
 
 // Backdrop bitmaps
-#define MAINSCREEN      ".\\ART\\GARFEMPT.BMP"
-#define RIBBON          ".\\ART\\RIBBON.BMP"
+#define MAINSCREEN      "art\\GARFEMPT.BMP"
+#define RIBBON          "art\\RIBBON.BMP"
 
 #define RIBBON_X        139
 #define RIBBON_Y        332
@@ -132,33 +132,33 @@ namespace Garkfunkle {
 
 #define RULES_TEXT      "GARFUNK.TXT"               // rules file
 
-#define WIN_SOUND       ".\\SOUND\\FANFARE1.WAV"
-#define WRONG_SOUND     ".\\SOUND\\SOSORRY.WAV"
-#define SLOW_SOUND      ".\\SOUND\\ALARM.WAV"
-#define SIGN_1_SOUND    ".\\SOUND\\SIGN1.WAV"
-#define SIGN_2_SOUND    ".\\SOUND\\SIGN2.WAV"
-#define SIGN_3_SOUND    ".\\SOUND\\SIGN3.WAV"
-#define SIGN_4_SOUND    ".\\SOUND\\SIGN4.WAV"
-#define SIGN_5_SOUND    ".\\SOUND\\SIGN5.WAV"
-#define BENCH_SOUND     ".\\SOUND\\MYSEAT.WAV"
-#define TREES_SOUND     ".\\SOUND\\TIMBER.WAV"
-#define RULES_SOUND     ".\\SOUND\\GARFUNK.WAV"
+#define WIN_SOUND       "sound\\FANFARE1.WAV"
+#define WRONG_SOUND     "sound\\SOSORRY.WAV"
+#define SLOW_SOUND      "sound\\ALARM.WAV"
+#define SIGN_1_SOUND    "sound\\SIGN1.WAV"
+#define SIGN_2_SOUND    "sound\\SIGN2.WAV"
+#define SIGN_3_SOUND    "sound\\SIGN3.WAV"
+#define SIGN_4_SOUND    "sound\\SIGN4.WAV"
+#define SIGN_5_SOUND    "sound\\SIGN5.WAV"
+#define BENCH_SOUND     "sound\\MYSEAT.WAV"
+#define TREES_SOUND     "sound\\TIMBER.WAV"
+#define RULES_SOUND     "sound\\GARFUNK.WAV"
 
 #define NUM_SIGN_SOUNDS 5
 
-#define VIOLIN_SOUND    ".\\SOUND\\viol2.mid"
-#define CELLO_SOUND     ".\\SOUND\\cello2.mid"
-#define DRUM_SOUND      ".\\SOUND\\DRUM2.MID"   //drum.mid"     //DRUM.WAV"
-#define SAX_SOUND       ".\\SOUND\\sax2.mid"
-#define HARP_SOUND      ".\\SOUND\\harp2.mid"
-#define CLARINET_SOUND  ".\\SOUND\\clar2.mid"
+#define VIOLIN_SOUND    "sound\\viol2.mid"
+#define CELLO_SOUND     "sound\\cello2.mid"
+#define DRUM_SOUND      "sound\\DRUM2.MID"   //drum.mid"     //DRUM.WAV"
+#define SAX_SOUND       "sound\\sax2.mid"
+#define HARP_SOUND      "sound\\harp2.mid"
+#define CLARINET_SOUND  "sound\\clar2.mid"
 
-#define VIOLIN_ANIM     ".\\ART\\violin2.bmp"
-#define CELLO_ANIM      ".\\ART\\cello2.bmp"
-#define DRUM_ANIM       ".\\ART\\drums2.bmp"
-#define SAX_ANIM        ".\\ART\\sax2.bmp"
-#define HARP_ANIM       ".\\ART\\harp2.bmp"
-#define CLARINET_ANIM   ".\\ART\\clari2.bmp"
+#define VIOLIN_ANIM     "art\\violin2.bmp"
+#define CELLO_ANIM      "art\\cello2.bmp"
+#define DRUM_ANIM       "art\\drums2.bmp"
+#define SAX_ANIM        "art\\sax2.bmp"
+#define HARP_ANIM       "art\\harp2.bmp"
+#define CLARINET_ANIM   "art\\clari2.bmp"
 
 #define VIOLIN_CELS     14
 #define CELLO_CELS      16

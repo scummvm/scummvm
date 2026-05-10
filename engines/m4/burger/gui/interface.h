@@ -25,8 +25,6 @@
 
 #include "m4/adv_r/adv_interface.h"
 #include "m4/adv_r/adv_hotspot.h"
-#include "m4/graphics/graphics.h"
-#include "m4/graphics/gr_buff.h"
 #include "m4/burger/gui/inventory.h"
 
 namespace M4 {
@@ -44,7 +42,6 @@ private:
 
 public:
 	int _sprite = 22; // main_interface_sprite;
-	bool _shown = false;
 	GUI::InterfaceBox *_interfaceBox = nullptr;
 	GUI::Inventory *_inventory = nullptr;
 	GUI::TextField *_textField = nullptr;

@@ -36,7 +36,7 @@ namespace PDQ {
 // CGuessDlg dialog
 
 CGuessDlg::CGuessDlg(CWnd *pParent, CPalette *pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_GUESS_DLG, ".\\ART\\GUESS.BMP", 36, 48) {
+	: CBmpDialog(pParent, pPalette, IDD_GUESS_DLG, "art\\GUESS.BMP", 36, 48) {
 }
 
 void CGuessDlg::DoDataExchange(CDataExchange* pDX) {

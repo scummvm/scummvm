@@ -54,7 +54,7 @@ void MenuRoom::setButtons(const MenuButtonDef *btns, int count) {
 
 void MenuRoom::drawButton(int index) {
 	if (index < 0 || index >= (int)_buttons.size())
-		error_show(FL, 'Burg', "draw_button which?");
+		error_show(FL, "draw_button which?");
 
 	MenuButton &btn = _buttons[index];
 	assert(btn._state >= BTNSTATE_DISABLED && btn._state <= BTNSTATE_PRESSED);

@@ -53,7 +53,7 @@ bool GamePalette::loadPalette() {
 	uint16 i, j;
 	Common::Path filename;
 	NuvieIOFileRead file;
-	Std::string game_name, game_id, pal_name;
+	Common::String game_name, game_id, pal_name;
 
 	config->value("config/GameName", game_name);
 	config->value("config/GameID", game_id);
@@ -109,7 +109,7 @@ bool GamePalette::loadPaletteIntoBuffer(unsigned char *pal) {
 	uint16 i, j;
 	Common::Path filename;
 	NuvieIOFileRead file;
-	Std::string game_name, game_id, pal_name;
+	Common::String game_name, game_id, pal_name;
 
 	config->value("config/GameName", game_name);
 	config->value("config/GameID", game_id);

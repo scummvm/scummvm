@@ -20,21 +20,20 @@
  */
 
 #include "ultima/ultima8/gumps/u8_save_gump.h"
-#include "ultima/ultima8/gumps/widgets/edit_widget.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/kernel/mouse.h"
+
+#include "common/config-manager.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "gui/message.h"
+#include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/shape.h"
 #include "ultima/ultima8/gfx/shape_frame.h"
-#include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/gumps/paged_gump.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/translation.h"
-#include "gui/message.h"
+#include "ultima/ultima8/gumps/widgets/edit_widget.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -227,7 +226,7 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		// save
 		assert(_save);
 
-		Std::string name = widget->getText();
+		Common::String name = widget->getText();
 		if (name.empty()) return;
 
 		// Note: this might close us, so we should return right after.
@@ -274,7 +273,7 @@ bool U8SaveGump::loadgame(int saveIndex) {
 	return true;
 }
 
-bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
+bool U8SaveGump::savegame(int saveIndex, const Common::String &name) {
 	if (name.empty())
 		return false;
 

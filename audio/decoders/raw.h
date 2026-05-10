@@ -34,7 +34,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class PacketizedAudioStream;
+class StatelessPacketizedAudioStream;
 class SeekableAudioStream;
 
 /**
@@ -93,15 +93,15 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
- * Creates a PacketizedAudioStream that will automatically queue
+ * Creates a StatelessPacketizedAudioStream that will automatically queue
  * packets as individual AudioStreams like returned by makeRawStream.
  *
  * @param rate   Rate of the sound data.
  * @param flags	 Audio flags combination.
  * @see RawFlags
- * @return The new PacketizedAudioStream.
+ * @return The new StatelessPacketizedAudioStream.
  */
-PacketizedAudioStream *makePacketizedRawStream(int rate, byte flags);
+StatelessPacketizedAudioStream *makePacketizedRawStream(int rate, byte flags);
 
 } // End of namespace Audio
 

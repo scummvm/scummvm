@@ -22,6 +22,7 @@
 #include "common/util.h"
 
 #include "mediastation/actor.h"
+#include "mediastation/actors/camera.h"
 #include "mediastation/actors/stage.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/scriptconstants.h"
@@ -29,21 +30,126 @@
 
 namespace MediaStation {
 
-Actor::~Actor() {
-	for (auto it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
-		Common::Array<EventHandler *> &handlersForType = it->_value;
-		for (EventHandler *handler : handlersForType) {
-			delete handler;
-		}
-		handlersForType.clear();
+const char *actorTypeToStr(ActorType type) {
+	switch (type) {
+	case kActorTypeEmpty:
+		return "Empty";
+	case kActorTypeScreen:
+		return "Screen";
+	case kActorTypeStage:
+		return "Stage";
+	case kActorTypePath:
+		return "Path";
+	case kActorTypeSound:
+		return "Sound";
+	case kActorTypeTimer:
+		return "Timer";
+	case kActorTypeImage:
+		return "Image";
+	case kActorTypeHotspot:
+		return "Hotspot";
+	case kActorTypeCursor:
+		return "Cursor";
+	case kActorTypeSprite:
+		return "Sprite";
+	case kActorTypeLKZazu:
+		return "LKZazu";
+	case kActorTypeLKConstellations:
+		return "LKConstellations";
+	case kActorTypeDocument:
+		return "Document";
+	case kActorTypeDiskImage:
+		return "ImageSet";
+	case kActorTypeMovie:
+		return "Movie";
+	case kActorTypeStreamMovieProxy:
+		return "StreamMovieProxy";
+	case kActorTypePalette:
+		return "Palette";
+	case kActorTypePrinter:
+		return "Printer";
+	case kActorTypeText:
+		return "Text";
+	case kActorTypeFont:
+		return "Font";
+	case kActorTypeCamera:
+		return "Camera";
+	case kActorTypeCanvas:
+		return "Canvas";
+	case kActorTypeXsnd:
+		return "Xsnd";
+	case kActorTypeXsndMidi:
+		return "XsndMidi";
+	case kActorTypeRecorder:
+		return "Recorder";
+	case kActorTypeFunction:
+		return "Function";
+	default:
+		return "UNKNOWN";
 	}
-	_eventHandlers.clear();
+}
+
+void Polygon::loadFromParameterStream(Chunk & chunk) {
+	uint16 totalPoints = chunk.readTypedUint16();
+	for (uint16 i = 0; i < totalPoints; i++) {
+		Common::Point point = chunk.readTypedPoint();
+		_polygon.push_back(point);
+	}
+}
+
+bool Polygon::containsPoint(const Common::Point &point) const {
+	// We're in the bbox, but there might not be a polygon to check.
+	if (_polygon.empty()) {
+		return true;
+	}
+
+	// Each edge is checked whether it cuts the outgoing stream from the point.
+	int rcross = 0; // Number of right-side overlaps
+	for (unsigned i = 0; i < _polygon.size(); i++) {
+		const Common::Point &edgeStart = _polygon[i];
+		const Common::Point &edgeEnd = _polygon[(i + 1) % _polygon.size()];
+
+		// A vertex is a point? Then it lies on one edge of the polygon.
+		if (point == edgeStart)
+			return true;
+
+		if ((edgeStart.y > point.y) != (edgeEnd.y > point.y)) {
+			int term1 = (edgeStart.x - point.x) * (edgeEnd.y - point.y) - (edgeEnd.x - point.x) * (edgeStart.y - point.y);
+			int term2 = (edgeEnd.y - point.y) - (edgeStart.y - edgeEnd.y);
+			if ((term1 > 0) == (term2 >= 0))
+				rcross++;
+		}
+	}
+
+	// The point is strictly inside the polygon if and only if the number of overlaps is odd.
+	return ((rcross % 2) == 1);
+}
+
+void Actor::setId(uint id) {
+	_id = id;
+	_debugName = g_engine->formatActorName(this);
+}
+
+const char *Actor::debugName() const {
+	return _debugName.c_str();
+}
+
+Actor::~Actor() {
+	for (auto it = _scriptResponses.begin(); it != _scriptResponses.end(); ++it) {
+		Common::Array<ScriptResponse *> &responsesForType = it->_value;
+		for (ScriptResponse *response : responsesForType) {
+			delete response;
+		}
+		responsesForType.clear();
+	}
+	_scriptResponses.clear();
 }
 
 void Actor::initFromParameterStream(Chunk &chunk) {
 	ActorHeaderSectionType paramType = kActorHeaderEmptySection;
 	while (true) {
 		paramType = static_cast<ActorHeaderSectionType>(chunk.readTypedUint16());
+		debugC(5, kDebugLoading, "[%s] %s: Got section type 0x%x", debugName(), __func__, static_cast<uint>(paramType));
 		if (paramType == 0) {
 			break;
 		} else {
@@ -54,93 +160,167 @@ void Actor::initFromParameterStream(Chunk &chunk) {
 
 void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderEventHandler: {
-		EventHandler *eventHandler = new EventHandler(chunk);
-		Common::Array<EventHandler *> &eventHandlersForType = _eventHandlers.getOrCreateVal(eventHandler->_type);
+	case kActorHeaderScriptResponse: {
+		ScriptResponse *scriptResponse = new ScriptResponse(chunk);
+		Common::Array<ScriptResponse *> &scriptResponsesForType = _scriptResponses.getOrCreateVal(scriptResponse->_type);
 
 		// This is not a hashmap because we don't want to have to hash ScriptValues.
-		for (EventHandler *existingEventHandler : eventHandlersForType) {
-			if (existingEventHandler->_argumentValue == eventHandler->_argumentValue) {
-				error("%s: Event handler for %s (%s) already exists", __func__,
-					  eventTypeToStr(eventHandler->_type), eventHandler->getDebugHeader().c_str());
+		for (ScriptResponse *existingScriptResponse : scriptResponsesForType) {
+			if (existingScriptResponse->_argumentValue == scriptResponse->_argumentValue) {
+				error("[%s] %s: Script response for %s (%s) already exists", debugName(), __func__,
+					eventTypeToStr(scriptResponse->_type), scriptResponse->_argumentValue.getDebugString().c_str());
 			}
 		}
-		eventHandlersForType.push_back(eventHandler);
+		scriptResponsesForType.push_back(scriptResponse);
 		break;
 	}
 
+	case kActorHeaderActorName:
+		_debugName = chunk.readTypedString();
+		break;
+
 	default:
-		error("Got unimplemented actor parameter 0x%x", static_cast<uint>(paramType));
+		error("[%s] %s: Got unimplemented actor parameter 0x%x", debugName(), __func__, static_cast<uint>(paramType));
 	}
 }
 
 void Actor::loadIsComplete() {
 	if (_loadIsComplete) {
-		warning("%s: Called more than once for actor %d", __func__, _id);
+		warning("[%s] %s: Already loaded", debugName(), __func__);
 	}
 	_loadIsComplete = true;
 }
 
 ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	error("%s: Got unimplemented method call 0x%x (%s)", __func__, static_cast<uint>(methodId), builtInMethodToStr(methodId));
+	warning("[%s] %s: Got unimplemented method call 0x%x (%s)",
+		debugName(), __func__, static_cast<uint>(methodId), builtInMethodToStr(methodId));
+	return ScriptValue();
 }
 
-void Actor::readChunk(Chunk &chunk) {
-	error("%s: Chunk reading for actor type 0x%x is not implemented", __func__, static_cast<uint>(_type));
+void Actor::onEvent(const ActorEvent &event) {
+	warning("[%s] %s: No handler for engine event %s", debugName(), __func__, eventTypeToStr(event.type));
 }
 
-void Actor::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("%s: Subfile reading for actor type 0x%x is not implemented", __func__, static_cast<uint>(_type));
-}
-
-void Actor::processTimeEventHandlers() {
-	// TODO: Replace with a queue.
-	uint currentTime = g_system->getMillis();
-	const Common::Array<EventHandler *> &_timeHandlers = _eventHandlers.getValOrDefault(kTimerEvent);
-	for (EventHandler *timeEvent : _timeHandlers) {
-		// Indeed float, not time.
+ScriptResponse *Actor::findNextTimeScriptResponseAfter(uint32 after) const {
+	const Common::Array<ScriptResponse *> &_timeResponses = _scriptResponses.getValOrDefault(kTimerScriptEvent);
+	for (ScriptResponse *timeEvent : _timeResponses) {
 		double timeEventInFractionalSeconds = timeEvent->_argumentValue.asFloat();
-		uint timeEventInMilliseconds = timeEventInFractionalSeconds * 1000;
-		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
-		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;
-		if (!timeEventAlreadyProcessed && timeEventNeedsToBeProcessed) {
-			debugC(5, kDebugScript, "Actor::processTimeEventHandlers(): Running On Time handler for time %d ms", timeEventInMilliseconds);
-			timeEvent->execute(_id);
+		uint32 timeEventInMilliseconds = static_cast<uint32>(timeEventInFractionalSeconds * 1000);
+		if (timeEventInMilliseconds >= after) {
+			return timeEvent;
 		}
 	}
-	_lastProcessedTime = currentTime - _startTime;
+
+	return nullptr;
 }
 
-void Actor::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg) {
-	const Common::Array<EventHandler *> &eventHandlers = _eventHandlers.getValOrDefault(eventType);
-	for (EventHandler *eventHandler : eventHandlers) {
-		const ScriptValue &argToCheck = eventHandler->_argumentValue;
+void Actor::runScriptResponseIfExists(EventType eventType, const ScriptValue &arg) {
+	const Common::Array<ScriptResponse *> &scriptResponses = _scriptResponses.getValOrDefault(eventType);
+	for (ScriptResponse *scriptResponse : scriptResponses) {
+		const ScriptValue &argToCheck = scriptResponse->_argumentValue;
 
 		if (arg.getType() != argToCheck.getType()) {
-			warning("Got event handler arg type %s, expected %s",
-					scriptValueTypeToStr(arg.getType()), scriptValueTypeToStr(argToCheck.getType()));
+			warning("[%s] %s: Got script response arg type %s, expected %s", debugName(), __func__,
+				scriptValueTypeToStr(arg.getType()), scriptValueTypeToStr(argToCheck.getType()));
 			continue;
 		}
 
 		if (arg == argToCheck) {
-			debugC(5, kDebugScript, "Executing handler for event type %s on actor %d", eventTypeToStr(eventType), _id);
-			eventHandler->execute(_id);
+			debugC(5, kDebugScript, "[%s] %s: Executing response for event type %s", debugName(), __func__, eventTypeToStr(eventType));
+			scriptResponse->execute(_id);
 			return;
 		}
 	}
-	debugC(5, kDebugScript, "No event handler for event type %s on actor %d", eventTypeToStr(eventType), _id);
+
+	debugC(5, kDebugScript, "[%s] %s: No script response for event type %s", debugName(), __func__, eventTypeToStr(eventType));
 }
 
-void Actor::runEventHandlerIfExists(EventType eventType) {
+void Actor::runScriptResponseIfExists(EventType eventType) {
 	ScriptValue scriptValue;
-	runEventHandlerIfExists(eventType, scriptValue);
+	runScriptResponseIfExists(eventType, scriptValue);
+}
+
+void Actor::processTimeScriptResponses() {
+	// The original had this logic duplicated across several actors, but it made more sense
+	// to consolidate it into the main Actor in the reimplementation. This does NOT set up the
+	// next timer - client code has to do that itself.
+	// Get current runtime time.
+	uint32 currentTimeInMilliseconds = g_engine->getTotalPlayTime();
+	uint32 elapsedTimeInMilliseconds = currentTimeInMilliseconds - _startTime;
+
+	// Process all events that have elapsed up to current time.
+	ScriptResponse *nextTimeScriptResponse = findNextTimeScriptResponseAfter(_lastProcessedTime);
+	while (nextTimeScriptResponse != nullptr) {
+		// If this event is in the future, stop processing.
+		double eventTimeInSeconds = nextTimeScriptResponse->_argumentValue.asFloat();
+		uint32 eventTimeInMilliseconds = eventTimeInSeconds * 1000;
+		if (eventTimeInMilliseconds > elapsedTimeInMilliseconds) {
+			break;
+		}
+
+		// Execute the event.
+		debugC(5, kDebugScript, "[%s] %s: Running On Time response for time %d ms (lastProcessedTime: %d, elapsedTime: %d)",
+			debugName(), __func__, eventTimeInMilliseconds, _lastProcessedTime, elapsedTimeInMilliseconds);
+		nextTimeScriptResponse->execute(_id);
+
+		// Increment by 1 to prevent re-triggering the same event. This works because in the original,
+		// timer events are at least 10 ms apart anyway.
+		_lastProcessedTime = eventTimeInMilliseconds + 1;
+		nextTimeScriptResponse = findNextTimeScriptResponseAfter(_lastProcessedTime);
+	}
+}
+
+bool Actor::setupNextScriptResponseTimer() {
+	// Find the next event after the last processed time.
+	ScriptResponse *nextEvent = findNextTimeScriptResponseAfter(_lastProcessedTime);
+	if (nextEvent == nullptr) {
+		// No more events to schedule.
+		debugC(5, kDebugScript, "[%s] %s: No more events to schedule", debugName(), __func__);
+		return false;
+	}
+
+	// Calculate duration until next event from current elapsed time.
+	double nextEventTimeInFractionalSeconds = nextEvent->_argumentValue.asFloat();
+	uint32 nextEventTimeInMilliseconds = nextEventTimeInFractionalSeconds * 1000;
+	uint32 currentTimeInMilliseconds = g_engine->getTotalPlayTime();
+	uint32 elapsedTimeInMilliseconds = currentTimeInMilliseconds - _startTime;
+	uint32 durationUntilNextEventInMilliseconds = nextEventTimeInMilliseconds - elapsedTimeInMilliseconds;
+	debugC(5, kDebugEvents, "[%s] %s: Scheduling timer for %d ms (next event at %d ms)",
+		debugName(), __func__, durationUntilNextEventInMilliseconds, nextEventTimeInMilliseconds);
+	g_engine->getTimerService()->startTimer(_timer, durationUntilNextEventInMilliseconds);
+	return true;
+}
+
+void Actor::triggerRemainingTimerEvents() {
+	uint32 currentTimeInMilliseconds = g_engine->getTotalPlayTime();
+	uint32 elapsedTimeInMilliseconds = currentTimeInMilliseconds - _startTime;
+
+	ScriptResponse *nextTimeScriptResponse = findNextTimeScriptResponseAfter(_lastProcessedTime);
+	while (nextTimeScriptResponse != nullptr) {
+		double eventTimeInSeconds = nextTimeScriptResponse->_argumentValue.asFloat();
+		uint32 eventTimeInMilliseconds = eventTimeInSeconds * 1000;
+
+		debugC(5, kDebugEvents, "[%s] %s: Running remaining On Time response for time %d ms (lastProcessedTime: %d, elapsedTime: %d)",
+			debugName(), __func__, eventTimeInMilliseconds,  _lastProcessedTime, elapsedTimeInMilliseconds);
+
+		// Increment by 1 to prevent re-triggering the same event.
+		_lastProcessedTime = eventTimeInMilliseconds + 1;
+		nextTimeScriptResponse->execute(_id);
+		nextTimeScriptResponse = findNextTimeScriptResponseAfter(_lastProcessedTime);
+	}
+}
+
+SpatialEntity::~SpatialEntity() {
+	if (_parentStage != nullptr) {
+		_parentStage->removeChildSpatialEntity(this);
+	}
 }
 
 ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 	switch (methodId) {
 	case kSpatialMoveToMethod: {
-		assert(args.size() == 2);
+		ARGCOUNTCHECK(2);
 		int16 x = static_cast<int16>(args[0].asFloat());
 		int16 y = static_cast<int16>(args[1].asFloat());
 		moveTo(x, y);
@@ -148,7 +328,7 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 	}
 
 	case kSpatialMoveToByOffsetMethod: {
-		assert(args.size() == 2);
+		ARGCOUNTCHECK(2);
 		int16 dx = static_cast<int16>(args[0].asFloat());
 		int16 dy = static_cast<int16>(args[1].asFloat());
 		int16 newX = _boundingBox.left + dx;
@@ -158,14 +338,14 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 	}
 
 	case kSpatialZMoveToMethod: {
-		assert(args.size() == 1);
+		ARGCOUNTCHECK(1);
 		int zIndex = static_cast<int>(args[0].asFloat());
 		setZIndex(zIndex);
 		break;
 	}
 
 	case kSpatialCenterMoveToMethod: {
-		assert(args.size() == 2);
+		ARGCOUNTCHECK(2);
 		int16 x = static_cast<int16>(args[0].asFloat());
 		int16 y = static_cast<int16>(args[1].asFloat());
 		moveToCentered(x, y);
@@ -173,93 +353,119 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 	}
 
 	case kGetLeftXMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToFloat(_boundingBox.left);
 		break;
 
 	case kGetTopYMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToFloat(_boundingBox.top);
 		break;
 
 	case kGetWidthMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToFloat(_boundingBox.width());
 		break;
 
 	case kGetHeightMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToFloat(_boundingBox.height());
 		break;
 
 	case kGetCenterXMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		int centerX = _boundingBox.left + (_boundingBox.width() / 2);
 		returnValue.setToFloat(centerX);
 		break;
 	}
 
 	case kGetCenterYMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		int centerY = _boundingBox.top + (_boundingBox.height() / 2);
 		returnValue.setToFloat(centerY);
 		break;
 	}
 
 	case kGetZCoordinateMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToFloat(_zIndex);
 		break;
 
+	case kIsPointInsideMethod: {
+		ARGCOUNTCHECK(2);
+		int16 xToCheck = static_cast<int16>(args[0].asFloat());
+		int16 yToCheck = static_cast<int16>(args[1].asFloat());
+		Common::Point pointToCheck(xToCheck, yToCheck);
+		bool pointIsInside = getBbox().contains(pointToCheck);
+		returnValue.setToBool(pointIsInside);
+		break;
+	}
+
 	case kSetDissolveFactorMethod: {
-		assert(args.size() == 1);
+		ARGCOUNTCHECK(1);
 		double dissolveFactor = args[0].asFloat();
 		setDissolveFactor(dissolveFactor);
 		break;
 	}
 
+	case kGetMouseXOffsetMethod: {
+		Common::Point mouseOffset;
+		currentMousePosition(mouseOffset);
+		mouseOffset -= _originalBoundingBox.origin();
+		returnValue.setToFloat(static_cast<double>(mouseOffset.x));
+		break;
+	}
+
+	case kGetMouseYOffsetMethod: {
+		Common::Point mouseOffset;
+		currentMousePosition(mouseOffset);
+		mouseOffset -= _originalBoundingBox.origin();
+		returnValue.setToFloat(static_cast<double>(mouseOffset.y));
+		break;
+	}
+
 	case kIsVisibleMethod:
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		returnValue.setToBool(isVisible());
 		break;
 
 	case kSetMousePositionMethod: {
-		assert(args.size() == 2);
+		ARGCOUNTCHECK(2);
 		int16 x = static_cast<int16>(args[0].asFloat());
 		int16 y = static_cast<int16>(args[1].asFloat());
 		setMousePosition(x, y);
 		break;
 	}
 
-	case kGetXScaleMethod1:
-	case kGetXScaleMethod2:
-		assert(args.empty());
-		returnValue.setToFloat(_scaleX);
+	case kGetParallaxFactorXMethod1:
+	case kGetParallaxFactorXMethod2:
+		ARGCOUNTCHECK(0);
+		returnValue.setToFloat(_parallaxFactorX);
 		break;
 
-	case kSetScaleMethod:
-		assert(args.size() == 1);
+	case kSetParallaxFactorMethod:
+		ARGCOUNTCHECK(1);
 		invalidateLocalBounds();
-		_scaleX = _scaleY = args[0].asFloat();
-		invalidateLocalBounds();
-		break;
-
-	case kSetXScaleMethod:
-		assert(args.size() == 1);
-		invalidateLocalBounds();
-		_scaleX = args[0].asFloat();
+		_parallaxFactorX = _parallaxFactorY = args[0].asFloat();
 		invalidateLocalBounds();
 		break;
 
-	case kGetYScaleMethod:
-		assert(args.empty());
-		returnValue.setToFloat(_scaleY);
+	case kSetParallaxFactorXMethod:
+		ARGCOUNTCHECK(1);
+		invalidateLocalBounds();
+		_parallaxFactorX = args[0].asFloat();
+		invalidateLocalBounds();
 		break;
 
-	case kSetYScaleMethod:
-		assert(args.size() == 1);
+	case kGetParallaxFactorYMethod:
+		ARGCOUNTCHECK(0);
+		returnValue.setToFloat(_parallaxFactorY);
+		break;
+
+	case kSetParallaxFactorYMethod:
+		ARGCOUNTCHECK(1);
 		invalidateLocalBounds();
-		_scaleY = args[0].asFloat();
+		_parallaxFactorY = args[0].asFloat();
 		invalidateLocalBounds();
 		break;
 
@@ -272,12 +478,15 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
 	case kActorHeaderBoundingBox:
-		_boundingBox = chunk.readTypedRect();
+		_originalBoundingBox = chunk.readTypedRect();
+		setAdjustedBounds(kWrapNone);
 		break;
 
-	case kActorHeaderDissolveFactor:
-		_dissolveFactor = chunk.readTypedDouble();
+	case kActorHeaderDissolveFactor: {
+		double dissolveFactor = chunk.readTypedDouble();
+		setDissolveFactor(dissolveFactor);
 		break;
+	}
 
 	case kActorHeaderZIndex:
 		_zIndex = chunk.readTypedGraphicUnit();
@@ -291,20 +500,16 @@ void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType
 		_stageId = chunk.readTypedUint16();
 		break;
 
-	case kActorHeaderActorReference:
-		_actorReference = chunk.readTypedUint16();
-		break;
-
 	case kActorHeaderScaleXAndY:
-		_scaleX = _scaleY = chunk.readTypedDouble();
+		_parallaxFactorX = _parallaxFactorY = chunk.readTypedDouble();
 		break;
 
 	case kActorHeaderScaleX:
-		_scaleX = chunk.readTypedDouble();
+		_parallaxFactorX = chunk.readTypedDouble();
 		break;
 
 	case kActorHeaderScaleY:
-		_scaleY = chunk.readTypedDouble();
+		_parallaxFactorY = chunk.readTypedDouble();
 		break;
 
 	default:
@@ -314,27 +519,28 @@ void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType
 
 void SpatialEntity::loadIsComplete() {
 	Actor::loadIsComplete();
-	Actor *pendingParentStageActor = g_engine->getActorById(_stageId);
-	if (pendingParentStageActor == nullptr) {
-		error("%s: Actor %d doesn't exist", __func__, _stageId);
-	} else if (pendingParentStageActor->type() != kActorTypeStage) {
-		error("%s: Requested parent stage %d is not a stage", __func__, _stageId);
+	if (_stageId != 0) {
+		StageActor *pendingParentStage = static_cast<StageActor *>(g_engine->getImtGod()->getActorByIdAndType(_stageId, kActorTypeStage));
+		pendingParentStage->addChildSpatialEntity(this);
 	}
-	StageActor *pendingParentStage = static_cast<StageActor *>(pendingParentStageActor);
-	pendingParentStage->addChildSpatialEntity(this);
+}
+
+void SpatialEntity::currentMousePosition(Common::Point &point) {
+	if (_parentStage != nullptr) {
+		_parentStage->currentMousePosition(point);
+	}
 }
 
 void SpatialEntity::invalidateMouse() {
-	// TODO: Invalidate the mouse properly when we have custom events.
-	// For now, we simulate the mouse update event with a mouse moved event.
-	Common::Event mouseEvent;
-	mouseEvent.type = Common::EVENT_MOUSEMOVE;
-	mouseEvent.mouse = g_system->getEventManager()->getMousePos();
-	g_system->getEventManager()->pushEvent(mouseEvent);
+	MouseEvent event(kMouseEnterExitEvent, g_system->getEventManager()->getMousePos());
+	g_engine->getEventLoop()->queueEvent(event);
 }
 
 void SpatialEntity::moveTo(int16 x, int16 y) {
 	Common::Point dest(x, y);
+	debugC(3, kDebugGraphics, "[%s] %s: (%d, %d) -> (%d, %d)", debugName(), __func__,
+		_originalBoundingBox.origin().x, _originalBoundingBox.origin().y, x, y);
+
 	if (dest == _boundingBox.origin()) {
 		// We aren't actually moving anywhere.
 		return;
@@ -343,7 +549,8 @@ void SpatialEntity::moveTo(int16 x, int16 y) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
-	_boundingBox.moveTo(dest);
+	_originalBoundingBox.moveTo(dest);
+	setAdjustedBounds(kWrapNone);
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
@@ -355,6 +562,7 @@ void SpatialEntity::moveTo(int16 x, int16 y) {
 void SpatialEntity::moveToCentered(int16 x, int16 y) {
 	int16 targetX = x - (_boundingBox.width() / 2);
 	int16 targetY = y - (_boundingBox.height() / 2);
+	debugC(3, kDebugGraphics, "[%s] %s: (%d, %d)", debugName(), __func__, targetX, targetY);
 	moveTo(targetX, targetY);
 }
 
@@ -367,7 +575,8 @@ void SpatialEntity::setBounds(const Common::Rect &bounds) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
-	_boundingBox = bounds;
+	_originalBoundingBox = bounds;
+	setAdjustedBounds(kWrapNone);
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
@@ -404,11 +613,134 @@ void SpatialEntity::setDissolveFactor(double dissolveFactor) {
 }
 
 void SpatialEntity::invalidateLocalBounds() {
-	g_engine->addDirtyRect(getBbox());
+	if (_parentStage != nullptr) {
+		setAdjustedBounds(kWrapNone);
+		_parentStage->invalidateRect(getBbox());
+	}
 }
 
 void SpatialEntity::invalidateLocalZIndex() {
-	warning("STUB: %s", __func__);
+	if (_parentStage != nullptr) {
+		_parentStage->invalidateZIndexOf(this);
+	}
+}
+
+void SpatialEntity::setAdjustedBounds(CylindricalWrapMode wrapMode) {
+	_boundingBox = _originalBoundingBox;
+	if (_parentStage == nullptr) {
+		return;
+	}
+
+	Common::Point offset(0, 0);
+	Common::Point stageExtent = _parentStage->extent();
+
+	// Calculate position offset for cylindrical wrapping.
+	switch (wrapMode) {
+	case kWrapRight:
+		offset.x = stageExtent.x;
+		offset.y = 0;
+		break;
+
+	case kWrapDown:
+		offset.x = 0;
+		offset.y = stageExtent.y;
+		break;
+
+	case kWrapRightDown:
+		offset.x = stageExtent.x;
+		offset.y = stageExtent.y;
+		break;
+
+	case kWrapLeft:
+		offset.x = -stageExtent.x;
+		offset.y = 0;
+		break;
+
+	case kWrapUp:
+		offset.x = 0;
+		offset.y = -stageExtent.y;
+		break;
+
+	case kWrapLeftUp:
+		offset.x = -stageExtent.x;
+		offset.y = -stageExtent.y;
+		break;
+
+	case kWrapLeftDown:
+		offset.x = -stageExtent.x;
+		offset.y = stageExtent.y;
+		break;
+
+	case kWrapRightUp:
+		offset.x = stageExtent.x;
+		offset.y = -stageExtent.y;
+		break;
+
+	case kWrapNone:
+	default:
+		// No offset adjustment.
+		break;
+	}
+	_boundingBox.translate(-offset.x, -offset.y);
+
+	// Apply parallax scrolling if parallax factors are set.
+	// This simulates depth by adjusting position based on distance from viewport center.
+	// parallax 0.0 means no parallax (ignores camera movement).
+	// parallax 1.0 means neutral depth (moves with camera at focal plane).
+	// parallax >1.0 means appears closer (moves more than camera).
+	// parallax <1.0 means appears farther (moves less than camera).
+	bool hasHorizontalParallax = _parallaxFactorX != 0.0;
+	bool hasVerticalParallax = _parallaxFactorY != 0.0;
+	if (!hasHorizontalParallax && !hasVerticalParallax) {
+		return;
+	}
+
+	// Transform camera viewport to object's local coordinate space (inside any stages).
+	CameraActor *currentCamera = _parentStage->getCurrentCamera();
+	if (currentCamera == nullptr) {
+		return;
+	}
+
+	Common::Rect viewportBounds = currentCamera->getViewportBounds();
+	Common::Rect localViewport = viewportBounds;
+	Common::Point accumulatedOffset = viewportBounds.origin();
+	StageActor *currentStage = _parentStage;
+	while (currentStage != nullptr && currentStage != currentCamera->getParentStage()) {
+		Common::Rect parentBounds = currentStage->getBbox();
+		accumulatedOffset -= parentBounds.origin();
+		currentStage = currentStage->getParentStage();
+	}
+	localViewport.moveTo(accumulatedOffset.x, accumulatedOffset.y);
+
+	if (_boundingBox.intersects(localViewport)) {
+		// Apply horizontal parallax.
+		int16 parallaxAdjustedLeft = _boundingBox.left;
+		if (hasHorizontalParallax) {
+			// Calculate offset from viewport center to object center.
+			int16 viewportHalfWidth = localViewport.width() / 2;
+			int16 boundsHalfWidth = _boundingBox.width() / 2;
+			int centerOffset = (_boundingBox.left + boundsHalfWidth) - (localViewport.left + viewportHalfWidth);
+
+			// Multiply by parallax factor to simulate depth.
+			double parallaxOffset = static_cast<double>(centerOffset) * _parallaxFactorX;
+			parallaxAdjustedLeft += static_cast<int16>(parallaxOffset);
+		}
+
+		// Apply vertical parallax.
+		int16 parallaxAdjustedTop = _boundingBox.top;
+		if (hasVerticalParallax) {
+			// Calculate offset from viewport center to object center.
+			int16 viewportHalfHeight = localViewport.height() / 2;
+			int16 boundsHalfHeight = _boundingBox.height() / 2;
+			int centerOffset = (_boundingBox.top + boundsHalfHeight) - (localViewport.top + viewportHalfHeight);
+
+			// Multiply by parallax factor to simulate depth.
+			double parallaxOffset = static_cast<double>(centerOffset) * _parallaxFactorY;
+			parallaxAdjustedTop += static_cast<int16>(parallaxOffset);
+		}
+
+		_boundingBox.moveTo(parallaxAdjustedLeft, parallaxAdjustedTop);
+	}
 }
 
 } // End of namespace MediaStation

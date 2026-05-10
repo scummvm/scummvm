@@ -21,7 +21,6 @@
 #ifndef ULTIMA8_USECODE_UCPROCESS_H
 #define ULTIMA8_USECODE_UCPROCESS_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
 
@@ -81,7 +80,7 @@ protected:
 	UCStack _stack;
 
 	// "Free Me" list
-	Std::list<Common::Pair<uint16, int> > _freeOnTerminate;
+	Common::List<Common::Pair<uint16, int> > _freeOnTerminate;
 };
 
 } // End of namespace Ultima8

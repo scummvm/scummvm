@@ -31,7 +31,6 @@
 #include "common/formats/json.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "gui/saveload-dialog.h"
 
 namespace Cloud {
 

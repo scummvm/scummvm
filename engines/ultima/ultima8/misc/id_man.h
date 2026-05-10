@@ -22,7 +22,12 @@
 #ifndef ULTIMA8_MISC_IDMAN_H
 #define ULTIMA8_MISC_IDMAN_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
+
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {
@@ -48,7 +53,7 @@ class idMan {
 
 	uint16      _usedCount;      //!< number of IDs currently in use
 
-	Std::vector<uint16> _ids;    //!< the 'next' field in a list of free IDs
+	Common::Array<uint16> _ids;    //!< the 'next' field in a list of free IDs
 	uint16      _first;          //!< the first ID in the free list
 	uint16      _last;           //!< the last ID in the last list
 public:

@@ -104,6 +104,8 @@ private:
 	void drawInput();
 	void drawSelection();
 
+	void calcWin95Scroll(int &scrollAreaTop, int &scrollAreaHeight, int &barY, int &barHeight);
+
 public:
 	bool _editable;
 	bool _selectable;
@@ -117,6 +119,17 @@ private:
 	Common::U32String _inputText;
 	uint _inputTextHeight;
 	bool _inputIsDirty;
+
+	WindowClick _scrollDirection;
+	uint32 _nextScrollTime;
+	uint32 _scrollDelay;
+	uint32 _nextWheelEventTime;
+	WindowClick _clickedScrollPart;
+
+	// dragging bar for win95
+	bool _isDragging;
+	int _dragStartY;
+	int _dragStartScrollPos;
 
 	MacMenu *_menu;
 

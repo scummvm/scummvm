@@ -192,7 +192,7 @@ const byte *U4PaletteLoader::loadEgaPalette() {
 
 		_egaPalette = new byte[16 * 3];
 
-		Std::vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
+		Common::Array<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
 		for (const auto &i : paletteConf) {
 
 			if (i.getName() != "color")

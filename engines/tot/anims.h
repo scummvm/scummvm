@@ -37,7 +37,7 @@ struct FliHeader {
 	uint magic, // format id
 		frames, // number of animation frames
 		width,  // anim width
-		heigth, // anim height
+		height, // anim height
 		depth,  // 8 bits per pixel
 		flags;
 	int32 speed;        // time delay between frames

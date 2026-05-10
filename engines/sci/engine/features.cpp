@@ -494,7 +494,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 
 		// HACK: The Inside the Chest Demo and King's Questions minigame
 		// don't have sounds at all, but they're using a SCI2 kernel
-		if (g_sci->getGameId() == GID_CHEST || g_sci->getGameId() == GID_KQUESTIONS) {
+		if (g_sci->getGameId() == GID_CHEST || g_sci->getGameId() == GID_SHIELD || g_sci->getGameId() == GID_KQUESTIONS) {
 			_sci21KernelType = SCI_VERSION_2;
 		} else if (g_sci->getGameId() == GID_RAMA && g_sci->isDemo()) {
 			_sci21KernelType = SCI_VERSION_2_1_MIDDLE;

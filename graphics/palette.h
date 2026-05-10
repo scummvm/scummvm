@@ -42,6 +42,10 @@ enum ColorDistanceMethod {
 constexpr int PALETTE_COUNT = 256;
 constexpr int PALETTE_SIZE = (256 * 3);
 
+extern const byte HGC_A_PALETTE[6];
+extern const byte HGC_G_PALETTE[6];
+
+
 /**
  * @brief Simple class for handling a palette data.
  *
@@ -52,6 +56,8 @@ constexpr int PALETTE_SIZE = (256 * 3);
  * (transparency) value. Then the second color starts, and so on. So memory
  * looks like this: R1-G1-B1-R2-G2-B2-R3-...
  */
+
+
 class Palette {
 	byte *_data;
 	uint16 _size;

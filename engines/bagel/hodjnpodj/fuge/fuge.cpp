@@ -48,7 +48,7 @@ extern CWnd *ghParentWnd;
 //
 // This mini-game's main screen bitmap
 //
-#define MINI_GAME_MAP   ".\\ART\\FUGE6.BMP"
+#define MINI_GAME_MAP   "art\\FUGE6.BMP"
 
 // Fuge sprite bitmaps
 //
@@ -124,28 +124,28 @@ extern CWnd *ghParentWnd;
 
 // Sounds
 //
-#define WAV_PADDLE      ".\\SOUND\\PADDLE.WAV"
-#define WAV_WALL        ".\\SOUND\\WALL.WAV"
-#define WAV_WINWAVE     ".\\SOUND\\WINWAVE.WAV"
-#define WAV_GAMEOVER    ".\\SOUND\\SOSORRY.WAV"     //GAMEOVER.WAV"
-#define WAV_LOSEBALL    ".\\SOUND\\TOILET.WAV"      //LOSEBALL.WAV"
+#define WAV_PADDLE      "sound\\PADDLE.WAV"
+#define WAV_WALL        "sound\\WALL.WAV"
+#define WAV_WINWAVE     "sound\\WINWAVE.WAV"
+#define WAV_GAMEOVER    "sound\\SOSORRY.WAV"     //GAMEOVER.WAV"
+#define WAV_LOSEBALL    "sound\\TOILET.WAV"      //LOSEBALL.WAV"
 
-#define WAV_NARRATION   ".\\SOUND\\FUGE.WAV"
-#define MID_SOUNDTRACK  ".\\SOUND\\FUGE.MID"
+#define WAV_NARRATION   "sound\\FUGE.WAV"
+#define MID_SOUNDTRACK  "sound\\FUGE.MID"
 
-#define WAV_CAR1        ".\\SOUND\\SICK.WAV"
-#define WAV_CAR2        ".\\SOUND\\FERRIS.WAV"
-#define WAV_TENT        ".\\SOUND\\LAWYER.WAV"
-#define WAV_BOOTH       ".\\SOUND\\STEPUP.WAV"
-#define WAV_PEOPLE1     ".\\SOUND\\BALLOON.WAV"
-#define WAV_PEOPLE2     ".\\SOUND\\AUNTEDNA.WAV"
+#define WAV_CAR1        "sound\\SICK.WAV"
+#define WAV_CAR2        "sound\\FERRIS.WAV"
+#define WAV_TENT        "sound\\LAWYER.WAV"
+#define WAV_BOOTH       "sound\\STEPUP.WAV"
+#define WAV_PEOPLE1     "sound\\BALLOON.WAV"
+#define WAV_PEOPLE2     "sound\\AUNTEDNA.WAV"
 
 #define N_PADDLE_SIZES (PSIZE_MAX+1)
 
 STATIC const char *pszPaddles[N_PADDLE_SIZES] = {
-	".\\ART\\PADCEL45.BMP",
-	".\\ART\\PADCEL60.BMP",
-	".\\ART\\PADCEL90.BMP"
+	"art\\PADCEL45.BMP",
+	"art\\PADCEL60.BMP",
+	"art\\PADCEL90.BMP"
 };
 
 STATIC const double fPaddleAngles[N_PADDLE_SIZES] = {
@@ -214,13 +214,13 @@ STATIC const double fPaddleAngles[N_PADDLE_SIZES] = {
 // Globals
 //
 STATIC const char *pszFugeArt[N_ROWS + 1] = {
-	".\\ART\\FUGE6.BMP",
-	".\\ART\\FUGE1.BMP",
-	".\\ART\\FUGE2.BMP",
-	".\\ART\\FUGE3.BMP",
-	".\\ART\\FUGE4.BMP",
-	".\\ART\\FUGE5.BMP",
-	".\\ART\\FUGE6.BMP"
+	"art\\FUGE6.BMP",
+	"art\\FUGE1.BMP",
+	"art\\FUGE2.BMP",
+	"art\\FUGE3.BMP",
+	"art\\FUGE4.BMP",
+	"art\\FUGE5.BMP",
+	"art\\FUGE6.BMP"
 };
 
 STATIC CPalette    *pGamePalette;
@@ -1947,7 +1947,7 @@ void CFugeWindow::LoseBall() {
 
 		            if (pSprite->SharePalette(m_pGamePalette) != false) {
 
-		                if (pSprite->LoadCels(pDC, ".\\ART\\LOSEBALL.BMP", N_BLACKHOLE_CELS) != false) {
+		                if (pSprite->LoadCels(pDC, "art\\LOSEBALL.BMP", N_BLACKHOLE_CELS) != false) {
 
 		                    pSprite->SetMasked(true);
 		                    pSprite->SetMobile(true);

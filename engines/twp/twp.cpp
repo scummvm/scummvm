@@ -274,6 +274,9 @@ bool TwpEngine::preWalk(Common::SharedPtr<Object> actor, VerbId verbId, Common::
 			debugC(kDebugGame, "%s %d n1=%s(%s) n2=%s -> %s", funcName.c_str(), verbId.id, noun1->_name.c_str(), noun1->_key.c_str(), n2Name.c_str(), result ? "yes" : "no");
 		}
 	}
+	if (!result) {
+		sqcallfunc(result, "actorPreWalk", verbId.id, noun1->_table, n2Table);
+	}
 	return result;
 }
 
@@ -1025,7 +1028,7 @@ Common::Error TwpEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
 	_gfx.init();
@@ -1340,7 +1343,7 @@ Common::Error TwpEngine::run() {
 	_system->setImGuiCallbacks(ImGuiCallbacks());
 #endif
 
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 	g_system->lockMouse(false);
 
 	return Common::kNoError;
@@ -2130,7 +2133,7 @@ void TwpEngine::capture(Graphics::Surface &surface, int width, int height) {
 HSQUIRRELVM TwpEngine::getVm() { return _vm->get(); }
 
 int TwpEngine::runDialog(GUI::Dialog &dialog) {
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 	g_system->lockMouse(false);
 
 	int result = Engine::runDialog(dialog);

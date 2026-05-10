@@ -78,7 +78,8 @@ void TinyGLRenderer::init() {
 
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_TEXTURE_2D);
-	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_CULL_FACE);
+	tglFrontFace(TGL_CW);
 	_stippleEnabled = false;
 }
 
@@ -105,7 +106,7 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	TinyGL3DTexture *glTexture = static_cast<TinyGL3DTexture *>(texture);
-	tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_CULL_FACE);
 	tglEnable(TGL_TEXTURE_2D);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 
@@ -115,6 +116,8 @@ void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	tglNormalPointer(TGL_FLOAT, 0, _skyNormals);
 	if (texture->_width == 1008)
 		tglTexCoordPointer(2, TGL_FLOAT, 0, _skyUvs1008);
+	else if (texture->_width == 672)
+		tglTexCoordPointer(2, TGL_FLOAT, 0, _skyUvs672);
 	else if (texture->_width == 128)
 		tglTexCoordPointer(2, TGL_FLOAT, 0, _skyUvs128);
 	else
@@ -139,7 +142,7 @@ void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 
 	tglBindTexture(TGL_TEXTURE_2D, 0);
 	tglDisable(TGL_TEXTURE_2D);
-	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_CULL_FACE);
 	tglFlush();
 }
 
@@ -208,6 +211,16 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglMultMatrixf(lookMatrix.getData());
 	tglRotatef(rollAngle, 0.0f, 0.0f, 1.0f);
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
+
+	// Apply a 2D shake effect on the projection matrix,
+	// matching the OpenGL fixed-function implementation.
+	tglMatrixMode(TGL_PROJECTION);
+	TGLfloat projMatrix[16];
+	tglGetFloatv(TGL_PROJECTION_MATRIX, projMatrix);
+	tglLoadIdentity();
+	tglTranslatef(_shakeOffset.x * 0.025f, _shakeOffset.y * 0.025f, 0.0f);
+	tglMultMatrixf(projMatrix);
+	tglMatrixMode(TGL_MODELVIEW);
 }
 
 void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect &viewArea) {
@@ -252,24 +265,28 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	}
 
-	tglDisable(TGL_DEPTH_TEST);
+
 	tglDepthMask(TGL_FALSE);
 
 	tglColor4ub(r, g, b, 255);
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
-	float coef = (9 - frame) / 9.0;
-	float radius = (1 - coef) * 4.0;
 
-	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, viewArea.height() + viewArea.top);
-	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
+	// Exponential ease-out trajectory inspired by the original ZX animation.
+	float coef = 1.0f - powf(0.5f, (8 - frame + 1) / 2.0f);
+	float radius = 1.0f + frame * 0.5f;
+
+	float startX = viewArea.left + viewArea.width() / 2.0f + 2;
+	float startY = viewArea.height() + viewArea.top;
+	float ballX = coef * position.x + (1.0f - coef) * startX;
+	float ballY = coef * position.y + (1.0f - coef) * startY;
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
+	copyToVertexArray(0, Math::Vector3d(ballX, ballY, 0));
 
-	for(int i = 0; i <= triangleAmount; i++) {
-		float x = ball_position.x + (radius * cos(i *  twicePi / triangleAmount));
-		float y = ball_position.y + (radius * sin(i * twicePi / triangleAmount));
+	for (int i = 0; i <= triangleAmount; i++) {
+		float x = ballX + (radius * cos(i * twicePi / triangleAmount));
+		float y = ballY + (radius * sin(i * twicePi / triangleAmount));
 		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
 	}
 
@@ -278,7 +295,6 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDisable(TGL_BLEND);
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
 
@@ -311,7 +327,6 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	}
 
-	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	tglColor4ub(r, g, b, 255);
@@ -335,7 +350,6 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDisable(TGL_BLEND);
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
 
@@ -348,7 +362,6 @@ void TinyGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	tglEnable(TGL_BLEND);
 	tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 
-	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	useColor(255, 255, 255);
@@ -371,7 +384,6 @@ void TinyGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDisable(TGL_BLEND);
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
 
@@ -461,7 +473,6 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 		}
 
 	tglLoadMatrixf(m);
-	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	setStippleData(stipple);
@@ -488,17 +499,15 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	useStipple(false);
 
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 	tglPopMatrix();
 }
 
-void TinyGLRenderer::depthTesting(bool enabled) {
+void TinyGLRenderer::enableCulling(bool enabled) {
 	if (enabled) {
-		tglClear(TGL_DEPTH_BUFFER_BIT);
-		tglEnable(TGL_DEPTH_TEST);
+		tglEnable(TGL_CULL_FACE);
 	} else {
-		tglDisable(TGL_DEPTH_TEST);
+		tglDisable(TGL_CULL_FACE);
 	}
 }
 

@@ -186,7 +186,7 @@ void ContainerWidget::display_special_char(uint16 x, uint16 y, uint8 quality) {
 	screen->blitbitmap(x + 6, y + 11, inventory_font[quality + 9], 3, 5, obj_font_color, bg_color);
 }
 
-GUI_status ContainerWidget::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status ContainerWidget::MouseDown(int x, int y, Events::MouseButton button) {
 //Events *event = Game::get_game()->get_event();
 //MsgScroll *scroll = Game::get_game()->get_scroll();
 	x -= area.left;
@@ -248,7 +248,7 @@ Obj *ContainerWidget::get_obj_at_location(int x, int y) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status ContainerWidget::MouseUp(int /*x*/, int /*y*/, Shared::MouseButton button) {
+GUI_status ContainerWidget::MouseUp(int /*x*/, int /*y*/, Events::MouseButton button) {
 	if (button == USE_BUTTON) {
 		//x -= area.left;
 		//y -= area.top;
@@ -517,7 +517,7 @@ void ContainerWidget::try_click() {
 }
 
 /* Use object. */
-GUI_status ContainerWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
+GUI_status ContainerWidget::MouseDouble(int x, int y, Events::MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return GUI_PASS;
@@ -534,12 +534,12 @@ GUI_status ContainerWidget::MouseDouble(int x, int y, Shared::MouseButton button
 	return GUI_PASS;
 }
 
-GUI_status ContainerWidget::MouseClick(int x, int y, Shared::MouseButton button) {
+GUI_status ContainerWidget::MouseClick(int x, int y, Events::MouseButton button) {
 	return MouseUp(x, y, button);
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status ContainerWidget::MouseDelayed(int x, int y, Shared::MouseButton button) {
+GUI_status ContainerWidget::MouseDelayed(int x, int y, Events::MouseButton button) {
 	if (ready_obj)
 		try_click();
 	return GUI_PASS;

@@ -22,7 +22,6 @@
 #ifndef ULTIMA8_GUMPS_PAPERDOLLGUMP_H
 #define ULTIMA8_GUMPS_PAPERDOLLGUMP_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/gumps/container_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -75,7 +74,7 @@ protected:
 
 	//! Paint a single stat
 	void PaintStat(RenderSurface *surf, unsigned int n,
-	               Std::string text, int val);
+	               Common::String text, int val);
 
 	RenderedText *_cachedText[14]; // constant!!
 	int _cachedVal[7]; // constant!!

@@ -27,6 +27,7 @@
 #include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Sound {
@@ -118,6 +119,9 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	// Assure no prior sound for the channel is playing
 	stop(channel);
 
+	if (!loop)
+		g_engine->drawSubtitle(name);
+
 	// Load in the new sound
 	preload(name, false, room_num);
 	DigiEntry &entry = _sounds[name];
@@ -159,11 +163,12 @@ void Digi::stop(uint channel, bool calledFromUnload) {
 
 	Channel &c = _channels[channel];
 	if (!c._name.empty()) {
-		Common::String name = c._name;
+		const Common::String name = c._name;
 
 		_mixer->stopHandle(c._soundHandle);
 		c._trigger = -1;
 		c._name.clear();
+		g_engine->clearSubtitle();
 
 		if (!calledFromUnload) {
 			digi_unload(name);
@@ -183,7 +188,7 @@ void Digi::read_another_chunk() {
 
 		// Check if the channel has a sound playing that finished
 		if (c._trigger != -1 && !_mixer->isSoundHandleActive(c._soundHandle)) {
-			int trigger = c._trigger;
+			const int trigger = c._trigger;
 			c._trigger = -1;
 			stop(channel);
 
@@ -201,19 +206,11 @@ void Digi::change_volume(int channel, int vol) {
 	_mixer->setChannelVolume(_channels[channel]._soundHandle, vol);
 }
 
-void Digi::set_overall_volume(int vol) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
-}
-
-int Digi::get_overall_volume() {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-}
-
 int32 Digi::ticks_to_play(const char *name, int roomNum) {
 	// Get the file and retrieve it's size
-	Common::String filename = expand_name_2_RAW(name, roomNum);
+	const Common::String filename = expand_name_2_RAW(name, roomNum);
 	SysFile sf(filename);
-	double size = sf.size();
+	const double size = sf.size();
 	sf.close();
 
 	term_message("  digi_ticks_to_play");
@@ -262,14 +259,6 @@ bool digi_play_state(int channel) {
 
 void digi_change_volume(int channel, int vol) {
 	_G(digi).change_volume(channel, vol);
-}
-
-void digi_set_overall_volume(int vol) {
-	_G(digi).set_overall_volume(vol);
-}
-
-int digi_get_overall_volume() {
-	return _G(digi).get_overall_volume();
 }
 
 int32 digi_ticks_to_play(const char *name, int roomNum) {

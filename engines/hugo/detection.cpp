@@ -59,7 +59,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_TTS)
+			GUIO2(GAMEOPTION_TTS, GAMEOPTION_WINDOWS_INTERFACE)
 		},
 		kGameTypeHugo1
 	},
@@ -83,7 +83,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO1(GAMEOPTION_TTS)
+			GUIO2(GAMEOPTION_TTS, GAMEOPTION_WINDOWS_INTERFACE)
 		},
 		kGameTypeHugo2
 	},
@@ -107,7 +107,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO1(GAMEOPTION_TTS)
+			GUIO2(GAMEOPTION_TTS, GAMEOPTION_WINDOWS_INTERFACE)
 		},
 		kGameTypeHugo3
 	},

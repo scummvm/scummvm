@@ -158,9 +158,54 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else
 		error("Unknown C64 release");
 
-	_playerSid = new DrillerSIDPlayer(_mixer);
+	// Only one SID instance can be active at a time; music is the default.
+	// Create the inactive player first so its SID is destroyed before
+	// the active player's SID is created.
+	_playerC64Sfx = new DrillerC64SFXPlayer();
+	_playerC64Sfx->destroySID();
+	_playerMusic = new DrillerSIDPlayer();
+
+	// C64 SFX index mapping
+	// Based on analysis of the C64 binary SFX routines
+	_soundIndexShoot = 2;           // SFX #2 - Dual-voice noise sweep (explosion/drilling)
+	_soundIndexCollide = 3;         // SFX #3 - Noise pitch slide (collision)
+	_soundIndexStepUp = 5;          // SFX #5 - Pulse slide up
+	_soundIndexStepDown = 4;        // SFX #4 - Pulse slide down
+	_soundIndexFall = 11;           // SFX #11 - Triangle slide down fast (falling)
+	_soundIndexStart = 8;           // SFX #8 - Triangle slide up (teleporter/energy)
+	_soundIndexMenu = 6;            // SFX #6 - Triangle blip
+	_soundIndexAreaChange = 8;      // SFX #8 - Triangle slide up
+	_soundIndexHit = 7;             // SFX #7 - Dual noise burst
+	_soundIndexNoShield = 9;        // SFX #9 - Dual slide noise (damage)
+	_soundIndexNoEnergy = 9;        // SFX #9 - Dual slide noise (damage)
+	_soundIndexFallen = 18;         // SFX #18 - Major explosion
+	_soundIndexTimeout = 10;        // SFX #10 - Programmed noise bursts (alarm)
+	_soundIndexForceEndGame = 18;   // SFX #18 - Major explosion
+	_soundIndexCrushed = 18;        // SFX #18 - Major explosion
+	_soundIndexMissionComplete = 14; // SFX #14 - 3-step chord
 }
 
+void DrillerEngine::playSoundC64(int index) {
+	debugC(1, kFreescapeDebugMedia, "Playing C64 SFX %d", index);
+	if (_playerC64Sfx && _c64UseSFX)
+		_playerC64Sfx->playSfx(index);
+}
+
+void DrillerEngine::toggleC64Sound() {
+	if (_c64UseSFX) {
+		if (_playerC64Sfx)
+			_playerC64Sfx->destroySID();
+		if (_playerMusic)
+			_playerMusic->startMusic();
+		_c64UseSFX = false;
+	} else {
+		if (_playerMusic)
+			_playerMusic->stopMusic();
+		if (_playerC64Sfx)
+			_playerC64Sfx->initSID();
+		_c64UseSFX = true;
+	}
+}
 
 void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 

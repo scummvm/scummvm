@@ -20,7 +20,7 @@
  */
 
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/gui/widgets/console.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_file_list.h"
@@ -41,7 +41,7 @@ bool NuvieFileList::open(const Common::Path &directory, const char *search, uint
 	sort_mode = s_mode;
 
 	if (!arcMember || !arcMember->isDirectory()) {
-		ConsoleAddWarning(Std::string("Failed to open ") + directory.toString());
+		ConsoleAddWarning(Common::String("Failed to open ") + directory.toString());
 		return false;
 	}
 
@@ -49,7 +49,7 @@ bool NuvieFileList::open(const Common::Path &directory, const char *search, uint
 
 	arcMember->listChildren(children, search);
 	if (children.empty()) {
-		ConsoleAddWarning(Std::string("Failed to get children of ") + directory.toString());
+		ConsoleAddWarning(Common::String("Failed to get children of ") + directory.toString());
 		return false;
 	};
 
@@ -74,8 +74,8 @@ bool NuvieFileList::add_filename(const Common::String &fileName) {
 	return true;
 }
 
-const Std::string *NuvieFileList::get_latest() const {
-	Std::list<NuvieFileDesc>::const_iterator iter;
+const Common::String *NuvieFileList::get_latest() const {
+	Common::List<NuvieFileDesc>::const_iterator iter;
 
 	iter = file_list.begin();
 
@@ -94,12 +94,8 @@ void NuvieFileList::close() {
 	return;
 }
 
-Std::set<Std::string> NuvieFileList::get_filenames() const {
-	Std::set<Std::string> filenames;
-	for (const auto &desc : file_list) {
-		filenames.insert(desc.filename);
-	}
-	return filenames;
+const Common::List<NuvieFileDesc> &NuvieFileList::get_filelist() const {
+	return file_list;
 }
 
 } // End of namespace Nuvie

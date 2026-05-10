@@ -83,14 +83,8 @@ class ClassicCostumeRenderer : public BaseCostumeRenderer {
 protected:
 	ClassicCostumeLoader _loaded;
 
-	byte _scaleIndexX;						/* must wrap at 256 */
-	byte _scaleIndexY;
-	uint16 _palette[32];
-
 public:
-	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm), _scaleIndexX(0), _scaleIndexY(0) {
-		memset(_palette, 0, sizeof(_palette));
-	}
+	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(uint16 *palette) override;
 	void setFacing(const Actor *a) override;
@@ -99,14 +93,14 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
-	void proc3(ByleRLEData &v1);
-	void proc3_ami(ByleRLEData &v1);
+	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
 
-	void procC64(ByleRLEData &v1, int actor);
+	void byleRLEDecode_C64(ByleRLEData &compData, int actor);
+	void byleRLEDecode_ami(ByleRLEData &compData);
+	void byleRLEDecode_PCEngine(ByleRLEData &compData);
 
-	void procPCEngine(ByleRLEData &v1);
-
-	byte mainRoutine(int xmoveCur, int ymoveCur);
+private:
+	void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) override;
 };
 
 class NESCostumeRenderer : public BaseCostumeRenderer {

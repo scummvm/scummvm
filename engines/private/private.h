@@ -32,6 +32,10 @@
 
 #include "private/grammar.h"
 
+namespace Common {
+class Archive;
+}
+
 namespace Image {
 class ImageDecoder;
 }
@@ -78,6 +82,12 @@ typedef struct ExitInfo {
 	Common::String nextSetting;
 	Common::Rect   rect;
 	Common::String cursor;
+
+	void clear() {
+		nextSetting.clear();
+		rect.setEmpty();
+		cursor.clear();
+	}
 } ExitInfo;
 
 typedef struct MaskInfo {
@@ -88,9 +98,17 @@ typedef struct MaskInfo {
 	Symbol *flag2;
 	Common::String cursor;
 	Common::String inventoryItem;
+	bool useBoxCollision;
+	Common::Rect box;
+
+	MaskInfo() {
+		clear();
+	}
 
 	void clear() {
 		surf = nullptr;
+		useBoxCollision = false;
+		box = Common::Rect();
 		flag1 = nullptr;
 		flag2 = nullptr;
 		nextSetting.clear();
@@ -100,11 +118,61 @@ typedef struct MaskInfo {
 	}
 } MaskInfo;
 
+enum PhoneStatus : byte {
+	kPhoneStatusWaiting,
+	kPhoneStatusAvailable,
+	kPhoneStatusCalling,
+	kPhoneStatusMissed,
+	kPhoneStatusAnswered
+};
+
+typedef struct Sound {
+	Common::String name;
+	Audio::SoundHandle handle;
+} Sound;
+
 typedef struct PhoneInfo {
-	Common::String sound;
-	Symbol *flag;
-	int val;
+	Common::String name;
+	bool once;
+	int startIndex;
+	int endIndex;
+	Common::String flagName;
+	int flagValue;
+	PhoneStatus status;
+	int callCount;
+	uint32 soundIndex;
+	Common::Array<Common::String> sounds;
 } PhoneInfo;
+
+typedef struct RadioClip {
+	Common::String name;
+	bool played;
+	int priority;
+	int disabledPriority1; // 0 == none
+	bool exactPriorityMatch1;
+	int disabledPriority2; // 0 == none
+	bool exactPriorityMatch2;
+	Common::String flagName;
+	int flagValue;
+} RadioClip;
+
+typedef struct Radio {
+	Common::String path;
+	Sound *sound;
+	Common::Array<RadioClip> clips;
+	int channels[3];
+
+	Radio() : sound(nullptr) {
+		clear();
+	}
+
+	void clear() {
+		clips.clear();
+		for (uint i = 0; i < ARRAYSIZE(channels); i++) {
+			channels[i] = -1;
+		}
+	}
+} Radio;
 
 typedef struct DossierInfo {
 	Common::String page1;
@@ -126,8 +194,13 @@ typedef struct MemoryInfo {
 typedef struct DiaryPage {
 	Common::String locationName;
 	Common::Array<MemoryInfo> memories;
-	uint locationID;
+	int locationID;
 } DiaryPage;
+
+typedef struct InventoryItem {
+	Common::String diaryImage;
+	Common::String flag;
+} InventoryItem;
 
 // funcs
 
@@ -143,9 +216,8 @@ extern const FuncTable funcTable[];
 
 typedef Common::List<ExitInfo> ExitList;
 typedef Common::List<MaskInfo> MaskList;
-typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
-typedef Common::List<Common::String> InvList;
+typedef Common::List<InventoryItem> InvList;
 typedef Common::List<Common::Rect *> RectList;
 
 // arrays
@@ -157,6 +229,17 @@ typedef Common::Array<DiaryPage> DiaryPages;
 
 typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 
+enum SubtitleType {
+	kSubtitleAudio,
+	kSubtitleVideo
+};
+
+struct SubtitleSlot {
+	Audio::SoundHandle handle;
+	Video::Subtitles *subs;
+
+	SubtitleSlot() : subs(nullptr) {}
+};
 
 class PrivateEngine : public Engine {
 private:
@@ -165,7 +248,15 @@ private:
 	Image::ImageDecoder *_image;
 	int _screenW, _screenH;
 
+	// helper to generate the correct subtitle path
+	Common::Path getSubtitlePath(const Common::String &soundName);
+
+	bool isSfxSubtitle(const Video::Subtitles *subs);
+	bool isSlotActive(const SubtitleSlot &slot);
+
 public:
+	bool _shouldHighlightMasks;
+	bool _highlightMasks;
 	PrivateEngine(OSystem *syst, const ADGameDescription *gd);
 	~PrivateEngine();
 
@@ -176,16 +267,17 @@ public:
 
 	SymbolMaps maps;
 
-	Audio::SoundHandle _fgSoundHandle;
-	Audio::SoundHandle _bgSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
 	Video::SmackerDecoder *_pausedVideo;
+	Common::String _pausedMovieName;
 
 	Common::Error run() override;
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
+	void pauseEngineIntern(bool pause) override;
 	Common::SeekableReadStream *loadAssets();
+	Common::Archive *loadMacInstaller();
 
 	// Functions
 
@@ -194,15 +286,17 @@ public:
 
 	// User input
 	void selectPauseGame(Common::Point);
-	void selectMask(Common::Point);
-	void selectExit(Common::Point);
-	void selectLoadGame(Common::Point);
-	void selectSaveGame(Common::Point);
+	bool selectMask(Common::Point);
+	bool selectExit(Common::Point);
+	bool selectLoadGame(Common::Point);
+	bool selectSaveGame(Common::Point);
 	void resumeGame();
 
 	// Cursors
+	void updateCursor(Common::Point);
 	bool cursorPauseMovie(Common::Point);
 	bool cursorExit(Common::Point);
+	bool cursorSafeDigit(Common::Point);
 	bool cursorMask(Common::Point);
 
 	bool hasFeature(EngineFeature f) const override;
@@ -216,7 +310,6 @@ public:
 		return true;
 	}
 
-	void ignoreEvents();
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
@@ -226,9 +319,14 @@ public:
 	void skipVideo();
 	void destroyVideo();
 
-	void loadSubtitles(const Common::Path &path);
+	void loadSubtitles(const Common::Path &path, SubtitleType type, Sound *sound = nullptr);
+	// use to clean up sounds which have finished playing once
+	void updateSubtitles();
+	void destroySubtitles();
 	void adjustSubtitleSize();
-	Video::Subtitles *_subtitles;
+	Video::Subtitles *_videoSubtitles;
+	SubtitleSlot _voiceSlot; // high priority (speech)
+	SubtitleSlot _sfxSlot;   // low priority (sfxs)
 	bool _useSubtitles;
 	bool _sfxSubtitles;
 
@@ -252,6 +350,7 @@ public:
 	// Rendering
 	Graphics::ManagedSurface *_compositeSurface;
 	Graphics::Surface *loadMask(const Common::String &, int, int, bool);
+	void loadMaskAndInfo(MaskInfo *m, const Common::String &name, int x, int y, bool drawn);
 	void drawMask(Graphics::Surface *);
 	void fillRect(uint32, Common::Rect);
 	bool inMask(Graphics::Surface *, Common::Point);
@@ -279,9 +378,14 @@ public:
 	Common::String getDiaryLastPageSetting();
 	Common::String getPOGoBustMovieSetting();
 	Common::String getPoliceBustFromMOSetting();
+	Common::String getListenToPhoneSetting();
 	Common::String getAlternateGameVariable();
 	Common::String getPoliceIndexVariable();
 	Common::String getWallSafeValueVariable();
+	Common::String getPoliceArrivedVariable();
+	Common::String getBeenDowntownVariable();
+	Common::String getPoliceStationLocation();
+	const char *getSymbolName(const char *name, const char *strippedName, const char *demoName = nullptr);
 
 	// movies
 	Common::String _nextMovie;
@@ -291,10 +395,12 @@ public:
 	DossierArray _dossiers;
 	uint _dossierSuspect;
 	uint _dossierPage;
+	MaskInfo _dossierPageMask;
 	MaskInfo _dossierNextSuspectMask;
 	MaskInfo _dossierPrevSuspectMask;
 	MaskInfo _dossierNextSheetMask;
 	MaskInfo _dossierPrevSheetMask;
+	bool selectDossierPage(Common::Point);
 	bool selectDossierNextSuspect(Common::Point);
 	bool selectDossierPrevSuspect(Common::Point);
 	bool selectDossierNextSheet(Common::Point);
@@ -304,20 +410,30 @@ public:
 
 	// Police Bust
 	bool _policeBustEnabled;
+	bool _policeSirenPlayed;
+	int _numberOfClicks;
+	int _numberClicksAfterSiren;
+	int _policeBustMovieIndex;
+	Common::String _policeBustMovie;
+	Common::String _policeBustPreviousSetting;
+	void resetPoliceBust();
 	void startPoliceBust();
+	void stopPoliceBust();
+	void wallSafeAlarm();
+	void completePoliceBust();
 	void checkPoliceBust();
-	int _numberClicks;
-	int _maxNumberClicks;
-	int _sirenWarning;
-	Common::String _policeBustSetting;
 
 	// Diary
 	InvList inventory;
 	bool inInventory(const Common::String &bmp) const;
+	void addInventory(const Common::String &bmp, Common::String &flag);
+	void removeInventory(const Common::String &bmp);
+	void removeRandomInventory();
 	Common::String _diaryLocPrefix;
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 	bool _toTake;
+	bool _haveTakenItem;
 	DiaryPages _diaryPages;
 	int _currentDiaryPage;
 	ExitInfo _diaryNextPageExit;
@@ -330,6 +446,9 @@ public:
 	Common::Array<MaskInfo> _locationMasks;
 	Common::Array<MaskInfo> _memoryMasks;
 	bool selectMemory(const Common::Point &mousePos);
+	void setLocationAsVisited(Symbol *location);
+	int getMaxLocationValue();
+	bool selectSkipMemoryVideo(Common::Point mousePos);
 
 	// Save/Load games
 	MaskInfo _saveGameMask;
@@ -339,7 +458,6 @@ public:
 	bool _modified;
 
 	PlayedMediaTable _playedMovies;
-	PlayedMediaTable _playedPhoneClips;
 	Common::String _repeatedMovieExit;
 
 	// Masks/Exits
@@ -347,10 +465,25 @@ public:
 	MaskList _masks;
 
 	// Sounds
-	void playSound(const Common::String &, uint, bool, bool);
-	void stopSound(bool);
-	bool isSoundActive();
+	void playBackgroundSound(const Common::String &name);
+	void playForegroundSound(const Common::String &name);
+	void playForegroundSound(Sound &sound, const Common::String &name);
+	void playSound(Sound &sound, const Common::String &name, bool loop);
+	void stopForegroundSounds();
+	void stopSounds();
+	void stopSound(Sound &sound);
+	bool isSoundPlaying();
+	bool isSoundPlaying(Sound &sound);
+	void waitForSoundsToStop();
+	bool consumeEvents();
+	Sound _bgSound;
+	Sound _fgSounds[4];
+	Sound _phoneCallSound;
+	Sound _AMRadioSound;
+	Sound _policeRadioSound;
+	Sound _takeLeaveSound;
 	bool _noStopSounds;
+	Common::String _pausedBackgroundSoundName;
 
 	Common::String getPaperShuffleSound();
 	Common::String _globalAudioPath;
@@ -361,39 +494,55 @@ public:
 	Common::String _sirenSound;
 
 	// Radios
-	Common::String _infaceRadioPath;
 	MaskInfo _AMRadioArea;
 	MaskInfo _policeRadioArea;
+	Radio _AMRadio;
+	Radio _policeRadio;
+	void addRadioClip(
+		Radio &radio, const Common::String &name, int priority,
+		int disabledPriority1, bool exactPriorityMatch1,
+		int disabledPriority2, bool exactPriorityMatch2,
+		const Common::String &flagName, int flagValue);
+	void initializeAMRadioChannels(uint clipCount);
+	void initializePoliceRadioChannels();
+	void disableRadioClips(Radio &radio, int priority);
+	void playRadio(Radio &radio, bool randomlyDisableClips);
+	bool selectAMRadioArea(Common::Point);
+	bool selectPoliceRadioArea(Common::Point);
+
+	// Phone
 	MaskInfo _phoneArea;
 	Common::String _phonePrefix;
-	Common::String _phoneCallSound;
-	SoundList _AMRadio;
-	SoundList _policeRadio;
-	PhoneList _phone;
-
-	Common::String getRandomPhoneClip(const char *, int, int);
-	void selectAMRadioArea(Common::Point);
-	void selectPoliceRadioArea(Common::Point);
-	void selectPhoneArea(Common::Point);
+	PhoneList _phones;
+	void addPhone(const Common::String &name, bool once, int startIndex, int endIndex, const Common::String &flagName, int flagValue);
+	void initializePhoneOnDesktop();
 	void checkPhoneCall();
+	bool cursorPhoneArea(Common::Point mousePos);
+	bool selectPhoneArea(Common::Point mousePos);
 
 	// Safe
-	uint32 _safeColor;
 	Common::String _safeNumberPath;
 	MaskInfo _safeDigitArea[3];
 	Common::Rect _safeDigitRect[3];
-	uint32 _safeDigit[3];
 
+	void initializeWallSafeValue();
 	bool selectSafeDigit(Common::Point);
 	void addSafeDigit(uint32, Common::Rect*);
-	void renderSafeDigit(uint32);
+	int getSafeDigit(uint32 d);
+	void incrementSafeDigit(uint32 d);
 
 	// Random values
 	bool getRandomBool(uint);
 
-	// Timers
-	bool installTimer(uint32, Common::String *);
-	void removeTimer();
+	// Timer
+	Common::String _timerSetting;
+	Common::String _timerSkipSetting;
+	uint32 _timerStartTime;
+	uint32 _timerDelay;
+	void setTimer(uint32 duration, const Common::String &setting, const Common::String &skipSetting);
+	void clearTimer();
+	void skipTimer();
+	void checkTimer();
 
 	// VM objects
 	RectList _rects; // created by fCRect

@@ -8,6 +8,8 @@ MODULE_OBJS := \
 	cursor.o \
 	decompr.o \
 	dialog.o \
+	ega.o \
+	ega_resource.o \
 	ifgm.o \
 	input.o \
 	invent.o \
@@ -22,7 +24,7 @@ MODULE_OBJS := \
 	r_texts.o \
 	resdata.o \
 	room.o \
-	savegame.o \
+	saveload.o \
 	script.o \
 	sound.o \
 	timer.o

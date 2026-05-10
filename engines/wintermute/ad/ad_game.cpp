@@ -2492,12 +2492,10 @@ bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *vie
 		{
 			*layerWidth = _scene->_mainLayer->_width;
 			*layerHeight = _scene->_mainLayer->_height;
-#ifdef ENABLE_WME3D
 			if (_game->_editorResolutionWidth > 0)
 				*layerWidth = _game->_editorResolutionWidth;
 			if (_game->_editorResolutionHeight > 0)
 				*layerHeight = _game->_editorResolutionHeight;
-#endif
 		}
 		return true;
 	} else

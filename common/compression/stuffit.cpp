@@ -1001,7 +1001,10 @@ bool StuffItArchive::decompress13(Common::SeekableReadStream *src, byte *dst, ui
 	j = bits.getBits<8>();
 	i = j>>4;
 	if(i > 5)
+	{
+		delete s;
 		return false;
+	}
 	if(i)
 	{
 		SIT13InitInfo(s, i--);
@@ -1019,7 +1022,9 @@ bool StuffItArchive::decompress13(Common::SeekableReadStream *src, byte *dst, ui
 		j = (j&7)+10;
 		SIT13_CreateTree(s, &bits, s->Buffer2, j);
 	}
-	return SIT13_Extract(s, &bits, out);
+	bool result = SIT13_Extract(s, &bits, out);
+	delete s;
+	return result;
 }
 
 #define OUTPUT_VAL(x) \

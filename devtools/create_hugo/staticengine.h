@@ -39,8 +39,8 @@ const char *textEngine[NUM_ENGINE_TEXT] = {
 	"game but bigger and better!\n\n"
 	"Call 1-800-2424-PsL now to order the\n"
 	"Hugo Trilogy for Windows for only $36!\n"
-	"(Note: This number is for ORDERS only).\n\n"
-	"It includes all 3 games plus the 30-page\n"
+	"(Note: This number is for ORDERS only)\n\n"
+	"It includes all 3 games + the 30-page\n"
 	"answer book.  See Ordering information\n"
 	"for more details and some screenshots."
 };

@@ -45,8 +45,8 @@ ConfigElement Config::getElement(const Common::String &name) const {
 	return ConfigElement(node);
 }
 
-Std::vector<Common::String> Config::getGames() {
-	Std::vector<Common::String> result;
+Common::Array<Common::String> Config::getGames() {
+	Common::Array<Common::String> result;
 	result.push_back("Ultima IV");
 	return result;
 }
@@ -112,9 +112,9 @@ int ConfigElement::getEnum(const Common::String &name, const char *const enumVal
 	error("invalid enum value for %s: %s", name.c_str(), str.c_str());
 }
 
-Std::vector<ConfigElement> ConfigElement::getChildren() const {
+Common::Array<ConfigElement> ConfigElement::getChildren() const {
 	const Common::Array<Shared::XMLNode *> &children = _node->children();
-	Std::vector<ConfigElement> result;
+	Common::Array<ConfigElement> result;
 
 	for (const auto &c : children)
 		result.push_back(c);

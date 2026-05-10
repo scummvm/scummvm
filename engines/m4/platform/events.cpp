@@ -217,19 +217,20 @@ bool Events::util_kbd_check(int32 *parm1) {
 	if (!parm1 || _pendingKeys.empty())
 		return false;
 
-	Common::KeyState ks = _pendingKeys.pop();
+	const Common::KeyState ks = _pendingKeys.pop();
 	if (is_mod_key(ks))
 		return false;
 
-	int flags = ks.flags & (Common::KBD_CTRL | Common::KBD_ALT);
-	int key = (ks.ascii >= 32 && ks.ascii <= 127 && !flags) ? ks.ascii : (int)ks.keycode;
+	const int flags = ks.flags & (Common::KBD_CTRL | Common::KBD_ALT);
+	const int key = (ks.ascii >= 32 && ks.ascii <= 127 && !flags) ? ks.ascii : (int)ks.keycode;
 	*parm1 = key | (flags << 16);
 
 	return true;
 }
 
 void Events::delay(uint amount) {
-	uint32 beginTime = g_system->getMillis(), newTime;
+	const uint32 beginTime = g_system->getMillis();
+	uint32 newTime;
 
 	do {
 		krn_pal_game_task();

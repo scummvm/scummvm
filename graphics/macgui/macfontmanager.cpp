@@ -34,7 +34,7 @@
 namespace Graphics {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
-// https://www.1000bit.it/support/manuali/apple/technotes/iigs/tn.iigs.041.html
+// https://web.archive.org/web/20221006211144/www.1000bit.it/support/manuali/apple/technotes/iigs/tn.iigs.041.html
 static const struct FontProto {
 	int id;
 	Common::Language lang;
@@ -576,15 +576,15 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 			if (macFont->getSize() <= 0) {
 				debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont() - Font size <= 0!");
 			}
-			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, _ttfRenderMode);
 			_uniFontRegistry.setVal(macFont->getName(), font);
 		} else if (_fontInfo.contains(familyId)) {
-			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, _ttfRenderMode);
 
 			// We may get nullptr from here, so storing it to avoid multiple tries
 			_uniFontRegistry.setVal(macFont->getName(), font);
 		} else {
-			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+			font = Graphics::loadTTFFontFromArchive("LiberationSans-Regular.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, _ttfRenderMode);
 			_uniFontRegistry.setVal(macFont->getName(), font);
 		}
 	}
@@ -947,10 +947,11 @@ void MacFontManager::generateTTFFont(MacFont &toFont, Common::SeekableReadStream
 	// TODO: Handle getSlant() flags
 
 	stream->seek(0);
-	Font *font = Graphics::loadTTFFont(stream, DisposeAfterUse::NO, toFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
+	Font *font = Graphics::loadTTFFont(stream, DisposeAfterUse::NO, toFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, _ttfRenderMode);
 
 	if (!font) {
 		warning("Failed to generate font '%s'", toPrintable(getFontName(toFont)).c_str());
+		return;
 	}
 
 	toFont.setGenerated(true);
@@ -980,6 +981,7 @@ void MacFontManager::generateFONTFont(MacFont &toFont, MacFont &fromFont) {
 
 	if (!font) {
 		warning("Failed to generate font '%s'", toPrintable(getFontName(toFont)).c_str());
+		return;
 	}
 
 	toFont.setGenerated(true);

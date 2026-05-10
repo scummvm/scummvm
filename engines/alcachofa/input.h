@@ -27,6 +27,9 @@
 
 namespace Alcachofa {
 
+struct Task;
+class Process;
+
 class Input {
 public:
 	inline bool wasMouseLeftPressed() const { return _wasMouseLeftPressed; }
@@ -40,6 +43,7 @@ public:
 	inline bool isAnyMouseDown() const { return _isMouseLeftDown || _isMouseRightDown; }
 	inline bool wasMenuKeyPressed() const { return _wasMenuKeyPressed; }
 	inline bool wasInventoryKeyPressed() const { return _wasInventoryKeyPressed; }
+	inline bool wasSubtitlesKeyPressed() const { return _wasSubtitlesKeyPressed; }
 	inline Common::Point mousePos2D() const { return _mousePos2D; }
 	inline Common::Point mousePos3D() const { return _mousePos3D; }
 	const Input &debugInput() const { scumm_assert(_debugInput != nullptr); return *_debugInput; }
@@ -47,6 +51,7 @@ public:
 	void nextFrame();
 	bool handleEvent(const Common::Event &event);
 	void toggleDebugInput(bool debugMode); ///< Toggles input debug mode which blocks any input not retrieved with debugInput
+	Task *waitForInput(Process &process);
 
 private:
 	void updateMousePos3D();
@@ -59,7 +64,8 @@ private:
 		_isMouseLeftDown = false,
 		_isMouseRightDown = false,
 		_wasMenuKeyPressed = false,
-		_wasInventoryKeyPressed = false;
+		_wasInventoryKeyPressed = false,
+		_wasSubtitlesKeyPressed = false;
 	Common::Point
 		_mousePos2D,
 		_mousePos3D;

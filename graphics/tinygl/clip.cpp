@@ -37,13 +37,37 @@ namespace TinyGL {
 #define CLIP_ZMAX   (1 << 5)
 
 void GLContext::gl_transform_to_viewport(GLVertex *v) {
-	float winv;
+	float winv, result;
 
 	// coordinates
 	winv = (float)(1.0 / v->pc.W);
-	v->zp.x = (int)(v->pc.X * winv * viewport.scale.X + viewport.trans.X);
-	v->zp.y = (int)(v->pc.Y * winv * viewport.scale.Y + viewport.trans.Y);
-	v->zp.z = (int)(v->pc.Z * winv * viewport.scale.Z + viewport.trans.Z);
+	// Compute and clamp X coordinate
+	result = v->pc.X * winv * viewport.scale.X + viewport.trans.X;
+	if (result > (float)INT_MAX)
+			v->zp.x = INT_MAX;
+	else if (result < (float)INT_MIN)
+			v->zp.x = INT_MIN;
+	else
+			v->zp.x = (int)result;
+
+	// Compute and clamp Y coordinate
+	result = v->pc.Y * winv * viewport.scale.Y + viewport.trans.Y;
+	if (result > (float)INT_MAX)
+			v->zp.y = INT_MAX;
+	else if (result < (float)INT_MIN)
+			v->zp.y = INT_MIN;
+	else
+			v->zp.y = (int)result;
+
+	// Compute and clamp Z coordinate
+	result = v->pc.Z * winv * viewport.scale.Z + viewport.trans.Z;
+	if (result > (float)INT_MAX)
+			v->zp.z = INT_MAX;
+	else if (result < (float)INT_MIN)
+			v->zp.z = INT_MIN;
+	else
+			v->zp.z = (int)result;
+
 
 	// color
 	v->zp.r = (int)(v->color.X * ZB_POINT_RED_MAX);

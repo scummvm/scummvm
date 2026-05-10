@@ -108,7 +108,7 @@ for comp in $(get_var _components); do
 done
 
 # Create needed engines build files
-awk -f "engines.awk" < /dev/null > /dev/null 2>&1
+awk -f "./engines.awk" < /dev/null > /dev/null 2>&1
 
 mkdir -p "engines"
 

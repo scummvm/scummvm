@@ -387,9 +387,7 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needDisplayResize = false;
 	_transactionDetails.needTextureUpdate = false;
 #endif
-#ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
-#endif
 
 	_oldVideoMode = _videoMode;
 }
@@ -443,14 +441,13 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 
 			_videoMode.filtering = _oldVideoMode.filtering;
 		}
-#ifdef USE_RGB_COLOR
+
 		if (_videoMode.format != _oldVideoMode.format) {
 			errors |= OSystem::kTransactionFormatNotSupported;
 
 			_videoMode.format = _oldVideoMode.format;
 			_screenFormat = _videoMode.format;
 		}
-#endif
 
 		if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
 			errors |= OSystem::kTransactionSizeChangeFailed;
@@ -468,11 +465,7 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 		_oldVideoMode.setup = false;
 	}
 
-#ifdef USE_RGB_COLOR
 	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
-#else
-	if (_transactionDetails.sizeChanged) {
-#endif
 		unloadGFXMode();
 		if (!loadGFXMode()) {
 			if (_oldVideoMode.setup) {
@@ -709,10 +702,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 	// If the scalerIndex has changed, change scaler plugins
 	if (&_scalerPlugins[_videoMode.scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin
-#ifdef USE_RGB_COLOR
-		|| _transactionDetails.formatChanged
-#endif
-		) {
+		|| _transactionDetails.formatChanged) {
 		Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
 		delete _scaler;
 
@@ -812,7 +802,6 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 		getDefaultResolution(w, h);
 	}
 
-#ifdef USE_RGB_COLOR
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
@@ -827,7 +816,6 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
 	}
-#endif
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Avoid redundant res changes, only in SDL1. In SDL2, redundancies may not
@@ -997,10 +985,8 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_screen == nullptr)
 		error("allocating _screen failed");
 
-#ifdef USE_RGB_COLOR
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
 	SDL_SetAlpha(_screen, 0, 255);
-#endif
 
 	// SDL 1.2 palettes default to all black,
 	// SDL 1.3 palettes default to all white,
@@ -1086,6 +1072,9 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		error("allocating _tmpscreen2 failed");
 
 	if (_isHwPalette) {
+		if (!_screenFormat.isCLUT8())
+			return false;
+
 		SDL_SetColors(_tmpscreen2, _overlayPalette, 0, 256);
 		SDL_SetColors(_overlayscreen, _overlayPalette, 0, 256);
 	}
@@ -1242,7 +1231,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			blackrect.x = ((_videoMode.screenWidth + _gameScreenShakeXOffset) * _videoMode.scaleFactor);
 		}
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible) {
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 		}
 
@@ -1263,7 +1252,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			blackrect.y = ((_videoMode.screenHeight + _gameScreenShakeYOffset) * _videoMode.scaleFactor);
 		}
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible) {
 			blackrect.y = real2Aspect(blackrect.y);
 			blackrect.h = real2Aspect(blackrect.h + blackrect.y - 1) - blackrect.y + 1;
 		}
@@ -1450,7 +1439,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				dst_x *= scale1;
 				dst_y *= scale1;
 
-				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
 				_scaler->scale((byte *)srcSurf->pixels + (src_x + _maxExtraPixels) * bpp + (src_y + _maxExtraPixels) * srcPitch, srcPitch,
@@ -1462,7 +1451,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				r->h = dst_h * scale1;
 
 #ifdef USE_ASPECT
-				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
+				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
 					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, 	convertSDLPixelFormat(_hwScreen->format));
 #endif
 			}
@@ -1487,7 +1476,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 		// We draw the focus rectangle on top of everything, to assure it's easily visible.
-		// Of course when the overlay is visible we do not show it, since it is only for game
+		// Of course when the GUI overlay is visible we do not show it, since it is only for game
 		// specific focus.
 		if (_enableFocusRect && !_overlayInGUI) {
 			int x = _focusRect.left + _currentShakeXOffset;
@@ -1507,7 +1496,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				w *= scale1;
 				h *= scale1;
 
-				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					y = real2Aspect(y);
 
 				if (h > 0 && w > 0) {
@@ -1852,7 +1841,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool in
 	}
 
 #ifdef USE_ASPECT
-	if (_videoMode.aspectRatioCorrection && !_overlayInGUI && !realCoordinates)
+	if (_videoMode.aspectRatioCorrection && !inOverlay && !realCoordinates)
 		makeRectStretchable(x, y, w, h, _videoMode.filtering);
 #endif
 
@@ -1962,7 +1951,7 @@ void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 
 	// We just fake this as a dirty rect for now, to easily force a screen update whenever
 	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), false);
 #endif
 }
 
@@ -1976,7 +1965,7 @@ void SurfaceSdlGraphicsManager::clearFocusRectangle() {
 
 	// We just fake this as a dirty rect for now, to easily force a screen update whenever
 	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), false);
 #endif
 }
 
@@ -2170,7 +2159,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		return;
 	}
 
-#ifdef USE_RGB_COLOR
 	if (mask && format && format->bytesPerPixel > 1 && !_isHwPalette) {
 		const uint numPixels = w * h;
 		const uint inBPP = format->bytesPerPixel;
@@ -2221,7 +2209,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		setMouseCursor(&maskedImage[0], w, h, hotspotX, hotspotY, 0, dontScale, &formatWithAlpha, nullptr, true);
 		return;
 	}
-#endif
 
 	bool formatChanged = false;
 
@@ -2892,7 +2879,7 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
 	if (sizeChanged) {
 		// Forcibly resizing the window here since a user switching scaler
 		// size will not normally cause the window to update
-		_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _lastFlags);
+		_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _window->getWindowFlags());
 	}
 #endif
 
@@ -3277,9 +3264,9 @@ void *SurfaceSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image,
 	SDL_UpdateTexture(texture, nullptr, s->getPixels(), s->pitch);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 #ifdef USE_IMGUI_SDLRENDERER3
-	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_LINEAR);
+	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 #elif defined(USE_IMGUI_SDLRENDERER2)
-	SDL_SetTextureScaleMode(texture, SDL_ScaleModeLinear);
+	SDL_SetTextureScaleMode(texture, SDL_ScaleModeNearest);
 #endif
 
 	s->free();

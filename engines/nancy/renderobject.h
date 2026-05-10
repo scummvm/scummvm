@@ -34,12 +34,13 @@ class GraphicsManager;
 // A subclass of this will be automatically updated and drawn from the graphics manager,
 // but initialization needs to be done manually.
 class RenderObject {
-	friend class GraphicsManager;
 public:
 	RenderObject(uint16 zOrder);
 	RenderObject(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
 
 	virtual ~RenderObject();
+
+	RenderObject(RenderObject &&) = default;
 
 	virtual void init(); // Does not get called automatically
 	virtual void registerGraphics(); // Does not get called automatically
@@ -51,13 +52,21 @@ public:
 	void setTransparent(bool isTransparent);
 	bool isVisible() const { return _isVisible; }
 
+	bool needsRedraw() const { return _needsRedraw; }
+	void setNeedsRedraw(bool needsRedraw) { _needsRedraw = needsRedraw; }
+
+	void setHasMoved(bool hasMoved) { _hasMoved = hasMoved; }
+
 	// Only used by The Vampire Diaries
 	void grabPalette(byte *colors, uint paletteStart = 0, uint paletteSize = 256);
 	void setPalette(const Common::Path &paletteName, uint paletteStart = 0, uint paletteSize = 256);
 	void setPalette(const byte *colors, uint paletteStart = 0, uint paletteSize = 256);
 
 	bool hasMoved() const { return _previousScreenPosition != _screenPosition; }
+	void updatePreviousScreenPosition() { _previousScreenPosition = _screenPosition; }
+
 	Common::Rect getScreenPosition() const;
+	Common::Rect getScreenPositionRaw() const { return _screenPosition; }
 	Common::Rect getPreviousScreenPosition() const;
 
 	// Given a screen-space rect, convert it to the _drawSurface's local space
@@ -67,13 +76,14 @@ public:
 
 	Common::Rect getBounds() const { return Common::Rect(_screenPosition.width(), _screenPosition.height()); }
 	uint16 getZOrder() const { return _z; }
+	void setZOrder(uint16 z) { _z = z; }
 
 	Graphics::ManagedSurface _drawSurface;
 
-protected:
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
 
+protected:
 	bool _needsRedraw;
 	bool _isVisible;
 	bool _hasMoved;

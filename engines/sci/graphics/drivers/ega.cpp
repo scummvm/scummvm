@@ -67,7 +67,7 @@ template <typename T> void ega640RenderLine(byte *&dst, const byte *src, int w, 
 	dst = reinterpret_cast<byte*>(d2);
 }
 
-void SCI1_EGADriver::initScreen(const Graphics::PixelFormat*) {
+bool SCI1_EGADriver::initScreen(const Graphics::PixelFormat*) {
 	if (!_ready)
 		loadData();
 
@@ -122,6 +122,8 @@ void SCI1_EGADriver::initScreen(const Graphics::PixelFormat*) {
 	_renderLine = lineProcs[_pixelSize >> 1];
 
 	_ready = true;
+
+	return true;
 }
 
 void SCI1_EGADriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod*, const byte*) {

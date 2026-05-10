@@ -32,6 +32,7 @@ namespace Locations {
 
 class Tavern : public Location {
 private:
+	Shared::Xeen::SpriteResource _btnSprites;
 	/**
 	 * Have a drink
 	 */

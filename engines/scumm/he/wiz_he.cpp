@@ -25,7 +25,13 @@
 #include "common/ptr.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 #include "graphics/primitives.h"
+
+#include "gui/gui-manager.h"
+
+#include "scumm/he/font_he.h"
+
 #include "scumm/he/logic_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
@@ -456,7 +462,28 @@ WizPxShrdBuffer Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z,
 
 	// Verify if it's a printing operation...
 	if (flags & kWRFPrint) {
-		warning("Wiz::drawAWizPrimEx(): Printing not yet supported");
+		Graphics::ManagedSurface surf(destWidth, destHeight, Graphics::PixelFormat::createFormatCLUT8());
+		surf.copyRectToSurface(destPtr(), destWidth, 0, 0, destWidth, destHeight);
+
+		byte pal[256 * 3];
+
+		if (_vm->_game.features & GF_16BIT_COLOR) {
+			WizRawPixel *wpal = (WizRawPixel *)_vm->getHEPaletteSlot(1);
+			int r, g, b;
+			for (int i = 0; i < 256; i++) {
+				rawPixelExtractComponents(wpal[i], r, g, b);
+				pal[i * 3 + 0] = r;
+				pal[i * 3 + 1] = g;
+				pal[i * 3 + 2] = b;
+			}
+		} else {
+			// Taking the current global palette. FIXME: could be not the thing we want
+			g_system->getPaletteManager()->grabPalette(pal, 0, 256);
+		}
+
+		surf.setPalette(pal, 0, 256);
+
+		g_gui.printImage(surf);
 
 		if (_vm->_game.heversion <= 99 || (flags & kWRFAlloc) == 0)
 			destPtr = WizPxShrdBuffer();
@@ -700,7 +727,7 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 	byte *dataTmp = nullptr;
 
 	int outValue = 0;
-	
+
 	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->overrideImageHitTest(&outValue, globNum, state, x, y, flags)) {
 		return outValue;
 	}
@@ -1164,13 +1191,21 @@ void Wiz::loadWizCursor(int resId, int palette, bool useColor) {
 					((uint16 *)cursor)[i] = 0x7FFF;
 			}
 		}
+
+		const byte black[3] = { 0x00, 0x00, 0x00 };
+		const byte white[3] = { 0xFF, 0xFF, 0xFF };
+
+		CursorMan.replaceCursorPalette(black, 0, 1);
+		CursorMan.replaceCursorPalette(white, 15, 1);
 	}
 
 	_vm->setCursorHotspot(x, y);
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bytesPerPixel);
 
 	// Since we set up cursor palette for default cursor, disable it now...
-	CursorMan.disableCursorPalette(true);
+	if (useColor) {
+		CursorMan.disableCursorPalette(true);
+	}
 }
 
 #define ADD_REQUIRED_IMAGE(whatImageIsRequired) {                                                                                    \
@@ -1775,7 +1810,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 			correctedAngle = (360 - correctedAngle);
 		}
 
-		// Get the upper left point so that our blit matches 
+		// Get the upper left point so that our blit matches
 		// in position the normal warp drawing function...
 		polyBuildBoundingRect(listOfPoints, 4, boundingRect);
 		x = boundingRect.left;
@@ -2323,7 +2358,7 @@ void Wiz::ensureNativeFormatImageForState(int image, int state) {
 		switch (compType) {
 		// These were in the original but they appear to be dead code.
 		// Not removing these just yet...
-		// 
+		//
 		// case kWCTNone16Bpp:
 		// 	newCompType += kWCTNone16BppBigEndian - kWCTNone16Bpp;
 		// 	break;
@@ -2372,7 +2407,7 @@ void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 	}
 
 	int whichImage = params->image;
-	
+
 	// Make the clipping rect for this image / state...
 	getWizImageDim(whichImage, whichState, width, height);
 
@@ -2399,23 +2434,40 @@ void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageFontStartCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Start Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->startFont(params->image))) {
+		warning("Wiz::processWizImageFontStartCmd(): Couldn't start font");
+	}
 }
 
 void Wiz::processWizImageFontEndCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: End Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->endFont(params->image))) {
+		warning("Wiz::processWizImageFontEndCmd(): Couldn't end font");
+	}
 }
 
 void Wiz::processWizImageFontCreateCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Create Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->createFont(params->image,
+														  reinterpret_cast<const char *>(params->fontProperties.fontName),
+														  params->fontProperties.fgColor,
+														  params->fontProperties.bgColor,
+														  params->fontProperties.style,
+														  params->fontProperties.size))) {
+		warning("Wiz::processWizImageFontCreateCmd(): Couldn't create font");
+	}
 }
 
 void Wiz::processWizImageFontRenderCmd(const WizImageCommand *params) {
-	// TODO: Render Font String
-	error("Wiz::processWizImageFontRenderCmd(): Render Font String");
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->renderString(params->image,
+															params->state,
+															params->fontProperties.xPos,
+															params->fontProperties.yPos,
+															reinterpret_cast<const char *>(params->fontProperties.string)))) {
+		warning("Wiz::processWizImageFontRenderCmd(): Couldn't render font");
+	}
 }
 
 void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {

@@ -19,13 +19,15 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "atari-screen.h"
 
 #include <mint/falcon.h>
 
 #include "atari-graphics.h"		// MAX_HZ_SHAKE, MAX_V_SHAKE
 #include "atari-supervidel.h"	// g_hasSuperVidel
-//#include "backends/platform/atari/atari-debug.h"
+//#include "common/debug.h"
 
 Screen::Screen(bool tt, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
 	: palette(palette_)
@@ -140,7 +142,7 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, int x, int y, int
 
 	if ((w == srcSurface.w && h == srcSurface.h)
 		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
-		//atari_debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
+		//debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
 
 		dirtyRects.clear();
 		// even if srcSurface.w != _offsettedSurf.w, alignRect would lead to the same result

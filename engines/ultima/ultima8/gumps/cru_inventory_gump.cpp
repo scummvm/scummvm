@@ -108,8 +108,8 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 			if (q > 1) {
 				// This isn't the most efficient way to work out if we need to make new
 				// text, but it works..
-				const Std::string qtext = Std::string::format("%d", q);
-				const Std::string &currenttext = _inventoryText->getText();
+				const Common::String qtext = Common::String::format("%d", q);
+				const Common::String &currenttext = _inventoryText->getText();
 				if (!qtext.equals(currenttext)) {
 					RemoveChild(_inventoryText);
 					_inventoryText->Close();

@@ -23,7 +23,6 @@
 #define HODJNPODJ_CRYPT_REC_H
 
 #include "common/file.h"
-//#include <lzexpand.h>
 
 namespace Bagel {
 namespace HodjNPodj {

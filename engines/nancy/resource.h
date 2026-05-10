@@ -34,8 +34,6 @@ namespace Nancy {
 class IFF;
 
 class ResourceManager {
-	friend class NancyConsole;
-	friend class NancyEngine;
 public:
 	ResourceManager() = default;
 	~ResourceManager() = default;
@@ -52,7 +50,6 @@ public:
 	bool readCifTree(const Common::String &name, const Common::String &ext, int priority);
 	PatchTree *readPatchTree(Common::SeekableReadStream *stream, const Common::String &name, int priority);
 
-private:
 	// Debug functions
 
 	// Return a human-readable description of a single CIF file.

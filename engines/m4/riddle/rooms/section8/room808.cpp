@@ -22,11 +22,12 @@
 #include "m4/riddle/rooms/section8/room808.h"
 
 
+#include "m4/riddle/riddle.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/other.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
-#include "m4/riddle/riddle.h"
-#include "m4/riddle/vars.h"
 #include "m4/wscript/wst_regs.h"
 
 namespace M4 {
@@ -264,11 +265,15 @@ void Room808::pre_parser() {
 		if (_G(flags)[V096] == 0) {
 			ws_walk(_G(my_walker), 185, 165, nullptr, 6, 2, true);
 		} else {
+			// Hack to fix #16098 - Save game before the move to ensure the position is correct when restoring the auto-save
+			other_save_game_for_resurrection();
 			ws_walk(_G(my_walker), 192, 163, nullptr, 10, 2, true);
 		}
 		_G(kernel).trigger_mode = KT_PREPARSE;
 	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[kBridgeWheelPosition] == 4 && check1Fl) {
 		intr_cancel_sentence();
+		// Hack to fix #16098 - Save game before the move to ensure the position is correct when restoring the auto-save
+		other_save_game_for_resurrection();
 		_G(kernel).trigger_mode = KT_DAEMON;
 		ws_walk(_G(my_walker), 274, 142, nullptr, 8, 2, true);
 		_G(kernel).trigger_mode = KT_PREPARSE;
@@ -1032,7 +1037,7 @@ void Room808::parser() {
 				break;
 
 			case 30:
-				_G(game).new_room = 807;
+				_G(game).setRoom(807);
 				adv_kill_digi_between_rooms(false);
 				digi_play_loop("950_s29", 3, 255, -1, -1);
 
@@ -1059,7 +1064,7 @@ void Room808::parser() {
 				break;
 
 			case 20:
-				_G(game).new_room = 809;
+				_G(game).setRoom(809);
 				break;
 
 			default:
@@ -1450,11 +1455,14 @@ void Room808::daemon() {
 		if (_G(spleenSpraying)) {
 			kernel_timing_trigger(200, 966, nullptr);
 		} else {
+			_G(player).disable_hyperwalk = false;
+
 			ws_unhide_walker(_G(my_walker));
-			ws_demand_location(_G(my_walker), 202, 179);
+			ws_demand_location(_G(my_walker), 190, 179);
 			ws_demand_facing(_G(my_walker), 2);
 
-			other_save_game_for_resurrection();
+			// TODO : remove the hack and use this code when we understand why it doesn't save the right position in the auto-save			
+			// other_save_game_for_resurrection();
 			_G(game).setRoom(413);
 		}
 
@@ -1686,11 +1694,13 @@ void Room808::daemon() {
 		break;
 
 	case 967:
+		// Note : this block is never used as the environment variable spleenSpraying is never set (thus trigger 966 & 967 are never called)
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_location(_G(my_walker), 202, 179);
 		ws_demand_facing(_G(my_walker), 2);
 
-		other_save_game_for_resurrection();
+		// TODO : remove the hack and use this code when we understand why it doesn't save the right position in the auto-save
+		// other_save_game_for_resurrection();
 		_G(game).setRoom(413);
 
 		break;
@@ -1702,7 +1712,7 @@ void Room808::daemon() {
 
 bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {
 	if (machine == nullptr || machine->myAnim8 == nullptr) {
-		error_show(FL, 514, "ws_walk");
+		error_show(FL, "ws_walk");
 	}
 
 	const int32 currPos_x = machine->myAnim8->myRegs[IDX_X] >> 16;
@@ -1712,19 +1722,19 @@ bool Room808::getWalkPath(machine *machine, int32 walk_x, int32 walk_y) {
 	const int32 currNode = AddRailNode(currPos_x, currPos_y, currBuffer, true);
 
 	if (currNode < 0) {
-		error_show(FL, 520, "Walker's curr posn: %ld %ld", currPos_x, currPos_y);
+		error_show(FL, "Walker's curr posn: %ld %ld", currPos_x, currPos_y);
 	}
 
 	const int32 destNode = AddRailNode(walk_x, walk_y, currBuffer, true);
 
 	if (destNode < 0) {
-		error_show(FL, 520, "Trying to walk to: %ld %ld", walk_x, walk_y);
+		error_show(FL, "Trying to walk to: %ld %ld", walk_x, walk_y);
 	}
 
 	if (machine->walkPath)
 		DisposePath(machine->walkPath);
 
-	bool retVal = GetShortestPath(currNode, destNode, &machine->walkPath);
+	const bool retVal = GetShortestPath(currNode, destNode, &machine->walkPath);
 
 	RemoveRailNode(currNode, currBuffer, true);
 	RemoveRailNode(destNode, currBuffer, true);

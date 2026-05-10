@@ -206,7 +206,7 @@ static void assembleImage(const byte *img, uint imgPosX, uint imgPosY) {
 		else
 			x = imgPosX;
 
-		if (imgPosX + wImg < g_engine->_dirtyMainSpriteX + wBg)
+		if (imgPosX + wImg < static_cast<uint>(g_engine->_dirtyMainSpriteX + wBg))
 			incx = imgPosX + wImg - x;
 		else
 			incx = g_engine->_dirtyMainSpriteX + wBg - x;
@@ -216,7 +216,7 @@ static void assembleImage(const byte *img, uint imgPosX, uint imgPosY) {
 		else
 			y = imgPosY;
 
-		if (imgPosY + hImg < g_engine->_dirtyMainSpriteY + hBg)
+		if (imgPosY + hImg < static_cast<uint>(g_engine->_dirtyMainSpriteY + hBg))
 			incy = imgPosY + hImg - y;
 		else
 			incy = g_engine->_dirtyMainSpriteY + hBg - y;
@@ -881,7 +881,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 	_mouse->show();
 }
 
-void TotEngine::useInventoryObjectWithInventoryObject(uint objectCode1, uint objectCode2) {
+void TotEngine::useInventoryObjectWithInventoryObject(int16 objectCode1, int16 objectCode2) {
 	byte invIndex, indobj1, indobj2;
 
 	readObject(_sceneObjectsData, objectCode1, _curObject);
@@ -2365,7 +2365,7 @@ void TotEngine::useScreenObject() {
 					_chrono->_gameTick = false;
 					emptyLoop2();
 					sprites(true);
-				} while (!(_currentSecondaryTrajectoryIndex == (_currentRoomData->secondaryTrajectoryLength / 2)));
+				} while (!(_currentSecondaryTrajectoryIndex == (_currentRoomData->secondaryTrajectoryLength / 2u)));
 
 				animateGive(3, 2);
 				updateInventory(usedObjectIndex);

@@ -279,8 +279,8 @@ public:
 	 *						If nullptr is passed then no subtitle will be added to the returned string.
 	 * @return				The processed string.
 	 */
-	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep = "\r----------\r");
-	Common::String strSplit(const char *str, const char *sep = "\r----------\r") {
+	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep);
+	Common::String strSplit(const char *str, const char *sep) {
 		return strSplitLanguage(str, NULL, sep);
 	}
 
@@ -295,10 +295,6 @@ public:
 
 	// Initializes ports and paint16 for non-sci32 games, also sets default palette
 	void initGraphics();
-
-	// Suggest to download the GK2 subtitles patch
-	// in the future, we might refactor it to something more generic, if needed
-	void suggestDownloadGK2SubTitlesPatch();
 
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx

@@ -55,12 +55,14 @@ public:
 	GameMaddog2(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameMaddog2() override;
 	Common::Error run() override;
-	void debugWarpTo(int val);
+	void runCursorTimer();
+	void debug_warpTo(int val);
 
 private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	MD2ScriptFunctionPoint getScriptFunctionZonePtrFb(Common::String name);
 	MD2ScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	MD2ScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
@@ -79,14 +81,23 @@ private:
 	MD2ScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_liveIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_reloadIcon;
-	Graphics::Surface *_drawIcon;
-	Graphics::Surface *_knifeIcon;
-	Graphics::Surface *_bulletholeIcon;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_liveIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_reloadIcon = nullptr;
+	Graphics::Surface *_drawIcon = nullptr;
+	Graphics::Surface *_knifeIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
+
+	// sounds
+	Audio::SeekableAudioStream *_saveSound = nullptr;
+	Audio::SeekableAudioStream *_loadSound = nullptr;
+	Audio::SeekableAudioStream *_skullSound = nullptr;
+	Audio::SeekableAudioStream *_shotSound = nullptr;
+	Audio::SeekableAudioStream *_emptySound = nullptr;
 
 	// constants
 	const int16 _sbClue[3] = {0x67, 0x68, 0x69};
@@ -109,6 +120,23 @@ private:
 	const uint16 _shotPos[12][2] = {{0x96, 0xBD}, {0x9A, 0xBD}, {0x9E, 0xBD}, {0x0A2, 0xBD}, {0x0A6, 0xBD}, {0x0AA, 0xBD}, {0x0AE, 0xBD}, {0x0B2, 0xBD}, {0x0B6, 0xBD}, {0x0BA, 0xBD}, {0x0BE, 0xBD}, {0x0C2, 0xBD}};
 
 	// gamestate
+	uint8 _difficulty = 1;
+	uint8 _emptyCount = 0;
+	bool _holster = false;
+	uint8 _oldDifficulty = 1;
+	uint8 _inHolster = 0;
+	int8 _lives = 0;
+	int8 _oldLives = 0;
+	int32 _score = 0;
+	int32 _oldScore = -1;
+	bool _shotFired = false;
+	uint16 _shots = 0;
+	uint8 _oldShots = 0;
+	uint8 _whichGun = 0;
+	uint8 _oldWhichGun = 0xFF;
+	long int _minF = 0;
+	long int _maxF = 0;
+
 	uint16 _dieBits = 0;
 	uint16 _gotTo = 0;
 	uint16 _sbGotTo = 0;
@@ -132,6 +160,12 @@ private:
 	uint16 _shootOutCnt = 0;
 	uint16 _totalDies = 0;
 
+	Common::String _lastScene;
+	Common::String _retScene;
+	Common::String _subScene;
+
+	uint32 _thisGameTimer = 0;
+
 	// base functions
 	void newGame();
 	void resetParams();
@@ -139,13 +173,15 @@ private:
 	void updateStat();
 	void changeDifficulty(uint8 newDifficulty);
 	void showDifficulty(uint8 newDifficulty, bool updateCursor);
+	void adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty);
 	void updateCursor();
 	void updateMouse();
 	void moveMouse();
 	void displayScore();
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
+	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
 
 	// misc game functions
 	Common::String numToScene(int n);
@@ -161,16 +197,25 @@ private:
 	void genericNext();
 	void playerWon();
 
+	// Timer
+	void setupCursorTimer();
+	void removeCursorTimer();
+	
 	// Script functions: Zone
 	void zoneBullethole(Common::Point *point);
 	void zoneSkullhole(Common::Point *point);
 
 	// Script functions: RectHit
+	void rectNewScene(Rect *rect);
 	void rectShotmenu(Rect *rect);
 	void rectSave(Rect *rect);
 	void rectLoad(Rect *rect);
 	void rectContinue(Rect *rect);
 	void rectStart(Rect *rect);
+	void rectEasy(Rect *rect);
+	void rectAverage(Rect *rect);
+	void rectHard(Rect *rect);
+	void rectExit(Rect *rect);
 	void rectSkull(Rect *rect);
 	void rectKillInnocentMan(Rect *rect);
 	void rectKillInnocentWoman(Rect *rect);
@@ -248,6 +293,9 @@ private:
 
 	// Script functions: Scene WepDwn
 	void sceneDefaultWepdwn(Scene *scene);
+
+	// Script functions: ScnScr
+	void sceneDefaultScore(Scene *scene);
 };
 
 class DebuggerMaddog2 : public GUI::Debugger {

@@ -157,8 +157,36 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		GAMEOPTION_EOB_ADDRULES,
 		{
 			_s("Faithful AD&D rules"),
-			_s("Make implementation of AD&D rules more compliant with the AD&D 2nd edition handbook"),
+			_s(
+				"- Eliminate HP gain round-off errors\n"
+				"- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
+				"- Elves get +1 to hit with swords and bows (per official game manual)"
+			),
 			"addrules",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_EOB_NPCPATCH,
+		{
+			_s("Fix Ileria and Beohram NPCs"),
+			_s("Make Ileria a female and Beohram a paladin"),
+			"npcpatch",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_EOB_RELOAD,
+		{
+			_s("Enhanced thrown weapon reload"),
+			_s("Thrown weapons (daggers, darts, spears...) get replaced from belt and backpack inventory slots, with thrown weapons only"),
+			"mreload",
 			false,
 			0,
 			0
@@ -228,10 +256,6 @@ Common::Error KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 			flags.lang = Common::EN_ANY;
 	}
 
-#ifndef USE_RGB_COLOR
-	flags.useHiColorMode = false;
-#endif
-
 	switch (flags.gameID) {
 	case Kyra::GI_KYRA1:
 		*engine = new Kyra::KyraEngine_LoK(syst, flags);
@@ -257,8 +281,6 @@ Common::Error KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 	case Kyra::GI_EOB2:
 		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
 			 flags.useHiRes = true;
-		 if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode)
-			 return Common::Error(Common::kUnsupportedColorMode, _s("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build"));
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
 		break;
 #else

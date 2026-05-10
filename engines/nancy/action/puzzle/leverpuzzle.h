@@ -57,9 +57,10 @@ public:
 	Time _solveSoundPlayTime;
 	SolveState _solveState = kNotSolved;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "LeverPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawLever(uint id);
 };

@@ -22,6 +22,7 @@
 #include "common/engine_data.h"
 #include "engines/engine.h"
 #include "graphics/fonts/ttf.h"
+#include "image/bmp.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/shared/utils/strings.h"
@@ -39,6 +40,7 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	delete _monsters;
+	delete _suggestedNames;
 	g_globals = nullptr;
 }
 
@@ -56,7 +58,7 @@ void Globals::createBlankButton() {
 bool Globals::load(bool isEnhanced) {
 	// Initialise engine data for the game
 	Common::U32String errMsg;
-	if (!Common::load_engine_data("mm.dat", "mm1", 1, 0, errMsg)) {
+	if (!Common::load_engine_data("mm.dat", "mm1", 1, 1, errMsg)) {
 		GUIErrorMessage(errMsg);
 		return false;
 	}
@@ -86,19 +88,18 @@ bool Globals::load(bool isEnhanced) {
 		{
 			// Load the Xeen game screen background
 			Common::File f;
-			if (!f.open("back.raw"))
+			Image::BitmapDecoder decoder;
+			if (f.open("gfx/back.bmp") && decoder.loadStream(f))
+				_gameBackground.copyFrom(*decoder.getSurface());
+			else if (f.open("back.raw")) {
+				_gameBackground.create(320, 200);
+				f.read(_gameBackground.getPixels(), 320 * 200);
+			} else {
 				error("Could not load background");
-			_gameBackground.create(320, 200);
-			f.read(_gameBackground.getPixels(), 320 * 200);
+			}
 		}
 
-		{
-			Common::File f;
-			if (!f.open("symbols.bin"))
-				error("Could not load symbols.bin");
-			f.read(SYMBOLS, 20 * 64);
-			f.close();
-		}
+		_symbols.load();
 
 		{
 			Common::File f;
@@ -117,6 +118,11 @@ bool Globals::load(bool isEnhanced) {
 			XeenFont::setColors(0);
 			f.close();
 		}
+
+		// Show the mouse cursor
+		g_events->loadCursors();
+		g_events->setCursor(0);
+		g_events->showCursor();
 	}
 
 	return true;

@@ -231,6 +231,7 @@ public:
 			memcpy(_slide + sizeof(_slide) - dict_size, dict, dict_size);
 		}
 	}
+	~GzioReadStream() override;
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 
@@ -568,6 +569,10 @@ huft_free (struct huft *t)
   return 0;
 }
 
+GzioReadStream::~GzioReadStream() {
+  huft_free (_tl);
+  huft_free (_td);
+}
 
 /*
  *  inflate (decompress) the codes in a deflated (compressed) block.

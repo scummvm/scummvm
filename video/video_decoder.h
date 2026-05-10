@@ -251,6 +251,12 @@ public:
 	int getCurFrame() const;
 
 	/**
+	 * Returns the current frame delay of the video.
+	 * @return the last frame decoded by the video
+	 */
+	int getCurFrameDelay() const;
+
+	/**
 	 * Returns the number of frames in the video.
 	 * @return the number of frames in the video
 	 */
@@ -625,6 +631,15 @@ protected:
 		 * @see VideoDecoder::getCurFrame()
 		 */
 		virtual int getCurFrame() const = 0;
+
+		/**
+		 * Get the current frame delay of this track
+		 *
+		 * @see VideoDecoder::getCurFrameDelay()
+		 */
+		virtual int getCurFrameDelay() const {
+			return 0;
+		};
 
 		/**
 		 * Get the frame count of this track

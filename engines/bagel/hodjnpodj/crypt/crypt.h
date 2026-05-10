@@ -30,7 +30,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-#define SPLASHSPEC      ".\\art\\crypt.BMP" // bitmap file for the splash screen
+#define SPLASHSPEC      "art\\crypt.BMP" // bitmap file for the splash screen
 
 #define NOT_USED        -1
 #define MAP             2

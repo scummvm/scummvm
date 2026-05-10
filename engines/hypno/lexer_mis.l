@@ -101,6 +101,9 @@ GS_[A-Z_0-9]+				HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITC
 
 namespace Hypno {
 
+extern Common::Array<uint32> *smenu_idx;
+extern HotspotsStack *stack;
+
 int parse_mis(const char *code) {
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
@@ -108,6 +111,10 @@ int parse_mis(const char *code) {
 	yy_switch_to_buffer(bp);
 	HYPNO_MIS_parse();
 	yy_delete_buffer(bp);
+	delete smenu_idx;
+	smenu_idx = nullptr;
+	delete stack;
+	stack = nullptr;
 	return 0;
 }
 

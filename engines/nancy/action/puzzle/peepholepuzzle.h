@@ -40,9 +40,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "PeepholePuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawInner();
 	void checkButtons();

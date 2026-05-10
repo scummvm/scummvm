@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GUMPS_U8SAVEGUMP_H
 #define ULTIMA8_GUMPS_U8SAVEGUMP_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -57,13 +57,13 @@ protected:
 	bool _save;
 	int _page;
 
-	Std::vector<EditWidget *> _editWidgets;
-	Std::vector<Std::string> _descriptions;
+	Common::Array<EditWidget *> _editWidgets;
+	Common::Array<Common::String> _descriptions;
 
 	void loadDescriptions();
 
 	bool loadgame(int saveIndex);
-	bool savegame(int saveIndex, const Std::string &name);
+	bool savegame(int saveIndex, const Common::String &name);
 };
 
 } // End of namespace Ultima8

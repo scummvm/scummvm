@@ -24,7 +24,6 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 #include "graphics/cursorman.h"
 
@@ -346,7 +345,7 @@ int CineEngine::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
@@ -357,7 +356,7 @@ int CineEngine::scummVMSaveLoadDialog(bool isSave) {
 		}
 	}
 	else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 

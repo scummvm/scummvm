@@ -42,7 +42,6 @@
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/display_manager.h"
-#define PSP_INCLUDE_SWAP
 #include "backends/platform/psp/memory.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
@@ -137,7 +136,7 @@ void Palette::setPartial(const byte *colors, uint start, uint num, bool supports
 }
 
 // Sets pixel format and number of entries by the buffer's pixel format */
-void Palette::setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType, bool swapRedBlue /* = false */) {
+void Palette::setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType) {
 	DEBUG_ENTER_FUNC();
 
 	if (paletteType == PSPPixelFormat::Type_Unknown)
@@ -159,7 +158,7 @@ void Palette::setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::
 		break;
 	}
 
-	_pixelFormat.set(paletteType, swapRedBlue);
+	_pixelFormat.set(paletteType);
 }
 
 bool Palette::allocate() {
@@ -300,12 +299,12 @@ uint32 Palette::getRGBAColorAt(uint32 position) const {
 
 // class Buffer ---------------------------------------------------
 
-void Buffer::setPixelFormat(PSPPixelFormat::Type type, bool swapRedBlue) {
+void Buffer::setPixelFormat(PSPPixelFormat::Type type) {
 	if (type == PSPPixelFormat::Type_None ||
 	        type == PSPPixelFormat::Type_Unknown)
 		PSP_ERROR("Unhandled buffer format[%u]\n", type);
 
-	_pixelFormat.set(type, swapRedBlue);
+	_pixelFormat.set(type);
 }
 
 bool Buffer::hasPalette() {
@@ -349,16 +348,10 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 
 	if (pitch == realWidthInBytes && pitch == recWidthInBytes) {
 		//memcpy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
-		if (_pixelFormat.swapRB)
-			PspMemorySwap::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
-		else
-			PspMemory::fastCopy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
+		PspMemory::fastCopy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 	} else {
 		do {
-			if (_pixelFormat.swapRB)
-				PspMemorySwap::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
-			else
-				PspMemory::fastCopy(dst, buf, recWidthInBytes);
+			PspMemory::fastCopy(dst, buf, recWidthInBytes);
 			buf += pitch;
 			dst += realWidthInBytes;
 		} while (--recHeight);
@@ -377,10 +370,7 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 
 	do {
 		//memcpy(dst, src, sourceWidthInBytes);
-		if (_pixelFormat.swapRB)
-			PspMemorySwap::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
-		else
-			PspMemory::fastCopy(dst, src, sourceWidthInBytes);
+		PspMemory::fastCopy(dst, src, sourceWidthInBytes);
 		src += realWidthInBytes;
 		dst += pitch;
 	} while (--h);
@@ -639,7 +629,6 @@ inline uint32 GuRenderer::convertToGuPixelFormat(PSPPixelFormat::Type format) {
 		guFormat = GU_PSM_5650;
 		break;
 	case PSPPixelFormat::Type_8888:
-	case PSPPixelFormat::Type_8888_RGBA:
 		guFormat = GU_PSM_8888;
 		break;
 	case PSPPixelFormat::Type_Palette_8bit:

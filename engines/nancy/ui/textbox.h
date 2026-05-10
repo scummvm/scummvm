@@ -35,7 +35,7 @@ namespace UI {
 
 class Scrollbar;
 
-class Textbox : public Nancy::RenderObject, public Misc::HypertextParser {
+class Textbox : public RenderObject, public Misc::HypertextParser {
 public:
 	Textbox();
 	virtual ~Textbox();

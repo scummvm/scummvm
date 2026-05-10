@@ -48,11 +48,18 @@ public:
 	Graphics::ManagedSurface *_menuFxOnIndicator;
 	Graphics::ManagedSurface *_menuFxOffIndicator;
 	Graphics::ManagedSurface *_menu;
+	byte *_cursorData;       // diagonal arrow (outside view area)
+	byte *_crosshairData;    // crosshair (# pointer, inside view area)
+	int _cursorW;
+	int _cursorH;
+	void setAmigaCursor(bool crosshair);
 
 	void beforeStarting() override;
 	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
+	bool triggerWinCondition() override;
 	void endGame() override;
+	void executeEscapeCameraSequence();
 
 	void drawInfoMenu() override;
 	void loadAssets() override;
@@ -68,6 +75,10 @@ public:
 	void initZX();
 	void initDOS();
 	void initCPC();
+	void initC64();
+
+	void loadAssetsC64FullGame() override;
+	void drawC64UI(Graphics::Surface *surface) override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
@@ -77,6 +88,7 @@ public:
 	void drawLiftingGate(Graphics::Surface *surface);
 	void drawDroppingGate(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
+	void releasedKey(const int keycode) override;
 	void checkSensors() override;
 	void updateTimeVariables() override;
 	void drawBackground() override;
@@ -102,12 +114,19 @@ public:
 
 	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back);
 	Graphics::ManagedSurface *loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back);
-	Graphics::ManagedSurface *loadFrame(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, uint32 back);
+
+	// CPC-specific frame loading (Mode 1: 4 pixels per byte)
+	// cpcPalette is a 4-entry array mapping CPC ink numbers (0-3) to ARGB colors
+	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeaderCPC(Common::SeekableReadStream *file, int pos, int numFrames, const uint32 *cpcPalette);
+	Graphics::ManagedSurface *loadFrameWithHeaderCPC(Common::SeekableReadStream *file, int pos, const uint32 *cpcPalette);
+	Graphics::ManagedSurface *loadFrameCPC(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, const uint32 *cpcPalette);
+
 	Graphics::ManagedSurface *loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height);
 
 	Graphics::ManagedSurface *loadFrameFromPlanesVertical(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternalVertical(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, int plane);
+	Graphics::ManagedSurface *loadFrameFromPlanesInterleaved(Common::SeekableReadStream *file, int widthInWords, int height);
 
 	Common::Array<Graphics::ManagedSurface *>_keysBorderFrames;
 	Common::Array<Graphics::ManagedSurface *>_keysMenuFrames;
@@ -123,11 +142,35 @@ public:
 	Graphics::ManagedSurface *_riddleTopFrame;
 	Graphics::ManagedSurface *_riddleBackgroundFrame;
 	Graphics::ManagedSurface *_riddleBottomFrame;
+	Graphics::ManagedSurface *_riddleNailFrame;
 
 	Graphics::ManagedSurface *_endGameThroneFrame;
 	Graphics::ManagedSurface *_endGameBackgroundFrame;
 	Graphics::ManagedSurface *_gameOverBackgroundFrame;
 
+	// CPC: CLUT8 versions of UI sprites (indexed by ink 0-3). On area change,
+	// we setPalette + convert to ARGB, like the border does in swapPalette.
+	Graphics::ManagedSurface *_strenghtBackgroundCLUT8;
+	Graphics::ManagedSurface *_strenghtBarCLUT8;
+	Common::Array<Graphics::ManagedSurface *> _strenghtWeightsCLUT8;
+	Graphics::ManagedSurface *_spiritsMeterBgCLUT8;
+	Graphics::ManagedSurface *_spiritsMeterIndCLUT8;
+	Graphics::ManagedSurface *_keysBorderCLUT8;
+	Common::Array<Graphics::ManagedSurface *> _flagCLUT8;
+	uint32 _cpcUIPalette[4]; // used by gate rendering
+	void convertCPCSprite(Graphics::ManagedSurface *clut8, Graphics::ManagedSurface *&argb, bool transparentInk0 = false);
+	Graphics::ManagedSurface *loadFrameWithHeaderCPCIndexed(Common::SeekableReadStream *file, int pos);
+	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeaderCPCIndexed(Common::SeekableReadStream *file, int pos, int numFrames);
+	void updateCPCSpritesPalette();
+
+	Common::String _notEnoughRoomMessage;
+	Common::String _tooWeakMessage;
+	Common::String _crawlSelectedMessage;
+	Common::String _walkSelectedMessage;
+	Common::String _runSelectedMessage;
+	Common::String _ghostInAreaMessage;
+
+	Common::Array<byte> _modData; // Embedded ProTracker module (Amiga demo)
 	Common::Array<int> _keysCollected;
 	bool _useRockTravel;
 	int _spiritsMeter;
@@ -148,6 +191,7 @@ private:
 	void drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics::Surface *surface);
 	void tryToCollectKey();
 	void addGhosts();
+	bool hasEscaped();
 	bool ghostInArea();
 	void updateThunder();
 
@@ -157,6 +201,7 @@ private:
 	int _droppingGateStartTicks;
 	int _thunderTicks;
 	int _thunderFrameDuration;
+	int _thunderFrameIndex;
 	Math::Vector3d _thunderOffset;
 	Common::Array<Texture *>_thunderTextures;
 };

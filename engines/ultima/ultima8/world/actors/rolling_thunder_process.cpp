@@ -268,7 +268,7 @@ bool RollingThunderProcess::fireDistance(Direction dir, int32 x, int32 y, int32 
 			const Point3 end = oc;
 			const int32 dims[3] = {2, 2, 2};
 
-			Std::list<CurrentMap::SweepItem> collisions;
+			Common::List<CurrentMap::SweepItem> collisions;
 			cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 						 _itemNum, false, &collisions);
 			for (const auto &collision : collisions) {

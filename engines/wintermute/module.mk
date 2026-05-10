@@ -104,6 +104,7 @@ MODULE_OBJS := \
 	ext/wme_commandlinehelper.o \
 	ext/wme_displacement.o \
 	ext/wme_galaxy.o \
+	ext/wme_protection.o \
 	ext/wme_steam.o \
 	ext/wme_windowmode.o \
 	debugger/breakpoint.o \

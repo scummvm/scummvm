@@ -266,6 +266,17 @@ int VideoDecoder::getCurFrame() const {
 	return frame;
 }
 
+int VideoDecoder::getCurFrameDelay() const {
+	int32 frame = -1;
+
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
+			frame += ((VideoTrack *)*it)->getCurFrameDelay() + 1;
+
+	return frame;
+}
+
+
 uint32 VideoDecoder::getFrameCount() const {
 	int count = 0;
 

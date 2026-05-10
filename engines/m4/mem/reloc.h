@@ -35,10 +35,6 @@ inline void HUnLock(Handle h) {}
 inline void HPurge(Handle h) {}
 inline void HNoPurge(Handle h) {}
 
-inline bool MakeMem(size_t FreeBlockNeeded, const char *) {
-	return true;
-}
-
 MemHandle MakeNewHandle(size_t size, const Common::String &);
 bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &name);
 MemHandle NewHandle(size_t size, const Common::String &str);

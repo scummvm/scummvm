@@ -59,8 +59,97 @@ void IDebugRenderer::debugShape(const Shape &shape, Color color) {
 	}
 }
 
-AnimationBase::AnimationBase(String fileName, AnimationFolder folder)
-	: _fileName(reencode(fileName))
+ImageV1::ImageV1(SeekableReadStream &stream) {
+	_drawOffset = readPoint16(stream);
+	stream.skip(4); // another point
+	_size = readPoint16(stream);
+	uint32 pixelCount = stream.readUint32LE();
+	stream.skip(5); // yet another point and some flag
+	bool isPaletted = readBool(stream);
+
+	// for segments we could either scan the file first to sum the total segment count
+	// or we can not use reserve and rely on the capacity doubling as heuristic
+	// using reserve will guarantee we always reallocate _segments
+	scumm_assert(_size.x >= 0 && _size.y >= 0);
+	_lines.reserve(_size.y);
+	for (int16 y = 0; y < _size.y; y++) {
+		uint16 segmentCount = stream.readUint16LE();
+		_lines.push_back({ _segments.size(), _segments.size() + segmentCount });
+		for (uint16 i = 0; i < segmentCount; i++) {
+			_segments.push_back({
+				stream.readUint16LE(),
+				stream.readUint16LE(),
+				stream.readUint32LE() });
+		}
+	}
+
+	const uint bpp = isPaletted ? 1 : 3;
+	_pixels.resize(pixelCount * bpp);
+	stream.read(_pixels.data(), pixelCount * bpp);
+	if (isPaletted) {
+		_palette.resize(PALETTE_SIZE);
+		stream.read(_palette.data(), PALETTE_SIZE);
+	}
+	scumm_assert(!stream.err());
+}
+
+ManagedSurface *ImageV1::render(byte alpha) const {
+	ManagedSurface *surface = new ManagedSurface(_size.x, _size.y, g_engine->renderer().getPixelFormat());
+	render(*surface, {}, alpha);
+	return surface;
+}
+
+void ImageV1::render(ManagedSurface &target, Point dstOffset, byte alpha) const {
+	assert(target.format.bytesPerPixel == 4);
+	Point srcOffset = {};
+	if (dstOffset.x < 0) {
+		srcOffset.x = -dstOffset.x;
+		dstOffset.x = 0;
+	}
+	if (dstOffset.y < 0) {
+		srcOffset.y = -dstOffset.y;
+		dstOffset.y = 0;
+	}
+	if (dstOffset.x >= target.w || dstOffset.y >= target.h ||
+		srcOffset.x >= _size.x || srcOffset.y >= _size.y)
+		return;
+	const int maxSrcY = MIN((int)_size.y, target.h - dstOffset.y);
+	const uint bpp = _palette.empty() ? 3 : 1;
+
+	int dstY = dstOffset.y;
+	for (int srcY = srcOffset.y; srcY < maxSrcY; srcY++, dstY++) {
+		const auto line = _lines[srcY];
+		int dstX = dstOffset.x;
+		for (uint segmentI = line._start; segmentI < line._end; segmentI++) {
+			const auto segment = _segments[segmentI];
+			dstX += segment._xOffset;
+			if (dstX >= target.w)
+				break;
+			if (dstX + segment._width < 0) {
+				dstX += segment._width;
+				continue;
+			}
+			uint srcPixelI = segment._dataOffset;
+			if (dstX < 0)
+				srcPixelI += -dstX * bpp;
+			uint width = MIN((int)segment._width, target.w - dstX);
+
+			uint32* dstPixel = (uint32*)target.getBasePtr(dstX, dstY);
+			for (uint x = 0; x < width; x++) {
+				const byte* srcPixel = _palette.empty()
+					? _pixels.data() + srcPixelI
+					: _palette.data() + 3 * _pixels[srcPixelI];
+				*dstPixel = target.format.ARGBToColor(alpha, srcPixel[2], srcPixel[1], srcPixel[0]);
+				dstPixel++;
+				srcPixelI += bpp;
+			}
+			dstX += segment._width;
+		}
+	}
+}
+
+AnimationBase::AnimationBase(GameFileReference fileRef, AnimationFolder folder)
+	: _fileRef(move(fileRef))
 	, _folder(folder) {}
 
 AnimationBase::~AnimationBase() {
@@ -71,46 +160,191 @@ void AnimationBase::load() {
 	if (_isLoaded)
 		return;
 
-	String fullPath;
-	switch (_folder) {
-	case AnimationFolder::Animations:
-		fullPath = "Animaciones/";
-		break;
-	case AnimationFolder::Masks:
-		fullPath = "Mascaras/";
-		break;
-	case AnimationFolder::Backgrounds:
-		fullPath = "Fondos/";
-		break;
-	default:
-		assert(false && "Invalid AnimationFolder");
-		break;
-	}
-	if (_fileName.size() < 4 || scumm_strnicmp(_fileName.end() - 4, ".AN0", 4) != 0)
-		_fileName += ".AN0";
-	fullPath += _fileName;
-
-	File file;
-	if (!file.open(fullPath.c_str())) {
-		// original fallback
-		fullPath = "Mascaras/" + _fileName;
-		if (!file.open(fullPath.c_str())) {
-			loadMissingAnimation();
+	ScopedPtr<SeekableReadStream> rawStream;
+	if (_fileRef.isEmbedded()) {
+		if (_fileRef._size == 0) {
+			// this happens for some special cases in original movie adventure
+			// we cannot really check against an allowlist here, so we don't
+			setToEmpty();
 			return;
+		} else
+			rawStream = g_engine->world().openFileRef(_fileRef);
+	} else {
+		// for real file paths we have to apply the folder and do some fallback
+		const char *extension = g_engine->isV3() ? ".AN0" : ".ANI";
+		String fullPath;
+		const auto getFullPath = [&] (AnimationFolder folder) {
+			switch (folder) {
+			case AnimationFolder::Animations:
+				fullPath = "Animaciones/";
+				break;
+			case AnimationFolder::Masks:
+				fullPath = "Mascaras/";
+				break;
+			case AnimationFolder::Backgrounds:
+				fullPath = "Fondos/";
+				break;
+			default:
+				assert(false && "Invalid AnimationFolder");
+				break;
+			}
+			fullPath += _fileRef._path;
+			if (!_fileRef._path.hasSuffixIgnoreCase(extension))
+				fullPath += extension;
+		};
+		getFullPath(_folder);
+
+		File *file = new File();
+		if (!file->open(fullPath.c_str())) {
+			// original fallback
+			getFullPath(AnimationFolder::Masks);
+			if (!file->open(fullPath.c_str())) {
+				delete file;
+				file = nullptr;
+			}
+		}
+		rawStream.reset(file);
+	}
+	
+	if (rawStream == nullptr) {
+		// only allow missing animations we know are faulty in the original game
+		g_engine->game().missingAnimation(_fileRef._path);
+		setToEmpty();
+		return;
+	}
+
+	// Reading the images is a major bottleneck in loading, buffering helps a lot with that
+	ScopedPtr<SeekableReadStream> stream(
+		wrapBufferedSeekableReadStream(rawStream.get(), rawStream->size(), DisposeAfterUse::NO));
+	if (g_engine->isV1())
+		readV1(*stream);
+	else if (g_engine->isV2())
+		readV2(*stream);
+	else
+		readV3(*stream);
+	_isLoaded = true;
+}
+
+void AnimationBase::readV1(SeekableReadStream &stream) {
+	char magic[4];
+	stream.read(magic, sizeof(magic));
+	scumm_assert(memcmp(magic, "ANI", 4) == 0);
+
+	skipVarString(stream); // another internal, unused name
+	uint spriteCount = stream.readUint32LE();
+	uint frameCount = stream.readUint32LE();
+	scumm_assert(spriteCount <= kMaxSpriteIDsV1);
+	_spriteBases.reserve(spriteCount);
+	_spriteEnabled.reserve(spriteCount);
+	_spriteOffsets.reserve(spriteCount * frameCount);
+	
+	readPoint16(stream); // "totalSize", unused for now
+	stream.skip(4); // unknown
+	_totalDuration = stream.readUint32LE();
+	stream.skip(4);
+	byte alpha = stream.readByte();
+	stream.skip(8);
+
+	Array<byte> spriteOrder;
+	spriteOrder.reserve(spriteCount);
+	for (uint i = 0; i < spriteCount; i++) {
+		uint imageCount = stream.readUint32LE();
+		spriteOrder.push_back(stream.readByte());
+		_spriteEnabled.push_back(!readBool(stream));
+		stream.skip(4);
+
+		_spriteBases.push_back(_images.size());
+		for (uint j = 0; j < imageCount; j++) {
+			ImageV1 image(stream);
+			_imageOffsets.push_back(image.drawOffset());
+			_images.push_back(image.render(alpha));
 		}
 	}
-	// Reading the images is a major bottleneck in loading, buffering helps a lot with that
-	ScopedPtr<SeekableReadStream> stream(wrapBufferedSeekableReadStream(&file, file.size(), DisposeAfterUse::NO));
+	createIndexMappingV1and2(spriteOrder);
+	readFramesV1and2(stream, frameCount, spriteCount);
+}
 
-	uint spriteCount = stream->readUint32LE();
+void AnimationBase::readV2(SeekableReadStream &stream) {
+	char magic[4];
+	stream.read(magic, sizeof(magic));
+	scumm_assert(memcmp(magic, "ANI", 4) == 0);
+
+	stream.skip(4); // unused and unknown
+	uint spriteCount = stream.readUint32LE();
+	uint frameCount = stream.readUint32LE();
+	scumm_assert(spriteCount <= kMaxSpriteIDsV1);
+	_spriteBases.reserve(spriteCount);
+	_spriteEnabled.resize(spriteCount, true); // all sprites are enabled
+	_spriteOffsets.reserve(spriteCount * frameCount);
+	
+	_totalDuration = stream.readUint32LE();
+	byte alpha = stream.readByte();
+	stream.skip(8);
+
+	Array<byte> spriteOrder;
+	spriteOrder.reserve(spriteCount);
+	for (uint i = 0; i < spriteCount; i++) {
+		uint imageCount = stream.readUint32LE();
+		spriteOrder.push_back(stream.readByte());
+		stream.skip(4);
+
+		_spriteBases.push_back(_images.size());
+		for (uint j = 0; j < imageCount; j++) {
+			ImageV1 image(stream);
+			_imageOffsets.push_back(image.drawOffset());
+			_images.push_back(image.render(alpha));
+		}
+	}
+	createIndexMappingV1and2(spriteOrder);
+	readFramesV1and2(stream, frameCount, spriteCount);
+}
+
+void AnimationBase::createIndexMappingV1and2(const Array<byte> &spriteOrder) {
+	// Sprite order is setup by setting up index sequence and
+	// then stable sort descending by order (here: Bubblesort)
+	for (uint i = 0; i < spriteOrder.size(); i++)
+		_spriteIndexMapping[i] = i;
+	for (uint i = 0; i < spriteOrder.size(); i++) {
+		bool hadChange = false;
+		for (uint j = 0; j < spriteOrder.size() - i - 1; j++) {
+			if (spriteOrder[_spriteIndexMapping[j]] < spriteOrder[_spriteIndexMapping[j + 1]]) {
+				SWAP(_spriteIndexMapping[j], _spriteIndexMapping[j + 1]);
+				hadChange = true;
+			}
+		}
+		if (!hadChange)
+			break;
+	}
+}
+
+void AnimationBase::readFramesV1and2(Common::SeekableReadStream &stream, uint frameCount, uint spriteCount) {
+	for (uint i = 0; i < frameCount; i++) {
+		for (uint j = 0; j < spriteCount; j++) {
+			int imageI = stream.readByte();
+			if (imageI <= 0 || (uint)imageI > _images.size()) // we make sure that spriteBases + imageI <= 0 if the local imageI is invalid
+				imageI = -(int)_spriteOffsets.size();
+			_spriteOffsets.push_back(imageI);
+		}
+		stream.skip(kMaxSpriteIDsV1 - spriteCount);
+
+		AnimationFrame frame;
+		frame._center = readPoint16(stream);
+		frame._offset = readPoint16(stream);
+		frame._duration = stream.readUint16LE();
+		_frames.push_back(frame);
+	}
+}
+
+void AnimationBase::readV3(SeekableReadStream &stream) {
+	uint spriteCount = stream.readUint32LE();
 	assert(spriteCount < kMaxSpriteIDs);
 	_spriteBases.reserve(spriteCount);
 
-	uint imageCount = stream->readUint32LE();
+	uint imageCount = stream.readUint32LE();
 	_images.reserve(imageCount);
 	_imageOffsets.reserve(imageCount);
 	for (uint i = 0; i < imageCount; i++) {
-		_images.push_back(readImage(*stream));
+		_images.push_back(readImageV3(stream));
 	}
 
 	// an inconsistency, maybe a historical reason:
@@ -118,37 +352,35 @@ void AnimationBase::load() {
 	// have to be contiguous we do not need to do that ourselves.
 	// but let's check in Debug to be sure
 	for (uint i = 0; i < spriteCount; i++) {
-		_spriteBases.push_back(stream->readUint32LE());
-		assert(_spriteBases.back() < imageCount);
+		_spriteBases.push_back(stream.readUint32LE());
+		assert((uint)_spriteBases.back() < imageCount);
 	}
 #ifdef ALCACHOFA_DEBUG
 	for (uint i = spriteCount; i < kMaxSpriteIDs; i++)
-		assert(stream->readSint32LE() == 0);
+		assert(stream.readSint32LE() == 0);
 #else
-	stream->skip(sizeof(int32) * (kMaxSpriteIDs - spriteCount));
+	stream.skip(sizeof(int32) * (kMaxSpriteIDs - spriteCount));
 #endif
 
 	for (uint i = 0; i < imageCount; i++)
-		_imageOffsets.push_back(readPoint(*stream));
+		_imageOffsets.push_back(readPoint32(stream));
 	for (uint i = 0; i < kMaxSpriteIDs; i++)
-		_spriteIndexMapping[i] = stream->readSint32LE();
+		_spriteIndexMapping[i] = stream.readSint32LE();
 
-	uint frameCount = stream->readUint32LE();
+	uint frameCount = stream.readUint32LE();
 	_frames.reserve(frameCount);
 	_spriteOffsets.reserve(frameCount * spriteCount);
 	_totalDuration = 0;
 	for (uint i = 0; i < frameCount; i++) {
 		for (uint j = 0; j < spriteCount; j++)
-			_spriteOffsets.push_back(stream->readUint32LE());
+			_spriteOffsets.push_back(stream.readUint32LE());
 		AnimationFrame frame;
-		frame._center = readPoint(*stream);
-		frame._offset = readPoint(*stream);
-		frame._duration = stream->readUint32LE();
+		frame._center = readPoint32(stream);
+		frame._offset = readPoint32(stream);
+		frame._duration = stream.readUint32LE();
 		_frames.push_back(frame);
 		_totalDuration += frame._duration;
 	}
-
-	_isLoaded = true;
 }
 
 void AnimationBase::freeImages() {
@@ -166,11 +398,11 @@ void AnimationBase::freeImages() {
 	_isLoaded = false;
 }
 
-ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
+ManagedSurface *AnimationBase::readImageV3(SeekableReadStream &stream) const {
 	SeekableSubReadStream subStream(&stream, stream.pos(), stream.size());
 	TGADecoder decoder;
 	if (!decoder.loadStream(subStream))
-		error("Failed to load TGA from animation %s", _fileName.c_str());
+		error("Failed to load TGA from animation %s", _fileRef._path.c_str());
 
 	// The length of the image is unknown but TGADecoder does not read
 	// the end marker, so let's search for it.
@@ -183,7 +415,7 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 		if (potentialStart < buffer + kMarkerLength)
 			memmove(buffer, potentialStart, kMarkerLength - nextRead);
 		if (stream.read(buffer + kMarkerLength - nextRead, nextRead) != nextRead)
-			error("Unexpected end-of-file in animation %s", _fileName.c_str());
+			error("Unexpected end-of-file in animation %s", _fileRef._path.c_str());
 		potentialStart = find(buffer + 1, buffer + kMarkerLength, kExpectedMarker[0]);
 	} while (strncmp(buffer, kExpectedMarker, kMarkerLength) != 0);
 
@@ -200,11 +432,8 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 	return target;
 }
 
-void AnimationBase::loadMissingAnimation() {
-	// only allow missing animations we know are faulty in the original game
-	g_engine->game().missingAnimation(_fileName);
-
-	// otherwise setup a functioning but empty animation
+void AnimationBase::setToEmpty() {
+	assert(!_isLoaded);
 	_isLoaded = true;
 	_totalDuration = 1;
 	_spriteIndexMapping[0] = 0;
@@ -248,8 +477,8 @@ Point AnimationBase::imageSize(int32 imageI) const {
 	return image == nullptr ? Point() : Point(image->w, image->h);
 }
 
-Animation::Animation(String fileName, AnimationFolder folder)
-	: AnimationBase(fileName, folder) {}
+Animation::Animation(GameFileReference fileRef, AnimationFolder folder)
+	: AnimationBase(move(fileRef), folder) {}
 
 void Animation::load() {
 	if (_isLoaded)
@@ -262,10 +491,10 @@ void Animation::load() {
 		texHeight = nextHigher2(maxBounds.height());
 	}
 	_renderedSurface.create(texWidth, texHeight, g_engine->renderer().getPixelFormat());
-	_renderedTexture = g_engine->renderer().createTexture(texWidth, texHeight, true);
+	_renderedTexture = g_engine->renderer().createTexture(texWidth, texHeight, g_engine->config().texFilter());
 
 	// We always create mipmaps, even for the backgrounds that usually do not scale much,
-	// the exception to this is the thumbnails for the savestates.
+	// the exception to this is the thumbnails for the savestates. (and disabling filter also disables mipmaps)
 	// If we need to reduce graphics memory usage in the future, we can change it right here
 }
 
@@ -385,6 +614,15 @@ void Animation::prerenderFrame(int32 frameI) {
 	_renderedPremultiplyAlpha = _premultiplyAlpha;
 }
 
+struct TexCoords {
+	TexCoords(const Rect &inner, int16 outerW, int16 outerH) {
+		_min = Vector2d(0.5f / outerW, 0.5f / outerH);
+		_max = Vector2d((inner.width() - 0.5f) / outerW, (inner.height() - 0.5f) / outerH);
+	}
+
+	Vector2d _min, _max;
+};
+
 void Animation::outputRect2D(int32 frameI, float scale, Vector2d &topLeft, Vector2d &size) const {
 	auto bounds = frameBounds(frameI);
 	topLeft += as2D(totalFrameOffset(frameI)) * scale;
@@ -394,8 +632,7 @@ void Animation::outputRect2D(int32 frameI, float scale, Vector2d &topLeft, Vecto
 void Animation::draw2D(int32 frameI, Vector2d topLeft, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
-	Vector2d texMin(0, 0);
-	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
+	TexCoords tex(bounds, _renderedSurface.w, _renderedSurface.h);
 
 	Vector2d size;
 	outputRect2D(frameI, scale, topLeft, size);
@@ -403,12 +640,15 @@ void Animation::draw2D(int32 frameI, Vector2d topLeft, float scale, BlendMode bl
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
-	renderer.quad(topLeft, size, color, Angle(), texMin, texMax);
+	renderer.quad(topLeft, size, color, Angle(), tex._min, tex._max);
 }
 
 void Animation::outputRect3D(int32 frameI, float scale, Vector3d &topLeft, Vector2d &size) const {
 	auto bounds = frameBounds(frameI);
-	topLeft += as3D(totalFrameOffset(frameI)) * scale;
+	if (g_engine->isV3())
+		topLeft += as3D(totalFrameOffset(frameI)) * scale;
+	else // scale by depth position is not used in V1
+		topLeft += as3D(totalFrameOffset(frameI)) * scale / (topLeft.z() * kInvBaseScale);
 	topLeft = g_engine->camera().transform3Dto2D(topLeft);
 	size = Vector2d(bounds.width(), bounds.height()) * scale * topLeft.z();
 }
@@ -416,8 +656,7 @@ void Animation::outputRect3D(int32 frameI, float scale, Vector3d &topLeft, Vecto
 void Animation::draw3D(int32 frameI, Vector3d topLeft, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
-	Vector2d texMin(0, 0);
-	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
+	TexCoords tex(bounds, _renderedSurface.w, _renderedSurface.h);
 
 	Vector2d size;
 	outputRect3D(frameI, scale, topLeft, size);
@@ -426,14 +665,13 @@ void Animation::draw3D(int32 frameI, Vector3d topLeft, float scale, BlendMode bl
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
-	renderer.quad(as2D(topLeft), size, color, rotation, texMin, texMax);
+	renderer.quad(as2D(topLeft), size, color, rotation, tex._min, tex._max);
 }
 
 void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d size, Vector2d texOffset, BlendMode blendMode) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
-	Vector2d texMin(0, 0);
-	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
+	TexCoords tex(bounds, _renderedSurface.w, _renderedSurface.h);
 
 	topLeft += as3D(totalFrameOffset(frameI));
 	topLeft = g_engine->camera().transform3Dto2D(topLeft);
@@ -444,23 +682,64 @@ void Animation::drawEffect(int32 frameI, Vector3d topLeft, Vector2d size, Vector
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
-	renderer.quad(as2D(topLeft), size, kWhite, rotation, texMin + texOffset, texMax + texOffset);
+	renderer.quad(as2D(topLeft), size, kWhite, rotation, tex._min + texOffset, tex._max + texOffset);
 }
 
-Font::Font(String fileName) : AnimationBase(fileName) {}
+Font::Font(GameFileReference fileRef)
+	: AnimationBase(move(fileRef))
+	, _charToImage(g_engine->isV1() ? 33 : 32)
+	, _spaceImageI(g_engine->isV1() ? 94 : 0)
+	, _charSpacing(g_engine->isV1() ? 3 : 0) {}
+
+static void fixFontAtlasColorsV1(ManagedSurface &surface) {
+	// In V1 the font contains green and black pixels where
+	//  - black pixels should stay black
+	//  - green pixels should be the text color
+	// The image segments determine the alpha.
+	// For rendering in OpenGL we want the green pixels to be white
+	// so multiplication with the text color still works (BlendMode::Tinted)
+	assert(surface.format.bytesPerPixel == 4);
+	const uint32 alphaMask = uint32(255) << surface.format.aShift;
+	const uint32 black = alphaMask;
+	const uint32 white = ~uint32(0);
+
+	for (int16 y = 0; y < surface.h; y++) {
+		uint32 *pixel = (uint32 *)surface.getBasePtr(0, y);
+		for (int16 x = 0; x < surface.w; x++, pixel++) {
+			auto alpha = *pixel & alphaMask;
+			*pixel = !alpha ? *pixel
+				: (*pixel & ~alphaMask) ? white : black;
+		}
+	}
+}
+
+static void fixFontAtlasColorsV2(ManagedSurface &surface) {
+	// In V2 the font contains grayscale pixels and magenta as color key
+	// We just remove the color key to transparent
+	assert(surface.format.bytesPerPixel == 4);
+	const uint32 magenta = surface.format.ARGBToColor(255, 255, 0, 255);
+
+	for (int16 y = 0; y < surface.h; y++) {
+		uint32 *pixel = (uint32 *)surface.getBasePtr(0, y);
+		for (int16 x = 0; x < surface.w; x++, pixel++) {
+			*pixel = *pixel == magenta ? 0 : *pixel;
+		}
+	}
+}
 
 void Font::load() {
 	if (_isLoaded)
 		return;
 	AnimationBase::load();
 	// We now render all frames into a 16x16 atlas and fill up to power of two size just because it is easy here
-	// However in two out of three fonts the character 128 is massive, it looks like a bug
+	// However for V3 in two out of three fonts the character 128 is massive, it looks like a bug
 	// as we want easy regular-sized characters it is ignored
 
 	Point cellSize;
 	for (auto image : _images) {
-		assert(image != nullptr); // no fake pictures in fonts please
-		if (image == _images[128])
+		if (image == nullptr)
+			continue; // the russian variant of adventuradecine-remastered unfortunately contains fake images
+		if (g_engine->isV3() && image == _images[128])
 			continue;
 		cellSize.x = MAX(cellSize.x, image->w);
 		cellSize.y = MAX(cellSize.y, image->h);
@@ -474,7 +753,8 @@ void Font::load() {
 	const float invWidth = 1.0f / atlasSurface.w;
 	const float invHeight = 1.0f / atlasSurface.h;
 	for (uint i = 0; i < _images.size(); i++) {
-		if (i == 128) continue;
+		if (_images[i] == nullptr) continue;
+		if (g_engine->isV3() && i == 128) continue;
 
 		int offsetX = (i % 16) * cellSize.x + (cellSize.x - _images[i]->w) / 2;
 		int offsetY = (i / 16) * cellSize.y + (cellSize.y - _images[i]->h) / 2;
@@ -485,9 +765,14 @@ void Font::load() {
 		_texMaxs[i].setX((offsetX + _images[i]->w) * invWidth);
 		_texMaxs[i].setY((offsetY + _images[i]->h) * invHeight);
 	}
+	if (g_engine->isV1())
+		fixFontAtlasColorsV1(atlasSurface);
+	else if (g_engine->isV2())
+		fixFontAtlasColorsV2(atlasSurface);
+
 	_texture = g_engine->renderer().createTexture(atlasSurface.w, atlasSurface.h, false);
 	_texture->update(atlasSurface);
-	debugCN(1, kDebugGraphics, "Rendered font atlas %s at %dx%d", _fileName.c_str(), atlasSurface.w, atlasSurface.h);
+	debugCN(1, kDebugGraphics, "Rendered font atlas %s at %dx%d", _fileRef._path.c_str(), atlasSurface.w, atlasSurface.h);
 }
 
 void Font::freeImages() {
@@ -499,9 +784,15 @@ void Font::freeImages() {
 	_texMaxs.clear();
 }
 
-void Font::drawCharacter(int32 imageI, Point centerPoint, Color color) {
-	assert(imageI >= 0 && (uint)imageI < _images.size());
-	Vector2d center = as2D(centerPoint + _imageOffsets[imageI]);
+void Font::drawCharacter(byte ch, Point centerPoint, Color color) {
+	if (!isVisibleChar(ch))
+		return;
+
+	int32 imageI = ch - _charToImage;
+	Point offset = g_engine->isV1()
+		? Point(0, spaceSize().y - _images[imageI]->h)
+		: _imageOffsets[imageI];
+	Vector2d center = as2D(centerPoint + offset);
 	Vector2d size(_images[imageI]->w, _images[imageI]->h);
 
 	auto &renderer = g_engine->renderer();
@@ -510,31 +801,46 @@ void Font::drawCharacter(int32 imageI, Point centerPoint, Color color) {
 	renderer.quad(center, size, color, Angle(), _texMins[imageI], _texMaxs[imageI]);
 }
 
-Graphic::Graphic() {}
-
-Graphic::Graphic(ReadStream &stream) {
-	_topLeft.x = stream.readSint16LE();
-	_topLeft.y = stream.readSint16LE();
-	_scale = stream.readSint16LE();
-	_order = stream.readSByte();
-	auto animationName = readVarString(stream);
-	if (!animationName.empty())
-		setAnimation(animationName, AnimationFolder::Animations);
+bool Font::isVisibleChar(byte ch) const {
+	return ch >= _charToImage &&
+		(uint)(ch - _charToImage) < _images.size() &&
+		_images[ch - _charToImage] != nullptr &&
+		ch - _charToImage != _spaceImageI;
 }
 
-Graphic::Graphic(const Graphic &other)
-	: _animation(other._animation)
-	, _topLeft(other._topLeft)
-	, _scale(other._scale)
-	, _order(other._order)
-	, _color(other._color)
-	, _isPaused(other._isPaused)
-	, _isLooping(other._isLooping)
-	, _lastTime(other._lastTime)
-	, _frameI(other._frameI)
-	, _depthScale(other._depthScale) {}
+Point Font::characterSize(byte ch) const {
+	return isVisibleChar(ch)
+		? imageSize(ch - _charToImage) + Point(_charSpacing, 0)
+		: imageSize(_spaceImageI);
+}
 
-Graphic &Graphic::operator= (const Graphic &other) {
+Point Font::spaceSize() const {
+	return imageSize(_spaceImageI);
+}
+
+Graphic::Graphic() {}
+
+Graphic::Graphic(SeekableReadStream &stream) {
+	if (g_engine->isV1()) {
+		_topLeft = readPoint32(stream);
+		_scale = stream.readSint16LE();
+		_order = (int8)stream.readSint16LE();
+	} else {
+		_topLeft.x = stream.readSint16LE();
+		_topLeft.y = stream.readSint16LE();
+		_scale = stream.readSint16LE();
+		_order = stream.readSByte();
+	}
+	auto animationRef = g_engine->world().readFileRef(stream);
+	if (animationRef.isValid())
+		setAnimation(animationRef, AnimationFolder::Animations);
+}
+
+Graphic::Graphic(const Graphic &other) {
+	*this = other;
+}
+
+Graphic &Graphic::operator=(const Graphic &other) {
 	_ownedAnimation.reset();
 	_animation = other._animation;
 	_topLeft = other._topLeft;
@@ -602,8 +908,8 @@ void Graphic::reset() {
 	_lastTime = _isPaused ? 0 : g_engine->getMillis();
 }
 
-void Graphic::setAnimation(const Common::String &fileName, AnimationFolder folder) {
-	_ownedAnimation.reset(new Animation(fileName, folder));
+void Graphic::setAnimation(const GameFileReference &fileRef, AnimationFolder folder) {
+	_ownedAnimation.reset(new Animation(fileRef, folder));
 	_animation = _ownedAnimation.get();
 }
 
@@ -689,14 +995,6 @@ static const byte *trimTrailing(const byte *text, const byte *begin, bool trimSp
 	return text;
 }
 
-static Point characterSize(const Font &font, byte ch) {
-	if (ch <= ' ' || (uint)(ch - ' ') >= font.imageCount())
-		ch = 0;
-	else
-		ch -= ' ';
-	return font.imageSize(ch);
-}
-
 TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos, int maxWidth, bool centered, Color color, int8 order)
 	: IDrawRequest(order)
 	, _font(font)
@@ -709,6 +1007,8 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 	// allocate on drawQueue to prevent having destruct it
 	assert(originalText != nullptr);
 	auto textLen = strlen(originalText);
+	if (textLen == 0)
+		return;
 	char *text = (char *)g_engine->drawQueue().allocator().allocateRaw(textLen + 1, 1);
 	memcpy(text, originalText, textLen + 1);
 
@@ -723,7 +1023,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 		}
 
 		if (*itChar != '\r' && *itChar)
-			lineWidth += characterSize(font, *itChar).x;
+			lineWidth += font.characterSize(*itChar).x;
 		if (lineWidth <= maxWidth && *itChar != '\r' && *itChar) {
 			itChar++;
 			continue;
@@ -755,7 +1055,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 		lineWidth = 0;
 		for (auto ch : _lines[i]) {
 			if (ch != '\r' && ch)
-				lineWidth += characterSize(font, ch).x;
+				lineWidth += font.characterSize(ch).x;
 		}
 		_posX[i] = lineWidth;
 		_width = MAX(_width, lineWidth);
@@ -773,7 +1073,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 		fill(_posX.begin(), _posX.end(), pos.x);
 
 	// setup height and y position
-	_height = (int)lineCount * (font.imageSize(0).y * 4 / 3);
+	_height = (int)lineCount * (font.spaceSize().y * 4 / 3);
 	_posY = pos.y;
 	if (centered)
 		_posY -= _height / 2;
@@ -784,17 +1084,15 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 }
 
 void TextDrawRequest::draw() {
-	const Point spaceSize = _font.imageSize(0);
 	Point cursor(0, _posY);
 	for (uint i = 0; i < _lines.size(); i++) {
 		cursor.x = _posX[i];
 		for (auto ch : _lines[i]) {
-			const Point charSize = characterSize(_font, ch);
-			if (ch > ' ' && (uint)(ch - ' ') < _font.imageCount())
-				_font.drawCharacter(ch - ' ', Point(cursor.x, cursor.y), _color);
+			const Point charSize = _font.characterSize(ch);
+			_font.drawCharacter(ch, Point(cursor.x, cursor.y), _color);
 			cursor.x += charSize.x;
 		}
-		cursor.y += spaceSize.y * 4 / 3;
+		cursor.y += _font.spaceSize().y * 4 / 3;
 	}
 }
 
@@ -950,8 +1248,8 @@ void DrawQueue::draw() {
 	for (int8 order = kOrderCount - 1; order >= 0; order--) {
 		_renderer->setLodBias(_lodBiasPerOrder[order]);
 		for (uint8 requestI = 0; requestI < _requestsPerOrderCount[order]; requestI++) {
-			_requestsPerOrder[order][requestI]->draw();
-			_requestsPerOrder[order][requestI]->~IDrawRequest();
+			_requestsPerOrder[order][_requestsPerOrderCount[order] - 1 - requestI]->draw();
+			_requestsPerOrder[order][_requestsPerOrderCount[order] - 1 - requestI]->~IDrawRequest();
 		}
 	}
 	_allocator.deallocateAll();

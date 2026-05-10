@@ -55,7 +55,6 @@ Socket *Socket::connect(const Common::String &url) {
 
 Socket *AndroidSocket::connect(const Common::String &url) {
 	JNIEnv *env = JNI::getEnv();
-	NetJNI::init(env);
 
 	jstring url_obj = env->NewStringUTF(url.c_str());
 	jobject socket_obj = env->NewObject(NetJNI::_CLS_Socket, NetJNI::_MID_socket_init, url_obj);

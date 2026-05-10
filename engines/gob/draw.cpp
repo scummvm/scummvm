@@ -240,6 +240,8 @@ void Draw::blitInvalidated() {
 			((_vm->_global->_videoMode == 5) || (_vm->_global->_videoMode == 7)))
 		return;
 
+	_vm->_vidPlayer->liveVideosLoop();
+
 	if (_cursorIndex == 4)
 		blitCursor();
 
@@ -533,7 +535,7 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 				WRITE_VAR(24, (uint32) 0);
 			WRITE_VAR(25, (uint32) shortId);
 			if (_hotspotText)
-				Common::strlcpy(_hotspotText, paramStr, 40);
+				Common::strlcpy(_hotspotText, paramStr, _vm->_global->_inter_animDataSize * 4);
 		}
 		_vm->_inter->funcBlock(0);
 		_vm->_game->_script->pop();
@@ -542,7 +544,7 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 	Common::strcpy_s(paramStr, 200, tmpStr);
 
 	if (fontIndex >= kFontCount) {
-		warning("Draw::oPlaytoons_sub_F_1B(): Font %d > Count %d", fontIndex, kFontCount);
+		warning("Draw::drawButton(): Font %d > Count %d", fontIndex, kFontCount);
 		return;
 	}
 
@@ -554,32 +556,39 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 		_fontIndex = fontIndex;
 		_frontColor = color;
 		if (_vm->_game->_script->getVersionMinor() >= 4 && strchr(paramStr, '\\')) {
+			// Multi-lines button
 			char str[80];
 			char *str2;
-			int16 strLen= 0;
+			int16 nbrOfLines = 0;
 			int16 offY, deltaY;
 
 			str2 = paramStr;
 			do {
-				strLen++;
+				nbrOfLines++;
 				str2++;
 				str2 = strchr(str2, '\\');
 			} while (str2);
-			deltaY = (bottom - right + 1 - (strLen * _fonts[fontIndex]->getCharHeight())) / (strLen + 1);
-			offY = right + deltaY;
-			for (int i = 0; paramStr[i]; i++) {
+			deltaY = (bottom - top + 1 - (nbrOfLines * _fonts[fontIndex]->getCharHeight())) / (nbrOfLines + 1);
+			offY = top + deltaY;
+			int i = 0;
+			while (true) {
 				int j = 0;
-				while (paramStr[i] && paramStr[i] != 92)
+				while (paramStr[i] != '\0' && paramStr[i] != '\\')
 					str[j++] = paramStr[i++];
-				str[j] = 0;
+				str[j] = '\0';
 				_destSpriteX = left;
 				_destSpriteY = offY;
 				_textToPrint = str;
 				width = stringLength(str, fontIndex);
 				adjustCoords(1, &width, nullptr);
-				_destSpriteX += (top - left + 1 - width) / 2;
+				_destSpriteX += (right - left + 1 - width) / 2;
 				spriteOperation(DRAW_PRINTTEXT);
+				if (paramStr[i] == '\0')
+					break; // End of the string
+
+				// We are at a '\', new line
 				offY += deltaY + _fonts[fontIndex]->getCharHeight();
+				++i;
 			}
 		} else {
 			_destSpriteX = left;

@@ -43,8 +43,10 @@ void WidgetQuit::show() {
 	const char *NO = FIXED(No);
 
 	// Set up the display area
-	_bounds = Common::Rect(_surface.stringWidth(FIXED(AreYouSureYou)) + _surface.widestChar() * 2,
-		(_surface.fontHeight() + 7) * 4);
+	const int firstLineWidth = _surface.stringWidth(FIXED(AreYouSureYou));
+	const int secondLineWidth = _surface.stringWidth(FIXED(WishToQuit));
+	const int boundsWidth = MAX(firstLineWidth, secondLineWidth) + _surface.widestChar() * 2;
+	_bounds = Common::Rect(boundsWidth, (_surface.fontHeight() + 7) * 4);
 	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 
 	// Create the surface
@@ -53,8 +55,8 @@ void WidgetQuit::show() {
 	makeInfoArea();
 
 	// Draw the message text
-	_surface.writeString(FIXED(AreYouSureYou), Common::Point((_surface.width() - _surface.stringWidth(FIXED(AreYouSureYou))) / 2, 5), INFO_TOP);
-	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.width() - _surface.stringWidth(FIXED(WishToQuit))) / 2,
+	_surface.writeString(FIXED(AreYouSureYou), Common::Point((_surface.width() - firstLineWidth) / 2, 5), INFO_TOP);
+	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.width() - secondLineWidth) / 2,
 		_surface.fontHeight() + 9), INFO_TOP);
 
 	// Draw the horizontal bars separating the commands and the message

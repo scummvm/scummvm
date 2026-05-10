@@ -46,7 +46,7 @@ extern LPGAMESTRUCT pGameParams;
 extern int          g_nCardBack;
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	m_cRectCardBack1    = CRect(CBCK_RECT1_LEFT - DELTA, CBCK_RECT1_TOP - DELTA, CBCK_RECT1_RIG + DELTA, CBCK_RECT1_BOT + DELTA);
 	m_cRectCardBack2    = CRect(CBCK_RECT2_LEFT - DELTA, CBCK_RECT2_TOP - DELTA, CBCK_RECT2_RIG + DELTA, CBCK_RECT2_BOT + DELTA);
 	m_nCardBack         = g_nCardBack;

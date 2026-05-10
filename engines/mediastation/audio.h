@@ -30,26 +30,59 @@
 
 namespace MediaStation {
 
+enum SoundPlayState {
+	kSoundPlayStateInvalid = 0,
+	kSoundPlayStateStopped = 1,
+	kSoundPlayStatePlaying = 2,
+	kSoundPlayStatePaused = 3,
+	kSoundPlayStateSleep = 4,
+	kSoundPlayStateAwake = 5
+};
+
+enum SoundStopReason {
+	kSoundStopForNone = 0,
+	kSoundStopForFailure = 1,
+	kSoundStopForEnd = 2,
+	kSoundStopForScriptStop = 3,
+	kSoundStopForAbort = 4
+};
+
+class SoundClient {
+public:
+	virtual ~SoundClient() {}
+	virtual void soundPlayStateChanged(SoundPlayState state, SoundStopReason why) = 0;
+};
+
 class AudioSequence {
 public:
-	AudioSequence() {};
+	AudioSequence(SoundClient *client) : _client(client) {};
 	~AudioSequence();
 
-	void play();
+	void start();
+	void pause();
+	void resume();
 	void stop();
+	void sleep();
+	void awake();
+
+	void service();
+	void makeSoundIdle(SoundStopReason stopReason = kSoundStopForNone);
+	void playStateChanged(SoundPlayState state, SoundStopReason why = kSoundStopForNone);
 
 	void readParameters(Chunk &chunk);
 	void readChunk(Chunk &chunk);
-	bool isActive();
 	bool isEmpty() { return _streams.empty(); }
 
 	uint _rate = 0;
 	uint _channelCount = 0;
 	uint _bitsPerSample = 0;
+	uint _chunkCount = 0;
 
 private:
 	Common::Array<Audio::SeekableAudioStream *> _streams;
 	Audio::SoundHandle _handle;
+	SoundClient *_client = nullptr;
+	SoundPlayState _state = kSoundPlayStateStopped;
 };
 
 } // End of namespace MediaStation

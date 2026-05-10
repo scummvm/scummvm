@@ -33,6 +33,10 @@
 #define kMaxBufferedRecords 10000
 #define kRecordBuffSize sizeof(RecorderEvent) * kMaxBufferedRecords
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Common {
 
 enum RecorderEventType {
@@ -149,8 +153,9 @@ public:
 	RecorderEvent getNextEvent();
 	void writeEvent(const RecorderEvent &event);
 
-	void saveScreenShot(Graphics::Surface &screen, byte md5[16]);
-	Graphics::Surface *getScreenShot(int number);
+	void saveScreenShot(const Graphics::ManagedSurface &screen, const byte md5[16]);
+	void saveScreenShot(const Graphics::Surface &screen, const byte md5[16]);
+	Graphics::ManagedSurface *getScreenShot(int number);
 	int getScreensCount();
 
 	bool isEventsBufferEmpty() const;
@@ -204,7 +209,6 @@ private:
 	bool skipToNextScreenshot();
 	void readEvent(RecorderEvent& event);
 	void readEventsToBuffer(uint32 size);
-	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 };
 
 } // End of namespace Common

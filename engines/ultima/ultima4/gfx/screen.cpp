@@ -344,7 +344,7 @@ void Screen::screenMessage(const char *fmt, ...) {
 void Screen::screenLoadGraphicsFromConf() {
 	const Config *config = Config::getInstance();
 
-	Std::vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
+	Common::Array<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
 	for (const auto &conf : graphicsConf) {
 
 		if (conf.getName() == "layout")
@@ -381,7 +381,7 @@ Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	layout->_name = conf.getString("name");
 	layout->_type = static_cast<LayoutType>(conf.getEnum("type", typeEnumStrings));
 
-	Std::vector<ConfigElement> children = conf.getChildren();
+	Common::Array<ConfigElement> children = conf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() == "tileshape") {
 			layout->_tileShape.x = i.getInt("width");
@@ -397,7 +397,7 @@ Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	return layout;
 }
 
-Std::vector<MapTile> Screen::screenViewportTile(uint width, uint height, int x, int y, bool &focus) {
+Common::Array<MapTile> Screen::screenViewportTile(uint width, uint height, int x, int y, bool &focus) {
 	MapCoords center = g_context->_location->_coords;
 	static MapTile grass = g_context->_location->_map->_tileSet->getByName("grass")->getId();
 
@@ -418,7 +418,7 @@ Std::vector<MapTile> Screen::screenViewportTile(uint width, uint height, int x, 
 	/* off the edge of the map: pad with grass tiles */
 	if (MAP_IS_OOB(g_context->_location->_map, tc)) {
 		focus = false;
-		Std::vector<MapTile> result;
+		Common::Array<MapTile> result;
 		result.push_back(grass);
 		return result;
 	}
@@ -434,7 +434,7 @@ bool Screen::screenTileUpdate(TileView *view, const Coords &coords, bool redraw)
 	bool focus;
 	MapCoords mc(coords);
 	mc.wrap(g_context->_location->_map);
-	Std::vector<MapTile> tiles = g_context->_location->tilesAt(mc, focus);
+	Common::Array<MapTile> tiles = g_context->_location->tilesAt(mc, focus);
 
 	// Get the screen coordinates
 	int x = coords.x;
@@ -474,7 +474,7 @@ void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
 
 		int x, y;
 
-		Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H];
+		Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H];
 		bool viewportFocus[VIEWPORT_W][VIEWPORT_H];
 
 		for (y = 0; y < VIEWPORT_H; y++) {
@@ -687,7 +687,7 @@ void Screen::screenSetCursorPos(int x, int y) {
 	_cursorPos.y = y;
 }
 
-void Screen::screenFindLineOfSight(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSight(Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	if (!g_context)
@@ -722,7 +722,7 @@ void Screen::screenFindLineOfSight(Std::vector<MapTile> viewportTiles[VIEWPORT_W
 		error("unknown line of sight style %s!\n", settings._lineOfSight.c_str());
 }
 
-void Screen::screenFindLineOfSightDOS(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSightDOS(Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	_los[VIEWPORT_W / 2][VIEWPORT_H / 2] = 1;
@@ -802,7 +802,7 @@ void Screen::screenFindLineOfSightDOS(Std::vector<MapTile> viewportTiles[VIEWPOR
 	}
 }
 
-void Screen::screenFindLineOfSightEnhanced(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSightEnhanced(Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	/*
@@ -1213,7 +1213,7 @@ void Screen::screenGemUpdate() {
 	// TODO: Move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
 	if (g_context->_location->_map->_type == Map::DUNGEON) {
 		//DO THE SPECIAL DUNGEON MAP TRAVERSAL
-		Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
+		Common::Array<Common::Array<int> > drawnTiles(layout->_viewport.width(), Common::Array<int>(layout->_viewport.height(), 0));
 		Common::List<Common::Pair<int, int> > coordStack;
 
 		//Put the avatar's position on the stack
@@ -1245,7 +1245,7 @@ void Screen::screenGemUpdate() {
 			// DRAW THE ACTUAL TILE
 			bool focus;
 
-			Std::vector<MapTile> tiles = screenViewportTile(layout->_viewport.width(),
+			Common::Array<MapTile> tiles = screenViewportTile(layout->_viewport.width(),
 			                                                layout->_viewport.height(), x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
 
@@ -1389,15 +1389,15 @@ void inline screenUnlock(){};
 void inline screenWait(int numberOfAnimationFrames){};
 #endif
 
-const Std::vector<Common::String> &screenGetFilterNames() {
+const Common::Array<Common::String> &screenGetFilterNames() {
 	return g_screen->_filterNames;
 }
 
-const Std::vector<Common::String> &screenGetGemLayoutNames() {
+const Common::Array<Common::String> &screenGetGemLayoutNames() {
 	return g_screen->_gemLayoutNames;
 }
 
-const Std::vector<Common::String> &screenGetLineOfSightStyles() {
+const Common::Array<Common::String> &screenGetLineOfSightStyles() {
 	return g_screen->_lineOfSightStyles;
 }
 

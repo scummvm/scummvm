@@ -20,9 +20,10 @@
  */
 
 #include "m4/riddle/rooms/section7/room707.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
-#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
@@ -282,7 +283,7 @@ void Room707::parser() {
 			player_set_commands_allowed(true);
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 704;
+			_G(game).setRoom(704);
 
 			break;
 
@@ -313,7 +314,7 @@ void Room707::parser() {
 			player_set_commands_allowed(true);
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 705;
+			_G(game).setRoom(705);
 
 			break;
 
@@ -344,7 +345,7 @@ void Room707::parser() {
 			player_set_commands_allowed(true);
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 703;
+			_G(game).setRoom(703);
 
 			break;
 
@@ -375,7 +376,7 @@ void Room707::parser() {
 			player_set_commands_allowed(true);
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 706;
+			_G(game).setRoom(706);
 
 			break;
 

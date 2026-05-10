@@ -51,7 +51,6 @@ public:
 
 	Common::String formatInfo() override;
 
-private:
 	Common::U32String _plainText;
 	Graphics::PixelFormat _pf32;
 	Picture *_picture;

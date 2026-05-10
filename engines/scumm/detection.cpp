@@ -65,6 +65,7 @@ static const DebugChannelDef debugFlagList[] = {
 		{Scumm::DEBUG_SMUSH, "SMUSH", "Track SMUSH"},
 		{Scumm::DEBUG_MOONBASE_AI, "MOONBASEAI", "Track Moonbase AI"},
 		{Scumm::DEBUG_NETWORK, "NETWORK", "Track Networking"},
+		{Scumm::DEBUG_IMGUI, "IMGUI", "Show ImGui debug window (if available)"},
 		DEBUG_CHANNEL_END
 };
 

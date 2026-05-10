@@ -29,7 +29,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Life {
 
-#define SPLASHSPEC          ".\\art\\backgrnd.BMP"
+#define SPLASHSPEC          "art\\backgrnd.BMP"
 
 
 #define CURLY_X         25      // Colony dimensions
@@ -41,8 +41,8 @@ namespace Life {
 #define OFFSET_X         6
 #define OFFSET_Y         4
 
-#define SCROLL_BUTTON   ".\\art\\SCROLBTN.BMP"  // scroll commands button bmp
-#define CALENDAR_BMP    ".\\ART\\CALENDAR.BMP"  // the blank calendar artwork
+#define SCROLL_BUTTON   "art\\SCROLBTN.BMP"  // scroll commands button bmp
+#define CALENDAR_BMP    "art\\CALENDAR.BMP"  // the blank calendar artwork
 
 // stat info
 #define STATS_COLOR             RGB(255, 255, 0)    // color of visual game stats

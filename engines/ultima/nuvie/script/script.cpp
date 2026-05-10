@@ -882,14 +882,14 @@ Script::~Script() {
 }
 
 bool Script::init() {
-	Std::string tmp;
+	Common::String tmp;
 	Common::Path dir, path;
 	config->value("config/datadir", tmp, "");
 	dir = Common::Path(tmp);
 	build_path(dir, "scripts", path);
 	dir = path;
 
-	Std::string game_tag = get_game_tag(gametype);
+	Common::String game_tag = get_game_tag(gametype);
 	game_tag.toLowercase();
 
 	build_path(dir, game_tag, path);
@@ -898,12 +898,12 @@ bool Script::init() {
 	build_path(dir, "init.lua", path);
 	ConsoleAddInfo("Loading init.lua");
 
-	Std::string init_str = "init = nuvie_load(\"";
+	Common::String init_str = "init = nuvie_load(\"";
 	init_str.append(game_tag);
 	init_str.append("/init.lua\"); init()");
 
 	if (run_script(init_str.c_str()) == false) {
-		Std::string errorStr = "Loading ";
+		Common::String errorStr = "Loading ";
 		errorStr.append(path.toString('/'));
 		ConsoleAddError(errorStr);
 		return false;
@@ -937,7 +937,7 @@ bool Script::run_script(const char *scriptStr) {
 }
 
 bool Script::play_cutscene(const char *script_file) {
-	string script_file_path = "";
+	Common::String script_file_path = "";
 	config->value("config/GameID", script_file_path);
 	script_file_path += script_file;
 
@@ -1391,7 +1391,7 @@ ScriptThread *Script::call_function_in_thread(const char *function_name) {
 }
 
 bool Script::run_lua_file(const char *filename) {
-	Std::string tmp;
+	Common::String tmp;
 	Script::get_script()->get_config()->value("config/datadir", tmp, "");
 
 	Common::Path dir(tmp), path;
@@ -2354,7 +2354,7 @@ static int nscript_display_prompt(lua_State *L) {
  */
 static int nscript_load(lua_State *L) {
 	const char *file = luaL_checkstring(L, 1);
-	string tmp;
+	Common::String tmp;
 	Common::Path dir;
 	Common::Path path;
 
@@ -2382,7 +2382,7 @@ static int nscript_load(lua_State *L) {
 static int nscript_config_get_boolean_value(lua_State *L) {
 	bool value;
 	const char *config_key = luaL_checkstring(L, 1);
-	Script::get_script()->get_config()->value(Std::string(config_key), value);
+	Script::get_script()->get_config()->value(Common::String(config_key), value);
 
 	lua_pushboolean(L, value);
 	return 1;
@@ -2404,7 +2404,7 @@ static int nscript_config_get_game_type(lua_State *L) {
    @return a two character string representing the currently selected language. "en" is the default if no language has been selected.
  */
 static int nscript_config_get_language(lua_State *L) {
-	Std::string value;
+	Common::String value;
 	Script::get_script()->get_config()->value(config_get_game_key(Script::get_script()->get_config()) + "/language", value, "en");
 	lua_pushstring(L, value.c_str());
 	return 1;
@@ -3391,7 +3391,7 @@ static int nscript_quake_start(lua_State *L) {
 }
 
 static int nscript_new_hit_entities_tbl_var(lua_State *L, ProjectileEffect *effect) {
-	vector<MapEntity> *hit_items = effect->get_hit_entities();
+	Common::Array<MapEntity> *hit_items = effect->get_hit_entities();
 
 	lua_newtable(L);
 
@@ -3512,7 +3512,7 @@ static int nscript_projectile_anim_multi(lua_State *L) {
 	uint16 y = 0;
 	uint8 z = 0;
 
-	vector<MapCoord> t;
+	Common::Array<MapCoord> t;
 
 	for (int i = 1;; i++) {
 		lua_pushinteger(L, i);
@@ -4261,7 +4261,7 @@ static int nscript_input_select(lua_State *L) {
 	AsyncEffect *e = new AsyncEffect(inputEffect);
 	e->run(EFFECT_PROCESS_GUI_INPUT);
 
-	Std::string input = inputEffect->get_input();
+	Common::String input = inputEffect->get_input();
 
 	lua_pushstring(L, input.c_str());
 
@@ -4290,7 +4290,7 @@ static int nscript_input_select_integer(lua_State *L) {
 	AsyncEffect *e = new AsyncEffect(inputEffect);
 	e->run(EFFECT_PROCESS_GUI_INPUT);
 
-	Std::string input = inputEffect->get_input();
+	Common::String input = inputEffect->get_input();
 
 	int num = (int)strtol(input.c_str(), (char **)nullptr, 10);
 	lua_pushinteger(L, num);
@@ -4604,7 +4604,7 @@ Loads text from a given LZC file.
  */
 static int nscript_load_text_from_lzc(lua_State *L) {
 	unsigned char *buf = nullptr;
-	Std::string filename(lua_tostring(L, 1));
+	Common::String filename(lua_tostring(L, 1));
 	U6Lib_n lib_n;
 
 	Common::Path path;

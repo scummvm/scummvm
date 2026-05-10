@@ -73,7 +73,9 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	{ "TOGGLE_COMBAT", _s("Toggle combat"), "b", nullptr },
 	{ "ATTACK", _s("Attack"), "a", nullptr },
 	{ "MULTI_USE", _s("Multi-use"), "SEMICOLON", nullptr },
+	// I18N: command bar is the bar of commands at the bottom of the screen
 	{ "SELECT_COMMAND_BAR", _s("Select command bar"), nullptr, nullptr },
+	// I18N: command bar is the bar of commands at the bottom of the screen
 	{ "NEW_COMMAND_BAR", _s("Select new command bar"), "COMMA", nullptr },
 	// I18N: gump is Graphical User Menu Pop-up
 	{ "DOLL_GUMP", _s("Doll gump"), "i", nullptr },
@@ -92,12 +94,13 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	//{ "QUIT_NO_DIALOG", "_s(Quit without confirmation"), "M+q", nullptr },
 	{ "GAME_MENU_DIALOG", _s("Show game menu; Cancel action if in middle of action"), "ESCAPE", nullptr },
 	//{ "TOGGLE_FULLSCREEN", "_s(Toggle fullscreen"), "M+RETURN", nullptr },
-	{ "TOGGLE_CURSOR", _s("Toggle Cursor"), "TAB", nullptr },
+	{ "TOGGLE_CURSOR", _s("Toggle cursor"), "TAB", nullptr },
 	{ "TOGGLE_COMBAT_STRATEGY", _s("Toggle combat strategy"), "BACKQUOTE", nullptr },
 	{ "TOGGLE_FPS_DISPLAY", _s("Toggle frames per second display"), "C+PLUS", nullptr },
 	{ "TOGGLE_AUDIO", _s("Toggle audio"), "C+a", nullptr },
 	{ "TOGGLE_MUSIC", _s("Toggle music"), "C+m", nullptr },
 	{ "TOGGLE_SFX", _s("Toggle sfx"), "C+s", nullptr },
+	// I18N: command bar is the bar of commands at the bottom of the screen
 	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", _s("Toggle original style command bar"), nullptr, nullptr },
 	{ "DO_ACTION", _s("Do action"), "RETURN", "KP_ENTER" },
 	{ "CANCEL_ACTION", _s("Cancel action"), "SPACE", nullptr },

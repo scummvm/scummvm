@@ -39,8 +39,11 @@ AbstractFSNode *LibRetroFilesystemFactory::makeCurrentDirectoryFileNode() const 
 #ifdef PLAYSTATION3
 	return new LibRetroFilesystemNode("/");
 #else
-	char buf[MAXPATHLEN];
-	return getcwd(buf, MAXPATHLEN) ? new LibRetroFilesystemNode(buf) : NULL;
+	char *cwd = getcwd(NULL, 0);
+	AbstractFSNode *node = cwd ? new LibRetroFilesystemNode(Common::String(cwd)) : NULL;
+	if (cwd)
+		free(cwd);
+	return node;
 #endif
 }
 

@@ -32,7 +32,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Frame {
 
-#define BUTTONSBMP      ".\\ART\\NEWBTNS.BMP"
+#define BUTTONSBMP      "art\\NEWBTNS.BMP"
 
 //////////////////////////////////////////////////////////////////////////////
 ////////    Options Specific to Word Search

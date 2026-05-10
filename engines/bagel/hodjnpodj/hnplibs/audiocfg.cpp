@@ -41,7 +41,7 @@ static  CColorButton *pCancelButton = nullptr;                 // Cancel button 
 
 
 CAudioCfgDlg::CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, IDD_AUDIOCFG, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, IDD_AUDIOCFG, "art\\SSCROLL.BMP") {
 	m_pScrollBar1 = nullptr;
 
 	DoModal();

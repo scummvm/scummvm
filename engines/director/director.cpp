@@ -248,6 +248,13 @@ void DirectorEngine::setVersion(uint16 version) {
 	_lingo->reloadBuiltIns();
 }
 
+#ifndef USE_IMGUI
+namespace DT {
+bool isMouseInputIgnored() { return false; }
+void setSelectedChannel(int channel) { }
+}
+#endif
+
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
@@ -269,8 +276,12 @@ Common::Error DirectorEngine::run() {
 
 #ifdef USE_RGB_COLOR
 	if (ConfMan.getBool("true_color") || (getGameFlags() & GF_32BPP) || debugChannelSet(-1, kDebug32bpp))
-		_wmMode |= Graphics::kWMMode32bpp;
+		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	else
 #endif
+		_pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+
+	debugC(1, kDebugImages, "Director pixelformat is: %s", _pixelformat.toString().c_str());
 
 	if (getGameFlags() & GF_DESKTOP)
 		_wmMode &= ~Graphics::kWMModeNoDesktop;
@@ -280,7 +291,7 @@ Common::Error DirectorEngine::run() {
 		_wmHeight = 480;
 	}
 
-	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
+	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage(), _pixelformat);
 	_wm->setEngine(this);
 
 	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
@@ -291,10 +302,6 @@ Common::Error DirectorEngine::run() {
 	_wm->setDesktopMode(_wmMode);
 
 	_wm->printWMMode();
-
-	_pixelformat = _wm->_pixelformat;
-
-	debugC(1, kDebugImages, "Director pixelformat is: %s", _pixelformat.toString().c_str());
 
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	_stage->incRefCount();

@@ -293,7 +293,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		DEALLOCATE(cursor);
 
 	// For Blue Force and Return to Ringworld, enable the question button when an inventory icon is selected
-	if (g_vm->getGameID() != GType_Ringworld)
+	if (g_vm->getGameID() == GType_BlueForce || g_vm->getGameID() == GType_Ringworld2)
 		T2_GLOBALS._uiElements._question.setEnabled(questionEnabled);
 }
 

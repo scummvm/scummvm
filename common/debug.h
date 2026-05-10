@@ -22,18 +22,22 @@
 #ifndef COMMON_DEBUG_H
 #define COMMON_DEBUG_H
 
+#ifdef FORCE_TEXT_CONSOLE
+#undef DISABLE_TEXT_CONSOLE
+#endif
+
 #include "common/scummsys.h"
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline void debug(const char *s, ...) {}
-inline void debug(int level, const char *s, ...) {}
-inline void debugN(const char *s, ...) {}
-inline void debugN(int level, const char *s, ...) {}
-inline void debugC(int level, uint32 debugChannel, const char *s, ...) {}
-inline void debugC(uint32 debugChannel, const char *s, ...) {}
-inline void debugCN(int level, uint32 debugChannel, const char *s, ...) {}
-inline void debugCN(uint32 debugChannel, const char *s, ...) {}
+static inline void debug(const char *s, ...) {}
+static inline void debug(int level, const char *s, ...) {}
+static inline void debugN(const char *s, ...) {}
+static inline void debugN(int level, const char *s, ...) {}
+static inline void debugC(int level, uint32 debugChannel, const char *s, ...) {}
+static inline void debugC(uint32 debugChannel, const char *s, ...) {}
+static inline void debugCN(int level, uint32 debugChannel, const char *s, ...) {}
+static inline void debugCN(uint32 debugChannel, const char *s, ...) {}
 
 #else
 
@@ -165,6 +169,7 @@ enum GlobalDebugLevels {
 	kDebugLevelMacGUI,
 	kDebugLevelGGraphics,
 	kDebugLevelGVideo,
+	kDebugLevelGAudio,
 };
 
 /** @} */

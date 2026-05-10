@@ -60,7 +60,7 @@ CColorButton    *pMsgOKButton = nullptr;
  *
  ****************************************************************/
 CMsgDlg::CMsgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	:  CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	pPackRatOptPalette = pPalette;
 	m_nWhichMsg = 1;
 	m_lScore = 0L;

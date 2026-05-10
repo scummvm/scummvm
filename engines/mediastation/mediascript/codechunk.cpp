@@ -28,31 +28,42 @@
 
 namespace MediaStation {
 
-CodeChunk::CodeChunk(Chunk &chunk) {
-	uint lengthInBytes = chunk.readTypedUint32();
-	debugC(5, kDebugLoading, "CodeChunk::CodeChunk(): Length 0x%x (@0x%llx)", lengthInBytes, static_cast<long long int>(chunk.pos()));
-	_bytecode = static_cast<ParameterReadStream *>(chunk.readStream(lengthInBytes));
+Common::String CodeChunk::makeDebugIndent() const {
+	Common::String indentation;
+	for (uint i = 0; i < _debugIndentLevel; ++i) {
+		indentation += "    ";
+	}
+	return indentation;
 }
 
 ScriptValue CodeChunk::executeNextBlock() {
 	uint blockSize = _bytecode->readTypedUint32();
-	uint startingPos = _bytecode->pos();
+	int64 startingPos = _bytecode->pos();
+	debugC(7, kDebugScript, "%s: Entering new block (blockSize: %d, startingPos: %lld)",
+		__func__, blockSize, static_cast<long long int>(startingPos));
 
-	ScriptValue returnValue;
 	ExpressionType expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
 	while (expressionType != kExpressionTypeEmpty && !_returnImmediately) {
-		returnValue = evaluateExpression(expressionType);
+		evaluateExpression(expressionType);
 		expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
+
+		if (_returnImmediately) {
+			debugC(7, kDebugScript, "%s: Done executing block due to script returning value (%s)", __func__, _returnValue.getDebugString().c_str());
+		} else if (expressionType == kExpressionTypeEmpty) {
+			debugC(7, kDebugScript, "%s: Done executing block due to end of chunk", __func__);
+		}
 	}
 
-	// Verify we consumed the right number of script bytes.
+	// Verify we consumed the right number of script bytes. This is not in the original,
+	// but it's a very useful sanity check.
 	if (!_returnImmediately) {
 		uint bytesRead = _bytecode->pos() - startingPos;
 		if (bytesRead != blockSize) {
 			error("%s: Expected to have read %d script bytes, actually read %d", __func__, blockSize, bytesRead);
 		}
 	}
-	return returnValue;
+
+	return _returnValue;
 }
 
 void CodeChunk::skipNextBlock() {
@@ -60,18 +71,16 @@ void CodeChunk::skipNextBlock() {
 	_bytecode->skip(lengthInBytes);
 }
 
-ScriptValue CodeChunk::execute(Common::Array<ScriptValue> *args) {
+ScriptValue CodeChunk::executeWithArguments(Common::Array<ScriptValue> *args) {
+	// Only functions have this call depth requirement.
+	if (g_engine->getFunctionManager()->_scriptBlockCallDepth >= MAX_CALL_DEPTH) {
+		error("%s: Exceeded max call stack depth", __func__);
+	}
+
+	g_engine->getFunctionManager()->_scriptBlockCallDepth++;
 	_args = args;
 	ScriptValue returnValue = executeNextBlock();
-
-	// Rewind the stream once we're finished, in case we need to execute
-	// this code again!
-	_bytecode->seek(0);
-	_locals.clear();
-	// We don't own the args, so we will prevent a potentially out-of-scope
-	// variable from being re-accessed.
-	_args = nullptr;
-
+	g_engine->getFunctionManager()->_scriptBlockCallDepth--;
 	return returnValue;
 }
 
@@ -79,6 +88,29 @@ ScriptValue CodeChunk::evaluateExpression() {
 	ExpressionType expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
 	ScriptValue returnValue = evaluateExpression(expressionType);
 	return returnValue;
+}
+
+void CodeChunk::evaluateLValue(ScriptValue *&targetPtr) {
+	// Evaluate an expression as an lvalue (something that can be modified in place).
+	ExpressionType expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
+
+	switch (expressionType) {
+	case kExpressionTypeVariable:
+		// Make target point directly to the variable. This permits modifications to the variable
+		// (like adding to a collection) to persist in the original variable.
+		targetPtr = readAndReturnVariable();
+		break;
+
+	case kExpressionTypeValue:
+	case kExpressionTypeOperation:
+		// For values/operations, just fill in the temporary value the caller passed to us.
+		// This means modifications to the evaluated expression will not be persisted like variables.
+		*targetPtr = evaluateExpression(expressionType);
+		break;
+
+	default:
+		error("%s: Unexpected expression type %s", __func__, expressionTypeToStr(expressionType));
+	}
 }
 
 ScriptValue CodeChunk::evaluateExpression(ExpressionType expressionType) {
@@ -160,7 +192,7 @@ ScriptValue CodeChunk::evaluateOperation() {
 		break;
 
 	case kOpcodeReturn:
-		returnValue = evaluateReturn();
+		evaluateReturn();
 		break;
 
 	case kOpcodeReturnNoValue:
@@ -198,14 +230,14 @@ ScriptValue CodeChunk::evaluateValue() {
 		}
 		debugC(5, kDebugScript, "%d ", b);
 		returnValue.setToBool(b == 1 ? true : false);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeFloat: {
 		double f = _bytecode->readTypedDouble();
 		debugC(5, kDebugScript, "%f ", f);
 		returnValue.setToFloat(f);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeInt: {
@@ -213,7 +245,7 @@ ScriptValue CodeChunk::evaluateValue() {
 		debugC(5, kDebugScript, "%d ", i);
 		// Ints are stored internally as doubles.
 		returnValue.setToFloat(static_cast<double>(i));
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeString: {
@@ -222,52 +254,57 @@ ScriptValue CodeChunk::evaluateValue() {
 		Common::String string = _bytecode->readString('\0', size);
 		debugC(5, kDebugScript, "%s ", string.c_str());
 		returnValue.setToString(string);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeParamToken: {
 		uint literal = _bytecode->readTypedUint16();
-		debugC(5, kDebugScript, "%d ", literal);
+		Common::String tokenName = g_engine->formatParamTokenName(literal);
+		debugC(5, kDebugScript, "%s ", tokenName.c_str());
 		returnValue.setToParamToken(literal);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeActorId: {
 		uint actorId = _bytecode->readTypedUint16();
-		debugC(5, kDebugScript, "%d ", actorId);
+		Common::String actorName = g_engine->formatActorName(actorId, true);
+		debugC(5, kDebugScript, "%s ", actorName.c_str());
 		returnValue.setToActorId(actorId);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeTime: {
 		double d = _bytecode->readTypedTime();
 		debugC(5, kDebugScript, "%f ", d);
 		returnValue.setToTime(d);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeVariable: {
 		returnValue = ScriptValue(_bytecode);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeFunctionId: {
 		uint functionId = _bytecode->readTypedUint16();
-		debugC(5, kDebugScript, "%d ", functionId);
+		// Function IDs are included in this same listing that also includes actors.
+		Common::String functionName = g_engine->formatFunctionName(functionId);
+		debugC(5, kDebugScript, "%s ", functionName.c_str());
 		returnValue.setToFunctionId(functionId);
-		return returnValue;
+		break;
 	}
 
 	case kOperandTypeMethodId: {
 		BuiltInMethod methodId = static_cast<BuiltInMethod>(_bytecode->readTypedUint16());
-		debugC(5, kDebugScript, "%s ", builtInMethodToStr(methodId));
+		debugC(5, kDebugScript, "%s (%d)", builtInMethodToStr(methodId), static_cast<uint>(methodId));
 		returnValue.setToMethodId(methodId);
-		return returnValue;
+		break;
 	}
 
 	default:
 		error("%s: Got unknown ScriptValue type %s (%d)", __func__, operandTypeToStr(operandType), static_cast<uint>(operandType));
 	}
+	return returnValue;
 }
 
 ScriptValue CodeChunk::evaluateVariable() {
@@ -278,78 +315,109 @@ ScriptValue CodeChunk::evaluateVariable() {
 ScriptValue *CodeChunk::readAndReturnVariable() {
 	uint id = _bytecode->readTypedUint16();
 	VariableScope scope = static_cast<VariableScope>(_bytecode->readTypedUint16());
-	debugC(5, kDebugScript, "%d (%s)", id, variableScopeToStr(scope));
+	Common::String name = g_engine->formatVariableName(id);
 
-	ScriptValue returnValue;
+	ScriptValue *variable = nullptr;
 	switch (scope) {
 	case kVariableScopeGlobal: {
-		ScriptValue *variable = g_engine->getVariable(id);
+		variable = g_engine->getImtGod()->getVariable(id);
 		if (variable == nullptr) {
-			error("%s: Global variable %d doesn't exist", __func__, id);
+			error("%s: Global variable %s doesn't exist", __func__, g_engine->formatVariableName(id).c_str());
 		}
-		return variable;
+		break;
 	}
 
 	case kVariableScopeLocal: {
+		// The ID is actually a one-based index.
 		uint index = id - 1;
-		return &_locals.operator[](index);
+		variable = &_locals.operator[](index);
+		break;
 	}
 
 	case kVariableScopeIndirectParameter: {
+		// The ID is actually a one-based index.
+		uint baseIndex = id - 1;
 		ScriptValue indexValue = evaluateExpression();
-		uint index = static_cast<uint>(indexValue.asFloat() + id);
-		return &_args->operator[](index);
+		uint index = static_cast<uint>(indexValue.asFloat()) + baseIndex;
+		variable = &_args->operator[](index);
+		break;
 	}
 
 	case kVariableScopeParameter: {
+		// The ID is actually a one-based index.
 		uint index = id - 1;
 		if (_args == nullptr) {
 			error("%s: Requested a parameter in a code chunk that has no parameters", __func__);
 		}
-		return &_args->operator[](index);
+		variable = &_args->operator[](index);
+		break;
 	}
 
 	default:
 		error("%s: Got unknown variable scope %s (%d)", __func__, variableScopeToStr(scope), static_cast<uint>(scope));
 	}
+
+	debugC(5, kDebugScript, "%s (%s) [value: %s]", name.c_str(), variableScopeToStr(scope), variable->getDebugString().c_str());
+	return variable;
 }
 
 void CodeChunk::evaluateIf() {
-	debugCN(5, kDebugScript, "\n    condition: ");
+	_debugIndentLevel++;
+	debugCN(5, kDebugScript, "\n%scondition: ", makeDebugIndent().c_str());
 	ScriptValue condition = evaluateExpression();
 	if (condition.getType() != kScriptValueTypeBool) {
 		error("%s: Expected bool condition, got %s", __func__, scriptValueTypeToStr(condition.getType()));
 	}
 
 	if (condition.asBool()) {
+		debugC(5, kDebugScript, "%s=> TRUE", makeDebugIndent().c_str());
+		_debugIndentLevel--;
 		executeNextBlock();
+		debugC(6, kDebugScript, "%s: Taking TRUE branch", __func__);
 	} else {
+		debugC(5, kDebugScript, "%s=> FALSE", makeDebugIndent().c_str());
+		_debugIndentLevel--;
 		skipNextBlock();
+		debugC(6, kDebugScript, "%s: Skipping TRUE branch", __func__);
 	}
 }
 
 void CodeChunk::evaluateIfElse() {
-	debugCN(5, kDebugScript, "\n    condition: ");
+	_debugIndentLevel++;
+	debugCN(5, kDebugScript, "\n%scondition: ", makeDebugIndent().c_str());
 	ScriptValue condition = evaluateExpression();
 	if (condition.getType() != kScriptValueTypeBool) {
 		error("%s: Expected bool condition, got %s", __func__, scriptValueTypeToStr(condition.getType()));
 	}
 
 	if (condition.asBool()) {
+		debugC(5, kDebugScript, "%s=> TRUE", makeDebugIndent().c_str());
+		_debugIndentLevel--;
+
+		debugC(6, kDebugScript, "%s: Taking TRUE branch", __func__);
 		executeNextBlock();
+
+		debugC(6, kDebugScript, "%s: Skipping FALSE branch", __func__);
 		skipNextBlock();
 	} else {
+		debugC(5, kDebugScript, "%s=> FALSE", makeDebugIndent().c_str());
+		_debugIndentLevel--;
+
+		debugC(6, kDebugScript, "%s: Skipping TRUE branch", __func__);
 		skipNextBlock();
+
+		debugC(6, kDebugScript, "%s: Taking FALSE branch", __func__);
 		executeNextBlock();
 	}
 }
 
 ScriptValue CodeChunk::evaluateAssign() {
-	debugCN(5, kDebugScript, "Variable ");
+	_debugIndentLevel++;
+	debugCN(5, kDebugScript, "\n%svariable: ", makeDebugIndent().c_str());
 	ScriptValue *targetVariable = readAndReturnVariable();
-
-	debugC(5, kDebugScript, "  Value: ");
+	debugCN(5, kDebugScript, "%svalue: ", makeDebugIndent().c_str());
 	ScriptValue value = evaluateExpression();
+	_debugIndentLevel--;
 
 	if (value.getType() == kScriptValueTypeEmpty) {
 		error("%s: Attempt to assign an empty value to a variable", __func__);
@@ -364,9 +432,10 @@ ScriptValue CodeChunk::evaluateAssign() {
 }
 
 ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
-	debugCN(5, kDebugScript, "\n    lhs: ");
+	_debugIndentLevel++;
+	debugCN(5, kDebugScript, "\n%slhs: ", makeDebugIndent().c_str());
 	ScriptValue value1 = evaluateExpression();
-	debugCN(5, kDebugScript, "    rhs: ");
+	debugCN(5, kDebugScript, "%srhs: ", makeDebugIndent().c_str());
 	ScriptValue value2 = evaluateExpression();
 
 	ScriptValue returnValue;
@@ -430,13 +499,25 @@ ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
 	default:
 		error("%s: Got unknown binary operation opcode %s", __func__, opcodeToStr(op));
 	}
+
+	// For comparison operations, show the result.
+	if (op == kOpcodeOr || op == kOpcodeXor || op == kOpcodeAnd ||
+	    op == kOpcodeEquals || op == kOpcodeNotEquals ||
+	    op == kOpcodeLessThan || op == kOpcodeGreaterThan ||
+	    op == kOpcodeLessThanOrEqualTo || op == kOpcodeGreaterThanOrEqualTo) {
+		debugC(5, kDebugScript, "%s=> %s", makeDebugIndent().c_str(), returnValue.asBool() ? "TRUE" : "FALSE");
+	}
+
+	_debugIndentLevel--;
 	return returnValue;
 }
 
 ScriptValue CodeChunk::evaluateUnaryOperation() {
 	// The only supported unary operation seems to be negation.
+	_debugIndentLevel++;
+	debugCN(5, kDebugScript, "\n%svalue: ", makeDebugIndent().c_str());
 	ScriptValue value = evaluateExpression();
-	debugCN(5, kDebugScript, "    value: ");
+	_debugIndentLevel--;
 	return -value;
 }
 
@@ -455,14 +536,17 @@ ScriptValue CodeChunk::evaluateFunctionCall(bool isIndirect) {
 }
 
 ScriptValue CodeChunk::evaluateFunctionCall(uint functionId, uint paramCount) {
-	debugC(5, kDebugScript, "%d (%d params)", functionId, paramCount);
+	Common::String functionName = g_engine->formatFunctionName(functionId);
+	debugC(5, kDebugScript, "%s (%d params)", functionName.c_str(), paramCount);
 
 	Common::Array<ScriptValue> args;
+	_debugIndentLevel++;
 	for (uint i = 0; i < paramCount; i++) {
-		debugCN(5, kDebugScript, "  Param %d: ", i);
+		debugCN(5, kDebugScript, "%sparam %d: ", makeDebugIndent().c_str(), i);
 		ScriptValue arg = evaluateExpression();
 		args.push_back(arg);
 	}
+	_debugIndentLevel--;
 
 	ScriptValue returnValue = g_engine->getFunctionManager()->call(functionId, args);
 	return returnValue;
@@ -489,61 +573,68 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 	// define. Functions, however, CAN be title-defined.
 	// But here, we're only looking for built-in methods.
 	debugC(5, kDebugScript, "%s (%d params)", builtInMethodToStr(method), paramCount);
-	debugCN(5, kDebugScript, "  Self: ");
+	_debugIndentLevel++;
+	debugCN(5, kDebugScript, "%sself: ", makeDebugIndent().c_str());
 
-	ScriptValue target = evaluateExpression();
+	// Evaluate target as an lvalue to get a pointer to the actual variable if there is one.
+	ScriptValue methodCallTarget;
+	ScriptValue *methodCallTargetPtr = &methodCallTarget;
+	evaluateLValue(methodCallTargetPtr);
 	Common::Array<ScriptValue> args;
 	for (uint i = 0; i < paramCount; i++) {
-		debugCN(5, kDebugScript, "  Param %d: ", i);
+		debugCN(5, kDebugScript, "%sparam %d: ", makeDebugIndent().c_str(), i);
 		ScriptValue arg = evaluateExpression();
 		args.push_back(arg);
 	}
+	_debugIndentLevel--;
 
 	ScriptValue returnValue;
-	switch (target.getType()) {
+	switch (methodCallTargetPtr->getType()) {
 	case kScriptValueTypeActorId: {
-		if (target.asActorId() == 0) {
+		if (methodCallTargetPtr->asActorId() == 0) {
 			// It seems to be valid to call a method on a null actor ID, in
-			// which case nothing happens. Still issue warning for traceability.
-			warning("%s: Attempt to call method on a null actor ID", __func__);
-			return returnValue;
+			// which case nothing happens. Still log for traceability.
+			debugC(5, kDebugScript, "%s: Attempt to call method %s (%d) on null actor ID", __func__, builtInMethodToStr(method), static_cast<uint>(method));
+			break;
 		} else {
 			// This is a regular actor that we can process directly.
-			uint actorId = target.asActorId();
-			Actor *targetActor = g_engine->getActorById(actorId);
+			uint actorId = methodCallTargetPtr->asActorId();
+			Actor *targetActor = g_engine->getImtGod()->getActorById(actorId);
 			if (targetActor == nullptr) {
-				error("%s: Attempt to call method on actor ID %d, which isn't loaded", __func__, target.asActorId());
+				warning("[%s] %s: Actor not loaded", g_engine->formatActorName(actorId).c_str(), __func__);
+			} else {
+				returnValue = targetActor->callMethod(method, args);
 			}
-			returnValue = targetActor->callMethod(method, args);
-			return returnValue;
+			break;
 		}
 	}
 
 	case kScriptValueTypeCollection: {
-		Common::SharedPtr<Collection> collection = target.asCollection();
+		Collection *collection = methodCallTargetPtr->asCollection();
 		returnValue = collection->callMethod(method, args);
-		return returnValue;
+		break;
 	}
 
 	default:
-		error("Attempt to call method on unimplemented value type %s (%d)",
-			scriptValueTypeToStr(target.getType()), static_cast<uint>(target.getType()));
+		error("%s: Attempt to call method %s (%d) on unimplemented value type %s (%d)", __func__,
+			builtInMethodToStr(method), static_cast<uint>(method),
+			scriptValueTypeToStr(methodCallTargetPtr->getType()), static_cast<uint>(methodCallTargetPtr->getType()));
 	}
+	return returnValue;
 }
 
 void CodeChunk::evaluateDeclareLocals() {
 	uint localVariableCount = _bytecode->readTypedUint16();
 	if (localVariableCount <= 0) {
-		error("Got non-positive local variable count");
+		error("%s: Got non-positive local variable count", __func__);
 	}
 	debugC(5, kDebugScript, "%d", localVariableCount);
 	_locals = Common::Array<ScriptValue>(localVariableCount);
 }
 
-ScriptValue CodeChunk::evaluateReturn() {
-	ScriptValue returnValue = evaluateExpression();
+void CodeChunk::evaluateReturn() {
+	_returnValue = evaluateExpression();
 	_returnImmediately = true;
-	return returnValue;
 }
 
 void CodeChunk::evaluateReturnNoValue() {
@@ -557,18 +648,23 @@ void CodeChunk::evaluateWhileLoop() {
 	while (true) {
 		// Seek to the top of the loop bytecode.
 		_bytecode->seek(loopStartPosition);
+		_debugIndentLevel++;
+		debugCN(5, kDebugScript, "\n%scondition: ", makeDebugIndent().c_str());
 		ScriptValue condition = evaluateExpression();
+		_debugIndentLevel--;
 		if (condition.getType() != kScriptValueTypeBool) {
-			error("Expected loop condition to be bool, not %s", scriptValueTypeToStr(condition.getType()));
+			error("%s: Expected loop condition to be bool, not %s", __func__, scriptValueTypeToStr(condition.getType()));
 		}
 
 		if (++iterationCount >= MAX_LOOP_ITERATION_COUNT) {
-			error("Exceeded max loop iteration count");
+			error("%s: Exceeded max loop iteration count", __func__);
 		}
 
 		if (condition.asBool()) {
+			debugC(5, kDebugScript, "%s=> TRUE (continue loop)", makeDebugIndent().c_str());
 			executeNextBlock();
 		} else {
+			debugC(5, kDebugScript, "%s=> FALSE (exit loop)", makeDebugIndent().c_str());
 			skipNextBlock();
 			break;
 		}
@@ -578,10 +674,8 @@ void CodeChunk::evaluateWhileLoop() {
 CodeChunk::~CodeChunk() {
 	_locals.clear();
 
-	// We don't own the args, so we don't need to delete it.
+	// We don't own the args or the code stream, so we don't need to delete them.
 	_args = nullptr;
-
-	delete _bytecode;
 	_bytecode = nullptr;
 }
 

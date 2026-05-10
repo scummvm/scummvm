@@ -1329,14 +1329,14 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	Common::List<ResourceId> resources = _engine->getResMan()->listResources(kResourceTypeSound);
 	Common::sort(resources.begin(), resources.end());
 	int instruments[128];
-	bool instrumentsSongs[128][1000];
+	uint8 instrumentsSongs[128][1000 / 8];
 
 	for (int i = 0; i < 128; i++)
 		instruments[i] = 0;
 
 	for (int i = 0; i < 128; i++)
-		for (int j = 0; j < 1000; j++)
-			instrumentsSongs[i][j] = false;
+		for (int j = 0; j < 1000 / 8; j++)
+			instrumentsSongs[i][j] = 0;
 
 	if (songNumber == -1) {
 		debugPrintf("%d sounds found, checking their instrument mappings...\n", resources.size());
@@ -1396,7 +1396,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 
 					debugPrintf(" %d", instrument);
 					instruments[instrument]++;
-					instrumentsSongs[instrument][itr->getNumber()] = true;
+					instrumentsSongs[instrument][itr->getNumber() >> 3] |= 1 << (itr->getNumber() & 7);
 				} else {
 					channelData++;
 				}
@@ -1462,7 +1462,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			if (instruments[i] > 0) {
 				debugPrintf("Instrument %d: ", i);
 				for (int j = 0; j < 1000; j++) {
-					if (instrumentsSongs[i][j])
+					if ((instrumentsSongs[i][j >> 3] & (1 << (j & 7))) != 0)
 						debugPrintf("%d, ", j);
 				}
 				debugPrintf("\n");

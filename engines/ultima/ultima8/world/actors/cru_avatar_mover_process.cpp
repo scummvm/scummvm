@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
+
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
@@ -28,7 +29,6 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/kernel/delay_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -511,7 +511,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			// and not trigger any events
 			//
 			bool startvalid = true;
-			Std::list<CurrentMap::SweepItem> collisions;
+			Common::List<CurrentMap::SweepItem> collisions;
 			Point3 end(x, y, z);
 			avatar->setLocation(origpt);
 			currentmap->sweepTest(origpt, end, dims, avatar->getShapeInfo()->_flags,

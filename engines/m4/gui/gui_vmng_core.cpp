@@ -68,21 +68,16 @@ namespace M4 {
 bool vmng_init() {
 	if (_G(vmng_Initted))
 		return false;
+
 	_G(vmng_Initted) = true;
 
 	_G(frontScreen) = nullptr;
 	_G(backScreen) = nullptr;
 	_G(inactiveScreens) = nullptr;
 
-	if (!mem_register_stash_type(&_G(memtypeSCRN), sizeof(ScreenContext), 32, "+SCRN")) {
-		return false;
-	}
-	if (!mem_register_stash_type(&_G(memtypeMATTE), sizeof(matte), 32, "+guiMATTE")) {
-		return false;
-	}
-	if (!mem_register_stash_type(&_G(memtypeRECT), sizeof(RectList), 256, "+guiRecList")) {
-		return false;
-	}
+	mem_register_stash_type(&_G(memtypeSCRN), sizeof(ScreenContext), 32, "+SCRN");
+	mem_register_stash_type(&_G(memtypeMATTE), sizeof(matte), 32, "+guiMATTE");
+	mem_register_stash_type(&_G(memtypeRECT), sizeof(RectList), 256, "+guiRecList");
 
 	return true;
 }
@@ -314,7 +309,8 @@ ScreenContext *ExtractScreen(void *scrnContent, int32 status) {
 			} else {
 				tempScreen = myScreen->infront;
 				tempScreen->behind = myScreen->behind;
-				if (tempScreen->behind) tempScreen->behind->infront = tempScreen;
+				if (tempScreen->behind)
+					tempScreen->behind->infront = tempScreen;
 			}
 		}
 	}

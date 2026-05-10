@@ -139,8 +139,8 @@ static luaL_reg powFunc[] = {
 ** Open math library
 */
 void lua_mathlibopen() {
-	luaL_openlib(mathlib, (sizeof(mathlib) / sizeof(mathlib[0])));
-	luaL_addlibtolist(powFunc, (sizeof(powFunc) / sizeof(powFunc[0])));
+	luaL_openlib(mathlib, ARRAYSIZE(mathlib));
+	luaL_addlibtolist(powFunc, ARRAYSIZE(powFunc));
 	lua_pushstring("deg");
 	lua_setglobal("_TRIGMODE");
 	lua_pushcfunction(math_pow);

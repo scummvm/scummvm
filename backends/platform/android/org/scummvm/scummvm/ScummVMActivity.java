@@ -1,20 +1,49 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.scummvm.scummvm;
 
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.hardware.usb.UsbConstants;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -64,7 +93,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-public class ScummVMActivity extends Activity implements OnKeyboardVisibilityListener {
+public class ScummVMActivity extends Activity {
 	/* Establish whether the hover events are available */
 	private static boolean _hoverAvailable;
 
@@ -128,8 +157,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public View _screenKeyboard = null;
 	private boolean keyboardWithoutTextInputShown = false;
 
-//	boolean _isPaused = false;
 	private InputMethodManager _inputManager = null;
+
+	private PluginBroadcastReceiver _pluginBroadcastReceiver = null;
 
 	// Set to true in onDestroy
 	// This avoids that when C++ terminates we call finish() a second time
@@ -1011,7 +1041,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//_main_surface.captureMouse(true, true);
 		//_main_surface.showSystemMouseCursor(false);
 
+		updateAudioValues();
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		_pluginBroadcastReceiver = new PluginBroadcastReceiver();
 
 		// TODO needed?
 		takeKeyEvents(true);
@@ -1103,7 +1135,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
 
 		// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
-		setKeyboardVisibilityListener(this);
+		setupKeyboardVisibilityListener();
 
 		_main_surface.setOnKeyListener(_events);
 		_main_surface.setOnTouchListener(_events);
@@ -1207,6 +1239,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//_main_surface.showSystemMouseCursor(false);
 		//Log.d(ScummVM.LOG_TAG, "onResume - captureMouse(true)");
 		_main_surface.captureMouse(true);
+
+		_pluginBroadcastReceiver.register(this);
 	}
 
 	@Override
@@ -1216,6 +1250,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		_isPaused = true;
 
 		super.onPause();
+
+		_pluginBroadcastReceiver.unregister(this);
 
 		if (_scummvm != null)
 			_scummvm.setPause(true);
@@ -1374,17 +1410,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-//	// Shows the system bars by removing all the flags
-//	// except for the ones that make the content appear under the system bars.
-//	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-//	private void showSystemUI() {
-//		View decorView = getWindow().getDecorView();
-//		decorView.setSystemUiVisibility(
-//		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//		    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-//	}
-
 //	// Show or hide the Android keyboard.
 //	// Called by the override of showVirtualKeyboard()
 //	@TargetApi(Build.VERSION_CODES.CUPCAKE)
@@ -1432,37 +1457,36 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	// Listener to check for keyboard visibility changes
 	// https://stackoverflow.com/a/36259261
-	private void setKeyboardVisibilityListener(final OnKeyboardVisibilityListener onKeyboardVisibilityListener) {
+	private void setupKeyboardVisibilityListener() {
 		final View parentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-		if (parentView != null) {
-			parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-				private boolean alreadyOpen;
-				private final int defaultKeyboardHeightDP = 100;
-				private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
-				private final Rect rect = new Rect();
-
-				@TargetApi(Build.VERSION_CODES.CUPCAKE)
-				@Override
-				public void onGlobalLayout() {
-					int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
-					parentView.getWindowVisibleDisplayFrame(rect);
-					int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
-					boolean isShown = heightDiff >= estimatedKeyboardHeight;
-
-					if (isShown == alreadyOpen) {
-						Log.i(ScummVM.LOG_TAG, "Keyboard state:: ignoring global layout change...");
-						return;
-					}
-					alreadyOpen = isShown;
-					onKeyboardVisibilityListener.onVisibilityChanged(isShown);
-				}
-			});
+		if (parentView == null) {
+			return;
 		}
+		parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			private boolean alreadyOpen;
+			private final int defaultKeyboardHeightDP = 100;
+			private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
+			private final Rect rect = new Rect();
+
+			@TargetApi(Build.VERSION_CODES.CUPCAKE)
+			@Override
+			public void onGlobalLayout() {
+				int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
+				parentView.getWindowVisibleDisplayFrame(rect);
+				int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
+				boolean isShown = heightDiff >= estimatedKeyboardHeight;
+
+				if (isShown == alreadyOpen) {
+					Log.i(ScummVM.LOG_TAG, "Keyboard state:: ignoring global layout change...");
+					return;
+				}
+				alreadyOpen = isShown;
+				onKeyboardVisibilityChanged(isShown);
+			}
+		});
 	}
 
-	@Override
-	public void onVisibilityChanged(boolean visible) {
+	public void onKeyboardVisibilityChanged(boolean visible) {
 //		Toast.makeText(HomeActivity.this, visible ? "Keyboard is active" : "Keyboard is Inactive", Toast.LENGTH_SHORT).show();
 		CompatHelpers.HideSystemStatusBar.hide(getWindow());
 	}
@@ -1473,6 +1497,156 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// so if we target more recent API levels, we could remove this function
 		return getWindowManager().getDefaultDisplay().getPixelFormat();
 	}
+
+	// region Audio/Oboe helpers
+
+	private void updateAudioValues() {
+		// These values are useless on Android Oreo and above as AAudio doesn't use them
+		/*
+		PackageManager pm = getPackageManager();
+		boolean hasLL = pm.hasSystemFeature(PackageManager.FEATURE_AUDIO_LOW_LATENCY);
+		*/
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			int audioTrackSampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
+			int audioTrackFramesPerBurst = AudioTrack.getMinBufferSize(audioTrackSampleRate,
+				AudioFormat.CHANNEL_OUT_STEREO,
+				AudioFormat.ENCODING_PCM_16BIT);
+			audioTrackFramesPerBurst /= 2 * 2; // Convert Stereo 16-bits to frames
+			audioTrackFramesPerBurst /= 4; // AudioTrack tends to buffer a lot
+
+			Log.d(ScummVM.LOG_TAG,  "updateAudioValues:" +
+				" at=" + Integer.toString(audioTrackSampleRate) + "/" + Integer.toString(audioTrackFramesPerBurst));
+
+			ScummVM.setDefaultAudioValues(audioTrackSampleRate, audioTrackFramesPerBurst);
+			return;
+		}
+
+		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		String text = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+		int audioManagerSampleRate = Integer.parseInt(text);
+		text = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+		int audioManagerFramesPerBurst = Integer.parseInt(text);
+
+		Log.d(ScummVM.LOG_TAG,  "updateAudioValues:" +
+			" am=" + Integer.toString(audioManagerSampleRate) + "/" + Integer.toString(audioManagerFramesPerBurst));
+
+		ScummVM.setDefaultAudioValues(audioManagerSampleRate, audioManagerFramesPerBurst);
+	}
+
+	/**
+	 * This BroadcastReceiver works around an AAudio/oboe bug
+	 * cf. <a href="https://github.com/google/oboe/wiki/TechNote_Disconnect">Oboe doc</a>
+	 */
+	private static class PluginBroadcastReceiver extends BroadcastReceiver {
+		private static final String ACTION_HEADSET_PLUG	=
+			(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) ?
+				AudioManager.ACTION_HEADSET_PLUG :
+				Intent.ACTION_HEADSET_PLUG;
+
+		private int lastStatus = -1;
+
+		private IntentFilter getIntentFilter() {
+			IntentFilter filter = new IntentFilter(ACTION_HEADSET_PLUG);
+			filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+			filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+			return filter;
+		}
+
+		void register(Context ctx) {
+			if (Build.VERSION_CODES.P <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+				CompatHelpers.ReceiverCompat.registerReceiver(ctx, this, getIntentFilter());
+			}
+		}
+
+		void unregister(Context ctx) {
+			if (Build.VERSION_CODES.P <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+				ctx.unregisterReceiver(this);
+			}
+		}
+
+		@Override
+		public void onReceive(Context context, @NonNull Intent intent) {
+			// Close the stream if it was not disconnected.
+			String action = intent.getAction();
+			if (ACTION_HEADSET_PLUG.equals(action)) {
+				boolean micro = intent.getIntExtra("microphone", -1) == 1;
+				boolean state = intent.getIntExtra("state", -1) == 1;
+				int newStatus = (micro ? 1 : 0) + (state ? 2 : 0);
+
+				Log.i(ScummVM.LOG_TAG, action +
+					" micro=" + Boolean.toString(micro) +
+					" state=" + Boolean.toString(state) +
+					" status=" + Integer.toString(newStatus) +
+					" lastStatus=" + Integer.toString(lastStatus) +
+					" diff=" + Integer.toString(lastStatus ^ newStatus));
+
+				if (isInitialStickyBroadcast()) {
+					if (lastStatus == -1) {
+						lastStatus = newStatus;
+						return;
+					}
+				}
+
+				if (((lastStatus ^ newStatus) & 2) == 0) {
+					// We are only interested in a state change
+					return;
+				}
+
+				lastStatus = newStatus;
+				ScummVM.notifyAudioDisconnect();
+			}
+			else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action) ||
+				UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+				UsbDevice device = CompatHelpers.IntentCompat.getParcelableExtra(intent, UsbManager.EXTRA_DEVICE, UsbDevice.class);
+				if (device == null) {
+					return;
+				}
+				final boolean hasAudioPlayback =
+					containsAudioStreamingInterface(device, UsbConstants.USB_DIR_OUT);
+				final boolean hasAudioCapture =
+					containsAudioStreamingInterface(device, UsbConstants.USB_DIR_IN);
+				Log.w(ScummVM.LOG_TAG, action + " device=" + device.toString() + " playback=" + Boolean.toString(hasAudioPlayback) + " capture=" + Boolean.toString(hasAudioCapture));
+				if (!hasAudioPlayback) {
+					// We are only interested in playback sinks
+					return;
+				}
+				ScummVM.notifyAudioDisconnect();
+			}
+		}
+
+		private static final int AUDIO_STREAMING_SUB_CLASS = 2;
+
+		/**
+		 * Figure out if an UsbDevice contains audio input/output streaming interface or not.
+		 *
+		 * @param device the given UsbDevice
+		 * @param direction the direction of the audio streaming interface
+		 * @return true if the UsbDevice contains the audio input/output streaming interface.
+		 */
+		private boolean containsAudioStreamingInterface(UsbDevice device, int direction) {
+			final int interfaceCount = device.getInterfaceCount();
+			for (int i = 0; i < interfaceCount; ++i) {
+				UsbInterface usbInterface = device.getInterface(i);
+				if (usbInterface.getInterfaceClass() != UsbConstants.USB_CLASS_AUDIO
+					&& usbInterface.getInterfaceSubclass() != AUDIO_STREAMING_SUB_CLASS) {
+					continue;
+				}
+				final int endpointCount = usbInterface.getEndpointCount();
+				for (int j = 0; j < endpointCount; ++j) {
+					if (usbInterface.getEndpoint(j).getDirection() == direction) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	}
+
+	// endregion
+
+	// region Configuration migration and internal folder init
+	// -------------------------------------------------------------------------------------------
 
 	// Auxiliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
 	private static void copyFileUsingStream(File source, File dest) throws IOException {
@@ -2042,6 +2216,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return true;
 	}
 
+	// endregion
+
+	// region Assets extraction and update
+	// -------------------------------------------------------------------------------------------
+
 	// Deletes recursively a directory and its contents
 	private static void deleteDir(File dir) {
 		for (File child : dir.listFiles()) {
@@ -2306,8 +2485,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-	// -------------------------------------------------------------------------------------------
-	// Start of SAF enabled code
+	// endregion
+
+	// region Start of SAF enabled code
 	// -------------------------------------------------------------------------------------------
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
 		synchronized(safSyncObject) {
@@ -2397,9 +2577,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return resultURI;
 	}
 
-	// -------------------------------------------------------------------------------------------
-	// End of SAF enabled code
-	// -------------------------------------------------------------------------------------------
+	// endregion
 
 } // end of ScummVMActivity
 

@@ -57,8 +57,10 @@ void renderGlyph(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 	}
 }
 
-void UpscaledGfxDriver::initScreen(const Graphics::PixelFormat *format) {
-	GfxDefaultDriver::initScreen(format);
+bool UpscaledGfxDriver::initScreen(const Graphics::PixelFormat *format) {
+	if (!GfxDefaultDriver::initScreen(format))
+		return false;
+
 	_scaledBitmap = new byte[_screenW * _screenH * _srcPixelSize]();
 
 	static const ScaledRenderProc scaledRenderProcs[] = {
@@ -69,6 +71,8 @@ void UpscaledGfxDriver::initScreen(const Graphics::PixelFormat *format) {
 	assert((_srcPixelSize >> 1) < ARRAYSIZE(scaledRenderProcs));
 	_renderScaled = scaledRenderProcs[_srcPixelSize >> 1];
 	_renderGlyph = &renderGlyph;
+
+	return true;
 }
 
 void UpscaledGfxDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {

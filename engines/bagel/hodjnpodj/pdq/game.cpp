@@ -60,10 +60,10 @@ typedef struct {
 
 
 STATIC const char *pszCategorySounds[N_CATEGORIES] = {
-	".\\SOUND\\TGG5.WAV",
-	".\\SOUND\\TGG6.WAV",
-	".\\SOUND\\TGG7.WAV",
-	".\\SOUND\\TGG8.WAV"
+	"sound\\TGG5.WAV",
+	"sound\\TGG6.WAV",
+	"sound\\TGG7.WAV",
+	"sound\\TGG8.WAV"
 };
 
 

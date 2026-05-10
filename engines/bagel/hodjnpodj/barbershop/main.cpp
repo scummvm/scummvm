@@ -41,15 +41,15 @@ namespace Barbershop {
 //
 // This mini-game's main screen bitmap
 //
-#define MINI_GAME_MAP   ".\\ART\\barb.BMP"
+#define MINI_GAME_MAP   "art\\barb.BMP"
 
 //
 // This mini-game's sound file
 //
-#define MIDI_SOUND      ".\\SOUND\\barber.mid"
+#define MIDI_SOUND      "sound\\barber.mid"
 
 #define RULES_TXT       "barb.txt"
-#define RULES_WAV       ".\\sound\\rlbq.wav"
+#define RULES_WAV       "sound\\rlbq.wav"
 
 
 //
@@ -169,7 +169,7 @@ CMainWindow::CMainWindow() {
 			//
 			if ((m_pScrollSprite = new CSprite) != nullptr) {
 				m_pScrollSprite->SharePalette(m_pGamePalette);
-				bSuccess = m_pScrollSprite->LoadSprite(pDC, ".\\ART\\SCROLBTN.BMP");
+				bSuccess = m_pScrollSprite->LoadSprite(pDC, "art\\SCROLBTN.BMP");
 				assert(bSuccess);
 				if (bSuccess) {
 					m_pScrollSprite->SetMasked(true);

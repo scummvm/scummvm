@@ -39,7 +39,7 @@
 // libronin doesn't support rename
 #define STDIOSTREAM_NO_ATOMIC_SUPPORT
 #endif
-#if defined(ATARI)
+#if defined(__MINT__)
 // Atari file names must have a 8.3 format, atomic breaks this
 #define STDIOSTREAM_NO_ATOMIC_SUPPORT
 #endif

@@ -25,16 +25,6 @@
 
 namespace M4 {
 
-M4Surface::M4Surface(int sw, int sh) : Buffer() {
-	this->w = sw;
-	this->h = sh;
-	this->stride = sw;
-	this->encoding = NO_COMPRESS;
-	this->data = new byte[sw * sh];
-	Common::fill(this->data, this->data + sw * sh, 0);
-	_disposeAfterUse = DisposeAfterUse::YES;
-}
-
 M4Surface::M4Surface(const byte *src, int sw, int sh) {
 	this->w = sw;
 	this->h = sh;
@@ -56,14 +46,14 @@ void M4Surface::rleDraw(const byte *src, int x, int y) {
 	const byte *srcP = src;
 	byte *destData = data + y * w + x;
 	byte *destP = destData;
-	int destWidth = w;
-	byte count, val;
+	const int destWidth = w;
+	byte val;
 	int line = 0;
 
 	assert(x >= 0 && y >= 0 && x < w && y < h);
 
 	for (;;) {
-		count = *srcP++;
+		byte count = *srcP++;
 
 		if (count) {
 			// Basic run length
@@ -114,7 +104,7 @@ void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
 		} else {
 			// All other RLE drawing first decompresses the sprite, and then does
 			// the various clipping, reverse, etc. on that
-			M4Surface tmp(src.data, src.w, src.h);
+			const M4Surface tmp(src.data, src.w, src.h);
 			drawInner(tmp, depthCodes, x, y, forwards, srcDepth, palette, inverseColorTable);
 		}
 	} else {
@@ -131,16 +121,16 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes, int x, int 
 		if (y >= h)
 			// Below bottom of screen
 			break;
-		else if (y < 0)
+
+		if (y < 0)
 			// Above top of screen
 			continue;
 
 		const byte *srcP = forwards ? src.getBasePtr(0, srcY) : src.getBasePtr(src.w - 1, srcY);
 		byte *destP = getBasePtr(x, y);
 		const byte *depthP = depthCodes ? depthCodes + y * w + x : nullptr;
-		int deltaX = forwards ? 1 : -1;
+		const int deltaX = forwards ? 1 : -1;
 		int destX = x;
-		uint32 adjusted, total;
 
 		for (int srcX = 0; srcX < src.w; ++srcX, srcP += deltaX, ++destX) {
 			if (destX >= w)
@@ -148,7 +138,7 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes, int x, int 
 				break;
 
 			byte v = *srcP;
-			byte depth = depthP ? *depthP & 0xf : 0;
+			const byte depth = depthP ? *depthP & 0xf : 0;
 			if (destX >= 0 && v != 0 && (!depthP || depth == 0 || srcDepth < depth)) {
 				if (inverseColorTable) {
 					// Handling for shadows
@@ -159,9 +149,9 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes, int x, int 
 						rgb >>= 2;
 
 						// Red component
-						adjusted = (rgb & 0xff) * v;
+						uint32 adjusted = (rgb & 0xff) * v;
 						adjusted = MIN((uint)(adjusted >> 8), 31U);
-						total = adjusted << 10;
+						uint32 total = adjusted << 10;
 
 						// Green component
 						rgb >>= 8;

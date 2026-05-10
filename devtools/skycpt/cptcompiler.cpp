@@ -26,6 +26,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Including common/util.h would cause type declaration conflicts
+#ifndef ARRAYSIZE
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#endif
+
 uint32 crop(char *line);
 uint16 findCptId(char *name, TextFile *cptFile);
 
@@ -477,7 +482,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	bool filesExist = true;
 	char inName[32];
 	for (int i = 0; i < 7; i++) {
-		sprintf(inName, "RESET.%03d", gameVers[i]);
+		snprintf(inName, ARRAYSIZE(inName), "RESET.%03d", gameVers[i]);
 		FILE *test = fopen(inName, "rb");
 		if (test)
 			fclose(test);
@@ -511,7 +516,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		for (int cnt = 0; cnt < 6; cnt++) {
 			printf("Processing diff v0.0%03d\n", gameVers[cnt]);
 			uint16 diffPos = 0;
-			sprintf(inName, "RESET.%03d", gameVers[cnt]);
+			snprintf(inName, ARRAYSIZE(inName), "RESET.%03d", gameVers[cnt]);
 			FILE *resDiff = fopen(inName, "rb");
 			fseek(resDiff, 0, SEEK_END);
 			assert(ftell(resDiff) == (resSize * 2));

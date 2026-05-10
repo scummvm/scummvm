@@ -42,31 +42,45 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	s.skip(0x17, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
-	s.skip(0x43, kGameTypeNancy2);
+	s.skip(0x43, kGameTypeNancy2, kGameTypeNancy9);
+	s.skip(0x41, kGameTypeNancy10);
 
 	readFilename(s, conversationTextsFilename, kGameTypeNancy6);
 	readFilename(s, autotextFilename, kGameTypeNancy6);
+	readFilename(s, fontFilename, kGameTypeNancy12);
+	readFilename(s, flagsFilename, kGameTypeNancy12);
 
-	s.syncAsUint16LE(firstScene.sceneID);
+	s.skip(1, kGameTypeNancy14);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy13);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
 	s.syncAsUint16LE(firstScene.frameID);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy14);
+	s.skip(2, kGameTypeNancy14); // Unknown
 	s.syncAsUint16LE(firstScene.verticalOffset);
-	s.syncAsUint16LE(startTimeHours);
-	s.syncAsUint16LE(startTimeMinutes);
 
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7);
+	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy13);
+	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy13);
+
+	s.skip(1, kGameTypeNancy14);
+
+	s.skip(1, kGameTypeNancy14);
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy13);
 	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7);
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy14);
+	s.skip(2, kGameTypeNancy14);	// Unknown
 	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7);
 
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 	s.skip(3); // Number of object, frame, and logo images
 	if (g_nancy->getEngineData("PLG0")) {
-		// Parner logos were introduced with nancy4, but at least one nancy3 release
+		// Partner logos were introduced with nancy4, but at least one nancy3 release
 		// had one as well. For some reason they didn't port over the code from the
 		// later games, but implemented it the same way the other BSUM images work.
 		// Hence, we skip an extra byte indicating the number of partner logos.
 		s.skip(1);
 	}
+
+	s.skip(4, kGameTypeNancy11);	// Unknown
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
@@ -75,12 +89,14 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.skip(0x10, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, textboxScreenPosition);
 	readRect(s, inventoryBoxScreenPosition);
-	readRect(s, menuButtonSrc);
-	readRect(s, helpButtonSrc);
-	readRect(s, menuButtonDest);
-	readRect(s, helpButtonDest);
-	readRect(s, menuButtonHighlightSrc, kGameTypeNancy2);
-	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2);
+	
+	readRect(s, menuButtonSrc, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, helpButtonSrc, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, menuButtonDest, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, helpButtonDest, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, menuButtonHighlightSrc, kGameTypeNancy2, kGameTypeNancy9);
+	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2, kGameTypeNancy9);
+
 	readRect(s, clockHighlightSrc, kGameTypeNancy2);
 
 	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
@@ -123,20 +139,22 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
-	readRect(*chunkStream, scrollbarSrcBounds);
-	s.syncAsUint16LE(scrollbarDefaultPos.x);
-	s.syncAsUint16LE(scrollbarDefaultPos.y);
-	s.syncAsUint16LE(scrollbarMaxScroll);
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		readRect(*chunkStream, scrollbarSrcBounds);
+		s.syncAsUint16LE(scrollbarDefaultPos.x);
+		s.syncAsUint16LE(scrollbarDefaultPos.y);
+		s.syncAsUint16LE(scrollbarMaxScroll);
 
-	readRectArray(s, ornamentSrcs, 6, 6, kGameTypeVampire, kGameTypeNancy1);
-	readRectArray(s, ornamentDests, 6, 6, kGameTypeVampire, kGameTypeNancy1);
+		readRectArray(s, ornamentSrcs, 6, 6, kGameTypeVampire, kGameTypeNancy1);
+		readRectArray(s, ornamentDests, 6, 6, kGameTypeVampire, kGameTypeNancy1);
 
-	uint numFrames = g_nancy->getGameType() == kGameTypeVampire ? 10 : 7;
+		uint numFrames = g_nancy->getGameType() == kGameTypeVampire ? 10 : 7;
 
-	readRectArray(s, curtainAnimationSrcs, numFrames * 2);
+		readRectArray(s, curtainAnimationSrcs, numFrames * 2);
 
-	readRect(s, curtainsScreenPosition);
-	s.syncAsUint16LE(curtainsFrameTime);
+		readRect(s, curtainsScreenPosition);
+		s.syncAsUint16LE(curtainsFrameTime);
+	}
 
 	s.syncAsUint16LE(captionAutoClearTime, kGameTypeNancy3);
 
@@ -146,7 +164,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory box icons surface w/h
 	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory cursors surface w/h
 
-	s.skip(0x10); // unknown rect, same size as a hotspot
+	s.skip(0x10, kGameTypeVampire, kGameTypeNancy9); // unknown rect, same size as a hotspot
 
 	byte textBuf[60];
 
@@ -206,10 +224,13 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 			item.cantSound.readNormal(*chunkStream);
 		} else if (s.getVersion() >= kGameTypeNancy9) {
 			for (int j = 0; j < 3; ++j) {
+				if (s.getVersion() >= kGameTypeNancy10)
+					readFilename(s, item.cantSounds[j].name);
 				s.syncBytes(textBuf, 60);
 				textBuf[59] = '\0';
 				assembleTextLine((char *)textBuf, item.cantTexts[j], 60);
-				readFilename(s, item.cantSounds[j].name);
+				if (s.getVersion() == kGameTypeNancy9)
+					readFilename(s, item.cantSounds[j].name);
 			}
 
 			item.cantText = item.cantTexts[0]; // Default text is the first one
@@ -219,11 +240,13 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	bool isVampire = g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire;
+	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
 
 	readRect(*chunkStream, scrollbarSrcBounds);
 
-	chunkStream->seek(0x20);
+	if (g_nancy->getGameType() <= kGameTypeNancy9)
+		chunkStream->seek(0x20);
+
 	readRect(*chunkStream, innerBoundingBox);
 
 	scrollbarDefaultPos.x = chunkStream->readUint16LE() - (isVampire ? 1 : 0);
@@ -235,8 +258,21 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	leftOffset = chunkStream->readUint16LE() - 1;
 	rightOffset = chunkStream->readUint16LE();
 
-	readRectArray(*chunkStream, ornamentSrcs, 14);
-	readRectArray(*chunkStream, ornamentDests, 14);
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		readRectArray(*chunkStream, ornamentSrcs, 14);
+		readRectArray(*chunkStream, ornamentDests, 14);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		chunkStream->skip(2);
+
+		maxScrollWidth = chunkStream->readSint32LE();
+		firstLineY = chunkStream->readSint32LE();
+		unknown1 = chunkStream->readSint32LE();
+		unknown2 = chunkStream->readSint32LE();
+		contentWidth = chunkStream->readSint32LE();
+		contentHeight = chunkStream->readSint32LE();
+	}
 
 	defaultFontID = chunkStream->readUint16LE();
 	defaultTextColor = chunkStream->readUint16LE();
@@ -262,6 +298,9 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		textBackground =			(r << format.rShift) |
 									(g << format.gShift) |
 									(b << format.bShift);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy10)
+			chunkStream->skip(1);
 
 		r = chunkStream->readByte();
 		g = chunkStream->readByte();
@@ -516,7 +555,8 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readRectArray(*chunkStream, _disabledButtonSrcs, 5);
 
 		readRectArray(*chunkStream, _buttonDests, 5);
-		readRectArray(*chunkStream, _textboxBounds, 10);
+		readRectArray(*chunkStream, _textboxBounds, 9);
+		readRect(*chunkStream, _inputTextboxBounds);
 
 		chunkStream->skip(25); // prefixes and suffixes for filenames
 
@@ -825,6 +865,238 @@ TABL::TABL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 MARK::MARK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRectArray(*chunkStream, _markSrcs, 5);
+}
+
+SCTB::SCTB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, imageName);
+	// TODO
+}
+
+SHUI::SHUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readRectArray(*chunkStream, _closeRects, 4);
+	readRectArray(*chunkStream, _sliderRects, 4);
+}
+
+TASK::TASK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, imageName);
+
+	readRect(*chunkStream, srcRect);
+	readRect(*chunkStream, dstRect);
+	readRect(*chunkStream, unkRect1);
+	readRect(*chunkStream, unkRect2);
+
+	char nameBuf[34];
+	for (uint i = 0; i < kNumButtons; ++i) {
+		readUIButton(*chunkStream, buttons[i].button);
+		chunkStream->read(buttons[i].unknownPad, sizeof(buttons[i].unknownPad));
+		for (uint s = 0; s < kNumAltSounds; ++s) {
+			chunkStream->read(nameBuf, 33);
+			nameBuf[33] = '\0';
+			buttons[i].clickSoundName[s] = nameBuf;
+		}
+	}
+}
+
+UIBW::UIBW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, imageName);
+
+	// Read URL records one at a time, stopping when the remaining bytes
+	// are no longer enough for a full record or when the record has an
+	// empty (zero-byte) name — the game pads the array with empty slots.
+	while (chunkStream->size() - chunkStream->pos() >= (int64)kUrlRecordSize) {
+		UrlPage page;
+		readFilename(*chunkStream, page.imageName);
+		if (page.imageName.empty()) {
+			// Skip the remainder of the (empty) record: 215 - 33 bytes.
+			chunkStream->skip(kUrlRecordSize - 33);
+			continue;
+		}
+
+		uint16 hotspotCount = chunkStream->readUint16LE();
+		for (uint i = 0; i < kMaxHotspotsPerPage; ++i) {
+			Hotspot h;
+			h.id = chunkStream->readUint16LE();
+			readRect(*chunkStream, h.rect);
+			if (i < hotspotCount) {
+				page.hotspots.push_back(h);
+			}
+		}
+
+		pages.push_back(page);
+	}
+}
+
+UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+
+	readFilename(*chunkStream, overlayImageName);
+
+	// Skip shared UIButton template - the sub-fields data is read
+	// separately for each button record below.
+	chunkStream->skip(206);
+
+	for (uint i = 0; i < kNumDialPadSlots; ++i) {
+		readRect(*chunkStream, dialPadSlots[i].srcRect);
+		readRect(*chunkStream, dialPadSlots[i].destRect);
+		char nameBuf[34];
+		chunkStream->read(nameBuf, 33);
+		nameBuf[33] = '\0';
+		dialPadSlots[i].soundName = nameBuf;
+	}
+
+	// Screen-frame and label rects
+	readRect(*chunkStream, dialHilite.srcRect);
+	readRect(*chunkStream, dialHilite.destRect);
+	readRect(*chunkStream, screenOutSrcRect);
+	statusTextX = chunkStream->readSint32LE();
+	statusTextY = chunkStream->readSint32LE();
+	readRect(*chunkStream, welcomeScreen.srcRect);
+	readRect(*chunkStream, welcomeScreen.destRect);
+
+	char labelBuf[21];
+	for (uint i = 0; i < kNumStatusLabels; ++i) {
+		chunkStream->read(labelBuf, 20);
+		labelBuf[20] = '\0';
+		statusLabels[i] = labelBuf;
+	}
+
+	readRect(*chunkStream, dialLabel.srcRect);
+	readRect(*chunkStream, dialLabel.destRect);
+	readRect(*chunkStream, webLabel.srcRect);
+	readRect(*chunkStream, webLabel.destRect);
+	readRect(*chunkStream, dirLabel.srcRect);
+	readRect(*chunkStream, dirLabel.destRect);
+
+	// Call/hang-up widget (3 rects).
+	readRect(*chunkStream, callButton.srcRectIdle);
+	readRect(*chunkStream, callButton.srcRectPressed);
+	readRect(*chunkStream, callButton.destRect);
+
+	// Screen-content sprite block
+	readFilename(*chunkStream, phoneUseSound);
+	readRect(*chunkStream, signalSpriteSrc);
+	readRect(*chunkStream, signalSpriteSrcAlt);
+	readRect(*chunkStream, signalSpriteDest);
+	readRect(*chunkStream, batterySpriteSrc);
+	readRect(*chunkStream, batterySpriteSrcAlt);
+	readRect(*chunkStream, batterySpriteDest);
+	readRect(*chunkStream, typeMessage.srcRect);
+	readRect(*chunkStream, typeMessage.destRect);
+	readRect(*chunkStream, connectedLabel.srcRect);
+	readRect(*chunkStream, connectedLabel.destRect);
+	readRect(*chunkStream, connectingSpriteSrc);
+	readRect(*chunkStream, connectingSpriteSrcAlt);
+	readRect(*chunkStream, connectingSpriteDest);
+	readRect(*chunkStream, onlineHeading.srcRect);
+	readRect(*chunkStream, onlineHeading.destRect);
+	readRect(*chunkStream, fullEmptyScreenSrc);
+	readRect(*chunkStream, emailListContainer);
+	readRect(*chunkStream, dirArrowSrc);
+	readRect(*chunkStream, dirCursorSrc);
+	readRect(*chunkStream, dirHeading.srcRect);
+	readRect(*chunkStream, dirHeading.destRect);
+
+	for (uint i = 0; i < kNumSubButtons; ++i) {
+		readRect(*chunkStream, subButtons[i].srcRectIdle);
+		readRect(*chunkStream, subButtons[i].srcRectPressed);
+		readRect(*chunkStream, subButtons[i].destRect);
+	}
+
+	// Heading/icon rect pairs
+	readRect(*chunkStream, searchHeading.srcRect);
+	readRect(*chunkStream, searchHeading.destRect);
+	readRect(*chunkStream, emailIconUnread);
+	readRect(*chunkStream, emailIconSelected);
+	readRect(*chunkStream, emailHeading.srcRect);
+	readRect(*chunkStream, emailHeading.destRect);
+	readRect(*chunkStream, helpHeading.srcRect);
+	readRect(*chunkStream, helpHeading.destRect);
+	readRect(*chunkStream, browserHeading.srcRect);
+	readRect(*chunkStream, browserHeading.destRect);
+
+	readFilename(*chunkStream, holdMusicSound);
+	readFilename(*chunkStream, answeringMachineSound);
+	holdLink1 = chunkStream->readSint16LE();
+	holdLink2 = chunkStream->readSint16LE();
+	readFilename(*chunkStream, urlSound);
+	urlLink1 = chunkStream->readSint16LE();
+	urlLink2 = chunkStream->readSint16LE();
+	urlLink3 = chunkStream->readSint16LE();
+
+	fontId1 = chunkStream->readUint16LE();
+	fontId2 = chunkStream->readUint16LE();
+
+	readFilename(*chunkStream, outgoingRingSound);
+	readFilename(*chunkStream, pickupSound);
+	readFilename(*chunkStream, invalidNumberSound);
+
+	contactCount = chunkStream->readUint16LE();
+
+	const int64 maxEntries = (chunkStream->size() - chunkStream->pos()) / 41;
+	const uint16 entries = MIN<uint16>(contactCount, (uint16)maxEntries);
+	contacts.resize(entries);
+	for (uint i = 0; i < entries; ++i) {
+		Contact &c = contacts[i];
+
+		chunkStream->read(c.unknownPrefix, sizeof(c.unknownPrefix));
+
+		char nameBuf[21];
+		chunkStream->read(nameBuf, 20);
+		nameBuf[20] = '\0';
+		c.name = nameBuf;
+
+		chunkStream->read(c.unknownSuffix, sizeof(c.unknownSuffix));
+	}
+}
+
+UICO::UICO(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+	readRect(*chunkStream, textRect);
+}
+
+UIIV::UIIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+
+	readRectArray(*chunkStream, slotSrcRects, 16);
+	readRectArray(*chunkStream, slotDestRects, 16);
+
+	chunkStream->skip(2);
+
+	for (uint i = 0; i < kNumFilters; ++i) {
+		readUIButtonSlot(*chunkStream, filters[i]);
+	}
+
+	readRectArray(*chunkStream, tabCaptionSrcRects, kNumFilters);
+
+	readRect(*chunkStream, tabCaptionDestRect);
+}
+
+UINB::UINB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+
+	for (uint i = 0; i < kNumTabs; ++i) {
+		readUIButtonSlot(*chunkStream, tabs[i]);
+	}
+
+	readRect(*chunkStream, textRect);
+	primaryFontID = chunkStream->readUint16LE();
+	secondaryFontAttr = chunkStream->readUint16LE();
+	useFilenameTextFlag = chunkStream->readUint16LE();
+	readFilename(*chunkStream, conditionalTextFilename);
+
+	// 3 sound names played at random when an item is marked complete
+	// (glyph attr -> 8)
+	for (uint i = 0; i < kNumPageSoundsPerSet; ++i) {
+		readFilename(*chunkStream, actionableClickSounds[i]);
+	}
+
+	// 3 sound names for no-action clicks
+	for (uint i = 0; i < kNumPageSoundsPerSet; ++i) {
+		readFilename(*chunkStream, noActionClickSounds[i]);
+	}
+
+	readRectArray(*chunkStream, tabCaptionSrcRects, kNumTabs);
+	readRect(*chunkStream, tabCaptionDestRect);
 }
 
 } // End of namespace Nancy

@@ -22,11 +22,12 @@
 #ifndef ULTIMA8_WORLD_CURRENTMAP_H
 #define ULTIMA8_WORLD_CURRENTMAP_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/world/position_info.h"
+#include "common/list.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/point3.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/world/position_info.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -167,12 +168,12 @@ public:
 	//!         true if any items were hit.
 	bool sweepTest(const Point3 &start, const Point3 &end,
 	               const int32 dims[3], uint32 shapeflags,
-	               ObjId item, bool solid_only, Std::list<SweepItem> *hit) const;
+	               ObjId item, bool solid_only, Common::List<SweepItem> *hit) const;
 
 	TeleportEgg *findDestination(uint16 id);
 
 	// Not allowed to modify the list. Remember to use const_iterator
-	const Std::list<Item *> *getItemList(int32 gx, int32 gy) const;
+	const Common::List<Item *> *getItemList(int32 gx, int32 gy) const;
 
 	bool isChunkFast(int32 cx, int32 cy) const {
 		// CONSTANTS!
@@ -193,7 +194,7 @@ public:
 	INTRINSIC(I_canExistAtPoint);
 
 private:
-	void loadItems(const Std::list<Item *> &itemlist, bool callCacheIn);
+	void loadItems(const Common::List<Item *> &itemlist, bool callCacheIn);
 	void createEggHatcher();
 
 	//! clip the given map chunk numbers to iterate over them safely
@@ -203,7 +204,7 @@ private:
 
 	// item lists. Lots of them :-)
 	// items[x][y]
-	Std::list<Item *> _items[MAP_NUM_CHUNKS][MAP_NUM_CHUNKS];
+	Common::List<Item *> _items[MAP_NUM_CHUNKS][MAP_NUM_CHUNKS];
 
 	ProcId _eggHatcher;
 

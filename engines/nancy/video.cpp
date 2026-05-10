@@ -42,9 +42,9 @@ private:
 };
 
 bool VideoCacheLoader::loadInner() {
-	AVFDecoder::CacheHint hint = _owner._cacheHint;
-	int frameID = _owner._curFrame;
-	int frameCount = _owner._frameCount;
+	AVFDecoder::CacheHint hint = _owner.getCacheHint();
+	int frameID = _owner.getCurFrame();
+	int frameCount = _owner.getFrameCount();
 
 	for (int i = 0; i < frameCount; ++i) {
 		if (frameID < 0) {
@@ -55,16 +55,16 @@ bool VideoCacheLoader::loadInner() {
 			frameID -= frameCount;
 		}
 
-		if (!_owner._frameCache[frameID].getPixels()) {
+		if (!_owner.getSurfaceForFrame(frameID)->getPixels()) {
 			_owner.decodeFrame(frameID);
 			return false;
 		}
 
 		// Select next frame based on hint and play direction
 		if (hint != AVFDecoder::kLoadBidirectional) {
-			frameID = _owner._reversed ? frameID - 1 : frameID + 1;
+			frameID = _owner.isReversed() ? frameID - 1 : frameID + 1;
 		} else {
-			frameID = _owner._curFrame + (i % 2 ? i >> 1 : -(i >> 1));
+			frameID = _owner.getCurFrame() + (i % 2 ? i >> 1 : -(i >> 1));
 		}
 	}
 
@@ -111,16 +111,16 @@ bool AVFDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 const Graphics::Surface *AVFDecoder::decodeFrame(uint frameNr) {
-	return ((AVFDecoder::AVFVideoTrack *)getTrack(0))->decodeFrame(frameNr);
+	return ((AVFVideoTrack *)getTrack(0))->decodeFrame(frameNr);
 }
 
 void AVFDecoder::addFrameTime(const uint16 timeToAdd) {
-	((AVFDecoder::AVFVideoTrack *)getTrack(0))->_frameTime += timeToAdd;
+	((AVFVideoTrack *)getTrack(0))->addFrameTime(timeToAdd);
 }
 
 // Custom function to allow the last frame of the video to play correctly
 bool AVFDecoder::atEnd() const {
-	const AVFDecoder::AVFVideoTrack *track = ((const AVFDecoder::AVFVideoTrack *)getTrack(0));
+	const AVFVideoTrack *track = ((const AVFVideoTrack *)getTrack(0));
 	if (!track) {
 		return true;
 	}

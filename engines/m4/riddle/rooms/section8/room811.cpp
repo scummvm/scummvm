@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section8/room811.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -372,7 +373,7 @@ void Room811::daemon() {
 
 	case 92:
 		digi_play_loop("950_s45", 3, 128, -1, 950);
-		_G(game).new_room = 861;
+		_G(game).setRoom(861);
 		break;
 
 	case 1050:

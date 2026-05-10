@@ -456,7 +456,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 		Video::AVIDecoder *aviDecoder = new Video::AVIDecoder(12);
 		return new MoviePlayer(vm, system, aviDecoder, kVideoDecoderMP2);
 #else
-		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"), _("OK"));
+		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"));
 		dialog.runModal();
 		return nullptr;
 #endif
@@ -466,7 +466,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 	// In addition, some of the later re-releases of the game don't have the "eye" Virgin logo movie.
 	if (!vm->_logic->readVar(DEMO) && strcmp(name, "eye") != 0) {
 		Common::U32String buf = Common::U32String::format(_("Cutscene '%s' not found"), name);
-		GUI::MessageDialog dialog(buf, _("OK"));
+		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 	} else
 		warning("Cutscene '%s' not found", name);

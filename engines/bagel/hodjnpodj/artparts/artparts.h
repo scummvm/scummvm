@@ -68,19 +68,19 @@ namespace ArtParts {
 #define PAUSE_TIME           3000       // Wait three seconds before erasing hint screen
 
 // Sound files
-#define PICK_SOUND      ".\\sound\\pickart.wav"
-#define SWITCH_SOUND    ".\\sound\\moveart.wav"
-#define WIN_SOUND       ".\\sound\\sound146.wav"
-#define UNDO_SOUND      ".\\sound\\sound355.wav"
-#define LOSE_SOUND      ".\\sound\\buzzer.wav"
-#define RULES_WAV       ".\\sound\\artparts.wav"
+#define PICK_SOUND      "sound\\pickart.wav"
+#define SWITCH_SOUND    "sound\\moveart.wav"
+#define WIN_SOUND       "sound\\sound146.wav"
+#define UNDO_SOUND      "sound\\sound355.wav"
+#define LOSE_SOUND      "sound\\buzzer.wav"
+#define RULES_WAV       "sound\\artparts.wav"
 
-#define GAME_THEME      ".\\sound\\artparts.mid"
+#define GAME_THEME      "sound\\artparts.mid"
 
 // Backdrop bitmaps
-#define MAINSCREEN      ".\\ART\\ARTPART1.BMP"
-#define FRAMESCREEN     ".\\ART\\ARTPART1.BMP"
-#define TEXTSCREEN      ".\\ART\\ARTTEMP.BMP"
+#define MAINSCREEN      "art\\ARTPART1.BMP"
+#define FRAMESCREEN     "art\\ARTPART1.BMP"
+#define TEXTSCREEN      "art\\ARTTEMP.BMP"
 
 #define DATA_FILE       "artfiles.dat"
 #define MAX_FILE_LENGTH          20     // Longest Art file name length allowed
@@ -104,9 +104,11 @@ namespace ArtParts {
 class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
+	~CMainWindow();
+
 	bool LoadArtWork();
-	void DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight);
-	void SwitchAreas(CRect Src, CRect Dst);
+	void DrawPart(const CPoint &Src, const CPoint &Dst, int nWidth, int nHeight);
+	void SwitchAreas(const CRect &Src, const CRect &Dst);
 	void InitValues();
 	void NewGame();
 	void CheckForWin();

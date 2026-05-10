@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_TIMED_EVENT_H
 #define NUVIE_CORE_TIMED_EVENT_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/core/obj_manager.h"
 
@@ -43,7 +43,7 @@ class TimedEvent;
 /* A queue for our events.
  */
 class TimeQueue {
-	Std::list<TimedEvent *> tq;
+	Common::List<TimedEvent *> tq;
 public:
 	TimeQueue() : tq() { }
 	~TimeQueue() {
@@ -119,7 +119,7 @@ public:
 /* Print to stdout. (timer test)
  */
 class TimedMessage : public TimedEvent {
-	Std::string msg;
+	Common::String msg;
 public:
 	TimedMessage(uint32 reltime, const char *m, bool repeating = false)
 		: TimedEvent(reltime), msg(m) {
@@ -239,14 +239,14 @@ protected:
 
 public:
 	TimedAdvance(uint8 hours, uint16 r = 60);
-	TimedAdvance(Std::string timestring, uint16 r = 60); // "HH:MM"
+	TimedAdvance(Common::String timestring, uint16 r = 60); // "HH:MM"
 	~TimedAdvance() override { }
 
 	void init(uint16 min, uint16 r); // start time advance
 
 	void timed(uint32 evtime) override;
 	bool time_passed() const; // returns true if stop time has passed
-	void get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring);
+	void get_time_from_string(uint8 &hour, uint8 &minute, Common::String timestring);
 };
 
 

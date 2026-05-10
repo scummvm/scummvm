@@ -213,9 +213,10 @@ void MacGuiImpl::MacDialogWindow::show() {
 void MacGuiImpl::MacDialogWindow::setFocusedWidget(int x, int y) {
 	int nr = findWidget(x, y);
 	if (nr >= 0) {
+		if (_focusedWidget && _focusedWidget != _widgets[nr])
+			clearFocusedWidget();
+
 		_focusedWidget = _widgets[nr];
-		_focusClick.x = x;
-		_focusClick.y = y;
 		_focusedWidget->getFocus();
 	} else
 		clearFocusedWidget();
@@ -225,8 +226,6 @@ void MacGuiImpl::MacDialogWindow::clearFocusedWidget() {
 	if (_focusedWidget) {
 		_focusedWidget->loseFocus();
 		_focusedWidget = nullptr;
-		_focusClick.x = -1;
-		_focusClick.y = -1;
 	}
 }
 
@@ -621,13 +620,13 @@ bool MacGuiImpl::MacDialogWindow::runDialog(MacGuiImpl::MacDialogEvent &dialogEv
 				MacWidget *widget = _focusedWidget;
 
 				if (widget->findWidget(event.mouse.x, event.mouse.y)) {
-					if (widget->handleMouseUp(event)) {
-						clearFocusedWidget();
+					if (widget->handleMouseUp(event))
 						queueEvent(widget, kDialogClick);
-					}
-				}
 
-				clearFocusedWidget();
+					if (!widget->keepFocus(event.mouse.x, event.mouse.y))
+						clearFocusedWidget();
+				} else
+					clearFocusedWidget();
 			}
 
 			updateCursor();

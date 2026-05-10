@@ -46,6 +46,7 @@ protected:
 	virtual void OnCancel() override;
 	afx_msg void OnDestroy();
 	afx_msg void OnPaint();
+	afx_msg void OnOK() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

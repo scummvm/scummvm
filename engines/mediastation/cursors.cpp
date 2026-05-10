@@ -132,15 +132,13 @@ void CursorManager::registerAsPermanent(uint16 id) {
 }
 
 void CursorManager::setAsPermanent(uint16 id) {
-	bool cursorAlreadySet = _currentCursorId == id && _permanentCursorId == id;
-	bool cursorIsEmpty = id == 0;
-	if (cursorAlreadySet || cursorIsEmpty) {
-		return;
+	bool cursorAlreadySet = (_currentCursorId == id) && (_permanentCursorId == id);
+	bool cursorIsEmpty = (id == 0);
+	if (!cursorAlreadySet && !cursorIsEmpty) {
+		_permanentCursorId = id;
+		_currentCursorId = id;
+		resetCurrent();
 	}
-
-	_permanentCursorId = id;
-	_currentCursorId = id;
-	resetCurrent();
 }
 
 void CursorManager::setAsTemporary(uint16 id) {
@@ -168,8 +166,13 @@ void CursorManager::unsetTemporary() {
 
 void CursorManager::resetCurrent() {
 	if (_currentCursorId != 0) {
-		Graphics::Cursor *cursor = _cursors.getVal(_currentCursorId);
-		CursorMan.replaceCursor(cursor);
+		Graphics::Cursor *cursor = _cursors.getValOrDefault(_currentCursorId);
+		if (cursor != nullptr) {
+			CursorMan.replaceCursor(cursor);
+		} else {
+			warning("%s: Cursor %d not found", __func__, _currentCursorId);
+		}
+
 	}
 }
 
@@ -187,7 +190,7 @@ WindowsCursorManager::WindowsCursorManager(const Common::Path &appName) : Cursor
 	}
 
 	Common::WinResources *exe = Common::WinResources::createFromEXE(appName);
-	if (!exe->loadFromEXE(appName)) {
+	if (exe == nullptr || !exe->loadFromEXE(appName)) {
 		error("%s: Could not load resources from executable %s", __func__, appName.toString().c_str());
 	}
 
@@ -215,13 +218,15 @@ WindowsCursorManager::~WindowsCursorManager() {
 }
 
 Graphics::Cursor *WindowsCursorManager::loadResourceCursor(const Common::String &name) {
-	Graphics::WinCursorGroup *group = _cursorGroups.getValOrDefault(name);
-	if (group != nullptr) {
-		Graphics::Cursor *cursor = group->cursors[0].cursor;
-		return cursor;
-	} else {
-		error("%s: Reqested Windows cursor %s not found", __func__, name.c_str());
+	// Search for case-insensitive match since resource names are expected to be case-insensitive.
+	for (auto it = _cursorGroups.begin(); it != _cursorGroups.end(); ++it) {
+		if (it->_key.equalsIgnoreCase(name)) {
+			Graphics::Cursor *cursor = it->_value->cursors[0].cursor;
+			return cursor;
+		}
 	}
+
+	error("%s: Reqested Windows cursor %s not found", __func__, name.c_str());
 }
 
 MacCursorManager::MacCursorManager(const Common::Path &appName) : CursorManager(appName) {

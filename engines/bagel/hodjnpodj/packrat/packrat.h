@@ -49,14 +49,14 @@ namespace Packrat {
 
 // Rules File Identifiers
 #define RULESFILE                   "PACKRAT.TXT"
-#define RULES_WAV                   ".\\SOUND\\PACKRAT.WAV"
+#define RULES_WAV                   "sound\\PACKRAT.WAV"
 
 // Sound files:
-#define GAME_THEME          ".\\SOUND\\PACRAT.MID"
-#define DEAD_WAV            ".\\SOUND\\TAPS.WAV"
-#define DOODAD_WAV          ".\\SOUND\\DOODAD.WAV"
-#define LEVEL_WAV           ".\\SOUND\\APPLAUSE.WAV"
-#define LASTLEV_WAV         ".\\SOUND\\WIN45.WAV"
+#define GAME_THEME          "sound\\PACRAT.MID"
+#define DEAD_WAV            "sound\\TAPS.WAV"
+#define DOODAD_WAV          "sound\\DOODAD.WAV"
+#define LEVEL_WAV           "sound\\APPLAUSE.WAV"
+#define LASTLEV_WAV         "sound\\WIN45.WAV"
 // Bitmap Identifiers
 #define OPTSCROLL                   "ART\\OPTSCRL.BMP"
 

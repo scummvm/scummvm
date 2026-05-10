@@ -1,0 +1,120 @@
+<!-- Creator     : groff version 1.23.0 -->
+<!-- CreationDate: Sun Mar  2 21:34:04 2025 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>PYCDLIB-EXTRACT-FILES</title>
+
+</head>
+<body>
+
+<h1 align="center">PYCDLIB-EXTRACT-FILES</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em">pycdlib-extract-files
+- tool to extract files from an ISO using pycdlib</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>pycdlib-extract-files
+[OPTIONS] &lt;iso-file&gt;</b></p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">This is a tool
+to extract files from an existing ISO file. Using this tool,
+the files and directories on an ISO can be extracted to the
+local filesystem.</p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;path&minus;type</b>
+<i>[auto,iso9660,rockridge,joliet,udf]</i></p>
+
+<p style="margin-left:18%;">Specifies the path name
+convention to use while extracting the files. If the ISO to
+be extracted doesn&rsquo;t contain the path type specified,
+an error is thrown. If not specified, defaults to auto,
+which first tries to extract files via the UDF path, then
+the Rock Ridge path, then the Joliet path, and finally falls
+back to the ISO9660 path if all else fails. Once one path
+type succeeds, all files will be extracted as that path
+type.</p>
+
+<p style="margin-left:9%;"><b>&minus;start&minus;path</b>
+<i>&lt;pathname&gt;</i></p>
+
+<p style="margin-left:18%;">The ISO path to start
+extracting from, specified in a Unix like path (something
+like &quot;/foo/bar&quot;). If not specified, extraction
+starts from the root of the ISO (equivalent to specifying
+&quot;/&quot;). The starting path must be a directory on the
+ISO. If &minus;path&minus;type is not specified, the path is
+an ISO9660 style path. If &minus;path&minus;type is
+specified, the start path specified here must be of that
+particular type.</p>
+
+<p style="margin-left:9%;"><b>&minus;extract&minus;to</b>
+<i>&lt;destpath&gt;</i></p>
+
+<p style="margin-left:18%;">The local directory to extract
+the data to. The &quot;destpath&quot; must exist and must be
+a directory, or an error will be thrown. If not specified,
+pycdlib&minus;extract&minus;files will extract the files to
+the current directory.</p>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em">pycdlib-explorer(1),
+pycdlib-genisoimage(1)</p>
+
+<h2>AUTHOR
+<a name="AUTHOR"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">Chris Lalancette
+&lt;clalancette@gmail.com&gt;</p>
+<hr>
+</body>
+</html>

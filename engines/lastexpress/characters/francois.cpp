@@ -349,11 +349,11 @@ void LogicManager::HAND_Francois_DoWalk(HAND_PARAMS) {
 				}
 			} else {
 				if (getCharacter(kCharacterCath).characterPosition.position <= getCharacter(kCharacterFrancois).characterPosition.position) {
-					playNIS(kEventFrancoisShowEggNight);
-				} else {
 					playNIS(kEventFrancoisShowEggNightD);
+				} else {
+					playNIS(kEventFrancoisShowEggNight);
 				}
-				
+
 			}
 			
 			if (getCharacter(kCharacterFrancois).direction == 1) {

@@ -51,7 +51,7 @@ GUI_TextToggleButton::~GUI_TextToggleButton() {
 	texts = 0;
 }
 
-GUI_status GUI_TextToggleButton::MouseUp(int x, int y, Shared::MouseButton button_) {
+GUI_status GUI_TextToggleButton::MouseUp(int x, int y, Events::MouseButton button_) {
 	if ((button_ == 1 || button_ == 3) && (pressed[0])) {
 		pressed[0] = 0;
 		return Activate_button(x, y, button_);
@@ -59,8 +59,8 @@ GUI_status GUI_TextToggleButton::MouseUp(int x, int y, Shared::MouseButton butto
 	return GUI_Button::MouseUp(x, y, button_);
 }
 
-GUI_status GUI_TextToggleButton::Activate_button(int x, int y, Shared::MouseButton button_) {
-	selection = (selection + (button_ == Shared::BUTTON_LEFT ? 1 : -1)) % count;
+GUI_status GUI_TextToggleButton::Activate_button(int x, int y, Events::MouseButton button_) {
+	selection = (selection + (button_ == Events::BUTTON_LEFT ? 1 : -1)) % count;
 	if (selection < 0)
 		selection = count - 1;
 

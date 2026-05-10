@@ -33,13 +33,15 @@ public:
 	TimerActor() : Actor(kActorTypeTimer) {};
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void process() override;
+	virtual void timerEvent(const TimerEvent &event) override;
 
 private:
-	bool _isPlaying = false;
+	uint32 _pauseStartTime = 0;
 
-	void timePlay();
-	void timeStop();
+	void start();
+	void stop();
+	void pause();
+	void resume(bool shouldRestart);
 };
 
 } // End of namespace MediaStation

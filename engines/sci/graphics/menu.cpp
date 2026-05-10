@@ -110,8 +110,11 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 				tagPos = curPos;
 				break;
 			case '`': // Right-aligned
-				if (rightAlignedPos)
-					error("multiple right-aligned markers within one menu-item");
+				if (rightAlignedPos) {
+					// SQ3 Russian translation has two consecutive ` characters.
+					// SSCI tolerated this, so warn instead of error. Bug #16642
+					warning("multiple right-aligned markers within one menu-item");
+				}
 				rightAlignedPos = curPos;
 				break;
 			case '^': // Ctrl-prefix

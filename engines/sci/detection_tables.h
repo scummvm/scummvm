@@ -231,6 +231,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)	},
 
+	{"shield", "", {
+		{"resource.map", 0, "9dd015e79cac4f91e7de805448f39775", 1912},
+		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)	},
+
 	// Christmas Card 1988 - English DOS
 	// SCI interpreter version 0.000.294
 	{"christmas1988", "", {
@@ -1878,6 +1884,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
+	// King's Quest 4 - Fanmade Hebrew translation, based on the series GOG version
+	// Game version 1.006.004
+	// SCI interpreter version 0.000.502
+	// Released: August 7, 1989 (Information from About screen in scripts)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
+		{"resource.001", 0, "77615c595388acf3d1df8e107bfb6b52", 452523},
+		{"resource.002", 0, "77615c595388acf3d1df8e107bfb6b52", 536573},
+		{"resource.003", 0, "77615c595388acf3d1df8e107bfb6b52", 707591},
+		{"font.000", 0, "5053e202adbd7a4fdebb30b2ea76ce27", 2835},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER},
+
 #define GUIO_KQ5_CD_WINDOWS GUIO7(GUIO_MIDIGM,                         \
 								  GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
@@ -1960,6 +1979,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_KQ5_CD_WINDOWS },
+
+	// King's Quest 5 - Fanmade Hebrew translation Windows CD (based on the series GOG version)
+	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000.052"
+	{"kq5", "CD", {
+		{"resource.map", 0, "f68ba690e5920725dcf9328001b90e33", 13122},
+		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
+		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
+		{"0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_CD, GUIO_KQ5_CD_WINDOWS},
 
 	// King's Quest 5 - English DOS Floppy
 	// SCI interpreter version 1.000.060
@@ -2484,6 +2513,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "51ca9f8afc42ef442f6545b3c82a9165", 596121},
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
+
+	// King's Quest 6 - Fanmade Hebrew translation Windows CD (based on the series GOG version)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.00G"
+	// SCI interpreter version 1.001.054
+	{"kq6", "", {
+		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
+		{"0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_CD, GUIO_KQ6_CD},
+
+	// King's Quest 6 - Fanmade Hebrew translation Windows CD (based on the series GOG version)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.00G"
+	// SCI interpreter version 1.001.054
+	{"kq6", "", {
+		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
+		{"0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_CD, GUIO_KQ6_CD_WINDOWS},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
@@ -4675,8 +4724,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
-	// Police Quest 3 EGA
-	// Reported by musiclyinspired in bug report #5251
+	// Police Quest 3 EGA - (720k disks)
 	{"pq3", "EGA", {
 		{"resource.map", 0, "1341f7c9643947414a8e238b88f68d82", 5901},
 		{"resource.000", 0, "7659713720d61d9465a59091b7ee63ea", 402208},
@@ -4685,6 +4733,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "31c226bf01b69c8182b8ca0e8760b0a7", 527848},
 		{"resource.004", 0, "b96a86ab681769e4cbb439670d967ca6", 449682},
 		{"resource.005", 0, "9e6c53a0e7eef53694d260fade8b1fc7", 724000},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
+	// Police Quest 3 EGA - (1.2M disks)
+	{"pq3", "EGA", {
+		{"resource.map", 0, "aa938c5c3ffd4927bba4edfb9db640df", 5535},
+		{"resource.000", 0, "7659713720d61d9465a59091b7ee63ea", 504069},
+		{"resource.001", 0, "0284ca44341fbc3cb7a047e49d230234", 869158},
+		{"resource.002", 0, "31c226bf01b69c8182b8ca0e8760b0a7", 983665},
+		{"resource.003", 0, "9e6c53a0e7eef53694d260fade8b1fc7", 930048},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
@@ -5924,6 +5982,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "c47b9817cf13f16b803fcbce647e63f3", 1514692},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
+
+	// Space Quest 3 - Russian fan translation by Igor Malyshko
+	{ "sq3", "", {
+		{"resource.map", 0, "7f1a45f497a8b93dce14147807ce383c", 3726},
+		{"resource.001", 0, "b62b0f98ff876304a5af214c9557f266", 1674902},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
 
 #define GUIO_SQ4_CD GUIO6(GAMEOPTION_SQ4_SILVER_CURSORS,	\
 						  GAMEOPTION_PREFER_DIGITAL_SFX,	\

@@ -55,6 +55,7 @@ struct HugoGameDescription {
 };
 
 #define GAMEOPTION_TTS               GUIO_GAMEOPTIONS1
+#define GAMEOPTION_WINDOWS_INTERFACE GUIO_GAMEOPTIONS2
 
 } // End of namespace Hugo
 

@@ -58,23 +58,33 @@ RippedLetterPuzzleData::RippedLetterPuzzleData() :
 	playerHasTriedPuzzle(false) {}
 
 void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
-	if (ser.isLoading()) {
-		order.resize(24);
-		rotations.resize(24);
-	} else {
-		// A piece may still be held while saving; make sure the saved data
-		// has it back in the last place it was picked up from
-		if (_pickedUpPieceID != -1) {
-			order[_pickedUpPieceLastPos] = _pickedUpPieceID;
-			rotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
-			_pickedUpPieceID = -1;
-			_pickedUpPieceLastPos = -1;
-			_pickedUpPieceRot = 0;
-		}
+	// Serialize through fixed size buffers so save or load never
+	// mutates the live puzzle state
+	Common::Array<int8> serializedOrder(24, -1);
+	Common::Array<byte> serializedRotations(24, 0);
+
+	for (uint i = 0; i < order.size() && i < serializedOrder.size(); ++i) {
+		serializedOrder[i] = order[i];
 	}
 
-	ser.syncArray(order.data(), 24, Common::Serializer::Byte);
-	ser.syncArray(rotations.data(), 24, Common::Serializer::Byte);
+	for (uint i = 0; i < rotations.size() && i < serializedRotations.size(); ++i) {
+		serializedRotations[i] = rotations[i];
+	}
+
+	// A piece may still be held while saving; make sure the saved data
+	// has it back in the last place it was picked up from
+	if (ser.isSaving() && _pickedUpPieceID != -1) {
+		serializedOrder[_pickedUpPieceLastPos] = _pickedUpPieceID;
+		serializedRotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
+	}
+
+	ser.syncArray(serializedOrder.data(), serializedOrder.size(), Common::Serializer::Byte);
+	ser.syncArray(serializedRotations.data(), serializedRotations.size(), Common::Serializer::Byte);
+
+	if (ser.isLoading()) {
+		Common::move(serializedOrder.begin(), serializedOrder.end(), order.begin());
+		Common::move(serializedRotations.begin(), serializedRotations.end(), rotations.begin());
+	}
 }
 
 TowerPuzzleData::TowerPuzzleData() {
@@ -191,6 +201,46 @@ void TableData::synchronize(Common::Serializer &ser) {
 	ser.syncArray(comboValues.data(), num, Common::Serializer::FloatLE);
 }
 
+void QuizPuzzleData::synchronize(Common::Serializer &ser) {
+	// Serialize as: numScenes, then for each scene: sceneID, numBoxes, box data
+	uint16 numScenes = (uint16)boxCorrect.size();
+	ser.syncAsUint16LE(numScenes);
+
+	if (ser.isLoading()) {
+		boxCorrect.clear();
+		typedText.clear();
+		for (uint16 s = 0; s < numScenes; ++s) {
+			uint16 sceneID = 0;
+			ser.syncAsUint16LE(sceneID);
+			byte num = 0;
+			ser.syncAsByte(num);
+			auto &bc = boxCorrect[sceneID];
+			auto &tt = typedText[sceneID];
+			bc.resize(num, false);
+			tt.resize(num);
+			for (uint i = 0; i < num; ++i) {
+				byte b = 0;
+				ser.syncAsByte(b);
+				bc[i] = (b != 0);
+				ser.syncString(tt[i]);
+			}
+		}
+	} else {
+		for (auto &entry : boxCorrect) {
+			uint16 sceneID = entry._key;
+			ser.syncAsUint16LE(sceneID);
+			byte num = (byte)entry._value.size();
+			ser.syncAsByte(num);
+			auto &tt = typedText[sceneID];
+			for (uint i = 0; i < num; ++i) {
+				byte b = entry._value[i] ? 1 : 0;
+				ser.syncAsByte(b);
+				ser.syncString(tt[i]);
+			}
+		}
+	}
+}
+
 void TableData::setSingleValue(uint16 index, int16 value) {
 	if (singleValues.size() <= index) {
 		singleValues.resize(index + 1, kNoTableValue);
@@ -229,6 +279,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new SoundEqualizerPuzzleData();
 	case AssemblyPuzzleData::getTag():
 		return new AssemblyPuzzleData();
+	case QuizPuzzleData::getTag():
+		return new QuizPuzzleData();
 	case JournalData::getTag():
 		return new JournalData();
 	case TableData::getTag():

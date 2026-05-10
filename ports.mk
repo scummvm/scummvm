@@ -139,7 +139,7 @@ bundle_name = ScummVM.app
 bundle-pack:
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
-	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
+	printf "APPL????" > $(bundle_name)/Contents/PkgInfo
 	sed -e 's/$$(PRODUCT_BUNDLE_IDENTIFIER)/org.scummvm.app/' $(srcdir)/dists/macosx/Info.plist >$(bundle_name)/Contents/Info.plist
 ifdef USE_SPARKLE
 	mkdir -p $(bundle_name)/Contents/Frameworks
@@ -203,8 +203,10 @@ ifdef DYNAMIC_MODULES
 endif
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	chmod 755 $(bundle_name)/Contents/Resources/licenses
+	chmod 644 $(bundle_name)/Contents/Resources/licenses/*
 ifneq ($(DIST_FILES_SHADERS),)
 	chmod 755 $(bundle_name)/Contents/Resources/shaders
+	chmod 644 $(bundle_name)/Contents/Resources/shaders/*
 endif
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
@@ -509,9 +511,19 @@ else
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += -liconv \
                 -framework CoreMIDI -framework CoreAudio\
-                $(STATICLIBPATH)/lib/libfluidsynth.a \
-                $(STATICLIBPATH)/lib/libglib-2.0.a \
-                $(STATICLIBPATH)/lib/libintl.a
+                $(STATICLIBPATH)/lib/libfluidsynth.a
+ifneq (,$(wildcard $(STATICLIBPATH)/lib/libglib-2.0.a))
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglib-2.0.a
+ifneq (,$(wildcard $(STATICLIBPATH)/lib/libintl.a))
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libintl.a
+endif
+endif
+
+ifdef USE_TTS
+ifndef USE_NS_SPEECH_SYNTHESIZER
+OSX_STATIC_LIBS += -framework AVFoundation
+endif
+endif
 
 ifneq ($(BACKEND), ios7)
 OSX_STATIC_LIBS += -lreadline
@@ -580,7 +592,11 @@ OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libRetroWave.a
 endif
 
 ifdef USE_SONIVOX
+ifneq (,$(wildcard $(STATICLIBPATH)/lib/libsonivox-static.a))
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libsonivox-static.a
+else
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libsonivox.a
+endif
 endif
 
 ifdef USE_SPARKLE
@@ -605,7 +621,8 @@ scummvm-static-ios: $(DETECT_OBJS) $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES -framework GameController \
 		-framework CoreFoundation -framework QuartzCore -framework Foundation \
-		-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration -lobjc -lz
+		-framework AudioToolbox -framework CoreAudio -framework CoreMIDI \
+		-framework SystemConfiguration -lobjc -lz
 
 # Special target to create a snapshot disk image for macOS
 # TODO: Replace AUTHORS by Credits.rtf
@@ -645,11 +662,13 @@ osxsnap: bundle
 	cp $(DIST_FILES_DOCS_no-nb) ./ScummVM-snapshot/doc/no-nb/
 	mkdir ScummVM-snapshot/doc/sv
 	cp $(DIST_FILES_DOCS_se) ./ScummVM-snapshot/doc/sv/
-	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/QuickStart
-	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/*/*
-ifndef MACOSX_LEOPARD_OR_BELOW
+ifdef MACOSX_LEOPARD_OR_BELOW
+	perl -pi -e 'print "\xEF\xBB\xBF" if $$. == 1 && substr($$_, 0, 3) ne "\xEF\xBB\xBF"; close ARGV if eof' ./ScummVM-snapshot/doc/*/*
+else
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/*/*
 endif
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/QuickStart
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/*/*
 	cp -RP $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
@@ -695,15 +714,10 @@ ideprojects: devtools/create_project
 ifeq ($(VER_DIRTY), -dirty)
 	$(error You have uncommitted changes)
 endif
-ifeq "$(CUR_BRANCH)" "heads/master"
-	$(error You cannot do it on master)
-else ifeq "$(CUR_BRANCH)" ""
-	$(error You must be on a release branch)
-endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && $(PWD)/devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/*.h *.workspace *.cbp
 	@echo Creating MSVC project files...
-	@cd $(srcdir)/dists/msvc && $(PWD)/devtools/create_project/create_project ../.. --msvc-version 12 --msvc >/dev/null && git add -f engines/*.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@cd $(srcdir)/dists/msvc && $(PWD)/devtools/create_project/create_project ../.. --msvc-version 18 --msvc >/dev/null && git add -f engines/*.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run

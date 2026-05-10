@@ -29,7 +29,6 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_API_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_API_H
 
-//include <stdarg.h>
 #include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/debugging/out.h"

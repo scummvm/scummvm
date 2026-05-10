@@ -82,7 +82,7 @@ public:
 	bool allocate();
 	void deallocate();
 	void clear();
-	void setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType, bool swapRedBlue = false);
+	void setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType);
 	void setNumOfEntries(uint32 num) {	_numOfEntries = num; }
 	uint32 getNumOfEntries() const { return _numOfEntries; }
 	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_numOfEntries); }
@@ -124,7 +124,7 @@ public:
 	void setSize(uint32 width, uint32 height, HowToSize textureOrSource = kSizeByTextureSize);
 	void setBitsPerPixel(uint32 bits) { _pixelFormat.bitsPerPixel = bits; }
 	void setBytesPerPixel(uint32 bytes) { setBitsPerPixel(bytes << 3); }
-	void setPixelFormat(PSPPixelFormat::Type type, bool swapRedBlue = false);
+	void setPixelFormat(PSPPixelFormat::Type type);
 
 	// getters
 	uint32 getWidth() const { return _width; }
@@ -140,6 +140,8 @@ public:
 	uint32 getBytesPerPixel() const { return getBitsPerPixel() >> 3; } /* won't work for 4-bit */
 	const byte *getPixels() const { return _pixels; }
 	byte *getPixels() { return _pixels; }
+	const byte *getBasePtr(int x, int y) const { return _pixels + _pixelFormat.pixelsToBytes((y * _width) + x); }
+	byte *getBasePtr(int x, int y) { return _pixels + _pixelFormat.pixelsToBytes((y * _width) + x); }
 	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_width * _height); }
 
 	bool hasPalette();
@@ -196,7 +198,7 @@ public:
 	void setOffsetOnScreen(int x, int y) { _offsetOnScreen.x = x; _offsetOnScreen.y = y; }
 	void setOffsetInBuffer(uint32 x, uint32 y) { _offsetInBuffer.x = x; _offsetInBuffer.y = y; }
 	void setColorTest(bool value) { _colorTest = value; }
-	void setKeyColor(uint32 value) { _keyColor = _buffer->_pixelFormat.convertTo32BitColor(value); }
+	void setKeyColor(uint32 value) { _keyColor = value; }
 	void setAlphaBlending(bool value) { _blending = value; }
 	void setAlphaReverse(bool value) { _alphaReverse = value; }
 	void setFullScreen(bool value) { _fullScreen = value; }		// Shortcut for rendering

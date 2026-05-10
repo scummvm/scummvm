@@ -33,6 +33,7 @@
 namespace Sludge {
 
 const char CustomSaveHelper::UTF8_CHECKER[] = {'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0'};
+const char CustomSaveHelper::CP1252_CHECKER[] = {'U', 'N', '\xA3', 'L', 'O', '\xE5', 'C', 'K', 'E', 'D', '\0'};
 uint16 CustomSaveHelper::_saveEncoding = false;
 char CustomSaveHelper::_encode1 = 0;
 char CustomSaveHelper::_encode2 = 0;
@@ -131,7 +132,11 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 
 	if (_saveEncoding) {
 		checker = readStringEncoded(fp);
-		if (checker != UTF8_CHECKER) {
+
+		// ScummVM used UTF8_CHECKER when writing files before March 2026 due to a conversion error.
+		// For backward compatibility, we still accept UTF8_CHECKER when reading files.
+		// Files written after March 2026 use CP1252_CHECKER, the correct encoding.
+		if ((checker != CP1252_CHECKER) && (checker != UTF8_CHECKER)) {
 			delete fp;
 			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}
@@ -201,7 +206,7 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 
 	if (_saveEncoding) {
 		fp->writeString("[Custom data (encoded)]\r\n");
-		writeStringEncoded(UTF8_CHECKER, fp);
+		writeStringEncoded(CP1252_CHECKER, fp);
 	} else {
 		fp->writeString("[Custom data (ASCII)]\n");
 	}

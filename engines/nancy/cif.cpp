@@ -60,6 +60,12 @@ static void syncCifInfo(Common::Serializer &ser, CifInfo &info, bool tree) {
 	if (!tree) {
 		info.dataOffset = ser.bytesSynced();
 	}
+
+	// HACK: Since Nancy14, the compression flag isn't set
+	// in the header. Try to detect compressed files by the
+	// presence of a compressed size
+	if (g_nancy->getGameType() >= kGameTypeNancy14 && info.compressedSize > 0)
+		info.comp = CifInfo::kResCompression;
 }
 
 // Reads the data for ciftree cif files
@@ -148,13 +154,14 @@ Common::SeekableReadStream *CifFile::createReadStreamRaw() const {
 }
 
 bool CifFile::sync(Common::Serializer &ser) {
-	if (!ser.matchBytes("CIF FILE WayneSikes", 20)) {
+	if (g_nancy->getGameType() <= kGameTypeNancy11 && ser.matchBytes("CIF FILE WayneSikes", 20)) {
+		ser.skip(4);	// 4 bytes unused
+	} else if (g_nancy->getGameType() >= kGameTypeNancy12 && ser.matchBytes("CIF FILE HerInteractive", 24)) {
+		// Nancy 12+
+	} else {
 		warning("Invalid id string found in CifFile '%s'", _info.name.toString().c_str());
 		return false;
 	}
-
-	// 4 bytes unused
-	ser.skip(4);
 
 	// Version high bytes. These do not change
 	uint16 hi = 2;
@@ -163,7 +170,7 @@ bool CifFile::sync(Common::Serializer &ser) {
 	uint32 ver = (g_nancy->getGameType() <= kGameTypeNancy1) ? 0 : 1;
 	ser.syncAsUint16LE(ver);
 
-	if (ver != 0 && ver != 1) {
+	if (ver != 0 && ver != 1 && ver != 2) {
 		warning("Unsupported version %d found in CifFile '%s'", ver, _info.name.toString().c_str());
 		return false;
 	}
@@ -285,13 +292,15 @@ CifTree *CifTree::makeCifTreeArchive(const Common::String &name, const Common::S
 }
 
 bool CifTree::sync(Common::Serializer &ser) {
-	if (!ser.matchBytes("CIF TREE WayneSikes", 20)) {
+	if (g_nancy->getGameType() <= kGameTypeNancy11 && ser.matchBytes("CIF TREE WayneSikes", 20)) {
+		// Nancy 1-11
+		ser.skip(4); // 4 bytes unused
+	} else if (g_nancy->getGameType() >= kGameTypeNancy12 && ser.matchBytes("CIF TREE HerInteractive", 24)) {
+		// Nancy 12+
+	} else {
 		warning("Invalid id string found in CifTree '%s'", _name.toString().c_str());
 		return false;
 	}
-
-	// 4 bytes unused
-	ser.skip(4);
 
 	// Version high bytes. These do not change
 	uint16 hi = 2;
@@ -300,7 +309,8 @@ bool CifTree::sync(Common::Serializer &ser) {
 	uint32 ver = (g_nancy->getGameType() <= kGameTypeNancy1) ? 0 : 1;
 	ser.syncAsUint16LE(ver);
 
-	if (ver != 0 && ver != 1) {
+	// TODO: Nancy16 introduced version 3
+	if (ver != 0 && ver != 1 && ver != 2) {
 		warning("Unsupported version %d found in CifTree '%s'", ver, _name.toString().c_str());
 		return false;
 	}
@@ -331,6 +341,18 @@ bool CifTree::sync(Common::Serializer &ser) {
 	}
 
 	return true;
+}
+
+Common::Array<Common::Path> CifTree::getPathsForType(CifInfo::ResType type) const {
+	Common::Array<Common::Path> pathList;
+
+	for (auto &it : _fileMap) {
+		if (type == CifInfo::kResTypeAny || it._value.type == type) {
+			pathList.push_back(it._key);
+		}
+	}
+
+	return pathList;
 }
 
 bool PatchTree::hasFile(const Common::Path &path) const {

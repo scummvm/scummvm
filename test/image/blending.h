@@ -29,6 +29,7 @@
 #include "common/fs.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
@@ -796,10 +797,20 @@ static bool areSurfacesEqual(const Graphics::ManagedSurface *a, const Graphics::
 
 class BlendBlitUnfilteredTestSuite : public CxxTest::TestSuite {
 public:
-	void test_blend_speed() {
+	void setUp() {
 #if BENCHMARK_TIME
 		Common::install_null_g_system();
+#endif
+	}
 
+	void tearDown() {
+#if BENCHMARK_TIME
+		Common::uninstall_null_g_system();
+#endif
+	}
+
+	void test_blend_speed() {
+#if BENCHMARK_TIME
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitGeneric;
 #ifdef SCUMMVM_NEON
 		Graphics::BlendBlit::blitFunc = Graphics::BlendBlit::blitNEON;
@@ -974,7 +985,7 @@ public:
 		for (int g = 255; g >= 0; g = (g == 255 ? 128 : (g == 128 ? 0 : -1))) {
 		for (int b = 255; b >= 0; b = (b == 255 ? 128 : (b == 128 ? 0 : -1))) {
 		for (int flipping = 0; flipping <= 3; flipping++) {
-		for (int rect = 0; rect < (int)(sizeof(srcs)/sizeof(srcs[0])); rect++) {
+		for (int rect = 0; rect < ARRAYSIZE(srcs); rect++) {
 			oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(ba, br, bg, bb));
 			oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
 			oldSurf.blit(oldSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);

@@ -46,7 +46,7 @@ TileRules::~TileRules() {
 
 void TileRules::load() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
+	Common::Array<ConfigElement> rules = config->getElement("tileRules").getChildren();
 
 	for (const auto &i : rules) {
 		TileRule *rule = new TileRule();
@@ -79,7 +79,7 @@ TileSets::~TileSets() {
 
 void TileSets::loadAll() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> conf;
+	Common::Array<ConfigElement> conf;
 
 	unloadAll();
 
@@ -199,12 +199,12 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 	_walkOffDirs = MASK_DIR_ALL;
 	_name = conf.getString("name");
 
-	for (i = 0; i < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); i++) {
+	for (i = 0; i < ARRAYSIZE(booleanAttributes); i++) {
 		if (conf.getBool(booleanAttributes[i].name))
 			_mask |= booleanAttributes[i].mask;
 	}
 
-	for (i = 0; i < sizeof(movementBooleanAttr) / sizeof(movementBooleanAttr[0]); i++) {
+	for (i = 0; i < ARRAYSIZE(movementBooleanAttr); i++) {
 		if (conf.getBool(movementBooleanAttr[i]._name))
 			_movementMask |= movementBooleanAttr[i]._mask;
 	}
@@ -257,7 +257,7 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 		_extends = nullptr;
 
 	int index = 0;
-	Std::vector<ConfigElement> children = tilesetConf.getChildren();
+	Common::Array<ConfigElement> children = tilesetConf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() != "tile")
 			continue;

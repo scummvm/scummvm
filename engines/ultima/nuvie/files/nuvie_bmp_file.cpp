@@ -220,7 +220,7 @@ void NuvieBmpFile::write8BitData(NuvieIOFileWrite *file) {
 	}
 }
 
-bool NuvieBmpFile::handleError(Std::string error) {
+bool NuvieBmpFile::handleError(Common::String error) {
 	if (data) {
 		free(data);
 		data = nullptr;

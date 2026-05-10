@@ -60,7 +60,7 @@ CColorButton    *pOKButton = nullptr;
  *
  ****************************************************************/
 CUserWonDlg::CUserWonDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	:  CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	pUWonPalette = pPalette;
 }
 

@@ -27,7 +27,7 @@
 
 namespace Agi {
 
-class SoundGenA2 : public SoundGen, public Audio::AudioStream {
+class SoundGenA2 : public SoundGen {
 public:
 	SoundGenA2(AgiBase *vm, Audio::Mixer *pMixer);
 	~SoundGenA2() override;
@@ -35,24 +35,13 @@ public:
 	void play(int resnum) override;
 	void stop() override;
 
-	int readBuffer(int16 *buffer, const int numSamples) override;
-
-	bool isStereo() const override {
-		return false;
-	}
-
-	bool endOfData() const override {
-		return false;
-	}
-
-	int getRate() const override {
-		return _speaker.getRate();
-	}
-
 private:
-	Common::Mutex _mutex;
 	bool _isPlaying;
-	Audio::PCSpeakerStream _speaker;
+	Audio::PCSpeaker _speaker;
+
+	void onTimer();
+
+	static void timerProc(void *refCon);
 };
 
 } // End of namespace Agi

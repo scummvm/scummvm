@@ -21,7 +21,10 @@
 
 #include "m4/burger/rooms/section7/room706.h"
 #include "m4/burger/rooms/section7/section7.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -558,7 +561,7 @@ void Room706::parser() {
 
 void Room706::conv83() {
 	if (conv_sound_to_play()) {
-		int who = conv_whos_talking();
+		const int who = conv_whos_talking();
 
 		if (who <= 0) {
 			_astralShould = 1;

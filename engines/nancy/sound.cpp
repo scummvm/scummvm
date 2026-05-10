@@ -27,7 +27,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/vorbis.h"
+#include "engines/nancy/sound_vorbis.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
@@ -222,7 +222,7 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware)
 		return Audio::makeRawStream(subStream, overrideSamplesPerSec == 0 ? samplesPerSec : overrideSamplesPerSec, flags, DisposeAfterUse::YES);
 	else
-		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
+		return makeHISVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
 SoundManager::SoundManager() : _shouldRecalculate(false), _mixer(g_system->getMixer()) {}
@@ -613,7 +613,7 @@ void SoundManager::recalculateSoundEffects() {
 	_positionLerp = 0;
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
-		const Nancy::State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
+		const State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
 		SceneChangeDescription &sceneInfo = NancySceneState.getSceneInfo();
 		Math::Vector3d rotatedFrontVector = NancySceneState.getSceneInfo().listenerFrontVector;
 		rotatedFrontVector.normalize();
@@ -638,7 +638,7 @@ void SoundManager::recalculateSoundEffects() {
 void SoundManager::stopAndUnloadSceneSpecificSounds() {
 	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
 
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+	if (g_nancy->getGameType() == kGameTypeVampire && State::Map::hasInstance()) {
 		// Don't stop the map sound in certain scenes
 		uint nextScene = NancySceneState.getNextSceneInfo().sceneID;
 		if (nextScene != 0 && (nextScene < 15 || nextScene > 27)) {
@@ -655,7 +655,7 @@ void SoundManager::stopAndUnloadSceneSpecificSounds() {
 
 void SoundManager::pauseSceneSpecificSounds(bool pause) {
 	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+	if (g_nancy->getGameType() == kGameTypeVampire && State::Map::hasInstance()) {
 		if (!pause || g_nancy->getState() != NancyState::kMap) {
 			// Stop the map sound in certain scenes
 			uint currentScene = NancySceneState.getSceneInfo().sceneID;
@@ -902,6 +902,29 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 		_mixer->setChannelBalance(chan.handle, pan * 127);
 		_mixer->setChannelRate(chan.handle, rate);
 	}
+}
+
+Common::String SoundManager::getChannelInfo(uint16 channelID) {
+	Common::String result;
+
+	const auto &chan = _channels[channelID];
+
+	if (isSoundPlaying(channelID)) {
+		result += Common::String::format("Channel %u, filename %s\n", channelID, chan.name.c_str());
+		result += Common::String::format("Source rate %i, playing at %i\n", chan.stream->getRate(), _mixer->getChannelRate(chan.handle));
+		result += Common::String::format("Volume: %u, pan: %i, numLoops: %u\n\n", chan.volume, _mixer->getChannelBalance(chan.handle), chan.numLoops);
+
+		if (chan.playCommands != kPlaySequential) {
+			result += Common::String::format("\tPlay commands 0x%08x\n", chan.playCommands);
+
+			if (chan.effectData) {
+				result += Common::String::format("\tPosition: %f, %f, %f, ", chan.position.x(), chan.position.y(), chan.position.z());
+				result += Common::String::format("delta: %f, %f, %f\n\n", chan.positionDelta.x(), chan.positionDelta.y(), chan.positionDelta.z());
+			}
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Nancy

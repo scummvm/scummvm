@@ -21,7 +21,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(DYNAMIC_MODULES) && defined(POSIX) && !defined(__3DS__)
+#if defined(DYNAMIC_MODULES) && defined(POSIX) && !defined(__3DS__) && !defined(__MINT__)
 
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
@@ -81,4 +81,4 @@ Plugin *POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
 }
 
 
-#endif // defined(DYNAMIC_MODULES) && defined(POSIX)
+#endif // defined(DYNAMIC_MODULES) && defined(POSIX) && !defined(__3DS__) && !defined(__MINT__)

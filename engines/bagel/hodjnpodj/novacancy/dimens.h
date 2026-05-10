@@ -39,40 +39,40 @@ namespace NoVacancy {
 
 #define _STRINGTABLE    1                 // use stringtable for retrieving string constants.
 
-#define RULES                   ".\\novac.txt"                      //  rules text file.                
+#define RULES                   "novac.txt"                      //  rules text file.
 
 #if !_STRINGTABLE
 
 	/////////////////////////<<<<<<<<<WAVES AND MIDIS>>>>>>>>>//////////////////////
-	#define MIDI_FILE               ".\\sound\\shotmac.mid"         //background music
-	#define CREAKING_DOOR_CLOSING ".\\sound\\doorclos.wav" //creaking/slamming  door closing.
-	#define CREAKING_DOOR_OPENING ".\\sound\\dooropen.wav" //creaking  door opening.
-	#define ROLLING_DICE_WAVE            ".\\sound\\dice2.wav"       //rolling of dice.
-	#define EXTRA                   ".\\sound\\extra.wav"                             // newspaper EasterEgg
-	#define GHOST                   ".\\sound\\ghost.wav"                            // bottle EasterEgg
-	#define HAT                         ".\\sound\\hat.wav"
-	#define MEOW                    ".\\sound\\meow.wav"
-	#define HICCUPS               ".\\sound\\hiccups.wav"
-	#define SORRY                   ".\\sound\\sorry.wav"
-	#define SOSORRY             ".\\sound\\sosorry.wav"
-	#define NOPE                    ".\\sound\\nope.wav"
-	#define APPLAUSE            ".\\sound\\applause.wav"
-	#define FOOTSTEP            ".\\sound\\footstep.wav"
-	#define SINGRAIN                ".\\sound\\singrain.wav"
-	#define SHAKE                   ".\\SOUND\\SHAKE.WAV"
-	#define ROLL                    ".\\SOUND\\ROLL.WAV"
+	#define MIDI_FILE               "sound\\shotmac.mid"         //background music
+	#define CREAKING_DOOR_CLOSING "sound\\doorclos.wav" //creaking/slamming  door closing.
+	#define CREAKING_DOOR_OPENING "sound\\dooropen.wav" //creaking  door opening.
+	#define ROLLING_DICE_WAVE            "sound\\dice2.wav"       //rolling of dice.
+	#define EXTRA                   "sound\\extra.wav"                             // newspaper EasterEgg
+	#define GHOST                   "sound\\ghost.wav"                            // bottle EasterEgg
+	#define HAT                         "sound\\hat.wav"
+	#define MEOW                    "sound\\meow.wav"
+	#define HICCUPS               "sound\\hiccups.wav"
+	#define SORRY                   "sound\\sorry.wav"
+	#define SOSORRY             "sound\\sosorry.wav"
+	#define NOPE                    "sound\\nope.wav"
+	#define APPLAUSE            "sound\\applause.wav"
+	#define FOOTSTEP            "sound\\footstep.wav"
+	#define SINGRAIN                "sound\\singrain.wav"
+	#define SHAKE                   "sound\\SHAKE.WAV"
+	#define ROLL                    "sound\\ROLL.WAV"
 
 
 	/////////////////////////<<<<<<<<<CELL STRIPS, BMPS AND ANIMATIONS>>>>>>>//////////////////////
 
-	#define MINI_GAME_MAP   ".\\ART\\NOVACSY3.BMP"         //splash screen
+	#define MINI_GAME_MAP   "art\\NOVACSY3.BMP"         //splash screen
 
-	#define ROLLING_LDIE_ANIMATION ".\\art\\ld.bmp"                      //the 2-dice case cell strip for leftdie (white bckgnd)
-	#define ROLLING_RDIE_ANIMATION ".\\art\\Rd.bmp"                      //the 2-dice case cell strip for r-die (white bckgnd)
+	#define ROLLING_LDIE_ANIMATION "art\\ld.bmp"                      //the 2-dice case cell strip for leftdie (white bckgnd)
+	#define ROLLING_RDIE_ANIMATION "art\\Rd.bmp"                      //the 2-dice case cell strip for r-die (white bckgnd)
 	#define SINGLE_ROLLING_DIE_ANIMATION     ROLLING_LDIE_ANIMATION       //the single die case cell strip                           /////////////---------?
-	#define BOTTLE_STRIP_door_closed    ".\\art\\bottle1.bmp"
-	#define HAT4_STRIP_door_open    ".\\art\\cat_open.bmp"
-	#define HAT4_STRIP_door_closed  ".\\art\\cat_clsd.bmp"
+	#define BOTTLE_STRIP_door_closed    "art\\bottle1.bmp"
+	#define HAT4_STRIP_door_open    "art\\cat_open.bmp"
+	#define HAT4_STRIP_door_closed  "art\\cat_clsd.bmp"
 
 
 #else                                                         //_STRINGTABLE

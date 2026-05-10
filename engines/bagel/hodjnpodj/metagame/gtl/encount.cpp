@@ -45,302 +45,302 @@ bool EligibleEncounter(int, bool, int, long);
 
 static const CEncounterTable Encounters[MG_ENC_COUNT] = {
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB41.WAV",
+		MG_SECTOR_ANY, "sound\\BB41.WAV",
 		{MG_ACT_CROWNS, -14, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB42.WAV",
+		MG_SECTOR_ANY, "sound\\BB42.WAV",
 		{MG_ACT_CROWNS, -6, 0}, ""
 	},
 
 	{
-		MG_SECTOR_BRIDGE, ".\\SOUND\\BB39.WAV",
+		MG_SECTOR_BRIDGE, "sound\\BB39.WAV",
 		{MG_ACT_OBJECT, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_BRIDGE, ".\\SOUND\\BB40.WAV",
+		MG_SECTOR_BRIDGE, "sound\\BB40.WAV",
 		{MG_ACT_GO, MG_SECTOR_CHUCKLE, 0}, ""
 	},
 
 	{
-		MG_SECTOR_CHUCKLE, ".\\SOUND\\BB19.WAV",
+		MG_SECTOR_CHUCKLE, "sound\\BB19.WAV",
 		{MG_ACT_GO, MG_SECTOR_RIVER, 0}, ""
 	},
 
 	{
-		MG_SECTOR_CHUCKLE, ".\\SOUND\\BB20.WAV",
+		MG_SECTOR_CHUCKLE, "sound\\BB20.WAV",
 		{MG_ACT_OBJECT, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_DESERT, ".\\SOUND\\BB01.WAV",
+		MG_SECTOR_DESERT, "sound\\BB01.WAV",
 		{MG_ACT_GO2, MG_SECTOR_CHUCKLE, MG_SECTOR_PATSHWERQUE, 0}, ""
 	},
 
 	{
-		MG_SECTOR_DESERT, ".\\SOUND\\BB02.WAV",
+		MG_SECTOR_DESERT, "sound\\BB02.WAV",
 		{MG_ACT_OBJECT, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ESTATE, ".\\SOUND\\BB05.WAV",
+		MG_SECTOR_ESTATE, "sound\\BB05.WAV",
 		{MG_ACT_CROWNS, +50, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ESTATE, ".\\SOUND\\BB06.WAV",
+		MG_SECTOR_ESTATE, "sound\\BB06.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_FARM, ".\\SOUND\\BB17.WAV",
+		MG_SECTOR_FARM, "sound\\BB17.WAV",
 		{MG_ACT_CROWNS, +25, MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_FARM, ".\\SOUND\\BB18.WAV",
+		MG_SECTOR_FARM, "sound\\BB18.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_GLACIER, ".\\SOUND\\BB07.WAV",
+		MG_SECTOR_GLACIER, "sound\\BB07.WAV",
 		{MG_ACT_GO, MG_SECTOR_PASTEESH, 0}, ""
 	},
 
 	{
-		MG_SECTOR_GLACIER, ".\\SOUND\\BB08.WAV",
+		MG_SECTOR_GLACIER, "sound\\BB08.WAV",
 		{MG_ACT_OBJECT, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_HILLSIDE, ".\\SOUND\\BB13.WAV",
+		MG_SECTOR_HILLSIDE, "sound\\BB13.WAV",
 		{MG_ACT_CROWNS, -15, 0}, ""
 	},
 
 	{
-		MG_SECTOR_HILLSIDE, ".\\SOUND\\BB14.WAV",
+		MG_SECTOR_HILLSIDE, "sound\\BB14.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_LAKE, ".\\SOUND\\BB31.WAV",
+		MG_SECTOR_LAKE, "sound\\BB31.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_LAKE, ".\\SOUND\\BB32.WAV",
+		MG_SECTOR_LAKE, "sound\\BB32.WAV",
 		{MG_ACT_OBJECT, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MEADOW, ".\\SOUND\\BB35.WAV",
+		MG_SECTOR_MEADOW, "sound\\BB35.WAV",
 		{MG_ACT_CROWNS, +18, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MEADOW, ".\\SOUND\\BB36.WAV",
+		MG_SECTOR_MEADOW, "sound\\BB36.WAV",
 		{MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MLPARK, ".\\SOUND\\BB03.WAV",
+		MG_SECTOR_MLPARK, "sound\\BB03.WAV",
 		{MG_ACT_CROWNS, -6, MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MLPARK, ".\\SOUND\\BB04.WAV",
+		MG_SECTOR_MLPARK, "sound\\BB04.WAV",
 		{MG_ACT_CROWNS, -20, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MOUNTAINS, ".\\SOUND\\BB29.WAV",
+		MG_SECTOR_MOUNTAINS, "sound\\BB29.WAV",
 		{MG_ACT_CROWNS, +20, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MOUNTAINS, ".\\SOUND\\BB30.WAV",
+		MG_SECTOR_MOUNTAINS, "sound\\BB30.WAV",
 		{MG_ACT_GO, MG_SECTOR_MEADOW, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\BB33.WAV",
+		MG_SECTOR_MOUNTAINVIEW, "sound\\BB33.WAV",
 		{MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\BB34.WAV",
+		MG_SECTOR_MOUNTAINVIEW, "sound\\BB34.WAV",
 		{MG_ACT_GO, MG_SECTOR_POPORREE, 0}, ""
 	},
 
 	{
-		MG_SECTOR_PASTEESH, ".\\SOUND\\BB09.WAV",
+		MG_SECTOR_PASTEESH, "sound\\BB09.WAV",
 		{MG_ACT_CROWNS, -30, 0}, ""
 	},
 
 	{
-		MG_SECTOR_PASTEESH, ".\\SOUND\\BB10.WAV",
+		MG_SECTOR_PASTEESH, "sound\\BB10.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_PATSHWERQUE, ".\\SOUND\\BB21.WAV",
+		MG_SECTOR_PATSHWERQUE, "sound\\BB21.WAV",
 		{MG_ACT_GO, MG_SECTOR_FARM, 0}, ""
 	},
 
 	{
-		MG_SECTOR_PATSHWERQUE, ".\\SOUND\\BB22.WAV",
+		MG_SECTOR_PATSHWERQUE, "sound\\BB22.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_PLAINS, ".\\SOUND\\BB11.WAV",
+		MG_SECTOR_PLAINS, "sound\\BB11.WAV",
 		{MG_ACT_CROWNS, -15, 0}, ""
 	},
 
 	{
-		MG_SECTOR_PLAINS, ".\\SOUND\\BB12.WAV",
+		MG_SECTOR_PLAINS, "sound\\BB12.WAV",
 		{MG_ACT_OBJECT, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_POPORREE, ".\\SOUND\\BB25.WAV",
+		MG_SECTOR_POPORREE, "sound\\BB25.WAV",
 		{MG_ACT_CROWNS, +16, 0}, ""
 	},
 
 	{
-		MG_SECTOR_POPORREE, ".\\SOUND\\BB26.WAV",
+		MG_SECTOR_POPORREE, "sound\\BB26.WAV",
 		{MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_RIVER, ".\\SOUND\\BB37.WAV",
+		MG_SECTOR_RIVER, "sound\\BB37.WAV",
 		{MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_RIVER, ".\\SOUND\\BB38.WAV",
+		MG_SECTOR_RIVER, "sound\\BB38.WAV",
 		{MG_ACT_OBJECT, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_SWAMP, ".\\SOUND\\BB23.WAV",
+		MG_SECTOR_SWAMP, "sound\\BB23.WAV",
 		{MG_ACT_CROWNS, -8, 0}, ""
 	},
 
 	{
-		MG_SECTOR_SWAMP, ".\\SOUND\\BB24.WAV",
+		MG_SECTOR_SWAMP, "sound\\BB24.WAV",
 		{MG_ACT_OBJECT, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_VOLCANO, ".\\SOUND\\BB15.WAV",
+		MG_SECTOR_VOLCANO, "sound\\BB15.WAV",
 		{MG_ACT_CROWNS, -15, 0}, ""
 	},
 
 	{
-		MG_SECTOR_VOLCANO, ".\\SOUND\\BB16.WAV",
+		MG_SECTOR_VOLCANO, "sound\\BB16.WAV",
 		{MG_ACT_CROWNS, +35, 0}, ""
 	},
 
 	{
-		MG_SECTOR_WITTY, ".\\SOUND\\BB27.WAV",
+		MG_SECTOR_WITTY, "sound\\BB27.WAV",
 		{MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_WITTY, ".\\SOUND\\BB28.WAV",
+		MG_SECTOR_WITTY, "sound\\BB28.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB43.WAV",
+		MG_SECTOR_ANY, "sound\\BB43.WAV",
 		{MG_ACT_CROWNS, +16, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB44.WAV",
+		MG_SECTOR_ANY, "sound\\BB44.WAV",
 		{MG_ACT_TURN, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB45.WAV",
+		MG_SECTOR_ANY, "sound\\BB45.WAV",
 		{MG_ACT_CROWNS, +10, MG_ACT_OBJECT, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB46.WAV",
+		MG_SECTOR_ANY, "sound\\BB46.WAV",
 		{MG_ACT_CROWNS, +22, MG_ACT_OBJECT, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB47.WAV",
+		MG_SECTOR_ANY, "sound\\BB47.WAV",
 		{MG_ACT_CROWNS, -11, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB48.WAV",
+		MG_SECTOR_ANY, "sound\\BB48.WAV",
 		{MG_ACT_GOCOND, MG_SECTOR_LAKE, MG_SECTOR_HILLSIDE, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB49.WAV",
+		MG_SECTOR_ANY, "sound\\BB49.WAV",
 		{MG_ACT_GOCOND, MG_SECTOR_GLACIER, MG_SECTOR_MOUNTAINS, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB50.WAV",
+		MG_SECTOR_ANY, "sound\\BB50.WAV",
 		{MG_ACT_OBJECT, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB51.WAV",
+		MG_SECTOR_ANY, "sound\\BB51.WAV",
 		{MG_ACT_CROWNS, -6, MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB52.WAV",
+		MG_SECTOR_ANY, "sound\\BB52.WAV",
 		{MG_ACT_CROWNS, +21, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB53.WAV",
+		MG_SECTOR_ANY, "sound\\BB53.WAV",
 		{MG_ACT_CROWNS, -18, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB54.WAV",
+		MG_SECTOR_ANY, "sound\\BB54.WAV",
 		{MG_ACT_CROWNS, -17, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB55.WAV",
+		MG_SECTOR_ANY, "sound\\BB55.WAV",
 		{MG_ACT_TURN, +1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB56.WAV",
+		MG_SECTOR_ANY, "sound\\BB56.WAV",
 		{MG_ACT_OBJECT, -1, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB57.WAV",
+		MG_SECTOR_ANY, "sound\\BB57.WAV",
 		{MG_ACT_CROWNS, +26, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB58.WAV",
+		MG_SECTOR_ANY, "sound\\BB58.WAV",
 		{MG_ACT_CROWNS, -9, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB59.WAV",
+		MG_SECTOR_ANY, "sound\\BB59.WAV",
 		{MG_ACT_CROWNS, -15, 0}, ""
 	},
 
 	{
-		MG_SECTOR_ANY, ".\\SOUND\\BB60.WAV",
+		MG_SECTOR_ANY, "sound\\BB60.WAV",
 		{MG_ACT_CROWNS, -12, 0}, ""
 	},
 
@@ -348,207 +348,207 @@ static const CEncounterTable Encounters[MG_ENC_COUNT] = {
 	// Start of Color Narrations
 	//
 
-	{MG_SECTOR_ANY, ".\\SOUND\\CL161.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL168.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL162.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL169.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL163.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL170.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL164.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL171.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL161.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL168.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL162.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL169.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL163.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL170.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL164.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL171.WAV", { MG_ACT_PODJ, 0 }, ""},
 
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL153.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL154.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL155.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL156.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL157.WAV", { 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL158.WAV", { 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL159.WAV", { 0 }, ""},
-	{MG_SECTOR_BRIDGE, ".\\SOUND\\CL160.WAV", { 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL153.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL154.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL155.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL156.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL157.WAV", { 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL158.WAV", { 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL159.WAV", { 0 }, ""},
+	{MG_SECTOR_BRIDGE, "sound\\CL160.WAV", { 0 }, ""},
 
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL073.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL074.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL075.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL076.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL077.WAV", { 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL078.WAV", { 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL079.WAV", { 0 }, ""},
-	{MG_SECTOR_CHUCKLE, ".\\SOUND\\CL080.WAV", { 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL073.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL074.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL075.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL076.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL077.WAV", { 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL078.WAV", { 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL079.WAV", { 0 }, ""},
+	{MG_SECTOR_CHUCKLE, "sound\\CL080.WAV", { 0 }, ""},
 
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL001.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL002.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL003.WAV", { 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL004.WAV", { 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL005.WAV", { 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL006.WAV", { 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL007.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_DESERT, ".\\SOUND\\CL008.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL001.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL002.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL003.WAV", { 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL004.WAV", { 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL005.WAV", { 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL006.WAV", { 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL007.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_DESERT, "sound\\CL008.WAV", { MG_ACT_PODJ, 0 }, ""},
 
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL017.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL018.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL019.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL020.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL021.WAV", { 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL022.WAV", { 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL023.WAV", { 0 }, ""},
-	{MG_SECTOR_ESTATE, ".\\SOUND\\CL024.WAV", { 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL017.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL018.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL019.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL020.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL021.WAV", { 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL022.WAV", { 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL023.WAV", { 0 }, ""},
+	{MG_SECTOR_ESTATE, "sound\\CL024.WAV", { 0 }, ""},
 
-	{MG_SECTOR_FARM, ".\\SOUND\\CL065.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL066.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL067.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL068.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL069.WAV", { 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL070.WAV", { 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL071.WAV", { 0 }, ""},
-	{MG_SECTOR_FARM, ".\\SOUND\\CL072.WAV", { 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL065.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL066.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL067.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL068.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL069.WAV", { 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL070.WAV", { 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL071.WAV", { 0 }, ""},
+	{MG_SECTOR_FARM, "sound\\CL072.WAV", { 0 }, ""},
 
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL025.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL026.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL027.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL028.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL029.WAV", { 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL030.WAV", { 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL031.WAV", { 0 }, ""},
-	{MG_SECTOR_GLACIER, ".\\SOUND\\CL032.WAV", { 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL025.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL026.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL027.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL028.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL029.WAV", { 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL030.WAV", { 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL031.WAV", { 0 }, ""},
+	{MG_SECTOR_GLACIER, "sound\\CL032.WAV", { 0 }, ""},
 
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL049.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL050.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL051.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL052.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL053.WAV", { 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL054.WAV", { 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL055.WAV", { 0 }, ""},
-	{MG_SECTOR_HILLSIDE, ".\\SOUND\\CL056.WAV", { 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL049.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL050.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL051.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL052.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL053.WAV", { 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL054.WAV", { 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL055.WAV", { 0 }, ""},
+	{MG_SECTOR_HILLSIDE, "sound\\CL056.WAV", { 0 }, ""},
 
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL121.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL122.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL123.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL124.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL125.WAV", { 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL126.WAV", { 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL127.WAV", { 0 }, ""},
-	{MG_SECTOR_LAKE, ".\\SOUND\\CL128.WAV", { 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL121.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL122.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL123.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL124.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL125.WAV", { 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL126.WAV", { 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL127.WAV", { 0 }, ""},
+	{MG_SECTOR_LAKE, "sound\\CL128.WAV", { 0 }, ""},
 
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL137.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL138.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL139.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL140.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL141.WAV", { 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL142.WAV", { 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL143.WAV", { 0 }, ""},
-	{MG_SECTOR_MEADOW, ".\\SOUND\\CL144.WAV", { 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL137.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL138.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL139.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL140.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL141.WAV", { 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL142.WAV", { 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL143.WAV", { 0 }, ""},
+	{MG_SECTOR_MEADOW, "sound\\CL144.WAV", { 0 }, ""},
 
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL009.WAV", { 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL010.WAV", { 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL011.WAV", { 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL012.WAV", { 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL013.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL014.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL015.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MLPARK, ".\\SOUND\\CL016.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL009.WAV", { 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL010.WAV", { 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL011.WAV", { 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL012.WAV", { 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL013.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL014.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL015.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MLPARK, "sound\\CL016.WAV", { MG_ACT_PODJ, 0 }, ""},
 
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL113.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL114.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL115.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL116.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL117.WAV", { 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL118.WAV", { 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL119.WAV", { 0 }, ""},
-	{MG_SECTOR_MOUNTAINS, ".\\SOUND\\CL120.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL113.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL114.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL115.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL116.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL117.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL118.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL119.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINS, "sound\\CL120.WAV", { 0 }, ""},
 
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL129.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL130.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL131.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL132.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL133.WAV", { 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL134.WAV", { 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL135.WAV", { 0 }, ""},
-	{MG_SECTOR_MOUNTAINVIEW, ".\\SOUND\\CL136.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL129.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL130.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL131.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL132.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL133.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL134.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL135.WAV", { 0 }, ""},
+	{MG_SECTOR_MOUNTAINVIEW, "sound\\CL136.WAV", { 0 }, ""},
 
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL033.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL034.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL035.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL036.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL037.WAV", { 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL038.WAV", { 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL039.WAV", { 0 }, ""},
-	{MG_SECTOR_PASTEESH, ".\\SOUND\\CL040.WAV", { 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL033.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL034.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL035.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL036.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL037.WAV", { 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL038.WAV", { 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL039.WAV", { 0 }, ""},
+	{MG_SECTOR_PASTEESH, "sound\\CL040.WAV", { 0 }, ""},
 
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL081.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL082.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL083.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL084.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL085.WAV", { 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL086.WAV", { 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL087.WAV", { 0 }, ""},
-	{MG_SECTOR_PATSHWERQUE, ".\\SOUND\\CL088.WAV", { 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL081.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL082.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL083.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL084.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL085.WAV", { 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL086.WAV", { 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL087.WAV", { 0 }, ""},
+	{MG_SECTOR_PATSHWERQUE, "sound\\CL088.WAV", { 0 }, ""},
 
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL041.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL042.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL043.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL044.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL045.WAV", { 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL046.WAV", { 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL047.WAV", { 0 }, ""},
-	{MG_SECTOR_PLAINS, ".\\SOUND\\CL048.WAV", { 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL041.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL042.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL043.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL044.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL045.WAV", { 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL046.WAV", { 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL047.WAV", { 0 }, ""},
+	{MG_SECTOR_PLAINS, "sound\\CL048.WAV", { 0 }, ""},
 
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL097.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL098.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL099.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL100.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL101.WAV", { 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL102.WAV", { 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL103.WAV", { 0 }, ""},
-	{MG_SECTOR_POPORREE, ".\\SOUND\\CL104.WAV", { 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL097.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL098.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL099.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL100.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL101.WAV", { 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL102.WAV", { 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL103.WAV", { 0 }, ""},
+	{MG_SECTOR_POPORREE, "sound\\CL104.WAV", { 0 }, ""},
 
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL145.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL146.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL147.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL148.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL149.WAV", { 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL150.WAV", { 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL151.WAV", { 0 }, ""},
-	{MG_SECTOR_RIVER, ".\\SOUND\\CL152.WAV", { 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL145.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL146.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL147.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL148.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL149.WAV", { 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL150.WAV", { 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL151.WAV", { 0 }, ""},
+	{MG_SECTOR_RIVER, "sound\\CL152.WAV", { 0 }, ""},
 
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL089.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL090.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL091.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL092.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL093.WAV", { 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL094.WAV", { 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL095.WAV", { 0 }, ""},
-	{MG_SECTOR_SWAMP, ".\\SOUND\\CL096.WAV", { 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL089.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL090.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL091.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL092.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL093.WAV", { 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL094.WAV", { 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL095.WAV", { 0 }, ""},
+	{MG_SECTOR_SWAMP, "sound\\CL096.WAV", { 0 }, ""},
 
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL057.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL058.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL059.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL060.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL061.WAV", { 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL062.WAV", { 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL063.WAV", { 0 }, ""},
-	{MG_SECTOR_VOLCANO, ".\\SOUND\\CL064.WAV", { 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL057.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL058.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL059.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL060.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL061.WAV", { 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL062.WAV", { 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL063.WAV", { 0 }, ""},
+	{MG_SECTOR_VOLCANO, "sound\\CL064.WAV", { 0 }, ""},
 
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL105.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL106.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL107.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL108.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL109.WAV", { 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL110.WAV", { 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL111.WAV", { 0 }, ""},
-	{MG_SECTOR_WITTY, ".\\SOUND\\CL112.WAV", { 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL105.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL106.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL107.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL108.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL109.WAV", { 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL110.WAV", { 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL111.WAV", { 0 }, ""},
+	{MG_SECTOR_WITTY, "sound\\CL112.WAV", { 0 }, ""},
 
-	{MG_SECTOR_ANY, ".\\SOUND\\CL165.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL166.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL167.WAV", { MG_ACT_HODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL172.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL173.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL174.WAV", { MG_ACT_PODJ, 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL175.WAV", { 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL176.WAV", { 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL177.WAV", { 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL178.WAV", { 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL179.WAV", { 0 }, ""},
-	{MG_SECTOR_ANY, ".\\SOUND\\CL180.WAV", { 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL165.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL166.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL167.WAV", { MG_ACT_HODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL172.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL173.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL174.WAV", { MG_ACT_PODJ, 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL175.WAV", { 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL176.WAV", { 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL177.WAV", { 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL178.WAV", { 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL179.WAV", { 0 }, ""},
+	{MG_SECTOR_ANY, "sound\\CL180.WAV", { 0 }, ""},
 };
 
 

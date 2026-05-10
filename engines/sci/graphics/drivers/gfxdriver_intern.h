@@ -32,7 +32,7 @@ class GfxDefaultDriver : public GfxDriver {
 public:
 	GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool isSCI0, bool rgbRendering);
 	~GfxDefaultDriver() override;
-	void initScreen(const Graphics::PixelFormat *srcRGBFormat) override; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
+	bool initScreen(const Graphics::PixelFormat *srcRGBFormat) override; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -68,7 +68,7 @@ class SCI0_DOSPreVGADriver : public GfxDriver {
 public:
 	SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, bool rgbRendering);
 	~SCI0_DOSPreVGADriver() override;
-	void initScreen(const Graphics::PixelFormat*) override;
+	bool initScreen(const Graphics::PixelFormat*) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
 	void replaceMacCursor(const Graphics::Cursor*) override;
 	void copyCurrentBitmap(byte*, uint32) const override;
@@ -91,7 +91,7 @@ class UpscaledGfxDriver : public GfxDefaultDriver {
 public:
 	UpscaledGfxDriver(int16 textAlignX, bool scaleCursor, bool rgbRendering);
 	~UpscaledGfxDriver() override;
-	void initScreen(const Graphics::PixelFormat *format) override;
+	bool initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -127,7 +127,7 @@ class SCI1_EGADriver : public GfxDriver {
 public:
 	SCI1_EGADriver(bool rgbRendering);
 	~SCI1_EGADriver() override;
-	void initScreen(const Graphics::PixelFormat*) override;
+	bool initScreen(const Graphics::PixelFormat*) override;
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod*, const byte*) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;

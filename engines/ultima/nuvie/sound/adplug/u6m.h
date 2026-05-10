@@ -46,8 +46,8 @@ public:
 	void rewind(int subsong) override;
 	float getrefresh() override;
 
-	Std::string gettype() override {
-		return Std::string("Ultima 6 Music");
+	Common::String gettype() override {
+		return Common::String("Ultima 6 Music");
 	};
 
 

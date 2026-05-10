@@ -233,17 +233,17 @@ void ExpEffect::start_anim() {
 }
 
 ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
-	vector<MapCoord> t;
+	Common::Array<MapCoord> t;
 	t.push_back(target);
 
 	init(tileNum, start, t, speed, trailFlag, initialTileRotation, rotationAmount, src_y_offset);
 }
 
-ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation) {
+ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation) {
 	init(tileNum, start, t, speed, trailFlag, initialTileRotation, 0, 0);
 }
 
-void ProjectileEffect::init(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
+void ProjectileEffect::init(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
 	finished_tiles = 0;
 
 	tile_num = tileNum;
@@ -474,7 +474,7 @@ uint16 HitEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	return 0;
 }
 
-TextEffect::TextEffect(Std::string text) { // default somewhat centered on player for cheat messages
+TextEffect::TextEffect(Common::String text) { // default somewhat centered on player for cheat messages
 	const MapWindow *map_window = game->get_map_window();
 	if (!map_window || map_window->Status() != WIDGET_VISIBLE) // scripted sequence like intro and intro menu
 		return;
@@ -488,7 +488,7 @@ TextEffect::TextEffect(Std::string text) { // default somewhat centered on playe
 /*** TextEffect ***/
 /* Print Text to MapWindow for duration
  */
-TextEffect::TextEffect(Std::string text, const MapCoord &location) {
+TextEffect::TextEffect(Common::String text, const MapCoord &location) {
 	add_anim(new TextAnim(text, location, 1500));
 }
 
@@ -835,7 +835,7 @@ void MissileEffect::hit_blocking() {
 
 /*** SleepEffect ***/
 /* The TimedAdvance is started after the fade-out completes. */
-SleepEffect::SleepEffect(Std::string until)
+SleepEffect::SleepEffect(Common::String until)
 	: timer(nullptr),
 	  stop_hour(0),
 	  stop_minute(0),
@@ -1318,7 +1318,7 @@ void TileFadeEffect::add_actor_anim() {
 	Tile *from = actor->get_tile();
 	add_tile_anim(loc, from);
 
-	const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+	const Common::List<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
 	for (Obj *obj : surrounding_objs)
 		add_obj_anim(obj);
 }
@@ -1419,7 +1419,7 @@ void TileBlackFadeEffect::add_actor_anim() {
 	Tile *from = actor->get_tile();
 	add_tile_anim(loc, from);
 
-	const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+	const Common::List<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
 	for (Obj *o : surrounding_objs)
 		add_obj_anim(o);
 }
@@ -1658,7 +1658,7 @@ TextInputEffect::TextInputEffect(const char *allowed_chars, bool can_escape) {
 /* The effect ends when this is called. (if input is correct) */
 uint16 TextInputEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	if (msg == MESG_INPUT_READY) {
-		input = *(Std::string *)data;
+		input = *(Common::String *)data;
 		game->unpause_world();
 		delete_self();
 	}

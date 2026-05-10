@@ -38,7 +38,7 @@ bool Console::cmdGlobal(int argc, const char **argv) {
 		debugPrintf("Flag %d = %d\n", flagNum, _G(flags)[(Flag)flagNum]);
 	} else if (argc == 3) {
 		int flagNum = atol(argv[1]);
-		int flagVal = atol(argv[2]);
+		const int flagVal = atol(argv[2]);
 		_G(flags)[(Flag)flagNum] = flagVal;
 		debugPrintf("Flag set\n");
 	} else {
@@ -49,11 +49,8 @@ bool Console::cmdGlobal(int argc, const char **argv) {
 }
 
 bool Console::cmdTest(int argc, const char **argv) {
-	int tests = _G(flags)[kFirstTestPassed] ? 1 : 0 +
-		_G(flags)[kSecondTestPassed] ? 1 : 0 +
-		_G(flags)[kThirdTestPassed] ? 1 : 0 +
-		_G(flags)[kFourthTestPassed] ? 1 : 0 +
-		_G(flags)[kFifthTestPassed] ? 1 : 0;
+	const int tests = _G(flags)[kFirstTestPassed] ? 1 : 0 + _G(flags)[kSecondTestPassed] ? 1 : 0 +
+			_G(flags)[kThirdTestPassed] ? 1 : 0 + _G(flags)[kFourthTestPassed] ? 1 : 0 + _G(flags)[kFifthTestPassed] ? 1 : 0;
 
 	debugPrintf("Tests passed = %d\n", tests);
 	return true;
@@ -61,14 +58,13 @@ bool Console::cmdTest(int argc, const char **argv) {
 
 bool Console::cmdTime(int argc, const char **argv) {
 	if (argc == 2) {
-		int newTime = atol(argv[1]);
+		const int newTime = atol(argv[1]);
 		_G(flags).set_boonsville_time(newTime - 1);
 		return false;
-
-	} else {
-		debugPrintf("Current time is %d\n", _G(flags)[kBoonsvilleTime]);
-		return true;
 	}
+
+	debugPrintf("Current time is %d\n", _G(flags)[kBoonsvilleTime]);
+	return true;
 }
 
 } // End of namespace Burger

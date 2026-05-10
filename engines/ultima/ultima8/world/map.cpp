@@ -19,17 +19,17 @@
  *
  */
 
-#include "ultima/ultima.h"
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/world/map.h"
-#include "ultima/ultima8/world/item_factory.h"
+
+#include "common/stack.h"
+#include "ultima/ultima.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/misc/point3.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/world/coord_utils.h"
-#include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/gfx/main_shape_archive.h"
+#include "ultima/ultima8/world/item_factory.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -191,7 +191,7 @@ void Map::unloadFixed() {
 	_fixedItems.clear();
 }
 
-void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
+void Map::loadFixedFormatObjects(Common::List<Item *> &itemlist,
 								 Common::SeekableReadStream *rs,
 								 uint32 extendedflags) {
 	if (!rs) return;

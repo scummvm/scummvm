@@ -23,8 +23,10 @@ gui/message.cpp
 gui/onscreendialog.cpp
 gui/options.cpp
 gui/predictivedialog.cpp
+gui/printing-dialog.cpp
 gui/recorderdialog.cpp
 gui/remotebrowser.cpp
+gui/saveload.cpp
 gui/saveload-dialog.cpp
 gui/shaderbrowser-dialog.cpp
 gui/textviewer.cpp
@@ -35,6 +37,7 @@ gui/updates-dialog.cpp
 gui/widget.cpp
 gui/widgets/grid.cpp
 gui/widgets/groupedlist.cpp
+gui/widgets/richtext.cpp
 
 base/main.cpp
 

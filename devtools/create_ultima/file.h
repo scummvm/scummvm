@@ -32,6 +32,9 @@
 typedef unsigned char byte;
 typedef unsigned int uint32;
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 #include "create_ultima.h"
 
 class File {
@@ -42,7 +45,7 @@ public:
 		_file = fopen(filename, "rb");
 		if (!_file) {
 			char buf[255];
-			sprintf(buf, "Could not open file %s", filename);
+			snprintf(buf, ARRAYSIZE(buf), "Could not open file %s", filename);
 			error(buf);
 		}
 	}

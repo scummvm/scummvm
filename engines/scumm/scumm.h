@@ -520,6 +520,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class MacV5Gui;
 	friend class MacV6Gui;
 	friend class LogicHEBasketball;
+	friend class ScummEditor;
 
 public:
 	/* Put often used variables at the top.
@@ -746,6 +747,7 @@ protected:
 
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
+	bool showBannerAndPauseForTextInput(int bannerId, const char *prompt, Common::String &input, uint maxLength = 255);
 	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
 	Common::KeyState printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine);
 
@@ -803,8 +805,9 @@ protected:
 	void drawDraftsInventory();
 
 public:
-	char displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
+	char displayMessage(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 	bool displayMessageYesNo(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
+	bool displayMessageOKQuit(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 
 protected:
 	byte _fastMode = 0;
@@ -832,6 +835,61 @@ public:
 		}
 		return _scummVars[var];
 	}
+
+	bool applyMi2NiDemoOverride();
+	struct Playback {
+		struct FrameEvent {
+			bool hasPos = false;
+			uint16 x = 0;
+			uint16 y = 0;
+
+			uint16 mbs = 0;
+			uint16 key = 0;
+		};
+
+		static void parseStream(const Common::Array<byte> &stream, Common::Array<FrameEvent> &outEvents);
+
+		bool _loaded = false;
+		bool _attempted = false;
+		bool _active = false;
+
+		bool _mi2DemoVarsApplied = false;
+
+		Common::Array<FrameEvent> _events;
+
+		uint32 _streamOff = 0;
+		uint32 _streamBytes = 0;
+
+		uint32 _nextIndex = 0;
+		int _lastRoom = -1;
+
+		bool _hasPrevMbs = false;
+		uint16 _prevMbs = 0;
+		uint32 _firstInteractIndex = 0;
+		bool _firstInteractValid = false;
+
+		int16 _curX = 0;
+		int16 _curY = 0;
+		bool _pendingLUp = false;
+		bool _pendingRUp = false;
+
+		bool _sputmCmdActive = false;
+		byte _sputmCmdEnterCount = 0;
+		Common::String _sputmCmdBuf;
+		Common::String _name;
+		
+		void reset();
+		bool tryLoadPlayback(ScummEngine *engine, const Common::Path &path = Common::Path("demo.rec"));
+		bool startPlayback(ScummEngine *engine);
+		void playbackPump(ScummEngine *engine);
+		
+		//MI2 DOS NI Demo specific playback helpers
+		void mi2DemoArmPlaybackByRoom(ScummEngine *engine);
+		void mi2DemoPlaybackJumpRoom(ScummEngine *engine, int room);
+		bool handleMi2NIDemoSputmDebugKey(ScummEngine *engine, uint16 rawKey);
+	};
+
+	Playback _playback;
 
 protected:
 	int16 _varwatch = 0;
@@ -1016,6 +1074,7 @@ protected:
 	virtual void runInventoryScript(int i);
 	virtual void runInventoryScriptEx(int i);
 	virtual void checkAndRunSentenceScript();
+	bool monkey1HermanNoteWorkaround(const SentenceTab &st);
 	void runExitScript();
 	void runEntryScript();
 	void runQuitScript();
@@ -1087,6 +1146,7 @@ protected:
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
 	void askForDisk(const Common::Path &filename, int disknum);
+	byte getEncByte(int room);
 	bool openResourceFile(const Common::Path &filename, byte encByte);
 
 	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);
@@ -1347,6 +1407,7 @@ protected:
 	void initCycl(const byte *ptr);	// Color cycle
 
 	void decodeNESBaseTiles();
+	void playNESTitleScreens();
 
 	void drawObject(int obj, int scrollType);
 	void drawRoomObjects(int arg);

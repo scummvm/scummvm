@@ -369,7 +369,7 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 			if (savegame.getSaveSlot() == i - 1) {
 				// manually creating a savegame should not overwrite the autosave slot
 				if (textIdx != TextId::kCreateSaveGame || i > 1) {
-					saveFiles.addButton(savegame.getDescription().encode().c_str(), i);
+					saveFiles.addButton(savegame.getDescription().c_str(), i);
 				}
 				++savesIndex;
 			} else if (showEmptySlots) {

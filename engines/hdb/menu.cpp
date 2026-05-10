@@ -1216,7 +1216,7 @@ void Menu::drawTitle() {
 		if (g_hdb->_gfx->isFadeActive())
 			break;
 		g_hdb->_gfx->turnOffFade();
-		g_hdb->_gfx->fillScreen(0);
+		g_hdb->_gfx->fillScreen();
 		{
 			_titleCycle++;
 			_rocketY = g_hdb->_screenHeight;	// ycoord

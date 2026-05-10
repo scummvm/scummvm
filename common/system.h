@@ -40,6 +40,7 @@ class Mixer;
 }
 
 namespace Graphics {
+class CursorManager;
 struct Surface;
 }
 
@@ -69,6 +70,7 @@ class TextToSpeechManager;
 #if defined(USE_SYSDIALOGS)
 class DialogManager;
 #endif
+class PrintingManager;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -161,6 +163,8 @@ typedef struct ImGuiCallbacks {
  * - Sound output
  */
 class OSystem : Common::NonCopyable {
+	friend class Graphics::CursorManager;
+
 protected:
 	OSystem();
 	virtual ~OSystem();
@@ -198,8 +202,6 @@ protected:
 
 	/**
 	 * No default value is provided for _eventManager by OSystem.
-	 * However, EventsBaseBackend::initBackend() does set a default value
-	 * if none has been set before.
 	 *
 	 * @note _eventManager is deleted by the OSystem destructor.
 	 */
@@ -263,6 +265,13 @@ protected:
 	 * @note _fsFactory is deleted by the OSystem destructor.
 	 */
 	FilesystemFactory *_fsFactory;
+
+	/**
+	 * No default value is provided for _printingManager by OSystem.
+	 *
+	 * @note _printingManager is deleted by the OSystem destructor.
+	*/
+	Common::PrintingManager *_printingManager;
 
 	/**
 	 * Used by the DLC Manager implementation
@@ -1474,7 +1483,7 @@ public:
 	 * class instead of using this directly.
 	 */
 
-
+protected:
 	/**
 	 * Show or hide the mouse cursor.
 	 *
@@ -1488,21 +1497,6 @@ public:
 	 * @see Graphics::CursorManager::showMouse
 	 */
 	virtual bool showMouse(bool visible) = 0;
-
-	/**
-	 * Lock or unlock the mouse cursor within the window.
-	 *
-	 */
-	virtual bool lockMouse(bool lock) { return false; }
-
-	/**
-	 * Move ("warp") the mouse cursor to the specified position in virtual
-	 * screen coordinates.
-	 *
-	 * @param x		New x position of the mouse.
-	 * @param y		New y position of the mouse.
-	 */
-	virtual void warpMouse(int x, int y) = 0;
 
 	/**
 	 * Set the bitmap used for drawing the cursor.
@@ -1536,7 +1530,21 @@ public:
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
+public:
+	/**
+	 * Lock or unlock the mouse cursor within the window.
+	 *
+	 */
+	virtual bool lockMouse(bool lock) { return false; }
 
+	/**
+	 * Move ("warp") the mouse cursor to the specified position in virtual
+	 * screen coordinates.
+	 *
+	 * @param x		New x position of the mouse.
+	 * @param y		New y position of the mouse.
+	 */
+	virtual void warpMouse(int x, int y) = 0;
 
 	/**
 	 * Get the system-configured double-click time interval.
@@ -1792,6 +1800,15 @@ public:
 		return _textToSpeechManager;
 	}
 
+	/**
+	 * Return the PrintingManager, used to handle printing.
+	 *
+	 * @return The PrintingManager for the current architecture.
+	 */
+	virtual Common::PrintingManager *getPrintingManager() {
+		return _printingManager;
+	}
+
 #if defined(USE_SYSDIALOGS)
 	/**
 	 * Return the DialogManager, which is used to handle system dialogs.
@@ -1834,7 +1851,7 @@ public:
 	 * @param s         SearchSet to which the system-specific dirs, if any, are added.
 	 * @param priority	Priority with which those dirs are added.
 	 */
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) {}
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
 	/**
 	 * Open the default config file for reading by returning a suitable

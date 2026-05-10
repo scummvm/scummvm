@@ -137,7 +137,7 @@ public:
 	ValueDisplayDialog(const Common::U32String &label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
 	void open() override;
-	void drawDialog(GUI::DrawLayer layerToDraw) override;
+	void drawDialog(GUI::DrawLayer layerToDraw, bool resetClipping = true) override;
 	void handleTickle() override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		close();
@@ -241,6 +241,7 @@ protected:
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createGammaCorrectionCheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createSegaShadowModeCheckbox(GuiObject *boss, const Common::String &name);
+	GUI::CheckboxWidget *createSegaCdWaitCursorWhenPausedCheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name);
 #ifdef USE_TTS
 	GUI::CheckboxWidget *createEnableTTSCheckbox(GuiObject *boss, const Common::String &name);
@@ -388,6 +389,7 @@ private:
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableSegaShadowModeCheckbox = nullptr;
+	GUI::CheckboxWidget *_enableSegaCdWaitCursorWhenPausedCheckbox = nullptr;
 #ifdef USE_TTS
 	GUI::CheckboxWidget *_enableTTSCheckbox = nullptr;
 #endif

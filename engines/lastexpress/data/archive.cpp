@@ -270,7 +270,7 @@ void ArchiveManager::readCD(void *dstBuf, int offset, uint32 size) {
 			error("Error reading from file \"%s\"", "CD cache file");
 		}
 
-		_cdFilePosition = (offset + readSize);
+		_cdFilePosition = (offset + size);
 	}
 }
 

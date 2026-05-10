@@ -196,7 +196,7 @@ Common::Error CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 Common::KeymapArray CGEMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
-	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Soltys", _("Game Keymappings"));
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Soltys", _("Game keymappings"));
 
 	Action *act;
 
@@ -247,49 +247,49 @@ Common::KeymapArray CGEMetaEngine::initKeymaps(const char *target) const {
 
 	// I18N: Here ALTered Item refers to the dice that has been altered/changed.
 	// In order to escape the dice game loop press Right/Left Alt
-	act = new Action("ALTITEM", _("ALTered Item"));
+	act = new Action("ALTITEM", _("ALTered item"));
 	act->setCustomEngineActionEvent(kActionAltDice);
 	act->addDefaultInputMapping("LALT");
 	act->addDefaultInputMapping("RALT");
 	act->addDefaultInputMapping("JOY_Y");
 	keymap->addAction(act);
 
-	act = new Action("INV1", _("Inventory Item 1 (Select / Deselect)"));
+	act = new Action("INV1", _("Inventory item 1 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv1);
 	act->addDefaultInputMapping("1");
 	keymap->addAction(act);
 
-	act = new Action("INV2", _("Inventory Item 2 (Select / Deselect)"));
+	act = new Action("INV2", _("Inventory item 2 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv2);
 	act->addDefaultInputMapping("2");
 	keymap->addAction(act);
 
-	act = new Action("INV3", _("Inventory Item 3 (Select / Deselect)"));
+	act = new Action("INV3", _("Inventory item 3 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv3);
 	act->addDefaultInputMapping("3");
 	keymap->addAction(act);
 
-	act = new Action("INV4", _("Inventory Item 4 (Select / Deselect)"));
+	act = new Action("INV4", _("Inventory item 4 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv4);
 	act->addDefaultInputMapping("4");
 	keymap->addAction(act);
 
-	act = new Action("INV5", _("Inventory Item 5 (Select / Deselect)"));
+	act = new Action("INV5", _("Inventory item 5 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv5);
 	act->addDefaultInputMapping("5");
 	keymap->addAction(act);
 
-	act = new Action("INV6", _("Inventory Item 6 (Select / Deselect)"));
+	act = new Action("INV6", _("Inventory item 6 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv6);
 	act->addDefaultInputMapping("6");
 	keymap->addAction(act);
 
-	act = new Action("INV7", _("Inventory Item 7 (Select / Deselect)"));
+	act = new Action("INV7", _("Inventory item 7 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv7);
 	act->addDefaultInputMapping("7");
 	keymap->addAction(act);
 
-	act = new Action("INV8", _("Inventory Item 8 (Select / Deselect)"));
+	act = new Action("INV8", _("Inventory item 8 (Select / Deselect)"));
 	act->setCustomEngineActionEvent(kActionInv8);
 	act->addDefaultInputMapping("8");
 	keymap->addAction(act);

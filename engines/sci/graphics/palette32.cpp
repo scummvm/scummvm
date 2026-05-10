@@ -362,9 +362,7 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 	// Palette versioning
 	_version(1),
 	_needsUpdate(false),
-#ifdef USE_RGB_COLOR
 	_hardwarePalette(),
-#endif
 	_currentPalette(),
 	_sourcePalette(),
 	_nextPalette(),
@@ -489,11 +487,7 @@ void GfxPalette32::updateHardware() {
 		return;
 	}
 
-#ifdef USE_RGB_COLOR
 	uint8 *bpal = _hardwarePalette;
-#else
-	uint8 bpal[256 * 3];
-#endif
 
 	// HACK: There are resources in a couple of Windows-only games that seem to
 	// include bogus palette entries above 236. SSCI does a lot of extra work
@@ -534,12 +528,6 @@ void GfxPalette32::updateHardware() {
 			bpal[i * 3 + 2] = gammaTables[_gammaLevel][_currentPalette.colors[i].b];
 		}
 	}
-
-#ifndef USE_RGB_COLOR
-	// When creating a raw palette on the stack, any skipped area of the palette
-	// needs to be blacked out or else it will contain garbage memory
-	memset(bpal + (maxIndex + 1) * 3, 0, (255 - maxIndex - 1) * 3);
-#endif
 
 	// The last color must always be white
 	bpal[255 * 3    ] = 255;

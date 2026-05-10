@@ -39,13 +39,6 @@ uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, i
 	error("gr_color_createInverseTable is not implemented in ScummVM");
 }
 
-void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num) {
-	error("gr_color_create_ipl5 is not implemented in ScummVM");
-}
-
-uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors) {
-	error("gr_color_load_ipl5 is not implemented in ScummVM");
-}
 
 void gr_color_set(int32 c) {
 	_G(color) = c;
@@ -119,6 +112,9 @@ void gr_pal_interface(RGB8 *fixpal) {
 	if (_GI().set_interface_palette(fixpal))
 		return;
 
+	// The following code is unreachable as set_interface_palette always returns true
+	// This is also present in the original code
+	// 
 	// Low intensity
 	gr_pal_set_RGB8(&fixpal[0], 0, 0, 0);		// r0 g0 b0		black
 	gr_pal_set_RGB8(&fixpal[1], 0, 0, 168);		// r0 g0 b2		blue
@@ -171,7 +167,7 @@ void gr_restore_palette() {
 
 void pal_mirror_colours(int first_color, int last_color, RGB8 *pal) {
 	if (first_color < 0 || last_color > 255 || first_color > last_color)
-		error_show(FL, 'Burg', "pal_mirror_colours index error");
+		error_show(FL, "pal_mirror_colours index error");
 
 	const int num_colors = last_color - first_color + 1;
 	for (int index = 0; index < num_colors; ++index) {

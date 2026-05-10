@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section6/room607.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -186,8 +187,8 @@ void Room607::parser() {
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			hotspot_set_active("RONGORONGO TABLET", false);
 			terminateMachineAndNull(_tablet);
-			kernel_examine_inventory_object("ping rongorongo tablet", 5, 1, 212, 150, 5,
-				_val1 ? "607r09" : nullptr);
+			kernel_examine_inventory_object("ping rongorongo tablet", _G(master_palette), 5, 1, 212, 150, 5,
+				_val1 ? "607r09" : nullptr, -1);
 			_G(flags)[V203] = 8;
 			break;
 		case 5:

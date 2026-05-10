@@ -55,9 +55,9 @@ public:
 	void loadClosedGroups(const Common::U32String &groupName);
 	void saveClosedGroups(const Common::U32String &groupName);
 
-	void setSelected(int item);
+	Common::Array<bool> saveSelection() const;
+	void loadSelection(const Common::Array<bool> &savedSelection);
 	int getSelected() const { return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
-
 	void setFilter(const Common::U32String &filter, bool redraw = true);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
@@ -72,11 +72,13 @@ public:
 
 	void startEditMode() override { error("Edit mode is not supported for Grouped Lists"); }
 
+	bool isItemSelectable(int item) const override;
+
 protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
 	void drawWidget() override;
-	int findDataIndex(int) const;
+	ThemeEngine::WidgetStateInfo getItemState(int item) const override;
 };
 
 } // End of namespace GUI

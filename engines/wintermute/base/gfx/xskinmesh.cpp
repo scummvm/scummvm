@@ -549,12 +549,10 @@ static bool parseDeclData(XFileData &fileData, struct MeshData *meshData) {
 	for (i = 0; i < declObj->_numElements; ++i) {
 		switch (declObj->_elements[i]._usage) {
 		case DXDECLUSAGE_NORMAL:
-			assert(!(meshData->_fvf & DXFVF_NORMAL));
 			normalOffset = vertexSize;
 			meshData->_fvf |= DXFVF_NORMAL;
 			break;
 		case DXDECLUSAGE_TEXCOORD:
-			assert(!(meshData->_fvf & DXFVF_TEX1));
 			textureOffset = vertexSize;
 			meshData->_fvf |= DXFVF_TEX1;
 			break;

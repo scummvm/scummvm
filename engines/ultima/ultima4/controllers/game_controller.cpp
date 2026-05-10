@@ -810,7 +810,7 @@ void GameController::attack(Direction dir) {
 		return;
 	}
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(
+	Common::Array<Coords> path = gameGetDirectionalActionPath(
 		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
 	for (const auto &coords : path) {

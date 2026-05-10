@@ -29,10 +29,7 @@
 
 namespace Nancy {
 
-class NancyEngine;
-
 class CursorManager {
-	friend class NancyEngine;
 
 public:
 	enum CursorType {
@@ -56,8 +53,27 @@ public:
 		kCustom1Hotspot			= 17,
 		kCustom2				= 18,
 		kCustom2Hotspot			= 19,
-		kNormalArrow,
-		kHotspotArrow
+		kNormalArrow			= 20,
+		kHotspotArrow			= 21,
+
+		// Cursors in Nancy10 and newer games
+		kNewNormal 				= 0,	// Eyeglass, non-highlighted
+		kNewHotspot 			= 1,	// Eyeglass, highlighted
+		kNewNormalArrow			= 8,
+		kNewHotspotArrow		= 9,
+		kNewExit 				= 10,	// Used for movement and exiting puzzles
+		kNewRotateCW 			= 13,	// Used in puzzles only
+		kNewRotateCCW 			= 14,	// Used in puzzles only
+		kNewMoveLeft 			= 15,	// Used for movement and turning in 360 scenes
+		kNewMoveRight 			= 16,	// Used for movement and turning in 360 scenes
+		kNewMoveForward			= 17,	// Used for movement
+		kNewMoveBackward		= 18,	// Used for movement and exiting puzzles
+		kNewMoveUp				= 19,	// Used for movement
+		kNewMoveDown			= 20,	// Used for movement
+		kNewRotateRight			= 21,	// Used in 360 scenes
+		kNewRotateLeft			= 22,	// Used in 360 scenes
+		kNewInvertedRotateRight = 23,	// Used in 360 scenes
+		kNewInvertedRotateLeft	= 24,	// Used in 360 scenes
 	};
 
 	CursorManager();
@@ -68,6 +84,7 @@ public:
 	void setCursor(CursorType type, int16 itemID);
 	void setCursorType(CursorType type);
 	void setCursorItemID(int16 itemID);
+	void showCursor(bool shouldShow);
 
 	void warpCursor(const Common::Point &pos);
 
@@ -81,8 +98,6 @@ public:
 	const CursorType _puzzleExitCursor;
 
 private:
-	void showCursor(bool shouldShow);
-
 	void adjustCursorHotspot();
 
 	struct Cursor {
@@ -97,6 +112,7 @@ private:
 	Common::Point _primaryVideoInitialPos;
 
 	Graphics::ManagedSurface _invCursorsSurface;
+	Graphics::ManagedSurface _uiCursorsSurface;	// Nancy13+
 
 	Common::Point _warpedMousePos;
 	CursorType _curCursorType;

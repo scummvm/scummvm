@@ -73,7 +73,7 @@ bool ItemSelectionProcess::selectNextItem(bool grab) {
 	currentmap->areaSearch(&uclist, script, sizeof(script),
 						   mainactor, 0x200, false);
 
-	Std::vector<Item *> candidates;
+	Common::Array<Item *> candidates;
 
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		ObjId itemid = uclist.getuint16(i);

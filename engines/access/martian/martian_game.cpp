@@ -393,7 +393,7 @@ void MartianEngine::establish(int estabIndex, int sub) {
 	_events->showCursor();
 }
 
-void MartianEngine::synchronize(Common::Serializer &s) {
+Common::Error MartianEngine::synchronize(Common::Serializer &s) {
 	AccessEngine::synchronize(s);
 
 	for (int i = 0; i < ARRAYSIZE(_travel); i++) {
@@ -419,6 +419,8 @@ void MartianEngine::synchronize(Common::Serializer &s) {
 	_boxSelectYOld
 	_numLines
 	*/
+
+	return Common::kNoError;
 }
 
 

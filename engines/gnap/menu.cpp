@@ -21,7 +21,6 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
-#include "common/translation.h"
 
 #include "gui/saveload.h"
 #include "graphics/thumbnail.h"
@@ -462,7 +461,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 		playSound(0x108F4, false);
 
 		if (_sceneClickedHotspot == 1) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int16 savegameId = dialog->runModalWithCurrentTarget();
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
@@ -471,7 +470,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 				saveGameState(savegameId, savegameDescription);
 			}
 		} else {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int16 savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 

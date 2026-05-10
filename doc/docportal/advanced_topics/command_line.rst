@@ -182,10 +182,14 @@ Short options are listed where they are available.
         ``--list-audio-devices``,,"Lists all available audio devices",
         ``--list-debugflags=engine``,,"Lists engine-specific debug flags. If ``engine=global`` or engine is not specified, then it lists global debug flags.",
         ``--list-engines``,,"Lists supported engines, then exits",
+        ``--list-engines-json``,,"Lists supported engines as json, then exits",
         ``--list-games``,``-z``, "Lists supported games, then exits.",
-        ``--list-records=TARGET``,, "Lists recordings for the specified target (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
+        ``--list-games-json``,, "Lists supported games as json, then exits.",
+        ``--list-records --game=TARGET``,, "Lists recordings for the specified target (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
+        ``--list-records-json --game=TARGET``,, "Lists recordings as json for the specified target (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
         ``--list-saves --game=TARGET``,,"Displays a list of saved games for the game specified, or for all targets if no game specified.",
         ``--list-targets``,``-t``,"Lists configured targets, then exits",
+        ``--list-targets-json``,,"Lists configured targets as json, then exits",
         ``--list-themes``,,"Lists all usable GUI themes",
         ``--logfile=PATH``,``-l``,"Uses alternate path for log file (SDL backend only).",
         ``--md5``,,"Shows MD5 hash of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last ``NUM`` bytes of the file given by ``PATH``. If ``--md5-engine=ENGINE_ID`` option is passed then it auto-calculates the required bytes and its hash, overriding ``--md5-length``",
@@ -197,7 +201,7 @@ Short options are listed where they are available.
         ``--multi-midi``,,":ref:`Enables combination AdLib and native MIDI <multi>`",false
         ``--music-driver=MODE``,``-e``,":ref:`Selects preferred music device <device>`",auto
         ``--music-volume=NUM``,``-m``,":ref:`Sets the music volume <music>`, 0-255",192
-    	``--native-mt32``,,":ref:`True Roland MT-32 (disables GM emulation) <mt32>`",false
+        ``--native-mt32``,,":ref:`True Roland MT-32 (disables GM emulation) <mt32>`",false
         ``--no-fullscreen``,``-F``,"Forces windowed mode",
         ``--opl-driver=DRIVER``,,":ref:`Selects AdLib (OPL) emulator <opl>`",
         ``--output-channels=CHANNELS``,,"Select output channel count, for example, 2 for stereo.",
@@ -223,7 +227,7 @@ Short options are listed where they are available.
         - windows",
         ``--random-seed=SEED``,,":ref:`Sets the random seed used to initialize entropy <seed>`",
         ``--record-file-name=FILE``,,"Specifies recorded file name (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",record.bin
-        ``--record-mode=MODE``,,"Specifies record mode for `Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_. Allowed values: record, playback, info, update, passthrough.", none
+        ``--record-mode=MODE``,,"Specifies record mode for `Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_. Allowed values: record, playback, fast_playback, info, update, passthrough.", none
         ``--recursive``,,"In combination with ``--add or ``--detect`` recurses down all subdirectories",
         ``--renderer=RENDERER``,,"Selects 3D renderer. Allowed values: software, opengl, opengl_shaders",
         ``--render-mode=MODE``,,":ref:`Enables additional render modes <render>`.

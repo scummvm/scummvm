@@ -19,12 +19,13 @@
  *
  */
 
+#include "ultima/ultima8/misc/debugger.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
-#include "image/png.h"
+#include "common/system.h"
 #include "image/bmp.h"
-#include "ultima/ultima8/ultima8.h"
+#include "image/png.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -34,28 +35,28 @@
 #include "ultima/ultima8/gfx/texture.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
-#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
-#include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/bit_set.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/world/actors/avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/pathfinder.h"
+#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/pathfinder.h"
-#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/item_selection_process.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -219,7 +220,9 @@ bool Debugger::cmdSetVideoMode(int argc, const char **argv) {
 		debugPrintf("Usage: %s <width> <height>\n", argv[0]);
 		return true;
 	} else {
-		Ultima8Engine::get_instance()->changeVideoMode(strtol(argv[1], 0, 0), strtol(argv[2], 0, 0));
+		Common::Error err = Ultima8Engine::get_instance()->changeVideoMode(strtol(argv[1], 0, 0), strtol(argv[2], 0, 0));
+		if (err.getCode() != Common::kNoError)
+			debugPrintf("Failed to set video mode: %s", err.getDesc().c_str());
 		return false;
 	}
 }
@@ -729,7 +732,7 @@ void Debugger::dumpCurrentMap() {
 	// Work out the map limits in chunks
 	for (int32 y = 0; y < MAP_NUM_CHUNKS; y++) {
 		for (int32 x = 0; x < MAP_NUM_CHUNKS; x++) {
-			const Std::list<Item *> *list = curmap->getItemList(x, y);
+			const Common::List<Item *> *list = curmap->getItemList(x, y);
 
 			// Should iterate the items!
 			// (items could extend outside of this chunk and they have height)
@@ -1074,11 +1077,10 @@ bool Debugger::cmdRecall(int argc, const char **argv) {
 
 bool Debugger::cmdListMarks(int argc, const char **argv) {
 	const Common::ConfigManager::Domain *domain = ConfMan.getActiveDomain();
-	Common::ConfigManager::Domain::const_iterator dit;
 	Common::StringArray marks;
-	for (dit = domain->begin(); dit != domain->end(); ++dit) {
-		if (dit->_key.hasPrefix("mark_")) {
-			marks.push_back(dit->_key.substr(5));
+	for (const auto & dit : *domain) {
+		if (dit._key.hasPrefix("mark_")) {
+			marks.push_back(dit._key.substr(5));
 		}
 	}
 

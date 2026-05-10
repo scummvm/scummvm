@@ -1,0 +1,881 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Based on the original sources
+ *   https://github.com/Croquetx/thecolony
+ * Copyright (C) 1988, David A. Smith
+ *
+ * Distributed under Apache Version 2.0 License
+ *
+ */
+
+#include "common/debug.h"
+
+#include "colony/colony.h"
+#include "colony/sound.h"
+
+namespace Colony {
+
+enum {
+	kOpcodeLRotate = 1,
+	kOpcodeRRotate = 2,
+	kOpcodeForward = 3,
+	kOpcodeFShoot = 4,
+	kOpcodeSnoop = 20
+};
+
+bool isBaseRobotType(int type) {
+	return type >= kRobEye && type <= kRobUPyramid;
+}
+
+bool isEggType(int type) {
+	return type > kRobUPyramid && type < kRobQueen;
+}
+
+int trailTargetAngle(uint8 code) {
+	switch (code) {
+	case 2:
+		return 0;
+	case 1:
+		return 32;
+	case 8:
+		return 64;
+	case 7:
+		return 96;
+	case 6:
+		return 128;
+	case 5:
+		return 160;
+	case 4:
+		return 192;
+	case 3:
+		return 224;
+	default:
+		return -1;
+	}
+}
+
+int ColonyEngine::getColonyActiveRobotLimit() const {
+	switch (_level) {
+	case 2:
+		return 25;
+	case 3:
+	case 4:
+		return 30;
+	case 5:
+	case 6:
+	case 7:
+		return 35;
+	default:
+		return 0;
+	}
+}
+
+void ColonyEngine::copyOverflowObjectToSlot(int num) {
+	const int activeLimit = getColonyActiveRobotLimit();
+	if (num <= 0 || num > activeLimit || num > kMeNum - 1 || num > (int)_objects.size())
+		return;
+
+	const int searchEnd = MIN<int>((int)_objects.size(), kMeNum - 1);
+	for (int objectNum = searchEnd; objectNum > activeLimit; --objectNum) {
+		if (objectNum == num)
+			continue;
+
+		Thing &source = _objects[objectNum - 1];
+		if (!source.alive)
+			continue;
+
+		if (source.where.xindex >= 0 && source.where.xindex < 32 &&
+			source.where.yindex >= 0 && source.where.yindex < 32) {
+			if (isEggType(source.type)) {
+				if (_foodArray[source.where.xindex][source.where.yindex] == objectNum)
+					_foodArray[source.where.xindex][source.where.yindex] = (uint8)num;
+			} else if (_robotArray[source.where.xindex][source.where.yindex] == objectNum) {
+				_robotArray[source.where.xindex][source.where.yindex] = (uint8)num;
+			}
+		}
+
+		Thing replacement = source;
+		replacement.visible = 0;
+		_objects[num - 1] = replacement;
+		source = Thing();
+		return;
+	}
+}
+
+void ColonyEngine::respawnObject(int num, int type) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[num - 1];
+	if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+		obj.where.yindex >= 0 && obj.where.yindex < 32) {
+		if (isEggType(obj.type)) {
+			if (_foodArray[obj.where.xindex][obj.where.yindex] == num)
+				_foodArray[obj.where.xindex][obj.where.yindex] = 0;
+		} else if (_robotArray[obj.where.xindex][obj.where.yindex] == num) {
+			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+		}
+	}
+
+	int xloc, yloc;
+	do {
+		if (_level == 7 && type == kRobQueen) {
+			xloc = 27;
+			yloc = 10;
+		} else {
+			xloc = 2 + _randomSource.getRandomNumber(26);
+			yloc = 2 + _randomSource.getRandomNumber(26);
+		}
+	} while (_robotArray[xloc][yloc] || _foodArray[xloc][yloc]);
+
+	resetObjectSlot(num - 1, type, (xloc << 8) + 128, (yloc << 8) + 128, _randomSource.getRandomNumber(255));
+}
+
+void ColonyEngine::cThink() {
+	if (_gameMode != kModeColony)
+		return;
+
+	const int activeLimit = MIN<int>(getColonyActiveRobotLimit(), (int)_objects.size());
+	for (int num = 1; num <= activeLimit; ++num) {
+		const Thing &obj = _objects[num - 1];
+		if (!obj.alive || obj.type <= 0 || obj.type > kBaseObject)
+			continue;
+
+		switch (obj.type) {
+		case kRobEye:
+			eyeThink(num);
+			break;
+		case kRobPyramid:
+			pyramidThink(num);
+			break;
+		case kRobCube:
+			cubeThink(num);
+			break;
+		case kRobUPyramid:
+			upyramidThink(num);
+			break;
+		case kRobQueen:
+			queenThink(num);
+			break;
+		case kRobDrone:
+		case kRobSoldier:
+			droneThink(num);
+			break;
+		case kRobSnoop:
+			snoopThink(num);
+			break;
+		default:
+			eggThink(num);
+			break;
+		}
+	}
+}
+
+void ColonyEngine::cubeThink(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	_objects[num - 1].where.look = (uint8)(_objects[num - 1].where.look + 15);
+	moveThink(num);
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMCube, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
+		bigGrow(num);
+}
+
+void ColonyEngine::pyramidThink(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	_objects[num - 1].where.look = (uint8)(_objects[num - 1].where.look + 15);
+	moveThink(num);
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMPyramid, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
+		bigGrow(num);
+}
+
+void ColonyEngine::upyramidThink(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	_objects[num - 1].where.look = (uint8)(_objects[num - 1].where.look - 15);
+	moveThink(num);
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMUPyramid, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
+		bigGrow(num);
+}
+
+void ColonyEngine::eyeThink(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	moveThink(num);
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMEye, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
+		bigGrow(num);
+}
+
+void ColonyEngine::queenThink(int num) {
+	Thing &obj = _objects[num - 1];
+	moveThink(num);
+	obj.time--;
+	obj.where.lookx += obj.where.delta;
+	if (obj.where.lookx < -24 || obj.where.lookx > 24)
+		obj.where.delta = -obj.where.delta;
+	obj.where.look = (uint8)(obj.where.ang + obj.where.lookx);
+
+	if (obj.time < 0) {
+		const int eggX = obj.where.xindex;
+		const int eggY = obj.where.yindex;
+		bool laidEgg = false;
+
+		switch (_randomSource.getRandomNumber(3)) {
+		case 0:
+			laidEgg = layEgg(kRobMEye, eggX, eggY);
+			break;
+		case 1:
+			laidEgg = layEgg(kRobMCube, eggX, eggY);
+			break;
+		case 2:
+			laidEgg = layEgg(kRobMPyramid, eggX, eggY);
+			break;
+		case 3:
+			laidEgg = layEgg(kRobMUPyramid, eggX, eggY);
+			break;
+		}
+
+		if (laidEgg)
+			_objects[num - 1].time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	}
+
+	Thing &updatedObj = _objects[num - 1];
+	if (!updatedObj.grow)
+		return;
+
+	if (updatedObj.where.xindex >= 0 && updatedObj.where.xindex < 32 &&
+		updatedObj.where.yindex >= 0 && updatedObj.where.yindex < 32 &&
+		_robotArray[updatedObj.where.xindex][updatedObj.where.yindex] == num)
+		_robotArray[updatedObj.where.xindex][updatedObj.where.yindex] = 0;
+
+	updatedObj.alive = 0;
+	_allGrow = false;
+	_sound->play(Sound::kExplode);
+
+	for (uint i = 0; i < _objects.size(); ++i) {
+		Thing &other = _objects[i];
+		if (other.alive && isBaseRobotType(other.type))
+			other.grow = -1;
+	}
+
+	if (_level >= 1 && _level <= 7)
+		_levelData[_level - 1].queen = 0;
+}
+
+void ColonyEngine::droneThink(int num) {
+	Thing &obj = _objects[num - 1];
+	moveThink(num);
+	obj.time--;
+	obj.where.lookx += obj.where.delta;
+	if (obj.where.lookx < -24 || obj.where.lookx > 24)
+		obj.where.delta = -obj.where.delta;
+	obj.where.look = (uint8)(obj.where.ang + obj.where.lookx);
+
+	if (!obj.grow)
+		return;
+
+	if (obj.type == kRobDrone) {
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32 &&
+			_robotArray[obj.where.xindex][obj.where.yindex] == num)
+			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+		obj.alive = 0;
+		_sound->play(Sound::kExplode);
+		copyOverflowObjectToSlot(num);
+	} else {
+		obj.type = kRobDrone;
+		obj.where.wallPad = robotWallPad(kRobDrone);
+		obj.grow = 0;
+		obj.where.power[1] = 10 + ((_randomSource.getRandomNumber(15) & 0x0F) << _level);
+	}
+}
+
+void ColonyEngine::eggThink(int num) {
+	Thing &obj = _objects[num - 1];
+	if (!isEggType(obj.type))
+		return;
+
+	if (_allGrow) {
+		obj.time--;
+	} else if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+		obj.where.yindex >= 0 && obj.where.yindex < 32 &&
+		_foodArray[obj.where.xindex][obj.where.yindex] == 0) {
+		_foodArray[obj.where.xindex][obj.where.yindex] = (uint8)num;
+		if (_robotArray[obj.where.xindex][obj.where.yindex] == num)
+			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+		obj.grow = -1;
+	}
+
+	if (obj.time <= 0)
+		obj.grow = 1;
+	if (obj.grow)
+		growRobot(num);
+}
+
+bool ColonyEngine::layEgg(int type, int xindex, int yindex) {
+	auto hasFood = [this](int x, int y) -> bool {
+		if (x < 0 || x >= 32 || y < 0 || y >= 32)
+			return false;
+		return _foodArray[x][y] != 0;
+	};
+
+	if (hasFood(xindex, yindex) ||
+		hasFood(xindex + 1, yindex) ||
+		hasFood(xindex - 1, yindex) ||
+		hasFood(xindex, yindex + 1) ||
+		hasFood(xindex, yindex - 1))
+		return false;
+
+	return createObject(type, (xindex << 8) + 128, (yindex << 8) + 128, _randomSource.getRandomNumber(255));
+}
+
+void ColonyEngine::moveThink(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[num - 1];
+	if (!obj.alive)
+		return;
+
+	switch (obj.opcode) {
+	case kOpcodeLRotate:
+		obj.where.ang = (uint8)(obj.where.ang + 7);
+		obj.where.look = (uint8)(obj.where.look + 7);
+		obj.counter--;
+		if (obj.counter <= 0) {
+			obj.opcode = kOpcodeForward;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		}
+		if (scanForPlayer(num) == kMeNum) {
+			robotShoot(num);
+			obj.opcode = kOpcodeFShoot;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x3F;
+		}
+		return;
+
+	case kOpcodeRRotate:
+		obj.where.ang = (uint8)(obj.where.ang - 7);
+		obj.where.look = (uint8)(obj.where.look - 7);
+		obj.counter--;
+		if (obj.counter <= 0) {
+			obj.opcode = kOpcodeForward;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x3F;
+		}
+		if (scanForPlayer(num) == kMeNum) {
+			robotShoot(num);
+			obj.opcode = kOpcodeFShoot;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x1F;
+		}
+		return;
+
+	case kOpcodeForward: {
+		obj.counter--;
+		if (obj.counter <= 0) {
+			obj.opcode = (_randomSource.getRandomNumber(1) ? kOpcodeLRotate : kOpcodeRRotate);
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+			return;
+		}
+
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32 &&
+			_robotArray[obj.where.xindex][obj.where.yindex] == num)
+			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+
+		_suppressCollisionSound = true;
+		const int collide = checkwall(obj.where.xloc + (_cost[obj.where.ang] >> 2),
+			obj.where.yloc + (_sint[obj.where.ang] >> 2), &obj.where);
+		_suppressCollisionSound = false;
+
+		if (collide) {
+			obj.opcode = (_randomSource.getRandomNumber(1) ? kOpcodeLRotate : kOpcodeRRotate);
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		}
+
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32)
+			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)num;
+		return;
+	}
+
+	case kOpcodeFShoot: {
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32 &&
+			_robotArray[obj.where.xindex][obj.where.yindex] == num)
+			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+
+		_suppressCollisionSound = true;
+		const int collide = checkwall(obj.where.xloc + obj.where.dx + (_me.dx >> 2) + (_cost[obj.where.ang] >> 2),
+			obj.where.yloc + obj.where.dy + (_me.dy >> 2) + (_sint[obj.where.ang] >> 2), &obj.where);
+		_suppressCollisionSound = false;
+
+		if (collide) {
+			obj.opcode = (_randomSource.getRandomNumber(1) ? kOpcodeLRotate : kOpcodeRRotate);
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		}
+
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32)
+			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)num;
+
+		if (scanForPlayer(num) == kMeNum) {
+			robotShoot(num);
+		} else {
+			obj.opcode = kOpcodeForward;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		}
+		return;
+	}
+
+	default:
+		obj.alive = 0;
+		obj.opcode = kOpcodeForward;
+		obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		break;
+	}
+}
+
+void ColonyEngine::snoopThink(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[num - 1];
+	if (!obj.alive)
+		return;
+
+	switch (obj.opcode) {
+	case kOpcodeLRotate:
+		obj.where.ang = (uint8)(obj.where.ang + 7);
+		obj.where.look = obj.where.ang;
+		obj.counter--;
+		if (obj.counter <= 0) {
+			obj.opcode = kOpcodeForward;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		}
+		break;
+
+	case kOpcodeRRotate:
+		obj.where.ang = (uint8)(obj.where.ang - 7);
+		obj.where.look = obj.where.ang;
+		obj.counter--;
+		if (obj.counter <= 0) {
+			obj.opcode = kOpcodeForward;
+			obj.counter = _randomSource.getRandomNumber(255) & 0x3F;
+		}
+		break;
+
+	case kOpcodeForward: {
+		obj.counter--;
+		if (obj.counter <= 0) {
+			obj.opcode = (_randomSource.getRandomNumber(1) ? kOpcodeLRotate : kOpcodeRRotate);
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+			break;
+		}
+
+		const int oldX = obj.where.xindex;
+		const int oldY = obj.where.yindex;
+		if (oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32 && _robotArray[oldX][oldY] == num)
+			_robotArray[oldX][oldY] = 0;
+
+		const int fx = obj.where.xloc + (_cost[obj.where.ang] >> 2);
+		const int fy = obj.where.yloc + (_sint[obj.where.ang] >> 2);
+		_suppressCollisionSound = true;
+		const int collide = checkwall(fx, fy, &obj.where);
+		_suppressCollisionSound = false;
+
+		if (collide == kMeNum) {
+			respawnObject(num, kRobSnoop);
+			_sound->play(Sound::kSlug);
+			debugC(1, kColonyDebugCombat,
+				"snoopHitPlayer: snoop=%d cell=(%d,%d) delta=[-%d,-%d,-%d]",
+				num, oldX, oldY,
+				(int)MIN<int32>((3 * _me.power[0]) / 4, 32000),
+				(int)MIN<int32>((3 * _me.power[1]) / 4, 32000),
+				(int)MIN<int32>((3 * _me.power[2]) / 4, 32000));
+			setPower(-(int)MIN<int32>((3 * _me.power[0]) / 4, 32000),
+				-(int)MIN<int32>((3 * _me.power[1]) / 4, 32000),
+				-(int)MIN<int32>((3 * _me.power[2]) / 4, 32000));
+			return;
+		}
+
+		if (collide > 0 && collide <= (int)_objects.size()) {
+			const Thing &other = _objects[collide - 1];
+			if (other.alive && other.type >= kRobEye && other.type <= kBaseObject) {
+				respawnObject(collide, other.type);
+				obj.where.xloc = fx;
+				obj.where.yloc = fy;
+				obj.where.xindex = fx >> 8;
+				obj.where.yindex = fy >> 8;
+			} else {
+				obj.opcode = (_randomSource.getRandomNumber(1) ? kOpcodeLRotate : kOpcodeRRotate);
+				obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+			}
+		} else if (collide) {
+			obj.opcode = (_randomSource.getRandomNumber(1) ? kOpcodeLRotate : kOpcodeRRotate);
+			obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		}
+
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32)
+			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)num;
+
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32 &&
+			_dirXY[obj.where.xindex][obj.where.yindex]) {
+			obj.opcode = kOpcodeSnoop;
+			obj.where.ang &= 0xF8;
+			obj.where.look = obj.where.ang;
+		}
+		break;
+	}
+
+	case kOpcodeSnoop: {
+		const int target = trailTargetAngle(_dirXY[obj.where.xindex][obj.where.yindex]);
+		if (target >= 0 && obj.where.ang != target) {
+			const int diff = (target - obj.where.ang) & 0xFF;
+			if (diff < 128)
+				obj.where.ang = (uint8)(obj.where.ang + 8);
+			else
+				obj.where.ang = (uint8)(obj.where.ang - 8);
+			obj.where.look = obj.where.ang;
+			return;
+		}
+
+		obj.opcode = kOpcodeForward;
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32)
+			_dirXY[obj.where.xindex][obj.where.yindex] = 0;
+		obj.counter = 0x3F;
+		break;
+	}
+
+	default:
+		obj.alive = 0;
+		obj.opcode = kOpcodeForward;
+		obj.counter = _randomSource.getRandomNumber(255) & 0x0F;
+		break;
+	}
+}
+
+void ColonyEngine::bigGrow(int num) {
+	Thing &obj = _objects[num - 1];
+	const int xindex = obj.where.xindex;
+	const int yindex = obj.where.yindex;
+
+	obj.count++;
+	if (xindex < 0 || xindex >= 32 || yindex < 0 || yindex >= 32)
+		return;
+	if (_foodArray[xindex][yindex] != 0)
+		return;
+
+	if (obj.where.xloc == (xindex << 8) + 128 && obj.where.yloc == (yindex << 8) + 128) {
+		_foodArray[xindex][yindex] = (uint8)num;
+		if (_robotArray[xindex][yindex] == num)
+			_robotArray[xindex][yindex] = 0;
+		obj.type += 4;
+		obj.where.wallPad = robotWallPad(obj.type);
+		obj.count = 0;
+		obj.time = 10 + (_randomSource.getRandomNumber(63) & 0x3F);
+	} else {
+		obj.where.xloc = (xindex << 8) + 128;
+		obj.where.yloc = (yindex << 8) + 128;
+		obj.opcode = kOpcodeLRotate;
+		obj.counter = 100;
+		obj.count = 0;
+	}
+}
+
+void ColonyEngine::growRobot(int num) {
+	Thing &obj = _objects[num - 1];
+	obj.count++;
+	obj.time = 10 + (_randomSource.getRandomNumber(63) & 0x3F);
+
+	switch (obj.type) {
+	case kRobFEye:
+	case kRobFPyramid:
+	case kRobFCube:
+	case kRobFUPyramid:
+		if (obj.count > 3) {
+			obj.count = 0;
+			if (obj.grow == 1) {
+				obj.grow = 0;
+				obj.type -= 4;
+			} else {
+				obj.type += 4;
+			}
+			obj.where.wallPad = robotWallPad(obj.type);
+		}
+		break;
+
+	case kRobSEye:
+	case kRobSPyramid:
+	case kRobSCube:
+	case kRobSUPyramid:
+		if (obj.count > 3) {
+			obj.count = 0;
+			if (obj.grow == 1) {
+				obj.type -= 4;
+			} else {
+				obj.grow = 0;
+				obj.type += 4;
+			}
+			obj.where.wallPad = robotWallPad(obj.type);
+		}
+		break;
+
+	case kRobMEye:
+	case kRobMPyramid:
+	case kRobMCube:
+	case kRobMUPyramid:
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32 &&
+			_robotArray[obj.where.xindex][obj.where.yindex] == 0) {
+			obj.count = 0;
+			obj.type -= 4;
+			obj.where.wallPad = robotWallPad(obj.type);
+			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)num;
+			if (_foodArray[obj.where.xindex][obj.where.yindex] == num)
+				_foodArray[obj.where.xindex][obj.where.yindex] = 0;
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+int ColonyEngine::scanForPlayer(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return 0;
+
+	Thing &obj = _objects[num - 1];
+	Locate fire;
+	memset(&fire, 0, sizeof(fire));
+	fire.ang = obj.where.ang;
+	fire.type = 2;
+
+	int fireX = obj.where.xloc;
+	int fireY = obj.where.yloc;
+	int collide = 0;
+
+	do {
+		fire.xloc = fireX;
+		fire.yloc = fireY;
+		fire.xindex = fireX >> 8;
+		fire.yindex = fireY >> 8;
+		fireX += _cost[fire.ang] * 2;
+		fireY += _sint[fire.ang] * 2;
+		_suppressCollisionSound = true;
+		collide = checkwall(fireX, fireY, &fire);
+		_suppressCollisionSound = false;
+	} while (!collide);
+
+	if (collide == kMeNum) {
+		obj.where.dx = (_me.xloc - fireX) >> 1;
+		obj.where.dy = (_me.yloc - fireY) >> 1;
+		debugC(1, kColonyDebugCombat,
+			"scanForPlayer: robot=%d type=%d from=(%d,%d) ang=%d sees player, aim=(%d,%d)",
+			num, obj.type, obj.where.xindex, obj.where.yindex, obj.where.ang,
+			(int)obj.where.dx, (int)obj.where.dy);
+	}
+
+	return collide;
+}
+
+void ColonyEngine::robotShoot(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[num - 1];
+	if (!obj.alive)
+		return;
+
+	auto qlog = [](int32 x) -> int {
+		int i = 0;
+		while (x > 0) {
+			x >>= 1;
+			i++;
+		}
+		return i;
+	};
+
+	const int epower2 = qlog(_me.power[2]);
+	const int armor2 = _armor * _armor;
+	int damage = 0;
+	int damage0 = 0;
+	int damage1 = 0;
+	int damage2 = 0;
+
+	obj.opcode = kOpcodeFShoot;
+	_sound->play(Sound::kShoot);
+
+	switch (obj.type) {
+	case kRobEye:
+		damage = epower2 * armor2 - (1 << _level);
+		if (damage > -_level)
+			damage = -_level;
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
+		break;
+	case kRobPyramid:
+		damage = epower2 * armor2 - (1 << _level);
+		if (damage > -_level)
+			damage = -_level;
+		damage0 = damage;
+		damage1 = -_level;
+		damage2 = -_level;
+		break;
+	case kRobCube:
+		damage = epower2 * armor2 - (1 << _level);
+		if (damage > -_level)
+			damage = -_level;
+		damage0 = -_level;
+		damage1 = damage;
+		damage2 = -_level;
+		break;
+	case kRobUPyramid:
+		damage = epower2 * armor2 - (1 << _level);
+		if (damage > -_level)
+			damage = -_level;
+		damage0 = -_level;
+		damage1 = -_level;
+		damage2 = damage;
+		break;
+	case kRobQueen:
+		damage = epower2 * armor2 - ((_level == 1 || _level == 7) ? (3 << 10) : (3 << _level));
+		if (damage > -_level)
+			damage = -(1 << _level);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
+		break;
+	case kRobDrone:
+		damage = epower2 * armor2 - (4 << _level);
+		if (damage > -_level)
+			damage = -(_level << 1);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
+		break;
+	case kRobSoldier:
+		damage = epower2 * armor2 - (5 << _level);
+		if (damage > -_level)
+			damage = -(_level << 1);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
+		break;
+	default:
+		break;
+	}
+
+	if (damage0 != 0 || damage1 != 0 || damage2 != 0) {
+		debugC(1, kColonyDebugCombat,
+			"robotShoot: robot=%d type=%d cell=(%d,%d) ang=%d delta=[%d,%d,%d] player=(%d,%d)",
+			num, obj.type, obj.where.xindex, obj.where.yindex, obj.where.ang,
+			damage0, damage1, damage2, _me.xindex, _me.yindex);
+		// shoot.c: MeGetShot() — visual feedback when player is hit
+		meGetShot();
+		setPower(damage0, damage1, damage2);
+	}
+}
+
+void ColonyEngine::meEat() {
+	if (_me.xindex < 0 || _me.xindex >= 32 || _me.yindex < 0 || _me.yindex >= 32)
+		return;
+
+	const int foodNum = _foodArray[_me.xindex][_me.yindex];
+	if (foodNum <= 0 || foodNum > (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[foodNum - 1];
+	_foodArray[_me.xindex][_me.yindex] = 0;
+	obj.alive = 0;
+	_sound->play(Sound::kEat);
+	if (foodNum <= getColonyActiveRobotLimit())
+		copyOverflowObjectToSlot(foodNum);
+
+	switch (obj.type) {
+	case kRobMUPyramid:
+	case kRobFUPyramid:
+	case kRobSUPyramid:
+		setPower(7 << _level, 7 << _level, 15 << _level);
+		break;
+	case kRobMEye:
+	case kRobFEye:
+	case kRobSEye:
+		setPower(15 << _level, 15 << _level, 15 << _level);
+		break;
+	case kRobMPyramid:
+	case kRobFPyramid:
+	case kRobSPyramid:
+		setPower(15 << _level, 7 << _level, 7 << _level);
+		break;
+	case kRobMCube:
+	case kRobFCube:
+	case kRobSCube:
+		setPower(7 << _level, 15 << _level, 7 << _level);
+		break;
+	default:
+		break;
+	}
+}
+
+} // End of namespace Colony

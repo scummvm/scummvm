@@ -61,7 +61,7 @@ Music::Music(Audio::Mixer *mixer) :
 	 */
 	const Config *config = Config::getInstance();
 
-	Std::vector<ConfigElement> musicConfs = config->getElement("music").getChildren();
+	Common::Array<ConfigElement> musicConfs = config->getElement("music").getChildren();
 	for (const auto &m : musicConfs) {
 		if (m.getName() != "track")
 			continue;

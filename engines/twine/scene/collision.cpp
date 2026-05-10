@@ -516,4 +516,9 @@ int32 Collision::extraCheckExtraCol(ExtraListStruct *extra, int32 extraIdx) cons
 	return -1;
 }
 
+void Collision::doImpact(int32 num, int32 x, int32 y, int32 z, int32 owner) {
+	debugC(3, kDebugLevels::kDebugCollision, "Collision::doImpact(%i, %i, %i, %i, %i)", num, x, y, z, owner);
+	// TODO: Implement me
+}
+
 } // namespace TwinE

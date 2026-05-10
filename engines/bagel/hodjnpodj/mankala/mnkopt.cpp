@@ -104,7 +104,7 @@ END_MESSAGE_MAP()
 // CMnkUsr dialog
 
 CMnkUsr::CMnkUsr(CWnd *xpParent, CPalette *xpPalette, unsigned int nID)
-	:  CBmpDialog(xpParent, xpPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	:  CBmpDialog(xpParent, xpPalette, nID, "art\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(CMnkUsr)
 	m_iUShells = 0;
 	m_iUStrength = 0;

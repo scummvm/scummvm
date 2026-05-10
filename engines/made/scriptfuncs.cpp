@@ -389,12 +389,12 @@ int16 ScriptFunctions::sfStopTele(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfHideMouseCursor(int16 argc, int16 *argv) {
-	_vm->_system->showMouse(false);
+	CursorMan.showMouse(false);
 	return 0;
 }
 
 int16 ScriptFunctions::sfShowMouseCursor(int16 argc, int16 *argv) {
-	_vm->_system->showMouse(true);
+	CursorMan.showMouse(true);
 	return 0;
 }
 
@@ -834,9 +834,9 @@ int16 ScriptFunctions::sfGetTextWidth(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfPlayMovie(int16 argc, int16 *argv) {
 	const char *movieName = _vm->_dat->getObjectString(argv[1]);
-	_vm->_system->showMouse(false);
+	CursorMan.showMouse(false);
 	bool completed = _vm->_pmvPlayer->play(movieName);
-	_vm->_system->showMouse(true);
+	CursorMan.showMouse(true);
 	// Return true/false according to if the movie was canceled or not
 	return completed ? -1 : 0;
 }

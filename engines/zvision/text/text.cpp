@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/enc-internal.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
@@ -234,7 +235,7 @@ TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
 	return (TextChange)retval;
 }
 
-void TextStyleState::readAllStyles(const Common::String &txt) {
+void TextStyleState::readAllStyles(const Common::U32String &txt) {
 	int16 startTextPosition = -1;
 	int16 endTextPosition = -1;
 
@@ -245,7 +246,7 @@ void TextStyleState::readAllStyles(const Common::String &txt) {
 			endTextPosition = i;
 			if (startTextPosition != -1) {
 				if ((endTextPosition - startTextPosition - 1) > 0) {
-					parseStyle(Common::String(txt.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
+					parseStyle(Common::U32String(txt.c_str() + startTextPosition + 1).encode(), endTextPosition - startTextPosition - 1);
 				}
 			}
 		}
@@ -275,7 +276,7 @@ void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 	font.loadFont(_fontname, _size, tempStyle);
 }
 
-void TextRenderer::drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification justify) {
+void TextRenderer::drawTextWithJustification(const Common::U32String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification justify) {
 	switch (justify) {
 	case TEXT_JUSTIFY_LEFT :
 		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
@@ -289,7 +290,7 @@ void TextRenderer::drawTextWithJustification(const Common::String &text, StyledT
 	}
 }
 
-int32 TextRenderer::drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest) {
+int32 TextRenderer::drawText(const Common::U32String &text, TextStyleState &state, Graphics::Surface &dest) {
 	StyledTTFont font(_engine);
 	state.updateFontWithTextState(font);
 
@@ -311,7 +312,7 @@ struct TextSurface {
 	uint _lineNumber;
 };
 
-void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest, bool blackFrame) {
+void TextRenderer::drawTextWithWordWrapping(const Common::U32String &text, Graphics::Surface &dest, bool blackFrame) {
 	Common::Array<TextSurface> textSurfaces;
 	Common::Array<uint> lineWidths;
 	Common::Array<TextJustification> lineJustifications;
@@ -323,8 +324,8 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	StyledTTFont font(_engine);
 	currentState.updateFontWithTextState(font);
 
-	Common::String currentSentence; // Not a true 'grammatical' sentence. Rather, it's just a collection of words
-	Common::String currentWord;
+	Common::U32String currentSentence; // Not a true 'grammatical' sentence. Rather, it's just a collection of words
+	Common::U32String currentWord;
 	int sentenceWidth = 0;
 	int wordWidth = 0;
 	int lineWidth = 0;
@@ -364,7 +365,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 
 			uint stateChanges = 0u;
 			if ((endTextPosition - startTextPosition - 1) > 0) {
-				stateChanges = currentState.parseStyle(Common::String(text.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
+				stateChanges = currentState.parseStyle(Common::U32String(text.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
 			}
 
 			if (stateChanges & (TEXT_CHANGE_FONT_TYPE | TEXT_CHANGE_FONT_STYLE)) {
@@ -410,7 +411,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 				lineJustifications.push_back(currentState._justification);
 			}
 			if (stateChanges & TEXT_CHANGE_HAS_STATE_BOX) {
-				Common::String temp = Common::String::format("%d", _engine->getScriptManager()->getStateValue(currentState._statebox));
+				Common::U32String temp = Common::U32String::format("%d", _engine->getScriptManager()->getStateValue(currentState._statebox));
 				wordWidth += font.getStringWidth(temp);
 
 				// If the word causes the line to overflow, render the sentence and start a new line
@@ -534,6 +535,14 @@ Common::U32String readWideLine(Common::SeekableReadStream &stream) {
 		asciiString += value;
 	}
 	return asciiString;
+}
+
+void fixPseudo1251(Common::U32String *str) {
+	for (uint32 i = 0; i < str->size(); i++) {
+		uint32 c = str->operator[](i);
+		if (c >= 0x80 && c < 0x100)
+			str->operator[](i) = Common::kWindows1251ConversionTable[c & 0x7f];
+	}
 }
 
 } // End of namespace ZVision

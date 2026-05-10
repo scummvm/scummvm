@@ -24,50 +24,57 @@
 
 namespace Common {
 
-void memset64(uint64 *dst, uint64 val, size_t count) {
-	if (!count)
-		return;
-
-	int n = (count + 7) >> 3;
-	switch (count % 8) {
-	default:
-	case 0:	do {
-	       		*dst++ = val; // fall through
-	case 7:		*dst++ = val; // fall through
-	case 6:		*dst++ = val; // fall through
-	case 5:		*dst++ = val; // fall through
-	case 4:		*dst++ = val; // fall through
-	case 3:		*dst++ = val; // fall through
-	case 2:		*dst++ = val; // fall through
-	case 1:		*dst++ = val;
-	       	} while (--n > 0);
+template<typename T>
+static inline void memsetXX(T *dst, T val, size_t count) {
+	while(count >= 8) {
+		dst[0] = val;
+		dst[1] = val;
+		dst[2] = val;
+		dst[3] = val;
+		dst[4] = val;
+		dst[5] = val;
+		dst[6] = val;
+		dst[7] = val;
+		dst += 8;
+		count -= 8;
 	}
+	switch(count) {
+	case 7:
+		*(dst++) = val;
+		/* fall through */
+	case 6:
+		*(dst++) = val;
+		/* fall through */
+	case 5:
+		*(dst++) = val;
+		/* fall through */
+	case 4:
+		*(dst++) = val;
+		/* fall through */
+	case 3:
+		*(dst++) = val;
+		/* fall through */
+	case 2:
+		*(dst++) = val;
+		/* fall through */
+	case 1:
+		*(dst++) = val;
+		/* fall through */
+	case 0:
+		break;
+	}
+}
+
+void memset64(uint64 *dst, uint64 val, size_t count) {
+	memsetXX<uint64>(dst, val, count);
 }
 
 void memset32(uint32 *dst, uint32 val, size_t count) {
-	if (!IS_ALIGNED(dst, 8) && count) {
-		*dst++ = val;
-		count -= 1;
-	}
-
-	memset64((uint64 *)dst, val | ((uint64)val << 32), count >> 1);
-
-	if (count & 1) {
-		dst[count & ~1] = val;
-	}
+	memsetXX<uint32>(dst, val, count);
 }
 
 void memset16(uint16 *dst, uint16 val, size_t count) {
-	if (!IS_ALIGNED(dst, 4) && count) {
-		*dst++ = val;
-		count -= 1;
-	}
-
-	memset32((uint32 *)dst, val | ((uint32)val << 16), count >> 1);
-
-	if (count & 1) {
-		dst[count & ~1] = val;
-	}
+	memsetXX<uint16>(dst, val, count);
 }
 
 } // End of namespace Common

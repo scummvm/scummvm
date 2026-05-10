@@ -46,9 +46,9 @@ namespace WordSearch {
 #define IDC_JUNK            999
 
 // Art File Identifiers
-#define     SPLASHSPEC      ".\\ART\\WORDSRCH.BMP"
-#define     ALLLETTERS      ".\\ART\\LETTERS.BMP"
-#define     TIMERSPRITE     ".\\ART\\DASYTIMR.BMP"
+#define     SPLASHSPEC      "art\\WORDSRCH.BMP"
+#define     ALLLETTERS      "art\\LETTERS.BMP"
+#define     TIMERSPRITE     "art\\DASYTIMR.BMP"
 
 // Timer info
 #define     GAMETIMER       99
@@ -56,25 +56,25 @@ namespace WordSearch {
 
 // Rules File Identifiers
 #define RULESFILE                   "WORDSRCH.TXT"
-#define RULES_WAV                   ".\\SOUND\\WORDSRCH.WAV"
+#define RULES_WAV                   "sound\\WORDSRCH.WAV"
 
 // Sound files:
-#define GAME_THEME          ".\\SOUND\\WORDSRCH.MID"
-#define COW_WAV             ".\\SOUND\\SLURP2.WAV"
-#define CHICKEN_WAV         ".\\SOUND\\BRAWK.WAV"
-#define PIG_WAV             ".\\SOUND\\OINK.WAV"
-#define FLOWER_WAV          ".\\SOUND\\LOVESME.WAV"
-#define FIND_WAV            ".\\SOUND\\TINYBELL.WAV"
-#define NOPE_WAV            ".\\SOUND\\NOPE.WAV"
-#define TRYAGAIN_WAV        ".\\SOUND\\TRYAGAIN.WAV"
-#define TICK_WAV            ".\\SOUND\\TICK.WAV"
-#define TIMEOUT_WAV         ".\\SOUND\\BUZZER.WAV"
-#define ALLFOUND_WAV        ".\\SOUND\\APPLAUSE.WAV"
+#define GAME_THEME          "sound\\WORDSRCH.MID"
+#define COW_WAV             "sound\\SLURP2.WAV"
+#define CHICKEN_WAV         "sound\\BRAWK.WAV"
+#define PIG_WAV             "sound\\OINK.WAV"
+#define FLOWER_WAV          "sound\\LOVESME.WAV"
+#define FIND_WAV            "sound\\TINYBELL.WAV"
+#define NOPE_WAV            "sound\\NOPE.WAV"
+#define TRYAGAIN_WAV        "sound\\TRYAGAIN.WAV"
+#define TICK_WAV            "sound\\TICK.WAV"
+#define TIMEOUT_WAV         "sound\\BUZZER.WAV"
+#define ALLFOUND_WAV        "sound\\APPLAUSE.WAV"
 
 // Anim files:
-#define COW_ANIM            ".\\ART\\COW.BMP"
-#define CHICKEN_ANIM        ".\\ART\\CHICKEN.BMP"
-#define PIG_ANIM            ".\\ART\\PIG.BMP"
+#define COW_ANIM            "art\\COW.BMP"
+#define CHICKEN_ANIM        "art\\CHICKEN.BMP"
+#define PIG_ANIM            "art\\PIG.BMP"
 
 // Easter Egg info
 #define COW_X               40  //38

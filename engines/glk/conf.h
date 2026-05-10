@@ -90,6 +90,8 @@ public:
 	double _gamma;
 	uint _borderColor, _borderSave;
 	uint _windowColor, _windowSave;
+	bool _windowColorOverride;
+	bool _borderColorOverride;
 	int _scrollWidth;
 	uint _scrollBg, _scrollFg;
 	bool _graphics;
@@ -122,6 +124,11 @@ public:
 	 * modify scummvm.ini later on to see what options are available
 	 */
 	void flush();
+
+	/**
+	 * Destructor
+	 */
+	~Conf();
 };
 
 extern Conf *g_conf;

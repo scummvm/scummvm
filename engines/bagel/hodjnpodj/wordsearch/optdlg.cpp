@@ -69,7 +69,7 @@ CCheckButton    *pWordForwardButton = nullptr;
  *
  ****************************************************************/
 CWSOptDlg::CWSOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-		:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
+		:  CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP"),
 		rDisplayTime(35, 90, 200, 110) {
 	CDC     *pDC = GetDC();
 

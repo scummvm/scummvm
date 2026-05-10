@@ -181,8 +181,8 @@ void TypeFlags::loadWeaponInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	// load weapons
-	Std::vector<Std::string> weaponkeys;
-	Std::string category = "weapons";
+	Common::Array<Common::String> weaponkeys;
+	Common::String category = "weapons";
 	weaponkeys = config->listSections(category);
 	for (const auto &section : weaponkeys) {
 		WeaponInfo *wi = new WeaponInfo;
@@ -301,8 +301,8 @@ void TypeFlags::loadArmourInfo() {
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
 
 	// load armour
-	Std::vector<Std::string> armourkeys;
-	Std::string category = "armour";
+	Common::Array<Common::String> armourkeys;
+	Common::String category = "armour";
 	armourkeys = config->listSections(category);
 	for (const auto &section : armourkeys) {
 		ArmourInfo ai;
@@ -357,8 +357,8 @@ void TypeFlags::loadMonsterInfo() {
 	treasureLoader.loadDefaults();
 
 	// load monsters
-	Std::vector<Std::string> monsterkeys;
-	Std::string category = "monsters";
+	Common::Array<Common::String> monsterkeys;
+	Common::String category = "monsters";
 	monsterkeys = config->listSections(category);
 	for (const auto &section : monsterkeys) {
 		MonsterInfo *mi = new MonsterInfo;
@@ -421,7 +421,7 @@ void TypeFlags::loadMonsterInfo() {
 		else
 			mi->_explode = 0;
 
-		Std::string treasure;
+		Common::String treasure;
 		if (config->get(category, section, "treasure", treasure)) {
 			bool ok = treasureLoader.parse(treasure, mi->_treasure);
 			if (!ok) {

@@ -33,6 +33,7 @@
 #include "audio/audiostream.h"
 #include "common/endian.h"
 #include "common/ptr.h"
+#include "common/array.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -117,7 +118,7 @@ private:
 
 class Ima_ADPCMStream : public ADPCMStream {
 protected:
-	int16 decodeIMA(byte code, int channel = 0); // Default to using the left channel/using one channel
+	int16 decodeIMA(byte code, int channel = 0, int shift = 3); // Default to using the left channel/using one channel
 
 public:
 	Ima_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
@@ -168,7 +169,6 @@ public:
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-
 };
 
 class MSIma_ADPCMStream : public Ima_ADPCMStream {
@@ -260,6 +260,31 @@ public:
 private:
 	byte _nibble, _lastByte;
 	bool _topNibble;
+};
+
+class FOURXM_ADPCMStream : public Ima_ADPCMStream {
+public:
+	FOURXM_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, 0) {
+		decode();
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override {
+		return !_planes.empty() && _samplePos >= _planes[0].size();
+	}
+
+	void reset() override {
+		Ima_ADPCMStream::reset();
+		_samplePos = 0;
+		_planes.clear();
+	}
+
+private:
+	void decode();
+
+	uint _samplePos = 0;
+	Common::Array<Common::Array<int16>> _planes;
 };
 
 } // End of namespace Audio

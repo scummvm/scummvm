@@ -117,7 +117,7 @@ void LogicManager::endGame(int type, int value, int sceneIndex, bool showScene) 
 
 	_engine->_navigationEngineIsRunning = false;
 	_engine->getMessageManager()->clearMessageQueue();
-	_engine->_stopUpdatingCharacters = false;
+	_engine->_stopUpdatingCharacters = true;
 
 	if (showScene) {
 		fadeToWhite();
@@ -532,7 +532,7 @@ bool LogicManager::onLowPlatform(int character) {
 
 bool LogicManager::onKronPlatform(int character) {
 	return checkLoc(character, kCarKronos)
-		&& getCharacter(character).characterPosition.position < 7900;
+		&& getCharacter(character).characterPosition.position > 7900;
 }
 
 bool LogicManager::cathInCorridor(int car) {
@@ -1955,7 +1955,7 @@ void LogicManager::queueSFX(int character, uint8 action, uint8 delay) {
 				sndNum = sndArray[rnd(3)];
 				break;
 			case 198:
-				sndArray[0] = 198;
+				sndArray[0] = 199;
 				sndArray[1] = 200;
 				sndArray[2] = 201;
 				sndArray[3] = 202;
@@ -3208,7 +3208,7 @@ bool LogicManager::walk(int character, int car, int position) {
 
 			if (getCharacter(character).characterPosition.car == kCarGreenSleeping && onLowPlatform(kCharacterCath)) {
 				queueSFX(kCharacterCath, 14, 0);
-				playChrExcuseMe(character, kCarGreenSleeping, 16);
+				playChrExcuseMe(character, kCharacterCath, 16);
 				bumpCath(kCarGreenSleeping, 1, 255);
 				playDialog(kCharacterCath, "CAT1127A" , -1, 0);
 				queueSFX(kCharacterCath, 15, 0);
@@ -3223,9 +3223,9 @@ bool LogicManager::walk(int character, int car, int position) {
 				return true;
 			}
 
-			if (getCharacter(character).characterPosition.car == kCarGreenSleeping && onKronPlatform(0)) {
+			if (getCharacter(character).characterPosition.car == kCarGreenSleeping && onKronPlatform(kCharacterCath)) {
 				queueSFX(kCharacterCath, 14, 0);
-				playChrExcuseMe(character, 0, 16);
+				playChrExcuseMe(character, kCharacterCath, 16);
 				bumpCath(kCarGreenSleeping, 62, 255);
 				playDialog(kCharacterCath, "CAT1127A" , -1, 0);
 				queueSFX(kCharacterCath, 15, 0);
@@ -3264,7 +3264,7 @@ bool LogicManager::walk(int character, int car, int position) {
 
 			if (getCharacter(character).characterPosition.car == kCarKronos && onKronPlatform(kCharacterCath)) {
 				queueSFX(kCharacterCath, 14, 0);
-				playChrExcuseMe(character, 0, 16);
+				playChrExcuseMe(character, kCharacterCath, 16);
 				bumpCath(kCarGreenSleeping, 62, 255);
 				playDialog(kCharacterCath, "CAT1127A", -1, 0);
 				queueSFX(kCharacterCath, 15, 0);

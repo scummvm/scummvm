@@ -234,6 +234,10 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
 		_enabled(false),
 		_disableWhenComplete(false),
 		_scriptDriven(false),
+		_isPreloaded(false),
+		_noFrameSkip(false),
+		_unk147(0),
+		_unk148(0),
 		_isLastFrame(false),
 		_soundHeading(0),
 		_soundAttenuation(0),
@@ -257,17 +261,62 @@ void ScriptedMovie::drawOverlay() {
 	Movie::drawOverlay();
 }
 
-void ScriptedMovie::update() {
+void ScriptedMovie::update(bool pauseAtFirstFrame) {
+	int32 effectiveStartFrame = _startFrame;
+	int32 effectiveEndFrame = _endFrame;
+
 	if (_startFrameVar) {
-		_startFrame = _vm->_state->getVar(_startFrameVar);
+		uint16 startFrameVarValue = _vm->_state->getVar(_startFrameVar);
+		if (startFrameVarValue == 0) {
+			effectiveStartFrame = startFrameVarValue;
+		} else {
+			effectiveStartFrame = startFrameVarValue - 1;
+		}
 	}
 
 	if (_endFrameVar) {
-		_endFrame = _vm->_state->getVar(_endFrameVar);
+		uint16 endFrameVarValue = _vm->_state->getVar(_endFrameVar);
+		if (endFrameVarValue == 0) {
+			effectiveEndFrame = endFrameVarValue;
+		} else {
+			effectiveEndFrame = endFrameVarValue - 1;
+		}
 	}
 
-	if (!_endFrame) {
-		_endFrame = _bink.getFrameCount();
+	uint32 frameCount = _bink.getFrameCount();
+	if (!effectiveEndFrame || (uint32)effectiveEndFrame >= frameCount) {
+		effectiveEndFrame = frameCount - 1;
+	}
+
+	if (!_startFrameVar && effectiveStartFrame > 0) {
+		--effectiveStartFrame;
+	}
+
+	if (effectiveStartFrame >= effectiveEndFrame) {
+		effectiveStartFrame = effectiveEndFrame;
+	}
+
+	switch (getId()) {
+	case 13011:
+		// Special case for the looping movie 13011 (room: 603 age: 6) of the looping swiming jellyfish at node LIFO 11
+		if (_vm->_state->getLocationRoom() == 603 && _vm->_state->getLocationAge() == 6) {
+			effectiveStartFrame = 0;
+		}
+		break;
+
+	case 20003:
+		// Special case for movie 20003 (room: 501 age: 5) of Saavedro running away at node LEIS 3, when the player first arrives at J'nanin
+		// Prevents Saavedro appearing as though he's "blinking in" (he's already there when the player arrives, and running away).
+		// (Original Bug)
+		// NOTE this movie id also exists in the Main Menu -> Options (room: 901 age: 9) (Archive::kStillMovie)
+		// and the startFrame should not be changed there (from 0)
+		if (_vm->_state->getLocationRoom() == 501 && _vm->_state->getLocationAge() == 5) {
+			effectiveStartFrame = 1;
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (_posUVar) {
@@ -293,11 +342,12 @@ void ScriptedMovie::update() {
 		_enabled = newEnabled;
 
 		if (newEnabled) {
+			int currFrame = _bink.getCurFrame();
 			if (_disableWhenComplete
-					|| _bink.getCurFrame() < _startFrame
-					|| _bink.getCurFrame() >= _endFrame
-					|| _bink.endOfVideo()) {
-				_bink.seekToFrame(_startFrame);
+			    || currFrame < effectiveStartFrame
+			    || currFrame >= effectiveEndFrame
+			    || _bink.endOfVideo()) {
+				_bink.seekToFrame(effectiveStartFrame);
 				_isLastFrame = false;
 			}
 
@@ -316,18 +366,52 @@ void ScriptedMovie::update() {
 	}
 
 	if (_enabled) {
+		if (_isPreloaded) {
+			if (pauseAtFirstFrame) {
+				if (!_bink.isPaused()) {
+					_bink.pauseVideo(true);
+				}
+				return;
+			} else {
+				_isPreloaded = false;
+				if (_bink.isPaused()) {
+					_bink.pauseVideo(false);
+				}
+			}
+		}
+
 		updateVolume();
 
+		bool forceDrawNextFrame = false;
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
 			if (nextFrame > 0 && nextFrame <= (int32)_bink.getFrameCount()) {
 				// Are we changing frame?
-				if (_bink.getCurFrame() != nextFrame - 1) {
+				int currFrame = _bink.getCurFrame();
+				if (currFrame != nextFrame - 1) {
 					// Don't seek if we just want to display the next frame
-					if (_bink.getCurFrame() + 1 != nextFrame - 1) {
-						_bink.seekToFrame(nextFrame - 1);
+					if (currFrame + 1 != nextFrame - 1) {
+						if (getId() == 12001
+						    && _vm->_state->getLocationRoom() == 1005 && _vm->_state->getLocationAge() == 10
+						    && nextFrame >= 200 && nextFrame < 250) {
+							debug("effectiveStartframe for getId(): %d (room: %d, age: %d) is: %d", getId(), _vm->_state->getLocationRoom(), _vm->_state->getLocationAge(), effectiveStartFrame);
+							// fix glitchy transition for rotation of the left turntable track (movie id 12001, room: 1005, age: 10),
+							// eg. when the left dial panel has no wood pegs
+							if (nextFrame >= 247) {
+								// values 247 and 248 should stay at the same frame
+								_bink.seekToFrame(248);
+							} else {
+								_bink.seekToFrame(nextFrame + 1);
+							}
+						} else {
+							_bink.seekToFrame(nextFrame - 1);
+						}
 					}
-					drawNextFrameToTexture();
+					forceDrawNextFrame = true;
+					if (_scriptDriven) {
+						drawNextFrameToTexture();
+						forceDrawNextFrame = false;
+					}
 				}
 
 				_vm->_state->setVar(_nextFrameReadVar, 0);
@@ -335,21 +419,21 @@ void ScriptedMovie::update() {
 			}
 		}
 
-		if (!_scriptDriven && (_bink.needsUpdate() || _isLastFrame)) {
+		if (!_scriptDriven && (forceDrawNextFrame || _bink.needsUpdate() || _isLastFrame)) {
 			bool complete = false;
-
 			if (_isLastFrame) {
 				_isLastFrame = false;
-
 				if (_loop) {
-					_bink.seekToFrame(_startFrame);
+					_bink.seekToFrame(effectiveStartFrame);
 					drawNextFrameToTexture();
 				} else {
 					complete = true;
 				}
 			} else {
 				drawNextFrameToTexture();
-				_isLastFrame = _bink.getCurFrame() == (_endFrame - 1);
+				if (!forceDrawNextFrame) {
+					_isLastFrame = _bink.getCurFrame() == effectiveEndFrame;
+				}
 			}
 
 			if (_nextFrameWriteVar) {
@@ -423,7 +507,20 @@ void SimpleMovie::update() {
 
 	uint16 ambiantStartFrame = _vm->_state->getMovieAmbiantScriptStartFrame();
 	if (ambiantStartFrame && _bink.getCurFrame() > ambiantStartFrame) {
-		_vm->runAmbientScripts(_vm->_state->getMovieAmbiantScript());
+		// Fixes bug #16491 for missing ambient sounds while a simpleMovie is playing
+		// eg. the burning fire after Saavedro throws the lamp at the curtain in Tomahna (during the intro at Atrus's office)
+		// and the screaming squee after trapping it in Edanna.
+		// This fix is essentially replicating the code from ambientReloadCurrentNode() script command.
+		// In these movies (SimpleMovie), a frame number (ambiantStartFrame) is set (before they start)
+		// upon which the ambient sounds scripts should be re-evaluated,
+		// because a condition and related variables to that condition will have changed
+		// and therefore different ambient sounds should be played.
+		//
+		// NOTE: The value set for var MovieAmbiantScript (181) is not a node id -- so calling runAmbientScripts() here with it as argument does not work.
+		// Instead, we just reload the current node's ambient scripts and then applySounds using the value of MovieAmbiantScript as fadeOutDelay.
+		_vm->_ambient->loadNode(0, 0, 0);
+		_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(_vm->_state->getMovieAmbiantScript()));
+
 		_vm->_state->setMovieAmbiantScriptStartFrame(0);
 		_vm->_state->setMovieAmbiantScript(0);
 	}
@@ -496,7 +593,7 @@ ProjectorMovie::~ProjectorMovie() {
 	}
 }
 
-void ProjectorMovie::update() {
+void ProjectorMovie::update(bool justFirstFrame) {
 	if (!_frame) {
 		// First call, get the alpha channel from the bink file
 		const Graphics::Surface *frame = _bink.decodeNextFrame();

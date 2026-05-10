@@ -247,12 +247,19 @@ public:
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
+	MESSAGE(MouseMove);
 	MESSAGE(Action);
 	MESSAGE(Game);
 	MESSAGE(Header);
 	MESSAGE(Info);
 	MESSAGE(DrawGraphic);
 	#undef MESSAGE
+};
+
+class ViewsBase {
+public:
+	ViewsBase() {}
+	virtual ~ViewsBase() {}
 };
 
 /**
@@ -287,6 +294,7 @@ protected:
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
+	MESSAGE(MouseMove);
 	MESSAGE(DrawGraphic);
 	#undef MESSAGE
 public:

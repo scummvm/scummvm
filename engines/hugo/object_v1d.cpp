@@ -329,18 +329,6 @@ void ObjectHandler_v1d::moveObjects() {
 		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 			clearBoundary(obj->_oldx + currImage->_x1, obj->_oldx + currImage->_x2, obj->_oldy + currImage->_y2);
 	}
-
-	// If maze mode is enabled, do special maze processing
-	if (_vm->_maze._enabledFl) {
-		Seq *currImage = _vm->_hero->_currImagePtr;// Get ptr to current image
-		// hero coordinates
-		int x1 = _vm->_hero->_x + currImage->_x1;     // Left edge of object
-		int x2 = _vm->_hero->_x + currImage->_x2;     // Right edge
-		int y1 = _vm->_hero->_y + currImage->_y1;     // Top edge
-		int y2 = _vm->_hero->_y + currImage->_y2;     // Bottom edge
-
-		_vm->_scheduler->processMaze(x1, x2, y1, y2);
-	}
 }
 
 /**
@@ -348,8 +336,16 @@ void ObjectHandler_v1d::moveObjects() {
  * the assumption for now that the first obj is always the HERO) to the object
  * number of the swapped image
  */
-void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
-	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
+void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2, bool restoring) {
+	debugC(1, kDebugObject, "swapImages(%d, %d, %d)", objIndex1, objIndex2, restoring);
+
+	// WORKAROUND: If Hero's image is swapped then restoring a game sets Hero's
+	// direction to right. This bug is quite noticeable in Hugo2 as Penelope.
+	// This was fixed in Hugo3 and Windows. We backport the fix to this version,
+	// but only when restoring so that original in-game behavior is preserved.
+	if (restoring) {
+		saveSeq(&_objects[objIndex1]);
+	}
 
 	SeqList tmpSeqList[kMaxSeqNumb];
 	int seqListSize = sizeof(SeqList) * kMaxSeqNumb;
@@ -357,7 +353,11 @@ void ObjectHandler_v1d::swapImages(int objIndex1, int objIndex2) {
 	memmove(tmpSeqList, _objects[objIndex1]._seqList, seqListSize);
 	memmove(_objects[objIndex1]._seqList, _objects[objIndex2]._seqList, seqListSize);
 	memmove(_objects[objIndex2]._seqList, tmpSeqList, seqListSize);
-	_objects[objIndex1]._currImagePtr = _objects[objIndex1]._seqList[0]._seqPtr;
+	if (restoring) {
+		restoreSeq(&_objects[objIndex1]);
+	} else {
+		_objects[objIndex1]._currImagePtr = _objects[objIndex1]._seqList[0]._seqPtr;
+	}
 	_objects[objIndex2]._currImagePtr = _objects[objIndex2]._seqList[0]._seqPtr;
 	_vm->_heroImage = (_vm->_heroImage == kHeroIndex) ? objIndex2 : kHeroIndex;
 }
@@ -376,11 +376,11 @@ void ObjectHandler_v1d::homeIn(int objIndex1, const int objIndex2, const int8 ob
 		dy = 1;
 
 	if (abs(dx) > abs(dy)) {
-		obj1->_vx = objDx * -sign<int8>(dx);
-		obj1->_vy = abs((objDy * dy) / dx) * -sign<int8>(dy);
+		obj1->_vx = objDx * -sign(dx);
+		obj1->_vy = abs((objDy * dy) / dx) * -sign(dy);
 	} else {
-		obj1->_vy = objDy * sign<int8>(dy);
-		obj1->_vx = abs((objDx * dx) / dy) * sign<int8>(dx);
+		obj1->_vy = objDy * sign(dy);
+		obj1->_vx = abs((objDx * dx) / dy) * sign(dx);
 	}
 }
 } // End of namespace Hugo

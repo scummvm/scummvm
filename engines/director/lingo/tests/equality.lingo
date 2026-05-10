@@ -142,6 +142,17 @@ scummvmAssert(not([1, 2, 3] <> [1, "2", 3.0]))
 scummvmAssert(["testa", "testb"] = ["testa", "TESTB"])
 scummvmAssert([#a: "testa", #b: "testb"] = [#a: "testa", #b: "TESTB"])
 
+scummvmAssert(("" = []))
+scummvmAssert(("sausages" = []))
+scummvmAssert(not("" = ["sausages"]))
+scummvmAssert(("sausages" = ["sausages"]))
+
+set the scummvmVersion to 600
+scummvmAssert(not("" = []))
+scummvmAssert(not("sausages" = []))
+scummvmAssert(not("" = ["sausages"]))
+scummvmAssert(not("sausages" = ["sausages"]))
+
 -- D4 has a quirk where only the left side list elements are checked
 set the scummvmVersion to 400
 scummvmAssert([] = [1, "2", 4])

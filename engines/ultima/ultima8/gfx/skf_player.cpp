@@ -19,22 +19,22 @@
  *
  */
 
-#include "ultima/ultima.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/gfx/skf_player.h"
+
+#include "common/config-manager.h"
+#include "common/system.h"
+#include "ultima/ultima.h"
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/audio/raw_audio_sample.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
-#include "ultima/ultima8/gfx/shape.h"
-#include "ultima/ultima8/gfx/texture.h"
-#include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/audio/raw_audio_sample.h"
 #include "ultima/ultima8/gfx/fonts/font.h"
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
 #include "ultima/ultima8/gfx/fonts/rendered_text.h"
-#include "common/config-manager.h"
-#include "common/system.h"
+#include "ultima/ultima8/gfx/shape.h"
+#include "ultima/ultima8/gfx/texture.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -252,7 +252,7 @@ void SKFPlayer::run() {
 			                    _skf->get_object(_events[_curEvent]->_data - 1));
 			uint32 textsize = _skf->get_size(_events[_curEvent]->_data - 1);
 			if (subtitles && textsize > 7) {
-				Std::string subtitle = (textbuf + 6);
+				Common::String subtitle = (textbuf + 6);
 				delete _subs;
 				_subtitleY = textbuf[4] + (textbuf[5] << 8);
 				unsigned int remaining;

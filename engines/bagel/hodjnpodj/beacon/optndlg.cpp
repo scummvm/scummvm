@@ -48,7 +48,7 @@ int     m_nSweepSettings[15] =  {MIN_SWEEPS, 10, 15, 20, 30, 40, 50, 60, 80, 100
 
 
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, "art\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_bAutomatic = false;
 	m_bChangeAtTwelve = false;

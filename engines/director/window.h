@@ -177,7 +177,7 @@ public:
 	void freezeLingoState();
 	void thawLingoState();
 	void freezeLingoPlayState();
-	bool thawLingoPlayState();
+	bool requeueLingoPlayState();
 	LingoState *getLastFrozenLingoState() { return _frozenLingoStates.empty() ? nullptr : _frozenLingoStates[_frozenLingoStates.size() - 1]; }
 	void moveLingoState(Window *target);
 

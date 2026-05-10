@@ -19,30 +19,29 @@
  *
  */
 
+#include "ultima/ultima8/games/game_data.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
-
-#include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/usecode/usecode_flex.h"
-#include "ultima/ultima8/gfx/main_shape_archive.h"
+#include "ultima/ultima8/audio/music_flex.h"
+#include "ultima/ultima8/audio/speech_flex.h"
+#include "ultima/ultima8/conf/config_file_manager.h"
+#include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
+#include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/gfx/fonts/font_manager.h"
 #include "ultima/ultima8/gfx/fonts/font_shape_archive.h"
 #include "ultima/ultima8/gfx/gump_shape_archive.h"
-#include "ultima/ultima8/world/map_glob.h"
-#include "ultima/ultima8/world/fire_type_table.h"
-#include "ultima/ultima8/world/actors/npc_dat.h"
-#include "ultima/ultima8/world/actors/combat_dat.h"
+#include "ultima/ultima8/gfx/main_shape_archive.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/shape.h"
 #include "ultima/ultima8/gfx/wpn_ovlay_dat.h"
-#include "ultima/ultima8/gfx/fonts/font_manager.h"
-#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/gumps/weasel_dat.h"
-#include "ultima/ultima8/conf/config_file_manager.h"
-#include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
-#include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/speech_flex.h"
+#include "ultima/ultima8/misc/util.h"
+#include "ultima/ultima8/usecode/usecode_flex.h"
+#include "ultima/ultima8/world/actors/combat_dat.h"
+#include "ultima/ultima8/world/actors/npc_dat.h"
+#include "ultima/ultima8/world/fire_type_table.h"
+#include "ultima/ultima8/world/map_glob.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -177,10 +176,10 @@ void GameData::loadTranslation() {
 	}
 }
 
-Std::string GameData::translate(const Std::string &text) {
+Common::String GameData::translate(const Common::String &text) {
 	// TODO: maybe cache these lookups? config calls may be expensive
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Std::string trans;
+	Common::String trans;
 	if (config->get("language", "text", text, trans)) {
 		return trans;
 	}
@@ -193,8 +192,8 @@ FrameID GameData::translate(FrameID f) {
 	// TODO: allow translations to be in another shapeflex
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Std::string category = "language";
-	Std::string section;
+	Common::String category = "language";
+	Common::String section;
 
 	switch (f._flexId) {
 	case GUMPS:
@@ -207,8 +206,8 @@ FrameID GameData::translate(FrameID f) {
 	char buf[100];
 	Common::sprintf_s(buf, "%d,%d", f._shapeNum, f._frameNum);
 
-	Std::string key = buf;
-	Std::string trans;
+	Common::String key = buf;
+	Common::String trans;
 	if (!config->get(category, section, key, trans)) {
 		return f;
 	}
@@ -235,7 +234,7 @@ void GameData::loadU8Data() {
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");
 
-	Std::string filename = "usecode/";
+	Common::String filename = "usecode/";
 	filename += langletter;
 	filename += "usecode.flx";
 
@@ -373,9 +372,9 @@ void GameData::setupJPOverrides() {
 	jpkeyvals = config->listKeyValues("language", "jpfonts");
 	for (const auto &i : jpkeyvals) {
 		int fontnum = atoi(i._key.c_str());
-		const Std::string &fontdesc = i._value;
+		const Common::String &fontdesc = i._value;
 
-		Std::vector<Std::string> vals;
+		Common::Array<Common::String> vals;
 		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 2) {
 			warning("Invalid jpfont override: %s", fontdesc.c_str());
@@ -404,9 +403,9 @@ void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 	ttfkeyvals = config->listKeyValues(category, "fontoverride");
 	for (const auto &i : ttfkeyvals) {
 		int fontnum = atoi(i._key.c_str());
-		const Std::string &fontdesc = i._value;
+		const Common::String &fontdesc = i._value;
 
-		Std::vector<Std::string> vals;
+		Common::Array<Common::String> vals;
 		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 4) {
 			warning("Invalid ttf override: %s", fontdesc.c_str());
@@ -498,7 +497,7 @@ void GameData::loadRemorseData() {
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");
 
-	Std::string filename = "usecode/";
+	Common::String filename = "usecode/";
 	filename += langletter;
 	filename += "usecode.flx";
 

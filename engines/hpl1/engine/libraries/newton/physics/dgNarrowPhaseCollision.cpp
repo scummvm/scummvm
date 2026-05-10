@@ -297,7 +297,7 @@ dgCollision *dgWorld::CreateConvexHull(dgInt32 count,
 	// find the shape in cache
 	dgBodyCollisionList::dgTreeNode *node = dgBodyCollisionList::Find(crc);
 	if (!node) {
-		// chape not found crate a new one and add to teh cache
+		// chape not found crate a new one and add to the cache
 		dgCollisionConvexHull *const collision =
 		    new (m_allocator) dgCollisionConvexHull(m_allocator, crc, count,
 		            strideInBytes, tolerance, vertexArray, offsetMatrix);
@@ -327,7 +327,7 @@ dgCollision *dgWorld::CreateConvexHull(dgInt32 count,
 		}
 	}
 
-	// add reference to teh shape and return the collision pointer
+	// add reference to the shape and return the collision pointer
 	node->GetInfo()->AddRef();
 	return node->GetInfo();
 }

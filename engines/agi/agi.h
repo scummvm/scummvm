@@ -112,8 +112,7 @@ enum AgiGameFeatures {
 	GF_AGDS        = (1 << 1), // marks games created with AGDS - all using AGI version 2.440
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
 	GF_FANMADE     = (1 << 3), // marks fanmade games
-	GF_2GSOLDSOUND = (1 << 5),
-	GF_EXTCHAR     = (1 << 6)  // use WORDS.TOK.EXTENDED
+	GF_2GSOLDSOUND = (1 << 5)
 };
 
 enum AgiGameID {

@@ -24,9 +24,56 @@
 
 namespace Director {
 
+struct NavInstruction {
+	byte instruction_type;
+	byte reserved;
+	Common::String text;
+};
+struct NavCondition {
+	uint16 record_size;
+	uint16 destination_node;
+	uint16 condition_id;
+	uint16 instruction_count;
+
+	Common::Array<NavInstruction> instructions;
+};
+
+struct NavHotSpot {
+	uint16 record_size;
+	int16 left;
+	int16 top;
+	int16 right;
+	int16 bottom;
+	uint16 cursor_id;
+	byte initially_hidden;
+	byte unknown_0d;
+	uint16 condition_count;
+	Common::String evaluation_name;
+
+	bool isHidden; // Not part of the original data, used to track current hidden state in ScummVM
+
+	Common::Array<NavCondition> conditions;
+};
+
+struct NavNode {
+	uint16 background_picture;
+	uint16 hotspot_count;
+	uint16 unknown_04;
+	uint16 hotspot_list_offset;
+	Common::String name;
+
+	Common::Array<NavHotSpot> hotspots;
+};
+
 class MapNavigatorXObject : public Object<MapNavigatorXObject> {
 public:
 	MapNavigatorXObject(ObjectType objType);
+
+	Common::String _filename;
+	int16 _nodeCount;
+	int16 _hotspotCount;
+	int16 _firstNodeIndex;
+	Common::Array<NavNode> _nodes;
 };
 
 namespace MapNavigatorXObj {

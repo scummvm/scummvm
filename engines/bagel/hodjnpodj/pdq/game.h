@@ -64,21 +64,21 @@ namespace PDQ {
 #define NUM_FLOWER_CELS     21
 #define FLOWER_SLEEP        200
 
-#define BIRD_ANIM       ".\\ART\\BIRD.BMP"
-#define HORSE1_ANIM     ".\\ART\\HORSE1.BMP"
-#define HORSE2_ANIM     ".\\ART\\HORSE2.BMP"
-#define FLOWER_ANIM     ".\\ART\\FLOWER.BMP"
+#define BIRD_ANIM       "art\\BIRD.BMP"
+#define HORSE1_ANIM     "art\\HORSE1.BMP"
+#define HORSE2_ANIM     "art\\HORSE2.BMP"
+#define FLOWER_ANIM     "art\\FLOWER.BMP"
 
-#define WAV_REVEAL      ".\\SOUND\\REVEAL.WAV"
-#define WAV_BADGUESS    ".\\SOUND\\BADGUESS.WAV"
-#define WAV_GAMEOVER    ".\\SOUND\\GAMEOVER.WAV"
-#define WAV_YOUWIN      ".\\SOUND\\YOUWIN.WAV"
-#define WAV_HORSE1      ".\\SOUND\\HORSE1.WAV"
-#define WAV_HORSE2      ".\\SOUND\\HORSE2.WAV"
-#define WAV_BIRD        ".\\SOUND\\BIRD.WAV"
-#define WAV_FLOWER      ".\\SOUND\\WEIRD.WAV"
+#define WAV_REVEAL      "sound\\REVEAL.WAV"
+#define WAV_BADGUESS    "sound\\BADGUESS.WAV"
+#define WAV_GAMEOVER    "sound\\GAMEOVER.WAV"
+#define WAV_YOUWIN      "sound\\YOUWIN.WAV"
+#define WAV_HORSE1      "sound\\HORSE1.WAV"
+#define WAV_HORSE2      "sound\\HORSE2.WAV"
+#define WAV_BIRD        "sound\\BIRD.WAV"
+#define WAV_FLOWER      "sound\\WEIRD.WAV"
 
-#define MID_SOUNDTRACK  ".\\SOUND\\THGESNG.MID"
+#define MID_SOUNDTRACK  "sound\\THGESNG.MID"
 
 /*
 * prototypes

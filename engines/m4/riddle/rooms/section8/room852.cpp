@@ -20,6 +20,7 @@
  */
 
 #include "m4/riddle/rooms/section8/room852.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 

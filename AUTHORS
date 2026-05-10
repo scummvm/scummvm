@@ -31,6 +31,9 @@ ScummVM Team
     ADL:
        Walter van Niftrik
 
+    AGDS:
+       Vladimir Menshakov
+
     AGI:
        Stuart George
        Matthew Hoops                  - (retired)
@@ -94,6 +97,10 @@ ScummVM Team
 
     Alcachofa:
        Hermann Noll
+
+    ALG:
+       Filippos Karapetis
+       David Kment
 
     Asylum:
        Alex Bevilacqua
@@ -225,7 +232,11 @@ ScummVM Team
 
     Freescape:
        Chris Allen                    - Sound engine programming
+       Dhruv                          - Render engine fixes
        Gustavo Grieco
+
+    Gamos:
+       Anton Yarcev
 
     Glk:
        Paul Gilbert
@@ -405,6 +416,10 @@ ScummVM Team
     Petka:
        Andrei Prykhodko
        Eugene Sandulenko
+
+    PhoenixVR:
+       Vladimir Menshakov
+       Hermann Noll                   - Help with 3D VR projections
 
     Pink:
        Andrei Prykhodko
@@ -593,6 +608,7 @@ ScummVM Team
        Paul Gilbert
        Matthew Duggan
        Matthew Jimenez
+       Paul Robson                    - (Akalabeth)
        Daniel c. Wuerl                - (Nuvie)
        Eric Fry                       - (Nuvie)
        Jeremy Newman                  - (Nuvie)
@@ -622,9 +638,14 @@ ScummVM Team
     WAGE:
        Alikhan Balpykov
        Eugene Sandulenko
+       Alexei Svitkine                - (Java implementation author)
 
     Watchmaker:
        Einar Johan Troan Somaen;
+
+    Wayne's World:
+       Arnaud Boutonne
+       Benjamin Haisch
 
     Wintermute:
        Gunnar Birke                   - Wintermute 3D
@@ -878,89 +899,149 @@ Other contributions
        Johannes Schickel              - (retired)
        Lothar Serra Mari
 
-  GUI Translations
-  ----------------
+  GUI Translations (with 10+ translations)
+  ----------------------------------------
      Thierry Crozat                 - Translation Lead
 
+    Arabic:
+       Malek Bellasfar
+
     Basque:
+       Josu Igoa
        Mikel Iturbe Urretxa
 
     Belarusian:
        Ivan Lukyanov
 
+    Belarusian (Taraškievica):
+       Kage
+
     Catalan:
+       Sergi Pérez Labernia
        Jordi Vilalta Prat
+       Xaviu
+
+    Chinese (Simplified Han script):
+       复予
+       Crane yang
+       Xiao Zheng
+       kane159
 
     Czech:
        Zbynik Schwarz
+       AsciiWolf
 
     Danish:
+       Bo Mortensen
        Steffen Nyeland
        scootergrisen
 
     Dutch:
        Ben Castricum
+       SecularSteve
 
     Finnish:
-       Linus Virtanen
-       Toni Saarela
        Timo Mikkolainen
+       Toni Saarela
+       Linus Virtanen
+       jepael
+       LINUX-SAUNA
 
     French:
        Thierry Crozat
+       dwa
        Purple T
 
     Galician:
        Santiago G. Sanz
 
+    Georgian:
+       NorwayFun
+
     German:
-       Simon Sawatzki
        Lothar Serra Mari
+       Simon Sawatzki
+       SecularSteve
 
     Greek:
-       Thanasis Antoniou
        Filippos Karapetis
+       Antoniou Thanasis
+
+    Hebrew:
+       Niv Baehr
+
+    Hindi:
+       Krish
+       Aditya Mohan
+       Aashwin Vaish
+       barryspacezero
 
     Hungarian:
        Alex Bevilacqua
        George Kormendi
+       Hovánszki Tamás
 
     Italian:
+       Walter Agazzi
        Matteo Angelino
        Paolo Bossi
-       Walter Agazzi
+
+    Japanese:
+       iplaysomegames101
+       VAN-Gluon
+
+    Korean:
+       Joohan Lee
+       Hoseok Seo
+       Won Star
+       papercutter0324
 
     Norwegian (Bokmaal):
+       Thomas Risan
        Einar Johan Somaaen
+       Stian Schultz
 
     Norwegian (Nynorsk):
        Einar Johan Somaaen
 
     Polish:
+       Pawel Kolodziejski
+       Eryk Michalak
        GrajPoPolsku.pl Team
+       SkiffPL
 
     Brazilian Portuguese:
-       ScummBR Team
        Marcel Souza Lemes
+       ScummBR Team
 
     Portuguese:
        Daniel Albano
 
     Russian:
        Eugene Sandulenko
+       iplaysomegames101
 
     Spanish:
        Tomas Maidagan
        Jordi Vilalta Prat
-       IlDucci
        Rodrigo Vegas Sanchez-Ferrero
+       IlDucci
 
     Swedish:
+       Henrik Andersson
        Hampus Flink
        Adrian Fruehwirth
+       Daniel Nylander
+       Sebastian Rasmussen
+
+    Turkish:
+       Ahmet Furkan
+       mdenizdemirci
 
     Ukrainian:
        Lubomyr Lisen
+       Eugene Sandulenko
+       iplaysomegames101
 
   Game Translations
   -----------------

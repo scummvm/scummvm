@@ -78,7 +78,11 @@ void FontSubtitles::loadResources() {
 	// We draw the subtitles in the adequate resolution so that they are not
 	// scaled up. This is the scale factor of the current resolution
 	// compared to the original
-	_scale = getPosition().width() / (float) getOriginalPosition().width();
+	Common::Rect screen = _vm->_gfx->viewport();
+	_scale = MIN(
+		screen.width()  / (float) Renderer::kOriginalWidth,
+		screen.height() / (float) Renderer::kOriginalHeight
+	);
 
 #ifdef USE_FREETYPE2
 	const char *ttfFile;
@@ -264,14 +268,37 @@ static Common::CodePage getEncodingFromCharsetCode(uint32 gdiCharset) {
 
 void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	const Graphics::Font *font;
-	if (_font)
+
+	bool needsRescaling = false;
+	Common::Rect screen = _vm->_gfx->viewport();
+	float newScale = MIN(
+		screen.width()  / (float) Renderer::kOriginalWidth,
+		screen.height() / (float) Renderer::kOriginalHeight
+	);
+	needsRescaling = _scale != newScale;
+
+	if (_font) {
+		if (needsRescaling) {
+			warning("The font scale: %f does not match the expected value: %f. The subtitles might have been rendered incorrectly", _scale,  newScale);
+			delete _font;
+			loadResources();
+		}
 		font = _font;
-	else
+	} else {
 		font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+	}
 
 	if (!font)
 		error("No available font");
 
+	if (needsRescaling) {
+		freeTexture();
+		if (_surface) {
+			_surface->free();
+			delete _surface;
+			_surface = nullptr;
+		}
+	}
 	if (!_texture || !_surface) {
 		createTexture();
 	}
@@ -403,8 +430,8 @@ void Subtitles::loadFontSettings(int32 id) {
 	_fontBold = fontNums.getMiscData(1);
 	_surfaceHeight = fontNums.getMiscData(2);
 	_singleLineTop = fontNums.getMiscData(3);
-	_line1Top = fontNums.getMiscData(4);
-	_line2Top = fontNums.getMiscData(5);
+	_line1Top = fontNums.getMiscData(4); // unused?
+	_line2Top = fontNums.getMiscData(5); // unused?
 	_surfaceTop = fontNums.getMiscData(6);
 	_fontCharsetCode = fontNums.getMiscData(7);
 
@@ -451,15 +478,19 @@ ResourceDescription Subtitles::loadText(int32 id, bool overriden) {
 void Subtitles::setFrame(int32 frame) {
 	const Phrase *phrase = nullptr;
 
-	for (uint i = 0; i < _phrases.size(); i++) {
+	uint phraseIdx = 0;
+	for (uint i = 0; i < _phrases.size(); ++i) {
 		if (_phrases[i].frame > frame)
 			break;
 
 		phrase = &_phrases[i];
+		phraseIdx = i;
 	}
 
-	if (!phrase) {
+	if (!phrase
+		|| (phraseIdx == _phrases.size() - 1 && phrase->string.empty())) {
 		freeTexture();
+		_frame = -1;
 		return;
 	}
 
@@ -476,16 +507,38 @@ void Subtitles::drawOverlay() {
 	if (!_texture)
 		return;
 
+	Common::Rect viewport;
+	if (_scaled) {
+		viewport = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
+	} else {
+		viewport = _vm->_gfx->viewport();
+	}
+
+	float scale = MIN(
+		viewport.width()  / (float) Renderer::kOriginalWidth,
+		viewport.height() / (float) Renderer::kOriginalHeight
+	);
+
+
 	Common::Rect screen = _vm->_gfx->viewport();
-	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth, _surfaceHeight);
-	bottomBorder.translate(0, _surfaceTop);
+	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth * scale, _surfaceHeight * scale);
 
 	if (_vm->isWideScreenModEnabled()) {
-		// Draw a black background to cover the main game frame
-		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight), 0xFF, 0x00, 0x00, 0x00);
+		// Draw a black background to cover the main game frame and clamp it to the bottom of the screen
+		int16 subsWindowPositionHeight = getPosition().height();
+		Common::Rect subtitlesBackgroundRect = Common::Rect(screen.width(), (_surfaceHeight - _surfaceTop) * scale);
+		int16 topOfSubtitlesBackgroundRect = subsWindowPositionHeight - subtitlesBackgroundRect.height();
+		if (topOfSubtitlesBackgroundRect < 0) {
+			topOfSubtitlesBackgroundRect = 0;
+			warning("Subtitles background rectangle is taller than the subtitles' container window.");
+		}
+		subtitlesBackgroundRect.translate(0, topOfSubtitlesBackgroundRect);
+		_vm->_gfx->drawRect2D(subtitlesBackgroundRect, 0xFF, 0x00, 0x00, 0x00);
 
-		// Center the subtitles in the screen
-		bottomBorder.translate((screen.width() - Renderer::kOriginalWidth) / 2, 0);
+		// Center the subtitles in the screen, and start it at the same height as the subtitles background rectangle
+		bottomBorder.translate((screen.width() - Renderer::kOriginalWidth * scale) / 2, topOfSubtitlesBackgroundRect);
+	} else {
+		bottomBorder.translate(0, _surfaceTop * scale);
 	}
 
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);
@@ -527,7 +580,12 @@ Common::Rect Subtitles::getPosition() const {
 	Common::Rect frame;
 
 	if (_vm->isWideScreenModEnabled()) {
-		frame = Common::Rect(screen.width(), Renderer::kBottomBorderHeight);
+		// This sets the position for the "Window" where the subtitles' texture and background are drawn
+		float scale = MIN(
+			screen.width()  / (float) Renderer::kOriginalWidth,
+			screen.height() / (float) Renderer::kOriginalHeight
+		);
+		frame = Common::Rect(screen.width(), Renderer::kBottomBorderHeightForSubsInWideScreen * scale);
 
 		Common::Rect scenePosition = _vm->_scene->getPosition();
 		int16 top = CLIP<int16>(screen.height() - frame.height(), 0, scenePosition.bottom);

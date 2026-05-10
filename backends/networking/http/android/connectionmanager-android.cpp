@@ -60,11 +60,7 @@ namespace Networking {
 ConnectionManagerAndroid::ConnectionManagerAndroid() : ConnectionManager(), _manager(0) {
 	JNIEnv *env = JNI::getEnv();
 
-	NetJNI::init(env);
-
-	// As we are called once, don't bother storing a global reference in JNI init
-	jclass cls = env->FindClass("org/scummvm/scummvm/net/HTTPManager");
-	jobject obj = env->NewObject(cls, NetJNI::_MID_manager_init);
+	jobject obj = env->NewObject(NetJNI::_CLS_HTTPManager, NetJNI::_MID_manager_init);
 	if (env->ExceptionCheck()) {
 		LOGE("HTTPManager::<init> failed");
 		env->ExceptionDescribe();

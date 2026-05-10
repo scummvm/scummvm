@@ -27,7 +27,6 @@
 #include "common/scummsys.h"
 #include "twine/debugger/ringbuffer.h"
 #include "twine/shared.h"
-#include <cstdarg>
 
 namespace TwinE {
 

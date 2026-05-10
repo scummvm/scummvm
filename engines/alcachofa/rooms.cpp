@@ -26,14 +26,28 @@
 #include "alcachofa/menu.h"
 
 #include "common/file.h"
+#include "common/substream.h"
 
 using namespace Common;
 
 namespace Alcachofa {
 
-Room::Room(World *world, SeekableReadStream &stream) : Room(world, stream, false) {}
+Room::Room(World *world)
+	: _world(world)
+	, _mapIndex(world->loadedMapCount()) {}
 
-static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &stream) {
+Room::Room(World *world, SeekableReadStream &stream)
+	: _world(world)
+	, _mapIndex(world->loadedMapCount()) {
+	if (g_engine->isV1()) {
+		readRoomV1(stream);
+		readObjects(stream);
+	} else
+		readRoomV2and3(stream, false);
+	initBackground();
+}
+
+static ObjectBase *readRoomObject(Room *room, const String &type, SeekableReadStream &stream) {
 	if (type == ObjectBase::kClassName)
 		return new ObjectBase(room, stream);
 	else if (type == PointObject::kClassName)
@@ -52,17 +66,23 @@ static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &st
 		return new InternetMenuButton(room, stream);
 	else if (type == OptionsMenuButton::kClassName)
 		return new OptionsMenuButton(room, stream);
-	else if (type == EditBox::kClassName)
-		return new EditBox(room, stream);
-	else if (type == PushButton::kClassName)
+	else if (type == EditBox::kClassName) {
+		if (g_engine->isV2())
+			return new EditBoxV2(room, stream);
+		else
+			return new EditBoxV3(room, stream);
+	} else if (type == PushButton::kClassName)
 		return new PushButton(room, stream);
 	else if (type == CheckBox::kClassName)
 		return new CheckBox(room, stream);
 	else if (type == CheckBoxAutoAdjustNoise::kClassName)
 		return new CheckBoxAutoAdjustNoise(room, stream);
-	else if (type == SlideButton::kClassName)
-		return new SlideButton(room, stream);
-	else if (type == IRCWindow::kClassName)
+	else if (type == SlideButton::kClassName) {
+		if (g_engine->isV2())
+			return new SlideButtonV2(room, stream);
+		else
+			return new SlideButtonV3(room, stream);
+	} else if (type == IRCWindow::kClassName)
 		return new IRCWindow(room, stream);
 	else if (type == MessageBox::kClassName)
 		return new MessageBox(room, stream);
@@ -80,24 +100,55 @@ static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &st
 		return new MainCharacter(room, stream);
 	else if (type == FloorColor::kClassName)
 		return new FloorColor(room, stream);
+	else if (type == ButtonV1::kClassName)
+		return new ButtonV1(room, stream);
 	else
 		return nullptr; // handled in Room::Room
 }
 
-Room::Room(World *world, SeekableReadStream &stream, bool hasUselessByte)
-	: _world(world) {
+void Room::readRoomV1(SeekableReadStream &stream) {
 	_name = readVarString(stream);
+	_backgroundName = readVarString(stream);
 	_musicId = (int)stream.readByte();
 	_characterAlphaTint = stream.readByte();
-	auto backgroundScale = stream.readSint16LE();
+	skipVarString(stream);
+}
+
+void Room::readRoomV2and3(SeekableReadStream &stream, bool hasUselessByte) {
+	_name = readVarString(stream);
+	_backgroundName = _name;
+	_musicId = (int)stream.readByte();
+	_characterAlphaTint = stream.readByte();
+	_backgroundScale = stream.readSint16LE();
 	_floors[0] = PathFindingShape(stream);
 	_floors[1] = PathFindingShape(stream);
 	_fixedCameraOnEntering = readBool(stream);
-	PathFindingShape _(stream); // unused path finding area
-	_characterAlphaPremultiplier = stream.readByte();
+	if (g_engine->isV3()) {
+		PathFindingShape _(stream); // unused path finding area
+		_characterAlphaPremultiplier = stream.readByte();
+	}
 	if (hasUselessByte)
 		stream.readByte();
 
+	readObjects(stream);
+}
+
+void Room::initBackground() {
+	if (!g_engine->game().doesRoomHaveBackground(this))
+		return;
+
+	if (g_engine->isV1()) {
+		// in V1 _backgroundName refers to an object which represents the background
+		if (!_backgroundName.empty())
+			_backgroundObject = getObjectByName(_backgroundName.c_str());
+	} else {
+		// in V3 _backgroundName is the name of an animation, we have to create the object
+		_backgroundObject = new Background(this, _backgroundName, _backgroundScale);
+		_objects.push_back(_backgroundObject);
+	}
+}
+
+void Room::readObjects(SeekableReadStream &stream) {
 	uint32 objectEnd = stream.readUint32LE();
 	while (objectEnd > 0) {
 		const auto type = readVarString(stream);
@@ -109,17 +160,23 @@ Room::Room(World *world, SeekableReadStream &stream, bool hasUselessByte)
 			g_engine->game().notEnoughObjectDataRead(_name.c_str(), stream.pos(), objectEnd);
 			stream.seek(objectEnd, SEEK_SET);
 		} else if (stream.pos() > objectEnd) // this is probably not recoverable
-			error("Read past the object data (%u > %lld) in room %s", objectEnd, (long long int)stream.pos(), _name.c_str());
+			error("Read past the object data (%u < %lld) in room %s", objectEnd, (long long int)stream.pos(), _name.c_str());
 
 		if (object != nullptr)
 			_objects.push_back(object);
 		objectEnd = stream.readUint32LE();
 	}
-	if (g_engine->game().doesRoomHaveBackground(this))
-		_objects.push_back(new Background(this, _name, backgroundScale));
 
 	if (!_floors[0].empty())
 		_activeFloorI = 0;
+}
+
+RoomWithFloor::RoomWithFloor(World *world, SeekableReadStream &stream) : Room(world) {
+	readRoomV1(stream);
+	_floors[0] = PathFindingShape(stream);
+	_floors[1] = PathFindingShape(stream);
+	readObjects(stream);
+	initBackground();
 }
 
 Room::~Room() {
@@ -180,7 +237,7 @@ bool Room::updateInput() {
 
 	bool canInteract = !player.activeCharacter()->isBusy();
 	// A complicated network condition can prevent interaction at this point
-	if (g_engine->menu().isOpen() || !player.isGameLoaded())
+	if (g_engine->menu().isOpen())
 		canInteract = true;
 	if (canInteract) {
 		player.resetCursor();
@@ -190,6 +247,7 @@ bool Room::updateInput() {
 			player.updateCursor();
 		}
 		player.drawCursor();
+		g_engine->globalUI().drawInventoryButton();
 	}
 
 	if (player.currentRoom() == this) {
@@ -210,7 +268,6 @@ void Room::updateInteraction() {
 			player.activeCharacter()->room() == this &&
 			player.pressedObject() == nullptr) {
 			player.activeCharacter()->walkToMouse();
-			g_engine->camera().setFollow(player.activeCharacter());
 		}
 	} else {
 		player.selectedObject()->markSelected();
@@ -220,18 +277,9 @@ void Room::updateInteraction() {
 }
 
 void Room::updateRoomBounds() {
-	auto background = getObjectByName("Background");
-	auto graphic = background == nullptr ? nullptr : background->graphic();
-	if (graphic != nullptr) {
-		auto bgSize = graphic->animation().imageSize(0);
-		/* This fixes a bug where if the background image is invalid the original engine
-		 * would not update the background size. This would be around 1024,768 due to
-		 * previous rooms in the bug instances I found.
-		 */
-		if (bgSize == Point(0, 0))
-			bgSize = Point(1024, 768);
-		g_engine->camera().setRoomBounds(bgSize, graphic->scale());
-	}
+	auto graphic = _backgroundObject == nullptr ? nullptr : _backgroundObject->graphic();
+	if (graphic != nullptr)
+		g_engine->camera().setRoomBounds(*graphic);
 }
 
 void Room::updateObjects() {
@@ -320,8 +368,10 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 	return best;
 }
 
-OptionsMenu::OptionsMenu(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {}
+OptionsMenu::OptionsMenu(World *world, SeekableReadStream &stream) : Room(world) {
+	readRoomV2and3(stream, true);
+	initBackground();
+}
 
 bool OptionsMenu::updateInput() {
 	if (!Room::updateInput())
@@ -354,14 +404,25 @@ void OptionsMenu::clearLastSelectedObject() {
 	_lastSelectedObject = nullptr;
 }
 
-ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {}
+ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream) : Room(world) {
+	readRoomV2and3(stream, true);
+	initBackground();
+}
 
-ListenMenu::ListenMenu(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {}
+ListenMenu::ListenMenu(World *world, SeekableReadStream &stream) : Room(world) {
+	readRoomV2and3(stream, true);
+	initBackground();
+}
 
-Inventory::Inventory(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {}
+Inventory::Inventory(World *world, SeekableReadStream &stream) : Room(world) {
+	if (g_engine->isV1()) {
+		readRoomV1(stream);
+		stream.skip(1); // denoted as "sinusar" but unused
+		readObjects(stream);
+	} else
+		readRoomV2and3(stream, true);
+	initBackground();
+}
 
 Inventory::~Inventory() {
 	// No need to delete items, they are room objects and thus deleted in Room::~Room
@@ -371,11 +432,11 @@ bool Inventory::updateInput() {
 	auto &player = g_engine->player();
 	auto &input = g_engine->input();
 	auto *hoveredItem = getHoveredItem();
+	if (player.activeCharacter()->isBusy())
+		return true;
+	player.drawCursor(0);
 
-	if (!player.activeCharacter()->isBusy())
-		player.drawCursor(0);
-
-	if (hoveredItem != nullptr && !player.activeCharacter()->isBusy()) {
+	if (hoveredItem != nullptr) {
 		if ((input.wasMouseLeftPressed() && player.heldItem() == nullptr) ||
 			(input.wasMouseLeftReleased() && player.heldItem() != nullptr) ||
 			input.wasMouseRightReleased()) {
@@ -391,16 +452,15 @@ bool Inventory::updateInput() {
 	}
 
 	const bool userWantsToCloseInventory =
-		closeInventoryTriggerBounds().contains(input.mousePos2D()) ||
+		g_engine->globalUI().isHoveringInventoryExit() ||
 		input.wasMenuKeyPressed() ||
 		input.wasInventoryKeyPressed();
-	if (!player.activeCharacter()->isBusy() &&
-		userWantsToCloseInventory)
+	if (userWantsToCloseInventory) {
+		player.changeRoomToBeforeInventory();
 		close();
+	}
 
-	if (!player.activeCharacter()->isBusy() &&
-		hoveredItem == nullptr &&
-		input.wasMouseRightReleased()) {
+	if (hoveredItem == nullptr && input.wasMouseRightReleased()) {
 		player.heldItem() = nullptr;
 		return false;
 	}
@@ -458,7 +518,7 @@ void Inventory::drawAsOverlay(int32 scrollY) {
 		int8 oldOrder = graphic->order();
 		graphic->topLeft().y += scrollY;
 		graphic->order() = -kForegroundOrderCount;
-		if (object->name().equalsIgnoreCase("Background"))
+		if (object == _backgroundObject)
 			graphic->order()++;
 		object->draw();
 		graphic->topLeft().y = oldY;
@@ -467,14 +527,13 @@ void Inventory::drawAsOverlay(int32 scrollY) {
 }
 
 void Inventory::open() {
-	g_engine->camera().backup(1);
+	g_engine->camera().onOpenMenu();
 	g_engine->player().changeRoom(name(), true);
 	updateItemsByActiveCharacter();
 }
 
 void Inventory::close() {
-	g_engine->player().changeRoomToBeforeInventory();
-	g_engine->camera().restore(1);
+	g_engine->camera().onCloseMenu();
 	g_engine->globalUI().startClosingInventory();
 }
 
@@ -492,23 +551,21 @@ void Room::debugPrint(bool withObjects) const {
 	}
 }
 
-static constexpr const char *kMapFiles[] = {
-	"MAPAS/MAPA5.EMC",
-	"MAPAS/MAPA4.EMC",
-	"MAPAS/MAPA3.EMC",
-	"MAPAS/MAPA2.EMC",
-	"MAPAS/MAPA1.EMC",
-	"MAPAS/GLOBAL.EMC",
-	nullptr
-};
+void World::load() {
+	_scriptFileRef = g_engine->game().getScriptFileRef();
 
-World::World() {
-	for (auto *itMapFile = kMapFiles; *itMapFile != nullptr; itMapFile++) {
-		if (loadWorldFile(*itMapFile))
+	auto loadWorldFile =
+		g_engine->isV1() ? &World::loadWorldFileV1
+		: g_engine->isV2() ? &World::loadWorldFileV2
+		: &World::loadWorldFileV3;
+	const char *const *mapFiles = g_engine->game().getMapFiles();
+	for (auto *itMapFile = mapFiles; *itMapFile != nullptr; itMapFile++) {
+		if ((*this.*loadWorldFile)(*itMapFile))
 			_loadedMapCount++;
 	}
 	loadLocalizedNames();
 	loadDialogLines();
+	_isLoading = false;
 
 	_globalRoom = getRoomByName("GLOBAL");
 	if (_globalRoom == nullptr)
@@ -580,7 +637,9 @@ ObjectBase *World::getObjectByName(MainCharacterKind character, const char *name
 		return getObjectByName(name);
 	const auto &player = g_engine->player();
 	ObjectBase *result = nullptr;
-	if (player.activeCharacterKind() == character && player.currentRoom() != player.activeCharacter()->room())
+	if (player.activeCharacterKind() == character &&
+		player.currentRoom() != nullptr &&
+		player.currentRoom() != player.activeCharacter()->room())
 		result = player.currentRoom()->getObjectByName(name);
 	if (result == nullptr)
 		result = player.activeCharacter()->room()->getObjectByName(name);
@@ -613,17 +672,21 @@ void World::toggleObject(MainCharacterKind character, const char *objName, bool 
 		object->toggle(isEnabled);
 }
 
-const Common::String &World::getGlobalAnimationName(GlobalAnimationKind kind) const {
+const GameFileReference &World::getGlobalAnimation(GlobalAnimationKind kind) const {
 	int kindI = (int)kind;
 	assert(kindI >= 0 && kindI < (int)GlobalAnimationKind::Count);
-	return _globalAnimationNames[kindI];
+	return _globalAnimations[kindI];
 }
 
 const char *World::getLocalizedName(const String &name) const {
 	const char *localizedName;
 	return _localizedNames.tryGetVal(name.c_str(), localizedName)
 		? localizedName
+#ifdef ALCACHOFA_DEBUG
 		: name.c_str();
+#else
+		: "";
+#endif
 }
 
 const char *World::getDialogLine(int32 dialogId) const {
@@ -636,6 +699,8 @@ static Room *readRoom(World *world, SeekableReadStream &stream) {
 	const auto type = readVarString(stream);
 	if (type == Room::kClassName)
 		return new Room(world, stream);
+	else if (type == RoomWithFloor::kClassName)
+		return new RoomWithFloor(world, stream);
 	else if (type == OptionsMenu::kClassName)
 		return new OptionsMenu(world, stream);
 	else if (type == ConnectMenu::kClassName)
@@ -650,68 +715,174 @@ static Room *readRoom(World *world, SeekableReadStream &stream) {
 	}
 }
 
-bool World::loadWorldFile(const char *path) {
-	Common::File file;
+/* World files start with a self-description of the data format (after 1-2 offsets)
+ * We ignore the self-description and just read the actual data
+ * The first offset points to the room room data
+ * (Only V1) The second offset points to the script file
+ */
+
+bool World::loadWorldFileV3(const char *path) {
+	File file;
 	if (!file.open(path)) {
-		// this is not necessarily an error, apparently the demos just have less
-		// chapter files. Being a demo is then also stored in some script vars
+		// this is not necessarily an error, the demos just have less chapter files.
+		// Being a demo is then also stored in some script vars
 		warning("Could not open world file %s\n", path);
 		return false;
 	}
 
-	// the first chunk seems to be debug symbols and/or info about the file structure
-	// it is ignored in the published game.
-	auto startOffset = file.readUint32LE();
+	uint32 startOffset = file.readUint32LE();
 	file.seek(startOffset, SEEK_SET);
-	skipVarString(file); // some more unused strings related to development files?
-	skipVarString(file);
-	skipVarString(file);
-	skipVarString(file);
-	skipVarString(file);
-	skipVarString(file);
+	skipVarString(file); // always "CMundo"
+	skipVarString(file); // name of the CMundo object
+	skipVarString(file); // path to sound files
+	skipVarString(file); // path to animation files
+	skipVarString(file); // path to background files
+	skipVarString(file); // path to masks (static object animations) files
 
 	_initScriptName = readVarString(file);
 	skipVarString(file); // would be _updateScriptName, but it is never called
 	for (int i = 0; i < (int)GlobalAnimationKind::Count; i++)
-		_globalAnimationNames[i] = readVarString(file);
+		_globalAnimations[i] = readFileRef(file);
 
+	readRooms(file);
+
+	return true;
+}
+
+bool World::loadWorldFileV2(const char *path) {
+	File file;
+	if (!file.open(path)) {
+		// this is not necessarily an error, the demos just have less chapter files.
+		// Being a demo is then also stored in some script vars
+		warning("Could not open world file %s\n", path);
+		return false;
+	}
+
+	uint32 startOffset = file.readUint32LE();
+	file.seek(startOffset, SEEK_SET);
+	skipVarString(file); // always "CMundo"
+	skipVarString(file); // name of the CMundo object
+	skipVarString(file); // path to sound files
+	skipVarString(file); // path to animation files
+	skipVarString(file); // path to background files
+
+	_initScriptName = readVarString(file);
+	skipVarString(file); // would be _updateScriptName, but it is never called
+	
+	const auto readGlobalAnim = [&] (
+		GlobalAnimationKind kind1,
+		GlobalAnimationKind kind2) {
+		auto fileRef = readFileRef(file);
+		_globalAnimations[(int)kind1] = fileRef;
+		if (kind2 != GlobalAnimationKind::Count)
+			_globalAnimations[(int)kind2] = fileRef;
+	};
+	readGlobalAnim(GlobalAnimationKind::GeneralFont, GlobalAnimationKind::DialogFont);
+	readGlobalAnim(GlobalAnimationKind::Cursor, GlobalAnimationKind::Count);
+	readGlobalAnim(GlobalAnimationKind::FilemonIcon, GlobalAnimationKind::FilemonDisabledIcon);
+	readGlobalAnim(GlobalAnimationKind::MortadeloIcon, GlobalAnimationKind::MortadeloDisabledIcon);
+	readGlobalAnim(GlobalAnimationKind::InventoryIcon, GlobalAnimationKind::InventoryDisabledIcon);
+
+	readRooms(file);
+
+	return true;
+}
+
+static void readEmbeddedArchive(SharedPtr<File> file);
+
+bool World::loadWorldFileV1(const char *path) {
+	auto file = SharedPtr<File>(new File());
+	if (!file->open(path)) {
+		// this is not necessarily an error, the demos just have less chapter files.
+		// Being a demo is then also stored in some script vars
+		warning("Could not open world file %s\n", path);
+		return false;
+	}
+
+	uint32 startOffset = file->readUint32LE();
+	uint32 scriptOffset = file->readUint32LE();
+	file->seek(scriptOffset, SEEK_SET);
+	if (file->readByte() == 1)
+		_scriptFileRef = { "SCRIPT", _files.size(), file->pos(), (uint32)(file->size() - file->pos())};
+
+	file->seek(startOffset, SEEK_SET);
+	skipVarString(*file); // always "CMundo"
+	skipVarString(*file); // name of the CMundo object
+	skipVarString(*file); // *second* name of the CMundo object
+	file->readByte(); // would be "isFinalFile", but always one for released games
+	readEmbeddedArchive(file);
+	_initScriptName = readVarString(*file);
+	skipVarString(*file); // _updateScriptName
+
+	const auto readGlobalAnim = [&] (
+		GlobalAnimationKind kind1,
+		GlobalAnimationKind kind2) {
+		auto fileRef = readFileRef(*file);
+		_globalAnimations[(int)kind1] = fileRef;
+		if (kind2 != GlobalAnimationKind::Count)
+			_globalAnimations[(int)kind2] = fileRef;
+	};
+	readGlobalAnim(GlobalAnimationKind::GeneralFont, GlobalAnimationKind::DialogFont);
+	readGlobalAnim(GlobalAnimationKind::Cursor, GlobalAnimationKind::Count);
+	readGlobalAnim(GlobalAnimationKind::FilemonIcon, GlobalAnimationKind::FilemonDisabledIcon); // note file/morta are swapped in V1
+	readGlobalAnim(GlobalAnimationKind::MortadeloIcon, GlobalAnimationKind::MortadeloDisabledIcon);
+	readGlobalAnim(GlobalAnimationKind::InventoryIcon, GlobalAnimationKind::InventoryDisabledIcon);
+
+	readRooms(*file);
+	_files.emplace_back(move(file));
+	return true;
+}
+
+void World::readRooms(File &file) {
 	uint32 roomEnd = file.readUint32LE();
 	while (roomEnd > 0) {
 		Room *room = readRoom(this, file);
 		if (room != nullptr)
 			_rooms.push_back(room);
 		if (file.pos() < roomEnd) {
-			g_engine->game().notEnoughRoomDataRead(path, file.pos(), roomEnd);
+			g_engine->game().notEnoughRoomDataRead(file.getName(), file.pos(), roomEnd);
 			file.seek(roomEnd, SEEK_SET);
 		} else if (file.pos() > roomEnd) // this surely is not recoverable
-			error("Read past the room data for world %s", path);
+			error("Read past the room data for world %s", file.getName());
 		roomEnd = file.readUint32LE();
 	}
-
-	return true;
+	scumm_assert(!file.err());
 }
 
 /**
- * @brief Behold the incredible encryption of text files:
+ * @brief Behold the incredible encryption of text files (for V3):
  *   - first 32 bytes are cipher
  *   - next byte is the XOR key
  *   - next 4 bytes are garbage
  *   - rest of the file is cipher
+ *
+ * V1 is unencrypted
+ * V2 uses a constant key
  */
-static void loadEncryptedFile(const char *path, Array<char> &output) {
+static void loadEncryptedFile(const char *path, char key, Array<char> &output) {
 	constexpr uint kHeaderSize = 32;
 	File file;
 	if (!file.open(path))
 		error("Could not open text file %s", path);
-	output.resize(file.size() - 4 - 1 + 1); // garbage bytes, key and we add a zero terminator for safety
-	if (file.read(output.data(), kHeaderSize) != kHeaderSize)
-		error("Could not read text file header");
-	char key = file.readSByte();
-	uint remainingSize = output.size() - kHeaderSize - 1;
-	if (!file.skip(4) || file.read(output.data() + kHeaderSize, remainingSize) != remainingSize)
-		error("Could not read text file body");
-	for (auto &ch : output)
-		ch ^= key;
+
+	if (key == kEmbeddedXORKey) {
+		output.resize(file.size() - 4 - 1 + 1); // garbage bytes, key and we add a zero terminator for safety
+		if (file.read(output.data(), kHeaderSize) != kHeaderSize)
+			error("Could not read text file header");
+		key = file.readSByte();
+		uint remainingSize = output.size() - kHeaderSize - 1;
+		if (!file.skip(4) || file.read(output.data() + kHeaderSize, remainingSize) != remainingSize)
+			error("Could not read text file body");
+	} else {
+		output.resize(file.size() + 1);
+		if (file.read(output.data(), output.size() - 1) != output.size() - 1)
+			error("Could not read text file");
+	}
+
+	if (key != kNoXORKey) {
+		for (auto &ch : output)
+			ch ^= key;
+	}
 	output.back() = '\0'; // one for good measure and a zero-terminator
 }
 
@@ -734,24 +905,55 @@ static char *trimTrailing(char *start, char *end) {
 }
 
 void World::loadLocalizedNames() {
-	loadEncryptedFile("Textos/OBJETOS.nkr", _namesChunk);
+	const char *filename = g_engine->game().getObjectFileName();
+	char textFileKey = g_engine->game().getTextFileKey();
+#ifdef ALCACHOFA_DEBUG
+	if (File::exists("OBJETOS.MOD.TXT")) {
+		filename = "OBJETOS.MOD.TXT";
+		textFileKey = 0;
+	}
+#endif
+	loadEncryptedFile(filename, textFileKey, _namesChunk);
 	char *lineStart = _namesChunk.begin(), *fileEnd = _namesChunk.end() - 1;
-	while (lineStart < fileEnd) {
-		char *lineEnd = find(lineStart, fileEnd, '\n');
-		char *keyEnd = find(lineStart, lineEnd, '#');
-		if (keyEnd == lineStart || keyEnd == lineEnd || keyEnd + 1 == lineEnd)
-			error("Invalid localized name line separator");
-		char *valueEnd = trimTrailing(keyEnd + 1, lineEnd);
 
-		*keyEnd = 0;
-		*valueEnd = 0;
-		if (valueEnd == keyEnd + 1) {
-			// happens in the english version of Movie Adventure
-			warning("Empty localized name for %s", lineStart);
+	if (*lineStart == '\"') {
+		// "key" "value"
+		while (lineStart < fileEnd) {
+			char *lineEnd = find(lineStart, fileEnd, '\n');
+			char *keyStart = find(lineStart, lineEnd, '\"');
+			char *keyEnd = find(MIN(keyStart + 1, lineEnd), lineEnd, '\"');
+			char *valueStart = find(MIN(keyEnd + 1, lineEnd), lineEnd, '\"');
+			char *valueEnd = find(MIN(valueStart + 1, lineEnd), lineEnd, '\"');
+			if (keyStart == lineEnd || keyEnd == lineEnd || keyStart + 1 == keyEnd ||
+				valueStart == lineEnd || valueEnd == lineEnd)
+				error("Invalid localized name line");
+
+			keyStart++;
+			*keyEnd = 0;
+			valueStart++;
+			*valueEnd = 0;
+			_localizedNames[keyStart] = valueStart;
+			lineStart = lineEnd + 1;
 		}
+	} else {
+		// key#value
+		while (lineStart < fileEnd) {
+			char *lineEnd = find(lineStart, fileEnd, '\n');
+			char *keyEnd = find(lineStart, lineEnd, '#');
+			if (keyEnd == lineStart || keyEnd == lineEnd || keyEnd + 1 == lineEnd)
+				error("Invalid localized name line separator");
+			char *valueEnd = trimTrailing(keyEnd + 1, lineEnd);
 
-		_localizedNames[lineStart] = keyEnd + 1;
-		lineStart = lineEnd + 1;
+			*keyEnd = 0;
+			*valueEnd = 0;
+			if (valueEnd == keyEnd + 1) {
+				// happens in the english version of Movie Adventure
+				warning("Empty localized name for %s", lineStart);
+			}
+
+			_localizedNames[lineStart] = keyEnd + 1;
+			lineStart = lineEnd + 1;
+		}
 	}
 }
 
@@ -764,7 +966,15 @@ void World::loadDialogLines() {
 	 * - The ID does not have to be correct, it is ignored by the original engine.
 	 * - We only need the dialog line and insert null-terminators where appropriate.
 	 */
-	loadEncryptedFile("Textos/DIALOGOS.nkr", _dialogChunk);
+	const char *filename = g_engine->game().getDialogFileName();
+	char textFileKey = g_engine->game().getTextFileKey();
+#ifdef ALCACHOFA_DEBUG
+	if (File::exists("TEXTOS.MOD.TXT")) {
+		filename = "TEXTOS.MOD.TXT";
+		textFileKey = 0;
+	}
+#endif
+	loadEncryptedFile(filename, textFileKey, _dialogChunk);
 	char *lineStart = _dialogChunk.begin(), *fileEnd = _dialogChunk.end() - 1;
 	while (lineStart < fileEnd) {
 		char *lineEnd = find(lineStart, fileEnd, '\n');
@@ -796,6 +1006,131 @@ void World::loadDialogLines() {
 void World::syncGame(Serializer &s) {
 	for (Room *room : _rooms)
 		room->syncGame(s);
+}
+
+GameFileReference World::readFileRef(SeekableReadStream &stream) const {
+	assert(_isLoading);
+	auto name = readVarString(stream);
+	if (g_engine->isV1()) {
+		uint32 size = stream.readUint32LE();
+		uint32 offset = (uint32)stream.pos();
+		stream.skip(size);
+		return { name, (uint32)_files.size(), offset, size };
+	} else
+		return GameFileReference(g_engine->game().reencodePath(name));
+}
+
+ScopedPtr<SeekableReadStream> World::openFileRef(const GameFileReference &ref) const {
+	assert(!_isLoading);
+	if (!ref.isValid())
+		return nullptr;
+	else if (ref._fileIndex != UINT32_MAX) {
+		assert(ref._fileIndex < _files.size());
+		auto &file = _files[ref._fileIndex];
+		if (!file->seek(ref._position, SEEK_SET))
+			error("Could not seek to inline file %s at %u", ref._path.c_str(), ref._position);
+		return ScopedPtr<SeekableReadStream>(
+			new SeekableSubReadStream(file.get(), ref._position, ref._position + ref._size, DisposeAfterUse::NO));
+	} else {
+		ScopedPtr<File> file(new File());
+		if (!file->open(Path(ref._path)))
+			return nullptr;
+		return ScopedPtr<SeekableReadStream>(file.release()); // Ubuntu 22 does allow the implicit conversion
+	}
+}
+
+class EmbeddedArchive;
+class EmbeddedArchiveMember : public GenericArchiveMember {
+	friend class EmbeddedArchive;
+	uint32 _offset;
+	uint32 _end;
+
+	EmbeddedArchiveMember(const String &pathStr, const EmbeddedArchive &parent, uint32 offset, uint32 end);
+};
+
+class EmbeddedArchive : public Archive {
+public:
+	EmbeddedArchive(SharedPtr<File> file) : _file(move(file)) {
+		// the stored filenames have their original full paths,
+		// e.g. c:\myf2000\textos\dialogos.txt
+		// but the filenames alone do not clash so we flatten everything
+
+		skipVarString(*_file);
+		uint32 totalSize = _file->readUint32LE();
+		int64 endPosition = _file->pos() + totalSize;
+		_file->skip(2);
+		uint32 fileCount = _file->readUint32LE();
+		_members.reserve((uint)fileCount);
+
+		for (uint32 i = 0; i < fileCount; i++) {
+			auto fullPath = readVarString(*_file);
+			auto extension = readVarString(*_file);
+			uint32 fileSize = _file->readUint32LE();
+			uint32 fileOffset = (uint32)_file->pos();
+			_file->skip(fileSize);
+
+			uint32 lastSep = fullPath.findLastOf('\\');
+			if (lastSep == String::npos)
+				lastSep = 0;
+			auto fileName = String::format("%s.%s", fullPath.c_str() + lastSep, extension.c_str());
+			_members.emplace_back(
+				new EmbeddedArchiveMember(fileName, *this, fileOffset, fileOffset + fileSize));
+		}
+
+		if (_file->pos() > endPosition)
+			error("Read past the specified archive total size in %s", _file->getName());
+		_file->seek(endPosition, SEEK_SET);
+		scumm_assert(!_file->err());
+	}
+
+	bool hasFile(const Path &path) const override {
+		return getMember(path) != nullptr;
+	}
+
+	int listMembers(ArchiveMemberList &list) const override {
+		for (const auto &member : _members)
+			list.emplace_back(member);
+		return (int)_members.size();
+	}
+
+	const ArchiveMemberPtr getMember(const Path &path) const override {
+		return getMemberInternal(path);
+	}
+
+	SeekableReadStream *createReadStreamForMember(const Path &path) const override {
+		auto member = getMemberInternal(path);
+		if (member == nullptr)
+			return nullptr;
+		if (!_file->seek(member->_offset, SEEK_SET))
+			error("Could not seek to embedded file: %s at %u", path.toString().c_str(), member->_offset);
+		return new SafeSeekableSubReadStream(_file.get(), member->_offset, member->_end, DisposeAfterUse::NO);
+	}
+
+private:
+	const SharedPtr<EmbeddedArchiveMember> getMemberInternal(const Path &path) const {
+		for (const auto &member : _members) {
+			if (member->getPathInArchive().equalsIgnoreCase(path))
+				return member;
+		}
+		return nullptr;
+	}
+
+	SharedPtr<File> _file;
+	Array<SharedPtr<EmbeddedArchiveMember>> _members;
+};
+
+EmbeddedArchiveMember::EmbeddedArchiveMember(
+	const String &pathStr,
+	const EmbeddedArchive &parent,
+	uint32 offset,
+	uint32 end)
+	: GenericArchiveMember(pathStr, parent)
+	, _offset(offset)
+	, _end(end) {}
+
+static void readEmbeddedArchive(SharedPtr<File> file) {
+	auto archive = new EmbeddedArchive(file);
+	SearchMan.add(file->getName(), archive);
 }
 
 }

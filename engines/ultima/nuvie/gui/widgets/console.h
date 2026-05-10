@@ -42,14 +42,14 @@ public:
 	Console(const Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h);
 	~Console() override;
 
-	void AddLine(const Std::string &line) override;
+	void AddLine(const Common::String &line) override;
 };
 
 void ConsoleInit(const Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h);
 void ConsoleDelete();
 void ConsoleAddInfo(const char *s, ...);
-void ConsoleAddError(const Std::string &s);
-void ConsoleAddWarning(const Std::string &s);
+void ConsoleAddError(const Common::String &s);
+void ConsoleAddWarning(const Common::String &s);
 void ConsolePause();
 void ConsoleShow();
 void ConsoleHide();

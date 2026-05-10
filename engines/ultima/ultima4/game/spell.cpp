@@ -232,7 +232,7 @@ Common::String Spells::spellGetErrorMessage(uint spell, SpellCastError error) {
 	}
 
 	/* find the message that we're looking for and return it! */
-	for (i = 0; i < sizeof(SPELL_ERROR_MSGS) / sizeof(SPELL_ERROR_MSGS[0]); i++) {
+	for (i = 0; i < ARRAYSIZE(SPELL_ERROR_MSGS); i++) {
 		if (err == SPELL_ERROR_MSGS[i].err)
 			return Common::String(SPELL_ERROR_MSGS[i].msg);
 	}
@@ -352,7 +352,7 @@ void Spells::spellMagicAttack(const Common::String &tilename, Direction dir, int
 	                   xu4_random((maxDamage + 1) - minDamage) + minDamage :
 	                   maxDamage;
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, (*party)[controller->getFocus()]->getCoords(),
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, (*party)[controller->getFocus()]->getCoords(),
 	                           1, 11, Tile::canAttackOverTile, false);
 	for (const auto &coords : path) {
 		if (spellMagicAttackAt(coords, tile, attackDamage))

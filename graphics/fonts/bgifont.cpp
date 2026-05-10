@@ -187,7 +187,15 @@ void BgiFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	int charWidth = font->widths[charIndex];
 
 	for (uint16 i = 0; i < _totalHeight; i++) {
+		// Boundary check for Y...
+		if (y + i < 0 || y + (int)i >= dst->h)
+			continue;
+
 		for (uint16 j = 0; j < charWidth; j++) {
+			// Boundary check for X...
+			if (x + j < 0 || x + (int)j >= dst->w)
+				continue;
+
 			if (font->surface->getPixel(font->offsets[charIndex] + j, i)) {
 				if (dst->format.bytesPerPixel == 1)
 					*((byte *)dst->getBasePtr(x + j, y + i)) = color;

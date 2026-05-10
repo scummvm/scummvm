@@ -23,7 +23,12 @@
 #define ULTIMA8_KERNEL_OBJECT_H
 
 #include "ultima/ultima8/misc/classtype.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/debugger.h"
+
+namespace Common {
+class ReadStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {

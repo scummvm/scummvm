@@ -40,26 +40,26 @@ struct RendGrBuff {
 };
 
 struct DrawRequestX {
-	int32 x;			// X position relative	to GrBuff(0, 0)
-	int32 y;			// Y position relative	to GrBuff(0, 0)
-	int32 scale_x;		// X scale factor (can be negative for reverse draw)
-	int32 scale_y;		// Y scale factor (can't be negative)
-	uint8 *depth_map;	// Depth code array for destination (doesn't care if srcDepth is 0)
-	RGBcolor *Pal;		// Palette for shadow draw (doesn't care if SHADOW bit is not set in Src.encoding)
-	uint8 *ICT;			// Inverse Color Table (doesn't care if SHADOW bit is not set in Src.encoding)
-	uint8 depth;		// Depth code for source (0 if no depth processing)
+	int32 x = 0;				// X position relative	to GrBuff(0, 0)
+	int32 y = 0;				// Y position relative	to GrBuff(0, 0)
+	int32 scale_x = 0;			// X scale factor (can be negative for reverse draw)
+	int32 scale_y = 0;			// Y scale factor (can't be negative)
+	uint8 *depth_map = nullptr;	// Depth code array for destination (doesn't care if srcDepth is 0)
+	RGBcolor *Pal = nullptr;	// Palette for shadow draw (doesn't care if SHADOW bit is not set in Src.encoding)
+	uint8 *ICT = nullptr;		// Inverse Color Table (doesn't care if SHADOW bit is not set in Src.encoding)
+	uint8 depth = 0;			// Depth code for source (0 if no depth processing)
 };
 
 struct RendCell {
-	uint32 Pack;
-	uint32 Stream;
-	long   hot_x;
-	long   hot_y;
-	uint32 Width;
-	uint32 Height;
-	uint32 Comp;
-	uint32 Reserved[8];
-	uint8 *data;
+	uint32 Pack = 0;
+	uint32 Stream = 0;
+	long   hot_x = 0;
+	long   hot_y = 0;
+	uint32 Width = 0;
+	uint32 Height = 0;
+	uint32 Comp = 0;
+	uint32 Reserved[8] = {};
+	uint8 *data = nullptr;
 };
 
 enum {
@@ -73,10 +73,18 @@ typedef uint32 RenderResult;
 typedef RenderResult(*RenderFunc)();
 
 struct Rend_Globals {
-	uint8 *_sourceAddress, *_destinationAddress, *_depthAddress, _spriteDepth, *_InverseColorTable;
-	int32 _X_scale, _LeftPorch, _RightPorch, _StartingPixelPos, _X_error;
-	int _Increment;
-	RGBcolor *_Palette;
+	uint8 *_sourceAddress = nullptr;
+	uint8 *_destinationAddress = nullptr;
+	uint8 *_depthAddress = nullptr;
+	uint8 _spriteDepth = 0;
+	uint8 *_InverseColorTable = nullptr;
+	int32 _X_scale = 0;
+	int32 _LeftPorch = 0;
+	int32 _RightPorch = 0;
+	int32 _StartingPixelPos = 0;
+	int32 _X_error = 0;
+	int _Increment = 0;
+	RGBcolor *_Palette = nullptr;
 };
 
 void GetUpdateRectangle(int32 x, int32 y, int32 hot_x, int32 hot_y, int32 scale_x, int32 scale_y, int32 Width, int32 Height, M4Rect *UpdateRect);

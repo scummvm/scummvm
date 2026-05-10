@@ -48,8 +48,10 @@ OpenGLTexture::OpenGLTexture(int32 w, int32 h, bool withMipmaps)
 	OpenGL::clearGLError(); // we will just ignore it
 	GL_CALL(glGenTextures(1, &_handle));
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+	const bool filter = g_engine->config().texFilter();
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter ? GL_LINEAR : GL_NEAREST));
 	setMirrorWrap(false);
 }
 

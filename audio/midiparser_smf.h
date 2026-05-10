@@ -30,18 +30,9 @@
 class MidiParser_SMF : public MidiParser {
 
 protected:
-	/**
-	 * Compresses the specified type 1 MIDI tracks to a single type 0 track.
-	 * 
-	 * @param tracks Pointer to an array of type 1 tracks.
-	 * @param numTracks The number of type 1 tracks.
-	 * @param buffer Buffer which will contain the compressed type 0 track.
-	 * @param malformedPitchBends True if broken pitch bend events consisting
-	 * of just the command byte should be ignored. This is only useful for MIDI
-	 * data which has this specific problem.
-	 * @return The size of the compressed type 0 track in bytes.
-	 */
-	uint32 compressToType0(byte *tracks[], byte numTracks, byte *buffer, bool malformedPitchBends = false);
+	// Reads a delta between events.
+	virtual uint32 readDelta(const byte *&data);
+
 	void parseNextEvent(EventInfo &info) override;
 
 public:

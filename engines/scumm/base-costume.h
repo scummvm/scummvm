@@ -86,6 +86,9 @@ public:
 protected:
 	ScummEngine *_vm;
 
+	// flag to enable AkosRenderer's behaviour in paintCelByleRLECommon() and byleRLEDecode()
+	bool _akosRendering;
+
 	// Destination
 	Graphics::Surface _out;
 	int32 _numStrips;
@@ -97,22 +100,22 @@ protected:
 	int _xMove, _yMove;
 
 	// whether to draw the actor mirrored
-	bool _mirror;
+	bool _drawActorToRight;
 
 	int _numBlocks;
 
 	// width and height of cel to decode
 	int _width, _height;
 
+	// actor _palette
+	uint16 _palette[256] = {};
+
 public:
 	struct ByleRLEData {
 		// Parameters for the original ("V1") costume codec.
-		// These ones are accessed from ARM code. Don't reorder.
 		int x;
 		int y;
 		const byte *scaleTable;
-		int height;
-		int width;
 		int skipWidth;
 		byte *destPtr;
 		const byte *maskPtr;
@@ -120,12 +123,12 @@ public:
 		byte mask, shr;
 		byte repColor;
 		byte repLen;
-		// These ones aren't accessed from ARM code.
 		Common::Rect boundsRect;
 		int scaleXIndex, scaleYIndex;
+		int scaleIndexMask;
 	};
 
-	BaseCostumeRenderer(ScummEngine *scumm) {
+    BaseCostumeRenderer(ScummEngine *scumm, bool akosRendering = false) {
 		_actorID = 0;
 		_shadowMode = 0;
 		_shadowTable = nullptr;
@@ -135,10 +138,12 @@ public:
 		_drawTop = _drawBottom = 0;
 
 		_vm = scumm;
+        _akosRendering = akosRendering;
+
 		_numStrips = -1;
 		_srcPtr = nullptr;
 		_xMove = _yMove = 0;
-		_mirror = false;
+		_drawActorToRight = false;
 		_width = _height = 0;
 		_skipLimbs = false;
 		_paletteNum = 0;
@@ -157,7 +162,23 @@ public:
 protected:
 	virtual byte drawLimb(const Actor *a, int limb) = 0;
 
+	byte paintCelByleRLECommon(
+		int xMoveCur,
+		int yMoveCur,
+		int numColors,
+		int scaletableSize,
+		bool amiOrPcEngCost,
+		bool c64Cost,
+		ByleRLEData &compData,
+		bool &decode);
+
+	void byleRLEDecode(ByleRLEData &compData, int16 actorHitX = 0, int16 actorHitY = 0, bool *actorHitResult = nullptr, const uint8 *xmap = nullptr);
+
 	void skipCelLines(ByleRLEData &compData, int num);
+
+private:
+	// helper function to be called from paintCelByleRLECommon
+	virtual void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {}
 };
 
 } // End of namespace Scumm

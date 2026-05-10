@@ -33,7 +33,6 @@ private:
 	machine *_series1 = nullptr;
 	machine *_series1s = nullptr;
 	Series _jug;
-	//machine *_series4 = nullptr;
 	Series _series5;
 	machine *_series7 = nullptr;
 	noWalkRect *_walk1 = nullptr;

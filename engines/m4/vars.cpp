@@ -21,10 +21,12 @@
 
 #include "common/debug.h"
 #include "m4/vars.h"
+
+#include "core/imath.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
-#include "m4/dbg/debug.h"
+#include "m4/dbg/dbg_wscript.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/gui/game_menu.h"
 #include "m4/gui/gui_buffer.h"
@@ -41,7 +43,7 @@ namespace M4 {
 
 Vars *g_vars;
 
-Vars::Vars() : _digi(g_engine->_mixer), _midi(g_engine->_mixer) {
+Vars::Vars() : _digi(g_engine->_mixer), _midi() {
 	g_vars = this;
 
 	Common::fill(_sizeMem, _sizeMem + _MEMTYPE_LIMIT, 0);
@@ -79,23 +81,23 @@ bool Vars::init() {
 
 	if (!_kernel.hag_mode) {
 		if (!read_catalog())
-			error_show(FL, 'PARS', "game_main");
+			error_show(FL, "game_main");
 	}
 
 	term_message("Load walker engines");
 	if (!LoadWSAssets("walker script", &_master_palette[0]))
-		error_show(FL, 'FNF!', "walker script");
+		error_show(FL, "walker script");
 	if (!LoadWSAssets("show script", &_master_palette[0]))
-		error_show(FL, 'FNF!', "show script");
+		error_show(FL, "show script");
 	if (!LoadWSAssets("stream script", &_master_palette[0]))
-		error_show(FL, 'FNF!', "stream script");
+		error_show(FL, "stream script");
 
 	grab_fonts();
 	gr_font_set(_font_inter);
 
 	if (_cheating_enabled) {
 		if (!dbg_ws_init(_kernel.start_up_with_dbg_ws, _font_tiny_prop, _globals))
-			error_show(FL, 'DWIF', "cheat system");
+			error_show(FL, "cheat system");
 	}
 
 	main_cold_data_init();
@@ -110,7 +112,7 @@ bool Vars::init() {
 void Vars::game_systems_initialize(byte flags) {
 	_G(term).init(_G(kernel).use_debug_monitor, _G(kernel).use_log_file);
 
-	int totalMem = _G(kernel).mem_avail();
+	const int totalMem = _G(kernel).mem_avail();
 	if (_G(kernel).suppress_cache == CACHE_NOT_OVERRIDE_BY_FLAG_PARSE)
 		_G(kernel).suppress_cache = totalMem < 8000000;
 
@@ -127,20 +129,22 @@ void Vars::game_systems_initialize(byte flags) {
 
 	if (flags & INSTALL_PLAYER_BEEN_INIT) {
 		if (!player_been_init(MAX_SCENES))
-			error_show(FL, 'PBIF');
+			error_show(FL, "main init");
 	}
 
 	term_message("Firing up GUI");
 	fire_up_gui();
 
 	if (flags & INSTALL_SOUND_DRIVERS) {
-		// No implementation
+		const int result = _midi.open();
+		if (result > 0)
+			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(result));
 	} else {
 		term_message("Sound driver installation skipped");
 	}
 
 	if (!woodscript_init())
-		error_show(FL, 'WSIF');
+		error_show(FL, "main init");
 
 	gr_pal_clear(_master_palette);
 
@@ -149,7 +153,7 @@ void Vars::game_systems_initialize(byte flags) {
 		InitRails();
 
 	if (!f_stream_Init())
-		error_show(FL, 'FSIF');
+		error_show(FL, "main init");
 
 	mouse_set_sprite(kArrowCursor);
 
@@ -217,19 +221,19 @@ void Vars::game_systems_shutdown() {
 
 void Vars::fire_up_gui() {
 	if (!gui_system_init())
-		error_show(FL, 'GUI0');
+		error_show(FL, "gui init");
 	if (!vmng_init())
-		error_show(FL, 'GUI1');
+		error_show(FL, "gui init");
 	if (!gui_mouse_init())
-		error_show(FL, 'GUI2');
+		error_show(FL, "gui init");
 	if (!gui_dialog_init())
-		error_show(FL, 'GUI3');
+		error_show(FL, "gui init");
 #ifdef TODO
 	if (!InitItems())
-		error_show(FL, 'GUI4');
+		error_show(FL, "gui init");
 #endif
 	if (!gui_buffer_system_init())
-		error_show(FL, 'GUI5');
+		error_show(FL, "gui init");
 }
 
 bool Vars::woodscript_init() {
@@ -259,12 +263,10 @@ void Vars::grab_fonts() {
 }
 
 void Vars::create_mouse_watch_dialog() {
-	int x_offset;
-
 	gr_font_set(_font_tiny);
 	_mousePosDialog = DialogCreateAbsolute(0, 380, 200, 480, 3 | SF_GET_MOUSE);
 	_showMousePos = false;
-	x_offset = 64;
+	const int x_offset = 64;
 
 	Dialog_Add_Message(_mousePosDialog, 4, 4, "Scene:", 0);
 	Dialog_Add_Message(_mousePosDialog, x_offset, 4, "0", 1);
@@ -296,8 +298,6 @@ void Vars::create_mouse_watch_dialog() {
 }
 
 void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
-	int32 maxW, maxH;
-
 	_mouseSeriesHandle = nullptr;
 	_mouseSeriesOffset = 0;
 	_mouseSeriesPalOffset = 0;
@@ -310,6 +310,7 @@ void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
 	if (LoadSpriteSeries(assetName.c_str(), &_mouseSeriesHandle, &_mouseSeriesOffset, &_mouseSeriesPalOffset, myPalette) > 0) {
 		_mouseSeriesResource = assetName;
 
+		int32 maxW, maxH;
 		if (ws_GetSSMaxWH(_mouseSeriesHandle, _mouseSeriesOffset, &maxW, &maxH)) {
 			if (maxW && maxH) {
 				_mouseBuffer.data = (byte *)mem_alloc(maxW * maxH, "mouse graphic");

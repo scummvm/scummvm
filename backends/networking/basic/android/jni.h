@@ -55,6 +55,8 @@ private:
 	static jmethodID _MID_socket_close;
 
 #ifdef USE_HTTP
+	static jclass    _CLS_HTTPManager;
+
 	static jmethodID _MID_manager_init;
 	static jmethodID _MID_manager_startRequest;
 	static jmethodID _MID_manager_poll;

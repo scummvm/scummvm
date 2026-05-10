@@ -174,7 +174,7 @@ public:
 	void animateDirectionChange(float pitch, float heading, uint16 scriptTicks);
 	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
 
-	void drawFrame(bool noSwap = false);
+	void drawFrame(bool noSwap = false, bool pausePreloadedScriptMovies = false);
 
 	void processInput(bool interactive);
 	void processEventForKeyboardState(const Common::Event &event);

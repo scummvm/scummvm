@@ -19,10 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/eclipse/ay.music.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
 
@@ -30,6 +32,21 @@ namespace Freescape {
 
 void EclipseEngine::initCPC() {
 	_viewArea = Common::Rect(36 + 3, 24 + 8, 284, 130 + 3);
+	// Sound mappings from TEPROG.BIN disassembly (sub_6D19h call sites)
+	_soundIndexShoot = 5;            // 0x5D80: LD A,05h; CALL 6D19h (type 0x16 destroy)
+	_soundIndexCollide = 12;         // 0x5192/0x5239: deferred via (0CFD9h)
+	_soundIndexStepDown = 12;        // 0x5194/0x5239: small height drop within threshold
+	_soundIndexStepUp = 12;          // same sound for step up (matches ZX version)
+	_soundIndexStart = 3;            // 0x770F/7726/776A: game start transition
+	_soundIndexAreaChange = 7;       // 0x63E0: deferred via (0CFD9h), type 0x12
+	_soundIndexStartFalling = 6;     // 0x797E: falling handler, first phase
+	_soundIndexEndFalling = 8;       // 0x79AC: falling handler, landing
+	_soundIndexFall = 5;             // 0x7D25: death/game-over animation
+	_soundIndexNoShield = 5;         // game-over conditions reuse death sound
+	_soundIndexFallen = 5;
+	_soundIndexTimeout = 5;
+	_soundIndexForceEndGame = 5;
+	_soundIndexCrushed = 5;
 }
 
 byte kCPCPaletteEclipseTitleData[4][3] = {
@@ -47,7 +64,24 @@ byte kCPCPaletteEclipseBorderData[4][3] = {
 };
 
 
-extern Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode0);
+
+void EclipseEngine::loadHeartFramesCPC(Common::SeekableReadStream *file, int restOffset, int beatOffset) {
+	// Decode heart frames as indexed (CLUT8) pixel data.
+	// The actual palette is applied at draw time from the current area's
+	// ink/paper colors, since CPC pen assignments change per area.
+	int offsets[2] = { beatOffset, restOffset };
+
+	for (int f = 0; f < 2; f++) {
+		file->seek(offsets[f]);
+		int height = file->readByte();
+		int widthBytes = file->readByte();
+
+		auto *indexed = new Graphics::ManagedSurface();
+		indexed->create(widthBytes * 4, height, Graphics::PixelFormat::createFormatCLUT8());
+		loadFrameCPCIndexed(file, indexed, widthBytes, height);
+		_heartFramesCPCIndexed.push_back(indexed);
+	}
+}
 
 void EclipseEngine::loadAssetsCPCFullGame() {
 	Common::File file;
@@ -86,21 +120,33 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 
 	if (isEclipse2()) {
 		loadFonts(&file, 0x60bc);
-		loadMessagesFixedSize(&file, 0x326, 16, 30);
+		loadMessagesFixedSize(&file, 0x326, 16, 34);
 		load8bitBinary(&file, 0x62b4, 16);
+		loadSoundsCPC(&file, 0x0879, 104, 0x08E1, 165, 0x07E6, 147);
 	} else {
 		loadFonts(&file, 0x6076);
 		loadMessagesFixedSize(&file, 0x326, 16, 30);
 		load8bitBinary(&file, 0x626e, 16);
+		loadSoundsCPC(&file, 0x07C9, 104, 0x0831, 165, 0x0736, 147);
 	}
 
 	loadColorPalette();
 	swapPalette(1);
 
+	if (isEclipse2()) {
+		loadHeartFramesCPC(&file, 0x0D8B, 0x0DBD);
+	} else {
+		loadHeartFramesCPC(&file, 0x0CDB, 0x0D0D);
+	}
+	updateHeartFramesCPC();
+
 	_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
 
 	for (auto &it : _indicators)
 		it->convertToInPlace(_gfx->_texturePixelFormat);
+
+	if (ConfMan.getBool("ay_music"))
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::loadAssetsCPCDemo() {
@@ -123,13 +169,59 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	loadMessagesFixedSize(&file, 0x362, 16, 23);
 	loadMessagesFixedSize(&file, 0x570b, 264, 5);
 	load8bitBinary(&file, 0x65c6, 16);
+	loadSoundsCPC(&file, 0x0805, 104, 0x086D, 165, 0x0772, 147);
 	loadColorPalette();
 	swapPalette(1);
+	loadHeartFramesCPC(&file, 0x0D17, 0x0D49);
+	updateHeartFramesCPC();
+
+	// This patch forces a solid color to the bottom of the chest in the area 5
+	// It was transparent in the original game
+	GeometricObject *obj = (GeometricObject *)_areaMap[5]->objectWithID(12);
+	assert(obj);
+	obj->setColor(2, 4);
 
 	_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
 
 	for (auto &it : _indicators)
 		it->convertToInPlace(_gfx->_texturePixelFormat);
+
+	if (ConfMan.getBool("ay_music"))
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
+}
+
+void EclipseEngine::updateHeartFramesCPC() {
+	if (_heartFramesCPCIndexed.empty())
+		return;
+
+	uint8 r, g, b;
+	byte palette[4 * 3];
+	for (int c = 0; c < 4; c++) {
+		_gfx->selectColorFromFourColorPalette(c, r, g, b);
+		palette[c * 3 + 0] = r;
+		palette[c * 3 + 1] = g;
+		palette[c * 3 + 2] = b;
+	}
+
+	for (auto &sprite : _eclipseSprites) {
+		sprite->free();
+		delete sprite;
+	}
+	_eclipseSprites.clear();
+
+	for (uint i = 0; i < _heartFramesCPCIndexed.size(); i++) {
+		Graphics::ManagedSurface clut8;
+		clut8.copyFrom(*_heartFramesCPCIndexed[i]);
+		clut8.setPalette(palette, 0, 4);
+
+		Graphics::Surface *converted = _gfx->convertImageFormatIfNecessary(&clut8);
+		auto *surf = new Graphics::ManagedSurface();
+		surf->copyFrom(*converted);
+		converted->free();
+		delete converted;
+
+		_eclipseSprites.push_back(surf);
+	}
 }
 
 void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
@@ -166,8 +258,7 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 102, 135, back, front, surface);
 
-	Common::String encodedScoreStr = getScoreString(score);
-	drawStringInSurface(encodedScoreStr, 136, 6, back, other, surface);
+	drawScoreString(score, 136, 6, back, other, surface);
 
 	int x = 171;
 	if (shield < 10)
@@ -190,13 +281,20 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	drawIndicator(surface, 45, 4, 12);
 	drawEclipseIndicator(surface, 228, 0, front, other);
 
-	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
+	int energy = _gameStateVars[k8bitVariableEnergy];
+	if (energy < 0)
+		energy = 0;
+
+	_gfx->readFromPalette(_currentArea->_paperColor, r, g, b);
+	uint32 waterColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	Common::Rect jarBackground(124, 165, 148, 192);
 	surface->fillRect(jarBackground, back);
 
-	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
-	surface->fillRect(jarWater, blue);
+	Common::Rect jarWater(124, 192 - energy, 148, 192);
+	surface->fillRect(jarWater, waterColor);
+
+	drawHeartIndicator(surface, 176, 168);
 
 	surface->fillRect(Common::Rect(225, 168, 235, 187), front);
 	drawCompass(surface, 229, 177, _yaw, 10, back);

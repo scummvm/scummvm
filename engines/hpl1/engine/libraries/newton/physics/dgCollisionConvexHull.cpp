@@ -95,7 +95,7 @@ dgCollisionConvexHull::dgCollisionConvexHull(dgMemoryAllocator *const allocator,
 				planesArray[planeCount].m_index = i;
 				planesArray[planeCount].m_face = face;
 				planeCount++;
-				NEWTON_ASSERT(planeCount < dgInt32(sizeof(planesArray) / sizeof(planesArray[0])));
+				NEWTON_ASSERT(planeCount < dgInt32(ARRAYSIZE(planesArray)));
 			}
 		}
 	}

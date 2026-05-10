@@ -44,9 +44,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "MouseLightPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	Common::Path _imageName;
 	byte _radius = 0;

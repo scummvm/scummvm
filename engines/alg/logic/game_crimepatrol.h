@@ -53,12 +53,13 @@ public:
 	GameCrimePatrol(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameCrimePatrol() override;
 	void init() override;
-	void debugWarpTo(int val);
+	void debug_warpTo(int val);
 
 private:
 	Common::Error run() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	CPScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	CPScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
 	void callScriptFunctionRectHit(Common::String name, Rect *rect);
@@ -74,13 +75,22 @@ private:
 	CPScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_liveIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_difficultyIcon;
-	Graphics::Surface *_bulletholeIcon;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_liveIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_difficultyIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
 
+	// sounds
+	Audio::SeekableAudioStream *_saveSound = nullptr;
+	Audio::SeekableAudioStream *_loadSound = nullptr;
+	Audio::SeekableAudioStream *_skullSound = nullptr;
+	Audio::SeekableAudioStream *_shotSound = nullptr;
+	Audio::SeekableAudioStream *_emptySound = nullptr;
+	
 	// constants
 	const int16 _scenesLevel0[2] = {0x0191, 0};
 	const int16 _scenesLevel1[3] = {0x27, 0x01B7, 0};
@@ -133,6 +143,18 @@ private:
 	const int16 _practiceTargetBottom[5] = {0x3D, 0x79, 0x7B, 0xA1, 0xA1};
 
 	// gamestate
+	uint8 _difficulty = 1;
+	uint8 _oldDifficulty = 1;
+	bool _holster = false;
+	int8 _lives = 0;
+	int8 _oldLives = 0;
+	int32 _score = 0;
+	int32 _oldScore = -1;
+	uint16 _shots = 0;
+	uint8 _oldShots = 0;
+	uint8 _whichGun = 0;
+	uint8 _oldWhichGun = 0xFF;
+
 	uint16 _gotTo[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int8 _stage = 0;
 	int8 _oldStage = -1;
@@ -159,13 +181,15 @@ private:
 	void displayScores();
 	void displayShotsLeft();
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
+	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
 
 	// misc game functions
 	void displayShotFiredImage(Common::Point *point);
 	void enableVideoFadeIn();
-	uint16 sceneToNumber(Scene *scene);
+	uint16 sceneToNumber(Common::String sceneName);
+	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	uint16 pickRandomScene(uint8 index, uint8 max);
 	uint16 pickDeathScene();
 	void sceneNxtscnGeneric(uint8 index);
@@ -173,11 +197,16 @@ private:
 	void sceneIsoGotToGeneric(uint8 index, uint16 sceneId);
 
 	// Script functions: RectHit
+	void rectNewScene(Rect *rect);
 	void rectShotMenu(Rect *rect);
 	void rectSave(Rect *rect);
 	void rectLoad(Rect *rect);
 	void rectContinue(Rect *rect);
 	void rectStart(Rect *rect);
+	void rectEasy(Rect *rect);
+	void rectAverage(Rect *rect);
+	void rectHard(Rect *rect);
+	void rectExit(Rect *rect);
 	void rectTargetPractice(Rect *rect);
 	void rectSelectTargetPractice(Rect *rect);
 	void rectSelectGangFight(Rect *rect);
@@ -261,7 +290,11 @@ private:
 
 	// Script functions: Scene WepDwn
 	void sceneDefaultWepdwn(Scene *scene);
+
 	void debugDrawPracticeRects();
+
+	// Script functions: ScnScr
+	void sceneDefaultScore(Scene *scene);
 };
 
 class DebuggerCrimePatrol : public GUI::Debugger {

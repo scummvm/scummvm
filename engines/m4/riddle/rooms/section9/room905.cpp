@@ -19,12 +19,15 @@
  *
  */
 
-#include "m4/m4.h"
 #include "m4/riddle/rooms/section9/room905.h"
-#include "m4/graphics/gr_series.h"
-#include "m4/gui/gui_sys.h"
-#include "m4/platform/keys.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
+#include "m4/gui/gui_buffer.h"
+#include "m4/gui/gui_sys.h"
+#include "m4/gui/gui_vmng.h"
+#include "m4/m4.h"
+#include "m4/platform/keys.h"
 
 namespace M4 {
 namespace Riddle {
@@ -42,8 +45,35 @@ void Room905::escapePressed(void *, void *) {
 }
 
 void Room905::init() {
-	_roomStates_field4 = -1;
-	warning("Room 905 - large STUB in init");
+	_roomStates_field4 = 0xff;
+
+	_905_BuffTemp = new GrBuff(640, _G(kernel).letter_box_y);
+	Buffer *myBuff = _905_BuffTemp->get_buffer();
+	byte *bufferHandle = myBuff->data;
+
+	for (int i = 0; i < 640 * _G(kernel).letter_box_y; i++) {
+		bufferHandle[i] = 0;
+	}
+
+	gui_GrBuff_register(0, 0, _905_BuffTemp, SF_SURFACE, nullptr);
+	gui_buffer_activate((Buffer *)_905_BuffTemp);
+	
+	vmng_screen_show(_905_BuffTemp);
+	
+	_905_BuffTemp2 = new GrBuff(640, 77);
+	myBuff = _905_BuffTemp2->get_buffer();
+	bufferHandle = myBuff->data;
+	
+	for (int i = 0; i < 640 * 77; i++) {
+		bufferHandle[i] = 0;
+	}	
+
+	gui_GrBuff_register(0, 403, _905_BuffTemp2, SF_SURFACE, nullptr);
+	gui_buffer_activate((Buffer *)_905_BuffTemp2);
+	vmng_screen_show(_905_BuffTemp2);
+
+	MoveScreenDelta(_G(game_buff_ptr), 0, -(_G(kernel).letter_box_y + 768));
+
 	series_load("905 hold frame", -1, nullptr);
 	g_engine->adv_camera_pan_step(3);
 	player_set_commands_allowed(false);
@@ -78,7 +108,7 @@ void Room905::daemon() {
 		_roomStates_field4 -= 3;
 		if (_roomStates_field4 <= 40) {
 			adv_kill_digi_between_rooms(false);
-			_G(game).new_room = 906;
+			_G(game).setRoom(906);
 		} else {
 			digi_change_panning(1, _roomStates_field4);
 			kernel_timing_trigger(2, 30, nullptr);
@@ -86,13 +116,11 @@ void Room905::daemon() {
 		break;
 
 	case 55:
-		_G(game).new_room = 304;
-		_G(game).new_section = 3;
+		_G(game).setRoom(304);
 		break;
 
 	case 56:
-		_G(game).new_room = 494;
-		_G(game).new_section = 4;
+		_G(game).setRoom(494);
 		break;
 
 	case 666:
@@ -109,7 +137,17 @@ void Room905::daemon() {
 }
 
 void Room905::shutdown() {
-	warning("STUB - Room905::shutdown");
+	if (_905_BuffTemp) {
+		gui_buffer_deregister((Buffer *)_905_BuffTemp);
+		delete _905_BuffTemp;
+		_905_BuffTemp = nullptr;
+	}
+
+	if (_905_BuffTemp2) {
+		gui_buffer_deregister((Buffer *)_905_BuffTemp2);
+		delete _905_BuffTemp2;
+		_905_BuffTemp2 = nullptr;
+	}
 }
 
 } // namespace Rooms

@@ -30,7 +30,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#define BACKPACK_SPEC   ".\\art\\mlscroll.bmp"      // path for backpack's DIB on disk
+#define BACKPACK_SPEC   "art\\mlscroll.bmp"      // path for backpack's DIB on disk
 #define BACKPACK_DX             502
 #define BACKPACK_DY             395
 #define BACKPACK_CURL_DX        500
@@ -61,7 +61,9 @@ namespace Gtl {
 
 
 class CBackpack : public CDialog {
-	// Construction
+private:
+	bool bFirstTime = true;              // flag for first time information is displayed
+
 public:
 	CBackpack(CWnd *pParent, CPalette *pPalette,
 		CInventory *pInventory);
@@ -74,7 +76,7 @@ public:
 	static  void UpdatePage(CDC *pDC);
 	static  void ClearDialogImage();
 	static  void RefreshBackground();
-	static  void DoWaitCursor();
+	static  void ShowWaitCursor();
 	static  void DoArrowCursor();
 
 private:

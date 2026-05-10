@@ -61,7 +61,7 @@ public:
 	DCT(int bits, TransformType trans);
 	~DCT();
 
-	void calc(float *data);
+	void calc(float *data) const;
 
 private:
 	int _bits;
@@ -74,10 +74,10 @@ private:
 
 	RDFT *_rdft;
 
-	void calcDCTI  (float *data);
-	void calcDCTII (float *data);
-	void calcDCTIII(float *data);
-	void calcDSTI  (float *data);
+	void calcDCTI(float *data) const;
+	void calcDCTII(float *data) const;
+	void calcDCTIII(float *data) const;
+	void calcDSTI(float *data) const;
 };
 
 /** @} */

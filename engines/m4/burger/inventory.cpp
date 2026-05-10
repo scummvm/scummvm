@@ -42,7 +42,7 @@ static const InvObject INVENTORY_ITEMS[] = {
 	{ "whistle", "PFEIFE", "SIFFLET", 170, 40, 40},
 	{ "carrot juice", "M\xd6""HRENSAFT", "JUS DE CAROTTES", 172, 25, 25},
 	{ "deed", "URKUNDE", "ACTE DE VENTE", 105, 38, 38},
-	{ "laxative", "ABF\xdcHRMITTEL", "LAXATIF", 174, 54, 54},
+	{ "laxative", "ABF\xdc""HRMITTEL", "LAXATIF", 174, 54, 54},
 	{ "amplifier", "VERST\xc4""RKER", "AMPLIFICATEUR", 145, 34, 34},
 	{ "jawz o' life", "KLEMMBACKE", "LA TRON\xc7ONNEUSE", 137, 37, 37},
 	{ "broken puz dispenser", "Bonbonspender,kaputt", "BOITE A PEZ CASSEE", 176, 16, 16},
@@ -59,8 +59,8 @@ static const InvObject INVENTORY_ITEMS[] = {
 	{ "gizmo", "GER\xc4""T", "GIZMO", 999, 58, 58},
 	{ "kindling", "ANZ\xdc""NDHOLZ", "PETIT BOIS", 999, 20, 20},
 	{ "burning kindling", "BRENNENDES HOLZ", "PETIT BOIS ENFLAMME", 999, 21, 21},
-	{ "christmas lights", "LICHTERKETTE", "LUMIERES DE NO\xebL", 508, 22, 22},
-	{ "christmas lights ", "LICHTERKETTE", "LUMIERES DE NO\xebL", 508, 23, 23 },
+	{ "christmas lights", "LICHTERKETTE", "LUMIERES DE NO\xeb""L", 508, 22, 22},
+	{ "christmas lights ", "LICHTERKETTE", "LUMIERES DE NO\xeb""L", 508, 23, 23 },
 	{ "bottle", "FLASCHE", "BOUTEILLE", 999, 24, 24},
 	{ "soapy water", "SEIFENWASSER", "EAU DE BAIN", 999, 26, 26},
 	{ "rubber gloves", "GUMMIHANDSCHUHE", "GANTS DE CAOUTCHOUC", 503, 35, 35},
@@ -77,7 +77,7 @@ static const InvObject INVENTORY_ITEMS[] = {
 };
 
 void Inventory::init() {
-	bool isFrench = g_engine->getLanguage() == Common::FR_FRA;
+	const bool isFrench = g_engine->getLanguage() == Common::FR_FRA;
 
 	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item) {
 		const char *foreignName = isFrench ? item->_frenchName : item->_germanName;

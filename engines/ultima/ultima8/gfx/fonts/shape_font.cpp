@@ -19,11 +19,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
-#include "ultima/ultima8/gfx/shape_frame.h"
+
 #include "ultima/ultima8/gfx/fonts/shape_rendered_text.h"
+#include "ultima/ultima8/gfx/shape_frame.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -79,7 +79,7 @@ int ShapeFont::getBaselineSkip() {
 	return getHeight() + getVlead();
 }
 
-void ShapeFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
+void ShapeFont::getStringSize(const Common::String &text, int32 &width, int32 &height) {
 	width = _hLead;
 	height = getHeight();
 
@@ -118,13 +118,13 @@ int ShapeFont::charToFrameNum(char c) const {
 	}
 }
 
-RenderedText *ShapeFont::renderText(const Std::string &text,
+RenderedText *ShapeFont::renderText(const Common::String &text,
 									unsigned int &remaining,
 									int32 width, int32 height, TextAlign align,
 									bool u8specials, bool pagebreaks,
-									Std::string::size_type cursor) {
+									Common::String::size_type cursor) {
 	int32 resultwidth, resultheight;
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,
 	                            width, height, align, u8specials, pagebreaks,
 	                            resultwidth, resultheight, cursor);

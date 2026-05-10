@@ -32,17 +32,22 @@ namespace MediaStation {
 
 class CodeChunk {
 public:
-	CodeChunk(Chunk &chunk);
+	CodeChunk(ParameterReadStream *bytecode) : _bytecode(bytecode) {};
 	~CodeChunk();
 
 	ScriptValue executeNextBlock();
-	ScriptValue execute(Common::Array<ScriptValue> *args = nullptr);
+	ScriptValue executeWithArguments(Common::Array<ScriptValue> *args);
 
 private:
+	// This is not the number of recursive calls, it is as far is the script call stack is
+	// ever allowed to get.
+	static const uint MAX_CALL_DEPTH = 0x0f;
+
 	void skipNextBlock();
 
 	ScriptValue evaluateExpression();
 	ScriptValue evaluateExpression(ExpressionType expressionType);
+	void evaluateLValue(ScriptValue *&targetPtr);
 	ScriptValue evaluateOperation();
 	ScriptValue evaluateValue();
 	ScriptValue evaluateVariable();
@@ -59,15 +64,20 @@ private:
 	ScriptValue evaluateMethodCall(bool isIndirect = false);
 	ScriptValue evaluateMethodCall(BuiltInMethod method, uint paramCount);
 	void evaluateDeclareLocals();
-	ScriptValue evaluateReturn();
+	void evaluateReturn();
 	void evaluateReturnNoValue();
 	void evaluateWhileLoop();
 
 	static const uint MAX_LOOP_ITERATION_COUNT = 1000;
 	bool _returnImmediately = false;
+	ScriptValue _returnValue;
 	Common::Array<ScriptValue> _locals;
 	Common::Array<ScriptValue> *_args = nullptr;
 	ParameterReadStream *_bytecode = nullptr;
+
+	// Debug output indentation tracking.
+	uint _debugIndentLevel = 0;
+	Common::String makeDebugIndent() const;
 };
 
 } // End of namespace MediaStation

@@ -167,6 +167,7 @@ public:
 	uint32 _lastClickTime;
 	uint32 _lastClickTime2;
 	Common::Point _lastClickPos;
+	Common::Point _lastMousePos;
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
 	uint32 _stageColor;

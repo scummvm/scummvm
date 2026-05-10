@@ -123,7 +123,7 @@ protected:
 	uint16 tile_num;
 
 	MapCoord start_loc; // where explosion will start
-	vector<MapCoord> targets;
+	Common::Array<MapCoord> targets;
 	uint8 anim_speed;
 	bool trail;
 	uint16 initial_tile_rotation;
@@ -131,7 +131,7 @@ protected:
 	uint8 src_tile_y_offset;
 	uint16 finished_tiles;
 
-	vector<MapEntity> hit_entities;
+	Common::Array<MapEntity> hit_entities;
 
 	virtual void start_anim();
 
@@ -141,13 +141,13 @@ public:
 			finished_tiles(0) {
 	}
 	ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
-	ProjectileEffect(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
+	ProjectileEffect(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
 
-	void init(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
+	void init(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
-	vector<MapEntity> *get_hit_entities() {
+	Common::Array<MapEntity> *get_hit_entities() {
 		return &hit_entities;
 	}
 };
@@ -235,8 +235,8 @@ public:
 class TextEffect : public Effect {
 
 public:
-	TextEffect(Std::string text);
-	TextEffect(Std::string text, const MapCoord &location);
+	TextEffect(Common::String text);
+	TextEffect(Common::String text, const MapCoord &location);
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
@@ -387,9 +387,9 @@ class PaletteEffect : public TimedEffect {
 class SleepEffect : public Effect {
 	TimedAdvance *timer; // timed event
 	uint8 stop_hour, stop_minute; // sleep until this time
-	Std::string stop_time;
+	Common::String stop_time;
 public:
-	SleepEffect(Std::string until);
+	SleepEffect(Common::String until);
 	SleepEffect(uint8 to_hour);
 	~SleepEffect() override;
 
@@ -601,13 +601,13 @@ public:
 
 /* Gather text from scroll input then continue. */
 class TextInputEffect: public Effect {
-	Std::string input;
+	Common::String input;
 public:
 	/* Called by the Effect handler when input is available. */
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	TextInputEffect(const char *allowed_chars, bool can_escape);
 	~TextInputEffect() override { }
-	Std::string get_input() {
+	Common::String get_input() {
 		return input;
 	}
 };

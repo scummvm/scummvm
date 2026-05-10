@@ -8,6 +8,7 @@
 static const char *TEST_PATH = "parent/dir/file.txt";
 static const char *TEST_ESCAPED1_PATH = "|parent/dir/file.txt";
 static const char *TEST_ESCAPED2_PATH = "par/ent\\dir\\file.txt";
+static const char *TEST_ESCAPED3_PATH = "parent\\dir\\fi|le.txt";
 static const char *TEST_BS_PATH = "parent\\dir\\file.txt";
 
 class PathTestSuite : public CxxTest::TestSuite
@@ -30,8 +31,12 @@ class PathTestSuite : public CxxTest::TestSuite
 		Common::Path p4(TEST_ESCAPED2_PATH, '\\');
 		TS_ASSERT_EQUALS(p4.toString('\\'), TEST_ESCAPED2_PATH);
 
-		Common::Path p5(TEST_BS_PATH, '\\');
-		TS_ASSERT_EQUALS(p5.toString('\\'), TEST_BS_PATH);
+		Common::Path p5(TEST_ESCAPED3_PATH, '\\');
+		TS_ASSERT_EQUALS(p5.toString('\\'), TEST_ESCAPED3_PATH);
+		TS_ASSERT_EQUALS(p5.baseName(), "fi|le.txt");
+
+		Common::Path p6(TEST_BS_PATH, '\\');
+		TS_ASSERT_EQUALS(p6.toString('\\'), TEST_BS_PATH);
 
 #ifndef RELEASE_BUILD
 		Common::Path::_shownSeparatorCollisionWarning = false;
@@ -47,7 +52,7 @@ class PathTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(Common::Path::_shownSeparatorCollisionWarning, true);
 
 		Common::Path::_shownSeparatorCollisionWarning = false;
-		TS_ASSERT_EQUALS(p5.toString('i'), "parentidirifile.txt");
+		TS_ASSERT_EQUALS(p6.toString('i'), "parentidirifile.txt");
 		TS_ASSERT_EQUALS(Common::Path::_shownSeparatorCollisionWarning, true);
 #endif
 	}

@@ -95,12 +95,10 @@ MemHandle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset);
 MemHandle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int32 *machInstrOffset);
 MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset);
 int32 ws_GetDATACount(uint32 hash);
-int32 GetSSHeaderInfo(Common::SeekableReadStream *stream, uint32 **data, RGB8 *myPalette);
 bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH);
 
 // USING SPRITES WITHOUT GOING THROUGH THE WOODSCRIPT TREE
 int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette);
-int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette);
 M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index, M4sprite *mySprite, bool *streamSeries);
 
 // WOODSCRIPT STREAMING API

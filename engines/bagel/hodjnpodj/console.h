@@ -31,6 +31,9 @@ namespace HodjNPodj {
 class Console : public GUI::Debugger {
 private:
 	bool cmdDumpRes(int argc, const char **argv);
+#ifndef RELEASE_BUILD
+	bool cmdClicks(int argc, const char **argv);
+#endif
 
 public:
 	Console();

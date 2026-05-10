@@ -25,12 +25,12 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Std::vector<Common::String> u4read_stringtable(const Common::String &filename) {
+Common::Array<Common::String> u4read_stringtable(const Common::String &filename) {
 	Common::File f;
 	if (!f.open(Common::Path(Common::String::format("data/text/%s.dat", filename.c_str()))))
 		error("Could not open string table '%s'", filename.c_str());
 
-	Std::vector<Common::String> strs;
+	Common::Array<Common::String> strs;
 	Common::String line;
 	int64 filesize = f.size();
 

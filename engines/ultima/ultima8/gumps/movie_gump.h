@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GUMPS_MOVIEGUMP_H
 #define ULTIMA8_GUMPS_MOVIEGUMP_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"
@@ -55,7 +55,7 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 
 	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack, bool noScale);
-	static MovieGump *CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent, uint16 frameshape);
+	static MovieGump *CruMovieViewer(const Common::String fname, int x, int y, const byte *pal, Gump *parent, uint16 frameshape);
 
 	bool loadData(Common::ReadStream *rs);
 	void saveData(Common::WriteStream *ws) override;

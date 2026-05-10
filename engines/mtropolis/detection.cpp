@@ -84,6 +84,7 @@ static const PlainGameDescriptor mTropolisGames[] = {
 	{"od_living_science", "An Odyssey of Discovery: Living Science"},
 	{"food_genes_compendium", "The Facts about Genes and our Food - A Compendium"},
 	{"uts_shadow_warrior", "Unlock the Secrets: Shadow Warrior"},
+	{"wannadino", "Wanna-Be A Dino Finder"},
 
 
 	{"mtropolis", "mTropolis Title"},

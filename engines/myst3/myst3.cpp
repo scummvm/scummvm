@@ -53,6 +53,7 @@
 
 #include "image/jpeg.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/renderer.h"
 #include "graphics/yuv_to_rgb.h"
 #include "graphics/framelimiter.h"
@@ -178,7 +179,7 @@ Common::Error Myst3Engine::run() {
 	}
 	_archiveNode = new Archive();
 
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	settingsInitDefaults();
 	syncSoundSettings();
@@ -722,7 +723,7 @@ void Myst3Engine::interactWithHoveredElement() {
 	_sound->playEffect(697, 5);
 }
 
-void Myst3Engine::drawFrame(bool noSwap) {
+void Myst3Engine::drawFrame(bool noSwap, bool pausePreloadedScriptMovies) {
 	_sound->update();
 	_gfx->clear();
 
@@ -755,7 +756,7 @@ void Myst3Engine::drawFrame(bool noSwap) {
 	}
 
 	for (int i = _movies.size() - 1; i >= 0 ; i--) {
-		_movies[i]->update();
+		_movies[i]->update(pausePreloadedScriptMovies);
 		_gfx->renderDrawable(_movies[i], _scene);
 	}
 
@@ -824,8 +825,12 @@ bool Myst3Engine::isInventoryVisible() {
 		return false;
 	}
 
-	// Only draw the inventory when the mouse is inside its area
-	if (isWideScreenModEnabled() && !_inventory->isMouseInside()) {
+	// For widescreen mod:
+	// Only draw the inventory when:
+	// - the mouse is inside its area
+	// - and the cursor is visible
+	// - and the inventory is not empty
+	if (isWideScreenModEnabled() && (!_cursor->isVisible() || !_inventory->isMouseInside() || _inventory->isEmpty())) {
 		return false;
 	}
 
@@ -1136,6 +1141,26 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 		_state->setMovieScriptDriven(0);
 	}
 
+	if (_state->getMoviePreloadToMemory()) {
+		movie->setPreloaded(_state->getMoviePreloadToMemory());
+		_state->setMoviePreloadToMemory(0);
+	}
+
+	if (_state->getMovieNoFrameSkip()) {
+		movie->setNoFrameSkip(_state->getMovieNoFrameSkip());
+		_state->setMovieNoFrameSkip(0);
+	}
+
+	if (_state->getMovieUnk147()) {
+		movie->setUnk147(_state->getMovieUnk147());
+		_state->setMovieUnk147(0);
+	}
+
+	if (_state->getMovieUnk148()) {
+		movie->setUnk148(_state->getMovieUnk148());
+		_state->setMovieUnk148(0);
+	}
+
 	if (_state->getMovieStartFrameVar()) {
 		movie->setStartFrameVar(_state->getMovieStartFrameVar());
 		_state->setMovieStartFrameVar(0);
@@ -1301,8 +1326,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe, bool refreshAmbient
 			_inputEscapePressedNotConsumed = false;
 			break;
 		}
-
-		drawFrame();
+		drawFrame(false, true);
 	}
 
 	_drawables.pop_back();
@@ -1505,6 +1529,9 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 	HotSpot *hovered = getHoveredHotspot(nodeData, var);
 	if (hovered) {
 		_cursor->setVisible(false);
+		// enable free camera movement after placing the symbol on the pedestal
+		// fix for bug #16758
+		_cursor->lockPosition(true);
 		_scriptEngine->run(&hovered->script);
 		_cursor->setVisible(true);
 	}
@@ -1908,6 +1935,7 @@ void Myst3Engine::settingsInitDefaults() {
 	ConfMan.registerDefault("mouse_inverted", false);
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("subtitles", false);
+	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("vibrations", true); // Xbox specific
 }
 
@@ -1936,6 +1964,7 @@ void Myst3Engine::settingsApplyFromVars() {
 	ConfMan.setInt("mouse_speed", _state->getMouseSpeed());
 	ConfMan.setBool("zip_mode", _state->getZipModeEnabled());
 	ConfMan.setBool("subtitles", _state->getSubtitlesEnabled());
+	ConfMan.setBool("speech_mute", false);
 
 	if (getPlatform() != Common::kPlatformXbox) {
 		ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
@@ -1971,6 +2000,13 @@ void Myst3Engine::settingsApplyFromVars() {
 
 void Myst3Engine::syncSoundSettings() {
 	Engine::syncSoundSettings();
+
+	// If speech_mute is set to true, either in the game domain "Text and speech" settings or inherited from the global settings
+	// translate it to false, since speech cannot be muted in Myst 3.
+	// This will result in a setting of "just subtitles" for the game's domain option "Text and speech" to change to "both" (after the game is run).
+	if (ConfMan.getBool("speech_mute") == true) {
+		ConfMan.setBool("speech_mute", false);
+	}
 
 	uint soundOverall = ConfMan.getInt("overall_volume");
 	uint soundVolumeMusic = ConfMan.getInt("music_volume");

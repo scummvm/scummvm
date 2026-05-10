@@ -4,6 +4,9 @@
 #include "po_parser.h"
 #include <iostream>
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 // List of languages to look for. To add new languages you only need to change the array below
 // and add the supporting files:
 //   - 640x480 bitmap picture for the newpaper named 'img1-##.pbm' and 'img2-##.pbm'
@@ -20,9 +23,9 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	File dataFile;
 	char fileName[20];
 	if (part == 1)
-		sprintf(fileName, "msn_data.%03d-%s", fileNumber, language);
+		snprintf(fileName, ARRAYSIZE(fileName), "msn_data.%03d-%s", fileNumber, language);
 	if (part == 2)
-		sprintf(fileName, "ms2_data.%03d-%s", fileNumber, language);
+		snprintf(fileName, ARRAYSIZE(fileName), "ms2_data.%03d-%s", fileNumber, language);
 	if (!dataFile.open(fileName, kFileReadMode)) {
 		printf("Cannot find dataFile %s. This file will be skipped.\n", fileName);
 		return;
@@ -31,7 +34,7 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	// Write block header in output file (4 bytes).
 	// M(fileNumber) for example M015
 	char number[4];
-	sprintf(number, "%03d", fileNumber);
+	snprintf(number, ARRAYSIZE(number), "%03d", fileNumber);
 	outputFile.writeByte('M');
 	for (int i = 0 ; i < 3 ; ++i) {
 			outputFile.writeByte(number[i]);
@@ -67,9 +70,9 @@ void writeDocFile(File& outputFile, const char *fileExtension, const char* langu
 	File docFile;
 	char fileName[20];
 	if (part == 1)
-		sprintf(fileName, "msn.%s-%s", fileExtension, language);
+		snprintf(fileName, ARRAYSIZE(fileName), "msn.%s-%s", fileExtension, language);
 	if (part == 2)
-		sprintf(fileName, "ms2.%s-%s", fileExtension, language);
+		snprintf(fileName, ARRAYSIZE(fileName), "ms2.%s-%s", fileExtension, language);
 	if (!docFile.open(fileName, kFileReadMode)) {
 		printf("Cannot find file '%s'. This file will be skipped.\n", fileName);
 		return;
@@ -113,7 +116,7 @@ void writeDocFile(File& outputFile, const char *fileExtension, const char* langu
 void writeImage(File& outputFile, const char *name, const char* language) {
 	File imgFile;
 	char fileName[16];
-	sprintf(fileName, "%s-%s.pbm", name, language);
+	snprintf(fileName, ARRAYSIZE(fileName), "%s-%s.pbm", name, language);
 	if (!imgFile.open(fileName, kFileReadMode)) {
 		printf("Cannot find image '%s' for language '%s'. This image will be skipped.\n", name, language);
 		return;
@@ -256,7 +259,7 @@ void writeGermanStrings(File& outputFile, int part) {
 
 void writeStrings(File& outputFile, const char* language, int part) {
 	char fileName[16];
-	sprintf(fileName, "strings%d-%s.po", part, language);
+	snprintf(fileName, ARRAYSIZE(fileName), "strings%d-%s.po", part, language);
 	PoMessageList* poList = parsePoFile(fileName);
 	if (!poList) {
 		printf("Cannot find strings%d file for language '%s'.\n", part, language);

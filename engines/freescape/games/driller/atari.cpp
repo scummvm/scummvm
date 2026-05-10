@@ -20,6 +20,7 @@
  */
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/endian.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/driller/driller.h"
@@ -61,9 +62,9 @@ Common::SeekableReadStream *DrillerEngine::decryptFileAtari(const Common::Path &
 }
 
 void DrillerEngine::loadAssetsAtariFullGame() {
-
+	Common::SeekableReadStream *stream = nullptr;
 	if (_variant & GF_ATARI_RETAIL) {
-		Common::SeekableReadStream *stream = decryptFileAtari("x.prg");
+		stream = decryptFileAtari("x.prg");
 
 		_border = loadAndConvertNeoImage(stream, 0x14b96);
 		_borderExtra = loadAndConvertNeoImage(stream, 0x1c916);
@@ -84,8 +85,10 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 		Common::File file;
 		file.open("x.prg");
 
-		if (!file.isOpen())
-			error("Failed to open 'x.prg' executable for AtariST");
+		if (!file.isOpen()) {
+			stream = decryptFileAtariVirtualWorlds("dril.all");
+		} else
+			stream = &file;
 
 		if (isSpaceStationOblivion()) {
 			_border = loadAndConvertNeoImage(&file, 0x13544);
@@ -104,23 +107,35 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			loadPalettes(&file, 0x296fa - 0x1d6);
 			loadSoundsFx(&file, 0x30da6 - 0x1d6, 25);
 		} else {
-			_border = loadAndConvertNeoImage(&file, 0x1371a);
-			_title = loadAndConvertNeoImage(&file, 0x396);
+			_border = loadAndConvertNeoImage(stream, 0x1371a);
+			_title = loadAndConvertNeoImage(stream, 0x396);
 
-			loadFonts(&file, 0x8a32);
+			loadFonts(stream, 0x8a32);
 
 			Common::Array<Graphics::ManagedSurface *> chars;
-			chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, &file, 0x8a32 + 112 * 33 + 1, 100);
+			chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, stream, 0x8a32 + 112 * 33 + 1, 100);
 			_fontSmall = Font(chars);
 			_fontSmall.setCharWidth(5);
 
-			loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
-			loadGlobalObjects(&file, 0xbccc, 8);
-			load8bitBinary(&file, 0x29b3c, 16);
-			loadPalettes(&file, 0x296fa);
-			loadSoundsFx(&file, 0x30da6, 25);
+			loadMessagesFixedSize(stream, 0xc5d8, 14, 20);
+			loadGlobalObjects(stream, 0xbccc, 8);
+			load8bitBinary(stream, 0x29b3c, 16);
+			loadPalettes(stream, 0x296fa);
+			loadSoundsFx(stream, 0x30da6, 25);
+
+			// Budget Atari full-game indicator blocks match the Amiga retail data
+			// shifted by -0xDA in the validated 293062-byte x.prg layout.
+			byte *palette = getPaletteFromNeoImage(stream, 0x1371a);
+			loadRigSprites(stream, 0x23FA0, palette);
+			if (palette) {
+				loadIndicatorSprites(stream, palette, 0x26EC0, 0x27148, 0x24CAE, 0x26838);
+				loadCompassStrips(stream, palette, 0x2323C, 0x26E72);
+				loadEarthquakeSprites(stream, palette, 0x27486);
+			}
+			free(palette);
 		}
-	}
+	} else
+		error("Unknown Atari ST Driller variant");
 
 	for (auto &area : _areaMap) {
 		// Center and pad each area name so we do not have to do it at each frame
@@ -184,6 +199,22 @@ void DrillerEngine::loadAssetsAtariDemo() {
 		loadFonts(&file, 0x7bc);
 		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
 		loadGlobalObjects(&file, 0x3946, 8);
+
+		byte *palette = nullptr;
+		Common::File neoFile;
+		neoFile.open("console.neo");
+		if (neoFile.isOpen())
+			palette = getPaletteFromNeoImage(&neoFile, 0);
+
+		loadRigSprites(&file, 0x1AB9A);
+		if (palette) {
+			// The rolling Atari demo carries the same indicator blocks here,
+			// but the current bundled vehicle fallback is already good enough.
+			loadIndicatorSprites(&file, palette, 0x1D55A, 0x1D7E2, -1, 0x1CED2);
+			loadCompassStrips(&file, palette, 0x19E36, 0x1D50C);
+			loadEarthquakeSprites(&file, palette, 0x1DB20);
+		}
+		free(palette);
 	}
 
 	file.close();

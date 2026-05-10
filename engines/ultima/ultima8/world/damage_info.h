@@ -22,7 +22,7 @@
 #ifndef WORLD_DAMAGE_INFO_H
 #define WORLD_DAMAGE_INFO_H
 
-#include "ultima/shared/std/string.h"
+#include "common/scummsys.h"
 
 namespace Ultima {
 namespace Ultima8 {

@@ -22,6 +22,8 @@
 #ifndef DISABLE_NES_APU
 
 #include "engines/engine.h"
+#include "common/array.h"
+#include "common/system.h"
 #include "scumm/players/player_nes.h"
 #include "scumm/scumm.h"
 #include "audio/mixer.h"
@@ -603,6 +605,8 @@ Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 		_slot[i].data = nullptr;
 	}
 
+	_title2SfxActive = false;
+
 	for (i = 0; i < NUMCHANS; i++) {
 		_mchan[i].command = 0;
 		_mchan[i].framedelay = 0;
@@ -644,6 +648,7 @@ int Player_NES::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 void Player_NES::stopAllSounds() {
+	_title2SfxActive = false;
 	for (int i = 0; i < NUMSLOTS; i++) {
 		_slot[i].framesleft = 0;
 		_slot[i].type = 0;
@@ -652,6 +657,34 @@ void Player_NES::stopAllSounds() {
 
 	isSFXplaying = 0;
 	checkSilenceChannels(0);
+}
+
+
+void Player_NES::startTitleTwinkleGroup(const byte twinkleSteps4x6[4][6]) {
+	_title2SfxActive = true;
+	_titleSfxBuf.clear();
+	_titleSfxBuf.reserve(29);
+
+	for (int stepIndex = 0; stepIndex < 4; ++stepIndex) {
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][0]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][1]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][2]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][3]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][4]);
+		_titleSfxBuf.push_back(0x10);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][5]);
+	}
+
+	_titleSfxBuf.push_back(0xFF);
+
+	const int slotIndex = 0;
+	_slot[slotIndex].type = 10;
+	_slot[slotIndex].id = -2;
+	_slot[slotIndex].data = _titleSfxBuf.data();
+	_slot[slotIndex].offset = 0;
+	_slot[slotIndex].framesleft = 1;
+	checkSilenceChannels(slotIndex);
+	isSFXplaying = true;
 }
 
 void Player_NES::stopSound(int nr) {
@@ -722,6 +755,8 @@ void Player_NES::sound_play() {
 }
 
 void Player_NES::playSFX (int nr) {
+	const bool isTitle2Chirp = (nr == 0 && _slot[nr].id == -2 && _title2SfxActive);
+
 	if (--_slot[nr].framesleft)
 		return;
 
@@ -741,15 +776,26 @@ void Player_NES::playSFX (int nr) {
 			_slot[nr].id = -1;
 			_slot[nr].type = 0;
 			isSFXplaying = false;
-			APU_writeControl(0);
+
+			if (!isTitle2Chirp)
+				APU_writeControl(0);
 
 			if (!nr && _slot[1].framesleft) {
 				_slot[1].framesleft = 1;
 				isSFXplaying = true;
 			}
+
+			if (isTitle2Chirp)
+				_title2SfxActive = false;
+
 			return;
 		} else {
-			_slot[nr].framesleft = _slot[nr].data[_slot[nr].offset++];
+			if (isTitle2Chirp) {
+				const byte frames = _slot[nr].data[_slot[nr].offset++];
+				_slot[nr].framesleft = frames;
+			} else {
+				_slot[nr].framesleft = _slot[nr].data[_slot[nr].offset++];
+			}
 			return;
 		}
 	}

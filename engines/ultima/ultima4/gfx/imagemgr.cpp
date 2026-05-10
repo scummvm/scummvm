@@ -102,7 +102,7 @@ void ImageMgr::init() {
 	 * register all the images declared in the config files
 	 */
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
+	Common::Array<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
 	for (const auto &conf : graphicsConf) {
 		if (conf.getName() == "imageset") {
 			ImageSet *set = loadImageSetFromConf(conf);
@@ -128,7 +128,7 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 	set->_location = conf.getString("location");
 	set->_extends = conf.getString("extends");
 
-	Std::vector<ConfigElement> children = conf.getChildren();
+	Common::Array<ConfigElement> children = conf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() == "image") {
 			ImageInfo *info = loadImageInfoFromConf(i);
@@ -161,7 +161,7 @@ ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	info->_fixup = static_cast<ImageFixup>(conf.getEnum("fixup", fixupEnumStrings));
 	info->_image = nullptr;
 
-	Std::vector<ConfigElement> children = conf.getChildren();
+	Common::Array<ConfigElement> children = conf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() == "subimage") {
 			SubImage *subimage = loadSubImageFromConf(info, i);
@@ -688,7 +688,7 @@ void ImageMgr::freeIntroBackgrounds() {
 	}
 }
 
-const Std::vector<Common::String> &ImageMgr::getSetNames() {
+const Common::Array<Common::String> &ImageMgr::getSetNames() {
 	return _imageSetNames;
 }
 

@@ -1,0 +1,492 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/file.h"
+#include "graphics/paletteman.h"
+#include "graphics/screen.h"
+
+#include "pelrock/chrono.h"
+#include "pelrock/pelrock.h"
+#include "pelrock/util.h"
+#include "pelrock/video.h"
+
+namespace Pelrock {
+
+VideoManager::VideoManager(
+	Graphics::Screen *screen,
+	PelrockEventManager *events,
+	ChronoManager *chrono,
+	LargeFont *largeFont,
+	DialogManager *dialog,
+	SoundManager *sound) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont), _dialog(dialog), _sound(sound) {
+	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	if (!_introSndFile.open("introsnd.dat")) {
+		error("VideoManager::VideoManager(): Could not open introsnd.dat");
+	}
+}
+
+VideoManager::~VideoManager() {
+	_videoSurface.free();
+	_introSndFile.close();
+	_textSurface.free();
+}
+
+void VideoManager::playIntro() {
+	initMetadata();
+	Common::File videoFile;
+	if (!videoFile.open("ESCENAX.SSN")) {
+		error("VideoManager::playIntro(): Could not open ESCENAX.SSN");
+		return;
+	}
+	videoFile.seek(0, SEEK_SET);
+
+
+	_videoSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
+	_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
+
+	uint16 frameCounter = 0;
+	bool videoExitFlag = false;
+
+	while (!videoExitFlag && !g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
+		_events->pollEvent();
+
+		ChunkHeader chunk;
+		readChunk(videoFile, chunk);
+
+		if (_events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
+			break;
+		}
+
+		switch (chunk.chunkType) {
+		case 1:
+		case 2: {
+			Subtitle *subtitle = getSubtitleForFrame(frameCounter);
+			int frameSkip = subtitle != nullptr ? 4 : 2;
+			while (!g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
+				_chrono->updateChrono();
+				_events->pollEvent();
+				if (_chrono->_gameTick && _chrono->getFrameCount() % frameSkip == 0)
+					break;
+				g_system->delayMillis(10);
+			}
+
+			int currentFrame = frameCounter++;
+			processFrame(chunk, currentFrame);
+
+			if (_voiceEffect.contains(currentFrame)) {
+				// Wait for any playing voice to finish before starting new one
+				while (_sound->isPlaying(0)) {
+					_events->pollEvent();
+					g_system->delayMillis(10);
+					if (g_engine->shouldQuit() || _events->_lastKeyEvent == Common::KEYCODE_ESCAPE)
+						break;
+				}
+				AudioEffect voice = _voiceEffect[currentFrame];
+				VoiceData voiceData = _sounds[voice.filename];
+				_introSndFile.seek(voiceData.offset, SEEK_SET);
+				byte *voiceBuffer = new byte[voiceData.length];
+				_introSndFile.read(voiceBuffer, voiceData.length);
+				_sound->playSound(voiceBuffer, voiceData.length, 0);
+			}
+
+
+
+
+			if (_sfxEffect.contains(currentFrame)) {
+				AudioEffect sfx = _sfxEffect[currentFrame];
+				VoiceData sfxData = _sounds[sfx.filename];
+				_introSndFile.seek(sfxData.offset, SEEK_SET);
+				byte *sfxBuffer = new byte[sfxData.length];
+				_introSndFile.read(sfxBuffer, sfxData.length);
+				_sound->playSound(sfxBuffer, sfxData.length, 1);
+			}
+
+			if (_musicEffect.contains(currentFrame)) {
+				MusicEffect music = _musicEffect[currentFrame];
+				_sound->playMusicTrack(music.trackNumber, true);
+			}
+
+			// subtitles are suppressed in the frame range 571-669)
+			bool skipSubs = (currentFrame >= 571 && currentFrame <= 669);
+			if (subtitle != nullptr && !skipSubs) {
+				Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
+
+				byte color;
+				_dialog->processColorAndTrim(lines, color);
+				Graphics::Surface *s = _dialog->getDialogueSurface(lines, color);
+				_textSurface.transBlitFrom(*s, Common::Point(subtitle->x, subtitle->y), 255);
+				s->free();
+				delete s;
+			}
+
+			presentFrame();
+			break;
+		}
+		case 3:
+			videoExitFlag = true;
+			break;
+		case 4:
+			loadPalette(chunk);
+			break;
+		case 6:
+			// type 6 is merely wait for 20ms
+			g_system->delayMillis(20);
+			break;
+		default:
+			debug("Unknown chunk type %d encountered", chunk.chunkType);
+			break;
+		}
+	}
+
+	videoFile.close();
+}
+
+void VideoManager::loadPalette(ChunkHeader &chunk) {
+	byte palette[768];
+	for (int i = 0; i < 256; i++) {
+		palette[i * 3 + 0] = chunk.data[i * 3 + 0] << 2;
+		palette[i * 3 + 1] = chunk.data[i * 3 + 1] << 2;
+		palette[i * 3 + 2] = chunk.data[i * 3 + 2] << 2;
+	}
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+}
+
+byte *VideoManager::decodeCopyBlock(byte *data, uint32 offset) {
+
+	byte *buf = new byte[256000];
+	memset(buf, 0, 256000);
+	uint32 pos = offset + 0x04;
+	// frames are encoded so that each block copy has a 5-byte header
+	// the first 3 bytes are the offset within the screen to which to
+	// copy the bytes. The 5th byte is the length of the block to copy.
+	while (true) {
+		byte length = data[pos + 4];
+		if (length == 0) {
+			break;
+		}
+		uint32 dest_offset = READ_LE_UINT24(data + pos);
+
+		if (dest_offset + length > 256000) {
+			break;
+		}
+		pos += 5;
+		Common::copy(data + pos, data + pos + length, buf + dest_offset);
+		pos += length;
+	}
+
+	return buf;
+}
+
+byte *VideoManager::decodeRLE(byte *data, size_t size, uint32 offset) {
+	byte *buf = new byte[256000];
+	memset(buf, 0, 256000);
+	uint32 pos = offset;
+	uint32 outPos = 0;
+	while (outPos < 256000 && pos < size) {
+		byte countByte = data[pos];
+		pos += 1;
+
+		if ((countByte & 0xC0) == 0xC0) {
+			// RLE: count in lower 6 bits, next byte is value
+			uint32 count = countByte & 0x3F;
+			if (pos >= size) {
+				break;
+			}
+			byte value = data[pos];
+			pos += 1;
+			for (uint32 i = 0; i < count && outPos < 256000; i++) {
+				buf[outPos++] = value;
+			}
+		} else {
+			// Literal: count is 1, this byte is the value
+			buf[outPos++] = countByte;
+		}
+	}
+	return buf;
+}
+
+void VideoManager::readChunk(Common::SeekableReadStream &stream, ChunkHeader &chunk) {
+	chunk.blockCount = stream.readUint32LE();
+	chunk.dataOffset = stream.readUint32LE();
+	chunk.chunkType = stream.readByte();
+
+	chunk.data = new byte[chunk.blockCount * chunkSize + 9];
+	stream.read(chunk.data, chunk.blockCount * chunkSize - 9);
+}
+
+void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
+	byte *frameData = nullptr;
+	if (chunk.chunkType == 1) {
+		// Video data chunk
+		frameData = decodeRLE(chunk.data, chunk.blockCount * chunkSize, 0x04);
+	} else if (chunk.chunkType == 2) {
+		// Block copy chunk
+		frameData = decodeCopyBlock(chunk.data, 0);
+	}
+
+	byte *surfacePixels = (byte *)_videoSurface.getPixels();
+	if (frameCount == 0) {
+		memcpy(surfacePixels, frameData, 256000);
+	} else {
+		// Subsequent frames, XOR with previous frame
+		for (int i = 0; i < 256000; i++) {
+			surfacePixels[i] ^= frameData[i];
+		}
+	}
+	delete[] frameData;
+}
+
+void VideoManager::presentFrame() {
+	_screen->blitFrom(_videoSurface);
+	_screen->transBlitFrom(_textSurface, 255);
+	_screen->markAllDirty();
+	_screen->update();
+}
+
+void VideoManager::initMetadata() {
+	Common::File metadataFile;
+	if (!metadataFile.open("ESCENAX.SCR")) {
+		error("VideoManager::initMetadata(): Could not open ESCENAX.SCR");
+		return;
+	}
+
+	if (_introSndFile.isOpen()) {
+		_introSndFile.seek(0, SEEK_SET);
+		char signature[5] = {0};
+		_introSndFile.read(signature, 4);
+		if (strcmp(signature, "PACK") == 0) {
+			uint32 numFiles = _introSndFile.readUint32LE();
+			for (uint32 i = 0; i < numFiles; ++i) {
+				VoiceData sound;
+				Common::String filename = _introSndFile.readString();
+				sound.offset = _introSndFile.readUint32LE();
+				sound.length = _introSndFile.readUint32LE();
+				_sounds[filename] = sound;
+			}
+		}
+	}
+
+	while (metadataFile.eos() == false) {
+		char curChar = metadataFile.readByte();
+		if (curChar == '/') {
+			char nextChar = metadataFile.readByte();
+			if (nextChar == 't') { // subtitle
+				Subtitle subtitle = readSubtitle(metadataFile);
+				_subtitles.push_back(subtitle);
+			} else if (nextChar == 'x') {
+				AudioEffect voice = readAudioEffect(metadataFile);
+				// Read filename (up to 12 bytes, null-terminated)
+				_voiceEffect[voice.startFrame] = voice;
+			} else if (nextChar == 'f') {
+				AudioEffect sfx = readAudioEffect(metadataFile);
+				_sfxEffect[sfx.startFrame] = sfx;
+			} else if (nextChar == 'c') {
+				MusicEffect music = readMusicEffect(metadataFile);
+				_musicEffect[music.startFrame] = music;
+			}
+		}
+	}
+
+	metadataFile.close();
+}
+
+MusicEffect VideoManager::readMusicEffect(Common::File &metadataFile) {
+	MusicEffect music;
+	Common::String buffer;
+
+	// Skip spaces after "/c"
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
+	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+	bool frameCountRead = false;
+	while (!metadataFile.eos()) {
+		char c = metadataFile.readByte();
+		if (c == ' ') {
+			if (!buffer.empty() && !frameCountRead) {
+				music.startFrame = atoi(buffer.c_str());
+				buffer.clear();
+				frameCountRead = true;
+			}
+		} else if (c == 0x0D || c == 0x0A) {
+			break;
+		} else {
+			buffer += c;
+		}
+	}
+	music.trackNumber = atoi(buffer.c_str());
+	return music;
+}
+
+AudioEffect VideoManager::readAudioEffect(Common::File &metadataFile) {
+	AudioEffect voice;
+	Common::String buffer;
+
+	// Skip spaces after "/x"
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
+	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+	bool frameCountRead = false;
+	while (!metadataFile.eos()) {
+		char c = metadataFile.readByte();
+		if (c == ' ') {
+			if (!buffer.empty() && !frameCountRead) {
+				voice.startFrame = atoi(buffer.c_str());
+				buffer.clear();
+				frameCountRead = true;
+			}
+		} else if (c == 0x0D || c == 0x0A) {
+			break;
+		} else {
+			buffer += c;
+		}
+	}
+	voice.filename = buffer;
+	return voice;
+}
+
+Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
+	Subtitle subtitle;
+	Common::String buffer;
+	int values[4];
+	int valueIndex = 0;
+
+	// Skip spaces after "/t"
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
+	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+	// Parse 4 space-delimited numbers
+	while (!metadataFile.eos() && valueIndex < 4) {
+		char c = metadataFile.readByte();
+
+		if (c == ' ') {
+			if (!buffer.empty()) {
+				values[valueIndex++] = atoi(buffer.c_str());
+				buffer.clear();
+			}
+		} else if (c >= '0' && c <= '9') {
+			buffer += c;
+		} else if (c == 0x08) {
+			// End of numbers, start of text
+			if (!buffer.empty()) {
+				values[valueIndex++] = atoi(buffer.c_str());
+			}
+			break;
+		}
+	}
+
+	subtitle.startFrame = values[0];
+	subtitle.endFrame = values[1];
+	subtitle.x = values[2];
+	subtitle.y = values[3];
+
+	subtitle.text.clear();
+
+	// skip leading spaces in subtitle tex
+	byte nextByte;
+	do {
+		nextByte = metadataFile.readByte();
+	} while (nextByte == ' ' && !metadataFile.eos());
+
+	if (nextByte == 0x08) {
+		subtitle.text += '@';
+	} else {
+		subtitle.text += decodeChar(nextByte);
+	}
+
+	// Read text until CRLF (0x0D 0x0A)
+	while (!metadataFile.eos()) {
+
+		byte c = metadataFile.readByte();
+		if (c == 0x0D) {
+			byte next = metadataFile.readByte();
+			if (next == 0x0A) {
+				break;
+			} else {
+				subtitle.text += decodeChar(c);
+				subtitle.text += decodeChar(next);
+			}
+		} else {
+			if (c == 0x00) {
+				// do nothing
+			}
+			if (c == 0x08)
+				subtitle.text += '@';
+			else
+				subtitle.text += decodeChar(c);
+		}
+	}
+	return subtitle;
+}
+
+byte VideoManager::decodeChar(byte c) {
+
+	switch (c) {
+	case 0xAD:
+		return video_special_chars[1];
+	case 0xA8:
+		return video_special_chars[0];
+	case 0xA4:
+		return video_special_chars[3]; // n tilde
+	case 0xA3:
+		return video_special_chars[4];
+	case 0xA2:
+		return video_special_chars[5];
+	case 0xA1:
+		return video_special_chars[6];
+	case 0x82:
+		return video_special_chars[7];
+	case 0xA0:
+		return video_special_chars[8];
+	default:
+		return c;
+	}
+}
+
+Subtitle *VideoManager::getSubtitleForFrame(uint16 frameCounter) {
+	// Check if current subtitle is still active
+	if (_currentSubtitleIndex < _subtitles.size()) {
+		Subtitle &sub = _subtitles[_currentSubtitleIndex];
+
+		if (frameCounter >= sub.startFrame && frameCounter <= sub.endFrame) {
+			return &sub; // Still showing this subtitle
+		}
+
+		if (frameCounter > sub.endFrame) {
+			_currentSubtitleIndex++; // Move to next subtitle
+			_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
+			// Check if new subtitle should be active
+			if (_currentSubtitleIndex < _subtitles.size()) {
+				Subtitle &nextSub = _subtitles[_currentSubtitleIndex];
+				if (frameCounter >= nextSub.startFrame && frameCounter <= nextSub.endFrame) {
+					return &nextSub;
+				}
+			}
+		}
+	}
+
+	return nullptr; // No active subtitle
+}
+
+} // End of namespace Pelrock

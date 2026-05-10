@@ -21,15 +21,16 @@
 
 #include "m4/burger/rooms/section4/room401.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
 const seriesStreamBreak Room401::SERIES1[] = {
-	{  7, "401v001",  1, 255, -1, 0, 0, 0 },
-	{ 36, "401A_002", 2, 200, -1, 0, 0, 0 },
-	{ 89, nullptr,    0,   0,  9, 0, 0, 0 },
+	{  7, "401v001",  1, 255, -1, 0, nullptr, 0 },
+	{ 36, "401A_002", 2, 200, -1, 0, nullptr, 0 },
+	{ 89, nullptr,    0,   0,  9, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 

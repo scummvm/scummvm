@@ -100,6 +100,8 @@ public:
 	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
 
+	Common::Rect getRect() const;
+
 	/**
 	 * Return a pointer to the pixel data.
 	 *
@@ -289,7 +291,7 @@ public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
 	 */
-	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds) const;
+	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds, uint src_w = 0, uint src_h = 0, byte flip = FLIP_NONE) const;
 
 	/**
 	 * Copy a bitmap to the internal buffer of the surface.

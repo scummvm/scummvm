@@ -58,26 +58,26 @@ namespace Poker {
 #define IDC_JUNK            999
 
 // Sound File Identifiers
-#define CARDSOUND               ".\\SOUND\\CARDDEAL.WAV"    //FWAP.WAV"
-#define WAV_PLACE               ".\\SOUND\\COIN.WAV"
-#define WAV_CLEAR               ".\\SOUND\\CEARBET.WAV"
-#define WAV_HOLD                ".\\SOUND\\CLICK.WAV"
-#define WAV_PAY                 ".\\SOUND\\PAYOFF.WAV"
-#define WAV_NOPAY               ".\\SOUND\\BUZZER2.WAV"
-#define WAV_BROKE               ".\\SOUND\\SOSORRY.WAV"
+#define CARDSOUND               "sound\\CARDDEAL.WAV"    //FWAP.WAV"
+#define WAV_PLACE               "sound\\COIN.WAV"
+#define WAV_CLEAR               "sound\\CEARBET.WAV"
+#define WAV_HOLD                "sound\\CLICK.WAV"
+#define WAV_PAY                 "sound\\PAYOFF.WAV"
+#define WAV_NOPAY               "sound\\BUZZER2.WAV"
+#define WAV_BROKE               "sound\\SOSORRY.WAV"
 //
 // Easter Egg sound files
-#define WAV_CLOCK               ".\\SOUND\\BIGBEN.WAV"
-#define WAV_BOOM                ".\\SOUND\\EXPLODE.WAV"
-#define WAV_STAR                ".\\SOUND\\TOMTOMS.WAV"
-#define WAV_PENCIL              ".\\SOUND\\PENCIL.WAV"
-#define WAV_CHAIR               ".\\SOUND\\SQUEAK.WAV"
-#define WAV_WINDOW              ".\\SOUND\\WINDOW.WAV"
-#define WAV_LIGHT               ".\\SOUND\\LIGHTING.WAV"
+#define WAV_CLOCK               "sound\\BIGBEN.WAV"
+#define WAV_BOOM                "sound\\EXPLODE.WAV"
+#define WAV_STAR                "sound\\TOMTOMS.WAV"
+#define WAV_PENCIL              "sound\\PENCIL.WAV"
+#define WAV_CHAIR               "sound\\SQUEAK.WAV"
+#define WAV_WINDOW              "sound\\WINDOW.WAV"
+#define WAV_LIGHT               "sound\\LIGHTING.WAV"
 //
 // Easter Egg art files
-#define CLOCK_ANIM              ".\\ART\\CLOCK.BMP"
-#define BOOM_ANIM               ".\\ART\\BOOM.BMP"
+#define CLOCK_ANIM              "art\\CLOCK.BMP"
+#define BOOM_ANIM               "art\\BOOM.BMP"
 #define CLOCK_FRAMES            16
 #define BOOM_FRAMES             25
 #define CLOCK_SLEEP             175

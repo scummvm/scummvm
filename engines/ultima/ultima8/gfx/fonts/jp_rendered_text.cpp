@@ -19,19 +19,19 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/gfx/fonts/jp_rendered_text.h"
+
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/render_surface.h"
 #include "ultima/ultima8/gfx/shape_frame.h"
-#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/texture.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,
+JPRenderedText::JPRenderedText(Common::List<PositionedText> &lines, int width, int height,
 		int vLead, ShapeFont *font, unsigned int fontNum)
 		: _lines(lines), _font(font), _fontNum(fontNum) {
 	_width = width;
@@ -96,8 +96,6 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	Palette *pal = palman->getPalette(fontpal);
 	const Palette *savepal = _font->getPalette();
 	_font->setPalette(pal);
-
-	Std::list<PositionedText>::const_iterator iter;
 
 	for (const auto &line : _lines) {
 		int line_x = x + line._dims.left;

@@ -236,7 +236,7 @@ void LogicManager::CONS_Hadija_PeekF(CONS_PARAMS) {
 void LogicManager::HAND_Hadija_PeekF(HAND_PARAMS) {
 	switch (msg->action) {
 	case 12:
-		getCharacter(kCharacterHadija).characterPosition.position = 2740;
+		getCharacter(kCharacterHadija).characterPosition.position = 4070;
 		getCharacter(kCharacterHadija).callbacks[getCharacter(kCharacterHadija).currentCall + 8] = 1;
 		HadijaCall(&LogicManager::CONS_Hadija_DoCorrOtis, "619Cf", 6, 0, 0);
 		break;

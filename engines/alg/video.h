@@ -47,18 +47,17 @@ public:
 	uint32 getCurrentFrame() const { return _currentFrame; }
 
 private:
-	Common::File *_input;
-	Graphics::Surface *_frame;
-	Audio::PacketizedAudioStream *_audioStream;
+	Common::File *_input = nullptr;
+	Graphics::Surface *_frame = nullptr;
+	Audio::PacketizedAudioStream *_audioStream = nullptr;
 	Audio::SoundHandle _audioHandle;
-	uint8 *_palette;
-	bool _paletteDirty;
-	bool _gotVideoFrame;
-	uint32 _currentFrame;
-	uint32 _size;
-	uint32 _bytesLeft;
-	uint16 _currentChunk;
-
+	uint8 *_palette = nullptr;
+	bool _paletteDirty = false;
+	bool _gotVideoFrame = false;
+	uint32 _currentFrame = 0;
+	uint32 _size = 0;
+	uint32 _bytesLeft = 0;
+	uint16 _currentChunk = 0;
 	uint16 _numChunks = 0;
 	uint16 _frameRate = 0;
 	uint16 _videoMode = 0;

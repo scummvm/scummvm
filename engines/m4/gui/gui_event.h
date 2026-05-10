@@ -23,8 +23,6 @@
 #ifndef M4_GUI_GUI_EVENT_H
 #define M4_GUI_GUI_EVENT_H
 
-#include "m4/m4_types.h"
-
 namespace M4 {
 
 enum {

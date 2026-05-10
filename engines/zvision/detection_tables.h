@@ -258,6 +258,21 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Zork Grand Inquisitor Russian CD version
+		{
+			"zgi",
+			"CD",
+			AD_ENTRY2s("SCRIPTS.ZFS", "81efd40ecc3d22531e211368b779f17f", 8336944,
+					   "SUBTITLE.ZFS", "4d117c6f4efc8b5d12d7ad47deae5b0b", 717757),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO5(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING, GAMEOPTION_ENABLE_WIDESCREEN, GAMEOPTION_HQ_PANORAMA)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
 		AD_TABLE_END_MARKER,
 		GID_NONE
 	}

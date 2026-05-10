@@ -41,7 +41,7 @@ namespace Mankala {
 
 
 // DATADIR is directory for *.BMP and other data files
-// #define DATADIR ".".\\"
+// #define DATADIR ".""
 #define DATADIR "art\\"
 // const XPSTR MNKSCREEN = DATADIR "mancrab.bmp" ;  // bitmap file for screen
 
@@ -90,30 +90,30 @@ const int BESTWINUNDEF = -1000 ;  // value of undefined minimax value
 
 #define IDC_SCROLL      419
 
-#define RULES   ".\\mankala.txt"
+#define RULES   "mankala.txt"
 
-#define RULES_NARRATION     ".\\sound\\mankala.wav"
-#define IGO3                ".\\sound\\igo3.wav"
-#define YOUGO3              ".\\sound\\yougo3.wav"
-#define GOAGAIN             ".\\sound\\goagain.wav"
-#define IGOAGAIN            ".\\sound\\igoagain.wav"
-#define PICKUP              ".\\sound\\pickup.wav"
-#define ONESHELL            ".\\sound\\oneshell.wav"
-#define INK ".\\sound\\ink.wav"
-#define BROCHURE    ".\\sound\\brochure.wav"
-#define ARMCHAIR    ".\\sound\\armchair.wav"
-#define FISHHOOK    ".\\sound\\fishhook.wav"
-#define PAILS   ".\\sound\\pails.wav"
-#define NETSHELL    ".\\sound\\netshell.wav"
-#define WHEEL   ".\\sound\\wheel.wav"
-#define HONK    ".\\sound\\honk.wav"
-#define POP ".\\sound\\pop.wav"
-#define INFLATE ".\\sound\\inflate.wav"
-#define SOSORRY ".\\sound\\sosorry.wav"
-#define FANFARE2    ".\\sound\\fanfare2.wav"
-#define MIDI_BCKGND ".\\sound\\mankala.mid"
-#define GLOBE_SPRITE ".\\art\\globe2.bmp"
-#define CHAIR_SPRITE ".\\art\\chair.bmp"
+#define RULES_NARRATION     "sound\\mankala.wav"
+#define IGO3                "sound\\igo3.wav"
+#define YOUGO3              "sound\\yougo3.wav"
+#define GOAGAIN             "sound\\goagain.wav"
+#define IGOAGAIN            "sound\\igoagain.wav"
+#define PICKUP              "sound\\pickup.wav"
+#define ONESHELL            "sound\\oneshell.wav"
+#define INK "sound\\ink.wav"
+#define BROCHURE    "sound\\brochure.wav"
+#define ARMCHAIR    "sound\\armchair.wav"
+#define FISHHOOK    "sound\\fishhook.wav"
+#define PAILS   "sound\\pails.wav"
+#define NETSHELL    "sound\\netshell.wav"
+#define WHEEL   "sound\\wheel.wav"
+#define HONK    "sound\\honk.wav"
+#define POP "sound\\pop.wav"
+#define INFLATE "sound\\inflate.wav"
+#define SOSORRY "sound\\sosorry.wav"
+#define FANFARE2    "sound\\fanfare2.wav"
+#define MIDI_BCKGND "sound\\mankala.mid"
+#define GLOBE_SPRITE "art\\globe2.bmp"
+#define CHAIR_SPRITE "art\\chair.bmp"
 
 
 //inline int OTHERPLAYER(int iPlayer) {return(NUMPLAYERS - 1 - iPlayer) ; }

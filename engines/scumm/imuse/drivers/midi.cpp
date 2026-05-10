@@ -836,8 +836,8 @@ void IMuseChannel_MT32::effectLevel(byte value) {
 }
 
 void IMuseChannel_MT32::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize)  {
-	if (type != 'ROL ') {
-		warning("IMuseChannel_MT32: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	if (type != MKTAG('R','O','L',' ')) {
+		warning("IMuseChannel_MT32: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 		return;
 	}
 

@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section7/room702.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -249,7 +250,7 @@ void Room702::parser() {
 		case 4:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s39", 3, 255, -1, -1);
-			_G(game).new_room = 703;
+			_G(game).setRoom(703);
 
 			break;
 
@@ -267,7 +268,7 @@ void Room702::parser() {
 			if (_G(flags)[V211] && !_G(flags)[V210])
 				_G(flags)[V213] = 1;
 
-			_G(game).new_room = 701;
+			_G(game).setRoom(701);
 			break;
 
 		default:
@@ -308,7 +309,7 @@ void Room702::parser() {
 				_G(flags)[V213] = 1;
 			}
 
-			_G(game).new_room = 703;
+			_G(game).setRoom(703);
 
 			break;
 

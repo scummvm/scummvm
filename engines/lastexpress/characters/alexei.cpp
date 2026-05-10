@@ -367,6 +367,9 @@ void LogicManager::HAND_Alexei_DoWalk(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
 	case 12:
+		if (msg->action == 12)
+			getCharacter(kCharacterAlexei).inventoryItem = 0;
+
 		if (walk(kCharacterAlexei, getCharacterCurrentParams(kCharacterAlexei)[0], getCharacterCurrentParams(kCharacterAlexei)[1])) {
 			getCharacter(kCharacterAlexei).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterAlexei, _functionsAlexei[getCharacter(kCharacterAlexei).callbacks[getCharacter(kCharacterAlexei).currentCall]]);

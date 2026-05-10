@@ -87,11 +87,7 @@ bool this_is_a_walkcode(int32 x, int32 y) {
 	if (!_G(screenCodeBuff))
 		return false;
 
-	Buffer *walkCodes;
-	byte *ptr;
-	bool result;
-
-	walkCodes = _G(screenCodeBuff)->get_buffer();
+	Buffer *walkCodes = _G(screenCodeBuff)->get_buffer();
 	if (!walkCodes)
 		return false;
 
@@ -99,22 +95,18 @@ bool this_is_a_walkcode(int32 x, int32 y) {
 	if (x < 0 || y < 0 || x >= walkCodes->w || y >= walkCodes->h)
 		return false;
 
-	ptr = gr_buffer_pointer(walkCodes, x, y);
-	result = ((*ptr) & 0x10) ? true : false;
+	byte *ptr = gr_buffer_pointer(walkCodes, x, y);
+	const bool result = ((*ptr) & 0x10) ? true : false;
 
 	_G(screenCodeBuff)->release();
 	return result;
 }
 
 int32 get_screen_depth(int32 x, int32 y) {
-	Buffer *walkCodes;
-	byte *ptr;
-	int32 myDepth;
-
 	if (!_G(screenCodeBuff))
 		return 0;
 
-	walkCodes = _G(screenCodeBuff)->get_buffer();
+	Buffer *walkCodes = _G(screenCodeBuff)->get_buffer();
 	if (!walkCodes) {
 		return 0;
 	}
@@ -124,19 +116,15 @@ int32 get_screen_depth(int32 x, int32 y) {
 		return -1;
 	}
 
-	ptr = gr_buffer_pointer(walkCodes, x, y);
-	myDepth = (*ptr) & 0x0f;
+	byte *ptr = gr_buffer_pointer(walkCodes, x, y);
+	const int32 myDepth = (*ptr) & 0x0f;
 
 	_G(screenCodeBuff)->release();
 	return myDepth;
 }
 
 int32 get_screen_color(int32 x, int32 y) {
-	Buffer *game_buff;
-	byte *ptr;
-	int32 myColor;
-
-	game_buff = _G(gameDrawBuff)->get_buffer();
+	Buffer *game_buff = _G(gameDrawBuff)->get_buffer();
 	if (!game_buff) {
 		return -1;
 	}
@@ -146,8 +134,8 @@ int32 get_screen_color(int32 x, int32 y) {
 		return -1;
 	}
 
-	ptr = gr_buffer_pointer(game_buff, x, y);
-	myColor = *ptr;
+	byte *ptr = gr_buffer_pointer(game_buff, x, y);
+	const int32 myColor = *ptr;
 
 	_G(gameDrawBuff)->release();
 	return myColor;
@@ -161,7 +149,7 @@ void update_mouse_pos_dialog() {
 
 	if (_G(my_walker) != nullptr) {
 		if (!_G(my_walker)->myAnim8)
-			error_show(FL, 'W:-(');
+			error_show(FL, "you sunk the walker!");
 		player_get_info();
 	}
 
@@ -170,11 +158,11 @@ void update_mouse_pos_dialog() {
 	Common::sprintf_s(tempStr1, "%d  From: %d", _G(game).room_id, _G(game).previous_room);
 	Dialog_Change_Item_Prompt(_G(mousePosDialog), tempStr1, nullptr, 1);
 
-	int32 xxx = _G(MouseState).CursorColumn;
-	int32 yyy = _G(MouseState).CursorRow;
+	const int32 xxx = _G(MouseState).CursorColumn;
+	const int32 yyy = _G(MouseState).CursorRow;
 
-	int32 scrnDepth = get_screen_depth(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
-	int32 palColor = get_screen_color(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
+	const int32 scrnDepth = get_screen_depth(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
+	const int32 palColor = get_screen_color(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1);
 
 	if (this_is_a_walkcode(xxx - game_buff_ptr->x1, yyy - game_buff_ptr->y1)) {
 		Common::sprintf_s(tempStr1, "WC %d, %d  PAL: %d", xxx, yyy, palColor);

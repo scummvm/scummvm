@@ -1,0 +1,5 @@
+# Compulsory line, this is a version 3 file
+version=3
+
+https://github.com/clalancette/pycdlib/tags \
+ /clalancette/pycdlib/archive/v(.*).tar.gz

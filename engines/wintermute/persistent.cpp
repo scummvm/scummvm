@@ -85,6 +85,7 @@
 #include "engines/wintermute/ext/wme_displacement.h"
 #include "engines/wintermute/ext/wme_steam.h"
 #include "engines/wintermute/ext/wme_galaxy.h"
+#include "engines/wintermute/ext/wme_protection.h"
 #include "engines/wintermute/ext/wme_vlink.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_edit.h"
@@ -179,6 +180,7 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(SXWMEGalaxyAPI, false)
 	REGISTER_CLASS(SXCommandLineHelper, false)
 	REGISTER_CLASS(SXDisplacement, false)
+	REGISTER_CLASS(SXProtection, false)
 
 	REGISTER_CLASS(UIButton, false)
 	REGISTER_CLASS(UIEdit, false)

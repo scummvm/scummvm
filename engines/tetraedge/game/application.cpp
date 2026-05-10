@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "common/events.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/scaler.h"
 
 #include "tetraedge/tetraedge.h"
@@ -267,7 +268,7 @@ void Application::create() {
 	_mouseCursorLayout.setName("mouseCursor");
 
 	// Not needed in scummvm:
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	//mainWindow->setNativeCursorVisible(false);
 
 	_mouseCursorLayout.load(_defaultCursor);

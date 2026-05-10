@@ -128,11 +128,10 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 	int i;
 	int32 thatRoomCode;
 	char assetPath[MAX_FILENAME_SIZE];
-	char *tempPtr;
 
 	// Load walker
 	db_rmlst_get_asset_room_path(walkerName, assetPath, &thatRoomCode);
-	tempPtr = strrchr(assetPath, '.');
+	char *tempPtr = strrchr(assetPath, '.');
 	if (!tempPtr)
 		return false;
 
@@ -213,7 +212,7 @@ int calc_facing(int x, int y) {
 	if (!x) {
 		return -_G(player_info).y < -y;
 	} else {
-		double slope = (double)(y - _G(player_info).y) / (double)(x - _G(player_info).x);
+		const double slope = (double)(y - _G(player_info).y) / (double)(x - _G(player_info).x);
 		term_message("click (%d,%d)  player (%d,%d)  slope = %f",
 			x, -y, _G(player_info).x, -_G(player_info).y);
 

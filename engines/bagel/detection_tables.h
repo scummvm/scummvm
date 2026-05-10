@@ -26,6 +26,7 @@ const PlainGameDescriptor bagelGames[] = {
 	{ "spacebar", "The Space Bar" },
 	{ "hodjnpodj", "Hodj 'n' Podj" },
 	{ "mazeodoom", "Hodj 'n' Podj - Maze O' Doom" },
+	{ "artparts", "Hodj 'n' Podj - Art Parts" },
 	{ 0, 0 }
 };
 
@@ -103,7 +104,7 @@ const ADGameDescription gameDescriptions[] = {
 		           "meta/meta.gtl", "35f9d5c944f718768a233d9d62447d07", 43441),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -113,7 +114,17 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("art/modparts.bmp", "2d8fae58e0cb21cedc118b3a1bcf142b", 11998),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"artparts",
+		nullptr,
+		AD_ENTRY1s("arttemp.bmp", "ec4897660a14cb73f4fe7d714acaab7a", 308278),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -123,7 +134,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hnpdemo.exe", "5200631d37e258651ee0037f32262b49", 147040),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 

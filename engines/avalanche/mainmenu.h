@@ -45,6 +45,7 @@ private:
 	void loadFont();
 	void loadRegiInfo();
 	void option(byte which, Common::String what);
+	void drawMenu();
 	void centre(int16 y, Common::String text);
 	void wait();
 };

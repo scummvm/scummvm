@@ -20,11 +20,11 @@
  */
 
 #include "m4/riddle/rooms/section8/room805.h"
-
-#include "m4/adv_r/adv_file.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/adv_r/adv_file.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -169,8 +169,7 @@ void Room805::initHotspots() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "JADE DOOR ", false);
 
 	if (!player_been_here(805))
-		_G(flags)
-		[V262] = 0;
+		_G(flags)[V262] = 0;
 
 	if (_G(flags)[V270] == 805 && _G(flags)[V262] == 1) {
 		_chariotRestMach = series_play("805 CHARIOT REST", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);
@@ -854,7 +853,7 @@ void Room805::parser() {
 				digi_play_loop("950_s33", 2, 255, -1, -1);
 				_G(flags)[V270] = 806;
 				_G(flags)[V262] = 0;
-				_G(game).new_room = 806;
+				_G(game).setRoom(806);
 
 				break;
 
@@ -987,7 +986,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 844;
+			_G(game).setRoom(844);
 
 			break;
 
@@ -1007,7 +1006,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 834;
+			_G(game).setRoom(834);
 
 			break;
 
@@ -1027,7 +1026,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 814;
+			_G(game).setRoom(814);
 
 			break;
 
@@ -1047,7 +1046,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 824;
+			_G(game).setRoom(824);
 
 			break;
 
@@ -1066,7 +1065,7 @@ void Room805::parser() {
 		case 2:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 804;
+			_G(game).setRoom(804);
 
 			break;
 
@@ -1095,7 +1094,7 @@ void Room805::parser() {
 		case 3:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 806;
+			_G(game).setRoom(806);
 
 			break;
 

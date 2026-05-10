@@ -31,6 +31,7 @@ public:
 	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvcVersion);
 
 protected:
+	const int _version;
 	const MSVCVersion _msvcVersion;
 
 	StringList _enableLanguageExtensions;
@@ -54,6 +55,8 @@ protected:
 	std::string outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const;
 
 	void createWorkspace(const BuildSetup &setup) override;
+	void createWorkspaceClassic(const BuildSetup &setup);
+	void createWorkspaceXml(const BuildSetup &setup);
 
 	void createOtherBuildFiles(const BuildSetup &setup) override;
 

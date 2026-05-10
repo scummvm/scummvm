@@ -21,8 +21,9 @@
 
 #include "m4/riddle/rooms/section8/room801.h"
 #include "m4/riddle/rooms/section8/section8.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -674,7 +675,7 @@ void Room801::parser() {
 			ws_unhide_walker(_G(my_walker));
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("801_s02", 3, 35, -1, -1);
-			_G(game).new_room = 802;
+			_G(game).setRoom(802);
 			break;
 		default:
 			break;
@@ -974,7 +975,7 @@ void Room801::daemon() {
 		break;
 
 	case 83:
-		_G(game).new_room = 852;
+		_G(game).setRoom(852);
 		break;
 
 	case 200:

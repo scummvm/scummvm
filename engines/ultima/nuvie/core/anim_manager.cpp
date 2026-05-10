@@ -339,8 +339,8 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
  */
 void TileAnim::remove_tile(uint32 i) {
 	if (i < _tiles.size()) {
-		//vector<PositionedTile*>::iterator ti = &tiles[i];
-		Std::vector<PositionedTile *>::iterator ti = _tiles.begin();
+		//Common::Array<PositionedTile*>::iterator ti = &tiles[i];
+		Common::Array<PositionedTile *>::iterator ti = _tiles.begin();
 		for (uint32 j = 0; j < i; j++)
 			ti++;
 
@@ -350,7 +350,7 @@ void TileAnim::remove_tile(uint32 i) {
 }
 
 void TileAnim::remove_tile(PositionedTile *p_tile) {
-	Std::vector<PositionedTile *>::iterator ti = _tiles.begin();
+	Common::Array<PositionedTile *>::iterator ti = _tiles.begin();
 	for (; ti != _tiles.end(); ti++) {
 		if (*ti == p_tile) {
 			delete *ti;
@@ -445,7 +445,7 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 
 /*** TextAnim ***/
 
-TextAnim::TextAnim(Std::string t, MapCoord loc, uint32 dur) {
+TextAnim::TextAnim(Common::String t, MapCoord loc, uint32 dur) {
 	_px = loc.x;
 	_py = loc.y;
 	duration = dur;
@@ -953,7 +953,7 @@ void ExplosiveAnim::get_shifted_location(uint16 &x, uint16 &y, uint16 &px_, uint
 
 
 /*** ProjectileAnim ***/
-ProjectileAnim::ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrail, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
+ProjectileAnim::ProjectileAnim(uint16 tileNum, MapCoord *start, Common::Array<MapCoord> target, uint8 animSpeed, bool leaveTrail, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
 	tile_num = tileNum; //382; // U6 FIREBALL_EFFECT
 	src_tile_y_offset = src_y_offset;
 	src = *start;

@@ -36,7 +36,7 @@ private:
 	int _frame = 0;
 	int _deputyMode = 0;
 	int _deputyShould = 0;
-	int _val4 = 0;
+	int _val4_frameNumber = 0;
 	int _sherrifMode = 0;
 	int _sherrifShould = 0;
 	int _wilburMode = 0;

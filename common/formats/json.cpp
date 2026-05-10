@@ -777,7 +777,7 @@ bool JSONValue::isBool() const {
 * @return bool Returns true if it is a Number value, false otherwise
 */
 bool JSONValue::isNumber() const {
-	return _type == JSONType_Number;
+	return _type == JSONType_Number || _type == JSONType_IntegerNumber;
 }
 
 /**
@@ -846,6 +846,8 @@ bool JSONValue::asBool() const {
 * @return double Returns the number value
 */
 double JSONValue::asNumber() const {
+	if (_type == JSONType_IntegerNumber)
+		return (double)_integerValue;
 	return _numberValue;
 }
 

@@ -186,4 +186,18 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	return 0;
 }
 
+void FontManager::mayDeleteFont(const Font *font) const {
+	if (font == nullptr)
+		return;
+
+	if (font == g_sysfont || font == g_sysfont_big || font == g_consolefont)
+		return;
+
+	if (Common::find(_ownedFonts.begin(), _ownedFonts.end(), font) != _ownedFonts.end())
+		return;
+
+	// Then we can assume it's not const
+	delete const_cast<Font *>(font);
+}
+
 } // End of namespace Graphics

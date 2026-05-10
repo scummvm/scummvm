@@ -21,16 +21,15 @@
 
 #include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/gfx/gump_shape_archive.h"
-#include "ultima/ultima8/gumps/widgets/sliding_widget.h"
 #include "ultima/ultima8/gfx/fonts/font.h"
-#include "ultima/ultima8/gfx/fonts/rendered_text.h"
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
+#include "ultima/ultima8/gfx/gump_shape_archive.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/usecode/uc_process.h"
+#include "ultima/ultima8/gumps/widgets/sliding_widget.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/usecode/uc_process.h"
 
 namespace Ultima {
 namespace Ultima8 {

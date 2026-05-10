@@ -37,6 +37,7 @@
 #include "engines/wintermute/dcgf.h"
 
 #include "common/algorithm.h"
+#include "common/array.h"
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/tokenizer.h"
@@ -177,6 +178,54 @@ bool BaseFileManager::initPaths() {
 	if (languageSubFolder.exists()) {
 		addPath(PATH_PACKAGE, languageSubFolder);
 	}
+
+	// Special paths init for the SD/HD combo multi-language versions of sotv:
+	// such versions include a launcher which allows selecting the SD/HD
+	// version and mixing any combination of available voices and subtitles
+	bool use_sd_assets = ConfMan.getBool("use_sd_assets"); // if false: hd
+	bool use_it_voices = ConfMan.getBool("use_it_voices"); // if false: en
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+	switch (lang) {
+	case Common::DE_DEU:
+	case Common::EN_ANY:
+	case Common::ES_ESP:
+	case Common::FR_FRA:
+	case Common::IT_ITA:
+	case Common::PL_POL:
+	case Common::RU_RUS:
+		// supported (in terms of subtitles) language selected, all good
+		break;
+	default:
+		// unsupported language selected, fallback to English subtitles
+		lang = Common::EN_ANY;
+		break;
+	}// switch(lang)
+
+	// Now that we have values for the three options needed (SD/HD, voices
+	// language and subtitles language), we can emulate the SotV launcher logic,
+	// which, according to the options selected via its UI, writes to the
+	// Windows registry a suitable "PackagePaths" entry. Such entry is then used
+	// by WME on startup to load only the subset of the available packages which
+	// is relevant to the selected options, avoiding incorrect overrides.
+	const char *gameVersion = use_sd_assets ? "sd" : "hd";
+	const char *voicesLang = use_it_voices ? "it" : "en";
+	const char *subtitleLang = Common::getLanguageCode(lang);
+
+	Common::Array<Common::String> sotvSubfolders;
+	sotvSubfolders.push_back("common");
+	sotvSubfolders.push_back(Common::String::format("common_%s", gameVersion));
+	sotvSubfolders.push_back(Common::String::format("i18n_audio_%s", voicesLang));
+	sotvSubfolders.push_back(Common::String::format("i18n_audio_%s_%s", voicesLang, gameVersion));
+	sotvSubfolders.push_back(Common::String::format("i18n_%s", subtitleLang));
+	sotvSubfolders.push_back(Common::String::format("i18n_%s_%s", subtitleLang, gameVersion));
+	for (const auto &sotvSubfolder : sotvSubfolders) {
+		Common::FSNode subFolder = gameData.getChild(sotvSubfolder);
+		if (subFolder.exists()) {
+	        addPath(PATH_PACKAGE, subFolder);
+	    }
+	}
+	// end of special sotv1/sotv2 paths init
+
 	return STATUS_OK;
 }
 

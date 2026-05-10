@@ -19,7 +19,6 @@
  *
  */
 
-//include <cstring>
 #include "common/std/algorithm.h"
 #include "ags/shared/util/buffered_stream.h"
 #include "ags/shared/util/stdio_compat.h"

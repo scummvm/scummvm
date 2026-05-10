@@ -77,7 +77,7 @@ bool BaseImage::getImageInfo(const Common::String &filename, int32 &width, int32
 	} else if (file.hasSuffix(".jpg")) {
 		ret = getImageInfoJPG(filename, width, height);
 	} else {
-		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 
 	return ret;
@@ -218,6 +218,11 @@ bool BaseImage::loadFile(const Common::String &filename) {
 	if (filename.hasPrefix("savegame:") || _filename.hasSuffix(".bmp")) {
 		_decoder = new Image::BitmapDecoder();
 	} else if (_filename.hasSuffix(".png")) {
+		if (BaseEngine::instance().getGameId() == "satanandsons" &&
+		    _filename.hasSuffix("\\plein\\kaars.1.png")) {
+			debug(2, "BaseImage::loadFile : Buggy PNG bitmap %s, skipping...", filename.c_str());
+			return false;
+		}
 		_decoder = new Image::PNGDecoder();
 	} else if (_filename.hasSuffix(".tga")) {
 		_decoder = new Image::TGADecoder();
@@ -226,7 +231,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 		jpeg->setOutputPixelFormat(BaseEngine::getRenderer()->getPixelFormat());
 		_decoder = jpeg;
 	} else {
-		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
 	Common::SeekableReadStream *file = _fileManager->openFile(filename);

@@ -48,7 +48,7 @@ class TextStyleState {
 public:
 	TextStyleState();
 	TextChange parseStyle(const Common::String &str, int16 len);
-	void readAllStyles(const Common::String &txt);
+	void readAllStyles(const Common::U32String &txt);
 	void updateFontWithTextState(StyledTTFont &font);
 
 	uint32 getTextColor(ZVision *engine) {
@@ -74,15 +74,16 @@ class TextRenderer {
 public:
 	TextRenderer(ZVision *engine): _engine(engine) {};
 
-	void drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification jusification);
-	int32 drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest);
-	void drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest, bool blackFrame = false);
+	void drawTextWithJustification(const Common::U32String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification jusification);
+	int32 drawText(const Common::U32String &text, TextStyleState &state, Graphics::Surface &dest);
+	void drawTextWithWordWrapping(const Common::U32String &text, Graphics::Surface &dest, bool blackFrame = false);
 
 private:
 	ZVision *_engine;
 };
 
 Common::U32String readWideLine(Common::SeekableReadStream &stream);
+void fixPseudo1251(Common::U32String *str);
 
 } // End of namespace ZVision
 

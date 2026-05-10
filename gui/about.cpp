@@ -31,6 +31,9 @@
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/widgets/scrollbar.h"
+#include "gui/animation/FluidScroll.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
@@ -65,7 +68,7 @@ enum {
 
 static const char *const copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2025 The ScummVM Team",
+"C0""Copyright (C) 2001-2026 The ScummVM Team",
 "C0""https://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
@@ -86,9 +89,21 @@ static const char *const gpl_text[] = {
 
 AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
-	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
+	  _scrollPos(0.0f), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame),
+	  _isDragging(false), _dragLastY(0) {
 
+	_fluidScroller = new FluidScroller();	
+	_scrollbar = nullptr;
+	_closeButton = nullptr;
 	reflowLayout();
+}
+
+AboutDialog::~AboutDialog() {
+	delete _fluidScroller;
+}
+
+void AboutDialog::buildLines() {
+	_lines.clear();
 
 	int i;
 
@@ -99,8 +114,13 @@ AboutDialog::AboutDialog(bool inGame)
 	version += gScummVMVersion;
 	addLine(version);
 
+	#ifdef RELEASE_BUILD
+	// I18N: built with <compiler>
+	Common::U32String date = Common::U32String::format(_("(built with %s)"), gScummVMCompiler);
+	#else
 	// I18N: built on <build date> with <compiler>
 	Common::U32String date = Common::U32String::format(_("(built on %s with %s)"), gScummVMBuildDate, gScummVMCompiler);
+	#endif
 	addLine(Common::U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
@@ -160,9 +180,9 @@ AboutDialog::AboutDialog(bool inGame)
 	uint32 beginTime = g_system->getMillis(true);
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
 	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
-	if (!inGame) PluginMan.unloadDetectionPlugin();
+	if (!_inGame) PluginMan.unloadDetectionPlugin();
 #endif
-	if (!inGame) PluginMan.loadFirstPlugin();
+	if (!_inGame) PluginMan.loadFirstPlugin();
 	do {
 		uint32 currentTime = g_system->getMillis(true);
 		if (currentTime - beginTime > 1500) {
@@ -174,9 +194,9 @@ AboutDialog::AboutDialog(bool inGame)
 		for (const auto &plugin : plugins) {
 			enginesDetected.push_back(plugin->getName());
 		}
-	} while (!inGame && PluginMan.loadNextPlugin());
+	} while (!_inGame && PluginMan.loadNextPlugin());
 
-	if (!inGame) PluginMan.loadDetectionPlugin();
+	if (!_inGame) PluginMan.loadDetectionPlugin();
 
 	for (auto &engine : enginesDetected) {
 		Common::String str;
@@ -184,7 +204,7 @@ AboutDialog::AboutDialog(bool inGame)
 		const Plugin *p = EngineMan.findDetectionPlugin(engine);
 
 		if (!p) {
-			if (!inGame) warning("Cannot find plugin for %s", engine.c_str());
+			if (!_inGame) warning("Cannot find plugin for %s", engine.c_str());
 			continue;
 		}
 
@@ -205,6 +225,14 @@ AboutDialog::AboutDialog(bool inGame)
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(Common::U32String(credits[i], Common::kUtf8));
+
+	if (_scrollbar) {
+		_scrollbar->_numEntries = _lines.size() * _lineHeight;
+		int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+		_scrollbar->_entriesPerPage = _h - buttonHeight - 8 - 3 * _yOff;
+		_scrollbar->_singleStep = _lineHeight;
+		_scrollbar->recalc();
+	}
 }
 
 void AboutDialog::addLine(const Common::U32String &str) {
@@ -217,7 +245,8 @@ void AboutDialog::addLine(const Common::U32String &str) {
 		Common::U32String renderStr(strBeginItr, str.end());
 
 		Common::U32StringArray wrappedLines;
-		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
+		// Leave some margin inside the rectangle
+		g_gui.getFont().wordWrapText(renderStr, _textRect.width() - 2 * _xOff, wrappedLines);
 
 		for (const auto &line : wrappedLines) {
 			_lines.push_back(format + line);
@@ -228,9 +257,10 @@ void AboutDialog::addLine(const Common::U32String &str) {
 
 void AboutDialog::open() {
 	_scrollTime = g_system->getMillis() + kScrollStartDelay;
-	_scrollPos = 0;
+	_scrollPos = 0.0f;
 	_willClose = false;
 
+	_fluidScroller->reset();
 	Dialog::open();
 }
 
@@ -238,19 +268,28 @@ void AboutDialog::close() {
 	Dialog::close();
 }
 
-void AboutDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void AboutDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
-	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
+	// Draw text inside this rectangle to mimic a viewport
+	Common::Rect r = _textRect;
+	r.translate(_x, _y);
+	g_gui.theme()->drawWidgetBackground(r, ThemeEngine::kWidgetBackgroundBorder);
+	setTextDrawableArea(r);
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
 	// TODO: Maybe prerender all of the text into another surface,
 	//       and then simply compose that over the screen surface
 	//       in the right way. Should be even faster...
-	const int firstLine = _scrollPos / _lineHeight;
-	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
-	int y = _y + _yOff - (_scrollPos % _lineHeight);
+	float visualScrollPos = _fluidScroller->getVisualPosition();
+	int firstLine = (int)floorf(visualScrollPos / (float)_lineHeight);
+	int lastLine = (int)floorf((visualScrollPos + (float)_textRect.height()) / (float)_lineHeight) + 1;
+	firstLine = CLIP(firstLine, 0, (int)_lines.size());
+	lastLine = CLIP(lastLine, 0, (int)_lines.size());
+
+	float yOffset = visualScrollPos - (float)firstLine * (float)_lineHeight;
+	int y = _y + _textRect.top - (int)yOffset;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		Common::U32String str = _lines[line];
@@ -304,15 +343,28 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
-			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
-			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			// Center the text line within the _textRect
+			g_gui.theme()->drawText(Common::Rect(_x + _textRect.left + _xOff, y, _x + _textRect.right - _xOff, y + g_gui.theme()->getFontHeight()),
+									renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
+									ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
 }
 
 void AboutDialog::handleTickle() {
 	const uint32 t = g_system->getMillis();
+
+	if (_fluidScroller->update(t, _scrollPos)) {
+		if (_scrollbar) {
+			_scrollbar->_currentPos = (int)_scrollPos;
+			_scrollbar->recalc();
+		}
+		drawDialog(kDrawLayerForeground);
+		// Update scrollTime to prevent jump (if auto-scroll resumes)
+		_scrollTime = t;
+		return;
+	}
+
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (_autoScroll && scrollOffset > 0) {
 		int modifiers = g_system->getEventManager()->getModifierState();
@@ -327,36 +379,77 @@ void AboutDialog::handleTickle() {
 		_scrollTime = t;
 
 		if (_scrollPos < 0) {
-			_scrollPos = 0;
-		} else if ((uint32)_scrollPos > _lines.size() * _lineHeight) {
-			_scrollPos = 0;
+			_scrollPos = 0.0f;
+		} else if (_scrollPos > (float)_lines.size() * (float)_lineHeight) {
+			_scrollPos = 0.0f;
 			_scrollTime += kScrollStartDelay;
+		}
+
+		_fluidScroller->setPosition(_scrollPos);
+
+		if (_scrollbar) {
+			_scrollbar->_currentPos = (int)_scrollPos;
+			_scrollbar->recalc();
 		}
 		drawDialog(kDrawLayerForeground);
 	}
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	// Close upon any mouse click
-	close();
+	if (_isDragging) {
+		_isDragging = false;
+		_fluidScroller->startFling();
+	}
+	Dialog::handleMouseUp(x, y, button, clickCount);
+}
+
+void AboutDialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (button == 1 && !findWidget(x, y)) {
+		_isDragging = true;
+		_dragLastY = y;
+		_autoScroll = false;
+		_fluidScroller->stopAnimation();
+	}
+	Dialog::handleMouseDown(x, y, button, clickCount);
+}
+
+void AboutDialog::handleMouseMoved(int x, int y, int button) {
+	if (_isDragging) {
+		int deltaY = _dragLastY - y;
+		_dragLastY = y;
+
+		if (deltaY != 0) {
+			_autoScroll = false;
+			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+			_scrollPos = _fluidScroller->getVisualPosition();
+
+			if (_scrollbar) {
+				_scrollbar->_currentPos = (int)_scrollPos;
+				_scrollbar->recalc();
+			}
+
+			drawDialog(kDrawLayerForeground);
+		}
+	} else {
+		Dialog::handleMouseMoved(x, y, button);
+	}
 }
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
-	const int stepping = 5 * _lineHeight * direction;
-
-	if (stepping == 0)
-		return;
-
 	_autoScroll = false;
+	_fluidScroller->handleMouseWheel(direction);
+}
 
-	int newScrollPos = _scrollPos + stepping;
-
-	if (newScrollPos < 0) {
-		_scrollPos = 0;
-	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
-		_scrollPos = newScrollPos;
+void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if (cmd == kSetPositionCmd) {
+		_scrollPos = (float)data;
+		_autoScroll = false;
+		_fluidScroller->stopAnimation();
+		_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
+		drawDialog(kDrawLayerForeground);
+	} else if (cmd == kCloseCmd) {
+		close();
 	}
-	drawDialog(kDrawLayerForeground);
 }
 
 void AboutDialog::handleKeyDown(Common::KeyState state) {
@@ -367,12 +460,12 @@ void AboutDialog::handleKeyDown(Common::KeyState state) {
 		return;
 	}
 
-	if (state.ascii)
+	if (state.keycode == Common::KEYCODE_ESCAPE)
 		_willClose = true;
 }
 
 void AboutDialog::handleKeyUp(Common::KeyState state) {
-	if (state.ascii && _willClose)
+	if (state.keycode == Common::KEYCODE_ESCAPE && _willClose)
 		close();
 }
 
@@ -392,16 +485,39 @@ void AboutDialog::reflowLayout() {
 
 	_lineHeight = g_gui.getFontHeight() + 3;
 
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 15);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 80);
+
 	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
-	_w = 0;
+	int maxW = _w - 2 * _xOff - scrollbarWidth - 10;
+	int optimalW = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i]) + 5;
-		if (_w < tmp && tmp <= maxW) {
-			_w = tmp;
-		}
+			int tmp = g_gui.getStringWidth(credits[i]) + 5;
+			if (optimalW < tmp && tmp <= maxW)
+				optimalW = tmp;
 	}
-	_w += 2*_xOff;
+	_w = optimalW + 2 * _xOff + scrollbarWidth + 20;
+
+	// Make sure it's not wider than max width
+	_w = MIN<uint16>(_w, screenArea.width() - 2 * outerBorder);
+
+	// Calculate the rectangle for the text area
+	_textRect = Common::Rect(_xOff, _yOff, _w - scrollbarWidth - 3 * _xOff, _h - buttonHeight - 8 - 3 * _yOff);
+
+	if (!_scrollbar)
+		_scrollbar = new ScrollBarWidget(this, _w - scrollbarWidth - _xOff, _yOff, scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);
+	else {
+		_scrollbar->setPos(_w - scrollbarWidth - _xOff, _yOff);
+		_scrollbar->setSize(scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);
+	}
+
+	if (!_closeButton)
+		_closeButton = new ButtonWidget(this, _w - buttonWidth - 16 - _xOff, _h - buttonHeight - 2 * _yOff, buttonWidth, buttonHeight, _("Close"), Common::U32String(), kCloseCmd);
+	else {
+		_closeButton->setPos(_w - buttonWidth - 16 - _xOff, _h - buttonHeight - 2 * _yOff);
+		_closeButton->setSize(buttonWidth, buttonHeight);
+	}
 
 	// Center the dialog in the screen
 	_x = (screenW - _w) / 2;
@@ -409,6 +525,11 @@ void AboutDialog::reflowLayout() {
 
 	// Make it fit in the safe area
 	screenArea.constrain(_x, _y, _w, _h);
+
+	buildLines();
+
+	int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - _textRect.height());
+	_fluidScroller->setBounds((float)maxScroll, _textRect.height(), (float)_scrollbar->_singleStep);
 }
 
 

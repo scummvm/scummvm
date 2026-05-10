@@ -174,7 +174,7 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 		return descriptor;
 
 	} else {
-		SaveStateDescriptor emptySave(this, slotNr, Common::U32String());
+		SaveStateDescriptor emptySave(this, slotNr);
 		return emptySave;
 	}
 }

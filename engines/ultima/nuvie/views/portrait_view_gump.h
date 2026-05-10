@@ -60,7 +60,7 @@ public:
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:

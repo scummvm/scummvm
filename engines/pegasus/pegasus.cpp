@@ -385,7 +385,7 @@ void PegasusEngine::runIntro() {
 }
 
 Common::Error PegasusEngine::showLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
+	GUI::SaveLoadChooser slc(false);
 
 	int slot = slc.runModalWithCurrentTarget();
 
@@ -404,7 +404,7 @@ Common::Error PegasusEngine::showLoadDialog() {
 }
 
 Common::Error PegasusEngine::showSaveDialog() {
-	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser slc(true);
 
 	int slot = slc.runModalWithCurrentTarget();
 

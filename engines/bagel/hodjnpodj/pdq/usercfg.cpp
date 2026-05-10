@@ -64,7 +64,7 @@ static  CColorButton *pDefaultsButton = nullptr;               // Defaults butto
 static  CCheckButton *pFixedButton = nullptr;
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 
 	m_pNamesButton = nullptr;
 	DoModal();

@@ -68,13 +68,17 @@ public:
 
 	void render();
 	void undrawCursor();
+	void drawStep(ManagedSurface *g, ManagedSurface *src,  ManagedSurface *border, int x, int y, int w, int h, int xoff, int yoff, uint32 transcolor, uint32 btcolor);
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	bool draw(bool forceRedraw = false) override;
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
-	ManagedSurface *getSurface() { return _canvas._surface; }
+	ManagedSurface *getRawSurface() { return _canvas._surface; }
+	ManagedSurface *getGlyphMask() { return _glyphMaskSurface; }
+	ManagedSurface *getCharBoxMask() { return _charBoxMaskSurface; }
+
 	int getInterLinear() { return _canvas._interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
@@ -87,6 +91,7 @@ public:
 	virtual Common::Point calculateOffset();
 	void setActive(bool active) override;
 	void setEditable(bool editable);
+	void setInputPadding(bool enable){ _addInputPadding = enable; }
 
 	void setColors(uint32 fg, uint32 bg) override;
 	// set fgcolor for line x
@@ -231,6 +236,7 @@ protected:
 	bool _scrollBar;
 	MacWindowBorder _scrollBorder;
 	ManagedSurface _borderSurface;
+	ManagedSurface _borderMaskSurface;
 
 	int _selEnd;
 	int _selStart;
@@ -244,7 +250,12 @@ private:
 	ManagedSurface *_cursorSurface;
 	ManagedSurface *_cursorSurface2;
 
+	ManagedSurface *_glyphMaskSurface;
+	ManagedSurface *_charBoxMaskSurface;
+
 	int _editableRow;
+
+	bool _addInputPadding;
 
 	bool _inTextSelection;
 	SelectedText _selectedText;

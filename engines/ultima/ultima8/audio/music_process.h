@@ -25,7 +25,6 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"
-#include "audio/mididrv.h"
 
 namespace Ultima {
 namespace Ultima8 {

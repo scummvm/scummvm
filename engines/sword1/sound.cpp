@@ -516,12 +516,12 @@ void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 				break;
 			}
 
+		file.close();
+
 		if (locIndex == 0xFFFFFFFF) {
 			warning("Could not find local number %d in room %d in speech.inf", roomNo, localNo);
 			return;
 		}
-
-		file.close();
 
 		index = _cowHeader[(roomOffset + locIndex) * 2];
 		sampleFileSize = _cowHeader[(roomOffset + locIndex) * 2 + 1];
@@ -560,8 +560,9 @@ void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 				memset(_speechSample, 0, _speechSize);
 
 				SwordEngine::_systemVars.speechRunning = expandSpeech(compSample, _speechSample, sampleFileSize);
-				free(compSample);
 			}
+
+			free(compSample);
 		}
 	}
 }
@@ -571,6 +572,13 @@ bool Sound::expandSpeech(byte *src, byte *dst, uint32 dstSize, bool *endiannessC
 	if (_cowMode == CowPSX) {
 		Audio::RewindableAudioStream *stream = Audio::makeXAStream(new Common::MemoryReadStream(src, dstSize), 11025);
 		stream->readBuffer((int16 *)_speechSample, _speechSize);
+
+#ifdef SCUMM_BIG_ENDIAN
+		for (int i = 0; i < _speechSize / 2; i++) {
+			((int16 *)_speechSample)[i] = TO_LE_16(((int16 *)_speechSample)[i]);
+		}
+#endif
+
 		return true;
 	} else if (_cowMode != CowWave && _cowMode != CowDemo) {
 		Audio::RewindableAudioStream *stream = nullptr;
@@ -591,6 +599,13 @@ bool Sound::expandSpeech(byte *src, byte *dst, uint32 dstSize, bool *endiannessC
 #endif
 		if (stream) {
 			stream->readBuffer((int16 *)_speechSample, _speechSize);
+
+#ifdef SCUMM_BIG_ENDIAN
+			for (int i = 0; i < _speechSize / 2; i++) {
+				((int16 *)_speechSample)[i] = TO_LE_16(((int16 *)_speechSample)[i]);
+			}
+#endif
+
 			return true;
 		} else {
 			return false;
@@ -600,7 +615,7 @@ bool Sound::expandSpeech(byte *src, byte *dst, uint32 dstSize, bool *endiannessC
 	uint8 *fBuf = src;
 	uint32 headerPos = 0;
 
-	while ((READ_BE_UINT32(fBuf + headerPos) != 'data') && (headerPos < 100))
+	while ((READ_BE_UINT32(fBuf + headerPos) != MKTAG('d','a','t','a')) && (headerPos < 100))
 		headerPos++;
 
 	if (headerPos < 100) {
@@ -984,6 +999,7 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 	}
 
 	delete _compressedMusicStream[newHandleId];
+	_compressedMusicStream[newHandleId] = nullptr;
 
 	if (assignedMode == MusWav) {
 		if (_musicFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
@@ -992,7 +1008,7 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 			return false;
 		}
 
-		sampleRate = wavHead.dwSamplesPerSec;
+		sampleRate = FROM_LE_32(wavHead.dwSamplesPerSec);
 	}
 #ifdef USE_FLAC
 	else if (assignedMode == MusFLAC) {
@@ -1019,14 +1035,19 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 		Common::File tableFile;
 		if (!tableFile.open("tunes.tab")) {
 			debug(5, "Sound::streamMusicFile(): couldn't open the tunes.tab file, bailing out...");
+			_musicFile[newHandleId].close();
 			return false;
 		}
 
 		// The PSX demo has a broken/truncated tunes.tab. So we check here
 		// that the offset is not beyond the end of the file.
 		int32 tableOffset = (tuneId - 1) * 8;
-		if (tableOffset >= tableFile.size())
+		if (tableOffset >= tableFile.size()) {
+			tableFile.close();
+			_musicFile[newHandleId].close();
 			return false;
+		}
+
 		tableFile.seek(tableOffset, SEEK_SET);
 		uint32 offset = tableFile.readUint32LE() * 0x800;
 		uint32 size = tableFile.readUint32LE();
@@ -1227,7 +1248,6 @@ void Sound::updateMusicStreaming() {
 						
 						if (_musicStreamFading[i] == 0) {
 							_mixer->setChannelVolume(_hSampleMusic[i], 0);
-							_musicOutputStream[i]->finish();
 							_musicOutputStream[i] = nullptr;
 
 							_mixer->stopHandle(_hSampleMusic[i]);
@@ -1311,6 +1331,12 @@ void Sound::serveSample(Common::File *file, int32 i) {
 							debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
 					}
 				}
+
+#ifdef SCUMM_BIG_ENDIAN
+				for (int j = 0; j < len; j++) {
+					((int16 *)buf)[j] = TO_LE_16(((int16 *)buf)[j]);
+				}
+#endif
 			}
 
 			if (_musicStreamFormat[i] != MusWav)

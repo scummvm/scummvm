@@ -37,6 +37,7 @@
 #include "director/sprite.h"
 #include "director/window.h"
 #include "director/castmember/castmember.h"
+#include "director/debugger/debugtools.h"
 
 namespace Director {
 
@@ -58,6 +59,25 @@ bool DirectorEngine::processEvents(bool captureClick, bool skipWindowManager) {
 
 	Common::Event event;
 	while (pollEvent(event)) {
+		if (Director::DT::isMouseInputIgnored()) {
+			if (Common::isMouseEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN) {
+					Window *window = g_director->getCurrentWindow();
+					Score *score = window->getCurrentMovie()->getScore();
+					uint16 spriteId = 0;
+
+					if (g_director->getVersion() < 400)
+						spriteId = score->getActiveSpriteIDFromPos(event.mouse);
+					else
+						spriteId = score->getMouseSpriteIDFromPos(event.mouse);
+
+					Director::DT::setSelectedChannel(spriteId);
+					window->render(true);
+				}
+				continue;
+			}
+		}
+
 		if (skipWindowManager || !_wm->processEvent(event)) {
 			// We only want to handle these events if the event
 			// wasn't handled by the window manager.
@@ -143,6 +163,7 @@ bool Movie::processEvent(Common::Event &event) {
 			spriteId = _score->getMouseSpriteIDFromPos(event.mouse);
 
 		_currentHoveredSpriteId = spriteId;
+		_lastMousePos = event.mouse;
 	}
 
 	Common::Point pos;

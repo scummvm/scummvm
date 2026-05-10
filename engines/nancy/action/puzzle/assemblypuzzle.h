@@ -38,6 +38,8 @@ public:
 	AssemblyPuzzle() : RenderActionRecord(7) {}
 	virtual ~AssemblyPuzzle() {}
 
+	AssemblyPuzzle(AssemblyPuzzle &&) = default;
+
 	void init() override;
 	void registerGraphics() override;
 
@@ -45,9 +47,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "AssemblyPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void rotateBase(bool ccw);
 

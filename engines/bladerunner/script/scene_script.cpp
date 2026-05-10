@@ -219,7 +219,7 @@ bool SceneScript::clickedOnActor(int actorId) {
 	++_inScriptCounter;
 	bool result = false;
 	if (_currentScript != nullptr) {
-		_currentScript->ClickedOnActor(actorId);
+		result = _currentScript->ClickedOnActor(actorId);
 	}
 	_vm->_runningActorId = -1;
 	--_inScriptCounter;
@@ -241,7 +241,7 @@ bool SceneScript::clickedOnItem(int itemId, bool combatMode) {
 	++_inScriptCounter;
 	bool result = false;
 	if (_currentScript != nullptr) {
-		_currentScript->ClickedOnItem(itemId, combatMode);
+		result = _currentScript->ClickedOnItem(itemId, combatMode);
 	}
 	_vm->_runningActorId = -1;
 	--_inScriptCounter;
@@ -256,7 +256,7 @@ bool SceneScript::clickedOnExit(int exitId) {
 	++_inScriptCounter;
 	bool result = false;
 	if (_currentScript != nullptr) {
-		_currentScript->ClickedOnExit(exitId);
+		result = _currentScript->ClickedOnExit(exitId);
 	}
 	_vm->_runningActorId = -1;
 	--_inScriptCounter;
@@ -271,7 +271,7 @@ bool SceneScript::clickedOn2DRegion(int region) {
 	++_inScriptCounter;
 	bool result = false;
 	if (_currentScript != nullptr) {
-		 _currentScript->ClickedOn2DRegion(region);
+		result = _currentScript->ClickedOn2DRegion(region);
 	 }
 	_vm->_runningActorId = -1;
 	--_inScriptCounter;

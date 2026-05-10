@@ -39,18 +39,6 @@ DECLARE_SINGLETON(Nancy::State::SetupMenu);
 namespace Nancy {
 namespace State {
 
-SetupMenu::~SetupMenu() {
-	for (auto *tog : _toggles) {
-		delete tog;
-	}
-
-	for (auto *scroll : _scrollbars) {
-		delete scroll;
-	}
-
-	delete _exitButton;
-}
-
 void SetupMenu::process() {
 	switch (_state) {
 	case kInit:
@@ -76,11 +64,11 @@ bool SetupMenu::onStateExit(const NancyState::NancyState nextState) {
 void SetupMenu::registerGraphics() {
 	_background.registerGraphics();
 
-	for (auto *tog : _toggles) {
+	for (auto &tog : _toggles) {
 		tog->registerGraphics();
 	}
 
-	for (auto *scroll : _scrollbars) {
+	for (auto &scroll : _scrollbars) {
 		scroll->registerGraphics();
 	}
 
@@ -153,11 +141,12 @@ void SetupMenu::init() {
 		}
 	}
 
+	_toggles.resize(_setupData->_buttonDests.size() - 1);
 	for (uint i = 0; i < _setupData->_buttonDests.size() - 1; ++i) {
-		_toggles.push_back(new UI::Toggle(5, _background._drawSurface,
+		_toggles[i].reset(new UI::Toggle(5, _background._drawSurface,
 			_setupData->_buttonDownSrcs[i], _setupData->_buttonDests[i]));
 
-		_toggles.back()->init();
+		_toggles[i]->init();
 	}
 
 	// Set toggle visibility
@@ -165,12 +154,13 @@ void SetupMenu::init() {
 		_toggles[i]->setState(ConfMan.getBool(getToggleConfManKey(i), ConfMan.getActiveDomainName()));
 	}
 
+	_scrollbars.resize(_setupData->_scrollbarSrcs.size());
 	for (uint i = 0; i < _setupData->_scrollbarSrcs.size(); ++i) {
-		_scrollbars.push_back(new UI::Scrollbar(7, _setupData->_scrollbarSrcs[i],
+		_scrollbars[i].reset(new UI::Scrollbar(7, _setupData->_scrollbarSrcs[i],
 			_background._drawSurface, Common::Point(_setupData->_scrollbarsCenterXPosL[i] + 1, _setupData->_scrollbarsCenterYPos[i]),
 			_setupData->_scrollbarsCenterXPosR[i] + 1 - _setupData->_scrollbarsCenterXPosL[i] - 1, false));
-		_scrollbars.back()->init();
-		_scrollbars.back()->setVisible(true);
+		_scrollbars[i]->init();
+		_scrollbars[i]->setVisible(true);
 	}
 
 	// Set scrollbar positions
@@ -178,9 +168,9 @@ void SetupMenu::init() {
 	_scrollbars[1]->setPosition(ConfMan.getInt("music_volume") / 255.0);
 	_scrollbars[2]->setPosition(ConfMan.getInt("sfx_volume") / 255.0);
 
-	_exitButton = new UI::Button(5, _background._drawSurface,
+	_exitButton.reset(new UI::Button(5, _background._drawSurface,
 		_setupData->_buttonDownSrcs.back(), _setupData->_buttonDests.back(),
-		_setupData->_doneButtonHighlightSrc);
+		_setupData->_doneButtonHighlightSrc));
 	_exitButton->init();
 	_exitButton->setVisible(false);
 
@@ -193,7 +183,7 @@ void SetupMenu::run() {
 	NancyInput input = g_nancy->_input->getInput();
 
 	for (uint i = 0; i < _scrollbars.size(); ++i) {
-		auto *scroll = _scrollbars[i];
+		auto &scroll = _scrollbars[i];
 
 		float startPos = scroll->getPos();
 		scroll->handleInput(input);
@@ -223,7 +213,7 @@ void SetupMenu::run() {
 	}
 
 	for (uint i = 0; i < _toggles.size(); ++i) {
-		auto *tog = _toggles[i];
+		auto &tog = _toggles[i];
 		tog->handleInput(input);
 		if (tog->_stateChanged) {
 			g_nancy->_sound->playSound("BUOK");

@@ -35,20 +35,15 @@ namespace M4 {
 #define CHUNK_DATA	0x44415441	//'DATA'
 #define CHUNK_CELS	0x43454C53	//'CELS'
 
-#define CHUNK_NECS	0x4E454353	//INTEL 'SCEN'
 #define CHUNK_HCAM	0x4843414D	//INTEL 'MACH'
 #define CHUNK_UQES	0x55514553	//INTEL 'SEQU'
 #define CHUNK_SLEC	0x534C4543	//INTEL 'CELS'
 #define CHUNK_ATAD	0x41544144	//INTEL 'DATA'
 
-#define MACH_NUM_STATES		0
 #define MACH_OFFSETS		1
 
-#define SEQU_NUM_VARS		0
 #define SEQU_SEQU_START		1
 
-#define DATA_REC_COUNT		0
-#define DATA_REC_SIZE		1
 #define DATA_REC_START		2
 
 #define MAX_ASSET_HASH		255
@@ -91,19 +86,14 @@ bool InitWSAssets() {
 
 	// Make sure this is only called once.
 	if (_GWS(wsloaderInitialized)) {
-		error_show(FL, 'WSSN');
+		error_show(FL, "WSLoader not initialized");
 	}
 
 	// Allocate space for the tables used by the loader and the resource io MACHine tables
-	if ((_GWS(globalMACHnames) = (char **)mem_alloc(sizeof(char *) * 256, "MACH resource table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalMACHHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalMACHoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "MACH offsets table")) == nullptr) {
-		return false;
-	}
+	_GWS(globalMACHnames) = (char **)mem_alloc(sizeof(char *) * 256, "MACH resource table");
+	_GWS(globalMACHHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table");
+	_GWS(globalMACHoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "MACH offsets table");
+
 	for (i = 0; i < 256; i++) {
 		_GWS(globalMACHnames)[i] = nullptr;
 		_GWS(globalMACHHandles)[i] = nullptr;
@@ -111,15 +101,10 @@ bool InitWSAssets() {
 	}
 
 	// SEQUence tables
-	if ((_GWS(globalSEQUnames) = (char **)mem_alloc(sizeof(char *) * 256, "SEQU resource table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalSEQUHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalSEQUoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "SEQU offsets table")) == nullptr) {
-		return false;
-	}
+	_GWS(globalSEQUnames) = (char **)mem_alloc(sizeof(char *) * 256, "SEQU resource table");
+	_GWS(globalSEQUHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table");
+	_GWS(globalSEQUoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "SEQU offsets table");
+	
 	for (i = 0; i < 256; i++) {
 		_GWS(globalSEQUnames)[i] = nullptr;
 		_GWS(globalSEQUHandles)[i] = nullptr;
@@ -127,15 +112,10 @@ bool InitWSAssets() {
 	}
 
 	// DATA tables
-	if ((_GWS(globalDATAnames) = (char **)mem_alloc(sizeof(char *) * 256, "DATA resource table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalDATAHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalDATAoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "DATA offsets table")) == nullptr) {
-		return false;
-	}
+	_GWS(globalDATAnames) = (char **)mem_alloc(sizeof(char *) * 256, "DATA resource table");
+	_GWS(globalDATAHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table");
+	_GWS(globalDATAoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "DATA offsets table");
+
 	for (i = 0; i < 256; i++) {
 		_GWS(globalDATAnames)[i] = nullptr;
 		_GWS(globalDATAHandles)[i] = nullptr;
@@ -143,18 +123,11 @@ bool InitWSAssets() {
 	}
 
 	// CELS tables
-	if ((_GWS(globalCELSnames) = (char **)mem_alloc(sizeof(char *) * 256, "CELS resource table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalCELSHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalCELSoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "CELS offsets table")) == nullptr) {
-		return false;
-	}
-	if ((_GWS(globalCELSPaloffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "CELS pal offsets table")) == nullptr) {
-		return false;
-	}
+	_GWS(globalCELSnames) = (char **)mem_alloc(sizeof(char *) * 256, "CELS resource table");
+	_GWS(globalCELSHandles) = (MemHandle *)mem_alloc(sizeof(MemHandle) * 256, "CELS Handles table");
+	_GWS(globalCELSoffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "CELS offsets table");
+	_GWS(globalCELSPaloffsets) = (int32 *)mem_alloc(sizeof(int32) * 256, "CELS pal offsets table");
+
 	for (i = 0; i < 256; i++) {
 		_GWS(globalCELSnames)[i] = nullptr;
 		_GWS(globalCELSHandles)[i] = nullptr;
@@ -243,7 +216,7 @@ bool ClearWSAssets(uint32 assetType, int32 minHash, int32 maxHash) {
 	return true;
 }
 
-void ShutdownWSAssets(void) {
+void ShutdownWSAssets() {
 	if (!_GWS(wsloaderInitialized))
 		return;
 
@@ -254,20 +227,44 @@ void ShutdownWSAssets(void) {
 	ClearWSAssets(_WS_ASSET_DATA, 0, MAX_ASSET_HASH);
 
 	// Deallocate all tables
-	if (_GWS(globalMACHnames)) mem_free(_GWS(globalMACHnames));
-	if (_GWS(globalSEQUnames)) mem_free(_GWS(globalSEQUnames));
-	if (_GWS(globalDATAnames)) mem_free(_GWS(globalDATAnames));
-	if (_GWS(globalCELSnames)) mem_free(_GWS(globalCELSnames));
+	if (_GWS(globalMACHnames))
+		mem_free(_GWS(globalMACHnames));
 
-	if (_GWS(globalMACHHandles)) mem_free(_GWS(globalMACHHandles));
-	if (_GWS(globalMACHoffsets)) mem_free(_GWS(globalMACHoffsets));
-	if (_GWS(globalSEQUHandles)) mem_free(_GWS(globalSEQUHandles));
-	if (_GWS(globalSEQUoffsets)) mem_free(_GWS(globalSEQUoffsets));
-	if (_GWS(globalDATAHandles)) mem_free(_GWS(globalDATAHandles));
-	if (_GWS(globalDATAoffsets)) mem_free(_GWS(globalDATAoffsets));
-	if (_GWS(globalCELSHandles)) mem_free(_GWS(globalCELSHandles));
-	if (_GWS(globalCELSoffsets)) mem_free(_GWS(globalCELSoffsets));
-	if (_GWS(globalCELSPaloffsets)) mem_free(_GWS(globalCELSPaloffsets));
+	if (_GWS(globalSEQUnames))
+		mem_free(_GWS(globalSEQUnames));
+
+	if (_GWS(globalDATAnames))
+		mem_free(_GWS(globalDATAnames));
+
+	if (_GWS(globalCELSnames))
+		mem_free(_GWS(globalCELSnames));
+
+	if (_GWS(globalMACHHandles))
+		mem_free(_GWS(globalMACHHandles));
+
+	if (_GWS(globalMACHoffsets))
+		mem_free(_GWS(globalMACHoffsets));
+
+	if (_GWS(globalSEQUHandles))
+		mem_free(_GWS(globalSEQUHandles));
+
+	if (_GWS(globalSEQUoffsets))
+		mem_free(_GWS(globalSEQUoffsets));
+
+	if (_GWS(globalDATAHandles))
+		mem_free(_GWS(globalDATAHandles));
+
+	if (_GWS(globalDATAoffsets))
+		mem_free(_GWS(globalDATAoffsets));
+
+	if (_GWS(globalCELSHandles))
+		mem_free(_GWS(globalCELSHandles));
+
+	if (_GWS(globalCELSoffsets))
+		mem_free(_GWS(globalCELSoffsets));
+
+	if (_GWS(globalCELSPaloffsets))
+		mem_free(_GWS(globalCELSPaloffsets));
 
 	_GWS(wsloaderInitialized) = false;
 }
@@ -286,13 +283,13 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 	// Check that the loader has been initialized
 	if (!_GWS(wsloaderInitialized)) {
-		error_show(FL, 'WSLI');
+		error_show(FL, "Asset Name: %s", wsAssetName);
 	}
 
 	// Use the resource io manager to read in the entire block
 	const MemHandle workHandle = rget(wsAssetName, &assetSize);
 	if (workHandle == nullptr) {
-		error_show(FL, 'FNF!', "Asset Name: %s", wsAssetName);
+		error_show(FL, "Asset Name: %s", wsAssetName);
 	}
 
 	// Lock the handle so we can step through the chunk
@@ -315,10 +312,10 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 	while (!finished) {
 		// Read in the chunk size and hash number
 		if (!GetNextint32(&parseAssetPtr, endOfAssetBlock, chunkSize)) {
-			error_show(FL, 'WSLE', "Asset Name: %s", wsAssetName);
+			error_show(FL, "Asset Name: %s", wsAssetName);
 		}
 		if (!GetNextint32(&parseAssetPtr, endOfAssetBlock, chunkHash)) {
-			error_show(FL, 'WSLE', "Asset Name: %s", wsAssetName);
+			error_show(FL, "Asset Name: %s", wsAssetName);
 		}
 
 		// Process the chunk according to type
@@ -336,7 +333,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_MACH:
 			// Check the validity of the machine hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, MACH hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, MACH hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_MACH, *chunkHash, *chunkHash);
 
@@ -347,7 +344,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
-				error_show(FL, 'WSLE', "Asset Name: %s, MACH hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, MACH hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// Byteswap the entire machine if necessary
@@ -375,7 +372,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_SEQU:
 			// Check the validity of the sequence hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, SEQU hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, SEQU hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_SEQU, *chunkHash, *chunkHash);
 
@@ -386,7 +383,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
-				error_show(FL, 'WSLE', "Asset Name: %s, SEQU hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, SEQU hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// Byteswap the entire sequence if necessary
@@ -414,7 +411,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_DATA:
 			// Check the validity of the data block hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, DATA hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, DATA hash was: %d", wsAssetName, *chunkHash);
 			}
 			ClearWSAssets(_WS_ASSET_DATA, *chunkHash, *chunkHash);
 
@@ -425,7 +422,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
-				error_show(FL, 'WSLE', "Asset Name: %s, DATA hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, DATA hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// Byteswap the entire data block if necessary
@@ -452,7 +449,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		case CHUNK_CELS: {
 			// Check the validity of the cels hash number, and clear it
 			if (*chunkHash > MAX_ASSET_HASH) {
-				error_show(FL, 'WSLA', "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			ClearWSAssets(_WS_ASSET_CELS, *chunkHash, *chunkHash);
@@ -462,7 +459,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Process the SS from the stream file
 			if (ProcessCELS(wsAssetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette) < 0) {
-				error_show(FL, 'WSLP', "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
+				error_show(FL, "Asset Name: %s, CELS hash was: %d", wsAssetName, *chunkHash);
 			}
 
 			// At this point, celsPtr points to the beginning of the cels data, palPtr to the pal data
@@ -482,9 +479,8 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 		}
 
 		default:
-			error_show(FL, 'WSLT', "Asset Name: %s, %d bytes into the file.", wsAssetName,
+			error_show(FL, "Asset Name: %s, %d bytes into the file.", wsAssetName,
 				(intptr)parseAssetPtr - 12 - (intptr)mainAssetPtr);
-			break;
 		}
 
 		// Read the next chunkType, or signal we are finished
@@ -507,10 +503,6 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 
 	if (!mySprite) {
 		mySprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "Sprite");
-		if (!mySprite) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d.", sizeof(M4sprite));
-			return nullptr;
-		}
 	}
 
 	// Find the cels source  from the asset block
@@ -575,7 +567,7 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 
 	// Load in the sprite series
 	if ((workHandle = rget(assetName, &assetSize)) == nullptr)
-		error_show(FL, 'FNF!', "Sprite series: %s", assetName);
+		error_show(FL, "Sprite series: %s", assetName);
 
 	HLock(workHandle);
 
@@ -586,7 +578,7 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 	// Process the SS from the stream file
 	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
 	if (celsSize < 0) {
-		error_show(FL, 'WSLP', "series: %s", assetName);
+		error_show(FL, "series: %s", assetName);
 	}
 
 	// Store the handle and offsets
@@ -594,54 +586,6 @@ int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *ce
 	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
 	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
 
-	HUnLock(workHandle);
-
-	return celsSize;
-}
-
-int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
-	Common::File f;
-	int32 *celsPtr, *palPtr;
-	char *parseAssetPtr;
-
-	// This loads a sprite series into the provided vars, rather than the WS tables.
-	// The WS loader is not involved with this procedure.
-
-	// First open the file
-	if (!f.open(assetName))
-		return -1;
-
-	// Get the file size
-	const uint32 assetSize = f.size();
-
-	// Create a handle big enough to hold the contents of the file
-	const MemHandle workHandle = NewHandle(assetSize, "ss file");
-
-	// Lock the handle and read the contents of the file into it
-	HLock(workHandle);
-	char *mainAssetPtr = (char *)*workHandle;
-	if (f.read(mainAssetPtr, assetSize) < assetSize) {
-		mem_free(workHandle);
-		return -1;
-	}
-
-	// Close the file
-	f.close();
-
-	// Set up some pointers
-	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
-	parseAssetPtr = mainAssetPtr;
-
-	// Process the SS from the stream file
-	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
-	if (celsSize < 0) {
-		error_show(FL, 'WSLP', "series: %s", assetName);
-	}
-
-	// Store the handle and offsets
-	*seriesHandle = workHandle;
-	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
-	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
 	HUnLock(workHandle);
 
 	return celsSize;
@@ -680,7 +624,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 
 	// Check that the loader has been initialized
 	if (!_GWS(wsloaderInitialized)) {
-		error_show(FL, 'WSLI', "Asset Name: %s", wsAssetName);
+		error_show(FL, "Asset Name: %s", wsAssetName);
 	}
 
 	int32 emptySlot = -1;
@@ -703,7 +647,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 		// Else the SS must be stored in the given hash, replacing any previous contents.
 		// Index checking
 		if (hash > MAX_ASSET_HASH) {
-			error_show(FL, 'WSLA', "Asset Name: %s, hash given was %d", wsAssetName, hash);
+			error_show(FL, "Asset Name: %s, hash given was %d", wsAssetName, hash);
 		}
 
 		// Check to see if the SS is already loaded in the given hash slot
@@ -720,11 +664,11 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 
 			// Since the SS is already loaded, return the slot
 			return hash;
-		} else {
-			// The series is not already loaded, set up values for the next if statement
-			i = MAX_ASSET_HASH + 1;
-			emptySlot = hash;
 		}
+
+		// The series is not already loaded, set up values for the next if statement
+		i = MAX_ASSET_HASH + 1;
+		emptySlot = hash;
 	}
 
 	// If we've searched the entire table and not found the series, but
@@ -732,7 +676,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 	if ((i > MAX_ASSET_HASH) && (emptySlot >= 0)) {
 		workHandle = rget(wsAssetName, &assetSize);
 		if (workHandle == nullptr) {
-			error_show(FL, 'FNF!', wsAssetName);
+			error_show(FL, wsAssetName);
 		}
 
 		// Lock the handle so we can step through the chunk
@@ -749,7 +693,7 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 
 		// Process the SS from the stream file
 		if (ProcessCELS(wsAssetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette) < 0) {
-			error_show(FL, 'WSLP', "Asset Name: %s", wsAssetName);
+			error_show(FL, "Asset Name: %s", wsAssetName);
 		}
 
 		// At this point, celsPtr points to the beginning of the cels data, palPtr to the pal data
@@ -787,12 +731,10 @@ int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
 
 		// Return the hash number for the series
 		return i;
-	} else {
-		// Else we searched the entire table, it was not already loaded, and there are no empty slots
-		error_show(FL, 'WSLF', "Asset Name: %s", wsAssetName);
 	}
 
-	return -1;
+	// Else we searched the entire table, it was not already loaded, and there are no empty slots
+	error_show(FL, "Asset Name: %s", wsAssetName);
 }
 
 static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char * /*mainAssetPtr*/, char *endOfAssetBlock,
@@ -1047,91 +989,6 @@ M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite
 	return mySprite;
 }
 
-
-int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
-	int32 *celsPtr, *palPtr;
-	char *parseAssetPtr;
-	int32 assetSize;
-
-	//This loads a sprite series into the provided vars, rather than the WS tables.
-	//The WS loader is not involved with this procedure.
-
-	// Load in the sprite series
-	const MemHandle workHandle = rget(assetName, &assetSize);
-	if (workHandle == nullptr)
-		error_show(FL, 'FNF!', "Sprite series: %s", assetName);
-
-	HLock(workHandle);
-
-	char *mainAssetPtr = (char *)*workHandle;
-	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
-	parseAssetPtr = mainAssetPtr;
-
-	// Process the SS from the stream file
-	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
-	if (celsSize < 0) {
-		error_show(FL, 'WSLP', "series: %s", assetName);
-	}
-
-	// Store the handle and offsets
-	*seriesHandle = workHandle;
-	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
-	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
-
-	HUnLock(workHandle);
-
-	return celsSize;
-}
-
-int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
-	Common::File f;
-	int32 *celsPtr, *palPtr;
-	char *parseAssetPtr;
-
-	// This loads a sprite series into the provided vars, rather than the WS tables.
-	// The WS loader is not involved with this procedure.
-
-	// First open the file
-	if (!f.open(assetName))
-		return -1;
-
-	// Get the size
-	const uint32 assetSize = f.size();
-
-	// Create a handle big enough to hold the contents of the file
-	MemHandle workHandle = NewHandle(assetSize, "ss file");
-
-	// Lock the handle and read the contents of the file intoit
-	HLock(workHandle);
-	char *mainAssetPtr = (char *)*workHandle;
-	if (f.read(mainAssetPtr, assetSize) < assetSize) {
-		f.close();
-		mem_free(workHandle);
-		return -1;
-	}
-
-	// Close the file
-	f.close();
-
-	// Set up some pointers
-	char *endOfAssetBlock = (char *)((intptr)mainAssetPtr + assetSize);
-	parseAssetPtr = mainAssetPtr;
-
-	// Process the SS from the stream file
-	const int32 celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette);
-	if (celsSize < 0) {
-		error_show(FL, 'WSLP', "series: %s", assetName);
-	}
-
-	// Store the handle and offsets
-	*seriesHandle = workHandle;
-	*celsOffset = (intptr)celsPtr - (intptr)mainAssetPtr;
-	*palOffset = (intptr)palPtr - (intptr)mainAssetPtr;
-	HUnLock(workHandle);
-
-	return celsSize;
-}
-
 CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 	bool streamSeries;
 
@@ -1144,24 +1001,18 @@ CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB) {
 	//If a memory location to store the CCB has not been provided...
 	if (!myCCB) {
 		// Create the CCB struct
-		if ((myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes", sizeof(CCB));
-			return nullptr;
-		}
+		myCCB = (CCB *)mem_alloc(sizeof(CCB), "CCB");
 
 		// Create the CCB current location and new location rectangles
-		if ((myCCB->currLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "M4Rect")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes", sizeof(M4Rect));
-			return nullptr;
-		}
+		myCCB->currLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "M4Rect");
+
 		myCCB->currLocation->x1 = 0;
 		myCCB->currLocation->y1 = 0;
 		myCCB->currLocation->x2 = 0;
 		myCCB->currLocation->y2 = 0;
-		if ((myCCB->newLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "M4Rect")) == nullptr) {
-			ws_LogErrorMsg(FL, "Out of memory - mem requested: %d bytes", sizeof(M4Rect));
-			return nullptr;
-		}
+
+		myCCB->newLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "M4Rect");
+		
 		myCCB->maxArea = nullptr;
 		myCCB->source = nullptr;
 	}
@@ -1523,15 +1374,10 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 		// If there is at least one color specified in this block
 		if (numColors > 0) {
 			uint32 *myColors = (uint32 *)mem_alloc(celsSize - 12, "ss pal info");
-			if (myColors == nullptr) {
-				ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", celsSize - 12);
-				return -1;
-			}
 
 			// Read in the color info into a temp buffer
 			for (i = 0; i < numColors; ++i)
 				myColors[i] = sysFile->readUint32LE();
-
 
 			// If the chunk is in the wrong format, byte-swap the entire chunk
 			// note: we do this because we want the data stored in nrgb format
@@ -1601,10 +1447,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Allocate a block to hold both the series header, and the sprite offset table
-	if ((*data = (uint32 *)mem_alloc((SS_HEAD_SIZE + numCels) * 4, "ss header")) == nullptr) {
-		ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", (SS_HEAD_SIZE + numCels) << 2);
-		return -1;
-	}
+	*data = (uint32 *)mem_alloc((SS_HEAD_SIZE + numCels) * 4, "ss header");
 
 	// Read in the series header and the sprite offset table
 	// Since we already read in celsType and celsSize, SS_HEAD_SIZE-2
@@ -1630,7 +1473,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 }
 
 bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
-	int32 obesest_frame = 0;
+	int32 largest_frame = 0;
 
 	// Verify the parameters
 	if (!sysFile || !anim8 || !anim8->myCCB) {
@@ -1640,10 +1483,10 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 
 	CCB *myCCB = anim8->myCCB;
 	frac16 *myRegs = anim8->myRegs;
-	int32 ssDataOffset = 0;
 
 	// Read in the SS stream header
-	if ((ssDataOffset = GetSSHeaderInfo(sysFile, &(myCCB->streamSSHeader), &_G(master_palette)[0])) <= 0) {
+	int32 ssDataOffset = GetSSHeaderInfo(sysFile, &(myCCB->streamSSHeader), &_G(master_palette)[0]);
+	if (ssDataOffset <= 0) {
 		return false;
 	}
 
@@ -1666,18 +1509,16 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 
 		if (offsets[i] > maxFrameSize) {
 			maxFrameSize = offsets[i];
-			obesest_frame = i;
+			largest_frame = i;
 		}
 	}
 
 	// For the last sprite we take the entire chunk size - the chunk header - the offset for that sprite
-	offsets[numSprites - 1] = celsPtr[CELS_SRC_SIZE] -
-		((SS_HEAD_SIZE + celsPtr[CELS_COUNT]) << 2) -
-		offsets[numSprites - 1];
+	offsets[numSprites - 1] = celsPtr[CELS_SRC_SIZE] - ((SS_HEAD_SIZE + celsPtr[CELS_COUNT]) << 2) - offsets[numSprites - 1];
 
 	if (offsets[numSprites - 1] > maxFrameSize) {
 		maxFrameSize = offsets[numSprites - 1];
-		obesest_frame = numSprites - 1;
+		largest_frame = numSprites - 1;
 	}
 
 	// Calculate the maximum size a sprite could be
@@ -1685,13 +1526,9 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 
 	if (!myCCB->source) {
 		myCCB->source = (M4sprite *)mem_alloc(sizeof(M4sprite), "Sprite");
-		if (!myCCB->source) {
-			ws_LogErrorMsg(FL, "Failed to mem_alloc() %d bytes.", sizeof(M4sprite));
-			return false;
-		}
 	}
 
-	term_message("Biggest frame was: %d, size: %d bytes (compressed)", obesest_frame, maxFrameSize);
+	term_message("Biggest frame was: %d, size: %d bytes (compressed)", largest_frame, maxFrameSize);
 
 	// Access the streamer to recognize the new client
 	myCCB->myStream = (void *)f_stream_Open(sysFile, ssDataOffset, maxFrameSize, maxFrameSize << 4, numSprites, (int32 *)offsets, 4, false);
@@ -1764,9 +1601,7 @@ bool ws_GetNextSSstreamCel(Anim8 *anim8) {
 	mySprite->yOffset = FROM_LE_32(myCelSource[CELS_Y]);
 	mySprite->w = FROM_LE_32(myCelSource[CELS_W]);
 	mySprite->h = FROM_LE_32(myCelSource[CELS_H]);
-
 	mySprite->encoding = (uint8)FROM_LE_32(myCelSource[CELS_COMP]);
-
 	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
 
 	// Initialize the CCB structure

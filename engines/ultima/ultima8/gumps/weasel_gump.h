@@ -22,7 +22,6 @@
 #ifndef ULTIMA8_GUMPS_REMORSEMENUGUMP_H
 #define ULTIMA8_GUMPS_REMORSEMENUGUMP_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -84,12 +83,12 @@ private:
 	void abortPurchase();
 	void checkBuyMore();
 	void confirmPurchase();
-	void setYesNoQuestion(const Std::string &msg);
+	void setYesNoQuestion(const Common::String &msg);
 	void browsingMode(bool browsing);
 	int purchasedCount(uint16 shape) const;
 
 	void updateItemDisplay();
-	Gump *playMovie(const Std::string &filename);
+	Gump *playMovie(const Common::String &filename);
 
 	/// Gump to hold all the UI items (not the movies)
 	Gump *_ui;
@@ -109,7 +108,7 @@ private:
 	int32 _credits;
 
 	/// The list of pending purchases (shape nums)
-	Std::vector<uint16> _purchases;
+	Common::Array<uint16> _purchases;
 
 	/// The current item num being browsed
 	int _curItem;

@@ -384,7 +384,10 @@ GUI *LoLEngine::gui() const {
 Common::Error LoLEngine::init() {
 	_screen = new Screen_LoL(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	setDebugger(new Debugger_LoL(this));
 

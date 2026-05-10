@@ -23,9 +23,6 @@
 #ifndef M4_BURGER_GUI_H
 #define M4_BURGER_GUI_H
 
-#include "m4/burger/gui/game_menu.h"
-#include "m4/burger/gui/interface.h"
-
 namespace M4 {
 namespace Burger {
 namespace GUI {

@@ -32,19 +32,14 @@ namespace M4 {
 static void transShow(void *s, void *r, void *b, int32 destX, int32 destY);
 
 bool gui_mouse_init() {
-	_G(mouseBuffer).data = nullptr;
-	if ((_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic")) == nullptr) {
-		return false;
-	}
+	_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic");
 	_G(mouseBuffer).w = 32;
 	_G(mouseBuffer).stride = 32;
 	_G(mouseBuffer).h = 32;
 
 	auto &mouseSprite = _G(mouseSprite);
 	if (!mouseSprite) {
-		if ((mouseSprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "mouse sprite")) == nullptr) {
-			return false;
-		}
+		mouseSprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "mouse sprite");
 
 		mouseSprite->x = 0;
 		mouseSprite->y = 0;
@@ -63,9 +58,7 @@ bool gui_mouse_init() {
 		_G(mouseY2offset) = mouseSprite->h - _G(mouseY1offset) - 1;
 	}
 
-	if ((_G(mouseScreenSource) = (transSprite *)mem_alloc(sizeof(transSprite), "mouse transSprite")) == nullptr) {
-		return false;
-	}
+	_G(mouseScreenSource) = (transSprite *)mem_alloc(sizeof(transSprite), "mouse transSprite");
 
 	_G(mouseScreenSource)->srcSprite = mouseSprite;
 	_G(mouseScreenSource)->scrnBuffer = &_G(mouseBuffer);

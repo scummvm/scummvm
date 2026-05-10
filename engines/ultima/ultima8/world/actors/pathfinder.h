@@ -22,9 +22,10 @@
 #ifndef ULTIMA8_WORLD_ACTORS_PATHFINDER_H
 #define ULTIMA8_WORLD_ACTORS_PATHFINDER_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/point3.h"
+#include "ultima/ultima8/misc/priority_queue.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 //#define DEBUG_PATHFINDER
@@ -78,7 +79,7 @@ public:
 	bool canReach();
 
 	//! pathfind. If true, the found path is returned in path
-	bool pathfind(Std::vector<PathfindingAction> &path);
+	bool pathfind(Common::Array<PathfindingAction> &path);
 
 #ifdef DEBUG_PATHFINDER
 	static ObjId _visualDebugActor;
@@ -96,10 +97,10 @@ protected:
 	int32 _actorXd, _actorYd, _actorZd;
 
 	Common::Array<PathfindingState> _visited;
-	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
+	PriorityQueue<PathNode *, Common::Array<PathNode *>, PathNodeCmp> _nodes;
 
 	/** List of nodes for garbage collection later and order is not important */
-	Std::vector<PathNode *> _cleanupNodes;
+	Common::Array<PathNode *> _cleanupNodes;
 
 	bool alreadyVisited(const Point3 &pt) const;
 	void newNode(PathNode *oldnode, PathfindingState &state,

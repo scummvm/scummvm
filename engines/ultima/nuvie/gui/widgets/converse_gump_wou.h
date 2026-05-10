@@ -26,12 +26,10 @@
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/fonts/font.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {
-
-using Std::list;
 
 class Configuration;
 class Font;
@@ -59,11 +57,11 @@ public:
 
 	void Display(bool full_redraw) override;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 	GUI_status MouseMotion(int x, int y, uint8 state) override {
@@ -75,16 +73,16 @@ public:
 	GUI_status MouseLeave(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseClick(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDouble(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDelayed(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseHeld(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 
@@ -94,7 +92,7 @@ public:
 
 protected:
 
-	void input_add_string(Std::string token_str);
+	void input_add_string(Common::String token_str);
 	void process_page_break() override;
 	uint8 get_input_font_color() const override {
 		return FONT_COLOR_WOU_CONVERSE_INPUT;

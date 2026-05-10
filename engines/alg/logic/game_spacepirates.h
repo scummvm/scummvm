@@ -54,12 +54,14 @@ public:
 	GameSpacePirates(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameSpacePirates() override;
 	Common::Error run() override;
-	void debugWarpTo(int val);
+	void debug_warpTo(int val);
 
 private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
+	void fixScriptBugs();
 	SPScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	SPScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
 	void callScriptFunctionRectHit(Common::String name, Rect *rect);
@@ -76,18 +78,40 @@ private:
 	SPScriptFunctionSceneMap _sceneMissedRects;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_liveIcon1;
-	Graphics::Surface *_liveIcon2;
-	Graphics::Surface *_liveIcon3;
-	Graphics::Surface *_difficultyIcon;
-	Graphics::Surface *_bulletholeIcon;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_liveIcon1 = nullptr;
+	Graphics::Surface *_liveIcon2 = nullptr;
+	Graphics::Surface *_liveIcon3 = nullptr;
+	Graphics::Surface *_difficultyIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
+
+	// sounds
+	Audio::SeekableAudioStream *_saveSound = nullptr;
+	Audio::SeekableAudioStream *_loadSound = nullptr;
+	Audio::SeekableAudioStream *_difficultySound = nullptr;
+	Audio::SeekableAudioStream *_skullSound = nullptr;
+	Audio::SeekableAudioStream *_shotSound = nullptr;
+	Audio::SeekableAudioStream *_emptySound = nullptr;
 
 	// constants
 
 	// gamestate
+	uint8 _difficulty = 1;
+	uint8 _oldDifficulty = 1;
+	bool _holster = false;
+	int8 _lives = 0;
+	int8 _oldLives = 0;
+	int32 _score = 0;
+	int32 _oldScore = -1;
+	uint16 _shots = 0;
+	uint8 _oldShots = 0;
+	uint8 _whichGun = 0;
+	uint8 _oldWhichGun = 0xFF;
+
 	bool _gameLoaded = false;
 	int8 _livesLoaded = 0;
 	uint16 _shotsLoaded = 0;
@@ -134,8 +158,9 @@ private:
 	void displayScores();
 	void displayShotsLeft();
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
+	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
 
 	// misc game functions
 	void playErrorSound();
@@ -144,12 +169,13 @@ private:
 	void displayShotLine(uint16 startX, uint16 startY, uint16 endX, uint16 endY);
 	void displayMultipleShotLines();
 	void enableVideoFadeIn();
-	uint16 sceneToNumber(Scene *scene);
+	uint16 sceneToNumber(Common::String sceneName);
 	uint16 randomUnusedScene(uint8 max);
 	uint16 randomNumberInRange(uint16 min, uint16 max);
 	uint16 pickCrystalScene(uint16 scene1, uint16 scene2, uint16 scene3);
 
 	// Script functions: RectHit
+	void rectNewScene(Rect *rect);
 	void rectShotMenu(Rect *rect);
 	void rectSave(Rect *rect);
 	void rectLoad(Rect *rect);
@@ -158,6 +184,7 @@ private:
 	void rectEasy(Rect *rect);
 	void rectAverage(Rect *rect);
 	void rectHard(Rect *rect);
+	void rectExit(Rect *rect);
 	void rectDefault(Rect *rect);
 	void rectKillInnocentPerson(Rect *rect);
 	void rectContinueJunkRings(Rect *rect);
@@ -249,8 +276,8 @@ private:
 	// Script functions: Scene WepDwn
 	void sceneDefaultWepdwn(Scene *scene);
 
-	// Script functions: Scene ScnScr
-	void sceneDefaultScnscr(Scene *scene);
+	// Script functions: ScnScr
+	void sceneDefaultScore(Scene *scene);
 };
 
 class DebuggerSpacePirates : public GUI::Debugger {

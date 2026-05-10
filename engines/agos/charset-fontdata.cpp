@@ -28,6 +28,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/fonts/amigafont.h"
 
 namespace AGOS {
 
@@ -3005,6 +3006,9 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	color = window->textColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			y < 136 && (_windowNum == 1 || _windowNum == 2 || y >= 132))
+		color = (color & 0x0F) | 208;
 
 	do {
 		int8 b = *src++;
@@ -3025,7 +3029,133 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	_videoLockOut &= ~0x8000;
 }
 
+static inline byte pnPreserveBit7ShiftLeft1(byte x) {
+	byte shifted = (byte)(x << 1);
+	if (x & 0x80)
+		shifted |= 0x80;
+	return shifted;
+}
+
+static inline byte pnSqueezeRow(byte rawRow, bool anyBit1SetAcrossGlyph) {
+	byte x = pnPreserveBit7ShiftLeft1(rawRow);
+
+	byte hi = (byte)(x & 0xF0);
+	byte lo = (byte)(x & 0x0F);
+
+	if (anyBit1SetAcrossGlyph)
+		lo = (byte)(lo << 1);
+
+	byte combined = (byte)(hi | lo);
+	combined = (byte)(combined & 0xFC);
+	return combined;
+}
+
+static inline void pnSqueezeGlyph8Rows(const byte *src8, byte *dst8) {
+	byte orAll = 0;
+	for (int i = 0; i < 8; i++)
+		orAll = (byte)(orAll | src8[i]);
+
+	const bool anyBit1SetAcrossGlyph = (orAll & 0x02) != 0;
+
+	for (int i = 0; i < 8; i++)
+		dst8[i] = pnSqueezeRow(src8[i], anyBit1SetAcrossGlyph);
+}
+
+void AGOSEngine::drawPnAmigaTopazChar(WindowBlock *window, byte chr) {
+	PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+	if (plane == nullptr || plane->pixels == nullptr)
+		return;
+
+	Graphics::Surface surface;
+	surface.init(plane->width, plane->height, plane->width, plane->pixels, Graphics::PixelFormat::createFormatCLUT8());
+
+	const int x = window->textColumn;
+	const int y = window->textRow;
+	const int glyphWidth = getPnAmigaGlyphAdvance(' ');
+	const int fontHeight = getPnAmigaGlyphHeight();
+	if (chr == 128 && isPnAmigaInputWindow(window)) {
+		chr = '_';
+	}
+
+	if (chr == 128 || chr == 129) {
+		surface.fillRect(Common::Rect(x, y, x + glyphWidth, y + fontHeight), window->textColor);
+		return;
+	}
+
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return;
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return;
+
+	if (usePnAmigaDoubleHeightTopaz())
+		font->drawCharDoubleHeight(&surface, chr, x, y, window->textColor);
+	else
+		font->drawChar(&surface, chr, x + font->getCharDrawOffset(chr), y, window->textColor);
+}
+
+void AGOSEngine::drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr) {
+	const byte *src;
+	byte color, *dst;
+	uint dstPitch, h, w, i;
+
+	if (chr < 32 || (chr - 32) > 98)
+		return;
+
+	Graphics::Surface *screen = getBackendSurface();
+
+	dst = (byte *)screen->getPixels();
+	dstPitch = screen->pitch;
+	h = 8;
+	w = 6;
+
+	src = english_pnFont + (chr - 32) * 8;
+
+	byte pnTmp[8];
+	pnSqueezeGlyph8Rows(src, pnTmp);
+	src = pnTmp;
+
+	dst += y * dstPitch + x + window->textColumnOffset;
+
+	color = window->textColor;
+
+	do {
+		int8 b = *src++;
+		i = 0;
+		do {
+			if (b < 0) {
+				dst[i] = color;
+			}
+			b <<= 1;
+		} while (++i != w);
+		dst += dstPitch;
+	} while (--h);
+
+	Common::Rect dirtyRect(x + window->textColumnOffset, y,
+	                       x + window->textColumnOffset + 6, y + 8);
+	updateBackendSurface(&dirtyRect);
+}
+
+void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	if (isPnAmigaTextWindow(window)) {
+		(void)x;
+		(void)y;
+		_videoLockOut |= 0x8000;
+		drawPnAmigaTopazChar(window, chr);
+		compositePnAmigaTextPlane(window);
+		_videoLockOut &= ~0x8000;
+		return;
+	}
+	_videoLockOut |= 0x8000;
+	drawPnSqueezedChar(window, x, y, chr);
+	_videoLockOut &= ~0x8000;
+}
+
 void AGOSEngine_Elvira1::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
+		drawPnSqueezedChar(window, x, y, chr);
+		return;
+	}
 	if (_language != Common::JA_JPN || _forceAscii) {
 		AGOSEngine::windowDrawChar(window, x, y, chr);
 		return;

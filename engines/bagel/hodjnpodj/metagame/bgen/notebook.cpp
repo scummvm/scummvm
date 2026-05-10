@@ -39,6 +39,7 @@ namespace Gtl {
 #define TEXT_MORE_DY        5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB     "[ More ]"              // actual text to display for "more" indicator
 #define MORE_TEXT_LENGTH    8                       // # characters in "more" indicator string
+#define FONT_SIZE			32
 
 extern CBfcMgr *lpMetaGameStruct;
 
@@ -86,7 +87,6 @@ static  CFont *pNoteFont = nullptr;              // font to use for displaying n
 //static  bool        bInfoEOF = false;               // whether end-of-file has been reached
 
 static  bool        bActiveWindow = false;          // whether our window is active
-static  bool        bFirstTime = true;              // flag for first time information is displayed
 //static  int         nNotebook_DX, nNotebook_DY;     // size of useable notebook background
 //static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
 //static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
@@ -290,6 +290,7 @@ void CNotebook::OnDestroy() {
 		}
 	*/
 
+	bFirstTime = true;
 	CDialog::OnDestroy();
 }
 
@@ -380,7 +381,7 @@ void CNotebook::OnPaint() {
 void CNotebook::UpdateNotebook(CDC *pDC) {
 	CPalette *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);  // setup the proper palette
 	(*pDC).RealizePalette();
@@ -390,14 +391,14 @@ void CNotebook::UpdateNotebook(CDC *pDC) {
 		PaintMaskedBitmap(pDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		UpdateContent(pDC);
 		//		if (pTitleText != nullptr)
-		//			(*pTitleText).DisplayString(pDC, "Log Entries", 32, TEXT_HEAVY, RGB(128,0,128));
+		//			(*pTitleText).DisplayString(pDC, "Log Entries", FONT_SIZE, TEXT_HEAVY, RGB(128,0,128));
 	} else {
 		if (pBackgroundBitmap != nullptr)                                                      // ... otherwise revise work area
 			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		UpdateContent(pWorkDC);                                 // ... then zap it to the screen
 		//		if (pTitleText != nullptr)
-		//			(*pTitleText).DisplayString(pWorkDC, "Log Entries", 32, TEXT_HEAVY, RGB(128,0,128));
+		//			(*pTitleText).DisplayString(pWorkDC, "Log Entries", FONT_SIZE, TEXT_HEAVY, RGB(128,0,128));
 		(*pDC).BitBlt(0, 0, NOTEBOOK_DX, NOTEBOOK_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
 
@@ -413,7 +414,7 @@ void CNotebook::UpdateNote(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pNotebookDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
@@ -460,7 +461,7 @@ void CNotebook::UpdateContent(CDC *pDC) {
 				NOTE_TEXT_DX + NOTE_TEXT_DDX,
 				NOTE_TEXT_DY + NOTE_TEXT_DDY);
 			pText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
-			(*pText).DisplayString(pDC, "The log is empty ...", 32, TEXT_BOLD, RGB(128, 0, 128));
+			(*pText).DisplayString(pDC, "The log is empty ...", FONT_SIZE, TEXT_BOLD, RGB(128, 0, 128));
 			delete pText;
 			return;
 		} else
@@ -790,7 +791,7 @@ bool CNotebook::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CNotebook::DoWaitCursor() {
+void CNotebook::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

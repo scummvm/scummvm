@@ -1,0 +1,1778 @@
+.TH PYCDLIB-GENISOIMAGE 1 "Sep 2017" "pycdlib-genisoimage"
+
+.SH NAME
+pycdlib-genisoimage - tool to master ISOs using pycdlib
+
+.SH SYNOPSIS
+.B pycdlib-genisoimage [options] [-o filename] pathspec [pathspec ...]
+
+.SH DESCRIPTION
+.B pycdlib-genisoimage
+is a pre-mastering program to generate ISO9660/Joliet/HFS hybrid filesystems.
+It is meant to be 100% flag-compatible with the original
+.B genisoimage
+program so that it can be dropped into existing scripts with no changes.  Please
+see the man page for
+.B genisoimage
+for more detailed explanation of the options to this program.  There are a few
+differences to note between this program and the original
+.B genisoimage.
+First, not all of the options are implemented in this program.  This means that
+.B pycdlib-genisoimage
+will silently ignore some flags; for the most common usage of this program,
+this will not matter.  However, if you are trying to do something odd and
+specific, it may not work.  The flags that this applies to are noted in the
+OPTIONS below.  In some cases these flags can be implemented with a bit of
+work, and in some cases the flags can never be implemented due to the design
+of pycdlib.  If in doubt, please ask on https://github.com/clalancette/pycdlib/issues.
+Second,
+.B pycdlib-genisoimage
+does not output all of the same messages to standard out/standard error that
+.B genisoimage
+does.  Any program that relies on parsing the output of
+.B genisoimage
+will probably not work.  Third,
+.B pycdlib-genisoimage
+will not always generate ISOs that are 100% the same as the
+.B genisoimage
+counterparts.  This is for a variety of reasons, ranging from bug fixing to simple differences in implementations.  In almost all cases this does not matter, but please keep it in mind when using this program instead of
+.B genisoimage.
+
+.SH OPTIONS
+.TP
+.BI \-abstract " file"
+Specifies the abstract filename.  There is space for 37 characters.
+.TP
+.BI \-A " application_id"
+.TP
+.BI \-appid " application_id"
+Specifies a text string that will be written into the volume header.
+This should describe the application that will be on the disc.  There
+is space for 128 characters.
+.TP
+.B \-allow\-limited\-size
+(not supported by pycdlib-genisoimage) When processing files larger than 2GiB which cannot be easily represented in
+ISO9660, add them with a shrunk visible file size to ISO9660 and with the
+correct visible file size to the UDF system. The result is an inconsistent
+filesystem and users need to make sure that they really use UDF rather than
+ISO9660 driver to read a such disk. Implies enabling
+.BR \-udf.
+.TP
+.B \-allow\-leading\-dots
+.TP
+.B \-ldots
+(not supported by pycdlib-genisoimage) Allow ISO9660 filenames to begin with a period.  Usually, a leading dot is
+replaced with an underscore in order to maintain MS-DOS compatibility.
+.br
+This violates the ISO9660 standard, but it happens to work on many systems.
+Use with caution.
+.TP
+.B \-allow\-lowercase
+(not supported by pycdlib-genisoimage) This options allows lowercase characters to appear in ISO9660 filenames.
+.br
+This violates the ISO9660 standard, but it happens to work on some systems.
+Use with caution.
+.TP
+.B \-allow\-multidot
+(not supported by pycdlib-genisoimage) This options allows more than one dot to appear in ISO9660 filenames.
+A leading dot is not affected by this option, it
+may be allowed separately using
+.BR \-allow\-leading\-dots .
+.br
+This violates the ISO9660 standard, but it happens to work on many systems.
+Use with caution.
+.TP
+.BI \-biblio " file"
+Specifies the bibliographic filename.  There is space for 37 characters.
+.TP
+.B \-cache\-inodes
+.TP
+.B \-no\-cache\-inodes
+(not supported by pycdlib-genisoimage) Enable or disable caching inode and device numbers to find hard links
+to files.  If
+.B pycdlib-genisoimage
+finds a hard link (a file with multiple names), the file will also be
+hard-linked on the CD, so the file contents only appear once.  This
+helps to save space.
+.B \-cache\-inodes
+is default on Unix-like operating systems, but
+.B \-no\-cache\-inodes
+is default on some other systems such as Cygwin, because it is not safe
+to assume that inode numbers are unique on those systems.  (Some
+versions of Cygwin create fake inode numbers using a weak hashing
+algorithm, which may produce duplicates.)  If two files have the same
+inode number but are not hard links to the same file,
+.B pycdlib-genisoimage \-cache\-inodes
+will not behave correctly.
+.B \-no\-cache\-inodes
+is safe in all situations, but in that case
+.B pycdlib-genisoimage
+cannot detect hard links, so the resulting CD image may be larger
+than necessary.
+.TP
+.BI \-alpha\-boot " alpha_boot_image"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the boot image to be used when
+making an Alpha/SRM bootable CD. The pathname must be relative to the
+source path specified to
+.BR pycdlib-genisoimage .
+.TP
+.BI \-hppa\-bootloader " hppa_bootloader_image"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the boot image to be used when
+making an HPPA bootable CD. The pathname must be relative to the
+source path specified to
+.BR pycdlib-genisoimage .
+Other options are required, at the very least a kernel filename and
+a boot command line.
+.TP
+.BI \-hppa\-cmdline " hppa_boot_command_line"
+(not supported by pycdlib-genisoimage) Specifies the command line to be passed to the HPPA boot loader when
+making a bootable CD. Separate the parameters with spaces or
+commas. More options must be passed to
+.B pycdlib-genisoimage,
+at the very least a kernel filename and the boot loader filename.
+.TP
+.BI \-hppa\-kernel\-32 " hppa_kernel_32"
+.TP
+.BI \-hppa\-kernel\-64 " hppa_kernel_64"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the 32-bit and/or 64-bit kernel images
+to be used when making an HPPA bootable CD. The pathnames must be
+relative to the source path specified to
+.BR pycdlib-genisoimage .
+Other options are required, at the very least the boot loader filename
+and the boot command line.
+.TP
+.BI \-hppa\-ramdisk " hppa_ramdisk_image"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the ramdisk image to be used when
+making an HPPA bootable CD. The pathname must be relative to the
+source path specified to
+.BR pycdlib-genisoimage .
+This parameter is optional.  Other options are required, at the very
+least a kernel filename and the boot command line.
+.TP
+.BI \-mips\-boot " mips_boot_image"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the boot image to be used when
+making an SGI/big-endian MIPS bootable CD. The pathname must be
+relative to the source path specified to
+.BR pycdlib-genisoimage .
+This option may be specified several times, to store up to 15 boot
+images.
+.TP
+.BI \-mipsel\-boot " mipsel_boot_image"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the boot image to be used when
+making an DEC/little-endian MIPS bootable CD. The pathname must be
+relative to the source path specified to
+.BR pycdlib-genisoimage .
+.TP
+.BI \-B " img_sun4,img_sun4c,img_sun4m,img_sun4d,img_sun4e"
+.TP
+.BI \-sparc\-boot " img_sun4,img_sun4c,img_sun4m,img_sun4d,img_sun4e"
+(not supported by pycdlib-genisoimage) Specifies a comma-separated list of boot images that are needed to make
+a bootable CD for SPARC systems.
+Partition 0 is used for the ISO9660 image, the first image file is mapped
+to partition 1.
+The comma-separated list may have up to 7 fields, including empty fields.
+This option is required to make a bootable CD for Sun SPARC systems.
+If
+.B \-B
+or
+.B \-sparc\-boot
+has been specified, the first sector of the resulting image will
+contain a Sun disk label. This disk label specifies slice 0 for the
+ISO9660 image and slices 1 to 7 for the boot images that
+have been specified with this option. Byte offsets 512 to 8191
+within each of the additional boot images must contain a primary boot
+that works for the appropriate SPARC architecture. The rest of each
+of the images usually contains a UFS filesystem used for the primary
+kernel boot stage.
+.IP
+The implemented boot method is the one found with SunOS 4.x and SunOS 5.x.
+However, it does not depend on SunOS internals but only on properties of
+the Open Boot prom, so it should be usable for any OS for SPARC systems.
+For more information also see the
+.B NOTES
+section below.
+.IP
+If the special filename
+.B ...
+is used, the actual and all following boot partitions are mapped to the
+previous partition. If
+.B pycdlib-genisoimage
+is called with
+.BI \-G " image " \-B " ..."
+all boot partitions are mapped to the partition that contains the ISO9660
+filesystem image and the generic boot image that is located in the first
+16 sectors of the disc is used for all architectures.
+.TP
+.BI \-G " generic_boot_image"
+(not supported by pycdlib-genisoimage) Specifies the path and filename of the generic boot image to be used when making
+a generic bootable CD.  The boot image will be placed on the first 16
+sectors of the CD, before the ISO9660 primary volume descriptor.
+If this option is used together with
+.BR \-sparc\-boot ,
+the Sun disk label will overlay the first 512 bytes of the generic
+boot image.
+.TP
+.BI \-b " eltorito_boot_image"
+.TP
+.BI \-eltorito\-boot " eltorito_boot_image"
+Specifies the path and filename of the boot image to be used when making
+an El Torito bootable CD for x86 PCs. The pathname must be relative to
+the source path specified to
+.BR pycdlib-genisoimage .
+This option is required to make an El Torito bootable CD.
+The boot image must be exactly 1200 kB, 1440 kB or 2880 kB, and
+.B pycdlib-genisoimage
+will use this size when creating the output ISO9660 filesystem.  The PC
+BIOS will use the image to emulate a floppy disk, so the first 512-byte
+sector should contain PC boot code.  This will work, for example, if
+the boot image is a LILO-based boot floppy.
+.IP
+If the boot image is not an image of a floppy, you need to add either
+.BR \-hard\-disk\-boot " or " \-no\-emul\-boot .
+If the system should not boot off the emulated disk, use
+.BR \-no\-boot .
+.IP
+If
+.B \-sort
+has not been specified, the boot images are sorted
+with low priority (+2) to the beginning of the medium.
+If you don't like this, you need to specify a sort weight of 0 for the boot images.
+.TP
+.B \-eltorito\-alt\-boot
+Start with a new set of El Torito boot parameters.  Up to 63 El Torito
+boot entries may be stored on a single CD.
+.TP
+.BI \-hard\-disk\-boot
+Specifies that the boot image used to create El Torito bootable CDs is
+a hard disk image. The image must begin with a master boot
+record that contains a single partition.
+.TP
+.BI \-eltorito\-platform " id"
+(not supported by pycdlib-genisoimage) Set the "El Torito" platform id for a boot record or a section of boot records.
+The
+.I id
+parameter may be either:
+.RS
+.TP
+.B x86
+This is the default
+.I platform id
+value and specifies entries for the PC platform.
+If no
+.B \-eltorito\-platform
+option appears before the first
+.B \-eltorito\-boot
+option, the default boot entry becomes an entry for the x86 PC platform.
+.TP
+.B PPC
+Boot entries for the Power PC platform.
+.TP
+.B Mac
+Boot entries for the Apple Mac platform.
+.TP
+.B efi
+Boot entries for EFI based PCs.
+.TP
+.B #
+A numeric value specifying any platform id.
+.LP
+If the option
+.B \-eltorito\-platform
+appears before the first
+.B \-eltorito\-boot
+option, it sets the
+.I platform id
+for the default boot entry.
+.LP
+If the option
+.B \-eltorito\-platform
+appears after an
+.B \-eltorito\-boot
+option and sets the
+.I platform id
+to a value different from the previous value,
+it starts a new set of boot entries.
+.LP
+The second boot entry and any new
+.I platform id
+creates a new section header and reduces the number of boot
+entries per CD by one.
+.RE
+.TP
+.BI \-ignore\-error
+(not supported by pycdlib-genisoimage) Ignore errors.
+.B pycdlib-genisoimage
+by default aborts on several errors, such as read errors. With this option in effect,
+.B pycdlib-genisoimage
+tries to continue.
+Use with care.
+.TP
+.BI \-no\-emul\-boot
+Specifies that the boot image used to create El Torito bootable CDs is
+a "no emulation" image. The system will load and execute this image without
+performing any disk emulation.
+.TP
+.BI \-no\-boot
+Specifies that the created El Torito CD should be marked as not bootable. The
+system will provide an emulated drive for the image, but will boot off
+a standard boot device.
+.TP
+.BI \-boot\-load\-seg " segment_address"
+Specifies the load segment address of the boot image for no-emulation
+El Torito CDs.
+.TP
+.BI \-boot\-load\-size " load_sectors"
+Specifies the number of "virtual" (512-byte) sectors to load in
+no-emulation mode.  The default is to load the entire boot file.  Some
+BIOSes may have problems if this is not a multiple of 4.
+.TP
+.B \-boot\-info\-table
+Specifies that a 56-byte table with information of the CD-ROM layout
+will be patched in at offset 8 in the boot file.
+.TP
+.BI \-C " last_sess_start,next_sess_start"
+.TP
+.BI \-cdrecord\-params " last_sess_start,next_sess_start"
+(not supported by pycdlib-genisoimage) This option is needed to create a CD Extra or the image of a second
+session or a higher-level session for a multisession disc.
+.B \-C
+takes two numbers separated by a comma. The first is the first sector
+in the last session of the disc that should be appended to.
+The second number is the starting sector number of the new session.
+The correct numbers may be retrieved by calling
+.B wodim \-msinfo ...
+If
+.B \-C
+is used in conjunction with
+.BR \-M ,
+.B pycdlib-genisoimage
+will create a filesystem image that is intended to be a continuation
+of the previous session.
+If
+.B \-C
+is used without
+.BR \-M ,
+.B pycdlib-genisoimage
+will create a filesystem image that is intended to be used for a second
+session on a CD Extra. This is a multisession CD that holds audio data
+in the first session and an ISO9660 filesystem in the second session.
+.TP
+.BI \-c " boot_catalog"
+.TP
+.BI \-eltorito\-catalog " boot_catalog"
+Specifies the path and filename of the boot catalog, which is required
+for an El Torito bootable CD. The pathname must be relative to the source
+path specified to
+.BR pycdlib-genisoimage .
+This file will be inserted into the output tree and not created
+in the source filesystem, so be
+sure the specified filename does not conflict with an existing file, or
+it will be excluded. Usually a name like
+.I boot.catalog
+is chosen.
+.IP
+If
+.B \-sort
+has not been specified, the boot catalog sorted
+with low priority (+1) to the beginning of the medium.
+If you don't like this, you need to specify a sort weight of 0 for the boot catalog.
+.TP
+.B \-check\-oldnames
+(not supported by pycdlib-genisoimage) Check all filenames imported from the old session for compliance with
+the ISO9660 file naming rules.
+Without this option, only names longer than 31 characters are checked,
+as these files are a serious violation of the ISO9660 standard.
+.TP
+.BI \-check\-session " file"
+(not supported by pycdlib-genisoimage) Check all old sessions for compliance with actual
+.B pycdlib-genisoimage
+ISO9660 file naming rules.
+This is a high-level option that combines
+.B \-M
+.I file
+.BR "\-C 0,0 \-check\-oldnames" .
+For the parameter
+.IR file ,
+see the description of
+.BR \-M .
+.TP
+.BI \-checksum_algorithm_iso " alg1,alg2,..."
+(not supported by pycdlib-genisoimage) Specify the checksum types desired for the output image.
+.TP
+.BI \-checksum_algorithm_template " alg1,alg2,..."
+(not supported by pycdlib-genisoimage) Specify the checksum types desired for the output jigdo template.
+.TP
+.BI \-copyright " file"
+Specifies copyright information, typically a filename on the disc.
+There is space for 37 characters.
+.TP
+.B \-d
+.TP
+.B \-omit\-period
+(not supported by pycdlib-genisoimage) Do not append a period to files that do not have one.
+.br
+This violates the ISO9660 standard, but it happens to work on many systems.
+Use with caution.
+.TP
+.B \-D
+.TP
+.B \-disable\-deep\-relocation
+(not supported by pycdlib-genisoimage) Do not use deep directory relocation, and instead just pack them in the
+way we see them.
+.br
+If ISO9660:1999 has not been selected,
+this violates the ISO9660 standard, but it happens to work on many systems.
+Use with caution.
+.TP
+.B \-data\-change\-warn
+(not supported by pycdlib-genisoimage) If the size of a file changes while the file is being archived, treat this
+condition as a warning only that does not cause
+.B pycdlib-genisoimage
+to abort.
+.TP
+.B \-debug
+(not supported by pycdlib-genisoimage) Set debug flag.
+.TP
+.BI \-dir\-mode " mode"
+(not supported by pycdlib-genisoimage) Overrides the mode of directories used to create the image to
+.IR mode ,
+specified as 4 digits of permission bits as in
+.BR chmod (1).
+This option automatically enables Rock Ridge extensions.
+.TP
+.B \-dvd\-video
+(not supported by pycdlib-genisoimage) Generate a DVD-Video compliant UDF filesystem. This is done by sorting the
+order of the content of the appropriate files and by adding padding
+between the files if needed.
+Note that the sorting only works if the DVD-Video filenames include uppercase
+characters only.
+.IP
+Note that in order to get a DVD-Video compliant filesystem image, you
+need to prepare a DVD-Video compliant directory tree.  This requires a
+directory
+.B VIDEO_TS
+(all caps) in the root directory of the resulting DVD, and usually
+another directory
+.BR AUDIO_TS .
+.B VIDEO_TS
+needs to include all needed files (filenames must be all caps) for a
+compliant DVD-Video filesystem.
+.TP
+.BI \-e " efi_boot_file"
+.TP
+.BI \-efi\-boot " efi_boot_file"
+Set EFI boot image name.
+.TP
+.B \-f
+.TP
+.B \-follow\-links
+(not supported by pycdlib-genisoimage) Follow symbolic links when generating the filesystem.  When this option is not
+in use, symbolic links will be entered using Rock Ridge if enabled, otherwise
+they will be ignored.
+.TP
+.BI \-file\-mode " mode"
+(not supported by pycdlib-genisoimage) Overrides the mode of regular files used to create the image to
+.IR mode ,
+specified as 4 digits of permission bits as in
+.BR chmod (1).
+This option automatically enables Rock Ridge extensions.
+.TP
+.B \-find
+(not supported by pycdlib-genisoimage) This option acts a separator.
+If it is used, all
+.B pycdlib-genisoimage
+options must be to the left of the
+.B \-find
+option. To the right of the
+.B \-find
+option,
+.B pycdlib-genisoimage
+accepts the
+.B find
+command line syntax only.
+.sp
+The
+.B find
+expression acts as a filter between the source of file names and the
+consumer, which is archiving engine.
+If the
+.B find
+expression evaluated as TRUE, then the related file is selected for
+processing, otherwise it is omited.
+.sp
+In order to make the evaluation of the
+.B find
+expression more convenient,
+.B pycdlib-genisoimage
+implements additional
+.B find primaries
+that have side effects on the file meta data.
+.B pycdlib-genisoimage
+implements the following additional
+.B find
+primaries:
+.RS
+.TP
+.B \-help
+Lists the available
+.BR find (1)
+syntax.
+.TP
+.BI \-chgrp " gname"
+The primary always evaluates as true;
+it sets the group of the file to
+.IR gname .
+.TP
+.BI \-chmod " mode"
+The primary always evaluates as true;
+it sets the permissions of the file to
+.IR mode .
+Octal and symbolic permissions are accepted for
+.I mode
+as with
+.BR chmod (1).
+.TP
+.BI \-chown " uname"
+The primary always evaluates as true;
+it sets the owner of the file to
+.IR uname .
+.TP
+.B \-false
+The primary always evaluates as false;
+it allows to make the result of the full expression different from
+the result of a part of the expression.
+.TP
+.B \-true
+The primary always evaluates as true;
+it allows to make the result of the full expression different from
+the result of a part of the expression.
+.PP
+The command line:
+.PP
+.B pycdlib-genisoimage -o o.iso -find . ( -type d -ls -o false ) -o ! -type d
+.PP
+lists all directories and puts all non-directories to the image
+.BR o.iso .
+.PP
+The command line:
+.PP
+.B pycdlib-genisoimage -o o.iso -find . ( -type d -chown root -o true )
+.PP
+archives all directories so they appear to be owned by root in the archive,
+all non-directories are archived as they are in the file system.
+.PP
+Note that the
+.BR \-ls ,
+.B \-exec
+and the
+.B \-ok
+primary cannot be used if
+.B stdin
+or
+stdout
+has not been redirected.
+.RE
+.TP
+.BI \-gid " gid"
+(not supported by pycdlib-genisoimage) Overrides the group ID read from the source files to the value of
+.IR gid .
+Specifying this option automatically enables Rock Ridge extensions.
+.TP
+.B \-gui
+(not supported by pycdlib-genisoimage) Switch the behaviour for a GUI. This currently makes the output more verbose
+but may have other effects in the future.
+.TP
+.B \-graft\-points
+(not supported by pycdlib-genisoimage) Allow use of graft points for filenames. If this option is used, all
+filenames are checked for graft points. The filename is divided at the
+first unescaped equal sign. All occurrences of `\(rs' and `=' characters
+must be escaped with `\(rs' if
+.B \-graft\-points
+has been specified.
+.TP
+.BI \-hide " glob"
+Hide any files matching
+.IR glob ,
+a shell wildcard pattern, from being seen in the ISO9660 or Rock Ridge
+directory.
+.I glob
+may match any part of the filename or path.  If
+.I glob
+matches a directory, the contents of that directory will be hidden.
+In order to match a directory name, make sure the pathname does not include
+a trailing `/' character.
+All the hidden files will still be written to the output CD image file.
+See also
+.BR \-hide\-joliet ,
+and
+.IR README.hide .
+This option may be used multiple times.
+.TP
+.BI \-hide\-list " file"
+A file containing a list of shell wildcards to be hidden.  See
+.BR \-hide .
+.TP
+.BI \-hidden " glob"
+Add the hidden (existence) ISO9660 directory attribute for files and
+directories matching
+.IR glob ,
+a shell wildcard pattern.  This attribute will prevent the files from
+being shown by some MS-DOS and Windows commands.
+.I glob
+may match any part of the filename or path.
+In order to match a directory name, make sure the pathname does not include
+a trailing `/' character.
+This option may be used multiple times.
+.TP
+.BI \-hidden\-list " file"
+A file containing a list of shell wildcards to get the hidden
+attribute.  See
+.BR \-hidden .
+.TP
+.BI \-hide\-joliet " glob"
+Hide files and directories matching
+.IR glob ,
+a shell wildcard pattern, from being seen in the Joliet directory.
+.I glob
+may match any part of the filename or path.  If
+.I glob
+matches a directory, the contents of that directory will be hidden.
+In order to match a directory name, make sure the pathname does not include
+a trailing `/' character.
+All the hidden files will still be written to the output CD image file.
+This option is usually used with
+.BR \-hide .
+See also
+.IR README.hide .
+This option may be used multiple times.
+.TP
+.BI \-hide\-joliet\-list " file"
+A file containing a list of shell wildcards to be hidden from the
+Joliet tree.  See
+.BR \-hide\-joliet .
+.TP
+.B \-hide\-joliet\-trans\-tbl
+(not supported by pycdlib-genisoimage) Hide the
+.I TRANS.TBL
+files from the Joliet tree.
+These files usually don't make sense in the Joliet world as they list
+the real name and the ISO9660 name which may both be different from the
+Joliet name.
+.TP
+.B \-hide\-rr\-moved
+Rename the directory
+.I RR_MOVED
+to
+.I .rr_moved
+in the Rock Ridge tree.
+It seems to be impossible to completely hide the
+.I RR_MOVED
+directory from the Rock Ridge tree.
+This option only makes the visible tree less confusing for
+people who don't know what this directory is for.
+If you need to have no
+.I RR_MOVED
+directory at all, you should use
+.BR \-D .
+Note that if
+.B \-D
+has been specified, the resulting filesystem is not ISO9660
+level-1 compliant and will not be readable on MS-DOS.
+See also the
+.B NOTES
+section.
+.TP
+.BI \-hide\-udf " glob"
+Hide
+.I glob
+from being seen on the UDF directory.
+.I glob
+is a shell wild-card-style pattern that must match any part of the filename
+or path.
+Multiple globs may be hidden.
+If
+.I glob
+matches a directory, then the contents of that directory will be hidden.
+In order to match a directory name, make sure the pathname does not include
+a trailing '/' character.
+All the hidden files will still be written to the output CD image file.
+Should be used with the
+.B \-hide
+option.
+.TP
+.BI \-hide\-udf\-list " file"
+A file containing a list of
+.I globs
+to be hidden as above.
+.TP
+.BI \-input\-charset " charset"
+(not supported by pycdlib-genisoimage) Input charset that defines the characters used in local filenames.
+To get a list of valid charset names, call
+.BR "pycdlib-genisoimage \-input\-charset help" .
+To get a 1:1 mapping, you may use
+.B default
+as charset name. The default initial values are
+.I cp437
+on DOS-based systems and
+.I iso8859-1
+on all other systems.
+.TP
+.BI \-output\-charset " charset"
+(not supported by pycdlib-genisoimage) Output charset that defines the characters that will be used in Rock Ridge
+filenames.  Defaults to the input charset.  See
+.B CHARACTER SETS
+section below for more details.
+.TP
+.BI \-iso\-level " level"
+Set the ISO9660 conformance level. Valid numbers are 1 to 4.
+.IP
+With level 1, files may only consist of one section and filenames are
+restricted to 8.3 characters.
+.IP
+With level 2, files may only consist of one section.
+.IP
+With level 3, no restrictions (other than ISO-9660:1988) do apply.
+.IP
+With all ISO9660 levels from 1 to 3, all filenames are restricted to
+uppercase letters, numbers and underscores (_). Filenames are
+limited to 31 characters, directory nesting is limited to 8
+levels, and pathnames are limited to 255 characters.
+.IP
+Level 4 officially does not exist but
+.B pycdlib-genisoimage
+maps it to ISO-9660:1999, which is ISO9660 version 2.
+.IP
+With level 4, an enhanced volume descriptor with version number
+and file structure version number set to 2 is emitted.
+Directory nesting is not limited to 8 levels,
+there is no need for a file to contain a dot and the dot has no
+special meaning, filenames do not have version numbers,
+.\" (f XXX ??? The character used for filling byte positions which are
+.\"     specified to be characters is subject to agreement between the
+.\"     originator and the recipient of the volume),
+and filenames can be up to 207 characters long, or 197 characters if
+Rock Ridge is used.
+.IP
+When creating Version 2 images,
+.B pycdlib-genisoimage
+emits an enhanced volume descriptor, similar but not identical to a
+primary volume descriptor. Be careful not to use broken software
+to make ISO9660 images bootable by assuming a second PVD copy and patching
+this putative PVD copy into an El Torito VD.
+.TP
+.B \-J
+Generate Joliet directory records in addition to regular ISO9660
+filenames.  This is primarily useful when the discs are to be used on
+Windows machines.  Joliet filenames are specified in Unicode and each
+path component can be up to 64 Unicode characters long.
+Note that Joliet is not a standard \(em only Microsoft Windows and Linux
+systems can read Joliet extensions.  For greater portability, consider
+using both Joliet and Rock Ridge extensions.
+.TP
+.B \-joliet\-long
+(not supported by pycdlib-genisoimage) Allow Joliet filenames to be up to 103 Unicode characters, instead of
+64.  This breaks the Joliet specification, but appears to work. Use
+with caution.
+.\" The number 103 is derived from: the maximum Directory Record Length
+.\" (254), minus the length of Directory Record (33), minus CD-ROM XA
+.\" System Use Extension Information (14), divided by the UTF-16
+.\" character size (2).
+.TP
+.BI \-jcharset " charset"
+(not supported by pycdlib-genisoimage) A combination of
+.B \-J \-input\-charset
+.IR charset .
+.TP
+.B \-l
+.TP
+.B \-full\-iso9660\-filenames
+(not supported by pycdlib-genisoimage) Allow full 31-character filenames.  Normally the ISO9660 filename will be in an
+8.3 format which is compatible with MS-DOS, even though the ISO9660 standard
+allows filenames of up to 31 characters.  If you use this option, the disc may
+be difficult to use on a MS-DOS system, but will work on most other systems.
+Use with caution.
+.TP
+.B \-L
+Outdated option; use
+.B \-allow\-leading\-dots
+instead.
+.TP
+.BI \-jigdo\-jigdo " jigdo_file"
+(not supported by pycdlib-genisoimage) Produce a
+.B jigdo
+.I .jigdo
+metadata file as well as the filesystem image.
+.TP
+.BI \-jigdo\-template " template_file"
+(not supported by pycdlib-genisoimage) Produce a
+.B jigdo
+.I .template
+file as well as the filesystem image.
+.TP
+.BI \-jigdo\-min\-file\-size " size"
+(not supported by pycdlib-genisoimage) Specify the minimum size for a file to be listed in the
+.I .jigdo
+file. Default (and minimum allowed) is 1KB.
+.TP
+.BI \-jigdo\-force\-md5 " path"
+(not supported by pycdlib-genisoimage) Specify a file pattern where files
+.I must
+be contained in the externally-supplied MD5 list as supplied by
+.BR \-md5\-list .
+.TP
+.BI \-jigdo\-exclude " path"
+(not supported by pycdlib-genisoimage) Specify a file pattern where files will not be listed in the
+.I .jigdo
+file.
+.TP
+.BI \-jigdo\-map " path"
+(not supported by pycdlib-genisoimage) Specify a pattern mapping for the jigdo file
+(e.g.
+.IR Debian=/mirror/debian ).
+.TP
+.BI \-md5\-list " md5_file"
+(not supported by pycdlib-genisoimage) Specify a file containing the MD5sums, sizes and pathnames of the
+files to be included in the
+.I .jigdo
+file.
+.TP
+.BI \-jigdo\-template\-compress " algorithm"
+(not supported by pycdlib-genisoimage) Specify a compression algorithm to use for template date. gzip and
+bzip2 are currently supported, and gzip is the default.
+.TP
+.BI \-log\-file " log_file"
+Redirect all error, warning and informational messages to
+.I log_file
+instead of the standard error.
+.TP
+.B \-long\-rr\-time
+(not supported by pycdlib-genisoimage) Use the long ISO-9660 time format for the file time stamps used in Rock Ridge.
+This time format allows to represent year 0 .. year 9999 with a granularity of 10ms.
+.sp
+The short ISO-9660 time format only allows to represent year 1900 .. year 2155
+with a granularity of 1s.
+.TP
+.BI \-m " glob"
+Exclude files matching
+.IR glob ,
+a shell wildcard pattern, from being written to CD-ROM.
+.I glob
+may match either the filename component or the full pathname.
+This option may be used multiple times.  For example:
+.sp
+     pycdlib-genisoimage \-o rom \-m \(aq*.o\(aq \-m core \-m foobar
+.sp
+would exclude all files ending in `.o', or called
+.IR core " or " foobar
+from the image.  Note that if you had a directory called
+.IR foobar ,
+it too (and of course all its descendants) would be excluded.
+.TP
+.BI \-exclude\-list " file"
+A file containing a list of shell wildcards to be excluded.  See
+.BR \-m .
+.TP
+.B \-max\-iso9660\-filenames
+(not supported by pycdlib-genisoimage) Allow ISO9660 filenames to be up to 37 characters long.
+This option enables
+.B \-N
+as the extra name space is taken from the space reserved for
+file version numbers.
+.br
+This violates the ISO9660 standard, but it happens to work on many systems.
+Although a conforming application needs to provide a buffer space of at
+least 37 characters, discs created with this option may cause a buffer
+overflow in the reading operating system. Use with extreme care.
+.TP
+.BI \-M " path"
+.TP
+.BI \-M " device"
+.TP
+.BI \-dev " device"
+(not supported by pycdlib-genisoimage) Specifies path to existing ISO9660 image to be merged. The alternate form
+takes a SCSI device specifier that uses the same syntax as the
+.B dev=
+parameter of
+.BR wodim .
+The output of
+.B pycdlib-genisoimage
+will be a new session which should get written to the end of the
+image specified in
+.BR \-M .
+Typically this requires multisession capability for the CD recorder
+used to write the image.  This option may only be used in conjunction
+with
+.BR \-C .
+.TP
+.BI \-modification\-date " date-spec"
+(not supported by pycdlib-genisoimage) Set the
+.B modification date
+in the primary volume descriptor (PVD) to a value different from the current
+time.
+This allows e.g. to set up an intentional UUID for
+.BR grub .
+.sp
+.ne 3
+The format of
+.I date-spec
+is:
+.sp
+.nf
+	\fIyyyy\fR[\fImm\fR[\fIdd\fR[\fIhh\fR[\fImm\fR[\fIss\fR]\|]\|]\|]\|][.\fIhh\fR][+-\fIghgm\fR]
+.fi
+.sp
+The fields are
+.BR year ,
+.BR month ,
+.BR "day of month" ,
+.BR hour ,
+.BR minute ,
+.BR second ,
+.BR "hundreds of a second" ,
+.BR "GMT offset in hours and minutes" .
+The time is interpreted as local time.
+.sp
+Year and the GMT offset are four digit fields, all other fields take two digits.
+The GMT offset may be between -12 and +13 hours in 15 minute steps. Locations
+east to Greenwich have positive values. The value is the sum of the time zone offset
+and the effects from daylight saving time.
+Omited values are replaced by the minimal possible values.
+If the GMT offset is omited, it is computed from the local time value that has been
+supplied.
+.sp
+Between year and month as well as between month and day of month, a separator chosen
+from '/' and '-' may appear. In this case, the year may be a two digit number with
+values 69..99 representing 1969..1999 and values 00..68 representing 2000..2068.
+Between date and time spec, an optional space is permitted. Between hours and minutes
+as well as between minutes and seconds, an optional ':' separator is permitted.
+This allows
+.B pycdlib-genisoimage
+to parse the popular POSIX date format created by:
+.sp
+.nf
+	\fBdate "+%Y-%m-%d %H:%M:%S %z"\fR
+.fi
+.sp
+Note that the possible range for
+.I date-spec
+for 32 bit programs is limited to values up to 2038 Jan 19 04:14:07 GMT.
+.TP
+.B \-N
+.TP
+.B \-omit\-version\-number
+(not supported by pycdlib-genisoimage) Omit version numbers from ISO9660 filenames.
+.br
+This violates the ISO9660 standard, but no one really uses the
+version numbers anyway.  Use with caution.
+.TP
+.BI \-new\-dir\-mode " mode"
+(not supported by pycdlib-genisoimage) Specify the mode, a 4-digit number as used in
+.BR chmod (1),
+to use when creating new directories in the filesystem image.  The
+default is 0555.
+.TP
+.B \-nobak
+.TP
+.B \-no\-bak
+Exclude backup files files on the ISO9660 filesystem; that is,
+filenames that contain the characters `~' or `#' or end in
+.IR .bak .
+These are typically backup files for Unix text editors.
+.TP
+.B \-no\-limit\-pathtables
+(not supported by pycdlib-genisoimage) A ISO-9660 filesystem contains path tables that contain a list of directories.
+This list may contain many directories but only 65535 of them may be parent
+directories.
+When
+.B \-no\-limit\-pathtables
+is in use, further parent directories will be folded to the root directory
+and the resulting filesystem will no longer be usable on
+.BR DOS .
+.TP
+.B \-no\-long\-rr\-time
+(not supported by pycdlib-genisoimage) Use the short ISO-9660 time format for the file time stamps used in Rock Ridge.
+This time format allows to represent year 1990 .. year 2155 with a granularity of one second.
+.TP
+.B \-force\-rr
+(not supported by pycdlib-genisoimage) Do not use the automatic Rock Ridge attributes recognition for previous sessions.
+This can work around problems with images created by, e.g., NERO Burning ROM.
+.TP
+.B \-no\-rr
+(not supported by pycdlib-genisoimage) Do not use the Rock Ridge attributes from previous sessions.
+This may help to avoid problems when
+.B pycdlib-genisoimage
+finds illegal Rock Ridge signatures on an old session.
+.TP
+.B \-no\-split\-symlink\-components
+(not supported by pycdlib-genisoimage) Don't split the symlink components, but begin a new Continuation Area (CE)
+instead. This may waste some space, but the SunOS 4.1.4 cdrom driver
+has a bug in reading split symlink components.
+.IP
+It is questionable whether this option is useful nowadays.
+.TP
+.B \-no\-split\-symlink\-fields
+(not supported by pycdlib-genisoimage) Don't split the symlink fields, but begin a new Continuation Area (CE)
+instead. This may waste some space, but the SunOS 4.1.4 and
+Solaris 2.5.1 cdrom driver have a bug in reading split symlink fields
+(a `/' can be dropped).
+.IP
+It is questionable whether this option is useful nowadays.
+.TP
+.BI \-o " filename"
+Specify the output file for the the ISO9660 filesystem image.
+This can be a disk file, a tape drive, or it can correspond directly
+to the device name of the optical disc writer.  If not specified, stdout is
+used.  Note that the output can also be a block device for a regular
+disk partition, in which case the ISO9660 filesystem can be mounted
+normally to verify that it was generated correctly.
+.TP
+.B \-pad
+(not supported by pycdlib-genisoimage) Pad the end of the whole image by 150 sectors (300 kB).  This option is
+enabled by default.  If used in combination with
+.BR \-B ,
+padding is inserted between the ISO9660 partition and the boot
+partitions, such that the first boot partition starts
+on a sector number that is a multiple of 16.
+.IP
+The padding is needed as many operating systems (e.g. Linux)
+implement read-ahead bugs in their filesystem I/O. These bugs result in read
+errors on files that are located near the end of a track, particularly
+if the disc is written in Track At Once mode, or where a CD audio track
+follows the data track.
+.\" XXX: Someone should check to see if the Linux readahead bug is
+.\" XXX: still present, and update this comment accordingly.
+.TP
+.B \-no\-pad
+(not supported by pycdlib-genisoimage) Do not pad the end by 150 sectors (300 kB) and do not make the the boot partitions
+start on a multiple of 16 sectors.
+.TP
+.BI \-path\-list " file"
+A file containing a list of
+.I pathspec
+directories and filenames to be added to the ISO9660 filesystem. This list
+of pathspecs are processed after any that appear on the command line. If the
+argument is
+.IR \- ,
+the list is read from the standard input.
+.TP
+.B \-P
+Outdated option; use
+.B \-publisher
+instead.
+.TP
+.BI \-publisher " publisher_id"
+Specifies a text string that will be written into the volume header.
+This should describe the publisher of the CD-ROM, usually with a
+mailing address and phone number.  There is space for 128 characters.
+.TP
+.BI \-p " preparer_id"
+.TP
+.BI \-preparer " preparer_id"
+Specifies a text string that will be written into the volume header.
+This should describe the preparer of the CD-ROM, usually with a mailing
+address and phone number.  There is space on the disc for 128
+characters of information.
+The related Joliet entry is limited to 64 characters.
+.TP
+.B \-posix\-H
+(not supported by pycdlib-genisoimage) Follow all symbolic links encountered on command line when generating the filesystem.
+.TP
+.B \-posix\-L
+(not supported by pycdlib-genisoimage) Follow all symbolic links when generating the filesystem.
+When this option is not in use, symbolic links will be entered using
+Rock Ridge if enabled, otherwise the file will be ignored.
+.TP
+.B \-posix\-P
+(not supported by pycdlib-genisoimage) Do not follow symbolic links when generating the filesystem (this is the default).
+If
+.B \-posix\-P
+is specified after
+.B \-posix\-H
+or
+.BR \-posix\-L ,
+the effect of these options will be reset.
+.TP
+.B \-print\-size
+Print estimated filesystem size in multiples of the sector size (2048 bytes)
+and exit. This option is needed for
+Disk At Once mode and with some CD-R drives when piping directly into
+.BR wodim ,
+cases where
+.B wodim
+needs to know the size of the filesystem image in advance.
+Old versions of
+.B mkisofs
+wrote this information (among other information) to
+.IR stderr .
+As this turns out to be hard to parse, the number without any other information
+is now printed on
+.I stdout
+too.
+If you like to write a simple shell script, redirect
+.I stderr
+and catch the number from
+.IR stdout .
+This may be done with:
+.sp
+     cdblocks=\` pycdlib-genisoimage \-print\-size \-quiet .\|.\|. \`
+.br
+     pycdlib-genisoimage .\|.\|. | wodim .\|.\|. tsize=${cdblocks}s \-
+.TP
+.B \-quiet
+This makes
+.B pycdlib-genisoimage
+even less verbose.  No progress output will be provided.
+.TP
+.B \-R
+.TP
+.B \-rock
+Generate SUSP and RR records using the Rock Ridge protocol to further describe
+the files on the ISO9660 filesystem.
+.TP
+.B \-r
+.TP
+.B \-rational\-rock
+This is like the \-R option, but file ownership and modes are set to
+more useful values.  The uid and gid are set to zero, because they are
+usually only useful on the author's system, and not useful to the
+client.  All the file read bits are set true, so that files and
+directories are globally readable on the client.  If any execute bit is
+set for a file, set all of the execute bits, so that executables are
+globally executable on the client.  If any search bit is set for a
+directory, set all of the search bits, so that directories are globally
+searchable on the client.  All write bits are cleared, because the
+filesystem will be mounted read-only in any case.  If any of the special
+mode bits are set, clear them, because file locks are not useful on a
+read-only filesystem, and set-id bits are not desirable for uid 0 or
+gid 0.
+When used on Win32, the execute bit is set on
+.I all
+files. This is a result of the lack of file permissions on Win32 and the
+Cygwin POSIX emulation layer.  See also
+.BR \-uid ", " \-gid ,
+.BR \-dir\-mode ", " \-file\-mode
+and
+.BR \-new\-dir\-mode .
+.TP
+.B \-relaxed\-filenames
+(not supported by pycdlib-genisoimage) Allows ISO9660 filenames to include all 7-bit ASCII characters except
+lowercase letters.
+.br
+This violates the ISO9660 standard, but it happens to work on many systems.
+Use with caution.
+.TP
+.BI \-root " dir"
+(not supported by pycdlib-genisoimage) Moves all files and directories into
+.I dir
+in the image. This is essentially the
+same as using
+.B \-graft\-points
+and adding
+.I dir
+in front of every pathspec, but is easier to use.
+.I dir
+may actually be several levels deep. It is
+created with the same permissions as other graft points.
+.TP
+.B \-rrip110
+Create ISO-9660 file system images that follow the old Rrip Version-1.10 standard
+from 1993. This option may be needed if you know of systems that do not implement
+the Rrip protocol correctly and like the file system to be read by such a system.
+Currently no such system is known.
+.sp
+If a file system has been created with
+.BR \-rrip110 ,
+the Rock Ridge attributes do not include inode number information.
+.TP
+.B \-rrip112
+Create ISO-9660 file system images that follow the new Rrip Version-1.12 standard
+from 1994.
+.TP
+.BI \-old-root " dir"
+(not supported by pycdlib-genisoimage) This option is necessary when writing a multisession
+image and the previous (or even older) session was written with
+.B -root
+.IR dir .
+Using a directory name not found in the previous session
+causes
+.B pycdlib-genisoimage
+to abort with an error.
+Without this option,
+.B pycdlib-genisoimage
+would not be able to find unmodified files and would
+be forced to write their data into the image once more.
+.B \-root
+and
+.B \-old-root
+are meant to be used together to do incremental backups.
+The initial session would e.g. use:
+.B pycdlib-genisoimage \-root backup_1
+.IR dirs .
+The next incremental backup with
+.B pycdlib-genisoimage \-root backup_2 \-old-root backup_1
+.I dirs
+would take another snapshot of these directories. The first
+snapshot would be found in
+.BR backup_1 ,
+the second one in
+.BR backup_2 ,
+but only modified or new files need to be written
+into the second session.
+Without these options, new files would be added and old ones would be
+preserved. But old ones would be overwritten if the file was
+modified. Recovering the files by copying the whole directory back
+from CD would also restore files that were deleted
+intentionally. Accessing several older versions of a file requires
+support by the operating system to choose which sessions are to be
+mounted.
+.TP
+.BI \-s " sector type"
+.TP
+.BI \-sectype " sector type"
+(not supported by pycdlib-genisoimage) Set output sector type to e.g. data/xa1/raw.
+.TP
+.BI \-sort " sort_file"
+(not supported by pycdlib-genisoimage) Sort file locations on the media. Sorting is controlled by a file that
+contains pairs of filenames and sorting offset weighting.
+If the weighting is higher, the file will be located closer to the
+beginning of the media, if the weighting is lower, the file will be located
+closer to the end of the media. There must be only one space or tabs
+character between the filename and the
+weight and the weight must be the last characters on a line. The filename
+is taken to include all the characters up to, but not including the last
+space or tab character on a line. This is to allow for space characters to
+be in, or at the end of a filename.
+This option does
+.B not
+sort the order of the filenames that appear
+in the ISO9660 directory. It sorts the order in which the file data is
+written to the CD image, which is useful in order to optimize the
+data layout on a CD. See
+.B README.sort
+for more details.
+.TP
+.BI \-sparc\-boot " img_sun4,img_sun4c,img_sun4m,img_sun4d,img_sun4e"
+(not supported by pycdlib-genisoimage) See
+.B \-B
+above.
+.TP
+.BI \-sparc\-label " label"
+(not supported by pycdlib-genisoimage) Set the Sun disk label name for the Sun disk label that is created with
+.BR \-sparc-boot .
+.TP
+.B \-split\-output
+(not supported by pycdlib-genisoimage) Split the output image into several files of approximately 1 GB each.
+This helps to create DVD-sized ISO9660 images on operating systems without
+large file support.
+.B wodim
+will concatenate more than one file into a single track if writing to a DVD.
+To make
+.B \-split\-output
+work,
+.BI \-o " filename"
+must be specified. The resulting output images will be named:
+.IR filename_00 ", " filename_01 ", " filename_02 ....
+.TP
+.BI \-stream\-media\-size " #"
+(not supported by pycdlib-genisoimage) Select streaming operation and set the media size to # sectors.
+This allows you to pipe the output of the
+.BR tar (1)
+program into
+.B pycdlib-genisoimage
+and to create an ISO9660 filesystem without the need of an intermediate
+tar archive file.
+If this option has been specified,
+.B pycdlib-genisoimage
+reads from
+.I stdin
+and creates a file with the name
+.IR STREAM.IMG .
+The maximum size of the file (with padding) is 200 sectors less than the
+specified media size. If
+.B \-no\-pad
+has been specified, the file size is 50 sectors less than the specified media size.
+If the file is smaller,
+.B pycdlib-genisoimage
+will write padding. This may take awhile.
+.IP
+The option
+.B \-stream\-media\-size
+creates simple ISO9660 filesystems only and may not used together with multisession
+or hybrid filesystem options.
+.TP
+.BI \-stream\-file\-name " name"
+Reserved for future use.
+.TP
+.BI \-sunx86\-boot " UFS_img,,,AUX1_img"
+(not supported by pycdlib-genisoimage) Specifies a comma-separated list of filesystem images that are needed to make
+a bootable CD for Solaris x86 systems.
+.IP
+Note that partition 1 is used for the ISO9660 image and that partition 2 is
+the whole disk, so partition 1 and 2 may not be used by external partition data.
+The first image file is mapped to partition 0.
+There may be empty fields in the comma-separated list,
+and list entries for partition 1 and 2 must be empty.
+The maximum number of supported partitions is 8 (although the Solaris x86
+partition table could support up to 16 partitions), so it is impossible
+to specify more than 6 partition images.
+This option is required to make a bootable CD for Solaris x86 systems.
+.IP
+If
+.B \-sunx86\-boot
+has been specified, the first sector of the resulting image will
+contain a PC fdisk label with a Solaris type 0x82 fdisk partition that
+starts at offset 512 and spans the whole CD.
+In addition, for the Solaris type 0x82 fdisk partition, there is a
+SVr4 disk label at offset 1024 in the first sector of the CD.
+This disk label specifies slice 0 for the first (usually UFS type)
+filesystem image that is used to boot the PC and slice 1 for
+the ISO9660 image.
+Slice 2 spans the whole CD slice 3 .\|.\|. slice 7 may be used for additional
+filesystem images that have been specified with this option.
+.IP
+A Solaris x86 boot CD uses a 1024 byte sized primary boot that uses the
+.B El-Torito no-emulation
+boot mode and a secondary generic boot that is in CD sectors 1\|.\|.15.
+For this reason, both
+.BI "-b " bootimage " \-no\-emul\-boot"
+and
+.BI \-G " genboot"
+must be specified.
+.TP
+.BI \-sunx86\-label " label"
+(not supported by pycdlib-genisoimage) Set the SVr4 disk label name for the SVr4 disk label that is created with
+.BR \-sunx86-boot .
+.TP
+.BI \-sysid " ID"
+Specifies the system ID.  There is space for 32 characters.
+.TP
+.B \-T
+.TP
+.B \-translation\-table
+(not supported by pycdlib-genisoimage) Generate a file
+.I TRANS.TBL
+in each directory on the CD-ROM, which can be used
+on non-Rock\ Ridge-capable systems to help establish the correct filenames.
+There is also information present in the file that indicates the major and
+minor numbers for block and character devices, and each symlink has the name of
+the link file given.
+.TP
+.BI \-table\-name " table_name"
+(not supported by pycdlib-genisoimage) Alternative translation table filename (see above). Implies
+.BR \-T .
+If you are creating a multisession image you must use the same name
+as in the previous session.
+.TP
+.BI \-ucs\-level " level"
+Set Unicode conformance level in the Joliet SVD. The default level is 3.
+It may be set to 1..3 using this option.
+.TP
+.B \-UDF
+Include a
+.B UDF
+hybrid in the generated filesystem image.
+As
+.B pycdlib-genisoimage
+always creates a ISO-9660 filesystem,
+it is not possible to create UDF only images.
+Note that
+.B UDF
+wastes the space from sector ~20 to sector 256 at the beginning of the disk
+in addition to the space needed for real
+.B UDF
+data structures.
+.TP
+.B \-udf
+Rationalized UDF with user and group set to 0 and with simplified permissions.
+See
+.B \-r
+option for more information.
+.TP
+.B \-udf\-symlinks
+Support symlinks in
+.B UDF
+filesystems. This is the default.
+.TP
+.B \-no\-udf\-symlinks
+Do not support symlinks in
+.B UDF
+filesystems.
+.TP
+.BI \-uid " uid"
+(not supported by pycdlib-genisoimage) Overrides the uid read from the source files to the value of
+.IR uid .
+Specifying this option automatically enables Rock Ridge extensions.
+.TP
+.B \-use\-fileversion
+(not supported by pycdlib-genisoimage) The option
+.B \-use\-fileversion
+allows
+.B pycdlib-genisoimage
+to use file version numbers from the filesystem.
+If the option is not specified,
+.B pycdlib-genisoimage
+creates a version number of 1 for all files.
+File versions are strings in the range
+.I ;1
+to
+.I ;32767
+This option is the default on VMS.
+.TP
+.B \-U
+.TP
+.B \-untranslated\-filenames
+(not supported by pycdlib-genisoimage) Allows "untranslated" filenames, completely violating the ISO9660 standards
+described above.  Enables the following flags:
+.B \-d \-l \-N \-allow\-leading\-dots \-relaxed\-filenames
+.BR "\-allow\-lowercase \-allow\-multidot \-no\-iso\-translate" .
+Allows more than one `.' character in the filename, as well as
+mixed-case filenames.  This is useful on HP-UX, where the built-in
+.I cdfs
+filesystem does not recognize any extensions. Use with extreme caution.
+.TP
+.B \-no\-iso\-translate
+(not supported by pycdlib-genisoimage) Do not translate the characters `#' and `~' which are invalid for ISO9660 filenames.
+Although invalid, these characters are often used by Microsoft systems.
+.br
+This violates the ISO9660 standard, but it happens to work on many systems.
+Use with caution.
+.TP
+.BI \-V " volid"
+Specifies the volume ID (volume name or label) to be written into the
+master block.  There is space for 32 characters.
+The volume ID is used as the mount point by the Solaris volume
+manager and as a label assigned to a disc on various other platforms
+such as Windows and Apple Mac OS.
+.TP
+.BI \-volset " ID"
+Specifies the volume set ID.  There is space for 128 characters.
+.TP
+.BI \-volset\-size " #"
+Sets the volume set size to #.
+The volume set size is the number of CDs that are in a CD volume set.
+A volume set is a collection of one or more volumes, on which a set of
+files is recorded.
+.IP
+Volume Sets are not intended to be used to create a set numbered CDs
+that are part of e.g. a Operation System installation set of CDs.
+Volume Sets are rather used to record a big directory tree that would not
+fit on a single volume.
+Each volume of a Volume Set contains a description of all the directories
+and files that are recorded on the volumes where the sequence numbers
+are less than, or equal to, the assigned Volume Set Size of the current
+volume.
+.IP
+.B pycdlib-genisoimage
+currently does not support a
+.B \-volset\-size
+that is larger than 1.
+.IP
+The option
+.B \-volset\-size
+must be specified before
+.B \-volset\-seqno
+on each command line.
+.TP
+.BI \-volset\-seqno " #"
+Sets the volume set sequence number to #.
+The volume set sequence number is the index number of the current
+CD in a CD set.
+The option
+.B \-volset\-size
+must be specified before
+.B \-volset\-seqno
+on each command line.
+.TP
+.B \-v
+.TP
+.B \-verbose
+Verbose execution. If given twice on the command line, extra debug information
+will be printed.
+.TP
+.BI \-x " glob"
+Identical to
+.B \-m
+.IR glob .
+.TP
+.B \-XA
+Generate XA directory attruibutes.
+.TP
+.B \-xa
+Generate rationalized XA directory attruibutes.
+.TP
+.B \-z
+.TP
+.B \-transparent\-compression
+(not supported by pycdlib-genisoimage) Generate special
+.I RRIP
+records for transparently compressed files.
+This is only of use and interest for hosts that support transparent
+decompression, such as Linux 2.4.14 or later.  You must specify
+.BR \-R " or " \-r
+to enable Rock Ridge, and generate compressed files using the
+.B mkzftree
+utility before running
+.BR pycdlib-genisoimage .
+Note that transparent compression is a nonstandard Rock Ridge extension.
+The resulting disks are only transparently readable if used on Linux.
+On other operating systems you will need to call
+.B mkzftree
+by hand to decompress the files.
+.TP
+.B \-scan\-for\-duplicates
+Keep a running list of file hashes, attempting to link as many files together
+as possible.  This results in the smallest possible ISO image, but may be
+very slow, particular with large files.
+.\" ----------------------------------------
+.SH "HFS OPTIONS"
+.TP
+.B \-hfs
+(not supported by pycdlib-genisoimage) Create an ISO9660/HFS hybrid CD. This option should be used in conjunction
+with the
+.BR \-map ,
+.B \-magic
+and/or the various
+.I double dash
+options given below.
+.TP
+.B \-no\-hfs
+Do not create an ISO-9660/HFS hybrid CD even though other options may imply to do so.
+.TP
+.B \-apple
+(not supported by pycdlib-genisoimage) Create an ISO9660 CD with Apple's extensions. Similar to
+.BR \-hfs ,
+except that the Apple Extensions to ISO9660 are added instead of
+creating an HFS hybrid volume.
+Former
+.B pycdlib-genisoimage
+versions did include Rock Ridge attributes by default if
+.B \-apple
+was specified. This versions of
+.B pycdlib-genisoimage
+does not do this anymore. If you like to have Rock Ridge attributes,
+you need to specify this separately.
+.TP
+.BI \-map " mapping_file"
+(not supported by pycdlib-genisoimage) Use the
+.I mapping_file
+to set the CREATOR and TYPE information for a file based on the
+filename's extension. A filename is
+mapped only if it is not one of the know Apple/Unix file formats.
+.TP
+.BI \-magic " magic_file"
+(not supported by pycdlib-genisoimage) The CREATOR and TYPE information is set by using a file's
+.I magic number
+(usually the first few bytes of a file). The
+.I magic_file
+is only used if a file is not one of the known Apple/Unix file formats, or
+the filename extension has not been mapped using
+.BR \-map .
+.TP
+.BI \-hfs\-creator " creator"
+(not supported by pycdlib-genisoimage) Set the default CREATOR for all files. Must be exactly 4 characters.
+.TP
+.BI \-hfs\-type " type"
+(not supported by pycdlib-genisoimage) Set the default TYPE for all files. Must be exactly 4 characters.
+.TP
+.B \-probe
+(not supported by pycdlib-genisoimage) Search the contents of files for all the known Apple/Unix file formats.
+However, the only way to check for
+.I MacBinary
+and
+.I AppleSingle
+files is to open and read them, so this option may
+increase processing time. It is better to use one or more
+.I double dash
+options given below if the Apple/Unix formats in use are known.
+.TP
+.B \-no\-desktop
+(not supported by pycdlib-genisoimage) Do not create (empty) Desktop files. New HFS Desktop files will be created
+when the CD is used on a Macintosh (and stored in the System Folder).
+By default, empty Desktop files are added to the HFS volume.
+.TP
+.B \-mac\-name
+(not supported by pycdlib-genisoimage) Use the HFS filename as the starting point for the ISO9660, Joliet and
+Rock Ridge filenames.
+.TP
+.BI \-boot\-hfs\-file " driver_file"
+(not supported by pycdlib-genisoimage) Installs the
+.I driver_file
+that
+.I may
+make the CD bootable on a Macintosh.
+.TP
+.B \-part
+(not supported by pycdlib-genisoimage) Generate an HFS partition table. By default, no partition table is generated,
+but some older Macintosh CD-ROM drivers need an HFS partition table on the
+CD-ROM to be able to recognize a hybrid CD-ROM.
+.TP
+.BI \-auto " AutoStart_file"
+(not supported by pycdlib-genisoimage) Make the HFS CD use the QuickTime 2.0 Autostart feature to launch an
+application or document. The given filename must be the name of a document or
+application located at the top level of the CD. The filename must be less
+than 12 characters. (Alpha).
+.TP
+.BI \-cluster\-size " size"
+(not supported by pycdlib-genisoimage) Set the size in bytes of the cluster or allocation units of PC Exchange
+files. Implies
+.BR \-\-exchange .
+.TP
+.BI \-hide\-hfs " glob"
+(not supported by pycdlib-genisoimage) Hide
+.IR glob ,
+a shell wildcard pattern, from the HFS volume.  The file or directory
+will still exist in the ISO9660 and/or Joliet directory.
+.I glob
+may match any part of the filename.  Multiple globs may be excluded.
+Example:
+.sp
+     pycdlib-genisoimage \-o rom \-hfs \-hide\-hfs \(aq*.o\(aq \-hide\-hfs foobar
+.sp
+would exclude all files ending in `.o' or called
+.I foobar
+from the HFS volume. Note that if you had a directory called
+.IR foobar ,
+it too (and of course all its descendants) would be excluded.  The
+.I glob
+can also be a path name relative to the source directories given on the
+command line. Example:
+.sp
+     pycdlib-genisoimage \-o rom \-hfs \-hide\-hfs src/html src
+.sp
+would exclude just the file or directory called
+.I html
+from the
+.I src
+directory.  Any other file or directory called
+.I html
+in the tree will not be excluded.  Should be used with
+.B \-hide
+and/or
+.BR \-hide\-joliet .
+In order to match a directory name, make sure the pattern does not
+include a trailing `/' character. See
+.I README.hide
+for more details.
+.TP
+.BI \-hide\-hfs\-list " file"
+(not supported by pycdlib-genisoimage) Specify a file containing a list of wildcard patterns to be hidden as in
+.BR \-hide\-hfs .
+.TP
+.BI \-hfs\-volid " hfs_volid"
+(not supported by pycdlib-genisoimage) Volume name for the HFS partition. This is the name that is
+assigned to the disc on a Macintosh and replaces the
+.I volid
+used with
+.BR \-V .
+.TP
+.B \-icon\-position
+(not supported by pycdlib-genisoimage) Use the icon position information, if it exists, from the Apple/Unix file.
+The icons will appear in the same position as they would on a Macintosh
+desktop. Folder location and size on screen, its scroll positions, folder
+View (view as Icons, Small Icons, etc.) are also preserved.
+.\" This option may become set by default in the future.
+(Alpha).
+.TP
+.BI \-root\-info " file"
+(not supported by pycdlib-genisoimage) Set the location, size on screen, scroll positions, folder View etc. for the
+root folder of an HFS volume. See
+.I README.rootinfo
+for more information.  (Alpha)
+.TP
+.BI \-prep\-boot " file"
+(not supported by pycdlib-genisoimage) PReP boot image file. Up to 4 are allowed. See
+.I README.prep_boot
+for more information.  (Alpha)
+.TP
+.BI \-chrp\-boot
+(not supported by pycdlib-genisoimage) Add CHRP boot header.
+.TP
+.BI \-input\-hfs\-charset " charset"
+(not supported by pycdlib-genisoimage) Input charset that defines the characters used in HFS filenames when
+used with
+.BR \-mac\-name .
+The default charset is
+.I cp10000
+(Mac Roman).
+.TP
+.BI \-output\-hfs\-charset " charset"
+(not supported by pycdlib-genisoimage) Output charset that defines the characters that will be used in the HFS
+filenames. Defaults to the input charset.
+.TP
+.B \-hfs\-unlock
+(not supported by pycdlib-genisoimage) By default,
+.B pycdlib-genisoimage
+will create an HFS volume that is locked.
+This option leaves the volume unlocked so that other applications (e.g.
+.BR hfsutils )
+can modify the volume.
+.TP
+.BI \-hfs\-bless " folder_name"
+(not supported by pycdlib-genisoimage) "Bless" the given directory (folder). This is usually the
+.I System Folder
+and is used in creating HFS bootable CDs. The name of the directory must
+be the whole path name as
+.B pycdlib-genisoimage
+sees it.  E.g., if the given pathspec is
+.I ./cddata
+and the required folder is called
+.IR "System Folder" ,
+the whole path name is
+.I \(dq/cddata/System Folder\(dq
+(remember to use quotes if the name contains spaces).
+.TP
+.BI \-hfs\-parms " parameters"
+(not supported by pycdlib-genisoimage) Override certain parameters used to create the HFS filesystem. Unlikely to
+be used in normal circumstances.
+.TP
+.B \-\-cap
+(not supported by pycdlib-genisoimage) Look for AUFS CAP Macintosh files. Search for CAP Apple/Unix file formats
+only. Searching for the other possible Apple/Unix file formats is disabled,
+unless other
+.I double dash
+options are given.
+.TP
+.B \-\-netatalk
+(not supported by pycdlib-genisoimage) Look for NETATALK Macintosh files
+.TP
+.B \-\-double
+(not supported by pycdlib-genisoimage) Look for AppleDouble Macintosh files
+.TP
+.B \-\-ethershare
+(not supported by pycdlib-genisoimage) Look for Helios EtherShare Macintosh files
+.TP
+.B \-\-ushare
+(not supported by pycdlib-genisoimage) Look for IPT UShare Macintosh files
+.TP
+.B \-\-exchange
+(not supported by pycdlib-genisoimage) Look for PC Exchange Macintosh files
+.TP
+.B \-\-sgi
+(not supported by pycdlib-genisoimage) Look for SGI Macintosh files
+.TP
+.B \-\-xinet
+(not supported by pycdlib-genisoimage) Look for XINET Macintosh files
+.TP
+.B \-\-macbin
+(not supported by pycdlib-genisoimage) Look for MacBinary Macintosh files
+.TP
+.B \-\-single
+(not supported by pycdlib-genisoimage) Look for AppleSingle Macintosh files
+.TP
+.B \-\-dave
+(not supported by pycdlib-genisoimage) Look for Thursby Software Systems DAVE Macintosh files
+.TP
+.B \-\-sfm
+(not supported by pycdlib-genisoimage) Look for Microsoft's Services for Macintosh files (NT only) (Alpha)
+.TP
+.B \-\-osx\-double
+(not supported by pycdlib-genisoimage) Look for Mac OS X AppleDouble Macintosh files
+.TP
+.B \-\-osx\-hfs
+(not supported by pycdlib-genisoimage) Look for Mac OS X HFS Macintosh files
+
+.SH SEE ALSO
+genisoimage(1), pycdlib-explorer(1), pycdlib-extract-files(1)
+
+.SH AUTHOR
+Chris Lalancette <clalancette@gmail.com>

@@ -63,6 +63,8 @@ jmethodID NetJNI::_MID_socket_recv = 0;
 jmethodID NetJNI::_MID_socket_close = 0;
 
 #ifdef USE_HTTP
+jclass NetJNI::_CLS_HTTPManager = nullptr;
+
 jmethodID NetJNI::_MID_manager_init = 0;
 jmethodID NetJNI::_MID_manager_startRequest = 0;
 jmethodID NetJNI::_MID_manager_poll = 0;
@@ -139,6 +141,7 @@ void NetJNI::init(JNIEnv *env) {
 
 #ifdef USE_HTTP
 	cls = env->FindClass("org/scummvm/scummvm/net/HTTPManager");
+	_CLS_HTTPManager = (jclass)env->NewGlobalRef(cls);
 
 	FIND_CONSTRUCTOR(manager_, "()");
 	FIND_METHOD(manager_, startRequest, "(Lorg/scummvm/scummvm/net/HTTPRequest;)V");

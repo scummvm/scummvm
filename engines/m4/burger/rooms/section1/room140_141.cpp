@@ -21,8 +21,11 @@
 
 #include "m4/burger/rooms/section1/room140_141.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -116,8 +119,8 @@ static const seriesStreamBreak SERIES1[] = {
 };
 
 static const seriesStreamBreak SERIES2[] = {
-	{ 5, "141_007", 1, 255, -1, 0, 0, 0 },
-	{ 9, 0, 2, 255, 3, 0, 0, 0 },
+	{ 5, "141_007", 1, 255, -1, 0, nullptr, 0 },
+	{ 9, nullptr, 2, 255, 3, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -310,31 +313,31 @@ void Room140_141::daemon() {
 				if (imath_ranged_rand(1, 15) == 1) {
 					digi_stop(2);
 					_trufflesMode = 1;
-					Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
+					Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				} else {
 					playRandom();
 					frame = imath_ranged_rand(7, 8);
-					Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, frame, frame);
+					Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, frame, frame);
 				}
 			} else {
 				digi_stop(2);
 				_trufflesMode = 1;
-				Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 4:
 			_trufflesMode = 3;
-			Series::series_play("140tr01", 0xa00, 0, 6, 6, 0, 100, 0, 0, 9, 11);
+			Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 6, 0, 100, 0, 0, 9, 11);
 			break;
 
 		case 7:
 			if (_trufflesShould == 7) {
 				frame = imath_ranged_rand(5, 6);
-				Series::series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140tr02", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				Series::series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, 7, 8);
+				Series::series_play("140tr02", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 7, 8);
 			}
 			break;
 
@@ -343,14 +346,14 @@ void Room140_141::daemon() {
 			case 10:
 				digi_play("140t002", 2, 255, 12);
 				_trufflesMode = 10;
-				Series::series_play("140tr06", 0xa00, 0, 6, 8, 0, 100, 0, 0, 0, 4);
+				Series::series_play("140tr06", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 8, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 12:
 				digi_play(Common::String::format("140t004%c", 'a' + imath_ranged_rand(0, 3)).c_str(),
 					2, 255, 10);
 				_trufflesMode = 12;
-				Series::series_play("140tr07", 0xa00, 0, 6, 7, 0, 100, 0, 0, 0, 3);
+				Series::series_play("140tr07", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 0, 3);
 
 				if (player_said("gear", "dock") || player_said("try to dock")) {
 					kernel_timing_trigger(90, 16);
@@ -477,7 +480,7 @@ void Room140_141::daemon() {
 				break;
 
 			case 24:
-				_elmoShould = 24;
+				_elmoMode = 24;
 				Series::series_play("140pe06", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 				kernel_timing_trigger(60, 19);
 				break;
@@ -663,7 +666,14 @@ void Room140_141::daemon() {
 				digi_unload("141_002");
 				digi_unload("141_003");
 				break;
+
+			default:
+				break;
 			}
+			break;
+			
+		default:
+			break;
 		}
 		break;
 
@@ -673,14 +683,14 @@ void Room140_141::daemon() {
 			switch (_wilburShould) {
 			case 50:
 				_wilburShould = 51;
-				_flag2 = 1;
+				_flag2 = true;
 				digi_preload_stream_breaks(&SERIES4[0]);
 				series_stream_with_breaks(&SERIES4[0], _G(flags)[V000] == 1002 ? "141wi01" : "140wi01",
 					6, 0xf00, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 51:
-				_flag2 = 0;
+				_flag2 = false;
 				_series2 = series_play(_G(flags)[V000] == 1002 ? "141wave" : "140wave",
 					0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
 				_wilburShould = 52;
@@ -709,7 +719,7 @@ void Room140_141::daemon() {
 
 			case 55:
 				terminateMachineAndNull(_series2);
-				_flag2 = 1;
+				_flag2 = true;
 
 				series_stream_with_breaks(SERIES3, _G(flags)[V000] == 1002 ? "141wi03" : "140wi03",
 					10, 0xf00, 18);
@@ -717,7 +727,7 @@ void Room140_141::daemon() {
 
 			case 56:
 				terminateMachineAndNull(_series2);
-				_flag2 = 1;
+				_flag2 = true;
 
 				series_stream_with_breaks(SERIES3, _G(flags)[V000] == 1002 ? "141wi03" : "140wi03",
 					6, 0xf00, 18);
@@ -843,7 +853,7 @@ void Room140_141::daemon() {
 		break;
 
 	case kWILBUR_SPEECH_STARTED:
-		_G(kernel).continue_handling_trigger = 1;
+		_G(kernel).continue_handling_trigger = true;
 		_wilburShould = 53;
 		break;
 
@@ -854,7 +864,7 @@ void Room140_141::daemon() {
 }
 
 void Room140_141::parser() {
-	bool lookFlag = player_said("look") || player_said("look at");
+	const bool lookFlag = player_said("look") || player_said("look at");
 
 	if (player_said("conv20")) {
 		conv20();
@@ -910,9 +920,9 @@ done:
 
 void Room140_141::conv20() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 21) {
 		if (who <= 0) {

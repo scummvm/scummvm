@@ -42,7 +42,7 @@ namespace Locations {
 
 	static const uint8 kTempleOptionsCount = 3;
 
-	static const uint8 kTrainingButtonCount = 2;
+	//static const uint8 kTrainingButtonCount = 2;
 	static const uint8 kTrainingIneligibleInfoCount = 2;
 	static const uint8 kTrainingEligibleInfoCount = 4;
 #endif

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
@@ -30,11 +30,10 @@ template<class T> void StringToArgv(const T &args, Common::Array<T> &argv) {
 	argv.clear();
 
 	bool quoted = false;
-	typename T::const_iterator it;
 	int ch;
 	T arg;
 
-	for (it = args.begin(); it != args.end(); ++it) {
+	for (auto it = args.begin(); it != args.end(); ++it) {
 		ch = *it;
 
 		// Toggle quoted string handling
@@ -89,7 +88,7 @@ template<class T> void StringToArgv(const T &args, Common::Array<T> &argv) {
 template void StringToArgv<Common::String>(const Common::String &args, Common::Array<Common::String> &argv);
 
 template<class T> void SplitString(const T &args, char sep,
-								   Std::vector<T> &argv) {
+								   Common::Array<T> &argv) {
 	// Clear the vector
 	argv.clear();
 
@@ -110,16 +109,16 @@ template<class T> void SplitString(const T &args, char sep,
 }
 
 
-template void SplitString<Std::string>(const Std::string &args, char sep, Std::vector<Std::string> &argv);
+template void SplitString<Common::String>(const Common::String &args, char sep, Common::Array<Common::String> &argv);
 
 template<class T> void SplitStringKV(const T &args, char sep,
-									 Std::vector<Common::Pair<T, T> > &argv) {
+									 Common::Array<Common::Pair<T, T> > &argv) {
 	// Clear the vector
 	argv.clear();
 
 	if (args.empty()) return;
 
-	Std::vector<T> keyvals;
+	Common::Array<T> keyvals;
 	SplitString(args, sep, keyvals);
 
 	for (unsigned int i = 0; i < keyvals.size(); ++i) {
@@ -139,7 +138,7 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	}
 }
 
-template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Common::Pair<Std::string, Std::string> > &argv);
+template void SplitStringKV<Common::String>(const Common::String &args, char sep, Common::Array<Common::Pair<Common::String, Common::String> > &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

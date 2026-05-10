@@ -29,7 +29,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Peggle {
 
-#define NARRATIVESPEC   ".\\SOUND\\PEGG.WAV"
+#define NARRATIVESPEC   "sound\\PEGG.WAV"
 #define RULESSPEC       "PEGGLE.TXT"
 
 // Button positioning constants

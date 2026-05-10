@@ -709,7 +709,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 				_graphics->screenUpdate();
 			}
 		}
-	} else if ((code == kActionQuit)) {
+	} else if (code == kActionQuit) {
 		// Quit?
 		_graphics->drawMessage("Do you want to quit? (Y/N)", false);
 		eatMessages();
@@ -731,7 +731,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 				updateEvents();
 				_anim->diffNextFrame();
 			} else if (curMsg->_msgClass == kMessageAction) {
-				if ((curMsg->_code == kActionQuitDialogYes)) {
+				if (curMsg->_code == kActionQuitDialogYes) {
 					_anim->stopDiff();
 					return false;
 				} else if (curMsg->_code == kActionQuitDialogNo)

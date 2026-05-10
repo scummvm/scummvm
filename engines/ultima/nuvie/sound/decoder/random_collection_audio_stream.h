@@ -42,7 +42,7 @@ public:
 /**
  * Factory function for a QueuingAudioStream.
  */
-RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, Std::vector<Audio::RewindableAudioStream *>streams, DisposeAfterUse::Flag disposeAfterUse);
+RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, Common::Array<Audio::RewindableAudioStream *>streams, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace U6Audio
 } // End of namespace Nuvie

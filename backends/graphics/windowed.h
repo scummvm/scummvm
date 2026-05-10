@@ -56,6 +56,7 @@ public:
 		_windowHeight(0),
 		_screenAlign(SCREEN_ALIGN_CENTER | SCREEN_ALIGN_MIDDLE),
 		_rotationMode(Common::kRotationNormal),
+		_ignoreGameSafeArea(false),
 		_overlayVisible(false),
 		_overlayInGUI(false),
 		_gameScreenShakeXOffset(0),
@@ -187,6 +188,24 @@ public:
 
 	int getWindowWidth() const { return _windowWidth; }
 	int getWindowHeight() const { return _windowHeight; }
+
+	void setIgnoreGameSafeArea(bool ignoreGameSafeArea) {
+		if (_ignoreGameSafeArea == ignoreGameSafeArea) {
+			return;
+		}
+
+		_ignoreGameSafeArea = ignoreGameSafeArea;
+
+		Insets insets = getSafeAreaInsets();
+		if (insets.left == 0 &&
+		    insets.top == 0 &&
+		    insets.right == 0 &&
+		    insets.bottom == 0) {
+			return;
+		}
+
+		handleResizeImpl(_windowWidth, _windowHeight);
+	}
 
 protected:
 	/**
@@ -347,7 +366,12 @@ protected:
 		}
 
 		// Compute a safe area rectangle out of the insets
-		Insets insets = getSafeAreaInsets();
+		Insets insets;
+		if (_ignoreGameSafeArea) {
+			insets = {0, 0, 0, 0};
+		} else {
+			insets = getSafeAreaInsets();
+		}
 		Common::Rect safeArea(insets.left, insets.top,
 				_windowWidth - insets.right,
 				_windowHeight - insets.bottom);
@@ -462,6 +486,11 @@ protected:
 	 * How the screens need to be rotated on the screen
 	 */
 	Common::RotationMode _rotationMode;
+
+	/**
+	 * Whether the safe area should be ignored for games
+	 */
+	bool _ignoreGameSafeArea;
 
 	/**
 	 * Whether the overlay (i.e. launcher, including the out-of-game launcher)

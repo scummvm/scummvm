@@ -34,6 +34,24 @@
 
 namespace AGOS {
 
+static inline uint8 atariSTColorNibbleToComponent(uint8 v) {
+	v &= 0x07;
+	return v * 32;
+}
+
+static inline void writeElvira2AtariSTPaletteColor(byte *dst, uint16 color) {
+	dst[0] = atariSTColorNibbleToComponent((color >> 8) & 0x0F);
+	dst[1] = atariSTColorNibbleToComponent((color >> 4) & 0x0F);
+	dst[2] = atariSTColorNibbleToComponent((color >> 0) & 0x0F);
+}
+
+static inline void applyElvira2AtariSTScenePaletteOverride(byte *paletteBase) {
+	writeElvira2AtariSTPaletteColor(paletteBase + 0 * 3, 0x000);
+	writeElvira2AtariSTPaletteColor(paletteBase + 1 * 3, 0x775);
+	writeElvira2AtariSTPaletteColor(paletteBase + 2 * 3, 0x500);
+	writeElvira2AtariSTPaletteColor(paletteBase + 15 * 3, 0x750);
+}
+
 void AGOSEngine_Elvira2::setupVideoOpcodes(VgaOpcodeProc *op) {
 	AGOSEngine::setupVideoOpcodes(op);
 
@@ -70,6 +88,9 @@ void AGOSEngine::vc44_ifBitClear() {
 void AGOSEngine::vc45_setWindowPalette() {
 	uint16 num = vcReadNextWord();
 	uint16 color = vcReadNextWord();
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && (num == 1 || num == 2))
+		color = 13;
 
 	const uint16 *vlut = &_videoWindows[num * 4];
 	uint8 width = vlut[2] * 8;
@@ -111,23 +132,32 @@ void AGOSEngine::vc45_setWindowPalette() {
 }
 
 void AGOSEngine::setPaletteSlot(uint16 srcOffs, uint8 dstOffs) {
-	byte *offs, *palptr, *src;
+	byte *offs, *palptr, *src, *paletteBase;
 	uint16 num;
 
-	palptr = _displayPalette + dstOffs * 3 * 16;
+	paletteBase = palptr = _displayPalette + dstOffs * 3 * 16;
 	offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 	src = offs + srcOffs * 32;
 	num = 16;
 
 	do {
 		uint16 color = READ_BE_UINT16(src);
-		palptr[0] = ((color & 0xf00) >> 8) * 32;
-		palptr[1] = ((color & 0x0f0) >> 4) * 32;
-		palptr[2] = ((color & 0x00f) >> 0) * 32;
+		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+			palptr[0] = atariSTColorNibbleToComponent((color & 0xf00) >> 8);
+			palptr[1] = atariSTColorNibbleToComponent((color & 0x0f0) >> 4);
+			palptr[2] = atariSTColorNibbleToComponent((color & 0x00f) >> 0);
+		} else {
+			palptr[0] = ((color & 0xf00) >> 8) * 32;
+			palptr[1] = ((color & 0x0f0) >> 4) * 32;
+			palptr[2] = ((color & 0x00f) >> 0) * 32;
+		}
 
 		palptr += 3;
 		src += 2;
 	} while (--num);
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST)
+		applyElvira2AtariSTScenePaletteOverride(paletteBase);
 
 	_paletteFlag = 2;
 }

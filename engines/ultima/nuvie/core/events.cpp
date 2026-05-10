@@ -62,8 +62,6 @@ namespace Nuvie {
 
 Events *Events::g_events;
 
-using Std::string;
-
 EventInput_s::~EventInput_s() {
 	if (target_init) delete target_init;
 	if (str) delete str;
@@ -75,8 +73,8 @@ void EventInput_s::set_loc(const MapCoord &c) {
 	loc = new MapCoord(c);
 }
 
-Events::Events(Shared::EventsCallback *callback, const Configuration *cfg)
-		: Shared::EventsManager(callback), config(cfg), converse(nullptr),
+Events::Events(const Configuration *cfg)
+		: config(cfg), converse(nullptr),
 		  keybinder(nullptr), showingQuitDialog(false), fps_counter_widget(nullptr),
 		  cursor_mode(false){
 	g_events = this;
@@ -210,6 +208,46 @@ bool Events::update() {
 		game->set_mouse_pointer(0);
 
 	return true;
+}
+
+Events::MouseButton Events::whichButton(Common::EventType type) {
+	if (type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_LBUTTONUP)
+		return BUTTON_LEFT;
+	else if (type == Common::EVENT_RBUTTONDOWN || type == Common::EVENT_RBUTTONUP)
+		return BUTTON_RIGHT;
+	else if (type == Common::EVENT_MBUTTONDOWN || type == Common::EVENT_MBUTTONUP)
+		return BUTTON_MIDDLE;
+	else
+		return BUTTON_NONE;
+}
+
+bool Events::pollEvent(Common::Event &evt) {
+	// Event handling
+	if (g_system->getEventManager()->pollEvent(evt)) {
+		switch (evt.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = evt.mouse;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_MBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			_buttonsDown |= BUTTON_MASK(whichButton(evt.type));
+			_mousePos = evt.mouse;
+			break;
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+			_buttonsDown &= ~BUTTON_MASK(whichButton(evt.type));
+			_mousePos = evt.mouse;
+			break;
+		default:
+			break;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 bool Events::handleSDL_KEYDOWN(const Common::Event *event_) {
@@ -1467,7 +1505,7 @@ bool Events::actor_exists(const Actor *a) const {
 void Events::alt_code_input(const char *in) {
 	ActorManager *am = game->get_actor_manager();
 	Actor *a = am->get_actor((uint8) strtol(in, nullptr, 10));
-	static string teleport_string = "";
+	static Common::String teleport_string = "";
 	static Obj obj;
 	uint8 a_num = 0;
 	switch (active_alt_code) {
@@ -2784,7 +2822,7 @@ bool Events::rest() {
 	}
 	scroll->display_string("Rest");
 
-	string err_str;
+	Common::String err_str;
 	if (!player->get_party()->can_rest(err_str)) {
 		scroll->display_string(err_str);
 		scroll->display_string("\n");
@@ -2987,7 +3025,7 @@ void Events::doAction() {
 			}
 			assert(scroll->has_input()); // doAction should only be called when input is ready
 			assert(input.str == 0);
-			input.str = new string(scroll->get_input());
+			input.str = new Common::String(scroll->get_input());
 			endAction();
 			doAction();
 		} else if (input.select_from_inventory) // some redirection here...

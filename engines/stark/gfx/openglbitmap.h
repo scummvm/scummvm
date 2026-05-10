@@ -45,8 +45,11 @@ public:
 	void setSamplingFilter(SamplingFilter filter) override;
 	Graphics::PixelFormat getBestPixelFormat() const override;
 
+	const GLfloat *getTexCoords() const { return _texCoords; }
+
 protected:
 	GLuint _id;
+	GLfloat _texCoords[2*4];
 };
 
 } // End of namespace Gfx

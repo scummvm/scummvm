@@ -721,7 +721,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 			}
 			return;
 		default:
-			error("Unsupported pic-operation %X", pic_op);
+			error("Unsupported pic-operation %X at position %d", pic_op, curPos - 1);
 		}
 		if ((_EGAdrawingVisualize) && (isEGA)) {
 			_screen->copyToScreen();

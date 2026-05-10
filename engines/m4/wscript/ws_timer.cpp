@@ -26,7 +26,7 @@ namespace M4 {
 
 static void dispose_timeRequest(onTimeReq *timeReq);
 
-bool ws_InitWSTimer(void) {
+bool ws_InitWSTimer() {
 	_GWS(firstTimeReq) = nullptr;
 	return true;
 }
@@ -118,8 +118,8 @@ void ws_CheckTimeReqs(int32 curTime) {
 	while (tempTimeReq && (tempTimeReq->myTime <= curTime)) {
 		// Extract all important information from request
 		machine *myXM = tempTimeReq->myXM;
-		int32 pcOffset = tempTimeReq->pcOffset;
-		int32 pcCount = tempTimeReq->pcCount;
+		const int32 pcOffset = tempTimeReq->pcOffset;
+		const int32 pcCount = tempTimeReq->pcCount;
 
 		// Remove it from the list and dispose
 		_GWS(firstTimeReq) = _GWS(firstTimeReq)->next;

@@ -83,11 +83,7 @@ enum {
 #define TAG_MOVE_CEL		0x00004000
 #define TAG_MAP_CEL			0x00002000
 
-#define GLOB_COUNT 39
-
 extern const char *myRegLabels[];
-extern const char *myGlobLabels[];
-extern const char *tagLabels[];
 
 } // End of namespace M4
 

@@ -36,6 +36,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace ArtParts {
 
+#define FONT_SIZE 14
+
 bool    InArtRegion(CPoint point);
 CPoint  WinToArt(CPoint point);
 
@@ -59,6 +61,50 @@ int CMainWindow::tempColumns;
 bool CMainWindow::tempFramed;
 
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Dummy class for the Art Parts demo to map art/ and sound/ subfolders to current folder
+ */
+class ArtSoundArchive : public Common::Archive {
+public:
+	bool hasFile(const Common::Path &path) const override {
+		Common::String pathStr = path.toString();
+		if (pathStr.hasPrefixIgnoreCase("art/")) {
+			pathStr = pathStr.c_str() + 4;
+		} else if (pathStr.hasPrefixIgnoreCase("sound/")) {
+			pathStr = pathStr.c_str() + 6;
+		} else {
+			return false;
+		}
+		return Common::File::exists(pathStr.c_str());
+	}
+
+	int listMembers(Common::ArchiveMemberList &list) const override {
+		return 0;
+	}
+
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override {
+		return Common::ArchiveMemberPtr();
+	}
+
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override {
+		Common::String pathStr = path.toString();
+		if (pathStr.hasPrefixIgnoreCase("art/")) {
+			pathStr = pathStr.c_str() + 4;
+		} else if (pathStr.hasPrefixIgnoreCase("sound/")) {
+			pathStr = pathStr.c_str() + 6;
+		} else {
+			return nullptr;
+		}
+
+		Common::File f;
+		if (f.open(pathStr.c_str()))
+			return f.readStream(f.size());
+		return nullptr;
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // CMainWindow constructor:
 // Create the window with the appropriate style, size, menu, etc.;
@@ -72,6 +118,9 @@ CMainWindow::CMainWindow() {
 
 	initStatics();
 	BeginWaitCursor();
+
+	if (g_engine->isDemo())
+		SearchMan.add("artparts_demo", new ArtSoundArchive());
 
 	// Define a special window class which traps double-clicks, is byte aligned
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
@@ -174,6 +223,10 @@ CMainWindow::CMainWindow() {
 
 } //End of CMainWindow
 
+CMainWindow::~CMainWindow() {
+	SearchMan.remove("artparts_demo");
+}
+
 void CMainWindow::initStatics() {
 	pGamePalette = nullptr;
 	nSeconds = MIN_TIME;
@@ -221,7 +274,7 @@ void CMainWindow::OnPaint() {
 		else {
 			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
-		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
+		(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 	} else {
 		PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
@@ -1044,7 +1097,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 		else {
 			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
-		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
+		(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 
 		if (nMinutes == 0 && nSeconds == 0) {
 			char buf[64];
@@ -1119,7 +1172,7 @@ Other functions:
  *      void
  *
  ****************************************************************/
-void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
+void CMainWindow::SwitchAreas(const CRect &Src, const CRect &Dst) {
 	POINT SrcCR, DstCR, SizeCR, Temp;
 	int c, r;
 
@@ -1133,7 +1186,8 @@ void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
 	DrawPart(Src.TopLeft(), Dst.TopLeft(), Src.Width(), Src.Height());
 
 	CRect Overlap;
-	if (Overlap.IntersectRect(Src, Dst) == 0) {          // They don't intersect
+	if (Overlap.IntersectRect(Src, Dst) == 0) {
+		// They don't intersect
 		DrawPart(Dst.TopLeft(), Src.TopLeft(), Src.Width(), Src.Height());
 
 		for (c = 0; c < SizeCR.x; c++) {                // Update the Grid data
@@ -1148,7 +1202,6 @@ void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
 		}
 
 	} else {                                            // Deal with intersection
-
 		POINT *Movers, *MGrids, *SGrids, *p, *g, *s, Part, NewPart;
 		Movers = (POINT *)malloc((SizeCR.x * SizeCR.y) * sizeof(POINT));
 		MGrids = (POINT *)malloc((SizeCR.x * SizeCR.y) * sizeof(POINT));
@@ -1244,7 +1297,7 @@ void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight) {
+void CMainWindow::DrawPart(const CPoint &Src, const CPoint &Dst, int nWidth, int nHeight) {
 
 	pScratch2DC->BitBlt(Dst.x, Dst.y, nWidth, nHeight, pScratch1DC, Src.x, Src.y, SRCCOPY);
 
@@ -1347,7 +1400,7 @@ bool CMainWindow::LoadArtWork() {
 		return false;
 	}
 
-	Common::sprintf_s(bufName, ".\\art\\%s", ArtName);
+	Common::sprintf_s(bufName, "art\\%s", ArtName);
 	Common::sprintf_s(szCurrentArt, "%s", bufName);                  // copy to a global for use in OnPaint
 
 	(*pSourceDoc).OpenDocument(bufName);
@@ -1586,7 +1639,7 @@ void CMainWindow::NewGame() {
 	else {
 		Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 	}
-	(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
+	(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 
 	EndWaitCursor();
 

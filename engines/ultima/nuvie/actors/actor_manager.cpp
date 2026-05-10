@@ -1106,13 +1106,13 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 
 	uint8 avatar_portrait = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
-	Std::set<Std::string> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
+	Common::Array<Common::String> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
 
-	for (const Std::string &filename : files) {
+	for (const Common::String &filename : files) {
 		if (filename.size() != 19) { // avatar_nnn_nnnn.bmp
 			continue;
 		}
-		Std::string num_str = filename.substr(7, 3);
+		Common::String num_str = filename.substr(7, 3);
 		uint8 portrait_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		if (portrait_num == avatar_portrait) {
@@ -1134,13 +1134,13 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	Common::Path imagefile;
 
-	Std::set<Std::string> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
+	Common::Array<Common::String> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
 
-	for (const Std::string &filename : files) {
+	for (const Common::String &filename : files) {
 		if (filename.size() != 18) { // actor_nnn_nnnn.bmp
 			continue;
 		}
-		Std::string num_str = filename.substr(6, 3);
+		Common::String num_str = filename.substr(6, 3);
 		uint8 actor_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		num_str = filename.substr(10, 4);
@@ -1157,7 +1157,7 @@ void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	return;
 }
 
-Std::set<Std::string> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix) {
+Common::Array<Common::String> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Common::String &filenamePrefix) {
 	NuvieFileList filelistDataDir;
 	NuvieFileList filelistSaveGameDir;
 	Common::Path path;
@@ -1169,10 +1169,19 @@ Std::set<Std::string> ActorManager::getCustomTileFilenames(const Common::Path &d
 	path.joinInPlace(datadir);
 	filelistSaveGameDir.open(path, filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
-	Std::set<Std::string> files = filelistSaveGameDir.get_filenames();
-	Std::set<Std::string> dataFiles = filelistDataDir.get_filenames();
-	files.insert(dataFiles.begin(), dataFiles.end());
-	return files;
+	const Common::List<NuvieFileDesc> &files = filelistSaveGameDir.get_filelist();
+	const Common::List<NuvieFileDesc> &dataFiles = filelistDataDir.get_filelist();
+
+	Common::EqualTo<Common::String> comparitor;
+	Common::Array<Common::String> filenames;
+	for (const auto &desc : files) {
+		filenames.push_back(desc.filename);
+	}
+	for (const auto &desc : dataFiles) {
+		filenames.push_back(desc.filename);
+	}
+	Common::sort(filenames.begin(), filenames.end(), comparitor);
+	return filenames;
 }
 
 Actor *ActorManager::findActorAtImpl(uint16 x, uint16 y, uint8 z, bool (*predicateWrapper)(void *predicate, const Actor *), bool incDoubleTile, bool incSurroundingObjs, void *predicate) const {

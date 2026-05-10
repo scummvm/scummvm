@@ -294,7 +294,7 @@ void LogicManager::CONS_Monsieur_FinishSeqOtis(CONS_PARAMS) {
 void LogicManager::HAND_Monsieur_FinishSeqOtis(HAND_PARAMS) {
 	switch (msg->action) {
 	case 0:
-		if (getCharacter(kCharacterMonsieur).direction == 4) {
+		if (getCharacter(kCharacterMonsieur).direction != 4) {
 			getCharacter(kCharacterMonsieur).currentCall--;
 			_engine->getMessageManager()->setMessageHandle(kCharacterMonsieur, _functionsMonsieur[getCharacter(kCharacterMonsieur).callbacks[getCharacter(kCharacterMonsieur).currentCall]]);
 			fedEx(kCharacterMonsieur, kCharacterMonsieur, 18, 0);

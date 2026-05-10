@@ -21,6 +21,7 @@
 
 #include "mediastation/datafile.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
@@ -123,20 +124,10 @@ VersionInfo ParameterReadStream::readTypedVersion() {
 	return version;
 }
 
-uint32 ParameterReadStream::readTypedChunkReference() {
-	readAndVerifyType(kDatumTypeChunkReference);
+ChannelIdent ParameterReadStream::readTypedChannelIdent() {
+	readAndVerifyType(kDatumTypeChannelIdent);
 	// This one is always BE.
 	return readUint32BE();
-}
-
-Polygon ParameterReadStream::readTypedPolygon() {
-	Polygon polygon;
-	uint totalPoints = readTypedUint16();
-	for (uint i = 0; i < totalPoints; ++i) {
-		Common::Point point = readTypedGraphicSize();
-		polygon.push_back(point);
-	}
-	return polygon;
 }
 
 Chunk::Chunk(Common::SeekableReadStream *stream) : _parentStream(stream) {
@@ -144,9 +135,7 @@ Chunk::Chunk(Common::SeekableReadStream *stream) : _parentStream(stream) {
 	_length = _parentStream->readUint32LE();
 	_dataStartOffset = pos();
 	_dataEndOffset = _dataStartOffset + _length;
-	debugC(5, kDebugLoading, "Chunk::Chunk(): Got chunk with ID \"%s\" and size 0x%x", tag2str(_id), _length);
-	if (_length == 0)
-		error("%s: Encountered a zero-length chunk. This usually indicates corrupted data - maybe a CD-ROM read error.", __func__);
+	debugC(5, kDebugLoading, "%s: Got chunk with ID \"%s\" and size 0x%x", __func__, tag2str(_id), _length);
 }
 
 uint32 Chunk::bytesRemaining() {
@@ -169,10 +158,10 @@ bool Chunk::seek(int64 offset, int whence) {
 
 	if (pos() < _dataStartOffset) {
 		uint overrun = _dataStartOffset - offset;
-		error("Attempted to seek 0x%x bytes before start of chunk (@0x%llx)", overrun, static_cast<long long int>(pos()));
+		error("%s: Attempted to seek 0x%x bytes before start of chunk (@0x%llx)", __func__, overrun, static_cast<long long int>(pos()));
 	} else if (pos() > _dataEndOffset) {
 		uint overrun = offset - _dataEndOffset;
-		error("Attempted to seek 0x%x bytes past end of chunk (@0x%llx)", overrun, static_cast<long long int>(pos()));
+		error("%s: Attempted to seek 0x%x bytes past end of chunk (@0x%llx)", __func__, overrun, static_cast<long long int>(pos()));
 	}
 	return true;
 }
@@ -211,18 +200,122 @@ Chunk Subfile::nextChunk() {
 }
 
 bool Subfile::atEnd() {
-	// TODO: Is this the best place to put this and approach to use?
-	return _rootChunk.bytesRemaining() == 0;
-}
-
-Datafile::Datafile(const Common::Path &path) {
-	if (!open(path)) {
-		error("%s: Failed to open %s", __func__, path.toString().c_str());
+	// There might be a padding byte at the end of the subfile, so
+	// we need to check for that.
+	if (_rootChunk.pos() % 2 == 0) {
+		return _rootChunk.bytesRemaining() == 0;
+	} else {
+		return _rootChunk.bytesRemaining() == 1;
 	}
 }
 
-Subfile Datafile::getNextSubfile() {
+void CdRomStream::openStream(uint streamId) {
+	const StreamInfo &streamInfo = g_engine->getImtGod()->streamInfoForIdent(streamId);
+	if (streamInfo._fileId == 0) {
+		error("%s: Stream %d not found in current title", __func__, streamId);
+	}
+
+	const FileInfo &fileInfo = g_engine->getImtGod()->fileInfoForIdent(streamInfo._fileId);
+	if (fileInfo._id == 0) {
+		error("%s: File %s for stream %d not found in current title", __func__, g_engine->formatFileName(streamInfo._fileId).c_str(), streamId);
+	}
+
+	bool requestedStreamAlreadyOpen = isOpen() && _fileId == streamInfo._fileId;
+	if (requestedStreamAlreadyOpen) {
+		seek(streamInfo._startOffsetInFile);
+	} else {
+		if (isOpen()) {
+			close();
+		}
+
+		Common::Path filename(fileInfo._name);
+		if (!open(filename)) {
+			error("%s: Failed to open %s", __func__, filename.toString().c_str());
+		}
+		seek(streamInfo._startOffsetInFile);
+		_fileId = streamInfo._fileId;
+	}
+}
+
+Subfile CdRomStream::getNextSubfile() {
 	return Subfile(_handle);
+}
+
+void ChannelClient::registerWithStreamManager() {
+	g_engine->getStreamFeedManager()->registerChannelClient(this);
+}
+
+void ChannelClient::unregisterWithStreamManager() {
+	g_engine->getStreamFeedManager()->unregisterChannelClient(this);
+}
+
+ImtStreamFeed::ImtStreamFeed(uint actorId) : StreamFeed(actorId) {
+	_stream = new CdRomStream();
+}
+
+ImtStreamFeed::~ImtStreamFeed() {
+	delete _stream;
+	_stream = nullptr;
+}
+
+void ImtStreamFeed::closeFeed() {
+	_stream->closeStream();
+	g_engine->getDocument()->streamDidClose(_id);
+}
+
+void ImtStreamFeed::openFeed(uint streamId, uint startOffset) {
+	// For CXT files, there is a 0x10-byte header before the first stream, but this header
+	// isn't actually used by the engine. This header is not present in BOOT.STM.
+	// [0x00-0x04] Byte order - either II\0\0 for Intel byte order or MM\0\0 for Motorola byte order.
+	//       Motorola byte order never actually seems to be used for data files, even on big-endian
+	//       platforms. Other parts of the engine perform the byte swapping on the fly.
+	// [0x05-0x08] Unknown.
+	// [0x09-0x0c] Stream (subfile) count in this file, uint32le.
+	// [0x0d-0x10] Total file size, uint32le.
+
+	// The original had an intermediary StreamProgress class here, with a StreamProgressClient
+	// class, but there as only
+	g_engine->getDocument()->streamDidOpen(streamId);
+	_stream->openStream(streamId);
+}
+
+void ImtStreamFeed::readData() {
+	Subfile subfile = _stream->getNextSubfile();
+	Chunk chunk = subfile.nextChunk();
+	g_engine->getDocument()->streamWillRead(_id);
+	g_engine->getImtGod()->readHeaderSections(subfile, chunk);
+	g_engine->getDocument()->streamDidFinish(_id);
+}
+
+StreamFeedManager::~StreamFeedManager() {
+	for (auto it = _streamFeeds.begin(); it != _streamFeeds.end(); ++it) {
+		delete it->_value;
+	}
+	_streamFeeds.clear();
+}
+
+void StreamFeedManager::closeStreamFeed(StreamFeed *streamFeed) {
+	streamFeed->closeFeed();
+	_streamFeeds.erase(streamFeed->_id);
+	delete streamFeed;
+}
+
+void StreamFeedManager::registerChannelClient(ChannelClient *client) {
+	if (_channelClients.getValOrDefault(client->channelIdent()) != nullptr) {
+		warning("%s: Channel %s already has a client", __func__, g_engine->formatAssetNameForChannelIdent(client->channelIdent()).c_str());
+	}
+	_channelClients.setVal(client->channelIdent(), client);
+}
+
+void StreamFeedManager::unregisterChannelClient(ChannelClient *client) {
+	_channelClients.erase(client->channelIdent());
+}
+
+ImtStreamFeed *StreamFeedManager::openStreamFeed(uint actorId, uint offsetInStream, uint maxBytesToRead) {
+	ImtStreamFeed *streamFeed = new ImtStreamFeed(actorId);
+	streamFeed->openFeed(actorId, offsetInStream);
+	_streamFeeds.setVal(actorId, streamFeed);
+	return streamFeed;
 }
 
 } // End of namespace MediaStation

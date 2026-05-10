@@ -113,8 +113,7 @@ void SnapProcess::updateCurrentEgg() {
 void SnapProcess::removeEgg(Item *item) {
 	assert(item);
 	ObjId id = item->getObjId();
-	for (Std::list<ObjId>::iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
+	for (auto iter = _snapEggs.begin(); iter != _snapEggs.end(); ++iter) {
 		if (*iter == id) {
 			iter = _snapEggs.erase(iter);
 		}

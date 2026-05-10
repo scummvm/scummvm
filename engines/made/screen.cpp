@@ -980,6 +980,9 @@ void Screen::clearSpriteList() {
 }
 
 void Screen::setMouseCursor(const Graphics::Cursor *cursor) {
+	// The original Windows version of Rodney's Funscreen upscales the
+	// main screen, but displays the cursor at native resolution.
+	// FIXME: This is likely too small on high DPI displays.
 	CursorMan.replaceCursor(cursor, true);
 }
 

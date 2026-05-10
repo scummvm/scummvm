@@ -263,12 +263,10 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 							initializerParams = sprite->_behaviors[event.behaviorIndex].initializerParams;
 						}
 					} else {
-						_lastClickedSpriteId = 0;
 						return;
 					}
 				} else {
 					if (!sprite->_scriptId.member) {
-						_lastClickedSpriteId = 0;
 						return;
 					}
 

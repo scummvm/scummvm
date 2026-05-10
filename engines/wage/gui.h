@@ -110,7 +110,15 @@ enum {
 	kMenuActionPaste,
 	kMenuActionClear,
 
-	kMenuActionCommand
+	kMenuActionCommand,
+
+	kMenuActionStartupScreen,
+	kMenuActionStartupSound
+};
+
+enum {
+	kScreenWidth = 512,
+	kScreenHeight = 342
 };
 
 class Gui {
@@ -131,11 +139,13 @@ public:
 	void actionUndo();
 	void actionClear();
 	void actionCut();
+	void actionStartupSound();
 	void disableUndo();
 	void disableAllMenus();
 	void enableNewGameMenus();
 	void enableSave();
 	void enableRevert();
+	bool decodeStartupScreen();
 
 	bool processSceneEvents(WindowClick click, Common::Event &event);
 	bool processConsoleEvents(WindowClick click, Common::Event &event);

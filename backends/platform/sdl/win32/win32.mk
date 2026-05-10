@@ -10,7 +10,7 @@ clean: clean-win32-resource-embed
 
 .PHONY: clean-win32-resource-embed
 
-define win32-resource-embed-macro=
+define win32-resource-embed-macro
 $(1): configure.stamp $(foreach filename,$($(2)), $(srcdir)/$(filename)) $($(2)_SOURCE)
 	$(QUIET)echo '    GENERATE' $$@
 	$(QUIET)mkdir -p $$(dir $$@)

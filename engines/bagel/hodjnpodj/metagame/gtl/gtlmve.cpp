@@ -55,146 +55,146 @@ struct CLUE_LOC {
 };
 
 const char *szGameSounds[MG_SOUND_COUNT] = {
-	".\\SOUND\\PK1.WAV",
-	".\\SOUND\\PK2.WAV",
-	".\\SOUND\\PG1.WAV",
-	".\\SOUND\\PG2.WAV",
-	".\\SOUND\\PG3.WAV",
-	".\\SOUND\\PG4.WAV",
-	".\\SOUND\\PG5.WAV",
-	".\\SOUND\\PG6.WAV",
-	".\\SOUND\\FG1.WAV",
-	".\\SOUND\\FG2.WAV",
-	".\\SOUND\\FG3.WAV",
-	".\\SOUND\\FG4.WAV",
-	".\\SOUND\\FG5.WAV",
-	".\\SOUND\\TG1.WAV",
-	".\\SOUND\\TG2.WAV",
-	".\\SOUND\\TG3.WAV",
-	".\\SOUND\\TG4.WAV",
-	".\\SOUND\\TG5.WAV",
-	".\\SOUND\\TG6.WAV",
-	".\\SOUND\\DF1.WAV",
-	".\\SOUND\\DF2.WAV",
-	".\\SOUND\\DF3.WAV",
-	".\\SOUND\\DF4.WAV",
-	".\\SOUND\\DF5.WAV",
-	".\\SOUND\\GF1B.WAV",
-	".\\SOUND\\GF2B.WAV",
-	".\\SOUND\\GF3B.WAV",
-	".\\SOUND\\CR1.WAV",
-	".\\SOUND\\CR2.WAV",
-	".\\SOUND\\CR3.WAV",
-	".\\SOUND\\CR4.WAV",
-	".\\SOUND\\CR5.WAV",
-	".\\SOUND\\BC1.WAV",
-	".\\SOUND\\BC2.WAV",
-	".\\SOUND\\BC3.WAV",
-	".\\SOUND\\BC4.WAV",
-	".\\SOUND\\BC5.WAV",
-	".\\SOUND\\RR1.WAV",
-	".\\SOUND\\RR2.WAV",
-	".\\SOUND\\RR3.WAV",
-	".\\SOUND\\RR4.WAV",
-	".\\SOUND\\BF1.WAV",
-	".\\SOUND\\BF2.WAV",
-	".\\SOUND\\BF3.WAV",
-	".\\SOUND\\PR1B.WAV",
-	".\\SOUND\\PR2B.WAV",
-	".\\SOUND\\PR3B.WAV",
-	".\\SOUND\\PR4B.WAV",
-	".\\SOUND\\MD1.WAV",
-	".\\SOUND\\MD2.WAV",
-	".\\SOUND\\MD3.WAV",
-	".\\SOUND\\MD4.WAV",
-	".\\SOUND\\WS1.WAV",
-	".\\SOUND\\WS2.WAV",
-	".\\SOUND\\WS3.WAV",
-	".\\SOUND\\WS4.WAV",
-	".\\SOUND\\BQ1.WAV",
-	".\\SOUND\\BQ2.WAV",
-	".\\SOUND\\MK1.WAV",
-	".\\SOUND\\MK6.WAV",
-	".\\SOUND\\AR1.WAV",
-	".\\SOUND\\AR2.WAV",
-	".\\SOUND\\NV1.WAV",
-	".\\SOUND\\NV2.WAV",
-	".\\SOUND\\NV3.WAV",
-	".\\SOUND\\AP1.WAV",
-	".\\SOUND\\AP2.WAV",
-	".\\SOUND\\LF1.WAV",
-	".\\SOUND\\LF2.WAV",
-	".\\SOUND\\EU1.WAV",
-	".\\SOUND\\EU2.WAV",
-	".\\SOUND\\OLN1.WAV",
-	".\\SOUND\\OLN2.WAV",
-	".\\SOUND\\OLN3.WAV",
-	".\\SOUND\\OLN4.WAV",
-	".\\SOUND\\OLN5.WAV",
-	".\\SOUND\\OLN6.WAV",
-	".\\SOUND\\OLN7.WAV",
-	".\\SOUND\\OLN8.WAV",
-	".\\SOUND\\OLN9.WAV",
-	".\\SOUND\\GSPS1.WAV",
-	".\\SOUND\\GSPS2.WAV",
-	".\\SOUND\\GSPS3.WAV",
-	".\\SOUND\\GSPS4.WAV",
-	".\\SOUND\\GSPS5.WAV",
-	".\\SOUND\\GSPS6.WAV",
-	".\\SOUND\\GSPS7.WAV",
-	".\\SOUND\\GSPS8.WAV",
-	".\\SOUND\\UTP1.WAV",
-	".\\SOUND\\UTP2.WAV",
-	".\\SOUND\\UTP3.WAV",
-	".\\SOUND\\UTP4.WAV",
-	".\\SOUND\\UTP5.WAV",
-	".\\SOUND\\UTP6.WAV",
-	".\\SOUND\\UTP7.WAV",
-	".\\SOUND\\UTP8.WAV",
-	".\\SOUND\\TRN1.WAV",
-	".\\SOUND\\TRN2.WAV",
-	".\\SOUND\\TRN3.WAV",
-	".\\SOUND\\TRN4.WAV",
-	".\\SOUND\\TRN5.WAV",
-	".\\SOUND\\TRN6.WAV",
-	".\\SOUND\\TRN7.WAV",
-	".\\SOUND\\TRN8.WAV",
-	".\\SOUND\\TRN9.WAV",
-	".\\SOUND\\TRN10.WAV",
-	".\\SOUND\\TRN11.WAV",
-	".\\SOUND\\TRN12.WAV",
-	".\\SOUND\\BB61.WAV",
-	".\\SOUND\\BB62.WAV",
-	".\\SOUND\\BB63.WAV",
-	".\\SOUND\\BB64.WAV",
-	".\\SOUND\\BB65.WAV",
-	".\\SOUND\\BB66.WAV",
-	".\\SOUND\\BB67.WAV",
-	".\\SOUND\\BB68.WAV",
-	".\\SOUND\\BB69.WAV",
-	".\\SOUND\\BB70.WAV",
-	".\\SOUND\\BB71.WAV",
-	".\\SOUND\\FM1.WAV",
-	".\\SOUND\\FM2.WAV",
-	".\\SOUND\\PM1.WAV",
-	".\\SOUND\\PM2.WAV",
-	".\\SOUND\\WC1.WAV",
-	".\\SOUND\\WC2.WAV",
-	".\\SOUND\\AC1.WAV",
-	".\\SOUND\\AC2.WAV",
-	".\\SOUND\\WT1.WAV",
-	".\\SOUND\\WT2.WAV",
-	".\\SOUND\\WR1.WAV",
-	".\\SOUND\\WR2.WAV",
-	".\\SOUND\\BR1.WAV",
-	".\\SOUND\\BR2.WAV",
-	".\\SOUND\\MM1.WAV",
-	".\\SOUND\\MM2.WAV",
-	".\\SOUND\\PI1.WAV",
-	".\\SOUND\\PI2.WAV",
-	".\\SOUND\\PI3.WAV",
-	".\\SOUND\\HM1.WAV",
-	".\\SOUND\\HM2.WAV"
+	"sound\\PK1.WAV",
+	"sound\\PK2.WAV",
+	"sound\\PG1.WAV",
+	"sound\\PG2.WAV",
+	"sound\\PG3.WAV",
+	"sound\\PG4.WAV",
+	"sound\\PG5.WAV",
+	"sound\\PG6.WAV",
+	"sound\\FG1.WAV",
+	"sound\\FG2.WAV",
+	"sound\\FG3.WAV",
+	"sound\\FG4.WAV",
+	"sound\\FG5.WAV",
+	"sound\\TG1.WAV",
+	"sound\\TG2.WAV",
+	"sound\\TG3.WAV",
+	"sound\\TG4.WAV",
+	"sound\\TG5.WAV",
+	"sound\\TG6.WAV",
+	"sound\\DF1.WAV",
+	"sound\\DF2.WAV",
+	"sound\\DF3.WAV",
+	"sound\\DF4.WAV",
+	"sound\\DF5.WAV",
+	"sound\\GF1B.WAV",
+	"sound\\GF2B.WAV",
+	"sound\\GF3B.WAV",
+	"sound\\CR1.WAV",
+	"sound\\CR2.WAV",
+	"sound\\CR3.WAV",
+	"sound\\CR4.WAV",
+	"sound\\CR5.WAV",
+	"sound\\BC1.WAV",
+	"sound\\BC2.WAV",
+	"sound\\BC3.WAV",
+	"sound\\BC4.WAV",
+	"sound\\BC5.WAV",
+	"sound\\RR1.WAV",
+	"sound\\RR2.WAV",
+	"sound\\RR3.WAV",
+	"sound\\RR4.WAV",
+	"sound\\BF1.WAV",
+	"sound\\BF2.WAV",
+	"sound\\BF3.WAV",
+	"sound\\PR1B.WAV",
+	"sound\\PR2B.WAV",
+	"sound\\PR3B.WAV",
+	"sound\\PR4B.WAV",
+	"sound\\MD1.WAV",
+	"sound\\MD2.WAV",
+	"sound\\MD3.WAV",
+	"sound\\MD4.WAV",
+	"sound\\WS1.WAV",
+	"sound\\WS2.WAV",
+	"sound\\WS3.WAV",
+	"sound\\WS4.WAV",
+	"sound\\BQ1.WAV",
+	"sound\\BQ2.WAV",
+	"sound\\MK1.WAV",
+	"sound\\MK6.WAV",
+	"sound\\AR1.WAV",
+	"sound\\AR2.WAV",
+	"sound\\NV1.WAV",
+	"sound\\NV2.WAV",
+	"sound\\NV3.WAV",
+	"sound\\AP1.WAV",
+	"sound\\AP2.WAV",
+	"sound\\LF1.WAV",
+	"sound\\LF2.WAV",
+	"sound\\EU1.WAV",
+	"sound\\EU2.WAV",
+	"sound\\OLN1.WAV",
+	"sound\\OLN2.WAV",
+	"sound\\OLN3.WAV",
+	"sound\\OLN4.WAV",
+	"sound\\OLN5.WAV",
+	"sound\\OLN6.WAV",
+	"sound\\OLN7.WAV",
+	"sound\\OLN8.WAV",
+	"sound\\OLN9.WAV",
+	"sound\\GSPS1.WAV",
+	"sound\\GSPS2.WAV",
+	"sound\\GSPS3.WAV",
+	"sound\\GSPS4.WAV",
+	"sound\\GSPS5.WAV",
+	"sound\\GSPS6.WAV",
+	"sound\\GSPS7.WAV",
+	"sound\\GSPS8.WAV",
+	"sound\\UTP1.WAV",
+	"sound\\UTP2.WAV",
+	"sound\\UTP3.WAV",
+	"sound\\UTP4.WAV",
+	"sound\\UTP5.WAV",
+	"sound\\UTP6.WAV",
+	"sound\\UTP7.WAV",
+	"sound\\UTP8.WAV",
+	"sound\\TRN1.WAV",
+	"sound\\TRN2.WAV",
+	"sound\\TRN3.WAV",
+	"sound\\TRN4.WAV",
+	"sound\\TRN5.WAV",
+	"sound\\TRN6.WAV",
+	"sound\\TRN7.WAV",
+	"sound\\TRN8.WAV",
+	"sound\\TRN9.WAV",
+	"sound\\TRN10.WAV",
+	"sound\\TRN11.WAV",
+	"sound\\TRN12.WAV",
+	"sound\\BB61.WAV",
+	"sound\\BB62.WAV",
+	"sound\\BB63.WAV",
+	"sound\\BB64.WAV",
+	"sound\\BB65.WAV",
+	"sound\\BB66.WAV",
+	"sound\\BB67.WAV",
+	"sound\\BB68.WAV",
+	"sound\\BB69.WAV",
+	"sound\\BB70.WAV",
+	"sound\\BB71.WAV",
+	"sound\\FM1.WAV",
+	"sound\\FM2.WAV",
+	"sound\\PM1.WAV",
+	"sound\\PM2.WAV",
+	"sound\\WC1.WAV",
+	"sound\\WC2.WAV",
+	"sound\\AC1.WAV",
+	"sound\\AC2.WAV",
+	"sound\\WT1.WAV",
+	"sound\\WT2.WAV",
+	"sound\\WR1.WAV",
+	"sound\\WR2.WAV",
+	"sound\\BR1.WAV",
+	"sound\\BR2.WAV",
+	"sound\\MM1.WAV",
+	"sound\\MM2.WAV",
+	"sound\\PI1.WAV",
+	"sound\\PI2.WAV",
+	"sound\\PI3.WAV",
+	"sound\\HM1.WAV",
+	"sound\\HM2.WAV"
 };
 
 static const CLUE_LOC nClueLocation[NOTE_COUNT] = {
@@ -463,7 +463,6 @@ bool CGtlData::EndMoveProcessing()
 	const CLocTable * xpLocTable = CMgStatic::cLocTable, *xpLocEntry ;
 	int iLocFunctionCode ;  // MG_GAME_xxxx or MG_VISIT_xxxx
 	bool bExitDll = false ;
-	static bool bFirstTime = true;
 	CSound *pSound;
 
 	if (xpXodj && xpXodj->m_iCharNode >= 0 && xpXodj->m_iCharNode < m_iNodes && !(lpNode = m_lpNodes + xpXodj->m_iCharNode)->m_bDeleted && lpNode->m_bRelocatable) {
@@ -489,7 +488,7 @@ bool CGtlData::EndMoveProcessing()
 
 				// then set the the game code to the MG_GAME_CHALLENGE
 
-				pSound = new CSound(xpGtlView, (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh ? ".\\sound\\msc18.wav" : ".\\sound\\msc19.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
+				pSound = new CSound(xpGtlView, (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh ? "sound\\msc18.wav" : "sound\\msc19.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
 				pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 				pSound->play();
 
@@ -551,7 +550,7 @@ bool CGtlData::EndMoveProcessing()
 
 				// then set the the game code to the MG_GAME_CHALLENGE
 
-				pSound = new CSound(xpGtlView, (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh ? ".\\sound\\msc18.wav" : ".\\sound\\msc19.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
+				pSound = new CSound(xpGtlView, (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh ? "sound\\msc18.wav" : "sound\\msc19.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
 				pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 				pSound->play();
 
@@ -1183,13 +1182,13 @@ bool CGtlData::InitInterface(int iCode, bool & bExitDll)
 			else
 				lpMetaGameStruct->m_cPodj.m_bHaveMishMosh = true;
 
-			pSound = new CSound(xpGtlView, ".\\sound\\rsc1.wav", SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+			pSound = new CSound(xpGtlView, "sound\\rsc1.wav", SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 			pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 			pSound->play();
-			pSound = new CSound(xpGtlView, ".\\sound\\rsc2.wav", SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+			pSound = new CSound(xpGtlView, "sound\\rsc2.wav", SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 			pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 			pSound->play();
-			pSound = new CSound(xpGtlView, ".\\sound\\rsc3.wav", SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
+			pSound = new CSound(xpGtlView, "sound\\rsc3.wav", SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);
 			pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 			pSound->play();
 			break ;
@@ -1544,7 +1543,6 @@ bool CGtlData::InitInterface(int iCode, bool & bExitDll)
 
 			CDC         *pDC = nullptr;
 			if ((pDC = gpMyView->GetDC()) != nullptr) {
-
 				m_cBgbMgr.m_xpBsuSet->PrepareDc(pDC, true);
 				if ((pSpinner = new CSpinner(xpGtlView, pDC, 0, 0, m_xpCurXodj->m_bHodj)) != nullptr) {
 					point = pDC->GetViewportOrg();
@@ -2604,38 +2602,39 @@ bool CGtlData::ProcessGameResult(CXodj *xpXodj, int iGameCode, LPGAMESTRUCT lpGa
 		//
 		iSoundCode -= MG_SOUND_BASE;
 		assert(iSoundCode >= 0 && iSoundCode <= MG_SOUND_MAX);
-		if ((pSound = new CSound(xpGtlView, szGameSounds[iSoundCode], SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE)) != nullptr) {
+		if ((pSound = new CSound(xpGtlView, szGameSounds[iSoundCode],
+			SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | (bWin ? 0 : SOUND_AUTODELETE) )) != nullptr) {
 			pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
 			pSound->play();
 		}
 	}
 
 	if (bWin) {
-
+		// Win information
 		switch (iWinCode) {
-
-		// win information
-		//
 		case MG_WIN_INFO:
 			DivulgeInformation(m_xpCurXodj, false);
-			break ;
+			break;
 
-		// give the player an object from storage
-		//
+		// Give the player an object from storage
 		case MG_WIN_OBJECT:
 			GainRandomItem(m_xpCurXodj);
-			break ;
+			break;
 
-		// player gains
-		//
+		// Player gains money
 		case MG_WIN_MONEY:
-
 			if (lMoneyWon > 0)
 				GainMoney(m_xpCurXodj, lMoneyWon);
-			break ;
+			break;
 
 		default:
-			break ;
+			break;
+		}
+
+		// Stop playing dialog dictation if it's still playing, now that the dialog is closed
+		if (pSound != nullptr) {
+			pSound->stop();
+			delete pSound;
 		}
 	}
 

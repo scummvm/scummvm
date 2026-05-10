@@ -161,7 +161,7 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 		}
 		if (_looping) {
 			if (_loopStart != 0) {
-				Audio::AudioStream *loopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp(_loopStart, _stream->getRate()), _stream->getLength(), DisposeAfterUse::NO);
+				Audio::AudioStream *loopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp((_loopStart * 1000) / _stream->getRate(), _stream->getRate()), _stream->getLength(), DisposeAfterUse::NO);
 				g_system->getMixer()->playStream(type, _handle, loopStream, -1, _volume, _pan, DisposeAfterUse::YES);
 			} else {
 				Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
@@ -221,7 +221,7 @@ bool BaseSoundBuffer::pause() {
 uint32 BaseSoundBuffer::getLength() {
 	if (_stream) {
 		uint32 len = _stream->getLength().msecs();
-		return len * 1000;
+		return len;
 	}
 	return 0;
 }

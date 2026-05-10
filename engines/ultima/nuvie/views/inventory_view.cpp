@@ -638,7 +638,7 @@ bool InventoryView::select_obj(Obj *obj) {
 	return false;
 }
 
-GUI_status InventoryView::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status InventoryView::MouseDown(int x, int y, Events::MouseButton button) {
 	return GUI_PASS;
 }
 

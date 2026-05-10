@@ -38,6 +38,7 @@
 #include "director/lingo/xlibs/b/batqt.h"
 #include "director/lingo/xlibs/b/bimxobj.h"
 #include "director/lingo/xlibs/b/blitpict.h"
+#include "director/lingo/xlibs/b/blockthedrawingxobj.h"
 #include "director/lingo/xlibs/c/cdromxobj.h"
 #include "director/lingo/xlibs/c/closebleedwindowxcmd.h"
 #include "director/lingo/xlibs/c/colorxobj.h"
@@ -53,6 +54,7 @@
 #include "director/lingo/xlibs/d/dpwavi.h"
 #include "director/lingo/xlibs/d/dpwqtw.h"
 #include "director/lingo/xlibs/d/draw.h"
+#include "director/lingo/xlibs/e/ecdctrl.h"
 #include "director/lingo/xlibs/e/ednox.h"
 #include "director/lingo/xlibs/e/eventq.h"
 #include "director/lingo/xlibs/f/fadegammadownxcmd.h"
@@ -100,6 +102,7 @@
 #include "director/lingo/xlibs/m/movutils.h"
 #include "director/lingo/xlibs/m/msfile.h"
 #include "director/lingo/xlibs/m/mystisle.h"
+#include "director/lingo/xlibs/m/mazexobj.h"
 #include "director/lingo/xlibs/o/openbleedwindowxcmd.h"
 #include "director/lingo/xlibs/o/orthoplayxobj.h"
 #include "director/lingo/xlibs/p/paco.h"
@@ -112,8 +115,10 @@
 #include "director/lingo/xlibs/p/printomatic.h"
 #include "director/lingo/xlibs/p/processxobj.h"
 #include "director/lingo/xlibs/p/putcurs.h"
-#include "director/lingo/xlibs/q/qtmovie.h"
+#include "director/lingo/xlibs/p/playsoundmoviexobj.h"
 #include "director/lingo/xlibs/q/qtcatmovieplayerxobj.h"
+#include "director/lingo/xlibs/q/qtsupport.h"
+#include "director/lingo/xlibs/q/qtmovie.h"
 #include "director/lingo/xlibs/q/qtvr.h"
 #include "director/lingo/xlibs/q/quicktime.h"
 #include "director/lingo/xlibs/r/registercomponent.h"
@@ -124,7 +129,9 @@
 #include "director/lingo/xlibs/s/spacemgr.h"
 #include "director/lingo/xlibs/s/stagetc.h"
 #include "director/lingo/xlibs/s/syscolor.h"
+#include "director/lingo/xlibs/s/savenrestorexobj.h"
 #include "director/lingo/xlibs/t/tengu.h"
+#include "director/lingo/xlibs/t/temnotaxobj.h"
 #include "director/lingo/xlibs/u/unittest.h"
 #include "director/lingo/xlibs/v/valkyrie.h"
 #include "director/lingo/xlibs/v/versions.h"
@@ -146,22 +153,28 @@
 #include "director/lingo/xlibs/y/yasix.h"
 #include "director/lingo/xtras/a/audio.h"
 #include "director/lingo/xtras/b/budapi.h"
-#include "director/lingo/xtras/directsound.h"
+#include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
-#include "director/lingo/xtras/filextra.h"
-#include "director/lingo/xtras/keypoll.h"
-#include "director/lingo/xtras/masterapp.h"
+#include "director/lingo/xtras/f/filextra.h"
+#include "director/lingo/xtras/k/keypoll.h"
+#include "director/lingo/xtras/m/masterapp.h"
 #include "director/lingo/xtras/m/mui.h"
 #include "director/lingo/xtras/m/mui.h"
-#include "director/lingo/xtras/openurl.h"
-#include "director/lingo/xtras/oscheck.h"
-#include "director/lingo/xtras/qtvrxtra.h"
+#include "director/lingo/xtras/o/openurl.h"
+#include "director/lingo/xtras/o/oscheck.h"
+#include "director/lingo/xtras/q/qtvrxtra.h"
 #include "director/lingo/xtras/r/registryreader.h"
-#include "director/lingo/xtras/rtk.h"
-#include "director/lingo/xtras/scrnutil.h"
+#include "director/lingo/xtras/r/rtk.h"
+#include "director/lingo/xtras/s/scrnutil.h"
 #include "director/lingo/xtras/s/smacker.h"
-#include "director/lingo/xtras/timextra.h"
-#include "director/lingo/xtras/xsound.h"
+#include "director/lingo/xtras/s/staytoonedhall.h"
+#include "director/lingo/xtras/s/staytoonedball.h"
+#include "director/lingo/xtras/s/staytoonedglop.h"
+#include "director/lingo/xtras/s/staytoonedhigh.h"
+#include "director/lingo/xtras/s/staytoonedober.h"
+#include "director/lingo/xtras/s/staytoonedtoon.h"
+#include "director/lingo/xtras/t/timextra.h"
+#include "director/lingo/xtras/x/xsound.h"
 
 namespace Director {
 
@@ -245,6 +258,7 @@ static const struct XLibProto {
 	XLIBDEF(BatQT,				kXObj,			400),	// D4
 	XLIBDEF(BIMXObj,			kXObj,			400),	// D4
 	XLIBDEF(BlitPictXObj,		kXObj,			400),	// D4
+	XLIBDEF(BlockTheDrawingXObj,			kXObj,					400),	// D4
 	XLIBDEF(BudAPIXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(CDROMXObj,			kXObj,			200),	// D2
 	XLIBDEF(CloseBleedWindowXCMD,kXObj,			300),	// D3
@@ -263,6 +277,7 @@ static const struct XLibProto {
 	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
 	XLIBDEF(DisplayResXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DrawXObj,			kXObj,			400),	// D4
+	XLIBDEF(ECDCtrlXObj,			kXObj,					400),	// D4
 	XLIBDEF(Ednox,				kXObj,			300),	// D3
 	XLIBDEF(EventQXObj,			kXObj,			400),	// D4
 	XLIBDEF(FEDraculXObj,		kXObj,			400),	// D4
@@ -301,6 +316,7 @@ static const struct XLibProto {
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
 	XLIBDEF(MapNavigatorXObj,	kXObj,			400),	// D4
 	XLIBDEF(MasterAppXtra,		kXtraObj,		500),	// D5
+	XLIBDEF(MazeXObj,			kXObj,					400),	// D4
 	XLIBDEF(MemCheckXObj,		kXObj,			400),	// D4
 	XLIBDEF(MemoryXObj,			kXObj,			300),	// D3
 	XLIBDEF(Misc,				kXObj,			400),	// D4
@@ -322,6 +338,7 @@ static const struct XLibProto {
 	XLIBDEF(PalXObj,			kXObj,			400),	// D4
 	XLIBDEF(PanelXObj,			kXObj,			200),	// D2
 	XLIBDEF(PharaohsXObj,		kXObj,			400),	// D4
+	XLIBDEF(PlaySoundMovieXObj,			kXObj,					400),	// D4
 	XLIBDEF(PopUpMenuXObj,		kXObj,			200),	// D2
 	XLIBDEF(Porta,				kXObj,			300),	// D3
 	XLIBDEF(PrefPath,			kXObj,			400),	// D4
@@ -330,6 +347,7 @@ static const struct XLibProto {
 	XLIBDEF(PutcursXObj,		kXObj,			400),	// D4
 	XLIBDEF(QTCatMoviePlayerXObj,kXObj,			400),	// D4
 	XLIBDEF(QTMovie,			kXObj,			400),	// D4
+	XLIBDEF(QTSupport,			kXObj,			600),	// D4
 	XLIBDEF(QTVR,				kXObj,			400),	// D4
 	XLIBDEF(QtvrxtraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(Quicktime,			kXObj,			300),	// D3
@@ -338,6 +356,7 @@ static const struct XLibProto {
 	XLIBDEF(RegistryReaderXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(RemixXCMD,			kXObj,			300),	// D3
 	XLIBDEF(RolloverToolkitXtra,kXtraObj,		500),	// D5
+	XLIBDEF(SaveNRestoreXObj,			kXObj,					400),	// D4
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
 	XLIBDEF(SmackerXtra,			kXtraObj,					500),	// D5
@@ -345,7 +364,14 @@ static const struct XLibProto {
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
+	XLIBDEF(StayToonedBallXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedGlopXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedHallXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedHighXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedOberXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedToonXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SysColorXObj,		kXObj,			400),	// D4
+	XLIBDEF(TemnotaXObj,			kXObj,					400),	// D4
 	XLIBDEF(TenguXObj,			kXObj,			400),	// D4
 	XLIBDEF(TimextraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(UnitTestXObj,		kXObj,			400),	// D4
@@ -399,6 +425,7 @@ void Lingo::initXLibs() {
 
 			_xlibOpeners[lib->names[i].name] = lib->opener;
 			_xlibClosers[lib->names[i].name] = lib->closer;
+			_xlibTypes[lib->names[i].name] = lib->type;
 		}
 	}
 }
@@ -439,6 +466,19 @@ void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &p
 
 	if (_openXLibs.contains(name))
 		return;
+
+	if (type == 0 && _xlibTypes.contains(name)) {
+		type = (_xlibTypes[name] & kXtraObj) ? kXtraObj : kXObj;
+	}
+
+	// manual override for game quirks
+	if (name.equalsIgnoreCase("fileio")) {
+		if (g_director->_fileIOType == kXtraObj && g_director->getVersion() >= 500) {
+			type = kXtraObj;
+		} else if (g_director->_fileIOType == kXObj) {
+			type = kXObj;
+		}
+	}
 
 	_openXLibs[name] = type;
 

@@ -129,7 +129,7 @@ char *Text::getText(int ref) {
 		return _cache[i]._text;
 
 	warning("getText: Unable to find ref %d:%d", ref / 256, ref % 256);
-	return nullptr;
+	return _cache[0]._text;
 }
 
 void Text::say(const char *text, Sprite *spr) {

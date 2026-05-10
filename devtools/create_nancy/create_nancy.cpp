@@ -323,6 +323,8 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeGoodbyes(output, _nancy9Goodbyes))
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy8TelephoneRinging))	// same as 8
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy9EventFlagNames))
+	WRAPWITHOFFSET(writePatchFile(output, 10, nancy9PatchSrcFiles, "files/nancy9"))
+	WRAPWITHOFFSET(writePatchAssociations(output, nancy9PatchAssociations))
 
 	// Nancy Drew: The Secret of Shadow Ranch
 	gameOffsets.push_back(output.pos());

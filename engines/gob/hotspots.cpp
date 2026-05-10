@@ -555,8 +555,15 @@ void Hotspots::enter(uint16 index) {
 	_currentX = _vm->_global->_inter_mouseX;
 	_currentY = _vm->_global->_inter_mouseY;
 
-	if (spot.funcEnter != 0)
+	if (spot.funcEnter != 0) {
+		_vm->_game->pushOnGlobalCallStack(kHotspotEnter,
+										  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+										  _vm->_game->_curTotFile, spot.funcEnter);
+
 		call(spot.funcEnter);
+
+		_vm->_game->popGlobalCallStack();
+	}
 }
 
 void Hotspots::leave(uint16 index) {
@@ -583,7 +590,14 @@ void Hotspots::leave(uint16 index) {
 		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			_vm->_game->_script = spot.scriptFuncLeave;
 		}
+
+		_vm->_game->pushOnGlobalCallStack(kHotspotLeave,
+										  _vm->_game->_curTotFile, curScript->_currentOpcodePos,
+										  _vm->_game->_curTotFile, spot.funcLeave);
+
 		call(spot.funcLeave);
+
+		_vm->_game->popGlobalCallStack();
 		_vm->_game->_script = curScript;
 	}
 }
@@ -1608,8 +1622,15 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 			}
 
 			// Leave the current hotspot
-			if ((_currentKey != 0) && (_hotspots[_currentIndex].funcLeave != 0))
+			if ((_currentKey != 0) && (_hotspots[_currentIndex].funcLeave != 0)) {
+				_vm->_game->pushOnGlobalCallStack(kHotspotLeave,
+												  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+												  _vm->_game->_curTotFile, _hotspots[_currentIndex].funcLeave);
+
 				call(_hotspots[_currentIndex].funcLeave);
+
+				_vm->_game->popGlobalCallStack();
+			}
 
 			_currentKey = 0;
 		}
@@ -1738,8 +1759,15 @@ void Hotspots::evaluate() {
 		setCurrentHotspot(ids, id);
 
 		// Enter it
-		if (_hotspots[index].funcEnter != 0)
+		if (_hotspots[index].funcEnter != 0) {
+			_vm->_game->pushOnGlobalCallStack(kHotspotEnter,
+											  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+											  _vm->_game->_curTotFile, _hotspots[index].funcEnter);
+
 			call(_hotspots[index].funcEnter);
+
+			_vm->_game->popGlobalCallStack();
+		}
 
 		setCurrentHotspot(nullptr, 0);
 		id = 0;
@@ -2215,7 +2243,14 @@ bool Hotspots::leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const u
 
 		// Call the leave and time it
 		startTime = _vm->_util->getTimeKey();
+		_vm->_game->pushOnGlobalCallStack(kHotspotLeave,
+										  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+										  _vm->_game->_curTotFile, spot.funcLeave);
+
 		call(spot.funcLeave);
+
+		_vm->_game->popGlobalCallStack();
+
 		_vm->_inter->animPalette();
 		callTime = _vm->_util->getTimeKey() - startTime;
 

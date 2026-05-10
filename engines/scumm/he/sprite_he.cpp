@@ -88,7 +88,7 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 	if (!_activeSpriteCount)
 		return 0;
 
-	spritePtr = &_activeSprites [_activeSpriteCount - 1];
+	spritePtr = &_activeSprites[_activeSpriteCount - 1];
 
 	if (quickCheck != 0) {
 		for (int counter = 0; counter < _activeSpriteCount; counter++, spritePtr--) {
@@ -172,6 +172,42 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 
 					// Get the last active image state...
 					state = (*spritePtr)->lastState;
+				}
+
+				// The following code seems to only be present in FunShop titles
+				// and is responsible for accurately passing the mouse hover check
+				// for clip art sprites...
+				if (_vm->_game.id == GID_FUNSHOP) {
+					int angle = (*spritePtr)->lastAngle;
+					int scale = (*spritePtr)->lastScale;
+
+					bool scaleSpecified = (kSFScaleSpecified & (*spritePtr)->flags);
+					bool angleSpecified = (kSFAngleSpecified & (*spritePtr)->flags);
+
+					if (scaleSpecified || angleSpecified) {
+						// Scale the incoming point into image relative position...
+						if (scaleSpecified) {
+							if (scale <= 0) {
+								continue;
+							}
+
+							testPointX = (testPointX * 256) / scale;
+							testPointY = (testPointY * 256) / scale;
+						}
+
+						// Rotate the test point...
+						if (angleSpecified) {
+							Common::Point testPoint((int16)testPointX, (int16)testPointY);
+							_vm->_wiz->polyRotatePoints(&testPoint, 1, ((360 - angle) % 360));
+						}
+
+						// Adjust the pos to image relative coords...
+						int32 w, h;
+
+						_vm->_wiz->getWizImageDim(image, state, w, h);
+						testPointX += (w / 2);
+						testPointY += (h / 2);
+					}
 				}
 
 				if (!_vm->_wiz->hitTestWiz(image, state, testPointX, testPointY, (*spritePtr)->lastRenderFlags)) {

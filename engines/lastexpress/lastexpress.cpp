@@ -158,8 +158,6 @@ Common::Error LastExpressEngine::run() {
 	_debugger = new Debugger(this);
 	setDebugger(_debugger);
 
-	if (gDebugLevel >= 3)
-		DebugMan.enableDebugChannel(kDebugConsole);
 
 	// Graphics manager
 	_graphicsMan = new GraphicsManager(this);
@@ -208,11 +206,12 @@ Common::Error LastExpressEngine::run() {
 	getGraphicsManager()->initLuminosityValues(dataPixelFormat.rMax() << 11, dataPixelFormat.gMax() << 5, dataPixelFormat.bMax() << 0);
 
 #ifdef USE_IMGUI
-	ImGuiCallbacks callbacks;
-	callbacks.init = onImGuiInit;
-	callbacks.render = onImGuiRender;
-	callbacks.cleanup = onImGuiCleanup;
-	_system->setImGuiCallbacks(callbacks);
+	ImGuiCallbacks imGuiCallbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	imGuiCallbacks.init = onImGuiInit;
+	imGuiCallbacks.render = drawImGui ? onImGuiRender : nullptr;
+	imGuiCallbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(imGuiCallbacks);
 #endif
 
 	getMessageManager()->setEventHandle(kEventChannelEngine, &LastExpressEngine::engineEventHandlerWrapper);
@@ -225,6 +224,13 @@ Common::Error LastExpressEngine::run() {
 	getMenu()->doEgg(false, kSavegameTypeIndex, 0);
 
 	while (!shouldQuit()) {
+#ifdef USE_IMGUI
+		if (debugChannelSet(-1, kDebugImGui) != drawImGui) {
+			drawImGui = !drawImGui;
+			imGuiCallbacks.render = drawImGui ? onImGuiRender : nullptr;
+			_system->setImGuiCallbacks(imGuiCallbacks);
+		}
+#endif
 		do {
 			getSoundManager()->soundThread();
 			getSubtitleManager()->subThread();
@@ -475,7 +481,7 @@ bool LastExpressEngine::handleEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_F4:
-				if (_navigationEngineIsRunning && gDebugLevel >= 3)
+				if (_navigationEngineIsRunning && debugChannelSet(-1, kDebugImGui))
 					getLogicManager()->doF4();
 
 				break;
@@ -564,7 +570,7 @@ bool LastExpressEngine::handleEvents() {
 
 #ifdef USE_IMGUI
 	// Allow the debugger to pick up the changes...
-	if (gDebugLevel >= 3) {
+	if (debugChannelSet(-1, kDebugImGui)) {
 		_system->updateScreen();
 	} else {
 #endif

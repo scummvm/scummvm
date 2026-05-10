@@ -79,7 +79,7 @@ void Autotext::execute() {
 	if (_surfaceID > 2) {
 		// Surfaces 3+ are journal surfaces, and their text contents are saved. Texts MUST be in CONVO chunk,
 		// so we do not check _useAutotextChunk
-		Nancy::JournalData *journalData = (Nancy::JournalData *)NancySceneState.getPuzzleData(Nancy::JournalData::getTag());
+		JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
 		assert(journalData);
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);

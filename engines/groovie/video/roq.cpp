@@ -545,6 +545,21 @@ bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
 	}
 }
 
+bool ROQPlayer::isValidBlockHeaderType(uint16 blockHeaderType) {
+	if (blockHeaderType == 0x1001
+		|| blockHeaderType == 0x1002
+		|| blockHeaderType == 0x1011
+		|| blockHeaderType == 0x1012
+		|| blockHeaderType == 0x1013
+		|| blockHeaderType == 0x1020
+		|| blockHeaderType == 0x1021
+		|| blockHeaderType == 0x1030) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 bool ROQPlayer::processBlock() {
 	// Read the header of the block
 	ROQBlockHeader blockHeader;
@@ -602,9 +617,41 @@ bool ROQPlayer::processBlock() {
 	}
 
 	if (endpos != _file->pos() && !_file->eos()) {
-		warning("Groovie::ROQ: BLOCK %04x Should have ended at %lld, and has ended at %lld", blockHeader.type, (long long)endpos, (long long)_file->pos());
+		warning("Groovie::ROQ: BLOCK 0x%04x Should have ended at %lld, and has ended at %lld", blockHeader.type, (long long)endpos, (long long)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
-		_file->seek(MIN(_file->pos(), endpos));
+		int64 currFilePos = _file->pos();
+		if (currFilePos < endpos) {
+			// In this case we stay at the current position,
+			// which is *before* the intended endpos (as calculated from its blockHeader.size) of the faulty block
+
+			// We "peek" ahead to see what type of block is next
+			bool foundValidBlockHeaderType = false;
+			uint16 blockHeaderType = _file->readUint16LE();
+			if (!_file->eos() && !isValidBlockHeaderType(blockHeaderType)) {
+				warning("Groovie::ROQ: Peek next BLOCK 0x%04x is of unknown type at %lld!", blockHeaderType, (long long)currFilePos);
+				// This means we were put at the start of an invalid block,
+				// so test what would happen if we instead seek to the indicated endpos of the faulty block
+				_file->seek(endpos);
+				blockHeaderType = _file->readUint16LE();
+				if (!_file->eos() && isValidBlockHeaderType(blockHeaderType)) {
+					debug("Groovie::ROQ: Peek next BLOCK 0x%04x is of KNOWN type at %lld!", blockHeaderType, (long long)endpos);
+					foundValidBlockHeaderType = true;
+					// Seek back to the intended endpos where we now know starts a block with valid block header type
+					_file->seek(endpos);
+				}
+			}
+			if (!foundValidBlockHeaderType) {
+				// As a fallback seek back to currFilePos and continue from there.
+				// This is likely to lead to a failure in processing in some future block.
+				// In practice this should not happen.
+				_file->seek(currFilePos);
+			}
+		} else {
+			// If the intended endpos of the faulty block is *before* the current file pos,
+			// just seek to the intended endpos and continue from there.
+			// We don't do any peeking here since this case is as of yet not connected to any known bugs.
+			_file->seek(endpos);
+		}
 	}
 	// End the frame when the graphics have been modified or when there's an error
 	return endframe || !ok;

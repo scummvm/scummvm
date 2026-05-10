@@ -38,7 +38,7 @@ struct NancyInput;
 
 namespace UI {
 
-class Viewport : public Nancy::RenderObject {
+class Viewport : public RenderObject {
 public:
 	Viewport() :
 		RenderObject(6),
@@ -48,10 +48,10 @@ public:
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
 		_panningType(kPanNone),
-		_decoder(AVFDecoder::kLoadBidirectional),
+		_decoder(new AVFDecoder(AVFDecoder::kLoadBidirectional)),
 		_autoMove(false) {}
 
-	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
+	virtual ~Viewport() { _decoder->close(); _fullFrame.free(); }
 
 	void init() override;
 	void handleInput(NancyInput &input);
@@ -66,7 +66,7 @@ public:
 	void scrollUp(uint delta);
 	void scrollDown(uint delta);
 
-	uint16 getFrameCount() const { return _decoder.isVideoLoaded() ? _decoder.getFrameCount() : 0; }
+	uint16 getFrameCount() const { return _decoder->isVideoLoaded() ? _decoder->getFrameCount() : 0; }
 	uint16 getCurFrame() const { return _currentFrame; }
 	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
 	uint16 getMaxScroll() const;
@@ -88,7 +88,8 @@ protected:
 
 	byte _panningType;
 
-	AVFDecoder _decoder;
+	Common::ScopedPtr<Video::VideoDecoder> _decoder;
+	uint16 _videoType = kVideoPlaytypeAVF;
 	uint16 _currentFrame;
 	uint16 _videoFormat;
 	Graphics::ManagedSurface _fullFrame;

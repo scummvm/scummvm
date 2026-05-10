@@ -618,7 +618,8 @@ bool CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 			MFC::TranslateMessage(&msg);
 			MFC::DispatchMessage(&msg);
 		}
-		if (iK != 5) Sleep(10);                      //delay 10 ms except for the last one,
+		if (iK != 5)
+			AfxGetApp()->pause();			//delay 10 ms except for the last one,
 		//so that the shell does not "fly" off the board.
 	}
 

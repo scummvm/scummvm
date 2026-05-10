@@ -28,8 +28,8 @@ namespace MediaStation {
 
 class ParameterClient {
 public:
-	ParameterClient() {};
-	virtual ~ParameterClient() {};
+	ParameterClient();
+	virtual ~ParameterClient();
 
 	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) = 0;
 };
@@ -39,7 +39,7 @@ enum DeviceOwnerSectionType {
 	kDeviceOwnerAllowMultipleStreams = 0x36,
 };
 
-class DeviceOwner : public ParameterClient {
+class ImtDeviceOwner : public ParameterClient {
 public:
 	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
 
@@ -57,8 +57,49 @@ class Document : public ParameterClient {
 public:
 	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
 	void readStartupInformation(Chunk &chunk);
+	void readContextLoadComplete(Chunk &chunk);
 
-	uint _entryScreenId = 0;
+	void beginTitle();
+	void startContextLoad(uint contextId);
+	bool isContextLoadInProgress(uint contextId);
+	void branchToScreen(uint screenId, bool disableScreenAutoUpdate);
+
+	void streamDidClose(uint streamId);
+	void streamDidFinish(uint streamId);
+	// These implementations are left empty because they are empty in the original,
+	// but they are kept because they are technically still defined in the original.
+	void streamDidOpen(uint streamId) {};
+	void streamWillRead(uint streamId) {};
+
+	uint contextIdForScreenActorId(uint screenActorId);
+	void addToContextLoadQueue(uint contextId);
+	void removeFromContextLoadQueue(uint contextId);
+	bool isContextLoadQueued(uint contextId);
+	void contextReleaseComplete(uint contextId);
+	void contextAlreadyReleased(uint contextId);
+
+private:
+	uint _currentScreenActorId = 0;
+	StreamFeed *_currentStreamFeed = nullptr;
+	Common::Array<uint> _contextLoadQueue;
+	bool _entryPointScreenIdWasOverridden = false;
+	uint _entryPointScreenId = 0;
+	uint _entryPointStreamId = 0;
+	uint _loadingContextId = 0;
+	uint _loadingScreenActorId = 0;
+	uint _disabledScreenAutoUpdateToken = 0;
+
+	void contextLoadDidComplete();
+	void screenLoadDidComplete();
+	void startFeed(uint streamId);
+	// This is named stopFeed in the original, but it is a bit of a misnomer
+	// because it also closes the stream feed. In the lower-level stream feed manager
+	// and stream feeds themselves, stopping the stream feed and closing it is
+	// two separate operations.
+	void stopFeed();
+	void blowAwayCurrentScreen();
+	void preloadParentContexts(uint contextId);
+	void checkQueuedContextLoads();
 };
 
 } // End of namespace MediaStation

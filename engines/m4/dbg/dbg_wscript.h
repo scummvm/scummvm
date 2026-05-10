@@ -24,7 +24,6 @@
 
 #include "common/stream.h"
 #include "m4/m4_types.h"
-#include "m4/dbg/dbg_defs.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/wscript/ws_machine.h"
 
@@ -38,15 +37,6 @@ extern void dbg_AddOpcodeToMachineInstr(int instruction);
 extern void dbg_AddParamToCurrMachInstr(const char *param);
 extern void dbg_AddGlobalParamToCurrMachInstr(int num, const char *prefix = nullptr);
 extern void dbg_AddRegParamToCurrMachInstr(int num, const char *prefix = nullptr);
-
-extern void dbg_ws_update();
-
-extern void dbg_LaunchSequence(Anim8 *myAnim8);
-extern void dbg_DebugWSMach(machine *m, bool debug);
-extern void dbg_DebugNextCycle();
-extern void dbg_RemoveWSMach(machine *m);
-extern void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR);
-extern void dbg_WSError(Common::WriteStream *logFile, machine *m, int32 errorType, const char *errDesc, const char *errMsg, int32 pcOffset);
 
 } // namespace M4
 

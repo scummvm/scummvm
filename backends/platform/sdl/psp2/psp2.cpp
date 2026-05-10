@@ -39,26 +39,32 @@
 
 
 static const Common::HardwareInputTableEntry psp2JoystickButtons[] = {
+	// I18N: Hardware key on controller
 	{ "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("Cross")       },
+	// I18N: Hardware key on controller
 	{ "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("Circle")      },
+	// I18N: Hardware key on controller
 	{ "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("Square")      },
+	// I18N: Hardware key on controller
 	{ "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Triangle")    },
+	// I18N: Hardware key on controller
 	{ "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
+	// I18N: Hardware key on controller
 	{ "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
 	{ "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
 	{ "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
-	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
-	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
-	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
-	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad up")    },
+	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad down")  },
+	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad left")  },
+	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad right") },
 	{ nullptr,              0,                                      nullptr           }
 };
 
 static const Common::AxisTableEntry psp2JoystickAxes[] = {
-	{ "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left Stick X")  },
-	{ "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left Stick Y")  },
-	{ "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right Stick X") },
-	{ "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right Stick Y") },
+	{ "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left stick X")  },
+	{ "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left stick Y")  },
+	{ "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right stick X") },
+	{ "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right stick Y") },
 	{ nullptr,             0,                                   Common::kAxisTypeFull, nullptr             }
 };
 
@@ -162,6 +168,19 @@ Common::Path OSystem_PSP2::getDefaultConfigFileName() {
 
 Common::Path OSystem_PSP2::getDefaultLogFileName() {
 	return "ux0:data/scummvm/scummvm.log";
+}
+
+void OSystem_PSP2::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+#ifdef DATA_PATH
+	// Add the global DATA_PATH to the directory search list
+	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
+	Common::FSNode dataNode(DATA_PATH);
+	if (dataNode.exists() && dataNode.isDirectory()) {
+		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
+	}
+#endif
+
+	// Don't add current working directory: there is none
 }
 
 Common::HardwareInputSet *OSystem_PSP2::getHardwareInputSet() {

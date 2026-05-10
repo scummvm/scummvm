@@ -61,7 +61,7 @@ static CColorButton    *pCancelButton = nullptr;
  ****************************************************************/
 
 COptionsDlg::COptionsDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	:  CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	m_bSoundOn = true;
 	m_bDisableSets = false;
 	m_pOptionsPalette = pPalette;

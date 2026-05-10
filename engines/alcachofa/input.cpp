@@ -37,6 +37,7 @@ void Input::nextFrame() {
 	_wasMouseRightReleased = false;
 	_wasMenuKeyPressed = false;
 	_wasInventoryKeyPressed = false;
+	_wasSubtitlesKeyPressed = false;
 	updateMousePos3D(); // camera transformation might have changed
 }
 
@@ -77,6 +78,9 @@ bool Input::handleEvent(const Common::Event &event) {
 		case EventAction::InputInventory:
 			_wasInventoryKeyPressed = true;
 			return true;
+		case EventAction::InputSubtitles:
+			_wasSubtitlesKeyPressed = true;
+			return true;
 		default:
 			return false;
 		}
@@ -100,6 +104,33 @@ void Input::toggleDebugInput(bool debugMode) {
 void Input::updateMousePos3D() {
 	auto pos3D = g_engine->camera().transform2Dto3D({ (float)_mousePos2D.x, (float)_mousePos2D.y, kBaseScale });
 	_mousePos3D = { (int16)pos3D.x(), (int16)pos3D.y() };
+}
+
+struct WaitForInputTask final : public Task {
+	WaitForInputTask(Process &process) : Task(process) {}
+
+	WaitForInputTask(Process &process, Serializer &s) : Task(process) {}
+
+	TaskReturn run() override {
+		TASK_BEGIN;
+
+		// originally this would unlock interaction
+		do {
+			TASK_YIELD(1);
+		} while(!g_engine->input().wasAnyMousePressed());
+		TASK_END;
+	}
+
+	void debugPrint() override {
+		g_engine->getDebugger()->debugPrintf("Wait for input");
+	}
+
+	const char *taskName() const override;
+};
+DECLARE_TASK(WaitForInputTask)
+
+Task *Input::waitForInput(Process &process) {
+	return new WaitForInputTask(process);
 }
 
 }

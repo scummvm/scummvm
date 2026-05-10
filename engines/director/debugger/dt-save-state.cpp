@@ -94,6 +94,8 @@ void saveCurrentState() {
 	json["ScoreWindow"] = new Common::JSONValue(_state->_scoreWindow);
 	json["ChannelsWindow"] = new Common::JSONValue(_state->_channelsWindow);
 	json["CastWindow"] = new Common::JSONValue(_state->_castWindow);
+	json["IgnoreMouse"] = new Common::JSONValue(_state->_ignoreMouse);
+	json["EnableMultiViewport"] = new Common::JSONValue(_state->_enableMultiViewport);
 
 	// Save the JSON
 	Common::JSONValue save(json);
@@ -177,6 +179,15 @@ void loadSavedState() {
 	_state->_scoreWindow = saved->asObject()["ScoreWindow"]->asString();
 	_state->_channelsWindow = saved->asObject()["ChannelsWindow"]->asString();
 	_state->_castWindow = saved->asObject()["CastWindow"]->asString();
+	_state->_ignoreMouse = saved->asObject()["IgnoreMouse"]->asBool();
+	_state->_enableMultiViewport = saved->asObject()["EnableMultiViewport"]->asBool();
+
+	ImGuiIO &io = ImGui::GetIO();
+	if (_state->_enableMultiViewport) {
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	} else {
+		io.ConfigFlags &= ~ImGuiConfigFlags_ViewportsEnable;
+	}
 
 	free(data);
 	delete saved;

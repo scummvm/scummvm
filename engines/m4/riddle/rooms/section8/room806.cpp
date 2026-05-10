@@ -20,12 +20,12 @@
  */
 
 #include "m4/riddle/rooms/section8/room806.h"
-
+#include "m4/riddle/riddle.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/other.h"
 #include "m4/graphics/gr_series.h"
-#include "m4/riddle/riddle.h"
-#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
@@ -154,14 +154,18 @@ void Room806::init() {
 			if (!_G(flags)[V265]) {
 				ws_walk(_G(my_walker), 221, 316, nullptr, 12001, 3, true);
 			} else {
-				if (!player_been_here(809))
-					kernel_timing_trigger(imath_ranged_rand(1200, 1800), 201, nullptr);
+				ws_walk(_G(my_walker), 221, 316, nullptr, 999, 3, true);
+				
+				if (!_G(flags)[V276]) {
+					if (!player_been_here(809))
+						kernel_timing_trigger(imath_ranged_rand(1200, 1800), 201, nullptr);
 
-				kernel_timing_trigger(imath_ranged_rand(1200, 1800), 701, nullptr);
+					kernel_timing_trigger(imath_ranged_rand(1200, 1800), 701, nullptr);
+				}
 			}
 
 			if (!_G(flags)[V276])
-				sendWSMessage_10000(_mcTrekMach, 30, 296, 0, 501, 1);
+				sendWSMessage_10000(_mcTrekMach, 30, 296, 0, 501, 0);
 
 		} else if (!_G(flags)[V265]) {
 			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, 101, 1);
@@ -921,7 +925,7 @@ void Room806::parser() {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s33", 1, 255, -1, -1);
 			digi_play_loop("950_s29", 3, 93, -1, -1);
-			_G(game).new_room = 807;
+			_G(game).setRoom(807);
 
 			break;
 
@@ -1090,7 +1094,7 @@ void Room806::parser() {
 		} else if (_G(kernel).trigger == 1) {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 93, -1, -1);
-			_G(game).new_room = 805;
+			_G(game).setRoom(805);
 		}
 	} // if (player_said("west") && (_G(kernel).trigger == -1 || _G(kernel).trigger == 1))
 
@@ -1102,7 +1106,7 @@ void Room806::parser() {
 		} else if (_G(kernel).trigger == 1) {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 93, -1, -1);
-			_G(game).new_room = 807;
+			_G(game).setRoom(807);
 		}
 	}
 
@@ -1111,7 +1115,6 @@ void Room806::parser() {
 }
 
 void Room806::daemon() {
-	warning("Trigger %d", _G(kernel).trigger);
 	switch (_G(kernel).trigger) {
 	case 101:
 		ws_hide_walker(_mcTrekMach);

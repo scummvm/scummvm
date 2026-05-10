@@ -93,6 +93,8 @@ static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColors, uint32 m
 static void FadeProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
+		COLORREF origRGB[MAX_COLORS];   // local copy of original palette
+		int32 numColors;                // number of colors in original palette
 		COLORREF fadeRGB[MAX_COLORS];	// local copy of palette
 		const long *pColMult;			// pointer to color multiplier table
 		PALETTE *pPalette;		// pointer to palette
@@ -107,8 +109,13 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		// Note that this palette is being faded
 		FadingPalette(pFade->pPalQ, true);
 
-	// get pointer to palette - reduce pointer indirection a bit
+	// get palette - reduce pointer indirection a bit.
+	// copy to a local array so that palette can be immediately deleted,
+	// otherwise it will leak if coroutine is interrupted by another fade.
 	_ctx->pPalette = _vm->_handle->GetPalette(pFade->pPalQ->hPal);
+	memcpy(_ctx->origRGB, _ctx->pPalette->palRGB, _ctx->pPalette->numColors * sizeof(COLORREF));
+	_ctx->numColors = _ctx->pPalette->numColors;
+	delete _ctx->pPalette;
 
 	for (_ctx->pColMult = pFade->pColorMultTable; *_ctx->pColMult >= 0; _ctx->pColMult++) {
 		// go through all multipliers in table - until a negative entry
@@ -118,11 +125,11 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 			FadePalette(_ctx->fadeRGB, pFade->pPalQ->palRGB,
 				pFade->pPalQ->numColors, (uint32) *_ctx->pColMult);
 		else
-			FadePalette(_ctx->fadeRGB, _ctx->pPalette->palRGB,
-				_ctx->pPalette->numColors, (uint32) *_ctx->pColMult);
+			FadePalette(_ctx->fadeRGB, _ctx->origRGB,
+				_ctx->numColors, (uint32) *_ctx->pColMult);
 
 		// send new palette to video DAC
-		UpdateDACqueue(pFade->pPalQ->posInDAC, _ctx->pPalette->numColors, _ctx->fadeRGB);
+		UpdateDACqueue(pFade->pPalQ->posInDAC, _ctx->numColors, _ctx->fadeRGB);
 
 		// allow time for video DAC to be updated
 		CORO_SLEEP(1);
@@ -131,8 +138,6 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 	if (TinselVersion >= 2)
 		// Note that this palette is being faded
 		FadingPalette(pFade->pPalQ, false);
-
-	delete _ctx->pPalette;
 
 	CORO_END_CODE;
 }

@@ -98,6 +98,7 @@
 #include "resources/hof_dos_cd_spanish.h"
 #include "resources/hof_dos_cd_hebrew.h"
 #include "resources/hof_dos_cd_czech.h"
+#include "resources/hof_dos_cd_korean.h"
 
 #include "resources/hof_fmtowns.h"
 #include "resources/hof_fmtowns_english.h"
@@ -1374,6 +1375,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP, &k2SeqplayTlkFilesDOSCDSpanishProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, CS_CZE, &k2SeqplayStringsDOSCDCzechProvider },
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, CS_CZE, &k2SeqplayTlkFilesDOSCDCzechProvider },
+	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, KO_KOR, &k2SeqplayStringsDOSCDKoreanProvider },
+	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, KO_KOR, &k2SeqplayTlkFilesDOSCDKoreanProvider },
 	{ k2SeqplayPakFiles, kKyra2, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k2SeqplayPakFilesFMTownsProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformFMTowns, kNoSpecial, EN_ANY, &k2SeqplayStringsFMTownsEnglishProvider },
 	{ k2SeqplaySfxFiles, kKyra2, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k2SeqplaySfxFilesFMTownsProvider },

@@ -36,9 +36,11 @@ SAVED_ASFLAGS=$ASFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
+SAVED_CXXFILT=$CXXFILT
 SAVED_DWP=$DWP
 SAVED_LD=$LD
 SAVED_LDFLAGS=$LDFLAGS
+SAVED_NM=$NM
 SAVED_PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR:-unset}
 SAVED_RANLIB=$RANLIB
 SAVED_SDL_CONFIG=$SDL_CONFIG
@@ -189,7 +191,9 @@ _taskbar=auto
 _updates=no
 _libunity=auto
 _dialogs=auto
+_printing=yes
 _tts=auto
+_osx_tts_backend=auto
 _gtk=auto
 _fribidi=auto
 _discord=auto
@@ -203,6 +207,7 @@ _werror_build=auto
 _text_console=no
 _mt32emu=yes
 _lua=yes
+_mfc=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _build_edge_scalers=yes
@@ -247,10 +252,12 @@ _ext_sse2=auto
 _ext_avx2=auto
 _ext_neon=auto
 # Default commands
-_ranlib="ranlib"
-_strip="strip"
 _ar="ar cr"
 _as="as"
+_cxxfilt="c++filt"
+_ranlib="ranlib"
+_nm="nm"
+_strip="strip"
 _dwp="dwp"
 _windres="windres"
 _ldd="ldd"
@@ -293,14 +300,18 @@ _need_memalign=yes
 _have_x86=no
 _have_amd64=no
 _imgui=yes
+_cdtoons=auto
 _indeo3=auto
 _indeo45=auto
 _hnm=auto
+_jyv1=auto
 _qdm2=auto
 _fmtowns_pc98_audio=auto
 _sid_audio=auto
 _svq1=auto
+_truemotion1=auto
 _vgmtrans_audio=auto
+_xan=auto
 _midi=auto
 _universaltracker=auto
 
@@ -322,8 +333,10 @@ add_feature png "PNG" "_png"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature printing "Printing" "_printing"
 
 # Components are features which may be disabled if unused by the engines
+add_component cdtoons "CDTOONS" "_cdtoons" "USE_CDTOONS"
 add_component enet "ENet" "_enet" "USE_ENET"
 add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
 add_component gif "GIF" "_gif" "USE_GIF"
@@ -331,7 +344,9 @@ add_component hnm "HNM" "_hnm" "USE_HNM"
 add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
 add_component indeo3 "Indeo 3" "_indeo3" "USE_INDEO3"
 add_component indeo45 "Indeo 4&5" "_indeo45" "USE_INDEO45"
+add_component jyv1 "JYV1" "_jyv1" "USE_JYV1"
 add_component lua "Lua" "_lua" "USE_LUA"
+add_component mfc "MFC" "_mfc" "USE_MFC"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
 add_component midi "MIDI synthesis" "_midi" "USE_MIDI"
@@ -341,8 +356,10 @@ add_component qdm2 "QDM2" "_qdm2" "USE_QDM2"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component svq1 "Sorenson Video 1" "_svq1" "USE_SVQ1"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
+add_component truemotion1 "TrueMotion 1" "_truemotion1" "USE_TRUEMOTION1"
 add_component universaltracker "External Tracker Libraries" "_universaltracker" "USE_UNIVERSALTRACKER"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
+add_component xan "XAN" "_xan" "USE_XAN"
 
 # The following list of features cannot be declared as components
 # because they are used in the common code:
@@ -667,14 +684,8 @@ get_system_exe_extension() {
 	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
-	mint)
-		if test "$_backend" = "atari"; then
-			# ATARI backend
-			_exeext=".ttp"
-		else
-			# SDL backend
-			_exeext=".gtp"
-		fi
+	mint*)
+		_exeext=".prg"
 		;;
 	emscripten)
 		_exeext=".html"
@@ -1204,10 +1215,12 @@ Some influential environment variables:
                      headers in a nonstandard directory <include dir>
   CXX                C++ compiler command
   CXXFLAGS           C++ compiler flags
+  CXXFILT            demangle C++ symbols command
   DWP                DWARF packing utility command
   LD                 linker command
   LDFLAGS            linker flags, e.g. -L<lib dir> if you have libraries in a
                      nonstandard directory <lib dir>
+  NM                 list symbols command
   PKG_CONFIG_LIBDIR  list of directories where pkg-config '.pc' files are
                      looked up
   RANLIB             archive indexer command
@@ -1231,7 +1244,7 @@ cat >> $TMPLOG <<EOF
 Invocation command line was:
 $0 $@
 Saved environment variables:
-AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
+AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CXXFILT="$SAVED_CXXFILT" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" NM="$SAVED_NM" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
 EOF
 
 JPEG_LIBS=-ljpeg
@@ -1396,6 +1409,8 @@ for ac_option in $@; do
 	--disable-vkeybd)            _vkeybd=no              ;;
 	--enable-eventrecorder)      _eventrec=yes           ;;
 	--disable-eventrecorder)     _eventrec=no            ;;
+	--enable-system-printing)    _printing=yes           ;;
+	--disable-system-printing)   _printing=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
 	--enable-ext-sse2)           _ext_sse2=yes           ;;
@@ -1826,6 +1841,11 @@ kos32)
 	_host_cpu=i686
 	_host_alias=kos32
 	;;
+m68k-atari-mintelf*)
+	_host_os=mintelf
+	_host_cpu=m68k
+	_host_alias=$_host
+	;;
 m68k-atari-mint*)
 	_host_os=mint
 	_host_cpu=m68k
@@ -1986,10 +2006,12 @@ if test -z "$_host_alias"; then
 	_host_alias="$_host_cpu-$_host_os"
 else
 	# if _host_alias was set, default to the standard GNU tools
+	_ar="$_host_alias-ar cr"
+	_as=$_host_alias-as
+	_cxxfilt=$_host_alias-c++filt
+	_nm=$_host_alias-nm
 	_ranlib=$_host_alias-ranlib
 	_strip=$_host_alias-strip
-	_ar="$_host_alias-ar cr"
-	_as="$_host_alias-as"
 	_dwp=$_host_alias-dwp
 	_windres=$_host_alias-windres
 fi
@@ -2247,7 +2269,7 @@ if test "$_host_os" = android; then
 	if test -z "$PKG_CONFIG_LIBDIR"; then
 		PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
 	fi
-	_libcurlpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libcurlpath"
+	_libmikmodpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libmikmodpath"
 fi
 
 #
@@ -2306,20 +2328,28 @@ if test -z "$CXX"; then
 	exit 1
 fi
 
-if test -n "$RANLIB"; then
-	_ranlib=$RANLIB
-fi
-
-if test -n "$STRIP"; then
-	_strip=$STRIP
-fi
-
 if test -n "$AR"; then
 	_ar="$AR cr"
 fi
 
 if test -n "$AS"; then
 	_as=$AS
+fi
+
+if test -n "$CXXFILT"; then
+	_cxxfilt=$CXXFILT
+fi
+
+if test -n "$NM"; then
+	_nm=$NM
+fi
+
+if test -n "$RANLIB"; then
+	_ranlib=$RANLIB
+fi
+
+if test -n "$STRIP"; then
+	_strip=$STRIP
 fi
 
 if test -n "$DWP"; then
@@ -2362,6 +2392,8 @@ have_icc=no
 cc_check_define __INTEL_COMPILER && have_icc=yes
 have_clang=no
 cc_check_define __clang__ && have_clang=yes
+have_apple_clang=no
+test "$have_clang" = yes && cc_check_define __apple_build_version__ && have_apple_clang=yes
 
 if test "$have_icc" = yes; then
 	add_line_to_config_mk 'HAVE_ICC = 1'
@@ -2386,7 +2418,7 @@ if test "$have_gcc" = yes; then
 	add_line_to_config_mk 'HAVE_GCC = 1'
 	_cxx_major=`gcc_get_define __GNUC__`
 	_cxx_minor=`gcc_get_define __GNUC_MINOR__`
-	cxx_version="`( $CXX -dumpversion ) 2>&1`"
+	cxx_version="`$CXX -dumpversion 2>&1`"
 
 	if test "$have_clang" = yes; then
 		# Clang sets a gcc version number for compatibility.
@@ -2394,10 +2426,15 @@ if test "$have_gcc" = yes; then
 		# compiler version checks.
 
 		# For the version reported in the configure log (cxx_version),
-		# we get the actual clang version.
+		# we get the actual Clang version. Apple Clang also has its
+		# own version numbers, so differentiate it.
 		cxx_version=`gcc_get_define __clang_version__`
 		cxx_version="`echo "${cxx_version}" | sed -e 's/"\([^ ]*\) .*/\1/'`"
-		cxx_version="clang $cxx_version, ok"
+		if test "$have_apple_clang" = yes; then
+			cxx_version="Apple Clang $cxx_version, ok"
+		else
+			cxx_version="Clang $cxx_version, ok"
+		fi
 
 		_clang_major=`gcc_get_define __clang_major__`
 		_clang_minor=`gcc_get_define __clang_minor__`
@@ -2434,13 +2471,13 @@ if test "$have_gcc" = yes; then
 		fi
 	fi
 elif test "$have_icc" = yes; then
-	cxx_version="`( $CXX -dumpversion ) 2>/dev/null`"
+	cxx_version="`$CXX -dumpversion 2>/dev/null`"
 	_cxx_major="`echo "${cxx_version}" | sed -ne 's/\([0-9][0-9]*\)\..*/\1/gp'`"
 	_cxx_minor="`echo "${cxx_version}" | sed -ne 's/[0-9][0-9]*\.\([0-9][0-9]*\)/\1/gp'`"
 	cxx_version="ICC $cxx_version, ok"
 else
 	# TODO: Big scary warning about unsupported compilers
-	cxx_version=`( $CXX -version ) 2>&1`
+	cxx_version=`$CXX -version 2>&1`
 	if test "$?" -eq 0; then
 		cxx_version="`echo "${cxx_version}" | sed -ne 's/^.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/gp'`"
 		if test -z "${cxx_version}"; then
@@ -2862,9 +2899,6 @@ case $_host_cpu in
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-				# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
-				# (on Pandora and iPhone at least)
-				#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
 				;;
 		esac
 
@@ -3211,6 +3245,10 @@ EOF
 			fi
 		fi
 
+		# The TTS backend can use either NSSpeechSynthesizer or AVSpeechSynthesizer. The latter
+		# is only available since macOS 10.14, while the former is available in older versions
+		# but deprecated in macOS 12. This coincides with the switch to Apple Silicon CPUs.
+		_osx_tts_backend="NSSpeechSynthesizer"
 		case $_host_cpu in
 		powerpc*)
 			# We use -force_cpusubtype_ALL to ensure the binary runs on every
@@ -3227,6 +3265,7 @@ EOF
 			;;
 		aarch64)
 			add_line_to_config_mk 'MACOSX_ARM64 = 1'
+			_osx_tts_backend="AVSpeechSynthesizer"
 			;;
 		esac
 
@@ -3435,7 +3474,6 @@ EOF
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var DEFINES "-D_GNU_SOURCE"
-		append_var DEFINES "-D_ISOC11_SOURCE"
 		;;
 	morphos*)
 		if test "$_debug_build" = no; then
@@ -3443,13 +3481,15 @@ EOF
 		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/usr/local/lib"
-		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
 		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
 		# use SDL2
 		_sdlconfig=sdl2-config
+		# OpenGL configuration
+		_opengl_game_classic=yes
+		_opengl_game_shaders=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -3543,6 +3583,7 @@ EOF
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
+		_detection_features_full=no
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
@@ -3838,7 +3879,6 @@ if test -n "$_host"; then
 			if test "$_optimizations" = "yes"; then
 				# --enable-release, --enable-optimizations
 				append_var CXXFLAGS "-fomit-frame-pointer"
-				append_var CXXFLAGS "-fno-exceptions"
 				append_var CXXFLAGS "-ffast-math -fno-unsafe-math-optimizations"
 			fi
 
@@ -3853,8 +3893,51 @@ if test -n "$_host"; then
 			append_var LDFLAGS "-Wl,--msuper-memory"
 			append_var LDFLAGS "-Wl,--stack,256k"
 
+			# common defines for atari and firebee/sdl backends
+			_sdlnet=no
+			_libcurl=no
+			_enet=no
+			_flac=no
+			_alsa=no
 			_seq_midi=no
+			_sndio=no
 			_timidity=no
+			_mpeg2=no
+			_a52=no
+			_vpx=no
+			_faad=no
+			_fluidsynth=no
+			_fluidlite=no
+			_sonivox=no
+			_opengl_mode=none
+			_tinygl=no
+			_tts=no
+			_fribidi=no
+			_discord=no
+			_text_console=yes # USE_TEXT_CONSOLE_FOR_DEBUGGER
+			_mt32emu=no
+			_lua=no
+			_build_hq_scalers=no
+			_cloud=no
+			_curl=no
+			_translation=no
+			_lua=no
+			_sid_audio=no
+			_tinygl=no
+			_nuked_opl=no
+			_detection_features_full=no
+
+			if test "$_backend" = sdl; then
+				if cc_check_define __mcoldfire__; then
+					_firebee_plugin_provider=yes
+				else
+					_atari_plugin_provider=yes
+				fi
+				define_in_config_if_yes "$_atari_plugin_provider" 'USE_ATARI_PLUGIN_PROVIDER'
+				define_in_config_if_yes "$_firebee_plugin_provider" 'USE_FIREBEE_PLUGIN_PROVIDER'
+			fi
+
+			_port_mk="backends/platform/atari/atari.mk"
 			;;
 		maemo)
 			_optimization_level=-Os
@@ -4068,6 +4151,7 @@ if test -n "$_host"; then
 			#the -gcc- variants allow link time optimization
 			_ar="$_host_alias-gcc-ar cr"
 			_ranlib=$_host_alias-gcc-ranlib
+			_pkgconfig="${VITASDK}/bin/arm-vita-eabi-pkg-config"
 			;;
 		psp)
 			_backend="psp"
@@ -4079,7 +4163,7 @@ if test -n "$_host"; then
 			;;
 		tvos)
 			add_line_to_config_mk 'IPHONE = 1'
-			append_var DEFINES "-DIPHONE -DIPHONE_IOS7"
+			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_TVOS"
 			_backend="ios7"
 			_seq_midi=no
 			_timidity=no
@@ -4159,11 +4243,24 @@ case $_backend in
 		fi
 		;;
 	atari)
-		define_in_config_if_yes yes "ATARI"
+		append_var DEFINES "-DATARI"
 		append_var DEFINES "-DDISABLE_NES_APU"
-		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lgem"
-		_sid_audio=no
+		_ogg=no
+		_vorbis=no
+		_tremor=no
+		_mad=no
+		_jpeg=no
+		_png=no
+		_gif=no
+		_theoradec=no
+		_readline=no
+		_freetype2=no
+		_libmikmod=no
+		_libopenmpt=no
+		_libmpcdec=no
+		_build_scalers=no
+		_build_aspect=no
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
@@ -4191,8 +4288,8 @@ case $_backend in
 	ios7)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
-		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
-		append_var LIBS "-framework GameController"
+		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration"
+		append_var LIBS "-framework GameController -framework CoreMIDI"
 		if test "$_host" = 'tvos'; then
 			append_var LDFLAGS "-mtvos-version-min=9 -arch arm64"
 			append_var CFLAGS "-mtvos-version-min=9 -arch arm64"
@@ -4729,7 +4826,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dc | ds | emscripten |ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
+	3ds | android | dc | ds | emscripten | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -5123,6 +5220,18 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
+	mintelf)
+		_elf_loader=yes
+		append_var DEFINES "-DM68K_TARGET"
+		append_var DEFINES "-DPLUGIN_DETECTION_NAME=\\\"detectio\\\""
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DELF_LOADER_CXA_ATEXIT"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+		append_var DEFINES "-DELF_NO_MEM_MANAGER"
+_mak_plugins='
+PLUGIN_LDFLAGS		+= -Wl,-m,m68kelf,-T,$(srcdir)/backends/plugins/mintelf/plugin.ld
+'
+		;;
 	*cygwin* | *mingw32* | mingw64)
 		_plugin_prefix=""
 		_plugin_suffix=".dll"
@@ -5131,18 +5240,6 @@ PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 PLUGIN_LDFLAGS		+= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
-'
-		;;
-	morphos)
-		_plugin_prefix="lib"
-		_plugin_suffix=".so"
-		append_var CXXFLAGS "-fPIC"
-		append_var LIBS "-use-dynld"
-_mak_plugins='
-PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += -shared
-PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
-POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	psp)
@@ -5209,8 +5306,16 @@ fi
 define_in_config_if_yes "$_dynamic_modules" 'DYNAMIC_MODULES'
 
 if test "$_dynamic_modules" = yes ; then
-	add_line_to_config_h "#define PLUGIN_PREFIX	\"$_plugin_prefix\""
-	add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
+	if test ! -z "$_plugin_prefix" ; then
+		add_line_to_config_h "#define PLUGIN_PREFIX	\"$_plugin_prefix\""
+	else
+		add_line_to_config_h "#undef PLUGIN_PREFIX"
+	fi
+	if test ! -z "$_plugin_suffix" ; then
+		add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
+	else
+		add_line_to_config_h "#undef PLUGIN_SUFFIX"
+	fi
 	add_line_to_config_mk "PLUGIN_PREFIX := $_plugin_prefix"
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
 fi
@@ -5327,17 +5432,38 @@ EOF
 			cc_check -lspeechd && _tts=yes
 			;;
 		darwin*)
-			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocol
-			cat > $TMPC << EOF
+			if test "$_osx_tts_backend" = "NSSpeechSynthesizer" ; then
+				# Check older NSSpeechSynthesizer API.
+				cat > $TMPC << EOF
 #include <AppKit/NSSpeechSynthesizer.h>
 @interface SpeechDelegate : NSObject<NSSpeechSynthesizerDelegate> {
 }
 @end
 int main(void) { return 0; }
 EOF
+				cc_check -ObjC++ -lobjc && _tts=yes
+			else
+				# Check the newer AVSpeechSynthesizer API is available
+				cat > $TMPC << EOF
+#import <AVFoundation/AVFoundation.h>
+@interface SpeechDelegate : NSObject<AVSpeechSynthesizerDelegate> {
+}
+@end
+int main(void) { return 0; }
+EOF
+				cc_check -ObjC++ -lobjc && _tts=yes
+			fi
+			;;
+		iphoneos)
+			cat > $TMPC << EOF
+#import <AVFoundation/AVFoundation.h>
+@interface SpeechDelegate : NSObject<AVSpeechSynthesizerDelegate> {
+}
+@end
+int main(void) { return 0; }
+EOF
 			cc_check -ObjC++ -lobjc && _tts=yes
 			;;
-		
 		emscripten)
 			# Emscripten has the "Web Speech API" available
 			_tts=yes
@@ -6604,6 +6730,10 @@ if test "$_opengl_mode" != none ; then
 						darwin*)
 							_opengl_mode=gl
 							;;
+						morphos)
+							_opengl_glad=no
+							_opengl_mode=gl
+							;;
 						*)
 							# As SDL2 supports everything, let users choose
 							test "$_opengl_mode" = "auto" && _opengl_mode=any
@@ -6697,6 +6827,9 @@ EOF
 				;;
 			mingw*)
 				OPENGL_LIBS="-lopengl32"
+				;;
+			morphos*)
+				_opengl_can_compile=yes
 				;;
 			serenity*)
 				OPENGL_LIBS="-lgl"
@@ -7137,6 +7270,21 @@ fi
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
 
 #
+# Check whether to build printing support
+#
+echo_n "Building system printing support... "
+case $_host_os in
+mingw*)
+	echo "win32"
+	append_var LIBS '-lwinspool'
+	;;
+*)
+	echo "no"
+	;;
+esac
+define_in_config_if_yes $_printing 'USE_SYSTEM_PRINTING'
+
+#
 # Check whether to build system dialogs support
 #
 echo_n "Building system dialogs support... "
@@ -7190,8 +7338,20 @@ else
 		append_var LIBS '-lsapi -lole32'
 		;;
 	darwin*)
-		echo "osx"
+		if test "$_osx_tts_backend" = "NSSpeechSynthesizer" ; then
+			echo "osx (NSSpeechSynthesizer)"
+			_tts=yes
+			define_in_config_if_yes $_tts 'USE_NS_SPEECH_SYNTHESIZER'
+		else
+			echo "osx (AVSpeechSynthesizer)"
+			_tts=yes
+			append_var LIBS "-framework AVFoundation"
+		fi
+		;;
+	iphoneos)
+		echo "ios (AVSpeechSynthesizer)"
 		_tts=yes
+		append_var LIBS "-framework AVFoundation"
 		;;
 	emscripten)
 		echo "Web Speech API"
@@ -7595,7 +7755,7 @@ case $_host_os in
 			esac
 		done
 
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -ljnigraphics -lEGL"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -loboe -ljnigraphics -lEGL"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
@@ -7728,9 +7888,11 @@ SAVED_ASFLAGS           := $SAVED_ASFLAGS
 SAVED_CPPFLAGS          := $SAVED_CPPFLAGS
 SAVED_CXX               := $SAVED_CXX
 SAVED_CXXFLAGS          := $SAVED_CXXFLAGS
+SAVED_CXXFILT           := $SAVED_CXXFILT
 SAVED_DWP               := $SAVED_DWP
 SAVED_LD                := $SAVED_LD
 SAVED_LDFLAGS           := $SAVED_LDFLAGS
+SAVED_NM                := $SAVED_NM
 SAVED_PKG_CONFIG_LIBDIR := $SAVED_PKG_CONFIG_LIBDIR
 SAVED_RANLIB            := $SAVED_RANLIB
 SAVED_SDL_CONFIG        := $SAVED_SDL_CONFIG
@@ -7738,15 +7900,17 @@ SAVED_STRIP             := $SAVED_STRIP
 SAVED_WINDRES           := $SAVED_WINDRES
 SAVED_WINDRESFLAGS      := $SAVED_WINDRESFLAGS
 
-CXX := $CXX
-CXXFLAGS := $CXXFLAGS
-LD := $LD
-LIBS += $LIBS
-RANLIB := $_ranlib
-STRIP := $_strip
 AR := $_ar
 AS := $_as
 ASFLAGS := $ASFLAGS
+CXX := $CXX
+CXXFLAGS := $CXXFLAGS
+CXXFILT := $_cxxfilt
+LD := $LD
+LIBS += $LIBS
+NM := $_nm
+RANLIB := $_ranlib
+STRIP := $_strip
 DWP := $_dwp
 WINDRES := $_windres
 LDD := $_ldd

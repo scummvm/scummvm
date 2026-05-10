@@ -289,7 +289,7 @@ void COptions::OnPaint() {
 		dc.RealizePalette();
 	}
 
-	bSuccess = PaintMaskedDIB(&dc, pOptionsPalette, ".\\art\\oscroll.bmp", 0, 0);
+	bSuccess = PaintMaskedDIB(&dc, pOptionsPalette, "art\\oscroll.bmp", 0, 0);
 	ASSERT(bSuccess);
 
 	if (pOptionsPalette != nullptr)

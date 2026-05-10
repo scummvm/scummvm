@@ -23,9 +23,8 @@
 #define ULTIMA8_GUMPS_GUMP_H
 
 #include "common/rect.h"
-#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/gfx/frame_id.h"
-#include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
@@ -62,7 +61,7 @@ protected:
 
 	//! The Gump list for this gump. This will contain all child gumps,
 	//! as well as all gump widgets.
-	Std::list<Gump *> _children;      // List of all gumps
+	Common::List<Gump *> _children;      // List of all gumps
 	Gump               *_focusChild;  // The child that has focus
 
 	uint16              _notifier;      // Process to notify when we're closing

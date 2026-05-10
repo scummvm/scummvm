@@ -36,11 +36,10 @@
 
 namespace HDB {
 
-Gfx::Gfx() {
+Gfx::Gfx() : _globalSurface(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_screenFormat) {
 	_tLookupArray = nullptr;
 	_starsInfo.active = false;
 	_gfxCache = new Common::Array<GfxCache *>;
-	_globalSurface.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
 	_pointerDisplayable = 1;
 	_sines = new Math::SineTable(360);
 	_cosines = new Math::CosineTable(360);
@@ -112,7 +111,6 @@ Gfx::~Gfx() {
 	delete _cosines;
 	for (int i = 0; i < _fontHeader.numChars; i++)
 		_fontSurfaces[i].free();
-	_globalSurface.free();
 	for (int i = 0; i < _numTiles; i++) {
 		delete _tLookupArray[i].tData;
 		_tLookupArray[i].tData = nullptr;
@@ -196,8 +194,8 @@ void Gfx::init() {
 	_eBottom = g_hdb->_screenHeight;
 
 	// Need two main memory screen-sized surfaces for screen fading
-	_fadeBuffer1.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
-	_fadeBuffer2.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
+	_fadeBuffer1.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_screenFormat);
+	_fadeBuffer2.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_screenFormat);
 
 	// Load Game Font
 	if (!loadFont(HDB_FONT))
@@ -351,9 +349,9 @@ double Gfx::getCos(int index) {
 	return _cosines->at(index);
 }
 
-void Gfx::fillScreen(uint32 color) {
+void Gfx::fillScreen() {
+	uint32 color = _globalSurface.format.RGBToColor(0, 0, 0);
 	_globalSurface.fillRect(Common::Rect(g_hdb->_screenWidth, g_hdb->_screenHeight), color);
-	g_system->fillScreen(color);
 }
 
 void Gfx::updateVideo() {
@@ -364,15 +362,7 @@ void Gfx::updateVideo() {
 
 	g_hdb->checkProgress();
 
-	int left = g_hdb->_screenWidth / 2 - g_hdb->_progressGfx->_width / 2;
-
-	Common::Rect clip(g_hdb->_progressGfx->getSurface()->getBounds());
-	clip.moveTo(left, g_hdb->_progressY);
-	clip.clip(_globalSurface.getBounds());
-	if (!clip.isEmpty())
-		g_system->copyRectToScreen(_globalSurface.getBasePtr(clip.left, clip.top), _globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
-
-	g_system->updateScreen();
+	_globalSurface.update();
 }
 
 void Gfx::drawPointer() {
@@ -418,6 +408,45 @@ void Gfx::setFade(bool fadeIn, bool black, int steps) {
 	_fadeInfo.active = true;
 }
 
+template<typename T>
+static void doFadeBlack(Graphics::ManagedSurface &fadeBuffer, int curStep) {
+	// Black fade
+	for (int y = 0; y < fadeBuffer.h; y++) {
+		T *ptr = (T *)fadeBuffer.getBasePtr(0, y);
+		for (int x = 0; x < fadeBuffer.w; x++) {
+			T value = *ptr;
+			if (value) {
+				uint8 r, g, b;
+				fadeBuffer.format.colorToRGB(value, r, g, b);
+				r = (r * curStep) >> 8;
+				g = (g * curStep) >> 8;
+				b = (b * curStep) >> 8;
+				*ptr = fadeBuffer.format.RGBToColor(r, g, b);
+			}
+			ptr++;
+		}
+	}
+}
+
+template<typename T>
+static void doFadeWhite(Graphics::ManagedSurface &fadeBuffer, int curStep) {
+	// White fade
+	for (int y = 0; y < fadeBuffer.h; y++) {
+		T *ptr = (T *)fadeBuffer.getBasePtr(0, y);
+		for (int x = 0; x < fadeBuffer.w; x++) {
+			T value = *ptr;
+
+			uint8 r, g, b;
+			fadeBuffer.format.colorToRGB(value, r, g, b);
+			r += (255 - r) * (256 - curStep) / 256;
+			g += (255 - g) * (256 - curStep) / 256;
+			b += (255 - b) * (256 - curStep) / 256;
+			*ptr = fadeBuffer.format.RGBToColor(r, g, b);
+			ptr++;
+		}
+	}
+}
+
 void Gfx::updateFade() {
 	if (!_fadeInfo.active && !_fadeInfo.stayFaded)
 		return;
@@ -427,39 +456,15 @@ void Gfx::updateFade() {
 
 	if (g_hdb->isPPC()) {
 		if (!_fadeInfo.isBlack) {
-			// Black fade
-			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
-				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					uint16 value = *ptr;
-					if (value) {
-						uint8 r, g, b;
-						g_hdb->_format.colorToRGB(value, r, g, b);
-						r = (r * _fadeInfo.curStep) >> 8;
-						g = (g * _fadeInfo.curStep) >> 8;
-						b = (b * _fadeInfo.curStep) >> 8;
-						*ptr = g_hdb->_format.RGBToColor(r, g, b);
-					}
-					ptr++;
-				}
-			}
-
+			if (_fadeBuffer1.format.bytesPerPixel == 2)
+				doFadeBlack<uint16>(_fadeBuffer1, _fadeInfo.curStep);
+			else if (_fadeBuffer1.format.bytesPerPixel == 4)
+				doFadeBlack<uint32>(_fadeBuffer1, _fadeInfo.curStep);
 		} else {
-			// White fade
-			for (int y = 0; y < g_hdb->_screenHeight; y++) {
-				uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
-				for (int x = 0; x < g_hdb->_screenWidth; x++) {
-					uint16 value = *ptr;
-
-					uint8 r, g, b;
-					g_hdb->_format.colorToRGB(value, r, g, b);
-					r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
-					g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
-					b += (255 - b) * (256 - _fadeInfo.curStep) / 256;
-					*ptr = g_hdb->_format.RGBToColor(r, g, b);
-					ptr++;
-				}
-			}
+			if (_fadeBuffer1.format.bytesPerPixel == 2)
+				doFadeWhite<uint16>(_fadeBuffer1, _fadeInfo.curStep);
+			else if (_fadeBuffer1.format.bytesPerPixel == 4)
+				doFadeWhite<uint32>(_fadeBuffer1, _fadeInfo.curStep);
 		}
 
 		if (_fadeInfo.isFadeIn) {
@@ -482,54 +487,29 @@ void Gfx::updateFade() {
 			}
 		}
 	} else {
-		_fadeBuffer2.blitFrom(_globalSurface);
+		_fadeBuffer2.simpleBlitFrom(_globalSurface);
 
 		static int waitAFrame = 0;
 
 		do {
 			// Copy pristine copy of background to modification buffer
-			_fadeBuffer1.blitFrom(_fadeBuffer2);
+			_fadeBuffer1.simpleBlitFrom(_fadeBuffer2);
 
 			// do the actual alphablending
 
 			if (!_fadeInfo.isBlack) {
-				// Black Fade
-
-				for (int y = 0; y < g_hdb->_screenHeight; y++) {
-					uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
-					for (int x = 0; x < g_hdb->_screenWidth; x++) {
-						uint16 value = *ptr;
-						if (value) {
-							uint8 r, g, b;
-							g_hdb->_format.colorToRGB(value, r, g, b);
-							r = (r * _fadeInfo.curStep) >> 8;
-							g = (g * _fadeInfo.curStep) >> 8;
-							b = (b * _fadeInfo.curStep) >> 8;
-							*ptr = g_hdb->_format.RGBToColor(r, g, b);
-						}
-						ptr++;
-					}
-				}
+				if (_fadeBuffer1.format.bytesPerPixel == 2)
+					doFadeBlack<uint16>(_fadeBuffer1, _fadeInfo.curStep);
+				else if (_fadeBuffer1.format.bytesPerPixel == 4)
+					doFadeBlack<uint32>(_fadeBuffer1, _fadeInfo.curStep);
 			} else {
-				// White Fade
-
-				for (int y = 0; y < g_hdb->_screenHeight; y++) {
-					uint16 *ptr = (uint16 *)_fadeBuffer1.getBasePtr(0, y);
-					for (int x = 0; x < g_hdb->_screenWidth; x++) {
-						uint16 value = *ptr;
-						uint8 r, g, b;
-						g_hdb->_format.colorToRGB(value, r, g, b);
-						r += (255 - r) * (256 - _fadeInfo.curStep) / 256;
-						g += (255 - g) * (256 - _fadeInfo.curStep) / 256;
-						b += (255 - b) * (256 - _fadeInfo.curStep) / 256;
-						*ptr = g_hdb->_format.RGBToColor(r, g, b);
-						ptr++;
-					}
-				}
+				if (_fadeBuffer1.format.bytesPerPixel == 2)
+					doFadeWhite<uint16>(_fadeBuffer1, _fadeInfo.curStep);
+				else if (_fadeBuffer1.format.bytesPerPixel == 4)
+					doFadeWhite<uint32>(_fadeBuffer1, _fadeInfo.curStep);
 			}
 
-			_globalSurface.blitFrom(_fadeBuffer1);
-			g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
+			_globalSurface.simpleBlitFrom(_fadeBuffer1);
 
 			// step the fading values to the next one and
 			// see if we're done yet
@@ -560,7 +540,7 @@ void Gfx::updateFade() {
 				return;
 			}
 
-			g_system->updateScreen();
+			_globalSurface.update();
 			if (g_hdb->getDebug()) {
 				g_hdb->_frames.push_back(g_system->getMillis());
 				while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
@@ -617,12 +597,12 @@ Tile *Gfx::loadIcon(const char *tileName) {
 	return tile;
 }
 
-void Gfx::setPixel(int x, int y, uint16 color) {
+void Gfx::setPixel(int x, int y, uint32 color) {
 	if (x < 0 || y < 0 || x >= _globalSurface.w || y >= _globalSurface.h)
 		return;
 
-	*(uint16 *)_globalSurface.getBasePtr(x, y) = color;
-	g_system->copyRectToScreen(_globalSurface.getBasePtr(x, y), _globalSurface.pitch, x, y, 1, 1);
+	_globalSurface.setPixel(x, y, color);
+	_globalSurface.addDirtyRect(Common::Rect(x, y, x + 1, y + 1));
 }
 
 Tile *Gfx::getTile(int index) {
@@ -822,7 +802,7 @@ void Gfx::setup3DStars() {
 		_stars3D[i].y = g_hdb->_rnd->getRandomNumber(g_hdb->_screenHeight - 1);
 		_stars3D[i].speed = g_hdb->_rnd->getRandomNumber(255);
 		if (g_hdb->isPPC())
-			_stars3D[i].color = g_hdb->_format.RGBToColor(_stars3D[i].speed, _stars3D[i].speed, _stars3D[i].speed);
+			_stars3D[i].color = g_hdb->_screenFormat.RGBToColor(_stars3D[i].speed, _stars3D[i].speed, _stars3D[i].speed);
 		else {
 			_stars3D[i].speed >>= 1;
 			_stars3D[i].color = _stars3D[i].speed / 64;
@@ -836,14 +816,14 @@ void Gfx::setup3DStarsLeft() {
 		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(g_hdb->_screenHeight - 1);
 		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(4))) / 6.0;
 		if (g_hdb->isPPC())
-			_stars3DSlow[i].color = g_hdb->_format.RGBToColor((int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250));
+			_stars3DSlow[i].color = g_hdb->_screenFormat.RGBToColor((int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250));
 		else
 			_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
 	}
 }
 
 void Gfx::draw3DStars() {
-	fillScreen(0);
+	fillScreen();
 	for (int i = 0; i < kNum3DStars; i++) {
 		if (g_hdb->isPPC()) {
 			setPixel((int)_stars3D[i].x, (int)_stars3D[i].y, _stars3D[i].color);
@@ -859,7 +839,7 @@ void Gfx::draw3DStars() {
 }
 
 void Gfx::draw3DStarsLeft() {
-	fillScreen(0);
+	fillScreen();
 	for (int i = 0; i < kNum3DStars; i++) {
 		if (g_hdb->isPPC())
 			setPixel((int)_stars3DSlow[i].x, (int)_stars3DSlow[i].y, _stars3DSlow[i].color);
@@ -902,7 +882,7 @@ void Gfx::drawSnow() {
 
 	for (int i = 0; i < MAX_SNOW; i++) {
 		if (g_hdb->isPPC()) {
-			uint16 color = g_hdb->_format.RGBToColor(160, 160, 160);
+			uint32 color = g_hdb->_screenFormat.RGBToColor(160, 160, 160);
 			setPixel((int)_snowInfo.x[i] + 1, (int)_snowInfo.y[i], color);
 			setPixel((int)_snowInfo.x[i] - 1, (int)_snowInfo.y[i], color);
 			setPixel((int)_snowInfo.x[i], (int)_snowInfo.y[i] + 1, color);
@@ -964,7 +944,7 @@ bool Gfx::loadFont(const char *string) {
 			// Position after reading cInfo
 			int curPos = memoryStream.pos();
 
-			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
+			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_dataFormat);
 
 			// Go to character location
 			memoryStream.seek(startPos + cInfo->offset);
@@ -977,6 +957,9 @@ bool Gfx::loadFont(const char *string) {
 					*ptr = memoryStream.readUint16LE();
 				}
 			}
+
+			_fontSurfaces[i].convertToInPlace(g_hdb->_screenFormat);
+			_fontSurfaces[i].setTransparentColor(_fontSurfaces[i].format.RGBToColor(255, 0, 255));
 
 			memoryStream.seek(curPos);
 
@@ -1014,7 +997,7 @@ bool Gfx::loadFont(const char *string) {
 			// Position after reading cInfo
 			int curPos = stream->pos();
 
-			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_format);
+			_fontSurfaces[i].create(cInfo->width, _fontHeader.height, g_hdb->_dataFormat);
 
 			// Go to character location
 			stream->seek(startPos + cInfo->offset);
@@ -1026,6 +1009,9 @@ bool Gfx::loadFont(const char *string) {
 					ptr++;
 				}
 			}
+
+			_fontSurfaces[i].convertToInPlace(g_hdb->_screenFormat);
+			_fontSurfaces[i].setTransparentColor(_fontSurfaces[i].format.RGBToColor(255, 0, 255));
 
 			stream->seek(curPos);
 
@@ -1088,14 +1074,7 @@ void Gfx::drawText(const char *string) {
 			width = kFontSpace;
 
 		// Blit the character
-		_globalSurface.transBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY), 0xf81f);
-
-		Common::Rect clip(0, 0, width, _fontHeader.height);
-		clip.moveTo(_cursorX, _cursorY);
-		clip.clip(_globalSurface.getBounds());
-		if (!clip.isEmpty()) {
-			g_system->copyRectToScreen(_globalSurface.getBasePtr(clip.left, clip.top), _globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
-		}
+		_globalSurface.simpleBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY));
 
 		// Advance the cursor
 		_cursorX += width + _fontHeader.kerning + kFontIncrement;
@@ -1329,7 +1308,7 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 
 Picture::Picture() : _width(0), _height(0) {
 	_name[0] = 0;
-	_surface.create(_width, _height, g_hdb->_format);
+	_surface.create(_width, _height, g_hdb->_screenFormat);
 }
 
 Picture::~Picture() {
@@ -1344,7 +1323,7 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	debug(8, "Picture: _name: %s", _name);
 
 	if (g_hdb->isPPC()) {
-		_surface.create(_width, _height, g_hdb->_format);
+		_surface.create(_width, _height, g_hdb->_dataFormat);
 
 		for (int x = 0; x < _width; x++) {
 			for (int y = 0; y < _height; y++) {
@@ -1355,8 +1334,9 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 			}
 		}
 
+		_surface.convertToInPlace(g_hdb->_screenFormat);
 	} else {
-		_surface.create(_width, _height, g_hdb->_format);
+		_surface.create(_width, _height, g_hdb->_dataFormat);
 		stream->readUint32LE(); // Skip Win32 Surface
 
 		for (int y = 0; y < _height; y++) {
@@ -1366,32 +1346,34 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 				ptr++;
 			}
 		}
+
+		_surface.convertToInPlace(g_hdb->_screenFormat);
 	}
 
 	return _surface;
 }
 
 int Picture::draw(int x, int y) {
-	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
 }
 
-int Picture::drawMasked(int x, int y, int alpha) {
-	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f, false, alpha & 0xff);
+int Picture::drawMasked(int x, int y, uint8 alpha) {
+	_surface.setTransparentColor(_surface.format.RGBToColor(255, 0, 255));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y), Graphics::FLIP_NONE, false, alpha);
+	_surface.clearTransparentColor();
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
@@ -1399,7 +1381,7 @@ int Picture::drawMasked(int x, int y, int alpha) {
 
 Tile::Tile() : _flags(0) {
 	_name[0] = 0;
-	_surface.create(32, 32, g_hdb->_format);
+	_surface.create(32, 32, g_hdb->_screenFormat);
 }
 
 Tile::~Tile() {
@@ -1409,7 +1391,7 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 	_flags = stream->readUint32LE();
 	stream->read(_name, 64);
 
-	_surface.create(32, 32, g_hdb->_format);
+	_surface.create(32, 32, g_hdb->_dataFormat);
 	if (g_hdb->isPPC()) {
 		for (int y = 0; y < 32; y++) {
 			for (int x = 0; x < 32; x++) {
@@ -1429,31 +1411,32 @@ Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
 			}
 		}
 	}
+	_surface.convertToInPlace(g_hdb->_screenFormat);
 
 	return _surface;
 }
 
 int Tile::draw(int x, int y) {
-	g_hdb->_gfx->_globalSurface.blitFrom(_surface, Common::Point(x, y));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y));
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
 }
 
-int Tile::drawMasked(int x, int y, int alpha) {
-	g_hdb->_gfx->_globalSurface.transBlitFrom(_surface, Common::Point(x, y), 0xf81f, false, alpha & 0xff);
+int Tile::drawMasked(int x, int y, uint8 alpha) {
+	_surface.setTransparentColor(_surface.format.RGBToColor(255, 0, 255));
+	g_hdb->_gfx->_globalSurface.simpleBlitFrom(_surface, Common::Point(x, y), Graphics::FLIP_NONE, false, alpha);
+	_surface.clearTransparentColor();
 
 	Common::Rect clip(_surface.getBounds());
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;

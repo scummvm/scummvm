@@ -114,6 +114,22 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 			numCharacters = 105;
 		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy10) {
+			// Nancy10 added even more characters to its fonts
+			_uppercaseAWithDotOffset        = stream.readUint16LE();
+			_aWithDotOffset                 = stream.readUint16LE();
+			_underscoreOffset               = stream.readUint16LE();
+			_hashOffset                     = stream.readUint16LE();
+			_dollarOffset                   = stream.readUint16LE();
+			_lessThanOffset                 = stream.readUint16LE();
+			_greaterThanOffset              = stream.readUint16LE();
+			_leftCurlyBracketOffset         = stream.readUint16LE();
+			_rightCurlyBracketOffset        = stream.readUint16LE();
+			_euroOffset                     = stream.readUint16LE();
+
+			numCharacters = 115;
+		}
 	}
 
 	_characterRects.resize(numCharacters);
@@ -310,6 +326,30 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 					offset = -1;
 				}
 				break;
+			// TODO: _uppercaseAWithDotOffset
+			// TODO: _aWithDotOffset
+			case '\x5f':
+				offset = _underscoreOffset;
+				break;
+			case '\x23':
+				offset = _hashOffset;
+				break;
+			case '\x24':
+				offset = _dollarOffset;
+				break;
+			case '\x3c':
+				offset = _lessThanOffset;
+				break;
+			case '\x3e':
+				offset = _greaterThanOffset;
+				break;
+			case '\x7b':
+				offset = _leftCurlyBracketOffset;
+				break;
+			case '\x7d':
+				offset = _rightCurlyBracketOffset;
+				break;
+			// TODO: _euroOffset
 			default:
 				offset = -1;
 				break;

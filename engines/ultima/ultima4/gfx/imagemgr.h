@@ -144,7 +144,7 @@ public:
 	 * Free up any background images used only in the animations.
 	 */
 	void freeIntroBackgrounds();
-	const Std::vector<Common::String> &getSetNames();
+	const Common::Array<Common::String> &getSetNames();
 	Common::File *getImageFile(ImageInfo *info);
 	bool imageExists(ImageInfo *info);
 
@@ -202,7 +202,7 @@ private:
 
 	static ImageMgr *_instance;
 	Common::HashMap<Common::String, ImageSet *> _imageSets;
-	Std::vector<Common::String> _imageSetNames;
+	Common::Array<Common::String> _imageSetNames;
 	ImageSet *_baseSet;
 	ImageInfo _screenInfo;
 	uint *_abyssData;

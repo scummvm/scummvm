@@ -66,7 +66,7 @@ extern HWND     ghwndParent;
  *      n/a
  *
  ****************************************************************/
-CMetaOptDlg::CMetaOptDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_OPTIONDLG, ".\\ART\\MLSCROLL.BMP") {
+CMetaOptDlg::CMetaOptDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_OPTIONDLG, "art\\MLSCROLL.BMP") {
 	m_pParent = pParent;
 	m_pPalette = pPalette;
 	m_pBfcMgr = nullptr;

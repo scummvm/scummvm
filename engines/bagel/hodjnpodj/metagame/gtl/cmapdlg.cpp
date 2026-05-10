@@ -29,7 +29,7 @@ namespace Metagame {
 namespace Gtl {
 
 CMapDialog::CMapDialog(CWnd* pParent, CPalette *pPalette, POINT HodjLoc, POINT PodjLoc)
-	: CBmpDialog(pParent, pPalette, IDD_ZOOMMAP, ".\\art\\minimap.bmp", 0, 0, false) {
+	: CBmpDialog(pParent, pPalette, IDD_ZOOMMAP, "art\\minimap.bmp", 0, 0, false) {
 	// Initialize all members
 	//
 	m_pPalette = pPalette;
@@ -135,11 +135,11 @@ void CMapDialog::OnPaint() {
 	m_ptZoomPodj.x = (int)(((long)m_PodjLoc.x * ZOOMMAP_WIDTH) / BIGMAP_WIDTH);
 	m_ptZoomPodj.y = (int)(((long)m_PodjLoc.y * ZOOMMAP_HEIGHT) / BIGMAP_HEIGHT);
 
-	PaintMaskedDIB(pDC, m_pPalette, ".\\art\\hodj.bmp",
+	PaintMaskedDIB(pDC, m_pPalette, "art\\hodj.bmp",
 	               m_ptZoomHodj.x - PLAYER_OFFSET_X, m_ptZoomHodj.y - PLAYER_OFFSET_Y,
 	               PLAYER_BITMAP_DX, PLAYER_BITMAP_DY);
 
-	PaintMaskedDIB(pDC, m_pPalette, ".\\art\\podj.bmp",
+	PaintMaskedDIB(pDC, m_pPalette, "art\\podj.bmp",
 	               m_ptZoomPodj.x - PLAYER_OFFSET_X, m_ptZoomPodj.y - PLAYER_OFFSET_Y,
 	               PLAYER_BITMAP_DX, PLAYER_BITMAP_DY);
 

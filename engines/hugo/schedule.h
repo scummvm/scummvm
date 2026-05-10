@@ -533,7 +533,7 @@ public:
 	void loadScreenAct(Common::SeekableReadStream &in);
 	void newScreen(const int screenIndex);
 	void processBonus(const int bonusIndex);
-	void processMaze(const int x1, const int x2, const int y1, const int y2);
+	virtual void processMaze(const int x1, const int x2, const int y1, const int y2);
 	void restoreSchedulerData(Common::ReadStream *in);
 	void restoreScreen(const int screenIndex);
 	void saveSchedulerData(Common::WriteStream *out);
@@ -635,6 +635,7 @@ public:
 	~Scheduler_v1w() override;
 
 	void runScheduler() override;
+	void processMaze(const int x1, const int x2, const int y1, const int y2) override;
 
 protected:
 	uint32 getTicks() override;

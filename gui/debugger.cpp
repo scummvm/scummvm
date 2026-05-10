@@ -239,6 +239,7 @@ void Debugger::enter() {
 	if (_firstTime) {
 		debugPrintf("Debugger started, type 'exit' to return to the game.\n");
 		debugPrintf("Type 'help' to see a little list of commands and variables.\n");
+		debugPrintf("Type 'clear' or 'cls' to clear the debugger's output.\n");
 		_firstTime = false;
 	}
 

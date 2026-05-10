@@ -66,20 +66,21 @@ protected:
 
 		virtual void readHeader();
 
-		bool endOfTrack() const;
-		virtual bool isRewindable() const { return true; }
-		virtual bool rewind();
+		bool endOfTrack() const override;
+		virtual bool isRewindable() const override{ return true; }
+		virtual bool rewind() override;
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
-		virtual const Graphics::Surface *decodeNextFrame();
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getCurFrameDelay() const override { return _frameDelay; }
+		int getFrameCount() const override { return _frameCount; }
+		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
+		virtual const Graphics::Surface *decodeNextFrame() override;
 		virtual void handleFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette.data(); }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		const byte *getPalette() const override{ _dirtyPalette = false; return _palette.data(); }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 		void clearDirtyRects() { _dirtyRects.clear(); }

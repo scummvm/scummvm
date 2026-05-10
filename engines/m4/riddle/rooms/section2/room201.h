@@ -91,8 +91,8 @@ private:
 	int _trigger10 = -1;
 	int _trigger11 = -1;
 	int _trigger12 = -1;
-	int _items[12];
-	int32 _itemFlags[12];
+	int _items[12] = { 0 };
+	int32 _itemFlags[12] = { 0 };
 	int _totalItems = 0;
 	int32 _hasKeyItems = 0;
 
@@ -106,7 +106,7 @@ private:
 	bool buildKeyItemsArray();
 
 public:
-	Room201();
+	Room201() : Section2Room() {}
 	~Room201() override {}
 
 	void preload() override;

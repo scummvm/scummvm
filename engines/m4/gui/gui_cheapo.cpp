@@ -25,11 +25,9 @@
 #include "m4/graphics/gr_font.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/graphics/gr_series.h"
-#include "m4/adv_r/adv_trigger.h"
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/m4.h"
-#include "m4/mem/mem.h"
 #include "m4/mem/memman.h"
 #include "m4/vars.h"
 
@@ -41,13 +39,13 @@ RectClass::RectClass() {
 
 RectClass::RectClass(const RectClass *r) {
 	if (!r) {
-		error_show(FL, 'CGNR');
-	} else {
-		_x1 = r->_x1;
-		_y1 = r->_y1;
-		_x2 = r->_x2;
-		_y2 = r->_y2;
+		error_show(FL, "missing rect");
 	}
+
+	_x1 = r->_x1;
+	_y1 = r->_y1;
+	_x2 = r->_x2;
+	_y2 = r->_y2;
 }
 
 RectClass::RectClass(int16 x1, int16 y1, int16 x2, int16 y2) :
@@ -59,13 +57,13 @@ RectClass::~RectClass() {
 
 void RectClass::copyInto(RectClass *r) const {
 	if (!r) {
-		error_show(FL, 'CGNR');
-	} else {
-		r->_x1 = _x1;
-		r->_y1 = _y1;
-		r->_x2 = _x2;
-		r->_y2 = _y2;
+		error_show(FL, "missing rect");
 	}
+
+	r->_x1 = _x1;
+	r->_y1 = _y1;
+	r->_x2 = _x2;
+	r->_y2 = _y2;
 }
 
 void RectClass::set(int16 x1, int16 y1, int16 x2, int16 y2) {
@@ -77,13 +75,13 @@ void RectClass::set(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 void RectClass::set(const RectClass *r) {
 	if (!r) {
-		error_show(FL, 'CGNR');
-	} else {
-		_x1 = r->_x1;
-		_y1 = r->_y1;
-		_x2 = r->_x2;
-		_y2 = r->_y2;
+		error_show(FL, "missing rect");
 	}
+
+	_x1 = r->_x1;
+	_y1 = r->_y1;
+	_x2 = r->_x2;
+	_y2 = r->_y2;
 }
 
 int16 RectClass::inside(int16 x, int16 y) const {
@@ -115,17 +113,15 @@ void TextField::set_string(const char *string) {
 		return;
 	}
 
-	int16 string_len = (int16)(cstrlen(string) + 1);
+	const int16 string_len = (int16)(cstrlen(string) + 1);
 	if (_string == nullptr) {
 		_string = (char *)mem_alloc(string_len, "string");
-	} else {
-		if (_string_len < string_len) {
-			_string = (char *)mem_realloc(_string, string_len, "string");
-		}
+	} else if (_string_len < string_len) {
+		_string = (char *)mem_realloc(_string, string_len, "string");
 	}
 
 	if (!_string)
-		error_show(FL, 'OOM!', "TextField set_string:%s", _string);
+		error_show(FL, "TextField set_string:%s", _string);
 
 	_string_len = string_len;
 	cstrcpy(_string, string);
@@ -274,12 +270,12 @@ ControlStatus ButtonClass::track(int32 eventType, int16 x, int16 y) {
 	if (!INTERFACE_VISIBLE)
 		return NOTHING;
 
-	ButtonState old_state = _state;
+	const ButtonState old_state = _state;
 	ControlStatus result = NOTHING;
 
-	bool button_clicked = (eventType == _ME_L_click) || (eventType == _ME_L_hold) || (eventType == _ME_L_drag);
+	const bool button_clicked = (eventType == _ME_L_click) || (eventType == _ME_L_hold) || (eventType == _ME_L_drag);
 
-	int16 overTag = inside(x, y);
+	const int16 overTag = inside(x, y);
 
 	if (overTag == _tag) {
 		// if Button is pressed
@@ -377,12 +373,12 @@ ControlStatus Toggler::track(int32 eventType, int16 x, int16 y) {
 	if (!INTERFACE_VISIBLE)
 		return NOTHING;
 
-	ButtonState old_state = _state;
+	const ButtonState old_state = _state;
 	ControlStatus result = NOTHING;
 
-	bool button_clicked = (eventType == _ME_L_click) || (eventType == _ME_L_hold) || (eventType == _ME_L_drag);
+	const bool button_clicked = (eventType == _ME_L_click) || (eventType == _ME_L_hold) || (eventType == _ME_L_drag);
 
-	int16 overTag = inside(x, y);
+	const int16 overTag = inside(x, y);
 
 	if (overTag == _tag) {
 		// if Button is pressed
@@ -440,8 +436,7 @@ int16 InterfaceBox::inside(int16 x, int16 y) const {
 	if (!RectClass::inside(x, y))
 		return -1;
 
-	int16 iter;
-	for (iter = 0; iter < _index; iter++) {
+	for (int16 iter = 0; iter < _index; iter++) {
 		if (_button[iter]->inside(x, y))
 			return _button[iter]->get_tag();
 	}
@@ -477,21 +472,19 @@ void InterfaceBox::set_selected(bool s) {
 }
 
 void InterfaceBox::add(ButtonClass *b) {
-	if (!b) {
-		error_show(FL, 'CGIA');
-	} else if (_index >= MAX_BUTTONS) {
-		error_show(FL, 'CGIA');
-	} else {
-		// Convert to global coordinates
-		b->_x1 += _x1;
-		b->_x2 += _x1;
-		b->_y1 += _y1;
-		b->_y2 += _y1;
-
-		_button[_index] = b;
-		_button[_index]->_must_redraw = true;
-		++_index;
+	if (!b || _index >= MAX_BUTTONS) {
+		error_show(FL, "Bad button or index");
 	}
+
+	// Convert to global coordinates
+	b->_x1 += _x1;
+	b->_x2 += _x1;
+	b->_y1 += _y1;
+	b->_y2 += _y1;
+
+	_button[_index] = b;
+	_button[_index]->_must_redraw = true;
+	++_index;
 }
 
 ControlStatus InterfaceBox::track(int32 eventType, int16 x, int16 y) {

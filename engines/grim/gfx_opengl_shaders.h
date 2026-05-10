@@ -77,7 +77,6 @@ public:
 	void drawShadowPlanes() override;
 	void setShadowMode() override;
 	void clearShadowMode() override;
-	bool isShadowModeActive() override;
 	void setShadowColor(byte r, byte g, byte b) override;
 	void getShadowColor(byte *r, byte *g, byte *b) override;
 	void destroyShadow(Shadow *shadow) override;

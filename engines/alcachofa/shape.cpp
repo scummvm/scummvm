@@ -270,7 +270,7 @@ Shape::Shape(ReadStream &stream) {
 			? stream.readByte()
 			: pointsPerPolygon;
 		for (int j = 0; j < pointCount; j++)
-			_points.push_back(readPoint(stream));
+			_points.push_back(readPoint32(stream));
 		addPolygon(pointCount);
 	}
 }
@@ -348,7 +348,7 @@ PathFindingShape::PathFindingShape(ReadStream &stream) {
 
 	for (int i = 0; i < polygonCount; i++) {
 		for (uint j = 0; j < kPointsPerPolygon; j++)
-			_points.push_back(readPoint(stream));
+			_points.push_back(readPoint32(stream));
 		_polygonOrders.push_back(stream.readSByte());
 		for (uint j = 0; j < kPointsPerPolygon; j++)
 			_pointDepths.push_back(stream.readByte());
@@ -638,7 +638,7 @@ FloorColorShape::FloorColorShape(ReadStream &stream) {
 
 	for (int i = 0; i < polygonCount; i++) {
 		for (uint j = 0; j < kPointsPerPolygon; j++)
-			_points.push_back(readPoint(stream));
+			_points.push_back(readPoint32(stream));
 
 		// For the colors the alpha channel is not used so we store the brightness into it instead
 		// Brightness is store 0-100, but we can scale it up here

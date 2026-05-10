@@ -356,7 +356,7 @@ void SaveLoadChooserDialog::listSaves() {
 #endif
 }
 
-void SaveLoadChooserDialog::activate(int slot, const Common::U32String &description) {
+void SaveLoadChooserDialog::activate(int slot, const Common::String &description) {
 	if (!_saveList.empty() && slot < int(_saveList.size())) {
 		const SaveStateDescriptor &desc = _saveList[slot];
 		if (_saveMode)
@@ -392,7 +392,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
-		((PicButtonWidget *)button)->setGfxFromTheme(image, kPicButtonStateEnabled, false);
+		((PicButtonWidget *)button)->setGfxFromTheme(image);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);
@@ -478,7 +478,7 @@ void SaveLoadChooserSimple::addThumbnailContainer() {
 
 int SaveLoadChooserSimple::runIntern() {
 	if (_gfxWidget)
-		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
+		_gfxWidget->clearGfx();
 
 	_resultString.clear();
 	reflowLayout();
@@ -487,9 +487,9 @@ int SaveLoadChooserSimple::runIntern() {
 	return Dialog::runModal();
 }
 
-const Common::U32String SaveLoadChooserSimple::getResultString() const {
+const Common::String SaveLoadChooserSimple::getResultString() const {
 	int selItem = _list->getSelected();
-	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
+	return (selItem >= 0) ? _list->getSelectedString().encode() : _resultString;
 }
 
 void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -517,7 +517,7 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 				Common::U32String description;
 				if (!_saveList.empty())
 					description = _list->getSelectedString();
-				activate(selItem, description);
+				activate(selItem, description.encode());
 			}
 		}
 		break;
@@ -527,7 +527,7 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 			Common::U32String description;
 			if (!_saveList.empty())
 				description = _list->getSelectedString();
-			activate(selItem, description);
+			activate(selItem, description.encode());
 		}
 		break;
 	case kListSelectionChangedCmd:
@@ -768,7 +768,7 @@ void SaveLoadChooserSimple::updateSaveList(bool external) {
 		}
 
 		// Show "Untitled saved game" for empty/whitespace saved game descriptions
-		Common::U32String description = x->getDescription();
+		Common::U32String description = x->getDescription().decode();
 		Common::U32String trimmedDescription = description;
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {
@@ -856,14 +856,14 @@ SaveLoadChooserGrid::~SaveLoadChooserGrid() {
 	delete _pageDisplay;
 }
 
-const Common::U32String SaveLoadChooserGrid::getResultString() const {
+const Common::String SaveLoadChooserGrid::getResultString() const {
 	return _resultString;
 }
 
 void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	const int slot = cmd + _curPage * _entriesPerPage - 1;
 	if (cmd <= _entriesPerPage && slot < (int)_saveList.size()) {
-		activate(slot, Common::U32String());
+		activate(slot, Common::String());
 	}
 
 	switch (cmd) {
@@ -1156,7 +1156,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 
 void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
-		i->button->setGfx((Graphics::ManagedSurface *)nullptr);
+		i->button->clearGfx();
 		i->setVisible(false);
 	}
 }
@@ -1180,10 +1180,10 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
-		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + _saveList[i].getDescription());
+		curButton.description->setLabel(Common::U32String::format("%d. %s", saveSlot, _saveList[i].getDescription().c_str()));
 
 		Common::U32String tooltip(_("Name: "));
-		tooltip += _saveList[i].getDescription();
+		tooltip += _saveList[i].getDescription().decode();
 
 		if (_saveDateSupport) {
 			const Common::U32String &saveDate = desc.getSaveDate();
@@ -1248,12 +1248,12 @@ SavenameDialog::SavenameDialog()
 	_targetSlot = 0;
 }
 
-void SavenameDialog::setDescription(const Common::U32String &desc) {
-	_description->setEditString(desc);
+void SavenameDialog::setDescription(const Common::String &desc) {
+	_description->setEditString(desc.decode());
 }
 
-const Common::U32String &SavenameDialog::getDescription() {
-	return _description->getEditString();
+const Common::String SavenameDialog::getDescription() {
+	return _description->getEditString().encode();
 }
 
 void SavenameDialog::open() {

@@ -93,11 +93,11 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	        << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	        << "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfiguration(project, "Debug", *arch);
-		outputConfiguration(project, "ASan", *arch);
-		outputConfiguration(project, "LLVM", *arch);
-		outputConfiguration(project, "Release", *arch);
+	for (const auto arch : _archs) {
+		outputConfiguration(project, "Debug", arch);
+		outputConfiguration(project, "ASan", arch);
+		outputConfiguration(project, "LLVM", arch);
+		outputConfiguration(project, "Release", arch);
 	}
 	project << "\t</ItemGroup>\n";
 
@@ -112,39 +112,39 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfigurationType(setup, project, name, "Release", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "ASan", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "LLVM", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "Debug", *arch, _msvcVersion);
+	for (const auto arch : _archs) {
+		outputConfigurationType(setup, project, name, "Release", arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "ASan", arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "LLVM", arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "Debug", arch, _msvcVersion);
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	        << "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	        << "\t</ImportGroup>\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputProperties(setup, project, "Release", *arch);
-		outputProperties(setup, project, "ASan", *arch);
-		outputProperties(setup, project, "LLVM", *arch);
-		outputProperties(setup, project, "Debug", *arch);
+	for (const auto arch : _archs) {
+		outputProperties(setup, project, "Release", arch);
+		outputProperties(setup, project, "ASan", arch);
+		outputProperties(setup, project, "LLVM", arch);
+		outputProperties(setup, project, "Debug", arch);
 	}
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
 	// Project-specific settings (asan uses debug properties)
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+	for (const auto arch : _archs) {
 		BuildSetup archsetup = setup;
-		std::map<MSVC_Architecture, StringList>::const_iterator disabled_features_it = _arch_disabled_features.find(*arch);
+		const auto disabled_features_it = _arch_disabled_features.find(arch);
 		if (disabled_features_it != _arch_disabled_features.end()) {
-			for (StringList::const_iterator j = disabled_features_it->second.begin(); j != disabled_features_it->second.end(); ++j) {
-				archsetup = removeFeatureFromSetup(archsetup, *j);
+			for (const auto &j : disabled_features_it->second) {
+				archsetup = removeFeatureFromSetup(archsetup, j);
 			}
 		}
-		outputProjectSettings(project, name, archsetup, false, *arch, "Debug");
-		outputProjectSettings(project, name, archsetup, false, *arch, "ASan");
-		outputProjectSettings(project, name, archsetup, false, *arch, "LLVM");
-		outputProjectSettings(project, name, archsetup, true, *arch, "Release");
+		outputProjectSettings(project, name, archsetup, false, arch, "Debug");
+		outputProjectSettings(project, name, archsetup, false, arch, "ASan");
+		outputProjectSettings(project, name, archsetup, false, arch, "LLVM");
+		outputProjectSettings(project, name, archsetup, true, arch, "Release");
 	}
 
 	// Files
@@ -224,8 +224,8 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 
 	// Output the list of filters
 	filters << "\t<ItemGroup>\n";
-	for (std::list<std::string>::iterator filter = _filters.begin(); filter != _filters.end(); ++filter) {
-		filters << "\t\t<Filter Include=\"" << *filter << "\">\n"
+	for (const auto &filter : _filters) {
+		filters << "\t\t<Filter Include=\"" << filter << "\">\n"
 		        << "\t\t\t<UniqueIdentifier>" << createUUID() << "</UniqueIdentifier>\n"
 		        << "\t\t</Filter>\n";
 	}
@@ -244,13 +244,13 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action) {
 	if (!files.empty()) {
 		filters << "\t<ItemGroup>\n";
-		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
-			if ((*entry).filter != "") {
-				filters << "\t\t<" << action << " Include=\"" << (*entry).path << "\">\n"
-				        << "\t\t\t<Filter>" << (*entry).filter << "</Filter>\n"
+		for (const auto &entry : files) {
+			if (!entry.filter.empty()) {
+				filters << "\t\t<" << action << " Include=\"" << entry.path << "\">\n"
+				        << "\t\t\t<Filter>" << entry.filter << "</Filter>\n"
 				        << "\t\t</" << action << ">\n";
 			} else {
-				filters << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
+				filters << "\t\t<" << action << " Include=\"" << entry.path << "\" />\n";
 			}
 		}
 		filters << "\t</ItemGroup>\n";
@@ -260,9 +260,9 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
-	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
-		       << "\t\t<Project>{" << i->second << "}</Project>\n"
+	for (const auto &i : _engineUuidMap) {
+		output << "\t<ProjectReference Include=\"" << i.first << ".vcxproj\">\n"
+		       << "\t\t<Project>{" << i.second << "}</Project>\n"
 		       << "\t</ProjectReference>\n";
 	}
 
@@ -281,8 +281,8 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 
 	std::string warnings = "";
 	if (warningsIterator != _projectWarnings.end())
-		for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
-			warnings += *i + ';';
+		for (const auto &i : warningsIterator->second)
+			warnings += i + ';';
 
 	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << configuration << "|" << getMSVCConfigName(arch) << "'\">\n"
 	        << "\t\t<ClCompile>\n";
@@ -308,9 +308,9 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		std::string libraries = outputLibraryDependencies(setup, isRelease);
 
 		// MSBuild uses ; for separators instead of spaces
-		for (std::string::iterator i = libraries.begin(); i != libraries.end(); ++i) {
-			if (*i == ' ') {
-				*i = ';';
+		for (char &library : libraries) {
+			if (library == ' ') {
+				library = ';';
 			}
 		}
 
@@ -344,16 +344,16 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix) {
 
 	std::string warnings;
-	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
-		warnings += *i + ';';
+	for (const auto &globalWarning : _globalWarnings)
+		warnings += globalWarning + ';';
 
 	std::string warningsAsErrors;
-	for (StringList::const_iterator i = _globalErrors.begin(); i != _globalErrors.end(); ++i)
-		warningsAsErrors += "/we\"" + (*i) + "\" ";
+	for (const auto &globalError : _globalErrors)
+		warningsAsErrors += "/we\"" + globalError + "\" ";
 
 	std::string definesList;
-	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
-		definesList += *i + ';';
+	for (const auto &define : defines)
+		definesList += define + ';';
 
 	// Add define to include revision header
 	if (setup.runBuildEvents)
@@ -437,14 +437,14 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	}
 
 	std::string includeDirsList;
-	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
-		includeDirsList += convertPathToWin(*i) + ';';
+	for (const auto &includeDir : setup.includeDirs)
+		includeDirsList += convertPathToWin(includeDir) + ';';
 
 	std::string includeSDL = setup.getSDLName();
 
 	std::string libraryDirsList;
-	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
-		libraryDirsList += convertPathToWin(*i) + ';';
+	for (const auto &libraryDir : setup.libraryDirs)
+		libraryDirsList += convertPathToWin(libraryDir) + ';';
 
 	std::string libsPath;
 	if (setup.libsDir.empty())
@@ -577,9 +577,7 @@ void MSBuildProvider::insertPathIntoDirectory(FileNode &dir, const std::string &
 }
 
 void MSBuildProvider::createFileNodesFromPCHList(FileNode &dir, const std::string &pathBase, const StringList &pchCompileFiles) {
-	for (StringList::const_iterator it = pchCompileFiles.begin(), itEnd = pchCompileFiles.end(); it != itEnd; ++it) {
-		const std::string &pchPath = *it;
-
+	for (const auto &pchPath : pchCompileFiles) {
 		if (pchPath.size() > pathBase.size() && pchPath.substr(0, pathBase.size()) == pathBase) {
 			std::string internalPath = pchPath.substr(pathBase.size());
 
@@ -625,24 +623,24 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &
 		_filters.pop_back(); // remove last empty filter
 
 		// Combine lists, removing duplicates
-		for (StringList::const_iterator it = backupFilters.begin(), itEnd = backupFilters.end(); it != itEnd; ++it) {
-			if (std::find(_filters.begin(), _filters.end(), *it) != _filters.end())
-				_filters.push_back(*it);
+		for (const auto &backupFilter : backupFilters) {
+			if (std::find(_filters.begin(), _filters.end(), backupFilter) != _filters.end())
+				_filters.push_back(backupFilter);
 		}
 	}
 
 	// Output asm files
 	if (!_asmFiles.empty()) {
 		projectFile << "\t<ItemGroup>\n";
-		for (std::list<FileEntry>::const_iterator entry = _asmFiles.begin(); entry != _asmFiles.end(); ++entry) {
+		for (const auto &_asmFile : _asmFiles) {
 
-			projectFile << "\t\t<CustomBuild Include=\"" << (*entry).path << "\">\n"
+			projectFile << "\t\t<CustomBuild Include=\"" << _asmFile.path << "\">\n"
 			            << "\t\t\t<FileType>Document</FileType>\n";
 
-			outputNasmCommand(projectFile, "Debug", (*entry).prefix);
-			outputNasmCommand(projectFile, "ASan", (*entry).prefix);
-			outputNasmCommand(projectFile, "Release", (*entry).prefix);
-			outputNasmCommand(projectFile, "LLVM", (*entry).prefix);
+			outputNasmCommand(projectFile, "Debug", _asmFile.prefix);
+			outputNasmCommand(projectFile, "ASan", _asmFile.prefix);
+			outputNasmCommand(projectFile, "Release", _asmFile.prefix);
+			outputNasmCommand(projectFile, "LLVM", _asmFile.prefix);
 
 			projectFile << "\t\t</CustomBuild>\n";
 		}
@@ -653,8 +651,8 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &
 void MSBuildProvider::outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action) {
 	if (!files.empty()) {
 		projectFile << "\t<ItemGroup>\n";
-		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
-			projectFile << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
+		for (const auto &file : files) {
+			projectFile << "\t\t<" << action << " Include=\"" << file.path << "\" />\n";
 		}
 		projectFile << "\t</ItemGroup>\n";
 	}
@@ -673,17 +671,15 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 		pchIncludeRootWin = convertPathToWin(pchIncludeRoot);
 
 		// Convert PCH paths to Win
-		for (StringList::const_iterator entry = pchDirs.begin(), end = pchDirs.end(); entry != end; ++entry) {
-			std::string convertedPath = convertPathToWin(*entry);
+		for (const auto &pchDir : pchDirs) {
+			std::string convertedPath = convertPathToWin(pchDir);
 			if (convertedPath.size() < pchIncludeRootWin.size() || convertedPath.substr(0, pchIncludeRootWin.size()) != pchIncludeRootWin) {
 				error("PCH path '" + convertedPath + "' wasn't located under PCH include root '" + pchIncludeRootWin + "'");
 			}
 
-			pchDirsWin.push_back(convertPathToWin(*entry));
+			pchDirsWin.push_back(convertPathToWin(pchDir));
 		}
-		for (StringList::const_iterator entry = pchExclude.begin(), end = pchExclude.end(); entry != end; ++entry) {
-			const std::string path = *entry;
-
+		for (const auto &path : pchExclude) {
 			if (path.size() >= 2 && path[path.size() - 1] == 'o' && path[path.size() - 2] == '.')
 				pchExcludeWin.push_back(convertPathToWin(path.substr(0, path.size() - 2)));
 		}
@@ -693,12 +689,12 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 
 	if (!files.empty()) {
 		projectFile << "\t<ItemGroup>\n";
-		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
+		for (const auto &file : files) {
 			std::string pchIncludePath, pchFilePath, pchFileName;
 
 			bool fileHasPCH = false;
 			if (hasPCH)
-				fileHasPCH = calculatePchPaths(entry->path, pchIncludeRootWin, pchDirsWin, pchExcludeWin, '\\', pchIncludePath, pchFilePath, pchFileName);
+				fileHasPCH = calculatePchPaths(file.path, pchIncludeRootWin, pchDirsWin, pchExcludeWin, '\\', pchIncludePath, pchFilePath, pchFileName);
 
 			if (fileHasPCH) {
 				std::string pchOutputFileName = "$(IntDir)dists\\msvc\\%(RelativeDir)" + pchFileName.substr(0, pchFileName.size() - 2) + ".pch";
@@ -707,21 +703,21 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 				pchInfo.file = pchIncludePath;
 				pchInfo.outputFile = pchOutputFileName;
 
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n";
+				projectFile << "\t\t<ClCompile Include=\"" << file.path << "\">\n";
 				projectFile << "\t\t\t<PrecompiledHeader>Use</PrecompiledHeader>\n";
 				projectFile << "\t\t\t<PrecompiledHeaderFile>" << pchIncludePath << "</PrecompiledHeaderFile>\n";
 				projectFile << "\t\t\t<PrecompiledHeaderOutputFile>" << pchOutputFileName << "</PrecompiledHeaderOutputFile>\n";
 				projectFile << "\t\t</ClCompile>\n";
 			} else {
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\" />\n";
+				projectFile << "\t\t<ClCompile Include=\"" << file.path << "\" />\n";
 			}
 		}
 
 		// Flush PCH files
-		for (std::map<std::string, PCHInfo>::const_iterator pchIt = pchMap.begin(), pchItEnd = pchMap.end(); pchIt != pchItEnd; ++pchIt) {
-			const PCHInfo &pchInfo = pchIt->second;
+		for (const auto &pchIt : pchMap) {
+			const PCHInfo &pchInfo = pchIt.second;
 
-			const std::string &filePath = pchIt->first;
+			const std::string &filePath = pchIt.first;
 			assert(filePath.size() >= 2 && filePath.substr(filePath.size() - 2) == ".h");
 
 			std::string cppFilePath = filePath.substr(0, filePath.size() - 2) + ".cpp";
@@ -781,9 +777,7 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 }
 
 void MSBuildProvider::computeFileList(const FileNode &dir, const std::string &objPrefix, const std::string &filePrefix) {
-	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
-		const FileNode *node = *i;
-
+	for (const auto *node : dir.children) {
 		if (!node->children.empty()) {
 			// Update filter
 			std::string _currentFilter = _filters.back();

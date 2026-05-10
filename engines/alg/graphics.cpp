@@ -167,7 +167,7 @@ void AlgGraphics::drawImage(Graphics::Surface *dst, Graphics::Surface *src, int3
 	if (dstY + src->h > dst->h) {
 		subRect.bottom -= dstY + src->h - dst->h;
 	}
-	dst->copyRectToSurfaceWithKey(src->getBasePtr(subRect.left, subRect.top), src->pitch, dstX, dstY, subRect.width(), subRect.height(), 0x00);
+	dst->copyRectToSurfaceWithKey(*src, dstX, dstY, subRect, 0x00);
 }
 
 void AlgGraphics::drawImageCentered(Graphics::Surface *dst, Graphics::Surface *src, int32 x, int32 y) {

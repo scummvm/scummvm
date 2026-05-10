@@ -774,7 +774,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\skull.bmp", NUM_SKULL_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\skull.bmp", NUM_SKULL_CELS);
 		ASSERT(bSuccess);
 		(*pSprite).SetMasked(false);
 		(*pSprite).SetMobile(false);
@@ -835,7 +835,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\urn01.bmp", NUM_URN1_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\urn01.bmp", NUM_URN1_CELS);
 		ASSERT(bSuccess);
 		(*pSprite).SetMasked(false);
 		(*pSprite).SetMobile(false);
@@ -860,7 +860,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\urn02.bmp", NUM_URN2_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\urn02.bmp", NUM_URN2_CELS);
 		ASSERT(bSuccess);
 		(*pSprite).SetMasked(false);
 		(*pSprite).SetMobile(false);
@@ -885,7 +885,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\urn03.bmp", NUM_URN3_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\urn03.bmp", NUM_URN3_CELS);
 		ASSERT(bSuccess);
 		(*pSprite).SetMasked(false);
 		(*pSprite).SetMobile(false);

@@ -41,7 +41,7 @@ TileMaps::~TileMaps() {
 
 void TileMaps::loadAll() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> conf;
+	Common::Array<ConfigElement> conf;
 
 	// FIXME: make sure tilesets are loaded by now
 	unloadAll();
@@ -76,7 +76,7 @@ void TileMaps::load(const ConfigElement &tilemapConf) {
 	Common::String tileset = tilemapConf.getString("tileset");
 
 	int index = 0;
-	Std::vector<ConfigElement> children = tilemapConf.getChildren();
+	Common::Array<ConfigElement> children = tilemapConf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() != "mapping")
 			continue;

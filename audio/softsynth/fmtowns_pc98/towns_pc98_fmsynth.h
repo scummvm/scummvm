@@ -125,7 +125,11 @@ private:
 #endif
 
 	struct ChanInternal {
-		ChanInternal();
+		ChanInternal() = default;
+		ChanInternal(const ChanInternal &) = delete;
+		ChanInternal(ChanInternal &&) = delete;
+		ChanInternal &operator=(const ChanInternal &) = delete;
+		ChanInternal &operator=(ChanInternal &&) = delete;
 		~ChanInternal();
 
 		void ampModSensitivity(uint32 value) {
@@ -138,16 +142,16 @@ private:
 			feedbuf[0] = feedbuf[1] = feedbuf[2] = 0;
 		}
 
-		bool enableLeft;
-		bool enableRight;
-		bool updateEnvelopeParameters;
-		int32 feedbuf[3];
-		uint8 algorithm;
+		bool enableLeft = false;
+		bool enableRight = false;
+		bool updateEnvelopeParameters = false;
+		int32 feedbuf[3] = {};
+		uint8 algorithm = 0u;
 
-		uint32 ampModSvty;
-		uint32 frqModSvty;
+		uint32 ampModSvty = 0u;
+		uint32 frqModSvty = 0u;
 
-		TownsPC98_FmSynthOperator *opr[4];
+		TownsPC98_FmSynthOperator *opr[4] = {};
 	};
 
 	TownsPC98_FmSynthSquareWaveSource *_ssg;

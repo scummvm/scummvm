@@ -23,7 +23,6 @@
 #ifndef M4_ADV_R_ADV_TRIGGER_H
 #define M4_ADV_R_ADV_TRIGGER_H
 
-#include "m4/m4_types.h"
 #include "m4/adv_r/adv.h"
 
 namespace M4 {

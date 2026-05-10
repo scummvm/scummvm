@@ -29,7 +29,7 @@
 	#include "graphics/opengl/context.h"
 #endif
 
-#include "freescape/gfx.h"
+#include "freescape/freescape.h"
 #include "freescape/objects/object.h"
 
 namespace Freescape {
@@ -48,8 +48,16 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool
 	_palette = nullptr;
 	_colorMap = nullptr;
 	_colorRemaps = nullptr;
+	_colorCyclingIndex = 0;
+	_colorCyclingTimer = -1;
+	_colorCyclingPaletteIndex = 15;
+	_colorCyclingSpeed = 3;
 	_renderMode = renderMode;
 	_isAccelerated = false;
+	_debugRenderBoundingBoxes = false;
+	_debugRenderOcclusionBoxes = false;
+	_debugRenderWireframe = false;
+	_debugRenderNormals = false;
 	_authenticGraphics = authenticGraphics;
 
 	for (int i = 0; i < 16; i++) {
@@ -63,8 +71,6 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool
 }
 
 Renderer::~Renderer() {}
-
-extern byte getCPCPixel(byte cpc_byte, int index, bool mode0);
 
 byte getCPCStipple(byte cpc_byte, int back, int fore) {
 	int c0 = getCPCPixel(cpc_byte, 0, true);
@@ -254,7 +260,9 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 		}
 	} else if (_renderMode == Common::kRenderCPC) {
 		fillColorPairArray();
-		for (int i = 4; i < 15; i++) {
+		// Castle CPC uses color-map entry 3 as a genuine checker pattern,
+		// so CPC stipples need to be generated for all 15 Freescape entries.
+		for (int i = 0; i < 15; i++) {
 			byte pair = _colorPair[i];
 			byte c1 = pair & 0xf;
 			byte c2 = (pair >> 4) & 0xf;
@@ -297,9 +305,30 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 }
 
 void Renderer::readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
+	// Amiga/Atari: COLOR15 hardware palette cycling.
+	// From assembly: interrupt handler at $12BA cycles $DFF19E (COLOR15)
+	// through table at $8B78 every 4 frames, gated by per-area flag at $7EC2.
+	// Only palette index 15 is affected; other indices render normally.
+	if (index == _colorCyclingPaletteIndex && _colorCyclingTimer >= 0 && !_colorCyclingTable.empty()) {
+		uint16 val = _colorCyclingTable[_colorCyclingIndex];
+		r = ((val >> 8) & 0xF) * 17;
+		g = ((val >> 4) & 0xF) * 17;
+		b = (val & 0xF) * 17;
+		return;
+	}
 	r = _palette[3 * index + 0];
 	g = _palette[3 * index + 1];
 	b = _palette[3 * index + 2];
+}
+
+void Renderer::updateColorCycling() {
+	if (_colorCyclingTimer < 0 || _colorCyclingTable.empty())
+		return;
+	_colorCyclingTimer--;
+	if (_colorCyclingTimer < 0) {
+		_colorCyclingTimer = _colorCyclingSpeed;
+		_colorCyclingIndex = (_colorCyclingIndex + 1) % _colorCyclingTable.size();
+	}
 }
 
 uint8 Renderer::indexFromColor(uint8 r, uint8 g, uint8 b) {
@@ -355,6 +384,8 @@ bool Renderer::getRGBAtC64(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 			stipple = nullptr;
 			return true;
 		}
+		if (isEncodedCPCDirectColor(index))
+			index = decodeCPCDirectColor(index);
 		readFromPalette(index, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
@@ -459,6 +490,8 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 			stipple = nullptr;
 			return true;
 		}
+		if (isEncodedCPCDirectColor(index))
+			index = decodeCPCDirectColor(index);
 		readFromPalette(index, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
@@ -467,10 +500,33 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return true;
 	}
 	assert(_renderMode == Common::kRenderCPC);
+
+	if (isEncodedCPCDirectColor(index)) {
+		index = decodeCPCDirectColor(index);
+		readFromPalette(index, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		stipple = nullptr;
+		return true;
+	}
+
+	if (index == 0 || index > 15) {
+		// Color indices outside the 1-15 stipple range are raw CPC ink
+		// values used for backgrounds. Read directly from the hardware
+		// palette instead of the stipple tables.
+		readFromPalette(index, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		stipple = nullptr;
+		return true;
+	}
+
 	stipple = (byte *)_stipples[index - 1];
-	byte *entry = (*_colorMap)[index - 1];
-	uint8 i1 = getCPCPixel(entry[0], 0, true);
-	uint8 i2 = getCPCPixel(entry[0], 1, true);
+	byte pair = _colorPair[index - 1];
+	uint8 i1 = pair & 0xf;
+	uint8 i2 = (pair >> 4) & 0xf;
 	selectColorFromFourColorPalette(i1, r1, g1, b1);
 	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	if (r1 == r2 && g1 == g2 && b1 == b2) {
@@ -531,12 +587,27 @@ bool Renderer::getRGBAt(uint8 index, uint8 ecolor, uint8 &r1, uint8 &g1, uint8 &
 	}
 
 	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
+		// Hardware palette cycling: if the main color index matches the cycling
+		// palette entry and cycling is active, use the cycling color directly.
+		// This must happen BEFORE color pair resolution since on real hardware
+		// the Copper list sets the color register globally.
+		if (index == _colorCyclingPaletteIndex && _colorCyclingTimer >= 0 && !_colorCyclingTable.empty()) {
+			readFromPalette(index, r1, g1, b1);
+			r2 = r1; g2 = g1; b2 = b1;
+			if (ecolor > 0)
+				readFromPalette(ecolor, r2, g2, b2);
+			return true;
+		}
+
 		if (_colorPair[index] > 0) {
 			int color = 0;
 			color = _colorPair[index] & 0xf;
 			readFromPalette(color, r1, g1, b1);
 			color = _colorPair[index] >> 4;
 			readFromPalette(color, r2, g2, b2);
+			// Also apply cycling to ecolor if it matches the cycling index
+			if (ecolor > 0 && ecolor == _colorCyclingPaletteIndex && _colorCyclingTimer >= 0 && !_colorCyclingTable.empty())
+				readFromPalette(ecolor, r2, g2, b2);
 			return true;
 		} else if (_colorRemaps && _colorRemaps->contains(index)) {
 			int color = (*_colorRemaps)[index];
@@ -847,13 +918,13 @@ void Renderer::renderCube(const Math::Vector3d &originalOrigin, const Math::Vect
 	uint color = (*colours)[0];
 	uint ecolor = ecolours ? (*ecolours)[0] : 0;
 
-	if (size.x() <= 1) {
+	/*if (size.x() <= 1) {
 		origin.x() += offset;
 	} else if (size.y() <= 1) {
 		origin.y() += offset;
 	} else if (size.z() <= 1) {
 		origin.z() += offset;
-	}
+	}*/
 
 	if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 		setStippleData(stipple);
@@ -977,9 +1048,6 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 	Math::Vector3d size = originalSize;
 	Math::Vector3d origin = originalOrigin;
 
-	if (!_isAccelerated)
-		polygonOffset(true);
-
 	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
 		/* According to https://www.shdon.com/freescape/
 		If the bounding box is has all non-zero dimensions
@@ -995,17 +1063,16 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 		it were a rectangle perpendicular to the Z axis.
 		TODO: fix this case.
 		*/
-		if (size.x() <= size.y() && size.x() <= size.z())
+		/*if (size.x() <= size.y() && size.x() <= size.z())
 			size.x() = 0;
 		else if (size.y() <= size.x() && size.y() <= size.z())
 			size.y() = 0;
 		else if (size.z() <= size.x() && size.z() <= size.y())
 			size.z() = 0;
 		else
-			error("Invalid size!");
+			error("Invalid size!");*/
 	}
 
-	float dx, dy, dz;
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	Common::Array<Math::Vector3d> vertices;
@@ -1028,33 +1095,41 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 		if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 			setStippleData(stipple);
 			useColor(r1, g1, b1);
+			float d1x = 0, d1y = 0, d1z = 0;
+			if (size.x() == 0) {
+				d1y = size.y();
+			} else if (size.y() == 0) {
+				d1x = size.x();
+			} else if (size.z() == 0) {
+				d1x = size.x();
+			}
+
+			float d2x = 0, d2y = 0, d2z = 0;
+			if (size.x() == 0) {
+				d2z = size.z();
+			} else if (size.y() == 0) {
+				d2z = size.z();
+			} else if (size.z() == 0) {
+				d2y = size.y();
+			}
+
 			vertices.clear();
-			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
+			bool useFlippedWinding = (size.x() == 0) || (size.z() == 0);
 
-			dx = dy = dz = 0.0;
-			if (size.x() == 0) {
-				dy = size.y();
-			} else if (size.y() == 0) {
-				dx = size.x();
-			} else if (size.z() == 0) {
-				dx = size.x();
+			if (i == 1)
+				useFlippedWinding = !useFlippedWinding;
+
+			if (useFlippedWinding) {
+				vertices.push_back(origin);
+				vertices.push_back(Math::Vector3d(origin.x() + d2x, origin.y() + d2y, origin.z() + d2z));
+				vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
+				vertices.push_back(Math::Vector3d(origin.x() + d1x, origin.y() + d1y, origin.z() + d1z));
+			} else {
+				vertices.push_back(origin);
+				vertices.push_back(Math::Vector3d(origin.x() + d1x, origin.y() + d1y, origin.z() + d1z));
+				vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
+				vertices.push_back(Math::Vector3d(origin.x() + d2x, origin.y() + d2y, origin.z() + d2z));
 			}
-
-			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
-			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
-			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
-
-			dx = dy = dz = 0.0;
-			if (size.x() == 0) {
-				dz = size.z();
-			} else if (size.y() == 0) {
-				dz = size.z();
-			} else if (size.z() == 0) {
-				dy = size.y();
-			}
-
-			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
-			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
 			if (r1 != r2 || g1 != g2 || b1 != b2) {
 				useStipple(true);
@@ -1064,10 +1139,12 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 			}
 		}
 	}
-	polygonOffset(false);
 }
 
-void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *originalOrdinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
+void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size,
+							 const Common::Array<float> *originalOrdinates, Common::Array<uint8> *colours,
+							 Common::Array<uint8> *ecolours, float offset) {
+
 	Common::Array<float> *ordinates = new Common::Array<float>(*originalOrdinates);
 
 	uint8 r1, g1, b1, r2, g2, b2;
@@ -1079,9 +1156,7 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 
 	uint color = 0;
 	uint ecolor = 0;
-
 	if (ordinates->size() == 6) { // Line
-		polygonOffset(true);
 		color = (*colours)[0];
 		ecolor = ecolours ? (*ecolours)[0] : 0;
 
@@ -1114,12 +1189,7 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 			renderFace(vertices);
 			useStipple(false);
 		}
-		polygonOffset(false);
 	} else {
-
-		if (!_isAccelerated)
-			polygonOffset(true);
-
 		if (size.x() == 0) {
 			for (int i = 0; i < int(ordinates->size()); i++) {
 				if (i % 3 == 0)
@@ -1143,9 +1213,10 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 			setStippleData(stipple);
 			useColor(r1, g1, b1);
-			for (uint i = 0; i < ordinates->size(); i = i + 3) {
-				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
-			}
+			// reverse winding
+			for (int k = ordinates->size(); k > 0; k = k - 3)
+				vertices.push_back(Math::Vector3d((*ordinates)[k - 3], (*ordinates)[k - 2], (*ordinates)[k - 1]));
+
 			renderFace(vertices);
 			if (r1 != r2 || g1 != g2 || b1 != b2) {
 				useStipple(true);
@@ -1161,9 +1232,10 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 			setStippleData(stipple);
 			useColor(r1, g1, b1);
-			for (int i = ordinates->size(); i > 0; i = i - 3) {
-				vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
-			}
+			// forward winding
+			for (uint k = 0; k < ordinates->size(); k = k + 3)
+				vertices.push_back(Math::Vector3d((*ordinates)[k], (*ordinates)[k + 1], (*ordinates)[k + 2]));
+
 			renderFace(vertices);
 			if (r1 != r2 || g1 != g2 || b1 != b2) {
 				useStipple(true);
@@ -1174,7 +1246,6 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		}
 	}
 
-	polygonOffset(false);
 	delete(ordinates);
 }
 
@@ -1184,6 +1255,8 @@ void Renderer::drawBackground(uint8 color) {
 
 	if (_colorRemaps && _colorRemaps->contains(color)) {
 		color = (*_colorRemaps)[color];
+		if (_renderMode == Common::kRenderCPC && isEncodedCPCDirectColor(color))
+			color = decodeCPCDirectColor(color);
 		readFromPalette(color, r1, g1, b1);
 		clear(r1, g1, b1);
 		return;

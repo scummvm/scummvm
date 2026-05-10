@@ -34,6 +34,8 @@ namespace Tattoo {
 
 class WidgetTooltipBase : public WidgetBase {
 public:
+	static const int kMaxTooltipWidth = 150;
+
 	WidgetTooltipBase(SherlockEngine *vm) : WidgetBase(vm) {}
 	~WidgetTooltipBase() override {}
 

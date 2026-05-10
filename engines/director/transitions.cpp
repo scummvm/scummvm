@@ -282,6 +282,10 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 
 	uint w = clipRect.width();
 	uint h = clipRect.height();
+	if (w == 0 || h == 0) {
+		warning("Window::playTransition(): zero-sized clip rect, aborting");
+		return;
+	}
 
 	for (uint16 i = 1; i < t.steps + 1; i++) {
 		uint32 startTime = g_system->getMillis();

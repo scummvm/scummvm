@@ -5,7 +5,6 @@
 #pragma once
 
 #include "common/util.h"
-#include <stddef.h>
 
 namespace TwinE {
 

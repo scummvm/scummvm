@@ -57,6 +57,8 @@
 #include "tinsel/object.h"
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
+#include "tinsel/psx_archive.h"
+#include "tinsel/psx_japan_font.h"
 #include "tinsel/savescn.h"
 #include "tinsel/scn.h"
 #include "tinsel/sound.h"
@@ -527,6 +529,13 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 		g_HookScene.scene = 0;
 	}
 
+	// Skip DW1 introduction if Escape was pressed by switching to title screen
+	if (WasDw1IntroSkipped()) {
+		g_NextScene.scene = _vm->_handle->GetDw1TitleSceneHandle();
+		g_NextScene.entry = 1;
+		g_NextScene.trans = TRANS_DEF;
+	}
+
 	// Workaround for "Missing Red Dragon in square" bug in Discworld 1 PSX, act IV.
 	// This happens with the original interpreter on PSX too: the red dragon in Act IV
 	// doesn't show up inside the square at the right time. Original game required the
@@ -904,7 +913,8 @@ const char *const TinselEngine::_sceneFiles[] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0),
+		_memoryManagerInitialized(false) {
 	_vm = this;
 
 	_gameId = 0;
@@ -933,6 +943,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
 	delete _spriter;
+	delete _systemReel;
+	delete _notebook;
 	delete _cursor;
 	delete _bg;
 	delete _font;
@@ -954,7 +966,9 @@ TinselEngine::~TinselEngine() {
 	delete _actor;
 	delete _config;
 
-	MemoryDeinit();
+	if (_memoryManagerInitialized) {
+		MemoryDeinit();
+	}
 
 	// Reset global vars
 	ResetVarsDrives();	// drives.cpp
@@ -978,6 +992,10 @@ TinselEngine::~TinselEngine() {
 	RebootTimers();       // timers.cpp
 	ResetVarsTinlib();	// tinlib.cpp
 	ResetVarsTinsel();	// tinsel.cpp
+
+	ClosePsxJapanFont();
+
+	CoroScheduler.destroy();
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
@@ -988,6 +1006,9 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 	if (TinselV1PSX) {
 		// Add subfolders needed for PSX versions of Discworld 1
 		SearchMan.addDirectory(gamePath, 0, 3, true);
+
+		// Add PSX archive if it exists (German, Japanese)
+		addPsxArchive("discwld.lfi", "discwld.lfd");
 	} else {
 		// Add DW2 subfolder to search path in case user is running directly from the CDs
 		SearchMan.addSubDirectoryMatching(gamePath, "dw2");
@@ -1058,6 +1079,7 @@ Common::Error TinselEngine::run() {
 
 	// init memory manager
 	MemoryInit();
+	_memoryManagerInitialized = true;
 
 	// load user configuration
 	_vm->_config->readFromDisk();
@@ -1088,6 +1110,11 @@ Common::Error TinselEngine::run() {
 
 	// Actors, globals and inventory icons
 	LoadBasicChunks();
+
+	// External font
+	if (TinselV1PSXJapan) {
+		OpenPsxJapanFont();
+	}
 
 	// Continuous game processes
 	CreateConstProcesses();
@@ -1152,8 +1179,6 @@ Common::Error TinselEngine::run() {
 	_vm->_config->writeToDisk();
 
 	EndScene();
-	if (_bg)
-		_bg->ResetBackground();
 
 	return Common::kNoError;
 }
@@ -1427,6 +1452,15 @@ const char *TinselEngine::getSceneFile(LANGUAGE lang) {
 		lang = TXT_ENGLISH; // fallback to ENGLISH.SCN if <LANG>.IDX is not found
 
 	return _sceneFiles[lang];
+}
+
+void TinselEngine::addPsxArchive(const char *indexFileName, const char *dataFileName) {
+	PsxArchive *psxArchive = new PsxArchive();
+	if (psxArchive->open(indexFileName, dataFileName, TinselVersion)) {
+		SearchMan.add(dataFileName, psxArchive);
+	} else {
+		delete psxArchive;
+	}
 }
 
 } // End of namespace Tinsel

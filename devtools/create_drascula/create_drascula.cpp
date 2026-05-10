@@ -28,6 +28,11 @@
 #include "create_drascula.h"
 #include "staticdata.h"
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
+
 #define DRASCULA_DAT_VER 7	// 1 byte
 
 static void writeByte(FILE *fp, uint8 b) {

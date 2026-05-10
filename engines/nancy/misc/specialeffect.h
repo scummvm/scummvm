@@ -51,6 +51,8 @@ public:
 		_rect(rect) {}
 	virtual ~SpecialEffect() {}
 
+	SpecialEffect(SpecialEffect &&) = default;
+
 	void init() override;
 	void updateGraphics() override;
 

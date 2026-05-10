@@ -41,12 +41,14 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "atw",			"Above The Waves" },
 	{ "leptonsquest",	"Lepton's Quest" },
 	{ "otto",			"Otto Experiment" },
+	{ "samnmaxfl",		"Sam and Max Flintlocked" },
+	{ "fullmoon",		"Full Moon" },
 	{ 0, 0 }
 };
 
-#define GAME1l(t, e, f1, m1, s1, lang, pl, langId) 	{ { t, e, AD_ENTRY1s(f1, m1, s1), lang, pl, ADGF_TESTING, GUIO1(GUIO_NOMIDI) }, langId }
+#define GAME1l(t, e, f1, m1, s1, lang, pl, langId) 	{ { t, e, AD_ENTRY1s(f1, m1, s1), lang, pl, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI) }, langId }
 #define GAME1(t, e, f1, m1, s1) GAME1l(t, e, f1, m1, s1, Common::EN_ANY, Common::kPlatformUnknown, 0)
-#define GAME2l(t, e, f1, m1, s1, f2, m2, s2, lang, pl, langId) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), lang, pl, ADGF_TESTING, GUIO1(GUIO_NOMIDI) }, langId }
+#define GAME2l(t, e, f1, m1, s1, f2, m2, s2, lang, pl, langId) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), lang, pl, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI) }, langId }
 #define GAME2(t, e, f1, m1, s1, f2, m2, s2) GAME2l(t, e, f1, m1, s1, f2, m2, s2, Common::EN_ANY, Common::kPlatformUnknown, 0)
 
 
@@ -166,6 +168,12 @@ static const SludgeGameDescription gameDescriptions[] = {
 	GAME1l("leptonsquest", "", "LeptonsQuest.slg", "763d4020dcd55a4af4c01664f79584da", 71233239, Common::EN_ANY, Common::kPlatformLinux, 0),
 
 	GAME1("otto", "", "gamedata", "c93b1bd849cdb6a23fb8eb389f5c1955", 154427),
+
+	GAME2("samnmaxfl", "Beta", "gamedata",    "48da7df99553ba2655e875821b0a5516", 18635689,
+					   "Sam and Max Flintlocked Beta.exe", "34cc90e376acc77870882bdc70488d81", 83968),
+
+	GAME2("fullmoon", "", "gamedata",    "66e0ee55b517970807b794f34feb500a", 95645674,
+					      "Full Moon.exe", "34cc90e376acc77870882bdc70488d81", 83968),
 
 	{ AD_TABLE_END_MARKER, 0 }
 };

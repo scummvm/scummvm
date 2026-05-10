@@ -81,7 +81,6 @@ static  CFont *pFont = nullptr;                  // font to use for displaying b
 //static  char        chPathName[128];                // buffer to hold path name of the backpack file
 
 static  bool        bActiveWindow = false;          // whether our window is active
-static  bool        bFirstTime = true;              // flag for first time information is displayed
 static  int         nBackpack_DX, nBackpack_DY;     // size of useable backpack background
 static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
 static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
@@ -270,6 +269,7 @@ void CBackpack::OnDestroy() {
 		pItemText = nullptr;
 	}
 
+	bFirstTime = true;
 	CDialog::OnDestroy();
 }
 
@@ -357,7 +357,7 @@ void CBackpack::OnPaint() {
 void CBackpack::UpdateBackpack(CDC *pDC) {
 	CPalette *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
 	(*pDC).RealizePalette();
@@ -390,7 +390,7 @@ void CBackpack::UpdatePage(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pBackpackDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pBackpackBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
@@ -792,7 +792,7 @@ bool CBackpack::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CBackpack::DoWaitCursor() {
+void CBackpack::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

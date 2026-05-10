@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (отладка)</string>
   <string name="app_desc">Движок графической адвенчуры</string>
   <string name="ok">OK</string>
   <string name="quit">Выход</string>
+  <string name="no_log_file_title">Ошибка файла лога</string>
+  <string name="no_log_file">Невозможно прочитать файл лога ScummVM или создать новый!</string>
   <string name="no_config_file_title">Ошибка файла конфигурации</string>
   <string name="no_config_file">Невозможно прочитать файл конфигурации ScummVM или создать новый!</string>
   <string name="no_save_path_title">Ошибка пути сохранения</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Закрыть выпадающий список</string>
   <string name="saf_request_prompt">Пожалуйста, выберите *корень* вашей внешней (физической) SD-карты. Это необходимо, чтобы ScummVM получил доступ к этой папке: </string>
   <string name="saf_revoke_done">Разрешения Storage Access Framework для ScummVM были отозваны!</string>
+  <string name="ini_parsing_error">Файл конфигурации содержит ошибку формата</string>
+  <string name="shortcut_creator_title">Запустить игру</string>
+  <string name="shortcut_creator_search_game">Искать игру</string>
+  <string name="shortcut_creator_game_item_icon">Иконка игры</string>
+  <string name="shortcut_creator_customize_game_name_hint">Метка ярлыка</string>
+  <string name="shortcut_creator_customize_game_icon_description">Иконка ярлыка</string>
 </resources>

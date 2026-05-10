@@ -166,8 +166,7 @@ void showCast() {
 						continue;
 
 					for (auto castMember : *cast->_loadedCast) {
-						if (!castMember._value->isLoaded())
-							continue;
+						castMember._value->load();
 
 						Common::String name(getDisplayName(castMember._value));
 						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
@@ -176,7 +175,21 @@ void showCast() {
 							continue;
 
 						ImGui::TableNextRow();
-						ImGui::TableNextColumn();
+
+						// Make the entire row selectable/clickable
+						ImGui::TableSetColumnIndex(0);
+						if (ImGui::Selectable(
+							Common::String::format("##row%d", castMember._key).c_str(),
+							false,
+							ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
+							ImVec2(0, 32.f) // match row height
+						)) {
+							castMember._value->load();
+							_state->_castDetails._castMember = castMember._value;
+							_state->_w.castDetails = true;
+						}
+						ImGui::SameLine();
+
 						ImGui::Text("%s %s", toIcon(castMember._value->_type), name.c_str());
 
 						ImGui::TableNextColumn();
@@ -248,8 +261,7 @@ void showCast() {
 						continue;
 
 					for (auto castMember : *cast->_loadedCast) {
-						if (!castMember._value->isLoaded())
-							continue;
+						castMember._value->load();
 
 						Common::String name(getDisplayName(castMember._value));
 						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
@@ -310,13 +322,20 @@ void showCast() {
 							const ImVec2 p1 = ImGui::GetItemRectMax();
 							ImGui::PushClipRect(p0, p1, true);
 							ImDrawList *draw_list = ImGui::GetWindowDrawList();
-							draw_list->AddRect(p0, p1, IM_COL32_WHITE);
+							draw_list->AddRect(p0, p1, _state->theme->borderColor);
 							const ImVec2 pos = p0 + ImVec2((thumbnailSize - textWidth) * 0.5f, (thumbnailSize - textHeight) * 0.5f);
-							draw_list->AddText(nullptr, 0.f, pos, IM_COL32_WHITE, name.c_str(), 0, thumbnailSize);
-							draw_list->AddText(nullptr, 0.f, p1 - ImVec2(16, 16), IM_COL32_WHITE, toIcon(castMember._value->_type));
+							draw_list->AddText(nullptr, 0.f, pos, _state->theme->gridTextColor, name.c_str(), 0, thumbnailSize);
+							draw_list->AddText(nullptr, 0.f, p1 - ImVec2(16, 16), _state->theme->gridTextColor, toIcon(castMember._value->_type));
 							ImGui::PopClipRect();
 						}
 						ImGui::EndGroup();
+
+						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+							// Cast Member Clicked
+							castMember._value->load();
+							_state->_castDetails._castMember = castMember._value; // Must set _castMember before making the caseDetails window visible to prevent null castMember
+							_state->_w.castDetails = true;
+						}
 					}
 				}
 				ImGui::EndTable();

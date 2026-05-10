@@ -48,7 +48,7 @@ extern const char *INI_SECTION;
 
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	m_pOKButton = nullptr;
 	m_pCancelButton = nullptr;
 	m_pDefaultsButton = nullptr;

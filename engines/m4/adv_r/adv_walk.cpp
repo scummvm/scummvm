@@ -42,13 +42,8 @@ void set_walker_scaling(SceneDef *rdef) {
 
 static void ws_walkto_node(machine *myWalker, railNode *destNode, bool firstTime) {
 	// Parameter verification
-	if (!myWalker) {
-		error_show(FL, 'W:-(');
-		return;
-	}
-	if (!destNode) {
-		error_show(FL, 'WNDN');
-		return;
+	if (!myWalker || !destNode) {
+		error_show(FL, "walkto node");
 	}
 
 	// Calculate the destination values x, y, s
@@ -77,8 +72,7 @@ static void ws_walkto_node(machine *myWalker, railNode *destNode, bool firstTime
 bool walker_has_walk_finished(machine *sender) {
 	// Parameter verification
 	if ((!sender) || (!sender->myAnim8)) {
-		error_show(FL, 'W:-(');
-		return false;
+		error_show(FL, "walker node callback");
 	}
 
 	// Remove the node we just arrived at from the sender's walkPath
@@ -107,7 +101,7 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 	int32 currNodeID, destNodeID;
 
 	if (!myWalker || !myWalker->myAnim8)
-		error_show(FL, 'W:-(');
+		error_show(FL, "ws_walk");
 
 	// Get walker's current location
 	const int32 currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
@@ -118,10 +112,10 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 	if (_G(screenCodeBuff))
 		walkerCodes = _G(screenCodeBuff)->get_buffer();
 	if ((currNodeID = AddRailNode(currX, currY, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Walker's curr posn: %d %d", currX, currY);
+		error_show(FL, "Walker's curr posn: %d %d", currX, currY);
 	}
 	if ((destNodeID = AddRailNode(x, y, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Trying to walk to: %d %d", x, y);
+		error_show(FL, "Trying to walk to: %d %d", x, y);
 	}
 
 	// Dispose of the current path myWalker is following
@@ -172,48 +166,6 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 		adv_hyperwalk_to_final_destination(nullptr, nullptr);
 }
 
-bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y) {
-	int32 currNodeID, destNodeID;
-
-	if (!myWalker || !myWalker->myAnim8) {
-		error_show(FL, 'W:-(');
-		return false;
-	}
-
-	// Get walker's current location
-	const int32 currX = myWalker->myAnim8->myRegs[IDX_X] >> 16;
-	const int32 currY = myWalker->myAnim8->myRegs[IDX_Y] >> 16;
-
-	// Add the walker's current location and the destination to the rail nodes...
-	Buffer *walkerCodes = nullptr;
-	if (_G(screenCodeBuff)) {
-		walkerCodes = _G(screenCodeBuff)->get_buffer();
-	}
-	if ((currNodeID = AddRailNode(currX, currY, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Walker's curr posn: %d %d", currX, currY);
-	}
-	if ((destNodeID = AddRailNode(x, y, walkerCodes, true)) < 0) {
-		error_show(FL, 'WCAN', "Trying to walk to: %d %d", x, y);
-	}
-
-	// Dispose of the current path myWalker is following
-	if (myWalker->walkPath) {
-		DisposePath(myWalker->walkPath);
-	}
-
-	// Find the shortest path between currNodeID, and destNodeID
-	const bool result = GetShortestPath(currNodeID, destNodeID, &(myWalker->walkPath));
-
-	// Now that a path has been attempted, remove the two extra added nodes
-	RemoveRailNode(currNodeID, walkerCodes, true);
-	RemoveRailNode(destNodeID, walkerCodes, true);
-	if (_G(screenCodeBuff))
-		_G(screenCodeBuff)->release();
-
-	return result;
-}
-
-
 void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool complete_walk) {
 	const int8 directions[14] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
 
@@ -258,7 +210,7 @@ void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
 		return;
 	}
 
-	frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	const frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 
 	_G(globals)[GLB_TEMP_1] = x << 16;
 	_G(globals)[GLB_TEMP_2] = y << 16;
@@ -276,7 +228,7 @@ static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, i
 		return;
 	}
 
-	frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	const frac16 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((y << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
 
 	_G(globals)[GLB_TEMP_1] = x << 16;
 	_G(globals)[GLB_TEMP_2] = y << 16;
@@ -295,8 +247,7 @@ void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger) {
 	int8 directions[13] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
 
 	if (!myWalker || !myWalker->myAnim8) {
-		error_show(FL, 'W:-(', "demand facing: %d", facing);
-		return;
+		error_show(FL, "demand facing: %d", facing);
 	}
 
 	// Verify that facing is valid or set -1
@@ -321,8 +272,7 @@ void ws_demand_location(int32 x, int32 y, int facing) {
 
 void ws_hide_walker(machine *myWalker) {
 	if (!myWalker) {
-		error_show(FL, 'W:-(');
-		return;
+		error_show(FL, "hide walker");
 	}
 
 	_G(player).walker_visible = false;
@@ -331,8 +281,7 @@ void ws_hide_walker(machine *myWalker) {
 
 void ws_unhide_walker(machine *myWalker) {
 	if (!myWalker) {
-		error_show(FL, 'W:-(');
-		return;
+		error_show(FL, "unhide_walker");
 	}
 
 	_G(player).walker_visible = true;
@@ -363,8 +312,7 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 	const int8 facings[10] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
 
 	if (!myWalker || !myWalker->myAnim8) {
-		error_show(FL, 'W:-(');
-		return;
+		error_show(FL, "ws_Get_walker_info");
 	}
 
 	Anim8 *myAnim8 = myWalker->myAnim8;
@@ -397,7 +345,7 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 }
 
 
-bool ws_walk_init_system() {
+void ws_walk_init_system() {
 	// Initialize walker
 	_G(globals)[GLB_MIN_Y] = _G(currentSceneDef).back_y << 16;
 	_G(globals)[GLB_MAX_Y] = _G(currentSceneDef).front_y << 16;
@@ -412,33 +360,29 @@ bool ws_walk_init_system() {
 	_G(my_walker) = _GW().walk_initialize_walker();
 
 	if (!_G(my_walker)) {
-		error_show(FL, 'W:-(');
-		return false;
+		error_show(FL, "ws_walk_init_system");
 	}
-	return true;
 }
 
-bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette) {
+void ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette) {
 	int32 i = 0;
 
 	while (dir_array[i] >= 0) {
 		const int32 result = AddWSAssetCELS(name_array[i], dir_array[i],
 		                                    (load_palette && !shadow_flag) ? _G(master_palette) : nullptr);
 		if (result < 0)
-			error_show(FL, 'W:-(');
+			error_show(FL, "ws_walk_load_series");
 
 		i++;
 	}
-
-	return true;
 }
 
-bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette) {
-	return (ws_walk_load_series(dir_array, name_array, false, load_palette));
+void ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette) {
+	ws_walk_load_series(dir_array, name_array, false, load_palette);
 }
 
-bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]) {
-	return (ws_walk_load_series(dir_array, name_array, true, false));
+void ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]) {
+	ws_walk_load_series(dir_array, name_array, true, false);
 }
 
 void ws_walk_dump_series(int16 num_directions, int16 start_hash) {

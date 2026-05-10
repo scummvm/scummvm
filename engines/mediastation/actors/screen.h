@@ -28,7 +28,7 @@
 
 namespace MediaStation {
 
-// A Screen holds actor data and processes event handlers for a Context.
+// A Screen holds actor data and processes script responses for a Context.
 // The original separated them this way - there is a ContextParameters section,
 // then a Screen actor header.
 class ScreenActor : public Actor {
@@ -36,6 +36,7 @@ public:
 	ScreenActor() : Actor(kActorTypeScreen) {};
 
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
+	virtual void onEvent(const ActorEvent &event) override;
 
 	uint _cursorResourceId = 0;
 };

@@ -477,8 +477,9 @@ Common::Error TwinEEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 }
 
 void TwinEEngine::autoSave() {
-	debug("Autosave %s", _gameState->_sceneName);
-	saveGameState(getAutosaveSlot(), _gameState->_sceneName, true);
+	Common::U32String originalSceneName(_gameState->_sceneName, Common::kDos850);
+	const Common::String sceneName = originalSceneName.encode(Common::kUtf8);
+	saveGameState(getAutosaveSlot(), sceneName, true);
 }
 
 void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
@@ -917,6 +918,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_movements->update();
 
+	if (isLBA2()) {
+		_rain->GereRain();
+	}
+
 	_debugState->update();
 
 	if (_menuOptions->flagCredits) {
@@ -1235,6 +1240,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	_grid->centerScreenOnActor();
 
 	_redraw->drawScene(_redraw->_firstTime);
+
+	if (isLBA2()) {
+		_rain->AffRain();
+	}
 
 	// workaround to fix hero redraw after drowning
 	if (_actor->_cropBottomScreen && _redraw->_firstTime) {

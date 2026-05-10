@@ -78,7 +78,7 @@ public:
 	void update_map_sfx(); //updates the active sounds
 	void update(); // at the moment this just changes songs if required
 
-	void musicPlayFrom(string group);
+	void musicPlayFrom(Common::String group);
 
 	void musicPause();
 	void musicPlay();
@@ -135,17 +135,17 @@ private:
 	bool loadSong(Song *song, const Common::Path &filename, const char *fileId, const char *title);
 	bool groupAddSong(const char *group, Song *song);
 
-	//bool LoadObjectSamples(string sound_dir);
-	//bool LoadTileSamples(string sound_dir);
-	bool LoadSfxManager(string sfx_style);
+	//bool LoadObjectSamples(Common::String sound_dir);
+	//bool LoadTileSamples(Common::String sound_dir);
+	bool LoadSfxManager(Common::String sfx_style);
 
-	Sound *SongExists(const string &name); //have we loaded this sound before?
-	Sound *SampleExists(const string &name); //have we loaded this sound before?
+	Sound *SongExists(const Common::String &name); //have we loaded this sound before?
+	Sound *SampleExists(const Common::String &name); //have we loaded this sound before?
 
 
 	Sound *RequestTileSound(int id);
 	Sound *RequestObjectSound(int id);
-	Sound *RequestSong(const string &group); //request a song from this group
+	Sound *RequestSong(const Common::String &group); //request a song from this group
 
 	uint16 RequestObjectSfxId(uint16 obj_n);
 
@@ -154,14 +154,14 @@ private:
 	IntCollectionMap m_TileSampleMap;
 	IntCollectionMap m_ObjectSampleMap;
 	StringCollectionMap m_MusicMap;
-	list<Sound *> m_Songs;
-	list<Sound *> m_Samples;
+	Common::List<Sound *> m_Songs;
+	Common::List<Sound *> m_Samples;
 	const Configuration *m_Config;
 
 	//state info:
-	string m_CurrentGroup;
+	Common::String m_CurrentGroup;
 	Sound *m_pCurrentSong;
-	list<SoundManagerSfx> m_ActiveSounds;
+	Common::List<SoundManagerSfx> m_ActiveSounds;
 	bool audio_enabled;
 	bool music_enabled;
 	bool speech_enabled;

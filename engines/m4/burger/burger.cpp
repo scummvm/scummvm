@@ -20,69 +20,71 @@
  */
 
 #include "common/debug.h"
+#include "m4/burger/inventory.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/console.h"
 #include "m4/burger/vars.h"
 #include "m4/burger/core/conv.h"
 #include "m4/burger/gui/gui_gizmo.h"
 #include "m4/burger/gui/game_menu.h"
-#include "m4/graphics/krn_pal.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
+#include "m4/graphics/krn_pal.h"
 
 namespace M4 {
 namespace Burger {
 
 static const seriesPlayBreak PLAY_BREAKS1[] = {
-	{  0, 17, nullptr,   1,   0,    -1, 2048,  0, 0, 0 },
-	{ 18, 18, nullptr,   0,   0, 10008,    0,  0, 0, 0 },
-	{ 19, 21, "999blow", 1, 125,    -1,    0, -1, 0, 0 },
-	{ 22, 30, nullptr,   0,   0,    -1,    0,  0, 0, 0 },
-	{  7,  0, nullptr,   0,   0,    -1,    0,  0, 0, 0 },
-	{ -1, -1, nullptr,   0,   0,    -1,    0,  0, 0, 0 }
+	{  0, 17, nullptr,   1,   0,    -1, 2048,  0, nullptr, 0 },
+	{ 18, 18, nullptr,   0,   0, 10008,    0,  0, nullptr, 0 },
+	{ 19, 21, "999blow", 1, 125,    -1,    0, -1, nullptr, 0 },
+	{ 22, 30, nullptr,   0,   0,    -1,    0,  0, nullptr, 0 },
+	{  7,  0, nullptr,   0,   0,    -1,    0,  0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0,    -1,    0,  0, nullptr, 0 }
 };
 
 static const seriesPlayBreak PLAY_BREAKS2[] = {
-	{  0, 11, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 12, 13, nullptr,   0,   0, -1,    0, 5, 0, 0 },
-	{ 14, 26, "302w002", 1, 255, -1,    0, 0, 0, 0 },
-	{  7,  0, nullptr,   0,   0, -1,    0, 0, 0, 0 },
-	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 }
+	{  0, 11, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 12, 13, nullptr,   0,   0, -1,    0, 5, nullptr, 0 },
+	{ 14, 26, "302w002", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  7,  0, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 }
 };
 
 static const seriesPlayBreak PLAY_BREAKS3[] = {
-	{  0, 14, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 15, 16, "600_008", 2, 255, -1,    0, 0, 0, 0 },
-	{ 17, 21, "602w012", 1, 255, -1,    0, 0, 0, 0 },
-	{  7,  0, nullptr,   0,   0, -1,    0, 0, 0, 0 },
-	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 }
+	{  0, 14, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 15, 16, "600_008", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 17, 21, "602w012", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  7,  0, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 }
 };
 
 static const seriesPlayBreak PLAY_BREAKS4[] = {
-	{ 0, 12, 0, 1, 0, -1, 2048, 0, 0, 0 },
-	{ 12, 13, "500_004", 1, 255, -1, 0, 2,  0, 0 },
-	{ 12, 0, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ -1, -1, 0, 0, 0, -1, 0, 0, 0, 0 }
+	{ 0, 12, nullptr, 1, 0, -1, 2048, 0, nullptr, 0 },
+	{ 12, 13, "500_004", 1, 255, -1, 0, 2,  nullptr, 0 },
+	{ 12, 0, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ -1, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 }
 };
 
 static const seriesPlayBreak PLAY_BREAKS5[] = {
-	{  0, 15, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 16, 20, "999_001", 1, 200, -1,    0, 0, 0, 0 },
-	{ 19, 19, nullptr,   0,   0, -1,    0, 0, 0, 0 },
-	{ 15, 18, "999_001", 1, 200, -1,    0, 0, 0, 0 },
-	{ 15, 18, "999_001", 1, 200, -1,    0, 0, 0, 0 },
-	{ 14,  0, nullptr,   0,   0, -1,    0, 0, 0, 0 },
-	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 }
+	{  0, 15, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 16, 20, "999_001", 1, 200, -1,    0, 0, nullptr, 0 },
+	{ 19, 19, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 15, 18, "999_001", 1, 200, -1,    0, 0, nullptr, 0 },
+	{ 15, 18, "999_001", 1, 200, -1,    0, 0, nullptr, 0 },
+	{ 14,  0, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 }
 };
 
 static const seriesPlayBreak PLAY_BREAKS6[] = {
-	{  0, 15, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 16, 23, "999_001", 1, 200, -1,    0, 0, 0, 0 },
-	{ 24, 30, "999_002", 1, 200, -1,    0, 0, 0, 0 },
-	{ 31, 34, nullptr,   1, 200, -1,    0, 0, 0, 0 },
-	{ 34, 34, nullptr,   0,   0, -1,    0, 0, 0, 0 },
-	{ 14,  0, nullptr,   0,   0, -1,    0, 0, 0, 0 },
-	{ -1, -1, nullptr,   0,   0, -1,    0, 0, 0, 0 }
+	{  0, 15, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 16, 23, "999_001", 1, 200, -1,    0, 0, nullptr, 0 },
+	{ 24, 30, "999_002", 1, 200, -1,    0, 0, nullptr, 0 },
+	{ 31, 34, nullptr,   1, 200, -1,    0, 0, nullptr, 0 },
+	{ 34, 34, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ 14,  0, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
+	{ -1, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 }
 };
 
 static const char *SAID1[][4] = {
@@ -332,7 +334,7 @@ void BurgerEngine::global_daemon() {
 	case kAdvanceHour:
 		if (!player_commands_allowed() && !_G(flags)[V299] && _G(my_walker) &&
 				_G(player).walker_in_this_scene && _G(player).walker_visible)
-			sendWSMessage(0, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0, 0, _G(my_walker), 0, nullptr, 1);
 
 		kernel_timing_trigger(imath_ranged_rand(900, 1800), kAdvanceHour);
 		break;
@@ -361,7 +363,7 @@ void BurgerEngine::global_daemon() {
 			_G(wilbur_should) = 10017;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
-			error_show(FL, 'Burg', "Time to abduct Wilbur in space?");
+			error_show(FL, "Time to abduct Wilbur in space?");
 		}
 		break;
 
@@ -733,8 +735,8 @@ void BurgerEngine::testDone5() {
 #define MAX_INT 0x7FFFFFFF
 
 void BurgerEngine::wilburTeleported() {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
-	int oldSection = _G(game).section_id;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const int oldSection = _G(game).section_id;
 
 	switch (oldSection) {
 	case 3:
@@ -769,31 +771,29 @@ void BurgerEngine::wilburTeleported() {
 	if (_G(executing) != WHOLE_GAME) {
 		_G(flags).reset2();
 		_G(game).setRoom(604);
+	} else if (_G(flags)[kFifthTestPassed]) {
+		testDone5();
+		kernel_trigger_dispatch_now(10033);
+	} else if (_G(flags)[kFourthTestPassed] && !_G(flags)[V153]) {
+		testDone4();
+		_G(game).setRoom(207);
+	} else if (_G(flags)[kThirdTestPassed] && !_G(flags)[V185]) {
+		testDone3();
+		_G(game).setRoom(207);
+	} else if (_G(flags)[kSecondTestPassed] && !_G(flags)[V100]) {
+		testDone2();
+		_G(game).setRoom(207);
+	} else if (_G(flags)[kFirstTestPassed] && !_G(flags)[V242]) {
+		testDone1();
+		_G(game).setRoom(204);
 	} else {
-		if (_G(flags)[kFifthTestPassed]) {
-			testDone5();
-			kernel_trigger_dispatch_now(10033);
-		} else if (_G(flags)[kFourthTestPassed] && !_G(flags)[V153]) {
-			testDone4();
-			_G(game).setRoom(207);
-		} else if (_G(flags)[kThirdTestPassed] && !_G(flags)[V185]) {
-			testDone3();
-			_G(game).setRoom(207);
-		} else if (_G(flags)[kSecondTestPassed] && !_G(flags)[V100]) {
-			testDone2();
-			_G(game).setRoom(207);
-		} else if (_G(flags)[kFirstTestPassed] && !_G(flags)[V242]) {
-			testDone1();
-			_G(game).setRoom(204);
-		} else {
-			static_cast<Inventory *>(_G(inventory))->reset();
-			_G(flags).reset5();
-			_G(flags).reset4();
-			_G(flags).reset3();
-			_G(flags).reset2();
-			_G(flags).reset1();
-			_G(game).setRoom(101);
-		}
+		static_cast<Inventory *>(_G(inventory))->reset();
+		_G(flags).reset5();
+		_G(flags).reset4();
+		_G(flags).reset3();
+		_G(flags).reset2();
+		_G(flags).reset1();
+		_G(game).setRoom(101);
 	}
 
 	_G(kernel).trigger_mode = oldMode;
@@ -829,8 +829,8 @@ bool BurgerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (g_vars && _G(game).room_id == 903)
 		// Allow loading games from the main menu
 		return true;
-	else
-		return M4Engine::canLoadGameStateCurrently(msg);
+
+	return M4Engine::canLoadGameStateCurrently(msg);
 }
 
 } // namespace Burger

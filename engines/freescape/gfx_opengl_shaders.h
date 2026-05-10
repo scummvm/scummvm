@@ -73,6 +73,7 @@ public:
 	int _variableStippleArray[128];
 
 	virtual void init() override;
+	virtual void drawAABB(const Math::AABB &aabb, uint8 r, uint8 g, uint8 b) override;
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
 	virtual void setViewport(const Common::Rect &rect) override;
 	virtual Common::Point nativeResolution() override;
@@ -81,7 +82,7 @@ public:
 
 	virtual void useColor(uint8 r, uint8 g, uint8 b) override;
 	virtual void polygonOffset(bool enabled) override;
-	virtual void depthTesting(bool enabled) override;
+	virtual void enableCulling(bool enabled) override;
 
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
@@ -95,6 +96,7 @@ public:
 	virtual void renderPlayerShootRay(byte color, const Common::Point &position, const Common::Rect &viewPort) override;
 	void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) override;
 	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
+	void drawThunder(Texture *texture, Math::Vector3d position, float size) override;
 
 	virtual void renderCrossair(const Common::Point &crossairPosition) override;
 

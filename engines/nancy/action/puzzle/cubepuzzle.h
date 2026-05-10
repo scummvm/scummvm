@@ -43,9 +43,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "CubePuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void rotateBase(int dir);
 

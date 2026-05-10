@@ -23,8 +23,6 @@
 #define ULTIMA8_GUMPS_SHAPEVIEWERGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
-
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {

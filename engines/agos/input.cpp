@@ -165,6 +165,16 @@ out_of_here:
 	_noRightClick = 0;
 }
 
+bool AGOSEngine::isSimon2LanguageToggleKeyPressed() const {
+	return getGameType() == GType_SIMON2 && hasSimon2LanguageFiles() &&
+		(_keyPressed.keycode == Common::KEYCODE_SPACE);
+}
+
+void AGOSEngine::refreshSimon2LanguageText() {
+	cycleSimon2LanguageOverlay();
+	_keyPressed.reset();
+}
+
 void AGOSEngine::waitForInput() {
 	HitArea *ha;
 	uint id;
@@ -192,6 +202,11 @@ void AGOSEngine::waitForInput() {
 		_dragAccept = true;
 
 		while (!shouldQuit()) {
+			if (isSimon2LanguageToggleKeyPressed()) {
+				refreshSimon2LanguageText();
+				continue;
+			}
+
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 				_action == kActionShowObjects)
 				displayBoxStars();

@@ -34,7 +34,9 @@ namespace Nancy {
 
 GraphicsManager::GraphicsManager() :
 	_objects(objectComparator),
-	_inputPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
+	_inputPixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0),
+	_inputPixelFormat24(Graphics::PixelFormat::createFormatBGR24()),
+	_inputPixelFormat32(Graphics::PixelFormat::createFormatBGRA32()),
 	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()),
 	_transparentPixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
@@ -49,9 +51,9 @@ void GraphicsManager::init() {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_transColor = bsum->paletteTrans;
 	} else {
-		_transColor = 	(bsum->rTrans << _inputPixelFormat.rShift) |
-						(bsum->gTrans << _inputPixelFormat.gShift) |
-						(bsum->bTrans << _inputPixelFormat.bShift);
+		_transColor = 	(bsum->rTrans << _inputPixelFormat16.rShift) |
+						(bsum->gTrans << _inputPixelFormat16.gShift) |
+						(bsum->bTrans << _inputPixelFormat16.bShift);
 	}
 
 	initGraphics(640, 480, &_screenPixelFormat);
@@ -79,8 +81,8 @@ void GraphicsManager::draw(bool updateScreen) {
 
 		current.updateGraphics();
 
-		if (current._needsRedraw) {
-			if (current._isVisible) {
+		if (current.needsRedraw()) {
+			if (current.isVisible()) {
 				if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
 					// Object moved to a new location on screen, update the previous one
 					_dirtyRects.push_back(current.getPreviousScreenPosition());
@@ -94,9 +96,9 @@ void GraphicsManager::draw(bool updateScreen) {
 			}
 		}
 
-		current._needsRedraw = false;
-		current._hasMoved = false;
-		current._previousScreenPosition = current._screenPosition;
+		current.setNeedsRedraw(false);
+		current.setHasMoved(false);
+		current.updatePreviousScreenPosition();
 	}
 
 	// Filter out dirty rects that are completely inside others to reduce overdraw
@@ -115,7 +117,7 @@ void GraphicsManager::draw(bool updateScreen) {
 		for (RenderObject **it = _objects.begin(); it < _objects.end(); ++it) {
 			RenderObject &current = **it;
 
-			if (!current._isVisible || current.getScreenPosition().isEmpty()) {
+			if (!current.isVisible() || current.getScreenPosition().isEmpty()) {
 				continue;
 			}
 
@@ -128,7 +130,7 @@ void GraphicsManager::draw(bool updateScreen) {
 				for (auto it2 = it + 1; it2 < _objects.end(); ++it2) {
 					RenderObject &other = **it2;
 
-					if (!other._isVisible || other.getScreenPosition().isEmpty()) {
+					if (!other.isVisible() || other.getScreenPosition().isEmpty()) {
 						continue;
 					}
 
@@ -206,7 +208,7 @@ void GraphicsManager::clearObjects() {
 
 void GraphicsManager::redrawAll() {
 	for (auto &obj : _objects) {
-		obj->_needsRedraw = true;
+		obj->setNeedsRedraw(true);
 	}
 }
 
@@ -393,11 +395,19 @@ void GraphicsManager::debugDrawToScreen(const Graphics::ManagedSurface &surf) {
 	_screen.update();
 }
 
-const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
-	if (g_nancy->getGameType() == kGameTypeVampire) {
+const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat(uint bpp) {
+	if (g_nancy->getGameType() == kGameTypeVampire)
 		return _clut8Format;
-	} else {
-		return _inputPixelFormat;
+
+	switch (bpp) {
+	case 16:
+		return _inputPixelFormat16;	// RGB555
+	case 24:
+		return _inputPixelFormat24;
+	case 32:
+		return _inputPixelFormat32;
+	default:
+		error("Unsupported input pixel format with bpp %d", bpp);
 	}
 }
 

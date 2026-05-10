@@ -29,7 +29,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#define NOTEBOOK_SPEC   ".\\art\\mlscroll.bmp"      // path for notebook's DIB on disk
+#define NOTEBOOK_SPEC   "art\\mlscroll.bmp"      // path for notebook's DIB on disk
 #define NOTEBOOK_DX             502
 #define NOTEBOOK_DY             395
 #define NOTEBOOK_CURL_DX        500
@@ -61,7 +61,7 @@ namespace Gtl {
 #define IDC_NOTEBOOK_BOOK       921
 #define IDC_NOTEBOOK_SOUND      922
 
-#define NOTE_FONT_SIZE          -16
+#define NOTE_FONT_SIZE          -12
 #define NOTE_TEXT_COLOR         RGB(128,0,128)
 #define NOTE_MORE_COLOR         RGB(0,0,0)
 
@@ -82,7 +82,9 @@ namespace Gtl {
 
 
 class CNotebook : public CDialog {
-	// Construction
+private:
+	bool bFirstTime = true;              // flag for first time information is displayed
+
 public:
 	CNotebook(CWnd *pParent, CPalette *pPalette, CNote *pNoteList, CNote *pNote);
 
@@ -91,7 +93,7 @@ public:
 	static  void UpdateNote(CDC *pDC);
 	static  void ClearDialogImage();
 	static  void RefreshBackground();
-	static  void DoWaitCursor();
+	static  void ShowWaitCursor();
 	static  void DoArrowCursor();
 
 private:

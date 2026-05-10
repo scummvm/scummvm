@@ -43,6 +43,8 @@ public:
 	void onPause(bool paused) override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	struct Riddle {
 		Common::String text;
@@ -55,7 +57,6 @@ protected:
 	};
 
 	Common::String getRecordTypeName() const override { return "RiddlePuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawText();
 

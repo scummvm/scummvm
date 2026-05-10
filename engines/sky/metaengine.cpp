@@ -128,12 +128,12 @@ Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("p");
 	shortcutsKeymap->addAction(act);
 
-	act = new Action("FAST", _("Toggle fast mode on / off"));
+	act = new Action("FAST", _("Toggle fast mode"));
 	act->setCustomEngineActionEvent(kSkyActionToggleFastMode);
 	act->addDefaultInputMapping("C+f");
 	shortcutsKeymap->addAction(act);
 
-	act = new Action("RFAST", _("Toggle really fast mode on / off"));
+	act = new Action("RFAST", _("Toggle really fast mode"));
 	act->setCustomEngineActionEvent(kSkyActionToggleReallyFastMode);
 	act->addDefaultInputMapping("C+g");
 	shortcutsKeymap->addAction(act);
@@ -214,8 +214,10 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(ext.c_str());
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
-			saveList.push_back(SaveStateDescriptor(this, slotNum,
-				(slotNum == 0) ? _("Autosave") : Common::U32String(savenames[slotNum - 1])));
+			if (slotNum == 0)
+				saveList.push_back(SaveStateDescriptor(this, slotNum, _("Autosave")));
+			else
+				saveList.push_back(SaveStateDescriptor(this, slotNum, savenames[slotNum - 1]));
 			delete in;
 		}
 	}

@@ -27,7 +27,7 @@
 namespace Nancy {
 namespace UI {
 
-class ViewportOrnaments : public Nancy::RenderObject {
+class ViewportOrnaments : public RenderObject {
 public:
 	ViewportOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
 	virtual ~ViewportOrnaments() {}
@@ -35,7 +35,7 @@ public:
 	void init() override;
 };
 
-class TextboxOrnaments : public Nancy::RenderObject {
+class TextboxOrnaments : public RenderObject {
 public:
 	TextboxOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
 	virtual ~TextboxOrnaments() {}
@@ -43,7 +43,7 @@ public:
 	void init() override;
 };
 
-class InventoryBoxOrnaments : public Nancy::RenderObject {
+class InventoryBoxOrnaments : public RenderObject {
 public:
 	InventoryBoxOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
 	virtual ~InventoryBoxOrnaments() {}

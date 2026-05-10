@@ -85,6 +85,7 @@ MODULE_OBJS = \
 	lingo/xlibs/d/dpwavi.o \
 	lingo/xlibs/d/dpwqtw.o \
 	lingo/xlibs/d/draw.o \
+	lingo/xlibs/e/ecdctrl.o \
 	lingo/xlibs/e/ednox.o \
 	lingo/xlibs/e/eventq.o \
 	lingo/xlibs/f/fadegammadownxcmd.o \
@@ -132,7 +133,12 @@ MODULE_OBJS = \
 	lingo/xlibs/m/movutils.o \
 	lingo/xlibs/m/msfile.o \
 	lingo/xlibs/m/mystisle.o \
+	lingo/xlibs/b/blockthedrawingxobj.o \
+	lingo/xlibs/m/mazexobj.o \
 	lingo/xlibs/o/openbleedwindowxcmd.o \
+ 	lingo/xlibs/p/playsoundmoviexobj.o \
+ 	lingo/xlibs/s/savenrestorexobj.o \
+ 	lingo/xlibs/t/temnotaxobj.o \
 	lingo/xlibs/o/orthoplayxobj.o \
 	lingo/xlibs/p/paco.o \
 	lingo/xlibs/p/palxobj.o \
@@ -146,6 +152,7 @@ MODULE_OBJS = \
 	lingo/xlibs/p/putcurs.o \
 	lingo/xlibs/q/qtcatmovieplayerxobj.o \
 	lingo/xlibs/q/qtmovie.o \
+	lingo/xlibs/q/qtsupport.o \
 	lingo/xlibs/q/qtvr.o \
 	lingo/xlibs/q/quicktime.o \
 	lingo/xlibs/r/registercomponent.o \
@@ -178,34 +185,42 @@ MODULE_OBJS = \
 	lingo/xlibs/y/yasix.o \
 	lingo/xtras/b/budapi.o \
 	lingo/xtras/a/audio.o \
-	lingo/xtras/directsound.o \
+	lingo/xtras/d/directsound.o \
 	lingo/xtras/d/displayres.o \
-	lingo/xtras/filextra.o \
-	lingo/xtras/keypoll.o \
-	lingo/xtras/masterapp.o \
+	lingo/xtras/f/filextra.o \
+	lingo/xtras/k/keypoll.o \
+	lingo/xtras/m/masterapp.o \
 	lingo/xtras/m/mui.o \
-	lingo/xtras/openurl.o \
-	lingo/xtras/oscheck.o \
-	lingo/xtras/qtvrxtra.o \
+	lingo/xtras/o/openurl.o \
+	lingo/xtras/o/oscheck.o \
+	lingo/xtras/q/qtvrxtra.o \
 	lingo/xtras/r/registryreader.o \
-	lingo/xtras/rtk.o \
-	lingo/xtras/scrnutil.o \
+	lingo/xtras/r/rtk.o \
+	lingo/xtras/s/scrnutil.o \
 	lingo/xtras/s/smacker.o \
-	lingo/xtras/timextra.o \
-	lingo/xtras/xsound.o
+	lingo/xtras/s/staytoonedhall.o \
+	lingo/xtras/s/staytoonedball.o \
+	lingo/xtras/s/staytoonedglop.o \
+	lingo/xtras/s/staytoonedhigh.o \
+	lingo/xtras/s/staytoonedober.o \
+	lingo/xtras/s/staytoonedtoon.o \
+	lingo/xtras/t/timextra.o \
+	lingo/xtras/x/xsound.o
 
 
 ifdef USE_IMGUI
 MODULE_OBJS += \
 	debugger/debugtools.o \
 	debugger/dt-cast.o \
+	debugger/dt-castdetails.o \
 	debugger/dt-controlpanel.o \
 	debugger/dt-lists.o \
 	debugger/dt-save-state.o \
 	debugger/dt-score.o \
 	debugger/dt-script-d2.o \
 	debugger/dt-script-d4.o \
-	debugger/dt-scripts.o
+	debugger/dt-scripts.o \
+	debugger/dt-search.o
 
 endif
 

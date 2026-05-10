@@ -86,7 +86,7 @@ cd ../scummvm-icons
 num_lines=`git -P log --oneline "--since=$fileDate" default/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Repack gui/themes/gui-icons.dat${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd ../scummvm-icons/default; zip -r9 ../../scummvm/gui/themes/gui-icons.dat .'${NC}"
 
   failPlus
 else
@@ -294,7 +294,10 @@ fi
 echo_n "Checking missing/extra POTFILES..."
 
 # Now get list of includes
-git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | sort > $TMP
+git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | \
+    grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | \
+    grep -v avfaudio-text-to-speech.mm | grep -v engines/m4/subtitles.cpp | \
+    grep -v testbed/metaengine.cpp | grep -v waynesworld/waynesworld.cpp| sort > $TMP
 
 res=`diff -  $TMP <<< "$list"`
 
@@ -438,14 +441,14 @@ absentFiles=0
 declare -a licensefiles=(
   "Makefile.common#DIST_FILES_DOCS.*%FILE%"
   "backends/platform/maemo/debian/rules#install -m0644.*%FILE%.*debian/scummvm/usr/share/doc/scummvm"
-  "backends/platform/sdl/macosx/appmenu_osx.mm#openFromBundle\(@\"%FILEUNDOTTED%\"\);"
+  "backends/platform/sdl/macosx/appmenu_osx.mm#openFromBundle\(@\"%FILEUNDOTTED%\", @\"licenses\"\);"
   "backends/platform/sdl/win32/win32.mk#cp \\$\(srcdir\)/%FILE% \\$\(WIN32PATH\)/%FILEBASE%\.txt"
   "devtools/create_project/create_project.cpp#in\.push_back\(setup.srcDir \+ \"/%FILE%\"\)"
   "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"%FILE%\"\);"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/%FILEBASE% %FILE% scummvm.man.readme"
   "dists/redhat/scummvm.spec#%doc AUTHORS README.md.*%FILE%"
   "dists/redhat/scummvm.spec.in#%doc AUTHORS README.md.*%FILE%"
-  "ports.mk#cp \\$\(bundle_name\)/Contents/Resources/%FILEBASE% \\$\(bundle_name\)/Contents/Resources/%FILEUNDOTTED%"
+  "ports.mk#mv \\$\(bundle_name\)/Contents/Resources/%FILEBASE% \\$\(bundle_name\)/Contents/Resources/licenses/%FILEUNDOTTED%"
   "ports.mk#mv \./ScummVM-snapshot/%FILEBASE% \./ScummVM-snapshot"
 )
 

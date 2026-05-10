@@ -220,7 +220,9 @@ GUI_status GUI::HandleEvent(Common::Event *event) {
 	GUI_status status = GUI_PASS;
 
 	if (dragging) { //&& !block_input)
-		if (Shared::isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.
+		if (event->type == Common::EVENT_LBUTTONUP ||
+				event->type == Common::EVENT_MBUTTONUP ||
+				event->type == Common::EVENT_RBUTTONUP) { //FIX for button up that doesn't hit a widget.
 			for (hit = false, i = numwidgets - 1; (i >= 0) && (hit == false); --i) {
 				if (widgets[i]->Status() == WIDGET_VISIBLE && widgets[i]->is_drop_target() && widgets[i]->HitRect(event->mouse.x, event->mouse.y)) {
 					gui_drag_manager->drop((GUI_DragArea *)widgets[i], event->mouse.x, event->mouse.y);
@@ -401,7 +403,7 @@ void GUI::lock_input(GUI_Widget *widget) {
 }
 
 Common::Path GUI::get_data_dir() const {
-	Std::string datadir;
+	Common::String datadir;
 
 	config->value("config/datadir", datadir, "");
 

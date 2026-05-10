@@ -248,17 +248,17 @@ void ConverseInterpret::exec() {
 /* Print script text, resolving special symbols as they are encountered.
  */
 void ConverseInterpret::do_text() {
-	string output = get_formatted_text(converse->get_output().c_str());
+	Common::String output = get_formatted_text(converse->get_output().c_str());
 	converse->print(output.c_str());
 }
 
 /* Print script text, resolving special symbols as they are encountered.
  */
-string ConverseInterpret::get_formatted_text(const char *c_str) {
+Common::String ConverseInterpret::get_formatted_text(const char *c_str) {
 	unsigned int i = 0;
 	char symbol[3] = { '\0', '\0', '\0' },
 	                 intval[16];
-	string output;
+	Common::String output;
 	const uint32 len = strlen(c_str);
 	uint32 last_value = 0;
 
@@ -1181,7 +1181,7 @@ uint8 ConverseInterpret::npc_num(uint32 n) {
 /* Returns true if the keywords list contains the input string, or contains an
  * asterisk (matching any input).
  */
-bool ConverseInterpret::check_keywords(string keystr, string instr) {
+bool ConverseInterpret::check_keywords(Common::String keystr, Common::String instr) {
 	const char *strt_s = nullptr;
 	char *tok_s = nullptr, *cmp_s = nullptr;
 	if (keystr == "*")
@@ -1368,8 +1368,8 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 			} while (is_print(db[++p]));
 			++p; // skip this unprintable now so it's not counted as an item
 			if (item) {
-				string item_str = item;
-				string find_str = dstring;
+				Common::String item_str = item;
+				Common::String find_str = dstring;
 				free(item);
 				// match keywords format: clamp item to 4 characters
 				if (item_str.size() > 4)

@@ -74,7 +74,8 @@ enum GameFileTypes {
 	GAME_TEXTFILE = 1 << 10,
 	GAME_VGAFILE  = 1 << 11,
 	GAME_GFXIDXFILE = 1 << 12,
-	GAME_CABFILE  = 1 << 13
+	GAME_CABFILE  = 1 << 13,
+	GAME_LANGFILE = 1 << 14
 
 };
 

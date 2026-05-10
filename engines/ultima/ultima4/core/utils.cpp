@@ -80,8 +80,8 @@ Common::String xu4_to_string(int val) {
 	return buffer;
 }
 
-Std::vector<Common::String> split(const Common::String &s, const Common::String &separators) {
-	Std::vector<Common::String> result;
+Common::Array<Common::String> split(const Common::String &s, const Common::String &separators) {
+	Common::Array<Common::String> result;
 	Common::String current;
 
 	for (unsigned i = 0; i < s.size(); i++) {

@@ -94,7 +94,7 @@ void PDAMgr::execute(const Command &command) {
 	}
 }
 
-void PDAMgr::goToPage(const Common::String &pageName) {
+void PDAMgr::goToPage(const Common::String pageName) {
 	if (_page && !_page->getName().compareToIgnoreCase(pageName))
 		return;
 

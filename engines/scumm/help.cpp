@@ -100,7 +100,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		ADD_BIND(_("Ctrl") + U32String(" m"), _("Toggle mouse capture"));
 		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" 9, 0"), _("Cycle between graphics filters"));
 		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" +, -"), _("Increase / Decrease scale factor"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" a"), _("Toggle aspect-ratio correction"));
+		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" a"), _("Toggle aspect ratio correction"));
 		ADD_LINE;
 		ADD_LINE;
 		// FIXME: This should use word-wrapping, and should not assume

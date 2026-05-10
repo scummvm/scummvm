@@ -184,7 +184,7 @@ char *AdSentence::getStance(int stance) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::display() {
-	if (!_font || !_text || !_text[0]) {
+	if (!_font || !_text) {
 		return STATUS_FAILED;
 	}
 

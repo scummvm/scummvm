@@ -36,7 +36,6 @@ class RaycastLevelBuilder;
 // Action record implementing nancy3's maze minigame
 class RaycastPuzzle : public RenderActionRecord {
 	friend class RaycastDeferredLoader;
-	friend class RaycastLevelBuilder;
 public:
 	RaycastPuzzle() : RenderActionRecord(7), _map(7) {}
 	~RaycastPuzzle() override;
@@ -50,9 +49,10 @@ public:
 	void handleInput(NancyInput &input) override;
 	void updateGraphics() override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "RaycastPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void validateMap();
 

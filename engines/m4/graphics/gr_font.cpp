@@ -29,8 +29,6 @@
 
 namespace M4 {
 
-#define font_width 2		/* offset to width array */
-#define font_data 130		/* offset to data array	*/
 #define STR_FONTSTRUCT "font struct"
 #define STR_FONTWIDTH "font widths"
 #define STR_FONTOFF "font offsets"
@@ -182,8 +180,6 @@ void gr_font_set_color(uint8 foreground) {
 
 Font *gr_font_create_system_font() {
 	_G(interfaceFont) = (Font *)mem_alloc(sizeof(Font), "Font");
-	if (!_G(interfaceFont))
-		error("font struct");
 
 	_G(interfaceFont)->max_y_size = font_intr_h;
 	_G(interfaceFont)->max_x_size = font_intr_w;
@@ -292,8 +288,8 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	byte *prev_target_ptr = target_ptr;
 
 	int32 cursX = x;
-	Byte *widthArray = _G(font)->width;
-	Byte *fontPixData = _G(font)->pixData;
+	byte *widthArray = _G(font)->width;
+	byte *fontPixData = _G(font)->pixData;
 	short *offsetArray = _G(font)->offset;
 
 	while (*out_string) {
@@ -307,7 +303,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 				return cursX;
 
 			const int32 offset = offsetArray[c];
-			Byte *charData = &fontPixData[offset];
+			byte *charData = &fontPixData[offset];
 
 			const int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; // bytesPer[wdth];	// 2 bits per pixel
 			if (skipTop)
@@ -315,7 +311,7 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 
 			for (int32 i = 0; i < height; i++) {
 				for (int32 j = 0; j < bytesInChar; j++) {
-					const Byte workByte = *charData++;
+					const byte workByte = *charData++;
 					if (workByte & 0xc0)
 						*target_ptr = font_colors[(workByte & 0xc0) >> 6];
 					target_ptr++;
@@ -361,11 +357,9 @@ Font *gr_font_load(const char *fontName) {
 
 	uint32 tag = fontFile.readUint32LE();
 	if (tag != 'FONT')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", (const char *)fontName, 0);
+		error_show(FL, "font: %s chkpnt: %d", (const char *)fontName, 0);
 
 	Font *newFont = (Font *)mem_alloc(sizeof(Font), STR_FONTSTRUCT);
-	if (!newFont)
-		error_show(FL, 'OOM!', "_G(font) struct");
 
 	newFont->max_y_size = fontFile.readByte();
 	newFont->max_x_size = fontFile.readByte();
@@ -374,24 +368,20 @@ Font *gr_font_load(const char *fontName) {
 	// read 'WIDT' into tag
 	tag = fontFile.readUint32LE();
 	if (tag != 'WIDT')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 1);
+		error_show(FL, "font: %s chkpnt: %d", fontName, 1);
 
 	// width table
 	newFont->width = (byte *)mem_alloc(256, STR_FONTWIDTH);
-	if (!newFont->width)
-		error_show(FL, 'OOM!', "_G(font) width table");
 
 	fontFile.read(newFont->width, 256);
 
 	// read 'OFFS' into tag
 	tag = fontFile.readUint32LE();
 	if (tag != 'OFFS')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 2);
+		error_show(FL, "font: %s chkpnt: %d", fontName, 2);
 
 	// offset table
 	newFont->offset = (short *)mem_alloc(256 * sizeof(int16), STR_FONTOFF);
-	if (!newFont->offset)
-		error_show(FL, 'OOM!', "font offset table");
 
 	for (int i = 0; i < 256; i++)
 		newFont->offset[i] = fontFile.readSint16LE();
@@ -399,12 +389,10 @@ Font *gr_font_load(const char *fontName) {
 	// read 'PIXS' into tag
 	tag = fontFile.readUint32LE();
 	if (tag != 'PIXS')
-		error_show(FL, 'FNTL', "font: %s chkpnt: %d", fontName, 3);
+		error_show(FL, "font: %s chkpnt: %d", fontName, 3);
 
 	// pixData
 	newFont->pixData = (byte *)mem_alloc(newFont->dataSize, STR_FONTDATA);
-	if (!newFont->pixData)
-		error_show(FL, 'OOM!', "font pix data");
 
 	fontFile.read(newFont->pixData, newFont->dataSize);
 

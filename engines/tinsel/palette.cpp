@@ -99,42 +99,63 @@ void ResetVarsPalette() {
 }
 
 /**
- * Map PSX palettes to original palette from resource file
+ * Map PSX palettes to original palette from resource file.
+ * PSX CLUTs contain 16 colors as 16-bit LE entries in RGB555 format.
+ * A color value of zero indicates transparency.
  */
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 	PALETTE *pal = _vm->_handle->GetPalette(originalPal->hPal);
-	bool colorFound = false;
-	uint16 clutEntry = 0;
 
-	// Empty the table with color correspondences
+	// Initialize the table to empty (transparent) entries
 	memset(mapperTable, 0, 16);
 
-	for (int j = 1; j < 16; j++) {
-		clutEntry = READ_16(psxClut + (sizeof(uint16) * j));
-		if (clutEntry) {
-			if (clutEntry == 0x7EC0) { // This is an already known value, used by the in-game text
-				mapperTable[j] = 232;
+	for (int j = 0; j < 16; j++) {
+		uint16 clutEntry = READ_16(psxClut + (sizeof(uint16) * j));
+		if (clutEntry == 0) {
+			// RGB555(0,0,0) indicates transparency.
+			// optimization: assume all subsequent entries
+			// are also zero, unless this is the first entry.
+			if (j == 0) {
 				continue;
+			} else {
+				break;
 			}
+		}
 
-			// Check for correspondent color
-			for (int32 i = 0; (i < pal->numColors) && !colorFound; i++) {
-				// get R G B values in the same way as psx format converters
-				uint16 psxEquivalent = TINSEL_PSX_RGB(
-					pal->palette[i * 3] >> 3,
-					pal->palette[i * 3 + 1] >> 3,
-					pal->palette[i * 3 + 2] >> 3
-				);
+		if (clutEntry == 0x7EC0) { // This is an already known value, used by the in-game text
+			mapperTable[j] = 232;
+			continue;
+		}
 
-				if (psxEquivalent == clutEntry) {
-					mapperTable[j] = i + 1; // Add entry in the table for the found color
-					colorFound = true;
+		// Check for the matching RGB888 color in the original palette resource.
+		// We use the first color whose upper 5 bits of each component match.
+		// If no color matches, assume black. An RGB555 color value of zero
+		// represents transparency, but this makes it impossible to represent black.
+		// Instead, the developers used almost-black colors such as RGB555(0,0,1),
+		// but that workaround means we won't always find a matching original color.
+		for (int32 i = 0; (i < pal->numColors); i++) {
+			// get R G B values in the same way as psx format converters
+			uint16 psxEquivalent = TINSEL_PSX_RGB(
+				pal->palette[i * 3 + 0] >> 3,
+				pal->palette[i * 3 + 1] >> 3,
+				pal->palette[i * 3 + 2] >> 3
+			);
+
+			if (psxEquivalent == clutEntry) {
+				mapperTable[j] = i + 1; // Add entry in the table for the found color
+				break;
+			}
+		}
+		// If no color was found then use black
+		if (!mapperTable[j]) {
+			for (int32 i = 0; (i < pal->numColors); i++) {
+				if (pal->palette[i * 3 + 0] == 0 &&
+					pal->palette[i * 3 + 1] == 0 &&
+					pal->palette[i * 3 + 2] == 0) {
+					mapperTable[j] = i + 1;
+					break;
 				}
 			}
-			colorFound = false;
-		} else { // The rest of the entries are zeroes
-			delete pal;
-			return;
 		}
 	}
 

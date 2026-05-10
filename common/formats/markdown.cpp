@@ -17,6 +17,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+// from https://github.com/vmg/sundown
+
 #include "common/formats/markdown.h"
 #include "common/str.h"
 #include "common/util.h"

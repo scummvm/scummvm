@@ -295,6 +295,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, const char *border[], uint hei
 	offsets.upperScrollHeight = 16;
 	offsets.lowerScrollHeight = 16;
 	offsets.titlePos = titlePos;
+	offsets.titlePadding = 8;
 	target->setBorder(surface, flags, offsets);
 }
 

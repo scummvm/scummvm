@@ -69,7 +69,7 @@ enum WinResourceType {
 class WinResourceID {
 public:
 	WinResourceID() { _idType = kIDTypeNull; _id = 0; }
-	WinResourceID(String x) { _idType = kIDTypeString; _name = x; }
+	WinResourceID(const String &x) { _idType = kIDTypeString; _name = x; }
 	WinResourceID(uint32 x) { _idType = kIDTypeNumerical; _id = x; }
 
 	WinResourceID &operator=(const String &x);

@@ -230,7 +230,6 @@ bool MidiParser_SBR::loadMusic(const byte *data, uint32 size) {
 	uint16 bytesRead = 0;
 	for (int i = 0; i < endTrack; i++) {
 		const byte *startOfTrack = data;
-		uint16 trackSize = 0;
 
 		bool foundEndOfTrack = false;
 		while (bytesRead < size) {
@@ -238,13 +237,11 @@ bool MidiParser_SBR::loadMusic(const byte *data, uint32 size) {
 			if (eventType == 0) {
 				foundEndOfTrack = true;
 				data++;
-				trackSize++;
 				bytesRead++;
 				break;
 			}
 			else {
 				data += 6;
-				trackSize += 6;
 				bytesRead += 6;
 			}
 		}

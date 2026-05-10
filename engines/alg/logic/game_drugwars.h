@@ -53,12 +53,13 @@ public:
 	GameDrugWars(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameDrugWars() override;
 	Common::Error run() override;
-	void debugWarpTo(int val);
+	void debug_warpTo(int val);
 
 private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	DWScriptFunctionRect getScriptFunctionRectHit(const Common::String &name);
 	DWScriptFunctionScene getScriptFunctionScene(SceneFuncType type, const Common::String &name);
 	void callScriptFunctionRectHit(const Common::String &name, Rect *rect);
@@ -74,13 +75,22 @@ private:
 	DWScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_liveIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_difficultyIcon;
-	Graphics::Surface *_bulletholeIcon;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_liveIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_difficultyIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
 
+	// sounds
+	Audio::SeekableAudioStream *_saveSound = nullptr;
+	Audio::SeekableAudioStream *_loadSound = nullptr;
+	Audio::SeekableAudioStream *_skullSound = nullptr;
+	Audio::SeekableAudioStream *_shotSound = nullptr;
+	Audio::SeekableAudioStream *_emptySound = nullptr;
+	
 	// constants
 	const int16 _randomScenes0[7] = {0x29, 0x2B, 0x2D, 0x2F, 0x31, 0x33, 0};
 	const int16 _randomScenes1[6] = {0x37, 0x39, 0x3B, 0x3D, 0x3F, 0};
@@ -111,6 +121,18 @@ private:
 	const uint16 _scenarioStartScenes[14] = {0x27, 0x36, 0x4A, 0x57, 0x9D, 0x8B, 0x74, 0xD8, 0xBF, 0xB8, 0x0160, 0x010A, 0x0137, 0x017F};
 
 	// gamestate
+	uint8 _difficulty = 1;
+	uint8 _oldDifficulty = 1;
+	bool _holster = false;
+	int8 _lives = 0;
+	int8 _oldLives = 0;
+	int32 _score = 0;
+	int32 _oldScore = -1;
+	uint16 _shots = 0;
+	uint8 _oldShots = 0;
+	uint8 _whichGun = 0;
+	uint8 _oldWhichGun = 0xFF;
+
 	uint8 _continues = 0;
 	uint16 _gotTo[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int8 _gotToIndex = 0;
@@ -138,24 +160,30 @@ private:
 	void displayScores();
 	void displayShotsLeft();
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
+	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
 
 	// misc game functions
 	void displayShotFiredImage(Common::Point *point);
 	void enableVideoFadeIn();
-	uint16 sceneToNumber(Scene *scene);
+	uint16 sceneToNumber(Common::String sceneName);
+	uint16 randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude);
 	uint16 pickRandomScene(uint8 index, uint8 max);
 	uint16 pickDeathScene();
-	void sceneNxtscnGeneric(uint8 index);
 	void rectSelectGeneric(uint8 index);
 
 	// Script functions: RectHit
+	void rectNewScene(Rect *rect);
 	void rectShotMenu(Rect *rect);
 	void rectSave(Rect *rect);
 	void rectLoad(Rect *rect);
 	void rectContinue(Rect *rect);
 	void rectStart(Rect *rect);
+	void rectEasy(Rect *rect);
+	void rectAverage(Rect *rect);
+	void rectHard(Rect *rect);
+	void rectExit(Rect *rect);
 	void rectSelectTargetPractice(Rect *rect);
 	void rectSelectBar(Rect *rect);
 	void rectSelectCarChase(Rect *rect);
@@ -188,6 +216,9 @@ private:
 
 	// Script functions: Scene WepDwn
 	void sceneDefaultWepdwn(Scene *scene);
+
+	// Script functions: ScnScr
+	void sceneDefaultScore(Scene *scene);
 };
 
 class DebuggerDrugWars : public GUI::Debugger {

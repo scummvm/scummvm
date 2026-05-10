@@ -22,7 +22,7 @@
 #ifndef MTROPOLIS_COROUTINE_PROTOS_H
 #define MTROPOLIS_COROUTINE_PROTOS_H
 
-#include <stddef.h>
+#include "common/scummsys.h"
 
 namespace MTropolis {
 

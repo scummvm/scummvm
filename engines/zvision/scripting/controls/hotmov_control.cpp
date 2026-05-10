@@ -116,14 +116,16 @@ bool HotMovControl::process(uint32 deltaTimeInMillis) {
 }
 
 bool HotMovControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	debugC(6, kDebugControl, "ZVision::HotMovControl::onMouseMove( (%d,%d), (%d,%d))", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-
 	if (!_animation)
 		return false;
-
 	if (_cycle < _cyclesCount) {
-		if (_frames[_animation->getCurFrame()].contains(backgroundImageSpacePos)) {
+		_frame = _animation->getCurFrame();
+		if(_frame < 0)
+			return false;
+		if (_frames[_frame].contains(backgroundImageSpacePos)) {
 			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
 			return true;
 		}

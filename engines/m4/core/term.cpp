@@ -29,7 +29,6 @@ namespace M4 {
 
 void Term::init(bool use_me, bool use_log) {
 	_using_mono_screen = use_me;
-	_use_log_file = use_log;
 	set_mode(MESSAGE_MODE);
 
 	if (use_log) {

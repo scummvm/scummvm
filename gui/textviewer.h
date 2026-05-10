@@ -64,19 +64,19 @@ private:
 	const Graphics::Font *_font = nullptr;
 
 	bool loadFile(const Common::Path &fname);
-	void reflowLayout();
+	void reflowLayout() override;
 
 public:
 	TextViewerDialog(const Common::Path &fname);
 	~TextViewerDialog();
 
 	void destroy();
-	void open();
-	void drawDialog(DrawLayer layerToDraw);
+	void open() override;
+	void drawDialog(DrawLayer layerToDraw, bool resetClipping = true) override;
 
-	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(Common::KeyState state);
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleMouseWheel(int x, int y, int direction) override;
+	void handleKeyDown(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 } // End of namespace GUI

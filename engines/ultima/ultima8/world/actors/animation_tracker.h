@@ -22,9 +22,10 @@
 #ifndef WORLD_ACTORS_ANIMATIONTRACKER_H
 #define WORLD_ACTORS_ANIMATIONTRACKER_H
 
+#include "ultima/ultima8/misc/common_types.h"
+#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
-#include "ultima/ultima8/misc/point3.h"
 
 namespace Ultima {
 namespace Ultima8 {

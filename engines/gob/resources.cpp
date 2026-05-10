@@ -176,12 +176,11 @@ bool Resources::load(const Common::String &fileName) {
 		_extResourceTable = nullptr;
 	}
 
-	if (!hasTOTRes && !hasEXTRes) {
-		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
-			return true; // Some "library" TOT files used in Adibou2 have no embed resources, nor external ones.
-		else
-			return false;
-	};
+	if (!hasTOTRes && !hasEXTRes
+			&& _vm->getGameType() != kGameTypeAdibou2  // Some "library" TOT files used in Adibou2 have no embed resources, nor external ones.
+			&& _vm->getGameType() != kGameTypeAdi4)  {
+		return false;
+	}
 
 	if (!loadTOTTextTable(_fileBase)) {
 		unload();

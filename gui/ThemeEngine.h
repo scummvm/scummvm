@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.20"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.22"
 
 class OSystem;
 
@@ -63,8 +63,8 @@ enum DrawData {
 	kDDMainDialogBackground,
 	kDDSpecialColorBackground,
 	kDDPlainColorBackground,
-	kDDTooltipBackground,
 	kDDDefaultBackground,
+	kDDTooltipBackground,
 	kDDTextSelectionBackground,
 	kDDTextSelectionFocusBackground,
 	kDDThumbnailBackground,
@@ -208,7 +208,7 @@ private:
 
 class ThemeEngine {
 protected:
-	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
+	typedef Common::HashMap<Common::String, Common::SharedPtr<Graphics::ManagedSurface> > ImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -458,6 +458,16 @@ public:
 	 */
 	void disableClipRect();
 
+	/**
+	 * Get the rectangle that a dialog with provided coordinates would dirty on screen.
+	 *
+	 * @param r The dialog rectangle
+	 * @param bgtype The dialog background
+	 *
+	 * @return The rectangle drawn by the engine including drop shadows
+	 */
+	Common::Rect getDialogDirtyRect(const Common::Rect &r, DialogBackground bgtype);
+
 	/** @name WIDGET DRAWING METHODS */
 	//@{
 
@@ -533,6 +543,12 @@ public:
 	TextColor getTextColor(DrawData ddId) const;
 
 	TextColorData *getTextColorData(TextColor color) const;
+
+	/**
+	 * Returns the background color of the first draw step for a given DrawData item.
+	 * Useful for widgets that need a flat fill matching the theme background.
+	 */
+	bool getDrawDataColor(DrawData ddId, uint8 &r, uint8 &g, uint8 &b) const;
 
 	/**
 	 * Interface for ThemeParser class: Parsed DrawSteps are added via this function.
@@ -612,6 +628,15 @@ public:
 	 */
 	bool addTextData(const Common::String &drawDataId, TextData textId, TextColor id, Graphics::TextAlign alignH, TextAlignVertical alignV);
 
+public:
+	enum CursorType {
+		kCursorNormal = 0,
+		kCursorIndex = 1,
+		kCursorMax
+	};
+
+	void setActiveCursor(CursorType type);
+
 protected:
 	/**
 	 * Returns if the Theme is ready to draw stuff on screen.
@@ -632,6 +657,16 @@ protected:
 	 */
 	void setGraphicsMode(GraphicsMode mode);
 
+	struct CursorData {
+		Common::SharedPtr<Graphics::ManagedSurface> surface;
+		int hotspotX = 0;
+		int hotspotY = 0;
+	};
+
+	CursorData _cursors[kCursorMax];
+	CursorType _activeCursorType = kCursorNormal;
+	bool _useCursor = false;
+
 public:
 	inline ThemeEval *getEvaluator() { return _themeEval; }
 	inline Graphics::VectorRenderer *renderer() { return _vectorRenderer; }
@@ -639,7 +674,7 @@ public:
 	inline bool supportsImages() const { return true; }
 	inline bool ownCursor() const { return _useCursor; }
 
-	Graphics::ManagedSurface *getImageSurface(const Common::String &name) const {
+	Common::SharedPtr<Graphics::ManagedSurface> getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
@@ -650,8 +685,9 @@ public:
 	 * @param filename File name of the bitmap to load.
 	 * @param hotspotX X Coordinate of the bitmap which does the cursor click.
 	 * @param hotspotY Y Coordinate of the bitmap which does the cursor click.
+	 * @param type Cursor type (normal or index)
 	 */
-	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY);
+	bool createCursor(const Common::String &filename, int hotspotX, int hotspotY, CursorType type = kCursorNormal);
 
 	/**
 	 * Wrapper for restoring data from the Back Buffer to the screen.
@@ -719,6 +755,12 @@ protected:
 	                const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 
 	/**
+	 * Compute the extended (dirty) rectangle for a given draw data type applied
+	 * to the given base rect. Includes background and shadow offsets.
+	 */
+	Common::Rect getDrawDataExtendedRect(DrawData type, const Common::Rect &r) const;
+
+	/**
 	 * DEBUG: Draws a white square and writes some text next to it.
 	 */
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
@@ -743,6 +785,8 @@ private:
 	static Common::String getThemeId(const Common::Path &filename);
 	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
 	static void listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list);
+
+	Common::Archive *createUnpackedThemeArchive(const Common::FSNode &themeDir);
 
 protected:
 	OSystem *_system; /** Global system object. */
@@ -802,7 +846,6 @@ protected:
 
 	ImagesMap _bitmaps;
 	Graphics::PixelFormat _overlayFormat;
-	Graphics::PixelFormat _cursorFormat;
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
@@ -817,7 +860,6 @@ protected:
 	Common::Archive *_themeArchive;
 	Common::SearchSet _themeFiles;
 
-	bool _useCursor;
 	int _cursorHotspotX, _cursorHotspotY;
 	uint32 _cursorTransparent;
 	byte *_cursor;
@@ -826,8 +868,6 @@ protected:
 	enum {
 		MAX_CURS_COLORS = 255
 	};
-	byte _cursorPal[3 * MAX_CURS_COLORS];
-	byte _cursorPalSize;
 
 	Common::Rect _clip;
 };

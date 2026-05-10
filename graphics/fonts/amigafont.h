@@ -56,6 +56,12 @@ class AmigaFont : public Font {
 	};
 #include "common/pack-end.h"
 
+public:
+	enum Topaz9Builtin {
+		kTopaz9Builtin
+	};
+
+private:
 	AmigaDiskFont	*_font;
 	byte			*_data;
 	byte			*_charData;
@@ -68,6 +74,10 @@ class AmigaFont : public Font {
 	int             _maxCharWidth;
 
 private:
+	void initFromData(const byte *data, uint32 dataSize, uint32 fontOffset);
+	bool isProportional() const;
+	int16 getCharSpace(byte c) const;
+	int16 getCharKern(byte c) const;
 	uint16 getPixels(byte c) const;
 	uint16 getOffset(byte c) const;
 
@@ -78,19 +88,25 @@ public:
 	 * Create font in Amiga format.
 	 *
 	 * @param stream  Stream with the font data. If NULL, then the built-in
-	 *				  Topaz font is used.
+	 *				  Topaz 8 font is used.
 	 */
 	AmigaFont(Common::SeekableReadStream *stream = NULL);
+	AmigaFont(Topaz9Builtin);
 	virtual ~AmigaFont();
 
 	virtual int getFontHeight() const;
 	virtual int getCharWidth(uint32 chr) const;
 	virtual int getMaxCharWidth() const;
 	virtual int getKerningOffset(uint32 left, uint32 right) const;
+	int getCharAdvanceWidth(uint32 chr) const;
+	int getCharDrawOffset(uint32 chr) const;
+	int getCharInkWidth(uint32 chr) const;
+	int getCharRenderWidth(uint32 chr) const;
+	void drawCharDoubleHeight(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
-	int getLoChar() { return _font->_loChar; }
-	int getHiChar() { return _font->_hiChar; }
+	int getLoChar() const { return _font->_loChar; }
+	int getHiChar() const { return _font->_hiChar; }
 };
 
 } // End of namespace Graphics

@@ -168,7 +168,7 @@ bool Actor::giveTreasure() {
 		return false;
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
-	const Std::vector<TreasureInfo> &treasure = mi->_treasure;
+	const Common::Array<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
 		const TreasureInfo &ti = treasure[i];
@@ -1324,10 +1324,9 @@ ProcId Actor::dieU8(uint16 damageType) {
 
 	// Kill blue potion use process if running
 	if (_objId == kMainActorId) {
-		ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
-		ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
-		for (; iter != endproc; ++iter) {
-			UCProcess *p = dynamic_cast<UCProcess *>(*iter);
+		auto processes = Kernel::get_instance()->getProcesses();
+		for (auto process : processes) {
+			auto p = dynamic_cast<UCProcess *>(process);
 			if (!p)
 				continue;
 			if (p->getClassId() != 766) // Potion
@@ -1607,13 +1606,14 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 
 void Actor::killAllButCombatProcesses() {
 	// loop over all processes, keeping only the relevant ones
-	ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
-	ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
-	for (; iter != endproc; ++iter) {
-		Process *p = *iter;
-		if (!p) continue;
-		if (p->getItemNum() != _objId) continue;
-		if (p->is_terminated()) continue;
+	auto processes = Kernel::get_instance()->getProcesses();
+	for (auto p : processes) {
+		if (!p)
+			continue;
+		if (p->getItemNum() != _objId)
+			continue;
+		if (p->is_terminated())
+			continue;
 
 		uint16 type = p->getType();
 
@@ -1638,13 +1638,15 @@ ProcId Actor::killAllButFallAnims(bool death) {
 	}
 
 	// loop over all animation processes, keeping only the relevant ones
-	ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
-	ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
-	for (; iter != endproc; ++iter) {
-		ActorAnimProcess *p = dynamic_cast<ActorAnimProcess *>(*iter);
-		if (!p) continue;
-		if (p->getItemNum() != _objId) continue;
-		if (p->is_terminated()) continue;
+	auto processes = Kernel::get_instance()->getProcesses();
+	for (auto process : processes) {
+		auto p = dynamic_cast<ActorAnimProcess *>(process);
+		if (!p)
+			continue;
+		if (p->getItemNum() != _objId)
+			continue;
+		if (p->is_terminated())
+			continue;
 
 		Animation::Sequence action = p->getAction();
 

@@ -52,7 +52,7 @@ void TurningPuzzle::updateGraphics() {
 
 	if (_solveState == kWaitForAnimation) {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
+			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _numFramesPerTurn);
 
 			if (	(_turnFrameID == 0 && _solveAnimFace == 0) ||
 					(_turnFrameID == 1 && _solveAnimFace > 0 && (int)_solveAnimFace < _numFaces - 1)) {
@@ -92,7 +92,7 @@ void TurningPuzzle::updateGraphics() {
 
 	if (_objectCurrentlyTurning != -1) {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
+			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _numFramesPerTurn);
 			++_turnFrameID;
 
 			uint faceID = _currentOrder[_objectCurrentlyTurning];
@@ -132,6 +132,9 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint numSpindles = stream.readUint16LE();
 	_numFaces = stream.readUint16LE();
 	_numFramesPerTurn = stream.readUint16LE();
+	if (_numFramesPerTurn == 0) {
+		error("TurningPuzzle::readData(): _numFramesPerTurn is 0");
+	}
 
 	_startPositions.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
@@ -216,7 +219,6 @@ void TurningPuzzle::execute() {
 			}
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
 		}
 
 		break;

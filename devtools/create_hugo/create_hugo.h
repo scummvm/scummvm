@@ -27,7 +27,7 @@
 #define DATAALIGNMENT 4
 
 #define HUGO_DAT_VER_MAJ 0  // 1 byte
-#define HUGO_DAT_VER_MIN 42 // 1 byte
+#define HUGO_DAT_VER_MIN 44 // 1 byte
 
 typedef unsigned char  uint8;
 typedef unsigned char  byte;

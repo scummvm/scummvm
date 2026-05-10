@@ -247,7 +247,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 class Myst3MetaEngineDetection : public AdvancedMetaEngineDetection<Myst3GameDescription> {
 public:
 	Myst3MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, myst3Games) {
-		_guiOptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
+		_guiOptions = GUIO4(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECHVOLUME, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

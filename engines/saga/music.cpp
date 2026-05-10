@@ -98,8 +98,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 							_("Could not find AdLib instrument definition files\n"
 							  "%s and %s. Without these files,\n"
 							  "the music will not sound the same as the original game."),
-							opl2InstDefFilename, opl3InstDefFilename),
-						_("OK"));
+							opl2InstDefFilename, opl3InstDefFilename));
 					dialog.runModal();
 
 					OPL::Config::OplType oplType =

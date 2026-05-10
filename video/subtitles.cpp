@@ -51,7 +51,6 @@ void SRTParser::cleanup() {
 
 void SRTParser::parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const {
 	Common::String currentText = text;
-	currentText.replace('\n', ' ');
 
 	while (true) {
 		Common::String::size_type pos_i_start = currentText.find("<i>");
@@ -253,9 +252,9 @@ bool SRTParser::parseFile(const Common::Path &fname) {
 			break;
 		}
 
-		Common::Array<SubtitlePart> parts;
-		parseTextAndTags(text, parts);
-		_entries.push_back(new SRTEntry(seq, start, end, parts));
+		SRTEntry *entry = new SRTEntry(seq, start, end);
+		parseTextAndTags(text, entry->parts);
+		_entries.push_back(entry);
 	}
 
 	qsort(_entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparator);
@@ -277,32 +276,36 @@ const Common::Array<SubtitlePart> *SRTParser::getSubtitleParts(uint32 timestamp)
 	return &(*entry)->parts;
 }
 
-Common::String SRTParser::getSubtitle(uint32 timestamp) const {
-	const Common::Array<SubtitlePart> *parts = getSubtitleParts(timestamp);
-	if (!parts)
-		return "";
+bool SRTParser::isSfx() const {
+	if (_entries.empty() || _entries[0]->parts.empty())
+		return false;
 
-	Common::String subtitle;
-	for (const auto &part : *parts) {
-		subtitle += part.text;
-	}
-	return subtitle;
+	return _entries[0]->parts[0].tag == "sfx";
 }
 
 #define SHADOW 1
 
 Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(true),
 	_lastOverlayWidth(-1), _lastOverlayHeight(-1) {
-	_surface = new Graphics::Surface();
 	_subtitleDev = ConfMan.getBool("subtitle_dev");
 }
 
 Subtitles::~Subtitles() {
-	delete _surface;
+	close();
+	_surface.free();
+
+	for (const auto &font : _fonts) {
+		FontMan.mayDeleteFont(font._value);
+	}
 }
 
-void Subtitles::setFont(const char *fontname, int height, Common::String type) {
+void Subtitles::setFont(const char *fontname, int height, FontStyle type) {
 	_fontHeight = height;
+
+	if (_fonts[type]) {
+		FontMan.mayDeleteFont(_fonts[type]);
+		_fonts[type] = nullptr;
+	}
 
 #ifdef USE_FREETYPE2
 	Graphics::Font *font = nullptr;
@@ -332,16 +335,24 @@ void Subtitles::setFont(const char *fontname, int height, Common::String type) {
 
 		_fonts[type] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	}
-
 }
 
 void Subtitles::loadSRTFile(const Common::Path &fname) {
 	debug(1, "loadSRTFile('%s')", fname.toString().c_str());
 
-	if (_subtitleDev) {
+	if (_subtitleDev)
 		_fname = fname;
-	}
-	_loaded = _srtParser.parseFile(fname);
+
+	_srtParser = new SRTParser();
+	_loaded = _srtParser->parseFile(fname);
+}
+
+void Subtitles::close() {
+	_loaded = false;
+	_parts = nullptr;
+	_fname.clear();
+	delete _srtParser;
+	_srtParser = nullptr;
 }
 
 void Subtitles::setBBox(const Common::Rect &bbox) {
@@ -349,16 +360,16 @@ void Subtitles::setBBox(const Common::Rect &bbox) {
 
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
 	_overlayHasAlpha = overlayFormat.aBits() != 0;
-	_surface->create(_requestedBBox.width() + SHADOW * 2, _requestedBBox.height() + SHADOW * 2, overlayFormat);
+	_surface.create(_requestedBBox.width() + SHADOW * 2, _requestedBBox.height() + SHADOW * 2, overlayFormat);
 	// Force recalculation of real bounding box
 	_lastOverlayWidth = -1;
 	_lastOverlayHeight = -1;
 }
 
 void Subtitles::setColor(byte r, byte g, byte b) {
-	_color = _surface->format.ARGBToColor(255, r, g, b);
-	_blackColor = _surface->format.ARGBToColor(255, 0, 0, 0);
-	_transparentColor = _surface->format.ARGBToColor(0, 0, 0, 0);
+	_color = _surface.format.ARGBToColor(255, r, g, b);
+	_blackColor = _surface.format.ARGBToColor(255, 0, 0, 0);
+	_transparentColor = _surface.format.ARGBToColor(0, 0, 0, 0);
 }
 
 void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
@@ -366,30 +377,7 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) {
-	const Common::Array<SubtitlePart> *parts = nullptr;
-	if (_loaded) {
-		parts = _srtParser.getSubtitleParts(timestamp);
-	}
-
-	Common::String subtitle;
-	if (parts) {
-		for (const auto &part : *parts) {
-			subtitle += part.text;
-		}
-	} else if (_subtitleDev) {
-		subtitle = _fname.toString('/');
-		uint32 hours, mins, secs, msecs;
-		secs = timestamp / 1000;
-		hours = secs / 3600;
-		mins = (secs / 60) % 60;
-		secs %= 60;
-		msecs = timestamp % 1000;
-		subtitle += " " + Common::String::format("%02u:%02u:%02u,%03u", hours, mins, secs, msecs);
-	} else {
-		return false;
-	}
-
+bool Subtitles::recalculateBoundingBox() const {
 	int16 width = g_system->getOverlayWidth(),
 		  height = g_system->getOverlayHeight();
 
@@ -421,117 +409,228 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) {
 			_realBBox.left = 0;
 		}
 
-		force = true;
+		return true;
 	}
 
-	if (!force && _overlayHasAlpha && subtitle == _subtitle)
+	return false;
+}
+
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
+	const Common::Array<SubtitlePart> *parts;
+	bool isSFX = false;
+	if (_loaded && _srtParser) {
+		parts = _srtParser->getSubtitleParts(timestamp);
+		if (parts && !parts->empty()) {
+			isSFX = (*parts)[0].tag == "sfx";
+		}
+	} else if (_subtitleDev) {
+		// Force refresh
+		_parts = nullptr;
+
+		Common::String subtitle = _fname.toString('/');
+		uint32 hours, mins, secs, msecs;
+		secs = timestamp / 1000;
+		hours = secs / 3600;
+		mins = (secs / 60) % 60;
+		secs %= 60;
+		msecs = timestamp % 1000;
+		subtitle += " " + Common::String::format("%02u:%02u:%02u,%03u", hours, mins, secs, msecs);
+
+		if (_devParts.empty()) {
+			_devParts.push_back(SubtitlePart("", ""));
+		}
+		_devParts[0].text = subtitle;
+
+		parts = &_devParts;
+	} else {
+		return false;
+	}
+
+	force |= recalculateBoundingBox();
+
+	if (!force && _overlayHasAlpha && parts == _parts)
 		return false;
 
-	if (force || subtitle != _subtitle) {
-		debug(1, "%d: %s", timestamp, subtitle.c_str());
+	if (force || parts != _parts) {
+		if (debugLevelSet(1)) {
+			Common::String subtitle;
+			if (parts) {
+				for (const auto &part : *parts) {
+					subtitle += part.text;
+				}
+			}
+			debug(1, "%d: %s", timestamp, subtitle.c_str());
+		}
 
-		_subtitle = subtitle;
 		_parts = parts;
 
-		if ((!parts || parts->empty() || (*parts)[0].tag != "sfx") || showSFX)
+		if (!isSFX || showSFX)
 			renderSubtitle();
+	}
+
+	updateSubtitleOverlay();
+
+	return true;
+}
+
+void Subtitles::clearSubtitle() const {
+	if (!_loaded)
+		return;
+
+	g_system->hideOverlay();
+	_drawRect.setEmpty();
+	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
+}
+
+void Subtitles::updateSubtitleOverlay() const {
+	if (!_loaded)
+		return;
+
+	if (!shouldShowSubtitle()) {
+		g_system->hideOverlay();
+		return;
+	}
+
+	if (!g_system->isOverlayVisible()) {
+		g_system->clearOverlay();
+		g_system->showOverlay(false);
 	}
 
 	if (_overlayHasAlpha) {
 		// When we have alpha, draw the whole surface without thinking it more
-		g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
+		g_system->copyRectToOverlay(_surface.getPixels(), _surface.pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
 	} else {
 		// When overlay doesn't have alpha, showing it hides the underlying game screen
 		// We force a copy of the game screen to the overlay by clearing it
 		// We then draw the smallest possible surface to minimize black rectangle behind text
 		g_system->clearOverlay();
-		g_system->copyRectToOverlay((byte *)_surface->getPixels() + _drawRect.top * _surface->pitch + _drawRect.left * _surface->format.bytesPerPixel, _surface->pitch,
-				_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
+		g_system->copyRectToOverlay((byte *)_surface.getPixels() + _drawRect.top * _surface.pitch + _drawRect.left * _surface.format.bytesPerPixel, _surface.pitch,
+									_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
 	}
-
-	return true;
 }
 
+struct SubtitleRenderingPart {
+	Common::U32String text;
+	const Graphics::Font *font;
+	bool newLine;
+	int left;
+	int right;
+};
+
 void Subtitles::renderSubtitle() const {
-	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
+	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
 
 	if (!_parts || _parts->empty()) {
-		_drawRect.left = 0;
-		_drawRect.top = 0;
-		_drawRect.right = 0;
-		_drawRect.bottom = 0;
+		_drawRect.setEmpty();
 		return;
 	}
 
-	Common::Array<Common::Array<SubtitlePart>> lines;
-	lines.push_back(Common::Array<SubtitlePart>());
+	Common::Array<SubtitleRenderingPart> splitParts;
 
-	int currentLineWidth = 0;
+	// First, calculate all positions as if we were left aligned
+	bool newLine = true;
+	int currentX = 0;
 	for (const auto &part : *_parts) {
-		const Graphics::Font *font = _fonts[part.tag == "i" ? "italic" : "regular"];
-		if (!font) font = _fonts["regular"];
+		const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
+		if (!font) font = _fonts[kFontStyleRegular];
 
-		Common::U32String u32_text(part.text);
-		int partWidth = font->getStringWidth(u32_text);
+		Common::Array<Common::U32String> lines;
 
-		if (currentLineWidth + partWidth > _realBBox.width()) {
-			lines.push_back(Common::Array<SubtitlePart>());
-			currentLineWidth = 0;
+		font->wordWrapText(part.text.decode(Common::kUtf8), _realBBox.width(), lines, currentX);
+
+		if (lines.empty()) {
+			continue;
 		}
-		lines.back().push_back(part);
-		currentLineWidth += partWidth;
+		splitParts.reserve(splitParts.size() + lines.size());
+
+		int width = 0;
+		for (auto line = lines.begin(); line != lines.end() - 1; line++) {
+			width = font->getStringWidth(*line);
+			splitParts.emplace_back(SubtitleRenderingPart{*line, font, newLine, currentX, currentX + width});
+			newLine = true;
+			currentX = 0;
+		}
+		width = font->getStringWidth(lines.back());
+		splitParts.emplace_back(SubtitleRenderingPart{lines.back(), font, newLine, currentX, currentX + width});
+		newLine = false;
+		currentX += width;
+
+		// Last newline doesn't trigger an empty line in wordWrapText
+		if (part.text.hasSuffix("\n")) {
+			newLine = true;
+			currentX = 0;
+		}
 	}
 
-	int height = _vPad;
-	int totalWidth = 0;
+	_splitPartCount = (uint16)splitParts.size();
 
-	for (const auto &line : lines) {
-		int lineWidth = 0;
-		for (const auto &part : line) {
-			const Graphics::Font *font = _fonts[part.tag == "i" ? "italic" : "regular"];
-			if (!font) font = _fonts["regular"];
-			lineWidth += font->getStringWidth(convertUtf8ToUtf32(part.text));
+	// Then, center all lines and calculate the drawing box
+	auto lineBegin = splitParts.begin();
+	int minX = _realBBox.width();
+	int maxWidth = 0;
+
+	for (auto splitPart = splitParts.begin() + 1; splitPart != splitParts.end(); splitPart++) {
+		if (!splitPart->newLine) {
+			continue;
 		}
-		totalWidth = MAX(totalWidth, lineWidth);
+		int width = MIN(splitPart[-1].right + 2 * _hPad, (int)_realBBox.width());
+		int origin = (_realBBox.width() - width) / 2;
+		minX = MIN(minX, origin);
+		maxWidth = MAX(maxWidth, width);
+
+		for(auto part = lineBegin; part != splitPart; part++) {
+			part->left += origin;
+			part->right += origin;
+		}
+
+		lineBegin = splitPart;
 	}
-	totalWidth = MIN(totalWidth + 2 * _hPad, (int)_realBBox.width());
+	if (lineBegin != splitParts.end()) {
+		int width = MIN(splitParts.back().right + 2 * _hPad, (int)_realBBox.width());
+		int origin = (_realBBox.width() - width) / 2;
+		minX = MIN(minX, origin);
+		maxWidth = MAX(maxWidth, width);
 
-	for (const auto &line : lines) {
-		int lineWidth = 0;
-		for (const auto &part : line) {
-			const Graphics::Font *font = _fonts[part.tag == "i" ? "italic" : "regular"];
-			if (!font) font = _fonts["regular"];
-			lineWidth += font->getStringWidth(convertUtf8ToUtf32(part.text));
+		for(auto part = lineBegin; part != splitParts.end(); part++) {
+			part->left += origin;
+			part->right += origin;
 		}
-
-		int originX = (_realBBox.width() - lineWidth) / 2;
-		int currentX = originX;
-
-		for (const auto &part : line) {
-			Common::String fontType = part.tag == "i" ? "italic" : "regular";
-			const Graphics::Font *font = _fonts[fontType] ? _fonts[fontType] : _fonts["regular"];
-			Common::U32String u32_text = convertBiDiU32String(Common::U32String(part.text)).visual;
-			int partWidth = font->getStringWidth(u32_text);
-
-			font->drawString(_surface, u32_text, currentX, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX + SHADOW * 2, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX + SHADOW * 2, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX + SHADOW, height + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
-
-			currentX += partWidth;
-		}
-		height += _fonts["regular"]->getFontHeight();
-		if (height + _vPad > _realBBox.bottom)
-			break;
 	}
 
-	height += _vPad;
+	// Finally, render every part on the surface
+	int currentY = _vPad;
+	int lineHeight = 0;
+	for (const auto &part : splitParts) {
+		const Graphics::Font *font = part.font;
+		int partWidth = part.right - part.left;
 
-	_drawRect.left = (_realBBox.width() - totalWidth) / 2;
+		if (part.newLine) {
+			currentY += lineHeight;
+			if (currentY + _vPad > _realBBox.bottom) {
+				lineHeight = 0;
+				break;
+			}
+
+			lineHeight = font->getFontHeight();
+		}
+
+		Common::U32String u32_text = convertBiDiU32String(part.text).visual;
+
+		font->drawString(&_surface, u32_text, part.left, currentY, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left + SHADOW * 2, currentY, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left, currentY + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left + SHADOW * 2, currentY + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left + SHADOW, currentY + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
+
+	}
+
+	currentY += lineHeight + _vPad;
+
+	_drawRect.left = minX;
 	_drawRect.top = 0;
-	_drawRect.setWidth(totalWidth + SHADOW * 2);
-	_drawRect.setHeight(height + SHADOW * 2);
+	_drawRect.setWidth(maxWidth + SHADOW * 2);
+	_drawRect.setHeight(currentY + SHADOW * 2);
+	_drawRect.clip(_realBBox.width(), _realBBox.height());
 }
 
 } // End of namespace Video

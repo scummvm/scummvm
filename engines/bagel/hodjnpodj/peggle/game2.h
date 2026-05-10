@@ -33,15 +33,15 @@ namespace Peggle {
 
 // midi sound file
 
-#define GAME_THEME      ".\\SOUND\\PEGGLEBO.MID"
+#define GAME_THEME      "sound\\PEGGLEBO.MID"
 
 // Wave sound files
 
-#define WAV_UNDO    ".\\SOUND\\SOUND208.WAV"
-#define WAV_WON     ".\\SOUND\\SOUNDWON.WAV"
-#define WAV_DONE    ".\\SOUND\\SOUND216.WAV"
-#define WAV_MOVE    ".\\SOUND\\SOUND169.WAV"
-#define WAV_NOMOVE  ".\\SOUND\\OLD169.WAV"
+#define WAV_UNDO    "sound\\SOUND208.WAV"
+#define WAV_WON     "sound\\SOUNDWON.WAV"
+#define WAV_DONE    "sound\\SOUND216.WAV"
+#define WAV_MOVE    "sound\\SOUND169.WAV"
+#define WAV_NOMOVE  "sound\\OLD169.WAV"
 
 // Title display offsets
 
@@ -98,25 +98,25 @@ namespace Peggle {
 #define NET_Y               35
 #define NET_DX              122
 #define NET_DY              50
-#define NET_SOUND           ".\\SOUND\\ANCHORS.WAV"
+#define NET_SOUND           "sound\\ANCHORS.WAV"
 
 #define OAR_X               20
 #define OAR_Y               53
 #define OAR_DX              185
 #define OAR_DY              52
-#define OAR_SOUND           ".\\SOUND\\ROWBOAT.WAV"
+#define OAR_SOUND           "sound\\ROWBOAT.WAV"
 
 #define SIGN_X              355
 #define SIGN_Y              25
 #define SIGN_DX             67
 #define SIGN_DY             36
-#define SIGN_SOUND          ".\\SOUND\\TAVERN.WAV"
+#define SIGN_SOUND          "sound\\TAVERN.WAV"
 
 #define TABLE_X             314
 #define TABLE_Y             170
 #define TABLE_DX            122
 #define TABLE_DY            42
-#define TABLE_SOUND         ".\\SOUND\\FRINIGHT.WAV"
+#define TABLE_SOUND         "sound\\FRINIGHT.WAV"
 
 #define CANDLENR_X          595
 #define CANDLENR_Y          208
@@ -127,7 +127,7 @@ namespace Peggle {
 #define CANDLEFR_Y          183
 #define CANDLEFR_DX         20
 #define CANDLEFR_DY         20
-#define CANDLE_SOUND        ".\\SOUND\\STNICMSG.WAV"
+#define CANDLE_SOUND        "sound\\STNICMSG.WAV"
 
 // Board display offsets
 

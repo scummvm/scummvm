@@ -43,7 +43,7 @@ extern bool bPrePlaceColonies,      // Whether they want to pre-place some
 extern CPalette *pGamePalette;      // Used everywhere for ref
 
 CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
-	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	: CBmpDialog(pParent, pPalette, nID, "art\\SSCROLL.BMP") {
 	m_DisplayRounds     = "";
 	m_DisplaySpeed      = "";
 	m_DisplayVillages   = "";

@@ -294,10 +294,10 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		}
 
 		if (_w == -1)
-			_w = _children[0]->getWidth();
+			_w = MIN(_children[0]->getWidth(), safeArea.width());
 
 		if (_h == -1)
-			_h = _children[0]->getHeight();
+			_h = MIN(_children[0]->getHeight(), safeArea.height());
 
 		if (_y == -1)
 			_y = (screenH >> 1) - (_h >> 1);

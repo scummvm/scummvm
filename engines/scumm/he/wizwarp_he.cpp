@@ -30,7 +30,7 @@ namespace Scumm {
 #define WARP_FRAC_SIZE        (_vm->_game.heversion > 98 ? 20 : 16)
 #define WARP_FRAC_VALUE       (1 << (WARP_FRAC_SIZE))
 #define WARP_TEXTURE_LIMIT    (1 << (31 - (WARP_FRAC_SIZE)))
-#define WARP_TO_FRAC(_x_)     ((_x_) << (WARP_FRAC_SIZE))
+#define WARP_TO_FRAC(_x_)     ((_x_) * (1 << (WARP_FRAC_SIZE)))
 #define WARP_FROM_FRAC(_x_)   ((_x_) >> (WARP_FRAC_SIZE))
 
 bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transparentColor, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, int shadowImage) {

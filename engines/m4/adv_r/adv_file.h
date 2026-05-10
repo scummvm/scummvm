@@ -23,7 +23,6 @@
 #ifndef M4_ADV_R_ADV_FILE_H
 #define M4_ADV_R_ADV_FILE_H
 
-#include "common/stream.h"
 #include "m4/adv_r/adv.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_buff.h"

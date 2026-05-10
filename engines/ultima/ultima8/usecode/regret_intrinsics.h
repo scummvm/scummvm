@@ -22,8 +22,28 @@
 #ifndef ULTIMA8_USECODE_REGRETINTRINSICS_H
 #define ULTIMA8_USECODE_REGRETINTRINSICS_H
 
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/games/game.h"
+#include "ultima/ultima8/gfx/palette_fader_process.h"
+#include "ultima/ultima8/gumps/computer_gump.h"
+#include "ultima/ultima8/gumps/cru_status_gump.h"
+#include "ultima/ultima8/gumps/keypad_gump.h"
+#include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/battery_charger_process.h"
+#include "ultima/ultima8/world/actors/cru_healer_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {

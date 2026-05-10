@@ -98,7 +98,7 @@ void TeRendererTinyGL::init(uint width, uint height) {
 
 	const Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	debug(2, "INFO: TinyGL front buffer pixel format: %s", pixelFormat.toString().c_str());
-	TinyGL::createContext(width, height, pixelFormat, 256, true, ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(width, height, pixelFormat, 256, true, ConfMan.getBool("dirtyrects"), 7 * 1024 * 1024);
 
 	tglViewport(0, 0, width, height);
 

@@ -33,9 +33,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
-using Std::vector;
-
 
 Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
 		hidden(false), screen(nullptr), config(nullptr), screen_w(0), screen_h(0) {
@@ -45,7 +42,7 @@ Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
 /* Returns true if mouse pointers file was loaded.
  */
 bool Cursor::init(const Configuration *c, Screen *s, nuvie_game_t game_type) {
-	Std::string file;
+	Common::String file;
 	Common::Path filename;
 	bool enable_cursors;
 

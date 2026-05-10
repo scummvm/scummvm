@@ -63,7 +63,6 @@ const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
-#ifdef USE_RGB_COLOR
 	{
 		GAMEOPTION_HQ_VIDEO,
 		{
@@ -75,7 +74,6 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
-#endif
 
 	{
 		GAMEOPTION_LARRYSCALE,

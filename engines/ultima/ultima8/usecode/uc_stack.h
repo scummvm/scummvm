@@ -24,6 +24,11 @@
 
 #include "common/scummsys.h"
 
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
+
 namespace Ultima {
 namespace Ultima8 {
 

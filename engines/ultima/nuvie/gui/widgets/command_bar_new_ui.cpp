@@ -44,8 +44,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
-
 #define btn_size 17
 #define SELECTED_COLOR 248
 #define table_size_U6 13
@@ -136,7 +134,7 @@ CommandBarNewUI::~CommandBarNewUI() {
 
 
 
-GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status CommandBarNewUI::MouseDown(int x, int y, Events::MouseButton button) {
 	if (HitRect(x, y)) {
 		x -= area.left;
 		y -= area.right;
@@ -157,7 +155,7 @@ GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) 
 	return GUI_YUM;
 }
 
-GUI_status CommandBarNewUI::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status CommandBarNewUI::MouseUp(int x, int y, Events::MouseButton button) {
 	/*
 	    if(HitRect(x, y))
 	    {
@@ -236,7 +234,7 @@ void CommandBarNewUI::Display(bool full_redraw) {
 		//scr->fill(bg_color, area.left, area.top, area.width(), area.height());
 		if (!game->is_orig_style()) {
 			//display_information();
-			string infostring(game->get_clock()->get_date_string());
+			Common::String infostring(game->get_clock()->get_date_string());
 			infostring += " Wind:";
 			infostring += wind;
 			font->drawString(scr, infostring.c_str(), area.left - 13, area.top); // sort of center
@@ -273,7 +271,7 @@ const char *CommandBarNewUI::get_command_name(sint8 command_num) const {
 /*
 void CommandBarNewUI::display_information()
 {
-	string infostring(game->get_clock()->get_date_string());
+	Common::String infostring(game->get_clock()->get_date_string());
 	infostring += " Wind:";
 	infostring += wind;
 	text->drawString(screen, infostring.c_str(), area.left + 8, area.top, 0);

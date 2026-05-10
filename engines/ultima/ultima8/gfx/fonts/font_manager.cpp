@@ -19,14 +19,12 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/file.h"
-
-#include "ultima/ultima.h"
-#include "ultima/ultima8/misc/common_types.h"
-
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
 
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "graphics/fonts/ttf.h"
+#include "ultima/ultima.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
 #include "ultima/ultima8/gfx/fonts/font_shape_archive.h"
@@ -34,8 +32,6 @@
 #include "ultima/ultima8/gfx/fonts/jp_font.h"
 #include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
-
-#include "graphics/fonts/ttf.h"
 
 namespace Ultima {
 namespace Ultima8 {

@@ -51,11 +51,11 @@ void TreasureLoader::loadDefaults() {
 	}
 }
 
-bool TreasureLoader::parse(const Std::string &desc,
-						   Std::vector<TreasureInfo> &treasure) const {
+bool TreasureLoader::parse(const Common::String &desc,
+						   Common::Array<TreasureInfo> &treasure) const {
 	treasure.clear();
 
-	Std::vector<Std::string> tr;
+	Common::Array<Common::String> tr;
 	SplitString(desc, ';', tr);
 
 	TreasureInfo ti;
@@ -70,17 +70,17 @@ bool TreasureLoader::parse(const Std::string &desc,
 	return true;
 }
 
-bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
+bool TreasureLoader::internalParse(const Common::String &desc, TreasureInfo &ti,
 								   bool loadingDefault) const {
 	ti.clear();
 	bool loadedDefault = false;
 
-	Std::vector<Common::Pair<Std::string, Std::string> > kv;
+	Common::Array<Common::Pair<Common::String, Common::String> > kv;
 	SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {
-		const Std::string &key = kv[i].first;
-		Std::string val = kv[i].second;
+		const Common::String &key = kv[i].first;
+		Common::String val = kv[i].second;
 
 		if (key == "shape") {
 			if (!parseUInt32Vector(val, ti._shapes)) {
@@ -130,8 +130,7 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 		} else if (key == "type" && !loadingDefault) {
 			if (loadedDefault)
 				return false;
-			TreasureMap::const_iterator iter;
-			iter = _defaultTreasure.find(val);
+			auto iter = _defaultTreasure.find(val);
 			if (iter != _defaultTreasure.end())
 				ti = iter->_value;
 			else
@@ -162,20 +161,20 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 	return true;
 }
 
-bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
-									   Std::vector<uint32> &vec) const {
-	Std::string val = val_;
+bool TreasureLoader::parseUInt32Vector(const Common::String &val_,
+									   Common::Array<uint32> &vec) const {
+	Common::String val = val_;
 	vec.clear();
 
 	if (val.empty())
 		return false;
 
 	while (!val.empty()) {
-		Std::string::size_type pos = val.find(',');
-		const Std::string item = val.substr(0, pos);
+		Common::String::size_type pos = val.find(',');
+		const Common::String item = val.substr(0, pos);
 
-		Std::string::size_type itempos = val.find('-');
-		if (itempos != Std::string::npos) {
+		Common::String::size_type itempos = val.find('-');
+		if (itempos != Common::String::npos) {
 			unsigned int min, max;
 			if (!parseUIntRange(item, min, max))
 				return false;
@@ -188,17 +187,17 @@ bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
 			vec.push_back(x);
 		}
 
-		if (pos != Std::string::npos) pos++;
+		if (pos != Common::String::npos) pos++;
 		val.erase(0, pos);
 	}
 
 	return true;
 }
 
-bool TreasureLoader::parseUIntRange(const Std::string &val,
+bool TreasureLoader::parseUIntRange(const Common::String &val,
 									unsigned int &min, unsigned int &max) const {
-	Std::string::size_type pos = val.find('-');
-	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
+	Common::String::size_type pos = val.find('-');
+	if (pos == 0 || pos == Common::String::npos || pos + 1 >= val.size())
 		return false;
 	int t1 = 0;
 	int t2 = 0;
@@ -213,7 +212,7 @@ bool TreasureLoader::parseUIntRange(const Std::string &val,
 	return ok;
 }
 
-bool TreasureLoader::parseDouble(const Std::string &val, double &d) const {
+bool TreasureLoader::parseDouble(const Common::String &val, double &d) const {
 	if (val.empty())
 		return false;
 	// TODO: error checking
@@ -221,7 +220,7 @@ bool TreasureLoader::parseDouble(const Std::string &val, double &d) const {
 	return true;
 }
 
-bool TreasureLoader::parseInt(const Std::string &val, int &i) const {
+bool TreasureLoader::parseInt(const Common::String &val, int &i) const {
 	if (val.empty())
 		return false;
 	// TODO: error checking

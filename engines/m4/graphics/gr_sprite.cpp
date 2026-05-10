@@ -35,13 +35,13 @@ namespace M4 {
  * S and D are Raw encoded (unencoded!) buffers.
  */
 static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
-	uint8 *pScaled, *pData = S->data;
-
 	if (!D)
-		error_show(FL, 'BUF!', "scale sprite NULL D");
+		error_show(FL, "scale sprite NULL D");
 
 	if (!S)
-		error_show(FL, 'BUF!', "scale sprite h:%d w:%d sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
+		error_show(FL, "scale sprite h:%d w:%d sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
+
+	uint8 *pData = S->data;
 
 	/* calculate new x size */
 	D->w = S->w * ScaleX / 100;
@@ -56,9 +56,10 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	D->stride = D->w;
 
 	/* allocate 'scaled' buffer */
-	if (!(D->data = pScaled = (uint8 *)mem_alloc(D->h * D->stride, "scaled buffer")))
-		error_show(FL, 'OOM!', "scaled buffer h:%uld w:%uld", D->h, D->stride);
+	uint8 *pScaled = (uint8 *)mem_alloc(D->h * D->stride, "scaled buffer");
 
+	D->data = pScaled;
+	
 	uint16 ErrY = 50;
 	for (uint16 i = 0; i < S->h; ++i) {
 		ErrY += ScaleY;
@@ -82,11 +83,6 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 
 #define Scaled	((drawReq->scaleY != 100) || (drawReq->scaleX != 100 && drawReq->scaleX != -100))
 #define Rle	(source.encoding == RLE8)
-#define Clipped ((drawReq->x < 0) || (drawReq->y < 0) || (drawReq->x + source.w > drawReq->Dest->w) || (drawReq->y + source.h > drawReq->Dest->h))
-#define Forward (drawReq->scaleX > 0)
-#define Depthed (drawReq->srcDepth)
-#define Shadow	(source.encoding & 0x80)
-#define ClipD	(leftOffset || rightOffset || bottomCut)
 
 uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	Buffer source;
@@ -112,14 +108,13 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	// if it's RLE encoded, ensure the sprite will decode to match the expected size
 	if (source.encoding & RLE8) {
 		if (RLE8Decode_Size(source.data, source.stride) != (size_t)(source.stride * source.h))
-			error_show(FL, 'RLE8', "RLE8 sprite suspected BAD!");
+			error_show(FL, "RLE8 sprite suspected BAD!");
 	}
 
 	// Check for RLE encoding in case of shadows
 	// There is no RLE shadow draw routine, so we have to decode shadows ahead of time.
 	if ((source.encoding & RLE8) && (source.encoding & SHADOW)) {
-		if (!(shadowBuff = (uint8 *)mem_alloc(source.stride * source.h, "shadow buff")))
-			error_show(FL, 'OOM!', "buffer w:%uld, h:%uld", source.w, source.h);
+		shadowBuff = (uint8 *)mem_alloc(source.stride * source.h, "shadow buff");
 
 		RLE8Decode(source.data, shadowBuff, source.stride);
 		source.data = shadowBuff;
@@ -132,8 +127,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		// Check if input is RLE8 encoded
 		// If it's scaled we decode it first
 		if (Rle) {
-			if (!(scaledBuff = (uint8 *)mem_alloc(source.stride * source.h, "scaled buffer")))
-				error_show(FL, 'OOM!', "no mem: buffer w:%d, h:%d", source.w, source.h);
+			scaledBuff = (uint8 *)mem_alloc(source.stride * source.h, "scaled buffer");
 
 			RLE8Decode(source.data, scaledBuff, source.stride);
 			source.data = scaledBuff;
@@ -146,7 +140,7 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 			if (scaledBuff)
 				mem_free(scaledBuff);
 
-			error_show(FL, 'SPSF', "gr_sprite_draw");
+			error_show(FL, "gr_sprite_draw");
 		}
 
 		// Preserve encoding
@@ -183,7 +177,6 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 #define ESC     ((uint8)0)
 #define EOL	((uint8)0)
 #define EOB	((uint8)1)
-#define DELTA	((uint8)2)
 
 #define OutBuffSize(x)	((x) + (((x) + 254) / 255 + 1) * 2 + 2)
 
@@ -193,7 +186,7 @@ static uint16 EncodeScan(uint8 *pi, uint8 *po, uint16 scanlen, uint8 EndByte) {
 
 	while (scanlen) {
 		uint16 limit = (scanlen < 255) ? scanlen : 255;
-		//imath_min(scanlen, 255);
+
 		for (run = 1; run < limit && *pi == *ps; ++run, ++ps) {}
 
 		if (run > 1) {
@@ -241,16 +234,12 @@ uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest) {
 	Dest->h = Source->h;
 	Dest->encoding = RLE8;
 	Dest->stride = Source->stride;
-
-	if (!(Dest->data = (uint8 *)mem_alloc(Source->h * OutBuffSize(Source->stride), "sprite data"))) {
-		return 0;
-	}
+	Dest->data = (uint8 *)mem_alloc(Source->h * OutBuffSize(Source->stride), "sprite data");
 
 	for (i = 0; i < Source->h - 1; ++i)
 		Offset += EncodeScan(Source->data + i * Source->stride, Dest->data + Offset, Source->w, EOL);
 
 	Offset += EncodeScan(Source->data + i * Source->stride, Dest->data + Offset, Source->w, EOB);
-
 	Dest->data = (uint8 *)mem_realloc(Dest->data, Offset, "rle8 sprite data");
 
 	return Offset;

@@ -42,7 +42,7 @@ class ConverseSpeech {
 	// game system objects from nuvie
 	const Configuration *config;
 	Audio::SoundHandle handle;
-	Std::list<TownsSound> list;
+	Common::List<TownsSound> list;
 
 public:
 	ConverseSpeech();

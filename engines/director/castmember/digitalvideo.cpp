@@ -248,6 +248,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	uint32 magic3 = copiedStream->readUint32BE();
 	delete copiedStream;
 	bool result = false;
+	bool tryQuickTime = false;
 
 	debugC(2, kDebugLoading, "Loading video %s -> %s", path.c_str(), location.toString(Common::Path::kNativeSeparator).c_str());
 	if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
@@ -264,6 +265,27 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		}
 
 	} else if (magic2 == MKTAG('m', 'o', 'o', 'v') || magic2 == MKTAG('m', 'd', 'a', 't')) {
+		tryQuickTime = true;
+	} else if (magic1 == MKTAG('R', 'I', 'F', 'F') && (magic3 == MKTAG('A', 'V', 'I', ' '))) {
+		_video = new Video::AVIDecoder();
+		result = _video->loadFile(location);
+		if (!result) {
+		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping video '%s'", path.c_str());
+		    delete _video;
+		    _video = nullptr;
+			return false;
+		} else {
+			_videoType = kDVVideoForWindows;
+		}
+	} else {
+		// early QuickTime videos are a nightmare for magic ID detection,
+		// but let's be honest it's probably going to be QuickTime with Cinepak,
+		// the little postage-stamp-sized video format that could
+		debugC(8, kDebugLevelGVideo, "DigitalVideoCastMember::loadVideo(): couldn't find magic ID, trying QuickTime");
+		tryQuickTime = true;
+	}
+
+	if (tryQuickTime) {
 		_video = new Video::QuickTimeDecoder();
 		result = _video->loadFile(location);
 		if (!result) {
@@ -283,18 +305,9 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		} else {
 			_videoType = kDVQuickTime;
 		}
-	} else if (magic1 == MKTAG('R', 'I', 'F', 'F') && (magic3 == MKTAG('A', 'V', 'I', ' '))) {
-		_video = new Video::AVIDecoder();
-		result = _video->loadFile(location);
-		if (!result) {
-		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping video '%s'", path.c_str());
-		    delete _video;
-		    _video = nullptr;
-			return false;
-		} else {
-			_videoType = kDVVideoForWindows;
-		}
-	} else {
+	}
+
+	if (!result) {
 		warning("DigitalVideoCastMember::loadVideo: Unknown file format for video '%s', skipping", path.c_str());
 	}
 
@@ -379,7 +392,7 @@ void DigitalVideoCastMember::startVideo() {
 	else
 		_video->start();
 
-	debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
+	debugC(2, kDebugImages, "STARTING VIDEO %s %d/%d", _filename.c_str(), getMovieCurrentTime(), getMovieTotalTime());
 
 	if (_channel && _channel->_stopTime == 0)
 		_channel->_stopTime = getMovieTotalTime();
@@ -678,6 +691,16 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 		return;
 	case kTheDuration:
 		warning("DigitalVideoCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		return;
+	case kTheFileName:
+		// Update the filename, then force the video to be replaced.
+		// Channel dimensions are replaced by the video.
+		CastMember::setField(field, d);
+		loadVideoFromCast();
+		if (_channel) {
+			_channel->setWidth(_initialRect.width());
+			_channel->setHeight(_initialRect.height());
+		}
 		return;
 	case kTheFrameRate:
 		_frameRate = d.asInt();

@@ -26,30 +26,30 @@
 
 namespace Alcachofa {
 
-Common::Rect openInventoryTriggerBounds();
-Common::Rect closeInventoryTriggerBounds();
-
 class GlobalUI {
 public:
 	GlobalUI();
+	virtual ~GlobalUI() {}
 
 	inline Font &generalFont() const { assert(_generalFont != nullptr); return *_generalFont; }
 	inline Font &dialogFont() const { assert(_dialogFont != nullptr); return *_dialogFont; }
 	inline bool &isPermanentFaded() { return _isPermanentFaded; }
 
 	bool updateChangingCharacter();
-	void drawChangingButton();
-	bool updateOpeningInventory();
+	virtual void drawChangingButton() = 0;
+	virtual void drawInventoryButton() = 0;
+	virtual bool updateOpeningInventory() = 0; ///< returns true iff interaction is handled
+	virtual void startClosingInventory() = 0;
+	virtual bool isHoveringInventoryExit() const = 0;
 	void updateClosingInventory();
-	void startClosingInventory();
 	void drawScreenStates(); // black borders and/or permanent fade
 	void syncGame(Common::Serializer &s);
 
-private:
+protected:
 	Animation *activeAnimation() const;
-	bool isHoveringChangeButton() const;
+	virtual bool isHoveringChangeButton() const = 0;
 
-	Graphic _changeButton;
+	Graphic _changeButton, _inventoryButton;
 	Common::ScopedPtr<Font>
 		_generalFont,
 		_dialogFont;
@@ -63,6 +63,30 @@ private:
 		_isClosingInventory = false,
 		_isPermanentFaded = false;
 	uint32 _timeForInventory = 0;
+};
+
+class GlobalUIV1 final : public GlobalUI {
+public:
+	void drawChangingButton() override;
+	void drawInventoryButton() override;
+	bool updateOpeningInventory() override;
+	void startClosingInventory() override;
+	bool isHoveringInventoryExit() const override;
+
+protected:
+	bool isHoveringChangeButton() const override;
+};
+
+class GlobalUIV3 final : public GlobalUI {
+public:
+	void drawChangingButton() override;
+	void drawInventoryButton() override;
+	bool updateOpeningInventory() override;
+	void startClosingInventory() override;
+	bool isHoveringInventoryExit() const override;
+
+protected:
+	bool isHoveringChangeButton() const override;
 };
 
 Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs);

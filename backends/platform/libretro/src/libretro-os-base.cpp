@@ -30,6 +30,7 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
@@ -70,6 +71,7 @@ void OSystem_libretro::initBackend() {
 	if (! ConfMan.hasKey("libretro_hooks_clear"))
 		ConfMan.set("libretro_hooks_clear", 0);
 
+	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 
 	_mixer = new Audio::MixerImpl(retro_setting_get_sample_rate(), true, retro_setting_get_audio_samples_buffer_size());
@@ -81,7 +83,7 @@ void OSystem_libretro::initBackend() {
 
 	resetGraphicsManager();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 	refreshRetroSettings();
 }
 

@@ -29,18 +29,18 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace DFA {
 
-#define SPLASHSPEC      ".\\ART\\DFA.BMP"
+#define SPLASHSPEC      "art\\DFA.BMP"
 
 #ifdef BACKWARDSTIMER
-	#define TIMERSPRITE     ".\\ART\\WATCHES2.BMP"
+	#define TIMERSPRITE     "art\\WATCHES2.BMP"
 #else
-	#define TIMERSPRITE     ".\\ART\\WATCHES.BMP"
+	#define TIMERSPRITE     "art\\WATCHES.BMP"
 #endif
 
 //
 // Cursor and mallet animation
 //
-#define MALLET          ".\\ART\\MALLET.BMP"
+#define MALLET          "art\\MALLET.BMP"
 #define MALLETCELS      5
 #define MALLET_WIDTH    32
 #define MALLET_HEIGHT   32

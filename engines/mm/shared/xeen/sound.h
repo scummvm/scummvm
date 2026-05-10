@@ -88,6 +88,7 @@ public:
 	 * Stops any currently playing music
 	 */
 	void stopSong() {
+		_currentMusic.clear();
 		songCommand(STOP_SONG);
 	}
 

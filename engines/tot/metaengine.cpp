@@ -161,7 +161,7 @@ Common::KeymapArray TotMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("F1");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MAINMENU", _("Main menu/Exit"));
+	act = new Action("MAINMENU", _("Main menu / Exit"));
 	act->setCustomEngineActionEvent(kActionEscape);
 	act->addDefaultInputMapping("ESCAPE");
 	gameKeyMap->addAction(act);
@@ -175,7 +175,7 @@ Common::KeymapArray TotMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("QUITCANCEL", _("Cancel quit"));
 	act->setCustomEngineActionEvent(kActionNo);
 	act->addDefaultInputMapping(defaultTotKeys[KEY_NO]);
-	act->addDefaultInputMapping("JOY_KEFT_TRIGGER");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	quitDialogKeyMap->addAction(act);
 
 	KeymapArray keymaps(3);

@@ -19,11 +19,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
-
 #include "ultima/ultima8/world/fire_type_table.h"
-#include "ultima/ultima8/world/fire_type.h"
+
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/fire_type.h"
 
 namespace Ultima {
 namespace Ultima8 {

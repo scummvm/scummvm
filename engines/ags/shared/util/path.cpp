@@ -22,7 +22,6 @@
 #include "ags/shared/core/platform.h"
 #if AGS_PLATFORM_OS_WINDOWS
 #define NOMINMAX
-//include <windows.h>
 #endif
 #include "ags/lib/allegro/file.h"
 #include "ags/shared/util/path.h"

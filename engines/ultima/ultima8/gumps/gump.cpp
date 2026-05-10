@@ -128,20 +128,15 @@ void Gump::Close(bool no_del) {
 }
 
 void Gump::RenderSurfaceChanged() {
-	// Iterate all children
-	Std::list<Gump *>::iterator it = _children.reverse_begin();
-	Std::list<Gump *>::iterator end = _children.end();
-
-	while (it != end) {
-		(*it)->RenderSurfaceChanged();
-		--it;
+	for (auto *g : _children) {
+		g->RenderSurfaceChanged();
 	}
 }
 
 void Gump::run() {
 	// Iterate all children
-	Std::list<Gump *>::iterator it = _children.begin();
-	Std::list<Gump *>::iterator end = _children.end();
+	auto it = _children.begin();
+	const auto end = _children.end();
 
 	while (it != end) {
 		Gump *g = *it;
@@ -169,8 +164,8 @@ void Gump::CloseItemDependents() {
 	}
 
 	// Pass the MapChanged message to all the children
-	Std::list<Gump *>::iterator it = _children.begin();
-	Std::list<Gump *>::iterator end = _children.end();
+	auto it = _children.begin();
+	const auto end = _children.end();
 
 	while (it != end) {
 		Gump *g = *it;
@@ -195,8 +190,7 @@ bool Gump::GetMouseCursor(int32 mx, int32 my, Shape &shape, int32 &frame) {
 	bool ret = false;
 
 	// This reverse iterates the children
-	Std::list<Gump *>::iterator it;
-	for (it = _children.reverse_begin(); it != _children.end(); --it)
+	for (auto it = _children.reverse_begin(); it != _children.end(); --it)
 	{
 		Gump *g = *it;
 
@@ -285,8 +279,8 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	surf->setClippingRect(new_rect);
 
 	// Iterate all children
-	Std::list<Gump *>::iterator it = _children.reverse_begin();
-	Std::list<Gump *>::iterator end = _children.end();
+	auto it = _children.reverse_begin();
+	const auto end = _children.end();
 
 	while (it != end) {
 		Gump *g = *it;
@@ -316,8 +310,8 @@ Gump *Gump::FindGump(int mx, int my) {
 	Gump *gump = nullptr;
 
 	// Iterate all children
-	Std::list<Gump *>::iterator it = _children.reverse_begin();
-	Std::list<Gump *>::iterator end = _children.end();
+	auto it = _children.reverse_begin();
+	const auto end = _children.end();
 
 	while (it != end && !gump) {
 		Gump *g = *it;
@@ -396,8 +390,7 @@ bool Gump::PointOnGump(int mx, int my) {
 	}
 
 	// reverse-iterate children
-	Std::list<Gump *>::iterator it;
-	for (it = _children.reverse_begin(); it != _children.end(); --it) {
+	for (auto it = _children.reverse_begin(); it != _children.end(); --it) {
 		Gump *g = *it;
 
 		// It's got the point
@@ -483,8 +476,7 @@ uint16 Gump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = 0;
 
 	// reverse-iterate children
-	Std::list<Gump *>::iterator it;
-	for (it = _children.reverse_begin(); it != _children.end(); --it) {
+	for (auto it = _children.reverse_begin(); it != _children.end(); --it) {
 		Gump *g = *it;
 
 		// Not if closing or hidden
@@ -559,7 +551,7 @@ void Gump::FindNewFocusChild() {
 	_focusChild = nullptr;
 
 	// Now add the gump to use as the new focus
-	Std::list<Gump *>::iterator	it = _children.reverse_begin();
+	const auto it = _children.reverse_begin();
 
 	if (it != _children.end()) {
 		(*it)->MakeFocus();
@@ -576,8 +568,8 @@ void Gump::AddChild(Gump *gump, bool take_focus) {
 	if (old_parent) old_parent->RemoveChild(gump);
 
 	// Now add the gump in the correct spot
-	Std::list<Gump *>::iterator  it = _children.begin();
-	Std::list<Gump *>::iterator  end = _children.end();
+	auto it = _children.begin();
+	const auto end = _children.end();
 
 	for (; it != end; ++it) {
 		Gump *other = *it;
@@ -625,8 +617,8 @@ void Gump::MoveChildToFront(Gump *gump) {
 
 	_children.remove(gump);
 
-	Std::list<Gump *>::iterator  it = _children.begin();
-	Std::list<Gump *>::iterator  end = _children.end();
+	auto it = _children.begin();
+	const auto end = _children.end();
 	for (; it != end; ++it) {
 		Gump *other = *it;
 
@@ -674,8 +666,7 @@ Gump *Gump::onMouseDown(int button, int32 mx, int32 my) {
 	Gump *handled = nullptr;
 
 	// Iterate children backwards
-	Std::list<Gump *>::iterator it;
-	for (it = _children.reverse_begin(); it != _children.end(); --it) {
+	for (auto it = _children.reverse_begin(); it != _children.end(); --it) {
 		Gump *g = *it;
 
 		// Not if closing or hidden
@@ -698,8 +689,7 @@ Gump *Gump::onMouseMotion(int32 mx, int32 my) {
 	Gump *handled = nullptr;
 
 	// Iterate children backwards
-	Std::list<Gump *>::iterator it;
-	for (it = _children.reverse_begin(); it != _children.end(); --it) {
+	for (auto it = _children.reverse_begin(); it != _children.end(); --it) {
 		Gump *g = *it;
 
 		// Not if closing or hidden

@@ -107,10 +107,10 @@ int8 BoardSelected = CROSS;
 //} ;
 char fState [GRID_SIZE][GRID_SIZE];
 const char *BoardSpec[BOARD_COUNT] = {
-	".\\ART\\CROSS.BMP",
-	".\\ART\\CROSSX.BMP",
-	".\\ART\\TRIANGLE.BMP",
-	".\\ART\\TRIANGLX.BMP"
+	"art\\CROSS.BMP",
+	"art\\CROSSX.BMP",
+	"art\\TRIANGLE.BMP",
+	"art\\TRIANGLX.BMP"
 };
 
 // Move co-ordinates. 1 peg can be removed per move.
@@ -650,7 +650,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\dart.bmp", NUM_DART_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\dart.bmp", NUM_DART_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
@@ -660,7 +660,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 		(*pSprite).SetMobile(false);
 
 		if ((*pGameInfo).bSoundEffectsEnabled) {
-			pEffect = new CSound((CWnd *)this, ".\\sound\\darts.wav",                // Load up the sound file as a
+			pEffect = new CSound((CWnd *)this, "sound\\darts.wav",                // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		for (i = 0; i < NUM_DART_CELS; i++) {
@@ -682,7 +682,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\keg.bmp", NUM_KEG_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\keg.bmp", NUM_KEG_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
@@ -692,7 +692,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 		(*pSprite).SetMobile(false);
 
 		if ((*pGameInfo).bSoundEffectsEnabled) {
-			pEffect = new CSound((CWnd *)this, ".\\sound\\barglass.wav",             // Load up the sound file as a
+			pEffect = new CSound((CWnd *)this, "sound\\barglass.wav",             // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);                //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
@@ -715,7 +715,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 		pDC = GetDC();
 		pSprite = new CSprite;
 		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\stool.bmp", NUM_STOOL_CELS);
+		bSuccess = (*pSprite).LoadCels(pDC, "art\\stool.bmp", NUM_STOOL_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
@@ -725,7 +725,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 		(*pSprite).SetMobile(false);
 
 		if ((*pGameInfo).bSoundEffectsEnabled) {
-			pEffect = new CSound((CWnd *)this, ".\\sound\\chrdance.wav",             // Load up the sound file as a
+			pEffect = new CSound((CWnd *)this, "sound\\chrdance.wav",             // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_QUEUE |  SOUND_ASYNCH | SOUND_AUTODELETE);               //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
@@ -1279,72 +1279,13 @@ BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CTheApp
-
-// InitInstance:
-// When any CTheApp object is created, this member function is automatically
-// called.  Any data may be set up at this point.
-//
-// Also, the main window of the application should be created and shown here.
-// Return true if the initialization is successful.
-//
-/*
-bool CTheApp::InitInstance()
-{
-CMainWindow *pMyMain;
-
-TRACE( "Boffo Games\n" );
-
-SetDialogBkColor();         // hook gray dialogs (was default in MFC V1)
-
-m_pMainWnd = pMyMain = new CMainWindow();
-m_pMainWnd->ShowWindow( m_nCmdShow );
-
-m_pMainWnd->UpdateWindow();
-
-return true;
-}
-
-bool CTheApp::ExitInstance()
-{
-
-CSprite::FlushSpriteChain();
-
-if (pShotGlass != nullptr)
-    delete pShotGlass;
-if (pTableSlot != nullptr)
-    delete pTableSlot;
-if (pInvalidSlot != nullptr)
-    delete pInvalidSlot;
-if (pCursorSprite != nullptr)
-    delete pCursorSprite;
-
-if (pScrollButton != nullptr)
-    delete pScrollButton;
-
-if (pGamePalette != nullptr ) {
-    pGamePalette->DeleteObject ;
-    delete pGamePalette;
-    }
-
-// don't forget to set the Cursor back to normal!
-
-#ifndef SHOW_CURSOR
-::ShowCursor(true);
-#endif
-
-return(true);
-}
-*/
-
 void CMainWindow::OnClose() {
 	CDC     *pDC;
 	CBrush  myBrush;
 	CRect   myRect;
 
-//	CTheApp::ExitInstance();
+	// Remove the linked sprites
+	CSprite::FlushSpriteChain();
 
 	pDC = GetDC();
 	myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);

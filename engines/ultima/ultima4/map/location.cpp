@@ -67,8 +67,8 @@ Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx
 	locationPush(prev, this);
 }
 
-Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
-	Std::vector<MapTile> tiles;
+Common::Array<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
+	Common::Array<MapTile> tiles;
 	Common::List<Annotation *> a = _map->_annotations->ptrsToAllAt(coords);
 	Common::List<Annotation *>::iterator i;
 	Object *obj = _map->objectAt(coords);
@@ -172,7 +172,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	const static int dirs_per_step = sizeof(dirs) / sizeof(*dirs);
 	int loop_count = 0;
 
-	Std::set<MapCoords> searched;
+	//std::set<MapCoords> searched;
 	Common::List<MapCoords> searchQueue;
 
 	//Pathfinding to closest traversable tile with appropriate replacement properties.
@@ -182,7 +182,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 		MapCoords currentStep = searchQueue.front();
 		searchQueue.pop_front();
 
-		searched.insert(currentStep);
+		//searched.insert(currentStep);
 
 		for (int i = 0; i < dirs_per_step; i++) {
 			MapCoords newStep(currentStep);

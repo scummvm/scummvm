@@ -214,9 +214,13 @@ Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 #endif
 			*engine = new SciEngine(syst, desc, g->gameidEnum);
 
+			// Save the language info from the options string, since it will be overwritten in the next step.
+			const Common::String optStr = ConfMan.get("guioptions");
+			const Common::List<Common::Language> langList = Common::parseLanguagesFromGameGUIOptionsString(optStr);
+
 			// If the GUI options were updated, we catch this here and update them in the users config file transparently.
 			Common::updateGameGUIOptions(customizeGuiOptions(ConfMan.getPath("path"), desc->guiOptions, desc->platform, g->gameidStr, g->version),
-										 getGameGUIOptionsDescriptionLanguage(desc->language),
+										 getGameGUIOptionsDescriptionLanguages(langList),
 										 getGameGUIOptionsDescriptionPlatform(desc->platform));
 
 			return Common::kNoError;

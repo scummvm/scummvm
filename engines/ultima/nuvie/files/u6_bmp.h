@@ -22,7 +22,7 @@
 #ifndef NUVIE_FILES_U6BMP_H
 #define NUVIE_FILES_U6BMP_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 #include "ultima/nuvie/files/u6_shape.h"
 

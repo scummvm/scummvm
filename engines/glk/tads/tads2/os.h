@@ -258,7 +258,6 @@ namespace TADS2 {
  *   definitions below.
  */
 #ifdef OS_PTHREAD_TLS
-#include <pthread.h>
 #define OS_DECL_TLS(typ, varname) pthread_key_t varname
 #define os_tls_create(varname) pthread_key_create(&varname, NULL)
 #define os_tls_delete(varname) pthread_key_delete(varname)

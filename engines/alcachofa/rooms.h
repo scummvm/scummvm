@@ -35,6 +35,7 @@ public:
 	virtual ~Room();
 
 	inline World &world() { return *_world; }
+	inline uint8 mapIndex() const { return _mapIndex; }
 	inline const Common::String &name() const { return _name; }
 	inline const PathFindingShape *activeFloor() const {
 		return _activeFloorI < 0 ? nullptr : &_floors[_activeFloorI];
@@ -65,7 +66,11 @@ public:
 	void debugPrint(bool withObjects) const;
 
 protected:
-	Room(World *world, Common::SeekableReadStream &stream, bool hasUselessByte);
+	Room(World *world);
+	void readRoomV1(Common::SeekableReadStream &stream);
+	void readRoomV2and3(Common::SeekableReadStream &stream, bool hasUselessByte);
+	void readObjects(Common::SeekableReadStream &stream);
+	void initBackground();
 	void updateScripts();
 	void updateRoomBounds();
 	void updateInteraction();
@@ -75,16 +80,26 @@ protected:
 	ShapeObject *getSelectedObject(ShapeObject *best = nullptr) const;
 
 	World *_world;
-	Common::String _name;
+	ObjectBase *_backgroundObject = nullptr;
+	Common::String _name, _backgroundName;
 	PathFindingShape _floors[2];
-	bool _fixedCameraOnEntering;
+	bool _fixedCameraOnEntering = false;
 	int8 _activeFloorI = -1;
 	int _musicId = -1;
+	int16 _backgroundScale = kBaseScale;
 	uint8
-		_characterAlphaTint,
-		_characterAlphaPremultiplier; ///< for some reason in percent instead of 0-255
+		_mapIndex,
+		_characterAlphaTint = 0,
+		_characterAlphaPremultiplier = 100; ///< for some reason in percent instead of 0-255
 
 	Common::Array<ObjectBase *> _objects;
+};
+
+// only used for V1 where Rooms by default have no floor
+class RoomWithFloor final : public Room {
+public:
+	static constexpr const char *kClassName = "CHabitacionConSuelo";
+	RoomWithFloor(World *world, Common::SeekableReadStream &stream);
 };
 
 class OptionsMenu final : public Room {
@@ -150,10 +165,13 @@ enum class GlobalAnimationKind {
 	Count
 };
 
+constexpr char kNoXORKey = 0;
+constexpr char kEmbeddedXORKey = -128;
+
 class World final {
 public:
-	World();
 	~World();
+	void load(); ///< unfortunately has to be split from ctor, so g_engine->world() is already set during load
 
 	// reference-returning queries will error if the object does not exist
 
@@ -164,6 +182,7 @@ public:
 	inline Inventory &inventory() const { assert(_inventory != nullptr); return *_inventory; }
 	inline MainCharacter &filemon() const { assert(_filemon != nullptr); return *_filemon; }
 	inline MainCharacter &mortadelo() const { assert(_mortadelo != nullptr);  return *_mortadelo; }
+	inline GameFileReference scriptFileRef() const { return _scriptFileRef; }
 	inline const Common::String &initScriptName() const { return _initScriptName; }
 	inline uint8 loadedMapCount() const { return _loadedMapCount; }
 
@@ -178,15 +197,21 @@ public:
 	ObjectBase *getObjectByName(const char *name) const;
 	ObjectBase *getObjectByName(MainCharacterKind character, const char *name) const;
 	ObjectBase *getObjectByNameFromAnyRoom(const char *name) const;
-	const Common::String &getGlobalAnimationName(GlobalAnimationKind kind) const;
+	const GameFileReference &getGlobalAnimation(GlobalAnimationKind kind) const;
 	const char *getLocalizedName(const Common::String &name) const;
 	const char *getDialogLine(int32 dialogId) const;
 
 	void toggleObject(MainCharacterKind character, const char *objName, bool isEnabled);
 	void syncGame(Common::Serializer &s);
 
+	GameFileReference readFileRef(Common::SeekableReadStream &stream) const;
+	Common::ScopedPtr<Common::SeekableReadStream> openFileRef(const GameFileReference &ref) const;
+
 private:
-	bool loadWorldFile(const char *path);
+	bool loadWorldFileV3(const char *path);
+	bool loadWorldFileV2(const char *path);
+	bool loadWorldFileV1(const char *path);
+	void readRooms(Common::File &file);
 	void loadLocalizedNames();
 	void loadDialogLines();
 
@@ -195,18 +220,21 @@ private:
 		bool operator()(const char *a, const char *b) const { return strcmp(a, b) == 0; }
 	};
 
+	Common::Array<Common::SharedPtr<Common::File>> _files; ///< only used in V1 to read embedded files
 	Common::Array<Room *> _rooms;
-	Common::String _globalAnimationNames[(int)GlobalAnimationKind::Count];
+	GameFileReference _globalAnimations[(int)GlobalAnimationKind::Count];
 	Common::String _initScriptName;
-	Room *_globalRoom;
-	Inventory *_inventory;
-	MainCharacter *_filemon, *_mortadelo;
+	GameFileReference _scriptFileRef;
+	Room *_globalRoom = nullptr;
+	Inventory *_inventory = nullptr;
+	MainCharacter *_filemon = nullptr, *_mortadelo = nullptr;
 	uint8 _loadedMapCount = 0;
 	Common::HashMap<const char *, const char *,
 		Common::Hash<const char *>,
 		StringEqualTo> _localizedNames;
 	Common::Array<const char *> _dialogLines;
 	Common::Array<char> _namesChunk, _dialogChunk; ///< holds the memory for localizedNames / dialogLines
+	bool _isLoading = true;
 };
 
 }

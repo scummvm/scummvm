@@ -24,10 +24,11 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+#include "common/system.h"
+
 #include "avalanche/avalanche.h"
 #include "avalanche/mainmenu.h"
-
-#include "common/system.h"
+#include "avalanche/intro.h"
 
 namespace Avalanche {
 
@@ -38,12 +39,17 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 }
 
 void MainMenu::run() {
-	CursorMan.showMouse(false);
+	_vm->_intro->run();
 	_vm->_graphics->menuInitialize();
 	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
 	loadFont();
+	drawMenu();
+	wait();
+}
 
+void MainMenu::drawMenu() {
+	CursorMan.showMouse(false);
 	option(1, "Play the game.");
 	option(2, "Read the background.");
 	option(3, "Preview... perhaps...");
@@ -54,8 +60,6 @@ void MainMenu::run() {
 	centre(301, "Make your choice, or wait for the demo.");
 
 	_vm->_graphics->menuRefreshScreen();
-
-	wait();
 }
 
 void MainMenu::loadFont() {
@@ -84,7 +88,6 @@ void MainMenu::centre(int16 y, Common::String text) {
 void MainMenu::wait() {
 	int x = 0;
 	while (!_vm->shouldQuit()) {
-		_vm->_graphics->menuDrawIndicator(x);
 		_vm->_system->delayMillis(40);
 		x++;
 		if (x == 641)
@@ -101,6 +104,12 @@ void MainMenu::wait() {
 				_vm->_graphics->menuRestoreScreen();
 				CursorMan.showMouse(true);
 				return;
+			case Common::KEYCODE_2:
+				_vm->_intro->run();
+				_vm->_graphics->menuInitialize();
+				_vm->_graphics->menuLoadPictures();
+				drawMenu();
+				break;
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_6: // Falltroughs are inteded.
 				// Exit back to DOS

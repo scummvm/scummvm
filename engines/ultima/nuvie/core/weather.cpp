@@ -44,7 +44,7 @@ namespace Nuvie {
 Weather::Weather(const Configuration *cfg, GameClock *c, nuvie_game_t type)
 		: config(cfg), _clock(c), gametype(type), wind_dir(NUVIE_DIR_NONE),
 		  wind_timer(nullptr) {
-	string s;
+	Common::String s;
 	config->value(config_get_game_key(config) + "/displayed_wind_dir", s, "from");
 	if (s == "to")
 		display_from_wind_dir = false;
@@ -177,7 +177,7 @@ bool Weather::is_moon_visible() const {
 	return false;
 }
 
-string Weather::get_wind_dir_str() const {
+Common::String Weather::get_wind_dir_str() const {
 	if (display_from_wind_dir) {
 		static const char from_names[9][3] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW", "C"};
 		return from_names[wind_dir];

@@ -465,7 +465,6 @@ bool CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition, bool bScrollWindow)
 	CRect cHPaintRect, cVPaintRect; // more rects for uncovered region
 	CBsuSet *xpSet;
 	CScrollBar *xpScrollBar;
-	static bool bFirstTime = true;
 
 	AfxGetApp()->DoWaitCursor(1);
 

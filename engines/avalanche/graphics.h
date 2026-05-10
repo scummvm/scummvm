@@ -95,6 +95,13 @@ public:
 	// Used in winning()
 	void drawWinningPic();
 
+	/* 
+	* Used in quitting(), the parameter is to accept different numbers (representing different scenarios). I put it here to 
+	* preserve some of the multi-purpose functionality of the original function.
+	*/
+
+	void drawQuittingPic();
+
 	// Ghostroom's functions:
 	void ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type);
 	Graphics::Surface ghostLoadPicture(Common::File &file, Common::Point &coord);
@@ -124,7 +131,6 @@ public:
 	void menuRestoreScreen();
 	void menuLoadPictures();
 	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color);
-	void menuDrawIndicator(int x);
 
 	void clearAlso();
 	void clearTextBar();
@@ -159,6 +165,8 @@ public:
 	void saveScreen();
 	void restoreScreen();
 	void removeBackup();
+
+	Graphics::Surface &getSurface() { return _surface; }
 
 private:
 	static const int16 kMouseSize = 134;

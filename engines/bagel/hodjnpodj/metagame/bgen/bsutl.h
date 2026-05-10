@@ -72,6 +72,7 @@ class CRRect;
 class CBsuSet {
 public:
 	class CBsuBar *m_xpBarChain = nullptr;	// chain of scroll bar objects
+	bool bFirstTime = true;
 	bool m_bInUpdateBars = false;			// prevent UpdateBars recursion
 	CDialog *m_xpDlg = nullptr;				// dialog to be updated
 	CWnd *m_xpWnd = nullptr;				// window to be scrolled

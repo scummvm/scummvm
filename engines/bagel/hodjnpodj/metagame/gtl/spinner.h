@@ -29,10 +29,10 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#define SPINNER_SPEC                ".\\art\\spinner.bmp"
-#define HODJ_SPINNER_NUMBERS_SPEC   ".\\art\\spinblue.bmp"
-#define PODJ_SPINNER_NUMBERS_SPEC   ".\\art\\spinred.bmp"
-#define SPINNER_SOUND               ".\\sound\\spinner.wav"
+#define SPINNER_SPEC                "art\\spinner.bmp"
+#define HODJ_SPINNER_NUMBERS_SPEC   "art\\spinblue.bmp"
+#define PODJ_SPINNER_NUMBERS_SPEC   "art\\spinred.bmp"
+#define SPINNER_SOUND               "sound\\spinner.wav"
 
 #define SPINNER_COUNT       64
 #define SPINNER_CYCLE       15

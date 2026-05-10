@@ -22,7 +22,6 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_DEBUG_H
 #define AGS_ENGINE_AC_GLOBAL_DEBUG_H
 
-//include <cstdio>
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

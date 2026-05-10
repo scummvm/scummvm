@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section7/room710.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -512,7 +513,7 @@ void Room710::parser() {
 		case 5:
 			midi_stop();
 			player_set_commands_allowed(true);
-			_G(game).new_room = 711;
+			_G(game).setRoom(711);
 
 			break;
 
@@ -536,7 +537,7 @@ void Room710::parser() {
 				player_set_commands_allowed(true);
 				adv_kill_digi_between_rooms(false);
 				midi_stop();
-				_G(game).new_room = 709;
+				_G(game).setRoom(709);
 
 				break;
 

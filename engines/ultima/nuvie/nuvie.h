@@ -23,7 +23,7 @@
 #define NUVIE_NUVIE_H
 
 #include "ultima/shared/engine/events.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "common/archive.h"
 #include "common/random.h"
@@ -33,13 +33,14 @@
 namespace Ultima {
 namespace Nuvie {
 
+class Events;
 class Game;
 class SaveGame;
 class Screen;
 class Script;
 class SoundManager;
 
-class NuvieEngine : public Engine, public Ultima::Shared::EventsCallback {
+class NuvieEngine : public Engine {
 private:
 	Common::RandomSource _randomSource;
 	Configuration *_config;
@@ -49,7 +50,7 @@ private:
 	SaveGame *_savegame;
 
 	SoundManager *_soundManager;
-	Ultima::Shared::EventsManager *_events;
+	Events *_events;
 protected:
 	const UltimaGameDescription *_gameDescription;
 private:
@@ -67,7 +68,7 @@ protected:
 	 */
 	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion);
 public:
-	const Std::string c_empty_string;
+	const Common::String c_empty_string;
 public:
 	NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~NuvieEngine() override;

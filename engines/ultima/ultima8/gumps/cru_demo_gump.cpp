@@ -19,11 +19,11 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "image/bmp.h"
-
 #include "ultima/ultima8/gumps/cru_demo_gump.h"
 
+#include "common/config-manager.h"
+#include "common/stack.h"
+#include "image/bmp.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gfx/render_surface.h"

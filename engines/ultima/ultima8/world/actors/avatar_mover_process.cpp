@@ -20,11 +20,13 @@
  */
 
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
+
+#include "common/system.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction_util.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
 namespace Ultima8 {

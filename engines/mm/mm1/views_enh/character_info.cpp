@@ -179,6 +179,12 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 }
 
 bool CharacterInfo::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_RIGHT)
+		return true;
+
+	if (msg._button != MouseMessage::MB_LEFT)
+		return PartyView::msgMouseUp(msg);
+
 	// Check if a stat icon was clicked
 	Common::Rect r(25, 22);
 	for (int i = 0; i < CHAR_ICONS_COUNT; ++i) {
@@ -220,13 +226,20 @@ void CharacterInfo::draw() {
 
 void CharacterInfo::drawTitle() {
 	const Character &c = *g_globals->_currCharacter;
-	Common::String msg = Common::String::format(
-		"%s : %s %s %s %s",
-		camelCase(c._name).c_str(),
-		STRING[Common::String::format("stats.sex.%d", (int)c._sex)].c_str(),
+	const char *sex = (c._sex == MALE) ? "M" : (c._sex == FEMALE ? "F" : "O");
+	Common::String suffix = Common::String::format(
+		" : %s %s %s %s",
+		sex,
 		STRING[Common::String::format("stats.alignments.%d", (int)c._alignment)].c_str(),
 		STRING[Common::String::format("stats.races.%d", (int)c._race)].c_str(),
 		STRING[Common::String::format("stats.classes.%d", (int)c._class)].c_str()
+	);
+	Common::String name = truncateString(camelCase(c._name),
+		269 - (int)getStringWidth(suffix));
+	Common::String msg = Common::String::format(
+		"%s%s",
+		name.c_str(),
+		suffix.c_str()
 	);
 
 	writeString(0, 0, msg);

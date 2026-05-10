@@ -143,7 +143,7 @@ bool DownloadDialog::selectDirectories() {
 		if (file.getName().equalsIgnoreCase(remoteDirectory.name())) {
 			// If there is, ask user whether it's OK
 			if (!file.isDirectory()) {
-				GUI::MessageDialog alert(_("Cannot create a directory to download - the specified directory has a file with the same name."), _("OK"));
+				GUI::MessageDialog alert(_("Cannot create a directory to download - the specified directory has a file with the same name."));
 				alert.runModal();
 				return false;
 			}

@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_AUDIO_AUDIOSAMPLE_H
 #define ULTIMA8_AUDIO_AUDIOSAMPLE_H
 
+#include "common/scummsys.h"
+
 namespace Audio {
 class SeekableAudioStream;
 }

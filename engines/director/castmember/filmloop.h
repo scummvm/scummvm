@@ -72,8 +72,9 @@ public:
 	bool _crop;
 	bool _center;
 
-	Common::Array<FilmLoopFrame> _frames;
 	Common::Array<Channel> _subchannels;
+
+	Score *_score;
 };
 
 } // End of namespace Director

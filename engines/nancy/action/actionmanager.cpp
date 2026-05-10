@@ -263,7 +263,7 @@ void ActionManager::processActionRecords() {
 			activeRecordsThisFrame = true;
 		}
 
-		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState._state == State::Scene::kLoad) {
+		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState.getState() == State::Scene::kLoad) {
 			// changeScene() must have been called, abort any further processing.
 			// Both old and new behavior is needed (nancy3 intro narration, nancy4 garden gate)
 			return;
@@ -338,22 +338,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			dep.satisfied = true;
 			break;
 		case DependencyType::kInventory:
-			if (dep.condition == g_nancy->_false) {
-				// Item not in possession or held
-				if (NancySceneState._flags.items[dep.label] == g_nancy->_false &&
-					dep.label != NancySceneState._flags.heldItem) {
-					dep.satisfied = true;
-				} else {
-					dep.satisfied = false;
-				}
-			} else {
-				if (NancySceneState._flags.items[dep.label] == g_nancy->_true ||
-					dep.label == NancySceneState._flags.heldItem) {
-					dep.satisfied = true;
-				} else {
-					dep.satisfied = false;
-				}
-			}
+			dep.satisfied = NancySceneState.hasItem(dep.label) == dep.condition;
 
 			break;
 		case DependencyType::kEvent:
@@ -372,7 +357,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				// other way around here. So, we need to check for inequality
 				if (!NancySceneState.getLogicCondition(dep.label, dep.condition)) {
 					// Wait for specified time before satisfying dependency condition
-					Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
+					Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState.getLogicConditionTimestamp(dep.label);
 
 					if (elapsed >= dep.timeData) {
 						dep.satisfied = true;
@@ -405,8 +390,8 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			break;
 		case DependencyType::kElapsedPlayerTime: {
 			// We're only interested in the hours and minutes
-			Time playerTime = NancySceneState._timers.playerTime.getHours() * 3600000 +
-								NancySceneState._timers.playerTime.getMinutes() * 60000;
+			Time playerTime = NancySceneState.getPlayerTime().getHours() * 3600000 +
+								NancySceneState.getPlayerTime().getMinutes() * 60000;
 			switch (dep.condition) {
 			case 0:
 				dep.satisfied = dep.timeData < playerTime;
@@ -424,8 +409,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			// Check how many times a scene has been visited.
 			// This dependency type keeps its data in the time variables
 			// Note: nancy7 completely flipped the meaning of 1 and 2
-			int count = NancySceneState._flags.sceneCounts.contains(dep.hours) ?
-				NancySceneState._flags.sceneCounts[dep.hours] : 0;
+			int count = NancySceneState.getSceneCounts(dep.hours);
 			switch (dep.milliseconds) {
 			case 1:
 				if (	(dep.minutes < count && g_nancy->getGameType() <= kGameTypeNancy6) ||
@@ -459,13 +443,13 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 		}
 		case DependencyType::kElapsedPlayerDay:
 			if (record._days == -1) {
-				record._days = NancySceneState._timers.playerTime.getDays();
+				record._days = NancySceneState.getPlayerTime().getDays();
 				dep.satisfied = true;
 				break;
 			}
 
-			if (record._days < NancySceneState._timers.playerTime.getDays()) {
-				record._days = NancySceneState._timers.playerTime.getDays();
+			if (record._days < NancySceneState.getPlayerTime().getDays()) {
+				record._days = NancySceneState.getPlayerTime().getDays();
 
 				// This is not used in nancy3 and up, so it's a safe assumption that we
 				// do not need to check types recursively
@@ -542,7 +526,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kDifficultyLevel:
-			if (dep.condition == NancySceneState._difficulty) {
+			if (dep.condition == NancySceneState.getDifficulty()) {
 				dep.satisfied = true;
 			} else {
 				dep.satisfied = false;

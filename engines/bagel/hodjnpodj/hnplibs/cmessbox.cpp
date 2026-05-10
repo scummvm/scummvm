@@ -32,7 +32,7 @@ namespace HodjNPodj {
 static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
 
 CMessageBox::CMessageBox(CWnd* pParent, CPalette *pPalette, const char *msg1, const char *msg2, const int dx, const int dy)
-	: CBmpDialog(pParent, pPalette, IDD_GAMEOVER, ".\\ART\\SSCROLL.BMP", dx, dy) {
+	: CBmpDialog(pParent, pPalette, IDD_GAMEOVER, "art\\SSCROLL.BMP", dx, dy) {
 	// Initialize all members
 	//
 	m_pPalette = pPalette;

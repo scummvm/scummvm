@@ -23,6 +23,7 @@
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 #include "graphics/cursorman.h"
 
@@ -36,6 +37,7 @@ GameJohnnyRock::GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd) : Ga
 }
 
 GameJohnnyRock::~GameJohnnyRock() {
+	unregisterScriptFunctions();
 	for (auto item : *_difficultyIcon) {
 		item->free();
 		delete item;
@@ -48,6 +50,19 @@ GameJohnnyRock::~GameJohnnyRock() {
 		_bulletholeIcon->free();
 		delete _bulletholeIcon;
 	}
+	for (auto item : *_gun) {
+		item->free();
+		delete item;
+	}
+	for (auto item : *_numbers) {
+		item->free();
+		delete item;
+	}
+	delete _saveSound;
+	delete _loadSound;
+	delete _moneySound;
+	delete _shotSound;
+	delete _emptySound;
 }
 
 void GameJohnnyRock::init() {
@@ -70,24 +85,24 @@ void GameJohnnyRock::init() {
 	registerScriptFunctions();
 	verifyScriptFunctions();
 
-	_menuzone = new Zone("MainMenu", "GLOBALHIT");
-	_menuzone->addRect(0x0C, 0xBB, 0x3C, 0xC7, nullptr, 0, "SHOTMENU", "0");
+	_menuZone = new Zone("MainMenu", "GLOBALHIT");
+	_menuZone->addRect(0x0C, 0xBB, 0x3C, 0xC7, nullptr, 0, "SHOTMENU", "0");
 
-	_submenzone = new Zone("SubMenu", "GLOBALHIT");
-	_submenzone->addRect(0x10, 0x0F, 0x78, 0x34, nullptr, 0, "STARTMENU", "0");
-	_submenzone->addRect(0x10, 0x8E, 0x8A, 0xAF, nullptr, 0, "CONTMENU", "0");
-	_submenzone->addRect(0x10, 0x3A, 0x6A, 0x5C, nullptr, 0, "RECTSAVE", "0");
-	_submenzone->addRect(0x10, 0x64, 0x84, 0x99, nullptr, 0, "RECTLOAD", "0");
-	_submenzone->addRect(0xD2, 0x8D, 0x12F, 0xB0, nullptr, 0, "EXITMENU", "0");
-	_submenzone->addRect(0xD0, 0x35, 0x123, 0x51, nullptr, 0, "RECTEASY", "0");
-	_submenzone->addRect(0xD2, 0x50, 0x125, 0x6B, nullptr, 0, "RECTAVG", "0");
-	_submenzone->addRect(0xD2, 0x6D, 0x122, 0x86, nullptr, 0, "RECTHARD", "0");
+	_subMenuZone = new Zone("SubMenu", "GLOBALHIT");
+	_subMenuZone->addRect(0x10, 0x0F, 0x78, 0x34, nullptr, 0, "STARTMENU", "0");
+	_subMenuZone->addRect(0x10, 0x8E, 0x8A, 0xAF, nullptr, 0, "CONTMENU", "0");
+	_subMenuZone->addRect(0x10, 0x3A, 0x6A, 0x5C, nullptr, 0, "RECTSAVE", "0");
+	_subMenuZone->addRect(0x10, 0x64, 0x84, 0x99, nullptr, 0, "RECTLOAD", "0");
+	_subMenuZone->addRect(0xD2, 0x8D, 0x12F, 0xB0, nullptr, 0, "EXITMENU", "0");
+	_subMenuZone->addRect(0xD0, 0x35, 0x123, 0x51, nullptr, 0, "RECTEASY", "0");
+	_subMenuZone->addRect(0xD2, 0x50, 0x125, 0x6B, nullptr, 0, "RECTAVG", "0");
+	_subMenuZone->addRect(0xD2, 0x6D, 0x122, 0x86, nullptr, 0, "RECTHARD", "0");
 
 	_shotSound = loadSoundFile("blow.8b");
 	_emptySound = loadSoundFile("empty.8b");
 	_saveSound = loadSoundFile("saved.8b");
 	_loadSound = loadSoundFile("loaded.8b");
-	_skullSound = loadSoundFile("money.8b");
+	_moneySound = loadSoundFile("money.8b");
 
 	_gun = AlgGraphics::loadScreenCoordAniImage("gun.ani", _palette);
 	_numbers = AlgGraphics::loadAniImage("numbers.ani", _palette);
@@ -101,9 +116,11 @@ void GameJohnnyRock::init() {
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
 	moveMouse();
+
+	delete level;
+	delete hole;
 }
 
-// FIXME: Need to unregisterScriptFunctions() in destructor to delete all allocated JRScriptFunctionRect and prevent reallocation to fix memory leakage here...
 void GameJohnnyRock::registerScriptFunctions() {
 #define RECT_HIT_FUNCTION(name, func) _rectHitFuncs[name] = new JRScriptFunctionRect(this, &GameJohnnyRock::func);
 	RECT_HIT_FUNCTION("DEFAULT", rectNewScene);
@@ -236,6 +253,41 @@ void GameJohnnyRock::verifyScriptFunctions() {
 	}
 }
 
+void GameJohnnyRock::unregisterScriptFunctions() {
+	for (auto &func : _rectHitFuncs) {
+		delete func._value;
+	}
+	for (auto &func : _scenePreOps) {
+		delete func._value;
+	}
+	for (auto &func : _sceneShowMsg) {
+		delete func._value;
+	}
+	for (auto &func : _sceneInsOps) {
+		delete func._value;
+	}
+	for (auto &func : _sceneWepDwn) {
+		delete func._value;
+	}
+	for (auto &func : _sceneScnScr) {
+		delete func._value;
+	}
+	for (auto &func : _sceneNxtFrm) {
+		delete func._value;
+	}
+	for (auto &func : _sceneNxtScn) {
+		delete func._value;
+	}
+	_rectHitFuncs.clear();
+	_scenePreOps.clear();
+	_sceneShowMsg.clear();
+	_sceneInsOps.clear();
+	_sceneWepDwn.clear();
+	_sceneScnScr.clear();
+	_sceneNxtFrm.clear();
+	_sceneNxtScn.clear();
+}
+
 JRScriptFunctionPoint GameJohnnyRock::getScriptFunctionZonePtrFb(Common::String name) {
 	auto it = _zonePtrFb.find(name);
 	if (it != _zonePtrFb.end()) {
@@ -325,7 +377,7 @@ Common::Error GameJohnnyRock::run() {
 		_currentFrame = getFrame(scene);
 		while (_currentFrame <= scene->_endFrame && _curScene == oldscene && !_vm->shouldQuit()) {
 			updateMouse();
-			// TODO: call scene->messageFunc
+			callScriptFunctionScene(SHOWMSG, scene->_scnmsg, scene);
 			callScriptFunctionScene(INSOP, scene->_insop, scene);
 			_holster = weaponDown();
 			if (_holster) {
@@ -334,7 +386,7 @@ Common::Error GameJohnnyRock::run() {
 			Common::Point firedCoords;
 			if (fired(&firedCoords)) {
 				if (!_holster) {
-					Rect *hitGlobalRect = checkZone(_menuzone, &firedCoords);
+					Rect *hitGlobalRect = checkZone(_menuZone, &firedCoords);
 					if (hitGlobalRect != nullptr) {
 						callScriptFunctionRectHit(hitGlobalRect->_rectHit, hitGlobalRect);
 					} else if (_shots > 0) {
@@ -343,7 +395,7 @@ Common::Error GameJohnnyRock::run() {
 						}
 						updateStat();
 						Rect *hitRect = nullptr;
-						Zone *hitSceneZone = checkZonesV1(scene, hitRect, &firedCoords);
+						Zone *hitSceneZone = checkZones(scene, hitRect, &firedCoords);
 						if (hitSceneZone != nullptr) {
 							callScriptFunctionZonePtrFb(hitSceneZone->_ptrfb, &firedCoords);
 							callScriptFunctionRectHit(hitRect->_rectHit, hitRect);
@@ -414,9 +466,6 @@ bool GameJohnnyRock::fired(Common::Point *point) {
 	if (!_leftDown) {
 		_buttonDown = false;
 		return false;
-	}
-	if (_leftDown && !_inMenu) {
-		_leftDown = true;
 	}
 	if (_buttonDown) {
 		if (_thisGameTimer - _machGunTimer > 3) {
@@ -513,7 +562,7 @@ void GameJohnnyRock::doMenu() {
 	while (_inMenu && !_vm->shouldQuit()) {
 		Common::Point firedCoords;
 		if (fired(&firedCoords)) {
-			Rect *hitMenuRect = checkZone(_submenzone, &firedCoords);
+			Rect *hitMenuRect = checkZone(_subMenuZone, &firedCoords);
 			if (hitMenuRect != nullptr) {
 				callScriptFunctionRectHit(hitMenuRect->_rectHit, hitMenuRect);
 			}
@@ -581,9 +630,34 @@ void GameJohnnyRock::changeDifficulty(uint8 newDifficulty) {
 		return;
 	}
 	showDifficulty(newDifficulty, true);
-	Game::adjustDifficulty(newDifficulty, _oldDifficulty);
+	adjustDifficulty(newDifficulty, _oldDifficulty);
 	_oldDifficulty = newDifficulty;
 	_difficulty = newDifficulty;
+}
+
+void GameJohnnyRock::adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty) {
+	Common::Array<Scene *> *scenes = _sceneInfo->getScenes();
+	for (size_t i = 0; i < scenes->size(); i++) {
+		Scene *scene = (*scenes)[i];
+		if (!(scene->_diff & 0x01)) {
+			if (scene->_preop == "PAUSE" || scene->_preop == "PAUSFI" || scene->_preop == "PAUSPR") {
+				scene->_dataParam1 = (scene->_dataParam1 * _pauseDiffScale[newDifficulty - 1]) / _pauseDiffScale[oldDifficulty - 1];
+			}
+		}
+		for (size_t j = 0; j < scene->_zones.size(); j++) {
+			Zone *zone = scene->_zones[j];
+			for (size_t k = 0; k < zone->_rects.size(); k++) {
+				Rect *rect = zone->_rects[k];
+				if (!(scene->_diff & 0x02)) {
+					int16 cx = (rect->left + rect->right) / 2;
+					int16 cy = (rect->top + rect->bottom) / 2;
+					int32 w = (rect->width() * _rectDiffScale[newDifficulty - 1]) / _rectDiffScale[oldDifficulty - 1];
+					int32 h = (rect->height() * _rectDiffScale[newDifficulty - 1]) / _rectDiffScale[oldDifficulty - 1];
+					rect->center(cx, cy, w, h);
+				}
+			}
+		}
+	}
 }
 
 void GameJohnnyRock::updateCursor() {
@@ -628,13 +702,7 @@ bool GameJohnnyRock::weaponDown() {
 	return false;
 }
 
-bool GameJohnnyRock::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameJohnnyRock::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameJohnnyRock::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeUint16LE(_totalDies);
@@ -700,18 +768,10 @@ bool GameJohnnyRock::saveState() {
 	outSaveFile->writeString(_retScene);
 	outSaveFile->writeByte(0);
 	outSaveFile->writeByte(_randomScenesSavestateIndex);
-	outSaveFile->finalize();
-	delete outSaveFile;
 	return true;
 }
 
-bool GameJohnnyRock::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameJohnnyRock::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameJohnnyRock::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameJohnnyRock::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -777,7 +837,6 @@ bool GameJohnnyRock::loadState() {
 	_subScene = inSaveFile->readString();
 	_retScene = inSaveFile->readString();
 	_randomScenesSavestateIndex = inSaveFile->readByte();
-	delete inSaveFile;
 	// find out where _random_scenes should point
 	uint16 placeIndex = _entranceIndex[_randomScenesSavestateIndex];
 	if (_randomScenesSavestateIndex < 5) {
@@ -791,7 +850,21 @@ bool GameJohnnyRock::loadState() {
 }
 
 void GameJohnnyRock::doMoneySound() {
-	playSound(_skullSound);
+	playSound(_moneySound);
+}
+
+Zone *GameJohnnyRock::checkZones(Scene *scene, Rect *&hitRect, Common::Point *point) {
+	for (auto &zone : scene->_zones) {
+		uint32 startFrame = zone->_startFrame - _videoFrameSkip + 1;
+		uint32 endFrame = zone->_endFrame + _videoFrameSkip - 1;
+		if (_currentFrame >= startFrame && _currentFrame <= endFrame) {
+			hitRect = checkZone(zone, point);
+			if (hitRect != nullptr) {
+				return zone;
+			}
+		}
+	}
+	return nullptr;
 }
 
 // Misc game functions
@@ -838,12 +911,14 @@ uint16 GameJohnnyRock::sceneToNum(Common::String sceneName) {
 
 void GameJohnnyRock::defaultBullethole(Common::Point *point) {
 	if (point->x >= 14 && point->x <= 306 && point->y >= 5 && point->y <= 169) {
-		uint16 targetX = point->x - _videoPosX;
-		uint16 targetY = point->y - _videoPosY;
-		AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
+		int32 targetX = point->x - _videoPosX;
+		int32 targetY = point->y - _videoPosY;
+		if (targetX > 0 && targetY > 0) {
+			AlgGraphics::drawImageCentered(_videoDecoder->getVideoFrame(), _bulletholeIcon, targetX, targetY);
+		}
 		updateCursor();
 		_shotFired = true;
-		doShot();
+		playSound(_shotSound);
 	}
 }
 
@@ -896,9 +971,57 @@ void GameJohnnyRock::showCombination() {
 	_curScene = numToScene(offset + 0xDB);
 }
 
+// Timer
+static void cursorTimerCallback(void *refCon) {
+	GameJohnnyRock *game = static_cast<GameJohnnyRock *>(refCon);
+	game->runCursorTimer();
+}
+
+void GameJohnnyRock::setupCursorTimer() {
+	g_system->getTimerManager()->installTimerProc(&cursorTimerCallback, 1000000 / 50, (void *)this, "cursortimer");
+}
+
+void GameJohnnyRock::removeCursorTimer() {
+	g_system->getTimerManager()->removeTimerProc(&cursorTimerCallback);
+}
+
+void GameJohnnyRock::runCursorTimer() {
+	_thisGameTimer += 2;
+	if (_whichGun == 9) {
+		if (_emptyCount > 0) {
+			_emptyCount--;
+		} else {
+			_whichGun = 0;
+		}
+	} else {
+		if (_shotFired) {
+			_whichGun++;
+			if (_whichGun > 5) {
+				_whichGun = 0;
+				_shotFired = false;
+			}
+		} else {
+			if (_inHolster > 0) {
+				_inHolster--;
+				if (_inHolster == 0 && _whichGun == 7) {
+					_whichGun = 6;
+				}
+			}
+		}
+	}
+}
+
 // Script functions: Zone
 void GameJohnnyRock::zoneBullethole(Common::Point *point) {
 	defaultBullethole(point);
+}
+
+// Script functions: RectHit
+void GameJohnnyRock::rectNewScene(Rect *rect) {
+	_score += rect->_score;
+	if (!rect->_scene.empty()) {
+		_curScene = rect->_scene;
+	}
 }
 
 void GameJohnnyRock::rectShotMenu(Rect *rect) {
@@ -906,14 +1029,14 @@ void GameJohnnyRock::rectShotMenu(Rect *rect) {
 }
 
 void GameJohnnyRock::rectSave(Rect *rect) {
-	if (saveState()) {
-		doSaveSound();
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
+		playSound(_saveSound);
 	}
 }
 
 void GameJohnnyRock::rectLoad(Rect *rect) {
-	if (loadState()) {
-		doLoadSound();
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
+		playSound(_loadSound);
 	}
 }
 
@@ -949,6 +1072,22 @@ void GameJohnnyRock::rectStart(Rect *rect) {
 	resetParams();
 	newGame();
 	updateStat();
+}
+
+void GameJohnnyRock::rectEasy(Rect *rect) {
+	_difficulty = 1;
+}
+
+void GameJohnnyRock::rectAverage(Rect *rect) {
+	_difficulty = 2;
+}
+
+void GameJohnnyRock::rectHard(Rect *rect) {
+	_difficulty = 3;
+}
+
+void GameJohnnyRock::rectExit(Rect *rect) {
+	shutdown();
 }
 
 void GameJohnnyRock::rectKillInnocent(Rect *rect) {
@@ -1725,9 +1864,26 @@ void GameJohnnyRock::sceneDefaultWepdwn(Scene *scene) {
 	updateMouse();
 }
 
+// Script functions: ScnScr
+void GameJohnnyRock::sceneDefaultScore(Scene *scene) {
+	if (scene->_scnscrParam > 0) {
+		_score += scene->_scnscrParam;
+	}
+}
+
 // Debug methods
-void GameJohnnyRock::debugWarpTo(int val) {
-	// TODO implement
+void GameJohnnyRock::debug_warpTo(int val) {
+	resetParams();
+	switch (val) {
+	case 0:
+		_curScene = _startScene;
+		break;
+	case 1:
+		_curScene = "scene175";
+		break;
+	default:
+		break;
+	}
 }
 
 // Debugger methods
@@ -1742,11 +1898,11 @@ DebuggerJohnnyRock::DebuggerJohnnyRock(GameJohnnyRock *game) {
 
 bool DebuggerJohnnyRock::cmdWarpTo(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: warp <int>");
+		debugPrintf("Usage: warp <int>\n");
 		return true;
 	} else {
 		int val = atoi(argv[1]);
-		_game->debugWarpTo(val);
+		_game->debug_warpTo(val);
 		return false;
 	}
 }

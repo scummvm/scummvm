@@ -60,7 +60,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_WINDOWS_CURSORS,
 		{
-			_s("Use Windows mouse cursors"),
+			_s("Use Windows cursors"),
 			_s("If selected, the game will use Windows mouse cursors bundled in the original .exe file. Otherwise, it will use lower resolution cursors from the data files."),
 			"windows_cursors",
 			true,

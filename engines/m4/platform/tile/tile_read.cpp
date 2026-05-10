@@ -28,9 +28,8 @@ namespace M4 {
 
 void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 	int32 *num_x_tiles, int32 *num_y_tiles, int32 *tile_x, int32 *tile_y, RGB8 *pal) {
-	int32 value;
 
-	// Initalize return parameters
+	// Initialize return parameters
 	*num_x_tiles = 0;
 	*num_y_tiles = 0;
 	*tile_x = 0;
@@ -40,7 +39,7 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 
 	// Open file
 	if (!ifp->exists())
-		error_show(FL, 'FNF!', ".TT file");
+		error_show(FL, ".TT file");
 
 	ifp->readUint32LE();	// skip chunk ID
 	ifp->readUint32LE();	// skip chunk size
@@ -54,7 +53,7 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 
 	// Write color table
 	for (int i = 0; i < 256; i++) {
-		value = ifp->readSint32LE();
+		const int32 value = ifp->readSint32LE();
 
 		pal[i].r = (value >> 16) & 0x0ff;
 		pal[i].g = (value >> 8) & 0x0ff;
@@ -63,12 +62,7 @@ void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
 }
 
 Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
-	int32 tile_size;
-	int offset;
 	Buffer *out = (Buffer *)mem_alloc(sizeof(Buffer), "tile buffer");
-
-	if (!out)
-		error_show(FL, 'OOM!', "fail to allocate mem for buffer structure");
 
 	out->data = nullptr;
 	out->w = 0;
@@ -77,28 +71,21 @@ Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
 
 	// Check parameters
 	if (index < 0)
-		error_show(FL, 'TILI');
+		error_show(FL, "Negative index");
 
-	tile_size = tile_x * tile_y;
+	const int32 tile_size = tile_x * tile_y;
 
 	if (index == 0) {
 		// First tile data
 		if (!ifp->exists())
-			error_show(FL, 'FNF!', ".TT file");
+			error_show(FL, ".TT file");
 
 		// Read data of tiles to file
-		offset = index * tile_size + 256 * 4 + 32; // Get rid of color table and header stuff
+		const int offset = index * tile_size + 256 * 4 + 32; // Get rid of color table and header stuff
 		ifp->seek((uint32)offset);
 	}
 
 	gr_buffer_init(out, "back tile", tile_x, tile_y);
-	if (out->data == nullptr) {
-		out->w = 0;
-		out->stride = 0;
-		out->h = 0;
-		error_show(FL, 'OOM!', "fail to allocate mem for .TT buffer");
-		return out;
-	}
 
 	out->w = out->stride = tile_x;
 	out->h = tile_y;

@@ -38,7 +38,6 @@
 #include "common/events.h"
 #include "common/array.h"
 #include "common/algorithm.h"
-#include "common/translation.h"
 
 #include "engines/util.h"
 #include "engines/engine.h"
@@ -268,7 +267,7 @@ void DMEngine::initializeGame() {
 				return;
 
 			if (_gameMode == kDMModeLoadSavedGame) { // if resume was clicked, bring up ScummVM load screen
-				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 				saveSlot = dialog->runModalWithCurrentTarget();
 				delete dialog;
 			}

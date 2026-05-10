@@ -22,8 +22,8 @@
 #ifndef ULTIMA8_FILESYS_ARCHIVE_H
 #define ULTIMA8_FILESYS_ARCHIVE_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -83,7 +83,7 @@ protected:
 	uint32 getRawSize(uint32 index) const;
 
 private:
-	Std::vector<FlexFile *> _sources;
+	Common::Array<FlexFile *> _sources;
 
 	FlexFile *findArchiveFile(uint32 index) const;
 };

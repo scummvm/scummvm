@@ -554,6 +554,7 @@ private:
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _grayListMap;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _globsMap;
+	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _fileNamesMap;
 	bool _hashMapsInited;
 
 protected:
@@ -654,6 +655,13 @@ public:
 	 * @see MetaEngine::getName().
 	 */
 	const char *getName() const override = 0;
+
+	/**
+	 * Gets the game Id based on the provided target.
+	 * @param target		Game target string
+	 * @return Game Id string
+	*/
+	Common::String getGameId(const char *target) const;
 
 public:
 	/**

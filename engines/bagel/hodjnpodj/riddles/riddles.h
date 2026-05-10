@@ -88,19 +88,19 @@ namespace Riddles {
 #define COLUMN_7_DX         40
 #define COLUMN_7_DY         88
 
-#define COLUMN_WAV          ".\\SOUND\\COLUMN.WAV"
+#define COLUMN_WAV          "sound\\COLUMN.WAV"
 
 #define MAX_RIDDLE_LENGTH  159
 #define MIN_RIDDLE_LENGTH   20
 #define MAX_ANSWERS         13
 #define MAX_ANSWER_LENGTH   23
 
-#define FISH_ANIM           ".\\art\\ridfish.bmp"
-#define FISH_WAV            ".\\sound\\lakefish.wav"
-#define NESS_ANIM           ".\\art\\nessie.bmp"
-#define NESS_WAV            ".\\sound\\serpent.wav"
-#define SKIER_ANIM          ".\\art\\skier.bmp"
-#define SKIER_WAV           ".\\sound\\jetski.wav"
+#define FISH_ANIM           "art\\ridfish.bmp"
+#define FISH_WAV            "sound\\lakefish.wav"
+#define NESS_ANIM           "art\\nessie.bmp"
+#define NESS_WAV            "sound\\serpent.wav"
+#define SKIER_ANIM          "art\\skier.bmp"
+#define SKIER_WAV           "sound\\jetski.wav"
 
 #include "common/pack-start.h"  // START STRUCT PACKING
 struct RIDDLE {

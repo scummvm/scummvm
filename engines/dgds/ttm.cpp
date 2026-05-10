@@ -627,6 +627,11 @@ void TTMInterpreter::doFadeOutOp(int16 colorno, int16 ncolors, int16 targetcol, 
 			g_system->updateScreen();
 			g_system->delayMillis(5);
 		}
+
+		// Slight hack - the above loop took some time, so update frame millis
+		// to make sure times calculated for dialogs are still right, as they
+		// happen after this
+		_vm->updateThisFrameMillis();
 	}
 
 	// Logic here is different in Dragon + HOC.  They clear all buffers after fade
@@ -644,6 +649,7 @@ void TTMInterpreter::doFadeOutOp(int16 colorno, int16 ncolors, int16 targetcol, 
 
 	// Reset to previous palette.
 	_vm->getGamePals()->setPalette();
+
 }
 
 void TTMInterpreter::doFadeInOp(int16 colorno, int16 ncolors, int16 targetcol, int16 speed) {
@@ -660,6 +666,11 @@ void TTMInterpreter::doFadeInOp(int16 colorno, int16 ncolors, int16 targetcol, i
 			g_system->updateScreen();
 			g_system->delayMillis(5);
 		}
+
+		// Slight hack - the above loop took some time, so update frame millis
+		// to make sure times calculated for dialogs are still right, as they
+		// happen after this
+		_vm->updateThisFrameMillis();
 	}
 }
 

@@ -36,7 +36,8 @@ enum AlcachofaDebugChannels {
 
 enum class EngineVersion {
 	V1_0 = 10, // edicion orginal, vaqueros and terror
-	V2_0 = 20, // the rest
+	V2_0 = 20, // secta, moscu and escarabajo
+	V2_1 = 21, // corvino, balones and mamelucos
 	V3_0 = 30, // Remastered movie adventure (used for original spanish release)
 	V3_1 = 31, // Remastered movie adventure (for german release and english/spanish steam release)
 };
@@ -58,8 +59,9 @@ extern const PlainGameDescriptor alcachofaGames[];
 
 extern const AlcachofaGameDescription gameDescriptions[];
 
-#define GAMEOPTION_HIGH_QUALITY GUIO_GAMEOPTIONS1 // I should comment what this does, but I don't know
-#define GAMEOPTION_32BITS GUIO_GAMEOPTIONS2
+#define GAMEOPTION_HIGH_QUALITY GUIO_GAMEOPTIONS1 // toggles some special effect objects
+#define GAMEOPTION_32BITS GUIO_GAMEOPTIONS2 // renders in 16/32 bit color 
+#define GAMEOPTION_TEXTURE_FILTER GUIO_GAMEOPTIONS3 // toggles texture filters
 
 } // End of namespace Alcachofa
 

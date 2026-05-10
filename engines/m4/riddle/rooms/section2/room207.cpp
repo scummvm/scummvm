@@ -21,11 +21,11 @@
 
 #include "m4/riddle/rooms/section2/room207.h"
 #include "m4/riddle/rooms/section2/section2.h"
-
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/other.h"
 #include "m4/graphics/gr_series.h"
-#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
@@ -126,7 +126,7 @@ void Room207::init() {
 		}
 	}
 
-	if (inv_object_is_here("REBUS AMULET")) {
+	if (!inv_object_is_here("REBUS AMULET")) {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", false);
 	} else {
 		_rebusAmuletSeries = series_load("rebus amulet", -1, nullptr);
@@ -318,7 +318,7 @@ void Room207::parser() {
 	}  else if (player_said("conv203d")) {
 		convHandler();
 	} else if (_G(kernel).trigger == 203) {
-		_G(game).new_room = 203;
+		_G(game).setRoom(203);
 	} else if (talkFlag && player_said("peasant")) {
 		player_set_commands_allowed(false);
 		player_update_info();
@@ -892,8 +892,8 @@ void Room207::parser() {
 		}
 
 	} else if (!_pipeFlag && lookFlag && player_said("REBUS AMULET") && !inv_object_is_here("REBUS AMULET")) {
-		if (_G(flags)[V061] == 0) {
-			_G(flags)[V061] = 1;
+		if (_G(flags)[V074] == 0) {
+			_G(flags)[V074] = 1;
 			digi_play("207r04", 1);
 		} else
 			digi_play("207r04a", 1);
@@ -1042,7 +1042,7 @@ void Room207::parser() {
 			break;
 
 		case 1:
-			_G(game).new_room = 203;
+			_G(game).setRoom(203);
 
 			break;
 
@@ -1701,7 +1701,7 @@ void Room207::daemon() {
 		break;
 
 	case 749:
-		_G(game).new_room = 203;
+		_G(game).setRoom(203);
 		break;
 
 	default:

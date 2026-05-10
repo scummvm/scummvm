@@ -175,6 +175,22 @@ public:
 	U32String getTranslation(const String &message, const String &context) const;
 
 	/**
+	 * Return the translation of the message with the given index into
+	 * the current language.
+	 *
+	 * In case the index is out of bounds, return an empty message,
+	 * as a U32String.
+	 */
+	U32String getTranslation(uint32 index) const;
+
+	/**
+	 * Return a list of all the loaded contexts.
+	 *
+	 * @return A list of all the loaded contexts.
+	 */
+	const StringArray getContexts() const;
+
+	/**
 	 * Return a list of supported languages.
 	 *
 	 * @return The list of supported languages in a user-readable format.
@@ -239,6 +255,22 @@ private:
 	 */
 	bool checkHeader(File &in);
 
+	/**
+	 * Return the translation of @p message into the current language loaded from a .po file.
+	 *
+	 * In case the message is not found in the translation catalog,
+	 * return the original untranslated message, as a U32String.
+	 */
+	U32String getPoTranslation(const char *message) const;
+	U32String getPoTranslation(const char *message, const char *context) const;
+
+	/**
+	 * Load the translation for the given language from its .po file.
+	 *
+	 * @param index Index of the language in the list of languages.
+	 */
+	bool loadLanguagePo(int index);
+
 	StringArray _langs;
 	StringArray _langNames;
 
@@ -246,6 +278,9 @@ private:
 	Array<PoMessageEntry> _currentTranslationMessages;
 	int _currentLang;
 	Common::String _translationsFileName;
+	bool _havePoDirectory;
+	bool _usingPo;
+	HashMap<Common::String, int> _poTranslations;
 };
 
 class MainTranslationManager : public TranslationManager, public Singleton<MainTranslationManager> {

@@ -89,6 +89,7 @@ class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
 class PopUpWidget;
+class ScrollContainerWidget;
 
 struct LauncherEntry {
 	Common::String key;
@@ -136,6 +137,7 @@ protected:
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
 	Widget			*_editButton;
+	Widget			*_mainHelpButton;
 	Common::StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
@@ -145,6 +147,7 @@ protected:
 	Common::String	_title;
 	Common::String	_search;
 	MetadataParser	_metadataParser;
+	Common::StringArray _domainTitles;	// Store game titles for each domain
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
@@ -188,6 +191,38 @@ protected:
 	void removeGame(int item);
 
 	/**
+	 * Remove multiple games and their addons.
+	 */
+	void removeGamesWithAddons(const Common::StringArray &domainsToRemove);
+
+	/**
+	 * Shared helper for removing games after confirmation.
+	 * Called by subclasses after building their own confirmation message.
+	 */
+	void removeGames(const Common::Array<bool> &selectedItems, bool isGrid);
+
+	/**
+	 * Handle game removal confirmation with selection validation.
+	 * Checks if at least one item is selected, then shows the removal
+	 * confirmation dialog with a list of games to be removed.
+	 */
+	void confirmRemoveGames(const Common::Array<bool> &selectedItems);
+
+	/**
+	 * Update selection after game removal.
+	 * Each subclass handles its own UI-specific selection logic.
+	 */
+	virtual void updateSelectionAfterRemoval() = 0;
+
+	/**
+	 * Check if any items are selected in the given array.
+	 */
+	bool hasAnySelection(const Common::Array<bool> &selectedItems) const;
+
+	// Get the selected items from the current view (list or grid).
+	virtual const Common::Array<bool>& getSelectedItems() const = 0;
+
+	/**
 	 * Handle "Edit game..." button.
 	 */
 	void editGame(int item);
@@ -218,6 +253,41 @@ private:
 	bool checkModifier(int modifier);
 };
 
+/**
+ * Removal confirmation dialog with scrollable content.
+ * Used by LauncherDialog to display game list for removal confirmation.
+ */
+class RemovalConfirmationDialog : public Dialog {
+public:
+	RemovalConfirmationDialog(const Common::U32String &message, const Common::StringArray &gameTitles);
+	~RemovalConfirmationDialog() override;
+
+	void reflowLayout() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	static const uint32 kRemovalYes = 1;
+	static const uint32 kRemovalNo = 2;
+
+private:
+	static const int kHorizontalMargin = 10;
+	static const int kButtonSpacing = 10;
+	static const int kGamePadding = 10;
+
+	// Pre-calculated values
+	const int _buttonWidth;
+	const int _buttonHeight;
+	const int _scrollbarWidth;
+
+	Common::U32String _message;
+	Common::StringArray _gameTitles;
+	ScrollContainerWidget *_scrollContainer;
+	Common::Array<StaticTextWidget *> _messageWidgets;
+	Common::Array<StaticTextWidget *> _gameNameWidgets;
+	Common::Array<ButtonWidget *> _buttons;
+	Common::Array<Common::U32String> _messageLines;
+	int _maxlineWidth;
+};
+
 class LauncherChooser {
 protected:
 	LauncherDialog *_impl;
@@ -241,6 +311,8 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
 
 protected:
+	void updateSelectionAfterRemoval() override;
+	const Common::Array<bool>& getSelectedItems() const override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);

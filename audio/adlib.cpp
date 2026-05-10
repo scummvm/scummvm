@@ -19,9 +19,10 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/error.h"
 #include "common/scummsys.h"
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/error.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/types.h"
@@ -1271,10 +1272,10 @@ void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr, uint32 da
 	}
 #endif
 
-	if (type == 'ADL ' && instr && dataSize == sizeof(AdLibInstrument))
+	if (type == MKTAG('A','D','L',' ') && instr && dataSize == sizeof(AdLibInstrument))
 		memcpy(&_partInstr, instr, sizeof(AdLibInstrument));
-	else if (type != 'ADL '){
-		warning("AdLibPart: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	else if (type != MKTAG('A','D','L',' ')) {
+		warning("AdLibPart: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 	}
 }
 
@@ -1359,7 +1360,7 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 	}
 #endif
 
-	if (type == 'ADLP' && instr && dataSize) {
+	if (type == MKTAG('A','D','L','P') && instr && dataSize) {
 		byte note = instr[0];
 		_notes[note] = instr[1];
 
@@ -1381,8 +1382,8 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 		_customInstruments[note]->carSustainRelease     = instr[10];
 		_customInstruments[note]->carWaveformSelect     = instr[11];
 		_customInstruments[note]->feedback               = instr[12];
-	} else if (type != 'ADLP'){
-		warning("AdLibPercussionChannel: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	} else if (type != MKTAG('A','D','L','P')) {
+		warning("AdLibPercussionChannel: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 	}
 }
 
@@ -2311,14 +2312,23 @@ public:
 
 MusicDevices AdLibEmuMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, "", MT_ADLIB));
+
+	if (OPL::Config::detect(OPL::Config::kOpl2) > 0 ||
+	    OPL::Config::detect(OPL::Config::kOpl3) > 0) {
+		devices.push_back(MusicDevice(this, "", MT_ADLIB));
+	}
+
 	return devices;
 }
 
 Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_ADLIB();
+	if (OPL::Config::detect(OPL::Config::kOpl2) > 0 ||
+	    OPL::Config::detect(OPL::Config::kOpl3) > 0) {
+		*mididriver = new MidiDriver_ADLIB();
+		return Common::kNoError;
+	}
 
-	return Common::kNoError;
+	return Common::kAudioDeviceInitFailed;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ADLIB)

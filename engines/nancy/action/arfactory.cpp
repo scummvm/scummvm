@@ -81,13 +81,26 @@ namespace Action {
 ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableReadStream *recordStream) {
 	switch (type) {
 	case 10:
-		return new Hot1FrSceneChange(CursorManager::kHotspot);
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new Hot1FrSceneChange(CursorManager::kHotspot);
+		else
+			return new SceneChange();	// Moved from 12 in Nancy10
 	case 11:
-		return new HotMultiframeSceneChange(CursorManager::kHotspot);
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new HotMultiframeSceneChange(CursorManager::kHotspot);
+		else
+			return new Hot1FrSceneChange(CursorManager::kNormal, true);
 	case 12:
-		return new SceneChange();
+		if (g_nancy->getGameType() <= kGameTypeNancy9) {
+			return new SceneChange();
+		} else {
+			return new HotMultiframeSceneChange(CursorManager::kNormal, true);
+		}
 	case 13:
-		return new HotMultiframeMultisceneChange();
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new HotMultiframeMultiSceneChange();
+		else
+			return new Hot1FrSceneChange(CursorManager::kExit); // TODO: cursor
 	case 14:
 		return new Hot1FrSceneChange(CursorManager::kExit);
 	case 15:
@@ -99,46 +112,75 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 18:
 		return new Hot1FrSceneChange(CursorManager::kMoveDown);
 	case 19:
-		return new HotMultiframeSceneChange(CursorManager::kMoveForward);
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new HotMultiframeSceneChange(CursorManager::kMoveForward);
+		else
+			return new Hot1FrSceneChange(CursorManager::kMoveLeft);		// Moved from 22 in Nancy10
 	case 20:
-		if (g_nancy->getGameType() == kGameTypeVampire) {
+		if (g_nancy->getGameType() == kGameTypeVampire)
 			return new PaletteThisScene();
-		} else {
+		else if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new HotMultiframeSceneChange(CursorManager::kMoveUp);
-		}
+		else
+			return new Hot1FrSceneChange(CursorManager::kMoveRight);	// Moved from 23 in Nancy10
 	case 21:
-		if (g_nancy->getGameType() == kGameTypeVampire) {
+		if (g_nancy->getGameType() == kGameTypeVampire)
 			return new PaletteNextScene();
-		} else {
+		else if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new HotMultiframeSceneChange(CursorManager::kMoveDown);
-		}
+		else
+			return new HotSingleFrameSceneChange();
 	case 22:
-		return new Hot1FrSceneChange(CursorManager::kMoveLeft);
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new Hot1FrSceneChange(CursorManager::kMoveLeft);
+		else
+			return new HotMultiframeSceneChange(CursorManager::kHotspot);		// Moved from 11 in Nancy 10
 	case 23:
-		return new Hot1FrSceneChange(CursorManager::kMoveRight);
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new Hot1FrSceneChange(CursorManager::kMoveRight);
+		else
+			return new HotMultiframeSceneChange(CursorManager::kMoveForward);	// Moved from 19 in Nancy 10
 	case 24:
-		return new HotMultiframeMultisceneCursorTypeSceneChange();
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new HotMultiframeMultiSceneCursorTypeSceneChange();
+		else
+			return new HotMultiframeSceneChange(CursorManager::kMoveUp);		// Moved from 20 in Nancy 10
 	case 25: {
-		// Weird case; instead of storing the cursor id, they instead chose to store
-		// an AR id corresponding to one of the directional Hot1FrSceneChange variants.
-		// Thus, we need to scan the incoming chunk and make another call to createActionRecord().
-		// This is not the most elegant solution, but it works :)
-		assert(recordStream);
-		uint16 innerID = recordStream->readUint16LE();
-		Hot1FrSceneChange *newRec = dynamic_cast<Hot1FrSceneChange *>(createActionRecord(innerID));
-		assert(newRec);
-		newRec->_isTerse = true;
-		return newRec;
+		if (g_nancy->getGameType() <= kGameTypeNancy9) {
+			// Weird case; instead of storing the cursor id, they instead chose to store
+			// an AR id corresponding to one of the directional Hot1FrSceneChange variants.
+			// Thus, we need to scan the incoming chunk and make another call to createActionRecord().
+			// This is not the most elegant solution, but it works :)
+			assert(recordStream);
+			uint16 innerID = recordStream->readUint16LE();
+			Hot1FrSceneChange *newRec = dynamic_cast<Hot1FrSceneChange *>(createActionRecord(innerID));
+			assert(newRec);
+			newRec->_isTerse = true;
+			return newRec;
+		} else {
+			return new HotMultiframeSceneChange(CursorManager::kMoveDown);		// Moved from 21 in Nancy 10
+		}
 	}
 	case 26:
-		return new InteractiveVideo();
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
+			return new InteractiveVideo();
+		else
+			return new HotMultiframeMultiSceneChange();	// Moved from 13 in Nancy 10
+	case 27:
+		return new HotMultiframeMultiSceneCursorTypeSceneChange(); // Moved from 24 to 27 in Nancy10
+	case 28:
+		return new InteractiveVideo();	// Moved from 26 to 28 in Nancy10
+	case 29:
+		// Nancy 10+
+		return new ControlUIItems();
+	case 32:
+		// Nancy 10+
+		return new UIPopupPrepScene();
 	case 40:
-		if (g_nancy->getGameType() < kGameTypeNancy2) {
-			// Only used in TVD
-			return new LightningOn();
-		} else {
+		if (g_nancy->getGameType() <= kGameTypeNancy1)
+			return new LightningOn();	// Only used in TVD
+		else
 			return new SpecialEffect();
-		}
 	case 50:
 		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:
@@ -147,25 +189,22 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 53:
 		return new PlaySecondaryMovie();
 	case 54:
-		if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new Overlay(false); // PlayStaticBitmapAnimation
-		} else {
+		else
 			return new Overlay(true);
-		}
 	case 55:
-		if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new Overlay(true); // PlayIntStaticBitmapAnimation
-		} else if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		else if (g_nancy->getGameType() >= kGameTypeNancy7)
 			return new OverlayStaticTerse();
-		}
-		return nullptr;
+		else
+			return nullptr;
 	case 56:
-		if (g_nancy->getGameType() <= kGameTypeNancy6) {
+		if (g_nancy->getGameType() <= kGameTypeNancy6)
 			return new ConversationVideo();
-		} else {
+		else
 			return new OverlayAnimTerse();
-		}
-		return nullptr;
 	case 57:
 		return new ConversationCel();
 	case 58:
@@ -187,11 +226,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new Autotext();
 		}
 	case 62:
-		if (g_nancy->getGameType() <= kGameTypeNancy7) {
+		if (g_nancy->getGameType() <= kGameTypeNancy7)
 			return new MapCallHotMultiframe(); // TVD/nancy1 only
-		} else {
+		else
 			return new ConversationCelTerse(); // nancy8 and up
-		}
 	case 63:
 		return new ConversationSoundTerse();
 	case 65:
@@ -210,8 +248,14 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new ModifyListEntry(ModifyListEntry::kDelete);
 	case 73:
 		return new ModifyListEntry(ModifyListEntry::kMark);
-	case 75:
-		return new TextBoxWrite();
+	case 74:	// Added in Nancy 10
+	case 75:	// Changed in Nancy 10
+	case 81:	// Nancy 11+
+		if (g_nancy->getGameType() <= kGameTypeNancy9 && type == 75) {
+			return new TextBoxWrite();
+		} else {
+			return new FrameTextBox(static_cast<FrameTextBox::Variant>(type));
+		}
 	case 76:
 		return new TextboxClear();
 	case 77:
@@ -243,11 +287,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 107:
 		return new EventFlags();
 	case 108:
-		if (g_nancy->getGameType() <= kGameTypeNancy6) {
+		if (g_nancy->getGameType() <= kGameTypeNancy6)
 			return new OrderingPuzzle(OrderingPuzzle::kOrdering);
-		} else {
+		else
 			return new GotoMenu();
-		}
 	case 109:
 		return new LoseGame();
 	case 110:
@@ -288,6 +331,13 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PopInvViewPriorScene();
 	case 126:
 		return new GoInvViewScene();
+	case 130:
+		// Nancy 10+
+		warning("ChangeCellPhoneInfo - not implemented yet");
+		return nullptr;
+	case 131:
+		// Nancy 10+
+		return new AddSearchLink();
 	case 140:
 		return new SetVolume();
 	case 148:
@@ -295,11 +345,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: Used in Nancy 9, sand castle puzzle
 		return nullptr;
 	case 149:
-		if (g_nancy->getGameType() >= kGameTypeNancy9) {
-			// This got moved in nancy9
-			return new SetVolume();
-		}
-		return nullptr;
+		if (g_nancy->getGameType() >= kGameTypeNancy9)
+			return new SetVolume();	// Moved from 140 in Nancy9
+		else
+			return nullptr;
 	case 150:
 		return new PlaySound();
 	case 151:
@@ -404,6 +453,22 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new WhaleSurvivorPuzzle();
 	case 238:
 		return new MemoryPuzzle();
+	// -- Nancy 10 and up --
+	case 239:
+		//return new SortPuzzle();
+	case 241:
+		// return new DotConnectPuzzle();
+	case 242:
+		// return new MagnetMazePuzzle();
+	case 243:
+		// return new BeadPuzzle();
+	case 244:
+		// return new GridMapPuzzle();
+	// -- Nancy 11 and up --
+	case 245:
+		// return new TypingQuizPuzzle();
+	case 246:
+		// return new MatchPuzzle();
 	default:
 		warning("Unknown action record type %d", type);
 		return nullptr;

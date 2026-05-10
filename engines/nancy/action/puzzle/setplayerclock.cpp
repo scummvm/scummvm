@@ -34,7 +34,7 @@ namespace Nancy {
 namespace Action {
 
 SetPlayerClock::~SetPlayerClock() {
-	Nancy::UI::Clock *clock = NancySceneState.getClock();
+	UI::Clock *clock = NancySceneState.getClock();
 	if (clock) {
 		clock->lockClock(false);
 	}
@@ -99,7 +99,7 @@ void SetPlayerClock::execute() {
 
 		_alarmHours = NancySceneState.getPlayerTime().getHours();
 
-		Nancy::UI::Clock *clock = NancySceneState.getClock();
+		UI::Clock *clock = NancySceneState.getClock();
 		if (clock) {
 			clock->lockClock(true);
 		}

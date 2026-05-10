@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'ScummVM Documentation'
-copyright = '2020-2025, ScummVM'
+copyright = '2020-2026, ScummVM'
 author = 'ScummVM'
 
 

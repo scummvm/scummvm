@@ -298,6 +298,12 @@ public:
 	void setBaseFileName(Common::Path str) { _baseFileName = str; }
 
 	/**
+	 * Get the original Macintosh file name extracted from headers.
+	 * @return The original file name if available, otherwise an empty string.
+	 */
+	String getOriginalFileName() const { return _originalFileName; }
+
+	/**
 	 * Return list of resource IDs with specified type ID
 	 */
 	MacResIDArray getResIDArray(uint32 typeID);
@@ -347,6 +353,7 @@ public:
 private:
 	SeekableReadStream *_stream;
 	Path _baseFileName;
+	String _originalFileName;
 
 	bool load(SeekableReadStream *stream);
 

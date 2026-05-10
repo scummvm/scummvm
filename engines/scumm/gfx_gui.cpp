@@ -331,6 +331,32 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	return ks;
 }
 
+bool ScummEngine::showBannerAndPauseForTextInput(int bannerId, const char *prompt, Common::String &input, uint maxLength) {
+	const Common::String promptString(prompt);
+
+	input.clear();
+
+	while (true) {
+		const Common::String bannerText = promptString + input;
+		Common::KeyState ks = showBannerAndPause(bannerId, -1, "%s", bannerText.c_str());
+
+		if (ks.keycode == Common::KEYCODE_ESCAPE)
+			return false;
+
+		if (ks.keycode == Common::KEYCODE_RETURN)
+			return !input.empty();
+
+		if (ks.keycode == Common::KEYCODE_BACKSPACE || ks.keycode == Common::KEYCODE_DELETE) {
+			if (!input.empty())
+				input.deleteLastChar();
+			continue;
+		}
+
+		if (ks.ascii >= 32 && ks.ascii < 127 && input.size() < maxLength)
+			input += (char)ks.ascii;
+	}
+}
+
 Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine) {
 	Common::Rect sentenceline;
 	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;

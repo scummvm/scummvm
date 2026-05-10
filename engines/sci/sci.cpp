@@ -188,6 +188,12 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 		SearchMan.addSubDirectoryMatching(gameDataDir, "bonus"); // resource patches
 	}
 
+	// Behind the Developer's Shield is an alternate set of articles and
+	// artwork bundled with Inside the Chest.
+	if (_gameId == GID_SHIELD) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "shield", -1);
+	}
+
 	switch (desc->language) {
 	case Common::DE_DEU:
 		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");
@@ -322,8 +328,9 @@ Common::Error SciEngine::run() {
 		bool undither = ConfMan.getBool("disable_dithering");
 		Common::RenderMode renderMode = SciGfxDriver::getRenderMode();
 
-		// Disable undithering for CGA, Hercules and other unsuitable video modes. The render mode should have been set to
-		// kRenderDefault by determineRenderMode() if undithering is selected, but we want to make sure that this matches.
+		// Disable undithering for CGA, Hercules and other unsuitable video modes. For all other modes,
+		// the render mode should have been changed to kRenderDefault inside SciGfxDriver::getRenderMode()
+		// if undithering is selected.
 		if (renderMode != Common::kRenderDefault)
 			undither = false;
 
@@ -451,10 +458,6 @@ Common::Error SciEngine::run() {
 		warning("Fan made script patch detected");
 	}
 
-	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
-		suggestDownloadGK2SubTitlesPatch();
-	}
-
 	runGame();
 
 	ConfMan.flushToDisk();
@@ -514,36 +517,6 @@ bool SciEngine::gameHasFanMadePatch() {
 	}
 
 	return false;
-}
-
-void SciEngine::suggestDownloadGK2SubTitlesPatch() {
-	Common::U32String altButton;
-	Common::U32String downloadMessage;
-
-	if (_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		altButton = _("Download patch");
-		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
-	}
-	else {
-		altButton = "";
-		downloadMessage = "";
-	}
-
-	int result = showScummVMDialog(_("GK2 has fan made subtitles, available thanks to the good people at SierraHelp.\n\n"
-		"Installation:\n"
-		"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
-		downloadMessage +
-		"- extract zip file\n"
-		"- no need to run the .exe file\n"
-		"- extract the .exe file with a file archiver, like 7-zip\n"
-		"- create a PATCHES subdirectory inside your GK2 directory\n"
-		"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
-		"- replace files with similar names\n"
-		"- restart the game\n"), altButton, false);
-	if (result) {
-		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
-		_system->openUrl(url);
-	}
 }
 
 bool SciEngine::initGame() {

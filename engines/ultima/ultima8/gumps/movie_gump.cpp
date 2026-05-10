@@ -54,7 +54,7 @@ static const uint32 IFF_LANG_FR = MKTAG('F', 'R', 'E', 'N');
 static const uint32 IFF_LANG_EN = MKTAG('E', 'N', 'G', 'L');
 static const uint32 IFF_LANG_DE = MKTAG('G', 'E', 'R', 'M');
 
-static Std::string _fixCrusaderMovieName(const Std::string &s) {
+static Common::String _fixCrusaderMovieName(const Common::String &s) {
 	/*
 	 HACK! The game comes with movies MVA01.AVI etc, but the usecode mentions both
 	 MVA01 and MVA1.  We do a translation here.	 These are the strings we need to fix:
@@ -68,7 +68,7 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 	 0B52: 0D	push string	"mva9"
 	*/
 	if (s.size() == 4)
-		return Std::string::format("mva0%c", s[3]);
+		return Common::String::format("mva0%c", s[3]);
 	else if (s.equals("mva3a"))
 		return "mva03a";
 	else if (s.equals("mva5a"))
@@ -77,12 +77,12 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 	return s;
 }
 
-static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
-	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
+static Common::SeekableReadStream *_tryLoadCruMovieFile(const Common::String &filename, const char *extn) {
+	const Common::String path = Common::String::format("flics/%s.%s", filename.c_str(), extn);
 	auto *rs = new Common::File();
 	if (!rs->open(path.c_str())) {
 		// Try with a "0" in the name
-		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
+		const Common::String adjustedfn = Common::String::format("flics/0%s.%s", filename.c_str(), extn);
 		if (!rs->open(adjustedfn.c_str())) {
 			delete rs;
 			return nullptr;
@@ -91,7 +91,7 @@ static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filen
 	return rs;
 }
 
-static Common::SeekableReadStream *_tryLoadCruAVI(const Std::string &filename) {
+static Common::SeekableReadStream *_tryLoadCruAVI(const Common::String &filename) {
 	Common::SeekableReadStream *rs = _tryLoadCruMovieFile(filename, "avi");
 	if (!rs)
 		warning("movie %s not found", filename.c_str());
@@ -100,7 +100,7 @@ static Common::SeekableReadStream *_tryLoadCruAVI(const Std::string &filename) {
 
 // Convenience function that tries to open both TXT (No Remorse)
 // and IFF (No Regret) subtitle formats.
-static Common::SeekableReadStream *_tryLoadCruSubtitle(const Std::string &filename) {
+static Common::SeekableReadStream *_tryLoadCruSubtitle(const Common::String &filename) {
 	Common::SeekableReadStream *txtfile = _tryLoadCruMovieFile(filename, "txt");
 	if (txtfile)
 		return txtfile;
@@ -255,7 +255,7 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 	}
 }
 
-/*static*/ MovieGump *MovieGump::CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent, uint16 frameshape) {
+/*static*/ MovieGump *MovieGump::CruMovieViewer(const Common::String fname, int x, int y, const byte *pal, Gump *parent, uint16 frameshape) {
 	Common::SeekableReadStream *rs = _tryLoadCruAVI(fname);
 	if (!rs)
 		return nullptr;

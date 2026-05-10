@@ -54,18 +54,18 @@ struct SPECIAL_TRAVEL {
 };
 
 static const SPECIAL_TRAVEL aTravelArray[MG_SPECIAL_VISIT_COUNT] = {
-	{{"st35", "st36", "st37", "st38", "st39", "st40", nullptr}, "Boat2", ".\\ART\\?0BOAT.BMP", 0, 0},
-	{{"st40", "st39", "st38", "st37", "st36", "st35", nullptr}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
-	{{"st30", "st31", "st32", "st33", "st34", "st35", nullptr}, "Boat1", ".\\ART\\?0BOAT.BMP", 0, 0},
-	{{"st35", "st34", "st33", "st32", "st31", "st30", nullptr}, "Boat3", ".\\ART\\?0BOAT.BMP", 0, 0},
+	{{"st35", "st36", "st37", "st38", "st39", "st40", nullptr}, "Boat2", "art\\?0BOAT.BMP", 0, 0},
+	{{"st40", "st39", "st38", "st37", "st36", "st35", nullptr}, "Boat1", "art\\?0BOAT.BMP", 0, 0},
+	{{"st30", "st31", "st32", "st33", "st34", "st35", nullptr}, "Boat1", "art\\?0BOAT.BMP", 0, 0},
+	{{"st35", "st34", "st33", "st32", "st31", "st30", nullptr}, "Boat3", "art\\?0BOAT.BMP", 0, 0},
 
-	{{"st01", "st02", "st03", "st04", nullptr, nullptr, nullptr}, "Sky2", ".\\ART\\?0SKY.BMP", 0, 0},
-	{{"st04", "st03", "st02", "st01", nullptr, nullptr, nullptr}, "Sky1", ".\\ART\\?0SKY.BMP", 0, 0},
+	{{"st01", "st02", "st03", "st04", nullptr, nullptr, nullptr}, "Sky2", "art\\?0SKY.BMP", 0, 0},
+	{{"st04", "st03", "st02", "st01", nullptr, nullptr, nullptr}, "Sky1", "art\\?0SKY.BMP", 0, 0},
 
-	{{"st22", "st21", "st20", "st19", "st18", "st17", "st15", "st14", "st13", "st11", "st10", "Aerie", nullptr}, nullptr, ".\\ART\\?0CAR.BMP", MG_SOUND_TRAN1, MG_SOUND_TRAN2},
-	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, nullptr, ".\\ART\\?0WALK.BMP", 0, 0},
-	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, "Secret2", ".\\ART\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6},
-	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, "Secret1", ".\\ART\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6}
+	{{"st22", "st21", "st20", "st19", "st18", "st17", "st15", "st14", "st13", "st11", "st10", "Aerie", nullptr}, nullptr, "art\\?0CAR.BMP", MG_SOUND_TRAN1, MG_SOUND_TRAN2},
+	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, nullptr, "art\\?0WALK.BMP", 0, 0},
+	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, "Secret2", "art\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6},
+	{{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, "Secret1", "art\\?0WALK.BMP", MG_SOUND_TRAN5, MG_SOUND_TRAN6}
 };
 
 // CGtlData::SetMetaGame -- set meta game on or off
@@ -214,7 +214,7 @@ bool CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 
 	// as long as the computer's on the move, then compute move and
 	// play it
-	while (!AfxGetApp()->isQuitting() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == false) && (bExitMetaDLL == false)) {
+	while (!AfxGetApp()->shouldQuit() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == false) && (bExitMetaDLL == false)) {
 
 		if (((m_xpCurXodj->m_bHodj) && (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh)) ||
 		        ((m_xpCurXodj->m_bHodj == false) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
@@ -293,7 +293,7 @@ bool CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	// path, and lpiShortPath[1] contains the total weight.
 	// The remaining array elements contain the path nodes.
 	for (iK = 3 ; _metaGame && !bDone && iK <= lpiShortPath[0] ; ++iK) {
-		if (app->isQuitting())
+		if (app->shouldQuit())
 			break;
 
 		lpNextNode = m_lpNodes + lpiShortPath[iK] ;

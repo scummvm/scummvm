@@ -22,7 +22,6 @@
 #include "gui/saveload.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
-#include "common/translation.h"
 
 #include "trecision/actor.h"
 #include "trecision/animmanager.h"
@@ -64,7 +63,7 @@ bool TrecisionEngine::dataSave() {
 	_pathFind->nextStep();
 
 	if (!ConfMan.getBool("originalsaveload")) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		int saveSlot = dialog->runModalWithCurrentTarget();
 		Common::String saveName = dialog->getResultString();
 		bool skipSave = saveSlot == -1;
@@ -250,7 +249,7 @@ bool TrecisionEngine::dataLoad() {
 	bool retval = true;
 
 	if (!ConfMan.getBool("originalsaveload")) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 		int saveSlot = dialog->runModalWithCurrentTarget();
 		bool skipLoad = saveSlot == -1;
 		delete dialog;

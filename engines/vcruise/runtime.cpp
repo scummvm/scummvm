@@ -1835,7 +1835,7 @@ bool Runtime::bootGame(bool newGame) {
 			Common::IT_ITA,
 		};
 
-		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+		uint langCount = ARRAYSIZE(langIndexes);
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == _defaultLanguage)
@@ -1876,7 +1876,7 @@ bool Runtime::bootGame(bool newGame) {
 			Common::CS_CZE,
 		};
 
-		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+		uint langCount = ARRAYSIZE(langIndexes);
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == _defaultLanguage)
@@ -2725,7 +2725,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 		if (copyRect.isValidRect() || !copyRect.isEmpty()) {
 			Graphics::Palette p(_animDecoder->getPalette(), 256);
-			_gameSection.surf->simpleBlitFrom(*surface, copyRect, copyRect.origin(), &p);
+			_gameSection.surf->simpleBlitFrom(*surface, copyRect, copyRect.origin(), Graphics::FLIP_NONE, false, 255, &p);
 			drawSectionToScreen(_gameSection, copyRect);
 		}
 

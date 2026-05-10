@@ -106,6 +106,6 @@ const LipSync::PhonemeAnim LipSync::_animTable[] = {
 	{0x0292, 2}, {0x002E, 2}, {0x0000, 0}
 };
 
-const int LipSync::_animTableSize = sizeof(LipSync::_animTable) / sizeof(LipSync::_animTable[0]);
+const int LipSync::_animTableSize = ARRAYSIZE(LipSync::_animTable);
 
 } // end of namespace Grim

@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_MEDIASCRIPT_BUILTINS_H
 #define MEDIASTATION_MEDIASCRIPT_BUILTINS_H
 
+#include "common/scummsys.h"
+
 namespace MediaStation {
 
 enum ExpressionType {
@@ -71,26 +73,54 @@ enum VariableScope {
 const char *variableScopeToStr(VariableScope scope);
 
 enum BuiltInFunction {
-	kUnk1Function = 0xA,
-	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
-	kEffectTransitionFunction = 0xC,
-	kEffectTransitionOnSyncFunction = 0xD,
-	kDrawingFunction = 0x25,
-	// TODO: Figure out if TimeOfDay = 101 is consistent across titles.
-	kDebugPrintFunction = 0xB4,
-	// TODO: Figure out code for DebugPrint.
-	// TODO: Figure out code for Quit.
+	kRandomFunction = 0x0A,
+	kTimeOfDayFunction = 0x0B,
+	kEffectTransitionFunction = 0x0C,
+	kEffectTransitionOnSyncFunction = 0x0D,
+	kPlatformFunction = 0x0E,
+	kSquareRootFunction = 0x0F,
+	kGetUniqueRandomFunction = 0x10,
+	kCurrentRunTimeFunction = 0x11,
+	kSetGammaCorrectionFunction = 0x12,
+	kGetDefaultGammaCorrectionFunction = 0x13,
+	kGetCurrentGammaCorrectionFunction = 0x14,
+	kSetAudioVolumeFunction = 0x17,
+	kGetAudioVolumeFunction = 0x18,
+	kSystemLanguagePreferenceFunction = 0x19,
+	kSetRegistryFunction = 0x1A,
+	kGetRegistryFunction = 0x1B,
+	kSetProfileFunction = 0x1C,
+	kMazeGenerateFunction = 0x1F,
+	kMazeApplyMoveMaskFunction = 0x20,
+	kMazeSolveFunction = 0x21,
+	kBeginTimedIntervalFunction = 0x22,
+	kEndTimedIntervalFunction = 0x23,
+	kCheckersFunction = 0x24, // Hercules
+	kDrawingFunction = 0x25, // IBM/Crayola
+
+	// Early engine versions (like for Lion King and such), had different opcodes
+	// for some functions, even though the functions were the same. So those are
+	// defined here.
+	kLegacy_RandomFunction = 0x64,
+	kLegacy_TimeOfDayFunction = 0x65,
+	kLegacy_EffectTransitionFunction = 0x66,
+	kLegacy_EffectTransitionOnSyncFunction = 0x67,
+	kLegacy_PlatformFunction = 0x68,
+	kLegacy_SquareRootFunction = 0x69,
+	kLegacy_GetUniqueRandomFunction = 0x6A,
+	kLegacy_GetCurrentRunTimeFunction = 0x6B,
+	kLegacy_SetGammaCorrectionFunction = 0xAA,
+	kLegacy_GetDefaultGammaCorrectionFunction = 0xAB,
+	kLegacy_GetCurrentGammaCorrectionFunction = 0xAC,
+	kLegacy_DebugPrintFunction = 0xB4,
+	kLegacy_SetAudioVolumeFunction = 0xBE,
+	kLegacy_GetAudioVolumeFunction = 0xBF,
+	kLegacy_SystemLanguagePreferenceFunction = 0xC8,
 };
-const char *builtInFunctionToStr(BuiltInFunction function);
+const char *builtInFunctionToStr(uint function);
 
 enum BuiltInMethod {
 	kInvalidMethod = 0,
-	// TODO: What object types does CursorSet apply to?
-	// Currently it's only in var_7be1_cursor_currentTool in
-	// IBM/Crayola.
-	kCursorSetMethod = 0xC8,
-
-	// SPATIAL ENTITY METHODS.
 	kSpatialHideMethod = 0xCB,
 	kSpatialMoveToMethod = 0xCC,
 	kSpatialMoveToByOffsetMethod = 0xCD,
@@ -98,6 +128,8 @@ enum BuiltInMethod {
 	kSpatialShowMethod = 0xCA,
 	kTimePlayMethod = 0xCE,
 	kTimeStopMethod = 0xCF,
+	kTimePauseMethod = 0xD0,
+	kTimeResumeMethod = 0xD1,
 	kIsPlayingMethod = 0x174,
 	kSetDissolveFactorMethod = 0xF1,
 	kSpatialCenterMoveToMethod = 0xE6,
@@ -115,12 +147,21 @@ enum BuiltInMethod {
 	kSetMousePositionMethod = 0x129,
 	// It isn't clear what the difference is meant to be
 	// between these two, as the code looks the same for both.
-	kGetXScaleMethod1 = 0x16E,
-	kGetXScaleMethod2 = 0x17E,
-	kSetScaleMethod = 0x16F,
-	kSetXScaleMethod = 0x17F,
-	kGetYScaleMethod = 0x180,
-	kSetYScaleMethod = 0x181,
+	kGetParallaxFactorXMethod1 = 0x16E,
+	kGetParallaxFactorXMethod2 = 0x17E,
+	kSetParallaxFactorMethod = 0x16F,
+	kSetParallaxFactorXMethod = 0x17F,
+	kGetParallaxFactorYMethod = 0x180,
+	kSetParallaxFactorYMethod = 0x181,
+	kStartCachingMethod = 0x113,
+	kIsCachingMethod = 0x114,
+	kIsPausedMethod = 0x175,
+
+	// STREAM MOVIE METHODS.
+	kStreamMovieSetProxyZIndex = 0x10B,
+	kStreamMovieGetProxyZIndex = 0x10C,
+	kStreamMovieMoveProxyToStageMethod = 0x17C,
+	kStreamMovieMoveProxyToRootStageMethod = 0x17D,
 
 	// HOTSPOT METHODS.
 	// NOTE: IDs 0xD2 and 0xD3 seem to be double-assigned
@@ -142,7 +183,9 @@ enum BuiltInMethod {
 	// NOTE: IDs 0xD2 and 0xD3 seem to be double-assigned
 	// between two hotspot methods and two stage methods.
 	kAddActorToStageMethod = 0xD2,
+	kAddActorToStageMethod2 = 0x170,
 	kRemoveActorFromStageMethod = 0xD3,
+	kRemoveActorFromStageMethod2 = 0x171,
 	kSetWorldSpaceExtentMethod = 0x16B,
 	kSetBoundsMethod = 0x11F,
 	kStageSetSizeMethod = 0x16B,
@@ -150,28 +193,73 @@ enum BuiltInMethod {
 	kStageGetHeightMethod = 0x16D,
 
 	// CAMERA METHODS.
+	// NOTE: IDs 0x15A and 0x15B seem to be double-assigned
+	// between two camera methods and two printer methods.
+	kAddToStageMethod = 0x15A,
+	kRemoveFromStageMethod = 0x15B,
+	kAddedToStageMethod = 0x15C,
+	kStartPanMethod = 0x15D,
 	kStopPanMethod = 0x15E,
+	kIsPanningMethod = 0x15F,
 	kViewportMoveToMethod = 0x160,
+	kAdjustCameraViewportMethod = 0x161,
+	kAdjustCameraViewportSpatialCenterMethod = 0x162,
+	kSetCameraBoundsMethod = 0x163,
+	kXViewportPositionMethod = 0x164,
 	kYViewportPositionMethod = 0x165,
 	kPanToMethod = 0x172,
 
 	// CANVAS METHODS.
-	kClearToPaletteMethod = 0x17B,
+	kCanvasClearToTransparencyMethod = 0x172,
+	kCanvasStampImageMethod = 0x179,
+	kCanvasCopyScreenToMethod = 0x17A,
+	kCanvasClearToPaletteMethod = 0x17B,
 
 	// DOCUMENT METHODS.
-	kLoadContextMethod = 0x176,
-	kReleaseContextMethod = 0x177,
-	kBranchToScreenMethod = 0xC9,
-	kIsLoadedMethod = 0x178,
+	kDocumentBranchToScreenMethod = 0xC9,
+	kDocumentQuitMethod = 0xD9,
+	kIsLoadingMethod = 0x169,
+	kDocumentSetMultipleStreamsMethod = 0x174,
+	kDocumentSetMultipleSoundsMethod = 0x175,
+	kDocumentLoadContextMethod = 0x176,
+	kDocumentReleaseContextMethod = 0x177,
+	kDocumentContextIsLoadedMethod = 0x178,
 
 	// PATH METHODS.
-	kSetDurationMethod = 0x106,
-	kPercentCompleteMethod = 0x107,
+	kPathSetDurationMethod = 0x106,
+	kPathGetPercentCompleteMethod = 0x107,
+	kPathSetStartPointMethod = 0xf2,
+	kPathSetEndPointMethod = 0xf3,
+	kPathSetTotalStepsMethod = 0xf4,
+	kPathSetStepRateMethod = 0xf5,
 
 	// TEXT METHODS.
-	kTextMethod = 0x122,
-	kSetTextMethod = 0x123,
-	kSetMaximumTextLengthMethod = 0x125,
+	kTextSetEditableMethod = 0xD2,
+	kTextSetNonEditableMethod = 0xD3,
+	kTextGetFontActorMethod = 0x120,
+	kTextSetFontActorMethod = 0x121,
+	kTextGetTextMethod = 0x122,
+	kTextSetTextMethod = 0x123,
+	kTextGetMaxLengthMethod = 0x124,
+	kTextSetMaxLengthMethod = 0x125,
+	kGetLastPressedCharCodeMethod = 0x126,
+	kTextGetCursorPositionMethod = 0x127,
+	kTextSetCursorPositionMethod = 0x128,
+	kTextGetJustificationMethod = 0x14b,
+	kTextSetJustificationMethod = 0x14c,
+	kTextGetPositionMethod = 0x14d,
+	kTextSetPositionMethod = 0x14e,
+	kTextGetConstrainToWidthMethod = 0x150,
+	kTextSetConstrainToWidthMethod = 0x151,
+	kTextGetCursorIsVisibleMethod = 0x152,
+	kTextSetCursorIsVisibleMethod = 0x153,
+	kTextGetOverwriteModeMethod = 0x154,
+	kTextSetOverwriteModeMethod = 0x155,
+	kTextGetTranslatedCharCode = 0x156,
+	kTextAddAcceptedCharsMethod = 0x157,
+	kTextIsCharacterAcceptedMethod = 0x158,
+	kTextEnableDisableCharacterMethod = 0x159,
+	kTextIsEditableMethod = 0x173,
 
 	// COLLECTION METHODS.
 	// These are arrays used in Media Script.
@@ -193,60 +281,69 @@ enum BuiltInMethod {
 	kSortMethod = 0x10A,
 
 	// PRINTER METHODS.
+	// NOTE: IDs 0x15A and 0x15B seem to be double-assigned
+	// between two camera methods and two printer methods.
 	kOpenLensMethod = 0x15A,
 	kCloseLensMethod = 0x15B,
+
+	// CURSOR METHODS.
+	kCursorSetMethod = 0xC8,
+
+	// DISK IMAGE ACTOR METHODS.
+	kPreloadMethod = 0x166,
+	kPurgeMethod = 0x167,
+	kStopLoadMethod = 0x168,
+	kIsRectInMemoryMethod = 0x16A,
 };
 const char *builtInMethodToStr(BuiltInMethod method);
 
 enum EventType {
-	// TIMER EVENTS.
-	kTimerEvent = 0x5,
-
-	// HOTSPOT EVENTS.
-	kMouseDownEvent = 0x6,
-	kMouseUpEvent = 0x7,
-	kMouseMovedEvent = 0x8,
-	kMouseEnteredEvent = 0x9,
-	kMouseExitedEvent = 0xA,
-	kKeyDownEvent = 0xD,
-
-	// SOUND EVENTS.
-	kSoundEndEvent = 0xE,
+	kEventTypeInvalid = 0x00,
+	kDisplayAutoUpdateEvent = 0x02,
+	kDisplayEnableAutoUpdateEvent = 0x03,
+	kTimerServiceAlarmEvent = 0x04, // This schedules when the timer is supposed to fire.
+	kTimerScriptEvent = 0x05, // This is specifically a script timer event.
+	kMouseDownEvent = 0x06,
+	kMouseUpEvent = 0x07,
+	kMouseMovedEvent = 0x08,
+	kMouseEnteredEvent = 0x09,
+	kMouseExitedEvent = 0x0A,
+	kMouseEnterExitEvent = 0x0B,
+	kMouseOutOfFocusEvent = 0x0C,
+	kKeyDownEvent = 0x0D,
+	kSoundEndEvent = 0x0E,
+	kMovieEndEvent = 0x0F,
+	kPathEndEvent = 0x10,
+	kScreenEntryEvent = 0x11,
+	kScreenBranchEvent = 0x12,
 	kSoundAbortEvent = 0x13,
 	kSoundFailureEvent = 0x14,
-	kSoundStoppedEvent = 0x1D,
-	kSoundBeginEvent = 0x1E,
-
-	// MOVIE EVENTS.
-	kMovieEndEvent = 0xF,
 	kMovieAbortEvent = 0x15,
 	kMovieFailureEvent = 0x16,
+	kSpriteMovieEndEvent = 0x17,
+	kScreenExitEvent = 0x1B,
+	kPathStepEvent = 0x1C,
+	kSoundStoppedEvent = 0x1D,
+	kSoundBeginEvent = 0x1E,
 	kMovieStoppedEvent = 0x1F,
 	kMovieBeginEvent = 0x20,
-
-	// SPRITE EVENTS.
-	// Just "MovieEnd" in source.
-	kSpriteMovieEndEvent = 0x17,
-
-	// SCREEN EVENTS.
-	kEntryEvent = 0x11,
-	kExitEvent = 0x1B,
-
-	// CONTEXT EVENTS.
-	kLoadCompleteEvent = 0x2C,
-
-	// TEXT EVENTS.
-	kInputEvent = 0x25,
-	kErrorEvent = 0x26,
-
-	// CAMERA EVENTS.
-	kPanAbortEvent = 0x2B,
-	kPanEndEvent = 0x2A,
-
-	// PATH EVENTS.
-	kStepEvent = 0x1C,
 	kPathStoppedEvent = 0x21,
-	kPathEndEvent = 0x10
+	kCachingFailureEvent = 0x22,
+	kCachingEndedEvent = 0x23,
+	kCachingStartedEvent = 0x24,
+	kTextInputEvent = 0x25,
+	kTextErrorEvent = 0x26,
+	kDiskImageActorStepEvent = 0x27,
+	kDiskImageActorEndEvent = 0x28,
+	kCameraPanStepEvent = 0x29,
+	kCameraPanEndEvent = 0x2A,
+	kCameraPanAbortEvent = 0x2B,
+	kContextLoadCompleteEvent = 0x2C,
+	kContextAlreadyLoadedEvent = 0x2D,
+	kContextReleaseCompleteEvent = 0x2E,
+	kContextAlreadyReleasedEvent = 0x2F,
+	kContextLoadStartEvent = 0x30,
+	kContextReleaseStartEvent = 0x31
 };
 const char *eventTypeToStr(EventType type);
 

@@ -39,7 +39,7 @@ struct Rails_Globals {
 	int32 memtypePATHN = 0;
 };
 
-bool InitRails();
+void InitRails();
 void rail_system_shutdown();
 void ClearRails();
 noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 altX, int32 altY, Buffer *walkCodes);

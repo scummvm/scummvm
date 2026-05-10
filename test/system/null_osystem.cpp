@@ -4,6 +4,10 @@
 #define NULL_DRIVER_USE_FOR_TEST 1
 #include "null_osystem.h"
 #include "../backends/platform/null/null.cpp"
+#ifdef USE_CLOUD
+#undef USE_CLOUD
+#endif
+#include "../backends/saves/savefile.cpp"
 
 //#define DISPLAY_ERROR_MESSAGES
 
@@ -15,6 +19,12 @@ void Common::install_null_g_system() {
 #endif
 
 	g_system = OSystem_NULL_create(silenceLogs);
+	g_system->initBackend();
+}
+
+void Common::uninstall_null_g_system() {
+	g_system->destroy();
+	g_system = nullptr;
 }
 
 void OSystem_NULL::quit() {
@@ -36,8 +46,4 @@ void BaseBackend::fillScreen(uint32 col) {
 }
 
 void BaseBackend::fillScreen(const Common::Rect &r, uint32 col) {
-}
-
-void EventsBaseBackend::initBackend() {
-	BaseBackend::initBackend();
 }

@@ -30,33 +30,6 @@
 
 namespace hpl {
 
-static void getSettings(Bitmap2D *apSrc, int &alChannels, TGLint &internalFormat, TGLenum &format) {
-	alChannels = apSrc->getNumChannels();
-	tString sType = cString::ToLowerCase(apSrc->getType());
-	const Common::String bmpFormat = apSrc->format().toString();
-
-	if (alChannels == 4) {
-		internalFormat = TGL_RGBA;
-		if (bmpFormat.contains("BGRA")) {
-			format = TGL_BGRA;
-		} else {
-			format = TGL_RGBA;
-		}
-	}
-	if (alChannels == 3) {
-		internalFormat = TGL_RGB;
-		if (bmpFormat.contains("BGR")) {
-			format = TGL_BGR;
-		} else {
-			format = TGL_RGB;
-		}
-	}
-	if (alChannels == 1) {
-		format = TGL_RED;
-		internalFormat = TGL_RED;
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////////
@@ -171,13 +144,6 @@ bool TGLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, con
 	PostCreation(GLTarget);
 
 	return true;
-}
-
-//-----------------------------------------------------------------------
-
-void TGLTexture::SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
-							 eColorDataFormat aDataFormat, void *apPixelData) {
-	HPL1_UNIMPLEMENTED(TGLTexture::SetPixels2D);
 }
 
 //-----------------------------------------------------------------------
@@ -371,10 +337,9 @@ bool TGLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	if ((!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) && mTarget != eTextureTarget_Rect)
 		Hpl1::logWarning(Hpl1::kDebugTextures, "texture '%s' does not have a pow2 size", msName.c_str());
 
-	int lChannels = 0;
-	TGLint internalFormat = 0;
-	TGLenum format = 0;
-	getSettings(pBitmapSrc, lChannels, internalFormat, format);
+	int lChannels = 4;
+	TGLint internalFormat = TGL_RGBA;
+	TGLenum format = TGL_RGBA;
 
 	_bpp = lChannels * 8;
 

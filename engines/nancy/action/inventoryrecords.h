@@ -73,10 +73,11 @@ public:
 	int16 _drawnFrameID = -1;
 	Graphics::ManagedSurface _fullSurface;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
 	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
 };
 
 // When clicking an ActionRecord hotspot with a kItem dependency, the engine

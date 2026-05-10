@@ -23,6 +23,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/path.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -37,6 +38,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/fonts/amigafont.h"
 
 #include "audio/mididrv.h"
 
@@ -156,6 +158,10 @@ Common::Error AGOSEngine_Elvira1::init() {
 		else
 			error("AGOSEngine_Elvira1::init(): Failed to load SJIS font.");
 	}
+	// Automatically start the Atari ST music driver with tune 1
+	if (getPlatform() == Common::kPlatformAtariST && (getFeatures() & GF_DEMO)) {
+		playMusic(1, 0);
+	}
 	return ret;
 }
 
@@ -268,6 +274,11 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_speech = false;
 	_subtitles = false;
 
+	_simon2OverlayLanguage = Common::EN_ANY;
+	_useSimon2LanguageOverlay = false;
+	_simon2LanguageFlagTimer = 0;
+	_simon2LanguageFlagClearPending = false;
+
 	_animatePointer = 0;
 	_maxCursorWidth = 0;
 	_maxCursorHeight = 0;
@@ -302,6 +313,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_curWindow = 0;
 	_textWindow = nullptr;
+	_pnAmigaFont = nullptr;
 
 	_subjectItem = nullptr;
 	_objectItem = nullptr;
@@ -402,6 +414,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_vgaFrozenBase = nullptr;
 	_vgaRealBase = nullptr;
 	_zoneBuffers = nullptr;
+	_pnAmigaUiVisible = false;
 
 	_curVgaFile1 = nullptr;
 	_curVgaFile2 = nullptr;
@@ -502,6 +515,13 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_displayPalette, 0, sizeof(_displayPalette));
+	memset(_pnPaletteBanks, 0, sizeof(_pnPaletteBanks));
+	memset(_pnFadeCurrent, 0, sizeof(_pnFadeCurrent));
+	memset(_pnHavePaletteBank, 0, sizeof(_pnHavePaletteBank));
+	_pnDayNightControllerSelectorMask = 0xFFFF;
+	_pnDayNightControllerLastStage = 0xFF;
+	_pnLastClockMinutes = -1;
+	_pnDayNightControllerTickCounter = 0x00C8;
 
 	memset(_videoBuf1, 0, sizeof(_videoBuf1));
 	memset(_videoWindows, 0, sizeof(_videoWindows));
@@ -529,6 +549,8 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_musicVolume = 192;
 	_effectsVolume = 192;
 	_useDigitalSfx = true;
+	_pendingWaitCommandDelay = false;
+	_pendingPNWaitScreenDelay = false;
 
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;
@@ -563,6 +585,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_moveYMax = 0;
 
 	_forceAscii = false;
+	_useSimon2LanguageOverlay = false;
 
 	_vc10BasePtrOld = nullptr;
 	memcpy (_hebrewCharWidths,
@@ -580,6 +603,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	// Add default file directories for Amiga/Macintosh
 	// versions of Simon the Sorcerer 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 
 	// Add default file directories for Amiga & Macintosh
 	// versions of The Feeble Files
@@ -598,11 +622,15 @@ Common::Error AGOSEngine::init() {
 		_screenHeight = 480;
 	} else {
 		_screenWidth = 320;
-		_screenHeight = 200;
+		_screenHeight = isPnAmiga() ? 240 : 200;
 	}
 
 	_internalWidth = _screenWidth;
 	_internalHeight = _screenHeight;
+	if (isPnAmiga()) {
+		_internalWidth = 640;
+		_internalHeight = 480;
+	}
 
 	if (getPlatform() == Common::kPlatformPC98) {
 		_internalWidth <<= 1;
@@ -617,6 +645,7 @@ Common::Error AGOSEngine::init() {
 	_midi = new MidiPlayer(this);
 
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
+			(getGameType() == GType_SIMON2 && (getPlatform() == Common::kPlatformAmiga || isSimon2MacAmiga())) ||
 			(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 			((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
 			(getPlatform() == Common::kPlatformDOS && getGameType() != GType_PN && getGameType() != GType_FF) ||
@@ -650,11 +679,14 @@ Common::Error AGOSEngine::init() {
 	_backGroundBuf = new Graphics::Surface();
 	_backGroundBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP || (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98)) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP ||
+			(getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98) || isPnAmiga()) {
 		_backBuf = new Graphics::Surface();
 		_backBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
+		memset(_backBuf->getPixels(), 0, _backBuf->pitch * _backBuf->h);
 		_scaleBuf = new Graphics::Surface();
-		_scaleBuf->create(_internalWidth, _internalHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_scaleBuf->create(_internalWidth, isPnAmiga() ? _screenHeight : _internalHeight, Graphics::PixelFormat::createFormatCLUT8());
+		memset(_scaleBuf->getPixels(), 0, _scaleBuf->pitch * _scaleBuf->h);
 	}
 
 	if (getGameType() == GType_SIMON2) {
@@ -684,6 +716,8 @@ Common::Error AGOSEngine::init() {
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_language = Common::parseLanguage(ConfMan.get("language"));
+	_simon2OverlayLanguage = _language;
+	loadSimon2LanguageOverlay();
 
 	if (getGameType() == GType_PP) {
 		_speech = true;
@@ -946,10 +980,112 @@ void AGOSEngine::setupGame() {
 	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
 		_videoWindows[9] = 75;
 	}
+	if (isPnAmiga()) {
+		_videoWindows[3] = 134;
+		_videoWindows[7] = 134;
+		_videoWindows[11] = 134;
+		_videoWindows[15] = 240;
+		if (_pnAmigaFont == nullptr)
+			_pnAmigaFont = new Graphics::AmigaFont(Graphics::AmigaFont::kTopaz9Builtin);
+	}
 }
+
+
+bool AGOSEngine::isPnAmiga() const {
+	return getGameType() == GType_PN && getPlatform() == Common::kPlatformAmiga;
+}
+
+bool AGOSEngine::usePnAmigaDoubleHeightTopaz() const {
+	return ConfMan.hasKey("pn_amiga_doubleheight_font") && ConfMan.getBool("pn_amiga_doubleheight_font");
+}
+
+const Graphics::AmigaFont *AGOSEngine::getPnAmigaFont() const {
+	return _pnAmigaFont;
+}
+
+uint16 AGOSEngine::getPnAmigaGlyphAdvance(byte chr) const {
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return 0;
+	if (chr == 128 || chr == 129)
+		return font->getCharAdvanceWidth(' ');
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return 0;
+
+	return font->getCharAdvanceWidth(chr);
+}
+
+uint16 AGOSEngine::getPnAmigaGlyphRenderWidth(byte chr) const {
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return 0;
+	if (chr == 128 && isPnAmiga())
+		chr = '_';
+	if (chr == 128 || chr == 129)
+		return getPnAmigaGlyphAdvance(' ');
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return 0;
+
+	return font->getCharRenderWidth(chr);
+}
+
+uint16 AGOSEngine::getPnAmigaGlyphHeight() const {
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	const uint16 rawHeight = font ? font->getFontHeight() : 9;
+	return usePnAmigaDoubleHeightTopaz() ? rawHeight * 2 : rawHeight;
+}
+
+void AGOSEngine::ensurePnAmigaTextPlanes() {
+	if (!isPnAmiga())
+		return;
+	const WindowBlock *mainWindow = _windowArray[0];
+	const WindowBlock *inputWindow = _windowArray[2];
+	if (mainWindow == nullptr || inputWindow == nullptr)
+		return;
+
+	const uint16 mainWidth = getPnAmigaTextPlaneWidth(mainWindow);
+	const uint16 mainHeight = getPnAmigaWindowInteriorHeight(mainWindow);
+	const uint16 inputWidth = getPnAmigaTextPlaneWidth(inputWindow);
+	const uint16 inputHeight = getPnAmigaWindowInteriorHeight(inputWindow);
+
+	if (_pnAmigaMainTextPlane.pixels == nullptr || _pnAmigaMainTextPlane.width != mainWidth || _pnAmigaMainTextPlane.height != mainHeight) {
+		delete[] _pnAmigaMainTextPlane.pixels;
+		_pnAmigaMainTextPlane.width = mainWidth;
+		_pnAmigaMainTextPlane.height = mainHeight;
+		_pnAmigaMainTextPlane.pixels = new byte[mainWidth * mainHeight];
+		memset(_pnAmigaMainTextPlane.pixels, 0, mainWidth * mainHeight);
+	}
+
+	if (_pnAmigaInputTextPlane.pixels == nullptr || _pnAmigaInputTextPlane.width != inputWidth || _pnAmigaInputTextPlane.height != inputHeight) {
+		delete[] _pnAmigaInputTextPlane.pixels;
+		_pnAmigaInputTextPlane.width = inputWidth;
+		_pnAmigaInputTextPlane.height = inputHeight;
+		_pnAmigaInputTextPlane.pixels = new byte[inputWidth * inputHeight];
+		memset(_pnAmigaInputTextPlane.pixels, 0, inputWidth * inputHeight);
+	}
+}
+
+AGOSEngine::PnAmigaTextPlane *AGOSEngine::getPnAmigaTextPlane(const WindowBlock *window) {
+	if (isPnAmigaMainTextWindow(window))
+		return &_pnAmigaMainTextPlane;
+	if (isPnAmigaInputWindow(window))
+		return &_pnAmigaInputTextPlane;
+	return nullptr;
+}
+
+const AGOSEngine::PnAmigaTextPlane *AGOSEngine::getPnAmigaTextPlane(const WindowBlock *window) const {
+	if (isPnAmigaMainTextWindow(window))
+		return &_pnAmigaMainTextPlane;
+	if (isPnAmigaInputWindow(window))
+		return &_pnAmigaInputTextPlane;
+	return nullptr;
+}
+
 
 AGOSEngine::~AGOSEngine() {
 	_system->getAudioCDManager()->stop();
+	stopMusic();
+	delete _pnAmigaFont;
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];
@@ -967,6 +1103,8 @@ AGOSEngine::~AGOSEngine() {
 	free(_roomsList);
 	free(_roomStates);
 	free(_stringTabPtr);
+	delete[] _pnAmigaMainTextPlane.pixels;
+	delete[] _pnAmigaInputTextPlane.pixels;
 	free(_strippedTxtMem);
 	free(_tblList);
 	free(_textMem);
@@ -1087,6 +1225,13 @@ Common::Error AGOSEngine::go() {
 
 	while (!shouldQuit()) {
 		waitForInput();
+
+		if (getGameType() == GType_SIMON2 && (_keyPressed.keycode == Common::KEYCODE_SPACE) && hasSimon2LanguageFiles()) {
+			cycleSimon2LanguageOverlay();
+			_keyPressed.reset();
+			continue;
+		}
+
 		handleVerbClicked(_verbHitArea);
 		delay(100);
 	}
@@ -1159,6 +1304,116 @@ void AGOSEngine::syncSoundSettingsIntern() {
 
 	if (_midiEnabled)
 		_midi->syncSoundSettings();
+}
+
+static bool decodeSimon2LanguageFile(const Common::String &filename, Common::Array<Common::String> &entries) {
+	Common::SeekableReadStream *in = SearchMan.createReadStreamForMember(Common::Path(filename));
+	if (!in)
+		return false;
+
+	Common::String current;
+	while (!in->eos()) {
+		byte raw = in->readByte();
+		byte decoded = raw + 1;
+		if (decoded == 0) {
+			entries.push_back(current);
+			current.clear();
+		} else {
+			current += (char)decoded;
+		}
+	}
+
+	delete in;
+	return !entries.empty();
+}
+
+bool AGOSEngine::hasSimon2LanguageFiles() const {
+	if (getGameType() != GType_SIMON2)
+		return false;
+
+	return SearchMan.hasFile("simon2.english") || SearchMan.hasFile("simon2.german") ||
+		SearchMan.hasFile("simon2.italian") || SearchMan.hasFile("simon2.french");
+}
+
+Common::Language AGOSEngine::getNextSimon2OverlayLanguage() const {
+	Common::Array<Common::Language> available;
+
+	if (SearchMan.hasFile("simon2.english"))
+		available.push_back(Common::EN_ANY);
+	if (SearchMan.hasFile("simon2.german"))
+		available.push_back(Common::DE_DEU);
+	if (SearchMan.hasFile("simon2.italian"))
+		available.push_back(Common::IT_ITA);
+	if (SearchMan.hasFile("simon2.french"))
+		available.push_back(Common::FR_FRA);
+
+	if (available.empty())
+		return _language;
+
+	for (uint i = 0; i < available.size(); ++i) {
+		if (available[i] == _language)
+			return available[(i + 1) % available.size()];
+	}
+
+	return available[0];
+}
+
+void AGOSEngine::cycleSimon2LanguageOverlay() {
+	if (!hasSimon2LanguageFiles())
+		return;
+
+	_language = getNextSimon2OverlayLanguage();
+	_simon2OverlayLanguage = _language;
+	loadSimon2LanguageOverlay();
+	_simon2LanguageFlagTimer = 0x32;
+	_simon2LanguageFlagClearPending = false;
+	_displayFlag = 1;
+}
+
+void AGOSEngine::loadSimon2LanguageOverlay() {
+	_useSimon2LanguageOverlay = false;
+	_simon2LanguageOverlay.clear();
+
+	if (!hasSimon2LanguageFiles())
+		return;
+
+	Common::String targetFile;
+	switch (_language) {
+	case Common::DE_DEU:
+		targetFile = "simon2.german";
+		break;
+	case Common::IT_ITA:
+		targetFile = "simon2.italian";
+		break;
+	case Common::FR_FRA:
+		targetFile = "simon2.french";
+		break;
+	default:
+		return;
+	}
+
+	Common::Array<Common::String> englishEntries;
+	Common::Array<Common::String> translatedEntries;
+	if (!decodeSimon2LanguageFile("simon2.english", englishEntries))
+		return;
+	if (!decodeSimon2LanguageFile(targetFile, translatedEntries))
+		return;
+
+	size_t count = MIN(englishEntries.size(), translatedEntries.size());
+	for (size_t i = 0; i < count; ++i) {
+		if (!englishEntries[i].empty() && englishEntries[i] != translatedEntries[i])
+			_simon2LanguageOverlay.setVal(englishEntries[i], translatedEntries[i]);
+	}
+
+	_useSimon2LanguageOverlay = !_simon2LanguageOverlay.empty();
+}
+
+Common::String AGOSEngine::translateLanguageOverlay(const Common::String &english) const {
+	if (!_useSimon2LanguageOverlay)
+		return english;
+	if (!_simon2LanguageOverlay.contains(english))
+		return english;
+	return _simon2LanguageOverlay.getValOrDefault(english);
 }
 
 } // End of namespace AGOS

@@ -67,8 +67,6 @@ extern void syncGlobInfo(Common::Serializer &s);
 // in POLYGONS.C
 extern void syncPolyInfo(Common::Serializer &s);
 
-extern int g_sceneCtr;
-
 extern bool g_ASceneIsSaved;
 
 //----------------- LOCAL DEFINES --------------------
@@ -685,10 +683,9 @@ static void DoSave() {
 void ProcessSRQueue() {
 	switch (g_SRstate) {
 	case SR_DORESTORE:
-		// If a load has been done directly from title screens, set a larger value for scene ctr so the
-		// code used to skip the title screens in Discworld 1 gets properly disabled
-		if (g_sceneCtr < 10)
-			g_sceneCtr = 10;
+		// Clear the DW1 flag used for implementing introduction skipping.
+		// This restore may have come from the ScummVM GMM or launcher.
+		EndDw1Intro();
 
 		if (DoRestore()) {
 			DoRestoreScene(g_srsd, false);

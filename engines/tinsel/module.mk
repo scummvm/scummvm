@@ -35,6 +35,8 @@ MODULE_OBJS := \
 	pdisplay.o \
 	play.o \
 	polygons.o \
+	psx_archive.o \
+	psx_japan_font.o \
 	saveload.o \
 	savescn.o \
 	scene.o \

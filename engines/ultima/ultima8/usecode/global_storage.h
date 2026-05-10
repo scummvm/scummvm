@@ -22,6 +22,13 @@
 #ifndef ULTIMA8_USECODE_GLOBAL_STORAGE_H
 #define ULTIMA8_USECODE_GLOBAL_STORAGE_H
 
+#include "common/scummsys.h"
+
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
+
 namespace Ultima {
 namespace Ultima8 {
 

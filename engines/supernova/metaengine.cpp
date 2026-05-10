@@ -208,7 +208,7 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 }
 
 Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
-	
+
 	using namespace Common;
 	using namespace Supernova;
 
@@ -222,7 +222,7 @@ Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
 	Keymap *computerKeymap = new Keymap(Keymap::kKeymapTypeGame, "computer", _("Computer keymappings"));
 
 	Common::Action *act;
-	
+
 	act = new Common::Action(kStandardActionLeftClick, _("Interact"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
@@ -282,13 +282,13 @@ Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_DOWN");
 	textReaderKeymap->addAction(act);
 
-	act = new Common::Action("PGUP", _("Page up"));
+	act = new Common::Action("PGUP", _("Previous page"));
 	act->setCustomEngineActionEvent(kActionPgUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	textReaderKeymap->addAction(act);
 
-	act = new Common::Action("PGDOWN", _("Page down"));
+	act = new Common::Action("PGDOWN", _("Next page"));
 	act->setCustomEngineActionEvent(kActionPgDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
@@ -375,7 +375,7 @@ Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_B");
 		computerKeymap->addAction(act);
-		
+
 		act = new Common::Action("OFFICE", _("Office manager"));
 		act->setCustomEngineActionEvent(kActionOfficeManager);
 		act->addDefaultInputMapping("1");
@@ -414,7 +414,7 @@ Common::KeymapArray SupernovaMetaEngine::initKeymaps(const char *target) const {
 	cutsceneKeymap->setEnabled(false);
 	textReaderKeymap->setEnabled(false);
 	computerKeymap->setEnabled(false);
-	
+
 	return keymaps;
 }
 

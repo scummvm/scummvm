@@ -1754,7 +1754,7 @@ const char *NavigateModifier::getDefaultName() const {
 }
 
 OpenTitleModifier::OpenTitleModifier()
-	: _addToReturnList(false){
+	/*: _addToReturnList(false) */ {
 }
 
 OpenTitleModifier::~OpenTitleModifier() {
@@ -1769,7 +1769,7 @@ bool OpenTitleModifier::load(const PlugInModifierLoaderContext &context, const D
 
 	_pathOrUrl = data.pathOrUrl.value.asString;
 
-	_addToReturnList = static_cast<bool>(data.addToReturnList.value.asInt);
+	//_addToReturnList = static_cast<bool>(data.addToReturnList.value.asInt);
 
 	return true;
 }

@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 3.0.0git
+Version		: 2026.2.1git
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters

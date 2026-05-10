@@ -26,7 +26,6 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "common/translation.h"
 
 #include "startrek/resource.h"
 #include "startrek/room.h"
@@ -39,7 +38,7 @@ bool StarTrekEngine::showSaveMenu() {
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	dialog = new GUI::SaveLoadChooser(true);
 
 	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString();
@@ -64,7 +63,7 @@ bool StarTrekEngine::showLoadMenu() {
 	GUI::SaveLoadChooser *dialog;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	dialog = new GUI::SaveLoadChooser(false);
 	slot = dialog->runModalWithCurrentTarget();
 
 	delete dialog;

@@ -2010,12 +2010,10 @@ void UCMachine::execProcess(UCProcess *p) {
 }
 
 
-const Std::string &UCMachine::getString(uint16 str) const {
-	static const Std::string emptystring("");
+const Common::String &UCMachine::getString(uint16 str) const {
+	static const Common::String emptystring("");
 
-	Common::HashMap<uint16, Std::string>::const_iterator iter =
-			_stringHeap.find(str);
-
+	const auto iter = _stringHeap.find(str);
 	if (iter != _stringHeap.end())
 		return iter->_value;
 
@@ -2023,8 +2021,7 @@ const Std::string &UCMachine::getString(uint16 str) const {
 }
 
 UCList *UCMachine::getList(uint16 l) {
-	Common::HashMap<uint16, UCList *>::iterator iter = _listHeap.find(l);
-
+	const auto iter = _listHeap.find(l);
 	if (iter != _listHeap.end())
 		return iter->_value;
 
@@ -2062,7 +2059,7 @@ void UCMachine::freeString(uint16 s) {
 	//! (when something accesses _stringHeap[0])
 	//! This may not be desirable, but OTOH the created string will be
 	//! empty, so not too much of a problem.
-	Common::HashMap<uint16, Std::string>::iterator iter = _stringHeap.find(s);
+	const auto iter = _stringHeap.find(s);
 	if (iter != _stringHeap.end()) {
 		_stringHeap.erase(iter);
 		_stringIDs->clearID(s);
@@ -2070,7 +2067,7 @@ void UCMachine::freeString(uint16 s) {
 }
 
 void UCMachine::freeList(uint16 l) {
-	Common::HashMap<uint16, UCList *>::iterator iter = _listHeap.find(l);
+	const auto iter = _listHeap.find(l);
 	if (iter != _listHeap.end() && iter->_value) {
 		iter->_value->free();
 		delete iter->_value;
@@ -2080,7 +2077,7 @@ void UCMachine::freeList(uint16 l) {
 }
 
 void UCMachine::freeStringList(uint16 l) {
-	Common::HashMap<uint16, UCList *>::iterator iter = _listHeap.find(l);
+	const auto iter = _listHeap.find(l);
 	if (iter != _listHeap.end() && iter->_value) {
 		iter->_value->freeStrings();
 		delete iter->_value;

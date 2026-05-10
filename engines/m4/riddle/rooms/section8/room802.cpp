@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section8/room802.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -214,7 +215,7 @@ void Room802::parser() {
 			_G(flags)[V260] = 1;
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("801_s02", 3, 100, -1, -1);
-			_G(game).new_room = 801;
+			_G(game).setRoom(801);
 			break;
 		case 10:
 			sendWSMessage_10000(1, _ripActionMach, _lookWithMatch, 13, 18, 1, _lookWithMatch, 19, 22, 1);
@@ -440,7 +441,7 @@ void Room802::parser() {
 			break;
 		case 2:
 			terminateMachine(_ripActionMach);
-			_G(game).new_room = 801;
+			_G(game).setRoom(801);
 			break;
 		default:
 			break;

@@ -50,8 +50,8 @@ Common::Path resolvePathWithFuzz(const Common::String &path, const Common::Path 
 Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path findAbsolutePath(const Common::String &path, bool directory = false, const char **exts = nullptr);
 Common::Path findPath(const Common::Path &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
-Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
-Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr, Common::String currentPath_ = "");
+Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, Common::String currentPath = "");
 Common::Path findXLibPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 Common::Path findAudioPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 

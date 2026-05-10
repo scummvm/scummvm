@@ -51,7 +51,7 @@ public:
 	void playDemoScreen() override { }; // no demo for U8
 
 protected:
-	Std::string getCreditText(Common::SeekableReadStream *rs);
+	Common::String getCreditText(Common::SeekableReadStream *rs);
 };
 
 } // End of namespace Ultima8

@@ -21,9 +21,10 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/softsynth/sid.h"
 
+#include "engines/freescape/music.h"
 #include "engines/freescape/games/driller/c64.music.h"
+#include "engines/freescape/games/driller/c64.sfx.h"
 
 namespace Freescape {
 
@@ -45,7 +46,12 @@ public:
 
 	bool _useAutomaticDrilling;
 
-	DrillerSIDPlayer *_playerSid;
+	MusicPlayer *_playerMusic;
+	DrillerC64SFXPlayer *_playerC64Sfx;
+	bool _c64UseSFX;
+
+	void playSoundC64(int index) override;
+	void toggleC64Sound();
 
 	// Only used for Amiga and Atari ST
 	Font _fontSmall;
@@ -57,11 +63,13 @@ public:
 
 	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
+	bool triggerWinCondition() override;
 	bool checkIfGameEnded() override;
 	void endGame() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
+	void playSoundZX(int index, Audio::SoundHandle &handle) override;
 	void drawInfoMenu() override;
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, double fov, uint32 color);
@@ -71,6 +79,8 @@ public:
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 
 private:
+	int _finalAreaWinConditionIndex;
+	int _amigaAtariEndGameStep;
 	bool drillDeployed(Area *area);
 	GeometricObject *_drillBase;
 	Math::Vector3d drillPosition();
@@ -99,6 +109,28 @@ private:
 	void initAmigaAtari();
 	void initDOS();
 	void initZX();
+
+	// Amiga/Atari UI sprite indicators loaded from executable
+	Common::Array<Graphics::ManagedSurface *> _rigSprites;     // 5 rig animation frames
+	Common::Array<Graphics::ManagedSurface *> _stepSprites;    // 8 step indicator frames
+	Common::Array<Graphics::ManagedSurface *> _angleSprites;   // 8 angle/compass frames
+	Common::Array<Graphics::ManagedSurface *> _vehicleSprites; // 5 vehicle mode frames (fly + 4 tank heights)
+	Common::Array<Graphics::ManagedSurface *> _quitSprites;   // 11 quit animation frames
+	int _quitConfirmCounter;  // 0=not quitting, 1-4=waiting for confirmations
+	int _quitStartTicks;      // _ticks when quit was initiated (for shutter animation)
+	Common::Rect _quitArea;   // click area for quit button on Amiga/Atari console
+	Common::Array<Graphics::ManagedSurface *> _earthquakeSprites; // seismograph monitor frames
+	int _earthquakeLastFrame;
+	void loadRigSprites(Common::SeekableReadStream *file, int sprigsOffset, byte *palette = nullptr);
+	void loadIndicatorSprites(Common::SeekableReadStream *file, byte *palette,
+		int stepOffset, int angleOffset, int vehicleOffset, int quitOffset);
+	void loadEarthquakeSprites(Common::SeekableReadStream *file, byte *palette, int earthquakeOffset);
+
+	// Compass indicators loaded from executable
+	Graphics::ManagedSurface *_compassPitchStrip;  // pitch: 32px wide × (144+29) rows scrolling strip
+	Common::Array<Graphics::ManagedSurface *> _compassYawFrames; // yaw: 72 pre-rendered 30×5 frames
+	void loadCompassStrips(Common::SeekableReadStream *file, byte *palette,
+		int pitchStripOffset, int yawCogOffset);
 	void initCPC();
 	void initC64();
 

@@ -104,10 +104,10 @@ public:
 		const bool isSprite = false;
 
 		bool result = TwinE::drawGraph(posX, posY, brick_326, isSprite, screen, clip);
-		TS_ASSERT_EQUALS(0, screen.getPixel(posX + 21, posY));
-		TS_ASSERT_EQUALS(0xd0, screen.getPixel(posX + 22, posY));
-		TS_ASSERT_EQUALS(0xf0, screen.getPixel(posX + 25, posY + 37));
-		TS_ASSERT_EQUALS(0, screen.getPixel(posX + 26, posY + 37));
+		TS_ASSERT_EQUALS(0u, screen.getPixel(posX + 21, posY));
+		TS_ASSERT_EQUALS(0xd0u, screen.getPixel(posX + 22, posY));
+		TS_ASSERT_EQUALS(0xf0u, screen.getPixel(posX + 25, posY + 37));
+		TS_ASSERT_EQUALS(0u, screen.getPixel(posX + 26, posY + 37));
 		// Common::DumpFile file;
 		// file.open("test_gridtest.png");
 		// Image::writePNG(file, screen, pal);

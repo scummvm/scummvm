@@ -32,10 +32,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
-using Std::string;
-using Std::vector;
-
 class Actor;
 class CallBack;
 class AnimManager;
@@ -45,7 +41,7 @@ class Font;
 
 #define MESG_TIMED CB_TIMED
 
-typedef Std::list<NuvieAnim *>::iterator AnimIterator;
+typedef Common::List<NuvieAnim *>::iterator AnimIterator;
 
 /* Each viewable area has it's own AnimManager. (but I can only think of
  * animations in the MapWindow using this, so that could very well change)
@@ -54,7 +50,7 @@ class AnimManager {
 	MapWindow *map_window;
 	Screen *viewsurf;
 	Common::Rect viewport; // clip anims to location
-	Std::list<NuvieAnim *> anim_list; // in paint order
+	Common::List<NuvieAnim *> anim_list; // in paint order
 	uint32 next_id;
 
 	uint8 tile_pitch;
@@ -205,7 +201,7 @@ protected:
 	uint32 _tx, _ty, // location on surface: in increments of "tile_pitch"
 	       _px, _py; // location on surface: pixel offset from tx,ty
 
-	vector<PositionedTile *> _tiles;
+	Common::Array<PositionedTile *> _tiles;
 
 	void display() override;
 
@@ -339,9 +335,9 @@ typedef struct {
 class ExplosiveAnim : public TimedAnim {
 	MapCoord center;
 	uint32 radius; // num. of spaces from center
-	vector<ExplosiveAnimSegment> flame; // lines of fire from the center
+	Common::Array<ExplosiveAnimSegment> flame; // lines of fire from the center
 	uint16 exploding_tile_num; // fireball effect tile_num
-	vector<MapEntity> hit_items; // things the explosion has hit
+	Common::Array<MapEntity> hit_items; // things the explosion has hit
 
 public:
 	ExplosiveAnim(const MapCoord &start, uint32 size);
@@ -369,16 +365,16 @@ typedef struct {
 
 class ProjectileAnim : public TileAnim {
 	MapCoord src;
-	vector<ProjectileLine> line;
+	Common::Array<ProjectileLine> line;
 	uint16 tile_num; // fireball effect tile_num
 	uint8 src_tile_y_offset; //amount to offset src_tile when rotating. Used by arrows and bolts
-	vector<MapEntity> hit_items; // things the projectile has hit
+	Common::Array<MapEntity> hit_items; // things the projectile has hit
 	uint16 stopped_count;
 	uint8 speed; //number of pixels to move in a single update.
 
 	bool leaveTrailFlag;
 public:
-	ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
+	ProjectileAnim(uint16 tileNum, MapCoord *start, Common::Array<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
 	~ProjectileAnim() override;
 	void start() override;
 
@@ -453,12 +449,12 @@ public:
 };
 
 class TextAnim : public TimedAnim {
-	Std::string text;
+	Common::String text;
 	Font *font;
 	uint32 duration;
 
 public:
-	TextAnim(Std::string text, MapCoord loc, uint32 dur);
+	TextAnim(Common::String text, MapCoord loc, uint32 dur);
 	~TextAnim() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
 	void start() override                    {

@@ -338,7 +338,7 @@
 // -- Windows --
 
 {
-	{
+	{ // Used by ADI4 unlockable games
 		"gob2",
 		"v1.02",
 		AD_ENTRY2s("intro.stk", "285d7340f98ebad65d465585da12910b", 837286,
@@ -582,8 +582,8 @@
 {
 	{
 		"gob2",
-		"Non-Interactive Demo",
-		AD_ENTRY1("intro.stk", "8b1c98ff2ab2e14f47a1b891e9b92217"),
+		"Non-Interactive Demo (v1.0)",
+		AD_ENTRY1s("intro.stk", "8b1c98ff2ab2e14f47a1b891e9b92217", 907690),
 		EN_GRB,
 		kPlatformDOS,
 		ADGF_DEMO,

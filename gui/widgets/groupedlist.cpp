@@ -29,6 +29,7 @@
 #include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/animation/FluidScroll.h"
 
 #include "gui/ThemeEval.h"
 
@@ -140,8 +141,13 @@ void GroupedListWidget::sortGroups() {
 			}
 		}
 	}
+
+	_selectedItem = -1;
 	checkBounds();
 	scrollBarRecalc();
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
@@ -189,75 +195,156 @@ void GroupedListWidget::saveClosedGroups(const Common::U32String &groupName) {
 	ConfMan.flushToDisk();
 }
 
-int GroupedListWidget::findDataIndex(int data_index) const {
-	// The given index is an index in the _dataList.
-	// We want the index in the current _listIndex (which may be filtered and sorted) for this data.
-	// Sanity check to avoid iterating on the _listIndex if we know the given index is invalid.
-	if (data_index < -1 || data_index >= (int)_dataList.size())
-		return -1;
-	for (uint i = 0; i < _listIndex.size(); ++i) {
-		if (_listIndex[i] == data_index)
-			return i;
-	}
-	return -1;
+Common::Array<bool> GroupedListWidget::saveSelection() const {
+	return _selectedItems;
 }
 
-void GroupedListWidget::setSelected(int item) {
-	if (item < -1 || item >= (int)_dataList.size())
-		return;
+void GroupedListWidget::loadSelection(const Common::Array<bool> &savedSelection) {
+	_selectedItems.clear();
+	_selectedItems.resize(_dataList.size(), false);
 
-	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && (_selectedItem == -1 || _selectedItem >= (int)_list.size() || _listIndex[_selectedItem] != item)) {
-		if (_editMode)
-			abortEditMode();
-
-		_selectedItem = findDataIndex(item);
-
-		// Notify clients that the selection changed.
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
-
-		if (_selectedItem != -1 && !isItemVisible(_selectedItem)) {
-			// scroll selected item to center if possible
-			_currentPos = _selectedItem - _entriesPerPage / 2;
-			scrollToCurrent();
-		}
-		markAsDirty();
+	int count = MIN((int)savedSelection.size(), (int)_selectedItems.size());
+	for (int i = 0; i < count; ++i) {
+		_selectedItems[i] = savedSelection[i];
 	}
+
+	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
+
+	int topMostSel = -1;
+	int bottomMostSel = -1;
+
+	for (int visualRow = 0; visualRow < (int)_listIndex.size(); ++visualRow) {
+		int dataIndex = _listIndex[visualRow];
+
+		if (dataIndex >= 0 &&
+			dataIndex < (int)_selectedItems.size() &&
+			_selectedItems[dataIndex]) {
+
+			if (topMostSel == -1) {
+				topMostSel = visualRow;
+				_selectedItem = visualRow;
+				_lastSelectionStartItem = visualRow;
+			}
+
+			bottomMostSel = visualRow;
+		}
+	}
+
+	if (topMostSel != -1 && _entriesPerPage > 0) {
+		int span = bottomMostSel - topMostSel + 1;
+
+		if (topMostSel == bottomMostSel) {
+			_currentPos = topMostSel - _entriesPerPage / 2;
+		} else if (span <= _entriesPerPage) {
+			int spanCenter = (topMostSel + bottomMostSel) / 2;
+			_currentPos = spanCenter - _entriesPerPage / 2;
+		} else {
+			_currentPos = topMostSel;
+		}
+	} else {
+		_currentPos = 0;
+	}
+
+	checkBounds();
+	scrollBarRecalc();
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
+
+	markAsDirty();
 }
 
 void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
 
-	// First check whether the selection changed
-	int newSelectedItem = findItem(x, y);
-	if (_selectedItem != newSelectedItem && newSelectedItem != -1) {
-		if (_listIndex[newSelectedItem] > -1) {
-			if (_editMode)
-				abortEditMode();
-			_selectedItem = newSelectedItem;
-			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		} else if (isGroupHeader(_listIndex[newSelectedItem])) {
-			int groupID = indexToGroupID(_listIndex[newSelectedItem]);
-			int oldSelection = getSelected();
-			_selectedItem = -1;
-			toggleGroup(groupID);
-			// Try to preserve the selection, but without scrolling
-			if (oldSelection != -1) {
-				_selectedItem = findDataIndex(oldSelection);
-				sendCommand(kListSelectionChangedCmd, _selectedItem);
-			}
-		}
+	_isMouseDown = true;
+	_isDragging = false;
+	_dragLastY = 0;
+
+	if (button == 1) {
+		_dragStartY = y;
+		_dragLastY = y;
+		_fluidScroller->stopAnimation();
 	}
 
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
-	markAsDirty();
-
+	if (_editMode)
+		abortEditMode();
 }
 
 void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (button == 1 || button == 2) {
+		if (_isMouseDown && button == 1 && _isDragging)
+			_fluidScroller->startFling();
+
+		if (_isMouseDown && !_isDragging) {
+			int newSelectedItem = findItem(x, y);
+			if (newSelectedItem != -1) {
+				if (isGroupHeader(_listIndex[newSelectedItem])) {
+					int groupID = indexToGroupID(_listIndex[newSelectedItem]);
+					int oldSelection = getSelected();
+					_selectedItem = -1;
+					toggleGroup(groupID);
+					if (oldSelection != -1) {
+						_selectedItem = findDataIndex(oldSelection);
+						sendCommand(kListSelectionChangedCmd, _selectedItem);
+					}
+					applyScrollPos();
+				} else {
+					int dataIndex = _listIndex[newSelectedItem];
+					if (dataIndex >= 0) {
+						// Get modifier keys
+						int modifiers = g_system->getEventManager()->getModifierState();
+						bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
+						bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
+
+						// Only handle multi-select if it's enabled
+						if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
+							if (shiftClick && _lastSelectionStartItem != -1) {
+								// Shift+Click: Select range in terms of underlying data indices
+								int startListIndex = _lastSelectionStartItem;
+								int endListIndex = newSelectedItem;              
+								selectItemRange(startListIndex, endListIndex);
+								_selectedItem = newSelectedItem;
+								_lastSelectionStartItem = newSelectedItem;
+								sendCommand(kListSelectionChangedCmd, _selectedItem);
+							} else if (ctrlClick) {
+								// Ctrl+Click: toggle selection for the underlying data index
+								if (isItemSelected(newSelectedItem)) {
+									markSelectedItem(newSelectedItem, false);
+								} else {
+									markSelectedItem(newSelectedItem, true);
+									_selectedItem = newSelectedItem;
+									_lastSelectionStartItem = newSelectedItem;
+								}
+								sendCommand(kListSelectionChangedCmd, _selectedItem);
+							}
+						} else {
+							// Regular click: clear selection and select only this underlying item
+							clearSelection();
+							_selectedItem = newSelectedItem;
+							markSelectedItem(newSelectedItem, true);
+							sendCommand(kListSelectionChangedCmd, _selectedItem);
+						}
+
+						// Notify clients if an item was clicked
+						if (newSelectedItem >= 0)
+							sendCommand(kListItemSingleClickedCmd, _selectedItem);
+
+						applyScrollPos();
+					}
+				}
+			}
+		}
+
+		_isMouseDown = false;
+		_isDragging = false;
+	}
+
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y))) {
@@ -269,16 +356,17 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
-	_scrollBar->handleMouseWheel(x, y, direction);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
-			_currentPos = data;
-			checkBounds();
-			markAsDirty();
+			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+			_fluidScroller->stopAnimation();
+			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
+			applyScrollPos();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
 			// NOTE: ListWidget's boss is always GUI::Dialog
@@ -291,40 +379,40 @@ void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 }
 
 int GroupedListWidget::getItemPos(int item) {
-	int pos = 0;
-
 	for (uint i = 0; i < _listIndex.size(); i++) {
 		if (_listIndex[i] == item) {
-			return pos;
-		} else if (_listIndex[i] >= 0) { // skip headers
-			pos++;
+			return i;
 		}
 	}
 
 	return -1;
 }
 
-int GroupedListWidget::getNewSel(int index) {   
-	// If the list is empty, return -1
-	if (_listIndex.size() == 1){
-		return -1;
-	}
+int GroupedListWidget::getNewSel(int index) {
+    if (_listIndex.empty()) {
+        return -1;
+    }
 
-	// Find the index-th item in the list
-	for (uint i = 0; i < _listIndex.size(); i++) {
-		if (index == 0 && _listIndex[i] >= 0) {
-			return _listIndex[i];
-		} else if (_listIndex[i] >= 0) {
-			index--;
-		}
-	}
+    if (index < 0) {
+        return -1;
+    }
+    if (index >= (int)_listIndex.size()) {
+        index = _listIndex.size() - 1;
+    }
 
-	// If we are at the end of the list, return the last item.
-	if (index == 0) {
-		return _listIndex[_listIndex.size() - 1];
-	} else {
-		return -1;
-	}
+    // First try the next selectable visible item
+    int selectable = findSelectableItem(index, +1);
+
+    // If there is none below, try the previous selectable one
+    if (selectable == -1) {
+        selectable = findSelectableItem(index - 1, -1);
+    }
+
+    if (selectable == -1) {
+        return -1;
+    }
+
+    return _listIndex[selectable];
 }
 
 void GroupedListWidget::toggleGroup(int groupID) {
@@ -342,24 +430,37 @@ void GroupedListWidget::drawWidget() {
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
+	const int firstItem = MAX(0, (int)(_scrollPos / lineHeight));
+	const int offset = _scrollPos < 0 ? (int)_scrollPos : (int)_scrollPos % lineHeight;
 	const int indentSpacing = g_gui.getFontHeight();
-	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + _topPadding + lineHeight * i;
+
+	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);
+	Common::Rect oldClip = g_gui.theme()->swapClipRect(innerRect.findIntersectingRect(g_gui.theme()->getClipRect()));
+
+	for (i = 0, pos = firstItem; i <= _entriesPerPage && pos < len; i++, pos++) {
+		const int y = _y + _topPadding + lineHeight * i - offset;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 #if 0
 		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
 #endif
 
-		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos)
-			inverted = _inversion;
+		// For grouped lists, only real items (non-headers) may be highlighted.
+		int mapped = _listIndex[pos];
+		bool isRealItem = (mapped >= 0);
+		if (isRealItem) {
+			if (isItemSelected(pos))
+				inverted = _inversion;
+		}
+
+		ThemeEngine::WidgetStateInfo itemState = getItemState(pos);
 
 		Common::Rect r(getEditRect());
 		int pad = _leftPadding;
 		int rtlPad = (_x + r.left + _leftPadding) - (_x + _hlLeftPadding);
 
-		if (isGroupHeader(_listIndex[pos])) {
-			int groupID = indexToGroupID(_listIndex[pos]);
+		// Group header / grouped list indentation logic
+		if (isGroupHeader(mapped)) {
+    		int groupID = indexToGroupID(mapped);
 #if 0
 			bold = ThemeEngine::kFontStyleBold;
 #endif
@@ -376,7 +477,7 @@ void GroupedListWidget::drawWidget() {
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
 			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + lineHeight),
-									buffer, _state, _drawAlign, inverted, _leftPadding, true);
+									buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
@@ -402,9 +503,8 @@ void GroupedListWidget::drawWidget() {
 			buffer = _list[pos];
 		}
 
-		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true, color);
+		drawFormattedText(r1, buffer, itemState, _drawAlign, inverted, pad, true, color);
 
-		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
 			buffer = Common::String::format(" .%2d", (pos + _numberingMode));
 
@@ -413,9 +513,14 @@ void GroupedListWidget::drawWidget() {
 			r2.left = r1.right;
 			r2.right = r1.right + rtlPad;
 
-			g_gui.theme()->drawText(r2, buffer, _state, _drawAlign, inverted, _leftPadding, true);
+			g_gui.theme()->drawText(r2, buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
+
+	g_gui.theme()->swapClipRect(oldClip);
+
+	if (_editMode)
+		EditableWidget::drawWidget();
 }
 
 void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) {
@@ -487,6 +592,15 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
 		g_gui.scheduleTopDialogRedraw();
 	}
+}
+ThemeEngine::WidgetStateInfo GroupedListWidget::getItemState(int item) const {
+	return _state;
+}
+
+bool GroupedListWidget::isItemSelectable(int item) const {
+	if (item < 0 || item >= (int)_listIndex.size())
+		return false;
+	return !isGroupHeader(_listIndex[item]);
 }
 
 } // End of namespace GUI

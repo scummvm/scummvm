@@ -115,6 +115,7 @@ enum SciGameId {
 	GID_QFG4DEMO,	// We have a separate ID for QFG4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_RAMA,
 	GID_REALM,
+	GID_SHIELD,
 	GID_SHIVERS,
 	//GID_SHIVERS2,	// Not SCI
 	GID_SLATER,

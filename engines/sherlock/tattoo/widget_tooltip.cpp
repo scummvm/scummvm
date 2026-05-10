@@ -29,8 +29,6 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-#define MAX_TOOLTIP_WIDTH 150
-
 void WidgetTooltipBase::draw() {
 	Screen &screen = *_vm->_screen;
 
@@ -83,8 +81,9 @@ void WidgetTooltip::setText(const Common::String &strIn) {
 		int height = _surface.stringHeight(str) + 2;
 		Common::String line1 = str, line2 = "";
 
+		// TODO This code is similar to WidgetInventoryTooltip::setText(). Maybe they should be merged?
 		// See if we need to split it into two lines
-		if (width > MAX_TOOLTIP_WIDTH) {
+		if (width > kMaxTooltipWidth) {
 			// Go forward word by word to find out where to split the line
 			const char *s = str.c_str();
 			const char *space = nullptr;

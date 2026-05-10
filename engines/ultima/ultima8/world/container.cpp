@@ -144,9 +144,7 @@ bool Container::addItem(Item *item, bool checkwghtvol) {
 
 
 bool Container::removeItem(Item *item) {
-	Std::list<Item *>::iterator iter;
-
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+	for (auto iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if (*iter == item) {
 			_contents.erase(iter);
 			return true;
@@ -156,9 +154,7 @@ bool Container::removeItem(Item *item) {
 }
 
 bool Container::moveItemToEnd(Item *item) {
-	Std::list<Item *>::iterator iter;
-
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+	for (auto iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if (*iter == item) {
 			// found; move to end
 			_contents.erase(iter);
@@ -168,7 +164,6 @@ bool Container::moveItemToEnd(Item *item) {
 	}
 
 	// not found
-
 	return false;
 }
 
@@ -298,7 +293,7 @@ Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
 	return nullptr;
 }
 
-void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse) {
+void Container::getItemsWithShapeFamily(Common::Array<Item *> &itemlist, uint16 family, bool recurse) {
 	for (auto *item : _contents) {
 		if (item->getShapeInfo()->_family == family)
 			itemlist.push_back(item);

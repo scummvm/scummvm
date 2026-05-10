@@ -1510,7 +1510,7 @@ dgIntersectStatus dgAABBPolygonSoup::CalculateAllFaceEdgeNormals(void *context, 
 		adjacentFaces.m_normal = dgPlane(n, -(n % p));
 	}
 
-	NEWTON_ASSERT(indexCount < dgInt32(sizeof(adjacentFaces.m_edgeMap) / sizeof(adjacentFaces.m_edgeMap[0])));
+	NEWTON_ASSERT(indexCount < dgInt32(ARRAYSIZE(adjacentFaces.m_edgeMap)));
 
 	dgInt32 edgeIndex = indexCount - 1;
 	dgInt32 i0 = indexArray[indexCount - 1];

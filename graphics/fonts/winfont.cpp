@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/ptr.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -52,81 +53,61 @@ void WinFont::close() {
 	_glyphs = nullptr;
 }
 
-// Reads a null-terminated string
-static Common::String readString(Common::SeekableReadStream &stream) {
-	Common::String string;
-
-	char c = stream.readByte();
-	while (c && stream.pos() < stream.size()) {
-		string += c;
-		c = stream.readByte();
-	}
-
-	return string;
-}
-
 static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 	WinFontDirEntry entry;
 
 	stream.skip(68); // Useless
 	entry.points = stream.readUint16LE();
 	stream.skip(43); // Useless (for now, maybe not in the future)
-	readString(stream); // Skip Device Name
-	entry.faceName = readString(stream);
+	stream.readString(); // Skip Device Name
+	entry.faceName = stream.readString();
 
 	return entry;
 }
 
 bool WinFont::loadFromFON(const Common::Path &fileName, const WinFontDirEntry &dirEntry) {
-	Common::WinResources *exe = Common::WinResources::createFromEXE(fileName);
-	if (!exe)
+	Common::ScopedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(fileName));
+	if (!exe) {
 		return false;
+	}
 
-	bool ok = loadFromEXE(exe, fileName, dirEntry);
-	delete exe;
-	return ok;
+	return loadFromEXE(exe.get(), fileName, dirEntry);
 }
 
 bool WinFont::loadFromFON(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry) {
-	Common::WinResources *exe = Common::WinResources::createFromEXE(&stream);
-	if (!exe)
+	Common::ScopedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(&stream));
+	if (!exe) {
 		return false;
+	}
 
-	bool ok = loadFromEXE(exe, Common::Path("stream"), dirEntry);
-	delete exe;
-	return ok;
+	return loadFromEXE(exe.get(), "stream", dirEntry);
 }
 
 bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::Path &fileName, const WinFontDirEntry &dirEntry) {
 	// Let's pull out the font directory
-	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kWinFontDir, Common::String("FONTDIR"));
+	Common::ScopedPtr<Common::SeekableReadStream> fontDirectory(exe->getResource(Common::kWinFontDir, Common::WinResourceID("FONTDIR")));
 	if (!fontDirectory) {
 		warning("No font directory in '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
-	uint32 fontId = getFontIndex(*fontDirectory, dirEntry);
-
-	delete fontDirectory;
-
-	// Couldn't match the face name
+	// Match the face name
+	uint32 fontId = getFontIndex(*fontDirectory.get(), dirEntry);
 	if (fontId == 0xffffffff) {
 		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(),
 				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
-	// Actually go get our font now...
-	Common::SeekableReadStream *fontStream = exe->getResource(Common::kWinFont, fontId);
+	// Get the font
+	Common::ScopedPtr<Common::SeekableReadStream> fontStream(exe->getResource(Common::kWinFont, fontId));
 	if (!fontStream) {
 		warning("Could not find font %d in %s", fontId,
 				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
-	bool ok = loadFromFNT(*fontStream);
-	delete fontStream;
-	return ok;
+	return loadFromFNT(*fontStream.get());
 }
 
 /**
@@ -152,7 +133,7 @@ uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDi
 		return 0xffffffff;
 	}
 
-	// Scour the directory for our matching name
+	// Search the directory for our matching name
 	for (uint16 i = 0; i < numFonts; i++) {
 		uint16 id = stream.readUint16LE();
 
@@ -182,8 +163,10 @@ Common::String WinFont::getFONFontName(Common::SeekableReadStream& stream) {
 
 bool WinFont::loadFromFNT(const Common::Path &fileName) {
 	Common::File file;
-
-	return file.open(fileName) && loadFromFNT(file);
+	if (!file.open(fileName)) {
+		return false;
+	}
+	return loadFromFNT(file);
 }
 
 char WinFont::indexToCharacter(uint16 index) const {
@@ -207,15 +190,22 @@ int WinFont::getCharWidth(uint32 chr) const {
 }
 
 bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
-	uint16 version = stream.readUint16LE();
+	uint32 fontPos = stream.pos();
 
-	// We'll accept Win1, Win2, and Win3 fonts
+	// Font versions:
+	// 1.0 Raster: Unsupported. Different bitmap format. Win 1.0 included these.
+	// 2.0 Raster: Supported. Most common format.
+	// 3.0 Raster: Supported. More header fields, 32-bit offsets.
+	// 1.0 Vector: Unsupported. Windows only has three: Modern, Roman, Script
+	// 2.0 Vector: Unsupported. None are known to exist.
+	// 3.0 Vector: Unsupported. None are known to exist.
+	uint16 version = stream.readUint16LE();
 	if (version != 0x100 && version != 0x200 && version != 0x300) {
 		warning("Bad FNT version %04x", version);
 		return false;
 	}
 
-	/* uint32 sizeOfGlyphTableInBytes = */ stream.readUint32LE();
+	/* uint32 fontSize = */ stream.readUint32LE();
 	stream.skip(60); // Copyright info
 	uint16 fontType = stream.readUint16LE();
 	_sizeInPoints = stream.readUint16LE();
@@ -248,22 +238,38 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 	/* uint32 device = */ stream.readUint32LE();
 	/* uint32 face = */ stream.readUint32LE();
 	/* uint32 bitsPointer = */ stream.readUint32LE();
-	uint32 bitsOffset = stream.readUint32LE();
-	/* byte reserved = */ stream.readByte();
+	/* uint32 bitsOffset = */ stream.readUint32LE();
 
-	if (version == 0x100) {
-		// Seems Win1 has an extra byte?
-		stream.readByte();
+	if (version == 0x200) {
+		/* byte reserved = */ stream.readByte();
 	} else if (version == 0x300) {
-		// For Windows 3.0, Microsoft added 6 new fields. All of which are
-		// guaranteed to be 0. Which leads to the question: Why add these at all?
+		/* byte reserved = */ stream.readByte();
 
+		// Windows 3.0 added fields for future versions that were never used.
+		// These fields are always zero. True Type replaced this font format.
 		/* uint32 flags = */ stream.readUint32LE();
 		/* uint16 aSpace = */ stream.readUint16LE();
 		/* uint16 bSpace = */ stream.readUint16LE();
 		/* uint16 cSpace = */ stream.readUint16LE();
 		/* uint32 colorPointer = */ stream.readUint32LE();
-		stream.skip(16); // Reserved
+		stream.skip(16); // reserved [ dfReserved1 ]
+	}
+
+	// TODO: Add support for the three vector fonts: Modern, Roman, and Script.
+	// Note that the Windows font spec defines how vector points are stored, but not
+	// the line drawing or resizing algorithms; these were implementation specific.
+	// The three vector fonts only appear in the 1.0 format. The Script font has
+	// characters that draw beyond their widths to achieve the connected effect.
+	if (fontType & 1) {
+		warning("WinFont: vector fonts not supported");
+		return false;
+	}
+	// Windows 1.0 raster fonts have significantly different formats for the glyph
+	// entries and the font bitmap. The glyph entry table may not even be present.
+	// 1.0 raster fonts appeared in Windows 1.0 and were upgraded to 2.0 afterwards.
+	if (version == 0x100) {
+		warning("WinFont: 1.0 raster fonts not supported");
+		return false;
 	}
 
 	// Begin loading in the glyphs
@@ -279,21 +285,11 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 			_glyphs[i].charWidth = pixWidth;
 
 		_glyphs[i].offset = (version == 0x300) ? stream.readUint32LE() : stream.readUint16LE();
-
-		// Seems the offsets in the Win1 font format are based on bitsOffset
-		if (version == 0x100)
-			_glyphs[i].offset += bitsOffset;
-	}
-
-	// TODO: Currently only raster fonts are supported!
-	if (fontType & 1) {
-		warning("Vector FNT files not supported yet");
-		return false;
 	}
 
 	// Read in the bitmaps for the raster images
 	for (uint16 i = 0; i < _glyphCount - 1; i++) {
-		stream.seek(_glyphs[i].offset);
+		stream.seek(fontPos + _glyphs[i].offset);
 
 		_glyphs[i].bitmap = new byte[_pixHeight * _glyphs[i].charWidth];
 
@@ -333,7 +329,15 @@ void WinFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	GlyphEntry &glyph = _glyphs[characterToIndex(chr)];
 
 	for (uint16 i = 0; i < _pixHeight; i++) {
+		// Boundary check for Y...
+		if (y + i < 0 || y + (int)i >= dst->h)
+			continue;
+
 		for (uint16 j = 0; j < glyph.charWidth; j++) {
+			// Boundary check for X...
+			if (x + j < 0 || x + (int)j >= dst->w)
+				continue;
+
 			if (glyph.bitmap[j + i * glyph.charWidth]) {
 				if (dst->format.bytesPerPixel == 1)
 					*((byte *)dst->getBasePtr(x + j, y + i)) = color;

@@ -43,9 +43,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "OverrideLockPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawButton(uint buttonID, bool clear);
 	void drawLights();

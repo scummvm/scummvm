@@ -271,22 +271,18 @@ void CSpinner::SetupSpinner() {
  ************************************************************************/
 
 int CSpinner::Animate(int nX, int nY) {
-	int     nValue = -1;
-	uint32   goal;
+	int nValue = -1;
 
-	m_nX = nX;                                      // establish position
+	// Establish position
+	m_nX = nX;
 	m_nY = nY;
 
 	AfxGetApp()->DoWaitCursor(1);
 
-	nValue = Spin();                               // spin it and get a result
-	if (nValue > 0) {                              // pause for a moment
-		goal = GetTickCount() + SPINNER_WAIT * 1000L;
-		while (goal > GetTickCount()) {             // handle non-input messages
-			if (HandleMessages())                   // ... and terminate loop if urgent
-				break;
-		}
-		Hide();                              // hide the spinner
+	nValue = Spin();								// Spin it and get a result
+	if (nValue > 0) {
+		g_system->delayMillis(SPINNER_WAIT * 1000);	// Pause for a moment
+		Hide();										// hide the spinner
 	}
 
 	AfxGetApp()->DoWaitCursor(-1);

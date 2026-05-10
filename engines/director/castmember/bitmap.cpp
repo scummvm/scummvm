@@ -101,11 +101,11 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		}
 
 		_pitch = _initialRect.width();
-		if (_pitch % 16)
-			_pitch += 16 - (_initialRect.width() % 16);
 
 		_pitch *= _bitsPerPixel;
 		_pitch >>= 3;
+		if (_pitch % 2)
+			_pitch += 2 - (_pitch % 2);
 
 	} else if (version >= kFileVer400 && version < kFileVer600) {
 		_flags1 = flags1;
@@ -409,6 +409,8 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 }
 
 Graphics::Surface *BitmapCastMember::getDitherImg() {
+	if (!_picture->_surface.getPixels())
+        return nullptr;
 	Graphics::Surface *dither = nullptr;
 
 	// Convert indexed image to indexed palette
@@ -554,10 +556,6 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 	uint32 whiteColor = 0;
 	bool colorFound = false;
 	const byte *palette = g_director->getPalette();
-
-	if (_picture->getPaletteCount() > 0) {
-		palette = _picture->_palette;
-	}
 
 	if (tmp.format.isCLUT8()) {
 		for (int y = 0; y < tmp.h; y++) {

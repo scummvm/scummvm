@@ -212,7 +212,7 @@ void lua_open() {
 	lua_resetglobals();
 	luaT_init();
 	luaB_predefine();
-	luaL_addlibtolist(stdErrorRimFunc, (sizeof(stdErrorRimFunc) / sizeof(stdErrorRimFunc[0])));
+	luaL_addlibtolist(stdErrorRimFunc, ARRAYSIZE(stdErrorRimFunc));
 	if (Debug::isChannelEnabled(Debug::Lua))
 		lua_callhook = callHook;
 }

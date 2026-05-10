@@ -959,7 +959,7 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		if (!sentence->localWord("earth")) {
 			if (g_language == Common::EN_ANY && !sentence->contains("earth"))
 				return 1;
-			if (g_language == Common::EN_ANY && !sentence->contains("erde"))
+			if (g_language == Common::DE_DEU && !sentence->contains("erde"))
 				return 1;
 		}
 		break;

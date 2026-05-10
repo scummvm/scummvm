@@ -118,7 +118,8 @@ void OpenGLShaderRenderer::init() {
 		_defaultShaderStippleArray[i] = _defaultStippleArray[i];
 
 	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 	glEnable(GL_SCISSOR_TEST);
 	setViewport(_viewport);
 }
@@ -147,6 +148,7 @@ void OpenGLShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, co
 	_bitmapShader->use();
 	_bitmapShader->setUniform("flipY", glTexture->_upsideDown);
 
+	glDisable(GL_CULL_FACE);
 	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
@@ -155,6 +157,7 @@ void OpenGLShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, co
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
 	_bitmapShader->unbind();
 }
 
@@ -177,11 +180,13 @@ void OpenGLShaderRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	_cubemapShader->use();
 	_cubemapShader->setUniform("mvpMatrix", skyboxMVP);
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _cubemapTexCoordVBO);
 	if (texture->_width == 1008)
 		glBufferData(GL_ARRAY_BUFFER, sizeof(_skyUvs1008), _skyUvs1008, GL_DYNAMIC_DRAW);
+	else if (texture->_width == 672)
+		glBufferData(GL_ARRAY_BUFFER, sizeof(_skyUvs672), _skyUvs672, GL_DYNAMIC_DRAW);
 	else if (texture->_width == 128)
 		glBufferData(GL_ARRAY_BUFFER, sizeof(_skyUvs128), _skyUvs128, GL_DYNAMIC_DRAW);
 	else
@@ -192,7 +197,88 @@ void OpenGLShaderRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 
 	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	_cubemapShader->unbind();
+}
+
+void OpenGLShaderRenderer::drawThunder(Texture *texture, const Math::Vector3d position, const float size) {
+	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
+
+	// Compute eye-space position of the thunder
+	// Convention: matrix(col, row) maps to column-major layout
+	const Math::Matrix4 &mv = _modelViewMatrix;
+	float ex = mv(0,0)*position.x() + mv(1,0)*position.y() + mv(2,0)*position.z() + mv(3,0);
+	float ey = mv(0,1)*position.x() + mv(1,1)*position.y() + mv(2,1)*position.z() + mv(3,1);
+	float ez = mv(0,2)*position.x() + mv(1,2)*position.y() + mv(2,2)*position.z() + mv(3,2);
+
+	// Build billboard model-view with Rz(-90) rotation and eye-space translation
+	// cos(-90) = 0, sin(-90) = -1
+	Math::Matrix4 billboardMV;
+	billboardMV(0, 0) = 0.0f;  billboardMV(0, 1) = -1.0f; billboardMV(0, 2) = 0.0f; billboardMV(0, 3) = 0.0f;
+	billboardMV(1, 0) = 1.0f;  billboardMV(1, 1) = 0.0f;  billboardMV(1, 2) = 0.0f; billboardMV(1, 3) = 0.0f;
+	billboardMV(2, 0) = 0.0f;  billboardMV(2, 1) = 0.0f;  billboardMV(2, 2) = 1.0f; billboardMV(2, 3) = 0.0f;
+	billboardMV(3, 0) = ex;    billboardMV(3, 1) = ey;     billboardMV(3, 2) = ez;   billboardMV(3, 3) = 1.0f;
+
+	// Build MVP using the same pattern as drawSkybox/positionCamera
+	Math::Matrix4 proj = _projectionMatrix;
+	Math::Matrix4 model = billboardMV;
+	proj.transpose();
+	model.transpose();
+	Math::Matrix4 thunderMVP = proj * model;
+	thunderMVP.transpose();
+
+	// Build quad geometry (two triangles)
+	float half = size * 0.5f;
+	float quadVerts[] = {
+		-half, -half, 0.0f,
+		 half, -half, 0.0f,
+		 half,  half, 0.0f,
+		-half, -half, 0.0f,
+		 half,  half, 0.0f,
+		-half,  half, 0.0f,
+	};
+	float quadTexCoords[] = {
+		0.0f, 0.0f,
+		0.0f, 0.72f,
+		1.0f, 0.72f,
+		0.0f, 0.0f,
+		1.0f, 0.72f,
+		1.0f, 0.0f,
+	};
+
+	_cubemapShader->use();
+	_cubemapShader->setUniform("mvpMatrix", thunderMVP);
+
+	// Upload quad vertex data
+	glBindBuffer(GL_ARRAY_BUFFER, _cubemapVertVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVerts), quadVerts, GL_DYNAMIC_DRAW);
+
+	// Upload quad texcoord data
+	glBindBuffer(GL_ARRAY_BUFFER, _cubemapTexCoordVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadTexCoords), quadTexCoords, GL_DYNAMIC_DRAW);
+
+	// Bind thunder texture
+	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// Additive blending for glow effect
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glDisable(GL_CULL_FACE);
+
+	// Draw the textured quad
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Restore skybox vertex data in the VBO
+	glBindBuffer(GL_ARRAY_BUFFER, _cubemapVertVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(_skyVertices), _skyVertices, GL_DYNAMIC_DRAW);
+
+	// Restore state
+	glDisable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	_cubemapShader->unbind();
 }
@@ -219,7 +305,12 @@ void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math:
 	model.transpose();
 	_mvpMatrix = proj * model;
 	_mvpMatrix.transpose();
+
+	_triangleShader->use();
+	_triangleShader->setUniform("shakeOffset",
+		Math::Vector2d(_shakeOffset.x * 0.025f, _shakeOffset.y * 0.025f));
 }
+
 void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect &viewArea) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
@@ -257,6 +348,7 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 	_triangleShader->use();
 	_triangleShader->setUniform("useStipple", false);
 	_triangleShader->setUniform("mvpMatrix", identity);
+	_triangleShader->setUniform("shakeOffset", Math::Vector2d(0, 0));
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
@@ -276,26 +368,30 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	glDepthMask(GL_FALSE);
 
 	useColor(r, g, b);
 
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
-	float coef = (9 - frame) / 9.0;
-	float radius = (1 - coef) * 4.0;
 
-	Common::Point position(_position.x, _screenH - _position.y);
+	// Exponential ease-out trajectory inspired by the original ZX animation.
+	float coef = 1.0f - powf(0.5f, (8 - frame + 1) / 2.0f);
+	float radius = 1.0f + frame * 0.5f;
 
-	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, _screenH - (viewArea.height() + viewArea.top));
-	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
+	float posX = (float)_position.x;
+	float posY = (float)(_screenH - _position.y);
+	float startX = viewArea.left + viewArea.width() / 2.0f + 2;
+	float startY = (float)(_screenH - (viewArea.height() + viewArea.top));
+	float ballX = coef * posX + (1.0f - coef) * startX;
+	float ballY = coef * posY + (1.0f - coef) * startY;
 
-	copyToVertexArray(0, Math::Vector3d(remap(ball_position.x, _screenW), remap(ball_position.y, _screenH), 0));
+	copyToVertexArray(0, Math::Vector3d(remap(ballX, _screenW), remap(ballY, _screenH), 0));
 
 	for (int i = 0; i <= triangleAmount; i++) {
-		float x = remap(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)), _screenW);
-		float y = remap(ball_position.y + (radius * sin(i * twicePi / triangleAmount)), _screenH);
+		float x = remap(ballX + (radius * cos(i * twicePi / triangleAmount)), _screenW);
+		float y = remap(ballY + (radius * sin(i * twicePi / triangleAmount)), _screenH);
 		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
 	}
 
@@ -305,7 +401,7 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 	glDrawArrays(GL_TRIANGLE_FAN, 0, (triangleAmount + 2));
 
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glDepthMask(GL_TRUE);
 }
 
@@ -321,6 +417,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 	_triangleShader->use();
 	_triangleShader->setUniform("useStipple", false);
 	_triangleShader->setUniform("mvpMatrix", identity);
+	_triangleShader->setUniform("shakeOffset", Math::Vector2d(0, 0));
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
@@ -340,7 +437,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	glDepthMask(GL_FALSE);
 
 	useColor(r, g, b);
@@ -367,7 +464,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 	glLineWidth(1);
 
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glDepthMask(GL_TRUE);
 }
 
@@ -404,22 +501,29 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 		verts.push_back(z);
 	}
 
-	// === Apply billboard effect to MVP matrix ===
-	// Replicate the legacy code's matrix modification
-	Math::Matrix4 billboardMVP = _mvpMatrix;
-
-	// Zero out rotation for rows 1, 3 (skip row 2), set diagonal to 1.0
-	// This matches: for (int i = 1; i < 4; i++) for (int j = 0; j < 4; j++)
+	// === Apply billboard effect to modelview matrix only ===
+	// Matrix4 operator()(i,j) uses (column, row) convention, matching
+	// OpenGL column-major m[col*4+row]. Zero columns 1 and 3 (skip 2),
+	// set diagonal to 1.0 — same as legacy glGetFloatv billboard.
+	Math::Matrix4 billboardMV = _modelViewMatrix;
 	for (int i = 1; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == 2)
 				continue;
 			if (i == j)
-				billboardMVP(i, j) = 2.5f;
+				billboardMV(i, j) = 1.0f;
 			else
-				billboardMVP(i, j) = 0.0f;
+				billboardMV(i, j) = 0.0f;
 		}
 	}
+
+	// Recombine with projection (same pattern as positionCamera)
+	Math::Matrix4 proj = _projectionMatrix;
+	Math::Matrix4 model = billboardMV;
+	proj.transpose();
+	model.transpose();
+	Math::Matrix4 billboardMVP = proj * model;
+	billboardMVP.transpose();
 
 	// === Bind VBO ===
 	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
@@ -432,10 +536,10 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	// === Shader uniforms ===
 	_triangleShader->use();
 	_triangleShader->setUniform("mvpMatrix", billboardMVP);
+	_triangleShader->setUniform("shakeOffset", Math::Vector2d(0, 0));
 	_triangleShader->setUniform("useStipple", false);
 
 	// === Render settings ===
-	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
 	// === Draw vertex fan ===
@@ -449,7 +553,6 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	}
 
 	// === Restore state ===
-	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 
 	// === Cleanup binding ===
@@ -457,6 +560,67 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	_triangleShader->unbind();
+}
+
+void OpenGLShaderRenderer::drawAABB(const Math::AABB &aabb, uint8 r, uint8 g, uint8 b) {
+	if (!aabb.isValid())
+		return;
+
+	Math::Vector3d min = aabb.getMin();
+	Math::Vector3d max = aabb.getMax();
+
+	// calculate the 8 corners of the box
+	Math::Vector3d c[8];
+	c[0] = Math::Vector3d(min.x(), min.y(), min.z());
+	c[1] = Math::Vector3d(max.x(), min.y(), min.z());
+	c[2] = Math::Vector3d(max.x(), max.y(), min.z());
+	c[3] = Math::Vector3d(min.x(), max.y(), min.z());
+	c[4] = Math::Vector3d(min.x(), min.y(), max.z());
+	c[5] = Math::Vector3d(max.x(), min.y(), max.z());
+	c[6] = Math::Vector3d(max.x(), max.y(), max.z());
+	c[7] = Math::Vector3d(min.x(), max.y(), max.z());
+
+	_triangleShader->use();
+	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
+	useColor(r, g, b);
+
+	// disable depth so we can see the box through walls
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glLineWidth(2.0f);
+
+	// build lines (12 lines * 2 vertices = 24 vertices)
+	int idx = 0;
+
+	auto pushLine = [&](int i, int j) {
+		copyToVertexArray(idx++, c[i]);
+		copyToVertexArray(idx++, c[j]);
+	};
+
+	// bottom
+	pushLine(0, 1);
+	pushLine(1, 2);
+	pushLine(2, 3);
+	pushLine(3, 0);
+	// top
+	pushLine(4, 5);
+	pushLine(5, 6);
+	pushLine(6, 7);
+	pushLine(7, 4);
+	// sides
+	pushLine(0, 4);
+	pushLine(1, 5);
+	pushLine(2, 6);
+	pushLine(3, 7);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, idx * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glDrawArrays(GL_LINES, 0, idx);
+
+	// restore state
+	glLineWidth(1.0f);
 }
 
 void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition) {
@@ -469,11 +633,11 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition)
 	_triangleShader->use();
 	_triangleShader->setUniform("useStipple", false);
 	_triangleShader->setUniform("mvpMatrix", identity);
+	_triangleShader->setUniform("shakeOffset", Math::Vector2d(0, 0));
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 
-	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
 	useColor(255, 255, 255);
@@ -500,7 +664,6 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition)
 
 	glLineWidth(1);
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
 
@@ -510,6 +673,13 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 
 	_triangleShader->use();
 	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
+
+#if !USE_FORCED_GLES2
+	if (_debugRenderWireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		useColor(0, 255, 0);
+	}
+#endif
 
 	if (vertices.size() == 2) {
 		const Math::Vector3d &v1 = vertices[1];
@@ -527,6 +697,10 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 		glDrawArrays(GL_LINES, 0, 2);
 
 		glLineWidth(1);
+#if !USE_FORCED_GLES2
+		if (_debugRenderWireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
 		return;
 	}
 
@@ -544,15 +718,41 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
 	glDrawArrays(GL_TRIANGLES, 0, vi + 3);
+
+	if (_debugRenderNormals && vertices.size() >= 3) {
+		// calculate center
+		Math::Vector3d center(0, 0, 0);
+		for (auto &v : vertices) center += v;
+		center /= (float)vertices.size();
+
+		// calculate normal vector
+		Math::Vector3d v1 = vertices[1] - vertices[0];
+		Math::Vector3d v2 = vertices[2] - vertices[0];
+		Math::Vector3d normal = Math::Vector3d::crossProduct(v1, v2);
+		normal.normalize();
+		Math::Vector3d tip = center + (normal * 50.0f);
+
+		// upload normal line
+		copyToVertexArray(0, center);
+		copyToVertexArray(1, tip);
+
+		useColor(255, 0, 255); // pink
+
+		glBufferData(GL_ARRAY_BUFFER, 2 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
+
+#if !USE_FORCED_GLES2
+	if (_debugRenderWireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
 }
 
-void OpenGLShaderRenderer::depthTesting(bool enabled) {
+void OpenGLShaderRenderer::enableCulling(bool enabled) {
 	if (enabled) {
-		// If we re-enable depth testing, we need to clear the depth buffer
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 	} else {
-		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
 	}
 }
 

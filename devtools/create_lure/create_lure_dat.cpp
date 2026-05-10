@@ -296,7 +296,7 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 			offset += sizeof(RoomResourceOutput);
 
 			// Copy over room exits
-			for (int foo = 0; ; ++foo) {
+			while (true) {
 				RoomResourceExit1 *p = (RoomResourceExit1 *) (data + offset);
 				lureExe.read(p, sizeof(RoomResourceExit1));
 				if (FROM_LE_16(p->xs) == 0xffff) break;

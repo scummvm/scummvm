@@ -82,7 +82,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy9ConditionalDialog
 	{	0, 1254, "NHK54",
 		{ { kEv, 175, true }, { kEv, 190, false }, { kEv, 116, false } } },
 	{	0, 1255, "NHK55",
-		{ { kEv, 249, true }, { kEv, 45, true }, { kEv, 186, false }, { kEv, 192, false } } },
+		{ { kEv, 249, true }, { kEv, 186, false }, { kEv, 192, false } } },
+	{	0, 1255, "NHK55",
+		{ { kEv, 45, true }, { kEv, 186, false }, { kEv, 192, false } } },
 	{	0, 1256, "NHK56",
 		{ { kEv, 318, true }, { kEv, 326, true }, { kEv, 327, false }, { kEv, 184, false } } },
 	{	0, 1257, "NHK57",
@@ -106,7 +108,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy9ConditionalDialog
 	{	0, 1154, "NJK54",
         { { kEv, 508, true }, { kEv, 228, false }, { kIn, 11, false } } },
 	{	0, 1164, "NJK64",
-        { { kEv, 37, true }, { kEv, 409, true }, { kEv, 224, false } } },
+        { { kEv, 37, true }, { kEv, 224, false } } },
+	{	0, 1164, "NJK64",
+        { { kEv, 409, true }, { kEv, 224, false } } },
 	{	0, 1155, "NJK55",
         { { kEv, 409, true }, { kEv, 179, true }, { kEv, 223, false } } },
 	{	0, 1157, "NJK57",
@@ -151,7 +155,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy9ConditionalDialog
 	{	0, 1088, "NKB88",
         { { kEv, 283, true }, { kEv, 508, true }, { kEv, 250, false } } },
 	{	0, 1069, "NKB69",
-        { { kEv, 250, true }, { kEv, 429, true }, { kEv, 428, true }, { kEv, 247, false }, { kEv, 303, false } } },
+        { { kEv, 250, true }, { kEv, 429, true }, { kEv, 247, false }, { kEv, 303, false } } },
+	{	0, 1069, "NKB69",
+        { { kEv, 250, true }, { kEv, 428, true }, { kEv, 247, false }, { kEv, 303, false } } },
 },
 {	// Bess & George, 35 responses
 	{	0, 1650, "NBG50",
@@ -161,15 +167,25 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy9ConditionalDialog
 	{	0, 1653, "NBG53",
         { { kEv, 277, true }, { kEv, 221, false }, { kEv, 83, false } } },
 	{	0, 1654, "NBG54",
-        { { kEv, 222, true }, { kEv, 226, true }, { kEv, 225, true }, { kEv, 283, false }, { kEv, 82, false } } },
+        { { kEv, 222, true }, { kEv, 225, true }, { kEv, 283, false }, { kEv, 82, false } } },
+	{	0, 1654, "NBG54",
+        { { kEv, 226, true }, { kEv, 225, true }, { kEv, 283, false }, { kEv, 82, false } } },
 	{	0, 1655, "NBG55",
         { { kEv, 186, true }, { kEv, 84, false } } },
 	{	0, 1656, "NBG56",
         { { kEv, 268, true }, { kEv, 388, false }, { kEv, 64, false } } },
 	{	0, 1657, "NBG57",
-        { { kEv, 331, false }, { kEv, 409, false }, { kEv, 68, false }, { kIn, 14, true }, { kIn, 15, true }, { kIn, 16, true }, { kIn, 17, true } } },
+        { { kEv, 331, false }, { kEv, 409, false }, { kEv, 68, false }, { kIn, 14, true } } },
+	{	0, 1657, "NBG57",
+        { { kEv, 331, false }, { kEv, 409, false }, { kEv, 68, false }, { kIn, 15, true } } },
+	{	0, 1657, "NBG57",
+        { { kEv, 331, false }, { kEv, 409, false }, { kEv, 68, false }, { kIn, 16, true } } },
+	{	0, 1657, "NBG57",
+        { { kEv, 331, false }, { kEv, 409, false }, { kEv, 68, false }, { kIn, 17, true } } },
 	{	0, 1659, "NBG59",
-        { { kEv, 338, true }, { kEv, 42, true }, { kEv, 224, true }, { kEv, 420, false }, { kEv, 79, false }, { kIn, 23, true } } },
+        { { kEv, 338, true }, { kEv, 42, true }, { kEv, 420, false }, { kEv, 79, false }, { kIn, 23, true } } },
+	{	0, 1659, "NBG59",
+        { { kEv, 338, true }, { kEv, 224, true }, { kEv, 420, false }, { kEv, 79, false }, { kIn, 23, true } } },
 	{	0, 1660, "NBG60",
         { { kEv, 99, true }, { kEv, 177, true }, { kEv, 412, false }, { kEv, 80, false } } },
 	{	0, 1661, "NBG61",
@@ -241,7 +257,13 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy9ConditionalDialog
 	{	0, 1756, "NFJ56",
 		{ { kEv, 138, true }, { kEv, 229, true }, { kEv, 419, false }, { kEv, 75, false }, { kEv, 156, false } } },
 	{	0, 1757, "NFJ57",
-		{ { kEv, 351, true }, { kEv, 192, true }, { kEv, 249, true }, { kEv, 45, true }, { kEv, 186, true }, { kEv, 418, false }, { kEv, 141, false } } },
+		{ { kEv, 351, true }, { kEv, 192, true }, { kEv, 418, false }, { kEv, 141, false } } },
+	{	0, 1757, "NFJ57",
+		{ { kEv, 351, true }, { kEv, 249, true }, { kEv, 418, false }, { kEv, 141, false } } },
+	{	0, 1757, "NFJ57",
+		{ { kEv, 351, true }, { kEv, 45, true }, { kEv, 418, false }, { kEv, 141, false } } },
+	{	0, 1757, "NFJ57",
+		{ { kEv, 351, true }, { kEv, 186, true }, { kEv, 418, false }, { kEv, 141, false } } },
 	{	0, 1758, "NFJ58",
 		{ { kEv, 419, true }, { kEv, 313, true }, { kEv, 415, false }, { kEv, 137, false } } },
 	{	0, 1759, "NFJ59",
@@ -249,7 +271,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy9ConditionalDialog
 	{	0, 1770, "NFJ70",
 		{ { kEv, 150, false }, { kEv, 426, false }, { kEv, 120, false }, { kIn, 20, true } } },
 	{	0, 1771, "NFJ71",
-		{ { kEv, 518, true }, { kEv, 398, false }, { kEv, 459, false }, { kEv, 126, false } } },
+		{ { kEv, 518, true }, { kEv, 398, false }, { kEv, 126, false } } },
+	{	0, 1771, "NFJ71",
+		{ { kEv, 518, true }, { kEv, 459, false }, { kEv, 126, false } } },
 	{	0, 1772, "NFJ72",
 		{ { kEv, 410, false }, { kEv, 136, false }, { kIn, 14, true }, { kIn, 15, true }, { kIn, 16, true }, { kIn, 17, true } } },
 	{	0, 1773, "NFJ73",
@@ -973,6 +997,16 @@ const Common::Array<const char *> _nancy9EventFlagNames = {
 	"EV_Empty112",
 	"EV_Empty113",
 	"EV_Empty114",
+};
+
+const Common::Array<const char *> nancy9PatchSrcFiles {
+	"NCP06na.HIS"
+};
+
+// Patch notes:
+// - The missing sound file is a patch from the original devs. Should only be enabled in the English version
+const Common::Array<PatchAssociation> nancy9PatchAssociations {
+	{ { "language", "en" }, { "NCP06na.HIS" } }
 };
 
 #endif // NANCY9DATA_H

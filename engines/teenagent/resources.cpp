@@ -347,6 +347,14 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	// Locate the correct language block
 	bool found = false;
+	byte datLang = 0;
+	switch (gd->language) {
+	case Common::CS_CZE: datLang = DataLanguage::CS_CZE; break;
+	case Common::EN_ANY: datLang = DataLanguage::EN_ANY; break;
+	case Common::PL_POL: datLang = DataLanguage::PL_POL; break;
+	case Common::RU_RUS: datLang = DataLanguage::RU_RUS; break;
+	default: break;
+	}
 
 	while (!found) {
 		dat->read(tempBuffer, 5);
@@ -354,7 +362,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 			error("Could not locate correct language block");
 		}
 
-		if (gd->language == tempBuffer[0]) {
+		if (datLang == tempBuffer[0]) {
 			found = true;
 			uint32 dataOffset = READ_LE_UINT32(&tempBuffer[1]);
 			dat->seek(dataOffset);

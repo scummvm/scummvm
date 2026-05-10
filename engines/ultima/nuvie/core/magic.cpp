@@ -285,7 +285,7 @@ bool Magic::cast() {
 }
 
 void Magic::display_spell_incantation(uint8 index) {
-	string incantation_str;
+	Common::String incantation_str;
 	for (int i = 0; spell[index]->invocation[i] != '\0'; i++)
 		incantation_str += syllable[spell[index]->invocation[i] - Common::KEYCODE_a];
 
@@ -306,7 +306,7 @@ void Magic::display_ingredients(uint8 index) {
 		event->scroll->display_string("None\n\n");
 		return;
 	}
-	string list;
+	Common::String list;
 	for (int shift = 0; shift < 8; shift++) {
 		if (1 << shift & spell[index]->reagents) {
 			list += " ";
@@ -321,7 +321,7 @@ void Magic::display_ingredients(uint8 index) {
 }
 
 void Magic::cast_spell_directly(uint8 spell_num) {
-	string lua = "run_magic_script(\"";
+	Common::String lua = "run_magic_script(\"";
 	lua += spell[spell_num]->invocation;
 	lua += "\")";
 

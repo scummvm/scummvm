@@ -1,0 +1,41 @@
+diff --git a/pycdlib/pycdlib.py b/pycdlib/pycdlib.py
+index 65b608c..214741a 100644
+--- a/pycdlib/pycdlib.py
++++ b/pycdlib/pycdlib.py
+@@ -5544,19 +5544,22 @@ class PyCdlib:
+             if key in ('joliet_path', 'rr_path', 'iso_path', 'udf_path'):
+                 if value is not None:
+                     num_paths += 1
++            elif key == "encoding":
++                pass
+             else:
+-                raise pycdlibexception.PyCdlibInvalidInput("Invalid keyword, must be one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")
++                raise pycdlibexception.PyCdlibInvalidInput(f"Invalid keyword {key}, must be one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")
+ 
++        encoding = {"encoding": kwargs["encoding"]} if "encoding" in kwargs else {}
+         if num_paths != 1:
+             raise pycdlibexception.PyCdlibInvalidInput("Must specify one, and only one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")
+ 
+         if 'joliet_path' in kwargs:
+-            return self._get_joliet_entry(self._normalize_joliet_path(kwargs['joliet_path']))
++            return self._get_joliet_entry(self._normalize_joliet_path(kwargs['joliet_path']), **encoding)
+         if 'rr_path' in kwargs:
+-            return self._get_rr_entry(utils.normpath(kwargs['rr_path']))
++            return self._get_rr_entry(utils.normpath(kwargs['rr_path']), **encoding)
+         if 'udf_path' in kwargs:
+-            return self._get_udf_entry(kwargs['udf_path'])
+-        return self._get_iso_entry(utils.normpath(kwargs['iso_path']))
++            return self._get_udf_entry(kwargs['udf_path'], **encoding)
++        return self._get_iso_entry(utils.normpath(kwargs['iso_path']), **encoding)
+ 
+     def add_isohybrid(self, part_entry=1, mbr_id=None, part_offset=0,
+                       geometry_sectors=32, geometry_heads=64, part_type=None,
+@@ -5875,7 +5878,7 @@ class PyCdlib:
+             elif key == 'encoding':
+                 user_encoding = value
+             else:
+-                raise pycdlibexception.PyCdlibInvalidInput("Invalid keyword, must be one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")
++                raise pycdlibexception.PyCdlibInvalidInput(f"Invalid keyword {key}, must be one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")
+ 
+         if num_paths != 1:
+             raise pycdlibexception.PyCdlibInvalidInput("Must specify one, and only one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")

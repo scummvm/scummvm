@@ -94,7 +94,7 @@ public:
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	int run(const Common::String &target, const MetaEngine *metaEngine);
-	virtual const Common::U32String getResultString() const = 0;
+	virtual const Common::String getResultString() const = 0;
 
 protected:
 	virtual int runIntern() = 0;
@@ -112,7 +112,7 @@ protected:
 	*/
 	virtual void listSaves();
 
-	void activate(int slot, const Common::U32String &description);
+	void activate(int slot, const Common::String &description);
 
 	const bool					_saveMode;
 	const MetaEngine		    *_metaEngine;
@@ -124,7 +124,7 @@ protected:
 	Common::String				_target;
 	bool _dialogWasShown;
 	SaveStateList				_saveList;
-	Common::U32String			_resultString;
+	Common::String			_resultString;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;
@@ -151,7 +151,7 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	const Common::U32String getResultString() const override;
+	const Common::String getResultString() const override;
 
 	void reflowLayout() override;
 
@@ -188,8 +188,8 @@ class SavenameDialog : public Dialog {
 public:
 	SavenameDialog();
 
-	void setDescription(const Common::U32String &desc);
-	const Common::U32String &getDescription();
+	void setDescription(const Common::String &desc);
+	const Common::String getDescription();
 
 	void setTargetSlot(int slot) { _targetSlot = slot; }
 
@@ -207,7 +207,7 @@ public:
 	SaveLoadChooserGrid(const Common::U32String &title, bool saveMode);
 	~SaveLoadChooserGrid() override;
 
-	const Common::U32String getResultString() const override;
+	const Common::String getResultString() const override;
 
 	void open() override;
 

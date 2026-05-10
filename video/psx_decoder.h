@@ -77,9 +77,10 @@ protected:
 private:
 	class PSXVideoTrack : public VideoTrack {
 	public:
-		PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount);
+		PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount, byte channel);
 		~PSXVideoTrack() override;
 
+		byte getChannel() const { return _channel; }
 		uint16 getWidth() const override { return _width; }
 		uint16 getHeight() const override { return _height; }
 		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
@@ -105,6 +106,7 @@ private:
 		uint16 _height;
 		uint32 _frameCount;
 		Audio::Timestamp _nextFrameStartTime;
+		byte _channel;
 		bool _endOfTrack;
 		int _curFrame;
 
@@ -135,9 +137,10 @@ private:
 
 	class PSXAudioTrack : public AudioTrack {
 	public:
-		PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType);
+		PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType, byte channel);
 		~PSXAudioTrack() override;
 
+		byte getChannel() const { return _channel; }
 		bool endOfTrack() const override;
 
 		void setEndOfTrack() { _endOfTrack = true; }
@@ -148,6 +151,7 @@ private:
 
 		Audio::QueuingAudioStream *_audStream;
 
+		byte _channel;
 		bool _endOfTrack;
 		bool _stereo;
 		uint _rate;

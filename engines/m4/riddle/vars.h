@@ -41,6 +41,9 @@ enum global_triggers {
 };
 
 class Vars : public M4::Vars {
+private:
+	static void spanish_ascii_converter_proc(char *string);
+
 protected:
 	void main_cold_data_init() override;
 

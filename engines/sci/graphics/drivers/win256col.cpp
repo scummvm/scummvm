@@ -30,7 +30,7 @@ class WindowsGfx256ColorsDriver final : public UpscaledGfxDriver {
 public:
 	WindowsGfx256ColorsDriver(bool coloredDosStyleCursors, bool smallWindow, bool rgbRendering);
 	~WindowsGfx256ColorsDriver() override {}
-	void initScreen(const Graphics::PixelFormat *format) override;
+	bool initScreen(const Graphics::PixelFormat *format) override;
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
@@ -143,10 +143,14 @@ void hiresRenderLine(byte *&dst, const byte *src, int pitch, int w, const byte *
 void renderLineDummy(byte *&, const byte* , int, int, const byte*) {
 }
 
-void WindowsGfx256ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
-	UpscaledGfxDriver::initScreen(format);
+bool WindowsGfx256ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	if (!UpscaledGfxDriver::initScreen(format))
+		return false;
+
 	_renderLine = _smallWindow ? &smallWindowRenderLine : &largeWindowRenderLine;
 	_renderLine2 = _smallWindow ? &renderLineDummy : &hiresRenderLine;
+
+	return true;
 }
 
 void WindowsGfx256ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {

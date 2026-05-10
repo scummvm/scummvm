@@ -89,7 +89,6 @@ static  CFont       *pFont = nullptr;                  // font to use for displa
 //static  char        chPathName[128];                // buffer to hold path name of the store file
 
 static  bool        bActiveWindow = false;          // whether our window is active
-static  bool        bFirstTime = true;              // flag for first time information is displayed
 static  int         nStore_DX, nStore_DY;           // size of useable store background
 static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
 static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
@@ -232,11 +231,10 @@ void CGeneralStore::OnCancel() {
 void CGeneralStore::OnDestroy() {
 	bool    bUpdateNeeded;
 
-	if (pFont != nullptr)
-		delete pFont;                               // release the font file
-
-	if (pOKButton != nullptr)                          // release the button
-		delete pOKButton;
+	delete pFont;                               // release the font file
+	delete pOKButton;
+	pFont = nullptr;
+	pOKButton = nullptr;
 
 	if (m_bKeyboardHook)                                // remove keyboard hook, if present
 		RemoveKeyboardHook();
@@ -284,6 +282,7 @@ void CGeneralStore::OnDestroy() {
 		pTitleText = nullptr;
 	}
 
+	bFirstTime = true;
 	CDialog::OnDestroy();
 }
 
@@ -376,7 +375,7 @@ void CGeneralStore::OnPaint() {
 void CGeneralStore::UpdateStore(CDC *pDC) {
 	CPalette    *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
 	(*pDC).RealizePalette();
@@ -409,7 +408,7 @@ void CGeneralStore::UpdatePage(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pStoreDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		if (pBackgroundBitmap != nullptr)
@@ -773,15 +772,15 @@ void CGeneralStore::OnLButtonDown(unsigned int nFlags, CPoint point) {
 					if ((pCrowns == nullptr) ||
 					        ((*pCrowns).GetQuantity() < nPrice)) {
 						(*pItemText).DisplayString(pDC, "Not have enough crowns to buy that!", FONT_SIZE, TEXT_BOLD, STORE_BLURB_COLOR);
-						pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps5.wav" : ".\\sound\\gsps6.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+						pSound = new CSound(this, (bPlayingHodj ? "sound\\gsps5.wav" : "sound\\gsps6.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
 						(*pSound).play();
 					} else {
 						(*pItemText).DisplayString(pDC, "Thanks for the purchase!", FONT_SIZE, TEXT_BOLD, STORE_BLURB_COLOR);
 						if (brand() & 1)
-							pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps1.wav" : ".\\sound\\gsps2.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+							pSound = new CSound(this, (bPlayingHodj ? "sound\\gsps1.wav" : "sound\\gsps2.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						else
-							pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps3.wav" : ".\\sound\\gsps4.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+							pSound = new CSound(this, (bPlayingHodj ? "sound\\gsps3.wav" : "sound\\gsps4.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
 						(*pSound).play();
 						(*pInventory).DiscardItem(pCrowns, nPrice);
@@ -846,7 +845,7 @@ bool CGeneralStore::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned 
 }
 
 
-void CGeneralStore::DoWaitCursor() {
+void CGeneralStore::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

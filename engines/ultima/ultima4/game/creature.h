@@ -36,7 +36,7 @@ class Tile;
 
 typedef unsigned short CreatureId;
 typedef Common::HashMap<CreatureId, class Creature *> CreatureMap;
-typedef Std::vector<class Creature *> CreatureVector;
+typedef Common::Array<class Creature *> CreatureVector;
 
 #define MAX_CREATURES 128
 

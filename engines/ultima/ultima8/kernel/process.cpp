@@ -118,7 +118,7 @@ Common::String Process::dumpInfo() const {
 
 	if (!_waiting.empty()) {
 		info += ", notify: ";
-		for (Std::vector<ProcId>::const_iterator i = _waiting.begin(); i != _waiting.end(); ++i) {
+		for (auto i = _waiting.begin(); i != _waiting.end(); ++i) {
 			if (i != _waiting.begin()) info += ", ";
 			info += Common::String::format("%d", *i);
 		}

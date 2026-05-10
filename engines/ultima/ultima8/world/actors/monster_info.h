@@ -42,7 +42,7 @@ struct MonsterInfo {
 	bool _shifter; // shapeshifter
 	uint32 _explode; // shape to hurl around after being killed (or 0)
 
-	Std::vector<TreasureInfo> _treasure;
+	Common::Array<TreasureInfo> _treasure;
 };
 
 } // End of namespace Ultima8

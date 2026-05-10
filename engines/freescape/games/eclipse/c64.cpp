@@ -22,6 +22,8 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/eclipse/c64.music.h"
+#include "freescape/games/eclipse/c64.sfx.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
 
@@ -29,6 +31,26 @@ namespace Freescape {
 
 void EclipseEngine::initC64() {
 	_viewArea = Common::Rect(32, 32, 288, 136);
+
+	_maxEnergy = 35;
+
+	// SFX indices mapped from totec1.prg disassembly (JSR $CB4B call sites)
+	_soundIndexShoot = 1;            // $5F27: opcode $16 destroy handler
+	_soundIndexCollide = 12;         // $4E80/$4F50: deferred via $1549
+	_soundIndexStepDown = 12;        // same as collide (matches CPC pattern)
+	_soundIndexStepUp = 12;          // same as collide (matches CPC pattern)
+	_soundIndexStart = 7;            // $4118: game start after title screen
+	_soundIndexAreaChange = 7;       // $66CF: FCL opcode $12 area change
+	_soundIndexStartFalling = 6;     // $790B: deferred via $1549
+	_soundIndexEndFalling = 8;       // $792D: deferred via $1549
+	_soundIndexFall = 5;             // $7C20/$7C45: death/fall animation
+	_soundIndexNoShield = 5;         // game-over conditions reuse fall sound
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = 5;
+	_soundIndexTimeout = 5;
+	_soundIndexForceEndGame = 5;
+	_soundIndexCrushed = 5;
+	_soundIndexMissionComplete = -1;
 }
 
 extern byte kC64Palette[16][3];
@@ -47,11 +69,11 @@ void EclipseEngine::loadAssetsC64FullGame() {
 		// size should be the size of the decompressed data
 		Common::MemoryReadStream dfile(_extraBuffer, size, DisposeAfterUse::NO);
 
-		loadMessagesFixedSize(&dfile, 0x1d84, 16, 30);
+		loadMessagesFixedSize(&dfile, 0x1d84, 16, isEclipse2() ? 34 : 30);
 		loadFonts(&dfile, 0xc3e);
 		load8bitBinary(&dfile, 0x9a3e, 16);
 	} else if (_variant & GF_C64_DISC) {
-		loadMessagesFixedSize(&file, 0x1534, 16, 30);
+		loadMessagesFixedSize(&file, isEclipse2() ? 0x1538 : 0x1534, 16, isEclipse2() ? 34 : 30);
 		loadFonts(&file, 0x3f2);
 		if (isEclipse2())
 			load8bitBinary(&file, 0x7ac4, 16);
@@ -81,6 +103,75 @@ void EclipseEngine::loadAssetsC64FullGame() {
 
 	for (auto &it : _indicators)
 		it->convertToInPlace(_gfx->_texturePixelFormat);
+
+	if (isEclipse2()) {
+		// Eclipse 2 has music embedded in the game data file.
+		// Both disc and tape versions contain the same music engine and data.
+		if (_variant & GF_C64_DISC) {
+			// Disc data file starts at load address 0x0410, same as totec1.prg
+			file.close();
+			file.open("totaleclipse2.c64.data");
+			if (file.isOpen()) {
+				uint16 loadAddress = file.readUint16LE();
+				if (loadAddress == 0x0410) {
+					_c64MusicData.resize(file.size() - 2);
+					file.read(_c64MusicData.data(), _c64MusicData.size());
+					delete _playerMusic;
+					_playerMusic = new EclipseC64MusicPlayer(_c64MusicData);
+				}
+			}
+		} else if ((_variant & GF_C64_TAPE) && _extraBuffer) {
+			// Tape decompressed data has music at a 0x0C3F offset from disc addresses.
+			// The music player expects data indexed from load address 0x0410.
+			// Remap: musicData[i] = decompressed[i + 0x084E]
+			static const int kTapeMusicShift = 0x084E;
+			static const int kMusicRegionSize = 0x1100; // covers 0x0410..0x14FF
+			_c64MusicData.resize(kMusicRegionSize);
+			memcpy(_c64MusicData.data(), _extraBuffer + kTapeMusicShift, kMusicRegionSize);
+			delete _playerMusic;
+			_playerMusic = new EclipseC64MusicPlayer(_c64MusicData);
+		}
+	} else {
+		Common::File musicFile;
+		musicFile.open("totec1.prg");
+		if (musicFile.isOpen()) {
+			uint16 loadAddress = musicFile.readUint16LE();
+			if (loadAddress == 0x0410) {
+				_c64MusicData.resize(musicFile.size() - 2);
+				musicFile.read(_c64MusicData.data(), _c64MusicData.size());
+				delete _playerMusic;
+				_playerMusic = new EclipseC64MusicPlayer(_c64MusicData);
+			}
+		}
+	}
+
+	// Only one SID instance can be active at a time; music is the default.
+	// Create the inactive player first so its SID is destroyed before
+	// the active player's SID is created.
+	_playerC64Sfx = new EclipseC64SFXPlayer();
+	_playerC64Sfx->destroySID();
+}
+
+void EclipseEngine::playSoundC64(int index) {
+	debugC(1, kFreescapeDebugMedia, "Playing Eclipse C64 SFX %d", index);
+	if (_playerC64Sfx && _c64UseSFX)
+		_playerC64Sfx->playSfx(index);
+}
+
+void EclipseEngine::toggleC64Sound() {
+	if (_c64UseSFX) {
+		if (_playerC64Sfx)
+			_playerC64Sfx->destroySID();
+		if (_playerMusic)
+			_playerMusic->startMusic();
+		_c64UseSFX = false;
+	} else {
+		if (_playerMusic)
+			_playerMusic->stopMusic();
+		if (_playerC64Sfx)
+			_playerC64Sfx->initSID();
+		_c64UseSFX = true;
+	}
 }
 
 
@@ -132,8 +223,7 @@ void EclipseEngine::drawC64UI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 104, 138, back, yellow, surface);
 
-	Common::String encodedScoreStr = getScoreString(score);
-	drawStringInSurface(encodedScoreStr, 128, 7, black, white, surface);
+	drawScoreString(score, 128, 7, black, white, surface);
 
 	Common::String shieldStr = Common::String::format("%d", shield);
 

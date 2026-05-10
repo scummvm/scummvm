@@ -29,11 +29,16 @@
 MidiParser_SMF::MidiParser_SMF(int8 source) : MidiParser(source) {
 }
 
+uint32 MidiParser_SMF::readDelta(const byte *&data) {
+	// Default implementation: use the standard MIDI VLQ format.
+	return readVLQ(data);
+}
+
 void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 	uint8 subtrack = info.subtrack;
 	const byte *playPos = _position._subtracks[subtrack]._playPos;
 	info.start = playPos;
-	info.delta = readVLQ(playPos);
+	info.delta = readDelta(playPos);
 
 	// Process the next info.
 	if ((playPos[0] & 0xF0) >= 0x80)

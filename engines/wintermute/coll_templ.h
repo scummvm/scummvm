@@ -32,8 +32,6 @@
 
 namespace Wintermute {
 
-#include <new>
-
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
 inline void dcConstructElements(TYPE *pElements, int32 nCount) {

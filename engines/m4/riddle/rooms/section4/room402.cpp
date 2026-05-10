@@ -21,9 +21,10 @@
 
 #include "m4/riddle/rooms/section4/room402.h"
 #include "m4/riddle/rooms/section4/section4.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/riddle.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -1137,7 +1138,7 @@ void Room402::daemon() {
 		break;
 
 	case 216:
-		if (_G(flags)[V111] > 1) {
+		if (_flags111 > 1) {
 			_flags111--;
 			sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 17, 214,
 				_ripPaysWolfie, 17, 17, 0);

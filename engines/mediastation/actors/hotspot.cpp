@@ -27,14 +27,9 @@ namespace MediaStation {
 
 void HotspotActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderMouseActiveArea: {
-		uint16 total_points = chunk.readTypedUint16();
-		for (int i = 0; i < total_points; i++) {
-			Common::Point point = chunk.readTypedPoint();
-			_mouseActiveArea.push_back(point);
-		}
+	case kActorHeaderMouseActiveArea:
+		_mouseActiveArea.loadFromParameterStream(chunk);
 		break;
-	}
 
 	case kActorHeaderStartup:
 		_isActive = static_cast<bool>(chunk.readTypedByte());
@@ -53,42 +48,11 @@ void HotspotActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType)
 	}
 }
 
-bool HotspotActor::isInside(const Common::Point &pointToCheck) {
-	// No sense checking the polygon if we're not even in the bbox.
-	if (!_boundingBox.contains(pointToCheck)) {
-		return false;
+bool HotspotActor::inBounds(const Common::Point &point) {
+	if (_parentStage != nullptr) {
+		return _parentStage->inBounds(point, getBbox(), _mouseActiveArea);
 	}
-
-	// We're in the bbox, but there might not be a polygon to check.
-	if (_mouseActiveArea.empty()) {
-		return true;
-	}
-
-	// Polygon intersection code adapted from HADESCH engine, might need more
-	// refinement once more testing is possible.
-	Common::Point point = pointToCheck - Common::Point(_boundingBox.left, _boundingBox.top);
-	int rcross = 0; // Number of right-side overlaps
-
-	// Each edge is checked whether it cuts the outgoing stream from the point
-	Common::Array<Common::Point> _polygon = _mouseActiveArea;
-	for (unsigned i = 0; i < _polygon.size(); i++) {
-		const Common::Point &edgeStart = _polygon[i];
-		const Common::Point &edgeEnd = _polygon[(i + 1) % _polygon.size()];
-
-		// A vertex is a point? Then it lies on one edge of the polygon
-		if (point == edgeStart)
-			return true;
-
-		if ((edgeStart.y > point.y) != (edgeEnd.y > point.y)) {
-			int term1 = (edgeStart.x - point.x) * (edgeEnd.y - point.y) - (edgeEnd.x - point.x) * (edgeStart.y - point.y);
-			int term2 = (edgeEnd.y - point.y) - (edgeStart.y - edgeEnd.y);
-			if ((term1 > 0) == (term2 >= 0))
-				rcross++;
-		}
-	}
-
-	// The point is strictly inside the polygon if and only if the number of overlaps is odd
-	return ((rcross % 2) == 1);
+	return false;
 }
 
 ScriptValue HotspotActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -96,38 +60,52 @@ ScriptValue HotspotActor::callMethod(BuiltInMethod methodId, Common::Array<Scrip
 
 	switch (methodId) {
 	case kMouseActivateMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		activate();
-		return returnValue;
+		break;
 	}
 
 	case kMouseDeactivateMethod: {
-		assert(args.empty());
+		ARGCOUNTCHECK(0);
 		deactivate();
-		return returnValue;
+		break;
 	}
 
-	case kIsActiveMethod: {
-		assert(args.empty());
-		returnValue.setToBool(_isActive);
-		return returnValue;
+
+	case kIsPointInsideMethod: {
+		ARGCOUNTCHECK(2);
+		int16 xToCheck = static_cast<int16>(args[0].asFloat());
+		int16 yToCheck = static_cast<int16>(args[1].asFloat());
+		Common::Point pointToCheck(xToCheck, yToCheck);
+		bool pointIsInside = inBounds(pointToCheck);
+		returnValue.setToBool(pointIsInside);
+		break;
 	}
 
 	case kTriggerAbsXPositionMethod: {
+		ARGCOUNTCHECK(0);
 		double mouseX = static_cast<double>(g_system->getEventManager()->getMousePos().x);
 		returnValue.setToFloat(mouseX);
-		return returnValue;
+		break;
 	}
 
 	case kTriggerAbsYPositionMethod: {
+		ARGCOUNTCHECK(0);
 		double mouseY = static_cast<double>(g_system->getEventManager()->getMousePos().y);
 		returnValue.setToFloat(mouseY);
-		return returnValue;
+		break;
+	}
+
+	case kIsActiveMethod: {
+		ARGCOUNTCHECK(0);
+		returnValue.setToBool(_isActive);
+		break;
 	}
 
 	default:
-		return SpatialEntity::callMethod(methodId, args);
+		returnValue = SpatialEntity::callMethod(methodId, args);
 	}
+	return returnValue;
 }
 
 uint16 HotspotActor::findActorToAcceptMouseEvents(
@@ -138,7 +116,11 @@ uint16 HotspotActor::findActorToAcceptMouseEvents(
 
 	uint16 result = 0;
 	if (isActive()) {
-		if (isInside(point)) {
+		if (clipMouseEvents && !_getOffstageEvents) {
+			eventMask &= ~(kMouseDownFlag | kMouseMovedFlag | kMouseEnterFlag | kMouseUnk1Flag);
+		}
+
+		if (inBounds(point)) {
 			if (eventMask & kMouseDownFlag) {
 				state.mouseDown = this;
 				result |= kMouseDownFlag;
@@ -165,7 +147,7 @@ uint16 HotspotActor::findActorToAcceptMouseEvents(
 			result |= kMouseUpFlag;
 		}
 	} else {
-		debugC(5, kDebugEvents, "%s: %d: Inactive", __func__, id());
+		debugC(8, kDebugEvents, "[%s] %s: Inactive", debugName(),  __func__);
 	}
 
 	return result;
@@ -185,68 +167,68 @@ void HotspotActor::deactivate() {
 			g_engine->setMouseDownHotspot(nullptr);
 		}
 		if (g_engine->getMouseInsideHotspot() == this) {
-			g_engine->setMouseDownHotspot(nullptr);
+			g_engine->setMouseInsideHotspot(nullptr);
 		}
 
 		invalidateMouse();
 	}
 }
 
-void HotspotActor::mouseDownEvent(const Common::Event &event) {
+void HotspotActor::mouseDownEvent(const MouseEvent &event) {
 	if (!_isActive) {
-		warning("%s: Called on inactive hotspot", __func__);
+		warning("[%s] %s: Inactive", debugName(), __func__);
 		return;
 	}
 
 	g_engine->setMouseDownHotspot(this);
-	runEventHandlerIfExists(kMouseDownEvent);
+	runScriptResponseIfExists(kMouseDownEvent);
 }
 
-void HotspotActor::mouseUpEvent(const Common::Event &event) {
+void HotspotActor::mouseUpEvent(const MouseEvent &event) {
 	if (!_isActive) {
-		warning("%s: Called on inactive hotspot", __func__);
+		warning("[%s] %s: Inactive", debugName(), __func__);
 		return;
 	}
 
 	g_engine->setMouseDownHotspot(nullptr);
-	runEventHandlerIfExists(kMouseUpEvent);
+	runScriptResponseIfExists(kMouseUpEvent);
 }
 
-void HotspotActor::mouseEnteredEvent(const Common::Event &event) {
+void HotspotActor::mouseEnteredEvent(const MouseEvent &event) {
 	if (!_isActive) {
-		warning("%s: Called on inactive hotspot", __func__);
+		warning("[%s] %s: Inactive", debugName(), __func__);
 		return;
 	}
 
 	g_engine->setMouseInsideHotspot(this);
 	if (_cursorResourceId != 0) {
-		debugC(5, kDebugEvents, "%s: Setting cursor %d for asset %d", __func__, _cursorResourceId, id());
+		debugC(5, kDebugEvents, "[%s] %s: Setting cursor %d", debugName(), __func__, _cursorResourceId);
 		g_engine->getCursorManager()->setAsTemporary(_cursorResourceId);
 	} else {
-		debugC(5, kDebugEvents, "%s: Unsetting cursor for asset %d", __func__, id());
+		debugC(5, kDebugEvents, "[%s] %s: Unsetting cursor", debugName(), __func__);
 		g_engine->getCursorManager()->unsetTemporary();
 	}
 
-	runEventHandlerIfExists(kMouseEnteredEvent);
+	runScriptResponseIfExists(kMouseEnteredEvent);
 }
 
-void HotspotActor::mouseMovedEvent(const Common::Event &event) {
+void HotspotActor::mouseMovedEvent(const MouseEvent &event) {
 	if (!_isActive) {
-		warning("%s: Called on inactive hotspot", __func__);
+		warning("[%s] %s: Inactive", debugName(), __func__);
 		return;
 	}
 
-	runEventHandlerIfExists(kMouseMovedEvent);
+	runScriptResponseIfExists(kMouseMovedEvent);
 }
 
-void HotspotActor::mouseExitedEvent(const Common::Event &event) {
+void HotspotActor::mouseExitedEvent(const MouseEvent &event) {
 	if (!_isActive) {
-		warning("%s: Called on inactive hotspot", __func__);
+		warning("[%s] %s: Inactive", debugName(), __func__);
 		return;
 	}
 
 	g_engine->setMouseInsideHotspot(nullptr);
-	runEventHandlerIfExists(kMouseExitedEvent);
+	runScriptResponseIfExists(kMouseExitedEvent);
 }
 
 } // End of namespace MediaStation

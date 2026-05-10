@@ -44,7 +44,7 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
@@ -57,7 +57,7 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 		if (desc.size() > 28)
 			desc = Common::String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 
@@ -207,8 +207,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 				_("This saved game uses version %u, but this engine only "
 					"supports up to version %d. You will need an updated version "
 					"of the engine to use this saved game."), tempVersion, SAVE_VERSION
-			),
-		_("OK"));
+			));
 		dialog.runModal();
 	}
 

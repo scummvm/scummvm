@@ -20,9 +20,10 @@
  */
 
 #include "m4/riddle/rooms/section4/room407.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/riddle.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -351,7 +352,7 @@ void Room407::init() {
 				_G(kernel).trigger_mode = KT_PARSE;
 			} else if (_tubeState == 1130) {
 				_G(kernel).trigger_mode = KT_DAEMON;
-				kernel_timing_trigger(1, 410);
+				kernel_timing_trigger(1, 420);
 				_G(kernel).trigger_mode = KT_PARSE;
 			}
 		}
@@ -925,7 +926,7 @@ void Room407::daemon() {
 		terminateMachineAndNull(_bottle);
 
 		_407r = series_load("407r");
-		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, false,
 			triggerMachineByHashCallback, "GLASS JAR TURNS");
 		sendWSMessage_10000(1, _bottle, _407r, 1, 30, 186, _407r, 30, 30, 0);
 		digi_play("407_s16", 3);
@@ -3437,6 +3438,7 @@ void Room407::faucetPipeGlassJar() {
 
 void Room407::gardenHoseFaucetPipe() {
 	switch (_G(kernel).trigger) {
+
 	case 1:
 		_drawerPopupHose = series_place_sprite(
 			"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
@@ -3470,6 +3472,7 @@ void Room407::gardenHoseFaucetPipe() {
 	case 70:
 		_ripHiHand1 = series_load("rip trek hi 1 hand");
 		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(1);
 		break;
 
 	case 777:
@@ -5542,7 +5545,7 @@ void Room407::takeLeverKeyFromBench() {
 		terminateMachineAndNull(_lever);
 		inv_give_to_player("LEVER KEY");
 		hotspot_set_active("LEVER KEY ", false);
-		kernel_examine_inventory_object("PING LEVER KEY", 5, 1, 175, 200, 2, "407_s07a");
+		kernel_examine_inventory_object("PING LEVER KEY", _G(master_palette), 5, 1, 175, 200, 2, "407_s07a", -1);
 		break;
 
 	case 2:

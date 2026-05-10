@@ -19,10 +19,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/speech_flex.h"
+
+#include "common/debug.h"
 #include "ultima/ultima8/audio/audio_sample.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,16 +40,16 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 		unsigned int slen = 0;
 		while (off + slen < size && cbuf[off + slen])
 			slen++;
-		Std::string text(cbuf + off, slen);
+		Common::String text(cbuf + off, slen);
 		text.replace('\t', ' ');
 		off += slen + 1;
 
-		Std::string::size_type pos1 = text.findFirstNotOf(' ');
-		if (pos1 == Std::string::npos) {
+		Common::String::size_type pos1 = text.findFirstNotOf(' ');
+		if (pos1 == Common::String::npos) {
 			text = "";
 		}
 		else {
-			Std::string::size_type pos2 = text.findLastNotOf(' ');
+			Common::String::size_type pos2 = text.findLastNotOf(' ');
 			text = text.substr(pos1, pos2 - pos1 + 1);
 		}
 
@@ -63,18 +64,18 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 SpeechFlex::~SpeechFlex(void) {
 }
 
-int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
+int SpeechFlex::getIndexForPhrase(const Common::String &phrase,
 								  uint32 start, uint32 &end) const {
 	int i = 1;
 
-	Std::string text = phrase.substr(start);
+	Common::String text = phrase.substr(start);
 	text.replace('\t', ' ');
 
-	Std::string::size_type pos1 = text.findFirstNotOf(' ');
-	if (pos1 == Std::string::npos)
+	Common::String::size_type pos1 = text.findFirstNotOf(' ');
+	if (pos1 == Common::String::npos)
 		return 0;
 
-	Std::string::size_type pos2 = text.findLastNotOf(' ');
+	Common::String::size_type pos2 = text.findLastNotOf(' ');
 	text = text.substr(pos1, pos2 - pos1 + 1);
 
 	debug(6, "Looking for string: \"%s\"", text.c_str());
@@ -94,7 +95,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	return 0;
 }
 
-uint32 SpeechFlex::getSpeechLength(const Std::string &phrase) {
+uint32 SpeechFlex::getSpeechLength(const Common::String &phrase) {
 	uint32 start = 0, end = 0;
 	uint32 length = 0;
 

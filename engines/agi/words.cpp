@@ -26,8 +26,9 @@
 
 namespace Agi {
 
-Words::Words(AgiEngine *vm) {
-	_vm = vm;
+Words::Words(AgiEngine *vm) : 
+	_vm(vm),
+	_hasExtendedCharacters(false) {
 
 	clearEgoWords();
 }
@@ -139,10 +140,7 @@ int Words::loadDictionary(Common::SeekableReadStream &stream) {
 	return errOK;
 }
 
-int Words::loadExtendedDictionary(const char *sierraFname) {
-	Common::String fnameStr = Common::String(sierraFname) + ".extended";
-	const char *fname = fnameStr.c_str();
-
+int Words::loadExtendedDictionary(const char *fname) {
 	Common::File fp;
 	if (!fp.open(fname)) {
 		warning("loadWords: can't open %s", fname);
@@ -163,6 +161,7 @@ int Words::loadExtendedDictionary(const char *sierraFname) {
 		}
 	}
 
+	_hasExtendedCharacters = true;
 	return errOK;
 }
 
@@ -253,7 +252,7 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowercase, uint
 
 	foundWordLen = 0;
 
-	const byte lastCharInAbc = _vm->getFeatures() & GF_EXTCHAR ? 0xff : 'z';
+	const byte lastCharInAbc = _hasExtendedCharacters ? 0xff : 'z';
 
 	// Words normally have to start with a letter.
 	// ENHANCEMENT: Fan games and translations include words that start with a

@@ -39,8 +39,8 @@ namespace HodjNPodj {
 namespace Life {
 
 #define RULES_TXT   "life.txt"                  // rules text file
-#define RULES_WAV   ".\\sound\\rllf.wav"        // rules narration
-#define MIDI_SOUND  ".\\SOUND\\life.mid"        // background music
+#define RULES_WAV   "sound\\rllf.wav"        // rules narration
+#define MIDI_SOUND  "sound\\life.mid"        // background music
 
 //
 // Win/Lose conditions

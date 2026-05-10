@@ -57,7 +57,6 @@ private:
 
 private:
 	void open_read();
-	void open_write();
 	void open_read_low_level();
 	bool open_hash_file();
 	Common::String get_last_string(const Common::String &src);

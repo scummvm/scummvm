@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.asset-pack'
+    id('com.android.asset-pack')
 }
 
 if (project.hasProperty('splitAssets')) {

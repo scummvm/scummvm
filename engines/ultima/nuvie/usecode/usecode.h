@@ -22,7 +22,7 @@
 #ifndef NUVIE_USECODE_USECODE_H
 #define NUVIE_USECODE_USECODE_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/misc/map_entity.h"
 #include "ultima/nuvie/core/obj_manager.h"
@@ -171,7 +171,7 @@ protected:
 		Actor *actor_ref, *actor2_ref;
 		MapCoord *mapcoord_ref;
 		CallbackMessage *msg_ref;
-		Std::string *string_ref;
+		Common::String *string_ref;
 		MapEntity *ent_ref;
 		char *data_ref;
 	} items;

@@ -100,6 +100,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint elemSize = g_nancy->getGameType() <= kGameTypeNancy8 ? 1 : 2;
 
 	_initOrder.resize(width * height);
+	assert(width * height <= 24); // If this gets hit we need to increase the sizes in RippedLetterPuzzleData
+
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
 			_initOrder[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
@@ -193,7 +195,7 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void RippedLetterPuzzle::execute() {
 	switch (_state) {
-	case kBegin:
+	case kBegin: {
 		_puzzleState = (RippedLetterPuzzleData *)NancySceneState.getPuzzleData(RippedLetterPuzzleData::getTag());
 		assert(_puzzleState);
 
@@ -202,10 +204,50 @@ void RippedLetterPuzzle::execute() {
 
 		NancySceneState.setNoHeldItem();
 
+		bool hasLoadedProgress = false;
+		// Detect progress from the loaded tile order because
+		// playerHasTriedPuzzle is not serialized
 		if (!_puzzleState->playerHasTriedPuzzle) {
-			_puzzleState->order = _initOrder;
-			_puzzleState->rotations = _initRotations;
-			_puzzleState->playerHasTriedPuzzle = true;
+			const uint loadedStateSize = MIN<uint>(_puzzleState->order.size(), _puzzleState->rotations.size());
+			const uint loadedTileCount = MIN<uint>(loadedStateSize, _initOrder.size());
+			for (uint i = 0; i < loadedTileCount; ++i) {
+				if (_puzzleState->order[i] != _initOrder[i] || _puzzleState->rotations[i] != _initRotations[i]) {
+					hasLoadedProgress = true;
+					break;
+				}
+			}
+
+			// Traverse the order and rotations arrays to check if
+			// they have been initialized. If they haven't, they'll
+			// be full of zeroes, so there's no progress to continue,
+			// thus the arrays will need to be initialized normally.
+			if (hasLoadedProgress) {
+				bool arraysAreInitialized = false;
+				for (uint i = 0; i < loadedStateSize; ++i) {
+					if (_puzzleState->order[i] != 0 || _puzzleState->rotations[i] != 0) {
+						arraysAreInitialized = true;
+						break;
+					}
+				}
+
+				if (!arraysAreInitialized)
+					hasLoadedProgress = false;
+			}
+		}
+
+		// The serialized puzzle state uses 24 slots. Resize it to
+		// the current puzzle dimensions before use
+		_puzzleState->order.resize(_initOrder.size());
+		_puzzleState->rotations.resize(_initRotations.size());
+
+		if (!_puzzleState->playerHasTriedPuzzle) {
+			if (hasLoadedProgress) {
+				_puzzleState->playerHasTriedPuzzle = true;
+			} else {
+				_puzzleState->order = _initOrder;
+				_puzzleState->rotations = _initRotations;
+				_puzzleState->playerHasTriedPuzzle = true;
+			}
 		} else if (_puzzleState->_pickedUpPieceID != -1) {
 			// Puzzle was left while still holding a piece (e.g. by clicking a scene item).
 			// Make sure we put the held piece back in its place
@@ -225,7 +267,8 @@ void RippedLetterPuzzle::execute() {
 		g_nancy->_sound->loadSound(_rotateSound);
 
 		_state = kRun;
-		// fall through
+	}
+	// fall through
 	case kRun:
 		switch (_solveState) {
 		case kNotSolved :
@@ -371,6 +414,9 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 							_pickedUpPiece.setVisible(true);
 							_pickedUpPiece.setTransparent(true);
+							// After a swap, the held piece must return
+							// to this slot on save or re-entry
+							_puzzleState->_pickedUpPieceLastPos = i;
 						}
 
 						SWAP<int8>(_puzzleState->order[i], _puzzleState->_pickedUpPieceID);
@@ -423,11 +469,7 @@ bool RippedLetterPuzzle::checkOrder(bool useAlt) {
 	auto &current = _puzzleState->order;
 	auto &correct = useAlt ? _solveOrderAlt : _solveOrder;
 
-	if (!_doubles.size()) {
-		return current == correct;
-	}
-
-	for (uint i = 0; i < current.size(); ++i) {
+	for (uint i = 0; i < correct.size(); ++i) {
 		bool foundCorrect = false;
 		bool isDoubled = false;
 		for (auto &d : _doubles) {

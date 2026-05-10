@@ -38,11 +38,11 @@ namespace Poker {
 
 
 // Game theme song
-#define     GAME_THEME      ".\\SOUND\\VIDEOPO.MID"
+#define     GAME_THEME      "sound\\VIDEOPO.MID"
 
 // Rules File Identifiers
 #define     RULESFILE       "POKER.TXT"
-#define     RULES_WAV       ".\\SOUND\\POKER.WAV"
+#define     RULES_WAV       "sound\\POKER.WAV"
 
 #define     BETBUTTONS          "ART\\BETBTNS.BMP"
 #define     BET1UP              "ART\\BET1U.BMP"
@@ -1004,6 +1004,9 @@ bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				SetBet(0);
 				if (m_lpGameStruct->bPlayingMetagame) {
 					if (roundOfPlay >= m_nRound) {
+						UpdateWindow();
+
+						// Show the game over dialog
 						CMessageBox cMsgBox((CWnd *)this, pGamePalette, "Your 4 rounds", "are over.");
 						PostMessage(WM_CLOSE);
 					}

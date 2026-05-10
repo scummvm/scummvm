@@ -40,10 +40,10 @@ namespace Barbershop {
 //
 // sounds
 //
-#define STOCKCARDS  ".\\sound\\carddeal.wav"
-#define UNDO        ".\\sound\\sound355.wav"
-#define WIN_SOUND   ".\\sound\\applause.wav"
-#define LOSE_SOUND  ".\\sound\\sosorry.wav"
+#define STOCKCARDS  "sound\\carddeal.wav"
+#define UNDO        "sound\\sound355.wav"
+#define WIN_SOUND   "sound\\applause.wav"
+#define LOSE_SOUND  "sound\\sosorry.wav"
 
 //
 // related to stock card flipping sounds

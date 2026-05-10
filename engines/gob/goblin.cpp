@@ -265,11 +265,6 @@ void Goblin::drawObjects() {
 			objDesc->dirtyBottom =
 			    MAX(objDesc->bottom, _vm->_scenery->_toRedrawBottom);
 		}
-
-		objDesc->dirtyLeft = 0;
-		objDesc->dirtyRight = 319;
-		objDesc->dirtyTop = 0;
-		objDesc->dirtyBottom = 199;
 	}
 
 	sortByOrder(_objList);

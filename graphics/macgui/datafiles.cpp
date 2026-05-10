@@ -43,27 +43,27 @@ struct BorderName {
 };
 
 static const BorderName borders[] = {
-	{0x00, 					"StandardClose",			{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0}},
-	{0x01, 					"ThickNoTitle",		 		{ 5,  5,  5,  5,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x02, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x03, 					"ThinNoTitleShadow",		{ 1,  3,  1,  3,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x04, 					"StandardClose",			{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0}},
-	{0x05, 					"Thick",					{ 5,  5, 20,  5,		 2,  3,		false,	13, -1, -1, 0,  -1, 0, 0, 0}},
-	{0x06, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x07, 					"ThinNoTitleShadow",		{ 1,  3,  1,  3,		-1, -1, 	false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x08, 					"StandardCloseZoom",		{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0}},
-	{0x09, 					"ThickZoom",				{ 5,  5, 20,  5,		 2,  3,		false,	13, -1, -1, 0,  -1, 0, 0, 0}},
-	{0x0A, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x0B, 					"ThinNoTitleShadow",  		{ 1,  3,  1,  3,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x0C, 					"StandardCloseZoom",		{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0}},
-	{0x0D, 					"ThickZoom",				{ 5,  5, 20,  5,		 2,  3,		false,	13, -1, -1, 0,  -1, 0, 0, 0}},
-	{0x0E, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x0F, 					"ThinNoTitleShadow",  		{ 1,  3,  1,  3,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}},
-	{0x10, 					"RoundClose",		 		{ 1,  1, 19,  6,		 1,  1,		true,	25,  15, 8, 11, -1, 0, 0, 0}},
-	{kBorderScroll + 0x00,	"Win95BorderScrollbar",		{ 1,  17, 1,  1,		 1,  1,		true,	25, -1, -1, 0,  -1, 0, 15, 17}},
-	{kBorderScroll + 0x01, 	"Win95NoBorderScrollbar",	{ 1,  17, 1,  1,		 1,  1,		true,	25, -1, -1, 0,  -1, 0, 15, 17}},
-	{kBorderScroll + 0x02, 	"MacOSNoBorderScrollbar",	{ 1,  17, 1,  1,		 1,  1,		true,	25, -1, -1, 0,  -1, 0, 17, 17}},
-	{0xFF, 					"No type",			 		{-1, -1, -1, -1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0}}
+	{0x00, 					"StandardClose",			{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0, 0}},
+	{0x01, 					"ThickNoTitle",		 		{ 5,  5,  5,  5,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x02, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x03, 					"ThinNoTitleShadow",		{ 1,  3,  1,  3,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x04, 					"StandardClose",			{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0, 0}},
+	{0x05, 					"Thick",					{ 5,  5, 20,  5,		 2,  3,		false,	13, -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x06, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x07, 					"ThinNoTitleShadow",		{ 1,  3,  1,  3,		-1, -1, 	false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x08, 					"StandardCloseZoom",		{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0, 0}},
+	{0x09, 					"ThickZoom",				{ 5,  5, 20,  5,		 2,  3,		false,	13, -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x0A, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x0B, 					"ThinNoTitleShadow",  		{ 1,  3,  1,  3,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x0C, 					"StandardCloseZoom",		{ 1,  2, 19,  2,		 2,  2,		false,	25,  15, 8, 11, -1, 0, 0, 0, 0}},
+	{0x0D, 					"ThickZoom",				{ 5,  5, 20,  5,		 2,  3,		false,	13, -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x0E, 					"ThinNoTitle",		 		{ 1,  1,  1,  1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x0F, 					"ThinNoTitleShadow",  		{ 1,  3,  1,  3,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}},
+	{0x10, 					"RoundClose",		 		{ 1,  1, 19,  6,		 1,  1,		true,	25,  15, 8, 11, -1, 0, 0, 0, 0}},
+	{kBorderScroll + 0x00,	"Win95BorderScrollbar",		{ 1,  17, 1,  1,		 1,  1,		true,	25, -1, -1, 0,  -1, 0, 15, 17, 8}},
+	{kBorderScroll + 0x01, 	"Win95NoBorderScrollbar",	{ 1,  17, 1,  1,		 1,  1,		true,	25, -1, -1, 0,  -1, 0, 15, 17, 8}},
+	{kBorderScroll + 0x02, 	"MacOSNoBorderScrollbar",	{ 1,  17, 1,  1,		 1,  1,		true,	25, -1, -1, 0,  -1, 0, 17, 17, 8}},
+	{0xFF, 					"No type",			 		{-1, -1, -1, -1,		-1, -1,		false,	0,  -1, -1, 0,  -1, 0, 0, 0, 0}}
 };
 
 Common::String windowTypeName(uint32 windowType) {

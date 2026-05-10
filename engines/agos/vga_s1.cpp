@@ -93,6 +93,32 @@ static const uint8 customPalette[96] = {
 	0xFF, 0xFF, 0x77,
 };
 
+// Simon 1 Acorn floppy demo does not load Simon's palette
+// via TABLES. It needs to be loaded and patched in.
+void AGOSEngine_Simon1::patchSimonAcornFloppyDemoPalettes() {
+	if (_simonAcornFloppyDemoPaletteLoaded)
+		return;
+
+	Common::Array<byte> palette;
+	if (!loadSimonAcornFloppyDemoPalette(palette))
+		return;
+
+	for (int c = 0; c < 16; ++c) {
+		const int dst = (32 + c) * 3;
+		const int src = c * 3;
+
+		if (_displayPalette[dst + 0] == 0 &&
+		    _displayPalette[dst + 1] == 0 &&
+		    _displayPalette[dst + 2] == 0) {
+			_displayPalette[dst + 0] = palette[src + 0];
+			_displayPalette[dst + 1] = palette[src + 1];
+			_displayPalette[dst + 2] = palette[src + 2];
+		}
+	}
+
+	_simonAcornFloppyDemoPaletteLoaded = true;
+}
+
 void AGOSEngine_Simon1::vc22_setPalette() {
 	byte *offs, *palptr = nullptr, *src;
 	uint16 a = 0, b, num, palSize = 0;
@@ -136,6 +162,12 @@ void AGOSEngine_Simon1::vc22_setPalette() {
 		};
 	}
 
+	// Acorn Simon 1 floppy demo: Simon renders black because part of the palette
+	// is never populated. The original demo executable loads the palette data from
+	// VGA 0191 as a special case, not via TABLES.
+	if (getGameId() == GID_SIMON1 && getPlatform() == Common::kPlatformAcorn && (_gameDescription->desc.flags & ADGF_DEMO) && !(getFeatures() & GF_TALKIE)) {
+		patchSimonAcornFloppyDemoPalettes();
+	}
 	_paletteFlag = 2;
 	_vgaSpriteChanged++;
 }

@@ -75,9 +75,12 @@ static const char HELP_STRING1[] =
 	"  -v, --version            Display ScummVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
+	"  --list-games-json        Display list of supported games in JSON format and exit\n"
 	"  --list-all-games         Display list of all detected games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
+	"  --list-targets-json      Display list of configured targets in JSON format and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
+	"  --list-engines-json      Display list of supported engines in JSON format and exit\n"
 	"  --list-all-engines       Display list of all detection engines and exit\n"
 	"  --dump-all-detection-entries Create a DAT file containing MD5s from detection entries of all engines\n"
 	"  --stats                  Display statistics about engines and games and exit\n"
@@ -94,7 +97,7 @@ static const char HELP_STRING1[] =
 	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
-	"  --engine=ID              In combination with --list-games, --list-all-games, --list-targets, or --stats only\n"
+	"  --engine=ID              In combination with --list-games, --list-games-json, --list-all-games, --list-targets, or --stats only\n"
 	"                           lists games for this engine. Multiple engines can be listed separated by a coma.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
@@ -177,7 +180,13 @@ static const char HELP_STRING4[] =
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-channels=CHANNELS Select output channel count (e.g. 2 for stereo)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
+	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator ("
+#ifndef DISABLE_MAME_OPL
+																	 "mame"
+#endif
+#ifndef DISABLE_DOSBOX_OPL
+																	 ", db"
+#endif
 #ifndef DISABLE_NUKED_OPL
 																	 ", nuked"
 #endif
@@ -201,13 +210,14 @@ static const char HELP_STRING4[] =
 	"                           atari, macintosh, macintoshbw, vgaGray)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
-	"                           info, update, passthrough [default])\n"
+	"                           fast_playback, info, update, passthrough [default])\n"
 	"  --record-file-name=FILE  Specify record file name\n"
 	"  --disable-display        Disable any gfx output. Used for headless events\n"
 	"                           playback by Event Recorder\n"
 	"  --screenshot-period=NUM  When recording, trigger a screenshot every NUM milliseconds\n"
 	"                           (default: 60000)\n"
 	"  --list-records           Display a list of recordings for the target specified\n"
+	"  --list-records-json      Display a list of recordings in JSON format for the target specified\n"
 #endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -378,7 +388,9 @@ void registerDefaults() {
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 	ConfMan.registerDefault("disable_sdl_audio", false);
 
+#ifdef ENABLE_EVENTRECORDER
 	ConfMan.registerDefault("disable_display", false);
+#endif
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
 
@@ -676,7 +688,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('t', "list-targets")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-targets-json")
+			END_COMMAND
+
 			DO_COMMAND('z', "list-games")
+			END_COMMAND
+
+			DO_LONG_COMMAND("list-games-json")
 			END_COMMAND
 
 			DO_LONG_COMMAND("list-all-games")
@@ -691,6 +709,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_COMMAND("list-engines")
+			END_COMMAND
+
+			DO_LONG_COMMAND("list-engines-json")
 			END_COMMAND
 
 			DO_LONG_COMMAND("list-all-engines")
@@ -809,6 +830,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_COMMAND("list-records")
+			END_COMMAND
+
+			DO_LONG_COMMAND("list-records-json")
 			END_COMMAND
 
 			DO_LONG_OPTION_INT("screenshot-period")
@@ -976,6 +1000,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_PATH("themepath")
 			END_OPTION
 
+			// This is for internal use only, intentianally not documented
+			DO_LONG_OPTION_BOOL("dump-all-dialogs")
+			END_OPTION
+
 			DO_LONG_OPTION("shader")
 				Common::SearchSet _shaderSet;
 				Common::generateZipSet(_shaderSet, "shaders.dat", "shaders*.dat");
@@ -1052,7 +1080,7 @@ unknownOption:
 }
 
 /** List all available game IDs, i.e. all games which any loaded plugin supports. */
-static void listGames(const Common::String &engineID) {
+static void listGames(const Common::String &engineID, bool jsonOutput) {
 	const bool all = engineID.empty();
 	Common::StringArray engines;
 	if (!all) {
@@ -1060,8 +1088,12 @@ static void listGames(const Common::String &engineID) {
 		engines = tokenizer.split();
 	}
 
-	printf("Game ID                        Full Title                                                 \n"
-	       "------------------------------ -----------------------------------------------------------\n");
+	if (jsonOutput) {
+		printf("{");
+	} else {
+		printf("Game ID                        Full Title                                                 \n"
+			"------------------------------ -----------------------------------------------------------\n");
+	}
 
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	for (const auto &plugin : plugins) {
@@ -1073,10 +1105,25 @@ static void listGames(const Common::String &engineID) {
 
 		if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
+			bool first = true;
 			for (const auto &v : list) {
-				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId).c_str(), v.description);
+				const Common::String &gameId = buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId);
+				if (jsonOutput) {
+					if (!first) {
+						printf(",\n");
+					} else {
+						printf("\n");
+					}
+					first = false;
+					printf("  \"%s\": \"%s\"", gameId.c_str(), v.description);
+				} else {
+					printf("%-30s %s\n", gameId.c_str(), v.description);
+				}
 			}
 		}
+	}
+	if (jsonOutput) {
+		printf("\n}\n");
 	}
 }
 
@@ -1106,11 +1153,16 @@ static void listAllGames(const Common::String &engineID) {
 }
 
 /** List all supported engines, i.e. all loaded engine plugins. */
-static void listEngines() {
-	printf("Engine ID       Engine Name                                           \n"
-	       "--------------- ------------------------------------------------------\n");
+static void listEngines(bool jsonOutput) {
+	if (jsonOutput) {
+		printf("{");
+	} else {
+		printf("Engine ID       Engine Name                                           \n"
+			"--------------- ------------------------------------------------------\n");
+	}
 
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	bool first = true;
 	for (const auto &plugin : plugins) {
 		const Plugin *p = EngineMan.findDetectionPlugin(plugin->getName());
 		/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
@@ -1118,7 +1170,21 @@ static void listEngines() {
 			continue;
 		}
 
-		printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
+		if (jsonOutput) {
+			if (!first) {
+				printf(",\n");
+			} else {
+				printf("\n");
+				first = false;
+			}
+			printf("  \"%s\": \"%s\"", p->get<MetaEngineDetection>().getName(),
+			       p->get<MetaEngineDetection>().getEngineName());
+		} else {
+			printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
+		}
+	}
+	if (jsonOutput) {
+		printf("\n}\n");
 	}
 }
 
@@ -1135,7 +1201,7 @@ static void listAllEngines() {
 }
 
 /** List all targets which are configured in the config file. */
-static void listTargets(const Common::String &engineID) {
+static void listTargets(const Common::String &engineID, bool jsonOutput) {
 	const bool any = engineID.empty();
 	Common::StringArray engines;
 	if (!any) {
@@ -1143,41 +1209,80 @@ static void listTargets(const Common::String &engineID) {
 		engines = tokenizer.split();
 	}
 
-	printf("Target               Description                                           \n"
-	       "-------------------- ------------------------------------------------------\n");
+	if (jsonOutput) {
+		printf("{");
+	} else {
+		printf("Target               Description                                           \n"
+			"-------------------- ------------------------------------------------------\n");
+	}
 
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 
-	Common::Array<Common::String> targets;
+	struct Target {
+		Common::String name;
+		Common::String description;
+		Common::String engineId;
+		Common::String gameId;
+
+		Common::String toString() const {
+			return Common::String::format("%-20s %s", name.c_str(), description.c_str());
+		}
+
+		bool operator<(const Target &other) const {
+			return toString() < other.toString();
+		}
+	};
+	Common::Array<Target> targets;
 	targets.reserve(domains.size());
 
 	for (const auto &domain : domains) {
 		Common::String name(domain._key);
 		Common::String description(domain._value.getValOrDefault("description"));
-		Common::String engine;
-		if (!any)
-			engine = domain._value.getValOrDefault("engineid");
+		Common::String engine = domain._value.getValOrDefault("engineid");
+		Common::String gameId = domain._value.getValOrDefault("gameid");
 
 		// If there's no description, fallback on the default description.
-		if (description.empty() || (!any && engine.empty())) {
+		if (description.empty() || engine.empty() || gameId.empty()) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(name);
 			if (description.empty() && !g.description.empty())
 				description = g.description;
-			if (!any && engine.empty() && !g.engineId.empty())
+			if (engine.empty() && !g.engineId.empty())
 				engine = g.engineId;
+			if (gameId.empty() && !g.gameId.empty())
+				gameId = g.gameId;
 		}
 		// If there's still no description, we cannot come up with one. Insert some dummy text.
 		if (description.empty())
 			description = "<Unknown game>";
 
 		if (any || Common::find(engines.begin(), engines.end(), engine) != engines.end())
-			targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
+			targets.push_back({name, description, engine, gameId});
 	}
 
 	Common::sort(targets.begin(), targets.end());
 
-	for (const auto &target : targets)
-		printf("%s\n", target.c_str());
+	bool first = true;
+	for (const auto &target : targets) {
+		if (jsonOutput) {
+			if (!first) {
+				printf(",\n");
+			} else {
+				printf("\n");
+				first = false;
+			}
+			printf("  \"%s\": {\n", target.name.c_str());
+			printf("    \"description\": \"%s\",\n", target.description.c_str());
+			printf("    \"engineId\": \"%s\",\n", target.engineId.c_str());
+			printf("    \"gameId\": \"%s\"\n", target.gameId.c_str());
+			printf("  }");
+		} else {
+			printf("%s\n", target.toString().c_str());
+		}
+	}
+
+	if (jsonOutput) {
+		printf("\n}\n");
+	}
 }
 
 static void printStatistics(const Common::String &engineID) {
@@ -1308,7 +1413,7 @@ static void assembleTargets(const Common::String &singleTarget, Common::Array<Co
 }
 
 #ifdef ENABLE_EVENTRECORDER
-static Common::Error listRecords(const Common::String &singleTarget) {
+static Common::Error listRecords(const Common::String &singleTarget, bool jsonOutput) {
 	Common::Error result = Common::kNoError;
 
 	Common::Array<Common::String> targets;
@@ -1318,6 +1423,11 @@ static Common::Error listRecords(const Common::String &singleTarget) {
 	g_system->initBackend();
 
 	Common::String oldDomain = ConfMan.getActiveDomainName();
+	bool first = true;
+
+	if (jsonOutput) {
+		printf("{\n");
+	}
 
 	for (const auto &target : targets) {
 		Common::String currentTarget;
@@ -1341,10 +1451,29 @@ static Common::Error listRecords(const Common::String &singleTarget) {
 		if (files.empty()) {
 			continue;
 		}
-		printf("Recordings for target '%s' (gameid '%s'):\n", target.c_str(), qualifiedGameId.c_str());
-		for (const auto &x : files) {
-			printf("  %s\n", x.c_str());
+		if (jsonOutput) {
+			if (!first)
+				printf(",\n");
+			first = false;
+			printf("  \"%s\": {\n", target.c_str());
+			printf("  \"records\": [\n");
+			for (size_t i = 0; i < files.size(); ++i) {
+				printf("    \"%s\"%s\n", files[i].c_str(), (i + 1 < files.size()) ? "," : "");
+			}
+			printf("  ],\n");
+			printf("  \"engine\": \"%s\",\n", game.engineId.c_str());
+			printf("  \"gameid\": \"%s\"\n", qualifiedGameId.c_str());
+			printf("  }");
+		} else {
+			printf("Recordings for target '%s' (gameid '%s'):\n", target.c_str(), qualifiedGameId.c_str());
+			for (const auto &x : files) {
+				printf("  %s\n", x.c_str());
+			}
 		}
+	}
+
+	if (jsonOutput) {
+		printf("\n}\n");
 	}
 
 	// Revert to the old active domain
@@ -1443,7 +1572,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 					   "  ---- ------------------------------------------------------\n");
 
 			for (const auto &x : saveList) {
-				printf("  %-4d %s\n", x.getSaveSlot(), x.getDescription().encode().c_str());
+				printf("  %-4d %s\n", x.getSaveSlot(), x.getDescription().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 			atLeastOneFound = true;
@@ -1921,7 +2050,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// --list-games). This must be done after the config file and the plugins
 	// have been loaded.
 	if (command == "list-targets") {
-		listTargets(settings["engine"]);
+		listTargets(settings["engine"], false);
+		return cmdDoExit;
+	} else if (command == "list-targets-json") {
+		listTargets(settings["engine"], true);
 		return cmdDoExit;
 	} else if (command == "list-all-debugflags") {
 		listAllEngineDebugFlags();
@@ -1930,13 +2062,19 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listDebugFlags(settings["list-debugflags"]);
 		return cmdDoExit;
 	} else if (command == "list-games") {
-		listGames(settings["engine"]);
+		listGames(settings["engine"], false);
+		return cmdDoExit;
+	} else if (command == "list-games-json") {
+		listGames(settings["engine"], true);
 		return cmdDoExit;
 	} else if (command == "list-all-games") {
 		listAllGames(settings["engine"]);
 		return cmdDoExit;
 	} else if (command == "list-engines") {
-		listEngines();
+		listEngines(false);
+		return cmdDoExit;
+	} else if (command == "list-engines-json") {
+		listEngines(true);
 		return cmdDoExit;
 	} else if (command == "list-all-engines") {
 		listAllEngines();
@@ -1949,7 +2087,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return cmdDoExit;
 #ifdef ENABLE_EVENTRECORDER
 	} else if (command == "list-records") {
-		err = listRecords(settings["game"]);
+		err = listRecords(settings["game"], false);
+		return cmdDoExit;
+	} else if (command == "list-records-json") {
+		err = listRecords(settings["game"], true);
 		return cmdDoExit;
 #endif
 	} else if (command == "list-saves") {
@@ -2096,7 +2237,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			Common::Path fileName = Filename.getLastComponent();
 
 			Common::MacResManager macResMan;
-			if (macResMan.open(fileName, dir)) {
+			if (macResMan.open(fileName, dir) && macResMan.isMacFile()) {
 				warning("Mac resources detected");
 				command = "md5mac";
 			}
@@ -2177,6 +2318,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"render-mode",
 		"random-seed",
 		"renderer",
+		"dump-all-dialogs",
 		nullptr
 	};
 

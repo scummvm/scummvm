@@ -187,8 +187,9 @@ int AgiLoader_v2::loadObjects() {
 }
 
 int AgiLoader_v2::loadWords() {
-	if (_vm->getFeatures() & GF_EXTCHAR) {
-		return _vm->_words->loadExtendedDictionary(WORDS);
+	// Use a fan-made extended dictionary file for translations if present.
+	if (Common::File::exists(EXTENDED_DICTIONARY_FILENAME)) {
+		return _vm->_words->loadExtendedDictionary(EXTENDED_DICTIONARY_FILENAME);
 	} else {
 		return _vm->_words->loadDictionary(WORDS);
 	}

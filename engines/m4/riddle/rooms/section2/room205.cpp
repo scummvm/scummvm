@@ -20,12 +20,12 @@
  */
 
 #include "m4/riddle/rooms/section2/room205.h"
-
-#include "m4/adv_r/other.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/inventory.h"
 #include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/adv_r/other.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -337,8 +337,7 @@ void Room205::parser() {
 		case 21:
 			inv_give_to_player("CHINESE YUAN");
 			inv_move_object("CHARCOAL", 999);
-			_G(game).new_section = 8;
-			_G(game).new_room = 850;
+			_G(game).setRoom(850);
 			break;
 
 		default:
@@ -537,7 +536,7 @@ void Room205::parser() {
 				break;
 
 			case 3:
-				kernel_examine_inventory_object("PING CHARCOAL", 5, 1, 144, 271, 4, nullptr, -1);
+				kernel_examine_inventory_object("PING CHARCOAL", _G(master_palette), 5, 1, 144, 271, 4, nullptr, -1);
 				break;
 
 			case 4:
@@ -728,7 +727,7 @@ void Room205::parser() {
 				break;
 
 			case 1:
-				_G(game).new_room = 204;
+				_G(game).setRoom(204);
 				break;
 
 			default:
@@ -1434,8 +1433,7 @@ void Room205::daemon() {
 
 	case 666:
 		other_save_game_for_resurrection();
-		_G(game).new_section = 4;
-		_G(game).new_room = 413;
+		_G(game).setRoom(413);
 		break;
 
 	case 669:
@@ -1446,8 +1444,7 @@ void Room205::daemon() {
 		_fieldDC = 0;
 		_fieldE0 = 0;
 		other_save_game_for_resurrection();
-		_G(game).new_section = 4;
-		_G(game).new_room = 413;
+		_G(game).setRoom(413);
 		break;
 
 	case 901:

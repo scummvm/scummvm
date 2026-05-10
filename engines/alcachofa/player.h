@@ -39,8 +39,6 @@ public:
 	MainCharacter *inactiveCharacter() const;
 	FakeSemaphore &semaphoreFor(MainCharacterKind kind);
 
-	inline bool &isGameLoaded() { return _isGameLoaded; }
-
 	inline MainCharacterKind activeCharacterKind() const {
 		return _activeCharacter == nullptr ? MainCharacterKind::None : _activeCharacter->kind();
 	}
@@ -50,7 +48,7 @@ public:
 	void updateCursor();
 	void drawCursor(bool forceDefaultCursor = false);
 	void resetCursor();
-	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
+	void changeRoom(const Common::String &targetRoomName, bool resetCamera, bool isTemporary = false);
 	void changeRoomToBeforeInventory();
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);
@@ -72,9 +70,8 @@ private:
 	void *_pressedObject = nullptr; // terrible but GlobalUI wants to store a Graphic pointer
 	Item *_heldItem = nullptr;
 	int32 _cursorFrameI = 0;
-	bool
-		_isGameLoaded = true,
-		_didLoadGlobalRooms = false;
+	bool _didLoadGlobalRooms = false,
+		_isInTemporaryRoom = false;
 	Character *_lastDialogCharacters[kMaxLastDialogCharacters] = { nullptr };
 	int _nextLastDialogCharacter = 0;
 };

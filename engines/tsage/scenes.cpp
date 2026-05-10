@@ -20,7 +20,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "gui/saveload.h"
 #include "tsage/dialogs.h"
 #include "tsage/scenes.h"
@@ -635,11 +634,7 @@ void Game::quitGame() {
 }
 
 void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
-	GUI::SaveLoadChooser *dialog;
-	if (saveFlag)
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), saveFlag);
-	else
-		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), saveFlag);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(saveFlag);
 
 	saveSlot = dialog->runModalWithCurrentTarget();
 	saveName = dialog->getResultString();

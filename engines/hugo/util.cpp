@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "gui/message.h"
 
+#include "hugo/hugo.h"
 #include "hugo/dialogs.h"
 #include "hugo/util.h"
 
@@ -85,10 +86,11 @@ void reverseByte(byte *data) {
 	*data = result;
 }
 
-void notifyBox(const Common::String &msg, bool ttsVoiceText, bool ttsReplaceNewlines) {
+void notifyBox(const Common::String &msg, TtsOptions ttsOptions) {
 #ifdef USE_TTS
-	if (ttsVoiceText) {
-		sayText(msg, Common::TextToSpeechManager::QUEUE, ttsReplaceNewlines);
+	if (ttsOptions & kTtsSpeech) {
+		bool replaceNewlines = ((ttsOptions & kTtsReplaceNewlines) == kTtsReplaceNewlines);
+		sayText(msg, Common::TextToSpeechManager::QUEUE, replaceNewlines);
 	}
 #endif
 

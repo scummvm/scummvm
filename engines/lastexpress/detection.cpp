@@ -31,15 +31,7 @@ static const PlainGameDescriptor lastExpressGames[] = {
 };
 
 static const DebugChannelDef debugFlagList[] = {
-	{LastExpress::kLastExpressDebugGraphics, "Graphics", "Debug graphics & animation/sequence playback"},
-	{LastExpress::kLastExpressDebugResource, "Resource", "Debug resource management"},
-	{LastExpress::kLastExpressDebugCursor, "Cursor", "Debug cursor handling"},
-	{LastExpress::kLastExpressDebugSound, "Sound", "Debug sound playback"},
-	{LastExpress::kLastExpressDebugSubtitle, "Subtitle", "Debug subtitles"},
-	{LastExpress::kLastExpressDebugSavegame, "Savegame", "Debug savegames"},
-	{LastExpress::kLastExpressDebugLogic, "Logic", "Debug logic"},
-	{LastExpress::kLastExpressDebugScenes, "Scenes", "Debug scenes & hotspots"},
-	{LastExpress::kLastExpressDebugUnknown, "Unknown", "Debug unknown data"},
+	{LastExpress::kDebugImGui, "ImGui", "Enable the ImGui debugger"},
 	DEBUG_CHANNEL_END
 };
 

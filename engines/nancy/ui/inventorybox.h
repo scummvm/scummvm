@@ -22,9 +22,11 @@
 #ifndef NANCY_UI_INVENTORYBOX_H
 #define NANCY_UI_INVENTORYBOX_H
 
-#include "engines/nancy/time.h"
+#include "common/ptr.h"
 
+#include "engines/nancy/time.h"
 #include "engines/nancy/renderobject.h"
+#include "engines/nancy/ui/scrollbar.h"
 
 namespace Nancy {
 
@@ -37,11 +39,7 @@ class Scene;
 
 namespace UI {
 
-class Scrollbar;
-
 class InventoryBox : public RenderObject {
-	friend class Nancy::State::Scene;
-
 public:
 	struct ItemDescription {
 		Common::String name; // 0x00
@@ -50,7 +48,6 @@ public:
 	};
 
 	InventoryBox();
-	virtual ~InventoryBox();
 
 	void init() override;
 	void updateGraphics() override;
@@ -59,12 +56,15 @@ public:
 
 	void onScrollbarMove();
 
-private:
-	// These are private since they should only be called from Scene
 	void addItem(const int16 itemID);
 	void removeItem(const int16 itemID);
-
 	void onReorder();
+
+	Common::Array<int16> &getOrder() { return _order; }
+
+private:
+	// These are private since they should only be called from Scene
+
 	void setHotspots(const uint pageNr);
 	void drawItemInSlot(const uint itemID, const uint slotID, const bool highlighted = false);
 
@@ -96,7 +96,7 @@ private:
 	Graphics::ManagedSurface _iconsSurface;
 	Graphics::ManagedSurface _fullInventorySurface;
 
-	Scrollbar *_scrollbar;
+	Common::ScopedPtr<Scrollbar> _scrollbar;
 	Curtains _curtains;
 
 	float _scrollbarPos;

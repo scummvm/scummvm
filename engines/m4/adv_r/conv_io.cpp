@@ -83,7 +83,7 @@ void cdd_init() {
 	_G(cdd).mesg_snd_file = nullptr;
 }
 
-Conv *conv_get_handle(void) {
+Conv *conv_get_handle() {
 	return _GC(globConv);
 }
 
@@ -373,8 +373,6 @@ static void conv_save_state(Conv *c) {
 		file_size = _GC(convSave).size();
 
 		conv_save_buff = (char *)mem_alloc(file_size, "conv save buff");
-		if (!conv_save_buff)
-			error_show(FL, 'OOM!');
 
 		Common::copy(&_GC(convSave)[0], &_GC(convSave)[0] + file_size, &conv_save_buff[0]);
 
@@ -396,8 +394,6 @@ static void conv_save_state(Conv *c) {
 
 			mem_free(conv_save_buff);
 			conv_save_buff = (char *)mem_alloc(amt_to_write + NAME_SIZE + sizeof(int32), "conv save buff");
-			if (!conv_save_buff)
-				error_show(FL, 'OOM!');
 
 			memcpy(&conv_save_buff[offset], fname, NAME_SIZE * sizeof(char));
 			offset += NAME_SIZE * sizeof(char);
@@ -411,8 +407,6 @@ static void conv_save_state(Conv *c) {
 		offset = 0;
 
 		conv_save_buff = (char *)mem_alloc(amt_to_write + NAME_SIZE + sizeof(int32), "conv save buff");
-		if (!conv_save_buff)
-			error_show(FL, 'OOM!');
 
 		memcpy(&conv_save_buff[offset], fname, NAME_SIZE * sizeof(char));
 		offset += NAME_SIZE * sizeof(char);
@@ -496,7 +490,7 @@ static void conv_save_state(Conv *c) {
 	}
 
 	if (amt_to_write != size)
-		error_show(FL, 'CNVS', "save_state: error! size written != size (%d %d)", amt_to_write, size);
+		error_show(FL, "save_state: error! size written != size (%d %d)", amt_to_write, size);
 
 	// Finally, write out the conversation data
 	if (overwrite_file == true) {
@@ -521,13 +515,13 @@ static Conv *conv_restore_state(Conv *c) {
 	short flag_index = 0;
 	int32 val;
 	int32 e_flags = 0;
-	int32 myCNode;
 
 	char fname[13];
 	int file_size;
 
-	int32 ent;
+	int32 ent = 0;
 	c->myCNode = 0;
+	int32 myCNode;
 
 	find_and_set_conv_name(c);
 	Common::strcpy_s(fname, _GC(conv_name));
@@ -543,8 +537,6 @@ static Conv *conv_restore_state(Conv *c) {
 	}
 
 	char *conv_save_buff = (char *)mem_alloc(file_size, "conv save buff");
-	if (!conv_save_buff)
-		error_show(FL, 'OOM!');
 
 	// ------------------
 
@@ -566,7 +558,7 @@ static Conv *conv_restore_state(Conv *c) {
 	/*int num_entries = */READ_LE_UINT32(&conv_save_buff[offset]);
 	offset += sizeof(int32);
 
-	ent = 0; c->myCNode = 0;
+	c->myCNode = 0;
 
 	while (ent < c->chunkSize) {
 		conv_ops_get_entry(ent, &next, &tag, c);
@@ -666,7 +658,7 @@ void conv_set_box_xy(int32 x, int32 y) {
 	_GC(glob_y) = y;
 }
 
-static void conv_set_disp_default(void) {
+static void conv_set_disp_default() {
 	_GC(conv_font_spacing_h) = _GC(conv_default_h);
 	_GC(conv_font_spacing_v) = _GC(conv_default_v);
 	_GC(conv_normal_colour) = _GC(conv_default_normal_colour);
@@ -707,7 +699,7 @@ Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want
 	SysFile fp(fullPathname);
 	if (!fp.exists()) {
 		// Force the file open
-		error_show(FL, 'CNVL', "couldn't conv_load %s", fullPathname);
+		error_show(FL, "couldn't conv_load %s", fullPathname);
 	}
 
 	const int32 cSize = fp.size();

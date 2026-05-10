@@ -22,6 +22,10 @@
 #ifndef COMMON_CONSOLE_H
 #define COMMON_CONSOLE_H
 
+#ifdef FORCE_TEXT_CONSOLE
+#undef DISABLE_TEXT_CONSOLE
+#endif
+
 #include "common/scummsys.h"
 
 namespace Common {
@@ -84,7 +88,7 @@ void NORETURN_PRE error(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETUR
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline void GCC_PRINTF(1, 2) warning(MSVC_PRINTF const char *s, ...) {}
+static inline void GCC_PRINTF(1, 2) warning(MSVC_PRINTF const char *s, ...) {}
 
 #else
 

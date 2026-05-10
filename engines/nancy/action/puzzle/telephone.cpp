@@ -135,7 +135,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		PhoneCall &call = _calls[i];
 
 		if (_isNewPhone) {
-			call.eventFlagCondition = stream.readSint16LE();
+			call.directoryDisplayCondition = stream.readSint16LE();
 		}
 
 		call.phoneNumber.resize(11);
@@ -194,17 +194,11 @@ void Telephone::execute() {
 				// We do this before going to the ringing state to support nancy4's voice mail system,
 				// where call numbers can be 1 digit long
 				for (uint i = 0; i < _calls.size(); ++i) {
-					// Do not evaluate phone calls whose condition isn't met
-					if (_calls[i].eventFlagCondition != kEvNoEvent) {
-						if (NancySceneState.getEventFlag(_calls[i].eventFlagCondition, g_nancy->_false)) {
-							continue;
-						}
-					}
-
+					auto &call = _calls[i];
 					bool invalid = false;
 
 					for (uint j = 0; j < _calledNumber.size(); ++j) {
-						if (_calledNumber[j] != _calls[i].phoneNumber[j]) {
+						if (_calledNumber[j] != call.phoneNumber[j]) {
 							// Invalid number, move onto next
 							invalid = true;
 							break;
@@ -456,9 +450,11 @@ void Telephone::handleInput(NancyInput &input) {
 			bool changeDirectoryEntry = false;
 			int dirEntryDelta = 1;
 			if (_dialButtonID != -1 && buttonNr == _dialButtonID) {
-				_calledNumber = _calls[_displayedDirectory].phoneNumber;
-				while (_calledNumber.back() == 10) {
-					_calledNumber.pop_back();
+				if (_isShowingDirectory) {
+					_calledNumber = _calls[_displayedDirectory].phoneNumber;
+					while (_calledNumber.back() == 10) {
+						_calledNumber.pop_back();
+					}
 				}
 
 				_checkNumbers = true;
@@ -550,11 +546,11 @@ void Telephone::handleInput(NancyInput &input) {
 						_displayedDirectory = _calls.size() - 1;
 					}
 
-					if (_calls[_displayedDirectory].eventFlagCondition == kEvNoEvent) {
+					if (_calls[_displayedDirectory].directoryDisplayCondition == kEvNoEvent) {
 						break;
 					}
 
-					if (NancySceneState.getEventFlag(_calls[_displayedDirectory].eventFlagCondition, g_nancy->_true)) {
+					if (NancySceneState.getEventFlag(_calls[_displayedDirectory].directoryDisplayCondition, g_nancy->_true)) {
 						break;
 					}
 

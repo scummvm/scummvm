@@ -55,12 +55,14 @@ public:
 	GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd);
 	~GameJohnnyRock() override;
 	Common::Error run() override;
-	void debugWarpTo(int val);
+	void runCursorTimer();
+	void debug_warpTo(int val);
 
 private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	JRScriptFunctionPoint getScriptFunctionZonePtrFb(Common::String name);
 	JRScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	JRScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
@@ -79,10 +81,19 @@ private:
 	JRScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Common::Array<Graphics::Surface *> *_difficultyIcon;
-	Graphics::Surface *_levelIcon;
-	Graphics::Surface *_bulletholeIcon;
+	Graphics::Surface *_levelIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_difficultyIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
 
+	// sounds
+	Audio::SeekableAudioStream *_saveSound = nullptr;
+	Audio::SeekableAudioStream *_loadSound = nullptr;
+	Audio::SeekableAudioStream *_moneySound = nullptr;
+	Audio::SeekableAudioStream *_shotSound = nullptr;
+	Audio::SeekableAudioStream *_emptySound = nullptr;
+	
 	// constants
 	const int16 _randomRooftop[6] = {2, -4, 0x104, 0x1E, 0x100, 0x102};
 	const int16 _randomTheater[9] = {5, -5, 0x111, 0x1E, 0x107, 0x109, 0x10B, 0x10D, 0x10F};
@@ -104,6 +115,19 @@ private:
 	const uint16 _diffPos[4][2] = {{0, 0}, {0xCD, 0x35}, {0xD2, 0x53}, {0xD2, 0x6E}};
 
 	// gamestate
+	uint8 _difficulty = 1;
+	uint8 _emptyCount = 0;
+	bool _holster = false;
+	uint8 _oldDifficulty = 1;
+	uint8 _inHolster = 0;
+	int32 _score = 0;
+	int32 _oldScore = -1;
+	bool _shotFired = false;
+	uint16 _shots = 0;
+	uint8 _oldShots = 0;
+	uint8 _whichGun = 0;
+	uint8 _oldWhichGun = 0xFF;
+
 	uint16 _totalDies = 0;
 	int16 _gameMoney = 0;
 	int16 _oldGameMoney = 0;
@@ -153,6 +177,11 @@ private:
 	uint8 _mgunCnt = 0;
 	uint32 _machGunTimer = 0;
 
+	Common::String _retScene;
+	Common::String _subScene;
+
+	uint32 _thisGameTimer = 0;
+
 	// base functions
 	bool fired(Common::Point *point);
 	void newGame();
@@ -163,13 +192,15 @@ private:
 	void displayScore();
 	void showDifficulty(uint8 newDifficulty, bool updateCursor);
 	void changeDifficulty(uint8 newDifficulty);
+	void adjustDifficulty(uint8 newDifficulty, uint8 oldDifficulty);
 	void updateCursor();
 	void updateMouse();
 	void moveMouse();
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
 	void doMoneySound();
+	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
 
 	// misc game functions
 	Common::String numToScene(int n);
@@ -182,15 +213,24 @@ private:
 	void shotCombination(uint8 combination, bool combinationB);
 	void shotLuckyNumber(uint8 number);
 
+	// Timer
+	void setupCursorTimer();
+	void removeCursorTimer();
+	
 	// Script functions: Zone
 	void zoneBullethole(Common::Point *point);
 
 	// Script functions: RectHit
+	void rectNewScene(Rect *rect);
 	void rectShotMenu(Rect *rect);
 	void rectSave(Rect *rect);
 	void rectLoad(Rect *rect);
 	void rectContinue(Rect *rect);
 	void rectStart(Rect *rect);
+	void rectEasy(Rect *rect);
+	void rectAverage(Rect *rect);
+	void rectHard(Rect *rect);
+	void rectExit(Rect *rect);
 	void rectKillInnocent(Rect *rect);
 	void rectSelectCasino(Rect *rect);
 	void rectSelectPoolhall(Rect *rect);
@@ -268,6 +308,9 @@ private:
 
 	// Script functions: Scene WepDwn
 	void sceneDefaultWepdwn(Scene *scene);
+
+	// Script functions: ScnScr
+	void sceneDefaultScore(Scene *scene);
 };
 
 class DebuggerJohnnyRock : public GUI::Debugger {

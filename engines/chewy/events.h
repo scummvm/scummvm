@@ -58,7 +58,7 @@ private:
 	int16 _hotkey = Common::KEYCODE_INVALID;
 
 	/**
-	 * Checks for timer expiries
+	 * Checks for timers' expiration
 	 */
 	void checkTimers();
 

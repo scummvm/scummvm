@@ -119,12 +119,12 @@ Source: ..\..\win32dist-mingw\doc\es\InicioRapido.txt; DestDir: {app}; Flags: ig
 Source: ..\..\win32dist-mingw\doc\fr\DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion; Languages: french
 Source: ..\..\win32dist-mingw\doc\it\GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion; Languages: italian
 Source: ..\..\win32dist-mingw\doc\no-nb\HurtigStart.txt; DestDir: {app}; Flags: ignoreversion; Languages: norwegian
-Source: ..\..\win32dist-mingw\doc\se\Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
+Source: ..\..\win32dist-mingw\doc\sv\Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 
 ; README and DOCUMENTATION
 Source: ..\..\win32dist-mingw\doc\cz\PrectiMe.txt; DestDir: {app}; Flags: ignoreversion; Languages: czech
 Source: ..\..\win32dist-mingw\doc\de\LIESMICH.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
-Source: ..\..\win32dist-mingw\doc\se\LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
+Source: ..\..\win32dist-mingw\doc\sv\LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 
 ; ScummVM executables and libraries
 ; for 32 bit aka. i686:

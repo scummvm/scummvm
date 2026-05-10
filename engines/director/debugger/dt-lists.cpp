@@ -141,10 +141,7 @@ void showWatchedVars() {
 			name.type = VARREF;
 			Datum val = g_lingo->varFetch(name, true);
 
-			bool outOfScope = false;
-			if (val.type == VOID) {
-				outOfScope = true;
-			}
+			bool outOfScope = (val.type == VOID);
 
 			id += 1;
 			ImGui::PushID(id);
@@ -157,6 +154,29 @@ void showWatchedVars() {
 
 		if (_state->_variables.empty())
 			ImGui::Text("(no watched variables)");
+
+		ImGui::Separator();
+		if (ImGui::CollapsingHeader("Write Log")) {
+			if (ImGui::BeginChild("##watchlog", ImVec2(0, 150), true)) {
+				for (int i = (int)_state->_watchLog.size() - 1; i >= 0; i--) {
+					ImGuiState::WatchLogEntry &entry = _state->_watchLog[i];
+					ImGui::TextColored(
+						ImVec4(1.0f, 0.4f, 0.4f, 1.0f),
+						"write '%s': %s  [%s]",
+						entry.varName.c_str(),
+						entry.value.c_str(),
+						entry.scriptRef.c_str()
+					);
+				}
+
+				if (_state->_watchLog.empty())
+					ImGui::Text("(no writes logged)");
+			}
+			ImGui::EndChild();
+
+			if (ImGui::Button("Clear Log"))
+				_state->_watchLog.clear();
+		}
 	}
 	ImGui::End();
 }
@@ -195,26 +215,26 @@ void showBreakpointList() {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				const ImVec2 mid(pos.x + 7, pos.y + 7);
 
-				ImVec4 color = bps[i].enabled ? _state->_colors._bp_color_enabled : _state->_colors._bp_color_disabled;
+				ImVec4 color = bps[i].enabled ? _state->theme->bp_color_enabled : _state->theme->bp_color_disabled;
 				ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 				if (ImGui::IsItemClicked(0)) {
 					if (bps[i].enabled) {
 						bps[i].enabled = false;
-						color = _state->_colors._bp_color_disabled;
+						color = _state->theme->bp_color_disabled;
 					} else {
 						bps[i].enabled = true;
-						color = _state->_colors._bp_color_enabled;
+						color = _state->theme->bp_color_enabled;
 					}
 				}
 
 				if (!bps[i].enabled && ImGui::IsItemHovered()) {
-					color = _state->_colors._bp_color_hover;
+					color = _state->theme->bp_color_hover;
 				}
 
 				if (bps[i].enabled)
 					dl->AddCircleFilled(mid, 4.0f, ImColor(color));
 				else
-					dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._line_color));
+					dl->AddCircle(mid, 4.0f, ImColor(_state->theme->line_color));
 
 				// enabled column
 				ImGui::TableNextColumn();

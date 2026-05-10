@@ -1,15 +1,34 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="app_name">ScummVM 종료</string>
+  <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (디버그)</string>
+  <string name="app_desc">그래픽 고급 게임 엔진</string>
   <string name="ok">확인</string>
   <string name="quit">종료</string>
-  <string name="no_save_path_title">저장 경로:</string>
-  <string name="no_icons_path_title">/icon/ 경로:</string>
-  <string name="keyboard_toggle_btn_desc">가상 키보드</string>
-  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="no_log_file_title">로그 파일 오류</string>
+  <string name="no_log_file">ScummVM 로그 파일을 읽을 수 없거나 새 로그 파일을 만들 수 없습니다!</string>
+  <string name="no_config_file_title">구성 파일 오류</string>
+  <string name="no_config_file">ScummVM 구성 파일을 읽거나 새 파일을 만들 수 없습니다!</string>
+  <string name="no_save_path_title">저장 경로 오류</string>
+  <string name="no_save_path_configured">기본 저장 경로를 만들거나 접근할 수 없습니다!</string>
+  <string name="no_icons_path_title">아이콘 경로 오류</string>
+  <string name="no_icons_path_configured">기본 아이콘과 셰이더 경로를 만들거나 접근할 수 없습니다!</string>
+  <string name="bad_explicit_save_path_configured">글로벌적으로 설정된 저장 경로에 접속할 수 없습니다! ScummVM 옵션에서 기본값으로 되돌려주세요</string>
+  <string name="keyboard_toggle_btn_desc">가상 키보드 전환</string>
+  <string name="customkeyboardview_keycode_alt">Alt 키</string>
   <string name="customkeyboardview_keycode_cancel">취소</string>
   <string name="customkeyboardview_keycode_delete">삭제</string>
-  <string name="customkeyboardview_keycode_shift">시프트 키</string>
-  <string name="customkeyboardview_keycode_enter">Enter</string>
-  <string name="customkeyboardview_popup_close">닫기</string>
+  <string name="customkeyboardview_keycode_done">완료</string>
+  <string name="customkeyboardview_keycode_mode_change">모드 변경</string>
+  <string name="customkeyboardview_keycode_shift">시프트</string>
+  <string name="customkeyboardview_keycode_enter">엔터</string>
+  <string name="customkeyboardview_popup_close">팝업 닫기</string>
+  <string name="saf_request_prompt">외부(물리적) SD 카드의 *루트*를 선택하세요. 이는 ScummVM이 이 경로에 접속하는 데 필요합니다: </string>
+  <string name="saf_revoke_done">ScummVM에 대한 저장소 접속 프레임워크 권한이 취소되었습니다!</string>
+  <string name="ini_parsing_error">구성 파일을 구문 분석할 수 없음</string>
+  <string name="shortcut_creator_title">게임 실행</string>
+  <string name="shortcut_creator_search_game">게임 검색</string>
+  <string name="shortcut_creator_game_item_icon">게임 아이콘</string>
+  <string name="shortcut_creator_customize_game_name_hint">바로가기 레이블</string>
+  <string name="shortcut_creator_customize_game_icon_description">바로가기 아이콘</string>
 </resources>

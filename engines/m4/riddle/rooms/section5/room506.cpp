@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section5/room506.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
 
 namespace M4 {
@@ -39,7 +40,7 @@ void Room506::preload() {
 }
 
 void Room506::init() {
-	_flag2 = _flag3 = _towerFlag = false;
+	_darkPaletteSet = _lightPaletteSet = _towerFlag = false;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
 		_flag1 = true;
@@ -101,13 +102,14 @@ void Room506::init() {
 		MoveScreenDelta(-432, 0);
 		ws_demand_location(_G(my_walker), 754, 242, 8);
 		ws_walk(_G(my_walker), 697, 247, nullptr, 502, 8);
+		player_set_commands_allowed(false);
 		break;
 	}
 
 	if (_flag1)
 		restorePalette();
 	else
-		setupPalette();
+		setDarkPalette();
 }
 
 void Room506::daemon() {
@@ -173,6 +175,8 @@ void Room506::pre_parser() {
 		} else {
 			ws_walk(_G(my_walker), _destX, _destY, nullptr, -1, _destFacing);
 		}
+
+		setDarkPalette();
 		break;
 
 	case 1002:
@@ -191,12 +195,12 @@ void Room506::pre_parser() {
 	if (_G(player).need_to_walk || _G(player).ready_to_walk || _G(player).waiting_for_walk) {
 		_towerFlag = !scumm_strnicmp(_G(player).verb, "IN TOWER", 8);
 
-		if (_G(player).walk_x < 900 && _flag2 && !player_said("   ") && !player_said("    ")) {
+		if (_G(player).walk_x < 900 && _darkPaletteSet && !player_said("   ") && !player_said("    ")) {
 			saveWalk();
 			ws_walk(_G(my_walker), 717, 144, nullptr, 1000, 1);
 		}
 
-		if (_G(player).walk_x > 900 && _flag3 && !player_said("   ") && !player_said("    ")) {
+		if (_G(player).walk_x > 900 && _lightPaletteSet && !player_said("   ") && !player_said("    ")) {
 			saveWalk();
 			ws_walk(_G(my_walker), 995, 308, nullptr, 1001, 1);
 		}
@@ -223,8 +227,7 @@ void Room506::parser() {
 			break;
 
 		case 2:
-			kernel_examine_inventory_object(_G(flags)[V152] == 6 ? "PING GREEN VINE" :
-				"PING BROWN VINE", 5, 1, 396, 180, 3);
+			kernel_examine_inventory_object(_G(flags)[V152] == 6 ? "PING GREEN VINE" : "PING BROWN VINE", _G(master_palette), 5, 1, 396, 180, 3, nullptr, -1);
 			break;
 
 		case 3:
@@ -392,7 +395,7 @@ void Room506::parser() {
 		}
 
 		if (player_said("    ")) {
-			setupPalette();
+			setDarkPalette();
 			ws_walk(_G(my_walker), 1039, 328, nullptr, -1, 4);
 
 			if (_towerFlag)
@@ -406,9 +409,9 @@ void Room506::parser() {
 }
 
 void Room506::restorePalette() {
-	if (!_flag3) {
-		_flag3 = true;
-		_flag2 = false;
+	if (!_lightPaletteSet) {
+		_lightPaletteSet = true;
+		_darkPaletteSet = false;
 		hotspot_set_active("   ", false);
 		hotspot_set_active("    ", true);
 
@@ -423,10 +426,10 @@ void Room506::restorePalette() {
 	}
 }
 
-void Room506::setupPalette() {
-	if (!_flag2) {
-		_flag2 = true;
-		_flag3 = false;
+void Room506::setDarkPalette() {
+	if (!_darkPaletteSet) {
+		_darkPaletteSet = true;
+		_lightPaletteSet = false;
 		hotspot_set_active("   ", true);
 		hotspot_set_active("    ", false);
 

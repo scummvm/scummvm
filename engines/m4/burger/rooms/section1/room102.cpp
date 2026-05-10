@@ -21,7 +21,9 @@
 
 #include "m4/burger/rooms/section1/room102.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/platform/timer.h"
@@ -726,7 +728,7 @@ void Room102::daemon() {
 				terminateMachineAndNull(_series6);
 				_series3 = nullptr;
 				_harryShould = 54;
-				Series::series_play("102ha07", 0xf00, 2, 3, 6, 0, 100, 0, 0, 30, 30);
+				Series::series_play("102ha07", 0xf00, 2, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 30, 30);
 			}
 			break;
 
@@ -1023,6 +1025,7 @@ void Room102::daemon() {
 			break;
 
 		case 72:
+		case 76:
 			digi_unload_stream_breaks(STREAMS6);
 			ws_unhide_walker();
 			wilbur_speech("102w011", 28);
@@ -1037,6 +1040,7 @@ void Room102::daemon() {
 			break;
 
 		case 74:
+		case 78:
 			digi_unload_stream_breaks(STREAMS7);
 			ws_unhide_walker();
 			wilbur_speech("102w011", 28);
@@ -1050,24 +1054,12 @@ void Room102::daemon() {
 			series_stream_with_breaks(STREAMS6, "102wi11", 6, 0x100, kCHANGE_WILBUR_ANIMATION);
 			break;
 
-		case 76:
-			digi_unload_stream_breaks(STREAMS6);
-			ws_unhide_walker();
-			wilbur_speech("102w011", 28);
-			break;
-
 		case 77:
 			ws_hide_walker();
 			_G(wilbur_should) = 78;
 			digi_preload_stream_breaks(STREAMS7);
 			series_play("102wi10s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 			series_stream_with_breaks(STREAMS7, "102wi10", 6, 0x100, kCHANGE_WILBUR_ANIMATION);
-			break;
-
-		case 78:
-			digi_unload_stream_breaks(STREAMS7);
-			ws_unhide_walker();
-			wilbur_speech("102w011", 28);
 			break;
 
 		case 79:

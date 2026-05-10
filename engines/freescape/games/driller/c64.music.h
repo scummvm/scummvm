@@ -19,14 +19,13 @@
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/softsynth/sid.h"
+#include "audio/sid.h"
 #include "common/debug.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
-class DrillerSIDPlayer : public Audio::AudioStream {
+class DrillerSIDPlayer : public MusicPlayer {
 
 	// --- Voice State Structure ---
 	struct VoiceState {
@@ -199,54 +198,48 @@ class DrillerSIDPlayer : public Audio::AudioStream {
 	};
 
 	// --- Member Variables ---
-	Resid::SID *_sid;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle; // Changed from pointer
-	int _sampleRate;
-	float _cyclesPerSample;
-	double _cycleCounter;
+	SID::SID *_sid;
 
 	// Player State
 	enum PlayState { STOPPED,
 					 PLAYING,
 					 CHANGING_TUNE };
+	enum ContinuousEffectEntry {
+		kVoiceDone,
+		kFullEffectPath,
+		kPortamentoOnlyPath
+	};
 	PlayState _playState;
 	uint8_t _targetTuneIndex; // Tune index requested via startMusic
 
 	// Global Timing
-	uint8_t _globalTempo;      // Tempo value for current tune (0xD10)
+	uint8_t _globalTempo;       // Tempo value for current tune (0xD10)
 	int8_t _globalTempoCounter; // Frame counter for tempo (0xD12), signed to handle < 0 check
-	uint8_t _framePhase;       // Tracks which voice is being processed (0, 7, 14)
 
 	// Voice States
 	VoiceState _voiceState[3];
 
-	// Internal helpers
-	uint8_t _tempControl3; // Temporary storage for gate mask (0xD13)
-	// uint8_t _tempControl1; // Temp storage from instrument data (0xD11)
+	// Gate mask is now per-voice (v.gateMask) matching assembly's control3
 
 public:
-	DrillerSIDPlayer(Audio::Mixer *mixer);
+	DrillerSIDPlayer(int tuneIndex = 1);
 	~DrillerSIDPlayer();
-	void startMusic(int tuneIndex = 1);
-	void stopMusic();
-
-	int readBuffer(int16 *buffer, const int numSamples) override;
-
-	bool isStereo() const override { return false; }
-	bool endOfData() const override { return false; }
-	int getRate() const override { return _sampleRate; }
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
 
 private:
-	void SID_Write(int reg, uint8_t data);
 	void initSID();
-	void playFrame();
+	void destroySID();
+	void SID_Write(int reg, uint8_t data);
+	void onTimer();
 	void handleChangeTune(int tuneIndex);
 	void handleResetVoices();
 	void playVoice(int voiceIndex);
-	void applyNote(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1, int voiceIndex);
-	void applyContinuousEffects(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1);
-	void applyHardRestart(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1);
-};
+	void applyNote(VoiceState &v, int sidOffset, const uint8_t *instA0);
+	ContinuousEffectEntry postNoteEffectSetup(VoiceState &v, const uint8_t *instA0, const uint8_t *instA1);
+	void applyContinuousEffects(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1, bool startAtPortamento);
+	void applyHardRestart(VoiceState &v, int sidOffset, const uint8_t *instA1);
+	};
 
 } // namespace Freescape

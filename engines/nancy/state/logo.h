@@ -66,7 +66,7 @@ private:
 	RenderObject _videoObj;
 };
 
-#define NancyLogoState Nancy::State::Logo::instance()
+#define NancyLogoState State::Logo::instance()
 
 } // end of namespace State
 } // End of namespace Nancy

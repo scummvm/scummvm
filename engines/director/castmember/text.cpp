@@ -251,6 +251,12 @@ void TextCastMember::setForeColor(uint32 fgCol) {
 void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
 	Graphics::MacText *target = getWidget();
 	if (target) {
+		if (target->_wm->_pixelformat.isCLUT8()) {
+			byte r, g, b;
+			target->_wm->getPaletteEntry(fgCol, r, g, b);
+			fgCol = target->_wm->findBestColor(r, g, b);
+		}
+
 		return target->setTextColor(fgCol, start, end);
 	}
 	_modified = true;
@@ -323,8 +329,8 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
 		} else if (_textType == kTextTypeFixed || _textType == kTextTypeScrolling) {
 			// use initialRect to create widget for fixed style text, this maybe related to version.
-			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
-			dims.bottom = MIN<int>(dims.bottom, dims.top + MAX<int>(_initialRect.height(), _maxHeight));
+			dims.right = MAX<int>(dims.right, dims.left + _initialRect.width());
+			dims.bottom = MAX<int>(dims.bottom, dims.top + MAX<int>(_initialRect.height(), _maxHeight));
 		}
 		widget = createWindowOrWidget(bbox, dims, macFont);
 		if (_textType != kTextTypeScrolling) {

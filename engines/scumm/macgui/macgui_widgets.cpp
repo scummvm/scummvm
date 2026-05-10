@@ -1656,6 +1656,8 @@ bool MacGuiImpl::MacListBox::handleKeyDown(Common::Event &event) {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacPopUpMenu::MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, text, enabled), _textWidth(textWidth), _texts(texts) {
+	_enhUIUX = g_engine->enhancementEnabled(kEnhUIUX);
+	_floating = false;
 	_black = _window->_gui->getBlack();
 	_white = _window->_gui->getWhite();
 
@@ -1666,6 +1668,16 @@ MacGuiImpl::MacPopUpMenu::MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Comm
 MacGuiImpl::MacPopUpMenu::~MacPopUpMenu() {
 	_texts.clear();
 	_popUpBackground.free();
+}
+
+void MacGuiImpl::MacPopUpMenu::close() {
+	if (_menuVisible)
+		_window->drawSprite(&_popUpBackground, _popUpBounds.left, _popUpBounds.top);
+
+	_menuVisible = false;
+	_floating = false;
+
+	setRedraw();
 }
 
 bool MacGuiImpl::MacPopUpMenu::findWidget(int x, int y) const {
@@ -1690,9 +1702,8 @@ void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 	// in any way.
 
 	uint32 fg, bg;
-	bool focused = drawFocused || _window->getFocusedWidget() == this;
 
-	if (focused) {
+	if (_menuVisible) {
 		fg = _white;
 		bg = _black;
 	} else {
@@ -1706,7 +1717,7 @@ void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 	s->fillRect(Common::Rect(_bounds.left, _bounds.top + 1, _bounds.left + _textWidth, _bounds.bottom - 3), bg);
 	font->drawString(s, _text, _bounds.left, _bounds.top + 1, _textWidth, fg, Graphics::kTextAlignLeft, 4);
 
-	if (focused) {
+	if (_menuVisible) {
 		Common::Rect r = _popUpBounds;
 		r.bottom--;
 		r.right--;
@@ -1766,11 +1777,17 @@ void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
 	_fullRedraw = false;
 
 	_window->markRectAsDirty(_bounds);
-	if (focused)
+	if (_menuVisible)
 		_window->markRectAsDirty(_popUpBounds);
 }
 
 void MacGuiImpl::MacPopUpMenu::handleMouseDown(Common::Event &event) {
+	if (_floating) {
+		if (!_popUpBounds.contains(event.mouse.x, event.mouse.y))
+			close();
+		return;
+	}
+
 	_popUpBounds.top = _bounds.top - 16 * _value;
 	_popUpBounds.bottom = _bounds.bottom - 1 + 16 * (_texts.size() - _value - 1);
 
@@ -1780,11 +1797,19 @@ void MacGuiImpl::MacPopUpMenu::handleMouseDown(Common::Event &event) {
 	_popUpBackground.copyFrom(background);
 
 	_menuVisible = true;
+	_floating = false;
 	_selected = _value;
 }
 
 bool MacGuiImpl::MacPopUpMenu::handleMouseUp(Common::Event &event) {
 	if (_selected != -1) {
+		if (_enhUIUX) {
+			if (!_floating && _selected == getValue()) {
+				_floating = true;
+				return false;
+			}
+		}
+
 		int selected = _selected;
 
 		for (int i = 0; i < 6; i++) {
@@ -1811,9 +1836,7 @@ bool MacGuiImpl::MacPopUpMenu::handleMouseUp(Common::Event &event) {
 		setValue(selected);
 	}
 
-	_window->drawSprite(&_popUpBackground, _popUpBounds.left, _popUpBounds.top);
-	_menuVisible = false;
-
+	close();
 	return false;
 }
 
@@ -1840,6 +1863,14 @@ void MacGuiImpl::MacPopUpMenu::handleMouseMove(Common::Event &event) {
 		_selected = selected;
 		setRedraw();
 	}
+}
+
+void MacGuiImpl::MacPopUpMenu::loseFocus() {
+	close();
+}
+
+bool MacGuiImpl::MacPopUpMenu::keepFocus(int x, int y) {
+	return _floating && _popUpBounds.contains(x, y);
 }
 
 } // End of namespace Scumm

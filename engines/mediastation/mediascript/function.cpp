@@ -19,31 +19,66 @@
  *
  */
 
+#include "common/memstream.h"
+#include "common/str.h"
+
 #include "mediastation/mediascript/function.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
 
 namespace MediaStation {
+
+// For exact argument count.
+#define FUNCARGCHECK(n) \
+	if (args.size() != (n)) { \
+		warning("%s: expected %d argument%s, got %d", builtInFunctionToStr(functionId), (n), ((n) == 1 ? "" : "s"), args.size()); \
+	}
+
+// For a range of valid argument counts (min to max).
+#define FUNCARGRANGE(min, max) \
+	if (args.size() < (min) || args.size() > (max)) { \
+		warning("%s: expected %d to %d argument, got %d", builtInFunctionToStr(functionId), (min), (max), args.size()); \
+	}
+
+// For minimum argument count (no maximum).
+#define FUNCARGMIN(min) \
+	if (args.size() < (min)) { \
+		warning("%s: expected at least %d argument%s, got %d", builtInFunctionToStr(functionId), (min), ((min) == 1 ? "" : "s"), args.size()); \
+	}
+
 ScriptFunction::ScriptFunction(Chunk &chunk) {
 	_contextId = chunk.readTypedUint16();
-	// In PROFILE._ST (only present in some titles), the function ID is reported
-	// with 19900 added, so function 100 would be reported as 20000. But in
-	// bytecode, the zero-based ID is used, so that's what we'll store here.
 	_id = chunk.readTypedUint16();
-	_code = new CodeChunk(chunk);
+	_bytecodeSize = chunk.readTypedUint32();
+	debugC(5, kDebugLoading, "%s: Context %d, function %d [%d bytes]",
+		__func__, _contextId, _id, _bytecodeSize);
+
+	// Store bytecode as a flat buffer rather than a stream, so we can create
+	// fresh streams for each execution (necessary for recursive function calls).
+	_bytecodeBuffer = static_cast<byte *>(malloc(_bytecodeSize));
+	chunk.read(_bytecodeBuffer, _bytecodeSize);
 }
 
 ScriptFunction::~ScriptFunction() {
-	delete _code;
-	_code = nullptr;
+	free(_bytecodeBuffer);
+	_bytecodeBuffer = nullptr;
 }
 
 ScriptValue ScriptFunction::execute(Common::Array<ScriptValue> &args) {
-	debugC(5, kDebugScript, "\n********** SCRIPT FUNCTION %d **********", _id);
-	ScriptValue returnValue = _code->execute(&args);
-	debugC(5, kDebugScript, "********** END SCRIPT FUNCTION **********");
+	Common::String name = g_engine->formatFunctionName(_id);
+	debugC(5, kDebugScript, "\n********** SCRIPT FUNCTION %s **********", name.c_str());
+
+	// Create a new stream for this execution to avoid conflicts with recursive calls.
+	Common::SeekableReadStream *baseStream = new Common::MemoryReadStream(_bytecodeBuffer, _bytecodeSize, DisposeAfterUse::NO);
+	ParameterReadStream *bytecodeStream = static_cast<ParameterReadStream *>(baseStream);
+	CodeChunk code(bytecodeStream);
+	ScriptValue returnValue = code.executeWithArguments(&args);
+	delete bytecodeStream;
+
+	debugC(5, kDebugScript, "********** END SCRIPT FUNCTION %s **********", name.c_str());
 	return returnValue;
 }
+
 
 FunctionManager::~FunctionManager() {
 	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
@@ -72,38 +107,504 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 	ScriptValue returnValue;
 
 	// The original had a complex function registration system that I deemed too uselessly complex to
-	// reimplement. Here, we get basically the same behaviour by checking for default functions first,
-	// then falling through to title-defined functions.
+	// reimplement. First, we try executing the title-defined function. We try this first because
+	// later engine versions used some functions IDs that previously mapped to built-in functions in
+	// earlier engine versions. So we will try executing the title-defined function first and only then
+	// fall back to the built-in functions.
+	ScriptFunction *scriptFunction = _functions.getValOrDefault(functionId);
+	if (scriptFunction != nullptr) {
+		returnValue = scriptFunction->execute(args);
+		return returnValue;
+	}
+
+	// If there was no title-defined function, next check for built-in functions.
 	switch (functionId) {
+	case kRandomFunction:
+	case kLegacy_RandomFunction:
+		FUNCARGCHECK(2);
+		script_Random(args, returnValue);
+		break;
+
+	case kTimeOfDayFunction:
+	case kLegacy_TimeOfDayFunction:
+		FUNCARGCHECK(0);
+		script_TimeOfDay(args, returnValue);
+		break;
+
 	case kEffectTransitionFunction:
+	case kLegacy_EffectTransitionFunction:
 		g_engine->getDisplayManager()->effectTransition(args);
 		break;
 
 	case kEffectTransitionOnSyncFunction:
+	case kLegacy_EffectTransitionOnSyncFunction:
 		g_engine->getDisplayManager()->setTransitionOnSync(args);
 		break;
 
+	case kPlatformFunction:
+	case kLegacy_PlatformFunction:
+		FUNCARGCHECK(0);
+		script_GetPlatform(args, returnValue);
+		break;
+
+	case kSquareRootFunction:
+	case kLegacy_SquareRootFunction:
+		FUNCARGCHECK(1);
+		script_SquareRoot(args, returnValue);
+		break;
+
+	case kGetUniqueRandomFunction:
+	case kLegacy_GetUniqueRandomFunction:
+		FUNCARGMIN(2);
+		script_GetUniqueRandom(args, returnValue);
+		break;
+
+	case kCurrentRunTimeFunction:
+	case kLegacy_GetCurrentRunTimeFunction:
+		FUNCARGCHECK(0);
+		script_CurrentRunTime(args, returnValue);
+		break;
+
+	case kSetGammaCorrectionFunction:
+	case kLegacy_SetGammaCorrectionFunction:
+		FUNCARGRANGE(1, 3);
+		script_SetGammaCorrection(args, returnValue);
+		break;
+
+	case kGetDefaultGammaCorrectionFunction:
+	case kLegacy_GetDefaultGammaCorrectionFunction:
+		FUNCARGCHECK(0);
+		script_GetDefaultGammaCorrection(args, returnValue);
+		break;
+
+	case kGetCurrentGammaCorrectionFunction:
+	case kLegacy_GetCurrentGammaCorrectionFunction:
+		FUNCARGCHECK(0);
+		script_GetCurrentGammaCorrection(args, returnValue);
+		break;
+
+	case kSetAudioVolumeFunction:
+	case kLegacy_SetAudioVolumeFunction:
+		FUNCARGCHECK(1);
+		script_SetAudioVolume(args, returnValue);
+		break;
+
+	case kGetAudioVolumeFunction:
+	case kLegacy_GetAudioVolumeFunction:
+		FUNCARGCHECK(0);
+		script_GetAudioVolume(args, returnValue);
+		break;
+
+	case kSystemLanguagePreferenceFunction:
+	case kLegacy_SystemLanguagePreferenceFunction:
+		script_SystemLanguagePreference(args, returnValue);
+		break;
+
+	case kSetRegistryFunction:
+		script_SetRegistry(args, returnValue);
+		break;
+
+	case kGetRegistryFunction:
+		FUNCARGCHECK(3);
+		script_GetRegistry(args, returnValue);
+		break;
+
+	case kSetProfileFunction:
+		script_SetProfile(args, returnValue);
+		break;
+
+	case kMazeGenerateFunction:
+		script_MazeGenerate(args, returnValue);
+		break;
+
+	case kMazeApplyMoveMaskFunction:
+		script_MazeApplyMoveMask(args, returnValue);
+		break;
+
+	case kMazeSolveFunction:
+		script_MazeSolve(args, returnValue);
+		break;
+
+	case kBeginTimedIntervalFunction:
+		script_BeginTimedInterval(args, returnValue);
+		break;
+
+	case kEndTimedIntervalFunction:
+		script_EndTimedInterval(args, returnValue);
+		break;
+
 	case kDrawingFunction:
-		warning("STUB: %s", builtInFunctionToStr(static_cast<BuiltInFunction>(functionId)));
+		script_Drawing(args, returnValue);
 		break;
 
-	case kUnk1Function:
-		warning("%s: Function Unk1 Not implemented", __func__);
-		returnValue.setToFloat(1.0);
+	case kCheckersFunction:
+		script_Checkers(args, returnValue);
 		break;
 
-	default: {
-		// Execute the title-defined function here.
-		ScriptFunction *scriptFunction = _functions.getValOrDefault(functionId);
-		if (scriptFunction != nullptr) {
-			returnValue = scriptFunction->execute(args);
-		} else {
-			error("%s: Unimplemented function 0x%02x", __func__, functionId);
-		}
-	}
+	case kLegacy_DebugPrintFunction:
+		// We don't need to check arg counts here. This just prints however many args we have.
+		script_DebugPrint(args, returnValue);
+		break;
+
+	default:
+		// If we got here, that means there was neither a title-defined nor a built-in function
+		// for this ID, so we can now declare it unimplemented. This is a warning instead of an error
+		// so execution can continue, but if the function is expected to return anything, there will
+		// likely be an error about attempting to assign a null value to a variable.
+		warning("%s: Unimplemented function 0x%02x", __func__, functionId);
 	}
 
 	return returnValue;
+}
+
+void FunctionManager::script_GetPlatform(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	Common::Platform platform = g_engine->getPlatform();
+	switch (platform) {
+	case Common::Platform::kPlatformWindows:
+		returnValue.setToParamToken(kPlatformParamTokenWindows);
+		break;
+
+	case Common::Platform::kPlatformMacintosh:
+		returnValue.setToParamToken(kPlatformParamTokenWindows);
+		break;
+
+	default:
+		warning("%s: Unknown platform %d", __func__, static_cast<int>(platform));
+		returnValue.setToParamToken(kPlatformParamTokenUnknown);
+	}
+}
+
+void FunctionManager::script_Random(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// This function takes in a range, and then generates a random value within that range.
+	ScriptValue bottomArg = args[0];
+	ScriptValue topArg = args[1];
+	if (bottomArg.getType() != topArg.getType()) {
+		error("%s: Both arguments must be of same type", __func__);
+	}
+
+	ScriptValueType type = args[0].getType();
+	double bottom = 0.0;
+	double top = 0.0;
+	bool treatAsInteger = false;
+	switch (type) {
+	case kScriptValueTypeFloat: {
+		// For numeric values, treat them as integers (floor values).
+		bottom = floor(bottomArg.asFloat());
+		top = floor(topArg.asFloat());
+		treatAsInteger = true;
+		break;
+	}
+
+	case kScriptValueTypeBool: {
+		// Convert boolean values to numbers.
+		bottom = bottomArg.asBool() ? 1.0 : 0.0;
+		top = topArg.asBool() ? 1.0 : 0.0;
+		treatAsInteger = true;
+		break;
+	}
+
+	case kScriptValueTypeTime: {
+		// Treat time values as capable of having fractional seconds.
+		bottom = bottomArg.asTime();
+		top = topArg.asTime();
+		treatAsInteger = false;
+		break;
+	}
+
+	default:
+		error("%s: Invalid argument type: %s", __func__, scriptValueTypeToStr(type));
+	}
+
+	// Ensure proper inclusive ordering of bottom and top.
+	if (top < bottom) {
+		SWAP(top, bottom);
+	}
+
+	// Calculate random value in range.
+	double range = top - bottom;
+	uint randomValue = g_engine->_randomSource.getRandomNumber(UINT32_MAX);
+	double randomFloat = (static_cast<double>(randomValue) * range) / static_cast<double>(UINT32_MAX) + bottom;
+	if (treatAsInteger) {
+		randomFloat = floor(randomFloat);
+	}
+
+	// Set result based on original argument type.
+	switch (type) {
+	case kScriptValueTypeFloat:
+		returnValue.setToFloat(randomFloat);
+		break;
+
+	case kScriptValueTypeBool: {
+		bool boolResult = (randomFloat != 0.0);
+		returnValue.setToBool(boolResult);
+		break;
+	}
+
+	case kScriptValueTypeTime:
+		returnValue.setToTime(randomFloat);
+		break;
+
+	default:
+		error("%s: Invalid argument type: %s", __func__, scriptValueTypeToStr(type));
+	}
+}
+
+void FunctionManager::script_TimeOfDay(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	TimeDate timeDate;
+	// Calculate seconds since midnight.
+	g_system->getTimeAndDate(timeDate);
+	uint32 secondsSinceMidnight = (timeDate.tm_hour * 60 + timeDate.tm_min) * 60 + timeDate.tm_sec;
+	returnValue.setToTime(static_cast<double>(secondsSinceMidnight));
+}
+
+void FunctionManager::script_SquareRoot(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	if (args[0].getType() != kScriptValueTypeFloat) {
+		error("%s: Numeric value required", __func__);
+	}
+
+	double value = args[0].asFloat();
+	if (value < 0.0) {
+		error("%s: Argument must be nonnegative", __func__);
+	}
+
+	double result = sqrt(value);
+	returnValue.setToFloat(result);
+}
+
+void FunctionManager::script_GetUniqueRandom(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// Unlike the regular Random which simply returns any random number in a range, GetUniqueRandom allows the caller
+	// to specify numbers that should NOT be returned (the third arg and onward), making it useful for generating random
+	// values that haven't been used before or avoiding specific unwanted values.
+	for (ScriptValue arg : args) {
+		if (arg.getType() != kScriptValueTypeFloat) {
+			error("%s: All arguments must be numeric", __func__);
+		}
+	}
+
+	// The original forces that the list of excluded numbers (and the range to choose from)
+	// can be at max 100 numbers. With the two args for the range, the max is thus 102.
+	const uint MAX_ARGS_SIZE = 102;
+	if (args.size() > MAX_ARGS_SIZE) {
+		args.resize(MAX_ARGS_SIZE);
+	}
+
+	// Ensure that the range is properly constructed.
+	double bottom = floor(args[0].asFloat());
+	double top = floor(args[1].asFloat());
+	if (top < bottom) {
+		SWAP(top, bottom);
+	}
+
+	// Build list of unused (non-excluded) integers in the range.
+	Common::Array<double> unusedNumbers;
+	for (double currentValue = bottom; currentValue <= top; currentValue += 1.0) {
+		// Check if this value appears in the exclusion list (args 2 onwards).
+		bool isExcluded = false;
+		for (uint i = 2; i < args.size(); i++) {
+			if (args[i].asFloat() == currentValue) {
+				isExcluded = true;
+				break;
+			}
+		}
+
+		if (!isExcluded) {
+			unusedNumbers.push_back(currentValue);
+		}
+	}
+
+	if (unusedNumbers.size() > 0) {
+		uint randomIndex = g_engine->_randomSource.getRandomNumberRng(0, unusedNumbers.size() - 1);
+		returnValue.setToFloat(unusedNumbers[randomIndex]);
+	} else {
+		warning("%s: No unused numbers to choose from", __func__);
+	}
+}
+
+void FunctionManager::script_CurrentRunTime(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// The current runtime is expected to be returned in seconds.
+	const uint32 MILLISECONDS_IN_ONE_SECOND = 1000;
+	double runtimeInSeconds = g_system->getMillis() / static_cast<double>(MILLISECONDS_IN_ONE_SECOND);
+	returnValue.setToFloat(runtimeInSeconds);
+}
+
+void FunctionManager::script_SetGammaCorrection(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	double red = 1.0;
+	double green = 1.0;
+	double blue = 1.0;
+	if (args.size() >= 3) {
+		if (args[0].getType() != kScriptValueTypeFloat ||
+				args[1].getType() != kScriptValueTypeFloat ||
+				args[2].getType() != kScriptValueTypeFloat) {
+			warning("%s: Expected float arguments", __func__);
+			return;
+		}
+
+		red = args[0].asFloat();
+		green = args[1].asFloat();
+		blue = args[2].asFloat();
+
+	} else if (args.size() >= 1) {
+		if (args[0].getType() != kScriptValueTypeCollection) {
+			warning("%s: Expected collection argument", __func__);
+			return;
+		}
+
+		Collection *collection = args[0].asCollection();
+		if (collection->size() != 3) {
+			warning("%s: Collection must contain exactly 3 elements, got %u", __func__, collection->size());
+			return;
+		}
+
+		if (collection->operator[](0).getType() != kScriptValueTypeFloat ||
+				collection->operator[](1).getType() != kScriptValueTypeFloat ||
+				collection->operator[](2).getType() != kScriptValueTypeFloat) {
+			warning("%s: Expected float arguments", __func__);
+			return;
+		}
+
+		red = collection->operator[](0).asFloat();
+		green = collection->operator[](1).asFloat();
+		blue = collection->operator[](2).asFloat();
+	}
+
+	g_engine->getDisplayManager()->setGammaValues(red, green, blue);
+}
+
+void FunctionManager::script_GetDefaultGammaCorrection(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	if (args.size() != 0) {
+		warning("%s: Expected 0 arguments, got %u", __func__, args.size());
+		return;
+	}
+
+	double red, green, blue;
+	g_engine->getDisplayManager()->getDefaultGammaValues(red, green, blue);
+
+	Collection *collection = new Collection();
+	ScriptValue redValue;
+	redValue.setToFloat(red);
+	collection->push_back(redValue);
+
+	ScriptValue greenValue;
+	greenValue.setToFloat(green);
+	collection->push_back(greenValue);
+
+	ScriptValue blueValue;
+	blueValue.setToFloat(blue);
+	collection->push_back(blueValue);
+
+	returnValue.setToCollection(collection);
+}
+
+void FunctionManager::script_GetCurrentGammaCorrection(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	if (args.size() != 0) {
+		warning("%s: Expected 0 arguments, got %u", __func__, args.size());
+		return;
+	}
+
+	double red, green, blue;
+	g_engine->getDisplayManager()->getGammaValues(red, green, blue);
+	Collection *collection = new Collection();
+
+	ScriptValue redValue;
+	redValue.setToFloat(red);
+	collection->push_back(redValue);
+
+	ScriptValue greenValue;
+	greenValue.setToFloat(green);
+	collection->push_back(greenValue);
+
+	ScriptValue blueValue;
+	blueValue.setToFloat(blue);
+	collection->push_back(blueValue);
+
+	returnValue.setToCollection(collection);
+}
+
+void FunctionManager::script_SetAudioVolume(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	if (args[0].getType() != kScriptValueTypeFloat) {
+		warning("%s: Expected float argument", __func__);
+		return;
+	}
+
+	// Convert from 0.0 - 1.0 to ScummVM's mixer range.
+	double volume = args[0].asFloat();
+	volume = CLIP(volume, 0.0, 1.0);
+	int mixerVolume = static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, mixerVolume);
+}
+
+void FunctionManager::script_GetAudioVolume(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// Convert from ScummVM's mixer range to 0.0 - 1.0.
+	int mixerVolume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
+	double volume = static_cast<double>(mixerVolume) / static_cast<double>(Audio::Mixer::kMaxMixerVolume);
+	CLIP(volume, 0.0, 1.0);
+	returnValue.setToFloat(volume);
+}
+
+void FunctionManager::script_SystemLanguagePreference(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_SetRegistry(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_GetRegistry(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// Even though this is basically still stubbed out, we need to set a return value or we will get errors.
+	returnValue = args[2];
+	Common::String registryName = args[0].asString();
+	if (registryName.size() != 0) {
+		// TODO: Get the registry (saved game content) with this name.
+		warning("STUB: %s: %s", __func__, registryName.c_str());
+	}
+}
+
+void FunctionManager::script_SetProfile(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_DebugPrint(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	// The original reports time in seconds, but milliseconds is fine.
+	// The "IMT @ clock ..." format is from the original's debug printing style.
+	Common::String output = Common::String::format("IMT @ clock %d", g_system->getMillis());
+	for (uint i = 0; i < args.size(); i++) {
+		// Append all provided arguments.
+		if (i != 0) {
+			output += ", ";
+		} else {
+			output += " ";
+		}
+		output += args[i].getDebugString();
+	}
+	debug("%s", output.c_str());
+}
+
+void FunctionManager::script_MazeGenerate(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_MazeApplyMoveMask(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_MazeSolve(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_BeginTimedInterval(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_EndTimedInterval(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_Checkers(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
+}
+
+void FunctionManager::script_Drawing(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
+	warning("STUB: %s", __func__);
 }
 
 void FunctionManager::deleteFunctionsForContext(uint contextId) {

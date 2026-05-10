@@ -19,8 +19,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
-
 #include "ultima/ultima8/gfx/shape_info.h"
 #include "ultima/ultima8/ultima8.h"
 

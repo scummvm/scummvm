@@ -74,6 +74,7 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 	_underFireBackgroundColor = 255;
 	_inkColor = 255;
 	_paperColor = 255;
+	_colorCycling = false;
 
 	_gasPocketRadius = 0;
 
@@ -84,18 +85,6 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 		}
 	}
 
-	// sort so that those that are planar are drawn last
-	struct {
-		bool operator()(Object *object1, Object *object2) {
-			if (!object1->isPlanar() && object2->isPlanar())
-				return true;
-			if (object1->isPlanar() && !object2->isPlanar())
-				return false;
-			return object1->getObjectID() > object2->getObjectID();
-		};
-	} compareObjects;
-
-	Common::sort(_drawableObjects.begin(), _drawableObjects.end(), compareObjects);
 	_lastTick = 0;
 }
 
@@ -237,15 +226,30 @@ void Area::resetArea() {
 
 void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait) {
 	bool runAnimation = animationTicks != _lastTick;
+	bool cameraChanged = camera != _lastCameraPosition;
+	bool sort = runAnimation || cameraChanged || _sortedObjects.empty();
+
 	assert(_drawableObjects.size() > 0);
-	ObjectArray planarObjects;
-	ObjectArray nonPlanarObjects;
+	if (sort)
+		_sortedObjects.clear();
+
 	Object *floor = nullptr;
-	Common::HashMap<Object *, float> sizes;
-	float offset = 1.0 / _scale;
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			if (!gfx->_debugHighlightObjectIDs.empty()) {
+				bool found = false;
+				for (auto id : gfx->_debugHighlightObjectIDs) {
+					if (obj->getObjectID() == id) {
+						found = true;
+						break;
+					}
+				}
+				// if this object is not in our list, skip it completely.
+				// it will not be sorted, and it will not be drawn.
+				if (!found)
+					continue;
+			}
 			if (obj->getObjectID() == 0 && _groundColor < 255 && _skyColor < 255) {
 				floor = obj;
 				continue;
@@ -256,119 +260,141 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 			}
 
-			if (obj->isPlanar())
-				planarObjects.push_back(obj);
-			else
-				nonPlanarObjects.push_back(obj);
+			if (sort)
+				_sortedObjects.push_back(obj);
 		}
 	}
 
 	if (floor) {
-		gfx->depthTesting(false);
 		floor->draw(gfx);
-		gfx->depthTesting(true);
 	}
 
-	Common::HashMap<Object *, float> offsetMap;
-	for (auto &planar : planarObjects)
-		offsetMap[planar] = 0;
+	// Corresponds to L9c66 in assembly (bounding_box_axis_loop)
+	auto checkAxis = [](float minA, float maxA, float minB, float maxB) -> int {
+		bool signMinA = minA >= 0;
+		bool signMaxA = maxA >= 0;
+		bool signMinB = minB >= 0;
+		bool signMaxB = maxB >= 0;
+		if (minA >= maxB - 0.5f) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
+			if (signMinA != signMaxB) // A covers 0 (L9ce6_first_object_is_closer)
+				return 1; // A is closer
+			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
+				return 2; // B is closer
 
-	for (auto &planar : planarObjects) {
-		Math::Vector3d centerPlanar = planar->_boundingBox.getMin() + planar->_boundingBox.getMax();
-		centerPlanar /= 2;
-		Math::Vector3d distance;
-		for (auto &object : nonPlanarObjects) {
-			if (object->_partOfGroup)
-				continue;
+			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
+				return 0;
 
-			distance = object->_boundingBox.distance(centerPlanar);
-			if (distance.length() > 0.0001)
-				continue;
+			// Same side
+			if (!signMinA) { // Negative side (sign bit set in asm)
+				if (minA > minB) return 1; // A closer
+				if (minA < minB) return 2; // B closer
+				if (maxA > maxB) return 1; // A closer
+				return 2; // B closer
+			} else { // Positive side (sign bit clear in asm)
+				if (minA < minB) return 1; // A closer
+				if (minA > minB) return 2; // B closer
+				if (maxA > maxB) return 2; // B closer
+				return 1; // A closer
+			}
+		} else if (minB >= maxA - 0.5f) { // B is clearly "greater" than A
+			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
+				return 2; // B is closer
+			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
+				return 1; // A is closer
 
-			float sizeNonPlanar = object->_boundingBox.getSize().length();
-			if (sizes[planar] >= sizeNonPlanar)
-				continue;
+			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
+				return 0;
 
-			sizes[planar] = sizeNonPlanar;
-
-			if (planar->getSize().x() == 0) {
-				if (object->getOrigin().x() >= centerPlanar.x())
-					offsetMap[planar] = -offset;
-				else
-					offsetMap[planar] = offset;
-			} else if (planar->getSize().y() == 0) {
-				if (object->getOrigin().y() >= centerPlanar.y())
-					offsetMap[planar] = -offset;
-				else
-					offsetMap[planar] = offset;
-			} else if (planar->getSize().z() == 0) {
-				if (object->getOrigin().z() >= centerPlanar.z())
-					offsetMap[planar] = -offset;
-				else
-					offsetMap[planar] = offset;
-			} else
-				; //It was not really planar?!
-		}
-	}
-
-	for (auto &planar : planarObjects) {
-		Math::Vector3d centerPlanar = planar->_boundingBox.getMin() + planar->_boundingBox.getMax();
-		centerPlanar /= 2;
-		Math::Vector3d distance;
-		for (auto &object : planarObjects) {
-			if (object == planar)
-				continue;
-
-			distance = object->_boundingBox.distance(centerPlanar);
-			if (distance.length() > 0)
-				continue;
-
-			if (planar->getSize().x() == 0) {
-				if (object->getSize().x() > 0)
-					continue;
-			} else if (planar->getSize().y() == 0) {
-				if (object->getSize().y() > 0)
-					continue;
-			} else if (planar->getSize().z() == 0) {
-				if (object->getSize().z() > 0)
-					continue;
-			} else
-				continue;
-
-			//debug("planar object %d collides with planar object %d", planar->getObjectID(), object->getObjectID());
-			if (offsetMap[planar] == offsetMap[object] && offsetMap[object] != 0) {
-				// Nothing to do?
-			} else if (offsetMap[planar] == offsetMap[object] && offsetMap[object] == 0) {
-				if (planar->getSize().x() == 0) {
-					if (object->getOrigin().x() < centerPlanar.x())
-						offsetMap[planar] = -offset;
-					else
-						offsetMap[planar] = offset;
-				} else if (planar->getSize().y() == 0) {
-					if (object->getOrigin().y() < centerPlanar.y())
-						offsetMap[planar] = -offset;
-					else
-						offsetMap[planar] = offset;
-				} else if (planar->getSize().z() == 0) {
-					if (object->getOrigin().z() < centerPlanar.z())
-						offsetMap[planar] = -offset;
-					else
-						offsetMap[planar] = offset;
-				} else
-					; //It was not really planar?!
+			// Same side
+			if (!signMinB) { // Negative side
+				if (minB > minA) return 2; // B closer
+				if (minB < minA) return 1; // A closer
+				if (maxB > maxA) return 2; // B closer
+				return 1; // A closer
+			} else { // Positive side
+				if (minB < minA) return 2; // B closer
+				if (minB > minA) return 1; // A closer
+				if (maxB > maxA) return 1; // A closer
+				return 2; // B closer
 			}
 		}
+		return 0; // Overlap (L9cf3_objects_incomparable_in_this_axis)
+	};
+
+	// Bubble sort as implemented in castlemaster2-annotated.asm (L9c2d_sort_objects_for_rendering)
+	// NOTE: The sorting is performed on unprojected world-space coordinates relative to the player (L847f).
+	// The rotation/view matrix (computed in L95de) is NOT applied to the bounding boxes used for sorting.
+	// It is only applied to the vertices during the projection phase (L850f/L9177).
+	int n = _sortedObjects.size();
+	if (n > 1 && sort) {
+		// Pre-sort by distance from camera (furthest first) to provide a stable initial
+		// ordering for the non-transitive bubble sort below. The original game achieves
+		// this by culling off-screen objects via a rendering volume check (L8bb7/L845b)
+		// before sorting, which prevents distant off-screen objects from interfering with
+		// the depth ordering of visible objects through non-transitive comparisons.
+		Common::sort(_sortedObjects.begin(), _sortedObjects.end(),
+			[&camera](Object *a, Object *b) {
+				Math::Vector3d centerA = (a->_occlusionBox.getMin() + a->_occlusionBox.getMax()) * 0.5f;
+				Math::Vector3d centerB = (b->_occlusionBox.getMin() + b->_occlusionBox.getMax()) * 0.5f;
+				return (centerA - camera).getSquareMagnitude() > (centerB - camera).getSquareMagnitude();
+			});
+		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
+			bool changed = false;
+			for (int j = 0; j < n - 1; j++) { // L9c45_objects_loop
+				Object *a = _sortedObjects[j];
+				Object *b = _sortedObjects[j + 1];
+
+				Math::AABB bboxA = a->_occlusionBox;
+				Math::AABB bboxB = b->_occlusionBox;
+				Math::Vector3d minA = bboxA.getMin() - camera;
+				Math::Vector3d maxA = bboxA.getMax() - camera;
+				Math::Vector3d minB = bboxB.getMin() - camera;
+				Math::Vector3d maxB = bboxB.getMax() - camera;
+
+				int result = 0;
+
+				// X axis
+				result = (result << 2) | checkAxis(minA.x(), maxA.x(), minB.x(), maxB.x());
+				// Y axis
+				result = (result << 2) | checkAxis(minA.y(), maxA.y(), minB.y(), maxB.y());
+				// Z axis
+				result = (result << 2) | checkAxis(minA.z(), maxA.z(), minB.z(), maxB.z());
+
+				bool keepOrder = false;
+				// If result indicates B is closer in at least one axis, AND A is NEVER closer in any axis, keep order (A before B)
+				// Codes where B is closer (2) and A is not (1):
+				// 2 (Z), 8 (Y), 32 (X) -> hex: 02, 08, 20
+				// 2+8=10 (0A), 2+32=34 (22), 8+32=40 (28)
+				// 2+8+32=42 (2A)
+				// L9d37_next_object (Keep order)
+				if (result == 0x02 || result == 0x08 || result == 0x20 ||
+					result == 0x0A || result == 0x22 || result == 0x28 || result == 0x2A)
+					keepOrder = true; // A before B
+
+				if (!keepOrder) {
+					// Swap objects (L9d2c_flip_objects_loop)
+					_sortedObjects[j] = b;
+					_sortedObjects[j + 1] = a;
+					changed = true;
+				}
+			}
+			if (!changed)
+				break;
+		}
 	}
 
-	for (auto &obj : nonPlanarObjects) {
+	for (auto &obj : _sortedObjects) {
 		obj->draw(gfx);
-	}
 
-	for (auto &pair : offsetMap) {
-		pair._key->draw(gfx, pair._value);
+		// draw bounding boxes
+		if (gfx->_debugRenderBoundingBoxes)
+			gfx->drawAABB(obj->_boundingBox, 0, 255, 0);
+		if (gfx->_debugRenderOcclusionBoxes)
+			gfx->drawAABB(obj->_occlusionBox, 255, 0, 0);
 	}
-
 	_lastTick = animationTicks;
+	if (sort)
+		_lastCameraPosition = camera;
 }
 
 void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) {

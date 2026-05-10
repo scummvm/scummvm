@@ -1242,7 +1242,7 @@ bool CMainWindow::LoadArtWork(CDC *pDC) {
 	}
 
 	char bufName[MAX_FILE_LENGTH + 10];
-	Common::sprintf_s(bufName, ".\\ART\\%s", ArtName);
+	Common::sprintf_s(bufName, "art\\%s", ArtName);
 
 	(*pSourceDoc).OpenDocument(bufName);
 

@@ -33,6 +33,7 @@
 #include "mm/mm1/data/roster.h"
 #include "mm/mm1/data/treasure.h"
 #include "mm/mm1/gfx/bitmap_font.h"
+#include "mm/mm1/gfx/symbols.h"
 #include "mm/mm1/game/combat.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/maps/maps.h"
@@ -59,6 +60,7 @@ public:
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
 	bool _minimapOn = false;
+	Common::Array<SuggestedName> *_suggestedNames = nullptr;
 
 	// Console flags
 	bool _intangible = false;
@@ -79,7 +81,7 @@ public:
 	Shared::Xeen::SpriteResource _escSprites;
 	Graphics::ManagedSurface _blankButton;
 	Graphics::ManagedSurface _gameBackground;
-	byte SYMBOLS[20][64];
+	Gfx::Symbols _symbols;
 	XeenFont _fontNormal;
 	XeenFont _fontReduced;
 public:

@@ -40,7 +40,7 @@ COptn::COptn(
     int nLttrsSlvd /*LSLVD_DEFAULT*/,
     int nTime /*TIME_DEFAULT*/
 )
-	: CBmpDialog(pParent, pPalette, IDD_USER_OPTIONS, ".\\ART\\SSCROLL.BMP")
+	: CBmpDialog(pParent, pPalette, IDD_USER_OPTIONS, "art\\SSCROLL.BMP")
 
 {
 	//{{AFX_DATA_INIT(COptn)

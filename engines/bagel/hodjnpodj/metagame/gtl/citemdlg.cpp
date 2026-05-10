@@ -38,7 +38,7 @@ BEGIN_MESSAGE_MAP(CItemDialog, CBmpDialog)
 END_MESSAGE_MAP()
 
 CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, bool bHodj, bool bGain, long lAmount)
-	: CBmpDialog(pParent, pPalette, IDD_ITEMMOVE, ".\\art\\msscroll.bmp") {
+	: CBmpDialog(pParent, pPalette, IDD_ITEMMOVE, "art\\msscroll.bmp") {
 	// Initialize all members
 	m_pPalette = pPalette;
 	m_pItem = pItem;
