@@ -438,6 +438,22 @@ void ModifyListEntry::execute() {
 			array.push_back(JournalData::Entry(_stringID, _mark, _sceneID));
 		}
 
+		if (found && g_nancy->getGameType() == kGameTypeNancy9 && NancySceneState.getSceneInfo().sceneID == 2491) {
+			// WORKAROUND: We do not persist the sceneID information for journal entries in
+			// nancy9 saved games, due to an oversight when the sceneID field was added. This
+			// means that for the search functionality in the laptop (which is the only place
+			// where the sceneID field is used in nancy9), the sceneID values will always be
+			// lost on save/load. Fortunately, these are always initialized by the game scripts,
+			// so we can use those script values instead. This code will ensure that the sceneID
+			// values are obtained from the game scripts in that scene, instead of the
+			// broken saved values, so the search functionality will work correctly even after
+			// save/load. Refer to JournalData::synchronize(), for a note on the missing sync
+			// of the SceneID field.
+			if (_stringID.hasPrefix("S0") && found->mark == _mark && _mark >= 10 &&
+				found->sceneID == kNoScene && _sceneID != kNoScene) {
+				found->sceneID = _sceneID;
+			}
+		}
 		break;
 	case kDelete:
 		if (found) {
