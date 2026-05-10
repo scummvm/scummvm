@@ -246,7 +246,12 @@ done:
 }
 
 void room_111_synchronize(Common::Serializer &s) {
-	
+	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
+	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
+	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	s.syncAsSint16LE(scratch.dragon_frame);
+	s.syncAsSint16LE(scratch.done_with_conv);
+	s.syncAsSint16LE(scratch.prev_room);
 }
 
 void room_111_preload() {
