@@ -107,7 +107,7 @@ static Scratch scratch;
 
 #define fx_king_in_well                  1    /* rm110a  */
 #define fx_pid_in_well                   2    /* rm110b0 */
-#define fx_reach_fruit                   3    /* kgrh_9  */ 
+#define fx_reach_fruit                   3    /* kgrh_9  */
 
 
 /* ======================== Triggers ========================= */
@@ -245,8 +245,8 @@ static Scratch scratch;
 #define CONV8_SIT                        1
 #define CONV8_LOOK                       2
 #define CONV8_POINT                      3
-#define CONV8_SHRUG                      4 
-#define CONV8_SCRATCH                    5 
+#define CONV8_SHRUG                      4
+#define CONV8_SCRATCH                    5
 
 /* slathan conversation states */
 #define CONV14_SIT                       1
@@ -254,7 +254,7 @@ static Scratch scratch;
 #define CONV14_TOSS_AGAIN                3
 #define CONV14_TALK                      4
 #define CONV14_POINT                     5
-#define CONV14_NOD                       6 
+#define CONV14_NOD                       6
 #define CONV14_NOD_TALK                  7
 #define CONV14_LOOK_AROUND               8
 
@@ -350,9 +350,9 @@ static Scratch scratch;
 #define RANDOM_MERCHANT_HIGH             40
 #define RANDOM_MERCHANT_STAND            26
 #define RANDOM_MERCHANT_BEND_OVER        27
-#define RANDOM_MERCHANT_CLEAN_COUNTER_1  31   
+#define RANDOM_MERCHANT_CLEAN_COUNTER_1  31
 #define RANDOM_MERCHANT_REACH            32
-#define RANDOM_MERCHANT_CLEAN_COUNTER_2  35   
+#define RANDOM_MERCHANT_CLEAN_COUNTER_2  35
 #define RANDOM_MERCHANT_SHRUG            36
 #define RANDOM_MERCHANT_JUST_SAY_NO      37
 #define RANDOM_MERCHANT_FOLD_ARMS        38
@@ -372,7 +372,7 @@ static Scratch scratch;
 #define MERCHANT                         4
 
 /* random numbers for everyone */
-#define RANDOM_LOWEST_NUMBER             1 
+#define RANDOM_LOWEST_NUMBER             1
 #define RANDOM_HIGHEST_NUMBER            6
 
 /* timer macros */
@@ -2248,7 +2248,7 @@ void handle_conv_merchant() {
 		}
 	}
 
-	if ((player_verb == conv006_thanks_only)) {
+	if (player_verb == conv006_thanks_only) {
 		switch (kernel.trigger) {
 		case 0:
 			conv_you_trigger(1);
