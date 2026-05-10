@@ -42,6 +42,8 @@ enum {
 	N_WallGrinds         =  67,
 	N_DragonInWater      =  72,
 	N_OldMachinery       =  74,
+	N_DogWhimper         =  79,
+	N_BeastSnd           =  80,
 	N_JumpDownWell       =  93,
 	N_BooksRumble        =  94,
 	N_McMornTipsTable    = 100

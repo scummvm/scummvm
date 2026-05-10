@@ -29,23 +29,24 @@ namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
-	bird_figurine   =  1,
-	shieldstone     =  3,
-	sword           =  4,
-	goblet          =  5,
-	bone            =  6,
-	fruit           =  7,
-	pid_doll        =  8,
-	statue          = 15,
-	magic_belt      = 18,
-	crystal_ball    = 29,
-	shifter_ring    = 32,
-	rare_coin       = 38,
-	crystal_flower  = 39,
-	ruby_ring       = 41,
-	gold_nugget     = 42,
-	magic_music_box = 43,
-	emerald         = 44
+	bird_figurine    =  1,
+	shieldstone      =  3,
+	sword            =  4,
+	goblet           =  5,
+	bone             =  6,
+	fruit            =  7,
+	pid_doll         =  8,
+	statue           = 15,
+	magic_belt       = 18,
+	crystal_ball     = 29,
+	shifter_ring     = 32,
+	rare_coin        = 38,
+	crystal_flower   = 39,
+	ruby_ring        = 41,
+	gold_nugget      = 42,
+	magic_music_box  = 43,
+	emerald          = 44,
+	piece_of_paper   = 45
 };
 
 } // namespace Dragonsphere
