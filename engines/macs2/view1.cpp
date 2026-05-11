@@ -32,6 +32,19 @@ namespace Macs2 {
 namespace {
 constexpr int kNumLoadedCursors = 5;
 
+void setViewPaletteSafely(const byte *colors) {
+	const bool cursorWasVisible = CursorMan.isVisible();
+	if (cursorWasVisible) {
+		CursorMan.showMouse(false);
+	}
+
+	g_system->getPaletteManager()->setPalette(colors, 0, 256);
+
+	if (cursorWasVisible) {
+		CursorMan.showMouse(true);
+	}
+}
+
 void applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
 	byte colors[256 * 3];
 	memcpy(colors, sourcePalette, sizeof(colors));
@@ -43,7 +56,7 @@ void applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
 		}
 		colors[i] = (colors[i] * 259 + 33) >> 6;
 	}
-	g_system->getPaletteManager()->setPalette(colors, 0, 256);
+	setViewPaletteSafely(colors);
 }
 }
 
@@ -149,7 +162,7 @@ void View1::UpdateCursor() {
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 		currentSpeechActData.onRightSide = false;
-		g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+		setViewPaletteSafely(g_engine->_pal);
 		_paletteDirty = false;
 		UpdateCursor();
 		CursorMan.showMouse(true);
@@ -419,7 +432,7 @@ void View1::handleFading() {
 			if (currentFadeValue <= 0) {
 				currentFadeValue = -1;
 				fadeMode = FadeMode::None;
-				g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+				setViewPaletteSafely(g_engine->_pal);
 				_paletteDirty = false;
 				return;
 			}
@@ -877,7 +890,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 
 void View1::draw() {
 	if (_paletteDirty && currentFadeValue < 0) {
-		g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+		setViewPaletteSafely(g_engine->_pal);
 		_paletteDirty = false;
 	}
 
@@ -2038,26 +2051,10 @@ uint16 Character::GetVerticalOffset() const {
 		result = 0;
 	}
 
-	// TODO: Figure out what variable this is and how this code works
-	/*
-l0037_8F3D:
-	les	di,[bp-13h]
-	cmp	word ptr es:[di+8h],0h
-	jz	8F67h
+	if (GameObject->Unknown != 0) {
+		result = (result * GameObject->Unknown) / 100;
+	}
 
-l0037_8F47:
-	mov	ax,[bp-6h]
-	cwd
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,es:[di+8h]
-	xor	dx,dx
-	call	far 00CDh:0C97h
-	mov	cx,64h
-	xor	bx,bx
-	call	far 00CDh:0CD4h
-	mov	[bp-0Ch],ax
-	*/
 	return result;
 }
 
@@ -2363,6 +2360,11 @@ void Character::Update() {
 
 
 		IsLerping = false;
+		if (hasMotionVerticalOffset) {
+			GameObject->Unknown = motionTargetVerticalOffset;
+			motionProgress = motionDistanceUnits;
+			hasMotionVerticalOffset = false;
+		}
 		// Go to the same orientation but standing
 		GameObject->Orientation += 8;
 
@@ -2400,9 +2402,29 @@ void Character::Update() {
 	}
 
 	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
+	if (hasMotionVerticalOffset) {
+		if (progress < 0.0f) {
+			progress = 0.0f;
+		} else if (progress > 1.0f) {
+			progress = 1.0f;
+		}
+
+		if (motionDistanceUnits != 0) {
+			motionProgress = (uint16)(motionDistanceUnits * progress);
+			if (motionProgress > motionDistanceUnits) {
+				motionProgress = motionDistanceUnits;
+			}
+		}
+
+		const int32 verticalOffsetDelta = (int32)motionTargetVerticalOffset - (int32)motionStartVerticalOffset;
+		GameObject->Unknown = (uint16)((int32)motionStartVerticalOffset + (int32)(verticalOffsetDelta * progress));
+	}
 	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
 	if (!LerpIgnoresObstacles && HandleWalkability(this)) {
 		IsLerping = false;
+		if (hasMotionVerticalOffset) {
+			hasMotionVerticalOffset = false;
+		}
 		// Go the the same orientation but standing
 		GameObject->Orientation += 8;
 		// TODO: Copy & paste code
