@@ -35,6 +35,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "audio/mixer.h"
 
 #include "macs2/detection.h"
 #include "macs2/events.h"
@@ -311,6 +312,7 @@ public:
 	Common::Array<uint8> array5023;
 
 	Common::Array<uint16> array50D5;
+	Common::Array<uint16> pathfindingValueRemaps;
 
 	// [51F7h]
 	uint16 numPathfindingPoints;
@@ -333,6 +335,13 @@ public:
 
 	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);
+	Adlib *getAdlib() const { return _adlib; }
+	void setCurrentSoundData(const Common::Array<uint8> &data);
+	void clearCurrentSoundData();
+	void playCurrentSound();
+	void stopCurrentSound();
+	bool hasCurrentSound() const { return !_currentSoundData.empty(); }
+	bool isCurrentSoundPlaying() const;
 
 	void playTestSound();
 
@@ -356,6 +365,8 @@ public:
 	// TODO: Feels like this should be more elegantly solved, also check how the game does this
 	// Is required for example after a scene change
 	bool scheduledRunIsInitScene = false;
+	Common::Array<uint8> _currentSoundData;
+	Audio::SoundHandle _currentSoundHandle;
 
 	// Schedules a run of the script the next time the executor is ticked
 	void ScheduleRun(bool initScene = false);
