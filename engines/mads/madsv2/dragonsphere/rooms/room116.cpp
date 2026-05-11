@@ -75,7 +75,7 @@ static Scratch scratch;
 /* ========================= Sprites ========================= */
 
 #define fx_door                 1  /* rm116x  */
-#define fx_open_door            2  /* rm116g  */ 
+#define fx_open_door            2  /* rm116g  */
 #define fx_kingsicle            3  /* rm116a4 */
 #define fx_bear_morph           4  /* rm116b1 */
 #define fx_give_soul            5  /* pdrm_6  */
@@ -118,6 +118,7 @@ static Scratch scratch;
 #define KING_Y_SIZE             50
 
 /* animation descriptions */
+#define KING_NO_ANIMATION       0
 #define KING_OFF_ICE            1
 #define KING_THRU_DOOR          2
 
@@ -127,8 +128,8 @@ static Scratch scratch;
 /* for bear_status */
 #define HAS_NEVER_BEEN_A_BEAR   0
 #define FIRST_TIME_BEAR         1
-#define IS_PID_AGAIN            2 
-#define IS_A_BEAR_AGAIN         3 
+#define IS_PID_AGAIN            2
+#define IS_A_BEAR_AGAIN         3
 
 #define KING_SHUT_UP            0
 #define KING_TALK               1
@@ -157,7 +158,7 @@ static void room_116_init() {
 		local->just_melted = false;
 		local->anim_1_running = false;
 		local->anim_2_running = false;
-		local->animation_running = false;
+		local->animation_running = KING_NO_ANIMATION;
 	}
 
 	conv_get(CONVERSATION_WITH_KING);
@@ -434,7 +435,7 @@ static void room_116_pre_parser() {
 	}
 }
 
-static void room_116_conv13() {
+static void room_116_conversation_with_king() {
 	bool flag1 = false, flag2 = false;
 
 	if (player_verb == 3) {
@@ -462,21 +463,18 @@ static void room_116_conv13() {
 
 static void room_116_parser() {
 	if (conv_control.running == CONVERSATION_WITH_KING) {
-		room_116_conv13();
-		player.command_ready = false;
-		return;
+		room_116_conversation_with_king();
+		goto handled;
 	}
 
 	if (player_parse(words_revert, 0) &&
 	    (local->bear_status == FIRST_TIME_BEAR || local->bear_status == IS_A_BEAR_AGAIN)) {
-		player.command_ready = false;
-		return;
+		goto handled;
 	}
 
 	if (player.look_around) {
 		text_show(global[king_status] == KING_CAPTIVE ? 11601 : 11608);
-		player.command_ready = false;
-		return;
+		goto handled;
 	}
 
 	if (player_parse(words_talk_to, words_king, 0)) {
@@ -487,41 +485,42 @@ static void room_116_parser() {
 			conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
 			conv_export_value(0);
 		}
-		player.command_ready = false;
-		return;
+		goto handled;
 	}
 
-	// Door to stairwell (room 119) — noun 230
-	if (player_parse(words_walk_through, 230, 0) ||
-	    player_parse(words_open, 230, 0) ||
-	    player_parse(words_pull, 230, 0)) {
+	if (player_parse(words_walk_through, words_door_to_stairwell, 0) ||
+	    player_parse(words_open, words_door_to_stairwell, 0) ||
+	    player_parse(words_pull, words_door_to_stairwell, 0)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
-			if (local->anim_1_running) {
+
+			if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
 				kernel_abort_animation(aa[1]);
 				local->anim_1_running = false;
-				aa[0] = kernel_run_animation(kernel_name('f', -1), 0);  // TODO: verify 'f' animation
+				aa[0] = kernel_run_animation(kernel_name('B', -1), 0);
+				local->animation_running = KING_THRU_DOOR;
 			}
-			kernel_seq_delete(seq[fx_door]);
-			seq[fx_door] = kernel_seq_pingpong(ss[fx_door], false, 7, 0, 0, 5);  // TODO: verify pingpong count
-			kernel_seq_depth(seq[fx_door], 14);
-			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 1);
-			kernel_timing_trigger(45, 3);  // TODO: verify timing
+
+			player.walker_visible = false;
+			seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], false, 8, 2, 0, 0);
+			kernel_seq_player(seq[fx_open_door], -1);
+			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_EXPIRE, 0, 3);
 			break;
+
 		case 1:
 			kernel_seq_delete(seq[fx_door]);
 			sound_play(N_DoorOpens);
-			seq[fx_open_door] = kernel_seq_forward(ss[fx_open_door], false, 7, 0, 0, 0);
-			kernel_seq_depth(seq[fx_open_door], 14);
-			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_EXPIRE, 0, 2);
+			seq[fx_open_door] = kernel_seq_forward(ss[fx_door], false, 7, 0, 0, 0);
+			kernel_seq_depth(seq[fx_door], 14);
+			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 2:
-			local->temp = seq[fx_open_door];
-			kernel_seq_delete(seq[fx_open_door]);
-			seq[fx_open_door] = kernel_seq_stamp(ss[fx_open_door], false, KERNEL_LAST);
-			kernel_seq_depth(seq[fx_open_door], 14);
-			kernel_synch(KERNEL_SERIES, seq[fx_open_door], KERNEL_SERIES, local->temp);
+			local->temp = seq[fx_door];
+			seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_LAST);
+			kernel_seq_depth(seq[fx_door], 14);
+			kernel_synch(KERNEL_SERIES, seq[fx_door], KERNEL_SERIES, local->temp);
 			break;
 		case 3:
 			player.walker_visible = true;
@@ -530,15 +529,17 @@ static void room_116_parser() {
 			break;
 		case 4:
 			player_walk(START_X_ROOM_119, START_Y_ROOM_119, FACING_EAST);
-			if (!global[king_is_in_stairwell])  // TODO: verify condition
+
+			if (global[king_status] == KING_WITH_SOUL && global[king_is_in_stairwell])
 				player_walk_trigger(5);
 			break;
 		case 5:
-			if (global[king_is_in_stairwell]) {  // TODO: verify condition
+			if (global[king_status] != KING_CAPTIVE || global[king_is_in_stairwell]) {
 				seq[fx_spill] = kernel_seq_stamp(ss[fx_spill], false, KERNEL_FIRST);
-				kernel_seq_depth(seq[fx_spill], 15);
+				kernel_seq_depth(seq[fx_spill], 10);
 			}
-			kernel_seq_delete(seq[fx_open_door]);
+
+			kernel_seq_delete(seq[fx_door]);
 			sound_play(N_DoorCloses);
 			seq[fx_door] = kernel_seq_backward(ss[fx_door], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door], 14);
@@ -546,100 +547,179 @@ static void room_116_parser() {
 			break;
 		case 6:
 			local->temp = seq[fx_door];
-			kernel_seq_delete(seq[fx_door]);
 			seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
 			kernel_seq_depth(seq[fx_door], 14);
 			kernel_synch(KERNEL_SERIES, seq[fx_door], KERNEL_SERIES, local->temp);
 			new_room = 119;
 			break;
 		}
-		player.command_ready = false;
-		return;
+		goto handled;
 	}
 
-	// Door to darkness beast room (room 115) — noun 228
-	if (player_parse(words_walk_through, 228, 0) ||
-	    player_parse(words_open, 228, 0) ||
-	    player_parse(words_pull, 228, 0)) {
-		// TODO: verify exact behavior (conv + export or direct room change)
-		new_room = 115;
-		player.command_ready = false;
-		return;
+	if (player_parse(words_walk_through, words_door_to_darkness, 0) ||
+			player_parse(words_open, 228, 0) ||
+			player_parse(words_pull, 228, 0)) {
+		if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
+			conv_run(13);
+			conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
+			conv_export_value(1);
+		} else {
+			new_room = 115;
+		}
+		goto handled;
 	}
 
 	// Can't shift into seal/snake while a bear
 	if ((player_parse(words_shift_into_seal, 0) || player_parse(words_shift_into_snake, 0)) &&
 	    (local->bear_status == FIRST_TIME_BEAR || local->bear_status == IS_A_BEAR_AGAIN)) {
-		text_show(11622);  // TODO: verify text ID
-		player.command_ready = false;
-		return;
+		text_show(990);
+		goto handled;
 	}
 
 	// Shift into bear / invoke crystal ball (bear transformation)
 	if (player_parse(words_shift_into_bear, 0) ||
 	    player_parse(words_invoke_power_of, words_crystal_ball, 0)) {
-		if (local->bear_status == HAS_NEVER_BEEN_A_BEAR ||
-		    local->bear_status == IS_PID_AGAIN) {
+		if (player_parse(words_shift_into_bear, 0) &&
+				(local->bear_status == FIRST_TIME_BEAR || local->bear_status == IS_A_BEAR_AGAIN)) {
+			text_show(11629);
+			goto handled;
+		} else if ((local->bear_status == HAS_NEVER_BEEN_A_BEAR || local->bear_status == IS_PID_AGAIN) &&
+				global[king_status] == KING_CAPTIVE) {
 			switch (kernel.trigger) {
 			case 0:
 				player.commands_allowed = false;
-				player.walker_visible = false;
-				kernel_seq_delete(seq[fx_bear_morph]);
-				seq[fx_bear_morph] = kernel_seq_forward(ss[fx_bear_morph], false, 8, 0, 0, 0);
-				kernel_seq_depth(seq[fx_bear_morph], 4);
-				kernel_seq_trigger(seq[fx_bear_morph], KERNEL_TRIGGER_EXPIRE, 0, 1);
+				player_walk(WALK_TO_KINGSICLE_X, WALK_TO_KINGSICLE_Y, FACING_NORTHWEST);
+				player_walk_trigger(1);
 				break;
+
 			case 1:
+				if (player_parse(words_invoke_power_of, 0))
+					sound_play(N_InvokeCrystalBall);
+
+				player.walker_visible = false;
+				seq[fx_bear_morph] = kernel_seq_forward(ss[fx_bear_morph], false, 8, 0, 0, 1);
+				kernel_seq_depth(seq[fx_bear_morph], 4);
+				kernel_seq_range(seq[fx_bear_morph], KERNEL_FIRST, KERNEL_LAST);
+				kernel_synch(1, seq[fx_bear_morph], 2, 0);
+				kernel_seq_trigger(seq[fx_bear_morph], KERNEL_TRIGGER_EXPIRE, 0, 2);
+				break;
+
+			case 2:
+				local->temp = seq[fx_bear_morph];
+
+				if (player_parse(words_crystal_ball, 0)) {
+					aa[fx_open_door] = kernel_run_animation(kernel_name('a', -1), 0);
+					local->anim_2_running = true;
+					global[crystal_ball_dead] = true;
+				} else {
+					seq[fx_bear_morph] = kernel_seq_stamp(ss[fx_bear_morph], 0, KERNEL_LAST);
+					kernel_seq_depth(seq[fx_bear_morph], 4);
+					kernel_synch(KERNEL_SERIES, seq[fx_bear_morph], KERNEL_SERIES, local->temp);
+					player.commands_allowed = true;
+				}
+
+				if (local->bear_status == HAS_NEVER_BEEN_A_BEAR) {
+					global[player_score] += 5;
+					local->bear_status = FIRST_TIME_BEAR;
+				} else if (local->bear_status == IS_PID_AGAIN) {
+					local->bear_status = IS_A_BEAR_AGAIN;
+				}
+
 				if (local->bear_status == HAS_NEVER_BEEN_A_BEAR)
 					local->bear_status = FIRST_TIME_BEAR;
 				else
 					local->bear_status = IS_A_BEAR_AGAIN;
-				player.commands_allowed = true;
-				kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, seq[fx_bear_morph]);
-				break;
-			case 2:
-				// TODO: verify case 2 content
 				break;
 			}
-			player.command_ready = false;
-			return;
 		}
+
+		goto handled;
 	}
 
 	// Bear grabs king / gives soul to king
-	if (player_parse(words_push, words_king, 0) ||
-	    player_parse(words_pull, words_king, 0) ||
-	    player_parse(words_take, words_king, 0)) {
-		if (local->bear_status == FIRST_TIME_BEAR || local->bear_status == IS_A_BEAR_AGAIN) {
+	if ((player_parse(words_push, words_king, 0) ||
+		player_parse(words_pull, words_king, 0) ||
+		player_parse(words_take, words_king, 0) ||
+		player_parse(words_put, words_king, words_cave_floor)) &&
+		global[king_status] == KING_CAPTIVE) {
+		if (local->bear_status == HAS_NEVER_BEEN_A_BEAR) {
+			kernel_seq_delete(seq[fx_bear_morph]);
+			player.commands_allowed = false;
+			local->anim_2_running = true;
+			aa[fx_bear_morph] = kernel_run_animation(kernel_name('a', -1), 0);
+		} else {
 			switch (kernel.trigger) {
 			case 0:
-				if (player_has(crystal_ball)) {
+				player.commands_allowed = false;
+				player_walk(WALK_TO_KINGSICLE_X, WALK_TO_KINGSICLE_Y, FACING_NORTH);
+				player_walk_trigger(1);
+				break;
+
+			case 1:
+				player.walker_visible = false;
+				seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], 0, 9, 0, 0, 2);
+				kernel_seq_player(seq[fx_open_door], -1);
+				kernel_seq_trigger(seq[fx_open_door], 0, 0, 8);
+				break;
+
+			case 2:
+				player.walker_visible = true;
+				kernel_synch(2, 0, 1, seq[fx_open_door]);
+				kernel_timing_trigger(12, 3);
+				sound_play(N_GrabKing);
+				break;
+
+			case 3:
+				text_show(game.difficulty == 0 ? 11612 : 11613);
+				player.commands_allowed = true;
+				break;
+			}
+		}
+
+		goto handled;
+	}
+
+	if (player_parse(words_give, 82, words_king) ||
+			player_parse(words_invoke_power_of, words_crystal_ball) ||
+			player_parse(words_put, 82, words_king))  {
+		if ((player_parse(words_give, 82, words_king) || player_parse(words_put, 82, words_king)) &&
+				global[king_status] == KING_CAPTIVE) {
+			text_show(11630);
+		} else if (global[king_status] == KING_WITHOUT_SOUL) {
+			switch (kernel.trigger) {
+			case 0:
+				if (player_parse(words_crystal_ball, 0)) {
 					sound_play(N_InvokeCrystalBall);
 					kernel_timing_trigger(1, 3);
 				} else {
+					player.commands_allowed = false;
 					player_walk(WALK_TO_KING_SOUL_X, WALK_TO_KING_SOUL_Y, FACING_WEST);
 					player_walk_trigger(1);
 				}
 				break;
+
 			case 1:
-				if (!player_has(crystal_ball)) {
-					seq[fx_give_soul] = kernel_seq_pingpong(ss[fx_give_soul], false, 7, 0, 0, 0);
-					kernel_seq_depth(seq[fx_give_soul], 3);
-					kernel_seq_trigger(seq[fx_give_soul], KERNEL_TRIGGER_EXPIRE, 0, 2);
-					kernel_timing_trigger(60, 3);  // TODO: verify timing
+				if (!player_parse(words_crystal_ball, 0)) {
+					player.walker_visible = false;
+					seq[fx_give_soul] = kernel_seq_pingpong(ss[fx_give_soul], -1, 8, 0, 0, 2);
+					kernel_seq_player(seq[fx_give_soul], -1);
+					kernel_seq_trigger(seq[fx_give_soul], 2, 4, 2);
+					kernel_seq_trigger(seq[fx_give_soul], 0, 0, 3);
 				}
 				break;
+
 			case 2:
 				sound_play(97);
 				ss[fx_smoke] = kernel_load_series(kernel_name('a', 5), false);
-				seq[fx_smoke] = kernel_seq_forward(ss[fx_smoke], false, 7, 0, 0, 0);
+				seq[fx_smoke] = kernel_seq_forward(ss[fx_smoke], false, 8, 0, 0, 1);
 				kernel_seq_depth(seq[fx_smoke], 1);
 				kernel_seq_range(seq[fx_smoke], KERNEL_FIRST, KERNEL_LAST);
 				kernel_seq_trigger(seq[fx_smoke], KERNEL_TRIGGER_EXPIRE, 0, 4);
 				break;
+
 			case 3:
-				if (player_has(crystal_ball)) {
-					text_show(11617);
+				if (player_parse(109, 0)) {
+					text_show(11618);
 					inter_move_object(crystal_ball, NOWHERE);
 					text_show(970);
 					kernel_timing_trigger(1, 6);
@@ -648,41 +728,128 @@ static void room_116_parser() {
 					kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, seq[fx_give_soul]);
 				}
 				break;
+
 			case 4:
 				matte_deallocate_series(ss[fx_smoke], -1);
 				kernel_timing_trigger(1, 5);
 				break;
+
 			case 5:
 				kernel_timing_trigger(10, 6);
 				break;
+
 			case 6:
-				if (!player_has(crystal_ball)) {
+				if (!player_parse(crystal_ball, 0)) {
 					inter_move_object(soul_egg, NOWHERE);
 					text_show(11614);
 				}
+
 				global[king_status] = KING_WITH_SOUL;
 				global[player_score] += 5;
 				player.commands_allowed = true;
+				local->king_action = 0;
 				conv_run(CONVERSATION_WITH_KING);
-				conv_export_value(1);
+				conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
 				break;
 			}
-			player.command_ready = false;
-			return;
+		}
+
+		goto handled;
+	}
+
+	if (player_parse(words_invoke, words_signet_ring, 0)) {
+		if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
+			conv_run(13);
+			conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
+			conv_export_value(1);
+			local->invoked_ring = true;
+		} else {
+			new_room = 110;
+		}
+
+		goto handled;
+	}
+
+	if (player_parse(words_look, 0) || player_parse(words_look_at, 0)) {
+		if (player_parse(words_cave_floor, 0)) {
+			text_show(11602);
+			goto handled;
+		} else if (player_parse(words_cave_wall, 0)) {
+			text_show(11603);
+			goto handled;
+		} else if (player_parse(229, 0)) {
+			text_show(global[king_status] == KING_CAPTIVE ? 11604 : 11609);
+			goto handled;
+		} else if (player_parse(words_door_to_stairwell, 0)) {
+			text_show(11605);
+			goto handled;
+		} else if (player_parse(words_door_to_darkness, 0)) {
+			text_show(11606);
+			goto handled;
+		} else if (player_parse(words_king, 0) && global[king_status] == KING_CAPTIVE) {
+			text_show(11607);
+			goto handled;
+		} else if (player_parse(words_king, 0) && global[king_status] == KING_OFF_ICE) {
+			text_show(11610);
+			goto handled;
+		} else if (player_parse(words_king, 0) && conv_control.running != 13) {
+			text_show(11611);
+			goto handled;
 		}
 	}
 
-	// TODO: look/look_at specific noun responses
-
-	// Bear form verb filter
-	if (local->bear_status == FIRST_TIME_BEAR || local->bear_status == IS_A_BEAR_AGAIN) {
-		text_show(32);
-		player.command_ready = false;
-		return;
+	if (player_parse(words_gaze_into, words_crystal_ball, 0) && global[king_status] == KING_CAPTIVE) {
+		text_show(11615);
+		goto handled;
+	}
+	if (player_parse(words_gaze_into, words_crystal_ball, 0) && global[king_status] == KING_WITHOUT_SOUL) {
+		text_show(11616);
+		goto handled;
 	}
 
-	// TODO: words_heal + words_king response
-	// TODO: words_sword / words_attack + words_king response
+	if (player_parse(words_close, words_door_to_stairwell, 0)) {
+		text_show(42);
+		goto handled;
+	}
+
+	if ((local->bear_status != FIRST_TIME_BEAR || local->bear_status != IS_A_BEAR_AGAIN) &&
+			!player_parse(words_look, 0) &&
+			!player_parse(words_take, 0) &&
+			!player_parse(words_push, 0) &&
+			!player_parse(words_open, 0) &&
+			!player_parse(words_put, 0) &&
+			!player_parse(words_talk_to, 0) &&
+			!player_parse(words_give, 0) &&
+			!player_parse(words_pull, 0) &&
+			!player_parse(words_close, 0) &&
+			!player_parse(words_throw, 0) &&
+			!player_parse(words_swim_to, 0) &&
+			!player_parse(words_swim_towards, 0)) {
+		text_show(32);
+		goto handled;
+	}
+
+	if (player_parse(words_heal, words_king) && global[king_status] != KING_WITH_SOUL) {
+		text_show(11622);
+		goto handled;
+	}
+
+	if (player_parse(words_sword, words_attack, words_king, 0) ||
+			player_parse(words_sword, words_carve_up, words_king, 0) ||
+			player_parse(words_sword, words_thrust, words_king, 0)) {
+		if (global[king_status] == KING_CAPTIVE) {
+			text_show(11621);
+			goto handled;
+		} else {
+			goto done;
+		}
+	}
+
+handled:
+	player.command_ready = false;
+
+done:
+	;
 }
 
 void room_116_synchronize(Common::Serializer &s) {
