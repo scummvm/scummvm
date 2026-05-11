@@ -717,11 +717,16 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	case SDL_MOUSEWHEEL: {
 		Sint32 yDir = ev.wheel.y;
 		// We want the mouse coordinates supplied with a mouse wheel event.
-		// However, SDL2 does not supply these, thus we use whatever we got
-		// last time.
+		// However, SDL2 only supplies these since v2.26.0. For older versions
+		// we use whatever we got last time.
+#if SDL_VERSION_ATLEAST(2, 26, 0)
+		if (!processMouseEvent(event, ev.wheel.mouseX, ev.wheel.mouseY)) {
+#else
 		if (!processMouseEvent(event, _mouseX, _mouseY)) {
+#endif
 			return false;
 		}
+
 		if (yDir < 0) {
 			event.type = Common::EVENT_WHEELDOWN;
 			return true;
