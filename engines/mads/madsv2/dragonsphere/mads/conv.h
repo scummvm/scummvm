@@ -154,6 +154,46 @@ enum {
 	conv035_exit_b_b    =  3
 };
 
+enum {
+	conv047_protect          =  0,
+	conv047_kingsay_escort   =  3,
+	conv047_kingsay_why      =  4,
+	conv047_exit_b_b         =  7,
+	conv047_exit_k_k         =  9,
+	conv047_myguys_whydirt   = 10,
+	conv047_postbribe        = 12,
+	conv047_exit_i_i         = 15,
+	conv047_prebribe_giver   = 17,
+	conv047_give_b_b         = 20,
+	conv047_reaction2_only   = 23,
+	conv047_offer_never      = 24,
+	conv047_askback          = 24,
+	conv047_offer_boon       = 25,
+	conv047_offer_wasnt      = 26,
+	conv047_boon2_only       = 27,
+	conv047_boon3_suppose    = 29,
+	conv047_usesame          = 29,
+	conv047_take_back_b_b    = 31,
+	conv047_heythere         = 32,
+	conv047_collat2_only     = 33,
+	conv047_exit_d_d         = 35,
+	conv047_askback_heythere = 36,
+	conv047_exit_f_f         = 40,
+	conv047_kill_b_b         = 42,
+	conv047_give_d_d         = 45,
+	conv047_heythere_only    = 46,
+	conv047_take_back_d_d    = 48
+};
+
+enum {
+	conv054_restart          =  1,
+	conv054_exit_b_b         = 10,
+	conv054_show_drink_b_b   = 21,
+	conv054_death_b_b        = 25,
+	conv054_take_swig_b_b    = 29,
+	conv054_offer_b_b        = 33
+};
+
 } // namespace Dragonsphere
 } // namespace MADSV2
 } // namespace MADS

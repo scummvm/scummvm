@@ -320,7 +320,7 @@ static void run_animation(int animIndex) {
 			current_anim_inter->segment[ctr].counter = -1;
 
 		image_inter_marker = 1;
-		image_inter_list[0].flags = 0xfffe;
+		image_inter_list[0].flags = -2;
 		image_inter_list[0].segment_id = 0xff;
 
 		timer_activate_low_priority(anim_interface_timer);

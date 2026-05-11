@@ -29,6 +29,7 @@ namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
+	// Section 1
 	N_DoorOpens          =  24,
 	N_DoorCloses         =  25,
 	N_TakeObjectSnd      =  26,
@@ -51,7 +52,14 @@ enum {
 	N_MagicDoorUnlocked  =  89,
 	N_JumpDownWell       =  93,
 	N_BooksRumble        =  94,
-	N_McMornTipsTable    = 100
+	N_McMornTipsTable    = 100,
+
+	// Section 2
+	N_BackgroundMus      =  16,
+	N_GuardCollapses     =  65,
+	N_TentaclesSplash    =  66,
+	N_MouthRockTalks     =  71,
+	N_PoolMonsterEatsPid =  72
 };
 
 } // namespace Dragonsphere
