@@ -305,11 +305,18 @@ View1::View1() : UIElement("View1") {
 	void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 		// TODO: Draw the border
 
-		AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait();
+		AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait(currentSpeechActData.onRightSide);
+		AnimFrame *leftPortrait = currentSpeechActData.speaker->GetCurrentPortrait(false);
+		AnimFrame *rightPortrait = currentSpeechActData.speaker->GetCurrentPortrait(true);
+		if (frame == nullptr) {
+			return;
+		}
 
 		// See l0037_B462: for the calculations below
 		// Draw the border
-		const Common::Point borderSize(frame->Width + 0xD, frame->Height + 0xD);
+		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->Width : 0, rightPortrait ? rightPortrait->Width : 0);
+		const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->Height : 0, rightPortrait ? rightPortrait->Height : 0);
+		const Common::Point borderSize(portraitWidth + 0xD, portraitHeight + 0xD);
 		DrawBorder(currentSpeechActData.position, borderSize, s);
 		
 		// Draw the portrait over the border
@@ -1483,9 +1490,10 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	Common::Point portraitBoxPosition = position;
 
 	if (currentSpeechActData.speaker != nullptr) {
-		AnimFrame *portrait = currentSpeechActData.speaker->GetCurrentPortrait();
-		if (portrait != nullptr) {
-			const int portraitWidth = portrait->Width;
+		AnimFrame *leftPortrait = currentSpeechActData.speaker->GetCurrentPortrait(false);
+		AnimFrame *rightPortrait = currentSpeechActData.speaker->GetCurrentPortrait(true);
+		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->Width : 0, rightPortrait ? rightPortrait->Width : 0);
+		if (portraitWidth > 0) {
 			if (onRightSide) {
 				stringBoxX = position.x - portraitWidth - 0x12 - totalWidth;
 				portraitBoxPosition.x = stringBoxX + totalWidth + 4;
@@ -2073,9 +2081,7 @@ bool Character::TryFollowPath() {
 }
 
 bool Character::isAnimationMirrored() const {
-
-	return false;
-	// return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
+	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
 }
 
 uint8 Character::getMirroredAnimation(uint8 original) const {
@@ -2093,6 +2099,7 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 	case 16:
 		return 10;
 	}
+	return original;
 }
 
 
@@ -2188,12 +2195,27 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// TODO: Think about proper memory management
 }
 
-Macs2::AnimFrame *Character::GetCurrentPortrait() {
-	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[17], true, 2);
+Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
+	if (GameObject->Blobs.size() <= 17) {
+		return nullptr;
+	}
+
+	uint portraitBlobIndex = 17;
+	if (onRightSide && GameObject->Blobs.size() > 18 && !GameObject->Blobs[18].empty()) {
+		portraitBlobIndex = 18;
+	} else if (GameObject->Blobs[portraitBlobIndex].empty() && GameObject->Blobs.size() > 18 && !GameObject->Blobs[18].empty()) {
+		portraitBlobIndex = 18;
+	}
+
+	if (GameObject->Blobs[portraitBlobIndex].empty()) {
+		return nullptr;
+	}
+
+	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[portraitBlobIndex], true, 2);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(GameObject->Blobs[17].data(), GameObject->Blobs[17].size());
+	Common::MemoryReadStream stream(GameObject->Blobs[portraitBlobIndex].data(), GameObject->Blobs[portraitBlobIndex].size());
 	stream.seek(offset);
 	result->ReadFromStream(&stream);
 	return result;
