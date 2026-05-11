@@ -68,7 +68,8 @@ static TileResource picture_res, depth_res;
 static CycleList cycle_list;
 static Buffer scr_work_orig;
 static Room *room;
-static Anim *current_anim, *current_anim2;
+static AnimPtr current_anim;
+static AnimInterPtr current_anim_inter;
 static bool has_cycles;
 static int viewing_at_y2;
 constexpr int SPEECH_LINES_COUNT = 10;
@@ -77,13 +78,24 @@ static int speech_lines_count;
 static SeriesPtr animSeries;
 static SpritePageInfoPtr pageInfo;
 static SpritePageTablePtr pageTable;
-static void *anim_buffer;
 static bool foundSeries;
 static int imageFlags, imageFlags2, imageFlags3;
 static int imageSpriteId;
 static int largeBufferSize;
 static byte *largeBuffer, *largeBufferEnd;
 static byte *largeBuffer1, *largeBuffer2;
+static bool hasAnimInited;
+static int minFrame, maxFrame;
+static int timer1, timer2;
+static int runVal1, runVal2, runVal3;
+static int runVal4, runVal5, runVal6;
+static int runVal7, runVal8, runVal9;
+static int runVal10, runVal11, runVal12;
+static int loadFontFlag;
+static int runFx;
+static int runCtr1;
+static int currentFrame;
+static bool peelFlag;
 
 /**
  * Initializes animview global variables
@@ -107,7 +119,8 @@ static void init_globals() {
 	memset(&cycle_list, 0, sizeof(CycleList));
 	memset(&scr_work_orig, 0, sizeof(Buffer));
 	room = nullptr;
-	current_anim = current_anim2 = nullptr;
+	current_anim = nullptr;
+	current_anim_inter = nullptr;
 	has_cycles = false;
 	viewing_at_y2 = 0;
 	memset(speech_lines, 0, sizeof(speech_lines));
@@ -115,13 +128,25 @@ static void init_globals() {
 	animSeries = nullptr;
 	pageInfo = nullptr;
 	pageTable = nullptr;
-	anim_buffer = nullptr;
 	foundSeries = false;
 	imageFlags = imageFlags2 = imageFlags3 = 0;
 	imageSpriteId = 0;
 	largeBufferSize = 0;
 	largeBuffer = largeBufferEnd = nullptr;
 	largeBuffer1 = largeBuffer2 = nullptr;
+	hasAnimInited = false;
+	minFrame = maxFrame = -1;
+	timer1 = timer2 = 0;
+	runVal1 = 0;
+	runVal2 = runVal3 = -1;
+	runVal4 = runVal5 = runVal6 = 0;
+	runVal7 = runVal8 = runVal9 = 0;
+	runVal10 = runVal11 = runVal12 = 0;
+	loadFontFlag = 0;
+	runFx = 0;
+	runCtr1 = 0;
+	currentFrame = 0;
+	peelFlag = false;
 }
 
 /**
@@ -238,8 +263,79 @@ static void read_resource(Common::SeekableReadStream *src) {
 	}
 }
 
-static void run_animation() {
+static void anim_normal_timer() {
 	// TODO
+}
+
+static void anim_interface_timer() {
+	// TODO
+}
+
+/**
+ * Responsible for running a loaded animation
+ */
+static void run_animation(int animIndex) {
+	int ctr;
+
+	if (hasAnimInited) {
+		hasAnimInited = true;
+		mouse_set_work_buffer(scr_inter_orig.data, scr_inter_orig.x);
+		mouse_set_view_port_loc(0, viewing_at_y, scr_inter_orig.x, scr_inter_orig.y + viewing_at_y - 1);
+		mouse_set_view_port(0, 0);
+	}
+
+	auto &screen = *g_engine->getScreen();
+	if (viewing_at_y && anim_list[animIndex].show_bars) {
+		screen.hLine(0, viewing_at_y, 319, 253);
+		screen.hLine(0, viewing_at_y + scr_inter_orig.y, 319, 253);
+	} else if (viewing_at_y) {
+		screen.hLine(0, viewing_at_y, 319, 0);
+		screen.hLine(0, viewing_at_y + scr_inter_orig.y, 319, 0);
+	}
+
+	buffer_fill(scr_inter_orig, 0);
+
+	if (minFrame == -1)
+		minFrame = 0;
+	if (maxFrame == -1)
+		maxFrame = current_anim->num_frames;
+
+	minFrame = CLIP<int>(minFrame, 0, current_anim->num_frames);
+	maxFrame = CLIP<int>(maxFrame, 0, maxFrame);
+	if (animIndex == 0)
+		timer1 = g_system->getMillis();
+
+	runVal4 = -1;
+	loadFontFlag = current_anim->load_flags & AA_LOAD_FONT;
+
+	runVal5 = runVal6 = runVal7 = runVal8 = 0;
+	runVal9 = runVal10 = runVal11 = 0;
+
+	if (current_anim->background_type == AA_INTERFACE) {
+		currentFrame = -1;
+		runVal12 = -1;
+		runFx = 0;
+
+		for (ctr = 0; ctr < current_anim_inter->num_frames; ++ctr)
+			current_anim_inter->segment[ctr].counter = -1;
+
+		image_inter_marker = 1;
+		image_inter_list[0].flags = 0xfffe;
+		image_inter_list[0].segment_id = 0xff;
+
+		timer_activate_low_priority(anim_interface_timer);
+
+	} else {
+		timer1 += current_anim->frame[minFrame].ticks;
+		runFx = anim_list[animIndex].fx;
+		currentFrame = minFrame;
+		runCtr1 = 0;
+		peelFlag = current_anim->misc_peel_x || current_anim->misc_peel_y;
+		timer2 = timer1;
+		timer_activate_low_priority(anim_normal_timer);
+	}
+
+	// TODO: Inner animation loop
 }
 
 /**
@@ -369,7 +465,7 @@ static void animate() {
 		}
 
 		has_cycles = cycle_list.num_cycles > 0;
-		current_anim2 = current_anim;
+		current_anim_inter = (AnimInterPtr)current_anim;
 
 		int height = (scr_work.y == 200) ? 200 : 156;
 		buffer_init(&scr_inter_orig, 320, height);
@@ -421,15 +517,17 @@ static void animate() {
 		}
 
 		// Run the animation
-		run_animation();
+		run_animation(count);
 
 		for (auto &line : speech_lines) {
 			mem_free(line);
 			line = nullptr;
 		}
 
-		mem_free(anim_buffer);
-		anim_buffer = nullptr;
+		mem_free(largeBuffer);
+		largeBuffer = nullptr;
+
+		minFrame = maxFrame = -1;
 
 		// Free the allocated sound driver
 		g_engine->_soundManager->closeDriver();
