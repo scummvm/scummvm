@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
+#include "common/array.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
@@ -45,10 +46,7 @@ namespace Macs2 {
 
 	class MacsAudioStream : public Audio::SeekableAudioStream {
 public:
-		Common::MemoryReadStream *_fileStream;
-
-		int64 startPosition;
-		int64 length;
+		Common::Array<byte> _data;
 		int64 pos;
 
 		virtual ~MacsAudioStream() {}
@@ -90,7 +88,7 @@ public:
 	
 	virtual bool seek(const Audio::Timestamp &where);
 
-	virtual Audio::Timestamp getLength() const;
+		virtual Audio::Timestamp getLength() const;
 	};
 
 	struct Macs2GameDescription;
