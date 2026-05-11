@@ -119,6 +119,12 @@ private:
 
 	// TODO: Handle properly
 	uint8 animationIndex = 1;
+	uint16 motionTargetVerticalOffset = 0;
+	uint16 motionVerticalOffsetDelta = 0;
+	uint16 motionDistanceUnits = 0;
+	uint16 motionProgress = 0;
+	uint16 motionStartVerticalOffset = 0;
+	bool hasMotionVerticalOffset = false;
 
 	bool isAnimationMirrored() const;
 	uint8 getMirroredAnimation(uint8 original) const;
