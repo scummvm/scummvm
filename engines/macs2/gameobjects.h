@@ -90,6 +90,7 @@ public:
 	uint16 RuntimeValue217 = 0;
 	uint16 RuntimeValue219 = 0;
 	uint16 RuntimeSlotValues[0x15] = { 0 };
+	bool RuntimeFlag22F = false;
 	bool IsClickable = true;
 	bool IsVisible = true;
 	bool HasBoundsAttachment = false;
