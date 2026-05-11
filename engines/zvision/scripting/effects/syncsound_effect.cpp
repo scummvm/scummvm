@@ -33,48 +33,18 @@
 namespace ZVision {
 
 SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::Path &filename, int32 syncto)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_AUDIO) {
+	: MusicNode(engine, key, filename, false, Audio::Mixer::kMaxChannelVolume) {
 	_syncto = syncto;
-	_sub = 0;
-
-	Audio::RewindableAudioStream *audioStream = NULL;
-
-	if (filename.baseName().contains(".wav")) {
-		Common::File *file = new Common::File();
-		if (file->open(filename)) {
-			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-		}
-	} else {
-		audioStream = makeRawZorkStream(filename, _engine);
-	}
-
-	_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream);
-
-	Common::String subname = filename.baseName();
-	subname.setChar('s', subname.size() - 3);
-	subname.setChar('u', subname.size() - 2);
-	subname.setChar('b', subname.size() - 1);
-
-	Common::Path subpath(filename.getParent().appendComponent(subname));
-	if (SearchMan.hasFile(subpath))
-		_sub = _engine->getSubtitleManager()->create(subpath, _handle); // NB automatic subtitle!
 }
 
 SyncSoundNode::~SyncSoundNode() {
-	_engine->_mixer->stopHandle(_handle);
-	if (_sub)
-		_engine->getSubtitleManager()->destroy(_sub);
 }
 
 bool SyncSoundNode::process(uint32 deltaTimeInMillis) {
-	if (! _engine->_mixer->isSoundHandleActive(_handle))
+	if (_engine->getScriptManager()->getSideFX(_syncto) == NULL)
 		return stop();
-	else {
-
-		if (_engine->getScriptManager()->getSideFX(_syncto) == NULL)
-			return stop();
-	}
-	return false;
+	else
+		return MusicNode::process(deltaTimeInMillis);
 }
 
 } // End of namespace ZVision
