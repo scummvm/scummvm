@@ -162,6 +162,8 @@ class GameObject;
 
 			bool isTimerActive = false;
 			uint32 timerEndMillis;
+			bool isFrameWaitActive = false;
+			uint16 frameWaitTicksRemaining = 0;
 
 			// We use this array to gather the dialogue choices as they come in
 			Common::Array<Common::StringArray> DialogueChoices;
@@ -223,7 +225,7 @@ class GameObject;
 			
 
 			// 01E7:A903
-			void ScriptPrintString();
+			void ScriptPrintString(bool alignRight = false);
 
 			Common::StringArray debugBuffer;
 			bool lastOpcodeTriggeredSkip = false;
@@ -312,6 +314,8 @@ class GameObject;
 
 			void StartTimer(uint32 duration);
 			void EndTimer();
+			void StartFrameWait(uint16 duration);
+			void EndFrameWait();
 
 			bool isRunningScript = false;
 			bool isAwaitingCallback = false;
