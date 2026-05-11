@@ -65,7 +65,7 @@ private:
 
 	// If this is set, a lerp to a location becomes picking up
 	// TODO: Replace by more proper task implementation later
-	Character *objectToPickUp = nullptr;
+	Macs2::GameObject *pickedUpObject = nullptr;
 
 	// Simple timer to keep track of how long we play the picking up animation
 	float pickupAnimationEndTime= -1.0f;
@@ -122,7 +122,7 @@ private:
 		Macs2::AnimFrame *GetCurrentPortrait();
 		void StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 
-		void StartPickup(Character *object);
+		void StartPickup(Macs2::GameObject *object);
 
 		// Handles setting this character up to send an event to the script executor when finished
 		// and will send the event right away in case the last movement is already done
@@ -228,6 +228,8 @@ public:
 
 	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
 	void SetInventorySource(GameObject *newInventorySource);
+	void OpenInventory(GameObject *newInventorySource);
+	void CloseInventory();
 
 	bool IsInventorySourceProtagonist() const;
 

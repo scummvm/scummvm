@@ -248,6 +248,9 @@ class GameObject;
 			// This is where a secondary inventory was last opened,
 			// when it is closed, we need to execute from here
 			uint32 secondaryInventoryLocation;
+			bool hasPendingExternalInventoryResume = false;
+			uint16 externalInventorySourceObjectID = 0;
+			MouseMode savedExternalInventoryMouseMode = MouseMode::Use;
 
 			// Implements a lookup in the "areas" map
 			uint16 Func101D(uint16 x, uint16 y);
@@ -279,6 +282,10 @@ class GameObject;
 
 			// Is set to true in opcode 2C if an object is inside another target object
 			bool global103C = false;
+			bool pickupInProgress = false;
+			uint16 pickupActorObjectID = 0;
+			uint16 pickupTargetObjectID = 0;
+			MouseMode savedPickupMouseMode = MouseMode::Use;
 
 			// TODO: Mockup variable to simulate conditions where the scripting
 			// function would be called again, like after a walk to event
