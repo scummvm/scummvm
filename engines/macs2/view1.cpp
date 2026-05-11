@@ -29,6 +29,10 @@
 #include <math/vector2d.h>
 
 namespace Macs2 {
+namespace {
+constexpr int kNumLoadedCursors = 5;
+}
+
 void View1::OpenInventory(GameObject *newInventorySource) {
 	if (newInventorySource == nullptr) {
 		warning("Tried to open inventory for a null source");
@@ -112,14 +116,22 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 }
 void View1::UpdateCursor() {
 	int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
-	CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
+	if (mode < 0 || mode >= kNumLoadedCursors) {
+		warning("Invalid cursor mode %d, falling back to Use cursor", mode);
+		mode = (int)Script::MouseMode::Use - (int)Script::MouseMode::Talk;
+	}
+
+	if (g_engine->_cursorData[mode] == nullptr || g_engine->_cursorWidths[mode] == 0 || g_engine->_cursorHeights[mode] == 0) {
+		warning("Cursor data for mode %d is invalid", mode);
+		return;
+	}
+
+	CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[mode] >> 1, 0);
 }
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
-		// TODO: Adjust for final min value
-		int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
-		g_engine->_cursorData[mode][(g_engine->_cursorWidths[mode] >> 1) + (g_engine->_cursorHeights[0] >> 1) * g_engine->_cursorWidths[mode]] = 0xFF;
-		CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
+		currentSpeechActData.onRightSide = false;
+		UpdateCursor();
 		CursorMan.showMouse(true);
 
 		// TODO: Check if this works like this
@@ -128,6 +140,7 @@ View1::View1() : UIElement("View1") {
 		// TODO: Remember that the game starts enumerating objects at 1 and not at 0
 		protagonist->GameObject = GameObjects::instance().Objects[0x0];
 		characters.push_back(protagonist);
+		inventorySource = protagonist->GameObject;
 
 		// inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
 
@@ -273,12 +286,6 @@ View1::View1() : UIElement("View1") {
 		// TODO: Draw the border
 
 		AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait();
-		if (currentSpeechActData.onRightSide) {
-			// TODO: Need to measure the string box for this one
-			// TODO: Temporary fix by moving it to the left side
-			currentSpeechActData.position.x = 10;
-		}
-		// TODO: Add the else block
 
 		// See l0037_B462: for the calculations below
 		// Draw the border
@@ -671,8 +678,13 @@ View1::View1() : UIElement("View1") {
 			if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
 				// TODO: Should address the protagonist differently
 				// TODO: Sort out the different modes and only define them once
-				
-				GetCharacterByIndex(1)->StartLerpTo(msg._pos, 1000);
+				Character *protagonist = GetCharacterByIndex(1);
+				if (protagonist == nullptr) {
+					warning("Ignoring walk click without protagonist character in the active scene");
+					return true;
+				}
+
+				protagonist->StartLerpTo(msg._pos, 1000);
 				return true;
 			}
 
@@ -726,6 +738,11 @@ View1::View1() : UIElement("View1") {
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	// close();
+	if (_isShowingStringBox && !_isShowingDialogueChoice) {
+		clearStringBox();
+		return true;
+	}
+
 	if (msg.ascii == (uint16)'t') {
 		if (_isShowingInventory && activeInventoryItem != nullptr) {
 			if (inventorySource->Index == 1) {
@@ -1385,8 +1402,6 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 }
 
 void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
-	 
-	
 	setStringBox(strings);
 	_isShowingDialogueChoice = false;
 	_dialogueChoiceCount = 0;
@@ -1396,6 +1411,28 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	currentSpeechActData.strings = strings;
 	currentSpeechActData.position = position;
 	currentSpeechActData.onRightSide = onRightSide;
+
+	const int totalWidth = g_engine->MeasureStrings(strings) + 0x12;
+	const int totalHeight = g_engine->MeasureStringsVertically(strings) + 0x10;
+	int stringBoxX = position.x;
+	int stringBoxY = position.y;
+
+	if (currentSpeechActData.speaker != nullptr) {
+		AnimFrame *portrait = currentSpeechActData.speaker->GetCurrentPortrait();
+		if (portrait != nullptr) {
+			const int portraitWidth = portrait->Width + 0xD;
+			const int portraitGap = 6;
+			if (onRightSide) {
+				stringBoxX = position.x - totalWidth - portraitGap;
+			} else {
+				stringBoxX = position.x + portraitWidth + portraitGap;
+			}
+		}
+	}
+
+	stringBoxX = MAX(0, MIN(320 - totalWidth, stringBoxX));
+	stringBoxY = MAX(0, MIN(200 - totalHeight, stringBoxY));
+	stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 
 	if (autoclickActive) {
 		clearStringBox();

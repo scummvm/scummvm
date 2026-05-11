@@ -76,7 +76,11 @@ inline void ScriptExecutor::FuncA3D2() {
 	}
 	
 	isSkipping = true;
-	assert(expectedEndLocation == _stream->pos());
+	if (expectedEndLocation != _stream->pos()) {
+		warning("Macs2::ScriptExecutor::FuncA3D2 resyncing stream from %u to %u",
+				(uint32)expectedEndLocation, (uint32)_stream->pos());
+		expectedEndLocation = _stream->pos();
+	}
 	int skipDepth = 1;
 	const int64 lastHeaderPos = MAX<int64>(0, _stream->size() - 2);
 	while ((skipDepth != 0) && (_stream->pos() <= lastHeaderPos)) {
@@ -127,7 +131,11 @@ void ScriptExecutor::FuncA37A() {
 	}
 
 	isSkipping = true;
-	assert(expectedEndLocation == _stream->pos());
+	if (expectedEndLocation != _stream->pos()) {
+		warning("Macs2::ScriptExecutor::FuncA37A resyncing stream from %u to %u",
+				(uint32)expectedEndLocation, (uint32)_stream->pos());
+		expectedEndLocation = _stream->pos();
+	}
 	int skipDepth = 1;
 	const int64 lastHeaderPos = MAX<int64>(0, _stream->size() - 2);
 	while ((skipDepth != 0) && (_stream->pos() <= lastHeaderPos)) {
@@ -1092,7 +1100,7 @@ uint16 ScriptExecutor::Func101D(uint16 x, uint16 y) {
 	return result;
 }
 
-void ScriptExecutor::ScriptPrintString() {
+void ScriptExecutor::ScriptPrintString(bool alignRight) {
 
 	// TODO: Labels above not handled yet
 	// TODO: Lots of details not handled
@@ -1114,6 +1122,10 @@ void ScriptExecutor::ScriptPrintString() {
 		strings = g_engine->DecodeStrings(s, bp2, bp4);
 	}
 	
+	if (alignRight) {
+		x -= g_engine->MeasureStrings(strings) + 0x12;
+	}
+
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	currentView->setStringBoxAt(strings, Common::Point(x, y));
@@ -1185,7 +1197,11 @@ void ScriptExecutor::DumpWholeScript() {
 		// Make sure we have read all the bytes we should have read
 		// TODO: Think about if we should also check this on exiting the function,
 		// maybe we miss some cases like this
-		assert(_stream->pos() == expectedEndLocation);
+		if (_stream->pos() != expectedEndLocation) {
+			warning("Macs2::ScriptExecutor::DumpWholeScript resyncing stream from %u to %u",
+					(uint32)expectedEndLocation, (uint32)_stream->pos());
+			expectedEndLocation = _stream->pos();
+		}
 
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
@@ -1589,7 +1605,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// Make sure we have read all the bytes we should have read
 		// TODO: Think about if we should also check this on exiting the function,
 		// maybe we miss some cases like this
-		assert(_stream->pos() == expectedEndLocation);
+		if (_stream->pos() != expectedEndLocation) {
+			warning("Macs2::ScriptExecutor::ExecuteScript resyncing stream from %u to %u",
+					(uint32)expectedEndLocation, (uint32)_stream->pos());
+			expectedEndLocation = _stream->pos();
+		}
 
 		// Read an opcode and length
 		byte opcode1 = ReadByte(); // [bp - 1h]
@@ -1794,6 +1814,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to be able to address the character objects by ID, now relying
 			// on the fact that they were added in a specific order
 			Character *c = currentView->GetCharacterByIndex(objectID);
+			if (c == nullptr) {
+				warning("Ignoring walk-to for missing character %u", objectID);
+				continue;
+			}
 			// TODO: Figure out what determines if a movement ignores obstacles on the way
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000, true);
 		} else if (opcode1 == 0x11) {
@@ -1985,16 +2009,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (opcode1 == 0x0E) {
 			FuncB6BE_actual();
 		} else if (opcode1 == 0x0F) {
-			// This is a timer for waiting to advance
-			// TODO: Mocked reads to advance the file correctly
-			// TODO: These might be conditional so they might break
-			// for another example
+			// The original interpreter stores a frame countdown that is decremented
+			// once per game tick, rather than using a wall-clock timer.
 			uint16 duration = Func9F4D_16();
 			requestCallback = false;
-			// TODO: Need to figure out the units/duration of the timer
-			constexpr uint32 durationMultiplier = 50;
-			// constexpr uint32 durationMultiplier = 1;
-			StartTimer(duration * durationMultiplier);
+			StartFrameWait(duration);
 			isAwaitingCallback = true;
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
@@ -2290,7 +2309,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: This calls the same function as the print string but adds a param
 			// which changes behaviour in the function
 			// TODO: Implement the change by the flag
-			ScriptPrintString();
+			ScriptPrintString(true);
 			// TODO: Proper end handling
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
@@ -2435,16 +2454,17 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// Scene initialization run
 		// TODO: Need to better encapsulate this down the road
 		// TODO: Not sure which order is really right, need to check in SIS logs
-		if (_state != ExecutorState::WaitingForCallback) {
+		const bool resumingAfterCallback = (_state == ExecutorState::WaitingForCallback);
+		if (!resumingAfterCallback) {
 			// TODO: Not sure if this is the right place and condition to reset this
 			// variable. Context here is that we might have an object that triggers several
 			// description strings in a row, and we would disable the executing object
 			// if we always reset this object
 			// TODO: Watch out for issues caused by this
 			_executingScriptObjectID = 0;
+			IsRepeatRun = false;
+			IsSceneInitRun = firstRun;
 		}
-		IsRepeatRun = false;
-		IsSceneInitRun = firstRun;
 		_state = ExecutorState::Executing;
 		Step();
 	}
@@ -2459,6 +2479,16 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	}
 
 	void ScriptExecutor::tick() {
+		if (isFrameWaitActive) {
+			if (frameWaitTicksRemaining > 0) {
+				--frameWaitTicksRemaining;
+			}
+			if (frameWaitTicksRemaining == 0) {
+				isFrameWaitActive = false;
+				Run();
+			}
+		}
+
 		if (isTimerActive) {
 			if (g_engine->currentMillis > timerEndMillis) {
 				isTimerActive = false;
@@ -2476,6 +2506,16 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 	void ScriptExecutor::EndTimer() {
 		isTimerActive = false;
+	}
+
+	void ScriptExecutor::StartFrameWait(uint16 duration) {
+		isFrameWaitActive = true;
+		frameWaitTicksRemaining = duration;
+	}
+
+	void ScriptExecutor::EndFrameWait() {
+		isFrameWaitActive = false;
+		frameWaitTicksRemaining = 0;
 	}
 
 	void ScriptExecutor::Rewind() {

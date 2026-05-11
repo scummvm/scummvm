@@ -757,6 +757,13 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Refresh the surface
 	currentView->_backgroundSurface = _bgImageShip;
+	currentView->clearStringBox(false);
+	currentView->_drawnStringBox.clear();
+	currentView->_continueScriptAfterUI = false;
+	currentView->currentSpeechActData = SpeechActData();
+	currentView->_isShowingInventory = false;
+	currentView->activeInventoryItem = nullptr;
+	currentView->isShowingMainMenu = false;
 
 	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->characters) {
@@ -1368,10 +1375,12 @@ void Macs2Engine::playTestSound() {
 	Audio::Mixer::SoundType soundType = Audio::Mixer::SoundType::kPlainSoundType;
 	Audio::SoundHandle soundHandle;
 	MacsAudioStream *audioStream = new MacsAudioStream();
-	audioStream->_fileStream = _fileStream;
-	audioStream->startPosition = 0x000B66DE + 4;
 	audioStream->pos = 0;
-	audioStream->length = 0x1E42;
+	audioStream->_data.resize(0x1E42);
+	const int64 oldPos = _fileStream->pos();
+	_fileStream->seek(0x000B66DE + 4, SEEK_SET);
+	_fileStream->read(audioStream->_data.data(), audioStream->_data.size());
+	_fileStream->seek(oldPos, SEEK_SET);
 	// TODO: Convert 8 bit to 16 signed 
 	mixer->playStream(soundType, &soundHandle, audioStream);
 	
@@ -1786,12 +1795,11 @@ uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
 
 int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int numSamplesRead = 0;
-	_fileStream->seek(startPosition + pos, SEEK_SET);
 	for (int i = 0; i < numSamples; i++) {
-		if (pos >= length) {
+		if (pos >= _data.size()) {
 			return numSamplesRead;
 		}
-		buffer[i] = 0 + _fileStream->readByte();
+		buffer[i] = _data[pos];
 		numSamplesRead++;
 		pos++;
 	}
@@ -1807,16 +1815,21 @@ int MacsAudioStream::getRate() const {
 }
 
 bool MacsAudioStream::endOfData() const {
-	return pos >= length;
+	return pos >= _data.size();
 }
 
 bool MacsAudioStream::seek(const Audio::Timestamp &where) {
-	// TODO: Figure this one out
+	const int64 targetPos = where.msecs() * getRate() / 1000;
+	if (targetPos < 0 || targetPos > _data.size()) {
+		return false;
+	}
+
+	pos = targetPos;
 	return true;
 }
 
 Audio::Timestamp MacsAudioStream::getLength() const {
-	return Audio::Timestamp();
+	return Audio::Timestamp(0, _data.size(), getRate());
 }
 
 } // End of namespace Macs2
