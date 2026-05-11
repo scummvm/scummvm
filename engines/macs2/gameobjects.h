@@ -78,6 +78,7 @@ public:
 	uint16 Index;
 
 	Common::Array<uint8> overloadAnimation;
+	uint16 overloadAnimationSourceKey = 0;
 	bool useOverloadAnimation = false;
 
 	// These are the values read by the code around l0037_082D:
@@ -89,6 +90,7 @@ public:
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.
 	Common::Array<Common::Array<uint8> > Blobs;
+	Common::Array<uint16> BlobSourceKeys;
 
 	// The object-specific script
 	// TODO: Random thought - do objects have their own space for script variables?

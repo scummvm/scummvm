@@ -193,6 +193,8 @@ class GameObject;
 			// 0037h:0A439h
 			void SkipUntil14();
 
+			bool IsPathWalkable(const Common::Point &from, const Common::Point &to);
+
 			// void Func101D(uint16 x, uint16 y);
 			
 			void Func9F4D(uint16 &out1, uint16 &out2);
@@ -261,6 +263,7 @@ class GameObject;
 			// in the obstacles/pathfinding map
 			// Should be 1 while we execute a "character stopped walking" script,
 			// otherwise 0
+			bool global103A = false;
 			bool global1032 = false;
 
 			// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
@@ -284,6 +287,9 @@ class GameObject;
 
 			// Is set to true in opcode 2C if an object is inside another target object
 			bool global103C = false;
+			bool global103E = false;
+			bool global1040 = false;
+			bool global1042 = false;
 			bool pickupInProgress = false;
 			uint16 pickupActorObjectID = 0;
 			uint16 pickupTargetObjectID = 0;

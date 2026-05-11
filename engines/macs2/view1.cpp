@@ -57,6 +57,8 @@ void View1::OpenInventory(GameObject *newInventorySource) {
 	_isShowingInventory = true;
 	inventoryPage = 0;
 	activeInventoryItem = nullptr;
+	g_engine->_scriptExecutor->global1040 = false;
+	g_engine->_scriptExecutor->global1042 = false;
 	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
 		g_engine->SetCursorMode(Script::MouseMode::Use);
 		UpdateCursor();
@@ -72,6 +74,8 @@ void View1::CloseInventory() {
 	_isShowingInventory = false;
 	inventoryPage = 0;
 	activeInventoryItem = nullptr;
+	g_engine->_scriptExecutor->global1040 = false;
+	g_engine->_scriptExecutor->global1042 = false;
 
 	if (shouldResumeExternalInventory) {
 		g_engine->SetCursorMode(g_engine->_scriptExecutor->savedExternalInventoryMouseMode);
@@ -643,6 +647,7 @@ void View1::handleFading() {
 					// right number prefix like here 419 instead of 19?
 					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + firstObject->Index;
 					g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
+					g_engine->_scriptExecutor->global1042 = true;
 					g_engine->RunScriptExecutor(false);
 				}
 				

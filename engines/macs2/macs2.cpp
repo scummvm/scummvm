@@ -188,6 +188,7 @@ void Macs2Engine::readResourceFile() {
 			_fileStream->read(data, dataSize);
 			// TODO: Place this data in the game object and create the game object
 			gameObject->Blobs.push_back(Common::Array<uint8>(data, dataSize));
+			gameObject->BlobSourceKeys.push_back(unknown2);
 			// Load three values here
 			// l0037_0B62:
 			// Data at offset +Ch
@@ -764,6 +765,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->_isShowingInventory = false;
 	currentView->activeInventoryItem = nullptr;
 	currentView->isShowingMainMenu = false;
+	_scriptExecutor->global1040 = false;
+	_scriptExecutor->global1042 = false;
 
 	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->characters) {
@@ -1341,8 +1344,11 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	Common::Array<uint8> *targetBlob = nullptr;
 	if (slotIndex == 0x15) {
 		targetBlob = &go->overloadAnimation;
+		go->overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
 	} else if (slotIndex - 1 < go->Blobs.size()) {
 		targetBlob = &go->Blobs[slotIndex - 1];
+		if (slotIndex - 1 < go->BlobSourceKeys.size())
+			go->BlobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
 	}
 
 	if (targetBlob == nullptr) {
