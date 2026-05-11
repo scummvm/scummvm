@@ -2077,11 +2077,34 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint32 actorIndex = Func9F4D_32() - 0x400;
 			uint32 objectIndex = Func9F4D_32() -0x400;
 
-			// TODO: For now, handle this as a special case of lerping to a position
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			Character *actor = currentView->GetCharacterByIndex(actorIndex);
-			Character *object = currentView->GetCharacterByIndex(objectIndex);
-			actor->StartPickup(object);
+			GameObject *targetObject = GameObjects::GetObjectByIndex(objectIndex);
+			if (pickupInProgress) {
+				EndTimer();
+				EndBuffering(lastOpcodeTriggeredSkip);
+				return ExecutionResult::WaitingForCallback;
+			}
+			if (actor == nullptr || targetObject == nullptr) {
+				warning("Invalid pickup request for actor %u target %u", actorIndex, objectIndex);
+				continue;
+			}
+			if (actorIndex == objectIndex || targetObject->SceneIndex == actor->GameObject->Index) {
+				warning("Ignoring invalid pickup request for actor %u target %u", actorIndex, objectIndex);
+				continue;
+			}
+			if (targetObject->SceneIndex != actor->GameObject->SceneIndex) {
+				warning("Ignoring pickup across scenes for actor %u target %u", actorIndex, objectIndex);
+				continue;
+			}
+			pickupInProgress = true;
+			pickupActorObjectID = actorIndex;
+			pickupTargetObjectID = objectIndex;
+			savedPickupMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
+			currentView->activeInventoryItem = nullptr;
+			_engine->SetCursorMode(savedPickupMouseMode);
+			currentView->UpdateCursor();
+			actor->StartPickup(targetObject);
 			requestCallback = false;
 			isAwaitingCallback = true;
 			// TODO: Could be special for me with the short timer times, but it can happen
@@ -2237,15 +2260,17 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x29) {
 			uint32 objectID = Func9F4D_32();
 			objectID -= 0x400;
-			// Skip to the end of the script
-			// _stream->seek(0, SEEK_END);
-			// expectedEndLocation = _stream->pos();
-			// Need to open a secondary inventory
-			// TODO: Encapsulate this code
 			View1 *currentView = (View1 *)_engine->findView("View1");
-			currentView->SetInventorySource(GameObjects::instance().Objects[objectID - 1]);
-			currentView->_isShowingInventory = true;
+			GameObject *inventorySource = GameObjects::GetObjectByIndex(objectID);
+			if (inventorySource == nullptr) {
+				warning("Invalid inventory source object %u", objectID);
+				continue;
+			}
+			savedExternalInventoryMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
+			hasPendingExternalInventoryResume = true;
+			externalInventorySourceObjectID = objectID;
 			secondaryInventoryLocation = _stream->pos();
+			currentView->OpenInventory(inventorySource);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x2A) {
 			uint32 objectID = Func9F4D_32() - 0x400;
