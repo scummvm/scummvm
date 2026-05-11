@@ -848,11 +848,11 @@ Common::String Window::formatWindowInfo() {
 	Common::Rect dims = _window->getDimensions();
 	Common::Rect innerDims = _window->getInnerDimensions();
 	return Common::String::format(
-			"name: \"%s\", movie: \"%s\", currentPath: \"%s\", dims: (%d,%d) %dx%d, innerDims: (%d, %d) %dx%d, visible: %d",
+			"name: \"%s\", movie: \"%s\", currentPath: \"%s\", dims: (%d,%d) %dx%d, innerDims: (%d, %d) %dx%d, visible: %d\n  %s",
 			_name.c_str(), _currentMovie->getMacName().c_str(), _currentPath.c_str(),
 			dims.left, dims.top, dims.width(), dims.height(),
 			innerDims.left, innerDims.top, innerDims.width(), innerDims.height(),
-			_window->isVisible()
+			_window->isVisible(), _currentMovie->formatMovieInfo().c_str()
 	);
 }
 

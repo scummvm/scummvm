@@ -144,6 +144,8 @@ public:
 	void processEvent(LEvent event, int targetId = 0);
 	void queueInputEvent(LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
 
+	Common::String formatMovieInfo();
+
 private:
 	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
 
