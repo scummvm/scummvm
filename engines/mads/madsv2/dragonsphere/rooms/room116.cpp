@@ -845,6 +845,8 @@ static void room_116_parser() {
 		}
 	}
 
+	goto done;
+
 handled:
 	player.command_ready = false;
 
@@ -853,7 +855,23 @@ done:
 }
 
 void room_116_synchronize(Common::Serializer &s) {
-	
+	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
+	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
+	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	s.syncAsSint16LE(scratch.temp);
+	s.syncAsSint16LE(scratch.kingsicle_id);
+	s.syncAsSint16LE(scratch.bear_status);
+	s.syncAsSint16LE(scratch.animation_running);
+	s.syncAsSint16LE(scratch.current_frame);
+	s.syncAsSint16LE(scratch.just_melted);
+	s.syncAsSint16LE(scratch.king_frame);
+	s.syncAsSint16LE(scratch.king_action);
+	s.syncAsSint16LE(scratch.king_talk_count);
+	s.syncAsSint16LE(scratch.anim_1_running);
+	s.syncAsSint16LE(scratch.lift_frame);
+	s.syncAsSint16LE(scratch.lift_action);
+	s.syncAsSint16LE(scratch.anim_2_running);
+	s.syncAsSint16LE(scratch.invoked_ring);
 }
 
 void room_116_preload() {
