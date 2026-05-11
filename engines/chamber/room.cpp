@@ -299,18 +299,18 @@ void drawBackground(byte *target, byte vblank) {
 	int16 i;
 	uint16 offs = (2 / 2) * CGA_BYTES_PER_LINE + 8;   /*TODO: calcxy?*/
 	byte *pixels = gauss_data + 0x3C8; /*TODO: better const*/
+	if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
+		background_draw_steps = background_draw_steps_cga;
+	} else {
+		background_draw_steps = background_draw_steps_hga;
+	}
 	for (i = 0; i < 53; i++) {
 		/*draw a tile, alternating between two variants*/
 		g_vm->_renderer->blit(pixels + (i & 1 ? 0 : kBgW * kBgH), kBgW, kBgW, kBgH, target, offs);
-		if (vblank)
-			waitVBlank();
-		if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
-			background_draw_steps = background_draw_steps_cga;
-		} else {
-			background_draw_steps = background_draw_steps_hga;
-		}
 		offs += background_draw_steps[i];
 	}
+	if (vblank)
+		waitVBlank();
 
 	offs = (182 / 2) * CGA_BYTES_PER_LINE;  /*TODO: calcxy?*/
 	for (i = 0; i < 9; i++) {
@@ -546,8 +546,6 @@ void drawRoomDoor(void) {
 		else
 			g_vm->_renderer->blitSpriteFlip(pixels, pitch, w, h, backbuffer, offs);
 	}
-	waitVBlank();
-	waitVBlank();
 	g_vm->_renderer->copyScreenBlock(backbuffer, info->width, info->height, frontbuffer, info->offs);
 }
 
@@ -568,7 +566,7 @@ void animRoomDoorOpen(byte index) {
 	oldheight = info->layer[1].height;
 
 	for (i = 0; i < oldheight / 2; i++) {
-#if 1
+#if 0
 		drawRoomDoor();
 #endif
 		info->layer[1].height -= 2;
@@ -606,7 +604,7 @@ void animRoomDoorClose(byte index) {
 	info->layer[1].height = 1;
 
 	for (i = 0; i < oldheight / 2; i++) {
-#if 1
+#if 0
 		drawRoomDoor();
 #endif
 		info->layer[1].height += 2;
@@ -1039,9 +1037,6 @@ void refreshZone(void) {
 	popDirtyRects(DirtyRectSprite);
 	popDirtyRects(DirtyRectBubble);
 	popDirtyRects(DirtyRectText);
-
-	if (!skip_zone_transition && !right_button)
-		drawBackground(SCREENBUFFER, 1);
 
 	g_vm->_renderer->backBufferToRealFull();
 
