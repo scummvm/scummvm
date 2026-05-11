@@ -1529,8 +1529,8 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 	HotSpot *hovered = getHoveredHotspot(nodeData, var);
 	if (hovered) {
 		_cursor->setVisible(false);
-		// enable free camera movement after placing the symbol on the pedestal
-		// fix for bug #16758
+		// Enable free camera movement after placing the symbol on the imaging/scanner table.
+		// Part of fix for #16758
 		_cursor->lockPosition(true);
 		_scriptEngine->run(&hovered->script);
 		_cursor->setVisible(true);
