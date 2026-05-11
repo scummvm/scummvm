@@ -29,6 +29,48 @@
 #include <math/vector2d.h>
 
 namespace Macs2 {
+void View1::OpenInventory(GameObject *newInventorySource) {
+	if (newInventorySource == nullptr) {
+		warning("Tried to open inventory for a null source");
+		return;
+	}
+
+	SetInventorySource(newInventorySource);
+	_isShowingInventory = true;
+	inventoryPage = 0;
+	activeInventoryItem = nullptr;
+	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
+		g_engine->SetCursorMode(Script::MouseMode::Use);
+		UpdateCursor();
+	}
+}
+
+void View1::CloseInventory() {
+	if (!_isShowingInventory) {
+		return;
+	}
+
+	const bool shouldResumeExternalInventory = !IsInventorySourceProtagonist() && g_engine->_scriptExecutor->hasPendingExternalInventoryResume;
+	_isShowingInventory = false;
+	inventoryPage = 0;
+	activeInventoryItem = nullptr;
+
+	if (shouldResumeExternalInventory) {
+		g_engine->SetCursorMode(g_engine->_scriptExecutor->savedExternalInventoryMouseMode);
+		UpdateCursor();
+		SetInventorySource(GameObjects::instance().GetProtagonistObject());
+		g_engine->_scriptExecutor->hasPendingExternalInventoryResume = false;
+		g_engine->_scriptExecutor->externalInventorySourceObjectID = 0;
+		g_engine->_scriptExecutor->SetCurrentSceneScriptAt(g_engine->_scriptExecutor->secondaryInventoryLocation);
+		g_engine->RunScriptExecutor();
+		return;
+	}
+
+	if (!IsInventorySourceProtagonist()) {
+		SetInventorySource(GameObjects::instance().GetProtagonistObject());
+	}
+}
+
 void View1::SetInventorySource(GameObject *newInventorySource) {
 	inventorySource = newInventorySource;
 	// TODO: Make sure the assignment per object is saved correctly
@@ -535,7 +577,8 @@ View1::View1() : UIElement("View1") {
 
 						} break;
 						case static_cast<int>(InventoryButtonIndex::Close): {
-							_isShowingInventory = false;
+							CloseInventory();
+							return true;
 						}
 						}
 					}
@@ -601,7 +644,7 @@ View1::View1() : UIElement("View1") {
 						} break;
 						case static_cast<int>(MainMenuButtonIndex::Inventory): {
 							isShowingMainMenu = false;
-							_isShowingInventory = true;
+							OpenInventory(GameObjects::instance().GetProtagonistObject());
 						} break;
 						
 
@@ -719,17 +762,9 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		GetCharacterByIndex(1)->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
 		if (!_isShowingInventory) {
-			SetInventorySource(GameObjects::instance().GetProtagonistObject());
-		}
-		_isShowingInventory = !_isShowingInventory;
-		inventoryPage = 0;
-		// If we closed an external inventory, we need to continue where we left
-		// to have the chance to do closing of containers etc.
-		if (!_isShowingInventory && !IsInventorySourceProtagonist()) {
-			// TODO: This would probably need to capture the state of the script executor better,
-			// e.g. by capturing which script we were running etc.
-			g_engine->_scriptExecutor->SetCurrentSceneScriptAt(g_engine->_scriptExecutor->secondaryInventoryLocation);
-			g_engine->RunScriptExecutor();
+			OpenInventory(GameObjects::instance().GetProtagonistObject());
+		} else {
+			CloseInventory();
 		}
 	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
 		// Register a dialogue choice and act upon it
@@ -2112,10 +2147,10 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool i
 	GameObject->Orientation = segment + 1;
 }
 
-void Character::StartPickup(Character *object) {
-	objectToPickUp = object;
+void Character::StartPickup(Macs2::GameObject *object) {
+	pickedUpObject = object;
 	ExecuteScriptOnFinishLerp = true;
-	StartLerpTo(objectToPickUp->GetPosition(), 1000);
+	StartLerpTo(pickedUpObject->Position, 1000);
 }
 
 void Character::RegisterWaitForMovementFinishedEvent() {
@@ -2133,15 +2168,47 @@ void Character::Update() {
 			GameObject->Orientation = previousOrientation;
 			pickupAnimationEndTime = -1.0f;
 			View1 *currentView = (View1 *)g_engine->findView("View1");
-			int index = currentView->GetCharacterArrayIndex(objectToPickUp);
-			currentView->inventoryItems.push_back(objectToPickUp->GameObject);
-			currentView->characters.remove_at(index);
-			// Give it to the protagonist
-			objectToPickUp->GameObject->SceneIndex = 1;
-			objectToPickUp = nullptr;
+			Character *pickedUpCharacter = currentView->GetCharacterByIndex(pickedUpObject->Index);
+			if (pickedUpCharacter != nullptr) {
+				int index = currentView->GetCharacterArrayIndex(pickedUpCharacter);
+				if (index >= 0) {
+					currentView->characters.remove_at(index);
+				}
+			}
+			pickedUpObject->SceneIndex = GameObject->Index;
+			if (currentView->inventorySource != nullptr && currentView->inventorySource->Index == GameObject->Index) {
+				currentView->inventoryItems.push_back(pickedUpObject);
+			}
+			if (g_engine->_scriptExecutor->pickupInProgress) {
+				g_engine->_scriptExecutor->pickupInProgress = false;
+				g_engine->_scriptExecutor->pickupActorObjectID = 0;
+				g_engine->_scriptExecutor->pickupTargetObjectID = 0;
+				g_engine->SetCursorMode(g_engine->_scriptExecutor->savedPickupMouseMode);
+				currentView->UpdateCursor();
+			}
+			pickedUpObject = nullptr;
 			// From here on the interacted object should become 0
 			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
+			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
+			if (ExecuteScriptOnFinishLerp) {
+				ExecuteScriptOnFinishLerp = false;
+				g_engine->_scriptExecutor->global1032 = true;
+				g_engine->ScheduleRun();
+			}
 			return;
+		}
+		if (pickedUpObject != nullptr && pickupAnimationEndTime < 0.0f) {
+			View1 *currentView = (View1 *)g_engine->findView("View1");
+			if (g_engine->_scriptExecutor->pickupInProgress) {
+				g_engine->_scriptExecutor->pickupInProgress = false;
+				g_engine->_scriptExecutor->pickupActorObjectID = 0;
+				g_engine->_scriptExecutor->pickupTargetObjectID = 0;
+				g_engine->SetCursorMode(g_engine->_scriptExecutor->savedPickupMouseMode);
+				currentView->UpdateCursor();
+			}
+			pickedUpObject = nullptr;
+			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
+			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
 		}
 
 
@@ -2174,7 +2241,7 @@ void Character::Update() {
 		GameObject->Orientation += 8;
 
 		// Check if we need to pick something up
-		if (objectToPickUp != nullptr) {
+		if (pickedUpObject != nullptr) {
 			// Start the timer
 			pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
 			// TODO: Actual implementation lives somewhere around
