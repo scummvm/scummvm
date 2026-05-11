@@ -69,8 +69,6 @@ Common::String ScriptExecutor::IdentifyHelperOpcode(uint8 opcode, uint16 value) 
 
 inline void ScriptExecutor::FuncA3D2() {
 	lastOpcodeTriggeredSkip = true;
-	// TODO: Quality is not at the level of the rest - consider
-	// rewriting from the deassembly
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
 		SIS_Debug("-- Entering A3D2");
 	} else {
@@ -79,42 +77,40 @@ inline void ScriptExecutor::FuncA3D2() {
 	
 	isSkipping = true;
 	assert(expectedEndLocation == _stream->pos());
-	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
-	// TODO: Figure out end condition
-	for (;;) {
+	int skipDepth = 1;
+	const int64 lastHeaderPos = MAX<int64>(0, _stream->size() - 2);
+	while ((skipDepth != 0) && (_stream->pos() <= lastHeaderPos)) {
 		const byte opcode = ReadByte();
 		const byte length = ReadByte();
 		if (opcode >= 3) {
 			if (opcode <= 6) {
-				skipValue++;
+				skipDepth++;
 			}
 		}
-		if (opcode == 8) {
-			if (skipValue == 1) {
-				skipValue--;
-			}
+		if ((opcode == 8) && (skipDepth == 1)) {
+			skipDepth = 0;
 		}
 		if (opcode == 7) {
-			skipValue--;
+			skipDepth--;
 		}
-		// Do the skipping
-		_stream->seek(length, SEEK_CUR);
-		debugC(DEBUG_SV, "- A3D2 skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
 
-		// TODO: Add a log here
-		if (skipValue != 0) {
-			// Continue the loop if there is data left in the stream
-			// TODO: Check for remaining script data
-		} else {
-			if (skipValue != 0) {
-				// TODO: Implement:
-				// mov	word ptr [1028h],1Dh
-				// TODO: Add an assert here to see if this ever happens in practice
-			}
+		const int64 remainingBytes = _stream->size() - _stream->pos();
+		if (length > remainingBytes) {
+			warning("Macs2::ScriptExecutor::FuncA3D2 truncated block: opcode %.2x length %u remaining %lld",
+					opcode, length, (long long)remainingBytes);
+			_stream->seek(_stream->size(), SEEK_SET);
 			break;
 		}
-		// TODO: Continue here
+
+		_stream->seek(length, SEEK_CUR);
+		debugC(DEBUG_SV, "- A3D2 skipping %u bytes for opcode %.2x [%d]", length, opcode, skipDepth);
 	}
+
+	if (skipDepth != 0) {
+		warning("Macs2::ScriptExecutor::FuncA3D2 left skip block early at %lld/%lld",
+				(long long)_stream->pos(), (long long)_stream->size());
+	}
+
 	// Fix up the expected location after skipping
 	expectedEndLocation = _stream->pos();
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
@@ -124,8 +120,6 @@ inline void ScriptExecutor::FuncA3D2() {
 }
 
 void ScriptExecutor::FuncA37A() {
-	// TODO: Quality is not at the level of the rest - consider
-	// rewriting from the deassembly
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
 		SIS_Debug("-- Entering A37A");
 	} else {
@@ -134,35 +128,35 @@ void ScriptExecutor::FuncA37A() {
 
 	isSkipping = true;
 	assert(expectedEndLocation == _stream->pos());
-	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
-	// TODO: Figure out end condition
-	for (;;) {
+	int skipDepth = 1;
+	const int64 lastHeaderPos = MAX<int64>(0, _stream->size() - 2);
+	while ((skipDepth != 0) && (_stream->pos() <= lastHeaderPos)) {
 		const byte opcode = ReadByte();
 		const byte length = ReadByte();
 		if (opcode >= 3) {
 			if (opcode <= 6) {
-				skipValue++;
+				skipDepth++;
 			}
 		}
 		if (opcode == 7) {
-			skipValue--;
+			skipDepth--;
 		}
-		// Do the skipping
-		_stream->seek(length, SEEK_CUR);
-		debugC(DEBUG_SV, "- A37A skipping %u bytes for opcode %.2x [%u]", length, opcode, skipValue);
 
-		if (skipValue == 0) {
+		const int64 remainingBytes = _stream->size() - _stream->pos();
+		if (length > remainingBytes) {
+			warning("Macs2::ScriptExecutor::FuncA37A truncated block: opcode %.2x length %u remaining %lld",
+					opcode, length, (long long)remainingBytes);
+			_stream->seek(_stream->size(), SEEK_SET);
 			break;
 		}
-		if (_stream->eos()) {
-			break;
-		}
+
+		_stream->seek(length, SEEK_CUR);
+		debugC(DEBUG_SV, "- A37A skipping %u bytes for opcode %.2x [%d]", length, opcode, skipDepth);
 	}
 
-	if (skipValue != 0) {
-		// TODO: Implement:
-		// mov	word ptr [1028h],1Dh
-		// TODO: Add an assert here to see if this ever happens in practice
+	if (skipDepth != 0) {
+		warning("Macs2::ScriptExecutor::FuncA37A left skip block early at %lld/%lld",
+				(long long)_stream->pos(), (long long)_stream->size());
 	}
 	
 	// Fix up the expected location after skipping
@@ -1127,31 +1121,23 @@ void ScriptExecutor::ScriptPrintString() {
 
 void ScriptExecutor::BeginBuffering() {
 	lastOpcodeTriggeredSkip = false;
+	debugBuffer.clear();
 }
 
 void ScriptExecutor::EndBuffering(bool shouldMark) {
+	(void)shouldMark;
 	lastOpcodeTriggeredSkip = false;
-	for (const Common::String &currentString : debugBuffer) {
-		const Common::String prefix = shouldMark ? "** " : "";
-		debug("%s%s", prefix.c_str(), currentString.c_str());
-	}
 	debugBuffer.clear();
 }
 
 
 
 void ScriptExecutor::SIS_Debug(const char *format, ...) {
+	(void)format;
 	// TODO: Consider a refactor of the script execution, with the endbuffer needed
 	// when we finished executing one opcode, the endbuffer ends up being in too many places
 	// Would be cleaner if there was one exit of the function
-	va_list args;
-	va_start(args, format);
-
-	const Common::String line = Common::String::vformat(format, args);
-	debugBuffer.push_back(line);
-	
-
-	va_end(args);
+	return;
 }
 
 void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
@@ -1417,7 +1403,7 @@ byte Script::ScriptExecutor::ReadByte() {
 		// TODO: This had the output channel active, to consider if I want to handle this separately
 		//debugC(DEBUG_SV,"Script read (byte): %.2x at location %.4x", result, pos);
 	//} else {
-		SIS_Debug("Script read (byte): %.2x at location %.4x", result, pos);
+		SIS_Debug("Script read (byte): %.2x at location %.4x", result, (uint32)pos);
 	//}
 	return result;
 }
@@ -1425,7 +1411,7 @@ byte Script::ScriptExecutor::ReadByte() {
 uint16 Script::ScriptExecutor::ReadWord() {
 	const int64 pos = _stream->pos();
 	const uint16 result = _stream->readUint16LE();
-	SIS_Debug("Script read (word): %.4x at location %.4x", result, pos);
+	SIS_Debug("Script read (word): %.4x at location %.4x", result, (uint32)pos);
 	return result;
 }
 	
