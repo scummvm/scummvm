@@ -54,7 +54,8 @@ class GameObject;
 			// TODO: Check if correct
 			Walk = 0x16,
 			// TODO: Check if correct
-			UseInventory = 0x17
+			UseInventory = 0x17,
+			PanelUse = 0x18
 		};
 
 		enum class ExecutorState {
@@ -288,6 +289,9 @@ class GameObject;
 			// Is set to true in opcode 2C if an object is inside another target object
 			bool global103C = false;
 			bool global103E = false;
+			bool global06BE = true;
+			bool global06C0 = true;
+			bool global1F4C = false;
 			bool global1040 = false;
 			bool global1042 = false;
 			bool pickupInProgress = false;

@@ -813,6 +813,11 @@ l0037_A242:
 		out2 = 0;
 		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
+	} else if (value == 0x2C) {
+		out1 = _mouseMode == MouseMode::PanelUse ? _interactedObjectID : 0;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	}
 
 /*
@@ -971,9 +976,13 @@ l0037_A324:
 	mov	[bp-2h],ax
 
 */
-	else if (value == 0x31) {
-		// TODO: We need the values of two globals here, for now returning fixed 0
-		out1 = 0;
+	else if (value == 0x30) {
+		out1 = (global06C0 && global1F4C) ? 1 : 0;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	} else if (value == 0x31) {
+		out1 = (global06BE && global1F4C) ? 1 : 0;
 		out2 = 0;
 		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -2424,21 +2433,26 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
-			// TODO: Unknown opcode, reads a value, caps it to 64h and does something with it
-			Func9F4D_Placeholder();
+			uint16 volume = Func9F4D_16();
+			g_engine->_adlib->SetVolume(volume);
 		} else if (opcode1 == 0x32) {
-			// TODO: Unknown opcode, my first hunch is something about adjusting click
-			// checking for the mouse clicks
-			// Likely an object ID
-			Func9F4D_Placeholder();
-			// Used as a bool which will be written to a field of the object
-			Func9F4D_Placeholder();
+			uint16 objectID = Func9F4D_16() - 0x0400;
+			const uint16 clickable = Func9F4D_16();
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			if (object == nullptr) {
+				warning("Ignoring clickable toggle for invalid object %u", objectID);
+				continue;
+			}
+			object->IsClickable = clickable != 0;
 		} else if (opcode1 == 0x33) {
-				// TODO: Unknown opcode, looks very similar to 0x32
-				// Likely an object ID
-				Func9F4D_Placeholder();
-				
-				Func9F4D_Placeholder();
+			uint16 objectID = Func9F4D_16() - 0x0400;
+			const uint16 visible = Func9F4D_16();
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			if (object == nullptr) {
+				warning("Ignoring visibility toggle for invalid object %u", objectID);
+				continue;
+			}
+			object->IsVisible = visible != 0;
 		} else if (opcode1 == 0x34) {
 			// Sets an entry in the [5BD1] list for hotspot lookup
 			// [bp-2h]
@@ -2458,13 +2472,31 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				g_engine->HotspotOverrides[v1] = v2;
 			}
 		} else if (opcode1 == 0x35) {
-			// Object IDs
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			// Unknown category
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			uint16 objectID = Func9F4D_16() - 0x0400;
+			uint16 otherObjectID = Func9F4D_16() - 0x0400;
+			const uint16 value1 = Func9F4D_16();
+			const uint16 value2 = Func9F4D_16();
+			const uint16 value3 = Func9F4D_16();
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			GameObject *otherObject = GameObjects::GetObjectByIndex(otherObjectID);
+			if (object == nullptr || otherObject == nullptr) {
+				warning("Ignoring bounds attachment for invalid objects %u -> %u", objectID, otherObjectID);
+				continue;
+			}
+
+			if (objectID == otherObjectID) {
+				object->HasBoundsAttachment = false;
+				object->BoundsAttachmentObjectID = 0;
+				object->BoundsAttachmentValue1 = 0;
+				object->BoundsAttachmentValue2 = 0;
+				object->BoundsAttachmentValue3 = 0;
+			} else {
+				object->HasBoundsAttachment = true;
+				object->BoundsAttachmentObjectID = otherObjectID;
+				object->BoundsAttachmentValue1 = value1;
+				object->BoundsAttachmentValue2 = value2;
+				object->BoundsAttachmentValue3 = value3;
+			}
 		} else if (opcode1 == 0x36) {
 			// Seems to not read anything
 		} else if (opcode1 == 0x37) {

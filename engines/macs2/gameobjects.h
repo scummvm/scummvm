@@ -86,6 +86,13 @@ public:
 	uint16 SceneIndex;
 	uint16 Orientation;
 	uint16 Unknown;
+	bool IsClickable = true;
+	bool IsVisible = true;
+	bool HasBoundsAttachment = false;
+	uint16 BoundsAttachmentObjectID = 0;
+	uint16 BoundsAttachmentValue1 = 0;
+	uint16 BoundsAttachmentValue2 = 0;
+	uint16 BoundsAttachmentValue3 = 0;
 
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.

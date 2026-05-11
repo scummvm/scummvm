@@ -767,6 +767,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->isShowingMainMenu = false;
 	_scriptExecutor->global1040 = false;
 	_scriptExecutor->global1042 = false;
+	_scriptExecutor->global1F4C = false;
 
 	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->characters) {

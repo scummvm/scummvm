@@ -1259,6 +1259,14 @@ void Adlib::SetSong(Macs2::StreamHandler *sh) {
 	Func244D(shMem2250);
 }
 
+void Adlib::SetVolume(uint16 volume) {
+	if (volume > 100)
+		volume = 100;
+
+	const byte mixerVolume = static_cast<byte>((volume * Audio::Mixer::kMaxChannelVolume) / 100);
+	_opl->setVolume(mixerVolume);
+}
+
 void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	// TODO: Figure out the actual sizes
 	constexpr uint32 size = 255;
