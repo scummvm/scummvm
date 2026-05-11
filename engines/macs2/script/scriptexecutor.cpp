@@ -31,6 +31,16 @@
 namespace Macs2 {
 namespace Script {
 
+static Common::String joinDebugStrings(const Common::StringArray &strings) {
+	Common::String result;
+	for (uint i = 0; i < strings.size(); ++i) {
+		if (i != 0)
+			result += " | ";
+		result += strings[i];
+	}
+	return result;
+}
+
 #define ScriptNoEntry debug("Unhandled case in script handling.");
 #define STR_HELPER(x) #x
 
@@ -71,9 +81,9 @@ Common::String ScriptExecutor::IdentifyHelperOpcode(uint8 opcode, uint16 value) 
 inline void ScriptExecutor::FuncA3D2() {
 	lastOpcodeTriggeredSkip = true;
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		SIS_Debug("-- Entering A3D2");
+		debug("-- Entering A3D2");
 	} else {
-		SIS_Debug("-- Skipping using A3D2");
+		debug("-- Skipping using A3D2");
 	}
 	
 	isSkipping = true;
@@ -119,16 +129,16 @@ inline void ScriptExecutor::FuncA3D2() {
 	// Fix up the expected location after skipping
 	expectedEndLocation = _stream->pos();
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		SIS_Debug("-- Leaving A3D2");
+		debug("-- Leaving A3D2");
 	}
 	isSkipping = false;
 }
 
 void ScriptExecutor::FuncA37A() {
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		SIS_Debug("-- Entering A37A");
+		debug("-- Entering A37A");
 	} else {
-		SIS_Debug("-- Skipping using A37A");
+		debug("-- Skipping using A37A");
 	}
 
 	isSkipping = true;
@@ -171,7 +181,7 @@ void ScriptExecutor::FuncA37A() {
 	// Fix up the expected location after skipping
 	expectedEndLocation = _stream->pos();
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		SIS_Debug("-- Leaving A37A");
+		debug("-- Leaving A37A");
 	}
 	isSkipping = false;
 }
@@ -206,7 +216,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 
 	Common::String opcodeInfo = IdentifyHelperOpcode(opcode1, value);
 
-	SIS_Debug("- 9F4D opcode: %.2x %.4x %s", opcode1, value, opcodeInfo.c_str());
+	debug("- 9F4D opcode: %.2x %.4x %s", opcode1, value, opcodeInfo.c_str());
 
 
 	if (opcode1 == 0x0) {
@@ -214,7 +224,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		out1 = value;
 		out2 = 0;
 		// TODO: Do we need to do something to exit?
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	// l0037_9F72:
@@ -231,7 +241,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 				*/
 				// TODO: Implement the jump
 				// TODO: Add a return macro
-				SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+				debug("- 9F4D results: %.4x %.4x", out1, out2);
 				return;
 			}
 			else {
@@ -241,7 +251,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 				out1 = var.a;
 				out2 = var.b;
 				// TODO: Centralized return handling
-				SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+				debug("- 9F4D results: %.4x %.4x", out1, out2);
 				return;
 			}
 		}
@@ -249,7 +259,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// l0037_9FAE:
 	if (opcode1 != 0xFF) {
 		// TODO: Do we write out a 0 for the values?
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	// We are starting to execute opcode FFh here
@@ -260,14 +270,14 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 			// l0037_9FC7:
 			out1 = _interactedObjectID;
 			out2 = _interactedOtherObjectID;
-			SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+			debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
 		} else if (_mouseMode == MouseMode::UseInventory) {
 			// l0037_9FD9:
 			// TODO: Not sure why the original code looks so complex
 			out1 = _interactedObjectID;
 			out2 = _interactedOtherObjectID;
-			SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+			debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
 		} else {
 			out1 = out2 = 0x0000;
@@ -279,7 +289,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		} else {
 			out1 = out2 = 0x0000;
 		}	
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	// l0037_A050:
 	} else if (value == 0x4) {
@@ -290,7 +300,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		out2 = 0;
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 		/*
 		mov	di,[0776h]
@@ -307,7 +317,12 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	} else if (value == 0x7) {
 		// l0037_A095:
 		out1 = out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	} else if (value == 0x8 || value == 0x9) {
+		out1 = 0;
+		out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -391,7 +406,7 @@ l0037_A029:
 	else if (value == 0x2) {
 		out1 = _mouseMode == MouseMode::Look ? _interactedObjectID : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 		} 
 /*
@@ -456,18 +471,18 @@ else if (value == 0x6) {
 	
 	out1 = 1;
 	out2 = 0;
-	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 	} else if (value == 0xb) {
 
 		out1 = (uint16)IsRepeatRun;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0xc) {
 		out1 = 1;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -510,7 +525,7 @@ l0037_A0C0:
 
 		out1 = 1;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 		/*
@@ -565,7 +580,7 @@ else if (value == 0x0d) {
 	// TODO: Confirm this one
 	out1 = chosenDialogueOption;
 	out2 = 0;
-	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 // l0037_A120:
 } else if (value >= 0xE && value <= 0x22) {
@@ -576,7 +591,7 @@ else if (value == 0x0d) {
 } else if (value == 0x23) {
 	out1 = global103A ? 1 : 0;
 	out2 = 0;
-	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 }
 	/*
@@ -621,7 +636,7 @@ else if (value == 0x24) {
 		actor = GameObjects::GetProtagonistObject();
 	out1 = actor ? actor->Position.x : 0;
 	out2 = 0;
-	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 }
 /*
@@ -646,7 +661,7 @@ else if (value == 0x25) {
 		actor = GameObjects::GetProtagonistObject();
 	out1 = actor ? actor->Position.y : 0;
 	out2 = 0;
-	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 }
 
@@ -672,7 +687,7 @@ l0037_A1B9:
 		*/
 		out1 = (uint16)IsSceneInitRun;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	else if (value == 0x27) {
@@ -695,7 +710,7 @@ l0037_A1B9:
 		// does that come from?
 		// TODO: Fixing to 0 for now
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	
@@ -749,12 +764,12 @@ l0037_A209:
 	else if (value == 0x28) {
 		out1 = global103C ? 1 : 0;
 		out2 = 0x0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x29) {
 		out1 = global103E ? 1 : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -804,7 +819,7 @@ l0037_A242:
 			(currentView->_isShowingInventory || currentView->_isShowingStringBox || currentView->isShowingMainMenu);
 		out1 = (global1042 && !uiOpen) ? 1 : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x2B) {
 		View1 *currentView = (View1 *)_engine->findView("View1");
@@ -812,12 +827,12 @@ l0037_A242:
 			(currentView->_isShowingInventory || currentView->_isShowingStringBox || currentView->isShowingMainMenu);
 		out1 = (global1040 && !uiOpen) ? 1 : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x2C) {
 		out1 = _mouseMode == MouseMode::PanelUse ? _interactedObjectID : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -886,7 +901,7 @@ l0037_A2A4:
 	} else if (value == 0x2E) {
 		out1 = 2;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -925,7 +940,7 @@ l0037_A2CF:
 	else if (value == 0x2F) {
 		out1 = Scenes::instance().LastSceneIndex;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 /*
@@ -980,12 +995,12 @@ l0037_A324:
 	else if (value == 0x30) {
 		out1 = (global06C0 && global1F4C) ? 1 : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x31) {
 		out1 = (global06BE && global1F4C) ? 1 : 0;
 		out2 = 0;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else {
 		// TODO: Handle others
@@ -1003,7 +1018,7 @@ l0037_A32C:
 	retf
 	*/
 
-	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	// debug("-- Leaving 94FD");
 }
 
@@ -1264,16 +1279,6 @@ void ScriptExecutor::EndBuffering(bool shouldMark) {
 	debugBuffer.clear();
 }
 
-
-
-void ScriptExecutor::SIS_Debug(const char *format, ...) {
-	(void)format;
-	// TODO: Consider a refactor of the script execution, with the endbuffer needed
-	// when we finished executing one opcode, the endbuffer ends up being in too many places
-	// Would be cleaner if there was one exit of the function
-	return;
-}
-
 void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
 	_variables[index].a = a;
 	_variables[index].b = b;
@@ -1338,7 +1343,7 @@ void ScriptExecutor::DumpWholeScript() {
 		if (opcode1 != 0x5) {
 			opcodeInfo = IdentifyScriptOpcode(opcode1, 0);
 		}
-		SIS_Debug("[%u] - First block opcode: %.2x %s", skipValue, opcode1, opcodeInfo.c_str());
+		debug("[%u] - First block opcode: %.2x %s", skipValue, opcode1, opcodeInfo.c_str());
 		byte length = ReadByte(); // [bp-2h]
 		expectedEndLocation += length + 2;
 
@@ -1352,7 +1357,7 @@ void ScriptExecutor::DumpWholeScript() {
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
 			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
-			SIS_Debug("[%u] - Second block opcode: %.2x %s", skipValue, opcode2, opcodeInfo.c_str());
+			debug("[%u] - Second block opcode: %.2x %s", skipValue, opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
 			// [bp-5h]
@@ -1384,7 +1389,7 @@ void ScriptExecutor::DumpWholeScript() {
 		if (opcode1 == 0x0d) {
 			// Show a dialogue option
 			uint32 objectID = Func9F4D_32() - 0x400;
-			SIS_Debug("Object ID of speaker: %.4x.\n", objectID);
+			debug("Object ID of speaker: %.4x.\n", objectID);
 			uint16 x = Func9F4D_16();
 			uint16 y = Func9F4D_16();
 			uint16 side = Func9F4D_16();
@@ -1397,7 +1402,7 @@ void ScriptExecutor::DumpWholeScript() {
 			strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
 
 			for (Common::String &currentLine : strings) {
-				SIS_Debug("String: %s", currentLine.c_str());
+				debug("String: %s", currentLine.c_str());
 			}
 		}
 		_stream->seek(expectedEndLocation);
@@ -1543,7 +1548,7 @@ byte Script::ScriptExecutor::ReadByte() {
 		// TODO: This had the output channel active, to consider if I want to handle this separately
 		//debugC(DEBUG_SV,"Script read (byte): %.2x at location %.4x", result, pos);
 	//} else {
-		SIS_Debug("Script read (byte): %.2x at location %.4x", result, (uint32)pos);
+		debug("Script read (byte): %.2x at location %.4x", result, (uint32)pos);
 	//}
 	return result;
 }
@@ -1551,7 +1556,7 @@ byte Script::ScriptExecutor::ReadByte() {
 uint16 Script::ScriptExecutor::ReadWord() {
 	const int64 pos = _stream->pos();
 	const uint16 result = _stream->readUint16LE();
-	SIS_Debug("Script read (word): %.4x at location %.4x", result, (uint32)pos);
+	debug("Script read (word): %.4x at location %.4x", result, (uint32)pos);
 	return result;
 }
 	
@@ -1748,7 +1753,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (opcode1 != 0x5) {
 			opcodeInfo = IdentifyScriptOpcode(opcode1, 0);
 		}	
-		SIS_Debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
+		debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
 		byte length = ReadByte();  // [bp-2h]
 		expectedEndLocation += length + 2;
 
@@ -1839,7 +1844,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
 			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
-			SIS_Debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
+			debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
 			// [bp-5h]
@@ -2122,6 +2127,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
 				strings = g_engine->DecodeStrings(s, offset, numLines);
 			}
+
+			debugC(kDebugScript,
+				"Opcode 0D dialogue: speaker=%u rawPos=(%u,%u) side=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
+				objectID, x, y, side, offset, numLines, _executingScriptObjectID, joinDebugStrings(strings).c_str());
 			
 			activeDialogueSpeakerObjectID = objectID;
 			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
@@ -2183,6 +2192,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
 				lines = _engine->DecodeStrings(stringsStream, offset, numLines);
 			}
+			debugC(kDebugScript,
+				"Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
+				index, offset, numLines, _executingScriptObjectID, joinDebugStrings(lines).c_str());
 			DialogueChoices.push_back(lines);
 		} else if (opcode1 == 0x17) {
 			// Finish the dialogue choice
@@ -2192,6 +2204,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint32 y = Func9F4D_32();
 			uint16 side = Func9F4D_16();
 			const uint16 speakerObjectID = activeDialogueSpeakerObjectID != 0 ? activeDialogueSpeakerObjectID : _executingScriptObjectID;
+			debugC(kDebugScript,
+				"Opcode 17 choice box: speaker=%u rawPos=(%u,%u) side=%u choiceCount=%u",
+				speakerObjectID, x, y, side, DialogueChoices.size());
 			currentView->ShowDialogueChoice(speakerObjectID, DialogueChoices, Common::Point(x, y), side);
 			requestCallback = false;
 			// TODO: Could be special for me with the short timer times, but it can happen
@@ -2702,6 +2717,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				warning("Ignoring empty overlay text entry at offset %u", stringOffset);
 				continue;
 			}
+			debugC(kDebugScript,
+				"Opcode 3A overlay text: rawPos=(%u,%u) align=%u textOffset=%u entryType=%u scriptObject=%u text=\"%s\"",
+				x, y, alignment, stringOffset, entryType, _executingScriptObjectID, strings[0].c_str());
 
 			View1::OverlayTextEntry entry;
 			entry.position = Common::Point(x, y);

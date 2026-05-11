@@ -109,7 +109,7 @@ class GameObject;
 			
 
 			inline void ScriptUnimplementedOpcode(const char *source, uint16 opcode) {
-				SIS_Debug("Unimplemented opcode (%s): %.2x.", source, opcode);
+				debug("Unimplemented opcode (%s): %.2x.", source, opcode);
 			}
 
 			inline void ScriptUnimplementedOpcode_Helper(uint16 opcode) {
@@ -237,7 +237,6 @@ class GameObject;
 			bool lastOpcodeTriggeredSkip = false;
 			void BeginBuffering();
 			void EndBuffering(bool shouldMark = false);
-			void SIS_Debug(const char *format, ...);
 
 			// Global [0F92h], seems to be 0 if we execute the script of the scene
 			// and the object ID if we execute the script of another object

@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/debug.h"
 #include "graphics/palette.h"
 #include "macs2/view1.h"
 #include "macs2/macs2.h"
@@ -31,6 +32,16 @@
 namespace Macs2 {
 namespace {
 constexpr int kNumLoadedCursors = 5;
+
+Common::String joinDebugStrings(const Common::StringArray &strings) {
+	Common::String result;
+	for (uint i = 0; i < strings.size(); ++i) {
+		if (i != 0)
+			result += " | ";
+		result += strings[i];
+	}
+	return result;
+}
 
 void setViewPaletteSafely(View1 *view, const byte *colors) {
 	const bool cursorWasVisible = CursorMan.isVisible();
@@ -409,15 +420,18 @@ View1::View1() : UIElement("View1") {
 		}
 	}
 
-	void View1::showStringBox(const Common::StringArray &sa) {
-		// This calculation can be found at l0037_B368:
-		int borderWidth = 10;
-		int padding = 3;
-		int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
-		int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
+void View1::showStringBox(const Common::StringArray &sa) {
+	// This calculation can be found at l0037_B368:
+	int borderWidth = 10;
+	int padding = 3;
+	int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
+	int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
+	debugC(kDebugScript,
+		"Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
+		sa.size(), stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
 
-		// drawStringBackground(x, y, totalWidth, totalHeight);
-		Graphics::ManagedSurface s = getSurface();
+	// drawStringBackground(x, y, totalWidth, totalHeight);
+	Graphics::ManagedSurface s = getSurface();
 		DrawBorder(stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
 		// TODO range based
 		int lineOffset = stringBoxPosition.y + 0x9;
@@ -1537,6 +1551,11 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 
 	currentSpeechActData.position = portraitBoxPosition;
 	stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
+	debugC(kDebugScript,
+		"Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
+		characterIndex, position.x, position.y, onRightSide ? 1 : 0,
+		currentSpeechActData.position.x, currentSpeechActData.position.y,
+		stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 
 	if (autoclickActive) {
 		clearStringBox();
@@ -1546,6 +1565,7 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// fn0037_A65D proc
 	constexpr uint16 width = 6;
+	debugC(kDebugScript, "Render border: pos=(%d,%d) size=(%d,%d)", pos.x, pos.y, size.x, size.y);
 
 	// TODO: Not sure what cmp	word ptr [2026h],1h does
 	// Draw the background
