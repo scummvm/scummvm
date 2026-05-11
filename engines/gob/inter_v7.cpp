@@ -1892,15 +1892,19 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 			SearchMan.listMatchingMembers(files, Common::Path(file)); // Search for CD.INF files
 			for (Common::ArchiveMemberDetails &cdInfFile : files) {
 				Common::SeekableReadStream *stream = cdInfFile.arcMember->createReadStream();
+				bool found = false;
 				while (stream->pos() + 4 <= stream->size()) {
 					// CD.INF contains a list of applications, as uint32 LE values
 					uint32 applicationNumber = stream->readUint32LE();
 					if (Common::find(installedApplications.begin(), installedApplications.end(), applicationNumber) == installedApplications.end()) {
 						// Application not installed yet, set it as current CD path
 						setCurrentCDPath(cdInfFile.arcName);
+						found = true;
 						break;
 					}
 				}
+				delete stream;
+				if (found) break;
 			}
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
