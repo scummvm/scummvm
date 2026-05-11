@@ -572,6 +572,11 @@ else if (value == 0x0d) {
 	out1 = value - 0x0D;
 	out2 = 0;
 	return;
+} else if (value == 0x23) {
+	out1 = global103A ? 1 : 0;
+	out2 = 0;
+	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+	return;
 }
 	/*
 l0037_A13B:
@@ -745,6 +750,11 @@ l0037_A209:
 		out2 = 0x0;
 		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
+	} else if (value == 0x29) {
+		out1 = global103E ? 1 : 0;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
 	}
 
 /*
@@ -788,11 +798,18 @@ l0037_A242:
 	jmp	0A256h
 	*/
 	else if (value == 0x2A) {
-		// We return 1 if [1042] is 1 and [0FD2] is 0.
-		// [1042] is set to true if we move an item onto the stack thingy in the inventory
-		// [0FD2] is the UI screen ID, and is 0 if no UI is open
-		// TODO: Just hardcoded for now to be able to progress
-		out1 = 0x0;
+		View1 *currentView = (View1 *)_engine->findView("View1");
+		const bool uiOpen = currentView != nullptr &&
+			(currentView->_isShowingInventory || currentView->_isShowingStringBox || currentView->isShowingMainMenu);
+		out1 = (global1042 && !uiOpen) ? 1 : 0;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	} else if (value == 0x2B) {
+		View1 *currentView = (View1 *)_engine->findView("View1");
+		const bool uiOpen = currentView != nullptr &&
+			(currentView->_isShowingInventory || currentView->_isShowingStringBox || currentView->isShowingMainMenu);
+		out1 = (global1040 && !uiOpen) ? 1 : 0;
 		out2 = 0;
 		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -1112,6 +1129,35 @@ uint16 ScriptExecutor::Func101D(uint16 x, uint16 y) {
 	// l0037_10B7:
 	// Reminder that this data can be adjusted with a script opcode
 	return result;
+}
+
+bool ScriptExecutor::IsPathWalkable(const Common::Point &from, const Common::Point &to) {
+	int x1 = from.x;
+	int y1 = from.y;
+	const int x2 = to.x;
+	const int y2 = to.y;
+	const int dx = abs(x2 - x1);
+	const int dy = abs(y2 - y1);
+	const int sx = (x1 < x2) ? 1 : -1;
+	const int sy = (y1 < y2) ? 1 : -1;
+	int err = dx - dy;
+
+	while (true) {
+		if (Func101D(x1, y1) >= 0xC8)
+			return false;
+		if (x1 == x2 && y1 == y2)
+			return true;
+
+		const int e2 = 2 * err;
+		if (e2 > -dy) {
+			err -= dy;
+			x1 += sx;
+		}
+		if (e2 < dx) {
+			err += dx;
+			y1 += sy;
+		}
+	}
 }
 
 void ScriptExecutor::ScriptPrintString(bool alignRight) {
@@ -2169,12 +2215,16 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 			
 		} else if (opcode1 == 0x1f) {
-			// TODO: We should run a pathfinding test and save the result for 9F4D opcode 23 to read
-			// Object ID
-			Func9F4D_Placeholder();
-			// Target x and y
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			uint32 objectID = Func9F4D_32() - 0x400;
+			uint32 x = Func9F4D_32();
+			uint32 y = Func9F4D_32();
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			global103A = false;
+			if (object == nullptr) {
+				warning("Ignoring pathfinding test for invalid object %u", objectID);
+			} else {
+				global103A = IsPathWalkable(object->Position, Common::Point(x, y));
+			}
 		} else if (opcode1 == 0x20) {
 			// TODO: This one should add an offset to the y axis, skipping for now
 
@@ -2325,6 +2375,46 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 			// This must return a bool
 			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x2E) {
+			uint32 sceneAnimIndex = Func9F4D_32();
+			uint32 minOffset = Func9F4D_32();
+			uint32 maxOffset = Func9F4D_32();
+			global103E = false;
+			if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance().CurrentSceneSpecialAnimOffsets.size()) {
+				warning("Ignoring scene animation range test for invalid index %u", sceneAnimIndex);
+			} else {
+				const uint16 blobSourceKey = static_cast<uint16>(Scenes::instance().CurrentSceneSpecialAnimOffsets[sceneAnimIndex - 1] >> 16);
+				global103E = blobSourceKey >= minOffset && blobSourceKey <= maxOffset;
+			}
+		} else if (opcode1 == 0x2F) {
+			uint32 objectID = Func9F4D_32() - 0x400;
+			uint16 slotID = Func9F4D_16();
+			uint16 minOffset = Func9F4D_16();
+			uint16 maxOffset = Func9F4D_16();
+			global103E = false;
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			if (object == nullptr) {
+				warning("Ignoring object animation range test for invalid object %u", objectID);
+				continue;
+			}
+
+			uint16 blobSourceKey = 0;
+			bool hasBlob = false;
+			if (slotID == 0x15) {
+				hasBlob = !object->overloadAnimation.empty();
+				blobSourceKey = object->overloadAnimationSourceKey;
+			} else if (slotID >= 1 && slotID <= object->Blobs.size()) {
+				hasBlob = !object->Blobs[slotID - 1].empty();
+				if (slotID - 1 < object->BlobSourceKeys.size())
+					blobSourceKey = object->BlobSourceKeys[slotID - 1];
+			} else {
+				warning("Ignoring object animation range test for invalid slot %u on object %u", slotID, objectID);
+				continue;
+			}
+
+			if (hasBlob) {
+				global103E = blobSourceKey >= minOffset && blobSourceKey <= maxOffset;
+			}
 		} else if (opcode1 == 0x30) {
 			// TODO: This calls the same function as the print string but adds a param
 			// which changes behaviour in the function
