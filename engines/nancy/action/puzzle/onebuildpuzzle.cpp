@@ -331,7 +331,8 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (topmostAny != -1) {
-		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+		if (topmostUnplaced != -1)
+			g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
 
 		// Left click on an unplaced piece: pick it up
 		// Right click: pick it up and rotate it
