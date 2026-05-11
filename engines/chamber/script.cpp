@@ -378,14 +378,12 @@ uint16 SCR_2C_Wait4(void) {
 
 /*
 Wait for a specified number of seconds or a keypress
-TODO: Always waits for a 4 seconds due to a bug?
 */
 uint16 SCR_2D_Wait(void) {
 	byte seconds;
 	script_ptr++;
 	seconds = *script_ptr++;
-	(void)seconds;
-	wait(4);    /*TODO: looks like a bug?*/
+	wait(seconds);
 	return 0;
 }
 

@@ -136,7 +136,6 @@ void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 }
 
 void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
-	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
 	uint16 ofs = g_vm->_renderer->calcXY_p(x, y);
 	g_vm->_renderer->backupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
@@ -160,11 +159,6 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	updh = ey - updy;
 	ofs = g_vm->_renderer->calcXY_p(updx, updy);
 	/*TODO looks like here was some code before*/
-	for (delay = 0; delay < anim_draw_delay; delay++) {
-		g_system->delayMillis(1000 / 16 / 25);
-	}
-	waitVBlank();
-
 	if (anim_use_dot_effect)
 		copyScreenBlockWithDotEffect(backbuffer, updx, updy, updw, updh, frontbuffer);
 	else {
