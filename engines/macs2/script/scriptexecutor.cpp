@@ -2288,45 +2288,95 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				global103A = IsPathWalkable(object->Position, Common::Point(x, y));
 			}
 		} else if (opcode1 == 0x20) {
-			// TODO: This one should add an offset to the y axis, skipping for now
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			uint16 offset = Func9F4D_16();
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring vertical offset set for invalid object %d", objectID);
+				continue;
+			}
 
-			// Object ID
-			Func9F4D_Placeholder();
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring vertical offset set for missing object %d", objectID);
+				continue;
+			}
 
-			// Offset
-			Func9F4D_Placeholder();
+			object->Unknown = offset;
 		} else if (opcode1 == 0x21) {
-			// TODO: This one adds upward motion to an animation/movement
-			// Can be found when the panther jumps
-			// Object ID
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-		} else if (opcode1 == 0x22) {
-			// TODO: Properly implement fn0037_C2C4 proc
-			// Based on previous experimentation, this will play the fumbling animation
-			//uint16 throwaway1;
-			//uint16 throwaway2;
-			//Func9F4D(throwaway1, throwaway2);
-			//Func9F4D(throwaway1, throwaway2);
-			uint32 objectID = Func9F4D_32() - 0x400;
-			uint16 animIndex = Func9F4D_16();
-			// GameObjects::GetObjectByIndex(objectID)->testOverloadAnimation = animIndex;
-			GameObjects::GetObjectByIndex(objectID)->Orientation = animIndex;
-		} else if (opcode1 == 0x23) {
-			// TODO: Not fully understood - need to check how exactly it works
-			// Basically implements a move to (maybe in conjunction with an offset applied
-			// by opcode 0x20
-			uint32 objectID = Func9F4D_32() - 0x400;
-			uint32 x = Func9F4D_32();
-			uint32 y = Func9F4D_32();
-			uint32 unknown = Func9F4D_32();
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			uint16 targetVerticalOffset = Func9F4D_16();
+			uint16 verticalOffsetDelta = Func9F4D_16();
+			uint16 motionDistance = Func9F4D_16();
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring motion setup for invalid object %d", objectID);
+				continue;
+			}
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
-			// TODO: Need to be able to address the character objects by ID, now relying
-			// on the fact that they were added in a specific order
-			Character *c = currentView->GetCharacterByIndex(objectID);
+			Character *character = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr || character == nullptr) {
+				warning("Ignoring motion setup for missing character object %d", objectID);
+				continue;
+			}
+
+			character->motionStartVerticalOffset = object->Unknown;
+			character->motionTargetVerticalOffset = targetVerticalOffset;
+			character->motionVerticalOffsetDelta = verticalOffsetDelta;
+			character->motionDistanceUnits = motionDistance;
+			character->motionProgress = 0;
+			character->hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->Unknown;
+		} else if (opcode1 == 0x22) {
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			uint16 animIndex = Func9F4D_16();
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring orientation set for invalid object %d", objectID);
+				continue;
+			}
+
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring orientation set for missing object %d", objectID);
+				continue;
+			}
+
+			if (animIndex < 9 || animIndex > 0x10) {
+				warning("Ignoring out-of-range orientation %u for object %d", animIndex, objectID);
+				continue;
+			}
+
+			object->Orientation = animIndex;
+		} else if (opcode1 == 0x23) {
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			uint32 x = Func9F4D_32();
+			uint32 y = Func9F4D_32();
+			uint16 targetVerticalOffset = Func9F4D_16();
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring move-to-position for invalid object %d", objectID);
+				continue;
+			}
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			Character *c = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
+			if (object == nullptr || c == nullptr) {
+				warning("Ignoring move-to-position for missing character object %d", objectID);
+				continue;
+			}
+
+			const Common::Point target(x, y);
+			if (!IsPathWalkable(object->Position, target) && _engine->Func0E8C(target) < 0xC8) {
+				warning("Ignoring move-to-position for blocked target (%u,%u) on object %d", x, y, objectID);
+				continue;
+			}
+
+			c->IsFollowingPath = false;
+			c->motionStartVerticalOffset = object->Unknown;
+			c->motionTargetVerticalOffset = targetVerticalOffset;
+			c->motionVerticalOffsetDelta = ABS<int32>((int32)object->Unknown - (int32)targetVerticalOffset);
+			c->motionDistanceUnits = ABS<int32>((int32)x - object->Position.x) + ABS<int32>((int32)y - object->Position.y);
+			c->motionProgress = 0;
+			c->hasMotionVerticalOffset = true;
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
 			isAwaitingCallback = true;
 		} else if (opcode1 == 0x24) {
