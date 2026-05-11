@@ -695,7 +695,13 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleMouseButtonUp(ev, event);
 
 	case SDL_EVENT_MOUSE_WHEEL: {
+#if SDL_VERSION_ATLEAST(3, 2, 12)
+		Sint32 yDir = ev.wheel.integer_y;
+#else
+		// We only have the precise y available. Ir would be better to accumulate it
+		// until we get at least -1 or +1 so that we can handle slow scrolling with abs values < 1.
 		Sint32 yDir = ev.wheel.y;
+#endif
 		if (!processMouseEvent(event, ev.wheel.mouse_x, ev.wheel.mouse_y)) {
 			return false;
 		}
