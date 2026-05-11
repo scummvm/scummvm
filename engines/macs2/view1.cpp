@@ -32,20 +32,21 @@ namespace Macs2 {
 namespace {
 constexpr int kNumLoadedCursors = 5;
 
-void setViewPaletteSafely(const byte *colors) {
+void setViewPaletteSafely(View1 *view, const byte *colors) {
 	const bool cursorWasVisible = CursorMan.isVisible();
-	if (cursorWasVisible) {
+	if (cursorWasVisible)
 		CursorMan.showMouse(false);
-	}
 
 	g_system->getPaletteManager()->setPalette(colors, 0, 256);
 
-	if (cursorWasVisible) {
+	if (view != nullptr)
+		view->UpdateCursor();
+
+	if (cursorWasVisible)
 		CursorMan.showMouse(true);
-	}
 }
 
-void applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
+void applyPaletteWithFade(View1 *view, const byte *sourcePalette, int fadeValue) {
 	byte colors[256 * 3];
 	memcpy(colors, sourcePalette, sizeof(colors));
 	for (uint i = 0; i < ARRAYSIZE(colors); ++i) {
@@ -56,7 +57,7 @@ void applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
 		}
 		colors[i] = (colors[i] * 259 + 33) >> 6;
 	}
-	setViewPaletteSafely(colors);
+	setViewPaletteSafely(view, colors);
 }
 }
 
@@ -157,14 +158,32 @@ void View1::UpdateCursor() {
 		return;
 	}
 
-	CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[mode] >> 1, 0);
+	const uint16 width = g_engine->_cursorWidths[mode];
+	const uint16 height = g_engine->_cursorHeights[mode];
+	const byte *cursorData = g_engine->_cursorData[mode];
+	const Graphics::PixelFormat rgbaCursorFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Common::Array<uint32> rgbaCursor;
+	rgbaCursor.resize(width * height);
+
+	for (uint i = 0; i < rgbaCursor.size(); ++i) {
+		const byte colorIndex = cursorData[i];
+		if (colorIndex == 0) {
+			rgbaCursor[i] = 0;
+			continue;
+		}
+
+		const byte *paletteEntry = &g_engine->_pal[colorIndex * 3];
+		rgbaCursor[i] = rgbaCursorFormat.RGBToColor(paletteEntry[0], paletteEntry[1], paletteEntry[2]);
+	}
+
+	CursorMan.replaceCursor(rgbaCursor.data(), width, height, width >> 1, height >> 1, 0, false, &rgbaCursorFormat);
 }
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
 		currentSpeechActData.onRightSide = false;
-		setViewPaletteSafely(g_engine->_pal);
-		_paletteDirty = false;
 		UpdateCursor();
+		setViewPaletteSafely(this, g_engine->_pal);
+		_paletteDirty = false;
 		CursorMan.showMouse(true);
 
 		// TODO: Check if this works like this
@@ -432,7 +451,7 @@ void View1::handleFading() {
 			if (currentFadeValue <= 0) {
 				currentFadeValue = -1;
 				fadeMode = FadeMode::None;
-				setViewPaletteSafely(g_engine->_pal);
+				setViewPaletteSafely(this, g_engine->_pal);
 				_paletteDirty = false;
 				return;
 			}
@@ -444,7 +463,7 @@ void View1::handleFading() {
 			}
 		}
 
-		applyPaletteWithFade(g_engine->_palVanilla, currentFadeValue);
+		applyPaletteWithFade(this, g_engine->_palVanilla, currentFadeValue);
 	}
 
 	void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
@@ -890,7 +909,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 
 void View1::draw() {
 	if (_paletteDirty && currentFadeValue < 0) {
-		setViewPaletteSafely(g_engine->_pal);
+		setViewPaletteSafely(this, g_engine->_pal);
 		_paletteDirty = false;
 	}
 

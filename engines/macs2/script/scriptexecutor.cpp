@@ -2245,13 +2245,44 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			EndTimer();
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
+		} else if (opcode1 == 0x1a) {
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			uint16 value217 = Func9F4D_16();
+			uint16 value219 = Func9F4D_16();
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring object runtime setup for invalid object %d", objectID);
+				continue;
+			}
+
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring object runtime setup for missing object %d", objectID);
+				continue;
+			}
+
+			object->RuntimeValue217 = value217;
+			object->RuntimeValue219 = value219;
 		} else if (opcode1 == 0x1b) {
-			// TODO: No idea yet what this does, it seems to be around move commands in some cases,
-			// and seems to go along with 1e
-			uint32 objectID = Func9F4D_32();
-			Func9F4D_32();
-			Func9F4D_32();
-			// TODO: Still need to check if the object is actually already living in the scene at game start
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			uint16 slotID = Func9F4D_16();
+			uint16 value = Func9F4D_16();
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring object slot setup for invalid object %d", objectID);
+				continue;
+			}
+
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring object slot setup for missing object %d", objectID);
+				continue;
+			}
+
+			if (slotID < 1 || slotID > ARRAYSIZE(object->RuntimeSlotValues)) {
+				warning("Ignoring object slot setup for invalid slot %u on object %d", slotID, objectID);
+				continue;
+			}
+
+			object->RuntimeSlotValues[slotID - 1] = value;
 		} else if (opcode1 == 0x1c) {
 			// Working assumption is that this has something to do with guarding against executing
 			// object scripts, it only changes the value of global [102Ah]
