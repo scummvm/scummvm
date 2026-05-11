@@ -2774,22 +2774,54 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			musicSlots[slotID - 1].clear();
 		} else if (opcode1 == 0x48) {
 			// Retrieve object x and use A334 to save it to a script variable
-			uint32 objectID = Func9F4D_32() - 0x400;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring object X query for invalid object %d", objectID);
+				continue;
+			}
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring object X query for missing object %d", objectID);
+				continue;
+			}
 			FuncA334(object->Position.x);
 		} else if (opcode1 == 0x49) {
 			// Retrieve object y and use A334 to save it to a script variable
-			uint32 objectID = Func9F4D_32() - 0x400;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring object Y query for invalid object %d", objectID);
+				continue;
+			}
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring object Y query for missing object %d", objectID);
+				continue;
+			}
 			FuncA334(object->Position.y);
 		} else if (opcode1 == 0x4A) {
-			uint32 objectID = Func9F4D_32() - 0x400;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring object field query for invalid object %d", objectID);
+				continue;
+			}
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring object field query for missing object %d", objectID);
+				continue;
+			}
 			FuncA334(object->Unknown);
 		} else if (opcode1 == 0x4B) {
 			// Retrieve object orientation and use A334 to save it to a script variable
-			uint32 objectID = Func9F4D_32() - 0x400;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			int32 objectID = (int32)Func9F4D_32() - 0x400;
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Ignoring object orientation query for invalid object %d", objectID);
+				continue;
+			}
+			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+			if (object == nullptr) {
+				warning("Ignoring object orientation query for missing object %d", objectID);
+				continue;
+			}
 			FuncA334(object->Orientation);
 		} else if (opcode1 == 0x4C) {
 			for (GameObject *object : GameObjects::instance().Objects) {
