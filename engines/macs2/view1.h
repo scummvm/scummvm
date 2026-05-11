@@ -125,6 +125,7 @@ private:
 	uint16 motionProgress = 0;
 	uint16 motionStartVerticalOffset = 0;
 	bool hasMotionVerticalOffset = false;
+	bool shouldMirrorCurrentAnimation = false;
 
 	bool isAnimationMirrored() const;
 	uint8 getMirroredAnimation(uint8 original) const;
@@ -254,6 +255,11 @@ class View1 : public UIElement {
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
 	FadeMode fadeMode = FadeMode::None;
+	bool _cursorSuppressedForFade = false;
+	bool _cursorWasVisibleBeforeFade = false;
+
+	void beginFadeCursorSuppression();
+	void endFadeCursorSuppression(const byte *palette);
 
 
 public:
@@ -293,7 +299,8 @@ public:
 
 	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
 	// be so separated
-	void UpdateCursor();
+	void UpdateCursor(const byte *palette = nullptr);
+	bool isCursorSuppressedForFade() const { return _cursorSuppressedForFade; }
 
 	View1();
 	virtual ~View1() {}
