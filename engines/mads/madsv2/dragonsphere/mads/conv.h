@@ -140,14 +140,18 @@ enum {
 };
 
 enum {
-	conv034_five_b_b = 4,
-	conv034_seven_only = 7,
-	conv034_eight_b_b = 9,
-	conv034_eight_only = 10,
-	conv034_nine_only = 11,
-	conv034_final_only = 15,
-	conv034_exit_a_a = 16,
-	conv034_exit_b_b = 17
+	conv034_five_b_b    =  4,
+	conv034_seven_only  =  7,
+	conv034_eight_b_b   =  9,
+	conv034_eight_only  = 10,
+	conv034_nine_only   = 11,
+	conv034_final_only  = 15,
+	conv034_exit_a_a    = 16,
+	conv034_exit_b_b    = 17
+};
+
+enum {
+	conv035_exit_b_b    =  3
 };
 
 } // namespace Dragonsphere

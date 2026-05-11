@@ -37,6 +37,7 @@ enum {
 	N_SealMus            =  35,
 	N_UnderGroundMus     =  36,
 	N_WayStationMus      =  37,
+	N_Angels             =  42,
 	N_QueenMother        =  45,
 	N_TurnDiaryPage      =  65,
 	N_WallGrinds         =  67,
@@ -46,6 +47,8 @@ enum {
 	N_DogWhimper         =  79,
 	N_BeastSnd           =  80,
 	N_GrabKing           =  82,
+	N_MagicDoorOpens     =  88,
+	N_MagicDoorUnlocked  =  89,
 	N_JumpDownWell       =  93,
 	N_BooksRumble        =  94,
 	N_McMornTipsTable    = 100

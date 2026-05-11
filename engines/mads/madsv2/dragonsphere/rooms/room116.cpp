@@ -488,9 +488,9 @@ static void room_116_parser() {
 		goto handled;
 	}
 
-	if (player_parse(words_walk_through, words_door_to_stairwell, 0) ||
-	    player_parse(words_open, words_door_to_stairwell, 0) ||
-	    player_parse(words_pull, words_door_to_stairwell, 0)) {
+	if (player_parse(words_walk_through, words_door_to_north, 0) ||
+	    player_parse(words_open, words_door_to_north, 0) ||
+	    player_parse(words_pull, words_door_to_north, 0)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -560,7 +560,7 @@ static void room_116_parser() {
 			player_parse(words_open, 228, 0) ||
 			player_parse(words_pull, 228, 0)) {
 		if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
-			conv_run(13);
+			conv_run(CONVERSATION_WITH_KING);
 			conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
 			conv_export_value(1);
 		} else {
@@ -759,7 +759,7 @@ static void room_116_parser() {
 
 	if (player_parse(words_invoke, words_signet_ring, 0)) {
 		if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
-			conv_run(13);
+			conv_run(CONVERSATION_WITH_KING);
 			conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
 			conv_export_value(1);
 			local->invoked_ring = true;
@@ -780,7 +780,7 @@ static void room_116_parser() {
 		} else if (player_parse(229, 0)) {
 			text_show(global[king_status] == KING_CAPTIVE ? 11604 : 11609);
 			goto handled;
-		} else if (player_parse(words_door_to_stairwell, 0)) {
+		} else if (player_parse(words_door_to_north, 0)) {
 			text_show(11605);
 			goto handled;
 		} else if (player_parse(words_door_to_darkness, 0)) {
@@ -807,7 +807,7 @@ static void room_116_parser() {
 		goto handled;
 	}
 
-	if (player_parse(words_close, words_door_to_stairwell, 0)) {
+	if (player_parse(words_close, words_door_to_north, 0)) {
 		text_show(42);
 		goto handled;
 	}
