@@ -334,6 +334,18 @@ public:
 
 	void TriggerDialogueChoice(uint8 index);
 
+	struct OverlayTextEntry {
+		Common::Point position;
+		uint8 alignment = 0;
+		Common::String text;
+	};
+
+	void addOverlayTextEntry(const OverlayTextEntry &entry);
+	void clearOverlayTextEntries();
+	void drawOverlayTextEntries();
+
+	Common::Array<OverlayTextEntry> _overlayTextEntries;
+
 	uint16 CalculateCharacterScaling(uint16 characterY, bool updateDebugValues = false);
 
 	uint16 GetHitObjectID(const Common::Point &pos) const;

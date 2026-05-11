@@ -20,6 +20,7 @@
  */
 
 #include "adlib.h"
+#include "audio/mixer.h"
 #include "audio/fmopl.h"
 #include "common/debug.h"
 #include <common/memstream.h>
@@ -1251,12 +1252,29 @@ void Adlib::Init() {
 
 void Adlib::Deinit() {
 	_opl->stop();
+	delete _activeSongStream;
+	_activeSongStream = nullptr;
 	delete _opl;
 }
 
 void Adlib::SetSong(Macs2::StreamHandler *sh) {
 	shMem2250 = sh;
 	Func244D(shMem2250);
+}
+
+void Adlib::PlaySongData(const Common::Array<uint8> &data) {
+	delete _activeSongStream;
+	_activeSongData = data;
+	_activeSongStream = new StreamHandler(&_activeSongData);
+	SetSong(_activeSongStream);
+}
+
+void Adlib::StopMusic() {
+	shMem2250 = nullptr;
+	delete _activeSongStream;
+	_activeSongStream = nullptr;
+	_activeSongData.clear();
+	SetVolume(0);
 }
 
 void Adlib::SetVolume(uint16 volume) {

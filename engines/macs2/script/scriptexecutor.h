@@ -195,6 +195,9 @@ class GameObject;
 			void SkipUntil14();
 
 			bool IsPathWalkable(const Common::Point &from, const Common::Point &to);
+			bool loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset = 0x189);
+			bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex);
+			bool loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 
 			// void Func101D(uint16 x, uint16 y);
 			
@@ -292,8 +295,17 @@ class GameObject;
 			bool global06BE = true;
 			bool global06C0 = true;
 			bool global1F4C = false;
+			bool overlayTextStageActive = false;
 			bool global1040 = false;
 			bool global1042 = false;
+			Common::Array<uint8> musicSlots[2];
+			uint16 activeMusicSlot = 0;
+			uint16 musicControlMode = 0;
+			uint16 musicControlParam = 0;
+			uint16 musicControlVolume = 0;
+			bool waitForSoundPlayback = false;
+			bool waitForMusicControl = false;
+			bool waitForAdlibReady = false;
 			bool pickupInProgress = false;
 			uint16 pickupActorObjectID = 0;
 			uint16 pickupTargetObjectID = 0;

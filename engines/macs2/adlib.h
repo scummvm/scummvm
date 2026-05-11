@@ -138,7 +138,7 @@ namespace Macs2 {
 		uint16 g2240;
 
 		// Global byte varialbe [2242]
-		uint8 g2242;
+		uint8 g2242 = 1;
 
 		// Global word variable [224Eh]
 		uint16 g224E;
@@ -215,18 +215,25 @@ namespace Macs2 {
 		void Func2A80(uint8 bpp6, uint8 bpp8, uint8 reg_base);
 	
 
-	public:
+		public:
 	void Init();
 
 	void Deinit();
 
 	void SetSong(Macs2::StreamHandler *sh);
+	void PlaySongData(const Common::Array<uint8> &data);
+	void StopMusic();
+	bool isPlaybackReady() const { return g2242 != 0; }
 
 	void SetVolume(uint16 volume);
 
 	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
 
 	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
+
+	private:
+	Common::Array<uint8> _activeSongData;
+	StreamHandler *_activeSongStream = nullptr;
 
 		
 	};

@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/memstream.h"
+#include "macs2/adlib.h"
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 #include <macs2/view1.h>
@@ -1167,6 +1168,58 @@ bool ScriptExecutor::IsPathWalkable(const Common::Point &from, const Common::Poi
 			y1 += sy;
 		}
 	}
+}
+
+bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset) {
+	if (resourceIndex == 0) {
+		warning("Ignoring resource load for zero resource index");
+		return false;
+	}
+
+	const int64 oldPos = g_engine->_fileStream->pos();
+	uint32 address = 0;
+
+	if (_executingScriptObjectID == 0) {
+		if (resourceIndex > _engine->array520D.size()) {
+			warning("Ignoring resource load for missing scene resource %u", resourceIndex);
+			return false;
+		}
+		address = _engine->array520D[resourceIndex - 1];
+	} else {
+		GameObject *object = GameObjects::GetObjectByIndex(_executingScriptObjectID);
+		if (object == nullptr || object->DataOffset == 0) {
+			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectID, resourceIndex);
+			return false;
+		}
+		g_engine->_fileStream->seek(object->DataOffset + objectTableOffset + (resourceIndex - 1) * 4, SEEK_SET);
+		address = g_engine->_fileStream->readUint32LE();
+	}
+
+	if (address == 0) {
+		warning("Ignoring resource load for empty resource %u", resourceIndex);
+		g_engine->_fileStream->seek(oldPos, SEEK_SET);
+		return false;
+	}
+
+	g_engine->_fileStream->seek(address, SEEK_SET);
+	const uint32 size = g_engine->_fileStream->readUint32LE();
+	if (size == 0) {
+		warning("Ignoring resource load for zero-sized resource %u", resourceIndex);
+		g_engine->_fileStream->seek(oldPos, SEEK_SET);
+		return false;
+	}
+	outData.resize(size);
+	g_engine->_fileStream->read(outData.data(), size);
+	g_engine->_fileStream->seek(oldPos, SEEK_SET);
+	return !outData.empty();
+}
+
+bool ScriptExecutor::loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex) {
+	return loadIndexedResource(outData, resourceIndex);
+}
+
+bool ScriptExecutor::loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex) {
+	return loadIndexedResource(outData, resourceIndex);
 }
 
 void ScriptExecutor::ScriptPrintString(bool alignRight) {
@@ -2434,7 +2487,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
 			uint16 volume = Func9F4D_16();
-			g_engine->_adlib->SetVolume(volume);
+			g_engine->getAdlib()->SetVolume(volume);
 		} else if (opcode1 == 0x32) {
 			uint16 objectID = Func9F4D_16() - 0x0400;
 			const uint16 clickable = Func9F4D_16();
@@ -2455,13 +2508,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			object->IsVisible = visible != 0;
 		} else if (opcode1 == 0x34) {
 			// Sets an entry in the [5BD1] list for hotspot lookup
-			// [bp-2h]
-			uint32 v1 = Func9F4D_32() - 0x800;
-			// [bp-4h]
-			uint32 v2 = Func9F4D_32() - 0x800;
+			const uint16 v1 = Func9F4D_16() - 0x800;
+			const uint16 v2 = Func9F4D_16() - 0x800;
 
 			if (v1 < 0x1 || v1 > 0x10 || v2 < 0x1 || v2 > 0x10) {
-				// Invalid data
+				warning("Ignoring hotspot override %.4x -> %.4x outside valid range", v1 + 0x800, v2 + 0x800);
 				continue;
 			}
 			if (v1 == v2) {
@@ -2498,22 +2549,92 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				object->BoundsAttachmentValue3 = value3;
 			}
 		} else if (opcode1 == 0x36) {
-			// Seems to not read anything
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr) {
+				if (currentView->_isShowingStringBox || currentView->_isShowingDialogueChoice) {
+					currentView->_continueScriptAfterUI = false;
+					currentView->clearStringBox(false);
+				}
+
+				if (currentView->_isShowingInventory) {
+					hasPendingExternalInventoryResume = false;
+					externalInventorySourceObjectID = 0;
+					currentView->CloseInventory();
+				}
+
+				if (currentView->isShowingMainMenu) {
+					currentView->isShowingMainMenu = false;
+					currentView->redraw();
+				}
+			}
 		} else if (opcode1 == 0x37) {
-			// Seems to not read anything
+			_executingScriptObjectID = 0;
+			executingObjectIndex = Scenes::instance().CurrentSceneIndex;
+			scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
+			activeDialogueSpeakerObjectID = 0;
+			SetCurrentSceneScriptAt(0);
 		} else if (opcode1 == 0x038) {
-			// TODO: Unknown opcode so far
-			// Seems to load something from an object or scene, but not sure
 			ReadByte();
+			overlayTextStageActive = true;
+		} else if (opcode1 == 0x039) {
+			if (overlayTextStageActive) {
+				overlayTextStageActive = false;
+			}
 		} else if (opcode1 == 0x03A) {
-			// TODO: Unknown opcode so far - happens at the end of the chapter 2 after
-			// cutting the ropes with the axe
-			// 0037:D82C proc
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			ReadWord();
-			ReadWord();
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView == nullptr) {
+				warning("Ignoring overlay text entry without an active View1");
+				Func9F4D_16();
+				Func9F4D_16();
+				Func9F4D_16();
+				ReadWord();
+				ReadWord();
+				continue;
+			}
+
+			const uint16 x = Func9F4D_16();
+			const uint16 y = Func9F4D_16();
+			const uint8 alignment = Func9F4D_16();
+			const uint16 stringOffset = ReadWord();
+			const uint16 entryType = ReadWord();
+			if (!overlayTextStageActive) {
+				warning("Ignoring overlay text entry at %u,%u without active overlay text stage", x, y);
+				continue;
+			}
+			if (currentView->_overlayTextEntries.size() >= 10) {
+				warning("Ignoring overlay text entry because the overlay list is full");
+				continue;
+			}
+			if (entryType != 1) {
+				warning("Ignoring overlay text entry with unsupported entry type %u", entryType);
+				continue;
+			}
+
+			Common::StringArray strings;
+			if (_executingScriptObjectID == 0) {
+				strings = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, stringOffset, 1);
+			} else {
+				Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+				strings = _engine->DecodeStrings(stringsStream, stringOffset, 1);
+			}
+			if (strings.empty()) {
+				warning("Ignoring empty overlay text entry at offset %u", stringOffset);
+				continue;
+			}
+
+			View1::OverlayTextEntry entry;
+			entry.position = Common::Point(x, y);
+			entry.alignment = alignment;
+			entry.text = strings[0];
+			if (entry.text.size() > 0x28) {
+				entry.text = entry.text.substr(0, 0x28);
+			}
+			currentView->addOverlayTextEntry(entry);
+		} else if (opcode1 == 0x03B) {
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr) {
+				currentView->clearOverlayTextEntries();
+			}
 		} else if (opcode1 == 0x03C) {
 			const uint16 fadeSpeed = Func9F4D_16();
 			View1 *currentView = (View1 *)_engine->findView("View1");
@@ -2527,42 +2648,130 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				currentView->startFading();
 			}
 		} else if (opcode1 == 0x3E) {
-			// TODO: Seems to have no visual difference
-			// TODO: No idea what the byte does
-			ReadByte();
-		} else if (opcode1 == 0x3F) {
-			// TODO: Not yet identified opcode.
-			// No arguments and seems to do something low-level
-		} else if (opcode1 == 0x40) {
-			// TODO: Called function has some outputs to DMA functions - could be something very
-			// specific related to memory management
-		} else if (opcode1 == 0x41) {
-			// TODO: Not yet identified opcode
+			const uint8 resourceIndex = ReadByte();
+			Common::Array<uint8> soundData;
+			if (!loadSoundResource(soundData, resourceIndex))
+				continue;
 
-			// Has no further data, but looks like it changes the cursor mode after
-			// checking some globals
+			if (_engine->hasCurrentSound() && global06BE)
+				_engine->stopCurrentSound();
+			_engine->setCurrentSoundData(soundData);
+		} else if (opcode1 == 0x3F) {
+			if (global06BE)
+				_engine->stopCurrentSound();
+			_engine->clearCurrentSoundData();
+		} else if (opcode1 == 0x40) {
+			if (global06BE) {
+				if (!_engine->hasCurrentSound()) {
+					warning("Ignoring sound playback without loaded sound data");
+					continue;
+				}
+				_engine->playCurrentSound();
+			}
+		} else if (opcode1 == 0x41) {
+			if (global06BE && global1F4C) {
+				waitForSoundPlayback = true;
+				EndTimer();
+				EndBuffering(lastOpcodeTriggeredSkip);
+				return ExecutionResult::WaitingForCallback;
+			}
 		} else if (opcode1 == 0x42) {
-			// TODO: Not yet identified opcode
-			// Seems to do some low-level operation as it calls a function from the
-			// low-level part of the code
-			// No arguments
+			if (global06BE)
+				_engine->stopCurrentSound();
 		} else if (opcode1 == 0x43) {
-			// TODO: Not yet identified opcode
-			Func9F4D_Placeholder();
-			ReadByte();
+			const uint16 slotID = Func9F4D_16();
+			const uint8 resourceIndex = ReadByte();
+			if (slotID < 1 || slotID > 2) {
+				warning("Ignoring music load for invalid slot %u", slotID);
+				continue;
+			}
+
+			Common::Array<uint8> slotData;
+			if (loadMusicResource(slotData, resourceIndex))
+				musicSlots[slotID - 1] = slotData;
 		} else if (opcode1 == 0x44) {
-			// TODO: Not yet identified opcode
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			const uint16 slotID = Func9F4D_16();
+			const uint16 startMuted = Func9F4D_16();
+			const uint16 fadeParam = Func9F4D_16();
+			if (slotID < 1 || slotID > 2) {
+				warning("Ignoring music start for invalid slot %u", slotID);
+				continue;
+			}
+
+			if (!global06C0 || !global1F4C) {
+				activeMusicSlot = slotID;
+				continue;
+			}
+
+			if (activeMusicSlot != 0) {
+				_engine->getAdlib()->StopMusic();
+				activeMusicSlot = 0;
+			}
+
+			if (musicSlots[slotID - 1].empty()) {
+				warning("Ignoring music start for empty slot %u", slotID);
+				continue;
+			}
+
+			_engine->getAdlib()->PlaySongData(musicSlots[slotID - 1]);
+			if (startMuted == 0) {
+				musicControlMode = 1;
+				musicControlParam = fadeParam;
+				musicControlVolume = 0x3F;
+				_engine->getAdlib()->SetVolume(musicControlVolume);
+			} else {
+				musicControlMode = 0;
+				musicControlParam = 0;
+				musicControlVolume = 0;
+				_engine->getAdlib()->SetVolume(0);
+			}
+
+			activeMusicSlot = slotID;
 		} else if (opcode1 == 0x45) {
-			// TODO: Not yet identified opcode
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			const uint16 slotID = Func9F4D_16();
+			const uint16 stopImmediately = Func9F4D_16();
+			const uint16 fadeParam = Func9F4D_16();
+			if (slotID < 1 || slotID > 2) {
+				warning("Ignoring music stop for invalid slot %u", slotID);
+				continue;
+			}
+
+			if (!global06C0 || !global1F4C) {
+				activeMusicSlot = 0;
+				continue;
+			}
+
+			if (activeMusicSlot == slotID) {
+				if (stopImmediately == 0) {
+					musicControlMode = 2;
+					musicControlParam = fadeParam;
+				} else {
+					_engine->getAdlib()->StopMusic();
+					musicControlMode = 0;
+					musicControlParam = 0;
+					activeMusicSlot = 0;
+				}
+			}
+		} else if (opcode1 == 0x47) {
+			if (global1F4C && global06C0) {
+				waitForMusicControl = true;
+				EndTimer();
+				EndBuffering(lastOpcodeTriggeredSkip);
+				return ExecutionResult::WaitingForCallback;
+			}
 		} else if (opcode1 == 0x46) {
-			// TODO: Not yet identified opcode
-			Func9F4D_Placeholder();
+			const uint16 slotID = Func9F4D_16();
+			if (slotID < 1 || slotID > 2) {
+				warning("Ignoring music free for invalid slot %u", slotID);
+				continue;
+			}
+
+			if (activeMusicSlot == slotID) {
+				if (global06C0 && global1F4C)
+					_engine->getAdlib()->StopMusic();
+				activeMusicSlot = 0;
+			}
+			musicSlots[slotID - 1].clear();
 		} else if (opcode1 == 0x48) {
 			// Retrieve object x and use A334 to save it to a script variable
 			uint32 objectID = Func9F4D_32() - 0x400;
@@ -2573,16 +2782,45 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint32 objectID = Func9F4D_32() - 0x400;
 			GameObject *object = GameObjects::GetObjectByIndex(objectID);
 			FuncA334(object->Position.y);
+		} else if (opcode1 == 0x4A) {
+			uint32 objectID = Func9F4D_32() - 0x400;
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			FuncA334(object->Unknown);
 		} else if (opcode1 == 0x4B) {
 			// Retrieve object orientation and use A334 to save it to a script variable
 			uint32 objectID = Func9F4D_32() - 0x400;
 			GameObject *object = GameObjects::GetObjectByIndex(objectID);
 			FuncA334(object->Orientation);
+		} else if (opcode1 == 0x4C) {
+			for (GameObject *object : GameObjects::instance().Objects) {
+				if (object != nullptr && object->SceneIndex == Scenes::instance().CurrentActorIndex + 0x400) {
+					object->SceneIndex = 0;
+				}
+			}
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr && currentView->inventorySource != nullptr) {
+				currentView->SetInventorySource(currentView->inventorySource);
+				if (currentView->activeInventoryItem != nullptr &&
+					currentView->activeInventoryItem->SceneIndex != currentView->inventorySource->Index) {
+					currentView->activeInventoryItem = nullptr;
+				}
+			}
 		} else if (opcode1 == 0x4D) {
-			// TODO: No idea yet what this does - it does manipulate a value that is used during
-			// pathfinding/walkability calculations
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			const uint16 sourceValue = Func9F4D_16();
+			const uint16 targetValue = Func9F4D_16();
+			if (sourceValue < 0xC8 || sourceValue > 0xEF || targetValue < 0xC8 || targetValue > 0xEF) {
+				warning("Ignoring pathfinding remap %.4x -> %.4x outside valid range", sourceValue, targetValue);
+				continue;
+			}
+			g_engine->pathfindingValueRemaps[sourceValue] = targetValue;
+		} else if (opcode1 == 0x4E) {
+			if (global1F4C && global06C0) {
+				waitForAdlibReady = true;
+				EndTimer();
+				EndBuffering(lastOpcodeTriggeredSkip);
+				return ExecutionResult::WaitingForCallback;
+			}
 		}
 		else {
 			ScriptUnimplementedOpcode_Main(opcode1);
@@ -2625,6 +2863,51 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	}
 
 	void ScriptExecutor::tick() {
+		if (musicControlMode != 0 && activeMusicSlot != 0) {
+			const uint16 step = MAX<uint16>(musicControlParam, 1);
+			if (musicControlMode == 1) {
+				musicControlVolume = (musicControlVolume > step) ? musicControlVolume - step : 0;
+				_engine->getAdlib()->SetVolume(musicControlVolume);
+				if (musicControlVolume == 0) {
+					musicControlMode = 0;
+				}
+			} else {
+				const uint16 nextVolume = MIN<uint16>(musicControlVolume + step, 0x3F);
+				musicControlVolume = nextVolume;
+				if (musicControlVolume < 0x3F) {
+					_engine->getAdlib()->SetVolume(musicControlVolume);
+				} else {
+					musicControlMode = 0;
+					activeMusicSlot = 0;
+					_engine->getAdlib()->StopMusic();
+				}
+			}
+		}
+
+		if (waitForSoundPlayback) {
+			if (!_engine->isCurrentSoundPlaying()) {
+				waitForSoundPlayback = false;
+				Run();
+			}
+			return;
+		}
+
+		if (waitForMusicControl) {
+			if (musicControlMode == 0) {
+				waitForMusicControl = false;
+				Run();
+			}
+			return;
+		}
+
+		if (waitForAdlibReady) {
+			if (_engine->getAdlib()->isPlaybackReady()) {
+				waitForAdlibReady = false;
+				Run();
+			}
+			return;
+		}
+
 		if (isFrameWaitActive) {
 			if (frameWaitTicksRemaining > 0) {
 				--frameWaitTicksRemaining;
