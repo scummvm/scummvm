@@ -166,6 +166,7 @@ void Macs2Engine::readResourceFile() {
 		_fileStream->seek(objectOffset, SEEK_SET);
 		GameObject *gameObject = new GameObject();
 		gameObject->Index = i;
+		gameObject->DataOffset = objectOffset;
 
 		// This loading happens around the l0037_082D: mark
 		uint16 x = _fileStream->readUint16LE();
@@ -596,9 +597,14 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	for (int i = 0; i < HotspotOverrides.size(); i++) {
 		HotspotOverrides[i] = 0xFFFF;
 	}
+	pathfindingValueRemaps.resize(0x100);
+	for (int i = 0; i < pathfindingValueRemaps.size(); i++) {
+		pathfindingValueRemaps[i] = 0;
+	}
 }
 
 Macs2Engine::~Macs2Engine() {
+	clearCurrentSoundData();
 	_adlib->Deinit(); 
 
 }
@@ -765,9 +771,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->_isShowingInventory = false;
 	currentView->activeInventoryItem = nullptr;
 	currentView->isShowingMainMenu = false;
+	currentView->clearOverlayTextEntries();
 	_scriptExecutor->global1040 = false;
 	_scriptExecutor->global1042 = false;
 	_scriptExecutor->global1F4C = false;
+	_scriptExecutor->overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->characters) {
@@ -1231,18 +1239,12 @@ uint16 Macs2Engine::Func0E8C(const Common::Point &p) {
 		return value;
 	}
 
-	uint16 lookupIndex = value;
-	lookupIndex << 1;
-	lookupIndex << 1;
-	lookupIndex += value;
-	// TODO: We should look up based on byte ptr es:[di+4EA5h] here
-	bool lookedUpValue = false;
-	if (!lookedUpValue) {
+	if (value >= pathfindingValueRemaps.size()) {
 		return 0xFF;
-	} else {
-		// TODO: We need to look up based on es:[di+4EA6h]
-		return 0xAB;
 	}
+
+	const uint16 remappedValue = pathfindingValueRemaps[value];
+	return remappedValue != 0 ? remappedValue : 0xFF;
 }
 
 int Macs2Engine::MeasureString(Common::String &s) {
@@ -1375,6 +1377,37 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	StreamHandler *sh = new StreamHandler(data);
 	_adlib->SetSong(sh);
 	
+}
+
+void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {
+	stopCurrentSound();
+	_currentSoundData = data;
+}
+
+void Macs2Engine::clearCurrentSoundData() {
+	stopCurrentSound();
+	_currentSoundData.clear();
+}
+
+void Macs2Engine::playCurrentSound() {
+	if (_currentSoundData.empty())
+		return;
+
+	stopCurrentSound();
+	MacsAudioStream *audioStream = new MacsAudioStream();
+	audioStream->pos = 0;
+	audioStream->_data = _currentSoundData;
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_currentSoundHandle, audioStream);
+}
+
+void Macs2Engine::stopCurrentSound() {
+	Audio::Mixer *mixer = g_system->getMixer();
+	if (mixer->isSoundHandleActive(_currentSoundHandle))
+		mixer->stopHandle(_currentSoundHandle);
+}
+
+bool Macs2Engine::isCurrentSoundPlaying() const {
+	return g_system->getMixer()->isSoundHandleActive(_currentSoundHandle);
 }
 
 void Macs2Engine::playTestSound() {
@@ -1807,7 +1840,7 @@ int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (pos >= _data.size()) {
 			return numSamplesRead;
 		}
-		buffer[i] = _data[pos];
+		buffer[i] = static_cast<int16>((static_cast<int>(_data[pos]) - 128) << 8);
 		numSamplesRead++;
 		pos++;
 	}

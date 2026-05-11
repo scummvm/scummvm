@@ -340,6 +340,36 @@ View1::View1() : UIElement("View1") {
 		renderString(pos.x, pos.y, s);
 	}
 
+	void View1::addOverlayTextEntry(const OverlayTextEntry &entry) {
+		_overlayTextEntries.push_back(entry);
+		redraw();
+	}
+
+	void View1::clearOverlayTextEntries() {
+		if (_overlayTextEntries.empty()) {
+			return;
+		}
+		_overlayTextEntries.clear();
+		redraw();
+	}
+
+	void View1::drawOverlayTextEntries() {
+		for (const OverlayTextEntry &entry : _overlayTextEntries) {
+			int x = entry.position.x;
+			Common::String text = entry.text;
+			if (entry.alignment == 1) {
+				x -= g_engine->MeasureString(text);
+			} else if (entry.alignment == 2) {
+				x -= g_engine->MeasureString(text) / 2;
+			}
+
+			if (x < 0)
+				x = 0;
+
+			renderString(x, entry.position.y, text);
+		}
+	}
+
 	void View1::showStringBox(const Common::StringArray &sa) {
 		// This calculation can be found at l0037_B368:
 		int borderWidth = 10;
@@ -863,6 +893,7 @@ void View1::draw() {
 
 	drawBackgroundAnimations(s);
 	DrawCharacters(s);
+	drawOverlayTextEntries();
 
 	// Draw the character
 

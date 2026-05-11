@@ -76,6 +76,7 @@ public:
 
 	// Index of the object, starting at 1
 	uint16 Index;
+	uint32 DataOffset = 0;
 
 	Common::Array<uint8> overloadAnimation;
 	uint16 overloadAnimationSourceKey = 0;
