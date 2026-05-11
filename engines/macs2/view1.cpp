@@ -43,24 +43,13 @@ Common::String joinDebugStrings(const Common::StringArray &strings) {
 	return result;
 }
 
-void setViewPaletteSafely(View1 *view, const byte *colors) {
-	const bool cursorWasVisible = CursorMan.isVisible();
-	if (cursorWasVisible)
-		CursorMan.showMouse(false);
-
-	g_system->getPaletteManager()->setPalette(colors, 0, 256);
-
-	if (view != nullptr)
-		view->UpdateCursor();
-
-	if (cursorWasVisible)
-		CursorMan.showMouse(true);
+void logRenderedText(const char *kind, int x, int y, const Common::String &text) {
+	debug("%s text at (%d,%d): %s", kind, x, y, text.c_str());
 }
 
-void applyPaletteWithFade(View1 *view, const byte *sourcePalette, int fadeValue) {
-	byte colors[256 * 3];
-	memcpy(colors, sourcePalette, sizeof(colors));
-	for (uint i = 0; i < ARRAYSIZE(colors); ++i) {
+void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
+	memcpy(colors, sourcePalette, 256 * 3);
+	for (uint i = 0; i < 256 * 3; ++i) {
 		if (colors[i] < fadeValue) {
 			colors[i] = 0;
 		} else {
@@ -68,6 +57,26 @@ void applyPaletteWithFade(View1 *view, const byte *sourcePalette, int fadeValue)
 		}
 		colors[i] = (colors[i] * 259 + 33) >> 6;
 	}
+}
+
+void setViewPaletteSafely(View1 *view, const byte *colors) {
+	const bool shouldTouchCursor = view != nullptr && !view->isCursorSuppressedForFade();
+	const bool cursorWasVisible = shouldTouchCursor && CursorMan.isVisible();
+	if (cursorWasVisible)
+		CursorMan.showMouse(false);
+
+	if (shouldTouchCursor)
+		view->UpdateCursor(colors);
+
+	g_system->getPaletteManager()->setPalette(colors, 0, 256);
+
+	if (cursorWasVisible)
+		CursorMan.showMouse(true);
+}
+
+void applyPaletteWithFade(View1 *view, const byte *sourcePalette, int fadeValue) {
+	byte colors[256 * 3];
+	buildFadedPalette(colors, sourcePalette, fadeValue);
 	setViewPaletteSafely(view, colors);
 }
 }
@@ -136,7 +145,7 @@ void View1::TransferInventoryItem(GameObject *item, GameObject *targetContainer)
 	int index = FindInventoryItem(item);
 	inventoryItems.remove_at(index);
 	item->SceneIndex = targetContainer->Index;
-	
+
 }
 
 int View1::FindInventoryItem(GameObject *item) {
@@ -157,7 +166,7 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 	}
 	return nullptr;
 }
-void View1::UpdateCursor() {
+void View1::UpdateCursor(const byte *palette) {
 	int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
 	if (mode < 0 || mode >= kNumLoadedCursors) {
 		warning("Invalid cursor mode %d, falling back to Use cursor", mode);
@@ -183,7 +192,8 @@ void View1::UpdateCursor() {
 			continue;
 		}
 
-		const byte *paletteEntry = &g_engine->_pal[colorIndex * 3];
+		const byte *activePalette = palette ? palette : g_engine->_pal;
+		const byte *paletteEntry = &activePalette[colorIndex * 3];
 		rgbaCursor[i] = rgbaCursorFormat.RGBToColor(paletteEntry[0], paletteEntry[1], paletteEntry[2]);
 	}
 
@@ -222,7 +232,7 @@ View1::View1() : UIElement("View1") {
 		Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
 		// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 		stream.seek(23, SEEK_SET);
-		
+
 		uint16 offset = Macs2::BackgroundAnimationBlob::Func1480(gameObject->Blobs[index], true, 0);
 		offset += 6;
 		stream.seek(offset, SEEK_SET);
@@ -241,7 +251,7 @@ View1::View1() : UIElement("View1") {
 				const uint16 currentY = y + yOffset;
 				const uint32 currentValue = s.getPixel(currentX, currentY);
 				const uint32 newValue = g_engine->_shadingTable[currentValue];
-				if (currentX < 320 && currentY < 200) 
+				if (currentX < 320 && currentY < 200)
 					s.setPixel(currentX, currentY, newValue);
 			}
 		}
@@ -261,7 +271,7 @@ View1::View1() : UIElement("View1") {
 		uint16 xSegments = (width / g_engine->_borderWidth) + 1;
 		uint16 ySegments = (height / g_engine->_borderHeight) + 1;
 
-		
+
 
 		// First the left side
 		Common::Rect clippingRect(x, y, x + borderWidth, y + height);
@@ -361,7 +371,7 @@ View1::View1() : UIElement("View1") {
 		const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->Height : 0, rightPortrait ? rightPortrait->Height : 0);
 		const Common::Point borderSize(portraitWidth + 0xD, portraitHeight + 0xD);
 		DrawBorder(currentSpeechActData.position, borderSize, s);
-		
+
 		// Draw the portrait over the border
 		Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
 		DrawSprite(pos, frame->Width, frame->Height, frame->Data, s, false);
@@ -380,6 +390,9 @@ View1::View1() : UIElement("View1") {
 				currentX += data.Width + 1;
 				// TODO: Add reference to where this is defined
 			} else {
+				if ((byte)*iter != ' ') {
+					warning("Missing glyph for character 0x%02x while rendering \"%s\" at (%u,%u)", (byte)*iter, s.c_str(), x, y);
+				}
 				// TODO: Different character for not found?
 				currentX += 10;
 			}
@@ -416,6 +429,7 @@ View1::View1() : UIElement("View1") {
 			if (x < 0)
 				x = 0;
 
+			logRenderedText("Overlay", x, entry.position.y, text);
 			renderString(x, entry.position.y, text);
 		}
 	}
@@ -426,6 +440,8 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	int padding = 3;
 	int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
 	int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
+	debug("Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
+		sa.size(), stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
 	debugC(kDebugScript,
 		"Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
 		sa.size(), stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
@@ -436,6 +452,7 @@ void View1::showStringBox(const Common::StringArray &sa) {
 		// TODO range based
 		int lineOffset = stringBoxPosition.y + 0x9;
 		for (auto iter = sa.begin(); iter < sa.end(); iter++) {
+			logRenderedText("TextBox", stringBoxPosition.x + 0x9, lineOffset, *iter);
 			renderString(stringBoxPosition.x + 0x9, lineOffset, *iter);
 			lineOffset += g_engine->maxGlyphHeight + 2;
 		}
@@ -466,14 +483,20 @@ void View1::handleFading() {
 				currentFadeValue = -1;
 				fadeMode = FadeMode::None;
 				setViewPaletteSafely(this, g_engine->_pal);
+				endFadeCursorSuppression(g_engine->_pal);
 				_paletteDirty = false;
 				return;
 			}
 		} else {
 			currentFadeValue += fadeDelta;
 			if (currentFadeValue >= 0x40) {
+				byte colors[256 * 3];
 				currentFadeValue = 0x40;
 				fadeMode = FadeMode::None;
+				buildFadedPalette(colors, g_engine->_palVanilla, currentFadeValue);
+				setViewPaletteSafely(this, colors);
+				endFadeCursorSuppression(colors);
+				return;
 			}
 		}
 
@@ -484,7 +507,7 @@ void View1::handleFading() {
 
 		constexpr bool drawNodes = false;
 		if (drawNodes) {
-		
+
 			GlyphData xData;
 			g_engine->FindGlyph('x', xData);
 			int numLines = 0;
@@ -614,7 +637,7 @@ void View1::handleFading() {
 		} else if (!continueScript) {
 			_continueScriptAfterUI = false;
 		}
-		
+
 	}
 
 	int View1::GetCharacterArrayIndex(const Character *c) const {
@@ -641,13 +664,40 @@ void View1::handleFading() {
 	}
 
 	void View1::startFading() {
+		beginFadeCursorSuppression();
 		currentFadeValue = 0x40;
 		fadeMode = FadeMode::FromBlack;
 	}
 
 	void View1::startFadeToBlack() {
+		beginFadeCursorSuppression();
 		currentFadeValue = 0;
 		fadeMode = FadeMode::ToBlack;
+	}
+
+	void View1::beginFadeCursorSuppression() {
+		if (_cursorSuppressedForFade) {
+			return;
+		}
+
+		_cursorWasVisibleBeforeFade = CursorMan.isVisible();
+		if (_cursorWasVisibleBeforeFade) {
+			CursorMan.showMouse(false);
+		}
+		_cursorSuppressedForFade = true;
+	}
+
+	void View1::endFadeCursorSuppression(const byte *palette) {
+		if (!_cursorSuppressedForFade) {
+			return;
+		}
+
+		_cursorSuppressedForFade = false;
+		UpdateCursor(palette);
+		if (_cursorWasVisibleBeforeFade) {
+			CursorMan.showMouse(true);
+		}
+		_cursorWasVisibleBeforeFade = false;
 	}
 
 	bool View1::msgFocus(const FocusMessage &msg) {
@@ -733,8 +783,8 @@ void View1::handleFading() {
 					g_engine->_scriptExecutor->global1042 = true;
 					g_engine->RunScriptExecutor(false);
 				}
-				
-				
+
+
 				return true;
 			}
 
@@ -763,7 +813,7 @@ void View1::handleFading() {
 							isShowingMainMenu = false;
 							OpenInventory(GameObjects::instance().GetProtagonistObject());
 						} break;
-						
+
 
 						case static_cast<int>(MainMenuButtonIndex::Close): {
 							isShowingMainMenu = false;
@@ -912,12 +962,12 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		bool pathfindingResult = characters[0]->FindPath(mousePos);
 		GetCharacterByIndex(1)->IsFollowingPath = pathfindingResult;
 		GetCharacterByIndex(1)->CurrentPathIndex = -1;
-		
+
 	} else if (msg.ascii == 'n') {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		openMainMenu(mousePos);
 	}
-	
+
 	return true;
 }
 
@@ -928,7 +978,7 @@ void View1::draw() {
 	}
 
 	handleFading();
-	
+
 	Graphics::ManagedSurface s = getSurface();
 
 	s.blitFrom(_backgroundSurface);
@@ -968,7 +1018,7 @@ void View1::draw() {
 
 	// Draw the border part
 	/* uint16 borderX = 100;
-	uint16 borderY = 50; 
+	uint16 borderY = 50;
 	for (int x = 0; x < g_engine->_borderWidth; x++) {
 		for (int y = 0; y < g_engine->_borderHeight; y++) {
 			uint8 val = g_engine->_borderData[y * g_engine->_borderWidth + x];
@@ -991,7 +1041,7 @@ void View1::draw() {
 	}
 	*/
 
-	
+
 	// DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
 	// DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
 
@@ -1000,8 +1050,8 @@ void View1::draw() {
 
 	// Draw the animation frame
 	// DrawSprite(180, 80, g_engine->_guyWidth, g_engine->_guyHeight, g_engine->_guyData, s);
-	
-	
+
+
 	//for (int i = 0; i < 100; ++i)
 	//	s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
 
@@ -1134,7 +1184,7 @@ bool View1::tick() {
 		currentCharacter->Update();
 		i++;
 	}
-	
+
 	return true;
 }
 
@@ -1182,7 +1232,7 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 			// throws off the calculation
 			maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->Width);
 		}
-		
+
 		// TODO: Not sure if this one is needed
 		maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->Height);
 	}
@@ -1201,11 +1251,11 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 
 	Graphics::ManagedSurface *buffer = new Graphics::ManagedSurface(s.w, s.h, s.format);
 	buffer->rawBlitFrom(s, Common::Rect(0, 0, s.w, s.h), Common::Point(0, 0));
-	
+
 
 	DrawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
 	DrawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
-	
+
 
 	uint16 buttonX = (s.w / 2) - (maxWidthButtonIcon + 4) * 3 + 2;
 	uint16 buttonY = y + height - 4 - maxHeightButtonIcon;
@@ -1214,7 +1264,7 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	for (int i = 0; i < 6; i++) {
 		uint16 index = g_engine->inventoryIconIndices[i];
 		AnimFrame &currentFrame = g_engine->imageResources[index - 1];
-		DrawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);	
+		DrawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);
 		uint16 iconX = (maxWidthButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
 		uint16 iconY = (maxHeightButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
 		inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), maxWidthButtonIcon, maxHeightButtonIcon);
@@ -1264,7 +1314,7 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 		itemX = x + 8;
 		itemY += maxHeightInventoryIcon + 4;
 	}
-	
+
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
@@ -1357,7 +1407,7 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, co
 void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s) {
 	int xScaling = 0;
 	int yScaling = 0;
-	
+
 	int currentTargetX = 0;
 	int currentTargetY = 0;
 
@@ -1481,10 +1531,10 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		if (is_in_list<uint16, 0x50, 0x17, 0x18, 0x23>(index)) { // || index == 0x10) {
 			continue;
 		}
-		
+
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
-		bool mirror = current->isAnimationMirrored();
-		
+		bool mirror = current->shouldMirrorCurrentAnimation;
+
 		// AnimFrame *frame = current->GetCurrentPortrait();
 		uint8 depth = current->GetPosition().y;
 		if (depth == 0) {
@@ -1500,7 +1550,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		// DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		Common::Point actualPosition = current->GetPosition() - Common::Point(0, current->GetVerticalOffset());
-		DrawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s); 
+		DrawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s);
 
 
 		Common::String number = Common::String::format("%u", scalingFactor);
@@ -1551,6 +1601,10 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 
 	currentSpeechActData.position = portraitBoxPosition;
 	stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
+	debug("Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
+		characterIndex, position.x, position.y, onRightSide ? 1 : 0,
+		currentSpeechActData.position.x, currentSpeechActData.position.y,
+		stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 	debugC(kDebugScript,
 		"Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
 		characterIndex, position.x, position.y, onRightSide ? 1 : 0,
@@ -1593,7 +1647,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Draw the highlights and shadows
 	// TODO: Compare with the code at l0037_A6FA: especially what
 	// the skipped (image argument 0) calls do or if I took care of them
-	// 
+	//
 	// Top side highlight
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
 
@@ -1605,7 +1659,7 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 
 	// Right side shadow
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
-	
+
 	// Top shadow
 	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x1011, s);
 
@@ -1698,7 +1752,7 @@ void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, 
 }
 
 void View1::DrawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	
+
 	DrawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
 	DrawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
 	DrawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
@@ -1738,14 +1792,14 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	// 0037:3AF5 (in fn0037_3AD4)
 
 	// TODO: There is quite some setup going on in this function before we get to the drawing
-	
+
 	Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
 	// TODO: Should check which texture we actually use at the moment
 
 	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	
+
 	const Sprite *sprite = GetUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
@@ -1831,7 +1885,7 @@ void View1::TriggerDialogueChoice(uint8 index) {
 uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValues) {
 	// l0037_93F4: 	scummvm.exe!Macs2::View1::msgKeypress(const Macs2::KeypressMessage & msg) Line 542	C++
 
-	
+
 	int32 eax = g_engine->word51FD;
 	int32 edx = 0;
 	int32 ecx = eax;
@@ -2025,7 +2079,7 @@ bool Character::FindPath(Common::Point target) {
 		debug("No walkable entry point found!");
 		return false;
 	}
-	
+
 	Common::Array<bool> visited;
 	visited.resize(16);
 	debug("Best entry point: %u at distance %u", minIndex, minLength);
@@ -2143,14 +2197,20 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
 	int blobIndex = GameObject->Orientation - 1;
-	
-		
-		// TODO: Figure out how the game realizes that this animation
-		// (the tiger at the start in orientation 15d) is not mirrored
-		// TODO: FIgure out where we got the glitch with the chicken from
-	if (isAnimationMirrored() && GameObject->Index != 0x9 && GameObject->Index != 0x6) {
-		blobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
-		// blobIndex = GameObject->Orientation - 1 -
+	shouldMirrorCurrentAnimation = false;
+
+	if (isAnimationMirrored()) {
+		const int mirroredBlobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
+		const bool hasOriginalBlob = blobIndex >= 0 && blobIndex < (int)GameObject->Blobs.size() && !GameObject->Blobs[blobIndex].empty();
+		const bool hasMirroredSourceBlob = mirroredBlobIndex >= 0 && mirroredBlobIndex < (int)GameObject->Blobs.size() &&
+			!GameObject->Blobs[mirroredBlobIndex].empty();
+		const bool hasDistinctOriginalFacing = hasOriginalBlob &&
+			(!hasMirroredSourceBlob || GameObject->Blobs[blobIndex] != GameObject->Blobs[mirroredBlobIndex]);
+
+		if (!hasDistinctOriginalFacing && hasMirroredSourceBlob) {
+			blobIndex = mirroredBlobIndex;
+			shouldMirrorCurrentAnimation = true;
+		}
 	}
 	/* if (IsLerping) {
 		// We are walking
@@ -2216,7 +2276,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	*/
 
 	Common::Array<uint8> &blob = GameObject->useOverloadAnimation ? GameObject->overloadAnimation : GameObject->Blobs[blobIndex];
-	
+
 	// Update pass
 	BackgroundAnimationBlob::Func1480(blob, true, 2);
 	// Retrieval pass
@@ -2267,7 +2327,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 	} else {
 		stream.seek(36, SEEK_SET);
 	}
-	
+
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
@@ -2277,7 +2337,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	StartPosition = GetPosition();
 	EndPosition = target;
-	float Angle = 
+	float Angle =
 	StartTime = g_events->currentMillis;
 	Duration = duration;
 	IsLerping = true;

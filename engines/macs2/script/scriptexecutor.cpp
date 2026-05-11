@@ -93,9 +93,12 @@ inline void ScriptExecutor::FuncA3D2() {
 		expectedEndLocation = _stream->pos();
 	}
 	int skipDepth = 1;
-	const int64 lastHeaderPos = MAX<int64>(0, _stream->size() - 2);
-	while ((skipDepth != 0) && (_stream->pos() <= lastHeaderPos)) {
+	while ((skipDepth != 0) && (_stream->pos() < _stream->size())) {
 		const byte opcode = ReadByte();
+		if (_stream->pos() >= _stream->size()) {
+			debugC(DEBUG_SV, "- A3D2 hit end of stream after opcode %.2x [%d]", opcode, skipDepth);
+			break;
+		}
 		const byte length = ReadByte();
 		if (opcode >= 3) {
 			if (opcode <= 6) {
@@ -111,8 +114,8 @@ inline void ScriptExecutor::FuncA3D2() {
 
 		const int64 remainingBytes = _stream->size() - _stream->pos();
 		if (length > remainingBytes) {
-			warning("Macs2::ScriptExecutor::FuncA3D2 truncated block: opcode %.2x length %u remaining %lld",
-					opcode, length, (long long)remainingBytes);
+			debugC(DEBUG_SV, "- A3D2 clamping truncated block: opcode %.2x length %u remaining %lld [%d]",
+					opcode, length, (long long)remainingBytes, skipDepth);
 			_stream->seek(_stream->size(), SEEK_SET);
 			break;
 		}
@@ -122,8 +125,8 @@ inline void ScriptExecutor::FuncA3D2() {
 	}
 
 	if (skipDepth != 0) {
-		warning("Macs2::ScriptExecutor::FuncA3D2 left skip block early at %lld/%lld",
-				(long long)_stream->pos(), (long long)_stream->size());
+		debugC(DEBUG_SV, "- A3D2 left skip block early at %lld/%lld [%d]",
+				(long long)_stream->pos(), (long long)_stream->size(), skipDepth);
 	}
 
 	// Fix up the expected location after skipping
@@ -148,9 +151,12 @@ void ScriptExecutor::FuncA37A() {
 		expectedEndLocation = _stream->pos();
 	}
 	int skipDepth = 1;
-	const int64 lastHeaderPos = MAX<int64>(0, _stream->size() - 2);
-	while ((skipDepth != 0) && (_stream->pos() <= lastHeaderPos)) {
+	while ((skipDepth != 0) && (_stream->pos() < _stream->size())) {
 		const byte opcode = ReadByte();
+		if (_stream->pos() >= _stream->size()) {
+			debugC(DEBUG_SV, "- A37A hit end of stream after opcode %.2x [%d]", opcode, skipDepth);
+			break;
+		}
 		const byte length = ReadByte();
 		if (opcode >= 3) {
 			if (opcode <= 6) {
@@ -163,8 +169,8 @@ void ScriptExecutor::FuncA37A() {
 
 		const int64 remainingBytes = _stream->size() - _stream->pos();
 		if (length > remainingBytes) {
-			warning("Macs2::ScriptExecutor::FuncA37A truncated block: opcode %.2x length %u remaining %lld",
-					opcode, length, (long long)remainingBytes);
+			debugC(DEBUG_SV, "- A37A clamping truncated block: opcode %.2x length %u remaining %lld [%d]",
+					opcode, length, (long long)remainingBytes, skipDepth);
 			_stream->seek(_stream->size(), SEEK_SET);
 			break;
 		}
@@ -174,8 +180,8 @@ void ScriptExecutor::FuncA37A() {
 	}
 
 	if (skipDepth != 0) {
-		warning("Macs2::ScriptExecutor::FuncA37A left skip block early at %lld/%lld",
-				(long long)_stream->pos(), (long long)_stream->size());
+		debugC(DEBUG_SV, "- A37A left skip block early at %lld/%lld [%d]",
+				(long long)_stream->pos(), (long long)_stream->size(), skipDepth);
 	}
 	
 	// Fix up the expected location after skipping
@@ -208,6 +214,8 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
 	// debug("-- Entering 9F4D");
 	// fn0037_9F4D proc
+	out1 = 0;
+	out2 = 0;
 
 	byte opcode1 = ReadByte(); // [bp-5h]
 	
@@ -1790,6 +1798,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			if (res1 | res2) {
 				FuncA3D2();
 			}
+			expectedEndLocation = _stream->pos();
 			/*
 			l0037_DC25:
 		call	far 0037h:9F4Dh
@@ -1821,6 +1830,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				FuncA3D2();
 				// TODO: Handle end condition
 			}
+			expectedEndLocation = _stream->pos();
 
 			/*
 			l0037_DC44:
@@ -2513,26 +2523,56 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 			g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
 		} else if (opcode1 == 0x2B) {
-			// TODO: Mocking this one for now to see if this unlocks something
-			// It loads an object index, checks if it has a certain pointer in its
-			// data and if so calls two other functions with the object index
-			Func9F4D_Placeholder();
-		
+			const uint16 objectID = Func9F4D_16() - 0x400;
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			if (object == nullptr) {
+				warning("Ignoring object refresh for invalid object %u", objectID);
+				continue;
+			}
+			if (object->Blobs.empty()) {
+				warning("Ignoring object refresh for unloaded object %u", objectID);
+				continue;
+			}
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView == nullptr) {
+				continue;
+			}
+
+			Character *character = currentView->GetCharacterByIndex(objectID);
+			const int currentIndex = currentView->GetCharacterArrayIndex(character);
+			if (object->SceneIndex != Scenes::instance().CurrentSceneIndex) {
+				if (currentIndex >= 0) {
+					currentView->characters.remove_at(currentIndex);
+				}
+				continue;
+			}
+
+			if (character == nullptr) {
+				character = new Character();
+				character->GameObject = object;
+			} else if (currentIndex >= 0) {
+				currentView->characters.remove_at(currentIndex);
+			}
+
+			currentView->characters.push_back(character);
 		} else if (opcode1 == 0x2C) {
-			// TODO: Guess is that we check if we have an inventory item
-			// This gets saved into [103Ch]
-			// TODO: This is handled as an object ID
 			uint16 objectID = Func9F4D_16() - 0x400;
-			uint16 parentID = Func9F4D_16() - 0x400;
-			const GameObject* object = GameObjects::GetObjectByIndex(objectID);
+			uint16 parentID = Func9F4D_16();
+			const GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			if (object == nullptr) {
+				warning("Ignoring inventory check for invalid object %u", objectID);
+				continue;
+			}
 			global103C = object->SceneIndex == parentID;
 		} else if (opcode1 == 0x2D) {
-			// TODO: This one seems to adjust something about pathfinding, but not sure what exactly
-			// It impacts the field di+22Fh of the object data, which is a bool
-			// This is an object ID
-			Func9F4D_Placeholder();
-			// This must return a bool
-			Func9F4D_Placeholder();
+			const uint16 objectID = Func9F4D_16() - 0x400;
+			const bool enabled = Func9F4D_16() != 0;
+			GameObject *object = GameObjects::GetObjectByIndex(objectID);
+			if (object == nullptr) {
+				warning("Ignoring object runtime flag for invalid object %u", objectID);
+				continue;
+			}
+			object->RuntimeFlag22F = enabled;
 		} else if (opcode1 == 0x2E) {
 			uint32 sceneAnimIndex = Func9F4D_32();
 			uint32 minOffset = Func9F4D_32();
