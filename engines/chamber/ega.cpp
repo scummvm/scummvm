@@ -488,8 +488,8 @@ void EGARenderer::traceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *so
 		if (e2 > -abh) { err -= abh; x0 += ddx; }
 		if (e2 <  abw) { err += abw; y0 += ddy; }
 	}
-	if (target == SCREENBUFFER)
-		blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
+	/*Caller (e.g. jaggedZoom) issues one waitVBlank/blitToScreen per cycle;
+	  flushing the whole screen here turned each line into an updateScreen.*/
 }
 
 void EGARenderer::zoomImage(byte *pixels, byte w, byte h, byte /*nw*/, byte /*nh*/, byte *target, uint16 ofs) {
