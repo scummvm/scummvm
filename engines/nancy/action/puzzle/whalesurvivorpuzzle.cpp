@@ -820,6 +820,10 @@ void WhaleSurvivorPuzzle::redraw() {
 		_drawSurface.blitFrom(_imageStart, Common::Point(_overlayRect.left, _overlayRect.top));
 		_drawSurface.blitFrom(_imageMain, _startButtonHeld ? _startButtonSrcRects[1] : _startButtonSrcRects[0],
 		                      Common::Point(_startButtonDestRect.left, _startButtonDestRect.top));
+
+		// Draw quit button (pressed variant while mouse held)
+		_drawSurface.blitFrom(_imageMain, _quitButtonHeld ? _quitButtonSrcRects[1] : _quitButtonSrcRects[0],
+		                      Common::Point(_quitButtonDestRect.left, _quitButtonDestRect.top));
 		return;
 
 	case kHitAnimation:
