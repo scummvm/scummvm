@@ -125,7 +125,7 @@ private:
 
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
-		Macs2::AnimFrame *GetCurrentPortrait();
+		Macs2::AnimFrame *GetCurrentPortrait(bool onRightSide = false);
 		void StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 
 		void StartPickup(Macs2::GameObject *object);
