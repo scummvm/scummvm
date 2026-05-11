@@ -222,6 +222,8 @@ namespace Macs2 {
 
 	void SetSong(Macs2::StreamHandler *sh);
 
+	void SetVolume(uint16 volume);
+
 	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
 
 	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);

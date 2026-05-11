@@ -1386,6 +1386,9 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	int i = -1;
 	for (auto current : characters) {
 		int index = current->GameObject->Index;
+		if (!current->GameObject->IsVisible) {
+			continue;
+		}
 		// TODO: Object 50h is a special one, it is the invisible object that moves along the
 		// ground during the stick throw. Need to check how this is handled it the game
 		// TODO: I'm kind of guessing that nr. 10 also is not visible, it does not appear
@@ -1770,6 +1773,9 @@ uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValue
 uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 	// TODO: Naive implementation for now
 	for (auto currentCharacter : characters) {
+		if (!currentCharacter->GameObject->IsVisible || !currentCharacter->GameObject->IsClickable) {
+			continue;
+		}
 		auto animFrame = currentCharacter->GetCurrentAnimationFrame();
 
 		// Saved point of the object is at the bottom in the middle, frame local space starts
