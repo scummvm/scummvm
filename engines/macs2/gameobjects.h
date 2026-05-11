@@ -87,6 +87,9 @@ public:
 	uint16 SceneIndex;
 	uint16 Orientation;
 	uint16 Unknown;
+	uint16 RuntimeValue217 = 0;
+	uint16 RuntimeValue219 = 0;
+	uint16 RuntimeSlotValues[0x15] = { 0 };
 	bool IsClickable = true;
 	bool IsVisible = true;
 	bool HasBoundsAttachment = false;
