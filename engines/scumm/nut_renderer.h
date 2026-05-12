@@ -40,14 +40,9 @@ protected:
 
 	ScummEngine *_vm;
 	int _numChars;
-	int _maxCharSize;
 	int _fontHeight;
 	int _spacing;
-	byte *_charBuffer;
 	byte *_decodedData;
-	byte *_paletteMap;
-	byte _bpp;
-	byte _palette[16];
 	const int _direction;
 
 	const int8 *_2byteShadowXOffsetTable;
@@ -67,7 +62,6 @@ protected:
 	void codec21(byte *dst, const byte *src, int width, int height, int pitch);
 
 	void loadFont(const char *filename);
-	byte *unpackChar(byte c);
 
 public:
 	NutRenderer(ScummEngine *vm, const char *filename);
