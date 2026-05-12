@@ -78,9 +78,14 @@ void OneBuildPuzzle::init() {
 		p.setTransparent(true);
 		p.setZ(_z + (uint16)i + 1);
 	}
+
+	_isInitialized = true;
 }
 
 void OneBuildPuzzle::registerGraphics() {
+	if (!_isInitialized)
+		return;
+
 	for (uint i = 0; i < _pieces.size(); ++i)
 		_pieces[i].registerGraphics();
 }

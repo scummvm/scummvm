@@ -91,9 +91,14 @@ void MultiBuildPuzzle::init() {
 			slot.setZ(_z);  // Below all active pieces (_z+1 and up)
 		}
 	}
+
+	_isInitialized = true;
 }
 
 void MultiBuildPuzzle::registerGraphics() {
+	if (!_isInitialized)
+		return;
+
 	if (_hasCloseupImage) {
 		for (uint i = 0; i < _shelfSlots.size(); ++i)
 			_shelfSlots[i].registerGraphics();

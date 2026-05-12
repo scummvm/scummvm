@@ -140,6 +140,10 @@ protected:
 	// Currently playing sound (scratch copy updated each time a sound is played)
 	SoundDescription _currentSound;
 
+	// Initialization flag, used to ensure that the puzzle pieces have been initialized
+	// before drawing them on screen
+	bool _isInitialized = false;
+
 	// --- Internal methods ---
 
 	void playPickupSound();	// FUN_0047239c
