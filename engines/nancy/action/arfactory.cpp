@@ -250,7 +250,6 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new ModifyListEntry(ModifyListEntry::kMark);
 	case 74:	// Added in Nancy 10
 	case 75:	// Changed in Nancy 10
-	case 81:	// Nancy 11+
 		if (g_nancy->getGameType() <= kGameTypeNancy9 && type == 75) {
 			return new TextBoxWrite();
 		} else {
@@ -264,6 +263,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new SetValueCombo();
 	case 79:
 		return new ValueTest();
+	//case 81: // Nancy 11+
+	//	return nullptr;	// TODO
 	case 97:
 		return new EventFlags(true);
 	case 98:
