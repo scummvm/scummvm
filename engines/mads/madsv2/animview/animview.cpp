@@ -294,7 +294,7 @@ static bool anim_fade(Palette *pal, int fadeAmount) {
 	bool palChanged = false;
 	byte *rgb = (byte *)pal;
 	for (int count = 0; count < Graphics::PALETTE_SIZE; ++count, ++pal) {
-		*rgb = MAX((int)*pal - fadeAmount, 0);
+		*rgb = MAX((int)*rgb - fadeAmount, 0);
 		if (*rgb)
 			palChanged = true;
 	}
