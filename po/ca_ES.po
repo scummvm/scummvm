@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-10 10:01+0000\n"
-"PO-Revision-Date: 2026-04-15 17:22+0000\n"
+"PO-Revision-Date: 2026-05-12 22:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1984,10 +1984,8 @@ msgid "MIDI gain:"
 msgstr "Guany MIDI:"
 
 #: gui/options.cpp:1866
-#, fuzzy
-#| msgid "MT-32 Device:"
 msgid "MT-32 device:"
-msgstr "Disposit. MT-32:"
+msgstr "Dispositiu MT-32:"
 
 #: gui/options.cpp:1866
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -7782,10 +7780,8 @@ msgid "Toggle wireframe"
 msgstr "Commuta la malla"
 
 #: engines/colony/metaengine.cpp:178
-#, fuzzy
-#| msgid "Menu / Skip"
 msgid "Menu / Skip intro"
-msgstr "Menú / Omet"
+msgstr "Menú / Omet la introducció"
 
 #: engines/colony/metaengine.cpp:184 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
@@ -8992,11 +8988,11 @@ msgstr "Tipografia"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Link style:"
-msgstr ""
+msgstr "Estil dels enllaços:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Style for URLs if they appear in-game"
-msgstr ""
+msgstr "Estil de les URLs si apareixen en el joc"
 
 #: engines/glk/dialogs.cpp:279
 msgid "Caret shape:"
@@ -9015,6 +9011,9 @@ msgid ""
 "Custom marker in place of the \"More...\" marker for eg. \"continue\". Leave "
 "it blank to use the game's default"
 msgstr ""
+"Mostra un marcador personalitzat en lloc del marcador \"Més...\", per "
+"exemple. «continua». Deixeu-lo en blanc per utilitzar el valor predeterminat "
+"del joc"
 
 #: engines/glk/dialogs.cpp:288
 msgid "Style hints:"
@@ -9022,7 +9021,7 @@ msgstr "Consells d'estil:"
 
 #: engines/glk/dialogs.cpp:288
 msgid "Let the game suggest text styling options"
-msgstr ""
+msgstr "Permet que el joc suggereixi opcions d'estil de text"
 
 #: engines/glk/dialogs.cpp:289
 msgid "Safe clicks:"
@@ -9031,6 +9030,7 @@ msgstr "Clics segurs:"
 #: engines/glk/dialogs.cpp:289
 msgid "Safely apply clicks while input is pending"
 msgstr ""
+"Aplica de forma segura els clics mentre l'entrada de comandes està pendent"
 
 #. I18N: This is setting for number of text columns
 #: engines/glk/dialogs.cpp:292
@@ -9039,24 +9039,24 @@ msgstr "Nombre de columnes:"
 
 #: engines/glk/dialogs.cpp:292
 msgid "Number of columns"
-msgstr ""
+msgstr "Nombre de columnes"
 
 #. I18N: This is setting for number of text rows
 #: engines/glk/dialogs.cpp:294
 msgid "Rows count:"
-msgstr ""
+msgstr "Comptador de files:"
 
 #: engines/glk/dialogs.cpp:294
 msgid "Number of rows"
-msgstr ""
+msgstr "Nombre de files"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Lock columns:"
-msgstr ""
+msgstr "Bloca les columnes:"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Check it to manually change the column count"
-msgstr ""
+msgstr "Marqueu-lo per a canviar manualment el comptador de columnes"
 
 #: engines/glk/dialogs.cpp:297
 msgid "Lock rows:"
@@ -9064,12 +9064,12 @@ msgstr "Bloqueja les files:"
 
 #: engines/glk/dialogs.cpp:297
 msgid "Check it to manually change the row count"
-msgstr ""
+msgstr "Marqueu-lo per a canviar manualment el comptador de files"
 
 #. I18N: This is a setting for enabling text justification
 #: engines/glk/dialogs.cpp:301
 msgid "Justify:"
-msgstr ""
+msgstr "Justifica:"
 
 #: engines/glk/dialogs.cpp:302
 msgid "Enable text justification"
@@ -9087,7 +9087,7 @@ msgstr "Trieu les cometes tipogràfiques"
 #: engines/glk/dialogs.cpp:307
 msgctxt "quotes"
 msgid "Off"
-msgstr ""
+msgstr "Desactiva"
 
 #. I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
 #: engines/glk/dialogs.cpp:309
@@ -9099,40 +9099,40 @@ msgstr "Normals"
 #: engines/glk/dialogs.cpp:311
 msgctxt "quotes"
 msgid "Rabid"
-msgstr ""
+msgstr "Cometes Rabid"
 
 #. I18N: This is a setting for forcing all input to be in uppercase
 #: engines/glk/dialogs.cpp:314
 msgid "Caps:"
-msgstr ""
+msgstr "Majúscules:"
 
 #: engines/glk/dialogs.cpp:314
 msgid "Force uppercase input"
-msgstr ""
+msgstr "Força l'entrada en majúscules"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:317
 msgid "Dashes:"
-msgstr ""
+msgstr "Guions:"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:319
 msgid "Types of dashes"
-msgstr ""
+msgstr "Tipus de guions"
 
 #: engines/glk/dialogs.cpp:320 engines/glk/dialogs.cpp:332
 msgid "Off"
-msgstr ""
+msgstr "Desactiva"
 
 #. I18N: This is a setting for using normal typographic dashes, which are like in most books, with the em dash being the longest and the en dash being half of it
 #: engines/glk/dialogs.cpp:322
 msgid "Em dashes"
-msgstr ""
+msgstr "Guions llargs"
 
 #. I18N: This is a setting for using "en+em" dashes, which are like normal typographic dashes but with the en dash being the same length as the em dash, like in some comic books
 #: engines/glk/dialogs.cpp:324
 msgid "En+Em dashes"
-msgstr ""
+msgstr "Guions curts-llargs"
 
 #: engines/glk/dialogs.cpp:326
 msgid "User experience"
@@ -9146,17 +9146,17 @@ msgstr "Espais:"
 #. I18N: This is a setting for type of spaces in the text
 #: engines/glk/dialogs.cpp:331
 msgid "Types of spaces"
-msgstr ""
+msgstr "Tipus d'espais"
 
 #. I18N: This is a setting for compressing double spaces into single ones in text
 #: engines/glk/dialogs.cpp:334
 msgid "Compress double spaces"
-msgstr ""
+msgstr "Comprimeix els espais dobles"
 
 #. I18N: This is a setting for expanding single spaces into double ones in text
 #: engines/glk/dialogs.cpp:336
 msgid "Expand single spaces"
-msgstr ""
+msgstr "Expandeix espais individuals"
 
 #: engines/glk/dialogs.cpp:338
 msgid "Graphics:"
@@ -9164,7 +9164,7 @@ msgstr "Gràfics:"
 
 #: engines/glk/dialogs.cpp:338
 msgid "Turn graphics on/off"
-msgstr ""
+msgstr "Activa/desactiva els gràfics"
 
 #: engines/glk/dialogs.cpp:340
 msgid "Window margin"
@@ -9172,11 +9172,11 @@ msgstr "Marge de la finestra"
 
 #: engines/glk/dialogs.cpp:341
 msgid "Horizontal margin for window"
-msgstr ""
+msgstr "Marge horitzontal per a la finestra"
 
 #: engines/glk/dialogs.cpp:342
 msgid "Vertical margin for window"
-msgstr ""
+msgstr "Marge vertical per a la finestra"
 
 #: engines/glk/dialogs.cpp:344
 msgid "Window padding"
@@ -9184,11 +9184,11 @@ msgstr "Espaiat de la finestra"
 
 #: engines/glk/dialogs.cpp:345
 msgid "Horizontal padding for window"
-msgstr ""
+msgstr "Espaiat horitzontal per a la finestra"
 
 #: engines/glk/dialogs.cpp:346
 msgid "Vertical padding for window"
-msgstr ""
+msgstr "Espaiat vertical per a la finestra"
 
 #: engines/glk/dialogs.cpp:348
 msgid "Text margin"
@@ -9196,11 +9196,11 @@ msgstr "Marge del text"
 
 #: engines/glk/dialogs.cpp:349
 msgid "Horizontal margin for text"
-msgstr ""
+msgstr "Marge horitzontal per al text"
 
 #: engines/glk/dialogs.cpp:350
 msgid "Vertical margin for text"
-msgstr ""
+msgstr "Marge vertical per al text"
 
 #. I18N: This is a setting for leading, which is the vertical distance between text rows
 #: engines/glk/dialogs.cpp:353
@@ -11389,10 +11389,8 @@ msgid "Toggle Chatty AI"
 msgstr "Commutar IA de xat"
 
 #: engines/pelrock/metaengine.cpp:46
-#, fuzzy
-#| msgid "Alternative action"
 msgid "Alternate timing"
-msgstr "Acció alternativa"
+msgstr "Temps alternatiu"
 
 #: engines/pelrock/metaengine.cpp:47
 msgid ""
@@ -11401,10 +11399,8 @@ msgid ""
 msgstr ""
 
 #: engines/pelrock/metaengine.cpp:57
-#, fuzzy
-#| msgid "Play intro videos"
 msgid "Play intro"
-msgstr "Reprodueix els vídeos d'introducció"
+msgstr "Reprodueix la introducció"
 
 #: engines/pelrock/metaengine.cpp:58
 msgid ""
@@ -11413,10 +11409,8 @@ msgid ""
 msgstr ""
 
 #: engines/pelrock/metaengine.cpp:68
-#, fuzzy
-#| msgid "Disable sensors"
 msgid "Disable screensaver"
-msgstr "Desactiva els sensors"
+msgstr "Desactiva l'estalvi de pantalla"
 
 #: engines/pelrock/metaengine.cpp:69
 msgid "Disable original screensaver slider mini-game every 60 seconds."
