@@ -198,8 +198,9 @@ void OneBuildPuzzle::execute() {
 					// Pickup/rotate sound finished; return to idle (piece still dragging)
 					_solveState = kIdle;
 				} else if (_correctlyPlaced) {
-					playGoodPlacementSound();
 					checkAllPlaced();
+					if (!_isSolved)
+						playGoodPlacementSound();
 				} else {
 					// Wrong drop: play bad placement feedback
 					playBadPlacementSound();
@@ -222,6 +223,7 @@ void OneBuildPuzzle::execute() {
 			break;
 		case kTriggerCompletion:
 			// Play completion sound/text, then wait for it to finish
+			g_nancy->_sound->loadSound(_completionSound);
 			g_nancy->_sound->playSound(_completionSound);
 			if (!_completionText.empty()) {
 				NancySceneState.getTextbox().clear();
