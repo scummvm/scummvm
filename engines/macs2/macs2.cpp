@@ -198,6 +198,7 @@ void Macs2Engine::readResourceFile() {
 			uint16 unknown5 = _fileStream->readByte();
 			// Local variable [bp-5h]
 			uint16 unknown6 = _fileStream->readByte();
+			gameObject->BlobMirrorFlags.push_back(unknown5 != 0);
 
 			// In order to get to l0037_0BBA: where the blob will be mirrored,
 			// the bytes at +Eh and +Fh must be != 0
@@ -1348,10 +1349,13 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	if (slotIndex == 0x15) {
 		targetBlob = &go->overloadAnimation;
 		go->overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
+		go->overloadAnimationMirrored = false;
 	} else if (slotIndex - 1 < go->Blobs.size()) {
 		targetBlob = &go->Blobs[slotIndex - 1];
 		if (slotIndex - 1 < go->BlobSourceKeys.size())
 			go->BlobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
+		if (slotIndex - 1 < go->BlobMirrorFlags.size())
+			go->BlobMirrorFlags[slotIndex - 1] = false;
 	}
 
 	if (targetBlob == nullptr) {

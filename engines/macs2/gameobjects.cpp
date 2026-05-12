@@ -25,6 +25,11 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneScript(uint16 sceneIndex, Comm
 	// We read 80h bytes
 	fileStream->seek(0x80, SEEK_CUR);
 	uint16 scriptSize = fileStream->readUint16LE();
+	if (scriptSize == 0) {
+		warning("Macs2::Scenes::ReadSceneScript: scene %u has empty script", sceneIndex);
+		// Return a valid but empty stream
+		return new Common::MemoryReadStream(nullptr, 0);
+	}
 	uint8 *scriptData = new uint8[scriptSize];
 	fileStream->read(scriptData, scriptSize);
 	// TODO: Consider using the endian version for all the memoryReadStreams

@@ -80,6 +80,7 @@ public:
 
 	Common::Array<uint8> overloadAnimation;
 	uint16 overloadAnimationSourceKey = 0;
+	bool overloadAnimationMirrored = false;
 	bool useOverloadAnimation = false;
 
 	// These are the values read by the code around l0037_082D:
@@ -103,6 +104,7 @@ public:
 	// include the animations, the dialogue images, the inventory icons etc.
 	Common::Array<Common::Array<uint8> > Blobs;
 	Common::Array<uint16> BlobSourceKeys;
+	Common::Array<bool> BlobMirrorFlags;
 
 	// The object-specific script
 	// TODO: Random thought - do objects have their own space for script variables?
