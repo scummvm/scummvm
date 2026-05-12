@@ -1327,7 +1327,7 @@ void ScriptExecutor::DumpWholeScript() {
 			break;
 		}
 		// TODO: Probably only one of these is necessary
-		if (_stream->pos() >= _stream->size() - 1) {
+		if (_stream->size() == 0 || _stream->pos() >= _stream->size() - 1) {
 			break;
 		}
 
@@ -1485,7 +1485,9 @@ void ScriptExecutor::Step() {
 	// Rewind and reset to the scene script after we are done executing
 	executingObjectIndex == Scenes::instance().CurrentSceneIndex;
 	SetScript(Scenes::instance().CurrentSceneScript);
-	_stream->seek(0, SEEK_SET);
+	if (_stream && _stream->size() > 0) {
+		_stream->seek(0, SEEK_SET);
+	}
 	scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_state = ExecutorState::Idle;
 	g_engine->_scriptExecutor->global1032 = false;
@@ -1533,6 +1535,9 @@ bool ScriptExecutor::LoadNextScript() {
 		IsRepeatRun = true;
 		executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 		_stream = Scenes::instance().CurrentSceneScript;
+		if (!_stream || _stream->size() == 0) {
+			return false;
+		}
 		_stream->seek(0, SEEK_SET);
 		scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 		debug("----- Switching execution to script for scene: %.4x", executingObjectIndex);
@@ -1735,7 +1740,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			break;
 		}
 		// TODO: Probably only one of these is necessary
-		if (_stream->pos() >= _stream->size() - 1) {
+		if (_stream->size() == 0 || _stream->pos() >= _stream->size() - 1) {
 			break;
 		}
 
@@ -1795,6 +1800,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 res1;
 			uint16 res2;
 			Func9F4D(res1, res2);
+			expectedEndLocation = _stream->pos();
 			if (res1 | res2) {
 				FuncA3D2();
 			}
@@ -1820,15 +1826,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 result1;
 			uint16 result2;
 			Func9F4D(result1, result2);
-			// TODO: Check if we need the values further below
-			/*
-			mov	[bp-7h],ax
-			mov	[bp-5h],dx
-			*/
+			expectedEndLocation = _stream->pos();
 			// If any bit is set in the result, we skip, otherwise we fall through and continue the loop
 			if ((result1 | result2) == 0) {
 				FuncA3D2();
-				// TODO: Handle end condition
 			}
 			expectedEndLocation = _stream->pos();
 
@@ -2467,6 +2468,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
 			GameObject *object = GameObjects::GetObjectByIndex(id);
 			object->overloadAnimation = blob;
+			object->overloadAnimationMirrored = false;
 			object->useOverloadAnimation = false;
 			// object->Blobs.push_back(blob);
 			// object->Blobs[animationID - 1] = blob;
