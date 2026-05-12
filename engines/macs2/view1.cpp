@@ -198,6 +198,13 @@ void View1::UpdateCursor(const byte *palette) {
 	}
 
 	CursorMan.replaceCursor(rgbaCursor.data(), width, height, width >> 1, height >> 1, 0, false, &rgbaCursorFormat);
+	// Enable a cursor palette so the backend won't re-blit the cursor on
+	// every screen palette change. The macs2 engine uses RGBA cursors with
+	// baked-in palette colors, so the cursor palette content is irrelevant —
+	// it just needs to exist to prevent the backend's setPalette() from
+	// triggering blitCursor() which can corrupt the RLE-accelerated surface.
+	byte dummyPalette[256 * 3] = {};
+	CursorMan.replaceCursorPalette(dummyPalette, 0, 256);
 }
 View1::View1() : UIElement("View1") {
 		_backgroundSurface = g_engine->_bgImageShip;
@@ -1363,7 +1370,7 @@ GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
 void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s, bool mirrored, bool useDepth, uint8 depth)
 {
 	for (int currentX = 0; currentX < width; currentX++) {
-		int actualX = mirrored ? width - currentX : currentX;
+		int actualX = mirrored ? width - currentX - 1 : currentX;
 		for (int currentY = 0; currentY < height; currentY++) {
 			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
@@ -2197,7 +2204,7 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
 	int blobIndex = GameObject->Orientation - 1;
-	shouldMirrorCurrentAnimation = false;
+	bool mirror = false;
 
 	if (isAnimationMirrored()) {
 		const int mirroredBlobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
@@ -2209,7 +2216,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 
 		if (!hasDistinctOriginalFacing && hasMirroredSourceBlob) {
 			blobIndex = mirroredBlobIndex;
-			shouldMirrorCurrentAnimation = true;
+			mirror = true;
 		}
 	}
 	/* if (IsLerping) {
@@ -2235,6 +2242,13 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 			}
 		}
 	}
+
+	if (GameObject->useOverloadAnimation) {
+		mirror ^= GameObject->overloadAnimationMirrored;
+	} else if (blobIndex >= 0 && blobIndex < (int)GameObject->BlobMirrorFlags.size()) {
+		mirror ^= GameObject->BlobMirrorFlags[blobIndex];
+	}
+	shouldMirrorCurrentAnimation = mirror;
 	/*
 	// int offset = 0x1C;
 
