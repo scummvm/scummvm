@@ -837,6 +837,7 @@ private:
 
 	Common::List<Common::Path> _findFileMatches;
 	Common::Path _currentCDPath;
+	uint32 _adibouSynthCDInfAppNum = 0;
 
 	Common::String _currentHtmlFile;
 	HtmlContext *_currentHtmlContext;

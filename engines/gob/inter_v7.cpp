@@ -1928,14 +1928,28 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 
 			if (!found) {
 				// Fallback: select any add-on directory not yet claimed (handles add-ons without CD.INF).
+				// Determine the application number from appli_NN.vmd (no CD.INF to read it from).
+				_adibouSynthCDInfAppNum = 0;
 				Common::ArchiveMemberDetailsList stkFiles;
 				SearchMan.listMatchingMembers(stkFiles, Common::Path("intro_ap.stk"));
 				for (Common::ArchiveMemberDetails &stkFile : stkFiles) {
 					if (Common::find(usedDirs.begin(), usedDirs.end(), stkFile.arcName) == usedDirs.end()) {
 						setCurrentCDPath(stkFile.arcName);
+						for (uint32 appNum = 1; appNum <= 99 && _adibouSynthCDInfAppNum == 0; appNum++) {
+							Common::Path appliVmd(Common::String::format("appli_%02d.vmd", appNum));
+							Common::ArchiveMemberDetailsList appliFiles;
+							SearchMan.listMatchingMembers(appliFiles, appliVmd);
+							for (Common::ArchiveMemberDetails &appliFile : appliFiles)
+								if (appliFile.arcName == stkFile.arcName) {
+									_adibouSynthCDInfAppNum = appNum;
+									break;
+								}
+						}
 						break;
 					}
 				}
+			} else {
+				_adibouSynthCDInfAppNum = 0;
 			}
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
@@ -1959,9 +1973,13 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		// WORKAROUND to disable the 3D driving activity in Adibou2/Sciences (not supported in ScummVM)
 		size = -1;
 	} else if (mode == SaveLoad::kSaveModeNone) {
-		size = _vm->_dataIO->fileSize(file);
-		if (size == -1)
-			warning("File \"%s\" not found", file.c_str());
+		if (_vm->getGameType() == kGameTypeAdibou2 && file == "CD.INF" && _adibouSynthCDInfAppNum > 0) {
+			size = 4; // Synthetic CD.INF: one application number (uint32 LE)
+		} else {
+			size = _vm->_dataIO->fileSize(file);
+			if (size == -1)
+				warning("File \"%s\" not found", file.c_str());
+		}
 
 	} else if (mode == SaveLoad::kSaveModeSave)
 		size = _vm->_saveLoad->getSize(file.c_str());
@@ -2029,6 +2047,22 @@ void Inter_v7::o7_readData(OpFuncParams &params) {
 
 	if (file.empty()) {
 		WRITE_VAR(1, size);
+		return;
+	}
+
+	if (_vm->getGameType() == kGameTypeAdibou2 && file.compareToIgnoreCase("CD.INF") == 0 &&
+	    _adibouSynthCDInfAppNum > 0) {
+		// Synthesized CD.INF: return the app number for an add-on that has no real CD.INF.
+		uint32 synthAppNum = _adibouSynthCDInfAppNum;
+		_adibouSynthCDInfAppNum = 0;
+		if (((dataVar >> 2) == 59) && (size == 4)) {
+			WRITE_VAR(59, synthAppNum);
+			if ((_vm->getPlatform() != Common::kPlatformDOS) && (VAR(59) < 256))
+				WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
+		} else {
+			WRITE_LE_UINT32(buf, synthAppNum);
+		}
+		WRITE_VAR(1, 0);
 		return;
 	}
 
