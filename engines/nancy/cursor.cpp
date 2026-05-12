@@ -45,7 +45,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 	chunkStream->seek(0);
 
-	// First, we need to figure out the number of possible CursorTypes in the current game
+	// First, we need to figure out the number of possible CursorTypes in the current game.
 	_numCursorTypes = g_nancy->getStaticData().numCursorTypes;
 
 	// The structure of CURS is weird:
@@ -70,16 +70,17 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	// the ones in the item arrays. As a result, most of the CURS data is effectively junk that never gets used.
 
 	// Perhaps in the future the class could be modified so we no longer have to store or care about all of the junk cursors;
-	// however, this cannot happen until the engine is more mature and I'm more aware of what changes they made to the
+	// however, this cannot happen until the engine is more mature and we're more aware of what changes they made to the
 	// cursor code in later games.
 
-	uint numCursors = _numCursorTypes * (g_nancy->getGameType() == kGameTypeVampire ? 2 : 3) + g_nancy->getStaticData().numItems * _numCursorTypes;
-	if (g_nancy->getGameType() >= kGameTypeNancy10 && g_nancy->getGameType() <= kGameTypeNancy12) {
-		_numCursorTypes = 37;
-		numCursors = _numCursorTypes * 2 + g_nancy->getStaticData().numItems * 2;
-	} else if (g_nancy->getGameType() >= kGameTypeNancy13) {
-		_numCursorTypes = 37;
-		numCursors = 174;
+	uint numCursors;
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Normal + item cursors. Each cursor has a normal and a highlighted variant
+		numCursors = (_numCursorTypes + g_nancy->getStaticData().numItems) * 2;
+	} else {
+		const uint sysSections = (g_nancy->getGameType() == kGameTypeVampire) ? 2 : 3;
+		numCursors = _numCursorTypes * sysSections
+					+ g_nancy->getStaticData().numItems * _numCursorTypes;
 	}
 
 	_cursors.resize(numCursors);
@@ -88,7 +89,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	Common::Path inventoryCursorsImageName;
 
 	if (g_nancy->getGameType() <= kGameTypeNancy12) {
-		auto *inventoryData = GetEngineData(INV)
+		auto *inventoryData = GetEngineData(INV);
 		assert(inventoryData);
 		inventoryCursorsImageName = inventoryData->inventoryCursorsImageName;
 	} else {
@@ -100,6 +101,9 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 		readRect(*chunkStream, _cursors[i].bounds);
 	}
 
+	// Nancy 10-12 store a parallel rect array (likely highlighted-state
+	// variants of the same cursors) between the source rects and the
+	// hotspot block.
 	if (g_nancy->getGameType() >= kGameTypeNancy10 && g_nancy->getGameType() <= kGameTypeNancy12)
 		chunkStream->skip(numCursors * 4 * 4);	// TODO
 
@@ -112,8 +116,10 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	_primaryVideoInitialPos.x = chunkStream->readUint16LE();
 	_primaryVideoInitialPos.y = chunkStream->readUint16LE();
 
-	if (g_nancy->getGameType() >= kGameTypeNancy13)
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
 		g_nancy->_resource->loadImage(uiCursorsImageName, _uiCursorsSurface);
+		// TODO: Add handling for split UI + inventory cursors in Nancy13+
+	}
 
 	g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
@@ -127,139 +133,156 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID) {
+	// Item-held variants. The Nancy 10+ chunk reserves `numItems × 2`
+	// slots after the two 37-entry system arrays (= _numCursorTypes * 2),
+	// each item getting one [idle, hotspot] pair. Held items only
+	// override the cursor for kNormal / kHotspot; directional /
+	// rotate / arrow types render their system sprite directly even
+	// while the player is carrying something.
+	if (itemID != -1 && (type == kNormal || type == kHotspot)) {
+		_hasItem = true;
+		const uint itemsOffset = (uint)_numCursorTypes * 2;
+		const uint variant = (type == kHotspot) ? 1 : 0;
+		return itemsOffset + (uint)itemID * 2 + variant;
+	}
+
+	// System cursors: translate the legacy CursorType to the matching
+	// kNew* idle slot. Each Nancy 10+ cursor type T occupies a pair
+	// (T*2, T*2+1) in the chunk — idle followed by hotspot. We always
+	// return the idle slot here
+	switch (type) {
+	case kNormal:               return kNewNormal;
+	case kHotspot:              return kNewHotspot;
+	case kNormalArrow:          return kNewNormalArrow;
+	case kHotspotArrow:         return kNewHotspotArrow;
+	case kExit:                 return kNewExit;
+	case kMove:                 return kNewExit;
+	case kRotateCW:             return kNewRotateCW;
+	case kRotateCCW:            return kNewRotateCCW;
+	case kMoveLeft:             return kNewMoveLeft;
+	case kMoveRight:            return kNewMoveRight;
+	case kMoveForward:          return kNewMoveForward;
+	case kMoveBackward:         return kNewMoveBackward;
+	case kMoveUp:               return kNewMoveUp;
+	case kMoveDown:             return kNewMoveDown;
+	case kRotateLeft:           return kNewRotateLeft;
+	case kRotateRight:          return kNewRotateRight;
+	case kInvertedRotateLeft:   return kNewInvertedRotateLeft;
+	case kInvertedRotateRight:  return kNewInvertedRotateRight;
+	default:
+		return kNewNormal;
+	}
+}
+
 void CursorManager::setCursor(CursorType type, int16 itemID) {
-	if (!_isInitialized) {
+	if (!_isInitialized)
 		return;
-	}
 
-	GameType gameType = g_nancy->getGameType();
+	const GameType gameType = g_nancy->getGameType();
 
-	if (type == _curCursorType && itemID == _curItemID) {
+	if (type == _curCursorType && itemID == _curItemID)
 		return;
-	} else {
-		_curCursorType = type;
-		_curItemID = itemID;
-	}
 
+	_curCursorType = type;
+	_curItemID = itemID;
 	_hasItem = false;
 
-	// For all cases below, the selected cursor is _always_ shown, regardless
-	// of whether or not an item is held. All other types of cursor
-	// are overridable when holding an item. Every item cursor has
-	// _numItemCursor variants, one corresponding to every numbered
+	if (gameType >= kGameTypeNancy10) {
+		_curCursorID = resolveNancy10CursorID(type, itemID);
+		return;
+	}
+
+	// For all cases below, the selected cursor is _always_ shown,
+	// regardless of whether or not an item is held. All other types of
+	// cursor are overridable when holding an item. Every item cursor
+	// has _numCursorTypes variants, one corresponding to every numbered
 	// value of the CursorType enum.
+
 	switch (type) {
 	case kNormalArrow:
-		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewNormalArrow: _numCursorTypes;
+		_curCursorID = _numCursorTypes;
 		return;
 	case kHotspotArrow:
-		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewHotspotArrow : _numCursorTypes + 1;
+		_curCursorID = _numCursorTypes + 1;
 		return;
 	case kInvertedRotateLeft:
-		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewInvertedRotateLeft : kInvertedRotateLeft;
+			_curCursorID = kInvertedRotateLeft;
 			return;
 		}
-
 		// fall through
 	case kRotateLeft:
-		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateLeft : kRotateLeft;
+			_curCursorID = kRotateLeft;
 			return;
 		}
-
 		// fall through
 	case kMoveLeft:
-		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveLeft : kMoveLeft;
+			_curCursorID = kMoveLeft;
 			return;
-		} else {
-			type = kMove;
 		}
-
+		type = kMove;
 		break;
 	case kInvertedRotateRight:
-		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewInvertedRotateRight : kInvertedRotateRight;
+			_curCursorID = kInvertedRotateRight;
 			return;
 		}
-
 		// fall through
 	case kRotateRight:
-		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateRight : kRotateRight;
+			_curCursorID = kRotateRight;
 			return;
 		}
-
 		// fall through
 	case kMoveRight:
-		// Only valid for nancy3 and up
 		if (gameType >= kGameTypeNancy3) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveRight : kMoveRight;
+			_curCursorID = kMoveRight;
 			return;
-		} else {
-			type = kMove;
 		}
-
+		type = kMove;
 		break;
 	case kMoveUp:
-		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveUp : kMoveUp;
+			_curCursorID = kMoveUp;
 			return;
-		} else {
-			type = kMove;
 		}
-
+		type = kMove;
 		break;
 	case kMoveDown:
-		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveDown : kMoveDown;
+			_curCursorID = kMoveDown;
 			return;
-		} else {
-			type = kMove;
 		}
-
+		type = kMove;
 		break;
 	case kMoveForward:
-		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveForward : kMoveForward;
+			_curCursorID = kMoveForward;
 			return;
-		} else {
-			type = kHotspot;
 		}
-
+		type = kHotspot;
 		break;
 	case kMoveBackward:
-		// Only valid for nancy4 and up
 		if (gameType >= kGameTypeNancy4) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewMoveBackward : kMoveBackward;
+			_curCursorID = kMoveBackward;
 			return;
-		} else {
-			type = kHotspot;
 		}
-
+		type = kHotspot;
 		break;
 	case kExit:
-		// Not valid in TVD
 		if (gameType != kGameTypeVampire) {
-			_curCursorID = (gameType >= kGameTypeNancy10) ? kNewExit : kExit;
+			_curCursorID = kExit;
 			return;
 		}
-
 		break;
 	case kRotateCW:
-		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateCW : kRotateCW;
+		_curCursorID = kRotateCW;
 		return;
 	case kRotateCCW:
-		_curCursorID = (gameType >= kGameTypeNancy10) ? kNewRotateCCW : kRotateCCW;
+		_curCursorID = kRotateCCW;
 		return;
 	default:
 		break;
@@ -272,12 +295,11 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		// No item held, set to eyeglass
 		itemID = 0;
 	} else {
-		// Item held
-		itemsOffset = _numCursorTypes * (g_nancy->getGameType() == kGameTypeVampire ? 2 : 3);
+		itemsOffset = _numCursorTypes * (gameType == kGameTypeVampire ? 2 : 3);
 		_hasItem = true;
 	}
 
-	_curCursorID = (itemID * _numCursorTypes) + itemsOffset + type;
+	_curCursorID = (uint)(itemID * _numCursorTypes) + itemsOffset + (uint)type;
 }
 
 void CursorManager::setCursorType(CursorType type) {
@@ -327,9 +349,8 @@ void CursorManager::showCursor(bool shouldShow) {
 }
 
 void CursorManager::adjustCursorHotspot() {
-	if (g_nancy->getGameType() == kGameTypeVampire) {
+	if (g_nancy->getGameType() == kGameTypeVampire)
 		return;
-	}
 
 	// Improvement: the arrow cursor in the Nancy games has an atrocious hotspot that's
 	// right in the middle of the graphic, instead of in the top left where
@@ -339,13 +360,15 @@ void CursorManager::adjustCursorHotspot() {
 
 	// TODO: Make this optional?
 
-	uint startID = _curCursorID;
+	const CursorType startType = _curCursorType;
+	const uint startID = _curCursorID;
 
 	setCursorType(kNormalArrow);
 	_cursors[_curCursorID].hotspot = {3, 4};
 	setCursorType(kHotspotArrow);
 	_cursors[_curCursorID].hotspot = {3, 4};
 
+	_curCursorType = startType;
 	_curCursorID = startID;
 }
 

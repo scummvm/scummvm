@@ -56,24 +56,26 @@ public:
 		kNormalArrow			= 20,
 		kHotspotArrow			= 21,
 
-		// Cursors in Nancy10 and newer games
-		kNewNormal 				= 0,	// Eyeglass, non-highlighted
-		kNewHotspot 			= 1,	// Eyeglass, highlighted
-		kNewNormalArrow			= 8,
-		kNewHotspotArrow		= 9,
-		kNewExit 				= 10,	// Used for movement and exiting puzzles
-		kNewRotateCW 			= 13,	// Used in puzzles only
-		kNewRotateCCW 			= 14,	// Used in puzzles only
-		kNewMoveLeft 			= 15,	// Used for movement and turning in 360 scenes
-		kNewMoveRight 			= 16,	// Used for movement and turning in 360 scenes
-		kNewMoveForward			= 17,	// Used for movement
-		kNewMoveBackward		= 18,	// Used for movement and exiting puzzles
-		kNewMoveUp				= 19,	// Used for movement
-		kNewMoveDown			= 20,	// Used for movement
-		kNewRotateRight			= 21,	// Used in 360 scenes
-		kNewRotateLeft			= 22,	// Used in 360 scenes
-		kNewInvertedRotateRight = 23,	// Used in 360 scenes
-		kNewInvertedRotateLeft	= 24,	// Used in 360 scenes
+		// Cursors in Nancy10 and newer games. Each cursor type stores
+		// two consecutive entries in the chunk: an idle slot at
+		// (type * 2) and a hotspot/highlighted slot at (type * 2 + 1).
+		kNewNormal 				= 0,	// Type 0 idle  — Eyeglass
+		kNewHotspot 			= 1,	// Type 0 hotspot — Eyeglass highlighted (only "hotspot" variant we expose)
+		kNewNormalArrow			= 8,	// Type 4 idle  — when the cursor is over the taskbar
+		kNewHotspotArrow		= 9,	// Type 4 hotspot
+		kNewExit 				= 10,	// Type 5 idle  — Used for movement and exiting puzzles
+		kNewRotateCW 			= 12,	// Type 6 idle  — Used in puzzles only
+		kNewRotateCCW 			= 14,	// Type 7 idle  — Used in puzzles only
+		kNewMoveLeft 			= 16,	// Type 8 idle  — Used for movement and turning in 360 scenes
+		kNewMoveRight 			= 18,	// Type 9 idle  — Used for movement and turning in 360 scenes
+		kNewMoveForward			= 20,	// Type 10 idle — Used for movement
+		kNewMoveBackward		= 22,	// Type 11 idle — Used for movement and exiting puzzles
+		kNewMoveUp				= 24,	// Type 12 idle — Used for movement
+		kNewMoveDown			= 26,	// Type 13 idle — Used for movement
+		kNewRotateRight			= 28,	// Type 14 idle — Used in 360 scenes
+		kNewRotateLeft			= 30,	// Type 15 idle — Used in 360 scenes
+		kNewInvertedRotateRight = 32,	// Type 16 idle — Used in 360 scenes
+		kNewInvertedRotateLeft	= 34,	// Type 17 idle — Used in 360 scenes
 	};
 
 	CursorManager();
@@ -99,6 +101,9 @@ public:
 
 private:
 	void adjustCursorHotspot();
+
+	// Resolve a CursorType + held-item pair to a Nancy 10+ cursor ID.
+	uint resolveNancy10CursorID(CursorType type, int16 itemID);
 
 	struct Cursor {
 		Common::Rect bounds;
