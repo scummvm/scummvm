@@ -86,16 +86,18 @@ static byte *largeBuffer, *largeBufferEnd;
 static byte *largeBuffer1, *largeBuffer2;
 static bool hasAnimInited;
 static int minFrame, maxFrame;
-static int timer1, timer2;
+static uint32 timer1, timer2;
 static int runVal1, runVal2, runVal3;
 static int runVal4, runVal5, runVal6;
 static int runVal7, runVal8, runVal9;
-static int runVal10, runVal11, runVal12;
+static int runVal10, runVal12;
 static int loadFontFlag;
 static int runFx;
 static int runCtr1;
 static int currentFrame;
 static bool peelFlag;
+static int current_error_code;
+static bool wait_for_music_at_end;
 
 /**
  * Initializes animview global variables
@@ -141,12 +143,15 @@ static void init_globals() {
 	runVal2 = runVal3 = -1;
 	runVal4 = runVal5 = runVal6 = 0;
 	runVal7 = runVal8 = runVal9 = 0;
-	runVal10 = runVal11 = runVal12 = 0;
+	runVal10 = runVal12 = 0;
 	loadFontFlag = 0;
 	runFx = 0;
 	runCtr1 = 0;
 	currentFrame = 0;
 	peelFlag = false;
+	current_error_code = 0;
+	wait_for_music_at_end = false;
+	exit_immediately_at_end = false;
 }
 
 /**
@@ -267,8 +272,34 @@ static void anim_normal_timer() {
 	// TODO
 }
 
-static void anim_interface_timer() {
+static void cycling_timer() {
 	// TODO
+}
+
+static void anim_peel() {
+	int peelX = current_anim->misc_peel_x;
+	if (peelX) {
+		buffer_peel_horiz(&scr_work, peelX);
+		matte_refresh_work();
+	}
+
+	int peelY = current_anim->misc_peel_y;
+	if (peelY) {
+		buffer_peel_vert(&scr_work, peelY, scr_inter_orig.data, 320 * 200);
+		matte_refresh_work();
+	}
+}
+
+static bool anim_fade(Palette *pal, int fadeAmount) {
+	bool palChanged = false;
+	byte *rgb = (byte *)pal;
+	for (int count = 0; count < Graphics::PALETTE_SIZE; ++count, ++pal) {
+		*rgb = MAX((int)*pal - fadeAmount, 0);
+		if (*rgb)
+			palChanged = true;
+	}
+
+	return palChanged;
 }
 
 /**
@@ -309,7 +340,7 @@ static void run_animation(int animIndex) {
 	loadFontFlag = current_anim->load_flags & AA_LOAD_FONT;
 
 	runVal5 = runVal6 = runVal7 = runVal8 = 0;
-	runVal9 = runVal10 = runVal11 = 0;
+	runVal9 = runVal10 = 0;
 
 	if (current_anim->background_type == AA_INTERFACE) {
 		currentFrame = -1;
@@ -323,7 +354,8 @@ static void run_animation(int animIndex) {
 		image_inter_list[0].flags = -2;
 		image_inter_list[0].segment_id = 0xff;
 
-		timer_activate_low_priority(anim_interface_timer);
+		//timer_activate_low_priority(anim_inter_timer);
+		error("TODO: Inter version of animation files");
 
 	} else {
 		timer1 += current_anim->frame[minFrame].ticks;
@@ -336,6 +368,69 @@ static void run_animation(int animIndex) {
 	}
 
 	// TODO: Inner animation loop
+
+	cycling_threshold = 3;
+	timer_activate_low_priority(cycling_active ? cycling_timer : nullptr);
+
+	if (!current_error_code && current_anim->misc_slow_fade) {
+		timer_activate_low_priority(nullptr);
+		timer2 = g_system->getMillis();
+		bool fadeFlag = true;
+
+		while (fadeFlag && !current_error_code) {
+			// Check for any keypress
+			if (g_engine->hasPendingKey()) {
+				g_engine->flushKeys();
+				current_error_code = true;
+			}
+
+			if (g_engine->shouldQuit())
+				current_error_code = true;
+
+			g_system->delayMillis(10);
+			if (g_system->getMillis() < timer2)
+				continue;
+
+			if (peelFlag) {
+				anim_peel();
+				matte_frame(0, 0);
+			}
+
+			anim_fade(&cycling_palette, current_anim->misc_slow_fade);
+			mcga_setpal(&cycling_palette);
+			timer2 += current_anim->misc_peel_rate;
+		}
+	}
+
+	if ((animIndex <= (anim_count - 1)) &&
+			(wait_for_music_at_end || !exit_immediately_at_end)) {
+		while (current_error_code == 0) {
+			// Check for any keypress or mouse clicks
+			if (g_engine->hasPendingKey()) {
+				g_engine->flushKeys();
+				current_error_code = true;
+			}
+
+			int mouseX = 0, mouseY = 0;
+			if (mouse_get_status(&mouseX, &mouseY))
+				current_error_code = true;
+
+			if (g_engine->shouldQuit())
+				current_error_code = true;
+
+			if (!exit_immediately_at_end)
+				continue;
+			if (g_engine->_soundManager->command(8))
+				continue;
+			current_error_code = true;
+		}
+	}
+
+	// Teardown for final animation
+	if (animIndex == (anim_count - 1) || current_error_code) {
+		timer_activate_low_priority(nullptr);
+		g_engine->stopSpeech();
+	}
 }
 
 /**
