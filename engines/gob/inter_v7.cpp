@@ -1887,17 +1887,36 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		Common::Array<uint32> installedApplications = getAdibou2InstalledApplications();
 		int32 indexAppli = VAR_OFFSET(20196);
 		if (indexAppli <= 0) {
-			// New appli, find the first directory containing an application still not installed, and set it as "current CD" path.
-			Common::ArchiveMemberDetailsList files;
-			SearchMan.listMatchingMembers(files, Common::Path(file)); // Search for CD.INF files
-			for (Common::ArchiveMemberDetails &cdInfFile : files) {
+			// New appli: find an uninstalled add-on directory and set it as "current CD" path.
+			//
+			// Build the set of already-used directories to skip:
+			//   1. Directories associated with installed apps (via appli_XX.vmd lookup).
+			//   2. The current CD path, to prevent consecutive pre-scan calls from selecting
+			//      the same add-on twice (e.g. when the menu displays multiple empty slots).
+			Common::StringArray usedDirs;
+			for (uint32 appNum : installedApplications) {
+				Common::Path appliVmd(Common::String::format("appli_%02d.vmd", appNum));
+				Common::ArchiveMemberDetailsList appliFiles;
+				SearchMan.listMatchingMembers(appliFiles, appliVmd);
+				for (Common::ArchiveMemberDetails &appliFile : appliFiles)
+					if (Common::find(usedDirs.begin(), usedDirs.end(), appliFile.arcName) == usedDirs.end())
+						usedDirs.push_back(appliFile.arcName);
+			}
+			Common::String currentPath = _currentCDPath.toString();
+			if (!currentPath.empty() && Common::find(usedDirs.begin(), usedDirs.end(), currentPath) == usedDirs.end())
+				usedDirs.push_back(currentPath);
+
+			// Try CD.INF-based detection (provides the application number directly).
+			bool found = false;
+			Common::ArchiveMemberDetailsList cdInfFiles;
+			SearchMan.listMatchingMembers(cdInfFiles, Common::Path(file));
+			for (Common::ArchiveMemberDetails &cdInfFile : cdInfFiles) {
+				if (Common::find(usedDirs.begin(), usedDirs.end(), cdInfFile.arcName) != usedDirs.end())
+					continue;
 				Common::SeekableReadStream *stream = cdInfFile.arcMember->createReadStream();
-				bool found = false;
 				while (stream->pos() + 4 <= stream->size()) {
-					// CD.INF contains a list of applications, as uint32 LE values
 					uint32 applicationNumber = stream->readUint32LE();
 					if (Common::find(installedApplications.begin(), installedApplications.end(), applicationNumber) == installedApplications.end()) {
-						// Application not installed yet, set it as current CD path
 						setCurrentCDPath(cdInfFile.arcName);
 						found = true;
 						break;
@@ -1905,6 +1924,18 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 				}
 				delete stream;
 				if (found) break;
+			}
+
+			if (!found) {
+				// Fallback: select any add-on directory not yet claimed (handles add-ons without CD.INF).
+				Common::ArchiveMemberDetailsList stkFiles;
+				SearchMan.listMatchingMembers(stkFiles, Common::Path("intro_ap.stk"));
+				for (Common::ArchiveMemberDetails &stkFile : stkFiles) {
+					if (Common::find(usedDirs.begin(), usedDirs.end(), stkFile.arcName) == usedDirs.end()) {
+						setCurrentCDPath(stkFile.arcName);
+						break;
+					}
+				}
 			}
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
