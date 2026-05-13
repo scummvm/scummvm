@@ -1,0 +1,3 @@
+Tests:
+  - if CXXTEST_CXXFLAGS_REMOVE and CXXTEST_CCFLAGS_REMOVE flags work,
+  - if CCFLAGS and CXXFLAGS vars work.

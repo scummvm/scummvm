@@ -1,0 +1,84 @@
+#!/bin/bash
+
+if test -z "$WORKSPACE"; then
+    echo "ERROR: \$WORKSPACE not defined"
+    exit 1
+fi
+export PATH="$WORKSPACE/vpython/bin:$PATH"
+
+if test -n "$1"; then
+    PYTHON="$1"
+else
+    PYTHON=python
+fi
+
+echo
+echo "Building on `hostname`:"
+echo
+echo "  Workspace: ${WORKSPACE}"
+echo
+echo "  Package: ${PACKAGE}"
+echo
+echo "  Environment:"
+/usr/bin/env 2>&1 | sort | sed 's/^/    /'
+echo
+echo "  Python:"
+${PYTHON} -c 'import sys; sys.stdout.write(sys.version+"\n")' 2>&1 \
+    | sed 's/^/    /'
+PYTHON_VER=`${PYTHON} -c 'import sys; sys.stdout.write(str(sys.version_info[0]))'`
+echo
+# The following executables are required (missing app yields build failure)
+for app in gcc; do
+which $app || exit 1
+echo "  $app:"
+$app --version 2>&1 | grep -v '^$' | sed 's/^/    /' || exit 1
+echo
+done
+
+
+# Setup virtual Python environment
+\rm -Rf vpython
+tmp=2.6
+if [ "yes" = "$(echo | awk "($PYTHON_VER < $tmp) { print \"yes\"; }")" ]; then
+   "$PYTHON" "$WORKSPACE"/cxxtest/admin/virtualenv_1.7.py "$WORKSPACE"/vpython || exit 1
+else
+   "$PYTHON" "$WORKSPACE"/cxxtest/admin/virtualenv.py "$WORKSPACE"/vpython || exit 1
+fi
+vpython/bin/easy_install nose
+if test "$PYTHON_VER" -gt 2; then
+    vpython/bin/easy_install unittest2py3k
+    #vpython/bin/pip install unittest2py3k
+else
+    vpython/bin/easy_install unittest2
+fi
+vpython/bin/easy_install ply
+vpython/bin/easy_install ordereddict
+vpython/bin/easy_install gcovr
+vpython/bin/easy_install coverage
+vpython/bin/easy_install pyutilib.th
+cd "$WORKSPACE"/cxxtest/python
+"$WORKSPACE"/vpython/bin/python setup.py develop
+
+# Cleanup test directories
+cd "$WORKSPACE"/cxxtest/test
+make clean
+cd "$WORKSPACE"/cxxtest/doc
+make clean
+cd "$WORKSPACE"
+
+# Run tests
+export CXXTEST_GCOV_FLAGS='-fprofile-arcs -ftest-coverage'
+vpython/bin/nosetests --verbosity=2 -w "$WORKSPACE"/cxxtest \
+    --with-coverage --with-xunit --xunit-file="$WORKSPACE"/TEST-cxxtest.xml \
+    || echo "(INFO) nosetests returned non-zero return code"
+
+# Generate Python code coverage
+vpython/bin/coverage xml --omit="$WORKSPACE/vpython/lib/*,$WORKSPACE/cxxtest/test/*,$WORKSPACE/cxxtest/doc/examples/*" -o $WORKSPACE/cxxtest/test/coverage.xml
+
+# Generate C++ code coverage
+cd "$WORKSPACE"/cxxtest
+"$WORKSPACE"/vpython/bin/gcovr -v -d -r "$WORKSPACE"/cxxtest \
+    -x -o "$WORKSPACE"/cxxtest/coverage.xml \
+    --gcov-filter '.*#test#(\.\.|\^)#cxxtest#.*gcov'
+
+echo "DONE"

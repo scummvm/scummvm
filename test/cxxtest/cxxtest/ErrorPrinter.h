@@ -1,3 +1,14 @@
+/*
+-------------------------------------------------------------------------
+ CxxTest: A lightweight C++ unit testing library.
+ Copyright (c) 2008 Sandia Corporation.
+ This software is distributed under the LGPL License v3
+ For more information, see the COPYING file in the top CxxTest directory.
+ Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
+ the U.S. Government retains certain rights in this software.
+-------------------------------------------------------------------------
+*/
+
 #ifndef __cxxtest__ErrorPrinter_h__
 #define __cxxtest__ErrorPrinter_h__
 
@@ -25,31 +36,33 @@
 
 namespace CxxTest
 {
-    class ErrorPrinter : public ErrorFormatter
-    {
-    public:
-        ErrorPrinter( CXXTEST_STD(ostream) &o = CXXTEST_STD(cout), const char *preLine = ":", const char *postLine = "" ) :
-            ErrorFormatter( new Adapter(o), preLine, postLine ) {}
-        virtual ~ErrorPrinter() { delete outputStream(); }
+class ErrorPrinter : public ErrorFormatter
+{
+public:
+    ErrorPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout), const char *preLine = ":", const char *postLine = "",
+                 const char *errorString = "Error",
+                 const char *warningString = "Warning") :
+        ErrorFormatter(new Adapter(o), preLine, postLine, errorString, warningString) {}
+    virtual ~ErrorPrinter() { delete outputStream(); }
 
-    private:
-        class Adapter : public OutputStream
+private:
+    class Adapter : public OutputStream
+    {
+        CXXTEST_STD(ostream) &_o;
+    public:
+        Adapter(CXXTEST_STD(ostream) &o) : _o(o) {}
+        void flush() { _o.flush(); }
+        OutputStream &operator<<(const char *s) { _o << s; return *this; }
+        OutputStream &operator<<(Manipulator m) { return OutputStream::operator<<(m); }
+        OutputStream &operator<<(unsigned i)
         {
-            CXXTEST_STD(ostream) &_o;
-        public:
-            Adapter( CXXTEST_STD(ostream) &o ) : _o(o) {}
-            void flush() { _o.flush(); }
-            OutputStream &operator<<( const char *s ) { _o << s; return *this; }
-            OutputStream &operator<<( Manipulator m ) { return OutputStream::operator<<( m ); }
-            OutputStream &operator<<( unsigned i )
-            {
-                char s[1 + 3 * sizeof(unsigned)];
-                numberToString( i, s );
-                _o << s;
-                return *this;
-            }
-        };
+            char s[1 + 3 * sizeof(unsigned)];
+            numberToString(i, s);
+            _o << s;
+            return *this;
+        }
     };
+};
 }
 
 #endif // __cxxtest__ErrorPrinter_h__

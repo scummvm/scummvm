@@ -1,26 +1,24 @@
-Introduction
-------------
+Overview
+--------
 
-CxxTest is a JUnit/CppUnit/xUnit-like framework for C++.
-
-Its advantages over existing alternatives are that it:
- - Doesn't require RTTI
- - Doesn't require member template functions
- - Doesn't require exception handling
- - Doesn't require any external libraries (including memory management,
-   file/console I/O, graphics libraries)
-
-This makes it extremely portable and usable.
+CxxTest is a unit testing framework for C++ that is similar in
+spirit to JUnit, CppUnit, and xUnit. CxxTest is easy to use because
+it does not require precompiling a CxxTest testing library, it
+employs no advanced features of C++ (e.g. RTTI) and it supports a
+very flexible form of test discovery.
 
 CxxTest is available under the GNU Lesser General Public Licence (LGPL).
-See http://www.gnu.org/copyleft/lesser.html for the license.
 
-Simple user's guide
--------------------
+A user guide can be downloaded from http://cxxtest.com.
+
+
+A Simple Example
+----------------
 
 1. Create a test suite header file:
 
-MyTest.h:
+MyTestSuite.h:
+
   #include <cxxtest/TestSuite.h>
 
   class MyTestSuite : public CxxTest::TestSuite
@@ -36,28 +34,11 @@ MyTest.h:
 
 2. Generate the tests file:
 
- # cxxtestgen.pl -o tests.cpp MyTestSuite.h
+ # cxxtestgen --error-printer -o tests.cpp MyTestSuite.h
 
+3. Compile and run!
 
-3. Create a main function that runs the tests
-
-main.cpp:
-  #include <cxxtest/ErrorPrinter.h>
-
-  int main( void )
-  {
-      CxxText::ErrorPrinter::runAllTests();
-      return 0;
-  }
-
-
-4. Compile and run!
-
-  # g++ -o main main.cpp tests.cpp
+  # g++ -o main tests.cpp
   # ./main
-  Running 1 test(s).OK!
+  Running cxxtest tests (1 test).OK!
 
-
-Advanced User's Guide
----------------------
-See docs/guide.html.

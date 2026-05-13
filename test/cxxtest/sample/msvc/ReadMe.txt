@@ -11,7 +11,7 @@ Whenever you build this workspace, the tests are run, and any failed assertions
 are displayed as compilation errors (you can browse them using F4).
 
 Note that to run this sample, you need first to create an environment
-variable PERL or PYTHON, e.g. PERL=c:\perl\bin\perl.exe
+variable PYTHON, e.g. Python=c:\Python25\bin\python.exe
 
 
 To use these .dsp and .dsw files in your own project, run FixFiles.bat

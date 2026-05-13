@@ -1,0 +1,35 @@
+# What I want to do is the following:
+# I have my class files ending with .cc and
+# the main file ending with .cpp. This way it
+# very easy to do the following line just to
+# have all sources in that variable
+
+import os
+
+mySrc = Glob("*.cc")
+myFlags = ['-I.']
+
+myEnv = Environment( ENV = os.environ, tools = ['default', \
+    'cxxtest'], toolpath=['../../'])
+
+# Here is the first problem I corrected:
+# Flags won't be correctly recognized by cxxtest
+myEnv.Replace(CXXFLAGS = myFlags)
+
+
+# Then I want to convert those sources to objects
+
+myObjs = myEnv.Object(mySrc)
+
+# Having the objects I can create my program
+# this way:
+
+myEnv.Program('hello', ['main.cpp'] + myObjs)
+
+# Now I want to do the same thing with the tests
+# target
+# With the non corrected version you'll get 2 errors:
+# The CXXFLAGS are not set correctly
+# It won't even accept this construction, which as you see
+# works perfectly with Program (and CxxTest should work like it)
+myEnv.CxxTest('helloTest', ['hellotest.t.h'] + myObjs)

@@ -1,0 +1,10 @@
+env = Environment(
+    toolpath=['../../'],
+    tools=['default','cxxtest'],
+    CXXTEST='./../../../../bin/cxxtestgen'
+    )
+
+env['CXXTEST_SKIP_ERRORS'] = True
+env.CxxTest(['src/ThrowNoStd.h'])
+env.CxxTest(['src/AborterNoThrow.h'])
+env.CxxTest(['src/Comments.h'])

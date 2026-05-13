@@ -3,7 +3,7 @@
 
 Dice::Dice()
 {
-    T::srand( T::time( 0 ) );
+    T::srand(T::time(0));
 }
 
 unsigned Dice::roll()

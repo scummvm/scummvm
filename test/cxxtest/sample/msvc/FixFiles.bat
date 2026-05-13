@@ -73,17 +73,15 @@ TESTS            = <TESTS>
 CXXTESTDIR       = <CXXTEST>
 
 # Check CXXTESTDIR
-!if !exist($(CXXTESTDIR)\cxxtestgen.pl)
+!if !exist($(CXXTESTDIR)\bin\cxxtestgen)
 !error Please fix CXXTESTDIR
 !endif
 
-# cxxtestgen needs Perl or Python
-!if defined(PERL)
-CXXTESTGEN       = $(PERL) $(CXXTESTDIR)/cxxtestgen.pl
-!elseif defined(PYTHON)
-CXXTESTGEN       = $(PYTHON) $(CXXTESTDIR)/cxxtestgen.py
+# cxxtestgen needs Python
+!if defined(PYTHON)
+CXXTESTGEN       = $(PYTHON) $(CXXTESTDIR)/bin/cxxtestgen
 !else
-!error You must define PERL or PYTHON
+!error You must define PYTHON
 !endif
 
 # The arguments to pass to cxxtestgen
@@ -103,7 +101,7 @@ run: $(DIR)\runner.exe
         $(DIR)\runner.exe $(RUNNER_FLAGS)
 ';
 
-$CxxTest_2_Build = 
+$CxxTest_2_Build =
 '# Microsoft Developer Studio Project File - Name="CxxTest_2_Build" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
@@ -113,19 +111,19 @@ $CxxTest_2_Build =
 CFG=CxxTest_2_Build - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "CxxTest_2_Build.mak".
-!MESSAGE 
+!MESSAGE
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "CxxTest_2_Build.mak" CFG="CxxTest_2_Build - Win32 Debug"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "CxxTest_2_Build - Win32 Release" (based on "Win32 (x86) Console Application")
 !MESSAGE "CxxTest_2_Build - Win32 Debug" (based on "Win32 (x86) Console Application")
-!MESSAGE 
+!MESSAGE
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -182,7 +180,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /out:"Debug/runner.exe" /pdbtype:sept
 
-!ENDIF 
+!ENDIF
 
 # Begin Target
 

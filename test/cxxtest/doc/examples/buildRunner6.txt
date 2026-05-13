@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite name="cxxtest" date="Tue Apr 23 23:28:43 2013" tests="2" errors="0" failures="1" time="0" >
+    <testcase classname="MyTestSuite2" name="testAddition" line="7" />
+    <testcase classname="MyTestSuite2" name="testMultiplication" line="13">
+        <failure file="MyTestSuite2.h" line="16" type="failedAssertEquals" >Error: Expected (2 * 2 == 5), found (4 != 5)</failure>
+    </testcase>
+</testsuite>

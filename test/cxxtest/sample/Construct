@@ -6,7 +6,7 @@
 
 $env = new cons( CXX => ("$^O" eq 'MSWin32') ? 'cl -nologo -GX' : 'c++',
 		 CPPPATH => '..',
-	         CXXTESTGEN => 'perl -w ../cxxtestgen.pl' );
+	         CXXTESTGEN => '../bin/cxxtestgen' );
 
 @tests = <*.h>;
 

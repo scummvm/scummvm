@@ -1,0 +1,7 @@
+Running cxxtest tests (1 test)
+In MyTestSuite2::testMultiplication:
+/Users/wehart/home/mac/src/cxxtest/doc/examples/MyTestSuite2.h:15: Trace: Starting multiplication test
+/Users/wehart/home/mac/src/cxxtest/doc/examples/MyTestSuite2.h:16: Error: Expected (2 * 2 == 5), found (4 != 5)
+/Users/wehart/home/mac/src/cxxtest/doc/examples/MyTestSuite2.h:17: Trace: Finishing multiplication test
+Failed 1 and Skipped 0 of 1 test
+Success rate: 0%
