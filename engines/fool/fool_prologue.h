@@ -38,14 +38,14 @@ public:
 
 	void run();
 
-	void sub_128_004();
+	void sub_128_004(bool finale);
 	void sub_128_1ba(int16 screenPage);
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
 	void delayFromMarker(int16 numTicks); // sub_128_24a
 	void drawTextRightAlign(int16 y, int16 x); // sub_128_26c
 	void drawTextCenterAlign(int16 unk1, int16 unk2); // sub_128_2a6
-	void fillRect(int16 patternID, int16 top, int16 left, int16 bottom, int16 right); // sub_128_2f0
+	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_2f0
 	void sub_128_354(PatternMode mode, uint16 unk2);
 	void sub_128_3ee(int16 unk1);
 	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
@@ -77,7 +77,7 @@ public:
 	void prologueRenderNextText(); // sub_130_f48
 	void sub_130_1002();
 
-	void sub_131_004();
+	void finaleRun(); // sub_131_004
 
 	void sub_131_4dc0();
 	void sub_131_4e48();
@@ -161,6 +161,7 @@ private:
 	int16 var_i16_3da;
 	int16 var_i16_3dc;
 	int16 var_i16_3e0;
+	int16 var_i16_3e2;
 
 	int16 var_i16_3fc;
 
@@ -180,6 +181,8 @@ private:
 
 	byte arr_i32_b54[SCREEN_PAGE_SIZE*12];
 
+	BitMap arr_i32_1e3fc[16];
+
 	BitMap arr_i32_3bca4;
 
 	BitMap arr_i32_41296[12];
@@ -190,6 +193,7 @@ private:
 
 	Common::Rect arr_i16_41af4;
 	Common::Rect arr_i16_41afc;
+	int16 arr_i16_41b04[3];
 	Common::Rect arr_i16_41b0a;
 
 	double arr_f64_41bbe[8] = { 0 };

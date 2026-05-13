@@ -105,7 +105,7 @@ void FoolGame::jigsawRun() {
 				_screenGrid[i].left,
 				_screenGrid[i].top,
 				_jigsawPieces[this->arr_i16_3738[i]],
-				kPutCopy
+				kSrcCopy
 			);
 		// 132:0452
 		}
@@ -347,7 +347,7 @@ void FoolGame::jigsawDropSelected() {
 				_screenGrid[this->arr_i16_2f38[i*32 + j]].left,
 				_screenGrid[this->arr_i16_2f38[i*32 + j]].top,
 				_jigsawPieces[this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]],
-				kPutCopy
+				kSrcCopy
 			);
 		}
 	}
@@ -366,7 +366,7 @@ void FoolGame::jigsawDropSelected() {
 					_screenGrid[this->arr_i16_2f38[i*32+j]].left,
 					_screenGrid[this->arr_i16_2f38[i*32+j]].top,
 					_jigsawPieces[this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]],
-					kPutCopy
+					kSrcCopy
 				);
 			}
 			// 132:134a
