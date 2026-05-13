@@ -23,6 +23,7 @@
 #define NANCY_UI_NOTEBOOKPOPUP_H
 
 #include "engines/nancy/renderobject.h"
+#include "engines/nancy/misc/hypertext.h"
 
 namespace Nancy {
 
@@ -33,7 +34,7 @@ namespace UI {
 
 // Nancy 10+ notebook popup. Driven by the UINB chunk: overlay image + two
 // tab buttons.
-class NotebookPopup : public RenderObject {
+class NotebookPopup : public RenderObject, public Misc::HypertextParser {
 public:
 	NotebookPopup();
 	~NotebookPopup() override = default;
@@ -47,18 +48,65 @@ public:
 	void close();
 	void toggle() { if (_isOpen) close(); else open(); }
 
+	// Re-render the active tab's text content into the text rect.
+	// Called automatically on open() and on tab switch; Scene also
+	// invokes it after a ModifyListEntry AR runs while the popup is open.
+	void refreshContent();
+
 private:
 	static const uint kNumTabs = 2;
 
+	enum WidgetState {
+		kStatePressed = 0,
+		kStateHover = 1,
+		kStateIdle = 2,
+		kStateDisabled = 3
+	};
+
 	void drawBackground();
 	void drawTabs();
+	void drawTab(uint index, bool drawHover = false);
+	void drawContent();
+	// Paint foreground widgets (close button, scrollbar) on top of the
+	// already-drawn background + content layers.
+	void drawForeground();
+	void drawCloseButton(WidgetState state);
+	void drawScrollbar(WidgetState state);
+
+	// Returns the on-popup-surface bounding rect of the slider thumb at
+	// the current scroll position (in popup-local coords).
+	Common::Rect computeThumbRect() const;
+
+	// Convert a chunk-space destRect into popup-local coordinates.
+	Common::Rect toPopupLocal(const Common::Rect &chunkRect, bool useGameFrame) const;
+	Common::Point popupLocalMouse(const Common::Point &screenMouse) const;
+
+	// Populate HypertextParser's text-line list with the active tab's
+	// entries.
+	void buildTextLines();
+
+	void paintPaperIntoFullSurface();
 
 	const UINB *_uinbData;
 
-	Graphics::ManagedSurface _overlayImage; // popup background image
+	Graphics::ManagedSurface _overlayImage;     // popup background image
+	Graphics::ManagedSurface _closeButtonImage; // header.secondaryButton.primaryImageName
 
 	bool _isOpen;
+	bool _closeButtonHovered = false;
+	bool _tabHovered = false;
 	int _activeTab; // 0..1, matching UINB::tabs index
+
+	// Scrollbar state. Driven by header.slider.
+	float _scrollPos = 0.0f;        // [0, 1]: 0 = top, 1 = bottom
+	bool _scrollbarDragging = false;
+	bool _scrollbarHovered = false;
+	int _scrollbarGrabOffset = 0;
+
+	enum NotebookTab {
+		kNotebookTabJournal = 3,
+		kNotebookTabTasks = 4
+	};
 };
 
 } // End of namespace UI

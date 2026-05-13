@@ -468,6 +468,12 @@ void ModifyListEntry::execute() {
 		break;
 	}
 
+	// Nancy 10+: if the notebook popup is currently visible, refresh the
+	// rendered list, so the new/changed entry shows up.
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getNotebookPopup().isOpen()) {
+		NancySceneState.getNotebookPopup().refreshContent();
+	}
+
 	finishExecution();
 }
 
