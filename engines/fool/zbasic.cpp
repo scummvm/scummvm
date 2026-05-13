@@ -445,24 +445,16 @@ void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
 	warning("STUB: ZBasic::picture");
 }
 
-void ZBasic::put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode) {
+void ZBasic::put(int16 x, int16 y, BitMap &src, SourceMode mode) {
 	this->put(x, y, x+src->w, y+src->h, src, mode);
 }
 
-void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutMode mode) {
+void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, SourceMode mode) {
 	debugC(8, kDebugGraphics, "ZBasic::put: %p -> (%d, %d) (%d, %d)", (void *)src.get(), x1, y1, x2, y2);
 	Common::Rect destRect(x1, y1, x2, y2);
-	SourceMode sm = kSrcCopy;
-	if (mode == kPutXOR) {
-		sm = kSrcXor;
-	} else if (mode == kPutAND) {
-		sm = kSrcBic;
-	} else if (mode == kPutOR) {
-		sm = kSrcOr;
-	}
 	GrafPtr port;
 	_toolbox->GetPort(port);
-	_toolbox->CopyBits(src, port->portBits, src->getBounds(), destRect, sm, nullptr);
+	_toolbox->CopyBits(src, port->portBits, src->getBounds(), destRect, mode, nullptr);
 }
 
 int32 ZBasic::readDataDblInt() {

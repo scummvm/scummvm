@@ -138,13 +138,6 @@ enum ZBasicWindowType {
 	kWindowDocumentFixed = 5,
 };
 
-enum ZBasicPutMode {
-	kPutCopy = 0,
-	kPutXOR = 1,
-	kPutOR = 2,
-	kPutAND = 3, // FIXME: check that these are right
-};
-
 struct ZBasicDatum {
 	ZBasicDatumType type = kDatumNULL;
 	uint32 offset = 0;
@@ -266,8 +259,8 @@ public:
 	void openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
-	void put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode);
-	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutMode mode);
+	void put(int16 x, int16 y, BitMap &src, SourceMode mode);
+	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, SourceMode mode);
 	int16 readDataInt();
 	int32 readDataDblInt();
 	Common::U32String readDataStr();

@@ -126,7 +126,7 @@ void FoolGame::highPriestessRun() {
 	this->var_i16_68a = 1;
 	for (int16 i = 1; i <= 0x155; i++) {
 		g_zbasic->get(1, i, SCREEN_WIDTH, i + 1, this->arr_bmp_fa3c);
-		g_zbasic->put(g_zbasic->rndInt(0x14) - 0xa, i, this->arr_bmp_fa3c, kPutCopy);
+		g_zbasic->put(g_zbasic->rndInt(0x14) - 0xa, i, this->arr_bmp_fa3c, kSrcCopy);
 		if (i % 2 == 0) {
 			g_toolbox->Delay(0);
 		}

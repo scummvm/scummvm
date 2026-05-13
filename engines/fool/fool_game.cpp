@@ -242,7 +242,7 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 
 	// 128:00e6
 	if (put == 1) {
-		g_zbasic->put(0, 0, bmp, kPutCopy);
+		g_zbasic->put(0, 0, bmp, kSrcCopy);
 	}
 }
 
@@ -1106,7 +1106,7 @@ void FoolGame::storyRenderPage() {
 		fillRect(0x2f, 0x37, 0x11f, 0x1db, 0);
 		if (this->var_i16_7e0 != 0) {
 			// Paste the previous lines of text, if we copied them
-			g_zbasic->put(0x3c, 0x32, this->arr_bmp_b3ec, kPutCopy);
+			g_zbasic->put(0x3c, 0x32, this->arr_bmp_b3ec, kSrcCopy);
 		}
 		// 128:252a
 		// y-position where the story text should start
@@ -2302,7 +2302,7 @@ void FoolGame::shipsRun() {
 	this->var_i16_d08 = g_zbasic->rndInt(5) + 5;
 	this->var_i16_d0a = g_zbasic->rndInt(5) - 0xa;
 	for (int16 i = 0; i <= 5; i++) {
-		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
 		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
 		this->sub_128_5a6c();
 	}
@@ -2333,7 +2333,7 @@ void FoolGame::shipsRun() {
 	if (_activePuzzleSolved) {
 		this->sub_128_6186();
 		this->sub_128_50e(0x14, 0x64, 0);
-		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
 		_event.where.x += 5;
 		_event.where.y -= 5;
 		if (_activePuzzleStatus < 0x64) {
@@ -2418,7 +2418,7 @@ void FoolGame::sub_128_55ac() {
 	}
 	// 128:56a0
 	for (this->var_i16_68a = 0; this->var_i16_68a <= 0x5; this->var_i16_68a++) {
-		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
 		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
 		this->sub_128_5a6c();
 	}
@@ -2435,7 +2435,7 @@ void FoolGame::sub_128_57a2() {
 	this->var_str_d12 = g_zbasic->ucase(g_zbasic->chr(_keyLastPressed));
 	if (g_zbasic->instr(1, g_zbasic->str(105), this->var_str_d12) > 0) { // NESW
 		// 128:57e0
-		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
 		this->var_i16_d08 = 0;
 		this->var_i16_d0a = 0;
 		if (this->var_str_d12 == g_zbasic->str(106)) { // N
@@ -2495,7 +2495,7 @@ void FoolGame::sub_128_5a6c() {
 	//Common::fill(fakePal+3, fakePal+768, 0x00);
 	//this->arr_bmp_bbbc->rawSurface().debugPrint(5, 0, 0,0, 0, -1, 160, fakePal);
 	g_toolbox->EraseRoundRect(this->arr_rect_1910c, 8, 7);
-	g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_b3ec, kPutXOR);
+	g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_b3ec, kSrcXor);
 	this->sub_128_406(0);
 }
 
@@ -2972,12 +2972,12 @@ void FoolGame::sub_129_068() {
 	// unfurl the scroll by blitting the lower half a bunch of times
 	for (int i = 0; i <= 0x15; i++) {
 		this->var_i16_484 = g_zbasic->readDataInt();
-		g_zbasic->put(0, this->var_i16_484, this->arr_bmp_5dfc, kPutCopy);
+		g_zbasic->put(0, this->var_i16_484, this->arr_bmp_5dfc, kSrcCopy);
 		this->sub_128_3da(2);
 	}
 	// 129:0888
-	g_zbasic->put(0, 0x14f, this->arr_bmp_b3ec, kPutCopy);
-	g_zbasic->put(0x1f9, 0x14f, this->arr_bmp_109dc, kPutCopy);
+	g_zbasic->put(0, 0x14f, this->arr_bmp_b3ec, kSrcCopy);
+	g_zbasic->put(0x1f9, 0x14f, this->arr_bmp_109dc, kSrcCopy);
 	g_zbasic->picture(0x39, 0x29, this->arr_i32_192c0[1]);
 
 	// 129:08ee
@@ -3329,7 +3329,7 @@ void FoolGame::sub_144_004() {
 			var_i16_42 + (int16)(i*0.6f),
 			SCREEN_WIDTH - i,
 			SCREEN_HEIGHT - (int16)(i*0.6f),
-			arr_bmp_5dfc, kPutCopy);
+			arr_bmp_5dfc, kSrcCopy);
 		// 144:015a
 		sub_128_406(0xf);
 	}
