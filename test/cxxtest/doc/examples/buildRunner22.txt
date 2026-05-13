@@ -1,0 +1,2 @@
+Parsing file Namespace1.h done.
+Running cxxtest tests (2 tests)..OK!

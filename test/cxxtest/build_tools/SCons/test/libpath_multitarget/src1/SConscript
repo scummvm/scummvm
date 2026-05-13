@@ -1,0 +1,3 @@
+Import('env')
+
+env.SharedLibrary('foo', 'foo.cpp')

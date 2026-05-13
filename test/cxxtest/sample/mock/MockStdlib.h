@@ -8,7 +8,7 @@ class MockStdlib :
 public:
     unsigned lastSeed;
 
-    void srand( unsigned seed )
+    void srand(unsigned seed)
     {
         lastSeed = seed;
     }
@@ -22,10 +22,12 @@ public:
 
     time_t nextTime;
 
-    time_t time( time_t *t )
+    time_t time(time_t *t)
     {
-        if ( t )
+        if (t)
+        {
             *t = nextTime;
+        }
         return nextTime;
     }
 };

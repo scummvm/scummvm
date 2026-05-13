@@ -1,0 +1,6 @@
+Running cxxtest tests (1 test)
+In MyTestSuite6::<no test>:
+MyTestSuite6.h:8: Error: Test failed: createSuite() failed
+MyTestSuite6.h:8: Error: Assertion failed: suite() != 0
+Failed 1 and Skipped 0 of 1 test
+Success rate: 0%

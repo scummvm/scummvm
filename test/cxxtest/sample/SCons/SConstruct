@@ -1,0 +1,39 @@
+
+cxxtestbuilder_path = '../../build_tools/SCons/cxxtest.py'
+cxxtest_path = '../..'
+
+# First a bit of python magic to make the CxxTestBuilder available
+# without having to copy it into a particular path.
+# for nicer examples you *should* use, see the cxxtest builder tests in the
+# build_tools/SCons/test directory.
+import imp
+cxxtest = imp.load_source('cxxtest', cxxtestbuilder_path)
+
+# First build the 'real' library, when working on an embedded system
+# this may involve a cross compiler.
+env = Environment()
+env.BuildDir('build/embedded_platform', 'src')
+env.Append(CPPPATH=['include'])
+libtested = env.StaticLibrary('build/embedded_platform/tested',
+                              env.Glob('build/embedded_platform/*.c'))
+
+# Now create a seperate build environment for the tests so we can keep any
+# options that are specific to testing  seperate from the 'production' build
+# environment. For simplicity I am just copying the production environment.
+# If we are cross compiling for the "real" library, then this
+# environement might be using the normal compiler.
+env_test = env.Clone()
+
+# Add the CxxTestBuilder to our testing build environment.
+cxxtest.generate(env_test, CXXTEST_INSTALL_DIR = cxxtest_path)
+
+# If we were working with an embedded platform we may want to create a
+# seperate version of our library that runs on our development box in
+# order to do our initial unit testing. This version may also include
+# any special preprocessor defines needed for testing e.g. -DTESTING
+env_test.BuildDir('build/dev_platform', 'src')
+env_test.BuildDir('build/tests', 'tests')
+lib_to_test = env_test.StaticLibrary('build/dev_platform/tested',
+                                     env.Glob('build/dev_platform/*.c'))
+env_test.Append(LIBS=lib_to_test)
+env_test.CxxTest(env_test.Glob('tests/*.h'))

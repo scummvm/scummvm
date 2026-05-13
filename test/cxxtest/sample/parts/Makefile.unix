@@ -11,7 +11,7 @@ clean:
 	rm -f *~ *.cpp *.o runner
 
 CXXTESTDIR   = ../..
-CXXTESTGEN   = $(CXXTESTDIR)/cxxtestgen.pl
+CXXTESTGEN   = $(CXXTESTDIR)/bin/cxxtestgen
 CXXTESTFLAGS = --have-eh --abort-on-fail
 
 TESTS = $(wildcard ../*Test.h)

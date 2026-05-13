@@ -89,7 +89,7 @@ test/runner: test/runner.cpp $(TEST_LIBS) copy-dat
 	+$(QUIET_CXX)$(LD) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ test/runner.cpp $(TEST_LIBS) $(TEST_LDFLAGS)
 test/runner.cpp: $(TESTS) $(srcdir)/test/module.mk
 	@mkdir -p test
-	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
+	$(srcdir)/test/cxxtest/bin/cxxtestgen $(TEST_FLAGS) -o $@ $+
 
 clean: clean-test
 clean-test:

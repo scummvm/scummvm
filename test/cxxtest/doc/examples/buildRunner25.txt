@@ -1,0 +1,2 @@
+Running cxxtest tests (1 test).OK!
+Non-CxxTest stuff is happening now.

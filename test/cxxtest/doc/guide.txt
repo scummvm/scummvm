@@ -1,0 +1,1871 @@
+CxxTest User Guide
+==================
+:doctype: article
+
+:cpp: {basebackend@docbook:c++:cpp}
+:makefile: {basebackend@docbook:make:makefile}
+
+:numbered!:
+[abstract]
+Abstract
+--------
+CxxTest is a unit testing framework for C\++ that is similar in
+spirit to http://junit.org/[JUnit],
+http://cppunit.sourceforge.net[CppUnit], and
+http://xprogramming.com/software.html[xUnit].  CxxTest is easy to
+use because it does not require precompiling a CxxTest testing
+library, it employs no advanced features of C++ (e.g. RTTI) and it
+supports a very flexible form of test discovery.  This documentation
+describes CxxTest 4.4, which is an incremental release that includes
+a variety of bug fixes and minor enhancements.
+
+:numbered:
+
+Overview
+--------
+
+CxxTest is a unit testing framework for C++ that is similar in
+spirit to http://junit.org/[JUnit],
+http://cppunit.sourceforge.net[CppUnit], and
+http://xprogramming.com/software.html[xUnit].
+CxxTest is designed to be as portable as possible;  it does not require
+
+ - RTTI
+ - Member template functions
+ - Exception handling
+ - External libraries (including memory management, file/console I/O, graphics libraries)
+
+In particular, the design of CxxTest was tailored for C\++ compilers
+on embedded systems, for which many of these features are not
+supported.  However, CxxTest can also leverage standard C++ features
+when they are supported by a compiler (e.g. catch unhandled
+exceptions).
+
+Additionally, CxxTest supports _test discovery_.  Tests are defined
+in C\++ header files, which are parsed by CxxTest to automatically
+generate a test runner.  Thus, CxxTest is somewhat easier to use
+than alternative C++ testing frameworks, since you do not need to
+_register_ tests.
+
+The http://cxxtest.com[CxxTest Home Page] is
+http://cxxtest.com[http://cxxtest.com].  This webpage contains links
+for https://sourceforge.net/projects/cxxtest/files/[release downloads],
+the https://groups.google.com/forum/?hl=en#!forum/cxxtest-forum[CxxTest
+discussion list], and documentation in
+http://cxxtest.com/guide.html[HTML],
+http://cxxtest.com/guide.pdf[PDF], and
+http://cxxtest.com/guide.epub[EPUB] formats.  The
+http://cxxtest.com[CxxTest Home Page] also includes developer
+resources (e.g. https://software.sandia.gov/hudson/view/CxxTest/[automated
+test results]).  CxxTest is available under the
+http://www.gnu.org/licenses/lgpl.html[GNU Lesser General Public]
+license.
+
+The CxxTest User Guide provides the following documentation:
+
+ - <<gettingStarted,Getting Started>>: Some simple examples that illustrate how to use CxxTest
+ - <<testAssertions,Test Assertions>>: The test assertions supported by CxxTest
+ - <<cxxtestgen,The CxxTestGen Command>>: Documentation for the +cxxtestgen+ command
+ - <<runner,Test Runner Syntax>>: Discussion of command line options for test runners
+ - <<advanced,Advanced Testing Features>>: Advanced features of CxxTest
+ - <<traits,Value Traits>>: Customizing data traits for error messages
+ - <<mock,Testing with Mock Objects>>: How to test with mock global functions
+ - <<installation,Installation>>: How to install CxxTest
+ - <<discussion,Status and Future Plans>>: Comments on the past, present and future of CxxTest
+
+
+
+[[gettingStarted]]
+Getting Started
+---------------
+
+Testing is performed with CxxTest in a four-step process:
+
+ 1. Tests are defined in C++ header files
+ 2. The +cxxtestgen+ command processes header files to generate files for the test runner.
+ 3. Compile the test runner.
+ 4. Execute the test runner to run all test suites.
+
+CxxTest supports test automation, sharing of setup
+and shutdown code for tests, aggregation of tests into collections,
+and independence of the tests from the reporting framework.  To
+achieve this, CxxTest supports some important concepts that are common to xUnit frameworks (
+e.g. http://junit.org/[JUnit], http://cppunit.sourceforge.net[CppUnit], and
+http://xprogramming.com/software.html[xUnit]):
+
+test fixture::
+   A 'test fixture' represents the preparation needed to perform one or more
+   tests, and any associate cleanup actions.  This may involve, for example,
+   creating temporary or proxy databases, directories, or starting a server
+   process.
+
+/////
+test case::
+   A 'test case' is the smallest unit of testing.  It checks for a specific
+   response to a particular set of inputs.  CxxTest provides a base class,
+   +TestCase+, which may be used to create new test cases.
+/////
+
+test suite::
+   A 'test suite' is a collection of test cases, which represent
+   the smallest unit of testing.  A test suite is defined by a class
+   that inherits from the +CxxTest::TestSuite+ class, and the tests
+   in a test suite are executed together.
+
+test::
+    A test is a public member function of a test suite whose name
+    starts with +test+, e.g. +testDirectoryScanner()+,
+    +test_cool_feature()+ and +TestImportantBugFix()+.
+
+test runner::
+   A 'test runner' is a component which orchestrates the execution
+   of tests across one or more test suites and provides the outcome
+   to the user.
+
+When building test fixtures using +TestSuite+, the +TestSuite.setUp+
+and +TestSuite.tearDown+ methods can be overridden to provide
+initialization and cleanup for the fixture.  The +TestSuite.setUp+
+method is run before each test is executed, and the +TestSuite.tearDown+
+method is run after each test is executed.
+
+
+A First Example
+~~~~~~~~~~~~~~~
+
+The following is a simple example of a
+test suite with a single test, +testAddition+, which perform two test assertions:
+[source,{cpp}]
+----
+include::examples/MyTestSuite1.h[]
+----
+
+You use the +cxxtestgen+ script to generate a _test runner_ for test suites in C++ header files:
+[source,bash]
+----
+include::examples/.buildRunner_main.sh[]
+----
+This command generates the file +runner.cpp+, which can be compiled.
+[source,bash]
+----
+include::examples/.buildRunner_compile.sh[]
+----
+Note that additional compiler flags may be needed to include headers
+and libraries that are used during testing.
+
+
+This runner can be executed to perform the specified tests:
+[source,bash]
+----
+include::examples/.buildRunner_run.sh[]
+----
+which generates the following output:
+----
+include::examples/buildRunner.log[]
+----
+
+
+A Second Example
+~~~~~~~~~~~~~~~~
+
+The following header file extends the previous example to
+include a test that generates an error:
+[source,{cpp}]
+----
+include::examples/.MyTestSuite2_.h[]
+----
+
+The test runner generated by +cxxtestgen+ for this test suite generates the following output:
+----
+include::examples/buildRunner2.log[]
+----
+
+
+Sample Problems
+~~~~~~~~~~~~~~~
+
+CxxTest comes with example test suites in the `cxxtest/sample` subdirectory of
+the distribution.  If you look in that directory, you will see three
+Makefiles: `Makefile.unix`, `Makefile.msvc` and
+`Makefile.bcc32` which are for Linux/Unix, MS Visual C\++ and Borland C++, repectively.  These files are provided as a starting point,
+and some options may need to be tweaked in them for your system.
+
+////
+WEH - I think we should omit these command line unless they are tested...
+
+If you are running under Windows, a good guess would be to run
+`nmake -fMakefile.msvc run_win32` (you may need to run
+`VCVARS32.BAT` first).
+Under Linux, `make -fMakefile.unix run_x11` should probably work.
+////
+
+
+[[testAssertions]]
+Test Assertions
+---------------
+
+The following table summarizes the test assertions supported by CxxTest.
+<<appendix_A,Appendix A>> provides examples that illustrate the use of these test assertions.
+
+[options="header"]
+|====================================================================================
+| Macro                                                                 | Description
+| <<ts_assert,+TS_ASSERT(expr)+>>                                       | Verify +expr+ is true
+| xref:ts_assert_delta[+TS_ASSERT_DELTA(x,y,d)+]                        | Verify that +abs(x-y) < d+
+| xref:ts_assert_differs[+TS_ASSERT_DIFFERS(x,y)+]                      | Verify that +x != y+
+| xref:ts_assert_equals[+TS_ASSERT_EQUALS(x,y)+]                        | Verify that +x == y+
+| <<ts_assert_is_nan,+TS_ASSERT_IS_NAN(x)+>>                            | Verify that +x+ is NaN
+| <<ts_assert_is_infinite,+TS_ASSERT_IS_INFINITE(x)+>>                  | Verify that +x+ is infinite
+| xref:ts_assert_less_than[+TS_ASSERT_LESS_THAN(x,y)+]                  | Verify that +x < y+
+| xref:ts_assert_less_than_equals[+TS_ASSERT_LESS_THAN_EQUALS(x,y)+]    | Verify that +x <= y+
+| xref:ts_assert_predicate[+TS_ASSERT_PREDICATE(P,x)+]                  | Verify +P(x)+
+| xref:ts_assert_relation[+TS_ASSERT_RELATION(x,R,y)+]                  | Verify +x R y+
+| xref:ts_assert_same_data[+TS_ASSERT_SAME_DATA(x,y,size)+]             | Verify two buffers are equal
+| xref:ts_assert_throws[+TS_ASSERT_THROWS(expr,type)+]                  | Verify that +expr+ throws the specified exception type
+| <<ts_assert_throws_anything,+TS_ASSERT_THROWS_ANYTHING(expr)+>>     | Verify that +expr+ throws an exception
+| xref:ts_assert_throws_assert[+TS_ASSERT_THROWS_ASSERT(expr,arg,assertion)+] | Verify type and value of what +expr+ throws
+| xref:ts_assert_throws_equals[+TS_ASSERT_THROWS_EQUALS(expr,arg,x,y)+] | Verify type and value of what +expr+ throws
+| xref:ts_assert_throws_is_nan[+TS_ASSERT_THROWS_IS_NAN(expr,arg,x)+] | Verify type and value of what +expr+ throws
+| xref:ts_assert_throws_is_infinite[+TS_ASSERT_THROWS_IS_INFINITE(expr,arg,x)+] | Verify type and value of what +expr+ throws
+| <<ts_assert_throws_nothing,+TS_ASSERT_THROWS_NOTHING(expr)+>>       | Verify that +expr+ doesn't throw anything
+| <<ts_fail,+TS_FAIL(message)+>>                                   | Fail unconditionally
+| <<ts_skip,+TS_SKIP(message)+>>                                    | Skip this test
+| <<ts_trace,+TS_TRACE(message)+>>                                 | Print +message+ as an informational message
+| <<ts_warn,+TS_WARN(message)+>>                                    | Print +message+ as a warning
+|====================================================================================
+
+The test assertions supported by CxxTest are defined as macros,
+which eliminates the need for certain templates within CxxTest and
+allows tests to catch exceptions.  There are four categories of
+test assertions in CxxTest, which are distinguished by their prefixes:
+
+TS_:: These test assertions perform a test. Catch exceptions generated
+during testing will cause the test to fail, except for tests that
+check for exceptions.
+
+TSM_:: These test assertions perform the same tests as the corresponding
++TS+ assertions, but their first argument is a +const char*+ message
+buffer that is printed when the test fails.
+
+ETS_:: These test assertions perform the same tests as the corresponding
++TS+ assertions.  However, these test assertions do not catch
+exceptions generated during testing.
+
+ETSM_:: These test assertions perform the same tests as the
+corresponding +TS+ assertions, but (1) their first argument is a
++const char*+ message buffer is printed when the test fails, and
+(2) these assertions do not catch exceptions generated during
+testing.
+
+
+[[cxxtestgen]]
+The CxxTestGen Command
+----------------------
+
+The +cxxtestgen+ command processes one or more C++ header files to
+generate a test runner.  The +cxxtestgen+ command performs test
+discovery by parsing the header files to find test classes, which
+inherit from the class +CxxTest::TestSuite+.
+
+The +--help+ option generates the following summary of the +cxxtestgen+ command line options:
+
+----
+include::examples/cxxtestgen.out[]
+----
+The following section describe illustrate the use of these command line options.
+
+
+General Options
+~~~~~~~~~~~~~~~
+
+The default behavior of +cxxtestgen+ is to send the source for the
+test runner to the standard output stream.  The +--output+ (+-o+)
+option indicates a filename for the test runner.
+
+The +--world+ (+-w+) option specifies the value of the +CxxTest::RealWorldDescription::_worldName+
+variable.  This option also customizes the filename used for XML output files (see below).
+
+The +--include+ option defines a filename that is included in the runner before all other headers.
+
+The +--abort-on-fail+ option forces an abort if a test fails, rather than continuing execution
+to the next test.
+
+The +--main+ option specifies an alternate name for the +main()+ function.
+
+Test Listener Options
+~~~~~~~~~~~~~~~~~~~~~
+
+The test runner behavior is controlled by a _test listener_ class
+that is used to define to the +main+ function.  The test listener
+class is a subclass of +TestListener+ that receives notifications
+about the testing process, notably which assertions failed.  The
++--runner+ option is used to specify the test listener that is used
+in the test runner.  The following test listeners are defined in
+CxxTest:
+
+ +ErrorPrinter+::
+    This is the standard error printer, which formats its output to the standard output stream (+std::cout+).
+ +StdioPrinter+::
+    The same as +ErrorPrinter+ except that it uses +printf+ instead of +std::cout+.
+ +ParenPrinter+::
+    Identical to +ErrorPrinter+ except that it prints line numbers in parantheses. This is the way Visual Studio expects it.
+ +XmlPrinter+::
+    Print test results to an XML file.
+ +XUnitPrinter+::
+    This test listener generates output using both +ErrorPrinter+ and +XmlPrinter+.
+
+ErrorPrinter
+^^^^^^^^^^^^
+
+The +--error-printer+ option creates a runner using the +ErrorPrinter+
+test listener, and it indicates that the standard library is used
+in the test runner.  The +ErrorPrinter+ test listener prints dots
+to summarize test execution, along with a summary of the test
+results.  For example, the command
+[source,bash]
+----
+include::examples/.buildRunner2_main.sh[]
+----
+generates the following output:
+
+----
+include::examples/buildRunner2.log[]
+----
+
+StdioPrinter
+^^^^^^^^^^^^
+
+If your compiler does not support +std::cout+, then the +ErrorPrinter+ test listener cannot be used.
+In this case, the +StdioPrinter+ test listener can be used;  it provides the same output as +ErrorPrinter+ but it uses the +printf+ function. For example, the command line:
+[source,bash]
+----
+include::examples/.buildRunner4_main.sh[]
+----
+generates the following output:
+
+----
+include::examples/buildRunner4.txt[]
+----
+
+ParenPrinter
+^^^^^^^^^^^^
+
+The +--runner=ParenPrinter+ option creates a similar test runner:
+[source,bash]
+----
+include::examples/.buildRunner3_main.sh[]
+----
+This test runner generates output that is similar to the +ErrorPrinter+ test listener:
+
+----
+include::examples/buildRunner3.txt[]
+----
+The only difference is the parentheses used in the output.  This test listener provides a format that can be recognized by Visual Studio.
+
+////
+The +StdioPrinter+ makes reference to +stdout+ as the default output
+stream. In some environments, the +stdio.h+ header may be defined
+but not +stdout+.  The +StdioFilePrinter+ test listener can be used
+in this case, though the main() function needs to be adapted to specify the
+stream that is used in output.
+////
+
+XmlPrinter
+^^^^^^^^^^
+
+The +--runner=XmlPrinter+ option creates a test runner whose output is an XML summary of the test results.  For example, the command:
+[source,bash]
+----
+include::examples/.buildRunner6_main.sh[]
+----
+generates the following output:
+
+----
+include::examples/buildRunner6.txt[]
+----
+This XML format is conforms to the XML standard used by other xUnit tools.  Thus, this output can be used as input in other tools, like http://jenkins-ci.org/[Jenkins], to generate test summaries.
+
+
+XUnitPrinter
+^^^^^^^^^^^^
+
+The +XUnitPrinter+ test listener generates output using both the
+ErrorPrinter+ and +XmlPrinter+ test listeners.  This allows the
+user to interactively view a simple test summary, while simultaneously
+generating an XML summary of the test results.  The +--xunit-printer+
+option specifies the use of +XUnitPrinter+:
+[source,bash]
+----
+include::examples/.buildRunner7_main.sh[]
+----
+This test runner generates the following output:
+
+----
+include::examples/buildRunner7.txt[]
+----
+The default filename for the XML results is +TEST-cxxtest.xml+.  The
++--xunit-file+ option can be used to specify an alternative filename.
+Additionally, the value of the +--world+ option can be used to specify the
+filename +TEST-<world>.xml+.
+
+
+Language Options
+~~~~~~~~~~~~~~~~
+
+When +cxxtestgen+ performs test discovery, it also performs checks
+to detect whether (1) the standard library is used and (2) exceptions
+are used.  These checks configure CxxTest to _not_ assume that these
+C++ language features are used when generating the test driver.
+Thus, CxxTest can naturally be used with compilers that do not
+support these features.
+
+The +cxxtestgen+ command includes several options that override
+these checks and define features of C++ that are used by the test
+runner.  The +--have-std+ option indicates that the test runner
+should use the standard library, and the +--no-std+ option indicates
+that the test runner should not use the standard library. The
+--have-eh+ options indicates that the test runner should use
+exception handling, and the +--no-eh+ indicates that the test runner
+should not not use exception handling.
+
+The +--longlong+ option specifies the type used for long long
+integers.  The default is for _no_ long long integer type to be specified,
+which is consistent with the current C++ standard.
+
+CxxTest test runners depend quite heavily on static initialization
+of objects that are used to define and execute tests. The
+--no-static-init+ option can be used to avoid static initialization
+for compilers or linkers that have trouble compiling the default test runner.
+
+
+Creating Test Runners from Parts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The default behavior of +cxxtestgen+ is to generate a test runner that directly
+integrates classes that define the tests along with a +main()+ function that
+executes all test suites.  It is often useful to allow test suites to be
+processes separately and then linked together.  The +--root+ and +--part+
+options support this logic.  For example, suppose that we wish to define a test
+runner for tests in the headers MyTestSuite1.h+ and +MyTestSuite2.h+.  We
+execute +cxxtestgen+ with the +--part+ option to generate source files for each
+of the test suites:
+[source,bash]
+----
+include::examples/.buildRunner9_part.sh[]
+----
+Similarly, we execute +cxxtestgen+ with the +--root+ opiton to generate the +main()+ routine:
+[source,bash]
+----
+include::examples/.buildRunner9_root.sh[]
+----
+Finally, the test runner is built by compiling all of these source files together:
+[source,bash]
+----
+include::examples/.buildRunner9_compile.sh[]
+----
+
+
+Template Files
+~~~~~~~~~~~~~~
+
+CxxTest supports the use of _template files_ to provide a custom
+main()+ function.  This may be useful when using a custom test
+listener, or when using an existing CxxTest test listener in a
+nonstandard manner.  A template file is an ordinary source files
+with the embedded declaration +<CxxTest world>+, which tells
+cxxtestgen+ to insert the world definition at that point.
+
+The +--template+ option is used to specify the use of a template file:
+[source,bash]
+----
+include::examples/.buildRunner10_main.sh[]
+----
+For example, consider the following template file:
+[source,{cpp}]
+----
+include::examples/runner10.tpl[]
+----
+This file specifies macros that customize the test runner, and output is
+generated before and after the tests are run.
+
+Note that CxxTest needs to insert certain definitions and +#include+
+directives in the runner file. It normally does that before the
+first +#include <cxxtest/*.h>+ found in the template file. If this
+behavior is not what you need, use the directive +<CxxTest preamble>+
+to specify where this preamble is inserted.
+
+
+Test Discovery Options
+~~~~~~~~~~~~~~~~~~~~~~
+
+The +cxxtestgen+ command performs test discovery by searching C++
+header files for CxxTest test classes.  The default process for
+test discovery is a simple process that analyzes each line in a
+header file sequentially, looking for a sequence of lines that
+represent class definitions and test method definitions.
+
+There are many limitations to this simple process for test discovery,
+and in CxxTest 4.0 a new test discovery mechanism was added based
+on the a parser for the
+http://www.computing.surrey.ac.uk/research/dsrg/fog/[Flexible Object
+Generator (FOG)] language, which is a superset of C+\+.  The grammar
+for the FOG language was adapted to parse C++ header files to
+identify class definitions and class inheritance relationships,
+class and namespace nesting of declarations, and class methods.
+This allows +cxxtestgen+ to identify test classes that are defined
+with complex inheritance relationships.
+
+The +--fog+ option is used to specify the use of the FOG parser for
+test discovery.  Although the FOG parser is more powerful, the
+simpler +cxxtestgen+ test discover process is the default because
+the FOG parser is slower to execute.  Additionally, the FOG parser
+requires the installation of +ply+ and, for Python version 2.6,
+ordereddict+.  If these packages are not available, then the +--fog+
+option is automatically disabled.
+
+The following sections illustrate differences between these two test discovery mechanisms, along with
+general limitations of the test discovery process.
+
+Unexpected Test Suite Format
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The default test discovery mechanism does a very simple analysis
+of the input files, which can easily fail when test classes are not
+formated in a standard manner.  For example, consider the following
+test suite:
+[source,{cpp}]
+-----
+include::examples/MyTestSuite4.h[]
+----
+This test suite is not recognized by the default test discovery
+mechanism, but the FOG parser correctly parsers this file and
+recognizes the test suite.  A variety of similar discovery failures
+arise due to the simple process used by the test discovery mechanism.
+
+
+Commenting Out Tests
+^^^^^^^^^^^^^^^^^^^^
+
+Adding and disabling tests are two common steps in test development.
+The process of test discovery makes adding tests very easy.  However,
+disabling tests is somewhat more complicated.  Consider the following
+header file, which defines four tests (three of which are disabled):
+[source,{cpp}]
+-----
+include::examples/MyTestSuite3.h[]
+----
+
+The first is commented out with C\++-style comments, the second
+test is commented out with C-style comments, and the third test is
+named in a manner that is not recognized through test discovery
+(i.e., it does not start with +test+).
+
+The default test discovery mechanism only works with the first and
+third methods for disabling tests, but the FOG parser works with
+all three.  The FOG parser performs a complex, multi-line parse of
+the source file, so it can identify multi-line C-style comments.
+
+Note, however, that the use of C macros will not work:
+[source,{cpp}]
+-----
+include::examples/BadTestSuite1.h[]
+----
+The +cxxtestgen+ discovery mechanisms do not perform a C preprocessing
+step, since that would generally require using externally defined
+preprocessing variable definitions.   Additionally, preprocessor macros that act like functions will
+cause the FOG parser to fail unless they are followed by a semicolon.
+
+
+Test Classes Nested in Namespaces
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In some contexts, it is appropriate to nest test classes in namespaces.
+This allows the same class name to be used without creating conflicts
+in the test runner.  The default test discovery mechanism can only do
+this by declaring the namespaces with the class name, and then declaring the
+class with the explicit namespace prefix.  For example:
+[source,{cpp}]
+-----
+include::examples/Namespace2.h[]
+----
+However, the default test discovery mechanism cannot recognize the more typical
+declaration of test classes within nested namespaces:
+[source,{cpp}]
+-----
+include::examples/Namespace1.h[]
+----
+The FOG parser can discover tests nested within arbitrary namespaces, and unique
+names are used within the test runner to distinguish the test classes in different namespaces.
+
+
+
+[[runner]]
+Test Runner Syntax
+------------------
+
+The default behavior of the CxxTest test runner is to execute all
+tests in all of the test suites that are linked into the runner.
+However, CxxTest test runners process command line options that
+allow individual tests and test suites to be selected.
+
+For example, consider a test runner defined as follows:
+[source,bash]
+----
+include::examples/.buildRunner13_main.sh[]
+----
+The +--help+ (+-h+) option can be used to print the command line options for a test runner.  The command
+
+----
+include::examples/.buildRunner13_help.sh[]
+----
+generates the following output:
+
+----
+include::examples/runner13.help.txt[]
+----
+
+The +--help-tests+ option is used to list all test suites that are defined in a test runner.  The command
+[source,bash]
+----
+include::examples/.buildRunner13_helpTests.sh[]
+----
+generates the following output:
+
+----
+include::examples/runner13.helpTests.txt[]
+----
+The first column is the test suite name, and the second column is the test name.
+
+All tests in a test suite can be executed by simply specifying the test suite name.  For example
+[source,bash]
+----
+include::examples/.buildRunner13_MyTestSuite2.sh[]
+----
+executes the tests in test suite +MyTestSuite2+:
+
+----
+include::examples/runner13.MyTestSuite2.txt[]
+----
+
+Similarly, a single test can be executed by specifying the test suite followed by the test name.  For example
+[source,bash]
+----
+include::examples/.buildRunner13_testMultiplication.sh[]
+----
+executes the +testMultiplication+ test in test suite +MyTestSuite2+:
+
+----
+include::examples/runner13.testMultiplication.txt[]
+----
+
+The +-v+ option enables the printing of trace information generated
+by the +TS_TRACE+ function.  For example, the +testMultiplication+ test contains trace declarations
+before and after the multiplication test.  Thus, the command
+[source,bash]
+----
+include::examples/.buildRunner13_testMultiplicationVerbose.sh[]
+----
+generates this trace output before and after the test:
+
+----
+include::examples/runner13.testMultiplicationVerbose.txt[]
+----
+
+
+[[advanced]]
+Advanced Testing Features
+-------------------------
+
+Preprocessor Macros
+~~~~~~~~~~~~~~~~~~~
+
+CxxTest recognizes a variety of preprocessor macros that can be used to modify the behavior of a test runner.  Many of these mimic the options of the +cxxtestgen+ command.
+
+[options="header"]
+|====================================================================================
+| Preprocessor Macro  | Description
+| +CXXTEST_HAVE_STD+              | Use the standard library.
+| +CXXTEST_HAVE_EH+               | Use exception handling.
+| +CXXTEST_ABORT_TEST_ON_FAIL+    | Abort tests on failed asserts.
+| +CXXTEST_USER_VALUE_TRAITS+     | Enable user-defined value traits.  The default traits dump up to 8 bytes of the data as hex values.
+| +CXXTEST_OLD_TEMPLATE_SYNTAX+   | Use old template syntax that is used by some compilers (e.g. Borland C++ 5).
+| +CXXTEST_OLD_STD+               | Use old syntax for libraries where +std::+ is not recognized.
+| +CXXTEST_MAX_DUMP_SIZE+         | The value of this macro defines the maximum number of bytes to dump if +TS_ASSERT_SAME_DATA()+ fails. The default is 0, which indicates no limit.
+| +CXXTEST_DEFAULT_ABORT+         | The value of this macro is the default value of the dynamic _abort on fail_ flag.
+| +CXXTEST_LONGLONG+              | The value of this macro is used to define long long integers.
+|=====================================
+
+These preprocessor macros must be defined before the CxxTest header
+files are included in the test runner.  For example, the following
+template file defines +CXXTEST_HAVE_EH+ and +CXXTEST_ABORT_TEST_ON_FAIL+
+before other headers are included:
+[source,{cpp}]
+----
+include::examples/runner10.tpl[]
+----
+
+Several of these macros concern whether modern C++ conventions are
+supported by the compiler.  If tests need to be ported to multiple
+compilers, then one important convention is whether the namespace
++std::+ is supported.  For example, switching between +cout+ and
++std::cout+ typically needs to be done throughout a code.  CxxTest
+supports this with the +CXXTEST_STD()+ macro.  For example,
++CXXTEST_STD(cout)+ can be used within a test suite, and CxxTest
+handles the mapping of this to +cout+ or +std::cout+ depending on
+options provided to +cxxtestgen+.
+
+Finally, CxxTest defines the +CXXTEST_RUNNING+ preprocessor macro.
+This can be used in a test header file to define code that is
+executed when the header is not used in a test runner.  For example:
+[source,{cpp}]
+-----
+include::examples/MyTestSuite12.h[]
+----
+Note that test suites derived from +CxxTest::TestSuite+ class cannot
+easily be built outside of the test runner.
+
+
+
+Customizing Test Fixtures
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Setup and Teardown
+^^^^^^^^^^^^^^^^^^
+
+CxxTest test fixtures can be customized in several ways to manage
+the environment for test suites and individual tests.  A common
+feature of test suites is that they share a common logic for setting
+up data used in the tests.  Thus, there may be duplicate code for
+creating objects, files, inputs, etc.  Similarly, the tests may
+share common logic for cleaning up after the test is finished (e.g. deleting temporary objects).
+
+You can put this shared code in a common place by overriding the
+virtual functions `TestSuite::setUp()` and `TestSuite::tearDown()`.
+The `setUp()` function is called before each test, and `tearDown()`
+is called after each test.
+
+For example, the following test suite employs +setUp()+ and +tearDown()+ methods to
+allocate and deallocate memory for a string buffer:
+[source,{cpp}]
+-----
+include::examples/MyTestSuite5.h[]
+-----
+
+Note that test assertions cannot be used in within the +setUp()+
+or +tearDown()+ methods.  The scope of these methods is outside any
+test case, so an assertion failure does not have a clear semantics.
+Similarly, test assertions cannot be used in
+world setup and teardown or in +createSuite()+ or +destroySuite()+ methods for for
+dynamicly created test suites (see below).
+
+
+Dynamically Created Test Suites
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+CxxTest test fixtures can also be customized during the construction
+and deconstruction of test suites.  By default, CxxTest test suites
+are instantiated statically in the test runner.  However, dynamically
+created test suites can be used to perform suite-level setup and
+teardown operations, verify the environment needed to execute a
+test suite, and construct test suites that require a nontrivial
+constructor.
+
+CxxTest instantiates a test suite dynamically if the +createSuite()+
+or +destroySuite()+ methods are defined.  For example, the following
+test suite checks to see if it is being compiled with Microsoft
+Visual Studio.  If not, the +createSuite()+ returns a null pointer,
+indicating that the test suite was not created.
+[source,{cpp}]
+-----
+include::examples/MyTestSuite6.h[]
+-----
+
+Global and World Fixtures
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+CxxTest supports two related mechanisms for performing _global_
+setup and teardown operations.  _Global fixtures_ are classes that
+inherit from `CxxTest::GlobalFixture`, and they define `setUp` and
+`tearDown` methods.  The `setUp` method for all global fixtures is
+called before each test is executed, and the `tearDown` method for
+all global fixtures is called after each test is completed.  Thus,
+this mechanism provides a convenient way of defining setup and
+teardown operations that apply to all test suites.
+
+For example, consider the following test suite:
+[source,{cpp}]
+-----
+include::examples/MyTestSuite8.h[]
+-----
+This test suite defines a runner that generates the following output:
+
+-----
+include::examples/buildRunner18.txt[]
+-----
+
+Note that the global fixtures are instantiated with static global
+values.  This ensures that these fixtures are created before the
+runner is initialized.  Also, note that the `setUp` methods are
+called in the same sequence that the global fixtures are instantiated,
+and the `tearDown` methods are called in the reverse sequence.
+Finally, note that the `setUp` and `tearDown` methods in global
+fixtures return a boolean value, which indicates success or failure
+of that operation.
+
+This example also illustrates the use of _world fixtures_, which
+perform setup and teardown operations that are executed once each
+when beginning and finishing tests in each test suite.  World
+fixtures are defined with the `setUpWorld` and `tearDownWorld`
+methods in a global fixture.
+
+
+Runtime Test Customization
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+CxxTest defines several functions that can be called in a test suite to modify the default behavior of CxxTest.
+
+[options="header"]
+|==================================
+| Test Suite Method | Description
+| +setAbortTestOnFail(bool)+ |  This function specifies whether tests abort after a failure.  The default value of the flag is +false+.  This function only has an effect if exception handling is enabled.
+| +setMaxDumpSize(unsigned)+ | This function sets the maximum number of bytes that are dumped when
++TS_ASSERT_SAME_DATA()+ fails. The default is 0, which indicates no limit.
+|=============
+
+Note that the the configuration parameters are reset to their default
+values after each test is executed (more precisely, after +tearDown()+
+is called).  Consequently, calling these functions in the +setUp()+
+function has the effect of setting that value for the entire test
+suite.
+
+
+
+[[traits]]
+Value Traits
+------------
+
+CxxTest's test assertions like <<ts_assert_equals,TS_ASSERT_EQUALS>>
+work for built-in types, but they will not likely work for user-defined
+data types.  This is because CxxTest needs a way to compare objects
+and to convert them to strings when printing test failure summaries.
+Thus, user-defined data types need to have the `operator=` method
+defined to ensure that test assertions can be applied.
+
+For example, the following code
+[source,{cpp}]
+-----
+include::examples/MyTestSuite7.h[]
+-----
+defines a test runner that generates the following output
+
+-----
+include::examples/buildRunner17.txt[]
+-----
+The `operator=` method is required to apply
+<<ts_assert_equals,TS_ASSERT_EQUALS>> to `Data` objects.  However,
+the <<ts_assert_same_data,TS_ASSERT_SAME_DATA>> assertion can be
+applied to `Data2` objects that do not have `operator=` defined.
+
+Since CxxTest does not rely on any external library, conversion
+from arbitrary data types to strings is done using _value traits_.
+For example, to convert an integer to a string, CxxTest does the following:
+[source,{cpp}]
+----
+int i = 10;
+CxxTest::ValueTraits<int> converter(i);
+const char* string = converter.asString();
+----
+The CxxTest header file `cxxtest/ValueTraits.h` defines value traits
+for standard types like `int`, `char`, `double`, etc.  The default
+`ValueTraits` class for unknown types dumps up to 8 bytes of the value
+in hex format.
+
+If the macro `CXXTEST_USER_VALUE_TRAITS` is defined, then CxxTest will
+omit the default definitions for `ValueTraits`.  This allows a user to define their own trait specifications to customize the display of trait information.
+
+
+
+Enumeration Traits
+~~~~~~~~~~~~~~~~~~
+
+CxxTest provides a simple way to define value traits for enumeration
+types.  The `CXXTEST_ENUM_TRAITS` macro is used to define value
+traits for all members of an enumeration set.
+
+For example, the following code
+[source,{cpp}]
+-----
+include::examples/MyTestSuite9.h[]
+-----
+defines a test runner that generates the following output
+
+-----
+include::examples/buildRunner19.txt[]
+-----
+The enumeration value traits print strings that represent the elements of the enumeration, except where a numeric value is provided.
+
+Note that the `CXXTEST_ENUM_TRAITS` macros has two arguments;  the list of `CXXTEST_ENUM_MEMBER` macros is not separated by commas!
+
+
+Defining New Value Traits
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Defining value traits for a new class is done by providing a class
+specialization of `ValueTraits` that converts an object of the new
+class to a string.  For example, consider the definition of the
+`MyClass` class:
+[source,{cpp}]
+-----
+include::examples/MyClass.h[]
+-----
+This class includes definitions of `operator==` and `operator<`
+that support comparisons with <<ts_assert_equals,TS_ASSERT_EQUALS>>
+and <<ts_assert_less_than,TS_ASSERT_LESS_THAN>>.  Additionally,
+this header contains a specialization of `ValueTraits` (in the
+`CxxTest` namespace) that generates a string description of a `MyClass`
+instance.
+
+The following test suite illustrates how these definitions can be
+used to define a test runner:
+[source,{cpp}]
+-----
+include::examples/MyTestSuite10.h[]
+-----
+This runner for this test suite generates the following output:
+
+-----
+include::examples/buildRunner20.txt[]
+-----
+The test failure print logic uses the specialization of `ValueTraits` to create
+the string description of `MyClass` that appears in the output.
+
+
+Defining Value Traits for Template Classes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A simple modification to the above example illustrates how a trait can be defined for a
+template class:
+[source,{cpp}]
+-----
+include::examples/MyTestSuite11.h[]
+-----
+Unfortunately, this example employs partial template specialization, which  is not supported by all C++ compilers.
+
+
+[[mock]]
+Testing with Mock Objects
+-------------------------
+
+Mock Objects are a very useful concept for testing complex software.
+The key idea is to pass special objects to tested code that facilitates
+the testing process.  For instance, a class that implements a
+protocol over TCP might rely on an abstract `ISocket` interface.
+Then a mock testing strategy could pass a `MockSocket` object that
+does anything that is useful for testing (e.g., keep a log of all
+data ``sent'' to verify later).
+
+However, when a challenge for C/C++ developers is that you may need
+to call _global_ functions which you cannot override.  Consider any
+code that uses `fopen()`, `fwrite()` and `fclose()`.  It is not
+very elegant to have this code actually create files while being
+tested.  Even more importantly, you need to test how the code behaves
+when ``bad'' things happen (e.g., when `fopen()` fails).  Handling
+these types of exceptional conditions is often a very challenging
+issue for software testing.
+
+CxxTest addresses this challenge by providing a generic mechanism for
+defining mock global functions.  The next section illustrates this mechanism for a single
+global function.  The following section provides more detail about specific features of CxxTest's
+support for mock testing.
+
+
+Example: A Mock +time()+ Function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Suppose that we want to perform mock testing using the well known
+standard library function `time()`.  Setting up a test suite with
+a mock global function for `time()` can be broken down into the
+following steps.
+
+Declare Mock Functions
+^^^^^^^^^^^^^^^^^^^^^^
+
+The `CXXTEST_MOCK_GLOBAL` macro is used to declare mock global functions.  It is often convenient to include
+these declarations in a header file, which is used in both the test suite as well as the code that is being tested:
+[source,{cpp}]
+-----
+include::examples/time_mock.h[]
+-----
+
+Mock Functions in Tested Code
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The tested code uses mock global functions, rather than using the global functions directly.
+You access mock functions in the `T` (for _Test_) namespace, so the tested code calls `T::time()` instead of
+`time()`. This is the equivalent of using abstract interfaces
+instead of concrete classes.
+[source,{cpp}]
+-----
+include::examples/rand_example.cpp[]
+-----
+
+
+Mock Source Files
+^^^^^^^^^^^^^^^^^
+
+A source file needs to be defined that implements `T::time()` by
+calling the real global function.  This definition is performed automatically by
+defining `CXXTEST_MOCK_REAL_SOURCE_FILE` before the header file is defined:
+[source,{cpp}]
+-----
+include::examples/time_real.cpp[]
+-----
+This source file is not used for testing, but instead it supports normal use of the tested code.
+
+Similarly, a source file needs to be defined that implements `T::time()` by calling the mock
+global function.  This definition is performed automatically by defining `CXXTEST_MOCK_TEST_SOURCE_FILE` before the header file is defined:
+[source,{cpp}]
+-----
+include::examples/time_mock.cpp[]
+-----
+
+
+Test Suites using Mock Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A mock object for the `time()` function is created using the `T::Base_time` class,
+which is automatically created by CxxTest.  This class includes a `time()` method whose
+API is the same as the global `time()` function.  Thus, this method can be defined to have
+whatever behavior is desired during testing.  For example, the following example defines a
+mock object that increments a counter to define an incremental value for `time()`.
+[source,{cpp}]
+-----
+include::examples/MockTestSuite.h[]
+-----
+Note that CxxTest uses global data to associate calls made with `T::time()`
+to calls to `MockObject::time()`.  The `MockObject` class simply
+needs to be instantiated prior to the call to `T::time()`.
+
+
+Building the Test Runner
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The +cxxtestgen+ command is used to create a test runner with mock functions in a normal manner:
+[source,bash]
+-----
+include::examples/.buildRunner16_main.sh[]
+-----
+The test runner source file, `runner.cpp`, needs to be compiled an linked to the mock function definition, `time_mock.cpp`, as well as the code being tested, `rand_example.cpp`:
+[source,bash]
+-----
+include::examples/.buildRunner16_compile.sh[]
+-----
+This generates a test runner that generates the following output:
+
+-----
+include::examples/buildRunner16.txt[]
+-----
+
+
+Advanced Topics
+~~~~~~~~~~~~~~~
+
+Void Functions
+^^^^^^^^^^^^^^
+
+The `CXXTEST_MOCK_VOID_GLOBAL` is used to define mock global functions that return `void`.
+This is identical to
+`CXXTEST_MOCK_GLOBAL` except that it does not specify the return
+type.  Take a look in `sample/mock/T/stdlib.h` for a demonstation.
+
+Calling the Real Functions While Testing
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+During testing it is sometimes necessary to call the real global
+function instead of the mock global function.  CxxTest allows a
+user to do this by creating a special mock object.  For a global
+mock function of `time()`, the object `T::Real_time` represents the
+real function.  If this class is created, then `T::time()` will be
+redirected to the real function.
+
+Mocking Nonexistent Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes the tested code calls functions that are not available
+when testing.  For example, this can happen when testing driver
+code that calls kernel functions that are not available to a user-mode
+test runner.  CxxTest can provide mock global function definitions
+for the test code while using the original functions in the tested code.
+
+
+The `CXXTEST_SUPPLY_GLOBAL` and `CXXTEST_SUPPLY_VOID_GLOBAL` macros are used to provide mock global function definitions.  For example, the following declaration creates a mock global function for the Win32 kernel function `IoCallDriver`:
+[source,{cpp}]
+-----
+CXXTEST_SUPPLY_GLOBAL( NTSTATUS,                /* Return type */
+                       IoCallDriver,            /* Name        */
+                       ( PDEVICE_OBJECT Device, /* Prototype   */
+                         PIRP Irp ),
+                       ( Device, Irp )          /* How to call */ );
+-----
+The tested driver code calls `IoCallDriver()` normally;  there is no need for the `T::` syntax.
+The test suite is defined using the `T::Base_IoCallDriver` as with normal mock objects.
+
+CxxTest also provides the macros `CXXTEST_SUPPLY_GLOBAL_C` and
+`CXXTEST_SUPPLY_GLOBAL_VOID_C` that declare the functions with `C`
+linkage (i.e., using `extern "C"`).  These macros are used to declare
+function prototypes, since you may not be able to include the header
+files in the test suite that are associated with the mock global function.
+
+
+Functions in Namespaces
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The `CXXTEST_MOCK` macro is used to declare a mock global function that is associated
+with a function in a namespace, including static class member functions.
+For example, consider the function `bool Files::FileExists( const
+String &name )`;  the namespace `Files` contains the function
+`FileExists`.  The mock class will be called `T::Base_Files_FileExists`
+and the function to implemented would be `fileExists`.  The `CXXTEST_MOCK` macro declares this mock global function as follows:
+[source,{cpp}]
+-----
+CXXTEST_MOCK( Files_FileExists,       /* Suffix of mock class  */
+              bool,                   /* Return type           */
+              fileExists,             /* Name of mock member   */
+              ( const String &name ), /* Prototype             */
+              Files::FileExists,      /* Name of real function */
+              ( name )                /* Parameter list        */ );
+-----
+Similarly, the `CXXTEST_MOCK_VOID` macro is used to declare a mock global function that returns `void`.
+
+The `CXXTEST_SUPPLY` and `CXXTEST_SUPPLY_VOID` macros are used to provide mock global function definitions for nonexistent functions.  For example:
+[source,{cpp}]
+-----
+CXXTEST_SUPPLY( AllocateIrp,         /* => T::Base_AllocateIrp */
+                PIRP,                /* Return type            */
+                allocateIrp,         /* Name of mock member    */
+                ( CCHAR StackSize ), /* Prototype              */
+                IoAllocateIrp,       /* Name of real function  */
+                ( StackSize )        /* Parameter list         */ );
+-----
+Similarly, the `CXXTEST_SUPPLY_C` and `CXXTEST_SUPPLY_VOID_C` macros declare the functions with `C` linkage.
+
+Overloaded Functions
+^^^^^^^^^^^^^^^^^^^^
+
+The `CXXTEST_MOCK` and `CXXTEST_MOCK_VOID` macros have a flexible
+interface that can provide mock global function definitions for
+overloaded functions.  The arguments simply need to specify different
+mock class names, mock member names and different prototype definitions.
+These different mock declarations will generate different mock objects that can be explicitly
+referenced in a test suite.
+
+The Mock Namespace
+^^^^^^^^^^^^^^^^^^
+
+The default namespace for mock functions is `T::`.  This namespace can be changed by defining the
+`CXXTEST_MOCK_NAMESPACE` macro.
+
+
+[[installation]]
+Installation
+------------
+
+A key feature of CxxTest is that it does has virtually no installation
+process.  The +cxxtestgen+ script can be directly executed from the
++cxxtest/bin+ directory.  Simply adding this directory to the PATH
+environment of a command shell is sufficient for many applications.
+Beyond that, the build process for test runners simply needs to
+reference the +cxxtest+ root directory to enable proper includes
+during compilation.
+
+The FOG parser requires two Python packages:
+
+ - +ply+
+ - +ordereddict+ (This is needed when running Python 2.4, 2.5 or 2.6)
+
+If these packages are not available, then +cxxtestgen+ will generate an error when the
+FOG parser option is selected.
+If you have
+http://pypi.python.org/pypi/setuptools[setuptools] or
+http://pypi.python.org/pypi/distribute[distribute]
+installed, then
+you can install these packages from PyPI by executing
+[source,bash]
+----
+easy_install ply
+easy_install ordereddict
+----
+
+The +cxxtestgen+ script has been tested with many different versions
+of Python:  2.4 - 3.3, though future releases will not support
+Python 2.4.  Note that this script has only been tested with the
+CPython implementation.  CxxTest has been tested on Linux and
+Mac platforms using the `g++` and `clang++` compilers.
+
+////
+
+WEH - I thought about moving this section into the Getting Started
+section.  However, it makes sense to leave this here to reference
+future installations in Debian, Mac Ports, etc.  I think that that
+distribution model is very strategic for cxxtest.
+
+////
+
+### Mac
+
+If when using a makefile such as
+---
+test:
+    cxxtestgen --runner=ErrorPrinter -o slinkedlist-runner.cpp slinkedlist-test.cpp
+    cxxtestgen --runner=ErrorPrinter -o dlinkedlist-runner.cpp dlinkedlist-test.cpp
+    g++ -o test-runner slinkedlist-runner.cpp
+    g++ -o test-runner dlinkedlist-runner.cpp
+    ./test-runner
+---
+
+you receive the error
+---
+fatal error: 'cxxtest/TestListener.h' file not found
+---
+
+And your PATH is correct, try running
+---
+xcode-select --install
+---
+
+to authorize Xcode and let your header files work
+See http://stackoverflow.com/questions/23905661/on-mac-g-fails-to-search-usr-local-include-and-usr-local-lib-by-default
+
+
+[[discussion]]
+Status and Future Plans
+-----------------------
+
+The CxxTest 4.4 release is an incremental release that was driven
+by a variety of bug fixes and minor enhancements.  The CxxTest 4.0
+release reflected major changes in the management and focus of
+CxxTest:
+
+ - Perl is no longer used to support CxxTest scripts.  Python is now the only scripting language used by CxxTest.
+ - The testing scripts have been rewritten using the PyUnit framework.
+ - The installation process for CxxTest now leverages and integrates with the system Python installation.
+ - A more comprehensive C++ parser is now available, which supports testing of templates.
+ - The CxxTest GUI is no longer supported, and the <<ts_warn,TS_WARN>> is deprecated.
+ - CxxTest runners now have a command-line interface that facilitates interative use of the test runner.
+ - A new user guide is now available in PDF, HTML and Ebook formats.
+ - Updated the +cxxtestgen+ script to work with Python 2.6 through 3.2
+
+Additionally, CxxTest is now validated with continuous integration
+tests.  Yes, the CxxTest developers eat their own dog food!
+
+Although the GUI option for +cxxtestgen+ appears to work fine, this
+GUI is rather primitive.  It simply provides a visual summary of
+the test results, and not the interactive test execution that a
+user would expect.  This capability is deprecated since none of the
+current developers use this feature.  CxxTest users should consider
+using CxxTest with http://jenkins-ci.org/[Jenkins].  The +XUnitPrinter+
+test listener generates XML files that can be easily integrated by
+http://jenkins-ci.org/[Jenkins], which creates a visual summary of
+test results with links to drill-down into test outputs.
+
+This documentation has highlighted the commonly used test listeners.
+There are a variety of other test listeners provided by CxxTest
+that support advanced Cxxtest applications.  For example, the
++YesNoRunner+ is perhaps the simplest test listener;  it simply
+returns the number of test failures.  The +StdioFilePrinter+ is
+used by +StdioPrinter+, but it does not assume that +stdio+ is the
+default output stream.  This test listener can be used in contexts
+where a custom output stream must be specified.
+
+////
+WEH - I'd like to say more about future support for CxxTest, but I don't know
+more basic things like how we should plan to host CxxTest in the future.
+
+Discuss support for ...
+
+ - embedded compilers...  (Macros vs templates)
+ - SCONS
+
+Future work:
+
+ - ply cpp
+ - ignore template test classes using the FOG parser
+
+////
+
+////
+NOTE: we do not have test coverage for the following macros:
+CXXTEST_OLD_TEMPLATE_SYNTAX
+CXXTEST_OLD_STD
+CXXTEST_LONGLONG
+////
+
+
+:numbered!:
+
+[[acknowledgements]]
+Acknowledgements
+----------------
+
+CxxTest was originally developed by Erez Volk.  The following
+developers contributed to the CxxTest 4.x releases:
+
+* Gašper Ažman
+* Andrey Batyiev
+* Olivier Charloton
+* Dave Elcock
+* Kevin Fitch
+* William Hart
+* Allan Odgaard
+* Lionel Orry
+* John Siirola
+* Jon Schlueter
+* Andrei Korostelev
+* Sebastian Rettenberger
+* Piotr Kasprzyk
+* Gluttton
+* Pawel Tomulik
+
+The CxxTest documentation is generated using
+http://www.methods.co.nz/asciidoc/[AsciiDoc].
+
+A major advancement in CxxTest's capability is the new test discovery
+mechanism that is based on a parser of the Flexible Object Language
+(FOG).  FOG generalizes the C++ syntax, which enables CxxTest to
+extract high-level class structure for test discovery.  FOG was
+developed by Edward Willink:
+
+* Edward D. Willink.  'Meta-Compilation for C++', PhD Thesis, Computer Science Research Group, University of Surrey, January 2000.
+
+The FOG parser in CxxTest critically relies on the excellent LALR
+parser provided by Dave Beazley's `ply` Python package.  The scalable
+performance of `ply` is critical for CxxTest.
+
+CxxTest has greatly benefited from the support of the open source
+community.  We would like to thank the following organizations for
+providing web hosting and computing resources: GitHub, SourceForge,
+Tigris.org, Sandia National Laboratories, Google and COIN-OR.  The development
+of CxxTest has been partially supported by Sandia National Laboratories.
+Sandia National Laboratories is a multi-program laboratory managed
+and operated by Sandia Corporation, a wholly owned subsidiary of
+Lockheed Martin Corporation, for the U.S.  Department of Energy's
+National Nuclear Security Administration under contract DE-AC04-94AL85000.
+
+
+[appendix]
+[[appendix_A]]
+Test Assertion Examples
+-----------------------
+
+[[ts_assert]] TS_ASSERT::
+This is the most basic test assertion, which simply verifies that the +expr+ argument is true:
+[source,{cpp}]
+----
+include::examples/.Assertions_assert.h[]
+----
+[[ts_assert_delta]] TS_ASSERT_DELTA::
+This test assertion verifies two floating point values are within a specified absolute difference:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertDelta.h[]
+----
+
+[[ts_assert_differs]] TS_ASSERT_DIFFERS::
+This test assertion verifies that the two arguments are not equal:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertDiffers.h[]
+----
+
+[[ts_assert_equals]] TS_ASSERT_EQUALS::
+  This test assertion verifies that the two arguments are equal:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertEquals.h[]
+----
+Note that this test is performed using the C++ +==+ operator, whose behavior may be redefined for the two argument types.
+
+[[ts_assert_is_nan]] TS_ASSERT_IS_NAN::
+  This test assertion verifies that the argument is NaN:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertIsNan.h[]
+----
+
+[[ts_assert_is_infinite]] TS_ASSERT_IS_INFINITE::
+  This test assertion verifies that the argument is infinite:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertIsInfinite.h[]
+----
+
+[[ts_assert_less_than]] TS_ASSERT_LESS_THAN::
+This test assertion verifies that the first argument is strictly less than the second argument:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertLessThan.h[]
+----
+
+[[ts_assert_less_than_equals]] TS_ASSERT_LESS_THAN_EQUALS::
+This test assertion verifies that the first argument is less than or equal to the second argument:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertLessThanEquals.h[]
+----
+
+[[ts_assert_predicate]] TS_ASSERT_PREDICATE::
+This test assertion takes as an argument the name of a class, similar to a STL +unary_function+, and evaluates the +operator()+ method:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertPredicate.h[]
+----
+This test assertion can be seen as a generalization of <<ts_assert,TS_ASSERT>>, but it
+allows the tester to see the failed value.
+
+[[ts_assert_relation]] TS_ASSERT_RELATION::
+It takes as an argument the name of a class, similar to a STL +binary_function+, and evaluates the +operator()+ method:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertRelation.h[]
+----
+This test assertion can be seen as a generalization of <<ts_assert_equals,TS_ASSERT_EQUALS>>, <<ts_assert_differs,TS_ASSERT_DIFFERS>>, <<ts_assert_less_than,TS_ASSERT_LESS_THAN>> and <<ts_assert_less_than_equals,TS_ASSERT_LESS_THAN_EQUALS>>.
+This can be used to assert comparisons which are not covered by the builtin test assertions.
+
+[[ts_assert_same_data]] TS_ASSERT_SAME_DATA::
+This test assertion is similar to <<ts_assert_equals,TS_ASSERT_EQUALS>>,
+except that it compares the contents of two buffers in memory:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertSameData.h[]
+----
+The standard runner dumps the contents of both buffers as hex values when this test fails.
+
+[[ts_assert_throws]] TS_ASSERT_THROWS::
+This test assertion verifies that the specified exception is thrown when the first argument is executed:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrows.h[]
+----
+
+[[ts_assert_throws_anything]] TS_ASSERT_THROWS_ANYTHING::
+This test assertion verifies that _some_ exception is thrown when the first argument is executed:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrowsAnything.h[]
+----
+
+[[ts_assert_throws_assert]] TS_ASSERT_THROWS_ASSERT::
+This test assertion verifies that an exception is thrown when executing the first argument.  The second argument specifies a variable declaration for the exception, and the third argument is executed to test that
+exception value:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrowsAssert.h[]
+----
+Note that this can be viewed as a generalization of <<ts_assert_throws_equals,TS_ASSERT_THROWS_EQUALS>>.
+
+[[ts_assert_throws_equals]] TS_ASSERT_THROWS_EQUALS::
+This test assertion verifies that an exception is thrown when executing the first argument.  The second argument specifies a variable declaration for the exception, and the third and fourth arguments are values that are asserted equal after the exception is thrown:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrowsEquals.h[]
+----
+
+[[ts_assert_throws_is_nan]] TS_ASSERT_THROWS_IS_NAN::
+This test assertion verifies that an exception is thrown when executing the first argument.  The second argument specifies a variable declaration for the exception, and the third argument is a value that are asserted to be NaN after the exception is thrown:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrowsIsNan.h[]
+----
+
+[[ts_assert_throws_is_infinite]] TS_ASSERT_THROWS_IS_INFINITE::
+This test assertion verifies that an exception is thrown when executing the first argument.  The second argument specifies a variable declaration for the exception, and the third argument is a value that are asserted to be infinite after the exception is thrown:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrowsIsInfinite.h[]
+----
+
+[[ts_assert_throws_nothing]] TS_ASSERT_THROWS_NOTHING::
+This test assertion verifies that an exception is _not_ thrown when executing the first argument:
+[source,{cpp}]
+----
+include::examples/.Assertions_assertThrowsNothing.h[]
+----
+
+[[ts_fail]] TS_FAIL::
+This function triggers a test failure with an associated message:
+[source,{cpp}]
+----
+include::examples/.Assertions_fail.h[]
+----
+
+[[ts_skip]] TS_SKIP::
+This function causes the current test to be skipped with an associated warning message:
+[source,{cpp}]
+----
+include::examples/.Assertions_skip.h[]
+----
+
+[[ts_trace]] TS_TRACE::
+This function prints an informational message:
+[source,{cpp}]
+----
+include::examples/.Assertions_trace.h[]
+----
+
+[[ts_warn]] TS_WARN::
+This function prints a message as a warning:
+[source,{cpp}]
+----
+include::examples/.Assertions_warn.h[]
+----
+
+
+[appendix]
+[[appendix_B]]
+Integrating with Your Build Environment
+---------------------------------------
+
+CxxTest can be integrated into a variety of build environments to
+automate the generation, compilation and execution of test runners.
+Here is a rough breakdown of this process:
+
+* Split the application into a library and a main module that just
+  calls the library classes.  This way, the test runner will be
+  able to access all your classes through the library.
+* Create another application (or target, or project, or whatever)
+  for the test runner.  Make the build tool generate it automatically.
+* Configure the build tool to run the tests automatically.
+
+Unfortunately, different build tools and IDEs need to setup this
+process in different ways.  The following sections provide rough
+guidance for doing this for some come use cases.
+
+[NOTE]
+These examples (except for the SCons ones) are not actively maintained and
+tested. Please send suggestions to the CxxTest developers for updating this
+documentation.
+
+[[scons]]
+SCons
+~~~~~
+
+CxxTest provides built-in support for the SCons build system. This part
+documents this feature.
+
+[[scons_installation]]
+Installation
+^^^^^^^^^^^^
+
+The script is located at +build_tools/SCons/cxxtest.py+.
+You need SCons to be able to find this file, so do one of the following:
+
+- add the file to your project site_tools directory (default: +#/site_scons/site_tools/+)
+- link the file to your project site_tools directory
+- add +build_tools/SCons/cxxtest.py+ to your SCons toolpath.
+
+[NOTE]
+'#' means the project root, using the SCons convention of marking it that way.
+
+Preparing the tests for use with the builder
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This builder assumes that tests have a different suffix than other files in your
+project (by default: +.t.h+, configure via 'CXXTEST_SUFFIX'). This isn't a bad
+idea to begin with, since test "header files" are not really header files in the
+traditional sense. This is how it separates files it should run through
+cxxtestgen from the ones it should not.
+
+[NOTE]
+Test header files' filenames should end with +.t.h+.
+
+Compiling and Running the Tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, you build and run the tests by issuing the following command:
+
+.Building and running the tests in the shell
+===================
+[source,bash]
+scons check
+===================
+
+Of course, the actual name of the target is configurable (+CXXTEST_TARGET+).
+
+Using the Builder
+^^^^^^^^^^^^^^^^^
+
+This section describes what you do in your SConstruct file in order to be able
+to use the builder.
+
+First, you must tell the environment that you want to use the 'cxxtest' tool and
+how it should set itself up.
+
+The easiest way to set the environment up is to pray the defaults are ok.
+The builder does some autodetection and tries its best to figure everything out.
+In the event this works, setting up the environment is as easy as telling SCons
+it should use the 'cxxtest' tool.
+
+.Configuring the environment if defaults are ok
+===================
+[source,python]
+env = Environment(tools = ['default', 'cxxtest'])
+===================
+
+If this doesn't work, the builder tries its best to tell you what went wrong. In
+most cases, it just wasn't able to find where you installed cxxtest. You can fix
+this like so (assuming you have CxxTest in +#/extern_libs/cxxtest/+):
+
+.Configuring the environment: telling the builder where CxxTest is installed
+===================
+[source,python]
+env = Environment(tools = [
+        'default',
+         ('cxxtest', {'CXXTEST_INSTALL_DIR' : '#/extern_libs/cxxtest/'})
+      ])
+===================
+
+[NOTE]
+If you want to pass other options to the builder, just append them to the
+dictionary.
+
+It is advisable to pass most options to the builder at creation time, although
+the 'CxxTest' call can also accept most of them if you need to do some weird
+thing with a particular test.
+
+You can use the builder the same way you would the 'Program' builder.
+
+.Setting up tests with SCons and the cxxtest builder
+===================
+[source,python]
+---------------------------------------------------------------------------
+# ... set up the environment as above, with your favorite options
+# and then tell the builder to build some tests
+env.CxxTest('my_test_suite', source='mytests.t.h')                      #<1>
+env.CxxTest('the_other_suite', ['test_header.t.h', '../utilities.cpp']) #<2>
+env.CxxTest('the_third_suite',
+                 ['testsuite1.t.h', 'testsuite2.t.h',
+                  'testsuite3.t.h', 'required_libs.cpp'])               #<3>
+env.CxxTest('the_fourth_suite',
+                 ['reginold_never_checks_for_warnings.t.h'],
+                 CXXFLAGS='-Wall -Wextra -Weffc++ -pedantic')           #<4>
+---------------------------------------------------------------------------
+
+<1> Normal, 1-source file tests
+<2> This is how a single testsuite needing implementations is compilied
+<3> If you want multiple testsuites in a single runner, this is how it's done
+<4> unrecognised options are passed through to the Program builder unchanged
+
+===================
+
+Configuration Options
+^^^^^^^^^^^^^^^^^^^^^
+
+===== +CXXTEST_RUNNER+
+
+Default: "ErrorPrinter".
+
+This is what is passed to the +--runner+ option of +cxxtestgen+. See the section
+about runners to see what the other options are.
+
+===== +CXXTEST_OPTS+
+
+Default: empty.
+
+Any other commandline options to pass to +cxxtestgen+.
+
+Do not pass +--runner+, +--error-printer+ and friends, and +--root+ or +--part+
+here.
+
+===== +CXXTEST_SUFFIX+
+
+Default: ".t.h"
+
+The suffix test suite files have. Should be different from other header files.
+If you never mean to pass any header files that are not test suites to the
+builder, you can set this to ".h" and use plain ".h" files.
+
+===== +CXXTEST_TARGET+
+
+Default: "check"
+
+This is the target that scons tests are added to in order to run them. If you
+want something else, this is the place.
+
+===== +CXXTEST_INSTALL_DIR+
+
+Default: autodetect
+
+If cxxtest isn't found automatically, you need to set this. Normal SCons path
+expansion rules apply.
+
+===== +CXXTEST_CPPPATH+
+
+Default: autodetect
+
+If you don't want to clutter your normal +CPPPATH+ with CxxTest headers and this
+isn't autodetected even after you set +CXXTEST_INSTALL_DIR+, then set this.
+
+===== +CXXTEST+
+
+Default: autodetect
+
+If +cxxtestgen+ isn't found even after you set +CXXTEST_INSTALL_DIR+, then set
+this to the path of the +cxxtestgen+ script.
+
+===== +CXXTEST_SKIP_ERRORS+
+
+Default: False
+
+When running tests with +scons check+, if you want to continue even if tests
+fail, set this to True.
+
+===== +CXXTEST_PYTHON+
+
+Default: the same python interpreter that is running scons.
+
+If you want to use a particular python interpreter to run +cxxtestgen+, set its
+path here.
+
+===== +CXXTEST_CXXFLAGS_REMOVE+
+
+Default: a list of flags with which no test compiles. Changes as we fix bugs.
+
+Do you want your tests to compile without some flags and don't want gymnastics
+to get them out for tests only? This is the way. Just add them to here and they
+will be stripped. (This is a list, by the way, not a string.)
+
+===== +CXXTEST_CCFLAGS_REMOVE+
+
+Same as above, but for +CCFLAGS+.
+
+===== +CXXTEST_CXXTESTGEN_SCRIPT_NAME+
+
+If you are crazy and have changed the name of the cxxtestgen executable and want
+autodetection to work otherwise, set this to the new name.
+
+
+Using Makefiles
+~~~~~~~~~~~~~~~
+
+Generating the tests with a makefile is pretty straightforward.
+Simply add rules to generate, compile and run the test runner.
+
+[source,{makefile}]
+-----
+all: lib run_tests app
+
+# Rules to build your targets
+lib: ...
+
+app: ...
+
+# A rule that runs the unit tests
+run_tests: runner
+        ./runner
+
+# How to build the test runner
+runner: runner.cpp lib
+        $(CXX) -o $@ $<
+
+# How to generate the test runner
+runner.cpp: SimpleTest.h ComplicatedTest.h
+         cxxtestgen -o $@ --error-printer $^
+-----
+
+
+Using Cons
+~~~~~~~~~~
+
+http://dsmit.com/cons/[Cons] is a powerful and
+versatile make replacement which uses Perl scripts instead of Makefiles.
+
+See `cxxtest/sample/Construct` in the CxxTest distribution for an
+example of building CxxTest test runners with Cons.
+
+
+Using Microsoft Visual Studio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See `cxxtest/sample/msvc` in the distribution
+to see a reasonable integration of CxxTest with Microsoft Visual Studio's IDE.
+Basically, the workspace has three
+projects:
+
+* The project `CxxTest_3_Generate` runs `cxxtestgen`.
+* The project `CxxTest_2_Build` compiles the generated file.
+* The project `CxxTest_1_Run` runs the tests.
+
+This method certainly works, and the test results are conveniently
+displayed as compilation errors and warnings (for <<ts_warn,TS_WARN>>.
+However, there are still a few things missing; to integrate this
+approach with your own project, you usually need to work a little
+bit and tweak some makefiles and project options.  The script
+`sample/msvc/FixFiles.bat` can automate some of this process.
+
+
+Using Microsoft Windows DDK
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use CxxTest with the `build` utility for device drivers, you add
+the generated tests file as an extra dependency using the
+`NTBUILDTARGET0` macro and the `Makefile.inc` file.  An example of
+how to do this is in the CxxTest distribution under `sample/winddk`.
+
+
+[appendix]
+[[appendix_C]]
+Testing CxxTest
+---------------
+
+In the +cxxtest/test+ directory, you can execute
+[source,bash]
+----
+python test_cxxtest.py
+----
+to launch all tests.  By default, this script executes test suites
+for a variety of compilers if they are found on the user's path:
+`g++`, `clang++`, +cl+ (the Microsoft Visual Studio compiler).
+Additionally, this test script includes separate test suites for
+the default test discovery mechanism as well as test discovery using
+the new FOG parser.
+
+You can execute a specific test suite by giving its name as an
+argument to this test script.  For example, the command
+[source,bash]
+----
+python test_cxxtest.py TestGpp
+----
+executes the +TestGpp+ test suite, which tests CxxTest with the
+`g++` compiler.  Similarly, the command
+[source,bash]
+----
+python test_cxxtest.py TestGppFOG
+----
+executes the test suite that tests CxxTest using the `g++` compiler
+and the FOG parser.
+
+The +test_cxxtest.py+ script should work with versions Python 2.7
+or newer.  If you are running Python 2.6, you will need to install
+the +unittest2+ package.  If you have
+http://pypi.python.org/pypi/setuptools[setuptools] or
+http://pypi.python.org/pypi/distribute[distribute]
+installed, then
+you can install this package from PyPI by executing
+[source,bash]
+----
+easy_install unittest2
+----
+Similarly, the tests for this document rely on the `PyUtilib` Python package.
+
+The FOG parser requires two Python packages:
+
+ - +ply+
+ - +ordereddict+ (This is only needed when running Python 2.6)
+
+If these packages are not available, then +test_cxxtest.py+ will skip the FOG tests.
+
+
+[appendix]
+[[appendix_D]]
+include::../Versions[]
+
+// vim: ft=asciidoc

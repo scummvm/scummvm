@@ -1,0 +1,5 @@
+Import('env')
+env.CxxTest('test1.t.h', LIBS = ['foo'], CXXTEST_LIBPATH = ['../src1'], CXXTEST_TARGET = 'check-1')
+env.CxxTest('test2.t.h', LIBS = ['bar'], CXXTEST_LIBPATH = ['../src2'], CXXTEST_TARGET = 'check-2')
+env.Alias('check', ['check-1', 'check-2'])
+env.AlwaysBuild('check')

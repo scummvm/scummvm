@@ -4,10 +4,8 @@
 # Tell the DDK how to generate RunTests.cpp from RunTests.tpl and the tests
 #
 
-PERL=perl
 PYTHON=python
-CXXTESTGEN=$(PERL) $(CXXTESTDIR)/cxxtestgen.pl
-#CXXTESTGEN=$(PYTHON) $(CXXTESTDIR)/cxxtestgen.py
+CXXTESTGEN=$(PYTHON) $(CXXTESTDIR)/bin/cxxtestgen
 
 TEST_SUITES=$(SUITESDIR)/*.h
 

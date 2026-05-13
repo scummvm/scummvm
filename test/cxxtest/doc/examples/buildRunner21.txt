@@ -1,0 +1,5 @@
+Running cxxtest tests (2 tests).
+In MyTestSuite11::test_eq:
+MyTestSuite11.h:17: Error: Expected (x == y), found (8TMyClassIiE( 1 ) != 8TMyClassIiE( 1 ))
+Failed 1 and Skipped 0 of 2 tests
+Success rate: 50%
