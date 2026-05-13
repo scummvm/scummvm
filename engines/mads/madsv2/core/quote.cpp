@@ -101,12 +101,13 @@ char *quote_load(int quote_id, ...) {
 		now_reading++;
 	}
 
+	*pointer = 0;
+
 	if (mem_adjust(buffer, total_mem_needed)) {
 		quote_error = 6;
 		goto done;
 	}
 
-	*pointer = 0;
 	result = buffer;
 
 done:

@@ -1768,7 +1768,8 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d is used but empty", i);
 				continue;
 			}
-			_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), entry.index)), i, _macName, _version);
+			_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), entry.index)), i,
+					getArchive()->getPathName().toString(g_director->_dirSeparator), _version);
 			delete r;
 		}
 
@@ -1816,7 +1817,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 					scriptType = kCastScript;
 				}
 
-				Common::String filename = encodePathForDump(_macName);
+				Common::String filename = encodePathForDump(getArchive()->getPathName().toString(g_director->_dirSeparator));
 				Common::Path lingoPath(dumpScriptName(filename.c_str(), scriptType, _castsScriptIds[it->first], "lingo"));
 
 				if (out.open(lingoPath, true)) {

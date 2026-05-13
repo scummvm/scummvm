@@ -269,6 +269,8 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 					_firstFlip = -1;
 				}
 				_currentTab = slot;
+				if (_cardFlipSound.name != "NO SOUND")
+					g_nancy->_sound->playSound(_cardFlipSound);
 				redrawCards();
 			}
 			return;
@@ -277,9 +279,6 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 
 	// Card clicks are blocked while the flip-back timer is running
 	if (_flipTimerActive)
-		return;
-
-	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;
 
 	int base = _currentTab * kCardsPerTab;
@@ -292,6 +291,11 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 
 		// Unassigned or already matched or face-up: ignore
 		if (card.typeId == -1 || card.matchState != 0 || card.flipState != 0)
+			return;
+
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+		if (!(input.input & NancyInput::kLeftMouseButtonUp))
 			return;
 
 		// Flip this card face-up

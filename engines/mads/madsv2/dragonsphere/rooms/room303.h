@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADS_DRAGONSPHERE_ROOMS_301_H
-#define MADS_DRAGONSPHERE_ROOMS_301_H
+#ifndef MADS_DRAGONSPHERE_ROOMS_303_H
+#define MADS_DRAGONSPHERE_ROOMS_303_H
 
 #include "common/serializer.h"
 #include "mads/madsv2/core/general.h"
@@ -30,17 +30,8 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
-/**
- * Room local variables
- */
-struct Scratch {
-
-};
+extern void room_303_preload();
+extern void room_303_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
 } // namespace Dragonsphere

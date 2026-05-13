@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+﻿/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -22,9 +22,15 @@
 #include "mads/madsv2/core/conv.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
+#include "mads/madsv2/dragonsphere/mads/conv.h"
+#include "mads/madsv2/dragonsphere/mads/inventory.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/dragonsphere/mads/words.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room112.h"
@@ -34,26 +40,71 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-//static Scratch scratch;
+struct Scratch {
+	int16 sprite[15];       /* Sprite series handles */
+	int16 sequence[15];     /* Sequence handles      */
+	int16 animation[4];     /* Animation handles     */
+};
 
-void room_112_init() {
+#define local (&scratch)
+#define ss    local->sprite
+#define seq   local->sequence
+#define aa    local->animation
 
+static Scratch scratch;
+
+/* ======================== Triggers ========================= */
+
+#define ROOM_112_DONE_HEALING      60
+#define ROOM_112_DONE_UNHEALING    62
+
+
+static void room_112_init(void) {
+	viewing_at_y = ((video_y - display_y) >> 1);
+	kernel_init_dialog();  /* clear interface */
+	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
+
+	player.commands_allowed = false;
+	player.walker_visible = false;
+
+	if (player.x == 0) {
+		aa[0] = kernel_run_animation(kernel_name('g', 1), ROOM_112_DONE_HEALING);
+		global[player_score] += 5;
+	} else {
+		aa[0] = kernel_run_animation(kernel_name('g', 2), ROOM_112_DONE_UNHEALING);
+	}
+
+	section_1_music();
 }
 
-void room_112_daemon() {
+static void room_112_daemon() {
+	if (kernel.trigger == ROOM_112_DONE_HEALING) {
+		global[guard_pid_status] = GUARD_IS_HEALED;
+		player.x = 0;
+		text_show(11027);
+		new_room = 110;
+	}
 
+	if (kernel.trigger == ROOM_112_DONE_UNHEALING) {
+		global[guard_pid_status] = GUARD_IS_UNHEALED;
+		player.x = 100;
+		new_room = 110;
+	}
 }
 
-void room_112_pre_parser() {
-
+static void room_112_pre_parser() {
+	player.need_to_walk = false;
 }
 
-void room_112_parser() {
-
+static void room_112_parser() {
+	// No implementation
 }
+
 
 void room_112_synchronize(Common::Serializer &s) {
-	
+	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
+	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
+	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
 }
 
 void room_112_preload() {

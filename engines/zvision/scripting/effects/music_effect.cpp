@@ -203,7 +203,7 @@ PanTrackNode::~PanTrackNode() {
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
-	debugC(3, kDebugSound, "Processing PanTrackNode, key %d", _key);
+	debugC(5, kDebugSound, "Processing PanTrackNode, key %d", _key);
 	ScriptManager *scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {

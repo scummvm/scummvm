@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-08 05:23+0000\n"
-"PO-Revision-Date: 2026-05-04 17:22+0000\n"
+"POT-Creation-Date: 2026-05-10 10:01+0000\n"
+"PO-Revision-Date: 2026-05-12 22:22+0000\n"
 "Last-Translator: KARTIK SAXENA <kartiksaxena2005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -757,6 +757,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
+"सेव किए गए गेम को संदर्भित करने और कमांड लाइन से गेम चलाने के लिए उपयोग किया जाने वाला "
+"संक्षिप्त गेम आइडेंटिफ़ायर"
 
 #: gui/editgamedialog.cpp:349
 msgctxt "lowres"
@@ -871,6 +873,7 @@ msgstr "ईमेल क्लाइंट प्रारंभ करें"
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
 msgstr ""
+"इस गेम में ऐड-ऑन शामिल हैं, वह हिस्सा चुनें जिसकी आप जांच करना चाहते हैं:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -938,7 +941,7 @@ msgstr "कक्ष:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
-msgstr ""
+msgstr "डैम्प:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
@@ -950,12 +953,12 @@ msgstr "स्तर:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
-msgstr ""
+msgstr "कोरस"
 
 #. I18N: N stands for number here
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
-msgstr ""
+msgstr "संख्या:"
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
@@ -971,7 +974,7 @@ msgstr "प्रकार:"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr ""
+msgstr "साइन"
 
 #. I18N: Hardware key on controller
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:47
@@ -12120,11 +12123,11 @@ msgid "Game does not contain menu resources"
 msgstr ""
 
 #. I18N: 'Robot' is a video format name (as in 'MP4 video')
-#: engines/sci/detection_tables.h:4854
+#: engines/sci/detection_tables.h:4871
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4909
+#: engines/sci/detection_tables.h:4926
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 

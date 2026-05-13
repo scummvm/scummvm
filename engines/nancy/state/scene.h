@@ -173,6 +173,8 @@ public:
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
 	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
+	UI::InventoryPopup &getInventoryPopup() { return _inventoryPopup; }
+	UI::NotebookPopup &getNotebookPopup() { return _notebookPopup; }
 	UI::Clock *getClock();
 	UI::Taskbar *getTaskbar() { return _taskbar; }
 

@@ -2246,6 +2246,10 @@ void Script::moviePlayChangeNodeTrans(Context &c, const Opcode &cmd) {
 void Script::lookAt(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Look at %d, %d", cmd.op, cmd.args[0], cmd.args[1]);
 
+	// Lock camera until another script command (cameraFreeMovement) frees it.
+	// Part of fix for #16758 - locks camera while the J'nanin observatory bridge
+	// is extending towards the Narayan book pedestal.
+	_vm->_cursor->lockPosition(false);
 	_vm->animateDirectionChange(cmd.args[0], cmd.args[1], 0);
 }
 

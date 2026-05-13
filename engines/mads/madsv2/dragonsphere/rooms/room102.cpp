@@ -27,6 +27,10 @@
 #include "mads/madsv2/dragonsphere/mads/sounds.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/vocab.h"
+#include "mads/madsv2/dragonsphere/mads/conv.h"
+#include "mads/madsv2/dragonsphere/mads/inventory.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/dragonsphere/mads/words.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room102.h"
@@ -512,8 +516,8 @@ void room_102_preload() {
 	section_1_walker();
 	section_1_interface();
 
-	vocab_make_active(264);  // diaries
-	vocab_make_active(13);   // walk_to
+	vocab_make_active(words_diaries);
+	vocab_make_active(words_walk_to);
 }
 
 } // namespace Rooms

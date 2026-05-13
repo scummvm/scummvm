@@ -57,6 +57,7 @@
 namespace MADS {
 namespace MADSV2 {
 
+constexpr int SAVEGAME_VERSION = 1;
 constexpr int GAME_FRAME_RATE = 50;
 constexpr int GAME_FRAME_TIME = 1000 / GAME_FRAME_RATE;
 
@@ -128,8 +129,11 @@ bool MADSV2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error MADSV2Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	// Sync main game data
+	stream->writeByte(SAVEGAME_VERSION);
 	Common::Serializer s(nullptr, stream);
+	s.setVersion(SAVEGAME_VERSION);
+
+	// Sync main game data
 	syncGame(s);
 
 	// Save conversation data
@@ -140,6 +144,11 @@ Common::Error MADSV2Engine::saveGameStream(Common::WriteStream *stream, bool isA
 
 Common::Error MADSV2Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	int save = player.walker_is_loaded;
+
+	byte version = stream->readByte();
+	if (version != SAVEGAME_VERSION)
+		error("Invalid savegame version");
+
 
 	// Sync main game data
 	Common::Serializer s(stream, nullptr);
@@ -321,6 +330,10 @@ void MADSV2Engine::playSpeech(Audio::AudioStream *stream) {
 
 void MADSV2Engine::stopSpeech() {
 	_mixer->stopHandle(_speechHandle);
+}
+
+bool MADSV2Engine::isSpeechPlaying() const {
+	return _mixer->isSoundHandleActive(_speechHandle);
 }
 
 SaveStateList MADSV2Engine::listSaves() const {

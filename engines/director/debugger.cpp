@@ -473,6 +473,7 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 	debugPrintf("Shared cast functions:\n");
 	Cast *sharedCast = movie->getSharedCast();
 	if (sharedCast && sharedCast->_lingoArchive) {
+		debugPrintf("Movie: %s\n", sharedCast->getArchive()->getPathName().toString(g_director->_dirSeparator).c_str());
 		debugPrintf("%s", sharedCast->_lingoArchive->formatFunctionList("  ").c_str());
 	} else {
 		debugPrintf("  [empty]\n");

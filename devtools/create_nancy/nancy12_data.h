@@ -19,23 +19,27 @@
  *
  */
 
-#ifndef MADS_DRAGONSPHERE_ROOMS_408_H
-#define MADS_DRAGONSPHERE_ROOMS_408_H
+#ifndef NANCY12DATA_H
+#define NANCY12DATA_H
 
-#include "common/serializer.h"
-#include "mads/madsv2/core/general.h"
+#include "types.h"
 
-namespace MADS {
-namespace MADSV2 {
-namespace Dragonsphere {
-namespace Rooms {
+const GameConstants _nancy12Constants ={
+	70,												// numItems
+	1251,											// numEventFlags - TODO: verify this
+	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,			// genericEventFlags
+		11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
+	37,												// numCursorTypes
+	4000,											// logoEndAfter
+	32												// wonGameFlagID
+};
 
-extern void room_408_preload();
-extern void room_408_synchronize(Common::Serializer &s);
+// Conditional dialog checks and goodbyes have been moved to game data files
+const Common::Array<Common::Array<ConditionalDialogue>> _nancy12ConditionalDialogue = {};
+const Common::Array<Goodbye> _nancy12Goodbyes = {};
 
-} // namespace Rooms
-} // namespace Dragonsphere
-} // namespace MADSV2
-} // namespace MADS
+// Event flag names are no longer stored in the executable
+const Common::Array<const char *> _nancy12EventFlagNames = {};
 
-#endif
+#endif // NANCY12DATA_H

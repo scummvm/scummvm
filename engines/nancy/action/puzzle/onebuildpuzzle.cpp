@@ -78,9 +78,14 @@ void OneBuildPuzzle::init() {
 		p.setTransparent(true);
 		p.setZ(_z + (uint16)i + 1);
 	}
+
+	_isInitialized = true;
 }
 
 void OneBuildPuzzle::registerGraphics() {
+	if (!_isInitialized)
+		return;
+
 	for (uint i = 0; i < _pieces.size(); ++i)
 		_pieces[i].registerGraphics();
 }
@@ -193,8 +198,9 @@ void OneBuildPuzzle::execute() {
 					// Pickup/rotate sound finished; return to idle (piece still dragging)
 					_solveState = kIdle;
 				} else if (_correctlyPlaced) {
-					playGoodPlacementSound();
 					checkAllPlaced();
+					if (!_isSolved)
+						playGoodPlacementSound();
 				} else {
 					// Wrong drop: play bad placement feedback
 					playBadPlacementSound();
@@ -217,6 +223,7 @@ void OneBuildPuzzle::execute() {
 			break;
 		case kTriggerCompletion:
 			// Play completion sound/text, then wait for it to finish
+			g_nancy->_sound->loadSound(_completionSound);
 			g_nancy->_sound->playSound(_completionSound);
 			if (!_completionText.empty()) {
 				NancySceneState.getTextbox().clear();
@@ -331,7 +338,8 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (topmostAny != -1) {
-		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+		if (topmostUnplaced != -1)
+			g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
 
 		// Left click on an unplaced piece: pick it up
 		// Right click: pick it up and rotate it

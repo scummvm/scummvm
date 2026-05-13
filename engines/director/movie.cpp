@@ -743,6 +743,16 @@ Symbol Movie::getHandler(const Common::String &name, uint16 castLibHint) {
 	return Symbol();
 }
 
+Common::String Movie::formatMovieInfo() {
+	Common::String res = Common::String::format("name: '%s' archive: '%s' shared cast: '%s'",
+		getMacName().c_str(), getArchive()->getPathName().toString(Common::Path::kNativeSeparator).c_str(),
+		_sharedCast ? _sharedCast->getArchive()->getPathName().toString(Common::Path::kNativeSeparator).c_str() : "<none>");
+	for (auto &it : _casts) {
+		res += Common::String::format("\n  castLib %d: '%s' archive: '%s'", it._key, it._value->getCastName().c_str(), it._value->getArchive()->getPathName().toString(Common::Path::kNativeSeparator).c_str());
+	}
+	return res;
+}
+
 Common::String InfoEntry::readString(bool pascal) {
 	Common::String res;
 

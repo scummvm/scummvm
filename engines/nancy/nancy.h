@@ -43,18 +43,18 @@ class Serializer;
  *
  * Status of this engine:
  * The Vampire Diaries and all Nancy Drew games up to and including
- * Nancy Drew: Ghost Dogs of Moon Lake are fully completable.
+ * Nancy Drew: Danger on Deception Island are fully completable.
  * Every other game is untested but definitely unplayable.
  *
  * Games using this engine:
  *	- The Vampire Diaries (1996)
  *	- Almost every mainline Nancy Drew game by HeR Interactive,
- *		beginnning with Nancy Drew: Secrets can Kill (1998)
+ *		beginning with Nancy Drew: Secrets can Kill (1998)
  *		up to and including Nancy Drew: Sea of Darkness (2015)
  */
 namespace Nancy {
 
-static const int kSavegameVersion = 3;
+static const int kSavegameVersion = 4;
 
 struct NancyGameDescription;
 

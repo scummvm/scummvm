@@ -540,17 +540,27 @@ bool Window::loadNextMovie() {
 	_newMovieStarted = true;
 	_currentPath = Common::firstPathComponents(_nextMovie.movie, g_director->_dirSeparator);
 
+	Common::Path archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
+	archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+
+	if (_currentMovie && archivePath == _currentMovie->getArchive()->getPathName()) {
+		debug(0, "Window::loadNextMovie: next movie '%s' is the same as current movie, skipping load", archivePath.toString(Common::Path::kNativeSeparator).c_str());
+		return true;
+	}
+
 	Cast *previousSharedCast = nullptr;
 	if (_currentMovie) {
 		previousSharedCast = _currentMovie->getSharedCast();
 		_currentMovie->_sharedCast = nullptr;
 	}
 
-	delete _currentMovie;
-	_currentMovie = nullptr;
+	if (_currentMovie) {
+		debug(0, "@@@@   Unloading movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 
-	Common::Path archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
-	archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+		delete _currentMovie;
+		_currentMovie = nullptr;
+	}
+
 	Archive *mov = g_director->openArchive(archivePath);
 
 	_nextMovie.movie.clear(); // Clearing it, so we will not attempt to load again
@@ -838,11 +848,11 @@ Common::String Window::formatWindowInfo() {
 	Common::Rect dims = _window->getDimensions();
 	Common::Rect innerDims = _window->getInnerDimensions();
 	return Common::String::format(
-			"name: \"%s\", movie: \"%s\", currentPath: \"%s\", dims: (%d,%d) %dx%d, innerDims: (%d, %d) %dx%d, visible: %d",
+			"name: \"%s\", movie: \"%s\", currentPath: \"%s\", dims: (%d,%d) %dx%d, innerDims: (%d, %d) %dx%d, visible: %d\n  %s",
 			_name.c_str(), _currentMovie->getMacName().c_str(), _currentPath.c_str(),
 			dims.left, dims.top, dims.width(), dims.height(),
 			innerDims.left, innerDims.top, innerDims.width(), innerDims.height(),
-			_window->isVisible()
+			_window->isVisible(), _currentMovie->formatMovieInfo().c_str()
 	);
 }
 

@@ -219,10 +219,15 @@ void InventoryPopup::updatePageFromScroll() {
 void InventoryPopup::drawCloseButton(WidgetState state) {
 	const UIButtonRecord &btn = _uiivData->header.secondaryButton;
 	Common::Rect spr = btn.sourceRects[state];
-	const Common::Point chunkOrigin(_uiivData->header.normalDestRect.left,
-									_uiivData->header.normalDestRect.top);
-	const Common::Point dst(btn.destRect.left - chunkOrigin.x,
-							btn.destRect.top - chunkOrigin.y);
+	Common::Rect dstRect = btn.destRect;
+	if (btn.destUsesGameFrameOffset) {
+		const VIEW *view = GetEngineData(VIEW);
+		if (view) {
+			dstRect.translate(view->screenPosition.left, view->screenPosition.top);
+		}
+	}
+	const Common::Point dst(dstRect.left - _screenPosition.left,
+							dstRect.top - _screenPosition.top);
 
 	_drawSurface.blitFrom(_overlayImage, spr, dst);
 }
@@ -353,8 +358,15 @@ void InventoryPopup::handleInput(NancyInput &input) {
 	}
 
 	if (_uiivData->header.secondaryButtonEnabled) {
-		const Common::Rect &closeRect = _uiivData->header.secondaryButton.destRect;
-		const bool overClose = closeRect.contains(chunkMouse);
+		const UIButtonRecord &closeBtn = _uiivData->header.secondaryButton;
+		Common::Rect closeScreen = closeBtn.destRect;
+		if (closeBtn.destUsesGameFrameOffset) {
+			const VIEW *view = GetEngineData(VIEW);
+			if (view) {
+				closeScreen.translate(view->screenPosition.left, view->screenPosition.top);
+			}
+		}
+		const bool overClose = closeScreen.contains(input.mousePos);
 		if (overClose != _closeButtonHovered) {
 			_closeButtonHovered = overClose;
 			drawCloseButton(overClose ? kStateHover : kStateIdle);

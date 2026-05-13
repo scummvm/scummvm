@@ -33,6 +33,7 @@ private:
 	static void global_object_sprite();
 	static void stop_walker_basic();
 	static void stop_walker_tricks();
+	void lookAtLens();
 
 public:
 	PhantomEngine(OSystem *syst, const MADSGameDescription *gameDesc) :

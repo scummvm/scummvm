@@ -2653,6 +2653,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
 
+	// King's Quest 7 - Hebrew Windows (from GOG)
+	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
+	{"kq7", "", {
+		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
+		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		{"PATCHES/0.fon", 0, "98a0809f0122e776e7ff00961f8135bc", 3419},
+		// We need to look for these AVIs before enabling the Windows version
+		// because GOG.com releases are missing them. Their contents do not
+		// matter (some users replace them with higher quality versions created
+		// from the rare 1.65c release, which should not cause a detection
+		// failure)
+		{"avi/91.rbt", 0, NULL, AD_NO_SIZE},
+		{"avi/911.rbt", 0, NULL, AD_NO_SIZE},
+		{"avi/912.rbt", 0, NULL, AD_NO_SIZE},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_KQ7},
+
 	// King's Quest 7 - Italian DOS (from dego93 on bug report Trac#9739)
 	// VERSION file reports "2.00"
 	{"kq7", "", {

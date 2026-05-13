@@ -30,17 +30,8 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
-/**
- * Room local variables
- */
-struct Scratch {
-
-};
+extern void room_511_preload();
+extern void room_511_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
 } // namespace Dragonsphere

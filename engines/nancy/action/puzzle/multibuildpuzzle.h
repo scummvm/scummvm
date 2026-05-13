@@ -132,6 +132,10 @@ protected:
 	int16 _pickedUpWidth = 0;
 	int16 _pickedUpHeight = 0;
 
+	// Initialization flag, used to ensure that the puzzle pieces have been initialized
+	// before drawing them on screen
+	bool _isInitialized = false;
+
 	// --- Internal methods ---
 
 	void checkIfSolved();	// FUN_0046da47

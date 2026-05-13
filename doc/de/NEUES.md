@@ -28,6 +28,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  MM:
    - Verbesserte Unterstützung für Tastenkürzel in MM1.
+   - Charaktere können in MM1 Enhanced nur die Gegenstände verkaufen, die sie besitzen.
+   - In MM1 Enhanced ist kostenfreies Heilen jetzt nur noch an ausgewählten Tempeln möglich.
+   - In MM1 Enhanced wird die Musik nicht mehr fälschlicherweise neu gestartet, wenn der
+     GMM geöffnet und wieder geschlossen wird.
 
  SLUDGE:
    - Zwei weitere Spiele wurden zur Erkennungs-Datenbank hinzugefügt:

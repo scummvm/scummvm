@@ -814,6 +814,17 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy16
 	},
+	{ // MD5 by eientei95
+		{
+			"nancy16", nullptr,
+			AD_ENTRY1s("ciftree.dat", "dcc8ab339061dbd855ff158548543dcc", 1257169),
+			Common::EN_ANY,
+			Common::kPlatformWii,
+			ADGF_UNSUPPORTED | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy16
+	},
 	{ // MD5 by bluegr
 		{
 			"nancy17", nullptr,

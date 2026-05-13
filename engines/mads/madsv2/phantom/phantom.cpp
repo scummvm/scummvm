@@ -579,7 +579,7 @@ void PhantomEngine::global_parser_code() {
 
 
 	if (player_said_1(look) && player_has(object_named(player_main_noun))) {
-		object_examine(oar, text_008_24, 0);
+		lookAtLens();
 		goto handled;
 	}
 
@@ -656,6 +656,37 @@ handled:
 
 done:
 	;
+}
+
+void PhantomEngine::lookAtLens() {
+	int16 obj = object_named(player_main_noun);
+
+	if (player_parse(3, 123, 0)) {
+		object_examine(obj, global[current_year] == 1993 ? 802 : 842, 0);
+		return;
+	}
+	if (player_parse(3, 163, 0)) {
+		object_examine(obj, global[current_year] == 1993 ? 804 : 843, 0);
+		return;
+	}
+	if (player_parse(3, 23, 0)) {
+		object_examine(obj, global[current_year] == 1993 ? 817 : 844, 0);
+		return;
+	}
+	if (player_parse(3, 77, 0)) {
+		object_examine(obj, global[current_year] == 1993 ? 819 : 845, 0);
+		return;
+	}
+	if (player_parse(3, 87, 0)) {
+		object_examine(1, global[lantern_status] == 1 ? 831 : 801, 0);
+		return;
+	}
+	if (player_parse(3, 131, 0)) {
+		object_examine(6, 846, 0);
+		return;
+	}
+
+	object_examine(obj, obj + 800, 0);
 }
 
 void PhantomEngine::global_error_code() {

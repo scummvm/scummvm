@@ -23,6 +23,7 @@
 #define ZVISION_SYNCSOUND_NODE_H
 
 #include "audio/mixer.h"
+#include "zvision/scripting/effects/music_effect.h"
 #include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/subtitle_manager.h"
 
@@ -31,23 +32,14 @@ class String;
 }
 
 namespace ZVision {
-class SyncSoundNode : public ScriptingEffect {
+class SyncSoundNode : public MusicNode {
 public:
 	SyncSoundNode(ZVision *engine, uint32 key, Common::Path &file, int32 syncto);
-	~SyncSoundNode() override;
+	~SyncSoundNode();
 
-	/**
-	 * Decrement the timer by the delta time. If the timer is finished, set the status
-	 * in _globalState and let this node be deleted
-	 *
-	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
-	 * @return                     If true, the node can be deleted after process() finishes
-	 */
 	bool process(uint32 deltaTimeInMillis) override;
 private:
 	int32 _syncto;
-	Audio::SoundHandle _handle;
-	uint16 _sub;
 };
 
 } // End of namespace ZVision

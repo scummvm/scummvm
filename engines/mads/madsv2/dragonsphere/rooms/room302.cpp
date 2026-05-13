@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+﻿/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -25,6 +25,10 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
+#include "mads/madsv2/dragonsphere/mads/conv.h"
+#include "mads/madsv2/dragonsphere/mads/inventory.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/dragonsphere/mads/words.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section3.h"
 #include "mads/madsv2/dragonsphere/rooms/room302.h"
@@ -33,6 +37,14 @@ namespace MADS {
 namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
+
+struct Scratch {
+};
+
+#define local (&scratch)
+#define ss    local->sprite
+#define seq   local->sequence
+#define aa    local->animation
 
 //static Scratch scratch;
 
