@@ -86,7 +86,7 @@ void FoolGame::humbugTrail() {
 			this->arr_i16_9894[i],
 			this->arr_i16_ac1c[i],
 			this->arr_bmp_b3ec,
-			kPutCopy
+			kSrcCopy
 		);
 		// Simulate slow draw speed
 		if ((i % 42) == 0)
@@ -98,7 +98,7 @@ void FoolGame::humbugTrail() {
 		this->arr_i16_9894[this->var_i16_233c],
 		this->arr_i16_ac1c[this->var_i16_233c],
 		this->arr_bmp_b3ec,
-		kPutCopy
+		kSrcCopy
 	);
 	this->var_i16_233c = 1;
 	_stateFlags = kStateNull;
@@ -157,7 +157,7 @@ void FoolGame::sub_142_370() {
 				this->arr_i16_9894[this->var_i16_7a8],
 				this->arr_i16_ac1c[this->var_i16_7a8],
 				this->arr_bmp_b3ec,
-				kPutCopy
+				kSrcCopy
 			);
 			// 142:051c
 		} while (g_zbasic->incrAndCheck(this->var_i16_7a8, this->var_i16_1a9c, this->var_i16_484));
@@ -175,7 +175,7 @@ void FoolGame::sub_142_370() {
 				this->arr_i16_9894[i],
 				this->arr_i16_ac1c[i],
 				this->arr_bmp_b3ec,
-				kPutCopy
+				kSrcCopy
 			);
 			// 142:05c8
 		}
