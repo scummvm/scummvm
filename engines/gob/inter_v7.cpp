@@ -1808,6 +1808,14 @@ bool Inter_v7::setCurrentCDPath(const Common::String &newDirName) {
 	if (newDirName.equalsIgnoreCase("applis") || newDirName.equalsIgnoreCase("envir"))
 		return false;
 
+	// Reject absolute paths: SearchMan also registers the root game directory itself, whose
+	// arcName comes back as a full absolute path (e.g. "/home/user/game/adibou2").  Only
+	// simple relative subdirectory names (e.g. "ReadCount67") represent valid addon dirs.
+	if (newDirName.contains('/') || newDirName.contains('\\')) {
+		debugC(5, kDebugFileIO, "setCurrentCDPath: rejected \"%s\" (absolute path, not an addon subdirectory)", newDirName.c_str());
+		return false;
+	}
+
 	if (!_currentCDPath.empty())
 		SearchMan.setPriority(_currentCDPath.toString(), 0);
 
@@ -1901,6 +1909,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 						break;
 					}
 				}
+				delete stream;
 			}
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
