@@ -998,6 +998,7 @@ void RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte
 				}
 
 			} else {
+				delete[] anim.animData;
 				continue;
 			}
 			sprite.animData[j] = anim;
@@ -1290,6 +1291,7 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 	size_t decompressedSize = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
 	if (decompressedSize == 0) {
 		debug("Failed to decompress shadow map for room %d", roomNumber);
+		free(shadows);
 		shadows = nullptr;
 	}
 	// debug("Decompressed shadow map for room %d, compressed size: %zu, decompressed size: %zu", roomNumber, compressedSize, decompressedSize);

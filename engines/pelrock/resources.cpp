@@ -328,6 +328,7 @@ void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, by
 		size_t compressedSize = 0;
 		readUntilBuda(&alfred7, offset, compressed, compressedSize);
 		bufferSize = rleDecompress(compressed, compressedSize, 0, 0, &buffer, true);
+		free(compressed);
 	} else {
 		alfred7.seek(offset, SEEK_SET);
 		alfred7.read(buffer, bufferSize);
