@@ -283,7 +283,7 @@ MenuZGI::~MenuZGI() {
 bool MenuZGI::inMenu(const Common::Point &pos) const {
 	const Common::Point TopButtonOrigin(457,0);
 	const Common::Rect TopButtonArea(TopButtonOrigin,40,57);
-	if (_engine->getScriptManager()->getCurrentLocation() == "gjcr") {
+	if (_engine->getScriptManager()->getCurrentLocation() == "gjcr" && ConfMan.getBool("widescreen")) {
 		// WORKAROUND to stop normal menu hotspot from blocking topmost button in ZGI credits screen
 		if(TopButtonArea.contains(pos))
 			return false;
