@@ -31,59 +31,37 @@
 namespace EEM {
 
 /**
- * MIDI music player. Mirrors the original `MIDI.C` source file in
- * `EEMCD.EXE` (the `_MIDIPlayFile / _MIDIPlay / _StopMIDI /
- * _IsMIDIPlaying / _StartTravelMusic` family at `20a2:00e2-05c9`).
+ * MIDI music player. Mirrors MIDI.C in EEMCD.EXE
+ * (_MIDIPlayFile / _MIDIPlay / _StopMIDI / _IsMIDIPlaying /
+ * _StartTravelMusic family at 20a2:00e2-05c9).
  *
- * The original engine uses Miles Audio Interface Library (AIL):
+ * Original uses Miles AIL: _InitMIDI @ 20a2:013a registers
+ * ADLIB.ADV / SBFM.ADV / MT32MPU.ADV; _MIDIPlayFile @ 20a2:024c
+ * installs AdLib timbres from SAMPLE.AD (29be:14d6) via
+ * _AIL_install_timbre before _AIL_start_sequence. We use
+ * Audio::MidiDriver_Miles_AdLib_create (loads SAMPLE.AD) for AdLib
+ * and the Miles MT-32 driver for MT-32.
  *
- *   - `_InitMIDI @ 20a2:013a` calls `_AIL_register_driver` against
- *     `ADLIB.ADV` / `SBFM.ADV` / `MT32MPU.ADV` and reserves a timbre
- *     cache via `_AIL_define_timbre_cache`.
- *   - `_MIDIPlayFile @ 20a2:024c` opens the .XMI, calls
- *     `_AIL_register_sequence`, then loops over the sequence's
- *     `_AIL_timbre_request` results. For every (bank, patch) pair the
- *     driver asks for, it pulls the AdLib instrument definition from
- *     **`SAMPLE.AD`** (string at `29be:14d6`) via `_load_global_timbre`
- *     and installs it through `_AIL_install_timbre`. Only after every
- *     patch is loaded does it call `_AIL_start_sequence`.
- *
- * Without those custom timbres, ScummVM's generic AdLib synth falls
- * back to its built-in default timbre table — same notes, very
- * different timbres. ScummVM ships a Miles AdLib driver
- * (`Audio::MidiDriver_Miles_AdLib_create`) that loads `SAMPLE.AD` and
- * implements the same install-on-demand workflow, so we use it for
- * AdLib output. MT-32 uses ScummVM's Miles MT-32 driver path, and any
- * other MIDI output falls back to `Audio::MidiPlayer::createDriver`.
- *
- * Available music files in the game directory:
- *   - THEME.XMI   — opening anims (looping) + title screen
- *   - MUS00000.XMI..MUS00004.XMI — per-site travel music
- *     (`_StartTravelMusic` picks one via `_SiteNumber % 5`)
- *   - MUS00005.XMI — winner ending (`_DisplayCorrect` @ 1df2:0789)
- *   - MUS00006.XMI — loser ending (`_DisplayAlibi` @ 1df2:018a)
+ * Music files:
+ *   THEME.XMI — opening anims + title.
+ *   MUS00000..MUS00004 — travel music (siteNumber % 5).
+ *   MUS00005 — winner (_DisplayCorrect @ 1df2:0789).
+ *   MUS00006 — loser  (_DisplayAlibi  @ 1df2:018a).
  */
 class MusicPlayer : public Audio::MidiPlayer {
 public:
 	explicit MusicPlayer(bool isFloppy = false);
 
-	/// Mirrors `_MIDIPlayFile @ 20a2:024c`. Reads the .XMI from the game
-	/// directory and starts playing. `loop=true` mirrors the
-	/// `_LoopMIDI = 0xFFFF` writes inside `_DoOpeningAnims` (theme music).
+	/// _MIDIPlayFile @ 20a2:024c. loop=true mirrors
+	/// _LoopMIDI = 0xFFFF in _DoOpeningAnims.
 	void playFile(const Common::Path &xmiPath, bool loop = false);
 
-	/// Mirrors `_MIDIPlay(num) @ 20a2:047d`. Composes the filename
-	/// "MUS%05u.XMI" (CD) or maps to TRAVEL-N.XMI / FANFARE2.XMI
-	/// (floppy) and plays it. Used by `_StartTravelMusic`,
-	/// `_DisplayCorrect` (winner), `_DisplayAlibi` (loser).
+	/// _MIDIPlay(num) @ 20a2:047d. CD: "MUS%05u.XMI";
+	/// floppy: TRAVEL-N.XMI / FANFARE2.XMI.
 	void playMus(uint num, bool loop = false);
 
-	// In Miles AdLib mode the driver allocates its own AdLib voice
-	// pool and consumes the XMIDI's source-channel byte directly, so we
-	// must NOT route through `Audio::MidiPlayer::sendToChannel` (which
-	// remaps every source channel through `allocateChannel()` and
-	// breaks the timbre selection / volume scaling the Miles driver
-	// performs internally). Same workaround Toltecs / SAGA use.
+	// Miles drivers handle source-channel routing themselves; bypass
+	// Audio::MidiPlayer::sendToChannel. Same workaround as Toltecs / SAGA.
 	void send(uint32 b) override;
 
 private:

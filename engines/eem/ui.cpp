@@ -36,16 +36,10 @@
 #include "eem/music.h"
 #include "eem/site.h"
 
-// EEM — UI screens (NOTE.C, GALLERY.C, ACCUSE.C, MAP.C, CHOOSE.C combined).
-// Each function is a self-contained modal `EEMEngine::doX()` reachable from
-// the site loop. They share the same wait-for-input idiom and PIC 0x3f /
-// 0x41 / 0x42 / 0x43 backdrops.
-
 namespace EEM {
 
-// Five fixed gallery slot positions verified at `29be:0x116`. Used by
-// both `_DrawGallery @ 158f:0046` (notebook gallery) and the accuse
-// portrait grid; the layout is identical so we share the table.
+// Gallery slot positions @ 29be:0x116. Used by `_DrawGallery @ 158f:0046`
+// and the accuse portrait grid.
 struct GallerySlot { int x; int y; };
 const GallerySlot kGallerySlots[5] = {
 	{  83,  14 }, // 0
@@ -206,11 +200,8 @@ const byte *advanceFloppyDialogRecords(const byte *rec, uint count,
 	return rec;
 }
 
-// Floppy gallery slot positions verified at `2608:0x16c` (5 ×
-// {u16 x, u16 y}) — read by `_DrawGallery_Floppy @ 154e:0045`'s
-// `[BX + 0x16c]` (x) and `[BX + 0x16e]` (y) loads. The floppy
-// layout is shifted left ~0x30 px relative to CD: row 0 starts at
-// x=0x53 (vs 0x53→0x83 on CD) and the bottom row at x=0x77 / 0xbf.
+// Floppy gallery slot positions @ 2608:0x16c. Read by `_DrawGallery_Floppy
+// @ 154e:0045`'s [BX + 0x16c] (x) and [BX + 0x16e] (y) loads.
 const GallerySlot kFloppyGallerySlots[5] = {
 	{ 0x53, 0x0e }, // 0
 	{ 0x9b, 0x0e }, // 1
@@ -219,17 +210,15 @@ const GallerySlot kFloppyGallerySlots[5] = {
 	{ 0xbf, 0x5a }  // 4
 };
 
-// `_GetKDTextBalloon @ 1df2:0105` digit-balloon table @ `29be:1064`:
+// `_GetKDTextBalloon @ 1df2:0105` digit-balloon table @ 29be:1064:
 //   '0'→0x15  '1'→0x16  '2'→0x17  '3'→0x18  '4'→0x19
 //   '5'→0x1a  '6'→0x20  '7'→0x21  '8'→0x22  '9'→0x1e
 const uint16 kDigitBalloons[10] = {
 	0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x20, 0x21, 0x22, 0x1e
 };
 
-// Return the next non-empty slot in `slotRects` starting from `from`,
-// stepping by `dir` (+1 or -1) with wraparound. Used by the accuse
-// gallery's keyboard-cycle (TAB / arrow keys) — mirrors the way
-// `_PutMouseInRect` skips eliminated suspects in the original.
+// Next non-empty slot in `slotRects` from `from`, stepping by `dir` with
+// wraparound. Mirrors `_PutMouseInRect` skipping eliminated suspects.
 int nextLiveSlot(const Common::Array<Common::Rect> &slotRects,
 				 int from, int dir) {
 	const int n = (int)slotRects.size();
@@ -252,9 +241,7 @@ void copyToScreen(Graphics::ManagedSurface &scratch) {
 }
 
 void cycleChooserPalette() {
-	// `_DoChoose` / `_DoListPicker_Floppy` rotate 0x6f..0x73 on each
-	// frame tick while waiting for input. These colors are used by the
-	// animated chooser surface baked into the menu backgrounds.
+	// `_DoChoose` / `_DoListPicker_Floppy` rotate 0x6f..0x73 per tick.
 	cyclePaletteRange(kChooserCycleStart, kChooserCycleEnd);
 }
 
@@ -445,9 +432,6 @@ void drawProfilePickerFrame(const ProfilePickerView &v) {
 	copyToScreen(scratch);
 }
 
-// Snapshot of `doActionScreen`'s captured locals, used by
-// `drawActionMenuFrame`. Lives on the stack inside `doActionScreen`;
-// never escapes.
 struct ActionMenuView {
 	EEMEngine *vm;
 	const Picture *bg;
@@ -460,13 +444,9 @@ struct ActionMenuView {
 	uint pick;
 };
 
-// Mystery list shown in the "Choose A Mystery" sub-screen. Mirrors
-// `_DoChooseMystery @ 1a35:02b7`: opens BOOK%u.NME (CRLF-separated
-// ASCII strings, last entry is whitespace = sentinel), reads up to 25
-// lines × 40 bytes each, hands the array to `_CaseSelection`. We
-// preserve the trailing whitespace line as the original sentinel
-// since `_DoChoose @ 1c33:0514` walks until `*piVar3 == 0 && piVar3[1]
-// == 0` — but for our renderer we just keep the names array.
+// `_DoChooseMystery @ 1a35:02b7` — opens BOOK%u.NME (CRLF strings, up
+// to 25 × 40 bytes, whitespace-line sentinel). `_DoChoose @ 1c33:0514`
+// walks until {0, 0}.
 Common::StringArray loadBookNames(uint book) {
 	Common::StringArray names;
 	const Common::String fname = Common::String::format("BOOK%u.NME", book);
@@ -479,10 +459,7 @@ Common::StringArray loadBookNames(uint book) {
 		Common::String line = f.readLine();
 		if (f.eos() && line.empty())
 			break;
-		// `_fgets` in the original reads CRLF terminators with the line;
-		// `Common::File::readLine` strips them, so `line` here is the
-		// text only. Trim trailing whitespace so the sentinel "        "
-		// last entry doesn't render as a blank scrollable row.
+		// Trim trailing whitespace so the sentinel line doesn't render.
 		while (!line.empty() &&
 			   (line.lastChar() == ' ' || line.lastChar() == '\t' ||
 				line.lastChar() == '\r'))
@@ -504,14 +481,8 @@ void clampCaseTopRow(uint &topRow, uint listLen, uint visibleRows) {
 		topRow = maxTop;
 }
 
-// Per-mystery sub-chooser ("Choose A Mystery") view.
-//
-// `names` are the entries from BOOK%d.NME (in display order — index 0
-// = first case in the tier, mystery number = `tierLo + index`).
-// `solvedFlags` is a parallel bool array indicating which entries are
-// already solved (greyed and unselectable in `_DoChoose`).
-// `topRow` is the scroll position; up to 12 entries are visible.
-// `selRow` is the highlighted row (0-based within the names array).
+// "Choose A Mystery" sub-chooser view. names = BOOK%d.NME entries
+// (mystery number = tierLo + index). solvedFlags marks greyed entries.
 struct CaseSubmenuView {
 	EEMEngine *vm;
 	const Picture *caseBg;
@@ -535,10 +506,8 @@ void drawCaseGreeter(Graphics::ManagedSurface &scratch,
 	if (!haveKdAnim || !kdAnim || kdAnim->empty())
 		return;
 
-	// `_CaseSelection` registers the partner-specific ANI slot, but
-	// drives it with script 0x15 regardless of partner. The chooser
-	// loop advances it through `_UpdateAnimations` after each
-	// `_CheckFrameRate` tick.
+	// `_CaseSelection` drives the partner ANI with script 0x15 regardless
+	// of partner.
 	const uint32 now = g_system->getMillis();
 	const uint frameIdx = partnerFrameAtTick(0x15, (uint)kdAnim->size(), now);
 	blitAnimFrameAnchored(scratch.surfacePtr(), (*kdAnim)[frameIdx],
@@ -595,12 +564,9 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 	return false;
 }
 
-// Mirrors `_DoChoose`'s `DrawList @ 1c33:040d`. 12 visible rows × 10 px
-// at (61, 35); colour palette: 0x13 = highlighted (selected), 0x1B =
-// greyed (already solved), 0x5C = default. We approximate with the
-// closest indices of site palette 0 — 0xF (white) / 0x7 (medium grey)
-// / 0x8 (dark grey) — since we don't decode the original CLUT byte
-// ramp.
+// `_DoChoose`'s `DrawList @ 1c33:040d`. 12 rows × 10 px at (61, 35).
+// Original colours 0x13 sel / 0x1B greyed / 0x5C default approximated
+// here as 0xF / 0x8 / 0x7 from site palette 0.
 void drawCaseSubmenu(const CaseSubmenuView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -635,18 +601,14 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 			kListX, kListY0 + r * kLineH, kListW, color);
 	}
 
-	// Selection arrow at the left edge of the highlighted row — the
-	// original highlights via colour change but adding an arrow makes
-	// the keyboard-driven path obvious.
+	// Selection arrow (ScummVM-only — original uses colour change).
 	if (v.selRow >= v.topRow && v.selRow < v.topRow + (uint)kVisible) {
 		const int r = (int)(v.selRow - v.topRow);
 		v.vm->getFont().drawString(&scratch, ">",
 			kListX - 6, kListY0 + r * kLineH, 6, 0xF);
 	}
 
-	// Scrollbar thumb. `DrawThumb @ 1c33:????` renders a thumb at
-	// (240, 45..146) proportional to scroll position. We draw a
-	// 1-px outlined block to indicate the same range.
+	// Scrollbar thumb at (240, 45..146), proportional to scroll position.
 	if (count > (uint)kVisible) {
 		const int trackY0 = 45;
 		const int trackH  = 146 - 45;
@@ -674,22 +636,14 @@ void drawActionMenuFrame(const ActionMenuView &v) {
 					   kActionScreenDecorX, kActionScreenDecorY);
 
 	if (v.vm->getFont().isLoaded()) {
-		// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
-		// and `DAT_29be_0d02` for y. `_TextBox` @ 29be:0d00 holds
-		// {x=58, y=35, x2=238, y2=158}. Matches the blue panel.
+		// `DrawList @ 1c33:040d`. _TextBox @ 29be:0d00 = {58, 35, 238, 158}.
 		const int kListX  = 58 + 3;
 		const int kListW  = 238 - kListX;
 		const int kListY0 = 35;
 		const int kLineH  = 10;
 
-		// Render 11 list rows: separator + menu item pairs.
-		//   row 0  separator
-		//   row 1  Choose A Mystery
-		//   row 2  separator
-		//   row 3  Practice Mystery
-		//   ...
-		//   row 9  See ScrapBook 3
-		//   row 10 separator
+		// 11 rows: separator/item pairs (0=sep, 1=Choose A Mystery, ...,
+		// 9=See Scrapbook 3, 10=sep).
 		for (int r = 0; r < 11; r++) {
 			const int y = kListY0 + r * kLineH;
 			if ((r & 1) == 0) {
@@ -709,21 +663,11 @@ void drawActionMenuFrame(const ActionMenuView &v) {
 }
 
 void EEMEngine::doProfilePicker() {
-	// Mirrors `screen8_handler @ 1c33:1012`. The original walks
-	// `*.PLR` files in `C:\EEMCDSAV\` (max 25), reads the first 12
-	// bytes of each (the player-name field of `_PlayerRecord`), and
-	// hands the list to `_DoChoose`. If no profiles exist (loop hits
-	// `local_20 == 0` at 1c33:1170), it falls straight into
-	// `_NewPlayer`. Selecting an entry calls `_LoadPlayerRecord` and
-	// returns; the 0xfffe / 0xffff chooser sentinels both enter
-	// `_NewPlayer` in this screen.
+	// `screen8_handler @ 1c33:1012` — walks *.PLR (max 25), reads 12-byte
+	// player-name field, hands list to `_DoChoose`. No profiles or
+	// 0xfffe/0xffff sentinel enters `_NewPlayer`.
 
-	// Palette reset. `screen8_handler` runs `_FadeOut(); _GetPalette(0);
-	// _GetBackground(0x104);` before the picker, so the BG always
-	// renders against SITEPALS index 0 regardless of which intro
-	// palette was active last. Without this, skipping out of an intro
-	// anim (THEME / ANIM01..20 / TITLE) leaves the previous video's
-	// palette in place and the picker draws with the wrong colours.
+	// `screen8_handler` does `_FadeOut(); _GetPalette(0); _GetBackground(0x104)`.
 	setSitePalette(0);
 
 	const SaveStateList saves = listProfiles();
@@ -733,16 +677,12 @@ void EEMEngine::doProfilePicker() {
 	}
 
 	if (!_font.isLoaded()) {
-		// No font means we can't render the picker — fall through.
 		doNewPlayer();
 		return;
 	}
 
-	// Build the visible list: existing profile names + "[New Player]".
-	// The DOS picker also has a bottom click area at 29be:0d08 that
-	// returns 0xfffe and immediately enters `_NewPlayer`; keeping the
-	// explicit row makes that affordance visible in ScummVM while the
-	// bottom rect remains active too.
+	// Existing profiles + "[New Player]". DOS bottom click area @ 29be:0d08
+	// returns 0xfffe → `_NewPlayer`; rect remains active too.
 	Common::Array<ProfilePickerEntry> entries;
 	for (const SaveStateDescriptor &s : saves) {
 		ProfilePickerEntry e;
@@ -765,12 +705,8 @@ void EEMEngine::doProfilePicker() {
 	const bool haveReveal =
 		_picsArchive.getPicture(kProfilePickerRevealPic, reveal);
 
-	// Picker geometry: `DrawList @ 1c33:040d` is called from
-	// `screen8_handler @ 1c33:1012` with `(_TextBox + 3, DAT_29be_0d02)`.
-	// `_TextBox @ 29be:0d00` holds {x1=58, y1=35, x2=238, y2=158} so
-	// the list origin is (61, 35), 10 px per row, max 12 visible
-	// rows. `screen8_handler` slides PIC 0x105 into the lower strip
-	// before calling `_DoChoose`; it does not draw that caption as text.
+	// Geometry: list origin (61, 35), 10 px/row, 12 visible. PIC 0x105
+	// slides into lower strip via `screen8_handler` before `_DoChoose`.
 	ProfilePickerView view;
 	view.vm = this;
 	view.bg = &bg;
@@ -866,8 +802,7 @@ void EEMEngine::doProfilePicker() {
 					break;
 				}
 				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// `screen8_handler` sets `Chelp = 0`, so the
-					// original ignores this chooser button here.
+					// `screen8_handler` sets Chelp=0 — button ignored.
 					break;
 				}
 				if (kChooserListRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -915,9 +850,7 @@ void EEMEngine::doProfilePicker() {
 	if (e.slot < 0) {
 		doNewPlayer();
 	} else {
-		// Mirrors `_LoadPlayerRecord` at 1c33:1281 — slot found,
-		// load it. The save body re-fills `_playerName`, partner,
-		// chain stage, mysteriesSolved.
+		// `_LoadPlayerRecord @ 1c33:1281`.
 		if (!loadProfile(e.label)) {
 			warning("doProfilePicker: failed to load profile '%s' at slot %d",
 					e.label.c_str(), e.slot);
@@ -927,9 +860,8 @@ void EEMEngine::doProfilePicker() {
 }
 
 void EEMEngine::doNewPlayer() {
-	// Mirrors `_NewPlayer` @ 1c33:0dda. The original draws background
-	// 0x104 + character peek pic 0x107, then shows "Please type your
-	// name" and accepts up to 12 characters until Enter.
+	// `_NewPlayer @ 1c33:0dda` — BG 0x104 + peek pic 0x107, prompt for
+	// up to 12 chars.
 	if (!_font.isLoaded()) {
 		_playerName = "Detective";
 		return;
@@ -938,24 +870,18 @@ void EEMEngine::doNewPlayer() {
 	Common::String name;
 	const int maxChars = 12;
 
-	// Mirror the original: load PIC 0x104 as the name-entry backdrop.
-	// The original also slides in PIC 0x107 (a peeking character).
 	Picture bg;
 	const bool haveBG = _picsArchive.getPicture(0x104, bg);
 	Picture peek;
 	const bool havePeek = _picsArchive.getPicture(kNameEntryPeekPic, peek);
 
-	// Localized name-entry prompt. Spanish text is taken from the
-	// Spanish floppy EEM.EXE ("Teclea tu nombre"). The colon suffix is
-	// our own — the original DOS prompt has none.
+	// Spanish from EEM.EXE ("Teclea tu nombre"); colon added.
 	const char *prompt = isSpanish()
 		? "Teclea tu nombre:" : "Please type your name:";
 
 	if (animateNameEntryPeek(this, &bg, haveBG, havePeek ? &peek : nullptr))
 		return;
-	// Match the original `_NewPlayer`: `_Show_String(rw=0x28, cl=0x50)`
-	// for the prompt, then `_ShowChar(0x50, x, …)` for typed input.
-	// (rw=row=y, cl=col=x.) Prompt at (y=40, x=80), input at (y=80, x=80).
+	// Prompt (y=40, x=80), input (y=80, x=80).
 	drawNameEntryFrame(this, &bg, haveBG, havePeek ? &peek : nullptr,
 					   name, prompt);
 
@@ -977,20 +903,14 @@ void EEMEngine::doNewPlayer() {
 			if (k == Common::KEYCODE_RETURN) {
 				if (name.empty())
 					name = "Detective";
-				// Mirrors `_NewPlayer @ 1c33:0dda` tail (1c33:0fa0+):
-				// after the name is committed, try `_LoadPlayerRecord`
-				// — if it returns 0 (no existing .PLR), zero out the
-				// per-profile state and call `_SavePlayerRecord` to
-				// create a fresh profile file. Same flow here, mapped
-				// onto ScummVM save slots via name → description.
+				// `_NewPlayer @ 1c33:0fa0+`: `_LoadPlayerRecord` → if
+				// missing, zero state and `_SavePlayerRecord`.
 				if (!loadProfile(name)) {
 					_playerName = name;
 					memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
 					_mystery.clear();
 					_partner = 0;
-					// `_NewPlayer @ 1c33:0fa3` writes
-					// `DAT_2d5d_3f99 = 1` — fresh profiles always
-					// start at the Junior tier.
+					// `_NewPlayer @ 1c33:0fa3`: DAT_2d5d_3f99 = 1 (Junior).
 					_chainStage = 1;
 					saveProfile(name);
 				}
@@ -1027,38 +947,24 @@ void EEMEngine::doNewPlayer() {
 }
 
 int EEMEngine::doShowEnding(uint num, bool firstPage) {
-	// Mirrors `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @
-	// 1df2:044c` on CD and `FUN_1d40_05b7` + `FUN_1d40_031e` on
-	// floppy. CD ending file format:
+	// `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @ 1df2:044c`
+	// (CD); `FUN_1d40_05b7` + `FUN_1d40_031e` (floppy).
+	// CD E<num>.BIN format:
 	//   u16 pageCount
-	//   for each page:
-	//     u16 picNum
-	//     u16 x1, y1, x2, y2  (story rect — passed to WordWrap)
-	//     char text[]        (null-terminated, ParseString opcodes)
-	// Floppy files prepend a small title header and use a shared
-	// newspaper background (PIC 0x8b) plus per-page overlay pictures.
-	//
-	// The original swaps the font: `_FreeFont(); _LoadFont("tiny.fnt")`
-	// at 1df2:055f-1df2:0563, calls `_GetPalette(0)` (site palette 0),
-	// then for each page `_GetBackground(picNum)` +
-	// `_WordWrap2(x1, y1, x2-x1, text, fontColor=0, dropColor=-1)`. The
-	// fontColor=0 draws in palette index 0 (the newspaper's body-text
-	// colour), with no drop shadow. Verified at the call site asm
-	// 1df2:04cf-1df2:04f4 (Ghidra mis-paired the two trailing args).
-	//
-	// Keyboard page navigation mirrors the original handlers
-	// (1df2:0689 / 1df2:06a0): LEFT decrements pageIdx, RIGHT (or
-	// SPACE / Enter) increments it. Hitting the boundary (LEFT on page
-	// 0, RIGHT on last page) sets `[BP-0x18]` to -1 / 1 respectively
-	// and exits — that return value is what `_ShowScrapbook` uses to
-	// walk forward / backward through solved mysteries (see
-	// 1f78:0664-1f78:069c). Mouse navigation is intentionally limited
-	// to the red-highlighted edge rects so central page clicks are ignored.
-	//
-	// `firstPage=false` opens the ending at the LAST page (used by
-	// `doShowScrapbook` after a "previous mystery" navigation —
-	// matches `local_8 = 0` written before the back-step at
-	// 1f78:067e).
+	//   per page: u16 picNum
+	//             u16 x1, y1, x2, y2   (story rect — passed to WordWrap2)
+	//             char text[]          (null-terminated, ParseString opcodes)
+	// Floppy: small title header + shared newspaper BG (PIC 0x8b) +
+	//   per-page overlay pictures.
+	// Render: _FreeFont; _LoadFont("tiny.fnt") @ 1df2:055f; _GetPalette(0);
+	// per-page _GetBackground(picNum) + _WordWrap2(x1, y1, x2-x1, text,
+	// fontColor=0, dropColor=-1). fontColor=0 is the newspaper body-text
+	// colour (asm 1df2:04cf-04f4 — Ghidra mis-paired the trailing args).
+	// LEFT/RIGHT page nav (1df2:0689 / 06a0): boundary sets [BP-0x18] to
+	// -1 / +1 — that return value drives `_ShowScrapbook` walking forward/
+	// back through solved mysteries (1f78:0664-069c).
+	// firstPage=false opens at LAST page (used by doShowScrapbook after
+	// "previous mystery"; matches `local_8 = 0` @ 1f78:067e).
 	const Common::String fname = Common::String::format("E%u.BIN", num);
 	Common::File f;
 	if (!f.open(Common::Path(fname))) {
@@ -1077,19 +983,13 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		return 0;
 	}
 
-	// Mirrors 1df2:0558-1df2:056a — `_FreeFont(); _LoadFont(tiny.fnt)`.
-	// The newspaper layout uses TINY.FNT (smaller glyphs) so the body
-	// copy fits in the columns. `_LoadFont(font.fnt)` is restored at
-	// 1df2:0625 after the page loop.
+	// 1df2:0558-056a: TINY.FNT; restored at 1df2:0625.
 	EEMFont tinyFont;
 	const bool haveTinyFont = tinyFont.load(Common::Path("TINY.FNT"));
 	if (!haveTinyFont)
 		warning("doShowEnding: TINY.FNT failed to load — falling back");
 
-	// Mirrors 1df2:055f `_GetPalette(0)` — site palette 0 is the
-	// shared "newspaper" CLUT for ending pages. The newspaper body
-	// text in particular is palette index 0 (= newspaper black) so we
-	// MUST switch palettes before rendering.
+	// 1df2:055f `_GetPalette(0)` — newspaper CLUT (body text = idx 0).
 	setSitePalette(0);
 	CursorMan.showMouse(true);
 
@@ -1227,15 +1127,10 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 									  kFirstTryBadgePos, transp);
 			}
 
-			// Story text. The bytes are a null-terminated string with
-			// `_ParseString` placeholders (0x80 = player name, 0x82
-			// = partner first name, etc.).
+			// `_ParseString` placeholders (0x80=name, 0x82=partner first).
 			const Common::String text = parseString(raw, _playerName, _partner);
 
-			// Use TINY.FNT (`_LoadFont(@29be:10a5)` at 1df2:055f-0563)
-			// and color 0 (`_WordWrap2(...,0,-1)` per asm at 1df2:04cf,
-			// not 0xF as Ghidra's decompile output suggests). Falls
-			// back to the main font if TINY.FNT failed to load.
+			// TINY.FNT + color 0 (asm 1df2:04cf — not 0xF as Ghidra shows).
 			const EEMFont &renderFont = haveTinyFont ? tinyFont : _font;
 			if (renderFont.isLoaded() && x2 > x1) {
 				const int textW = MIN<int>((int)x2 - (int)x1, 320 - (int)x1);
@@ -1330,15 +1225,9 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 }
 
 void EEMEngine::doShowScrapbook(uint stage) {
-	// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`. The original
-	// splits the cases into 24-entry tiers, then feeds each ending
-	// viewer return direction back into the tier walk:
-	//   -1 -> previous mystery, opened at its last page
-	//    0 -> close scrapbook
-	//   +1 -> next mystery, opened at its first page
-	// When the requested tier is the player's current chain stage, the
-	// original skips unsolved entries; completed tiers are already solved,
-	// so they are shown as a full range.
+	// `_ShowScrapbook(stage, 0) @ 1f78:0642`. 24-entry tiers; ending
+	// viewer returns -1/0/+1 for prev/close/next. Current tier skips
+	// unsolved entries.
 	if (stage < 1 || stage > 3)
 		return;
 	const int solvedCount =
@@ -1389,31 +1278,13 @@ void EEMEngine::doShowScrapbook(uint stage) {
 }
 
 void EEMEngine::doSetup() {
-	// Mirrors `_DoSetup @ 1f78:044e` (CD) and `_DoSetup_Floppy @
-	// 1ee2:0387` (floppy). Both variants share the same PIC 0x40 BG
-	// with text labels baked in, the same 13 button rectangles at
-	// `_SetupButtons @ 29be:1218` (CD) / `2608:0d8c` (floppy), and the
-	// same 4 highlight rectangles at `0xe94..0xeb3` (Kid1 / Kid2 /
-	// SoundOn / SoundOff). Floppy additionally pre-loads a few overlay
-	// PICs (0x9b..0x9e + 0x1fa) that the CD uses on demand, but the
-	// behaviour is identical — colour-key swap on `0xFE` to indicate
-	// active state, click dispatch via the same 12-entry handler
-	// jumptable. So a single shared handler covers both variants.
-	//
-	// The setup screen is BG `PIC 0x40` (loaded once on entry) with
-	// every label baked in — "Setup", "Partner", "Sound", "Music",
-	// the "Jake"/"Jenny"/"On"/"Off" option strings, etc. — all
-	// rendered in palette key `0xFE`. The original then runs
-	// `_SetupSettings @ 1f78:000d` which uses `_SwapColors @
-	// 172b:1d2a` to recolour those `0xFE` pixels per label rect:
-	// `0x15` for the active state, `0` for the inactive one. So
-	// nothing is drawn as text; the visible state of each toggle is
-	// purely a per-rect colour swap on top of `PIC 0x40`.
-	//
-	// Click hit-tests go through `_SetupButtons @ 29be:1218` — 13×
-	// 8-byte rects. Each click runs `HandleSetupButton @ 1f78:0158`,
-	// which dispatches via the 12-entry jumptable at `1f78:0436`.
-	// Verified handler map (decompiled at each jumptable target):
+	// `_DoSetup @ 1f78:044e` (CD) / `_DoSetup_Floppy @ 1ee2:0387`.
+	// PIC 0x40 BG with labels baked in palette key 0xFE; `_SetupSettings
+	// @ 1f78:000d` runs `_SwapColors @ 172b:1d2a` per label rect
+	// (0x15 active, 0x00 inactive — nothing drawn as text). 13× 8-byte
+	// click rects at `_SetupButtons @ 29be:1218` (CD) / 2608:0d8c (floppy);
+	// `HandleSetupButton @ 1f78:0158` dispatches via 12-entry jumptable
+	// at 1f78:0436. Rect map (x1, y1, x2, y2 — handler):
 	//   [0]  ( 20, 44, 39, 61)   Partner toggle (1f78:017a)
 	//   [1]  ( 20, 87, 39,104)   Voice toggle   (1f78:0196 → DAT_2d5d_3f97)
 	//   [2]  ( 20,127, 39,144)   back to profile (NextScreen=8)
@@ -1427,9 +1298,8 @@ void EEMEngine::doSetup() {
 	//   [10] (212,153,266,184)   Quit          (_AreYouSure → NextScreen=0xffff)
 	//   [11] ( 81, 25,238, 37)   Credits       (PIC 0x208 fullscreen)
 	//   [12] ( 11,  1,  3,  3)   debug placeholder
-	// Highlight rects (`Kid1 @ 29be:1320` / `Kid2 @ 29be:1328` /
-	// `SoundOn @ 29be:1330` / `SoundOff @ 29be:1338`) drive
-	// `_SwapColors`; they're not click targets in the original.
+	// Highlight rects (Kid1/Kid2/SoundOn/SoundOff @ 29be:1320..1338) drive
+	// `_SwapColors` only — not click targets in the original.
 	if (!_font.isLoaded()) {
 		_nextScreen = (ScreenId)_lastScreen;
 		return;
@@ -1454,11 +1324,9 @@ void EEMEngine::doSetup() {
 	const Common::Rect kSoundOnRect  (106,  86, 125,  94);
 	const Common::Rect kSoundOffRect (106,  96, 125, 104);
 
-	// Pixel-level color-key swap. Mirrors `_SwapColors @ 172b:1d2a`:
-	// for each pixel in `r` whose value equals `from`, replace with
-	// `to`. `0xFE` is the BG's text-key color; `0x15` is the active
-	// (bright) palette index, `0x00` the inactive one — both verified
-	// in `_SetupSettings @ 1f78:000d`.
+	// `_SwapColors @ 172b:1d2a` — replace pixels in r where value==from
+	// with to. 0xFE = BG text-key; 0x15 = active palette index, 0x00 =
+	// inactive (set by `_SetupSettings @ 1f78:000d`).
 	auto swapColors = [](Graphics::ManagedSurface &dst,
 						 const Common::Rect &r, byte from, byte to) {
 		const int x1 = MAX<int>(0, r.left);
@@ -1500,15 +1368,9 @@ void EEMEngine::doSetup() {
 	};
 	draw();
 
-	// Render `picId` and block until click/key. Returns the pressed
-	// keycode (KEYCODE_ESCAPE for an explicit bail, KEYCODE_INVALID
-	// for a click or any other key). When `transparent` is true,
-	// preserve the current screen behind and overlay `picId` with
-	// its transparent colour key — mirrors `_InterfaceHelp @
-	// 1560:0205` calling `_Rect_Move_Mask` with the pic's
-	// `miscflags >> 8` as the transp byte. When false, do a raw
-	// fullscreen blit — mirrors the credits handler at 1f78:0281
-	// using `_vga_fbuffvid`.
+	// Render picId and block until input. transparent=true: overlay via
+	// `_Rect_Move_Mask` (`_InterfaceHelp @ 1560:0205`). false: raw fullscreen
+	// blit via `_vga_fbuffvid` (credits @ 1f78:0281).
 	auto showFullscreenPic = [&](uint16 picId,
 								  bool transparent) -> Common::KeyCode {
 		Picture pic;
@@ -1519,18 +1381,13 @@ void EEMEngine::doSetup() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		if (transparent) {
-			// Preserve the current screen so the help PIC's
-			// transparent pixels show the setup BG underneath.
 			Graphics::Surface *cur = g_system->lockScreen();
 			if (cur) {
 				scratch.simpleBlitFrom(*cur);
 				g_system->unlockScreen();
 			}
 			const byte transp = (byte)(pic.flags >> 8);
-			// Explicit destPos — the no-destPos overload of
-			// `transBlitFrom` (managed_surface.cpp:738) stretches
-			// src to dst dimensions, scaling the PIC to 320x200.
-			// The original `_Rect_Move_Mask` blits at native size.
+			// Explicit destPos — no-destPos overload stretches to dst.
 			scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
 								  (uint32)transp);
 		} else {
@@ -1557,10 +1414,8 @@ void EEMEngine::doSetup() {
 	};
 
 	auto leaveSetup = [&]() {
-		// `_DoSetup`'s entry writes `_NextScreen = _LastScreen`. We
-		// honor any handler that has already overridden `_nextScreen`
-		// (Credits / Save don't, but New Case / Quit do). Otherwise
-		// fall back to `_lastScreen`.
+		// `_DoSetup` entry: _NextScreen = _LastScreen. Fall back to it
+		// unless a handler already overrode _nextScreen.
 		if (_nextScreen == kScreenSetup) {
 			_nextScreen = (ScreenId)_lastScreen;
 			if (_nextScreen == kScreenSetup ||
@@ -1570,7 +1425,7 @@ void EEMEngine::doSetup() {
 		saveProfile(_playerName);
 	};
 
-	_nextScreen = kScreenSetup;  // sentinel — leaveSetup picks the real target
+	_nextScreen = kScreenSetup;  // sentinel — leaveSetup picks target
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool dirty = false;
@@ -1592,10 +1447,8 @@ void EEMEngine::doSetup() {
 			const int mx = ev.mouse.x;
 			const int my = ev.mouse.y;
 
-			// Partner toggle (button [0]) — original has no symmetric
-			// right-side button (the [3] rect is ScrapBook 1, not a
-			// partner arrow). Direct clicks on the Jake/Jenny labels
-			// are accepted as a more intuitive fallback.
+			// Partner toggle [0]. Direct Jake/Jenny label clicks are a
+			// ScummVM-only fallback.
 			if (kPartnerBtn.contains(mx, my)) {
 				_partner = _partner == 0 ? 1 : 0;
 				dirty = true;
@@ -1610,7 +1463,7 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Voice toggle (button [1]).
+			// Voice toggle [1].
 			if (kVoiceBtn.contains(mx, my)) {
 				_voiceOn = !_voiceOn;
 				if (_audio)
@@ -1637,33 +1490,26 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// New Case (button [7]). Original handler at 1f78:01ad
-			// sets `_NextScreen = 0xa` (CHOOSE_MYSTERY) and exits the
-			// dispatch loop with SI=1.
+			// New Case [7] @ 1f78:01ad → NextScreen=0xa (CHOOSE_MYSTERY).
 			if (kNewCaseBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				_nextScreen = kScreenChooseMystery;
 				return;
 			}
 
-			// Save (button [6]). Original calls `_SaveGame @
-			// 2404:0c87` and stays in the setup loop. Our save is
-			// profile-scoped (one slot per player name) — same effect.
+			// Save [6] — `_SaveGame @ 2404:0c87`.
 			if (kSaveBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				continue;
 			}
 
-			// Done (button [8]). Original handler is just `MOV SI,1;
-			// JMP exit` — `_NextScreen` stays at whatever entry set it
-			// to (= `_LastScreen`).
+			// Done [8] — MOV SI,1; JMP exit (NextScreen stays = LastScreen).
 			if (kDoneBtn.contains(mx, my)) {
 				leaveSetup();
 				return;
 			}
 
-			// Quit (button [10]). Original: `_AreYouSure(0)` →
-			// confirmed → `_NextScreen = 0xffff` (sentinel quit).
+			// Quit [10] — `_AreYouSure(0)` → NextScreen=0xffff.
 			if (kQuitBtn.contains(mx, my)) {
 				if (areYouSure()) {
 					_nextScreen = kScreenInvalid;
@@ -1673,28 +1519,17 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Help (button [9]). Original `_InterfaceHelp(1) @
-			// 1560:0205` walks the help-pic table at `29be:00c8`:
-			// each `num` slot is 5 bytes — count + two u16 PIC IDs.
-			// For num=1: count=2, pics = {0x0192, 0x01B1}. The
-			// original blits each pic with `_Rect_Move_Mask` — a
-			// MASKED blit whose transparent colour is the pic's
-			// `miscflags >> 8`, so the setup BG shows through. It
-			// also hides the cursor (`MOV [0x3a00], 0` + `_RemoveMouse`
-			// at the top of `_InterfaceHelp`, 1560:0216-021c). ESC
-			// at any point breaks out (1560:02b3 sets uVar5 = count).
+			// Help [9] — `_InterfaceHelp(1) @ 1560:0205`. Help-pic table
+			// @ 29be:00c8: each `num` slot = 5 bytes (count + two u16
+			// PIC IDs). num=1 → count=2, pics = {0x0192, 0x01B1}. Each
+			// pic blitted via `_Rect_Move_Mask` (transparent = pic
+			// `miscflags >> 8`, so setup BG shows through). Also hides
+			// cursor (1560:0216-021c). ESC breaks (1560:02b3).
 			if (kHelpBtn.contains(mx, my)) {
 				static const uint16 kHelp1Pics[] = { 0x0192, 0x01B1 };
 				CursorMan.showMouse(false);
 				for (uint i = 0; i < ARRAYSIZE(kHelp1Pics); i++) {
-					// Re-render the setup BG before each help PIC so
-					// each one overlays a clean canvas. Without this,
-					// `showFullscreenPic`'s `lockScreen` snapshot would
-					// pick up the previous PIC and the two help cards
-					// would composite together. Mirrors the original's
-					// `_vga_fvidvid(0)` call at the tail of every
-					// `_InterfaceHelp` iteration (1560:02e5), which
-					// restores the back-buffer BG between cards.
+					// Restore BG between cards (1560:02e5 `_vga_fvidvid(0)`).
 					draw();
 					const Common::KeyCode k =
 						showFullscreenPic(kHelp1Pics[i], /*transparent=*/true);
@@ -1706,37 +1541,25 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Credits (button [11]). Original handler at 1f78:025a
-			// loads PIC 0x208, hides the cursor (`MOV [0x3a00], 0`
-			// at 1f78:0269 + `_RemoveMouse @ 1000:542f` at 1f78:026F),
-			// blits it fullscreen via `_vga_fbuffvid` (raw copy, no
-			// mask), then waits for any input.
+			// Credits [11] @ 1f78:025a — PIC 0x208 fullscreen.
 			if (kCreditsBtn.contains(mx, my)) {
 				CursorMan.showMouse(false);
 				showFullscreenPic(0x208, /*transparent=*/false);
 				CursorMan.showMouse(true);
-				// PIC 0x208 has its own palette baked into the BG
-				// dump via `_GetPicture`; the original restores via
-				// `_GetPalette` on return. Reset to setup palette
-				// (SITEPALS index 0) so the setup BG renders right.
+				// PIC 0x208 has its own baked palette; restore site 0.
 				setSitePalette(0);
 				dirty = true;
 				continue;
 			}
 
-			// Profile (button [2]). Original handler writes
-			// `_NextScreen = 8`, returning to the player/profile
-			// picker. Save the current profile settings first, then
-			// let the screen driver run profile → partner → case/map.
+			// Profile [2] — NextScreen=8.
 			if (kProfileBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				_nextScreen = kScreenProfile;
 				return;
 			}
 
-			// ScrapBook 1 / 2 / 3 (buttons [3] / [4] / [5]). Original
-			// handlers call `_ShowScrapbook(stage, 0)`, with stages 2
-			// and 3 gated by chain progress.
+			// ScrapBook [3]/[4]/[5] — `_ShowScrapbook(stage, 0)`.
 			if (kScrap1Btn.contains(mx, my)) {
 				doShowScrapbook(1);
 				setSitePalette(0);
@@ -1764,17 +1587,9 @@ void EEMEngine::doSetup() {
 }
 
 void EEMEngine::doActionScreen() {
-	// Mirrors `_ActionScreen` @ 1c33:195b. The original draws background
-	// PIC 0x104 plus PIC 9 at (10, 0x87), then calls `_DoChoose` with
-	// `ActionNames @ 29be:0d6a`. The "Book N" heading belongs only to
-	// `_CaseSelection`, so this top-level menu intentionally does not
-	// draw one.
-	// Layout:
-	//   list[0]  = "----------------------------------"
-	//   list[1]  = "         Choose A Mystery"
-	//   list[2..10] = alternating menu items + separators
-	// Five selectable items: Choose A Mystery / Practice Mystery /
-	// See ScrapBook 1/2/3.
+	// `_ActionScreen @ 1c33:195b` — BG PIC 0x104 + PIC 9 @ (10, 0x87),
+	// `_DoChoose` with ActionNames @ 29be:0d6a. 5 picks alternating with
+	// separators.
 	enum MenuPick {
 		kPickChoose = 0,
 		kPickPractice,
@@ -1783,9 +1598,7 @@ void EEMEngine::doActionScreen() {
 		kPickScrap3,
 		kNumPicks
 	};
-	// Localized action-menu labels. Spanish text is taken verbatim
-	// from the Spanish floppy EEM.EXE (`eem-full-game/floppy-es/`):
-	// "Elegir Misterio" / "Caso de Practica" / "Ver Recortes  1..3".
+	// Spanish from EEM.EXE floppy-es.
 	const char *kPickLabelEN[kNumPicks] = {
 		"         Choose A Mystery",
 		"         Practice Mystery",
@@ -1801,17 +1614,11 @@ void EEMEngine::doActionScreen() {
 		"         Ver Recortes  3"
 	};
 	const char * const *kPickLabel = isSpanish() ? kPickLabelES : kPickLabelEN;
-	// Menu entry gating per `_ActionScreen @ 1c33:195b` — the asm at
-	// 1c33:19d1-1a70 sets greys[] based on chain stage AND per-tier
-	// solve count:
-	//   stage 1 → grey ScrapBook 2/3; grey ScrapBook 1 if no tier-1 solves
-	//   stage 2 → grey Practice + ScrapBook 3; grey ScrapBook 2 if no tier-2 solves
-	//   stage 3 → grey Practice; grey ScrapBook 3 if no tier-3 solves
-	//   stage 4 → grey Choose + Practice (post-completion read-only state)
-	// In other words: each tier's ScrapBook unlocks as soon as you've
-	// solved your first case in that tier. Practice Mystery is only
-	// available at stage 1. Choose A Mystery is greyed once every case
-	// in every tier is solved (stage 4).
+	// Gating @ 1c33:19d1-1a70 by chain stage + per-tier solves:
+	//   stage 1: grey SB2/3; SB1 needs any tier-1 solve
+	//   stage 2: grey Practice + SB3; SB2 needs tier-2 solve
+	//   stage 3: grey Practice; SB3 needs tier-3 solve
+	//   stage 4: grey Choose + Practice
 	bool anySolved1 = false;
 	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++)
 		if (_mysteriesSolved[i]) { anySolved1 = true; break; }
@@ -1833,8 +1640,7 @@ void EEMEngine::doActionScreen() {
 	const bool kPickEnabled[kNumPicks] = {
 		chooseOn, practiceOn, scrap1On, scrap2On, scrap3On
 	};
-	// Seed selection on the first enabled entry — at stage 4 the
-	// `Choose A Mystery` default is greyed, so we land on ScrapBook 1.
+	// Seed selection on first enabled entry.
 	uint pick = 0;
 	for (uint i = 0; i < kNumPicks; i++) {
 		if (kPickEnabled[i]) { pick = i; break; }
@@ -1842,27 +1648,15 @@ void EEMEngine::doActionScreen() {
 
 	const char *kSeparator = "----------------------------------";
 
-	// Click rectangles from the original `_DoChoose` @ 1c33:0514 — each
-	// `_InRect(_MouseX, _MouseY, addr, 0x29be)` reads one 4×u16 rect at
-	// the listed offset in segment 29be ({x1, y1, x2, y2}). We use
-	// `Common::Rect` (left/top/right/bottom) which also gives us
-	// `contains(x, y)` for hit testing.
+	// `_DoChoose @ 1c33:0514` click rects (4×u16 {x1,y1,x2,y2} in seg 29be):
 	const Common::Rect kOkRect      ( 12,  63,  41,  87); // 29be:0cd8 confirm
 	const Common::Rect kHelpRect    ( 12, 100,  41, 124); // 29be:0ce0 help
 	const Common::Rect kExitRect    ( 12, 137,  41, 161); // 29be:0ce8 cancel
 	const Common::Rect kListRect    ( 58,  35, 238, 158); // 29be:0d00 list panel
 
-	// The original `_NewPlayer` set `_MouseCursor = 1` on exit; the
-	// chain of screens after it expects the cursor to stay visible.
-	// Reassert here in case anything between hid it.
 	CursorMan.showMouse(true);
 
-	// Reassert site palette 0 (the chooser CLUT). In
-	// the normal flow `doProfilePicker` (or the post-screen reset paths
-	// at lines 1402 / 1147 / 1121) leaves us on palette 0 already, but
-	// the launcher-resume path jumps straight here from `_AllBlack`
-	// (palette = all-zero) — without this the BG renders into a black
-	// CLUT and the player sees an empty screen.
+	// Launcher-resume path can enter from `_AllBlack` palette.
 	setSitePalette(0);
 
 	Picture bg;
@@ -1893,11 +1687,8 @@ void EEMEngine::doActionScreen() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// OK / EXIT / HELP buttons (rectangles from `_DoChoose`).
 				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Greyed entries can't be confirmed (mirrors
-					// `_DoChoose @ 1c33:0635` — clicks on a `_Greys[i]
-					// != 0` row are ignored before `select` is set).
+					// Greyed entries ignored (`_DoChoose @ 1c33:0635`).
 					if (kPickEnabled[pick])
 						confirmed = true;
 					break;
@@ -1908,12 +1699,9 @@ void EEMEngine::doActionScreen() {
 					break;
 				}
 				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// `_ActionScreen` sets `Chelp = 0`, so `_DoChoose`
-					// ignores this middle button on the top-level menu.
+					// `_ActionScreen` sets Chelp=0.
 					continue;
 				}
-				// List panel: click on a non-separator row selects the
-				// menu entry under the cursor.
 				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
 					const int kLineH = 10;
 					const int row = (ev.mouse.y - kListRect.top) / kLineH;
@@ -1942,10 +1730,7 @@ void EEMEngine::doActionScreen() {
 				break;
 			}
 			if (k == Common::KEYCODE_UP || k == Common::KEYCODE_LEFT) {
-				// Cycle backwards through enabled picks (mirrors the
-				// `_DoChoose` arrow handlers @ 1c33:0514). Loop is
-				// bounded by `kNumPicks` so a row of all-disabled picks
-				// can't spin forever.
+				// `_DoChoose` arrow handlers @ 1c33:0514, bounded loop.
 				for (int i = 0; i < (int)kNumPicks; i++) {
 					pick = (pick == 0) ? (uint)(kNumPicks - 1) : pick - 1;
 					if (kPickEnabled[pick])
@@ -2010,12 +1795,8 @@ void EEMEngine::doActionScreen() {
 	}
 
 	if (pick == kPickScrap1 || pick == kPickScrap2 || pick == kPickScrap3) {
-		// `_ActionScreen` handlers at 1c33:1B13 / 1B26 / 1B40 each
-		// call `_ShowScrapbook(0, stage)` for the matching tier
-		// (verified at the action-handler jumptable bytes
-		// `01 03 05 07 09 ff` paired with handlers at 1c33:1be1).
-		// Viewing the scrapbook never starts a new case; return to
-		// the same action menu afterwards.
+		// `_ActionScreen` handlers @ 1c33:1B13 / 1B26 / 1B40 →
+		// `_ShowScrapbook(0, stage)`. Returns here afterwards.
 		const uint stage = (pick == kPickScrap1) ? 1
 						 : (pick == kPickScrap2) ? 2 : 3;
 		doShowScrapbook(stage);
@@ -2029,11 +1810,8 @@ void EEMEngine::doActionScreen() {
 }
 
 void EEMEngine::doCaseSelection() {
-	// Mirrors `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @
-	// 1c33:0a87`. `_DoChooseMystery` loads BOOK<stage>.NME and
-	// `_CaseSelection` draws PIC 0x41 plus the centered "Book N" /
-	// "Challenge Book" title. This screen is entered only after the
-	// player selects "Choose A Mystery" on `_ActionScreen`.
+	// `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @ 1c33:0a87` —
+	// loads BOOK<stage>.NME, draws PIC 0x41 + centered "Book N" title.
 	const uint kMaxMystery = 54;
 
 	CursorMan.showMouse(true);
@@ -2047,9 +1825,7 @@ void EEMEngine::doCaseSelection() {
 	const bool haveRevealPic =
 		_picsArchive.getPicture(kCaseSelectionRevealPic, revealPic);
 
-	// KD greeter sprite. `_CaseSelection @ 1c33:0a87` loads anim 0x15
-	// (Jake-paired) or 0x16 (Jenny-paired), then runs it through the
-	// chooser loop via `_UpdateAnimations`.
+	// `_CaseSelection @ 1c33:0a87` greeter ANI 0x15 (Jake) / 0x16 (Jenny).
 	const uint kKdAniId = (_partner == 0) ? 0x15 : 0x16;
 	Animation kdAnim;
 	const bool haveKdAnim = _aniArchive.loadAnimation(kKdAniId, kdAnim)
@@ -2057,10 +1833,8 @@ void EEMEngine::doCaseSelection() {
 	const int kKdAnimX = 0x112;
 	const int kKdAnimY = 0x50;
 
-	// Stage roster:
-	//   stage 1 (Junior, BOOK1.NME) -> mysteries  1..24
-	//   stage 2 (Senior, BOOK2.NME) -> mysteries 25..48
-	//   stage 3 (Master, BOOK3.NME) -> mysteries 49..54
+	// stage 1 (Junior, BOOK1.NME) = 1..24, stage 2 (Senior, BOOK2.NME) =
+	// 25..48, stage 3 (Master, BOOK3.NME) = 49..54.
 	uint stageLo = 1, stageHi = 0x18;
 	uint book = 1;
 	switch (_chainStage) {
@@ -2078,8 +1852,7 @@ void EEMEngine::doCaseSelection() {
 	}
 	const uint listLen = MIN<uint>((uint)names.size(), stageHi - stageLo + 1);
 
-	// Per-row solved flags. `_DoChoose @ 1c33:0521` skips solved entries
-	// when seeding the initial selection and ignores clicks on them.
+	// Solved-row gating @ `_DoChoose @ 1c33:0521`.
 	Common::Array<bool> solvedFlags;
 	solvedFlags.resize(listLen);
 	for (uint i = 0; i < listLen; i++) {
@@ -2143,10 +1916,8 @@ void EEMEngine::doCaseSelection() {
 					return;
 				}
 				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Original `_CaseSelection` returns 0xfffe here,
-					// then `_ChooseSavedGame` runs. ScummVM stores
-					// in-progress cases in the profile, so route to
-					// the profile picker instead.
+					// Original returns 0xfffe → `_ChooseSavedGame`. ScummVM
+					// stores in-progress cases per profile.
 					saveProfile(_playerName);
 					_mystery.clear();
 					_nextScreen = kScreenProfile;
@@ -2170,9 +1941,7 @@ void EEMEngine::doCaseSelection() {
 					const uint idx = topRow + (uint)row;
 					if (idx >= listLen || solvedFlags[idx])
 						continue;
-					// Second click on the already-selected row counts as
-					// the OK button — saves the player a trip down to the
-					// bottom-bar after picking a mystery.
+					// Second click on selected row = OK (ScummVM ergonomic).
 					if (idx == selRow) {
 						confirmed = true;
 						break;
@@ -2277,50 +2046,24 @@ void EEMEngine::doCaseSelection() {
 }
 
 void EEMEngine::doNotebook() {
-	// Mirrors `_DoNotebook @ 161e:0500` + `_DrawNotes @ 161e:01d0` +
-	// `_HandleNoteButton @ 161e:03cb`.
-	//
-	// Layout (verified from Ghidra labels in 29be:013f / 29be:0147):
-	//   _NotebookRect = (78, 12, 288, 152)   — note display rectangle.
-	//   _NoteButtons (11 entries, 8 bytes each, at 29be:0147):
-	//     [0]  (134, 174, 155, 190)  decorative — `_HandleNoteButton(0)`
-	//                                returns immediately (i-1 unsigned > 9).
-	//     [1]  (93,  174, 115, 190)  → `_InterfaceHelp(0)` (handler 0x3f9)
-	//     [2]  (157, 174, 178, 190)  → handler 0x477   (page nav)
-	//     [3]  (5,   80,  44, 110)   → `_KDHelp` (host hint, 0x403)
-	//     [4]  (180, 174, 201, 190)  → solve / accuse  (0x436)
-	//     [5]  (204, 174, 224, 190)  → `_NextScreen = 5` (gallery, 0x489)
-	//     [6]  (226, 174, 247, 190)  → handler 0x4ab
-	//     [7]  (7,   177,  57, 200)  → handler 0x480   (back to map)
-	//     [8]  (35,  111,  56, 136)  → `_NextScreen = 3` (site)
-	//     [9]  (0, 0, 0, 0)          → same exit as [8]
-	//     [10] (66,  79, 267, 174)   → `_InterfaceHelp(0)` (note area)
-	//   Background: PIC 0x3f.
-	//   Partner anim: anim 1 (Jake) / 0xb (Jenny) at (5, 80).
+	// `_DoNotebook @ 161e:0500` + `_DrawNotes @ 161e:01d0` +
+	// `_HandleNoteButton @ 161e:03cb`. _NotebookRect = (78, 12, 288, 152).
+	// _NoteButtons @ 29be:0147 — 11 rects × 8 bytes. Jumptable @ 161e:04ec
+	// dispatches handler[i-1] (rect 0's i-1 underflows = decorative slot):
+	//   [0] (134,174,155,190)  decorative — no handler
+	//   [1] ( 93,174,115,190)  HELP → `_InterfaceHelp(0)`           (0x3f9)
+	//   [2] (157,174,178,190)  GALLERY → `_NextScreen = 5`          (0x477)
+	//   [3] (  5, 80, 44,110)  host hint → `_KDHelp`                (0x403)
+	//   [4] (180,174,201,190)  SOLVE → `_SolvedCheck` → NextScreen=7 (0x436)
+	//   [5] (204,174,224,190)  PAGE NEXT → `_EraseNotes` + redraw   (0x489)
+	//   [6] (226,174,247,190)  PAGE PREV → CurrentPage-- + redraw   (0x4ab)
+	//   [7] (  7,177, 57,200)  MAP → `_NextScreen = 2`              (0x480)
+	//   [8] ( 35,111, 56,136)  SITE → `_NextScreen = 3`             (0x3ed)
+	//   [9] (  0,  0,  0,  0)  same exit as [8]
+	//   [10] (267,174,288,190) → `_InterfaceHelp(0)` again          (0x3f9)
+	// BG PIC 0x3f; partner ANI 1 (Jake) / 0xb (Jenny) at (5, 80).
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
-
-	// Button rects from `_NoteButtons @ 29be:0147` matched to handler
-	// addresses via the jump table at `_HandleNoteButton + 0xec` (i.e.
-	// 161e:04ec). Decoded handlers (i = rect_index, dispatch = handler[i-1]):
-	//   rect 0 (134,155) → no handler (i-1 underflows; original treats
-	//                      this as a decorative/no-op slot)
-	//   rect 1 (93,115)  → 0x03f9 = `_InterfaceHelp(0)`           (HELP)
-	//   rect 2 (157,178) → 0x0477 = `_NextScreen = 5`             (GALLERY)
-	//   rect 3 (5,80)    → 0x0403 = `_KDHelp`                     (host hint)
-	//   rect 4 (180,201) → 0x0436 = `_SolvedCheck` -> NextScreen=7 (SOLVE)
-	//   rect 5 (204,224) → 0x0489 = `_EraseNotes` + `_DrawNotes`  (PAGE NEXT)
-	//   rect 6 (226,247) → 0x04ab = decrement CurrentPage + redraw (PAGE PREV)
-	//   rect 7 (7,177)   → 0x0480 = `_NextScreen = 2`             (MAP)
-	//   rect 8 (35,111)  → 0x03ed = `_NextScreen = 3`             (SITE)
-	//   rect 9 (0,0)     → 0x03ed = same as rect 8
-	//   rect 10 (66,79)  → 0x03f9 = `_InterfaceHelp(0)`           (note-area help)
-	// (`_NoteButtons @ 29be:0147` actually has rect [10] at
-	// (267,174,288,190) — small button on the right of the bottom
-	// bar that the original handler dispatch table at 161e:04ec
-	// routes to `_InterfaceHelp(0)` again. Earlier this rect was
-	// mis-noted as a "note area" of (66,79,267,174) — that
-	// rectangle exists nowhere in the binary's button table.)
 
 	CursorMan.showMouse(true);
 
@@ -2372,10 +2115,7 @@ void EEMEngine::doNotebook() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Test buttons in the order the original would —
-				// button 0 / 9 are dead zones, so check the actionable
-				// rects directly. Earlier rects "win" when overlapping
-				// (matches `_FindButton`).
+				// Earlier rects win on overlap (matches `_FindButton`).
 				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenSite;
 					exitFlag = true;
@@ -2403,8 +2143,7 @@ void EEMEngine::doNotebook() {
 					break;
 				}
 				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// rect 1 → `_InterfaceHelp(0)`: walks `HelpData[0]` and
-					// blits PICs 0x63 / 0x1ae fullscreen for click-through.
+					// rect 1 → `_InterfaceHelp(0)` (PICs 0x63 / 0x1ae).
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					dirty = true;
@@ -2422,22 +2161,14 @@ void EEMEngine::doNotebook() {
 					continue;
 				}
 				if (kPdaHelp2Rect.contains(ev.mouse.x, ev.mouse.y)) {
-					// `_NoteButtons[10]` → handler 0x03f9 = same
-					// `_InterfaceHelp(0)` as button [1].
+					// _NoteButtons[10] → handler 0x03f9 = same as [1].
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					dirty = true;
 					continue;
 				}
-				// Click on a clue's slot rect → toggle selection. The
-				// original `_DoNotebook` doesn't do this — note
-				// selection lives in the accuse screen there — but
-				// keyboard 1..9 toggling is awkward, and the resulting
-				// `_NoteSelected` state is what `_SolvedCheck` reads
-				// either way. Slot rects are the per-clue rectangles
-				// `drawNotebookFrame` publishes, so this just
-				// reproduces the visible-text-bbox click without the
-				// previous bogus outer-area gate.
+				// ScummVM-only: click on clue slot toggles _NoteSelected
+				// (original toggles only in accuse screen).
 				for (uint i = 0; i < _notebookSlotRects.size(); i++) {
 					if (_notebookSlotRects[i].contains(ev.mouse.x,
 													   ev.mouse.y)) {
@@ -2453,7 +2184,7 @@ void EEMEngine::doNotebook() {
 			break;
 
 		const uint32 now = g_system->getMillis();
-		// Re-render every 100 ms so the partner sprite cycles frames.
+		// Re-render every 100 ms for partner sprite cycle.
 		if (dirty || now - lastDraw >= 100) {
 			drawNotebookFrame(page);
 			lastDraw = now;
@@ -2469,50 +2200,31 @@ void EEMEngine::doNotebook() {
 }
 
 void EEMEngine::drawNotebookFrame(int &page) {
-	// PDA notebook redraw — formerly the `draw` lambda inside `doNotebook`.
-	// Mirrors `_DrawNotes @ 161e:01d0` for the per-page note layout, plus
-	// the partner-sprite blit at (5, 80) (`_NewAnimation` from
-	// `_DoNotebook @ 161e:0500`). Uses `_notebookSlotRects` /
-	// `_notebookSlotClues` to publish the per-page slot layout to the
-	// click handler in `doNotebook`.
+	// `_DrawNotes @ 161e:01d0` per-page layout + partner sprite at (5,80)
+	// from `_DoNotebook @ 161e:0500`.
 	const Common::Rect kNotebookRect(78, 12, 288, 152);
 
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
-	// PIC 0x3f frame.
 	Picture frame;
 	if (_picsArchive.getPicture(0x3f, frame))
 		scratch.simpleBlitFrom(frame.surface);
 
-	// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny
-	// for CELLS, but the original `_DoNotebook @ 161e:0500` always
-	// uses script 0x01 (verified by `CONCAT22(1, ...)` in its
-	// `_NewAnimation` call at 161e:054c). Both 0x01 and 0x0b have
-	// the SAME script in `kAnimScripts` (alias), so both lookups
-	// produce identical results — but routing through 0x01
-	// matches the original verbatim.
+	// Partner ANI 1/0xb (cells); script 0x01 (`_NewAnimation @ 161e:054c`).
 	const uint partnerAnim = (_partner == 0) ? 1 : 0xb;
 	Animation partnerAni;
 	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) && !partnerAni.empty()) {
 		const uint32 now = g_system->getMillis();
 		const uint frameIdx = partnerFrameAtTick(0x01,
 												  (uint)partnerAni.size(), now);
-		// Anchor-aware blit. The PDA partner (anim 0x01/0x0b) cells
-		// have miscflags = rowoff = 0 in the audit, but routing
-		// through `blitAnimFrameAnchored` is harmless and keeps the
-		// rendering path consistent with the BigMap partner.
 		blitAnimFrameAnchored(scratch.surfacePtr(),
 							  partnerAni[frameIdx], 5, 80);
 	}
 
-	// Notes — `_DrawNotes` walks `_NoteIndex` for the current page,
-	// rendering each found clue's text inside `_NotebookRect` with
-	// word-wrap. Selected clues are highlighted (color 0x3c in the
-	// original's case-briefing palette).
-	// Build a list of found-clue indices, identical ordering to the
-	// original's iteration through `_CluesFound[]`.
+	// `_DrawNotes` walks `_NoteIndex` for current page; word-wraps each
+	// found clue in `_NotebookRect`. Selected = color 0x3c.
 	Common::Array<uint> found;
 	for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
 		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
@@ -2526,29 +2238,14 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	const int kRectW = kNotebookRect.width();
 	const int kRectH = kNotebookRect.height();
 
-	// Walk forward to the start clue of the current page.
-	// Each page renders as many clues as fit in `kRectH`.
+	// Walk forward to start clue of current page; fits as many as kRectH.
 	int clueCursor = 0;
 	Common::Array<int> pageStarts;
 	pageStarts.push_back(0);
-	// Floppy NoteIndex entries are 7 bytes:
-	//   +0..1  clue text offset (ABSOLUTE byte offset into the
-	//          mystery blob; partner-agnostic clue statement —
-	//          this is what the notebook displays).
-	//   +2..3  Jake's spoken line offset (used by
-	//          `_DisplayHotspotClue_Floppy` when Jake narrates a
-	//          dialog record — NOT for the notebook).
-	//   +4..5  Jenny's spoken line offset (same, for Jenny).
-	//   +6     score.
-	// Verified at `_DrawNotes_Floppy / FUN_15e0_01e8`'s
-	// `*(int *)(notes + idx * 7)` access (no `+2`/`+4` shift —
-	// always reads byte +0). The earlier port used the dialog
-	// spoken line for the notebook, which showed the partner's
-	// "Hi, Jake! Hi, Jenny!" intro instead of the actual clue
-	// statement ("We received a note that says..."). CD entries
-	// are 4 bytes with offsets relative to the TextBlock at
-	// header[+0xc]. Resolve the right text for the active variant
-	// once per render.
+	// Floppy NoteIndex entry (7 bytes): +0 clueTextOff (absolute, what
+	// the notebook displays), +2 Jake spoken, +4 Jenny spoken, +6 score.
+	// `_DrawNotes_Floppy / FUN_15e0_01e8` reads only byte +0.
+	// CD entries are 4 bytes, offsets relative to TextBlock @ header[+0xc].
 	const bool floppyNb = isFloppy();
 	const byte *bufBase = _mystery.blobAt(0);
 	const uint32 mysSz  = _mystery.dataSize();
@@ -2594,8 +2291,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 			page = 0;
 	}
 
-	// Track per-slot rectangles so the click handler can map a
-	// click in `kNoteArea` back to a clue index.
+	// Per-slot rects published to the click handler.
 	Common::Array<Common::Rect> slotRects;
 	Common::Array<uint> slotClues;
 
@@ -2611,12 +2307,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		if (txt.empty())
 			txt = Common::String::format(
 				isSpanish() ? "nota %u" : "clue %u", clueId);
-		// Per `_DrawNotes @ 161e:01d0`: text uses
-		// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
-		// (light yellow-white) for selected. Both contrast cleanly
-		// with the PDA screen's natural blue, so we draw text
-		// directly on PIC 0x3f without an extra fill rectangle —
-		// matches the original design.
+		// `_DrawNotes @ 161e:01d0`: 0x5c unselected, 0x3c selected.
 		Common::Array<Common::String> wrapped;
 		_font.wordWrapText(txt, kRectW, wrapped);
 		const int lineH = _font.getFontHeight();
@@ -2632,12 +2323,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		y += h + 7;
 	}
 
-	// Page indicator only — the original `_DrawNotes @ 161e:01d0`
-	// has no points display in the PDA notebook (the per-clue point
-	// values are SPOILERS for the chain weighting that the engine
-	// uses internally for `_GetSelectedPoints`). Showing the running
-	// total tells the player exactly when they have enough evidence
-	// to solve, which deflates the deduction step.
+	// Page indicator only (original has no points display).
 	_font.drawString(&scratch, Common::String::format("p%d/%d",
 							   page + 1, (int)pageStarts.size()),
 					 270, 4, 320, 0x5C);
@@ -2652,27 +2338,11 @@ void EEMEngine::drawNotebookFrame(int &page) {
 }
 
 void EEMEngine::doGallery() {
-	// Mirrors `_DoGallery @ 158f:065b` and `_DrawGallery @ 158f:0046`.
-	// Verified directly from the disassembly:
-	//   * Background: PIC 0x3f (same as PDA).
-	//   * Partner sprite at (5, 0x50): anim 2 (Jake) / 0x10 (Jenny).
-	//     `_NewAnimation(5, 0x50, ...)`. NOTE: gallery uses anim 2/0x10,
-	//     PDA uses 1/0xb — different sprites.
-	//   * Five fixed slot positions at `29be:0x116` (4 bytes per slot,
-	//     `{u16 x, u16 y}`):
-	//         slot 0 = ( 83,  14)   slot 3 = (119,  90)
-	//         slot 1 = (155,  14)   slot 4 = (191,  90)
-	//         slot 2 = (227,  14)
-	//   * For each logical suspect i in 0..NumSuspects-1:
-	//         picId   = `*(u16 *)(_GalleryData + i * 0x46)` (entry +0).
-	//         visible = `_InGallery[_NewOrder[i]] != 0`.
-	//         drawX   = positions[_NewOrder[i]].x
-	//         drawY   = positions[_NewOrder[i]].y + (0x48 - pic.height)
-	//     So portraits are BOTTOM-aligned to baselines 0x48 + pos.y.
-	//   * Click on portrait via `_SearchSuspects` → `MoreInfo(i)` shows
-	//     the suspect detail page. ESC returns to PDA.
-	//   * Frame-cycled @ 100ms via `_CheckFrameRate` + `_UpdateAnimations`
-	//     + `_GizmoColorCycle`.
+	// `_DoGallery @ 158f:065b` + `_DrawGallery @ 158f:0046`. BG PIC 0x3f.
+	// Partner ANI 2 (Jake) / 0x10 (Jenny) at (5, 0x50). 5 slot positions
+	// @ 29be:0x116. Per suspect i: picId = *(u16*)(_GalleryData + i*0x46);
+	// visible = _InGallery[_NewOrder[i]]; drawY = pos.y + (0x48 - pic.h)
+	// (bottom-aligned to baseline). Click → `_SearchSuspects` → moreInfo.
 	if (!_mystery.isLoaded())
 		return;
 
@@ -2732,21 +2402,17 @@ void EEMEngine::doGallery() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// PDA bottom-bar buttons mirror `_NoteButtons @ 29be:0147`.
-				// `_DoGallery @ 158f:065b` shares the SAME button table
-				// with `_DoNotebook` (both call `_FindButton` against the
-				// 11-entry table at 0x147). `_HandleGalleryButton @
-				// 158f:05c0` dispatches via a different jump table
-				// (158f:0645). Verified gallery button mapping:
-				//   rect 0 (134,155) → 0x05ef = `_NextScreen = 4` (NOTEBOOK)
-				//   rect 1 (93,115)  → 0x0625 = `_InterfaceHelp` (HELP)
-				//   rect 2 (157,178) → 0x0638 = generic exit (no-op)
-				//   rect 3 (5,80)    → 0x061e = `_KDHelp` (host hint)
-				//   rect 4 (180,201) → 0x05ff = `_SolvedCheck` -> SOLVE
-				//   rect 5 (204,224) → 0x0638 = generic exit
-				//   rect 6 (226,247) → 0x0638 = generic exit
-				//   rect 7 (7,177)   → 0x05f7 = `_NextScreen = 2` (MAP)
-				//   rect 8 (35,111)  → 0x05e4 = `_NextScreen = 3` (SITE)
+				// Shares _NoteButtons @ 29be:0147 with doNotebook;
+				// _HandleGalleryButton @ 158f:05c0 jumptable @ 158f:0645:
+				//   [0] (134,155) → NOTEBOOK = NextScreen=4   (0x5ef)
+				//   [1] ( 93,115) → HELP = _InterfaceHelp(0)  (0x625)
+				//   [2] (157,178) → generic exit (no-op)      (0x638)
+				//   [3] (  5, 80) → _KDHelp (host hint)       (0x61e)
+				//   [4] (180,201) → _SolvedCheck → SOLVE      (0x5ff)
+				//   [5] (204,224) → generic exit              (0x638)
+				//   [6] (226,247) → generic exit              (0x638)
+				//   [7] (  7,177) → MAP = NextScreen=2        (0x5f7)
+				//   [8] ( 35,111) → SITE = NextScreen=3       (0x5e4)
 				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenSite;
 					exitFlag = true;
@@ -2768,9 +2434,7 @@ void EEMEngine::doGallery() {
 					break;
 				}
 				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Gallery rect 1 → `_InterfaceHelp(0)` per jmp table at
-					// 158f:0625 (HandleGalleryButton). Same picture sequence
-					// as the notebook HELP button.
+					// rect 1 → `_InterfaceHelp(0)` (158f:0625).
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					lastDraw = 0;
@@ -2782,8 +2446,7 @@ void EEMEngine::doGallery() {
 					lastDraw = 0;
 					continue;
 				}
-				// `_SearchSuspects` walks the per-slot rects and returns
-				// the suspect index. We mirror that with cached rects.
+				// `_SearchSuspects` — per-slot rect → suspect index.
 				bool clicked = false;
 				for (uint i = 0; i < slotRects.size(); i++) {
 					if (slotSuspect[i] < 0)
@@ -2792,9 +2455,6 @@ void EEMEngine::doGallery() {
 						if (moreInfo(gd, (uint)slotSuspect[i],
 									 galBg, haveBg))
 							exitFlag = true;
-						// Force gallery redraw immediately so the
-						// player isn't left looking at the dismissed
-						// MoreInfo screen until the next 100 ms tick.
 						drawGalleryFrame(gd, num, slotRects, slotSuspect);
 						lastDraw = g_system->getMillis();
 						mouse = g_system->getEventManager()->getMousePos();
@@ -2823,11 +2483,6 @@ void EEMEngine::doGallery() {
 									  gallerySlotAt(slotRects, slotSuspect,
 													mouse.x, mouse.y));
 		}
-		// `g_system->updateScreen()` is what tells the framework to
-		// re-render the cursor at its current mouse position; without
-		// it here, the cursor only refreshes when `drawGalleryFrame`
-		// runs (every 100 ms) and visibly lags the mouse. Match
-		// `doNotebook`'s per-tick `updateScreen()` cadence (line 1548).
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
@@ -2836,28 +2491,13 @@ void EEMEngine::doGallery() {
 
 bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						  const Picture &galBg, bool haveBg) {
-	// Suspect-detail page. Mirrors `MoreInfo @ 158f:0419`:
-	//   _RefreshGalleryBackground();
-	//   _GetPicture(*(u16*)(gd + i*0x46));
-	//   _AddPicBackground(pic, 0x94, 0xf);
-	//   _DrawGalleryNotes(gd + i*0x46);
-	//   loop until ESC or button click.
-	// Suspect data layout differs by variant:
-	//   * CD (`158f:0419`): fixed 0x46-byte stride.
-	//     +0..1   picId
-	//     +8..9   clue count (u16)
-	//     +0xa..  array of u16 clue IDs (max 30,
-	//             terminated by 0xFFFF if short).
-	//   * Floppy (`_MoreInfo_Floppy = 154e:042b` →
-	//     `FUN_154e_0201` → `FUN_15e0_01e8`):
-	//     variable-stride.
-	//     +0..1   picId
-	//     +2..3   alibi (0xFFFF = guilty)
-	//     +4      clue count (u8)
-	//     +5..    u8 clue IDs (per the asm at
-	//             154e:020e..0282 which calls
-	//             `FUN_15e0_01e8(rect, entry+5,
-	//                            entry[4], NULL)`).
+	// `MoreInfo @ 158f:0419` — suspect detail. PIC = entry+0,
+	// _AddPicBackground at (0x94, 0xf), notes via _DrawGalleryNotes.
+	// CD layout (0x46-byte stride): +0 picId, +8 clueCount(u16), +0xa
+	// clue IDs(u16, 0xFFFF terminator, max 30).
+	// Floppy (`_MoreInfo_Floppy = 154e:042b` → `FUN_15e0_01e8`):
+	// variable stride. +0 picId, +2 alibi (0xFFFF = guilty), +4 count(u8),
+	// +5 clue IDs(u8).
 	const bool floppyMI = isFloppy();
 	const byte *suspect = floppyMI
 							  ? _mystery.floppySuspectEntry(suspectIdx)
@@ -2871,10 +2511,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 
 	setInteractiveMouseCursor(false);
 
-	// Suspect's clue notes inside _GalleryNoteRect
-	// = (78, 93, 288, 152), per 29be:0100. Cyan text
-	// renders directly on the PDA's natural blue
-	// screen — matches `_DrawGalleryNotes @ 158f:01f4`.
+	// _GalleryNoteRect = (78, 93, 288, 152) @ 29be:0100.
+	// `_DrawGalleryNotes @ 158f:01f4`.
 	const int rx = 78, ry = 93;
 	const int rw = 288 - 78, rh = 152 - 93;
 	const int lineH = _font.getFontHeight();
@@ -2882,14 +2520,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	const byte *ni = _mystery.noteIndex();
 	const uint16 niCount = _mystery.noteIndexCount();
 
-	// Pagination matches `_DrawNotes @ 161e:01d0` / `MoreInfo @
-	// 158f:0419`: the original tracks `_NextClue` across redraws and
-	// only emits clues whose wrapped height fits the rect, deferring
-	// the rest to the next page. `_PageBreaks[]` stores the
-	// entry-point for each page so PREV (button 6 / case 6 at
-	// 158f:03b8 — `SUB _CurrentPage, 2; _NextClue = _PageBreaks[...]`)
-	// can step back. We mirror that with an explicit stack of
-	// page-start indices: forward push, back pop.
+	// Pagination via `_NextClue` + `_PageBreaks[]` (case 6 @ 158f:03b8).
 	uint pageStart = 0;
 	Common::Array<uint> pageStack;
 	bool back = false;
@@ -2902,13 +2533,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		ms.clear();
 		if (haveBg)
 			ms.simpleBlitFrom(galBg.surface);
-		// Partner sprite at (5, 0x50). The original `MoreInfo @
-		// 158f:0419` calls `_RefreshGalleryBackground` (clears the
-		// portrait grid) but the partner anim slot registered by
-		// `_DoGallery` keeps painting at every `_UpdateAnimations`
-		// tick — the suspect detail pic covers the right side only
-		// (drawn at 0x94, 0xf), so the partner stays visible on the
-		// left. Re-blit per page so the frame stays current.
+		// Partner sprite at (5, 0x50). Re-blitted per page.
 		{
 			const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 			Animation partnerAni;
@@ -2921,7 +2546,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 									  partnerAni[frameIdx], 5, 0x50);
 			}
 		}
-		// Full suspect picture at (0x94, 0xf).
 		Picture detail;
 		if (_picsArchive.getPicture(detailPic, detail)) {
 			const byte transp = (byte)(detail.flags >> 8);
@@ -2929,12 +2553,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 							 Common::Point(0x94, 0x0f), transp);
 		}
 
-		// Walk the clue list from `pageStart`. Skip clues that aren't
-		// found / lack a note entry, then measure the wrapped height
-		// before drawing. If a clue would overflow and we've already
-		// drawn at least one, defer it to the next page; if it's the
-		// FIRST clue on this page (one clue too tall to ever fit),
-		// draw it anyway so progress is guaranteed.
+		// Walk clues from pageStart; defer overflow to next page unless
+		// first clue is too tall to ever fit.
 		int yPos = ry;
 		bool drewAny = false;
 		uint k = pageStart;
@@ -2952,10 +2572,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				continue;
 			if (!ni || clueId >= niCount)
 				continue;
-			// Floppy notes: 7-byte entries (+0..1 clue text, +2..3 Jake
-			// spoken, +4..5 Jenny spoken, +6 score). Notebook always
-			// uses +0 (partner-agnostic statement) per `FUN_15e0_01e8`.
-			// CD notes are 4-byte: u16 textOff + u16 score.
+			// Floppy: 7-byte entry (+0 text, +2 Jake, +4 Jenny, +6 score).
+			// CD: 4-byte entry (u16 textOff + u16 score).
 			Common::String txt;
 			if (floppyMI) {
 				const uint16 textOff = READ_LE_UINT16(ni + clueId * 7);
@@ -3006,9 +2624,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					: "No clues yet for this suspect.",
 				rx, ry, MAX<int>(8, rw), 0x5C);
 		}
-		// Header / footer text. The PDA's NEXT (case 5) and PREV
-		// (case 6) icons are visible on the bottom bar — the footer
-		// just covers dismissal here.
+		// Header / footer text.
 		if (_font.isLoaded()) {
 			_font.drawString(&ms,
 				isSpanish() ? "EXPEDIENTE" : "SUSPECT FILE",
@@ -3021,9 +2637,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 			0, 0, 320, 200);
 		g_system->updateScreen();
 
-		// Drain the queued LBUTTONDOWN that brought us into MoreInfo
-		// so it doesn't get caught by the input loop below. Subsequent
-		// pages don't need this.
+		// Drain the LBUTTONDOWN that opened MoreInfo (first page only).
 		if (isFirstShow) {
 			isFirstShow = false;
 			g_system->delayMillis(150);
@@ -3037,22 +2651,10 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 			}
 		}
 
-		// Wait for input. Each PDA button maps to a distinct action,
-		// mirroring `_HandleMoreButton @ 158f:027d`:
-		//   case 0 NOTEBOOK    -> NextScreen=4
-		//   case 1 HELP        -> _InterfaceHelp(0)
-		//   case 2 GALLERY     -> close MoreInfo
-		//   case 3 PARTNER head-> _KDHelp + redraw
-		//   case 4 ACCUSE      -> NextScreen=7
-		//   case 5 PAGE NEXT   -> next page
-		//   case 6 PAGE PREV   -> prev page
-		//   case 7 MAP         -> NextScreen=2
-		//   case 8 SITE        -> no-op
-		//   case 10 HELP (alt) -> _InterfaceHelp(0)
-		// Clicks outside any known button rect are no-ops, matching
-		// the original (which short-circuits on `_FindButton == -1`).
-		// ESC closes; PgDn / PgUp / Return / Backspace also paginate
-		// as a modern accessibility convenience.
+		// `_HandleMoreButton @ 158f:027d`:
+		//   [0] NOTEBOOK→4, [1] HELP→_InterfaceHelp, [2] GALLERY (close),
+		//   [3] _KDHelp, [4] ACCUSE→7, [5] PAGE_NEXT, [6] PAGE_PREV,
+		//   [7] MAP→2, [8] SITE noop, [10] HELP alt.
 		bool advance = false;
 		bool prev = false;
 		bool redraw = false;
@@ -3096,16 +2698,13 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					}
 					if (kPdaHelpRect.contains(mx, my) ||
 						kPdaHelp2Rect.contains(mx, my)) {
-						// Help overlay; re-render the current page
-						// after it dismisses.
 						setInteractiveMouseCursor(false);
 						doInterfaceHelp(0);
 						redraw = true;
 						break;
 					}
 					if (kPdaGalleryRect.contains(mx, my)) {
-						// Case 2: close MoreInfo and return to the
-						// portrait grid.
+						// Case 2: close MoreInfo.
 						back = true;
 						break;
 					}
@@ -3120,16 +2719,13 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						break;
 					}
 					if (kPdaPartnerHeadHintRect.contains(mx, my)) {
-						// Case 3: ask KD for a hint then redraw the
-						// current page over the clean BG.
+						// Case 3: _KDHelp.
 						setInteractiveMouseCursor(false);
 						doHelp();
 						redraw = true;
 						break;
 					}
-					// Case 8 SITE and click outside any known button
-					// = no-op. The original `_FindButton`
-					// short-circuits when no rect matches.
+					// Case 8 SITE / non-button = no-op.
 					break;
 				}
 				if (e2.type == Common::EVENT_KEYDOWN && hasMore &&
@@ -3149,9 +2745,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					break;
 				}
 			}
-			// Per-tick `updateScreen()` so the SDL cursor follows the
-			// mouse — without it the cursor freezes on entry to the
-			// MoreInfo screen.
 			g_system->updateScreen();
 			g_system->delayMillis(20);
 		}
@@ -3163,9 +2756,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 			pageStart = pageStack.back();
 			pageStack.pop_back();
 		}
-		// `redraw` falls through with the same `pageStart` and
-		// re-iterates the outer while, repainting on top of whatever
-		// the help overlay left behind.
 	}
 
 	return exitGallery;
@@ -3293,32 +2883,15 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 }
 
 void EEMEngine::doBigMap() {
-	// Two-stage flow that mirrors the original screen-1 wrapper at
-	// 20fe:120b and `_DoBigMap @ 20fe:09e7`:
-	//
-	//   STAGE 1 — Overview. PIC 0x42 + site icons drawn via the
-	//   `_DrawBigMapButtons` algorithm at BigMap coords MapData[+4/+6].
-	//   The original `_DoBigMap` returns sx/sy = (mouseX*2 - 0x74,
-	//   mouseY*2 - 0x55) when the player clicks inside `BigMapWindow`,
-	//   which is the scroll position into the SmallMap.
-	//
-	//   STAGE 2 — Detail zoom. PIC 0x43 frame + a 0xe9 × 0xab viewport
-	//   into BIGMAP.PIC at (2, 2), drawn by `DrawMap @ 20fe:1058` with
-	//   the (sx, sy) returned from stage 1. Site icons are stamped at
-	//   SmallMap coords MapData[+8/+0xa] via `_StampButtons`. Click on
-	//   a site icon → travel.
-	//
-	// MapData entry layout (14 bytes), verified directly from the
-	// disassembly of `_DrawBigMapButtons @ 20fe:0877` (`PUSH ES:[BX+4]`
-	// for X, `PUSH ES:[BX+6]` for Y, `CMP ES:[BX+0xc], 0` for crime)
-	// and `_StampButtons @ 20fe:0d2f` (`MOV AX, ES:[BX+8]`,
-	// `MOV AX, ES:[BX+0xa]`):
-	//   +0..3   ??? (not yet decoded)
-	//   +4..5   BigMap X
-	//   +6..7   BigMap Y
-	//   +8..9   SmallMap X
-	//   +0xa..b SmallMap Y
-	//   +0xc..d crime-flag
+	// `_DoBigMap @ 20fe:09e7` two stage:
+	//   Stage 1 (Overview): PIC 0x42 + site icons at MapData[+4/+6]
+	//     (`_DrawBigMapButtons @ 20fe:0877`). Click in BigMapWindow
+	//     returns scroll (mouseX*2 - 0x74, mouseY*2 - 0x55).
+	//   Stage 2 (Detail): PIC 0x43 frame + 0xe9×0xab BIGMAP.PIC viewport
+	//     at (2,2). Icons stamped at MapData[+8/+0xa] (`_StampButtons @
+	//     20fe:0d2f`). Click icon = travel.
+	// MapData entry (14 bytes): +0..3 ???, +4 BigMapX, +6 BigMapY,
+	//   +8 SmallMapX, +0xa SmallMapY, +0xc crime-flag.
 
 	if (!_mystery.isLoaded())
 		return;
@@ -3327,35 +2900,20 @@ void EEMEngine::doBigMap() {
 
 	while (!shouldQuit()) {
 		setInteractiveMouseCursor(false);
-		setSitePalette(0x24); // `_GetPalette(0x24)` per `_DoBigMap @ 20fe:09e7`.
+		setSitePalette(0x24); // `_GetPalette(0x24)` @ `_DoBigMap`.
 
-		// ------------------------------------------------------------------
-		// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
-		// ------------------------------------------------------------------
-
-		// Anchor for the partner-sprite timeline. `_DoBigMap`'s
-		// `_NewAnimation` call seeds the slot's frame index to 0xffff so
-		// the first `_UpdateAnimations` tick starts at script[0]; we mirror
-		// that by passing elapsed-since-open (zero on the first paint) into
-		// `bigMapPartnerFrameAtTick`, which plays the unfold once and then
+		// Stage 1: Overview. mapStartTick anchors partner timeline;
+		// `_NewAnimation` seeds frame to 0xffff so unfold plays once then
 		// loops the wait sequence.
 		const uint32 mapStartTick = g_system->getMillis();
 		drawBigMapOverview(0);
 		uint32 mapLastTick = mapStartTick;
 
-		// Static rectangles read directly from the binary at the labelled
-		// addresses (CD `29be:0x1596` / floppy `2608:0x13fe..0x143e`).
-		// Format is {x1, y1, x2, y2}. The floppy click table at
-		// `2608:1436` (verified at `_BigMapInteractionLoop_Floppy @
-		// 1fed:0a3a`) puts the setup button at (251, 3, 315, 42) — 1 px
-		// up and 1 px left of the CD's (252, 4, 315, 42). The floppy
-		// PIC 0x42 BG paints the visible button border at the same
-		// pixels, so use the variant-specific rect to match the
-		// hit-test region the original uses for that variant.
-		const Common::Rect kBigMapWindow(0, 0, 247, 192); // 29be:1596
+		// Rects @ CD 29be:1596 / floppy 2608:13fe (1 px diff on Setup).
+		const Common::Rect kBigMapWindow(0, 0, 247, 192);
 		const Common::Rect kSetupBtnRect = isFloppy()
-			? Common::Rect(251, 3, 315, 42)   // 2608:1436
-			: Common::Rect(252, 4, 315, 42);  // 29be:15ce
+			? Common::Rect(251, 3, 315, 42)
+			: Common::Rect(252, 4, 315, 42);
 
 		bool wantZoom = false;
 		int zoomX = 0;
@@ -3372,18 +2930,12 @@ void EEMEngine::doBigMap() {
 					continue;
 				}
 				if (ev.type == Common::EVENT_LBUTTONDOWN) {
-					// SetupButtonRect → `_NextScreen = 6` (the original's
-					// settings screen, mirrors `_DoBigMap @ 20fe:0c33`
-					// where it pushes `_PressButton` then writes
-					// `_NextScreen = 6`). Now wired to the actual
-					// `doSetup` handler instead of dropping the player
-					// out to the launcher.
+					// Setup → NextScreen=6 (`_DoBigMap @ 20fe:0c33`).
 					if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
 						_nextScreen = kScreenSetup;
 						return;
 					}
-					// Click in the BigMapWindow → zoom. Original formula:
-					//   sx = mouseX*2 - 0x74; sy = mouseY*2 - 0x55
+					// BigMapWindow click → zoom (sx=x*2-0x74, sy=y*2-0x55).
 					if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
 						int sx = ev.mouse.x * 2;
 						int sy = ev.mouse.y * 2;
@@ -3399,8 +2951,7 @@ void EEMEngine::doBigMap() {
 			if (wantZoom)
 				break;
 
-			// Cycle the partner-sprite frame every 100 ms (matching the
-			// original's `_CheckFrameRate` cadence inside `_DoBigMap`).
+			// `_CheckFrameRate` cadence — 100 ms.
 			const uint32 now = g_system->getMillis();
 			if (now - mapLastTick >= 100) {
 				mapLastTick = now;
@@ -3415,11 +2966,7 @@ void EEMEngine::doBigMap() {
 		if (!wantZoom)
 			return;
 
-		// ------------------------------------------------------------------
-		// STAGE 2 — Detail zoom: PIC 0x43 frame + scrollable BIGMAP.PIC
-		// viewport at (2, 2), 0xe9 × 0xab. Click on a stamped icon → travel.
-		// ------------------------------------------------------------------
-
+		// Stage 2: Detail. PIC 0x43 + BIGMAP.PIC viewport.
 		Common::File f;
 		if (!f.open(Common::Path("BIGMAP.PIC"))) {
 			warning("doBigMap: BIGMAP.PIC missing for detail view");
@@ -3443,19 +2990,13 @@ void EEMEngine::doBigMap() {
 		int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
 		int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
 
-		// Anchor the detail-screen partner timeline (mirrors `_DoMapScreen`'s
-		// `_NewAnimation` seeding the slot's frame index to 0xffff). The
-		// unfold (script 0x13) plays once, then `_SmallMapWaitSeq` loops.
+		// Detail partner timeline (script 0x13 unfold, then wait seq).
 		const uint32 detailStartTick = g_system->getMillis();
 		drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
 		uint32 detailLastTick = detailStartTick;
 		bool returnToOverview = false;
 
-		// `SmallMapButtons[4]` is the large right-side panel below setup:
-		// CD/floppy both store `(252, 43, 320, 200)`. Its handler at
-		// CD `20fe:156c` kills the zoom animation, sets `_NextScreen = 1`
-		// and calls `_DoBigMap` again, so mouse players can return to the
-		// overview without leaving the map screen.
+		// `SmallMapButtons[4]` @ 20fe:156c — return to overview.
 		const Common::Rect kBigMapReturnRect(252, 43, 320, 200);
 		const Common::Rect kArrowYUp(237, 2, 247, 11);
 		const Common::Rect kArrowYDown(237, 163, 247, 172);
@@ -3464,8 +3005,8 @@ void EEMEngine::doBigMap() {
 		const Common::Rect kXSlider(15, 175, 221, 185);
 		const Common::Rect kYSlider(237, 14, 247, 160);
 		const Common::Rect kDetailSetupBtn = isFloppy()
-			? Common::Rect(251, 3, 315, 42)   // 2608:1436
-			: Common::Rect(252, 4, 315, 42);  // 29be:15ce
+			? Common::Rect(251, 3, 315, 42)
+			: Common::Rect(252, 4, 315, 42);
 		const int kArrowStep = 16;
 		const int kSliderRange = mapW - kMapWinW;
 		const int kSliderRangeY = mapH - kMapWinH;
@@ -3516,17 +3057,7 @@ void EEMEngine::doBigMap() {
 						kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y) ||
 						kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y));
 					if (kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
-						// `_DoMapScreen @ 20fe:1560` writes `_NextScreen
-						// = 6` (= kScreenSetup) and `INC [BP-8]` to bail
-						// out of the detail loop — verified via the byte
-						// search for `c7 06 16 79 06 00`, which finds the
-						// imm at exactly this site and `_DoBigMap @
-						// 20fe:0c33`. Same `SetupButtonRect @ 29be:15ce`
-						// rect used by both the overview and the detail
-						// (no per-screen rect duplication in the binary).
-						// The detail/zoom state is lost on return because
-						// the screen driver re-enters BigMap at stage 1 —
-						// this matches the original behaviour.
+						// `_DoMapScreen @ 20fe:1560` — NextScreen=6.
 						_nextScreen = kScreenSetup;
 						setInteractiveMouseCursor(false);
 						return;
@@ -3549,8 +3080,6 @@ void EEMEngine::doBigMap() {
 							scrollX + kArrowStep);
 						dirty = true;
 					} else if (kXSlider.contains(ev.mouse.x, ev.mouse.y)) {
-						// Click on X slider track → jump scrollX so the
-						// click position maps proportionally into the map.
 						if (kSliderRange > 0) {
 							const int t = ev.mouse.x - kXSlider.left;
 							const int tw = kXSlider.width();
@@ -3570,9 +3099,7 @@ void EEMEngine::doBigMap() {
 							   ev.mouse.x < kMapWinX + kMapWinW &&
 							   ev.mouse.y >= kMapWinY &&
 							   ev.mouse.y < kMapWinY + kMapWinH) {
-						// Hit-test the per-site button at its actual bbox
-						// (`_StampButtons` records the rect at SmallMap +8/+0xa
-						// with the button PIC's width/height).
+						// Per-site bbox from `_StampButtons` (SmallMap +8/+0xa).
 						const bool fmap = _mystery.isLoaded() && isFloppy();
 						for (uint i = 0; i < _mystery.numSites(); i++) {
 							if (!_mystery._onSites[i] &&
@@ -3585,10 +3112,8 @@ void EEMEngine::doBigMap() {
 							uint16 my;
 							uint16 buttonId;
 							if (fmap) {
-								// Floppy detail view: click rect on
-								// BIGMAP.PIC at (+0, +2), labelled BUTTON.DBD
-								// entry ID at entry+4 (per
-								// `FUN_1fed_0c3e @ 1fed:0c3e`).
+								// Floppy: rect +0/+2; BUTTON.DBD id at +4
+								// (`FUN_1fed_0c3e @ 1fed:0c3e`).
 								mx = READ_LE_UINT16(entry + 0x0);
 								my = READ_LE_UINT16(entry + 0x2);
 								buttonId = (uint16)entry[0x4];
@@ -3620,8 +3145,7 @@ void EEMEngine::doBigMap() {
 			if (returnToOverview)
 				break;
 
-			// Cycle the partner sprite at 100 ms ticks (same cadence as
-			// `_DoMapScreen`'s `_CheckFrameRate` + `_UpdateAnimations` loop).
+			// 100 ms partner cycle.
 			const uint32 now = g_system->getMillis();
 			if (now - detailLastTick >= 100) {
 				detailLastTick = now;
@@ -3639,20 +3163,9 @@ void EEMEngine::doBigMap() {
 }
 
 void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
-	// Map-overview redraw — formerly the `drawOverview` lambda inside
-	// `doBigMap`. PIC 0x42 frame + per-site marker (Done / Crime / Site
-	// per `_DrawBigMapButtons @ 20fe:0877`) + the partner idle sprite.
-	// `_DoBigMap @ 20fe:09e7` (`_NewAnimation` block at 20fe:0a44-0a99)
-	// registers the partner: when `_LastScreen == 2` it plays an
-	// entrance one-shot at (0x102, 0x50) and on END swaps to the idle
-	// at (0xfd, 0x50). We don't track LastScreen finely enough so we
-	// always render the IDLE pose at (0xfd, 0x50). Idle anim ID:
-	// Jake = 0x14 (20), Jenny = 0x12 (18).
-	//
-	// `elapsedMs` is the time since `doBigMap` opened — the partner-sprite
-	// timeline anchor. `bigMapPartnerFrameAtTick` uses it to play the
-	// unfold script (0..8) once, then loop `_BigMapWaitSeq` (the open-map
-	// hold). Without that anchor the unfold would loop indefinitely.
+	// PIC 0x42 + per-site Done/Crime/Site marker (`_DrawBigMapButtons @
+	// 20fe:0877`) + partner idle at (0xfd, 0x50). Idle ANI: Jake=0x14,
+	// Jenny=0x12. elapsedMs anchors unfold→wait timeline.
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
@@ -3661,14 +3174,9 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	if (_picsArchive.getPicture(0x42, frame))
 		scratch.simpleBlitFrom(frame.surface);
 
-	// Marker PICs from `_main @ 1a35:0f59`. Three globals are filled
-	// once at boot via `_GetPicture` (1-based IDs):
-	//   _DoneMarker  = PIC 0x20d  (already-searched site)
-	//   _SiteMarker  = PIC 0xc5   (default available site)
-	//   _CrimeMarker = PIC 0xc6   (crime-scene flag set)
-	// Floppy's `PICS.DBX` has 524 entries, so PIC 0x20d is CD-only.
-	// Its pixels are the same 7x8 marker as PIC 0xc5, with the animated
-	// 0xfb/0xfc interior remapped to static 0x1b/0x19 blue.
+	// Marker PICs from `_main @ 1a35:0f59`:
+	//   _DoneMarker = 0x20d, _SiteMarker = 0xc5, _CrimeMarker = 0xc6.
+	// 0x20d is CD-only (floppy PICS.DBX has 524 entries).
 	Picture done;
 	Picture normal;
 	Picture crimeM;
@@ -3715,27 +3223,19 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 			blitBigMapMarker(scratch, *m, (int)mx, (int)my,
 							  useVisitedColors);
 		} else {
-			// Fallback if the markers couldn't be loaded.
 			const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
 			scratch.fillRect(mark, 0x0F);
 		}
 	}
 
-	// Partner idle sprite at (0xfd, 0x50). Jake = anim 0x14, Jenny = 0x12
-	// for the loaded CELLS, but the original `_DoBigMap @ 20fe:0a47`
-	// always passes `CONCAT22(0x14, ...)` to `_NewAnimation` so the
-	// SCRIPT key is 0x14 (`[0..8]` count-up) regardless of partner.
-	// Without this, Jenny was running 0x12's count-DOWN script
-	// `[8..0]` over her cells — visually backwards from the original.
+	// Partner idle at (0xfd, 0x50). `_DoBigMap @ 20fe:0a47` always passes
+	// script 0x14 (count-up) to `_NewAnimation` regardless of partner.
 	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
 	Animation mapAnim;
 	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
 		const uint frameIdx = bigMapPartnerFrameAtTick((uint)mapAnim.size(),
 													   elapsedMs);
-		// Anchor-aware: the BigMap walk-cycle has miscflags = -2 per
-		// cell, so the partner shifts left as it cycles — without the
-		// anchor adjustment the sprite "shakes in place" instead of
-		// walking forward.
+		// BigMap walk-cycle miscflags = -2 (anchor shift left).
 		blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
 							  0xfd, 0x50);
 	}
@@ -3749,15 +3249,9 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 								 const Common::Array<byte> &mapPixels,
 								 uint16 mapW, uint16 mapH,
 								 uint32 elapsedMs) {
-	// Map-detail redraw — formerly the `drawDetail` lambda inside
-	// `doBigMap`. PIC 0x43 frame + a 0xe9 × 0xab BIGMAP.PIC viewport at
-	// (2, 2), stamped site buttons, and the partner sprite at (0x101,
-	// 0x50) — `_DoMapScreen @ 20fe:120b` (`_NewAnimation` at
-	// 20fe:12cd-12f0, anim 0x13 Jake / 0x11 Jenny, seqnum 0x13).
-	//
-	// `elapsedMs` is the time since the detail screen was opened —
-	// `bigMapDetailPartnerFrameAtTick` uses it to play the unfold once
-	// and then loop `_SmallMapWaitSeq`.
+	// PIC 0x43 + 0xe9×0xab BIGMAP.PIC viewport at (2,2), stamped buttons,
+	// partner at (0x101, 0x50). `_DoMapScreen @ 20fe:120b` (ANI 0x13 Jake
+	// / 0x11 Jenny, seq 0x13). elapsedMs anchors unfold→wait.
 	const int kMapWinW = 0xe9;
 	const int kMapWinH = 0xab;
 	const int kMapWinX = 2;
@@ -3776,17 +3270,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	scratch.copyRectToSurface(mapPixels.data() + scrollY * mapW + scrollX,
 							  mapW, kMapWinX, kMapWinY, copyW, copyH);
 
-	// Stamped site buttons. `_StampButtons @ 20fe:0d2f` (CD):
-	//   button = _GetButton(MapData[+0])
-	//   destX  = MapData[+8]
-	//   destY  = MapData[+0xa]
-	// Floppy uses `FUN_1fed_0c3e @ 1fed:0c3e`: for each SITES row, the
-	// byte at entry+4 is a BUTTON.DBD entry ID (loaded via
-	// `FUN_16e2_1838 @ 16e2:1838`, which opens `button.dbd` — string
-	// at `2608:0558`). The labelled button is stamped at
-	// `(entry+0..1, entry+2..3)` on BIGMAP.PIC. These are the same
-	// per-site labelled buttons the CD uses, just keyed off a
-	// different field offset.
+	// `_StampButtons @ 20fe:0d2f` (CD): button=MapData[+0], dst=+8/+0xa.
+	// Floppy `FUN_1fed_0c3e @ 1fed:0c3e`: button.dbd id at +4, rect +0/+2.
 	const bool floppyMap = _mystery.isLoaded() && isFloppy();
 	for (uint i = 0; i < _mystery.numSites(); i++) {
 		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
@@ -3830,12 +3315,7 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		}
 	}
 
-	// Partner sprite on the detail map (drawn last to sit over the
-	// frame and the BIGMAP.PIC viewport). The original always passes
-	// `CONCAT22(0x13, ...)` to `_NewAnimation` (i.e. script ID 0x13)
-	// regardless of partner — verified at `_DoBigMap @ 20fe:0a47`.
-	// So we look up script 0x13 for both partners while still
-	// loading the partner-specific CELLS via `kDetailAniId`.
+	// Always script 0x13 (`_NewAnimation @ _DoBigMap 20fe:0a47`).
 	const uint kDetailAniId = (_partner == 0) ? 0x13 : 0x11;
 	Animation detailAnim;
 	if (_aniArchive.loadAnimation(kDetailAniId, detailAnim) &&
@@ -3852,46 +3332,24 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 }
 
 uint16 EEMEngine::getKDTextBalloon(byte firstChar) const {
-	// Mirrors `_GetKDTextBalloon @ 1df2:0105`:
+	// `_GetKDTextBalloon @ 1df2:0105`:
 	//   if ((ctype[firstChar] & 2) == 0)  bub = *(u16*)29be:1068 = 0x17
 	//   else                              bub = *(u16*)(29be:0fe6+0x1e+c*2)
-	// `ctype` is Borland's `_ctype_` array at `29be:2be1`. Bit 1 (0x02) is
-	// set only for digits '0'..'9' (verified by reading the table — '0'..'9'
-	// each map to byte 0x02; everything else has bit 1 clear).
-	// Lookup table at 29be:1064 (= 29be:0fe6 + 0x1e + '0'*2):
-	//   '0'→0x15  '1'→0x16  '2'→0x17  '3'→0x18  '4'→0x19
-	//   '5'→0x1a  '6'→0x20  '7'→0x21  '8'→0x22  '9'→0x1e
-	// Note `*(u16*)29be:1068` (= entry for '2') is the same byte the
-	// non-digit fallback returns — the original encodes the constant by
-	// reusing the digit-2 slot.
+	// `ctype` is Borland's `_ctype_` at 29be:2be1; bit 1 (0x02) is set
+	// only for '0'..'9'. Digit table @ 29be:1064 (see kDigitBalloons).
+	// `*(u16*)29be:1068` = entry for '2' = 0x17 — original reuses the
+	// digit-2 slot as the non-digit fallback constant.
 	if (firstChar < '0' || firstChar > '9')
 		return 0x17;
-	// `kDigitBalloons` lives at file scope above.
 	return kDigitBalloons[firstChar - '0'];
 }
 
 bool EEMEngine::doAccuseNotes() {
-	// Mirrors the accuse-notes screen at the head of `_DoAccuse @
-	// 1df2:0bdd`:
-	//   * BG: PIC 0x1A7 (the red "accuse-mode" backdrop).
-	//   * `_AccuseNoteRect @ 29be:1048` = (79, 27, 304, 159) holds
-	//     the rendered clue list.
-	//   * Counter at `(0xd1, 0xb)` = `(209, 11)` shows "N clue(s)"
-	//     remaining (`_UpdateSelectionCount @ 1df2:08dd`,
-	//     `_Show_String(0xb, 0xd1, ...)`).
-	//   * Expected count = `6 - DAT_2d5d_3f99`:
-	//       chainStage 1 → 5 clues, 2 → 4 clues, 3 → 3 clues.
-	//   * `_NoteUnselectedColor = 1` (red) for unselected, `0x3c`
-	//     for selected (1df2:0c2c sets it on entry).
-	//   * Click on a clue toggles its selection
-	//     (`_SearchNoteAreas` + `_SwapColors`).
-	//   * Click `_NoteButtons[4]` (rect at `(180, 174, 201, 190)`,
-	//     the original's solve button) jumps to the evidence check;
-	//     `_HandleAccuseNoteButton(4)` returns 2 and the outer loop
-	//     forces `uStack_8 = uStack_a` to trigger `_SolvedCheck`.
-	//   * CD and floppy originals only cancel this screen through ESC.
-	//     ScummVM also wires the visible PDA navigation buttons so the
-	//     accusation can be abandoned without a keyboard.
+	// `_DoAccuse @ 1df2:0bdd` head. BG PIC 0x1A7. `_AccuseNoteRect @
+	// 29be:1048` = (79, 27, 304, 159). Counter @ (209, 11) shows
+	// `6 - chainStage` (stage 1=5, 2=4, 3=3 clues). Unselected color 1
+	// (red), selected 0x3c. Click toggles selection; `_NoteButtons[4]`
+	// (180,174,201,190) SOLVE → `_HandleAccuseNoteButton` returns 2.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return false;
 	const byte *ni = _mystery.noteIndex();
@@ -3902,49 +3360,31 @@ bool EEMEngine::doAccuseNotes() {
 	Picture accuseBg;
 	const bool haveBg = _picsArchive.getPicture(0x1a7, accuseBg);
 
-	// Reset selection on entry. `FUN_1d40_0e07 @ 1d40:0e34` (floppy)
-	// explicitly zeroes the 0x7f-byte `_NoteSelected_Floppy` array
-	// before drawing, so the player always starts with a clean board.
-	// Without this, leftover selections from a failed attempt persist
-	// and the post-selection 100-point gate gets the wrong sum.
+	// `FUN_1d40_0e07 @ 1d40:0e34` zeroes _NoteSelected_Floppy on entry.
 	memset(_mystery._noteSelected, 0, sizeof(_mystery._noteSelected));
 
-	// Required count for solving — `6 - chainStage`.
 	const uint expected = (_chainStage >= 1 && _chainStage <= 3)
 		? (uint)(6 - _chainStage)
 		: 5;
 
-	// Build the list of FOUND clue IDs (in clue-ID order; the
-	// original's `_DrawNotes(NULL, 100, ...)` walks `_CluesFound[]`
-	// the same way).
+	// `_DrawNotes(NULL, 100, ...)` walks `_CluesFound[]`.
 	Common::Array<uint> found;
 	for (uint i = 0; i < niCount && i < Mystery::kCluesFoundCap; i++) {
 		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
 			found.push_back(i);
 	}
 
-	// `_AccuseNoteRect` (79, 27, 304, 159) — text wrap area.
 	const int rectX = 79;
 	const int rectY = 27;
 	const int rectW = 304 - 79;
 	const int rectH = 159 - 27;
 
-	// `_NoteButtons` rects (verified at `29be:0147`). `_DoAccuse`
-	// re-uses the same table as `_DoNotebook`, but the original
-	// handler only routes SOLVE / PAGE NEXT / PAGE PREV; ScummVM
-	// additionally routes the visible site/map/notebook/gallery
-	// buttons below for pointer-only cancellation.
-	// `_HandleAccuseNoteButton @ 1df2:0990` returns `DI` (initialised
-	// to 0) and only sets `DI = 2` in the `i == 4` branch (asm:
-	// `1df2:09b2: MOV DI, 0x2`). The outer loop's `iVar6 == 2` test
-	// at `1df2:0db2` is checking the HANDLER'S RETURN VALUE, not the
-	// button INDEX — earlier comment had this backwards. So the
-	// SOLVE rect is `[4]` (180, 174, 201, 190), the same icon the
-	// PDA uses to trigger the accuse flow in the first place.
-	const Common::Rect kBtnSolve   (180, 174, 201, 190); // [4] SOLVE
-	const Common::Rect kBtnPageNext(204, 174, 224, 190); // [5] PAGE NEXT
-	const Common::Rect kBtnPagePrev(226, 174, 247, 190); // [6] PAGE PREV
-	const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3] KD HELP
+	// `_NoteButtons` @ 29be:0147. `_HandleAccuseNoteButton @ 1df2:0990`
+	// returns DI=2 for i==4 (SOLVE).
+	const Common::Rect kBtnSolve   (180, 174, 201, 190); // [4]
+	const Common::Rect kBtnPageNext(204, 174, 224, 190); // [5]
+	const Common::Rect kBtnPagePrev(226, 174, 247, 190); // [6]
+	const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3]
 
 	// Per-page slot rects + their clue IDs (for click hit-testing).
 	Common::Array<Common::Rect> slotRects;
@@ -3955,20 +3395,9 @@ bool EEMEngine::doAccuseNotes() {
 	int numPages = 1;
 	pageBreaks[0] = 0;
 
-	// Variant-aware text resolver. CD note entries are 4 bytes
-	// (u16 textOff RELATIVE to TextBlock, u16 score), so the offset
-	// is added to `_textOffset` via `Mystery::textAt`. Floppy
-	// entries are 7 bytes:
-	//   +0..1  clue text offset (ABSOLUTE byte offset into the
-	//          mystery blob — partner-agnostic clue statement;
-	//          this is what the notebook displays).
-	//   +2..3  Jake spoken-line offset (`FUN_22dc_05c8 @ 22dc:0843`).
-	//   +4..5  Jenny spoken-line offset.
-	//   +6     score (`FUN_1d40_0c48`).
-	// `_DrawNotes_Floppy / FUN_15e0_01e8` reads `*(int *)(notes +
-	// idx * 7)` — always byte +0 — for the notebook text.
-	// Reading +2/+4 here showed the partner's "Hi, Jake! Hi,
-	// Jenny!" intro instead of the actual clue statement.
+	// CD note: 4 bytes (u16 textOff rel TextBlock, u16 score).
+	// Floppy: 7 bytes (+0 abs textOff, +2 Jake, +4 Jenny, +6 score).
+	// Notebook always uses +0 (`FUN_15e0_01e8`).
 	const bool floppyNote = isFloppy();
 	const byte *bufBaseNotes = _mystery.blobAt(0);
 	auto noteText = [&](uint clueId) -> Common::String {
@@ -4020,14 +3449,8 @@ bool EEMEngine::doAccuseNotes() {
 		if (haveBg)
 			scratch.simpleBlitFrom(accuseBg.surface);
 
-		// Partner sprite at (5, 0x50). The original `_DoAccuse @
-		// 1df2:0c2c` does `_NewAnimation(5, 0x50, partnerCells,
-		// script=2, prior=1)` — same anim cells as the gallery
-		// (anim 2 for Jake / 0x10 for Jenny) with script 0x02. The
-		// `_UpdateAnimations` loop in `_DoAccuse @ 1df2:0bfa` keeps
-		// the slot painting through the entire selection screen;
-		// without an explicit blit here the player sees a partner-
-		// less accuse-mode screen.
+		// Partner at (5, 0x50). `_DoAccuse @ 1df2:0c2c`: ANI 2/0x10,
+		// script 2, prior 1.
 		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 		Animation partnerAni;
 		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
@@ -4039,10 +3462,7 @@ bool EEMEngine::doAccuseNotes() {
 								  partnerAni[frameIdx], 5, 0x50);
 		}
 
-		// Clue list inside `_AccuseNoteRect`. Selected = 0x3c (yellow),
-		// unselected = 1 (red), per `_NoteUnselectedColor = 1` set at
-		// 1df2:0c25 — the red colour is what gives the screen its
-		// "accuse-mode" look together with PIC 0x1A7.
+		// Selected=0x3c, unselected=1 (`_NoteUnselectedColor` @ 1df2:0c25).
 		slotRects.clear();
 		slotClues.clear();
 		const int lineH = _font.getFontHeight();
@@ -4078,11 +3498,11 @@ bool EEMEngine::doAccuseNotes() {
 			y += h + 7;
 		}
 
-		// Counter — `_UpdateSelectionCount(remaining)` at (0xd1, 0xb).
+		// `_UpdateSelectionCount(remaining)` @ (0xd1, 0xb).
 		const uint remaining = (selectedCount < expected)
 			? expected - selectedCount
 			: 0;
-		// Spanish floppy uses "nota/notas" (verified in Spanish EEM.EXE).
+		// Spanish floppy uses "nota/notas".
 		const char *clueWord = isSpanish()
 			? (remaining == 1 ? "nota" : "notas")
 			: (remaining == 1 ? "clue" : "clues");
@@ -4165,12 +3585,7 @@ bool EEMEngine::doAccuseNotes() {
 					dirty = true;
 					continue;
 				}
-				// Page navigation — `_NoteButtons[5]` / `[6]`,
-				// dispatched in `_HandleAccuseNoteButton @
-				// 1df2:0990`. Only effective if there's another
-				// page in that direction; mirrors the
-				// `1 < _CurrentPage` guard at 1df2:09a8 and the
-				// `_NextClue != -1` guard at 1df2:099e.
+				// `_NoteButtons[5]/[6]` — page nav guards @ 1df2:09a8/099e.
 				if (kBtnPageNext.contains(mx, my)) {
 					if (page + 1 < numPages) {
 						page++;
@@ -4185,33 +3600,22 @@ bool EEMEngine::doAccuseNotes() {
 					}
 					continue;
 				}
-				// Partner click — `_NoteButtons[3]`. Original
-				// `_HandleAccuseNoteButton` doesn't dispatch this
-				// (no case for i == 3), but the rect is still in
-				// the table; we wire it to the puzzle hint so the
-				// player can ask the partner what to look for
-				// without leaving accuse mode.
+				// `_NoteButtons[3]` — ScummVM hint, original ignores.
 				if (kBtnPartner.contains(mx, my)) {
 					doHelp();
 					dirty = true;
 					continue;
 				}
 				if (kBtnSolve.contains(mx, my)) {
-					// Count selected.
 					uint selected = 0;
 					for (uint i = 0; i < found.size(); i++) {
 						if (_mystery._noteSelected[found[i]])
 							selected++;
 					}
 					if (selected == expected) {
-						// Commit — let the caller do the
-						// `_SolvedCheck` + suspect picker dance.
+						// `_DoAccuse` gate `uStack_8 == uStack_a`.
 						return true;
 					}
-					// Wrong count — `_DoAccuse` only triggers the
-					// check when `uStack_8 == uStack_a`; we just
-					// stay in the loop so the player can keep
-					// adjusting.
 					continue;
 				}
 				// Toggle clue under cursor.
@@ -4237,9 +3641,7 @@ bool EEMEngine::doAccuseNotes() {
 		}
 		if (dirty)
 			draw();
-		// Per-tick redraw so the partner sprite cycles. Same
-		// 100 ms cadence as `_CheckFrameRate` + `_UpdateAnimations`
-		// in the original (1df2:0bfa).
+		// 100 ms `_CheckFrameRate` cadence @ 1df2:0bfa.
 		static uint32 sLastTick = 0;
 		const uint32 now = g_system->getMillis();
 		if (now - sLastTick >= 100) {
@@ -4256,25 +3658,17 @@ void EEMEngine::doAccuse() {
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
-	// Floppy accusation flow is structurally different from the CD's:
-	// the suspect gallery section uses variable-stride entries (5 +
-	// nameLen bytes, NOT 0x46), the score is computed from the top-5
-	// note scores in `_TextSeen` (not `_NoteSelected`), and the win
-	// path renders the solved-chain dialog records at header[+0x12]
-	// rather than a single ClueBlock. Dispatch to a dedicated handler
-	// that mirrors `_KDHelp_Floppy` + `_HandleNoteButton_Floppy` (button
-	// 4 → `FUN_1d40_11fd` "ready to solve" gate) +
-	// `FUN_1d40_0c79` (gallery picker) + `_DisplayCorrect_Floppy` /
-	// `_DisplayAlibi_Floppy`.
+	// Floppy: variable-stride entries (5 + nameLen, not 0x46), top-5
+	// `_TextSeen` scoring (not `_NoteSelected`), header[+0x12] win-dialog.
+	// Handled by doAccuseFloppy (`FUN_1d40_11fd`, `FUN_1d40_0c79`,
+	// `_DisplayCorrect_Floppy`, `_DisplayAlibi_Floppy`).
 	if (isFloppy()) {
 		doAccuseFloppy();
 		return;
 	}
 
-	// `_AccuseEntry @ 1df2:0ff8` runs before the red accuse-notes
-	// picker. It scores the top five FOUND clues, says how close the
-	// player is, and only lets `_DoAccuse` continue when that score is
-	// at least 0x65.
+	// `_AccuseEntry @ 1df2:0ff8` — gates picker on top-5 found clue
+	// score (≥0x65 required).
 	const byte *entryKdIdx = _mystery.kdTextIndex();
 	if (!entryKdIdx)
 		return;
@@ -4350,36 +3744,19 @@ void EEMEngine::doAccuse() {
 		return;
 	}
 
-	// Mirrors `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
-	//   1. ACCUSE-NOTES SCREEN (PIC 0x1A7, the red "accuse-mode" BG):
-	//      `_DrawNotes(_AccuseNoteRect, NULL, 100, _NoteSelected)`
-	//      lists every found clue inside the rect at `29be:1048` =
-	//      `(79, 27, 304, 159)`. `_UpdateSelectionCount(remaining)`
-	//      shows "N clue(s)" at `(209, 11)` (ASM: `_Show_String(0xb,
-	//      0xd1, ...)` at 1df2:0907). `_NoteUnselectedColor = 1` is
-	//      the dim red used for unselected entries; selected ones
-	//      get `0x3c`. Click toggles via `_SearchNoteAreas` +
-	//      `_SwapColors`. Expected count = `6 - DAT_2d5d_3f99`
-	//      (= 6 - chainStage):
-	//          stage 1 → 5 clues, stage 2 → 4, stage 3 → 3.
-	//      When the count matches, `_SolvedCheck` decides:
-	//          fail → KD "not enough evidence" balloon → return.
-	//          pass → `_DoAccuseGallery()` (suspect picker).
+	// `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
+	//   1. Accuse-notes (PIC 0x1A7) — pick `6 - chainStage` clues.
+	//      Pass `_SolvedCheck` → gallery; fail → hint + return.
 	//   2. KD intro balloon (`KDTextIndex[+8]` + `_SayKDDigital(4)`).
-	//   3. `_GetBackground(0x3f)` + `_DrawGallery()` — portraits at
-	//      the 5 fixed slots (`29be:0x116`).
-	//   4. Click loop on portraits → `_WITCH(picked)` → guilty/alibi.
+	//   3. PIC 0x3f + `_DrawGallery` portraits at 5 slots (29be:0x116).
+	//   4. Click portrait → `_WITCH(picked)` → guilty/alibi.
 	const uint8 num = _mystery.numSuspects();
 	if (num == 0)
 		return;
 
 	const byte *gd = _mystery.galleryData();
 
-	// ACCUSE-NOTES SCREEN — let the player commit which N clues they
-	// believe solve the case. Mirrors the click-driven selection of
-	// `_DoAccuse @ 1df2:0bdd`'s outer loop. ESC returns to the site
-	// (matches `_DoAccuse @ 1df2:0c11` writing `_NextScreen = 3`);
-	// pointer navigation can also leave for the PDA, gallery, or map.
+	// `_DoAccuse @ 1df2:0c11` outer loop; ESC → NextScreen=3.
 	if (!doAccuseNotes()) {
 		if (_nextScreen == kScreenAccuse) {
 			_nextScreen = _lastScreen != kScreenInvalid
@@ -4388,12 +3765,7 @@ void EEMEngine::doAccuse() {
 		return;
 	}
 
-	// Evidence gate. `_DoAccuse @ 1df2:0c75` runs `_SolvedCheck`
-	// before opening the suspect picker; on failure it renders a
-	// partner balloon over the CURRENT screen (the PDA in the
-	// original) and returns. We render the same hint over the
-	// caller's screen and bail back to `_lastScreen` without ever
-	// touching the gallery BG.
+	// `_DoAccuse @ 1df2:0c75` — `_SolvedCheck` gate.
 	if (!_mystery.solvedCheck()) {
 		const byte *kdIdx = _mystery.kdTextIndex();
 		const int16 hintOff = kdIdx
@@ -4404,11 +3776,8 @@ void EEMEngine::doAccuse() {
 			hint = parseString(_mystery.textAt((uint16)hintOff),
 							   _playerName, _partner);
 		if (hint.empty()) {
-			// Fallback if `KDTextIndex[+6]` isn't set in this mystery.
-			// Spanish text from the Spanish floppy EEM.EXE — there's
-			// only the single "1Necesitamos buscar pistas..." string
-			// in the binary, so use it for both the zero-points and
-			// some-points cases.
+			// Fallback if `KDTextIndex[+6]` missing. Spanish floppy
+			// has only one "Necesitamos buscar pistas" string.
 			if (isSpanish()) {
 				hint = "Necesitamos buscar pistas antes de resolver "
 					   "el misterio. Investiguemos un poco mas!";
@@ -4423,9 +3792,8 @@ void EEMEngine::doAccuse() {
 			}
 		}
 
-		// Compose balloon overlay on the current screen. Mirrors the
-		// `_GetKDTextBalloon` + `_GetBalloon` + `_AddPicBackground`
-		// + `_WordWrap` sequence at 1df2:0c8d-0cd1.
+		// Balloon overlay (`_GetKDTextBalloon` + `_GetBalloon` +
+		// `_AddPicBackground` + `_WordWrap` @ 1df2:0c8d-0cd1).
 		Graphics::ManagedSurface ms(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
@@ -4437,10 +3805,7 @@ void EEMEngine::doAccuse() {
 		const byte firstChar =
 			hint.empty() ? (byte)0 : (byte)hint[0];
 		uint16 bubNum = getKDTextBalloon(firstChar);
-		// Strip the digit prefix used for balloon dispatch — it's
-		// consumed by the original at `_DisplayAlibi @ 1df2:0163`
-		// (`str = pbVar7 + 1`) and shouldn't appear in the rendered
-		// text. `_GetKDTextBalloon` itself doesn't advance past it.
+		// Strip digit prefix (`_DisplayAlibi @ 1df2:0163` `str=pbVar7+1`).
 		if (firstChar >= '0' && firstChar <= '9')
 			hint.deleteChar(0);
 		bubNum = fitBalloonToText(bubNum, hint);
@@ -4469,21 +3834,17 @@ void EEMEngine::doAccuse() {
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 
-		// `_DoAccuse @ 1df2:0cd9` plays `_SayKDDigital(3)` —
-		// partner-specific "not enough evidence" voice line.
+		// `_SayKDDigital(3)` @ 1df2:0cd9.
 		if (_audio && kdIdx)
 			_audio->sayKDDigital(kdIdx, 3, _partner);
 
 		waitForInput(20000);
-		// `_DoAccuse @ 1df2:0ce5` writes `_NextScreen = _LastScreen`
-		// so the player drops back where they came from.
+		// `_DoAccuse @ 1df2:0ce5` — NextScreen = LastScreen.
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
 	}
 
-	// Verbatim from 29be:0x116 — same five suspect slot positions as
-	// `_DrawGallery @ 158f:0046`.
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
@@ -4496,16 +3857,9 @@ void EEMEngine::doAccuse() {
 
 	int highlighted = 0;
 
-	// Step 1 — KD hint balloon. Mirrors `_DoAccuseGallery @ 1df2:0a31`
-	// (1df2:0a4c-1df2:0afe):
-	//   text  = TextBlock + KDTextIndex[+8]               (1df2:0a4c-0a57)
-	//   bub   = _GetKDTextBalloon(text[0])                (1df2:0a6d)
-	//   GetBalloon(bub)                                   (1df2:0a7c)
-	//   y     = (h < 0x4e) ? (0x50 - h) >> 1 : 1          (1df2:0a8b-0aa5)
-	//   AddPicBackground(pic, 0x21, y)                    (1df2:0aab)
-	//   WordWrap(0x21+tbl[bub].x, y+tbl[bub].y, tbl[bub].w, text, color=0)
-	//     tbl @ 29be:0875, 10-byte entries (1df2:0ad6-0af1)
-	//   _SayKDDigital(4); _Wait();                        (1df2:0b09-0b11)
+	// KD hint balloon @ `_DoAccuseGallery @ 1df2:0a31` (0a4c-0afe).
+	// y = (h < 0x4e) ? (0x50-h)>>1 : 1. Inset table @ 29be:0875.
+	// `_SayKDDigital(4)`.
 	const byte *kdIdx = _mystery.kdTextIndex();
 	if (kdIdx) {
 		const int16 textOff = (int16)READ_LE_UINT16(kdIdx + 8);
@@ -4514,20 +3868,10 @@ void EEMEngine::doAccuse() {
 			Common::String hint =
 				parseString(raw ? raw : "", _playerName, _partner);
 			if (!hint.empty()) {
-				// First-char dispatch via getKDTextBalloon (1df2:0105).
-				// Note: we pass the *parsed* first char; the original
-				// reads it BEFORE `_ParseString`, but the player-name /
-				// partner-name substitutions never start with digits, so
-				// the dispatch result is the same either way.
 				const byte firstChar =
 					hint.empty() ? (byte)0 : (byte)hint[0];
 				uint16 bubNum = getKDTextBalloon(firstChar);
-				// Strip the digit prefix used for balloon dispatch.
-				// `_DisplayAlibi @ 1df2:0163` does `str = pbVar7 + 1`
-				// after using `*str` for `bindx`. Same pattern used by
-				// `_DisplayHint`: digit picks the bubble shape AND is
-				// then consumed from the rendered text. Without this
-				// the intro balloon shows e.g. "1Ready to solve?".
+				// Strip digit prefix (`_DisplayAlibi @ 1df2:0163`).
 				if (firstChar >= '0' && firstChar <= '9')
 					hint.deleteChar(0);
 				bubNum = fitBalloonToText(bubNum, hint);
@@ -4536,22 +3880,12 @@ void EEMEngine::doAccuse() {
 					_balloonArchive.size() > (bubNum & 0x7F) &&
 					_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
 
-				// 1df2:0a8b-1df2:0aa5: y = (h < 0x4e) ? (0x50-h)>>1 : 1
 				const int balloonX = 0x21;
 				int balloonY = 1;
 				if (haveBalloon && balloon.surface.h < 0x4e)
 					balloonY = (0x50 - balloon.surface.h) / 2;
 
-				// Render the gallery FIRST so the balloon snapshot
-				// includes the partner sprite. The original
-				// `_DoAccuseGallery @ 1df2:0a31` does this implicitly:
-				// `_NewAnimation` registered the partner slot at
-				// (5, 0x50) before reaching this point, then
-				// `_GetBackground(0x3f)` + `_DrawGallery` paint the
-				// portraits, and `_UpdateAnimations` keeps the partner
-				// visible underneath the balloon overlay. Without this,
-				// the player sees an 8-second partner-less screen
-				// while reading the hint.
+				// Render gallery first so the snapshot includes partner.
 				drawAccuseGallery(num, gd, /*highlighted=*/-1,
 								  slotRects, slotSuspect);
 
@@ -4564,22 +3898,18 @@ void EEMEngine::doAccuse() {
 						ms.simpleBlitFrom(*cur);
 						g_system->unlockScreen();
 					} else if (haveAccuseBg) {
-						// Fallback: lockScreen failed somehow; at least
-						// fill from PIC 0x3f so we don't render against
-						// stale memory. simpleBlitFrom auto-clips, so
-						// no MIN(w, 320)/MIN(h, 200) needed.
+						// Fallback if lockScreen failed.
 						ms.simpleBlitFrom(accuseBg.surface);
 					}
 				}
-				// Masked balloon blit — `_Rect_Move_Mask` (1000:03fc)
-				// skips pixels equal to `pic[0] >> 8`.
+				// `_Rect_Move_Mask` (1000:03fc) — transp = pic[0]>>8.
 				if (haveBalloon) {
 					const byte transp = (byte)(balloon.flags >> 8);
 					ms.transBlitFrom(balloon.surface,
 									 Common::Point(balloonX, balloonY),
 									 transp);
 				}
-				// Inset table @ 29be:0875 — 1df2:0acb pushes color=0.
+				// Inset table @ 29be:0875.
 				uint16 tx = 5;
 				uint16 ty = 4;
 				uint16 tw = 155;
@@ -4599,9 +3929,7 @@ void EEMEngine::doAccuse() {
 		}
 	}
 
-	// Helper to find the next "alive" slot (one whose `_inGallery[phys]`
-	// flag is still set so a portrait was actually drawn). Mirrors the
-	// way the original wraps DI past empty slots.
+	// Wrap past empty slots (matches original DI advance).
 	if (slotRects[highlighted].isEmpty())
 		highlighted = nextLiveSlot(slotRects, highlighted, +1);
 
@@ -4679,10 +4007,7 @@ void EEMEngine::doAccuse() {
 				}
 			}
 		}
-		// 100 ms tick — the original calls `_UpdateAnimations` per
-		// `_CheckFrameRate` (1df2:0b33). The accuse screen has no
-		// animations registered, so the tick is just a redraw cadence.
-		// We still re-render whenever the highlight moves (`dirty`).
+		// 100 ms `_CheckFrameRate` @ 1df2:0b33.
 		const uint32 now = g_system->getMillis();
 		if (dirty || now - lastTick >= 100) {
 			drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
@@ -4695,16 +4020,8 @@ void EEMEngine::doAccuse() {
 	if (picked < 0)
 		return;
 
-	// Real chain evaluation. Mirrors the original two-gate accusation:
-	//   1. `_AccuseEntry @ 1df2:0ff8` checked top-five found points
-	//      before the note picker, so by this point the player has
-	//      enough evidence to attempt an accusation.
-	//   2. `_SolvedCheck @ 1df2:00ec` checked selectedPoints > 99
-	//      before opening this suspect picker, so the clue set is
-	//      valid if we got here.
-	//   3. `_WITCH @ 1df2:089f` checks `GalleryData[picked*0x46+0x02] ==
-	//      0xFFFF`. Innocent suspects store an alibi-text TextBlock
-	//      offset there; the guilty one uses the sentinel.
+	// `_WITCH @ 1df2:089f` — guilty when gd[picked*0x46+0x02] == 0xFFFF;
+	// innocents store an alibi TextBlock offset there.
 	const int points          = _mystery.selectedPoints();
 	const bool pickedGuilty   = _mystery.isGuilty((uint)picked);
 	const bool guessedRight   = pickedGuilty;
@@ -4714,24 +4031,16 @@ void EEMEngine::doAccuse() {
 		   pickedGuilty ? "yes" : "no",
 		   guessedRight ? "correct" : "wrong");
 
-	// Wrong suspect: full alibi flow. Mirrors `_DisplayAlibi @
-	// 1df2:0145`:
-	//   1. Plays MIDI 6 (loser sting) and waits for it to finish while
-	//      the gallery is still on screen (1df2:0184-1df2:0192).
-	//   2. Draws PIC 0x3e + the suspect's speech balloon + their
-	//      portrait at (0x82, py), where the balloon shape comes from
-	//      `AlibiBubbles[bindx]` (table @ 29be:1050) and bindx is the
-	//      digit-prefix on the alibi text (else 2). bindx<8 centres the
-	//      balloon horizontally; bindx>=8 pins it at x=0x21.
-	//   3. Plays the suspect's voice via `_SpoolSound(talk - 1)` where
-	//      `talk = (Partner == 0) ? gd[+0x6] : gd[+0x0]` (1df2:0258),
-	//      then waits for a click.
-	//   4. Overlays the partner's reaction balloon (text @
-	//      `KDTextIndex[+10]`) at (0x21, y) and plays
-	//      `_SayKDDigital(5)`.
-	//   5. Clears `_FirstTry` (1df2:0447) and returns to LastScreen.
+	// `_DisplayAlibi @ 1df2:0145`:
+	//   1. MIDI 6 loser sting (gallery still visible).
+	//   2. PIC 0x3e + suspect balloon + portrait at (0x82, py).
+	//      bindx = digit prefix (else 2). bindx<8 centres balloon,
+	//      bindx>=8 pins at x=0x21.
+	//   3. `_SpoolSound(talk-1)` where talk = partner==0 ? gd[+6] : gd[+0].
+	//   4. Partner reaction balloon @ KDTextIndex[+10], `_SayKDDigital(5)`.
+	//   5. _FirstTry = 0; NextScreen = LastScreen (1df2:043f).
 	if (!guessedRight) {
-		// Balloon-shape table @ 29be:1050 — 16 entries × u16.
+		// Balloon-shape table @ 29be:1050.
 		static const uint16 kAlibiBubbles[16] = {
 			0x002B, 0x002C, 0x002D, 0x002E,
 			0x00AB, 0x00AC, 0x00AD, 0x00AE,
@@ -4746,10 +4055,7 @@ void EEMEngine::doAccuse() {
 			if (raw)
 				alibi = parseString(raw, _playerName, _partner);
 		}
-		// Digit-prefix dispatch — `_DisplayAlibi @ 1df2:0163` reads
-		// `*str` for `bindx` and advances `str = pbVar7 + 1` so the
-		// digit doesn't reach the renderer. Non-digit first chars fall
-		// through to the default bindx=2 (1df2:015e).
+		// `_DisplayAlibi @ 1df2:0163` — bindx = digit prefix, else 2.
 		uint bindx = 2;
 		const byte firstChar = alibi.empty() ? (byte)0 : (byte)alibi[0];
 		if (firstChar >= '0' && firstChar <= '9') {
@@ -4774,9 +4080,7 @@ void EEMEngine::doAccuse() {
 			_balloonArchive.size() > (bubNum & 0x7F) &&
 			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
 
-		// Position math from 1df2:01a4-1df2:0207. py is the suspect
-		// portrait's Y; defaults to 0x5a, only overridden in the
-		// bindx<8 branch when the balloon is too tall to fit.
+		// Position math @ 1df2:01a4-0207.
 		int balloonX = 0x21;
 		int balloonY = 1;
 		int py = 0x5a;
@@ -4796,14 +4100,7 @@ void EEMEngine::doAccuse() {
 			balloonY = (bh < 0x4f) ? (0x50 - bh) / 2 : 1;
 		}
 
-		// `base` = BG + suspect + partner sprite — the persistent layer
-		// that survives across both balloon phases. The original engine
-		// keeps PIC 0x3e in the master BG buffer (16000), `_AddPicBackground`
-		// commits the suspect there, and the partner animation
-		// registered by `_DoAccuse @ 1df2:0c30` is re-blitted by every
-		// `_Repaint` via `_DrawActiveAnimations`. We don't have a
-		// slot-based animation system, so we manually keep a "base"
-		// surface and re-draw the partner frame for each phase.
+		// `base` = BG + suspect + partner. Survives both balloon phases.
 		Graphics::ManagedSurface base(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		base.clear();
@@ -4815,20 +4112,15 @@ void EEMEngine::doAccuse() {
 							   Common::Point(0x82, py),
 							   (uint32)transp);
 		}
-		// Partner sprite at (5, 0x50). Anim cells: 2 (Jake) / 0x10
-		// (Jenny); script key 0x02 — same indices `_DoAccuse @
-		// 1df2:0c30` uses for its `_NewAnimation` call. Partner is
-		// drawn AFTER the suspect so it doesn't get clipped by the
-		// portrait if their bounding boxes graze.
+		// Partner at (5, 0x50). ANI 2/0x10, script 0x02 (`_DoAccuse
+		// @ 1df2:0c30`). Drawn after suspect.
 		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 		Animation partnerAni;
 		const bool havePartner =
 			_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
 			!partnerAni.empty();
 
-		// Alibi-phase scratch = base + alibi balloon + alibi text +
-		// partner sprite (animation slot drawn on top per
-		// `_DrawActiveAnimations`).
+		// scratch = base + alibi balloon/text + partner.
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(base);
@@ -4838,8 +4130,7 @@ void EEMEngine::doAccuse() {
 								  Common::Point(balloonX, balloonY),
 								  (uint32)transp);
 		}
-		// Balloon-text inset table @ 29be:0875 — same dispatch as KD
-		// balloons. WordWrap color is 0 inside a balloon (1df2:0240).
+		// Inset table @ 29be:0875. Color 0 inside balloon (1df2:0240).
 		uint16 tx = 5, ty = 4, tw = 155;
 		getBalloonInsets(bubNum, tx, ty, tw);
 		if (_font.isLoaded() && !alibi.empty()) {
@@ -4854,9 +4145,7 @@ void EEMEngine::doAccuse() {
 								  partnerAni[frameIdx], 5, 0x50);
 		}
 
-		// Step 1 — alibi music. Original blocks until MIDI 6 ends with
-		// the gallery still on screen. We poll `_music->isPlaying`;
-		// click/ESC aborts early.
+		// MIDI 6 — blocks until done (or click/ESC aborts).
 		if (_music && _voiceOn) {
 			_music->playMus(6, /*loop=*/false);
 			const uint32 musStart = g_system->getMillis();
@@ -4875,8 +4164,7 @@ void EEMEngine::doAccuse() {
 						break;
 					}
 				}
-				// Hard cap so we never get stuck if MIDI never reports
-				// finish (some sound configurations).
+				// Hard cap if MIDI never reports finish.
 				if (g_system->getMillis() - musStart > 10000)
 					break;
 				g_system->updateScreen();
@@ -4885,9 +4173,8 @@ void EEMEngine::doAccuse() {
 			_music->stop();
 		}
 
-		// Step 2 — flip the alibi scene to screen + play suspect voice.
-		// `talk = (Partner==0) ? gd[+0x6] : gd[+0x0]` (1df2:0252-0258);
-		// indices are 1-based so subtract 1 before SpoolSound.
+		// Suspect voice. talk = partner==0 ? gd[+0x6] : gd[+0x0] (1df2:0252).
+		// 1-based, so SpoolSound(talk-1).
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
@@ -4903,16 +4190,8 @@ void EEMEngine::doAccuse() {
 		}
 		waitForInput(60000);
 
-		// Step 3 — partner reaction balloon. Mirrors 1df2:026e-1df2:02b6.
-		// Rebuild scratch from `base` (BG + suspect + partner sprite)
-		// so the alibi balloon + text don't bleed through. The
-		// original's `_Repaint` re-renders the master BG (which still
-		// has the alibi balloon committed), but the engine ALSO calls
-		// `_GetBackground(0x3e)` again before `_AddPicBackground` for
-		// each new balloon — flushing the master back to a clean state.
-		// We achieve the same end result by restoring `base` here.
-		// `_SayKDDigital(5)` auto-cancels the still-playing alibi voice
-		// (spoolSound calls stopSpool internally) so no explicit stop.
+		// Partner reaction @ 1df2:026e-02b6. Rebuild from `base` so alibi
+		// balloon clears. `_SayKDDigital(5)` auto-cancels alibi voice.
 		const byte *reactIdx = _mystery.kdTextIndex();
 		if (reactIdx) {
 			const int16 reactOff = (int16)READ_LE_UINT16(reactIdx + 10);
@@ -4937,8 +4216,6 @@ void EEMEngine::doAccuse() {
 				if (haveR && rBalloon.surface.h < 0x4e)
 					rY = (0x50 - rBalloon.surface.h) / 2;
 
-				// Reset to a clean BG + suspect, then layer the new
-				// balloon and the (refreshed) partner frame on top.
 				scratch.simpleBlitFrom(base);
 				if (haveR) {
 					const byte transp = (byte)(rBalloon.flags >> 8);
@@ -4971,35 +4248,22 @@ void EEMEngine::doAccuse() {
 		waitForInput(60000);
 
 		_mystery._firstTry = false;
-		// `_DisplayAlibi @ 1df2:043f` writes `_NextScreen =
-		// _LastScreen`. The original returns the player to the caller
-		// (PDA / site / map) for another try.
+		// `_DisplayAlibi @ 1df2:043f` — NextScreen = LastScreen.
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
 	}
 
-	// Right suspect — full win flow. Mirrors `_DisplayCorrect @
-	// 1df2:073c`: mark mystery solved, advance chain stage if the
-	// tier is complete, swap MIDI to the win cue, run SCRAPBK.ANI,
-	// show the per-mystery ending, save the profile, return to the
-	// action menu (`_NextScreen = 0xc` at 1df2:0895).
+	// Win — `_DisplayCorrect @ 1df2:073c`: mark solved, advance chain,
+	// MIDI 5, SCRAPBK.ANI, ending, save, NextScreen=0xc (1df2:0895).
 	{
 		const uint mn = _mystery.number();
 		if (mn < sizeof(_mysteriesSolved)) {
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 		}
 
-		// Mirrors the chain-advancement loop at `_DisplayCorrect @
-		// 1df2:0824-0850`. Skip mystery 0 (the practice case) per the
-		// `if (_MysteryNumber != 0)` guard at 1df2:080d, then check
-		// every mystery in the current tier:
-		//   stage 1 → check  1..0x18 (24 mysteries, "A chain")
-		//   stage 2 → check 0x19..0x30 (24 mysteries, "B chain")
-		//   stage 3 → check 0x31..0x36 (6 mysteries, "C chain")
-		// If every solve flag in that range is non-zero, bump the
-		// stage. Original increments unconditionally (3→4 is harmless
-		// since no further range covers it); we cap at 3 for clarity.
+		// Chain advance @ 1df2:0824-0850. Skip mystery 0 (practice).
+		// stage 1: 1..0x18, stage 2: 0x19..0x30, stage 3: 0x31..0x36.
 		if (mn != 0) {
 			uint lo = 0, hi = 0;
 			switch (_chainStage) {
@@ -5013,12 +4277,7 @@ void EEMEngine::doAccuse() {
 				if (i >= sizeof(_mysteriesSolved) || _mysteriesSolved[i] == 0)
 					allSolved = false;
 			}
-			// `_DisplayCorrect @ 1df2:0852` increments unconditionally
-			// when every case in the current tier is solved — including
-			// past stage 3 (so a stage-4 endgame state exists in the
-			// `.PLR` save format). `_ActionScreen @ 1c33:19d1` gates
-			// the menu on `if (3 < _chainStage)` to grey
-			// Choose-A-Mystery and Practice once everything's solved.
+			// 1df2:0852 increments past 3 (stage-4 endgame); cap at 4.
 			if (allSolved && _chainStage < 4) {
 				_chainStage++;
 				debugC(1, kDebugMystery,
@@ -5027,25 +4286,17 @@ void EEMEngine::doAccuse() {
 			}
 		}
 
-		// `_DisplayCorrect @ 1df2:073c` order:
-		//   1df2:0773  _AllBlack();
-		//   1df2:0776  _BuildBackground(5, 0x42, 0x14);  // conclusion BG
-		//   1df2:0780  _FadeIn();
-		//   1df2:0789  _MIDIPlay(5);                      // win music
-		//   1df2:07ac  _DisplayClue(MysteryIndex[+0x10]); // chain recap
-		// `_BuildBackground @ 172b:13e2` loads PIC 0x3D (the standard
-		// frame) and overlays SITES.DBD entry 5 at (0x42, 0x14), then
-		// sets palette via `_GetPalette(sitenum + 1)` = palette 6.
-		// Without this BG the chain-recap balloons render on top of
-		// the accuse-gallery BG (PIC 0x3F + suspect portraits), which
-		// is visually jarring — the conclusion is supposed to play
-		// against the dedicated "office / desk" scene.
+		// `_DisplayCorrect @ 1df2:073c`:
+		//   _AllBlack; _BuildBackground(5, 0x42, 0x14); _FadeIn;
+		//   _MIDIPlay(5); _DisplayClue(MysteryIndex[+0x10]).
+		// `_BuildBackground @ 172b:13e2` = PIC 0x3D + SITES entry 5 at
+		// (0x42, 0x14), palette = sitenum+1 = 6.
 		Graphics::Surface *blk = g_system->lockScreen();
 		if (blk) {
 			memset(blk->getPixels(), 0, 320 * 200);
 			g_system->unlockScreen();
 		}
-		setSitePalette(6); // sitenum + 1 per `_GetPalette` call
+		setSitePalette(6); // sitenum + 1 (`_GetPalette`).
 		Picture frame, scene;
 		if (_picsArchive.loadEntry(0x3d, frame)) {
 			g_system->copyRectToScreen(frame.surface.getPixels(),
@@ -5063,15 +4314,7 @@ void EEMEngine::doAccuse() {
 										   sw, sh);
 		}
 
-		// Partner sprite at (5, 0x50). The original `_DoAccuse @
-		// 1df2:0c30` registered the partner anim BEFORE entering the
-		// gallery; that slot stays active across `_DisplayCorrect`'s
-		// `_BuildBackground` (which calls `_Repaint` →
-		// `_DrawActiveAnimations` and re-blits the partner over the
-		// fresh BG). We don't have a slot system, so manually stamp
-		// the resting frame here. `displayClue` snapshots the screen
-		// on entry, so the partner ends up baked into its BG and is
-		// preserved across every clue iteration.
+		// Stamp partner at (5, 0x50); displayClue snapshots screen.
 		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 		Animation partnerAni;
 		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
@@ -5091,62 +4334,40 @@ void EEMEngine::doAccuse() {
 		if (_music && _voiceOn)
 			_music->playMus(5, /*loop=*/false);
 
-		// Chain-by-chain RECAP. Partner enumerates every required
-		// clue ("Look at this — the suspect was here at 8pm", "... and
-		// remember the broken vase from the kitchen", "... so it had
-		// to be X!") and arrives at the conclusion. Without rendering
-		// it the player goes straight from suspect-pick to the
-		// scrapbook anim and misses the deduction entirely.
+		// Chain recap — partner enumerates required clues.
 		const byte *solved = _mystery.solvedClueBlock();
 		if (solved)
 			displayClue(solved);
 		if (_music && _voiceOn)
 			_music->stop();
 
-		// `_DifferenceAnimation("scrapbk.ani")` (1df2:0848) — the
-		// physical scrapbook flip animation that introduces the
-		// per-mystery ending pages.
+		// `_DifferenceAnimation("scrapbk.ani")` @ 1df2:0848.
 		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
 
-		// `_ShowOneScrap @ 1f78:0773` is `_DisplayEnding(num, 1)` —
-		// the multi-page per-mystery ending narrative. This shares the
-		// same red edge cursor + edge-only mouse navigation used by the
-		// scrapbook browser.
+		// `_ShowOneScrap @ 1f78:0773` = `_DisplayEnding(num, 1)`.
 		doShowEnding(mn);
 
-		// Mirrors `_SavePlayerRecord` at 1df2:0857 — once the
-		// `_mysteriesSolved` table is updated, the original
-		// immediately persists the player record so the win sticks
-		// even if the player quits before reaching the menu.
-		//
-		// Order matters: `_mystery.clear()` BEFORE `saveProfile` so the
-		// save records `hasMystery=false`. Otherwise the next load of
-		// this profile sees the just-won mystery still loaded and the
-		// screen driver routes to its map (forcing the player to
-		// replay the win flow). Mirrors `_DisplayCorrect @ 1df2:0851`
-		// (`_DeleteSavedGame` removes the in-progress save before
-		// `_SavePlayerRecord` writes the post-win profile).
+		// `_SavePlayerRecord` @ 1df2:0857. Order: clear() before save
+		// so hasMystery=false (matches `_DeleteSavedGame` @ 1df2:0851).
 		_mystery.clear();
 		const Common::Error err = saveProfile(_playerName);
 		if (err.getCode() != Common::kNoError)
 			warning("saveProfile after solve failed: %s",
 					err.getDesc().c_str());
 
-		// `_DisplayCorrect @ 1df2:0895` writes `_NextScreen = 0xc` —
-		// the winner returns to the post-mystery `_ActionScreen`.
+		// `_DisplayCorrect @ 1df2:0895` — NextScreen = 0xc.
 		_nextScreen = kScreenAction;
 	}
 }
 
 void EEMEngine::doAccuseFloppy() {
-	// Floppy accuse flow — mirrors:
-	//   `_KDHelp_Floppy / FUN_1d40_11fd @ 1d40:11fd` (score gate +
-	//        partner "ready / not ready" balloon)
-	//   `FUN_1d40_0e07 @ 1d40:0e07`   (clue-selection screen — skipped
-	//        in this MVP; selectedPoints() already takes the top-5)
-	//   `FUN_1d40_0c79 @ 1d40:0c79`   (gallery picker)
-	//   `_DisplayCorrect_Floppy @ 1d40:0894`
-	//   `_DisplayAlibi_Floppy   @ 1d40:00df`
+	// Floppy accuse:
+	//   `_KDHelp_Floppy / FUN_1d40_11fd @ 1d40:11fd` — score gate.
+	//   `FUN_1d40_0e07` — clue selection (skipped; selectedPoints()
+	//     already takes top-5).
+	//   `FUN_1d40_0c79 @ 1d40:0c79` — gallery picker.
+	//   `_DisplayCorrect_Floppy @ 1d40:0894`.
+	//   `_DisplayAlibi_Floppy @ 1d40:00df`.
 	const byte *kdIdx     = _mystery.kdTextIndex();
 	const byte *bufBase   = _mystery.blobAt(0);
 	const uint32 mysSize  = _mystery.dataSize();
@@ -5171,9 +4392,8 @@ void EEMEngine::doAccuseFloppy() {
 		if (lineLen == 0)
 			return;
 		Common::String raw(p, lineLen);
-		// Digit prefix → balloon variant (per `_GetKDTextBalloon_Floppy
-		// @ 1d40:009f` and the `_KDBalloonByChar_Floppy` table at
-		// `2608:0c14 + char`).
+		// Digit → balloon variant (`_GetKDTextBalloon_Floppy @ 1d40:009f`
+		// + table @ 2608:0c14).
 		static const uint8 kDigitToBalloon[10] = {
 			0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
 		};
@@ -5233,19 +4453,18 @@ void EEMEngine::doAccuseFloppy() {
 		}
 	};
 
-	// `FUN_1d40_11fd` score gate. Picks one of three KD strings and
-	// returns 1 only when score >= 100.
+	// `FUN_1d40_11fd` — score gate, ready when score >= 100.
 	const int score = _mystery.selectedPoints();
 	uint kdSlot;
 	bool readyToSolve;
 	if (score < 50) {
-		kdSlot = 0;        // KDTextIndex[0] — "we've barely started"
+		kdSlot = 0;        // "we've barely started"
 		readyToSolve = false;
 	} else if (score < 100) {
-		kdSlot = 1;        // KDTextIndex[1] — "getting closer"
+		kdSlot = 1;        // "getting closer"
 		readyToSolve = false;
 	} else {
-		kdSlot = 2;        // KDTextIndex[2] — "ready to solve"
+		kdSlot = 2;        // "ready to solve"
 		readyToSolve = true;
 	}
 	showFloppyKDHint(kdSlot);
@@ -5255,14 +4474,8 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// Clue selection screen — `FUN_1d40_0e07 @ 1d40:0e07`. The user
-	// must pick exactly `6 - chainStage` clues from the found list,
-	// rendered on the red accuse-mode BG (PIC 0x1A7). Verified by
-	// the asm at 1d40:0e34 reading `local_c = 6 - DAT_28da_3052`,
-	// matching the CD's `_DoAccuse @ 1df2:0bdd` expected count.
-	// `doAccuseNotes()` already handles this UI for both variants
-	// (note text reading is variant-aware via `noteTextOff`); it
-	// returns true on commit, false on ESC / pointer navigation.
+	// Clue selection — `FUN_1d40_0e07 @ 1d40:0e07`. Pick `6 - chainStage`
+	// clues (1d40:0e34: `local_c = 6 - DAT_28da_3052`).
 	if (!doAccuseNotes()) {
 		if (_nextScreen == kScreenAccuse) {
 			_nextScreen = _lastScreen != kScreenInvalid
@@ -5271,19 +4484,8 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// Second score gate — based on the CLUES THE USER ACTUALLY
-	// PICKED. `_DoAccuse_Floppy @ 1d40:0e07` (after the commit
-	// branch at 1d40:0f3a) reads `local_a = FUN_1d40_0c48()` (=
-	// sum of byte +6 across selected note entries) and:
-	//   if (local_a < 100) → KDTextIndex[+6] hint (slot 3),
-	//                        bail back to last screen.
-	//   else              → call FUN_1d40_0c79 (gallery picker).
-	// Note this is distinct from the entry gate on
-	// `_GetSelectedPoints_Floppy @ 1d40:0c23` (which uses the
-	// auto-top-5 of FOUND clues — what `Mystery::selectedPoints`
-	// returns on floppy). A player can be "ready to solve" by score
-	// yet still pick the wrong subset; that's the case this gate
-	// catches.
+	// 2nd score gate on USER-PICKED clues (1d40:0f3a, FUN_1d40_0c48 =
+	// sum of byte +6 across selected entries). <100 → slot 3 hint.
 	int userSelectedScore = 0;
 	{
 		const byte *ni2 = _mystery.noteIndex();
@@ -5304,13 +4506,10 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// `FUN_1d40_0c79` — gallery picker. Show "Which suspect?" KD
-	// hint at slot 4 (KDTextIndex[+8]/2 = entry index 4), then
-	// render the gallery and wait for click.
+	// `FUN_1d40_0c79` — gallery picker. KDTextIndex slot 4 prompt.
 	showFloppyKDHint(4);
 
-	// Build slot list. Floppy gallery section: byte0 = numSuspects,
-	// then variable-stride entries.
+	// Floppy gallery: byte0 = numSuspects, then variable-stride entries.
 	const uint8 num = _mystery.numSuspects();
 	if (num == 0) {
 		_nextScreen = _lastScreen != kScreenInvalid
@@ -5318,8 +4517,7 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// Verbatim from `_DrawGallery_Floppy @ 154e:0050` — slot positions
-	// at `2608:016c` (5 × {u16 x, u16 y}).
+	// `_DrawGallery_Floppy @ 154e:0050` slots @ 2608:016c.
 	struct GallerySlot { int x, y; };
 	static const GallerySlot kFloppySlots[5] = {
 		{ 0x53, 0x0e }, { 0x9b, 0x0e }, { 0xe3, 0x0e },
@@ -5338,7 +4536,6 @@ void EEMEngine::doAccuseFloppy() {
 		if (haveAccuseBg)
 			scratch.simpleBlitFrom(accuseBg.surface);
 
-		// Partner sprite (anim 2 / 0x10) — same as CD doAccuse.
 		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 		Animation partnerAni;
 		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
@@ -5370,8 +4567,7 @@ void EEMEngine::doAccuseFloppy() {
 			if (!_picsArchive.getPicture(picId, portrait))
 				continue;
 			const GallerySlot &s = kFloppySlots[phys];
-			// `_DrawGallery_Floppy @ 154e:00ed` bottom-aligns to baseline
-			// 0x48 (= 72), same as CD: `placeY = s.y + (0x48 - h)`.
+			// Bottom-align to baseline 0x48 (`154e:00ed`).
 			const int placeX = s.x;
 			const int placeY = s.y + (0x48 - portrait.surface.h);
 			const byte transp = (byte)(portrait.flags >> 8);
@@ -5450,33 +4646,16 @@ void EEMEngine::doAccuseFloppy() {
 	const bool guilty = _mystery.isGuilty((uint)picked);
 
 	if (guilty) {
-		// Win path. Mirrors `_DisplayCorrect_Floppy @ 1d40:0894`:
-		//   1d40:08a0  _BuildBackground_Floppy(5, 0x42, 0x14);
-		//                 → PIC 0x3d frame + SITES entry 5 at (0x42,
-		//                   0x14), palette = sitenum + 1 = 6.
-		//   1d40:08b1  _FadeIn();
-		//   1d40:08c0  _MIDIPlayFile("travel-2.xmi");
-		//   1d40:08d0  walk solved chain via _DisplayHotspotClue_Floppy
-		//                 + _WaitForClick per record. Mid-recap: when
-		//                 only 3 records remain, play
-		//                 _PlayTitleANM_Floppy(0) = SCRAPBK.ANI.
-		//   1d40:0939  ((u16 *)0x3054)[mysteryNum] =
-		//                  _firstTry ? 2 : 1;
-		//   1d40:0941  tier-promotion check (advance _chainStage when
-		//                 every mystery in the current tier is solved).
-		//   1d40:0982  _SavePlayerRecord  (= saveProfile)
-		//   1d40:0985  _DeleteMysteryFile (= mystery cleanup)
-		//   1d40:0991  MakeSolvedSound = 1; ShowOneScrap(mystery)
-		//   1d40:09b0  _NextScreen = 0xc.
+		// `_DisplayCorrect_Floppy @ 1d40:0894`:
+		//   _BuildBackground_Floppy(5, 0x42, 0x14); _FadeIn;
+		//   _MIDIPlayFile("travel-2.xmi");
+		//   Walk solved chain, SCRAPBK.ANI when 3 records left.
+		//   Mark solved, tier-promote, SavePlayerRecord,
+		//   ShowOneScrap, NextScreen = 0xc.
 		const uint mn = _mystery.number();
 
-		// Conclusion BG composition. `_BuildBackground_Floppy @
-		// 16e2:12fd` blits PIC 0x3d (the desk frame) onto a cleared
-		// page, then overlays SITES.DBD entry 5 (the conclusion
-		// artwork) at (param_2, param_3) = (0x42, 0x14). Palette
-		// becomes `sitenum + 1` = 6. Same composition the CD `doAccuse`
-		// win flow performs (see ui.cpp:4145-4166), just driven from
-		// the floppy data archives.
+		// `_BuildBackground_Floppy @ 16e2:12fd` — PIC 0x3d + SITES entry 5
+		// at (0x42, 0x14), palette 6.
 		{
 			Graphics::Surface *blk = g_system->lockScreen();
 			if (blk) {
@@ -5501,17 +4680,8 @@ void EEMEngine::doAccuseFloppy() {
 						scene.surface.pitch, sx, sy, sw, sh);
 			}
 
-			// Partner sprite at (5, 0x50). The original keeps its
-			// `_NewAnimation` slot active across `_DisplayCorrect`'s
-			// `_BuildBackground_Floppy`, so `_UpdateAnimations` keeps
-			// re-stamping the partner over the fresh BG. We don't have
-			// a slot system, so manually bake the resting frame into
-			// the BG before the recap kicks off — `displayFloppyDialog
-			// Records` snapshots the screen on entry and the partner
-			// stays visible across every chain record. Without this
-			// the win sequence ends up partner-less. Anim 2 (Jake) /
-			// 0x10 (Jenny), script key 0x02 — same as the gallery
-			// picker and the CD accuse path (ui.cpp:4177).
+			// Stamp partner at (5, 0x50); displayFloppyDialogRecords
+			// snapshots screen. ANI 2/0x10, script 0x02.
 			const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 			Animation partnerAni;
 			if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
@@ -5529,22 +4699,12 @@ void EEMEngine::doAccuseFloppy() {
 			g_system->updateScreen();
 		}
 
-		// Win music — TRAVEL-2.XMI (`2608:0c84`, played via
-		// `_MIDIPlayFile` at `_DisplayCorrect_Floppy @ 1d40:08c0`).
-		// The CD path uses internal MUS index 5; the floppy plays the
-		// XMI directly by filename. `_voiceOn` (= `DAT_28da_3050`) is
-		// the gate the original checks first.
+		// TRAVEL-2.XMI @ 2608:0c84 (`_MIDIPlayFile` @ 1d40:08c0).
 		if (_music && _voiceOn)
 			_music->playFile(Common::Path("travel-2.xmi"), false);
 
-		// Walk the solved-clue chain. Header[+0x12] points at a
-		// `count` byte followed by `count` dialog records (same layout
-		// as hotspot dialogs). When only three records remain, the
-		// original clears animation slots and calls
-		// `_PlayTitleANM_Floppy(0)`. The title helper's file table maps
-		// index 0 to `SCRAPBK.ANI` and index 1 to `TITLE.ANM`, so this
-		// is the same scrapbook flip transition used by the CD win flow,
-		// just inserted before the last three floppy recap records.
+		// Walk solved chain (header[+0x12]: count byte + dialog records).
+		// SCRAPBK.ANI fires when 3 records remain (`_PlayTitleANM_Floppy(0)`).
 		const byte *chain = _mystery.solvedClueBlock();
 		if (chain) {
 			const uint count = chain[0];
@@ -5571,23 +4731,11 @@ void EEMEngine::doAccuseFloppy() {
 		if (_music && _voiceOn)
 			_music->stop();
 
-		// Mark mystery solved with first-try bonus tracking.
-		// `_DisplayCorrect_Floppy @ 1d40:0939`:
-		//   ((u16 *)0x3054)[mysteryNum] = 1;
-		//   if (DAT_28da_35df != 0)
-		//       ((u16 *)0x3054)[iVar5] = 2;
-		// `DAT_28da_35df` is `_firstTry`; it starts at 1 on
-		// `_ReadMystery_Floppy` and is cleared to 0 by
-		// `_DisplayAlibi_Floppy` on a wrong accusation. So 2 = won on
-		// first try, 1 = won after at least one alibi.
+		// 1d40:0939 — solved[mn] = _firstTry ? 2 : 1.
 		if (mn < sizeof(_mysteriesSolved))
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 
-		// Tier-promotion check. `_DisplayCorrect_Floppy @
-		// 1d40:0941..0978` walks the current tier's mystery range and
-		// advances `DAT_28da_3052` (= `_chainStage`) when every entry
-		// is non-zero. Skip mystery 0 (practice case) per the
-		// `if (DAT_2608_149c != 0)` guard at 1d40:093f.
+		// Tier promotion @ 1d40:0941..0978. Skip mystery 0 (practice).
 		if (mn != 0) {
 			uint lo = 0, hi = 0;
 			switch (_chainStage) {
@@ -5610,10 +4758,8 @@ void EEMEngine::doAccuseFloppy() {
 			}
 		}
 
-		// `_DisplayCorrect_Floppy` sets `MakeSolvedSound` before the
-		// newly solved ending is shown. `FUN_1d40_05b7` reads byte 0 of
-		// `E<num>.BIN` and maps values 0..2 through the table at
-		// `2608:0c5e` to VOC slots 0x15, 0x16, 0x17.
+		// `MakeSolvedSound`. `FUN_1d40_05b7` maps E<num>.BIN byte 0 (0..2)
+		// via table @ 2608:0c5e to VOC slots 0x15/0x16/0x17.
 		if (_audio && _voiceOn) {
 			Common::File ending;
 			const Common::String fname =
@@ -5631,19 +4777,10 @@ void EEMEngine::doAccuseFloppy() {
 			}
 		}
 
-		// `_DisplayCorrect_Floppy @ 1d40:0991` calls
-		// `FUN_1ee2_06ac(mystery)`, whose body is just
-		// `FUN_1d40_05b7(mystery, 1)` plus font cleanup. That is the
-		// floppy ending/scrapbook viewer, and it receives the
-		// first-try badge state from the solved table entry above.
+		// 1d40:0991 → FUN_1ee2_06ac (= FUN_1d40_05b7 + font cleanup).
 		doShowEnding(mn);
 
-		// Persist progress before clearing the in-progress mystery.
-		// `_DisplayCorrect_Floppy @ 1d40:0982` calls
-		// `_SavePlayerRecord` then `FUN_22dc_0dbd` (which deletes the
-		// per-mystery save file via DOS int 21h). Order matters here
-		// for the same reason as the CD path — clear → save so the
-		// profile records `hasMystery=false`.
+		// 1d40:0982 _SavePlayerRecord. clear() before save.
 		_mystery._solvedPuzzle = true;
 		_mystery.clear();
 		(void)saveProfile(_playerName);
@@ -5651,25 +4788,12 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// Innocent — `_DisplayAlibi_Floppy @ 1d40:00df`:
-	//   1d40:00fb  _GetBackground(0x3e);
-	//   1d40:0103  _GetPicture(suspect.picID);
-	//   1d40:010c  _AddPicBackground(susp_pic, 0x82, 0x5a);
-	//   1d40:0125  _MIDIPlayFile("fanfare2.xmi");  // alibi sting
-	//   1d40:0145  alibi-balloon table at `2608:0c0a + first_char`
-	//                  (separate from the KD digit→balloon table at
-	//                  `2608:0c14` — yes, 0xc0a, NOT 0xc14, verified
-	//                  via the `*(char *)(*local_a + 0xc0a)` access).
-	//                  Default = `DAT_2608_0c3c` = 0x2c.
-	//   1d40:01a3  balloon centred:
-	//                  bx = (0x140 - balloon.w) / 2;
-	//                  by = (0x5a  - balloon.h) / 2;
-	//   1d40:01d5  WordWrap alibi text inside balloon, _WaitForClick.
-	//   1d40:01ee  KD reaction at KDTextIndex[+10] = slot 5
-	//                  (NOT slot 8 — slot 8 is the gallery prompt).
-	//                  Balloon at (0x21, (0x50 - h) / 2).
-	//   1d40:0247  _NextScreen = _LastScreen;
-	//   1d40:024b  _firstTry = 0;
+	// `_DisplayAlibi_Floppy @ 1d40:00df`:
+	//   BG 0x3e + suspect pic at (0x82, 0x5a); MIDI fanfare2.xmi.
+	//   Balloon table @ 2608:0c0a (default 0x2c). Centered:
+	//     bx = (0x140-w)/2, by = (0x5a-h)/2.
+	//   KD reaction @ KDTextIndex[+10] = slot 5; NextScreen = LastScreen;
+	//   _firstTry = 0.
 	const byte *susp = _mystery.floppySuspectEntry((uint)picked);
 	uint16 picId = 0;
 	uint16 alibiOff = 0xFFFF;
@@ -5678,8 +4802,7 @@ void EEMEngine::doAccuseFloppy() {
 		alibiOff = _mystery.alibiTextOffset((uint)picked);
 	}
 
-	// Alibi-screen MIDI sting (FANFARE2.XMI). `_MIDIPlayFile` is
-	// gated on `_voiceOn` (= `DAT_28da_3050`) in the original.
+	// FANFARE2.XMI alibi sting (`_MIDIPlayFile` gated on _voiceOn).
 	if (_music && _voiceOn)
 		_music->playFile(Common::Path("fanfare2.xmi"), false);
 
@@ -5699,18 +4822,12 @@ void EEMEngine::doAccuseFloppy() {
 							_playerName, _partner);
 	}
 
-	// Alibi balloon dispatch. The original reads the alibi-balloon
-	// table at `2608:0c0a + first_char` — a SEPARATE table from the
-	// KD-hint table at `2608:0c14`. For digits '0'..'9' the values at
-	// `2608:0c3a..0c43` are { 0x2a, 0x2b, 0x2c, 0x2d, 0xaa, 0xab,
-	// 0xac, 0xad, 0x09, 0x0a }; default (non-digit char) is
-	// `DAT_2608_0c3c` = 0x2c. The high-bit values (0xAA..0xAD) are
-	// `_GetBalloon`'s "mirrored" flag — the low 7 bits are the
-	// balloon idx, top bit flips horizontally.
+	// Alibi balloon table @ 2608:0c0a (NOT 0c14). Digits @ 2608:0c3a..0c43.
+	// Default 0x2c. High bit = mirror flag.
 	static const uint8 kFloppyAlibiBalloonByDigit[10] = {
 		0x2a, 0x2b, 0x2c, 0x2d, 0xaa, 0xab, 0xac, 0xad, 0x09, 0x0a
 	};
-	uint balloonRaw = 0x2c; // default `DAT_2608_0c3c`
+	uint balloonRaw = 0x2c; // DAT_2608_0c3c
 	if (!alibi.empty() && alibi[0] >= '0' && alibi[0] <= '9') {
 		balloonRaw = kFloppyAlibiBalloonByDigit[(int)(alibi[0] - '0')];
 		alibi.deleteChar(0);
@@ -5734,9 +4851,7 @@ void EEMEngine::doAccuseFloppy() {
 	Picture balloon;
 	const bool haveBalloon = _balloonArchive.size() > balloonIdx &&
 		_balloonArchive.loadEntry(balloonIdx, balloon);
-	// Centred per `_DisplayAlibi_Floppy @ 1d40:01a0`:
-	//   uVar2 = (0x140 - balloon.w) / 2;  // x
-	//   uVar3 = (0x5a  - balloon.h) / 2;  // y (anchor in top-half)
+	// Centered @ 1d40:01a0: x=(0x140-w)/2, y=(0x5a-h)/2.
 	int balloonX = 0x21;
 	int balloonY = 1;
 	if (haveBalloon) {
@@ -5745,10 +4860,7 @@ void EEMEngine::doAccuseFloppy() {
 		if (balloonX < 0) balloonX = 0;
 		if (balloonY < 0) balloonY = 0;
 		const byte transp = (byte)(balloon.flags >> 8);
-		// `_GetBalloon`'s mirror flag (high bit of the table value)
-		// flips the balloon horizontally — the original applies it
-		// inside the blit primitive; ScummVM's `transBlitFrom` exposes
-		// the same via its `flipped` argument.
+		// Mirror flag (high bit) flips balloon horizontally.
 		scene.transBlitFrom(balloon.surface,
 							Common::Point(balloonX, balloonY),
 							transp, flipBalloon);
@@ -5759,19 +4871,13 @@ void EEMEngine::doAccuseFloppy() {
 		_font.drawWordWrapped(&scene, balloonX + tx, balloonY + ty,
 							  MAX<int>(8, (int)tw), alibi, 0);
 	}
-	// The floppy original keeps the accuse partner animation slot alive
-	// across `_DisplayAlibi_Floppy` and restores the screen with active
-	// animations between alibi phases. Stamp the same resting frame here
-	// before the KD reaction helper snapshots the current screen.
+	// Stamp partner resting frame before KD reaction snapshots screen.
 	blitAccusePartner(scene, _aniArchive, _partner, g_system->getMillis());
 	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, 320, 200);
 	g_system->updateScreen();
 
-	// `_DisplayAlibi_Floppy` does NOT play any per-suspect VOC — the
-	// alibi table at `2608:0c5e` (3 bytes: 0x15, 0x16, 0x17) is
-	// referenced by the post-win scrapbook (`FUN_1d40_05b7`), not the
-	// alibi screen. The MIDI sting we kicked off above carries the
-	// audio.
+	// No per-suspect VOC — alibi table @ 2608:0c5e is for post-win
+	// scrapbook (`FUN_1d40_05b7`), not alibi.
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -5791,12 +4897,7 @@ void EEMEngine::doAccuseFloppy() {
 		g_system->delayMillis(10);
 	}
 
-	// Partner reaction — `KDTextIndex[+10]` is byte offset 10 = u16
-	// stride entry 5 (NOT 8). Verified at
-	// `_DisplayAlibi_Floppy @ 1d40:01ee`:
-	//   `iVar4 = MysteryOff + *(KDTextIndex + 10);`
-	// Our `showFloppyKDHint(slot)` reads `kdIdx + slot * 2`, so slot
-	// 5 is the right argument here.
+	// `_DisplayAlibi_Floppy @ 1d40:01ee` — KDTextIndex[+10] = slot 5.
 	showFloppyKDHint(5);
 	if (_music && _voiceOn)
 		_music->stop();
@@ -5810,20 +4911,8 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 								   int highlighted,
 								   Common::Array<Common::Rect> &slotRects,
 								   Common::Array<int> &slotSuspect) {
-	// Accuse-gallery redraw — formerly the `drawGallery` lambda inside
-	// `doAccuse`. Mirrors `_DoAccuseGallery @ 1df2:0a31` portrait grid:
-	// PIC 0x3f backdrop, suspect portraits at the 5 fixed slots
-	// (`kGallerySlots` in this file's anon namespace), and a 1-px
-	// outline (palette index 0xFE) around the highlighted slot.
-	//
-	// Partner sprite at (5, 0x50): the original `_DoAccuse @ 1df2:0bdd`
-	// registers `_NewAnimation(5, 0x50, partnerCells, script=2, prior=1)`
-	// (1df2:0c30) BEFORE calling `_DoAccuseGallery`, then `_DrawGallery`
-	// calls `_DrawActiveAnimations` (158f:00a3) which re-renders the
-	// slot every frame. Without an explicit blit here, our port's
-	// accuse screen comes out partner-less. Anim CELLS are 2 (Jake) /
-	// 0x10 (Jenny); SCRIPT key is 0x02 for both partners (matches the
-	// `CONCAT22(2, ...)` arg verified at 1df2:0c2e).
+	// `_DoAccuseGallery @ 1df2:0a31` portrait grid. PIC 0x3f + 5 slots.
+	// Partner (5, 0x50) ANI 2/0x10, script 0x02 (`_DoAccuse @ 1df2:0c30`).
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
@@ -5833,10 +4922,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 	if (haveAccuseBg)
 		scratch.simpleBlitFrom(accuseBg.surface);
 
-	// Partner sprite, drawn BEFORE portraits so the suspect grid
-	// covers it where they overlap (the gallery slots start at
-	// y=14 / y=90, partner is at y=0x50=80 — no overlap, so order
-	// is purely defensive).
+	// Partner drawn first; defensive (no slot overlap).
 	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
 	Animation partnerAni;
 	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
@@ -5856,8 +4942,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 		const uint8 phys = _mystery._newOrder[i];
 		if (phys >= 5)
 			continue;
-		// `_DrawGallery @ 158f:00b9` skips suspects whose
-		// `_InGallery[phys]` flag is 0 — that's the original gate.
+		// `_DrawGallery @ 158f:00b9` skip on `_InGallery[phys]==0`.
 		if (_mystery._inGallery[phys] == 0)
 			continue;
 		const GallerySlot &s = kGallerySlots[phys];
@@ -5894,11 +4979,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 		slotSuspect[i] = (int)i;
 	}
 
-	// Highlight indicator. The original moves the mouse cursor to the
-	// centre of the highlighted suspect via `_PutMouseInRect` (1df2:0b8e);
-	// we draw a 1-px outline in palette index 0xFE instead, which sits
-	// inside the marching-ants cycle range 0xF9..0xFE and is visible
-	// under any palette without warping the player's cursor.
+	// Highlight outline (original uses `_PutMouseInRect` @ 1df2:0b8e).
 	if (highlighted >= 0 && highlighted < (int)slotRects.size() &&
 		!slotRects[highlighted].isEmpty()) {
 		Common::Rect r = slotRects[highlighted];

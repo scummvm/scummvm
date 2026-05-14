@@ -30,20 +30,13 @@
 namespace EEM {
 
 /**
- * Decoder for the engine's full-screen difference animations.
- *
- * Used for `BOLT.ANM`, `TITLE.ANM`, `ANIM01.A` .. `ANIM20.A`. The format is
- * documented by Load_Sequence @ 2503:0006 / OpenDifferenceAnimation @ 2520:0337:
- *
- *   - 0x300 bytes : 6-bit VGA palette
- *   - u16        : frame count
- *   - 12 bytes   : header (height @ +2, width @ +4, rest unused)
- *   - frames*u16 : packed length per frame
- *   - per frame  : `lengths[i]` bytes of RLE-packed delta data
- *
- * Each packed frame is unpacked by the custom `_ASM_Decompress` RLE
- * (1000:0953) into the persistent `_buffer`; skip opcodes preserve pixels
- * from the previous frame, which is how the difference encoding works.
+ * Decoder for BOLT.ANM, TITLE.ANM, ANIM01.A..ANIM20.A. Format from
+ * Load_Sequence @ 2503:0006 / OpenDifferenceAnimation @ 2520:0337:
+ *   - 0x300 bytes: 6-bit VGA palette
+ *   - u16: frame count
+ *   - 12 bytes: header (height @ +2, width @ +4, rest unused)
+ *   - frames*u16: packed length per frame
+ *   - per frame: lengths[i] bytes of RLE delta data (asmDecompress).
  */
 class ANMDecoder {
 public:
@@ -89,11 +82,8 @@ private:
 	uint16 _nextFrameIdx = 0;
 };
 
-/**
- * Decompress a single frame's RLE payload in place. Mirrors _ASM_Decompress
- * @ 1000:0953 byte-for-byte. @p dst already holds the previous frame; skip
- * opcodes leave those pixels untouched.
- */
+/// _ASM_Decompress @ 1000:0953. dst holds the previous frame; skip opcodes
+/// leave those pixels untouched (difference encoding).
 void asmDecompress(const byte *src, uint srcSize, byte *dst, uint dstSize);
 
 } // End of namespace EEM

@@ -30,18 +30,13 @@
 
 namespace EEM {
 
-// Character → glyph translation table.
-//
-// FONT.FNT layout (verified by dumping glyph bitmaps):
-//   index 0..26  : ' ' .. ':' (punctuation, digits)
-//   index 27..32 : ';' '<' '=' '>' '?' '@'
-//   index 33..58 : UPPERCASE A..Z
-//   index 59..84 : lowercase a..z
-//
-// The CHR2FNT segment table at 29b6:0000 in the original maps both 'A'
-// and 'a' to the lowercase glyph (so the original engine renders all
-// text in lowercase). We route uppercase ASCII letters to the uppercase
-// glyph slots (33..58) for proper mixed-case rendering.
+// CHR2FNT @ 29b6:0000. FONT.FNT layout:
+//   0..26  : ' ' .. ':'
+//   27..32 : ';' '<' '=' '>' '?' '@'
+//   33..58 : A..Z
+//   59..84 : a..z
+// Original aliases uppercase to lowercase glyphs; we route uppercase
+// ASCII to slots 33..58 for mixed-case rendering.
 const byte kCharToGlyph[128] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -100,15 +95,10 @@ bool EEMFont::load(const Common::Path &path) {
 			_maxWidth = g.widthBits;
 	}
 
-	// `_LoadFont @ 1b03:0220` sets the line stride to the FIRST
-	// glyph's height (= the space character) — `DAT_28da_30ca =
-	// DAT_28da_30ce` (the first byte of glyph 0 = its height). Tall
-	// descender glyphs ('g', 'j', 'p', 'q', 'y') hang into the next
-	// row by design, which is how the original engine keeps balloon
-	// text dense enough to fit. Using `_maxHeight` (the descender-
-	// inflated value) added 2–3 px per line and made every multi-
-	// line bubble overflow its graphic vertically — verbatim user-
-	// reported "bubbles aren't large enough" symptom.
+	// _LoadFont @ 1b03:0220 sets line stride to the first glyph's
+	// height (DAT_28da_30ca = DAT_28da_30ce, space glyph height).
+	// Descenders ('g','j','p','q','y') intentionally overhang into
+	// the next row.
 	_lineHeight = !_glyphs.empty() ? _glyphs[0].height : _maxHeight;
 	if (_lineHeight == 0)
 		_lineHeight = _maxHeight;

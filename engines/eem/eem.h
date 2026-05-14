@@ -46,45 +46,36 @@ namespace EEM {
 class AudioPlayer;
 class MusicPlayer;
 
-/**
- * Screen IDs used by the original `_ScreenDriver` dispatch table at
- * 1a35:0e5e (and the fallback at 1a35:0e54). 14 entries total: each
- * one is a screen ID + a near function pointer at offset +0x1c. The
- * driver does `JMP word ptr CS:[BX + 0x1c]`, so handlers tail-call —
- * each one runs the screen and updates `_NextScreen` for the next
- * trip through the dispatcher.
- *
- * IDs and their handlers (verified from disassembly at 1a35:0dec..0e4f):
- *
- *   0  INIT_CLUES  → `_PreLoad` + `_DoInitClues`, sets _NextScreen=1
- *   1  MAP         → `_DoMapScreen` @ 20fe:120b (sets _NextScreen
- *                    inside; 3 = a site was clicked, 6 = setup, etc.)
- *   2  MAP         → same handler as 1 (alternate entry, used when
- *                    `_LastScreen == 2` to swap the briefcase anim)
- *   3  SITE        → `_DoSiteLoop` @ 168d:03f4
- *   4  NOTEBOOK    → `_DoNotebook` @ 161e:0500
- *   5  GALLERY     → `_DoGallery` @ 158f:065b
- *   6  SETUP       → `_DoSetup` @ 1f78:044e
- *   7  ACCUSE      → `_DoAccuse` @ 1df2:0bdd (win → 12, lose → last)
- *   8  PROFILE     → `screen8_handler` @ 1c33:1012; tail sets =9
- *   9  PARTNER     → `_DoChoosePartner` @ 1a35:0756; sets =0xc inside
- *   10 (0xa) CHOOSE_MYSTERY → `_DoChooseMystery` + `_CaseSelection`;
- *                    starts with _NextScreen=0 so a successful pick
- *                    falls through to INIT_CLUES.
- *   11 (0xb) TITLE  → floppy `_DoTitle_Floppy` plays TITLE.ANM, waits
- *                    for input, then writes =8. CD shows TITLE.ANM in
- *                    `_DoOpeningAnims`, so it usually never enters this
- *                    handler.
- *   12 (0xc) ACTION → `_ActionScreen` @ 1c33:195b — Choose A Mystery /
- *                    Practice Mystery / See ScrapBook 1..3. Action 1
- *                    sets =10 (CHOOSE_MYSTERY).
- *   0xFFFF SENTINEL → exit loop
- *
- * Screen-driver state writes verified via xrefs to `_NextScreen @
- * 2d5d:3f26`: `_DisplayCorrect` writes 0xc (winner returns to ACTION),
- * `_DisplayAlibi` writes `_LastScreen` (loser snaps back), and
- * `_DoSiteLoop` writes 1/3/4 plus 0xffff on ESC.
- */
+/// _ScreenDriver dispatch table @ 1a35:0e5e (fallback @ 1a35:0e54).
+/// 14 entries total: each is a screen ID + near fn ptr at +0x1c; driver
+/// tail-calls via `JMP word ptr CS:[BX + 0x1c]`. Handler bodies update
+/// _NextScreen before returning. Handlers @ 1a35:0dec..0e4f:
+///
+///   0  INIT_CLUES → `_PreLoad` + `_DoInitClues`, writes _NextScreen=1
+///   1  MAP        → `_DoMapScreen @ 20fe:120b` (writes 3=site clicked,
+///                   6=setup, 0xffff=quit)
+///   2  MAP_ALT    → same handler as 1 (used when `_LastScreen == 2` to
+///                   swap the briefcase anim)
+///   3  SITE       → `_DoSiteLoop @ 168d:03f4`
+///   4  NOTEBOOK   → `_DoNotebook @ 161e:0500`
+///   5  GALLERY    → `_DoGallery @ 158f:065b`
+///   6  SETUP      → `_DoSetup @ 1f78:044e`
+///   7  ACCUSE     → `_DoAccuse @ 1df2:0bdd` (win → 0xc, lose → _LastScreen)
+///   8  PROFILE    → `screen8_handler @ 1c33:1012`; tail sets =9
+///   9  PARTNER    → `_DoChoosePartner @ 1a35:0756`; sets =0xc inside
+///   0xa CHOOSE_MYSTERY → `_DoChooseMystery` + `_CaseSelection`; presets
+///                   _NextScreen=0 so a successful pick falls through to
+///                   INIT_CLUES
+///   0xb TITLE     → floppy `_DoTitle_Floppy` plays TITLE.ANM, writes =8.
+///                   CD shows TITLE.ANM in `_DoOpeningAnims`, so this
+///                   handler is usually unused there.
+///   0xc ACTION    → `_ActionScreen @ 1c33:195b` — Choose A Mystery /
+///                   Practice / See ScrapBook 1..3. Action 1 sets =0xa.
+///   0xFFFF SENTINEL → exit loop
+///
+/// State writes (via xrefs to `_NextScreen @ 2d5d:3f26`): `_DisplayCorrect`
+/// writes 0xc, `_DisplayAlibi` writes `_LastScreen`, `_DoSiteLoop` writes
+/// 1/3/4 plus 0xffff on ESC.
 enum ScreenId {
 	kScreenInvalid        = 0xFFFF,
 	kScreenInitClues      = 0x00,
@@ -102,13 +93,12 @@ enum ScreenId {
 	kScreenAction         = 0x0C
 };
 
-/// Distribution variant. Selected at engine init from the
-/// `ADGameDescription::extra` field set by `gameDescriptions[]` in
-/// `detection.cpp`. Used to gate filename selection (TRAVEL-N.XMI
-/// vs MUS%05u.XMI, FANFARE2.XMI vs MUS00005.XMI, PHONESL.VOC vs
-/// PHONE.VOC), opening-anim flow (MOVIE.ANM vs ANIM01..20.A) and
-/// per-variant sound effects (DING.VOC / NEWSCAN.VOC only ship with
-/// the floppy release).
+/// Distribution variant from `ADGameDescription::extra` (set by
+/// `gameDescriptions[]` in `detection.cpp`). Gates filename selection
+/// (TRAVEL-N.XMI vs MUS%05u.XMI, FANFARE2.XMI vs MUS00005.XMI,
+/// PHONESL.VOC vs PHONE.VOC), opening-anim flow (MOVIE.ANM vs
+/// ANIM01..20.A), and per-variant SFX (DING.VOC / NEWSCAN.VOC ship only
+/// with floppy).
 enum Variant {
 	kVariantCD     = 0,
 	kVariantFloppy = 1,
@@ -130,53 +120,35 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
-	// Disable ScummVM's periodic autosave. The original engine's
-	// `screen8_handler @ 1c33:1012` builds the profile picker by
-	// walking every `*.PLR` file in the save dir, and we mirror that
-	// via `listProfiles() → MetaEngine::listSaves`. Letting the
-	// framework write a slot-0 autosave creates a phantom profile
-	// that shows up on the picker as a real save. Returning -1 tells
-	// the framework to skip autosave entirely.
+	// Autosave disabled: profile picker (screen8_handler @ 1c33:1012)
+	// lists `*.PLR` and a slot-0 autosave would appear as a profile.
 	int getAutosaveSlot() const override { return -1; }
 
-	// ScummVM extended-save hooks. The base `Engine::saveGameState` /
-	// `loadGameState` write/read the framework header (description,
-	// thumbnail, playtime, version) around our body via these
-	// streams. We keep all per-profile state in the body and only
-	// accept the current private body layout.
 	Common::Error saveGameStream(Common::WriteStream *stream,
 								  bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
-	// Per-profile save helpers. The original `_PlayerRecord` lives at
-	// `2d5d:3f6a` (159 bytes) and is written by `_SavePlayerRecord @
-	// 1c33:034f` to `C:\EEMCDSAV\<name>.PLR`. The DOS launcher screen
-	// `screen8_handler @ 1c33:1012` walks `*.PLR`, lets the player
-	// pick a profile, and calls `_LoadPlayerRecord`. We mirror the
-	// pattern by mapping each ScummVM save slot to one profile (slot
-	// description = player name) — same approach Wetlands uses.
+	// Per-profile saves: `_PlayerRecord` @ 2d5d:3f6a (159 bytes), written
+	// by `_SavePlayerRecord @ 1c33:034f` to `C:\EEMCDSAV\<name>.PLR`.
+	// Each save slot maps to one profile (slot description = the
+	// player name) — same approach Wetlands uses. `screen8_handler @
+	// 1c33:1012` walks `*.PLR`, lets the player pick a profile, and calls
+	// `_LoadPlayerRecord`.
 
-	/// Mirrors `_SavePlayerRecord @ 1c33:034f`. Saves into the slot
-	/// whose description matches @p name, or the lowest unused visible
-	/// slot if no match. Returns the kNoError on success.
+	/// `_SavePlayerRecord @ 1c33:034f`.
 	Common::Error saveProfile(const Common::String &name);
 
-	/// Mirrors `_LoadPlayerRecord @ 1c33:03a6`. Returns false if no
-	/// slot has @p name as its description.
+	/// `_LoadPlayerRecord @ 1c33:03a6`.
 	bool loadProfile(const Common::String &name);
 
-	/// Mirrors the `_findfirst("*.PLR")` walk inside
-	/// `screen8_handler`. Sorted by slot.
+	/// `_findfirst("*.PLR")` walk inside `screen8_handler`.
 	SaveStateList listProfiles() const;
 
 	const ADGameDescription *_gameDescription;
 	Variant _variant = kVariantCD;
 	Common::Language _language = Common::EN_ANY;
 
-	/// True for the Spanish floppy release. Used to swap hardcoded
-	/// English UI strings (menus, name prompt, notebook labels,
-	/// fallback hint copy) for their Spanish equivalents extracted
-	/// from EEM.EXE in `eem-full-game/floppy-es/`.
+	/// Spanish floppy release.
 	bool isSpanish() const { return _language == Common::ES_ESP; }
 
 	DBDArchive &getPics()    { return _picsArchive; }
@@ -188,156 +160,113 @@ public:
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
 
-	/// Switch to the red-outline cursor used to hint at interactive
-	/// regions that do not have their own original highlight art.
+	/// Red-outline cursor for interactive regions without original highlight art.
 	void setInteractiveMouseCursor(bool active);
 
-	/// Switch to the interactive cursor while the mouse is over a
-	/// searchable hotspot.
+	/// Interactive cursor over searchable hotspots.
 	void setHotspotMouseCursor(bool active);
 
-	/// Display one ClueBlock. @p clueBlock points at the u16 frame count
-	/// followed by 62-byte ClueEntries. Mirrors _DisplayClue @ 2404:05e6.
+	/// `_DisplayClue @ 2404:05e6`. @p clueBlock points at the u16 frame
+	/// count followed by 62-byte ClueEntries.
 	void displayClue(const byte *clueBlock);
 
-	/// Floppy hotspot click — locate the dialog records for the
-	/// clicked hotspot in the site's per-hotspot dialog list at
-	/// `site_data[+6]` and dispatch them through
-	/// `displayFloppyDialogRecords`. Mirrors `FUN_22dc_0b80 +
-	/// FUN_1652_00e6 + FUN_1652_006c`.
+	/// Floppy hotspot click. `FUN_22dc_0b80 + FUN_1652_00e6 + FUN_1652_006c`.
+	/// Locates dialog records in site_data[+6] and dispatches them.
 	void displayFloppyHotspotDialog(uint siteNum, uint hotIdx);
 
-	/// Active player name (saved as the profile-save description).
+	/// Active player name (= profile-save description).
 	const Common::String &playerName() const { return _playerName; }
 
-	/// Apply a single ClueEntry's side effects — notebook adds, gallery
-	/// updates, site flags. Called both by `displayClue` after a normal
-	/// click-through and when the player ESC-skips a multi-entry clue.
+	/// Apply a ClueEntry's side effects (notebook, gallery, site flags).
 	void applyClueSideEffects(const byte *entry);
 
-	/// Show clue/notebook screen. Mirrors `_DrawNotes` @ 161e:01d0.
+	/// `_DrawNotes @ 161e:01d0`.
 	void doNotebook();
 
-	/// Show suspect gallery. Mirrors `_DrawGallery` @ 158f:0046.
+	/// `_DrawGallery @ 158f:0046`.
 	void doGallery();
 
-	/// Suspect-detail view inside the gallery. Mirrors
-	/// `MoreInfo @ 158f:0419`: paints PIC 0x3f + suspect picture at
-	/// (0x94, 0x0f), paginates the suspect's found clues inside the
-	/// `_GalleryNoteRect`, and dispatches PDA bottom-bar buttons via
-	/// `_HandleMoreButton @ 158f:027d`. Sets `_nextScreen` and
-	/// returns true when the user picks a button that should exit
-	/// `doGallery` outright (NOTEBOOK / ACCUSE / MAP); returns false
-	/// for plain dismissal (ESC / GALLERY button) so the caller stays
-	/// on the portrait grid.
+	/// `MoreInfo @ 158f:0419`. Suspect-detail view inside the gallery; button
+	/// dispatch via `_HandleMoreButton @ 158f:027d`. Returns true if the
+	/// caller should exit `doGallery` (NOTEBOOK / ACCUSE / MAP).
 	bool moreInfo(const byte *gd, uint suspectIdx,
 				   const Picture &galBg, bool haveBg);
 
-	/// Show big map; click chooses next site. Mirrors `_DoBigMap` @ 20fe:09e7.
+	/// `_DoBigMap @ 20fe:09e7`.
 	void doBigMap();
 
-	/// Run the accuse flow (pick suspect, evaluate chains, show ending).
-	/// Mirrors `_DoAccuseGallery` @ 1df2:0a31 + `_DisplayEnding` @ 1df2:0548.
+	/// Accuse flow. `_DoAccuseGallery @ 1df2:0a31` + `_DisplayEnding @ 1df2:0548`.
 	void doAccuse();
 	void doAccuseFloppy();
 
-	/// Show the accuse-notes screen (PIC 0x1A7, the red "accuse-mode"
-	/// BG with selectable clue list + "N clues" remaining counter).
-	/// Mirrors the outer loop of `_DoAccuse @ 1df2:0bdd`. Returns
-	/// true if the player committed (selected the chain-required
-	/// number of clues and clicked SOLVE), false if they exited via
-	/// ESC / back. Called from `doAccuse` before the evidence gate.
+	/// Accuse-notes screen (PIC 0x1A7). Outer loop of `_DoAccuse @ 1df2:0bdd`.
+	/// Returns true if the player committed (SOLVE clicked), false on ESC.
 	bool doAccuseNotes();
 
-	/// Show a host hint from `KDTextIndex`. Mirrors `_KDHelp` @ 1560:010a +
-	/// `_DisplayHint` @ 1560:0009. Cycles between the two hint slots that
-	/// the original engine tracks via `_SawHelpHint`.
+	/// `_KDHelp @ 1560:010a` + `_DisplayHint @ 1560:0009`. Cycles two
+	/// hint slots tracked via `_SawHelpHint`.
 	void doHelp();
 
-	/// Display the interface-help picture sequence. Mirrors `_InterfaceHelp`
-	/// @ 1560:0205 — walks `HelpData @ 29be:00c8`, blits each pic fullscreen,
-	/// and waits for click / key (ESC ends the cycle).
+	/// `_InterfaceHelp @ 1560:0205`. Walks `HelpData @ 29be:00c8`.
 	void doInterfaceHelp(uint num = 0);
 
-	/// First-char-dispatch balloon picker. Mirrors `_GetKDTextBalloon @
-	/// 1df2:0105`. For digit first chars (0..9) returns balloon from the
-	/// table at `29be:1064`; for any other char returns the constant
-	/// `*(u16*)29be:1068 = 0x17`. The original branch is on Borland's
-	/// ctype-bit-1 (= digit) at `29be:2be1 + char`.
+	/// `_GetKDTextBalloon @ 1df2:0105`. Digits (0..9) → table @ 29be:1064;
+	/// otherwise `*(u16*)29be:1068 = 0x17`.
 	uint16 getKDTextBalloon(byte firstChar) const;
 
-	/// Cleanup for overly tall original speech balloons. Keeps the original
-	/// bubble family and mirror bit, but picks a shorter sibling when the
-	/// wrapped text leaves enough empty lines.
+	/// Pick a shorter balloon sibling when wrapped text leaves empty lines.
 	uint16 fitBalloonToText(uint16 bubNum, const Common::String &text);
 
-	/// Substitute the 0x80..0x89 control bytes the engine uses inside
-	/// `TextBlock` strings. Mirrors `_ParseString @ 1b66:07c3`; jump
-	/// table at 1b66:0cbe. Used by every clue / hint / balloon caller.
+	/// `_ParseString @ 1b66:07c3`. Substitutes 0x80..0x89 control bytes;
+	/// jump table @ 1b66:0cbe.
 	Common::String parseString(const Common::String &raw,
 							   const Common::String &playerName,
 							   uint partner) const;
 
-	/// Play the partner's one-shot reaction animation slot @num. Mirrors
-	/// `_DoKDAnim @ 168d:028a` + `_PlayAnimation @ 172b:1f46`. The
-	/// per-partner (animId, x, y) come from `_WaitAnims[1+num] @ 29be:0228`,
-	/// and the per-frame timing follows the sequence script that the
-	/// original would index at `_AnimationSequences[seqnum=animId]`. Used
-	/// by `displayClue` when a ClueEntry's KD-anim field (+0x3a) is set —
-	/// e.g. Jenny's "take a picture" gesture when the player searches an
-	/// NPC. Blocks until the script's first 0x80 marker.
+	/// `_DoKDAnim @ 168d:028a` + `_PlayAnimation @ 172b:1f46`. Per-partner
+	/// (animId, x, y) from `_WaitAnims[1+num] @ 29be:0228`. Blocks until
+	/// the script's first 0x80 marker.
 	void playKdAnim(uint16 num);
 
-	/// Provide a "clean" 320x200 backdrop for the next `playKdAnim` (and
-	/// any future blocking partner-anim playback) to use as the
+	/// Provide a "clean" 320x200 backdrop (site BG + static drops, no
+	/// NPCs / partner) for the next `playKdAnim` to use as the
 	/// background-erase source. Without this, the camera animation would
-	/// composite on top of the static partner sprite from the screen and
-	/// the previous resting frame would bleed through transparent pixels.
-	/// `SiteScreen` calls this with its `_bgSnapshot` (site BG + static
-	/// drops, no NPCs / partner) before invoking `displayClue` from a
-	/// hotspot click. Pass `nullptr` to clear.
+	/// composite on top of the static partner sprite and the previous
+	/// resting frame would bleed through transparent pixels. `SiteScreen`
+	/// passes its `_bgSnapshot` before `displayClue` from a hotspot click.
+	/// Pass `nullptr` to clear.
 	void setPartnerEraseBg(const Graphics::ManagedSurface *bg);
 
-	/// Look up balloon-text-inset metadata. Mirrors the 52-entry table at
-	/// `29be:0875` (CD) / `2608:05f9` (floppy), indexed by
-	/// `(bubNum & 0x7F)`. 10 bytes per entry; the first 3 fields
-	/// (x inset, y inset, text width) are used for text wrap, the last
-	/// 2 (indicator dX/dY) by `drawFloppyBubbleIndicator`. Returns
-	/// false if `bubNum` is outside the table.
+	/// Balloon-text-inset metadata. 52-entry table @ 29be:0875 (CD) /
+	/// 2608:05f9 (floppy), indexed by `(bubNum & 0x7F)`. 10 bytes per
+	/// entry: the first 3 fields (x inset, y inset, text width) are used
+	/// for text wrap; the last 2 (indicator dX/dY) by
+	/// `drawFloppyBubbleIndicator`. Returns false if `bubNum` is outside
+	/// the table.
 	bool getBalloonInsets(uint16 bubNum, uint16 &xInset, uint16 &yInset,
 						  uint16 &textW) const;
 	bool getBalloonIndicatorPos(uint16 bubNum, uint16 &dx,
 								 uint16 &dy) const;
 
-	/// Stamp the floppy "click to continue" indicator (PIC 0xa0 for
-	/// `endIndicator==false`, PIC 0xa1 otherwise) onto @p dst at the
-	/// position derived from the balloon-inset table. Mirrors
-	/// `FUN_22dc_05c8 @ 22dc:08aa` (mid-page) and `@ 22dc:08c0`
-	/// (end-of-record).
+	/// `FUN_22dc_05c8 @ 22dc:08aa` (mid-page) / `@ 22dc:08c0` (end).
+	/// PIC 0xa0 if !endIndicator else PIC 0xa1.
 	void drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
 								   uint16 bubNum, int ballX, int ballY,
 								   bool endIndicator);
 
-	/// "Are you sure?" yes/no dialog. Mirrors `_AreYouSure` @ 1a35:0a5c.
-	/// Returns true if the user picked YES.
+	/// `_AreYouSure @ 1a35:0a5c`. Returns true on YES.
 	bool areYouSure();
 
 private:
 	void applyStartupTestOverrides();
 
-	/**
-	 * Central dispatch loop matching the original _ScreenDriver @ 1a35:0dc1.
-	 * Each iteration calls the screen handler that matches _nextScreen.
-	 * Handlers update _lastScreen / _nextScreen and return; the loop exits
-	 * when _nextScreen == kScreenInvalid.
-	 */
+	/// Central dispatch loop matching `_ScreenDriver @ 1a35:0dc1`. Each
+	/// iteration calls the handler that matches `_nextScreen`; handlers
+	/// update `_lastScreen` / `_nextScreen` and return. Loop exits when
+	/// `_nextScreen == kScreenInvalid`.
 	void screenDriver();
 
-	/// Re-render helpers used by the corresponding `doX()` modal screens.
-	/// Each replaces what would otherwise be a `[&]()` capture-everything
-	/// lambda inside the `doX()` body; called from the screen's redraw
-	/// triggers (input changes, frame ticks). The state these need is
-	/// passed via reference parameters or read off engine members.
+	/// Re-render helpers for the corresponding `doX()` modal screens.
 	void drawNotebookFrame(int &page);
 	void drawGalleryFrame(const byte *gd, uint8 numSuspects,
 						  Common::Array<Common::Rect> &slotRects,
@@ -352,34 +281,22 @@ private:
 						   Common::Array<Common::Rect> &slotRects,
 						   Common::Array<int> &slotSuspect);
 
-	/**
-	 * Open the five .DBD/.DBX archive pairs the way _InitGraphicsSystem
-	 * @ 172b:0145 does at boot.
-	 */
+	/// Open the five .DBD/.DBX archive pairs. `_InitGraphicsSystem @ 172b:0145`.
 	bool openArchives();
 
-	/** Slurp SITEPALS into @c _sitePals. Mirrors _ReadPalettes @ 172b:0d89. */
+	/// `_ReadPalettes @ 172b:0d89`. Slurps SITEPALS into `_sitePals`.
 	bool loadSitePalettes();
 
-	/**
-	 * Upload palette index @p num (one of 40 stored in SITEPALS) to the
-	 * screen, with the VGA-DAC 6-bit-to-8-bit shift. Mirrors _GetPalette
-	 * @ 172b:0e80 followed by _setmany @ 1000:0930.
-	 */
+	/// `_GetPalette @ 172b:0e80` + `_setmany @ 1000:0930`. Uploads one of
+	/// 40 SITEPALS palettes with the VGA-DAC 6→8 bit shift.
 	void setSitePalette(uint num);
 
-	/// Fill @p out (256 × 3 bytes) with the SITEPALS palette at index
-	/// @p num, expanded from VGA's 6-bit DAC range to 8-bit. Returns
-	/// false if the index is out of range. Used when callers need the
-	/// palette for fade-in (set black first, then fade) without
-	/// flashing the target on screen.
+	/// Fill @p out (256 × 3 bytes) with SITEPALS palette @p num, expanded
+	/// from 6-bit DAC to 8-bit. False if out of range.
 	bool getSitePalette(uint num, byte *out) const;
 
-	/**
-	 * Upload a 6-bit VGA palette read from the head of an .ANM file (the
-	 * first 0x300 bytes per Load_Sequence @ 2503:0006). Used until the
-	 * full title-page animation chain is wired in.
-	 */
+	/// Upload the 6-bit VGA palette from the head of an .ANM file
+	/// (first 0x300 bytes per `Load_Sequence @ 2503:0006`).
 	bool setAnmPalette(const Common::Path &anmPath);
 
 public:
@@ -387,256 +304,168 @@ public:
 	void setSitePaletteForSite(uint siteNum) { setSitePalette(siteNum + 1); }
 private:
 
-	/** Blit @p pic to @p x, @p y on screen. */
 	void blitAt(const Picture &pic, int x, int y);
 
-	/** Hold the current frame for up to @p maxMs or until the user inputs. */
 public:
 	void waitForInput(uint32 maxMs);
 private:
 
-	/**
-	 * Play a difference-encoded animation file (.ANM / .A) on the full
-	 * 320x200 screen. Mirrors the data flow of `OpenDifferenceAnimation`
-	 * @ 2520:0337 → `Load_Sequence` + `Play_Sequence`. Audio cues are
-	 * skipped for now. The default frame delay is 120 ms to match the
-	 * original FRAME_RATE = 0x78 used by `_DoOpeningAnims`.
-	 *
-	 * If @p holdLastFrame is true the call blocks on the final frame
-	 * until the user clicks or hits a key — used for the title screen.
-	 * If @p fadeIn is true the first decoded frame is copied while the
-	 * palette is black, then the animation palette is ramped in like
-	 * `_OpenFadeIn`.
-	 */
+	/// Play a difference-encoded animation file (.ANM / .A) on the full
+	/// 320x200 screen. Mirrors the data flow of `OpenDifferenceAnimation
+	/// @ 2520:0337` → `Load_Sequence` + `Play_Sequence`. Audio cues are
+	/// skipped for now. The default 120 ms frame delay matches the
+	/// original `FRAME_RATE = 0x78` used by `_DoOpeningAnims`.
+	/// If @p holdLastFrame is true the call blocks on the final frame
+	/// until the user clicks or hits a key — used for the title screen.
+	/// If @p fadeIn is true the first decoded frame is copied while the
+	/// palette is black, then ramped in like `_OpenFadeIn`.
 	void playAnm(const Common::Path &path, uint frameDelayMs = 120,
 				 bool holdLastFrame = false, bool fadeIn = false);
 
-	/// Stop every active audio channel — voice, sound spool, and
-	/// MIDI. Mirrors the `_CleanMysterySounds @ 202f:05a5` +
-	/// `_StopMIDI @ 20a2:0512` pair the original triggers when the
-	/// player aborts the opening-anim chain or dismisses the title
-	/// (`_DoOpeningAnims @ 2520:082a` writes `_LoopMIDI = 0;
-	/// _StopMIDI();` after the title-input loop, and
-	/// `_CleanMysterySounds` is called twice — once after the loop
-	/// and once before TITLE.ANM). Called from every ESC handler in
-	/// the intro / title chain so the theme music + voice spool
-	/// don't bleed past the abort.
-	/// Stop currently-playing voice / spooled SFX. Pass `stopMusic =
-	/// true` (the default — matches `_CleanMysterySounds + _StopMIDI`)
-	/// to also halt the MIDI track; conversation / dialog skip paths
-	/// pass `false` so the site / briefing music keeps going across an
-	/// ESC.
+	/// `_CleanMysterySounds @ 202f:05a5` + `_StopMIDI @ 20a2:0512`.
+	/// `stopMusicToo=false` keeps MIDI playing across dialog skips.
 	void interruptAudio(bool stopMusicToo = true);
 
-	// Screen handlers — port targets in screens/ later.
 	void showEAKidsLogo();
 	void showHighScoreLogo();
 	void showFloppyStormLogo();
 
-	/// Profile selector — mirrors `screen8_handler @ 1c33:1012`.
-	/// Walks `listProfiles()`, draws the list of existing profile
-	/// names plus a "[New Player]" entry, and either calls
-	/// `loadProfile(name)` on a click or falls through to
-	/// `doNewPlayer()` if the user picks "New". When no profiles
-	/// exist, behaves identically to `doNewPlayer()` (the original
-	/// also bypasses the picker when `local_20 == 0` — see
-	/// 1c33:1170: `if (saves == 0) _NewPlayer();`).
+	/// `screen8_handler @ 1c33:1012`. Profile selector — walks
+	/// `listProfiles()`, falls through to `doNewPlayer()` if "New" or
+	/// no profiles exist (1c33:1170: `if (saves == 0) _NewPlayer();`).
 	void doProfilePicker();
-	void doNewPlayer();          ///< Mirrors `_NewPlayer` @ 1c33:0dda
+	void doNewPlayer();          ///< `_NewPlayer @ 1c33:0dda`.
 	void doChoosePartner();
 
-	/// Display the per-mystery ending pages from `E<num>.BIN`.
-	/// Mirrors `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage
-	/// @ 1df2:044c`. The file format is a 2-byte page count followed
-	/// by N pages, each `{ u16 picNum, u16 x1, u16 y1, u16 x2, u16 y2,
-	/// char text[] (null-terminated, ParseString placeholders) }`.
-	/// Blocks until the player exits the ending view or crosses either
-	/// page boundary.
+	/// Display the per-mystery ending pages from `E<num>.BIN`. Mirrors
+	/// `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @ 1df2:044c`.
+	/// File format: u16 page count, then N pages of
+	/// `{ u16 picNum, u16 x1, u16 y1, u16 x2, u16 y2,
+	///    char text[] (null-terminated, ParseString placeholders) }`.
 	/// `_ShowOneScrap @ 1f78:0773` is just `_DisplayEnding(num, 1)`,
-	/// so this same call covers the post-mystery scrapbook view from
-	/// the action menu.
-	///
-	/// `firstPage=true` opens at page 0; `false` opens at the last
-	/// page (used by `doShowScrapbook` when navigating backwards
-	/// between mysteries — mirrors the `local_8 = 0` write at
-	/// `_ShowScrapbook @ 1f78:067e`).
-	///
-	/// Returns the direction the user wants the caller to navigate:
-	///   -1 → previous mystery (LEFT pressed on the first page or
-	///        click in `PrevPageRect` while on first page),
-	///    0 → exit the scrapbook (ESC / quit; central clicks are ignored),
+	/// so this call also covers the post-mystery scrapbook view.
+	/// `firstPage=true` opens at page 0; `false` opens at the last page
+	/// (back-nav from `doShowScrapbook`, mirrors the `local_8 = 0` write
+	/// at `_ShowScrapbook @ 1f78:067e`).
+	/// Returns the caller's nav direction (per `[BP-0x18]` @ 1df2:0723):
+	///   -1 → previous mystery (LEFT on first page or click in PrevPageRect),
+	///    0 → exit scrapbook (ESC / quit),
 	///   +1 → next mystery (RIGHT/SPACE/Enter/click on last page).
-	/// Mirrors `_DisplayEnding`'s `[BP-0x18]` return at 1df2:0723.
 	int doShowEnding(uint num, bool firstPage = true);
 
-	/// Browse the scrapbook tier @p stage (1=Junior, 2=Senior,
-	/// 3=Master), moving between mystery endings with the original
-	/// `_DisplayEnding` return direction.
-	/// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`: the original
-	/// computes the mystery range from `(stage - 1) * 0x18 + 1` to
-	/// `(stage - 1) * 0x18 + 0x18`. If this is the current chain stage,
-	/// unsolved entries are skipped; completed tiers are already solved.
-	/// Used by both the setup-screen ScrapBook buttons and the
-	/// action-menu "See ScrapBook 1/2/3" entries.
+	/// `_ShowScrapbook(stage, 0) @ 1f78:0642`. Mystery range
+	/// `(stage-1)*0x18+1 .. (stage-1)*0x18+0x18`; skips unsolved
+	/// entries in the current chain stage.
 	void doShowScrapbook(uint stage);
 
 	void doActionScreen();
 	void doCaseSelection();
 	void doSiteLoop();
 
-	/// Setup / preferences screen. Mirrors `_DoSetup @ 1f78:044e` —
-	/// per-profile preferences (voice on/off via `DAT_2d5d_3f97`,
-	/// partner pick via SwapColors on Kid1/Kid2 rects). Reachable
-	/// from BigMap's setup button (sets `_NextScreen = 6` per
-	/// `_DoBigMap @ 20fe:0c33`). Returns to whatever
-	/// `_lastScreen` was — typically MAP.
+	/// `_DoSetup @ 1f78:044e`. Voice on/off (`DAT_2d5d_3f97`), partner
+	/// pick via SwapColors on Kid1/Kid2 rects.
 	void doSetup();
 
-	/// Render the case briefing background + game/book decorations and
-	/// display the briefing ClueBlock. Mirrors `_DoInitClues` @ 1a35:0411
-	/// minus the live ANI sequence playback.
+	/// `_DoInitClues @ 1a35:0411` (minus live ANI sequence playback).
 	void doInitClues();
 
-	/// Floppy variant of the briefing dialog renderer. Walks the dialog
-	/// record list at the tail of the floppy InitBlock (per
-	/// `FUN_19bb_042f` and `FUN_22dc_05c8 @ 22dc:05c8`) and renders one
-	/// speech balloon per record. Each record is `11 + textCount` bytes:
-	///   +0..1  picID (character portrait, 0 = none)
-	///   +2..3  picX
-	///   +4     picY
-	///   +5     balloonId | (mirror_flag << 7)
-	///   +6..7  balloonX
-	///   +8     balloonY
-	///   +9     soundFlag (high bit) | sound slot (low 7 bits)
-	///   +10    textCount
-	///   +11..  text indices (1 byte each, low 7 bits = NOTES idx)
+	/// Floppy briefing dialog renderer. Walks the dialog record list at
+	/// the tail of the floppy InitBlock (`FUN_19bb_042f`, `FUN_22dc_05c8
+	/// @ 22dc:05c8`). Record = 11 + textCount bytes:
+	///   +0..1 picID  +2..3 picX  +4 picY
+	///   +5 balloonId|(mirror<<7)  +6..7 balloonX  +8 balloonY
+	///   +9 soundFlag|slot  +10 textCount  +11.. text indices
 	void displayFloppyBriefing(const byte *initBlock);
 
-	/// Render `count` consecutive floppy dialog records starting at
-	/// `rec`. Shared between briefing and hotspot click handlers since
-	/// the original engine uses the same `FUN_22dc_05c8 @ 22dc:05c8`
-	/// renderer in both contexts. `lastIndicator` is the `param_2`
-	/// equivalent for the LAST record in the batch — 0 = no
-	/// indicator, 1 = PIC 0xa0 (red "more" arrow), 2 = PIC 0xa1
-	/// (alternate end indicator). Records before the last always get
-	/// PIC 0xa0.
+	/// `FUN_22dc_05c8 @ 22dc:05c8`. Renders `count` floppy dialog records.
+	/// `lastIndicator`: 0 = none, 1 = PIC 0xa0, 2 = PIC 0xa1 (records
+	/// before the last always get PIC 0xa0).
 	void displayFloppyDialogRecords(const byte *rec, uint count,
 									 uint lastIndicator = 0);
 
 public:
-	/// Mirrors `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI`
-	/// based on `_mystery._siteNumber % 5` and starts it one-shot. The
-	/// site loop calls this each time `enter(siteNum)` runs so the
-	/// music changes as the player travels between sites.
+	/// `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI` from
+	/// `_mystery._siteNumber % 5`, one-shot.
 	void startTravelMusic();
 
-	/// Block until the current MIDI cue finishes or the player skips it,
-	/// then stop/unload it. Mirrors the `_IsMIDIPlaying` spin +
-	/// `_StopMIDI` cleanup in `_DoSiteLoop` after the CD travel cue.
+	/// `_IsMIDIPlaying` spin + `_StopMIDI` cleanup in `_DoSiteLoop`.
 	void waitForMusicDone(uint32 maxMs = 60000);
 
-	/// Stop any currently playing MIDI track. Mirrors `_StopMIDI @
-	/// 20a2:0512` — used by `_DoSiteLoop @ 168d:06c0` after the
-	/// one-shot travel track plays out and by `_DisplayCorrect /
-	/// _DisplayAlibi` between MIDI cues.
+	/// `_StopMIDI @ 20a2:0512`.
 	void stopMusic();
 
-	/// Forwarded from `Engine::syncSoundSettings`. Re-pulls the user's
-	/// `music_volume` slider into the MIDI player's `_masterVolume`,
-	/// otherwise the AdLib output stays at whatever the slider was at
-	/// the moment `_music` was constructed (and the live launcher
-	/// changes to the volume slider have no effect).
+	/// `Engine::syncSoundSettings` override. Re-pulls `music_volume`
+	/// into the MIDI player's `_masterVolume`.
 	void syncSoundSettings() override;
 private:
 
-	Common::String _playerName;  ///< Substituted into 0x80 placeholders
+	Common::String _playerName;  ///< Substituted into 0x80 placeholders.
 
-	/// Per-mystery solved state. 0 = unsolved, 1 = solved, 2 = solved
-	/// on first try. Mirrors `_PlayerRecord.SolvedMysteries[55]` in the
-	/// original `_DisplayCorrect` flow.
+	/// `_PlayerRecord.SolvedMysteries[55]`. 0=unsolved, 1=solved, 2=first-try.
 	uint8 _mysteriesSolved[55] = {};
 
-	/// Current chain/tier the player is at — mirrors `DAT_2d5d_3f99`
+	/// Current chain/tier the player is at — `DAT_2d5d_3f99`
 	/// (`_PlayerRecord +0x2f`):
-	///   1 = Junior detective  (mysteries  1 .. 24, "A chain")
-	///   2 = Senior detective  (mysteries 25 .. 48, "B chain")
-	///   3 = Master detective  (mysteries 49 .. 54, "C chain")
-	/// Initialized to 1 in `_NewPlayer @ 1c33:0fa3` and bumped by
+	///   1 = Junior detective  (mysteries  1..24, "A chain")
+	///   2 = Senior detective  (mysteries 25..48, "B chain")
+	///   3 = Master detective  (mysteries 49..54, "C chain")
+	/// Initialized to 1 in `_NewPlayer @ 1c33:0fa3`; bumped by
 	/// `_DisplayCorrect @ 1df2:0853` once every mystery in the current
-	/// tier is solved (range checks at 1df2:080d / 0824 / 0837). The
-	/// value also gates `_CaseSelection`'s book label and selection
-	/// list (1c33:0a87 onwards).
+	/// tier is solved (range checks @ 1df2:080d / 0824 / 0837). Also
+	/// gates `_CaseSelection`'s book label and selection list
+	/// (1c33:0a87 onwards).
 	uint8 _chainStage = 1;
 
-	/// Voice / digital-audio enable flag. Mirrors `DAT_2d5d_3f97`
-	/// (`_PlayerRecord +0x2d`). Set to 1 by `_NewPlayer @ 1c33:0fa3`,
-	/// toggled by the SoundOn / SoundOff hot-rects in `_DoSetup @
-	/// 1f78:044e` (verified at `_SetupSettings` 1f78:0076 reading
-	/// the same byte to colour the on/off labels). Gates every
-	/// `_PlayVoice` and `_SpoolSound` call site (clue voices,
-	/// partner speech, intro VO etc. — see `_DoChoosePartner`,
-	/// `_DisplayClue`, `_SayKDDigital` xrefs).
+	/// Voice / digital-audio enable flag. `DAT_2d5d_3f97` (`_PlayerRecord
+	/// +0x2d`). Set to 1 by `_NewPlayer @ 1c33:0fa3`, toggled by the
+	/// SoundOn / SoundOff hot-rects in `_DoSetup @ 1f78:044e`. Gates
+	/// every `_PlayVoice` / `_SpoolSound` call site (clue voices,
+	/// partner speech, intro VO).
 	bool _voiceOn = true;
 
 	Common::RandomSource _rng;
 
-	DBDArchive _picsArchive;     ///< PICS.DBD/.DBX (sprites, buttons, frame backgrounds)
-	DBDArchive _aniArchive;      ///< ANI.DBD/.DBX (multi-frame character animations)
-	DBDArchive _sitesArchive;    ///< SITES.DBD/.DBX (one full-screen scene per site)
-	DBDArchive _balloonArchive;  ///< BALLOON.DBD/.DBX (speech-balloon sprites)
-	DBDArchive _buttonArchive;   ///< BUTTON.DBD/.DBX (per-site labeled map buttons; `_GetButton`)
-	Mystery    _mystery;         ///< Currently-loaded case file (M<n>.BIN)
-	EEMFont    _font;            ///< FONT.FNT - main 8 px font
+	DBDArchive _picsArchive;     ///< PICS.DBD/.DBX
+	DBDArchive _aniArchive;      ///< ANI.DBD/.DBX
+	DBDArchive _sitesArchive;    ///< SITES.DBD/.DBX
+	DBDArchive _balloonArchive;  ///< BALLOON.DBD/.DBX
+	DBDArchive _buttonArchive;   ///< BUTTON.DBD/.DBX (`_GetButton`)
+	Mystery    _mystery;         ///< M<n>.BIN
+	EEMFont    _font;            ///< FONT.FNT (8 px)
 
-	Common::Array<byte> _sitePals; ///< 40 x 768 bytes of 6-bit VGA palettes
+	Common::Array<byte> _sitePals; ///< 40 × 768 bytes, 6-bit VGA.
 
-	uint16 _lastScreen;  ///< Mirrors _LastScreen @ 2d5d:3f24
-	uint16 _nextScreen;  ///< Mirrors _NextScreen @ 2d5d:3f26
-	uint8  _partner;     ///< Mirrors _Partner: 0 = boy (Jake), 1 = girl (Jenny)
+	uint16 _lastScreen;  ///< `_LastScreen @ 2d5d:3f24`.
+	uint16 _nextScreen;  ///< `_NextScreen @ 2d5d:3f26`.
+	uint8  _partner;     ///< `_Partner`: 0=Jake, 1=Jenny.
 
-	/// Set when ESC is pressed during an intro animation or logo. Tells
-	/// the opening-anim loop in run() to skip the rest of the chain
-	/// instead of asking the user to click through every screen.
+	/// ESC during intro: skip remaining opening-anim chain.
 	bool _skipIntro = false;
 
-	/// Per-slot rectangles + clue IDs from the most recent notebook
-	/// render, populated by the `draw` lambda inside `doNotebook` and
-	/// consumed by the click handler. The original walks the notes
-	/// inline; we cache the layout to keep click hit-testing simple.
+	/// Cached notebook slot rects + clue IDs for click hit-testing.
 	Common::Array<Common::Rect> _notebookSlotRects;
 	Common::Array<uint>         _notebookSlotClues;
 
-	/// Optional clean BG (no partner / NPC sprites) used by `playKdAnim`
-	/// to erase the partner's resting frame between camera-anim cells.
-	/// Empty when no caller has provided one (PDA / case briefing /
-	/// accuse contexts use their own composed backdrops). See
-	/// `setPartnerEraseBg`.
+	/// Clean BG (no partner/NPC) used by `playKdAnim` between camera-anim
+	/// cells. See `setPartnerEraseBg`.
 	Graphics::ManagedSurface _partnerEraseBg;
 
 	bool _interactiveMouseCursor = false;
 
-	/// Site whose entrance animation has already played in the current
-	/// mystery. Kept on the engine, not SiteScreen, because PDA/gallery
-	/// screens destroy and recreate SiteScreen when returning to the site.
+	/// Site whose entrance animation has already played this mystery.
+	/// Lives on the engine because PDA/gallery destroys+recreates SiteScreen.
 	int _lastSiteArrivalAnim = -1;
 
-	/// XMIDI music player. Mirrors the original `MIDI.C` family
-	/// (`_MIDIPlayFile`, `_MIDIPlay`, `_StopMIDI`, `_StartTravelMusic`
-	/// at 20a2:00e2-05c9). Constructed lazily during `run()` once the
-	/// MIDI driver / timer system is up.
+	/// `MIDI.C` family (`_MIDIPlayFile`/`_MIDIPlay`/`_StopMIDI`/
+	/// `_StartTravelMusic` @ 20a2:00e2-05c9). Constructed lazily in `run()`.
 	MusicPlayer *_music = nullptr;
 
-	/// Digitised audio (voice + SFX). Mirrors `SOUND.C` / `SPOOLSND.C`
-	/// — VOC playback (`_PlayVoice @ 1ff1:023e`) and the per-mystery
-	/// SDB spool (`_SpoolSound @ 202f:068d` / `_InitMysterySounds @
-	/// 202f:05cb`). Constructed alongside `_music` in `run()`.
+	/// `SOUND.C` / `SPOOLSND.C`. `_PlayVoice @ 1ff1:023e`,
+	/// `_SpoolSound @ 202f:068d`, `_InitMysterySounds @ 202f:05cb`.
 public:
 	AudioPlayer *_audio = nullptr;
 
-	/// Public setter for `_nextScreen` so site loop / inline screens
-	/// can drive the screen-driver state machine without making the
-	/// member itself public. Mirrors the original's direct write to
-	/// `_NextScreen @ 2d5d:3f26` from anywhere in the engine.
+	/// `_NextScreen @ 2d5d:3f26` writer for site loop / inline screens.
 	void setNextScreen(ScreenId s) { _nextScreen = s; }
 	bool shouldPlaySiteArrival(uint siteNum) const {
 		return _lastSiteArrivalAnim != (int)siteNum;

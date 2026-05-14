@@ -53,7 +53,7 @@ bool DBDArchive::open(const Common::Path &dbdName, const Common::Path &dbxName) 
 		return false;
 	}
 
-	// _InitGraphicsSystem @ 172b:0145 reads 10 bytes per entry until EOF.
+	// _InitGraphicsSystem @ 172b:0145: 10-byte entries until EOF.
 	const int32 dbxSize = dbx.size();
 	_index.reserve(dbxSize / 10);
 	while (dbx.pos() + 10 <= dbxSize) {
@@ -76,10 +76,8 @@ void DBDArchive::close() {
 	_index.clear();
 }
 
-/**
- * Read one 12-byte frame header + payload at the current stream position.
- * Shared between picture and animation loaders since the layout is the same.
- */
+/// Read one 12-byte frame header + payload at the current stream position.
+/// Shared between picture and animation loaders since the layout is identical.
 bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out) {
 	out.flags             = stream.readUint16LE();
 	const uint16 height   = stream.readUint16LE();
@@ -116,11 +114,10 @@ bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out
 bool DBDArchive::loadEntry(uint num, Picture &out) {
 	if (num >= _index.size()) {
 		// Out-of-range picture IDs are non-fatal — every caller already
-		// checks the return value (e.g., `haveDone`/`haveCrime` in
-		// `drawBigMapOverview`). The floppy's PICS.DBD ships fewer
-		// entries than the CD (e.g., the BigMap done-marker `0x20D` is
-		// CD-only), so this fires routinely on floppy and shouldn't
-		// be a `warning`.
+		// checks the return value (e.g. `haveDone` / `haveCrime` in
+		// `drawBigMapOverview`). Floppy PICS.DBD ships fewer entries than
+		// CD (e.g. BigMap done-marker 0x20D is CD-only), so this fires
+		// routinely on floppy and stays at debug level rather than warning.
 		debugC(2, kDebugGfx,
 			   "DBDArchive::loadEntry: %u out of range (max %u)",
 			   num, (uint)_index.size());
@@ -133,8 +130,7 @@ bool DBDArchive::loadEntry(uint num, Picture &out) {
 		return false;
 	}
 
-	// Mirrors _GetFromDB @ 172b:105d. The 2-byte word read first matches
-	// loadAnimation's frame-count read; for picture entries it is always 1.
+	// _GetFromDB @ 172b:105d. Leading u16 = frame count (always 1 for pictures).
 	(void)_dbd.readUint16LE();
 	return readFrame(_dbd, entry.compressed != 0, out);
 }
@@ -151,7 +147,7 @@ bool DBDArchive::loadAnimation(uint num, Animation &out) {
 		return false;
 	}
 
-	// Mirrors _GetAnimation @ 172b:163a: u16 frame count, then N frames.
+	// _GetAnimation @ 172b:163a: u16 frame count, then N frames.
 	const uint16 frameCount = _dbd.readUint16LE();
 	if (frameCount == 0 || frameCount > 256) {
 		warning("DBDArchive::loadAnimation: %u has implausible frame count %u",

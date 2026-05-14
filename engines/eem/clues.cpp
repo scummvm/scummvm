@@ -35,30 +35,25 @@
 #include "eem/eem.h"
 #include "eem/site.h"
 
-// EEM — clue / briefing pipeline (SCRIPT.C clue parts + KD.C briefing parts).
-// Everything that drives a `ClueBlock` through the displayClue / portrait /
-// balloon / notebook-side-effect flow plus the case-briefing intro that
-// preambles into the same flow.
+// Clue / briefing pipeline (SCRIPT.C + KD.C).
 
 namespace EEM {
 
-// Picture / animation IDs verified against `_DoChoosePartner @ 1a35:0756`.
-// `const` at namespace scope already implies internal linkage in C++,
-// so no `static` needed.
-const uint kPicChooseBackground = 0x8c; ///< `_GetBackground(0x8c)`
-const uint kAniBoy  = 8;                 ///< `_GetAnimation(8)` (Jake)
-const uint kAniGirl = 9;                 ///< `_GetAnimation(9)` (Jenny)
+// _DoChoosePartner @ 1a35:0756.
+const uint kPicChooseBackground = 0x8c; // _GetBackground(0x8c)
+const uint kAniBoy  = 8;                // Jake
+const uint kAniGirl = 9;                // Jenny
 
-// `_DoHappiness @ 172b:27b5`: cursor X picks one of 4 rects; past
-// rect 3 is treated as level 4. Verbatim from `29be:030f`.
+// _DoHappiness @ 172b:27b5 — cursor X picks one of 4 rects @ 29be:030f.
+// Past rect 3 = level 4.
 const Common::Rect kHappyZones[4] = {
-	Common::Rect(  0, 0,  70, 200), // far left  — girl very happy, boy neutral
+	Common::Rect(  0, 0,  70, 200), // far left — girl very happy, boy neutral
 	Common::Rect( 70, 0, 126, 200), // girl's column
 	Common::Rect(126, 0, 182, 200), // middle
 	Common::Rect(182, 0, 235, 200), // boy's column
 };
 
-// On-screen positions verified from `_NewAnimation` calls @ 1a35:07b9 / 07d5.
+// _NewAnimation positions @ 1a35:07b9 / 07d5.
 const int kBoyX  = 0xe2; // 226
 const int kBoyY  = 0x62; // 98
 const int kGirlX = 0x42; // 66
@@ -87,11 +82,9 @@ uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock) {
 	return marked;
 }
 
-// `_DoHappiness @ 172b:27b5`: each cursor zone swaps the partner's
-// sequence script to a more / less "happy" cycle. Boy seqs lifted
-// verbatim from `29be:0337` (5 × 0x14 bytes), girl seqs from
-// `29be:039b`. Both cycle through 9 frames (the boy/girl anim cells
-// contain 10 cells = pairs of "neutral, smile" at increasing intensity).
+// _DoHappiness @ 172b:27b5 — per-zone sequence scripts.
+// Boy seqs @ 29be:0337 (5 × 0x14 bytes), girl seqs @ 29be:039b. 9 frames each;
+// the anim cells contain 10 cells = pairs of (neutral, smile) at 5 intensities.
 const uint8 kBoySeqs[5][9] = {
 	{ 0,0,0,0,0,0,0,1,0 }, // level 0
 	{ 2,2,2,2,2,2,2,3,2 }, // level 1
@@ -115,9 +108,10 @@ uint happinessLevel(int x) {
 	return 4; // past zone 3 → max level
 }
 
-// Lock the framebuffer, masked-blit `p` at (x, y), unlock. The transparent
-// colour is the high byte of `p.flags`; `_AddPicBackground @ 172b:0ed4`
-// pushes `word ptr ES:[BX] >> 8` as `_Rect_Move_Mask`'s mask byte.
+// Masked blit: transparent colour = high byte of p.flags.
+// _AddPicBackground @ 172b:0ed4 pushes `word ptr ES:[BX] >> 8` as
+// _Rect_Move_Mask's mask byte (the on-disk u16 at file offset 0 maps to
+// Picture::flags).
 void blitMaskedToScreen(const Picture &p, int x, int y) {
 	const byte transp = (byte)(p.flags >> 8);
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -150,11 +144,10 @@ void blitRawToScreen(const Picture &p, int x, int y) {
 							   x, y, w, h);
 }
 
+// _DoChoosePartner @ 1a35:0756. The original places boy + girl animations
+// on a backdrop and polls four click rectangles (two per character); we
+// approximate with a single split at x=160 (left=Jenny, right=Jake).
 void EEMEngine::doChoosePartner() {
-	// Mirrors _DoChoosePartner @ 1a35:0756. The original places boy + girl
-	// animations on a backdrop and polls four click rectangles (two per
-	// character) for the player's choice. We approximate by splitting the
-	// screen at x=160: left half = girl (Jenny), right half = boy (Jake).
 	Picture background;
 	if (!_picsArchive.getPicture(kPicChooseBackground, background)) {
 		warning("ChoosePartner background (%u) load failed", kPicChooseBackground);
@@ -174,19 +167,11 @@ void EEMEngine::doChoosePartner() {
 
 	setAnmPalette(Common::Path("TITLE.ANM"));
 
-	// `_DoHappiness @ 172b:27b5`: the cursor's X column picks one of 4
-	// rects (29be:030f, all full-height); past rect 3 → "level 4". The
-	// per-zone sequence scripts (`kBoySeqs` / `kGirlSeqs`) live at file
-	// scope above so the gestures match the original beat-for-beat.
-
-	// `_DoChoosePartner` opens with `_SetMousePos(0xa0, 0x96)` so the
-	// cursor lands centred between the two partners — start the
-	// happiness level from that initial X.
+	// _DoChoosePartner opens with _SetMousePos(0xa0, 0x96).
 	int curMouseX = 0xa0;
 	uint level = happinessLevel(curMouseX);
-	uint seqIdx = 0;       // step within the 9-frame seq
+	uint seqIdx = 0;
 
-	// Initial render — pose 0 of whichever zone the cursor opens in.
 	blitAt(background, 0, 0);
 	blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
 		   kGirlX, kGirlY);
@@ -201,11 +186,10 @@ void EEMEngine::doChoosePartner() {
 
 	uint32 lastTick = g_system->getMillis();
 	while (!shouldQuit()) {
-		// Advance through the 9-frame seq at 100 ms — `_CheckFrameRate`
-		// cadence. The seq is short and loops; matches the original
-		// `_UpdateAnimations` which restarts at curIdx=0 on the 0x80
-		// marker. Mirrors `_DoHappiness`'s rewriting of `curIdx = 0xFFFF`
-		// when the cursor crosses zones (we restart `seqIdx` instead).
+		// 100ms tick: matches _CheckFrameRate's ~10 fps cadence. The seq
+		// is short and loops; _UpdateAnimations restarts at curIdx=0 on
+		// the 0x80 marker. _DoHappiness rewrites curIdx=0xFFFF on zone
+		// change (here we restart seqIdx).
 		if (g_system->getMillis() - lastTick > 100) {
 			lastTick = g_system->getMillis();
 			seqIdx = (seqIdx + 1) % 9;
@@ -265,16 +249,14 @@ void EEMEngine::doChoosePartner() {
 		g_system->delayMillis(20);
 	}
 
-	// Mirrors the tail of `_DoChoosePartner @ 1a35:097f` — once the
-	// player commits to a partner, load and play their intro VOC
-	// (`jen.voc` for Jenny, `jake.voc` for Jake; strings at 29be:0af1 /
-	// 29be:0af9) and block on `_WaitForVoiceDone`.
+	// Partner intro VOC (jake.voc / jen.voc @ 29be:0af9 / 29be:0af1),
+	// tail of _DoChoosePartner @ 1a35:097f.
 	if (_audio) {
 		if (isFloppy()) {
-			// Floppy `_DoChoosePartner_Floppy @ 19bb:0a8e` calls
-			// `_LoadSoundName_Floppy(0x14)` (= slot 20) which the
-			// per-partner table at `2608:0f0e` / `2608:0f76` resolves
-			// to `m-0113sl.voc` (Jake) or `f-0140sl.voc` (Jenny).
+			// Floppy _DoChoosePartner_Floppy @ 19bb:0a8e calls
+			// _LoadSoundName_Floppy(0x14) (slot 20); per-partner tables at
+			// 2608:0f0e / 2608:0f76 resolve to m-0113sl.voc (Jake) or
+			// f-0140sl.voc (Jenny).
 			_audio->playFloppyVoiceSlot(0x14, _partner);
 		} else {
 			_audio->playVoc(Common::Path(
@@ -284,24 +266,16 @@ void EEMEngine::doChoosePartner() {
 	}
 }
 
+// _DoInitClues @ 1a35:0411. Sequence:
+//   1. BG 0x52, palette 0x22
+//   2. anims: game @ (0xcd, 0x6c), book @ (0, 99), nancy @ (0x68, 0x8b) on caseType=1
+//   3. cycle game anim once (click skips)
+//   4. _PlayInSequence per partner+caseType
+//   5. _DisplayClue(InitBlock + 2, 1) — briefing dialogue
+//   6. _OnSites[startSite] = 1
+// Anim IDs: gameAni = 0x17 (Jake) / 0x3b (Jenny);
+// bookAni = 0x18 / 0x3c; nancyAni = 0x19 (caseType 1 only).
 void EEMEngine::doInitClues() {
-	// Mirrors `_DoInitClues` @ 1a35:0411. The original does:
-	//   1. _AllBlack(); _GetBackground(0x52); _GetPalette(0x22);
-	//   2. _GetAnimation(gameAni); _NewAnimation(0xcd, 0x6c, ...)
-	//      _GetAnimation(bookAni); _NewAnimation(0,    99,   ...)
-	//      (case type 1 also: _NewAnimation(0x68, 0x8b, nancyAni))
-	//   3. _UpdateAnimations(); _FadeIn();
-	//   4. while (frame != gameNum) { _CheckFrameRate(); _UpdateAnimations(); }
-	//        — cycles through the entire game animation once. Click skips.
-	//   5. _PlayInSequence(seqId, ...) — plays a follow-up sequence based
-	//      on partner + case type.
-	//   6. _DisplayClue(InitBlock + 2, 1) — the briefing dialogue.
-	//   7. _OnSites[startSite] = 1.
-	//
-	// gameAni / bookAni / nancyAni values verified directly from Ghidra:
-	//   gameAni  = 0x17 (Jake) / 0x3b (Jenny)
-	//   bookAni  = 0x18 (Jake) / 0x3c (Jenny)
-	//   nancyAni = 0x19 (case type 1 only)
 	if (!_mystery.isLoaded())
 		return;
 
@@ -309,12 +283,9 @@ void EEMEngine::doInitClues() {
 	if (!ib)
 		return;
 
-	// CD InitBlock starts with `u16 caseType; u16 startSite; <clue block>`.
-	// Floppy InitBlock starts with `u8 caseType; u8 nSubjects; subjects[];
-	// u8 nDialog; dialog_records[]` — no embedded `startSite`. Verified in
-	// `FUN_19bb_042f` (floppy briefing) where `cVar1 = *(buffer +
-	// initOffset)` reads caseType as a single byte and the dialog loop
-	// uses `local_e = byte[initOffset + 1 + nSubjects + 1]`.
+	// CD InitBlock: u16 caseType; u16 startSite; <clue block>.
+	// Floppy InitBlock (FUN_19bb_042f): u8 caseType; u8 nSubjects;
+	// subjects[]; u8 nDialog; dialog_records[]. No startSite.
 	const bool floppy = isFloppy();
 	const uint16 caseType = floppy ? (uint16)ib[0] : READ_LE_UINT16(ib);
 
@@ -325,12 +296,8 @@ void EEMEngine::doInitClues() {
 		_mystery._siteNumber = startSite;
 		_mystery._lastSite = startSite;
 	} else {
-		// Floppy InitBlock has no startSite. The floppy BigMap iterator
-		// `FUN_1fed_07ed` walks every site in the SITES section
-		// unconditionally (no `_OnSites` gate) — verified at the floppy
-		// `_DoMapScreen @ 1fed:1060` which stamps every site marker
-		// before the interaction loop. Mark every loaded site as visible
-		// so our `_onSites`-gated overview stamps the same set.
+		// Floppy _DoMapScreen @ 1fed:1060 (FUN_1fed_07ed) walks every
+		// site unconditionally — mirror that by marking all visible.
 		const uint sites = _mystery.numSites();
 		for (uint s = 0; s < sites && s < Mystery::kVisitedSiteCap; s++)
 			_mystery._onSites[s] = 1;
@@ -354,34 +321,17 @@ void EEMEngine::doInitClues() {
 						  && _aniArchive.loadAnimation(0x19, nancy)
 						  && !nancy.empty();
 
-	// Step 4 — cycle through the game animation once before the briefing.
-	// Mirrors the `while (uVar9 != gameNum)` loop. The original calls
-	// `_UpdateAnimations` per `_CheckFrameRate` tick (~10 fps). We use
-	// 100 ms ticks for the same cadence. Click / key skips.
+	// Cycle game animation once (10 fps = _CheckFrameRate cadence).
+	// _DoInitClues @ 1a35:0507/0541 hard-codes the SCRIPT index to Jake's
+	// IDs (0x17/0x18/0x19) regardless of partner, so look up scripts by
+	// those IDs unconditionally.
 	if (haveGame || haveBook || haveNancy) {
 		const uint frameCount = haveGame ? game.size() : 8;
 		bool skip = false;
 		for (uint frame = 0; frame < frameCount && !shouldQuit() && !skip; frame++) {
-			// Restore BG + advance frame. The original always uses
-			// Jake's anim IDs (0x17/0x18/0x19) as the SCRIPT keys
-			// even when Jenny's CELL data is loaded — verified at
-			// `_DoInitClues @ 1a35:0507`/`0541` where
-			// `_NewAnimation(..., (PicData *)CONCAT22(0x17, ...), ...)`
-			// hard-codes the script index to 0x17. So we look up
-			// `partnerFrameAtTick(0x17, ...)` regardless of partner.
-			// This gives us the correct cadence — book holds on its
-			// "thinking" pose (cell 8) for 16 ticks instead of
-			// flipbook-cycling, and nancy waits 18 ticks before her
-			// late-arrival count-up.
 			if (haveBriefingBg)
 				blitAt(bg, 0, 0);
 			const uint32 t = frame * 100;
-			// All three briefing anims (game/book/nancy) go through
-			// the original `_NewAnimation` path so per-frame anchors
-			// apply. Use `blitAnimFrameAnchored` against a locked
-			// screen surface so the briefing partner / book / nancy
-			// translate cleanly between cells instead of pinning at
-			// the same top-left.
 			Graphics::Surface *scr = g_system->lockScreen();
 			if (!scr) {
 				skip = true;
@@ -402,11 +352,7 @@ void EEMEngine::doInitClues() {
 			g_system->unlockScreen();
 			g_system->updateScreen();
 
-			// Wait 100 ms or until input. ESC also stops any pending
-			// voice / spool so audio doesn't bleed past the briefing
-			// when the player skips early — without this the per-clue
-			// voice line that `displayClue` would spool keeps playing
-			// after we've moved on to the MAP.
+			// ESC interrupts voice/spool so audio doesn't bleed into the MAP.
 			const uint32 wakeup = g_system->getMillis() + 100;
 			while (g_system->getMillis() < wakeup && !shouldQuit() && !skip) {
 				Common::Event ev;
@@ -428,14 +374,11 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// Freeze only the same setup-animation band the original bakes into
-	// its background buffers before clearing the registered animations:
-	// `_VidramRectCopy(0, 0x5a, 0x28, 0x6d, 16000, 48000/32000)`.
-	// Width is in mode-X columns, so 0x28 columns = 160 pixels. This
-	// preserves the lower-left book/Nancy area but intentionally drops the
-	// right-side game animation; `_PlayInSequence` redraws that character
-	// over a clean background next. Preserving the full screen leaves the
-	// old right-side Jake/Jenny frame underneath the sequence.
+	// _VidramRectCopy(0, 0x5a, 0x28, 0x6d, 16000, 48000/32000): freeze the
+	// lower-left book/Nancy band the original bakes into BG buffers before
+	// clearing registered animations. Width is in mode-X cols (0x28 = 160px).
+	// Intentionally drops the right-side game anim; _PlayInSequence redraws
+	// that character over a clean BG next.
 	Graphics::ManagedSurface briefingBase(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	briefingBase.clear();
@@ -464,16 +407,12 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// Step 5 — `_PlayInSequence(animSeq, 0xcd, animY)` per Ghidra:
-	//   Jake (partner=0):
-	//     caseType=1 → anim 0x38 at (0xcd, 0x6d)
-	//     caseType=2 → anim 0x37 at (0xcd, 0x6c)
-	//     caseType=3 → anim 0x39 at (0xcd, 0x6c)
-	//   Jenny (partner=1):
-	//     caseType=2 → anim 0x3a at (0xcd, 0x6c)
-	//     caseType=3 → anim 0x3d at (0xcd, 0x6c)
-	// `_PlayInSequence @ 172b:2d03` plays each frame at (sx-w, sy-rowoff)
-	// with mask blit, advancing one frame per `_CheckFrameRate` tick.
+	// _PlayInSequence @ 172b:2d03. Anim selection per partner + caseType:
+	//   Jake:  caseType 1 -> 0x38 @ (0xcd, 0x6d)
+	//          caseType 2 -> 0x37 @ (0xcd, 0x6c)
+	//          caseType 3 -> 0x39 @ (0xcd, 0x6c)
+	//   Jenny: caseType 2 -> 0x3a @ (0xcd, 0x6c)
+	//          caseType 3 -> 0x3d @ (0xcd, 0x6c)
 	uint16 seqAni = 0xFFFF;
 	uint16 seqY   = 0x6c;
 	if (_partner == 0) {
@@ -514,21 +453,13 @@ void EEMEngine::doInitClues() {
 			for (uint frame = 0; frame < seq.size() && !shouldQuit() && !skip;
 				 frame++) {
 				const Picture &fr = seq[frame];
-				// Restore the frozen setup frame so the short overlay
-				// does not make the setup animation wrap to frame 0.
 				g_system->copyRectToScreen(briefingBase.getPixels(),
 										   briefingBase.pitch, 0, 0,
 										   320, 200);
-				// Anchor: `_PlayInSequence @ 172b:2d35-2d50` does
-				//   dstX = sx - cell[+0x8]     ; miscflags (signed)
-				//   dstY = sy - cell[+0x6]     ; rowoff   (signed)
-				// Ghidra's C decompile mis-labels `cell[+0x8]` as
-				// `width`; the actual asm is `SUB AX, ES:[BX+0x8]`,
-				// which is the per-frame X anchor offset stored in our
-				// `Picture::miscflags` field. Using `fr.surface.w`
-				// shifted every frame by the cell width and made the
-				// briefing partner appear duplicated next to the BG-
-				// baked figure (mystery 1 office briefing).
+				// _PlayInSequence @ 172b:2d35-2d50:
+				//   dstX = sx - cell[+0x8]   ; signed X anchor (miscflags)
+				//   dstY = sy - cell[+0x6]   ; signed Y anchor (rowoff)
+				// asm `SUB AX, ES:[BX+0x8]` — NOT the cell width.
 				const int dstX = (int)0xcd - (int)(int16)fr.miscflags;
 				const int dstY = (int)seqY - (int)(int16)fr.rowoff;
 				blitMaskedToScreen(fr, dstX, dstY);
@@ -556,14 +487,11 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// `_DoInitClues` plays a setup-voice ONLY for caseType 2/3.
-	//   CD: caseType 2 → PHONE.VOC. caseType 3 → no voice.
-	//   Floppy `_DoInitClues_Floppy @ 19bb:042f`:
-	//     caseType 2 → `_LoadSoundName_Floppy(slot 0xc)` = PHONESL.VOC
-	//     caseType 3 → `_LoadSoundName_Floppy(slot 3)`   = NEWSCAN.VOC
-	// (newspaper-scanner sting for the "TV/news anchor" briefing
-	// variant). Other case types open straight into the briefing
-	// dialogue without it.
+	// Setup voice (caseType 2/3 only):
+	//   CD:     caseType 2 -> PHONE.VOC
+	//   Floppy (_DoInitClues_Floppy @ 19bb:042f):
+	//     caseType 2 -> slot 0xc (PHONESL.VOC)
+	//     caseType 3 -> slot 3   (NEWSCAN.VOC, news-anchor variant)
 	if (_audio) {
 		if (caseType == 2) {
 			if (floppy)
@@ -577,23 +505,15 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// Step 6 — case briefing dialogue. CD InitBlock has the clue block
-	// at +4 (after `u16 caseType; u16 startSite`); floppy uses
-	// `u8 caseType; u8 nSubjects; subjects[nSubjects]; u8 nDialog;
-	// dialog_records[nDialog]` (each record `11 + textCount` bytes),
-	// dispatched via `FUN_22dc_05c8 @ 22dc:05c8`. We render dialog
-	// records ourselves on floppy.
+	// Briefing dialogue. CD: clue block @ ib+4 (after caseType,startSite).
+	// Floppy: dialog records dispatched via FUN_22dc_05c8 @ 22dc:05c8
+	// (record size = 11 + textCount bytes).
 	if (floppy) {
 		displayFloppyBriefing(ib);
 	} else {
 		const byte *briefingClues = ib + 4;
-		// Ghidra confirms CD `_DoInitClues` enters the normal
-		// `_DisplayClue(_InitBlock + 2, 1)` path, and `_DisplayClue`
-		// calls `_AddNotebook` for each ClueEntry note list at
-		// +0x30..+0x39. These starting notes are required before the
-		// first PDA visit, so mark them explicitly here. The regular
-		// displayClue side-effect pass is idempotent and still handles
-		// gallery/site updates in the original order.
+		// _DisplayClue calls _AddNotebook for each ClueEntry note list at
+		// +0x30..+0x39. Mark starting notes before the first PDA visit.
 		const uint marked = markClueBlockNotebookEntries(_mystery, briefingClues);
 		if (marked != 0)
 			debugC(1, kDebugScript,
@@ -603,27 +523,20 @@ void EEMEngine::doInitClues() {
 	}
 }
 
-/// Mirror `_ParseString` @ 1b66:07c3 — substitute the control bytes that
-/// the original engine uses as placeholders. Only the two we encounter most
-/// often (player name = 0x80, partner first name = 0x82) are substituted;
-/// other 0x8N opcodes are stripped. The original engine also handles
-/// hyphenation marks and a hint placeholder (0x89) we ignore for now.
+// _ParseString @ 1b66:07c3 (jump table @ 1b66:0cbe). Each handler reads
+// _Partner (u16 @ 0x7918) and indexes the name table @ 29be:0c28
+// ({Jake, Jennifer, he, she, him, her, his} as far pointers).
+//   0x80 player name (auto-cap word starts, uses _PlayerRecord)
+//   0x81 _Partner == 0 ? "Jake"     : "Jennifer"  (chosen detective)
+//   0x82 _Partner == 0 ? "Jennifer" : "Jake"      (the OTHER one)
+//   0x83 _Partner == 0 ? "he"       : "she"
+//   0x84 _Partner == 0 ? "him"      : "her"
+//   0x85 _Partner == 0 ? "his"      : "her"
+//   0x86..0x88 read a separate gender flag @ 0x7985 (TODO).
+//   0x89 KD hint placeholder (caller handles).
 Common::String EEMEngine::parseString(const Common::String &raw,
 									  const Common::String &playerName,
 									  uint partner) const {
-	// Substitution opcodes from `_ParseString` @ 1b66:07c3, jump-table
-	// at 1b66:0cbe. Each handler reads `_Partner` (16-bit at 0x7918)
-	// and indexes the name table at 29be:0c28 ({Jake, Jennifer, he,
-	// she, him, her, his} as far pointers).
-	//   0x80 — player's typed name (auto-cap word starts) — uses _PlayerRecord
-	//   0x81 — _Partner == 0 ? "Jake"     : "Jennifer"  (chosen detective)
-	//   0x82 — _Partner == 0 ? "Jennifer" : "Jake"      (the OTHER one)
-	//   0x83 — _Partner == 0 ? "he"       : "she"
-	//   0x84 — _Partner == 0 ? "him"      : "her"
-	//   0x85 — _Partner == 0 ? "his"      : "her"
-	//   0x86..0x88 read a different gender flag at 0x7985 — left alone
-	//     until that flag's source is traced.
-	//   0x89 — KD hint placeholder (handled by caller).
 	const bool isJake = (partner == 0);
 	Common::String out;
 	for (uint i = 0; i < raw.size(); i++) {
@@ -665,7 +578,7 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 			// through the default case and renders as a literal,
 			// pushing the line past the balloon's visual edge — the
 			// "bubbles aren't large enough" symptom. Promote it to
-			// `\n` so ScummVM's `Font::wordWrapText` (which honours
+			// `\n` so `Font::wordWrapText` (which honours
 			// embedded newlines) picks the same break point the
 			// original engine did.
 			out += '\n';
@@ -720,24 +633,21 @@ void EEMEngine::applyClueSideEffects(const byte *c) {
 	}
 }
 
+// ClueBlock layout:
+//   +0..1: number (entry count; 0 = no briefing)
+//   +2..3: pic ID for entry 0; entry N>0 uses (entry-1).lastWord
+//   +4..:  array of 62-byte entries
 void EEMEngine::displayClue(const byte *clueBlock) {
 	if (!clueBlock || !_mystery.isLoaded())
 		return;
 
-	// ClueBlock layout (verified against M0.BIN):
-	//   +0..1: number (entry count)
-	//   +2..3: pic ID for entry 0 (entry N>0 uses prev entry's last 2 bytes)
-	//   +4..:  array of 62-byte entries
 	const uint16 number = READ_LE_UINT16(clueBlock);
 	debugC(1, kDebugScript, "displayClue: %u entries", number);
-	if (number == 0 || number > 32) {
-		// number==0 = no briefing (e.g. mystery 0 case-type 4); >32 is a
-		// guard against bad pointers.
+	// number == 0 = no briefing (e.g. mystery 0 case-type 4); >32 = bad ptr.
+	if (number == 0 || number > 32)
 		return;
-	}
 
-	// Snapshot the current screen as the BG so character pics from
-	// earlier entries don't stack on top of each other.
+	// Snapshot BG so per-entry character pics don't stack.
 	Graphics::ManagedSurface bg(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.clear();
@@ -749,40 +659,29 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		}
 	}
 
+	// ClueEntry layout (62 bytes):
+	//   +0..1, +2..3:   p0 tx, ty       +4..5, +6..7:   p1 tx, ty
+	//   +8..9, +10..11: bubText offset p0/p1 (rel. TextBlock; -1 = none)
+	//   +12..13, +14..15: balloon pic ID p0/p1
+	//   +0x10/+0x12: bubX, bubY (partner 0)
+	//   +0x14/+0x16: bubX, bubY (partner 1)
+	//   +0x18: Jenny voice (1-based)
+	//   +0x1a: Jake  voice (1-based)
+	//   +0x30..+0x39: 5 notebook entries (-1 terminated)
+	//   +0x3a..+0x3b: KD-anim number (-1 = none)
+	// _DisplayClue @ 2404:05e6: partner 1 uses its own field set only when
+	// bubText1 != -1; otherwise falls back to partner 0 fields entirely.
+	// Partner 0 always uses field 0.
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
-		// Restore BG before drawing this entry's portrait + balloon.
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
 		const byte *c = clueBlock + 4 + i * 62;
-		// Per-partner fields:
-		//   +0..1, +2..3: tx, ty (partner 0)
-		//   +4..5, +6..7: tx, ty (partner 1)
-		//   +8..9, +10..11: bubText offset for partner 0/1 (rel. TextBlock)
-		//   +12..13, +14..15: balloon picture ID for partner 0/1
-		//   +16..17, +18..19: bubX, bubY
-		//   +0x3a..+0x3b:    KD-anim number (-1 = none)
-		// Per `_DisplayClue` @ 2404:05e6: partner 1 uses its own field
-		// set ONLY when bubText1 is not -1; otherwise it falls back to
-		// the partner 0 fields entirely. Partner 0 always uses field 0.
 
-		// Per-clue partner reaction animation. `_DisplayClue` @
-		// 2404:0635-064b checks `clueEntry[+0x3a]` and, when not -1,
-		// calls `_DoKDAnim(num)` BEFORE drawing the speaker portrait.
-		// This is what surfaces "Jenny takes a picture with a camera"
-		// (and the matching Jake gestures) during NPC searches.
+		// _DisplayClue @ 2404:0635-064b: _DoKDAnim(num) runs before the
+		// speaker portrait.
 		const int16 kdAnimNum = (int16)READ_LE_UINT16(c + 0x3a);
 		if (kdAnimNum != -1) {
 			playKdAnim((uint16)kdAnimNum);
-			// `playKdAnim` leaves the screen on the partner-less
-			// `_partnerEraseBg`, mirroring its between-frame erase
-			// source. Re-stamp `bg` so the partner sprite captured at
-			// `displayClue` entry returns before we draw the speaker
-			// portrait + balloon. Without this the bubble lands on a
-			// partner-less screen and the partner appears invisible
-			// for the entire first iteration. Mirrors the original's
-			// `_UpdateAnimations @ 172b:09c1` swap on `0x80`: the
-			// kdAnim slot is freed and the WaitHandle (partner) slot
-			// is reactivated with frame index 0xffff, so on the next
-			// tick the partner renders at script[0] of its wait anim.
+			// _UpdateAnimations @ 172b:09c1 reactivates the wait anim.
 			g_system->copyRectToScreen(bg.getPixels(), bg.pitch,
 									   0, 0, 320, 200);
 		}
@@ -798,12 +697,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		const uint16 bubNum = READ_LE_UINT16(c + (useP1 ? 0x0E : 0x0C));
 		const char *raw   = hasText ? _mystery.textAt(textOff) : "";
 
-		// Speaker portrait. Mirrors `_DisplayClue`'s `pic[clues+i*62-2]`:
-		// for entry 0 the pic ID is in the ClueBlock header at +2; for
-		// later entries it sits in the previous entry's last 2 bytes.
-		// Speaker portrait position uses partner 0 fields (+0..+3) when
-		// _partner==0 or when partner 1 falls back; otherwise partner 1
-		// fields (+4..+7). Same logic as the original.
+		// Speaker portrait: pic[clues + i*62 - 2]. Entry 0 ID is in
+		// ClueBlock +2; entries N>0 read (entry-1)+0x3c (last word).
 		const uint16 charX  = READ_LE_UINT16(c + (useP1 ? 4 : 0));
 		const uint16 charY  = READ_LE_UINT16(c + (useP1 ? 6 : 2));
 		const uint16 charPicId = (i == 0)
@@ -817,14 +712,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			}
 		}
 
-		// Substitute control bytes (0x80..0x89) — see `parseString` for
-		// the table. 0x81 = chosen detective, 0x82 = the other one.
 		const Common::String text = parseString(raw ? raw : "",
 												_playerName, _partner);
 
-		// Speech balloon. Mirrors `_GetBalloon` + `_AddPicBackground` in
-		// `_DisplayClue`, with the shared balloon metadata table used for
-		// text placement and the fitted balloon variant.
+		// Speech balloon: _GetBalloon + _AddPicBackground.
 		const uint16 fittedBubNum = fitBalloonToText(bubNum, text);
 		Picture balloon;
 		const uint16 balloonId = fittedBubNum & 0x7F;
@@ -833,9 +724,6 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			_balloonArchive.loadEntry(balloonId, balloon);
 
 		if (_font.isLoaded() && !text.empty()) {
-			// Snapshot the current screen, overlay balloon + text, then
-			// copy the changed band back. This preserves the site BG
-			// underneath unchanged regions.
 			Graphics::Surface *screen = g_system->lockScreen();
 			if (!screen)
 				break;
@@ -853,27 +741,21 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			if (haveBalloon) {
 				const int bw = MIN<int>(balloon.surface.w, 320 - bubX);
 				const int bh = MIN<int>(balloon.surface.h, 200 - bubY);
-				// `_AddPicBackground` passes `pic->miscflags >> 8` as
-				// the transparent colour to `_Rect_Move_Mask`. The
-				// on-disk u16 at file offset 0 maps to `Picture::flags`.
+				// _AddPicBackground: transparent colour = pic->miscflags >> 8.
 				const byte transp = (byte)(balloon.flags >> 8);
-				// `_GetBalloon @ 172b:1d7d` mirrors the picture
-				// horizontally when `(bubNum & 0x80)` is set — used
-				// for right-side speakers so the tail points the
-				// other way. ScummVM's `transBlitFrom` exposes the
-				// same via its `flipped` argument.
+				// _GetBalloon @ 172b:1d7d mirrors horizontally when
+				// (bubNum & 0x80) — for right-side speakers.
 				const bool flipBalloon = (fittedBubNum & 0x80) != 0;
 				if (bw > 0 && bh > 0) {
 					scratch.transBlitFrom(balloon.surface,
 										  Common::Point(bubX, bubY),
 										  transp, flipBalloon);
 				}
-				// Per-balloon metadata from `29be:0875` (52 × 10 bytes,
-				// indexed by `bubNum & 0x7F`). The original `_DisplayClue`
-				// does `_WordWrap(bubX + table[bub].x, bubY + table[bub].y,
-				// table[bub].w, ...)`. `getBalloonInsets` is the shared
-				// accessor (defined in `graphics.cpp`); fall back to the
-				// (5, 4, 155) entry-23 inset if the lookup fails.
+				// Per-balloon insets at 29be:0875 (52 x 10 bytes,
+				// indexed by bubNum & 0x7F). _DisplayClue does
+				// _WordWrap(bubX + table[bub].x, bubY + table[bub].y,
+				//           table[bub].w, ...).
+				// Fallback (5, 4, 155) = entry-23 inset.
 				uint16 bx = 5;
 				uint16 by = 4;
 				uint16 bw_ = 155;
@@ -883,16 +765,15 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				textW = bw_;
 				copyH = bh;
 			} else {
-				// No balloon — clear a band so old pixels don't bleed.
+				// No balloon: clear band.
 				const Common::Rect band(0, bubY, 320,
 					MIN<int>(bubY + copyH, 200));
 				scratch.fillRect(band, 0);
 				copyY = bubY;
 			}
 
-			// `_DisplayClue` @ 2404:07fe passes fontColor=0 (palette
-			// index 0 of the case-briefing palette 0x22) to `_WordWrap`.
-			// Hard-coding 0xF here gave the wrong colour.
+			// _DisplayClue @ 2404:07fe passes fontColor=0 (palette
+			// index 0 of case-briefing palette 0x22).
 			_font.drawWordWrapped(&scratch, textX, textY,
 				MAX<int>(8, textW), text, 0);
 
@@ -902,22 +783,14 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			g_system->updateScreen();
 		}
 
-		// `_DisplayClue` @ 2404:0833-085a — after the balloon is drawn,
-		// spool the per-clue voice. Each ClueEntry stores two 1-based
-		// sound indices: `+0x18` (Jenny voice) and `+0x1a` (Jake voice).
-		//
-		// Critical gate (verified at 2404:0833):
+		// _DisplayClue @ 2404:0833-085a — per-clue voice gate:
 		//   if (clue[+0x18] != 0 && voiceOn && voiceAvail) {
-		//       iVar6 = clue[+0x18];           // Jenny default
-		//       if (Partner == 0) iVar6 = clue[+0x1a];  // Jake override
+		//       iVar6 = clue[+0x18];                  // Jenny default
+		//       if (Partner == 0) iVar6 = clue[+0x1a]; // Jake override
 		//       _SpoolSound(iVar6 - 1);
 		//   }
-		// The condition gates on the JENNY slot regardless of partner.
-		// Some hotspot ClueBlocks define `+0x1a` (Jake voice) but leave
-		// `+0x18` at 0 — for those, the original engine plays nothing
-		// and the entry is text-only. Our previous code gated on the
-		// partner-selected slot and ended up firing unrelated voices
-		// (e.g., a "no audio" entry triggering Jake's spoolSound).
+		// Gate is on the Jenny slot regardless of partner; entries with
+		// +0x18 == 0 but +0x1a set are text-only.
 		if (_audio) {
 			const uint16 voiceJenny = READ_LE_UINT16(c + 0x18);
 			if (voiceJenny != 0 && voiceJenny != 0xFFFF) {
@@ -928,19 +801,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			}
 		}
 
-		// Wait for click/key to advance — only if we drew something.
-		// ESC skips the entire dialogue rather than just one entry.
-		// Only Return / KP-Enter / Space advance one entry; other keys
-		// are ignored so accidental keystrokes don't blow past dialog
-		// the player hasn't finished reading.
+		// Wait for click/key. ESC skips entire dialog; Return / KP-Enter /
+		// Space advance one entry.
 		if (hasText || (charPicId != 0 && charPicId != 0xFFFF)) {
-			// Click during a clue dialog only dismisses — there are no
-			// hover-interactive areas. Drop the highlighted cursor
-			// state the site loop may have left set so the player
-			// doesn't see a "clickable" cursor stuck on top of the
-			// balloon. The post-dialog `MOUSEMOVE` in the site loop
-			// will re-evaluate against hotspots and re-enable as
-			// needed.
+			// Clear any leftover highlighted-cursor state from the site loop.
 			setInteractiveMouseCursor(false);
 			bool advance = false;
 			bool skipAll = false;
@@ -953,9 +817,6 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						break;
 					}
 					if (ev.type == Common::EVENT_MOUSEMOVE) {
-						// Keep the cursor non-interactive across moves
-						// inside the dialog (defensive — in case some
-						// other code path tries to set it).
 						setInteractiveMouseCursor(false);
 						continue;
 					}
@@ -963,13 +824,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						advance = true;
 						skipAll = true;
-						// Cut the per-clue voice line that was just
-						// spooled — without this the voice keeps
-						// playing past the dialog dismissal and
-						// bleeds into the next screen (e.g. the
-						// case-briefing voice still talking on the
-						// MAP after ESC). Site / briefing MIDI
-						// stays — only voice + spool halt here.
+						// Cut voice + spool only (keep MIDI).
 						interruptAudio(/*stopMusicToo=*/false);
 						break;
 					}
@@ -985,16 +840,11 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						break;
 					}
 				}
-				// Tick the screen so the OSystem cursor follows the
-				// mouse — ScummVM redraws the cursor overlay only on
-				// updateScreen.
 				g_system->updateScreen();
 				g_system->delayMillis(10);
 			}
 			if (skipAll) {
-				// Apply remaining side-effects without rendering. The
-				// original silently runs the state updates even when the
-				// player skips ahead.
+				// Apply remaining side-effects without rendering.
 				for (uint k = i; k < number; k++)
 					applyClueSideEffects(clueBlock + 4 + k * 62);
 				return;
@@ -1004,13 +854,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		applyClueSideEffects(c);
 	}
 
-	// `_DisplayClue @ 2404:05e6` lets the per-clue voice bleed past
-	// the last entry's dismissal — `_Wait()` returns on ANY input
-	// without touching the digital playback. We deliberately diverge
-	// (mirroring `_StopTheVoice @ 1ff1:0283`'s effect, voice only,
-	// MIDI untouched) so the briefing voice line doesn't keep talking
-	// over the next screen when the player clicks through the final
-	// entry.
+	// _StopTheVoice @ 1ff1:0283 effect (voice only, keep MIDI). Diverges
+	// from _DisplayClue @ 2404:05e6 which lets voice bleed past dismissal.
 	interruptAudio(/*stopMusicToo=*/false);
 }
 
@@ -1027,10 +872,9 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 	//   u8  sound    @ +9     (high bit = play voice, low 7 bits = slot)
 	//   u8  textCount@ +10
 	//   u8  textIdx[]@ +11    (1 byte per — low 7 bits = NOTES idx)
-	// Text offsets in NOTES are ABSOLUTE byte offsets into the mystery
-	// buffer (verified by note 0 of M0.BIN at file offset 0xd0 holding
-	// "Hello, ..., I'm ... Eagle!"), so we read text via
-	// `mystery.blobAt(noteEntry[+2..3])` for Jake / `+4..5` for Jenny.
+	// NOTES text offsets are absolute byte offsets into the mystery
+	// buffer; read via mystery.blobAt(noteEntry[+2..3]) for Jake,
+	// +4..5 for Jenny.
 	if (!rec || !isFloppy() || !_font.isLoaded() || count == 0)
 		return;
 
@@ -1039,8 +883,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 	if (!notes || !bufBase)
 		return;
 
-	// Snapshot the current screen so each record restores the
-	// briefing background between bubbles.
+	// Snapshot BG for between-bubble restores.
 	Graphics::ManagedSurface bg(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
@@ -1054,16 +897,9 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 	const uint32 dsz       = _mystery.dataSize();
 	const uint32 notesBase = (uint32)(notes - bufBase);
 
-	// Pre-mark every text index across all records as "seen" up front.
-	// `_DisplayHotspotClue_Floppy @ 22dc:05c8` writes
-	// `_TextSeen_Floppy[idx] = 1` inside its render loop, but the
-	// original's `_WaitForClick` blocks until input — so the loop always
-	// runs to completion and every text gets marked. Our `waitForClick`
-	// honours ESC as "skip all" (sets `skipAll`/break), which matches
-	// player expectations for fast-forward but used to drop the seen-bit
-	// for every text after the ESC point. Pre-marking restores parity:
-	// ESC fast-forwards the *visual* but the notebook always reflects
-	// every clue the player would have seen if they'd clicked through.
+	// _DisplayHotspotClue_Floppy @ 22dc:05c8 writes _TextSeen_Floppy[idx]=1
+	// inline per text. Pre-mark all up front so ESC-fast-forward still
+	// records every clue in the notebook.
 	{
 		const byte *r = rec;
 		for (uint i = 0; i < count; i++) {
@@ -1078,14 +914,9 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 	}
 
 	auto waitForClick = [&]() -> bool {
-		// Drain pending events first so a previous keystroke's tail
-		// doesn't auto-advance the new page.
+		// Drain pending events so a stale keystroke doesn't auto-advance.
 		Common::Event drain;
 		while (g_system->getEventManager()->pollEvent(drain)) {}
-		// Click during the floppy dialog only dismisses — no
-		// hover-interactive areas. Clear any stuck highlight from the
-		// site loop so the cursor stays a normal pointer over the
-		// balloon.
 		setInteractiveMouseCursor(false);
 		const uint32 minVisibleMs = 250;
 		const uint32 startedAt = g_system->getMillis();
@@ -1125,25 +956,18 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 		const uint8  ballY    = rec[8];
 		const uint8  textCount= rec[10];
 
-		// Per-record voice (byte 9 high bit) — see comment in original
-		// header.
+		// byte 9: high bit = play voice slot.
 		const bool playedRecordVoice = (rec[9] & 0x80) != 0 && _audio;
 		if (playedRecordVoice) {
 			const uint slot = rec[9] & 0x7f;
 			_audio->playFloppyVoiceSlot(slot, _partner);
 		}
-		// Suspect-found side effect for byte 9 with high bit clear.
-		// Mirrors `_DisplayHotspotClue_Floppy @ 22dc:0908..0922`:
+		// _DisplayHotspotClue_Floppy @ 22dc:0908..0922 suspect-found:
 		//   if ((rec[9] & 0x80) == 0 && rec[9] != 0)
 		//     _InGallery_Floppy[_GalleryShuffleSeed_Floppy[rec[9]]] = 1;
-		// `_GalleryShuffleSeed_Floppy` is a byte array at DS:0x2d65 that
-		// overlaps `_NewOrder_Floppy` at DS:0x2d66 by one byte: i.e.
-		// `_GalleryShuffleSeed[i+1] == _NewOrder[i]` (verified by
-		// comparing the two writes in `_ReadMystery_Floppy @ 22dc:0178`).
-		// So in our terms the mapping is `_inGallery[_newOrder[b9 - 1]]`.
-		// Skipping `_newOrder` (as we did before) drew the right portrait
-		// only when `_newOrder` happened to be identity — randomized
-		// shuffles dropped one of the two M0 suspects.
+		// _GalleryShuffleSeed (DS:0x2d65) overlaps _NewOrder (DS:0x2d66)
+		// by one byte: GalleryShuffleSeed[i+1] == NewOrder[i]. So:
+		// _inGallery[_newOrder[b9 - 1]].
 		const uint8 b9 = rec[9];
 		if ((b9 & 0x80) == 0 && b9 != 0) {
 			const uint logicalIdx = (uint)b9 - 1;
@@ -1216,14 +1040,9 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 		const int textX = ballX + textXIns;
 		const int lineH    = _font.getFontHeight();
 
-		// Pagination state — `FUN_22dc_05c8`'s text-idx loop uses
-		// `local_1c` (set from the PREVIOUS text's flag bit) to decide
-		// between "fresh page" (redraw balloon, restart Y at top) and
-		// "continuation" (append below previous lines). We mirror that
-		// state machine so multi-text records render the same way the
-		// original does — without it our impl concatenates every text
-		// idx into ONE balloon and the result spills out the bottom
-		// (the user's "bubbles aren't large enough" screenshot).
+		// FUN_22dc_05c8 pagination via local_1c (set from previous text's
+		// flag bit): 0 = fresh page (redraw balloon, Y at top),
+		// 1 = continuation (append below previous lines).
 		bool firstPage  = true;
 		int  cursorY    = ballY + textYIns;
 		bool skipAll    = false;
@@ -1255,9 +1074,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			scratch.simpleBlitFrom(*bg.surfacePtr());
 
 			if (firstPage) {
-				// Optional character portrait — only draws once per
-				// fresh page (matches the original which only redraws
-				// the balloon on `local_1c == 0`).
+				// Original only redraws balloon + portrait on local_1c == 0.
 				if (picID != 0 && picID != 0xFFFF) {
 					Picture pic;
 					if (_picsArchive.getPicture(picID, pic)) {
@@ -1285,7 +1102,6 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 				cursorY = ballY + textYIns;
 			}
 
-			// Wrap text into lines and draw each at cursorY.
 			Common::Array<Common::String> lines;
 			_font.wordWrapText(text, MAX<int>(8, (int)textWidth), lines);
 			for (uint l = 0; l < lines.size(); l++) {
@@ -1295,26 +1111,20 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			}
 			cursorY += (int)lines.size() * lineH;
 
-			// Decide pagination for the NEXT text idx based on THIS
-			// text's high bit.
+			// Pagination for next text idx is driven by this text's high bit.
 			const bool textHighBit = (idxByte & 0x80) != 0;
 			const bool isLastText  = (t + 1 == textCount);
 			const bool isLastRec   = (i + 1 == count);
 
-			// Stamp the "click to continue" indicator (PIC 0xa0
-			// "more" arrow / PIC 0xa1 end indicator) before
-			// flipping to wait. Mirrors `_DisplayHotspotClue_Floppy
-			// @ 22dc:08aa` (mid-page) and `@ 22dc:08c0`
-			// (end-of-record). We skip drawing it on the very last
-			// click of the very last record when the caller passes
-			// `lastIndicator == 0` — that's the original `param_2 ==
-			// 0` "no indicator" case.
+			// "Click to continue" indicator: PIC 0xa0 ("more" arrow) or
+			// PIC 0xa1 (end). _DisplayHotspotClue_Floppy @ 22dc:08aa
+			// (mid-page) / @ 22dc:08c0 (end-of-record). lastIndicator == 0
+			// matches the original param_2 == 0 "no indicator" case.
 			bool waitNeeded   = false;
 			bool drawArrow    = false;
 			bool useEndPic    = false;
 			if (!isLastText) {
 				if (textHighBit) {
-					// continuation — no wait, no indicator
 					firstPage = false;
 				} else {
 					waitNeeded = true;
@@ -1322,15 +1132,12 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 					useEndPic  = false;
 				}
 			} else {
-				// Last text in this record.
 				waitNeeded = true;
 				if (!isLastRec) {
-					// More records follow — original passes
-					// `param_2 = 1` → PIC 0xa0.
+					// More records follow → param_2 = 1 → PIC 0xa0.
 					drawArrow = true;
 					useEndPic = false;
 				} else {
-					// Last record. Use caller-supplied indicator.
 					if (lastIndicator == 1) {
 						drawArrow = true;
 						useEndPic = false;
@@ -1373,11 +1180,8 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 }
 
 void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
-	// Floppy briefing — `FUN_19bb_042f @ 19bb:042f` walks
-	// `nDialog = ib[2 + nSubjects]` records starting at
-	// `ib + 3 + nSubjects`. Each record is rendered identically to a
-	// hotspot dialog record (same `FUN_22dc_05c8` callee), so we
-	// share `displayFloppyDialogRecords`.
+	// FUN_19bb_042f @ 19bb:042f: walks nDialog = ib[2 + nSubjects] records
+	// starting at ib + 3 + nSubjects, dispatching each to FUN_22dc_05c8.
 	if (!initBlock || !isFloppy())
 		return;
 	const uint8 nSubjects = initBlock[1];
@@ -1387,19 +1191,12 @@ void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
 }
 
 void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
-	// Floppy hotspot click — mirrors `FUN_22dc_0b80 @ 22dc:0b80` +
-	// `FUN_1652_00e6 @ 1652:00e6` + `FUN_1652_006c @ 1652:006c`.
-	// Each site stores a per-hotspot dialog list at
-	// `site_data[+6..7]`. The list is laid out as:
-	//   for each hotspot in order:
+	// FUN_22dc_0b80 @ 22dc:0b80 + FUN_1652_00e6 @ 1652:00e6 +
+	// FUN_1652_006c @ 1652:006c. site_data[+6..7] -> per-hotspot list:
+	//   for each hotspot:
 	//     main record (11 + textCount bytes)
-	//     u8 contFlags  (low 7 bits = continuation count, high bit
-	//                    used by FUN_1652_00e6 to drive the partner
-	//                    pose — irrelevant for text rendering)
-	//     contCount × { record (11 + textCount bytes) }
-	// We walk past `hotIdx` hotspots, then dispatch the matched main
-	// record + its continuation chain through the same renderer
-	// `displayFloppyBriefing` uses.
+	//     u8 contFlags  (low 7 = cont count, high bit = partner pose)
+	//     contCount x { record (11 + textCount bytes) }
 	if (!_mystery.isLoaded() || !isFloppy())
 		return;
 	const byte *site = _mystery.siteData(siteNum);
@@ -1411,10 +1208,8 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		return;
 	uint32 off = dlgListOff;
 	for (uint h = 0; h < hotIdx; h++) {
-		// Skip main record.
 		const byte *rec = bufBase + off;
 		off += 11 + rec[10];
-		// Read continuation count and skip those records.
 		const uint contCount = bufBase[off] & 0x7F;
 		off += 1;
 		for (uint c = 0; c < contCount; c++) {
@@ -1424,23 +1219,8 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 	}
 	if (off >= _mystery.dataSize())
 		return;
-	// Layout per hotspot is:
-	//   main record (11 + textCount bytes)
-	//   1 byte: continuation count (high bit = partner-pose flag,
-	//           low 7 bits = number of follow-up records)
-	//   continuation records (each 11 + textCount bytes, tightly packed)
-	// `displayFloppyDialogRecords` walks tightly so we have to call it
-	// twice — once for the main record, once for the continuations —
-	// otherwise the second iteration treats the cont-count byte as a
-	// record header and runs off the buffer.
-	//
-	// Each `displayFloppyDialogRecords` call snapshots the screen to
-	// know what to redraw between bubbles. If we just call it twice
-	// back-to-back the second snapshot includes the first call's last
-	// bubble, so the second bubble draws on top of the first one (the
-	// "background isn't redrawn" glitch the user reported). Capture
-	// the clean site BG here and restore it between the two calls so
-	// every record snapshots a bubble-free background.
+	// Snapshot clean site BG and restore between main + continuation calls
+	// so each displayFloppyDialogRecords sees a bubble-free background.
 	Graphics::ManagedSurface siteBG(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
@@ -1458,11 +1238,10 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		contFlagsByte = bufBase[off + mainLen];
 		contCount = contFlagsByte & 0x7F;
 	}
-	// `_HandleHotspotClick_Floppy @ 1652:00e6` derives the main
-	// record's `param_2` from the continuation byte:
-	//   contFlagsByte == 0  → 0 (no indicator, only one record)
-	//   high bit set         → 1 (PIC 0xa0, "more" arrow)
-	//   low 7 bits non-zero  → 2 (PIC 0xa1, alternate end)
+	// _HandleHotspotClick_Floppy @ 1652:00e6 derives param_2:
+	//   contFlagsByte == 0  -> 0 (no indicator)
+	//   high bit set        -> 1 (PIC 0xa0, "more")
+	//   low 7 bits non-zero -> 2 (PIC 0xa1, alt end)
 	uint mainIndicator = 0;
 	if (contFlagsByte != 0) {
 		mainIndicator = (contFlagsByte & 0x80) ? 1 : 2;
@@ -1473,19 +1252,12 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 	const uint32 contOff = off + mainLen + 1;
 	if (contOff >= _mystery.dataSize())
 		return;
-	// Wipe the main bubble before the continuation chain snapshots the
-	// screen — otherwise the first continuation bubble treats the
-	// post-main-bubble image as its background and the main balloon
-	// pixels persist behind every following balloon.
+	// Wipe main bubble so the continuation chain snapshots a clean BG.
 	g_system->copyRectToScreen(siteBG.getPixels(), siteBG.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
-	// Continuation chain: `_DisplayDialogContinuations_Floppy @
-	// 1652:006c` passes `param_2 + -1 != 0` (= 1 if more records
-	// follow, 0 on the last). Our renderer maps that automatically
-	// because mid-batch records always get PIC 0xa0; the last record
-	// uses our `lastIndicator` argument (= 0, no indicator on the
-	// final continuation).
+	// _DisplayDialogContinuations_Floppy @ 1652:006c: lastIndicator=0
+	// means no indicator on the final continuation.
 	displayFloppyDialogRecords(bufBase + contOff, contCount, 0);
 }
 
@@ -1498,12 +1270,10 @@ bool EEMEngine::areYouSure() {
 		g_system->unlockScreen();
 	}
 
-	// CD `_AreYouSure @ 1a35:0a5c` and floppy `FUN_19bb_0b43` both:
-	//   * load PIC 0x136 as the dialog body,
-	//   * load PIC 0x1fd / 0x1fe as the pressed YES / NO button images,
-	//   * center the dialog,
-	//   * hit-test YES at (x+0x0c,y+0x23)-(x+0x20,y+0x32),
-	//     and NO at (x+0x60,y+0x23)-(x+0x74,y+0x32).
+	// _AreYouSure @ 1a35:0a5c (CD) / FUN_19bb_0b43 (floppy):
+	//   PIC 0x136 = dialog body; PIC 0x1fd/0x1fe = YES/NO pressed buttons.
+	//   YES hit: (x+0x0c, y+0x23) .. (x+0x20, y+0x32)
+	//   NO  hit: (x+0x60, y+0x23) .. (x+0x74, y+0x32)
 	Picture dialogPic;
 	Picture yesPic;
 	Picture noPic;
@@ -1569,7 +1339,7 @@ bool EEMEngine::areYouSure() {
 				break;
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
-				// Spanish prompt is "S - Si" — accept both Y and S.
+				// Spanish prompt is "S - Si": accept Y and S.
 				if (ev.kbd.keycode == Common::KEYCODE_y ||
 					ev.kbd.keycode == Common::KEYCODE_s ||
 					ev.kbd.keycode == Common::KEYCODE_RETURN) {
@@ -1605,7 +1375,6 @@ bool EEMEngine::areYouSure() {
 		g_system->delayMillis(15);
 	}
 
-	// Restore the screen so the caller's UI is intact.
 	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, 320, 200);
 	g_system->updateScreen();
 	return result;

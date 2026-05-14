@@ -35,119 +35,84 @@ namespace EEM {
 class EEMEngine;
 
 /**
- * Non-MIDI audio (digitised voice + sound effects). Mirrors the
- * original `SOUND.C` / `SPOOLSND.C` source files in `EEMCD.EXE` —
- * the AIL digital playback path used for both standalone .VOC files
- * and the per-mystery `M%d.SDB` spool stream.
+ * Non-MIDI audio (digitised voice + SFX). Mirrors SOUND.C / SPOOLSND.C.
  *
- * Two pathways:
+ * - VOC files (THUNDER.VOC, PHONE.VOC, JEN.VOC/JAKE.VOC): _LoadSoundName +
+ *   _PlayVoice @ 1ff1:0299 / 1ff1:023e via _AIL_play_VOC_file.
+ * - Mystery spool stream: _InitMysterySounds @ 202f:05cb opens M%d.SDX/.SDB.
+ *   Each SDX entry is (offset, compSize, uncompSize). Equal sizes => raw PCM
+ *   (_UncompressedSound @ 202f:03e6); otherwise PKWARE DCL Implode
+ *   (_DeCompressSound @ 202f:02ad). Each blob starts with SB Time Constant +
+ *   AIL block count, then 8-bit unsigned PCM.
  *
- * 1. **VOC playback** — `_LoadSoundName @ 1ff1:0299` reads a Creative
- *    Voice File into memory and `_PlayVoice @ 1ff1:023e` hands it to
- *    `_AIL_play_VOC_file`. Used for THUNDER.VOC (Storm logo),
- *    PHONE.VOC (briefing), JEN.VOC / JAKE.VOC (partner choose).
- *
- * 2. **Spool stream** — `_InitMysterySounds @ 202f:05cb` opens
- *    `m%d.sdx` (29be:144f) and `m%d.sdb` (29be:145b) for the active
- *    mystery. `_SpoolSound(num) @ 202f:068d` indexes into the SDX
- *    table (12 bytes per entry: u32 file_offset, u32 compressed_size,
- *    u32 uncompressed_size). If sizes match it streams via
- *    `_UncompressedSound @ 202f:03e6`; otherwise it EXPLODE-decompresses
- *    via `_DeCompressSound @ 202f:02ad`.
- *
- *    Each entry's data starts with 2 metadata bytes — Sound Blaster
- *    Time Constant (`rate = 1000000 / (256 - tc)`) and the AIL block
- *    count — followed by the (optionally) PKWARE-DCL-compressed
- *    8-bit unsigned PCM stream. We use ScummVM's `Common::decompressDCL`
- *    + `Audio::makeRawStream` to reach the same audio at the same
- *    sample rate.
- *
- * Mystery 60 (`M60.SDB/SDX`) holds the 19 voiceovers played between
- * ANIM01..ANIM20 in `_DoOpeningAnims` (it loads `_InitMysterySounds(0x3c)`
- * before the loop and `_SpoolSound(uVar3 - 1)` between every clip).
- * Mysteries 0..55 hold each case's per-clue voice plus the partner's
- * digital lines (`_KDDigitalIndex` table within the .SD blob).
+ * M60.SDB/SDX holds the 19 voiceovers between ANIM01..ANIM20 in
+ * _DoOpeningAnims (loaded via _InitMysterySounds(0x3c)).
+ * M0..M55 hold per-mystery clue voice + partner KDDigital lines.
  */
 class AudioPlayer {
 public:
 	explicit AudioPlayer(EEMEngine *vm);
 	~AudioPlayer();
 
-	/// Mirrors the gate in every original audio call site
-	/// (`_DisplayClue` 2404:0845, `_DoChoosePartner` 1a35:098c,
-	/// `_DoOpeningAnims` 2520:08a8, `_DisplayCorrect` 1df2:0780, ...)
-	/// — every `_PlayVoice` / `_SpoolSound` is wrapped in
-	/// `if ((DAT_2d5d_3f97 != 0) && (_VoiceAvailable != 0))`. The
-	/// engine pulls `_voiceOn` (= `DAT_2d5d_3f97`) into here so we
-	/// can early-return at the audio boundary instead of duplicating
-	/// the gate at every call site.
+	/// Setup-screen voice toggle. Mirrors DAT_2d5d_3f97 — every original
+	/// `_PlayVoice` / `_SpoolSound` is wrapped in
+	/// `if ((DAT_2d5d_3f97 != 0) && (_VoiceAvailable != 0))`; we pull the
+	/// flag in here so callers don't duplicate the gate.
 	void setVoiceEnabled(bool enabled) { _voiceEnabled = enabled; }
 	bool voiceEnabled() const { return _voiceEnabled; }
 
-	// VOC playback ----------------------------------------------------
-
-	/// Mirrors `_LoadSoundName` + `_PlayVoice`. Loads the named .VOC
-	/// from the game directory and hands it to the speech mixer
-	/// channel. A new `playVoc` cancels any prior voice.
+	/// Loads the named .VOC from the game directory and hands it to the
+	/// speech mixer channel. Mirrors _LoadSoundName + _PlayVoice
+	/// @ 1ff1:0299 / 1ff1:023e. A new playVoc cancels any prior voice.
 	void playVoc(const Common::Path &vocPath);
 
-	/// Mirrors `_VoicePlaying @ 1ff1:01f9`.
+	/// _VoicePlaying @ 1ff1:01f9.
 	bool isVoicePlaying() const;
 
-	/// Mirrors `_WaitForVoiceDone @ 1ff1:0221`. Blocks (with frame /
-	/// event pumping, like the rest of the engine's busy-loops) until
-	/// the voice clip finishes. Returns early if the user clicks /
-	/// presses a key — same abort behaviour the original
-	/// `_AIL_stop_digital_playback` callback installed.
+	/// _WaitForVoiceDone @ 1ff1:0221. Blocks (with frame + event pumping)
+	/// until the voice clip finishes; returns early on click / keypress.
 	void waitForVoiceDone(uint32 maxMs = 60000);
 
-	/// Mirrors `_StopTheVoice @ 1ff1:0283`.
+	/// _StopTheVoice @ 1ff1:0283.
 	void stopVoice();
 
-	/// Floppy variant: play a VOC by 0..25 slot index in the per-partner
-	/// voice table. Mirrors `_LoadSoundName_Floppy @ 1f4e:0305` which
-	/// indexes the table at `2608:0f0e` (Jake) / `2608:0f76` (Jenny).
-	/// `partner` is 0 for Jake, 1 for Jenny. Common slots: 12 =
-	/// PHONESL.VOC, 20 = partner intro voice, 25 = THUNDER.VOC.
+	/// Play a floppy VOC by 0..25 slot index in the per-partner voice
+	/// table. Mirrors _LoadSoundName_Floppy @ 1f4e:0305 (tables at
+	/// 2608:0f0e Jake / 2608:0f76 Jenny). partner: 0=Jake, 1=Jenny.
+	/// Common slots: 12 = PHONESL.VOC, 20 = partner intro, 25 = THUNDER.VOC.
 	void playFloppyVoiceSlot(uint slot, uint partner);
 
-	// Mystery sound spool ---------------------------------------------
-
-	/// Mirrors `_InitMysterySounds @ 202f:05cb`. Loads `M%u.SDX` into
-	/// memory and remembers the corresponding `M%u.SDB` path.
+	/// Loads M%u.SDX into memory and remembers the matching M%u.SDB path.
+	/// Mirrors _InitMysterySounds @ 202f:05cb.
 	bool initMysterySounds(uint mysteryNum);
 
-	/// Mirrors `_CleanMysterySounds @ 202f:05a5`.
+	/// _CleanMysterySounds @ 202f:05a5.
 	void cleanMysterySounds();
 
-	/// Mirrors `_SpoolSound @ 202f:068d`. Reads + decompresses entry
-	/// `num` from the active SDB and queues it for SFX playback. The
-	/// original blocks until playback finishes — for ScummVM we let
-	/// the mixer run asynchronously and expose `waitForSpoolDone` so
-	/// callers that need the original "block-then-continue" semantics
-	/// can opt in.
+	/// Reads + decompresses SDX entry `num` from the active SDB and queues
+	/// it for SFX playback. Mirrors _SpoolSound @ 202f:068d. Original blocks
+	/// until playback finishes; we run async — use waitForSpoolDone to opt
+	/// in to the original block-then-continue semantics.
 	void spoolSound(uint num);
 
-	/// Mirrors the abort-on-input wait loop inside `_UncompressedSound`
-	/// / `_DeCompressSound`. Returns when the spool clip finishes or
-	/// the user clicks / presses a key.
+	/// Wait loop inside _UncompressedSound / _DeCompressSound; aborts on
+	/// click / keypress (same abort behaviour as the original).
 	void waitForSpoolDone(uint32 maxMs = 60000);
 
-	/// Mirrors the immediate `_AIL_stop_digital_playback` exit.
+	/// Immediate _AIL_stop_digital_playback exit.
 	void stopSpool();
 
 	bool isSpoolPlaying() const;
 
-	/// Mirrors `_SayKDDigital(kdspeak) @ 2404:0fbc`. Each mystery
-	/// embeds a `KDDigitalIndex` table immediately after the 18-byte
-	/// `KDTextIndex` header (set up by `_ReadMystery @ 2404:008f`:
-	/// `_KDDigitalIndex = _KDTextIndex + 0x12`). The table is two
-	/// 1-based sound indices per `kdspeak` slot — Jen at +2, Jake at
-	/// +4 from each entry's start (+1 word for the unused header
-	/// slot). Pass the mystery's `kdTextIndex()` pointer.
+	/// Mirrors _SayKDDigital(kdspeak) @ 2404:0fbc. Each mystery embeds a
+	/// KDDigitalIndex table 18 bytes (+0x12) after its KDTextIndex header
+	/// (set up by _ReadMystery @ 2404:008f: `_KDDigitalIndex = _KDTextIndex
+	/// + 0x12`). Table is two 1-based sound indices per kdspeak slot — Jen
+	/// at +2, Jake at +4 from each entry start (+1 word skips an unused
+	/// header slot). Pass the mystery's kdTextIndex() pointer.
 	void sayKDDigital(const byte *kdTextIndex, uint kdspeak, uint partner);
 
-	/// Mirrors `_QuitSounds @ 1ff1:03c5`.
+	/// _QuitSounds @ 1ff1:03c5.
 	void stopAll();
 
 private:
