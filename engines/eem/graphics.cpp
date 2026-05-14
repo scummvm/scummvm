@@ -274,18 +274,9 @@ void EEMEngine::doHelp() {
 			const uint h = (uint)balloon.surface.h;
 			if (h < 0x4e)
 				balloonY = (uint16)((0x50 - h) >> 1);
-			const byte transp = (byte)(balloon.flags >> 8);
-			for (int row = 0; row < balloon.surface.h && balloonY + row < 200;
-				 row++) {
-				const byte *src =
-					(const byte *)balloon.surface.getBasePtr(0, row);
-				byte *dst = (byte *)ms.getBasePtr(0x21, balloonY + row);
-				for (int col = 0; col < balloon.surface.w && 0x21 + col < 320;
-					 col++) {
-					if (src[col] != transp)
-						dst[col] = src[col];
-				}
-			}
+			ms.transBlitFrom(balloon.surface,
+							 Common::Point(0x21, balloonY),
+							 (uint32)(byte)(balloon.flags >> 8));
 		}
 		uint16 bx = 5;
 		uint16 by = 4;
@@ -669,19 +660,8 @@ void EEMEngine::drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
 		return;
 	const int x = ballX + (int)dx;
 	const int y = ballY + (int)dy;
-	const byte transp = (byte)(pic.flags >> 8);
-	const int pw = MIN<int>(pic.surface.w, 320 - x);
-	const int ph = MIN<int>(pic.surface.h, 200 - y);
-	if (x < 0 || y < 0 || pw <= 0 || ph <= 0)
-		return;
-	for (int row = 0; row < ph; row++) {
-		const byte *src = (const byte *)pic.surface.getBasePtr(0, row);
-		byte *out = (byte *)dst.getBasePtr(x, y + row);
-		for (int col = 0; col < pw; col++) {
-			if (src[col] != transp)
-				out[col] = src[col];
-		}
-	}
+	dst.transBlitFrom(pic.surface, Common::Point(x, y),
+					  (uint32)(byte)(pic.flags >> 8));
 }
 
 } // End of namespace EEM

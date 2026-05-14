@@ -275,23 +275,9 @@ void blitMaskedPicSlice(Graphics::ManagedSurface &dst, const Picture &pic,
 						int dstX, int dstY) {
 	if (pic.surface.empty() || w <= 0 || h <= 0)
 		return;
-
-	const byte transp = (byte)(pic.flags >> 8);
-	for (int row = 0; row < h; row++) {
-		const int sy = srcY + row;
-		const int dy = dstY + row;
-		if (sy < 0 || sy >= pic.surface.h || dy < 0 || dy >= dst.h)
-			continue;
-		for (int col = 0; col < w; col++) {
-			const int sx = srcX + col;
-			const int dx = dstX + col;
-			if (sx < 0 || sx >= pic.surface.w || dx < 0 || dx >= dst.w)
-				continue;
-			const byte c = *(const byte *)pic.surface.getBasePtr(sx, sy);
-			if (c != transp)
-				*(byte *)dst.getBasePtr(dx, dy) = c;
-		}
-	}
+	const Common::Rect srcRect(srcX, srcY, srcX + w, srcY + h);
+	dst.transBlitFrom(pic.surface, srcRect, Common::Point(dstX, dstY),
+					  (uint32)(byte)(pic.flags >> 8));
 }
 
 void blitMaskedPic(Graphics::ManagedSurface &dst, const Picture &pic,
@@ -2898,24 +2884,13 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 
 			const int placeX = s.x;
 			const int placeY = s.y + (0x48 - portrait.surface.h);
-			const byte transp = (byte)(portrait.flags >> 8);
 			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
 			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
 			if (w <= 0 || h <= 0)
 				continue;
-			for (int row = 0; row < h; row++) {
-				const int dstY = placeY + row;
-				if (dstY < 0)
-					continue;
-				const byte *src =
-					(const byte *)portrait.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < w; col++) {
-					const int dstX = placeX + col;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
+			scratch.transBlitFrom(portrait.surface,
+								  Common::Point(placeX, placeY),
+								  (uint32)(byte)(portrait.flags >> 8));
 			slotRects[i] = Common::Rect(placeX, placeY,
 										 placeX + w, placeY + h);
 			slotSuspect[i] = (int)i;
@@ -3360,21 +3335,16 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		}
 		const int sx = (int)mx - scrollX + kMapWinX;
 		const int sy = (int)my - scrollY + kMapWinY;
-		const byte transp = (byte)(button.flags >> 8);
-
-		// Crop blit against the viewport.
+		// Crop the button blit against the viewport.
 		const int x0 = MAX<int>(sx, kMapWinX);
 		const int y0 = MAX<int>(sy, kMapWinY);
 		const int x1 = MIN<int>(sx + button.surface.w, kMapWinX + kMapWinW);
 		const int y1 = MIN<int>(sy + button.surface.h, kMapWinY + kMapWinH);
-		for (int row = y0; row < y1; row++) {
-			const byte *src = (const byte *)button.surface.getBasePtr(0, row - sy);
-			byte *dst = (byte *)scratch.getBasePtr(0, row);
-			for (int col = x0; col < x1; col++) {
-				const byte px = src[col - sx];
-				if (px != transp)
-					dst[col] = px;
-			}
+		if (x1 > x0 && y1 > y0) {
+			const Common::Rect srcRect(x0 - sx, y0 - sy, x1 - sx, y1 - sy);
+			scratch.transBlitFrom(button.surface, srcRect,
+								  Common::Point(x0, y0),
+								  (uint32)(byte)(button.flags >> 8));
 		}
 	}
 
@@ -5069,24 +5039,13 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 
 		const int placeX = s.x;
 		const int placeY = s.y + (0x48 - portrait.surface.h);
-		const byte transp = (byte)(portrait.flags >> 8);
 		const int w = MIN<int>(portrait.surface.w, 320 - placeX);
 		const int h = MIN<int>(portrait.surface.h, 200 - placeY);
 		if (w <= 0 || h <= 0)
 			continue;
-		for (int row = 0; row < h; row++) {
-			const int dstY = placeY + row;
-			if (dstY < 0)
-				continue;
-			const byte *src =
-				(const byte *)portrait.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < w; col++) {
-				const int dstX = placeX + col;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		scratch.transBlitFrom(portrait.surface,
+							  Common::Point(placeX, placeY),
+							  (uint32)(byte)(portrait.flags >> 8));
 		slotRects[i] = Common::Rect(placeX, placeY,
 									 placeX + w, placeY + h);
 		slotSuspect[i] = (int)i;
