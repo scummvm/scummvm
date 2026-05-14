@@ -188,6 +188,10 @@ void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
 		*p = PALETTE_6BIT_TO_8BIT(*p);
 }
 
+void Screen::clearColor0() {
+	_rawPalette[0] = _rawPalette[1] = _rawPalette[2] = 0;
+}
+
 void Screen::updatePalette() {
 	g_system->getPaletteManager()->setPalette(&_tempPalette[0], 0, Graphics::PALETTE_COUNT);
 	update();

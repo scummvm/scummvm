@@ -59,10 +59,26 @@ void BubbleBox::clearBubbles() {
 	// Loop through the bubble list to restore the screen areas
 	if (_vm->getGameID() == kGameNoctropolis) {
 		for (Common::Rect r: _bubbles) {
+
+			// clear the areas outside the background if the bubble went outside it
+			if (r.left < _vm->_screen->_windowXAdd || r.top < _vm->_screen->_windowYAdd) {
+				_vm->_screen->fillRect(Common::Rect(0, 0, _vm->_screen->w, _vm->_screen->_windowYAdd), 0);
+				_vm->_screen->fillRect(Common::Rect(0, 0, _vm->_screen->_windowXAdd, _vm->_screen->h), 0);
+			}
+			if (r.right > _vm->_screen->w - _vm->_screen->_windowXAdd || r.bottom > _vm->_screen->h - _vm->_screen->_windowYAdd) {
+				_vm->_screen->fillRect(Common::Rect(_vm->_screen->w - _vm->_screen->_windowXAdd, 0, _vm->_screen->w, _vm->_screen->h), 0);
+				_vm->_screen->fillRect(Common::Rect(0, _vm->_screen->h - _vm->_screen->_windowYAdd, _vm->_screen->w, _vm->_screen->h), 0);
+			}
+
 			_vm->_screen->_screenYOff = 0;
 			r.left -= (MIN((int)r.left, 2) + _vm->_screen->_windowXAdd);
 			r.right = MIN(r.right, (int16)(_vm->_screen->w - _vm->_screen->_windowXAdd));
+			r.top -= _vm->_screen->_windowYAdd;
+			r.bottom -= _vm->_screen->_windowYAdd;
 
+			r.clip(Common::Rect(_vm->_screen->w, _vm->_screen->h));
+
+			// then copy in the bit we need from the draw buffer.
 			_vm->_screen->copyBlock(&_vm->_buffer2, r);
 		}
 	} else {

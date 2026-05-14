@@ -108,7 +108,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		vm->_buffer2.clear();
 		result = true;
 		if (_vm->_player->_roomNumber == 54) {
-			error("TODO: Implement special pal hack for fade in room 54?");
+			warning("TODO: Implement special pal hack for fade in room 54?");
 			/*
 			NoctPal_ClearRawPalette();
 			pbVar4 = GetRawPalette();
@@ -162,6 +162,10 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		if (!_vm->_midi->isPlaying())
 			_vm->_midi->newMusic(0, 1);
 		break;
+	case 16:
+		// This gets called at the start of the end credits.. do nothing?
+		((VideoPlayer_v2 *)_vm->_video)->enableSetPal();
+		break;
 	case 17:
 		warning("TODO: Add Nightdive credits here if playing that edition?");
 		// see NoctEndGame::drawer.
@@ -170,6 +174,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 	case 19:
 		warning("TODO: work our correct step on Special 19 (flashpalette)");
 		_vm->_screen->flashPalette(20);
+		break;
 	case 20:
 		vm->doLastComic();
 		result = true;

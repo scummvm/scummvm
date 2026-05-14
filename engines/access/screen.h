@@ -199,6 +199,12 @@ public:
 	void cyclePaletteForward();
 
 	void cyclePaletteBackwards();
+
+	/**
+	 * Clear colour 0 in the palette back to black
+	 * (workaround for Noctropolis)
+	 */
+	void clearColor0();
 };
 
 } // End of namespace Access

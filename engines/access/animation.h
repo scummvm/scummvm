@@ -73,6 +73,11 @@ public:
 	 * Remove the last animation timer
 	 */
 	void popBackTimer() { if (_animationTimers.size()) _animationTimers.pop_back(); }
+
+	/**
+	 * True if there is an anim running
+	 */
+	bool hasTimer() const { return !_animationTimers.empty(); };
 };
 
 class AnimationResource {

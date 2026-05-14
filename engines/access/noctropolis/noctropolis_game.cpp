@@ -98,6 +98,8 @@ void NoctropolisEngine::initVariables() {
 	_mouseMode = 0;
 	_animation->clearTimers();
 
+	initMinigame();
+
 	// This is Noct_InitTravel in the original
 	_travScrollRow = 15;
 	_travScrollCol = 0;
@@ -504,9 +506,6 @@ void NoctropolisEngine::setStilettoPos() {
 
 void NoctropolisEngine::dead(int deathType) {
 	// aka DeadMeat1
-
-	Common::String vidfile = Common::String::format("VID2/DEATH%d.VID", deathType + 1);
-
 	static constexpr struct { int16 x, y; } DEAD_COORD[] = {
 		{167, 21},
 		{161, 22},
@@ -522,15 +521,17 @@ void NoctropolisEngine::dead(int deathType) {
 		3, 0, 0, 0, 0, 0, 5, 6, 7, 1, 1, 2, 6, 4, 3, 3, 0, 3,
 	};
 
+	const int vidType = DEAD_VIDS[deathType];
+
+	const Common::Path vidFile(Common::String::format("VID2/DEATH%d.VID", vidType + 1));
+
 	const char *deathScreenFile =
 		(deathType < 6 || deathType == 9 || deathType == 10 || deathType == 11)
 		 ? "DEATH1.SCN" : "DEATH.SCN";
 
-	const int vidtype = DEAD_VIDS[deathType];
+	const Common::Point vidPos(DEAD_COORD[vidType].x, DEAD_COORD[vidType].y);
 
-	const Common::Point vidPos(DEAD_COORD[vidtype].x, DEAD_COORD[vidtype].y);
-
-	NoctropolisResources *res = (NoctropolisResources *)_res;
+	const NoctropolisResources *res = (const NoctropolisResources *)_res;
 
 	int16 deathTextX = deathType == 8 ? 80 : 130;
 	int16 deathTextY = deathType == 8 ? 310 : 220;
@@ -549,10 +550,12 @@ void NoctropolisEngine::dead(int deathType) {
 	_bubbleBox->_bubbleTitle = deathTextCaption;
 	_bubbleBox->placeBubble(res->getDeathText(deathType));
 
+	_screen->setIconPalette();
+	_screen->setPalette();
 	_screen->fadeIn();
 
 	VideoPlayer_v2 vidPlayer(this);
-	vidPlayer.VideoPlayer::setVideo(_screen, vidPos, Common::Path(vidfile), 0);
+	vidPlayer.VideoPlayer::setVideo(_screen, vidPos, vidFile, 0);
 	vidPlayer.playToEnd();
 
 	_events->waitKeyActionMouse();
@@ -601,8 +604,7 @@ void NoctropolisEngine::displayPegsTick() {
 		ie._position.x = pegPos[_minigameCurrentConfig[i]].x + 181 - 4;
 		ie._position.y = pegPos[_minigameCurrentConfig[i]].y + 116 - 3;
 		ie._offsetY = 7;
-		//spriteDrawItem.flags = 8; // Why? Scaling is 0! CHECKME
-		//spriteDrawItem.scaling;
+		ie._flags |= IMGFLAG_UNSCALED;
 		_images.addToList(ie);
 	}
 }
@@ -667,7 +669,10 @@ void NoctropolisEngine::playStilMorph() {
 	_screen->clearScreen();
 	VideoPlayer_v2 vidPlayer(this, true);
 	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(118, 118), Common::Path("VID1/DRLM00.VID"), 0);
+	_screen->setIconPalette();
+	_screen->setPalette();
 	vidPlayer.playToEnd();
+	_system->showMouse(true);
 }
 
 void NoctropolisEngine::flashPaletteEffect() {
