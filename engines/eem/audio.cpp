@@ -51,15 +51,8 @@ void AudioPlayer::stopAll() {
 	cleanMysterySounds();
 }
 
-// VOC playback --------------------------------------------------------
-
 void AudioPlayer::playVoc(const Common::Path &vocPath) {
-	// Voice / digital audio is gated by the `DAT_2d5d_3f97` flag in
-	// the original — verified at every callsite (`_DoChoosePartner @
-	// 1a35:098c`, `_DisplayClue @ 2404:0845`, `_DoOpeningAnims @
-	// 2520:08a8`, etc.). Setup-screen toggle and `_NewPlayer` fresh-
-	// profile init both rewrite that flag. We pull it into the audio
-	// player so callers don't have to duplicate the check.
+	// `_voiceEnabled` mirrors DAT_2d5d_3f97 (setup-screen voice toggle).
 	if (!_voiceEnabled) {
 		debugC(2, kDebugSound, "AudioPlayer: voice disabled, skipping %s",
 			   vocPath.toString().c_str());
@@ -67,7 +60,6 @@ void AudioPlayer::playVoc(const Common::Path &vocPath) {
 	}
 	stopVoice();
 
-	// Mirrors `_LoadSoundName`'s `_fopen` (1ff1:02ac).
 	Common::File *f = new Common::File();
 	if (!f->open(vocPath)) {
 		warning("AudioPlayer: %s missing", vocPath.toString().c_str());
@@ -83,9 +75,7 @@ void AudioPlayer::playVoc(const Common::Path &vocPath) {
 		return;
 	}
 
-	// `_PlayVoice` (1ff1:023e) goes through `_AIL_play_VOC_file` on the
-	// digital channel — we route through `kSpeechSoundType` so the
-	// launcher's "Speech volume" slider applies.
+	// _PlayVoice @ 1ff1:023e — route through kSpeechSoundType for the launcher slider.
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_voiceHandle,
 					   stream, -1, Audio::Mixer::kMaxChannelVolume,
 					   0, DisposeAfterUse::YES);
@@ -98,9 +88,8 @@ bool AudioPlayer::isVoicePlaying() const {
 }
 
 void AudioPlayer::waitForVoiceDone(uint32 maxMs) {
-	// Mirrors the wait loop at `_WaitForVoiceDone @ 1ff1:0221` — pumps
-	// events (so animations + abort-on-click still work) while waiting
-	// for the AIL voice channel to drain.
+	// _WaitForVoiceDone @ 1ff1:0221 — pumps events while the AIL voice channel
+	// drains, so animations + abort-on-click keep working during the wait.
 	const uint32 startMs = g_system->getMillis();
 	while (isVoicePlaying() && !_vm->shouldQuit() &&
 		   g_system->getMillis() - startMs < maxMs) {
@@ -124,12 +113,9 @@ void AudioPlayer::stopVoice() {
 		_mixer->stopHandle(_voiceHandle);
 }
 
-// Spool sound ---------------------------------------------------------
-
+// _ReadLong(&MysterySounds, size, sdx) @ 202f:0647.
+// 12-byte entries: (u32 offset, u32 compressed_size, u32 uncompressed_size).
 bool AudioPlayer::readSdxIndex(const Common::Path &sdxPath) {
-	// Mirrors `_ReadLong(&MysterySounds, size, sdx)` at 202f:0647 —
-	// reads the entire .SDX into memory; each 12-byte entry is
-	// (u32 offset, u32 compressed_size, u32 uncompressed_size).
 	Common::File f;
 	if (!f.open(sdxPath)) {
 		warning("AudioPlayer: %s missing", sdxPath.toString().c_str());
@@ -151,10 +137,8 @@ bool AudioPlayer::readSdxIndex(const Common::Path &sdxPath) {
 	return true;
 }
 
+// _InitMysterySounds @ 202f:05cb. Strings "m%u.sdx" @ 29be:144f, "m%u.sdb" @ 29be:145b.
 bool AudioPlayer::initMysterySounds(uint mysteryNum) {
-	// Mirrors `_InitMysterySounds @ 202f:05cb` — calls
-	// `_CleanMysterySounds` first, then sprintf-opens `m%u.sdx` (string
-	// at 29be:144f) and `m%u.sdb` (29be:145b).
 	cleanMysterySounds();
 
 	const Common::String sdxName = Common::String::format("M%u.SDX", mysteryNum);
@@ -180,12 +164,11 @@ void AudioPlayer::cleanMysterySounds() {
 	_currentMystery = -1;
 }
 
+// pcm must be allocated with malloc(): Audio::makeRawStream takes ownership
+// and frees it via free() on stream destruction (NOT delete/delete[]).
 void AudioPlayer::playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
 								Audio::SoundHandle &handle,
 								Audio::Mixer::SoundType type) {
-	// `Audio::makeRawStream` takes ownership and `free()`s the buffer
-	// on stream destruction — so the caller must `malloc` (not `new`)
-	// the PCM buffer.
 	Audio::SeekableAudioStream *stream =
 		Audio::makeRawStream(pcm, size, sampleRate, Audio::FLAG_UNSIGNED,
 							 DisposeAfterUse::YES);
@@ -199,11 +182,10 @@ void AudioPlayer::playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
 					   DisposeAfterUse::YES);
 }
 
-// Floppy per-partner voice table — verified by reading the raw filename
-// pointers at `2608:0f0e` (Jake) and `2608:0f76` (Jenny) in EEM.EXE,
-// each 26 × FAR-ptr to a NUL-terminated `*.voc` filename. Indexed by
-// `_LoadSoundName_Floppy @ 1f4e:0305`. Slots match across partners:
-//   12 = PHONESL.VOC, 20 = partner intro, 25 = THUNDER.VOC.
+// Floppy per-partner voice tables, indexed by _LoadSoundName_Floppy @ 1f4e:0305.
+// Filename FAR-ptr arrays at 2608:0f0e (Jake) and 2608:0f76 (Jenny), each
+// 26 * FAR-ptr to a NUL-terminated `*.voc` name. Slots align across partners,
+// e.g. 12 = PHONESL.VOC, 20 = partner intro, 25 = THUNDER.VOC.
 static const char *const kFloppyJakeVoiceTable[26] = {
 	"DING.VOC",       "M-0083SL.VOC", "M-0085SL.VOC", "NEWSCAN.VOC",
 	"M-0089SL.VOC",   "M-0091SL.VOC", "M-0092SL.VOC", "NEWSSHRT.VOC",
@@ -225,7 +207,7 @@ static const char *const kFloppyJennyVoiceTable[26] = {
 
 void AudioPlayer::playFloppyVoiceSlot(uint slot, uint partner) {
 	if (slot >= 26)
-		slot = 0;  // mirrors `_LoadSoundName_Floppy`'s `if (0x19 < slot) slot = 0;`
+		slot = 0;  // _LoadSoundName_Floppy: if (0x19 < slot) slot = 0;
 	const char *name = (partner == 0)
 		? kFloppyJakeVoiceTable[slot]
 		: kFloppyJennyVoiceTable[slot];
@@ -239,9 +221,7 @@ void AudioPlayer::spoolSound(uint num) {
 		return;
 	}
 	if (_currentMystery < 0) {
-		// No SDB/SDX bundle is loaded — floppy install (no `M*.SDB`)
-		// or pre-mystery state. Silently no-op; per-voice VOC playback
-		// for floppy lives elsewhere (TODO).
+		// No SDB/SDX bundle loaded (floppy install or pre-mystery state).
 		debugC(2, kDebugSound,
 			   "AudioPlayer: spoolSound(%u) skipped (no mystery sounds)", num);
 		return;
@@ -266,17 +246,14 @@ void AudioPlayer::spoolSound(uint num) {
 		return;
 	}
 
-	// Mirrors the two `_fgetc(in)` reads at 202f:02da-e1: byte 0 =
-	// Sound Blaster Time Constant, byte 1 = total AIL playback blocks.
-	// Convert TC -> sample rate via the standard SB formula. The block
-	// count is only used internally by the AIL DDS pipeline; ScummVM's
-	// mixer doesn't need it.
+	// _UncompressedSound 2-byte header @ 202f:02da-e1:
+	//   byte 0 = Sound Blaster Time Constant
+	//   byte 1 = total AIL playback blocks (internal to AIL DDS; unused here)
 	const byte tc          = sdb.readByte();
-	(void)sdb.readByte(); // total blocks — unused outside AIL
+	(void)sdb.readByte(); // AIL block count, unused outside AIL
 
-	// SB Time Constant: rate = 1000000 / (256 - tc). e.g. tc=0xD2 →
-	// 22 kHz. Guard against the degenerate tc=0xFF (would divide by 1
-	// → 1 MHz, well above what the mixer can resample sanely).
+	// SB Time Constant formula: rate = 1000000 / (256 - tc).
+	// e.g. tc=0xD2 -> 22 kHz. tc=0xFF would divide by 1 (1 MHz, nonsense); clamp.
 	const uint sampleRate = (tc < 0xFF)
 		? (uint)(1000000u / (256u - tc))
 		: 44100u;
@@ -285,11 +262,7 @@ void AudioPlayer::spoolSound(uint num) {
 	uint32 audioSize = 0;
 
 	if (entry.compressedSize == entry.uncompressedSize) {
-		// `_UncompressedSound @ 202f:03e6` — already raw PCM. The
-		// `_SpoolSound` equality check at 202f:06e6 is `comp == uncomp`;
-		// in that case `len = uncompressed_size` bytes follow the
-		// 2-byte header. Original reads in 16 KB chunks; we slurp the
-		// lot at once.
+		// _UncompressedSound @ 202f:03e6 — raw PCM follows the 2-byte header.
 		audioSize = entry.uncompressedSize;
 		pcm = (byte *)malloc(audioSize);
 		if (!pcm) {
@@ -303,18 +276,15 @@ void AudioPlayer::spoolSound(uint num) {
 			return;
 		}
 	} else {
-		// `_DeCompressSound @ 202f:02ad` → `EXPLODE @ 25c6:0d01`
-		// (PKWARE DCL "Implode") with READDISKSOUND/WRITESOUND
-		// callbacks. EXPLODE drives both ends via its OWN end-of-stream
-		// marker (length token 519); the SDX `compressed_size` /
-		// `uncompressed_size` are loose hints, NOT exact lengths —
-		// 202f:0332 even computes `destSize - 2` and never reads it.
-		// ScummVM's fixed-size `decompressDCL` overload errors when
-		// the actual output exceeds our pre-allocated buffer (which
-		// we saw on every M0 clue voice). Use the dynamic-sized
-		// overload instead — it lets the DCL stream terminate at its
-		// own marker. Source is bounded to the rest of the SDB so
-		// the bit reader can't fall off the end.
+		// _DeCompressSound @ 202f:02ad -> EXPLODE @ 25c6:0d01 (PKWARE DCL Implode),
+		// driven by READDISKSOUND/WRITESOUND callbacks. EXPLODE terminates on its
+		// own length token 519 (end-of-stream marker), not on the SDX sizes:
+		// 202f:0332 even computes `destSize - 2` and never reads it. The SDX
+		// `compressed_size` / `uncompressed_size` fields are loose hints.
+		// ScummVM's fixed-size `decompressDCL` overload errors when actual output
+		// exceeds the pre-allocated buffer (observed on M0 clue voices), so use
+		// the dynamic-sized overload and let DCL terminate at its own marker.
+		// Source is bounded to the rest of the SDB so the bit reader stays in range.
 		const uint32 streamStart = (uint32)sdb.pos();
 		Common::SeekableSubReadStream sub(&sdb, streamStart,
 										   (uint32)sdb.size(),
@@ -343,11 +313,7 @@ void AudioPlayer::spoolSound(uint num) {
 		   num, tc, sampleRate, audioSize,
 		   entry.compressedSize == entry.uncompressedSize ? "raw" : "DCL");
 
-	// `_AIL_start_digital_playback` at 202f:040c — we route through
-	// `kSFXSoundType` so the launcher's "SFX volume" slider applies
-	// (this is the same slider the original would've targeted via
-	// `_AIL_set_digital_master_volume`). Voice clips on the spool path
-	// are gameplay SFX, not the speech-only VOC stream.
+	// _AIL_start_digital_playback @ 202f:040c. Spool clips are gameplay SFX.
 	playPcmBuffer(pcm, audioSize, sampleRate, _spoolHandle,
 				  Audio::Mixer::kSFXSoundType);
 }
@@ -380,17 +346,13 @@ void AudioPlayer::stopSpool() {
 		_mixer->stopHandle(_spoolHandle);
 }
 
+// _SayKDDigital @ 2404:0fbc.
+//   slot = kdspeak * 2 + (partner == Jake ? 1 : 0); sound = digital[slot+1] - 1
+// KDDigitalIndex = KDTextIndex + 0x12 (set by _ReadMystery @ 2404:0163-0167).
 void AudioPlayer::sayKDDigital(const byte *kdTextIndex, uint kdspeak,
 							   uint partner) {
 	if (!kdTextIndex || _currentMystery < 0)
 		return;
-	// `_SayKDDigital @ 2404:0fbc`:
-	//   iVar1 = kdspeak * 2;
-	//   if (_Partner == 0) iVar1++;            // Jake offset
-	//   sound = *(u16 *)(KDDigitalIndex + (iVar1 + 1) * 2) - 1;
-	//   _SpoolSound(sound);
-	// KDDigitalIndex sits 18 bytes (`+ 0x12`) after KDTextIndex per
-	// `_ReadMystery` 2404:0163-0167.
 	const byte *digital = kdTextIndex + 0x12;
 	const uint slot = (kdspeak * 2) + (partner == 0 ? 1u : 0u) + 1u;
 	const uint16 raw = READ_LE_UINT16(digital + slot * 2);

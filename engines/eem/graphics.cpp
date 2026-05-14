@@ -35,29 +35,25 @@
 #include "eem/detection.h"
 #include "eem/eem.h"
 
-// EEM — graphics helpers (KDGRAPH.C + KDHELP.C, the latter merged because
-// it has only three functions). Animation playback, balloon-table lookup,
-// and the help-screen primitives that share the same balloon machinery.
-
 namespace EEM {
 
-// `_InterfaceHelp(num)` @ 1560:0205 reads `HelpData @ 29be:00c8` (5-byte
-// entries: u8 count, then up to 2 u16 picIds). Verified bytes:
+// HelpData @ 29be:00c8, read by _InterfaceHelp @ 1560:0205. 5-byte entries:
+// u8 count, then up to 2 u16 picIds. Verified bytes:
 //   entry 0 (PDA / gallery HELP button): count=2, picIds = 0x0063, 0x01ae
-//   entry 1: count=2, picIds = 0x0192, 0x01b1
-// Only entry 0 is reachable from the PDA notebook (rect 1) and the
-// gallery (rect 1) — both call `_InterfaceHelp(0)`.
+//   entry 1:                              count=2, picIds = 0x0192, 0x01b1
+// Only entry 0 is reachable from the PDA notebook (rect 1) and the gallery
+// (rect 1) — both call _InterfaceHelp(0).
 const uint16 kHelpPics[][2] = {
 	{ 0x0063, 0x01ae },
 	{ 0x0192, 0x01b1 },
 };
 
-// 52-entry, 10-bytes-each balloon-metadata table at `29be:0875` (CD)
-// / `2608:05f9` (floppy). Used by `_DisplayClue` to position
-// `_WordWrap` text inside the balloon AND to position the
-// "click to continue" indicator drawn by
-// `_DisplayHotspotClue_Floppy @ 22dc:05c8`. Layout per entry:
-//   +0..1 = text X inset, +2..3 = text Y inset
+// kBalloonInsetTable: 52 entries x 10 bytes @ 29be:0875 (CD) / 2608:05f9
+// (floppy), indexed by (bubNum & 0x7F). Used by _DisplayClue to position
+// _WordWrap text inside the balloon AND by _DisplayHotspotClue_Floppy
+// @ 22dc:05c8 to position the "click to continue" indicator. Layout per entry:
+//   +0..1 = text X inset
+//   +2..3 = text Y inset
 //   +4..5 = wrap width
 //   +6..7 = "more / end" indicator X within the balloon
 //   +8..9 = "more / end" indicator Y within the balloon
@@ -117,12 +113,8 @@ bool findBalloonFamily(uint16 balloonId, uint16 &first, uint16 &last) {
 	return false;
 }
 
-// Lines that fit inside balloon @p balloonId. The metadata-table `indDY`
-// is the designed bottom of the text area, NOT the indicator-drawing
-// position alone — for families 3, 4, 6 and the singletons the bubble
-// graphic continues below `indDY` with shadow / tail decoration that
-// text must not encroach on. Image height is therefore an overestimate;
-// `indDY` is the artist-intended last text line.
+// indDY is the artist-intended last text line, not just the indicator Y:
+// families 3, 4, 6 and singletons have shadow/tail decoration below indDY.
 uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
 	const uint idx = balloonId & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable) || lineH <= 0)
@@ -132,10 +124,9 @@ uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
 	return MAX<uint>(1, ((int)insets.indDY - (int)insets.y) / lineH + 1);
 }
 
-// Floppy KDHelp hotspot-searched check. Mirrors
-// `FUN_22dc_096c @ 22dc:096c`: walks the per-site dialog records at
-// `site_data[+6]` to skip `hotspotIdx` hotspots, then returns the
-// `_cluesFound` flag for that hotspot's first text index.
+// FUN_22dc_096c @ 22dc:096c: walks per-site dialog records at site_data[+6]
+// to skip hotspotIdx hotspots, returns _cluesFound flag for hotspot's first
+// text index.
 static bool floppyHotspotSearched(EEM::Mystery &mystery, uint siteIdx,
 								   uint hotspotIdx) {
 	const byte *site = mystery.siteData(siteIdx);
@@ -169,21 +160,14 @@ static bool floppyHotspotSearched(EEM::Mystery &mystery, uint siteIdx,
 }
 
 void EEMEngine::doHelp() {
-	// Floppy uses a totally different hint mechanism — per-mystery
-	// `H<n>.BIN` data files (one per case). Format verified at
-	// `FUN_1503_0001 @ 1503:0001` (loader, format string at
-	// `2608:0154` = "h%d.bin") + `FUN_1503_01a5 @ 1503:01a5`
-	// (consumer):
-	//   byte 0 = numChainHints
-	//   numChainHints × { byte siteIdx; byte hotspotIdx; }
-	//   byte = numExtraHints
-	//   numExtraHints × { byte siteIdx; byte hotspotIdx; }
-	//   asciiz string 1  ("[balloon-digit]Let's go to <site>...")
-	//   asciiz string 2  (alternate hint)
-	//   asciiz string 3  (post-solve hint, used when score ≥ 100)
-	// Selection logic: if any chain hotspot is unsearched → string 1.
-	// Else if any extra hotspot is unsearched → string 2. Else if
-	// `selectedPoints() ≥ 100` → string 3.
+	// Floppy per-mystery H<n>.BIN hint files. Loader FUN_1503_0001 @ 1503:0001
+	// (format string "h%d.bin" @ 2608:0154), consumer FUN_1503_01a5 @ 1503:01a5.
+	// Format:
+	//   byte numChainHints; numChainHints × { byte siteIdx; byte hotspotIdx; }
+	//   byte numExtraHints; numExtraHints × { byte siteIdx; byte hotspotIdx; }
+	//   asciiz str1, str2, str3 (post-solve, score >= 100)
+	// Selection: any chain hotspot unsearched -> str1; else any extra
+	// unsearched -> str2; else selectedPoints() >= 100 -> str3.
 	if (isFloppy() && _mystery.isLoaded()) {
 		const Common::String filename = Common::String::format("H%u.BIN",
 															   _mystery.number());
@@ -252,18 +236,9 @@ void EEMEngine::doHelp() {
 		if (!chosen || *chosen == 0)
 			return;
 
-		// Strip leading balloon-digit byte. `_GetKDTextBalloon @
-		// 1df2:0105` (= floppy `FUN_1d40_009f`) doesn't take the
-		// digit's *value* — it indexes the per-character table at
-		// `2608:0c14` by the literal byte, so '0'..'9' map to a
-		// non-trivial balloon-id sequence. Verified bytes at
-		// `2608:0c44` (= 0xc14 + '0'):
-		//   '0'→0x15, '1'→0x16, '2'→0x17, '3'→0x18, '4'→0x19,
-		//   '5'→0x1a, '6'→0x1c, '7'→0x1d, '8'→0x1e, '9'→0x0a.
-		// Without this map the previous (digit - '0') version asked
-		// `getBalloonInsets` for balloon 0 (text width 142) instead of
-		// the correct balloon 21 (text width 155), which is why the
-		// hint bubble rendered narrower than the original.
+		// _GetKDTextBalloon @ 1df2:0105 (floppy FUN_1d40_009f) indexes the
+		// per-character table at 2608:0c14 by the literal byte. Bytes at
+		// 2608:0c44 (= 0xc14 + '0') give the '0'..'9' -> balloon-id mapping:
 		static const uint8 kFloppyDigitToBalloon[10] = {
 			0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
 		};
@@ -317,7 +292,6 @@ void EEMEngine::doHelp() {
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, 320, 200);
 		g_system->updateScreen();
 
-		// Wait for click — KD hint dismisses on any input.
 		while (!shouldQuit()) {
 			Common::Event ev;
 			bool advance = false;
@@ -338,9 +312,9 @@ void EEMEngine::doHelp() {
 		return;
 	}
 
-	// Mirrors `_KDHelp @ 1560:010a`. The original walks the first two
-	// entries of `_AChain` (the puzzle's required-clue chain — the
-	// "spine" of evidence the player must collect):
+	// Mirrors _KDHelp @ 1560:010a. Walks the first two _AChain entries
+	// (the puzzle's required-clue chain — the "spine" of evidence the
+	// player must collect):
 	//
 	//   for (i = 0; i < 2; i++) {
 	//       if (_AChain[i] != -1 && _HintBlock[i] != -1 &&
@@ -351,17 +325,16 @@ void EEMEngine::doHelp() {
 	//       if (_HintBlock[i] != -1) defined++;
 	//   }
 	//   if (!shown) {
-	//       // Fall back to the generic KD hint: KDTextIndex[+0xe]
-	//       // (first time) / KDTextIndex[+0x10] (second time, toggled
-	//       // by _SawHelpHint). If neither chain entry had a hint
-	//       // defined, show the global "no hints" sentinel instead.
+	//       // Generic KD hint: KDTextIndex[+0xe] (first time) /
+	//       // KDTextIndex[+0x10] (second time, toggled by _SawHelpHint).
+	//       // If no chain hint was ever defined, render the "no hints"
+	//       // sentinel instead.
 	//       _DisplayHint(...);
 	//   }
 	//
-	// So this is a SMART per-puzzle hint: the partner points the
-	// player at whichever chain clue they haven't yet found, only
-	// falling back to the generic "let's keep looking" line when
-	// every chain hint has been triggered already.
+	// SMART per-puzzle hint: partner points at whichever chain clue the
+	// player hasn't found yet, only falling back to the generic line once
+	// every chain hint has been triggered.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
@@ -393,10 +366,7 @@ void EEMEngine::doHelp() {
 	}
 
 	if (chosenText == 0xFFFF) {
-		// No unfound chain clue had a hint to give — fall back to the
-		// generic KD hint (or the "no hints defined" sentinel if the
-		// chain has no hints at all). Mirrors the second arm of
-		// `_KDHelp` (1560:0152-019b).
+		// Second arm of _KDHelp (1560:0152-019b): generic KD hint fallback.
 		if (anyHintDefined) {
 			const uint16 hintFirst  = READ_LE_UINT16(kd + 0x0e);
 			const uint16 hintSecond = READ_LE_UINT16(kd + 0x10);
@@ -409,9 +379,7 @@ void EEMEngine::doHelp() {
 				soundNum   = 8;
 			}
 		}
-		// Else: keep chosenText == 0xFFFF — original would render
-		// `NoHints` (a "There are no hints defined for this Mystery"
-		// string at 29be:00d3); we just bail.
+		// Else: original would render NoHints string @ 29be:00d3; we bail.
 	}
 
 	if (chosenText == 0xFFFF) {
@@ -422,20 +390,19 @@ void EEMEngine::doHelp() {
 	const Common::String raw  = _mystery.textAt(chosenText);
 	Common::String text = parseString(raw, _playerName, _partner);
 
-	// Render as a speech-balloon overlay, exactly mirroring
-	// `_DisplayHint @ 1560:0009`:
+	// Render as a speech-balloon overlay, mirroring _DisplayHint @ 1560:0009:
 	//
 	//   _GetKDTextBalloon(text, &bub);             // first-char dispatch
-	//   _GetBalloon(bub);                           // load balloon pic
-	//   y = (h < 0x4e) ? (0x50 - h) >> 1 : 1;       // vertical centre
-	//   _AddPicBackground(balloon, 0x21, y);        // overlay on screen
+	//   _GetBalloon(bub);                          // load balloon pic
+	//   y = (h < 0x4e) ? (0x50 - h) >> 1 : 1;      // vertical centre
+	//   _AddPicBackground(balloon, 0x21, y);       // overlay on screen
 	//   _WordWrap(0x21+tbl[bub].x, y+tbl[bub].y,   // text inside balloon
 	//             tbl[bub].w, text, -1, color=0);
-	//   _SayKDDigital(snd);                          // partner voice
+	//   _SayKDDigital(snd);                        // partner voice
 	//   _Wait();
 	//
-	// The balloon BG is the caller's CURRENT screen — site / PDA /
-	// gallery — not a cleared scratch.
+	// BG is the caller's CURRENT screen (site / PDA / gallery), not a cleared
+	// scratch.
 	Graphics::ManagedSurface ms(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	ms.clear();
@@ -447,16 +414,13 @@ void EEMEngine::doHelp() {
 		}
 	}
 
-	// Balloon shape dispatch via `_GetKDTextBalloon @ 1df2:0105` —
-	// based on the first char of the parsed text. Digits select a
-	// specific balloon variant; non-digit defaults to `0x17`. The
-	// digit, when present, is THEN consumed from the displayed
-	// text — mirrors `_DisplayAlibi @ 1df2:0145`'s `str = pbVar7 + 1`
-	// advance after using `*str` for `bindx`. Without this the hint
-	// renders like "1Try checking the kitchen..." with a stray
-	// leading digit. `_GetKDTextBalloon` itself doesn't strip it
-	// (verified at 1df2:0105 — it just reads `*str`), so the caller
-	// has to.
+	// Balloon shape dispatch via _GetKDTextBalloon @ 1df2:0105 — based on
+	// the first char of the parsed text. Digits select a specific balloon
+	// variant; non-digit defaults to 0x17. The digit, when present, is
+	// THEN consumed from the displayed text — mirrors _DisplayAlibi
+	// @ 1df2:0145's `str = pbVar7 + 1` advance after reading `*str` for
+	// bindx. _GetKDTextBalloon itself doesn't strip it (1df2:0105 just
+	// reads `*str`), so the caller has to.
 	const byte firstChar =
 		text.empty() ? (byte)0 : (byte)text[0];
 	uint16 bubNum = getKDTextBalloon(firstChar);
@@ -480,8 +444,6 @@ void EEMEngine::doHelp() {
 						 (uint32)transp);
 	}
 
-	// Balloon-relative text insets from the table at `29be:0875`
-	// (10 bytes per entry: x, y, max-width, ...).
 	uint16 tx = 5, ty = 4, tw = 155;
 	getBalloonInsets(bubNum, tx, ty, tw);
 	_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty, tw, text,
@@ -491,9 +453,10 @@ void EEMEngine::doHelp() {
 							   0, 0, 320, 200);
 	g_system->updateScreen();
 
-	// `_DisplayHint @ 1560:0009` plays `_SayKDDigital(soundnum)` —
-	// partner-specific voice line keyed to which hint type fired (10
-	// = first chain hint, 11 = second, 7 / 8 = generic KD).
+	// _DisplayHint @ 1560:0009 plays _SayKDDigital(soundnum) — a
+	// partner-specific voice line keyed to which hint type fired:
+	//   10 = first chain hint, 11 = second chain hint,
+	//    7 = generic KD (first), 8 = generic KD (second).
 	if (_audio && _mystery.kdTextIndex() && soundNum > 0)
 		_audio->sayKDDigital(_mystery.kdTextIndex(), (uint)soundNum,
 							 _partner);
@@ -502,29 +465,22 @@ void EEMEngine::doHelp() {
 }
 
 void EEMEngine::doInterfaceHelp(uint num) {
-	// Mirrors `_InterfaceHelp(num)` @ 1560:0205. The original walks
-	// `HelpData @ 29be:00c8` (5-byte entries: u8 count, then up to 2
-	// u16 picIds), `_GetPicture`s each one, blits it via
-	// `_Rect_Move_Mask(0, 0, ...)` (a MASKED blit on top of the
-	// existing screen — transparent pixels show the caller's BG), and
-	// waits for click / key. ESC at `1560:02b3` skips to end. The
-	// function also hides the cursor at the top (`MOV [0x3a00], 0` at
-	// 1560:0216 + `_RemoveMouse @ 1000:542f` at 1560:021c) and
-	// restores it at the tail (`_DrawMouse @ 1000:5429` at 1560:02e8).
-	//
-	// `kHelpPics` lives at file scope above; see comment there for the
-	// HelpData decoding.
+	// Mirrors _InterfaceHelp(num) @ 1560:0205. The original walks
+	// HelpData @ 29be:00c8 (5-byte entries: u8 count, then up to 2 u16
+	// picIds), _GetPictures each one, blits via _Rect_Move_Mask(0, 0, ...)
+	// (a MASKED blit on top of the existing screen — transparent pixels
+	// show the caller's BG), and waits for click / key. ESC at 1560:02b3
+	// skips to the end. The function hides the cursor at the top
+	// (MOV [0x3a00], 0 @ 1560:0216 + _RemoveMouse @ 1000:542f at
+	// 1560:021c) and restores it at the tail (_DrawMouse @ 1000:5429
+	// at 1560:02e8). See kHelpPics comment for HelpData decoding.
 	if (num >= ARRAYSIZE(kHelpPics))
 		return;
 
 	debugC(1, kDebugScript, "doInterfaceHelp(%u): showing pics 0x%x, 0x%x",
 		   num, kHelpPics[num][0], kHelpPics[num][1]);
 
-	// Snapshot the caller's screen ONCE so each help PIC overlays the
-	// same clean BG. Without this, after the first PIC is dismissed the
-	// second snapshot would include the first PIC's pixels and the two
-	// would composite together — same gotcha as the setup-screen help
-	// loop fix in `doSetup`.
+	// Snapshot caller's screen once: each PIC overlays the same clean BG.
 	Graphics::ManagedSurface bg(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
@@ -548,17 +504,8 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		debugC(1, kDebugScript, "doInterfaceHelp: pic 0x%x = %dx%d flags=0x%x",
 			   picId, pic.surface.w, pic.surface.h, pic.flags);
 
-		// Compose a 320x200 frame from the clean BG snapshot and overlay
-		// the help pic with `transBlitFrom` — `Graphics::ManagedSurface`'s
-		// masked blit (transparent colour = the pic's `flags >> 8`,
-		// matching `_Rect_Move_Mask`'s param_10 at 1000:03fc). Pass an
-		// explicit `destPos` of (0, 0) — the no-destPos overload at
-		// managed_surface.cpp:738 scales src to fill `this`'s rect,
-		// stretching the help PIC to 320x200 instead of placing it at
-		// native size. The original `_Rect_Move_Mask` passes destX=0,
-		// destY=0 with copy-width = pic[+4] (= `pic.surface.w`) and
-		// copy-height = pic[+2] (= `pic.surface.h`) — i.e. native size,
-		// not stretched.
+		// transBlitFrom transp = pic.flags >> 8 matches _Rect_Move_Mask param_10
+		// @ 1000:03fc. Explicit (0,0) destPos: no-arg overload stretches to fill.
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
@@ -617,10 +564,7 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 
 uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 								   const Common::String &text) {
-	// Opt-in via the "Better fit for dialog balloons" game option, and
-	// CD-only — the floppy build's balloon archive / inset table hasn't
-	// been validated for shrinking yet, so leave it on the original
-	// artist-chosen bubble.
+	// Opt-in via "fit_dialog_balloons", CD only (floppy table unvalidated).
 	if (isFloppy() || !ConfMan.getBool("fit_dialog_balloons"))
 		return bubNum;
 
@@ -683,7 +627,6 @@ uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 
 bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 								  uint16 &yInset, uint16 &textW) const {
-	// `kBalloonInsetTable` lives at file scope above; see comment there.
 	const uint idx = bubNum & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
@@ -706,12 +649,12 @@ bool EEMEngine::getBalloonIndicatorPos(uint16 bubNum, uint16 &dx,
 void EEMEngine::drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
 										   uint16 bubNum, int ballX, int ballY,
 										   bool endIndicator) {
-	// Mirrors `_DisplayHotspotClue_Floppy @ 22dc:08c0` (end-of-record)
-	// and `@ 22dc:08aa` (mid-pagination). Both grab a pre-loaded PIC
-	// (`DAT_28da_3034 = PIC 0xa0` for "more pages",
-	//  `DAT_28da_3030 = PIC 0xa1` for "end indicator") and stamp it at
-	// `(ballX + insetTable[bubNum].indDX,
-	//   ballY + insetTable[bubNum].indDY)` via `_AddPicBackground`.
+	// Mirrors _DisplayHotspotClue_Floppy @ 22dc:08c0 (end-of-record) and
+	// @ 22dc:08aa (mid-pagination). Both grab a pre-loaded PIC:
+	//   DAT_28da_3034 = PIC 0xa0  "more pages" indicator
+	//   DAT_28da_3030 = PIC 0xa1  "end" indicator
+	// and stamp it at (ballX + insetTable[bubNum].indDX,
+	//                  ballY + insetTable[bubNum].indDY) via _AddPicBackground.
 	uint16 dx = 0;
 	uint16 dy = 0;
 	if (!getBalloonIndicatorPos(bubNum, dx, dy))

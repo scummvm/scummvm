@@ -39,11 +39,9 @@ const int kMidiDriverFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
 } // End of anonymous namespace
 
 MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
-	// Mirrors `_InitMIDI @ 20a2:013a` which used `_AIL_register_driver`
-	// to walk the .ADV files (ADLIB.ADV, SBFM.ADV, MT32MPU.ADV, etc.)
-	// and pick a backend. We honour the launcher's "Music driver"
-	// setting while preferring MT-32 when no concrete device was chosen,
-	// like other ScummVM engines with native MT-32 scores.
+	// _InitMIDI @ 20a2:013a — `_AIL_register_driver` against
+	// ADLIB.ADV / SBFM.ADV / MT32MPU.ADV. We honour the launcher's
+	// "Music driver" setting and prefer MT-32 when unset.
 	const MidiDriver::DeviceHandle dev =
 		MidiDriver::detectDevice(kMidiDriverFlags);
 	MusicType musicType = MidiDriver::getMusicType(dev);
@@ -52,22 +50,21 @@ MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 
 	switch (musicType) {
 	case MT_ADLIB:
-		// `_MIDIPlayFile` (20a2:024c) opens "SAMPLE.AD" (29be:14d6) and
-		// installs every patch the sequence requests via
+		// _MIDIPlayFile @ 20a2:024c opens SAMPLE.AD (string at 29be:14d6)
+		// and installs every patch the sequence requests via
 		// `_AIL_install_timbre`. ScummVM's Miles AdLib driver does the
-		// same: it reads SAMPLE.AD on construction and serves timbres
-		// out of that bank, which is what makes the notes match the
-		// 1993 release. SAMPLE.OPL would be the OPL3 variant; the game
-		// only ships SAMPLE.AD, so an empty path falls back to OPL2.
+		// same on-demand install from SAMPLE.AD, which is what makes
+		// the notes match the 1993 release; the generic AdLib fallback
+		// would use ScummVM's built-in timbres instead. SAMPLE.OPL would
+		// be the OPL3 variant — the game only ships SAMPLE.AD, so the
+		// empty second path falls back to OPL2.
 		_milesAudioMode = true;
 		_driver = Audio::MidiDriver_Miles_AdLib_create(
 			Common::Path("SAMPLE.AD"), Common::Path());
 		break;
 	case MT_MT32:
-		// `MT32MPU.ADV` was the original MT-32 driver; ScummVM has no
-		// Miles MT-32 instrument bank for EEM, so we use the standard
-		// MT-32 driver and let the XMIDI's own program changes drive
-		// the patch selection.
+		// MT32MPU.ADV in the original. No Miles MT-32 bank ships with
+		// EEM, so use the standard MT-32 driver.
 		_milesAudioMode = true;
 		_driver = Audio::MidiDriver_Miles_MT32_create(Common::Path());
 		break;
@@ -84,10 +81,7 @@ MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 			delete _driver;
 			_driver = nullptr;
 		} else {
-			// No GM/MT-32 reset for AdLib (Miles AdLib handles its own
-			// state); for MT-32/GM the original would've sent its own
-			// initialisation patches via `_AIL_install_timbre`, but we
-			// don't have those banks for non-AdLib devices.
+			// Miles AdLib handles its own reset.
 			if (musicType != MT_ADLIB) {
 				if (musicType == MT_MT32 || _nativeMT32)
 					_driver->sendMT32Reset();
@@ -103,12 +97,12 @@ MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 
 void MusicPlayer::send(uint32 b) {
 	// Miles drivers (both AdLib and MT-32) implement their own per-
-	// source-channel mixing and timbre installation, so just forward
-	// the raw event. Going through `MidiPlayer::send` would re-wrap
-	// CC 7 against `_masterVolume` AND remap the source channel via
-	// `sendToChannel`/`allocateChannel`, both of which the Miles driver
-	// already handles internally (and break the timbre selection if
-	// double-applied).
+	// source-channel mixing and timbre installation, so forward the raw
+	// event. Going through `MidiPlayer::send` would re-wrap CC 7 against
+	// `_masterVolume` AND remap the source channel via
+	// `sendToChannel` / `allocateChannel`, both of which the Miles
+	// driver already handles internally (double-applying breaks the
+	// timbre selection).
 	if (_milesAudioMode) {
 		_driver->send(b);
 		return;
@@ -123,7 +117,7 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 	Common::StackLock lock(_mutex);
 	stop();
 
-	// Mirrors `_MIDIPlayFile`'s `_fopen` + `_fread` (20a2:024c-029e).
+	// _MIDIPlayFile @ 20a2:024c-029e (_fopen + _fread).
 	Common::File f;
 	if (!f.open(xmiPath)) {
 		warning("MusicPlayer: %s missing", xmiPath.toString().c_str());
@@ -157,17 +151,15 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 		return;
 	}
 
-	// Mirrors `_LoopMIDI = 0xFFFF` (the count register the original
-	// engine uses for indefinite looping in `_DoOpeningAnims`).
+	// _LoopMIDI = 0xFFFF in _DoOpeningAnims.
 	_isLooping = loop;
 	_parser->property(MidiParser::mpAutoLoop, loop ? 1 : 0);
 	_parser->setTrack(0);
 
 	// Pull the launcher's music_volume slider into `_masterVolume` so
 	// the non-Miles `Audio::MidiPlayer::send` path scales correctly.
-	// (Miles drivers do their own volume handling on the Multisource
-	// path, but they also honour `MidiDriver::syncSoundSettings` which
-	// `Engine::syncSoundSettings` triggers.)
+	// (Miles drivers handle volume themselves but also honour
+	// `MidiDriver::syncSoundSettings` via `Engine::syncSoundSettings`.)
 	syncVolume();
 	_isPlaying = true;
 	debugC(1, kDebugSound, "MusicPlayer: playing %s (%u bytes, loop=%d, miles=%d)",
@@ -175,15 +167,14 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 }
 
 void MusicPlayer::playMus(uint num, bool loop) {
-	// CD format string verified at `29be:1525` ("mus%05d.xmi").
-	// Floppy maps the same numeric slots to its own filenames:
-	//   0..4 → travel music. The floppy table at 2608:1399-13cd holds
-	//          5 entries (Travel-6, Travel-4, Travel-7, Travel-1,
-	//          Travel-8) used by `_StartTravelMusic` via
-	//          `siteNumber % 5`.
+	// CD format string "mus%05d.xmi" at 29be:1525. Floppy maps the same
+	// numeric slots to different filenames:
+	//   0..4 → travel music. Table at 2608:1399-13cd holds 5 entries
+	//          (Travel-6, Travel-4, Travel-7, Travel-1, Travel-8) used by
+	//          `_StartTravelMusic` via `siteNumber % 5`.
 	//   5    → FANFARE2.XMI (winner). String at 2608:0c64.
-	//   6    → no equivalent in floppy install (the loser sting in
-	//          `_DisplayAlibi` is CD-only); skip.
+	//   6    → no equivalent on floppy (loser sting in `_DisplayAlibi`
+	//          is CD-only); skip.
 	if (_isFloppy) {
 		static const char *const kTravelTracks[5] = {
 			"Travel-6.XMI", "Travel-4.XMI", "Travel-7.XMI",

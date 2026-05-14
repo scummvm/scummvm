@@ -92,63 +92,23 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_data = staging;
 	_number = num;
 
-	// Floppy `M*.BIN` uses a completely different header layout from
-	// the CD release. Verified via Ghidra of `EEM.EXE` floppy:
-	//
-	//   `_ReadMystery_Floppy @ 22dc:0178` parses M0..M54 into pointers
-	//    held in a global table at 28da:3c87+. The header offsets are:
-	//
-	//     header[+0..+1]   ???
-	//     header[+2..+3]   ???
-	//     header[+4..+5]   pointer → SUSPECTS section
-	//                      (count byte, then 0xb-byte entries; entry[+4] =
-	//                       pic ID, entry[+10] = recolor flag)
-	//                      (`_FloppySuspectsPtr` @ 28da:3c8b)
-	//     header[+6..+7]   pointer → ???       (28da:3c9f)
-	//     header[+8..+9]   pointer → NOTES section
-	//                      (7-byte entries indexed by clue ID; used by
-	//                       floppy `_DrawNotes` @ 15e0:01e8)
-	//                      (`DAT_28da_3c9b`)
-	//     header[+0xa..+b] pointer → GALLERY-PORTRAITS section
-	//                      (count byte, then variable-length entries
-	//                       `5 + name_len` bytes; entry[+0..+1] = u16
-	//                       picID, entry[+4] = name length)
-	//                      (`_FloppyGalleryPtr` @ 28da:3c87, count =
-	//                       `_FloppyNumSuspects` @ 28da:004b)
-	//     header[+0xc..+d] pointer → TEXT block (alibi text base; used in
-	//                       floppy `_DisplayAlibi` @ 1d40:00df)
-	//     header[+0x10..1] pointer → KDTextIndex (`_FloppyKDTextIndexPtr`
-	//                       @ 28da:3c93)
-	//     header[+0x12..3] pointer → ???       (28da:3c8f)
-	//
-	//   There is NO fixed-offset numSites / numSuspects / numCONSITEs
-	//   field — counts are stored as the FIRST byte of each section.
-	//   The CD release refactored this into a flat header at fixed
-	//   offsets; our `Mystery::load` here parses the CD layout.
-	//
-	// Detect the variant from the first u16: CD M0 starts with `0x003e`
-	// (initOffset = 62), floppy M0 starts with `0x2286` (a section
-	// pointer near end-of-file). When the first u16 is too high to be
-	// a CD `_initOffset`, parse as floppy.
+	// Floppy M*.BIN uses a different header layout from CD.
+	// _ReadMystery_Floppy @ 22dc:0178. Section-pointer header:
+	//   header[+0]    InitBlock byte offset (caseType byte at *(buf+initOff))
+	//   header[+4]    SITES: count byte + 11-byte entries
+	//                 (entry[+4]=picID, [+6..7]=u16 X, [+8..9]=u16 Y, [+10]=recolor)
+	//   header[+6]    SITE INDEX (array of u16 offsets to per-site structs)
+	//   header[+8]    NOTES (7-byte entries / clue ID; _DrawNotes_Floppy @ 15e0:01e8)
+	//   header[+0xa]  GALLERY portraits: count byte + variable `5+nameLen` entries
+	//                 (entry[+0..1]=u16 picID, [+4]=nameLen)
+	//   header[+0xc]  TEXT block (alibi base; _DisplayAlibi_Floppy @ 1d40:00df)
+	//   header[+0x10] KDTextIndex
+	//   header[+0x12] SOLVED CLUE CHAIN
+	// Counts live in the FIRST BYTE of each section, not the header.
+	// Detect via first u16: CD M0 = 0x003e (initOffset), floppy M0 = 0x2286
+	// (section pointer near EOF).
 	if (readU16(0) > 0x100) {
 		_isFloppy = true;
-		// Section-pointer header verified via Ghidra of floppy
-		// `_ReadMystery_Floppy @ 22dc:0178`,
-		// `_DoSiteLoop_Floppy @ 1652:03a3`,
-		// and `FUN_1fed_07ed` (BigMap site iteration):
-		//
-		//   header[+4]   → SITES section
-		//                  count byte + 0xb-byte entries; entry[+4] =
-		//                  pic ID for BigMap marker, [+6..7] = u16 X,
-		//                  [+8..9] = u16 Y, [+10] = recolor flag.
-		//   header[+6]   → SITE INDEX (array of u16 offsets to per-site
-		//                  data structs; site[+0]=picOff,
-		//                  site[+2]=clueBlockOff, site[+8]=speakerInfo)
-		//   header[+8]   → NOTES (7-byte entries / clue ID)
-		//   header[+0xa] → SUSPECTS / GALLERY portraits
-		//   header[+0xc] → TEXT block base
-		//   header[+0x10] → KDTextIndex
-		//   header[+0x12] → SOLVED CLUE CHAIN
 		_floppySuspectsOff  = readU16(0x04);  // SITES
 		_floppyHintBlockOff = readU16(0x06);  // SITE INDEX
 		_floppyNoteIndexOff = readU16(0x08);
@@ -156,16 +116,8 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_floppyTextOff      = readU16(0x0c);
 		_floppyKDTextOff    = readU16(0x10);
 		_floppySolvedOff    = readU16(0x12);
-
-		// header[+0] (the first u16) holds the InitBlock byte offset on
-		// floppy too — verified at `FUN_19bb_042f` where `*DAT_28da_3ca5`
-		// (deref'd as int *) reads the first u16 of the buffer and uses
-		// it as `cVar1 = *(buffer + initOffset)` (caseType byte).
 		_initOffset = readU16(0x00);
 
-		// Counts: first byte of each section. Verified at
-		// `FUN_1fed_07ed` (`uVar3 = *_FloppySuspectsPtr` then iterates)
-		// and `FUN_154e_0045` (`DAT_28da_004b = *DAT_28da_3c87`).
 		const byte *sitesSec = (_floppySuspectsOff < _data.size())
 								? _data.data() + _floppySuspectsOff : nullptr;
 		const byte *susSec   = (_floppyGalleryOff < _data.size())
@@ -175,16 +127,9 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_numCONSITEs = 0;
 		_numCOFFSITEs = 0;
 
-		// Point CD-shaped accessor offsets at the floppy equivalents
-		// so existing accessors return the right base for floppy:
-		//   siteIndexEntry() → floppy site index (header[+6])
-		//   noteIndex()       → floppy notes (header[+8])
-		//   galleryData()     → floppy suspects (header[+0xa])
-		//   textAt()          → floppy text block (header[+0xc])
-		//   kdTextIndex()     → floppy KDTextIndex (header[+0x10])
-		//   solvedClueBlock() → floppy solved chain (header[+0x12])
-		// Per-section LAYOUTS still differ from CD, so consumers
-		// walking entries need `isFloppy()` branches.
+		// Point CD-shaped accessors at the floppy equivalents.
+		// Per-section LAYOUTS still differ, so consumers walking entries
+		// need `isFloppy()` branches.
 		_siteIndexOffset = _floppyHintBlockOff;
 		_noteOffset      = _floppyNoteIndexOff;
 		_galleryOffset   = _floppyGalleryOff;
@@ -193,16 +138,9 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_solvedOffset    = _floppySolvedOff;
 		_hintOffset      = _floppyHintBlockOff;
 
-		// Per-mystery runtime state — mirror `_ReadMystery_Floppy @
-		// 22dc:0178` zeroing `_TextSeen_Floppy` / `_InGallery_Floppy` and
-		// seeding `_NewOrder_Floppy[0]` (random) + the `+1`-shift loop
-		// that fills the rest. We use the identity mapping `[0..N-1]` so
-		// dialog `byte9` (1-based logical idx) maps to `_inGallery[idx -
-		// 1]` and the gallery render iterates the same indices. Without
-		// this init the floppy load path returns with `_newOrder` left
-		// at whatever `clear()` zeroed it to, so every byte9>0 dialog
-		// resolves through `_newOrder[logicalIdx]==0` and the second
-		// suspect overwrites the first slot.
+		// Per-mystery runtime state — mirrors _ReadMystery_Floppy @ 22dc:0178.
+		// _newOrder uses identity mapping [0..N-1] so dialog byte9 (1-based
+		// logical idx) maps to _inGallery[idx - 1].
 		memset(_cluesFound, 0, sizeof(_cluesFound));
 		memset(_noteSelected, 0, sizeof(_noteSelected));
 		memset(_hotSpotsSeen, 0, sizeof(_hotSpotsSeen));
@@ -245,13 +183,10 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_numCONSITEs = (uint8)readU16(14 * 2);
 	_numCOFFSITEs = (uint8)readU16(15 * 2);
 
-	// Defensive clamp. The floppy mystery file format uses a different
-	// header layout (verified by comparing M0.BIN: CD has `numSites =
-	// readU16(0x14) = 3`; floppy has `readU16(0x14) = 0x1925`,
-	// obviously not a site count). Without a clamp, downstream loops
-	// over `_onSites` / `_visitedSite` (capacity 20) blow past the
-	// array end. Until the floppy format is fully supported, cap at
-	// the array capacity so the engine fails gracefully.
+	// Defensive clamp: the floppy header layout differs (M0.BIN CD has
+	// numSites=readU16(0x14)=3; floppy has readU16(0x14)=0x1925, clearly
+	// not a count). Cap to `_onSites` / `_visitedSite` array capacity so
+	// downstream loops don't walk off the end on malformed/floppy files.
 	if (_numSites > kVisitedSiteCap)
 		_numSites = kVisitedSiteCap;
 
@@ -261,17 +196,14 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_cChain[i] = readU16((26 + i) * 2);
 	}
 
-	// Per-mystery runtime state — `_ReadMystery` zeroes these at load.
+	// Per-mystery runtime state — _ReadMystery zeroes these at load.
+	// _newOrder uses identity mapping; original randomly cycles gallery
+	// positions but requires matching changes in both clue side-effect
+	// and rendering paths.
 	memset(_cluesFound, 0, sizeof(_cluesFound));
 	memset(_noteSelected, 0, sizeof(_noteSelected));
 	memset(_hotSpotsSeen, 0, sizeof(_hotSpotsSeen));
 	memset(_inGallery, 0, sizeof(_inGallery));
-	// `_NewOrder` in the original randomly cycles the gallery positions
-	// per playthrough. For consistency between clue side-effects (which
-	// write to `_inGallery[_newOrder[galIdx]]`) and gallery rendering
-	// (which iterates logical indices), we keep the identity mapping.
-	// If the original's randomized positioning is required later, both
-	// the side-effect path AND the rendering path need to use it together.
 	(void)rng;
 	for (uint i = 0; i < kGalleryCap; i++)
 		_newOrder[i] = (uint8)i;
@@ -280,7 +212,7 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_sawCOFFSITEs = _sawCONSITEs = _sawHelpHint = _solvedPuzzle = false;
 	_firstTry = true;
 	_searchLocationNumber = _siteNumber = 0xFFFF;
-	_lastSite = 0x1B; // Sentinel matching _ReadMystery's `_LastSite = 0x1b`.
+	_lastSite = 0x1B; // _ReadMystery _LastSite sentinel.
 
 	debugC(1, kDebugMystery, "Loaded %s (%d B): %u sites, %u suspects, "
 		   "CON=%u COFF=%u, init=0x%04x site=0x%04x text=0x%04x",
@@ -293,9 +225,8 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 const byte *Mystery::siteIndexEntry(uint siteNum) const {
 	if (!isLoaded() || siteNum >= _numSites)
 		return nullptr;
-	// Floppy site index uses 2-byte (u16) entries — verified at
-	// `_DoSiteLoop_Floppy @ 1652:03d2` reading `*(int *)
-	// ((int)_FloppySiteIndexPtr + siteNum * 2)`. CD uses 6-byte rows.
+	// Floppy site index: 2-byte u16 entries (_DoSiteLoop_Floppy @ 1652:03d2).
+	// CD: 6-byte rows.
 	const uint stride = _isFloppy ? 2 : 6;
 	const uint off = _siteIndexOffset + siteNum * stride;
 	if (off + stride > _data.size())
@@ -383,13 +314,9 @@ void Mystery::loadFloppySiteAnimData() {
 
 const byte *Mystery::hotspots(uint siteNum) const {
 	if (_isFloppy) {
-		// Floppy: hotspot table sits inside the per-site sub-blob.
-		// `site_data[+4..5]` is a u16 file offset to a header byte
-		// (count) + N×8-byte rectangles (x1, y1, x2, y2 as u16s) —
-		// verified at `FUN_22dc_0b80 @ 22dc:0b80` (the click hit-test
-		// loop reads `*(byte *)(buf + site_data[+4])` for the count
-		// then `FUN_14c9_0039(... buf + site_data[+4] + 1 + i*8)`
-		// for each rectangle).
+		// Floppy hotspot table inside per-site sub-blob (FUN_22dc_0b80 @ 22dc:0b80).
+		// site_data[+4..5] = u16 file offset to count byte + N x 8-byte rects
+		// (x1, y1, x2, y2 as u16s).
 		const byte *site = siteData(siteNum);
 		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
 			return nullptr;
@@ -453,11 +380,10 @@ const byte *Mystery::noteIndex() const {
 uint16 Mystery::noteIndexCount() const {
 	if (!isLoaded())
 		return 0;
-	// NoteIndex runs from _noteOffset to the start of GalleryData.
-	// CD entries are 4 bytes (`u16 textOff; u16 points`); floppy
-	// entries are 7 bytes (`u16 ?; u16 jakeOff; u16 jennyOff; u8
-	// score`) — verified at `FUN_22dc_05c8 @ 22dc:0843` reading
-	// `*(int *)(notes + idx*7 + 2)` (Jake) / `+4` (Jenny).
+	// NoteIndex runs from _noteOffset to start of GalleryData.
+	// CD entries: 4 bytes (u16 textOff; u16 points).
+	// Floppy entries: 7 bytes (u16 ?; u16 jakeOff; u16 jennyOff; u8 score)
+	// per FUN_22dc_05c8 @ 22dc:0843.
 	if (_galleryOffset <= _noteOffset)
 		return 0;
 	const uint stride = _isFloppy ? 7 : 4;
@@ -473,11 +399,8 @@ bool Mystery::noteHasNotebookText(uint clueId) const {
 	if (!_isFloppy)
 		return true;
 
-	// `_DrawNotes_Floppy @ 15e0:01e8` first checks `_TextSeen[idx]`,
-	// then skips the row when `*(u16 *)(notes + idx * 7) == 0`.
-	// Many floppy dialog records are spoken-only lines: they must still
-	// be marked seen so site dialog does not repeat, but they are not
-	// notebook clues and should not render fallback "note N" labels.
+	// _DrawNotes_Floppy @ 15e0:01e8 skips rows with notes[idx*7..idx*7+1] == 0.
+	// Spoken-only dialog records are marked seen but have no notebook text.
 	return READ_LE_UINT16(ni + clueId * 7) != 0;
 }
 
@@ -491,12 +414,9 @@ const byte *Mystery::mapEntry(uint siteNum) const {
 	if (!isLoaded() || siteNum >= _numSites)
 		return nullptr;
 	if (_isFloppy) {
-		// Floppy SITES section: byte[0] = count, then 11-byte entries.
-		// Verified at `FUN_1fed_07ed` (BigMap site iteration) where
-		// `pcVar2 = _FloppySuspectsPtr` (header[+4]) and the loop reads
-		// `*(int *)(pcVar2 + i*0xb + 7)` (X) and `*(int *)(pcVar2 + i*0xb
-		// + 9)` (Y) — the +7/+9 offsets are 1-based because pcVar2[0]
-		// holds the count, so entry stride 11 starts at byte 1.
+		// Floppy SITES section (FUN_1fed_07ed): byte[0]=count, then 11-byte
+		// entries starting at byte 1.
+		//   +4 picID, +6..7 u16 X, +8..9 u16 Y, +10 recolor.
 		const uint off = _floppySuspectsOff + 1 + siteNum * 11;
 		if (off + 11 > _data.size())
 			return nullptr;
@@ -509,15 +429,12 @@ const byte *Mystery::mapEntry(uint siteNum) const {
 }
 
 const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
-	// Floppy gallery section: byte[0] = numSuspects, then per suspect a
-	// variable-size record of `5 + nameLen` bytes (verified at
-	// `_DrawGallery_Floppy @ 154e:00b6` advancing `iVar7 += pbVar4[4]
-	// + 5`):
-	//   u16 +0  picID (gallery portrait, BUTTON.DBD entry)
-	//   u16 +2  alibi marker (0xFFFF = guilty; else high byte = index
-	//           into TEXT_BLOCK alibi-offset table at header[+0xc])
-	//   u8  +4  name length
-	//   u8  +5..+5+nameLen-1  name string
+	// Floppy gallery section (_DrawGallery_Floppy @ 154e:00b6).
+	// byte[0]=numSuspects, then per suspect a `5 + nameLen` record:
+	//   u16 +0 picID (BUTTON.DBD entry)
+	//   u16 +2 alibi marker (0xFFFF=guilty; else hi byte indexes TEXT_BLOCK)
+	//   u8  +4 nameLen
+	//   u8  +5.. name string
 	if (!_isFloppy || !isLoaded())
 		return nullptr;
 	const byte *gd = _data.data() + _galleryOffset;
@@ -539,11 +456,9 @@ const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
 }
 
 bool Mystery::isGuilty(uint suspectIdx) const {
-	// `_WITCH @ 1df2:089f` (CD): `if (GalleryData[i*0x46 + 0x02] == -1)
-	// _DisplayCorrect(); else _DisplayAlibi(...)`. Innocent suspects
-	// store their alibi-text TextBlock offset at +0x02; the guilty
-	// one stores the sentinel 0xFFFF. Floppy uses the same convention
-	// at suspect entry +2..3 but with variable-stride entries.
+	// _WITCH @ 1df2:089f (CD): GalleryData[i*0x46 + 0x02] == 0xFFFF marks
+	// guilty; innocent suspects store their alibi TextBlock offset there.
+	// Floppy uses same convention at suspect entry +2..3 (variable stride).
 	if (_isFloppy) {
 		const byte *e = floppySuspectEntry(suspectIdx);
 		return e && READ_LE_UINT16(e + 2) == 0xFFFF;
@@ -557,13 +472,9 @@ bool Mystery::isGuilty(uint suspectIdx) const {
 
 uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
 	if (_isFloppy) {
-		// Floppy alibi: u16 at suspect +2..3 carries TWO things:
-		// 0xFFFF = guilty, otherwise the HIGH BYTE indexes the
-		// TEXT_BLOCK table (header[+0xc]), each entry u16 = absolute
-		// alibi-text offset in the buffer. Verified at
-		// `_DisplayAlibi_Floppy @ 1d40:0145` reading
-		// `*(int *)(textBlock + ((byte *)entry)[3] * 2)`. The result
-		// is an ABSOLUTE offset; caller reads via `blobAt(off)`.
+		// Floppy alibi (_DisplayAlibi_Floppy @ 1d40:0145): u16 at suspect +2..3.
+		// 0xFFFF = guilty; else high byte indexes the TEXT_BLOCK table at
+		// header[+0xc], each entry u16 = absolute alibi-text offset.
 		const byte *e = floppySuspectEntry(suspectIdx);
 		if (!e)
 			return 0xFFFF;
@@ -583,10 +494,8 @@ uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
 }
 
 const byte *Mystery::hintBlock() const {
-	// Header word at index 9 (`_hintOffset`) — used by `_KDHelp @
-	// 1560:010a`'s per-chain-clue hint table. Each pair-of-bytes is
-	// a TextBlock offset for the corresponding `_AChain` entry, or
-	// `0xFFFF` if no hint is defined for that chain position.
+	// Header word[9] _hintOffset (_KDHelp @ 1560:010a). Each u16 is a
+	// TextBlock offset for the corresponding _AChain entry, or 0xFFFF.
 	if (!isLoaded() || _hintOffset == 0 || _hintOffset >= _data.size())
 		return nullptr;
 	return _data.data() + _hintOffset;
@@ -604,10 +513,8 @@ int Mystery::selectedPoints() const {
 	if (!ni || cnt == 0)
 		return 0;
 	if (_isFloppy) {
-		// Floppy `_GetSelectedPoints_Floppy @ 1d40:0c23`: collect the
-		// per-note score (note +6 byte) for every clue with TextSeen
-		// set, sort descending, sum the top 5. Mirrors
-		// `_SortNotesByScore_Floppy @ 1d40:000e` + the top-5 fold.
+		// _GetSelectedPoints_Floppy @ 1d40:0c23: per-note score (note +6)
+		// for each TextSeen clue, sort descending, sum top 5.
 		uint8 scores[Mystery::kCluesFoundCap] = {};
 		uint scoreCount = 0;
 		const uint maxIdx = MIN<uint>(cnt, kCluesFoundCap);
@@ -616,7 +523,7 @@ int Mystery::selectedPoints() const {
 				continue;
 			scores[scoreCount++] = ni[i * 7 + 6];
 		}
-		// Partial selection sort for top 5.
+		// Partial selection sort for the top 5 scores.
 		const uint topN = MIN<uint>(5u, scoreCount);
 		for (uint k = 0; k < topN; k++) {
 			uint best = k;
@@ -639,7 +546,7 @@ int Mystery::selectedPoints() const {
 	for (uint i = 0; i < cnt && i < kCluesFoundCap; i++) {
 		if (!_noteSelected[i])
 			continue;
-		// Each NoteIndex entry is 4 bytes: u16 textOff + u16 points.
+		// CD NoteIndex entry: 4 bytes = u16 textOff + u16 points (at +2).
 		const uint16 pts = READ_LE_UINT16(ni + i * 4 + 2);
 		total += (int)(int16)pts;
 	}

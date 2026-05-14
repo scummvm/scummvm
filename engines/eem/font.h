@@ -40,18 +40,13 @@ struct FontGlyph {
 };
 
 /**
- * Loader for the engine's `.FNT` files (FONT.FNT, SYSTEM.FNT, TINY.FNT,
- * 8PNTTHIN.FNT). Mirrors `_LoadFont` @ 1b66:023c.
+ * Loader for .FNT files (FONT.FNT, SYSTEM.FNT, TINY.FNT, 8PNTTHIN.FNT).
+ * _LoadFont @ 1b66:023c.
  *
- * File layout:
- *   - u16 numChars
- *   - per char: u8 height, u8 widthBits, u8 sizeBytes, bytes[sizeBytes] bitmap
+ * Layout: u16 numChars, then per char u8 height, u8 widthBits,
+ * u8 sizeBytes, bytes[sizeBytes] bitmap.
  *
- * Subclasses `Graphics::Font` so callers can use the standard
- * `drawString` / `drawStringUnboxed` / `wordWrapText` helpers without
- * us reimplementing them. Lookups go through a 128-byte char→glyph
- * translation table extracted from CHR2FNT (segment 29b6:0000) — the
- * font is uppercase-only with lowercase aliased to uppercase glyphs.
+ * Char → glyph table extracted from CHR2FNT (29b6:0000).
  */
 class EEMFont : public Graphics::Font {
 public:
@@ -70,9 +65,8 @@ public:
 				  uint32 color) const override;
 	using Graphics::Font::drawChar;  // keep ManagedSurface overload
 
-	/// Convenience wrap-and-draw helper that uses the inherited
-	/// `wordWrapText` to break @p s into lines and then `drawString`
-	/// to render each. Returns the total height drawn.
+	/// Wrap @p s to @p width via the inherited `wordWrapText` and draw
+	/// each line at (x, y) downward. Returns total height drawn.
 	int drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
 						int width, const Common::String &s, uint32 color) const;
 
@@ -80,7 +74,7 @@ private:
 	Common::Array<FontGlyph> _glyphs;
 	uint16 _maxHeight  = 0;
 	uint16 _maxWidth   = 0;
-	uint16 _lineHeight = 0;  ///< First glyph height (= original line stride)
+	uint16 _lineHeight = 0;  ///< First glyph height (original line stride)
 };
 
 } // End of namespace EEM

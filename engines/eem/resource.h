@@ -31,79 +31,47 @@
 
 namespace EEM {
 
-/**
- * Index entry for a .DBD/.DBX archive pair (10 bytes on disk).
- *
- * Mirrors the original `dbi` struct read by _InitGraphicsSystem @ 172b:0145
- * in 10-byte chunks until EOF. Each entry locates one resource blob in the
- * companion .DBD container.
- */
+/// dbi struct from _InitGraphicsSystem @ 172b:0145 (10 bytes per entry).
 struct DBEntry {
-	uint32 offset;     ///< Byte offset of the entry in the .DBD file.
-	uint16 compressed; ///< Non-zero if the payload is PKWARE DCL ("Implode") packed.
-	uint32 size;       ///< Total size of the entry on disk (including 14-byte header).
+	uint32 offset;     ///< Byte offset in the .DBD file.
+	uint16 compressed; ///< Non-zero = PKWARE DCL ("Implode") packed payload.
+	uint32 size;       ///< Total entry size on disk (incl. 14-byte header).
 };
 
-/**
- * 8-bit indexed picture decoded from a .DBD entry.
- *
- * The original engine's PicData is a 16-byte struct; we keep the descriptive
- * fields here and let `Graphics::ManagedSurface` own the pixel data so the
- * rest of the engine can blit/scale/clip with the standard API.
- */
+/// 8-bit indexed picture decoded from a .DBD entry. Original PicData is
+/// 16 bytes; pixels live in Graphics::ManagedSurface.
 struct Picture {
-	uint16 flags     = 0; ///< +0  high byte = sub-mode used by some sprites
-	uint16 rowoff    = 0; ///< +6  row offset (used by some clipped sprites)
-	uint16 miscflags = 0; ///< +8  high byte = transparent-mask flag
+	uint16 flags     = 0; ///< +0  high byte: sub-mode
+	uint16 rowoff    = 0; ///< +6  row offset (clipped sprites)
+	uint16 miscflags = 0; ///< +8  high byte: transparent-mask flag
 	uint16 compsize  = 0; ///< +10 packed payload size on disk
 	Graphics::ManagedSurface surface;
 };
 
-/// Multi-frame animation as stored in ANI.DBD — a sequence of Pictures.
+/// Multi-frame animation from ANI.DBD.
 typedef Common::Array<Picture> Animation;
 
-/**
- * Reader for a .DBD + .DBX archive pair.
- *
- * The original engine has five such pairs: PICS, SITES, ANI, BALLOON, BUTTON.
- * Each .DBX is parsed once into an in-memory `_index`; reads of individual
- * entries seek into the .DBD on demand and (when flagged) decompress with
- * `Common::decompressDCL`.
- */
+/// .DBD + .DBX archive pair (PICS, SITES, ANI, BALLOON, BUTTON).
 class DBDArchive {
 public:
 	DBDArchive();
 	~DBDArchive();
 
-	/**
-	 * Open both halves of an archive. @p dbdName / @p dbxName are looked up
-	 * via SearchMan, so case is normalized for us. Returns false if either
-	 * file is missing or the index is malformed.
-	 */
+	/// Open both halves; returns false if either file is missing/malformed.
 	bool open(const Common::Path &dbdName, const Common::Path &dbxName);
 	void close();
 
-	/** Number of entries in the index. */
 	uint32 size() const { return _index.size(); }
 
-	/**
-	 * Load entry @p num (0-based index), decompressing if needed.
-	 * Returns true on success. Mirrors _GetFromDB @ 172b:105d.
-	 */
+	/// Load entry num (0-based), decompressing if needed.
+	/// _GetFromDB @ 172b:105d.
 	bool loadEntry(uint num, Picture &out);
 
-	/**
-	 * Convenience wrapper that mirrors the engine's 1-based picture API:
-	 * `_GetPicture(num)` calls `_GetFromDB(..., num - 1)`. Use this when
-	 * porting code that references picture IDs by their original number.
-	 */
+	/// 1-based wrapper matching the engine's _GetPicture(num) -> _GetFromDB(num - 1).
 	bool getPicture(uint num, Picture &out) { return loadEntry(num - 1, out); }
 
-	/**
-	 * Load a multi-frame animation entry. Mirrors _GetAnimation @ 172b:163a:
-	 * read u16 frameCount, then for each frame read a 12-byte header and
-	 * decompress the payload. Used for ANI.DBD entries.
-	 */
+	/// Multi-frame entry. _GetAnimation @ 172b:163a: u16 frameCount,
+	/// then per frame a 12-byte header + payload.
 	bool loadAnimation(uint num, Animation &out);
 
 private:

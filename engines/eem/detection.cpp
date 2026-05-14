@@ -56,10 +56,7 @@ const ADGameDescription gameDescriptions[] = {
 		GUI_OPTIONS_EEM_FLOPPY
 	},
 	{
-		// Spanish floppy release — same EEM.EXE binary as the English
-		// floppy (the engine code is identical), with a localised
-		// PICS.DBD that swaps the embedded English image text for
-		// Spanish equivalents.
+		// Spanish floppy: same EEM.EXE as English floppy, localised PICS.DBD.
 		"eem",
 		"Floppy",
 		AD_ENTRY2s("EEM.EXE",   "692a5e6e7f4516d6e40c1f80cbc1b2cc", 109542,

@@ -30,31 +30,23 @@
 
 namespace EEM {
 
-/**
- * One mystery (case file) loaded from `M<n>.BIN`.
- *
- * Mirrors the layout established by `_ReadMystery` @ 2404:008f:
- *
- *   word[0]  = InitBlock byte offset
- *   word[2]  = MapData byte offset
- *   word[3]  = SiteIndex byte offset
- *   word[4]  = TextBlock byte offset
- *   word[5]  = NoteIndex byte offset
- *   word[6]  = GalleryData byte offset
- *   word[7]  = KDTextIndex byte offset
- *   word[8]  = SolvedClues byte offset
- *   word[9]  = HintBlock byte offset
- *   word[10] = NumSites + start of MysteryStats
- *   word[13] = NumSuspects (low byte)
- *   word[14] = NumCONSITEs
- *   word[15] = NumCOFFSITEs
- *   word[16..20] = AChain (5 words)
- *   word[21..25] = BChain
- *   word[26..30] = CChain
- *
- * Per-mystery state is reset every time a mystery is loaded; chains and
- * indices are pointers into the in-memory `_data` blob.
- */
+/// Mystery file M<n>.BIN. CD header layout from _ReadMystery @ 2404:008f:
+///   word[0]      InitBlock offset
+///   word[2]      MapData offset
+///   word[3]      SiteIndex offset
+///   word[4]      TextBlock offset
+///   word[5]      NoteIndex offset
+///   word[6]      GalleryData offset
+///   word[7]      KDTextIndex offset
+///   word[8]      SolvedClues offset
+///   word[9]      HintBlock offset
+///   word[10]     NumSites
+///   word[13]     NumSuspects (low byte)
+///   word[14]     NumCONSITEs
+///   word[15]     NumCOFFSITEs
+///   word[16..20] AChain (5 words)
+///   word[21..25] BChain
+///   word[26..30] CChain
 class Mystery {
 public:
 	static const uint kNumChains       = 3;
@@ -67,14 +59,11 @@ public:
 	Mystery() = default;
 	~Mystery() = default;
 
-	/// Load `M<num>.BIN` and reset per-mystery state. Returns false on error.
+	/// Load M<num>.BIN and reset per-mystery state. Returns false on error.
 	bool load(uint num, class Common::RandomSource *rng = nullptr);
 
-	/// Drop the loaded mystery and zero per-mystery state. Safe to call
-	/// at any time; `isLoaded()` returns false afterward.
 	void clear();
 
-	/// True once `load()` succeeded and offsets are valid.
 	bool isLoaded() const { return !_data.empty(); }
 
 	uint number() const { return _number; }
@@ -83,120 +72,93 @@ public:
 	uint8  numCONSITEs() const { return _numCONSITEs; }
 	uint8  numCOFFSITEs() const { return _numCOFFSITEs; }
 
-	/// Pointer to the InitBlock (case briefing).
-	/// _InitBlock @ 2d5d:?? = mystery + word[0] in `_ReadMystery`.
+	/// InitBlock (case briefing) at mystery + word[0].
 	const byte *initBlock() const;
 
-	/// Pointer to the GalleryData; one 0x46-byte entry per suspect.
-	/// First u16 of each entry is the PIC picture ID for that suspect.
+	/// GalleryData: 0x46-byte entry per suspect; first u16 = PIC picture ID.
 	const byte *galleryData() const;
 
 	/// Floppy variable-stride suspect record. Returns nullptr on CD or
-	/// when @p suspectIdx is out of range. Walks the gallery section
-	/// (`5 + nameLen` bytes per suspect) to land on the requested entry.
-	/// Layout: u16 picID, u16 alibiMarker (0xFFFF = guilty),
+	/// out-of-range. Layout: u16 picID, u16 alibiMarker (0xFFFF=guilty),
 	/// u8 nameLen, nameLen bytes of name.
 	const byte *floppySuspectEntry(uint suspectIdx) const;
 
-	/// Pointer to the NoteIndex array (4 bytes per entry: u16 textOff + u16 pts).
+	/// NoteIndex array (4 bytes per entry: u16 textOff + u16 pts).
 	const byte *noteIndex() const;
 
-	/// Number of entries in NoteIndex.
 	uint16 noteIndexCount() const;
 
-	/// True when @p clueId has a visible notebook/accuse text entry.
-	/// Floppy dialog text indices may be spoken-only records with a
-	/// zero notebook text offset; those are marked seen but skipped by
-	/// `_DrawNotes_Floppy`.
+	/// True when clueId has a notebook text entry. Floppy dialog records
+	/// may be spoken-only with zero notebook offset, skipped by _DrawNotes_Floppy.
 	bool noteHasNotebookText(uint clueId) const;
 
-	/// Pointer to the KDTextIndex; first u16s are TextBlock offsets for
-	/// host hint lines.
+	/// KDTextIndex; first u16s are TextBlock offsets for host hint lines.
 	const byte *kdTextIndex() const;
 
-	/// Pointer to the HintBlock; per-clue hint TextBlock offsets indexed
-	/// by `_aChain[i]` (the Nth required clue). Mirrors the
-	/// `_HintBlock` global read in `_KDHelp @ 1560:010a`.
+	/// HintBlock (_KDHelp @ 1560:010a). Per-clue hint TextBlock offsets
+	/// indexed by _aChain[i].
 	const byte *hintBlock() const;
 
-	/// Read entry @p i from `_aChain` (the required-clue chain). Returns
-	/// 0xFFFF when no entry exists. Used by `_KDHelp` to walk unfound
-	/// clues for hints.
+	/// Entry @p i of the required-clue chain. Returns 0xFFFF when out of
+	/// range. Walked by `_KDHelp` to find unfound clues for hints.
 	uint16 aChain(uint i) const {
 		return i < kChainLen ? _aChain[i] : 0xFFFF;
 	}
 
-	/// Pointer to the MapData entry for site @p siteNum (14 bytes per
-	/// entry; first u16 = sitepic, +4..7 = (x, y) on the big map).
+	/// MapData entry for siteNum: 14 bytes; first u16 = sitepic, +4..7 = (x, y).
 	const byte *mapEntry(uint siteNum) const;
 
-	/// Pointer to the SiteIndex entry for site @p siteNum (6 bytes per site).
+	/// SiteIndex entry for siteNum (6 bytes per site on CD).
 	const byte *siteIndexEntry(uint siteNum) const;
 
-	/// Pointer to the SiteData (sitepic, travel, hotspot count, ...)
-	/// referenced by SiteIndex[@p siteNum].
+	/// SiteData (sitepic, travel, hotspot count, ...) per SiteIndex[siteNum].
 	const byte *siteData(uint siteNum) const;
 
-	/// Floppy-only pointer to the matching `ANI.BIN` per-site animation
-	/// block. Layout: u8 cycleCount, cycleCount × {u8 start, u8 end},
-	/// u8 animCount, animCount × {u8 animId, u16 x, u8 y}.
+	/// Floppy ANI.BIN per-site animation block. Layout:
+	/// u8 cycleCount, cycleCount x {u8 start, u8 end},
+	/// u8 animCount, animCount x {u8 animId, u16 x, u8 y}.
 	const byte *floppySiteAnimData(uint siteNum) const;
 
-	/// Pointer to the hotspot rectangle array for site @p siteNum.
-	/// Each rect is 14 bytes: x1, y1, x2, y2, then 6 bytes of clue data.
+	/// Hotspot rectangle array for siteNum (14 bytes each: x1,y1,x2,y2 + clue).
 	const byte *hotspots(uint siteNum) const;
 
-	/// Number of hotspots in site @p siteNum.
 	uint16 hotspotCount(uint siteNum) const;
 
-	/// Pointer to a NUL-terminated string at TextBlock+@p offset.
+	/// NUL-terminated string at TextBlock + offset.
 	const char *textAt(uint16 offset) const;
 
-	/// Pointer at byte offset @p offset within the mystery blob, or null
-	/// if out of range. Used to chase ClueBlock pointers stored in
-	/// hotspot data.
+	/// Pointer at byte @p offset within the mystery blob, or null if out
+	/// of range. Used to chase ClueBlock pointers stored in hotspot data.
 	const byte *blobAt(uint32 offset) const {
 		return offset < _data.size() ? _data.data() + offset : nullptr;
 	}
 
-	/// Total mystery blob size in bytes (for bounds checks).
 	uint32 dataSize() const { return (uint32)_data.size(); }
 
-	/// Synchronize the per-mystery runtime state for save/load. The fixed
-	/// arrays serialize first, then the booleans and counters.
 	void syncState(Common::Serializer &s);
 
-	/// Sum of point values of every selected notebook entry. Mirrors
-	/// `_GetSelectedPoints` @ 1df2:00bd.
+	/// _GetSelectedPoints @ 1df2:00bd.
 	int selectedPoints() const;
 
-	/// Sum of the top five point values among found notebook entries.
-	/// Mirrors `_GetFoundPoints` @ 1df2:0098.
+	/// _GetFoundPoints @ 1df2:0098 — sum of top 5 found notebook entries.
 	int foundPoints() const;
 
-	/// True when `selectedPoints() > 99`. Mirrors `_SolvedCheck`.
 	bool solvedCheck() const { return selectedPoints() > 99; }
 
-	/// True iff suspect @p suspectIdx is the case's guilty party. The
-	/// guilty marker is `GalleryData[suspectIdx * 0x46 + 0x02] ==
-	/// 0xFFFF` — innocent suspects store their alibi text offset there;
-	/// the guilty suspect uses the sentinel. Verified at `_WITCH @
-	/// 1df2:089f` (`if (psVar1->field_0x2 == -1) _DisplayCorrect();
-	/// else _DisplayAlibi(...)`).
+	/// _WITCH @ 1df2:089f. GalleryData[i*0x46 + 0x02] == 0xFFFF marks the
+	/// guilty suspect; innocent suspects store their alibi TextBlock offset.
 	bool isGuilty(uint suspectIdx) const;
 
-	/// TextBlock offset of suspect @p suspectIdx's alibi text. Returns
-	/// 0xFFFF for the guilty suspect (no alibi).
+	/// TextBlock offset of suspect's alibi text. 0xFFFF for guilty suspect.
 	uint16 alibiTextOffset(uint suspectIdx) const;
 
-	/// Pointer to the win-clueblock (`MysteryIndex[+0x10]` =
-	/// `_solvedOffset`). Mirrors `_DisplayCorrect`'s
-	/// `_DisplayClue(_Mystery + MysteryIndex[+0x10], 0)` at 1df2:0769.
+	/// Win-clueblock at `MysteryIndex[+0x10]` = `_solvedOffset`. Used by
+	/// `_DisplayCorrect` @ 1df2:0769 (`_DisplayClue(_Mystery + MysteryIndex[+0x10], 0)`).
 	const byte *solvedClueBlock() const;
 
 	/// Per-mystery runtime state, zeroed at load time.
 	uint8  _cluesFound[kCluesFoundCap]   = {};
-	uint8  _noteSelected[kCluesFoundCap] = {};  ///< Mirror `_NoteSelected`
+	uint8  _noteSelected[kCluesFoundCap] = {};  ///< _NoteSelected
 	uint16 _hotSpotsSeen[kHotSpotsCap]   = {};
 	uint16 _inGallery[kGalleryCap]       = {};
 	uint8  _newOrder[kGalleryCap]        = {};
@@ -234,19 +196,15 @@ private:
 	uint16 _bChain[kChainLen] = {};
 	uint16 _cChain[kChainLen] = {};
 
-	// Floppy variant uses a completely different header (see comment
-	// in `Mystery::load`). When `_isFloppy` is true, the CD-shaped
-	// `_initOffset / _siteIndexOffset / etc.` fields are unset and the
-	// floppy section pointers below are populated from the floppy
-	// header offsets verified at `_ReadMystery_Floppy @ 22dc:0178`.
+	// Floppy variant — see Mystery::load. _ReadMystery_Floppy @ 22dc:0178.
 	bool   _isFloppy = false;
-	uint16 _floppySuspectsOff = 0;   ///< header[+4]  → suspects
-	uint16 _floppyHintBlockOff = 0;  ///< header[+6]  → hint→clue table
-	uint16 _floppyNoteIndexOff = 0;  ///< header[+8]  → notes (7B/clue)
-	uint16 _floppyGalleryOff = 0;    ///< header[+0xa] → gallery portraits
-	uint16 _floppyTextOff = 0;       ///< header[+0xc] → text block
-	uint16 _floppyKDTextOff = 0;     ///< header[+0x10] → KDTextIndex
-	uint16 _floppySolvedOff = 0;     ///< header[+0x12] → solved clue chain
+	uint16 _floppySuspectsOff = 0;   ///< header[+4]    suspects
+	uint16 _floppyHintBlockOff = 0;  ///< header[+6]    hint -> clue table
+	uint16 _floppyNoteIndexOff = 0;  ///< header[+8]    notes (7B/clue)
+	uint16 _floppyGalleryOff = 0;    ///< header[+0xa]  gallery portraits
+	uint16 _floppyTextOff = 0;       ///< header[+0xc]  text block
+	uint16 _floppyKDTextOff = 0;     ///< header[+0x10] KDTextIndex
+	uint16 _floppySolvedOff = 0;     ///< header[+0x12] solved clue chain
 	Common::Array<byte> _floppySiteAnimData;
 	uint16 _floppySiteAnimSiteOff[kVisitedSiteCap] = {};
 
