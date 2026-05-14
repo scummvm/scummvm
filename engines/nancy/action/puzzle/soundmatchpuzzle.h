@@ -64,6 +64,8 @@ protected:
 
 	uint16 _requiredPairs = kNumButtons;   // how many matches needed to win
 
+	bool _resetOnWrong = false;
+
 	struct SoundButtonEntry {
 		SoundDescription sound;   // whale call sound
 		Common::String text;      // onomatopoeia shown in the text box
@@ -90,6 +92,8 @@ protected:
 	int  _selectedSoundButton  = -1;    // currently selected numbered button, -1 = none
 	int  _matchedPairs    = 0;
 	bool _isExiting       = false;
+
+	bool _whaleClickEnabled = false;
 
 	enum SolveSubState {
 		kIdle         = 0,
