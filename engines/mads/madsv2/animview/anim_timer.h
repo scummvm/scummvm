@@ -19,33 +19,17 @@
  *
  */
 
-#ifndef MADSV2_ANIMVIEW_H
-#define MADSV2_ANIMVIEW_H
+#ifndef MADSV2_ANIMVIEW_ANIM_TIMER_H
+#define MADSV2_ANIMVIEW_ANIM_TIMER_H
 
 #include "common/scummsys.h"
-#include "mads/madsv2/core/anim.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace AnimView {
 
-// Variables shared with anim_timer.cpp
-extern int speechNum;
-extern int current_error_code;
-extern int currentFrame, minFrame, maxFrame;
-extern bool foundSeries;
-extern int seriesMinFrame, seriesMaxFrame;
-extern bool timerFlag1;
-extern bool peelFlag;
-extern int runCtr1;
-extern int runFx;
-extern uint32 timer1, timer2;;
-extern AnimPtr current_anim;
-extern AnimInterPtr current_anim_inter;
-
-
-// Main animview function
-extern void animview_main(const char *resName);
+extern void anim_timer_init();
+extern void anim_timer();
 
 } // namespace AnimView
 } // namespace MADSV2

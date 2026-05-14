@@ -33,6 +33,8 @@
 #include "mads/madsv2/core/tile.h"
 #include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/animview/animview.h"
+#include "mads/madsv2/animview/anim_timer.h"
+#include "mads/madsv2/animview/functions.h"
 #include "mads/madsv2/engine.h"
 
 namespace MADS {
@@ -42,25 +44,27 @@ namespace AnimView {
 #define MADS_FORMAT(BUF, SRC) Common::strcpy_s(BUF, in_mads_mode ? "*" : ""); \
 	Common::strcat_s(BUF, SRC)
 
-struct AnimEntry {
-	char name[16];
-	uint8 bg_load_status;
-	uint8 sound_mode;
-	uint8 show_bars;
-	uint8 fx;
-};
-constexpr int MAX_ANIM = 40;
 constexpr bool in_mads_mode = true;
 
-static int anim_count;
-static AnimEntry anim_list[MAX_ANIM];
-static uint8 background_load_status;
-static int16 sound_interrupts_mode;
-static bool show_white_bars;
+int speechNum;
+int current_error_code;
+int currentFrame;
+int minFrame, maxFrame;
+bool foundSeries;
+int seriesMinFrame, seriesMaxFrame;
+bool timerFlag1;
+bool peelFlag;
+int runCtr1;
+int runFx;
+uint32 timer1, timer2;
+AnimPtr current_anim;
+AnimInterPtr current_anim_inter;
+
+static const byte FX_TIMES[16] = {
+	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
+};
+
 static int concat_mode;
-static bool resync_timer1, resync_timer2;
-static bool exit_immediately_at_end;
-static bool do_not_clear_screen;
 static bool has_sound_file;
 static char sound_file_name[80];
 static TileMapHeader picture_map, depth_map;
@@ -68,8 +72,6 @@ static TileResource picture_res, depth_res;
 static CycleList cycle_list;
 static Buffer scr_work_orig;
 static Room *room;
-static AnimPtr current_anim;
-static AnimInterPtr current_anim_inter;
 static bool has_cycles;
 static int viewing_at_y2;
 constexpr int SPEECH_LINES_COUNT = 10;
@@ -78,40 +80,26 @@ static int speech_lines_count;
 static SeriesPtr animSeries;
 static SpritePageInfoPtr pageInfo;
 static SpritePageTablePtr pageTable;
-static bool foundSeries;
-static int imageFlags, imageFlags2, imageFlags3;
-static int imageSpriteId;
+static int imageFlags, imageFlags2;
 static int largeBufferSize;
 static byte *largeBuffer, *largeBufferEnd;
 static byte *largeBuffer1, *largeBuffer2;
 static bool hasAnimInited;
-static int minFrame, maxFrame;
-static uint32 timer1, timer2;
 static int runVal1, runVal2, runVal3;
 static int runVal4, runVal5, runVal6;
-static int runVal7, runVal8, runVal9;
-static int runVal10, runVal12;
+static int runVal7, runVal8;
+static int runVal12;
 static int loadFontFlag;
-static int runFx;
-static int runCtr1;
-static int currentFrame;
-static bool peelFlag;
-static int current_error_code;
+static int error_code;
 static bool wait_for_music_at_end;
 
 /**
  * Initializes animview global variables
  */
 static void init_globals() {
-	anim_count = 0;
-	background_load_status = 0xff;
-	sound_interrupts_mode = -1;
-	show_white_bars = true;
+	anim_timer_init();
+	functions_init();
 	concat_mode = 0;
-	resync_timer1 = true;
-	resync_timer2 = false;
-	exit_immediately_at_end = false;
-	do_not_clear_screen = false;
 	has_sound_file = false;
 	*sound_file_name = '\0';
 	memset(&picture_map, 0, sizeof(TileMapHeader));
@@ -131,8 +119,8 @@ static void init_globals() {
 	pageInfo = nullptr;
 	pageTable = nullptr;
 	foundSeries = false;
-	imageFlags = imageFlags2 = imageFlags3 = 0;
-	imageSpriteId = 0;
+	imageFlags = imageFlags2 = seriesMaxFrame = 0;
+	seriesMinFrame = 0;
 	largeBufferSize = 0;
 	largeBuffer = largeBufferEnd = nullptr;
 	largeBuffer1 = largeBuffer2 = nullptr;
@@ -142,161 +130,30 @@ static void init_globals() {
 	runVal1 = 0;
 	runVal2 = runVal3 = -1;
 	runVal4 = runVal5 = runVal6 = 0;
-	runVal7 = runVal8 = runVal9 = 0;
-	runVal10 = runVal12 = 0;
+	runVal7 = runVal8 = speechNum = 0;
+	timerFlag1 = false;
+	runVal12 = 0;
 	loadFontFlag = 0;
 	runFx = 0;
 	runCtr1 = 0;
 	currentFrame = 0;
 	peelFlag = false;
-	current_error_code = 0;
+	error_code = current_error_code = 0;
 	wait_for_music_at_end = false;
 	exit_immediately_at_end = false;
 }
 
 /**
- * Adds an animation to the list of .aa files to show in sequence
- * @param name		Animation resource name
+ * Handleas incremental fading by subtracting an amount from each palette
+ * entries' RGB values down towards zero
  */
-static void add_anim(const char *name) {
-	static char buf[16];
-
-	if (strlen(name) > 0 && anim_count < MAX_ANIM) {
-		Common::strcpy_s(buf, name);
-		if (!strchr(buf, '.'))
-			Common::strcat_s(buf, ".aa");
-
-		Common::strcpy_s(anim_list[anim_count].name, buf);
-		anim_list[anim_count].bg_load_status = background_load_status;
-		anim_list[anim_count].sound_mode = sound_interrupts_mode;
-		anim_list[anim_count].show_bars = show_white_bars;
-		++anim_count;
-	}
-}
-
-/**
- * Parses a flag from an animation line in the resource file
- */
-static void flag_parse(const char *param) {
-	switch (tolower(*param++)) {
-	case 'o':
-		// Specify opening special effect
-		assert(anim_count < MAX_ANIM);
-		if (*param == ':')
-			anim_list[anim_count].fx = atoi(param + 1);
-		break;
-
-	case 'r':
-		// -r[:abn] Resynch timer (always, beginning, never)
-		if (*param == ':') {
-			switch (tolower(*++param)) {
-			case 'n':
-				resync_timer1 = true;
-				resync_timer2 = false;
-				break;
-			case 'a':
-				resync_timer1 = false;
-				break;
-			case 'b':
-				resync_timer1 = true;
-				resync_timer2 = true;
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-
-	case 'w':
-		// Toggle white bars on or off
-		show_white_bars = !show_white_bars;
-		break;
-
-	case 'x':
-		// Exit immediately after last frame
-		exit_immediately_at_end = true;
-		break;
-
-	case 'y':
-		// Do not clear screen at start
-		do_not_clear_screen = true;
-		break;
-
-	default:
-		error("Unsupported animview flag - %c", *param);
-		break;
-	}
-}
-
-/**
- * Reads the contents of the resource file stream, and adds
- * entries to the anim_list for what to display
- */
-static void read_resource(Common::SeekableReadStream *src) {
-	while (!src->eos()) {
-		Common::String line = src->readLine();
-		line.trim();
-		if (line.empty())
-			continue;
-
-		// Handle any flags at the start of the line
-		const char *lineP = line.c_str();
-		while (strchr("/-", *lineP)) {
-			// It's a flag
-			++lineP;
-			const char *switchEnd = strchr(lineP, ' ');
-			Common::String param;
-
-			if (switchEnd) {
-				// There's more line after the flag
-				param = Common::String(lineP, switchEnd);
-				for (lineP = switchEnd; *lineP == ' '; ++lineP) {
-				}
-			} else {
-				// This is the last flag of the line
-				param = Common::String(lineP);
-				lineP = lineP + strlen(lineP);
-			}
-
-			flag_parse(param.c_str());
-		}
-
-		// As long as we're not at the end of the line, any remainder
-		// should be the name of the animation resource to play
-		if (*lineP)
-			add_anim(lineP);
-	}
-}
-
-static void anim_normal_timer() {
-	// TODO
-}
-
-static void cycling_timer() {
-	// TODO
-}
-
-static void anim_peel() {
-	int peelX = current_anim->misc_peel_x;
-	if (peelX) {
-		buffer_peel_horiz(&scr_work, peelX);
-		matte_refresh_work();
-	}
-
-	int peelY = current_anim->misc_peel_y;
-	if (peelY) {
-		buffer_peel_vert(&scr_work, peelY, scr_inter_orig.data, 320 * 200);
-		matte_refresh_work();
-	}
-}
-
 static bool anim_fade(Palette *pal, int fadeAmount) {
 	bool palChanged = false;
 	byte *rgb = (byte *)pal;
-	for (int count = 0; count < Graphics::PALETTE_SIZE; ++count, ++pal) {
-		*rgb = MAX((int)*rgb - fadeAmount, 0);
+	for (int count = 0; count < Graphics::PALETTE_SIZE; ++count, ++rgb) {
 		if (*rgb)
 			palChanged = true;
+		*rgb = MAX((int)*rgb - fadeAmount, 0);
 	}
 
 	return palChanged;
@@ -340,7 +197,8 @@ static void run_animation(int animIndex) {
 	loadFontFlag = current_anim->load_flags & AA_LOAD_FONT;
 
 	runVal5 = runVal6 = runVal7 = runVal8 = 0;
-	runVal9 = runVal10 = 0;
+	speechNum = 0;
+	timerFlag1 = false;
 
 	if (current_anim->background_type == AA_INTERFACE) {
 		currentFrame = -1;
@@ -364,13 +222,42 @@ static void run_animation(int animIndex) {
 		runCtr1 = 0;
 		peelFlag = current_anim->misc_peel_x || current_anim->misc_peel_y;
 		timer2 = timer1;
-		timer_activate_low_priority(anim_normal_timer);
+		timer_activate_low_priority(anim_timer);
 	}
 
-	// TODO: Inner animation loop
+	// Main animation loop
+	while (currentFrame < maxFrame && !current_error_code) {
+		if (speechNum) {
+			if (!(current_anim->load_flags && AA_LOAD_SPEECH)) {
+				char speechName[80];
+				MADS_FORMAT(speechName, current_anim->speech_file);
+
+				speech_play(speechName, speechNum);
+			}
+
+			timerFlag1 = true;
+			speechNum = 0;
+		}
+
+		if (foundSeries) {
+			error("TODO: series block");
+		}
+
+		if (g_engine->shouldQuit())
+			current_error_code = 1;
+		if (g_engine->hasPendingKey()) {
+			g_engine->flushKeys();
+			error_code = 0;
+			current_error_code = 1;
+		}
+		if (mouse_get_status(&mouse_x, &mouse_y)) {
+			current_error_code = -1;
+			error_code = 3;
+		}
+	}
 
 	cycling_threshold = 3;
-	timer_activate_low_priority(cycling_active ? cycling_timer : nullptr);
+	timer_activate_low_priority(cycling_active ? cycle_colors : nullptr);
 
 	if (!current_error_code && current_anim->misc_slow_fade) {
 		timer_activate_low_priority(nullptr);
@@ -459,7 +346,7 @@ static void animate() {
 	matte_init(-1);
 
 	// Preload resources used by the animations
-	for (count = 0; count < anim_count && !g_engine->shouldQuit(); ++count) {
+	for (count = 0; count < anim_count && !error_code; ++count) {
 		AnimEntry &entry = anim_list[count];
 
 		MADS_FORMAT(buf, entry.name);
@@ -489,6 +376,9 @@ static void animate() {
 				himem_preload_series(buf, 0);
 			}
 		}
+
+		if (g_engine->shouldQuit())
+			error_code = 1;
 	}
 
 	if (!do_not_clear_screen) {
@@ -606,8 +496,8 @@ static void animate() {
 			if (foundSeries) {
 				Image &img = current_anim->image[imageIndex];
 				imageFlags = imageFlags2 = img.flags;
-				imageFlags3 = imageFlags - 1;
-				imageSpriteId = img.sprite_id;
+				seriesMaxFrame = imageFlags - 1;
+				seriesMinFrame = img.sprite_id;
 			}
 		}
 

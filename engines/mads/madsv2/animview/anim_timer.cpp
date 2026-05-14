@@ -19,36 +19,59 @@
  *
  */
 
-#ifndef MADSV2_ANIMVIEW_H
-#define MADSV2_ANIMVIEW_H
-
-#include "common/scummsys.h"
-#include "mads/madsv2/core/anim.h"
+#include "mads/madsv2/animview/anim_timer.h"
+#include "mads/madsv2/animview/animview.h"
+#include "mads/madsv2/animview/functions.h"
+#include "mads/madsv2/core/cycle.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace AnimView {
 
-// Variables shared with anim_timer.cpp
-extern int speechNum;
-extern int current_error_code;
-extern int currentFrame, minFrame, maxFrame;
-extern bool foundSeries;
-extern int seriesMinFrame, seriesMaxFrame;
-extern bool timerFlag1;
-extern bool peelFlag;
-extern int runCtr1;
-extern int runFx;
-extern uint32 timer1, timer2;;
-extern AnimPtr current_anim;
-extern AnimInterPtr current_anim_inter;
+static int normalTimer1;
+static int slow_frames, fast_frames, iffy_frames;
 
+void anim_timer_init() {
+	normalTimer1 = 0;
+	slow_frames = fast_frames = iffy_frames = 0;
+}
 
-// Main animview function
-extern void animview_main(const char *resName);
+void anim_timer() {
+	bool flag = false;
+	int currTimer = g_system->getMillis();
+
+	if (current_error_code || speechNum)
+		goto done;
+	if (currentFrame < 0 || currentFrame >= maxFrame)
+		goto done;
+	if (foundSeries && (currentFrame <= seriesMinFrame || currentFrame > seriesMaxFrame))
+		goto done;
+
+	if (timerFlag1) {
+		timerFlag1 = false;
+		flag = g_engine->isSpeechPlaying();
+		goto block1;
+	}
+	if (normalTimer1)
+		goto block2;
+
+	if (runFx == 0) {
+		if (peelFlag && timer2 >= currTimer && timer1 <= currTimer) {
+			anim_peel();
+
+		}
+	}
+
+block1:
+	warning("TODO: block1");
+block2:
+	warning("TODO: block2");
+
+done:
+	cycle_colors();
+}
 
 } // namespace AnimView
 } // namespace MADSV2
 } // namespace MADS
-
-#endif

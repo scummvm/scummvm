@@ -268,8 +268,8 @@ struct FrameEditBuf {
 	word timing;
 	word view_x;
 	word view_y;
-	char yank_x;
-	char yank_y;
+	int8 yank_x;
+	int8 yank_y;
 };
 
 typedef struct FrameEditBuf FrameEdit;
