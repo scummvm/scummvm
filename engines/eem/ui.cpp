@@ -163,16 +163,16 @@ constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
 constexpr uint16 kFirstTryBadgePic = 0x205;
 constexpr Common::Point kFirstTryBadgePos(0x1e, 9);
 
+// kPdaSiteRect / kPdaPartnerFootMapRect / kPdaPartnerHeadHintRect live in
+// eem.h (shared with site.cpp). The button-row rects below are PDA-screen-
+// only (`_NoteButtons @ 29be:0147`).
 constexpr Common::Rect kPdaHelpRect(Common::Point(93, 174), 22, 16);
 constexpr Common::Rect kPdaNotebookRect(Common::Point(134, 174), 21, 16);
 constexpr Common::Rect kPdaGalleryRect(Common::Point(157, 174), 21, 16);
-constexpr Common::Rect kPdaPartnerHeadHintRect(Common::Point(5, 80), 39, 30);
 constexpr Common::Rect kPdaAccuseRect(Common::Point(180, 174), 21, 16);
 constexpr Common::Rect kPdaPageNextRect(Common::Point(204, 174), 20, 16);
 constexpr Common::Rect kPdaPagePrevRect(Common::Point(226, 174), 21, 16);
 constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
-constexpr Common::Rect kPdaPartnerFootMapRect(Common::Point(7, 177), 50, 23);
-constexpr Common::Rect kPdaSiteRect(Common::Point(35, 111), 21, 25);
 
 constexpr uint16 kProfilePickerRevealPic = 0x105;
 constexpr int kProfilePickerRevealX = 0x3e;

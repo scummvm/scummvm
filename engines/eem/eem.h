@@ -28,6 +28,7 @@
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/random.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 #include "common/serializer.h"
@@ -114,6 +115,13 @@ enum Partner {
 /// VGA mode 13h dimensions (initGraphics(320, 200) in `EEMEngine::run`).
 constexpr int kScreenWidth  = 320;
 constexpr int kScreenHeight = 200;
+
+/// Shared PDA-frame navigation rects (PIC 0x3f) — reachable from Site,
+/// Notebook, Gallery, Accuse, and MoreInfo. Original `_NoteButtons` table
+/// @ 29be:0147 + the site-screen hit tests in `_DoSiteLoop @ 168d:03f4`.
+constexpr Common::Rect kPdaSiteRect             (Common::Point(35, 111), 21, 25);
+constexpr Common::Rect kPdaPartnerFootMapRect   (Common::Point( 7, 177), 50, 23);
+constexpr Common::Rect kPdaPartnerHeadHintRect  (Common::Point( 5,  80), 39, 30);
 
 class EEMEngine : public Engine {
 public:
