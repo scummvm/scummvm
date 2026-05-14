@@ -365,11 +365,11 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 
 		if (pickUp) {
 			setHeldItem(id);
+			g_nancy->_sound->playSound("BUOK");
 		} else if (getHeldItem() == id) {
 			setHeldItem(-1);
+			g_nancy->_sound->playSound("BUOK");
 		}
-
-		g_nancy->_sound->playSound("BUOK");
 
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
 			_inventoryBox.removeItem(id);
