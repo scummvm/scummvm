@@ -111,19 +111,50 @@ void swapColors(Graphics::ManagedSurface &dst,
 	}
 }
 
-void blitAccusePartner(Graphics::ManagedSurface &dstSurface,
-					   DBDArchive &aniArchive, uint8 partner,
-					   uint32 tickMs) {
-	const uint partnerAnim = (partner == 0) ? 2 : 0x10;
-	Animation partnerAni;
-	if (aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-		!partnerAni.empty()) {
-		const uint frameIdx = partnerFrameAtTick(0x02,
-												 (uint)partnerAni.size(),
-												 tickMs);
-		blitAnimFrameAnchored(dstSurface.surfacePtr(),
-							  partnerAni[frameIdx], 5, 0x50);
-	}
+// PDA-frame partner sprite specs. `(5, 0x50)` is the partner-at-desk anchor
+// shared by _DoNotebook (script 0x01, anim 1/0xb) and _DoGallery / _DoAccuse
+// / _MoreInfo (script 0x02, anim 2/0x10).
+struct PdaPartnerSpec {
+	uint16 scriptId;
+	uint16 animJake;
+	uint16 animJenny;
+	int    anchorX;
+	int    anchorY;
+};
+constexpr PdaPartnerSpec kPdaGalleryPartner { 0x02, 0x02, 0x10, 5, 0x50 };
+constexpr PdaPartnerSpec kPdaNotebookPartner{ 0x01, 0x01, 0x0b, 5, 0x50 };
+
+// Lookup current frame for spec; returns nullptr if anim load fails. `outAni`
+// owns the loaded cells; the returned pointer is valid until `outAni` goes
+// out of scope.
+const Picture *partnerFrameFor(DBDArchive &aniArchive, uint8 partner,
+							   const PdaPartnerSpec &spec, uint32 tickMs,
+							   Animation &outAni) {
+	const uint animId = (partner == 0) ? spec.animJake : spec.animJenny;
+	if (!aniArchive.loadAnimation(animId, outAni) || outAni.empty())
+		return nullptr;
+	const uint frameIdx = partnerFrameAtTick(spec.scriptId,
+											  (uint)outAni.size(), tickMs);
+	return &outAni[frameIdx];
+}
+
+void blitPdaPartner(Graphics::ManagedSurface &dst, DBDArchive &aniArchive,
+					uint8 partner, const PdaPartnerSpec &spec,
+					uint32 tickMs) {
+	Animation ani;
+	if (const Picture *fr = partnerFrameFor(aniArchive, partner, spec,
+											tickMs, ani))
+		blitAnimFrameAnchored(dst.surfacePtr(), *fr, spec.anchorX,
+							  spec.anchorY);
+}
+
+void blitPdaPartner(Graphics::Surface *screen, DBDArchive &aniArchive,
+					uint8 partner, const PdaPartnerSpec &spec,
+					uint32 tickMs) {
+	Animation ani;
+	if (const Picture *fr = partnerFrameFor(aniArchive, partner, spec,
+											tickMs, ani))
+		blitAnimFrameAnchored(screen, *fr, spec.anchorX, spec.anchorY);
 }
 
 constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
@@ -2263,15 +2294,8 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		scratch.simpleBlitFrom(frame.surface);
 
 	// Partner ANI 1/0xb (cells); script 0x01 (`_NewAnimation @ 161e:054c`).
-	const uint partnerAnim = (_partner == 0) ? 1 : 0xb;
-	Animation partnerAni;
-	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) && !partnerAni.empty()) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x01,
-												  (uint)partnerAni.size(), now);
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  partnerAni[frameIdx], 5, 80);
-	}
+	blitPdaPartner(scratch, _aniArchive, _partner, kPdaNotebookPartner,
+				   g_system->getMillis());
 
 	// `_DrawNotes` walks `_NoteIndex` for current page; word-wraps each
 	// found clue in `_NotebookRect`. Selected = color 0x3c.
@@ -2574,18 +2598,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		if (haveBg)
 			ms.simpleBlitFrom(galBg.surface);
 		// Partner sprite at (5, 0x50). Re-blitted per page.
-		{
-			const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-			Animation partnerAni;
-			if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-				!partnerAni.empty()) {
-				const uint32 now = g_system->getMillis();
-				const uint frameIdx = partnerFrameAtTick(0x02,
-					(uint)partnerAni.size(), now);
-				blitAnimFrameAnchored(ms.surfacePtr(),
-									  partnerAni[frameIdx], 5, 0x50);
-			}
-		}
+		blitPdaPartner(ms, _aniArchive, _partner, kPdaGalleryPartner,
+					   g_system->getMillis());
 		Picture detail;
 		if (_picsArchive.getPicture(detailPic, detail)) {
 			const byte transp = (byte)(detail.flags >> 8);
@@ -2818,10 +2832,6 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	// positions live in `kGallerySlots` in this file's anon namespace.
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
-	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-	Animation partnerAni;
-	const bool havePartner = _aniArchive.loadAnimation(partnerAnim, partnerAni)
-							  && !partnerAni.empty();
 
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -2830,24 +2840,13 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	if (haveBg)
 		scratch.simpleBlitFrom(galBg.surface);
 
-	// Partner sprite frame @ (5, 0x50). The original `_DoGallery @
-	// 158f:065b` registers `_NewAnimation(..., CONCAT22(2, ...), ...)`
-	// — script key 0x02 regardless of partner. Jake's 0x02 script
-	// (26 frames, brief wave + long hold + second wave) is what
-	// drives BOTH partners' cells. Earlier our port used 0x10 for
-	// Jenny, which is a 9-frame short blip — so Jenny was missing
-	// 17 frames of the wave-and-pause cadence that Jake has.
-	if (havePartner) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x02,
-												  (uint)partnerAni.size(), now);
-		// Anchor-aware blit, consistent with site-loop / BigMap
-		// rendering paths. Anim 0x02 has rowoff = miscflags = 0
-		// per the audit but the anchored blitter is still the
-		// right semantic for an `_NewAnimation`-rendered sprite.
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  partnerAni[frameIdx], 5, 0x50);
-	}
+	// Partner sprite frame @ (5, 0x50). `_DoGallery @ 158f:065b` registers
+	// _NewAnimation(..., CONCAT22(2, ...), ...) — script key 0x02 regardless
+	// of partner. Jake's 26-frame 0x02 script (brief wave + long hold +
+	// second wave) drives BOTH partners' cells (Jenny's own 0x10 anim is
+	// only 9 frames so it wouldn't cover the full cadence).
+	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
+				   g_system->getMillis());
 
 	// Portraits — `_DrawGallery @ 158f:0046` (CD) /
 	// `_DrawGallery_Floppy @ 154e:0045` (floppy) walks suspects 0..N-1
@@ -3430,16 +3429,8 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 
 	// Partner at (5, 0x50). `_DoAccuse @ 1df2:0c2c`: ANI 2/0x10,
 	// script 2, prior 1.
-	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-	Animation partnerAni;
-	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-		!partnerAni.empty()) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x02,
-												  (uint)partnerAni.size(), now);
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  partnerAni[frameIdx], 5, 0x50);
-	}
+	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
+				   g_system->getMillis());
 
 	// Selected=0x3c, unselected=1 (`_NoteUnselectedColor` @ 1df2:0c25).
 	Common::Array<Common::Rect> &slotRects = *ctx.slotRects;
@@ -4173,11 +4164,6 @@ void EEMEngine::doAccuse() {
 		}
 		// Partner at (5, 0x50). ANI 2/0x10, script 0x02 (`_DoAccuse
 		// @ 1df2:0c30`). Drawn after suspect.
-		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-		Animation partnerAni;
-		const bool havePartner =
-			_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-			!partnerAni.empty();
 
 		// scratch = base + alibi balloon/text + partner.
 		Graphics::ManagedSurface scratch(320, 200,
@@ -4197,12 +4183,8 @@ void EEMEngine::doAccuse() {
 								  balloonY + ty, tw, alibi,
 								  haveBalloon ? 0 : 0xF);
 		}
-		if (havePartner) {
-			const uint frameIdx = partnerFrameAtTick(0x02,
-				(uint)partnerAni.size(), g_system->getMillis());
-			blitAnimFrameAnchored(scratch.surfacePtr(),
-								  partnerAni[frameIdx], 5, 0x50);
-		}
+		blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
+					   g_system->getMillis());
 
 		// MIDI 6 — blocks until done (or click/ESC aborts).
 		if (_music && _voiceOn) {
@@ -4289,14 +4271,8 @@ void EEMEngine::doAccuse() {
 										  rY + rty, rtw, react,
 										  haveR ? 0 : 0xF);
 				}
-				if (havePartner) {
-					const uint frameIdx = partnerFrameAtTick(0x02,
-						(uint)partnerAni.size(),
-						g_system->getMillis());
-					blitAnimFrameAnchored(scratch.surfacePtr(),
-										  partnerAni[frameIdx],
-										  5, 0x50);
-				}
+				blitPdaPartner(scratch, _aniArchive, _partner,
+							   kPdaGalleryPartner, g_system->getMillis());
 				g_system->copyRectToScreen(scratch.getPixels(),
 					scratch.pitch, 0, 0, 320, 200);
 				g_system->updateScreen();
@@ -4385,19 +4361,10 @@ void EEMEngine::doAccuse() {
 		}
 
 		// Stamp partner at (5, 0x50); displayClue snapshots screen.
-		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-		Animation partnerAni;
-		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-			!partnerAni.empty()) {
-			Graphics::Surface *screen = g_system->lockScreen();
-			if (screen) {
-				const uint frameIdx = partnerFrameAtTick(0x02,
-					(uint)partnerAni.size(),
-					g_system->getMillis());
-				blitAnimFrameAnchored(screen, partnerAni[frameIdx],
-									  5, 0x50);
-				g_system->unlockScreen();
-			}
+		if (Graphics::Surface *screen = g_system->lockScreen()) {
+			blitPdaPartner(screen, _aniArchive, _partner,
+						   kPdaGalleryPartner, g_system->getMillis());
+			g_system->unlockScreen();
 		}
 		g_system->updateScreen();
 
@@ -4520,16 +4487,8 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 	if (haveAccuseBg)
 		scratch.simpleBlitFrom(accuseBg.surface);
 
-	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-	Animation partnerAni;
-	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-		!partnerAni.empty()) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x02,
-												  (uint)partnerAni.size(), now);
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  partnerAni[frameIdx], 5, 0x50);
-	}
+	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
+				   g_system->getMillis());
 
 	rects.resize(num);
 	suspects.resize(num);
@@ -4752,19 +4711,10 @@ void EEMEngine::doAccuseFloppy() {
 
 			// Stamp partner at (5, 0x50); displayFloppyDialogRecords
 			// snapshots screen. ANI 2/0x10, script 0x02.
-			const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-			Animation partnerAni;
-			if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-				!partnerAni.empty()) {
-				Graphics::Surface *screen = g_system->lockScreen();
-				if (screen) {
-					const uint frameIdx = partnerFrameAtTick(0x02,
-						(uint)partnerAni.size(),
-						g_system->getMillis());
-					blitAnimFrameAnchored(screen, partnerAni[frameIdx],
-										  5, 0x50);
-					g_system->unlockScreen();
-				}
+			if (Graphics::Surface *screen = g_system->lockScreen()) {
+				blitPdaPartner(screen, _aniArchive, _partner,
+							   kPdaGalleryPartner, g_system->getMillis());
+				g_system->unlockScreen();
 			}
 			g_system->updateScreen();
 		}
@@ -4955,7 +4905,8 @@ void EEMEngine::doAccuseFloppy() {
 							  MAX<int>(8, (int)tw), alibi, 0);
 	}
 	// Stamp partner resting frame before KD reaction snapshots screen.
-	blitAccusePartner(scene, _aniArchive, _partner, g_system->getMillis());
+	blitPdaPartner(scene, _aniArchive, _partner, kPdaGalleryPartner,
+				   g_system->getMillis());
 	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, 320, 200);
 	g_system->updateScreen();
 
@@ -5006,16 +4957,8 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 		scratch.simpleBlitFrom(accuseBg.surface);
 
 	// Partner drawn first; defensive (no slot overlap).
-	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-	Animation partnerAni;
-	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
-		!partnerAni.empty()) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x02,
-												  (uint)partnerAni.size(), now);
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  partnerAni[frameIdx], 5, 0x50);
-	}
+	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
+				   g_system->getMillis());
 
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
 		slotRects[i] = Common::Rect();
