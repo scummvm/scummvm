@@ -118,11 +118,12 @@ int NoctropolisInventory::displayInv() {
 					spriteIndex++;
 				uint16 slotX = _inventoryBase.x + 23 + (slotNum % 5) * 41;
 				uint16 slotY = _inventoryBase.y + 26 + (slotNum / 5) * 38;
-				screen->plotImage(inventorySprites, 3, Common::Point(slotX, slotY)); // draw empty slot
-				slotX += 20 - inventorySprites->getFrame(spriteIndex)->w / 2;
-				slotY += MAX(0, 38 - inventorySprites->getFrame(spriteIndex)->h) / 2;
+				screen->plotF(inventorySprites->getFrame(3), Common::Point(slotX, slotY)); // draw empty slot
+				// Centre the item icon
+				slotX += MAX(0, 20 - inventorySprites->getFrame(spriteIndex)->w / 2);
+				slotY += MAX(0, 19 - inventorySprites->getFrame(spriteIndex)->h / 2);
 				const Common::Point slotPt(slotX, slotY);
-				screen->plotImage(inventorySprites, spriteIndex, slotPt);
+				screen->plotF(inventorySprites->getFrame(spriteIndex), slotPt);
 				font->drawString(screen, Common::String::format("%d", spriteIndex), slotPt);
 			}
 

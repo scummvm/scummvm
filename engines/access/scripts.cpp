@@ -749,8 +749,11 @@ void Scripts::cmdCheckLoc() {
 	int maxY = _data->readUint16LE();
 	debugCN(1, kDebugScripts, "cmdCheckLoc(minX=%d, minY=%d, maxX=%d, maxY=%d)", minX, minY, maxX, maxY);
 
-	int curX = _vm->_player->_rawPlayer.x + _vm->_player->_playerOffset.x;
+	int curX = _vm->_player->_rawPlayer.x;
 	int curY = _vm->_player->_rawPlayer.y;
+
+	if (_vm->getGameID() != kGameNoctropolis)
+		curX += _vm->_player->_playerOffset.x;
 
 	if ((curX >= minX) && (curX <= maxX) && (curY >= minY) && (curY <= maxY)) {
 		debugC(1, kDebugScripts, " -> True");

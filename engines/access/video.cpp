@@ -331,6 +331,8 @@ void VideoPlayer_v2::handlePaletteChunk() {
 		_vm->_screen->setRawPalette(pal);
 		_vm->_screen->setPalette();
 		_vm->_screen->copyRawPalToTempPal();
+		// only do it once?
+		_setPal = false;
 	}
 }
 

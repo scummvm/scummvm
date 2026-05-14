@@ -168,6 +168,7 @@ public:
 
 	int getHeight() override { return _header._height; }
 
+	void enableSetPal() { _setPal = true; }
 };
 
 

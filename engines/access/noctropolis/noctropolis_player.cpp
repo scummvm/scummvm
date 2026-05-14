@@ -192,7 +192,7 @@ void NoctropolisPlayer::walk() {
 	} else {
 		// Move animation
 		int dirAnimNum = _animNumForDir(_playerDirection);
-		if (_playerDirection != _lastDirection) {
+		if (_playerDirection != _lastDirection || (_animManager && !_animManager->hasTimer())) {
 			_lastDirection = _playerDirection;
 			if (_animManager) {
 				_animManager->popBackTimer();
