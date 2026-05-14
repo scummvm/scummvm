@@ -1,12 +1,5 @@
 name: CI
-# Temporarily scoped to dev-eem to fix merge-blocking CI issues without
-# burning runner minutes on every push. Revert to `on: [push, pull_request]`
-# before opening upstream PRs from other branches.
-on:
-  push:
-    branches: [dev-eem]
-  pull_request:
-    branches: [dev-eem]
+on: [push, pull_request]
 #  schedule:
 #    - cron: '0 0-23/4 * * *'
 permissions:
