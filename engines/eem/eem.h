@@ -25,6 +25,7 @@
 #define EEM_EEM_H
 
 #include "common/array.h"
+#include "common/keyboard.h"
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/random.h"
@@ -268,6 +269,52 @@ private:
 
 	/// Re-render helpers for the corresponding `doX()` modal screens.
 	void drawNotebookFrame(int &page);
+
+	/// Resolve a single NoteIndex entry to displayable notebook text.
+	/// Handles the CD (4-byte) vs floppy (7-byte) entry strides.
+	Common::String notebookNoteText(uint clueId, const byte *ni,
+									uint16 niCount, bool floppyNb,
+									const byte *bufBase,
+									uint32 mysSz) const;
+
+	/// Shared state for `doAccuseNotes` helpers (text lookup, pagination,
+	/// render). Pointer fields refer to locals owned by `doAccuseNotes`.
+	struct AccuseNotesCtx {
+		const byte *ni;
+		uint16 niCount;
+		bool floppyNote;
+		const byte *bufBaseNotes;
+		const Common::Array<uint> *found;
+		int rectX, rectY, rectW, rectH;
+		uint expected;
+		bool haveBg;
+		const Picture *accuseBg;
+		Common::Array<Common::Rect> *slotRects;
+		Common::Array<uint> *slotClues;
+		int *pageBreaks;
+		int pageBreaksCap;
+		int *numPages;
+		int *page;
+	};
+
+	/// One NoteIndex entry as displayable accuse-screen text.
+	Common::String accuseNoteText(uint clueId, const AccuseNotesCtx &ctx) const;
+
+	/// Recompute `pageBreaks`/`numPages` after `_noteSelected` or font changes.
+	void accuseRebuildPagination(const AccuseNotesCtx &ctx);
+
+	/// Render one frame of the accuse-notes screen.
+	void accuseDrawScreen(const AccuseNotesCtx &ctx);
+
+	/// Floppy accuse helpers: KD-balloon hint (`_DisplayHint_Floppy @
+	/// 1503:00ca`) and the suspect portrait grid
+	/// (`_DrawGallery_Floppy @ 154e:0050`).
+	void floppyKDHint(uint kdSlot, const byte *kdIdx,
+					  const byte *bufBase, uint32 mysSize);
+	void accuseDrawGallery(int highlighted,
+						   Common::Array<Common::Rect> &rects,
+						   Common::Array<int> &suspects, uint8 num,
+						   bool haveAccuseBg, const Picture &accuseBg);
 	void drawGalleryFrame(const byte *gd, uint8 numSuspects,
 						  Common::Array<Common::Rect> &slotRects,
 						  Common::Array<int> &slotSuspect);
@@ -366,6 +413,12 @@ private:
 	/// pick via SwapColors on Kid1/Kid2 rects.
 	void doSetup();
 
+	/// `doSetup` helpers: redraw BG + label highlights, render a help/
+	/// credits card with blocking input wait, and the shared exit fallback.
+	void setupDrawScreen();
+	Common::KeyCode setupShowFullscreenPic(uint16 picId, bool transparent);
+	void setupLeave();
+
 	/// `_DoInitClues @ 1a35:0411` (minus live ANI sequence playback).
 	void doInitClues();
 
@@ -382,6 +435,11 @@ private:
 	/// before the last always get PIC 0xa0).
 	void displayFloppyDialogRecords(const byte *rec, uint count,
 									 uint lastIndicator = 0);
+
+	/// Wait for a click/keypress to advance a floppy dialog page.
+	/// Returns true if the user requested to skip the rest (ESC/QUIT),
+	/// false to advance one page.
+	bool floppyDialogWaitForClick();
 
 public:
 	/// `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI` from

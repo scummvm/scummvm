@@ -859,6 +859,40 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	interruptAudio(/* stopMusicToo= */ false);
 }
 
+bool EEMEngine::floppyDialogWaitForClick() {
+	// Drain pending events so a stale keystroke doesn't auto-advance.
+	Common::Event drain;
+	while (g_system->getEventManager()->pollEvent(drain)) {}
+	setInteractiveMouseCursor(false);
+	const uint32 minVisibleMs = 250;
+	const uint32 startedAt = g_system->getMillis();
+	while (!shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return true;  // skip
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				setInteractiveMouseCursor(false);
+				continue;
+			}
+			if (g_system->getMillis() - startedAt < minVisibleMs)
+				continue;
+			if (ev.type == Common::EVENT_KEYDOWN &&
+				ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				interruptAudio(/* stopMusicToo= */ false);
+				return true;  // skip
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN ||
+				ev.type == Common::EVENT_KEYDOWN)
+				return false;  // advance one page
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+	return true;
+}
+
 void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 											uint lastIndicator) {
 	// Render `count` consecutive floppy dialog records starting at
@@ -912,40 +946,6 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			r += 11 + tc;
 		}
 	}
-
-	auto waitForClick = [&]() -> bool {
-		// Drain pending events so a stale keystroke doesn't auto-advance.
-		Common::Event drain;
-		while (g_system->getEventManager()->pollEvent(drain)) {}
-		setInteractiveMouseCursor(false);
-		const uint32 minVisibleMs = 250;
-		const uint32 startedAt = g_system->getMillis();
-		while (!shouldQuit()) {
-			Common::Event ev;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-					return true;  // skip
-				if (ev.type == Common::EVENT_MOUSEMOVE) {
-					setInteractiveMouseCursor(false);
-					continue;
-				}
-				if (g_system->getMillis() - startedAt < minVisibleMs)
-					continue;
-				if (ev.type == Common::EVENT_KEYDOWN &&
-					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					interruptAudio(/* stopMusicToo= */ false);
-					return true;  // skip
-				}
-				if (ev.type == Common::EVENT_LBUTTONDOWN ||
-					ev.type == Common::EVENT_KEYDOWN)
-					return false;  // advance one page
-			}
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-		}
-		return true;
-	};
 
 	for (uint i = 0; i < count && !shouldQuit(); i++) {
 		const uint16 picID    = READ_LE_UINT16(rec + 0);
@@ -1158,7 +1158,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			g_system->updateScreen();
 
 			if (waitNeeded) {
-				if (waitForClick()) {
+				if (floppyDialogWaitForClick()) {
 					skipAll = true;
 					break;
 				}

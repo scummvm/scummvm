@@ -1423,6 +1423,11 @@ void SiteScreen::renderBackground(uint siteNum) {
 	}
 }
 
+void bumpHotspotEdgeColor(byte &color) {
+	const byte next = (byte)(color + 1);
+	color = (next > 0xFE) ? (byte)0xF9 : next;
+}
+
 void SiteScreen::renderHotspots(uint siteNum) {
 	// `_DrawSearchButtons`. Port adds optional "hide hint" setting.
 	if (ConfMan.getBool("hide_highlight_boxes"))
@@ -1484,33 +1489,29 @@ void SiteScreen::renderHotspots(uint siteNum) {
 			// the colour per pixel through palette indices 0xF9..0xFE,
 			// which `_ColorCycle(0xF9, 0xFE)` rotates every tick.
 			byte color = (byte)(0xF9 + ((i + (tickMs / 80)) & 0x07) % 6);
-			auto bumpColor = [&]() {
-				const byte next = (byte)(color + 1);
-				color = (next > 0xFE) ? (byte)0xF9 : next;
-			};
 			// Top edge
 			for (int x = rect.left; x < rect.right; x++) {
 				if (x >= 0 && x < screen->w && rect.top >= 0 && rect.top < screen->h)
 					*(byte *)screen->getBasePtr(x, rect.top) = color;
-				bumpColor();
+				bumpHotspotEdgeColor(color);
 			}
 			// Right edge
 			for (int y = rect.top; y < rect.bottom; y++) {
 				if (rect.right - 1 >= 0 && rect.right - 1 < screen->w && y >= 0 && y < screen->h)
 					*(byte *)screen->getBasePtr(rect.right - 1, y) = color;
-				bumpColor();
+				bumpHotspotEdgeColor(color);
 			}
 			// Bottom edge
 			for (int x = rect.right - 1; x >= rect.left; x--) {
 				if (x >= 0 && x < screen->w && rect.bottom - 1 >= 0 && rect.bottom - 1 < screen->h)
 					*(byte *)screen->getBasePtr(x, rect.bottom - 1) = color;
-				bumpColor();
+				bumpHotspotEdgeColor(color);
 			}
 			// Left edge
 			for (int y = rect.bottom - 1; y >= rect.top; y--) {
 				if (rect.left >= 0 && rect.left < screen->w && y >= 0 && y < screen->h)
 					*(byte *)screen->getBasePtr(rect.left, y) = color;
-				bumpColor();
+				bumpHotspotEdgeColor(color);
 			}
 		}
 	}
