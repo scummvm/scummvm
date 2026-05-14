@@ -133,6 +133,11 @@ void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
 	_conditionalResponseCharacterID = stream.readByte();
 	_goodbyeResponseCharacterID = stream.readByte();
 
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		_conditionalResponseCharacterID -= 7;
+		_goodbyeResponseCharacterID -= 7;
+	}
+
 	_defaultNextScene = stream.readByte();
 
 	_sceneChange.sceneID = stream.readUint16LE();
