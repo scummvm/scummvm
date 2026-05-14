@@ -407,6 +407,28 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
+	// Setup voice — _DoInitClues @ 1a35:061d runs this BEFORE _PlayInSequence
+	// (i.e. the phone rings, the player hears it ring out, and only then
+	// does Jake/Jenny reach for the receiver):
+	//   CD:     caseType 2 -> PHONE.VOC then _WaitForVoiceDone
+	//   Floppy (_DoInitClues_Floppy @ 19bb:042f):
+	//     caseType 2 -> slot 0xc (PHONESL.VOC)
+	//     caseType 3 -> slot 3   (NEWSCAN.VOC, news-anchor variant)
+	// While the voice plays the screen continues showing the game anim's
+	// last frame (saved into briefingBase above).
+	if (_audio) {
+		if (caseType == 2) {
+			if (floppy)
+				_audio->playFloppyVoiceSlot(0x0c, _partner);
+			else
+				_audio->playVoc(Common::Path("PHONE.VOC"));
+			_audio->waitForVoiceDone();
+		} else if (caseType == 3 && floppy) {
+			_audio->playFloppyVoiceSlot(0x03, _partner);
+			_audio->waitForVoiceDone();
+		}
+	}
+
 	// _PlayInSequence @ 172b:2d03. Anim selection per partner + caseType:
 	//   Jake:  caseType 1 -> 0x38 @ (0xcd, 0x6d)
 	//          caseType 2 -> 0x37 @ (0xcd, 0x6c)
@@ -484,24 +506,6 @@ void EEMEngine::doInitClues() {
 					g_system->delayMillis(10);
 				}
 			}
-		}
-	}
-
-	// Setup voice (caseType 2/3 only):
-	//   CD:     caseType 2 -> PHONE.VOC
-	//   Floppy (_DoInitClues_Floppy @ 19bb:042f):
-	//     caseType 2 -> slot 0xc (PHONESL.VOC)
-	//     caseType 3 -> slot 3   (NEWSCAN.VOC, news-anchor variant)
-	if (_audio) {
-		if (caseType == 2) {
-			if (floppy)
-				_audio->playFloppyVoiceSlot(0x0c, _partner);
-			else
-				_audio->playVoc(Common::Path("PHONE.VOC"));
-			_audio->waitForVoiceDone();
-		} else if (caseType == 3 && floppy) {
-			_audio->playFloppyVoiceSlot(0x03, _partner);
-			_audio->waitForVoiceDone();
 		}
 	}
 
