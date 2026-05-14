@@ -1993,7 +1993,7 @@ void EEMEngine::doCaseSelection() {
 					const uint idx = topRow + (uint)row;
 					if (idx >= listLen || solvedFlags[idx])
 						continue;
-					// Second click on selected row = OK (ScummVM ergonomic).
+					// Second click on selected row = OK (QoL fix).
 					if (idx == selRow) {
 						confirmed = true;
 						break;
@@ -2854,8 +2854,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	// Layout differs by variant:
 	//   * CD: fixed 0x46-byte stride, slot positions at `kGallerySlots`.
 	//   * Floppy: variable-stride entries (5 + entry[4] bytes per
-	//     suspect), slot positions at `kFloppyGallerySlots` (verified
-	//     at `2608:0x16c`).
+	//     suspect), slot positions at `kFloppyGallerySlots` (`2608:0x16c`).
 	const bool floppy = isFloppy();
 	const GallerySlot * const slots =
 		floppy ? kFloppyGallerySlots : kGallerySlots;
@@ -3228,7 +3227,7 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 			continue;
 		// CD entries are 14 bytes: X@+4, Y@+6, crime@+12.
 		// Floppy entries are 11 bytes: X@+6, Y@+8, recolor@+10.
-		// Floppy layout verified at `FUN_1fed_07ed` (BigMap iteration):
+		// Floppy layout: `FUN_1fed_07ed` (BigMap iteration):
 		//   `*(int *)(pcVar2 + i*0xb + 7)` (= entry+6, X u16)
 		//   `*(int *)(pcVar2 + i*0xb + 9)` (= entry+8, Y u16)
 		//   `pcVar2[i*0xb + 0xb]` (= entry+10, recolor flag — non-zero
