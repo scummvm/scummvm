@@ -100,8 +100,8 @@ void swapColors(Graphics::ManagedSurface &dst,
 					   const Common::Rect &r, byte from, byte to) {
 	const int x1 = MAX<int>(0, r.left);
 	const int y1 = MAX<int>(0, r.top);
-	const int x2 = MIN<int>(320, r.right);
-	const int y2 = MIN<int>(200, r.bottom);
+	const int x2 = MIN<int>(kScreenWidth, r.right);
+	const int y2 = MIN<int>(kScreenHeight, r.bottom);
 	for (int y = y1; y < y2; y++) {
 		byte *row = (byte *)dst.getBasePtr(0, y);
 		for (int x = x1; x < x2; x++) {
@@ -157,8 +157,8 @@ void blitPdaPartner(Graphics::Surface *screen, DBDArchive &aniArchive,
 		blitAnimFrameAnchored(screen, *fr, spec.anchorX, spec.anchorY);
 }
 
-constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
-constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, 200);
+constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, kScreenHeight);
+constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, kScreenHeight);
 constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
 constexpr uint16 kFirstTryBadgePic = 0x205;
 constexpr Common::Point kFirstTryBadgePos(0x1e, 9);
@@ -292,7 +292,7 @@ int nextLiveSlot(const Common::Array<Common::Rect> &slotRects,
 
 void copyToScreen(Graphics::ManagedSurface &scratch) {
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -357,13 +357,13 @@ void drawCaseBookTitle(Graphics::ManagedSurface &scratch, const EEMEngine *vm,
 		: Common::String::format(spanish ? "Lib. %u" : "Book %u", book);
 	const int titleW = vm->getFont().getStringWidth(title);
 	const int titleX = (0xba - titleW) / 2 + 0x3c;
-	vm->getFont().drawString(&scratch, title, titleX, 12, 320, 0xF);
+	vm->getFont().drawString(&scratch, title, titleX, 12, kScreenWidth, 0xF);
 }
 
 void drawNameEntryFrame(EEMEngine *vm, const Picture *bg, bool haveBG,
 						const Picture *peek, const Common::String &name,
 						const char *prompt) {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (haveBG)
@@ -383,7 +383,7 @@ bool animateNameEntryPeek(EEMEngine *vm, const Picture *bg, bool haveBG,
 	for (int w = 1; w <= peek->surface.w; w++) {
 		if (pumpQuitEvents(vm))
 			return true;
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveBG)
@@ -404,7 +404,7 @@ bool animateProfilePickerReveal(EEMEngine *vm, const Picture *bg,
 	for (int h = 1; h <= reveal->surface.h; h++) {
 		if (pumpQuitEvents(vm))
 			return true;
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveBG)
@@ -451,7 +451,7 @@ void clampProfileScroll(int &selected, int &start, int count) {
 }
 
 void drawProfilePickerFrame(const ProfilePickerView &v) {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (v.haveBG)
@@ -584,7 +584,7 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 	for (int i = 1; i <= steps; i++) {
 		if (pumpQuitEvents(vm))
 			return true;
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveCaseBg && caseBg)
@@ -610,7 +610,7 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 // Original colours 0x13 sel / 0x1B greyed / 0x5C default approximated
 // here as 0xF / 0x8 / 0x7 from site palette 0.
 void drawCaseSubmenu(const CaseSubmenuView &v) {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	drawCaseBase(scratch, v.vm, v.caseBg, v.haveCaseBg,
 				 v.revealPic, v.haveRevealPic,
@@ -668,7 +668,7 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 }
 
 void drawActionMenuFrame(const ActionMenuView &v) {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (v.haveBg && v.bg)
@@ -946,7 +946,7 @@ void EEMEngine::doNewPlayer() {
 					_playerName = name;
 					memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
 					_mystery.clear();
-					_partner = 0;
+					_partner = kPartnerJake;
 					// `_NewPlayer @ 1c33:0fa3`: DAT_2d5d_3f99 = 1 (Junior).
 					_chainStage = 1;
 					saveProfile(name);
@@ -1109,7 +1109,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 			uint16 y1 = 0;
 			uint16 x2 = 0;
 			const char *raw = nullptr;
-			Graphics::ManagedSurface scratch(320, 200,
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.clear();
 
@@ -1170,13 +1170,13 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 			// TINY.FNT + color 0 (asm 1df2:04cf — not 0xF as Ghidra shows).
 			const EEMFont &renderFont = haveTinyFont ? tinyFont : _font;
 			if (renderFont.isLoaded() && x2 > x1) {
-				const int textW = MIN<int>((int)x2 - (int)x1, 320 - (int)x1);
+				const int textW = MIN<int>((int)x2 - (int)x1, kScreenWidth - (int)x1);
 				renderFont.drawWordWrapped(&scratch, (int)x1, (int)y1,
 										   textW, text, 0);
 			}
 
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, 320, 200);
+									   0, 0, kScreenWidth, kScreenHeight);
 			g_system->updateScreen();
 			dirty = false;
 		}
@@ -1388,20 +1388,20 @@ void EEMEngine::doSetup() {
 			// Partner toggle [0]. Direct Jake/Jenny label clicks are a
 			// ScummVM-only fallback.
 			if (kPartnerBtn.contains(mx, my)) {
-				_partner = _partner == 0 ? 1 : 0;
+				_partner = _partner == kPartnerJake ? kPartnerJenny : kPartnerJake;
 				dirty = true;
 				continue;
 			}
 			if (kKid1Rect.contains(mx, my)) {
-				if (_partner != 0) {
-					_partner = 0;
+				if (_partner != kPartnerJake) {
+					_partner = kPartnerJake;
 					dirty = true;
 				}
 				continue;
 			}
 			if (kKid2Rect.contains(mx, my)) {
-				if (_partner != 1) {
-					_partner = 1;
+				if (_partner != kPartnerJenny) {
+					_partner = kPartnerJenny;
 					dirty = true;
 				}
 				continue;
@@ -1531,7 +1531,7 @@ void EEMEngine::doSetup() {
 }
 
 void EEMEngine::setupDrawScreen() {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	Picture bg;
@@ -1542,16 +1542,16 @@ void EEMEngine::setupDrawScreen() {
 	const byte kBright = 0x15;
 	const byte kDim    = 0x00;
 	swapColors(scratch, kSetupKid1Rect, kKey,
-			   _partner == 0 ? kBright : kDim);
+			   _partner == kPartnerJake ? kBright : kDim);
 	swapColors(scratch, kSetupKid2Rect, kKey,
-			   _partner == 1 ? kBright : kDim);
+			   _partner == kPartnerJenny ? kBright : kDim);
 	swapColors(scratch, kSetupSoundOnRect,  kKey,
 			   _voiceOn ? kBright : kDim);
 	swapColors(scratch, kSetupSoundOffRect, kKey,
 			   _voiceOn ? kDim : kBright);
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -1564,7 +1564,7 @@ Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent
 		warning("doSetup: PIC %u missing", (uint)picId);
 		return Common::KEYCODE_INVALID;
 	}
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	if (transparent) {
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -1581,7 +1581,7 @@ Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent
 		scratch.simpleBlitFrom(pic.surface);
 	}
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -1866,7 +1866,7 @@ void EEMEngine::doCaseSelection() {
 		_picsArchive.getPicture(kCaseSelectionRevealPic, revealPic);
 
 	// `_CaseSelection @ 1c33:0a87` greeter ANI 0x15 (Jake) / 0x16 (Jenny).
-	const uint kKdAniId = (_partner == 0) ? 0x15 : 0x16;
+	const uint kKdAniId = (_partner == kPartnerJake) ? 0x15 : 0x16;
 	Animation kdAnim;
 	const bool haveKdAnim = _aniArchive.loadAnimation(kKdAniId, kdAnim)
 							 && !kdAnim.empty();
@@ -2285,7 +2285,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	// from `_DoNotebook @ 161e:0500`.
 	const Common::Rect kNotebookRect(78, 12, 288, 152);
 
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -2384,10 +2384,10 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	// Page indicator only (original has no points display).
 	_font.drawString(&scratch, Common::String::format("p%d/%d",
 							   page + 1, (int)pageStarts.size()),
-					 270, 4, 320, 0x5C);
+					 270, 4, kScreenWidth, 0x5C);
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
 	// Publish slot info to `doNotebook`'s click handler.
@@ -2592,7 +2592,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	bool isFirstShow = true;
 
 	while (!back && !shouldQuit()) {
-		Graphics::ManagedSurface ms(320, 200,
+		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
 		if (haveBg)
@@ -2688,7 +2688,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				rx, ry + rh + 2, MAX<int>(8, rw), 0x3C);
 		}
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-			0, 0, 320, 200);
+			0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
 		// Drain the LBUTTONDOWN that opened MoreInfo (first page only).
@@ -2833,7 +2833,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
 
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -2882,8 +2882,8 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 
 			const int placeX = s.x;
 			const int placeY = s.y + (0x48 - portrait.surface.h);
-			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
-			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+			const int w = MIN<int>(portrait.surface.w, kScreenWidth - placeX);
+			const int h = MIN<int>(portrait.surface.h, kScreenHeight - placeY);
 			if (w <= 0 || h <= 0)
 				continue;
 			scratch.transBlitFrom(portrait.surface,
@@ -2898,7 +2898,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 			const int phH = 0x48;
 			const int phX = s.x;
 			const int phY = s.y;
-			if (phX + phW <= 320 && phY + phH <= 200) {
+			if (phX + phW <= kScreenWidth && phY + phH <= kScreenHeight) {
 				scratch.fillRect(Common::Rect(phX, phY,
 					phX + phW, phY + phH), 0x20);
 				scratch.frameRect(Common::Rect(phX, phY,
@@ -2913,7 +2913,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -3032,7 +3032,7 @@ void EEMEngine::doBigMap() {
 		bool returnToOverview = false;
 
 		// `SmallMapButtons[4]` @ 20fe:156c — return to overview.
-		const Common::Rect kBigMapReturnRect(252, 43, 320, 200);
+		const Common::Rect kBigMapReturnRect(252, 43, kScreenWidth, kScreenHeight);
 		const Common::Rect kArrowYUp(237, 2, 247, 11);
 		const Common::Rect kArrowYDown(237, 163, 247, 172);
 		const Common::Rect kArrowXLeft(2, 175, 12, 185);
@@ -3201,7 +3201,7 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	// PIC 0x42 + per-site Done/Crime/Site marker (`_DrawBigMapButtons @
 	// 20fe:0877`) + partner idle at (0xfd, 0x50). Idle ANI: Jake=0x14,
 	// Jenny=0x12. elapsedMs anchors unfold→wait timeline.
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -3266,7 +3266,7 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 
 	// Partner idle at (0xfd, 0x50). `_DoBigMap @ 20fe:0a47` always passes
 	// script 0x14 (count-up) to `_NewAnimation` regardless of partner.
-	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
+	const uint kMapAniId = (_partner == kPartnerJake) ? 0x14 : 0x12;
 	Animation mapAnim;
 	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
 		const uint frameIdx = bigMapPartnerFrameAtTick((uint)mapAnim.size(),
@@ -3277,7 +3277,7 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -3293,7 +3293,7 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	const int kMapWinX = 2;
 	const int kMapWinY = 2;
 
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -3347,7 +3347,7 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	}
 
 	// Always script 0x13 (`_NewAnimation @ _DoBigMap 20fe:0a47`).
-	const uint kDetailAniId = (_partner == 0) ? 0x13 : 0x11;
+	const uint kDetailAniId = (_partner == kPartnerJake) ? 0x13 : 0x11;
 	Animation detailAnim;
 	if (_aniArchive.loadAnimation(kDetailAniId, detailAnim) &&
 		!detailAnim.empty()) {
@@ -3358,7 +3358,7 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -3420,7 +3420,7 @@ void EEMEngine::accuseRebuildPagination(const AccuseNotesCtx &ctx) {
 }
 
 void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (ctx.haveBg)
@@ -3489,7 +3489,7 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -3747,7 +3747,7 @@ void EEMEngine::doAccuse() {
 								_playerName, _partner);
 	}
 	if (!entryText.empty()) {
-		Graphics::ManagedSurface ms(320, 200,
+		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -3781,7 +3781,7 @@ void EEMEngine::doAccuse() {
 								  tw, entryText, haveBalloon ? 0 : 0xF);
 		}
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-								   0, 0, 320, 200);
+								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 		if (_audio)
 			_audio->sayKDDigital(entryKdIdx, entryKDSpeak, _partner);
@@ -3843,7 +3843,7 @@ void EEMEngine::doAccuse() {
 
 		// Balloon overlay (`_GetKDTextBalloon` + `_GetBalloon` +
 		// `_AddPicBackground` + `_WordWrap` @ 1df2:0c8d-0cd1).
-		Graphics::ManagedSurface ms(320, 200,
+		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -3880,7 +3880,7 @@ void EEMEngine::doAccuse() {
 								  haveBalloon ? 0 : 0xF);
 		}
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-								   0, 0, 320, 200);
+								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
 		// `_SayKDDigital(3)` @ 1df2:0cd9.
@@ -3938,7 +3938,7 @@ void EEMEngine::doAccuse() {
 				drawAccuseGallery(num, gd, /* highlighted= */ -1,
 								  slotRects, slotSuspect);
 
-				Graphics::ManagedSurface ms(320, 200,
+				Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 					Graphics::PixelFormat::createFormatCLUT8());
 				ms.clear();
 				{
@@ -3969,7 +3969,7 @@ void EEMEngine::doAccuse() {
 										  haveBalloon ? 0 : 0xF);
 				}
 				g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-					0, 0, 320, 200);
+					0, 0, kScreenWidth, kScreenHeight);
 				g_system->updateScreen();
 				if (_audio)
 					_audio->sayKDDigital(kdIdx, 4, _partner);
@@ -4136,7 +4136,7 @@ void EEMEngine::doAccuse() {
 		if (bindx < 8) {
 			const int bw = haveBalloon ? balloon.surface.w : 0;
 			const int bh = haveBalloon ? balloon.surface.h : 0;
-			balloonX = (320 - bw) / 2;
+			balloonX = (kScreenWidth - bw) / 2;
 			if (bh < 0x5a) {
 				balloonY = (0x5a - bh) / 2;
 			} else {
@@ -4150,7 +4150,7 @@ void EEMEngine::doAccuse() {
 		}
 
 		// `base` = BG + suspect + partner. Survives both balloon phases.
-		Graphics::ManagedSurface base(320, 200,
+		Graphics::ManagedSurface base(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		base.clear();
 		if (haveAlibiBg)
@@ -4165,7 +4165,7 @@ void EEMEngine::doAccuse() {
 		// @ 1df2:0c30`). Drawn after suspect.
 
 		// scratch = base + alibi balloon/text + partner.
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(base);
 		if (haveBalloon) {
@@ -4216,7 +4216,7 @@ void EEMEngine::doAccuse() {
 		// Suspect voice. talk = partner==0 ? gd[+0x6] : gd[+0x0] (1df2:0252).
 		// 1-based, so SpoolSound(talk-1).
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
+								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 		if (_audio && gd) {
 			const uint16 alibiVoice =
@@ -4224,7 +4224,7 @@ void EEMEngine::doAccuse() {
 			const uint16 jakeVoice =
 				READ_LE_UINT16(gd + (uint)picked * 0x46 + 0x06);
 			const uint16 talk =
-				(_partner == 0) ? jakeVoice : alibiVoice;
+				(_partner == kPartnerJake) ? jakeVoice : alibiVoice;
 			if (talk != 0)
 				_audio->spoolSound((uint)(talk - 1));
 		}
@@ -4273,7 +4273,7 @@ void EEMEngine::doAccuse() {
 				blitPdaPartner(scratch, _aniArchive, _partner,
 							   kPdaGalleryPartner, g_system->getMillis());
 				g_system->copyRectToScreen(scratch.getPixels(),
-					scratch.pitch, 0, 0, 320, 200);
+					scratch.pitch, 0, 0, kScreenWidth, kScreenHeight);
 				g_system->updateScreen();
 				if (_audio)
 					_audio->sayKDDigital(reactIdx, 5, _partner);
@@ -4338,7 +4338,7 @@ void EEMEngine::doAccuse() {
 		// (0x42, 0x14), palette = sitenum+1 = 6.
 		Graphics::Surface *blk = g_system->lockScreen();
 		if (blk) {
-			memset(blk->getPixels(), 0, 320 * 200);
+			memset(blk->getPixels(), 0, kScreenWidth * kScreenHeight);
 			g_system->unlockScreen();
 		}
 		setSitePalette(6); // sitenum + 1 (`_GetPalette`).
@@ -4351,8 +4351,8 @@ void EEMEngine::doAccuse() {
 		if (5 < _sitesArchive.size() &&
 			_sitesArchive.loadEntry(5, scene)) {
 			const int sx = 0x42, sy = 0x14;
-			const int sw = MIN<int>(scene.surface.w, 320 - sx);
-			const int sh = MIN<int>(scene.surface.h, 200 - sy);
+			const int sw = MIN<int>(scene.surface.w, kScreenWidth - sx);
+			const int sh = MIN<int>(scene.surface.h, kScreenHeight - sy);
 			if (sw > 0 && sh > 0)
 				g_system->copyRectToScreen(scene.surface.getPixels(),
 										   scene.surface.pitch, sx, sy,
@@ -4428,7 +4428,7 @@ void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 	Common::String text =
 		parseString(Common::String(txt), _playerName, _partner);
 	balloonIdx = fitBalloonToText((uint16)balloonIdx, text) & 0x7F;
-	Graphics::ManagedSurface ms(320, 200,
+	Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	Graphics::Surface *cur = g_system->lockScreen();
 	if (cur) {
@@ -4453,7 +4453,7 @@ void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 	getBalloonInsets(balloonIdx, bx, by, bw);
 	_font.drawWordWrapped(&ms, 0x21 + bx, balloonY + by,
 						  MAX<int>(8, (int)bw), text, 0);
-	g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, 320, 200);
+	g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 	// Wait for click.
 	while (!shouldQuit()) {
@@ -4480,7 +4480,7 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 								  Common::Array<int> &suspects, uint8 num,
 								  bool haveAccuseBg,
 								  const Picture &accuseBg) {
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (haveAccuseBg)
@@ -4526,7 +4526,7 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 
@@ -4687,7 +4687,7 @@ void EEMEngine::doAccuseFloppy() {
 		{
 			Graphics::Surface *blk = g_system->lockScreen();
 			if (blk) {
-				memset(blk->getPixels(), 0, 320 * 200);
+				memset(blk->getPixels(), 0, kScreenWidth * kScreenHeight);
 				g_system->unlockScreen();
 			}
 			setSitePalette(6);
@@ -4701,8 +4701,8 @@ void EEMEngine::doAccuseFloppy() {
 			if (5 < _sitesArchive.size() &&
 				_sitesArchive.loadEntry(5, scene)) {
 				const int sx = 0x42, sy = 0x14;
-				const int sw = MIN<int>(scene.surface.w, 320 - sx);
-				const int sh = MIN<int>(scene.surface.h, 200 - sy);
+				const int sw = MIN<int>(scene.surface.w, kScreenWidth - sx);
+				const int sh = MIN<int>(scene.surface.h, kScreenHeight - sy);
 				if (sw > 0 && sh > 0)
 					g_system->copyRectToScreen(scene.surface.getPixels(),
 						scene.surface.pitch, sx, sy, sw, sh);
@@ -4867,7 +4867,7 @@ void EEMEngine::doAccuseFloppy() {
 	const bool flipBalloon = (balloonRaw & 0x80) != 0;
 
 	// Compose alibi screen.
-	Graphics::ManagedSurface scene(320, 200,
+	Graphics::ManagedSurface scene(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scene.clear();
 	if (haveAlibiBg)
@@ -4885,7 +4885,7 @@ void EEMEngine::doAccuseFloppy() {
 	int balloonX = 0x21;
 	int balloonY = 1;
 	if (haveBalloon) {
-		balloonX = (320 - balloon.surface.w) / 2;
+		balloonX = (kScreenWidth - balloon.surface.w) / 2;
 		balloonY = (0x5a - balloon.surface.h) / 2;
 		if (balloonX < 0)
 			balloonX = 0;
@@ -4906,7 +4906,7 @@ void EEMEngine::doAccuseFloppy() {
 	// Stamp partner resting frame before KD reaction snapshots screen.
 	blitPdaPartner(scene, _aniArchive, _partner, kPdaGalleryPartner,
 				   g_system->getMillis());
-	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, 320, 200);
+	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
 	// No per-suspect VOC — alibi table @ 2608:0c5e is for post-win
@@ -4949,7 +4949,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
-	Graphics::ManagedSurface scratch(320, 200,
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (haveAccuseBg)
@@ -4981,8 +4981,8 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 
 		const int placeX = s.x;
 		const int placeY = s.y + (0x48 - portrait.surface.h);
-		const int w = MIN<int>(portrait.surface.w, 320 - placeX);
-		const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+		const int w = MIN<int>(portrait.surface.w, kScreenWidth - placeX);
+		const int h = MIN<int>(portrait.surface.h, kScreenHeight - placeY);
 		if (w <= 0 || h <= 0)
 			continue;
 		scratch.transBlitFrom(portrait.surface,
@@ -5002,7 +5002,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 

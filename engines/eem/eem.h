@@ -104,6 +104,17 @@ enum Variant {
 	kVariantFloppy = 1,
 };
 
+/// `_Partner @ 29be:7918`. Selected at the partner-pick screen
+/// (_DoChoosePartner @ 1a35:0756) and persisted in the player profile.
+enum Partner {
+	kPartnerJake  = 0,
+	kPartnerJenny = 1,
+};
+
+/// VGA mode 13h dimensions (initGraphics(320, 200) in `EEMEngine::run`).
+constexpr int kScreenWidth  = 320;
+constexpr int kScreenHeight = 200;
+
 class EEMEngine : public Engine {
 public:
 	EEMEngine(OSystem *syst, const ADGameDescription *gameDesc);

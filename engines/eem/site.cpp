@@ -987,7 +987,7 @@ bool SiteScreen::enterSiteAnim() {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return false;
-	Graphics::ManagedSurface bg(320, 200,
+	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
@@ -995,10 +995,10 @@ bool SiteScreen::enterSiteAnim() {
 	// Phase 1 — skateboard scroll.
 	Animation skate;
 	if (_vm->getAni().loadAnimation(kSkateAni, skate) && !skate.empty()) {
-		// `iVar4 = 199 - sprite_h`, `uVar5 = 320 - sprite_w` (frame 0).
+		// `iVar4 = 199 - sprite_h`, `uVar5 = kScreenWidth - sprite_w` (frame 0).
 		const int spriteH = skate[0].surface.h;
 		const int spriteW = skate[0].surface.w;
-		int x = (320 - spriteW) & ~3;            // 4-px aligned (mode-X)
+		int x = (kScreenWidth - spriteW) & ~3;            // 4-px aligned (mode-X)
 		const int y = 199 - spriteH;
 		const byte transp = (byte)(skate[0].flags >> 8);
 		uint frameIdx = 0;
@@ -1007,12 +1007,12 @@ bool SiteScreen::enterSiteAnim() {
 		const int kFrameTicks = 0xc;    // original switches frame at 12 px
 
 		while (x + spriteW > 0 && !_vm->shouldQuit()) {
-			Graphics::ManagedSurface scratch(320, 200,
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
 			blitFrame(scratch, skate[frameIdx], x, y, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, 320, 200);
+									   0, 0, kScreenWidth, kScreenHeight);
 			g_system->updateScreen();
 
 			Common::Event ev;
@@ -1048,12 +1048,12 @@ bool SiteScreen::enterSiteAnim() {
 			const int destX = -(int)(int16)fr.miscflags;
 			const int destY = kKDY - (int)(int16)fr.rowoff;
 
-			Graphics::ManagedSurface scratch(320, 200,
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
 			blitFrame(scratch, fr, destX, destY, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, 320, 200);
+									   0, 0, kScreenWidth, kScreenHeight);
 			g_system->updateScreen();
 
 			Common::Event ev;
@@ -1267,7 +1267,7 @@ void SiteScreen::applyColorCycles() {
 }
 
 void SiteScreen::captureBgSnapshot() {
-	_bgSnapshot.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_bgSnapshot.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen) {
 		_snapshotSite = -1;
@@ -1278,10 +1278,10 @@ void SiteScreen::captureBgSnapshot() {
 }
 
 void SiteScreen::restoreBgSnapshot() {
-	if (_bgSnapshot.w != 320 || _bgSnapshot.h != 200)
+	if (_bgSnapshot.w != kScreenWidth || _bgSnapshot.h != kScreenHeight)
 		return;
 	g_system->copyRectToScreen(_bgSnapshot.getPixels(), _bgSnapshot.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 }
 
 void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
@@ -1401,8 +1401,8 @@ void SiteScreen::renderBackground(uint siteNum) {
 		// `_Rect_Move(0, 0, h, ..., 0x42, 0x14, 48000, h, w)`.
 		const int x = 0x42;
 		const int y = 0x14;
-		const int w = MIN<int>(scene.surface.w, 320 - x);
-		const int h = MIN<int>(scene.surface.h, 200 - y);
+		const int w = MIN<int>(scene.surface.w, kScreenWidth - x);
+		const int h = MIN<int>(scene.surface.h, kScreenHeight - y);
 		if (w > 0 && h > 0)
 			g_system->copyRectToScreen(scene.surface.getPixels(),
 									   scene.surface.pitch, x, y, w, h);
@@ -1635,7 +1635,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 	if (num >= ARRAYSIZE(kKdAnimTable))
 		return;
 
-	const uint partner = (_partner == 0) ? 0 : 1;
+	const uint partner = (_partner == kPartnerJake) ? 0 : 1;
 	const uint16 animId = kKdAnimTable[num][partner];
 	const int    px     = (int)kKdAnimTable[num][2 + partner];
 	const int    py     = (int)kKdAnimTable[num][4 + partner];
@@ -1657,9 +1657,9 @@ void EEMEngine::playKdAnim(uint16 num) {
 
 	// Erase-source: caller-stashed partner-less BG (via `setPartnerEraseBg`)
 	// or fall back to current screen (works for full-screen contexts).
-	Graphics::ManagedSurface bg(320, 200,
+	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
-	if (_partnerEraseBg.w == 320 && _partnerEraseBg.h == 200) {
+	if (_partnerEraseBg.w == kScreenWidth && _partnerEraseBg.h == kScreenHeight) {
 		bg.simpleBlitFrom(_partnerEraseBg);
 	} else {
 		Graphics::Surface *screen = g_system->lockScreen();
@@ -1676,7 +1676,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 		const Picture &fr = anim[frameIdx];
 		const byte transp = (byte)(fr.flags >> 8);
 
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
 		// Anchor-aware: kdAnim cells (0x03/0x04/0x0c/0x0d ...) have
@@ -1687,7 +1687,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 		(void)transp;  // anchored blitter recomputes from p.flags
 		blitAnimFrameAnchored(scratch.surfacePtr(), fr, px, py);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
+								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
 		// 100 ms per frame (~10 fps). Pump updateScreen inside the wait
@@ -1706,7 +1706,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 		}
 	}
 
-	g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
+	g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 }
 } // End of namespace EEM

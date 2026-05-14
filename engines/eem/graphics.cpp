@@ -256,7 +256,7 @@ void EEMEngine::doHelp() {
 		Common::String text = parseString(Common::String(txt),
 										   _playerName, _partner);
 		balloonIdx = fitBalloonToText((uint16)balloonIdx, text) & 0x7F;
-		Graphics::ManagedSurface ms(320, 200,
+		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
 		{
@@ -284,7 +284,7 @@ void EEMEngine::doHelp() {
 		getBalloonInsets(balloonIdx, bx, by, bw);
 		_font.drawWordWrapped(&ms, 0x21 + bx, balloonY + by,
 							  MAX<int>(8, (int)bw), text, 0);
-		g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, 320, 200);
+		g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
 		while (!shouldQuit()) {
@@ -398,7 +398,7 @@ void EEMEngine::doHelp() {
 	//
 	// BG is the caller's CURRENT screen (site / PDA / gallery), not a cleared
 	// scratch.
-	Graphics::ManagedSurface ms(320, 200,
+	Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	ms.clear();
 	{
@@ -445,7 +445,7 @@ void EEMEngine::doHelp() {
 						  haveBalloon ? 0 : 0xF);
 
 	g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
 	// _DisplayHint @ 1560:0009 plays _SayKDDigital(soundnum) — a
@@ -476,7 +476,7 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		   num, kHelpPics[num][0], kHelpPics[num][1]);
 
 	// Snapshot caller's screen once: each PIC overlays the same clean BG.
-	Graphics::ManagedSurface bg(320, 200,
+	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -501,14 +501,14 @@ void EEMEngine::doInterfaceHelp(uint num) {
 
 		// transBlitFrom transp = pic.flags >> 8 matches _Rect_Move_Mask param_10
 		// @ 1000:03fc. Explicit (0,0) destPos: no-arg overload stretches to fill.
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
 		const byte transp = (byte)(pic.flags >> 8);
 		scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
 							  (uint32)transp);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
+								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
 		bool escape = false;
@@ -548,8 +548,8 @@ void EEMEngine::doInterfaceHelp(uint num) {
 }
 
 void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
-	if (bg && bg->w == 320 && bg->h == 200) {
-		_partnerEraseBg.create(320, 200,
+	if (bg && bg->w == kScreenWidth && bg->h == kScreenHeight) {
+		_partnerEraseBg.create(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		_partnerEraseBg.simpleBlitFrom(*bg);
 	} else {
