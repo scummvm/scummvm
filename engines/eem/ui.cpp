@@ -403,7 +403,7 @@ bool animateProfilePickerReveal(EEMEngine *vm, const Picture *bg,
 
 struct ProfilePickerEntry {
 	Common::String label;
-	int slot;       ///< -1 means "create new"
+	int slot;
 };
 
 struct ProfilePickerView {
@@ -706,8 +706,11 @@ void EEMEngine::doProfilePicker() {
 		return;
 	}
 
-	// Existing profiles + "[New Player]". DOS bottom click area @ 29be:0d08
-	// returns 0xfffe → `_NewPlayer`; rect remains active too.
+	// Existing profiles only — the original `screen8_handler @ 1c33:1012`
+	// passes the bare *.PLR list to `_DoChoose` with NO synthesized "new
+	// player" entry. _DoChoose returns 0xfffe / 0xffff for the bottom click
+	// rect @ 29be:0d08 / ESC, which routes to `_NewPlayer` (handled below
+	// via kChooserNewPlayerRect / KEYCODE_ESCAPE).
 	Common::Array<ProfilePickerEntry> entries;
 	for (const SaveStateDescriptor &s : saves) {
 		ProfilePickerEntry e;
@@ -715,10 +718,6 @@ void EEMEngine::doProfilePicker() {
 		e.slot  = s.getSaveSlot();
 		entries.push_back(e);
 	}
-	ProfilePickerEntry newEntry;
-	newEntry.label = "[New Player]";
-	newEntry.slot  = -1;
-	entries.push_back(newEntry);
 
 	int sel = 0;
 	int start = 0;
@@ -871,16 +870,12 @@ void EEMEngine::doProfilePicker() {
 		return;
 	}
 
+	// `_LoadPlayerRecord @ 1c33:1281`.
 	const ProfilePickerEntry &e = entries[sel];
-	if (e.slot < 0) {
+	if (!loadProfile(e.label)) {
+		warning("doProfilePicker: failed to load profile '%s' at slot %d",
+				e.label.c_str(), e.slot);
 		doNewPlayer();
-	} else {
-		// `_LoadPlayerRecord @ 1c33:1281`.
-		if (!loadProfile(e.label)) {
-			warning("doProfilePicker: failed to load profile '%s' at slot %d",
-					e.label.c_str(), e.slot);
-			doNewPlayer();
-		}
 	}
 }
 
