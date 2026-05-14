@@ -1455,11 +1455,17 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 			if (kKid1Rect.contains(mx, my)) {
-				if (_partner != 0) { _partner = 0; dirty = true; }
+				if (_partner != 0) {
+					_partner = 0;
+					dirty = true;
+				}
 				continue;
 			}
 			if (kKid2Rect.contains(mx, my)) {
-				if (_partner != 1) { _partner = 1; dirty = true; }
+				if (_partner != 1) {
+					_partner = 1;
+					dirty = true;
+				}
 				continue;
 			}
 
@@ -1532,7 +1538,7 @@ void EEMEngine::doSetup() {
 					// Restore BG between cards (1560:02e5 `_vga_fvidvid(0)`).
 					draw();
 					const Common::KeyCode k =
-						showFullscreenPic(kHelp1Pics[i], /*transparent=*/true);
+						showFullscreenPic(kHelp1Pics[i], /* transparent= */ true);
 					if (k == Common::KEYCODE_ESCAPE)
 						break;
 				}
@@ -1544,7 +1550,7 @@ void EEMEngine::doSetup() {
 			// Credits [11] @ 1f78:025a — PIC 0x208 fullscreen.
 			if (kCreditsBtn.contains(mx, my)) {
 				CursorMan.showMouse(false);
-				showFullscreenPic(0x208, /*transparent=*/false);
+				showFullscreenPic(0x208, /* transparent= */ false);
 				CursorMan.showMouse(true);
 				// PIC 0x208 has its own baked palette; restore site 0.
 				setSitePalette(0);
@@ -1620,14 +1626,26 @@ void EEMEngine::doActionScreen() {
 	//   stage 3: grey Practice; SB3 needs tier-3 solve
 	//   stage 4: grey Choose + Practice
 	bool anySolved1 = false;
-	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++)
-		if (_mysteriesSolved[i]) { anySolved1 = true; break; }
+	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++) {
+		if (_mysteriesSolved[i]) {
+			anySolved1 = true;
+			break;
+		}
+	}
 	bool anySolved2 = false;
-	for (uint i = 0x19; i <= 0x30 && i < sizeof(_mysteriesSolved); i++)
-		if (_mysteriesSolved[i]) { anySolved2 = true; break; }
+	for (uint i = 0x19; i <= 0x30 && i < sizeof(_mysteriesSolved); i++) {
+		if (_mysteriesSolved[i]) {
+			anySolved2 = true;
+			break;
+		}
+	}
 	bool anySolved3 = false;
-	for (uint i = 0x31; i <= 0x36 && i < sizeof(_mysteriesSolved); i++)
-		if (_mysteriesSolved[i]) { anySolved3 = true; break; }
+	for (uint i = 0x31; i <= 0x36 && i < sizeof(_mysteriesSolved); i++) {
+		if (_mysteriesSolved[i]) {
+			anySolved3 = true;
+			break;
+		}
+	}
 
 	const bool chooseOn   = _chainStage < 4;
 	const bool practiceOn = _chainStage <= 1;
@@ -1643,7 +1661,10 @@ void EEMEngine::doActionScreen() {
 	// Seed selection on first enabled entry.
 	uint pick = 0;
 	for (uint i = 0; i < kNumPicks; i++) {
-		if (kPickEnabled[i]) { pick = i; break; }
+		if (kPickEnabled[i]) {
+			pick = i;
+			break;
+		}
 	}
 
 	const char *kSeparator = "----------------------------------";
@@ -1838,9 +1859,18 @@ void EEMEngine::doCaseSelection() {
 	uint stageLo = 1, stageHi = 0x18;
 	uint book = 1;
 	switch (_chainStage) {
-	case 2: stageLo = 0x19; stageHi = 0x30; book = 2; break;
-	case 3: stageLo = 0x31; stageHi = 0x36; book = 3; break;
-	default: break;
+	case 2:
+		stageLo = 0x19;
+		stageHi = 0x30;
+		book = 2;
+		break;
+	case 3:
+		stageLo = 0x31;
+		stageHi = 0x36;
+		book = 3;
+		break;
+	default:
+		break;
 	}
 	if (stageHi > kMaxMystery)
 		stageHi = kMaxMystery;
@@ -1924,7 +1954,10 @@ void EEMEngine::doCaseSelection() {
 					return;
 				}
 				if (kChooserUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
-					if (topRow > 0) { topRow--; dirty = true; }
+					if (topRow > 0) {
+						topRow--;
+						dirty = true;
+					}
 					continue;
 				}
 				if (kChooserDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -3204,20 +3237,21 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 									: READ_LE_UINT16(entry + 0x6);
 		const uint16 crime = floppy ? (uint16)entry[0xa]
 									: READ_LE_UINT16(entry + 0xc);
-		const bool   done_ = (i < Mystery::kVisitedSiteCap)
-							  && _mystery._visitedSite[i];
+		const bool isDone = (i < Mystery::kVisitedSiteCap)
+							 && _mystery._visitedSite[i];
 
 		const Picture *m = nullptr;
 		bool useVisitedColors = false;
-		if (done_ && haveDone)
+		if (isDone && haveDone) {
 			m = &done;
-		else if (done_ && haveNormal) {
+		} else if (isDone && haveNormal) {
 			m = &normal;
 			useVisitedColors = true;
-		} else if (crime != 0 && haveCrime)
+		} else if (crime != 0 && haveCrime) {
 			m = &crimeM;
-		else if (haveNormal)
+		} else if (haveNormal) {
 			m = &normal;
+		}
 
 		if (m) {
 			blitBigMapMarker(scratch, *m, (int)mx, (int)my,
@@ -3886,7 +3920,7 @@ void EEMEngine::doAccuse() {
 					balloonY = (0x50 - balloon.surface.h) / 2;
 
 				// Render gallery first so the snapshot includes partner.
-				drawAccuseGallery(num, gd, /*highlighted=*/-1,
+				drawAccuseGallery(num, gd, /* highlighted= */ -1,
 								  slotRects, slotSuspect);
 
 				Graphics::ManagedSurface ms(320, 200,
@@ -4147,7 +4181,7 @@ void EEMEngine::doAccuse() {
 
 		// MIDI 6 — blocks until done (or click/ESC aborts).
 		if (_music && _voiceOn) {
-			_music->playMus(6, /*loop=*/false);
+			_music->playMus(6, /* loop= */ false);
 			const uint32 musStart = g_system->getMillis();
 			bool aborted = false;
 			while (_music->isPlaying() && !shouldQuit() && !aborted) {
@@ -4265,12 +4299,23 @@ void EEMEngine::doAccuse() {
 		// Chain advance @ 1df2:0824-0850. Skip mystery 0 (practice).
 		// stage 1: 1..0x18, stage 2: 0x19..0x30, stage 3: 0x31..0x36.
 		if (mn != 0) {
-			uint lo = 0, hi = 0;
+			uint lo = 0;
+			uint hi = 0;
 			switch (_chainStage) {
-			case 1: lo = 1;    hi = 0x18; break;
-			case 2: lo = 0x19; hi = 0x30; break;
-			case 3: lo = 0x31; hi = 0x36; break;
-			default: break;
+			case 1:
+				lo = 1;
+				hi = 0x18;
+				break;
+			case 2:
+				lo = 0x19;
+				hi = 0x30;
+				break;
+			case 3:
+				lo = 0x31;
+				hi = 0x36;
+				break;
+			default:
+				break;
 			}
 			bool allSolved = (hi >= lo);
 			for (uint i = lo; i <= hi && allSolved; i++) {
@@ -4332,7 +4377,7 @@ void EEMEngine::doAccuse() {
 		g_system->updateScreen();
 
 		if (_music && _voiceOn)
-			_music->playMus(5, /*loop=*/false);
+			_music->playMus(5, /* loop= */ false);
 
 		// Chain recap — partner enumerates required clues.
 		const byte *solved = _mystery.solvedClueBlock();
@@ -4718,7 +4763,7 @@ void EEMEngine::doAccuseFloppy() {
 				if (tail) {
 					displayFloppyDialogRecords(records, beforeScrapbook, 1);
 					playAnm(Common::Path("SCRAPBK.ANI"), 120,
-							/*holdLastFrame=*/false, /*fadeIn=*/true);
+							/* holdLastFrame= */ false, /* fadeIn= */ true);
 					displayFloppyDialogRecords(tail, 3, 1);
 				} else {
 					warning("doAccuseFloppy: malformed solved chain");
@@ -4737,12 +4782,23 @@ void EEMEngine::doAccuseFloppy() {
 
 		// Tier promotion @ 1d40:0941..0978. Skip mystery 0 (practice).
 		if (mn != 0) {
-			uint lo = 0, hi = 0;
+			uint lo = 0;
+			uint hi = 0;
 			switch (_chainStage) {
-			case 1: lo = 1;    hi = 0x18; break;
-			case 2: lo = 0x19; hi = 0x30; break;
-			case 3: lo = 0x31; hi = 0x36; break;
-			default: break;
+			case 1:
+				lo = 1;
+				hi = 0x18;
+				break;
+			case 2:
+				lo = 0x19;
+				hi = 0x30;
+				break;
+			case 3:
+				lo = 0x31;
+				hi = 0x36;
+				break;
+			default:
+				break;
 			}
 			bool allSolved = (hi >= lo);
 			for (uint i = lo; i <= hi && allSolved; i++) {
@@ -4857,8 +4913,10 @@ void EEMEngine::doAccuseFloppy() {
 	if (haveBalloon) {
 		balloonX = (320 - balloon.surface.w) / 2;
 		balloonY = (0x5a - balloon.surface.h) / 2;
-		if (balloonX < 0) balloonX = 0;
-		if (balloonY < 0) balloonY = 0;
+		if (balloonX < 0)
+			balloonX = 0;
+		if (balloonY < 0)
+			balloonY = 0;
 		const byte transp = (byte)(balloon.flags >> 8);
 		// Mirror flag (high bit) flips balloon horizontally.
 		scene.transBlitFrom(balloon.surface,

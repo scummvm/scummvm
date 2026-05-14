@@ -198,12 +198,16 @@ void EEMEngine::doHelp() {
 		const char *str2 = nullptr;
 		const char *str3 = nullptr;
 		const char *p = str1;
-		while ((uint)((const byte *)p - hd) < hsz && *p != 0) p++;
-		if ((uint)((const byte *)p - hd) >= hsz) return;
+		while ((uint)((const byte *)p - hd) < hsz && *p != 0)
+			p++;
+		if ((uint)((const byte *)p - hd) >= hsz)
+			return;
 		str2 = p + 1;
 		p = str2;
-		while ((uint)((const byte *)p - hd) < hsz && *p != 0) p++;
-		if ((uint)((const byte *)p - hd) >= hsz) return;
+		while ((uint)((const byte *)p - hd) < hsz && *p != 0)
+			p++;
+		if ((uint)((const byte *)p - hd) >= hsz)
+			return;
 		str3 = p + 1;
 
 		const char *chosen = nullptr;

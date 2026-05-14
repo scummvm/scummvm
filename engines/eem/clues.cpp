@@ -359,7 +359,7 @@ void EEMEngine::doInitClues() {
 				while (g_system->getEventManager()->pollEvent(ev)) {
 					if (ev.type == Common::EVENT_KEYDOWN &&
 						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						interruptAudio(/*stopMusicToo=*/false);
+						interruptAudio(/* stopMusicToo= */ false);
 						skip = true;
 						break;
 					}
@@ -471,7 +471,7 @@ void EEMEngine::doInitClues() {
 					while (g_system->getEventManager()->pollEvent(ev)) {
 						if (ev.type == Common::EVENT_KEYDOWN &&
 							ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-							interruptAudio(/*stopMusicToo=*/false);
+							interruptAudio(/* stopMusicToo= */ false);
 							skip = true;
 							break;
 						}
@@ -756,13 +756,13 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				// _WordWrap(bubX + table[bub].x, bubY + table[bub].y,
 				//           table[bub].w, ...).
 				// Fallback (5, 4, 155) = entry-23 inset.
-				uint16 bx = 5;
-				uint16 by = 4;
-				uint16 bw_ = 155;
-				getBalloonInsets(balloonId, bx, by, bw_);
-				textX = bubX + bx;
-				textY = bubY + by;
-				textW = bw_;
+				uint16 insetX = 5;
+				uint16 insetY = 4;
+				uint16 insetW = 155;
+				getBalloonInsets(balloonId, insetX, insetY, insetW);
+				textX = bubX + insetX;
+				textY = bubY + insetY;
+				textW = insetW;
 				copyH = bh;
 			} else {
 				// No balloon: clear band.
@@ -825,7 +825,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						advance = true;
 						skipAll = true;
 						// Cut voice + spool only (keep MIDI).
-						interruptAudio(/*stopMusicToo=*/false);
+						interruptAudio(/* stopMusicToo= */ false);
 						break;
 					}
 					if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -856,7 +856,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 
 	// _StopTheVoice @ 1ff1:0283 effect (voice only, keep MIDI). Diverges
 	// from _DisplayClue @ 2404:05e6 which lets voice bleed past dismissal.
-	interruptAudio(/*stopMusicToo=*/false);
+	interruptAudio(/* stopMusicToo= */ false);
 }
 
 void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
@@ -934,7 +934,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 					continue;
 				if (ev.type == Common::EVENT_KEYDOWN &&
 					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					interruptAudio(/*stopMusicToo=*/false);
+					interruptAudio(/* stopMusicToo= */ false);
 					return true;  // skip
 				}
 				if (ev.type == Common::EVENT_LBUTTONDOWN ||
