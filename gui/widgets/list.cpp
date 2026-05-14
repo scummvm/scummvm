@@ -1126,6 +1126,7 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	}
 
 	_currentPos = 0;
+	_scrollPos = 0.0f;
 	_selectedItem = -1;
 
 	if (redraw) {
