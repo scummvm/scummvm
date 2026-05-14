@@ -1901,6 +1901,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 						break;
 					}
 				}
+				delete stream;
 			}
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
