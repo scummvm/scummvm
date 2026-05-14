@@ -1701,6 +1701,10 @@ uint16 Score::getSpriteIdByMemberId(CastMemberID id) {
 }
 
 Common::Rect Score::getChannelDirtyRectBounds() {
+	// if we've just started a new movie, we need to redraw everything.
+	if (_window->_newMovieFirstDraw) {
+		return _window->_window->getInnerDimensions();
+	}
 	Common::Array<Common::Rect> dirtyRects;
 	for (auto &it : _channels) {
 		if (it->_needsDraw) {
