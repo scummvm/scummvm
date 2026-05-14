@@ -228,7 +228,7 @@ static void run_animation(int animIndex) {
 	// Main animation loop
 	while (currentFrame < maxFrame && !current_error_code) {
 		if (speechNum) {
-			if (!(current_anim->load_flags && AA_LOAD_SPEECH)) {
+			if (!(current_anim->load_flags & AA_LOAD_SPEECH)) {
 				char speechName[80];
 				MADS_FORMAT(speechName, current_anim->speech_file);
 
