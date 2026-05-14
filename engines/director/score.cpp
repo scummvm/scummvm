@@ -305,9 +305,6 @@ void Score::startPlay() {
 		return;
 	}
 
-	if (_haveInteractivity && _version >= kFileVer300)
-		_movie->processEvent(kEventStartMovie);
-
 	// load first frame (either 1 or _nextFrame)
 	updateCurrentFrame();
 
@@ -319,7 +316,7 @@ void Score::startPlay() {
 	updateSprites(kRenderForceUpdate, true);
 
 	// Stage has been set up, run the StartMovie script
-	if (_version >= kFileVer300)
+	if (_haveInteractivity && _version >= kFileVer300)
 		_movie->processEvent(kEventStartMovie);
 }
 
