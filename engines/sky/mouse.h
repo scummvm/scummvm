@@ -29,9 +29,62 @@ class OSystem;
 
 namespace Sky {
 
+//max click cycles before interact is not valid upon release
+#define	CLICK_THRESHOLD	10
+//cycles before inv use-on trigger
+#define USEON_THRESHOLD 5
+//time till hotspot fades out after stopped touching
+#define	HOTSPOT_FADEOUT	36
+//hotspot icon size
+#define HOTSPOT_dim	36
+//exit is just one icon, so half width as straddles centre point
+#define HOTSPOT_ExitDim (HOTSPOT_dim >> 1)
+//closed hotspot radius
+#define	HOTSPOT_RADx 8
+#define	HOTSPOT_RAD 16
+
+//how far the popup icons sit above the midy
+#define	HOTSPOT_yoff 48
+//differentiate exits, just incase
+#define HOTSPOT_exit_yoff 48
+
+//use on cursor offset
+#define HOTSPOT_useon_yoff (-55)
+
+//inv button (bottom left)
+#define HOTSPOT_invx (TOP_LEFT_X + 40)
+#define HOTSPOT_invy (TOP_LEFT_Y + FULL_SCREEN_HEIGHT-35)
+
+//control panel button (top left)
+#define HOTSPOT_optionsx (TOP_LEFT_X + 30)
+#define HOTSPOT_optionsy (TOP_LEFT_Y + 30)
+
+//help button (top right)
+#define HOTSPOT_helpx (TOP_LEFT_X + FULL_SCREEN_WIDTH-30)
+#define HOTSPOT_helpy (TOP_LEFT_Y + 30)
+
+//glow proximity
+#define GLOW_DIST 150
+//drag to use on distance
+#define	USE_ON_DIST	40
+
+//fix super deep exits
+#define	TWEEKY_EXIT_ADJUST (FULL_SCREEN_HEIGHT + TOP_LEFT_Y - 40);
+
+
+//inv item sizes
+#define	XWIDTH 32
+#define YDEPTH 32
+
+//action flash
+#define	ACTION_FLASH_TIME 7
+
 class Disk;
 class Logic;
 class SkyCompact;
+class Text;
+struct Compact;
+enum UIIcon : uint8;
 
 class Mouse {
 
@@ -61,6 +114,15 @@ public:
 	bool wasClicked();
 	void logicClick() { _logicClick = true; }
 	void resetCursor();
+	bool IsUILive();
+	void resetUI();
+	int	doProximityHighlights(uint16 xPos, uint16 yPos);
+	uint16 giveXcood(Compact *itemData, uint32 id);
+	uint16 giveYcood(Compact *itemData, uint32 id);
+	UIIcon getInteractIcon(uint32 id);
+	bool hasSingleInteractIcon(uint32 id);
+	void updateHotspotCoordinate(uint16 xPos);
+	int	touchingFloor(uint16 xPos, uint16 yPos);
 
 protected:
 
@@ -72,6 +134,38 @@ protected:
 	uint16 _mouseB;	//mouse button
 	uint16 _mouseX;	//actual mouse coordinates
 	uint16 _mouseY;
+
+	int16	_mouseXOff;
+	int16	_mouseYOff;
+	uint16	_timeOn;//how long have we held on this item
+	uint16	_clickedNum;//remmebers what we clicked last
+	uint16	_fadeOut;//how long before current hotspot fades out when let go
+	bool	_prevMouseOn;//touching yes/no last cycle
+	uint16	_touchId;
+	uint16	_touchIdLegacy;
+	uint16	_hoverId;	//inv drag over inv
+	bool	_holding;
+	bool	_isExit;	//cur hotspot an exit?
+	uint32	_exitType;	//what type of exit
+	bool	_isFloor;
+	bool	_isLincInv;	//current inventory is in LINC which works weirdly differently
+	uint32	_lincMenuRef;	//used to check if a linc inv menu restarted the inv
+	uint16	_invYCoord;	//store inv item y coords ready for patching back in
+	int		_nearestProximityIconId;
+	bool	_floorLock;//stop moving off hotpots onto floors then releasing to get an interaction
+
+	uint16	_invX;//inventory bounds x
+	uint16	_invY;//inventory bounds y
+	uint16	_invW;//inventory bounds w
+	uint16	_invH;//inventory bounds h
+
+	bool	_actionFlash = false;	//clicked on action icon flasher
+	int		_actionFlashTime = 0;//counts down
+	int		_actionFlashIcon = 0;
+	int		_actionFlashX = 0;
+	int		_actionFlashY = 0;
+	void initExitIcon(uint32 type, int iconx, int icony);
+
 
 	uint16 _currentCursor;
 
@@ -85,6 +179,17 @@ protected:
 	Disk *_skyDisk;
 	Logic *_skyLogic;
 	SkyCompact *_skyCompact;
+
+	enum : uint8 {
+		Gameplay,
+		PreInventory,
+		Inventory,
+		INV_temp_examine,
+		InventoryUseOn,
+		Text_chooser,
+		MustRelease,
+		Alert_to_game,//new game alert box
+	} m_mode;
 };
 
 } // End of namespace Sky

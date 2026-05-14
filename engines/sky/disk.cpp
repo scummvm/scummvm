@@ -47,7 +47,7 @@ static int hashCompFunc(const void *m1, const void *m2) {
 Disk::Disk() {
 	_dataDiskHandle = new Common::File();
 
-	if (ConfMan.get("gameid") == "ibass") {
+	if (SkyEngine::_isIbass()) {
 		if (!_dataDiskHandle->open("bass.dat"))
 			error("Error opening bass.dat");
 
@@ -104,10 +104,64 @@ Disk::~Disk() {
 	if (_dataDiskHandle->isOpen())
 		_dataDiskHandle->close();
 	fnFlushBuffers();
-	free(_dinnerTableArea);
+	if (!SkyEngine::_isIbass())
+		free(_dinnerTableArea);
 	delete _dataDiskHandle;
-	delete[] _entry;
+	if (SkyEngine::_isIbass())
+		delete[] _entry;
 	_entry = 0;
+}
+
+animation *Disk::loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat) {
+	Common::File fp;
+
+	if (!fp.open(filename))
+		return 0;
+
+	animation *anim = new animation;
+
+	int num_frames;
+	int width;
+	int height;
+	char magic[4];
+
+	fp.read(magic, 4);
+	num_frames = fp.readUint32LE();
+	width = fp.readUint32LE();
+	height = fp.readUint32LE();
+
+	if (0 != strncmp(magic, "JPTX", 4) || width > 64 || height > 64)
+		error("Too large or invalid texture!\n");
+
+	if (num_frames >= MAX_FRAMES)
+		error("Too many frames (%d)\n", num_frames);
+
+	int scaledWidth = width  * 2 / 3;
+	int scaledHeight = height * 2 / 3;
+
+	anim->num_frames = num_frames;
+	anim->width = scaledWidth;
+	anim->height = scaledHeight;
+	anim->frames = new Graphics::Surface*[MAX_FRAMES];
+
+	for (int frame = 0; frame < num_frames; frame++) {
+		Graphics::Surface tempCanvas;
+		tempCanvas.create(width, height, Graphics::PixelFormat::createFormatRGBA32());
+		uint32 *tempPixels = (uint32 *)tempCanvas.getPixels();
+
+		int totalPixels = width * height;
+
+		for (int i = 0; i < totalPixels; i++)
+			tempPixels[i] = fp.readUint32LE();
+
+		Graphics::Surface *scaledCanvas = tempCanvas.scale(scaledWidth, scaledHeight);
+
+		anim->frames[frame] = scaledCanvas->convertTo(targetFormat);
+		scaledCanvas->free();
+		delete scaledCanvas;
+	}
+	fp.close();
+	return anim;
 }
 
 bool Disk::fileExists(uint16 fileNr) {
@@ -123,7 +177,7 @@ fileEntry *Disk::getEntry(uint32 filenum) {
 // allocate memory, load the file and return a pointer
 uint8 *Disk::loadFile(uint16 fileNr) {
 
-	if (ConfMan.get("gameid") == "ibass") {
+	if (SkyEngine::_isIbass()) {
 		fileEntry *entry = getEntry(fileNr);
 		if (!entry) {
 			debug(1, "iBass: File %d not found!", fileNr);
@@ -395,7 +449,7 @@ void Disk::dumpFile(uint16 fileNr) {
 }
 
 uint32 Disk::determineGameVersion() {
-	if (ConfMan.get("gameid") == "ibass")
+	if (SkyEngine::_isIbass())
 		return 400; // force the ibass version and immediately exit the function
 
 	//determine game version based on number of entries in dinner table

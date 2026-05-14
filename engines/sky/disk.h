@@ -26,7 +26,11 @@
 #include "common/scummsys.h"
 #include "common/compression/rnc_deco.h"
 
+#include "graphics/surface.h"
+
 #define MAX_FILES_IN_LIST 60
+
+#define MAX_FRAMES	16	//maximum number of frames per animation in ibass
 
 namespace Common {
 class File;
@@ -41,6 +45,13 @@ struct fileEntry {
 };
 
 namespace Sky {
+
+struct animation {
+	Graphics::Surface **frames;
+	int num_frames;
+	int width;
+	int height;
+};
 
 class Disk {
 public:
@@ -62,6 +73,7 @@ public:
 	void fnFlushBuffers();
 	uint32 *giveLoadedFilesList() { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
+	animation *loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat);
 
 protected:
 	uint8 *getFileInfo(uint16 fileNr);
