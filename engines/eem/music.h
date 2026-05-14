@@ -60,8 +60,8 @@ public:
 	/// floppy: TRAVEL-N.XMI / FANFARE2.XMI.
 	void playMus(uint num, bool loop = false);
 
-	// Miles drivers handle source-channel routing themselves; bypass
-	// Audio::MidiPlayer::sendToChannel. Same workaround as Toltecs / SAGA.
+	// WORKAROUND: Miles drivers handle source-channel routing themselves;
+	// bypass Audio::MidiPlayer::sendToChannel. Same as Toltecs / SAGA.
 	void send(uint32 b) override;
 
 private:

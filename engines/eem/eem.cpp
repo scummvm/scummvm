@@ -285,7 +285,7 @@ Common::Error EEMEngine::run() {
 	}
 
 	if (resumed)
-		goto screen_loop;
+		goto screenLoop;
 
 	// _DoOpeningAnims @ 2520:082a:
 	//   EA Kids logo (PIC) -> HighScore logo (PIC) -> Storm logo
@@ -325,13 +325,13 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro)
 			showFloppyStormLogo();
 		if (!shouldQuit() && !_skipIntro && _music)
-			_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
+			_music->playFile(Common::Path("THEME.XMI"), /* loop= */ true);
 		if (!shouldQuit() && !_skipIntro)
 			playAnm(Common::Path("CHAT.ANM"), 120,
-					/*holdLastFrame=*/false);
+					/* holdLastFrame= */ false);
 		if (!shouldQuit() && !_skipIntro)
 			playAnm(Common::Path("MOVIE.ANM"), 120,
-					/*holdLastFrame=*/false);
+					/* holdLastFrame= */ false);
 	} else {
 		showEAKidsLogo();
 		if (!shouldQuit() && !_skipIntro)
@@ -344,7 +344,7 @@ Common::Error EEMEngine::run() {
 			if (_audio)
 				_audio->playVoc(Common::Path("THUNDER.VOC"));
 			playAnm(Common::Path("BOLT.ANM"), 120,
-					/*holdLastFrame=*/false, /*fadeIn=*/true);
+					/* holdLastFrame= */ false, /* fadeIn= */ true);
 			waitForInput(1800);
 			fadeCurrentPaletteToBlack();
 			if (_audio)
@@ -354,14 +354,14 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro && _audio)
 			_audio->initMysterySounds(60);
 		if (!shouldQuit() && !_skipIntro && _music)
-			_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
+			_music->playFile(Common::Path("THEME.XMI"), /* loop= */ true);
 		for (int i = 1; i <= 20 && !shouldQuit() && !_skipIntro; i++) {
 			const bool fadeIn = (i == 1 || i == 5);
 			if (i == 5)
 				fadeCurrentPaletteToBlack();
 			Common::String name = Common::String::format("ANIM%02d.A", i);
 			playAnm(Common::Path(name), 120,
-					/*holdLastFrame=*/false, fadeIn);
+					/* holdLastFrame= */ false, fadeIn);
 			// _SpoolSound(uVar3 - 1) @ 2520:08c2 — per-anim VO, skipped
 			// when uVar3 == 0x14 @ 2520:08a8.
 			if (!shouldQuit() && !_skipIntro && i != 20 && _audio) {
@@ -374,17 +374,17 @@ Common::Error EEMEngine::run() {
 			_audio->cleanMysterySounds();
 		// _MIDIPlayFile("theme.xmi") @ 2520:0918.
 		if (!shouldQuit() && !_skipIntro && _music)
-			_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
+			_music->playFile(Common::Path("THEME.XMI"), /* loop= */ true);
 		if (!shouldQuit() && !_skipIntro)
 			playAnm(Common::Path("TITLE.ANM"), 120,
-					/*holdLastFrame=*/true, /*fadeIn=*/true);
+					/* holdLastFrame= */ true, /* fadeIn= */ true);
 	}
 	skippedIntro = _skipIntro;
 	_skipIntro = false;
 
 	if (isFloppy() && !shouldQuit() && !skippedIntro) {
 		_nextScreen = kScreenTitle;
-		goto screen_loop;
+		goto screenLoop;
 	}
 
 	// Title(B) -> screen 8 (profile) -> 9 (partner) -> C (action) ->
@@ -413,7 +413,7 @@ Common::Error EEMEngine::run() {
 	// `_mystery.load()` fresh and discard site / clue progress).
 	if (!shouldQuit() && !resumed)
 		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenAction;
-screen_loop:
+screenLoop:
 	while (!shouldQuit() && _nextScreen != kScreenInvalid) {
 		const ScreenId current = (ScreenId)_nextScreen;
 		debugC(1, kDebugGeneral, "screenDriver: id=%d", (int)current);
@@ -427,7 +427,7 @@ screen_loop:
 			if (isFloppy()) {
 				CursorMan.showMouse(false);
 				playAnm(Common::Path("TITLE.ANM"), 120,
-						/*holdLastFrame=*/true, /*fadeIn=*/true);
+						/* holdLastFrame= */ true, /* fadeIn= */ true);
 				_skipIntro = false;
 				CursorMan.showMouse(true);
 			}
@@ -963,7 +963,7 @@ void EEMEngine::startTravelMusic() {
 	if (!_music || !_mystery.isLoaded() || !_voiceOn)
 		return;
 	const uint num = _mystery._siteNumber % 5;
-	_music->playMus(num, /*loop=*/false);
+	_music->playMus(num, /* loop= */ false);
 }
 
 void EEMEngine::waitForMusicDone(uint32 maxMs) {
@@ -1180,7 +1180,7 @@ Common::Error EEMEngine::saveProfile(const Common::String &name) {
 	_playerName = name;
 	debugC(1, kDebugGeneral, "saveProfile(%s) -> slot %d",
 		   name.c_str(), slot);
-	return saveGameState(slot, name, /*isAutosave=*/false);
+	return saveGameState(slot, name, /* isAutosave= */ false);
 }
 
 bool EEMEngine::loadProfile(const Common::String &name) {

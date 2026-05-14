@@ -154,7 +154,7 @@ public:
 	DBDArchive &getPics()    { return _picsArchive; }
 	DBDArchive &getAni()     { return _aniArchive; }
 	DBDArchive &getSites()   { return _sitesArchive; }
-	DBDArchive &getBalloons(){ return _balloonArchive; }
+	DBDArchive &getBalloons() { return _balloonArchive; }
 	DBDArchive &getButtons() { return _buttonArchive; }
 	Mystery    &getMystery() { return _mystery; }
 	const EEMFont &getFont() const { return _font; }
