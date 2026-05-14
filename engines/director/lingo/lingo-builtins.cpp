@@ -2750,7 +2750,7 @@ void LB::b_erase(int nargs) {
 
 		for (uint i = 0; i < channels.size(); i++) {
 			if (channels[i]->_sprite->_castId == d.asMemberID()) {
-				channels[i]->_dirty = true;
+				channels[i]->setDirty();
 			}
 		}
 	}
@@ -3308,10 +3308,8 @@ void LB::b_puppetSprite(int nargs) {
 			if (refresh) {
 				// puppetSprite set to FALSE, copy back sprite data from frame cache
 				Channel *chan = sc->getChannelById(spriteId);
-				movie->getWindow()->addDirtyRect(chan->getBbox());
-				chan->_dirty = true;
 				chan->setClean(sc->_currentFrame->_sprites[spriteId]);
-				chan->_dirty = true;
+				chan->setDirty();
 			}
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
@@ -3468,7 +3466,7 @@ void LB::b_spriteBox(int nargs) {
 	// This automatically sets the stretch mode
 	channel->_sprite->_stretch = true;
 
-	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
+	channel->setDirty();
 	channel->setBbox(
 		l < r ? l : r,
 		t < b ? t : b,
@@ -3477,7 +3475,6 @@ void LB::b_spriteBox(int nargs) {
 	);
 	if (channel->_sprite->_cast)
 		channel->_sprite->_cast->setModified(true);
-	channel->_dirty = true;
 }
 
 void LB::b_unLoad(int nargs) {

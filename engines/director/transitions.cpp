@@ -205,10 +205,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		// Changed area transition
 		score->updateSprites(mode);
 
-		clipRect = _window->getDirtyRectBounds();
-
-		// Ensure we redraw any other sprites intersecting the non-clip area.
-		_window->clearDirtyRects();
+		clipRect = score->getChannelDirtyRectBounds();
 
 		// Some transitions depend upon an even clipRect size
 		if (clipRect.width() % 2 == 1)
@@ -218,9 +215,8 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 			clipRect.bottom += 1;
 
 		clipRect.clip(Common::Rect(innerDims.width(), innerDims.height()));
-		_window->addDirtyRect(clipRect);
 
-		render(false, &nextFrame);
+		render(true, &nextFrame);
 	} else {
 		// Full stage transition
 		score->updateSprites(mode);

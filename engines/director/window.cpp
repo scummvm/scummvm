@@ -69,6 +69,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_windowType = -1;
 	_isModal = false;
 	_skipFrameAdvance = false;
+	_resetScreen = false;
 
 	// Owned by the window manager
 	_window = new Graphics::MacWindow(id, scrollable, resizable, editable, wm);
@@ -157,6 +158,62 @@ void Window::drawChannelBox(Director::Movie *currentMovie, Graphics::ManagedSurf
 	}
 }
 
+void Window::renderChannel(Channel *channel, const Common::Rect &rect, Graphics::ManagedSurface *blitTo, bool invert) {
+	Score *score = _currentMovie->getScore();
+	if (rect.isEmpty())
+		return;
+	Common::Array<Channel *> dirtyChannels = score->getSpriteIntersections(rect);
+	Common::Array<Channel *> appendix;
+	Common::Rect r = rect;
+	r.clip(blitTo->getBounds());
+	size_t idx = 0;
+	// move direct-to-stage layers to the end of the list
+	while (idx < dirtyChannels.size()) {
+		Channel *ch = dirtyChannels[idx];
+		if (ch->isActiveVideo() && ch->isVideoDirectToStage()) {
+			appendix.push_back(ch);
+			dirtyChannels.remove_at(idx);
+			continue;
+		}
+		idx++;
+	}
+	for (auto &it : appendix) {
+		dirtyChannels.push_back(it);
+	}
+
+	size_t startIdx = 0;
+	if (channel->isTrail()) {
+		// trails mode, don't redraw anything stationary below the target
+		for (size_t i = 0; i < dirtyChannels.size(); i++) {
+			if (dirtyChannels[i] == channel) {
+				startIdx = i;
+				break;
+			}
+		}
+	} else {
+		blitTo->fillRect(r, _stageColor);
+	}
+	debugC(7, kDebugImages, "Window::renderChannel(): rect (%d, %d, %d, %d), %d overlapping channels", r.left, r.top, r.right, r.bottom, dirtyChannels.size());
+
+	for (size_t i = startIdx; i < dirtyChannels.size(); i++) {
+		Channel *ch = dirtyChannels[i];
+
+		if (ch->_visible && !ch->_hideFromStage) {
+			if (ch->hasSubChannels()) {
+				Common::Array<Channel> *list = ch->getSubChannels();
+				for (auto &k : *list) {
+					inkBlitFrom(&k, r, blitTo);
+				}
+			} else {
+				inkBlitFrom(ch, r, blitTo);
+				if ((ch == channel) && invert)
+					invertChannel(ch, r);
+			}
+		}
+	}
+	addDirtyRect(r);
+}
+
 bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!_currentMovie)
 		return false;
@@ -164,89 +221,62 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!blitTo)
 		blitTo = _window->getSurface();
 
-	Common::List<Common::Rect> &dirtyRects = _window->getDirtyRectList();
+	Score *score = _currentMovie->getScore();
+
+	Channel *hiliteChannel = score->getChannelById(_currentMovie->_currentHiliteChannelId);
+
+	if (_resetScreen) {
+		_resetScreen = false;
+		forceRedraw = true;
+	}
 
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
+	}
+
+	// for each channel
+	// - check to see if it needs a redraw
+	// - if it does:
+	//	- if trails, just draw the sprite again
+	//	- if not:
+	//	 - draw every sprite underneath, then the sprite
+	//	- disable redraw flag
+	debugC(7, kDebugImages, "Window::render(): starting draw cycle for frame %d", score->getCurrentFrameNum());
+	uint32 renderStartTime = g_system->getMillis();
+
+	for (size_t i = 0; i < score->_channels.size(); i++) {
+		Channel *chan = score->_channels[i];
+		if (!chan->_needsDraw && !forceRedraw)
+			continue;
+		Common::Rect bbox = chan->getBbox();
+
+		debugC(7, kDebugImages, "Window::render(): drawing channel %d", (int)i);
+
+		if (!chan->_lastTrail) {
+			renderChannel(chan, chan->_lastRenderedBbox, blitTo, chan == hiliteChannel);
+		}
+		renderChannel(chan, bbox, blitTo, chan == hiliteChannel);
+		chan->_needsDraw = false;
+		chan->_lastRenderedBbox = bbox;
+		chan->_lastTrail = chan->isTrail();
+	}
+
+	Common::List<Common::Rect> &dirtyRects = _window->getDirtyRectList();
+
+	if (forceRedraw) {
 		_window->markAllDirty();
 	} else {
 		if (dirtyRects.size() == 0 && _currentMovie->_videoPlayback == false) {
 			if (g_director->_debugDraw & kDebugDrawFrame) {
 				drawFrameCounter(blitTo);
-
 				_window->setContentDirty(true);
 			}
-
 			return false;
 		}
 
 		_window->mergeDirtyRects();
 	}
 
-	Channel *hiliteChannel = _currentMovie->getScore()->getChannelById(_currentMovie->_currentHiliteChannelId);
-
-	uint32 renderStartTime = g_system->getMillis();
-	debugC(7, kDebugImages, "Window::render(): Updating %d rects", dirtyRects.size());
-
-	for (auto &i : dirtyRects) {
-		Common::Rect r = i;
-		// The inner dimensions are relative to the virtual desktop while
-		// r isn't, so we need to move the window to be relative to the
-		// same sapce.
-		Common::Rect windowRect = _window->getInnerDimensions();
-		windowRect.moveTo(r.left, r.top);
-		r.clip(windowRect);
-
-		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
-
-		bool shouldClear = true;
-		Channel *trailChannel = nullptr;
-		for (auto &j : _dirtyChannels) {
-			bool isHidden = false;
-			isHidden = j->_hideFromStage;
-			if (j->_visible && !isHidden && r == j->getBbox() && j->isTrail()) {
-				shouldClear = false;
-				trailChannel = j;
-				break;
-			}
-		}
-
-		if (shouldClear) {
-			blitTo->fillRect(r, _stageColor);
-		} else if (trailChannel) {
-			// Trail rendering mode; do not re-render the background and sprites underneath.
-			_dirtyChannels.clear();
-			_dirtyChannels.push_back(trailChannel);
-		}
-
-		for (int pass = 0; pass < 2; pass++) {
-			for (auto &j : _dirtyChannels) {
-				if (j->isActiveVideo() && j->isVideoDirectToStage()) {
-					if (pass == 0)
-						continue;
-				} else {
-					if (pass == 1)
-						continue;
-				}
-
-				if (j->_hideFromStage)
-					continue;
-
-				if (j->_visible) {
-					if (j->hasSubChannels()) {
-						Common::Array<Channel> *list = j->getSubChannels();
-						for (auto &k : *list) {
-							inkBlitFrom(&k, r, blitTo);
-						}
-					} else {
-						inkBlitFrom(j, r, blitTo);
-						if (j == hiliteChannel)
-							invertChannel(hiliteChannel, r);
-					}
-				}
-			}
-		}
-	}
 
 #ifdef USE_IMGUI
 	int selectedChannel = DT::getSelectedChannel();
@@ -272,9 +302,10 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (g_director->_debugDraw & kDebugDrawFrame)
 		drawFrameCounter(blitTo);
 
+	debugC(7, kDebugImages, "Window::render(): Draw cycle finished in %d ms, %d dirty rects",  g_system->getMillis() - renderStartTime, dirtyRects.size());
+
 	dirtyRects.clear();
 	_window->setContentDirty(true);
-	debugC(7, kDebugImages, "Window::render(): Draw finished in %d ms",  g_system->getMillis() - renderStartTime);
 
 	return true;
 }
@@ -378,6 +409,7 @@ void Window::reset() {
 	Graphics::ManagedSurface *composeSurface = _window->getSurface();
 	resizeInner(composeSurface->w, composeSurface->h);
 	_window->setContentDirty(true);
+	_resetScreen = true;
 }
 
 void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {

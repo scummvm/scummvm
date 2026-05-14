@@ -187,7 +187,7 @@ bool Movie::processEvent(Common::Event &event) {
 		// if we are moving out of bounds, then we don't hilite it anymore
 		if (_currentHiliteChannelId && (sc->_channels[_currentHiliteChannelId]->isMouseIn(pos) != kCollisionYes)) {
 			g_director->getCurrentWindow()->setDirty(true);
-			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
+			sc->_channels[_currentHiliteChannelId]->setDirty();
 			_currentHiliteChannelId = 0;
 		}
 
@@ -196,19 +196,15 @@ bool Movie::processEvent(Common::Event &event) {
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;
 				g_director->getCurrentWindow()->setDirty(true);
-				g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
+				sc->_channels[_currentHiliteChannelId]->setDirty();
 			}
 		}
 
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
 				pos = _draggingSpriteOffset + event.mouse;
-				if (!_currentDraggedChannel->_sprite->_trails) {
-					g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
-				}
 				_currentDraggedChannel->setPosition(pos.x, pos.y, true);
-				_currentDraggedChannel->_dirty = true;
-				g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
+				_currentDraggedChannel->setDirty();
 			} else {
 				_currentDraggedChannel = nullptr;
 			}

@@ -1843,7 +1843,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			uint32 newColor = g_director->transformColor(d.asInt());
 			if (newColor != sprite->_backColor) {
 				sprite->_backColor = newColor;
-				channel->_dirty = true;
+				channel->setDirty();
 
 				// Based on Director in a Nutshell, page 15
 				sprite->setAutoPuppet(kAPBackColor, true);
@@ -1856,7 +1856,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			int blend = (100 - CLIP(d.asInt(), 0, 100)) * 255 / 100;
 			if (blend != sprite->_blendAmount) {
 				sprite->_blendAmount = blend;
-				channel->_dirty = true;
+				channel->setDirty();
 			}
 
 			if (d.asInt() == 0)
@@ -1874,11 +1874,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			CastMemberID targetMember = d.asMemberID();
 
 			if (targetMember != sprite->_castId) {
-				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->setCast(targetMember);
 				// Ensure the new sprite, whether larger or smaller, appears correctly on the screen
-				movie->getWindow()->addDirtyRect(channel->getBbox());
-				channel->_dirty = true;
 			}
 		}
 		break;
@@ -1912,12 +1909,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			// Since Digital Video dimensions get clarified after loading,
 			// we enforce them here
 			if (castId != sprite->_castId || (castMember && castMember->_type == kCastDigitalVideo)) {
-				if (!sprite->_trails) {
-					movie->getWindow()->addDirtyRect(channel->getBbox());
-					channel->_dirty = true;
-				}
 				channel->setCast(castId);
-				channel->_dirty = true;
 			}
 		}
 		break;
@@ -1939,7 +1931,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			}
 			if (channelId != -1 && channelId != (int)channel->_constraint) {
 				channel->_constraint = d.u.i;
-				channel->_dirty = true;
+				channel->setDirty();
 			}
 		}
 		break;
@@ -1956,7 +1948,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheFlipH: // D7
 		sprite->_thickness = (sprite->_thickness & ~kTFlipH) | ((d.asInt() ? kTFlipH : 0));
-		channel->_dirty = true;
+		channel->setDirty();
 
 		sprite->setAutoPuppet(kAPThickness, true);
 
@@ -1964,7 +1956,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheFlipV: // D7
 		sprite->_thickness = (sprite->_thickness & ~kTFlipV) | ((d.asInt() ? kTFlipV : 0));
-		channel->_dirty = true;
+		channel->setDirty();
 
 		sprite->setAutoPuppet(kAPThickness, true);
 
@@ -1975,7 +1967,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			uint32 newColor = g_director->transformColor(d.asInt());
 			if (newColor != sprite->_foreColor) {
 				sprite->_foreColor = newColor;
-				channel->_dirty = true;
+				channel->setDirty();
 			}
 
 			// Based on Director in a Nutshell, page 15
@@ -1984,9 +1976,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		if (d.asInt() != channel->getHeight()) {
-			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setHeight(d.asInt());
-			channel->_dirty = true;
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -1999,7 +1989,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheInk:
 		if (d.asInt() != sprite->_ink) {
 			sprite->_ink = static_cast<InkType>(d.asInt());
-			channel->_dirty = true;
+			channel->setDirty();
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -2008,26 +1998,20 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLineSize:
 		sprite->_thickness = (sprite->_thickness & ~kTThickness) | ((d.asInt() + 1) & kTThickness);
-		channel->_dirty = true;
+		channel->setDirty();
 
 		sprite->setAutoPuppet(kAPThickness, true);
 		break;
 	case kTheLoc:
 		if (channel->getPosition() != d.asPoint()) {
-			movie->getWindow()->addDirtyRect(channel->getBbox());
-			channel->_dirty = true;
+			channel->setNeedsDraw();
 		}
 		channel->setPosition(d.asPoint().x, d.asPoint().y);
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->getPosition().x) {
-			// Only add a dirty rectangle for the original position if we're not rendering in trails mode.
-			// Otherwise, it will erase the trail.
-			if (!channel->_sprite->_trails) {
-				movie->getWindow()->addDirtyRect(channel->getBbox());
-			}
-			channel->_dirty = true;
 			channel->setPosition(d.asInt(), channel->getPosition().y);
+			channel->setNeedsDraw();
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -2036,11 +2020,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->getPosition().y) {
-			if (!channel->_sprite->_trails) {
-				movie->getWindow()->addDirtyRect(channel->getBbox());
-			}
-			channel->_dirty = true;
 			channel->setPosition(channel->getPosition().x, d.asInt());
+			channel->setNeedsDraw();
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -2071,7 +2052,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kThePattern:
 		if (d.asInt() != sprite->getPattern()) {
 			sprite->setPattern(d.asInt());
-			channel->_dirty = true;
+			channel->setDirty();
 		}
 		break;
 	case kThePuppet:
@@ -2088,7 +2069,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				d.u.farr->arr[0].u.i, d.u.farr->arr[1].u.i,
 				d.u.farr->arr[2].u.i, d.u.farr->arr[3].u.i
 			);
-			channel->_dirty = true;
+			channel->setDirty();
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -2121,12 +2102,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheType:
 		if (d.asInt() != sprite->_spriteType) {
 			sprite->_spriteType = static_cast<SpriteType>(d.asInt());
-			channel->_dirty = true;
+			channel->setDirty();
 		}
 		break;
 	case kTheTweened: // D6
 		sprite->_thickness = (sprite->_thickness & ~kTTweened) | ((d.asInt() ? kTTweened : 0));
-		channel->_dirty = true;
+		channel->setDirty();
 
 		sprite->setAutoPuppet(kAPThickness, true);
 
@@ -2136,7 +2117,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheVisible:
 		if ((bool)d.asInt() != channel->_visible) {
 			channel->_visible = (bool)d.asInt();
-			channel->_dirty = true;
+			channel->setNeedsDraw();
 		}
 		break;
 	case kTheVolume:
@@ -2145,9 +2126,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (d.asInt() != channel->getWidth()) {
-			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 			channel->setWidth(d.asInt());
-			channel->_dirty = true;
 		}
 
 		// Based on Director in a Nutshell, page 15
@@ -2158,8 +2137,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
 
-	if (channel->_dirty)
-		movie->getWindow()->addDirtyRect(channel->getBbox());
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {

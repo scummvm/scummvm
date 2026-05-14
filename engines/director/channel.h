@@ -65,9 +65,11 @@ public:
 	bool isActiveVideo();
 	bool isVideoDirectToStage();
 
-	inline void setWidth(int w) { _sprite->setWidth(w); replaceWidget(); _dirty = true; };
-	inline void setHeight(int h) { _sprite->setHeight(h); replaceWidget(); _dirty = true; };
-	inline void setBbox(int l, int t, int r, int b) { _sprite->setBbox(l, t, r, b); replaceWidget(); _dirty = true; };
+	inline void setWidth(int w) { _sprite->setWidth(w); replaceWidget(); setNeedsDraw(); };
+	inline void setHeight(int h) { _sprite->setHeight(h); replaceWidget(); setNeedsDraw(); };
+	inline void setBbox(int l, int t, int r, int b) { _sprite->setBbox(l, t, r, b); replaceWidget(); setNeedsDraw(); };
+	void setDirty();
+	void setNeedsDraw() { _needsDraw = true; }
 	void setPosition(int x, int y, bool force = false);
 	void setCast(CastMemberID memberID);
 	void setClean(Sprite *nextSprite, bool partial = false);
@@ -106,7 +108,8 @@ public:
 	Cursor _cursor;
 	Graphics::MacWidget *_widget;
 
-	bool _dirty;
+	bool _widgetDirty;
+	bool _needsDraw;
 	bool _visible;
 	bool _hideFromStage; // Used in DT for hiding the channel from rendering
 	uint _constraint;
@@ -124,6 +127,8 @@ public:
 	uint _filmLoopFrame;
 
 	Common::Rect _rollOverBbox;
+	Common::Rect _lastRenderedBbox;
+	bool _lastTrail;
 
 	int _startFrame;
 	int _endFrame;
