@@ -2125,9 +2125,7 @@ void EEMEngine::doNotebook() {
 
 	drawNotebookFrame(page);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
-							  rectListContains(_notebookSlotRects,
-											   mouse.x, mouse.y));
+	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y));
 
 	uint32 lastDraw = g_system->getMillis();
 	uint32 gizmoLastTick = lastDraw;
@@ -2145,9 +2143,6 @@ void EEMEngine::doNotebook() {
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
 				setInteractiveMouseCursor(notebookButtonAt(ev.mouse.x,
-														   ev.mouse.y) ||
-										  rectListContains(_notebookSlotRects,
-														   ev.mouse.x,
 														   ev.mouse.y));
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
@@ -2220,17 +2215,10 @@ void EEMEngine::doNotebook() {
 					dirty = true;
 					continue;
 				}
-				// ScummVM-only: click on clue slot toggles _NoteSelected
-				// (original toggles only in accuse screen).
-				for (uint i = 0; i < _notebookSlotRects.size(); i++) {
-					if (_notebookSlotRects[i].contains(ev.mouse.x,
-													   ev.mouse.y)) {
-						const uint clueId = _notebookSlotClues[i];
-						_mystery._noteSelected[clueId] ^= 1;
-						dirty = true;
-						break;
-					}
-				}
+				// The notebook screen is read-only in the original:
+				// `_DoNotebook @ 161e:0500` only checks clicks against
+				// `_NoteButtons` (11 rects). Clue toggling lives in the
+				// accuse screen.
 			}
 		}
 		if (exitFlag)
@@ -2242,9 +2230,7 @@ void EEMEngine::doNotebook() {
 			drawNotebookFrame(page);
 			lastDraw = now;
 			mouse = g_system->getEventManager()->getMousePos();
-			setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
-									  rectListContains(_notebookSlotRects,
-													   mouse.x, mouse.y));
+			setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y));
 		}
 		// _GizmoColorCycle @ 1c33:0002 — `_DoNotebook` rotates 0x6f..0x73 each
 		// _CheckFrameRate tick (the PDA gizmo / LED indicator shimmer).
@@ -2348,10 +2334,10 @@ void EEMEngine::drawNotebookFrame(int &page) {
 			page = 0;
 	}
 
-	// Per-slot rects published to the click handler.
-	Common::Array<Common::Rect> slotRects;
-	Common::Array<uint> slotClues;
-
+	// `_DrawNotes @ 161e:01d0` is read-only on this screen — clue selection
+	// is driven exclusively from the accuse screen. The 0x3C / 0x5C colour
+	// choice still reflects `_NoteSelected[]` so picks made in accuse remain
+	// visible when the player flips back here.
 	const int startClue = (page < (int)pageStarts.size())
 							? pageStarts[page] : 0;
 	const int endClue   = (page + 1 < (int)pageStarts.size())
@@ -2365,7 +2351,6 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		if (txt.empty())
 			txt = Common::String::format(
 				isSpanish() ? "nota %u" : "clue %u", clueId);
-		// `_DrawNotes @ 161e:01d0`: 0x5c unselected, 0x3c selected.
 		Common::Array<Common::String> wrapped;
 		_font.wordWrapText(txt, kRectW, wrapped);
 		const int lineH = _font.getFontHeight();
@@ -2375,24 +2360,22 @@ void EEMEngine::drawNotebookFrame(int &page) {
 			_font.drawString(&scratch, wrapped[li], kRectX,
 							 y + (int)li * lineH, kRectW, color);
 		}
-		slotRects.push_back(Common::Rect(kRectX, y,
-										  kRectX + kRectW, y + h));
-		slotClues.push_back(clueId);
 		y += h + 7;
 	}
 
-	// Page indicator only (original has no points display).
-	_font.drawString(&scratch, Common::String::format("p%d/%d",
-							   page + 1, (int)pageStarts.size()),
-					 270, 4, kScreenWidth, 0x5C);
+	// `_DrawNotes @ 161e:01d0` appends a terminator line at the bottom of
+	// the last page once the clue list is exhausted — string @ 29be:01f4.
+	const bool isLastPage = (page + 1 >= (int)pageStarts.size());
+	if (isLastPage) {
+		const char *kEndMarker = isSpanish()
+			? "-- Fin de las notas --"
+			: "-- End of notes --";
+		_font.drawString(&scratch, kEndMarker, kRectX, y, kRectW, 0x5C);
+	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
-
-	// Publish slot info to `doNotebook`'s click handler.
-	_notebookSlotRects = slotRects;
-	_notebookSlotClues = slotClues;
 }
 
 void EEMEngine::doGallery() {
