@@ -321,17 +321,27 @@ void EEMEngine::doInitClues() {
 						  && _aniArchive.loadAnimation(0x19, nancy)
 						  && !nancy.empty();
 
-	// Cycle game animation once (10 fps = _CheckFrameRate cadence).
-	// _DoInitClues @ 1a35:0507/0541 hard-codes the SCRIPT index to Jake's
-	// IDs (0x17/0x18/0x19) regardless of partner, so look up scripts by
-	// those IDs unconditionally.
+	// Cycle game animation once at _CheckFrameRate cadence (~7 fps, 140 ms
+	// per _UpdateAnimations call — `LastFrame + 0xe` cs in _InitFrameCounter
+	// @ 1a35:01ae). Original loop @ 1a35:0507:
+	//   uVar9 = 1;
+	//   while (uVar9 != gameNum) {
+	//     if (_CheckFrameRate || skipped) { _UpdateAnimations(); uVar9++; }
+	//   }
+	// So `gameNum - 1` _UpdateAnimations calls; each call advances every
+	// registered slot by one script tick. _DoInitClues @ 1a35:0507/0541
+	// hard-codes the SCRIPT index to Jake's IDs (0x17/0x18/0x19) regardless
+	// of partner, so we look up scripts by those IDs unconditionally.
 	if (haveGame || haveBook || haveNancy) {
-		const uint frameCount = haveGame ? game.size() : 8;
+		const uint kCheckFrameRateMs = 140;
+		const uint baseFrames = haveGame ? game.size() : 8;
+		// `gameNum - 1` ticks: scriptIdx 0..gameNum-2.
+		const uint frameCount = (baseFrames > 0) ? baseFrames - 1 : 0;
 		bool skip = false;
 		for (uint frame = 0; frame < frameCount && !shouldQuit() && !skip; frame++) {
 			if (haveBriefingBg)
 				blitAt(bg, 0, 0);
-			const uint32 t = frame * 100;
+			const uint32 t = frame * kCheckFrameRateMs;
 			Graphics::Surface *scr = g_system->lockScreen();
 			if (!scr) {
 				skip = true;
@@ -353,7 +363,7 @@ void EEMEngine::doInitClues() {
 			g_system->updateScreen();
 
 			// ESC interrupts voice/spool so audio doesn't bleed into the MAP.
-			const uint32 wakeup = g_system->getMillis() + 100;
+			const uint32 wakeup = g_system->getMillis() + kCheckFrameRateMs;
 			while (g_system->getMillis() < wakeup && !shouldQuit() && !skip) {
 				Common::Event ev;
 				while (g_system->getEventManager()->pollEvent(ev)) {
