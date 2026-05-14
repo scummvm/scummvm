@@ -962,6 +962,10 @@ void Scene::load(bool fromSaveFile) {
 	if (sceneSummaryChunk) {
 		_sceneState.summary.read(*sceneSummaryChunk);
 	} else {
+		// Reset panning type set from previous scenes, since terse summary
+		// chunks don't contain panning type information
+		_sceneState.summary.panningType = kPan360;
+
 		sceneSummaryChunk = sceneIFF->getChunkStream("TSUM");
 		if (sceneSummaryChunk) {
 			_sceneState.summary.readTerse(*sceneSummaryChunk);
