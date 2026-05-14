@@ -2113,6 +2113,7 @@ void EEMEngine::doNotebook() {
 											   mouse.x, mouse.y));
 
 	uint32 lastDraw = g_system->getMillis();
+	uint32 gizmoLastTick = lastDraw;
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -2227,6 +2228,12 @@ void EEMEngine::doNotebook() {
 			setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
 									  rectListContains(_notebookSlotRects,
 													   mouse.x, mouse.y));
+		}
+		// _GizmoColorCycle @ 1c33:0002 — `_DoNotebook` rotates 0x6f..0x73 each
+		// _CheckFrameRate tick (the PDA gizmo / LED indicator shimmer).
+		if (now - gizmoLastTick >= kChooserCycleMillis) {
+			gizmoLastTick = now;
+			cycleChooserPalette();
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -2417,6 +2424,7 @@ void EEMEngine::doGallery() {
 							  gallerySlotAt(slotRects, slotSuspect,
 											mouse.x, mouse.y));
 	uint32 lastDraw = g_system->getMillis();
+	uint32 gizmoLastTick = lastDraw;
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -2523,6 +2531,11 @@ void EEMEngine::doGallery() {
 			setInteractiveMouseCursor(galleryButtonAt(mouse.x, mouse.y) ||
 									  gallerySlotAt(slotRects, slotSuspect,
 													mouse.x, mouse.y));
+		}
+		// _GizmoColorCycle @ 1c33:0002 — `_DoGallery` rotates 0x6f..0x73 each tick.
+		if (now - gizmoLastTick >= kChooserCycleMillis) {
+			gizmoLastTick = now;
+			cycleChooserPalette();
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -2699,6 +2712,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		bool advance = false;
 		bool prev = false;
 		bool redraw = false;
+		uint32 gizmoLastTick = g_system->getMillis();
 		while (!back && !advance && !prev && !redraw && !shouldQuit()) {
 			Common::Event e2;
 			while (g_system->getEventManager()->pollEvent(e2)) {
@@ -2785,6 +2799,13 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					prev = true;
 					break;
 				}
+			}
+			// _GizmoColorCycle @ 1c33:0002 — `MoreInfo` (158f:0480) rotates
+			// 0x6f..0x73 each tick.
+			const uint32 now = g_system->getMillis();
+			if (now - gizmoLastTick >= kChooserCycleMillis) {
+				gizmoLastTick = now;
+				cycleChooserPalette();
 			}
 			g_system->updateScreen();
 			g_system->delayMillis(20);
