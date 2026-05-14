@@ -690,5 +690,83 @@ void init_pal() {
 	pal_manager_colors = 0;
 }
 
+int pal_alloc_color(int slot, int allow_shared, int *out_index, const RGBcolor *color) {
+	int slot_num;
+
+	if (slot < 0) {
+		slot_num = -10;
+		int i = 0;
+		int *p = flag_used;
+		while (p < flag_used + PAL_MAXFLAGS) {
+			if (*p == 0) {
+				slot_num = i;
+				break;
+			}
+			i++;
+			p++;
+		}
+		if (slot_num < 0) {
+			error_report(-5, 2, 3, 1, 0);
+			return slot_num;
+		}
+	} else {
+		slot_num = slot;
+	}
+
+	long mask = 1L << slot_num;
+
+	byte *pal_ptr = &master_palette[0].r;
+	dword *status = color_status;
+	int color_index = 0;
+	bool found = false;
+
+	// First pass: look for an existing palette entry with a matching color
+	while (status < (color_status + 256)) {
+		if (!((*status & 1) && !allow_shared) && !(*status & 2)) {
+			if (memcmp(color, pal_ptr, 3) == 0) {
+				*status |= mask;
+				if (out_index)
+					*out_index = color_index;
+				found = true;
+			}
+		}
+		pal_ptr += 3;
+		status++;
+		color_index++;
+		if (found)
+			break;
+	}
+
+	if (!found) {
+		// Second pass: allocate a free palette entry and install the color
+		color_index = 0;
+		pal_ptr = &master_palette[0].r;
+		status = color_status;
+		bool allocated = false;
+
+		while (status < (color_status + 256)) {
+			if (*status == 0) {
+				memcpy(pal_ptr, color, 3);
+				*status |= mask;
+				if (out_index)
+					*out_index = color_index;
+				allocated = true;
+			}
+			pal_ptr += 3;
+			status++;
+			color_index++;
+			if (allocated)
+				break;
+		}
+
+		if (!allocated) {
+			error_report(-6, 2, 3, 1, 0);
+			slot_num = -11;
+		}
+	}
+
+	return slot_num;
+}
+
 } // namespace MADSV2
 } // namespace MADS

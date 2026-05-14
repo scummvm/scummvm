@@ -46,7 +46,8 @@ namespace AnimView {
 
 constexpr bool in_mads_mode = true;
 
-int speechNum;
+Audio::AudioStream *speechStream;
+int speechFlags;
 int current_error_code;
 int currentFrame;
 int minFrame, maxFrame;
@@ -59,6 +60,10 @@ int runFx;
 uint32 timer1, timer2;
 AnimPtr current_anim;
 AnimInterPtr current_anim_inter;
+int speechIndex;
+int speechLoops;
+int runVal6, runVal7, runVal8;
+int loadFontFlag;
 
 static const byte FX_TIMES[16] = {
 	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
@@ -86,10 +91,7 @@ static byte *largeBuffer, *largeBufferEnd;
 static byte *largeBuffer1, *largeBuffer2;
 static bool hasAnimInited;
 static int runVal1, runVal2, runVal3;
-static int runVal4, runVal5, runVal6;
-static int runVal7, runVal8;
 static int runVal12;
-static int loadFontFlag;
 static int error_code;
 static bool wait_for_music_at_end;
 
@@ -129,8 +131,9 @@ static void init_globals() {
 	timer1 = timer2 = 0;
 	runVal1 = 0;
 	runVal2 = runVal3 = -1;
-	runVal4 = runVal5 = runVal6 = 0;
-	runVal7 = runVal8 = speechNum = 0;
+	speechIndex = speechLoops = runVal6 = 0;
+	runVal7 = runVal8 = 0;
+	speechStream = nullptr;
 	timerFlag1 = false;
 	runVal12 = 0;
 	loadFontFlag = 0;
@@ -193,11 +196,11 @@ static void run_animation(int animIndex) {
 	if (animIndex == 0)
 		timer1 = g_system->getMillis();
 
-	runVal4 = -1;
+	speechIndex = -1;
 	loadFontFlag = current_anim->load_flags & AA_LOAD_FONT;
 
-	runVal5 = runVal6 = runVal7 = runVal8 = 0;
-	speechNum = 0;
+	speechLoops = runVal6 = runVal7 = runVal8 = 0;
+	speechStream = 0;
 	timerFlag1 = false;
 
 	if (current_anim->background_type == AA_INTERFACE) {
@@ -227,16 +230,17 @@ static void run_animation(int animIndex) {
 
 	// Main animation loop
 	while (currentFrame < maxFrame && !current_error_code) {
-		if (speechNum) {
+		if (speechStream) {
 			if (!(current_anim->load_flags & AA_LOAD_SPEECH)) {
-				char speechName[80];
-				MADS_FORMAT(speechName, current_anim->speech_file);
+				//char speechName[80];
+				//MADS_FORMAT(speechName, current_anim->speech_file);
 
-				speech_play(speechName, speechNum);
+				g_engine->playSpeech(speechStream);
+				//speech_play(speechName, speechStream);
 			}
 
 			timerFlag1 = true;
-			speechNum = 0;
+			speechStream = 0;
 		}
 
 		if (foundSeries) {

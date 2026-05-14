@@ -278,7 +278,7 @@ typedef FrameEdit *FrameEditPtr;
 
 struct Frame {
 	byte sound;         /* what sound cue to play                             */
-	byte speech;        /* what speech record to activate                     */
+	int8 speech;        /* what speech record to activate                     */
 	word ticks;         /* how many ticks for this frame (before? after?)     */
 	word view_x;        /* where the pan set currently                        */
 	word view_y;

@@ -22,15 +22,16 @@
 #ifndef MADSV2_ANIMVIEW_H
 #define MADSV2_ANIMVIEW_H
 
-#include "common/scummsys.h"
+#include "audio/audiostream.h"
 #include "mads/madsv2/core/anim.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace AnimView {
 
-// Variables shared with anim_timer.cpp
-extern int speechNum;
+// Variables shared with other AnimView namespace files
+extern Audio::AudioStream *speechStream;
+extern int speechFlags;
 extern int current_error_code;
 extern int currentFrame, minFrame, maxFrame;
 extern bool foundSeries;
@@ -42,6 +43,10 @@ extern int runFx;
 extern uint32 timer1, timer2;;
 extern AnimPtr current_anim;
 extern AnimInterPtr current_anim_inter;
+extern int speechIndex;
+extern int speechLoops;
+extern int runVal6, runVal7, runVal8;
+extern int loadFontFlag;
 
 
 // Main animview function
