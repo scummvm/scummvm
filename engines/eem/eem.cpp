@@ -1182,7 +1182,7 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 SaveStateList EEMEngine::listProfiles() const {
 	// _findfirst("*.PLR") in screen8_handler @ 1c33:1012.
-	// Filter out slot 0 (ScummVM autosave) to match the original which
+	// Filter out slot 0 (autosave) to match the original which
 	// has no autosave concept.
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 	for (uint i = 0; i < saves.size(); ) {

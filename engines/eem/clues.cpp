@@ -541,7 +541,13 @@ void EEMEngine::doInitClues() {
 //   0x83 _Partner == 0 ? "he"       : "she"
 //   0x84 _Partner == 0 ? "him"      : "her"
 //   0x85 _Partner == 0 ? "his"      : "her"
-//   0x86..0x88 read a separate gender flag @ 0x7985 (TODO).
+//   0x86..0x88 mirror 0x83..0x85 but branch on a separate gender flag
+//     (DAT_29be_7985, handlers @ 1b66:0ad2/0b41/0bb0). That flag has no
+//     writers anywhere in EEMCD.EXE — only the three handlers read it —
+//     and no shipping mystery text (CD or floppy) contains the 0x86/0x87
+//     /0x88 bytes inside parseString-formatted strings. The opcodes are
+//     dead in the original engine and dead in our data, so we drop them
+//     silently (which matches the always-0 flag path in DOS: he/him/his).
 //   0x89 KD hint placeholder (caller handles).
 Common::String EEMEngine::parseString(const Common::String &raw,
 									  const Common::String &playerName,
@@ -572,8 +578,12 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 		case 0x86:
 		case 0x87:
 		case 0x88:
+			// Stubbed suspect-gender pronouns; the DOS flag they branch
+			// on is never written and no mystery msg uses these bytes
+			// (see jumptable comment above).
+			break;
 		case 0x89:
-			// Eaten silently — see comment above.
+			// KD hint placeholder (caller handles before this point).
 			break;
 		case 0:
 			return out;
@@ -602,7 +612,7 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 	// `_DoWordWrap @ 1b66:04a7`, which advances past spaces at the
 	// start of every output line via `for (; str[last] == ' '; last++)`.
 	// ~60% of mystery-text strings carry 1-2 leading spaces in the data
-	// (verified across all CD M*.BIN files); the original WordWrap
+	// of the original WordWrap
 	// discards them, so we do the same before the text reaches
 	// `Font::wordWrapText` (which only trims at wrap-induced line
 	// boundaries, not at start-of-input or after an embedded '\n').
