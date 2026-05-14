@@ -144,6 +144,11 @@ void AtariMixerManager::init() {
 	Xbtimer(XB_TIMERA, 1<<3, 1, timerA);	// event count mode, count to '1'
 	Jenabint(MFP_TIMERA);
 
+	// route both mic channels to the ADC
+	Soundcmd(ADCINPUT, 0);
+	// enable and mix both sources (ADC and connection matrix) to the output
+	Soundcmd(ADDERIN, MATIN|ADCIN);
+
 	_samplesBuf = new uint8[_samples * _outputChannels * 2];	// always 16-bit
 
 	_mixer = new Audio::MixerImpl(_outputRate, _outputChannels == 2, _samples);
