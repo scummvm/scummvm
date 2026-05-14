@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Based on the original engine code by EA Kids / Storm Software (1994).
  *
  */
 
