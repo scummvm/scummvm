@@ -35,10 +35,6 @@
 
 namespace EEM {
 
-constexpr Common::Rect kSitePdaRect(Common::Point(35, 111), 21, 25);
-constexpr Common::Rect kSitePartnerFootMapRect(Common::Point(7, 177), 50, 23);
-constexpr Common::Rect kSitePartnerHeadHintRect(Common::Point(5, 80), 39, 30);
-
 // Masked blit using `transp` = high byte of `pic.flags` (`_Rect_Move_Mask @ 1000:03fc`).
 void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 			   int x, int y, byte transp) {
@@ -882,14 +878,14 @@ void SiteScreen::run() {
 				// Partner-head click is port-only: `_KDHelp` shortcut
 				// mirroring `_HandleNoteButton[3]` (0x0403) /
 				// `_HandleGalleryButton[3]` (0x061e). Rect = (5,80,44,110).
-				if (kSitePdaRect.contains(event.mouse.x, event.mouse.y)) {
+				if (kPdaSiteRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					_vm->setNextScreen(kScreenNotebook);
 					_vm->stopMusic();
 					return;
 				}
-				if (kSitePartnerFootMapRect.contains(event.mouse.x, event.mouse.y)) {
+				if (kPdaPartnerFootMapRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					// CD: _NextScreen=1, floppy=2.
@@ -898,7 +894,7 @@ void SiteScreen::run() {
 					_vm->stopMusic();
 					return;
 				}
-				if (kSitePartnerHeadHintRect.contains(event.mouse.x, event.mouse.y)) {
+				if (kPdaPartnerHeadHintRect.contains(event.mouse.x, event.mouse.y)) {
 					_vm->setHotspotMouseCursor(false);
 					_vm->doHelp();
 					notePartnerActivity();
@@ -1527,9 +1523,9 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
 	if (!_vm)
 		return;
-	const bool siteControl = kSitePdaRect.contains(x, y) ||
-							 kSitePartnerFootMapRect.contains(x, y) ||
-							 kSitePartnerHeadHintRect.contains(x, y);
+	const bool siteControl = kPdaSiteRect.contains(x, y) ||
+							 kPdaPartnerFootMapRect.contains(x, y) ||
+							 kPdaPartnerHeadHintRect.contains(x, y);
 	_vm->setHotspotMouseCursor(siteControl || hotspotAtPoint(siteNum, x, y) >= 0);
 }
 
