@@ -518,10 +518,6 @@ private:
 	/// ESC during intro: skip remaining opening-anim chain.
 	bool _skipIntro = false;
 
-	/// Cached notebook slot rects + clue IDs for click hit-testing.
-	Common::Array<Common::Rect> _notebookSlotRects;
-	Common::Array<uint>         _notebookSlotClues;
-
 	/// Clean BG (no partner/NPC) used by `playKdAnim` between camera-anim
 	/// cells. See `setPartnerEraseBg`.
 	Graphics::ManagedSurface _partnerEraseBg;
