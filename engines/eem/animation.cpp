@@ -27,7 +27,7 @@
 
 namespace EEM {
 
-void asmDecompress(const byte *src, uint srcSize, byte *dst, uint dstSize) {
+void decodeAnmFrameRLE(const byte *src, uint srcSize, byte *dst, uint dstSize) {
 	const byte *srcEnd = src + srcSize;
 	byte *dstEnd = dst + dstSize;
 
@@ -162,7 +162,7 @@ const byte *ANMDecoder::nextFrame() {
 		return nullptr;
 	}
 
-	asmDecompress(_packed.data(), packedSize, _buffer.data(), _buffer.size());
+	decodeAnmFrameRLE(_packed.data(), packedSize, _buffer.data(), _buffer.size());
 	_nextFrameIdx++;
 	return _buffer.data();
 }

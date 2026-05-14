@@ -36,7 +36,7 @@ namespace EEM {
  *   - u16: frame count
  *   - 12 bytes: header (height @ +2, width @ +4, rest unused)
  *   - frames*u16: packed length per frame
- *   - per frame: lengths[i] bytes of RLE delta data (asmDecompress).
+ *   - per frame: lengths[i] bytes of RLE delta data (decodeAnmFrameRLE).
  */
 class ANMDecoder {
 public:
@@ -82,9 +82,11 @@ private:
 	uint16 _nextFrameIdx = 0;
 };
 
-/// _ASM_Decompress @ 1000:0953. dst holds the previous frame; skip opcodes
-/// leave those pixels untouched (difference encoding).
-void asmDecompress(const byte *src, uint srcSize, byte *dst, uint dstSize);
+/// Decode a single ANM frame's RLE-encoded delta payload into @p dst.
+/// `dst` already holds the previous frame; skip opcodes leave those pixels
+/// untouched (difference encoding). Original symbol: `_ASM_Decompress`
+/// @ 1000:0953.
+void decodeAnmFrameRLE(const byte *src, uint srcSize, byte *dst, uint dstSize);
 
 } // End of namespace EEM
 
