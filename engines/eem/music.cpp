@@ -32,11 +32,7 @@
 
 namespace EEM {
 
-namespace {
-
 const int kMidiDriverFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
-
-} // End of anonymous namespace
 
 MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 	// _InitMIDI @ 20a2:013a — `_AIL_register_driver` against

@@ -127,7 +127,7 @@ uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
 // FUN_22dc_096c @ 22dc:096c: walks per-site dialog records at site_data[+6]
 // to skip hotspotIdx hotspots, returns _cluesFound flag for hotspot's first
 // text index.
-static bool floppyHotspotSearched(EEM::Mystery &mystery, uint siteIdx,
+bool floppyHotspotSearched(EEM::Mystery &mystery, uint siteIdx,
 								   uint hotspotIdx) {
 	const byte *site = mystery.siteData(siteIdx);
 	if (!site)

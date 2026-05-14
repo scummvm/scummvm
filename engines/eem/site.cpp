@@ -48,7 +48,7 @@ void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 // Masked top-left blit onto a locked screen surface. Clips both src and
 // dst against the screen, then delegates to copyRectToSurfaceWithKey
 // (Graphics::Surface's transparent-key blit).
-static void keyBlitToScreen(Graphics::Surface *screen, const Picture &p,
+void keyBlitToScreen(Graphics::Surface *screen, const Picture &p,
 							int x, int y) {
 	if (!screen || p.surface.empty())
 		return;
@@ -278,15 +278,15 @@ struct AnimScriptLong {
 // 0x17 (game) / 0x18 (book) / 0x19 (nancy) regardless of partner; the
 // per-partner ANI.DBD cells come from a separate entry (e.g. 0x3b for
 // Jenny's briefing).
-static const uint8 kScript17[] = {
+const uint8 kScript17[] = {
 	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 	20,21,22,23,24,25,26,27,28,29
 };
-static const uint8 kScript18[] = {
+const uint8 kScript18[] = {
 	0,1,2,3,4,5,6,7,8,8,8,8,8,8,8,8,
 	8,8,8,8,8,8,8,9,10,11,12,13,14,15
 };
-static const uint8 kScript19[] = {
+const uint8 kScript19[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	1,2,3,4,5,6,7,8,9,10,11,12
 };
@@ -295,7 +295,7 @@ static const uint8 kScript19[] = {
 // frames are the original's frame-hold mechanism (one entry per tick).
 
 // 0x1a (29be:19a4) — count-up 0..7, idle hold, repeat 1..7, idle, mirror 7..0, idle.
-static const uint8 kScript1a[] = {
+const uint8 kScript1a[] = {
 	0,1,2,3,4,5,6,7,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	1,2,3,4,5,6,7,
@@ -304,7 +304,7 @@ static const uint8 kScript1a[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 // 0x1e (29be:1a40) — slow walk-stutter with idle tail (76 entries).
-static const uint8 kScript1e[] = {
+const uint8 kScript1e[] = {
 	0,1,2,3,3,3,3,4,4,3,4,4,4,4,4,3,
 	5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,
 	5,5,5,5,5,5,6,5,6,5,7,7,7,7,7,7,
@@ -313,7 +313,7 @@ static const uint8 kScript1e[] = {
 };
 // 0x1f (29be:1ada) — 0..5, idle, 0..5, idle, 6..8 alternation,
 // idle (50 entries).
-static const uint8 kScript1f[] = {
+const uint8 kScript1f[] = {
 	0,1,2,3,4,5,
 	0,0,0,0,
 	1,2,3,4,5,
@@ -324,13 +324,13 @@ static const uint8 kScript1f[] = {
 	0,0,0,0,0
 };
 // 0x20 (29be:1b40) — count-up 0..33 (34 frames).
-static const uint8 kScript20[] = {
+const uint8 kScript20[] = {
 	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 	20,21,22,23,24,25,26,27,28,29,30,31,32,33
 };
 // 0x22 (29be:1ba4) — long held-frame walker 0..22 with idle tail
 // (115 entries; most frames held 4-7 ticks each).
-static const uint8 kScript22[] = {
+const uint8 kScript22[] = {
 	0,
 	1,1,1,1,1,
 	2,2,2,2,2,
@@ -358,7 +358,7 @@ static const uint8 kScript22[] = {
 };
 // 0x23 (29be:1c8c) — 29 entries: 0, 6 holds of 1, count-up 2..4,
 // down-up gesture, 5 idle frames.
-static const uint8 kScript23[] = {
+const uint8 kScript23[] = {
 	0,1,1,1,1,1,1,
 	2,3,4,3,2,
 	5,5,5,
@@ -367,7 +367,7 @@ static const uint8 kScript23[] = {
 };
 // 0x24 (29be:1cc8) — bell-curve hold (58 entries): 0,0, 1,1, 2,2,
 // 3 held for 26 ticks, mirror back, idle.
-static const uint8 kScript24[] = {
+const uint8 kScript24[] = {
 	0,0,1,1,2,2,
 	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
 	2,2,1,1,
@@ -375,7 +375,7 @@ static const uint8 kScript24[] = {
 };
 // 0x28 (29be:1d7e) — gentle hold 0..3 with long hold on 3, mirror
 // back, idle (45 entries).
-static const uint8 kScript28[] = {
+const uint8 kScript28[] = {
 	0,1,1,2,2,
 	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
 	2,2,1,1,
@@ -383,7 +383,7 @@ static const uint8 kScript28[] = {
 };
 // 0x29 (29be:1dda) — paired-step count-up 0..21 plus idle
 // (58 entries).
-static const uint8 kScript29[] = {
+const uint8 kScript29[] = {
 	0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,
 	11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,
 	20,20,21,21,
@@ -391,14 +391,14 @@ static const uint8 kScript29[] = {
 };
 // 0x2b (29be:1e5c) — count-up 0..11 with each frame held 4 ticks
 // (48 entries).
-static const uint8 kScript2b[] = {
+const uint8 kScript2b[] = {
 	0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,
 	4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,
 	8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11
 };
 // 0x2c (29be:1ebe) — alternation walk 0..19 with idle tail
 // (54 entries).
-static const uint8 kScript2c[] = {
+const uint8 kScript2c[] = {
 	0,1,2,3,4,5,
 	0,
 	6,7,8,9,10,10,10,10,10,10,
@@ -410,7 +410,7 @@ static const uint8 kScript2c[] = {
 };
 // 0x2d (29be:1f2c) — count-up 0..11 with each frame held 8 ticks
 // (96 entries).
-static const uint8 kScript2d[] = {
+const uint8 kScript2d[] = {
 	0,0,0,0,0,0,0,0,
 	1,1,1,1,1,1,1,1,
 	2,2,2,2,2,2,2,2,
@@ -426,7 +426,7 @@ static const uint8 kScript2d[] = {
 };
 // 0x30 (29be:1fee) — 0,0, count-up 1..19, idle, mirror down, extra
 // idle (86 entries).
-static const uint8 kScript30[] = {
+const uint8 kScript30[] = {
 	0,0,
 	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 	0,0,0,0,0,0,0,0,0,0,
@@ -435,7 +435,7 @@ static const uint8 kScript30[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 // 0x31 (29be:209c) — paired-step idle alternations (57 entries).
-static const uint8 kScript31[] = {
+const uint8 kScript31[] = {
 	0,0,0,1,1,1,
 	0,0,0,1,1,1,
 	2,2,2,3,3,3,
@@ -450,7 +450,7 @@ static const uint8 kScript31[] = {
 };
 // 0x36 (29be:2110) — 0..8 forward, 1..8 forward, frame 1 held 20
 // ticks, 8..0 mirror, idle tail (60 entries).
-static const uint8 kScript36[] = {
+const uint8 kScript36[] = {
 	0,1,2,3,4,5,6,7,8,
 	1,2,3,4,5,6,7,8,
 	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -484,19 +484,19 @@ const AnimScriptLong kAnimScriptsLong[] = {
 // never calls the switchers; floppy calls them from `_DoSiteLoop_Floppy`
 // (via `_Switch2Patient` / `_Switch2Impatient`). We intentionally enable
 // the same switch for both builds.
-static const uint8 kPatientSequence[]   = { 0,0,0,0,0,0,0,0,0,2 };
-static const uint8 kImpatientSequence[] = { 0,1,0,1,0,1,0,1,2,1 };
+const uint8 kPatientSequence[]   = { 0,0,0,0,0,0,0,0,0,2 };
+const uint8 kImpatientSequence[] = { 0,1,0,1,0,1,0,1,2,1 };
 
 // Test-shortened impatience delay. The original stores an hour-rounded
 // wall-clock value via DOS gettime; this keeps the same reset/switch
 // behavior but makes the feature observable during normal testing.
-static const uint32 kImpatienceDelayMs = 60 * 1000;
+const uint32 kImpatienceDelayMs = 60 * 1000;
 
 struct AnimScriptRef {
 	const uint8 *frames;
 	uint16 len;
 };
-static AnimScriptRef findAnimScript(uint16 seqnum) {
+AnimScriptRef findAnimScript(uint16 seqnum) {
 	for (uint i = 0; i < ARRAYSIZE(kAnimScripts); i++) {
 		if (kAnimScripts[i].seqnum == seqnum) {
 			AnimScriptRef r;
@@ -525,9 +525,9 @@ static AnimScriptRef findAnimScript(uint16 seqnum) {
 // (Borland C `struct time` memory order is min, hour, hund, sec.)
 // `+ 0xe` is 14 centiseconds → ~140 ms per frame, matching
 // `_CheckFrameRate @ 1a35:0204`.
-static const uint kFramePeriodMs = 140;
+const uint kFramePeriodMs = 140;
 
-static uint frameFromScriptAtTick(const uint8 *frames, uint len,
+uint frameFromScriptAtTick(const uint8 *frames, uint len,
 								  uint numFrames, uint32 tickMs) {
 	if (!frames || len == 0)
 		return numFrames > 0 ? (uint)((tickMs / kFramePeriodMs) % numFrames) : 0;
@@ -639,7 +639,7 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 // `_SmallMapWaitSeq @ 29be:1548`). `partnerFrameAtTick` can't model
 // that swap on its own (it always wraps on the same script), hence
 // this helper.
-static uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
+uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
 									   const uint8 *waitSeq, uint waitSeqLen,
 									   uint numFrames, uint32 elapsedMs) {
 	const uint tick = elapsedMs / kFramePeriodMs;
