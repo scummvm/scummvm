@@ -356,6 +356,9 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
+	if (!_scrollBar->isVisible())
+		return;
+
 	_fluidScroller->handleMouseWheel(direction);
 }
 

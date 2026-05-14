@@ -53,7 +53,7 @@ void ScrollContainerWidget::init() {
 }
 
 void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
-	if (!isEnabled())
+	if (!isEnabled() || !_verticalScroll->isVisible())
 		return;
 
 	_fluidScroller->handleMouseWheel(direction);
@@ -77,7 +77,7 @@ void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickC
 }
 
 void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
-	if (!_isMouseDown || _mouseDownY == y)
+	if (!_isMouseDown || _mouseDownY == y || !_verticalScroll->isVisible())
 		return;
 
 	if (!_isDragging && ABS(y - _mouseDownStartY) > kDragThreshold)

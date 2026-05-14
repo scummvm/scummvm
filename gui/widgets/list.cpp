@@ -460,11 +460,14 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
+	if (!_scrollBar->isVisible())
+		return;
+
 	_fluidScroller->handleMouseWheel(direction);
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {
-	if (!isEnabled())
+	if (!isEnabled() || !_scrollBar->isVisible())
 		return;
 
 	if (_isMouseDown && _dragLastY != 0) {

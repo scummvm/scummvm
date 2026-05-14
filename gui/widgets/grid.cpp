@@ -1023,6 +1023,9 @@ void GridWidget::selectVisualRange(int startPos, int endPos) {
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
+	if (!_scrollBar->isVisible())
+		return;
+
 	_fluidScroller->handleMouseWheel(direction);
 }
 
@@ -1058,7 +1061,7 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void GridWidget::handleMouseMoved(int x, int y, int button) {
-	if (!_isMouseDown)
+	if (!_isMouseDown || !_scrollBar->isVisible())
 		return;
 
 	if (!_isDragging && ABS(y - _dragStartY) > kDragThreshold) {
