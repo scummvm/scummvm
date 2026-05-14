@@ -399,7 +399,7 @@ void QuizPuzzle::executeNew() {
 						bool correct = checkAnswerForCurrentBox();
 						if (correct) {
 							_internalState = kStartCorrect;
-						} else if ((uint16)text.size() > _boxMaxLen[_currentBox]) {
+						} else if ((uint16)text.size() >= _boxMaxLen[_currentBox]) {
 							_internalState = kStartWrong;
 						}
 					}
