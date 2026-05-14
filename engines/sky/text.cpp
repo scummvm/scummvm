@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
+#include "common/config-manager.h"
 
 #include "sky/disk.h"
 #include "sky/logic.h"
@@ -514,9 +515,8 @@ void Text::initHuffTree() {
 		_huffTree = _huffTree_00368;
 		break;
 	case 372:
-		_huffTree = _huffTree_00372;
-		break;
 	case 400:
+		_huffTree = _huffTree_00372;
 		break;
 	default:
 		error("Unknown game version %d", SkyEngine::_systemVars->gameVersion);

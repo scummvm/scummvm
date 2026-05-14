@@ -25,6 +25,9 @@
 
 #include "common/scummsys.h"
 #include "sky/skydefs.h"
+#include "sky/struc.h"
+
+#include "graphics/surface.h"
 
 class OSystem;
 
@@ -39,6 +42,7 @@ class SkyEngine;
 class SkyCompact;
 struct Compact;
 struct DataFileHeader;
+struct Icon;
 
 #define SCROLL_JUMP		16
 #define VGA_COLORS		256
@@ -46,12 +50,30 @@ struct DataFileHeader;
 
 #define FORE 1
 #define BACK 0
+#define NUM_INV_ANIMS	44	//unique textures
+#define NUM_INV_ICONS	20	//(max) number of on-screen items
+#define NUM_PROXIMITY_ICONS 16	//(max) number of proximity icons
 
 typedef struct {
 	uint16 yCood;
 	Compact *compact;
 	DataFileHeader *sprite;
 } StSortList;
+
+enum UIIcon : uint8{
+	UI_ICON_INV = 0,
+	UI_ICON_LOOK,
+	UI_ICON_USE,
+	UI_ICON_HAND,
+	UI_ICON_MOUTH,
+	UI_ICON_HELP,
+	UI_ICON_OPTIONS,
+	UI_ICON_UP,
+	UI_ICON_DOWN,
+	UI_ICON_LEFT,
+	UI_ICON_RIGHT,
+	NUM_UI_ICONS
+};
 
 class Screen {
 public:
@@ -92,6 +114,28 @@ public:
 
 	void paintBox(uint16 x, uint16 y);
 	void showGrid(uint8 *gridBuf);
+	Graphics::Surface _screen32;
+	Graphics::Surface _iconSurface;
+	void renderFinalFrame();
+	void update32BitScreen();
+	Icon _uiIcon[NUM_UI_ICONS];
+	Icon _proximityIcon[NUM_PROXIMITY_ICONS];
+	Icon _invIcon[NUM_INV_ICONS];
+
+	void setIcon(int idx, int x, int y);
+	void drawIbassIcon();
+	void initIbassIcon(int idx, const char *filename);
+	void clearIbassIcon(int idx, bool fade);
+	void clearAllIbassIcons(bool fade);
+
+	bool isUIOpen();
+	void showInventory(int x1, int y1, int x2, int y2);
+	void hideInventory(void);
+
+	void setProximityIcon(int idx, int x, int y, float alpha, int frame);
+	void clearAllProximityIcons(bool fade = true);
+	void clearProximityIcon(int idx, bool fade = true);
+	void setProximityNotAnimate(int idx);
 
 private:
 	OSystem *_system;

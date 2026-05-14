@@ -1063,7 +1063,7 @@ void Sound::loadSection(uint8 pSection) {
 	} else
 		asmOfs = 0x7E;
 
-	if (ConfMan.get("gameid") != "ibass") {
+	if (!SkyEngine::_isIbass()) {
 		if ((_soundData[asmOfs] != 0x3C) || (_soundData[asmOfs + 0x27] != 0x8D) ||
 			(_soundData[asmOfs + 0x28] != 0x1E) || (_soundData[asmOfs + 0x2F] != 0x8D) ||
 			(_soundData[asmOfs + 0x30] != 0x36))

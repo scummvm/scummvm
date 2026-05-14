@@ -99,6 +99,7 @@ public:
 
 	static bool isDemo();
 	static bool isCDVersion();
+	static bool _isIbass();
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
@@ -108,6 +109,14 @@ public:
 		return Common::String::format("SKY-VM.%03d", slot);
 	}
 
+	Screen *getScreen() {
+		return _skyScreen;
+	}
+
+	Control *getControl() {
+		return _skyControl;
+	}
+
 	static void *fetchItem(uint32 num);
 	static void *_itemList[300];
 	static SystemVars *_systemVars;
@@ -115,6 +124,9 @@ public:
 	uint32 _chineseTraditionalOffsets[8];
 	char *_chineseTraditionalBlock;
 	Graphics::Big5Font *_big5Font;
+
+	bool canSaveGameStateCurrently();
+	int	giveCurrentScreen();
 
 protected:
 	// Engine APIs

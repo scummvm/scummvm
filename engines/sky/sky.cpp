@@ -170,6 +170,10 @@ void SkyEngine::handleKey() {
 			break;
 
 		case kSkyActionOpenControlPanel:
+			if (SkyEngine::_isIbass()) {
+				openMainMenuDialog();
+				break;
+			}
 			_skyControl->doControlPanel();
 			break;
 
@@ -212,12 +216,13 @@ Common::Error SkyEngine::go() {
 		// Clear pastIntro here (set to false) explicilty
 		// It should be false already, but better to ensure it
 		_systemVars->pastIntro = false;
-		if (_systemVars->gameVersion > 272) { // don't do intro for floppydemos
+		if (_systemVars->gameVersion > 272 && ConfMan.get("gameid") != "ibass") { // don't do intro for floppydemos
 			Intro *skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			bool floppyIntro = ConfMan.getBool("alt_intro");
 			introSkipped = !skyIntro->doIntro(floppyIntro);
 			delete skyIntro;
-		}
+		} else if (SkyEngine::_isIbass())
+			introSkipped = true;
 
 		if (!shouldQuit()) {
 			_skyScreen->clearScreen(true);
@@ -345,11 +350,8 @@ bool SkyEngine::loadChineseTraditional() {
 }
 
 Common::Error SkyEngine::init() {
-	if (ConfMan.get("gameid") == "ibass") {
-		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		initGraphics(640, 480, &format);
-	} else
-		initGraphics(320, 200);
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(320, 200, &format);
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
@@ -588,6 +590,12 @@ bool SkyEngine::isCDVersion() {
 	default:
 		error("Unknown game version %d", _systemVars->gameVersion);
 	}
+}
+
+bool SkyEngine::_isIbass() {
+	if (ConfMan.get("gameid") == "ibass")
+		return true;
+	return false;
 }
 
 } // End of namespace Sky
