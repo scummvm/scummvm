@@ -178,21 +178,13 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 	ser.skip(1, kGameTypeNancy1);
 
+	ser.skip(2, kGameTypeNancy10);
+
 	uint16 numVideoDescs = 0;
 	ser.syncAsUint16LE(numVideoDescs);
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
 		_videoDescs[i].readData(stream);
-	}
-
-	if (g_nancy->getGameType() >= kGameTypeNancy10) {
-		// TODO: Hotspot data
-		uint32 num;
-		ser.syncAsUint32LE(num);
-		Common::Array<Common::Rect> rects;
-		readRectArray(stream, rects, 4);
-
-		stream.skip(16);
 	}
 }
 
