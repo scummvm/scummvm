@@ -222,7 +222,7 @@ void EEMEngine::applyStartupTestOverrides() {
 
 Common::Error EEMEngine::run() {
 	// _SetMode13X @ 1000:0358 — VGA mode 13h.
-	initGraphics(320, 200);
+	initGraphics(kScreenWidth, kScreenHeight);
 
 	if (!openArchives())
 		return Common::Error(Common::kReadingFailed, "EEM archive open failed");
@@ -760,8 +760,8 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 
 void EEMEngine::blitAt(const Picture &pic, int x, int y) {
 	// Clip against the 320x200 frame buffer.
-	const int w = MIN<int>(pic.surface.w, 320 - x);
-	const int h = MIN<int>(pic.surface.h, 200 - y);
+	const int w = MIN<int>(pic.surface.w, kScreenWidth - x);
+	const int h = MIN<int>(pic.surface.h, kScreenHeight - y);
 	if (w <= 0 || h <= 0)
 		return;
 	g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,

@@ -130,8 +130,8 @@ void blitMaskedToScreen(const Picture &p, int x, int y) {
 }
 
 void blitRawToScreen(const Picture &p, int x, int y) {
-	const int w = MIN<int>(p.surface.w, 320 - x);
-	const int h = MIN<int>(p.surface.h, 200 - y);
+	const int w = MIN<int>(p.surface.w, kScreenWidth - x);
+	const int h = MIN<int>(p.surface.h, kScreenHeight - y);
 	if (x < 0 || y < 0 || w <= 0 || h <= 0)
 		return;
 
@@ -219,18 +219,18 @@ void EEMEngine::doChoosePartner() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				_partner = (ev.mouse.x >= 160) ? 0 : 1;
+				_partner = (ev.mouse.x >= 160) ? kPartnerJake : kPartnerJenny;
 				debugC(1, kDebugGeneral, "Partner picked: %s",
-					   _partner == 0 ? "Jake" : "Jennifer");
+					   _partner == kPartnerJake ? "Jake" : "Jennifer");
 				done = true;
 				break;
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
-					_partner = 1; done = true; break;
+					_partner = kPartnerJenny; done = true; break;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_partner = 0; done = true; break;
+					_partner = kPartnerJake; done = true; break;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_RETURN ||
 					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -255,7 +255,7 @@ void EEMEngine::doChoosePartner() {
 			_audio->playFloppyVoiceSlot(0x14, _partner);
 		} else {
 			_audio->playVoc(Common::Path(
-				(_partner == 0) ? "JAKE.VOC" : "JEN.VOC"));
+				(_partner == kPartnerJake) ? "JAKE.VOC" : "JEN.VOC"));
 		}
 		_audio->waitForVoiceDone();
 	}
@@ -306,8 +306,8 @@ void EEMEngine::doInitClues() {
 	if (haveBriefingBg)
 		blitAt(bg, 0, 0);
 
-	const uint gameAni = _partner == 0 ? 0x17 : 0x3b;
-	const uint bookAni = _partner == 0 ? 0x18 : 0x3c;
+	const uint gameAni = _partner == kPartnerJake ? 0x17 : 0x3b;
+	const uint bookAni = _partner == kPartnerJake ? 0x18 : 0x3c;
 	Animation game, book, nancy;
 	const bool haveGame  = _aniArchive.loadAnimation(gameAni, game) && !game.empty();
 	const bool haveBook  = _aniArchive.loadAnimation(bookAni, book) && !book.empty();
@@ -384,7 +384,7 @@ void EEMEngine::doInitClues() {
 	// clearing registered animations. Width is in mode-X cols (0x28 = 160px).
 	// Intentionally drops the right-side game anim; _PlayInSequence redraws
 	// that character over a clean BG next.
-	Graphics::ManagedSurface briefingBase(320, 200,
+	Graphics::ManagedSurface briefingBase(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	briefingBase.clear();
 	if (haveBriefingBg) {
@@ -442,7 +442,7 @@ void EEMEngine::doInitClues() {
 	//          caseType 3 -> 0x3d @ (0xcd, 0x6c)
 	uint16 seqAni = 0xFFFF;
 	uint16 seqY   = 0x6c;
-	if (_partner == 0) {
+	if (_partner == kPartnerJake) {
 		switch (caseType) {
 		case 1:
 			seqAni = 0x38;
@@ -482,7 +482,7 @@ void EEMEngine::doInitClues() {
 				const Picture &fr = seq[frame];
 				g_system->copyRectToScreen(briefingBase.getPixels(),
 										   briefingBase.pitch, 0, 0,
-										   320, 200);
+										   kScreenWidth, kScreenHeight);
 				// _PlayInSequence @ 172b:2d35-2d50:
 				//   dstX = sx - cell[+0x8]   ; signed X anchor (miscflags)
 				//   dstY = sy - cell[+0x6]   ; signed Y anchor (rowoff)
@@ -667,7 +667,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		return;
 
 	// Snapshot BG so per-entry character pics don't stack.
-	Graphics::ManagedSurface bg(320, 200,
+	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.clear();
 	{
@@ -692,7 +692,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	// bubText1 != -1; otherwise falls back to partner 0 fields entirely.
 	// Partner 0 always uses field 0.
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
-		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
+		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, kScreenWidth, kScreenHeight);
 		const byte *c = clueBlock + 4 + i * 62;
 
 		// _DisplayClue @ 2404:0635-064b: _DoKDAnim(num) runs before the
@@ -702,10 +702,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			playKdAnim((uint16)kdAnimNum);
 			// _UpdateAnimations @ 172b:09c1 reactivates the wait anim.
 			g_system->copyRectToScreen(bg.getPixels(), bg.pitch,
-									   0, 0, 320, 200);
+									   0, 0, kScreenWidth, kScreenHeight);
 		}
 
-		const bool useP1 = (_partner == 1) &&
+		const bool useP1 = (_partner == kPartnerJenny) &&
 			(READ_LE_UINT16(c + 10) != 0xFFFF);
 		const uint partner = useP1 ? 1 : 0;
 		const uint16 textOff = READ_LE_UINT16(c + 8 + partner * 2);
@@ -726,7 +726,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		if (charPicId != 0 && charPicId != 0xFFFF) {
 			Picture charPic;
 			if (_picsArchive.getPicture(charPicId, charPic) &&
-				charX < 320 && charY < 200) {
+				charX < kScreenWidth && charY < kScreenHeight) {
 				blitMaskedToScreen(charPic, charX, charY);
 			}
 		}
@@ -746,20 +746,20 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			Graphics::Surface *screen = g_system->lockScreen();
 			if (!screen)
 				break;
-			Graphics::ManagedSurface scratch(320, 200,
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(*screen);
 			g_system->unlockScreen();
 
 			int textX = bubX;
 			int textY = bubY;
-			int textW = MIN<int>(320 - bubX, 200);
+			int textW = MIN<int>(kScreenWidth - bubX, 200);
 			int copyY = bubY;
 			int copyH = _font.getFontHeight() * 4 + 8;
 
 			if (haveBalloon) {
-				const int bw = MIN<int>(balloon.surface.w, 320 - bubX);
-				const int bh = MIN<int>(balloon.surface.h, 200 - bubY);
+				const int bw = MIN<int>(balloon.surface.w, kScreenWidth - bubX);
+				const int bh = MIN<int>(balloon.surface.h, kScreenHeight - bubY);
 				// _AddPicBackground: transparent colour = pic->miscflags >> 8.
 				const byte transp = (byte)(balloon.flags >> 8);
 				// _GetBalloon @ 172b:1d7d mirrors horizontally when
@@ -785,8 +785,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				copyH = bh;
 			} else {
 				// No balloon: clear band.
-				const Common::Rect band(0, bubY, 320,
-					MIN<int>(bubY + copyH, 200));
+				const Common::Rect band(0, bubY, kScreenWidth,
+					MIN<int>(bubY + copyH, kScreenHeight));
 				scratch.fillRect(band, 0);
 				copyY = bubY;
 			}
@@ -797,8 +797,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				MAX<int>(8, textW), text, 0);
 
 			g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
-				scratch.pitch, 0, copyY, 320,
-				MIN<int>(copyH, 200 - copyY));
+				scratch.pitch, 0, copyY, kScreenWidth,
+				MIN<int>(copyH, kScreenHeight - copyY));
 			g_system->updateScreen();
 		}
 
@@ -814,7 +814,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			const uint16 voiceJenny = READ_LE_UINT16(c + 0x18);
 			if (voiceJenny != 0 && voiceJenny != 0xFFFF) {
 				const uint16 voiceJake = READ_LE_UINT16(c + 0x1a);
-				const uint16 voice = (_partner == 0) ? voiceJake : voiceJenny;
+				const uint16 voice = (_partner == kPartnerJake) ? voiceJake : voiceJenny;
 				if (voice != 0 && voice != 0xFFFF)
 					_audio->spoolSound((uint)(voice - 1));
 			}
@@ -937,7 +937,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 		return;
 
 	// Snapshot BG for between-bubble restores.
-	Graphics::ManagedSurface bg(320, 200,
+	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
 		Graphics::Surface *screen = g_system->lockScreen();
@@ -1010,7 +1010,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			const uint32 noteAbs = notesBase + (uint32)idx * 7;
 			if (noteAbs + 6 > dsz)
 				continue;
-			const uint16 textOff = (_partner == 0)
+			const uint16 textOff = (_partner == kPartnerJake)
 				? READ_LE_UINT16(notes + idx * 7 + 2)
 				: READ_LE_UINT16(notes + idx * 7 + 4);
 			if (textOff >= dsz)
@@ -1074,7 +1074,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			const uint32 noteAbs = notesBase + (uint32)idx * 7;
 			if (noteAbs + 6 > dsz)
 				break;
-			const uint16 textOff = (_partner == 0)
+			const uint16 textOff = (_partner == kPartnerJake)
 				? READ_LE_UINT16(notes + idx * 7 + 2)
 				: READ_LE_UINT16(notes + idx * 7 + 4);
 			if (textOff >= dsz)
@@ -1088,7 +1088,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 				parseString(raw, _playerName, _partner);
 
 			// Render this text page.
-			Graphics::ManagedSurface scratch(320, 200,
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(*bg.surfacePtr());
 
@@ -1163,7 +1163,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			}
 
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, 320, 200);
+									   0, 0, kScreenWidth, kScreenHeight);
 			g_system->updateScreen();
 
 			if (waitNeeded) {
@@ -1230,7 +1230,7 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		return;
 	// Snapshot clean site BG and restore between main + continuation calls
 	// so each displayFloppyDialogRecords sees a bubble-free background.
-	Graphics::ManagedSurface siteBG(320, 200,
+	Graphics::ManagedSurface siteBG(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
 		Graphics::Surface *screen = g_system->lockScreen();
@@ -1263,7 +1263,7 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		return;
 	// Wipe main bubble so the continuation chain snapshots a clean BG.
 	g_system->copyRectToScreen(siteBG.getPixels(), siteBG.pitch,
-							   0, 0, 320, 200);
+							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 	// _DisplayDialogContinuations_Floppy @ 1652:006c: lastIndicator=0
 	// means no indicator on the final continuation.
@@ -1272,7 +1272,7 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 
 bool EEMEngine::areYouSure() {
 	Graphics::Surface *screen = g_system->lockScreen();
-	Graphics::ManagedSurface saved(320, 200,
+	Graphics::ManagedSurface saved(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	if (screen) {
 		saved.simpleBlitFrom(*screen);
@@ -1299,8 +1299,8 @@ bool EEMEngine::areYouSure() {
 	int noY = 0;
 
 	if (haveOriginalDialog) {
-		const int x = (320 - dialogPic.surface.w) / 2;
-		const int y = (200 - dialogPic.surface.h) / 2;
+		const int x = (kScreenWidth - dialogPic.surface.w) / 2;
+		const int y = (kScreenHeight - dialogPic.surface.h) / 2;
 		yesX = x + 0x0c;
 		yesY = y + 0x23;
 		noX = x + 0x60;
@@ -1315,7 +1315,7 @@ bool EEMEngine::areYouSure() {
 		noRect = Common::Rect(dlg.left + 100, dlg.top + 34,
 							  dlg.left + 160, dlg.top + 54);
 
-		Graphics::ManagedSurface scratch(320, 200,
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(saved);
 		scratch.fillRect(dlg, 0);
@@ -1323,14 +1323,14 @@ bool EEMEngine::areYouSure() {
 		_font.drawString(&scratch,
 			isSpanish() ? "Estas seguro que quieres salir?"
 						: "Are you sure you want to quit?",
-			dlg.left + 8, dlg.top + 8, 320, 0xF);
+			dlg.left + 8, dlg.top + 8, kScreenWidth, 0xF);
 		_font.drawString(&scratch,
 			isSpanish() ? "S - Si" : "Y - Yes",
-			dlg.left + 16, dlg.top + 36, 320, 0xF);
+			dlg.left + 16, dlg.top + 36, kScreenWidth, 0xF);
 		_font.drawString(&scratch, "N - No", dlg.left + 100,
-						 dlg.top + 36, 320, 0xF);
+						 dlg.top + 36, kScreenWidth, 0xF);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
+								   0, 0, kScreenWidth, kScreenHeight);
 	} else {
 		return true;
 	}
@@ -1384,7 +1384,7 @@ bool EEMEngine::areYouSure() {
 		g_system->delayMillis(15);
 	}
 
-	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, 320, 200);
+	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 	return result;
 }
