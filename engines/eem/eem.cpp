@@ -96,7 +96,7 @@ const byte kCursorInteractivePalette[] = {
 	0xFF, 0xFF, 0xFF
 };
 
-static void fadeCurrentPaletteToBlack(uint delayMs = 8) {
+void fadeCurrentPaletteToBlack(uint delayMs = 8) {
 	byte start[kPalSize];
 	byte stepPal[kPalSize];
 	g_system->getPaletteManager()->grabPalette(start, 0, 256);
@@ -111,7 +111,7 @@ static void fadeCurrentPaletteToBlack(uint delayMs = 8) {
 	}
 }
 
-static void fadePaletteFromBlack(const byte *target, uint delayMs = 8) {
+void fadePaletteFromBlack(const byte *target, uint delayMs = 8) {
 	byte stepPal[kPalSize];
 
 	for (uint step = 1; step <= 16; step++) {
@@ -124,7 +124,7 @@ static void fadePaletteFromBlack(const byte *target, uint delayMs = 8) {
 	}
 }
 
-static void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
+void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 	byte palette[kPalSize];
 	bool used[256];
 	memset(used, 0, sizeof(used));
@@ -170,7 +170,7 @@ static void setInteractiveCursorPalette(const Picture &cursor, byte transparent)
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 }
 
-static void installMouseCursor(DBDArchive &pics, bool interactive) {
+void installMouseCursor(DBDArchive &pics, bool interactive) {
 	Picture cursor;
 	if (pics.getPicture(kPicMousePointer, cursor) && !cursor.surface.empty()) {
 		const byte transparent = (byte)(cursor.flags >> 8);
@@ -810,7 +810,7 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 //   fpal[start] = saved
 // If `show`, upload `end - start` entries (fpal[start..end-1]) — note that
 // fpal[end] is rotated in memory but intentionally not uploaded each tick.
-static void openColorCycle(byte *fpal, uint8 start, uint8 end, bool show) {
+void openColorCycle(byte *fpal, uint8 start, uint8 end, bool show) {
 	if (end <= start)
 		return;
 	const byte savedR = fpal[end * 3 + 0];

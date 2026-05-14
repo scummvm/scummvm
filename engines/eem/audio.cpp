@@ -186,7 +186,7 @@ void AudioPlayer::playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
 // Filename FAR-ptr arrays at 2608:0f0e (Jake) and 2608:0f76 (Jenny), each
 // 26 * FAR-ptr to a NUL-terminated `*.voc` name. Slots align across partners,
 // e.g. 12 = PHONESL.VOC, 20 = partner intro, 25 = THUNDER.VOC.
-static const char *const kFloppyJakeVoiceTable[26] = {
+const char *const kFloppyJakeVoiceTable[26] = {
 	"DING.VOC",       "M-0083SL.VOC", "M-0085SL.VOC", "NEWSCAN.VOC",
 	"M-0089SL.VOC",   "M-0091SL.VOC", "M-0092SL.VOC", "NEWSSHRT.VOC",
 	"M-0096SL.VOC",   "M-0102SL.VOC", "M-0104SL.VOC", "M-0107SL.VOC",
@@ -195,7 +195,7 @@ static const char *const kFloppyJakeVoiceTable[26] = {
 	"M-0113SL.VOC",   "B-0006SL.VOC", "B-0003SL.VOC", "B-0004SL.VOC",
 	"M-0163SL.VOC",   "THUNDER.VOC",
 };
-static const char *const kFloppyJennyVoiceTable[26] = {
+const char *const kFloppyJennyVoiceTable[26] = {
 	"DING.VOC",       "F-0194SL.VOC", "F-0191SL.VOC", "NEWSCAN.VOC",
 	"F-0187SL.VOC",   "F-0184SL.VOC", "F-0181SL.VOC", "NEWSSHRT.VOC",
 	"F-0177SL.VOC",   "F-0170SL.VOC", "F-0168SL.VOC", "F-0166SL.VOC",

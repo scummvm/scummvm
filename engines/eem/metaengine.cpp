@@ -31,7 +31,7 @@
 
 namespace EEM {
 
-static const ADExtraGuiOptionsMap optionsList[] = {
+const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_HIDE_HIGHLIGHT_BOXES,
 		{
