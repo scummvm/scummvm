@@ -61,8 +61,10 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 	_filmLoopFrame = 0;
 
 	_visible = true;
-	_dirty = true;
+	_widgetDirty = true;
+	_needsDraw = false;
 	_hideFromStage = false;
+	_lastTrail = false;
 
 	if (sp) {
 		_startFrame = sp->_spriteInfo.startFrame;
@@ -95,7 +97,7 @@ Channel& Channel::operator=(const Channel &channel) {
 	_filmLoopFrame = channel._filmLoopFrame;
 
 	_visible = channel._visible;
-	_dirty = channel._dirty;
+	_widgetDirty = channel._widgetDirty;
 	_hideFromStage = channel._hideFromStage;
 
 	_startFrame = channel._startFrame;
@@ -281,7 +283,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	if (!nextSprite)
 		return false;
 
-	bool isDirtyFlag = _dirty ||
+	bool isDirtyFlag = _widgetDirty ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
 	if (_sprite && !_sprite->_puppet && !_sprite->_autoPuppet) {
@@ -483,6 +485,7 @@ void Channel::setCast(CastMemberID memberID) {
 
 	// Based on Director in a Nutshell, page 15
 	_sprite->setAutoPuppet(kAPCast, true);
+	setNeedsDraw();
 }
 
 void Channel::setClean(Sprite *nextSprite, bool partial) {
@@ -527,7 +530,7 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	if (_stopTime && (!_sprite->_cast || (_sprite->_cast && _sprite->_cast->_type != kCastDigitalVideo)))
 		_stopTime = 0;
 
-	_dirty = false;
+	_widgetDirty = false;
 }
 
 void Channel::setStretch(bool enabled) {
@@ -535,8 +538,7 @@ void Channel::setStretch(bool enabled) {
 		// when the stretch flag is manually disabled,
 		// revert whatever dimensions the sprite has to
 		// the default in the cast
-		g_director->getCurrentWindow()->addDirtyRect(getBbox());
-		_dirty = true;
+		setDirty();
 
 		if (_sprite->_cast) {
 			Common::Rect bbox = _sprite->_cast->getBbox();
@@ -561,7 +563,7 @@ void Channel::updateTextCast() {
 		if (!textWidget->getFixDims() && (_sprite->_width != _widget->_dims.width() || _sprite->_height != _widget->_dims.height())) {
 			_sprite->_width = _widget->_dims.width();
 			_sprite->_height = _widget->_dims.height();
-			g_director->getCurrentWindow()->addDirtyRect(_widget->_dims);
+			setDirty();
 		}
 	}
 }
@@ -655,6 +657,10 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		_startFrame = _sprite->_spriteInfo.startFrame;
 		_endFrame = _sprite->_spriteInfo.endFrame;
 	}
+}
+
+void Channel::setDirty() {
+	_widgetDirty = true;
 }
 
 void Channel::setPosition(int x, int y, bool force) {

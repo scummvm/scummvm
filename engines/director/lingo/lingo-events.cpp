@@ -156,7 +156,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 					_currentHiliteChannelId = event.channelId;
 					g_director->_wm->_hilitingWidget = true;
 					g_director->getCurrentWindow()->setDirty(true);
-					g_director->getCurrentWindow()->addDirtyRect(_score->_channels[_currentHiliteChannelId]->getBbox());
+					_score->_channels[_currentHiliteChannelId]->setDirty();
 				}
 
 				CastMember *cast = getCastMember(_score->_channels[event.channelId]->_sprite->_castId);
@@ -187,7 +187,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 		} else if ((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) {
 			if (_currentHiliteChannelId && _score->_channels[_currentHiliteChannelId]) {
 				g_director->getCurrentWindow()->setDirty(true);
-				g_director->getCurrentWindow()->addDirtyRect(_score->_channels[_currentHiliteChannelId]->getBbox());
+				_score->_channels[_currentHiliteChannelId]->setDirty();
 			}
 			g_director->_wm->_hilitingWidget = false;
 

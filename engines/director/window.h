@@ -109,6 +109,7 @@ public:
 	~Window();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
+	void renderChannel(Channel *channel, const Common::Rect &rect, Graphics::ManagedSurface *blitTo = nullptr, bool invert = false);
 	void invertChannel(Channel *channel, const Common::Rect &destRect);
 
 	bool needsAppliedColor(DirectorPlotData *pd);
@@ -220,13 +221,13 @@ public:
 	Graphics::MacWindow *_window;
 	Graphics::MacWindowManager *_wm;
 
-	Common::List<Channel *> _dirtyChannels;
 	TransParams *_puppetTransition;
 
 	MovieReference _nextMovie;
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
 	bool _skipFrameAdvance;
+	bool _resetScreen;
 
 private:
 	uint32 _stageColor;

@@ -1055,7 +1055,7 @@ static void forceWindowRedraw(Window *window) {
 		return;
 
 	for (uint16 c = 0; c < score->_channels.size(); c++)
-		score->_channels[c]->_dirty = true;
+		score->_channels[c]->setDirty();
 }
 
 bool Debugger::cmdForceRedraw(int argc, const char **argv) {
