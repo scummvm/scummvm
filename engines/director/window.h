@@ -226,6 +226,7 @@ public:
 	MovieReference _nextMovie;
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
+	bool _newMovieFirstDraw;
 	bool _skipFrameAdvance;
 	bool _resetScreen;
 

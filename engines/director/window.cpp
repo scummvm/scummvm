@@ -62,6 +62,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_currentMovie = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
+	_newMovieFirstDraw = true;
 
 	_objType = kWindowObj;
 	_startFrame = _vm->getStartMovie().startFrame;
@@ -229,9 +230,14 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		_resetScreen = false;
 		forceRedraw = true;
 	}
+	if (_newMovieFirstDraw) {
+		_newMovieFirstDraw = false;
+		forceRedraw = true;
+	}
 
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
+		_window->markAllDirty();
 	}
 
 	// for each channel
@@ -570,6 +576,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 bool Window::loadNextMovie() {
 	_soundManager->changingMovie();
 	_newMovieStarted = true;
+	_newMovieFirstDraw = true;
 	_currentPath = Common::firstPathComponents(_nextMovie.movie, g_director->_dirSeparator);
 
 	Common::Path archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
