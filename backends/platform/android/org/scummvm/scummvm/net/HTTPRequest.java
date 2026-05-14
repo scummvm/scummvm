@@ -328,7 +328,19 @@ public class HTTPRequest implements Runnable {
 
 			int contentLength = urlConnection.getContentLength();
 
-			InputStream in = urlConnection.getInputStream();
+			InputStream in;
+			try {
+				in = urlConnection.getInputStream();
+			} catch (IOException e) {
+				// If getInputStream fails, the server may have returned an error code
+				// We can get the data from the error stream.
+				// If the error stream is null, it means a real error: rethrow the exception.
+				in = urlConnection.getErrorStream();
+				if (in == null) {
+					throw e;
+				}
+			}
+
 			if (_cancelled.get()) {
 				cleanup();
 				return;
@@ -361,7 +373,8 @@ public class HTTPRequest implements Runnable {
 			final int responseCode = urlConnection.getResponseCode();
 			_manager.enqueue(() -> finished(_nativePointer, responseCode, null));
 		} catch (FileNotFoundException e) {
-			// The server returned an error, return the error code and no data
+			// The server returned an error, and we didn't managed to get the error stream:
+			// return the error code and no data
 			int responseCode = -1;
 			try {
 				responseCode = urlConnection.getResponseCode();
