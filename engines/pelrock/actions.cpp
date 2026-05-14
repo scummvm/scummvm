@@ -1831,6 +1831,7 @@ void PelrockEngine::smokeAnimation(int spriteIndex, bool hide) {
 		_screen->update();
 		g_system->delayMillis(10);
 	}
+	smokeSurface.free();
 }
 
 void PelrockEngine::openArchitectDoor(HotSpot *hotspot) {

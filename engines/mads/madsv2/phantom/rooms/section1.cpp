@@ -126,7 +126,7 @@ void section_1_music() {
 			break;
 
 		case 103:
-			if ((global[jacques_status] == JACQUES_IS_DEAD_RICH_GONE)) {
+			if (global[jacques_status] == JACQUES_IS_DEAD_RICH_GONE) {
 				sound_play(N_JacquesDeadMus);
 				global[jacques_status] = JAC_DEAD_RICH_GONE_SEEN_BODY;
 

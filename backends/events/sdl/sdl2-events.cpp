@@ -75,7 +75,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 SdlEventSource::SdlEventSource()
 	: EventSource(), _scrollLock(false), _joystick(nullptr), _lastScreenID(0), _graphicsManager(nullptr), _queuedFakeMouseMove(false),
 	  _lastHatPosition(SDL_HAT_CENTERED), _mouseX(0), _mouseY(0), _engineRunning(false)
-	  , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
+	  , _queuedFakeKeyUp(false), _fakeKeyUp(), _queuedFakeMouseScroll(0), _fakeMouseScroll(), _controller(nullptr)
 	  {
 	int joystick_num = ConfMan.getInt("joystick_num");
 	if (joystick_num >= 0) {
@@ -640,6 +640,13 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 		return true;
 	}
 
+	// In we still need to send scroll events for an event with a scroll amount > 1
+	if (_queuedFakeMouseScroll) {
+		event = _fakeMouseScroll;
+		--_queuedFakeMouseScroll;
+		return true;
+	}
+
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = g_system->getScreenChangeID();
 	if (screenID != _lastScreenID) {
@@ -717,16 +724,25 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	case SDL_MOUSEWHEEL: {
 		Sint32 yDir = ev.wheel.y;
 		// We want the mouse coordinates supplied with a mouse wheel event.
-		// However, SDL2 does not supply these, thus we use whatever we got
-		// last time.
+		// However, SDL2 only supplies these since v2.26.0. For older versions
+		// we use whatever we got last time.
+#if SDL_VERSION_ATLEAST(2, 26, 0)
+		if (!processMouseEvent(event, ev.wheel.mouseX, ev.wheel.mouseY)) {
+#else
 		if (!processMouseEvent(event, _mouseX, _mouseY)) {
+#endif
 			return false;
 		}
+
 		if (yDir < 0) {
 			event.type = Common::EVENT_WHEELDOWN;
+			_fakeMouseScroll = event;
+			_queuedFakeMouseScroll = -yDir - 1;
 			return true;
 		} else if (yDir > 0) {
 			event.type = Common::EVENT_WHEELUP;
+			_fakeMouseScroll = event;
+			_queuedFakeMouseScroll = yDir - 1;
 			return true;
 		} else {
 			return false;

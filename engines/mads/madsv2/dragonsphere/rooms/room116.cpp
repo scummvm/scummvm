@@ -43,7 +43,7 @@ namespace Rooms {
 struct Scratch {
 	int16 sprite[15];       /* Sprite series handles */
 	int16 sequence[15];     /* Sequence handles      */
-	int16 animation[4];     /* Animation handles     */
+	int16 animation[9];     /* Animation handles     */
 
 	int16 temp;             /* for synching sprites */
 	int16 kingsicle_id;     /* hotspot id for frozen king */

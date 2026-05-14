@@ -32,6 +32,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed MM1 Enhanced allowing free temple healing where it shouldn't.
    - MM1 Enhanced most recently played music was restarting after opening and closing the GMM.
 
+ MYST3:
+   - Fixed a regreassion for the animation of the control wheel at J'nanin's shore.
+   - Camera movement is now free after placing a symbol on the pedestal at the watch tower in J'nanin.
+
  SLUDGE:
    - Added two more games to detection, "Sam and Max Flintlocked" and
 	   "Full Moon".

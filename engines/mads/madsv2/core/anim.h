@@ -268,8 +268,8 @@ struct FrameEditBuf {
 	word timing;
 	word view_x;
 	word view_y;
-	char yank_x;
-	char yank_y;
+	int8 yank_x;
+	int8 yank_y;
 };
 
 typedef struct FrameEditBuf FrameEdit;
@@ -278,7 +278,7 @@ typedef FrameEdit *FrameEditPtr;
 
 struct Frame {
 	byte sound;         /* what sound cue to play                             */
-	byte speech;        /* what speech record to activate                     */
+	int8 speech;        /* what speech record to activate                     */
 	word ticks;         /* how many ticks for this frame (before? after?)     */
 	word view_x;        /* where the pan set currently                        */
 	word view_y;

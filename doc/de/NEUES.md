@@ -33,6 +33,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - In MM1 Enhanced wird die Musik nicht mehr fälschlicherweise neu gestartet, wenn der
      GMM geöffnet und wieder geschlossen wird.
 
+ MYST3:
+   - Fehler in der Animation des Kontroll-Rads am Strand von J'nanin behoben.
+   - Die Kamera kann nun frei bewegt werden, nachdem ein Symbol am Uhren-Turm in J'nanin abgelegt wurde.
+
  SLUDGE:
    - Zwei weitere Spiele wurden zur Erkennungs-Datenbank hinzugefügt:
      "Sam and Max Flintlocked" und "Full Moon".

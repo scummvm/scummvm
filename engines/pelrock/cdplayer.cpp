@@ -128,6 +128,8 @@ void CDPlayer::cleanup() {
 
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
+	delete[] _controls;
+	_controls = nullptr;
 }
 
 void CDPlayer::checkMouse(int x, int y) {

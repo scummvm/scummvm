@@ -159,13 +159,15 @@ public:
 		const bool hadLanguage = ConfMan.hasKey("language");
 		const Common::String originalLanguage = hadLanguage ? ConfMan.get("language") : Common::String();
 
-		if (isSimon2Target && hadLanguage)
-			ConfMan.set("language", Common::getLanguageCode(Common::EN_ANY));
-
 		Common::Error err = AdvancedMetaEngineDetection::identifyGame(game, descriptor);
 
-		if (isSimon2Target && hadLanguage)
+		if (err.getCode() != Common::kNoError && isSimon2Target && hadLanguage) {
+			ConfMan.set("language", Common::getLanguageCode(Common::EN_ANY));
+
+			err = AdvancedMetaEngineDetection::identifyGame(game, descriptor);
+
 			ConfMan.set("language", originalLanguage);
+		}
 
 		if (err.getCode() == Common::kNoError && game.gameId == "simon2" && ConfMan.hasKey("path")) {
 			Common::FSNode gameDir(ConfMan.getPath("path"));

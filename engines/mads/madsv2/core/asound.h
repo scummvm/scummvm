@@ -450,7 +450,7 @@ public:
 	/**
 	 * Stop all currently playing sounds
 	 */
-	virtual int stop();
+	virtual int stop() override;
 
 	/**
 	 * Main poll method to allow sounds to progress

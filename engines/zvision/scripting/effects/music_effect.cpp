@@ -175,7 +175,6 @@ void MusicNode::setVolume(uint8 newVolume) {
 	}
 }
 
-
 PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, uint8 mag, bool resetMixerOnDelete, bool staticScreen)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK),
 	  _slot(slot),
@@ -186,6 +185,10 @@ PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos, 
 	  _pos(pos),
 	  _staticScreen(staticScreen),
 	  _resetMixerOnDelete(resetMixerOnDelete) {
+	if (_key != StateKey_NotSet) {
+		debugC(3, kDebugSound, "setting PanTrackNode state value to 1");
+		_engine->getScriptManager()->setStateValue(_key, 1);
+	}
 	debugC(3, kDebugSound, "Created PanTrackNode, key %d, slot %d", _key, _slot);
 	process(0);     // Try to set pan value for music node immediately
 }
@@ -200,6 +203,11 @@ PanTrackNode::~PanTrackNode() {
 		mus->setBalance(0);
 	} else
 		debugC(1, kDebugSound, "NOT resetting mixer, slot %d", _slot);
+	if (_key != StateKey_NotSet) {
+		debugC(3, kDebugSound, "setting PanTrackNode state value to 2");
+		_engine->getScriptManager()->setStateValue(_key, 2);
+	}
+	debugC(3, kDebugSound, "PanTrackNode: %d destroyed", _key);
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
@@ -208,36 +216,38 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
-		if (!_staticScreen)
-			// Original game scripted behaviour
-			switch (_engine->getRenderManager()->getRenderTable()->getRenderState()) {
-			case RenderTable::PANORAMA:
-				debugC(3, kDebugSound, "PanTrackNode in panorama mode");
-				_width = _engine->getRenderManager()->getBkgSize().x;
-				if (_width) {
-					_sourcePos.setDegrees(360 * _pos / _width);
-					_viewPos.setDegrees(360 * scriptManager->getStateValue(StateKey_ViewPos) / _width);
+		if (_engine->getScriptManager()->getStateValue(_key) != 0) {
+			if (!_staticScreen)
+				// Original game scripted behaviour
+				switch (_engine->getRenderManager()->getRenderTable()->getRenderState()) {
+				case RenderTable::PANORAMA:
+					debugC(3, kDebugSound, "PanTrackNode in panorama mode");
+					_width = _engine->getRenderManager()->getBkgSize().x;
+					if (_width) {
+						_sourcePos.setDegrees(360 * _pos / _width);
+						_viewPos.setDegrees(360 * scriptManager->getStateValue(StateKey_ViewPos) / _width);
+					} else {
+						warning("Encountered zero background width whilst processing PanTrackNode in panoramic mode!");
+					}
+					break;
+				case RenderTable::FLAT:
+				case RenderTable::TILT:
+				default:
+					debugC(3, kDebugSound, "PanTrackNode in FLAT/TILT mode");
+					_sourcePos.setDegrees(0);
+					_viewPos.setDegrees(0);
+					break;
 				} else {
-					warning("Encountered zero background width whilst processing PanTrackNode in panoramic mode!");
-				}
-				break;
-			case RenderTable::FLAT:
-			case RenderTable::TILT:
-			default:
-				debugC(3, kDebugSound, "PanTrackNode in FLAT/TILT mode");
-				_sourcePos.setDegrees(0);
+				// Used for auxiliary scripts only
+				_sourcePos.setDegrees(_pos);
 				_viewPos.setDegrees(0);
-				break;
-			} else {
-			// Used for auxiliary scripts only
-			_sourcePos.setDegrees(_pos);
-			_viewPos.setDegrees(0);
+			}
+			Math::Angle azimuth;
+			azimuth = _sourcePos - _viewPos;
+			debugC(3, kDebugSound, "soundPos: %f, _viewPos: %f, azimuth: %f, width %d", _sourcePos.getDegrees(), _viewPos.getDegrees(), azimuth.getDegrees(), _width);
+			// azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
+			mus->setDirection(azimuth, _mag);
 		}
-		Math::Angle azimuth;
-		azimuth = _sourcePos - _viewPos;
-		debugC(3, kDebugSound, "soundPos: %f, _viewPos: %f, azimuth: %f, width %d", _sourcePos.getDegrees(), _viewPos.getDegrees(), azimuth.getDegrees(), _width);
-		// azimuth is sound source position relative to player, clockwise from centre of camera axis to front when viewed top-down
-		mus->setDirection(azimuth, _mag);
 	}
 	return false;
 }

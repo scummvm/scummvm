@@ -227,6 +227,18 @@ protected:
 	 */
 	Common::Event _fakeKeyUp;
 
+	/**
+	 * Whether and how many times _fakeMouseScroll contains an event we need to send .
+	 */
+	int _queuedFakeMouseScroll;
+
+	/**
+	 * A fake mouse scroll event sent when the graphics manager is told to warp
+	 * the mouse but the system mouse is unable to be warped (e.g. because the
+	 * window is not focused).
+	 */
+	Common::Event _fakeMouseScroll;
+
 	enum {
 		MAX_NUM_FINGERS = 3, // number of fingers to track per panel
 		MAX_TAP_TIME = 250, // taps longer than this will not result in mouse click events

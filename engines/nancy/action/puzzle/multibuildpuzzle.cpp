@@ -388,12 +388,20 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			pp.registerGraphics();
 
 			if (_hasCloseupImage && !pp.cuSrcRect.isEmpty()) {
-				// First click shows close-up view, centered in the viewport.
+				// First click shows the close-up view centered on the
+				// piece's current center.
 				_selectedPiece = topmost;
-				int cuW = pp.cuSrcRect.width();
-				int cuH = pp.cuSrcRect.height();
-				int cuLeft = (vpScreen.width()  - cuW) / 2;
-				int cuTop  = (vpScreen.height() - cuH) / 2;
+				const int cuW = pp.cuSrcRect.width();
+				const int cuH = pp.cuSrcRect.height();
+				const int pieceW = pp.rotateSurfaces[pp.curRotation].w;
+				const int pieceH = pp.rotateSurfaces[pp.curRotation].h;
+				const int centerX = pp.gameRect.left + pieceW / 2;
+				const int centerY = pp.gameRect.top  + pieceH / 2;
+				int cuLeft = centerX - cuW / 2;
+				int cuTop  = centerY - cuH / 2;
+				// Clamp so the close-up stays fully inside the viewport.
+				cuLeft = CLIP<int>(cuLeft, 0, MAX(0, vpScreen.width()  - cuW));
+				cuTop  = CLIP<int>(cuTop,  0, MAX(0, vpScreen.height() - cuH));
 				pp.gameRect = Common::Rect(cuLeft, cuTop, cuLeft + cuW, cuTop + cuH);
 			} else {
 				// Direct drag: first click immediately starts dragging
