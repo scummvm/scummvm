@@ -804,76 +804,128 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 	}
 }
 
+// _OpenColorCycle @ 2520:04f7. Rotate `fpal[start..end]` by one slot:
+//   saved = fpal[end]
+//   for u = end..start+1: fpal[u] = fpal[u-1]
+//   fpal[start] = saved
+// If `show`, upload `end - start` entries (fpal[start..end-1]) — note that
+// fpal[end] is rotated in memory but intentionally not uploaded each tick.
+static void openColorCycle(byte *fpal, uint8 start, uint8 end, bool show) {
+	if (end <= start)
+		return;
+	const byte savedR = fpal[end * 3 + 0];
+	const byte savedG = fpal[end * 3 + 1];
+	const byte savedB = fpal[end * 3 + 2];
+	for (uint u = end; u > start; u--) {
+		fpal[u * 3 + 0] = fpal[(u - 1) * 3 + 0];
+		fpal[u * 3 + 1] = fpal[(u - 1) * 3 + 1];
+		fpal[u * 3 + 2] = fpal[(u - 1) * 3 + 2];
+	}
+	fpal[start * 3 + 0] = savedR;
+	fpal[start * 3 + 1] = savedG;
+	fpal[start * 3 + 2] = savedB;
+	if (show) {
+		g_system->getPaletteManager()->setPalette(fpal + start * 3, start,
+												   end - start);
+	}
+}
+
 void EEMEngine::showEAKidsLogo() {
 	// _ShowEAKids @ 2520:05f0:
-	//   1. GetPicture(0x54) + MemoryCopy to VGA + GetPalette(0x25).
-	//   2. FRAME_RATE = 25; for j in 0..1, for u in 0..0x36 (= 55):
-	//        OpenColorCycle(0x01, 0x6e)   // bg / outer ring shimmer
-	//        OpenColorCycle(0x81, 0xee)   // inner gradient shimmer
-	//        every 8 ticks: OpenColorCycle(0x70, 0x80)  // mid band
-	//   3. Tail: 5 more cycles of 0x70..0x80.
-	//   4. Wait 0x23 (=35) more frames.
-	//   5. _OpenFadeOut.
-	// The cycling is what gives the EA Kids logo its shifting glow —
-	// it's NOT a static logo.
+	//   _GetPicture(0x54) + memcpy to 0xa000 (VGA).
+	//   _GetPalette(0x25) loads pal 0x25 into _fpal (NOT uploaded to DAC).
+	//   FRAME_RATE = 0x19 (25 fps); _InitFrameReg.
+	//   for j in 0..1: show = j;
+	//     for u in 0..0x37 (= 55):
+	//       if (show) wait for next 25-fps tick (abort on key/click).
+	//       _OpenColorCycle(0x01, 0x6e, show)   // bg / outer ring shimmer
+	//       _OpenColorCycle(0x81, 0xee, show)   // inner gradient shimmer
+	//       if (--delay == 0) {
+	//         delay = 8;
+	//         _OpenColorCycle(0x70, 0x80, show) // mid band
+	//       }
+	//   if (!abort) {
+	//     for i in 0..5: _OpenColorCycle(0x70, 0x80, 1);
+	//     for i in 0..0x23: wait one frame;
+	//   }
+	//   _OpenFadeOut().
+	//
+	// Pass 1 (j=0, show=0) pre-rolls _fpal 55 frames in memory only — no
+	// DAC upload, no frame sync. Pass 2 (j=1, show=1) uploads each shift
+	// at 25 fps. Without the pre-roll, the logo first appears at the
+	// unrotated palette-0x25 phase instead of the intended "55-shifts-in"
+	// phase.
 	Picture pic;
 	if (!_picsArchive.getPicture(kPicEAKidsLogo, pic)) {
 		warning("EA Kids logo (%u) load failed", kPicEAKidsLogo);
 		return;
 	}
 	blitAt(pic, 0, 0);
-	setSitePalette(kPalEAKids);
-	g_system->updateScreen();
 
-	// 25 fps -> 40 ms / tick.
-	const uint kFrameMs = 40;
-	int delayCount = 8;
+	// _GetPalette(0x25) — load into our shadow buffer; do not upload.
+	// The logo bitmap is on screen but invisible until the first
+	// _OpenColorCycle(..., show=1) upload in pass 2 lights it up.
+	byte fpal[kPalSize];
+	if (!getSitePalette(kPalEAKids, fpal)) {
+		warning("EA Kids palette (%u) load failed", kPalEAKids);
+		return;
+	}
+
+	const uint kFrameMs = 40;  // FRAME_RATE = 0x19 (25 fps).
 	bool aborted = false;
-	for (uint outer = 0; outer < 2 && !aborted && !shouldQuit(); outer++) {
-		for (uint i = 0; i < 0x37 && !aborted && !shouldQuit(); i++) {
-			cyclePaletteRangeReverse(0x01, 0x6e);
-			cyclePaletteRangeReverse(0x81, 0xee);
+
+	for (uint j = 0; j < 2 && !aborted && !shouldQuit(); j++) {
+		const bool show = (j != 0);
+		int delayCount = 8;
+
+		for (uint u = 0; u < 0x37 && !aborted && !shouldQuit(); u++) {
+			if (show) {
+				const uint32 frameEnd = g_system->getMillis() + kFrameMs;
+				while (g_system->getMillis() < frameEnd && !aborted) {
+					Common::Event ev;
+					while (g_system->getEventManager()->pollEvent(ev)) {
+						if (ev.type == Common::EVENT_QUIT ||
+							ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+							_skipIntro = true;
+							return;
+						}
+						if (ev.type == Common::EVENT_KEYDOWN ||
+							ev.type == Common::EVENT_LBUTTONDOWN) {
+							if (ev.type == Common::EVENT_KEYDOWN &&
+								ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+								_skipIntro = true;
+							}
+							aborted = true;
+							break;
+						}
+					}
+					g_system->delayMillis(5);
+				}
+			}
+
+			openColorCycle(fpal, 0x01, 0x6e, show);
+			openColorCycle(fpal, 0x81, 0xee, show);
 			delayCount--;
 			if (delayCount == 0) {
 				delayCount = 8;
-				cyclePaletteRangeReverse(0x70, 0x80);
+				openColorCycle(fpal, 0x70, 0x80, show);
 			}
-			g_system->updateScreen();
-
-			const uint32 frameEnd = g_system->getMillis() + kFrameMs;
-			while (g_system->getMillis() < frameEnd && !aborted) {
-				Common::Event ev;
-				while (g_system->getEventManager()->pollEvent(ev)) {
-					if (ev.type == Common::EVENT_QUIT ||
-						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-						_skipIntro = true;
-						return;
-					}
-					if (ev.type == Common::EVENT_KEYDOWN ||
-						ev.type == Common::EVENT_LBUTTONDOWN) {
-						if (ev.type == Common::EVENT_KEYDOWN &&
-							ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-							_skipIntro = true;
-						}
-						aborted = true;
-						break;
-					}
-				}
-				g_system->delayMillis(5);
-			}
+			if (show)
+				g_system->updateScreen();
 		}
 	}
 
-	if (aborted)
+	if (aborted) {
+		fadeCurrentPaletteToBlack();
 		return;
+	}
 
 	for (uint i = 0; i < 5 && !shouldQuit(); i++)
-		cyclePaletteRangeReverse(0x70, 0x80);
+		openColorCycle(fpal, 0x70, 0x80, true);
 	g_system->updateScreen();
 	waitForInput(0x23 * kFrameMs);
 
-	// `_OpenFadeOut @ 2520:0093` — 16 linear steps from current palette
-	// to black.
+	// _OpenFadeOut @ 2520:0093 — 16 linear steps from current palette to black.
 	fadeCurrentPaletteToBlack();
 }
 
