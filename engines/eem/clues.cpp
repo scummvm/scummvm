@@ -45,12 +45,13 @@ const uint kAniBoy  = 8;                // Jake
 const uint kAniGirl = 9;                // Jenny
 
 // _DoHappiness @ 172b:27b5 — cursor X picks one of 4 rects @ 29be:030f.
-// Past rect 3 = level 4.
-const Common::Rect kHappyZones[4] = {
-	Common::Rect(  0, 0,  70, 200), // far left — girl very happy, boy neutral
-	Common::Rect( 70, 0, 126, 200), // girl's column
-	Common::Rect(126, 0, 182, 200), // middle
-	Common::Rect(182, 0, 235, 200), // boy's column
+// Past rect 3 = level 4. Constexpr (Point, w, h) form to avoid a global
+// constructor (-Wglobal-constructors).
+constexpr Common::Rect kHappyZones[4] = {
+	Common::Rect(Common::Point(  0, 0),  70, 200), // far left — girl very happy, boy neutral
+	Common::Rect(Common::Point( 70, 0),  56, 200), // girl's column
+	Common::Rect(Common::Point(126, 0),  56, 200), // middle
+	Common::Rect(Common::Point(182, 0),  53, 200), // boy's column
 };
 
 // _NewAnimation positions @ 1a35:07b9 / 07d5.
