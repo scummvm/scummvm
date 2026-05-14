@@ -45,6 +45,24 @@ void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 	dst.transBlitFrom(p.surface, Common::Point(x, y), (uint32)transp);
 }
 
+// Masked top-left blit onto a locked screen surface. Clips both src and
+// dst against the screen, then delegates to copyRectToSurfaceWithKey
+// (Graphics::Surface's transparent-key blit).
+static void keyBlitToScreen(Graphics::Surface *screen, const Picture &p,
+							int x, int y) {
+	if (!screen || p.surface.empty())
+		return;
+	const Common::Rect dst = Common::Rect(x, y, x + p.surface.w,
+										  y + p.surface.h)
+		.findIntersectingRect(Common::Rect(screen->w, screen->h));
+	if (dst.isEmpty())
+		return;
+	const Common::Rect src(dst.left - x, dst.top - y,
+						   dst.right - x, dst.bottom - y);
+	screen->copyRectToSurfaceWithKey(p.surface, dst.left, dst.top,
+									 src, (uint32)(byte)(p.flags >> 8));
+}
+
 // Top-left masked blit. `_AddDrop @ 172b:1a77` calls
 // `_Rect_Move_Mask(..., x, y, ...)` with the raw (x, y) and IGNORES
 // per-frame anchor offsets — so this is the correct path for static
@@ -53,50 +71,18 @@ void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 // (miscflags = X, rowoff = Y) apply correctly.
 void blitMaskedSurface(Graphics::Surface *screen, const Picture &p,
 					   int x, int y) {
-	if (!screen)
-		return;
-	const byte transp = (byte)(p.flags >> 8);
-	for (int row = 0; row < p.surface.h; row++) {
-		const int dstY = y + row;
-		if (dstY < 0 || dstY >= screen->h)
-			continue;
-		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-		byte *dst = (byte *)screen->getBasePtr(0, dstY);
-		for (int col = 0; col < p.surface.w; col++) {
-			const int dstX = x + col;
-			if (dstX < 0 || dstX >= screen->w)
-				continue;
-			if (src[col] != transp)
-				dst[dstX] = src[col];
-		}
-	}
+	keyBlitToScreen(screen, p, x, y);
 }
 
+// `_UpdateAnimations @ 172b:09c1`: blit at
+//   (anchor_x - puVar5[4], anchor_y - puVar5[3])
+// where puVar5[3]/[4] are per-frame rowoff/miscflags (signed int16) from
+// the 16-byte PicData header. Transparency = flags >> 8.
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY) {
-	// `_UpdateAnimations @ 172b:09c1`: blit at
-	//   (anchor_x - puVar5[4], anchor_y - puVar5[3])
-	// where puVar5[3]/[4] are per-frame rowoff/miscflags (signed int16)
-	// from the 16-byte PicData header. Transparency = flags >> 8.
-	if (!screen)
-		return;
-	const int blitX = anchorX - (int)(int16)p.miscflags;
-	const int blitY = anchorY - (int)(int16)p.rowoff;
-	const byte transp = (byte)(p.flags >> 8);
-	for (int row = 0; row < p.surface.h; row++) {
-		const int dstY = blitY + row;
-		if (dstY < 0 || dstY >= screen->h)
-			continue;
-		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-		byte *dst = (byte *)screen->getBasePtr(0, dstY);
-		for (int col = 0; col < p.surface.w; col++) {
-			const int dstX = blitX + col;
-			if (dstX < 0 || dstX >= screen->w)
-				continue;
-			if (src[col] != transp)
-				dst[dstX] = src[col];
-		}
-	}
+	keyBlitToScreen(screen, p,
+					anchorX - (int)(int16)p.miscflags,
+					anchorY - (int)(int16)p.rowoff);
 }
 
 // `_ColorCycle @ 172b:2015` — rotate `_fpal[start..end]` by one slot:

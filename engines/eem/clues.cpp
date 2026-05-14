@@ -114,23 +114,17 @@ uint happinessLevel(int x) {
 // _Rect_Move_Mask's mask byte (the on-disk u16 at file offset 0 maps to
 // Picture::flags).
 void blitMaskedToScreen(const Picture &p, int x, int y) {
-	const byte transp = (byte)(p.flags >> 8);
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
-	for (int row = 0; row < p.surface.h; row++) {
-		const int dstY = y + row;
-		if (dstY < 0 || dstY >= screen->h)
-			continue;
-		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-		byte *dst = (byte *)screen->getBasePtr(0, dstY);
-		for (int col = 0; col < p.surface.w; col++) {
-			const int dstX = x + col;
-			if (dstX < 0 || dstX >= screen->w)
-				continue;
-			if (src[col] != transp)
-				dst[dstX] = src[col];
-		}
+	const Common::Rect dst = Common::Rect(x, y, x + p.surface.w,
+										  y + p.surface.h)
+		.findIntersectingRect(Common::Rect(screen->w, screen->h));
+	if (!dst.isEmpty()) {
+		const Common::Rect src(dst.left - x, dst.top - y,
+							   dst.right - x, dst.bottom - y);
+		screen->copyRectToSurfaceWithKey(p.surface, dst.left, dst.top,
+										 src, (uint32)(byte)(p.flags >> 8));
 	}
 	g_system->unlockScreen();
 }
@@ -1093,19 +1087,9 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 				if (picID != 0 && picID != 0xFFFF) {
 					Picture pic;
 					if (_picsArchive.getPicture(picID, pic)) {
-						const byte transpC = (byte)(pic.flags >> 8);
-						const int pw = MIN<int>(pic.surface.w, 320 - picX);
-						const int ph = MIN<int>(pic.surface.h, 200 - picY);
-						for (int row = 0; row < ph; row++) {
-							const byte *src = (const byte *)
-								pic.surface.getBasePtr(0, row);
-							byte *dst = (byte *)
-								scratch.getBasePtr(picX, picY + row);
-							for (int col = 0; col < pw; col++) {
-								if (src[col] != transpC)
-									dst[col] = src[col];
-							}
-						}
+						scratch.transBlitFrom(pic.surface,
+											  Common::Point(picX, picY),
+											  (uint32)(byte)(pic.flags >> 8));
 					}
 				}
 				if (haveBalloon) {
