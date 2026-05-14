@@ -131,6 +131,9 @@ static jobjectArray getHeaders(JNIEnv *env, RequestHeaders *headersList) {
 	if (!headersList) {
 		return nullptr;
 	}
+	if (headersList->size() == 0) {
+		return nullptr;
+	}
 
 	jclass stringClass = env->FindClass("java/lang/String");
 	jobjectArray array = env->NewObjectArray(headersList->size() * 2, stringClass, nullptr);

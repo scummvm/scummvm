@@ -202,6 +202,9 @@ public class HTTPRequest implements Runnable {
 	}
 
 	private void setupHeaders(String[] requestHeaders) {
+		if (requestHeaders == null) {
+			return;
+		}
 		if ((requestHeaders.length & 1) != 0) {
 			throw new IllegalArgumentException("requestHeaders has odd length");
 		}
