@@ -891,6 +891,17 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy1New
 	},
+	{ // MD5 by mmogas
+		{
+			"nancy1new", nullptr,
+			AD_ENTRY1s("ciftree.dat", "2f0c77c84bb5533f5bc6ec824ddf4c31", 14936536),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy1New
+	},
 
 	// Do not delete
 	{ AD_TABLE_END_MARKER, kGameTypeNone }
