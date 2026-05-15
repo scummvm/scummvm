@@ -21,7 +21,6 @@
 
 #include "audio/audiostream.h"
 #include "common/file.h"
-#include "mads/madsv2/core/cycle.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/himem.h"
 #include "mads/madsv2/core/matte.h"
@@ -64,6 +63,9 @@ int speechIndex;
 int speechLoops;
 int runVal6, runVal7, runVal8;
 int loadFontFlag;
+int imageFrame;
+CycleList anim_cycle_list;
+bool has_cycles;
 
 static const byte FX_TIMES[16] = {
 	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
@@ -74,10 +76,8 @@ static bool has_sound_file;
 static char sound_file_name[80];
 static TileMapHeader picture_map, depth_map;
 static TileResource picture_res, depth_res;
-static CycleList cycle_list;
 static Buffer scr_work_orig;
 static Room *room;
-static bool has_cycles;
 static int viewing_at_y2;
 constexpr int SPEECH_LINES_COUNT = 10;
 static Audio::AudioStream *speech_lines[SPEECH_LINES_COUNT];
@@ -108,7 +108,7 @@ static void init_globals() {
 	memset(&depth_map, 0, sizeof(TileMapHeader));
 	memset(&picture_res, 0, sizeof(TileResource));
 	memset(&depth_res, 0, sizeof(TileResource));
-	memset(&cycle_list, 0, sizeof(CycleList));
+	memset(&anim_cycle_list, 0, sizeof(CycleList));
 	memset(&scr_work_orig, 0, sizeof(Buffer));
 	room = nullptr;
 	current_anim = nullptr;
@@ -144,6 +144,7 @@ static void init_globals() {
 	error_code = current_error_code = 0;
 	wait_for_music_at_end = false;
 	exit_immediately_at_end = false;
+	imageFrame = 0;
 }
 
 /**
@@ -435,7 +436,7 @@ static void animate() {
 		int loadFlags = anim_list[count].bg_load_status ? ANIM_LOAD_BACKGROUND : 0;
 		current_anim = anim_load(buf, &scr_work, &scr_depth,
 			&picture_map, &depth_map, &picture_res, &depth_res, &room,
-			&cycle_list, loadFlags);
+			&anim_cycle_list, loadFlags);
 		scr_work_orig = scr_work;
 
 		if (!current_anim)
@@ -453,7 +454,7 @@ static void animate() {
 			animSeries->arena = nullptr;
 		}
 
-		has_cycles = cycle_list.num_cycles > 0;
+		has_cycles = anim_cycle_list.num_cycles > 0;
 		current_anim_inter = (AnimInterPtr)current_anim;
 
 		int height = (scr_work.y == 200) ? 200 : 156;

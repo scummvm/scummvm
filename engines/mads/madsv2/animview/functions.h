@@ -71,6 +71,8 @@ extern void read_resource(Common::SeekableReadStream *src);
 
 extern void anim_peel();
 
+void anim_setup_cycle(int fx);
+
 } // namespace AnimView
 } // namespace MADSV2
 } // namespace MADS

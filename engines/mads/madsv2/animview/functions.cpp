@@ -22,7 +22,10 @@
 #include "common/textconsole.h"
 #include "mads/madsv2/animview/functions.h"
 #include "mads/madsv2/animview/animview.h"
+#include "mads/madsv2/core/cycle.h"
 #include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mcga.h"
+#include "mads/madsv2/core/pal.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -177,6 +180,16 @@ void anim_peel() {
 		buffer_peel_vert(&scr_work, peelY, scr_inter_orig.data, 320 * 200);
 		matte_refresh_work();
 	}
+}
+
+void anim_setup_cycle(int fx) {
+	cycling_active = false;
+	memcpy(cycling_palette, master_palette, sizeof(Palette));
+
+	if (fx)
+		mcga_setpal(&master_palette);
+
+	cycle_init(&anim_cycle_list, has_cycles && !fx);
 }
 
 } // namespace AnimView

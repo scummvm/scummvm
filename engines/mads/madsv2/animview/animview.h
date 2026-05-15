@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "mads/madsv2/core/anim.h"
+#include "mads/madsv2/core/cycle.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -47,6 +48,9 @@ extern int speechIndex;
 extern int speechLoops;
 extern int runVal6, runVal7, runVal8;
 extern int loadFontFlag;
+extern int imageFrame;
+extern CycleList anim_cycle_list;
+extern bool has_cycles;
 
 
 // Main animview function

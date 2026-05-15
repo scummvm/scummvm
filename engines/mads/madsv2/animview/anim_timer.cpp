@@ -43,7 +43,8 @@ static int messageHandle[MESSAGES_COUNT];
 static int paletteHandle;
 static int palIndex1, palIndex2;
 static int matteId;
-static int normalTimer1, messageCount;
+static int normalTimer1, imageCount;
+static int messageCount;
 static int frameViewX, frameViewY;
 static int currentViewX, currentViewY;
 
@@ -54,13 +55,14 @@ void anim_timer_init() {
 	normalTimer1 = messageCount = 0;
 	frameViewX = frameViewY = 0;
 	currentViewX = currentViewY = 0;
-	normalTimer1 = 0;
+	normalTimer1 = imageCount = 0;
 }
 
 void anim_timer() {
 	bool flag = false;
 	uint32 currTimer = g_system->getMillis();
 	Speech *speech;
+	Frame *frame;
 	int sound, count;
 
 	if (current_error_code || speechStream)
@@ -75,8 +77,10 @@ void anim_timer() {
 		flag = g_engine->isSpeechPlaying();
 		goto block1;
 	}
+
+	++runCtr1;
 	if (normalTimer1)
-		goto block2;
+		goto block3;
 
 	if (runFx == 0) {
 		if (peelFlag && timer2 >= currTimer && timer1 <= currTimer) {
@@ -112,7 +116,7 @@ void anim_timer() {
 		(speech->display_condition & 0x800) &&
 		(speech->resource_id >= 0);
 
-	if (speech->sound && (!flag || sound_var1 == 49)) {
+	if (speech->sound /*&& (!flag || sound_var1 == 49)*/) {
 		g_engine->_soundManager->command(speech->sound);
 	}
 
@@ -175,8 +179,111 @@ block2:
 		}
 	}
 
-	// TODO: More block 2 stuff
-	warning("TODO: block2");
+	imageCount = image_marker;
+	while (imageFrame < current_anim->num_images) {
+		Image *img = &current_anim->image[imageFrame];
+
+		if (img->flags > currentFrame)
+			break;
+		if (img->flags != currentFrame)
+			continue;
+
+		bool found = false;
+		for (count = 0; !found && count < imageCount; ++count) {
+			Image *img2 = &image_list[count];
+
+			found = img->series_id == img2->series_id &&
+				img->sprite_id == img2->sprite_id &&
+				img->x == img2->x &&
+				img->y == img2->y &&
+				img->depth == img2->depth &&
+				img->scale == img2->scale;
+			if (found)
+				img2->flags = 0;
+		}
+
+		if (!found) {
+			image_list[image_marker] = *img;
+			Series *series = series_list[img->series_id];
+			series->delta_series = (series->delta_series == 0) ? 1 : -4;
+			++image_marker;
+		}
+	}
+
+	if (currentFrame == 0)
+		anim_setup_cycle(runFx);
+
+	frame = &current_anim->frame[currentFrame];
+	if (frame->yank_x) {
+		buffer_peel_horiz(&scr_work, frame->yank_x);
+		matte_refresh_work();
+	}
+	if (frame->yank_y) {
+		buffer_peel_vert(&scr_work, frame->yank_y, scr_inter_orig.data, 320 * 200);
+		matte_refresh_work();
+	}
+
+	matte_frame(runFx, 0);
+
+block3:
+	if (runFx) {
+		currTimer = g_system->getMillis();
+		if (currTimer < timer1) {
+			normalTimer1 = -1;
+			goto done;
+		}
+
+		frame = &current_anim->frame[currentFrame];
+		if (frame->sound) {
+			g_engine->_soundManager->command(frame->sound);
+			timer1 = currTimer;
+		}
+
+		timer2 = currTimer + current_anim->misc_peel_rate;
+		cycling_active = has_cycles;
+	}
+
+	normalTimer1 = 0;
+
+	if (current_anim->misc_no_catchup || !resync_timer1 || runVal7 ||
+			(currentFrame == 0 && resync_timer2))
+		timer1 = currTimer;
+
+	runFx = 0;
+	runVal7 = 0;
+	runCtr1 = 0;
+
+	if (++currentFrame < maxFrame) {
+		frame = &current_anim->frame[currentFrame];
+		timer1 += frame->ticks;
+	}
+
+	if (speechIndex == -1)
+		goto done;
+	speech = &current_anim->speech[speechIndex];
+	if (speech->last_frame >= currentFrame)
+		goto done;
+	if (++runVal6 < speechLoops) {
+		if (runVal6 == maxFrame) {
+			frame = &current_anim->frame[runVal6 - 1];
+			timer1 += frame->ticks;
+		}
+
+		currentFrame = speech->first_frame;
+		imageFrame = speech->first_image;
+	} else {
+		speechIndex = -1;
+
+		if (runVal8) {
+			matte_clear_message(matteId);
+			pal_deallocate(paletteHandle);
+			runVal8 = 0;
+
+			for (count = 0; count < messageCount; ++count)
+				matte_clear_message(messageHandle[count]);
+			messageCount = 0;
+		}
+	}
 
 done:
 	cycle_colors();
