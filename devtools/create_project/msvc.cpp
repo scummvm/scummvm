@@ -323,7 +323,7 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 
 	std::string cmdLine = "";
 	cmdLine = "if not exist \"$(SolutionDir)test\\runner\" mkdir \"$(SolutionDir)test\\runner\"\n"
-	          "python3 &quot;$(SolutionDir)" + setup.filePrefix + "/test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test/runner/test_runner.cpp&quot;" + target;
+	          "python3 &quot;$(SolutionDir)" + setup.filePrefix + "/test/cxxtest/bin/cxxtestgen&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test/runner/test_runner.cpp&quot;" + target;
 	return cmdLine;
 }
 
