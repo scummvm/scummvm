@@ -578,6 +578,12 @@ void DrillerEngine::pressedKey(const int keycode) {
 		debugC(1, kFreescapeDebugMove, "Distance to gas pocket: %f", distanceToPocket);
 
 		float success = _useAutomaticDrilling ? 100.0 : 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
+		// Play the "processing" sound up front (matches BTF660 in the
+		// original Amiga code, where sound 5 starts before the
+		// RIG POSITIONED / NO GAS FOUND messages are displayed and
+		// before subsequent state changes can clobber the channel).
+		if (isDOS() || isAmiga() || isAtariST())
+			playSound(_soundIndexAreaChange, false, _soundFxHandle);
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 		addDrill(drill, success > 0);
 		if (success <= 0) {
@@ -603,8 +609,6 @@ void DrillerEngine::pressedKey(const int keycode) {
 		} else
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 		executeMovementConditions();
-		if (isDOS())
-			playSound(_soundIndexAreaChange, false, _soundFxHandle);
 	} else if (keycode == kActionCollectDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
@@ -646,7 +650,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		assert(scoreToRemove <= uint32(_gameStateVars[k8bitVariableScore]));
 		_gameStateVars[k8bitVariableScore] -= scoreToRemove;
 		executeMovementConditions();
-		if (isDOS())
+		if (isDOS() || isAmiga() || isAtariST())
 			playSound(_soundIndexAreaChange, false, _soundFxHandle);
 	}
 }
