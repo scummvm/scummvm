@@ -297,7 +297,21 @@ void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math:
 	viewMatrix.translate(-pos);
 	viewMatrix.transpose();
 
-	_modelViewMatrix = viewMatrix * lookMatrix;
+	// Roll around the camera's forward axis. The matrix is stored in the
+	// same transposed convention as lookMatrix (row-major storage that
+	// becomes column-major when handed to GL via getData()), so the entries
+	// are the transpose of the standard glRotatef(rollAngle, 0, 0, 1).
+	float c = cos(Math::deg2rad(rollAngle));
+	float s = sin(Math::deg2rad(rollAngle));
+	Math::Matrix4 rollMatrix;
+	rollMatrix(0, 0) = c;
+	rollMatrix(0, 1) = s;
+	rollMatrix(1, 0) = -s;
+	rollMatrix(1, 1) = c;
+	rollMatrix(2, 2) = 1.0f;
+	rollMatrix(3, 3) = 1.0f;
+
+	_modelViewMatrix = viewMatrix * rollMatrix * lookMatrix;
 
 	Math::Matrix4 proj = _projectionMatrix;
 	Math::Matrix4 model = _modelViewMatrix;
