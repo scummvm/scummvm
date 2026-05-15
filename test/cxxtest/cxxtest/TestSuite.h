@@ -67,6 +67,15 @@ struct equals
 };
 
 template<>
+struct equals<bool, int>
+{
+    static bool test(bool x, int y)
+    {
+        return (x == (bool)y);
+    }
+};
+
+template<>
 struct equals<const char*, const char*>
 {
     static bool test(const char *x, const  char *y)
