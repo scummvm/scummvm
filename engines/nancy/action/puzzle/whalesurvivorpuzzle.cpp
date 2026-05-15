@@ -220,6 +220,9 @@ void WhaleSurvivorPuzzle::init() {
 	if (_breathFreq < 1)
 		_breathFreq = 1;
 
+	float multiplierDenom = (float)_oxygenTickMs * 8.0f;
+	_deplPerMs = (multiplierDenom > 0.0f) ? _oxygenDeplSpeed / multiplierDenom : 0.0f;
+
 	_lastMs    = g_nancy->getTotalPlayTime();
 	_gameState = kStartScreen;
 	_score     = 0;
@@ -244,6 +247,9 @@ void WhaleSurvivorPuzzle::initRound() {
 	_oxygenDepleting  = false;
 	_oxygenStage      = 0;
 	_oxygenNextTickMs = 0;
+
+	_underwaterMultiplier = 1.0f;
+	_diveStartMs          = 0;
 
 	_porpoiseAnim      = kPorpoiseSwim;
 	_breathFrame       = 0;
@@ -425,7 +431,9 @@ void WhaleSurvivorPuzzle::execute() {
 			break;
 
 		case kTryAgain:
-			// Reset entities; entities and score are preserved between lives.
+			_score     = 0;
+			_prevScore = -1;
+			_lives     = kMaxLives;
 			initRound();
 			_gameState = kPlaying;
 			_lastMs    = nowMs;
@@ -544,23 +552,36 @@ void WhaleSurvivorPuzzle::updateGame(uint32 nowMs) {
 	bool moved = false;
 
 	if (_porpoiseAnim == kPorpoiseSwim) {
-		// Horizontal movement
-		if (_inputFlags & NancyInput::kMoveRight) {
+		// Movement keys are mutually exclusive in the original — only one
+		// direction processed per frame. The upward drift and breath-trigger
+		// only when no movement key is held.
+		if (_inputFlags & NancyInput::kMoveLeft) {
+			_porpX -= (float)deltaMs * _speedX;
+			if ((int)_porpX < _playfieldRect.left)
+				_porpX = (float)_playfieldRect.left;
+			moved = true;
+		} else if (_inputFlags & NancyInput::kMoveRight) {
 			_porpX += (float)deltaMs * _speedX;
 			int maxLeft = _playfieldRect.right - _porpWidth;
 			if ((int)_porpX > maxLeft)
 				_porpX = (float)maxLeft;
 			moved = true;
-		} else if (_inputFlags & NancyInput::kMoveLeft) {
-			_porpX -= (float)deltaMs * _speedX;
-			if ((int)_porpX < _playfieldRect.left)
-				_porpX = (float)_playfieldRect.left;
+		} else if (_inputFlags & NancyInput::kMoveDown) {
+			_porpY += (float)deltaMs * _speedY;
+			int maxTop = _maxY - _porpHeight + 1;
+			if ((int)_porpY > maxTop)
+				_porpY = (float)maxTop;
+			// Start oxygen depletion on first move below surface
+			if (!_oxygenDepleting && (int)_porpY > _surfaceY) {
+				_oxygenDepleting      = true;
+				_oxygenStage          = 0;
+				_oxygenNextTickMs     = nowMs + _oxygenTickMs;
+				_diveStartMs          = nowMs;
+				_underwaterMultiplier = 1.0f;
+			}
 			moved = true;
-		}
-
-		// Vertical movement
-		if (_inputFlags & NancyInput::kMoveUp) {
-			// Manual surface – move up faster
+		} else if (_inputFlags & NancyInput::kMoveUp) {
+			// Manual surface – move up at full speed
 			_porpY -= (float)deltaMs * _speedY;
 			if ((int)_porpY <= _surfaceY) {
 				_porpY = (float)_surfaceY;
@@ -569,24 +590,10 @@ void WhaleSurvivorPuzzle::updateGame(uint32 nowMs) {
 				_oxygenNextTickMs = 0;
 			}
 			moved = true;
-		} else if (_inputFlags & NancyInput::kMoveDown) {
-			// Always sink, regardless of current Y
-			_porpY += (float)deltaMs * _speedY;
-			int maxTop = _maxY - _porpHeight + 1;
-			if ((int)_porpY > maxTop)
-				_porpY = (float)maxTop;
-			// Start oxygen depletion on first move below surface
-			if (!_oxygenDepleting && (int)_porpY > _surfaceY) {
-				_oxygenDepleting  = true;
-				_oxygenStage      = 0;
-				_oxygenNextTickMs = nowMs + _oxygenTickMs;
-			}
-			moved = true;
 		} else {
-			// Natural upward drift
+			// Natural upward drift, with breath check on surface arrival
 			_porpY -= (float)deltaMs * _breathSpeed;
 			if ((int)_porpY <= _surfaceY) {
-				// Just surfaced – trigger breath if we were diving
 				bool wasBelow = _oxygenDepleting;
 				_porpY            = (float)_surfaceY;
 				_oxygenDepleting  = false;
@@ -606,6 +613,14 @@ void WhaleSurvivorPuzzle::updateGame(uint32 nowMs) {
 				}
 			}
 			moved = true;
+		}
+
+		// Update the underwater multiplier each frame the porpoise is below
+		// the surface.
+		if (_oxygenDepleting) {
+			_underwaterMultiplier = (float)(nowMs - _diveStartMs) * _deplPerMs + 1.0f;
+			if (_underwaterMultiplier < 1.0f)
+				_underwaterMultiplier = 1.0f;
 		}
 
 	} else if (_porpoiseAnim == kPorpoiseSurface) {
@@ -639,7 +654,7 @@ void WhaleSurvivorPuzzle::updateGame(uint32 nowMs) {
 		if ((int)_porpY <= _surfaceY) {
 			_porpY        = (float)_surfaceY;
 			_porpoiseAnim = kPorpoiseSwim;
-			loseLife(nowMs);
+			loseLife();
 		}
 		moved = true;
 	}
@@ -742,9 +757,10 @@ void WhaleSurvivorPuzzle::checkCollisions() {
 		_needsRedraw = true;
 
 		if (e.kind == kEntityFish) {
-			// Fish – eaten!
+			// Fish – eaten! Score scales with the underwater multiplier.
 			--_fishCount;
-			_score += _scoreDivisor > 0 ? (int)_scoreDivisor : 500;
+			int divisor = _scoreDivisor > 0 ? (int)_scoreDivisor : 500;
+			_score += (int)((float)divisor * _underwaterMultiplier);
 			if (_prevScore != _score)
 				_needsRedraw = true;
 
@@ -789,18 +805,21 @@ void WhaleSurvivorPuzzle::updateOxygen(uint32 nowMs) {
 	}
 }
 
-void WhaleSurvivorPuzzle::loseLife(uint32 nowMs) {
+void WhaleSurvivorPuzzle::loseLife() {
 	--_lives;
 	_needsRedraw = true;
 
+	// Reset oxygen and multiplier — the porpoise is back at the surface.
+	_oxygenDepleting      = false;
+	_oxygenStage          = 0;
+	_oxygenNextTickMs     = 0;
+	_underwaterMultiplier = 1.0f;
+
 	if (_lives <= 0) {
 		_lives = 0;
-		// No lives left -> go to loss scene after countdown
-		_gameState      = kWinScreen;
-		_executeWin     = false;
-		_countdownEndMs = nowMs;
-	} else {
-		// Still have lives -> show "try again" screen
+		// All lives gone -> show OH NO / try-again screen and wait for click.
+		// Click START in handleInput resets the game (kTryAgain); click QUIT
+		// fires the loss scene.
 		_gameState = kHitAnimation;
 		if (_tryAgainSound.name != "NO SOUND") {
 			g_nancy->_sound->loadSound(_tryAgainSound);
@@ -940,11 +959,14 @@ void WhaleSurvivorPuzzle::redraw() {
 		_drawSurface.blitFrom(_imageMain, *porpSrc,
 		                      Common::Point(_porpLeft, _porpTop));
 
-	// Draw bubble animation frame on top of porpoise when surfacing.
+	// Draw bubble animation frame above the porpoise's blowhole when
+	// surfacing. Centered horizontally on the porpoise.
 	if (_porpoiseAnim == kPorpoiseSurface && _breathFrame < kOxygenStages) {
-		const Common::Rect &bubbleSrc = _bubbleSrcRects[_breathFrame];
-		int bubbleX = _porpLeft - 5 + (_porpWidth - bubbleSrc.width()) / 2;
-		int bubbleY = _porpTop + 9 - bubbleSrc.height();
+		Common::Rect bubbleSrc = _bubbleSrcRects[_breathFrame];
+		bubbleSrc.top += 3;
+		bubbleSrc.bottom -= 2;	// trim top and bottom of bubble animation frame
+		int bubbleX = _porpLeft + (_porpWidth - bubbleSrc.width()) / 2;
+		int bubbleY = _porpTop  - bubbleSrc.height();
 		_drawSurface.transBlitFrom(_imageMain, bubbleSrc,
 		                           Common::Point(bubbleX, bubbleY),
 		                           g_nancy->_graphics->getTransColor());
@@ -957,10 +979,10 @@ void WhaleSurvivorPuzzle::redraw() {
 		                                    _livesDestRects[i].top));
 	}
 
-	// Draw score – display as 5 digits
+	// Draw score – display as 5 digits.
 	_prevScore = _score;
-	// Score is raw points; display with zero-padding to 5 digits
-	int displayScore = _score;
+	int divisor = _scoreDivisor > 0 ? (int)_scoreDivisor : 1;
+	int displayScore = _score / divisor;
 	const int kDigits = 5;
 	int digits[kDigits];
 	for (int d = kDigits - 1; d >= 0; --d) {
