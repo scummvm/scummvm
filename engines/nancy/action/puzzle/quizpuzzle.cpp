@@ -48,7 +48,7 @@ void QuizPuzzle::init() {
 	setTransparent(true);
 
 	g_nancy->_input->setVKEnabled(true);
-	RenderObject::init();
+	RenderActionRecord::init();
 }
 
 Common::String QuizPuzzle::readSubtitle(Common::SeekableReadStream &stream) {
