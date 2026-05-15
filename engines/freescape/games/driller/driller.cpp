@@ -1031,26 +1031,50 @@ void DrillerEngine::drawSensorShoot(Sensor *sensor) {
 		playSound(_soundIndexHit, true, _soundFxHandle);
 	}
 
+	Math::Vector3d sensorPos = sensor->getOrigin();
+
+	if (isAmiga() || isAtariST()) {
+		// Fan 8 lines emanating from the sensor toward points spread around
+		// the camera's view frustum (4 corners + 4 edge midpoints), matching
+		// the 8 lines of the original Amiga routine (BTE922). The targets
+		// have to sit in front of the camera along _cameraFront
+		float fwd = _playerHeight;
+		float spread = _playerHeight;
+		Math::Vector3d basePos = _position + _cameraFront * fwd;
+		Math::Vector3d right = _cameraRight * spread;
+		Math::Vector3d up(0, spread, 0);
+
+		_gfx->renderSensorShoot(1, sensorPos, basePos - right - up, _viewArea); // bottom-left
+		_gfx->renderSensorShoot(1, sensorPos, basePos + right - up, _viewArea); // bottom-right
+		_gfx->renderSensorShoot(1, sensorPos, basePos + right + up, _viewArea); // top-right
+		_gfx->renderSensorShoot(1, sensorPos, basePos - right + up, _viewArea); // top-left
+		_gfx->renderSensorShoot(1, sensorPos, basePos + up, _viewArea);         // top-center
+		_gfx->renderSensorShoot(1, sensorPos, basePos - up, _viewArea);         // bottom-center
+		_gfx->renderSensorShoot(1, sensorPos, basePos - right, _viewArea);      // middle-left
+		_gfx->renderSensorShoot(1, sensorPos, basePos + right, _viewArea);      // middle-right
+		return;
+	}
+
 	Math::Vector3d target;
 	target = _position;
 	target.y() = target.y() - _playerHeight;
 	target.x() = target.x() - 5;
-	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+	_gfx->renderSensorShoot(1, sensorPos, target, _viewArea);
 
 	target = _position;
 	target.y() = target.y() - _playerHeight;
 	target.x() = target.x() + 5;
-	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+	_gfx->renderSensorShoot(1, sensorPos, target, _viewArea);
 
 	target = _position;
 	target.y() = target.y() + _playerHeight;
 	target.x() = target.x() - 5;
-	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+	_gfx->renderSensorShoot(1, sensorPos, target, _viewArea);
 
 	target = _position;
 	target.y() = target.y() + _playerHeight;
 	target.x() = target.x() + 5;
-	_gfx->renderSensorShoot(1, sensor->getOrigin(), target, _viewArea);
+	_gfx->renderSensorShoot(1, sensorPos, target, _viewArea);
 }
 
 void DrillerEngine::updateTimeVariables() {
