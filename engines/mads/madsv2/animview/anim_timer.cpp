@@ -69,7 +69,7 @@ void anim_timer() {
 		goto done;
 	if (currentFrame < 0 || currentFrame >= maxFrame)
 		goto done;
-	if (foundSeries && (currentFrame <= seriesMinFrame || currentFrame > seriesMaxFrame))
+	if (foundSeries && currentFrame > seriesMaxFrame && currentFrame <= seriesMinFrame)
 		goto done;
 
 	if (timerFlag1) {
@@ -78,22 +78,23 @@ void anim_timer() {
 		goto block1;
 	}
 
-	++runCtr1;
 	if (normalTimer1)
 		goto block3;
 
+	++runCtr1;
+
 	if (runFx == 0) {
-		if (peelFlag && timer2 >= currTimer && timer1 <= currTimer) {
+		if (peelFlag && currTimer >= timer2 && currTimer <= timer1) {
 			anim_peel();
 
 			timer2 += current_anim->misc_peel_rate;
 
-			if (timer1 <= currTimer) {
+			if (currTimer < timer1) {
 				matte_frame(runFx, false);
 			}
 		}
 
-		if (timer1 < currTimer)
+		if (currTimer < timer1)
 			goto done;
 	} else {
 		uint32 time = timer1 - FX_TIMES[runFx];
@@ -112,9 +113,9 @@ void anim_timer() {
 		goto block2;
 
 	speech = &current_anim->speech[speechIndex];
-	flag = (speech->display_condition & 0x4000) &&
-		(speech->display_condition & 0x800) &&
-		(speech->resource_id >= 0);
+	flag = speech->display_condition != 0x4000 &&
+		speech->display_condition != 0x800 &&
+		speech->resource_id >= 0;
 
 	if (speech->sound /*&& (!flag || sound_var1 == 49)*/) {
 		g_engine->_soundManager->command(speech->sound);
@@ -133,12 +134,14 @@ block1:
 	runVal7 = -1;
 
 	speech = &current_anim->speech[speechIndex];
-	if (!loadFontFlag && (speech->display_condition & 0x8000) &&
-			(speech->display_condition & 0x2000)) {
+	if (!loadFontFlag &&
+			speech->display_condition != 0x8000 &&
+			speech->display_condition != 0x800 &&
+			speech->display_condition != 0x2000) {
 		paletteHandle = pal_alloc_color(-1, 0, &palIndex1, &speech->color[0]);
 		paletteHandle = pal_alloc_color(paletteHandle, -1, &palIndex2, &speech->color[1]);
 
-		mcga_setpal_range(&master_palette, MIN(palIndex1, palIndex2), ABS(palIndex2 - palIndex1));
+		mcga_setpal_range(&master_palette, MIN(palIndex1, palIndex2), ABS(palIndex2 - palIndex1) + 1);
 		runVal8 = -1;
 		matteId = matte_add_message(current_anim->font, speech->text,
 			speech->x, speech->y, (palIndex2 << 8) | palIndex1,
@@ -180,7 +183,7 @@ block2:
 	}
 
 	imageCount = image_marker;
-	while (imageFrame < current_anim->num_images) {
+	for (; imageFrame < current_anim->num_images; ++imageFrame) {
 		Image *img = &current_anim->image[imageFrame];
 
 		if (img->flags > currentFrame)
@@ -205,7 +208,7 @@ block2:
 		if (!found) {
 			image_list[image_marker] = *img;
 			Series *series = series_list[img->series_id];
-			series->delta_series = (series->delta_series == 0) ? 1 : -4;
+			series->delta_series = (series->delta_series < 1) ? 1 : -4;
 			++image_marker;
 		}
 	}
@@ -264,7 +267,7 @@ block3:
 	if (speech->last_frame >= currentFrame)
 		goto done;
 	if (++runVal6 < speechLoops) {
-		if (runVal6 == maxFrame) {
+		if (currentFrame == maxFrame) {
 			frame = &current_anim->frame[runVal6 - 1];
 			timer1 += frame->ticks;
 		}
