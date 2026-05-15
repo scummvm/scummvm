@@ -116,8 +116,12 @@ Common::Error NancyEngine::loadGameState(int slot) {
 	}
 
 	Common::Error result = Engine::loadGameState(slot);
-	if (result.getCode() == Common::kNoError)
+	if (result.getCode() == Common::kNoError) {
+		if (_gameFlow.curState != NancyState::kScene)
+			destroyState(_gameFlow.curState);
 		g_nancy->setState(NancyState::kScene);
+		g_nancy->setMouseEnabled(true);
+	}
 	return result;
 }
 
