@@ -450,6 +450,14 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "StopLoad";
 	case kIsRectInMemoryMethod:
 		return "IsRectInMemory";
+	case kDotGameResetMethod:
+		return "DotGameReset";
+	case kDotGameShowMethod:
+		return "DotGameShow";
+	case kDotGameHideMethod:
+		return "DotGameHide";
+	case kDotGameHitMethod:
+		return "DotGameHit";
 	default:
 		return "UNKNOWN";
 	}
@@ -503,6 +511,8 @@ const char *eventTypeToStr(EventType type) {
 		return "MovieFailure";
 	case kSpriteMovieEndEvent:
 		return "SpriteMovieEnd";
+	case kDotGameCompleteEvent:
+		return "DotGameComplete";
 	case kScreenExitEvent:
 		return "ScreenExit";
 	case kPathStepEvent:

@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	actors/cursor.o \
 	actors/diskimage.o \
 	actors/document.o \
+	actors/dotgame.o \
 	actors/font.o \
 	actors/hotspot.o \
 	actors/image.o \

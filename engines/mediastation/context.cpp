@@ -30,6 +30,7 @@
 #include "mediastation/actors/canvas.h"
 #include "mediastation/actors/cursor.h"
 #include "mediastation/actors/diskimage.h"
+#include "mediastation/actors/dotgame.h"
 #include "mediastation/actors/palette.h"
 #include "mediastation/actors/image.h"
 #include "mediastation/actors/path.h"
@@ -163,6 +164,10 @@ void ImtGod::readCreateActorData(Chunk &chunk) {
 
 	case kActorTypeDiskImage:
 		actor = new DiskImageActor();
+		break;
+
+	case kActorTypeDotGame:
+		actor = new DotGameActor();
 		break;
 
 	default:

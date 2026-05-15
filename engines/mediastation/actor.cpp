@@ -54,8 +54,8 @@ const char *actorTypeToStr(ActorType type) {
 		return "Sprite";
 	case kActorTypeLKZazu:
 		return "LKZazu";
-	case kActorTypeLKConstellations:
-		return "LKConstellations";
+	case kActorTypeDotGame:
+		return "DotGame";
 	case kActorTypeDocument:
 		return "Document";
 	case kActorTypeDiskImage:

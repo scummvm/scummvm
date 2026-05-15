@@ -294,6 +294,12 @@ enum BuiltInMethod {
 	kPurgeMethod = 0x167,
 	kStopLoadMethod = 0x168,
 	kIsRectInMemoryMethod = 0x16A,
+
+	// DOT GAME ACTOR METHODS.
+	kDotGameResetMethod = 0xE2,
+	kDotGameShowMethod = 0xE3,
+	kDotGameHideMethod = 0xE4,
+	kDotGameHitMethod = 0xE5,
 };
 const char *builtInMethodToStr(BuiltInMethod method);
 
@@ -321,6 +327,7 @@ enum EventType {
 	kMovieAbortEvent = 0x15,
 	kMovieFailureEvent = 0x16,
 	kSpriteMovieEndEvent = 0x17,
+	kDotGameCompleteEvent = 0x18,
 	kScreenExitEvent = 0x1B,
 	kPathStepEvent = 0x1C,
 	kSoundStoppedEvent = 0x1D,
