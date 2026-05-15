@@ -2424,47 +2424,53 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			++i;
 
 			while (i != tokens.end()) {
-				// Read input
-				std::string folder = unifyPath(*i);
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					// Read input
+					std::string folder = unifyPath(*i);
 
-				// Get include folder
-				const std::string source_dir = "$(srcdir)/";
-				const std::string selector = getLastPathComponent(folder);
-				const std::string module = getLastPathComponent(moduleDir);
+					// Get include folder
+					const std::string source_dir = "$(srcdir)/";
+					const std::string selector = getLastPathComponent(folder);
+					const std::string module = getLastPathComponent(moduleDir);
 
-				folder.replace(folder.find(source_dir), source_dir.length(), "");
-				folder.replace(folder.find(selector), selector.length(), "");
-				folder.replace(folder.find(module), module.length(), moduleDir);
+					folder.replace(folder.find(source_dir), source_dir.length(), "");
+					folder.replace(folder.find(selector), selector.length(), "");
+					folder.replace(folder.find(module), module.length(), moduleDir);
 
-				// Scan all files in the include folder
-				FileList files = listDirectory(folder);
+					// Scan all files in the include folder
+					FileList files = listDirectory(folder);
 
-				// Add to list of test folders
-				if (shouldInclude.top()) {
-					testDirs.push_back(folder);
-				}
-
-				for (FileList::const_iterator f = files.begin(); f != files.end(); ++f) {
-					if (f->isDirectory)
-						continue;
-
-					std::string filename = folder + f->name;
-
+					// Add to list of test folders
 					if (shouldInclude.top()) {
-						// In case we should include a file, we need to make
-						// sure it is not in the exclude list already. If it
-						// is we just drop it from the exclude list.
-						excludeList.remove(filename);
-
-						includeList.push_back(filename);
-					} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
-						// We only add the file to the exclude list in case it
-						// has not yet been added to the include list.
-						excludeList.push_back(filename);
+						testDirs.push_back(folder);
 					}
-				}
 
-				++i;
+					for (FileList::const_iterator f = files.begin(); f != files.end(); ++f) {
+						if (f->isDirectory)
+							continue;
+
+						std::string filename = folder + f->name;
+
+						if (shouldInclude.top()) {
+							// In case we should include a file, we need to make
+							// sure it is not in the exclude list already. If it
+							// is we just drop it from the exclude list.
+							excludeList.remove(filename);
+
+							includeList.push_back(filename);
+						} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+							// We only add the file to the exclude list in case it
+							// has not yet been added to the include list.
+							excludeList.push_back(filename);
+						}
+					}
+
+					++i;
+				}
 			}
 		} else if (*i == "ifdef") {
 			if (tokens.size() < 2)
