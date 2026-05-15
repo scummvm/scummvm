@@ -40,7 +40,7 @@ def scanInputFiles(files, _options):
         abort( 'No tests defined' )
     return [options,suites]
 
-lineCont_re = re.compile(r'(.*)\\s*$')
+lineCont_re = re.compile(r'(.*)\\\s*$')
 def scanInputFile(fileName):
     '''Scan single input file for test suites'''
     # mode 'rb' is problematic in python3 - byte arrays don't behave the same as
