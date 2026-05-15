@@ -48,11 +48,11 @@ void *timer_low_routine;
 
 
 void timer_install() {
-	// No implementation in ScummVM
+	timer_activate_low_priority(nullptr);
 }
 
 void timer_remove() {
-	// No implementation in ScummVM
+	timer_activate_low_priority(nullptr);
 }
 
 long timer_read() {
@@ -89,8 +89,8 @@ int timer_get_copy_protect() {
 	return timer_copy_protect_out;
 }
 
-void timer_activate_low_priority(void (*(routine))()) {
-	warning("TODO: timer_activate_low_priority");
+void timer_activate_low_priority(void (*routine)()) {
+	g_engine->setTimerFunction(routine);
 }
 
 byte *timer_get_interrupt_stack() {

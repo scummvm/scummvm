@@ -35,6 +35,8 @@
 namespace MADS {
 namespace MADSV2 {
 
+typedef void (*TimerFunction)();
+
 class MADSV2Engine : public MADSEngine {
 private:
 	void initGlobals();
@@ -47,8 +49,11 @@ protected:
 	Common::Point _mousePos;
 	int _mouseButtons = 0;
 	Audio::SoundHandle _speechHandle;
+	TimerFunction _timerFunction = nullptr;
+	uint32 _nextTimerTime = 0;
 
 	void pollEvents();
+	void checkForTimerFunction();
 
 public:
 	MADS::SoundManager *_soundManager = nullptr;
@@ -110,6 +115,13 @@ public:
 	void playSpeech(Audio::AudioStream *stream);
 	void stopSpeech();
 	bool isSpeechPlaying() const;
+
+	/**
+	 * Sets the timer function to call at 60Hz
+	 */
+	void setTimerFunction(TimerFunction fn) {
+		_timerFunction = fn;
+	}
 };
 
 extern MADSV2Engine *g_engine;

@@ -237,6 +237,9 @@ void MADSV2Engine::pollEvents() {
 		_nextFrameTime = time + GAME_FRAME_TIME;
 	}
 
+	// Handle calling any set timer function
+	checkForTimerFunction();
+
 	// Poll for events
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
@@ -285,6 +288,18 @@ void MADSV2Engine::pollEvents() {
 		if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
 				KEYBINDING_ACTIONS[e.customType] != Common::KEYCODE_INVALID)
 			_keyEvents.push(Common::KeyState(KEYBINDING_ACTIONS[e.customType]));
+	}
+}
+
+void MADSV2Engine::checkForTimerFunction() {
+	if (_timerFunction) {
+		uint32 time = g_system->getMillis();
+		if (time >= _nextTimerTime) {
+			_timerFunction();
+
+			// Determine the next time to call the function at 60Hz
+			_nextTimerTime = time + (1000 / 60);
+		}
 	}
 }
 
