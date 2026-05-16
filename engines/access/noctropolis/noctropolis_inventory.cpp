@@ -124,7 +124,8 @@ int NoctropolisInventory::displayInv() {
 				slotY += MAX(0, 19 - inventorySprites->getFrame(spriteIndex)->h / 2);
 				const Common::Point slotPt(slotX, slotY);
 				screen->plotF(inventorySprites->getFrame(spriteIndex), slotPt);
-				font->drawString(screen, Common::String::format("%d", spriteIndex), slotPt);
+				// Useful for debugging - draw sprite number
+				//font->drawString(screen, Common::String::format("%d", spriteIndex), slotPt);
 			}
 
 		}

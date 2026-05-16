@@ -99,6 +99,11 @@ void NoctropolisEngine::initVariables() {
 	_animation->clearTimers();
 
 	initMinigame();
+	ARRAYCLEAR(_flags);
+	ARRAYCLEAR(_ask);
+	for (auto &entry : _inventory->_inv) {
+		entry._value = ITEM_NOT_FOUND;
+	}
 
 	// This is Noct_InitTravel in the original
 	_travScrollRow = 15;
@@ -814,6 +819,9 @@ Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_establishTable[i]);
 
 	_stil->synchronize(s);
+	
+	if (s.isLoading()) // clear minigame state on load
+		initMinigame();
 
 	return result;
 }
