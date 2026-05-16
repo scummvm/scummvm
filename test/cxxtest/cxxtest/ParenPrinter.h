@@ -13,19 +13,31 @@
 #define __cxxtest__ParenPrinter_h__
 
 //
-// The ParenPrinter is identical to the ErrorPrinter, except it
-// prints the line number in a format expected by some compilers
+// The ParenPrinter is identical to the ErrorPrinter or the StdioPrinter,
+// except it prints the line number in a format expected by some compilers
 // (notably, MSVC).
 //
 
+#ifdef _CXXTEST_HAVE_STD
 #include <cxxtest/ErrorPrinter.h>
+#else
+#include <cxxtest/StdioPrinter.h>
+#endif // _CXXTEST_HAVE_STD
 
 namespace CxxTest
 {
+#ifdef _CXXTEST_HAVE_STD
 class ParenPrinter : public ErrorPrinter
+#else
+class ParenPrinter : public StdioPrinter
+#endif // _CXXTEST_HAVE_STD
 {
 public:
-    ParenPrinter(FILE *o = stdout) : ErrorPrinter(o, "(", ")") {}
+#ifdef _CXXTEST_HAVE_STD
+    ParenPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout)) : ErrorPrinter(o, "(", ")") {}
+#else
+    ParenPrinter(FILE *o = stdout) : StdioPrinter(o, "(", ")") {}
+#endif // _CXXTEST_HAVE_STD
 };
 }
 
