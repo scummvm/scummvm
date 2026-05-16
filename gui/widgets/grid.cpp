@@ -195,6 +195,7 @@ void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 void GridItemWidget::handleMouseEntered(int button) {
 	if (!_isHighlighted) {
 		_isHighlighted = true;
+		_grid->_highlightedItem = this;
 		markAsDirty();
 	}
 }
@@ -202,6 +203,8 @@ void GridItemWidget::handleMouseEntered(int button) {
 void GridItemWidget::handleMouseLeft(int button) {
 	if (_isHighlighted) {
 		_isHighlighted = false;
+		if (_grid->_highlightedItem == this)
+			_grid->_highlightedItem = nullptr;
 		markAsDirty();
 	}
 }
@@ -1088,6 +1091,8 @@ void GridWidget::applyScrollPos() {
 	assignEntriesToItems();
 	scrollBarRecalc();	
 	markAsDirty();
+	if (_highlightedItem)
+		_highlightedItem->handleMouseLeft(0);
 	g_gui.scheduleTopDialogRedraw();
 }
 
