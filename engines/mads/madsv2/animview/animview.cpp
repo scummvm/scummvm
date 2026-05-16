@@ -56,7 +56,7 @@ bool timerFlag1;
 bool peelFlag;
 int runCtr1;
 int runFx;
-uint32 timer1, timer2;
+long timer1, timer2;
 AnimPtr current_anim;
 AnimInterPtr current_anim_inter;
 int speechIndex;
@@ -66,6 +66,7 @@ int loadFontFlag;
 int imageFrame;
 CycleList anim_cycle_list;
 bool has_cycles;
+int currentViewX, currentViewY;
 
 static const byte FX_TIMES[16] = {
 	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
@@ -187,6 +188,9 @@ static void run_animation(int animIndex) {
 
 	buffer_fill(scr_inter_orig, 0);
 
+	currentViewX = currentViewY = -1;
+	current_error_code = error_code;
+
 	if (minFrame == -1)
 		minFrame = 0;
 	if (maxFrame == -1)
@@ -195,7 +199,7 @@ static void run_animation(int animIndex) {
 	minFrame = CLIP<int>(minFrame, 0, current_anim->num_frames);
 	maxFrame = CLIP<int>(maxFrame, 0, maxFrame);
 	if (animIndex == 0)
-		timer1 = g_system->getMillis();
+		timer1 = timer_read();
 
 	speechIndex = -1;
 	loadFontFlag = current_anim->load_flags & AA_LOAD_FONT;
@@ -266,7 +270,7 @@ static void run_animation(int animIndex) {
 
 	if (!current_error_code && current_anim->misc_slow_fade) {
 		timer_activate_low_priority(nullptr);
-		timer2 = g_system->getMillis();
+		timer2 = timer_read();
 		bool fadeFlag = true;
 
 		while (fadeFlag && !current_error_code) {
@@ -280,7 +284,7 @@ static void run_animation(int animIndex) {
 				current_error_code = true;
 
 			g_system->delayMillis(10);
-			if (g_system->getMillis() < timer2)
+			if (timer_read() < timer2)
 				continue;
 
 			if (peelFlag) {
@@ -330,12 +334,11 @@ static void run_animation(int animIndex) {
  * in sequence
  */
 static void animate() {
-	char buf[80], speech_name[80];
+	char buf[80];
 	AnimFile anim_in;
 	int count, series_ctr, ctr;
 	int soundLoadFlag = 0;
 	bool foundSound;
-	int oldMode;
 	int imageIndex;
 	static int packIndex = 0;
 

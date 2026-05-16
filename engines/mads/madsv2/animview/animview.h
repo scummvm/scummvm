@@ -41,7 +41,7 @@ extern bool timerFlag1;
 extern bool peelFlag;
 extern int runCtr1;
 extern int runFx;
-extern uint32 timer1, timer2;;
+extern long timer1, timer2;;
 extern AnimPtr current_anim;
 extern AnimInterPtr current_anim_inter;
 extern int speechIndex;
@@ -51,6 +51,7 @@ extern int loadFontFlag;
 extern int imageFrame;
 extern CycleList anim_cycle_list;
 extern bool has_cycles;
+extern int currentViewX, currentViewY;
 
 
 // Main animview function

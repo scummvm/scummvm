@@ -292,14 +292,17 @@ void MADSV2Engine::pollEvents() {
 }
 
 void MADSV2Engine::checkForTimerFunction() {
-	if (_timerFunction) {
+	if (_timerFunction && _nextTimerTime != (uint32)-1) {
 		uint32 time = g_system->getMillis();
 		if (time >= _nextTimerTime) {
-			// Determine the next time to call the function at 60Hz
-			_nextTimerTime = time + (1000 / 60);
+			// Flag the timer as disabled to prevent recursive calls
+			_nextTimerTime = (uint32)-1;
 
 			// Call the timer
 			_timerFunction();
+
+			// Determine the next time to call the function at 60Hz
+			_nextTimerTime = time + (1000 / 60);
 		}
 	}
 }

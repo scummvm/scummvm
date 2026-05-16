@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/engine.h"
 
 namespace MADS {
@@ -46,7 +47,6 @@ static int matteId;
 static int normalTimer1, imageCount;
 static int messageCount;
 static int frameViewX, frameViewY;
-static int currentViewX, currentViewY;
 
 void anim_timer_init() {
 	paletteHandle = 0;
@@ -60,7 +60,7 @@ void anim_timer_init() {
 
 void anim_timer() {
 	bool flag = false;
-	uint32 currTimer = g_system->getMillis();
+	uint32 currTimer = timer_read();
 	Speech *speech;
 	Frame *frame;
 	int sound, count;
@@ -169,7 +169,6 @@ block2:
 		if (!picture_map.one_to_one) {
 			tile_pan(&picture_map, frameViewX, frameViewY);
 			tile_pan(&depth_map, frameViewX, frameViewY);
-
 		}
 
 		image_marker = 1;
@@ -204,14 +203,15 @@ block2:
 				img->depth == img2->depth &&
 				img->scale == img2->scale;
 			if (found)
-				img2->flags = 0;
+				img2->flags = IMAGE_STATIC;
 		}
 
 		if (!found) {
 			assert(image_marker < IMAGE_LIST_SIZE);
 			image_list[image_marker] = *img;
 			Series *series = series_list[img->series_id];
-			series->delta_series = (series->delta_series < 1) ? 1 : -4;
+			image_list[image_marker].flags = (series->delta_series >= 1) ?
+				IMAGE_DELTA : IMAGE_UPDATE;
 			++image_marker;
 		}
 	}
@@ -233,7 +233,7 @@ block2:
 
 block3:
 	if (runFx) {
-		currTimer = g_system->getMillis();
+		currTimer = timer_read();
 		if (currTimer < timer1) {
 			normalTimer1 = -1;
 			goto done;
