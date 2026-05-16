@@ -39,6 +39,4 @@ bool Polygon::pointInside(int16 x, int16 y) const {
 	return result;
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Access
