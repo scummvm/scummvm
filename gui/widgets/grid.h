@@ -180,6 +180,7 @@ protected:
 	static const int kDragThreshold = 5;
 
 	FluidScroller *_fluidScroller;
+	GridItemWidget *_highlightedItem = nullptr;
 
 public:
 	int				_gridItemHeight;
