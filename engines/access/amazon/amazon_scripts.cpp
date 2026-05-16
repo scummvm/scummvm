@@ -248,8 +248,7 @@ void AmazonScripts::loadBackground(int param1, int param2) {
 }
 
 void AmazonScripts::loadNSound(int param1, int param2) {
-	Resource *sound = _vm->_files->loadFile(param1, param2);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+	_vm->_sound->loadAndAddSound(param1, param2);
 }
 
 void AmazonScripts::setInactive() {

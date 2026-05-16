@@ -35,10 +35,10 @@ class AccessEngine;
 
 struct FileIdent {
 	int _fileNum;
-	int _subfile;
+	int _subFile;
 
 	FileIdent();
-	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subfile = subfile; }
+	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subFile = subfile; }
 
 	void load(Common::SeekableReadStream &s);
 };

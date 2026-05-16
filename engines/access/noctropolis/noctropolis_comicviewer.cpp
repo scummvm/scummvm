@@ -157,9 +157,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 	}
 
 	if (playedSound) {
-		_vm->_sound->stopSound();
-		delete _vm->_sound->_soundTable[1]._res;
-		_vm->_sound->_soundTable[1]._res = nullptr;
+		_vm->_sound->freeSound(1);
 	}
 
 	delete _bubbleSprites;

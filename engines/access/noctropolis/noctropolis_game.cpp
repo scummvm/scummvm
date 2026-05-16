@@ -787,6 +787,16 @@ void NoctropolisEngine::stilWalk() {
 	_stil->walk();
 }
 
+void NoctropolisEngine::playInventoryStinger() {
+	static const FileIdent stingerIdent = FileIdent(99, 64);
+
+	if (!_sound->hasLoadedSound(stingerIdent))
+		_sound->loadAndAddSound(99, 64, 1);
+
+	// playSound will not add it to the queue if it's already there.
+	_sound->playSoundByIdent(stingerIdent);
+}
+
 Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
 	Common::Error result = AccessEngine::synchronize(s);
 

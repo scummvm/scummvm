@@ -90,7 +90,9 @@ void NoctropolisFont::makeCharSurface(Graphics::Surface &surface, byte ch, const
 }
 
 
+#if DUMP_FONTS
 static int dumpno = 0;
+#endif
 
 void NoctropolisFont::load(const uint16 *offsets, const byte *data) {
 	_chars.resize(_lastChar - _firstCharIndex);

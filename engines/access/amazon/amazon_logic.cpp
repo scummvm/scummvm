@@ -553,7 +553,7 @@ void Opening::doTent() {
 
 	_vm->_events->showCursor();
 	_vm->_midi->newMusic(11, 1);
-	_vm->_sound->_soundTable.clear();
+	_vm->_sound->freeSounds();
 
 	_vm->establishCenter(0, 4);
 }

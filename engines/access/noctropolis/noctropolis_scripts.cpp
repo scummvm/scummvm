@@ -163,8 +163,8 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 			_vm->_midi->newMusic(0, 1);
 		break;
 	case 16:
-		// This gets called at the start of the end credits.. do nothing?
-		((VideoPlayer_v2 *)_vm->_video)->enableSetPal();
+		// This gets called at the start of the end credits
+		((VideoPlayer_v2 *)_vm->_video)->setVideoPalNow();
 		break;
 	case 17:
 		warning("TODO: Add Nightdive credits here if playing that edition?");

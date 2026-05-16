@@ -316,8 +316,7 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 
 	while (soundsLeft) {
 		_sound->freeSounds();
-		Resource *res = _sound->loadSound(_narateFile + 99, _sndSubFile);
-		_sound->_soundTable.push_back(SoundEntry(res, 1));
+		_sound->loadAndAddSound(_narateFile + 99, _sndSubFile);
 		_sound->playSound(0);
 
 		while(_sound->isSFXPlaying() && !shouldQuit())

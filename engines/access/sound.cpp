@@ -48,13 +48,13 @@ SoundManager::~SoundManager() {
 void SoundManager::clearSounds() {
 	debugC(1, kDebugSound, "clearSounds()");
 
+	if (_mixer->isSoundHandleActive(*_effectsHandle))
+		_mixer->stopHandle(*_effectsHandle);
+
 	for (auto &sound : _soundTable)
 		delete sound._res;
 
 	_soundTable.clear();
-
-	if (_mixer->isSoundHandleActive(*_effectsHandle))
-		_mixer->stopHandle(*_effectsHandle);
 
 	while (_queue.size()) {
 		delete _queue[0]._stream;
@@ -74,20 +74,39 @@ bool SoundManager::isSoundQueued(int soundId) const {
 void SoundManager::loadSoundTable(int idx, int fileNum, int subfile, int priority) {
 	debugC(1, kDebugSound, "loadSoundTable(%d, %d, %d)", idx, fileNum, subfile);
 
-	Resource *soundResource;
-
 	if (idx >= (int)_soundTable.size())
 		_soundTable.resize(idx + 1);
+	else
+		freeSound(idx);
 
-	delete _soundTable[idx]._res;
-	soundResource = _vm->_files->loadFile(fileNum, subfile);
-	_soundTable[idx]._res = soundResource;
-	_soundTable[idx]._priority = priority;
+	Resource *soundResource = _vm->_files->loadFile(fileNum, subfile);
+	_soundTable[idx] = SoundEntry(soundResource, priority, fileNum, subfile);
 }
 
-Resource *SoundManager::loadSound(int fileNum, int subfile) {
-	debugC(1, kDebugSound, "loadSound(%d, %d)", fileNum, subfile);
-	return _vm->_files->loadFile(fileNum, subfile);
+void SoundManager::loadAndAddSound(const FileIdent &ident, int priority) {
+	loadAndAddSound(ident._fileNum, ident._subFile);
+}
+
+void SoundManager::loadAndAddSound(int fileNum, int subfile, int priority) {
+	Resource *res = _vm->_files->loadFile(fileNum, subfile);
+	_soundTable.push_back(SoundEntry(res, priority, fileNum, subfile));
+}
+
+bool SoundManager::hasLoadedSound(const FileIdent &ident) const {
+	for (const auto &entry : _soundTable) {
+		if (entry.matches(ident))
+			return true;
+	}
+	return false;
+}
+
+void SoundManager::freeSound(int idx) {
+	assert(idx >= 0 && idx < (int)_soundTable.size());
+	// make sure we don't try to use the resource
+	stopSound();
+	assert(!isSoundQueued(idx));
+	delete _soundTable[idx]._res;
+	_soundTable[idx] = SoundEntry();
 }
 
 void SoundManager::playSound(int soundIndex, bool loop /* = false */) {
@@ -99,6 +118,14 @@ void SoundManager::playSound(int soundIndex, bool loop /* = false */) {
 	int priority = _soundTable[soundIndex]._priority;
 	playSound(_soundTable[soundIndex]._res, priority, loop, soundIndex);
 }
+
+void SoundManager::playSoundByIdent(const FileIdent &ident, bool loop /* = false*/) {
+	for (int i = 0; i < (int)_soundTable.size(); i++) {
+		if (_soundTable[i].matches(ident))
+			playSound(i);
+	}
+}
+
 
 void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIndex) {
 	debugC(1, kDebugSound, "playSound");
@@ -163,10 +190,11 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 		_queue.push_back(QueuedSound(audioStream, soundIndex));
 	}
 
-	if (!_mixer->isSoundHandleActive(*_effectsHandle))
+	if (!_mixer->isSoundHandleActive(*_effectsHandle)) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
 						_queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
 						DisposeAfterUse::NO);
+	}
 }
 
 void SoundManager::checkSoundQueue() {
@@ -201,7 +229,7 @@ void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds)
 	for (const auto &sound : sounds) {
 		Resource *soundRes;
 		if (sound._soundFilename.empty()) {
-			soundRes = loadSound(sound._fileNum, sound._subfile);
+			loadAndAddSound(sound._fileNum, sound._subFile, sound._priority);
 		} else {
 			//
 			// In Noctropolis, sounds are defined by filenames, eg,
@@ -216,8 +244,8 @@ void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds)
 			path.joinInPlace(components[2]);
 			debugC(1, kDebugSound, "loadRawSound(%s)", path.toString().c_str());
 			soundRes = _vm->_files->loadRawFile(path);
+			_soundTable.push_back(SoundEntry(soundRes, sound._priority));
 		}
-		_soundTable.push_back(SoundEntry(soundRes, sound._priority));
 	}
 }
 
@@ -410,7 +438,7 @@ void MusicManager::loadMusic(int fileNum, int subfile) {
 }
 
 void MusicManager::loadMusic(FileIdent file) {
-	debugC(1, kDebugSound, "loadMusic(%d, %d)", file._fileNum, file._subfile);
+	debugC(1, kDebugSound, "loadMusic(%d, %d)", file._fileNum, file._subFile);
 
 	_music = _vm->_files->loadFile(file);
 }
