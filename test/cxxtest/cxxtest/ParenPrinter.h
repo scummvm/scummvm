@@ -25,7 +25,7 @@ namespace CxxTest
 class ParenPrinter : public ErrorPrinter
 {
 public:
-    ParenPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout)) : ErrorPrinter(o, "(", ")") {}
+    ParenPrinter(FILE *o = stdout) : ErrorPrinter(o, "(", ")") {}
 };
 }
 

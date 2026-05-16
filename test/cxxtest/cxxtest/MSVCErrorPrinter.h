@@ -32,7 +32,7 @@ namespace CxxTest
 class MSVCErrorPrinter : public ErrorPrinter
 {
 public:
-    MSVCErrorPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout))
+    MSVCErrorPrinter(FILE *o = stdout)
         : ErrorPrinter(o, "(", ") ", "error C2999", "warning C4999") {}
 };
 }
