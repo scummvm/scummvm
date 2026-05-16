@@ -248,6 +248,11 @@ void ScrollContainerWidget::markAsDirty() {
 	}
 }
 
+void ScrollContainerWidget::lostFocusWidget() {
+	_isMouseDown = _isDragging = false;
+	_mouseDownY = _mouseDownStartY = 0;
+}
+
 bool ScrollContainerWidget::containsWidget(Widget *w) const {
 	if (w == _verticalScroll || _verticalScroll->containsWidget(w))
 		return true;

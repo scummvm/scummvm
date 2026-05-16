@@ -66,6 +66,7 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
+	void lostFocusWidget() override;
 	void handleTickle() override;
 
 	// We overload getChildY to make sure child widgets are positioned correctly.

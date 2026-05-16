@@ -831,6 +831,8 @@ void ListWidget::receivedFocusWidget() {
 
 void ListWidget::lostFocusWidget() {
 	_inversion = ThemeEngine::kTextInversion;
+	_isMouseDown = _isDragging = false;
+	_dragStartY = _dragLastY = 0;
 
 	// If we lose focus, we simply forget the user changes
 	_editMode = false;
