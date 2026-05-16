@@ -94,8 +94,6 @@ VideoPlayer_v1::VideoPlayer_v1(AccessEngine *vm) : VideoPlayer(vm) {
 void VideoPlayer_v1::setVideo(const Common::Point &pt) {
 	_vidSurface->_orgX1 = pt.x;
 	_vidSurface->_orgY1 = pt.y;
-	_vm->_timers[31]._timer = _rate;
-	_vm->_timers[31]._initTm = _rate;
 
 	// Load in header
 	_header._frameCount = _videoData->_stream->readUint16LE();
@@ -130,6 +128,12 @@ void VideoPlayer_v1::setVideo(const Common::Point &pt) {
 	}
 
 	_videoEnd = false;
+}
+
+void VideoPlayer_v1::setRate(int rate) {
+	_rate = rate;
+	_vm->_timers[31]._timer = rate;
+	_vm->_timers[31]._initTm = _rate;
 }
 
 

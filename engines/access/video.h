@@ -104,7 +104,7 @@ private:
 protected:
 	void setVideo(const Common::Point &pt) override;
 
-	void setRate(int rate) override { _rate = rate; }
+	void setRate(int rate) override;
 
 	void delayToNextFrame() override;
 
