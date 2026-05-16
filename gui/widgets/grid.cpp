@@ -1087,6 +1087,7 @@ void GridWidget::applyScrollPos() {
 
 	assignEntriesToItems();
 	scrollBarRecalc();	
+	markAsDirty();
 	g_gui.scheduleTopDialogRedraw();
 }
 
