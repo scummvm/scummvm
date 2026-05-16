@@ -532,7 +532,7 @@ void NoctropolisEngine::dead(int deathType) {
 
 	const char *deathScreenFile =
 		(deathType < 6 || deathType == 9 || deathType == 10 || deathType == 11)
-		 ? "DEATH1.SCN" : "DEATH.SCN";
+		 ? "DEATH.SCN" : "DEATH1.SCN";
 
 	const Common::Point vidPos(DEAD_COORD[vidType].x, DEAD_COORD[vidType].y);
 
@@ -552,7 +552,7 @@ void NoctropolisEngine::dead(int deathType) {
 
 	_screen->_printOrg = _screen->_printStart = Common::Point(deathTextX, deathTextY);
 	_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-	_bubbleBox->_bubbleTitle = deathTextCaption;
+	_bubbleBox->_bubbleDisplStr = deathTextCaption;
 	_bubbleBox->placeBubble(res->getDeathText(deathType));
 
 	_screen->setIconPalette();
