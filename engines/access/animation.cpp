@@ -426,7 +426,6 @@ AnimationFramePart::AnimationFramePart(Common::SeekableReadStream *stream) {
 AnimationManager::AnimationManager(AccessEngine *vm) : Manager(vm) {
 	_animation = nullptr;
 	_animStart = nullptr;
-	//_frameScale = 0;
 }
 
 AnimationManager::~AnimationManager() {
@@ -474,7 +473,6 @@ Animation *AnimationManager::findAnimation(int animId) {
 
 void AnimationManager::animate(int animId) {
 	Animation *anim = findAnimation(animId);
-	//_frameScale = anim->_scaling;
 	anim->animate();
 }
 
