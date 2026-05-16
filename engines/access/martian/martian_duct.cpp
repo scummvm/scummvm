@@ -739,7 +739,7 @@ int MartianDuct::addPointsToMainPrimArray(int tempCount) {
 		_primZ2Array.resize(dstIdx + tempCount);
 	}
 
-    for (int srcidx = 0; srcidx < tempCount; srcidx += 2) {
+	for (int srcidx = 0; srcidx < tempCount; srcidx += 2) {
 		_primX1Array[dstIdx] = _tempPoints[srcidx].x;
 		_primY1Array[dstIdx] = _tempPoints[srcidx].y;
 		_primZ1Array[dstIdx] = _tempPoints[srcidx].z;

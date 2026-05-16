@@ -97,7 +97,7 @@ private:
 	 * Open up a sub-file resource within an alrady opened container file.
 	 */
 	void gotoAppended(Resource *file, int subfile);
-	
+
 	/**
 	 * Read index data from the container file
 	 */

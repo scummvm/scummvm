@@ -129,7 +129,7 @@ static const AccessGameDescription gameDescriptions[] = {
 		kGameMartianMemorandum,
 		0
 	},
-	
+
 	{
 		// Noctropolis (Sum from GOG Windows and macOS versions)
 		{

@@ -181,7 +181,7 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 			desc.setPlayTime(eHeader.playtime);
 			return desc;
 		}
-			
+
 		Access::AccessSavegameHeader header;
 		if (Access::AccessEngine::readSavegameHeader(f, header, false)) {
 			delete f;
@@ -195,7 +195,7 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 
 		delete f;
 
-		return SaveStateDescriptor();				
+		return SaveStateDescriptor();
 	}
 
 	return SaveStateDescriptor();

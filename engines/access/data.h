@@ -45,7 +45,7 @@ struct TimerEntry {
 	int _initTm;
 	int _timer;
 	byte _flag;
-	
+
 	bool isActive() const { return _flag != 0; }
 
 	void reset() {
