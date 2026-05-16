@@ -1429,6 +1429,15 @@ void FreescapeEngine::pauseEngineIntern(bool pause) {
 		_system->lockMouse(!pause);
 	}
 
+	// Drop any stuck key state on resume. A modal dialog (GMM, info menu,
+	// etc.) can swallow the KEYUP for a key that was held when it opened
+	// (typically a modifier like Ctrl on Ctrl+F5). If that happens, the
+	// EventManagerWrapper keeps synthesizing KEYDOWN repeats for the
+	// leaked key, which starves CUSTOM_ENGINE_ACTION_START repeats and
+	// makes movement go single-step until the wrapper state is cleared.
+	if (!pause && _eventManager)
+		_eventManager->purgeKeyboardEvents();
+
 	// We don't know when savedScreen will be used, so we do not deallocate it here
 }
 
