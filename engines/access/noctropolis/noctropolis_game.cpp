@@ -667,7 +667,7 @@ bool NoctropolisEngine::minigameIsSolved(uint rowIndex, const byte *finalRow) {
 
 void NoctropolisEngine::playStilMorph() {
 	_midi->stopSong();
-	_system->showMouse(false);
+	_events->hideCursor();
 	_midi->loadMusic(98, 4);
 	_midi->midiPlay();
 	_screen->fadeOut();
@@ -677,7 +677,7 @@ void NoctropolisEngine::playStilMorph() {
 	_screen->setIconPalette();
 	_screen->setPalette();
 	vidPlayer.playToEnd();
-	_system->showMouse(true);
+	_events->showCursor();
 }
 
 void NoctropolisEngine::flashPaletteEffect() {
@@ -688,7 +688,7 @@ void NoctropolisEngine::flashPaletteEffect() {
 
 void NoctropolisEngine::shotoMeanwhile() {
 	_midi->stopSong();
-	_system->showMouse(false);
+	_events->hideCursor();
 	_midi->loadMusic(98, 2);
 	_midi->midiPlay();
 	_screen->fadeOut();
@@ -714,7 +714,7 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_midi->stopSong();
 	_screen->copyRawPalToTempPal();
 	_screen->fadeOut();
-	_system->showMouse(true);
+	_events->showCursor();
 }
 
 void NoctropolisEngine::showComicCover() {
