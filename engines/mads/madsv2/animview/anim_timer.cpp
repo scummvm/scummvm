@@ -36,7 +36,6 @@ namespace AnimView {
 static const byte FX_TIMES[16] = {
 	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0, 0, 0
 };
-constexpr int sound_var1 = 49;
 
 constexpr int MESSAGES_COUNT = 8;
 static int messageHandle[MESSAGES_COUNT];
@@ -60,7 +59,7 @@ void anim_timer_init() {
 
 void anim_timer() {
 	bool flag = false;
-	uint32 currTimer = timer_read();
+	long currTimer = timer_read();
 	Speech *speech;
 	Frame *frame;
 	int sound, count;
@@ -99,7 +98,7 @@ void anim_timer() {
 		if (currTimer < timer1)
 			goto done;
 	} else {
-		uint32 time = timer1 - FX_TIMES[runFx];
+		long time = timer1 - FX_TIMES[runFx];
 		if (time > currTimer)
 			goto done;
 	}
@@ -119,8 +118,9 @@ void anim_timer() {
 		speech->display_condition != 0x800 &&
 		speech->resource_id >= 0;
 
-	if (speech->sound /*&& (!flag || sound_var1 == 49)*/) {
+	if (speech->sound /*&& (!flag || sound_var1 == '1')*/) {
 		g_engine->_soundManager->command(speech->sound);
+		flag = false;
 	}
 
 	if (flag) {
@@ -153,7 +153,7 @@ block1:
 		for (count = 0; count < current_anim->num_speech; ++count) {
 			Speech *s = &current_anim->speech[count];
 			if (count != speechIndex && messageCount < MESSAGES_COUNT &&
-					s->first_frame <= currentFrame && s->last_frame > currentFrame) {
+					s->first_frame <= currentFrame && s->last_frame >= currentFrame) {
 				messageHandle[messageCount++] = matte_add_message(current_anim->font, s->text,
 					s->x, s->y, (palIndex2 << 8) | palIndex1,
 					current_anim->font_auto_spacing);
@@ -178,7 +178,7 @@ block2:
 		currentViewY = frameViewY;
 	} else {
 		for (count = 0; count < image_marker; ++count) {
-			if (image_list[count].flags == IMAGE_REFRESH)
+			if (image_list[count].flags != IMAGE_REFRESH)
 				image_list[count].flags = IMAGE_ERASE;
 		}
 	}

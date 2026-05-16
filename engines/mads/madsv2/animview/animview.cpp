@@ -263,6 +263,9 @@ static void run_animation(int animIndex) {
 			current_error_code = -1;
 			error_code = 3;
 		}
+
+		// Animation loop delay
+		g_system->delayMillis(10);
 	}
 
 	cycling_threshold = 3;
