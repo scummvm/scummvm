@@ -1196,17 +1196,12 @@ Common::Error AdvancedMetaEngineBase::createInstance(OSystem *syst, Engine **eng
 	// file transparently.
 	ConfMan.setAndFlush("guioptions", gameDescriptor.getGUIOptions());
 
-	bool showTestingWarning = false;
-
-#ifdef RELEASE_BUILD
-	showTestingWarning = true;
-#endif
-
-	if (((gameDescriptor.gameSupportLevel == kUnstableGame
-			|| (gameDescriptor.gameSupportLevel == kTestingGame
-					&& showTestingWarning)))
+	if (gameDescriptor.gameSupportLevel == kUnstableGame
 			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
+
+	if (gameDescriptor.gameSupportLevel == kTestingGame)
+		Engine::warnUserAboutTestingMode();
 
 	if (gameDescriptor.gameSupportLevel == kWarningGame
 			&& !Engine::warnUserAboutUnsupportedGame(gameDescriptor.extra))

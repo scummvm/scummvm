@@ -809,7 +809,7 @@ bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 }
 
 bool Engine::warnUserAboutUnsupportedAddOn(Common::String addOnName) {
-	if (ConfMan.getBool("enable_unsupported_addon_warning")) {
+	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
 			ttsMan->pushState();
@@ -832,6 +832,23 @@ bool Engine::warnUserAboutUnsupportedAddOn(Common::String addOnName) {
 	}
 
 	return true;
+}
+
+void Engine::warnUserAboutTestingMode() {
+	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->pushState();
+			g_gui.initTextToSpeech();
+		}
+
+		GUI::MessageDialog alert(_("WARNING: The game you are about to start is newly supported and is in testing mode.\n"
+						"If you encounter any bugs or oddities, please report them to our bugtracker."), _("OK"));
+		alert.runModal();
+
+		if (ttsMan != nullptr)
+			ttsMan->popState();
+	}
 }
 
 void Engine::errorAddingAddOnWithoutBaseGame(Common::String addOnName, Common::String gameId) {

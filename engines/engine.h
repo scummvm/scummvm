@@ -602,6 +602,11 @@ public:
 	static bool warnUserAboutUnsupportedAddOn(Common::String addOnName);
 
 	/**
+	 * Display a warning to the user that the game is in testing mode.
+	 */
+	static void warnUserAboutTestingMode();
+
+	/**
 	 * Display an error message to the user that the game is an add-on than cannot be
 	 * run independently.
 	 *
