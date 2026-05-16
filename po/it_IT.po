@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-10 10:01+0000\n"
+"POT-Creation-Date: 2026-05-16 21:31+0000\n"
 "PO-Revision-Date: 2026-05-05 14:12+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -381,8 +381,9 @@ msgstr "Il codice JSON non è valido."
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2418 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:671 base/main.cpp:696
-#: dists/android.strings.xml.cpp:33 backends/platform/wii/options.cpp:46
-#: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
+#: dists/android.strings.xml.cpp:33 engines/engine.cpp:846
+#: backends/platform/wii/options.cpp:46 engines/buried/buried.cpp:622
+#: engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
@@ -1614,7 +1615,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM non ha potuto trovare nessun gioco nella cartella specificata!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:742 engines/engine.cpp:1227
+#: gui/launcher.cpp:742 engines/engine.cpp:1244
 msgid "Unknown variant"
 msgstr "Variante del gioco sconosciuta"
 
@@ -3841,7 +3842,14 @@ msgstr ""
 "completamente supportato da ScummVM. È quindi possibile che sia instabile, e "
 "i salvataggi potrebbero non funzionare con future versioni di ScummVM."
 
-#: engines/engine.cpp:844
+#: engines/engine.cpp:845
+msgid ""
+"WARNING: The game you are about to start is newly supported and is in "
+"testing mode.\n"
+"If you encounter any bugs or oddities, please report them to our bugtracker."
+msgstr ""
+
+#: engines/engine.cpp:861
 #, c-format
 msgid ""
 "The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be "
@@ -3853,11 +3861,11 @@ msgstr ""
 "contenuto dell'add-on in una sottocartella del gioco base e avvia "
 "quest'ultimo."
 
-#: engines/engine.cpp:861
+#: engines/engine.cpp:878
 msgid "This game is not supported."
 msgstr "Questo gioco non è supportato."
 
-#: engines/engine.cpp:861
+#: engines/engine.cpp:878
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3865,15 +3873,15 @@ msgstr ""
 "Questo gioco non è supportato per le seguenti ragioni:\n"
 "\n"
 
-#: engines/engine.cpp:1007
+#: engines/engine.cpp:1024
 msgid "Loading game is currently unavailable"
 msgstr "Caricamento temporaneamente disabilitato"
 
-#: engines/engine.cpp:1036
+#: engines/engine.cpp:1053
 msgid "Saving game is currently unavailable"
 msgstr "Salvataggio temporaneamente disabilitato"
 
-#: engines/engine.cpp:1205
+#: engines/engine.cpp:1222
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
@@ -3882,7 +3890,7 @@ msgstr ""
 "La directory '%s' sembra essere un add-on per il gioco '%s', ma ScummVM non "
 "ha rilevato il corrispondente add-on al suo interno."
 
-#: engines/engine.cpp:1233
+#: engines/engine.cpp:1250
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""

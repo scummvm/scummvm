@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-10 10:01+0000\n"
+"POT-Creation-Date: 2026-05-16 21:31+0000\n"
 "PO-Revision-Date: 2026-04-21 16:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -380,8 +380,9 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2418 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:671 base/main.cpp:696
-#: dists/android.strings.xml.cpp:33 backends/platform/wii/options.cpp:46
-#: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
+#: dists/android.strings.xml.cpp:33 engines/engine.cpp:846
+#: backends/platform/wii/options.cpp:46 engines/buried/buried.cpp:622
+#: engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
@@ -1588,7 +1589,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM은 선택한 디렉터리에서 아무 게임도 찾지 못했습니다!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:742 engines/engine.cpp:1227
+#: gui/launcher.cpp:742 engines/engine.cpp:1244
 msgid "Unknown variant"
 msgstr "알 수 없는 변종 게임"
 
@@ -3760,7 +3761,14 @@ msgstr ""
 "되어 있습니다. 따라서 불안정할 가능성이 높으며, 저장된 게임은 향후 ScummVM 버"
 "전에서 작동하지 않을 수 있습니다."
 
-#: engines/engine.cpp:844
+#: engines/engine.cpp:845
+msgid ""
+"WARNING: The game you are about to start is newly supported and is in "
+"testing mode.\n"
+"If you encounter any bugs or oddities, please report them to our bugtracker."
+msgstr ""
+
+#: engines/engine.cpp:861
 #, c-format
 msgid ""
 "The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be "
@@ -3770,11 +3778,11 @@ msgstr ""
 "추가하려는 게임 \"%s\"은 \"%s\"의 애드온이므로 단독으로 실행할 수 없습니다. "
 "애드온 콘텐츠를 기본 게임의 하위 디렉터리에 복사한 후 기본 게임을 실행하세요."
 
-#: engines/engine.cpp:861
+#: engines/engine.cpp:878
 msgid "This game is not supported."
 msgstr "이 게임은 지원되지 않습니다."
 
-#: engines/engine.cpp:861
+#: engines/engine.cpp:878
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3782,15 +3790,15 @@ msgstr ""
 "이 게임은 다음과 같은 이유로 지원되지 않습니다:\n"
 "\n"
 
-#: engines/engine.cpp:1007
+#: engines/engine.cpp:1024
 msgid "Loading game is currently unavailable"
 msgstr "현재는 게임을 불러올 수 없음"
 
-#: engines/engine.cpp:1036
+#: engines/engine.cpp:1053
 msgid "Saving game is currently unavailable"
 msgstr "현재는 게임을 저장할 수 없음"
 
-#: engines/engine.cpp:1205
+#: engines/engine.cpp:1222
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
@@ -3799,7 +3807,7 @@ msgstr ""
 "디렉터리 '%s'는 게임 '%s'의 애드온처럼 보이지만 ScummVM은 일치하는 애드온을 "
 "찾을 수 없습니다."
 
-#: engines/engine.cpp:1233
+#: engines/engine.cpp:1250
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr "디렉터리 '%s'은(는) 여러 개의 애드온과 일치합니다. 하나를 선택하세요."
