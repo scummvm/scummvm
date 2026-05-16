@@ -449,8 +449,7 @@ AnimPtr anim_load(const char *file_name,
 	RoomPtr *room, CycleListPtr cycle_list,
 	int load_flags);
 
-int anim_get_sound_info(char *file_name,
-	char *sound_file_buffer,
+int anim_get_sound_info(const char *file_name, char *sound_file_buffer,
 	int *sound_load_flag);
 
 int anim_get_header_info(char *file_name,

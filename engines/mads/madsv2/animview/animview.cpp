@@ -401,22 +401,14 @@ static void animate() {
 			if (anim_get_sound_info(buf, sound_file_name, &soundLoadFlag))
 				goto done;
 
-			if (soundLoadFlag) {
-				oldMode = concat_mode;
-				*speech_name = '\0';
-				MADS_FORMAT(speech_name, sound_file_name);
-				env_get_path(sound_file_name, speech_name);
-				concat_mode = oldMode;
-
-				// Original did setup of sound card driver type here. Not needed for ScummVM
-
-				has_sound_file = Common::File::exists(sound_file_name);
-			}
+			has_sound_file = Common::isDigit(sound_file_name[strlen(sound_file_name) - 1]);
 		}
 
-		if (has_sound_file)
-			// TODO: Load proper driver number
-			g_engine->_soundManager->init(9);
+		if (has_sound_file) {
+			// Initialize the sound driver
+			int section = sound_file_name[strlen(sound_file_name) - 1] - '0';
+			g_engine->_soundManager->init(section);
+		}
 
 		if (anim_list[count].bg_load_status) {
 			buffer_free(&scr_depth);
@@ -521,6 +513,7 @@ static void animate() {
 
 		// Free the allocated sound driver
 		g_engine->_soundManager->closeDriver();
+		has_sound_file = false;
 
 		// Free surface
 		buffer_free(&scr_inter_orig);

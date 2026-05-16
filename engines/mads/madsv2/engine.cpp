@@ -295,10 +295,11 @@ void MADSV2Engine::checkForTimerFunction() {
 	if (_timerFunction) {
 		uint32 time = g_system->getMillis();
 		if (time >= _nextTimerTime) {
-			_timerFunction();
-
 			// Determine the next time to call the function at 60Hz
 			_nextTimerTime = time + (1000 / 60);
+
+			// Call the timer
+			_timerFunction();
 		}
 	}
 }

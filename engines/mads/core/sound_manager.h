@@ -120,6 +120,13 @@ public:
 	void init(int sectionNumber);
 
 	/**
+	 * Returns true if a driver is loaded
+	 */
+	bool isLoaded() const {
+		return _driver != nullptr;
+	}
+
+	/**
 	 * Stop any currently active sound and remove the driver
 	 */
 	void closeDriver();

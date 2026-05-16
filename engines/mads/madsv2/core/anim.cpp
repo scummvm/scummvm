@@ -510,17 +510,26 @@ done:
 	return (anim);
 }
 
-int anim_get_sound_info(char *file_name, char *sound_file_buffer, int *sound_load_flag) {
+int anim_get_sound_info(const char *file_name, char *sound_file_buffer, int *sound_load_flag) {
 	int error_flag = true;
 	AnimFile anim_in;
 	Load load_handle;
 
 	load_handle.open = false;
 
+	// Open up the source animation file
 	if (loader_open(&load_handle, file_name, "rb", true)) goto done;
 
-	if (!loader_read(&anim_in, sizeof(AnimFile), 1, &load_handle)) goto done;
+	// Load the file header contents
+	byte buffer[AnimFile::SIZE];
+	if (!loader_read(buffer, AnimFile::SIZE, 1, &load_handle)) goto done;
 
+	{
+		Common::MemoryReadStream src(buffer, AnimFile::SIZE);
+		anim_in.load(&src);
+	}
+
+	// Copy out the sound filename
 	Common::strcpy_s(sound_file_buffer, 65536, anim_in.sound_file_name);
 	*sound_load_flag = (anim_in.load_flags & AA_LOAD_SOUND);
 

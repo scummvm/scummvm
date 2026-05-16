@@ -105,7 +105,7 @@ void anim_timer() {
 	}
 
 	sound = current_anim->frame[currentFrame].sound;
-	if (sound && runFx == 0)
+	if (sound && g_engine->_soundManager->isLoaded() && runFx == 0)
 		g_engine->_soundManager->command(sound);
 
 	if (speechIndex != -1)
@@ -208,6 +208,7 @@ block2:
 		}
 
 		if (!found) {
+			assert(image_marker < IMAGE_LIST_SIZE);
 			image_list[image_marker] = *img;
 			Series *series = series_list[img->series_id];
 			series->delta_series = (series->delta_series < 1) ? 1 : -4;
@@ -239,7 +240,7 @@ block3:
 		}
 
 		frame = &current_anim->frame[currentFrame];
-		if (frame->sound) {
+		if (frame->sound && g_engine->_soundManager->isLoaded()) {
 			g_engine->_soundManager->command(frame->sound);
 			timer1 = currTimer;
 		}
