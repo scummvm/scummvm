@@ -291,7 +291,7 @@ public:
 	int _numLines;
 	int _bcnt;
 
-	bool _clearSummaryFlag;
+	bool _clearSummaryFlag; // amazon only
 	bool _cheatFl; 	 // cheats are enabled
 	bool _restartFl; // game should restart
 	bool _textFlag;  // whether subtitles are enabled

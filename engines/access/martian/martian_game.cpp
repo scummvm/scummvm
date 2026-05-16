@@ -78,7 +78,6 @@ void MartianEngine::initVariables() {
 	_ask[33] = 1;
 
 	ARRAYCLEAR(_flags);
-
 }
 
 void MartianEngine::setNoteParams() {
