@@ -100,7 +100,7 @@ bool Resources::load(Common::U32String &errorMessage) {
 
 void Resources::load(Common::SeekableReadStream &s) {
 	uint count;
-	
+
 	assert(_vm->getGameID() != kGameNoctropolis);
 
 	// Get the offset of the data for the game

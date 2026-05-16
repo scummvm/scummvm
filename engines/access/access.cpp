@@ -518,8 +518,8 @@ Common::Error AccessEngine::saveGameStream(Common::WriteStream *stream, bool isA
 	return synchronize(s);
 }
 
-Common::Error AccessEngine::loadGameStream(Common::SeekableReadStream *stream) {	
-	Common::Serializer s(stream, nullptr);	
+Common::Error AccessEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer s(stream, nullptr);
 	Common::Error result = synchronize(s);
 
 	// Set extra post-load state
@@ -544,7 +544,7 @@ Common::Error AccessEngine::loadGameState(int slot) {
 		delete saveFile;
 		return Engine::loadGameState(slot);
 	}
-		
+
 	// Load most of the savegame data
 	synchronize(s);
 	delete saveFile;
@@ -624,8 +624,8 @@ bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHead
 
 	// Read the Total PlayTime (if available)
 	if (header._version > 1)
-		header._totalPlayTime = in->readUint32LE();	
-	
+		header._totalPlayTime = in->readUint32LE();
+
 	return true;
 }
 
@@ -661,17 +661,17 @@ static const AccessActionCode MARTIAN_ACTION_CODES[] = {
 };
 
 static const AccessActionCode NOCTROPOLIS_ACTION_CODES[] = {
-    { kActionLook,      0, },
-    { kActionOpen,      1, },
-    { kActionMove,      2, },
-    { kActionTake,      3, },
-    { kActionTalk,      4, },
-    { kActionUse,       5, },
-    { kActionWalk,      6, },
-    { kActionInventory, 7, },
-    { kActionTravel,    8, },
-    { kActionOptions,   9, },
-    { kActionSaveLoad,  10 },
+	{ kActionLook,      0, },
+	{ kActionOpen,      1, },
+	{ kActionMove,      2, },
+	{ kActionTake,      3, },
+	{ kActionTalk,      4, },
+	{ kActionUse,       5, },
+	{ kActionWalk,      6, },
+	{ kActionInventory, 7, },
+	{ kActionTravel,    8, },
+	{ kActionOptions,   9, },
+	{ kActionSaveLoad,  10 },
 	{ kActionNone, -1 },
 };
 

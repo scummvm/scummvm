@@ -819,7 +819,7 @@ Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_establishTable[i]);
 
 	_stil->synchronize(s);
-	
+
 	if (s.isLoading()) // clear minigame state on load
 		initMinigame();
 

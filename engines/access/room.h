@@ -71,7 +71,7 @@ enum RoomFlag {
 class Room : public Manager {
 private:
 	void roomLoop();
-	
+
 	void cmdExitContinuance();
 	void roomLoopContinuance();
 

@@ -152,7 +152,7 @@ public:
 	void checkScroll();
 
 	void checkMove();
-	
+
 	virtual void updateTimers() {};
 
 	/**
