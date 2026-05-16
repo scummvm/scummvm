@@ -42,7 +42,6 @@ private:
 public:
 	Animation *_animStart;
 	Common::Point _base;
-	//int _frameScale;
 public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
