@@ -252,6 +252,7 @@ public:
 
 	bool wantsFocus() override { return true; }
 
+	void lostFocusWidget() override;
 	bool handleKeyDown(Common::KeyState state) override;
 	bool handleKeyUp(Common::KeyState state) override;
 	void openTrayAtSelected();

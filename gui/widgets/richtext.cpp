@@ -392,6 +392,11 @@ void RichTextWidget::markAsDirty() {
 	}
 }
 
+void RichTextWidget::lostFocusWidget() {
+	_mouseDownY = _mouseDownStartY = 0;
+	_isDragging = false;
+}
+
 bool RichTextWidget::containsWidget(Widget *w) const {
 	if (w == _verticalScroll || _verticalScroll->containsWidget(w))
 		return true;

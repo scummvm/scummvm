@@ -1103,6 +1103,11 @@ bool GridWidget::handleKeyUp(Common::KeyState state) {
 	return false;
 }
 
+void GridWidget::lostFocusWidget() {
+	_isMouseDown = _isDragging = false;
+	_dragStartY = _dragLastY = 0;
+}
+
 void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// Work in progress
 	switch (cmd) {
