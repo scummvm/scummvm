@@ -141,6 +141,7 @@ private:
 
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
+	Graphics::Palette _pal;
 
 	void handleStraitChunk();
 	void handlePaletteChunk();
@@ -168,7 +169,7 @@ public:
 
 	int getHeight() override { return _header._height; }
 
-	void enableSetPal() { _setPal = true; }
+	void setVideoPalNow();
 };
 
 

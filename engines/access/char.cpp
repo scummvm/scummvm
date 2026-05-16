@@ -61,7 +61,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	for (int16 v = s.readSint16LE(); v != -1; v = s.readSint16LE()) {
 		ExtraCell ec;
 		ec._vid._fileNum = v;
-		ec._vid._subfile = s.readSint16LE();
+		ec._vid._subFile = s.readSint16LE();
 		ec._vidSound.load(s);
 
 		_extraCells.push_back(ec);
@@ -103,7 +103,7 @@ void CharManager::loadChar(int charId) {
 		if (!_vm->_establishFlag)
 			_vm->_screen->fadeOut();
 
-		_vm->_files->loadScreen(ce._screenFile._fileNum, ce._screenFile._subfile);
+		_vm->_files->loadScreen(ce._screenFile._fileNum, ce._screenFile._subFile);
 		_vm->_screen->setIconPalette();
 		_vm->_screen->fadeIn();
 	}
@@ -130,7 +130,7 @@ void CharManager::loadChar(int charId) {
 	_vm->_screen->_numColors = ce._numColors;
 	if (ce._paletteFile._fileNum != -1) {
 		int srcOffset = (_vm->getGameID() == kGameMartianMemorandum ? ce._startColor * 3 : 0);
-		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subfile, srcOffset);
+		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subFile, srcOffset);
 	}
 	_vm->_screen->setIconPalette();
 	_vm->_screen->setPalette();

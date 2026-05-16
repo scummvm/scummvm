@@ -29,12 +29,12 @@ namespace Access {
 
 FileIdent::FileIdent() {
 	_fileNum = -1;
-	_subfile = 0;
+	_subFile = 0;
 }
 
 void FileIdent::load(Common::SeekableReadStream &s) {
 	_fileNum = s.readSint16LE();
-	_subfile = s.readUint16LE();
+	_subFile = s.readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ CellIdent::	CellIdent() {
 CellIdent::CellIdent(int cell, int fileNum, int subfile) {
 	_cell = cell;
 	_fileNum = fileNum;
-	_subfile = subfile;
+	_subFile = subfile;
 }
 
 /*------------------------------------------------------------------------*/
@@ -117,7 +117,7 @@ Resource *FileManager::loadFile(int fileNum, int subfile) {
 }
 
 Resource *FileManager::loadFile(const FileIdent &fileIdent) {
-	return loadFile(fileIdent._fileNum, fileIdent._subfile);
+	return loadFile(fileIdent._fileNum, fileIdent._subFile);
 }
 
 Resource *FileManager::loadRawFile(const Common::Path &filename) {

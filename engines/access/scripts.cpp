@@ -600,12 +600,7 @@ void Scripts::cmdSetInventory() {
 	_vm->_inventory->_invChangeFlag = true;
 
 	if (itemVal == 1 && _vm->getGameID() == kGameNoctropolis) {
-		// Slight hack - add a new sound to play the stinger.  This won't be freed
-		// until we leave the room, but there are only a few inv items in each room
-		// so the total leak is tiny.
-		Resource *sound = _vm->_sound->loadSound(99, 64);
-		_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
-		_vm->_sound->playSound(_vm->_sound->_soundTable.size() - 1);
+		((Noctropolis::NoctropolisEngine *)_vm)->playInventoryStinger();
 	}
 }
 
@@ -1008,7 +1003,7 @@ void Scripts::cmdSetBufVid() {
 	debugC(1, kDebugScripts, "cmdSetBufVid(vidX=%d, vidY=%d, idx=%d, rate=%d)", vidX, vidY, idx, rate);
 	_vm->_vidX = vidX;
 	_vm->_vidY = vidY;
-	_vm->_video->setVideo(&_vm->_vidBuf, Common::Point(0, 0), FileIdent(_vm->_extraCells[idx]._vid._fileNum, _vm->_extraCells[idx]._vid._subfile), rate);
+	_vm->_video->setVideo(&_vm->_vidBuf, Common::Point(0, 0), FileIdent(_vm->_extraCells[idx]._vid._fileNum, _vm->_extraCells[idx]._vid._subFile), rate);
 }
 
 void Scripts::cmdPlayBufVid() {
@@ -1438,16 +1433,15 @@ void Scripts::cmdClearBlock() {
 void Scripts::cmdLoadSound() {
 	int idx = _data->readSint16LE();
 	debugC(1, kDebugScripts, "cmdLoadSound(idx=%d)", idx);
-	_vm->_sound->_soundTable.clear();
-	Resource *sound = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+	_vm->_sound->freeSounds();
+	_vm->_sound->loadAndAddSound(_vm->_extraCells[idx]._vidSound);
 }
 
 void Scripts::cmdFreeSound() {
 	debugC(1, kDebugScripts, "cmdFreeSound()");
 	SoundManager &sound = *_vm->_sound;
 
-	if (sound._soundTable.size() > 0 && sound._soundTable[0]._res) {
+	if (sound.hasSounds()) {
 		// Keep doing char display loop if playing sound for it
 		do {
 			if (_vm->getGameID() == kGameAmazon && _vm->_flags[236] == 1)
@@ -1881,6 +1875,7 @@ void Scripts::cmdRestoreBlock() {
 	debugC(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
 	Common::Rect r(Common::Point(x, y), w, h);
 	r.translate(-_vm->_screen->_windowXAdd, -_vm->_screen->_windowYAdd);
+	r.clip(_vm->_screen->w, _vm->_screen->h);
 	_vm->_screen->copyBlock(&_vm->_buffer2, r);
 
 	// Remake does this, but it doesn't use same buffer setup..

@@ -390,7 +390,7 @@ void Room::loadRoomData(const byte *roomData) {
 
 	if (roomInfo._playFieldFile._fileNum != -1) {
 		loadPlayField(roomInfo._playFieldFile._fileNum,
-			roomInfo._playFieldFile._subfile);
+			roomInfo._playFieldFile._subFile);
 		setupRoom();
 
 		_vm->_scaleMaxY = _playFieldHeight << 4;
@@ -423,7 +423,7 @@ void Room::loadRoomData(const byte *roomData) {
 		_vm->_screen->_startColor = roomInfo._startColor;
 		_vm->_screen->_numColors = roomInfo._numColors;
 		_vm->_screen->loadPalette(roomInfo._paletteFile._fileNum,
-			roomInfo._paletteFile._subfile);
+			roomInfo._paletteFile._subFile);
 	}
 
 	// Load extra cells
@@ -1213,7 +1213,7 @@ RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool is
 		for (int16 v = stream.readSint16LE(); v != -1; v = stream.readSint16LE()) {
 			ExtraCell ec;
 			ec._vid._fileNum = v;
-			ec._vid._subfile = stream.readSint16LE();
+			ec._vid._subFile = stream.readSint16LE();
 
 			_extraCells.push_back(ec);
 		}
@@ -1236,7 +1236,7 @@ RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool is
 			fi._fileNum = -1;
 			fi._soundFilename = stream.readString();
 		} else {
-			fi._subfile = stream.readUint16LE();
+			fi._subFile = stream.readUint16LE();
 		}
 		fi._priority = stream.readUint16LE();
 

@@ -324,16 +324,20 @@ void VideoPlayer_v2::handlePaletteChunk() {
 	debugC(kDebugGraphics, "VideoPlayer_v2::handlePaletteChunk()");
 	byte buf[768];
 	_videoData->_stream->read(buf, 768);
+	for (int i = 0; i < 768; i++)
+		buf[i] *= 4;
+	_pal = Graphics::Palette(buf, 256);
 	if (_setPal) {
-		for (int i = 0; i < 768; i++)
-			buf[i] *= 4;
-		Graphics::Palette pal(buf, 256);
-		_vm->_screen->setRawPalette(pal);
-		_vm->_screen->setPalette();
-		_vm->_screen->copyRawPalToTempPal();
+		setVideoPalNow();
 		// only do it once?
 		_setPal = false;
 	}
+}
+
+void VideoPlayer_v2::setVideoPalNow() {
+	_vm->_screen->setRawPalette(_pal);
+	_vm->_screen->setPalette();
+	_vm->_screen->copyRawPalToTempPal();
 }
 
 void VideoPlayer_v2::calcNextFrameTime(int delay) {

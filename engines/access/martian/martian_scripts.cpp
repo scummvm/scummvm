@@ -191,8 +191,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_midi->loadMusic(47, 8);
 
 	_vm->_sound->freeSounds();
-	Resource *sound = _vm->_sound->loadSound(46, 14);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+	_vm->_sound->loadAndAddSound(46, 14);
 
 	_vm->_screen->setDisplayScan();
 	_vm->_screen->forceFadeOut();
@@ -278,12 +277,9 @@ void MartianScripts::cmdSpecial7() {
 	}
 
 	_vm->_sound->freeSounds();
-	sound = _vm->_sound->loadSound(40, 8);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
-	sound = _vm->_sound->loadSound(40, 9);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
-	sound = _vm->_sound->loadSound(40, 10);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+	_vm->_sound->loadAndAddSound(40, 8);
+	_vm->_sound->loadAndAddSound(40, 9);
+	_vm->_sound->loadAndAddSound(40, 10);
 
 	_vm->_screen->forceFadeOut();
 	_vm->_files->loadScreen(40, 7);

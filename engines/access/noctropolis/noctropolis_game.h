@@ -91,6 +91,9 @@ public:
 	void doLastComic();
 	void doSpecialComic();
 
+	/** Play SFX for item added to inv, debounced */
+	void playInventoryStinger();
+
 protected:
 	void setupGame() override;
 	void initObjects() override;

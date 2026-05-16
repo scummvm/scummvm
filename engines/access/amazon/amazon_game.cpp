@@ -670,7 +670,7 @@ void AmazonEngine::dead(int deathId) {
 	_events->debounceLeft();
 	_events->zeroKeysActions();
 
-	_sound->_soundTable.push_back(SoundEntry(_files->loadFile(98, 44), 1));
+	_sound->loadAndAddSound(98, 44);
 
 	_screen->clearScreen();
 	_screen->setPanel(3);
