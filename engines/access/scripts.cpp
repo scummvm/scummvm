@@ -323,10 +323,12 @@ void Scripts::cmdObject() {
 void Scripts::cmdEndObject() {
 	const char *msg = _vm->_res->getGeneralMessage(_vm->_room->_selectCommand);
 	debugC(1, kDebugScripts, "cmdEndObject(msg=\"%s\")", msg);
-	if (_vm->getGameID() == kGameMartianMemorandum)
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		doCmdPrint_v1(msg);
-	else
+		cmdRetPos();
+	} else {
 		printString(msg);
+	}
 }
 
 
