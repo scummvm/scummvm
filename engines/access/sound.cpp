@@ -227,26 +227,26 @@ void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds)
 	clearSounds();
 
 	for (const auto &sound : sounds) {
-		Resource *soundRes;
 		if (sound._soundFilename.empty()) {
 			loadAndAddSound(sound._fileNum, sound._subFile, sound._priority);
 		} else {
 			//
 			// In Noctropolis, sounds are defined by filenames, eg,
-			// DARK/AUD/FLUX01A.WAV
-			// TODO: Should probably be loading from DARK parent directory?
-			// Remove DARK/
+			// DARK/AUD/FLUX01A.WAV.
 			//
-			Common::Path origpath = Common::Path(sound._soundFilename);
-			Common::StringArray components = origpath.splitComponents();
-			assert(components.size() == 3);
-			Common::Path path (components[1]);
-			path.joinInPlace(components[2]);
-			debugC(1, kDebugSound, "loadRawSound(%s)", path.toString().c_str());
-			soundRes = _vm->_files->loadRawFile(path);
-			_soundTable.push_back(SoundEntry(soundRes, sound._priority));
+			// The original does not have the data in a DARK/ subdir,
+			// so trim it first.
+			//
+			loadRawSound(Common::Path(sound._soundFilename.substr(5)), sound._priority);
 		}
 	}
+}
+
+int SoundManager::loadRawSound(const Common::Path &path, int priority) {
+	debugC(1, kDebugSound, "loadRawSound(%s)", path.toString().c_str());
+	Resource *soundRes = _vm->_files->loadRawFile(path);
+	_soundTable.push_back(SoundEntry(soundRes, priority));
+	return _soundTable.size() - 1;
 }
 
 void SoundManager::stopSound() {

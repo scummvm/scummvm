@@ -910,8 +910,7 @@ void Scripts::cmdSetVideo_v3() {
 
 	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, noFrame=%d)", pt.x, pt.y, cellIndex, noFrame);
 
-	// Hack: Skip the "DARK/"
-	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename.substr(5));
+	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename);
 	_vm->_video->setVideo(_vm->_screen, pt, vidpath, 0);
 
 	if (noFrame == 0) {

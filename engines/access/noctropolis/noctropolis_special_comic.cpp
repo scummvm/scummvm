@@ -124,7 +124,7 @@ static const struct ComicBlock page_1_blocks[] = {
 	block_p1_5,
 };
 
-static struct ComicPage page_1 = { "DARK/COMDATA/SEPG01.SCN", 98, 55, 1, 0, page_1_blocks, 6 };
+static struct ComicPage page_1 = { "COMDATA/SEPG01.SCN", 98, 55, 1, 0, page_1_blocks, 6 };
 
 static const struct Polygon poly_p2_b0 = { {
 	{ 369, 36 },
@@ -201,7 +201,7 @@ static const struct ComicBlock page_2_blocks[] = {
 	block_p2_4,
 };
 
-static struct ComicPage page_2 = { "DARK/COMDATA/SEPG02.SCN", 98, 55, 1, 0, page_2_blocks, 5 };
+static struct ComicPage page_2 = { "COMDATA/SEPG02.SCN", 98, 55, 1, 0, page_2_blocks, 5 };
 
 static const struct Polygon poly_p3_b0 = { {
 	{ 187, 0 },
@@ -238,7 +238,7 @@ static const struct ComicBlock page_3_blocks[] = {
 	block_p3_1,
 };
 
-static struct ComicPage page_3 = { "DARK/COMDATA/SEPG03.SCN", 98, 56, 0, 0, page_3_blocks, 2 };
+static struct ComicPage page_3 = { "COMDATA/SEPG03.SCN", 98, 56, 0, 0, page_3_blocks, 2 };
 
 static const struct Polygon poly_p4_b0 = { {
 	{ 187, 0 },
@@ -257,7 +257,7 @@ static const struct ComicBlock page_4_blocks[] = {
 	block_p4_0,
 };
 
-static struct ComicPage page_4 = { "DARK/COMDATA/SEPG04.SCN", 98, 57, 1, 0, page_4_blocks, 1 };
+static struct ComicPage page_4 = { "COMDATA/SEPG04.SCN", 98, 57, 1, 0, page_4_blocks, 1 };
 
 static const struct Polygon poly_p5_b0 = { {
 	{ 187, 0 },
@@ -333,7 +333,7 @@ static const struct ComicBlock page_5_blocks[] = {
 	block_p5_4,
 };
 
-static struct ComicPage page_5 = { "DARK/COMDATA/SEPG05.SCN", 98, 58, 1, 0, page_5_blocks, 5 };
+static struct ComicPage page_5 = { "COMDATA/SEPG05.SCN", 98, 58, 1, 0, page_5_blocks, 5 };
 
 static const struct Polygon poly_p6_b0 = { {
 	{ 188, 0 },
@@ -422,7 +422,7 @@ static const struct ComicBlock page_6_blocks[] = {
 	block_p6_5,
 };
 
-static struct ComicPage page_6 = { "DARK/COMDATA/SEPG06.SCN", 98, 58, 1, 0, page_6_blocks, 6 };
+static struct ComicPage page_6 = { "COMDATA/SEPG06.SCN", 98, 58, 1, 0, page_6_blocks, 6 };
 
 static const struct Polygon poly_p7_b0 = { {
 	{ 354, 4 },
@@ -455,7 +455,7 @@ static const struct ComicBlock page_7_blocks[] = {
 	block_p7_1,
 };
 
-static struct ComicPage page_7 = { "DARK/COMDATA/SEPG07.SCN", 98, 59, 1, 0, page_7_blocks, 2 };
+static struct ComicPage page_7 = { "COMDATA/SEPG07.SCN", 98, 59, 1, 0, page_7_blocks, 2 };
 
 const struct ComicPage *SpecialComicPages[] = {
 	&page_1,

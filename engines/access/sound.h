@@ -90,6 +90,7 @@ public:
 	bool isSFXPlaying();
 
 	void loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds);
+	int loadRawSound(const Common::Path &path, int priority);
 	void syncVolume();
 
 	void stopSound();

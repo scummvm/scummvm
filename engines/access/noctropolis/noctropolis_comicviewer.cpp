@@ -71,9 +71,9 @@ void ComicViewer::run(const ComicResource *comic) {
 PageResult ComicViewer::runPage(const ComicPage *page) {
 	PageResult result = kPageResultNone;
 
-	_vm->_files->loadScreen(Common::Path(page->filename.baseName()));
+	_vm->_files->loadScreen(Common::Path(page->filename));
 
-	Resource *bubbleData = _vm->_files->loadRawFile("comic.ap");
+	Resource *bubbleData = _vm->_files->loadRawFile("COMDATA/comic.ap");
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);
 	delete bubbleData;
 
