@@ -81,7 +81,7 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(walker_visible);
 	s.syncAsSint16LE(walker_previously_visible);
 	s.syncAsSint16LE(series_base);
-	s.syncAsSint16LE(available[8]);
+	s.syncMultipleLE(available);
 	s.syncAsSint16LE(facing);
 	s.syncAsSint16LE(turn_to_facing);
 	s.syncAsSint16LE(series);
