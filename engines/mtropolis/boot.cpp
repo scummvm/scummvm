@@ -2583,7 +2583,7 @@ PlayerType evaluateMacPlayer(Common::Archive &fs, Common::ArchiveMember &archive
 
 	Common::MacFinderInfo finderInfo;
 	if (Common::MacResManager::getFileFinderInfo(path, fs, finderInfo)) {
-		if (finderInfo.type[0] != 'A' || finderInfo.type[1] != 'P' || finderInfo.type[2] != 'P' || finderInfo.type[3] != 'L')
+		if (finderInfo.type != MKTAG('A', 'P', 'P', 'L'))
 			return kPlayerTypeNone;
 	}
 
@@ -2732,7 +2732,7 @@ bool getMacFileType(Common::Archive &fs, const Common::Path &path, uint32 &outTa
 	if (!Common::MacResManager::getFileFinderInfo(path, fs, finderInfo))
 		return false;
 
-	outTag = MKTAG(finderInfo.type[0], finderInfo.type[1], finderInfo.type[2], finderInfo.type[3]);
+	outTag = finderInfo.type;
 	return true;
 }
 

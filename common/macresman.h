@@ -96,8 +96,8 @@ struct MacFinderInfo {
 
 	MacFinderInfoData toData() const;
 
-	byte type[4];
-	byte creator[4];
+	uint32 type;
+	uint32 creator;
 	uint16 flags;
 	Common::Point position;
 	int16 windowID;

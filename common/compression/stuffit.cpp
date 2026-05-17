@@ -189,8 +189,8 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream, bool flattenTree) 
 
 		MacFinderInfo finfo;
 
-		headStream.read(finfo.type, 4);
-		headStream.read(finfo.creator, 4);
+		finfo.type = headStream.readUint32BE();
+		finfo.creator = headStream.readUint32BE();
 		finfo.flags = headStream.readUint16BE();
 		/* uint32 creationDate = */ headStream.readUint32BE();
 		/* uint32 modificationDate = */ headStream.readUint32BE();

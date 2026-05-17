@@ -43,8 +43,8 @@ private:
 	struct FileDesc {
 		FileDesc();
 
-		byte type[4];
-		byte creator[4];
+		uint32 type;
+		uint32 creator;
 		uint32 compressedDataSize;
 		uint32 uncompressedDataSize;
 		uint32 compressedResSize;
@@ -120,8 +120,8 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStreamForAl
 			return nullptr;
 
 		Common::MacFinderInfo finfo;
-		memcpy(finfo.type, _fileDesc->type, 4);
-		memcpy(finfo.creator, _fileDesc->creator, 4);
+		finfo.type = _fileDesc->type;
+		finfo.creator = _fileDesc->creator;
 
 		*finfoData = finfo.toData();
 
@@ -224,7 +224,7 @@ bool MacVISEArchive::ArchiveMember::isInMacArchive() const {
 	return true;
 }
 
-MacVISEArchive::FileDesc::FileDesc() : type{0, 0, 0, 0}, creator{0, 0, 0, 0}, compressedDataSize(0), uncompressedDataSize(0), compressedResSize(0), uncompressedResSize(0), positionInArchive(0) {
+MacVISEArchive::FileDesc::FileDesc() : type(0), creator(0), compressedDataSize(0), uncompressedDataSize(0), compressedResSize(0), uncompressedResSize(0), positionInArchive(0) {
 }
 
 MacVISEArchive::MacVISEArchive(Common::SeekableReadStream *archiveStream) : _archiveStream(archiveStream) {
@@ -302,8 +302,8 @@ bool MacVISEArchive::loadCatalog() {
 			}
 
 			FileDesc desc;
-			memcpy(desc.type, fileData + 40, 4);
-			memcpy(desc.creator, fileData + 44, 4);
+			desc.type = READ_BE_UINT32(fileData + 40);
+			desc.creator = READ_BE_UINT32(fileData + 44);
 			desc.compressedDataSize = READ_BE_UINT32(fileData + 64);
 			desc.uncompressedDataSize = READ_BE_UINT32(fileData + 68);
 			desc.compressedResSize = READ_BE_UINT32(fileData + 72);
