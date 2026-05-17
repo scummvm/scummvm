@@ -137,7 +137,6 @@ SoundDriver::SoundDriver(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path 
 }
 
 SoundDriver::~SoundDriver() {
-	Common::StackLock slock(_driverMutex);
 	_opl->stop();
 }
 
