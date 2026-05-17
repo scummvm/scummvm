@@ -360,11 +360,13 @@ private:
 	bool loadFromRawFork(SeekableReadStream *stream);
 	bool loadFromAppleDouble(SeekableReadStream *stream);
 
+public:
 	/**
 	 * Get Finder info from a file in MacBinary format
 	 */
 	static bool getFinderInfoFromMacBinary(SeekableReadStream *stream, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo);
 
+private:
 	/**
 	 * Get Finder info from a file in AppleDouble format
 	 */
