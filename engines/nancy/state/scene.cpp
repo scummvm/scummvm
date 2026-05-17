@@ -1262,8 +1262,9 @@ void Scene::initStaticData() {
 
 	if (g_nancy->getGameType() <= kGameTypeNancy9) {
 		const ImageChunk *fr0 = (const ImageChunk *)g_nancy->getEngineData("FR0");
-		assert(fr0);
-		imageName = fr0->imageName;
+		if (fr0) {
+			imageName = fr0->imageName;
+		}
 	}
 
 	auto *mapData = GetEngineData(MAP);
