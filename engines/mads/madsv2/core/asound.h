@@ -345,7 +345,7 @@ protected:
 	/**
 	 * Returns data for the specified offset.
 	 */
-	byte *loadData(int offset, int /*size*/) {
+	byte *loadData(int offset) {
 		return &_soundData[offset];
 	}
 
@@ -470,7 +470,7 @@ public:
 	/**
 	 * Plays a sound
 	*/
-	void playSound(int offset, int size);
+	void playSound(int offset);
 };
 
 } // namespace MADSV2

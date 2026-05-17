@@ -236,8 +236,8 @@ void ASound::noise() {
 		noise_inner(i);
 }
 
-void ASound::playSound(int offset, int size) {
-	findFreeChannelFull(loadData(offset, size));
+void ASound::playSound(int offset) {
+	findFreeChannelFull(loadData(offset));
 }
 
 /* =========================================================================
