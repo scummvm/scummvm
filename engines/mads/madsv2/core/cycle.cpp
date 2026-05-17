@@ -101,7 +101,7 @@ void cycle_colors(void) {
 				tmp = base[num - 1];
 
 				// Shift all colors forward by one
-				memmove(&base[1], &base[0], (num - 1) * sizeof(Palette));
+				memmove(&base[1], &base[0], (num - 1) * sizeof(RGBcolor));
 
 				// Write saved last color into the first slot
 				base[0] = tmp;

@@ -293,7 +293,7 @@ int matte_add_message(FontPtr font, char *text, int x, int y, int message_color,
 			message_list[message_handle].font = font;
 			message_list[message_handle].text = text;
 			message_list[message_handle].xs = font_string_width(font, text, auto_spacing);
-			message_list[message_handle].ys = font->max_y_size;
+			message_list[message_handle].ys = font ? font->max_y_size : 0;
 			message_list[message_handle].main_color = message_color;
 			message_list[message_handle].spacing = (char)auto_spacing;
 			message_list[message_handle].status = 1;

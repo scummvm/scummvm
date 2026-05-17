@@ -408,7 +408,8 @@ static void animate() {
 			if (anim_get_sound_info(buf, sound_file_name, &soundLoadFlag))
 				goto done;
 
-			has_sound_file = Common::isDigit(sound_file_name[strlen(sound_file_name) - 1]);
+			Common::String name(sound_file_name);
+			has_sound_file = !name.empty() && Common::isDigit(name.lastChar());
 		}
 
 		if (has_sound_file) {
