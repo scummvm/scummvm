@@ -263,7 +263,11 @@ void MatchPuzzle::execute() {
 			break;
 		}
 
-		case kMatchAnim: { // Match animation: wait for 800ms timer and sound to finish
+		case kMatchAnim: { // Match animation: wait for 800ms timer and sound to finish.
+			// While the 800ms window is still open, the slot-win "boop"
+			// sound is *re-triggered* every time the previous play
+			// finishes. With a short sample, that fits roughly three plays
+			// inside the window — which is why a match makes three boops.
 			uint32 now = g_system->getMillis();
 			bool timerDone = (now >= _stateTimer);
 			bool soundDone = !g_nancy->_sound->isSoundPlaying(_slotWinSound);
@@ -279,6 +283,10 @@ void MatchPuzzle::execute() {
 				_showFlagName = false;
 				redrawAllCells();
 				_gameSubState = kPlaying;
+			} else if (soundDone && _slotWinSound.name != "NO SOUND") {
+				// Sound has finished but the match-anim window hasn't
+				// closed yet — replay it for the next "boop".
+				g_nancy->_sound->playSound(_slotWinSound);
 			}
 			break;
 		}
