@@ -277,25 +277,26 @@ static void run_animation(int animIndex) {
 		bool fadeFlag = true;
 
 		while (fadeFlag && !current_error_code) {
-			// Check for any keypress
-			if (g_engine->hasPendingKey()) {
-				g_engine->flushKeys();
-				current_error_code = true;
-			}
+			do {
+				// Brief pause
+				g_system->delayMillis(10);
 
-			if (g_engine->shouldQuit())
-				current_error_code = true;
+				// Check for any keypress
+				if (g_engine->hasPendingKey()) {
+					g_engine->flushKeys();
+					current_error_code = true;
+				}
 
-			g_system->delayMillis(10);
-			if (timer_read() < timer2)
-				continue;
+				if (g_engine->shouldQuit())
+					current_error_code = true;
+			} while (timer_read() < timer2);
 
 			if (peelFlag) {
 				anim_peel();
 				matte_frame(0, 0);
 			}
 
-			anim_fade(&cycling_palette, current_anim->misc_slow_fade);
+			fadeFlag = anim_fade(&cycling_palette, current_anim->misc_slow_fade);
 			mcga_setpal(&cycling_palette);
 			timer2 += current_anim->misc_peel_rate;
 		}
