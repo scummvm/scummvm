@@ -459,7 +459,7 @@ static void animate() {
 		buffer_init(&scr_work, 320, height);
 		scr_inter = scr_work;
 
-		viewing_at_y = (height == 200) ? 0 : 200 - (height / 2);
+		viewing_at_y = (height == 200) ? 0 : (200 - height) / 2;
 		viewing_at_y2 = viewing_at_y;
 
 		buffer_fill(scr_work, 0);
