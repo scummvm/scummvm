@@ -23,6 +23,7 @@
 #define MADSV2_ANIMVIEW_FUNCTIONS_H
 
 #include "common/stream.h"
+#include "mads/madsv2/core/pal.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -71,7 +72,8 @@ extern void read_resource(Common::SeekableReadStream *src);
 
 extern void anim_peel();
 
-void anim_setup_cycle(int fx);
+extern void anim_setup_cycle(int fx);
+extern bool anim_fade(Palette *pal, int fadeAmount);
 
 } // namespace AnimView
 } // namespace MADSV2

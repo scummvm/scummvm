@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/himem.h"
+#include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/mouse.h"
@@ -86,10 +87,11 @@ static int speech_lines_count;
 static SeriesPtr animSeries;
 static SpritePageInfoPtr pageInfo;
 static SpritePageTablePtr pageTable;
-static int imageFlags, imageFlags2;
+static int imageFrame1, imageFrame2;
 static int largeBufferSize;
 static byte *largeBuffer, *largeBufferEnd;
-static byte *largeBuffer1, *largeBuffer2;
+static byte *largeBuffer1, *largeBuffer2, *largeBuffer3;
+static bool seriesFlag1, seriesFlag2;
 static bool hasAnimInited;
 static int runVal1, runVal2, runVal3;
 static int runVal12;
@@ -122,11 +124,14 @@ static void init_globals() {
 	pageInfo = nullptr;
 	pageTable = nullptr;
 	foundSeries = false;
-	imageFlags = imageFlags2 = seriesMaxFrame = 0;
+	imageFrame1 = imageFrame2 = seriesMaxFrame = 0;
 	seriesMinFrame = 0;
 	largeBufferSize = 0;
 	largeBuffer = largeBufferEnd = nullptr;
 	largeBuffer1 = largeBuffer2 = nullptr;
+	largeBuffer3 = nullptr;
+	seriesFlag1 = false;
+	seriesFlag2 = true;
 	hasAnimInited = false;
 	minFrame = maxFrame = -1;
 	timer1 = timer2 = 0;
@@ -148,20 +153,8 @@ static void init_globals() {
 	imageFrame = 0;
 }
 
-/**
- * Handleas incremental fading by subtracting an amount from each palette
- * entries' RGB values down towards zero
- */
-static bool anim_fade(Palette *pal, int fadeAmount) {
-	bool palChanged = false;
-	byte *rgb = (byte *)pal;
-	for (int count = 0; count < Graphics::PALETTE_SIZE; ++count, ++rgb) {
-		if (*rgb)
-			palChanged = true;
-		*rgb = MAX((int)*rgb - fadeAmount, 0);
-	}
-
-	return palChanged;
+static void anim_inter_timer() {
+	error("TODO: Inter anim timer");
 }
 
 /**
@@ -218,10 +211,9 @@ static void run_animation(int animIndex) {
 
 		image_inter_marker = 1;
 		image_inter_list[0].flags = -2;
-		image_inter_list[0].segment_id = 0xff;
+		image_inter_list[0].segment_id = KERNEL_SEGMENT_SYSTEM;
 
-		//timer_activate_low_priority(anim_inter_timer);
-		error("TODO: Inter version of animation files");
+		timer_activate_low_priority(anim_inter_timer);
 
 	} else {
 		timer1 += current_anim->frame[minFrame].ticks;
@@ -248,8 +240,53 @@ static void run_animation(int animIndex) {
 			speechStream = 0;
 		}
 
-		if (foundSeries) {
-			error("TODO: series block");
+		if (foundSeries && seriesMinFrame < seriesMaxFrame) {
+			// Get the memory needed for the page, rounded up
+			int frameIndex = seriesMinFrame - imageFrame1 + 2;
+			int pageMemNeeded = (pageTable[frameIndex - 1].memory_needed & ~15) + 16;
+			bool flag1 = false;
+
+			if (!seriesFlag1) {
+				if ((largeBufferEnd - largeBuffer2) <= pageMemNeeded) {
+					flag1 = true;
+				} else {
+					seriesFlag1 = true;
+					largeBuffer2 = largeBuffer;
+				}
+			}
+			if (seriesFlag1) {
+				if ((largeBuffer2 - largeBuffer1) <= pageMemNeeded)
+					flag1 = true;
+			}
+
+			if (seriesFlag2 && currentFrame <= seriesMinFrame && !picture_map.one_to_one)
+				flag1 = false;
+
+			if (flag1)
+				seriesFlag2 = false;
+
+			if (flag1) {
+				(void)sprite_data_load(animSeries, frameIndex, largeBuffer2);
+				largeBuffer2 += pageMemNeeded;
+				++seriesMinFrame;
+			}
+
+			while (((speechIndex == -1 && currentFrame > imageFrame2) ||
+					(speechIndex != -1 && current_anim->speech[speechIndex].first_frame > imageFrame2)) &&
+					imageFrame2 < seriesMaxFrame) {
+				frameIndex = imageFrame2 - imageFrame1 + 1;
+				pageMemNeeded = (pageTable[frameIndex - 1].memory_needed & ~15) + 16;
+				largeBuffer1 += pageMemNeeded;
+				++imageFrame2;
+
+				if (animSeries->index[frameIndex].data != largeBuffer1) {
+					largeBuffer1 = largeBuffer;
+					seriesFlag1 = false;
+
+					if (seriesMinFrame < imageFrame2)
+						largeBuffer2 = largeBuffer;
+				}
+			}
 		}
 
 		if (g_engine->shouldQuit())
@@ -490,6 +527,8 @@ static void animate() {
 
 			foundSeries = false;
 			imageIndex = -1;
+			seriesFlag1 = false;
+
 			for (ctr = 0; ctr < current_anim->num_images; ++ctr) {
 				int seriesId = current_anim->series_id[packIndex];
 				if (current_anim->image[ctr].series_id == seriesId) {
@@ -500,9 +539,9 @@ static void animate() {
 
 			if (foundSeries) {
 				Image &img = current_anim->image[imageIndex];
-				imageFlags = imageFlags2 = img.flags;
-				seriesMaxFrame = imageFlags - 1;
-				seriesMinFrame = img.sprite_id;
+				imageFrame1 = imageFrame2 = img.flags;
+				seriesMinFrame = img.flags - 1;
+				seriesMaxFrame = img.flags + img.sprite_id - 1;
 			}
 		}
 

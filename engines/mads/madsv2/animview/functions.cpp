@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "mads/madsv2/animview/functions.h"
 #include "mads/madsv2/animview/animview.h"
 #include "mads/madsv2/core/cycle.h"
@@ -190,6 +191,22 @@ void anim_setup_cycle(int fx) {
 		mcga_setpal(&master_palette);
 
 	cycle_init(&anim_cycle_list, has_cycles && !fx);
+}
+
+/**
+ * Handleas incremental fading by subtracting an amount from each palette
+ * entries' RGB values down towards zero
+ */
+bool anim_fade(Palette *pal, int fadeAmount) {
+	bool palChanged = false;
+	byte *rgb = (byte *)pal;
+	for (int count = 0; count < Graphics::PALETTE_SIZE; ++count, ++rgb) {
+		if (*rgb)
+			palChanged = true;
+		*rgb = MAX((int)*rgb - fadeAmount, 0);
+	}
+
+	return palChanged;
 }
 
 } // namespace AnimView

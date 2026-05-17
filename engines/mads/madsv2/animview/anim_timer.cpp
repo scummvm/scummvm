@@ -68,9 +68,7 @@ void anim_timer() {
 		goto done;
 	if (currentFrame < 0 || currentFrame >= maxFrame)
 		goto done;
-	// TODO: The min/max max values look like they're backwards. Plus, the code that sets
-	// up the values in animview.
-	if (foundSeries && currentFrame > seriesMaxFrame && currentFrame <= seriesMinFrame)
+	if (foundSeries && currentFrame > seriesMinFrame && currentFrame <= seriesMaxFrame)
 		goto done;
 
 	if (timerFlag1) {
