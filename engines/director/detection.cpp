@@ -375,6 +375,30 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			if (Common::MacResManager::isMacBinary(f)) {
 				warning("Director fallback detection: Start movie is in MacBinary format, reporting as Mac Director game");
 				desc->desc.platform = Common::kPlatformMacintosh;
+
+				f.seek(0);
+
+				Common::MacFinderInfo info;
+				Common::MacFinderExtendedInfo fxinfo;
+				if (Common::MacResManager::getFinderInfoFromMacBinary(&f, info, fxinfo)) {
+					switch (info.type) {
+					case MKTAG('V', 'W', 'S', 'C'):	// VideoWorks II movies ("scenes")
+						desc->version = 50;
+						break;
+					case MKTAG('V', 'W', 'Z', 'P'):	// VideoWorks + Director Overview ("Zorro")
+						desc->version = 0;
+						break;
+					case MKTAG('V', 'W', 'P', 'R'):	// "VideoWorks Pro" = Director
+						desc->version = 100;
+						break;
+					case MKTAG('V', 'W', 'M', 'D'):	// Director 3.0
+						desc->version = 300;
+						break;
+					default:
+						warning("Director fallback detection: Start movie has unrecognized Finder type %s, cannot determine version", tag2str(info.type));
+						break;
+					}
+				}
 			} else {
 				f.seek(0);
 				uint32 initialTag = f.readUint32BE();
