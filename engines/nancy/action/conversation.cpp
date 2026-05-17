@@ -116,6 +116,12 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
 		flagsStruct.flagToSet.flag.flag = stream.readByte();
 	}
+	// Read additional array for Nancy 10+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		uint16 numAdditionalEntries = stream.readUint16LE();
+		// Skip the additional entries - they are not used in this implementation
+		stream.skip(numAdditionalEntries * 6);
+	}
 }
 
 void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
@@ -163,6 +169,13 @@ void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
 		flagsStruct.flagToSet.type = stream.readByte();
 		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
 		flagsStruct.flagToSet.flag.flag = stream.readByte();
+	}
+
+	// Read additional array for Nancy 10+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		uint16 numAdditionalEntries = stream.readUint16LE();
+		// Skip the additional entries - they are not used in this implementation
+		stream.skip(numAdditionalEntries * 6);
 	}
 }
 
