@@ -258,7 +258,7 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 		if (i < palette.size())
 			surface->setTransparentColor(i);
 	} else {
-		if (_window->_wm->_pixelformat.isCLUT8())
+		if (!_window || _window->_wm->_pixelformat.isCLUT8())
 			surface->convertToInPlace(Graphics::PixelFormat::createFormatRGBA32());
 		else
 			surface->convertToInPlace(_window->_wm->_pixelformat);
