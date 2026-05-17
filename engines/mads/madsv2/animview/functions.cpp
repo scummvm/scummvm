@@ -33,7 +33,7 @@ namespace AnimView {
 
 int anim_count;
 AnimEntry anim_list[MAX_ANIM];
-uint8 background_load_status;
+bool background_load_status;
 int16 sound_interrupts_mode;
 bool show_white_bars;
 bool resync_timer1, resync_timer2;
@@ -45,7 +45,7 @@ bool do_not_clear_screen;
  */
 void functions_init() {
 	anim_count = 0;
-	background_load_status = 0;
+	background_load_status = true;
 	sound_interrupts_mode = 0;
 	show_white_bars = false;
 	resync_timer1 = true;

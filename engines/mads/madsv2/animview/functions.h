@@ -30,7 +30,7 @@ namespace AnimView {
 
 struct AnimEntry {
 	char name[16];
-	uint8 bg_load_status;
+	bool bg_load_status;
 	uint8 sound_mode;
 	uint8 show_bars;
 	uint8 fx;
@@ -39,7 +39,7 @@ constexpr int MAX_ANIM = 40;
 
 extern int anim_count;
 extern AnimEntry anim_list[MAX_ANIM];
-extern uint8 background_load_status;
+extern bool background_load_status;
 extern int16 sound_interrupts_mode;
 extern bool show_white_bars;
 extern bool resync_timer1, resync_timer2;

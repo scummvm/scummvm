@@ -221,11 +221,11 @@ block2:
 
 	frame = &current_anim->frame[currentFrame];
 	if (frame->yank_x) {
-		buffer_peel_horiz(&scr_work, frame->yank_x);
+		buffer_peel_horiz(&scr_orig, frame->yank_x);
 		matte_refresh_work();
 	}
 	if (frame->yank_y) {
-		buffer_peel_vert(&scr_work, frame->yank_y, scr_inter_orig.data, 320 * 200);
+		buffer_peel_vert(&scr_orig, frame->yank_y, scr_orig.data, 320 * 200);
 		matte_refresh_work();
 	}
 

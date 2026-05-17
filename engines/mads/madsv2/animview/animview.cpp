@@ -172,21 +172,21 @@ static void run_animation(int animIndex) {
 
 	if (hasAnimInited) {
 		hasAnimInited = true;
-		mouse_set_work_buffer(scr_inter_orig.data, scr_inter_orig.x);
-		mouse_set_view_port_loc(0, viewing_at_y, scr_inter_orig.x, scr_inter_orig.y + viewing_at_y - 1);
+		mouse_set_work_buffer(scr_work.data, scr_work.x);
+		mouse_set_view_port_loc(0, viewing_at_y, scr_work.x, scr_work.y + viewing_at_y - 1);
 		mouse_set_view_port(0, 0);
 	}
 
 	auto &screen = *g_engine->getScreen();
 	if (viewing_at_y && anim_list[animIndex].show_bars) {
 		screen.hLine(0, viewing_at_y, 319, 253);
-		screen.hLine(0, viewing_at_y + scr_inter_orig.y, 319, 253);
+		screen.hLine(0, viewing_at_y + scr_work.y, 319, 253);
 	} else if (viewing_at_y) {
 		screen.hLine(0, viewing_at_y, 319, 0);
-		screen.hLine(0, viewing_at_y + scr_inter_orig.y, 319, 0);
+		screen.hLine(0, viewing_at_y + scr_work.y, 319, 0);
 	}
 
-	buffer_fill(scr_inter_orig, 0);
+	buffer_fill(scr_work, 0);
 
 	currentViewX = currentViewY = -1;
 	current_error_code = error_code;
@@ -418,7 +418,7 @@ static void animate() {
 
 		if (anim_list[count].bg_load_status) {
 			buffer_free(&scr_depth);
-			buffer_free(&scr_inter);
+			buffer_free(&scr_orig);
 			tile_map_free(&picture_map);
 			tile_map_free(&depth_map);
 
@@ -432,10 +432,10 @@ static void animate() {
 		}
 
 		int loadFlags = anim_list[count].bg_load_status ? ANIM_LOAD_BACKGROUND : 0;
-		current_anim = anim_load(buf, &scr_work, &scr_depth,
+		current_anim = anim_load(buf, &scr_orig, &scr_depth,
 			&picture_map, &depth_map, &picture_res, &depth_res, &room,
 			&anim_cycle_list, loadFlags);
-		scr_work_orig = scr_work;
+		scr_inter_orig = scr_orig;
 
 		if (!current_anim)
 			error("Could not load anim for - %s", buf);
@@ -455,14 +455,14 @@ static void animate() {
 		has_cycles = anim_cycle_list.num_cycles > 0;
 		current_anim_inter = (AnimInterPtr)current_anim;
 
-		int height = (scr_work.y == 200) ? 200 : 156;
-		buffer_init(&scr_inter_orig, 320, height);
-		scr_inter = scr_inter_orig;
+		int height = (scr_orig.y == 200) ? 200 : 156;
+		buffer_init(&scr_work, 320, height);
+		scr_inter = scr_work;
 
 		viewing_at_y = (height == 200) ? 0 : 200 - (height / 2);
 		viewing_at_y2 = viewing_at_y;
 
-		buffer_fill(scr_inter_orig, 0);
+		buffer_fill(scr_work, 0);
 
 		// Speech handling
 		speech_lines_count = 0;
@@ -522,7 +522,7 @@ static void animate() {
 		has_sound_file = false;
 
 		// Free surface
-		buffer_free(&scr_inter_orig);
+		buffer_free(&scr_work);
 		anim_unload(current_anim);
 		current_anim = nullptr;
 	}
@@ -531,7 +531,7 @@ done:
 	buffer_free(&scr_work);
 	anim_unload(current_anim);
 	buffer_free(&scr_depth);
-	buffer_free(&scr_inter);
+	buffer_free(&scr_orig);
 	tile_map_free(&picture_map);
 	tile_map_free(&depth_map);
 

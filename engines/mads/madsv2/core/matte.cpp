@@ -628,8 +628,8 @@ static void matte_special_effect(int special_effect, int full_screen) {
 
 		if (special_effect == MATTE_FX_FADE_THRU_BLACK) {
 			mcga_getpal(&special_pal);
-			matte_quick_to_black(&special_pal[0].r, 1);
-			// magic_fade_to_grey (special_pal, NULL, 0, 256, 0, 1, 1, 16);
+			//matte_quick_to_black(&special_pal[0].r, 1);
+			magic_fade_to_grey(special_pal, NULL, 0, 256, 0, 1, 1, 16);
 			buffer_fill(scr_live, 0);
 		}
 
@@ -641,7 +641,7 @@ static void matte_special_effect(int special_effect, int full_screen) {
 			work_screen->x, work_screen->y);
 
 		matte_quick_from_black(&special_pal[0].r, 1);
-		// magic_fade_from_grey (special_pal, master_palette, 0, 256, 0, 1, 1, 16);
+		//magic_fade_from_grey(special_pal, master_palette, 0, 256, 0, 1, 1, 16);
 		break;
 
 	case MATTE_FX_CORNER_LOWER_LEFT:
