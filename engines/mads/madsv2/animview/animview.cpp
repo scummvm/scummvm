@@ -62,7 +62,7 @@ AnimInterPtr current_anim_inter;
 int speechIndex;
 int speechLoops;
 int runVal6, runVal7, runVal8;
-int loadFontFlag;
+bool loadFontFlag;
 int imageFrame;
 CycleList anim_cycle_list;
 bool has_cycles;
@@ -202,7 +202,7 @@ static void run_animation(int animIndex) {
 		timer1 = timer_read();
 
 	speechIndex = -1;
-	loadFontFlag = current_anim->load_flags & AA_LOAD_FONT;
+	loadFontFlag = (current_anim->load_flags & AA_LOAD_FONT) != 0;
 
 	speechLoops = runVal6 = runVal7 = runVal8 = 0;
 	speechStream = 0;

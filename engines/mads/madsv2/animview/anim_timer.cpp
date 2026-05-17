@@ -136,10 +136,8 @@ block1:
 	runVal7 = -1;
 
 	speech = &current_anim->speech[speechIndex];
-	if (!loadFontFlag &&
-			speech->display_condition != 0x8000 &&
-			speech->display_condition != 0x800 &&
-			speech->display_condition != 0x2000) {
+	if (loadFontFlag && speech->display_condition != 0x8000 &&
+			speech->display_condition != 0x800) {
 		paletteHandle = pal_alloc_color(-1, 0, &palIndex1, &speech->color[0]);
 		paletteHandle = pal_alloc_color(paletteHandle, -1, &palIndex2, &speech->color[1]);
 

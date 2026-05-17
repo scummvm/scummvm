@@ -47,7 +47,7 @@ extern AnimInterPtr current_anim_inter;
 extern int speechIndex;
 extern int speechLoops;
 extern int runVal6, runVal7, runVal8;
-extern int loadFontFlag;
+extern bool loadFontFlag;
 extern int imageFrame;
 extern CycleList anim_cycle_list;
 extern bool has_cycles;
