@@ -394,7 +394,7 @@ private:
 	}
 };
 
-void FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds) {
+void FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset) {
 	file->seek(offset);
 	_amigaSfxTable.clear();
 	for (int i = 0; i < numSounds; i++) {
@@ -415,12 +415,11 @@ void FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int 
 	_amigaDmaSamples.clear();
 	_amigaDmaSamples.resize(12);
 
-	static const int kModOffset = 0x3D5A6;
-	if (file->size() > kModOffset + 1084) {
-		int modSize = file->size() - kModOffset;
+	if (file->size() > modOffset + 1084) {
+		int modSize = file->size() - modOffset;
 		Common::Array<byte> modBytes;
 		modBytes.resize(modSize);
-		file->seek(kModOffset);
+		file->seek(modOffset);
 		file->read(modBytes.data(), modSize);
 
 		Common::MemoryReadStream modStream(modBytes.data(), modBytes.size());

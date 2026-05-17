@@ -66,10 +66,12 @@ public:
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
+	void loadAssetsAmigaFullGame() override;
 	void loadAssetsZXFullGame() override;
 	void loadAssetsCPCFullGame() override;
 	void borderScreen() override;
 	void selectCharacterScreen();
+	bool playAmigaIntro();
 	void drawOption();
 
 	void initZX();
@@ -180,6 +182,7 @@ public:
 
 	int _lastTenSeconds;
 	int _soundIndexStartFalling;
+	bool _selectedPrincess;
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);

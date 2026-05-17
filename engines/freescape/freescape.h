@@ -534,7 +534,7 @@ public:
 	Common::Array<byte> _soundsCPCEnvelopeTable;
 	Common::Array<byte> _soundsCPCSoundDefTable;
 
-	void loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds);
+	void loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset = 0x3D5A6);
 	void playSoundAmiga(int index, Audio::SoundHandle &handle);
 	Common::Array<AmigaSfxEntry> _amigaSfxTable;
 	Common::Array<AmigaDmaSample> _amigaDmaSamples;

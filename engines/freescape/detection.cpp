@@ -880,6 +880,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
 	},
+	// Full Castle Master, Amiga
+	{
+		"castlemaster",
+		"",
+		{
+			{"cm", 0, "67dcb3f62fe15f18ecc31380ffaf5c4e", 1112},
+			{"x", 0, "afc245de66ef8eb1b5fd061c6bbd602e", 349975},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
 	{
 		"castlemaster",
 		"",

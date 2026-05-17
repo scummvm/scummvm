@@ -860,7 +860,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
 	file->seek(offset);
 	uint8 numberOfAreas = readField(file, 8);
-	if (isAmiga() && isCastle() && isDemo())
+	// The Castle Master Amiga binary stores the count as 0x68 (104) but the
+	// area pointer table only has 87 valid entries; the demo and the full
+	// game share the same asset section so the same override applies.
+	if (isAmiga() && isCastle())
 		numberOfAreas = 87;
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 

@@ -121,6 +121,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_thunderTicks = 0;
 	_thunderFrameDuration = 0;
 	_thunderFrameIndex = 0;
+	_selectedPrincess = false;
 }
 
 CastleEngine::~CastleEngine() {
@@ -698,6 +699,8 @@ void CastleEngine::initGameState() {
 	_spiritsMeterPosition = _spiritsMeter * _spiritsToKill / _spiritsToKill;
 
 	_exploredAreas[_startArea] = true;
+	if (_selectedPrincess)
+		setGameBit(32);
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);
 
@@ -1999,6 +2002,12 @@ void CastleEngine::updateTimeVariables() {
 void CastleEngine::borderScreen() {
 	if (isAmiga() && isDemo())
 		return; // Skip character selection
+	if (isAmiga()) {
+		if (playAmigaIntro())
+			return;
+		selectCharacterScreen();
+		return;
+	}
 
 	if (isSpectrum() || isCPC() || isC64())
 		FreescapeEngine::borderScreen();
@@ -2049,7 +2058,7 @@ void CastleEngine::selectCharacterScreen() {
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	surface->fillRect(_fullscreenViewArea, color);
 
-	if (isSpectrum() || isCPC()) {
+	if (isSpectrum() || isCPC() || isAmiga()) {
 		if (_language == Common::ES_ESP) {
 			// No accent in "príncipe" since it is not supported by the font
 			lines.push_back(centerAndPadString("*******************", 21));
@@ -2129,7 +2138,7 @@ void CastleEngine::selectCharacterScreen() {
 	// lines[5] = prince, lines[6] = princess for ZX/CPC.
 	// For DOS, use riddle text line positions.
 	Common::Rect princeSelector, princessSelector;
-	if (isSpectrum() || isCPC()) {
+	if (isSpectrum() || isCPC() || isAmiga()) {
 		int x = _viewArea.left + 3;
 		int lineHeight = 12; // Castle Master line spacing in drawStringsInSurface
 		int princeY = _viewArea.top + 3 + 5 * lineHeight;
@@ -2180,10 +2189,10 @@ void CastleEngine::selectCharacterScreen() {
 
 				if (princeSelector.contains(mouse)) {
 					selected = true;
-					// Nothing, since game bit should be already zero
+					_selectedPrincess = false;
 				} else if (princessSelector.contains(mouse)) {
 					selected = true;
-					setGameBit(32);
+					_selectedPrincess = true;
 				}
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -2196,11 +2205,11 @@ void CastleEngine::selectCharacterScreen() {
 			switch (event.customType) {
 				case kActionSelectPrince:
 					selected = true;
-					// Nothing, since game bit should be already zero
+					_selectedPrincess = false;
 					break;
 				case kActionSelectPrincess:
 					selected = true;
-					setGameBit(32);
+					_selectedPrincess = true;
 					break;
 				default:
 					break;
