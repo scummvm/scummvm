@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/formats/winexe.h"
 
 #include "director/director.h"
@@ -352,8 +353,51 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 
 	// Now, if we have --start-movie supplied, let's consider that
 	// the developer knows what they're doing and report Director game
-	if (ConfMan.hasKey("start_movie"))
-		return ADDetectedGame(&desc->desc);
+	if (ConfMan.hasKey("start_movie")) {
+		// Check if the start movie is in MacBinary format
+
+		if (ConfMan.get("start_movie").hasPrefixIgnoreCase(".exe")) {
+			warning("Director fallback detection: Start movie has .exe extension, reporting as Windows Director game");
+			desc->desc.platform = Common::kPlatformWindows;
+			return ADDetectedGame(&desc->desc);
+		}
+
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			Common::String fileName = file->getName();
+
+			if (!fileName.equalsIgnoreCase(ConfMan.get("start_movie")))
+				continue;
+
+			Common::File f;
+			if (!f.open(*file))
+				continue;
+
+			if (Common::MacResManager::isMacBinary(f)) {
+				warning("Director fallback detection: Start movie is in MacBinary format, reporting as Mac Director game");
+				desc->desc.platform = Common::kPlatformMacintosh;
+			} else {
+				f.seek(0);
+				uint32 initialTag = f.readUint32BE();
+				switch (initialTag) {
+				case MKTAG('R', 'I', 'F', 'F'):
+				case MKTAG('R', 'I', 'F', 'X'):
+					desc->desc.platform = Common::kPlatformMacintosh;
+					break;
+				case MKTAG('X', 'F', 'I', 'R'):
+				case MKTAG('F', 'F', 'I', 'R'):
+					desc->desc.platform = Common::kPlatformWindows;
+					break;
+				default:
+					warning("Director fallback detection: Start movie does not have a valid RIFF tag, cannot determine platform");
+					return ADDetectedGame();
+				}
+			}
+
+			return ADDetectedGame(&desc->desc);
+		}
+
+		warning("Director fallback detection: Failed to open start movie at %s", ConfMan.get("start_movie").c_str());
+	}
 
 	return ADDetectedGame();
 }
