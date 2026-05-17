@@ -358,7 +358,7 @@ static void animate() {
 	matte_init(-1);
 
 	// Preload resources used by the animations
-	for (count = 0; count < anim_count && !error_code; ++count) {
+	for (count = 0; count < anim_count; ++count) {
 		AnimEntry &entry = anim_list[count];
 
 		MADS_FORMAT(buf, entry.name);
@@ -399,7 +399,7 @@ static void animate() {
 
 	speech_init();
 
-	for (count = 0; count < anim_count; ++count) {
+	for (count = 0; count < anim_count && !error_code; ++count) {
 		MADS_FORMAT(buf, anim_list[count].name);
 
 		foundSound = false;
@@ -527,6 +527,9 @@ static void animate() {
 		buffer_free(&scr_work);
 		anim_unload(current_anim);
 		current_anim = nullptr;
+
+		if (g_engine->shouldQuit())
+			error_code = 1;
 	}
 done:
 	timer_activate_low_priority(nullptr);
