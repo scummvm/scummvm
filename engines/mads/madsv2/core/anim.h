@@ -315,7 +315,7 @@ struct Speech {
 	byte sound;                   /* Sound to be used         */
 	Audio::AudioStream *speech;	  /* Speech audio stream      */
 	int16 x, y;                   /* Text coordinates         */
-	int16 display_condition;      /* Condition for display    */
+	uint16 display_condition;     /* Condition for display    */
 	RGBcolor color[2];            /* Colors for text display  */
 	word flags;                   /* Segment flags            */
 	int16 speech_loops;           /* Loops if speech active   */
