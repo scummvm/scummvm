@@ -55,7 +55,6 @@ void NoctropolisEngine::initObjects() {
 	_stil = new NoctropolisPlayer(this, true);
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "comdata");
 
 	// Current defaults to screen in Noctropolis.
 	_current = _screen;
@@ -187,8 +186,7 @@ Common::Error NoctropolisEngine::loadGameState(int slot) {
 void NoctropolisEngine::doFlashLogo() {
 	_events->hideCursor();
 
-	// TODO: should be "DARK/FLASH.SCN".
-	_files->loadScreen(Common::Path("FLASH.SCN"));
+	_files->loadScreen(Common::Path("DARK/FLASH.SCN"));
 	_screen->fadeIn();
 	if (shouldQuit())
 		return;
@@ -204,48 +202,83 @@ void NoctropolisEngine::doFlashLogo() {
 
 void NoctropolisEngine::doPublisherLogo() {
 	Common::File pngFile;
-	// TODO: should be "DARK/nds.png".
-	pngFile.open(Common::Path("nds.png"));
+	const Common::Path nightDive("DARK/nds.png");
 
-	// TODO: Original has a movie here instead of PNG, will need an update.
-	// The version on GOG has PNG for both windows and mac.
-	Image::PNGDecoder decoder;
-	decoder.loadStream(pngFile);
+	if (pngFile.exists(nightDive)) {
+		// The nightdive re-release, show their logo.
+		pngFile.open(nightDive);
 
-	// Find the best 8-bit palette for this logo as the png is 24-bit and we're
-	// not changing the output surface format for this one logo at the start!
-	Graphics::ColorQuantizer quant(256);
-	const Graphics::Surface *pngSurf = decoder.getSurface();
-	// The image comes in a bit big too
-	Graphics::Surface *scaledPng = pngSurf->scale(640, 360, true);
-	Graphics::PixelFormat format = scaledPng->format;
-	assert(format.bytesPerPixel == 3);
-	for (int y = 0; y < scaledPng->h; y++) {
-		for (int x = 0; x < scaledPng->w; x++) {
-			byte r,g,b;
-			format.colorToRGB(scaledPng->getPixel(x, y), r, g, b);
-			quant.addColor(r, g, b);
+		Image::PNGDecoder decoder;
+		decoder.loadStream(pngFile);
+
+		// Find the best 8-bit palette for this logo as the png is 24-bit and we're
+		// not changing the output surface format for this one logo at the start!
+		Graphics::ColorQuantizer quant(256);
+		const Graphics::Surface *pngSurf = decoder.getSurface();
+		// The image comes in a bit big too
+		Graphics::Surface *scaledPng = pngSurf->scale(640, 360, true);
+		Graphics::PixelFormat format = scaledPng->format;
+		assert(format.bytesPerPixel == 3);
+		for (int y = 0; y < scaledPng->h; y++) {
+			for (int x = 0; x < scaledPng->w; x++) {
+				byte r,g,b;
+				format.colorToRGB(scaledPng->getPixel(x, y), r, g, b);
+				quant.addColor(r, g, b);
+			}
 		}
-	}
-	Graphics::Palette *bestPal = quant.getPalette();
-	_screen->clearScreen();
-	_screen->setRawPalette(*bestPal);
-	_screen->setPalette();
-	for (int y = 0; y < MIN(scaledPng->h, _screen->h); y++) {
-		for (int x = 0; x < MIN(scaledPng->w, _screen->w); x++) {
-			byte r,g,b;
-			format.colorToRGB(scaledPng->getPixel(x, y), r, g, b);
-			byte col = bestPal->findBestColor(r, g, b);
-			_screen->setPixel(x, y, col);
+		Graphics::Palette *bestPal = quant.getPalette();
+		_screen->clearScreen();
+		_screen->setRawPalette(*bestPal);
+		_screen->setPalette();
+		for (int y = 0; y < MIN(scaledPng->h, _screen->h); y++) {
+			for (int x = 0; x < MIN(scaledPng->w, _screen->w); x++) {
+				byte r,g,b;
+				format.colorToRGB(scaledPng->getPixel(x, y), r, g, b);
+				byte col = bestPal->findBestColor(r, g, b);
+				_screen->setPixel(x, y, col);
+			}
 		}
+		delete bestPal;
+		_screen->fadeIn();
+
+		_events->_vbCount = 0x7e;
+		while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+			_events->pollEventsAndWait();
+		}
+		if (shouldQuit())
+			return;
+		_screen->fadeOut();
+
+	} else {
+		// The original EA release, show their logo.
+		//
+		// Interestingly, these files are availble even in the re-release.
+		// It would be possible to expose as an option, if anyone
+		// was particularly keen on restoring this publisher logo..
+		//
+		_screen->clearScreen();
+		int soundId = _sound->loadRawSound("AUD/EALOGO.WAV", 1);
+		_sound->playSound(soundId);
+		VideoPlayer_v2 vidPlayer(this, true);
+		// TODO: This video should really be played at double-size as it's 320x200
+		vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(160, 100), Common::Path("VID/EALOGO.VID"), 0);
+		vidPlayer.playToEnd();
+		// If the video is skipped the sfx isn't done yet.
+		if (_sound->isSFXPlaying())
+			_sound->stopSound();
 	}
-	delete bestPal;
+}
+
+void NoctropolisEngine::doUpsell() {
+	_files->loadScreen(Common::Path("TITLE.SCN"));
 	_screen->fadeIn();
+	if (shouldQuit())
+		return;
 
-	_events->_vbCount = 0x7e;
-	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
-		_events->pollEventsAndWait();
-	}
+	VideoPlayer_v2 vidPlayer(this, true);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(110, 17), Common::Path("TITL.VID"), 0);
+	vidPlayer.playToEnd();
+
 	if (shouldQuit())
 		return;
 	_screen->fadeOut();

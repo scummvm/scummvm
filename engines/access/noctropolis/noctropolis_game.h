@@ -90,9 +90,11 @@ public:
 	void playSuccubusAttack();
 	void doLastComic();
 	void doSpecialComic();
+	void doUpsell();
 
 	/** Play SFX for item added to inv, debounced */
 	void playInventoryStinger();
+
 
 protected:
 	void setupGame() override;

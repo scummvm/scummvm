@@ -453,6 +453,11 @@ void VideoPlayer_v2::handleSoundChunk(bool init) {
 
 	_videoData->_stream->read(soundData, soundSize);
 
+	if (!_audioStream) {
+		warning("Got sound block size %d before sound init! Skipping.", soundSize);
+		return;
+	}
+
 	_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 
 	debugC(kDebugGraphics, "soundSize = %d", soundSize);

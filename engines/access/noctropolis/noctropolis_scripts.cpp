@@ -167,8 +167,13 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		((VideoPlayer_v2 *)_vm->_video)->setVideoPalNow();
 		break;
 	case 17:
-		warning("TODO: Add Nightdive credits here if playing that edition?");
+		warning("TODO: End of game - add Nightdive credits here for that edition?");
 		// see NoctEndGame::drawer.
+		_vm->quitGame();
+		break;
+	case 18:
+		warning("TODO: End of demo - show upsell screen?");
+		vm->doUpsell();
 		_vm->quitGame();
 		break;
 	case 19:

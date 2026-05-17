@@ -60,7 +60,7 @@ static const struct ComicBlock page_1_blocks[] = {
 	block_p1_1,
 };
 
-static struct ComicPage page_1 = { "DARK/COMDATA/LEPG1_2.SCN", 98, 41, 1, 0, page_1_blocks, 2 };
+static struct ComicPage page_1 = { "COMDATA/LEPG1_2.SCN", 98, 41, 1, 0, page_1_blocks, 2 };
 
 static const struct Polygon poly_p2_b0 = { {
 	{ 106, 0 },
@@ -251,7 +251,7 @@ static const struct ComicBlock page_2_blocks[] = {
 	block_p2_12,
 };
 
-static struct ComicPage page_2 = { "DARK/COMDATA/LEPG3_4.SCN", 98, 42, 1, 0, page_2_blocks, 13 };
+static struct ComicPage page_2 = { "COMDATA/LEPG3_4.SCN", 98, 42, 1, 0, page_2_blocks, 13 };
 
 static const struct Polygon poly_p3_b0 = { {
 	{ 59, 265 },
@@ -359,7 +359,7 @@ static const struct ComicBlock page_3_blocks[] = {
 	block_p3_5,
 };
 
-static struct ComicPage page_3 = { "DARK/COMDATA/LEPG5_6.SCN", 98, 43, 0, 0, page_3_blocks, 6 };
+static struct ComicPage page_3 = { "COMDATA/LEPG5_6.SCN", 98, 43, 0, 0, page_3_blocks, 6 };
 
 static const struct Polygon poly_p4_b0 = { {
 	{ 62, 0 },
@@ -497,7 +497,7 @@ static const struct ComicBlock page_4_blocks[] = {
 	block_p4_8,
 };
 
-static struct ComicPage page_4 = { "DARK/COMDATA/LEPG7_8.SCN", 98, 44, 0, 0, page_4_blocks, 9 };
+static struct ComicPage page_4 = { "COMDATA/LEPG7_8.SCN", 98, 44, 0, 0, page_4_blocks, 9 };
 
 static const struct Polygon poly_p5_b0 = { {
 	{ 168, 83 },
@@ -709,7 +709,7 @@ static const struct ComicBlock page_5_blocks[] = {
 	block_p5_13,
 };
 
-static struct ComicPage page_5 = { "DARK/COMDATA/LEPG9_10.SCN", 98, 45, 0, 0, page_5_blocks, 14 };
+static struct ComicPage page_5 = { "COMDATA/LEPG9_10.SCN", 98, 45, 0, 0, page_5_blocks, 14 };
 
 static const struct Polygon poly_p6_b0 = { {
 	{ 255, 0 },
@@ -890,7 +890,7 @@ static const struct ComicBlock page_6_blocks[] = {
 	block_p6_10,
 };
 
-static struct ComicPage page_6 = { "DARK/COMDATA/LEPG1112.SCN", 98, 46, 0, 0, page_6_blocks, 11 };
+static struct ComicPage page_6 = { "COMDATA/LEPG1112.SCN", 98, 46, 0, 0, page_6_blocks, 11 };
 
 static const struct Polygon poly_p7_b0 = { {
 	{ 112, 50 },
@@ -1016,7 +1016,7 @@ static const struct ComicBlock page_7_blocks[] = {
 	block_p7_7,
 };
 
-static struct ComicPage page_7 = { "DARK/COMDATA/LEPG1314.SCN", 98, 47, 0, 0, page_7_blocks, 8 };
+static struct ComicPage page_7 = { "COMDATA/LEPG1314.SCN", 98, 47, 0, 0, page_7_blocks, 8 };
 
 static const struct Polygon poly_p8_b0 = { {
 	{ 59, 0 },
@@ -1185,7 +1185,7 @@ static const struct ComicBlock page_8_blocks[] = {
 	block_p8_10,
 };
 
-static struct ComicPage page_8 = { "DARK/COMDATA/LEPG1516.SCN", 98, 48, 1, 0, page_8_blocks, 11 };
+static struct ComicPage page_8 = { "COMDATA/LEPG1516.SCN", 98, 48, 1, 0, page_8_blocks, 11 };
 
 static const struct Polygon poly_p9_b0 = { {
 	{ 187, 0 },
@@ -1271,7 +1271,7 @@ static const struct ComicBlock page_9_blocks[] = {
 	block_p9_4,
 };
 
-static struct ComicPage page_9 = { "DARK/COMDATA/LEPG17.SCN", 98, 49, 1, 0, page_9_blocks, 5 };
+static struct ComicPage page_9 = { "COMDATA/LEPG17.SCN", 98, 49, 1, 0, page_9_blocks, 5 };
 
 static const struct Polygon poly_p10_b0 = { {
 	{ 59, 0 },
@@ -1443,7 +1443,7 @@ static const struct ComicBlock page_10_blocks[] = {
 	block_p10_9,
 };
 
-static struct ComicPage page_10 = { "DARK/COMDATA/LEPG1819.SCN", 98, 50, 1, 0, page_10_blocks, 10 };
+static struct ComicPage page_10 = { "COMDATA/LEPG1819.SCN", 98, 50, 1, 0, page_10_blocks, 10 };
 
 static const struct Polygon poly_p11_b0 = { {
 	{ 232, 82 },
@@ -1638,7 +1638,7 @@ static const struct ComicBlock page_11_blocks[] = {
 	block_p11_12,
 };
 
-static struct ComicPage page_11 = { "DARK/COMDATA/LEPG2021.SCN", 98, 15, 1, 0, page_11_blocks, 13 };
+static struct ComicPage page_11 = { "COMDATA/LEPG2021.SCN", 98, 15, 1, 0, page_11_blocks, 13 };
 
 static const struct Polygon poly_p12_b0 = { {
 	{ 186, 112 },
@@ -1809,7 +1809,7 @@ static const struct ComicBlock page_12_blocks[] = {
 	block_p12_10,
 };
 
-static struct ComicPage page_12 = { "DARK/COMDATA/LEPG2223.SCN", 98, 51, 1, 0, page_12_blocks, 11 };
+static struct ComicPage page_12 = { "COMDATA/LEPG2223.SCN", 98, 51, 1, 0, page_12_blocks, 11 };
 
 static const struct Polygon poly_p13_b0 = { {
 	{ 188, 0 },
@@ -1953,7 +1953,7 @@ static const struct ComicBlock page_13_blocks[] = {
 	block_p13_8,
 };
 
-static struct ComicPage page_13 = { "DARK/COMDATA/LEPG24.SCN", 98, 52, 1, 0, page_13_blocks, 9 };
+static struct ComicPage page_13 = { "COMDATA/LEPG24.SCN", 98, 52, 1, 0, page_13_blocks, 9 };
 
 static const struct Polygon poly_p14_b0 = { {
 	{ 323, 111 },
@@ -2029,7 +2029,7 @@ static const struct ComicBlock page_14_blocks[] = {
 	block_p14_4,
 };
 
-static struct ComicPage page_14 = { "DARK/COMDATA/LEPG2526.SCN", 98, 53, 1, 0, page_14_blocks, 5 };
+static struct ComicPage page_14 = { "COMDATA/LEPG2526.SCN", 98, 53, 1, 0, page_14_blocks, 5 };
 
 static const struct Polygon poly_p15_b0 = { {
 	{ 225, 22 },
@@ -2089,7 +2089,7 @@ static const struct ComicBlock page_15_blocks[] = {
 	block_p15_3,
 };
 
-static struct ComicPage page_15 = { "DARK/COMDATA/LEPG27.SCN", 98, 54, 0, 0, page_15_blocks, 4 };
+static struct ComicPage page_15 = { "COMDATA/LEPG27.SCN", 98, 54, 0, 0, page_15_blocks, 4 };
 
 const struct ComicPage *LastComicPages[] = {
 	&page_1,
