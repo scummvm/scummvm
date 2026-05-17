@@ -141,6 +141,8 @@ void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
 	_defaultNextScene = stream.readByte();
 
 	_sceneChange.sceneID = stream.readUint16LE();
+	if (g_nancy->getGameType() >= kGameTypeNancy10)
+		_sceneChange.frameID = stream.readUint16LE();
 	_sceneChange.continueSceneSound = kContinueSceneSound;
 
 	uint16 numResponses = stream.readUint16LE();
