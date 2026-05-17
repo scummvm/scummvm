@@ -168,6 +168,13 @@ void FluidScroller::feedWheel(uint32 time, float deltaY) {
 		effectiveDt = 20;
 
 	float velocity = deltaY / (float)effectiveDt;
+	if (_mode == kModeFling) {
+		float elapsed = (float)(time - _startTime);
+		float coefficient = powf(kDecelerationRate, elapsed);
+		float currentVelocity = _initialVelocity * coefficient;
+
+		velocity += currentVelocity * 0.2f;
+	}
 	startFling(velocity);
 }
 
@@ -176,7 +183,6 @@ void FluidScroller::handleMouseWheel(int direction, float multiplier) {
 	if (stepping == 0.0f)
 		return;
 
-	stopAnimation();
 	feedWheel(g_system->getMillis(), stepping);
 }
 
