@@ -95,10 +95,10 @@ void ArcadePuzzle::readData(Common::SeekableReadStream &stream) {
 	for (int i = 0; i < 10; ++i)
 		readRect(stream, _timerDigitSrc[i]);
 
-	readRect(stream, _timerDisplayDest);           // 16 bytes, +0x265
-	readRect(stream, _lifeSrc[0]);                 // 16 bytes, +0x275
-	readRect(stream, _lifeSrc[1]);                 // 16 bytes, +0x285
-	readRect(stream, _lifeSrc[2]);                 // 16 bytes, +0x295
+	readRect(stream, _timerColonSrc);              // 16 bytes, +0x265 (colon glyph source)
+	readRect(stream, _textSrc[0]);                 // 16 bytes, +0x275
+	readRect(stream, _textSrc[1]);                 // 16 bytes, +0x285
+	readRect(stream, _textSrc[2]);                 // 16 bytes, +0x295
 
 	_stateDelayMs = stream.readUint32LE();               // 4 bytes,  +0x2a5
 
@@ -132,10 +132,10 @@ void ArcadePuzzle::readData(Common::SeekableReadStream &stream) {
 	_cumulativeScore  = stream.readByte() != 0;          // +0x303
 	stream.skip(1);                                // +0x304 (random seed flag, unused)
 
-	_scoreStepSize    = stream.readSint32LE();           // +0x305
+	_scoreStepSize    = stream.readSint32LE();           // +0x305 (score-tick sound interval)
 	_timeBonusMax     = stream.readSint32LE();           // +0x309
 	_timeLimitSec     = stream.readSint32LE();           // +0x30d
-	stream.skip(4);                                      // +0x311 (unused score param)
+	_pointsPerBrick   = stream.readSint32LE();           // +0x311 (per-brick score multiplier)
 
 	for (int i = 0; i < 6; ++i)                          // 6×49 = 294 bytes, +0x315..+0x43a
 		_sounds[i].readNormal(stream);
@@ -177,7 +177,7 @@ void ArcadePuzzle::init() {
 	// Death line: ball dies when it passes this y coord
 	_deathY = _fieldBottom - _deathYDist;
 
-	// Paddle dimensions from paddle src rect
+	// Paddle dimensions from paddle src rect.
 	_paddleWidth  = _paddleSrc.width();
 	_paddleHeight = _paddleSrc.height();
 	_paddleHalfW  = _paddleWidth / 2;
@@ -198,7 +198,6 @@ void ArcadePuzzle::init() {
 	_ballSpeedPerMs   = (_ballSteps > 0)
 	    ? _ballPixPerStep   / (float)_ballSteps   : 1.0f;
 
-	// Build angle table
 	buildAngleTable();
 
 	// Score/timer display positions adjusted for field offset
@@ -292,6 +291,7 @@ void ArcadePuzzle::resetRound() {
 	_lifeLost     = false;
 	_lifeLostBall = false;
 	_gameHalted   = false;
+	_winGame      = false;
 	_score        = 0;
 	_launchBall   = false;
 
@@ -467,9 +467,9 @@ void ArcadePuzzle::initSublevel() {
 			drawBrick(i);
 
 	drawPaddle();
-	drawBall();
 	drawScore();
 	drawTimer();
+	drawBall();
 
 	_needsRedraw = true;
 }
@@ -487,7 +487,6 @@ void ArcadePuzzle::execute() {
 			g_nancy->_sound->loadSound(_sounds[i]);
 		// Dynamic sounds are loaded when needed
 
-		_livesLeft    = 3;
 		_state = kRun;
 		break;
 
@@ -500,7 +499,11 @@ void ArcadePuzzle::execute() {
 			updateTimer();
 			updateScore();
 
-			if (_levelClear) {
+			if (_lifeLost) {
+				_winFlags[_currentLevel] = 0;
+				_levelScore[_currentLevel] = 0;
+				_gameSubState = kLifeLost;
+			} else if (_levelClear) {
 				// Mark current level as won
 				_winFlags[_currentLevel] = 1;
 
@@ -518,13 +521,6 @@ void ArcadePuzzle::execute() {
 					_gameSubState = kLevelClear;
 				}
 			}
-
-			if (_lifeLost) {
-				// Reset current level flags and score
-				_winFlags[_currentLevel] = 0;
-				_levelScore[_currentLevel] = 0;
-				_gameSubState = kLifeLost;
-			}
 			break;
 
 		case kLevelClear:
@@ -537,23 +533,13 @@ void ArcadePuzzle::execute() {
 			break;
 
 		case kLifeLost:
-			--_livesLeft;
-			if (_livesLeft <= 0) {
-				// No lives left: game over lose
-				_lifeLost     = false;
-				_winGame      = false;
-				if (_gameOverSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_gameOverSound);
-					g_nancy->_sound->playSound(_gameOverSound);
-				}
-				_stateWaitUntil = g_system->getMillis() + _stateDelayMs;
-				_gameSubState = kGameOverLose;
-				break;
-			}
+			// Barnacle Blast has no lives — losing a ball just gives
+			// the player another try, indefinitely.
 			if (_lifeLostSound.name != "NO SOUND") {
 				g_nancy->_sound->loadSound(_lifeLostSound);
 				g_nancy->_sound->playSound(_lifeLostSound);
 			}
+			drawTryAgain();
 			_stateWaitUntil = g_system->getMillis() + _stateDelayMs;
 			_gameSubState = kWaitTimer;
 			break;
@@ -570,6 +556,7 @@ void ArcadePuzzle::execute() {
 				g_nancy->_sound->loadSound(_gameOverSound);
 				g_nancy->_sound->playSound(_gameOverSound);
 			}
+			drawYouWin();
 			_stateWaitUntil = g_system->getMillis() + _stateDelayMs;
 			_gameSubState = kWaitTimer;
 			break;
@@ -589,11 +576,6 @@ void ArcadePuzzle::execute() {
 			}
 			break;
 
-		case kGameOverLose:
-			if (g_system->getMillis() > _stateWaitUntil)
-				_gameSubState = kFinish;
-			break;
-
 		default:
 			break;
 		}
@@ -608,14 +590,11 @@ void ArcadePuzzle::execute() {
 		g_nancy->_sound->stopSound(_gameOverSound);
 		g_nancy->_sound->stopSound(_lifeLostSound);
 
-		if (_livesLeft > 0) {
-			_winScene.execute();
-		} else {
-			// Change to the same destination scene as winning, but without setting
-			// the win flag. The game script checks that flag to determine win/lose
-			// and will show the "you lost" message when it is absent.
-			NancySceneState.changeScene(_winScene._sceneChange);
-		}
+		// The puzzle has no lose path — the player keeps retrying
+		// forever until they clear the required level(s). So
+		// kActionTrigger is only ever reached via kGameOverWin, and
+		// we just execute the win scene change + flag set.
+		_winScene.execute();
 
 		finishExecution();
 		break;
@@ -837,15 +816,24 @@ void ArcadePuzzle::ballAndCollision() {
 	if (_ballNeedsRedraw) {
 		Common::Rect prevBallRect(_ballPrevLeft, _ballPrevTop, _ballPrevRight + 1, _ballPrevBottom + 1);
 		eraseBall();
-		// Restore any brick pixels the ball erase may have cleared
+
+		// Restore any brick pixels the ball erase may have cleared.
 		for (int i = 0; i < _totalBricks; ++i) {
 			if (_bricks[i].alive && _bricks[i].vpRect.intersects(prevBallRect))
 				drawBrick(i);
 		}
-		drawBall();
-		// Restore HUD in case ball erase clipped into the score/timer area
+
+		// Restore the paddle if the previous ball rect overlapped it.
+		Common::Rect paddleRect(_paddleLeft, _paddleTop, _paddleRight + 1, _paddleBottom + 1);
+		if (paddleRect.intersects(prevBallRect))
+			drawPaddle();
+
+		// Restore HUD BEFORE the ball so the ball renders on top of
+		// every other UI element.
 		drawScore();
 		drawTimer();
+
+		drawBall();
 		_ballNeedsRedraw = false;
 	}
 }
@@ -1038,10 +1026,12 @@ bool ArcadePuzzle::brickCollision(int &ballLeft, int &ballTop, int &ballRight, i
 		_collisionType = 0xf;
 	}
 
-	// Queue brick for removal and accumulate score
+	// Queue brick for removal and accumulate score.
 	addToExplosionList(i, 125);
 
-	_levelScore[_currentLevel] += (int32)_timeBonusMultiplier;
+	const float newScore = (float)_levelScore[_currentLevel]
+			+ (float)_pointsPerBrick * _timeBonusMultiplier;
+	_levelScore[_currentLevel] = (int32)newScore;
 	if (_cumulativeScore)
 		_score = _totalLevelScore + _levelScore[_currentLevel];
 	else
@@ -1057,14 +1047,35 @@ bool ArcadePuzzle::brickCollision(int &ballLeft, int &ballTop, int &ballRight, i
 void ArcadePuzzle::applyCollision() {
 	switch (_collisionType) {
 	case 0: {
-		// Paddle center: look up angle table based on where ball hit paddle
+		// Paddle-center bounce.
 		int hitPos = _ballCenterX - _paddleLeft;
 		hitPos = CLIP(hitPos, 0, _paddleWidth - 1);
-		uint32 rbit = g_nancy->_randomSource->getRandomBit();
-		int idx = hitPos * 6 + rbit * 3;
-		_ballDX   = _angleTable[idx + 0];
-		_ballDY   = _angleTable[idx + 1];
-		_ballSpin = _angleTable[idx + 2];
+
+		int subEntry = -1;
+		if (_ballDX > 0.0f && _ballDY < 0.0f)
+			subEntry = 0;
+		else if (_ballDX < 0.0f && _ballDY < 0.0f)
+			subEntry = 1;
+
+		// Reflect over paddle normal (0, 1): dx unchanged, dy negated.
+		_ballDY = -_ballDY;
+
+		if (subEntry == 0) {
+			_ballDX += _angleTable[hitPos * 6 + 0];
+			_ballDY += _angleTable[hitPos * 6 + 1];
+			_ballSpin = _angleTable[hitPos * 6 + 2];
+		} else if (subEntry == 1) {
+			_ballDX += _angleTable[hitPos * 6 + 3];
+			_ballDY += _angleTable[hitPos * 6 + 4];
+			_ballSpin = _angleTable[hitPos * 6 + 5];
+		}
+
+		const float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
+		if (len > 0.0f) {
+			_ballDX /= len;
+			_ballDY /= len;
+		}
+
 		g_nancy->_sound->playSound(_sounds[0]); // bounce sound
 		break;
 	}
@@ -1235,8 +1246,28 @@ void ArcadePuzzle::addToExplosionList(int brickIdx, uint32 delay) {
 
 	_explosionList.push_back(brickIdx);
 
-	_bricks[brickIdx].explosionTimer    = g_system->getMillis() + delay;
-	_bricks[brickIdx].pendingExplosion = true;
+	Brick &b = _bricks[brickIdx];
+	b.explosionTimer    = g_system->getMillis() + delay;
+	b.pendingExplosion  = true;
+
+	// Dissolve animation: swap the brick's `srcRect` over to the
+	// companion "exploded" sprite (`brickTypeSrc[4 + type]`) for the
+	// duration of the pending-explosion window. Doing this — instead of
+	// only blitting once here — means the brief pause where the dissolve
+	// sprite is visible survives any subsequent drawBrick() calls
+	// triggered by the ball-redraw / brick-restore path (which still
+	// treats the brick as alive until the explosion timer expires).
+	// processExplosions() then erases the brick rect to transparent,
+	// matching the original engine's two-step dissolve.
+	if (b.type >= 0 && b.type < 4) {
+		const int explosionIdx = 4 + b.type;
+		if (!_brickTypeSrc[explosionIdx].isEmpty()) {
+			b.srcRect = _brickTypeSrc[explosionIdx];
+			_drawSurface.blitFrom(_image, b.srcRect,
+									Common::Point(b.vpRect.left, b.vpRect.top));
+			_needsRedraw = true;
+		}
+	}
 }
 
 void ArcadePuzzle::playBrickHitSound() {
@@ -1263,15 +1294,16 @@ void ArcadePuzzle::updateTimer() {
 }
 
 void ArcadePuzzle::updateScore() {
-	if (_score == _prevScore)
-		return;
+	// Score-change branch — cap and redraw only when the displayed score
+	// actually moved.
+	if (_score != _prevScore) {
+		if (_score > 12000000)
+			_score = 12000000;
+		drawScore();
+		_prevScore = _score;
+	}
 
-	// Cap at 12,000,000
-	if (_score > 12000000)
-		_score = 12000000;
-
-	// Update time bonus multiplier
-	uint32 elapsedSecs = _timerElapsedMs / 1000;
+	const uint32 elapsedSecs = _timerElapsedMs / 1000;
 	if ((int32)elapsedSecs < _timeLimitSec) {
 		_timeBonusMultiplier =
 		    ((float)(_timeLimitSec - (int32)elapsedSecs)) *
@@ -1279,9 +1311,6 @@ void ArcadePuzzle::updateScore() {
 	} else {
 		_timeBonusMultiplier = 1.0f;
 	}
-
-	drawScore();
-	_prevScore = _score;
 }
 
 // ---- Drawing helpers --------------------------------------------------------
@@ -1291,6 +1320,23 @@ void ArcadePuzzle::drawBrick(int idx) {
 	if (!b.alive || b.type < 0) return;
 	_drawSurface.blitFrom(_image, b.srcRect, Common::Point(b.vpRect.left, b.vpRect.top));
 	_needsRedraw = true;
+}
+
+void ArcadePuzzle::drawBanner(const Common::Rect &srcRect) {
+	if (srcRect.isEmpty())
+		return;
+	const int x = _fieldLeft + (_fieldWidth  - srcRect.width())  / 2;
+	const int y = _fieldTop  + (_fieldHeight - srcRect.height()) / 2;
+	_drawSurface.blitFrom(_image, srcRect, Common::Point(x, y));
+	_needsRedraw = true;
+}
+
+void ArcadePuzzle::drawTryAgain() {
+	drawBanner(_textSrc[2]);
+}
+
+void ArcadePuzzle::drawYouWin() {
+	drawBanner(_textSrc[1]);
 }
 
 void ArcadePuzzle::eraseBrick(int idx) {
@@ -1382,27 +1428,42 @@ void ArcadePuzzle::drawTimer() {
 	if (_timerDigitSrc[0].isEmpty())
 		return;
 
-	int digitW = _timerDigitSrc[0].width();
-	int digitH = _timerDigitSrc[0].height();
-	int baseX  = _timerDisplayX + _fieldLeft;
-	int baseY  = _timerDisplayY + _fieldTop;
+	const int digitW = _timerDigitSrc[0].width();
+	const int digitH = _timerDigitSrc[0].height();
+	const int colonW = _timerColonSrc.isEmpty() ? 0 : _timerColonSrc.width();
+	const int colonH = _timerColonSrc.isEmpty() ? 0 : _timerColonSrc.height();
+	const int baseX  = _timerDisplayX + _fieldLeft;
+	const int baseY  = _timerDisplayY + _fieldTop;
 
-	// Erase old digits
-	Common::Rect eraseR(baseX, baseY, baseX + 4 * digitW, baseY + digitH);
+	// Total layout: [MM tens][MM ones][:][SS tens][SS ones]
+	const int totalW = 4 * digitW + colonW;
+	Common::Rect eraseR(baseX, baseY, baseX + totalW, baseY + digitH);
 	_drawSurface.fillRect(eraseR, _drawSurface.getTransparentColor());
 
-	// Draw MM:SS left-to-right: [mins_tens][mins_ones][secs_tens][secs_ones]
-	uint32 mins = _timerMins;
-	uint32 secs = _timerSecs;
+	const uint32 mins = _timerMins;
+	const uint32 secs = _timerSecs;
 
-	Common::Rect d3(baseX,                baseY, baseX +     digitW, baseY + digitH);
+	int x = baseX;
+	Common::Rect d3(x, baseY, x + digitW, baseY + digitH);
 	drawDigit(d3, mins / 10, true);
-	Common::Rect d2(baseX +     digitW,   baseY, baseX + 2 * digitW, baseY + digitH);
+	x += digitW;
+	Common::Rect d2(x, baseY, x + digitW, baseY + digitH);
 	drawDigit(d2, mins % 10, true);
-	Common::Rect d1(baseX + 2 * digitW,   baseY, baseX + 3 * digitW, baseY + digitH);
+	x += digitW;
+
+	// Colon between minutes and seconds.
+	if (colonW > 0) {
+		const int colonY = baseY + (digitH - colonH) / 2;
+		_drawSurface.blitFrom(_image, _timerColonSrc, Common::Point(x, colonY));
+		x += colonW;
+	}
+
+	Common::Rect d1(x, baseY, x + digitW, baseY + digitH);
 	drawDigit(d1, secs / 10, true);
-	Common::Rect d0(baseX + 3 * digitW,   baseY, baseX + 4 * digitW, baseY + digitH);
+	x += digitW;
+	Common::Rect d0(x, baseY, x + digitW, baseY + digitH);
 	drawDigit(d0, secs % 10, true);
+
 	_needsRedraw = true;
 }
 
