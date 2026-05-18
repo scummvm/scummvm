@@ -163,7 +163,7 @@ static void anim_inter_timer() {
 static void run_animation(int animIndex) {
 	int ctr;
 
-	if (hasAnimInited) {
+	if (!hasAnimInited) {
 		hasAnimInited = true;
 		mouse_set_work_buffer(scr_work.data, scr_work.x);
 		mouse_set_view_port_loc(0, viewing_at_y, scr_work.x, scr_work.y + viewing_at_y - 1);
@@ -172,15 +172,16 @@ static void run_animation(int animIndex) {
 
 	auto &screen = *g_engine->getScreen();
 	if (viewing_at_y && anim_list[animIndex].show_bars) {
-		screen.hLine(0, viewing_at_y, 319, 253);
-		screen.hLine(0, viewing_at_y + scr_work.y, 319, 253);
+		screen.hLine(0, viewing_at_y - 2, 319, 253);
+		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 253);
 	} else if (viewing_at_y) {
-		screen.hLine(0, viewing_at_y, 319, 0);
-		screen.hLine(0, viewing_at_y + scr_work.y, 319, 0);
+		screen.hLine(0, viewing_at_y - 2, 319, 0);
+		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 0);
 	}
 
 	buffer_fill(scr_work, 0);
 
+	imageFrame = 0;
 	currentViewX = currentViewY = -1;
 	current_error_code = error_code;
 
@@ -190,7 +191,10 @@ static void run_animation(int animIndex) {
 		maxFrame = current_anim->num_frames;
 
 	minFrame = CLIP<int>(minFrame, 0, current_anim->num_frames);
-	maxFrame = CLIP<int>(maxFrame, 0, maxFrame);
+	maxFrame = CLIP<int>(maxFrame, 0, current_anim->num_frames);
+	if (maxFrame < minFrame)
+		maxFrame = minFrame;
+
 	if (animIndex == 0)
 		timer1 = timer_read();
 
@@ -228,7 +232,7 @@ static void run_animation(int animIndex) {
 	// Main animation loop
 	while (currentFrame < maxFrame && !current_error_code) {
 		if (speechStream) {
-			if (!(current_anim->load_flags & AA_LOAD_SPEECH)) {
+			if (current_anim->load_flags & AA_LOAD_SPEECH) {
 				//char speechName[80];
 				//MADS_FORMAT(speechName, current_anim->speech_file);
 
@@ -339,7 +343,7 @@ static void run_animation(int animIndex) {
 		}
 	}
 
-	if ((animIndex <= (anim_count - 1)) &&
+	if ((animIndex == (anim_count - 1)) &&
 			(wait_for_music_at_end || !exit_immediately_at_end)) {
 		while (current_error_code == 0) {
 			// Check for any keypress or mouse clicks
@@ -366,8 +370,9 @@ static void run_animation(int animIndex) {
 	// Teardown for final animation
 	if (animIndex == (anim_count - 1) || current_error_code) {
 		timer_activate_low_priority(nullptr);
-		g_engine->stopSpeech();
 	}
+
+	g_engine->stopSpeech();
 }
 
 /**
