@@ -26,7 +26,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 // mask reveal puzzle
@@ -39,8 +39,8 @@ void FoolGame::revealRun() {
 	this->arr_i16_1eb8[21] = puzzlesReadShort();
 	debugC(5, kDebugLoading, "%d, %d, %04x", this->arr_i16_1eb8[15], this->arr_i16_1eb8[16], this->arr_i16_1eb8[21]);
 	this->var_str_384 = puzzlesReadString();
-	this->var_str_384 = g_zbasic->str(213) + this->var_str_384 + g_zbasic->str(214);
-	g_zbasic->menu(8, 6, 1, this->var_str_384);
+	this->var_str_384 = _zbasic->str(213) + this->var_str_384 + _zbasic->str(214);
+	_zbasic->menu(8, 6, 1, this->var_str_384);
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		this->arr_i16_3738[i] = puzzlesReadByte();
 	}
@@ -78,13 +78,13 @@ void FoolGame::revealRun() {
 	this->zoomRect(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
 	this->zoomRect(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, kPatCopy, 0x19);
 	// 134:02f0
-	this->arr_i16_1eb8[19] = g_zbasic->decodeInt(_activePuzzleBuffer);
+	this->arr_i16_1eb8[19] = _zbasic->decodeInt(_activePuzzleBuffer);
 	this->var_i16_1aba = this->arr_i16_1eb8[18];
-	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
 		this->sub_128_50e(
-			g_zbasic->rndInt(0x3e8) + 0x19,
+			_zbasic->rndInt(0x3e8) + 0x19,
 			0x28,
 			1
 		);
@@ -99,7 +99,7 @@ void FoolGame::revealRun() {
 		g_toolbox->FillRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19, _patterns[0]);
 		g_toolbox->FrameRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
 		// 134:0448
-		this->var_str_384 = g_zbasic->midStr(this->var_str_1272, this->var_i16_7be, 1);
+		this->var_str_384 = _zbasic->midStr(this->var_str_1272, this->var_i16_7be, 1);
 		this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_384);
 		g_toolbox->MoveTo(
 			_screenGrid[this->var_i16_7be].left + (this->arr_i16_1eb8[17] / 2) - (this->var_i16_7ba / 2),
@@ -140,7 +140,7 @@ void FoolGame::revealRun() {
 			this->revealReset();
 		}
 		if (_stateFlags == kStateSaveGame) {
-			_activePuzzleBuffer = g_zbasic->encodeInt(this->arr_i16_1eb8[19]);
+			_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[19]);
 			this->saveGame();
 		}
 		// 134:061e
@@ -149,7 +149,7 @@ void FoolGame::revealRun() {
 	if (_activePuzzleSolved) {
 		this->revealSuccess();
 	}
-	_activePuzzleBuffer = g_zbasic->encodeInt(this->arr_i16_1eb8[19]);
+	_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[19]);
 	// 134:0678: JMP - [0x8ae]
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		g_toolbox->KillPoly(_revealPoly[i]);

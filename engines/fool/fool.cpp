@@ -32,18 +32,21 @@
 #include "fool/fool_prologue.h"
 #include "fool/detection.h"
 #include "fool/console.h"
+#include "fool/toolbox.h"
 
 namespace Fool {
 
 FoolEngine *g_engine;
+Toolbox *g_toolbox;
 
 FoolEngine::FoolEngine(OSystem *syst, const FOOLGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Fool") {
 	g_engine = this;
-
+	g_toolbox = new Toolbox();
 }
 
 FoolEngine::~FoolEngine() {
+	delete g_toolbox;
 }
 
 uint32 FoolEngine::getFeatures() const {
@@ -63,8 +66,6 @@ Common::Error FoolEngine::run() {
 	_screen.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);
 
-	//FoolPrologue fp;
-	//fp.run();
 	FoolGame fg;
 	fg.run();
 

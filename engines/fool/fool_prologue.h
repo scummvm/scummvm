@@ -31,6 +31,8 @@
 
 namespace Fool {
 
+class ZBasic;
+
 class FoolPrologue {
 public:
 	FoolPrologue() {}
@@ -75,7 +77,6 @@ public:
 	void drawRain(); // sub_130_db0
 	void drawRainDrop(); // sub_130_e82
 	void prologueRenderNextText(); // sub_130_f48
-	void sub_130_1002();
 
 	void finaleRun(); // sub_131_004
 
@@ -85,6 +86,7 @@ public:
 	void sub_131_4f96();
 
 private:
+	ZBasic *_zbasic;
 	bool _quit = false;
 
 	// last tick count

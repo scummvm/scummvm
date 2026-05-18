@@ -26,7 +26,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 // high priestess challenge
@@ -72,8 +72,8 @@ void FoolGame::highPriestessRun() {
 			// is the humbug marked with the wadjet eye? if so, unmark
 			// 140:00ce
 			_puzzleCompletionStatus[0x17] = 0x64;
-			this->var_str_384 = _puzzleName[0x17] + g_zbasic->str(301); // ' '
-			g_zbasic->menu(0x4, 0x7, 0x1, this->var_str_384);
+			this->var_str_384 = _puzzleName[0x17] + _zbasic->str(301); // ' '
+			_zbasic->menu(0x4, 0x7, 0x1, this->var_str_384);
 		}
 	}
 	// 140:0116
@@ -86,8 +86,8 @@ void FoolGame::highPriestessRun() {
 		if (_puzzleCompletionStatus[0x3f] == 0x63) {
 			// is justice marked with the wadjet eye? if so, unmark
 			_puzzleCompletionStatus[0x3f] = 0x64;
-			this->var_str_384 = _puzzleName[0x3f] + g_zbasic->str(302); // ' '
-			g_zbasic->menu(6, 0xf, 1, this->var_str_384);
+			this->var_str_384 = _puzzleName[0x3f] + _zbasic->str(302); // ' '
+			_zbasic->menu(6, 0xf, 1, this->var_str_384);
 		}
 	}
 	// 140:019c
@@ -103,8 +103,8 @@ void FoolGame::highPriestessRun() {
 		if (_puzzleCompletionStatus[0x48] == 0x63) {
 			// is the hermit marked with the wadjet eye? if so, unmark
 			_puzzleCompletionStatus[0x48] = 0x64;
-			this->var_str_384 = _puzzleName[0x48] + g_zbasic->str(303);
-			g_zbasic->menu(7, 8, 1, this->var_str_384);
+			this->var_str_384 = _puzzleName[0x48] + _zbasic->str(303);
+			_zbasic->menu(7, 8, 1, this->var_str_384);
 		}
 	}
 	// 140:024c
@@ -112,7 +112,7 @@ void FoolGame::highPriestessRun() {
 		// show the fake puzzle picture
 		g_toolbox->PenNormal();
 		this->arr_i32_192c0[0] = g_toolbox->GetPicture(0x78);
-		g_zbasic->picture(0, 0, this->arr_i32_192c0[0]);
+		_zbasic->picture(0, 0, this->arr_i32_192c0[0]);
 		g_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
 		this->sub_128_61c2();
 	}
@@ -125,8 +125,8 @@ void FoolGame::highPriestessRun() {
 	// 140:02b4
 	this->var_i16_68a = 1;
 	for (int16 i = 1; i <= 0x155; i++) {
-		g_zbasic->get(1, i, SCREEN_WIDTH, i + 1, this->arr_bmp_fa3c);
-		g_zbasic->put(g_zbasic->rndInt(0x14) - 0xa, i, this->arr_bmp_fa3c, kSrcCopy);
+		_zbasic->get(1, i, SCREEN_WIDTH, i + 1, this->arr_bmp_fa3c);
+		_zbasic->put(_zbasic->rndInt(0x14) - 0xa, i, this->arr_bmp_fa3c, kSrcCopy);
 		if (i % 2 == 0) {
 			g_toolbox->Delay(0);
 		}
@@ -151,20 +151,20 @@ void FoolGame::highPriestessRun() {
 			if (i > 0xf0) {
 				this->var_i16_484 += 3;
 			}
-			g_toolbox->MoveTo(this->var_i16_484 + 0x5f - g_zbasic->rndInt(0x32), i);
-			g_toolbox->LineTo(0x1a1 - this->var_i16_484 + g_zbasic->rndInt(0x32), i);
+			g_toolbox->MoveTo(this->var_i16_484 + 0x5f - _zbasic->rndInt(0x32), i);
+			g_toolbox->LineTo(0x1a1 - this->var_i16_484 + _zbasic->rndInt(0x32), i);
 			if (i % 2 == 0) {
 				g_toolbox->Delay(0);
 			}
 		}
 		// 140:03f0
-		g_zbasic->text(0xfe, 0x18, 0x10, kSrcBic);
+		_zbasic->text(0xfe, 0x18, 0x10, kSrcBic);
 		this->var_i16_7a2 = 0x96;
-		this->sub_128_918(g_zbasic->str(304)); // you cannot claim
+		this->sub_128_918(_zbasic->str(304)); // you cannot claim
 		this->var_i16_7a2 = 0xb9;
-		this->sub_128_918(g_zbasic->str(305)); // the book of thoth
+		this->sub_128_918(_zbasic->str(305)); // the book of thoth
 		this->var_i16_7a2 = 0xdc;
-		this->sub_128_918(g_zbasic->str(306)); // so easily
+		this->sub_128_918(_zbasic->str(306)); // so easily
 		g_toolbox->SetPort(this->var_i32_0);
 		this->sub_128_61c2();
 	}
@@ -180,18 +180,18 @@ void FoolGame::thoth99Enchantments() {
 	if (_activePuzzleBuffer.empty()) { // was: str(307)
 		this->arr_i16_1eb8[0] = 0x63;
 	} else {
-		this->arr_i16_1eb8[0] = g_zbasic->decodeInt(_activePuzzleBuffer);
+		this->arr_i16_1eb8[0] = _zbasic->decodeInt(_activePuzzleBuffer);
 	}
 	// 140:04a2
 	if (this->arr_i16_1eb8[0] < 1) {
 		this->arr_i16_1eb8[0] = 1;
 	}
 	if (this->arr_i16_1eb8[0] == 0x63) {
-		g_zbasic->text(0xfe, 0x18, 0x10, kSrcBic);
+		_zbasic->text(0xfe, 0x18, 0x10, kSrcBic);
 		this->var_i16_7a2 = 0xaf;
-		this->sub_128_918(g_zbasic->str(308)); // you dare to challenge
+		this->sub_128_918(_zbasic->str(308)); // you dare to challenge
 		this->var_i16_7a2 = 0xd2;
-		this->sub_128_918(g_zbasic->str(309)); // the high priestess
+		this->sub_128_918(_zbasic->str(309)); // the high priestess
 		this->sub_128_3da(0xb4);
 	}
 	// 140:0532
@@ -202,7 +202,7 @@ void FoolGame::thoth99Enchantments() {
 		_screenGrid[i].right = _screenGrid[i].left + 0x28;
 	}
 	// 140:060c
-	g_zbasic->picture(0, 0x14, this->var_pic_7c2);
+	_zbasic->picture(0, 0x14, this->var_pic_7c2);
 	this->copyScreen(0, this->arr_bmp_b3ec);
 	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 		g_toolbox->PenSize(5, 5);
@@ -226,7 +226,7 @@ void FoolGame::thoth99Enchantments() {
 	this->arr_i16_4758[6] = SCREEN_HEIGHT;
 	this->arr_i16_4758[7] = SCREEN_WIDTH;
 	this->arr_i16_1eb8[1] = 0;
-	g_zbasic->unk_20();
+	_zbasic->unk_20();
 	this->sub_128_4da(1);
 	_stateFlags = kStateNull;
 	_activePuzzleSolved = false;
@@ -264,7 +264,7 @@ void FoolGame::thoth99Enchantments() {
 				this->arr_i16_1eb8[2] = this->arr_i16_1eb8[0];
 			} else {
 				// 140:0826
-				this->arr_i16_1eb8[2] = g_zbasic->rndInt(this->arr_i16_1eb8[0]);
+				this->arr_i16_1eb8[2] = _zbasic->rndInt(this->arr_i16_1eb8[0]);
 			}
 			// 140:084a
 			this->thothDrawEnchantment();
@@ -309,7 +309,7 @@ void FoolGame::thoth99Enchantments() {
 		if (this->arr_i16_1eb8[0] < 1) {
 			this->arr_i16_1eb8[0] = 1;
 		}
-		_activePuzzleBuffer = g_zbasic->encodeInt(this->arr_i16_1eb8[0]);
+		_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[0]);
 	}
 	// 140:09ee
 }
@@ -317,8 +317,8 @@ void FoolGame::thoth99Enchantments() {
 void FoolGame::thothMoveEnchantment() {
 	// 140:09f0
 	g_toolbox->FillRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14, _patterns[2]);
-	_screenGrid[this->arr_i16_1eb8[2]].top = g_zbasic->rndInt(0x11a) + 0x14;
-	_screenGrid[this->arr_i16_1eb8[2]].left = g_zbasic->rndInt(0x1da);
+	_screenGrid[this->arr_i16_1eb8[2]].top = _zbasic->rndInt(0x11a) + 0x14;
+	_screenGrid[this->arr_i16_1eb8[2]].left = _zbasic->rndInt(0x1da);
 	_screenGrid[this->arr_i16_1eb8[2]].bottom = _screenGrid[this->arr_i16_1eb8[2]].top + 0x28;
 	_screenGrid[this->arr_i16_1eb8[2]].right = _screenGrid[this->arr_i16_1eb8[2]].left + 0x28;
 	this->thothDrawEnchantment();
@@ -329,7 +329,7 @@ void FoolGame::thothDrawEnchantment() {
 	g_toolbox->PenNormal();
 	g_toolbox->EraseRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
 	g_toolbox->FrameRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
-	g_zbasic->text(0, 0xc, 0, kSrcOr);
+	_zbasic->text(0, 0xc, 0, kSrcOr);
 	this->var_str_384 = Common::U32String::format(" %d ", this->arr_i16_1eb8[2]); // was: str(311)
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
 	// 140:0bd2
@@ -391,19 +391,19 @@ void FoolGame::thothScrambleScreen() {
 void FoolGame::sub_140_e3c() {
 	// 140:0e3c
 	if (this->arr_i16_1eb8[0] == 1) {
-		g_zbasic->menu(8, 0, 1, g_zbasic->str(312)); // the last enchantment
-		g_zbasic->menu(8, 1, 1, g_zbasic->str(313)); // run for your life
+		_zbasic->menu(8, 0, 1, _zbasic->str(312)); // the last enchantment
+		_zbasic->menu(8, 1, 1, _zbasic->str(313)); // run for your life
 	} else {
 		// 140:0e8a
 		this->var_str_384 = Common::U32String::format(" %d", this->arr_i16_1eb8[0]);
-		this->var_str_9f4 = g_zbasic->str(314) + this->var_str_384 + g_zbasic->str(315); // the X enchantments
-		g_zbasic->menu(8, 0, 1, this->var_str_9f4);
-		g_zbasic->menu(8, 1, 1, g_zbasic->str(316)); // run for your life
-		g_zbasic->menu(8, 2, 1, g_zbasic->str(317)); // -
-		g_zbasic->menu(8, 3, 1, g_zbasic->str(318)); // or press each button
-		g_zbasic->menu(8, 4, 1, g_zbasic->str(319)); // in descending order
-		this->var_str_9f4 = g_zbasic->str(320) + this->var_str_384 + g_zbasic->str(321); // from X to 1
-		g_zbasic->menu(8, 5, 1, this->var_str_9f4);
+		this->var_str_9f4 = _zbasic->str(314) + this->var_str_384 + _zbasic->str(315); // the X enchantments
+		_zbasic->menu(8, 0, 1, this->var_str_9f4);
+		_zbasic->menu(8, 1, 1, _zbasic->str(316)); // run for your life
+		_zbasic->menu(8, 2, 1, _zbasic->str(317)); // -
+		_zbasic->menu(8, 3, 1, _zbasic->str(318)); // or press each button
+		_zbasic->menu(8, 4, 1, _zbasic->str(319)); // in descending order
+		this->var_str_9f4 = _zbasic->str(320) + this->var_str_384 + _zbasic->str(321); // from X to 1
+		_zbasic->menu(8, 5, 1, this->var_str_9f4);
 	}
 	// 140:0f82
 	return;
@@ -449,7 +449,7 @@ void FoolGame::sub_140_f84() {
 void FoolGame::thothKey1st() {
 	// 140:12fc
 	this->fillRect(0, 0, 0x14, SCREEN_WIDTH, 2);
-	g_zbasic->picture(0, 0x14, this->var_pic_7c2);
+	_zbasic->picture(0, 0x14, this->var_pic_7c2);
 	if ((this->var_i16_7ce & 2) != 0) {
 		g_toolbox->SetCursor(_cursors[0x10]);
 	}
@@ -481,7 +481,7 @@ void FoolGame::thothKey1st() {
 		_activePuzzleSolved = false;
 	} else {
 		// 140:1446
-		this->var_str_384 = g_zbasic->str(322); // behold ye the book of thoth
+		this->var_str_384 = _zbasic->str(322); // behold ye the book of thoth
 		this->sub_128_178a(0, 0);
 		this->sub_140_2f92();
 		this->var_i16_7ce ^= 2;
@@ -926,9 +926,9 @@ void FoolGame::thothKeyLast() {
 				this->copyScreen(1, this->arr_bmp_b3ec);
 			} else { // we're in the high priestess, show nothing but random filled squares
 				// 140:21fe
-				this->var_i16_484 = g_zbasic->rndInt(0x4e) + 2;
-				this->var_i16_68a = g_zbasic->rndInt(0x14) - 1;
-				this->var_i16_68c = g_zbasic->rndInt(0xe) - 1;
+				this->var_i16_484 = _zbasic->rndInt(0x4e) + 2;
+				this->var_i16_68a = _zbasic->rndInt(0x14) - 1;
+				this->var_i16_68c = _zbasic->rndInt(0xe) - 1;
 				// 140:2222
 				g_toolbox->FillRect(_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]], _patterns[this->var_i16_484]);
 				this->getNextEvent(-1);
@@ -983,7 +983,7 @@ void FoolGame::thothBadSelect() {
 	while ((_event.modifiers & kModMouseButtonUp) == 0) {
 		// 140:24c4
 		this->getNextEvent(-1);
-		this->var_i16_484 = g_zbasic->rndInt(0x50);
+		this->var_i16_484 = _zbasic->rndInt(0x50);
 		g_toolbox->FillRect(_screenGrid[this->arr_i16_1eb8[0]], _patterns[this->var_i16_484]);
 	}
 	// 140:2520
@@ -991,7 +991,7 @@ void FoolGame::thothBadSelect() {
 		this->copyScreen(1, this->arr_bmp_b3ec);
 	} else {
 		for (int16 i = this->var_i16_1de6; i >= this->arr_i16_3b38[_hermitPathStage]; i--) {
-			this->var_i16_484 = g_zbasic->rndInt(0x4e) + 2;
+			this->var_i16_484 = _zbasic->rndInt(0x4e) + 2;
 			g_toolbox->FillRect(_screenGrid[this->arr_i16_3738[i]], _patterns[this->var_i16_484]);
 		}
 	}
@@ -1080,7 +1080,7 @@ void FoolGame::hermitScreenBehold() {
 	} else {
 		// 140:290c
 		this->zoomRect(0x14, 0xc8, 0x14, 0x138, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x21);
-		this->var_str_384 = g_zbasic->str(323); // behold the last key of thoth
+		this->var_str_384 = _zbasic->str(323); // behold the last key of thoth
 		this->sub_128_178a(0x48, 2);
 	}
 	// 140:2966
@@ -1178,8 +1178,8 @@ void FoolGame::thothKeyLastSetup() {
 				this->var_i16_68c + this->arr_i16_1eb8[0xc]
 			);
 			// 140:2ce4
-		} while (g_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[0xb], this->arr_i16_1eb8[6]));
-	} while (g_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[0xb], this->arr_i16_1eb8[6]));
+	} while (_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
 	// 140:2d46
 
 	this->var_i16_484 = 0;
@@ -1204,7 +1204,7 @@ void FoolGame::thothKeyLastSetup() {
 			this->var_i16_68a = k;
 			for (int16 j = 0; j <= 0xd; j++) {
 				// 140:2e8c
-				this->var_i16_484 = g_zbasic->rndInt(0x4e) + 2;
+				this->var_i16_484 = _zbasic->rndInt(0x4e) + 2;
 				g_toolbox->FillRect(
 					_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[this->var_i16_68a]*32 + this->arr_i16_5cbc[j]]],
 					_patterns[this->var_i16_484]
@@ -1219,28 +1219,28 @@ void FoolGame::thothKeyLastSetup() {
 	}
 	// 140:2f2e
 	if ((_hermitPathStage == 6) && (_activePuzzle != 0x34)) {
-		g_zbasic->menu(8, 0, 1, g_zbasic->str(324)); // the last key of thoth
-		g_zbasic->menu(8, 1, 1, g_zbasic->str(325)); // return to scroll
+		_zbasic->menu(8, 0, 1, _zbasic->str(324)); // the last key of thoth
+		_zbasic->menu(8, 1, 1, _zbasic->str(325)); // return to scroll
 	}
 	this->copyScreen(0, this->arr_bmp_b3ec);
 }
 
 void FoolGame::sub_140_2f92() {
 	// 140:2f92
-	g_zbasic->menu(8, 0, 1, g_zbasic->str(326)); // the book of thoth
-	g_zbasic->menu(8, 1, 1, g_zbasic->str(327)); // return to scroll
-	g_zbasic->menu(8, 2, 0, g_zbasic->str(328)); // -
-	g_zbasic->menu(8, 3, 1, g_zbasic->str(329)); // be forewarned
-	g_zbasic->menu(8, 4, 1, g_zbasic->str(330)); // the high priestess has corrupted
-	g_zbasic->menu(8, 5, 1, g_zbasic->str(331)); // the book of thoth. you may need
-	g_zbasic->menu(8, 6, 1, g_zbasic->str(332)); // the help of others to unlock its
-	g_zbasic->menu(8, 7, 1, g_zbasic->str(333)); // secrets.
+	_zbasic->menu(8, 0, 1, _zbasic->str(326)); // the book of thoth
+	_zbasic->menu(8, 1, 1, _zbasic->str(327)); // return to scroll
+	_zbasic->menu(8, 2, 0, _zbasic->str(328)); // -
+	_zbasic->menu(8, 3, 1, _zbasic->str(329)); // be forewarned
+	_zbasic->menu(8, 4, 1, _zbasic->str(330)); // the high priestess has corrupted
+	_zbasic->menu(8, 5, 1, _zbasic->str(331)); // the book of thoth. you may need
+	_zbasic->menu(8, 6, 1, _zbasic->str(332)); // the help of others to unlock its
+	_zbasic->menu(8, 7, 1, _zbasic->str(333)); // secrets.
 }
 
 Common::Rect FoolGame::thothRandomSquare() {
 	// 140:3050
-	int16 x = g_zbasic->rndInt(0x19c);
-	int16 y = 0x14 + g_zbasic->rndInt(0xde);
+	int16 x = _zbasic->rndInt(0x19c);
+	int16 y = 0x14 + _zbasic->rndInt(0xde);
 	return Common::Rect(
 		x,
 		y,
@@ -1251,22 +1251,22 @@ Common::Rect FoolGame::thothRandomSquare() {
 
 Common::Rect FoolGame::thothRandomHRect() {
 	// 140:30da
-	int16 y = 0x14 + g_zbasic->rndInt(0xde);
+	int16 y = 0x14 + _zbasic->rndInt(0xde);
 	return Common::Rect(
 		0,
 		y,
 		SCREEN_WIDTH,
-		y + g_zbasic->rndInt(0x64)
+		y + _zbasic->rndInt(0x64)
 	);
 }
 
 Common::Rect FoolGame::thothRandomVRect() {
 	// 140:3148
-	int16 x = g_zbasic->rndInt(0x19c);
+	int16 x = _zbasic->rndInt(0x19c);
 	return Common::Rect(
 		x,
 		0x14,
-		x + g_zbasic->rndInt(0x64),
+		x + _zbasic->rndInt(0x64),
 		SCREEN_HEIGHT
 	);
 }
@@ -1287,8 +1287,8 @@ void FoolGame::sub_140_32ac() {
 	g_toolbox->PenNormal();
 	for (int16 j = 0; j <= 0x22; j++) {
 		for (int16 i = -5; i <= 0x159; i += 0xa) {
-			g_toolbox->MoveTo(0, g_zbasic->rndInt(0xa) + i);
-			g_toolbox->LineTo(SCREEN_WIDTH, g_zbasic->rndInt(0xa) + i);
+			g_toolbox->MoveTo(0, _zbasic->rndInt(0xa) + i);
+			g_toolbox->LineTo(SCREEN_WIDTH, _zbasic->rndInt(0xa) + i);
 		}
 	}
 	// 140:3300
@@ -1309,9 +1309,9 @@ void FoolGame::thothAdjustPuzzleData() {
 	// change puzzle data pointer to use high priestess data
 	this->var_i16_484 = (_puzzleDataOffsets[0x34] - 1) / 1000;
 	this->var_i16_7e4 = (_puzzleDataOffsets[0x34] - 1) % 1000;
-	g_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
+	_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
 	//this->var_bytes_696 = this->arr_bytes_109dc;
-	this->var_bytes_696 = g_zbasic->readFile(1, _puzzleDataOffsets[0x35] - _puzzleDataOffsets[0x34]);
+	this->var_bytes_696 = _zbasic->readFile(1, _puzzleDataOffsets[0x35] - _puzzleDataOffsets[0x34]);
 	this->var_ptr_696 = 0;
 	this->var_bytes_232a = this->var_bytes_696;
 	this->var_ptr_232a = this->var_ptr_696;

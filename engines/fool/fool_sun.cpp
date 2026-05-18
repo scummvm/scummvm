@@ -26,7 +26,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 // The Sun's map
@@ -78,11 +78,11 @@ void FoolGame::sunMapRun() {
 	// 137:02a2
 	this->fillRect(0x14, 0x67, 0x156, 0x1b1, 2);
 	for (int i = 1; i <= 0x51; i++) {
-		g_zbasic->picture(_screenGrid[i].left, _screenGrid[i].top, this->arr_i32_192c0[_sunMapTileID[i]]);
+		_zbasic->picture(_screenGrid[i].left, _screenGrid[i].top, this->arr_i32_192c0[_sunMapTileID[i]]);
 	}
 	// 137:0336
 	_stateFlags = kStateNull;
-	g_zbasic->menu(8, 3, 0, Common::U32String());
+	_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
 	this->sunMapCheckIfSolved();
 	while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved)) {
@@ -115,13 +115,13 @@ void FoolGame::sunMapRun() {
 	_activePuzzle = 0;
 	_activePuzzleStatus = 0x64;
 	_sunMapRestored = 1;
-	g_zbasic->menu(2, 7, 1, Common::U32String());
+	_zbasic->menu(2, 7, 1, Common::U32String());
 	for (int i = 1; i <= 0x50; i++) {
 		_puzzleFlags[i] = kFlagMenuEnabled;
 	}
 	for (int j = 3; j <= 7; j++) {
 		for (int i = 1; i <= 0x10; i++) {
-			g_zbasic->menu(j, i, 1, Common::U32String());
+			_zbasic->menu(j, i, 1, Common::U32String());
 		}
 	}
 }
@@ -135,7 +135,7 @@ void FoolGame::sunMapOnClick() {
 	}
 	// 137:0466
 	_menuDisabled = true;
-	g_zbasic->menu(8, 3, 0, Common::U32String());
+	_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(3, 3);
 	g_toolbox->PenMode(kPatXor);
@@ -155,7 +155,7 @@ void FoolGame::sunMapOnClick() {
 	this->sunMapDropSelected();
 	this->sunMapCheckIfSolved();
 	this->sub_128_6186();
-	g_zbasic->menu(8, 3, 1, Common::U32String());
+	_zbasic->menu(8, 3, 1, Common::U32String());
 	_menuDisabled = false;
 }
 
@@ -254,10 +254,10 @@ void FoolGame::sunMapMoveSelected() {
 void FoolGame::sunMapUndoMove() {
 	// 137:0d60
 	_stateFlags = kStateNull;
-	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
-	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
-	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
-	g_zbasic->swapInt(this->arr_i16_4758[7], this->arr_i16_4758[9]);
+	_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
+	_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
+	_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
+	_zbasic->swapInt(this->arr_i16_4758[7], this->arr_i16_4758[9]);
 	this->sunMapDropSelected();
 }
 
@@ -285,7 +285,7 @@ void FoolGame::sunMapDropSelected() {
 			}
 			// 137:0f7c
 			_sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa4];
-			g_zbasic->picture(
+			_zbasic->picture(
 				_screenGrid[this->arr_i16_2f38[i*32 + j]].left,
 				_screenGrid[this->arr_i16_2f38[i*32 + j]].top,
 				this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
@@ -299,7 +299,7 @@ void FoolGame::sunMapDropSelected() {
 				// 137:1114
 				this->var_i16_1aa6++;
 				_sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa6];
-				g_zbasic->picture(
+				_zbasic->picture(
 					_screenGrid[this->arr_i16_2f38[i*32 + j]].left,
 					_screenGrid[this->arr_i16_2f38[i*32 + j]].top,
 					this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
@@ -363,7 +363,7 @@ void FoolGame::sunMapRevealPiece() {
 		this->sub_128_3da(1);
 	}
 	// 137:1550
-	g_zbasic->picture(
+	_zbasic->picture(
 		_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].left,
 		_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top,
 		this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
