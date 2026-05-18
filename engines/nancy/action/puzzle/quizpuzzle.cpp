@@ -43,7 +43,8 @@ QuizPuzzle::~QuizPuzzle() {
 
 void QuizPuzzle::init() {
 	Common::Rect screenClip = NancySceneState.getViewport().getBounds();
-	if (g_nancy->getGameType() == kGameTypeNancy9 && NancySceneState.getSceneInfo().sceneID == 6443)
+	const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
+	if (g_nancy->getGameType() == kGameTypeNancy9 && (sceneId == 6441 || sceneId == 6443))
 		screenClip.right += 20; // WORKAROUND for chess puzzle in Nancy 9: the rightmost answer box is partially off-screen
 	_screenPosition = screenClip;
 	_drawSurface.create(screenClip.width(), screenClip.height(), g_nancy->_graphics->getInputPixelFormat());
