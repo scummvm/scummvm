@@ -40,7 +40,6 @@ NotebookPopup::NotebookPopup() :
 		// 10+ taskbar popups render on top of the entire scene UI.
 		RenderObject(12),
 		_uinbData(nullptr),
-		_isOpen(false),
 		_activeTab(0) {}
 
 // Cap on how tall HypertextParser's working surface can grow. Notebook
@@ -108,10 +107,9 @@ void NotebookPopup::registerGraphics() {
 }
 
 void NotebookPopup::open() {
-	if (_isOpen) 
+	if (_isVisible)
 		return;
 
-	_isOpen = true;
 	setVisible(true);
 
 	// JournalData entries may have changed since the last open (added by
@@ -125,10 +123,9 @@ void NotebookPopup::open() {
 }
 
 void NotebookPopup::close() {
-	if (!_isOpen) {
+	if (!_isVisible)
 		return;
-	}
-	_isOpen = false;
+
 	setVisible(false);
 
 	if (!_uinbData->header.sounds[1].name.empty()) {
@@ -249,7 +246,7 @@ void NotebookPopup::drawTab(uint index, bool drawHover) {
 }
 
 void NotebookPopup::handleInput(NancyInput &input) {
-	if (!_isOpen)
+	if (!_isVisible)
 		return;
 
 	const Common::Point localMouse = popupLocalMouse(input.mousePos);

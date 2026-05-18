@@ -43,10 +43,9 @@ public:
 	void registerGraphics() override;
 	void handleInput(NancyInput &input);
 
-	bool isOpen() const { return _isOpen; }
 	void open();
 	void close();
-	void toggle() { if (_isOpen) close(); else open(); }
+	void toggle() { if (_isVisible) close(); else open(); }
 
 	// Re-render the active tab's text content into the text rect.
 	// Called automatically on open() and on tab switch; Scene also
@@ -92,7 +91,6 @@ private:
 	Graphics::ManagedSurface _overlayImage;     // popup background image
 	Graphics::ManagedSurface _closeButtonImage; // header.secondaryButton.primaryImageName
 
-	bool _isOpen;
 	bool _closeButtonHovered = false;
 	bool _tabHovered = false;
 	int _activeTab; // 0..1, matching UINB::tabs index
