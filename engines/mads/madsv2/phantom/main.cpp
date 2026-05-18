@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "gui/saveload.h"
 #include "mads/madsv2/phantom/main.h"
 #include "mads/madsv2/animview/animview.h"
 #include "mads/madsv2/core/env.h"
@@ -277,6 +278,24 @@ void phantom_main() {
 			game_main(2, CMD_LINE);
 			return;
 
+		case 1: {
+			// Resume savegame
+			// Get a list of saves and choose the last one
+			auto saves = g_engine->listSaves();
+			if (!saves.empty())
+				savegame_slot = saves.back().getSaveSlot();
+
+			// Start the game, which will also load the selected savegame
+			game_main(2, CMD_LINE);
+			return;
+		}
+
+		case 2:
+			// Restore savegame
+			game_restore_flag = 2;
+			game_main(2, CMD_LINE);
+			return;
+
 		case 3:
 			AnimView::animview_main("@phantom");
 			selected_item = -1;
@@ -286,7 +305,12 @@ void phantom_main() {
 			// Exit
 			return;
 
+		case 6:
+			// Quotes
+			break;
+
 		default:
+			// Credits
 			break;
 		}
 	}

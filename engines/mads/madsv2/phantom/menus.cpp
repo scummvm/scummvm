@@ -330,6 +330,10 @@ static void global_menu_save_restore(int save) {
 		} else {
 			status = global_restore(selection);
 		}
+
+		if (status > 0)
+			// Dummy name to signal save/load went ok
+			Common::strcpy_s(save_game_buf, "OK");
 	}
 
 	if (status >= 0) {
@@ -681,7 +685,9 @@ void global_game_menu() {
 				global_menu_save_restore(false);
 			} else {
 				kernel.activate_menu = GAME_NO_MENU;
-				g_engine->loadGameDialog();
+				if (g_engine->loadGameDialog())
+					// Dummy name to flag that load was successful
+					Common::strcpy_s(save_game_buf, "OK");
 			}
 			break;
 		case GAME_OPTIONS_MENU:

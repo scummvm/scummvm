@@ -159,6 +159,7 @@ enum {
 
 extern byte game_restore_flag;         /* Flag if restoring game */
 extern byte game_autosaved;            /* Flag if autosaved      */
+extern int savegame_slot;
 
 extern byte game_mouse_cursor_fix;     /* Mouse cursor fix       */
 

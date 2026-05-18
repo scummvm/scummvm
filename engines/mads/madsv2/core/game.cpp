@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "mads/madsv2/engine.h"
 #include "mads/madsv2/core/game.h"
@@ -84,6 +83,7 @@ char config_file_name[20];
 int win_status = WIN_NOTHING;
 
 int art_hags_are_on_hd;
+int savegame_slot = -1;
 byte game_restore_flag = false;         /* Flag if restoring game */
 byte game_autosaved = false;         /* Flag if autosaved      */
 byte game_mouse_cursor_fix = false;     /* Use special cursor fix */
@@ -1215,11 +1215,11 @@ void game_control() {
 
 	conv_system_init();
 
-	if (ConfMan.hasKey("save_slot")) {
+	if (savegame_slot != -1) {
 		// Flag to do a savegame load
 		game_restore_flag = 1;
 
-	} else {
+	} else if (!game_restore_flag) {
 		result = main_copy_verify();
 		if (result == COPY_FAIL) {
 			game.going = false;
@@ -1278,8 +1278,8 @@ void game_control() {
 				force_chain = true;
 			}
 		} else {
-			// Savegame load from GMM
-			g_engine->loadGameState(ConfMan.getInt("save_slot"));
+			// Savegame load from GMM or Resume from main menu
+			g_engine->loadGameState(savegame_slot);
 		}
 	}
 
@@ -3017,6 +3017,7 @@ int main_copy_verify() {
 void init_game() {
 	win_status = WIN_NOTHING;
 	game_restore_flag = false;
+	savegame_slot = -1;
 	game_autosaved = false;
 	game_mouse_cursor_fix = false;
 	abort_value = 0;

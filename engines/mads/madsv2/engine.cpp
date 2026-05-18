@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "engines/util.h"
 #include "mads/mads.h"
@@ -120,6 +121,9 @@ void MADSV2Engine::readConfigFile() {
 	_musicFlag = config_file.music_flag;
 	_soundFlag = config_file.sound_flag;
 	_speechFlag = config_file.speech_flag;
+
+	if (ConfMan.hasKey("save_slot"))
+		savegame_slot = ConfMan.getInt("save_slot");
 }
 
 bool MADSV2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
