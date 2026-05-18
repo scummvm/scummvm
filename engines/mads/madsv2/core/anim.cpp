@@ -329,7 +329,7 @@ AnimPtr anim_load(const char *file_name, Buffer *orig, Buffer *depth,
 
 		size_t size = Speech::SIZE * anim_in.num_speech;
 		byte *buffer = (byte *)malloc(size);
-		if (!loader_read(buffer, speech_size, 1, &load_handle)) {
+		if (!loader_read(buffer, size, 1, &load_handle)) {
 			free(buffer);
 			goto done;
 		}
