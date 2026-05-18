@@ -19,6 +19,9 @@
  *
  */
 
+
+#include "common/unicode-bidi.h"
+
 #include "prince/prince.h"
 
 #include "prince/mob.h"
@@ -265,6 +268,8 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			y = _font->getFontHeight() - 2;
 		}
 
+		if (getLanguage() == Common::HE_ISR)
+			mobName = Common::convertBiDiString(mobName, Common::kWindows1255);
 		_font->drawString(screen, mobName, x, y, screen->w, 216);
 	}
 

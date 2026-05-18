@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/unicode-bidi.h"
+
 #include "prince/prince.h"
 
 #include "prince/graphics.h"
@@ -536,6 +538,9 @@ void PrinceEngine::checkOptions() {
 					optText = optionsTextRU[i];
 				}
 				break;
+			case Common::HE_ISR:
+				optText = optionsTextHE[i];
+				break;
 			default:
 				break;
 			};
@@ -552,6 +557,8 @@ void PrinceEngine::checkOptions() {
 			}
 			
 			uint16 textW = getTextWidth(optText.c_str());
+			if (getLanguage() == Common::HE_ISR)
+				optText = Common::convertBiDiString(optText, Common::kWindows1255);
 			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
 			_font->drawString(_graph->_frontScreen, optText, textX, textY, textW, optionsColor);
 			textY += _optionsStep;
@@ -603,6 +610,9 @@ void PrinceEngine::checkInvOptions() {
 					invText = invOptionsTextRU[i];
 				}
 				break;
+			case Common::HE_ISR:
+				invText = invOptionsTextHE[i];
+				break;
 			default:
 				error("Unknown game language %d", getLanguage());
 				break;
@@ -620,6 +630,8 @@ void PrinceEngine::checkInvOptions() {
 			}
 
 			uint16 textW = getTextWidth(invText.c_str());
+			if (getLanguage() == Common::HE_ISR)
+				invText = Common::convertBiDiString(invText, Common::kWindows1255);
 			uint16 textX = _optionsX + _invOptionsWidth / 2 - textW / 2;
 			_font->drawString(_graph->_screenForInventory, invText, textX, textY, _graph->_screenForInventory->w, optionsColor);
 			textY += _invOptionsStep;
