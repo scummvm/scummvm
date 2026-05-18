@@ -398,6 +398,7 @@ static void animate() {
 
 	timer_install();
 	matte_init(-1);
+	cycle_list.num_cycles = 0;
 
 	// Preload resources used by the animations
 	for (count = 0; count < anim_count; ++count) {
@@ -407,7 +408,7 @@ static void animate() {
 		himem_preload_series(buf, 0);
 
 		if (anim_get_header_info(buf, &anim_in))
-			return;
+			continue;
 
 		// Preload resources used by the animation
 		if (anim_in.load_flags & AA_LOAD_FONT) {
@@ -502,6 +503,7 @@ static void animate() {
 		int height = (scr_orig.y == 200) ? 200 : 156;
 		buffer_init(&scr_work, 320, height);
 		scr_inter = scr_work;
+		assert(scr_work.data);
 
 		viewing_at_y = (height == 200) ? 0 : (200 - height) / 2;
 		viewing_at_y2 = viewing_at_y;
@@ -525,12 +527,14 @@ static void animate() {
 		}
 
 		if (current_anim->misc_any_packed) {
-			largeBufferSize = 0xffff;
+			largeBufferSize = 0xfffff;	// Aribitrarily large value
 			largeBuffer = (byte *)mem_get(largeBufferSize);
+			assert(largeBuffer);
+
 			largeBufferEnd = largeBuffer + largeBufferSize - 1;
 			largeBuffer1 = largeBuffer2 = largeBuffer;
 
-			foundSeries = false;
+			foundSeries = true;
 			imageIndex = -1;
 			seriesFlag1 = false;
 
@@ -538,9 +542,12 @@ static void animate() {
 				int seriesId = current_anim->series_id[packIndex];
 				if (current_anim->image[ctr].series_id == seriesId) {
 					imageIndex = ctr;
-					foundSeries = true;
+					break;
 				}
 			}
+
+			if (imageIndex < 0)
+				foundSeries = false;
 
 			if (foundSeries) {
 				Image &img = current_anim->image[imageIndex];
