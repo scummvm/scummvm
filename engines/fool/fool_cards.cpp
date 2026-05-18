@@ -26,7 +26,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 #define CARDS_MAX_SCORE 700
@@ -54,7 +54,7 @@ void FoolGame::cardsRun() {
 
 	// 139:011c
 	for (int i = 0; i <= 0x25; i++) {
-		g_zbasic->indexSet(puzzlesReadString(), 1, i);
+		_zbasic->indexSet(puzzlesReadString(), 1, i);
 	}
 
 	this->var_i16_484 = 0x5e;
@@ -66,31 +66,31 @@ void FoolGame::cardsRun() {
 	this->sub_128_bde(1, 1, 0, 1, 1, 1);
 	this->fillRect(0xb4, 0xb5, 0x156, 0x14b, 2);
 	// illustration of the card game
-	g_zbasic->picture(0xc3, 0xf3, this->arr_i32_192c0[0x17]);
+	_zbasic->picture(0xc3, 0xf3, this->arr_i32_192c0[0x17]);
 	if (_activePuzzleBuffer.empty()) { // was: str(278)
 		// 139:01fa
-		_activePuzzleBuffer = g_zbasic->encodeInt(0) + g_zbasic->encodeInt(0) + g_zbasic->encodeInt(0);
+		_activePuzzleBuffer = _zbasic->encodeInt(0) + _zbasic->encodeInt(0) + _zbasic->encodeInt(0);
 		// card IDs
 		for (int16 i = 0; i <= 0x15; i++) {
 			this->arr_i16_5cbc[i] = i;
 		}
 		// 139:0244
 		for (int i = 0; i <= 0x15; i++) {
-			this->var_i16_484 = g_zbasic->rndInt(0x16) - 1;
-			this->var_i16_7e4 = g_zbasic->rndInt(0x16) - 1;
-			g_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[this->var_i16_7e4]);
+			this->var_i16_484 = _zbasic->rndInt(0x16) - 1;
+			this->var_i16_7e4 = _zbasic->rndInt(0x16) - 1;
+			_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[this->var_i16_7e4]);
 		}
 		// 139:029c
 		for (int i = 0; i <= 0x15; i++) {
-			_activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_5cbc[i]);
+			_activePuzzleBuffer += _zbasic->encodeInt(this->arr_i16_5cbc[i]);
 		}
 	}
 	// 139:02d8
 	// player scores
-	this->arr_i16_1eb8[5] = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, 1, 2));
-	this->arr_i16_1eb8[6] = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, 3, 2));
+	this->arr_i16_1eb8[5] = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, 1, 2));
+	this->arr_i16_1eb8[6] = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, 3, 2));
 	// 139:0320
-	this->var_i16_2010 = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, 5, 2));
+	this->var_i16_2010 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, 5, 2));
 	if ((this->arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
 		this->arr_i16_1eb8[5] = 0;
 		this->arr_i16_1eb8[6] = 0;
@@ -99,7 +99,7 @@ void FoolGame::cardsRun() {
 	// 139:039e
 
 	for (int i = 0; i <= 0x15; i++) {
-		this->arr_i16_5cbc[i] = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, i*2 + 7, 2));
+		this->arr_i16_5cbc[i] = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, i*2 + 7, 2));
 	}
 	// 139:03ea
 	this->arr_i16_5cbc[0x16] = 0x16;
@@ -165,11 +165,11 @@ void FoolGame::sub_139_50e() {
 
 void FoolGame::cardsShuffleDeck() {
 	// 139:051e
-	g_zbasic->unk_20();
+	_zbasic->unk_20();
 	for (int j = 0; j <= 2; j++) {
 		for (int i = 0; i <= 0x15; i++) {
-			this->var_i16_484 = g_zbasic->rndInt(0x16)-1;
-			g_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[i]);
+			this->var_i16_484 = _zbasic->rndInt(0x16)-1;
+			_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[i]);
 		}
 	}
 }
@@ -183,17 +183,17 @@ void FoolGame::cardsDrawTable() {
 	this->drawTarotCard(1, 4, 0);
 	this->drawTarotCard(2, 5, 0);
 	this->drawTarotCard(3, 6, 0);
-	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7a2 = 0xc3;
 	// 139:061a
-	this->sub_128_918(g_zbasic->str(279)); // Select a card above
+	this->sub_128_918(_zbasic->str(279)); // Select a card above
 	this->var_i16_7a2 = 0xd4;
-	this->sub_128_918(g_zbasic->str(280)); // or
+	this->sub_128_918(_zbasic->str(280)); // or
 	g_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, _patterns[0]);
 	g_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
-	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7a2 = 0xe9;
-	this->sub_128_918(g_zbasic->str(281)); // Yield
+	this->sub_128_918(_zbasic->str(281)); // Yield
 	this->var_i16_2016 = 1;
 	this->var_i16_2010 = 1;
 	this->sub_128_6186();
@@ -249,8 +249,8 @@ void FoolGame::cardsOnClick() {
 		}
 		// 139:088a
 		this->drawTarotCard(9, this->var_i16_1e00, 0);
-		g_zbasic->indexSet(
-			g_zbasic->chr(this->arr_i16_5cbc[0]+0x41) + g_zbasic->chr(this->arr_i16_5cbc[2]+0x41) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00]+0x41),
+		_zbasic->indexSet(
+			_zbasic->chr(this->arr_i16_5cbc[0]+0x41) + _zbasic->chr(this->arr_i16_5cbc[2]+0x41) + _zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00]+0x41),
 			1,
 			0x26
 		);
@@ -277,8 +277,8 @@ void FoolGame::cardsOnClick() {
 		this->sub_128_61ec();
 		// original code has the font ID as 1... maybe there's a fallback?
 		// this was intended to be Small
-		g_zbasic->text(0xfc, 9, Graphics::kMacFontRegular, kSrcBic);
-		this->sub_128_918(g_zbasic->str(282)); // (click mouse to continue)
+		_zbasic->text(0xfc, 9, Graphics::kMacFontRegular, kSrcBic);
+		this->sub_128_918(_zbasic->str(282)); // (click mouse to continue)
 		this->var_i16_2014 = 0;
 		_stateFlags = 0;
 		while ((_stateFlags == 0) && (this->var_i16_2014 == 0)) {
@@ -303,17 +303,17 @@ void FoolGame::cardsOnClick() {
 
 void FoolGame::sub_139_a22() {
 	// 139:0a22
-	this->var_str_201a = g_zbasic->chr(this->arr_i16_5cbc[0] + 0x41) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41);
+	this->var_str_201a = _zbasic->chr(this->arr_i16_5cbc[0] + 0x41) + _zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41);
 	this->var_i16_211a = this->var_i16_1e00;
-	g_zbasic->indexSet(g_zbasic->chr(this->arr_i16_5cbc[1] + 0x41) + g_zbasic->chr(this->arr_i16_5cbc[3] + 0x41), 1, 0x27);
-	this->var_str_211c = g_zbasic->index(1, 0x27);
+	_zbasic->indexSet(_zbasic->chr(this->arr_i16_5cbc[1] + 0x41) + _zbasic->chr(this->arr_i16_5cbc[3] + 0x41), 1, 0x27);
+	this->var_str_211c = _zbasic->index(1, 0x27);
 	this->var_i16_2016 = 0x2;
 	this->var_i16_221c = 0;
 	this->var_i16_221e = 0;
 	for (int16 i = 4; i <= 6; i++) {
 		// 139:0ae8
 		if (i  != this->var_i16_211a) {
-			g_zbasic->indexSet(this->var_str_211c + g_zbasic->chr(this->arr_i16_5cbc[i] + 0x41), 1, 0x27);
+			_zbasic->indexSet(this->var_str_211c + _zbasic->chr(this->arr_i16_5cbc[i] + 0x41), 1, 0x27);
 			this->sub_139_19da();
 			if (this->arr_i16_1eb8[2] >= this->var_i16_221c) {
 				// 139:0b52
@@ -332,7 +332,7 @@ void FoolGame::sub_139_a22() {
 		}
 		// 139:0bc4
 	}
-	g_zbasic->indexSet(this->var_str_211c + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
+	_zbasic->indexSet(this->var_str_211c + _zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
 	// 139:0c0a
 	this->arr_i16_1eb8[2] = this->var_i16_221c;
 	this->sub_139_191c();
@@ -341,11 +341,11 @@ void FoolGame::sub_139_a22() {
 	for (int16 j = 8; j >= 1; j--) {
 		this->var_i16_7a8 = 0;
 		// count the number of combination cards in the hand
-		for (int16 i = 1; i <= (int16)g_zbasic->index(1, j + 0x15).size(); i++) {
-			if (g_zbasic->instr(
+		for (int16 i = 1; i <= (int16)_zbasic->index(1, j + 0x15).size(); i++) {
+			if (_zbasic->instr(
 					1,
 					this->var_str_201a,
-					g_zbasic->midStr(g_zbasic->index(1, j + 0x15), i, 1))
+					_zbasic->midStr(_zbasic->index(1, j + 0x15), i, 1))
 				) {
 				this->var_i16_7a8++;
 			}
@@ -366,7 +366,7 @@ void FoolGame::sub_139_a22() {
 	// 139:0ce2
 	if (this->var_i16_221c == this->arr_i16_1eb8[2]) {
 		for (int16 i = 1; i <= (int16)this->var_str_201a.size(); i++) {
-			this->var_i16_484 = 0x15 - (g_zbasic->asc(g_zbasic->midStr(this->var_str_201a, i, 1)) - 0x41);
+			this->var_i16_484 = 0x15 - (_zbasic->asc(_zbasic->midStr(this->var_str_201a, i, 1)) - 0x41);
 			if (this->var_i16_484 > this->arr_i16_1eb8[4]) {
 				this->var_i16_2018 = 1;
 			}
@@ -387,9 +387,9 @@ void FoolGame::cardsOpponentYields() {
 	this->sub_128_50e(0x19, 0x64, 0x1);
 	this->var_i16_2012 = -CARDS_YIELD_PENALTY;
 	this->cardsDrawScores();
-	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7a2 = 0xc4;
-	this->sub_128_918(g_zbasic->str(283)); // The Old Man yields
+	this->sub_128_918(_zbasic->str(283)); // The Old Man yields
 }
 
 void FoolGame::cardsRevealHands() {
@@ -402,37 +402,37 @@ void FoolGame::cardsRevealHands() {
 	// show ol' mate's draw from the pile
 	this->drawTarotCard(8, this->var_i16_1e00, 0);
 
-	g_zbasic->indexSet(g_zbasic->index(1, 0x27) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
+	_zbasic->indexSet(_zbasic->index(1, 0x27) + _zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
 	// 139:0e70
 	for (int16 i = 1; i <= 2; i++) {
-		g_zbasic->indexSet(g_zbasic->str(284), 1, i + 0x27);
+		_zbasic->indexSet(_zbasic->str(284), 1, i + 0x27);
 		if ((this->arr_i16_1eb8[i] > 0) && (this->arr_i16_1eb8[i] < 9)) {
 			// 139:0ed6
-			g_zbasic->indexSet(
-				g_zbasic->index(1, 0x1d + this->arr_i16_1eb8[i]) + g_zbasic->str(285), // X pair
+			_zbasic->indexSet(
+				_zbasic->index(1, 0x1d + this->arr_i16_1eb8[i]) + _zbasic->str(285), // X pair
 				1,
 				i + 0x27
 			);
 		}
 		// 139:0f1e
 		if (this->arr_i16_1eb8[i] > 8) {
-			g_zbasic->indexSet(
-				g_zbasic->index(1, 0x1d + this->arr_i16_1eb8[i] - 8) + g_zbasic->str(286), // X triplet
+			_zbasic->indexSet(
+				_zbasic->index(1, 0x1d + this->arr_i16_1eb8[i] - 8) + _zbasic->str(286), // X triplet
 				1,
 				0x27 + i
 			);
 		}
 		// 139:0f84
-		g_zbasic->indexSet(
-			g_zbasic->index(1,0x15 - this->arr_i16_1eb8[i + 2]),
+		_zbasic->indexSet(
+			_zbasic->index(1,0x15 - this->arr_i16_1eb8[i + 2]),
 			1,
 			i + 0x29
 		);
 		// 139:0fca
-		if (g_zbasic->index(1, i + 0x27) == g_zbasic->str(287)) { // blank
+		if (_zbasic->index(1, i + 0x27) == _zbasic->str(287)) { // blank
 			// 139:0ff0
-			g_zbasic->indexSet(
-				g_zbasic->index(1, 0x29 + i),
+			_zbasic->indexSet(
+				_zbasic->index(1, 0x29 + i),
 				1,
 				i + 0x27
 			);
@@ -461,8 +461,8 @@ void FoolGame::cardsRevealHands() {
 		// 139:10f8
 		if (this->arr_i16_1eb8[1] != 0) {
 			for (int i = 1; i <= 2; i++) {
-				g_zbasic->indexSet(
-					g_zbasic->index(1, 0x27 + i) + g_zbasic->str(288) + g_zbasic->index(1, 0x29 + i) + g_zbasic->str(289),
+				_zbasic->indexSet(
+					_zbasic->index(1, 0x27 + i) + _zbasic->str(288) + _zbasic->index(1, 0x29 + i) + _zbasic->str(289),
 					1,
 					0x27 + i
 				);
@@ -476,26 +476,26 @@ void FoolGame::cardsRevealHands() {
 
 	this->cardsDrawScores();
 	if (this->var_i16_2016 == 1) {
-		this->var_str_384 = g_zbasic->str(290); // The fool
+		this->var_str_384 = _zbasic->str(290); // The fool
 	} else {
 		// 139:11ce
-		this->var_str_384 = g_zbasic->str(291); // The Old Man
+		this->var_str_384 = _zbasic->str(291); // The Old Man
 	}
 	// 139:11e2
 	if ((this->arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
-		this->var_str_9f4 = g_zbasic->str(292); // the game!
+		this->var_str_9f4 = _zbasic->str(292); // the game!
 	} else {
 		// 139:123e
-		this->var_str_9f4 = Common::U32String::format(" %d", this->var_i16_2012) + g_zbasic->str(293); // X points
+		this->var_str_9f4 = Common::U32String::format(" %d", this->var_i16_2012) + _zbasic->str(293); // X points
 	}
 	// 139:1264
-	this->var_str_384 += g_zbasic->str(294) + this->var_str_9f4; // X wins Y
+	this->var_str_384 += _zbasic->str(294) + this->var_str_9f4; // X wins Y
 	// winning hand
-	this->var_str_167c = g_zbasic->index(1, 0x28);
+	this->var_str_167c = _zbasic->index(1, 0x28);
 	// losing hand
-	this->var_str_2222 = g_zbasic->index(1, 0x29);
+	this->var_str_2222 = _zbasic->index(1, 0x29);
 	if (this->var_i16_2016 == 2) {
-		g_zbasic->swapStr(this->var_str_167c, this->var_str_2222);
+		_zbasic->swapStr(this->var_str_167c, this->var_str_2222);
 	}
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
 	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_167c);
@@ -514,13 +514,13 @@ void FoolGame::cardsRevealHands() {
 	// 139:1344
 	this->var_i16_2322 = (this->var_i16_2322 / 2) + 0x14;
 	this->fillRect(0x2e, 0x100 - this->var_i16_2322, 0x9a, 0x100 + this->var_i16_2322, 2);
-	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7a2 = 0x46;
 	this->sub_128_918(this->var_str_384);
 	this->var_i16_7a2 = 0x64;
 	this->sub_128_918(this->var_str_167c);
 	this->var_i16_7a2 = 0x78;
-	this->sub_128_918(g_zbasic->str(295)); // beats
+	this->sub_128_918(_zbasic->str(295)); // beats
 	this->var_i16_7a2 = 0x8c;
 	this->sub_128_918(this->var_str_2222);
 	if (this->arr_i16_1eb8[1] != 0) {
@@ -529,40 +529,40 @@ void FoolGame::cardsRevealHands() {
 			this->var_i16_68a -= 8;
 		}
 		// 139:1420
-		if (g_zbasic->instr(
+		if (_zbasic->instr(
 			1,
-			g_zbasic->index(1, 0x15 + this->var_i16_68a),
-			g_zbasic->midStr(g_zbasic->index(1, 0x26), 1, 1)
+			_zbasic->index(1, 0x15 + this->var_i16_68a),
+			_zbasic->midStr(_zbasic->index(1, 0x26), 1, 1)
 		) == 0) {
 			this->drawTarotCard(5, 0, 2);
 		}
 		// 139:1470
-		if (g_zbasic->instr(
+		if (_zbasic->instr(
 				1,
-				g_zbasic->index(1, 0x15 + this->var_i16_68a),
-				g_zbasic->midStr(g_zbasic->index(1, 0x26), 2, 1)
+				_zbasic->index(1, 0x15 + this->var_i16_68a),
+				_zbasic->midStr(_zbasic->index(1, 0x26), 2, 1)
 			) == 0) {
 			this->drawTarotCard(7, 0, 2);
 		}
 		// 139:14c0
-		if (g_zbasic->instr(
+		if (_zbasic->instr(
 				1,
-				g_zbasic->index(1, 0x15 + this->var_i16_68a),
-				g_zbasic->midStr(g_zbasic->index(1, 0x26), 3, 1)
+				_zbasic->index(1, 0x15 + this->var_i16_68a),
+				_zbasic->midStr(_zbasic->index(1, 0x26), 3, 1)
 			) == 0) {
 			this->drawTarotCard(9, 0, 2);
 		}
 	} else {
 		// 139:1514
-		this->var_str_384 = g_zbasic->chr((0x15 - this->arr_i16_1eb8[3]) + 0x41);
-		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 1, 1) != this->var_str_384) {
+		this->var_str_384 = _zbasic->chr((0x15 - this->arr_i16_1eb8[3]) + 0x41);
+		if (_zbasic->midStr(_zbasic->index(1, 0x26), 1, 1) != this->var_str_384) {
 			this->drawTarotCard(5, 0, 2);
 		}
 		// 139:157e
-		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 2, 1) != this->var_str_384) {
+		if (_zbasic->midStr(_zbasic->index(1, 0x26), 2, 1) != this->var_str_384) {
 			this->drawTarotCard(7, 0, 2);
 		}
-		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 3, 1) != this->var_str_384) {
+		if (_zbasic->midStr(_zbasic->index(1, 0x26), 3, 1) != this->var_str_384) {
 			this->drawTarotCard(9, 0, 2);
 		}
 	}
@@ -572,28 +572,28 @@ void FoolGame::cardsRevealHands() {
 		if (this->var_i16_68a > 8) {
 			this->var_i16_68a -= 8;
 		}
-		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 1, 1)) == 0) {
+		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + this->var_i16_68a), _zbasic->midStr(_zbasic->index(1, 0x27), 1, 1)) == 0) {
 			this->drawTarotCard(4, 0, 2);
 		}
 		// 139:1678
-		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 2, 1)) == 0) {
+		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + this->var_i16_68a), _zbasic->midStr(_zbasic->index(1, 0x27), 2, 1)) == 0) {
 			this->drawTarotCard(6, 0, 2);
 		}
 		// 139:16c8
-		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 3, 1)) == 0) {
+		if (_zbasic->instr(1, _zbasic->index(1, 0x15 + this->var_i16_68a), _zbasic->midStr(_zbasic->index(1, 0x27), 3, 1)) == 0) {
 			this->drawTarotCard(8, 0, 2);
 		}
 	} else {
 		// 139:171c
-		this->var_str_384 = g_zbasic->chr((0x15 - this->arr_i16_1eb8[4]) + 0x41);
-		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 1, 1)) {
+		this->var_str_384 = _zbasic->chr((0x15 - this->arr_i16_1eb8[4]) + 0x41);
+		if (this->var_str_384 != _zbasic->midStr(_zbasic->index(1, 0x27), 1, 1)) {
 			this->drawTarotCard(4, 0, 2);
 		}
 		// 139:1786
-		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 2, 1)) {
+		if (this->var_str_384 != _zbasic->midStr(_zbasic->index(1, 0x27), 2, 1)) {
 			this->drawTarotCard(6, 0, 2);
 		}
-		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 3, 1)) {
+		if (this->var_str_384 != _zbasic->midStr(_zbasic->index(1, 0x27), 3, 1)) {
 			this->drawTarotCard(8, 0, 2);
 		}
 	}
@@ -610,17 +610,17 @@ void FoolGame::sub_139_17fc() {
 	for (int i = 1; i <= 2; i++) {
 		this->arr_i16_1eb8[i + 2] = 0;
 		this->arr_i16_1eb8[i] = 0;
-		g_zbasic->indexSet(g_zbasic->str(296), 1, 0x25 + i); // blank
-		g_zbasic->indexSet(g_zbasic->str(297), 1, 0x27 + i); // blank
-		g_zbasic->indexSet(g_zbasic->str(298), 1, 0x29 + i); // blank
+		_zbasic->indexSet(_zbasic->str(296), 1, 0x25 + i); // blank
+		_zbasic->indexSet(_zbasic->str(297), 1, 0x27 + i); // blank
+		_zbasic->indexSet(_zbasic->str(298), 1, 0x29 + i); // blank
 	}
 }
 
 void FoolGame::sub_139_191c() {
 	// 139:191c
 	this->arr_i16_1eb8[this->var_i16_2016 + 2] = 0;
-	for (int i = 1; i <= (int)g_zbasic->index(1, this->var_i16_2016 + 0x25).size(); i++) {
-		this->var_i16_484 = 0x15 - (g_zbasic->asc(g_zbasic->midStr(g_zbasic->index(1, 0x25 + this->var_i16_2016), i, 1)) - 0x41);
+	for (int i = 1; i <= (int)_zbasic->index(1, this->var_i16_2016 + 0x25).size(); i++) {
+		this->var_i16_484 = 0x15 - (_zbasic->asc(_zbasic->midStr(_zbasic->index(1, 0x25 + this->var_i16_2016), i, 1)) - 0x41);
 		// 139:1974
 		if (this->var_i16_484 > this->arr_i16_1eb8[2 + this->var_i16_2016]) {
 			this->arr_i16_1eb8[2 + this->var_i16_2016] = this->var_i16_484;
@@ -636,11 +636,11 @@ void FoolGame::sub_139_19da() {
 		// cycle backward through the scoring combinations
 		for (int j = 8; j >= 1; j--) {
 			this->var_i16_7a8 = 0;
-			for (int i = 1; i <= (int)g_zbasic->index(1, j + 0x15).size(); i++) {
-				if (g_zbasic->instr(
+			for (int i = 1; i <= (int)_zbasic->index(1, j + 0x15).size(); i++) {
+				if (_zbasic->instr(
 					1,
-					g_zbasic->index(1, this->var_i16_2016 + 0x25),
-					g_zbasic->midStr(g_zbasic->index(1, 0x15 + j), i, 1)
+					_zbasic->index(1, this->var_i16_2016 + 0x25),
+					_zbasic->midStr(_zbasic->index(1, 0x15 + j), i, 1)
 				) != 0) {
 					this->var_i16_7a8++;
 				}
@@ -661,7 +661,7 @@ void FoolGame::sub_139_19da() {
 
 void FoolGame::cardsDrawScores() {
 	// 139:1b12
-	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->arr_i16_1eb8[this->var_i16_2016 + 4] += this->var_i16_2012;
 	if (this->arr_i16_1eb8[5] < CARDS_MIN_SCORE) {
 		this->arr_i16_1eb8[5] = CARDS_MIN_SCORE;
@@ -673,14 +673,14 @@ void FoolGame::cardsDrawScores() {
 	// 139:1bb2
 	this->fillRect(0x14, 0, 0x29, 0x5a, 2);
 	// Old Man
-	this->var_str_384 = g_zbasic->str(299) + Common::U32String::format(" %d", this->arr_i16_1eb8[6]);
+	this->var_str_384 = _zbasic->str(299) + Common::U32String::format(" %d", this->arr_i16_1eb8[6]);
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
 	g_toolbox->MoveTo(0x2d - (this->var_i16_484 / 2), 0x23);
 	g_toolbox->DrawString(this->var_str_384);
 
 	// 139:1c30
 	this->fillRect(0x14, 0x1a6, 0x29, 0x200, 2);
-	this->var_str_384 = g_zbasic->str(300) + Common::U32String::format(" %d", this->arr_i16_1eb8[5]);
+	this->var_str_384 = _zbasic->str(300) + Common::U32String::format(" %d", this->arr_i16_1eb8[5]);
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
 	g_toolbox->MoveTo(0x1d3 - (this->var_i16_484 / 2), 0x23);
 	g_toolbox->DrawString(this->var_str_384);
@@ -688,12 +688,12 @@ void FoolGame::cardsDrawScores() {
 
 void FoolGame::cardsStoreState() {
 	// 139:1cba
-	_activePuzzleBuffer = g_zbasic->encodeInt(this->arr_i16_1eb8[5]) +
-		g_zbasic->encodeInt(this->arr_i16_1eb8[6]) +
-		g_zbasic->encodeInt(this->var_i16_2010);
+	_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[5]) +
+		_zbasic->encodeInt(this->arr_i16_1eb8[6]) +
+		_zbasic->encodeInt(this->var_i16_2010);
 	// 139:1d00
 	for (int i = 0; i <= 0x15; i++) {
-		_activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_5cbc[i]);
+		_activePuzzleBuffer += _zbasic->encodeInt(this->arr_i16_5cbc[i]);
 	}
 }
 

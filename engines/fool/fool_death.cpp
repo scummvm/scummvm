@@ -26,17 +26,16 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
 // Death challenge
 void FoolGame::deathRun() {
 	// 141:0004
-	g_zbasic->get(0x6c, 0x127, 0x84, 0x127, this->arr_bmp_c38c);
-	this->sub_128_55c(g_zbasic->str(334));
+	_zbasic->get(0x6c, 0x127, 0x84, 0x127, this->arr_bmp_c38c);
+	this->sub_128_55c(_zbasic->str(334));
 	g_toolbox->InvertRect(this->arr_rect_1910c);
-	g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
-	g_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
+	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
+	_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
 	this->deathDrawZoom();
 	this->fillRect(0x14f, 0, 0x156, 0x7, 0x2);
 	this->fillRect(0x14f, 0x1f9, 0x156, 0x200, 2);
@@ -45,8 +44,8 @@ void FoolGame::deathRun() {
 	this->arr_rect_1eb8.bottom = 0x2e;
 	this->arr_rect_1eb8.right = 0x1a8;
 	// 141:0122
-	g_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
-	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
+	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
 	_event.where.y = 0x14;
 	// JMP 0x3c2
 	while (true) {
@@ -76,8 +75,8 @@ void FoolGame::deathRun() {
 			}
 		}
 		// 141:023a
-		g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_c38c);
-		this->sub_128_55c(g_zbasic->str(335)); // "~"
+		_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_c38c);
+		this->sub_128_55c(_zbasic->str(335)); // "~"
 		this->var_i16_233a = 1;
 		// JMP 0x2be
 		while (_event.where.y < 0x14) {
@@ -104,7 +103,7 @@ void FoolGame::deathRun() {
 					// JMP 0x9a2
 					// 141:09a2
 					this->deathDrawWhiteEye();
-					g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kSrcCopy);
+					_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kSrcCopy);
 					this->deathDrawZoom();
 					if (_activePuzzleStatus < 0x64) {
 						_activePuzzleStatus = 0x64;
@@ -136,7 +135,7 @@ void FoolGame::deathRun() {
 
 void FoolGame::deathMoveBlackEye() {
 	// 141:03ca
-	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
 	this->var_i16_68a = _event.where.x - 0xc - this->arr_rect_1eb8.left;
 	this->var_i16_68c = _event.where.y - 8 - this->arr_rect_1eb8.top;
 	// 141:0452
@@ -152,14 +151,14 @@ void FoolGame::deathMoveBlackEye() {
 	if (this->var_i16_68a > 6) {
 		this->var_i16_68a = 6;
 	}
-	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
 	// 141:04ce
 	this->arr_rect_1ec0.top = this->arr_rect_1eb8.top + this->var_i16_68c;
 	this->arr_rect_1ec0.left = this->arr_rect_1eb8.left + this->var_i16_68a;
 	this->arr_rect_1ec0.bottom = this->arr_rect_1eb8.bottom + this->var_i16_68c;
 	this->arr_rect_1ec0.right = this->arr_rect_1eb8.right + this->var_i16_68a;
 
-	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
 	// 141:05a2
 	if (this->arr_rect_1ec0.top < 0x14) {
 		this->arr_rect_1ec0.top = 0x14;
@@ -179,15 +178,15 @@ void FoolGame::deathMoveBlackEye() {
 		this->arr_rect_1ec0.left = 0x1e8;
 		this->arr_rect_1ec0.right = 0x200;
 	}
-	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
 	// 141:06bc
 	if (!((this->arr_rect_1eb8.top == this->arr_rect_1ec0.top) &&
 		((this->arr_rect_1eb8.left == this->arr_rect_1ec0.left)))) {
 		// 141:0722
-		g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kSrcCopy);
+		_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kSrcCopy);
 		this->arr_rect_1eb8 = this->arr_rect_1ec0;
-		g_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
-		g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+		_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
+		_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
 		this->sub_128_3da(1);
 	}
 	// 141:0880
@@ -196,7 +195,7 @@ void FoolGame::deathMoveBlackEye() {
 void FoolGame::deathDrawWhiteEye() {
 	// 141:0882
 	if (this->var_i16_233a != 0) {
-		g_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
+		_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
 	}
 	// 141:08b0
 	this->var_i16_233a = 0;

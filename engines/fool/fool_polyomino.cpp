@@ -26,7 +26,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 // polyomino puzzle
@@ -40,8 +40,8 @@ void FoolGame::polyominoRun() {
 	// 133:003c
 	this->var_str_384 = puzzlesReadString().decode(Common::kMacRoman);
 	// "the completed puzzle will reveal..."
-	this->var_str_384 = g_zbasic->str(209) + this->var_str_384 + g_zbasic->str(210);
-	g_zbasic->menu(8, 0xf, 1, this->var_str_384);
+	this->var_str_384 = _zbasic->str(209) + this->var_str_384 + _zbasic->str(210);
+	_zbasic->menu(8, 0xf, 1, this->var_str_384);
 	this->var_i16_484 = 0;
 	this->var_i16_68c = this->arr_i16_1eb8[8];
 	do {
@@ -58,13 +58,13 @@ void FoolGame::polyominoRun() {
 				this->var_i16_68c + this->arr_i16_1eb8[12]
 			);
 			// 133:0112
-		} while (g_zbasic->incrAndCheck(
+		} while (_zbasic->incrAndCheck(
 			this->var_i16_68a,
 			this->arr_i16_1eb8[11],
 			this->arr_i16_1eb8[6]
 		));
 		// 133:0142
-	} while (g_zbasic->incrAndCheck(
+	} while (_zbasic->incrAndCheck(
 		this->var_i16_68c,
 		this->arr_i16_1eb8[9],
 		this->arr_i16_1eb8[7]
@@ -87,7 +87,7 @@ void FoolGame::polyominoRun() {
 	}
 	// 133:0228
 	g_toolbox->SetPort(this->var_i32_f24);
-	g_zbasic->text(0xfb, 0x18, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(0xfb, 0x18, Graphics::kMacFontRegular, kSrcOr);
 
 	// for each polyomino
 	for (int j = 1; j <= this->arr_i16_1eb8[0x10]; j++) {
@@ -122,7 +122,7 @@ void FoolGame::polyominoRun() {
 				this->var_i16_1aa8 = 1;
 			}
 			for (int i = 3; i <= 4; i++) {
-				this->arr_i16_47d8[j*8 + i] = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, this->var_i16_1aa8, 2));
+				this->arr_i16_47d8[j*8 + i] = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, this->var_i16_1aa8, 2));
 				this->var_i16_1aa8 += 2;
 			}
 		}
@@ -162,7 +162,7 @@ void FoolGame::polyominoRun() {
 			g_toolbox->TextMode(kSrcXor);
 			for (int i = 1; i <= this->var_i16_103a; i += 3) {
 				g_toolbox->MoveTo(this->arr_i16_3738[i], this->arr_i16_3738[i+1]);
-				this->var_str_384 = g_zbasic->chr(this->arr_i16_3738[i+2]);
+				this->var_str_384 = _zbasic->chr(this->arr_i16_3738[i+2]);
 				g_toolbox->DrawString(this->var_str_384);
 			}
 		}
@@ -183,7 +183,7 @@ void FoolGame::polyominoRun() {
 			g_toolbox->TextMode((SourceMode)this->arr_i16_1eb8[0x1b]);
 			for (int i = 1; i <= this->var_i16_103a; i += 3) {
 				g_toolbox->MoveTo(this->arr_i16_3738[i], this->arr_i16_3738[i+1]);
-				this->var_str_384 = g_zbasic->chr(this->arr_i16_3738[i+2]);
+				this->var_str_384 = _zbasic->chr(this->arr_i16_3738[i+2]);
 				g_toolbox->DrawString(this->var_str_384);
 			}
 		}
@@ -306,13 +306,13 @@ void FoolGame::polyominoOnClick() {
 	this->var_i16_1062 = _screenGrid[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].left;
 	this->var_i16_1064 = _screenGrid[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].top;
 	debug(5, "FoolGame::polyominoOnClick: Draw pic 2 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
-	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 2]);
+	_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 2]);
 	// 133:0b1c
 	this->polyominoDrawFrame();
 	this->sub_128_4da(0);
 	this->var_i16_1ab6 = this->var_i16_1062;
 	this->var_i16_1ab8 = this->var_i16_1064;
-	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
+	_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 
 	// 133:0b5a: JMP - [0xde0]
 	while (_event.what != 2) {
@@ -350,13 +350,13 @@ void FoolGame::polyominoOnClick() {
 		if (_event.what != 2) {
 			debug(5, "FoolGame::polyominoOnClick: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 			// XOR out original position
-			g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
+			_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 			// drag to cursor position
 			this->var_i16_1062 = this->var_i16_1ab6;
 			this->var_i16_1064 = this->var_i16_1ab8;
 			// XOR out new position
 			debug(5, "FoolGame::polyominoOnClick: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
-			g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
+			_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 		}
 		// 133:0de0
 
@@ -418,13 +418,13 @@ void FoolGame::polyominoMove() {
 	// 133:0fce
 	if (this->var_i16_1ab0 != 0) {
 		debug(5, "FoolGame::polyominoMove: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
-		g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
+		_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 	}
 	// 133:1002
 	this->var_i16_1062 = _screenGrid[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
 	this->var_i16_1064 = _screenGrid[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
 	debug(5, "FoolGame::polyominoMove: Draw pic 1 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
-	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 1]);
+	_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 1]);
 
 }
 
@@ -439,7 +439,7 @@ void FoolGame::polyominoOnClickFixed() {
 	// 133:1188
 	debug(5, "FoolGame::polyominoOnClickFixed: Draw pic 0 (%d, %d)", this->var_i16_484, this->var_i16_7e4);
 	for (int i = 0; i <= 9; i++) {
-		g_zbasic->picture(this->var_i16_484, this->var_i16_7e4, this->arr_pic_49d8[this->var_i16_7cc*4]);
+		_zbasic->picture(this->var_i16_484, this->var_i16_7e4, this->arr_pic_49d8[this->var_i16_7cc*4]);
 		g_toolbox->Delay(0);
 	}
 	// 133:11c2
@@ -516,11 +516,11 @@ void FoolGame::polyominoSuccess() {
 
 void FoolGame::polyominoStoreState() {
 	// 133:1452
-	_activePuzzleBuffer = g_zbasic->str(212); // empty
+	_activePuzzleBuffer = _zbasic->str(212); // empty
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->arr_i16_1eb8[0x10]; i++) {
-		Common::String val1 = g_zbasic->encodeInt(this->arr_i16_47d8[i*8 + 3]);
-		Common::String val2 = g_zbasic->encodeInt(this->arr_i16_47d8[i*8 + 4]);
+		Common::String val1 = _zbasic->encodeInt(this->arr_i16_47d8[i*8 + 3]);
+		Common::String val2 = _zbasic->encodeInt(this->arr_i16_47d8[i*8 + 4]);
 		_activePuzzleBuffer += val1 + val2;
 	}
 }
