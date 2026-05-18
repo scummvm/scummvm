@@ -20,6 +20,7 @@
  */
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
@@ -42,6 +43,8 @@ QuizPuzzle::~QuizPuzzle() {
 
 void QuizPuzzle::init() {
 	Common::Rect screenClip = NancySceneState.getViewport().getBounds();
+	if (g_nancy->getGameType() == kGameTypeNancy9 && NancySceneState.getSceneInfo().sceneID == 6443)
+		screenClip.right += 20; // WORKAROUND for chess puzzle in Nancy 9: the rightmost answer box is partially off-screen
 	_screenPosition = screenClip;
 	_drawSurface.create(screenClip.width(), screenClip.height(), g_nancy->_graphics->getInputPixelFormat());
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
@@ -582,24 +585,28 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 
 	char cursorChar = (g_nancy->getGameType() == kGameTypeNancy8) ? '-' : _cursorChar;
 
-	// Mouse click: select a different (unsolved) box
-	if (input.input & NancyInput::kLeftMouseButtonUp) {
-		for (uint i = 0; i < _numBoxes; ++i) {
-			if (_boxCorrect[i])
-				continue;
-			Common::Rect screenRect = NancySceneState.getViewport().convertViewportToScreen(_boxRects[i]);
-			if (screenRect.contains(input.mousePos)) {
-				if (i != _currentBox) {
-					Common::String &oldText = _typedText[_currentBox];
-					if (!oldText.empty() && oldText.lastChar() == cursorChar)
-						oldText.deleteLastChar();
-					_currentBox = i;
-					_nextBlinkTime = 0;
-					drawText();
-				}
-				break;
+	// Hover over an unsolved text box: show the hotspot cursor and, on click,
+	// move the typing focus to that box.
+	for (uint i = 0; i < _numBoxes; ++i) {
+		if (_boxCorrect[i])
+			continue;
+		Common::Rect screenRect = NancySceneState.getViewport().convertViewportToScreen(_boxRects[i]);
+		if (!screenRect.contains(input.mousePos))
+			continue;
+
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (i != _currentBox) {
+				Common::String &oldText = _typedText[_currentBox];
+				if (!oldText.empty() && oldText.lastChar() == cursorChar)
+					oldText.deleteLastChar();
+				_currentBox = i;
+				_nextBlinkTime = 0;
+				drawText();
 			}
 		}
+		break;
 	}
 
 	for (auto &key : input.otherKbdInput) {
@@ -655,8 +662,8 @@ void QuizPuzzle::drawText() {
 		bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
 		bounds = convertToLocal(bounds);
 
-		int y = bounds.bottom + 1 - font->getFontHeight();
-		font->drawString(&_drawSurface, text, bounds.left, y, bounds.width(), 0);
+		int y = bounds.bottom - font->getFontHeight();
+		font->drawString(&_drawSurface, text, bounds.left - 1, y, bounds.width(), 0);
 	}
 
 	_needsRedraw = true;
