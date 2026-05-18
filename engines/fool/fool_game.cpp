@@ -401,7 +401,7 @@ void FoolGame::sub_128_4da(int16 unk1) {
 	this->var_i16_7a0 = unk1;
 }
 
-void FoolGame::sub_128_50e(int16 freq, int16 duration, int16 wait) {
+void FoolGame::playTone(int16 freq, int16 duration, int16 wait) {
 	// 128:050e
 	// audio tone
 	this->var_i16_34 = wait;
@@ -639,7 +639,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	g_toolbox->InitCursor();
 	this->sub_128_4da(1);
 	if (this->var_i16_7b0 != 0) {
-		this->sub_128_50e(0x19, 0x64, 0);
+		this->playTone(0x19, 0x64, 0);
 	}
 	// 128:0e46
 	this->copyScreen(0, this->arr_bmp_138bc);
@@ -2338,7 +2338,7 @@ void FoolGame::shipsRun() {
 	// 128:5396
 	if (_activePuzzleSolved) {
 		this->sub_128_6186();
-		this->sub_128_50e(0x14, 0x64, 0);
+		this->playTone(0x14, 0x64, 0);
 		_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
 		_event.where.x += 5;
 		_event.where.y -= 5;

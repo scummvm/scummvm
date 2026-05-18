@@ -284,7 +284,7 @@ void FoolGame::wordSearchOnClick() {
 	// for every letter in the word
 	for (int i = 1; i <= this->var_i16_1a94; i++) {
 		// play a tone
-		this->sub_128_50e(0xa + _zbasic->rndInt(0x3e8), 0x28, 1);
+		this->playTone(0xa + _zbasic->rndInt(0x3e8), 0x28, 1);
 		// 131:0b54
 		// remove the inverted square
 		g_toolbox->InvertRect(_screenGrid[this->arr_i16_4338[i]]);
@@ -313,7 +313,7 @@ void FoolGame::wordSearchOnClick() {
 void FoolGame::wordSearchBadSelect() {
 	// 131:0cbe
 	// play failure noise
-	this->sub_128_50e(0x14, 0x64, 0);
+	this->playTone(0x14, 0x64, 0);
 	// uninvert all highlighted boxes
 	for (int i = 1; i <= this->var_i16_1a94; i++) {
 		g_toolbox->InvertRect(_screenGrid[this->arr_i16_4338[i]]);

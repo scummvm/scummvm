@@ -600,7 +600,7 @@ void FoolGame::sub_140_15fc() {
 	this->var_i16_103a++;
 	if (this->var_i16_7e4 != this->var_i16_103a) {
 		this->var_i16_103a = 0;
-		this->sub_128_50e(0xf, 0x64, 0x1);
+		this->playTone(0xf, 0x64, 0x1);
 		for (int16 i = 0; i <= 9; i++) {
 			Common::Rect temp;
 			temp.top = this->arr_i16_4758[4];
@@ -858,7 +858,7 @@ void FoolGame::thothKey3rdOnClick() {
 
 void FoolGame::sub_140_1f68() {
 	// 140:1f68
-	this->sub_128_50e(0xf, 0x64, 1);
+	this->playTone(0xf, 0x64, 1);
 	this->var_i16_103a = 0;
 	g_toolbox->PenSize(0x14, 0x14);
 	g_toolbox->PenPat(_patterns[3]);
@@ -961,7 +961,7 @@ void FoolGame::thothKeyLastOnClick() {
 				}
 				// 140:23aa
 				this->arr_i16_1eb8[1] = this->arr_i16_1eb8[0];
-				this->sub_128_50e(0x32 + (this->var_i16_1de6 * 5), 0x28, 0);
+				this->playTone(0x32 + (this->var_i16_1de6 * 5), 0x28, 0);
 				g_toolbox->FillRect(_screenGrid[this->arr_i16_1eb8[0]], _patterns[2]);
 				this->var_i16_1de6++;
 				warning("thothKeyLastOnClick: 1de6: %d, target: %d", this->var_i16_1de6, (this->arr_i16_3b38[0x20 + _hermitPathStage] + 1));
@@ -979,7 +979,7 @@ void FoolGame::thothKeyLastOnClick() {
 
 void FoolGame::thothBadSelect() {
 	// 140:24ae
-	this->sub_128_50e(0x14, 0x64, 0x0);
+	this->playTone(0x14, 0x64, 0x0);
 	while ((_event.modifiers & kModMouseButtonUp) == 0) {
 		// 140:24c4
 		this->getNextEvent(-1);

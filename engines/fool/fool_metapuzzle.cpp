@@ -334,7 +334,7 @@ void FoolGame::sub_138_9c4() {
 
 void FoolGame::sub_138_a06() {
 	// 138:0a06
-	sub_128_50e(0x19, 0x64, 1);
+	playTone(0x19, 0x64, 1);
 	if (_metapuzzleSecretCodeCount == 0)
 		return;
 	metapuzzleSecretCodeReset();

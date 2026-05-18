@@ -303,7 +303,7 @@ void FoolGame::jumbleRun() {
 					}
 					// 130:09a4
 					for (int i = 1; i <= 3; i++) {
-						this->sub_128_50e(_zbasic->rndInt(0x1f4) + 0x19, 0x42, 0);
+						this->playTone(_zbasic->rndInt(0x1f4) + 0x19, 0x42, 0);
 					}
 					for (int j = 0; j <= 1; j++) {
 						for (int i = 1; i <= this->var_i16_1576; i++) {
@@ -616,18 +616,18 @@ void FoolGame::sub_130_1476() {
 	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
 		// 130:14fa
 		if (_event.where.x > 0x14) {
-			this->sub_128_50e(0xf, 0x42, 0x1);
+			this->playTone(0xf, 0x42, 0x1);
 		}
 		return;
 	}
 	// 130:1518
 	if (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] < 1) {
-		this->sub_128_50e(0xf, 0x42, 0x1);
+		this->playTone(0xf, 0x42, 0x1);
 		return;
 	}
 	// 130:1558
 	if ((_jumbleGameType == 6) && (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] >= 0x11)) {
-		this->sub_128_50e(0xf, 0x42, 0x1);
+		this->playTone(0xf, 0x42, 0x1);
 		return;
 	}
 	// 130:15b0
@@ -759,7 +759,7 @@ void FoolGame::sub_130_19da() {
 	// 130:19da
 	// fixed tile
 	this->sub_130_19ac();
-	this->sub_128_50e(0x19, 0x64, 0);
+	this->playTone(0x19, 0x64, 0);
 	for (int i = 0; i <= 0x19; i++) {
 		g_toolbox->InvertRect(_screenGrid[13]);
 		this->sub_128_3da(1);
