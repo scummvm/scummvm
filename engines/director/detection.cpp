@@ -383,10 +383,10 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 				if (Common::MacResManager::getFinderInfoFromMacBinary(&f, info, fxinfo)) {
 					switch (info.type) {
 					case MKTAG('V', 'W', 'S', 'C'):	// VideoWorks II movies ("scenes")
-						desc->version = 50;
+						desc->version = 10;
 						break;
 					case MKTAG('V', 'W', 'Z', 'P'):	// VideoWorks + Director Overview ("Zorro")
-						desc->version = 0;
+						desc->version = 20;
 						break;
 					case MKTAG('V', 'W', 'P', 'R'):	// "VideoWorks Pro" = Director
 						desc->version = 100;
@@ -398,6 +398,8 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 						warning("Director fallback detection: Start movie has unrecognized Finder type %s, cannot determine version", tag2str(info.type));
 						break;
 					}
+
+					warning("Director fallback detection: Start movie Finder info type %s, version guessed as %d", tag2str(info.type), desc->version);
 				}
 			} else {
 				f.seek(0);
