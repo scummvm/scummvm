@@ -30,7 +30,7 @@
 #include <sys/process.h>
 
 // Set program stack size from default 64KB to 256KB
-SYS_PROCESS_PARAM(1000, 0x40000)
+SYS_PROCESS_PARAM(1000, SYS_PROCESS_SPAWN_STACK_SIZE_256K)
 
 int main(int argc, char *argv[]) {
 
