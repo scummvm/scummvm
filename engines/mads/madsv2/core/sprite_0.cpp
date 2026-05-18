@@ -163,6 +163,11 @@ if (id < 0) {
 sprite = &series->index[id - 1];
 sprite_ptr = sprite->data;
 
+// WORKAROUND: Ignore sprites with no data. This fixes a crash in the Phantom
+// intro chandelier cutscene (7th animation)
+if (!sprite_ptr)
+	return;
+
 /* Load up buffer pointer info */
 target_ptr = buf->data;
 target_wrap = buf->x;
