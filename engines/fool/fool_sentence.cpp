@@ -93,7 +93,7 @@ void FoolGame::sentenceRun() {
 		}
 		// 135:0408
 		if (this->arr_i16_4338[this->var_i16_68a] == 1) {
-			this->sub_128_50e(_zbasic->rndInt(1000) + 0x19, 0x28, 1);
+			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, 1);
 			this->sub_135_a34();
 		}
 		// 135:044a
@@ -325,7 +325,7 @@ void FoolGame::sub_135_cee() {
 		_activePuzzleStatus = 0x64;
 		this->var_i16_68a = 1;
 		for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-			this->sub_128_50e(_zbasic->rndInt(1000) + 0x19, 0x28, 0);
+			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, 0);
 		}
 	}
 	// 135:0d40

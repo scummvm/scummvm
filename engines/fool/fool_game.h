@@ -74,7 +74,7 @@ public:
 	int32 puzzlesReadLong(); // sub_128_462
 	Common::String puzzlesReadString(); // sub_128_49a
 	void sub_128_4da(int16 unk1);
-	void sub_128_50e(int16 freq, int16 duration, int16 wait);
+	void playTone(int16 freq, int16 duration, int16 wait);
 	void sub_128_55c(const Common::U32String &unk1);
 	int16 sub_128_5fe();
 	OSErr sub_128_64c(int16 unk1);
@@ -268,20 +268,20 @@ public:
 	void mazeHiddenDoorShut(); // sub_136_17a4
 	void sub_136_1806();
 	void sub_136_185a();
-	void sub_136_1898();
+	void mazeThornsClearTrigger(); // sub_136_1898
 	void sub_136_18f4();
 	void sub_136_1932();
 	void sub_136_19d2();
 	void sub_136_1cf4();
 	void sub_136_1ddc();
 	void sub_136_1df4();
-	void sub_136_1e4c();
+	void mazeThornsGetScroll(); // sub_136_1e4c
 	void sub_136_21fa();
 	void sub_136_2200();
 	void mazeMovementTrail(); // sub_136_2208
 
 	void sub_136_24ae();
-	void sub_136_2538();
+	void mazePlayTone(); // sub_136_2538
 
 	void sub_136_2582();
 	void mazeDrawPlayer(); // sub_136_2664
@@ -653,7 +653,7 @@ private:
 	SourceMode var_src_1dee;
 
 	int16 var_i16_1df2;
-	int16 var_i16_1df4;
+	int16 mazeToneFreq; // var_i16_1df4
 	int16 var_i16_1df6;
 	int16 var_i16_1df8;
 	int16 var_i16_1dfa;
@@ -661,7 +661,7 @@ private:
 	int16 var_i16_1dfe;
 
 	int16 var_i16_1e00;
-	int16 var_i16_1e02;
+	int16 mazeToneFreqStep; // var_i16_1e02
 	int16 var_i16_1e04;
 
 	int16 var_i16_1e06;
