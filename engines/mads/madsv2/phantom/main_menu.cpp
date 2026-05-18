@@ -167,13 +167,8 @@ void start_series() {
 		if (handle < 0) goto done;
 
 		menu_item[count].handle = handle;
-		menu_item[count].active = true;
+		menu_item[count].active = count != 6;	// Quotes button was never implemented
 		menu_item[count].status = 0;
-	}
-
-	if (menu_item[6].active) {
-		/* menu_item[6].active = config_file.quotes_enabled; */
-		menu_item[6].active = false;
 	}
 
 	error_flag = false;

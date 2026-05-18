@@ -23,6 +23,7 @@
 #include "gui/saveload.h"
 #include "mads/madsv2/phantom/main.h"
 #include "mads/madsv2/animview/animview.h"
+#include "mads/madsv2/textview/textview.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/fileio.h"
@@ -305,12 +306,10 @@ void phantom_main() {
 			// Exit
 			return;
 
-		case 6:
-			// Quotes
-			break;
-
 		default:
 			// Credits
+			TextView::textview_main("credits");
+			selected_item = -1;
 			break;
 		}
 	}
