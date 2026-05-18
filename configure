@@ -7489,6 +7489,9 @@ case $_host in
 	arm-*riscos)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"\${datarootdir}/plugins\\\""
 		;;
+	ps3)
+		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$exec_prefix/plugins\\\""
+		;;
 	*)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 		;;
