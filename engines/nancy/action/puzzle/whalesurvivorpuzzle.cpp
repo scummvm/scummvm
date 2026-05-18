@@ -422,11 +422,9 @@ void WhaleSurvivorPuzzle::execute() {
 			break;
 
 		case kHitAnimation:
-			// Waiting for player to click – handled in handleInput.
-			// If no lives remain, proceed directly to game over.
-			if (_lives <= 0) {
-				_gameState = kWinScreen;
-			}
+			// Show the "Oh no! Try again" overlay and wait for the player
+			// to click Start (full restart via kTryAgain) or Quit (loss
+			// scene). Both transitions are handled in handleInput().
 			redraw();
 			break;
 
