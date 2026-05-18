@@ -288,6 +288,9 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	tabWidth = chunkStream->readUint16LE();
 	pageScrollPercent = chunkStream->readUint16LE(); // Not implemented yet
 
+	if (g_nancy->getGameType() >= kGameTypeNancy10)
+		chunkStream->skip(8);	// TODO: 4 new uint16 fields (values: 8, 9, 4, 75 in Nancy10)
+
 	Graphics::PixelFormat format = g_nancy->_graphics->getInputPixelFormat();
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		byte r, g, b;
@@ -298,9 +301,6 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		textBackground =			(r << format.rShift) |
 									(g << format.gShift) |
 									(b << format.bShift);
-
-		if (g_nancy->getGameType() >= kGameTypeNancy10)
-			chunkStream->skip(1);
 
 		r = chunkStream->readByte();
 		g = chunkStream->readByte();
