@@ -27,7 +27,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 // word search game
@@ -53,8 +53,8 @@ void FoolGame::wordSearchRun() {
 				this->var_i16_68c + this->arr_i16_1eb8[0xc] - 1
 			);
 		// 131:00d4
-		} while (g_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[0xb], this->arr_i16_1eb8[6]));
-	} while (g_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[0xb], this->arr_i16_1eb8[6]));
+	} while (_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
 	// 131:0134
 	this->var_i16_484 = 0;
 
@@ -69,12 +69,12 @@ void FoolGame::wordSearchRun() {
 	// total hidden word count
 	this->var_i16_198e = puzzlesReadShort();
 	if (_activePuzzleBuffer.empty()) { // was: str(191)
-		_activePuzzleBuffer = g_zbasic->space(this->var_i16_198e).encode(Common::kMacRoman);
+		_activePuzzleBuffer = _zbasic->space(this->var_i16_198e).encode(Common::kMacRoman);
 	} else {
 		// 131:01f2
-		this->arr_i16_4758[0] = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, this->var_i16_198e + 1, 2));
+		this->arr_i16_4758[0] = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, this->var_i16_198e + 1, 2));
 		for (int i = 1; i <= this->arr_i16_4758[0]; i++) {
-			this->arr_i16_4758[i] = g_zbasic->decodeInt(g_zbasic->midStr(
+			this->arr_i16_4758[i] = _zbasic->decodeInt(_zbasic->midStr(
 				_activePuzzleBuffer,
 				this->var_i16_198e + 1 + i*2,
 				2
@@ -107,7 +107,7 @@ void FoolGame::wordSearchRun() {
 	this->var_i16_1990 = 0;
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->var_i16_198e; i++) {
-		this->arr_i16_3738[i] = g_zbasic->castInt(g_zbasic->midStr(_activePuzzleBuffer, i, 1));
+		this->arr_i16_3738[i] = _zbasic->castInt(_zbasic->midStr(_activePuzzleBuffer, i, 1));
 		if (this->arr_i16_3738[i] != 0) {
 			this->var_i16_1990++;
 		}
@@ -116,22 +116,22 @@ void FoolGame::wordSearchRun() {
 	// 131:039e
 	this->var_i16_1992 = 1;
 	do {
-		g_zbasic->indexSet(puzzlesReadString(), 1, this->var_i16_1992 + this->var_i16_198e);
-		g_zbasic->indexSet(g_zbasic->str(192), 1, this->var_i16_1992); // blank string
+		_zbasic->indexSet(puzzlesReadString(), 1, this->var_i16_1992 + this->var_i16_198e);
+		_zbasic->indexSet(_zbasic->str(192), 1, this->var_i16_1992); // blank string
 		this->var_i16_484 = 1;
 		do {
-			this->var_str_384 = g_zbasic->midStr(
-				g_zbasic->index(1, this->var_i16_1992 + this->var_i16_198e),
+			this->var_str_384 = _zbasic->midStr(
+				_zbasic->index(1, this->var_i16_1992 + this->var_i16_198e),
 				this->var_i16_484,
 				1
 			);
 			// 131:0418
-			if (this->var_str_384 != g_zbasic->str(193)) { // string
-				g_zbasic->indexSet(g_zbasic->index(1, this->var_i16_1992) + this->var_str_384, 1, this->var_i16_1992);
+			if (this->var_str_384 != _zbasic->str(193)) { // string
+				_zbasic->indexSet(_zbasic->index(1, this->var_i16_1992) + this->var_str_384, 1, this->var_i16_1992);
 			}
 			// 131:045c
 			this->var_i16_484++;
-		} while ((int16)(g_zbasic->index(1, this->var_i16_1992 + this->var_i16_198e).size()) >= this->var_i16_484);
+		} while ((int16)(_zbasic->index(1, this->var_i16_1992 + this->var_i16_198e).size()) >= this->var_i16_484);
 
 		// 131:0480
 		this->var_i16_1992++;
@@ -141,10 +141,10 @@ void FoolGame::wordSearchRun() {
 	g_toolbox->PenNormal();
 	this->var_str_384 = this->var_str_188e;
 	this->wordSearchDrawFooter();
-	g_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], Graphics::kMacFontRegular, kSrcOr);
 	g_toolbox->PenPat(_patterns[1]);
 	g_toolbox->PenMode(kPatBic);
-	g_zbasic->unk_20();
+	_zbasic->unk_20();
 	// 131:04e0
 	for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
 		this->var_str_1994 = puzzlesReadString().decode(Common::kMacRoman);
@@ -159,8 +159,8 @@ void FoolGame::wordSearchRun() {
 		// 131:05b0
 		for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 			this->var_i16_1574 = i + (j - 1) * this->arr_i16_1eb8[0];
-			this->var_str_384 = g_zbasic->midStr(this->var_str_1994, i, 1);
-			this->arr_i16_3b38[i*32 + j] = g_zbasic->asc(this->var_str_384);
+			this->var_str_384 = _zbasic->midStr(this->var_str_1994, i, 1);
+			this->arr_i16_3b38[i*32 + j] = _zbasic->asc(this->var_str_384);
 
 			g_toolbox->MoveTo(
 				_screenGrid[this->var_i16_1574].left + this->arr_i16_1eb8[2] - 1,
@@ -179,21 +179,21 @@ void FoolGame::wordSearchRun() {
 	g_toolbox->PenNormal();
 	if ((this->var_i16_1990 > 0) && (this->var_i16_1990 < this->var_i16_198e)) {
 		// only X to go
-		this->var_str_384 = g_zbasic->str(194) + Common::U32String::format(" %d", this->var_i16_198e - this->var_i16_1990) + g_zbasic->str(195);
+		this->var_str_384 = _zbasic->str(194) + Common::U32String::format(" %d", this->var_i16_198e - this->var_i16_1990) + _zbasic->str(195);
 		this->wordSearchDrawFooter();
 	}
 	// 131:077a
 	this->var_str_9f4 = Common::U32String::format(" %d", this->var_i16_198e);
 	if (_activePuzzle != 0x50) {
 		// There are X words hidden below
-		this->var_str_384 = g_zbasic->str(196) + this->var_str_9f4 + g_zbasic->str(197);
-		g_zbasic->menu(8, 3, 1, this->var_str_384);
-		g_zbasic->menu(8, 4, 1, g_zbasic->str(198));
+		this->var_str_384 = _zbasic->str(196) + this->var_str_9f4 + _zbasic->str(197);
+		_zbasic->menu(8, 3, 1, this->var_str_384);
+		_zbasic->menu(8, 4, 1, _zbasic->str(198));
 	} else {
 	// 131:07f8
-		this->var_str_384 = g_zbasic->str(199) + this->var_str_9f4 + g_zbasic->str(200);
-		g_zbasic->menu(8, 3, 1, this->var_str_384);
-		g_zbasic->menu(8, 4, 1, g_zbasic->str(201));
+		this->var_str_384 = _zbasic->str(199) + this->var_str_9f4 + _zbasic->str(200);
+		_zbasic->menu(8, 3, 1, this->var_str_384);
+		_zbasic->menu(8, 4, 1, _zbasic->str(201));
 	}
 	// 131:084c
 	_stateFlags = kStateNull;
@@ -220,7 +220,7 @@ void FoolGame::wordSearchRun() {
 void FoolGame::wordSearchOnClick() {
 	// 131:08aa
 	this->var_i16_1a94 = 0; // length of word selected
-	this->var_str_1070 = g_zbasic->str(202); // blank
+	this->var_str_1070 = _zbasic->str(202); // blank
 	this->var_i16_1a96 = -1;
 	this->var_i16_1a98 = -1;
 
@@ -234,7 +234,7 @@ void FoolGame::wordSearchOnClick() {
 			this->var_i16_1574 = this->var_i16_68a + (this->var_i16_68c - 1)*this->arr_i16_1eb8[0];
 			this->var_i16_1a96 = this->var_i16_68a;
 			this->var_i16_1a98 = this->var_i16_68c;
-			this->var_str_1070 += g_zbasic->chr(this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]);
+			this->var_str_1070 += _zbasic->chr(this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]);
 			g_toolbox->InvertRect(_screenGrid[this->var_i16_1574]);
 			this->var_i16_1a94++;
 			// 131:09c4
@@ -266,7 +266,7 @@ void FoolGame::wordSearchOnClick() {
 	// 131:0aa0
 	// check selected string against the remaining word list
 	for (int i = 1; i <= this->var_i16_198e; i++) {
-		if ((this->var_str_1070 == g_zbasic->index(1, i)) && (this->arr_i16_3738[i] == 0)) {
+		if ((this->var_str_1070 == _zbasic->index(1, i)) && (this->arr_i16_3738[i] == 0)) {
 			// 131:0ae0
 			this->var_i16_1a9a = i;
 			this->arr_i16_3738[i] = 1;
@@ -284,7 +284,7 @@ void FoolGame::wordSearchOnClick() {
 	// for every letter in the word
 	for (int i = 1; i <= this->var_i16_1a94; i++) {
 		// play a tone
-		this->sub_128_50e(0xa + g_zbasic->rndInt(0x3e8), 0x28, 1);
+		this->sub_128_50e(0xa + _zbasic->rndInt(0x3e8), 0x28, 1);
 		// 131:0b54
 		// remove the inverted square
 		g_toolbox->InvertRect(_screenGrid[this->arr_i16_4338[i]]);
@@ -300,12 +300,12 @@ void FoolGame::wordSearchOnClick() {
 	g_toolbox->PenNormal();
 	this->var_i16_1990++;
 	if (this->var_i16_1990 == this->var_i16_198e) {
-		this->var_str_384 = g_zbasic->str(203); // blank
+		this->var_str_384 = _zbasic->str(203); // blank
 		this->wordSearchDrawFooter();
 		return;
 	}
 	// 131:0c64
-	this->var_str_384 = g_zbasic->index(1, this->var_i16_1a9a + this->var_i16_198e) + g_zbasic->str(204) + Common::U32String::format(" %d", this->var_i16_198e - this->var_i16_1990) + g_zbasic->str(205);	// WORD... only X to go
+	this->var_str_384 = _zbasic->index(1, this->var_i16_1a9a + this->var_i16_198e) + _zbasic->str(204) + Common::U32String::format(" %d", this->var_i16_198e - this->var_i16_1990) + _zbasic->str(205);	// WORD... only X to go
 	this->wordSearchDrawFooter();
 	this->sub_128_6186();
 }
@@ -328,17 +328,17 @@ void FoolGame::wordSearchBadSelect() {
 void FoolGame::wordSearchDrawFooter() {
 	// 131:0d22
 	this->fillRect(0x13b, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
-	g_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+	_zbasic->text(0xfa, 0xc, 0, kSrcBic);
 	this->var_i16_7a2 = 0x152;
 	this->sub_128_918(this->var_str_384);
 }
 
 void FoolGame::wordSearchStoreState() {
 	// 131:0d66
-	_activePuzzleBuffer = g_zbasic->str(206); // empty
+	_activePuzzleBuffer = _zbasic->str(206); // empty
 	for (int i = 1; i <= this->var_i16_198e; i++) {
 		this->var_str_384 = Common::U32String::format("%d", this->arr_i16_3738[i]);
-		_activePuzzleBuffer += g_zbasic->rightStr(this->var_str_384, 1);
+		_activePuzzleBuffer += _zbasic->rightStr(this->var_str_384, 1);
 	}
 	// 131:0dd6
 	this->var_i16_484 = 0;
@@ -365,7 +365,7 @@ void FoolGame::wordSearchStoreState() {
 	debugC(5, kDebugLoading, "wordSearchStoreState:");
 	for (int i = 0; i <= this->arr_i16_4758[0]; i++) {
 		debugCN(5, kDebugLoading, "%04x ", this->arr_i16_4758[i]);
-		_activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_4758[i]);
+		_activePuzzleBuffer += _zbasic->encodeInt(this->arr_i16_4758[i]);
 	}
 }
 
@@ -376,7 +376,7 @@ void FoolGame::wordSearchSuccess() {
 	}
 	// 131:0f52
 	this->sub_128_69c(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
-	g_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], 0, kSrcOr);
+	_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], 0, kSrcOr);
 	for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
 		for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 			if (this->arr_i16_2f38[i*32 + j] != 0) {
@@ -388,7 +388,7 @@ void FoolGame::wordSearchSuccess() {
 					_screenGrid[this->var_i16_1574].top + this->arr_i16_1eb8[3]
 				);
 				// 131:107a
-				this->var_str_384 = g_zbasic->chr(this->arr_i16_3b38[i*32 + j]);
+				this->var_str_384 = _zbasic->chr(this->arr_i16_3b38[i*32 + j]);
 				g_toolbox->DrawString(this->var_str_384);
 			}
 			// 131:10b0

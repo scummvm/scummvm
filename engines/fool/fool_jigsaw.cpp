@@ -28,7 +28,7 @@
 
 namespace Fool {
 
-extern ZBasic *g_zbasic;
+;
 extern Toolbox *g_toolbox;
 
 // jigsaw puzzle game
@@ -48,7 +48,7 @@ void FoolGame::jigsawRun() {
 	}
 	// 132:00a2
 	this->arr_i32_192c0[0] = g_toolbox->GetPicture(this->var_i16_1066);
-	g_zbasic->picture(0, 0x14, this->arr_i32_192c0[0]);
+	_zbasic->picture(0, 0x14, this->arr_i32_192c0[0]);
 	g_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
 	this->var_i16_1aa0 = 4 + ((this->arr_i16_1eb8[12] + 1)*2) * ((this->arr_i16_1eb8[13]+0x10)/0x10);
 	// 132:0136
@@ -69,20 +69,20 @@ void FoolGame::jigsawRun() {
 			//this->var_i16_1aa2 = 0x2af8 + this->var_i16_1aa0*(this->arr_i16_3738[this->var_i16_484] - 1);
 			// 132:0216
 			_jigsawPieces[this->arr_i16_3738[this->var_i16_484]] = BitMap(new Graphics::ManagedSurface());
-			g_zbasic->get(
+			_zbasic->get(
 				_screenGrid[this->var_i16_484].left,
 				_screenGrid[this->var_i16_484].top,
 				_screenGrid[this->var_i16_484].right,
 				_screenGrid[this->var_i16_484].bottom,
 				_jigsawPieces[this->arr_i16_3738[this->var_i16_484]]
 			);
-		} while (g_zbasic->incrAndCheck(
+		} while (_zbasic->incrAndCheck(
 			this->var_i16_68a,
 			this->arr_i16_1eb8[11],
 			this->arr_i16_1eb8[6]
 		));
 	// 132:02dc
-	} while (g_zbasic->incrAndCheck(
+	} while (_zbasic->incrAndCheck(
 		this->var_i16_68c,
 		this->arr_i16_1eb8[9],
 		this->arr_i16_1eb8[7]
@@ -99,9 +99,9 @@ void FoolGame::jigsawRun() {
 	// rearrange picture tiles to match state
 	if (!_activePuzzleBuffer.empty()) { // was: str(207)
 		for (int i = 1; i <= this->var_i16_1a9e; i++) {
-			Common::String tileData = g_zbasic->midStr(_activePuzzleBuffer, i*2 - 1, 2);
-			this->arr_i16_3738[i] = g_zbasic->decodeInt(tileData);
-			g_zbasic->put(
+			Common::String tileData = _zbasic->midStr(_activePuzzleBuffer, i*2 - 1, 2);
+			this->arr_i16_3738[i] = _zbasic->decodeInt(tileData);
+			_zbasic->put(
 				_screenGrid[i].left,
 				_screenGrid[i].top,
 				_jigsawPieces[this->arr_i16_3738[i]],
@@ -112,7 +112,7 @@ void FoolGame::jigsawRun() {
 	}
 	// 132:0464
 	_stateFlags = kStateNull;
-	g_zbasic->menu(8, 3, 0, Common::U32String());
+	_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
 	this->jigsawCheckIfSolved();
 	// JMP 0x4d8
@@ -155,7 +155,7 @@ void FoolGame::jigsawOnClick() {
 	}
 	// 132:059c
 	_menuDisabled = true;
-	g_zbasic->menu(8, 3, 0, Common::U32String());
+	_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(3, 3);
 	g_toolbox->PenMode(kPatXor);
@@ -181,7 +181,7 @@ void FoolGame::jigsawOnClick() {
 	this->jigsawDropSelected();
 	this->jigsawCheckIfSolved();
 	this->sub_128_6186();
-	g_zbasic->menu(8, 3, 1, Common::U32String());
+	_zbasic->menu(8, 3, 1, Common::U32String());
 	_menuDisabled = false;
 }
 
@@ -286,10 +286,10 @@ void FoolGame::jigsawMoveSelected() {
 void FoolGame::jigsawCancelSelect() {
 	// 132:0e5a
 	_stateFlags = kStateNull;
-	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
-	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
-	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
-	g_zbasic->swapInt(this->arr_i16_4758[7], this->arr_i16_4758[9]);
+	_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
+	_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
+	_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
+	_zbasic->swapInt(this->arr_i16_4758[7], this->arr_i16_4758[9]);
 	jigsawDropSelected();
 }
 
@@ -343,7 +343,7 @@ void FoolGame::jigsawDropSelected() {
 			// 132:10ba
 			// 0x2af8, this->var_i16_1aa0 * (this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]] - 1)
 			// blit tiles to screen
-			g_zbasic->put(
+			_zbasic->put(
 				_screenGrid[this->arr_i16_2f38[i*32 + j]].left,
 				_screenGrid[this->arr_i16_2f38[i*32 + j]].top,
 				_jigsawPieces[this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]],
@@ -362,7 +362,7 @@ void FoolGame::jigsawDropSelected() {
 				this->var_i16_1aa6++;
 				debug(8, "(%d, %d) [src]: %d <- buffer 2", i, j, this->arr_i16_3738[this->var_i16_1aa6]);
 				this->arr_i16_3738[this->arr_i16_2f38[i*32+j]] = this->arr_i16_3738[this->var_i16_1aa6];
-				g_zbasic->put(
+				_zbasic->put(
 					_screenGrid[this->arr_i16_2f38[i*32+j]].left,
 					_screenGrid[this->arr_i16_2f38[i*32+j]].top,
 					_jigsawPieces[this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]],
@@ -377,9 +377,9 @@ void FoolGame::jigsawDropSelected() {
 void FoolGame::jigsawStoreState() {
 	// convert jigsaw positions to string
 	// 132:1384
-	_activePuzzleBuffer = g_zbasic->str(208);
+	_activePuzzleBuffer = _zbasic->str(208);
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
-		_activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_3738[i]);
+		_activePuzzleBuffer += _zbasic->encodeInt(this->arr_i16_3738[i]);
 	}
 }
 

@@ -30,6 +30,8 @@
 
 namespace Fool {
 
+class ZBasic;
+
 enum FoolStateBits : uint16 {
 	kStateNull = 0x00,
 	kStateReturn = 0x01,
@@ -41,6 +43,7 @@ enum FoolStateBits : uint16 {
 	kStateChapterSelect = 0x40,
 	kStatePuzzleSelect = 0x80,
 	kStateMetapuzzleSelect = 0x100,
+	kStatePrintStory = 0x400,
 	kStateMetapuzzleComplete = 0x800,
 };
 
@@ -131,6 +134,7 @@ public:
 	void sub_128_41d8();
 	void sub_128_4472();
 	void menuAbout(); // sub_128_4a92
+	void menuPrologue();
 
 	void shipsRun(); // sub_128_5140
 	void sub_128_55ac();
@@ -413,6 +417,7 @@ public:
 
 
 private:
+	ZBasic *_zbasic;
 	bool _quit = false;
 
 	GrafPtr var_i32_0;
