@@ -83,7 +83,7 @@ void FoolGame::revealRun() {
 	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
-		this->sub_128_50e(
+		this->playTone(
 			_zbasic->rndInt(0x3e8) + 0x19,
 			0x28,
 			1

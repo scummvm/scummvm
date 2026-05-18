@@ -173,7 +173,7 @@ void FoolGame::straightPathReset() {
 	for (int16 i = 0; i <= 0x14; i++) {
 		var_i16_1574 = _zbasic->rndInt(arr_i16_1eb8[0] * arr_i16_1eb8[1]);
 		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
-		sub_128_50e(_zbasic->rndInt(0x2328) + 0xf, 0x28, 0x1);
+		playTone(_zbasic->rndInt(0x2328) + 0xf, 0x28, 0x1);
 		// 143:0812
 		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 	}

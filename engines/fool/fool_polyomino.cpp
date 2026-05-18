@@ -389,7 +389,7 @@ void FoolGame::polyominoOnClick() {
 
 void FoolGame::polyominoCancelMove() {
 	// 133:0eb2
-	this->sub_128_50e(0x14, 0x64, 0);
+	this->playTone(0x14, 0x64, 0);
 	this->var_i16_68a = this->arr_i16_47d8[this->var_i16_7cc*8 + 3];
 	this->var_i16_68c = this->arr_i16_47d8[this->var_i16_7cc*8 + 4];
 
@@ -433,7 +433,7 @@ void FoolGame::polyominoOnClickFixed() {
 	this->var_i16_484 = _screenGrid[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].left;
 	this->var_i16_7e4 = _screenGrid[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].top;
 	// play bass tone
-	this->sub_128_50e(0x14, 0x64, 0);
+	this->playTone(0x14, 0x64, 0);
 	// why do this???
 	// best guess: flashing the shape a few times before knocking it back
 	// 133:1188

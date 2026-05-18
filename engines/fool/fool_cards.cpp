@@ -213,13 +213,13 @@ void FoolGame::cardsOnClick() {
 				return;
 			// 139:0778
 			// player clicked the yield button (bad choice)
-			this->sub_128_50e(0x19, 0x64, 0x0);
+			this->playTone(0x19, 0x64, 0x0);
 			this->var_i16_2012 = -CARDS_YIELD_PENALTY;
 			this->cardsDrawScores();
 			this->var_i16_2014 = 1;
 		} else {
 			// 139:079e
-			this->sub_128_50e(0xf, 0x64, 0x1);
+			this->playTone(0xf, 0x64, 0x1);
 			for (int j = 0; j <= 1; j++) {
 				for (int16 i = 0; i <= 0x3; i++) {
 					this->drawTarotCard(i, 0, 3);
@@ -384,7 +384,7 @@ void FoolGame::sub_139_a22() {
 void FoolGame::cardsOpponentYields() {
 	// 139:0da8
 	// ol' mate gives up
-	this->sub_128_50e(0x19, 0x64, 0x1);
+	this->playTone(0x19, 0x64, 0x1);
 	this->var_i16_2012 = -CARDS_YIELD_PENALTY;
 	this->cardsDrawScores();
 	_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
