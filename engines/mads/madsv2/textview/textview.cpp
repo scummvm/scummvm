@@ -408,8 +408,10 @@ static void animate() {
 			timer1 = curr_time + peel_time;
 			curr_time = timer_read();
 
-			if (curr_time < timer2)
+			if (curr_time < timer2) {
 				matte_frame(0, 0);
+				mouse_hide();
+			}
 		}
 
 		if (curr_time >= timer2) {
@@ -433,6 +435,8 @@ static void animate() {
 				isGoing = false;
 
 			matte_frame(has_background ? 2 : 0, 0);
+			mouse_hide();
+
 			flag3 = has_background = false;
 			timer2 = curr_time + 6;
 		}
@@ -460,6 +464,7 @@ void textview_main(const char *resName) {
 	// Clear the screen
 	auto &screen = *g_engine->getScreen();
 	screen.clear();
+	mouse_hide();
 
 	// Open the text resource file
 	Common::String fname = Common::String::format("*%s.txr", resName);

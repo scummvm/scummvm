@@ -606,6 +606,7 @@ void animview_main(const char *resName) {
 
 	pack_enable_pfab_explode();
 	(void)env_verify();
+	mouse_hide();
 
 	Common::strcpy_s(name, resName);
 	if (*name == '@') {

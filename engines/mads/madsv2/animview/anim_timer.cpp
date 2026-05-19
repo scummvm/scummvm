@@ -25,6 +25,7 @@
 #include "mads/madsv2/core/cycle.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mcga.h"
+#include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/engine.h"
@@ -90,6 +91,7 @@ void anim_timer() {
 
 			if (currTimer < timer1) {
 				matte_frame(runFx, false);
+				mouse_hide();
 			}
 		}
 
@@ -226,6 +228,7 @@ block2:
 	}
 
 	matte_frame(runFx, 0);
+	mouse_hide();
 
 block3:
 	if (runFx) {
