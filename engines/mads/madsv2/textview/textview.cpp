@@ -457,6 +457,11 @@ void textview_main(const char *resName) {
 	background_ptr = nullptr;
 	xPos = 0;
 
+	// Clear the screen
+	auto &screen = *g_engine->getScreen();
+	screen.clear();
+
+	// Open the text resource file
 	Common::String fname = Common::String::format("*%s.txr", resName);
 	file_handle = env_open(fname.c_str());
 	if (!file_handle)
@@ -495,7 +500,6 @@ void textview_main(const char *resName) {
 	timer_activate_low_priority(cycle_colors);
 
 	// Draw boundary horizontal lines at top and bottom of the screen
-	auto &screen = *g_engine->getScreen();
 	if (viewing_at_y) {
 		screen.hLine(0, viewing_at_y - 2, 319, 2);
 		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 2);
