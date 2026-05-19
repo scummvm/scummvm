@@ -278,6 +278,9 @@ public:
 
 private:
 	void applyStartupTestOverrides();
+	bool areMysteriesSolved(uint lo, uint hi) const;
+	void advanceChainStageAfterSolve(uint mysteryNum);
+	void applySkipRepeatedCasesOption();
 
 	/// Central dispatch loop matching `_ScreenDriver @ 1a35:0dc1`. Each
 	/// iteration calls the handler that matches `_nextScreen`; handlers

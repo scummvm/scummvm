@@ -55,6 +55,17 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_SKIP_REPEATED_CASES,
+		{
+			_s("Skip repeated cases"),
+			_s("Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."),
+			"skip_repeated_cases",
+			false,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

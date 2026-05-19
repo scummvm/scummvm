@@ -4281,38 +4281,7 @@ void EEMEngine::doAccuse() {
 
 		// Chain advance @ 1df2:0824-0850. Skip mystery 0 (practice).
 		// stage 1: 1..0x18, stage 2: 0x19..0x30, stage 3: 0x31..0x36.
-		if (mn != 0) {
-			uint lo = 0;
-			uint hi = 0;
-			switch (_chainStage) {
-			case 1:
-				lo = 1;
-				hi = 0x18;
-				break;
-			case 2:
-				lo = 0x19;
-				hi = 0x30;
-				break;
-			case 3:
-				lo = 0x31;
-				hi = 0x36;
-				break;
-			default:
-				break;
-			}
-			bool allSolved = (hi >= lo);
-			for (uint i = lo; i <= hi && allSolved; i++) {
-				if (i >= sizeof(_mysteriesSolved) || _mysteriesSolved[i] == 0)
-					allSolved = false;
-			}
-			// 1df2:0852 increments past 3 (stage-4 endgame); cap at 4.
-			if (allSolved && _chainStage < 4) {
-				_chainStage++;
-				debugC(1, kDebugMystery,
-					   "chainStage advanced to %u after solving mystery %u",
-					   _chainStage, mn);
-			}
-		}
+		advanceChainStageAfterSolve(mn);
 
 		// `_DisplayCorrect @ 1df2:073c`:
 		//   _AllBlack; _BuildBackground(5, 0x42, 0x14); _FadeIn;
@@ -4738,38 +4707,7 @@ void EEMEngine::doAccuseFloppy() {
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 
 		// Tier promotion @ 1d40:0941..0978. Skip mystery 0 (practice).
-		if (mn != 0) {
-			uint lo = 0;
-			uint hi = 0;
-			switch (_chainStage) {
-			case 1:
-				lo = 1;
-				hi = 0x18;
-				break;
-			case 2:
-				lo = 0x19;
-				hi = 0x30;
-				break;
-			case 3:
-				lo = 0x31;
-				hi = 0x36;
-				break;
-			default:
-				break;
-			}
-			bool allSolved = (hi >= lo);
-			for (uint i = lo; i <= hi && allSolved; i++) {
-				if (i >= sizeof(_mysteriesSolved) ||
-					_mysteriesSolved[i] == 0)
-					allSolved = false;
-			}
-			if (allSolved && _chainStage < 4) {
-				_chainStage++;
-				debugC(1, kDebugMystery,
-					   "chainStage advanced to %u after solving mystery %u",
-					   _chainStage, mn);
-			}
-		}
+		advanceChainStageAfterSolve(mn);
 
 		// `MakeSolvedSound`. `FUN_1d40_05b7` maps E<num>.BIN byte 0 (0..2)
 		// via table @ 2608:0c5e to VOC slots 0x15/0x16/0x17.
