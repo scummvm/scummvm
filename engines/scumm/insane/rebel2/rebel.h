@@ -399,6 +399,13 @@ public:
 	// flags: bit 1 = add random unkilled types, bit 0 = limit credits to 2 (else 8)
 	uint16 processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags);
 
+	// Play a raw SAN segment from a scripted level handler.
+	// Retail reaches these call sites through different wrappers/direct paths; this
+	// only collapses ScummVM's shared dispatch step. Callers still choose the original
+	// flags and when to call processWaveEnd(). recordFrame preserves the original
+	// split between gameplay/wave calls and transition/init-only segments.
+	bool playLevelSegment(const char *filename, uint16 flags, bool recordFrame = true);
+
 	// Random number helper (emulates FUN_004233a0)
 	int getRandomVariant(int max);
 
