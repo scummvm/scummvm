@@ -444,6 +444,9 @@ Common::SeekableReadStream *env_open(const char *filename, const char *options) 
 		index_handle = NULL;
 
 	} else {
+		if (!Common::File::exists(load_file))
+			goto done;
+
 		Common::File *f = new Common::File();
 		f->open(load_file);
 		handle = f;

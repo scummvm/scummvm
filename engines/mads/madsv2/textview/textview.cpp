@@ -30,6 +30,7 @@
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/room.h"
 #include "mads/madsv2/core/timer.h"
+#include "mads/madsv2/core/video.h"
 #include "mads/madsv2/textview/textview.h"
 #include "mads/madsv2/engine.h"
 
@@ -61,9 +62,45 @@ static bool spare[3];
 static Buffer room_picture[3];
 static Buffer *background_ptr;
 static int16 xPos;
+static byte line_slice[156];
+
+static void read_line_slice(int xp) {
+	const byte *src = buffer_pointer(background_ptr, xp, 0);
+	byte *dest = line_slice;
+	for (int y = 0; y < 156; ++y, ++dest, src += background_ptr->x)
+		*dest = *src;
+}
+
+static void write_line_slice(int xp) {
+	byte *src = buffer_pointer(&scr_orig, xp, 0);
+	byte *dest = buffer_pointer(&scr_work, xp, 0);
+	const byte *ref = line_slice;
+	byte srcV, destV;
+
+	for (int y = 0; y < 156; ++y, src += 320, dest += 320, ++ref) {
+		srcV = *src;
+		destV = *dest;
+		*src = *ref;
+
+		if (srcV == destV)
+			*dest = *ref;
+	}
+}
 
 static void textview_timer() {
-	// TODO
+	long timer = timer_read();
+
+	if (flag4 && timer >= timer3) {
+		if (xPos >= 320) {
+			flag4 = false;
+		} else {
+			read_line_slice(xPos);
+			write_line_slice(xPos);
+			video_update(&scr_work, xPos, 0, xPos, viewing_at_y, 1, 156);
+			++xPos;
+			timer3 = timer + 1;
+		}
+	}
 }
 
 static void strip_linefeed(char *line) {
@@ -208,7 +245,7 @@ static void handle_command() {
 	*end = '\0';
 
 	// Copy out the command
-	Common::strcpy_s(command_buffer, line_buffer);
+	Common::strcpy_s(command_buffer, line_buffer + 1);
 	mads_strupr(command_buffer);
 
 	*end = endChar;
@@ -345,7 +382,7 @@ static void animate() {
 			if (flag3)
 				continue;
 
-			if (flag2 && file_handle->eos() && !isEnd) {
+			if (flag2 && !file_handle->eos() && !isEnd) {
 				Common::String s = file_handle->readLine();
 				Common::strcpy_s(line_buffer, s.c_str());
 				strip_linefeed(line_buffer);
@@ -420,9 +457,10 @@ void textview_main(const char *resName) {
 	background_ptr = nullptr;
 	xPos = 0;
 
-	file_handle = env_open(resName);
+	Common::String fname = Common::String::format("*%s.txr", resName);
+	file_handle = env_open(fname.c_str());
 	if (!file_handle)
-		error("textview -- failed to open response file : %s", resName);
+		error("textview -- failed to open response file : %s", fname.c_str());
 
 	font_conv = font_load("*fontconv.ff");
 	if (!font_conv)
