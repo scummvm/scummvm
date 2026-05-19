@@ -39,7 +39,7 @@ namespace TextView {
 
 constexpr int LINES_COUNT = 20;
 struct TextViewLine {
-	bool active;
+	int16 active;
 	int16 x, y;
 	char text[80];
 };
@@ -47,13 +47,24 @@ struct TextViewLine {
 Common::SeekableReadStream *file_handle;
 static Room *room;
 static TextViewLine lines[LINES_COUNT];
-static bool isGoing, active, flag2, flag3, isEnd;
-static bool flag5;
-static long timer1, timer2, curr_time;
+static bool isGoing, active, flag2, flag3;
+static bool flag4, flag5, isEnd;
+static int16 font_auto_spacing;
+static long timer1, timer2, timer3, curr_time;
 static char line_buffer[80];
+static char command_buffer[80];
 static bool has_background, pan_flag;
-static int peel_time, peel_x, peel_y;
-static int text_x, text_y;
+static int16 peel_time, peel_x, peel_y;
+static int16 text_x, text_y;
+static int16 room_id;
+static bool spare[3];
+static Buffer room_picture[3];
+static Buffer *background_ptr;
+static int16 xPos;
+
+static void textview_timer() {
+	// TODO
+}
 
 static void strip_linefeed(char *line) {
 	char *lf = strrchr(line, '\n');
@@ -69,16 +80,230 @@ static void trim_right(char *line) {
 	Common::strcpy_s(line, 80, s.c_str());
 }
 
-static void handle_command() {
+static bool check_command(const char *cmd, const char **value = nullptr) {
+	size_t len = strlen(cmd);
+	if (value)
+		*value = command_buffer + len;
 
+	return strncmp(command_buffer, cmd, len) == 0;
+}
+
+static void find_number(const char *&value) {
+	while (*value && !Common::isDigit(*value))
+		++value;
+}
+
+static void find_next_number(const char *&value) {
+	if (*value) {
+		while (*value && *value != ',')
+			++value;
+	}
+	if (*value) {
+		while (*value && !Common::isDigit(*value))
+			++value;
+	}
+}
+
+static void load_background(const char *value) {
+	find_number(value);
+	room_id = atoi(value);
+	has_background = true;
+	flag5 = false;
+	active = false;
+
+	pal_init(8, 8);
+	pal_white(master_palette);
+	master_palette[5].r = 0;
+	master_palette[5].g = 63;
+	master_palette[5].b = 63;
+	master_palette[6].r = 0;
+	master_palette[6].g = 45;
+	master_palette[6].b = 45;
+
+	room = room_load(room_id, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
+		&scr_special, &picture_map, &depth_map, &picture_resource,
+		&depth_resource, -1, -1, 0);
+	if (!room)
+		error("Could not load room %d", room_id);
+
+	image_marker = 1;
+	image_list[0].flags = IMAGE_REFRESH;
+	image_list[0].segment_id = 0xff;
+}
+
+static void pan(const char *value) {
+	find_number(value);
+	peel_x = atoi(value);
+	find_next_number(value);
+	peel_y = atoi(value);
+	find_next_number(value);
+	peel_time = atoi(value);
+
+	pan_flag = peel_x != 0 || peel_y != 0;
+}
+
+static void sound_driver(const char *value) {
+	g_engine->_soundManager->removeDriver();
+
+	char num = value[strlen(value) - 1];
+	if (Common::isDigit(num))
+		g_engine->_soundManager->init(num - '0');
+}
+
+static void play_sound(const char *value) {
+	find_number(value);
+	int num = atoi(value);
+
+	if (g_engine->_soundManager->isLoaded())
+		g_engine->_soundManager->command(num);
+}
+
+static void set_color(int index, const char *value) {
+	find_number(value);
+	master_palette[5 + index].r = atoi(value);
+	find_next_number(value);
+	master_palette[5 + index].g = atoi(value);
+	find_next_number(value);
+	master_palette[5 + index].b = atoi(value);
+
+	mcga_setpal_range(&master_palette, 5 + index, 1);
+}
+
+static void set_spare(const char *value) {
+	find_number(value);
+	int index = atoi(value);
+	find_next_number(value);
+	int roomId = atoi(value);
+
+	if (spare[index]) {
+		buffer_free(&room_picture[index]);
+		spare[index] = false;
+	}
+
+	spare[index] = room_picture_load(roomId, &room_picture[index], 0) == 0;
+}
+
+static void set_page(const char *value) {
+	find_number(value);
+	int index = atoi(value);
+
+	if (spare[index] && !flag4) {
+		background_ptr = &room_picture[index];
+		flag4 = true;
+		xPos = 0;
+		timer3 = timer_read();
+		timer_activate_low_priority(textview_timer);
+	}
+}
+
+static void handle_command() {
+	const char *value = nullptr;
+
+	// Get end of command
+	*command_buffer = '\0';
+	char *end = strchr(line_buffer, ']');
+	if (!end)
+		end = line_buffer + strlen(line_buffer);
+	char endChar = *end;
+	*end = '\0';
+
+	// Copy out the command
+	Common::strcpy_s(command_buffer, line_buffer);
+	mads_strupr(command_buffer);
+
+	*end = endChar;
+	if (endChar)
+		Common::strcpy_s(line_buffer, end + 1);
+
+	if (check_command("BACKGROUND", &value))
+		load_background(value);
+	if (check_command("GO"))
+		active = true;
+	if (check_command("PAN", &value))
+		pan(value);
+	if (check_command("DRIVER", &value))
+		sound_driver(value);
+	if (check_command("SOUND", &value))
+		play_sound(value);
+	if (check_command("COLOR0", &value))
+		set_color(0, value);
+	if (check_command("COLOR1", &value))
+		set_color(1, value);
+	if (check_command("SPARE", &value))
+		set_spare(value);
+	if (check_command("PAGE", &value))
+		set_page(value);
 }
 
 static void position_line() {
+	char tmp_buf[84];
 
+	if ((int)font_conv->max_y_size + text_y + 2 >= 156)
+		return;
+
+	// Split line_buffer at first '[' (start of commands) or at the null terminator
+	char *split = strchr(line_buffer, '[');
+	if (!split)
+		split = line_buffer + strlen(line_buffer);
+
+	// Copy text portion (before split) to tmp_buf, then shift remainder to line_buffer start
+	char saved = *split;
+	*split = '\0';
+	Common::strcpy_s(tmp_buf, line_buffer);
+	*split = saved;
+	Common::strcpy_s(line_buffer, split);
+
+	if (!strlen(line_buffer))
+		flag2 = flag3 = true;
+
+	// Handle '@' horizontal-position marker
+	char *at = strchr(tmp_buf, '@');
+	int width;
+	if (at) {
+		*at = '\0';
+		int left_width = font_string_width(font_conv, tmp_buf, font_auto_spacing);
+		memmove(at, at + 1, strlen(at + 1) + 1);
+		if (text_x == -1)
+			text_x = 160 - left_width;
+		width = font_string_width(font_conv, tmp_buf, font_auto_spacing);
+	} else {
+		width = font_string_width(font_conv, tmp_buf, font_auto_spacing);
+		if (text_x == -1)
+			text_x = 160 - width / 2;
+	}
+
+	// Find first inactive slot in lines[]
+	int slot = -1;
+	for (int i = 0; i < LINES_COUNT; ++i) {
+		if (!lines[i].active) {
+			slot = i;
+			break;
+		}
+	}
+
+	if (slot >= 0) {
+		if (text_x < 0 || text_x + width - 1 >= 320)
+			warning("position_line: text out of bounds: text_x=%d width=%d", text_x, width);
+
+		lines[slot].active = -1;
+		lines[slot].x = text_x;
+		lines[slot].y = 155;
+		Common::strcpy_s(lines[slot].text, tmp_buf);
+	}
+
+	text_x = -1;
 }
 
 static void shift_line(int lineNum) {
+	int fontH = font_conv->max_y_size;
+	TextViewLine &line = lines[lineNum];
 
+	if ((line.y + fontH) < 0) {
+		line.active = false;
+	} else {
+		matte_add_message(font_conv, line.text, line.x, line.y, 0x605, font_auto_spacing);
+		line.y--;
+	}
 }
 
 static void process_line() {
@@ -174,6 +399,8 @@ static void animate() {
 			flag3 = has_background = false;
 			timer2 = curr_time + 6;
 		}
+
+		g_system->delayMillis(10);
 	} while (isGoing && !g_engine->shouldQuit());
 }
 
@@ -181,10 +408,17 @@ void textview_main(const char *resName) {
 	active = false;
 	isGoing = flag2 = true;
 	isEnd = flag3 = false;
-	timer1 = timer2 = 0;
+	flag4 = false;
+	timer1 = timer2 = timer3 = 0;
 	has_background = pan_flag = false;
 	flag5 = 0;
 	text_x = text_y = 0;
+	font_auto_spacing = -1;
+	room_id = 0;
+	memset(spare, 0, sizeof(spare));
+	memset(&room_picture, 0, sizeof(room_picture));
+	background_ptr = nullptr;
+	xPos = 0;
 
 	file_handle = env_open(resName);
 	if (!file_handle)
