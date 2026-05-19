@@ -615,6 +615,7 @@ void Scene::registerGraphics() {
 	} else {
 		_inventoryPopup.registerGraphics();
 		_notebookPopup.registerGraphics();
+		_cellPhonePopup.registerGraphics();
 	}
 
 	_hotspotDebug.registerGraphics();
@@ -1142,13 +1143,20 @@ void Scene::handleInput() {
 	}
 
 	// We handle the textbox and inventory box first because of their scrollbars, which
-	// need to take highest priority
+	// need to take highest priority. On Nancy 10+ the taskbar-driven popups
+	// (inventory/notebook/cellphone) sit visually on top of the textbox
+	// strip, so they get first crack at input — otherwise a click inside
+	// the popup that overlapped the textbox area could accidentally pick
+	// a conversation response.
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		_inventoryPopup.handleInput(input);
+		_notebookPopup.handleInput(input);
+		_cellPhonePopup.handleInput(input);
+	}
+
 	_textbox.handleInput(input);
 	if (g_nancy->getGameType() <= kGameTypeNancy9) {
 		_inventoryBox.handleInput(input);
-	} else {
-		_inventoryPopup.handleInput(input);
-		_notebookPopup.handleInput(input);
 	}
 
 	// Handle invisible map button
@@ -1206,7 +1214,7 @@ void Scene::handleInput() {
 				_notebookPopup.toggle();
 				break;
 			case kTaskButtonCellphone:
-				// TODO: open cell-phone popup (UICL)
+				_cellPhonePopup.toggle();
 				break;
 			case kTaskButtonHelp:
 				requestStateChange(NancyState::kHelp);
@@ -1277,6 +1285,7 @@ void Scene::initStaticData() {
 	} else {
 		_inventoryPopup.init();
 		_notebookPopup.init();
+		_cellPhonePopup.init();
 	}
 
 	// Init buttons

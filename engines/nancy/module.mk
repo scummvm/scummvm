@@ -57,6 +57,7 @@ MODULE_OBJS = \
   ui/animatedbutton.o \
   ui/button.o \
   ui/clock.o \
+  ui/cellphonepopup.o \
   ui/inventorybox.o \
   ui/inventorypopup.o \
   ui/notebookpopup.o \
