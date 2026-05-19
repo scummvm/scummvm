@@ -117,7 +117,7 @@ void FoolGame::wordSearchRun() {
 	this->var_i16_1992 = 1;
 	do {
 		_zbasic->indexSet(puzzlesReadString(), 1, this->var_i16_1992 + this->var_i16_198e);
-		_zbasic->indexSet(_zbasic->str(192), 1, this->var_i16_1992); // blank string
+		_zbasic->indexSet(Common::U32String(), 1, this->var_i16_1992); // was: str(192)
 		this->var_i16_484 = 1;
 		do {
 			this->var_str_384 = _zbasic->midStr(
@@ -126,7 +126,7 @@ void FoolGame::wordSearchRun() {
 				1
 			);
 			// 131:0418
-			if (this->var_str_384 != _zbasic->str(193)) { // string
+			if (this->var_str_384 != _zbasic->str(193)) { // ' '
 				_zbasic->indexSet(_zbasic->index(1, this->var_i16_1992) + this->var_str_384, 1, this->var_i16_1992);
 			}
 			// 131:045c
@@ -220,7 +220,7 @@ void FoolGame::wordSearchRun() {
 void FoolGame::wordSearchOnClick() {
 	// 131:08aa
 	this->var_i16_1a94 = 0; // length of word selected
-	this->var_str_1070 = _zbasic->str(202); // blank
+	this->var_str_1070.clear(); // was: str(202)
 	this->var_i16_1a96 = -1;
 	this->var_i16_1a98 = -1;
 
@@ -300,7 +300,7 @@ void FoolGame::wordSearchOnClick() {
 	g_toolbox->PenNormal();
 	this->var_i16_1990++;
 	if (this->var_i16_1990 == this->var_i16_198e) {
-		this->var_str_384 = _zbasic->str(203); // blank
+		this->var_str_384 = _zbasic->str(203); // ' '
 		this->wordSearchDrawFooter();
 		return;
 	}
@@ -335,7 +335,7 @@ void FoolGame::wordSearchDrawFooter() {
 
 void FoolGame::wordSearchStoreState() {
 	// 131:0d66
-	_activePuzzleBuffer = _zbasic->str(206); // empty
+	_activePuzzleBuffer.clear(); // was: str(206)
 	for (int i = 1; i <= this->var_i16_198e; i++) {
 		this->var_str_384 = Common::U32String::format("%d", this->arr_i16_3738[i]);
 		_activePuzzleBuffer += _zbasic->rightStr(this->var_str_384, 1);

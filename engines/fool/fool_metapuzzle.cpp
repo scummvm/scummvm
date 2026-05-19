@@ -139,7 +139,7 @@ void FoolGame::sub_138_21e() {
 	temp.right = arr_i16_4d20[offset*4+3];
 	g_toolbox->InvertRect(temp);
 	puzzleLoadContext();
-	sub_128_3fb6();
+	puzzleSetupMenu();
 	sub_128_26f6();
 	sub_128_61ec();
 	if (_activePuzzle == 0x55) {
@@ -253,7 +253,7 @@ void FoolGame::metapuzzleSecretCode() {
 		_metapuzzleSecretCodeCount = 0;
 		var_i16_68a = 1;
 		for (int16 i = 1; i <= (int16)var_str_1272.size(); i++) {
-			if (_zbasic->midStr(var_str_1272, i, 1) != _zbasic->str(273)) {
+			if (_zbasic->midStr(var_str_1272, i, 1) != _zbasic->str(273)) { // ' '
 				_metapuzzleSecretCodeCount++;
 			}
 			// 138:07c2

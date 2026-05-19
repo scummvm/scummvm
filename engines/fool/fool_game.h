@@ -54,9 +54,26 @@ enum FoolPuzzleFlags : uint16 {
 	kFlagMapTile = 0x08,
 };
 
+enum FoolVersion {
+	kFool11 = 1,
+	kFool20 = 2,
+	kFool30 = 3,
+};
+
+enum FoolStrOffset {
+	kOffsetWordSearch,
+	kOffsetJigsaw,
+	kOffsetPolyomino,
+	kOffsetReveal,
+	kOffsetMaze,
+	kOffsetMetapuzzle,
+	kOffsetCards,
+	kOffsetThoth,
+};
+
 class FoolGame {
 public:
-	FoolGame() {}
+	FoolGame(FoolVersion version): _version(version) {}
 	~FoolGame() {}
 
 	void run();
@@ -127,7 +144,7 @@ public:
 	void sub_128_388a();
 	void puzzleRun(); // sub_128_39a0
 	void storyUnlockChapter(); // sub_128_3de6
-	void sub_128_3fb6();
+	void puzzleSetupMenu(); // sub_128_3fb6
 
 	void puzzleLoadContext(); // sub_128_4168
 	void puzzleSaveContext(); // sub_128_41aa
@@ -417,6 +434,7 @@ public:
 
 
 private:
+	FoolVersion _version;
 	ZBasic *_zbasic;
 	bool _quit = false;
 

@@ -29,7 +29,9 @@ namespace Fool {
 ;
 extern Toolbox *g_toolbox;
 
-#define CARDS_MAX_SCORE 700
+// v1.1 and v2.0 have the winning score set to 700.
+// v3.0 revises this to be 666, which I can't dispute is a much cooler score.
+#define CARDS_MAX_SCORE 666
 #define CARDS_MIN_SCORE (-999)
 #define CARDS_YIELD_PENALTY 27
 
@@ -405,7 +407,7 @@ void FoolGame::cardsRevealHands() {
 	_zbasic->indexSet(_zbasic->index(1, 0x27) + _zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
 	// 139:0e70
 	for (int16 i = 1; i <= 2; i++) {
-		_zbasic->indexSet(_zbasic->str(284), 1, i + 0x27);
+		_zbasic->indexSet(Common::U32String(), 1, i + 0x27); // was: str(284)
 		if ((this->arr_i16_1eb8[i] > 0) && (this->arr_i16_1eb8[i] < 9)) {
 			// 139:0ed6
 			_zbasic->indexSet(
@@ -429,7 +431,7 @@ void FoolGame::cardsRevealHands() {
 			i + 0x29
 		);
 		// 139:0fca
-		if (_zbasic->index(1, i + 0x27) == _zbasic->str(287)) { // blank
+		if (_zbasic->index(1, i + 0x27).empty()) { // was: str(287)
 			// 139:0ff0
 			_zbasic->indexSet(
 				_zbasic->index(1, 0x29 + i),
@@ -610,9 +612,9 @@ void FoolGame::sub_139_17fc() {
 	for (int i = 1; i <= 2; i++) {
 		this->arr_i16_1eb8[i + 2] = 0;
 		this->arr_i16_1eb8[i] = 0;
-		_zbasic->indexSet(_zbasic->str(296), 1, 0x25 + i); // blank
-		_zbasic->indexSet(_zbasic->str(297), 1, 0x27 + i); // blank
-		_zbasic->indexSet(_zbasic->str(298), 1, 0x29 + i); // blank
+		_zbasic->indexSet(Common::U32String(), 1, 0x25 + i); // was: str(296)
+		_zbasic->indexSet(Common::U32String(), 1, 0x27 + i); // was: str(297)
+		_zbasic->indexSet(Common::U32String(), 1, 0x29 + i); // was: str(298)
 	}
 }
 
