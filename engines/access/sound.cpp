@@ -398,7 +398,7 @@ void MusicManager::midiPlay() {
 		syncVolume();
 		_isPlaying = true;
 	} else {
-		warning("midiPlay() Unexpected signature 0x%08x, expected 'FORM'", magic);
+		warning("midiPlay() Unexpected signature 0x%08x, expected 'FORM', 'BEmd', or 'MThd'", magic);
 		_isPlaying = false;
 	}
 }

@@ -226,7 +226,7 @@ void NoctropolisRoom::doCommands() {
 		if (_vm->_player->_roomNumber == 59 && _selectCommand == kNoctCmdGetTake && hotspotIndex == 3) {
 			_vm->_scripts->_continuenceFlag = true;
 			_vm->_scripts->_continuenceType = 3;
-			error("TODO: Implement room 59 hack from original?");
+			warning("TODO: Implement room 59 hack from original?");
 		}
 
 		if (hotspotIndex < 0) {
@@ -326,11 +326,6 @@ void NoctropolisRoom::mainAreaLClick() {
 	const Common::Point &mousePos = _vm->_events->_mousePos;
 	const Common::Point pt = _vm->_events->calcRawMouse();
 	const Screen &screen = *_vm->_screen;
-
-	// TODO: For now just add a move-to point for the player.
-	//Player &player = *_vm->_player;
-	//player._moveTo = pt;
-	//player._playerMove = true;
 
 	//if (_selectCommand == -1) {
 	//	player._moveTo = pt;

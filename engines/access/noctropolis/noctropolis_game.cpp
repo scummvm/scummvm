@@ -418,9 +418,6 @@ void NoctropolisEngine::doTravel() {
 	_buffer2.clear();
 	_screen->clearScreen();
 	_room->loadPlayField(0, 0); // MAP.AP
-	// FIXME: This ignores window and probably is just plain wrong?
-	//_buffer1.copyFrom(*_screen);
-	//_buffer2.copyFrom(*_screen);
 	_screen->setPalette();
 	_screen->setIconPalette();
 	_scrollRow = _travScrollRow;
@@ -775,9 +772,6 @@ void NoctropolisEngine::playSuccubusSplit() {
 }
 
 void NoctropolisEngine::playSuccubusAttack() {
-	//warning("FIXME: NoctropolisEngine::playSuccubusAttack - skipping for testing.");
-	//return;
-
 	_midi->stopSong();
 	_midi->loadMusic(98, 4);
 	_midi->midiPlay();

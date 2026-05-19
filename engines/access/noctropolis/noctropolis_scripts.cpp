@@ -172,7 +172,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		_vm->quitGame();
 		break;
 	case 18:
-		warning("TODO: End of demo - show upsell screen?");
+		// End of demo
 		vm->doUpsell();
 		_vm->quitGame();
 		break;
