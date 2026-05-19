@@ -702,6 +702,11 @@ public:
 		bool active;
 	};
 
+	enum ExplosionFrameAdvance {
+		kExplosionAdvanceAfterDraw,
+		kExplosionAdvanceBeforeDraw
+	};
+
 	Explosion _explosions[5];
 	void spawnExplosion(int x, int y, int objectHalfWidth);
 
@@ -906,6 +911,8 @@ public:
 	void spawnShot(int x, int y);          // Dispatcher based on current handler
 
 	// Handler-specific explosion rendering
+	void renderExplosionFrame(byte *renderBitmap, int pitch, int width, int height,
+	                          Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance);
 	void renderTurretExplosions(byte *renderBitmap, int pitch, int width, int height);     // FUN_409FBC (Handler 0x26)
 	void renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height);    // FUN_402696 (Handler 8)
 	void renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height);      // FUN_40F1C5 (Handler 7)
