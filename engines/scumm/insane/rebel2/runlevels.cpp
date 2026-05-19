@@ -206,6 +206,32 @@ int InsaneRebel2::calculateAccuracy(int kills, int misses) const {
 	return (kills * 100) / totalShots;
 }
 
+bool InsaneRebel2::handleLevelDeath(int levelId, int phase,
+		const char *deathVideo, const char *retryVideo, int &levelResult) {
+	debug("Rebel2: Level %d Phase %d death", levelId, phase);
+	playCinematic(deathVideo);
+	if (_vm->shouldQuit()) {
+		levelResult = kLevelQuit;
+		return false;
+	}
+
+	_playerLives--;
+	if (_playerLives <= 0) {
+		playLevelGameOver(levelId);
+		levelResult = kLevelGameOver;
+		return false;
+	}
+
+	playCinematic(retryVideo);
+	_playerDamage = 0;
+	if (_vm->shouldQuit()) {
+		levelResult = kLevelQuit;
+		return false;
+	}
+
+	return true;
+}
+
 // ---------------------------------------------------------------------------
 // Level 2 Handler - FUN_00418063
 // Multiple parts with P1/P2/P3 subdirectories
@@ -314,8 +340,12 @@ int InsaneRebel2::runLevel2() {
 		if ((_rebelPhaseState & 0x10) != 0)
 			bonusCount++;
 
-		if (_playerDamage >= 255)
-			goto level2_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(2, _currentPhase, "LEV02/02DIE.SAN", "LEV02/02RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -390,8 +420,12 @@ int InsaneRebel2::runLevel2() {
 		if ((_rebelPhaseState & 0x10) != 0)
 			bonusCount++;
 
-		if (_playerDamage >= 255)
-			goto level2_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(2, _currentPhase, "LEV02/02DIE.SAN", "LEV02/02RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -479,8 +513,12 @@ int InsaneRebel2::runLevel2() {
 			bonusCount++;
 		totalKills += _rebelKillCounter;
 
-		if (_playerDamage >= 255)
-			goto level2_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(2, _currentPhase, "LEV02/02DIE.SAN", "LEV02/02RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -497,28 +535,6 @@ int InsaneRebel2::runLevel2() {
 		playLevelEnd(2);
 		_levelUnlocked[2] = true;  // Unlock level 3
 		return kLevelNextLevel;
-
-	level2_death:
-		// Player died — play death sequence and retry or game over
-		// Original: FUN_00417168("LEV02/02DIE.SAN", 0x20)
-		debug("Rebel2: Level 2 Phase %d death", _currentPhase);
-		playCinematic("LEV02/02DIE.SAN");
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-
-		// Original: if (DAT_0047ab5c != 0) DAT_0047a7ee++ (bonus life award).
-		// DAT_0047ab5c is set when the player earns a bonus life.
-		_playerLives--;
-		if (_playerLives <= 0) {
-			// Original: FUN_00417ab2("LEV02/02OVER.SAN", 0x20, 2)
-			playLevelGameOver(2);
-			return kLevelGameOver;
-		}
-		playCinematic("LEV02/02RETRY.SAN");
-		_playerDamage = 0;
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-		continue;  // Restart from beginning
 	}
 
 	return kLevelQuit;
@@ -1213,8 +1229,12 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level11_death_phase1;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(11, 1, "LEV11/11DIE_A.SAN", "LEV11/11RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1269,8 +1289,12 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level11_death_phase2;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(11, 2, "LEV11/11DIE_B.SAN", "LEV11/11RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1344,8 +1368,12 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level11_death_phase3;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(11, 3, "LEV11/11DIE_C.SAN", "LEV11/11RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1426,8 +1454,12 @@ int InsaneRebel2::runLevel11() {
 
 		totalKills += _rebelKillCounter;
 
-		if (_playerDamage >= 255)
-			goto level11_death_phase3;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(11, 3, "LEV11/11DIE_C.SAN", "LEV11/11RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1442,35 +1474,6 @@ int InsaneRebel2::runLevel11() {
 		playLevelEnd(11);
 		_levelUnlocked[11] = true;  // Unlock level 12
 		return kLevelNextLevel;
-
-	level11_death_phase1:
-		debug("Rebel2: Level 11 Phase 1 death");
-		playCinematic("LEV11/11DIE_A.SAN");
-		goto level11_retry;
-
-	level11_death_phase2:
-		debug("Rebel2: Level 11 Phase 2 death");
-		playCinematic("LEV11/11DIE_B.SAN");
-		goto level11_retry;
-
-	level11_death_phase3:
-		debug("Rebel2: Level 11 Phase 3 death");
-		playCinematic("LEV11/11DIE_C.SAN");
-		goto level11_retry;
-
-	level11_retry:
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-		_playerLives--;
-		if (_playerLives <= 0) {
-			playLevelGameOver(11);
-			return kLevelGameOver;
-		}
-		playCinematic("LEV11/11RETRY.SAN");
-		_playerDamage = 0;
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-		continue;  // Restart from Phase 1
 	}
 
 	return kLevelQuit;
@@ -1567,8 +1570,12 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level12_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(12, _currentPhase, "LEV12/12DIE.SAN", "LEV12/12RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1624,8 +1631,12 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level12_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(12, _currentPhase, "LEV12/12DIE.SAN", "LEV12/12RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1679,8 +1690,12 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level12_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(12, _currentPhase, "LEV12/12DIE.SAN", "LEV12/12RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1733,8 +1748,12 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255)
-			goto level12_death;
+		if (_playerDamage >= 255) {
+			int levelResult;
+			if (handleLevelDeath(12, _currentPhase, "LEV12/12DIE.SAN", "LEV12/12RETRY.SAN", levelResult))
+				continue;
+			return levelResult;
+		}
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
@@ -1757,24 +1776,6 @@ int InsaneRebel2::runLevel12() {
 		playLevelEnd(12);
 		_levelUnlocked[12] = true;  // Unlock level 13
 		return kLevelNextLevel;
-
-	level12_death:
-		// Single death video for all phases
-		debug("Rebel2: Level 12 Phase %d death", _currentPhase);
-		playCinematic("LEV12/12DIE.SAN");
-
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-		_playerLives--;
-		if (_playerLives <= 0) {
-			playLevelGameOver(12);
-			return kLevelGameOver;
-		}
-		playCinematic("LEV12/12RETRY.SAN");
-		_playerDamage = 0;
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-		continue;  // Restart from Phase 1
 	}
 
 	return kLevelQuit;
