@@ -197,6 +197,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	  _lastScreen(kScreenInvalid), _nextScreen(kScreenTitle), _partner(0) {
 	ConfMan.registerDefault("hide_highlight_boxes", false);
 	ConfMan.registerDefault("fit_dialog_balloons", false);
+	ConfMan.registerDefault("skip_repeated_cases", false);
 
 	_variant = (gameDesc && gameDesc->extra &&
 				Common::String(gameDesc->extra).contains("Floppy"))
@@ -218,6 +219,69 @@ void EEMEngine::applyStartupTestOverrides() {
 
 	debugC(1, kDebugGeneral,
 		   "startup test override: populated ScrapBook 1 mystery flags");
+}
+
+bool EEMEngine::areMysteriesSolved(uint lo, uint hi) const {
+	if (hi < lo)
+		return false;
+	for (uint i = lo; i <= hi; i++) {
+		if (i >= sizeof(_mysteriesSolved) || _mysteriesSolved[i] == 0)
+			return false;
+	}
+	return true;
+}
+
+void EEMEngine::advanceChainStageAfterSolve(uint mysteryNum) {
+	if (mysteryNum == 0 || _chainStage >= 4)
+		return;
+
+	uint lo = 0;
+	uint hi = 0;
+	switch (_chainStage) {
+	case 1:
+		lo = 1;
+		hi = 0x18;
+		break;
+	case 2:
+		lo = 0x19;
+		hi = 0x30;
+		break;
+	case 3:
+		lo = 0x31;
+		hi = 0x36;
+		break;
+	default:
+		return;
+	}
+
+	if (!areMysteriesSolved(lo, hi))
+		return;
+
+	const uint oldStage = _chainStage;
+	// Book 2 repeats the Book 1 cases; this option keeps the original solve
+	// state but jumps the profile's active chain straight to Book 3.
+	if (_chainStage == 1 && ConfMan.getBool("skip_repeated_cases"))
+		_chainStage = 3;
+	else
+		_chainStage++;
+
+	debugC(1, kDebugMystery,
+		   "chainStage advanced from %u to %u after solving mystery %u",
+		   oldStage, _chainStage, mysteryNum);
+}
+
+void EEMEngine::applySkipRepeatedCasesOption() {
+	if (!ConfMan.getBool("skip_repeated_cases"))
+		return;
+	if (_mystery.isLoaded())
+		return;
+	if (_chainStage <= 2 && areMysteriesSolved(1, 0x18)) {
+		const uint oldStage = _chainStage;
+		_chainStage = 3;
+		debugC(1, kDebugMystery,
+			   "skip_repeated_cases advanced chainStage from %u to %u",
+			   oldStage, _chainStage);
+	}
 }
 
 Common::Error EEMEngine::run() {
@@ -268,6 +332,7 @@ Common::Error EEMEngine::run() {
 		const Common::Error err = loadGameState(wantedSave);
 		if (err.getCode() == Common::kNoError) {
 			applyStartupTestOverrides();
+			applySkipRepeatedCasesOption();
 			CursorMan.showMouse(true);
 			if (_mystery.isLoaded()) {
 				debugC(1, kDebugGeneral,
@@ -399,6 +464,8 @@ Common::Error EEMEngine::run() {
 	if (!shouldQuit())
 		applyStartupTestOverrides();
 	if (!shouldQuit())
+		applySkipRepeatedCasesOption();
+	if (!shouldQuit())
 		doChoosePartner();
 
 	// Drop into the screen-driver state machine — same pattern as
@@ -521,6 +588,8 @@ screenLoop:
 			doProfilePicker();
 			if (!shouldQuit())
 				applyStartupTestOverrides();
+			if (!shouldQuit())
+				applySkipRepeatedCasesOption();
 			if (!shouldQuit())
 				doChoosePartner();
 			if (!shouldQuit())
@@ -1172,6 +1241,7 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		_mystery.clear();
 		resetSiteArrivalState();
 	}
+	applySkipRepeatedCasesOption();
 
 	debugC(1, kDebugGeneral,
 		   "Loaded profile name=%s partner=%u mystery=%d",
