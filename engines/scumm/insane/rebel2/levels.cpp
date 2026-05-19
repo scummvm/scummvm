@@ -413,8 +413,6 @@ int InsaneRebel2::runLevel(int levelId) {
 	_damageHighFlashCounter = 0;
 	_damageShakeCounter = 0;
 	_currentPhase = 1;
-	_phaseScore = 0;
-	_phaseMisses = 0;
 	_skipSectionRequested = false;
 
 	// Dispatch to per-level handler
