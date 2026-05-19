@@ -194,6 +194,7 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 
 				_engine->getRenderManager()->blitSurfaceToBkg(*srf, drawx, drawy, 0);
 
+				srf->free();
 				delete srf;
 
 				_renderedItem = curItem;
