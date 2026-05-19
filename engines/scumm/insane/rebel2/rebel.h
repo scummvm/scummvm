@@ -406,6 +406,8 @@ public:
 	// split between gameplay/wave calls and transition/init-only segments.
 	bool playLevelSegment(const char *filename, uint16 flags, bool recordFrame = true);
 
+	int calculateAccuracy(int kills, int misses) const;
+
 	// Random number helper (emulates FUN_004233a0)
 	int getRandomVariant(int max);
 

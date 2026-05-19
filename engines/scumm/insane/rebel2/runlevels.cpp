@@ -198,6 +198,14 @@ bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool rec
 	return !_vm->shouldQuit();
 }
 
+int InsaneRebel2::calculateAccuracy(int kills, int misses) const {
+	const int totalShots = kills + misses;
+	if (kills <= 0 || totalShots <= 0)
+		return 0;
+
+	return (kills * 100) / totalShots;
+}
+
 // ---------------------------------------------------------------------------
 // Level 2 Handler - FUN_00418063
 // Multiple parts with P1/P2/P3 subdirectories
@@ -481,11 +489,7 @@ int InsaneRebel2::runLevel2() {
 		// Score presentation remains to be implemented.
 		{
 			totalMisses += _rebelHitCounter;
-			int accuracy = 0;
-			int totalShots = totalKills + totalMisses;
-			if (totalKills > 0 && totalShots > 0) {
-				accuracy = (totalKills * 100) / totalShots;
-			}
+			int accuracy = calculateAccuracy(totalKills, totalMisses);
 			debug("Rebel2: Level 2 completed! kills=%d misses=%d accuracy=%d%% bonus=%d",
 				totalKills, totalMisses, accuracy, bonusCount);
 		}
@@ -955,10 +959,7 @@ int InsaneRebel2::runLevel8() {
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 8 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(8);
 			_levelUnlocked[8] = true;
@@ -1022,10 +1023,7 @@ int InsaneRebel2::runLevel9() {
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 9 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(9);
 			_levelUnlocked[9] = true;
@@ -1088,10 +1086,7 @@ int InsaneRebel2::runLevel10() {
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 10 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(10);
 			_levelUnlocked[10] = true;
@@ -1439,11 +1434,7 @@ int InsaneRebel2::runLevel11() {
 		// ----- LEVEL COMPLETED -----
 		{
 			totalMisses += _rebelHitCounter;
-			int accuracy = 0;
-			int totalShots = totalKills + totalMisses;
-			if (totalKills > 0 && totalShots > 0) {
-				accuracy = (totalKills * 100) / totalShots;
-			}
+			int accuracy = calculateAccuracy(totalKills, totalMisses);
 			debug("Rebel2: Level 11 completed! kills=%d misses=%d accuracy=%d%%",
 				totalKills, totalMisses, accuracy);
 		}
@@ -1754,10 +1745,7 @@ int InsaneRebel2::runLevel12() {
 
 		// ----- LEVEL COMPLETED -----
 		{
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 12 completed! kills=%d misses=%d accuracy=%d%%",
 				_rebelKillCounter, _rebelHitCounter, accuracy);
 		}
@@ -1837,10 +1825,7 @@ int InsaneRebel2::runLevel13() {
 		}
 
 		if (_playerShield > 0) {
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 13 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(13);
 			_levelUnlocked[13] = true;
@@ -1896,10 +1881,7 @@ int InsaneRebel2::runLevel14() {
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 14 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(14);
 			_levelUnlocked[14] = true;
@@ -1971,10 +1953,7 @@ int InsaneRebel2::runLevel15() {
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
-			int accuracy = 0;
-			if (_rebelKillCounter > 0) {
-				accuracy = (_rebelKillCounter * 100) / (_rebelHitCounter + _rebelKillCounter);
-			}
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debug("Rebel2: Level 15 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(15);
 			_levelUnlocked[15] = true;
