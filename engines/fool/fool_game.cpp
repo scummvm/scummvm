@@ -32,8 +32,8 @@ extern Toolbox *g_toolbox;
 
 // Based on m68k disassembly of the Fool's Errand v2.0, (c) 1988 Cliff Johnson.
 
-// v1.0 - original release, single-density disks
-// v2.0 - fixes full-screen rendering on higher-resolution displays
+// v1.0 - original release, single-density disks, different about menu
+// v2.0 - fixes full-screen rendering on higher-resolution displays, new about menu, can disable sounds
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
 void FoolGame::run() {
@@ -1714,7 +1714,7 @@ void FoolGame::puzzleRun() {
 		this->sub_128_41d8();
 	}
 	// 128:3a12
-	this->sub_128_3fb6();
+	this->puzzleSetupMenu();
 	this->sub_128_26f6();
 	this->sub_128_61ec();
 	this->puzzleLoadContext();
@@ -1901,7 +1901,7 @@ void FoolGame::storyUnlockChapter() {
 	// 128:3fb4
 }
 
-void FoolGame::sub_128_3fb6() {
+void FoolGame::puzzleSetupMenu() {
 	// 128:3fb6
 	// new: delete existing menu 8
 	this->var_menu_bf8 = g_toolbox->GetMHandle(8);
@@ -1927,6 +1927,14 @@ void FoolGame::sub_128_3fb6() {
 			// 128:40f6
 			this->var_i16_484++;
 			this->var_str_384 = _zbasic->index(0, i) + _zbasic->str(76);
+
+			// New: Override instructions for card game.
+			// v3 changed the score from 700 points to 666 points, but didn't change the puzzle data
+			// file (where the menu entries come from). We apply a similar bodge here.
+			if ((_activePuzzle == 7) &&(i == _puzzleMenuInstructions[_puzzleType[_activePuzzle]*2]+7)) {
+				this->var_str_384 = Common::U32String("• The first player to earn over 666 points wins the game.  ");
+			}
+
 			_zbasic->menu(8, this->var_i16_484, 1, this->var_str_384);
 		}
 	}
