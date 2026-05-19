@@ -780,6 +780,11 @@ void Score::update() {
 	}
 
 	_firstRun = false;
+
+	// Force cursor update if a new movie's started.
+	if (_window->_newMovieStarted)
+		renderCursor(_movie->getWindow()->getMousePos(), true);
+
 	_window->_newMovieStarted = false;
 
 	if (!_haveInteractivity)
