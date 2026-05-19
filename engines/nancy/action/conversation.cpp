@@ -40,7 +40,8 @@ namespace Action {
 
 ConversationSound::ConversationSound() :
 		RenderActionRecord(8),
-		_noResponse(g_nancy->getGameType() <= kGameTypeNancy2 ? 10 : 20),
+		_noResponse(g_nancy->getGameType() <= kGameTypeNancy2 ||
+					g_nancy->getGameType() >= kGameTypeNancy10 ? 10 : 20),
 		_hasDrawnTextbox(false),
 		_pickedResponse(-1) {
 	_conditionalResponseCharacterID = _noResponse;
@@ -132,11 +133,6 @@ void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
 
 	_conditionalResponseCharacterID = stream.readByte();
 	_goodbyeResponseCharacterID = stream.readByte();
-
-	if (g_nancy->getGameType() >= kGameTypeNancy10) {
-		_conditionalResponseCharacterID -= 7;
-		_goodbyeResponseCharacterID -= 7;
-	}
 
 	_defaultNextScene = stream.readByte();
 
