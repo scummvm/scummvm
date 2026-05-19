@@ -894,6 +894,17 @@ void ConversationCelTerse::readData(Common::SeekableReadStream &stream) {
 	_overrideTreeRects.resize(4, kCelOverrideTreeRectsOff);
 
 	readTerseData(stream);
+
+	// WORKAROUND: Fix the last frame for some videos, to prevent them from
+	// running for too long, if the associated sound file is shorter than
+	// the video
+	if (g_nancy->getGameType() == kGameTypeNancy9 && xsheetName == "KFB28" && _lastFrame == 102 && _sound.name == "KFF28") {
+		// Offerring to call the Sheriff for Katie - bug #16753
+		_lastFrame = 70;
+	}  else if (g_nancy->getGameType() == kGameTypeNancy9 && xsheetName == "StubAndy" && _lastFrame == 344 && _sound.name == "ACC03") {
+		// Asking Andy for a whale watching keychain design - bug #16786
+		_lastFrame = 30;
+	}
 }
 
 } // End of namespace Action
