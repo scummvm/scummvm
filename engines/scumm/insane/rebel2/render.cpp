@@ -3506,6 +3506,46 @@ void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, in
 	}
 }
 
+// renderExplosionFrame -- Shared low-res explosion sprite path.
+// The original handlers reach this through separate retail functions. In the
+// 320x200 path used here, they share the same scale buckets and centered NUT
+// draw; callers keep their coordinate transforms and frame timing explicit.
+void InsaneRebel2::renderExplosionFrame(byte *renderBitmap, int pitch, int width, int height,
+		InsaneRebel2::Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance) {
+	if (!explosion.active)
+		return;
+
+	if (explosion.counter <= 0) {
+		explosion.active = false;
+		return;
+	}
+
+	if (advance == kExplosionAdvanceBeforeDraw)
+		explosion.counter--;
+
+	// Fixed low-res thresholds (0x0b=11, 0x15=21).
+	int baseIndex;
+	if (explosion.scale < 11) {
+		baseIndex = 9;
+	} else if (explosion.scale < 21) {
+		baseIndex = 19;
+	} else {
+		baseIndex = 29;
+	}
+
+	int spriteIndex = baseIndex + (12 - explosion.counter);
+
+	if (_smush_iconsNut->getNumChars() > spriteIndex) {
+		int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+		int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+		renderNutSprite(renderBitmap, pitch, width, height,
+			screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
+	}
+
+	if (advance == kExplosionAdvanceAfterDraw)
+		explosion.counter--;
+}
+
 // renderTurretExplosions -- Handler 0x26 turret explosion rendering (FUN_409FBC).
 // Position: FUN_0041c720 3D->2D projection (identity at low-res).
 // Scale thresholds: <11, <21. Secondary NUT: DAT_0047fe80 (if DAT_0047a7fc >= 0).
@@ -3517,36 +3557,12 @@ void InsaneRebel2::renderTurretExplosions(byte *renderBitmap, int pitch, int wid
 		if (!_explosions[i].active)
 			continue;
 
-		if (_explosions[i].counter <= 0) {
-			_explosions[i].active = false;
-			continue;
-		}
-
-		// FUN_409FBC: Fixed thresholds (0x0b=11, 0x15=21)
-		int baseIndex;
-		if (_explosions[i].scale < 11) {
-			baseIndex = 9;   // Small (sprites 11-20)
-		} else if (_explosions[i].scale < 21) {
-			baseIndex = 19;  // Medium (sprites 21-30)
-		} else {
-			baseIndex = 29;  // Large (sprites 31-40)
-		}
-
-		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
-
 		// Position: world coords passed through FUN_0041c720 (3D→2D projection).
 		// At 320x200 low-res turret view, projection is effectively identity.
 		int screenX = _explosions[i].x;
 		int screenY = _explosions[i].y;
-
-		if (_smush_iconsNut->getNumChars() > spriteIndex) {
-			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
-			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-			renderNutSprite(renderBitmap, pitch, width, height,
-				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
-		}
-
-		_explosions[i].counter--;
+		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
+			screenX, screenY, kExplosionAdvanceAfterDraw);
 	}
 }
 
@@ -3561,41 +3577,17 @@ void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int wi
 		if (!_explosions[i].active)
 			continue;
 
-		if (_explosions[i].counter <= 0) {
-			_explosions[i].active = false;
-			continue;
-		}
-
-		// FUN_402696: Fixed thresholds (0x0b=11, 0x15=21)
-		int baseIndex;
-		if (_explosions[i].scale < 11) {
-			baseIndex = 9;
-		} else if (_explosions[i].scale < 21) {
-			baseIndex = 19;
-		} else {
-			baseIndex = 29;
-		}
-
-		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
-
 		// FUN_402696 line 22-23: screenX = worldX - DAT_0043e006, screenY = worldY - DAT_0043e008
 		int screenX = _explosions[i].x - _viewX;
 		int screenY = _explosions[i].y - _viewY;
-
-		if (_smush_iconsNut->getNumChars() > spriteIndex) {
-			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
-			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-			renderNutSprite(renderBitmap, pitch, width, height,
-				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
-		}
-
-		_explosions[i].counter--;
+		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
+			screenX, screenY, kExplosionAdvanceAfterDraw);
 	}
 }
 
 // renderSpaceExplosions -- Handler 7 space explosion rendering (FUN_40F1C5).
 // Position: FUN_0041c720 3D->2D projection.
-// Scale thresholds: resolution-dependent (low-res: <11/<21, hi-res: <21/<41).
+// Original scale thresholds are resolution-dependent; current low-res path uses <11/<21.
 // Secondary NUT: DAT_0047ff00 (FLY004, if DAT_0047a7fc >= 0).
 void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
@@ -3606,39 +3598,12 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 		if (!_explosions[i].active)
 			continue;
 
-		if (_explosions[i].counter <= 0) {
-			_explosions[i].active = false;
-			continue;
-		}
-
-		// FUN_40F1C5 lines 41-51: Resolution-dependent thresholds.
-		// Low-res (DAT_0047a808 < 2): thresholds 20, 10
-		// High-res: thresholds 40, 20
-		// We run at low-res (320x200), so use 10/20 (same as fixed handlers).
-		int baseIndex;
-		if (_explosions[i].scale < 11) {
-			baseIndex = 9;
-		} else if (_explosions[i].scale < 21) {
-			baseIndex = 19;
-		} else {
-			baseIndex = 29;
-		}
-
-		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
-
 		// Position: world coords through FUN_0041c720 (3D→2D projection).
 		// At low-res, this is close to identity for the ship view.
 		int screenX = _explosions[i].x;
 		int screenY = _explosions[i].y;
-
-		if (_smush_iconsNut->getNumChars() > spriteIndex) {
-			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
-			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-			renderNutSprite(renderBitmap, pitch, width, height,
-				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
-		}
-
-		_explosions[i].counter--;
+		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
+			screenX, screenY, kExplosionAdvanceAfterDraw);
 	}
 
 	// --- Part 2: Corridor/zone hit explosion (FUN_40F1C5 lines 61-85) ---
@@ -3697,7 +3662,7 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 
 // renderHandler25Explosions -- Handler 25 FPS explosion rendering (FUN_41F29A).
 // Position: world coords + view offset (DAT_0045790c/0e = _rebelViewOffsetX/Y).
-// Scale thresholds: resolution-dependent (same as Handler 7). No sound panning.
+// Original scale thresholds follow Handler 7; current low-res path uses <11/<21. No sound panning.
 void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
@@ -3706,36 +3671,11 @@ void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int 
 		if (!_explosions[i].active)
 			continue;
 
-		if (_explosions[i].counter <= 0) {
-			_explosions[i].active = false;
-			continue;
-		}
-
-		// Match FUN_41F29A exactly: decrement first, then select frame.
-		_explosions[i].counter--;
-
-		// FUN_41F29A lines 27-37: Resolution-dependent thresholds (same as Handler 7).
-		int baseIndex;
-		if (_explosions[i].scale < 11) {
-			baseIndex = 9;
-		} else if (_explosions[i].scale < 21) {
-			baseIndex = 19;
-		} else {
-			baseIndex = 29;
-		}
-
-		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
-
 		// FUN_41F29A line 22-23: screenX = worldX + DAT_0045790c, screenY = worldY + DAT_0045790e
 		int screenX = _explosions[i].x + _rebelViewOffsetX;
 		int screenY = _explosions[i].y + _rebelViewOffsetY;
-
-		if (_smush_iconsNut->getNumChars() > spriteIndex) {
-			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
-			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-			renderNutSprite(renderBitmap, pitch, width, height,
-				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
-		}
+		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
+			screenX, screenY, kExplosionAdvanceBeforeDraw);
 	}
 }
 
