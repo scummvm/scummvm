@@ -392,8 +392,17 @@ void Scene::setNoHeldItem() {
 byte Scene::hasItem(int16 id) const {
 	if (getHeldItem() == id) {
 		return g_nancy->_true;
-	} else {
+	} else if (id > 0 && (uint)id < _flags.items.size()) {
 		return _flags.items[id];
+	} else {
+		// TODO: Happens in Nancy10+. Gets called for item IDs
+		// 1824, 1825, 1826, 1827, when adding tasks to the
+		// notebook, for an array of 70 items in total. Looks
+		// like a case where a flag is contained for the held
+		// item ID to be checked.
+		debug(2, "Scene::hasItem: out-of-range id %d (items.size=%u)", id,
+			  (uint)_flags.items.size());
+		return g_nancy->_false;
 	}
 }
 
