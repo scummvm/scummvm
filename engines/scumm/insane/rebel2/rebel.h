@@ -410,6 +410,9 @@ public:
 
 	// Play DIE/OVER/RETRY tail. Returns true when the caller should restart its retry loop.
 	bool handleLevelDeath(int levelId, int phase, const char *deathVideo, const char *retryVideo, int &levelResult);
+	void resetLevelAttemptState(int initialPhase);
+	void resetLevelPhaseState(bool clearEnemies);
+	void resetLevelWaveState();
 
 	// Random number helper (emulates FUN_004233a0)
 	int getRandomVariant(int max);
