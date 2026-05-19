@@ -232,6 +232,37 @@ bool InsaneRebel2::handleLevelDeath(int levelId, int phase,
 	return true;
 }
 
+void InsaneRebel2::resetLevelAttemptState(int initialPhase) {
+	_playerShield = 255;
+	_playerDamage = 0;
+	_currentPhase = initialPhase;
+
+	_rebelAutopilot = 0;
+	_rebelDamageLevel = 0;
+	_rebelControlMode = 0;
+
+	_enemies.clear();
+	for (int i = 0; i < 512; i++) {
+		_rebelLinks[i][0] = 0;
+		_rebelLinks[i][1] = 0;
+		_rebelLinks[i][2] = 0;
+	}
+}
+
+void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
+	_rebelKillCounter = 0;
+	_rebelHitCounter = 0;
+	resetLevelWaveState();
+
+	if (clearEnemies)
+		_enemies.clear();
+}
+
+void InsaneRebel2::resetLevelWaveState() {
+	_rebelPhaseState = 0;
+	_rebelWaveState = 0;
+}
+
 // ---------------------------------------------------------------------------
 // Level 2 Handler - FUN_00418063
 // Multiple parts with P1/P2/P3 subdirectories
@@ -273,33 +304,14 @@ int InsaneRebel2::runLevel2() {
 
 	// Main gameplay retry loop (restarts from beginning on death)
 	while (!_vm->shouldQuit()) {
-		_playerShield = 255;
-		_playerDamage = 0;
-		_currentPhase = 1;
+		resetLevelAttemptState(1);
 		bonusCount = 0;
 		totalKills = 0;
 		totalMisses = 0;
 
-		// Reset Handler 25 cover state — player starts uncovered at level start
-		// DAT_00457904 and DAT_0045790a are zero-initialized globals in the original
-		_rebelAutopilot = 0;
-		_rebelDamageLevel = 0;
-		_rebelControlMode = 0;
-
-		// FUN_0041c7d0: Reset per-attempt state
-		_enemies.clear();
-		for (int i = 0; i < 512; i++) {
-			_rebelLinks[i][0] = 0;
-			_rebelLinks[i][1] = 0;
-			_rebelLinks[i][2] = 0;
-		}
-
 		// ----- PHASE 1: P1/02P01_X.SAN -----
 		// FUN_0041c7d0: Reset per-phase counters
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
+		resetLevelPhaseState(false);
 
 		// Initialize kill budget from level data table + random(3)
 		// Original: sVar4 = levelData[phase1Offset]; local_14[0] = sVar4 + random(3)
@@ -363,11 +375,7 @@ int InsaneRebel2::runLevel2() {
 
 		// ----- PHASE 2: P2/02P02_X.SAN -----
 		_currentPhase = 2;
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
-		_enemies.clear();
+		resetLevelPhaseState(true);
 
 		// Initialize Phase 2 budget
 		budget = kLevel2BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
@@ -442,11 +450,7 @@ int InsaneRebel2::runLevel2() {
 
 		// ----- PHASE 3: P3/02P03_X.SAN -----
 		_currentPhase = 3;
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
-		_enemies.clear();
+		resetLevelPhaseState(true);
 		prevWaveState = 0;
 
 		// Initialize Phase 3 budget
@@ -1164,31 +1168,13 @@ int InsaneRebel2::runLevel11() {
 
 	// Main gameplay retry loop (restarts from Phase 1 on death)
 	while (!_vm->shouldQuit()) {
-		_playerShield = 255;
-		_playerDamage = 0;
-		_currentPhase = 1;
+		resetLevelAttemptState(1);
 		totalKills = 0;
 		totalMisses = 0;
 		prevPhaseState = 0;
 
-		// Reset Handler 8 cover state
-		_rebelAutopilot = 0;
-		_rebelDamageLevel = 0;
-		_rebelControlMode = 0;
-
-		// FUN_0041c7d0: Reset per-attempt state
-		_enemies.clear();
-		for (int i = 0; i < 512; i++) {
-			_rebelLinks[i][0] = 0;
-			_rebelLinks[i][1] = 0;
-			_rebelLinks[i][2] = 0;
-		}
-
 		// ----- PHASE 1: P1/11P01_X.SAN -----
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
+		resetLevelPhaseState(false);
 
 		int16 budget = kLevel11BudgetBase[0] + _vm->_rnd.getRandomNumber(2);
 
@@ -1249,11 +1235,7 @@ int InsaneRebel2::runLevel11() {
 
 		// ----- PHASE 2: P2/11P02_X.SAN -----
 		_currentPhase = 2;
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
-		_enemies.clear();
+		resetLevelPhaseState(true);
 
 		budget = kLevel11BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
 		_rebelHandler = 8;
@@ -1310,11 +1292,7 @@ int InsaneRebel2::runLevel11() {
 		// ----- PHASE 3 FIRST HALF: P3/11P03_X (A-F) -----
 		// Bridge puzzle — exit when (phaseState & 0x70) == 0x70
 		_currentPhase = 3;
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
-		_enemies.clear();
+		resetLevelPhaseState(true);
 		prevPhaseState = 0;
 
 		budget = kLevel11BudgetBase[2] + _vm->_rnd.getRandomNumber(2);
@@ -1510,28 +1488,11 @@ int InsaneRebel2::runLevel12() {
 
 	// Main gameplay retry loop (restarts from Phase 1 on death)
 	while (!_vm->shouldQuit()) {
-		_playerShield = 255;
-		_playerDamage = 0;
-		_currentPhase = 1;
-
-		// Reset state
-		_rebelAutopilot = 0;
-		_rebelDamageLevel = 0;
-		_rebelControlMode = 0;
-
-		_enemies.clear();
-		for (int i = 0; i < 512; i++) {
-			_rebelLinks[i][0] = 0;
-			_rebelLinks[i][1] = 0;
-			_rebelLinks[i][2] = 0;
-		}
+		resetLevelAttemptState(1);
 
 		// ----- PHASE 1: 12P05 → P1/12P01_X -----
 		// FUN_00401000: Reset at top of each retry
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
+		resetLevelPhaseState(false);
 
 		int16 budget = kLevel12BudgetBase[0] + _vm->_rnd.getRandomNumber(2);
 
@@ -1581,8 +1542,7 @@ int InsaneRebel2::runLevel12() {
 
 		// ----- PHASE 2: 12P06 → P2/12P02_X -----
 		_currentPhase = 2;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
+		resetLevelWaveState();
 
 		budget = kLevel12BudgetBase[1] + _vm->_rnd.getRandomNumber(3);
 
@@ -1642,8 +1602,7 @@ int InsaneRebel2::runLevel12() {
 
 		// ----- PHASE 3: 12P07 → P3/12P03_X -----
 		_currentPhase = 3;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
+		resetLevelWaveState();
 
 		budget = kLevel12BudgetBase[2] + _vm->_rnd.getRandomNumber(3);
 
@@ -1701,8 +1660,7 @@ int InsaneRebel2::runLevel12() {
 
 		// ----- PHASE 4: 12P08 → P4/12P04_X -----
 		_currentPhase = 4;
-		_rebelPhaseState = 0;
-		_rebelWaveState = 0;
+		resetLevelWaveState();
 
 		budget = kLevel12BudgetBase[3] + _vm->_rnd.getRandomNumber(3);
 
