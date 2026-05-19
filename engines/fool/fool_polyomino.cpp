@@ -516,7 +516,7 @@ void FoolGame::polyominoSuccess() {
 
 void FoolGame::polyominoStoreState() {
 	// 133:1452
-	_activePuzzleBuffer = _zbasic->str(212); // empty
+	_activePuzzleBuffer.clear(); // was: str(212)
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->arr_i16_1eb8[0x10]; i++) {
 		Common::String val1 = _zbasic->encodeInt(this->arr_i16_47d8[i*8 + 3]);

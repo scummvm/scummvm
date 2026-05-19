@@ -66,7 +66,17 @@ Common::Error FoolEngine::run() {
 	_screen.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);
 
-	FoolGame fg;
+	Common::String versionStr(_gameDescription->desc.extra);
+	FoolVersion version = kFool20;
+	if (versionStr == "v1.1") {
+		version = kFool11;
+	} else if (versionStr == "v2.0") {
+		version = kFool20;
+	} else if (versionStr == "v3.0") {
+		version = kFool30;
+	}
+
+	FoolGame fg(version);
 	fg.run();
 
 	return Common::kNoError;

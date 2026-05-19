@@ -1033,9 +1033,11 @@ void FoolGame::hermitNextStage() {
 void FoolGame::hermitScreenFlash() {
 	// 140:2662
 	Common::Rect area(0x37, 0x29, 0x1c9, 0x142);
-	for (int16 i = 0; i <= 0x10; i++) {
+	// limit the amount of continuous full-screen flashing to WCAG
+	// recommendation of 3/second
+	for (int16 i = 0; i <= 6; i++) { // was: 0x10
 		g_toolbox->InvertRect(area);
-		this->sub_128_3da(1);
+		this->sub_128_3da(10); // was: 1
 	}
 }
 
@@ -1196,6 +1198,8 @@ void FoolGame::thothKeyLastSetup() {
 			for (int16 i = 0; i <= 0xd; i++) {
 				g_toolbox->EraseRect(_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[j]*32 + this->arr_i16_5cbc[i]]]);
 				g_toolbox->FrameRect(_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[j]*32 + this->arr_i16_5cbc[i]]]);
+				if (((i + j*0xd) % 6) == 0)
+					g_toolbox->Delay(0);
 			}
 		}
 	} else {
@@ -1209,6 +1213,8 @@ void FoolGame::thothKeyLastSetup() {
 					_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[this->var_i16_68a]*32 + this->arr_i16_5cbc[j]]],
 					_patterns[this->var_i16_484]
 				);
+				if (((j + k*0xd) % 6) == 0)
+					g_toolbox->Delay(0);
 				this->var_i16_68a++;
 				if (this->var_i16_68a > 0x13) {
 					this->var_i16_68a = 0;

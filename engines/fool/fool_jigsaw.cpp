@@ -377,7 +377,7 @@ void FoolGame::jigsawDropSelected() {
 void FoolGame::jigsawStoreState() {
 	// convert jigsaw positions to string
 	// 132:1384
-	_activePuzzleBuffer = _zbasic->str(208);
+	_activePuzzleBuffer.clear(); // was: str(208)
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
 		_activePuzzleBuffer += _zbasic->encodeInt(this->arr_i16_3738[i]);
 	}
