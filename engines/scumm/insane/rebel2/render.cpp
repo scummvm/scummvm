@@ -372,16 +372,6 @@ void InsaneRebel2::spawnShot(int x, int y) {
 		spawnHandler25Shot(x, y);
 		break;
 	default:
-		// Legacy fallback
-		for (int i = 0; i < 2; i++) {
-			if (!_shots[i].active) {
-				_shots[i].active = true;
-				_shots[i].counter = getShotMaxDuration();
-				_shots[i].x = x + _viewX;
-				_shots[i].y = y + _viewY;
-				break;
-			}
-		}
 		break;
 	}
 }
@@ -394,14 +384,14 @@ void InsaneRebel2::spawnTurretShot(int x, int y) {
 			// levelType 5: BLAST.SAD (slot 0), otherwise: TBLAST.SAD (slot 7)
 			playSfx((_rebelLevelType == 5) ? 0 : 7, 127, 0);
 
-				_turretShots[i].counter = getShotMaxDuration();
-				_turretShots[i].seqNum = _turretShotSeqCounter;
-				_turretShotSeqCounter++;
-				_turretShots[i].targetX = x + _viewX;  // DAT_0044366e in original
-				_turretShots[i].targetY = y + _viewY;  // DAT_00443670 in original
-				break;
-			}
+			_turretShots[i].counter = getShotMaxDuration();
+			_turretShots[i].seqNum = _turretShotSeqCounter;
+			_turretShotSeqCounter++;
+			_turretShots[i].targetX = x + _viewX;  // DAT_0044366e in original
+			_turretShots[i].targetY = y + _viewY;  // DAT_00443670 in original
+			break;
 		}
+	}
 }
 
 // spawnVehicleShot -- Handler 8 vehicle shot spawn (FUN_401CCF).
@@ -1025,11 +1015,10 @@ void InsaneRebel2::freeLaserTexture() {
 }
 
 //
-// initEdgeTable -- Initialize edge blend tables (FUN_410510).
+// initEdgeTable -- Initialize edge blend table (FUN_410510).
 //
-// When data is nullptr, fills with default tables:
+// When data is nullptr, fills with the default table:
 //   _edgeTable[a*256+b] = min(a,b) (symmetric identity blend)
-//   _edgeTableAlt[a*256+b] = special blend for hi-res mode
 // When data is non-null, loads the primary table from data+8 (upper triangle, symmetric).
 //
 void InsaneRebel2::initEdgeTable(const byte *data) {
@@ -1040,27 +1029,12 @@ void InsaneRebel2::initEdgeTable(const byte *data) {
 				// Primary table: table[a][b] = a (i.e. min(a,b) since b >= a)
 				_edgeTable[a + b * 256] = (byte)a;
 				_edgeTable[b + a * 256] = (byte)a;
-
-				// Secondary table: special blend rules (FUN_410510 lines 17-31)
-				if (a < 0x10 || b > 0x4f) {
-					// Outside blend range: use b if b==0, or (0xf < b && b < 0x50), or b==4
-					if (b == 0 || (b > 0xf && b < 0x50) || b == 4) {
-						_edgeTableAlt[a + b * 256] = (byte)b;
-					} else {
-						_edgeTableAlt[a + b * 256] = (byte)a;
-					}
-				} else {
-					// Blend range [0x10..0x4f]: average of a and b
-					_edgeTableAlt[a + b * 256] = (byte)((a + b) / 2);
-				}
-				_edgeTableAlt[b + a * 256] = _edgeTableAlt[a + b * 256];
 			}
 		}
 		// Special entries (FUN_410510 lines 33-36)
 		_edgeTable[0x42 * 256 + 0xf1] = 0x42;   // DAT_00447ff1
 		_edgeTable[0x42 + 0xf0 * 256] = 0x42;   // DAT_004480f0 (symmetric)
 		_edgeTable[0x41 * 256 + 0xb0] = 0x41;   // DAT_00447fb0
-		_edgeTableAlt[0x41 * 256 + 0xf0] = 0x41; // DAT_00443ff0
 	} else {
 		// Load table from IACT data (FUN_410510 non-NULL path, lines 39-47)
 		// Data format: 8-byte header + upper triangle of 256x256 symmetric table

@@ -276,12 +276,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_corridorBottomY = 0x104;  // 260 — full game buffer height
 	_hitCooldown = 0;
 
-	// Initialize legacy shot system (backwards compatibility)
-	for (i = 0; i < 2; i++) {
-		_shots[i].active = false;
-		_shots[i].counter = 0;
-	}
-
 	// Initialize Handler 0x26 Turret shot system (FUN_40AD63)
 	for (i = 0; i < 2; i++) {
 		_turretShots[i].counter = 0;
@@ -475,8 +469,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Initialize level state tracking for multi-phase levels
 	_currentPhase = 1;
 	_deathFrame = 0;
-	_phaseScore = 0;
-	_phaseMisses = 0;
 	_skipSectionRequested = false;
 
 	// Register as EventObserver to capture input events before ScummEngine consumes them
@@ -1104,21 +1096,6 @@ void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives,
 	}
 
 	savePilots();
-}
-
-int InsaneRebel2::getPilotHighestLevel() const {
-	if (_activePilot < 0 || _activePilot >= _numPilots)
-		return 0;
-
-	const PilotData &pilot = _pilots[_activePilot];
-	int highest = 0;
-	for (int i = kNumLevels - 1; i >= 0; i--) {
-		if (pilot.damage[i] < 0xFF) {
-			highest = i;
-			break;
-		}
-	}
-	return highest;
 }
 
 // processMouse -- Mouse input with edge detection for buttons.

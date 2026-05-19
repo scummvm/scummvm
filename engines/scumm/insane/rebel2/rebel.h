@@ -160,9 +160,6 @@ public:
 	// Draw the preview thumbnail box - emulates FUN_004292D0 calls in FUN_00415CF8
 	void drawPreviewBox(byte *renderBitmap, int pitch, int width, int height);
 
-	// Draw the preview thumbnail content - shows chapter number/status in preview area
-	void drawPreviewThumbnail(byte *renderBitmap, int pitch, int width, int height, int chapter);
-
 	// View offset for chapter preview scrolling (DAT_0047abe2/DAT_0047abe4)
 	int16 _previewOffsetX;   // X offset = -90 for chapter select
 	int16 _previewOffsetY;   // Y offset = chapter * -50 + 75
@@ -283,9 +280,6 @@ public:
 	// Update pilot progress after level completion
 	void updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage);
 
-	// Get highest unlocked level for active pilot (checks damage[] < 0xFF)
-	int getPilotHighestLevel() const;
-
 	// ---------------------------------------------------------------------------
 	// Pilot Selection Menu (FUN_00414A41)
 	// ---------------------------------------------------------------------------
@@ -301,9 +295,7 @@ public:
 	enum PilotMenuMode {
 		kPilotModeSelect = 0,     // Normal pilot list selection
 		kPilotModeNameInput = 1,  // Typing a new pilot name
-		kPilotModeDifficulty = 2, // Difficulty submenu
-		kPilotModeDeleteConfirm = 3, // Delete confirmation
-		kPilotModeCopySelect = 4  // Copy source selection
+		kPilotModeDifficulty = 2  // Difficulty submenu
 	};
 	PilotMenuMode _pilotMenuMode;
 	Common::String _pilotNameInput;      // Current name being typed
@@ -442,8 +434,6 @@ public:
 	// Level state tracking for multi-phase levels
 	int _currentPhase;        // Current gameplay phase (1, 2, 3 for Level 2; 1, 2 for Level 3/6)
 	int _deathFrame;          // Frame number where player died (for death video selection)
-	int _phaseScore;          // Accumulated score from previous phases (preserved on phase retry)
-	int _phaseMisses;         // Accumulated misses from previous phases
 	bool _skipSectionRequested; // Debug shortcut (Shift+S): force current gameplay section to end
 
 	// ---------------------------------------------------------------------------
@@ -542,20 +532,6 @@ public:
 	void frameEndCleanup();
 
 	// ---------------------------------------------------------------------------
-	// Opcode 6 Helper Functions
-	// ---------------------------------------------------------------------------
-	// Handler-specific setup extracted from iactRebel2Opcode6.
-
-	// Handler 8 (third-person on foot) setup - FUN_00401234 case 4
-	void opcode6Handler8Setup(int16 par3, int16 par4);
-
-	// Handler 7 (third-person ship) setup - FUN_0040c3cc case 4
-	void opcode6Handler7Setup(int16 par3, int16 par4);
-
-	// Calculate view offsets based on level type (lines 182-213)
-	void opcode6CalcViewOffsets();
-
-	// ---------------------------------------------------------------------------
 	// Opcode 8 Helper Functions
 	// ---------------------------------------------------------------------------
 	// Resource loading extracted from iactRebel2Opcode8.
@@ -618,7 +594,6 @@ public:
 	// _rebelDetailMode (DAT_0047a7fc): Controls whether edge highlights are drawn.
 	// Set from IACT opcode 6. When >= 0, edge highlights are enabled.
 	byte _edgeTable[256 * 256];       // DAT_0046a7d0 - primary edge blend table
-	byte _edgeTableAlt[256 * 256];    // DAT_00443fb0 - secondary blend table (hi-res mode)
 	int16 _rebelDetailMode;           // DAT_0047a7fc - edge highlight enable flag
 
 	// Initialize edge blend table (FUN_410510)
@@ -914,14 +889,6 @@ public:
 	SpaceShot _spaceShots[2];
 	int16 _spaceShotDirection;  // DAT_0044374e - ship direction for gun lookup
 
-	// Legacy struct for backwards compatibility
-	struct Shot {
-		bool active;
-		int counter;
-		int x, y;       // Target position
-	};
-	Shot _shots[2];
-
 	// Handler-specific shot spawning
 	void spawnTurretShot(int x, int y);    // Handler 0x26
 	void spawnVehicleShot(int x, int y);   // Handler 8
@@ -1017,9 +984,6 @@ public:
 	int16 _shipDirectionIndex;
 	int16 _shipDirectionH;           // Horizontal direction (0-4, center=2)
 	int16 _shipDirectionV;           // Vertical direction (0-6, center=3)
-
-	// Helper to load a NUT file from IACT chunk data
-	NutRenderer *loadNutFromIact(Common::SeekableReadStream &b, int dataSize);
 
 	// ---------------------------------------------------------------------------
 	// Handler 7 FLY Ship System
