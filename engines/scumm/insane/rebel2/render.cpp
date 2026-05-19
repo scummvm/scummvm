@@ -291,7 +291,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec 23/skip-RLE): %dx%d", width, height);
 							} else {
-								debug("Rebel2: TODO: Decode codec %d for embedded HUD", codec);
+								debug("Rebel2: Unsupported embedded HUD codec %d", codec);
 								frame.valid = false;
 							}
 
@@ -519,7 +519,7 @@ void InsaneRebel2::spawnSpaceShot(int x, int y) {
 			// Calculate gun positions from direction-based lookup tables
 			// In the original, these come from tables indexed by _shipDirectionIndex
 			// DAT_004437c2/DAT_00443808 for left gun, DAT_0044384e/DAT_00443894 for right gun
-			// For now, use simplified positions relative to ship
+			// Use simplified positions relative to the ship.
 			int shipScreenX = 160 + ((_shipPosX - 160) >> 3);
 			int shipScreenY = 105 + ((_shipPosY - 40) >> 2);
 

@@ -359,15 +359,8 @@ public:
 	// Play level beginning cinematic (LEVXX/XXBEG.SAN)
 	void playLevelBegin(int levelId);
 
-	// Play main gameplay video(s) for a level
-	// Returns true if level completed, false if player died
-	bool playLevelGameplay(int levelId);
-
 	// Play level completion video (LEVXX/XXEND.SAN)
 	void playLevelEnd(int levelId);
-
-	// Play death video (LEVXX/XXDIE_X.SAN) - variant based on frame/location
-	void playLevelDeath(int levelId);
 
 	// Play retry prompt video (LEVXX/XXRETRY.SAN)
 	void playLevelRetry(int levelId);

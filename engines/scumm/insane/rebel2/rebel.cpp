@@ -73,7 +73,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Rebel Assault 2: Load cockpit sprites NUT which contains crosshairs, explosions, status bar
 	// CPITIMAG.NUT = low-res (320x200), CPITIMHI.NUT = high-res (640x480)
-	// For now, use CPITIMAG since the game runs at 320x200
+	// The current renderer runs at 320x200, so use the low-res assets.
 	_smush_iconsNut = new NutRenderer(_vm, "SYSTM/CPITIMAG.NUT");
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 
@@ -169,7 +169,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	}
 	_rebelLastCounter = 0;
 
-	_difficulty = 1; // Default to Medium (1). TODO: Read from game config
+	_difficulty = 1; // Default to Medium.
 	_targetLockTimer = 0;  // DAT_00443676 equivalent
 
 	_speed = 12;
@@ -401,8 +401,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Main menu has 7 selectable items (0-6) matching GAME.TRS indices 11-17:
 	//   0: Start Game, 1: Options, 2: Calibrate Joystick, 3: Continue Intro,
 	//   4: Show Top Pilots, 5: Show Credits, 6: Return to Launcher
-	// Note: The coordinate formula uses numItemsTotal = 8 (includes title) for Y position calculation
-	// Formula from FUN_0041f5ae: (DAT_0047a806 == 0) + 6 = 7 items for keyboard mode
+	// FUN_0041f5ae uses the selectable item count for Y position calculation.
 	_menuItemCount = 7;
 	_menuInactivityTimer = 0;
 	_lastMenuVariant = -1;        // No previous menu video

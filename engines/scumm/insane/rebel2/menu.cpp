@@ -82,7 +82,7 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 //
 // processMenuInput -- Menu input handling (FUN_0041f5ae)
 //
-// Returns -1 (no action) or 0-4 (menu item selected).
+// Returns -1 (no action) or a 0-based selected menu item.
 // Events captured by notifyEvent() before ScummEngine consumes them.
 // Keyboard: Up=0x148, Down=0x150, Enter=0x0d, ESC=0x1b.
 // Mouse mode (DAT_0047a806 == 1): Y position maps to selection.
@@ -93,10 +93,9 @@ int InsaneRebel2::processMenuInput() {
 
 	// Menu item Y positions (low-res 320x200 mode):
 	// From FUN_0041f5ae: baseY = numItems * -5 + 0x68
-	// With 8 total items (title + 7 options): 8 * -5 + 104 = 64
-	// Items at Y = 64, 74, 84, 94, 104, 114, 124 with spacing of 10
-	const int numItemsTotal = 8;  // Title + 7 selectable items (matching assembly)
-	const int baseY = numItemsTotal * -5 + 0x68;  // = 64
+	// With 7 selectable items: 7 * -5 + 104 = 69
+	// Items at Y = 69, 79, 89, 99, 109, 119, 129 with spacing of 10
+	const int baseY = _menuItemCount * -5 + 0x68;
 	const int itemSpacing = 10;
 
 	// Process events from the queue (populated by notifyEvent)
@@ -138,7 +137,7 @@ int InsaneRebel2::processMenuInput() {
 				break;
 
 			case Common::KEYCODE_ESCAPE:
-				// ESC - Quit (index 4 = last item) - emulates key code 0x1b
+				// ESC - Quit (last item) - emulates key code 0x1b
 				result = _menuItemCount - 1;  // Select quit option
 				debug("Menu: ESC pressed - selecting quit (item %d)", result);
 				break;
@@ -150,32 +149,30 @@ int InsaneRebel2::processMenuInput() {
 
 		case Common::EVENT_LBUTTONDOWN:
 			_menuInactivityTimer = 0;
-			// TODO: Re-enable click-to-confirm (currently disabled for easier testing)
-			// Original behavior: clicking on a menu item both highlights and confirms it.
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
+			for (int i = 0; i < _menuItemCount; i++) {
+				int itemY = baseY + i * itemSpacing;
+				if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+					_menuSelection = i;
+					result = _menuSelection;
+					debug("Menu: Item %d selected (mouse)", _menuSelection);
+					break;
+				}
+			}
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			// Update hover selection based on Y position
-			// This emulates FUN_0041f5ae mouse mode behavior (DAT_0047a806 == 1)
 			{
 				int mouseY = event.mouse.y;
-				// Calculate selection from mouse Y position
-				// From assembly: DAT_00459988 = ((mouseY + 100) - (param_3 * -5 + 0x67)) / 10
-				int newSelection = (mouseY + 100 - (numItemsTotal * -5 + 0x67)) / 10;
-
-				// Clamp to valid range
-				if (newSelection < 0)
-					newSelection = 0;
-				if (newSelection >= _menuItemCount)
-					newSelection = _menuItemCount - 1;
-
-				// Only update if within menu area (not too far above/below)
-				int topY = baseY - 5;
-				int bottomY = baseY + (_menuItemCount - 1) * itemSpacing + 10;
-				if (mouseY >= topY && mouseY <= bottomY) {
-					if (newSelection != _menuSelection) {
-						_menuSelection = newSelection;
-						debug(5, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
+				for (int i = 0; i < _menuItemCount; i++) {
+					int itemY = baseY + i * itemSpacing;
+					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+						if (i != _menuSelection) {
+							_menuSelection = i;
+							debug(5, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
+						}
+						break;
 					}
 				}
 			}
@@ -890,8 +887,21 @@ int InsaneRebel2::processChapterSelectInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			// TODO: Re-enable click-to-confirm (currently disabled for easier testing)
-			// Original behavior: any click confirms current selection (DAT_0047a7e4 & 1)
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
+			{
+				int baseY = _chapterItemCount * -5 + 0x68;
+				for (int i = 0; i < _chapterItemCount; i++) {
+					int itemY = baseY + i * 10;
+					if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+						_chapterSelection = i;
+						_previewOffsetY = _chapterSelection * -50 + 75;
+						result = _chapterSelection;
+						debug("ChapterSelect: Item %d selected (mouse)", _chapterSelection);
+						break;
+					}
+				}
+			}
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -1474,6 +1484,8 @@ int InsaneRebel2::processLevelSelectInput() {
 	bool isDifficultyMode = (_gameState == kStateDifficultySelect);
 	int &selection = isDifficultyMode ? _difficultySelection : _levelSelection;
 	int itemCount = isDifficultyMode ? 6 : _levelItemCount;
+	const int itemBaseY = itemCount * -5 + 0x68;
+	const int itemSpacing = 10;
 
 	while (!_menuEventQueue.empty()) {
 		Common::Event event = _menuEventQueue.pop();
@@ -1515,12 +1527,28 @@ int InsaneRebel2::processLevelSelectInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			// TODO: Re-enable click-to-confirm (currently disabled for easier testing)
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
+			for (int i = 0; i < itemCount; i++) {
+				int itemY = itemBaseY + i * itemSpacing;
+				if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+					selection = i;
+					result = selection;
+					break;
+				}
+			}
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
 			_vm->_mouse.x = event.mouse.x;
 			_vm->_mouse.y = event.mouse.y;
+			for (int i = 0; i < itemCount; i++) {
+				int itemY = itemBaseY + i * itemSpacing;
+				if (event.mouse.y >= itemY - 4 && event.mouse.y < itemY + 6) {
+					selection = i;
+					break;
+				}
+			}
 			break;
 
 		case Common::EVENT_QUIT:

@@ -408,7 +408,7 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 }
 
 // ---------------------------------------------------------------------------
-// RA2 helper methods (still on SmushPlayer for now, used by base class)
+// RA2 helper methods used by the base SmushPlayer pipeline.
 // ---------------------------------------------------------------------------
 
 void SmushPlayerRebel2::handleGameLoad(int32 subSize, Common::SeekableReadStream &b) {

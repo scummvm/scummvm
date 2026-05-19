@@ -125,8 +125,8 @@ uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, 
 	// The SmushPlayer::play() call already blocks until video ends, so this step
 	// is handled implicitly. The early-exit logic (threshold > 0: if frame > 50
 	// AND all required enemy type bits are set, count up and break when > threshold)
-	// would need per-frame callbacks to work precisely. For now, the primary effect
-	// is covered by the video playing to completion and accumulating state.
+	// requires per-frame callbacks to work precisely. The current implementation
+	// covers the primary effect by playing the full video and accumulating state.
 	// TODO: Implement per-frame early exit callback for threshold-based wave termination.
 
 	// Step 2: Copy wave state to phase state (line 33)
@@ -230,7 +230,6 @@ int InsaneRebel2::runLevel2() {
 
 	// Play level beginning cinematic (02BEG.SAN)
 	// Original: FUN_004171c5("LEV02/02BEG.SAN", 0x20, 0xab, 0xa0, 10, 2, 0x46)
-	// Includes text overlay from GAME.TRS — deferred until text rendering is ready.
 	playLevelBegin(2);
 	if (_vm->shouldQuit())
 		return kLevelQuit;
@@ -498,7 +497,7 @@ int InsaneRebel2::runLevel2() {
 
 		// Level completed! Calculate accuracy score.
 		// Original: FUN_00417327 with score thresholds and medal ranks
-		// Score presentation deferred until GAME.TRS text rendering is implemented.
+		// Score presentation remains to be implemented.
 		{
 			totalMisses += _rebelHitCounter;
 			int accuracy = 0;
@@ -522,9 +521,8 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// Original: if (DAT_0047ab5c != 0) DAT_0047a7ee++ (bonus life award)
-		// DAT_0047ab5c is set when player earns a bonus life (e.g., score threshold).
-		// Currently not tracked — will be wired when bonus life system is implemented.
+		// Original: if (DAT_0047ab5c != 0) DAT_0047a7ee++ (bonus life award).
+		// DAT_0047ab5c is set when the player earns a bonus life.
 		_playerLives--;
 		if (_playerLives <= 0) {
 			// Original: FUN_00417ab2("LEV02/02OVER.SAN", 0x20, 2)
@@ -617,6 +615,7 @@ int InsaneRebel2::runLevel3() {
 	while (!_vm->shouldQuit()) {
 		_playerShield = 255;
 		_playerDamage = 0;
+		_playerScore = phase1Score;
 
 		// Reset bit table before gameplay starts
 		clearBit(0);
@@ -800,7 +799,7 @@ int InsaneRebel2::runLevel6() {
 	// phase 2 retries + death handling. Phase 1 death breaks inner → RETRY at outer bottom.
 	// Phase 2 death → RETRYB → re-enters phase 2 within inner loop.
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	int totalScore = 0;
+	int phase1Score = 0;
 
 	// Play level beginning cinematic (06BEG.SAN)
 	// Original: FUN_004171c5(s_LEV06_06BEG_SAN, 0x20, 0xaf, 0xa0, 10, 5, 0x4b)
@@ -852,8 +851,8 @@ int InsaneRebel2::runLevel6() {
 			continue;
 		}
 
-		// Phase 1 survived — save score, play POST1
-		totalScore = _playerScore;  // variantIdx = DAT_0047ab84
+		// Phase 1 survived — preserve this score across phase 2 retries.
+		phase1Score = _playerScore;  // variantIdx = DAT_0047ab84
 
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
@@ -866,6 +865,7 @@ int InsaneRebel2::runLevel6() {
 		while (!_vm->shouldQuit()) {
 			_rebelLevelType = 6;  // DAT_0047a7f8 = 6
 			_currentPhase = 2;
+			_playerScore = phase1Score;
 			clearBit(0);  // FUN_00407d10
 
 			debug("Rebel2: Level 6 Phase 2");
@@ -875,9 +875,6 @@ int InsaneRebel2::runLevel6() {
 
 			if (_vm->shouldQuit())
 				return kLevelQuit;
-
-			// Accumulate score: variantIdx = DAT_0047ab84 + variantIdx
-			totalScore += _playerScore;
 
 			if (_playerShield > 0) {
 				// Level completed!
@@ -947,8 +944,8 @@ int InsaneRebel2::runLevel7() {
 		// Original: FUN_0041f4d0("07PLAY.SAN", 0x28, -1, -1, 0)
 		// At frame 0x638 (1592), if DAT_0047ab8c != 0: play 07PLAYB.SAN (0x468)
 		// TODO: Mid-level fork at frame 1592 requires per-frame callback.
-		// For now, play the main video. The fork video (07PLAYB) would be triggered
-		// by IACT callbacks setting a state flag during gameplay.
+		// The fork video (07PLAYB) should be triggered by IACT callbacks setting
+		// a state flag during gameplay.
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV07/07PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
@@ -1461,7 +1458,7 @@ int InsaneRebel2::runLevel11() {
 			if (!allBasicKilled) {
 				// Normal bridge drop cinematic
 				playCinematic("LEV11/11POST3.SAN");
-				// Bonus checks (FUN_0042aa70) — deferred, play standard path
+				// Bonus checks (FUN_0042aa70) are not implemented; play the standard path.
 				// Original checks 0x77 and 0x62 for special POST3C cinematic
 			} else {
 				// All enemy types killed — bridge dropped successfully
@@ -1969,8 +1966,8 @@ int InsaneRebel2::runLevel13() {
 		// If alive after Phase A, play Phase B (reactor destruction loop)
 		// Original: at frame == maxFrame-10, play 13PLAY_B.SAN (0x468)
 		// Then loop while (DAT_0047ab90 != 0 || DAT_0047ab7c != 0)
-		// For now, play B as a sequential video. The IACT callbacks will manage
-		// the reactor target state through opcode interactions.
+		// Play B as a sequential video. The IACT callbacks manage the reactor
+		// target state through opcode interactions.
 		if (_playerShield > 0) {
 			splayer->setCurVideoFlags(0x468);
 			splayer->play("LEV13/13PLAY_B.SAN", 12);
