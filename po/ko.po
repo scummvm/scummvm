@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-19 20:01+0000\n"
-"PO-Revision-Date: 2026-04-21 16:22+0000\n"
+"PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -2046,8 +2046,6 @@ msgid "MIDI gain:"
 msgstr "미디 게인:"
 
 #: gui/options.cpp:1866
-#, fuzzy
-#| msgid "MT-32 Device:"
 msgid "MT-32 device:"
 msgstr "MT-32 장치:"
 
@@ -3767,6 +3765,8 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"경고: 지금 시작하려는 게임은 새로 지원되는 테스트 모드 게임입니다.\n"
+"버그나 이상 현상을 발견하시면 버그 추적 시스템에 신고해 주세요."
 
 #: engines/engine.cpp:861
 #, c-format
@@ -8083,10 +8083,8 @@ msgid "Toggle wireframe"
 msgstr "와이어프레임 전환"
 
 #: engines/colony/metaengine.cpp:178
-#, fuzzy
-#| msgid "Menu / Skip"
 msgid "Menu / Skip intro"
-msgstr "메뉴 / 건너뛰기"
+msgstr "메뉴 / 인트로 건너뛰기"
 
 #: engines/colony/metaengine.cpp:184 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
@@ -11670,38 +11668,34 @@ msgid "Toggle Chatty AI"
 msgstr "말 많은 AI 전환"
 
 #: engines/pelrock/metaengine.cpp:46
-#, fuzzy
-#| msgid "Alternative action"
 msgid "Alternate timing"
-msgstr "대체 작업"
+msgstr "대체 타이밍"
 
 #: engines/pelrock/metaengine.cpp:47
 msgid ""
 "Use ScummVM's alternate animation timing instead of the original game's "
 "slower walking and talking speed"
 msgstr ""
+"원작 게임의 느린 걷기 및 말하기 속도 대신 ScummVM의 대체 애니메이션 타이밍을 "
+"사용"
 
 #: engines/pelrock/metaengine.cpp:57
-#, fuzzy
-#| msgid "Play intro videos"
 msgid "Play intro"
-msgstr "인트로 비디오 재생"
+msgstr "인트로 재생"
 
 #: engines/pelrock/metaengine.cpp:58
 msgid ""
 "Play the game's intro sequence. Plays automatically the first time the game "
 "is launched."
-msgstr ""
+msgstr "게임 시작 영상을 재생합니다. 게임을 처음 실행할 때 자동으로 재생됩니다."
 
 #: engines/pelrock/metaengine.cpp:68
-#, fuzzy
-#| msgid "Disable sensors"
 msgid "Disable screensaver"
-msgstr "센서 비활성화"
+msgstr "화면 보호기 비활성화"
 
 #: engines/pelrock/metaengine.cpp:69
 msgid "Disable original screensaver slider mini-game every 60 seconds."
-msgstr ""
+msgstr "60초마다 재생되는 기존 화면 보호기 슬라이더 미니 게임을 비활성화합니다."
 
 #: engines/petka/metaengine.cpp:117
 msgid "Interact / Skip dialog"
