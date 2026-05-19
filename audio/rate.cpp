@@ -84,18 +84,20 @@ private:
 	int simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
 	int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
 
-	// keep a single printConvertType shared across all RateConverter_Impl specializations
+	// keep a single printConvertType shared across all RateConverter_Impl specializations.
+	// PrintContext must be trivially destructible: it lives in a function-scope static and
+	// is torn down after the OSystem (and its memory pool that backs Common::String) is gone.
 	struct PrintContext {
 		st_rate_t previousInRate = 0;
-		Common::String previousGameId;
+		char previousGameId[64] = { 0 };
 	};
 	void printConvertType(const char *name, PrintContext &ctx) const {
-		const Common::String activeDomain = ConfMan.getActiveDomainName();
+		const Common::String &activeDomain = ConfMan.getActiveDomainName();
 		if (!activeDomain.empty() &&
 			(ctx.previousInRate != _inRate ||
-			 ctx.previousGameId != activeDomain)) {
+			 strncmp(ctx.previousGameId, activeDomain.c_str(), sizeof(ctx.previousGameId)) != 0)) {
 			ctx.previousInRate = _inRate;
-			ctx.previousGameId = activeDomain;
+			Common::strlcpy(ctx.previousGameId, activeDomain.c_str(), sizeof(ctx.previousGameId));
 			debugC(kDebugLevelGAudio, "RateConverter_Impl::%s[%s]: inRate %d Hz (%s) => outRate %d Hz (%s)",
 				  name, activeDomain.c_str(),
 				  _inRate, inStereo ? "stereo" : "mono", _outRate, outStereo ? "stereo" : "mono");
