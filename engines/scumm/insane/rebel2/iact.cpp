@@ -1176,7 +1176,6 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		if (_grdSpriteMode == 3) {
 			if (_rebelDamageLevel == 5) {
 				// At max damage, check for direction change input
-				// For now, use mouse X position to determine direction
 				int16 mouseX = getGameplayAimPoint().x;
 				if (_player && _player->_width > 320) {
 					mouseX = (mouseX * 320) / _player->_width;
