@@ -26,7 +26,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetJustice] + (x))
+
 extern Toolbox *g_toolbox;
 
 // justice - lights on
@@ -47,14 +48,14 @@ void FoolGame::justiceRun() {
 			// 142:08a2
 			this->zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x1a);
 			_activePuzzleStatus = 0x63;
-			this->var_str_384 = _zbasic->str(345); // behold the 3rd key of thoth
+			this->var_str_384 = _zbasic->str(OFF(0)); // behold the 3rd key of thoth
 			this->sub_128_178a(0x3f, 1);
 		}
 	}
 	// 142:0906
 	if (_activePuzzleStatus == 0x63) {
-		_zbasic->menu(8, 0, 1, _zbasic->str(346)); // the 3rd key of thoth
-		_zbasic->menu(8, 1, 1, _zbasic->str(347)); // return to scroll
+		_zbasic->menu(8, 0, 1, _zbasic->str(OFF(1))); // the 3rd key of thoth
+		_zbasic->menu(8, 1, 1, _zbasic->str(OFF(2))); // return to scroll
 		this->thothKey3rd();
 		if (_activePuzzleSolved) {
 			this->zoomRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 2, kPatXor, 0x19);
@@ -83,12 +84,12 @@ void FoolGame::sub_142_9be() {
 	}
 	// 142:09ea
 	if (_puzzleCompletionStatus[0x34] < 4) {
-		_zbasic->menu(8, 3, 1, _zbasic->str(348)); // a secret hides here
-		_zbasic->menu(8, 4, 1, _zbasic->str(349)); // if twenty-five appear
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(3))); // a secret hides here
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(4))); // if twenty-five appear
 	} else {
 		// 142:0a3a
-		_zbasic->menu(8, 3, 1, _zbasic->str(350)); // you will remain here
-		_zbasic->menu(8, 4, 1, _zbasic->str(351)); // unless twenty-five appear
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(5))); // you will remain here
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(6))); // unless twenty-five appear
 	}
 	// 142:0a6a
 	this->justiceZoom();
@@ -108,8 +109,8 @@ void FoolGame::sub_142_9be() {
 	// 142:0adc
 	this->justiceZoom();
 	this->fillRect(0x1a, 0x82, 0x128, 0x190, 2);
-	if (_activePuzzleBuffer.empty()) { // was: str(352)
-		_activePuzzleBuffer = (_zbasic->space(0xc) + _zbasic->str(353) + _zbasic->space(0xc)).encode(Common::kMacRoman); // 1
+	if (_activePuzzleBuffer.empty()) { // was: str(OFF(7))
+		_activePuzzleBuffer = (_zbasic->space(0xc) + _zbasic->str(OFF(8)) + _zbasic->space(0xc)).encode(Common::kMacRoman); // 1
 		this->var_i16_233e = 1;
 	} else {
 		// 142:0b4c
@@ -120,10 +121,10 @@ void FoolGame::sub_142_9be() {
 	for (this->var_i16_484 = 1; this->var_i16_484 <= 0x19; this->var_i16_484++) {
 		this->var_i16_103a = _zbasic->castInt(_zbasic->midStr(_activePuzzleBuffer, this->var_i16_484, 1));
 		if ((this->var_i16_103a & 2) == 0) {
-			_zbasic->indexSet(_zbasic->str(354), 1, (this->var_i16_484 + 0x19));
+			_zbasic->indexSet(_zbasic->str(OFF(9)), 1, (this->var_i16_484 + 0x19)); // bullet
 		} else {
 			// 142:0be0
-			_zbasic->indexSet(_zbasic->str(355), 1, (this->var_i16_484 + 0x19));
+			_zbasic->indexSet(_zbasic->str(OFF(10)), 1, (this->var_i16_484 + 0x19)); // wadjet
 		}
 		// 142:0c06
 		if ((this->var_i16_103a & 1) != 0) {
@@ -166,14 +167,14 @@ void FoolGame::justiceOnClick() {
 	}
 	// 142:0d56
 	g_toolbox->InvertRoundRect(_screenGrid[this->var_i16_103a], 0x1e, 0x1e);
-	if (_zbasic->index(1, this->var_i16_103a + 0x19) == _zbasic->str(356)) { // \xa5
-		_zbasic->indexSet(_zbasic->str(357), 1, this->var_i16_103a + 0x19); // ~
+	if (_zbasic->index(1, this->var_i16_103a + 0x19) == _zbasic->str(OFF(11))) { // bullet
+		_zbasic->indexSet(_zbasic->str(OFF(12)), 1, this->var_i16_103a + 0x19); // wadjet
 	}
 	// 142:0dc6
 	if (this->var_i16_103a == 0xd) { // center button
 		if (this->var_i16_233e == 0) {
 			for (this->var_i16_484 = 1; this->var_i16_484 <= 0x19; this->var_i16_484++) {
-				_zbasic->indexSet(_zbasic->str(358), 1, this->var_i16_484 + 0x19); // \xa5
+				_zbasic->indexSet(_zbasic->str(OFF(13)), 1, this->var_i16_484 + 0x19); // bullet
 				this->arr_i16_3738[this->var_i16_484] = 0;
 				this->justiceRemoveBlock();
 			}
@@ -188,7 +189,7 @@ void FoolGame::justiceOnClick() {
 	}
 	// 142:0e44
 	Common::String buffer = _zbasic->indexRaw(1, this->var_i16_103a);
-	if (_zbasic->leftStr(buffer, 1) == _zbasic->str(359).encode(Common::kMacRoman)) { // M
+	if (_zbasic->leftStr(buffer, 1) == _zbasic->str(OFF(14)).encode(Common::kMacRoman)) { // M
 		this->var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(buffer, 2, 2));
 		this->justiceDrawBlock();
 		this->var_i16_2340 = 5;
@@ -230,7 +231,7 @@ void FoolGame::justiceDrawBlock() {
 	g_toolbox->PenNormal();
 	g_toolbox->FillRoundRect(_screenGrid[this->var_i16_484], 0x1e, 0x1e, _patterns[0]);
 	g_toolbox->FrameRoundRect(_screenGrid[this->var_i16_484], 0x1e, 0x1e);
-	_zbasic->text(0, 0xc, 0, kSrcOr);
+	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 	this->var_str_384 = _zbasic->index(1, this->var_i16_484 + 0x19);
 	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_384);
 	// 142:1056
@@ -254,7 +255,7 @@ void FoolGame::justiceStoreState() {
 	_activePuzzleBuffer = _zbasic->rightStr(this->var_str_384, 1);
 	for (int16 i = 1; i <= 0x19; i++) {
 		this->var_i16_484 = this->arr_i16_3738[i];
-		if (_zbasic->index(1, i + 0x19) == _zbasic->str(360)) { // ~
+		if (_zbasic->index(1, i + 0x19) == _zbasic->str(OFF(15))) { // wadjet
 			this->var_i16_484 |= 2;
 			this->var_str_384 = _zbasic->rightStr(Common::U32String::format(" %d", this->var_i16_484), 1);
 			_activePuzzleBuffer += this->var_str_384;

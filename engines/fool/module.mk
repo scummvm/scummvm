@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	fool_cards.o \
 	fool_death.o \
 	fool_game.o \
+	fool_hermit.o \
 	fool_humbug.o \
 	fool_jigsaw.o \
 	fool_jumble.o \
@@ -19,6 +20,7 @@ MODULE_OBJS = \
 	fool_straightpath.o \
 	fool_sun.o \
 	fool_thoth.o \
+	fool_threeships.o \
 	fool_wordsearch.o \
 	toolbox.o \
 	toolbox_fileman.o \

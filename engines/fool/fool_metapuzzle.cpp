@@ -28,7 +28,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetMetapuzzle] + (x))
+
 extern Toolbox *g_toolbox;
 
 // sun's map metapuzzle
@@ -183,13 +184,13 @@ void FoolGame::sub_138_21e() {
 
 void FoolGame::metapuzzleSetupMenu() {
 	// 138:03e0
-	_zbasic->menu(8, 0, 1, _zbasic->str(260)); // the sun's map
-	_zbasic->menu(8, 1, 1, _zbasic->str(261)); // return to scroll
-	_zbasic->menu(8, 2, 0, _zbasic->str(262)); // -
+	_zbasic->menu(8, 0, 1, _zbasic->str(OFF(0))); // the sun's map
+	_zbasic->menu(8, 1, 1, _zbasic->str(OFF(1))); // return to scroll
+	_zbasic->menu(8, 2, 0, _zbasic->str(OFF(2))); // -
 	var_i16_484 = 2;
 	for (int16 i = _puzzleMenuInstructions[0x30]; i <= _puzzleMenuInstructions[0x30+1]; i++) {
 		var_i16_484++;
-		var_str_384 = _zbasic->index(0, i) + _zbasic->str(263); // '  '
+		var_str_384 = _zbasic->index(0, i) + _zbasic->str(OFF(3)); // '  '
 		_zbasic->menu(8, var_i16_484, 1, var_str_384);
 	}
 }
@@ -212,27 +213,27 @@ void FoolGame::metapuzzleSecretCode() {
 		zoomRect(arr_i16_4d20[var_i16_68c*4], arr_i16_4d20[var_i16_68c*4+1], arr_i16_4d20[var_i16_68c*4+2], arr_i16_4d20[var_i16_68c*4+3], 0x122, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kPatXor, 0x1a);
 	}
 	if (_activePuzzle == 0x58) {
-		var_str_1170 = _zbasic->str(264); // treasure name
+		var_str_1170 = _zbasic->str(OFF(4)); // treasure name
 		_metapuzzleSecretCodeSpaceOffset = 8;
-		_metapuzzleSecretCodeCipher = _zbasic->str(265); // CQHXBMLGPTWIFRYASUVJZNKDOE
+		_metapuzzleSecretCodeCipher = _zbasic->str(OFF(5)); // CQHXBMLGPTWIFRYASUVJZNKDOE
 	}
 	// 138:0650
 	if (_activePuzzle == 0x59) {
-		var_str_1170 = _zbasic->str(266); // treasure name
+		var_str_1170 = _zbasic->str(OFF(6)); // treasure name
 		_metapuzzleSecretCodeSpaceOffset = 0;
-		_metapuzzleSecretCodeCipher = _zbasic->str(267); // IEGADHFBCPLNRKQOJMZWTYVUSX
+		_metapuzzleSecretCodeCipher = _zbasic->str(OFF(7)); // IEGADHFBCPLNRKQOJMZWTYVUSX
 	}
 	// 138:068a
 	if (_activePuzzle == 0x5a) {
-		var_str_1170 = _zbasic->str(268); // treasure name
+		var_str_1170 = _zbasic->str(OFF(8)); // treasure name
 		_metapuzzleSecretCodeSpaceOffset = 5;
-		_metapuzzleSecretCodeCipher = _zbasic->str(269); // ISDXMRCLHQYWBVPKGOUZTFNJAE
+		_metapuzzleSecretCodeCipher = _zbasic->str(OFF(9)); // ISDXMRCLHQYWBVPKGOUZTFNJAE
 	}
 	// 138:06c4
 	if (_activePuzzle == 0x5b) {
-		var_str_1170 = _zbasic->str(270); // treasure name
+		var_str_1170 = _zbasic->str(OFF(10)); // treasure name
 		_metapuzzleSecretCodeSpaceOffset = 9;
-		_metapuzzleSecretCodeCipher = _zbasic->str(271); // ZYXWVUTSRQPONMLKJIHGFEDCBA
+		_metapuzzleSecretCodeCipher = _zbasic->str(OFF(11)); // ZYXWVUTSRQPONMLKJIHGFEDCBA
 	}
 	// 138:06fe
 	arr_i16_1eb8[0] = 0x122;
@@ -245,7 +246,7 @@ void FoolGame::metapuzzleSecretCode() {
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
 	g_toolbox->FillRect(temp, _patterns[2]);
-	if (_activePuzzleBuffer.empty()) { // was: str(272)
+	if (_activePuzzleBuffer.empty()) { // was: str(OFF(11))
 		metapuzzleSecretCodeReset();
 	} else {
 		// 138:0778
@@ -253,7 +254,7 @@ void FoolGame::metapuzzleSecretCode() {
 		_metapuzzleSecretCodeCount = 0;
 		var_i16_68a = 1;
 		for (int16 i = 1; i <= (int16)var_str_1272.size(); i++) {
-			if (_zbasic->midStr(var_str_1272, i, 1) != _zbasic->str(273)) { // ' '
+			if (_zbasic->midStr(var_str_1272, i, 1) != _zbasic->str(OFF(12))) { // ' '
 				_metapuzzleSecretCodeCount++;
 			}
 			// 138:07c2
@@ -300,11 +301,11 @@ void FoolGame::metapuzzleSecretCodeDrawText() {
 	if (!((_keyLastPressed >= 0x41) && (_keyLastPressed <= 0x5a))) {
 		return;
 	}
-	_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
+	_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
 	_metapuzzleSecretCodeCount++;
 	if (_metapuzzleSecretCodeSpaceOffset == _metapuzzleSecretCodeCount) {
 		if (_zbasic->leftStr(var_str_1170, _metapuzzleSecretCodeSpaceOffset - 1) == var_str_1272) {
-			var_str_1272 += _zbasic->str(274); // ' '
+			var_str_1272 += _zbasic->str(OFF(14)); // ' '
 		}
 	}
 	// 138:0946
@@ -321,7 +322,7 @@ void FoolGame::metapuzzleSecretCodeDrawText() {
 
 void FoolGame::sub_138_9c4() {
 	// 138:09c4
-	_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
+	_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
 	Common::Rect temp;
 	temp.top = arr_i16_1eb8[0];
 	temp.left = arr_i16_1eb8[1];
@@ -348,11 +349,11 @@ void FoolGame::metapuzzleSecretCodeReset() {
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
 	g_toolbox->FillRect(temp, _patterns[2]);
-	_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 	var_i16_7a2 = 0x140;
-	var_str_384 = _zbasic->str(275); // if you know which is which, enter the letters you wish to switch
+	var_str_384 = _zbasic->str(OFF(15)); // if you know which is which, enter the letters you wish to switch
 	sub_128_918(var_str_384);
-	var_str_1272.clear(); // was: str(276)
+	var_str_1272.clear(); // was: str(OFF(16))
 	_metapuzzleSecretCodeCount = 0;
 }
 
@@ -423,10 +424,10 @@ void FoolGame::metapuzzleOnShift() {
 					var_str_384 = _puzzleName[_selectedMenuChapter];
 				} else {
 					// 138:0d8a
-					var_str_384 = _zbasic->str(277); // the book of thoth
+					var_str_384 = _zbasic->str(OFF(17)); // the book of thoth
 				}
 				// 138:0d9e
-				_zbasic->text(0, 0xc, 0, kSrcOr);
+				_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 				var_i16_30 = g_toolbox->StringWidth(var_str_384);
 				g_toolbox->MoveTo((_windowWidth / 2) - (var_i16_30 / 2), 0xf);
 				g_toolbox->DrawString(var_str_384);

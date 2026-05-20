@@ -28,7 +28,6 @@
 
 namespace Fool {
 
-;
 extern Toolbox *g_toolbox;
 
 void FoolGame::straightPathRun() {
@@ -71,7 +70,7 @@ void FoolGame::straightPathRun() {
 		var_str_1272 += _zbasic->index(1, i);
 		// 143:0276
 	}
-	_zbasic->text(0xfb, arr_i16_1eb8[14], 0, kSrcOr);
+	_zbasic->text(kFontPuzzle, arr_i16_1eb8[14], 0, kSrcOr);
 	_zbasic->unk_20();
 	// 143:02b6
 	for (int16 j = 0; j <= arr_i16_1eb8[1]; j++) {
@@ -187,7 +186,7 @@ void FoolGame::straightPathReset() {
 void FoolGame::straightPathDrawText() {
 	// 143:0864
 	straightPathClearText();
-	_zbasic->text(0xfe, 0x18, 0x18, kSrcBic);
+	_zbasic->text(kFontLarge, 0x18, 0x18, kSrcBic);
 	var_i16_7a2 = 0x148;
 	sub_128_918(_activePuzzleBuffer);
 }

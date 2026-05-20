@@ -79,9 +79,7 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		warning("ZBasic::loadProgram: could not find SCOT chunk");
 		return;
 	}
-	// Fool's Errand has an embedded version of Chicago with custom characters
-	Graphics::MacFont macFont = Graphics::MacFont(g_engine->_wm._fontMan->getFontIdByName("Chicago"), 12, 0);
-	_menu->setFont(g_engine->_wm._fontMan->getFont(&macFont));
+
 
 	Common::MemoryReadStream *scot = new Common::MemoryReadStream(scotRes->data(), scotRes->size());
 
@@ -801,6 +799,11 @@ Common::String ZBasic::indexRaw(int16 table, int16 index) {
 	}
 	debugC(5, kDebugLoading, "ZBasic::indexRaw: [%d][%d] = %s", table, index, _index[table][index].c_str());
 	return _index[table][index];
+}
+
+void ZBasic::setMenuFont(uint16 font, uint16 size, uint16 slant) {
+	Graphics::MacFont macFont = Graphics::MacFont(font, size, slant);
+	_menu->setFont(g_engine->_wm._fontMan->getFont(&macFont));
 }
 
 } // namespace Fool

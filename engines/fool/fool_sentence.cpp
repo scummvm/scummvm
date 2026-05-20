@@ -27,7 +27,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetSentence] + (x))
+
 extern Toolbox *g_toolbox;
 
 // sentence join game
@@ -55,7 +56,7 @@ void FoolGame::sentenceRun() {
 	_zbasic->indexRawSet(puzzlesReadString(), 1, 0);
 	this->var_str_1272 = puzzlesReadString().decode(Common::kMacRoman);
 	this->var_str_384 = puzzlesReadString().decode(Common::kMacRoman);
-	this->var_str_384 = _zbasic->str(215) + this->var_str_384 + _zbasic->str(216); // to reveal XXXXX
+	this->var_str_384 = _zbasic->str(OFF(0)) + this->var_str_384 + _zbasic->str(OFF(1)); // to reveal XXXXX
 	// 135:0152
 	_zbasic->menu(8, 7, 1, this->var_str_384);
 	this->arr_i16_1eb8[1] = 0x1c2 / this->arr_i16_1eb8[0];
@@ -84,7 +85,7 @@ void FoolGame::sentenceRun() {
 	this->arr_i16_1eb8[4] = 0;
 	for (this->var_i16_68a = 1; this->var_i16_68a <= this->arr_i16_1eb8[0]; this->var_i16_68a++) {
 		// 135:03a4
-		if (_activePuzzleBuffer.empty()) { // was: str(217)
+		if (_activePuzzleBuffer.empty()) { // was: str(OFF(2))
 			this->arr_i16_4338[this->var_i16_68a] = 1;
 		} else {
 			// 135:03d4
@@ -99,7 +100,7 @@ void FoolGame::sentenceRun() {
 		// 135:044a
 	}
 	// 135:0466
-	if (_activePuzzleBuffer.empty()) { // was: str(218)
+	if (_activePuzzleBuffer.empty()) { // was: str(OFF(3))
 		this->var_str_1070 = _zbasic->index(1, 0);
 	} else {
 		// 135:049a
@@ -194,9 +195,9 @@ void FoolGame::sub_135_5b6() {
 	if (this->var_i16_484 != 0) {
 		return;
 	}
-	_zbasic->text(0, 0xc, 0, kSrcBic);
+	_zbasic->text(_fontChicago, 0xc, 0, kSrcBic);
 	this->var_i16_7a2 = 0x124;
-	this->sub_128_918(_zbasic->str(219)); // click mouse to reset puzzle
+	this->sub_128_918(_zbasic->str(OFF(4))); // click mouse to reset puzzle
 
 	this->sub_128_6186();
 	this->var_i16_1abc = 1;
@@ -251,7 +252,7 @@ void FoolGame::sub_135_86a() {
 void FoolGame::sub_135_94c() {
 	// 135:094c
 	this->var_i16_484 = this->var_str_1070.size();
-	this->var_str_384.clear(); // was: str(220)
+	this->var_str_384.clear(); // was: str(OFF(5))
 	for (int16 i = this->var_i16_484; i >= 1; i--) {
 		this->var_str_384 += _zbasic->midStr(this->var_str_1070, i, 1);
 	}
@@ -273,8 +274,8 @@ void FoolGame::sub_135_9ba() {
 
 void FoolGame::sub_135_a34() {
 	// 135:0a34
-	_zbasic->text(0, 0xc, 0, kSrcOr);
-	this->var_str_384 = Common::U32String::format("%d", this->var_i16_68a) + _zbasic->str(221);
+	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
+	this->var_str_384 = Common::U32String::format("%d", this->var_i16_68a) + _zbasic->str(OFF(6)); // ' '
 	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_384);
 	g_toolbox->FillOval(_screenGrid[this->var_i16_68a], _patterns[0]);
 	g_toolbox->FrameOval(_screenGrid[this->var_i16_68a]);
@@ -284,7 +285,7 @@ void FoolGame::sub_135_a34() {
 
 void FoolGame::sub_135_b16() {
 	// 135:0b16
-	_zbasic->text(0xfe, 0x18, 0, kSrcOr);
+	_zbasic->text(kFontLarge, 0x18, 0, kSrcOr);
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_1070);
 	if (this->var_i16_484 < this->arr_i16_1eb8[4]) {
 		this->var_i16_484 = this->arr_i16_1eb8[4];
@@ -302,7 +303,7 @@ void FoolGame::sub_135_b16() {
 
 void FoolGame::sub_135_c1c() {
 	// 135:0c1c
-	_activePuzzleBuffer.clear(); // was: str(222)
+	_activePuzzleBuffer.clear(); // was: str(OFF(7))
 	if (this->var_i16_1abc != 0) {
 		this->var_i16_1abc = 0;
 		return;

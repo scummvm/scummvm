@@ -27,7 +27,6 @@
 
 namespace Fool {
 
-;
 extern Toolbox *g_toolbox;
 
 // word jumble/substitute puzzle
@@ -148,8 +147,8 @@ void FoolGame::jumbleRun() {
 		// 130:03fe
 		//if (_activePuzzleStatus <= _jumbleCurrentSubPuzzle)
 		this->var_i16_106e = 0;
-		this->var_str_1070 = _zbasic->str(168); // empty
-		this->var_str_1170 = _zbasic->str(169); // empty
+		this->var_str_1070.clear(); // was: str(168)
+		this->var_str_1170.clear(); // was: str(169)
 		this->var_i16_1270 = puzzlesReadShort();
 		for (this->var_i16_103a = 1; this->var_i16_103a <= this->var_i16_1270; this->var_i16_103a++) {
 			this->var_str_1272 = puzzlesReadString().decode(Common::kMacRoman);
@@ -246,7 +245,7 @@ void FoolGame::jumbleRun() {
 				this->var_i16_484 = puzzlesReadShort();
 				this->var_i16_7e4 = puzzlesReadShort();
 				this->var_str_1578 = puzzlesReadString().decode(Common::kMacRoman);
-				_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+				_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
 				if (this->var_i16_7e4 > 0) {
 					g_toolbox->MoveTo(this->var_i16_484, this->var_i16_7e4);
 					g_toolbox->DrawString(this->var_str_1578);
@@ -257,7 +256,7 @@ void FoolGame::jumbleRun() {
 		}
 		// 130:086a
 		this->var_i16_1678 = 0;
-		this->var_str_1578 = _zbasic->str(171);
+		this->var_str_1578.clear(); // was: str(171);
 		if (_jumbleCurrentSubPuzzle == _jumbleSubPuzzleCount) {
 			// all puzzles done, load the success animation list
 			this->arr_i16_4338[0] = puzzlesReadShort();
@@ -296,9 +295,9 @@ void FoolGame::jumbleRun() {
 			} else {
 				// 130:0956
 				if (_activePuzzle <= 0x50) {
-					if ((this->var_i16_1678 > 0) && (this->var_str_1578 != _zbasic->str(172))) {
+					if ((this->var_i16_1678 > 0) && (!this->var_str_1578.empty())) { // was: str(172)
 						// 130:098c
-						this->var_str_1578 = _zbasic->str(173);
+						this->var_str_1578.clear(); // was: str(173)
 						this->sub_130_2226();
 					}
 					// 130:09a4
@@ -402,7 +401,7 @@ void FoolGame::sub_130_c66() {
 		// 130:0c98
 		if (_activePuzzleStatus < 0x64) {
 			_activePuzzleStatus = _jumbleCurrentSubPuzzle;
-			if ((_jumbleGameType == 2) && (this->var_str_1578 != _zbasic->str(175))) {
+			if ((_jumbleGameType == 2) && (!this->var_str_1578.empty())) { // was: str(175)
 				_activePuzzleBuffer = this->var_str_1070 + _zbasic->leftStr(this->var_str_1578, this->var_i16_167a-2);
 			} else {
 				// 130:0cfe
@@ -438,7 +437,7 @@ void FoolGame::sub_130_d2e() {
 void FoolGame::sub_130_d90() {
 	// 130:0d90
 	// substitution cipher
-	if (_zbasic->index(1, 1) != _zbasic->str(177)) {
+	if (!_zbasic->index(1, 1).empty()) { // was: str(177)
 		if (this->var_str_1070.size() == this->var_str_1170.size()) {
 			this->var_i16_1372 = _zbasic->index(1, 1).size();
 			this->var_str_1578 = _zbasic->space(this->var_i16_1372);
@@ -464,12 +463,12 @@ void FoolGame::sub_130_d90() {
 
 		}
 		// 130:0f24
-		this->var_str_1578 += _zbasic->str(178) + _zbasic->index(1, 1); // ABC = XYZ
-		this->var_i16_167a = _zbasic->instr(1, this->var_str_1578, _zbasic->str(179));
+		this->var_str_1578 += Common::U32String(" = ") + _zbasic->index(1, 1); // ABC = XYZ
+		this->var_i16_167a = _zbasic->instr(1, this->var_str_1578, Common::U32String("=")); // was: str(179)
 		this->sub_130_2226();
 	} else {
 		// 130:0f72
-		this->var_str_1578 = _zbasic->str(180);
+		this->var_str_1578.clear(); // was: str(180);
 	}
 	// 130:0f86
 	this->var_i16_106e = 1;
@@ -497,7 +496,7 @@ void FoolGame::sub_130_d90() {
 
 void FoolGame::sub_130_1004() {
 	// 130:1004
-	this->var_i16_106e = _zbasic->instr(1, this->var_str_1070, _zbasic->str(181));
+	this->var_i16_106e = _zbasic->instr(1, this->var_str_1070, Common::U32String(" ")); // was: str(181)
 	if (this->var_i16_106e == 0) {
 		this->var_i16_106e = 1;
 	}
@@ -552,7 +551,7 @@ void FoolGame::sub_130_10a6() {
 void FoolGame::sub_130_1282() {
 	// 130:1282
 	// hidden message, change the mouse cursor
-	this->var_i16_106e = _zbasic->instr(1, this->var_str_1070, _zbasic->str(182));
+	this->var_i16_106e = _zbasic->instr(1, this->var_str_1070, Common::U32String(" ")); // was: str(182)
 	if (this->var_i16_106e == 0) {
 		this->var_i16_106e = 1;
 	}
@@ -602,7 +601,7 @@ void FoolGame::sub_130_1426() {
 	// 130:1426
 	this->var_i16_187e = 0;
 	this->var_i16_1880 = 0;
-	if (_zbasic->index(1, 1) != _zbasic->str(183)) {
+	if (!_zbasic->index(1, 1).empty()) { // was: str(183)
 		this->var_i16_1678 = 1;
 		this->var_str_1578 = _zbasic->index(1, 1);
 		this->sub_130_2226();
@@ -793,7 +792,7 @@ void FoolGame::sub_130_1a16() {
 		// 130:1b2e
 	}
 	// 130:1b40
-	if (this->var_str_1578 != _zbasic->str(184)) { // blank
+	if (!this->var_str_1578.empty()) { // was: str(184)
 		for (int16 i = 1; i <= this->var_i16_167a - 2; i++) {
 			this->var_str_d12 = _zbasic->midStr(this->var_str_1578, i, 1);
 			if ((this->var_str_d12 == this->var_str_1374) || (this->var_str_d12 == this->var_str_1474)) {
@@ -852,7 +851,7 @@ void FoolGame::sub_130_1c6c() {
 
 void FoolGame::sub_130_1dcc() {
 	// 130:1dcc
-	_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], 0, this->var_i16_106c);
+	_zbasic->text(kFontPuzzle, this->arr_i16_1eb8[0xe], 0, this->var_i16_106c);
 	g_toolbox->MoveTo(
 		_screenGrid[this->var_i16_1574].left + this->arr_i16_1eb8[2],
 		_screenGrid[this->var_i16_1574].top + this->arr_i16_1eb8[3]
@@ -879,7 +878,7 @@ void FoolGame::sub_130_1e76() {
 	temp.bottom = this->arr_i16_4758[2];
 	temp.right = this->arr_i16_4758[3];
 	g_toolbox->FillRect(temp, _patterns[this->var_i16_105e]);
-	_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], 0, this->var_i16_106c);
+	_zbasic->text(kFontPuzzle, this->arr_i16_1eb8[0xe], 0, this->var_i16_106c);
 	// 130:1f70
 	g_toolbox->MoveTo(
 		_screenGrid[this->var_i16_1574].left + this->arr_i16_1eb8[2],
@@ -955,7 +954,7 @@ void FoolGame::sub_130_2178() {
 		return;
 
 	this->var_i16_1678 = this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c];
-	if (_zbasic->index(1, this->var_i16_1678) != _zbasic->str(185)) { // empty
+	if (!_zbasic->index(1, this->var_i16_1678).empty()) { // was: str(185)
 		this->var_str_1578 = _zbasic->index(1, this->var_i16_1678);
 		this->sub_130_2226();
 	}
@@ -982,10 +981,10 @@ void FoolGame::sub_130_2226() {
 	}
 	// 130:2266
 	this->fillRect(0x124, 0x64, 0x139, 0x1ef, 0);
-	if (this->var_str_1578 == _zbasic->str(186)) // blank
+	if (this->var_str_1578.empty()) // was: str(186)
 		return;
 	// 130:22a0
-	_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_1578);
 	g_toolbox->MoveTo(0x127 - (this->var_i16_484 / 2), 0x133);
 	g_toolbox->DrawString(this->var_str_1578);
@@ -994,9 +993,9 @@ void FoolGame::sub_130_2226() {
 void FoolGame::sub_130_22ee() {
 	// 130:22ee
 	this->fillRect(0x131, 0x84, 0x156, 0x17e, this->var_i16_1060);
-	if (this->var_str_1578 == _zbasic->str(187)) // blank
+	if (this->var_str_1578.empty()) // was: str(187)
 		return;
-	_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 	this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_1578);
 	this->fillRect(0x13c, 0xf6 - (this->var_i16_7ba / 2), 0x150, 0x10a + (this->var_i16_7ba / 2), 2);
 	g_toolbox->MoveTo(0x100 - (this->var_i16_7ba / 2), 0x14a);
@@ -1006,9 +1005,9 @@ void FoolGame::sub_130_22ee() {
 void FoolGame::sub_130_23cc() {
 	// 130:23cc
 	this->fillRect(0x12c, 0x8c, 0x156, 0x186, this->var_i16_1060);
-	if (this->var_str_1578 == _zbasic->str(188))
+	if (this->var_str_1578.empty()) // was: str(188)
 		return;
-	_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 	this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_1578);
 	this->fillRect(0x130, 0x100 - (this->var_i16_7ba / 2), 0x144, 0x114 + (this->var_i16_7ba / 2), 2);
 	g_toolbox->MoveTo(0x10a - (this->var_i16_7ba / 2), 0x13e);
@@ -1018,9 +1017,9 @@ void FoolGame::sub_130_23cc() {
 void FoolGame::sub_130_24aa() {
 	// 130:24aa
 	this->fillRect(0x125, 0x20, 0x136, 0x15e, 2);
-	if (this->var_str_1578 == _zbasic->str(189)) // blank
+	if (this->var_str_1578.empty()) // was: str(189)
 		return;
-	_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 	this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_1578);
 	g_toolbox->MoveTo(0xc4 - (this->var_i16_7ba / 2), 0x131);
 	g_toolbox->DrawString(this->var_str_1578);
@@ -1028,9 +1027,9 @@ void FoolGame::sub_130_24aa() {
 
 void FoolGame::sub_130_2548() {
 	// 130:2548
-	_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
 	this->fillRect(0x131, 0, 0x156, 0x10e, 0x47);
-	if (this->var_str_1578 == _zbasic->str(190)) // blank
+	if (this->var_str_1578.empty()) // was: str(190)
 		return;
 
 	this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_1578);
