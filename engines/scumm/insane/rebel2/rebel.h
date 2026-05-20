@@ -813,6 +813,18 @@ public:
 	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords
 	// and draws proximity shadow cues for nearby danger zones.
 	void checkHandler7CollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
+	bool isHandler7ShipInsideObstacleZone(const CollisionZone &zone, int margin);
+	void applyHandler7ObstacleHit(const CollisionZone &zone, int zoneIndex);
+	void awardHandler7DodgeScore();
+	void checkHandler7ObstacleZones(uint16 &warningMask);
+	bool applyHandler7WallDamage(int wallDamage);
+	void resetHandler7HorizontalVelocity(int16 velocity);
+	void checkHandler7TopBoundary(const CollisionZone &zone, int16 vMargin, int wallDamage, uint16 &warningMask);
+	void checkHandler7BottomBoundary(const CollisionZone &zone, int16 vMargin, int wallDamage, uint16 &warningMask);
+	void checkHandler7LeftBoundary(const CollisionZone &zone, int16 hMargin, int wallDamage);
+	void checkHandler7RightBoundary(const CollisionZone &zone, int16 hMargin, int wallDamage);
+	void checkHandler7BoundaryZones(uint16 &warningMask);
+	void renderHandler7WarningCues(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, uint16 warningMask);
 
 	int16 _playerDamage;  // Legacy damage counter (kept for compatibility/telemetry)
 	int16 _playerShield;  // Shields: 0..255 where 255 = full
