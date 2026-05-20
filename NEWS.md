@@ -33,8 +33,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - MM1 Enhanced most recently played music was restarting after opening and closing the GMM.
 
  MYST3:
-   - Fixed a regreassion for the animation of the control wheel at J'nanin's shore.
+   - Fixed a regression for the animation of the control wheel at J'nanin's shore.
    - Camera movement is now free after placing a symbol on the pedestal at the watch tower in J'nanin.
+
+ NANCY:
+   - Fixed a regression in ripped letter types of puzzles, affecting all the Nancy games that feature such puzzles.
+   - Fixed potential crashes in ripped letter types of puzzles, after loading a saved game.
+   - Show the correct mouse cursor in rotating lock types of puzzles.
+   - Enter the game scene directly when loading a saved game from the launcher or the GMM, instead of starting in the main game menu.
+   - Properly handle the "Continue Game" button after clicking on the "More Nancy" button.
+   - Fixed an edge case in piano types of puzzles, where clicking on a key while another was still down produced a graphical glitch.
+   - Fixed some sounds stopping prematurely in Nancy Drew: Secret of the Scarlet Hand and newer games.
+   - Fixed animation speed and timing in turning types of puzzles.
 
  SLUDGE:
    - Added two more games to detection, "Sam and Max Flintlocked" and
