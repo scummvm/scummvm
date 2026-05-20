@@ -1578,14 +1578,11 @@ bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 sta
 	// If so, loads a per-level 256x256 color blend table from the IACT chunk data.
 	// This table controls the edge glow color of laser beams (e.g. red vs green).
 	// Data starts at byte offset 18 in the IACT chunk (in_stack_00000014 + 9 shorts).
-	if (par4 == 1000 && remaining >= 18 + 8 + 32896) {
-		// Layout: 18 bytes IACT header params already consumed by caller,
-		// but 'b' is positioned at startPos which is after par1..par4.
-		// The original code passes (param + 9 shorts) = data at byte offset 18 from chunk start.
-		// Since our stream starts after the 6 par shorts (12 bytes), the data is at offset 6 from startPos.
+	// The stream is positioned after par1..par4 (8 bytes), so retail's +18 is startPos + 10.
+	if (par4 == 1000 && remaining >= 10 + 8 + 32896) {
 		byte *edgeData = (byte *)malloc(8 + 32896);
 		if (edgeData) {
-			b.seek(startPos + 6);  // Skip 3 remaining shorts (par2, par3, par4 already read; 3 more padding shorts)
+			b.seek(startPos + 10);
 			b.read(edgeData, 8 + 32896);
 			initEdgeTable(edgeData);
 			free(edgeData);

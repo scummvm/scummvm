@@ -1326,13 +1326,9 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	byte *texPixels = _laserTexture.pixels;
 
 	// FUN_0040BBF6 line 23: sVar7 = (thickness * animFrame * 16) / maxFrames
-	// Tuned beam segment spacing: 60% of original.
-	constexpr int kBeamAnimScaleNumerator = 48;   // 16 * 0.6 * 5
-	constexpr int kBeamAnimScaleDenominator = 5;
 	if (maxFrames == 0)
 		maxFrames = 1;
-	int16 sVar7 = (int16)(((int)thickness * (int)animFrame * kBeamAnimScaleNumerator) /
-	                      ((int)maxFrames * kBeamAnimScaleDenominator));
+	int16 sVar7 = (int16)(((int)thickness * (int)animFrame * 16) / (int)maxFrames);
 
 	// FUN_0040BBF6 lines 24-25: Calculate delta with scaling
 	int16 dx = targetX - gunX;
