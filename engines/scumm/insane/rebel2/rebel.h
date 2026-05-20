@@ -392,12 +392,24 @@ public:
 
 	// Wave state management (FUN_00417b61)
 	// Waits for current video to finish, accumulates kill state, redistributes
-	// kill credits from the budget. Returns credited kill bits, or 0xFFFF on death/quit.
+	// kill credits from the budget.
 	// mask: required enemy bits (0x36 for Phase 1, 0x3e for Phases 2/3)
 	// budget: kill credit budget counter (decremented per credit transfer)
 	// threshold: early-exit frame threshold (0=disabled, 0x14=20 for wave loops)
 	// flags: bit 1 = add random unkilled types, bit 0 = limit credits to 2 (else 8)
-	uint16 processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags);
+	struct WaveEndResult {
+		WaveEndResult() : creditedBits(0), died(false), quit(false), completed(false), skipped(false) {}
+
+		bool shouldStop() const { return died || quit || completed || skipped; }
+
+		uint16 creditedBits;
+		bool died;
+		bool quit;
+		bool completed;
+		bool skipped;
+	};
+
+	WaveEndResult processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags);
 
 	// Play a raw SAN segment from a scripted level handler.
 	// Retail reaches these call sites through different wrappers/direct paths; this
