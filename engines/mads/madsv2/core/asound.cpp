@@ -232,6 +232,8 @@ int ASound::poll() {
 }
 
 void ASound::noise() {
+	Common::StackLock slock(_driverMutex);
+
 	for (int i = 0; i < ADLIB_CHANNEL_COUNT; i++)
 		noise_inner(i);
 }
@@ -427,21 +429,12 @@ void ASound::callFunction(uint16 offset) {
 
 void ASound::write(uint8 reg, uint8 value) {
 	_adlibPorts[reg] = value;
-	_queue.push(Common::Pair<byte, byte>(reg, value));
+	_opl->writeReg(reg, value);
 }
 
 void ASound::onTimer() {
 	Common::StackLock slock(_driverMutex);
-
 	poll();
-	flush();
-}
-
-void ASound::flush() {
-	while (!_queue.empty()) {
-		auto v = _queue.pop();
-		_opl->writeReg(v.first, v.second);
-	}
 }
 
 uint16 ASound::getRandomNumber() {

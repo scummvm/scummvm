@@ -128,7 +128,6 @@ struct AdlibSample {
 
 class ASound : public SoundDriver {
 private:
-	Common::Queue< Common::Pair<byte, byte> > _queue;
 	uint16 _callbackCounter = 0;		// Period counter
 	uint16 _callbackPeriod = 0;			// Period reload
 	AdlibChannel *_activeChannelPtr = NULL;
@@ -282,11 +281,6 @@ protected:
 	void write(uint8 reg, uint8 value);
 
 	/**
-	 * Flush any pending Adlib register values to the OPL driver
-	 */
-	void flush();
-
-	/**
 	 * Updates and returns _asound_randomSeed.
 	 */
 	uint16 getRandomNumber();
@@ -350,6 +344,11 @@ protected:
 	}
 
 protected:
+	/**
+	 * Plays the sound data at a given offset
+	*/
+	void playSound(int offset);
+
 	/**
 	 * Silences every voice and mutes the hardware:
 	 *   1. Reset all 9 channels.
@@ -466,11 +465,6 @@ public:
 	void setVolume(int volume) override {
 		// TODO: Does this need implementation?
 	}
-
-	/**
-	 * Plays a sound
-	*/
-	void playSound(int offset);
 };
 
 } // namespace MADSV2
