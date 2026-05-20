@@ -402,7 +402,7 @@ static void process_conv_wise() {
 	local->wise_talk_count = 0;
 }
 
-void room_203_init() {
+static void room_203_init() {
 	local->eye              = EYE_LEFT;
 	local->face_left        = FACE_NORMAL;
 	local->face_right       = FACE_NOT_THERE;
@@ -488,7 +488,7 @@ void room_203_init() {
 	section_2_music();
 }
 
-void room_203_daemon() {
+static void room_203_daemon() {
 	int temp;
 
 	if (local->anim_0_running) {
@@ -641,7 +641,7 @@ void room_203_daemon() {
 	}
 }
 
-void room_203_pre_parser() {
+static void room_203_pre_parser() {
 	if (player_said_1(cave) && player.need_to_walk) {
 		if (!player_said_1(walk_into)) {
 			player.need_to_walk = false;
@@ -657,7 +657,7 @@ void room_203_pre_parser() {
 	}
 }
 
-void room_203_parser() {
+static void room_203_parser() {
 	if (conv_control.running == CONV_49_KING) {
 		process_conv_wise();
 		goto handled;
@@ -870,9 +870,6 @@ handled:
 
 done:
 	;
-}
-
-void room_203_error() {
 }
 
 void room_203_synchronize(Common::Serializer &s) {

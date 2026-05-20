@@ -132,7 +132,7 @@ struct Scratch {
 static Scratch scratch;
 
 
-/* ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Sprite Series ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ */
+/* ========================= Sprite Series =================== */
 
 #define fx_lg_rock              0       /* rm201x0 */
 #define fx_md_rock              1       /* rm201x2 */
@@ -164,7 +164,7 @@ static Scratch scratch;
 
 
 
-/* ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Triggers ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ */
+/* ======================== Triggers ========================= */
 
 #define ROOM_201_HAND           60
 #define ROOM_201_HALT           65
@@ -180,7 +180,7 @@ static Scratch scratch;
 #define MUSIC                   120
 
 
-/* ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Other Macros ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ */
+/* ========================= Other Macros ==================== */
 
 #define camera_ratio_1          1
 #define camera_ratio_2          2
@@ -1458,7 +1458,7 @@ static void handle_anim_take() {
 	}
 }
 
-void room_201_daemon() {
+static void room_201_daemon() {
 	long dif;
 	int temp;
 
@@ -2035,7 +2035,7 @@ static void process_conv_pid_guards() {
 	} /* if you_trig_flag == true, then a you trigger is called from above, not here. */
 }
 
-void room_201_pre_parser() {
+static void room_201_pre_parser() {
 	if (local->activate_timer) {
 		player.need_to_walk = false;
 	}

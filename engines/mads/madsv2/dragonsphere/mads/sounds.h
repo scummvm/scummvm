@@ -58,6 +58,8 @@ enum {
 	N_BackgroundMus      =  16,
 	N_GuardCollapses     =  65,
 	N_TentaclesSplash    =  66,
+	N_LavaPlops          =  68,
+	N_002HealMeSnd       =  70,
 	N_MouthRockTalks     =  71,
 	N_PoolMonsterEatsPid =  72
 };

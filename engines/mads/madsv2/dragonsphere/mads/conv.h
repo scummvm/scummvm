@@ -192,6 +192,24 @@ enum {
 };
 
 enum {
+	conv051_nopass           = 0,
+	conv051_exit_b_b         = 3
+};
+
+enum {
+	conv052_nopass           = 0,
+	conv052_exit_b_b         = 5
+};
+
+enum {
+	conv053_story_b_b        =  3,
+	conv053_focus_b_b        =  9,
+	conv053_thanks_b_b       = 12,
+	conv053_thanks_only      = 13,
+	conv053_restart_only     = 14
+};
+
+enum {
 	conv054_restart          =  1,
 	conv054_exit_b_b         = 10,
 	conv054_show_drink_b_b   = 21,
