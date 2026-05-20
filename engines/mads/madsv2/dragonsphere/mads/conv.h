@@ -186,6 +186,12 @@ enum {
 };
 
 enum {
+	conv049_recheck          =  1,
+	conv049_exit_b_b         = 37,
+	conv049_polyquiz_b_b     = 33
+};
+
+enum {
 	conv054_restart          =  1,
 	conv054_exit_b_b         = 10,
 	conv054_show_drink_b_b   = 21,

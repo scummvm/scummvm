@@ -36,6 +36,7 @@ enum {
 	bone             =  6,
 	fruit            =  7,
 	pid_doll         =  8,
+	polystone        =  9,
 	key_crown        = 13,
 	statue           = 15,
 	soul_egg         = 17,
