@@ -102,6 +102,11 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		_pitch = _initialRect.width();
 
+		if (_bitsPerPixel == 1) {
+			if (_pitch % 16)
+				_pitch += 16 - (_initialRect.width() % 16);
+		}
+
 		_pitch *= _bitsPerPixel;
 		_pitch >>= 3;
 		if (_pitch % 2)
