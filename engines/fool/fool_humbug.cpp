@@ -26,7 +26,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetHumbug] + (x))
+
 extern Toolbox *g_toolbox;
 
 // the humbug - "irritating stick" style challenge
@@ -45,7 +46,7 @@ void FoolGame::humbugRun() {
 		// 142:004e
 		_activePuzzleStatus = 0x63;
 		this->zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
-		this->var_str_384 = _zbasic->str(336); // behold the 2nd key of thoth
+		this->var_str_384 = _zbasic->str(OFF(0)); // behold the 2nd key of thoth
 		this->sub_128_178a(0x17, 0);
 	}
 	// 142:00b2
@@ -65,18 +66,18 @@ void FoolGame::humbugRun() {
 void FoolGame::humbugTrail() {
 	// 142:00e6
 	if (_puzzleCompletionStatus[0x34] < 3) {
-		_zbasic->menu(8, 3, 1, _zbasic->str(337)); // A secret is undone
-		_zbasic->menu(8, 4, 1, _zbasic->str(338)); // if the two become one.
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(1))); // A secret is undone
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(2))); // if the two become one.
 	} else {
 		// 142:0136
-		_zbasic->menu(8, 3, 1, _zbasic->str(339)); // A puzzle is undone
-		_zbasic->menu(8, 4, 1, _zbasic->str(340)); // if the two become one.
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(3))); // A puzzle is undone
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(4))); // if the two become one.
 	}
 	// 142:0166
 	this->sub_128_271a();
 	this->sub_128_4da(0);
-	_zbasic->text(0, 0xc, 0, kSrcOr);
-	this->sub_128_55c(_zbasic->str(341)); // ~
+	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
+	this->sub_128_55c(_zbasic->str(OFF(5))); // ~
 	// eye button
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	for (int16 i = 1; i <= 0xa42; i++) {
@@ -194,13 +195,13 @@ void FoolGame::sub_142_5f2() {
 
 void FoolGame::sub_142_630() {
 	// 142:0630
-	_zbasic->menu(8, 0, 1, _zbasic->str(342)); // the 2nd key of thoth
-	_zbasic->menu(8, 1, 1, _zbasic->str(343)); // return to scroll
+	_zbasic->menu(8, 0, 1, _zbasic->str(OFF(6))); // the 2nd key of thoth
+	_zbasic->menu(8, 1, 1, _zbasic->str(OFF(7))); // return to scroll
 	this->thothKey2nd();
 	if (_activePuzzleSolved) {
 		// 142:066e
 		g_toolbox->PenNormal();
-		_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
+		_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
 		for (int16 i = 1; i <= 4; i++) {
 			Common::Rect temp;
 			temp.top = this->arr_i16_2f38[i*32];
@@ -220,7 +221,7 @@ void FoolGame::sub_142_630() {
 			g_toolbox->DrawString(this->var_str_384);
 		}
 		// 142:07ca
-		_zbasic->text(0, 0xc, 0, kSrcOr);
+		_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 		this->sub_128_6186();
 		this->sub_128_2664();
 		this->var_i16_484 = 0;

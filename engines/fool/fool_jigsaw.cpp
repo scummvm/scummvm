@@ -28,7 +28,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetJigsaw] + (x))
+
 extern Toolbox *g_toolbox;
 
 // jigsaw puzzle game
@@ -97,7 +98,7 @@ void FoolGame::jigsawRun() {
 	}
 	// 132:0376
 	// rearrange picture tiles to match state
-	if (!_activePuzzleBuffer.empty()) { // was: str(207)
+	if (!_activePuzzleBuffer.empty()) { // was: str(OFF(0))
 		for (int i = 1; i <= this->var_i16_1a9e; i++) {
 			Common::String tileData = _zbasic->midStr(_activePuzzleBuffer, i*2 - 1, 2);
 			this->arr_i16_3738[i] = _zbasic->decodeInt(tileData);
@@ -377,7 +378,7 @@ void FoolGame::jigsawDropSelected() {
 void FoolGame::jigsawStoreState() {
 	// convert jigsaw positions to string
 	// 132:1384
-	_activePuzzleBuffer.clear(); // was: str(208)
+	_activePuzzleBuffer.clear(); // was: str(OFF(1))
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
 		_activePuzzleBuffer += _zbasic->encodeInt(this->arr_i16_3738[i]);
 	}

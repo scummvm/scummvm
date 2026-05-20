@@ -305,6 +305,8 @@ public:
 	void indexRawSet(const Common::String &value, int16 table, int16 index);
 	Common::U32String index(int16 table, int16 index);
 	Common::String indexRaw(int16 table, int16 index);
+
+	void setMenuFont(uint16 font, uint16 size, uint16 slant);
 };
 
 } // namespace Fool

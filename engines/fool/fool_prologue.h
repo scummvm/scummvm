@@ -33,6 +33,11 @@ namespace Fool {
 
 class ZBasic;
 
+enum FoolPrologueFontID : uint16 {
+	kPrologueFontFool = 250,
+	kPrologueFontSmall = 251,
+};
+
 class FoolPrologue {
 public:
 	FoolPrologue() {}
