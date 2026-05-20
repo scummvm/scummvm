@@ -67,7 +67,13 @@ enum {
 	N_ToadEatsPlayer     =  70,
 	N_RalphIsRed         =  71,
 	N_EveryoneScatter    =  72,
-	N_CrystalPing        =  73
+	N_CrystalPing        =  73,
+
+	// Section 4
+	N_WindWhistles       =  29,
+	N_Bk404Music         =  33,
+	N_Bk406Music         =  35,
+	N_BellyDanceMusic    =  36
 };
 
 } // namespace Dragonsphere

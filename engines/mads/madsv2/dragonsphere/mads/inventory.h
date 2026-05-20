@@ -38,7 +38,10 @@ enum {
 	pid_doll         =  8,
 	polystone        =  9,
 	red_powerstone   = 10,
+	yellow_powerstone= 11,
+	blue_powerstone  = 12,
 	key_crown        = 13,
+	dates            = 14,
 	statue           = 15,
 	bottle_of_flies  = 16,
 	soul_egg         = 17,
@@ -47,6 +50,7 @@ enum {
 	crystal_ball     = 29,
 	soptus_soporific = 31,
 	shifter_ring     = 32,
+	medicine_bundle  = 33,
 	tentacle_parts   = 36,
 	rare_coin        = 38,
 	crystal_flower   = 39,
@@ -54,7 +58,8 @@ enum {
 	gold_nugget      = 42,
 	magic_music_box  = 43,
 	emerald          = 44,
-	piece_of_paper   = 45
+	piece_of_paper   = 45,
+	new_bundle       = 48
 };
 
 } // namespace Dragonsphere

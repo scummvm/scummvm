@@ -155,6 +155,85 @@ enum {
 };
 
 enum {
+	conv038_third_yes        =  2,
+	conv038_third_idont      =  4,
+	conv038_third_blab       =  5,
+	conv038_knowledge_yes    = 12,
+	conv038_knowledge_no     = 13,
+	conv038_knowledge_idont  = 14,
+	conv038_fourth_nound     = 21
+};
+
+enum {
+	conv039_greeting_only    =  0,
+	conv039_choices_b_b      =  2,
+	conv039_gift_b_b         = 19,
+	conv039_pre_addon_b_b    = 30,
+	conv039_exit_b_b         = 36,
+	conv039_exit_d_d         = 38
+};
+
+enum {
+	conv040_enter_b_b        =  4,
+	conv040_repeater         =  7,
+	conv040_leave_b_b        =  8
+};
+
+enum {
+	conv041_indance          = 17,
+	conv041_postdanc         = 21,
+	conv041_postgame         = 24,
+
+	conv041_danceyn_no       = 15,
+	conv041_to_game_b_b      = 17,
+	conv041_to_game_d_d      = 19,
+	conv041_dance_b_b        = 24,
+	conv041_postdance_b_b    = 35,
+	conv041_postdanc_only    = 36,
+	conv041_leaving          = 41,
+	conv041_give_stuff_a_a   = 42,
+	conv041_give_stuff_b_b   = 43,
+	conv041_give_stuff_f_f   = 45,
+	conv041_give_stuff_c_c   = 46,
+	conv041_give_stuff_d_d   = 47,
+	conv041_exit_b_b         = 64,
+	conv041_exit_d_d         = 66,
+	conv041_exit_f_f         = 68
+};
+
+enum {
+	conv043_greeting         =  0,
+	conv043_restart          =  4,
+	conv043_homenow          = 14,
+	conv043_rise_b_b         = 17,
+	conv043_rise_d_d         = 19,
+	conv043_exit_b_b         = 21,
+	conv043_exit_d_d         = 23
+};
+
+enum {
+	conv044_repeater         =  0,
+	conv044_greet            =  2,
+	conv044_leave_b_b        =  7,
+	conv044_enter_b_b        =  9
+};
+
+enum {
+	conv045_egaming_only     =  4,
+	conv045_hgaming_only     =  5,
+	conv045_to_game_b_b      =  9,
+	conv045_giver            = 11,
+	conv045_exit_b_b         = 11,
+	conv045_give_stuff_a_a   = 14,
+	conv045_give_stuff_b_b   = 15,
+	conv045_moredrink_b_b    = 20,
+	conv045_passout_b_b      = 23,
+	conv045_passout_e_e      = 26,
+	conv045_revive           = 28,
+	conv045_timer_b_b        = 29
+};
+
+enum {
 	conv047_protect          =  0,
 	conv047_kingsay_escort   =  3,
 	conv047_kingsay_why      =  4,
