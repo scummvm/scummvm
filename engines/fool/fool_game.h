@@ -60,15 +60,29 @@ enum FoolVersion {
 	kFool30 = 3,
 };
 
-enum FoolStrOffset {
+enum FoolZStrOffset : uint16 {
+	kOffsetVersion = 0,
+	kOffsetAbout,
+	kOffsetThreeShips,
 	kOffsetWordSearch,
 	kOffsetJigsaw,
 	kOffsetPolyomino,
 	kOffsetReveal,
+	kOffsetSentence,
 	kOffsetMaze,
 	kOffsetMetapuzzle,
 	kOffsetCards,
 	kOffsetThoth,
+	kOffsetHumbug,
+	kOffsetJustice,
+};
+
+enum FoolFontID : uint16 {
+	kFontChicago = 0,
+	kFontFool = 250,
+	kFontPuzzle = 251,
+	kFontSmall = 252,
+	kFontLarge = 254,
 };
 
 class FoolGame {
@@ -103,7 +117,7 @@ public:
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void getNextEvent(uint32 mask); // sub_128_c6a
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
-	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
+	void showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep); // sub_128_dfe
 
 	void sub_128_178a(int16 unk2, int16 unk1);
 	void setStateBits(uint16 bits); // sub_128_1c2c
@@ -153,12 +167,13 @@ public:
 	void menuAbout(); // sub_128_4a92
 	void menuPrologue();
 
+	// fool_threeships.cpp
 	void shipsRun(); // sub_128_5140
 	void sub_128_55ac();
 	void sub_128_57a2();
 	void sub_128_5a6c();
 
-	void sub_128_5b30();
+	void onClickMenu(); // sub_128_5b30
 	void sub_128_5baa();
 	void sub_128_5c20();
 	void thothHidePlayfield(); // sub_128_5ef0
@@ -174,7 +189,7 @@ public:
 
 	void sub_129_004();
 	void sub_129_068();
-	void sub_129_123a();
+	void menuLoadingMessage(int16 percent); // sub_129_123a
 
 	// fool_jumble.cpp:
 	void jumbleRun();
@@ -272,7 +287,6 @@ public:
 	void mazeMovePlayer(); // sub_136_a22
 	void sub_136_ade();
 	void mazeHotspot(); // sub_136_b00
-
 	void mazePrintMessage(); // sub_136_d64
 	void sub_136_e4c();
 	void sub_136_ed8();
@@ -342,7 +356,6 @@ public:
 	void sub_138_a90();
 	void metapuzzleOnOption(); // sub_138_b06
 	void metapuzzleOnShift(); // sub_138_b6a
-
 
 	// fool_cards.cpp
 	void cardsRun(); // sub_139_004
@@ -435,6 +448,8 @@ public:
 
 private:
 	FoolVersion _version;
+	const int *_zstrOffset;
+	int _fontChicago;
 	ZBasic *_zbasic;
 	bool _quit = false;
 
@@ -486,8 +501,6 @@ private:
 	int16 var_i16_7a2;
 	int16 var_i16_7a8;
 	int16 var_i16_7aa;
-	int16 var_i16_7ac;
-	int16 var_i16_7ae;
 	int16 var_i16_7b0;
 	int16 var_i16_7b2;
 	int16 var_i16_7b4;

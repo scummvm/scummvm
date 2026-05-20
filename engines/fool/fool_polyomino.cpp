@@ -26,7 +26,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetPolyomino] + (x))
+
 extern Toolbox *g_toolbox;
 
 // polyomino puzzle
@@ -40,7 +41,7 @@ void FoolGame::polyominoRun() {
 	// 133:003c
 	this->var_str_384 = puzzlesReadString().decode(Common::kMacRoman);
 	// "the completed puzzle will reveal..."
-	this->var_str_384 = _zbasic->str(209) + this->var_str_384 + _zbasic->str(210);
+	this->var_str_384 = _zbasic->str(OFF(0)) + this->var_str_384 + _zbasic->str(OFF(1));
 	_zbasic->menu(8, 0xf, 1, this->var_str_384);
 	this->var_i16_484 = 0;
 	this->var_i16_68c = this->arr_i16_1eb8[8];
@@ -87,7 +88,7 @@ void FoolGame::polyominoRun() {
 	}
 	// 133:0228
 	g_toolbox->SetPort(this->var_i32_f24);
-	_zbasic->text(0xfb, 0x18, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontPuzzle, 0x18, Graphics::kMacFontRegular, kSrcOr);
 
 	// for each polyomino
 	for (int j = 1; j <= this->arr_i16_1eb8[0x10]; j++) {
@@ -117,7 +118,7 @@ void FoolGame::polyominoRun() {
 				this->arr_i16_47d8[j*8 + 4]
 				);
 		// 133:02de
-		if (!_activePuzzleBuffer.empty()) { // was: str(211)
+		if (!_activePuzzleBuffer.empty()) { // was: str(OFF(2))
 			if (j == 1)  {
 				this->var_i16_1aa8 = 1;
 			}
@@ -516,7 +517,7 @@ void FoolGame::polyominoSuccess() {
 
 void FoolGame::polyominoStoreState() {
 	// 133:1452
-	_activePuzzleBuffer.clear(); // was: str(212)
+	_activePuzzleBuffer.clear(); // was: str(OFF(3))
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->arr_i16_1eb8[0x10]; i++) {
 		Common::String val1 = _zbasic->encodeInt(this->arr_i16_47d8[i*8 + 3]);

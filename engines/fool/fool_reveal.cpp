@@ -26,7 +26,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetReveal] + (x))
+
 extern Toolbox *g_toolbox;
 
 // mask reveal puzzle
@@ -39,7 +40,7 @@ void FoolGame::revealRun() {
 	this->arr_i16_1eb8[21] = puzzlesReadShort();
 	debugC(5, kDebugLoading, "%d, %d, %04x", this->arr_i16_1eb8[15], this->arr_i16_1eb8[16], this->arr_i16_1eb8[21]);
 	this->var_str_384 = puzzlesReadString();
-	this->var_str_384 = _zbasic->str(213) + this->var_str_384 + _zbasic->str(214);
+	this->var_str_384 = _zbasic->str(OFF(0)) + this->var_str_384 + _zbasic->str(OFF(1));
 	_zbasic->menu(8, 6, 1, this->var_str_384);
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		this->arr_i16_3738[i] = puzzlesReadByte();
@@ -80,7 +81,7 @@ void FoolGame::revealRun() {
 	// 134:02f0
 	this->arr_i16_1eb8[19] = _zbasic->decodeInt(_activePuzzleBuffer);
 	this->var_i16_1aba = this->arr_i16_1eb8[18];
-	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
 		this->playTone(

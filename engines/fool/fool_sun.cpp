@@ -26,7 +26,6 @@
 
 namespace Fool {
 
-;
 extern Toolbox *g_toolbox;
 
 // The Sun's map

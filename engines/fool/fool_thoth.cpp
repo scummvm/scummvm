@@ -26,7 +26,8 @@
 
 namespace Fool {
 
-;
+#define OFF(x) (_zstrOffset[kOffsetThoth] + (x))
+
 extern Toolbox *g_toolbox;
 
 // high priestess challenge
@@ -72,7 +73,7 @@ void FoolGame::highPriestessRun() {
 			// is the humbug marked with the wadjet eye? if so, unmark
 			// 140:00ce
 			_puzzleCompletionStatus[0x17] = 0x64;
-			this->var_str_384 = _puzzleName[0x17] + _zbasic->str(301); // ' '
+			this->var_str_384 = _puzzleName[0x17] + _zbasic->str(OFF(0)); // ' '
 			_zbasic->menu(0x4, 0x7, 0x1, this->var_str_384);
 		}
 	}
@@ -86,7 +87,7 @@ void FoolGame::highPriestessRun() {
 		if (_puzzleCompletionStatus[0x3f] == 0x63) {
 			// is justice marked with the wadjet eye? if so, unmark
 			_puzzleCompletionStatus[0x3f] = 0x64;
-			this->var_str_384 = _puzzleName[0x3f] + _zbasic->str(302); // ' '
+			this->var_str_384 = _puzzleName[0x3f] + _zbasic->str(OFF(1)); // ' '
 			_zbasic->menu(6, 0xf, 1, this->var_str_384);
 		}
 	}
@@ -103,7 +104,7 @@ void FoolGame::highPriestessRun() {
 		if (_puzzleCompletionStatus[0x48] == 0x63) {
 			// is the hermit marked with the wadjet eye? if so, unmark
 			_puzzleCompletionStatus[0x48] = 0x64;
-			this->var_str_384 = _puzzleName[0x48] + _zbasic->str(303);
+			this->var_str_384 = _puzzleName[0x48] + _zbasic->str(OFF(2)); // ' '
 			_zbasic->menu(7, 8, 1, this->var_str_384);
 		}
 	}
@@ -158,13 +159,13 @@ void FoolGame::highPriestessRun() {
 			}
 		}
 		// 140:03f0
-		_zbasic->text(0xfe, 0x18, 0x10, kSrcBic);
+		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
 		this->var_i16_7a2 = 0x96;
-		this->sub_128_918(_zbasic->str(304)); // you cannot claim
+		this->sub_128_918(_zbasic->str(OFF(3))); // you cannot claim
 		this->var_i16_7a2 = 0xb9;
-		this->sub_128_918(_zbasic->str(305)); // the book of thoth
+		this->sub_128_918(_zbasic->str(OFF(4))); // the book of thoth
 		this->var_i16_7a2 = 0xdc;
-		this->sub_128_918(_zbasic->str(306)); // so easily
+		this->sub_128_918(_zbasic->str(OFF(5))); // so easily
 		g_toolbox->SetPort(this->var_i32_0);
 		this->sub_128_61c2();
 	}
@@ -177,7 +178,7 @@ void FoolGame::highPriestessRun() {
 void FoolGame::thoth99Enchantments() {
 	// 140:0458
 	this->sub_128_4da(0);
-	if (_activePuzzleBuffer.empty()) { // was: str(307)
+	if (_activePuzzleBuffer.empty()) { // was: str(OFF(6))
 		this->arr_i16_1eb8[0] = 0x63;
 	} else {
 		this->arr_i16_1eb8[0] = _zbasic->decodeInt(_activePuzzleBuffer);
@@ -187,11 +188,11 @@ void FoolGame::thoth99Enchantments() {
 		this->arr_i16_1eb8[0] = 1;
 	}
 	if (this->arr_i16_1eb8[0] == 0x63) {
-		_zbasic->text(0xfe, 0x18, 0x10, kSrcBic);
+		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
 		this->var_i16_7a2 = 0xaf;
-		this->sub_128_918(_zbasic->str(308)); // you dare to challenge
+		this->sub_128_918(_zbasic->str(OFF(7))); // you dare to challenge
 		this->var_i16_7a2 = 0xd2;
-		this->sub_128_918(_zbasic->str(309)); // the high priestess
+		this->sub_128_918(_zbasic->str(OFF(8))); // the high priestess
 		this->sub_128_3da(0xb4);
 	}
 	// 140:0532
@@ -303,7 +304,7 @@ void FoolGame::thoth99Enchantments() {
 	// 140:097a
 	if (_activePuzzleSolved) {
 		this->sub_140_f84();
-		_activePuzzleBuffer.clear(); // was: 310
+		_activePuzzleBuffer.clear(); // was: str(OFF(9))
 	} else {
 		// 140:09a4
 		if (this->arr_i16_1eb8[0] < 1) {
@@ -329,8 +330,8 @@ void FoolGame::thothDrawEnchantment() {
 	g_toolbox->PenNormal();
 	g_toolbox->EraseRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
 	g_toolbox->FrameRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
-	_zbasic->text(0, 0xc, 0, kSrcOr);
-	this->var_str_384 = Common::U32String::format(" %d ", this->arr_i16_1eb8[2]); // was: str(311)
+	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
+	this->var_str_384 = Common::U32String::format(" %d ", this->arr_i16_1eb8[2]); // was: str(OFF(10))
 	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
 	// 140:0bd2
 	g_toolbox->MoveTo(
@@ -391,18 +392,18 @@ void FoolGame::thothScrambleScreen() {
 void FoolGame::sub_140_e3c() {
 	// 140:0e3c
 	if (this->arr_i16_1eb8[0] == 1) {
-		_zbasic->menu(8, 0, 1, _zbasic->str(312)); // the last enchantment
-		_zbasic->menu(8, 1, 1, _zbasic->str(313)); // run for your life
+		_zbasic->menu(8, 0, 1, _zbasic->str(OFF(11))); // the last enchantment
+		_zbasic->menu(8, 1, 1, _zbasic->str(OFF(12))); // run for your life
 	} else {
 		// 140:0e8a
 		this->var_str_384 = Common::U32String::format(" %d", this->arr_i16_1eb8[0]);
-		this->var_str_9f4 = _zbasic->str(314) + this->var_str_384 + _zbasic->str(315); // the X enchantments
+		this->var_str_9f4 = _zbasic->str(OFF(13)) + this->var_str_384 + _zbasic->str(OFF(14)); // the X enchantments
 		_zbasic->menu(8, 0, 1, this->var_str_9f4);
-		_zbasic->menu(8, 1, 1, _zbasic->str(316)); // run for your life
-		_zbasic->menu(8, 2, 1, _zbasic->str(317)); // -
-		_zbasic->menu(8, 3, 1, _zbasic->str(318)); // or press each button
-		_zbasic->menu(8, 4, 1, _zbasic->str(319)); // in descending order
-		this->var_str_9f4 = _zbasic->str(320) + this->var_str_384 + _zbasic->str(321); // from X to 1
+		_zbasic->menu(8, 1, 1, _zbasic->str(OFF(15))); // run for your life
+		_zbasic->menu(8, 2, 1, _zbasic->str(OFF(16))); // -
+		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(17))); // or press each button
+		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(18))); // in descending order
+		this->var_str_9f4 = _zbasic->str(OFF(19)) + this->var_str_384 + _zbasic->str(OFF(20)); // from X to 1
 		_zbasic->menu(8, 5, 1, this->var_str_9f4);
 	}
 	// 140:0f82
@@ -481,7 +482,7 @@ void FoolGame::thothKey1st() {
 		_activePuzzleSolved = false;
 	} else {
 		// 140:1446
-		this->var_str_384 = _zbasic->str(322); // behold ye the book of thoth
+		this->var_str_384 = _zbasic->str(OFF(21)); // behold ye the book of thoth
 		this->sub_128_178a(0, 0);
 		this->sub_140_2f92();
 		this->var_i16_7ce ^= 2;
@@ -1082,7 +1083,7 @@ void FoolGame::hermitScreenBehold() {
 	} else {
 		// 140:290c
 		this->zoomRect(0x14, 0xc8, 0x14, 0x138, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x21);
-		this->var_str_384 = _zbasic->str(323); // behold the last key of thoth
+		this->var_str_384 = _zbasic->str(OFF(22)); // behold the last key of thoth
 		this->sub_128_178a(0x48, 2);
 	}
 	// 140:2966
@@ -1225,22 +1226,22 @@ void FoolGame::thothKeyLastSetup() {
 	}
 	// 140:2f2e
 	if ((_hermitPathStage == 6) && (_activePuzzle != 0x34)) {
-		_zbasic->menu(8, 0, 1, _zbasic->str(324)); // the last key of thoth
-		_zbasic->menu(8, 1, 1, _zbasic->str(325)); // return to scroll
+		_zbasic->menu(8, 0, 1, _zbasic->str(OFF(23))); // the last key of thoth
+		_zbasic->menu(8, 1, 1, _zbasic->str(OFF(24))); // return to scroll
 	}
 	this->copyScreen(0, this->arr_bmp_b3ec);
 }
 
 void FoolGame::sub_140_2f92() {
 	// 140:2f92
-	_zbasic->menu(8, 0, 1, _zbasic->str(326)); // the book of thoth
-	_zbasic->menu(8, 1, 1, _zbasic->str(327)); // return to scroll
-	_zbasic->menu(8, 2, 0, _zbasic->str(328)); // -
-	_zbasic->menu(8, 3, 1, _zbasic->str(329)); // be forewarned
-	_zbasic->menu(8, 4, 1, _zbasic->str(330)); // the high priestess has corrupted
-	_zbasic->menu(8, 5, 1, _zbasic->str(331)); // the book of thoth. you may need
-	_zbasic->menu(8, 6, 1, _zbasic->str(332)); // the help of others to unlock its
-	_zbasic->menu(8, 7, 1, _zbasic->str(333)); // secrets.
+	_zbasic->menu(8, 0, 1, _zbasic->str(OFF(25))); // the book of thoth
+	_zbasic->menu(8, 1, 1, _zbasic->str(OFF(26))); // return to scroll
+	_zbasic->menu(8, 2, 0, _zbasic->str(OFF(27))); // -
+	_zbasic->menu(8, 3, 1, _zbasic->str(OFF(28))); // be forewarned
+	_zbasic->menu(8, 4, 1, _zbasic->str(OFF(29))); // the high priestess has corrupted
+	_zbasic->menu(8, 5, 1, _zbasic->str(OFF(30))); // the book of thoth. you may need
+	_zbasic->menu(8, 6, 1, _zbasic->str(OFF(31))); // the help of others to unlock its
+	_zbasic->menu(8, 7, 1, _zbasic->str(OFF(32))); // secrets.
 }
 
 Common::Rect FoolGame::thothRandomSquare() {
