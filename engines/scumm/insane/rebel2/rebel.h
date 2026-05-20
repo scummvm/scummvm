@@ -505,6 +505,14 @@ public:
 	void iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
+	void updateOpcode6Handler(int16 par2);
+	void handleOpcode6Handler8(int16 par3, int16 par4);
+	void handleOpcode6Handler7(Common::SeekableReadStream &b, int16 par4);
+	void handleOpcode6Handler25(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+	void handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4);
+	void handleOpcode6GenericInit(int16 par4);
+	void updateOpcode6GenericFlightState();
+	void scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par4);
 	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 

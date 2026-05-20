@@ -583,6 +583,918 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 	}
 }
 
+// ScummVM refactor helper for opcode 6, not a separate retail function.
+void InsaneRebel2::updateOpcode6Handler(int16 par2) {
+	// Update handler type if par2 is a known handler value (from FUN_4033CF case 6).
+	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
+		// Reset Level 2 background flag when transitioning away from Handler 8
+		if (_rebelHandler == 8 && par2 != 8) {
+			_level2BackgroundLoaded = false;
+		}
+		_rebelHandler = par2;
+		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
+	}
+}
+
+// ScummVM refactor helper for opcode 6 Handler 8, not a separate retail function.
+void InsaneRebel2::handleOpcode6Handler8(int16 par3, int16 par4) {
+	// Handler 8 specific logic (third-person on foot) - FUN_00401234 case 4.
+	// Set ship level mode (DAT_0043e000 = par3)
+	_shipLevelMode = par3;
+
+	// If par4 == 1, enable status bar and re-render laser texture (FUN_0040bb87)
+	if (par4 == 1) {
+		_rebelStatusBarSprite = 5;
+		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+			initLaserTexture(_smush_iconsNut, 5);
+		}
+	}
+
+	// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
+	// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
+	if (_shipLevelMode != 0 && par4 == 1 && !_rebelOp6Initialized) {
+		clearBit(0);
+		for (int i = 0; i < 512; i++) {
+			_rebelLinks[i][0] = 0;
+			_rebelLinks[i][1] = 0;
+			_rebelLinks[i][2] = 0;
+		}
+		_rebelWaveState = _rebelPhaseState;
+		_rebelOp6Initialized = true;
+		debug("Rebel2 Opcode 6 (Handler 8): Wave init, wave=0x%x", _rebelWaveState);
+	}
+
+	// Skip position calculation for special modes 4 and 5
+	if (_shipLevelMode != 4 && _shipLevelMode != 5) {
+		// ----- Movement Range Transition (Covered vs Shooting) -----
+		// Based on FUN_00401234 lines 85-120:
+		// Mode 2 = "Covered" state - contract movement range to 41 (0x29)
+		// Other modes = "Shooting" state - expand movement range to 127 (0x7f)
+		// Transition happens gradually at +/-10 per frame for smooth animation
+		if (_shipLevelMode == 2) {
+			// Covered state - contract movement range
+			if (_movementRangeLimit > 41) {
+				_movementRangeLimit -= 10;
+			}
+			if (_movementRangeLimit < 41) {
+				_movementRangeLimit = 41;
+			}
+		} else {
+			// Shooting state - expand movement range
+			if (_movementRangeLimit < 127) {
+				_movementRangeLimit += 10;
+			}
+			if (_movementRangeLimit > 127) {
+				_movementRangeLimit = 127;
+			}
+		}
+
+		// Calculate target position from mouse input
+		// Mouse X maps to ship horizontal tilt, Mouse Y to vertical tilt
+		// Based on FUN_00401234 lines 151-166:
+		// local_18 = ((DAT_0047a7e0 * 5 + 0x27b) * 0x40) / 0xfe
+		// local_1c = ((DAT_0047a7e2 * 5 + 0x27b) * 0x10) / 0xfe
+
+		// Map the effective aim position (-127 to 127 range) to the ship target.
+		Common::Point aimPos = getGameplayAimPoint();
+		int16 mouseOffsetX = (int16)((aimPos.x - 160) * 127 / 160);
+		int16 mouseOffsetY = (int16)((aimPos.y - 100) * 127 / 100);
+
+		// Clamp X offset to movement range limit (covered/shooting state)
+		// Based on FUN_00401234 lines 119-136
+		if (mouseOffsetX > _movementRangeLimit)
+			mouseOffsetX = _movementRangeLimit;
+		if (mouseOffsetX < -_movementRangeLimit)
+			mouseOffsetX = -_movementRangeLimit;
+		// Y offset always uses full range (+/-127)
+		if (mouseOffsetY > 127)
+			mouseOffsetY = 127;
+		if (mouseOffsetY < -127)
+			mouseOffsetY = -127;
+
+		// Calculate target positions using the original formula
+		// Original FUN_00401234 lines 151-166:
+		//   local_18 = ((mouseX * 5 + 0x27b) * 0x40) / 0xfe    -> X target
+		//   local_1c = ((mouseY * 5 + 0x27b) * 0x10) / 0xfe    -> Y target
+		//   _DAT_0043e004 = -local_1c   (stored negated for cursor display)
+		// The interpolation (lines 181-193) uses local_1c (positive), NOT _DAT_0043e004.
+		// So the interpolation target must be the positive formula result.
+		_shipTargetX = (int16)(((mouseOffsetX * 5 + 0x27b) * 0x40) / 0xfe);
+		_shipTargetY = (int16)(((mouseOffsetY * 5 + 0x27b) * 0x10) / 0xfe);
+
+		// Smooth interpolation toward target (max 50 pixels per frame)
+		const int16 maxStep = 50;  // 0x32 in hex
+		if (_shipPosX < _shipTargetX) {
+			int16 newX = _shipPosX + maxStep;
+			_shipPosX = (newX > _shipTargetX) ? _shipTargetX : newX;
+		} else if (_shipPosX > _shipTargetX) {
+			int16 newX = _shipPosX - maxStep;
+			_shipPosX = (newX < _shipTargetX) ? _shipTargetX : newX;
+		}
+
+		if (_shipPosY < _shipTargetY) {
+			int16 newY = _shipPosY + maxStep;
+			_shipPosY = (newY > _shipTargetY) ? _shipTargetY : newY;
+		} else if (_shipPosY > _shipTargetY) {
+			int16 newY = _shipPosY - maxStep;
+			_shipPosY = (newY < _shipTargetY) ? _shipTargetY : newY;
+		}
+
+		// Calculate ship direction indices for sprite selection
+		// Map mouse position to 5x7 direction grid (like Handler 7)
+		int16 mouseX = aimPos.x;
+		int16 mouseY = aimPos.y;
+
+		// Scale mouse if video is larger than 320x200
+		if (_player && _player->_width > 320) {
+			mouseX = (mouseX * 320) / _player->_width;
+		}
+		if (_player && _player->_height > 200) {
+			mouseY = (mouseY * 200) / _player->_height;
+		}
+
+		// Horizontal: 5 zones (0=far left, 2=center, 4=far right)
+		if (mouseX < 64)
+			_shipDirectionH = 0;
+		else if (mouseX < 128)
+			_shipDirectionH = 1;
+		else if (mouseX < 192)
+			_shipDirectionH = 2;
+		else if (mouseX < 256)
+			_shipDirectionH = 3;
+		else
+			_shipDirectionH = 4;
+
+		// Vertical: 7 zones (0=far up, 3=center, 6=far down)
+		if (mouseY < 28)
+			_shipDirectionV = 0;
+		else if (mouseY < 57)
+			_shipDirectionV = 1;
+		else if (mouseY < 86)
+			_shipDirectionV = 2;
+		else if (mouseY < 114)
+			_shipDirectionV = 3;
+		else if (mouseY < 143)
+			_shipDirectionV = 4;
+		else if (mouseY < 171)
+			_shipDirectionV = 5;
+		else
+			_shipDirectionV = 6;
+
+		_shipDirectionIndex = _shipDirectionH * 7 + _shipDirectionV;
+	}
+
+	// Update firing state from mouse button or joystick fire action
+	// Mode 4 (autopilot) disables shooting - FUN_00401CCF line 82-84
+	if (_shipLevelMode == 4) {
+		_shipFiring = false;
+	} else {
+		_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
+			_vm->getActionState(kScummActionInsaneAttack);
+	}
+
+	debug("Rebel2 Opcode 6 (Handler 8): mode=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
+		_shipLevelMode, _movementRangeLimit, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
+		_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
+}
+
+// ScummVM refactor helper for opcode 6 Handler 7, not a separate retail function.
+void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 par4) {
+	// Handler 7 specific logic (third-person ship) - FUN_0040d836 / FUN_0040c3cc
+	// Used for Level 3 and similar space combat levels.
+
+	// Set control mode: DAT_004437c0 = param_5[3] = par4 in FUN_40C3CC case 4.
+	// This determines collision mode and shooting capability:
+	//   Mode 0: Obstacle avoidance - SECONDARY zones, corridor boundaries
+	//   Mode 1: Tunnel flight - PRIMARY zones, per-edge push-back (hMargin=0x28)
+	//   Mode 2: Combat mode - shooting ENABLED, SECONDARY zones
+	//   Mode 3: Tunnel flight - PRIMARY zones, per-edge push-back (hMargin=0x0f)
+	_flyControlMode = par4;
+	debug("Rebel2 Opcode 6 (Handler 7): Control mode set to %d (shooting %s)",
+		par4, (par4 == 2) ? "ENABLED" : "DISABLED");
+
+	// Status bar: param_5[4] == 1 in original (first body word, 5th IACT word)
+	// In our parsing, par3 maps to param_5[2] and the body follows par4.
+	// FUN_40C3CC: if (param_5[4] == 1) FUN_0040bb87(DAT_0047a828,5);
+	// par3 is param_5[2], which the original doesn't use here.
+	// The body word for status bar is read separately below.
+	int16 bodyStatusFlag = 0;
+	if (b.size() - b.pos() >= 2) {
+		bodyStatusFlag = b.readSint16LE();
+	}
+	if (bodyStatusFlag == 1) {
+		_rebelStatusBarSprite = 5;
+		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+			initLaserTexture(_smush_iconsNut, 5);
+		}
+		debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
+	}
+
+	// Ship position update - FUN_40C3CC case 4, lines 49-327.
+	// Velocity-based physics with momentum/inertia:
+	//   Mouse offset from center -> scaled input [-127,127]
+	//   -> velocity history averaging -> physics delta (clamped +/-12/frame)
+	//   -> position clamping -> corridor collision -> perspective offsets
+	//
+	// Level data table (DAT_0047e0e8 + level*0x242 + difficulty*0x22):
+	//   offset 0: smoothing param (>>4 +1 = window size)
+	//   offset 2: Y speed          offset 4: X speed (levelSpeed)
+	//   offset 6: wind multiplier  offset 14: corridor damage
+	// We don't have the actual level data, so we use calibrated defaults.
+
+	// Step 1: Mouse input as offset from screen center.
+	// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100.
+	// _vm->_mouse.x/y are in virtual screen coords (0-319, 0-199)
+	// consistent with handler 8 which uses _vm->_mouse.x directly.
+	Common::Point aimPos = getGameplayAimPoint();
+	int16 inputX = (int16)(aimPos.x - 160);  // DAT_0047a7e0
+	int16 inputY = (int16)(aimPos.y - 100);  // DAT_0047a7e2
+
+	// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70).
+	if (inputX > 160)
+		inputX = 160;
+	if (inputX < -160)
+		inputX = -160;
+	if (inputY > 127)
+		inputY = 127;
+	if (inputY < -127)
+		inputY = -127;
+
+	// Step 2: Scale to [-127, 127] (lines 82-84).
+	// Mouse mode: scaledInputX = (DAT_0047a7e0 * 0x7f) / 0xa0.
+	int16 scaledInputX = (int16)((inputX * 127) / 160);
+	int16 scaledInputY = inputY;  // Y already in [-127, 127]
+
+	// Step 3: Velocity history + smoothed average (lines 141-157).
+	for (int i = 24; i > 0; i--) {
+		_velocityHistory[i] = _velocityHistory[i - 1];
+	}
+	_velocityHistory[0] = scaledInputX;
+
+	// Window size = (levelData[0] >> 4) + 1. Calibrated default: 5.
+	const int smoothWindow = 5;
+	int velSum = 0;
+	for (int i = 0; i < smoothWindow; i++) {
+		velSum += _velocityHistory[i];
+	}
+	_smoothedVelocity = (int16)(velSum / smoothWindow);  // DAT_0044370c
+
+	// Step 4: Wind history (lines 158-173).
+	// Wind multiplier comes from level data[6]. Without data, use 0 (no wind).
+	const int16 windMult = 0;
+	int windSumX = 0, windSumY = 0;
+	for (int i = 14; i > 0; i--) {
+		_windHistoryX[i] = _windHistoryX[i - 1];
+		windSumX += _windHistoryX[i];
+	}
+	_windHistoryX[0] = _windParamX;
+	int16 windEffectX = (int16)((windMult * (windSumX + _windParamX)) / 15);
+
+	for (int i = 14; i > 0; i--) {
+		_windHistoryY[i] = _windHistoryY[i - 1];
+		windSumY += _windHistoryY[i];
+	}
+	_windHistoryY[0] = _windParamY;
+	int16 windEffectY = (int16)((windMult * (windSumY + _windParamY)) / 15);
+
+	// Step 5: Position delta (lines 174-242).
+	// levelSpeed (offset 4): calibrated so max velocity (127) -> delta 12.
+	//   8 = (speed * 127) >> 9 -> speed around 32
+	// levelYSpeed (offset 2): calibrated so max input (127) -> delta ~6.
+	//   6 = (speed * 127) >> 10 -> speed around 48
+	const int16 levelSpeed = 32;
+	const int16 levelYSpeed = 48;
+	int16 absSmoothVel = ABS(_smoothedVelocity);
+	int16 positionDeltaX;
+
+	if (_flyControlMode == 1) {
+		// Mode 1: Full cross-axis coupling (lines 174-186).
+		// Banking: vertical input deflects horizontal movement.
+		if (scaledInputX < 1) {
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY - windEffectX) >> 9);
+		} else {
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY - windEffectX) >> 9);
+		}
+	} else {
+		// Mode 0/2/3: Reduced cross-axis coupling (lines 218-230).
+		if (scaledInputX < 1) {
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
+		} else {
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
+		}
+	}
+
+	// Clamp X delta to +/-12 per frame (lines 187-192 / 231-236).
+	if (positionDeltaX < -11)
+		positionDeltaX = -12;
+	if (positionDeltaX > 11)
+		positionDeltaX = 12;
+
+	// Apply X delta (line 193 / 237).
+	_flyShipScreenX += positionDeltaX;
+
+	// Y delta.
+	if (_flyControlMode == 1) {
+		// Mode 1: clamped to +/-12 with wind (lines 194-216).
+		int yCalc = levelYSpeed * scaledInputY - (windEffectY >> 1);
+		int yDelta = yCalc >> 10;
+		if (yDelta < -12)
+			yDelta = -12;
+		if (yDelta > 12)
+			yDelta = 12;
+		_flyShipScreenY -= (int16)yDelta;
+	} else {
+		// Mode 0/2/3: unclamped (lines 238-241).
+		_flyShipScreenY -= (int16)((levelYSpeed * scaledInputY) >> 10);
+	}
+
+	// Store vertical input for direction sprite (line 243).
+	_verticalInput = scaledInputY;  // DAT_0044370e
+
+	// Ship facing direction (line 244).
+	_facingRight = (0xd4 < _smoothedVelocity + _flyShipScreenX);
+
+	// Step 6: Position clamping (lines 245-256).
+	if (_flyShipScreenX > 0x194)
+		_flyShipScreenX = 0x194;  // 404
+	if (_flyShipScreenY > 0xF0)
+		_flyShipScreenY = 0xF0;    // 240
+	if (_flyShipScreenX < 0x14)
+		_flyShipScreenX = 0x14;    // 20
+	if (_flyShipScreenY < 0x14)
+		_flyShipScreenY = 0x14;    // 20
+
+	// Step 7: Corridor collision - mode 0/2 only (lines 257-292).
+	if (_flyControlMode == 0 || _flyControlMode == 2) {
+		LevelDifficultyParams wallParams = getDifficultyParams();
+		int corridorWallDmg = (wallParams.dodgeDamage >= 0) ? wallParams.dodgeDamage : 0;
+
+		// Right boundary (lines 258-270).
+		// Original: position is ALWAYS clamped; damage/bounce only when cooldown < 5.
+		if (_corridorRightX < _flyShipScreenX) {
+			_flyShipScreenX = _corridorRightX;
+			if (_hitCooldown < 5) {
+				for (int i = 0; i < 25; i++)
+					_velocityHistory[i] = -127;
+				_hitCooldown = 10;
+				_spaceShotDirection = 1;
+				initDamageFlash();
+				if (!_rebelInvulnerable) {
+					_playerDamage += corridorWallDmg;
+					if (_playerDamage > 255)
+						_playerDamage = 255;
+				}
+				_rebelHitCounter++;
+				playSfx(1, 127, 100);  // CRASH.SAD, right wall, pan right
+			}
+		}
+
+		// Left boundary (lines 271-283).
+		if (_flyShipScreenX < _corridorLeftX) {
+			_flyShipScreenX = _corridorLeftX;
+			if (_hitCooldown < 5) {
+				for (int i = 0; i < 25; i++)
+					_velocityHistory[i] = 127;
+				_hitCooldown = 10;
+				_spaceShotDirection = 0;
+				initDamageFlash();
+				if (!_rebelInvulnerable) {
+					_playerDamage += corridorWallDmg;
+					if (_playerDamage > 255)
+						_playerDamage = 255;
+				}
+				_rebelHitCounter++;
+				playSfx(1, 127, -100);  // CRASH.SAD, left wall, pan left
+			}
+		}
+
+		// Y boundary clamping - no damage (lines 285-292).
+		if (_corridorBottomY < _flyShipScreenY) {
+			_flyShipScreenY = _corridorBottomY;
+		}
+		if (_flyShipScreenY < _corridorTopY) {
+			_flyShipScreenY = _corridorTopY;
+		}
+	}
+
+	// Step 8: Perspective offsets (lines 293-316).
+	// f(x) = (focal * center * |offset|) / ((center - focal) * |offset| + focal * center)
+	// Close view (DAT_0047a7fc < 1): focalX=0x34, focalY=0x2d.
+	// Far view (DAT_0047a7fc >= 1): focalX=0x2b, focalY=0x19.
+	{
+		int absOffX = ABS(_flyShipScreenX - 0xd4);
+		int16 focalX = 0x2b;  // Far view default for Level 3
+		if (absOffX > 0) {
+			_perspectiveX = (int16)((focalX * 0xd4 * absOffX) /
+				((0xd4 - focalX) * absOffX + focalX * 0xd4));
+		} else {
+			_perspectiveX = 0;
+		}
+		if (_flyShipScreenX < 0xd5)
+			_perspectiveX = -_perspectiveX;
+
+		int absOffY = ABS(_flyShipScreenY - 0x82);
+		int16 focalY = 0x19;  // Far view default for Level 3
+		if (absOffY > 0) {
+			_perspectiveY = (int16)((focalY * 0x82 * absOffY) /
+				((0x82 - focalY) * absOffY + focalY * 0x82));
+		} else {
+			_perspectiveY = 0;
+		}
+		if (_flyShipScreenY < 0x83)
+			_perspectiveY = -_perspectiveY;
+	}
+
+	// View shift = clamped smoothed velocity (FUN_0040d836 lines 68-74).
+	_viewShift = _smoothedVelocity;
+	if (_viewShift > 127)
+		_viewShift = 127;
+	if (_viewShift < -127)
+		_viewShift = -127;
+
+	// Step 9: Direction sprite (FUN_0040d836 lines 88-106).
+	// 5x7 grid: vDir(0-4) * 7 + hDir(0-6) = sprite index (0-34).
+	// vDir from vertical input: (0xa0 - verticalInput) >> 6.
+	int16 vDir = (int16)(((int)(0xa0 - _verticalInput) + ((0xa0 - _verticalInput) < 0 ? 63 : 0)) >> 6);
+	if (vDir < 0)
+		vDir = 0;
+	if (vDir > 4)
+		vDir = 4;
+
+	// hDir from smoothed velocity: (0x95 - smoothedVelocity) / 0x2b.
+	int16 hDir = (int16)((0x95 - _smoothedVelocity) / 0x2b);
+	if (hDir < 0)
+		hDir = 0;
+	if (hDir > 6)
+		hDir = 6;
+
+	// Hysteresis at center (lines 90-97, 98-105).
+	if (hDir == 3 && ABS(_smoothedVelocity) > 10) {
+		hDir = (_smoothedVelocity < 1) ? 4 : 2;
+	}
+	if (vDir == 2 && ABS(_verticalInput) > 15) {
+		vDir = (_verticalInput < 1) ? 3 : 1;
+	}
+
+	_shipDirectionIndex = vDir * 7 + hDir;
+	if (_shipDirectionIndex < 0)
+		_shipDirectionIndex = 0;
+	if (_shipDirectionIndex > 34)
+		_shipDirectionIndex = 34;
+
+	_shipFiring = (_flyControlMode == 2) &&
+		((_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
+		 _vm->getActionState(kScummActionInsaneAttack));
+
+	debug("Rebel2 H7: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d mode=%d",
+		_flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
+		_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode);
+}
+
+// ScummVM refactor helper for opcode 6 Handler 25, not a separate retail function.
+void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+	// Handler 25 (0x19) specific logic (mixed mode - speeder bike).
+	// Based on FUN_0041cadb case 4 (opcode 6) lines 113-229.
+
+	// Read the reset flag from IACT data at offset 8-9 (local_14[4] in decompiled code).
+	// The stream position should be at offset 8 after par4 was read.
+	// From FUN_0041cadb line 114: if (local_14[4] == 1) { ... reset ... }
+	int16 par5 = 0;
+	if (b.pos() + 2 <= b.size()) {
+		int64 savedPos = b.pos();
+		par5 = b.readSint16LE();
+		b.seek(savedPos);  // Don't consume the stream
+	}
+
+	// If par5 == 1, enable status bar and reset state (lines 114-121).
+	// Note: This is local_14[4] in the decompiled code, NOT local_14[3] (par4).
+	if (par5 == 1) {
+		_rebelStatusBarSprite = 5;
+		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+			initLaserTexture(_smush_iconsNut, 5);
+		}
+
+		// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
+		if (!_rebelOp6Initialized) {
+			clearBit(0);
+			for (int i = 0; i < 512; i++) {
+				_rebelLinks[i][0] = 0;
+				_rebelLinks[i][1] = 0;
+				_rebelLinks[i][2] = 0;
+			}
+			_rebelWaveState = _rebelPhaseState;
+			_rebelOp6Initialized = true;
+			debug("Rebel2 Opcode 6 (Handler 25): Wave init, wave=0x%x autopilot=%d damageLevel=%d",
+				_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
+		}
+	}
+
+	// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render.
+	// From FUN_0041cadb line 122: DAT_00457900 = local_14[3].
+	// In ScummVM's IACT parsing: local_14[3] = offset 6-7 = par4.
+	// Mode 1: Uncovered, shooting position - sprite on left
+	// Mode 2: Covered, vertical shift
+	// Mode 3: Transition between covered/uncovered - sprite position depends on direction
+	// Mode 4: Alternative uncovered position - sprite on right
+	_grdSpriteMode = par4;  // local_14[3] maps to par4 (offset 6-7)
+
+	debug("Rebel2 Handler25 Opcode6: par2=%d par3=%d par4=%d(mode) par5=%d(reset) autopilot=%d damageLevel=%d controlMode=%d",
+		par2, par3, par4, par5, _rebelAutopilot, _rebelDamageLevel, _rebelControlMode);
+
+	// Autopilot logic (lines 123-146).
+	// From original FUN_0041cadb - NO damageLevel check, toggle happens immediately.
+	// The damage level counter provides the smooth visual transition.
+	if (!_rebelInvulnerable) {
+		if (_rebelAutopilot == 0) {
+			// Uncovered: RIGHT button enters cover.
+			if ((_rebelControlMode & 2) != 0) {
+				_rebelAutopilot = 1;
+				debug("Rebel2 Handler25: Entering cover (right click), controlMode=%d", _rebelControlMode);
+			}
+		} else {
+			// Covered: ANY button exits cover.
+			if (_rebelControlMode != 0) {
+				_rebelAutopilot = 0;
+				debug("Rebel2 Handler25: Exiting cover (button click), controlMode=%d", _rebelControlMode);
+			}
+		}
+
+		// Clear control mode after processing (sticky flags consumed).
+		_rebelControlMode = 0;
+	} else {
+		// Invulnerable mode: random autopilot changes.
+		if (_rebelAutopilot == 0) {
+			if (_vm->_rnd.getRandomNumber(100) == 0) {
+				_rebelAutopilot = 1;
+			}
+		} else {
+			if (_vm->_rnd.getRandomNumber(15) == 0) {
+				_rebelAutopilot = 0;
+				_rebelFlightDir = _vm->_rnd.getRandomNumber(2);
+			}
+		}
+	}
+
+	// Update damage level counter (lines 147-154).
+	// This provides the smooth transition animation between covered/uncovered states.
+	int prevDamageLevel = _rebelDamageLevel;
+	if (_rebelAutopilot == 0) {
+		// Uncovered: decrement damage level towards 0.
+		if (_rebelDamageLevel > 0) {
+			_rebelDamageLevel--;
+		}
+	} else {
+		// Covered: increment damage level towards 5.
+		if (_rebelDamageLevel < 5) {
+			_rebelDamageLevel++;
+		}
+	}
+	if (_rebelDamageLevel != prevDamageLevel) {
+		debug("Rebel2 Handler25: damageLevel transition %d -> %d (autopilot=%d)",
+			prevDamageLevel, _rebelDamageLevel, _rebelAutopilot);
+	}
+
+	// Flight direction logic for mode 3 (lines 155-177).
+	if (_grdSpriteMode == 3) {
+		if (_rebelDamageLevel == 5) {
+			// At max damage, check for direction change input.
+			int16 mouseX = getGameplayAimPoint().x;
+			if (_player && _player->_width > 320) {
+				mouseX = (mouseX * 320) / _player->_width;
+			}
+			if (mouseX > 235) {  // 0x4b + 160 = 235
+				_rebelFlightDir = 1;
+			}
+			if (mouseX < 85) {   // 160 - 0x4b = 85
+				_rebelFlightDir = 0;
+			}
+		}
+	} else {
+		_rebelFlightDir = 0;
+	}
+
+	// Calculate sprite and view offset positions based on mode (lines 182-213).
+	// DAT_0045790c = view offset X (for corridor overlay)
+	// DAT_0045790e = view offset Y (for corridor overlay)
+	// DAT_00457910 = sprite position X (relative to center)
+	// DAT_00457912 = sprite position Y (relative to center)
+	if (_grdSpriteMode == 1) {
+		// Mode 1: Uncovered, shooting - sprite shifts left as damage increases.
+		_rebelViewMode1 = 0x0e;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * -5 + -14;   // DAT_0045790c
+		_rebelViewOffset2X = _rebelDamageLevel * -22;       // DAT_00457910
+		_rebelViewOffsetY = 0;                              // DAT_0045790e
+		_rebelViewOffset2Y = 0;                             // DAT_00457912
+	} else if (_grdSpriteMode == 4) {
+		// Mode 4: Alternative uncovered - sprite shifts right.
+		_rebelViewMode1 = 0x22;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * 10 + -16;   // DAT_0045790c
+		_rebelViewOffset2X = _rebelDamageLevel * 17 + -85;  // DAT_00457910 (0x11 = 17, -0x55 = -85)
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+	} else if (_grdSpriteMode == 2) {
+		// Mode 2: Covered - vertical shift.
+		_rebelViewMode1 = 0;
+		_rebelViewMode2 = 0x0e;
+		_rebelViewOffsetY = _rebelDamageLevel * -5 + -14;   // DAT_0045790e
+		_rebelViewOffset2Y = (5 - _rebelDamageLevel) * 15 + -60;  // DAT_00457912 (0xf = 15, -0x3c = -60)
+		_rebelViewOffsetX = 0;
+		_rebelViewOffset2X = 0;
+	} else if (_grdSpriteMode == 3) {
+		// Mode 3: Transition - direction-dependent horizontal shift.
+		_rebelViewMode1 = 0x0f;
+		_rebelViewMode2 = 0;
+		// (-(DAT_00457902 == 0) & 6) - 3 = if dir==0: 6-3=3, else 0-3=-3
+		int16 dirMultX = (_rebelFlightDir == 0) ? 3 : -3;
+		// (-(DAT_00457902 == 0) & 0x28) - 0x14 = if dir==0: 40-20=20, else 0-20=-20
+		int16 dirMultX2 = (_rebelFlightDir == 0) ? 20 : -20;
+		_rebelViewOffsetX = dirMultX * (5 - _rebelDamageLevel) + -15;  // DAT_0045790c
+		_rebelViewOffset2X = dirMultX2 * (5 - _rebelDamageLevel);      // DAT_00457910
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+	} else {
+		// Mode 0 or unknown: use Mode 1 defaults as fallback.
+		_rebelViewMode1 = 0x0e;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * -5 + -14;
+		_rebelViewOffset2X = _rebelDamageLevel * -22;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		debug("Rebel2 Opcode 6 (Handler 25): Unknown mode %d, using Mode 1 fallback", _grdSpriteMode);
+	}
+
+	debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d autopilot=%d viewOff=(%d,%d) spritePos=(%d,%d)",
+		_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir, _rebelAutopilot,
+		_rebelViewOffsetX, _rebelViewOffsetY, _rebelViewOffset2X, _rebelViewOffset2Y);
+
+	// Set FOBJ position offsets (FUN_00424510 in original, line 214).
+	// All subsequent FOBJs in this frame will be shifted by these offsets.
+	if (_player) {
+		_player->_fobjOffsetX = _rebelViewOffsetX;
+		_player->_fobjOffsetY = _rebelViewOffsetY;
+	}
+
+	// Draw corridor overlay OPAQUELY (FUN_00428A10 in original, line 216).
+	// This wipes previous frame content so codec 23 delta skip regions show clean corridor.
+	if (renderBitmap) {
+		EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
+		if (corridorOverlay.valid && corridorOverlay.pixels) {
+			int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
+			int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
+
+			int srcOffsetX = 0;
+			int srcOffsetY = 0;
+			int destX = _rebelViewOffsetX;
+			int destY = _rebelViewOffsetY;
+			int drawWidth = corridorOverlay.width;
+			int drawHeight = corridorOverlay.height;
+
+			if (destX < 0) { srcOffsetX = -destX; drawWidth -= srcOffsetX; destX = 0; }
+			if (destY < 0) { srcOffsetY = -destY; drawHeight -= srcOffsetY; destY = 0; }
+			if (destX + drawWidth > pitch)
+				drawWidth = pitch - destX;
+			if (destY + drawHeight > bufHeight)
+				drawHeight = bufHeight - destY;
+			if (drawWidth > corridorOverlay.width - srcOffsetX)
+				drawWidth = corridorOverlay.width - srcOffsetX;
+			if (drawHeight > corridorOverlay.height - srcOffsetY)
+				drawHeight = corridorOverlay.height - srcOffsetY;
+
+			if (drawWidth > 0 && drawHeight > 0) {
+				for (int y = 0; y < drawHeight; y++) {
+					memcpy(renderBitmap + (destY + y) * pitch + destX,
+						   corridorOverlay.pixels + (srcOffsetY + y) * corridorOverlay.width + srcOffsetX,
+						   drawWidth);
+				}
+			}
+			debug("Rebel2 Opcode 6: Corridor overlay drawn at (%d,%d) size(%d,%d)",
+				_rebelViewOffsetX, _rebelViewOffsetY, corridorOverlay.width, corridorOverlay.height);
+		}
+	}
+}
+
+// ScummVM refactor helper for opcode 6 Handler 0x26, not a separate retail function.
+void InsaneRebel2::handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4) {
+	// Handler 0x26: FUN_407FCB line 77-79 - set level type from par4, read par5 for init trigger.
+	// param_5[3] = par4 = levelType, param_5[4] = par5 = init flag.
+	_rebelLevelType = par4;
+
+	// Read par5 from IACT body (param_5[4]).
+	int16 par5 = 0;
+	if (b.pos() + 2 <= b.size()) {
+		int64 savedPos = b.pos();
+		par5 = b.readSint16LE();
+		b.seek(savedPos);
+	}
+
+	if (par5 == 1) {
+		// Re-render laser texture for this level (FUN_0040bb87).
+		// levelType 5 uses sprite 53, all others use sprite 5.
+		_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
+		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > _rebelStatusBarSprite) {
+			initLaserTexture(_smush_iconsNut, _rebelStatusBarSprite);
+		}
+
+		if (!_rebelOp6Initialized) {
+			clearBit(0);
+			for (int i = 0; i < 512; i++) {
+				_rebelLinks[i][0] = 0;
+				_rebelLinks[i][1] = 0;
+				_rebelLinks[i][2] = 0;
+			}
+			_rebelWaveState = _rebelPhaseState;
+			_rebelHitCounter = 0;
+			_rebelOp6Initialized = true;
+			debug("Rebel2 Opcode 6 (Handler 0x26): Wave init, levelType=%d waveState=0x%x",
+				_rebelLevelType, _rebelWaveState);
+		}
+	}
+}
+
+// ScummVM refactor helper for opcode 6 generic init, not a separate retail function.
+void InsaneRebel2::handleOpcode6GenericInit(int16 par4) {
+	// Other handlers: par4 == 1 triggers init (NOT level type).
+	if (_rebelHandler != 0x26 && par4 == 1) {
+		_rebelStatusBarSprite = 5;
+		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+			initLaserTexture(_smush_iconsNut, 5);
+		}
+
+		if (!_rebelOp6Initialized) {
+			clearBit(0);
+			for (int i = 0; i < 512; i++) {
+				_rebelLinks[i][0] = 0;
+				_rebelLinks[i][1] = 0;
+				_rebelLinks[i][2] = 0;
+			}
+			_rebelWaveState = _rebelPhaseState;
+			_rebelHitCounter = 0;
+			_rebelOp6Initialized = true;
+			debug("Rebel2 Opcode 6: Wave init - cleared bits/links, waveState=0x%x", _rebelWaveState);
+		}
+	}
+}
+
+// ScummVM refactor helper for opcode 6 generic flight state, not a separate retail function.
+void InsaneRebel2::updateOpcode6GenericFlightState() {
+	// Step 3: Autopilot/control mode logic (lines 123-146)
+	// This determines whether the ship flies on autopilot or manual control.
+	if (!_rebelInvulnerable) {
+		// Normal mode: check control mode flags.
+		if (_rebelAutopilot == 0) {
+			if ((_rebelControlMode & 2) != 0) {
+				_rebelAutopilot = 1;
+			}
+		} else {
+			if (_rebelControlMode != 0) {
+				_rebelAutopilot = 0;
+			}
+		}
+	} else {
+		// Invulnerable mode: random autopilot changes.
+		if (_rebelAutopilot == 0) {
+			if (_vm->_rnd.getRandomNumber(100) == 0) {
+				_rebelAutopilot = 1;
+			}
+		} else {
+			if (_vm->_rnd.getRandomNumber(15) == 0) {
+				_rebelAutopilot = 0;
+				_rebelFlightDir = _vm->_rnd.getRandomNumber(2);
+			}
+		}
+	}
+
+	// Step 4: Update damage level counter (lines 147-154).
+	if (_rebelAutopilot == 0) {
+		if (_rebelDamageLevel > 0) {
+			_rebelDamageLevel--;
+		}
+	} else {
+		if (_rebelDamageLevel < 5) {
+			_rebelDamageLevel++;
+		}
+	}
+
+	// Handle level type 3 special direction logic (lines 155-181).
+	if (_rebelLevelType == 3) {
+		if (_rebelDamageLevel == 5) {
+			// Check for joystick/key input to change direction.
+			// Simplified: use mouse position.
+			int16 mouseX = getGameplayAimPoint().x;
+			if (mouseX > 235) {
+				_rebelFlightDir = 1;
+			}
+			if (mouseX < 85) {
+				_rebelFlightDir = 0;
+			}
+		}
+	} else {
+		_rebelFlightDir = 0;
+	}
+
+	// Step 5: Calculate view offsets based on level type (lines 182-213).
+	switch (_rebelLevelType) {
+	case 1:
+		// Type 1: Vertical movement.
+		_rebelViewMode1 = 0x0e;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * -5 - 0x0e;
+		_rebelViewOffset2X = _rebelDamageLevel * -0x16;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+
+	case 4:
+		// Type 4: Different vertical movement.
+		_rebelViewMode1 = 0x22;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * 10 - 0x10;
+		_rebelViewOffset2X = _rebelDamageLevel * 0x11 - 0x55;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+
+	case 2:
+		// Type 2: Horizontal movement.
+		_rebelViewMode1 = 0;
+		_rebelViewMode2 = 0x0e;
+		_rebelViewOffsetY = _rebelDamageLevel * -5 - 0x0e;
+		_rebelViewOffset2Y = (5 - _rebelDamageLevel) * 0x0f - 0x3c;
+		_rebelViewOffsetX = 0;
+		_rebelViewOffset2X = 0;
+		break;
+
+	case 3:
+		// Type 3: Direction-based movement.
+		_rebelViewMode1 = 0x0f;
+		_rebelViewMode2 = 0;
+		{
+			int dirFactor = (_rebelFlightDir == 0) ? 3 : -3;  // (-(ushort)(DAT_00457902 == 0) & 6) - 3
+			int dirFactor2 = (_rebelFlightDir == 0) ? 0x14 : -0x14;  // (-(ushort)(DAT_00457902 == 0) & 0x28) - 0x14
+			_rebelViewOffsetX = dirFactor * (5 - _rebelDamageLevel) - 0x0f;
+			_rebelViewOffset2X = dirFactor2 * (5 - _rebelDamageLevel);
+		}
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+
+	default:
+		// Default: No special offsets.
+		_rebelViewMode1 = 0;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = 0;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2X = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+	}
+
+	debug("Rebel2 Opcode 6: levelType=%d autopilot=%d damageLevel=%d viewOffset=(%d,%d)",
+		_rebelLevelType, _rebelAutopilot, _rebelDamageLevel, _rebelViewOffsetX, _rebelViewOffsetY);
+}
+
+// ScummVM refactor helper for opcode 6 embedded ANIM scan, not a separate retail function.
+void InsaneRebel2::scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par4) {
+	// Detect and load embedded ANIM (SAN) within the remaining IACT payload.
+	// Note: chunkSize is the remaining IACT payload size after par1-par4 header.
+	int64 startPos = b.pos();
+
+	// Use chunkSize (remaining IACT payload) rather than b.size() (entire FRME stream).
+	int64 remaining = chunkSize;
+	if (remaining > 0) {
+		int scanSize = (int)MIN<int64>(remaining, 65536);
+		byte *scanBuf = (byte *)malloc(scanSize);
+		if (scanBuf) {
+			int bytesRead = b.read(scanBuf, scanSize);
+			for (int i = 0; i + 8 <= bytesRead; ++i) {
+				if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+					int64 animStreamPos = startPos + i;
+					uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
+
+					// Limit to remaining IACT payload (chunkSize - offset into payload).
+					int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, chunkSize - i);
+					if (toCopy > 0) {
+						byte *animData = (byte *)malloc(toCopy);
+						if (animData) {
+							b.seek(animStreamPos);
+							b.read(animData, toCopy);
+							loadEmbeddedSan(par4, animData, toCopy, renderBitmap);
+							free(animData);
+						}
+					}
+					b.seek(startPos);
+					free(scanBuf);
+					return;
+				}
+			}
+			b.seek(startPos);
+			free(scanBuf);
+		}
+	}
+}
+
 //
 // iactRebel2Opcode6 -- Level setup / mode switch (FUN_41CADB case 4)
 //
@@ -605,905 +1517,30 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 	debug("Rebel2 IACT Opcode 6: par2=%d par3=%d par4=%d", par2, par3, par4);
 
-	// Update handler type if par2 is a known handler value (from FUN_4033CF case 6)
-	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
-		// Reset Level 2 background flag when transitioning away from Handler 8
-		if (_rebelHandler == 8 && par2 != 8) {
-			_level2BackgroundLoaded = false;
-		}
-		_rebelHandler = par2;
-		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
-	}
+	updateOpcode6Handler(par2);
 
-	// Handler 8 specific logic (third-person on foot) - FUN_00401234 case 4
 	if (_rebelHandler == 8) {
-		// Set ship level mode (DAT_0043e000 = par3)
-		_shipLevelMode = par3;
-
-		// If par4 == 1, enable status bar and re-render laser texture (FUN_0040bb87)
-		if (par4 == 1) {
-			_rebelStatusBarSprite = 5;
-			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
-				initLaserTexture(_smush_iconsNut, 5);
-			}
-		}
-
-		// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
-		// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
-		if (_shipLevelMode != 0 && par4 == 1 && !_rebelOp6Initialized) {
-			clearBit(0);
-			for (int i = 0; i < 512; i++) {
-				_rebelLinks[i][0] = 0;
-				_rebelLinks[i][1] = 0;
-				_rebelLinks[i][2] = 0;
-			}
-			_rebelWaveState = _rebelPhaseState;
-			_rebelOp6Initialized = true;
-			debug("Rebel2 Opcode 6 (Handler 8): Wave init, wave=0x%x", _rebelWaveState);
-		}
-
-		// Skip position calculation for special modes 4 and 5
-		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
-			// ----- Movement Range Transition (Covered vs Shooting) -----
-			// Based on FUN_00401234 lines 85-120:
-			// Mode 2 = "Covered" state - contract movement range to 41 (0x29)
-			// Other modes = "Shooting" state - expand movement range to 127 (0x7f)
-			// Transition happens gradually at ±10 per frame for smooth animation
-			if (_shipLevelMode == 2) {
-				// Covered state - contract movement range
-				if (_movementRangeLimit > 41) {
-					_movementRangeLimit -= 10;
-				}
-				if (_movementRangeLimit < 41) {
-					_movementRangeLimit = 41;
-				}
-			} else {
-				// Shooting state - expand movement range
-				if (_movementRangeLimit < 127) {
-					_movementRangeLimit += 10;
-				}
-				if (_movementRangeLimit > 127) {
-					_movementRangeLimit = 127;
-				}
-			}
-
-			// Calculate target position from mouse input
-			// Mouse X maps to ship horizontal tilt, Mouse Y to vertical tilt
-			// Based on FUN_00401234 lines 151-166:
-			// local_18 = ((DAT_0047a7e0 * 5 + 0x27b) * 0x40) / 0xfe
-			// local_1c = ((DAT_0047a7e2 * 5 + 0x27b) * 0x10) / 0xfe
-
-			// Map the effective aim position (-127 to 127 range) to the ship target.
-			Common::Point aimPos = getGameplayAimPoint();
-			int16 mouseOffsetX = (int16)((aimPos.x - 160) * 127 / 160);
-			int16 mouseOffsetY = (int16)((aimPos.y - 100) * 127 / 100);
-
-			// Clamp X offset to movement range limit (covered/shooting state)
-			// Based on FUN_00401234 lines 119-136
-			if (mouseOffsetX > _movementRangeLimit)
-				mouseOffsetX = _movementRangeLimit;
-			if (mouseOffsetX < -_movementRangeLimit)
-				mouseOffsetX = -_movementRangeLimit;
-			// Y offset always uses full range (±127)
-			if (mouseOffsetY > 127)
-				mouseOffsetY = 127;
-			if (mouseOffsetY < -127)
-				mouseOffsetY = -127;
-
-			// Calculate target positions using the original formula
-			// Original FUN_00401234 lines 151-166:
-			//   local_18 = ((mouseX * 5 + 0x27b) * 0x40) / 0xfe    -> X target
-			//   local_1c = ((mouseY * 5 + 0x27b) * 0x10) / 0xfe    -> Y target
-			//   _DAT_0043e004 = -local_1c   (stored negated for cursor display)
-			// The interpolation (lines 181-193) uses local_1c (positive), NOT _DAT_0043e004.
-			// So the interpolation target must be the positive formula result.
-			_shipTargetX = (int16)(((mouseOffsetX * 5 + 0x27b) * 0x40) / 0xfe);
-			_shipTargetY = (int16)(((mouseOffsetY * 5 + 0x27b) * 0x10) / 0xfe);
-
-			// Smooth interpolation toward target (max 50 pixels per frame)
-			const int16 maxStep = 50;  // 0x32 in hex
-			if (_shipPosX < _shipTargetX) {
-				int16 newX = _shipPosX + maxStep;
-				_shipPosX = (newX > _shipTargetX) ? _shipTargetX : newX;
-			} else if (_shipPosX > _shipTargetX) {
-				int16 newX = _shipPosX - maxStep;
-				_shipPosX = (newX < _shipTargetX) ? _shipTargetX : newX;
-			}
-
-			if (_shipPosY < _shipTargetY) {
-				int16 newY = _shipPosY + maxStep;
-				_shipPosY = (newY > _shipTargetY) ? _shipTargetY : newY;
-			} else if (_shipPosY > _shipTargetY) {
-				int16 newY = _shipPosY - maxStep;
-				_shipPosY = (newY < _shipTargetY) ? _shipTargetY : newY;
-			}
-
-			// Calculate ship direction indices for sprite selection
-			// Map mouse position to 5x7 direction grid (like Handler 7)
-			int16 mouseX = aimPos.x;
-			int16 mouseY = aimPos.y;
-
-			// Scale mouse if video is larger than 320x200
-			if (_player && _player->_width > 320) {
-				mouseX = (mouseX * 320) / _player->_width;
-			}
-			if (_player && _player->_height > 200) {
-				mouseY = (mouseY * 200) / _player->_height;
-			}
-
-			// Horizontal: 5 zones (0=far left, 2=center, 4=far right)
-			if (mouseX < 64)
-				_shipDirectionH = 0;
-			else if (mouseX < 128)
-				_shipDirectionH = 1;
-			else if (mouseX < 192)
-				_shipDirectionH = 2;
-			else if (mouseX < 256)
-				_shipDirectionH = 3;
-			else
-				_shipDirectionH = 4;
-
-			// Vertical: 7 zones (0=far up, 3=center, 6=far down)
-			if (mouseY < 28)
-				_shipDirectionV = 0;
-			else if (mouseY < 57)
-				_shipDirectionV = 1;
-			else if (mouseY < 86)
-				_shipDirectionV = 2;
-			else if (mouseY < 114)
-				_shipDirectionV = 3;
-			else if (mouseY < 143)
-				_shipDirectionV = 4;
-			else if (mouseY < 171)
-				_shipDirectionV = 5;
-			else
-				_shipDirectionV = 6;
-
-			_shipDirectionIndex = _shipDirectionH * 7 + _shipDirectionV;
-		}
-
-		// Update firing state from mouse button or joystick fire action
-		// Mode 4 (autopilot) disables shooting - FUN_00401CCF line 82-84
-		if (_shipLevelMode == 4) {
-			_shipFiring = false;
-		} else {
-			_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
-				_vm->getActionState(kScummActionInsaneAttack);
-		}
-
-		debug("Rebel2 Opcode 6 (Handler 8): mode=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
-			_shipLevelMode, _movementRangeLimit, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
-			_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
-
-		// Handler 8 doesn't use the same view offset logic as other handlers
-		// Skip the rest of the function for Handler 8
+		handleOpcode6Handler8(par3, par4);
 		return;
 	}
 
-	// Handler 7 specific logic (third-person ship) - FUN_0040d836 / FUN_0040c3cc
-	// Used for Level 3 and similar space combat levels
 	if (_rebelHandler == 7) {
-		// Set control mode: DAT_004437c0 = param_5[3] = par4 in FUN_40C3CC case 4.
-		// This determines collision mode and shooting capability:
-		//   Mode 0: Obstacle avoidance — SECONDARY zones, corridor boundaries
-		//   Mode 1: Tunnel flight — PRIMARY zones, per-edge push-back (hMargin=0x28)
-		//   Mode 2: Combat mode — shooting ENABLED, SECONDARY zones
-		//   Mode 3: Tunnel flight — PRIMARY zones, per-edge push-back (hMargin=0x0f)
-		_flyControlMode = par4;
-		debug("Rebel2 Opcode 6 (Handler 7): Control mode set to %d (shooting %s)",
-			par4, (par4 == 2) ? "ENABLED" : "DISABLED");
-
-		// Status bar: param_5[4] == 1 in original (first body word, 5th IACT word)
-		// In our parsing, par3 maps to param_5[2] and the body follows par4.
-		// FUN_40C3CC: if (param_5[4] == 1) FUN_0040bb87(DAT_0047a828,5);
-		// par3 is param_5[2], which the original doesn't use here.
-		// The body word for status bar is read separately below.
-		int16 bodyStatusFlag = 0;
-		if (b.size() - b.pos() >= 2) {
-			bodyStatusFlag = b.readSint16LE();
-		}
-		if (bodyStatusFlag == 1) {
-			_rebelStatusBarSprite = 5;
-			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
-				initLaserTexture(_smush_iconsNut, 5);
-			}
-			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
-		}
-
-		// ------------------------------------------------------------
-		// Ship position update — FUN_40C3CC case 4, lines 49-327
-		// ------------------------------------------------------------
-		// Velocity-based physics with momentum/inertia:
-		//   Mouse offset from center → scaled input [-127,127]
-		//   → velocity history averaging → physics delta (clamped ±12/frame)
-		//   → position clamping → corridor collision → perspective offsets
-		//
-		// Level data table (DAT_0047e0e8 + level*0x242 + difficulty*0x22):
-		//   offset 0: smoothing param (>>4 +1 = window size)
-		//   offset 2: Y speed          offset 4: X speed (levelSpeed)
-		//   offset 6: wind multiplier  offset 14: corridor damage
-		// We don't have the actual level data, so we use calibrated defaults.
-
-		// --- Step 1: Mouse input as offset from screen center ---
-		// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100
-		// _vm->_mouse.x/y are in virtual screen coords (0-319, 0-199)
-		// consistent with handler 8 which uses _vm->_mouse.x directly.
-		Common::Point aimPos = getGameplayAimPoint();
-		int16 inputX = (int16)(aimPos.x - 160);  // DAT_0047a7e0
-		int16 inputY = (int16)(aimPos.y - 100);  // DAT_0047a7e2
-
-		// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70)
-		if (inputX > 160)
-			inputX = 160;
-		if (inputX < -160)
-			inputX = -160;
-		if (inputY > 127)
-			inputY = 127;
-		if (inputY < -127)
-			inputY = -127;
-
-		// --- Step 2: Scale to [-127, 127] (lines 82-84) ---
-		// Mouse mode: scaledInputX = (DAT_0047a7e0 * 0x7f) / 0xa0
-		int16 scaledInputX = (int16)((inputX * 127) / 160);
-		int16 scaledInputY = inputY;  // Y already in [-127, 127]
-
-		// --- Step 3: Velocity history + smoothed average (lines 141-157) ---
-		for (int i = 24; i > 0; i--) {
-			_velocityHistory[i] = _velocityHistory[i - 1];
-		}
-		_velocityHistory[0] = scaledInputX;
-
-		// Window size = (levelData[0] >> 4) + 1. Calibrated default: 5.
-		const int smoothWindow = 5;
-		int velSum = 0;
-		for (int i = 0; i < smoothWindow; i++) {
-			velSum += _velocityHistory[i];
-		}
-		_smoothedVelocity = (int16)(velSum / smoothWindow);  // DAT_0044370c
-
-		// --- Step 4: Wind history (lines 158-173) ---
-		// Wind multiplier comes from level data[6]. Without data, use 0 (no wind).
-		const int16 windMult = 0;
-		int windSumX = 0, windSumY = 0;
-		for (int i = 14; i > 0; i--) {
-			_windHistoryX[i] = _windHistoryX[i - 1];
-			windSumX += _windHistoryX[i];
-		}
-		_windHistoryX[0] = _windParamX;
-		int16 windEffectX = (int16)((windMult * (windSumX + _windParamX)) / 15);
-
-		for (int i = 14; i > 0; i--) {
-			_windHistoryY[i] = _windHistoryY[i - 1];
-			windSumY += _windHistoryY[i];
-		}
-		_windHistoryY[0] = _windParamY;
-		int16 windEffectY = (int16)((windMult * (windSumY + _windParamY)) / 15);
-
-		// --- Step 5: Position delta (lines 174-242) ---
-		// levelSpeed (offset 4): calibrated so max velocity (127) → delta 12.
-		//   8 = (speed * 127) >> 9 → speed ≈ 32
-		// levelYSpeed (offset 2): calibrated so max input (127) → delta ~6.
-		//   6 = (speed * 127) >> 10 → speed ≈ 48
-		const int16 levelSpeed = 32;
-		const int16 levelYSpeed = 48;
-		int16 absSmoothVel = ABS(_smoothedVelocity);
-		int16 positionDeltaX;
-
-		if (_flyControlMode == 1) {
-			// Mode 1: Full cross-axis coupling (lines 174-186)
-			// Banking: vertical input deflects horizontal movement
-			if (scaledInputX < 1) {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY - windEffectX) >> 9);
-			} else {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY - windEffectX) >> 9);
-			}
-		} else {
-			// Mode 0/2/3: Reduced cross-axis coupling (lines 218-230)
-			if (scaledInputX < 1) {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
-			} else {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
-			}
-		}
-
-		// Clamp X delta to ±12 per frame (lines 187-192 / 231-236)
-		if (positionDeltaX < -11)
-			positionDeltaX = -12;
-		if (positionDeltaX > 11)
-			positionDeltaX = 12;
-
-		// Apply X delta (line 193 / 237)
-		_flyShipScreenX += positionDeltaX;
-
-		// Y delta
-		if (_flyControlMode == 1) {
-			// Mode 1: clamped to ±12 with wind (lines 194-216)
-			int yCalc = levelYSpeed * scaledInputY - (windEffectY >> 1);
-			int yDelta = yCalc >> 10;
-			if (yDelta < -12)
-				yDelta = -12;
-			if (yDelta > 12)
-				yDelta = 12;
-			_flyShipScreenY -= (int16)yDelta;
-		} else {
-			// Mode 0/2/3: unclamped (lines 238-241)
-			_flyShipScreenY -= (int16)((levelYSpeed * scaledInputY) >> 10);
-		}
-
-		// Store vertical input for direction sprite (line 243)
-		_verticalInput = scaledInputY;  // DAT_0044370e
-
-		// Ship facing direction (line 244)
-		_facingRight = (0xd4 < _smoothedVelocity + _flyShipScreenX);
-
-		// --- Step 6: Position clamping (lines 245-256) ---
-		if (_flyShipScreenX > 0x194)
-			_flyShipScreenX = 0x194;  // 404
-		if (_flyShipScreenY > 0xF0)
-			_flyShipScreenY = 0xF0;    // 240
-		if (_flyShipScreenX < 0x14)
-			_flyShipScreenX = 0x14;    // 20
-		if (_flyShipScreenY < 0x14)
-			_flyShipScreenY = 0x14;    // 20
-
-		// --- Step 7: Corridor collision — mode 0/2 only (lines 257-292) ---
-		if (_flyControlMode == 0 || _flyControlMode == 2) {
-			LevelDifficultyParams wallParams = getDifficultyParams();
-			int corridorWallDmg = (wallParams.dodgeDamage >= 0) ? wallParams.dodgeDamage : 0;
-
-			// Right boundary (lines 258-270)
-			// Original: position is ALWAYS clamped; damage/bounce only when cooldown < 5
-			if (_corridorRightX < _flyShipScreenX) {
-				_flyShipScreenX = _corridorRightX;
-				if (_hitCooldown < 5) {
-					for (int i = 0; i < 25; i++)
-						_velocityHistory[i] = -127;
-					_hitCooldown = 10;
-					_spaceShotDirection = 1;
-					initDamageFlash();
-					if (!_rebelInvulnerable) {
-						_playerDamage += corridorWallDmg;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-					}
-					_rebelHitCounter++;
-					playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right
-				}
-			}
-			// Left boundary (lines 271-283)
-			if (_flyShipScreenX < _corridorLeftX) {
-				_flyShipScreenX = _corridorLeftX;
-				if (_hitCooldown < 5) {
-					for (int i = 0; i < 25; i++)
-						_velocityHistory[i] = 127;
-					_hitCooldown = 10;
-					_spaceShotDirection = 0;
-					initDamageFlash();
-					if (!_rebelInvulnerable) {
-						_playerDamage += corridorWallDmg;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-					}
-					_rebelHitCounter++;
-					playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left
-				}
-			}
-			// Y boundary clamping — no damage (lines 285-292)
-			if (_corridorBottomY < _flyShipScreenY) {
-				_flyShipScreenY = _corridorBottomY;
-			}
-			if (_flyShipScreenY < _corridorTopY) {
-				_flyShipScreenY = _corridorTopY;
-			}
-		}
-
-		// --- Step 8: Perspective offsets (lines 293-316) ---
-		// f(x) = (focal * center * |offset|) / ((center - focal) * |offset| + focal * center)
-		// Close view (DAT_0047a7fc < 1): focalX=0x34, focalY=0x2d
-		// Far view (DAT_0047a7fc >= 1): focalX=0x2b, focalY=0x19
-		{
-			int absOffX = ABS(_flyShipScreenX - 0xd4);
-			int16 focalX = 0x2b;  // Far view default for Level 3
-			if (absOffX > 0) {
-				_perspectiveX = (int16)((focalX * 0xd4 * absOffX) /
-					((0xd4 - focalX) * absOffX + focalX * 0xd4));
-			} else {
-				_perspectiveX = 0;
-			}
-			if (_flyShipScreenX < 0xd5)
-				_perspectiveX = -_perspectiveX;
-
-			int absOffY = ABS(_flyShipScreenY - 0x82);
-			int16 focalY = 0x19;  // Far view default for Level 3
-			if (absOffY > 0) {
-				_perspectiveY = (int16)((focalY * 0x82 * absOffY) /
-					((0x82 - focalY) * absOffY + focalY * 0x82));
-			} else {
-				_perspectiveY = 0;
-			}
-			if (_flyShipScreenY < 0x83)
-				_perspectiveY = -_perspectiveY;
-		}
-
-		// View shift = clamped smoothed velocity (FUN_0040d836 lines 68-74)
-		_viewShift = _smoothedVelocity;
-		if (_viewShift > 127)
-			_viewShift = 127;
-		if (_viewShift < -127)
-			_viewShift = -127;
-
-		// --- Step 9: Direction sprite (FUN_0040d836 lines 88-106) ---
-		// 5x7 grid: vDir(0-4) * 7 + hDir(0-6) = sprite index (0-34)
-		// vDir from vertical input: (0xa0 - verticalInput) >> 6
-		int16 vDir = (int16)(((int)(0xa0 - _verticalInput) + ((0xa0 - _verticalInput) < 0 ? 63 : 0)) >> 6);
-		if (vDir < 0)
-			vDir = 0;
-		if (vDir > 4)
-			vDir = 4;
-
-		// hDir from smoothed velocity: (0x95 - smoothedVelocity) / 0x2b
-		int16 hDir = (int16)((0x95 - _smoothedVelocity) / 0x2b);
-		if (hDir < 0)
-			hDir = 0;
-		if (hDir > 6)
-			hDir = 6;
-
-		// Hysteresis at center (lines 90-97, 98-105)
-		if (hDir == 3 && ABS(_smoothedVelocity) > 10) {
-			hDir = (_smoothedVelocity < 1) ? 4 : 2;
-		}
-		if (vDir == 2 && ABS(_verticalInput) > 15) {
-			vDir = (_verticalInput < 1) ? 3 : 1;
-		}
-
-		_shipDirectionIndex = vDir * 7 + hDir;
-		if (_shipDirectionIndex < 0)
-			_shipDirectionIndex = 0;
-		if (_shipDirectionIndex > 34)
-			_shipDirectionIndex = 34;
-
-		_shipFiring = (_flyControlMode == 2) &&
-			((_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
-			 _vm->getActionState(kScummActionInsaneAttack));
-
-		debug("Rebel2 H7: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d mode=%d",
-			_flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
-			_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode);
-
+		handleOpcode6Handler7(b, par4);
 		return;
 	}
 
-	// Handler 25 (0x19) specific logic (mixed mode - speeder bike)
-	// Based on FUN_0041cadb case 4 (opcode 6) lines 113-229
 	if (_rebelHandler == 25) {
-		// Read the reset flag from IACT data at offset 8-9 (local_14[4] in decompiled code)
-		// The stream position should be at offset 8 after par4 was read
-		// From FUN_0041cadb line 114: if (local_14[4] == 1) { ... reset ... }
-		int16 par5 = 0;
-		if (b.pos() + 2 <= b.size()) {
-			int64 savedPos = b.pos();
-			par5 = b.readSint16LE();
-			b.seek(savedPos);  // Don't consume the stream
-		}
-
-		// If par5 == 1, enable status bar and reset state (lines 114-121)
-		// Note: This is local_14[4] in the decompiled code, NOT local_14[3] (par4)
-		if (par5 == 1) {
-			_rebelStatusBarSprite = 5;
-			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
-				initLaserTexture(_smush_iconsNut, 5);
-			}
-			// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
-			if (!_rebelOp6Initialized) {
-				clearBit(0);
-				for (int i = 0; i < 512; i++) {
-					_rebelLinks[i][0] = 0;
-					_rebelLinks[i][1] = 0;
-					_rebelLinks[i][2] = 0;
-				}
-				_rebelWaveState = _rebelPhaseState;
-				_rebelOp6Initialized = true;
-				debug("Rebel2 Opcode 6 (Handler 25): Wave init, wave=0x%x autopilot=%d damageLevel=%d",
-					_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
-			}
-		}
-
-		// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render
-		// From FUN_0041cadb line 122: DAT_00457900 = local_14[3];
-		// In ScummVM's IACT parsing: local_14[3] = offset 6-7 = par4
-		// Mode 1: Uncovered, shooting position - sprite on left
-		// Mode 2: Covered, vertical shift
-		// Mode 3: Transition between covered/uncovered - sprite position depends on direction
-		// Mode 4: Alternative uncovered position - sprite on right
-		_grdSpriteMode = par4;  // local_14[3] maps to par4 (offset 6-7)
-
-		debug("Rebel2 Handler25 Opcode6: par2=%d par3=%d par4=%d(mode) par5=%d(reset) autopilot=%d damageLevel=%d controlMode=%d",
-			par2, par3, par4, par5, _rebelAutopilot, _rebelDamageLevel, _rebelControlMode);
-
-		// Autopilot logic (lines 123-146)
-		// From original FUN_0041cadb - NO damageLevel check, toggle happens immediately
-		// The damage level counter provides the smooth visual transition
-		if (!_rebelInvulnerable) {
-			if (_rebelAutopilot == 0) {
-				// Uncovered: RIGHT button enters cover
-				if ((_rebelControlMode & 2) != 0) {
-					_rebelAutopilot = 1;
-					debug("Rebel2 Handler25: Entering cover (right click), controlMode=%d", _rebelControlMode);
-				}
-			} else {
-				// Covered: ANY button exits cover
-				if (_rebelControlMode != 0) {
-					_rebelAutopilot = 0;
-					debug("Rebel2 Handler25: Exiting cover (button click), controlMode=%d", _rebelControlMode);
-				}
-			}
-			// Clear control mode after processing (sticky flags consumed)
-			_rebelControlMode = 0;
-		} else {
-			// Invulnerable mode: random autopilot changes
-			if (_rebelAutopilot == 0) {
-				if (_vm->_rnd.getRandomNumber(100) == 0) {
-					_rebelAutopilot = 1;
-				}
-			} else {
-				if (_vm->_rnd.getRandomNumber(15) == 0) {
-					_rebelAutopilot = 0;
-					_rebelFlightDir = _vm->_rnd.getRandomNumber(2);
-				}
-			}
-		}
-
-		// Update damage level counter (lines 147-154)
-		// This provides the smooth transition animation between covered/uncovered states
-		int prevDamageLevel = _rebelDamageLevel;
-		if (_rebelAutopilot == 0) {
-			// Uncovered: decrement damage level towards 0
-			if (_rebelDamageLevel > 0) {
-				_rebelDamageLevel--;
-			}
-		} else {
-			// Covered: increment damage level towards 5
-			if (_rebelDamageLevel < 5) {
-				_rebelDamageLevel++;
-			}
-		}
-		if (_rebelDamageLevel != prevDamageLevel) {
-			debug("Rebel2 Handler25: damageLevel transition %d -> %d (autopilot=%d)",
-				prevDamageLevel, _rebelDamageLevel, _rebelAutopilot);
-		}
-
-		// Flight direction logic for mode 3 (lines 155-177)
-		if (_grdSpriteMode == 3) {
-			if (_rebelDamageLevel == 5) {
-				// At max damage, check for direction change input
-				int16 mouseX = getGameplayAimPoint().x;
-				if (_player && _player->_width > 320) {
-					mouseX = (mouseX * 320) / _player->_width;
-				}
-				if (mouseX > 235) {  // 0x4b + 160 = 235
-					_rebelFlightDir = 1;
-				}
-				if (mouseX < 85) {   // 160 - 0x4b = 85
-					_rebelFlightDir = 0;
-				}
-			}
-		} else {
-			_rebelFlightDir = 0;
-		}
-
-		// Calculate sprite and view offset positions based on mode (lines 182-213)
-		// DAT_0045790c = view offset X (for corridor overlay)
-		// DAT_0045790e = view offset Y (for corridor overlay)
-		// DAT_00457910 = sprite position X (relative to center)
-		// DAT_00457912 = sprite position Y (relative to center)
-		if (_grdSpriteMode == 1) {
-			// Mode 1: Uncovered, shooting - sprite shifts left as damage increases
-			_rebelViewMode1 = 0x0e;
-			_rebelViewMode2 = 0;
-			_rebelViewOffsetX = _rebelDamageLevel * -5 + -14;   // DAT_0045790c
-			_rebelViewOffset2X = _rebelDamageLevel * -22;       // DAT_00457910
-			_rebelViewOffsetY = 0;                              // DAT_0045790e
-			_rebelViewOffset2Y = 0;                             // DAT_00457912
-		} else if (_grdSpriteMode == 4) {
-			// Mode 4: Alternative uncovered - sprite shifts right
-			_rebelViewMode1 = 0x22;
-			_rebelViewMode2 = 0;
-			_rebelViewOffsetX = _rebelDamageLevel * 10 + -16;   // DAT_0045790c
-			_rebelViewOffset2X = _rebelDamageLevel * 17 + -85;  // DAT_00457910 (0x11 = 17, -0x55 = -85)
-			_rebelViewOffsetY = 0;
-			_rebelViewOffset2Y = 0;
-		} else if (_grdSpriteMode == 2) {
-			// Mode 2: Covered - vertical shift
-			_rebelViewMode1 = 0;
-			_rebelViewMode2 = 0x0e;
-			_rebelViewOffsetY = _rebelDamageLevel * -5 + -14;   // DAT_0045790e
-			_rebelViewOffset2Y = (5 - _rebelDamageLevel) * 15 + -60;  // DAT_00457912 (0xf = 15, -0x3c = -60)
-			_rebelViewOffsetX = 0;
-			_rebelViewOffset2X = 0;
-		} else if (_grdSpriteMode == 3) {
-			// Mode 3: Transition - direction-dependent horizontal shift
-			_rebelViewMode1 = 0x0f;
-			_rebelViewMode2 = 0;
-			// (-(DAT_00457902 == 0) & 6) - 3 = if dir==0: 6-3=3, else 0-3=-3
-			int16 dirMultX = (_rebelFlightDir == 0) ? 3 : -3;
-			// (-(DAT_00457902 == 0) & 0x28) - 0x14 = if dir==0: 40-20=20, else 0-20=-20
-			int16 dirMultX2 = (_rebelFlightDir == 0) ? 20 : -20;
-			_rebelViewOffsetX = dirMultX * (5 - _rebelDamageLevel) + -15;  // DAT_0045790c
-			_rebelViewOffset2X = dirMultX2 * (5 - _rebelDamageLevel);      // DAT_00457910
-			_rebelViewOffsetY = 0;
-			_rebelViewOffset2Y = 0;
-		} else {
-			// Mode 0 or unknown: use Mode 1 defaults as fallback
-			_rebelViewMode1 = 0x0e;
-			_rebelViewMode2 = 0;
-			_rebelViewOffsetX = _rebelDamageLevel * -5 + -14;
-			_rebelViewOffset2X = _rebelDamageLevel * -22;
-			_rebelViewOffsetY = 0;
-			_rebelViewOffset2Y = 0;
-			debug("Rebel2 Opcode 6 (Handler 25): Unknown mode %d, using Mode 1 fallback", _grdSpriteMode);
-		}
-
-		debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d autopilot=%d viewOff=(%d,%d) spritePos=(%d,%d)",
-			_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir, _rebelAutopilot,
-			_rebelViewOffsetX, _rebelViewOffsetY, _rebelViewOffset2X, _rebelViewOffset2Y);
-
-		// Set FOBJ position offsets (FUN_00424510 in original, line 214)
-		// All subsequent FOBJs in this frame will be shifted by these offsets
-		if (_player) {
-			_player->_fobjOffsetX = _rebelViewOffsetX;
-			_player->_fobjOffsetY = _rebelViewOffsetY;
-		}
-
-		// Draw corridor overlay OPAQUELY (FUN_00428A10 in original, line 216)
-		// This wipes previous frame content so codec 23 delta skip regions show clean corridor
-		if (renderBitmap) {
-			EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
-			if (corridorOverlay.valid && corridorOverlay.pixels) {
-				int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
-				int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
-
-				int srcOffsetX = 0;
-				int srcOffsetY = 0;
-				int destX = _rebelViewOffsetX;
-				int destY = _rebelViewOffsetY;
-				int drawWidth = corridorOverlay.width;
-				int drawHeight = corridorOverlay.height;
-
-				if (destX < 0) { srcOffsetX = -destX; drawWidth -= srcOffsetX; destX = 0; }
-				if (destY < 0) { srcOffsetY = -destY; drawHeight -= srcOffsetY; destY = 0; }
-				if (destX + drawWidth > pitch)
-					drawWidth = pitch - destX;
-				if (destY + drawHeight > bufHeight)
-					drawHeight = bufHeight - destY;
-				if (drawWidth > corridorOverlay.width - srcOffsetX)
-					drawWidth = corridorOverlay.width - srcOffsetX;
-				if (drawHeight > corridorOverlay.height - srcOffsetY)
-					drawHeight = corridorOverlay.height - srcOffsetY;
-
-				if (drawWidth > 0 && drawHeight > 0) {
-					for (int y = 0; y < drawHeight; y++) {
-						memcpy(renderBitmap + (destY + y) * pitch + destX,
-							   corridorOverlay.pixels + (srcOffsetY + y) * corridorOverlay.width + srcOffsetX,
-							   drawWidth);
-					}
-				}
-				debug("Rebel2 Opcode 6: Corridor overlay drawn at (%d,%d) size(%d,%d)",
-					_rebelViewOffsetX, _rebelViewOffsetY, corridorOverlay.width, corridorOverlay.height);
-			}
-		}
-
+		handleOpcode6Handler25(renderBitmap, b, par2, par3, par4);
 		return;
 	}
 
-	// Handler 0x26: FUN_407FCB line 77-79 — set level type from par4, read par5 for init trigger
-	// param_5[3] = par4 = levelType, param_5[4] = par5 = init flag
 	if (_rebelHandler == 0x26) {
-		_rebelLevelType = par4;
-
-		// Read par5 from IACT body (param_5[4])
-		int16 par5 = 0;
-		if (b.pos() + 2 <= b.size()) {
-			int64 savedPos = b.pos();
-			par5 = b.readSint16LE();
-			b.seek(savedPos);
-		}
-
-		if (par5 == 1) {
-			// Re-render laser texture for this level (FUN_0040bb87)
-			// levelType 5 uses sprite 53, all others use sprite 5
-			_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
-			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > _rebelStatusBarSprite) {
-				initLaserTexture(_smush_iconsNut, _rebelStatusBarSprite);
-			}
-
-			if (!_rebelOp6Initialized) {
-				clearBit(0);
-				for (int i = 0; i < 512; i++) {
-					_rebelLinks[i][0] = 0;
-					_rebelLinks[i][1] = 0;
-					_rebelLinks[i][2] = 0;
-				}
-				_rebelWaveState = _rebelPhaseState;
-				_rebelHitCounter = 0;
-				_rebelOp6Initialized = true;
-				debug("Rebel2 Opcode 6 (Handler 0x26): Wave init, levelType=%d waveState=0x%x",
-					_rebelLevelType, _rebelWaveState);
-			}
-		}
+		handleOpcode6Turret(b, par4);
 	}
 
-	// Other handlers: par4 == 1 triggers init (NOT level type)
-	if (_rebelHandler != 0x26 && par4 == 1) {
-		_rebelStatusBarSprite = 5;
-		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
-			initLaserTexture(_smush_iconsNut, 5);
-		}
-
-		if (!_rebelOp6Initialized) {
-			clearBit(0);
-			for (int i = 0; i < 512; i++) {
-				_rebelLinks[i][0] = 0;
-				_rebelLinks[i][1] = 0;
-				_rebelLinks[i][2] = 0;
-			}
-			_rebelWaveState = _rebelPhaseState;
-			_rebelHitCounter = 0;
-			_rebelOp6Initialized = true;
-			debug("Rebel2 Opcode 6: Wave init - cleared bits/links, waveState=0x%x", _rebelWaveState);
-		}
-	}
-
-	// Step 3: Autopilot/control mode logic (lines 123-146)
-	// This determines whether the ship flies on autopilot or manual control
-	if (!_rebelInvulnerable) {
-		// Normal mode: check control mode flags
-		if (_rebelAutopilot == 0) {
-			if ((_rebelControlMode & 2) != 0) {
-				_rebelAutopilot = 1;
-			}
-		} else {
-			if (_rebelControlMode != 0) {
-				_rebelAutopilot = 0;
-			}
-		}
-	} else {
-		// Invulnerable mode: random autopilot changes
-		if (_rebelAutopilot == 0) {
-			if (_vm->_rnd.getRandomNumber(100) == 0) {
-				_rebelAutopilot = 1;
-			}
-		} else {
-			if (_vm->_rnd.getRandomNumber(15) == 0) {
-				_rebelAutopilot = 0;
-				_rebelFlightDir = _vm->_rnd.getRandomNumber(2);
-			}
-		}
-	}
-
-	// Step 4: Update damage level counter (lines 147-154)
-	if (_rebelAutopilot == 0) {
-		if (_rebelDamageLevel > 0) {
-			_rebelDamageLevel--;
-		}
-	} else {
-		if (_rebelDamageLevel < 5) {
-			_rebelDamageLevel++;
-		}
-	}
-
-	// Handle level type 3 special direction logic (lines 155-181)
-	if (_rebelLevelType == 3) {
-		if (_rebelDamageLevel == 5) {
-			// Check for joystick/key input to change direction
-			// Simplified: use mouse position
-			int16 mouseX = getGameplayAimPoint().x;
-			if (mouseX > 235) {
-				_rebelFlightDir = 1;
-			}
-			if (mouseX < 85) {
-				_rebelFlightDir = 0;
-			}
-		}
-	} else {
-		_rebelFlightDir = 0;
-	}
-
-	// Step 5: Calculate view offsets based on level type (lines 182-213)
-	switch (_rebelLevelType) {
-	case 1:
-		// Type 1: Vertical movement
-		_rebelViewMode1 = 0x0e;
-		_rebelViewMode2 = 0;
-		_rebelViewOffsetX = _rebelDamageLevel * -5 - 0x0e;
-		_rebelViewOffset2X = _rebelDamageLevel * -0x16;
-		_rebelViewOffsetY = 0;
-		_rebelViewOffset2Y = 0;
-		break;
-
-	case 4:
-		// Type 4: Different vertical movement
-		_rebelViewMode1 = 0x22;
-		_rebelViewMode2 = 0;
-		_rebelViewOffsetX = _rebelDamageLevel * 10 - 0x10;
-		_rebelViewOffset2X = _rebelDamageLevel * 0x11 - 0x55;
-		_rebelViewOffsetY = 0;
-		_rebelViewOffset2Y = 0;
-		break;
-
-	case 2:
-		// Type 2: Horizontal movement
-		_rebelViewMode1 = 0;
-		_rebelViewMode2 = 0x0e;
-		_rebelViewOffsetY = _rebelDamageLevel * -5 - 0x0e;
-		_rebelViewOffset2Y = (5 - _rebelDamageLevel) * 0x0f - 0x3c;
-		_rebelViewOffsetX = 0;
-		_rebelViewOffset2X = 0;
-		break;
-
-	case 3:
-		// Type 3: Direction-based movement
-		_rebelViewMode1 = 0x0f;
-		_rebelViewMode2 = 0;
-		{
-			int dirFactor = (_rebelFlightDir == 0) ? 3 : -3;  // (-(ushort)(DAT_00457902 == 0) & 6) - 3
-			int dirFactor2 = (_rebelFlightDir == 0) ? 0x14 : -0x14;  // (-(ushort)(DAT_00457902 == 0) & 0x28) - 0x14
-			_rebelViewOffsetX = dirFactor * (5 - _rebelDamageLevel) - 0x0f;
-			_rebelViewOffset2X = dirFactor2 * (5 - _rebelDamageLevel);
-		}
-		_rebelViewOffsetY = 0;
-		_rebelViewOffset2Y = 0;
-		break;
-
-	default:
-		// Default: No special offsets
-		_rebelViewMode1 = 0;
-		_rebelViewMode2 = 0;
-		_rebelViewOffsetX = 0;
-		_rebelViewOffsetY = 0;
-		_rebelViewOffset2X = 0;
-		_rebelViewOffset2Y = 0;
-		break;
-	}
-
-	debug("Rebel2 Opcode 6: levelType=%d autopilot=%d damageLevel=%d viewOffset=(%d,%d)",
-		_rebelLevelType, _rebelAutopilot, _rebelDamageLevel, _rebelViewOffsetX, _rebelViewOffsetY);
-
-	// Detect and load embedded ANIM (SAN) within the remaining IACT payload
-	// Note: chunkSize is the remaining IACT payload size after par1-par4 header
-	{
-		int64 startPos = b.pos();
-		// Use chunkSize (remaining IACT payload) rather than b.size() (entire FRME stream)
-		int64 remaining = chunkSize;
-		if (remaining > 0) {
-			int scanSize = (int)MIN<int64>(remaining, 65536);
-			byte *scanBuf = (byte *)malloc(scanSize);
-			if (scanBuf) {
-				int bytesRead = b.read(scanBuf, scanSize);
-				for (int i = 0; i + 8 <= bytesRead; ++i) {
-					if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
-						int64 animStreamPos = startPos + i;
-						uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
-						// Limit to remaining IACT payload (chunkSize - offset into payload)
-						int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, chunkSize - i);
-						if (toCopy > 0) {
-							byte *animData = (byte *)malloc(toCopy);
-							if (animData) {
-								b.seek(animStreamPos);
-								b.read(animData, toCopy);
-								loadEmbeddedSan(par4, animData, toCopy, renderBitmap);
-								free(animData);
-							}
-						}
-						b.seek(startPos);
-						free(scanBuf);
-						return;
-					}
-				}
-				b.seek(startPos);
-				free(scanBuf);
-			}
-		}
-	}
+	handleOpcode6GenericInit(par4);
+	updateOpcode6GenericFlightState();
+	scanOpcode6EmbeddedAnim(renderBitmap, b, chunkSize, par4);
 }
 
 //
