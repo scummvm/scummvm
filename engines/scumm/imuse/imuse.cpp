@@ -902,7 +902,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 			if (!player)
 				return -1;
 			if (_newSystem && cmd == 5) {
-				assert(a[3] >= 0 && a[3] <= 15);
+				assert(a[2] >= 0 && a[2] <= 15);
 				part = player->getPart(a[2]);
 				if (!part)
 					return -1;
