@@ -538,6 +538,16 @@ public:
 	void renderStatusBarBackground(byte *renderBitmap, int pitch, int width, int height,
 								   int videoWidth, int videoHeight, int statusBarY);
 
+	void updatePostRenderScroll(int width, int height);
+	void updatePostRenderDeath();
+	void showPostRenderMenuCursor();
+	bool handlePostRenderMenuModes(byte *renderBitmap, int pitch, int width, int height, bool introPlaying);
+	bool handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
+	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
+								 int videoWidth, int videoHeight, int statusBarY, int32 curFrame);
+	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
+	void checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
+
 	// Draw NUT-based HUD overlays for Handler 0x26/0x19 turret modes
 	void renderTurretHudOverlays(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 

@@ -2036,28 +2036,10 @@ void InsaneRebel2::renderNutSpriteMirrored(byte *dst, int pitch, int width, int 
 	}
 }
 
-//
-// procPostRendering -- Post-frame rendering: HUD, ships, enemies, effects, status bar.
-//
-// Called after FOBJ decoding. Dispatches to per-handler rendering functions
-// for ship sprites, laser shots, explosions, crosshair, and damage effects.
-//
-void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-
-	// Determine correct pitch for the video buffer (usually 320 for Rebel2)
-	int width = _player->_width;
-	int height = _player->_height;
-	if (width == 0)
-		width = _vm->_screenWidth;
-	if (height == 0)
-		height = _vm->_screenHeight;
-	int pitch = width;
-
-	// Calculate View/Scroll Offsets
-	// Rebel Assault 2 uses a buffer larger (424x260) than screen (320x200)
-	// Map mouse X (0-320) to Scroll X (0-104)
-	// Map mouse Y (0-200) to Scroll Y (0-60)
+// updatePostRenderScroll -- Set SmushPlayer scroll offsets for the current frame.
+void InsaneRebel2::updatePostRenderScroll(int width, int height) {
+	// Rebel Assault 2 uses a buffer larger (424x260) than screen (320x200).
+	// Map mouse X (0-320) to Scroll X (0-104), and Y (0-200) to Scroll Y (0-60).
 	int maxScrollX = width - _vm->_screenWidth;
 	int maxScrollY = height - _vm->_screenHeight;
 
@@ -2066,15 +2048,18 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (maxScrollY < 0)
 		maxScrollY = 0;
 
-	// Simple linear mapping: Center of screen corresponds to center of buffer
+	// Simple linear mapping: Center of screen corresponds to center of buffer.
 	Common::Point aimPos = getGameplayAimPoint();
 	_viewX = (aimPos.x * maxScrollX) / _vm->_screenWidth;
 	_viewY = (aimPos.y * maxScrollY) / _vm->_screenHeight;
 
 	_player->setScrollOffset(_viewX, _viewY);
+}
 
-	// Death check: original game (FUN_417E53 line 25) exits video playback
-	// when DAT_0047a7ec >= 0xff (damage accumulator reaches 255).
+// updatePostRenderDeath -- End gameplay playback when player damage reaches 255.
+void InsaneRebel2::updatePostRenderDeath() {
+	// Original game (FUN_417E53 line 25) exits video playback when
+	// DAT_0047a7ec >= 0xff (damage accumulator reaches 255).
 	// Sync _playerShield from _playerDamage and break out of video on death.
 	if (_rebelHandler != 0) {
 		_playerShield = 255 - _playerDamage;
@@ -2083,150 +2068,130 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			_vm->_smushVideoShouldFinish = true;
 		}
 	}
+}
 
-	// --- HUD Drawing Order (from FUN_004089ab assembly analysis) ---
-	// Based on FUN_004089ab:
-	// 1. Line 156: FUN_004288c0 fills status bar background at Y=0xb4 (180)
-	// 2. Lines 171-226: Draw turret overlays, targeting reticle, crosshair
-	// 3. Line 243: FUN_0041c012 draws status bar sprites LAST (on top)
-	//
-	// In FUN_0041c012:
-	// - Sprites are drawn to buffer DAT_00482204 at position (0,0)
-	// - Buffer is composited at Y=0xb4 (180) via FUN_0042f780
-	// - DISPFONT.NUT (DAT_00482200) sprites 1-7 contain the status bar elements
-	//
-	// We draw directly to screen at Y=180
+// showPostRenderMenuCursor -- Restore the default cursor for menu videos.
+void InsaneRebel2::showPostRenderMenuCursor() {
+	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+	CursorMan.replaceCursor(cursor);
+	delete cursor;
+	CursorMan.showMouse(true);
+}
 
-	// Use video content coordinates, NOT buffer coordinates
-	const int videoWidth = 320;    // Native video width
-	const int videoHeight = 200;   // Native video height
-	const int statusBarY = 180;    // 0xb4 - status bar starts at Y=180 in video coords
-
-	// Hide HUD/status bar during intro videos (marked by SmushPlayer video flag 0x20)
-	// The 0x20 flag indicates a non-interactive cutscene/intro sequence OR menu
-	bool introPlaying = ((_player->_curVideoFlags & 0x20) != 0);
-
-	// Check if we're in menu mode (menu state + intro flag)
+// handlePostRenderMenuModes -- Process menu-like videos drawn during post-rendering.
+bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int width, int height, bool introPlaying) {
+	// Check if we're in menu mode (menu state + intro flag).
 	bool menuMode = (introPlaying && _gameState == kStateMainMenu);
 	bool pilotSelectMode = (introPlaying && (_gameState == kStatePilotSelect || _gameState == kStateDifficultySelect));
 	bool chapterSelectMode = (introPlaying && _gameState == kStateChapterSelect);
 
-	// Handle pilot selection input and rendering (FUN_00414A41)
-	// This is the pilot/save slot selection screen with centered menu
+	// Handle pilot selection input and rendering (FUN_00414A41).
+	// This is the pilot/save slot selection screen with centered menu.
 	if (pilotSelectMode) {
-		// Show the standard Windows arrow cursor
-		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
-		CursorMan.replaceCursor(cursor);
-		delete cursor;
-		CursorMan.showMouse(true);
+		showPostRenderMenuCursor();
 
-		// Process pilot selection input - emulates FUN_00414A41 input handling
+		// Process pilot selection input - emulates FUN_00414A41 input handling.
 		int selection = processLevelSelectInput();
 
-		// Draw pilot selection overlay - centered menu like main menu
+		// Draw pilot selection overlay - centered menu like main menu.
 		drawLevelSelectOverlay(renderBitmap, pitch, width, height);
 
-		// If a selection was confirmed, signal video to stop
+		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
 			debug("Rebel2: Pilot selection confirmed: %d", selection);
 			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
 
-		// Skip normal HUD rendering in pilot select mode
-		return;
+		// Skip normal HUD rendering in pilot select mode.
+		return true;
 	}
 
-	// Handle chapter selection input and rendering (FUN_00415CF8)
-	// This is the actual level/chapter selection screen with preview and password
+	// Handle chapter selection input and rendering (FUN_00415CF8).
+	// This is the actual level/chapter selection screen with preview and password.
 	if (chapterSelectMode) {
-		// Show the standard Windows arrow cursor (same as menu)
-		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
-		CursorMan.replaceCursor(cursor);
-		delete cursor;
-		CursorMan.showMouse(true);
+		showPostRenderMenuCursor();
 
 		// O_LEVEL.SAN provides the background with chapter preview thumbnails.
 		// The FOBJ offset system (set in procPreRendering) scrolls the correct preview
 		// into the preview box area. No black fill needed — video frame shows through.
 
-		// Process chapter selection input - emulates FUN_00415CF8 input handling
+		// Process chapter selection input - emulates FUN_00415CF8 input handling.
 		int selection = processChapterSelectInput();
 
-		// Draw chapter selection overlay - emulates FUN_00415CF8 rendering
+		// Draw chapter selection overlay - emulates FUN_00415CF8 rendering.
 		drawChapterSelectOverlay(renderBitmap, pitch, width, height);
 
-		// If a selection was confirmed, signal video to stop
+		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
 			debug("Rebel2: Chapter selection confirmed: %d", selection);
 			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
 
-		// Skip normal HUD rendering in chapter select mode
-		return;
+		// Skip normal HUD rendering in chapter select mode.
+		return true;
 	}
 
-	// Handle Top Pilots screen (FUN_00420116)
-	bool topPilotsMode = (introPlaying && _gameState == kStateTopPilots);
-	if (topPilotsMode) {
+	// Handle Top Pilots screen (FUN_00420116).
+	if (introPlaying && _gameState == kStateTopPilots) {
 		drawTopPilotsOverlay(renderBitmap, pitch, width, height);
-		return;
+		return true;
 	}
 
-	// Handle Options menu (FUN_004167A6)
-	bool optionsMode = (introPlaying && _gameState == kStateOptions);
-	if (optionsMode) {
+	// Handle Options menu (FUN_004167A6).
+	if (introPlaying && _gameState == kStateOptions) {
 		processOptionsInput();
 		drawOptionsOverlay(renderBitmap, pitch, width, height);
-		return;
+		return true;
 	}
 
-	// Handle menu input and rendering if in menu mode
 	if (menuMode) {
 		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
-		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt
-		// MSTOVER.NUT is a background overlay, NOT a cursor
-		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
-		CursorMan.replaceCursor(cursor);
-		delete cursor;
-		CursorMan.showMouse(true);
+		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt.
+		// MSTOVER.NUT is a background overlay, NOT a cursor.
+		showPostRenderMenuCursor();
 
-		// Process menu input during each frame
+		// Process menu input during each frame.
 		int selection = processMenuInput();
 
-		// Update inactivity timer (only increments when no input is received)
-		// Input resets timer in processMenuInput()
+		// Update inactivity timer (only increments when no input is received).
+		// Input resets timer in processMenuInput().
 		_menuInactivityTimer++;
 
-		// Check for inactivity timeout
-		// From FUN_004147b2: 300 frames of inactivity returns 0 (exit to intro/attract mode)
-		// At 12fps video rate, 300 frames = ~25 seconds of inactivity
-		// The original checks: if (local_8 > 299) return 0;
+		// Check for inactivity timeout.
+		// From FUN_004147b2: 300 frames of inactivity returns 0 (exit to intro/attract mode).
+		// At 12fps video rate, 300 frames = ~25 seconds of inactivity.
+		// The original checks: if (local_8 > 299) return 0.
 		if (_menuInactivityTimer > 300) {
 			debug("Rebel2: Menu inactivity timeout - ending video to loop");
-			// Signal video to end so menu loop plays new video
+			// Signal video to end so menu loop plays new video.
 			// This emulates the attract mode behavior where a new random
-			// menu video is selected after inactivity
+			// menu video is selected after inactivity.
 			_menuInactivityTimer = 0;
-			// Don't set _smushVideoShouldFinish here - let video end naturally
-			// This will cause runMainMenu to loop and play a new random video
+			// Don't set _smushVideoShouldFinish here - let video end naturally.
+			// This will cause runMainMenu to loop and play a new random video.
 		}
 
-		// Draw menu selection overlay
+		// Draw menu selection overlay.
 		drawMenuOverlay(renderBitmap, pitch, width, height);
 
-		// If a selection was confirmed, signal video to stop
+		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
 			debug("Rebel2: Menu selection confirmed: %d", selection);
 			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
 
-		// Skip normal HUD rendering in menu mode
-		return;
+		// Skip normal HUD rendering in menu mode.
+		return true;
 	}
 
+	return false;
+}
+
+// handlePostRenderIntro -- Hide gameplay HUD for intro/cinematic videos.
+bool InsaneRebel2::handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
 	// During intro/cinematic sequences:
 	// - Hide the mouse cursor (original: ShowCursor(0) at startup in FUN_00420c70)
 	// - Skip all HUD/status bar/crosshair rendering
@@ -2238,34 +2203,77 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// - Cinematics/intros don't have opcode 6, so handler stays 0
 	// - We use _rebelHandler == 0 as the primary indicator for intro/cinematic mode
 	if (_rebelHandler == 0) {
-		// Hide mouse cursor during intro - no crosshair, no clicking
+		// Hide mouse cursor during intro - no crosshair, no clicking.
 		CursorMan.showMouse(false);
 
-		// Track state transition for debugging
+		// Track state transition for debugging.
 		if (!_introCursorPushed) {
 			_introCursorPushed = true;
 			debug("Rebel2: Intro/cinematic mode (handler=0, flags=0x%x, state=%d) - HUD disabled, mouse hidden",
 				  _player->_curVideoFlags, _gameState);
 		}
 
-		// Chapter title text overlay (FUN_004171c5)
+		// Chapter title text overlay (FUN_004171c5).
 		if (_textOverlayActive)
 			renderTextOverlay(renderBitmap, pitch, width, height, curFrame);
 
-		// Skip all HUD rendering during intro - subtitles are rendered via opcode 9
-		return;
-	} else {
-		// Gameplay mode - handler was set by IACT opcode 6
-		if (_introCursorPushed) {
-			_introCursorPushed = false;
-			debug("Rebel2: Gameplay mode (handler=%d, flags=0x%x, state=%d) - HUD enabled",
-				  _rebelHandler, _player->_curVideoFlags, _gameState);
-		}
+		// Skip all HUD rendering during intro - subtitles are rendered via opcode 9.
+		return true;
 	}
 
-	// From here on, we're in gameplay mode (_rebelHandler != 0)
-	// Process mouse input for shooting
-	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0
+	// Gameplay mode - handler was set by IACT opcode 6.
+	if (_introCursorPushed) {
+		_introCursorPushed = false;
+		debug("Rebel2: Gameplay mode (handler=%d, flags=0x%x, state=%d) - HUD enabled",
+			  _rebelHandler, _player->_curVideoFlags, _gameState);
+	}
+
+	return false;
+}
+
+// updateGameplayDamageEffects -- Apply handler-specific damage visuals.
+void InsaneRebel2::updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height) {
+	// Damage visual effects - handler-specific per original architecture:
+	// Handler 8:    FUN_401CCF line 119 -> FUN_00420754 (palette flash + screen shake)
+	// Handler 0x19: FUN_41DB5E line 192 -> FUN_00420562 (palette flash only, every frame)
+	// Handler 0x26: FUN_4092D9 lines 135/225/237 -> FUN_00420515 trigger + palette flash
+	// Handler 7:    FUN_40E35E -> FUN_00420515 trigger + palette flash
+	if (_rebelHandler == 8) {
+		// Full damage effect: palette flash + screen shake.
+		// Suppressed during autopilot (mode 4) and cutscene (mode 5).
+		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
+			updateDamageEffect(renderBitmap, pitch, width, height);
+		}
+	} else if (_rebelHandler == 0x19 || _rebelHandler == 0x26 || _rebelHandler == 7) {
+		// Palette flash only - no screen shake for turret/FPS/ship handlers.
+		updateDamageFlashPalette();
+	}
+}
+
+// checkGameplayPostRenderCollisions -- Run handler-specific collision checks.
+void InsaneRebel2::checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
+	// Per-frame collision checking against registered zones.
+	//
+	// Handler 0x26 (turret): FUN_4092D9 - aim position vs primary zones (centered coords)
+	//   Zones with filterValue < 1000 tested via point-in-quad against mouse/aim position.
+	//
+	// Handler 7 (ship): FUN_40E35E - ship position vs zones per control mode:
+	//   Mode 0/2: SECONDARY zones (0x0E) - obstacle collision (inside quad = hit)
+	//   Mode 1/3: PRIMARY zones (0x0D) - wall/boundary per-edge with push-back
+	//   Uses ship position in raw buffer coords, hit cooldown, directional damage.
+	if (_rebelHandler == 0x26) {
+		checkCollisionZones();
+	} else if (_rebelHandler == 7) {
+		checkHandler7CollisionZones(renderBitmap, pitch, width, height, curFrame);
+	}
+}
+
+// renderGameplayPostFrame -- Draw the gameplay post-render pipeline in original order.
+void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
+										   int videoWidth, int videoHeight, int statusBarY, int32 curFrame) {
+	// From here on, we're in gameplay mode (_rebelHandler != 0).
+	// Process mouse input for shooting.
+	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0.
 	processMouse();
 
 	// NOTE: Level 2 background is drawn ONCE during IACT opcode 8 par4=5 processing
@@ -2285,10 +2293,22 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// The cockpit frame covers laser beam edges, giving the appearance
 	// that beams emerge from behind the cockpit.
 
-	// STEP 0: Fill status bar background (FUN_004288c0)
+	// Based on FUN_004089ab:
+	// 1. Line 156: FUN_004288c0 fills status bar background at Y=0xb4 (180)
+	// 2. Lines 171-226: Draw turret overlays, targeting reticle, crosshair
+	// 3. Line 243: FUN_0041c012 draws status bar sprites LAST (on top)
+	//
+	// In FUN_0041c012:
+	// - Sprites are drawn to buffer DAT_00482204 at position (0,0)
+	// - Buffer is composited at Y=0xb4 (180) via FUN_0042f780
+	// - DISPFONT.NUT (DAT_00482200) sprites 1-7 contain the status bar elements
+	//
+	// We draw directly to screen at Y=180.
+
+	// STEP 0: Fill status bar background (FUN_004288c0).
 	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY);
 
-	// Ship rendering (FUN_00401ccf for Handler 8, FUN_0040d836 for Handler 7)
+	// Ship rendering (FUN_00401ccf for Handler 8, FUN_0040d836 for Handler 7).
 	debug("Rebel2 Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
 		_rebelHandler, (void*)_shipSprite, (void*)_flyShipSprite, _shipLevelMode,
 		_shipSprite ? _shipSprite->getNumChars() : 0,
@@ -2298,13 +2318,13 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	renderHandler8Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
 
-	// Enemy target indicators (handler-specific; sprite-based in turret mode)
+	// Enemy target indicators (handler-specific; sprite-based in turret mode).
 	renderEnemyOverlays(renderBitmap, pitch, width, height, videoWidth);
 
-	// Explosion animations (FUN_409FBC) — drawn before lasers in original
+	// Explosion animations (FUN_409FBC) - drawn before lasers in original.
 	renderExplosions(renderBitmap, pitch, width, height);
 
-	// Laser shot beams — drawn BEFORE cockpit/HUD overlays so cockpit covers beam edges
+	// Laser shot beams - drawn BEFORE cockpit/HUD overlays so cockpit covers beam edges.
 	renderLaserShots(renderBitmap, pitch, width, height);
 
 	// Handler 25 GRD sprites drawn AFTER enemies/explosions/lasers per original FUN_0041DB5E:
@@ -2316,61 +2336,71 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	renderHandler25ShipPre(renderBitmap, pitch, width, height);
 	renderHandler25Ship(renderBitmap, pitch, width, height);
 
-	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (FUN_004089ab lines 195-226)
-	// These are cockpit frame, crosshair, and reticle — drawn ON TOP of laser beams
+	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (FUN_004089ab lines 195-226).
+	// These are cockpit frame, crosshair, and reticle - drawn ON TOP of laser beams.
 	renderTurretHudOverlays(renderBitmap, pitch, width, height, curFrame);
 
-	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks)
+	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks).
 	renderEmbeddedHudOverlays(renderBitmap, pitch, width, height);
 
-	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012)
+	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012).
 	renderStatusBarSprites(renderBitmap, pitch, width, height, statusBarY, curFrame);
 
-	// Damage visual effects — handler-specific per original architecture:
-	//   Handler 8:    FUN_401CCF line 119 → FUN_00420754 (palette flash + screen shake)
-	//   Handler 0x19: FUN_41DB5E line 192 → FUN_00420562 (palette flash only, every frame)
-	//   Handler 0x26: FUN_4092D9 lines 135/225/237 → FUN_00420515 trigger + palette flash
-	//   Handler 7:    FUN_40E35E → FUN_00420515 trigger + palette flash
-	if (_rebelHandler == 8) {
-		// Full damage effect: palette flash + screen shake
-		// Suppressed during autopilot (mode 4) and cutscene (mode 5)
-		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
-			updateDamageEffect(renderBitmap, pitch, width, height);
-		}
-	} else if (_rebelHandler == 0x19 || _rebelHandler == 0x26 || _rebelHandler == 7) {
-		// Palette flash only — no screen shake for turret/FPS/ship handlers
-		updateDamageFlashPalette();
-	}
+	updateGameplayDamageEffects(renderBitmap, pitch, width, height);
+	checkGameplayPostRenderCollisions(renderBitmap, pitch, width, height, curFrame);
 
-	// Per-frame collision checking against registered zones.
-	//
-	// Handler 0x26 (turret): FUN_4092D9 — aim position vs primary zones (centered coords)
-	//   Zones with filterValue < 1000 tested via point-in-quad against mouse/aim position.
-	//
-	// Handler 7 (ship): FUN_40E35E — ship position vs zones per control mode:
-	//   Mode 0/2: SECONDARY zones (0x0E) — obstacle collision (inside quad = hit)
-	//   Mode 1/3: PRIMARY zones (0x0D) — wall/boundary per-edge with push-back
-	//   Uses ship position in raw buffer coords, hit cooldown, directional damage.
-	if (_rebelHandler == 0x26) {
-		checkCollisionZones();
-	} else if (_rebelHandler == 7) {
-		checkHandler7CollisionZones(renderBitmap, pitch, width, height, curFrame);
-	}
-
-	// Crosshair/reticle (FUN_004089ab, FUN_0040d836)
+	// Crosshair/reticle (FUN_004089ab, FUN_0040d836).
 	renderCrosshair(renderBitmap, pitch, width, height);
 
-	// HUD score/lives rendering (FUN_0041c012)
+	// HUD score/lives rendering (FUN_0041c012).
 	renderScoreHUD(renderBitmap, pitch, width, height, statusBarY);
 
-	// Reset FOBJ position offsets (FUN_00424510(0,0) in original FUN_0041DB5E line 271)
+	// Reset FOBJ position offsets (FUN_00424510(0,0) in original FUN_0041DB5E line 271).
 	if (_player) {
 		_player->_fobjOffsetX = 0;
 		_player->_fobjOffsetY = 0;
 	}
 
-	// Frame end cleanup: reset enemy active flags and collision zones (FUN_403240)
+	// Frame end cleanup: reset enemy active flags and collision zones (FUN_403240).
 	frameEndCleanup();
+}
+
+//
+// procPostRendering -- Post-frame rendering: HUD, ships, enemies, effects, status bar.
+//
+// Called after FOBJ decoding. Dispatches to per-handler rendering functions
+// for ship sprites, laser shots, explosions, crosshair, and damage effects.
+//
+void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+
+	// Determine correct pitch for the video buffer (usually 320 for Rebel2)
+	int width = _player->_width;
+	int height = _player->_height;
+	if (width == 0)
+		width = _vm->_screenWidth;
+	if (height == 0)
+		height = _vm->_screenHeight;
+	int pitch = width;
+
+	updatePostRenderScroll(width, height);
+	updatePostRenderDeath();
+
+	// Use video content coordinates, NOT buffer coordinates
+	const int videoWidth = 320;    // Native video width
+	const int videoHeight = 200;   // Native video height
+	const int statusBarY = 180;    // 0xb4 - status bar starts at Y=180 in video coords
+
+	// Hide HUD/status bar during intro videos (marked by SmushPlayer video flag 0x20)
+	// The 0x20 flag indicates a non-interactive cutscene/intro sequence OR menu
+	bool introPlaying = ((_player->_curVideoFlags & 0x20) != 0);
+
+	if (handlePostRenderMenuModes(renderBitmap, pitch, width, height, introPlaying))
+		return;
+
+	if (handlePostRenderIntro(renderBitmap, pitch, width, height, curFrame))
+		return;
+	renderGameplayPostFrame(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY, curFrame);
 }
 
 // ---------------------------------------------------------------------------
