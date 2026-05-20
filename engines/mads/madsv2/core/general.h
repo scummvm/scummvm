@@ -156,9 +156,6 @@ inline char *mads_itoa(int value, char *buffer, int radix) {
 	return buffer;
 }
 
-inline void mads_chdir(const char *path) {}
-inline void mads_chdrive(int drive) {}
-inline int mads_getdrive() { return 3; }
 inline void mads_fullpath(char *buffer, const char *path, uint bufferCount) {
 	Common::strcpy_s(buffer, bufferCount, path);
 }

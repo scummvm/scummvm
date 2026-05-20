@@ -651,12 +651,6 @@ ItemPtr dialog_add_filename(DialogPtr dialog, int x, int y, const char *prompt,
 	int list_num, dirs_num;
 	int base_item;
 	int message_line;
-	int savedpath;
-	int savedrive;
-	char savepath[80];
-	char mypath[80];
-	char mypath2[80];
-	int mydrive;
 
 	dialog->status |= DD_FILEMENU;  // Note that we do in fact use files
 
@@ -672,10 +666,6 @@ ItemPtr dialog_add_filename(DialogPtr dialog, int x, int y, const char *prompt,
 		if ((listitem == NULL) || (dirsitem == NULL) || (dialog->lists_allocated > 0)) {
 			item = NULL;
 		} else {
-
-			savedpath = (mads_getcwd(savepath, 80) != NULL);
-			savedrive = mads_getdrive();
-
 			list_num = list_allocate(dialog);
 			dirs_num = list_allocate(dialog);
 
@@ -737,21 +727,7 @@ ItemPtr dialog_add_filename(DialogPtr dialog, int x, int y, const char *prompt,
 
 			dialog->fill_marker += (rows + 2);
 
-			if (savedpath) {
-				Common::strcpy_s(mypath, path);
-				mads_strupr(mypath);
-				mads_fullpath(mypath2, mypath, 80);
-				mydrive = ((int)mypath2[0]) - '@';
-				mads_chdir(mypath2);
-				mads_chdrive(mydrive);
-			}
-
 			dialog_load_directory(dialog, item);
-
-			if (savedpath) {
-				mads_chdir(savepath);
-				mads_chdrive(savedrive);
-			}
 		}
 	}
 
@@ -2954,17 +2930,11 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 	int mykey;
 	int count;
 	int buf;
-	//int savedpath;
-	int savedrive = 0;
 	int return_code;
-	char savepath[80];
-	char mypath[80];
-	char mypath2[80];
 	long base_time;
 	long now_time;
 	long my_timeout;
 	long diff;
-	int mydrive;
 	ItemPtr item;
 	struct KeyBuffer tempkey;
 
@@ -2973,19 +2943,6 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 	if (key_buffer == NULL) {
 		key_buffer = &tempkey;
 		tempkey.len = 0;
-	}
-
-	if (dialog->status & DD_FILEMENU) {
-		//savedpath = (mads_getcwd(savepath, 80) != NULL);
-		savedrive = mads_getdrive();
-
-		if (dialog->path_item != NULL) {
-			Common::strcpy_s(mypath, (dialog->path_item)->prompt);
-			mads_fullpath(mypath2, mypath, 80);
-			mydrive = ((int)mypath2[0]) - '@';
-			mads_chdrive(mydrive);
-			mads_chdir(mypath2);
-		}
 	}
 
 	return_code = false;
@@ -3286,11 +3243,6 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 		}
 
 		mouse_end_cycle((!(dialog->status & DD_EXITFLAG)) && !mouse_stroke_going, true);
-	}
-
-	if (dialog->status & DD_FILEMENU) {
-		mads_chdir(savepath);
-		mads_chdrive(savedrive);
 	}
 
 	if (!return_code) {
