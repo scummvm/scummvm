@@ -1665,236 +1665,252 @@ void InsaneRebel2::checkCollisionZones() {
 // Two modes: obstacle collision (secondary zones) and wall/boundary
 // collision (primary zones with per-edge push-back).
 //
-void InsaneRebel2::checkHandler7CollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
-	// FUN_40E35E — Handler 7 per-frame collision system.
-	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords.
-	// Two modes depending on _flyControlMode:
-	//   Mode 0/2: Obstacle collision using SECONDARY zones (inside quad = hit)
-	//   Mode 1/3: Wall/boundary collision using PRIMARY zones (per-edge push-back)
+// The helpers in this block are ScummVM refactor helpers split out of
+// checkHandler7CollisionZones; they are not separate retail functions.
+//
+bool InsaneRebel2::isHandler7ShipInsideObstacleZone(const InsaneRebel2::CollisionZone &zone, int margin) {
+	int x1 = zone.x1, y1 = zone.y1;
+	int x2 = zone.x2, y2 = zone.y2;
+	int x3 = zone.x3, y3 = zone.y3;
+	int x4 = zone.x4, y4 = zone.y4;
 
-	// Note: _hitCooldown is decremented in renderSpaceExplosions (FUN_40F1C5)
-	// to match the original where the decrement happens during rendering.
-	//
-	// local_c in FUN_40E35E: proximity mask for nearby danger-zone shadow cues.
-	// bit 0=left, bit 1=right, bit 2=top, bit 3=bottom
-	uint16 warningMask = 0;
+	// Point-in-quad test (lines 75-89).
+	// Start assuming inside, clear if outside any edge (with margin).
+	bool inside = true;
 
-	if (_flyControlMode == 0 || _flyControlMode == 2) {
-		// ---- Mode 0/2: Obstacle collision using SECONDARY zones (FUN_403b5b) ----
-		// Original lines 52-132: Point-in-quad test with 15px inward margin.
-		// Inside the quad = collision with obstacle.
-		const int margin = 15;  // local_14 = 0x0f, local_20 = 0x0f
+	// Top edge: interpolate Y along v1->v2 at shipX, +15 margin.
+	if (x2 != x1) {
+		int interpY = (_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + margin + y1;
+		if (_flyShipScreenY < interpY)
+			inside = false;
+	}
+	// Bottom edge: interpolate Y along v4->v3 at shipX, -15 margin.
+	if (inside && x3 != x4) {
+		int interpY = (_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - margin;
+		if (interpY < _flyShipScreenY)
+			inside = false;
+	}
+	// Left edge: interpolate X along v1->v4 at shipY, +15 margin.
+	if (inside && y4 != y1) {
+		int interpX = (_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + margin + x1;
+		if (_flyShipScreenX < interpX)
+			inside = false;
+	}
+	// Right edge: interpolate X along v2->v3 at shipY, -15 margin.
+	if (inside && y3 != y2) {
+		int interpX = (_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - margin;
+		if (interpX < _flyShipScreenX)
+			inside = false;
+	}
 
-		for (int i = 0; i < _secondaryZoneCount; i++) {
-			CollisionZone &zone = _secondaryZones[i];
-			if (!zone.active)
-				continue;
+	return inside;
+}
 
-			int x1 = zone.x1, y1 = zone.y1;
-			int x2 = zone.x2, y2 = zone.y2;
-			int x3 = zone.x3, y3 = zone.y3;
-			int x4 = zone.x4, y4 = zone.y4;
+void InsaneRebel2::applyHandler7ObstacleHit(const InsaneRebel2::CollisionZone &zone, int zoneIndex) {
+	// Collision with obstacle - apply damage and break.
+	_hitCooldown = 10;
+	_spaceShotDirection = zone.filterValue + 2;
 
-			// Point-in-quad test (lines 75-89)
-			// Start assuming inside, clear if outside any edge (with margin)
-			bool inside = true;
+	LevelDifficultyParams params = getDifficultyParams();
+	int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
+	if (!_rebelInvulnerable) {
+		_playerDamage += collisionDamage;
+		if (_playerDamage > 255)
+			_playerDamage = 255;
+	}
+	_rebelHitCounter++;
+	initDamageFlash();
+	// Pan based on ship X position relative to screen center.
+	playSfx(1, 127, CLIP((_flyShipScreenX - 212) * 127 / 160, -127, 127));
+	debug("Rebel2: Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
+		zoneIndex, _flyShipScreenX, _flyShipScreenY, collisionDamage);
+}
 
-			// Top edge: interpolate Y along v1→v2 at shipX, +15 margin
-			if (x2 != x1) {
-				int interpY = (_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + margin + y1;
-				if (_flyShipScreenY < interpY)
-					inside = false;
-			}
-			// Bottom edge: interpolate Y along v4→v3 at shipX, -15 margin
-			if (inside && x3 != x4) {
-				int interpY = (_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - margin;
-				if (interpY < _flyShipScreenY)
-					inside = false;
-			}
-			// Left edge: interpolate X along v1→v4 at shipY, +15 margin
-			if (inside && y4 != y1) {
-				int interpX = (_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + margin + x1;
-				if (_flyShipScreenX < interpX)
-					inside = false;
-			}
-			// Right edge: interpolate X along v2→v3 at shipY, -15 margin
-			if (inside && y3 != y2) {
-				int interpX = (_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - margin;
-				if (interpX < _flyShipScreenX)
-					inside = false;
-			}
+void InsaneRebel2::awardHandler7DodgeScore() {
+	// Safely avoided obstacle - award score.
+	// Original: FUN_0041bf8d(DAT_0047e100[levelIdx]).
+	LevelDifficultyParams scoreParams = getDifficultyParams();
+	if (scoreParams.dodgePoints > 0) {
+		addScore(scoreParams.dodgePoints);
+	}
+}
 
-			// Frame match: field2 - 1 == field1 (line 90)
-			if (zone.field2 - 1 == zone.field1) {
-				if (inside) {
-					// Collision with obstacle — apply damage and break
-					_hitCooldown = 10;
-					_spaceShotDirection = zone.filterValue + 2;
+void InsaneRebel2::checkHandler7ObstacleZones(uint16 &warningMask) {
+	// ---- Mode 0/2: Obstacle collision using SECONDARY zones (FUN_403b5b) ----
+	// Original lines 52-132: Point-in-quad test with 15px inward margin.
+	// Inside the quad = collision with obstacle.
+	const int margin = 15;  // local_14 = 0x0f, local_20 = 0x0f
 
-					LevelDifficultyParams params = getDifficultyParams();
-					int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
-					if (!_rebelInvulnerable) {
-						_playerDamage += collisionDamage;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-					}
-					_rebelHitCounter++;
-					initDamageFlash();
-					// Pan based on ship X position relative to screen center
-					playSfx(1, 127, CLIP((_flyShipScreenX - 212) * 127 / 160, -127, 127));
-					debug("Rebel2: Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
-						i, _flyShipScreenX, _flyShipScreenY, collisionDamage);
-					break;  // Only one collision per frame (original breaks)
-				} else {
-					// Safely avoided obstacle — award score
-					// Original: FUN_0041bf8d(DAT_0047e100[levelIdx])
-					LevelDifficultyParams scoreParams = getDifficultyParams();
-					if (scoreParams.dodgePoints > 0) {
-						addScore(scoreParams.dodgePoints);
-					}
-				}
-			}
+	for (int i = 0; i < _secondaryZoneCount; i++) {
+		CollisionZone &zone = _secondaryZones[i];
+		if (!zone.active)
+			continue;
 
-			// FUN_40E35E line 104: mark near-danger proximity for shadow cue rendering.
-			// Uses the low byte of zone.filterValue (retail local_1c) to pick direction bits.
-			if (zone.field2 - 13 < zone.field1) {
-				uint32 bit = 4u << ((byte)zone.filterValue & 0x1f);
-				warningMask = (uint16)(warningMask | (uint16)bit);
+		bool inside = isHandler7ShipInsideObstacleZone(zone, margin);
+
+		// Frame match: field2 - 1 == field1 (line 90).
+		if (zone.field2 - 1 == zone.field1) {
+			if (inside) {
+				applyHandler7ObstacleHit(zone, i);
+				break;  // Only one collision per frame (original breaks).
+			} else {
+				awardHandler7DodgeScore();
 			}
 		}
 
-		// Corridor side proximity (FUN_40E35E lines 127-131)
-		if (_flyShipScreenX < _corridorLeftX + 0x28)
-			warningMask |= 1;
-		if (_corridorRightX - 0x28 < _flyShipScreenX)
-			warningMask |= 2;
-
-	} else {
-		// ---- Mode 1/3: Wall/boundary collision using PRIMARY zones (FUN_403b34) ----
-		// Original lines 133-235: Per-edge interpolation with push-back.
-		// Ship position is clamped to wall boundaries when hitting.
-		int16 hMargin = (_flyControlMode == 1) ? 0x28 : 0x0f;  // local_14
-		const int16 vMargin = 0x0f;  // local_20
-		LevelDifficultyParams wallParams = getDifficultyParams();
-		int wallDamage = (wallParams.dodgeDamage >= 0) ? wallParams.dodgeDamage : 0;
-
-		for (int i = 0; i < _primaryZoneCount; i++) {
-			CollisionZone &zone = _primaryZones[i];
-			if (!zone.active)
-				continue;
-
-			int x1 = zone.x1, y1 = zone.y1;
-			int x2 = zone.x2, y2 = zone.y2;
-			int x3 = zone.x3, y3 = zone.y3;
-			int x4 = zone.x4, y4 = zone.y4;
-
-			// Top edge: interpolate Y along v1→v2 at shipX (lines 152-166)
-			if (x2 != x1) {
-				int16 edgeY = (int16)((_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + y1 + vMargin);
-				if (_flyShipScreenY < edgeY) {
-					// Ship above top wall — push down
-					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = wallDamage;
-						_playerDamage += damage;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-						_rebelHitCounter++;
-						_hitCooldown = 10;
-						debug("Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
-							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
-					}
-					_spaceShotDirection = 2;  // Direction: pushed down
-					_flyShipScreenY = edgeY;  // Push-back
-					playSfx(1, 127, 0);  // CRASH.SAD, top wall → center pan (always)
-					initDamageFlash();
-				} else if (_flyShipScreenY < edgeY + 0x28) {
-					warningMask |= 4;
-				}
-			}
-
-			// Bottom edge: interpolate Y along v4→v3 at shipX (lines 167-183)
-			if (x3 != x4) {
-				int16 edgeY = (int16)((_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - vMargin);
-				_corridorBottomY = vMargin + edgeY;  // DAT_00443b10 update
-				if (edgeY < _flyShipScreenY) {
-					// Ship below bottom wall — push up
-					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = wallDamage;
-						_playerDamage += damage;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-						_rebelHitCounter++;
-						_hitCooldown = 10;
-						debug("Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
-							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
-					}
-					_spaceShotDirection = 3;  // Direction: pushed up
-					_flyShipScreenY = edgeY;  // Push-back
-					playSfx(1, 127, 0);  // CRASH.SAD, bottom wall → center pan (always)
-					initDamageFlash();
-				} else if (edgeY - 0x28 < _flyShipScreenY) {
-					warningMask |= 8;
-				}
-			}
-
-			// Left edge: interpolate X along v1→v4 at shipY (lines 184-199)
-			if (y4 != y1) {
-				int16 edgeX = (int16)((_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + x1 + hMargin);
-				if (_flyShipScreenX < edgeX) {
-					// Ship left of left wall — push right
-					_flyShipScreenX = edgeX;  // Push-back
-
-					// FUN_40E35E resets horizontal history to force immediate rightward correction.
-					for (int j = 0; j < ARRAYSIZE(_velocityHistory); j++) {
-						_velocityHistory[j] = 127;
-					}
-
-					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = wallDamage;
-						_playerDamage += damage;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-						_rebelHitCounter++;
-						_hitCooldown = 10;
-						debug("Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
-							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
-					}
-					_spaceShotDirection = 0;  // Direction: pushed right
-					playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left (always)
-					initDamageFlash();
-				}
-			}
-
-			// Right edge: interpolate X along v2→v3 at shipY (lines 200-215)
-			if (y3 != y2) {
-				int16 edgeX = (int16)((_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - hMargin);
-				if (edgeX < _flyShipScreenX) {
-					// Ship right of right wall — push left
-					_flyShipScreenX = edgeX;  // Push-back
-
-					// FUN_40E35E resets horizontal history to force immediate leftward correction.
-					for (int j = 0; j < ARRAYSIZE(_velocityHistory); j++) {
-						_velocityHistory[j] = -127;
-					}
-
-					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = wallDamage;
-						_playerDamage += damage;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
-						_rebelHitCounter++;
-						_hitCooldown = 10;
-						debug("Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
-							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
-					}
-					_spaceShotDirection = 1;  // Direction: pushed left
-					playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right (always)
-					initDamageFlash();
-				}
-			}
+		// FUN_40E35E line 104: mark near-danger proximity for shadow cue rendering.
+		// Uses the low byte of zone.filterValue (retail local_1c) to pick direction bits.
+		if (zone.field2 - 13 < zone.field1) {
+			uint32 bit = 4u << ((byte)zone.filterValue & 0x1f);
+			warningMask = (uint16)(warningMask | (uint16)bit);
 		}
 	}
 
+	// Corridor side proximity (FUN_40E35E lines 127-131).
+	if (_flyShipScreenX < _corridorLeftX + 0x28)
+		warningMask |= 1;
+	if (_corridorRightX - 0x28 < _flyShipScreenX)
+		warningMask |= 2;
+}
+
+bool InsaneRebel2::applyHandler7WallDamage(int wallDamage) {
+	if (_hitCooldown < 5 && !_rebelInvulnerable) {
+		_playerDamage += wallDamage;
+		if (_playerDamage > 255)
+			_playerDamage = 255;
+		_rebelHitCounter++;
+		_hitCooldown = 10;
+		return true;
+	}
+
+	return false;
+}
+
+void InsaneRebel2::resetHandler7HorizontalVelocity(int16 velocity) {
+	for (int j = 0; j < ARRAYSIZE(_velocityHistory); j++) {
+		_velocityHistory[j] = velocity;
+	}
+}
+
+void InsaneRebel2::checkHandler7TopBoundary(const InsaneRebel2::CollisionZone &zone, int16 vMargin, int wallDamage, uint16 &warningMask) {
+	int x1 = zone.x1, y1 = zone.y1;
+	int x2 = zone.x2, y2 = zone.y2;
+
+	// Top edge: interpolate Y along v1->v2 at shipX (lines 152-166).
+	if (x2 != x1) {
+		int16 edgeY = (int16)((_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + y1 + vMargin);
+		if (_flyShipScreenY < edgeY) {
+			// Ship above top wall - push down.
+			if (applyHandler7WallDamage(wallDamage)) {
+				debug("Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
+					_flyShipScreenX, _flyShipScreenY, edgeY, wallDamage);
+			}
+			_spaceShotDirection = 2;  // Direction: pushed down
+			_flyShipScreenY = edgeY;  // Push-back
+			playSfx(1, 127, 0);  // CRASH.SAD, top wall -> center pan (always)
+			initDamageFlash();
+		} else if (_flyShipScreenY < edgeY + 0x28) {
+			warningMask |= 4;
+		}
+	}
+}
+
+void InsaneRebel2::checkHandler7BottomBoundary(const InsaneRebel2::CollisionZone &zone, int16 vMargin, int wallDamage, uint16 &warningMask) {
+	int x3 = zone.x3, y3 = zone.y3;
+	int x4 = zone.x4, y4 = zone.y4;
+
+	// Bottom edge: interpolate Y along v4->v3 at shipX (lines 167-183).
+	if (x3 != x4) {
+		int16 edgeY = (int16)((_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - vMargin);
+		_corridorBottomY = vMargin + edgeY;  // DAT_00443b10 update
+		if (edgeY < _flyShipScreenY) {
+			// Ship below bottom wall - push up.
+			if (applyHandler7WallDamage(wallDamage)) {
+				debug("Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
+					_flyShipScreenX, _flyShipScreenY, edgeY, wallDamage);
+			}
+			_spaceShotDirection = 3;  // Direction: pushed up
+			_flyShipScreenY = edgeY;  // Push-back
+			playSfx(1, 127, 0);  // CRASH.SAD, bottom wall -> center pan (always)
+			initDamageFlash();
+		} else if (edgeY - 0x28 < _flyShipScreenY) {
+			warningMask |= 8;
+		}
+	}
+}
+
+void InsaneRebel2::checkHandler7LeftBoundary(const InsaneRebel2::CollisionZone &zone, int16 hMargin, int wallDamage) {
+	int x1 = zone.x1, y1 = zone.y1;
+	int x4 = zone.x4, y4 = zone.y4;
+
+	// Left edge: interpolate X along v1->v4 at shipY (lines 184-199).
+	if (y4 != y1) {
+		int16 edgeX = (int16)((_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + x1 + hMargin);
+		if (_flyShipScreenX < edgeX) {
+			// Ship left of left wall - push right.
+			_flyShipScreenX = edgeX;  // Push-back
+
+			// FUN_40E35E resets horizontal history to force immediate rightward correction.
+			resetHandler7HorizontalVelocity(127);
+
+			if (applyHandler7WallDamage(wallDamage)) {
+				debug("Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
+					_flyShipScreenX, _flyShipScreenY, edgeX, wallDamage);
+			}
+			_spaceShotDirection = 0;  // Direction: pushed right
+			playSfx(1, 127, -100);  // CRASH.SAD, left wall -> pan left (always)
+			initDamageFlash();
+		}
+	}
+}
+
+void InsaneRebel2::checkHandler7RightBoundary(const InsaneRebel2::CollisionZone &zone, int16 hMargin, int wallDamage) {
+	int x2 = zone.x2, y2 = zone.y2;
+	int x3 = zone.x3, y3 = zone.y3;
+
+	// Right edge: interpolate X along v2->v3 at shipY (lines 200-215).
+	if (y3 != y2) {
+		int16 edgeX = (int16)((_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - hMargin);
+		if (edgeX < _flyShipScreenX) {
+			// Ship right of right wall - push left.
+			_flyShipScreenX = edgeX;  // Push-back
+
+			// FUN_40E35E resets horizontal history to force immediate leftward correction.
+			resetHandler7HorizontalVelocity(-127);
+
+			if (applyHandler7WallDamage(wallDamage)) {
+				debug("Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
+					_flyShipScreenX, _flyShipScreenY, edgeX, wallDamage);
+			}
+			_spaceShotDirection = 1;  // Direction: pushed left
+			playSfx(1, 127, 100);  // CRASH.SAD, right wall -> pan right (always)
+			initDamageFlash();
+		}
+	}
+}
+
+void InsaneRebel2::checkHandler7BoundaryZones(uint16 &warningMask) {
+	// ---- Mode 1/3: Wall/boundary collision using PRIMARY zones (FUN_403b34) ----
+	// Original lines 133-235: Per-edge interpolation with push-back.
+	// Ship position is clamped to wall boundaries when hitting.
+	int16 hMargin = (_flyControlMode == 1) ? 0x28 : 0x0f;  // local_14
+	const int16 vMargin = 0x0f;  // local_20
+	LevelDifficultyParams wallParams = getDifficultyParams();
+	int wallDamage = (wallParams.dodgeDamage >= 0) ? wallParams.dodgeDamage : 0;
+
+	for (int i = 0; i < _primaryZoneCount; i++) {
+		CollisionZone &zone = _primaryZones[i];
+		if (!zone.active)
+			continue;
+
+		checkHandler7TopBoundary(zone, vMargin, wallDamage, warningMask);
+		checkHandler7BottomBoundary(zone, vMargin, wallDamage, warningMask);
+		checkHandler7LeftBoundary(zone, hMargin, wallDamage);
+		checkHandler7RightBoundary(zone, hMargin, wallDamage);
+	}
+}
+
+void InsaneRebel2::renderHandler7WarningCues(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, uint16 warningMask) {
 	// FUN_40E35E tail: draw proximity danger shadow cues when enabled by frame/flags.
 	// Note: These are cue sprites (often perceived as "shadows"), not the aiming reticle.
 	LevelDifficultyParams dparams = getDifficultyParams();
@@ -1918,6 +1934,29 @@ void InsaneRebel2::checkHandler7CollisionZones(byte *renderBitmap, int pitch, in
 				0xa0 * scale + _viewX, 0x28 * scale + _viewY, _smush_iconsNut, 0x2a);
 		}
 	}
+}
+
+void InsaneRebel2::checkHandler7CollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
+	// FUN_40E35E - Handler 7 per-frame collision system.
+	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords.
+	// Two modes depending on _flyControlMode:
+	//   Mode 0/2: Obstacle collision using SECONDARY zones (inside quad = hit)
+	//   Mode 1/3: Wall/boundary collision using PRIMARY zones (per-edge push-back)
+
+	// Note: _hitCooldown is decremented in renderSpaceExplosions (FUN_40F1C5)
+	// to match the original where the decrement happens during rendering.
+	//
+	// local_c in FUN_40E35E: proximity mask for nearby danger-zone shadow cues.
+	// bit 0=left, bit 1=right, bit 2=top, bit 3=bottom
+	uint16 warningMask = 0;
+
+	if (_flyControlMode == 0 || _flyControlMode == 2) {
+		checkHandler7ObstacleZones(warningMask);
+	} else {
+		checkHandler7BoundaryZones(warningMask);
+	}
+
+	renderHandler7WarningCues(renderBitmap, pitch, width, height, curFrame, warningMask);
 }
 
 // renderNutSprite -- Draw a NUT sprite with transparency.
