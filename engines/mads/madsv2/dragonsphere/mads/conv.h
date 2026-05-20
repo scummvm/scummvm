@@ -218,6 +218,28 @@ enum {
 	conv054_offer_b_b        = 33
 };
 
+enum {
+	conv055_greet_only       =  0,
+	conv055_restart          =  8,
+	conv055_exit_b_b         = 13
+};
+
+enum {
+	conv056_ralphre2_permit  =  2
+};
+
+enum {
+	conv057_startquiz_only   =  0,
+	conv057_startquiz        =  0,
+	conv057_newquiz          = 25,
+	conv057_exit_b_b         = 29,
+	conv057_respons_b_b      = 33,
+	conv057_restart          = 39,
+	conv057_exit_d_d         = 51,
+	conv057_exit_f_f         = 59,
+	conv057_exit_h_h         = 61
+};
+
 } // namespace Dragonsphere
 } // namespace MADSV2
 } // namespace MADS

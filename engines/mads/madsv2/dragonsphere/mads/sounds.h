@@ -61,7 +61,13 @@ enum {
 	N_LavaPlops          =  68,
 	N_002HealMeSnd       =  70,
 	N_MouthRockTalks     =  71,
-	N_PoolMonsterEatsPid =  72
+	N_PoolMonsterEatsPid =  72,
+
+	// Section 3
+	N_ToadEatsPlayer     =  70,
+	N_RalphIsRed         =  71,
+	N_EveryoneScatter    =  72,
+	N_CrystalPing        =  73
 };
 
 } // namespace Dragonsphere
