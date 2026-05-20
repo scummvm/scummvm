@@ -7857,6 +7857,11 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--gc-sections"
 		fi
 		;;
+	ps3)
+		# Print enabled engines to 'configure.engines' file.
+		# It will help external build script to handle multiple builds per engine
+		awk -f "$_srcdir/engines.awk" -v _print_enabled_engines=yes < /dev/null
+		;;
 esac
 
 # Promote any warning to an error, only if explicitly asked

@@ -325,7 +325,9 @@ BEGIN {
 	config_mk = "config.mk.engines"
 	config_h = "config.h.engines"
 
-	if (_pass == "pass1")
+	if (_print_enabled_engines == "yes")
+		print_enabled_engines = 1
+	else if (_pass == "pass1")
 		pass = 1
 	else
 		pass = 2
@@ -436,6 +438,27 @@ END {
 			_tainted_build = "yes"
 			break
 		}
+	}
+
+	# Print enabled engines to 'configure.engines' file
+	# It will help external build script to handle multiple builds per engine
+	if (print_enabled_engines) {
+		printf("") > "configure.engines"
+		for (e = 1; e <= engine_count; e++) {
+			engine = sorted_engines[e]
+			if (get_engine_build(engine) != "no" && get_engine_sub(engine) == "no") {
+				line = engine
+				subeng_count = get_engine_subengines(engine, subengines)
+				for (s = 1; s <= subeng_count; s++) {
+					subeng = subengines[s]
+					if (get_engine_build(subeng) != "no") {
+						line = line "," subeng
+					}
+				}
+				print(line) >> "configure.engines"
+			}
+		}
+		exit 0
 	}
 
 	#
