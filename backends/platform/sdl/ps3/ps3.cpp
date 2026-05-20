@@ -35,6 +35,7 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
+#include <sys/process.h>
 
 static const Common::HardwareInputTableEntry playstationJoystickButtons[] = {
 	// I18N: Hardware key on controller
@@ -142,4 +143,8 @@ bool OSystem_PS3::hasFeature(Feature f) {
 	}
 
 	return OSystem_SDL::hasFeature(f);
+}
+
+void OSystem_PS3::spawnProcess(const char *path, const char **argv) {
+	sysProcessExitSpawn2(path, argv, nullptr, nullptr, 0, 1000, SYS_PROCESS_SPAWN_STACK_SIZE_256K);
 }
