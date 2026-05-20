@@ -265,13 +265,6 @@ extern ItemPtr dialog_add_listbased(DialogPtr dialog, int x, int y, const char *
 	int elements, int element_offset, int entry_width, int rows, int columns);
 
 /**
- * Adds a filename-base string item to the dialog box
- */
-extern ItemPtr dialog_add_filename(DialogPtr dialog, int x, int y, const char *prompt,
-	const char *default_val, const char *path, int rows, char *filebuf, int max_file_elements,
-	char *dirsbuf, int max_dirs_elements);
-
-/**
  * Appends a second list to a listbased string
  */
 extern ItemPtr dialog_append_list(DialogPtr dialog, int x, int y,
@@ -297,14 +290,6 @@ extern void dialog_destroy(DialogPtr dialog);
  * Deallocates memory for dialog, but does not restore screen
  */
 extern void dialog_destroy_persist(DialogPtr dialog);
-
-/**
- * Creates a dialog box and adds a filename entry to it
- */
-extern DialogPtr dialog_file_create(DialogPtr dialog, int ul_x, int ul_y,
-	int normal_color, int select_color, int hilite_color, ItemPtr *ok_item,
-	ItemPtr *first_item, const char *default_val, const char *path, int rows,
-	char *filebuf, int maxfiles, char *dirsbuf, int maxdirs, const char *prompt);
 
 /**
  * Assembly routine to read a file directory into the specified
@@ -371,29 +356,14 @@ extern void dialog_set_checkbox_callback(DialogPtr dialog, void (*(callback))())
 extern int dialog_read_checkbox(DialogPtr dialog, ItemPtr item);
 
 /**
- * Returns a pointer to the specified string buffer
- */
-extern char *dialog_read_string(DialogPtr dialog, ItemPtr item);
-
-/**
  * Returns a pointer to the specified list-based string
  */
 extern char *dialog_read_list(DialogPtr dialog, ItemPtr item);
 
 /**
- * Returns the dialog box's path
- */
-extern char *dialog_read_pathname(DialogPtr dialog, ItemPtr item);
-
-/**
  * Returns the filename selected by the user
  */
 extern char *dialog_read_filename(DialogPtr dialog, ItemPtr item);
-
-/**
- * Returns the filename and full path selected by the user
- */
-extern char *dialog_read_filepath(DialogPtr dialog, ItemPtr item);
 
 /**
  * Routine to display the entire dialog box
@@ -406,17 +376,6 @@ extern void dialog_show_all(DialogPtr dialog);
  */
 extern ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item,
 	ItemPtr default_button, KeyPtr key_buffer);
-
-extern char *dialog_select_file(const char *prompt, const char *path,
-	const char *filespec, char *output);
-extern char *dialog_enter_string(char *reply, const char *top_prompt,
-	const char *left_prompt, char *my_default, int maxlen);
-
-/**
- * Prompts user to enter an integer value (displays default).
- * Returns 0 if user aborted, or entry was out of range.
- */
-extern int dialog_enter_int(const char *top_prompt, int my_default);
 
 extern DialogPtr dialog_create_default();
 

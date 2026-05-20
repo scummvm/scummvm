@@ -642,102 +642,6 @@ ItemPtr dialog_append_list(DialogPtr dialog, int x, int y, ItemPtr base_string,
 	return listitem;
 }
 
-ItemPtr dialog_add_filename(DialogPtr dialog, int x, int y, const char *prompt,
-		const char *default_val, const char *path, int rows,
-		char *filebuf, int max_file_elements,
-		char *dirsbuf, int max_dirs_elements) {
-	ItemPtr item, listitem, dirsitem;
-	ListPtr list, dirs;
-	int list_num, dirs_num;
-	int base_item;
-	int message_line;
-
-	dialog->status |= DD_FILEMENU;  // Note that we do in fact use files
-
-	base_item = dialog->num_items;
-
-	item = dialog_add_string(dialog, x, y, prompt, default_val, DIALOG_FILE_BUFFER);
-
-	if (item != NULL) {
-
-		listitem = item_allocate(dialog, DD_I_FILELIST);
-		dirsitem = item_allocate(dialog, DD_I_DIRSLIST);
-
-		if ((listitem == NULL) || (dirsitem == NULL) || (dialog->lists_allocated > 0)) {
-			item = NULL;
-		} else {
-			list_num = list_allocate(dialog);
-			dirs_num = list_allocate(dialog);
-
-			list = &dialog->lists[list_num];
-			dirs = &dialog->lists[dirs_num];
-
-			item->type = DD_I_FILENAME;
-			listitem->type = DD_I_FILELIST;
-			dirsitem->type = DD_I_DIRSLIST;
-
-			listitem->keystroke = (int)'L';
-			dirsitem->keystroke = (int)'D';
-
-			dialog_add_blank(dialog);
-			dialog->path_item = dialog_add_message(dialog, DD_IX_LEFT, DD_IY_AUTOFILL, path);
-			dialog->string_marker += (80 - strlen(path));
-			dialog_add_blank(dialog);
-
-			message_line = dialog->fill_marker;
-			dialog_add_message(dialog, DD_IX_LEFT, message_line, "File ~List:");
-			dialog_add_message(dialog, 44, message_line, "~Drives / Dirs:");
-
-			list->rows = rows;
-			list->columns = 3;
-			dirs->rows = rows;
-			dirs->columns = 1;
-
-			dialog->width = MAX<short>(dialog->width, DIALOG_FILE_WIDTH);
-
-			list->entry_width = 12;
-			list->element_offset = 13;
-			list->max_elements = max_file_elements;
-			list->base_entry = 0;
-			list->picked_entry = -1;
-			list->thumb = -1;
-
-			dirs->entry_width = 12;
-			dirs->element_offset = 13;
-			dirs->max_elements = max_dirs_elements;
-			dirs->base_entry = 0;
-			dirs->picked_entry = -1;
-			dirs->thumb = -1;
-
-			list->window.ul_x = 0;
-			dirs->window.ul_x = 43;
-
-			list->window.ul_y = dialog->fill_marker;
-			dirs->window.ul_y = dialog->fill_marker;
-
-			item->status = listitem->id;
-			listitem->status = item->id;
-			dirsitem->status = item->id;
-
-			listitem->buf_id = list_num;
-			dirsitem->buf_id = dirs_num;
-
-			list->list = filebuf;
-			dirs->list = dirsbuf;
-
-			dialog->fill_marker += (rows + 2);
-
-			dialog_load_directory(dialog, item);
-		}
-	}
-
-	if (item == NULL) {
-		dialog->num_items = base_item;
-	}
-
-	return item;
-}
-
 void dialog_set_colors(int normal, int select, int hilite, int greyed) {
 	dialog_default_normal = normal;
 	dialog_default_select = select;
@@ -874,26 +778,6 @@ void dialog_destroy_persist(DialogPtr dialog) {
 	}
 }
 
-DialogPtr dialog_file_create(DialogPtr dialog, int ul_x, int ul_y,
-		int normal_color, int select_color, int hilite_color,
-		ItemPtr *ok_item, ItemPtr *first_item, const char *default_val,
-		const char *path, int rows, char *filebuf, int maxfiles,
-		char *dirsbuf, int maxdirs, const char *prompt) {
-	dialog = dialog_create(dialog, ul_x, ul_y, DIALOG_FILE_WIDTH,
-		normal_color, select_color, hilite_color);
-
-	dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, prompt);
-
-	*ok_item = dialog_add_button(dialog, DD_IX_LEFT, DD_IY_BUTTON, "  OK  ");
-	dialog_add_button(dialog, DD_IX_RIGHT, DD_IY_BUTTON, CANCEL_BUTTON);
-	*first_item = dialog_add_filename(dialog, DD_IX_LEFT, DD_IY_AUTOFILL, "~File Name: ",
-		default_val, path, rows,
-		filebuf, maxfiles,
-		dirsbuf, maxdirs);
-
-	return dialog;
-}
-
 void dialog_set_list_callback(DialogPtr dialog, void (*(callback))()) {
 	dialog->callback = callback;
 }
@@ -1023,27 +907,8 @@ char *dialog_read_list(DialogPtr dialog, ItemPtr item) {
 	return dialog->buffer[item->buf_id];
 }
 
-char *dialog_read_pathname(DialogPtr dialog, ItemPtr item) {
-	return (dialog->path_item)->prompt;
-}
-
 char *dialog_read_filename(DialogPtr dialog, ItemPtr item) {
 	return dialog->buffer[item->buf_id];
-}
-
-char *dialog_read_filepath(DialogPtr dialog, ItemPtr item) {
-	int mylen;
-
-	Common::strcpy_s(temp_buf, (dialog->path_item)->prompt);
-	mylen = strlen(temp_buf);
-
-	if (temp_buf[mylen - 1] != '\\') {
-		Common::strcat_s(temp_buf, "\\");
-	}
-
-	Common::strcat_s(temp_buf, dialog->buffer[item->buf_id]);
-
-	return (temp_buf);
 }
 
 /**
@@ -3252,97 +3117,6 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 	}
 
 	return item;
-}
-
-char *dialog_select_file(const char *prompt, const char *path, const char *filespec, char *output) {
-	DialogPtr dialog;
-	ItemPtr ok, first_item, result;
-	char *filebuf;
-	char *dirbuf;
-
-	filebuf = (char *)mem_get(3000);
-	if (filebuf == NULL) return NULL;
-
-	dirbuf = (char *)mem_get(1500);
-	if (dirbuf == NULL) {
-		mem_free(filebuf);
-		return NULL;
-	}
-
-	dialog = dialog_file_create(NULL, DD_CENTER, DD_CENTER,
-		DD_DEFAULT, DD_DEFAULT, DD_DEFAULT,
-		&ok, &first_item,
-		filespec, path, screen_max_y - 18,
-		filebuf, 200, dirbuf, 100, prompt);
-
-	result = dialog_execute(dialog, first_item, ok, NULL);
-
-	if (result != dialog->cancel_item) {
-		Common::strcpy_s(output, 65536, dialog_read_filepath(dialog, first_item));
-	} else {
-		output = NULL;
-	}
-
-	dialog_destroy(dialog);
-
-	mem_free(filebuf);
-	mem_free(dirbuf);
-
-	return output;
-}
-
-char *dialog_enter_string(char *reply, const char *top_prompt, const char *left_prompt,
-		char *my_default, int maxlen) {
-	char work[100];
-
-	DialogPtr dialog;
-	ItemPtr string, ok, cancel, result;
-
-	if (strlen(my_default) > (size_t)maxlen)
-		my_default[maxlen - 1] = 0;  // Trim default
-
-	if (left_prompt == NULL)
-		Common::strcpy_s(work, "~Reply: ");
-	else
-		Common::strcpy_s(work, left_prompt);
-
-	dialog = dialog_create(NULL, DD_CENTER, DD_CENTER, DD_AUTO,
-		DD_DEFAULT, DD_DEFAULT, DD_DEFAULT);
-
-	dialog_add_blank(dialog);
-	dialog_add_message(dialog, DD_IX_CENTER, DD_IY_AUTOFILL, top_prompt);
-	dialog_add_blank(dialog);
-	string = dialog_add_string(dialog, DD_IX_LEFT, DD_IY_AUTOFILL, work,
-		my_default, maxlen);
-	dialog_add_blank(dialog);
-	ok = dialog_add_button(dialog, DD_IX_LEFT, DD_IY_BUTTON, "  OK  ");
-	cancel = dialog_add_button(dialog, DD_IX_RIGHT, DD_IY_BUTTON, "Cancel");
-
-	result = dialog_execute(dialog, string, ok, NULL);
-
-	Common::strcpy_s(work, dialog_read_string(dialog, string));
-
-	dialog_destroy(dialog);
-
-	if (result == cancel)
-		return(NULL);
-
-	Common::strcpy_s(reply, 65536, work);
-	return(reply);
-}
-
-int dialog_enter_int(char *top_prompt, int my_default) {
-	char work[20], work1[20];
-
-	if (my_default != 0)
-		mads_itoa(my_default, work, 10);
-	else
-		Common::strcpy_s(work, "");
-
-	if (dialog_enter_string(work1, top_prompt, "~Value:", work, 12) == NULL)
-		return(0);
-
-	return atoi(work1);
 }
 
 DialogPtr dialog_create_default(void) {
