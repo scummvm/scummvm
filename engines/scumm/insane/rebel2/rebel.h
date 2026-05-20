@@ -514,6 +514,12 @@ public:
 	void updateOpcode6GenericFlightState();
 	void scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par4);
 	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
+	bool loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
+	bool loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
+	bool loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
+	bool loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
+	void loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par3, int16 par4);
+	bool handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData, int32 animDataSize, int16 par3, int16 par4);
 	void iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
