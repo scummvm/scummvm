@@ -30,6 +30,7 @@ public:
 	void initBackend() override;
 	bool hasFeature(Feature f) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
+	static void spawnProcess(const char *path, const char **argv);
 
 protected:
 	Common::Path getDefaultConfigFileName() override;
