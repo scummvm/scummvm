@@ -540,7 +540,7 @@ public:
 
 	void updatePostRenderScroll(int width, int height);
 	void updatePostRenderDeath();
-	void showPostRenderMenuCursor();
+	void renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height);
 	bool handlePostRenderMenuModes(byte *renderBitmap, int pitch, int width, int height, bool introPlaying);
 	bool handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,

@@ -24,7 +24,6 @@
 #include "common/util.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/wincursor.h"
 
 #include "scumm/scumm_v7.h"
 
@@ -2109,12 +2108,47 @@ void InsaneRebel2::updatePostRenderDeath() {
 	}
 }
 
-// showPostRenderMenuCursor -- Restore the default cursor for menu videos.
-void InsaneRebel2::showPostRenderMenuCursor() {
-	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
-	CursorMan.replaceCursor(cursor);
-	delete cursor;
-	CursorMan.showMouse(true);
+// renderPostRenderMenuCursor -- Draw RA2's software cursor for menu videos.
+void InsaneRebel2::renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height) {
+	// Original menu stages call FUN_0042a6d0() to show the game's software
+	// cursor object. Slot 0 is initialized by FUN_0042a660() from the cursor
+	// table embedded in RA2WIN95.EXE at VA 0x482f30 (7x10, hotspot 0,0).
+	// FUN_0042a660() passes 1 as the transparent color to FUN_00430380().
+	static const byte kRa2MenuCursor[] = {
+		 0,  0,  1,  1,  1,  1,  1,
+		 0, 15,  0,  1,  1,  1,  1,
+		 0, 15, 15,  0,  1,  1,  1,
+		 0, 15, 15, 15,  0,  1,  1,
+		 0, 15, 15, 15, 15,  0,  1,
+		 0, 15, 15, 15, 15, 15,  0,
+		 0, 15, 15, 15,  0,  0,  0,
+		 0, 15,  0, 15, 15,  1,  1,
+		 0,  0,  0,  0, 15,  0,  1,
+		 1,  1,  1,  0,  0,  0,  1
+	};
+	const int cursorWidth = 7;
+	const int cursorHeight = 10;
+
+	CursorMan.showMouse(false);
+	_vm->_system->showMouse(false);
+
+	const int cursorX = _vm->_mouse.x;
+	const int cursorY = _vm->_mouse.y;
+	for (int y = 0; y < cursorHeight; y++) {
+		int dstY = cursorY + y;
+		if (dstY < 0 || dstY >= height)
+			continue;
+
+		for (int x = 0; x < cursorWidth; x++) {
+			int dstX = cursorX + x;
+			if (dstX < 0 || dstX >= width)
+				continue;
+
+			byte color = kRa2MenuCursor[y * cursorWidth + x];
+			if (color != 1)
+				renderBitmap[dstY * pitch + dstX] = color;
+		}
+	}
 }
 
 // handlePostRenderMenuModes -- Process menu-like videos drawn during post-rendering.
@@ -2127,13 +2161,12 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 	// Handle pilot selection input and rendering (FUN_00414A41).
 	// This is the pilot/save slot selection screen with centered menu.
 	if (pilotSelectMode) {
-		showPostRenderMenuCursor();
-
 		// Process pilot selection input - emulates FUN_00414A41 input handling.
 		int selection = processLevelSelectInput();
 
 		// Draw pilot selection overlay - centered menu like main menu.
 		drawLevelSelectOverlay(renderBitmap, pitch, width, height);
+		renderPostRenderMenuCursor(renderBitmap, pitch, width, height);
 
 		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
@@ -2149,8 +2182,6 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 	// Handle chapter selection input and rendering (FUN_00415CF8).
 	// This is the actual level/chapter selection screen with preview and password.
 	if (chapterSelectMode) {
-		showPostRenderMenuCursor();
-
 		// O_LEVEL.SAN provides the background with chapter preview thumbnails.
 		// The FOBJ offset system (set in procPreRendering) scrolls the correct preview
 		// into the preview box area. No black fill needed — video frame shows through.
@@ -2160,6 +2191,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 
 		// Draw chapter selection overlay - emulates FUN_00415CF8 rendering.
 		drawChapterSelectOverlay(renderBitmap, pitch, width, height);
+		renderPostRenderMenuCursor(renderBitmap, pitch, width, height);
 
 		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
@@ -2182,15 +2214,11 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 	if (introPlaying && _gameState == kStateOptions) {
 		processOptionsInput();
 		drawOptionsOverlay(renderBitmap, pitch, width, height);
+		renderPostRenderMenuCursor(renderBitmap, pitch, width, height);
 		return true;
 	}
 
 	if (menuMode) {
-		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
-		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt.
-		// MSTOVER.NUT is a background overlay, NOT a cursor.
-		showPostRenderMenuCursor();
-
 		// Process menu input during each frame.
 		int selection = processMenuInput();
 
@@ -2214,6 +2242,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 
 		// Draw menu selection overlay.
 		drawMenuOverlay(renderBitmap, pitch, width, height);
+		renderPostRenderMenuCursor(renderBitmap, pitch, width, height);
 
 		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
