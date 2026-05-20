@@ -1555,33 +1555,30 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 //   Handler 0x26 (turret): Turret HUD NUT via par3 (1-4)
 //   Handler 0x19: Mixed turret mode, similar to 0x26
 //
-void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
-	// Sound loading: par3 in range 21-47
-
-	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)",
-		_rebelHandler, par2, par3, par4, _gameState);
-
-	int64 startPos = b.pos();
-	int64 remaining = (chunkSize > 0) ? chunkSize : (b.size() - startPos);
-
-	// ----- Handler 7: FLY NUT Loading (Third-Person Ship) -----
-	// FUN_0040c3cc case 6: par4 determines FLY sprite slot
+// ScummVM refactor helper for opcode 8 Handler 7 FLY loading, not a separate retail function.
+bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
+	// Handler 7: FLY NUT Loading (Third-Person Ship)
+	// FUN_0040c3cc case 6: par4 determines FLY sprite slot.
 	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || par4 == 11));
 	if (isHandler7FLY && remaining >= 14) {
 		if (loadHandler7FlySprites(b, remaining, par4)) {
 			b.seek(startPos);
-			return;
+			return true;
 		}
 		b.seek(startPos);
 	}
 
-	// ----- Edge Blend Table Loading (par4 == 1000) -----
+	return false;
+}
+
+// ScummVM refactor helper for opcode 8 edge table loading, not a separate retail function.
+bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
+	// Edge Blend Table Loading (par4 == 1000)
 	// FUN_405663: After all handler-specific opcode 8 processing, checks if par4==1000.
 	// If so, loads a per-level 256x256 color blend table from the IACT chunk data.
 	// This table controls the edge glow color of laser beams (e.g. red vs green).
 	// Data starts at byte offset 18 in the IACT chunk (in_stack_00000014 + 9 shorts).
 	if (par4 == 1000 && remaining >= 18 + 8 + 32896) {
-		// Read the raw edge table data from the stream
 		// Layout: 18 bytes IACT header params already consumed by caller,
 		// but 'b' is positioned at startPos which is after par1..par4.
 		// The original code passes (param + 9 shorts) = data at byte offset 18 from chunk start.
@@ -1595,63 +1592,75 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 			debug("Rebel2 Opcode 8: Loaded per-level edge blend table (par4=1000)");
 		}
 		b.seek(startPos);
-		return;
+		return true;
 	}
 
-	// ----- Auxiliary Sound Buffer Loading (par4 20-47) -----
-	// FUN_401234 case 6 (handler 8): par4 0x14-0x1b (20-27) → aux buffer 0
-	// FUN_41CADB case 6 (handler 25): par4 0x15-0x1b (21-27) → aux buffer 0,
-	//   0x1f-0x25 (31-37) → aux buffer 1, 0x28 (40) → aux buffer 3,
-	//   0x29-0x2f (41-47) → aux buffer 2
+	return false;
+}
+
+// ScummVM refactor helper for opcode 8 aux SFX loading, not a separate retail function.
+bool InsaneRebel2::loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
+	// Auxiliary Sound Buffer Loading (par4 20-47)
+	// FUN_401234 case 6 (handler 8): par4 0x14-0x1b (20-27) -> aux buffer 0
+	// FUN_41CADB case 6 (handler 25): par4 0x15-0x1b (21-27) -> aux buffer 0,
+	//   0x1f-0x25 (31-37) -> aux buffer 1, 0x28 (40) -> aux buffer 3,
+	//   0x29-0x2f (41-47) -> aux buffer 2
 	// Data layout: offset 14 = uint32 data size, offset 18 = PCM data start.
 	// Stream is at offset 8 (after par1-par4), so data size at +6, PCM at +10.
-	if (par4 >= 20 && par4 <= 47) {
-		int auxBuffer = -1;
-		if (par4 >= 20 && par4 <= 27) {
-			auxBuffer = 0;
-		} else if (par4 >= 31 && par4 <= 37) {
-			auxBuffer = 1;
-		} else if (par4 == 40) {
-			auxBuffer = 3;
-		} else if (par4 >= 41 && par4 <= 47) {
-			auxBuffer = 2;
-		}
+	if (par4 < 20 || par4 > 47)
+		return false;
 
-		if (auxBuffer >= 0 && remaining >= 10) {
-			b.seek(startPos + 6); // Skip to data size field (byte offset 14 from IACT start)
-			uint32 dataSize = b.readUint32LE();
-			if (dataSize > 0 && remaining >= (int64)(10 + dataSize)) {
-				byte *soundData = (byte *)malloc(dataSize);
-				if (soundData) {
-					b.read(soundData, dataSize);
-					loadAuxSfx(auxBuffer, soundData, dataSize);
-					free(soundData);
-					debug("Rebel2 Opcode 8: Loaded %d bytes into aux sound buffer %d (par4=%d)",
-						dataSize, auxBuffer, par4);
-				}
-			} else {
-				debug("Rebel2 Opcode 8: Aux sound par4=%d dataSize=%d exceeds remaining=%lld",
-					par4, dataSize, (long long)remaining);
-			}
-		}
-		b.seek(startPos);
-		return;
+	int auxBuffer = -1;
+	if (par4 >= 20 && par4 <= 27) {
+		auxBuffer = 0;
+	} else if (par4 >= 31 && par4 <= 37) {
+		auxBuffer = 1;
+	} else if (par4 == 40) {
+		auxBuffer = 3;
+	} else if (par4 >= 41 && par4 <= 47) {
+		auxBuffer = 2;
 	}
 
-	// ----- Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8) -----
+	if (auxBuffer >= 0 && remaining >= 10) {
+		b.seek(startPos + 6); // Skip to data size field (byte offset 14 from IACT start)
+		uint32 dataSize = b.readUint32LE();
+		if (dataSize > 0 && remaining >= (int64)(10 + dataSize)) {
+			byte *soundData = (byte *)malloc(dataSize);
+			if (soundData) {
+				b.read(soundData, dataSize);
+				loadAuxSfx(auxBuffer, soundData, dataSize);
+				free(soundData);
+				debug("Rebel2 Opcode 8: Loaded %u bytes into aux sound buffer %d (par4=%d)",
+					dataSize, auxBuffer, par4);
+			}
+		} else {
+			debug("Rebel2 Opcode 8: Aux sound par4=%d dataSize=%u exceeds remaining=%lld",
+				par4, dataSize, (long long)remaining);
+		}
+	}
+	b.seek(startPos);
+	return true;
+}
+
+// ScummVM refactor helper for opcode 8 Handler 25 shot-origin loading, not a separate retail function.
+bool InsaneRebel2::loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
+	// Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8)
 	// FUN_0041CADB case 6 pushes 30 short pointers into sscanf with format at 0x482360:
 	//   "%hd %hd  %hd %hd ... %hd %hd" (15 X/Y pairs).
 	// Parsed values are written into DAT_004578a6 / DAT_004578c6 at indices 5..19.
 	if (_rebelHandler == 25 && par4 == 8) {
-		bool loaded = loadHandler25ShotOriginTable(b, startPos, remaining);
-		if (loaded) {
+		if (loadHandler25ShotOriginTable(b, startPos, remaining)) {
 			b.seek(startPos);
-			return;
+			return true;
 		}
 	}
 
-	// ----- Scan for embedded ANIM data -----
-	// Remaining handlers require finding ANIM tag in the stream
+	return false;
+}
+
+// ScummVM refactor helper for opcode 8 embedded ANIM scanning, not a separate retail function.
+void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par3, int16 par4) {
+	// Remaining handlers require finding ANIM tag in the stream.
 	debug("Rebel2 Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
 		(long long)startPos, (long long)remaining);
 
@@ -1668,7 +1677,6 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	int bytesRead = b.read(scanBuf, scanSize);
 	debug("Rebel2 Opcode 8: Read %d bytes for ANIM scan", bytesRead);
 
-	// Find ANIM tag
 	int animOffset = -1;
 	for (int i = 0; i + 8 <= bytesRead; ++i) {
 		if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
@@ -1685,7 +1693,6 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
-	// Extract ANIM data
 	uint32 animReportedSize = READ_BE_UINT32(scanBuf + animOffset + 4);
 	int32 animDataSize = (int)MIN<int64>((int64)animReportedSize + 8, remaining - animOffset);
 	if (animDataSize <= 0) {
@@ -1703,33 +1710,38 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 
 	b.seek(startPos + animOffset);
 	b.read(animData, animDataSize);
+	handleOpcode8EmbeddedAnim(renderBitmap, animData, animDataSize, par3, par4);
 
+	free(animData);
+	free(scanBuf);
+	b.seek(startPos);
+}
+
+// ScummVM refactor helper for opcode 8 embedded ANIM routing, not a separate retail function.
+bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData, int32 animDataSize, int16 par3, int16 par4) {
 	bool handled = false;
 
-	// ----- Handler 0x26/0x19: Turret HUD Overlays -----
-	// FUN_00407fcb case 8: par3 1-4 for HUD NUT loading
+	// Handler 0x26/0x19: Turret HUD Overlays.
+	// FUN_00407fcb case 8: par3 1-4 for HUD NUT loading.
 	if (!handled && (_rebelHandler == 0x26 || _rebelHandler == 0x19)) {
 		if (par3 >= 1 && par3 <= 4) {
 			handled = loadTurretHudOverlay(animData, animDataSize, par3);
 		}
 	}
 
-	// ----- Handler 8: POV Ship Sprites or Background -----
-	// FUN_00401234 case 6: par4 selects POV NUT type (1,3,6,7) or background (5)
-	// NOTE: par3 is always 0 for Handler 8; par4 contains the actual sprite type
+	// Handler 8: POV Ship Sprites or Background.
+	// FUN_00401234 case 6: par4 selects POV NUT type (1,3,6,7) or background (5).
+	// NOTE: par3 is always 0 for Handler 8; par4 contains the actual sprite type.
 	if (!handled && _rebelHandler == 8) {
-		// Check for background loading first (par4=5)
 		if (par4 == 5) {
 			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
-		}
-		// Check for POV NUT sprites (par4=1,3,6,7)
-		else if (par4 == 1 || par4 == 3 || par4 == 6 || par4 == 7) {
+		} else if (par4 == 1 || par4 == 3 || par4 == 6 || par4 == 7) {
 			handled = loadHandler8ShipSprites(animData, animDataSize, par4);
 		}
 	}
 
-	// ----- Handler 25 (0x19): Level 2 GRD Ship Sprites and Background -----
-	// FUN_0041cadb case 6 (opcode 8): Uses PAR4 for switch selection
+	// Handler 25 (0x19): Level 2 GRD Ship Sprites and Background.
+	// FUN_0041cadb case 6 (opcode 8): Uses PAR4 for switch selection.
 	//   par4=1: GRD001 - Primary ship sprite -> DAT_00482240 / _grd001Sprite
 	//   par4=2: GRD002 - Secondary ship sprite -> DAT_00482238 / _grd002Sprite
 	//   par4=4: 350x230 corridor overlay -> DAT_00482268, draws immediately
@@ -1738,38 +1750,33 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	//   par4=7: Overlay -> DAT_00482248, draws immediately
 	if (!handled && _rebelHandler == 25) {
 		if (par4 == 1 || par4 == 2) {
-			// GRD ship sprites - load into NutRenderer for per-frame rendering
 			handled = loadHandler25GrdSprites(animData, animDataSize, par4);
 		} else if (par4 == 5) {
-			// Background (320x200) - stored for per-frame restoration
 			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
 		} else if (par4 == 4 || par4 == 6 || par4 == 7) {
-			// Overlays - draw immediately to renderBitmap
-			// These complete the visual scene along with the background
 			debug("Rebel2 Opcode 8: Handler 25 overlay par4=%d - drawing to screen", par4);
 			loadEmbeddedSan(par4, animData, animDataSize, renderBitmap);
 			handled = true;
 		}
 	}
 
-	// ----- Fallback: Embedded SAN HUD overlays -----
-	// For other cases, load as embedded SAN frame to HUD overlay slots
+	// Fallback: Embedded SAN HUD overlays.
+	// For other cases, load as embedded SAN frame to HUD overlay slots.
 	if (!handled) {
-		// Skip high-res data (par3 == 2, 4)
+		// Skip high-res data (par3 == 2, 4).
 		if (par3 == 2 || par3 == 4) {
 			debug("Rebel2 Opcode 8: Skipping high-res HUD par3=%d", par3);
 			handled = true;
 		} else {
-			// Determine userId: Handler 0x19 uses par3, others use par4
-			// Heuristic: if par3 is valid GRD range (1-13) and par4 is invalid, prefer par3
-			int userId;
+			// Determine userId: Handler 0x19 uses par3, others use par4.
+			// Heuristic: if par3 is valid GRD range (1-13) and par4 is invalid, prefer par3.
 			bool usePar3 = (_rebelHandler == 0x19);
 			if (!usePar3 && par3 >= 1 && par3 <= 13 && (par4 <= 0 || par4 >= 1000)) {
 				usePar3 = true;
 			}
-			userId = usePar3 ? par3 : par4;
+			int userId = usePar3 ? par3 : par4;
 
-			// Skip audio tracks (userId >= 1000)
+			// Skip audio tracks (userId >= 1000).
 			if (userId > 0 && userId < 1000) {
 				debug("Rebel2 Opcode 8: Loading embedded SAN HUD userId=%d (handler=%d par3=%d par4=%d)",
 					userId, _rebelHandler, par3, par4);
@@ -1783,9 +1790,29 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		debug("Rebel2 Opcode 8: Unhandled case - handler=%d par3=%d par4=%d", _rebelHandler, par3, par4);
 	}
 
-	free(animData);
-	free(scanBuf);
-	b.seek(startPos);
+	return handled;
+}
+
+void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
+	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)",
+		_rebelHandler, par2, par3, par4, _gameState);
+
+	int64 startPos = b.pos();
+	int64 remaining = (chunkSize > 0) ? chunkSize : (b.size() - startPos);
+
+	if (loadOpcode8Handler7FlySprites(b, startPos, remaining, par4))
+		return;
+
+	if (loadOpcode8EdgeTable(b, startPos, remaining, par4))
+		return;
+
+	if (loadOpcode8AuxSfx(b, startPos, remaining, par4))
+		return;
+
+	if (loadOpcode8ShotOriginTable(b, startPos, remaining, par4))
+		return;
+
+	loadOpcode8EmbeddedAnim(renderBitmap, b, startPos, remaining, par3, par4);
 }
 
 // loadHandler25ShotOriginTable -- Parse shot origin coordinate pairs from IACT payload.
