@@ -7857,6 +7857,11 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--gc-sections"
 		fi
 		;;
+	ps3)
+		# This enable separate modules/executables and chaining execution
+		# between the launcher and engine processes
+		define_in_config_if_yes "$_release_build" "PS3_MULTI_MODULES"
+		;;
 esac
 
 # Promote any warning to an error, only if explicitly asked

@@ -94,6 +94,10 @@
 #include "backends/fs/android/android-fs-factory.h"
 #endif
 
+#ifdef PLAYSTATION3
+#include "backends/platform/sdl/ps3/ps3.h"
+#endif
+
 #include "gui/dump-all-dialogs.h"
 
 static bool launcherDialog() {
@@ -776,6 +780,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Then, get the relevant Engine plugin from MetaEngine.
 			enginePlugin = PluginMan.findEnginePlugin(engineId);
 			if (enginePlugin == nullptr) {
+#ifdef PS3_MULTI_MODULES
+				Common::FSNode node((Common::String(PLUGIN_DIRECTORY "/") + engineId + ".self").c_str());
+				if (!node.exists())
+#endif
 				result = Common::kEnginePluginNotFound;
 			}
 		}
@@ -814,6 +822,20 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			if (ttsMan != nullptr) {
 				ttsMan->pushState();
 			}
+
+#ifdef PS3_MULTI_MODULES
+			// For launcher instance, the process was called without additional params
+			// Launching an engine flow will spawn new process with <target-id> param
+			// New process path will be "<plugin-dir>/<engine-id>.self"
+			if (argc == 1) {
+				const char *spawnArgv[2]{};
+				Common::String enginePath = Common::String(PLUGIN_DIRECTORY "/") + plugin->getName() + ".self";
+				spawnArgv[0] = ConfMan.getActiveDomainName().c_str();
+				system.destroy();
+				OSystem_PS3::spawnProcess(enginePath.c_str(), spawnArgv);
+			}
+#endif
+
 			// Try to run the game
 			result = runGame(enginePlugin, system, game, meDescriptor);
 			if (ttsMan != nullptr) {
@@ -899,6 +921,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		// reset the graphics to default
 		setupGraphics(system);
 		if (nullptr == ConfMan.getActiveDomain()) {
+#ifdef PS3_MULTI_MODULES
+			// For engine instance, process was called with <target-id> param
+			// Return to launcher flow spawn new launcher process without params
+			if (argc > 1) {
+				system.destroy();
+				OSystem_PS3::spawnProcess(PREFIX "/scummvm.self", nullptr);
+			}
+#endif
 			launcherDialog();
 		}
 	}
