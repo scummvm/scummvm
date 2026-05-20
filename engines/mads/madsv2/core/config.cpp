@@ -93,27 +93,7 @@ void global_load_config_parameters() {
 
 	kernel_panning_speed = config_file.panning_speed;
 	kernel_screen_fade = config_file.screen_fade;
-#if 0
-	kernel.sound_card = sound_get_letter(config_file.sound_card_type);
 
-	music_on = config_file.music_flag;
-	sound_on = config_file.sound_flag;
-	speech_on = config_file.speech_flag;
-
-	int mem = config_file.high_memory_mode;
-
-	if ((mem == MEMORY_NO_EMS) || (mem == MEMORY_CONVENTIONAL)) {
-		himem_preload_ems_disabled = true;
-	}
-
-	if ((mem == MEMORY_NO_XMS) || (mem == MEMORY_CONVENTIONAL)) {
-		himem_preload_xms_disabled = true;
-	}
-
-	if (config_file.speech_version_installed) {
-		speech_system_requested = true;
-	}
-#endif
 	if (config_file.cd_version_installed) {
 		env_search_cd = true;
 		env_cd_drive = (char)config_file.cd_drive;
@@ -125,14 +105,6 @@ void global_unload_config_parameters(void) {
 
 	config_file.panning_speed = kernel_panning_speed;
 	config_file.screen_fade = kernel_screen_fade;
-#if 0
-	config_file.music_flag = music_on;
-	config_file.sound_flag = sound_on;
-	config_file.speech_flag = speech_on;
-
-	config_file.sound_card_address = sound_board_address;
-	config_file.sound_card_type = sound_board_type;
-#endif
 }
 
 } // namespace MADSV2

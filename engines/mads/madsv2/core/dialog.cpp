@@ -1193,34 +1193,6 @@ static void dialog_show_message(DialogPtr dialog, ItemPtr item) {
 	mouse_show();
 }
 
-#if 0
-/**
- * Clears a message previously output with dialog_show_message ().
- * Currently, the only kind of message that could change (and thus
- * need to be cleared) is the pathname for file items, which is
- * handled internally.
- *
- * @param dialog	Dialog
- * @param item		Message item
- */
-static void dialog_clear_message(DialogPtr dialog, ItemPtr item) {
-	int cx, cy;
-	int count, bound;
-
-	mouse_hide();
-
-	cx = item->x + dialog->base_x;
-	cy = item->y + dialog->base_y;
-	bound = strlen(item->prompt);
-
-	for (count = 0; count < bound; count++) {
-		cx = screen_put(" ", dialog->normal_color, dialog->normal_color, cx, cy);
-	}
-
-	mouse_show();
-}
-#endif
-
 /**
  * Displays (and updates) a checkbox item
  *
@@ -2029,70 +2001,6 @@ static void dialog_do_search(DialogPtr dialog, ItemPtr item) {
 }
 
 /**
- * Routine to change the directory of the filename window
- *
- * @param dialog	Dialog
- * @param item		Item
- */
-static void dialog_set_new_directory(DialogPtr dialog, ItemPtr item) {
-	int buf;
-	//int newdrive;
-	ItemPtr baseitem; //, fileitem, pathitem;
-
-	baseitem = &dialog->item[item->status];
-	//fileitem = &dialog->item[baseitem->status];
-	buf = baseitem->buf_id;
-
-	Common::strcpy_s(temp_buf, dialog->buffer[buf]);
-	//pathitem = dialog->path_item;
-#ifdef TODO
-	if (temp_buf[1] == ':') {
-		// Change to a new drive, if requested
-		newdrive = ((int)temp_buf[0]) - 64;
-		mads_chdrive(newdrive);
-
-		dialog_clear_message(dialog, pathitem);
-		//mads_getcwd(temp_buf, DIALOG_MAX_PROMPT_CHARS);
-		Common::strcpy_s(temp_buf, "");
-		Common::strcpy_s(pathitem->prompt, 65536, temp_buf);
-
-	} else {
-		// otherwise, change to a new directory
-		mads_chdir(temp_buf);
-
-		dialog_clear_message(dialog, pathitem);
-
-		if (mads_getcwd(temp_buf, DIALOG_MAX_PROMPT_CHARS) != NULL) {
-			Common::strcpy_s(pathitem->prompt, temp_buf);
-		} else {
-			Common::strcpy_s(temp_buf, pathitem->prompt);
-			mads_chdir(temp_buf);
-		}
-	}
-
-	// Load a wildcard into the entry area
-	if ((strchr(dialog->buffer[buf], '*') == NULL) &&
-		(strchr(dialog->buffer[buf], '?') == NULL)) {
-		Common::strcpy_s(dialog->buffer[buf], "*.*");
-		dialog->buf_select[buf] = true;
-		dialog->buf_cursor[buf] = 0;
-		dialog->buf_selbase[buf] = 0;
-		dialog->buf_seltarget[buf] = 3;
-	}
-
-	// Load up the new directory and display
-	dialog_load_directory(dialog, baseitem);
-	dialog_show_any(dialog, pathitem);
-	dialog_update_any(dialog, baseitem, false);
-	dialog_update_any(dialog, fileitem, false);
-	dialog_update_any(dialog, item, false);
-	dialog_update_active(dialog, 0, false, false);
-#else
-	warning("TODO: dialog_set_new_directory");
-#endif
-}
-
-/**
  * Routine to handle scrolling around in a list window.  Used to
  * drive both mouse and cursor scroll routines.
  *
@@ -2498,13 +2406,8 @@ static void dialog_exec_mouse_list(DialogPtr dialog, ItemPtr item) {
 					// Handle double-click if any
 					if (mouse_start_stroke && (old_pick == list->picked_entry)) {
 						if ((long)timer_read_dos() <= mouse_list_timing + MOUSE_DOUBLE_TIMING) {
-							if (item->type == DD_I_DIRSLIST) {
-								dialog_set_new_directory(dialog, item);
-								abort = true;
-							} else {
-								dialog->active_item = (dialog->default_item)->id;
-								dialog->status |= DD_EXITFLAG;
-							}
+							dialog->active_item = (dialog->default_item)->id;
+							dialog->status |= DD_EXITFLAG;
 						}
 					}
 					if (mouse_start_stroke) mouse_list_timing = timer_read_dos();
@@ -2918,10 +2821,6 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 
 			case enter_key:
 				switch (item->type) {
-				case DD_I_DIRSLIST:
-					dialog_set_new_directory(dialog, item);
-					break;
-
 				case DD_I_BUTTON:
 					dialog->status |= DD_EXITFLAG;
 					break;
