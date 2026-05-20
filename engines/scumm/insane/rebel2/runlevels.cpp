@@ -88,28 +88,27 @@ int InsaneRebel2::runLevel1() {
 // ---------------------------------------------------------------------------
 // Wave State Management - FUN_00417b61
 // Waits for video completion, accumulates kill state, redistributes kill credits.
-// Used by all multi-wave levels (Level 2, 3, 6, etc.) as the core wave loop primitive.
+// Used by randomized multi-wave level handlers as the core wave loop primitive.
 // ---------------------------------------------------------------------------
 
-uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags) {
+InsaneRebel2::WaveEndResult InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags) {
 	// FUN_00417b61: Core wave management function
 	// Called after each wave video plays. Handles:
 	// 1. Waiting for video to finish (with early exit on enemy completion)
 	// 2. Copying wave state to accumulated phase state
 	// 3. Redistributing kill credits from the budget
-	//
-	// Returns: kill bits credited this wave, or 0xFFFF on death/quit/completion
 
-	uint16 result = 0;
+	WaveEndResult result;
 
 	// Debug shortcut path: force-end current section when requested via Shift+S.
-	// This returns the same sentinel (0xFFFF) used for section completion/death/quit.
 	if (_skipSectionRequested) {
 		_skipSectionRequested = false;
 		_rebelPhaseState = mask;
 		_rebelWaveState = mask;
 		debug("Rebel2 processWaveEnd: Shift+S skip consumed (mask=0x%x)", (uint16)mask);
-		return 0xFFFF;
+		result.completed = true;
+		result.skipped = true;
+		return result;
 	}
 
 	// Step 1: Wait for video to finish (lines 21-32)
@@ -167,7 +166,7 @@ uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, 
 	while (creditCount < maxCredits && numKilled > 0 && budget && *budget > 0) {
 		int idx = _vm->_rnd.getRandomNumber(numKilled - 1);
 		_rebelPhaseState -= killed[idx];   // Remove from accumulated state
-		result |= killed[idx];              // Credit to return value
+		result.creditedBits |= killed[idx]; // Credit to return value
 		(*budget)--;
 
 		// Remove from array (shift remaining elements)
@@ -179,13 +178,13 @@ uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, 
 	}
 
 	debug("Rebel2 processWaveEnd: result=0x%x phaseState=0x%x (after redistribution) budget=%d",
-		result, _rebelPhaseState, budget ? *budget : -1);
+		result.creditedBits, _rebelPhaseState, budget ? *budget : -1);
 
-	// Step 5: Return value (lines 74-78)
-	// Return 0xFFFF if: dead, phase complete, or quit
-	if (_playerDamage >= 255 || (int16)_rebelPhaseState >= mask || _vm->shouldQuit()) {
-		return 0xFFFF;
-	}
+	// Step 5: Stop conditions (lines 74-78)
+	result.died = (_playerDamage >= 255);
+	result.completed = ((int16)_rebelPhaseState >= mask);
+	result.quit = _vm->shouldQuit();
+
 	return result;
 }
 
@@ -391,8 +390,9 @@ int InsaneRebel2::runLevel2() {
 		// Phase 2 wave loop: processWaveEnd at TOP of loop (matches assembly structure)
 		// Original: local_10 = FUN_00417b61(0x3e, local_14, 0, 0); then switch(local_10)
 		while (true) {
-			uint16 waveSelect = processWaveEnd(0x3e, &budget, 0, 0);
-			if (waveSelect == 0xFFFF || (_rebelPhaseState & 0x0e) == 0x0e)
+			WaveEndResult waveEnd = processWaveEnd(0x3e, &budget, 0, 0);
+			uint16 waveSelect = waveEnd.creditedBits;
+			if (waveEnd.shouldStop() || (_rebelPhaseState & 0x0e) == 0x0e)
 				break;
 			if (_vm->shouldQuit())
 				return kLevelQuit;
@@ -467,11 +467,13 @@ int InsaneRebel2::runLevel2() {
 		// Phase 3: processWaveEnd at BOTTOM (like Phase 1), waveSelect carried across iterations
 		// Original: local_10 = FUN_00417b61(0x3e, local_14, 0, 0); while (loop) { ...; local_10 = FUN_00417b61(0x3e, local_14, 0x14, 0); }
 		{
-			uint16 waveSelect = processWaveEnd(0x3e, &budget, 0, 0);
+			WaveEndResult waveEnd = processWaveEnd(0x3e, &budget, 0, 0);
 
-			while (waveSelect != 0xFFFF && (_rebelPhaseState & 0x0e) != 0x0e) {
+			while (!waveEnd.shouldStop() && (_rebelPhaseState & 0x0e) != 0x0e) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
+
+				uint16 waveSelect = waveEnd.creditedBits;
 
 				// Phase 3 randomization (original lines 113-115):
 				// If previous wave state bit 0 was clear AND random(8)==0, set bit 0
@@ -508,7 +510,7 @@ int InsaneRebel2::runLevel2() {
 					return kLevelQuit;
 
 				// processWaveEnd at BOTTOM with threshold=0x14
-				waveSelect = processWaveEnd(0x3e, &budget, 0x14, 0);
+				waveEnd = processWaveEnd(0x3e, &budget, 0x14, 0);
 				debug("Rebel2: Phase 3 wave done - state=0x%x (need 0x0e) budget=%d", _rebelPhaseState, budget);
 			}
 		}
@@ -1184,13 +1186,15 @@ int InsaneRebel2::runLevel11() {
 			return kLevelQuit;
 
 		{
-			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0, 0);
+			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0, 0);
 
 			// Phase 1 wave loop: random(2) | (waveSelect & 8) → variants
 			// 0→D, 1→C, 8→B, 9→A
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
+
+				uint16 waveSelect = waveEnd.creditedBits;
 
 				// Bonus sound check
 				if ((_rebelPhaseState & 0x10) != 0 && (prevPhaseState & 0x10) == 0) {
@@ -1211,7 +1215,7 @@ int InsaneRebel2::runLevel11() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				waveSelect = processWaveEnd(0x0e, &budget, 0x14, 0);
+				waveEnd = processWaveEnd(0x0e, &budget, 0x14, 0);
 			}
 		}
 
@@ -1247,10 +1251,10 @@ int InsaneRebel2::runLevel11() {
 
 		{
 			// Phase 2: flags=3 (maxCredits=2, redistribution ON)
-			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0, 3);
+			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0, 3);
 
 			// Random(4) for variant selection: A, B, C, D
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
@@ -1267,7 +1271,7 @@ int InsaneRebel2::runLevel11() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				waveSelect = processWaveEnd(0x0e, &budget, 0x14, 3);
+				waveEnd = processWaveEnd(0x0e, &budget, 0x14, 3);
 			}
 		}
 
@@ -1303,11 +1307,11 @@ int InsaneRebel2::runLevel11() {
 			return kLevelQuit;
 
 		{
-			uint16 waveSelect = processWaveEnd(0x7e, &budget, 0, 0);
+			WaveEndResult waveEnd = processWaveEnd(0x7e, &budget, 0, 0);
 			int variantIdx = 0;  // Tracks variant for randomization threshold
 
 			// Loop until (phaseState & 0x70) == 0x70 (bridge targets destroyed)
-			while (waveSelect != 0xFFFF && (_rebelPhaseState & 0x70) != 0x70) {
+			while (!waveEnd.shouldStop() && (_rebelPhaseState & 0x70) != 0x70) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
@@ -1342,7 +1346,7 @@ int InsaneRebel2::runLevel11() {
 
 				// Threshold only for higher variants (original: (2 < variantIdx) - 1 & 0x14)
 				int16 threshold = (variantIdx > 2) ? 0x14 : 0;
-				waveSelect = processWaveEnd(0x7e, &budget, threshold, 0);
+				waveEnd = processWaveEnd(0x7e, &budget, threshold, 0);
 			}
 		}
 
@@ -1395,9 +1399,9 @@ int InsaneRebel2::runLevel11() {
 		// Only enter wave loop if not all basic types killed already
 		if ((_rebelPhaseState & 0x0e) < 0x0e) {
 			int variantIdx = 0;
-			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0, 0);
+			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0, 0);
 
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
@@ -1426,7 +1430,7 @@ int InsaneRebel2::runLevel11() {
 					return kLevelQuit;
 
 				int16 threshold = (variantIdx > 2) ? 0x14 : 0;
-				waveSelect = processWaveEnd(0x0e, &budget, threshold, 0);
+				waveEnd = processWaveEnd(0x0e, &budget, threshold, 0);
 			}
 		}
 
@@ -1507,13 +1511,14 @@ int InsaneRebel2::runLevel12() {
 			return kLevelQuit;
 
 		{
-			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
+			WaveEndResult waveEnd = processWaveEnd(6, &budget, 0x14, 0);
 
 			// Wave loop: random(2) | (waveSelect & 2) → 0:C, 1:D, 2:A, 3:B
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
+				uint16 waveSelect = waveEnd.creditedBits;
 				int sel = _vm->_rnd.getRandomNumber(1) | (waveSelect & 2);
 				const char *filename;
 				switch (sel) {
@@ -1527,7 +1532,7 @@ int InsaneRebel2::runLevel12() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				waveSelect = processWaveEnd(6, &budget, 0x14, 0);
+				waveEnd = processWaveEnd(6, &budget, 0x14, 0);
 			}
 		}
 
@@ -1557,11 +1562,13 @@ int InsaneRebel2::runLevel12() {
 			return kLevelQuit;
 
 		{
-			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
+			WaveEndResult waveEnd = processWaveEnd(6, &budget, 0x14, 0);
 
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
+
+				uint16 waveSelect = waveEnd.creditedBits;
 
 				// Variant selection: (waveSelect & 2) controls which set
 				int variantIdx;
@@ -1587,7 +1594,7 @@ int InsaneRebel2::runLevel12() {
 
 				// Variants E(2) and F(5) reset threshold to 0
 				int16 threshold = (variantIdx == 2 || variantIdx == 5) ? 0 : 0x14;
-				waveSelect = processWaveEnd(6, &budget, threshold, 0);
+				waveEnd = processWaveEnd(6, &budget, threshold, 0);
 			}
 		}
 
@@ -1618,9 +1625,9 @@ int InsaneRebel2::runLevel12() {
 
 		{
 			int variantIdx = 0;
-			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
+			WaveEndResult waveEnd = processWaveEnd(6, &budget, 0x14, 0);
 
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
@@ -1645,7 +1652,7 @@ int InsaneRebel2::runLevel12() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				waveSelect = processWaveEnd(6, &budget, 0x14, 0);
+				waveEnd = processWaveEnd(6, &budget, 0x14, 0);
 			}
 		}
 
@@ -1676,9 +1683,9 @@ int InsaneRebel2::runLevel12() {
 
 		{
 			int variantIdx = 0;
-			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0x14, 0);
+			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0x14, 0);
 
-			while (waveSelect != 0xFFFF) {
+			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
@@ -1702,7 +1709,7 @@ int InsaneRebel2::runLevel12() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				waveSelect = processWaveEnd(0x0e, &budget, 0x14, 0);
+				waveEnd = processWaveEnd(0x0e, &budget, 0x14, 0);
 			}
 		}
 
