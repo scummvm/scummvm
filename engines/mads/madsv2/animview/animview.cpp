@@ -297,7 +297,7 @@ static void run_animation(int animIndex) {
 			current_error_code = 1;
 		if (g_engine->hasPendingKey()) {
 			g_engine->flushKeys();
-			error_code = 0;
+			error_code = 1;
 			current_error_code = 1;
 		}
 		if (mouse_get_status(&mouse_x, &mouse_y)) {
@@ -325,11 +325,12 @@ static void run_animation(int animIndex) {
 				// Check for any keypress
 				if (g_engine->hasPendingKey()) {
 					g_engine->flushKeys();
-					current_error_code = true;
+					error_code = 1;
+					current_error_code = 1;
 				}
 
 				if (g_engine->shouldQuit())
-					current_error_code = true;
+					current_error_code = 1;
 			} while (timer_read() < timer2);
 
 			if (peelFlag) {
@@ -349,21 +350,22 @@ static void run_animation(int animIndex) {
 			// Check for any keypress or mouse clicks
 			if (g_engine->hasPendingKey()) {
 				g_engine->flushKeys();
-				current_error_code = true;
+				error_code = 1;
+				current_error_code = 1;
 			}
 
 			int mouseX = 0, mouseY = 0;
 			if (mouse_get_status(&mouseX, &mouseY))
-				current_error_code = true;
+				current_error_code = 1;
 
 			if (g_engine->shouldQuit())
-				current_error_code = true;
+				current_error_code = 1;
 
 			if (!exit_immediately_at_end)
 				continue;
 			if (g_engine->_soundManager->command(8))
 				continue;
-			current_error_code = true;
+			current_error_code = 1;
 		}
 	}
 
