@@ -183,6 +183,10 @@ MODULE_OBJS += \
 	madsv2/phantom/sound_phantom.o \
 	madsv2/dragonsphere/dragonsphere.o \
 	madsv2/dragonsphere/global.o \
+	madsv2/dragonsphere/main.o \
+	madsv2/dragonsphere/main_menu.o \
+	madsv2/dragonsphere/menus.o \
+	madsv2/dragonsphere/sound_dragonsphere.o \
 	madsv2/dragonsphere/mads/mads.o \
 	madsv2/dragonsphere/rooms/section1.o \
 	madsv2/dragonsphere/rooms/room101.o \

@@ -27,6 +27,8 @@
 #include "mads/madsv2/core/screen.h"
 #include "mads/madsv2/dragonsphere/dragonsphere.h"
 #include "mads/madsv2/dragonsphere/global.h"
+#include "mads/madsv2/dragonsphere/main.h"
+#include "mads/madsv2/dragonsphere/sound_dragonsphere.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -41,12 +43,11 @@ Common::Error DragonsphereEngine::run() {
 	setDebugger(new Console());
 
 	// Set up sound manager
-	_soundManager = nullptr; // new DragonsphereSoundManager(_mixer, _soundFlag);
-	//_soundManager->validate();
+	_soundManager = new DragonSoundManager(_mixer, _soundFlag);
+	_soundManager->validate();
 
 	// Run the game
-	// TODO
-	Dragonsphere::global_section_constructor();	// Test call
+	Dragonsphere::dragonsphere_main();
 
 	return Common::kNoError;
 }

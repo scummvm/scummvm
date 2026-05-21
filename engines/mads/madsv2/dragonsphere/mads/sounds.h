@@ -80,7 +80,10 @@ enum {
 	N_BigBirdCall        =  69,
 	N_JumpThwang         =  70,
 	N_StepOnFloatingDisk =  77,
-	N_004CryOfDismay     =  78
+	N_004CryOfDismay     =  78,
+
+	// Section 9
+	N_AllFade            =   1
 };
 
 } // namespace Dragonsphere
