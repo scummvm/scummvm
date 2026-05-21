@@ -193,7 +193,7 @@ Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Path 
 			}
 
 			warning("name: %s", i->getName().c_str());
-			Archive *arc = _vm->openArchive(i->getPathInArchive());
+			Common::SharedPtr<Archive> arc = _vm->openArchive(i->getPathInArchive());
 			Movie *m = new Movie(this);
 			m->setArchive(arc);
 			nameMap->setVal(m->getMacName(), m);
@@ -324,7 +324,7 @@ void Window::runTests() {
 
 	initGraphics(640, 480);
 
-	Archive *mainArchive = new RIFXArchive();
+	Common::SharedPtr<Archive> mainArchive(new RIFXArchive());
 	g_director->setMainArchive(mainArchive);
 	g_director->_allSeenResFiles.setVal("test.dir", mainArchive);
 	if (!mainArchive->openStream(stream, 0)) {

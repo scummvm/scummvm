@@ -273,7 +273,7 @@ bool Debugger::cmdVersion(int argc, const char **argv) {
 bool Debugger::cmdInfo(int argc, const char **argv) {
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie->getScore();
-	Archive *archive = movie->getArchive();
+	Archive *archive = movie->getArchive().get();
 	Cast *cast = movie->getCast();
 	debugPrintf("Movie path: %s\n", archive->getPathName().toString(g_director->_dirSeparator).c_str());
 	debugPrintf("Movie file size: %d\n", archive->getFileSize());

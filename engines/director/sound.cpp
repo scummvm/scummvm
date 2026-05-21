@@ -400,7 +400,7 @@ void DirectorSound::loadSampleSounds(uint type) {
 		for (uint j = 0; j < idList.size(); j++) {
 			if (static_cast<uint>(idList[j] & 0xFF) == type) {
 				id = idList[j];
-				archive = g_director->_allSeenResFiles[it];
+				archive = g_director->_allSeenResFiles[it].get();
 				break;
 			}
 		}
@@ -637,7 +637,7 @@ void DirectorSound::playFPlaySound() {
 	for (auto &it : g_director->_allOpenResFiles) {
 		id = g_director->_allSeenResFiles[it]->findResourceID(tag, sndName, true);
 		if (id != 0xFFFF) {
-			archive = g_director->_allSeenResFiles[it];
+			archive = g_director->_allSeenResFiles[it].get();
 			break;
 		}
 	}

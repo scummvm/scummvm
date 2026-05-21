@@ -297,7 +297,7 @@ void showArchive() {
 			ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.3f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 			for (auto &it : g_director->_allSeenResFiles) {
-				Archive *archive = it._value;
+				Archive *archive = it._value.get();
 
 				if (ImGui::TreeNode(archive->getPathName().toString().c_str())) {
 					Common::Array<uint32> typeList = archive->getResourceTypeList();

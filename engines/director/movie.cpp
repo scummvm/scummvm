@@ -117,7 +117,7 @@ Movie::~Movie() {
 	delete _score;
 }
 
-void Movie::setArchive(Archive *archive) {
+void Movie::setArchive(Common::SharedPtr<Archive> archive) {
 	_movieArchive = archive;
 
 	if (archive->hasResource(MKTAG('M', 'C', 'N', 'M'), 0)) {
@@ -169,7 +169,7 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		uint16 libResourceId = stream.readUint16();
 		uint16 libId = i + 1;
 		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, minMember: %d, maxMember: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), minMember, maxMember, libResourceId, libId);
-		Archive *castArchive = _movieArchive;
+		Common::SharedPtr<Archive> castArchive = _movieArchive;
 		bool isExternal = !path.empty();
 		if (isExternal) {
 			Common::Path archivePath = findMoviePath(path);
@@ -424,7 +424,7 @@ void Movie::clearSharedCast() {
 void Movie::loadSharedCastsFrom(Common::Path &filename) {
 	clearSharedCast();
 
-	Archive *sharedCast = _vm->openArchive(filename);
+	Common::SharedPtr<Archive> sharedCast = _vm->openArchive(filename);
 
 	if (!sharedCast) {
 		warning("loadSharedCastsFrom(): No shared cast %s", filename.toString().c_str());
@@ -442,8 +442,8 @@ void Movie::loadSharedCastsFrom(Common::Path &filename) {
 	_sharedCast->loadArchive();
 }
 
-Archive *Movie::loadExternalCastFrom(Common::Path &filename) {
-	Archive *externalCast = nullptr;
+Common::SharedPtr<Archive> Movie::loadExternalCastFrom(Common::Path &filename) {
+	Common::SharedPtr<Archive> externalCast = nullptr;
 	externalCast = _vm->openArchive(filename);
 
 	if (!externalCast) {
@@ -468,7 +468,7 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 		}
 	}
 
-	Archive *castArchive = loadExternalCastFrom(filename);
+	Common::SharedPtr<Archive> castArchive = loadExternalCastFrom(filename);
 	if (!castArchive) {
 		return false;
 	}
