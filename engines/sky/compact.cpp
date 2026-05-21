@@ -463,10 +463,6 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 }
 
 uint8 *SkyCompact::createResetData(uint16 gameVersion) {
-	// fall back to actual cd version for ibass
-	if (gameVersion == 400)
-		gameVersion = 372;
-
 	_cptFile->seek(_resetDataPos);
 	uint32 dataSize = _cptFile->readUint16LE() * sizeof(uint16);
 	uint16 *resetBuf = (uint16 *)malloc(dataSize);

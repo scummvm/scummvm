@@ -50,9 +50,9 @@ struct Icon;
 
 #define FORE 1
 #define BACK 0
-#define NUM_INV_ANIMS	44	//unique textures
-#define NUM_INV_ICONS	20	//(max) number of on-screen items
-#define NUM_PROXIMITY_ICONS 16	//(max) number of proximity icons
+#define NUM_INV_ANIMS	44	// unique textures
+#define NUM_INV_ICONS	20	// (max) number of on-screen items
+#define NUM_PROXIMITY_ICONS 16	// (max) number of proximity icons
 
 typedef struct {
 	uint16 yCood;
@@ -74,6 +74,8 @@ enum UIIcon : uint8{
 	UI_ICON_RIGHT,
 	NUM_UI_ICONS
 };
+
+extern const int invIconId[];
 
 class Screen {
 public:
@@ -121,21 +123,43 @@ public:
 	Icon _uiIcon[NUM_UI_ICONS];
 	Icon _proximityIcon[NUM_PROXIMITY_ICONS];
 	Icon _invIcon[NUM_INV_ICONS];
+	Icon _dragIcon;
 
 	void setIcon(int idx, int x, int y);
 	void drawIbassIcon();
+	void drawIbassInventory();
 	void initIbassIcon(int idx, const char *filename);
 	void clearIbassIcon(int idx, bool fade);
 	void clearAllIbassIcons(bool fade);
 
 	bool isUIOpen();
+
+	void addInvIcon(int frame, int x, int y, bool highlighted = false);
 	void showInventory(int x1, int y1, int x2, int y2);
 	void hideInventory(void);
+	void clearAllInvIcons();
+	int getInventoryAnimIdx(int frame);
 
 	void setProximityIcon(int idx, int x, int y, float alpha, int frame);
 	void clearAllProximityIcons(bool fade = true);
 	void clearProximityIcon(int idx, bool fade = true);
 	void setProximityNotAnimate(int idx);
+
+	void setDragIcon(int frame, bool highlighted = false);
+	void clearDragIcon();
+	void setDragIconHighlight(bool highlighted);
+
+protected:
+
+	int _invX1;
+	int _invY1;
+	int _invX2;
+	int _invY2;
+	bool _invVisible;
+	int _invIconsInUse;
+
+	Animation *_invAnim[NUM_INV_ANIMS];
+
 
 private:
 	OSystem *_system;

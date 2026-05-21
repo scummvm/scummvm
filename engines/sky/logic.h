@@ -156,26 +156,20 @@ public:
 	void initScreen0();
 	void parseSaveData(uint32 *data);
 
-	void Start_inventory(uint32	highlightedId = 0) {
-		//normal gameplay inv
-		fnStartMenu(_scriptVariables[FIRST_ICON],highlightedId,0);
-	}
+	void startInventory(uint32 highlightedId = 0);
 
-	uint32 *Give_inv_list() {
+	uint32 *giveInvList() {
 		return &_objectList[0];
 	}
 
-	void KillInventory();
-
-	void BlankMouse() {
-		fnBlankMouse(0, 0, 0);
-	}
+	void killInventory();
 
 private:
 	void setupLogicTable();
 	void setupMcodeTable();
 	const LogicTable *_logicTable;
 	const McodeTable *_mcodeTable;
+	bool _liveInv;
 
 protected:
 	void push(uint32);

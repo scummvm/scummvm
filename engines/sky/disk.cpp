@@ -37,100 +37,99 @@ static const char *const dataFilename = "sky.dsk";
 static const char *const dinnerFilename = "sky.dnr";
 
 static int hashCompFunc(const void *m1, const void *m2) {
-	fileEntry *e1 = (fileEntry *)m1;
-	fileEntry *e2 = (fileEntry *)m2;
-	if (e1->filenum == e2->filenum)
+	FileEntry *e1 = (FileEntry *)m1;
+	FileEntry *e2 = (FileEntry *)m2;
+	if (e1->_fileNum == e2->_fileNum)
 		return 0;
-	return (e1->filenum < e2->filenum ? -1 : 1);
+	return (e1->_fileNum < e2->_fileNum ? -1 : 1);
 }
 
 Disk::Disk() {
 	_dataDiskHandle = new Common::File();
+	Common::File *dnrHandle = new Common::File();
 
-	if (SkyEngine::_isIbass()) {
+	if (SkyEngine::isIbass()) {
 		if (!_dataDiskHandle->open("bass.dat"))
 			error("Error opening bass.dat");
 
-		char magic[4];
+		byte magic[4];
 		_dataDiskHandle->read(magic, 4);
-		if (0 != strncmp("HSFS", magic, 4))
+		if (0 != memcmp(magic, "HSFS", 4))
 			error("Invalid bass.dat file");
 
 		_numFiles = _dataDiskHandle->readUint32LE();
-		_entry = new fileEntry[_numFiles];
+		_entry = new FileEntry[_numFiles];
 
-		//now populate the entry table
+		// now populate the entry table
 		for (uint32 i = 0; i < _numFiles; i++) {
-			_entry[i].filenum = _dataDiskHandle->readUint32LE();
-			_entry[i].offset = _dataDiskHandle->readUint32LE();
-			_entry[i].size = _dataDiskHandle->readUint32LE();
-			_entry[i].compressed_size = _dataDiskHandle->readUint32LE();
+			_entry[i]._fileNum = _dataDiskHandle->readUint32LE();
+			_entry[i]._offset = _dataDiskHandle->readUint32LE();
+			_entry[i]._size = _dataDiskHandle->readUint32LE();
+			_entry[i]._compressedSize = _dataDiskHandle->readUint32LE();
 		}
 
  		memset(_buildList, 0, 60 * 2);
  		memset(_loadedFilesList, 0, 60 * 4);
-
-	} else {
-		Common::File *dnrHandle = new Common::File();
-
-		dnrHandle->open(dinnerFilename);
-		if (!dnrHandle->isOpen())
-			error("Could not open %s", dinnerFilename);
-
-		if (!(_dinnerTableEntries = dnrHandle->readUint32LE()))
-			error("Error reading from sky.dnr"); //even though it was opened correctly?!
-
-		_dinnerTableArea = (uint8 *)malloc(_dinnerTableEntries * 8);
-		uint32 entriesRead = dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
-
-		if (entriesRead != _dinnerTableEntries)
-			error("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
-
-		_dataDiskHandle->open(dataFilename);
-		if (!_dataDiskHandle->isOpen())
-			error("Error opening %s", dataFilename);
-
-		debug("Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
-
-		memset(_buildList, 0, 60 * 2);
-		memset(_loadedFilesList, 0, 60 * 4);
-
-		dnrHandle->close();
-		delete dnrHandle;
+		return;
 	}
+
+	dnrHandle->open(dinnerFilename);
+	if (!dnrHandle->isOpen())
+		error("Could not open %s", dinnerFilename);
+
+	if (!(_dinnerTableEntries = dnrHandle->readUint32LE()))
+		error("Error reading from sky.dnr"); //even though it was opened correctly?!
+
+	_dinnerTableArea = (uint8 *)malloc(_dinnerTableEntries * 8);
+	uint32 entriesRead = dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
+
+	if (entriesRead != _dinnerTableEntries)
+		error("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
+
+	_dataDiskHandle->open(dataFilename);
+	if (!_dataDiskHandle->isOpen())
+		error("Error opening %s", dataFilename);
+
+	debug("Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
+
+	memset(_buildList, 0, 60 * 2);
+	memset(_loadedFilesList, 0, 60 * 4);
+
+	dnrHandle->close();
+	delete dnrHandle;
 }
 
 Disk::~Disk() {
 	if (_dataDiskHandle->isOpen())
 		_dataDiskHandle->close();
 	fnFlushBuffers();
-	if (!SkyEngine::_isIbass())
+	if (!SkyEngine::isIbass())
 		free(_dinnerTableArea);
 	delete _dataDiskHandle;
-	if (SkyEngine::_isIbass())
+	if (SkyEngine::isIbass())
 		delete[] _entry;
 	_entry = 0;
 }
 
-animation *Disk::loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat) {
+Animation *Disk::loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat) {
 	Common::File fp;
 
 	if (!fp.open(filename))
 		return 0;
 
-	animation *anim = new animation;
+	Animation *anim = new Animation;
 
 	int num_frames;
 	int width;
 	int height;
-	char magic[4];
+	byte magic[4];
 
 	fp.read(magic, 4);
 	num_frames = fp.readUint32LE();
 	width = fp.readUint32LE();
 	height = fp.readUint32LE();
 
-	if (0 != strncmp(magic, "JPTX", 4) || width > 64 || height > 64)
+	if (0 != memcmp(magic, "JPTX", 4) || width > 64 || height > 64)
 		error("Too large or invalid texture!\n");
 
 	if (num_frames >= MAX_FRAMES)
@@ -139,10 +138,10 @@ animation *Disk::loadAnim(const char *filename, const Graphics::PixelFormat &tar
 	int scaledWidth = width  * 2 / 3;
 	int scaledHeight = height * 2 / 3;
 
-	anim->num_frames = num_frames;
-	anim->width = scaledWidth;
-	anim->height = scaledHeight;
-	anim->frames = new Graphics::Surface*[MAX_FRAMES];
+	anim->_numFrames = num_frames;
+	anim->_width = scaledWidth;
+	anim->_height = scaledHeight;
+	anim->_frames = new Graphics::Surface*[MAX_FRAMES];
 
 	for (int frame = 0; frame < num_frames; frame++) {
 		Graphics::Surface tempCanvas;
@@ -154,9 +153,11 @@ animation *Disk::loadAnim(const char *filename, const Graphics::PixelFormat &tar
 		for (int i = 0; i < totalPixels; i++)
 			tempPixels[i] = fp.readUint32LE();
 
+		tempCanvas.flipVertical(Common::Rect(width, height));
+
 		Graphics::Surface *scaledCanvas = tempCanvas.scale(scaledWidth, scaledHeight);
 
-		anim->frames[frame] = scaledCanvas->convertTo(targetFormat);
+		anim->_frames[frame] = scaledCanvas->convertTo(targetFormat);
 		scaledCanvas->free();
 		delete scaledCanvas;
 	}
@@ -168,128 +169,127 @@ bool Disk::fileExists(uint16 fileNr) {
 	return (getFileInfo(fileNr) != NULL);
 }
 
-fileEntry *Disk::getEntry(uint32 filenum) {
-	fileEntry searchEntry;
-	searchEntry.filenum = filenum;
-	return (fileEntry *)bsearch(&searchEntry, _entry, _numFiles, sizeof(fileEntry), hashCompFunc);
+FileEntry *Disk::getEntry(uint32 filenum) {
+	FileEntry searchEntry;
+	searchEntry._fileNum = filenum;
+	return (FileEntry *)bsearch(&searchEntry, _entry, _numFiles, sizeof(FileEntry), hashCompFunc);
 }
 
 // allocate memory, load the file and return a pointer
 uint8 *Disk::loadFile(uint16 fileNr) {
 
-	if (SkyEngine::_isIbass()) {
-		fileEntry *entry = getEntry(fileNr);
+	if (SkyEngine::isIbass()) {
+		FileEntry *entry = getEntry(fileNr);
 		if (!entry) {
 			debug(1, "iBass: File %d not found!", fileNr);
 			return NULL;
 		}
-		uint8 *compressedData = (uint8 *)malloc(entry->compressed_size);
-		uint8 *uncompressedData = (uint8 *)malloc(entry->size);
-		_dataDiskHandle->seek(entry->offset, SEEK_SET);
-		uint32 bytesRead = _dataDiskHandle->read(compressedData, entry->compressed_size);
-		assert(entry->compressed_size == bytesRead);
+		uint8 *compressedData = (uint8 *)malloc(entry->_compressedSize);
+		uint8 *uncompressedData = (uint8 *)malloc(entry->_size);
+		_dataDiskHandle->seek(entry->_offset, SEEK_SET);
+		uint32 bytesRead = _dataDiskHandle->read(compressedData, entry->_compressedSize);
+		assert(entry->_compressedSize == bytesRead);
 
-		unsigned long destLen = entry->size;
-		bool result = Common::inflateZlib(uncompressedData, &destLen, compressedData, entry->compressed_size);
+		unsigned long destLen = entry->_size;
+		bool result = Common::inflateZlib(uncompressedData, &destLen, compressedData, entry->_compressedSize);
 		assert(result == true);
 
 		free(compressedData);
-		_lastLoadedFileSize = entry->size;
+		_lastLoadedFileSize = entry->_size;
 		return uncompressedData;
-	} else {
-		uint8 cflag;
+	}
+	uint8 cflag;
 
-		debug(3, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
+	debug(3, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
 
-		uint8 *fileInfoPtr = getFileInfo(fileNr);
-		if (fileInfoPtr == NULL) {
-			debug(1, "File %d not found", fileNr);
-			return NULL;
-		}
+	uint8 *fileInfoPtr = getFileInfo(fileNr);
+	if (fileInfoPtr == NULL) {
+		debug(1, "File %d not found", fileNr);
+		return NULL;
+	}
 
-		uint32 fileFlags = READ_LE_UINT24(fileInfoPtr + 5);
-		uint32 fileSize = fileFlags & 0x03fffff;
-		uint32 fileOffset = READ_LE_UINT32(fileInfoPtr + 2) & 0x0ffffff;
+	uint32 fileFlags = READ_LE_UINT24(fileInfoPtr + 5);
+	uint32 fileSize = fileFlags & 0x03fffff;
+	uint32 fileOffset = READ_LE_UINT32(fileInfoPtr + 2) & 0x0ffffff;
 
-		_lastLoadedFileSize = fileSize;
-		cflag = (uint8)((fileOffset >> 23) & 0x1);
-		fileOffset &= 0x7FFFFF;
+	_lastLoadedFileSize = fileSize;
+	cflag = (uint8)((fileOffset >> 23) & 0x1);
+	fileOffset &= 0x7FFFFF;
 
-		if (cflag) {
-			if (SkyEngine::_systemVars->gameVersion == 331)
-				fileOffset <<= 3;
-			else
-				fileOffset <<= 4;
-		}
+	if (cflag) {
+		if (SkyEngine::_systemVars->gameVersion == 331)
+			fileOffset <<= 3;
+		else
+			fileOffset <<= 4;
+	}
 
-		uint8 *fileDest = (uint8 *)malloc(fileSize + 4); // allocate memory for file
+	uint8 *fileDest = (uint8 *)malloc(fileSize + 4); // allocate memory for file
 
-		_dataDiskHandle->seek(fileOffset, SEEK_SET);
+	_dataDiskHandle->seek(fileOffset, SEEK_SET);
 
-		//now read in the data
-		int32 bytesRead = _dataDiskHandle->read(fileDest, fileSize);
+	//now read in the data
+	int32 bytesRead = _dataDiskHandle->read(fileDest, fileSize);
 
-		if (bytesRead != (int32)fileSize)
-			warning("Unable to read %d bytes from datadisk (%d bytes read)", fileSize, bytesRead);
+	if (bytesRead != (int32)fileSize)
+		warning("Unable to read %d bytes from datadisk (%d bytes read)", fileSize, bytesRead);
 
-		cflag = (uint8)((fileFlags >> 23) & 0x1);
-		//if cflag == 0 then file is compressed, 1 == uncompressed
+	cflag = (uint8)((fileFlags >> 23) & 0x1);
+	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-		DataFileHeader *fileHeader = (DataFileHeader *)fileDest;
+	DataFileHeader *fileHeader = (DataFileHeader *)fileDest;
 
-		if ((!cflag) && ((FROM_LE_16(fileHeader->flag) >> 7) & 1)) {
-			debug(4, "File is RNC compressed.");
+	if ((!cflag) && ((FROM_LE_16(fileHeader->flag) >> 7) & 1)) {
+		debug(4, "File is RNC compressed.");
 
-			uint32 decompSize = (FROM_LE_16(fileHeader->flag) & ~0xFF) << 8;
-			decompSize |= FROM_LE_16(fileHeader->s_tot_size);
+		uint32 decompSize = (FROM_LE_16(fileHeader->flag) & ~0xFF) << 8;
+		decompSize |= FROM_LE_16(fileHeader->s_tot_size);
 
-			uint8 *uncompDest = (uint8 *)malloc(decompSize);
+		uint8 *uncompDest = (uint8 *)malloc(decompSize);
 
-			int32 unpackLen;
-			void *output, *input = fileDest + sizeof(DataFileHeader);
+		int32 unpackLen;
+		void *output, *input = fileDest + sizeof(DataFileHeader);
 
-			if ((fileFlags >> 22) & 0x1) { //do we include the header?
-				// don't return the file's header
-				output = uncompDest;
-				unpackLen = _rncDecoder.unpackM1(input, fileSize - sizeof(DataFileHeader), output);
-			} else {
-	#ifdef SCUMM_BIG_ENDIAN
-				// Convert DataFileHeader to BE (it only consists of 16 bit words)
-				uint16 *headPtr = (uint16 *)fileDest;
-				for (uint i = 0; i < sizeof(DataFileHeader) / 2; i++)
-					*(headPtr + i) = READ_LE_UINT16(headPtr + i);
-	#endif
-
-				memcpy(uncompDest, fileDest, sizeof(DataFileHeader));
-				output = uncompDest + sizeof(DataFileHeader);
-				unpackLen = _rncDecoder.unpackM1(input, fileSize - sizeof(DataFileHeader), output);
-				if (unpackLen)
-					unpackLen += sizeof(DataFileHeader);
-			}
-
-			debug(5, "UnpackM1 returned: %d", unpackLen);
-
-			if (unpackLen == 0) { //Unpack returned 0: file was probably not packed.
-				free(uncompDest);
-				return fileDest;
-			} else {
-				if (unpackLen != (int32)decompSize)
-					debug(1, "ERROR: File %d: invalid decomp size! (was: %d, should be: %d)", fileNr, unpackLen, decompSize);
-				_lastLoadedFileSize = decompSize;
-
-				free(fileDest);
-				return uncompDest;
-			}
+		if ((fileFlags >> 22) & 0x1) { //do we include the header?
+			// don't return the file's header
+			output = uncompDest;
+			unpackLen = _rncDecoder.unpackM1(input, fileSize - sizeof(DataFileHeader), output);
 		} else {
-	#ifdef SCUMM_BIG_ENDIAN
-			if (!cflag) {
-				uint16 *headPtr = (uint16 *)fileDest;
-				for (uint i = 0; i < sizeof(DataFileHeader) / 2; i++)
-					*(headPtr + i) = READ_LE_UINT16(headPtr + i);
-			}
-	#endif
-			return fileDest;
+#ifdef SCUMM_BIG_ENDIAN
+			// Convert DataFileHeader to BE (it only consists of 16 bit words)
+			uint16 *headPtr = (uint16 *)fileDest;
+			for (uint i = 0; i < sizeof(DataFileHeader) / 2; i++)
+				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
+#endif
+
+			memcpy(uncompDest, fileDest, sizeof(DataFileHeader));
+			output = uncompDest + sizeof(DataFileHeader);
+			unpackLen = _rncDecoder.unpackM1(input, fileSize - sizeof(DataFileHeader), output);
+			if (unpackLen)
+				unpackLen += sizeof(DataFileHeader);
 		}
+
+		debug(5, "UnpackM1 returned: %d", unpackLen);
+
+		if (unpackLen == 0) { //Unpack returned 0: file was probably not packed.
+			free(uncompDest);
+			return fileDest;
+		} else {
+			if (unpackLen != (int32)decompSize)
+				debug(1, "ERROR: File %d: invalid decomp size! (was: %d, should be: %d)", fileNr, unpackLen, decompSize);
+			_lastLoadedFileSize = decompSize;
+
+			free(fileDest);
+			return uncompDest;
+		}
+	} else {
+#ifdef SCUMM_BIG_ENDIAN
+		if (!cflag) {
+			uint16 *headPtr = (uint16 *)fileDest;
+			for (uint i = 0; i < sizeof(DataFileHeader) / 2; i++)
+				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
+		}
+#endif
+		return fileDest;
 	}
 }
 
@@ -449,8 +449,8 @@ void Disk::dumpFile(uint16 fileNr) {
 }
 
 uint32 Disk::determineGameVersion() {
-	if (SkyEngine::_isIbass())
-		return 400; // force the ibass version and immediately exit the function
+	if (SkyEngine::isIbass())
+		return 372; // fall back to actual cd version for ibass
 
 	//determine game version based on number of entries in dinner table
 	switch (_dinnerTableEntries) {

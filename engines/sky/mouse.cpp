@@ -20,7 +20,6 @@
  */
 
 
-#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -40,6 +39,7 @@ namespace Sky {
 #define MICE_FILE	60300
 #define NO_MAIN_OBJECTS	24
 #define NO_LINC_OBJECTS	21
+
 uint32 Mouse::_mouseMainObjects[24] = {
 	65,
 	9,
@@ -91,10 +91,11 @@ uint32 Mouse::_mouseLincObjects[21] = {
 	24829
 };
 
-Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact) {
+Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact, Screen *skyScreen) {
 	_skyDisk = skyDisk;
 	_skyCompact = skyCompact;
 	_system = system;
+	_skyScreen = skyScreen;
 	_mouseB = 0;
 	_currentCursor = 6;
 	_touchId = 0;
@@ -110,27 +111,27 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact) {
 }
 
 void Mouse::resetUI() {
-	//popup
+	// popup
 	_clickedNum = 0;
 	_prevMouseOn = false;
 	_touchId = 0;
 	_holding = false;
 	_timeOn = 0;
 	_fadeOut = 0;
-	m_mode = Gameplay;//master ui mode
+	M_MODE = GAMEPLAY; // master ui mode
 	_isFloor = false;
 	_isExit = false;
 	_actionFlash = false;
 	_floorLock = false;
 
-	if (((SkyEngine *)g_engine)->getScreen()) {
-		((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons(false);
-		((SkyEngine *)g_engine)->getScreen()->clearAllIbassIcons(false);
+	if (_skyScreen) {
+		_skyScreen->clearAllProximityIcons(false);
+		_skyScreen->clearAllIbassIcons(false);
 	}
 
 }
 
-Mouse::~Mouse() {
+Mouse::~Mouse( ){
 	free (_miceData);
 	free (_objectMouseData);
 }
@@ -144,8 +145,8 @@ bool Mouse::fnAddHuman() {
 	//reintroduce the mouse so that the human can control the player
 	//could still be switched out at high-level
 
-	if (m_mode == Gameplay)
-		m_mode = MustRelease;
+	if (M_MODE == GAMEPLAY)
+		M_MODE = MUST_RELEASE;
 
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
 		Logic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
@@ -231,7 +232,7 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	_currentCursor = frameNum;
 
-	if (SkyEngine::_isIbass()) {
+	if (SkyEngine::isIbass()) {
 		debug("ibass cursor path executed\n");
 		CursorMan.setDefaultArrowCursor();
 		CursorMan.showMouse(true);
@@ -252,7 +253,7 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 		CursorMan.showMouse(true);
 }
 
-bool Mouse::IsUILive() {
+bool Mouse::isUILive() {
 	if (!Logic::_scriptVariables[MOUSE_STOP] && (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) && (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 2)) )
 		return	true;
 
@@ -262,55 +263,52 @@ bool Mouse::IsUILive() {
 void Mouse::mouseEngine() {
 	_logicClick = (_mouseB > 0); // click signal is available for Logic for one gamecycle
 
-	if (SkyEngine::_isIbass()) {
-		m_mode = Gameplay; // TODO: REMOVE THIS AFTER INTRO IS IMPLEMENTED
+	if (SkyEngine::isIbass()) {
 		if (_actionFlash) {
 			_actionFlashTime--;
 			if (!_actionFlashTime)
 				_actionFlash = false;
 
 			if (!(_actionFlashTime & 1))
-				((SkyEngine *)g_engine)->getScreen()->clearIbassIcon(_actionFlashIcon, false);
+				_skyScreen->clearIbassIcon(_actionFlashIcon, false);
 			else
-				((SkyEngine *)g_engine)->getScreen()->setIcon(_actionFlashIcon, _actionFlashX, _actionFlashY);
+				_skyScreen->setIcon(_actionFlashIcon, _actionFlashX, _actionFlashY);
 		}
 
-		// if (!IsUILive())
-		// 	return;
-
-		switch (m_mode) {
-			case Alert_to_game:
+		switch (M_MODE) {
+			case ALERT_TO_GAME:
 				if (!_mouseB)
 					return;
 
-				((SkyEngine *)g_engine)->getScreen()->hideInventory();
-				m_mode=MustRelease;
+				_skyScreen->hideInventory();
+				M_MODE = MUST_RELEASE;
 				break;
 
-			case MustRelease:
+			case MUST_RELEASE:
 				if (_mouseB)
 					return;
 
 				resetUI();
-				m_mode=Gameplay;
+				M_MODE = GAMEPLAY;
 				break;
 
-			case Gameplay:
+			case GAMEPLAY:
 				pointerEngine(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
-				if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 2))
-					buttonEngine1();
 				break;
 
-			case PreInventory:
+			case PRE_INVENTORY:
 				if (_mouseB)
 					return;
 
-				m_mode=Inventory;
+				M_MODE = INVENTORY;
 				break;
 
-			case Inventory:
-			case InventoryUseOn:
-			case Text_chooser:
+			case INVENTORY:
+				if (isLincInv())
+					lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+
+			case INVENTORY_USE_ON:
+			case TEXT_CHOOSER:
 				break;
 		}
 
@@ -331,50 +329,48 @@ void Mouse::mouseEngine() {
 int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 	uint32 currentListNum = Logic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
-	int	midx,midy;
+	int midx, midy;
 	Compact *itemData;
 	uint16 itemNum;
-	int	found=0;
-	int	nearestDist=99999;
-	int	nearestId=0;
-	_nearestProximityIconId=0;
+	int found = 0;
+	int nearestDist = 99999;
+	int nearestId = 0;
+	_nearestProximityIconId = 0;
 
-	static int	proxFrame=0;
-	static int	proxFrameSpeed=0;
+	static int  proxFrame = 0;
+	static int  proxFrameSpeed = 0;
 
 	proxFrameSpeed++;
-	if	(proxFrameSpeed&1)
+	if (proxFrameSpeed & 1)
 		proxFrame++;
-	if	(proxFrame==3)
-		proxFrame=0;
+	if (proxFrame == 3)
+		proxFrame = 0;
 
-	//near inv button?
-	if (yPos>HOTSPOT_invy && xPos<HOTSPOT_invx)
-		return	0;
+	// near inv button?
+	if (yPos > HOTSPOT_invy && xPos < HOTSPOT_invx)
+		return  0;
 
-	//not on same as last time, or was not on anything previously, so re-scan all objects
+	// not on same as last time, or was not on anything previously, so re-scan all objects
 	do {
 		currentList = (uint16 *)_skyCompact->fetchCpt(currentListNum);
 		while ((*currentList != 0) && (*currentList != 0xFFFF)) {
 			itemNum = *currentList;
 			itemData = _skyCompact->fetchCpt(itemNum);
 			currentList++;
-
 			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (itemData->status & 16)) {
-				//hotspot, if a non-floor object
-				if (itemData->mouseOn && yPos > (20+TOP_LEFT_Y)) {
+				// hotspot, if a non-floor object
+				if (itemData->mouseOn && yPos > (20 + TOP_LEFT_Y)) {
 					midx = giveXcood(itemData, itemNum);
 					midy = giveYcood(itemData, itemNum);
 
-					//skip very high hotspots - eg the old inventory catch object
+					// skip very high hotspots - eg the old inventory catch object
 					if (midy < (TOP_LEFT_Y + 5))
 						continue;
 
-					//how far from finger?
-					int	d = abs(xPos - midx) + abs(yPos - midy);
+					int d = abs(xPos - midx) + abs(yPos - midy);
 					if (d < GLOW_DIST) {
 						float opacity = 1.0 - ((d * 1.0) / GLOW_DIST);
-						((SkyEngine *)g_engine)->getScreen()->setProximityIcon(found++, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), opacity, proxFrame);
+						_skyScreen->setProximityIcon(found++, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), opacity, proxFrame);
 					}
 
 					if (d < nearestDist) {
@@ -395,175 +391,171 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 
 UIIcon Mouse::getInteractIcon(uint32 id) {
 
-	switch(id) {
-		case	70://screen 1 stairs
-		case	4119://elevator hole
-		case	8210://outside stairs to furnace
-			return	UI_ICON_DOWN;//
+	switch (id) {
+	case 70: // screen 1 stairs
+	case 4119: // elevator hole
+	case 8210: // outside stairs to furnace
+		return UI_ICON_DOWN;
 
-		case	69://screen 1 stairs
-			return	UI_ICON_UP;//
+	case 69: // screen 1 stairs
+		return UI_ICON_UP;//
 
-		case	1://joey
-		case	4122://hobbins
-		case	16://lamb
-		case	8324://guard
-		case	8211://sam
-		case	8301://norville
-		case	8544://clipboard man
-		case	136://power room man
-		case	12546://galagher
-		case	12442://insurance man
-		case	12430://anchor man
-		case	12407://dr burke
-		case	16516://henri
-		case	16601://guard
-		case	16441://piermont
-		case	16599://gameboy
-		case	16600://gardener
-		case	16701://barman
-		case	16772://babs
-		case	16737://man1
-		case	16731://man2
-//		case	20511://medi joey
-		case	20911://ken
-		case	137://anita
-	//	case	12407://patient
-		case	12289://mr cool
-		case	8205://rad suit man
-		case	8309://guard walkway
-		case	21014://father @ end
-			return	UI_ICON_MOUTH;//talk
+	case 1: // joey
+	case 4122: // hobbins
+	case 16: // lamb
+	case 8324: // guard
+	case 8211: // sam
+	case 8301: // norville
+	case 8544: // clipboard man
+	case 136: // power room man
+	case 12546: // galagher
+	case 12442: // insurance man
+	case 12430: // anchor man
+	case 12407: // dr burke
+	case 16516: // henri
+	case 16601: // guard
+	case 16441: // piermont
+	case 16599: // gameboy
+	case 16600: // gardener
+	case 16701: // barman
+	case 16772: // babs
+	case 16737: // man1
+	case 16731: // man2
+	case 20911: // ken
+	case 137: // anita
+	case 12289: // mr cool
+	case 8205: // rad suit man
+	case 8309: // guard walkway
+	case 21014: // father @ end
+		return UI_ICON_MOUTH; // talk
 
-		case	4151://notice
-		case	4152://ledge-side notice
-		case	12383://sculpture
-		case	12388://mural
-		case	12386://poster
-		case	12387://ins poster
-		case	12378://surgery poster
-		case	12375://surgery poster
-		case	12376://surgery poster
-		case	12377://surgery poster
-		case	12401://dr poster
-		case	12402://dr poster
-		case	12545://ins poster
-		case	20678://crowbar on floor
-		case	12508://reich poster
-		case	12507://reich cert
-		case	12495://reich poster
-		case	8500://sensors
-		case	20576://medical computer monitor
-		case	20578://medical computer
-		case	8543://securty hq linc terminal
-			return	UI_ICON_LOOK;//look at
+	case 4151: // notice
+	case 4152: // ledge-side notice
+	case 12383: // sculpture
+	case 2388: // mural
+	case 12386: // poster
+	case 12387: // ins poster
+	case 12378: // surgery poster
+	case 12375: // surgery poster
+	case 12376: // surgery poster
+	case 12377: // surgery poster
+	case 12401: // dr poster
+	case 12402: // dr poster
+	case 12545: // ins poster
+	case 20678: // crowbar on floor
+	case 12508: // reich poster
+	case 12507: // reich cert
+	case 12495: // reich poster
+	case 8500: // sensors
+	case 20576: // medical computer monitor
+	case 20578: // medical computer
+	case 8543: // securty hq linc terminal
+		return UI_ICON_LOOK;//look at
 
-		case	4113://sandwhich
-		case	4114://sandwhich
-		case	8://reich card
-		case	9://sunglasses
-		case	8442://key
-		case	8443://wd40
-		case	8446://putty
-		case	24642://linc item
-		case	24602://linc item
-		case	16501://secateurs
-		case	16747://glass
-		case	20527://brick
-		case	20660://tongs
-		case	71://anita card
-		case	49://dog biscuits
-		case	24638://linc
-		case	24639://linc
-		case	24604://linc
-		case	12588://light bulb
-		case	12501://magazine
-		case	12565://tour ticket
-		case	8517://reactor anita card??!
-		case	20526://plaster
-		case	24641://linc world tuning fork
-		case	24787://virus
-		case	12517://video
-		case	12434://anchor
-		case	12435://anchor
-			return	UI_ICON_HAND;
+	case 4113: // sandwhich
+	case 4114: // sandwhich
+	case 8: // reich card
+	case 9: // sunglasses
+	case 8442: // key
+	case 8443: // wd40
+	case 8446: // putty
+	case 24642: // linc item
+	case 24602: // linc item
+	case 16501: // secateurs
+	case 16747: // glass
+	case 20527: // brick
+	case 20660: // tongs
+	case 71: // anita card
+	case 49: // dog biscuits
+	case 24638: // linc
+	case 24639: // linc
+	case 24604: // linc
+	case 12588: // light bulb
+	case 12501: // magazine
+	case 12565: // tour ticket
+	case 8517: // reactor anita card??!
+	case 20526: // plaster
+	case 24641: // linc world tuning fork
+	case 24787: // virus
+	case 12517: // video
+	case 12434: // anchor
+	case 12435: // anchor
+		return  UI_ICON_HAND;
 	}
 
-	return	UI_ICON_USE;
+	return UI_ICON_USE;
 }
 
 bool Mouse::hasSingleInteractIcon(uint32 id) {
-	switch(id) {
-		case	1://joey
-		case	4122://hobbins
-		case	4151://notice
-		case	4152://ledge-side notice
-		case	16://lamb
-		case	8500://sensors
-		case	8324://guard
-		case	8211://sam
-		case	8301://norville
-		case	8544://clipboard man
-		case	136://power room man
-		case	12546://galagher
-		case	12383://sculpture
-		case	12442://insurance man
-		case	12388://mural
-		case	12386://ins poster
-		case	12387://ins poster
-		case	12430://anchor man
-		case	12378://surgery poster
-		case	12375://surgery poster
-		case	12376://surgery poster
-		case	12377://surgery poster
-		case	12407://dr burke
-		case	12401://dr poster
-		case	12402://dr poster
-		case	12545://ins poster
-		case	24810://linc window button
-		case	16516://henri
-		case	16601://guard
-		case	16441://piermont
-		case	16599://gameboy
-		case	16600://gardener
-		case	16701://barman
-		case	16772://babs
-		case	16737://man1
-		case	16731://man2
-//		case	20511://medi joey
-		case	20911://ken
-		case	137://anita
-		case	12508://reich poster
-		case	12507://reich cert
-		case	12495://reich poster
-//		case	12407://patient
-		case	12289://mr cool
-		case	8205://rad suit man
-		case	8309://guard walkway
+	switch (id) {
+	case    1: // joey
+	case    4122: // hobbins
+	case    4151: // notice
+	case    4152: // ledge-side notice
+	case    16: // lamb
+	case    8500: // sensors
+	case    8324: // guard
+	case    8211: // sam
+	case    8301: // norville
+	case    8544: // clipboard man
+	case    136: // power room man
+	case    12546: // galagher
+	case    12383: // sculpture
+	case    12442: // insurance man
+	case    12388: // mural
+	case    12386: // ins poster
+	case    12387: // ins poster
+	case    12430: // anchor man
+	case    12378: // surgery poster
+	case    12375: // surgery poster
+	case    12376: // surgery poster
+	case    12377: // surgery poster
+	case    12407: // dr burke
+	case    12401: // dr poster
+	case    12402: // dr poster
+	case    12545: // ins poster
+	case    24810: // linc window button
+	case    16516: // henri
+	case    16601: // guard
+	case    16441: // piermont
+	case    16599: // gameboy
+	case    16600: // gardener
+	case    16701: // barman
+	case    16772: // babs
+	case    16737: // man1
+	case    16731: // man2
+	case    20911: // ken
+	case    137: // anita
+	case    12508: // reich poster
+	case    12507: // reich cert
+	case    12495: // reich poster
+	case    12289: // mr cool
+	case    8205: // rad suit man
+	case    8309: // guard walkway
 
-		case	20576://medical computer monitor
-		case	20578://medical computer
+	case    20576: // medical computer monitor
+	case    20578: // medical computer
 
-		case	24586://linc maze
-		case	24592://linc maze
-		case	24633://linc maze
-		case	24634://linc maze
-		case	24593://linc maze
-		case	24594://linc maze
-		case	24595://linc maze
-		case	24598://linc maze
-		case	8543://securty hq linc terminal
+	case    24586: // linc maze
+	case    24592: // linc maze
+	case    24633: // linc maze
+	case    24634: // linc maze
+	case    24593: // linc maze
+	case    24594: // linc maze
+	case    24595: // linc maze
+	case    24598: // linc maze
+	case    8543: // securty hq linc terminal
 
-		case	69://screen 1 stairs
-		case	70://screen 1 stairs
-		case	4119://elevator hole
-		case	8210://outside stairs to furnace
+	case    69: // screen 1 stairs
+	case    70: // screen 1 stairs
+	case    4119: // elevator hole
+	case    8210: // outside stairs to furnace
 
-		case	21014://father @ end
-				return	true;
+	case    21014: // father @ end
+		return  true;
 	}
 
-	return	false;
+	return  false;
 }
 
 uint16 Mouse::giveXcood(Compact *itemData, uint32 id) {
@@ -573,318 +565,938 @@ uint16 Mouse::giveXcood(Compact *itemData, uint32 id) {
 	midy = itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY >> 1);
 
 	if (mid < HOTSPOT_invx && midy > HOTSPOT_invy)
-		return	HOTSPOT_invx + 16;
+		return  HOTSPOT_invx + 16;
 
 
-	//not lamb
+	// not lamb
 	if (id != 16) {
-		if	(mid > 428)
-			return	428;
-		if	(mid < 142)
-			return	142;
+		if (mid > 428)
+			return  428;
+		if (mid < 142)
+			return  142;
 	}
 
-	switch(id) {
-		case	4112:{mid=258;break;}//cupboard door
-		case	4113:{mid=254;break;}//sandwich
-		case	4114:{mid=254;break;}//spanner
+	switch (id) {
+	case 4112: {
+		mid = 258; // cupboard door
+		break;
+	}
+	case 4113: {
+		mid = 254; // sandwich
+		break;
+	}
+	case 4114: {
+		mid = 254; // spanner
+		break;
+	}
 
-		case	12358:	{mid=428;break;}//bellevue - missing exit
-		case	12681:	{mid=428;break;}//bellevue
-		case	12349:	{mid=142;break;}//bellevue
-		case	12347:	{mid=428;break;}//bellevue
-		case	90:{mid=404;break;}//first room, door
-		case	97:{mid=190;break;}//ledge room, door
-		case	4116:{mid=269;break;}//elevator
-		case	4119:{mid=269;break;}//hole
-		case	4110:{mid=356;break;}//lathe
-		case	8248:{mid=357;break;}//walkway to security lobby
-		case	8238:{mid=181;break;}//walkway to power
-		case	8317:{mid=426;break;}//walkway to crash
-		case	8341:{mid=173;break;}//factory to walkway
-		case	8344:{mid=433;break;}//factory to factory 2
-		case	8500:{mid=224;break;}//sensors
-		case	8355:{mid=428;break;}//factory 2 to factory 3
-		case	8446:{mid=226;break;}//putty
-		case	8438:{mid=226;break;}//gangway
-		case	12680:{mid=201;break;}//exit
-		case	12679:{mid=307;break;}//exit
-		case	12678:{mid=179;break;}//exit
-		case	12677:{mid=319;break;}//exit
-		case	12324:{mid=191;break;}//exit
-		case	12336:{mid=182;break;}//exit
-		case	12442:{mid=376;break;}//exit
-		case	8483:{mid=225;break;}//console
-		case	12641:{mid=158;break;}//exit
+	case 12358:  {
+		mid = 428; // bellevue - missing exit
+		break;
+	}
+	case 12681:  {
+		mid = 428; // bellevue
+		break;
+	}
+	case 12349:  {
+		mid = 142; // bellevue
+		break;
+	}
+	case 12347:  {
+		mid = 428; // bellevue
+		break;
+	}
+	case 90: {
+		mid = 404; // first room, door
+		break;
+	}
+	case 97: {
+		mid = 190; // ledge room, door
+		break;
+	}
+	case 4116: {
+		mid = 269; // elevator
+		break;
+	}
+	case 4119: {
+		mid = 269; // hole
+		break;
+	}
+	case 4110: {
+		mid = 356; // lathe
+		break;
+	}
+	case 8248: {
+		mid = 357; // walkway to security lobby
+		break;
+	}
+	case 8238: {
+		mid = 181; // walkway to power
+		break;
+	}
+	case 8317: {
+		mid = 426; // walkway to crash
+		break;
+	}
+	case 8341: {
+		mid = 173; // factory to walkway
+		break;
+	}
+	case 8344: {
+		mid = 433; // factory to factory 2
+		break;
+	}
+	case 8500: {
+		mid = 224; // sensors
+		break;
+	}
+	case 8355: {
+		mid = 428; // factory 2 to factory 3
+		break;
+	}
+	case 8446: {
+		mid = 226; // putty
+		break;
+	}
+	case 8438: {
+		mid = 226; // gangway
+		break;
+	}
+	case 12680: {
+		mid = 201; // exit
+		break;
+	}
+	case 12679: {
+		mid = 307; // exit
+		break;
+	}
+	case 12678: {
+		mid = 179; // exit
+		break;
+	}
+	case 12677: {
+		mid = 319; // exit
+		break;
+	}
+	case 12324: {
+		mid = 191; // exit
+		break;
+	}
+	case 12336: {
+		mid = 182; // exit
+		break;
+	}
+	case 12442: {
+		mid = 376; // exit
+		break;
+	}
+	case 8483: {
+		mid = 225; // console
+		break;
+	}
+	case 12641: {
+		mid = 158; // exit
+		break;
+	}
 
-		//linc
-		case	12633:{mid=190;break;}//maze
-		case	24586:{mid=210;break;}//maze
-		case	24592:{mid=288;break;}//maze mid-bot
-		case	24593:{mid=400;break;}//maze mid-bot
-		case	24594:{mid=203;break;}//maze left-mid
-		case	24595:{mid=299;break;}//maze left-mid
+	// linc
+	case 12633: {
+		mid = 190; // maze
+		break;
+	}
+	case 24586: {
+		mid = 210; // maze
+		break;
+	}
+	case 24592: {
+		mid = 288; // maze mid-bot
+		break;
+	}
+	case 24593: {
+		mid = 400; // maze mid-bot
+		break;
+	}
+	case 24594: {
+		mid = 203; // maze left-mid
+		break;
+	}
+	case 24595: {
+		mid = 299; // maze left-mid
+		break;
+	}
 
 
-		//hyde
-		case	16496:{mid=263;break;}//plant
-		//cathedral
-		case	16462:{mid=168;break;}//exit
+	// hyde
+	case 16496: {
+		mid = 263; // plant
+		break;
+	}
+	// cathedral
+	case 16462: {
+		mid = 168; // exit
+		break;
+	}
 
-		//lockers
-		case	16576:{mid=246;break;}//body == 16569
-		case	16577:{mid=271;break;}//body == 16570
-		case	16578:{mid=296;break;}//body == 16571
-		case	16579:{mid=321;break;}//body == 16572
-		case	16580:{mid=346;break;}//body == 16573
+	// lockers
+	case 16576: {
+		mid = 246; // body == 16569
+		break;
+	}
+	case 16577: {
+		mid = 271; // body == 16570
+		break;
+	}
+	case 16578: {
+		mid = 296; // body == 16571
+		break;
+	}
+	case 16579: {
+		mid = 321; // body == 16572
+		break;
+	}
+	case 16580: {
+		mid = 346; // body == 16573
+		break;
+	}
 
-		//underworld
-		case	20506:{mid=389;break;}//metal door
-		//pit room
-		case	20600:{mid=283;break;}//cover
-		case	20648:{mid=283;break;}//pit
-		case	20570:{mid=247;break;}//exit to medical droid room
+	// underworld
+	case 20506: {
+		mid = 389; // metal door
+		break;
+	}
+	// pit room
+	case 20600: {
+		mid = 283; // cover
+		break;
+	}
+	case 20648: {
+		mid = 283; // pit
+		break;
+	}
+	case 20570: {
+		mid = 247; // exit to medical droid room
+		break;
+	}
 
-		case	20575:{mid=277;break;}//slot
-		case	20577:{mid=297;break;}//recharge unit
+	case 20575: {
+		mid = 277; // slot
+		break;
+	}
+	case 20577: {
+		mid = 297; // recharge unit
+		break;
+	}
 
-		case	24786:{mid=288;break;}//linc crystal
-		case	24787:{mid=288;break;}//virus
+	case 24786: {
+		mid = 288; // linc crystal
+		break;
+	}
+	case 24787: {
+		mid = 288; // virus
+		break;
+	}
 
-		case	20712:{mid=305;break;}//console
-		case	20713:{mid=356;break;}//console
+	case 20712: {
+		mid = 305; // console
+		break;
+	}
+	case 20713: {
+		mid = 356; // console
+		break;
+	}
 
-		case	20728:{mid=388;break;}//exit from door room
+	case 20728: {
+		mid = 388; // exit from door room
+		break;
+	}
 
-		case	8272:{mid=278;break;}//power room chair
+	case 8272: {
+		mid = 278; // power room chair
+		break;
+	}
 
-		case	12390:{mid=187;break;}//burke door
-		case	12541:{mid=187;break;}//burke exit
+	case 12390: {
+		mid = 187; // burke door
+		break;
+	}
+	case 12541: {
+		mid = 187; // burke exit
+		break;
+	}
 
 	}
 
-	return	mid;
+	return  mid;
 }
 
 uint16 Mouse::giveYcood(Compact *itemData, uint32 id) {
-	//push objects that are too far to left, or to the right, back onto the screen
+	// push objects that are too far to left, or to the right, back onto the screen
 	uint16 mid;
 
-	mid=itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
+	mid = itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY >> 1);
 
-	switch(id) {
-		case	4112: {//cupboard door - not if open
-			if	(Logic::_scriptVariables[112])//cupb_flag
-				return	0;
-			mid=221;
-			break;
-		}
-		case	4113:{mid=218;break;}//sandwich
-		case	4114:{mid=226;break;}//spanner
+	switch (id) {
+	case 4112: { // cupboard door - not if open
+		if (Logic::_scriptVariables[112]) // cupb_flag
+			return  0;
+		mid = 221;
+		break;
+	}
+	case 4113: {
+		mid = 218; // sandwich
+		break;
+	}
+	case 4114: {
+		mid = 226; // spanner
+		break;
+	}
 
-		case	4108:{mid=0;break;}//remove monitor screen
-		case	4111:{mid=0;break;}//remove lazer
-		case	4115:{mid=0;break;}//remove monitor screen
-		case	4117:{mid=0;break;}//remove monitor screen
-		case	4154:{mid=0;break;}//remove right sign
+	case 4108: {
+		mid = 0; // remove monitor screen
+		break;
+	}
+	case 4111: {
+		mid = 0; // remove lazer
+		break;
+	}
+	case 4115: {
+		mid = 0; // remove monitor screen
+		break;
+	}
+	case 4117: {
+		mid = 0; // remove monitor screen
+		break;
+	}
+	case 4154: {
+		mid = 0; // remove right sign
+		break;
+	}
+	case 12349:
+	// fall through
+	case 12347:
+	case 12358:  {
+		mid = TWEEKY_EXIT_ADJUST; // bellevue
+		break;
+	}
+	case 90: {
+		mid = 208; // first room, door
+		break;
+	}
+	case 97: {
+		mid = 216; // ledge room, door
+		break;
+	}
+	case 4116: {
+		mid = 259; // elevator
+		break;
+	}
+	case 4119: {
+		mid = 259; // hole
+		break;
+	}
+	case 4315: {
+		mid = 261; // exit left from junk room
+		break;
+	}
+	case 4103: {
+		mid = 242; // exit right from junk room
+		break;
+	}
+	case 4105: {
+		mid = 241; // exit left from hobbins room
+		break;
+	}
+	case 4110: {
+		mid = 230; // lathe
+		break;
+	}
+	case 8248: {
+		mid = 222;  // walkway to security lobby
+		break;
+	}
+	case 8238: {
+		mid = 222; // walkway to power
+		break;
+	}
+	case 8310: {
+		mid = 222; // walkway to first room
+		break;
+	}
+	case 8246: {
+		mid = 273; // power exit
+		break;
+	}
+	case 8317: {
+		mid = 273; // walkway to crash
+		break;
+	}
+	case 8331: {
+		mid = 230; // walkway to factory
+		break;
+	}
+	case 8341: {
+		mid = 239; // factory to walkway
+		break;
+	}
+	case 8344: {
+		mid = 282; // factory to factory 2
+		break;
+	}
+	case 8500: {
+		mid = 197; // sensors
+		break;
+	}
+	case 8355: {
+		mid = 255; // factory 2 to factory 3
+		break;
+	}
+	case 8366: {
+		mid = 227; // factory 2 to storeroom
+		break;
+	}
+	case 8375: {
+		mid = 238; // storeroom to factory 2
+		break;
+	}
+	case 8446: {
+		mid = 247; // putty
+		break;
+	}
+	case 8438: {
+		mid = 247; // gangway
+		break;
+	}
+	case 8364: {
+		mid = 252; // exit
+		break;
+	}
+	case 8459: {
+		mid = 252; // exit
+		break;
+	}
+	case 8256: {
+		mid = 297; // exit
+		break;
+	}
 
+	// bellevue
+	case 12304: {
+		mid = 252; // exit
+		break;
+	}
+	case 12338: {
+		mid = 286; // exit
+		break;
+	}
+	case 12681: {
+		mid = 250; // exit
+		break;
+	}
+	case 12370: {
+		mid = 289; // exit
+		break;
+	}
+	case 12361: {
+		mid = 267; // exit
+		break;
+	}
+	case 12679: {
+		mid = 179; // exit
+		break;
+	}
+	case 12678: {
+		mid = 179; // exit
+		break;
+	}
+	case 12677: {
+		mid = 179; // exit
+		break;
+	}
+	case 12313: {
+		mid = 284; // exit
+		break;
+	}
+	case 12676: {
+		mid = 241; // exit
+		break;
+	}
+	case 12327: {
+		mid = 244; // exit
+		break;
+	}
+	case 12315: {
+		mid = 286; // exit
+		break;
+	}
+	case 12324: {
+		mid = 308; // exit
+		break;
+	}
+	case 12336: {
+		mid = 306; // exit
+		break;
+	}
+	case 12442: {
+		mid = 246; // exit
+		break;
+	}
+	case 12447: {
+		mid = 242; // exit
+		break;
+	}
+	case 12680: {
+		mid = 179; // exit
+		break;
+	}
+	case 12459: {
+		mid = 281; // exit
+		break;
+	}
+	case 12471: {
+		mid = 302; // exit
+		break;
+	}
+	case 12399: {
+		mid = 257; // exit
+		break;
+	}
+	case 12390: {
+		mid = 264; // burke door
+		break;
+	}
+	case 12541: {
+		mid = 264; // burke exit
+		break;
+	}
 
-		case	12349:	{mid=TWEEKY_EXIT_ADJUST;break;}//bellevue
-		case	12347:	{mid=TWEEKY_EXIT_ADJUST;break;}//bellevue
-		case	12358:	{mid=TWEEKY_EXIT_ADJUST;break;}//bellevue
-		case	90:{mid=208;break;}//first room, door
-		case	97:{mid=216;break;}//ledge room, door
-		case	4116:{mid=259;break;}//elevator
-		case	4119:{mid=259;break;}//hole
-		case	4315:{mid=261;break;}//exit left from junk room
-		case	4103:{mid=242;break;}//exit right from junk room
-		case	4105:{mid=241;break;}//exit left from hobbins room
-		case	4110:{mid=230;break;}//lathe
-		case	8248:{mid=222;break;}//walkway to security lobby
-		case	8238:{mid=222;break;}//walkway to power
-		case	8310:{mid=222;break;}//walkway to first room
-		case	8246:{mid=273;break;}//power exit
-		case	8317:{mid=273;break;}//walkway to crash
-		case	8331:{mid=230;break;}//walkway to factory
-		case	8341:{mid=239;break;}//factory to walkway
-		case	8344:{mid=282;break;}//factory to factory 2
-		case	8500:{mid=197;break;}//sensors
-		case	8355:{mid=255;break;}//factory 2 to factory 3
-		case	8366:{mid=227;break;}//factory 2 to storeroom
-		case	8375:{mid=238;break;}//storeroom to factory 2
-		case	8446:{mid=247;break;}//putty
-		case	8438:{mid=247;break;}//gangway
-		case	8364:{mid=252;break;}//exit
-		case	8459:{mid=252;break;}//exit
-		case	8256:{mid=297;break;}//exit
+	case 12630: {
+		mid += 4; // slot
+		break;
+	}
+	case 12616: {
+		mid += 4; // slot
+		break;
+	}
+	case 12629: {
+		mid += 4; // slot
+		break;
+	}
+	case 12628: {
+		mid += 4; // slot
+		break;
+	}
+	case 12627: {
+		mid += 4; // slot
+		break;
+	}
+	case 12626: {
+		mid += 4; // slot
+		break;
+	}
 
-		//bellevue
-		case	12304:{mid=252;break;}//exit
-		case	12338:{mid=286;break;}//exit
-		case	12681:{mid=250;break;}//exit
-		case	12370:{mid=289;break;}//exit
-		case	12361:{mid=267;break;}//exit
-		case	12679:{mid=179;break;}//exit
-		case	12678:{mid=179;break;}//exit
-		case	12677:{mid=179;break;}//exit
-		case	12313:{mid=284;break;}//exit
-		case	12676:{mid=241;break;}//exit
-		case	12327:{mid=244;break;}//exit
-		case	12315:{mid=286;break;}//exit
-		case	12324:{mid=308;break;}//exit
-		case	12336:{mid=306;break;}//exit
-		case	12442:{mid=246;break;}//exit
-		case	12447:{mid=242;break;}//exit
-		case	12680:{mid=179;break;}//exit
-		case	12459:{mid=281;break;}//exit
-		case	12471:{mid=302;break;}//exit
-		case	12399:{mid=257;break;}//exit
-		case	12390:{mid=264;break;}//burke door
-		case	12541:{mid=264;break;}//burke exit
+	case 12620: {
+		mid = 220; // locker
+		break;
+	}
+	case 12621: {
+		mid = 220; // locker
+		break;
+	}
+	case 12622: {
+		mid = 220; // locker
+		break;
+	}
+	case 12623: {
+		mid = 220; // locker
+		break;
+	}
+	case 12613: {
+		mid = 220; // locker
+		break;
+	}
+	case 12624: {
+		mid = 220; // locker
+		break;
+	}
 
-		case	12630:{mid+=4;break;}//slot
-		case	12616:{mid+=4;break;}//slot
-		case	12629:{mid+=4;break;}//slot
-		case	12628:{mid+=4;break;}//slot
-		case	12627:{mid+=4;break;}//slot
-		case	12626:{mid+=4;break;}//slot
+	case 12631: {
+		mid = 273; // exit
+		break;
+	}
+	case 12641: {
+		mid = 290; // exit
+		break;
+	}
+	case 12642: {
+		mid = 273; // exit
+		break;
+	}
 
-		case	12620:{mid=220;break;}//locker
-		case	12621:{mid=220;break;}//locker
-		case	12622:{mid=220;break;}//locker
-		case	12623:{mid=220;break;}//locker
-		case	12613:{mid=220;break;}//locker
-		case	12624:{mid=220;break;}//locker
+	case 12474: {
+		mid = 282; // lamb door
+		break;
+	}
+	case 12486: {
+		mid = 298; // lamb door
+		break;
+	}
 
-		case	12631:{mid=273;break;}//exit
-		case	12641:{mid=290;break;}//exit
-		case	12642:{mid=273;break;}//exit
+	// security room
+	case 8295: {
+		mid = 299; // exit
+		break;
+	}
 
-		case	12474:{mid=282;break;}//lamb door
-		case	12486:{mid=298;break;}//lamb door
-
-		//security room
-		case	8295:{mid=299;break;}//exit
-
-		//hyde
-		case	16415:{mid=261;break;}//exit
-		case	16403:{mid=261;break;}//exit
-		case	16393:{mid=246;break;}//exit
-		case	16487:{mid=256;break;}//exit
-		case	16492:{mid=287;break;}//exit
-		case	16394:{mid=313;break;}//exit
-		case	16412:{mid=276;break;}//exit
-		case	16428:{mid=233;break;}//exit
-		case	16424:{mid=236;break;}//exit
-
-
-		//cathedral
-		case	16462:{mid=296;break;}//exit
-		case	16464:{mid=250;break;}//exit
-		case	16465:{mid=226;break;}//exit
-		case	16474:{mid=263;break;}//exit
-
-		case	16576:{mid=229;break;}//body == 16569
-		case	16577:{mid=229;break;}//body == 16570
-		case	16578:{mid=229;break;}//body == 16571
-		case	16579:{mid=229;break;}//body == 16572
-		case	16580:{mid=229;break;}//body == 16573
-
-		//reactor
-		case	8478:{mid=291;break;}//exit
-		case	8481:{mid=253;break;}//exit
-		case	8511:{mid=271;break;}//exit
-
-		//club
-		case	16538:{mid=279;break;}//exit
-
-		//abandoned subway
-		case	16439:{mid=267;break;}//exit
-
-		//entrance to underworld
-		case	16592:{mid=267;break;}//exit
-
-		//underworld
-		case	16649:{mid=291;break;}//exit
-		case	16660:{mid=285;break;}//exit
-		case	16662:{mid=254;break;}//exit
-		case	16661:{mid=291;break;}//exit
-		case	16671:{mid=291;break;}//exit
-		case	16681:{mid=282;break;}//exit
-		case	16682:{mid=282;break;}//exit
-		case	16719:{mid=287;break;}//exit
-		case	16720:{mid=287;break;}//exit
-		case	16729:{mid=291;break;}//exit
-		case	16730:{mid=301;break;}//exit
-		case	20506:{mid=276;break;}//metal door
-		//underworld main
-		case	20518:{mid=276;break;}//metal door
-		case	20532:{mid=264;break;}//exit
-		case	20558:{mid=296;break;}//exit
-		case	20598:{mid=237;break;}//exit
-		case	20601:{mid=183;break;}//metal bar
-		case	20600:{mid=237;break;}//cover
-		case	20648:{mid=237;break;}//pit
-		case	20570:{mid=268;break;}//exit to medical droid room
-
-		case	20573:{mid=290;break;}//droid room exit
-		case	20579:{mid=272;break;}//droid room exit
-		case	20572:{mid=277;break;}//droid room exit
-		case	20578:{mid=286;break;}//console
-		case	20674:{mid=279;break;}//droid room exit
-
-		case	20675:{mid=238;break;}//robot
-		case	20511:{mid=259;break;}//slot
-
-		case	20583:{mid=291;break;}//tank room exit
-		case	20604:{mid=264;break;}//tank room exit
-		case	20676:{mid=294;break;}//exit
-		case	20619:{mid=269;break;}//exit
-		case	20628:{mid=284;break;}//exit
-		case	20617:{mid=295;break;}//exit
-
-		case	24786:{mid=256;break;}//linc crystal
-		case	24787:{mid=256;break;}//linc crystal
-
-		case	20672:{mid=265;break;}//android room exit
-		case	20696:{mid=265;break;}//android room exit
-		case	20697:{mid=265;break;}//android room exit
-		case	20715:{mid=265;break;}//android room exit
-
-		case	20711:{mid=219;break;}//console
-		case	20712:{mid=219;break;}//console
-		case	20713:{mid=219;break;}//console
-
-		case	20725:{mid=268;break;}//exit
-
-		case	20726:{mid=270;break;}//exit from door room
-		case	20728:{mid=219;break;}//exit from door room
-
-		case	20741:{mid=254;break;}//exit from first vein room
-		case	20743:{mid=279;break;}//exit from first vein room
-		case	20752:{mid=279;break;}//exit near end
-		case	20886:{mid=243;break;}//exit orifice to linc
-
-		case	20874:{mid=0;break;}//pipe support - removed as appears to have no interaction
-
-		//linc
-		case	24592:{mid=306;break;}//maze mid-bot
-		case	24634:{mid=306;break;}//maze mid-bot
-//		case	24633:{mid=308;break;}//maze left-mid
-		case	24594:{mid=278;break;}//maze left-mid
-
-		case	8272:{mid=0;break;}//REMOVE power room chair
-
-		case	8290:
-		case	8291://power room switches
-		{
-			if	(!Logic::_scriptVariables[429])
-				return	0;
-		}
+	// hyde
+	case 16415: {
+		mid = 261; // exit
+		break;
+	}
+	case 16403: {
+		mid = 261; // exit
+		break;
+	}
+	case 16393: {
+		mid = 246; // exit
+		break;
+	}
+	case 16487: {
+		mid = 256; // exit
+		break;
+	}
+	case 16492: {
+		mid = 287; // exit
+		break;
+	}
+	case 16394: {
+		mid = 313; // exit
+		break;
+	}
+	case 16412: {
+		mid = 276; // exit
+		break;
+	}
+	case 16428: {
+		mid = 233; // exit
+		break;
+	}
+	case 16424: {
+		mid = 236; // exit
+		break;
 	}
 
 
-	return	mid;
+	// cathedral
+	case 16462: {
+		mid = 296; // exit
+		break;
+	}
+	case 16464: {
+		mid = 250; // exit
+		break;
+	}
+	case 16465: {
+		mid = 226; // exit
+		break;
+	}
+	case 16474: {
+		mid = 263; // exit
+		break;
+	}
+
+	case 16576: {
+		mid = 229; // body == 16569
+		break;
+	}
+	case 16577: {
+		mid = 229; // body == 16570
+		break;
+	}
+	case 16578: {
+		mid = 229; // body == 16571
+		break;
+	}
+	case 16579: {
+		mid = 229; // body == 16572
+		break;
+	}
+	case 16580: {
+		mid = 229; // body == 16573
+		break;
+	}
+
+	// reactor
+	case 8478: {
+		mid = 291; // exit
+		break;
+	}
+	case 8481: {
+		mid = 253; // exit
+		break;
+	}
+	case 8511: {
+		mid = 271; // exit
+		break;
+	}
+
+	// club
+	case 16538: {
+		mid = 279; // exit
+		break;
+	}
+
+	// abandoned subway
+	case 16439: {
+		mid = 267; // exit
+		break;
+	}
+
+	// entrance to underworld
+	case 16592: {
+		mid = 267; // exit
+		break;
+	}
+
+	// underworld
+	case 16649: {
+		mid = 291; // exit
+		break;
+	}
+	case 16660: {
+		mid = 285; // exit
+		break;
+	}
+	case 16662: {
+		mid = 254; // exit
+		break;
+	}
+	case 16661: {
+		mid = 291; // exit
+		break;
+	}
+	case 16671: {
+		mid = 291; // exit
+		break;
+	}
+	case 16681: {
+		mid = 282; // exit
+		break;
+	}
+	case 16682: {
+		mid = 282; // exit
+		break;
+	}
+	case 16719: {
+		mid = 287; // exit
+		break;
+	}
+	case 16720: {
+		mid = 287; // exit
+		break;
+	}
+	case 16729: {
+		mid = 291; // exit
+		break;
+	}
+	case 16730: {
+		mid = 301; // exit
+		break;
+	}
+	case 20506: {
+		mid = 276; // metal door
+		break;
+	}
+	// underworld main
+	case 20518: {
+		mid = 276; // metal door
+		break;
+	}
+	case 20532: {
+		mid = 264; // exit
+		break;
+	}
+	case 20558: {
+		mid = 296; // exit
+		break;
+	}
+	case 20598: {
+		mid = 237; // exit
+		break;
+	}
+	case 20601: {
+		mid = 183; // metal bar
+		break;
+	}
+	case 20600: {
+		mid = 237; // cover
+		break;
+	}
+	case 20648: {
+		mid = 237; // pit
+		break;
+	}
+	case 20570: {
+		mid = 268; // exit to medical droid room
+		break;
+	}
+
+	case 20573: {
+		mid = 290; // droid room exit
+		break;
+	}
+	case 20579: {
+		mid = 272; // droid room exit
+		break;
+	}
+	case 20572: {
+		mid = 277; // droid room exit
+		break;
+	}
+	case 20578: {
+		mid = 286; // console
+		break;
+	}
+	case 20674: {
+		mid = 279; // droid room exit
+		break;
+	}
+
+	case 20675: {
+		mid = 238; // robot
+		break;
+	}
+	case 20511: {
+		mid = 259; // slot
+		break;
+	}
+
+	case 20583: {
+		mid = 291; // tank room exit
+		break;
+	}
+	case 20604: {
+		mid = 264; // tank room exit
+		break;
+	}
+	case 20676: {
+		mid = 294; // exit
+		break;
+	}
+	case 20619: {
+		mid = 269; // exit
+		break;
+	}
+	case 20628: {
+		mid = 284; // exit
+		break;
+	}
+	case 20617: {
+		mid = 295; // exit
+		break;
+	}
+
+	case 24786: {
+		mid = 256; // linc crystal
+		break;
+	}
+	case 24787: {
+		mid = 256; // linc crystal
+		break;
+	}
+
+	case 20672: {
+		mid = 265; // android room exit
+		break;
+	}
+	case 20696: {
+		mid = 265; // android room exit
+		break;
+	}
+	case 20697: {
+		mid = 265; // android room exit
+		break;
+	}
+	case 20715: {
+		mid = 265; // android room exit
+		break;
+	}
+
+	case 20711: {
+		mid = 219; // console
+		break;
+	}
+	case 20712: {
+		mid = 219; // console
+		break;
+	}
+	case 20713: {
+		mid = 219; // console
+		break;
+	}
+
+	case 20725: {
+		mid = 268; // exit
+		break;
+	}
+
+	case 20726: {
+		mid = 270; // exit from door room
+		break;
+	}
+	case 20728: {
+		mid = 219; // exit from door room
+		break;
+	}
+
+	case 20741: {
+		mid = 254; // exit from first vein room
+		break;
+	}
+	case 20743: {
+		mid = 279; // exit from first vein room
+		break;
+	}
+	case 20752: {
+		mid = 279; // exit near end
+		break;
+	}
+	case 20886: {
+		mid = 243; // exit orifice to linc
+		break;
+	}
+
+	case 20874: {
+		mid = 0; // pipe support - removed as appears to have no interaction
+		break;
+	}
+
+	// linc
+	case 24592: {
+		mid = 306; // maze mid-bot
+		break;
+	}
+	case 24634: {
+		mid = 306; // maze mid-bot
+		break;
+	}
+	case 24594: {
+		mid = 278; // maze left-mid
+		break;
+	}
+
+	case 8272: {
+		mid = 0; // REMOVE power room chair
+		break;
+	}
+
+	case 8290:
+	case 8291: { // power room switches
+		if (!Logic::_scriptVariables[429])
+			return  0;
+	}
+	}
+
+	return mid;
 }
 
 int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
@@ -893,9 +1505,9 @@ int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
 	Compact *itemData;
 	uint16 itemNum;
 
-	//do not detect floors beyond a certain depth
-	if	(yPos > (HOTSPOT_invy+8)) return 0;
-	if	(yPos<(20+TOP_LEFT_Y))	return 0;
+	// do not detect floors beyond a certain depth
+	if (yPos > (HOTSPOT_invy + 8)) return 0;
+	if (yPos < (20 + TOP_LEFT_Y)) return 0;
 
 	do {
 		currentList = (uint16 *)_skyCompact->fetchCpt(currentListNum);
@@ -904,97 +1516,94 @@ int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
 			itemData = _skyCompact->fetchCpt(itemNum);
 			currentList++;
 
-			//on this screen, active, and a floor
+			// on this screen, active, and a floor
 			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (!itemData->mouseOn) && (itemData->status & 16)) {
 				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
 				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos) continue;
 				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos) continue;
 				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos) continue;
 
-				//hit this floor - we're done here
-				return	itemNum;
+				// hit this floor - we're done here
+				return  itemNum;
 			}
 		}
 		if (*currentList == 0xFFFF)
 			currentListNum = currentList[1];
 	} while (*currentList != 0);
 
-	//found nowt
-	return	0;
+	// found nowt
+	return 0;
 }
 
 void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
-	if (SkyEngine::_isIbass()) {
-		int midx, midy; //open hotspot dimensions
+	if (SkyEngine::isIbass()) {
+		int midx, midy; // open hotspot dimensions
 		Compact *itemData;
 		int itemProx;
 		int d = 0;
 
-		debug("TOP: _mouseB = %d, _fadeout = %d", _mouseB, _fadeOut);
-
 		if (yPos < (TOP_LEFT_Y + 5))
 			return;
 
-		//mouse must be down to search for stuff
+		// mouse must be down to search for stuff
 		if (_mouseB) {
-			//debug("Clicked");
-			//what are we near?
-			itemProx = doProximityHighlights(xPos,yPos);
+			// debug("Clicked");
+			// what are we near?
+			itemProx = doProximityHighlights(xPos, yPos);
 
-			//seems we need to clear this, but only safe to do so when a new click occurs as player is still live when walking to interact after a use-on interaction
-			//but not in linc terminal
-			if	(101 != Logic::_scriptVariables[SCREEN])
+			// seems we need to clear this, but only safe to do so when a new click occurs as player is still live when walking to interact after a use-on interaction
+			// but not in linc terminal
+			if (101 != Logic::_scriptVariables[SCREEN])
 				Logic::_scriptVariables[OBJECT_HELD] = 0;
 
-			//need to check if still touching any currently popped up hotspot
+			// need to check if still touching any currently popped up hotspot
 			if (_touchId && _touchId != 32767 && _timeOn < CLICK_THRESHOLD) {
 				if (_prevMouseOn == false)
 					_timeOn = 1;
 
-				//fetch the compact
+				// fetch the compact
 				itemData = _skyCompact->fetchCpt(_touchId);
 
-				//if not a floor
+				// if not a floor
 				if (itemData->mouseOn) {
-					((SkyEngine *)g_engine)->getScreen()->setProximityNotAnimate(_nearestProximityIconId);//we want this one remaining one to not animate
+					_skyScreen->setProximityNotAnimate(_nearestProximityIconId);//we want this one remaining one to not animate
 
 					midx = giveXcood(itemData, _touchId);
 					midy = giveYcood(itemData, _touchId);
-					//calc dist
+					// calc dist
 					d = abs(xPos - midx) + abs(yPos - midy);
 
-					//some left hand edge adjust for twin-hotspot non-exits
+					// some left hand edge adjust for twin-hotspot non-exits
 					if (!hasSingleInteractIcon(_touchId) && !_isExit)
 						if ((midx - HOTSPOT_dim) < TOP_LEFT_X)
 							midx = TOP_LEFT_X + HOTSPOT_dim;
 
-					//still touching a normal hotspot?
+					// still touching a normal hotspot?
 					if (!_isExit && midx - HOTSPOT_dim < xPos && midx + HOTSPOT_dim > xPos && midy - HOTSPOT_yoff < yPos && midy/*+HOTSPOT_yoff*/ > yPos) {
-						//if newly touching, and same item as last time, then inc the click count
-						if	(_prevMouseOn == false) {
+						// if newly touching, and same item as last time, then inc the click count
+						if (_prevMouseOn == false) {
 
-							_clickedNum++;	//one more click
-							//reset fade out timer to max
+							_clickedNum++;  // one more click
+							// reset fade out timer to max
 							_fadeOut = HOTSPOT_FADEOUT;
-							//reset hover time
+							// reset hover time
 							_timeOn = 1;
-						}
-						else
+						} else
 							_timeOn++;
 
-						int	icony = midy - HOTSPOT_yoff;
-						icony -= TOP_LEFT_Y;//normalise for renderer
+						int icony = midy - HOTSPOT_yoff;
+						icony -= TOP_LEFT_Y; // normalise for renderer
 						if (icony < 0)
 							icony = 0;
 
 						if (hasSingleInteractIcon(_touchId)) {
-							//update the coordinate of the hotspot
+							// update the coordinate of the hotspot
 							midx -= TOP_LEFT_X;
 							midx -= HOTSPOT_ExitDim;
 
-							//draw the icons
-							((SkyEngine *)g_engine)->getScreen()->setIcon( getInteractIcon(_touchId), midx+4, icony);
+							// draw the icons
+							_skyScreen->setIcon(getInteractIcon(_touchId), midx + 4, icony);
 							_actionFlashX = midx + 4;
 							_actionFlashIcon = getInteractIcon(_touchId);
 							_actionFlashY = icony;
@@ -1019,230 +1628,226 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 						// mouse on
 						_prevMouseOn = true;
 
-						//end here, when button held on something
+						// end here, when button held on something
 						return;
 					} else if (_isExit && midx - HOTSPOT_dim < xPos && midx + HOTSPOT_dim > xPos && midy - HOTSPOT_yoff < yPos && midy/*+HOTSPOT_yoff*/ > yPos) {
-						//still touching the poped up exit
-						//which action
+						// still touching the poped up exit
+						// which action
 						Logic::_scriptVariables[BUTTON] = 1;
 
-						//if newly touching, and same item as last time, then inc the click count
+						// if newly touching, and same item as last time, then inc the click count
 						if (_prevMouseOn == false) {
-							_clickedNum++;	//one more click
-							//reset fade out timer to max
+							_clickedNum++;  // one more click
+							// reset fade out timer to max
 							_fadeOut = HOTSPOT_FADEOUT;
-							//reset hover time
+							// reset hover time
 							_timeOn = 0;
 						} else {
 							_timeOn++; // one more cycle
-							//update the coordinate of the hotspot
-							int	iconx = midx - HOTSPOT_ExitDim;
-							iconx -= TOP_LEFT_X;//normalise for renderer
-							if	(iconx < 0)
+							// update the coordinate of the hotspot
+							int iconx = midx - HOTSPOT_ExitDim;
+							iconx -= TOP_LEFT_X; // normalise for renderer
+							if (iconx < 0)
 								iconx = 0;
 
-							int	icony = midy - HOTSPOT_exit_yoff;
-							icony -= TOP_LEFT_Y;//normalise for renderer
-							if	(icony < 0)
+							int icony = midy - HOTSPOT_exit_yoff;
+							icony -= TOP_LEFT_Y; // normalise for renderer
+							if (icony < 0)
 								icony = 0;
 
-							//draw the icon
+							// draw the icon
 							initExitIcon(_exitType, iconx, icony);
 
 							_actionFlashY = icony;
 						}
 
-						//mouse on
-						_prevMouseOn=true;
+						// mouse on
+						_prevMouseOn = true;
 
-						//end here, when button held on something
+						// end here, when button held on something
 						return;
 					} else {
 						_touchId = 0;
 						_clickedNum = 0;
 					}
-				} else {// else if floor
-					//floors just count time - we only want clicks(jabs)
-					//still touching it?
+				} else { // else if floor
+					// floors just count time - we only want clicks(jabs)
+					// still touching it?
 					if ((itemData->xcood + ((int16)itemData->mouseRelX) < xPos) && (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX > xPos) && (itemData->ycood + ((int16)itemData->mouseRelY) < yPos) && (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY > yPos))
-						_timeOn++;//one more cycle
+						_timeOn++; // one more cycle
 					else {
-						_touchId=0;
-						_clickedNum=0;
+						_touchId = 0;
+						_clickedNum = 0;
 					}
 				}
 			}
-			//find if we're touching a floor
-			int	floor = touchingFloor(xPos, yPos);
+			// find if we're touching a floor
+			int floor = touchingFloor(xPos, yPos);
 
 			if (itemProx) {
 				itemData = _skyCompact->fetchCpt(itemProx);
-				midx=giveXcood(itemData, itemProx);	//->xcood + ((int16)itemData->mouseRelX) + (itemData->mouseSizeX>>1);
-				midy=giveYcood(itemData, itemProx);//itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
-				//calc dist
-				d= abs(xPos-midx)+abs(yPos-midy);
+				midx = giveXcood(itemData, itemProx);
+				midy = giveYcood(itemData, itemProx);
+				// calc dist
+				d = abs(xPos - midx) + abs(yPos - midy);
 			}
 
-			//not close enough to real hotspot, and still touching previous floor
+			// not close enough to real hotspot, and still touching previous floor
 			if (floor && (d >= USE_ON_DIST) && floor == _touchId)
-				//if we skip floor, and dont hit another hotspot, then we quit after this search, because there is no fadeOut on floors, so the system resets the couter
-				//floorSkip=true;
-				//continue;
+				// if we skip floor, and dont hit another hotspot, then we quit after this search, because there is no fadeOut on floors, so the system resets the couter
+				// floorSkip=true;
+				// continue;
 				return;
 
 			if ((itemProx && d < USE_ON_DIST) || floor) {
 				// we've hit a new object
 
-				//floor or object?
+				// floor or object?
 				if (itemProx && d < USE_ON_DIST) {
-					//record what we're touching
-					Logic::_scriptVariables[SPECIAL_ITEM] = itemProx;//put in here now, for mouseOn script
+					// record what we're touching
+					Logic::_scriptVariables[SPECIAL_ITEM] = itemProx; // put in here now, for mouseOn script
 					_touchId = itemProx;
-					_touchIdLegacy = itemProx;	//remembered when mouse off
-				}
-				else {
-					//record what we're touching
-					Logic::_scriptVariables[SPECIAL_ITEM] = floor;//put in here now, for mouseOn script
+					_touchIdLegacy = itemProx; // remembered when mouse off
+				} else {
+					// record what we're touching
+					Logic::_scriptVariables[SPECIAL_ITEM] = floor; // put in here now, for mouseOn script
 					_touchId = floor;
-					_touchIdLegacy = floor;	//remembered when mouse off
+					_touchIdLegacy = floor; // remembered when mouse off
 				}
 
 				itemData = _skyCompact->fetchCpt(_touchId);
 
-				//jumping straight from one object to another?
+				// jumping straight from one object to another?
 				if (Logic::_scriptVariables[SPECIAL_ITEM]) {
-					//remove hotspot icons
-					((SkyEngine *)g_engine)->getScreen()->clearAllIbassIcons(false);
+					// remove hotspot icons
+					_skyScreen->clearAllIbassIcons(false);
 				}
 
-				//reset hover time to max
+				// reset hover time to max
 				_timeOn = 1;
 				_clickedNum = 0;
 
-				//run previous items get-off, if there was one (gone straight from one object onto another!)
+				// run previous items get-off, if there was one (gone straight from one object onto another!)
 				if (Logic::_scriptVariables[GET_OFF])
 					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
 
-				//write mouse off script number
+				// write mouse off script number
 				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
 
-				//run the mouse on script
+				// run the mouse on script
 				if (itemData->mouseOn) {
-					//disallow sliding back onto floors
+					// disallow sliding back onto floors
 					_floorLock = true;
 
-					//reset fade out timer
+					// reset fade out timer
 					_fadeOut = HOTSPOT_FADEOUT;
 					debug("Fadeout det to 36, mouseOn = %d, dist = %d", itemData->mouseOn, d);
 
-					((SkyEngine *)g_engine)->getScreen()->setProximityNotAnimate(_nearestProximityIconId);//we want this one remaining one to not animate
+					_skyScreen->setProximityNotAnimate(_nearestProximityIconId); // we want this one remaining one to not animate
 
-					//assume not
+					// assume not
 					_isExit = false;
 					_isFloor = false;
 
 					_skyLogic->mouseScript(itemData->mouseOn, itemData);
 
-					//exit, or hotspot?
+					// exit, or hotspot?
 					if (_isExit) {
 
-						int	iconx = midx - HOTSPOT_ExitDim;
-						iconx -= TOP_LEFT_X;//normalise for renderer
+						int iconx = midx - HOTSPOT_ExitDim;
+						iconx -= TOP_LEFT_X; // normalise for renderer
 						if (iconx < 0)
 							iconx = 0;
 
-						int	icony = midy - HOTSPOT_exit_yoff;
-						icony -= TOP_LEFT_Y;//normalise for renderer
+						int icony = midy - HOTSPOT_exit_yoff;
+						icony -= TOP_LEFT_Y; // normalise for renderer
 						if (icony < 0)
 							icony = 0;
 
-						//draw the icon
+						// draw the icon
 						initExitIcon(_exitType, iconx, icony);
 					} else {
-						int	icony = midy - HOTSPOT_yoff;
-						icony -= TOP_LEFT_Y;//normalise for renderer
+						int icony = midy - HOTSPOT_yoff;
+						icony -= TOP_LEFT_Y;// normalise for renderer
 						if (icony < 0)
 							icony = 0;
 
 						if (hasSingleInteractIcon(_touchId)) {
-							//update the coordinate of the hotspot
-							int	iconx = midx - HOTSPOT_ExitDim;
-							iconx -= TOP_LEFT_X;//normalise for renderer
+							// update the coordinate of the hotspot
+							int iconx = midx - HOTSPOT_ExitDim;
+							iconx -= TOP_LEFT_X;// normalise for renderer
 							if (iconx < 0)
 								iconx = 0;
 
-							//draw the icons
+							// draw the icons
 
-							((SkyEngine *)g_engine)->getScreen()->setIcon( getInteractIcon(_touchId), iconx+4, icony);
+							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + 4, icony);
 
-							if (_touchId == 70 || _touchId == 69 || _touchId == 24633 || _touchId == 24634 || _touchId == 4119 || _touchId == 8210)//stairs on screen 1 - normal object turned into exit - need to hack the button - the rest are either talk-to, which doesnt seem to matter, or look-at, like posters on walls
+							if (_touchId == 70 || _touchId == 69 || _touchId == 24633 || _touchId == 24634 || _touchId == 4119 || _touchId == 8210) // stairs on screen 1 - normal object turned into exit - need to hack the button - the rest are either talk-to, which doesnt seem to matter, or look-at, like posters on walls
 								Logic::_scriptVariables[BUTTON] = 1;
 							else
 								Logic::_scriptVariables[BUTTON] = 2;
 
-						} else {	//2 icons
-							//update the coordinate of the hotspot
-							int	iconx = midx - HOTSPOT_dim;
-							iconx -= TOP_LEFT_X;//normalise for renderer
+						} else { // 2 icons
+							// update the coordinate of the hotspot
+							int iconx = midx - HOTSPOT_dim;
+							iconx -= TOP_LEFT_X;// normalise for renderer
 							if (iconx < 0)
 								iconx = 0;
 
-							//draw the icons
-							((SkyEngine *)g_engine)->getScreen()->setIcon(UI_ICON_LOOK, iconx, icony);
-							((SkyEngine *)g_engine)->getScreen()->setIcon(getInteractIcon(_touchId), iconx+HOTSPOT_dim+4, icony);
+							// draw the icons
+							_skyScreen->setIcon(UI_ICON_LOOK, iconx, icony);
+							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + HOTSPOT_dim + 4, icony);
 						}
 					}
-				} else if (!_floorLock) {//no mouseOn script, which probably always means this is a floor?
-					//set action
+				} else if (!_floorLock) { // no mouseOn script, which probably always means this is a floor?
+					// set action
 					Logic::_scriptVariables[BUTTON] = 1;
-					//non graphical hotspots - floors - can interact first click
+					// non graphical hotspots - floors - can interact first click
 					_clickedNum = 1;
-					//reset hover time to max
+					// reset hover time to max
 					_timeOn = 1;
 					_isFloor = true;
 				} else
-					_touchId = 0; //locked floor
+					_touchId = 0; // locked floor
 
-				//mouse on
+				// mouse on
 				_prevMouseOn = true;
-				//we're done
+				// we're done
 				return;
 			} else {
 				debug("nothing");
-				//not touching anything, force open hotspot to close
+				// not touching anything, force open hotspot to close
 				if (_fadeOut)
-					_fadeOut=0;
+					_fadeOut = 0;
 			}
-			//not touching a game object - but what about HU buttons, such as Inv?
-			if (!_prevMouseOn && 101!=Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO]!=24765) {
+			// not touching a game object - but what about HU buttons, such as Inv?
+			if (!_prevMouseOn && 101 != Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO] != 24765) {
 				if (xPos < HOTSPOT_invx && yPos > HOTSPOT_invy) {
-					// _system->playUISFX(UI_SOUND_MENU_INTO);
-					_skyLogic->Start_inventory();
+					_skyLogic->startInventory();
 					_touchId = 0;
 					_holding = false;
-					m_mode = PreInventory;
-					((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons(false);
-					((SkyEngine *)g_engine)->getScreen()->clearAllIbassIcons(false);
+					M_MODE = PRE_INVENTORY;
+					_skyScreen->clearAllProximityIcons(false);
+					_skyScreen->clearAllIbassIcons(false);
 					return;
 				}
-				//control panel
+				// control panel
 				if (xPos < HOTSPOT_optionsx && yPos < HOTSPOT_optionsy) {
-					//_system->playUISFX(UI_SOUND_MENU_INTO);
-					((SkyEngine *)g_engine)->getControl()->doControlPanel();
-					((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons(false);
-					((SkyEngine *)g_engine)->getScreen()->clearAllIbassIcons(false);
+					_skyControl->doControlPanel();
+					_skyScreen->clearAllProximityIcons(false);
+					_skyScreen->clearAllIbassIcons(false);
 					_mouseB = 0;
 				}
-				//help screen
-				if (xPos>HOTSPOT_helpx && yPos<HOTSPOT_helpy) {
-					//_system->playUISFX(UI_SOUND_MENU_INTO);
-					((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons(false);
-					((SkyEngine *)g_engine)->getScreen()->clearAllIbassIcons(false);
+				// help screen
+				if (xPos > HOTSPOT_helpx && yPos < HOTSPOT_helpy) {
+					_skyScreen->clearAllProximityIcons(false);
+					_skyScreen->clearAllIbassIcons(false);
 					_mouseB = 0;
 				}
 			}
 
-			//mouse on
+			// mouse on
 			_prevMouseOn = true;
 
 
@@ -1251,96 +1856,91 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 			if (_prevMouseOn) {
 
 				if (!_touchId || _isFloor)
-					((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons();
+					_skyScreen->clearAllProximityIcons();
 
 				else if (_touchId) {
-					((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons();
-					//clear all but the one relating to the highlighted hotspot - hmmm
+					_skyScreen->clearAllProximityIcons();
+					// clear all but the one relating to the highlighted hotspot - hmmm
 					itemData = _skyCompact->fetchCpt(_touchId);
-					midx = giveXcood(itemData,_touchId);
-					midy = giveYcood(itemData,_touchId);//itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
-					((SkyEngine *)g_engine)->getScreen()->setProximityIcon(0, midx-TOP_LEFT_X-4, ((midy-TOP_LEFT_Y)-4), 1.0, 0);
-					((SkyEngine *)g_engine)->getScreen()->setProximityNotAnimate(0);//we want this one remaining one to not animate
+					midx = giveXcood(itemData, _touchId);
+					midy = giveYcood(itemData, _touchId); //itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
+					_skyScreen->setProximityIcon(0, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), 1.0, 0);
+					_skyScreen->setProximityNotAnimate(0);//we want this one remaining one to not animate
 				}
 			}
 
-			//let go
+			// let go
 			_prevMouseOn = false;
 			_floorLock = false;
 
-			//if 2nd or more click on this item
+			// if 2nd or more click on this item
 			if (_timeOn && _clickedNum) {
 
 
-				//faking the click so that the engine scripts execute correctly
+				// faking the click so that the engine scripts execute correctly
 				_logicClick = true;
 				if (Logic::_scriptVariables[BUTTON] == 0)
 					Logic::_scriptVariables[BUTTON] = 1;
 
-				//first, some autosaving incase this is a fatal, yes FATAL, interaction
+				// first, some autosaving incase this is a fatal, yes FATAL, interaction
 				if (g_engine->canSaveGameStateCurrently())
 					g_engine->saveGameState(0, "Autosave", true);
 
-				//an sfx
-				//Sky::g_engine->giveSystem()->playUISFX(UI_SOUND_MENU_ACK);
-				debug("WIPED");
+				// an sfx
 
-				_fadeOut = 0;	//force getOff script to run also
+				_fadeOut = 0;   // force getOff script to run also
 
-				//setup action flash
+				// setup action flash
 				if (!_isFloor) {
 					_actionFlash = true;
 					_actionFlashTime = ACTION_FLASH_TIME;
 				}
-				//set this again, as there's a chance some other random script may have cleared it since we first touched this hotspot
+				// set this again, as there's a chance some other random script may have cleared it since we first touched this hotspot
 				Logic::_scriptVariables[SPECIAL_ITEM] = _touchId;
 
 
-				//over anything?
+				// over anything?
 				Compact *item = _skyCompact->fetchCpt(Logic::_scriptVariables[SPECIAL_ITEM]);
-				if (item->mouseClick/* && item->cursorText*/)//not floors
+				if (item->mouseClick/* && item->cursorText*/)// not floors
 					_skyLogic->mouseScript(item->mouseClick, item);
 			}
 
-			//reset ready for next stab
+			// reset ready for next stab
 			_timeOn = 0;
-			//debug("Else block executed");
 		}
 
-		//mouse is not pressed, or not touching anything
+		// mouse is not pressed, or not touching anything
 
-		//count down to fade out and run get-off
+		// count down to fade out and run get-off
 		if (_fadeOut) {
 			_fadeOut--;
-			warning("_fadeout = %d, _touchIdLegacy: %d", _fadeOut, _touchIdLegacy);
-			//update coordinate, so hotspot follows walking megas
+			// update coordinate, so hotspot follows walking megas
 			updateHotspotCoordinate(xPos);
 		}
 
 		if (!_fadeOut) {
-			((SkyEngine *)g_engine)->getScreen()->clearAllProximityIcons();
+			_skyScreen->clearAllProximityIcons();
 
-			//reset number of times we clicked on this
-			_clickedNum=0;
-			_touchId=0;
+			// reset number of times we clicked on this
+			_clickedNum = 0;
+			_touchId = 0;
 
-			//process get-off script, if we were touching, and there is one
+			// process get-off script, if we were touching, and there is one
 			if (Logic::_scriptVariables[SPECIAL_ITEM] != 0) {
-				//close the hotspot popup
+				// close the hotspot popup
 
-				//remove hotspot icons
-				((SkyEngine *)g_engine)->getScreen()->clearAllIbassIcons(true);
+				// remove hotspot icons
+				_skyScreen->clearAllIbassIcons(true);
 
 				Logic::_scriptVariables[SPECIAL_ITEM] = 0;
 
-				//get off
+				// get off
 				if (Logic::_scriptVariables[GET_OFF])
-					_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
+					_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF], (uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
 
 				Logic::_scriptVariables[GET_OFF] = 0;
 			}
 		}
-		_mouseB = 0;
 		return;
 	}
 
@@ -1353,10 +1953,14 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 			Compact *itemData = _skyCompact->fetchCpt(itemNum);
 			currentList++;
 			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (itemData->status & 16)) {
-				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
-				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos) continue;
-				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos) continue;
-				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos) continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos)
+					continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos)
+					continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos)
+					continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos)
+					continue;
 				// we've hit the item
 				if (Logic::_scriptVariables[SPECIAL_ITEM] == itemNum)
 					return;
@@ -1382,77 +1986,77 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 }
 
 void Mouse::initExitIcon(uint32 type, int iconx, int icony) {
-	switch(type) {
-		case MOUSE_LEFT: {
-			_actionFlashIcon = UI_ICON_LEFT;
-			_actionFlashX = iconx + 8;
-			((SkyEngine *)g_engine)->getScreen()->setIcon(UI_ICON_LEFT, iconx + 8, icony);
-			break;
-		}
-		case MOUSE_RIGHT: {
-			_actionFlashIcon = UI_ICON_RIGHT;
-			_actionFlashX = iconx + 4;
-			((SkyEngine *)g_engine)->getScreen()->setIcon(UI_ICON_RIGHT, iconx + 4, icony);
-			break;
-		}
-		case MOUSE_UP: {
-			_actionFlashIcon = UI_ICON_UP;
-			_actionFlashX = iconx + 5;
-			((SkyEngine *)g_engine)->getScreen()->setIcon(UI_ICON_UP, iconx + 5, icony);
-			break;
-		}
-		case MOUSE_DOWN: {
-			_actionFlashIcon = UI_ICON_DOWN;
-			_actionFlashX = iconx + 5;
-			((SkyEngine *)g_engine)->getScreen()->setIcon(UI_ICON_DOWN, iconx + 5, icony);
-			break;
-		}
+	switch (type) {
+	case MOUSE_LEFT: {
+		_actionFlashIcon = UI_ICON_LEFT;
+		_actionFlashX = iconx + 8;
+		_skyScreen->setIcon(UI_ICON_LEFT, iconx + 8, icony);
+		break;
+	}
+	case MOUSE_RIGHT: {
+		_actionFlashIcon = UI_ICON_RIGHT;
+		_actionFlashX = iconx + 4;
+		_skyScreen->setIcon(UI_ICON_RIGHT, iconx + 4, icony);
+		break;
+	}
+	case MOUSE_UP: {
+		_actionFlashIcon = UI_ICON_UP;
+		_actionFlashX = iconx + 5;
+		_skyScreen->setIcon(UI_ICON_UP, iconx + 5, icony);
+		break;
+	}
+	case MOUSE_DOWN: {
+		_actionFlashIcon = UI_ICON_DOWN;
+		_actionFlashX = iconx + 5;
+		_skyScreen->setIcon(UI_ICON_DOWN, iconx + 5, icony);
+		break;
+	}
 	}
 }
 
 void Mouse::updateHotspotCoordinate(uint16 xPos) {
 	Compact *itemData;
-	int	midx,  midy;
+	int midx,  midy;
 
-	//fetch the compact
+	// fetch the compact
 	itemData = _skyCompact->fetchCpt(_touchIdLegacy);
 
 	if (!itemData)
 		return;
 
-	//if not a floor
+	// if not a floor
 	if (itemData->mouseOn && !_isExit) {
 
-		midx = giveXcood(itemData,_touchIdLegacy);//itemData->xcood + ((int16)itemData->mouseRelX) + (itemData->mouseSizeX>>1);
-		midy = giveYcood(itemData,_touchIdLegacy);//itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
+		midx = giveXcood(itemData, _touchIdLegacy);
+		midy = giveYcood(itemData, _touchIdLegacy);
 
-		int	icony = midy - HOTSPOT_yoff;
-		icony -= TOP_LEFT_Y;//normalise for renderer
-		if	(icony < 0)
+		int icony = midy - HOTSPOT_yoff;
+		icony -= TOP_LEFT_Y; // normalise for renderer
+		if (icony < 0)
 			icony = 0;
 
-		if	(hasSingleInteractIcon(_touchIdLegacy)) {
-			//update the coordinate of the hotspot
-			int	iconx = midx - HOTSPOT_ExitDim;
+		if (hasSingleInteractIcon(_touchIdLegacy)) {
+			// update the coordinate of the hotspot
+			int iconx = midx - HOTSPOT_ExitDim;
 			iconx -= TOP_LEFT_X;//normalise for renderer
-			if	(iconx < 0)
+			if (iconx < 0)
 				iconx = 0;
 
-			//draw the icons
-			((SkyEngine *)g_engine)->getScreen()->setIcon(getInteractIcon(_touchIdLegacy), iconx + 4, icony);
+			// draw the icons
+			_skyScreen->setIcon(getInteractIcon(_touchIdLegacy), iconx + 4, icony);
 		} else {
-			//update the coordinate of the hotspot
-			int	iconx = midx - HOTSPOT_dim;
+			// update the coordinate of the hotspot
+			int iconx = midx - HOTSPOT_dim;
 			iconx -= TOP_LEFT_X;//normalise for renderer
-			if	(iconx < 0)
+			if (iconx < 0)
 				iconx = 0;
 
-			//draw the icons
-			((SkyEngine *)g_engine)->getScreen()->setIcon(UI_ICON_LOOK, iconx, icony);
-			((SkyEngine *)g_engine)->getScreen()->setIcon(getInteractIcon(_touchIdLegacy), iconx + HOTSPOT_dim + 4, icony);
+			// draw the icons
+			_skyScreen->setIcon(UI_ICON_LOOK, iconx, icony);
+			_skyScreen->setIcon(getInteractIcon(_touchIdLegacy), iconx + HOTSPOT_dim + 4, icony);
 
-			//still touching the poped up area
-			//which action
+			// still touching the poped up area
+			// which action
 			if (xPos <= midx)
 				Logic::_scriptVariables[BUTTON] = 2;
 			else
@@ -1528,6 +2132,235 @@ bool Mouse::wasClicked() {
 		return true;
 	} else
 		return false;
+}
+
+void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
+	uint32 *objList;
+	int j, num;
+	Compact *itemData;
+	bool touched = false;
+
+	if (_mouseB)
+		_logicClick++;
+	else
+		_logicClick = 0;
+
+	// get list of compacts in inventory
+	objList = _skyLogic->giveInvList();
+
+	// how many
+	num = (int)Logic::_scriptVariables[MENU_LENGTH];
+
+	if (_holding) {
+
+		// dragged off of inv? Quit inv mode
+		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
+
+			// dragged off of the inv
+			M_MODE = INVENTORY_USE_ON;
+			// remove inv items from screen/logic processing
+			_skyLogic->killInventory();
+			// got to tidy the inv item
+			itemData = _skyCompact->fetchCpt(_touchId);
+			itemData->frame--;
+			itemData->getToFlag = 0;
+
+			// start fresh
+			_touchId = 0;
+
+			// highlight off
+			_skyScreen->setDragIconHighlight(false);
+			return;
+		}
+		// else, wait for release, and see if release on another item
+		if (_mouseB) {
+			// keep scanning objects to run geton/off
+			for (j = 0; j < num; j++) {
+
+
+				// fetch the compact
+				itemData = _skyCompact->fetchCpt(objList[j]);
+
+				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos)
+					continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) + XWIDTH < xPos)
+					continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos)
+					continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) + YDEPTH < yPos)
+					continue;
+
+				touched = true;
+
+				// on previous?
+				if (_hoverId == objList[j])
+					continue; // still on previous, so skip
+
+
+				// run previous items get-off, if there was one (gone straight from one object onto another!)
+				if (Logic::_scriptVariables[GET_OFF])
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], _skyCompact->fetchCpt(_hoverId));
+
+
+				// write new mouse off script number
+				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+
+				_hoverId = objList[j];
+
+				// new item
+				_skyLogic->startInventory(_hoverId); // highlight touched item
+
+				// run the mouse on script
+				if (itemData->mouseOn) {
+					uint16 tempY = itemData->ycood;
+					pushInvY(tempY);
+					itemData->ycood = 136;
+					Logic::_scriptVariables[BUTTON] = 3;
+					Logic::_scriptVariables[ICON_LIT] = _hoverId;
+					Logic::_scriptVariables[SPECIAL_ITEM] = _hoverId;
+					_skyLogic->mouseScript(itemData->mouseOn, itemData);
+					// and bring back render position
+					itemData->ycood = tempY;
+				}
+
+			}
+
+			// if we didn't register any hit then run the get off - we're sitting on blank inventory space
+			if (!touched) {
+				// touching nothing
+				_hoverId = 0;
+				if (Logic::_scriptVariables[GET_OFF]) {
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], _skyCompact->fetchCpt(_hoverId));
+					Logic::_scriptVariables[GET_OFF] = 0;
+				}
+
+			}
+
+			// we're done
+			return;
+		}
+
+		if (_hoverId == 24584 || _hoverId == 24630 || _hoverId == 24732 || _hoverId == 24643) {
+			// fetch the compact
+			itemData = _skyCompact->fetchCpt(_touchId);
+
+			// set button
+			Logic::_scriptVariables[BUTTON] = 3;
+			// record what we're touching
+			Logic::_scriptVariables[SPECIAL_ITEM] = _hoverId;
+
+			// fight internal logic's impulse to slide back up
+			uint16 tempY = itemData->ycood;
+			itemData->ycood = 136;
+			uint32 menuRef = _lincMenuRef;
+			_skyLogic->mouseScript(itemData->mouseClick, itemData);
+			// and bring back render position
+			itemData->ycood = tempY; // itemData->invY;
+
+
+			if (menuRef != _lincMenuRef) {
+				itemData = _skyCompact->fetchCpt(_touchId);
+				itemData->frame--;
+				itemData->getToFlag = 0;
+			} else {
+			}
+		} else {
+			// wont combine
+			itemData = _skyCompact->fetchCpt(_touchId);
+			itemData->frame--;
+			itemData->getToFlag = 0;
+
+		}
+		// bring back new inv - have to call again to kick in this frame fix
+		_skyLogic->startInventory();
+		_holding = false;
+		_skyScreen->clearDragIcon(); // clear the dragging icon
+
+		// cancel cursor
+		Logic::_scriptVariables[OBJECT_HELD] = 0;
+
+		return;
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------
+
+	// touching screen, but not an object yet
+	if (_mouseB) {
+		for (j = 0; j < num; j++) {
+			// fetch the compact
+			itemData = _skyCompact->fetchCpt(objList[j]);
+
+			if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
+			if (itemData->xcood + ((uint16)itemData->mouseRelX) + XWIDTH < xPos) continue;
+			if (itemData->ycood + ((uint16)itemData->mouseRelX) > yPos) continue;
+			if (itemData->ycood + ((uint16)itemData->mouseRelX) + YDEPTH < yPos) continue;
+
+			// record what we're touching
+			Logic::_scriptVariables[SPECIAL_ITEM] = objList[j];
+
+			if (_touchId != objList[j] && !_holding) {
+				debug("New touch\n");
+				// run previous items get-off, if there was one (gone straight from one object onto another)
+				if (Logic::_scriptVariables[GET_OFF])
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+
+				// write mouse off script number
+				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+
+				_touchId = objList[j];
+				_hoverId = objList[j];
+
+				Logic::_scriptVariables[ICON_LIT] = objList[j];
+
+				_skyLogic->mouseScript(itemData->mouseOn, itemData);
+				// reset hold counter
+
+				// init drag
+				_skyScreen->setDragIcon(itemData->frame, true);
+
+				// set button
+				Logic::_scriptVariables[BUTTON] = 2;
+				// record what we're touching
+				Logic::_scriptVariables[SPECIAL_ITEM] = _touchId;
+				Logic::_scriptVariables[ICON_LIT] = 0;
+				Logic::_scriptVariables[OBJECT_HELD] = 0;
+
+				// fetch the compact
+				itemData = _skyCompact->fetchCpt(_touchId);
+
+				// fight internal logic's impulse to slide back up
+
+				uint16 tempY = itemData->ycood;
+				itemData->ycood = 136;
+
+				// special stuff for quit-linc
+				if (_touchId == 24582) {
+					debug("QUIT LINC\n");
+					itemData->frame--;
+
+					// remove inventory items from screen/logic processing
+					_skyLogic->killInventory();
+					_skyScreen->clearDragIcon();
+					_skyLogic->mouseScript(itemData->mouseClick, itemData);
+					return;
+				}
+				_skyLogic->mouseScript(itemData->mouseClick, itemData);
+				// and bring back render position
+				itemData->ycood = tempY;
+
+				if (Logic::_scriptVariables[OBJECT_HELD]) {
+					// just render offset - cursor is still beneath the finger
+					_mouseYOff = HOTSPOT_useon_yoff;
+					_holding = true;
+					_touchIdLegacy = _touchId;
+					_skyLogic->startInventory(_touchId); // highlight touched item
+				}
+			}
+			// touching something - we're done
+			return;
+		}
+	}
+
 }
 
 } // End of namespace Sky
