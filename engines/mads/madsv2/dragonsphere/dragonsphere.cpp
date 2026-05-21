@@ -28,6 +28,7 @@
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/object.h"
+#include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/screen.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
@@ -261,89 +262,6 @@ void DragonsphereEngine::section_music(int section_num) {
 	}
 }
 
-void DragonsphereEngine::global_object_sprite() {
-	Common::strcpy_s(inter_object_buf, "*OB");
-	env_catint(inter_object_buf, inter_object_id, 3);
-	Common::strcat_s(inter_object_buf, "I");
-}
-
-void DragonsphereEngine::stop_walker_basic() {
-	int random;
-	int count;
-	int how_many;
-
-	random = imath_random(1, 30000);
-
-	switch (player.facing) {
-	case FACING_SOUTH:
-		if (random < 500) {
-			how_many = imath_random(4, 10);
-			for (count = 0; count < how_many; count++) {
-				player_add_stop_walker((random < 250) ? 1 : 2, 0);
-			}
-		} else if (random < 750) {
-			for (count = 0; count < 4; count++) {
-				player_add_stop_walker(1, 0);
-			}
-
-			player_add_stop_walker(0, 0);
-
-			for (count = 0; count < 4; count++) {
-				player_add_stop_walker(2, 0);
-			}
-
-			player_add_stop_walker(0, 0);
-		}
-		break;
-
-	case FACING_SOUTHEAST:
-	case FACING_SOUTHWEST:
-	case FACING_NORTHEAST:
-	case FACING_NORTHWEST:
-		if (random < 150) {
-			player_add_stop_walker(-1, 0);
-			player_add_stop_walker(1, 0);
-			for (count = 0; count < 6; count++) {
-				player_add_stop_walker(0, 0);
-			}
-		}
-		break;
-
-	case FACING_EAST:
-	case FACING_WEST:
-		if (random < 250) {
-			player_add_stop_walker(-1, 0);
-			how_many = imath_random(2, 6);
-			for (count = 0; count < how_many; count++) {
-				player_add_stop_walker(2, 0);
-			}
-			player_add_stop_walker(1, 0);
-			player_add_stop_walker(0, 0);
-			player_add_stop_walker(0, 0);
-		} else if (random < 500) {
-			WRITE_LE_UINT32(&global[walker_timing], kernel.clock);
-		}
-		break;
-
-	case FACING_NORTH:
-		if (random < 250) {
-			player_add_stop_walker(-1, 0);
-			how_many = imath_random(3, 7);
-			for (count = 0; count < how_many; count++) {
-				player_add_stop_walker(2, 0);
-			}
-			player_add_stop_walker(1, 0);
-			player_add_stop_walker(0, 0);
-		}
-		break;
-
-	}
-}
-
-void DragonsphereEngine::stop_walker_tricks() {
-
-}
-
 void DragonsphereEngine::global_section_constructor() {
 	Dragonsphere::global_section_constructor();
 }
@@ -360,10 +278,8 @@ void DragonsphereEngine::global_daemon_code() {
 	if (player.walker_visible && (player.commands_allowed || (conv_control.running >= 0)) && !player.walking &&
 		(player.facing == player.turn_to_facing) && global[perform_displacements]) {
 
-		if (kernel.clock >= *((long *)&global[walker_timing])) {
-
+		if (kernel.clock >= READ_LE_INT32(&global[walker_timing])) {
 			if (!player.stop_walker_pointer) {
-
 				random = imath_random(1, 30000);
 
 				if (global[player_persona] == PLAYER_IS_KING) {
@@ -1146,19 +1062,235 @@ done:
 }
 
 void DragonsphereEngine::global_object_examine() {
+	int id;
 
+	id = object_named(player_main_noun);
+
+	/* exceptions here */
+
+	if (player_said_1(music_box)) {
+		sound_play(N_MusicBoxOn);
+	}
+
+	if (player_said_1(doll)) {
+		if (global[player_persona] == PLAYER_IS_KING) {
+			object_examine(pid_doll, 808, 0);
+
+		} else { /* pid */
+			if (game.difficulty == EASY_MODE) {
+				if (global[pid_looked_at_doll]) {
+					object_examine(pid_doll, 896, 0);
+				} else {
+					object_examine(pid_doll, 895, 0);
+					global[pid_looked_at_doll] = true;
+					global[heal_verbs_visible] = true;
+					inter_move_object(pid_doll, NOWHERE);
+					inter_give_to_player(pid_doll);
+				}
+
+			} else {
+				if (global[pid_looked_at_doll]) {
+					object_examine(pid_doll, 896, 0);
+				} else {
+					object_examine(pid_doll, 706, 0);
+					global[pid_looked_at_doll] = true;
+					global[heal_verbs_visible] = true;
+					inter_move_object(pid_doll, NOWHERE);
+					inter_give_to_player(pid_doll);
+				}
+			}
+		}
+
+	} else if (player_said_1(polystone) && global[object_imitated] == -1) {
+		object_examine(polystone, 809, 0);
+
+	} else if (player_said_1(polystone) && global[object_imitated] == 9) {
+		object_examine(polystone, 809, 0);
+
+	} else if (player_said_1(polystone) && global[object_imitated] >= 0) {
+		object_examine(polystone, 894, 0);
+
+	} else if (player_said_1(medicine_bundle)) {
+		object_examine(medicine_bundle, 890, 0);
+
+	} else {
+		object_examine(id, 800 + id, 0);
+	}
+
+	if (player_said_1(music_box)) {
+		sound_play(N_MusicBoxOff);
+	}
 }
 
 void DragonsphereEngine::global_error_code() {
+	int show_me = 0;
+	int item;
+	int random;
 
+	random = imath_random(1, 1000);
+
+	if (player_said_3(put, king, pedestal)) {
+		if (global[king_status] != KING_CAPTIVE) {
+			text_show(43);
+			goto done;
+		}
+	}
+
+	if (player_said_1(take)) {
+		item = object_named(player_main_noun);
+		if (player_has(item) && player.main_object_source != STROKE_INTERFACE) {
+			show_me = 25;
+			/* player already has it */
+
+		} else {
+			if (random <= 333) {
+				show_me = 1;
+			} else if (random <= 666) {
+				show_me = 2;
+			} else {
+				show_me = 3;
+			}
+		}
+		goto done;
+	}
+
+	if (player_said_1(push)) {
+		if (random < 750) {
+			show_me = 4;
+		} else {
+			show_me = 5;
+		}
+		goto done;
+	}
+
+	if (player_said_1(pull)) {
+		if (random < 750) {
+			show_me = 6;
+		} else {
+			show_me = 7;
+		}
+		goto done;
+	}
+
+	if (player_said_1(open)) {
+		if (random <= 500) {
+			show_me = 8;
+		} else if (random <= 750) {
+			show_me = 9;
+		} else {
+			show_me = 10;
+		}
+		goto done;
+	}
+
+	if (player_said_1(close)) {
+		if (random <= 500) {
+			show_me = 11;
+		} else if (random <= 750) {
+			show_me = 12;
+		} else {
+			show_me = 13;
+		}
+		goto done;
+	}
+
+	if (player_said_1(put)) {
+		item = object_named(player_main_noun);
+		if (player_has(item)) {
+			show_me = 26;
+
+		} else if (player.main_object_source == STROKE_INTERFACE &&
+			player.second_object_source == STROKE_INTERFACE) {
+			show_me = 28;
+
+		} else if (random < 500) {
+			show_me = 14;
+
+		} else {
+			show_me = 15;
+		}
+		goto done;
+	}
+
+	if (player_said_1(talk_to)) {
+		if (random <= 500) {
+			show_me = 16;
+		} else {
+			show_me = 17;
+		}
+		goto done;
+	}
+
+	if (player_said_1(give)) {
+		item = object_named(player_main_noun);
+		if (player_has(item)) {
+			show_me = 27;
+
+		} else if (player.main_object_source == STROKE_INTERFACE &&
+			player.second_object_source == STROKE_INTERFACE) {
+			show_me = 28;
+
+		} else {
+			show_me = 18;
+		}
+		goto done;
+	}
+
+	if (player_said_1(throw)) {
+		item = object_named(player_main_noun);
+		if (player_has(item)) {
+			show_me = 19;
+		} else {
+			show_me = 28;
+		}
+		goto done;
+	}
+
+	if (player_said_1(look)) {
+		item = object_named(player_main_noun);
+		if (random <= 333) {
+			show_me = 20;
+		} else if (random <= 666) {
+			show_me = 21;
+		} else {
+			show_me = 22;
+		}
+		goto done;
+	}
+
+	if (!player_said_1(walk_to) && !player_said_1(walk_across) &&
+		!player_said_1(walk_down) && !player_said_1(walk_behind) &&
+		!player_said_1(cross)) {
+		if (random < 500) {
+			show_me = 23;
+		} else {
+			show_me = 24;
+		}
+		goto done;
+	}
+
+done:
+	if (show_me) text_show(show_me);
 }
 
 void DragonsphereEngine::global_room_init() {
+	switch (global[player_persona]) {
+	case PLAYER_IS_KING:
+		pal_change_color(KERNEL_MESSAGE_COLOR_BASE, 63, 0, 0);
+		pal_change_color(KERNEL_MESSAGE_COLOR_BASE + 1, 45, 0, 0);
+		break;
 
+	case PLAYER_IS_PID:
+	default:
+		pal_change_color(KERNEL_MESSAGE_COLOR_BASE, 63, 50, 42);
+		pal_change_color(KERNEL_MESSAGE_COLOR_BASE + 1, 45, 30, 20);
+		break;
+	}
 }
 
 void DragonsphereEngine::global_sound_driver() {
-
+	Common::strcpy_s(kernel.sound_driver, "/");
+	env_catint(kernel.sound_driver, new_section, 1);
 }
 
 } // namespace Dragonsphere
