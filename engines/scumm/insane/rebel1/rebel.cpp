@@ -242,6 +242,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 	memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
 	memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+	_inputAxisDeltaX = 0;
 	_avgInputX = 0;
 	_avgInputY = 0;
 	_mouseOffsetX = 0;
@@ -267,6 +268,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_activeGameOpcode = 0;
 	_frameGameOpcodeMask = 0;
 	_frameDispatchFlags = 0;
+	_asteroidPhysicsUpdatedThisFrame = false;
 
 	_health = kMaxHealth;
 	_lives = 3;
@@ -293,7 +295,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_pendingRouteIndex = -1;
 	_pendingRouteStartFrame = 0;
 	_pendingRouteCutoverFrame = -1;
-	_levelRouteChoice = 0;
 	_levelGameplayPhase = 0;
 	_level5SuccessFramesRemaining = 0;
 	_menuActive = false;

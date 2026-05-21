@@ -365,6 +365,7 @@ void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameGameOpcodeMask = 0;
 	_frameDispatchFlags = 0;
+	_asteroidPhysicsUpdatedThisFrame = false;
 
 	if (_interactiveVideoActive && _player) {
 		const bool usePerspectiveViewport =
@@ -384,6 +385,28 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	} else if (_player) {
 		ra1Player()->_ra1ViewportOffsetX = 0;
 		ra1Player()->_ra1ViewportOffsetY = 0;
+	}
+}
+
+void InsaneRebel1::syncViewportOffset(bool usePerspectiveViewport) {
+	if (!_player)
+		return;
+
+	if (!usePerspectiveViewport) {
+		ra1Player()->_ra1ViewportOffsetX = 0;
+		ra1Player()->_ra1ViewportOffsetY = 0;
+		return;
+	}
+
+	ra1Player()->_ra1ViewportOffsetX = _perspectiveX;
+	ra1Player()->_ra1ViewportOffsetY = _perspectiveY;
+
+	// SetCameraOffset() applies random shake to the camera value used by the
+	// visible source-window origin. Store it once so FTCH restore, overlays, and
+	// the final crop share one viewport origin for this frontend frame.
+	if (_screenFlash > 0) {
+		ra1Player()->_ra1ViewportOffsetX += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
+		ra1Player()->_ra1ViewportOffsetY += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
 	}
 }
 
@@ -432,7 +455,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
 	if (asteroidMode) {
 		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
-		updateAsteroidPhysics();
+		if (!_asteroidPhysicsUpdatedThisFrame) {
+			updateAsteroidPhysics();
+			_asteroidPhysicsUpdatedThisFrame = true;
+			syncViewportOffset(true);
+		}
 
 		// DOS 0x0B loops test health after each frontend frame and leave the
 		// interactive movie as soon as it drops below zero. Mirror that here so
@@ -487,22 +514,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// GAME handlers in the original update FUN_224FD during the same frame that
 	// the new control state is computed. Sync the current frame's viewport window
-	// before HUD/screen copy so 0x0B doesn't lag one frame behind the mouse.
+	// before HUD/screen copy so overlays and final crop observe the same camera.
 	// On-foot mode uses SetCameraOffset(0,0) — no viewport crop.
 	if (_player) {
 		if (onFootMode || (!asteroidMode && !turretMode && !flightMode)) {
-			ra1Player()->_ra1ViewportOffsetX = 0;
-			ra1Player()->_ra1ViewportOffsetY = 0;
-		} else {
-			ra1Player()->_ra1ViewportOffsetX = _perspectiveX;
-			ra1Player()->_ra1ViewportOffsetY = _perspectiveY;
-		}
-
-		// Screen shake — SetCameraOffset (0x224FD): random [-2,+2] jitter when
-		// _screenFlash > 0. Original uses RandScaleByte(5) - 2 for each axis.
-		if (_screenFlash > 0) {
-			ra1Player()->_ra1ViewportOffsetX += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
-			ra1Player()->_ra1ViewportOffsetY += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
+			syncViewportOffset(false);
+		} else if (!asteroidMode) {
+			syncViewportOffset(true);
 		}
 	}
 
@@ -563,7 +581,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// game loop. We call it from procPostRendering when _currentLevel == 7.
 	if (_currentLevel == 7) {
 		updateLevel8WalkerState();
-		renderLevel8Overlay(renderBitmap, pitch, width, height);
+		const int viewportX = _player ? ra1Player()->_ra1ViewportOffsetX : 0;
+		const int viewportY = _player ? ra1Player()->_ra1ViewportOffsetY : 0;
+		renderLevel8Overlay(renderBitmap, pitch, width, height, viewportX, viewportY);
 	}
 
 	renderHUD(renderBitmap, pitch, width, height);
@@ -1331,32 +1351,13 @@ const int16 InsaneRebel1::kWalkerAttackWindow1[3] = { 2588, 2323, 877 };
 const int16 InsaneRebel1::kWalkerAttackWindow2[3] = { 1709, 1444, -2 };
 const int16 InsaneRebel1::kWalkerAttackWindow3[3] = { 262, -2, -2 };
 
-// Per-route walker damage frame tables — FUN_12fe1/FUN_130c9/FUN_13195.
-// type: 0=proximity(41,32), 1=offsetY(15), 2=offsetX(24), 3=proximity(40,31), 4=offsetY(31)
-const InsaneRebel1::WalkerDamageFrame InsaneRebel1::kWalkerDamageRoute0[] = {
-	{0x00CD, 2}, {0x00EF, 2}, {0x0294, 1}, {0x03A2, 2},
-	{0x04BE, 0}, {0x05C9, 2}, {0x076C, 0}, {0x085A, 4}, {0x096F, 2}
-};
-const int InsaneRebel1::kWalkerDamageRoute0Count = ARRAYSIZE(kWalkerDamageRoute0);
-
-const InsaneRebel1::WalkerDamageFrame InsaneRebel1::kWalkerDamageRoute1[] = {
-	{0x0189, 1}, {0x0297, 2}, {0x03B3, 0}, {0x04BE, 4},
-	{0x0661, 0}, {0x074F, 4}, {0x0864, 4}
-};
-const int InsaneRebel1::kWalkerDamageRoute1Count = ARRAYSIZE(kWalkerDamageRoute1);
-
-const InsaneRebel1::WalkerDamageFrame InsaneRebel1::kWalkerDamageRoute2[] = {
-	{0x00BB, 0}, {0x01A9, 4}, {0x02BE, 4}
-};
-const int InsaneRebel1::kWalkerDamageRoute2Count = ARRAYSIZE(kWalkerDamageRoute2);
-
-// updateLevel8WalkerState — Per-frame walker health + attack window + damage logic.
+// updateLevel8WalkerState — Per-frame walker health + attack window logic.
 // Called from procPostRendering when _currentLevel == 7.
 void InsaneRebel1::updateLevel8WalkerState() {
 	// Walker health computation — RunLevel8Flow (0x18634-0x18655)
 	if (_walkerHealth >= 11) {
 		_walkerHealth = (int16)(100 - (_killCount + (_killCount >> 2)));
-	} else if (_walkerHealth > 0 && (_frameCounter & 3) == 0) {
+	} else if (_walkerHealth > 0 && (_gameCounter & 3) == 0) {
 		_walkerHealth--;
 	}
 
@@ -1366,40 +1367,10 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		return;
 	}
 
-	// Per-route damage check — FUN_12fe1/FUN_130c9/FUN_13195
+	// FUN_12fe1/FUN_130c9/FUN_13195 walker collision damage is applied from
+	// updateAsteroidPhysics(), where the 0x0B damage flags are consumed.
 	int route = CLIP(_levelRouteIndex, 0, 2);
-	const WalkerDamageFrame *table;
-	int tableCount;
-	switch (route) {
-	case 0:  table = kWalkerDamageRoute0; tableCount = kWalkerDamageRoute0Count; break;
-	case 1:  table = kWalkerDamageRoute1; tableCount = kWalkerDamageRoute1Count; break;
-	default: table = kWalkerDamageRoute2; tableCount = kWalkerDamageRoute2Count; break;
-	}
-
-	uint16 fc = (uint16)_frameCounter;
-	for (int i = 0; i < tableCount; i++) {
-		if (fc != (uint16)table[i].frame)
-			continue;
-
-		int16 dx = _shipPosX - kRA1CenterX;  // distance from center
-		int16 dy = _shipPosY - kRA1CenterY;
-		if (dx < 0) dx = -dx;
-		if (dy < 0) dy = -dy;
-
-		bool hit = false;
-		switch (table[i].type) {
-		case 0: hit = (dx < 0x29 && dy < 0x20); break;  // proximity(41,32)
-		case 1: hit = (dy < 0x0F); break;                // offsetY(15)
-		case 2: hit = (dx < 0x18); break;                // offsetX(24)
-		case 3: hit = (dx < 0x28 && dy < 0x1F); break;   // proximity(40,31)
-		case 4: hit = (dy < 0x1F); break;                // offsetY(31)
-		default: break;
-		}
-
-		if (hit)
-			_damageFlags |= 0x20;
-		break;
-	}
+	uint16 fc = (uint16)_gameCounter;
 
 	// Attack window logic — RunLevel8Flow (0x18778-0x18B4A)
 	const int16 *windows[3] = {
@@ -1440,12 +1411,12 @@ void InsaneRebel1::updateLevel8WalkerState() {
 
 		if (inDirectionalPhase) {
 			// Player can choose direction during last 50 frames
-			if (_playerFired && _avgInputX == 0) {
+			if (_playerFired && _inputAxisDeltaX == 0) {
 				_walkerBranchChoice = (_shipPosX < 0xA0) ? 1 : 2;
 			}
 		} else {
 			// Torpedo sound every 8 frames during targeting phase
-			if ((_frameCounter & 7) == 0)
+			if ((_gameCounter & 7) == 0)
 				playSfx(kSfxLockOn, 127, 0);
 		}
 	}
@@ -1471,9 +1442,13 @@ void InsaneRebel1::updateLevel8WalkerState() {
 				newRoute = 2;
 		}
 
-		if (newRoute != 0) {
+		if (newRoute != 0 && newRoute != route) {
 			_pendingRouteIndex = newRoute;
-			_vm->_smushVideoShouldFinish = true;
+			_pendingRouteCutoverFrame = _gameCounter + 7;
+			_pendingRouteStartFrame = _pendingRouteCutoverFrame;
+			debug(1, "RA1 L8 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
+				route, newRoute, (unsigned)_gameCounter, _shipPosX,
+				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
 		}
 		_walkerBranchChoice = 0;
 		break;
@@ -1482,28 +1457,27 @@ void InsaneRebel1::updateLevel8WalkerState() {
 
 // renderLevel8Overlay — Walker-specific UI from RunLevel8Flow (0x18660-0x18A7E).
 // Draws walker health %, attack timer, directional arrows, and target reticle.
-// Original draws via DrawStringEx/FormatAndDrawText in screen-space (within viewport).
-// We draw into 384x242 buffer, so add viewport offset to convert screen→buffer coords.
-void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int height) {
+// Original RunLevel8Flow projects these fixed cockpit-panel points and then uses
+// 1/4 parallax compensation. We draw into the 384x242 SMUSH buffer, so add the
+// viewport offset to convert the original screen-space result back to buffer
+// coordinates before the final RA1 crop.
+void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int height,
+		int viewportX, int viewportY) {
 	if (_currentLevel != 7)
 		return;
 
-	// Viewport offset: screen-space → buffer-space (same approach as renderHUD)
-	int viewX = _player ? ra1Player()->_ra1ViewportOffsetX : _perspectiveX;
-	int viewY = _player ? ra1Player()->_ra1ViewportOffsetY : _perspectiveY;
-
-	// Walker health display — "<<WALKER %d%%" at projected (0x61, 0x8D)
-	// Blinks when health < 16: only drawn when (frameCounter & 2) != 0
-	if (_walkerHealth > 0 && (_walkerHealth >= 16 || (_frameCounter & 2) != 0)) {
+	// Walker health display — "<<WALKER %d%%" at projected cockpit panel point (0x61, 0x8D).
+	// Blinks when health < 16: only drawn when (GAME counter & 2) != 0.
+	if (_walkerHealth > 0 && (_walkerHealth >= 16 || (_gameCounter & 2) != 0)) {
 		int16 projX = 0x61, projY = 0x8D;
 		projectGameplayPoint(projX, projY);
-		// Apply 1/4 parallax compensation (original: 0x61 - (projX - 0x61) >> 2)
 		projX = (int16)(0x61 - ((projX - 0x61) >> 2));
 		projY = (int16)(0x8D - ((projY - 0x8D) >> 2));
 
 		char walkerStr[24];
-		Common::sprintf_s(walkerStr, "<<WALKER %d%%%%", (int)_walkerHealth);
-		drawFontBankString(dst, pitch, width, height, viewX + projX, viewY + projY, walkerStr);
+		Common::sprintf_s(walkerStr, "<<WALKER %d%%", (int)_walkerHealth);
+		drawFontBankString(dst, pitch, width, height,
+			viewportX + projX, viewportY + projY, walkerStr);
 	}
 
 	// Attack window overlay (timer + arrows/reticle)
@@ -1513,7 +1487,7 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 		&kWalkerAttackWindow2[route],
 		&kWalkerAttackWindow3[route]
 	};
-	int16 frameNum = (int16)(uint16)_frameCounter;
+	int16 frameNum = (int16)(uint16)_gameCounter;
 
 	bool inWindow = false;
 	bool inDirectionalPhase = false;
@@ -1531,7 +1505,7 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 	if (!inWindow || _walkerBranchChoice != 0)
 		return;
 
-	// Timer countdown — "<<TIME %d" at projected (0x62, 0x9C)
+	// Timer countdown — "<<TIME %d" at projected cockpit panel point (0x62, 0x9C).
 	{
 		int16 projX = 0x62, projY = 0x9C;
 		projectGameplayPoint(projX, projY);
@@ -1540,7 +1514,8 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 
 		char timerStr[16];
 		Common::sprintf_s(timerStr, "<<TIME %d", (int)_walkerTimer);
-		drawFontBankString(dst, pitch, width, height, viewX + projX, viewY + projY, timerStr);
+		drawFontBankString(dst, pitch, width, height,
+			viewportX + projX, viewportY + projY, timerStr);
 	}
 
 	if (inDirectionalPhase) {
@@ -1553,21 +1528,21 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 		if (_shipPosX < 0xA0) {
 			// Left arrow "<<v"
 			drawFontBankString(dst, pitch, width, height,
-				viewX + 0xA6 + px, viewY + 0x92 + py, "<<v");
+				viewportX + 0xA6 + px, viewportY + 0x92 + py, "<<v");
 		} else {
 			// Right arrow "<<u"
 			drawFontBankString(dst, pitch, width, height,
-				viewX + 0xA8 - px, viewY + 0x93 - py, "<<u");
+				viewportX + 0xA8 - px, viewportY + 0x93 - py, "<<u");
 		}
 	} else {
 		// Target reticle — "<<w" at projected (0xA9, 0x9A), blinks on (frame & 4)
-		if ((_frameCounter & 4) == 0) {
+		if ((_gameCounter & 4) == 0) {
 			int16 projX = 0, projY = 0;
 			projectGameplayPoint(projX, projY);
 			int16 drawX = (int16)(0xA9 - (projX >> 2));
 			int16 drawY = (int16)(0x9A - (projY >> 2));
 			drawFontBankString(dst, pitch, width, height,
-				viewX + drawX, viewY + drawY, "<<w");
+				viewportX + drawX, viewportY + drawY, "<<w");
 		}
 	}
 }

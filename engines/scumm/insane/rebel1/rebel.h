@@ -161,8 +161,10 @@ private:
 	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
-	void renderLevel8Overlay(byte *dst, int pitch, int width, int height);
+	void renderLevel8Overlay(byte *dst, int pitch, int width, int height,
+		int viewportX, int viewportY);
 	void updateLevel8WalkerState();
+	void syncViewportOffset(bool usePerspectiveViewport);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 	void updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
@@ -246,6 +248,7 @@ private:
 	int16 _inputHistoryY[kInputHistorySize];  // 0x7594: vertical input history
 	int16 _viewHistoryX[kInputHistorySize];   // 0x75A8: viewport horizontal history
 	int16 _viewHistoryY[kInputHistorySize];   // 0x75BC: viewport vertical history
+	int16 _inputAxisDeltaX; // Current 0x0B horizontal input sample, before history averaging
 	int16 _avgInputX;    // smoothed horizontal input (clamped to [-0xA0, 0xA0])
 	int16 _avgInputY;    // smoothed vertical input (clamped to [-0x46, 0x41])
 	int16 _mouseOffsetX; // 0x9762-style accumulated recenter offset in DOS 640-space
@@ -300,6 +303,7 @@ private:
 	uint16 _activeGameOpcode;
 	uint32 _frameGameOpcodeMask;
 	uint16 _frameDispatchFlags;
+	bool _asteroidPhysicsUpdatedThisFrame;
 
 	// Difficulty (0=easy, 1=normal, 2=hard) — matches original DAT_22BC
 	int _difficulty;
@@ -384,8 +388,7 @@ private:
 	int _levelRouteIndex;        // Current mid-level route/segment for branching levels
 	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
 	int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches
-	int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (Level 7 uses branchFrame + 7)
-	int _levelRouteChoice;       // Level-local pending branch choice (0=none, 1=left, 2=right)
+	int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (branchFrame + 7)
 	int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
 
 	// Main menu / options state
@@ -493,19 +496,6 @@ private:
 	static const int16 kWalkerAttackWindow1[3];
 	static const int16 kWalkerAttackWindow2[3];
 	static const int16 kWalkerAttackWindow3[3];
-
-	// Per-route damage frame tables — FUN_12fe1/FUN_130c9/FUN_13195
-	// Each entry: {frameNumber, hitboxType} where hitboxType determines the check
-	struct WalkerDamageFrame {
-		int16 frame;
-		int16 type;    // 0=proximity(41,32), 1=offsetY(15), 2=offsetX(24), 3=proximity(40,31), 4=offsetY(31)
-	};
-	static const WalkerDamageFrame kWalkerDamageRoute0[];
-	static const WalkerDamageFrame kWalkerDamageRoute1[];
-	static const WalkerDamageFrame kWalkerDamageRoute2[];
-	static const int kWalkerDamageRoute0Count;
-	static const int kWalkerDamageRoute1Count;
-	static const int kWalkerDamageRoute2Count;
 
 	static const int kFrameObjectStateBytes = 300;
 	byte _frameObjectState[kFrameObjectStateBytes];

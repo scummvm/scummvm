@@ -37,6 +37,14 @@
 
 namespace Scumm {
 
+enum {
+	kRA1PresentationBorder = 4,
+	kRA1PresentationScreenWidth = 320,
+	kRA1PresentationScreenHeight = 200,
+	kRA1PresentationWidth = kRA1PresentationScreenWidth - kRA1PresentationBorder * 2,
+	kRA1PresentationHeight = kRA1PresentationScreenHeight - kRA1PresentationBorder * 2
+};
+
 static void ra1ApplyCenteredFetchPlacement(InsaneRebel1 *rebel1, int width, int height, int &left, int &top) {
 	int16 centerX = (int16)(left + (width >> 1));
 	int16 centerY = (int16)(top + (height >> 1));
@@ -66,6 +74,8 @@ void SmushPlayerRebel1::initGamePlayerFields() {
 	_ra1CleanFrame = nullptr;
 	_ra1CleanFrameSize = 0;
 	_ra1HasCleanFrame = false;
+	_ra1PresentationBuffer = nullptr;
+	_ra1PresentationBufferSize = 0;
 	_ra1ObjOverlayData = nullptr;
 	_ra1ObjOverlayDataSize = 0;
 	_ra1ObjOverlayCodec = 0;
@@ -85,6 +95,9 @@ void SmushPlayerRebel1::destroyGamePlayerFields() {
 	free(_ra1CleanFrame);
 	_ra1CleanFrame = nullptr;
 	_ra1CleanFrameSize = 0;
+	free(_ra1PresentationBuffer);
+	_ra1PresentationBuffer = nullptr;
+	_ra1PresentationBufferSize = 0;
 }
 
 void SmushPlayerRebel1::resetGameVideoState() {
@@ -120,6 +133,10 @@ void SmushPlayerRebel1::releaseGameVideoState() {
 	_ra1CleanFrame = nullptr;
 	_ra1CleanFrameSize = 0;
 	_ra1HasCleanFrame = false;
+
+	free(_ra1PresentationBuffer);
+	_ra1PresentationBuffer = nullptr;
+	_ra1PresentationBufferSize = 0;
 }
 
 bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStream &b) {
@@ -295,30 +312,51 @@ void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, in
 	} while (--height);
 }
 /**
- * RA1 codec 21: Skip/copy line codec (FUN_10D41).
+ * RA1 codec 21: Skip/copy line codec (FUN_10D41). Clip copy runs without
+ * changing source X; stored cockpit patches can legitimately start offscreen.
  */
-void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
-	dst += top * pitch + left;
+void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height,
+		int pitch, int bufWidth, int bufHeight) {
 	for (int row = 0; row < height; row++) {
-		uint16 lineSize = READ_LE_UINT16(src);
+		const uint16 lineSize = READ_LE_UINT16(src);
 		const byte *lineData = src + 2;
 		const byte *lineEnd = lineData + lineSize;
-		byte *dstRow = dst;
-		int remaining = width;
-		while (remaining > 0 && lineData < lineEnd) {
-			if (lineData + 2 > lineEnd) break;
-			uint16 skip = READ_LE_UINT16(lineData); lineData += 2;
-			dstRow += skip; remaining -= skip;
-			if (remaining <= 0) break;
-			if (lineData + 2 > lineEnd) break;
-			uint16 copyLen = READ_LE_UINT16(lineData) + 1; lineData += 2;
-			int toCopy = MIN<int>(copyLen, remaining);
-			if (lineData + toCopy > lineEnd) toCopy = (int)(lineEnd - lineData);
-			if (toCopy > 0) { memcpy(dstRow, lineData, toCopy); lineData += toCopy; dstRow += toCopy; remaining -= toCopy; }
-			if (copyLen > toCopy) lineData += (copyLen - toCopy);
+		const int dstY = top + row;
+		int srcX = 0;
+
+		while (srcX < width && lineData < lineEnd) {
+			if (lineData + 2 > lineEnd)
+				break;
+			const uint16 skip = READ_LE_UINT16(lineData);
+			lineData += 2;
+			srcX += skip;
+			if (srcX >= width)
+				break;
+
+			if (lineData + 2 > lineEnd)
+				break;
+			const int copyLen = READ_LE_UINT16(lineData) + 1;
+			lineData += 2;
+
+			const int readableLen = MIN<int>(copyLen, (int)(lineEnd - lineData));
+			const int dstStartX = left + srcX;
+			const int dstEndX = dstStartX + readableLen;
+			if (readableLen > 0 && dstY >= 0 && dstY < bufHeight) {
+				const int clippedStartX = MAX(dstStartX, 0);
+				const int clippedEndX = MIN(dstEndX, bufWidth);
+				if (clippedStartX < clippedEndX) {
+					const int srcSkipX = clippedStartX - dstStartX;
+					memcpy(dst + dstY * pitch + clippedStartX,
+						lineData + srcSkipX, clippedEndX - clippedStartX);
+				}
+			}
+
+			lineData += readableLen;
+			srcX += copyLen;
+			if (readableLen < copyLen)
+				break;
 		}
 		src += lineSize + 2;
-		dst += pitch;
 	}
 }
 
@@ -505,12 +543,23 @@ bool SmushPlayerRebel1::handleGameDimensionOverride(int codec, int width, int he
 }
 
 bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
+	_ra1FrameSourceSkipY = 0;
+
 	// RA1 additive codec (SKIP_RLE) and scatter (RA1_SCATTER) use absolute
 	// positions — they must NOT be clipped/adjusted.
 	if (codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA1_SCATTER)
 		return false;
+
+	// RA1 codec 21 is source-X sensitive: generic left clipping would reduce
+	// the destination width without skipping the corresponding source columns.
+	// Keep only the global FOBJ offset here and let the codec clip each run.
+	if (codec == SMUSH_CODEC_LINE_UPDATE) {
+		left += _fobjOffsetX;
+		top += _fobjOffsetY;
+		return false;
+	}
+
 	int sourceSkipY = 0;
-	_ra1FrameSourceSkipY = 0;
 	adjustFrameCoords(left, top, width, height, pitch, &sourceSkipY);
 	if (codec == SMUSH_CODEC_RLE_ALT) {
 		_ra1FrameSourceSkipY = sourceSkipY;
@@ -541,7 +590,8 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 			dataSize, param, parm2, codec);
 		return true;
 	case SMUSH_CODEC_LINE_UPDATE:
-		smushDecodeRA1SkipCopy(_dst, src, left, top, width, height, pitch);
+		smushDecodeRA1SkipCopy(_dst, src, left, top, width, height, pitch,
+			pitch, (_dst == _specialBuffer) ? _height : _vm->_screenHeight);
 		return true;
 	case SMUSH_CODEC_SKIP_RLE: {
 		const int bufWidth = pitch;
@@ -939,20 +989,46 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 	if (_dst == nullptr || _width <= 0 || _height <= 0)
 		return;
 
+	if (!_insane || !static_cast<InsaneRebel1 *>(_insane)->isInteractiveVideoActive() ||
+			_vm->_screenWidth != kRA1PresentationScreenWidth ||
+			_vm->_screenHeight != kRA1PresentationScreenHeight) {
+		SmushPlayer::handleGameUpdateScreen(src, srcPitch, width, height);
+		return;
+	}
+
 	int ra1ViewX = _ra1ViewportOffsetX;
 	int ra1ViewY = _ra1ViewportOffsetY;
 
-	const int srcX = CLIP(_scrollX + ra1ViewX, 0, _width - 1);
-	const int srcY = CLIP(_scrollY + ra1ViewY, 0, _height - 1);
+	const int srcX = CLIP(_scrollX + ra1ViewX + kRA1PresentationBorder, 0, _width - 1);
+	const int srcY = CLIP(_scrollY + ra1ViewY + kRA1PresentationBorder, 0, _height - 1);
 
-	int frameWidth = MIN(_width - srcX, _vm->_screenWidth);
-	int frameHeight = MIN(_height - srcY, _vm->_screenHeight);
+	int frameWidth = MIN<int>(_width - srcX, kRA1PresentationWidth);
+	int frameHeight = MIN<int>(_height - srcY, kRA1PresentationHeight);
 	if (frameWidth <= 0 || frameHeight <= 0)
 		return;
 
-	const byte *dst = _dst + srcY * _width + srcX;
+	const int presentationSize = kRA1PresentationScreenWidth * kRA1PresentationScreenHeight;
+	if (_ra1PresentationBuffer == nullptr || _ra1PresentationBufferSize < presentationSize) {
+		byte *newPresentationBuffer = (byte *)realloc(_ra1PresentationBuffer, presentationSize);
+		if (newPresentationBuffer == nullptr)
+			return;
+		_ra1PresentationBuffer = newPresentationBuffer;
+		_ra1PresentationBufferSize = presentationSize;
+	}
+	memset(_ra1PresentationBuffer, 0, presentationSize);
 
-	SmushPlayer::handleGameUpdateScreen(dst, _width, frameWidth, frameHeight);
+	// ResetPlaybackViewport() (0x20A53) initializes the interactive draw window
+	// to (4,4,312,192), leaving a black presentation frame around cockpit scenes.
+	const byte *dst = _dst + srcY * _width + srcX;
+	byte *presentationDst = _ra1PresentationBuffer +
+		kRA1PresentationBorder * kRA1PresentationScreenWidth + kRA1PresentationBorder;
+	for (int y = 0; y < frameHeight; y++) {
+		memcpy(presentationDst + y * kRA1PresentationScreenWidth,
+			dst + y * _width, frameWidth);
+	}
+
+	SmushPlayer::handleGameUpdateScreen(_ra1PresentationBuffer,
+		kRA1PresentationScreenWidth, kRA1PresentationScreenWidth, kRA1PresentationScreenHeight);
 }
 
 SmushFont *SmushPlayerRebel1::ra1GetFont(int font) {
