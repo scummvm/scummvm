@@ -68,6 +68,10 @@ private:
 	int32 _ra1CleanFrameSize;
 	bool _ra1HasCleanFrame;
 
+	// RA1 interactive movies present a 312x192 viewport inside a black 320x200 frame.
+	byte *_ra1PresentationBuffer;
+	int32 _ra1PresentationBufferSize;
+
 	// RA1 OBJ overlay FOBJ — cockpit drawn once frame 0, re-rendered every frame
 	byte *_ra1ObjOverlayData;
 	int32 _ra1ObjOverlayDataSize;

@@ -113,12 +113,6 @@ const int16 kLevel7BranchThreshold[6] = {
 	0, 170, 170, 160, 160, 160
 };
 
-const int16 kLevel8BranchFrames[3][3] = {
-	{ 2588, 1709,  262 },
-	{ 2323, 1444,   -2 },
-	{  877,   -2,   -2 }
-};
-
 inline bool isLevel4DamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0008:
@@ -501,14 +495,15 @@ void InsaneRebel1::checkDynamicLevelBranch() {
 	if (!_interactiveVideoActive || _levelRouteIndex < 0)
 		return;
 
-	if (_currentLevel == 6 && _pendingRouteIndex >= 0) {
+	if ((_currentLevel == 6 || _currentLevel == 7) && _pendingRouteIndex >= 0) {
+		const uint32 routeFrame = (_currentLevel == 7) ? (uint32)_gameCounter : _frameCounter;
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
-			_frameCounter >= (uint32)_pendingRouteCutoverFrame) {
+			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
 			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1 L7 cutover: route=%d -> %d at frame=%u (resumeTimelineFrame=%d)",
-				_levelRouteIndex, _pendingRouteIndex, (unsigned)_frameCounter,
-				(int)_pendingRouteStartFrame);
+			debug(1, "RA1 L%d cutover: route=%d -> %d at frame=%u (resumeTimelineFrame=%d)",
+				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,
+				(unsigned)routeFrame, (int)_pendingRouteStartFrame);
 		}
 		return;
 	}
@@ -539,45 +534,9 @@ void InsaneRebel1::checkDynamicLevelBranch() {
 		}
 	}
 
-	if (_currentLevel == 7) {
-		const int route = CLIP<int>(_levelRouteIndex, 0, 2);
-		const int frame = (int)_frameCounter;
-		const int leftBlockedFrame = kLevel8BranchFrames[route][2];
-		const int rightBlockedFrame = kLevel8BranchFrames[route][1];
-		const bool shotEdge = _playerFired && _fireCooldown == 0;
-		int nextRoute = -1;
-
-		for (int i = 0; i < 3; ++i) {
-			const int triggerFrame = kLevel8BranchFrames[route][i];
-			if (triggerFrame < 0)
-				continue;
-
-			if (shotEdge && frame > triggerFrame - 0x32 && frame <= triggerFrame)
-				_levelRouteChoice = (_shipPosX < kRA1CenterX) ? 1 : 2;
-
-			if (frame != triggerFrame)
-				continue;
-
-			const bool chooseLeft = (_levelRouteChoice == 1) ||
-				((_shipPosX < kRA1CenterX) && (_levelRouteChoice != 2));
-			if (chooseLeft) {
-				if (frame != leftBlockedFrame)
-					nextRoute = 1;
-			} else {
-				if (frame != rightBlockedFrame)
-					nextRoute = 2;
-			}
-			_levelRouteChoice = 0;
-			break;
-		}
-
-		if (nextRoute >= 0 && nextRoute != route) {
-			_pendingRouteIndex = nextRoute;
-			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1 L8 branch: route=%d -> %d at frame=%u shipX=%d",
-				route, nextRoute, (unsigned)_frameCounter, _shipPosX);
-		}
-	}
+	// Level 8 owns its branch choice in updateLevel8WalkerState(), where the
+	// original RunLevel8Flow also draws the timer/arrows and updates the local
+	// choice variable. This function only performs the delayed route cutover.
 }
 
 void InsaneRebel1::projectGameplayPoint(int16 &x, int16 &y) const {
@@ -1208,16 +1167,17 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_damageFlags |= 0x20;
 
 	if (_currentLevel == 7) {
+		const uint16 walkerFrame = (uint16)_gameCounter;
 		bool walkerHazard = false;
 		switch (CLIP<int>(_levelRouteIndex, 0, 2)) {
 		case 0:
-			walkerHazard = hasLevel8PerspectiveHazardRoute0((uint16)_frameCounter, _perspectiveX, _perspectiveY);
+			walkerHazard = hasLevel8PerspectiveHazardRoute0(walkerFrame, _perspectiveX, _perspectiveY);
 			break;
 		case 1:
-			walkerHazard = hasLevel8PerspectiveHazardRoute1((uint16)_frameCounter, _perspectiveX, _perspectiveY);
+			walkerHazard = hasLevel8PerspectiveHazardRoute1(walkerFrame, _perspectiveX, _perspectiveY);
 			break;
 		case 2:
-			walkerHazard = hasLevel8PerspectiveHazardRoute2((uint16)_frameCounter, _perspectiveX, _perspectiveY);
+			walkerHazard = hasLevel8PerspectiveHazardRoute2(walkerFrame, _perspectiveX, _perspectiveY);
 			break;
 		}
 
@@ -1301,6 +1261,7 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_level2JoystickFilteredX = 0;
 		_level2JoystickFilteredY = 0;
 	}
+	_inputAxisDeltaX = inputX;
 
 	debug("RA1 asteroid input: source=%s axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
 		inputSourceName,
@@ -1588,6 +1549,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
 		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_inputAxisDeltaX = 0;
 		_avgInputX = 0;
 		_avgInputY = 0;
 		_mouseOffsetX = 0;
@@ -1622,6 +1584,8 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 		// Field1 == 0 corresponds to baseline recenter behavior in the original.
 		if ((int32)param1 == 0) {
+			_perspectiveX = 0x20;
+			_perspectiveY = 0x17;
 			_shipPosX = kRA1CenterX;
 			_shipPosY = kRA1CenterY;
 		}
@@ -1630,9 +1594,12 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_frameGameOpcodeMask = 0;
 		_frameDispatchFlags = 0;
 		resetProjectionTable();
+		if ((int32)param1 == 0)
+			syncViewportOffset(true);
 
-		// RunLevel8Flow seeds the walker armor mask after the interactive segment
-		// has entered its runtime reset path, not before playback begins.
+		// Original RunLevel8Flow initializes its separate g_level8HitboxBuffer
+		// after the first L8PLAY runtime reset. We fold that mask into the
+		// secondary half of _frameObjectState; route resumes preserve it.
 		if (_currentLevel == 7)
 			memset(_frameObjectState + 150, 0xFF, 150);
 
@@ -1792,6 +1759,11 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			}
 		}
 		debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
+		if (!_asteroidPhysicsUpdatedThisFrame) {
+			updateAsteroidPhysics();
+			_asteroidPhysicsUpdatedThisFrame = true;
+			syncViewportOffset(true);
+		}
 		break;
 
 	case 0x5A:

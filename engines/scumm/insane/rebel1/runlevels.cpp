@@ -143,6 +143,71 @@ int32 findAnimFrameChunkOffset(ScummEngine_v7 *vm, const char *filename, int32 t
 	return result;
 }
 
+int32 findAnimFrameChunkOffsetByGameCounter(ScummEngine_v7 *vm, const char *filename, int32 targetCounter, int32 &localFrame) {
+	localFrame = 0;
+	if (targetCounter <= 0)
+		return 0;
+
+	ScummFile *file = vm->instantiateScummFile();
+	if (!vm->openFile(*file, Common::Path(filename))) {
+		delete file;
+		return -1;
+	}
+
+	int32 result = -1;
+	if (file->size() >= 8) {
+		file->readUint32BE();
+		file->readUint32BE();
+
+		int32 frameIndex = 0;
+		while (file->pos() + 8 <= file->size()) {
+			const int32 chunkOffset = (int32)file->pos();
+			const uint32 chunkTag = file->readUint32BE();
+			const int32 chunkSize = (int32)file->readUint32BE();
+			const int32 chunkDataOffset = (int32)file->pos();
+			const int32 nextChunkOffset = chunkOffset + 8 + chunkSize + ((chunkSize & 1) ? 1 : 0);
+			if (nextChunkOffset < chunkOffset || nextChunkOffset > file->size())
+				break;
+
+			if (chunkTag == MKTAG('F', 'R', 'M', 'E')) {
+				const int32 frameEnd = chunkDataOffset + chunkSize;
+				while (file->pos() + 8 <= frameEnd) {
+					const int32 subChunkOffset = (int32)file->pos();
+					const uint32 subChunkTag = file->readUint32BE();
+					const int32 subChunkSize = (int32)file->readUint32BE();
+					const int32 subChunkDataOffset = (int32)file->pos();
+					const int32 nextSubChunkOffset = subChunkDataOffset + subChunkSize + ((subChunkSize & 1) ? 1 : 0);
+					if (nextSubChunkOffset < subChunkOffset || nextSubChunkOffset > frameEnd)
+						break;
+
+					if (subChunkTag == MKTAG('G', 'A', 'M', 'E') && subChunkSize >= 8) {
+						const uint32 opcode = file->readUint32BE();
+						const int32 counter = (int32)file->readUint32BE();
+						if (opcode == 0x0B && counter >= targetCounter) {
+							localFrame = frameIndex;
+							result = chunkOffset;
+							break;
+						}
+					}
+
+					file->seek(nextSubChunkOffset, SEEK_SET);
+				}
+
+				if (result >= 0)
+					break;
+
+				frameIndex++;
+			}
+
+			file->seek(nextChunkOffset, SEEK_SET);
+		}
+	}
+
+	file->close();
+	delete file;
+	return result;
+}
+
 // ---------------------------------------------------------------------------
 // Game flow (matching original at 0x15597)
 // ---------------------------------------------------------------------------
@@ -891,6 +956,7 @@ bool InsaneRebel1::runLevel8() {
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
 		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_inputAxisDeltaX = 0;
 		_avgInputX = 0;
 		_avgInputY = 0;
 
@@ -900,24 +966,37 @@ bool InsaneRebel1::runLevel8() {
 		_walkerBranchChoice = 0;
 
 		int route = 0;
+		int32 routeStartFrame = 0;
 		while (!_vm->shouldQuit()) {
 			_levelRouteIndex = route;
 			_pendingRouteIndex = -1;
-			playInteractiveVideo(kLevel8Routes[route]);
+			_pendingRouteStartFrame = routeStartFrame;
+			_pendingRouteCutoverFrame = -1;
+			playInteractiveVideo(kLevel8Routes[route], routeStartFrame);
 			if (_vm->shouldQuit())
 				return false;
 
 			if (_health < 0)
 				break;
 
+			if (_walkerHealth <= 0)
+				break;
+
 			if (_pendingRouteIndex < 0 || _pendingRouteIndex == route)
 				break;
 
+			// RunLevel8Flow uses PlayAnmFile(..., g_frameCounter, 1, -1)
+			// when it branches from one walker route to another. That wrapper
+			// keeps the current ANM alive for seven more gameplay frames, then
+			// opens the destination route while preserving the active state.
+			routeStartFrame = _pendingRouteStartFrame;
 			route = _pendingRouteIndex;
 		}
 
 		_levelRouteIndex = -1;
 		_pendingRouteIndex = -1;
+		_pendingRouteStartFrame = 0;
+		_pendingRouteCutoverFrame = -1;
 
 		if (_health >= 0) {
 			playCinematic("LVL8/L8END.ANM");
@@ -1747,7 +1826,6 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	if (!resumingRoute)
 		clearBit(0);
 	_interactiveVideoActive = true;
-	_levelRouteChoice = 0;
 	if (!resumingRoute) {
 		_onFootInitialized = false;  // Reset so each segment triggers counter==0 init
 		resetFrameObjectState();
@@ -1770,6 +1848,23 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 			videoOffset = 0;
 		} else {
 			debug(1, "RA1 L7 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
+				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
+		}
+	} else if (_currentLevel == 7 && resumingRoute) {
+		videoOffset = findAnimFrameChunkOffsetByGameCounter(_vm, filename, startFrame, videoStartFrame);
+		if (videoOffset < 0) {
+			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d GAME counter lookup failed",
+				_levelRouteIndex, (int)startFrame);
+			videoStartFrame = startFrame;
+			videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
+		}
+		if (videoOffset < 0) {
+			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d localFrame=%d offset lookup failed",
+				_levelRouteIndex, (int)startFrame, (int)videoStartFrame);
+			videoStartFrame = 0;
+			videoOffset = 0;
+		} else {
+			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
 		}
 	}
