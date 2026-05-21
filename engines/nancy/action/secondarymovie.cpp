@@ -256,11 +256,6 @@ void PlaySecondaryMovie::execute() {
 		_triggerFlags.execute();
 		if (_videoSceneChange == kMovieSceneChange) {
 			NancySceneState.changeScene(_sceneChange);
-		} else {
-			// Not changing the scene so enable the mouse now
-			if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
-				g_nancy->setMouseEnabled(true);
-			}
 		}
 
 		NancySceneState.setActiveMovie(nullptr);
