@@ -158,7 +158,7 @@ void NoctropolisPlayer::calcManScale1() {
 
 		_vm->_screen->setScaleTable(_vm->_scale);
 		_playerOffset.x = _vm->_screen->_scaleTable1[60];
-		_playerOffset.y = _vm->_screen->_scaleTable1[200];
+		_playerOffset.y = _vm->_screen->_scaleTable1[_isStil ? 180 : 200];
 	} else {
 		_vm->_screen->setScaleTable(_vm->_scale);
 		_playerOffset.x = _vm->_screen->_scaleTable1[6];
