@@ -757,7 +757,9 @@ bool Channel::updateWidget() {
 }
 
 bool Channel::isTrail() {
-	return _sprite->_trails;
+	return _sprite->_trails || (_sprite->_cast &&
+			(_sprite->_cast->_type == kCastDigitalVideo) &&
+			(((DigitalVideoCastMember *)_sprite->_cast)->_directToStage));
 }
 
 int Channel::getMouseChar(int x, int y) {
