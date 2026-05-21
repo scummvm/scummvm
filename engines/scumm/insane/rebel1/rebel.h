@@ -319,9 +319,9 @@ private:
 		int16 slide;     // +0x09: cross-axis coupling
 		int16 drift;     // +0x0B: drift/turbulence multiplier
 		int16 snap;      // +0x0D: hit radius for shooting targets
-		int16 miss;      // +0x0F: first damage value; FUN_1CDA7 uses it for bit 0x80
-		int16 wham;      // +0x11: second damage value; FUN_1CDA7 uses it for bit 0x40
-		int16 shot;      // +0x13: third damage value; FUN_1CDA7 uses it for bit 0x20
+		int16 miss;      // +0x0F: light/scripted damage; FUN_1CDA7 uses it for bit 0x40
+		int16 wham;      // +0x11: medium/contact damage; FUN_1CDA7 uses it for bit 0x20
+		int16 shot;      // +0x13: heavy/projectile damage; FUN_1CDA7 uses it for bit 0x80
 		int16 kill;      // +0x15: score per target kill
 		int16 time;      // +0x17: survival bonus (added every 32 frames)
 		int16 levelPts;  // +0x19: chapter completion bonus (RunChapterCompleteSummaryScreen)

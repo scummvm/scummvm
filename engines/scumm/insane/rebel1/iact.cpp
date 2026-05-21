@@ -1221,6 +1221,8 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		const uint16 walkerFrame = (uint16)_gameCounter;
 		level8WalkerPlayerHit = hasLevel8WalkerPlayerHit(_levelRouteIndex, walkerFrame,
 			_perspectiveX, _perspectiveY);
+		// RunLevel8Flow sets damage flag 0x20 when the AT-AT route contact
+		// helper hits the player; boss damage uses _walkerHealth separately.
 		if (level8WalkerPlayerHit)
 			_damageFlags |= 0x20;
 	}
@@ -1231,18 +1233,18 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 
 	// Damage application (FUN_1CDA7 lines 20-41)
-	// Original 0x0B mapping: 0x80 -> +0x0F, 0x40 -> +0x11, 0x20 -> +0x13.
+	// Original 0x0B mapping: 0x80 -> +0x13, 0x40 -> +0x0F, 0x20 -> +0x11.
 	// No cooldown — all three damage types can stack each frame
 	if (_damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
 		const int16 oldHealth = _health;
 		const byte appliedDamageFlags = _damageFlags;
 		_screenFlash = 5;
 		if (_damageFlags & 0x80)
-			_health -= _tuning.miss;
-		if (_damageFlags & 0x40)
-			_health -= _tuning.wham;
-		if (_damageFlags & 0x20)
 			_health -= _tuning.shot;
+		if (_damageFlags & 0x40)
+			_health -= _tuning.miss;
+		if (_damageFlags & 0x20)
+			_health -= _tuning.wham;
 		if (_health < 0) {
 			_deathTimer = 15;  // 0x0F — shorter than Level 1's 30
 			if (_damageFlags & 0x80)
