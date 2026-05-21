@@ -181,9 +181,7 @@ DirectorEngine::~DirectorEngine() {
 		_currentWindow = nullptr;
 	}
 	delete _wm;
-	for (auto &it : _allSeenResFiles) {
-		delete it._value;
-	}
+	_allSeenResFiles.clear();
 	for (uint i = 0; i < _winCursor.size(); i++)
 		delete _winCursor[i];
 

@@ -303,7 +303,7 @@ bool Cast::eraseCastMember(int castId) {
 	return false;
 }
 
-void Cast::setArchive(Archive *archive) {
+void Cast::setArchive(Common::SharedPtr<Archive> archive) {
 	_castArchive = archive;
 
 	if (archive->hasResource(MKTAG('M', 'C', 'N', 'M'), 0)) {

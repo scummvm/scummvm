@@ -1806,13 +1806,11 @@ void LB::b_openResFile(int nargs) {
  	}
 
 	if (!g_director->_allSeenResFiles.contains(resPath)) {
-		MacArchive *arch = new MacArchive();
+		Common::SharedPtr<Archive> arch(new MacArchive());
 		if (arch->openFile(findPath(resPath))) {
 			g_director->_openResFiles.setVal(resPath, arch);
 			g_director->_allSeenResFiles.setVal(resPath, arch);
 			g_director->addArchiveToOpenList(resPath);
-		} else {
-			delete arch;
 		}
 	}
 }

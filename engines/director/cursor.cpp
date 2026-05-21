@@ -215,13 +215,13 @@ void Cursor::readFromResource(Datum resourceId) {
 
 		Cast *cast = g_director->getCurrentMovie()->getCast();
 		if (cast && cast->getArchive()) {
-			readSuccessful = readFromArchive(cast->getArchive(), resourceId.asInt());
+			readSuccessful = readFromArchive(cast->getArchive().get(), resourceId.asInt());
 			if (readSuccessful)
 				break;
 		}
 
 		for (auto &it : g_director->_allOpenResFiles) {
-			readSuccessful = readFromArchive(g_director->_allSeenResFiles[it], resourceId.asInt());
+			readSuccessful = readFromArchive(g_director->_allSeenResFiles[it].get(), resourceId.asInt());
 			if (readSuccessful)
 				break;
 		}
@@ -229,7 +229,7 @@ void Cursor::readFromResource(Datum resourceId) {
 		// Cursors can be located in the main archive, which may not
 		// be in _allOpenResFiles
 		if (!readSuccessful && g_director->getPlatform() == Common::kPlatformMacintosh) {
-			readSuccessful = readFromArchive(g_director->getMainArchive(), resourceId.asInt());
+			readSuccessful = readFromArchive(g_director->getMainArchive().get(), resourceId.asInt());
 		}
 
 		// TODO: figure out where to read custom cursor in windows platform

@@ -90,8 +90,8 @@ public:
 	~Cast();
 
 	void loadArchive();
-	void setArchive(Archive *archive);
-	Archive *getArchive() const { return _castArchive; };
+	void setArchive(Common::SharedPtr<Archive> archive);
+	Common::SharedPtr<Archive> getArchive() const { return _castArchive; };
 	Common::String getMacName() const { return _macName; }
 	Common::String getCastName() const { return _castName; }
 	void setCastName(const Common::String &name) { _castName = name; }
@@ -158,7 +158,7 @@ private:
 	uint32 computeChecksum();
 
 public:
-	Archive *_castArchive;
+	Common::SharedPtr<Archive> _castArchive;
 	Common::Platform _platform;
 	uint16 _castLibID;
 	uint16 _libResourceId;

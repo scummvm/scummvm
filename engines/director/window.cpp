@@ -561,7 +561,6 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 
 		g_director->_allSeenResFiles.erase(previousSharedCastPath);
 		g_director->_allOpenResFiles.remove(previousSharedCastPath);
-		delete previousSharedCast->_castArchive;
 		delete previousSharedCast;
 	} else {
 		debug(0, "@@   No previous shared cast");
@@ -600,14 +599,14 @@ bool Window::loadNextMovie() {
 		_currentMovie = nullptr;
 	}
 
-	Archive *mov = g_director->openArchive(archivePath);
+	Common::SharedPtr<Archive> mov = g_director->openArchive(archivePath);
 
 	_nextMovie.movie.clear(); // Clearing it, so we will not attempt to load again
 
 	if (!mov)
 		return false;
 
-	probeResources(mov);
+	probeResources(mov.get());
 
 	// Artificial delay for games that expect slow media, e.g. Spaceship Warlock
 	if (g_director->_loadSlowdownFactor && !debugChannelSet(-1, kDebugFast)) {
