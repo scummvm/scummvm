@@ -270,8 +270,10 @@ private:
 	};
 	InputSource _activeInputSource;
 
-	// 0x0B handler physics update (asteroid/surface levels)
-	void updateAsteroidPhysics();
+	// GAME opcode 0x0B physics update (scrolling cockpit/surface levels)
+	void updateGameOp0BPhysics();
+	void updateScreenFlashPalette();
+	void restoreScreenFlashPalette();
 
 	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
 	void updateOnFootPhysics();
@@ -303,7 +305,7 @@ private:
 	uint16 _activeGameOpcode;
 	uint32 _frameGameOpcodeMask;
 	uint16 _frameDispatchFlags;
-	bool _asteroidPhysicsUpdatedThisFrame;
+	bool _gameOp0BPhysicsUpdatedThisFrame;
 
 	// Difficulty (0=easy, 1=normal, 2=hard) — matches original DAT_22BC
 	int _difficulty;
@@ -317,9 +319,9 @@ private:
 		int16 slide;     // +0x09: cross-axis coupling
 		int16 drift;     // +0x0B: drift/turbulence multiplier
 		int16 snap;      // +0x0D: hit radius for shooting targets
-		int16 miss;      // +0x0F: obstacle collision damage (0x0B bit 0x40)
-		int16 wham;      // +0x11: light/wall damage
-		int16 shot;      // +0x13: heavy/projectile damage
+		int16 miss;      // +0x0F: first damage value; FUN_1CDA7 uses it for bit 0x80
+		int16 wham;      // +0x11: second damage value; FUN_1CDA7 uses it for bit 0x40
+		int16 shot;      // +0x13: third damage value; FUN_1CDA7 uses it for bit 0x20
 		int16 kill;      // +0x15: score per target kill
 		int16 time;      // +0x17: survival bonus (added every 32 frames)
 		int16 levelPts;  // +0x19: chapter completion bonus (RunChapterCompleteSummaryScreen)
@@ -345,6 +347,8 @@ private:
 	int16 _screenFlash;          // 0x7736: screen flash timer on hit
 	uint32 _frameCounter;        // 0x7740: global frame counter
 	bool _screenShakeEnabled;    // 0x41AC: when true, SetCameraOffset adds ±2 random jitter
+	byte _screenFlashBasePalette[0x300];
+	bool _screenFlashBasePaletteValid;
 	byte _deathCauseIndicator;   // 0x772E: non-zero = player died; selects death animation variant
 	byte _hudRenderFlag;         // 0x7600: 0xFF when HUD should render (set by combat mode handlers)
 	byte _hudDirtyFlag;          // 0x7601: 0xFF after HUD redraw (set by renderHUD)

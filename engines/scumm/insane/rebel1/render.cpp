@@ -365,7 +365,7 @@ void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameGameOpcodeMask = 0;
 	_frameDispatchFlags = 0;
-	_asteroidPhysicsUpdatedThisFrame = false;
+	_gameOp0BPhysicsUpdatedThisFrame = false;
 
 	if (_interactiveVideoActive && _player) {
 		const bool usePerspectiveViewport =
@@ -443,7 +443,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	_hudRenderFlag = 0xFF;
 
 	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
-	const bool asteroidMode = hasFrameGameOpcode(0x0B) ||
+	const bool gameOp0BMode = hasFrameGameOpcode(0x0B) ||
 		(!haveFrameGameOpcodes && _activeGameOpcode == 0x0B);
 	const bool onFootMode = hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
 		(!haveFrameGameOpcodes &&
@@ -453,17 +453,17 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
 		(!haveFrameGameOpcodes &&
 			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
-	if (asteroidMode) {
-		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
-		if (!_asteroidPhysicsUpdatedThisFrame) {
-			updateAsteroidPhysics();
-			_asteroidPhysicsUpdatedThisFrame = true;
+	if (gameOp0BMode) {
+		// GAME 0x0B scrolling cockpit/surface handler — FUN_1CDA7.
+		if (!_gameOp0BPhysicsUpdatedThisFrame) {
+			updateGameOp0BPhysics();
+			_gameOp0BPhysicsUpdatedThisFrame = true;
 			syncViewportOffset(true);
 		}
 
 		// DOS 0x0B loops test health after each frontend frame and leave the
 		// interactive movie as soon as it drops below zero. Mirror that here so
-		// asteroid/surface chapters transition to their retry/death clips like
+		// GAME 0x0B chapters transition to their retry/death clips like
 		// the other gameplay families do.
 		if (_health < 0) {
 			_fireCooldown = _playerFired ? 1 : 0;
@@ -517,9 +517,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// before HUD/screen copy so overlays and final crop observe the same camera.
 	// On-foot mode uses SetCameraOffset(0,0) — no viewport crop.
 	if (_player) {
-		if (onFootMode || (!asteroidMode && !turretMode && !flightMode)) {
+		if (onFootMode || (!gameOp0BMode && !turretMode && !flightMode)) {
 			syncViewportOffset(false);
-		} else if (!asteroidMode) {
+		} else if (!gameOp0BMode) {
 			syncViewportOffset(true);
 		}
 	}
@@ -1367,8 +1367,10 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		return;
 	}
 
-	// FUN_12fe1/FUN_130c9/FUN_13195 walker collision damage is applied from
-	// updateAsteroidPhysics(), where the 0x0B damage flags are consumed.
+	// FUN_12FE1/FUN_130C9/FUN_13195 test whether the walker shot hits the
+	// player. The port synthesizes that player-damage flag in updateGameOp0BPhysics(),
+	// where the 0x0B damage flags are consumed. This is unrelated to _walkerHealth,
+	// which is the boss health displayed by the Level 8 overlay.
 	int route = CLIP(_levelRouteIndex, 0, 2);
 	uint16 fc = (uint16)_gameCounter;
 
