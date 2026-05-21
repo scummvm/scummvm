@@ -915,7 +915,10 @@ bool InsaneRebel1::runLevel8() {
 
 	_currentLevel = 7;
 	loadLevelSprites(8);
-	loadTuningForLevel(7);
+	// RunLevel8Flow starts L8PLAY.ANM with initLevelFlag=10, so the walker
+	// chapter uses the original "8" tuning row while still keeping chapter
+	// index 7 for assets and Level 8-specific runtime logic.
+	loadTuningForLevel(10);
 
 	beginLevelTitleOverlay(7);
 	playCinematic("LVL8/L8INTRO.ANM");

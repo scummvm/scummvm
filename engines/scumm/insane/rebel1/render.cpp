@@ -1367,8 +1367,8 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		return;
 	}
 
-	// FUN_12FE1/FUN_130C9/FUN_13195 test whether the walker shot hits the
-	// player. The port synthesizes that player-damage flag in updateGameOp0BPhysics(),
+	// FUN_12FE1/FUN_130C9/FUN_13195 test whether the route-specific walker
+	// contact hazards hit the player. The port synthesizes that damage flag in updateGameOp0BPhysics(),
 	// where the 0x0B damage flags are consumed. This is unrelated to _walkerHealth,
 	// which is the boss health displayed by the Level 8 overlay.
 	int route = CLIP(_levelRouteIndex, 0, 2);
