@@ -73,7 +73,8 @@ enum {
 	N_WindWhistles       =  29,
 	N_Bk404Music         =  33,
 	N_Bk406Music         =  35,
-	N_BellyDanceMusic    =  36
+	N_BellyDanceMusic    =  36,
+	N_GamePieceSnd       =  66
 };
 
 } // namespace Dragonsphere

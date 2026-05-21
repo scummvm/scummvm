@@ -271,6 +271,14 @@ enum {
 };
 
 enum {
+	conv050_exit_b_b         =  8,
+	conv050_branch           =  9,
+	conv050_answers_yes      = 16,
+	conv050_answers_rulesask = 18,
+	conv050_exit_d_d         = 20
+};
+
+enum {
 	conv051_nopass           = 0,
 	conv051_exit_b_b         = 3
 };

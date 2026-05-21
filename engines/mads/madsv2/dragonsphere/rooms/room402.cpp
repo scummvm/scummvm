@@ -585,7 +585,7 @@ static void room_402_pre_parser() {
 static void room_402_parser() {
 	int count;
 	int count2 = global[oasis] - 1;
-	int room = 400;
+	int roomNum = 400;
 
 	if (player_said_1(cross)) {
 		if (player_said_1(desert_to_north) || player_said_1(desert_to_south)) {
@@ -599,13 +599,13 @@ static void room_402_parser() {
 			}
 
 			for (count = 0; count < 77; count++) {
-				++room; if (room == 404) room = 401;
+				++roomNum; if (roomNum == 404) roomNum = 401;
 				++count2; if (count2 == 78) count2 = 1;
 
 				if (count2 == global[desert_room]) {
-					if (global[desert_room] == 42)                 room = 401;
-					if (global[desert_room] == global[oasis])      room = 454;
-					if (global[desert_room] == global[fire_holes]) room = 412;
+					if (global[desert_room] == 42)                 roomNum = 401;
+					if (global[desert_room] == global[oasis])      roomNum = 454;
+					if (global[desert_room] == global[fire_holes]) roomNum = 412;
 					goto over;
 				}
 			}
@@ -620,11 +620,11 @@ over:
 			} else if (global[desert_counter] == 6 && !player_has_been_in_room(405)) {
 				new_room = 404;
 
-			} else if (room_id == room) {
+			} else if (room_id == roomNum) {
 				kernel.force_restart = true;
 
 			} else {
-				new_room = room;
+				new_room = roomNum;
 			}
 			goto handled;
 		}
