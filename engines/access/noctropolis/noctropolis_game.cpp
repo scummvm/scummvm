@@ -729,7 +729,10 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_fonts._fonts[3]->drawString(_screen, meanwhileTxt, Common::Point(100, 200));
 	_screen->fadeIn();
 	_system->updateScreen();
-	_system->delayMillis(180 * 17);
+	_events->_vbCount = 180;
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+		_events->pollEventsAndWait();
+	}
 	_screen->fadeOut();
 	_screen->clearScreen();
 	_screen->_printOrg = _screen->_printStart = Common::Point(300, 300);
@@ -754,7 +757,10 @@ void NoctropolisEngine::showComicCover() {
 	_files->loadScreen(Common::Path("comic93.scn"));
 	_screen->setPalette();
 	_system->updateScreen();
-	_system->delayMillis(300 * 17);
+	_events->_vbCount = 300;
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+		_events->pollEventsAndWait();
+	}
 	_midi->stopSong();
 	_screen->fadeOutThenClearAndSetPal();
 }
@@ -778,7 +784,11 @@ void NoctropolisEngine::playSuccubusAttack() {
 	_files->loadScreen(Common::Path("scene06.scn")); // "DARK/SCENE06.SCN"
 	_screen->fadeIn();
 	_system->updateScreen();
-	_system->delayMillis(60 * 17);
+	_events->_vbCount = 60;
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+		_events->pollEventsAndWait();
+	}
+
 	VideoPlayer_v2 vidPlayer(this);
 
 	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(118, 118), Common::Path("VID1/SUCATT1.VID"), 0);
