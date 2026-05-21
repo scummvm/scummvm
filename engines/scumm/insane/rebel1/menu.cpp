@@ -37,6 +37,12 @@ const int kRA1LevelSelectRowsPerCol = 8;
 const int kRA1NumLevels = 15;
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
+	// Global ScummVM dialogs pause the engine while their modal event loop runs.
+	// Do not consume those mouse/key events as RA1 gameplay/menu input, or the
+	// dialog buttons cannot receive clicks while an interactive video is active.
+	if (_vm->isPaused())
+		return false;
+
 	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
 		_activeInputSource = kInputSourceMouse;
 	}
