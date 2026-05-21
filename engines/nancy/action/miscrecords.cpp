@@ -181,9 +181,6 @@ void FrameTextBox::readData(Common::SeekableReadStream &stream) {
 }
 
 void FrameTextBox::execute() {
-	// TODO: UICO-driven conversation rendering isn't ready yet; route the
-	// line into the legacy textbox so subtitles still surface (the textbox
-	// is kept off-screen on Nancy 10+ but addTextLine is harmless).
 	auto &tb = NancySceneState.getTextbox();
 	tb.clear();
 	if (!_text.empty()) {
