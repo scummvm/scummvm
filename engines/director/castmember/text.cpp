@@ -1046,7 +1046,8 @@ uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStrea
 				// Ignoring height and ascent for now from FontStyle
 				uint16 temp;
 				style.formatStartOffset = pIndex;
-				const Common::u32char_type_t *s = _ftext.substr(it, 22).c_str();
+				Common::U32String data = _ftext.substr(it, 22);
+				const Common::u32char_type_t *s = data.c_str();
 
 				s = Graphics::readHex(&style.fontId, s, 4);
 				s = Graphics::readHex(&temp, s, 2);
