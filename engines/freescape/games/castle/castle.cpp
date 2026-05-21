@@ -761,10 +761,12 @@ void CastleEngine::endGame() {
 	_endGamePlayerEndArea = true;
 
 	if (hasEscaped()) {
-		insertTemporaryMessage(_messagesList[5], INT_MIN);
+		insertTemporaryMessage(_messagesList[(isAmiga() || isAtariST()) ? 15 : 5], INT_MIN);
 
 		if (isDOS() && !isCastleMaster2()) {
 			drawFullscreenEndGameAndWait();
+		} else if (isAmiga() && !isDemo() && _endGameBackgroundFrame) {
+			drawFullscreenAmigaEndGameAndWait();
 		} else if (isCastleMaster2()) {
 			executeEscapeCameraSequence();
 			drawFullscreenGameOverAndWait();
@@ -1312,6 +1314,51 @@ void CastleEngine::drawFullscreenEndGameAndWait() {
 	delete surface;
 }
 
+void CastleEngine::drawFullscreenAmigaEndGameAndWait() {
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00));
+	surface->fillRect(_viewArea, _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+
+	int dx = _viewArea.left + (_viewArea.width() - _endGameBackgroundFrame->w) / 2;
+	int dy = _viewArea.top + (_viewArea.height() - _endGameBackgroundFrame->h) / 2;
+	surface->copyRectToSurface(*_endGameBackgroundFrame, dx, dy,
+		Common::Rect(0, 0, _endGameBackgroundFrame->w, _endGameBackgroundFrame->h));
+
+	Common::Event event;
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (_eventManager->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				cont = false;
+				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionShoot || event.customType == kActionChangeMode || event.customType == kActionSkip)
+					cont = false;
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+			default:
+				break;
+			}
+		}
+		_gfx->clear(0, 0, 0, true);
+		drawBorder();
+		if (_currentArea)
+			drawUI();
+
+		drawFullscreenSurface(surface);
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+
+	surface->free();
+	delete surface;
+}
+
 void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::Event event;
 	bool cont = true;
@@ -1375,7 +1422,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	}
 
 	if (!isDOS() && hasEscaped()) {
-		insertTemporaryMessage(_messagesList[5], _countdown - 1);
+		insertTemporaryMessage(_messagesList[(isAmiga() || isAtariST()) ? 15 : 5], _countdown - 1);
 	}
 
 	while (!shouldQuit() && cont) {
@@ -1384,7 +1431,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 			insertTemporaryMessage(spiritsDestroyedString, _countdown - 4);
 			insertTemporaryMessage(keysCollectedString, _countdown - 6);
 			if (!isDOS() && hasEscaped()) {
-				insertTemporaryMessage(_messagesList[5], _countdown - 8);
+				insertTemporaryMessage(_messagesList[(isAmiga() || isAtariST()) ? 15 : 5], _countdown - 8);
 			}
 		}
 

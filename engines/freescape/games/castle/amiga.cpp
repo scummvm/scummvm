@@ -1441,6 +1441,16 @@ void CastleEngine::loadAssetsAmigaFullGame() {
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
+	// End-game throne picture. The original executable opens "W" during the
+	// escaped ending and displays the first 114 rows as a 16-word-wide
+	// interleaved Amiga bitplane image.
+	Common::File endGameFile;
+	if (endGameFile.open("w")) {
+		_endGameBackgroundFrame = loadFrameFromPlanesInterleaved(&endGameFile, 16, 114);
+		_endGameBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
+		endGameFile.close();
+	}
+
 	// Mountains panorama (63 words × 22 rows × 4 planes, interleaved).
 	file.seek(0x49c8);
 	_background = loadFrameFromPlanesInterleaved(&file, 63, 22);

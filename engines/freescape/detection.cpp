@@ -886,6 +886,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		{
 			{"cm", 0, "67dcb3f62fe15f18ecc31380ffaf5c4e", 1112},
+			{"w", 0, "63c770f1008a641c5fd5d0b9df2bcbb6", 32048},
 			{"x", 0, "afc245de66ef8eb1b5fd061c6bbd602e", 349975},
 			AD_LISTEND
 		},
