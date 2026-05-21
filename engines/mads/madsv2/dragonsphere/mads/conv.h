@@ -234,6 +234,13 @@ enum {
 };
 
 enum {
+	conv046_advicelp         =  1,
+	conv046_advicelp_bynow   =  2,
+	conv046_advicelp_seeya   =  4,
+	conv046_exit_b_b         =  6
+};
+
+enum {
 	conv047_protect          =  0,
 	conv047_kingsay_escort   =  3,
 	conv047_kingsay_why      =  4,
