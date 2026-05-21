@@ -170,8 +170,8 @@ void SkyEngine::handleKey() {
 			break;
 
 		case kSkyActionOpenControlPanel:
-			if (SkyEngine::_isIbass()) {
-				openMainMenuDialog();
+			if (SkyEngine::isIbass()) {
+				_skyControl->doControlPanel();
 				break;
 			}
 			_skyControl->doControlPanel();
@@ -216,12 +216,12 @@ Common::Error SkyEngine::go() {
 		// Clear pastIntro here (set to false) explicilty
 		// It should be false already, but better to ensure it
 		_systemVars->pastIntro = false;
-		if (_systemVars->gameVersion > 272 && ConfMan.get("gameid") != "ibass") { // don't do intro for floppydemos
+		if (_systemVars->gameVersion > 272 && !SkyEngine::isIbass()) { // don't do intro for floppydemos
 			Intro *skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			bool floppyIntro = ConfMan.getBool("alt_intro");
 			introSkipped = !skyIntro->doIntro(floppyIntro);
 			delete skyIntro;
-		} else if (SkyEngine::_isIbass())
+		} else if (SkyEngine::isIbass())
 			introSkipped = true;
 
 		if (!shouldQuit()) {
@@ -391,8 +391,8 @@ Common::Error SkyEngine::init() {
 
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(this, _skyDisk, _skyCompact);
-	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);
 	_skyScreen = new Screen(_system, _skyDisk, _skyCompact);
+	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact, _skyScreen);
 
 	initVirgin();
 	initItemList();
@@ -405,6 +405,7 @@ Common::Error SkyEngine::init() {
 	assert(shortcutsKeymap);
 
 	_skyControl = new Control(this, _saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system, shortcutsKeymap);
+	_skyMouse->useControlInstance(_skyControl);
 	_skyLogic->useControlInstance(_skyControl);
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
@@ -565,7 +566,6 @@ bool SkyEngine::isDemo() {
 	case 348:
 	case 368:
 	case 372:
-	case 400:
 		return false;
 	default:
 		error("Unknown game version %d", _systemVars->gameVersion);
@@ -585,14 +585,13 @@ bool SkyEngine::isCDVersion() {
 	case 365:
 	case 368:
 	case 372:
-	case 400:
 		return true;
 	default:
 		error("Unknown game version %d", _systemVars->gameVersion);
 	}
 }
 
-bool SkyEngine::_isIbass() {
+bool SkyEngine::isIbass() {
 	if (ConfMan.get("gameid") == "ibass")
 		return true;
 	return false;

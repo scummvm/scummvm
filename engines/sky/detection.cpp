@@ -122,7 +122,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
 	int dataDiskSize = -1;
-	bool hasibassDat = false;
+	bool hasIbassDat = false;
 	int ibassDiskSize = -1;
 	Common::String dataDiskHeadMD5 = "";
 	int exeSize = -1; 
@@ -156,9 +156,9 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 			if (0 == scumm_stricmp("bass.dat", file->getName().c_str())) {
 				Common::File ibassDisk;
 				if (ibassDisk.open(*file)) {
-					hasibassDat = true;
+					hasIbassDat = true;
 					ibassDiskSize = ibassDisk.size();
-					if (ibassDiskSize == 9737168 )
+					if (ibassDiskSize == 9737168)
 						dataDiskHeadMD5 = Common::computeStreamMD5AsString(ibassDisk, 5000);
 				}
 			}
@@ -229,7 +229,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		detectedGames.push_back(game);
 	}
 
-	if (hasibassDat) {
+	if (hasIbassDat) {
 		DetectedGame game;
 		Common::Language lang = Common::Language::UNK_LANG;
 		game = DetectedGame(getName(), ibassSetting.gameId, ibassSetting.description, lang);

@@ -23,7 +23,6 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "common/config-manager.h"
 
 #include "sky/disk.h"
 #include "sky/logic.h"
@@ -1063,7 +1062,7 @@ void Sound::loadSection(uint8 pSection) {
 	} else
 		asmOfs = 0x7E;
 
-	if (!SkyEngine::_isIbass()) {
+	if (!SkyEngine::isIbass()) {
 		if ((_soundData[asmOfs] != 0x3C) || (_soundData[asmOfs + 0x27] != 0x8D) ||
 			(_soundData[asmOfs + 0x28] != 0x1E) || (_soundData[asmOfs + 0x2F] != 0x8D) ||
 			(_soundData[asmOfs + 0x30] != 0x36))

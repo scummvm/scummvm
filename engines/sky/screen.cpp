@@ -24,7 +24,6 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/config-manager.h"
 #include "common/memstream.h"
 
 #include "graphics/paletteman.h"
@@ -69,31 +68,38 @@ void Screen::setIcon(int idx, int x, int y) {
 
 void Screen::drawIbassIcon() {
 	for (int i = 0; i < NUM_UI_ICONS; i++) {
-		if (_uiIcon[i].visible) {
-
-			// if (_uiIcon[i].anim == nullptr)
-			// 	continue;
+		if (_uiIcon[i]._visible) {
 
 			// get the current animation frame
-			Graphics::Surface *currentFrame = _uiIcon[i].anim->frames[_uiIcon[i].cur_frame];
+			Graphics::Surface *currentFrame = _uiIcon[i]._anim->_frames[_uiIcon[i]._curFrame];
 
-			_screen32.copyRectToSurfaceWithKey(*currentFrame, _uiIcon[i].x, _uiIcon[i].y, Common::Rect(currentFrame->w, currentFrame->h), _screen32.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF));
+			_screen32.copyRectToSurfaceWithKey(*currentFrame, _uiIcon[i]._x, _uiIcon[i]._y, Common::Rect(currentFrame->w, currentFrame->h), _screen32.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF));
 		}
 
 	}
 }
 
+void Screen::drawIbassInventory() {
+	for (int i = 0; i < NUM_INV_ICONS; i++) {
+		if (_invIcon[i]._visible) {
+
+			// get the current animation frame
+			Graphics::Surface *currentFrame = _invIcon[i]._anim->_frames[_invIcon[i]._curFrame];
+
+			_screen32.copyRectToSurfaceWithKey(*currentFrame, _invIcon[i]._x, _invIcon[i]._y, Common::Rect(currentFrame->w, currentFrame->h), _screen32.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF));
+		}
+	}
+}
+
 void Screen::initIbassIcon(int idx, const char *filename) {
-	_uiIcon[idx].anim = _skyDisk->loadAnim(filename, _screen32.format);
+	_uiIcon[idx]._anim = _skyDisk->loadAnim(filename, _screen32.format);
 }
 
 void Screen::clearIbassIcon(int idx, bool fade = true) {
-	_uiIcon[idx].visible = false;
-	//_uiIcon[idx].x = _uiIcon[idx].y = 0;
+	_uiIcon[idx]._visible = false;
 
-	if (!fade) {
-		_uiIcon[idx].alpha = 0.0f;
-	}
+	if (!fade)
+		_uiIcon[idx]._alpha = 0.0f;
 }
 
 void Screen::setProximityIcon(int idx, int x, int y, float alpha, int frame) {
@@ -101,32 +107,31 @@ void Screen::setProximityIcon(int idx, int x, int y, float alpha, int frame) {
 		return;
 
 	_proximityIcon[idx].set(x, y, alpha);
-	_proximityIcon[idx].animating = true;
-	_proximityIcon[idx].cur_frame = frame;
+	_proximityIcon[idx]._animating = true;
+	_proximityIcon[idx]._curFrame = frame;
 }
 
 void Screen::setProximityNotAnimate(int idx) {
 	if (idx < 0 || idx >= NUM_PROXIMITY_ICONS)
 		return;
 
-	_proximityIcon[idx].animating = false;
-	_proximityIcon[idx].cur_frame = 2;
+	_proximityIcon[idx]._animating = false;
+	_proximityIcon[idx]._curFrame = 2;
 }
 
 void Screen::clearAllIbassIcons(bool fade = true) {
 	for (int i = 0; i < NUM_UI_ICONS; i++)
 		clearIbassIcon(i, fade);
-
 }
 
 void Screen::clearProximityIcon(int idx, bool fade) {
 	if (idx < 0 || idx >= NUM_PROXIMITY_ICONS)
 		return;
 
-	_proximityIcon[idx].visible = false;
+	_proximityIcon[idx]._visible = false;
 
 	if (!fade)
-		_proximityIcon[idx].alpha = 0.0f;
+		_proximityIcon[idx]._alpha = 0.0f;
 }
 
 void Screen::clearAllProximityIcons(bool fade) {
@@ -135,30 +140,26 @@ void Screen::clearAllProximityIcons(bool fade) {
 	}
 }
 
+void Screen::setDragIcon(int frame, bool highlighted) {
+	_dragIcon._anim = _invAnim[getInventoryAnimIdx(frame)];
+	_dragIcon.set(0, 0);
+	_dragIcon._curFrame = highlighted ? 1 : 0;
+}
+
+void Screen::clearDragIcon() {
+	_dragIcon._visible = false;
+}
+
+void Screen::setDragIconHighlight(bool highlighted) {
+	_dragIcon._curFrame = highlighted ? 1 : 0;
+}
+
 bool Screen::isUIOpen() {
 	for (int i = 0; i < NUM_UI_ICONS; i++) {
-		if (_uiIcon[i].visible)
+		if (_uiIcon[i]._visible)
 			return true;
 	}
 	return false;
-}
-
-bool _invVisible;
-int _invX1;
-int _invY1;
-int _invX2;
-int _invY2;
-
-void Screen::showInventory(int x1, int y1, int x2, int y2) {
-	_invX1 = x1;
-	_invY1 = y1;
-	_invX2 = x2;
-	_invY2 = y2;
-	_invVisible = true;
-}
-
-void Screen::hideInventory(void) {
-	_invVisible = false;
 }
 
 Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
@@ -188,7 +189,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	}
 
 	//set the palette
-	if ((ConfMan.get("gameid") != "ibass") && _system->getScreenFormat().bytesPerPixel == 1)
+	if (!SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLORS);
 	_currentPalette = 0;
 
@@ -197,22 +198,37 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_seqInfo.running = false;
 
 	for (int i = 0; i < NUM_UI_ICONS; i++) {
-		_uiIcon[i].visible = false;
-		_uiIcon[i].anim = nullptr;
-		_uiIcon[i].x = 0;
-		_uiIcon[i].y = 0;
-		_uiIcon[i].alpha = 0.0f;
+		_uiIcon[i]._visible = false;
+		_uiIcon[i]._anim = nullptr;
+		_uiIcon[i]._x = 0;
+		_uiIcon[i]._y = 0;
+		_uiIcon[i]._alpha = 0.0f;
 	}
 
 	for (int i = 0; i < NUM_PROXIMITY_ICONS; i++) {
-		_proximityIcon[i].visible = false;
-		_proximityIcon[i].anim = nullptr;
-		_proximityIcon[i].x = 0;
-		_proximityIcon[i].y = 0;
-		_proximityIcon[i].alpha = 0.0f;
+		_proximityIcon[i]._visible = false;
+		_proximityIcon[i]._anim = nullptr;
+		_proximityIcon[i]._x = 0;
+		_proximityIcon[i]._y = 0;
+		_proximityIcon[i]._alpha = 0.0f;
 	}
 
-	if (SkyEngine::_isIbass()) {
+	for (int i = 0; i < NUM_INV_ICONS; i++) {
+		_invIcon[i]._visible = false;
+		_invIcon[i]._anim = nullptr;
+		_invIcon[i]._x = 0;
+		_invIcon[i]._y = 0;
+		_invIcon[i]._alpha = 0.0f;
+	}
+
+	for (int i = 0; i < NUM_INV_ANIMS; i++) {
+		char invTexFile[64];
+		Common::sprintf_s(invTexFile, "%d.tex", invIconId[i]);
+
+		_invAnim[i] = _skyDisk->loadAnim(invTexFile, _screen32.format);
+	}
+
+	if (SkyEngine::isIbass()) {
 		initIbassIcon(UI_ICON_LOOK, "eye.tex");
 		initIbassIcon(UI_ICON_USE, "cogs.tex");
 		initIbassIcon(UI_ICON_HAND, "hand.tex");
@@ -261,7 +277,13 @@ void Screen::update32BitScreen() {
 void Screen::renderFinalFrame() {
 	update32BitScreen();
 
+	if (SkyEngine::isIbass()) {
+
+		setIcon(UI_ICON_INV, 0, GAME_SCREEN_HEIGHT - 35);
+	}
+
 	drawIbassIcon();
+	drawIbassInventory();
 
 	if (_screen32.getPixels()) {
 		_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
@@ -286,7 +308,7 @@ void Screen::setFocusRectangle(const Common::Rect& rect) {
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 	convertPalette(pal, _palette);
-	if ((ConfMan.get("gameid") != "ibass") && _system->getScreenFormat().bytesPerPixel == 1)
+	if (SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
@@ -300,7 +322,7 @@ void Screen::setPaletteEndian(uint8 *pal) {
 #else
 	convertPalette(pal, _palette);
 #endif
-	if ((ConfMan.get("gameid") != "ibass") && _system->getScreenFormat().bytesPerPixel == 1)
+	if (SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
@@ -313,7 +335,7 @@ void Screen::halvePalette() {
 		halfPalette[cnt * 3 + 1] = _palette[cnt * 3 + 1] >> 1;
 		halfPalette[cnt * 3 + 2] = _palette[cnt * 3 + 2] >> 1;
 	}
-	if ((ConfMan.get("gameid") != "ibass") && _system->getScreenFormat().bytesPerPixel == 1)
+	if (SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(halfPalette, 0, GAME_COLORS);
 }
 
@@ -328,7 +350,7 @@ void Screen::setPalette(uint16 fileNum) {
 
   void Screen::showScreen(uint16 fileNum, bool fullscreen) {
 
-	if (SkyEngine::_isIbass()) {
+	if (SkyEngine::isIbass()) {
 		uint8 *imgData = _skyDisk->loadFile(fileNum);
 
 		if (imgData) {
@@ -346,20 +368,21 @@ void Screen::setPalette(uint16 fileNum) {
 				return;
 			}
 		}
-	} else {
-		// This is only used for static images in the floppy and cd intro
-		free(_currentScreen);
-		_currentScreen = _skyDisk->loadFile(fileNum);
-		if (!fullscreen && _currentScreen) {
-			// make sure the last 8 lines are forced to black.
-			memset(_currentScreen + GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH, 0, (FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT) * GAME_SCREEN_WIDTH);
-		}
-
-		if (_currentScreen)
-			showScreen(_currentScreen, fullscreen);
-		else
-			warning("Screen::showScreen: can't load file nr. %d",fileNum);
+		return;
 	}
+
+	// This is only used for static images in the floppy and cd intro
+	free(_currentScreen);
+	_currentScreen = _skyDisk->loadFile(fileNum);
+	if (!fullscreen && _currentScreen) {
+		// make sure the last 8 lines are forced to black.
+		memset(_currentScreen + GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH, 0, (FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT) * GAME_SCREEN_WIDTH);
+	}
+
+	if (_currentScreen)
+		showScreen(_currentScreen, fullscreen);
+	else
+		warning("Screen::showScreen: can't load file nr. %d",fileNum);
 }
 
 void Screen::showScreen(uint8 *pScreen, bool fullscreen) {
@@ -424,11 +447,10 @@ void Screen::flip(bool doUpdate) {
 	}
 
 	// only perform the 32-bit conversion ONCE per frame
-	if (isDirty || isUIOpen()) {
+	if (isDirty || isUIOpen())
 		renderFinalFrame();
-	} else if (doUpdate) {
+	 else if (doUpdate)
 		_system->updateScreen();
-	}
 }
 
 void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
@@ -447,7 +469,7 @@ void Screen::fnFadeDown(uint32 scroll) {
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
 			palette_fadedown_helper(_palette, GAME_COLORS);
-			if ((ConfMan.get("gameid") != "ibass") && _system->getScreenFormat().bytesPerPixel == 1)
+			if (!SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 				_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 			_system->updateScreen();
 			int32 waitTime = (int32)delayTime - _system->getMillis();
@@ -487,7 +509,7 @@ void Screen::palette_fadedown_helper(uint8 *pal, uint num) {
 }
 
 void Screen::paletteFadeUp(uint16 fileNr) {
-	if (!SkyEngine::_isIbass()) {
+	if (!SkyEngine::isIbass()) {
 		uint8 *pal = _skyDisk->loadFile(fileNr);
 		if (pal) {
 			paletteFadeUp(pal);
@@ -511,7 +533,7 @@ void Screen::paletteFadeUp(uint8 *pal) {
 			_palette[colCnt * 3 + 1] = (tmpPal[colCnt * 3 + 1] * cnt) >> 5;
 			_palette[colCnt * 3 + 2] = (tmpPal[colCnt * 3 + 2] * cnt) >> 5;
 		}
-		if ((ConfMan.get("gameid") != "ibass") && _system->getScreenFormat().bytesPerPixel == 1)
+		if (!SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 			_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 		_system->updateScreen();
 

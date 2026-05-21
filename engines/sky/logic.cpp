@@ -1874,6 +1874,84 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	/// initialize the top menu bar
 	// firstObject is o0 for game menu, k0 for linc
 
+	if (SkyEngine::isIbass()) {
+		Compact *cpt;
+
+		debug("init inv menu %d", firstObject);
+
+		// safety flag
+		_liveInv = true;
+
+		if (firstObject == 2048 || firstObject == 2168 || firstObject == 2288)
+			_skyMouse->setLincInv(true);
+		else
+			_skyMouse->setLincInv(false);
+
+		_skyMouse->incLincMenuRef();
+		_skyScreen->hideInventory();
+		_skyScreen->clearAllInvIcons();
+
+		uint i;
+		firstObject /= 4;
+
+		uint32 menuLength = 0;
+		for (i = firstObject; i < firstObject + ARRAYSIZE(_objectList); i++) {
+			// skip unused linc items
+			if (_scriptVariables[i] == 24581 || _scriptVariables[i] == 24628)
+				continue;
+
+			if (_scriptVariables[i])
+				_objectList[menuLength++] = _scriptVariables[i];
+		}
+		_scriptVariables[MENU_LENGTH] = menuLength;
+
+		debug("Menu length = %d", menuLength);
+
+		uint16 rollingX = TOP_LEFT_X + XWIDTH;
+		int xx = 0;
+		uint16 rollingY = 236;
+
+		int didX = 0, didY = 1;
+
+		for (i = 0; i < menuLength; i++) {
+			if (xx == 8) {
+				rollingX = TOP_LEFT_X + XWIDTH;
+				xx = 0;
+				rollingY += YDEPTH;
+
+				didY++;
+			}
+
+			cpt = _skyCompact->fetchCpt(_objectList[i]);
+			debug("Init i = %d ob = %d fr = %d\n", i, _objectList[i], cpt->frame);
+
+			cpt->status = ST_MOUSE + ST_FOREGROUND + /*ST_LOGIC +*/ ST_RECREATE;
+			cpt->screen = 999;
+
+			cpt->xcood = rollingX;
+			cpt->ycood = rollingY; // 112;
+
+			int frame = cpt->frame;
+
+			// if LINC then check for off frames and mask off :O :O
+			if (_objectList[i] > 20000)
+				if (!(frame & 1))
+					frame--;
+
+			_skyScreen->addInvIcon(frame, rollingX - TOP_LEFT_X, rollingY - TOP_LEFT_Y, (b == _objectList[i]));
+
+			rollingX += XWIDTH;
+
+			xx++;
+
+			if (didY == 1)
+				didX++;
+		}
+
+		return true;
+
+	}
+
 	uint i;
 	firstObject /= 4;
 

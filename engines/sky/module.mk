@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	grid.o \
 	hufftext.o \
 	intro.o \
+	inventory.o \
 	logic.o \
 	metaengine.o \
 	mouse.o \

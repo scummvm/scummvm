@@ -99,7 +99,7 @@ public:
 
 	static bool isDemo();
 	static bool isCDVersion();
-	static bool _isIbass();
+	static bool isIbass();
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
@@ -107,14 +107,6 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("SKY-VM.%03d", slot);
-	}
-
-	Screen *getScreen() {
-		return _skyScreen;
-	}
-
-	Control *getControl() {
-		return _skyControl;
 	}
 
 	static void *fetchItem(uint32 num);

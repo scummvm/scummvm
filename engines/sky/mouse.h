@@ -29,60 +29,62 @@ class OSystem;
 
 namespace Sky {
 
-//max click cycles before interact is not valid upon release
-#define	CLICK_THRESHOLD	10
-//cycles before inv use-on trigger
+// max click cycles before interact is not valid upon release
+#define CLICK_THRESHOLD 10
+// cycles before inv use-on trigger
 #define USEON_THRESHOLD 5
-//time till hotspot fades out after stopped touching
-#define	HOTSPOT_FADEOUT	36
-//hotspot icon size
-#define HOTSPOT_dim	36
-//exit is just one icon, so half width as straddles centre point
+// time till hotspot fades out after stopped touching
+#define HOTSPOT_FADEOUT 36
+// hotspot icon size
+#define HOTSPOT_dim 36
+// exit is just one icon, so half width as straddles centre point
 #define HOTSPOT_ExitDim (HOTSPOT_dim >> 1)
-//closed hotspot radius
-#define	HOTSPOT_RADx 8
-#define	HOTSPOT_RAD 16
+// closed hotspot radius
+#define HOTSPOT_RADx 8
+#define HOTSPOT_RAD 16
 
-//how far the popup icons sit above the midy
-#define	HOTSPOT_yoff 48
-//differentiate exits, just incase
+// how far the popup icons sit above the midy
+#define HOTSPOT_yoff 48
+// differentiate exits, just incase
 #define HOTSPOT_exit_yoff 48
 
-//use on cursor offset
+// use on cursor offset
 #define HOTSPOT_useon_yoff (-55)
 
-//inv button (bottom left)
+// inv button (bottom left)
 #define HOTSPOT_invx (TOP_LEFT_X + 40)
 #define HOTSPOT_invy (TOP_LEFT_Y + FULL_SCREEN_HEIGHT-35)
 
-//control panel button (top left)
+// control panel button (top left)
 #define HOTSPOT_optionsx (TOP_LEFT_X + 30)
 #define HOTSPOT_optionsy (TOP_LEFT_Y + 30)
 
-//help button (top right)
+// help button (top right)
 #define HOTSPOT_helpx (TOP_LEFT_X + FULL_SCREEN_WIDTH-30)
 #define HOTSPOT_helpy (TOP_LEFT_Y + 30)
 
-//glow proximity
+// glow proximity
 #define GLOW_DIST 150
-//drag to use on distance
-#define	USE_ON_DIST	40
+// drag to use on distance
+#define USE_ON_DIST 40
 
-//fix super deep exits
-#define	TWEEKY_EXIT_ADJUST (FULL_SCREEN_HEIGHT + TOP_LEFT_Y - 40);
+// fix super deep exits
+#define TWEEKY_EXIT_ADJUST (FULL_SCREEN_HEIGHT + TOP_LEFT_Y - 40);
 
 
-//inv item sizes
-#define	XWIDTH 32
+// inv item sizes
+#define XWIDTH 32
 #define YDEPTH 32
 
-//action flash
-#define	ACTION_FLASH_TIME 7
+// action flash
+#define ACTION_FLASH_TIME 7
 
 class Disk;
 class Logic;
 class SkyCompact;
 class Text;
+class Screen;
+class Control;
 struct Compact;
 enum UIIcon : uint8;
 
@@ -90,7 +92,7 @@ class Mouse {
 
 public:
 
-	Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact);
+	Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact, Screen *skyScreen);
 	~Mouse();
 
 	void mouseEngine();
@@ -105,6 +107,7 @@ public:
 	void drawNewMouse();
 	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
 	void useLogicInstance(Logic *skyLogic) { _skyLogic = skyLogic; }
+	void useControlInstance(Control *control) { _skyControl = control; }
 	void buttonPressed(uint8 button);
 	void mouseMoved(uint16 mouseX, uint16 mouseY);
 	void waitMouseNotPressed(int minDelay = 0);
@@ -114,11 +117,29 @@ public:
 	bool wasClicked();
 	void logicClick() { _logicClick = true; }
 	void resetCursor();
-	bool IsUILive();
+	bool isUILive();
 	void resetUI();
+	OSystem *giveSystem(){
+		return	_system;
+	}
 	int	doProximityHighlights(uint16 xPos, uint16 yPos);
 	uint16 giveXcood(Compact *itemData, uint32 id);
 	uint16 giveYcood(Compact *itemData, uint32 id);
+	void setLincInv(bool inv) {
+		_isLincInv = inv;
+	}
+	bool isLincInv() {
+		return _isLincInv;
+	}
+	void incLincMenuRef() {
+		_lincMenuRef++	;
+	}
+	void pushInvY(uint16 y) {
+		_invYCoord = y;
+	}
+	uint16 popInvY() {
+		return _invYCoord;
+	}
 	UIIcon getInteractIcon(uint32 id);
 	bool hasSingleInteractIcon(uint32 id);
 	void updateHotspotCoordinate(uint16 xPos);
@@ -128,6 +149,8 @@ protected:
 
 	void pointerEngine(uint16 xPos, uint16 yPos);
 	void buttonEngine1();
+	void invMouse(uint16 xPos, uint16 yPos);
+	void lincInvMouse(uint16 xPos, uint16 yPos);
 
 	bool _logicClick;
 
@@ -137,30 +160,30 @@ protected:
 
 	int16	_mouseXOff;
 	int16	_mouseYOff;
-	uint16	_timeOn;//how long have we held on this item
-	uint16	_clickedNum;//remmebers what we clicked last
-	uint16	_fadeOut;//how long before current hotspot fades out when let go
-	bool	_prevMouseOn;//touching yes/no last cycle
+	uint16	_timeOn; // how long have we held on this item
+	uint16	_clickedNum; // remmebers what we clicked last
+	uint16	_fadeOut; // how long before current hotspot fades out when let go
+	bool	_prevMouseOn; // touching yes/no last cycle
 	uint16	_touchId;
 	uint16	_touchIdLegacy;
-	uint16	_hoverId;	//inv drag over inv
+	uint16	_hoverId; // inv drag over inv
 	bool	_holding;
-	bool	_isExit;	//cur hotspot an exit?
-	uint32	_exitType;	//what type of exit
+	bool	_isExit; // cur hotspot an exit?
+	uint32	_exitType; // what type of exit
 	bool	_isFloor;
-	bool	_isLincInv;	//current inventory is in LINC which works weirdly differently
-	uint32	_lincMenuRef;	//used to check if a linc inv menu restarted the inv
-	uint16	_invYCoord;	//store inv item y coords ready for patching back in
+	bool	_isLincInv;	// current inventory is in LINC which works weirdly differently
+	uint32	_lincMenuRef; // used to check if a linc inv menu restarted the inv
+	uint16	_invYCoord;	// store inv item y coords ready for patching back in
 	int		_nearestProximityIconId;
-	bool	_floorLock;//stop moving off hotpots onto floors then releasing to get an interaction
+	bool	_floorLock; // stop moving off hotpots onto floors then releasing to get an interaction
 
-	uint16	_invX;//inventory bounds x
-	uint16	_invY;//inventory bounds y
-	uint16	_invW;//inventory bounds w
-	uint16	_invH;//inventory bounds h
+	uint16	_invX; // inventory bounds x
+	uint16	_invY; // inventory bounds y
+	uint16	_invW; // inventory bounds w
+	uint16	_invH; // inventory bounds h
 
-	bool	_actionFlash = false;	//clicked on action icon flasher
-	int		_actionFlashTime = 0;//counts down
+	bool	_actionFlash = false; // clicked on action icon flasher
+	int		_actionFlashTime = 0; // counts down
 	int		_actionFlashIcon = 0;
 	int		_actionFlashX = 0;
 	int		_actionFlashY = 0;
@@ -179,17 +202,19 @@ protected:
 	Disk *_skyDisk;
 	Logic *_skyLogic;
 	SkyCompact *_skyCompact;
+	Screen *_skyScreen;
+	Control *_skyControl;
 
 	enum : uint8 {
-		Gameplay,
-		PreInventory,
-		Inventory,
-		INV_temp_examine,
-		InventoryUseOn,
-		Text_chooser,
-		MustRelease,
-		Alert_to_game,//new game alert box
-	} m_mode;
+		GAMEPLAY,
+		PRE_INVENTORY,
+		INVENTORY,
+		INV_TEMP_EXAMINE,
+		INVENTORY_USE_ON,
+		TEXT_CHOOSER,
+		MUST_RELEASE,
+		ALERT_TO_GAME, // new game alert box
+	} M_MODE;
 };
 
 } // End of namespace Sky

@@ -26,31 +26,34 @@
 #include "common/scummsys.h"
 #include "common/compression/rnc_deco.h"
 
-#include "graphics/surface.h"
-
 #define MAX_FILES_IN_LIST 60
 
-#define MAX_FRAMES	16	//maximum number of frames per animation in ibass
+#define MAX_FRAMES 16 // Maximum number of frames per animation in ibass
 
 namespace Common {
 class File;
 }
 
-struct fileEntry {
-	uint32 filenum;
-	uint32 offset;
-	uint32 size;
-	uint32 compressed_size;
-	fileEntry() : filenum(0), offset(0), size(0), compressed_size(0) {}
+namespace Graphics {
+class Surface;
+class PixelFormat;
+}
+
+struct FileEntry {
+	uint32 _fileNum;
+	uint32 _offset;
+	uint32 _size;
+	uint32 _compressedSize;
+	FileEntry() : _fileNum(0), _offset(0), _size(0), _compressedSize(0) {}
 };
 
 namespace Sky {
 
-struct animation {
-	Graphics::Surface **frames;
-	int num_frames;
-	int width;
-	int height;
+struct Animation {
+	Graphics::Surface **_frames;
+	int _numFrames;
+	int _width;
+	int _height;
 };
 
 class Disk {
@@ -73,14 +76,14 @@ public:
 	void fnFlushBuffers();
 	uint32 *giveLoadedFilesList() { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
-	animation *loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat);
+	Animation *loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat);
 
 protected:
 	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);
 
 	uint32 _numFiles;
-	fileEntry *_entry;
+	FileEntry *_entry;
 
 	uint32 _dinnerTableEntries;
 	uint8 *_dinnerTableArea;
@@ -88,7 +91,7 @@ protected:
 	Common::RncDecoder _rncDecoder;
 
 	uint32 getFileSize(uint32 filenum);
-	fileEntry *getEntry(uint32 filenum);
+	FileEntry *getEntry(uint32 filenum);
 
 	uint16 _buildList[MAX_FILES_IN_LIST];
 	uint32 _loadedFilesList[MAX_FILES_IN_LIST];
