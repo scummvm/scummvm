@@ -1519,20 +1519,22 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 	}
 
 	if (inDirectionalPhase) {
-		// Directional arrows — projected from (0,0) with parallax compensation
+		// Directional arrows — DrawStringEx(..., flags=0x81) at:
+		// left:  (0xA6 - projX / 4, 0x92 - projY / 4)
+		// right: (0xA8 - projX / 4, 0x93 - projY / 4)
 		int16 projX = 0, projY = 0;
 		projectGameplayPoint(projX, projY);
-		int16 px = (int16)(-(projX >> 2));
-		int16 py = (int16)(-(projY >> 2));
+		const int16 parallaxX = (int16)(projX >> 2);
+		const int16 parallaxY = (int16)(projY >> 2);
 
 		if (_shipPosX < 0xA0) {
 			// Left arrow "<<v"
 			drawFontBankString(dst, pitch, width, height,
-				viewportX + 0xA6 + px, viewportY + 0x92 + py, "<<v");
+				viewportX + 0xA6 - parallaxX, viewportY + 0x92 - parallaxY, "<<v");
 		} else {
 			// Right arrow "<<u"
 			drawFontBankString(dst, pitch, width, height,
-				viewportX + 0xA8 - px, viewportY + 0x93 - py, "<<u");
+				viewportX + 0xA8 - parallaxX, viewportY + 0x93 - parallaxY, "<<u");
 		}
 	} else {
 		// Target reticle — "<<w" at projected (0xA9, 0x9A), blinks on (frame & 4)

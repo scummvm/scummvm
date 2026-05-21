@@ -500,6 +500,8 @@ void InsaneRebel1::checkDynamicLevelBranch() {
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
 			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
+			if (_player)
+				_player->setPreserveGameVideoStateOnRelease(true);
 			_vm->_smushVideoShouldFinish = true;
 			debug(1, "RA1 L%d cutover: route=%d -> %d at frame=%u (resumeTimelineFrame=%d)",
 				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,

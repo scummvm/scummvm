@@ -270,6 +270,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_fastForwardFromFrame = 0;
 	_fastForwardToFrame = 0;
 	_preserveVideoStateOnNextPlay = false;
+	_preserveGameVideoStateOnRelease = false;
 
 	_IACTpos = 0;
 	_speed = -1;
@@ -391,7 +392,10 @@ void SmushPlayer::release() {
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
 
-	releaseGameVideoState();
+	const bool preserveGameVideoState = _preserveGameVideoStateOnRelease;
+	_preserveGameVideoStateOnRelease = false;
+	if (!preserveGameVideoState)
+		releaseGameVideoState();
 	if (!shouldPreserveFrameBuffer()) {
 		free(_frameBuffer);
 		_frameBuffer = nullptr;

@@ -202,6 +202,7 @@ private:
 	uint32 _fastForwardFromFrame;
 	uint32 _fastForwardToFrame;
 	bool _preserveVideoStateOnNextPlay;
+	bool _preserveGameVideoStateOnRelease;
 
 	Audio::SoundHandle *_IACTchannel;
 	Audio::QueuingAudioStream *_IACTstream;
@@ -265,6 +266,7 @@ public:
 	void ensureMultiFont();
 	bool isFastForwardingCurrentFrame() const;
 	void setPreserveVideoStateOnNextPlay(bool preserve) { _preserveVideoStateOnNextPlay = preserve; }
+	void setPreserveGameVideoStateOnRelease(bool preserve) { _preserveGameVideoStateOnRelease = preserve; }
 	void setFastForwardFromFrame(uint32 frame) { _fastForwardFromFrame = frame; }
 	void setFastForwardToFrame(uint32 frame) { _fastForwardToFrame = frame; }
 
