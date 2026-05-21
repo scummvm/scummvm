@@ -1319,7 +1319,9 @@ uint16 humanVersion(uint16 ver) {
 		return 310;
 	if (ver >= kFileVer300)
 		return 300;
-	return 200;
+	if (ver >= kFileVer200)
+		return 200;
+	return 100;
 }
 
 Common::Platform platformFromID(uint16 id) {

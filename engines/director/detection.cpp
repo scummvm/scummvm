@@ -388,7 +388,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 					case MKTAG('V', 'W', 'Z', 'P'):	// VideoWorks + Director Overview ("Zorro")
 						desc->version = 20;
 						break;
-					case MKTAG('V', 'W', 'P', 'R'):	// "VideoWorks Pro" = Director
+					case MKTAG('V', 'W', 'P', 'R'):	// "VideoWorks Pro" = Director 1.0 / 2.0
 						desc->version = 100;
 						break;
 					case MKTAG('V', 'W', 'M', 'D'):	// Director 3.0

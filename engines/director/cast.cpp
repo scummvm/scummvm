@@ -321,7 +321,9 @@ void Cast::loadArchive() {
 void configLenSanityCheck(uint16 len, uint16 fileVersion) {
 	int tlen = -1;
 
-	if (fileVersion < kFileVer300) {
+	if (fileVersion < kFileVer200) {
+		tlen = 28;							// D1
+	} else if (fileVersion < kFileVer300) {
 		tlen = 30;							// D2
 	} else if (fileVersion < kFileVer400) {
 		tlen = 48;							// D3
@@ -481,6 +483,8 @@ bool Cast::loadConfig() {
 
 		debugC(1, kDebugLoading, "Cast::loadConfig(): field17: %d, field18: %d, field19: %d, movieDepth: %d, field22: %d field23: %d",
 			_field17, _field18, _field19, _movieDepth, _field22, _field23);
+	} else {
+		_movieDepth = _bitdepth; // D2 and below
 	}
 
 	if (_version >= kFileVer400) {
