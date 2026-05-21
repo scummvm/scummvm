@@ -625,6 +625,7 @@ void Scene::registerGraphics() {
 		_inventoryPopup.registerGraphics();
 		_notebookPopup.registerGraphics();
 		_cellPhonePopup.registerGraphics();
+		_conversationPopup.registerGraphics();
 	}
 
 	_hotspotDebug.registerGraphics();
@@ -1158,6 +1159,7 @@ void Scene::handleInput() {
 	// the popup that overlapped the textbox area could accidentally pick
 	// a conversation response.
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		_conversationPopup.handleInput(input);
 		_inventoryPopup.handleInput(input);
 		_notebookPopup.handleInput(input);
 		_cellPhonePopup.handleInput(input);
@@ -1295,6 +1297,7 @@ void Scene::initStaticData() {
 		_inventoryPopup.init();
 		_notebookPopup.init();
 		_cellPhonePopup.init();
+		_conversationPopup.init();
 	}
 
 	// Init buttons
