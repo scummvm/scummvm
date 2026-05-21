@@ -59,6 +59,9 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool
 	_debugRenderWireframe = false;
 	_debugRenderNormals = false;
 	_authenticGraphics = authenticGraphics;
+	_stereoEye = kStereoEyeNone;
+	_stereoSeparation = 0.2f;
+	_stereoConvergence = 800.0f;
 
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 128; j++) {
@@ -68,6 +71,54 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool
 	}
 
 	_scale = 1;
+}
+
+void Renderer::applyStereoTint(uint8 &r, uint8 &g, uint8 &b) const {
+	if (_stereoEye == kStereoEyeNone)
+		return;
+
+	uint8 lum = (uint8)((r * 77 + g * 150 + b * 29) >> 8);
+	if (_stereoEye == kStereoEyeLeft) {
+		r = lum;
+		g = 0;
+		b = 0;
+	} else if (_stereoEye == kStereoEyeRight) {
+		r = 0;
+		g = 0;
+		b = lum;
+	} else if (_stereoEye == kStereoEyeFlatAnaglyph) {
+		r = lum;
+		g = 0;
+		b = lum;
+	}
+}
+
+void Renderer::setStereoParameters(float separation, float convergence) {
+	_stereoSeparation = separation;
+	_stereoConvergence = convergence;
+}
+
+void Renderer::getStereoCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, Math::Vector3d &eyePos, Math::Vector3d &eyeInterest) const {
+	eyePos = pos;
+	eyeInterest = interest;
+	if (_stereoEye != kStereoEyeLeft && _stereoEye != kStereoEyeRight)
+		return;
+
+	Math::Vector3d up(0, 1, 0);
+	Math::Vector3d front = (interest - pos).getNormalized();
+	Math::Vector3d right = Math::Vector3d::crossProduct(front, up).getNormalized();
+
+	Math::Vector3d eyeOffset = right * (-_stereoSeparation * _stereoEye);
+	eyePos = pos + eyeOffset;
+	eyeInterest = interest + eyeOffset;
+}
+
+float Renderer::getStereoFrustumOffset(float nearClipPlane, bool mirroredProjection) const {
+	if (_stereoEye != kStereoEyeLeft && _stereoEye != kStereoEyeRight)
+		return 0.0f;
+
+	float offset = (-_stereoSeparation * _stereoEye) * nearClipPlane / _stereoConvergence;
+	return mirroredProjection ? -offset : offset;
 }
 
 Renderer::~Renderer() {}

@@ -113,6 +113,7 @@ enum FreescapeAction {
 	kActionSelectPrincess,
 	kActionQuit,
 	kActionToggleFlashlight,
+	kActionToggleStereoscopic,
 
 	// Demo actions
 	kActionUnknownKey,
@@ -569,6 +570,10 @@ public:
 	int _shootingFrames;
 	GeometricObject *_delayedShootObject;
 	void drawFrame();
+	void drawFrameStereo(int farClipPlane);
+
+	// Red/blue anaglyph 3D ("two eyes") effect, toggled with the 3 key.
+	bool _stereoMode;
 	void flashScreen(int backgroundColor);
 	uint8 _colorNumber;
 	Math::Vector3d _scaleVector;

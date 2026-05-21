@@ -76,6 +76,21 @@ public:
 	 *  Swap the buffers, making the drawn screen visible
 	 */
 	virtual void flipBuffer() {}
+
+	/**
+	 * Select the current eye for the red/blue stereoscopic 3D effect.
+	 * 0 = disabled (normal rendering), -1 = left eye (red), +1 = right eye (blue),
+	 * 2 = mono anaglyph at screen depth (red + blue).
+	 */
+	enum StereoEye {
+		kStereoEyeNone = 0,
+		kStereoEyeLeft = -1,
+		kStereoEyeRight = 1,
+		kStereoEyeFlatAnaglyph = 2
+	};
+	virtual void setStereoEye(StereoEye eye) { _stereoEye = eye; }
+	void setStereoParameters(float separation, float convergence);
+
 	virtual void useColor(uint8 r, uint8 g, uint8 b) = 0;
 	virtual void enableCulling(bool enabled) {};
 	virtual void polygonOffset(bool enabled) = 0;
@@ -100,6 +115,7 @@ public:
 
 	void setColorRemaps(ColorReMap *colorRemaps);
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) = 0;
+	virtual void clearDepthBuffer(bool ignoreViewport = false) {}
 	virtual void drawFloor(uint8 color) = 0;
 	virtual void drawBackground(uint8 color);
 
@@ -343,6 +359,13 @@ protected:
 	Math::Frustum _frustum;
 
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) const;
+	void applyStereoTint(uint8 &r, uint8 &g, uint8 &b) const;
+	void getStereoCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, Math::Vector3d &eyePos, Math::Vector3d &eyeInterest) const;
+	float getStereoFrustumOffset(float nearClipPlane, bool mirroredProjection) const;
+
+	StereoEye _stereoEye;
+	float _stereoSeparation; // half of the inter-ocular distance, in world units
+	float _stereoConvergence; // distance to the zero-parallax plane, in world units
 };
 
 Graphics::RendererType determinateRenderType();

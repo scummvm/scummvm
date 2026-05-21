@@ -67,6 +67,7 @@ public:
 
 	virtual void init() override;
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
+	virtual void clearDepthBuffer(bool ignoreViewport = false) override;
 	virtual void setViewport(const Common::Rect &rect) override;
 	virtual Common::Point nativeResolution() override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float rollAngle = 0.0) override;
@@ -78,6 +79,7 @@ public:
 	virtual void useStipple(bool enabled) override;
 	virtual void enableCulling(bool enabled) override;
 
+	virtual void setStereoEye(StereoEye eye) override;
 
 	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;
 	void freeTexture(Texture *texture) override;

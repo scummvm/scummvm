@@ -286,15 +286,31 @@ void OpenGLShaderRenderer::drawThunder(Texture *texture, const Math::Vector3d po
 void OpenGLShaderRenderer::updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	float xmaxValue = nearClipPlane * tan(Math::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
-	_projectionMatrix = Math::makeFrustumMatrix(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	if (_stereoEye == kStereoEyeLeft || _stereoEye == kStereoEyeRight) {
+		float stereoOffset = getStereoFrustumOffset(nearClipPlane, true);
+		_projectionMatrix = Math::makeFrustumMatrix(xmaxValue + stereoOffset, -xmaxValue + stereoOffset, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	} else {
+		_projectionMatrix = Math::makeFrustumMatrix(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	}
 }
 
 void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float rollAngle) {
 	Math::Vector3d up_vec(0, 1, 0);
 
-	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+	Math::Matrix4 lookMatrix;
+	Math::Vector3d viewPosition;
+	if (_stereoEye == kStereoEyeLeft || _stereoEye == kStereoEyeRight) {
+		Math::Vector3d eyePos;
+		Math::Vector3d eyeInterest;
+		getStereoCamera(pos, interest, eyePos, eyeInterest);
+		lookMatrix = Math::makeLookAtMatrix(eyePos, eyeInterest, up_vec);
+		viewPosition = eyePos;
+	} else {
+		lookMatrix = Math::makeLookAtMatrix(pos, interest, up_vec);
+		viewPosition = pos;
+	}
 	Math::Matrix4 viewMatrix;
-	viewMatrix.translate(-pos);
+	viewMatrix.translate(-viewPosition);
 	viewMatrix.transpose();
 
 	// Roll around the camera's forward axis. The matrix is stored in the
@@ -810,17 +826,41 @@ void OpenGLShaderRenderer::useStipple(bool enabled) {
 	}
 }
 
+void OpenGLShaderRenderer::setStereoEye(StereoEye eye) {
+	Renderer::setStereoEye(eye);
+	if (eye == kStereoEyeNone)
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	else if (eye == kStereoEyeLeft)
+		glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+	else if (eye == kStereoEyeRight)
+		glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_TRUE);
+	else if (eye == kStereoEyeFlatAnaglyph)
+		glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_TRUE);
+}
+
 void OpenGLShaderRenderer::useColor(uint8 r, uint8 g, uint8 b) {
+	if (_stereoEye != kStereoEyeNone)
+		applyStereoTint(r, g, b);
 	Math::Vector3d color(r / 256.0, g / 256.0, b / 256.0);
 	_triangleShader->use();
 	_triangleShader->setUniform("color", color);
 }
 
 void OpenGLShaderRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
+	if (_stereoEye != kStereoEyeNone)
+		applyStereoTint(r, g, b);
 	if (ignoreViewport)
 		glDisable(GL_SCISSOR_TEST);
 	glClearColor(r / 255., g / 255., b / 255., 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (ignoreViewport)
+		glEnable(GL_SCISSOR_TEST);
+}
+
+void OpenGLShaderRenderer::clearDepthBuffer(bool ignoreViewport) {
+	if (ignoreViewport)
+		glDisable(GL_SCISSOR_TEST);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	if (ignoreViewport)
 		glEnable(GL_SCISSOR_TEST);
 }

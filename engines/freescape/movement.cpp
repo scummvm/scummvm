@@ -114,6 +114,12 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
+
+	// I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
+	act = new Common::Action("STEREO3D", _("Toggle red/blue 3D"));
+	act->setCustomEngineActionEvent(kActionToggleStereoscopic);
+	act->addDefaultInputMapping("3");
+	engineKeyMap->addAction(act);
 }
 
 Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight, float reductionHeight = 0.0f) {
