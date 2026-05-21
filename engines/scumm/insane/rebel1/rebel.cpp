@@ -206,6 +206,8 @@ void InsaneRebel1::resetGameplayFlagsFromTuning() {
 }
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
+	Insane::_vm = scumm;
+
 	_screenWidth = 384;
 	_screenHeight = 242;
 
@@ -226,7 +228,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_posAccumY = 0;
 	_driftParam = 0;
 
-	_difficulty = 0;  // Easy by default
+	// Original startup initializes the options difficulty/tuning index to 1.
+	_difficulty = 1;
 	loadTuningForLevel(0);
 
 	_perspectiveX = 0;
@@ -268,7 +271,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_activeGameOpcode = 0;
 	_frameGameOpcodeMask = 0;
 	_frameDispatchFlags = 0;
-	_asteroidPhysicsUpdatedThisFrame = false;
+	_gameOp0BPhysicsUpdatedThisFrame = false;
 
 	_health = kMaxHealth;
 	_lives = 3;
@@ -283,6 +286,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_screenFlash = 0;
 	_frameCounter = 0;
 	_screenShakeEnabled = false;
+	memset(_screenFlashBasePalette, 0, sizeof(_screenFlashBasePalette));
+	_screenFlashBasePaletteValid = false;
 	_deathCauseIndicator = 0;
 	_hudRenderFlag = 0;
 	_hudDirtyFlag = 0;

@@ -315,52 +315,67 @@ inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 p
 	}
 }
 
-inline bool hasLevel8PerspectiveHazardRoute0(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+// Named translations of the original Level 8 route collision helpers
+// FUN_12FE1/FUN_130C9/FUN_13195. The names are new to the port.
+inline bool hasLevel8WalkerHazardRoute0(uint16 frame, int16 viewX, int16 viewY) {
 	switch (frame) {
 	case 0x00CD:
-		return perspectiveX < 0x29;
 	case 0x00EF:
-		return perspectiveY < 0x0F;
+		return viewX <= 0x28;
 	case 0x0294:
+		return viewY >= 0x0F;
+	case 0x03A2:
+		return viewX >= 0x18;
 	case 0x04BE:
 	case 0x076C:
-		return perspectiveX < 0x29 && perspectiveY < 0x20;
-	case 0x03A2:
-		return perspectiveX < 0x18;
+		return viewX <= 0x28 && viewY <= 0x1F;
 	case 0x05C9:
 	case 0x085A:
 	case 0x096F:
-		return perspectiveY < 0x20;
+		return viewY <= 0x1F;
 	default:
 		return false;
 	}
 }
 
-inline bool hasLevel8PerspectiveHazardRoute1(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+inline bool hasLevel8WalkerHazardRoute1(uint16 frame, int16 viewX, int16 viewY) {
 	switch (frame) {
 	case 0x0189:
-		return perspectiveY < 0x0F;
+		return viewY >= 0x0F;
 	case 0x0297:
-		return perspectiveX < 0x18;
+		return viewX >= 0x18;
 	case 0x03B3:
 	case 0x0661:
-		return perspectiveX < 0x29 && perspectiveY < 0x20;
+		return viewX <= 0x28 && viewY <= 0x1F;
 	case 0x04BE:
 	case 0x074F:
 	case 0x0864:
-		return perspectiveY < 0x20;
+		return viewY <= 0x1F;
 	default:
 		return false;
 	}
 }
 
-inline bool hasLevel8PerspectiveHazardRoute2(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+inline bool hasLevel8WalkerHazardRoute2(uint16 frame, int16 viewX, int16 viewY) {
 	switch (frame) {
 	case 0x00BB:
-		return perspectiveX < 0x29 && perspectiveY < 0x20;
+		return viewX <= 0x28 && viewY <= 0x1F;
 	case 0x01A9:
 	case 0x02BE:
-		return perspectiveY < 0x20;
+		return viewY <= 0x1F;
+	default:
+		return false;
+	}
+}
+
+inline bool hasLevel8WalkerPlayerHit(int route, uint16 frame, int16 viewX, int16 viewY) {
+	switch (CLIP<int>(route, 0, 2)) {
+	case 0:
+		return hasLevel8WalkerHazardRoute0(frame, viewX, viewY);
+	case 1:
+		return hasLevel8WalkerHazardRoute1(frame, viewX, viewY);
+	case 2:
+		return hasLevel8WalkerHazardRoute2(frame, viewX, viewY);
 	default:
 		return false;
 	}
@@ -1142,14 +1157,47 @@ void InsaneRebel1::updateTurretPhysics() {
 	_damageFlags = 0;
 }
 
-// updateAsteroidPhysics — FUN_1CDA7 (0x1CDA7). Opcode 0x0B handler.
+// New port helpers for the palette-flash block that is inline in FUN_1CDA7.
+void InsaneRebel1::restoreScreenFlashPalette() {
+	if (!_screenFlashBasePaletteValid)
+		return;
+
+	if (_player)
+		_player->setPalette(_screenFlashBasePalette);
+	_screenFlashBasePaletteValid = false;
+}
+
+void InsaneRebel1::updateScreenFlashPalette() {
+	if (!_player) {
+		_screenFlashBasePaletteValid = false;
+		return;
+	}
+
+	if (_screenFlash <= 0) {
+		restoreScreenFlashPalette();
+		return;
+	}
+
+	if (!_screenFlashBasePaletteValid) {
+		memcpy(_screenFlashBasePalette, _player->getVideoPalette(), sizeof(_screenFlashBasePalette));
+		_screenFlashBasePaletteValid = true;
+	}
+
+	byte flashPalette[0x300];
+	const int blend = CLIP<int>(8 - _screenFlash, 0, 8);
+	for (int i = 0; i < 0x300; i++)
+		flashPalette[i] = (byte)(0xFF - (((0xFF - _screenFlashBasePalette[i]) * blend) >> 3));
+	_player->setPalette(flashPalette);
+}
+
+// updateGameOp0BPhysics — FUN_1CDA7 (0x1CDA7). GAME opcode 0x0B handler.
 // Uses 10-frame input history averaging instead of accumulators.
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
-void InsaneRebel1::updateAsteroidPhysics() {
+void InsaneRebel1::updateGameOp0BPhysics() {
 	// Control feel tweak: original uses full 10-sample average in FUN_1CDA7.
 	// We keep the same pipeline but average over fewer samples for responsiveness.
-	const int kAsteroidSmoothWindow = 2;
+	const int kGameOp0BSmoothWindow = 2;
 
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
@@ -1168,22 +1216,12 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	if (_currentLevel == 5 && hasLevel6PerspectiveHazard((uint16)_frameCounter, _perspectiveX, _perspectiveY))
 		_damageFlags |= 0x20;
 
+	bool level8WalkerPlayerHit = false;
 	if (_currentLevel == 7) {
 		const uint16 walkerFrame = (uint16)_gameCounter;
-		bool walkerHazard = false;
-		switch (CLIP<int>(_levelRouteIndex, 0, 2)) {
-		case 0:
-			walkerHazard = hasLevel8PerspectiveHazardRoute0(walkerFrame, _perspectiveX, _perspectiveY);
-			break;
-		case 1:
-			walkerHazard = hasLevel8PerspectiveHazardRoute1(walkerFrame, _perspectiveX, _perspectiveY);
-			break;
-		case 2:
-			walkerHazard = hasLevel8PerspectiveHazardRoute2(walkerFrame, _perspectiveX, _perspectiveY);
-			break;
-		}
-
-		if (walkerHazard)
+		level8WalkerPlayerHit = hasLevel8WalkerPlayerHit(_levelRouteIndex, walkerFrame,
+			_perspectiveX, _perspectiveY);
+		if (level8WalkerPlayerHit)
 			_damageFlags |= 0x20;
 	}
 
@@ -1193,15 +1231,18 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	}
 
 	// Damage application (FUN_1CDA7 lines 20-41)
+	// Original 0x0B mapping: 0x80 -> +0x0F, 0x40 -> +0x11, 0x20 -> +0x13.
 	// No cooldown — all three damage types can stack each frame
 	if (_damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
+		const int16 oldHealth = _health;
+		const byte appliedDamageFlags = _damageFlags;
 		_screenFlash = 5;
 		if (_damageFlags & 0x80)
-			_health -= _tuning.shot;
-		if (_damageFlags & 0x40)
 			_health -= _tuning.miss;
-		if (_damageFlags & 0x20)
+		if (_damageFlags & 0x40)
 			_health -= _tuning.wham;
+		if (_damageFlags & 0x20)
+			_health -= _tuning.shot;
 		if (_health < 0) {
 			_deathTimer = 15;  // 0x0F — shorter than Level 1's 30
 			if (_damageFlags & 0x80)
@@ -1209,7 +1250,14 @@ void InsaneRebel1::updateAsteroidPhysics() {
 			else
 				_deathCauseIndicator = 1;
 		}
-		_prevDamageFlags = _damageFlags;
+		// FUN_1CDA7 dispatches g_sfxDamageHit, initialized from SYS/BOOM.SAD.
+		playSfx(kSfxBoom, 127, 0);
+		if (level8WalkerPlayerHit) {
+			debug(1, "RA1 L8 player hit by walker: route=%d frame=%u view=(%d,%d) flags=0x%02x health=%d->%d",
+				CLIP<int>(_levelRouteIndex, 0, 2), (unsigned)(uint16)_gameCounter,
+				_perspectiveX, _perspectiveY, appliedDamageFlags, oldHealth, _health);
+		}
+		_prevDamageFlags = appliedDamageFlags;
 		_damageFlags = 0;
 	}
 
@@ -1227,6 +1275,7 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_screenFlash--;
 		_screenShakeEnabled = (_screenFlash > 0);
 	}
+	updateScreenFlashPalette();
 
 	// --- Cursor and perspective smoothing (FUN_1CDA7) ---
 	// _inputHistory* maps to 0x7580/0x7594, _viewHistory* to 0x75A8/0x75BC.
@@ -1265,8 +1314,11 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	}
 	_inputAxisDeltaX = inputX;
 
-	debug("RA1 asteroid input: source=%s axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+	debug("RA1 GAME 0x0B input: frame=%d source=%s view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+		_gameCounter,
 		inputSourceName,
+		_perspectiveX, _perspectiveY,
+		_health, _prevDamageFlags,
 		_joystickAxisX, _joystickAxisY,
 		_vm->_mouse.x, _vm->_mouse.y,
 		_vm->getActionState(kScummActionInsaneLeft),
@@ -1285,13 +1337,13 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	int sumInputX = 0;
 	int sumInputY = 0;
-	for (int i = 0; i < kAsteroidSmoothWindow; i++) {
+	for (int i = 0; i < kGameOp0BSmoothWindow; i++) {
 		sumInputX += _inputHistoryX[i];
 		sumInputY += _inputHistoryY[i];
 	}
 
-	_avgInputX = (int16)(sumInputX / kAsteroidSmoothWindow);
-	_avgInputY = (int16)(-sumInputY / kAsteroidSmoothWindow);
+	_avgInputX = (int16)(sumInputX / kGameOp0BSmoothWindow);
+	_avgInputY = (int16)(-sumInputY / kGameOp0BSmoothWindow);
 	_avgInputX = CLIP<int16>(_avgInputX, -0xA0, 0xA0);
 	_avgInputY = CLIP<int16>(_avgInputY, -0x46, 0x41);
 
@@ -1307,13 +1359,13 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	int sumViewX = 0;
 	int sumViewY = 0;
-	for (int i = 0; i < kAsteroidSmoothWindow; i++) {
+	for (int i = 0; i < kGameOp0BSmoothWindow; i++) {
 		sumViewX += _viewHistoryX[i];
 		sumViewY += _viewHistoryY[i];
 	}
 
-	int16 avgViewX = (int16)(sumViewX / kAsteroidSmoothWindow);
-	int16 avgViewY = (int16)(sumViewY / kAsteroidSmoothWindow);
+	int16 avgViewX = (int16)(sumViewX / kGameOp0BSmoothWindow);
+	int16 avgViewY = (int16)(sumViewY / kGameOp0BSmoothWindow);
 	_perspectiveX = CLIP<int16>((int16)((avgViewX >> 1) + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)((avgViewY >> 1) + 0x17), 0, 0x2E);
 	resetProjectionTable();
@@ -1380,7 +1432,7 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	checkDynamicLevelBranch();
 
-	debug(7, "RA1 asteroid: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
+	debug(7, "RA1 GAME 0x0B: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
 		_shipPosX, _shipPosY, _avgInputX, _avgInputY,
 		_perspectiveX, _perspectiveY, _health, _screenFlash);
 }
@@ -1744,7 +1796,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 	case 0x0B:
 		_activeGameOpcode = 0x0B;
 		_frameGameOpcodeMask |= (1u << 0x0B);
-		// Asteroid/surface per-frame handler (FUN_1CDA7).
+		// GAME 0x0B per-frame handler (FUN_1CDA7).
 		// field1 = frame counter, field2 = max frames
 		_gameCounter = param1;
 		if (subSize >= 20) {
@@ -1761,9 +1813,9 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			}
 		}
 		debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
-		if (!_asteroidPhysicsUpdatedThisFrame) {
-			updateAsteroidPhysics();
-			_asteroidPhysicsUpdatedThisFrame = true;
+		if (!_gameOp0BPhysicsUpdatedThisFrame) {
+			updateGameOp0BPhysics();
+			_gameOp0BPhysicsUpdatedThisFrame = true;
 			syncViewportOffset(true);
 		}
 		break;
