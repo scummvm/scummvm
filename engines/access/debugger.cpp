@@ -23,6 +23,7 @@
 #include "access/access.h"
 #include "access/debugger.h"
 #include "access/amazon/amazon_game.h"
+#include "access/noctropolis/noctropolis_resources.h"
 
 namespace Access {
 
@@ -94,10 +95,10 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 	case 2: {
 		int newRoom = strToInt(argv[1]);
 		if (newRoom < 0 || newRoom >= (int)_vm->_res->ROOMTBL.size()) {
-			debugPrintf("Invalid Room Number\n");
+			debugPrintf("Invalid Room Number (only have %d)\n", (int)_vm->_res->ROOMTBL.size());
 			return true;
 		}
-		if (_vm->_res->ROOMTBL[newRoom]._desc.empty()) {
+		if (_vm->_res->ROOMTBL[newRoom]._data.empty()) {
 			debugPrintf("Unused Room Number\n");
 			return true;
 		}
@@ -241,9 +242,21 @@ bool Debugger::Cmd_Travel(int argc, const char **argv) {
 		debugPrintf("Travel table:\n");
 
 		for (int i = 0; i < ARRAYSIZE(_vm->_travel); ++i) {
-			if (!Martian::TRAVDATA[i])
-				break;
-			debugPrintf("%2d: %d (%s)\n", i, _vm->_travel[i], Martian::TRAVDATA[i]);
+			const char *label = "UNKNOWN";
+
+			if (_vm->getGameID() == kGameMartianMemorandum) {
+				if (!Martian::TRAVDATA[i])
+					break;
+			} else if (_vm->getGameID() == kGameNoctropolis) {
+				int j = 0;
+				while (Noctropolis::TRAV_ROOMS[j]) {
+					if (Noctropolis::TRAV_ROOMS[j] == i)
+						label = ((Noctropolis::NoctropolisResources *)_vm->_res)->getPlaceName(j);
+					j++;
+				}
+			}
+
+			debugPrintf("%2d: %d (%s)\n", i, _vm->_travel[i], label);
 		}
 
 		return true;
