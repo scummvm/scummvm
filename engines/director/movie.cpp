@@ -369,7 +369,8 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
 	_remapPalettesWhenNeeded = (fileInfo.flags & kMovieFlagRemapPalettesWhenNeeded) != 0;
 
-	_script = fileInfo.strings[0].readString(false);
+	if (fileInfo.strings.size() >= 1)
+		_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, 0);
@@ -377,12 +378,15 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	if (!_script.empty())
 		_cast->_lingoArchive->addCode(_script, kMovieScript, 0, nullptr, kLPPTrimGarbage);
 
-	_changedBy = fileInfo.strings[1].readString();
-	_createdBy = fileInfo.strings[2].readString();
-	_origDirectory = fileInfo.strings[3].readString();
+	if (fileInfo.strings.size() >= 2)
+		_changedBy = fileInfo.strings[1].readString();
+	if (fileInfo.strings.size() >= 3)
+		_createdBy = fileInfo.strings[2].readString();
+	if (fileInfo.strings.size() >= 4)
+		_origDirectory = fileInfo.strings[3].readString();
 
 	uint16 preload = 0;
-	if (fileInfo.strings[4].len) {
+	if ((fileInfo.strings.size() >= 5) && fileInfo.strings[4].len) {
 		if (stream.isBE())
 			preload = READ_BE_INT16(fileInfo.strings[4].data);
 		else
