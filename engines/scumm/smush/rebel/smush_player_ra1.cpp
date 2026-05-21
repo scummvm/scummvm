@@ -596,8 +596,12 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 	case SMUSH_CODEC_SKIP_RLE: {
 		const int bufWidth = pitch;
 		const int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
+		// Codec 23 uses the high byte of the FOBJ codec word as the palette
+		// band for its additive delta. The event-mask path may subtract 0x10
+		// from this value before decoding, which Level 8 uses for the walker
+		// armor layers.
 		smushDecodeRA1AdditiveLineUpdate(_dst, src, left, top, width, height,
-			pitch, bufWidth, bufHeight, 0);
+			pitch, bufWidth, bufHeight, param);
 		return true;
 	}
 	default:
