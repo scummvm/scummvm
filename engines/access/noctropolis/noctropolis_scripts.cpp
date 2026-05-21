@@ -168,7 +168,24 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		break;
 	case 17:
 		warning("TODO: End of game - add Nightdive credits here for that edition?");
-		// see NoctEndGame::drawer.
+		/*
+		// x, y, fontnum, ?, color
+		PrintStr("NIGHT DIVE STUDIOS IS:",0x15b,0x28,1,0,0xff);
+		PrintStr("EXECUTIVE PRODUCER-",0x15b,0x36,1,0,0xed);
+		PrintStr("STEPHEN KICK",0x1e3,0x44,1,0,0xee);
+		PrintStr("CHIEF ENGINEER-",0x15b,0x52,1,0,0xed);
+		PrintStr("JAMES HALEY",0x1e3,0x60,1,0,0xee);
+		PrintStr("KEX RENDERING TECH-",0x15b,0x6e,1,0,0xed);
+		PrintStr("SAMUEL VILLARREAL",0x1e3,0x7c,1,0,0xee);
+		PrintStr("VIDEO PLAYER-",0x15b,0x8a,1,0,0xed);
+		PrintStr("BRENT ERICKSON",0x1e3,0x98,1,0,0xee);
+		PrintStr("QA LEAD-",0x15b,0xa6,1,0,0xed);
+		PrintStr("DANIEL GRAYSHON",0x1e3,0xb4,1,0,0xee);
+		PrintStr("PLAYTESTING-",0x15b,0xc2,1,0,0xed);
+		PrintStr("SAMUEL VILLARREAL",0x1e3,0xd0,1,0,0xee);
+		PrintStr("TECHNICAL ADVISOR-",0x15b,0xde,1,0,0xed);
+		PrintStr("BRENT ERICKSON",0x1e3,0xec,1,0,0xee);
+		 */
 		_vm->quitGame();
 		break;
 	case 18:

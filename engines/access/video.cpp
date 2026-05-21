@@ -242,7 +242,7 @@ void VideoPlayer_v1::copyVideo() {
 //////////////////////////////////////////////////
 
 VideoPlayer_v2::VideoPlayer_v2(AccessEngine *vm, bool setPal) : VideoPlayer(vm), _audioStream(nullptr),
-_frame(nullptr), _nextFrameTime(0), _setPal(setPal), _startMs(0) {
+_frame(nullptr), _nextFrameTime(0), _setPal(setPal), _startMs(0), _drawBorder(false) {
 }
 
 void VideoPlayer_v2::setVideo(const Common::Point &pt) {
@@ -362,6 +362,14 @@ void VideoPlayer_v2::handleFrameChunk(bool delta, bool skipLines) {
 	uint32 frameDelay = _videoData->_stream->readUint16LE();
 	debugC(kDebugGraphics, "frameDelay = %d", frameDelay);
 	calcNextFrameTime(frameDelay);
+
+	if (_drawBorder) {
+		Common::Point pt(_vidSurface->_orgX1, _vidSurface->_orgY1);
+		_vidSurface->BaseSurface::drawBox(pt.x - 1, pt.y - 1, pt.x + _vm->_video->getWidth(), pt.y + _vm->_video->getHeight(), 249);
+		_vidSurface->BaseSurface::drawBox(pt.x - 2, pt.y - 2, pt.x + _vm->_video->getWidth() + 1, pt.y + _vm->_video->getHeight() + 1, 248);
+		_vidSurface->BaseSurface::drawBox(pt.x - 3, pt.y - 3, pt.x + _vm->_video->getWidth() + 2, pt.y + _vm->_video->getHeight() + 2, 247);
+		_drawBorder = false;
+	}
 
 	const Common::Rect frameBounds(Common::Point(_vidSurface->_orgX1, _vidSurface->_orgY1), _frame->w, _frame->h);
 	if (_videoFrame == 0 && delta) {
