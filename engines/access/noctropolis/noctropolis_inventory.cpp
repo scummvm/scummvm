@@ -94,7 +94,7 @@ int NoctropolisInventory::displayInv() {
 			upArrow = false;
 			downArrow = false;
 
-			if (_startInvItem > 0) {
+			if (_topItemIndex > 0) {
 				upArrow = true;
 				slotItems[slotIndex++] = kUpArrow;
 				slotCount--;
