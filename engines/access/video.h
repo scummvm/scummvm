@@ -136,6 +136,7 @@ private:
 	BaseSurface *_frame;
 	uint32 _nextFrameTime;
 	bool _setPal;
+	bool _drawBorder;
 	uint32 _startMs;
 	uint32 _delayTotal;
 
@@ -170,6 +171,8 @@ public:
 	int getHeight() override { return _header._height; }
 
 	void setVideoPalNow();
+
+	void setDrawBorder(bool drawBorder) { _drawBorder = drawBorder; }
 };
 
 

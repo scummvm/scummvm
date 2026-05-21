@@ -913,11 +913,7 @@ void Scripts::cmdSetVideo_v3() {
 	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename);
 	_vm->_video->setVideo(_vm->_screen, pt, vidpath, 0);
 
-	if (noFrame == 0) {
-		_vm->_screen->BaseSurface::drawBox(pt.x - 1, pt.y - 1, pt.x + _vm->_video->getWidth(), pt.y + _vm->_video->getHeight(), 249);
-		_vm->_screen->BaseSurface::drawBox(pt.x - 2, pt.y - 2, pt.x + _vm->_video->getWidth() + 1, pt.y + _vm->_video->getHeight() + 1, 248);
-		_vm->_screen->BaseSurface::drawBox(pt.x - 3, pt.y - 3, pt.x + _vm->_video->getWidth() + 2, pt.y + _vm->_video->getHeight() + 2, 247);
-	}
+	((VideoPlayer_v2 *)_vm->_video)->setDrawBorder(noFrame == 0);
 
 	if (cellIndex == 1 && roomNum == 0x36)
 		_vm->_screen->setIconPalette();
@@ -1888,6 +1884,15 @@ void Scripts::cmdCopyScnBuf() {
 	debugC(1, kDebugScripts, "cmdCopyScnBuf()");
 
 	// Copy the screen to the buffer, applying windowing offsets
+
+	//
+	// WORKAROUND: This causes double-drawing in the noct credits?
+	// Just skip for now which causes a small graphical glitch after
+	// showing the colored bars video.
+	//
+	if (_vm->_player->_roomNumber == 0x61)
+		return;
+
 	Common::Rect src(_vm->_screen->w, _vm->_screen->h);
 	const Common::Rect screenSize = src;
 	src.translate(_vm->_screen->_windowXAdd, _vm->_screen->_windowYAdd + _vm->_screen->_screenYOff);
