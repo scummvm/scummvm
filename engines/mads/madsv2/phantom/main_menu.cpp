@@ -152,7 +152,7 @@ Palette special_pal;                     /* Palette for fadeout */
 
 MenuItem menu_item[NUM_MENU_ITEMS+1];    /* Menu item array */
 
-void start_series() {
+static void start_series() {
 	int error_flag = true;
 	int count;
 	int handle;
@@ -180,7 +180,7 @@ done:
 	}
 }
 
-void stop_series(void) {
+static void stop_series(void) {
 	int count;
 
 	for (count = NUM_MENU_ITEMS - 1; count >= 0; count--) {
@@ -188,7 +188,7 @@ void stop_series(void) {
 	}
 }
 
-void start_hotspots(void) {
+static void start_hotspots(void) {
 	int count;
 	int x1, x2, y1, y2;
 	int xs, ys;
@@ -211,7 +211,7 @@ void start_hotspots(void) {
 	hspot_add(156, 77, 170, 83, 2, EYE_HOTSPOT + 1, mcga_mode);
 }
 
-void process_menu(void) {
+static void process_menu(void) {
 	int myspot;
 
 	myspot = hspot_which(mouse_x, mouse_y - viewing_at_y, mcga_mode);
@@ -236,7 +236,7 @@ void process_menu(void) {
 	}
 }
 
-void process_sprites(void) {
+static void process_sprites(void) {
 	int count;
 	int sprite;
 	int series;
@@ -309,7 +309,7 @@ done:
 	;
 }
 
-void process_messages(int anim) {
+static void process_messages(int anim) {
 	int total;
 	int count;
 	int id, x, y;
@@ -464,36 +464,9 @@ void menu_control(void) {
 		kernel.clock = now_clock;
 
 		if (now_clock >= menu_clock) {
-			switch (menu_mode) {
-			case MENU_APPEARING:
-				/*
-				menu_state -= 1;
-				if (menu_state <= 1) {
-				  menu_state         = MENU_HIGH_SPRITE;
-				  do {
-					menu_appear_state += 1;
-				  } while ((menu_appear_state < NUM_MENU_ITEMS) &&
-					   (!menu_item[menu_appear_state].active));
-				  if (menu_appear_state >= NUM_MENU_ITEMS) {
-					menu_mode          = MENU_ACCEPTING_COMMANDS;
-				  }
-				}
-				*/
-				break;
-
-			case MENU_ACCEPTING_COMMANDS:
-				break;
-
-			case MENU_DISAPPEARING:
+			if (menu_mode == MENU_DISAPPEARING)
 				going = false;
-				/*
-				menu_state += 1;
-				if (menu_state > MENU_HIGH_SPRITE + 1) {
-				  going = false;
-				}
-				*/
-				break;
-			}
+
 			menu_clock = now_clock + MENU_FRAME_RATE;
 		}
 
@@ -569,72 +542,6 @@ void menu_control(void) {
 	kernel_abort_animation(anim);
 
 	stop_series();
-}
-
-void add_parameter(char *parameter) {
-	if (command_line_size < COMMAND_LINE_MAX) {
-		Common::strcpy_s(command_line[command_line_size], parameter);
-		command_list[command_line_size] = command_line[command_line_size];
-		command_line_size++;
-	}
-}
-
-void add_sound_parameter(void) {
-	char temp_buf[80];
-	char work_buf[80];
-
-	Common::strcpy_s(temp_buf, "-c:n");
-	temp_buf[3] = sound_letter;
-
-	Common::strcat_s(temp_buf, ",");
-	Common::sprintf_s(work_buf, "%x", config_file.sound_card_address);
-	Common::strcat_s(temp_buf, work_buf);
-	Common::strcat_s(temp_buf, ",");
-	Common::sprintf_s(work_buf, "%x", config_file.sound_card_type);
-	Common::strcat_s(temp_buf, work_buf);
-
-	add_parameter(temp_buf);
-}
-
-void add_speech_parameter(void) {
-	char temp_buf[80];
-	char work_buf[80];
-
-	if (config_file.speech_card_type > 0) {
-		Common::strcpy_s(temp_buf, "-u:");
-
-		Common::sprintf_s(work_buf, "%x", config_file.speech_card_address);
-		Common::strcat_s(temp_buf, work_buf);
-		Common::strcat_s(temp_buf, ",");
-		Common::sprintf_s(work_buf, "%x", config_file.speech_card_type);
-		Common::strcat_s(temp_buf, work_buf);
-		Common::strcat_s(temp_buf, ",");
-		env_catint(temp_buf, config_file.speech_card_irq, 2);
-		Common::strcat_s(temp_buf, ",");
-		env_catint(temp_buf, config_file.speech_card_drq, 2);
-
-		add_parameter(temp_buf);
-	}
-}
-
-void add_chain_parameter(void) {
-	char temp_buf[80];
-	int added_dash = false;
-
-	Common::strcpy_s(temp_buf, "-a:\"mainmenu");
-
-	if (env_search_mode == ENV_SEARCH_CONCAT_FILES) {
-		Common::strcat_s(temp_buf, " -p");
-		added_dash = true;
-	}
-
-	if (use_mouse_cursor_fix) {
-		if (!added_dash) {
-			Common::strcat_s(temp_buf, " -");
-			added_dash = true;
-		}
-		Common::strcat_s(temp_buf, "u");
-	}
 }
 
 } // namespace Phantom
