@@ -57,6 +57,12 @@ static void main_menu_main() {
 
 	if (!kernel_game_startup(19, KERNEL_STARTUP_CURSOR | KERNEL_STARTUP_INTERRUPT | KERNEL_STARTUP_FONT,
 		nullptr, nullptr)) {
+		matte_init(0xFFFF);
+		bool valid = !kernel_room_startup(920, 0, nullptr, true, true);
+
+		// Setup scr_work to use the full surface of scr_main (i.e. 320x200).
+		// Because of this, viewing_at_y is actually == 0
+		scr_work.y = picture_map.viewport_y;
 		viewing_at_y = (200 - scr_work.y) >> 1;
 
 		mouse_cursor_sprite(cursor, 7);
@@ -65,7 +71,6 @@ static void main_menu_main() {
 		mouse_hide();
 
 		mouse_cursor_sprite(cursor, 1);
-		matte_init(0xFFFF);
 		kernel_seq_init();
 		kernel_message_init();
 		kernel_animation_init();
@@ -73,23 +78,6 @@ static void main_menu_main() {
 
 		picture_view_x = 0;
 		picture_view_y = 0;
-
-		quotes = quote_load(0, 68, 69, 70, 71, 72, 73, 74, 75, 76,
-			77, 78, 79, 80, 81, 82, 83, 84, 85, 86,
-			87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
-			97, 98, 99, 0);
-
-		global_speech_load(9);
-		bool valid = !kernel_room_startup(902, 0, nullptr, true, true);
-
-		master_palette[4].r = 63;
-		master_palette[4].g = 50;
-		master_palette[4].b = 0;
-		master_palette[5].r = 30;
-		master_palette[5].g = 15;
-		master_palette[5].b = 0;
-		mcga_setpal_range(&master_palette, 4, 2);
-
 		new_background = true;
 
 		if (valid) {
@@ -102,7 +90,7 @@ static void main_menu_main() {
 				screen.hLine(0, scr_work.y + viewing_at_y + 1, 319, LINE_COLOR);
 			}
 
-			kernel_load_sound_driver("*#SOUND.PH9", 'N', 544, 0, 49);
+			kernel_load_sound_driver("*#SOUND.DR9", 'N', 544, 0, 49);
 
 			menu_control();
 
@@ -135,9 +123,9 @@ static void main_cold_data_init() {
 	game_menu_exit = global_menu_system_shutdown;
 	game_emergency_save = global_emergency_save;
 
-	Common::strcpy_s(config_file_name, "config.pha");
-	Common::strcpy_s(save_game_key, "phan");
-	Common::strcpy_s(restart_game_key, "phantom");
+	Common::strcpy_s(config_file_name, "config.dra");
+	Common::strcpy_s(save_game_key, "drag");
+	Common::strcpy_s(restart_game_key, "dragon");
 
 	Common::strcpy_s(player.series_name, "RAL");
 	player.walker_must_reload = true;

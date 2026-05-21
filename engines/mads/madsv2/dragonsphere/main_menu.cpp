@@ -192,6 +192,7 @@ static void start_hotspots() {
 		ys = series->index[0].ys;
 		x1 = series->index[0].x - (xs >> 1);
 		y1 = series->index[0].y - (ys - 1);
+
 		x2 = x1 + xs - 1;
 		y2 = y1 + ys - 1;
 		hspot_add(x1, y1, x2, y2, 1, count, mcga_mode);
@@ -255,13 +256,6 @@ static void process_sprites() {
 				}
 			} else {
 				sprite = 1;
-				/*
-				if (count != selected_item) {
-				  sprite = 1;
-				} else {
-				  sprite = 2;
-				}
-				*/
 			}
 
 			image.series_id = (byte)menu_item[series].handle;
