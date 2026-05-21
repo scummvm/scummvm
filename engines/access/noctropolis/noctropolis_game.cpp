@@ -837,6 +837,8 @@ void NoctropolisEngine::playInventoryStinger() {
 
 	// playSound will not add it to the queue if it's already there.
 	_sound->playSoundByIdent(stingerIdent);
+
+	((NoctropolisInventory *)_inventory)->_topItemIndex = 0;
 }
 
 Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
@@ -857,8 +859,10 @@ Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
 
 	_stil->synchronize(s);
 
-	if (s.isLoading()) // clear minigame state on load
+	if (s.isLoading()) { // clear minigame state on load
 		initMinigame();
+		((NoctropolisInventory *)_inventory)->_topItemIndex = 0;
+	}
 
 	return result;
 }

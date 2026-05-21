@@ -34,12 +34,12 @@ public:
 
 	int displayInv() override;
 
+	int _topItemIndex;
+
 private:
 	bool _keepInventoryPosition;
 
 	Common::Point _inventoryBase;
-
-	int _topItemIndex;
 };
 
 } // end namespace Noctropolis
