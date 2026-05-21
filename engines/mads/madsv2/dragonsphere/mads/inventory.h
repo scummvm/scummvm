@@ -48,6 +48,7 @@ enum {
 	magic_belt       = 18,
 	amulet           = 19,
 	crystal_ball     = 29,
+	black_sphere     = 30,
 	soptus_soporific = 31,
 	shifter_ring     = 32,
 	medicine_bundle  = 33,

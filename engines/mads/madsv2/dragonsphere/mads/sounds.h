@@ -74,7 +74,13 @@ enum {
 	N_Bk404Music         =  33,
 	N_Bk406Music         =  35,
 	N_BellyDanceMusic    =  36,
-	N_GamePieceSnd       =  66
+	N_GamePieceSnd       =  66,
+	N_FlameBurst         =  67,
+	N_SnakeHiss          =  68,
+	N_BigBirdCall        =  69,
+	N_JumpThwang         =  70,
+	N_StepOnFloatingDisk =  77,
+	N_004CryOfDismay     =  78
 };
 
 } // namespace Dragonsphere
