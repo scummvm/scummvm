@@ -39,6 +39,7 @@
 #include "engines/nancy/ui/inventorypopup.h"
 #include "engines/nancy/ui/notebookpopup.h"
 #include "engines/nancy/ui/cellphonepopup.h"
+#include "engines/nancy/ui/conversationpopup.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -177,6 +178,7 @@ public:
 	UI::InventoryPopup &getInventoryPopup() { return _inventoryPopup; }
 	UI::NotebookPopup &getNotebookPopup() { return _notebookPopup; }
 	UI::CellPhonePopup &getCellPhonePopup() { return _cellPhonePopup; }
+	UI::ConversationPopup &getConversationPopup() { return _conversationPopup; }
 	UI::Clock *getClock();
 	UI::Taskbar *getTaskbar() { return _taskbar; }
 
@@ -279,6 +281,7 @@ private:
 	UI::InventoryPopup _inventoryPopup;
 	UI::NotebookPopup _notebookPopup;
 	UI::CellPhonePopup _cellPhonePopup;
+	UI::ConversationPopup _conversationPopup;
 
 	UI::Button *_menuButton;
 	UI::Button *_helpButton;

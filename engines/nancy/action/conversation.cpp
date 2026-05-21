@@ -256,13 +256,21 @@ void ConversationSound::execute() {
 	case kRun:
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
-			auto *textboxData = GetEngineData(TBOX);
-			assert(textboxData);
-			NancySceneState.getTextbox().clear();
-			NancySceneState.getTextbox().setOverrideFont(textboxData->conversationFontID);
+			if (g_nancy->getGameType() >= kGameTypeNancy10) {
+				NancySceneState.getConversationPopup().open();
 
-			if (ConfMan.getBool("subtitles")) {
-				NancySceneState.getTextbox().addTextLine(_text);
+				if (ConfMan.getBool("subtitles")) {
+					NancySceneState.getConversationPopup().addTextLine(_text);
+				}
+			} else {
+				auto *textboxData = GetEngineData(TBOX);
+				assert(textboxData);
+				NancySceneState.getTextbox().clear();
+				NancySceneState.getTextbox().setOverrideFont(textboxData->conversationFontID);
+
+				if (ConfMan.getBool("subtitles")) {
+					NancySceneState.getTextbox().addTextLine(_text);
+				}
 			}
 
 			Common::Array<uint> responsesToAdd;
@@ -317,8 +325,16 @@ void ConversationSound::execute() {
 				responsesToAdd.push_back(i);
 			}
 
+			if (g_nancy->getGameType() >= kGameTypeNancy10) {
+				NancySceneState.getConversationPopup().setResponseStart();
+			}
+
 			for (uint i : responsesToAdd) {
-				NancySceneState.getTextbox().addTextLine(_responses[i].text);
+				if (g_nancy->getGameType() >= kGameTypeNancy10) {
+					NancySceneState.getConversationPopup().addTextLine(_responses[i].text);
+				} else {
+					NancySceneState.getTextbox().addTextLine(_responses[i].text);
+				}
 				_responses[i].isOnScreen = true;
 			}
 		}
@@ -406,6 +422,10 @@ void ConversationSound::execute() {
 				}
 			}
 
+			if (g_nancy->getGameType() >= kGameTypeNancy10) {
+				NancySceneState.getConversationPopup().close();
+			}
+			
 			finishExecution();
 		}
 
