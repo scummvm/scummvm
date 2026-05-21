@@ -48,6 +48,7 @@ enum {
 	N_DogWhimper         =  79,
 	N_BeastSnd           =  80,
 	N_GrabKing           =  82,
+	N_WaterBubbles       =  86,
 	N_MagicDoorOpens     =  88,
 	N_MagicDoorUnlocked  =  89,
 	N_JumpDownWell       =  93,
@@ -82,8 +83,12 @@ enum {
 	N_StepOnFloatingDisk =  77,
 	N_004CryOfDismay     =  78,
 
-	// Section 9
-	N_AllFade            =   1
+	// Section 9/General
+	N_AllFade            =   1,
+	N_MusicBoxOn         =  17,
+	N_MusicBoxOff        =  18,
+	N_BlowBirdCall       =  30,
+	N_ListenToFlies      =  31
 };
 
 } // namespace Dragonsphere

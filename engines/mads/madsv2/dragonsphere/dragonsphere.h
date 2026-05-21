@@ -31,6 +31,7 @@ namespace Dragonsphere {
 class DragonsphereEngine : public MADSV2Engine {
 private:
 	static void global_object_sprite();
+	static void global_object_examine();
 	static void stop_walker_basic();
 	static void stop_walker_tricks();
 

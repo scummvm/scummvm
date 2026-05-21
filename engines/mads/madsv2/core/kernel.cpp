@@ -2552,7 +2552,7 @@ int kernel_load_sound_driver(const char *name, char sound_card_, int sound_board
 	// Get the section number from the end of the driver filename, and use it to initialize
 	// the sound system; we provide our own implementation of the drivers
 	int sectionNum = *(name + strlen(name) - 1) - '0';
-	assert((sectionNum >= 1 && sectionNum <= 5) || sectionNum == 9);
+	assert(sectionNum >= 1 && sectionNum <= 9);
 
 	g_engine->_soundManager->init(sectionNum);
 
