@@ -47,24 +47,11 @@ inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue,
 const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
 const int16 kRA1Op09AimYScale[5] = { 256, 252, 240, 221, 196 };
 
-// LVL1 stage-2 0x5D damage/event codes. The gameplay stream exposes low record ids
-// (6..18), while the recovered outer loop compares the post-latch state against the
-// later translated values seen in the executable. Accept both representations.
-inline bool isL1Stage2DamageLatch(uint16 code) {
+// Level 15 final approach 0x5D damage/event codes consumed by
+// RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
+// performed by HandleGameOp5D_SegmentLinkLatch.
+inline bool isLevel15FinalDamageLatch(uint16 code) {
 	switch (code) {
-	case 0x0006:
-	case 0x0007:
-	case 0x0008:
-	case 0x0009:
-	case 0x000A:
-	case 0x000B:
-	case 0x000C:
-	case 0x000D:
-	case 0x000E:
-	case 0x000F:
-	case 0x0010:
-	case 0x0011:
-	case 0x0012:
 	case 0x0049:
 	case 0x004B:
 	case 0x004E:
@@ -81,7 +68,7 @@ inline bool isL1Stage2DamageLatch(uint16 code) {
 	}
 }
 
-inline bool isL1Stage2SweepDamage(uint16 frameCounter, int16 perspectiveX) {
+inline bool hasLevel15FinalSweepDamage(uint16 frameCounter, int16 perspectiveX) {
 	switch (frameCounter) {
 	case 0x0034:
 	case 0x00ED:
@@ -910,8 +897,7 @@ void InsaneRebel1::updateShipPhysics() {
 	// RA1 FUN_1B297-style latches from GAME opcodes:
 	//   0x5D latch 0xFFFF -> bit 0x40 (obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (projectile-like hit)
-	if (_gameLatch5D == 0xFFFF || (_currentLevel == 0 && _flyControlMode == 2 &&
-		isL1Stage2DamageLatch(_gameLatch5D)))
+	if (_gameLatch5D == 0xFFFF)
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
 		_damageFlags |= 0x80;
@@ -990,6 +976,67 @@ void InsaneRebel1::updateShipPhysics() {
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
+// Port helper: FUN_1E6A7 computes this direction bucket inline before applying
+// the current frame's movement update.
+void InsaneRebel1::updateTurretShipDirection(int16 offsetY) {
+	int dir = 0;
+	if (_flyControlMode == 2) {
+		if (_rollAccum > 0x380) dir = 4;
+		else if (_rollAccum > 0x280) dir = 3;
+		else if (_rollAccum > 0x180) dir = 2;
+		else if (_rollAccum > 0x80) dir = 1;
+		else if (_rollAccum > -0x80) dir = 0;
+		else if (_rollAccum > -0x180) dir = 5;
+		else if (_rollAccum > -0x280) dir = 6;
+		else if (_rollAccum > -0x380) dir = 7;
+		else dir = 8;
+	} else {
+		if (_rollAccum > 0x380) dir = 8;
+		else if (_rollAccum > 0x280) dir = 7;
+		else if (_rollAccum > 0x180) dir = 6;
+		else if (_rollAccum > 0x80) dir = 5;
+		else if (_rollAccum > -0x80) dir = 4;
+		else if (_rollAccum > -0x180) dir = 3;
+		else if (_rollAccum > -0x280) dir = 2;
+		else if (_rollAccum > -0x380) dir = 1;
+		else dir = 0;
+
+		if (offsetY < -0x1E)
+			dir += 0x12;
+		else if (offsetY < 0x1E)
+			dir += 9;
+	}
+
+	const RA1SpriteBank *shipBank = &_shipBank;
+	if (_currentLevel == 0 && _flyControlMode == 2 && _shipBankAlt.numSprites > 0)
+		shipBank = &_shipBankAlt;
+	if (shipBank->numSprites > 0)
+		_shipDirIndex = CLIP<int16>((int16)dir, 0, shipBank->numSprites - 1);
+}
+
+void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
+	// Original 0x0D/0x0E collision compares projected script zones against the
+	// drawn ship center (base center + g_shipOffset). This port draws into a
+	// 384x242 source buffer and later crops by the camera offset, so convert that
+	// source-buffer anchor to the visible screen-space point used by the projected
+	// zones.
+	//
+	// In Level 1 part 2, HandleGameOp0A_TurretVariant reuses _shipPos for the
+	// targeting cursor, so collision must read the movement accumulator instead.
+	if (_currentLevel == 0 && _flyControlMode == 2) {
+		x = (int16)(kRA1CenterX + (int16)(_posAccumX >> 8));
+		y = (int16)(kRA1CenterY + (int16)(_posAccumY >> 8));
+	} else {
+		x = _shipPosX;
+		y = _shipPosY;
+	}
+
+	if (_interactiveVideoActive) {
+		x = (int16)(x - _perspectiveX);
+		y = (int16)(y - _perspectiveY);
+	}
+}
+
 // updateTurretPhysics — FUN_1E6A7 (0x1E6A7), opcode 0x08 path.
 // Stage-2 cockpit mode uses different smoothing/clamps than FUN_1DEB5.
 void InsaneRebel1::updateTurretPhysics() {
@@ -1001,16 +1048,9 @@ void InsaneRebel1::updateTurretPhysics() {
 	const int32 counter = _gameCounter;
 	const uint16 modeFlags = _frameDispatchFlags;
 
-	// RA1 latches consumed by handler family in FUN_1B297.
-	if (_currentLevel == 0 && _flyControlMode == 2 && isL1Stage2SweepDamage((uint16)counter, _perspectiveX))
-		_damageFlags |= 0x20;
-	if (_gameLatch5D == 0xFFFF || (_currentLevel == 0 && _flyControlMode == 2 &&
-		isL1Stage2DamageLatch(_gameLatch5D)))
+	if (_gameLatch5D == 0xFFFF)
 		_damageFlags |= 0x40;
-	if (_gameLatch5F != 0 &&
-		((_currentLevel == 0 && _flyControlMode == 2)
-			? (_vm->_rnd.getRandomNumber(2) == 0)
-			: (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)))
+	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
 		_damageFlags |= 0x80;
 
 	if (counter == 0) {
@@ -1021,6 +1061,19 @@ void InsaneRebel1::updateTurretPhysics() {
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
 		_damageCooldown = 0;
+	}
+
+	// GAME 0x0A appears before 0x08 in L1PLAY2.ANM. The original therefore
+	// draws shots/targeting and the ship from this pre-physics center, then
+	// updates the camera offset at the end of 0x08 for the final viewport copy.
+	const int16 preMoveOffsetX = (int16)(_posAccumX >> 8);
+	const int16 preMoveOffsetY = (int16)(_posAccumY >> 8);
+	if (_currentLevel == 0 && _flyControlMode == 2) {
+		_turretFrameShipOffsetX = preMoveOffsetX;
+		_turretFrameShipOffsetY = preMoveOffsetY;
+		_turretFrameShipCenterX = (int16)(kRA1CenterX + preMoveOffsetX);
+		_turretFrameShipCenterY = (int16)(kRA1CenterY + preMoveOffsetY);
+		_turretFrameShipCenterValid = true;
 	}
 
 	// Damage gate from FUN_1E6A7.
@@ -1048,6 +1101,8 @@ void InsaneRebel1::updateTurretPhysics() {
 
 	if (_health < 0 && _deathTimer > 0)
 		_deathTimer--;
+
+	updateTurretShipDirection(preMoveOffsetY);
 
 	// FUN_1E6A7 movement gate: counter > 8 or flags bit 0x40.
 	if (counter > 8 || (modeFlags & 0x40)) {
@@ -1104,40 +1159,6 @@ void InsaneRebel1::updateTurretPhysics() {
 	// FUN_1E6A7 rebuilds the side-look curve with a shallower table than the
 	// main flight handler, derived directly from roll.
 	rebuildProjectionTable((int16)(-(_rollAccum >> 9)), 0x0D);
-
-	// Direction bucket synthesis from FUN_1E6A7.
-	int dir = 0;
-	if (_flyControlMode == 2) {
-		if (_rollAccum > 0x380) dir = 4;
-		else if (_rollAccum > 0x280) dir = 3;
-		else if (_rollAccum > 0x180) dir = 2;
-		else if (_rollAccum > 0x80) dir = 1;
-		else if (_rollAccum > -0x80) dir = 0;
-		else if (_rollAccum > -0x180) dir = 5;
-		else if (_rollAccum > -0x280) dir = 6;
-		else if (_rollAccum > -0x380) dir = 7;
-		else dir = 8;
-	} else {
-		if (_rollAccum > 0x380) dir = 8;
-		else if (_rollAccum > 0x280) dir = 7;
-		else if (_rollAccum > 0x180) dir = 6;
-		else if (_rollAccum > 0x80) dir = 5;
-		else if (_rollAccum > -0x80) dir = 4;
-		else if (_rollAccum > -0x180) dir = 3;
-		else if (_rollAccum > -0x280) dir = 2;
-		else if (_rollAccum > -0x380) dir = 1;
-		else dir = 0;
-
-		if (offsetY < -0x1E)
-			dir += 0x12;
-		else if (offsetY < 0x1E)
-			dir += 9;
-	}
-	const RA1SpriteBank *shipBank = &_shipBank;
-	if (_currentLevel == 0 && _flyControlMode == 2 && _shipBankAlt.numSprites > 0)
-		shipBank = &_shipBankAlt;
-	if (shipBank->numSprites > 0)
-		_shipDirIndex = CLIP<int16>((int16)dir, 0, shipBank->numSprites - 1);
 
 	// Regeneration + survival bonus via FUN_1BB0E call in this path.
 	if ((_frameCounter & 0x1F) == 0) {
@@ -1202,18 +1223,23 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
+	const bool level15FinalPhase = (_currentLevel == 14 && _levelGameplayPhase == 2);
+
 	if (_gameLatch5D == 0xFFFF ||
 		(_currentLevel == 3 && isLevel4DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 5 && isLevel6DamageLatch(_gameLatch5D)) ||
-		(_currentLevel == 9 && isLevel10DamageLatch(_gameLatch5D)))
+		(_currentLevel == 9 && isLevel10DamageLatch(_gameLatch5D)) ||
+		(level15FinalPhase && isLevel15FinalDamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 &&
-		((_currentLevel == 3 || _currentLevel == 9)
+		((_currentLevel == 3 || _currentLevel == 9 || level15FinalPhase)
 			? (_vm->_rnd.getRandomNumber(2) == 0)
 			: (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)))
 		_damageFlags |= 0x80;
 
 	if (_currentLevel == 5 && hasLevel6PerspectiveHazard((uint16)_frameCounter, _perspectiveX, _perspectiveY))
+		_damageFlags |= 0x20;
+	if (level15FinalPhase && hasLevel15FinalSweepDamage((uint16)_gameCounter, _perspectiveX))
 		_damageFlags |= 0x20;
 
 	bool level8WalkerPlayerHit = false;
@@ -1725,39 +1751,43 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			// Apply 0x0D immediately so it sees the same pre-physics ship state as
 			// the other per-frame GAME latches. Deferring this until after 0x07/0x09
 			// movement made right-wall hits fire too early when steering into a wall.
-			const bool suppressDirectionalDamage = (_damageFlags & 0x10) != 0;
+			int16 collisionShipX = _shipPosX;
+			int16 collisionShipY = _shipPosY;
+			getCollisionShipCenter(collisionShipX, collisionShipY);
+
+			const bool suppressDirectionalDamage = (_frameDispatchFlags & 0x10) != 0;
 			const byte oldDirectionalFlags = _damageFlags & 0x0F;
 			if (_health >= 0) {
-				if (_shipPosX < _corridorLeftX) {
-					_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
+				if (collisionShipX < _corridorLeftX) {
+					_posAccumX = (int32)(_corridorLeftX + _perspectiveX - kRA1CenterX) * 0x100;
 					if (!suppressDirectionalDamage) {
 						if (_rollAccum < 0x100)
 							_rollAccum = 0x100;
 						_damageFlags |= 0x04;
 					}
 				}
-				if (_shipPosX > _corridorRightX) {
-					_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
+				if (collisionShipX > _corridorRightX) {
+					_posAccumX = (int32)(_corridorRightX + _perspectiveX - kRA1CenterX) * 0x100;
 					if (!suppressDirectionalDamage) {
 						if (_rollAccum > -0x100)
 							_rollAccum = -0x100;
 						_damageFlags |= 0x02;
 					}
 				}
-				if (_shipPosY < _corridorTopY) {
-					_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
+				if (collisionShipY < _corridorTopY) {
+					_posAccumY = (int32)(_corridorTopY + _perspectiveY - kRA1CenterY) * 0x100 + 0x100;
 					if (!suppressDirectionalDamage)
 						_damageFlags |= 0x01;
 				}
-				if (_shipPosY > _corridorBottomY) {
-					_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
+				if (collisionShipY > _corridorBottomY) {
+					_posAccumY = (int32)(_corridorBottomY + _perspectiveY - kRA1CenterY) * 0x100 - 0x100;
 					if (!suppressDirectionalDamage)
 						_damageFlags |= 0x08;
 				}
 			}
 			if ((_damageFlags & 0x0F) != oldDirectionalFlags) {
 				debug(1, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
-					_shipPosX, _shipPosY,
+					collisionShipX, collisionShipY,
 					_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
 					_damageFlags, suppressDirectionalDamage ? 1 : 0);
 			}
@@ -1777,6 +1807,8 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			int16 zoneTop = (int16)b.readUint32BE();
 			int16 zoneWidth = (int16)b.readUint32BE();
 			int16 zoneHeight = (int16)b.readUint32BE();
+			const int16 rawZoneLeft = zoneLeft;
+			const int16 rawZoneTop = zoneTop;
 
 			int16 centerX = zoneLeft + zoneWidth / 2;
 			int16 centerY = zoneTop + zoneHeight / 2;
@@ -1786,12 +1818,22 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			zoneTop = centerY - zoneHeight / 2;
 			int16 zoneRight = zoneLeft + zoneWidth;
 			int16 zoneBottom = zoneTop + zoneHeight;
-			if (_shipPosX > zoneLeft && _shipPosX < zoneRight &&
-				_shipPosY > zoneTop && _shipPosY < zoneBottom) {
+			int16 collisionShipX = _shipPosX;
+			int16 collisionShipY = _shipPosY;
+			getCollisionShipCenter(collisionShipX, collisionShipY);
+
+			if (_health >= 0 &&
+				collisionShipX > zoneLeft && collisionShipX < zoneRight &&
+				collisionShipY > zoneTop && collisionShipY < zoneBottom) {
 				_damageFlags |= 0x10;
+				debug(1, "RA1 0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
+					collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
+					rawZoneLeft, rawZoneTop, zoneWidth, zoneHeight,
+					_perspectiveX, _perspectiveY, _damageFlags);
 			}
-			debug(7, "RA1 GAME 0x0E: zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
-				zoneLeft, zoneTop, zoneRight, zoneBottom, _perspectiveX, _perspectiveY, _damageFlags);
+			debug(7, "RA1 GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
+				collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
+				_perspectiveX, _perspectiveY, _damageFlags);
 		}
 		break;
 
@@ -1914,7 +1956,7 @@ void InsaneRebel1::processShot() {
 
 	// Shot origin depends on game mode:
 	// On-foot: character position (g_shipOffsetX + g_perspectiveX)
-	// Turret: perspective-adjusted center
+	// Turret: ship center
 	// Flight: cursor position
 	const bool turretMode = (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A);
 	int16 originX, originY;
@@ -1922,8 +1964,7 @@ void InsaneRebel1::processShot() {
 		originX = _onFootCharX + kOnFootCenterX;
 		originY = _onFootCharY + kOnFootCenterY;
 	} else if (turretMode) {
-		originX = (int16)(kRA1CenterX + (_perspectiveX - 0x20));
-		originY = (int16)(kRA1CenterY + (_perspectiveY - 0x17));
+		getTurretShipCenter(originX, originY);
 	} else {
 		originX = _shipPosX;
 		originY = _shipPosY;

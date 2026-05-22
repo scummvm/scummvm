@@ -359,6 +359,27 @@ void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	}
 }
 
+void InsaneRebel1::getTurretShipCenter(int16 &x, int16 &y) const {
+	if (_currentLevel == 0 && _flyControlMode == 2) {
+		// Port helper: original Level 1 part 2 keeps g_perspectiveX/Y at the
+		// screen center and draws the overhead ship at g_shipOffsetX/Y from
+		// FUN_1E6A7. In this port _perspectiveX/Y stores the clamped camera
+		// offset passed to SetCameraOffset(), so recover the ship center from
+		// the movement accumulators instead.
+		if (_turretFrameShipCenterValid) {
+			x = _turretFrameShipCenterX;
+			y = _turretFrameShipCenterY;
+		} else {
+			x = (int16)(kRA1CenterX + (int16)(_posAccumX >> 8));
+			y = (int16)(kRA1CenterY + (int16)(_posAccumY >> 8));
+		}
+		return;
+	}
+
+	x = (int16)(kRA1CenterX + (_perspectiveX - 0x20));
+	y = (int16)(kRA1CenterY + (_perspectiveY - 0x17));
+}
+
 // procPreRendering — Sets viewport window offset (FUN_224FD at 0x224FD).
 // RA1 decodes FOBJs at chunk coordinates, then displays a scrolled 320x200
 // window inside the 384x242 framebuffer.
@@ -366,6 +387,7 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameGameOpcodeMask = 0;
 	_frameDispatchFlags = 0;
 	_gameOp0BPhysicsUpdatedThisFrame = false;
+	_turretFrameShipCenterValid = false;
 
 	if (_interactiveVideoActive && _player) {
 		const bool usePerspectiveViewport =
@@ -555,10 +577,16 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// FUN_1D79C (GAME 0x0A) owns the cursor center in stage-2 turret mode.
 		// The preceding overlay/shot pass uses the previous frame's cursor; the
 		// handler then publishes the next cursor position from the current
-		// ship-offset and camera state.
+		// pre-physics ship offset. In L1PLAY2 the following 0x08 handler updates
+		// the camera afterward, so source-space anchors and the final viewport
+		// crop intentionally observe different moments in the frame.
 		if (turretTargetingMode) {
-			const int16 shipOffsetX = (int16)(_posAccumX >> 8);
-			const int16 shipOffsetY = (int16)(_posAccumY >> 8);
+			const bool useTurretFrameCenter =
+				(_currentLevel == 0 && _flyControlMode == 2 && _turretFrameShipCenterValid);
+			const int16 shipOffsetX = useTurretFrameCenter ?
+				_turretFrameShipOffsetX : (int16)(_posAccumX >> 8);
+			const int16 shipOffsetY = useTurretFrameCenter ?
+				_turretFrameShipOffsetY : (int16)(_posAccumY >> 8);
 			_shipPosX = (int16)(kRA1CenterX + shipOffsetX);
 			_shipPosY = (int16)((kRA1CenterY + shipOffsetY - 0x23) - (shipOffsetY >> 3));
 		} else if (flightVariantTargetingMode) {
@@ -776,9 +804,14 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	const bool onFootMode = (effectiveOpcode == 0x19 || effectiveOpcode == 0x1A);
 	const bool turretMode = (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A);
 	const bool flightVariantMode = (effectiveOpcode == 0x09);
-	const int shipBaseX = turretMode ? (kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
-	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17))
-		: (flightVariantMode ? _shipPosY : (overlayY + _shipPosY));
+	int shipBaseX = _shipPosX;
+	int shipBaseY = flightVariantMode ? _shipPosY : (overlayY + _shipPosY);
+	if (turretMode) {
+		int16 centerX, centerY;
+		getTurretShipCenter(centerX, centerY);
+		shipBaseX = centerX;
+		shipBaseY = centerY;
+	}
 
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
@@ -1142,15 +1175,16 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 
 	const RA1Sprite &spr = shipBank->sprites[_shipDirIndex];
 
-	// In 0x08/0x0A turret handlers, _shipPos holds targeting/cursor state, while
-	// the ship sprite is still anchored from camera perspective + ship drift
-	// offsets. Flight handlers already store the ship sprite center in _shipPos.
+	// In 0x08/0x0A turret handlers, _shipPos holds targeting/cursor state.
+	// Flight handlers already store the ship sprite center in _shipPos.
 	int shipScreenX = _shipPosX;
 	int shipScreenY = _shipPosY;
 	const uint16 effectiveOpcode = getEffectiveGameOpcode();
 	if (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A) {
-		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
-		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
+		int16 centerX, centerY;
+		getTurretShipCenter(centerX, centerY);
+		shipScreenX = centerX;
+		shipScreenY = centerY;
 	}
 
 	int drawX = shipScreenX - spr.width / 2;
@@ -1174,8 +1208,10 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	int shipScreenY = overlayY + _shipPosY;
 	const uint16 effectiveOpcode = getEffectiveGameOpcode();
 	if (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A) {
-		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
-		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
+		int16 centerX, centerY;
+		getTurretShipCenter(centerX, centerY);
+		shipScreenX = centerX;
+		shipScreenY = centerY;
 	}
 
 	// --- Death shake explosions (FUN_1DEB5 LAB_1e0e3) ---

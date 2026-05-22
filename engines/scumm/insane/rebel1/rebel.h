@@ -147,6 +147,8 @@ private:
 	void loadLevelSprites(int level);
 	void updateShipPhysics();
 	void updateTurretPhysics();
+	void updateTurretShipDirection(int16 offsetY);
+	void getCollisionShipCenter(int16 &x, int16 &y) const;
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();
@@ -161,6 +163,7 @@ private:
 	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
+	void getTurretShipCenter(int16 &x, int16 &y) const;
 	void renderLevel8Overlay(byte *dst, int pitch, int width, int height,
 		int viewportX, int viewportY);
 	void updateLevel8WalkerState();
@@ -231,6 +234,11 @@ private:
 	// _74C2/_74C6: position accumulators (32-bit), pixel offset = accum >> 8
 	int32 _posAccumX;
 	int32 _posAccumY;
+	int16 _turretFrameShipOffsetX;
+	int16 _turretFrameShipOffsetY;
+	int16 _turretFrameShipCenterX;
+	int16 _turretFrameShipCenterY;
+	bool _turretFrameShipCenterValid;
 
 	// Per-frame drift bias from GAME 0x07 field3
 	int16 _driftParam;
