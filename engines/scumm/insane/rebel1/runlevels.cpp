@@ -1471,6 +1471,7 @@ bool InsaneRebel1::runLevel13() {
 
 	_currentLevel = 12;
 	loadLevelSprites(13);
+	loadRA1Nut("LVL13/L13LASR2.NUT", _enemyLaserBank);
 	loadTuningForLevel(12);
 
 	beginLevelTitleOverlay(12);
@@ -1514,6 +1515,7 @@ bool InsaneRebel1::runLevel13() {
 		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
 		_avgInputX = 0;
 		_avgInputY = 0;
+		resetEnemyShotSlots();
 
 		playInteractiveVideo("LVL13/L13PLAY.ANM");
 		if (_vm->shouldQuit())

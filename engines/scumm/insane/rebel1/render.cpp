@@ -241,6 +241,41 @@ int ra1ShotDirectionBucket(int dir) {
 	return 10;
 }
 
+// QuantizeDirectionWithAxisFlags from RunLevel13Flow: returns one of nine
+// direction sprites and publishes DrawFobjGlyph flip flags.
+int ra1ProjectileDirectionWithFlags(int16 srcX, int16 srcY, int16 dstX, int16 dstY, uint16 &flags) {
+	int dx = srcX - dstX;
+	int dy = dstY - srcY;
+	flags = 0;
+
+	if (dy < 0) {
+		dy = -dy;
+		flags |= 0x4000;
+	}
+	if (dx < 0) {
+		dx = -dx;
+		flags |= 0x2000;
+	}
+
+	if (dx * 10 < dy)
+		return 0;
+	if (dx * 10 < dy * 3)
+		return 1;
+	if (dx * 2 < dy)
+		return 2;
+	if (dx * 5 < dy * 4)
+		return 3;
+	if (dx * 4 < dy * 5)
+		return 4;
+	if (dx < dy * 2)
+		return 5;
+	if (dx * 3 < dy * 10)
+		return 6;
+	if (dx < dy * 10)
+		return 7;
+	return 8;
+}
+
 struct RA1ShotEmitterPair {
 	int16 x1;
 	int16 y1;
@@ -602,6 +637,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		_lastHitTarget = 0;
 	}
 
+	if (_currentLevel == 12)
+		renderLevel13EnemyShots(renderBitmap, pitch, width, height);
+
 	renderExplosions(renderBitmap, pitch, width, height);
 
 	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
@@ -767,6 +805,80 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 			_gostSlots[i].frame++;
 			if (_gostSlots[i].frame >= 10)
 				_gostSlots[i].targetId = 0;  // Animation complete
+		}
+	}
+}
+
+void InsaneRebel1::resetEnemyShotSlots() {
+	memset(_enemyShotSlots, 0, sizeof(_enemyShotSlots));
+}
+
+// Port helper for Level 13 RunLevel13Flow. The original stores this state in
+// five local stack arrays around the L13PLAY frontend loop, not in a named function.
+void InsaneRebel1::renderLevel13EnemyShots(byte *dst, int pitch, int width, int height) {
+	if (_currentLevel != 12 || !_interactiveVideoActive || _health < 0)
+		return;
+
+	const int targetCount = CLIP<int>(_prevTargetCount, 0, kMaxTargetBoxes);
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+
+	int16 playerX = getGameplayCursorX();
+	int16 playerY = getGameplayCursorY();
+	if (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A) {
+		getTurretShipCenter(playerX, playerY);
+	} else if (effectiveOpcode == 0x0B) {
+		unprojectGameplayPoint(playerX, playerY);
+	}
+
+	for (int i = 0; i < targetCount; i++) {
+		if (_targetBoxX[i] - 7 < playerX && playerX < _targetBoxX[i] + 7 &&
+			_targetBoxY[i] - 7 < playerY && playerY < _targetBoxY[i] + 7) {
+			_damageFlags |= 0x10;
+		}
+	}
+
+	if (targetCount > 0 && _vm->_rnd.getRandomNumber(19) == 0) {
+		for (int i = 0; i < kMaxEnemyShotSlots; i++) {
+			EnemyShotSlot &slot = _enemyShotSlots[i];
+			if (slot.timer != 0)
+				continue;
+
+			const int targetIdx = _vm->_rnd.getRandomNumber(targetCount - 1);
+			slot.startX = _targetBoxX[targetIdx];
+			slot.startY = _targetBoxY[targetIdx];
+			slot.targetX = playerX;
+			slot.targetY = playerY;
+			slot.timer = 0x0F;
+			slot.direction = ra1ProjectileDirectionWithFlags(slot.startX, slot.startY,
+				slot.targetX, slot.targetY, slot.flags);
+			playSfx(kSfxBlast, 127, 0);
+			break;
+		}
+	}
+
+	for (int i = 0; i < kMaxEnemyShotSlots; i++) {
+		EnemyShotSlot &slot = _enemyShotSlots[i];
+		if (slot.timer == 0)
+			continue;
+
+		const int progress = 0x0F - slot.timer;
+		const int drawX = slot.startX + ((slot.targetX - slot.startX) * progress) / 10;
+		const int drawY = slot.startY + ((slot.targetY - slot.startY) * progress) / 10;
+
+		if (_enemyLaserBank.numSprites > 0) {
+			const int baseSprite = (drawY < 0x50) ? 0x12 : ((drawY < 0xA0) ? 9 : 0);
+			const int spriteIdx = baseSprite + slot.direction;
+			if (spriteIdx >= 0 && spriteIdx < _enemyLaserBank.numSprites) {
+				renderSpriteWithFlags(dst, pitch, width, height, drawX, drawY,
+					_enemyLaserBank.sprites[spriteIdx], slot.flags | 0x3);
+			}
+		}
+
+		slot.timer--;
+		if (drawX - 0x0F < playerX && playerX < drawX + 0x0F &&
+			drawY - 7 < playerY && playerY < drawY + 7) {
+			_damageFlags |= 0x80;
+			slot.timer = 0;
 		}
 	}
 }
