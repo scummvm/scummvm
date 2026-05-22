@@ -75,21 +75,20 @@ void Textbox::init() {
 
 void Textbox::registerGraphics() {
 	RenderObject::registerGraphics();
-	_scrollbar->registerGraphics();
+	if (_scrollbar)
+		_scrollbar->registerGraphics();
 	_highlightRObj.registerGraphics();
 	_highlightRObj.setVisible(false);
 }
 
 void Textbox::updateGraphics() {
-	if (_autoClearTime && g_nancy->getTotalPlayTime() > _autoClearTime) {
+	if (_autoClearTime && g_nancy->getTotalPlayTime() > _autoClearTime)
 		clear();
-	}
 
-	if (_needsTextRedraw) {
+	if (_needsTextRedraw)
 		drawTextbox();
-	}
 
-	if (_scrollbarPos != _scrollbar->getPos()) {
+	if (_scrollbar && _scrollbarPos != _scrollbar->getPos()) {
 		_scrollbarPos = _scrollbar->getPos();
 
 		onScrollbarMove();
@@ -99,7 +98,8 @@ void Textbox::updateGraphics() {
 }
 
 void Textbox::handleInput(NancyInput &input) {
-	_scrollbar->handleInput(input);
+	if (_scrollbar)
+		_scrollbar->handleInput(input);
 
 	bool hasHighlight = false;
 	for (uint i = 0; i < _hotspots.size(); ++i) {
@@ -129,9 +129,8 @@ void Textbox::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (!hasHighlight && _highlightRObj.isVisible()) {
+	if (!hasHighlight && _highlightRObj.isVisible())
 		_highlightRObj.setVisible(false);
-	}
 }
 
 void Textbox::drawTextbox() {
@@ -157,8 +156,10 @@ void Textbox::drawTextbox() {
 void Textbox::clear() {
 	if (_textLines.size()) {
 		HypertextParser::clear();
-		_scrollbar->resetPosition();
-		onScrollbarMove();
+		if (_scrollbar) {
+			_scrollbar->resetPosition();
+			onScrollbarMove();
+		}
 		_fontIDOverride = -1;
 		_needsRedraw = true;
 		_autoClearTime = 0;
@@ -174,8 +175,10 @@ void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
 		_autoClearTime = g_nancy->getTotalPlayTime() + autoClearTime;
 	}
 
-	_scrollbar->resetPosition();
-	onScrollbarMove();
+	if (_scrollbar) {
+		_scrollbar->resetPosition();
+		onScrollbarMove();
+	}
 }
 
 void Textbox::setOverrideFont(const uint fontID) {
