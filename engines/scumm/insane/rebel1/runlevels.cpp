@@ -1411,38 +1411,52 @@ bool InsaneRebel1::runLevel12() {
 		_screenFlash = 0;
 		_screenShakeEnabled = false;
 		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
 		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
 
-		playInteractiveVideo("LVL12/L12PLAY.ANM");
-		if (_vm->shouldQuit())
-			return false;
+		while (!_vm->shouldQuit()) {
+			_frameCounter = 0;
+			_gameCounter = 0;
+			_activeGameOpcode = 0;
+			_gameLatch5D = 0;
+			_gameLatch5F = 0;
+			_damageFlags = 0;
+			resetGameplayFlagsFromTuning();
+			_targetCount = 0;
+			_prevTargetCount = 0;
+			_lastHitTarget = 0;
+			_shipPosX = kRA1CenterX;
+			_shipPosY = kRA1CenterY;
+			_shipDirIndex = 17;
+			_rollAccum = 0;
+			_liftSmooth = 0;
+			_posAccumX = 0;
+			_posAccumY = 0;
+			_perspectiveX = 0;
+			_perspectiveY = 0;
+			_levelGameplayPhase = 0;
+			memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+			memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+			memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+			memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+			_avgInputX = 0;
+			_avgInputY = 0;
 
-		if (_health >= 0) {
+			playInteractiveVideo("LVL12/L12PLAY.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			if (_levelGameplayPhase == 1) {
+				playCinematic("LVL12/L12RETRY.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				if (_health < 0)
+					break;
+				continue;
+			}
+
+			if (_health < 0)
+				break;
+
 			playCinematic("LVL12/L12END.ANM");
 			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)12);
 			return !_vm->shouldQuit();

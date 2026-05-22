@@ -296,6 +296,25 @@ inline bool isLevel10DamageLatch(uint16 code) {
 	return true;
 }
 
+inline bool isLevel12DamageLatch(uint16 code) {
+	// RunLevel12Flow treats these 0x5D latch values as safe; every other value
+	// raises damage flag 0x40. This helper is intentionally the inverse of the
+	// original branch shape so the update path reads as "is damage".
+	switch (code) {
+	case 0x0000:
+	case 0x0037:
+	case 0x003E:
+	case 0x0059:
+	case 0x00AC:
+	case 0x00C3:
+	case 0x00C5:
+	case 0x00C7:
+		return false;
+	default:
+		return true;
+	}
+}
+
 inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
 	switch (frame) {
 	case 0x006A:
@@ -1267,10 +1286,11 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		(_currentLevel == 3 && isLevel4DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 5 && isLevel6DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 9 && isLevel10DamageLatch(_gameLatch5D)) ||
+		(_currentLevel == 11 && isLevel12DamageLatch(_gameLatch5D)) ||
 		(level15FinalPhase && isLevel15FinalDamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 &&
-		((_currentLevel == 3 || _currentLevel == 9 || level15FinalPhase)
+		((_currentLevel == 3 || _currentLevel == 9 || _currentLevel == 11 || level15FinalPhase)
 			? (_vm->_rnd.getRandomNumber(2) == 0)
 			: (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)))
 		_damageFlags |= 0x80;
@@ -1449,6 +1469,29 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	resetProjectionTable();
 
 	_frameCounter++;
+
+	if (_currentLevel == 11) {
+		// RunLevel12Flow checks DAT_761A bits 0x20, 0x08, and 0x02 at frame
+		// 0x550. These map to destroyed object IDs 211, 213, and 215 in the
+		// port's one-based frame-object helper. On failure the original keeps
+		// pumping L12PLAY until frame 0x564, plays L12RETRY, then restarts
+		// L12PLAY without resetting health.
+		if (_levelGameplayPhase == 0 && _frameCounter == 0x550) {
+			const bool target211Destroyed = isFrameObjectPrimarySet(211);
+			const bool target213Destroyed = isFrameObjectPrimarySet(213);
+			const bool target215Destroyed = isFrameObjectPrimarySet(215);
+			if (!target211Destroyed || !target213Destroyed || !target215Destroyed) {
+				_levelGameplayPhase = 1;
+				debug(1, "RA1 L12 retry armed: frame=0x%04x targets=(%d,%d,%d)",
+					_frameCounter,
+					target211Destroyed ? 1 : 0,
+					target213Destroyed ? 1 : 0,
+					target215Destroyed ? 1 : 0);
+			}
+		}
+		if (_levelGameplayPhase == 1 && _frameCounter >= 0x564)
+			_vm->_smushVideoShouldFinish = true;
+	}
 
 	// Level 4 Phase 2: enable torpedo mode at frame 0x3E and finish as
 	// soon as the torpedo registers a hit. The DOS loop exits on killCount.
