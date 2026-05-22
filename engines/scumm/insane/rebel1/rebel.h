@@ -307,6 +307,10 @@ private:
 	int _introTextLevel;         // index into kLevelTitles
 	void beginLevelTitleOverlay(int level);
 	void drawLevelTitleOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
+	bool _level15SummaryActive;
+	int _level15SummaryTargetBonus;
+	void beginLevel15SummaryOverlay(int targetBonus);
+	void drawLevel15SummaryOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
 
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;

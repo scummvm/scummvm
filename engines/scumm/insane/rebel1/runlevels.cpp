@@ -1754,7 +1754,16 @@ bool InsaneRebel1::runLevel15() {
 		}
 
 		if (_health >= 0) {
+			int targetBonus = 0;
+			if (_killCount > 0x57)
+				targetBonus = 1000;
+			if (_killCount > 0x14)
+				targetBonus += (_killCount - 0x14) * _tuning.bonus;
+
+			beginLevel15SummaryOverlay(targetBonus);
 			playCinematic("LVL15/L15END1.ANM");
+			_level15SummaryActive = false;
+			_score += _tuning.levelPts + targetBonus + 10000;
 			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)15);
 			return !_vm->shouldQuit();
 		}
