@@ -163,6 +163,7 @@ private:
 	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
+	void handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame);
 	void renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height);
 	void resetEnemyShotSlots();
 	void renderLevel13EnemyShots(byte *dst, int pitch, int width, int height);
@@ -408,6 +409,10 @@ private:
 	int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches
 	int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (branchFrame + 7)
 	int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
+	// RunLevel14Flow queues L14PLY2B at L14PLAY2 maxFrame-0x0F.
+	bool _level14Play2BSplicePending;
+	bool _level14Play2BSpliced;
+	int32 _level14Play2BSpliceFrame;
 
 	// Main menu / options state
 	void runOptionsMenu();
