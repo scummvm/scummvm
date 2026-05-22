@@ -83,6 +83,38 @@ inline bool hasLevel15FinalSweepDamage(uint16 frameCounter, int16 perspectiveX) 
 	}
 }
 
+inline bool isLevel2DamageLatch(uint16 code) {
+	switch (code) {
+	case 0x0003:
+	case 0x0009:
+	case 0x000A:
+	case 0x000D:
+	case 0x0012:
+	case 0x0015:
+		return true;
+	default:
+		return false;
+	}
+}
+
+// Level 2 asteroid-contact helper from FUN_00012d70. RunLevel2Flow calls it
+// once per frontend frame and raises damage flag 0x20 when the current asteroid
+// pass intersects the camera position.
+inline bool hasLevel2AsteroidImpact(uint16 frameCounter, int16 perspectiveX, int16 perspectiveY) {
+	switch (frameCounter) {
+	case 0x0071:
+	case 0x0271:
+		return perspectiveX >= 0x28;
+	case 0x011E:
+		return perspectiveY >= 0x1F;
+	case 0x01E1:
+	case 0x02ED:
+		return perspectiveX > 0x17;
+	default:
+		return false;
+	}
+}
+
 const int16 kLevel7BranchFrames[6][6] = {
 	{ -1,  78, 267, 398, 556, 630 },
 	{ -1, 187, 376, 507, 665, 739 },
@@ -1224,8 +1256,10 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
 	const bool level15FinalPhase = (_currentLevel == 14 && _levelGameplayPhase == 2);
+	bool level2AsteroidHit = false;
 
 	if (_gameLatch5D == 0xFFFF ||
+		(_currentLevel == 1 && isLevel2DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 3 && isLevel4DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 5 && isLevel6DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 9 && isLevel10DamageLatch(_gameLatch5D)) ||
@@ -1241,6 +1275,12 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		_damageFlags |= 0x20;
 	if (level15FinalPhase && hasLevel15FinalSweepDamage((uint16)_gameCounter, _perspectiveX))
 		_damageFlags |= 0x20;
+
+	if (_currentLevel == 1) {
+		level2AsteroidHit = hasLevel2AsteroidImpact((uint16)_gameCounter, _perspectiveX, _perspectiveY);
+		if (level2AsteroidHit)
+			_damageFlags |= 0x20;
+	}
 
 	bool level8WalkerPlayerHit = false;
 	if (_currentLevel == 7) {
@@ -1280,6 +1320,12 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		}
 		// FUN_1CDA7 dispatches g_sfxDamageHit, initialized from SYS/BOOM.SAD.
 		playSfx(kSfxBoom, 127, 0);
+		if (_currentLevel == 1) {
+			debug(1, "RA1 L2 player hit: frame=%u view=(%d,%d) latch=%u asteroid=%d flags=0x%02x health=%d->%d",
+				(unsigned)(uint16)_gameCounter, _perspectiveX, _perspectiveY,
+				(unsigned)_gameLatch5D, level2AsteroidHit ? 1 : 0,
+				appliedDamageFlags, oldHealth, _health);
+		}
 		if (level8WalkerPlayerHit) {
 			debug(1, "RA1 L8 player hit by walker: route=%d frame=%u view=(%d,%d) flags=0x%02x health=%d->%d",
 				CLIP<int>(_levelRouteIndex, 0, 2), (unsigned)(uint16)_gameCounter,
