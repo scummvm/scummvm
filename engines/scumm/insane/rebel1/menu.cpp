@@ -36,6 +36,12 @@ const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
 const int kRA1LevelSelectRowsPerCol = 8;
 const int kRA1NumLevels = 15;
 const int kRA1MenuAxisThreshold = Common::JOYAXIS_MAX / 2;
+const int kRA1MenuLogicalWidth = 0x140;
+const int kRA1MenuFrameX = 0x32;
+const int kRA1MenuFrameW = 0xdc;
+const int kRA1MenuFrameH = 0x0f;
+const int kRA1MenuRowH = 0x0f;
+const byte kRA1MenuFrameColor = 0xdf;
 const uint32 kRA1JoystickAxisEscGuardMs = 250;
 
 static int getRebel1MenuAxisDirection(int16 axisValue) {
@@ -93,6 +99,29 @@ static int16 normalizeRebel1MappedAxisPosition(int16 axisPosition) {
 	// Custom backend axis events are half-axis magnitudes. Keymapper takes
 	// ABS(rawPosition), but int16 -32768 cannot be represented as +32768.
 	return axisPosition == Common::JOYAXIS_MIN ? Common::JOYAXIS_MAX : axisPosition;
+}
+
+static int getRebel1MenuCenteredX(int textWidth) {
+	return (kRA1MenuLogicalWidth - textWidth) / 2;
+}
+
+static void drawRebel1MenuFrame(byte *dst, int pitch, int width, int height, int x, int y, int w) {
+	if (!dst || width <= 0 || height <= 0)
+		return;
+
+	const int leftX = CLIP(x, 0, width - 1);
+	const int rightX = CLIP(x + w - 1, 0, width - 1);
+	const int topY = CLIP(y, 0, height - 1);
+	const int bottomY = CLIP(y + kRA1MenuFrameH - 1, 0, height - 1);
+
+	for (int px = leftX; px <= rightX; px++) {
+		dst[topY * pitch + px] = kRA1MenuFrameColor;
+		dst[bottomY * pitch + px] = kRA1MenuFrameColor;
+	}
+	for (int py = topY; py <= bottomY; py++) {
+		dst[py * pitch + leftX] = kRA1MenuFrameColor;
+		dst[py * pitch + rightX] = kRA1MenuFrameColor;
+	}
 }
 
 bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
@@ -390,7 +419,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		case Common::KEYCODE_ESCAPE:
-			_optionsSel = kOptionsItemCount - 1;  // Back
+			_optionsSel = 0;
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -532,7 +561,7 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		// Original renders over O1SCORE.ANM. Title appears after frame 20,
 		// entries fade in one per frame. We show all immediately.
 		const int titleW = getTalkTextWidth("TOP PILOTS");
-		drawTalkText((width - titleW) / 2, 10, "TOP PILOTS");
+		drawTalkText(getRebel1MenuCenteredX(titleW), 10, "TOP PILOTS");
 
 		for (int i = 0; i < kHighScoreCount; i++) {
 			const int y = 25 + i * 14;
@@ -553,8 +582,8 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		// --- Options submenu (matching original RunGameOptionsMenu) ---
 		const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
-		const int titleW = getTalkTextWidth("GAME OPTIONS");
-		drawTalkText((width - titleW) / 2, 30, "GAME OPTIONS");
+		const int titleW = getTitleTextWidth("GAME OPTIONS");
+		drawTitleText(getRebel1MenuCenteredX(titleW), 15, "GAME OPTIONS");
 
 		// Build dynamic option strings for each row
 		char diffLine[64], volLine[64];
@@ -563,49 +592,32 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 
 		const char *optItems[kOptionsItemCount] = {
 			"EXIT MENU",
+			_optRookieOneFemale ? "ROOKIE1 IS FEMALE" : "ROOKIE1 IS MALE",
 			_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
 			_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
 			_optTextEnabled   ? "DIALOGUE TEXT IS ON"      : "DIALOGUE TEXT IS OFF",
 			_optControlsYFlip ? "CONTROLS ARE Y-FLIPPED"  : "CONTROLS ARE NORMAL",
-			_turbulenceEnabled ? "TURBULENCE IS ON"        : "TURBULENCE IS OFF",
 			volLine,
-			diffLine,
-			"BACK"
+			diffLine
 		};
-
-		const int menuY = 44;
-		const int rowH = 14;
 
 		for (int i = 0; i < kOptionsItemCount; i++) {
 			const int textW = getTalkTextWidth(optItems[i]);
-			const int textX = (width - textW) / 2;
-			const int y = menuY + i * rowH;
-			drawTalkText(textX, y + 1, optItems[i]);
+			const int textX = getRebel1MenuCenteredX(textW);
+			const int y = 0x2d + i * kRA1MenuRowH;
+			drawTalkText(textX, y, optItems[i]);
 
-			if (i == _optionsSel) {
-				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
-				int bracketWidth = textW + 12;
-				int leftX = CLIP(textX - 6, 0, width - 1);
-				int rightX = CLIP(leftX + bracketWidth, 0, width - 1);
-				int topY = CLIP(y - 1, 0, height - 1);
-				int bottomY = CLIP(y + rowH - 2, 0, height - 1);
-				for (int x = leftX; x <= rightX; x++) {
-					dst[topY * pitch + x] = highlightColor;
-					dst[bottomY * pitch + x] = highlightColor;
-				}
-				for (int py = topY; py <= bottomY; py++) {
-					dst[py * pitch + leftX] = highlightColor;
-					dst[py * pitch + rightX] = highlightColor;
-				}
-			}
+			if (i == _optionsSel)
+				drawRebel1MenuFrame(dst, pitch, width, height,
+					kRA1MenuFrameX, (i + 1) * kRA1MenuRowH + 0x1d, kRA1MenuFrameW);
 		}
 		return;
 	}
 
 	if (_levelSelectActive) {
-		// --- Level select submenu (two-column layout) ---
-		const int titleW = getTalkTextWidth("LEVEL SELECT");
-		drawTalkText((width - titleW) / 2, 30, "LEVEL SELECT");
+		// --- ScummVM level select submenu, styled like the original frontend menus ---
+		const int titleW = getTitleTextWidth("LEVEL SELECT");
+		drawTitleText(getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
 
 		const char *kLevelItems[kRA1LevelSelectItemCount] = {
 			" 1 TRAINING",
@@ -626,36 +638,24 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 			"BACK"
 		};
 
-		const int menuY = 50;
-		const int rowH = 14;
-		const int leftColX = 8;
-		const int rightColX = width / 2 + 4;
+		const int menuY = 0x2d;
+		const int leftFrameX = 20;
+		const int rightFrameX = 170;
+		const int columnW = 130;
 
 		for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
 			const int col = i / kRA1LevelSelectRowsPerCol;
 			const int row = i % kRA1LevelSelectRowsPerCol;
-			const int textX = (col == 0) ? leftColX : rightColX;
-			const int y = menuY + row * rowH;
+			const int frameX = (col == 0) ? leftFrameX : rightFrameX;
+			const int y = menuY + row * kRA1MenuRowH;
 			const int textW = getTalkTextWidth(kLevelItems[i]);
+			const int textX = frameX + (columnW - textW) / 2;
 
-			drawTalkText(textX, y + 1, kLevelItems[i]);
+			drawTalkText(textX, y, kLevelItems[i]);
 
-			if (i == _levelSelectSel) {
-				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
-				int bracketWidth = textW + 12;
-				int leftX = CLIP(textX - 6, 0, width - 1);
-				int rightX = CLIP(leftX + bracketWidth, 0, width - 1);
-				int topY = CLIP(y - 1, 0, height - 1);
-				int bottomY = CLIP(y + rowH - 2, 0, height - 1);
-				for (int x = leftX; x <= rightX; x++) {
-					dst[topY * pitch + x] = highlightColor;
-					dst[bottomY * pitch + x] = highlightColor;
-				}
-				for (int py = topY; py <= bottomY; py++) {
-					dst[py * pitch + leftX] = highlightColor;
-					dst[py * pitch + rightX] = highlightColor;
-				}
-			}
+			if (i == _levelSelectSel)
+				drawRebel1MenuFrame(dst, pitch, width, height,
+					frameX, row * kRA1MenuRowH + 0x2c, columnW);
 		}
 		return;
 	}
@@ -671,52 +671,20 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 
 	// Center title
 	const int titleW = getTitleTextWidth("MAIN MENU");
-	const int titleX = (width - titleW) / 2;
-	drawTitleText(titleX, 36, "MAIN MENU");
+	const int titleX = getRebel1MenuCenteredX(titleW);
+	drawTitleText(titleX, 30, "MAIN MENU");
 
 	// Draw menu items centered horizontally
-	const int menuY = 60;
-	const int rowH = 16;
-
 	for (int i = 0; i < 5; i++) {
 		const int textW = getTalkTextWidth(kMenuItems[i]);
-		const int textX = (width - textW) / 2;
-		const int y = menuY + i * rowH;
+		const int textX = getRebel1MenuCenteredX(textW);
+		const int y = 0x3c + i * kRA1MenuRowH;
 
-		drawTalkText(textX, y + 1, kMenuItems[i]);
+		drawTalkText(textX, y, kMenuItems[i]);
 
-		// Selection highlight box — flashing border (FUN_004292d0 pattern from RA2)
-		if (i == _menuSelection) {
-			// Flash between two palette colors every 8 frames
-			byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
-
-			int bracketWidth = textW + 12;
-			int bracketHeight = rowH;
-			int leftX = textX - 6;
-			int rightX = leftX + bracketWidth;
-			int topY = y - 1;
-			int bottomY = y + bracketHeight - 2;
-
-			// Clamp
-			if (leftX < 0) leftX = 0;
-			if (rightX >= width) rightX = width - 1;
-			if (topY < 0) topY = 0;
-			if (bottomY >= height) bottomY = height - 1;
-
-			// Draw rectangle border (4 lines)
-			for (int x = leftX; x <= rightX && x < width; x++) {
-				if (topY >= 0 && topY < height)
-					dst[topY * pitch + x] = highlightColor;
-				if (bottomY >= 0 && bottomY < height)
-					dst[bottomY * pitch + x] = highlightColor;
-			}
-			for (int py = topY; py <= bottomY && py < height; py++) {
-				if (leftX >= 0 && leftX < width)
-					dst[py * pitch + leftX] = highlightColor;
-				if (rightX >= 0 && rightX < width)
-					dst[py * pitch + rightX] = highlightColor;
-			}
-		}
+		if (i == _menuSelection)
+			drawRebel1MenuFrame(dst, pitch, width, height,
+				kRA1MenuFrameX, (i + 1) * kRA1MenuRowH + 0x2c, kRA1MenuFrameW);
 	}
 }
 
@@ -759,27 +727,27 @@ void InsaneRebel1::runOptionsMenu() {
 
 		if (_menuConfirmed) {
 			switch (_optionsSel) {
-			case 0: // EXIT MENU (same as BACK)
+			case 0: // EXIT MENU
 				_optionsActive = false;
 				return;
-			case 1: // Toggle music
+			case 1: // Toggle Rookie One gender
+				_optRookieOneFemale = !_optRookieOneFemale;
+				break;
+			case 2: // Toggle music
 				_optMusicEnabled = !_optMusicEnabled;
 				_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
 				break;
-			case 2: // Toggle SFX + Voice
+			case 3: // Toggle SFX + Voice
 				_optSfxEnabled = !_optSfxEnabled;
 				_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
 				_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);
 				break;
-			case 3: // Toggle dialogue text
+			case 4: // Toggle dialogue text
 				_optTextEnabled = !_optTextEnabled;
 				ConfMan.setBool("subtitles", _optTextEnabled);
 				break;
-			case 4: // Toggle Y-flip controls
+			case 5: // Toggle Y-flip controls
 				_optControlsYFlip = !_optControlsYFlip;
-				break;
-			case 5: // Toggle turbulence
-				_turbulenceEnabled = !_turbulenceEnabled;
 				break;
 			case 6: // Volume — adjusted via left/right in notifyEvent
 				break;
@@ -787,9 +755,6 @@ void InsaneRebel1::runOptionsMenu() {
 				_difficulty = (_difficulty + 1) % 3;
 				loadTuningForLevel(0);
 				break;
-			case 8: // BACK
-				_optionsActive = false;
-				return;
 			}
 		}
 	}

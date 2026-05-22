@@ -326,9 +326,10 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_levelSelectActive = false;
 	_levelSelectSel = 0;
 	_startLevel = 1;
-	_turbulenceEnabled = false;
+	_turbulenceEnabled = true;
 
 	// Options — read initial state from ScummVM mixer
+	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
 	_optTextEnabled = true;
