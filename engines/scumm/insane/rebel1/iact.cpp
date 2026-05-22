@@ -1056,7 +1056,7 @@ void InsaneRebel1::updateShipPhysics() {
 	// --- Path branching detection ---
 	// Original (FUN_1B297): at GAME counter 394 (0x18A), sets nextSceneA=0x67/nextSceneB=0x69.
 	// After this point, drift goes strongly negative (pushing ship left for the hard path).
-	// If ship is right of center, player chose the right/easy path → switch to L1PLAY1R.
+	// If ship is right of center, player chose the hard branch → switch to L1PLAY1R.
 	// Keep this as a one-shot decision: once threshold is reached, lock path.
 	if (_pathBranchEnabled && _gameCounter >= kPathBranchCounter) {
 		if (_shipPosX > kRA1CenterX) {

@@ -208,6 +208,22 @@ int32 findAnimFrameChunkOffsetByGameCounter(ScummEngine_v7 *vm, const char *file
 	return result;
 }
 
+static void formatTargetAccuracy(char *dst, size_t dstSize, int kills, int targetCount, bool perfectText) {
+	if (perfectText && kills >= targetCount)
+		Common::sprintf_s(dst, dstSize, "Target Accuracy: Perfect");
+	else
+		Common::sprintf_s(dst, dstSize, "Target Accuracy: %d percent", (kills * 100) / targetCount);
+}
+
+static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillThreshold, int perKillBonus) {
+	int bonus = 0;
+	if (kills > perfectThreshold)
+		bonus += 1000;
+	if (kills > perKillThreshold)
+		bonus += (kills - perKillThreshold) * perKillBonus;
+	return bonus;
+}
+
 // ---------------------------------------------------------------------------
 // Game flow (matching original at 0x15597)
 // ---------------------------------------------------------------------------
@@ -230,6 +246,23 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	// Clear it even when the movie ended through ESC, so it cannot leak into
 	// the next cutscene or gameplay segment.
 	_introTextActive = false;
+}
+
+// The original runlevel flows repeat this pattern around RunChapterCompleteSummaryScreen:
+// queue the END ANM, draw the summary while the frontend pumps, then award points/unlock.
+void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlockedChapter,
+		int revealOffsetFromEnd, int stopOffsetFromEnd,
+		const char *bonusLabel1, const char *detailText1, int bonusValue1,
+		const char *bonusLabel2, const char *detailText2, int bonusValue2,
+		int passwordIndex) {
+	beginChapterSummaryOverlay(revealOffsetFromEnd, stopOffsetFromEnd,
+		bonusLabel1, detailText1, bonusValue1,
+		bonusLabel2, detailText2, bonusValue2,
+		passwordIndex);
+	playCinematic(filename);
+	_chapterSummary.active = false;
+	_score += _tuning.levelPts + bonusValue1 + bonusValue2;
+	_maxChapterUnlocked = MAX(_maxChapterUnlocked, unlockedChapter);
 }
 
 void InsaneRebel1::clearVideoBuffer() {
@@ -277,7 +310,7 @@ void InsaneRebel1::playIntroSequence() {
 //   2. L1HANGAR.ANM — Full hangar departure cutscene (782 frames, flags 0x0420)
 //   3. L1CU1.ANM — Pre-flight cutscene (flags 0x0400)
 //   4. L1PLAY1L.ANM — Stage 1 flight, hard/left path (788 frames)
-//      At frame 394, if player steers right → L1PLAY1R (easy path, 396 frames)
+//      At frame 394, if player steers right → L1PLAY1R (hard path, 396 frames)
 //   5. L1CU2.ANM — Mid-level cutscene
 //   6. L1PLAY2.ANM — Stage 2 turret
 //      If score < 5 (0x75D0): L1RETRY → retry Stage 2
@@ -378,8 +411,14 @@ bool InsaneRebel1::runLevel1() {
 					break;
 
 				if (_killCount > 4) {
-					playCinematic("LVL1/L1END.ANM");
-					_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)1);
+					const char *pathText = _rightPathSelected ? "Path Taken: Hard" : "Path Taken: Easy";
+					const int pathBonus = _rightPathSelected ? _tuning.bonus * 3 : 0;
+					char accuracyText[80];
+					formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x0E, true);
+					const int targetBonus = calculateThresholdBonus(_killCount, 0x0D, 5, _tuning.bonus);
+					playChapterCompleteCinematic("LVL1/L1END.ANM", 1, 0x78, 5,
+						"Part I", pathText, pathBonus,
+						"Part II", accuracyText, targetBonus);
 					return !_vm->shouldQuit();
 				}
 
@@ -451,8 +490,10 @@ bool InsaneRebel1::runLevel2() {
 			return false;
 
 		if (_health >= 0) {
-			playCinematic("LVL2/L2END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)2);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x18, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x17, 0x0C, _tuning.bonus);
+			playChapterCompleteCinematic("LVL2/L2END.ANM", 2, 0x69, 10, " ", accuracyText, bonus);
 			return !_vm->shouldQuit();
 		}
 
@@ -514,8 +555,8 @@ bool InsaneRebel1::runLevel3() {
 			return false;
 
 		if (_health >= 0) {
-			playCinematic("LVL3/L3END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)3);
+			playChapterCompleteCinematic("LVL3/L3END.ANM", 3, 0x69, 5,
+				nullptr, nullptr, 0, nullptr, nullptr, 0, 3);
 			return !_vm->shouldQuit();
 		}
 
@@ -597,8 +638,10 @@ bool InsaneRebel1::runLevel4() {
 
 		if (_health >= 0) {
 			// L4END1 = torpedo hit, L4END2 = torpedo missed
-			playCinematic((_killCount != 0) ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)4);
+			const bool torpedoHit = (_killCount != 0);
+			playChapterCompleteCinematic(torpedoHit ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM",
+				4, 0x69, 5, " ", torpedoHit ? "Torpedo Hit" : "Torpedo Missed",
+				torpedoHit ? _tuning.bonus : 0);
 			return !_vm->shouldQuit();
 		}
 
@@ -717,8 +760,16 @@ bool InsaneRebel1::runLevel5() {
 			return false;
 
 		if (_health >= 0) {
-			playCinematic("LVL5/L5END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)5);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 100, false);
+			int bonus = 0;
+			if (_killCount >= 0x1A)
+				bonus += (_killCount - 0x19) * _tuning.bonus;
+			if (_killCount >= 0x33)
+				bonus += (_killCount - 0x32) * _tuning.bonus;
+			if (_killCount >= 0x4C)
+				bonus += (_killCount - 0x4B) * _tuning.bonus;
+			playChapterCompleteCinematic("LVL5/L5END.ANM", 5, 0x69, 5, " ", accuracyText, bonus);
 			return !_vm->shouldQuit();
 		}
 
@@ -781,8 +832,11 @@ bool InsaneRebel1::runLevel6() {
 			return false;
 
 		if (_health >= 0) {
-			playCinematic("LVL6/L6END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)6);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x27, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x26, 0x0C, _tuning.bonus);
+			playChapterCompleteCinematic("LVL6/L6END.ANM", 6, 0x4B, 5,
+				" ", accuracyText, bonus, nullptr, nullptr, 0, 6);
 			return !_vm->shouldQuit();
 		}
 
@@ -889,8 +943,10 @@ bool InsaneRebel1::runLevel7() {
 		_pendingRouteCutoverFrame = -1;
 
 		if (_health >= 0) {
-			playCinematic("LVL7/L7END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)7);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x33, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x32, 0x14, _tuning.bonus);
+			playChapterCompleteCinematic("LVL7/L7END.ANM", 7, 0x69, 5, " ", accuracyText, bonus);
 			return !_vm->shouldQuit();
 		}
 
@@ -1007,8 +1063,7 @@ bool InsaneRebel1::runLevel8() {
 		_pendingRouteCutoverFrame = -1;
 
 		if (_health >= 0) {
-			playCinematic("LVL8/L8END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)8);
+			playChapterCompleteCinematic("LVL8/L8END.ANM", 8, 0x5F, 5);
 			return !_vm->shouldQuit();
 		}
 
@@ -1199,8 +1254,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_health < 0)
 				break;
 
-			playCinematic("LVL9/L9END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)9);
+			playChapterCompleteCinematic("LVL9/L9END.ANM", 9, 0x69, 5);
 			return !_vm->shouldQuit();
 		}
 
@@ -1273,8 +1327,11 @@ bool InsaneRebel1::runLevel10() {
 			return false;
 
 		if (_health >= 0) {
-			playCinematic("LVL10/L10END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)10);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x3E, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x3D, 0x32, _tuning.bonus);
+			playChapterCompleteCinematic("LVL10/L10END.ANM", 10, 0x4B, 5,
+				" ", accuracyText, bonus, nullptr, nullptr, 0, 10);
 			return !_vm->shouldQuit();
 		}
 
@@ -1366,8 +1423,10 @@ bool InsaneRebel1::runLevel11() {
 		}
 
 		if (_health >= 0) {
-			playCinematic("LVL11/L11END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)11);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x60, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x5F, 0x0F, _tuning.bonus);
+			playChapterCompleteCinematic("LVL11/L11END.ANM", 11, 0x69, 5, " ", accuracyText, bonus);
 			return !_vm->shouldQuit();
 		}
 
@@ -1457,8 +1516,10 @@ bool InsaneRebel1::runLevel12() {
 			if (_health < 0)
 				break;
 
-			playCinematic("LVL12/L12END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)12);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x58, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x57, 0x46, _tuning.bonus);
+			playChapterCompleteCinematic("LVL12/L12END.ANM", 12, 0x69, 5, " ", accuracyText, bonus);
 			return !_vm->shouldQuit();
 		}
 
@@ -1536,8 +1597,10 @@ bool InsaneRebel1::runLevel13() {
 			return false;
 
 		if (_health >= 0) {
-			playCinematic("LVL13/L13END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)13);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x146, true);
+			const int bonus = calculateThresholdBonus(_killCount, 0x145, 0x14, _tuning.bonus);
+			playChapterCompleteCinematic("LVL13/L13END.ANM", 13, 0x69, 5, " ", accuracyText, bonus);
 			return !_vm->shouldQuit();
 		}
 
@@ -1647,8 +1710,8 @@ bool InsaneRebel1::runLevel14() {
 		}
 
 		if (_health >= 0) {
-			playCinematic("LVL14/L14END.ANM");
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)14);
+			playChapterCompleteCinematic("LVL14/L14END.ANM", 14, 0x69, 5,
+				nullptr, nullptr, 0, nullptr, nullptr, 0, 14);
 			return !_vm->shouldQuit();
 		}
 
@@ -1760,11 +1823,11 @@ bool InsaneRebel1::runLevel15() {
 			if (_killCount > 0x14)
 				targetBonus += (_killCount - 0x14) * _tuning.bonus;
 
-			beginLevel15SummaryOverlay(targetBonus);
-			playCinematic("LVL15/L15END1.ANM");
-			_level15SummaryActive = false;
-			_score += _tuning.levelPts + targetBonus + 10000;
-			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)15);
+			char accuracyText[80];
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x58, false);
+			playChapterCompleteCinematic("LVL15/L15END1.ANM", 15, 0x122, 0xA5,
+				"Part I", accuracyText, targetBonus,
+				"Part II", "Torpedo on mark", 10000, 15);
 			return !_vm->shouldQuit();
 		}
 
