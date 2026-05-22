@@ -13,7 +13,7 @@
 #define UNIX_ERROR_PRINTER_H_N4C6JUX4
 
 #ifndef _CXXTEST_HAVE_STD
-#   define _CXXTEST_HAVE_STD
+#   error "UNIXErrorFormatter can't be used without std"
 #endif // _CXXTEST_HAVE_STD
 
 #include <cxxtest/Flags.h>
@@ -22,7 +22,7 @@
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/ValueTraits.h>
 #include <cxxtest/StdValueTraits.h>
-#include <cxxtest/ErrorFormatter.h> // CxxTest::OutputStream
+#include <cxxtest/OutputStream.h>
 
 namespace CxxTest
 {
@@ -262,11 +262,6 @@ private:
         (*_o) << "}" << endl;
     }
 
-    static void endl(OutputStream &o)
-    {
-        OutputStream::endl(o);
-    }
-
     bool _reported;
     OutputStream *_o;
     const char *_preLine;
@@ -281,26 +276,8 @@ class unix : public UNIXErrorFormatter
 {
 public:
     unix(CXXTEST_STD(ostream) &o = CXXTEST_STD(cerr), const char *preLine = ":", const char *postLine = "") :
-        UNIXErrorFormatter(new Adapter(o), preLine, postLine) {}
+        UNIXErrorFormatter(new StdOStreamAdapter(o), preLine, postLine) {}
     virtual ~unix() { delete outputStream(); }
-
-private:
-    class Adapter : public OutputStream
-    {
-        CXXTEST_STD(ostream) &_o;
-    public:
-        Adapter(CXXTEST_STD(ostream) &o) : _o(o) {}
-        void flush() { _o.flush(); }
-        OutputStream &operator<<(const char *s) { _o << s; return *this; }
-        OutputStream &operator<<(Manipulator m) { return OutputStream::operator<<(m); }
-        OutputStream &operator<<(unsigned i)
-        {
-            char s[1 + 3 * sizeof(unsigned)];
-            numberToString(i, s);
-            _o << s;
-            return *this;
-        }
-    };
 };
 }
 

@@ -21,7 +21,7 @@
 #include <cxxtest/Flags.h>
 
 #ifndef _CXXTEST_HAVE_STD
-#   define _CXXTEST_HAVE_STD
+#   error "XmlPrinter can't be used without std"
 #endif // _CXXTEST_HAVE_STD
 
 #include <cxxtest/XmlFormatter.h>
@@ -40,7 +40,7 @@ class XmlPrinter : public XmlFormatter
 {
 public:
     XmlPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout), const char* /*preLine*/ = ":", const char* /*postLine*/ = "") :
-        XmlFormatter(new Adapter(o), new Adapter(ostr), &ostr) {}
+        XmlFormatter(new StdOStreamAdapter(o), new StdOStreamAdapter(ostr), &ostr) {}
 
     virtual ~XmlPrinter()
     {
@@ -51,23 +51,6 @@ public:
 private:
 
     std::ostringstream ostr;
-
-    class Adapter : public OutputStream
-    {
-        CXXTEST_STD(ostream) &_o;
-    public:
-        Adapter(CXXTEST_STD(ostream) &o) : _o(o) {}
-        void flush() { _o.flush(); }
-        OutputStream &operator<<(const char *s) { _o << s; return *this; }
-        OutputStream &operator<<(Manipulator m) { return OutputStream::operator<<(m); }
-        OutputStream &operator<<(unsigned i)
-        {
-            char s[1 + 3 * sizeof(unsigned)];
-            numberToString(i, s);
-            _o << s;
-            return *this;
-        }
-    };
 };
 }
 

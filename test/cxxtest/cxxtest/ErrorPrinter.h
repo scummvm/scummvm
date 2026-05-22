@@ -16,38 +16,29 @@
 // The ErrorPrinter is a simple TestListener that
 // just prints "OK" if everything goes well, otherwise
 // reports the error in the format of compiler messages.
-// The ErrorPrinter uses stdout
+// The ErrorPrinter uses std::cout or stdout
 //
 
 #include <cxxtest/ErrorFormatter.h>
-#include <stdio.h>
 
 namespace CxxTest
 {
 class ErrorPrinter : public ErrorFormatter
 {
 public:
+#ifdef _CXXTEST_HAVE_STD
+    ErrorPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout), const char *preLine = ":", const char *postLine = "",
+                 const char *errorString = "Error",
+                 const char *warningString = "Warning") :
+        ErrorFormatter(new StdOStreamAdapter(o), preLine, postLine, errorString, warningString) {}
+#else
     ErrorPrinter(FILE *o = stdout, const char *preLine = ":", const char *postLine = "",
                  const char *errorString = "Error",
                  const char *warningString = "Warning") :
-        ErrorFormatter(new Adapter(o), preLine, postLine, errorString, warningString) {}
+        ErrorFormatter(new StdioFileAdapter(o), preLine, postLine, errorString, warningString) {}
+#endif // _CXXTEST_HAVE_STD
+
     virtual ~ErrorPrinter() { delete outputStream(); }
-
-private:
-    class Adapter : public OutputStream
-    {
-        Adapter(const Adapter &);
-        Adapter &operator=(const Adapter &);
-
-        FILE *_o;
-
-    public:
-        Adapter(FILE *o) : _o(o) {}
-        void flush() { fflush(_o); }
-        OutputStream &operator<<(unsigned i) { fprintf(_o, "%u", i); return *this; }
-        OutputStream &operator<<(const char *s) { fputs(s, _o); return *this; }
-        OutputStream &operator<<(Manipulator m) { return OutputStream::operator<<(m); }
-    };
 };
 }
 
