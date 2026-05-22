@@ -35,6 +35,161 @@ namespace Scumm {
 const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
 const int kRA1LevelSelectRowsPerCol = 8;
 const int kRA1NumLevels = 15;
+const int kRA1MenuAxisThreshold = Common::JOYAXIS_MAX / 2;
+const uint32 kRA1JoystickAxisEscGuardMs = 250;
+
+static int getRebel1MenuAxisDirection(int16 axisValue) {
+	if (axisValue >= kRA1MenuAxisThreshold)
+		return 1;
+	if (axisValue <= -kRA1MenuAxisThreshold)
+		return -1;
+	return 0;
+}
+
+static void setRebel1Volume(ScummEngine_v7 *vm, int &volume, int delta) {
+	volume = CLIP<int>(volume + delta, 0, 127);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+		(volume * Audio::Mixer::kMaxChannelVolume) / 127);
+	ConfMan.setInt("music_volume", (volume * 256) / 127);
+	ConfMan.setInt("sfx_volume", (volume * 256) / 127);
+	ConfMan.setInt("speech_volume", (volume * 256) / 127);
+}
+
+static const char *getRebel1ActionName(Common::CustomEventType customType) {
+	switch (customType) {
+	case kScummActionInsaneUp:
+		return "up";
+	case kScummActionInsaneDown:
+		return "down";
+	case kScummActionInsaneLeft:
+		return "left";
+	case kScummActionInsaneRight:
+		return "right";
+	case kScummActionInsaneAttack:
+		return "attack";
+	case kScummActionInsaneSwitch:
+		return "switch";
+	default:
+		return "other";
+	}
+}
+
+static const char *getRebel1BackendAxisName(Common::CustomEventType customType) {
+	switch (customType) {
+	case kScummBackendActionRebel1AxisUp:
+		return "stick-up";
+	case kScummBackendActionRebel1AxisDown:
+		return "stick-down";
+	case kScummBackendActionRebel1AxisLeft:
+		return "stick-left";
+	case kScummBackendActionRebel1AxisRight:
+		return "stick-right";
+	default:
+		return "other-axis";
+	}
+}
+
+static int16 normalizeRebel1MappedAxisPosition(int16 axisPosition) {
+	// Custom backend axis events are half-axis magnitudes. Keymapper takes
+	// ABS(rawPosition), but int16 -32768 cannot be represented as +32768.
+	return axisPosition == Common::JOYAXIS_MIN ? Common::JOYAXIS_MAX : axisPosition;
+}
+
+bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
+	if (!_menuActive || _highScoresActive)
+		return false;
+
+	if (_levelSelectActive) {
+		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
+		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
+
+		switch (action) {
+		case kScummActionInsaneUp:
+			row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
+			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
+			return true;
+		case kScummActionInsaneDown:
+			row = (row + 1) % kRA1LevelSelectRowsPerCol;
+			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
+			return true;
+		case kScummActionInsaneLeft:
+			if (col > 0)
+				_levelSelectSel -= kRA1LevelSelectRowsPerCol;
+			return true;
+		case kScummActionInsaneRight:
+			if (col < 1)
+				_levelSelectSel += kRA1LevelSelectRowsPerCol;
+			return true;
+		case kScummActionInsaneAttack:
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	if (_optionsActive) {
+		switch (action) {
+		case kScummActionInsaneUp:
+			_optionsSel = (_optionsSel + kOptionsItemCount - 1) % kOptionsItemCount;
+			return true;
+		case kScummActionInsaneDown:
+			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
+			return true;
+		case kScummActionInsaneLeft:
+			if (_optionsSel == 6)
+				setRebel1Volume(_vm, _optVolume, -5);
+			return true;
+		case kScummActionInsaneRight:
+			if (_optionsSel == 6)
+				setRebel1Volume(_vm, _optVolume, 5);
+			return true;
+		case kScummActionInsaneAttack:
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	switch (action) {
+	case kScummActionInsaneUp:
+		_menuSelection = (_menuSelection + 4) % 5;
+		return true;
+	case kScummActionInsaneDown:
+		_menuSelection = (_menuSelection + 1) % 5;
+		return true;
+	case kScummActionInsaneAttack:
+		_menuConfirmed = true;
+		_vm->_smushVideoShouldFinish = true;
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool InsaneRebel1::handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY) {
+	if (!_menuActive || _highScoresActive)
+		return false;
+
+	// RA1 maps stick axes to backend axis events for analog gameplay.
+	// Menus still need edge-triggered digital navigation from those same axes.
+	// Match the original raw-input convention: positive Y is stick-down in
+	// menus, and the Y-flip option reverses that interpretation.
+	const int oldX = getRebel1MenuAxisDirection(oldAxisX);
+	const int oldY = getRebel1MenuAxisDirection(oldAxisY);
+	const int newX = getRebel1MenuAxisDirection(_joystickAxisX);
+	const int newY = getRebel1MenuAxisDirection(_joystickAxisY);
+
+	if (newY != oldY && newY != 0)
+		return handleControllerMenuAction((newY > 0) != _optControlsYFlip ? kScummActionInsaneDown : kScummActionInsaneUp);
+	if (newX != oldX && newX != 0)
+		return handleControllerMenuAction(newX > 0 ? kScummActionInsaneRight : kScummActionInsaneLeft);
+
+	return false;
+}
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	// Global ScummVM dialogs pause the engine while their modal event loop runs.
@@ -47,29 +202,84 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		_activeInputSource = kInputSourceMouse;
 	}
 
+	if (event.type == Common::EVENT_JOYAXIS_MOTION) {
+		_lastJoystickAxisEventTime = _vm->_system->getMillis();
+		debug(1, "RA1 input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+			event.joystick.axis, event.joystick.position,
+			_menuActive, _interactiveVideoActive && !_menuActive,
+			_joystickAxisX, _joystickAxisY);
+	}
+
+	if (event.type == Common::EVENT_JOYBUTTON_DOWN || event.type == Common::EVENT_JOYBUTTON_UP) {
+		debug(1, "RA1 input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+			event.joystick.button, event.type == Common::EVENT_JOYBUTTON_DOWN,
+			_menuActive, _interactiveVideoActive && !_menuActive,
+			_joystickAxisX, _joystickAxisY);
+	}
+
 	if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
 		_activeInputSource = kInputSourceJoystickAnalog;
+		_lastJoystickAxisEventTime = _vm->_system->getMillis();
+		const int16 oldAxisX = _joystickAxisX;
+		const int16 oldAxisY = _joystickAxisY;
+		const int16 axisPosition = normalizeRebel1MappedAxisPosition(event.joystick.position);
 
 		switch (event.customType) {
 		case kScummBackendActionRebel1AxisUp:
-			if (event.joystick.position == 0 && _joystickAxisY < 0)
+			if (event.joystick.position == 0 && _joystickAxisY > 0) {
+				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
-			_joystickAxisY = event.joystick.position;
+			}
+			_joystickAxisY = -axisPosition;
+			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
+				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
+				_menuActive, _interactiveVideoActive && !_menuActive);
+			if (handleControllerMenuAxis(oldAxisX, oldAxisY))
+				return true;
 			return true;
 		case kScummBackendActionRebel1AxisDown:
-			if (event.joystick.position == 0 && _joystickAxisY > 0)
+			if (event.joystick.position == 0 && _joystickAxisY < 0) {
+				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
-			_joystickAxisY = -event.joystick.position;
+			}
+			_joystickAxisY = axisPosition;
+			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
+				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
+				_menuActive, _interactiveVideoActive && !_menuActive);
+			if (handleControllerMenuAxis(oldAxisX, oldAxisY))
+				return true;
 			return true;
 		case kScummBackendActionRebel1AxisLeft:
-			if (event.joystick.position == 0 && _joystickAxisX > 0)
+			if (event.joystick.position == 0 && _joystickAxisX > 0) {
+				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
-			_joystickAxisX = -event.joystick.position;
+			}
+			_joystickAxisX = -axisPosition;
+			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
+				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
+				_menuActive, _interactiveVideoActive && !_menuActive);
+			if (handleControllerMenuAxis(oldAxisX, oldAxisY))
+				return true;
 			return true;
 		case kScummBackendActionRebel1AxisRight:
-			if (event.joystick.position == 0 && _joystickAxisX < 0)
+			if (event.joystick.position == 0 && _joystickAxisX < 0) {
+				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
-			_joystickAxisX = event.joystick.position;
+			}
+			_joystickAxisX = axisPosition;
+			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
+				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
+				_menuActive, _interactiveVideoActive && !_menuActive);
+			if (handleControllerMenuAxis(oldAxisX, oldAxisY))
+				return true;
 			return true;
 		default:
 			break;
@@ -79,6 +289,15 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
+
+		debug(1, "RA1 input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
+			getRebel1ActionName(event.customType), event.customType, pressed,
+			_menuActive, _interactiveVideoActive && !_menuActive,
+			_joystickAxisX, _joystickAxisY,
+			_vm->getActionState(kScummActionInsaneLeft),
+			_vm->getActionState(kScummActionInsaneRight),
+			_vm->getActionState(kScummActionInsaneUp),
+			_vm->getActionState(kScummActionInsaneDown));
 
 		if (pressed &&
 			(event.customType == kScummActionInsaneUp ||
@@ -93,91 +312,8 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		}
 
-		if (_menuActive && !_highScoresActive && pressed) {
-			if (_levelSelectActive) {
-				int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
-				int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
-
-				switch (event.customType) {
-				case kScummActionInsaneUp:
-					row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
-					_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
-					return true;
-				case kScummActionInsaneDown:
-					row = (row + 1) % kRA1LevelSelectRowsPerCol;
-					_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
-					return true;
-				case kScummActionInsaneLeft:
-					if (col > 0)
-						_levelSelectSel -= kRA1LevelSelectRowsPerCol;
-					return true;
-				case kScummActionInsaneRight:
-					if (col < 1)
-						_levelSelectSel += kRA1LevelSelectRowsPerCol;
-					return true;
-				case kScummActionInsaneAttack:
-					_menuConfirmed = true;
-					_vm->_smushVideoShouldFinish = true;
-					return true;
-				default:
-					break;
-				}
-			}
-
-			if (_optionsActive) {
-				switch (event.customType) {
-				case kScummActionInsaneUp:
-					_optionsSel = (_optionsSel + kOptionsItemCount - 1) % kOptionsItemCount;
-					return true;
-				case kScummActionInsaneDown:
-					_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
-					return true;
-				case kScummActionInsaneLeft:
-					if (_optionsSel == 6) {
-						_optVolume = MAX(0, _optVolume - 5);
-						_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-							(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
-						ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
-						ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
-						ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
-					}
-					return true;
-				case kScummActionInsaneRight:
-					if (_optionsSel == 6) {
-						_optVolume = MIN(127, _optVolume + 5);
-						_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-							(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
-						ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
-						ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
-						ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
-					}
-					return true;
-				case kScummActionInsaneAttack:
-					_menuConfirmed = true;
-					_vm->_smushVideoShouldFinish = true;
-					return true;
-				default:
-					break;
-				}
-			}
-
-			if (!_optionsActive && !_levelSelectActive) {
-				switch (event.customType) {
-				case kScummActionInsaneUp:
-					_menuSelection = (_menuSelection + 4) % 5;
-					return true;
-				case kScummActionInsaneDown:
-					_menuSelection = (_menuSelection + 1) % 5;
-					return true;
-				case kScummActionInsaneAttack:
-					_menuConfirmed = true;
-					_vm->_smushVideoShouldFinish = true;
-					return true;
-				default:
-					break;
-				}
-			}
-		}
+		if (pressed && handleControllerMenuAction((ScummAction)event.customType))
+			return true;
 
 		if (_interactiveVideoActive && !_menuActive && event.customType == kScummActionInsaneAttack) {
 			_playerFired = pressed;
@@ -238,26 +374,14 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_a:
 			// Volume down when on volume row (row 6)
-			if (_optionsSel == 6) {
-				_optVolume = MAX(0, _optVolume - 5);
-				_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-					(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
-				ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
-				ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
-				ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
-			}
+			if (_optionsSel == 6)
+				setRebel1Volume(_vm, _optVolume, -5);
 			return true;
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_d:
 			// Volume up when on volume row (row 6)
-			if (_optionsSel == 6) {
-				_optVolume = MIN(127, _optVolume + 5);
-				_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-					(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
-				ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
-				ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
-				ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
-			}
+			if (_optionsSel == 6)
+				setRebel1Volume(_vm, _optVolume, 5);
 			return true;
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
@@ -329,9 +453,30 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 
+	if (event.type == Common::EVENT_MAINMENU && _interactiveVideoActive && !_menuActive) {
+		const uint32 now = _vm->_system->getMillis();
+		const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
+		debug(1, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
+			elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
+		if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
+			debug(1, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+			return true;
+		}
+	}
+
 	if (event.type == Common::EVENT_KEYDOWN && _player) {
 		if (_interactiveVideoActive && !_menuActive &&
 			event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			const uint32 now = _vm->_system->getMillis();
+			const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
+			debug(1, "RA1 input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
+				event.kbd.ascii, event.kbd.flags, event.kbdRepeat,
+				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
+			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
+				debug(1, "RA1 input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				return true;
+			}
+
 			debug("Rebel1: ESC pressed during gameplay - opening ScummVM menu");
 			const bool wasPaused = _player->_paused;
 			if (!wasPaused)

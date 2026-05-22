@@ -281,6 +281,7 @@ private:
 	bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
 	int16 _joystickAxisX;   // Rebel-specific left-stick X captured from keymapper axis events
 	int16 _joystickAxisY;   // Rebel-specific left-stick Y captured from keymapper axis events
+	uint32 _lastJoystickAxisEventTime;
 	int16 _level2JoystickFilteredX; // Smoothed Level 2 analog X input
 	int16 _level2JoystickFilteredY; // Smoothed Level 2 analog Y input
 	enum InputSource {
@@ -443,6 +444,8 @@ private:
 
 	// Main menu / options state
 	void runOptionsMenu();
+	bool handleControllerMenuAction(ScummAction action);
+	bool handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY);
 	bool _menuActive;
 	bool _menuConfirmed;
 	int _menuSelection; // 0..4 maps to return values 1..5
