@@ -163,6 +163,7 @@ private:
 	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
+	void renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height);
 	void resetEnemyShotSlots();
 	void renderLevel13EnemyShots(byte *dst, int pitch, int width, int height);
 	void getTurretShipCenter(int16 &x, int16 &y) const;

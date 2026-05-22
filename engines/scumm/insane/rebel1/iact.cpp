@@ -1326,6 +1326,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
+	const bool level15Phase1 = (_currentLevel == 14 && _levelGameplayPhase == 1);
 	const bool level15FinalPhase = (_currentLevel == 14 && _levelGameplayPhase == 2);
 	const bool level14Phase1 = (_currentLevel == 13 && _levelGameplayPhase == 1);
 	const bool level14Phase2 = (_currentLevel == 13 && _levelGameplayPhase == 2);
@@ -1342,9 +1343,12 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 && !level14Phase2) {
 		bool randomProjectileHit = false;
+		// Original level loops spell these fixed-probability cases separately.
+		// The shared 0x0B path collapses them into one branch.
 		if (level14Phase1)
 			randomProjectileHit = (_vm->_rnd.getRandomNumber(3) == 0);
-		else if (_currentLevel == 3 || _currentLevel == 9 || _currentLevel == 11 || level15FinalPhase)
+		else if (_currentLevel == 3 || _currentLevel == 9 || _currentLevel == 11 ||
+				level15Phase1 || level15FinalPhase)
 			randomProjectileHit = (_vm->_rnd.getRandomNumber(2) == 0);
 		else
 			randomProjectileHit = (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0);

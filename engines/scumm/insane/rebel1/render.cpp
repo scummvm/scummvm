@@ -642,6 +642,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	renderExplosions(renderBitmap, pitch, width, height);
 
+	if (_currentLevel == 10)
+		renderLevel11HitsOverlay(renderBitmap, pitch, width, height);
+
 	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
 	// In the original, RunLevel8Flow runs the walker logic inline in the per-frame
 	// game loop. We call it from procPostRendering when _currentLevel == 7.
@@ -807,6 +810,18 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 				_gostSlots[i].targetId = 0;  // Animation complete
 		}
 	}
+}
+
+// renderLevel11HitsOverlay — RunLevel11Flow (0x19F9F) calls FormatAndDrawText
+// each L11PLAY frame with "<<HITS %02d" at (0x119, 0x16). This helper is a
+// ScummVM-side extraction; the original keeps the draw call inline in the loop.
+void InsaneRebel1::renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height) {
+	if (_hudFontBank.numSprites <= 0 && _techFontBank.numSprites <= 0)
+		return;
+
+	char hitsStr[16];
+	Common::sprintf_s(hitsStr, "<<HITS %02d", (int)_killCount);
+	drawFontBankString(dst, pitch, width, height, 0x119, 0x16, hitsStr);
 }
 
 void InsaneRebel1::resetEnemyShotSlots() {
