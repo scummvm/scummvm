@@ -187,6 +187,30 @@ const RA1SpriteBank &selectLayerBank(const RA1SpriteBank &titleBank,
 	return (titleBank.numSprites > 0) ? titleBank : hudBank;
 }
 
+void drawCenteredRebel1String(InsaneRebel1 *rebel1, byte *dst, int pitch, int width, int height,
+		int centerX, int y, const char *text, int maxChars = -1) {
+	if (!rebel1 || !text)
+		return;
+
+	const char *drawText = text;
+	char clipped[96];
+	if (maxChars >= 0) {
+		int len = 0;
+		while (text[len] != '\0' && len < maxChars && len < (int)sizeof(clipped) - 1) {
+			clipped[len] = text[len];
+			len++;
+		}
+		clipped[len] = '\0';
+		drawText = clipped;
+	}
+
+	if (drawText[0] == '\0')
+		return;
+
+	const int textW = rebel1->getFontBankStringWidth(drawText);
+	rebel1->drawFontBankString(dst, pitch, width, height, centerX - textW / 2, y, drawText);
+}
+
 int getBankSpaceHeight(const RA1SpriteBank &bank) {
 	// In FUN_221B7 line advance is derived from the layer's space-glyph height (+4).
 	// With current NUT decoding we approximate that using the '!' glyph (index 0).
@@ -485,6 +509,14 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (w == 0) w = _screenWidth;
 		if (h == 0) h = _screenHeight;
 		drawLevelTitleOverlay(renderBitmap, w, w, h, curFrame, maxFrame);
+	}
+
+	if (_level15SummaryActive && renderBitmap) {
+		int w = _player ? _player->_width : _screenWidth;
+		int h = _player ? _player->_height : _screenHeight;
+		if (w == 0) w = _screenWidth;
+		if (h == 0) h = _screenHeight;
+		drawLevel15SummaryOverlay(renderBitmap, w, w, h, curFrame, maxFrame);
 	}
 
 	if (!_interactiveVideoActive || !renderBitmap)
@@ -1215,6 +1247,53 @@ void InsaneRebel1::drawLevelTitleOverlay(byte *dst, int pitch, int width, int he
 	// Original positions: title at y=10, subtitle at y=25 (0x19)
 	drawFontBankString(dst, pitch, width, height, centerX - titleW / 2, 10, title);
 	drawFontBankString(dst, pitch, width, height, centerX - subtitleW / 2, 25, subtitle);
+}
+
+void InsaneRebel1::beginLevel15SummaryOverlay(int targetBonus) {
+	_level15SummaryActive = true;
+	_level15SummaryTargetBonus = targetBonus;
+}
+
+// drawLevel15SummaryOverlay — RunChapterCompleteSummaryScreen (0x15E42), used by
+// RunLevel1GameLoop's L15END1 path. This is a ScummVM-side extraction of the
+// original summary draw loop; the score update is done by runLevel15().
+void InsaneRebel1::drawLevel15SummaryOverlay(byte *dst, int pitch, int width, int height,
+		int32 curFrame, int32 maxFrame) {
+	if (!_level15SummaryActive || !dst || maxFrame <= 0)
+		return;
+
+	const int32 revealBaseFrame = maxFrame - 0x122;
+	const int32 stopFrame = maxFrame - 0xA5;
+	if (curFrame < revealBaseFrame || curFrame >= stopFrame)
+		return;
+
+	const int centerX = width / 2;
+	const int titleChars = MAX<int>(0, (int)(curFrame - revealBaseFrame));
+	drawCenteredRebel1String(this, dst, pitch, width, height,
+		centerX, 5, "Chapter Complete", titleChars);
+
+	if (revealBaseFrame + 0x0F < curFrame) {
+		char completionText[40];
+		Common::sprintf_s(completionText, "Completion bonus: %d", (int)_tuning.levelPts);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x19, completionText);
+	}
+
+	if (revealBaseFrame + 0x28 < curFrame && curFrame < revealBaseFrame + 0x46) {
+		char accuracyText[48];
+		char bonusText[32];
+		Common::sprintf_s(accuracyText, "Target Accuracy: %d percent",
+			((int)_killCount * 100) / 0x58);
+		Common::sprintf_s(bonusText, "Bonus: %d", _level15SummaryTargetBonus);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, "Part I");
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, accuracyText);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, bonusText);
+	}
+
+	if (revealBaseFrame + 0x55 < curFrame && curFrame < revealBaseFrame + 0x73) {
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, "Part II");
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, "Torpedo on mark");
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, "Bonus: 10000");
+	}
 }
 
 // drawFontBankString — FUN_221B7 (0x221B7), partial parity:

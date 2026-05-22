@@ -316,6 +316,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_introTextStartFrame = 0;
 	_introTextEndFrame = 0;
 	_introTextLevel = 0;
+	_level15SummaryActive = false;
+	_level15SummaryTargetBonus = 0;
 	_menuConfirmed = false;
 	_menuSelection = 0;
 	_menuFrameCounter = 0;
