@@ -599,7 +599,7 @@ void PelrockEngine::checkMouse() {
 		} else if (_actionPopupState.isAlfredUnder && actionClicked != NO_ACTION) {
 			useOnAlfred(_state->selectedInventoryItem);
 		} else if (_inventoryOverlayState.isActive && _inventoryOverlayState.posInInventorySelectionArea(_events->_releaseX, _events->_releaseY)) {
-			int item = checkMouseClickInventoryOverlay(_events->_releaseX, _events->_releaseY);
+			int item = checkMouseClickInventoryOverlay(_events->_releaseX);
 			_state->selectedInventoryItem = item;
 			if (_actionPopupState.isAlfredUnder) {
 				useOnAlfred(item);
@@ -1283,7 +1283,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		showInventoryOverlay();
 		if (_inventoryOverlayState.posInInventorySelectionArea(_events->_mouseX, _events->_mouseY)) {
 			_inventoryOverlayState.flashingIconIndex = -1;
-			checkMouseOverInventoryOverlay(_events->_mouseX, _events->_mouseY);
+			checkMouseOverInventoryOverlay(_events->_mouseX);
 		}
 	}
 
@@ -1405,7 +1405,7 @@ void PelrockEngine::showInventoryOverlay() {
 	}
 }
 
-void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
+void PelrockEngine::checkMouseOverInventoryOverlay(int x) {
 	if (x < 20) {
 		if (_inventoryOverlayState.invStartingPos > 0) {
 			_inventoryOverlayState.invStartingPos--;
@@ -1425,7 +1425,7 @@ void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
 	}
 }
 
-int PelrockEngine::checkMouseClickInventoryOverlay(int x, int y) {
+int PelrockEngine::checkMouseClickInventoryOverlay(int x) {
 
 	if (x < 20) {
 		return -1;

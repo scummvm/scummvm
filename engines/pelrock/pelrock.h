@@ -106,8 +106,8 @@ private:
 
 	void showInventoryOverlay();
 
-	void checkMouseOverInventoryOverlay(int x, int y);
-	int checkMouseClickInventoryOverlay(int x, int y);
+	void checkMouseOverInventoryOverlay(int x);
+	int checkMouseClickInventoryOverlay(int x);
 
 	void gameLoop();
 	void firstScene();
