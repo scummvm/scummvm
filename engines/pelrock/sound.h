@@ -112,8 +112,8 @@ private:
 
 
 	uint32 _cdTrackStart = 0;
-	uint32 _cdTrackDuration;
-	uint32 _cdPlayStartTime; // time at the moment of calling play()
+	uint32 _cdTrackDuration = 0;
+	uint32 _cdPlayStartTime = 0; // time at the moment of calling play()
 
 };
 

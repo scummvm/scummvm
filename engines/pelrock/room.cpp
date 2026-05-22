@@ -1076,7 +1076,7 @@ uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common
 			description.index = pair12data[pos++];
 			description.text = "";
 
-			while (pos < (pair12size) && pair12data[pos] != 0xFD && pos < (pair12size)) {
+			while (pos < (pair12size) && pair12data[pos] != 0xFD) {
 
 				if (pair12data[pos] != 0x00) {
 					description.text.append(1, (char)pair12data[pos]);
