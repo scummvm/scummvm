@@ -163,6 +163,8 @@ private:
 	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
+	void resetEnemyShotSlots();
+	void renderLevel13EnemyShots(byte *dst, int pitch, int width, int height);
 	void getTurretShipCenter(int16 &x, int16 &y) const;
 	void renderLevel8Overlay(byte *dst, int pitch, int width, int height,
 		int viewportX, int viewportY);
@@ -203,6 +205,7 @@ private:
 	RA1SpriteBank _techFontBank;  // SYS/TECHFONT.NUT — targeting glyph layer ("<<" markers)
 	RA1SpriteBank _bangBank;      // LxBANG.NUT — impact/explosion sprites (10 frames)
 	RA1SpriteBank _laserBank;     // LxLASER.NUT — laser/shot effect sprites
+	RA1SpriteBank _enemyLaserBank; // LxLASR2.NUT — incoming projectile sprites
 	SmushFont *_menuFont;         // Use engine text renderer for correct TALKFONT character mapping
 
 	// RA1 screen dimensions (384x242)
@@ -481,6 +484,19 @@ private:
 
 	int16 _killCount;        // 0x75D0: targets destroyed this stage
 	int16 _lastHitTarget;    // 0x75D6: recent-kill latch, allows at most one hit per frame
+
+	// Incoming enemy projectile slots used by Level 13 RunLevel13Flow.
+	static const int kMaxEnemyShotSlots = 5;
+	struct EnemyShotSlot {
+		int16 timer;
+		int16 startX;
+		int16 startY;
+		int16 targetX;
+		int16 targetY;
+		int16 direction;
+		uint16 flags;
+	};
+	EnemyShotSlot _enemyShotSlots[kMaxEnemyShotSlots];
 
 	// Protected target IDs — 0x7732/0x7734 in original
 	// Targets listed here can be hit repeatedly (no event mask toggle).
