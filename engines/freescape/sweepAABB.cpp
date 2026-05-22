@@ -44,37 +44,6 @@ float sweepAABB(Math::AABB const &a, Math::AABB const &b, Math::Vector3d const &
 	Math::Vector3d m = b.getMin() - a.getMax();
 	Math::Vector3d mh = a.getSize() + b.getSize();
 
-	// Overlap-at-start: the AABBs already intersect on every axis. The
-	// plane sweep below requires s >= 0 for every test, so it would
-	// incorrectly return "no collision" and the caller would let the
-	// player walk straight through the geometry they are already inside.
-	// Detect that case here, pick the axis of smallest overlap, and emit
-	// a t=0 collision with a unit normal pointing out along that axis.
-	// The caller's epsilon * normal push then pries the player out of
-	// the overlap incrementally over a few frames.
-	if (m.x() < 0 && m.x() + mh.x() > 0 &&
-	    m.y() < 0 && m.y() + mh.y() > 0 &&
-	    m.z() < 0 && m.z() + mh.z() > 0) {
-		// Overlap depth on the "push -axis" side vs the "push +axis" side
-		// (both values are positive while we are overlapping).
-		float ovNegX = -m.x();
-		float ovPosX = m.x() + mh.x();
-		float ovNegY = -m.y();
-		float ovPosY = m.y() + mh.y();
-		float ovNegZ = -m.z();
-		float ovPosZ = m.z() + mh.z();
-		float minX = MIN(ovNegX, ovPosX);
-		float minY = MIN(ovNegY, ovPosY);
-		float minZ = MIN(ovNegZ, ovPosZ);
-		if (minX <= minY && minX <= minZ)
-			normal = Math::Vector3d(ovNegX < ovPosX ? -1.0f : 1.0f, 0, 0);
-		else if (minY <= minZ)
-			normal = Math::Vector3d(0, ovNegY < ovPosY ? -1.0f : 1.0f, 0);
-		else
-			normal = Math::Vector3d(0, 0, ovNegZ < ovPosZ ? -1.0f : 1.0f);
-		return 0.0f;
-	}
-
 	float h = 1.0;
 	float s = 0.0;
 	Math::Vector3d zero;
