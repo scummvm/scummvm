@@ -1992,13 +1992,18 @@ void InsaneRebel1::processShot() {
 }
 
 // checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
-// The original compares target bounds against the cursor after
-// UnprojectScreenPoint(), then reprojects the snapped cursor center after a hit.
+// The original compares target bounds against the cursor after UnprojectScreenPoint()
+// because g_shipPos is a screen-space cursor. Most handlers in this port draw the
+// cursor into the 384x242 source buffer before the viewport crop, so their cursor is
+// already in the same target space as raw FOBJ bounds. Opcode 0x0B remains screen-space
+// and still needs the original project/unproject conversion.
 void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
 	int16 snap = _tuning.snap;
+	const bool screenSpaceCursor = (getEffectiveGameOpcode() == 0x0B);
 	int16 curX = getGameplayCursorX();
 	int16 curY = getGameplayCursorY();
-	unprojectGameplayPoint(curX, curY);
+	if (screenSpaceCursor)
+		unprojectGameplayPoint(curX, curY);
 	const int slot = _targetCount;
 
 	if (slot < kMaxTargetBoxes) {
@@ -2028,6 +2033,13 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 		if (curX > left - snap && curX < right + snap &&
 			curY > top - snap && curY < bottom + snap) {
 			_targetProximity = 2;  // On-target
+			if (snap > 0) {
+				int16 snappedX = (left + right) / 2;
+				int16 snappedY = (top + bottom) / 2;
+				if (screenSpaceCursor)
+					projectGameplayPoint(snappedX, snappedY);
+				setGameplayCursor(snappedX, snappedY);
+			}
 
 			// DOS uses g_recentKillObjectIdPlus1 as a frame-wide latch. Once one
 			// target is hit this frame, overlapping FOBJ layers must not consume the
@@ -2078,15 +2090,6 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						projectGameplayPoint(hitCenterX, hitCenterY);
 						const int sfxPan = CLIP((hitCenterX - kRA1CenterX) * 127 / kRA1CenterX, -127, 127);
 						playSfx(kSfxExplode, 127, sfxPan);
-
-						// Match FUN_1C0EF: snap in unprojected space, then project back
-						// into the current gameplay window before rendering the pointer.
-						if (snap > 0) {
-							int16 snappedX = (left + right) / 2;
-							int16 snappedY = (top + bottom) / 2;
-							projectGameplayPoint(snappedX, snappedY);
-							setGameplayCursor(snappedX, snappedY);
-						}
 
 						debug(3, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
 							targetIdx, gi, _gostSlots[gi].posX, _gostSlots[gi].posY,
