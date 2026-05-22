@@ -193,31 +193,38 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
+		// 22 bytes of mandatory header
 
-		_updateFlags = stream.readByte();
+		if (stream.pos() < stream.size()) {
+			_updateFlags = stream.readByte();
 
-		// 22 bytes
-		// This is color image flag
-		if (_pitch & 0x8000) {
-			_pitch &= 0x3fff;
+			// This is color image flag
+			if (_pitch & 0x8000) {
+				_pitch &= 0x3fff;
 
-			_bitsPerPixel = stream.readByte();
+				_bitsPerPixel = stream.readByte();
 
-			int clutCastLib = -1;
-			if (version >= kFileVer500) {
-				clutCastLib = stream.readSint16();
-			}
-			int clutId = stream.readSint16();
-
-			if (clutId <= 0) // builtin palette
-				_clut = CastMemberID(clutId - 1, -1);
-			else if (clutId > 0) {
-				if (clutCastLib == -1) {
-					clutCastLib = _cast->_castLibID;
+				int clutCastLib = -1;
+				if (version >= kFileVer500) {
+					clutCastLib = stream.readSint16();
 				}
-				_clut = CastMemberID(clutId, clutCastLib);
+				int clutId = stream.readSint16();
+
+				if (clutId <= 0) // builtin palette
+					_clut = CastMemberID(clutId - 1, -1);
+				else if (clutId > 0) {
+					if (clutCastLib == -1) {
+						clutCastLib = _cast->_castLibID;
+					}
+					_clut = CastMemberID(clutId, clutCastLib);
+				}
+			} else {
+				_bitsPerPixel = 1;
 			}
 		} else {
+			// Minimal 22-byte header — no colour info present
+			if (_pitch & 0x8000)
+				_pitch &= 0x3fff;
 			_bitsPerPixel = 1;
 		}
 
