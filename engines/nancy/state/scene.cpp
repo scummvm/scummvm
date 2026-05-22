@@ -608,14 +608,7 @@ void Scene::registerGraphics() {
 	_frame.registerGraphics();
 	_viewport.registerGraphics();
 
-	// Pre-Nancy 10: legacy textbox is the on-screen subtitle/conversation
-	// strip. Nancy 10+: that role moves to the UICO popup; the legacy
-	// textbox is kept around in memory (other code still calls clear() /
-	// addTextLine() on it) but stays unregistered so its surface is
-	// never blitted to the screen.
-	if (g_nancy->getGameType() <= kGameTypeNancy9) {
-		_textbox.registerGraphics();
-	}
+	_textbox.registerGraphics();
 
 	// Pre-Nancy 10: inventory box is always-on-screen.
 	// Nancy 10+: a separate popup widget driven by UIIV (initially hidden).
