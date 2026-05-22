@@ -1940,9 +1940,51 @@ void LB::b_abort(int nargs) {
 	g_lingo->_abort = true;
 }
 
+// Helper: call a named handler on a single behavior instance with extra args.
+// extraArgs is stored in reverse order (as popped from stack).
+static void callBehaviorHandler(Datum &instance, const Common::String &msgName, const Common::Array<Datum> &extraArgs) {
+	Symbol sym = instance.u.obj->getMethod(msgName);
+	if (sym.type == VOIDSYM)
+		return;
+
+	g_lingo->push(instance);
+	for (int j = (int)extraArgs.size() - 1; j >= 0; j--)
+		g_lingo->push(extraArgs[j]);
+
+	int frame = g_lingo->_state->callstack.size();
+	LC::call(sym, 1 + (int)extraArgs.size(), false);
+	g_lingo->execute(frame);
+}
+
 void LB::b_call(int nargs) {
-	g_lingo->printSTUBWithArglist("b_call", nargs);
-	g_lingo->dropStack(nargs);
+	// call(#message, scriptInstance [, args...])
+	if (nargs < 2) {
+		warning("b_call: expected at least 2 args, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+
+	int numExtraArgs = nargs - 2;
+	Common::Array<Datum> extraArgs;
+	for (int i = 0; i < numExtraArgs; i++)
+		extraArgs.push_back(g_lingo->pop());
+
+	Datum script = g_lingo->pop();
+	Datum message = g_lingo->pop();
+	Common::String msgName = message.asString();
+
+	if (script.type == OBJECT) {
+		callBehaviorHandler(script, msgName, extraArgs);
+	} else if (script.type == ARRAY) {
+		// call() accepts a list of instances
+		for (uint i = 0; i < script.u.farr->arr.size(); i++) {
+			Datum instance = script.u.farr->arr[i];
+			if (instance.type == OBJECT)
+				callBehaviorHandler(instance, msgName, extraArgs);
+		}
+	} else {
+		warning("b_call: expected OBJECT or list for script argument");
+	}
 }
 
 void LB::b_callAncestor(int nargs) {
@@ -3443,13 +3485,97 @@ void LB::b_rollOver(int nargs) {
 }
 
 void LB::b_sendAllSprites(int nargs) {
-	g_lingo->printSTUBWithArglist("b_sendAllSprites", nargs);
-	g_lingo->dropStack(nargs);
+	// sendAllSprites(#message [, args...])
+	if (nargs < 1) {
+		warning("b_sendAllSprites: expected at least 1 arg, got %d", nargs);
+		return;
+	}
+
+	int numExtraArgs = nargs - 1;
+	Common::Array<Datum> extraArgs;
+	for (int i = 0; i < numExtraArgs; i++)
+		extraArgs.push_back(g_lingo->pop());
+
+	Datum message = g_lingo->pop();
+	Common::String msgName = message.asString();
+
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return;
+	Score *score = movie->getScore();
+	if (!score)
+		return;
+
+	bool anyHandled = false;
+	for (uint ch = 1; ch < score->_channels.size(); ch++) {
+		Channel *channel = score->_channels[ch];
+		if (!channel)
+			continue;
+		for (uint i = 0; i < channel->_scriptInstanceList.size(); i++) {
+			Datum instance = channel->_scriptInstanceList[i];
+			if (instance.type != OBJECT)
+				continue;
+			Symbol sym = instance.u.obj->getMethod(msgName);
+			if (sym.type == VOIDSYM)
+				continue;
+			callBehaviorHandler(instance, msgName, extraArgs);
+			anyHandled = true;
+		}
+	}
+
+	if (!anyHandled) {
+		for (int j = (int)extraArgs.size() - 1; j >= 0; j--)
+			g_lingo->push(extraArgs[j]);
+		g_lingo->executeHandler(msgName, numExtraArgs);
+	}
 }
 
 void LB::b_sendSprite(int nargs) {
-	g_lingo->printSTUBWithArglist("b_sendSprite", nargs);
-	g_lingo->dropStack(nargs);
+	// sendSprite(whichSprite, #message [, args...])
+	if (nargs < 2) {
+		warning("b_sendSprite: expected at least 2 args, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+
+	int numExtraArgs = nargs - 2;
+	Common::Array<Datum> extraArgs;
+	for (int i = 0; i < numExtraArgs; i++)
+		extraArgs.push_back(g_lingo->pop());
+
+	Datum message = g_lingo->pop();
+	int spriteNum = g_lingo->pop().asInt();
+	Common::String msgName = message.asString();
+
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return;
+	Score *score = movie->getScore();
+	if (!score)
+		return;
+
+	Channel *channel = score->getChannelById((uint16)spriteNum);
+	if (!channel)
+		return;
+
+	bool handled = false;
+	for (uint i = 0; i < channel->_scriptInstanceList.size(); i++) {
+		Datum instance = channel->_scriptInstanceList[i];
+		if (instance.type != OBJECT)
+			continue;
+		Symbol sym = instance.u.obj->getMethod(msgName);
+		if (sym.type == VOIDSYM)
+			continue;
+		callBehaviorHandler(instance, msgName, extraArgs);
+		handled = true;
+	}
+
+	if (!handled) {
+		// Pass down the hierarchy: frame script, movie scripts
+		for (int j = (int)extraArgs.size() - 1; j >= 0; j--)
+			g_lingo->push(extraArgs[j]);
+		g_lingo->executeHandler(msgName, numExtraArgs);
+	}
 }
 
 void LB::b_spriteBox(int nargs) {
