@@ -1992,8 +1992,8 @@ void PelrockEngine::pyramidCollapse() {
 		npc->zOrder = 254;
 
 	npc = _room->findSpriteByIndex(0);
-	npc->animData[0].nframes = 5;
 	if (npc) {
+		npc->animData[0].nframes = 5;
 		npc->animData[npc->curAnimIndex].movementFlags = 0x1C;
 		npc->y -= 25; // One-time nudge upward to emerge from behind pyramid
 	}
@@ -2035,9 +2035,10 @@ void PelrockEngine::pyramidCollapse() {
 
 	// Stop NPC movement
 	npc = _room->findSpriteByIndex(0);
-	npc->animData[0].nframes = 1;
-	if (npc)
+	if (npc) {
+		npc->animData[0].nframes = 1;
 		npc->animData[npc->curAnimIndex].movementFlags = 0;
+	}
 
 	_dialog->say(_res->_ingameTexts[kTextPor5Minutos], 0);
 
