@@ -334,6 +334,7 @@ bool InsaneRebel1::runLevel1() {
 		_pathBranchEnabled = true;
 		_rightPathSelected = false;
 		_flyControlMode = 1;
+		loadTuningForLevel(0);
 
 		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
 		if (_vm->shouldQuit())
@@ -354,6 +355,10 @@ bool InsaneRebel1::runLevel1() {
 				return false;
 
 			while (!_vm->shouldQuit()) {
+				// RunLevel1Flow calls L1PLAY2 with gameplay selector 1. This is
+				// the "1B" tuning row: snap/kill values are enabled and the
+				// lock/fire text overlay is suppressed.
+				loadTuningForLevel(1);
 				_flyControlMode = 2;
 				_turretEmitterLeftX = 10;
 				_turretEmitterLeftY = -5;
