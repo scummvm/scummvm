@@ -647,11 +647,6 @@ private:
     }
 #endif
 
-    static void endl(OutputStream &o)
-    {
-        OutputStream::endl(o);
-    }
-
     OutputStream *_o;
     OutputStream *_ostr;
     std::ostringstream *_os;

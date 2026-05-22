@@ -28,24 +28,8 @@ class StdioFilePrinter : public ErrorFormatter
 {
 public:
     StdioFilePrinter(FILE *o, const char *preLine = ":", const char *postLine = "") :
-        ErrorFormatter(new Adapter(o), preLine, postLine) {}
+        ErrorFormatter(new StdioFileAdapter(o), preLine, postLine) {}
     virtual ~StdioFilePrinter() { delete outputStream(); }
-
-private:
-    class Adapter : public OutputStream
-    {
-        Adapter(const Adapter &);
-        Adapter &operator=(const Adapter &);
-
-        FILE *_o;
-
-    public:
-        Adapter(FILE *o) : _o(o) {}
-        void flush() { fflush(_o); }
-        OutputStream &operator<<(unsigned i) { fprintf(_o, "%u", i); return *this; }
-        OutputStream &operator<<(const char *s) { fputs(s, _o); return *this; }
-        OutputStream &operator<<(Manipulator m) { return OutputStream::operator<<(m); }
-    };
 };
 }
 

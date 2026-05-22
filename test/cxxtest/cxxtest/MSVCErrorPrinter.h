@@ -32,8 +32,13 @@ namespace CxxTest
 class MSVCErrorPrinter : public ErrorPrinter
 {
 public:
+#ifdef _CXXTEST_HAVE_STD
+    MSVCErrorPrinter(CXXTEST_STD(ostream) &o = CXXTEST_STD(cout))
+        : ErrorPrinter(o, "(", ") ", "error C2999", "warning C4999") {}
+#else
     MSVCErrorPrinter(FILE *o = stdout)
         : ErrorPrinter(o, "(", ") ", "error C2999", "warning C4999") {}
+#endif // _CXXTEST_HAVE_STD
 };
 }
 
