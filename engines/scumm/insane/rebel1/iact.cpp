@@ -956,6 +956,8 @@ void InsaneRebel1::updateShipPhysics() {
 
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
+		// HandleGameOp07_ShipFlight dispatches g_sfxDamageHit here.
+		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 3;
 	}
 
@@ -1125,6 +1127,8 @@ void InsaneRebel1::updateTurretPhysics() {
 
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
+		// HandleGameOp08_TurretFlight dispatches g_sfxDamageHit here.
+		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 3;
 	}
 
@@ -1611,6 +1615,7 @@ void InsaneRebel1::updateOnFootPhysics() {
 		}
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = 3;
+		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 5;
 	}
 
@@ -1634,6 +1639,7 @@ void InsaneRebel1::updateOnFootPhysics() {
 		_screenFlash--;
 		_screenShakeEnabled = (_screenFlash > 0);
 	}
+	updateScreenFlashPalette();
 
 	_damageFlags = 0;
 	_frameCounter++;
