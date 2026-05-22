@@ -140,6 +140,11 @@ private:
 	// Play a passive cinematic (no game callback, skippable)
 	// startFrame > 0: fast-forward (decode without display) to that frame
 	void playCinematic(const char *filename, int32 startFrame = 0);
+	void playChapterCompleteCinematic(const char *filename, int16 unlockedChapter,
+		int revealOffsetFromEnd, int stopOffsetFromEnd,
+		const char *bonusLabel1 = nullptr, const char *detailText1 = nullptr, int bonusValue1 = 0,
+		const char *bonusLabel2 = nullptr, const char *detailText2 = nullptr, int bonusValue2 = 0,
+		int passwordIndex = 0);
 
 	// Play interactive gameplay video (with ship physics + HUD)
 	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
@@ -307,10 +312,28 @@ private:
 	int _introTextLevel;         // index into kLevelTitles
 	void beginLevelTitleOverlay(int level);
 	void drawLevelTitleOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
-	bool _level15SummaryActive;
-	int _level15SummaryTargetBonus;
-	void beginLevel15SummaryOverlay(int targetBonus);
-	void drawLevel15SummaryOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
+
+	static const int kChapterSummaryTextSize = 80;
+	struct ChapterSummaryState {
+		bool active;
+		int revealOffsetFromEnd;
+		int stopOffsetFromEnd;
+		bool hasBonus1;
+		bool hasBonus2;
+		char bonusLabel1[kChapterSummaryTextSize];
+		char detailText1[kChapterSummaryTextSize];
+		int bonusValue1;
+		char bonusLabel2[kChapterSummaryTextSize];
+		char detailText2[kChapterSummaryTextSize];
+		int bonusValue2;
+		int passwordIndex;
+	};
+	ChapterSummaryState _chapterSummary;
+	void beginChapterSummaryOverlay(int revealOffsetFromEnd, int stopOffsetFromEnd,
+		const char *bonusLabel1, const char *detailText1, int bonusValue1,
+		const char *bonusLabel2, const char *detailText2, int bonusValue2,
+		int passwordIndex);
+	void drawChapterSummaryOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
 
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
@@ -407,7 +430,7 @@ private:
 	static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
 	int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
 	bool _pathBranchEnabled;     // True when branching is active for this video
-	bool _rightPathSelected;     // True if player chose the right/easy path
+	bool _rightPathSelected;     // True if player branched into L1PLAY1R
 	int _levelRouteIndex;        // Current mid-level route/segment for branching levels
 	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
 	int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches

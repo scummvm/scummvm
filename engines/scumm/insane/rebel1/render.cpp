@@ -511,12 +511,12 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		drawLevelTitleOverlay(renderBitmap, w, w, h, curFrame, maxFrame);
 	}
 
-	if (_level15SummaryActive && renderBitmap) {
+	if (_chapterSummary.active && renderBitmap) {
 		int w = _player ? _player->_width : _screenWidth;
 		int h = _player ? _player->_height : _screenHeight;
 		if (w == 0) w = _screenWidth;
 		if (h == 0) h = _screenHeight;
-		drawLevel15SummaryOverlay(renderBitmap, w, w, h, curFrame, maxFrame);
+		drawChapterSummaryOverlay(renderBitmap, w, w, h, curFrame, maxFrame);
 	}
 
 	if (!_interactiveVideoActive || !renderBitmap)
@@ -1249,21 +1249,48 @@ void InsaneRebel1::drawLevelTitleOverlay(byte *dst, int pitch, int width, int he
 	drawFontBankString(dst, pitch, width, height, centerX - subtitleW / 2, 25, subtitle);
 }
 
-void InsaneRebel1::beginLevel15SummaryOverlay(int targetBonus) {
-	_level15SummaryActive = true;
-	_level15SummaryTargetBonus = targetBonus;
+void InsaneRebel1::beginChapterSummaryOverlay(int revealOffsetFromEnd, int stopOffsetFromEnd,
+		const char *bonusLabel1, const char *detailText1, int bonusValue1,
+		const char *bonusLabel2, const char *detailText2, int bonusValue2,
+		int passwordIndex) {
+	memset(&_chapterSummary, 0, sizeof(_chapterSummary));
+	_chapterSummary.active = true;
+	_chapterSummary.revealOffsetFromEnd = revealOffsetFromEnd;
+	_chapterSummary.stopOffsetFromEnd = stopOffsetFromEnd;
+	_chapterSummary.bonusValue1 = bonusValue1;
+	_chapterSummary.bonusValue2 = bonusValue2;
+	_chapterSummary.passwordIndex = passwordIndex;
+
+	if (bonusLabel1 && detailText1) {
+		_chapterSummary.hasBonus1 = true;
+		Common::strlcpy(_chapterSummary.bonusLabel1, bonusLabel1, sizeof(_chapterSummary.bonusLabel1));
+		Common::strlcpy(_chapterSummary.detailText1, detailText1, sizeof(_chapterSummary.detailText1));
+	}
+	if (bonusLabel2 && detailText2) {
+		_chapterSummary.hasBonus2 = true;
+		Common::strlcpy(_chapterSummary.bonusLabel2, bonusLabel2, sizeof(_chapterSummary.bonusLabel2));
+		Common::strlcpy(_chapterSummary.detailText2, detailText2, sizeof(_chapterSummary.detailText2));
+	}
 }
 
-// drawLevel15SummaryOverlay — RunChapterCompleteSummaryScreen (0x15E42), used by
-// RunLevel1GameLoop's L15END1 path. This is a ScummVM-side extraction of the
-// original summary draw loop; the score update is done by runLevel15().
-void InsaneRebel1::drawLevel15SummaryOverlay(byte *dst, int pitch, int width, int height,
+// The DOS table is stored as 15 XOR-0xAA encoded, 20-byte passcode slots at
+// DS:0x00A4. RunChapterCompleteSummaryScreen indexes it with passwordIndex-1.
+static const char *const kChapterCompletePasswords[] = {
+	"FALCON", "BIGGS", "ACKBAR", "ANOAT", "KAIBURR",
+	"FORNAX", "YUZZEM", "MYNOCK", "BESPIN", "BRIGIA",
+	"DAGOBAH", "KESSEL", "GREEDO", "MIMBAN", "ORGANA"
+};
+
+// drawChapterSummaryOverlay — RunChapterCompleteSummaryScreen (0x15E42), shared by
+// the RA1 runlevel flows that call it. This helper is a ScummVM-side extraction;
+// the original pumps frontend frames from the runlevel after queueing the END ANM.
+void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, int height,
 		int32 curFrame, int32 maxFrame) {
-	if (!_level15SummaryActive || !dst || maxFrame <= 0)
+	if (!_chapterSummary.active || !dst || maxFrame <= 0)
 		return;
 
-	const int32 revealBaseFrame = maxFrame - 0x122;
-	const int32 stopFrame = maxFrame - 0xA5;
+	const int32 revealBaseFrame = maxFrame - _chapterSummary.revealOffsetFromEnd;
+	const int32 stopFrame = maxFrame - _chapterSummary.stopOffsetFromEnd;
 	if (curFrame < revealBaseFrame || curFrame >= stopFrame)
 		return;
 
@@ -1278,21 +1305,31 @@ void InsaneRebel1::drawLevel15SummaryOverlay(byte *dst, int pitch, int width, in
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x19, completionText);
 	}
 
-	if (revealBaseFrame + 0x28 < curFrame && curFrame < revealBaseFrame + 0x46) {
-		char accuracyText[48];
+	if (_chapterSummary.hasBonus1 &&
+			revealBaseFrame + 0x28 < curFrame && curFrame < revealBaseFrame + 0x46) {
 		char bonusText[32];
-		Common::sprintf_s(accuracyText, "Target Accuracy: %d percent",
-			((int)_killCount * 100) / 0x58);
-		Common::sprintf_s(bonusText, "Bonus: %d", _level15SummaryTargetBonus);
-		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, "Part I");
-		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, accuracyText);
+		Common::sprintf_s(bonusText, "Bonus: %d", _chapterSummary.bonusValue1);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, _chapterSummary.bonusLabel1);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, _chapterSummary.detailText1);
 		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, bonusText);
 	}
 
-	if (revealBaseFrame + 0x55 < curFrame && curFrame < revealBaseFrame + 0x73) {
-		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, "Part II");
-		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, "Torpedo on mark");
-		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, "Bonus: 10000");
+	if (_chapterSummary.hasBonus2 &&
+			revealBaseFrame + 0x55 < curFrame && curFrame < revealBaseFrame + 0x73) {
+		char bonusText[32];
+		Common::sprintf_s(bonusText, "Bonus: %d", _chapterSummary.bonusValue2);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x32, _chapterSummary.bonusLabel2);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x46, _chapterSummary.detailText2);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x5A, bonusText);
+	}
+
+	if (_chapterSummary.passwordIndex > 0 &&
+			_chapterSummary.passwordIndex <= ARRAYSIZE(kChapterCompletePasswords) &&
+			revealBaseFrame + 10 < curFrame) {
+		char passwordText[40];
+		Common::sprintf_s(passwordText, "Password: %s",
+			kChapterCompletePasswords[_chapterSummary.passwordIndex - 1]);
+		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x73, passwordText);
 	}
 }
 
