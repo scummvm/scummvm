@@ -21,7 +21,9 @@
 
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/room.h"
 #include "mads/madsv2/core/sound.h"
@@ -60,9 +62,93 @@ void section_1_init() {
 }
 
 void section_1_walker() {
+	char temp_buf[80];
+	int dark_background = false;
+	int no_walker = false;
+
+	sound_queue(N_NoiseFade);
+
+	Common::strcpy_s(temp_buf, player.series_name);
+
+	global[perform_displacements] = true;
+
+	if (new_room == 111 ||
+		new_room == 112 ||
+		new_room == 117 ||
+		new_room == 120 ||
+		new_room == 119) {
+		no_walker = true;
+	}
+
+	if (new_room == 106 && room_id == 120) {
+		no_walker = true;
+	}
+
+	if (global[player_persona] == PLAYER_IS_KING) {
+		if (new_room == 113) {
+			no_walker = true;
+		}
+	}
+
+	switch (new_room) {
+	case 108:
+	case 109:
+	case 113:
+	case 114:
+	case 115:
+		dark_background = true;
+		break;
+	}
+
+	if (no_walker || global[no_load_walker]) {
+		player.series_name[0] = 0;
+
+	} else if (!player.force_series) {
+		if (global[player_persona] == PLAYER_IS_KING || new_room == 108 || new_room == 109) {
+			if (new_room == 113 || new_room == 114 || new_room == 115 || new_room == 116) {
+				Common::strcpy_s(player.series_name, "PD");
+			} else {
+				Common::strcpy_s(player.series_name, "KG");
+			}
+		} else {
+			Common::strcpy_s(player.series_name, "PD");
+		}
+		if (dark_background)
+			Common::strcat_s(player.series_name, "D");
+	}
+
+	if (strcmp(temp_buf, player.series_name) != 0)
+		player.walker_must_reload = true;
+
+	player.scaling_velocity = true;
 }
 
 void section_1_interface() {
+	int interface;
+	RGBcolor text_color = { 43, 29, 15 };
+
+	if (new_room == 116) {
+		interface = 2;
+
+	} else if (new_room == 110) {
+		interface = 5;
+
+	} else if (new_room == 120) {
+		interface = 8;
+
+	} else if ((new_room >= 113) && (new_room <= 119) && (new_room != 118)) {
+		interface = 1;
+
+	} else if ((new_room == 108) || (new_room == 109)) {
+		interface = 3;
+
+	} else {
+		interface = 0;
+	}
+
+	Common::strcpy_s(kernel.interface, kernel_interface_name(interface));
+
+	pal_change_color(INTER_MESSAGE_COLOR, 56, 47, 32);
 }
 
 void section_1_music() {

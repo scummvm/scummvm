@@ -21,6 +21,7 @@
 
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/player.h"
@@ -43,7 +44,7 @@ void section_9_init() {
 }
 
 void section_9_walker() {
-	sound_queue(5);
+	sound_queue(N_NoiseFade);
 	global[perform_displacements] = 0;
 	*player.series_name = '\0';
 	player.scaling_velocity = -1;
@@ -51,7 +52,7 @@ void section_9_walker() {
 
 void section_9_interface() {
 	Common::strcpy_s(kernel.interface, kernel_interface_name(7));
-	pal_change_color(47, 56, 254, 32);
+	pal_change_color(INTER_MESSAGE_COLOR, 56, 47, 32);
 }
 
 void section_9_music() {

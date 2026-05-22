@@ -21,7 +21,9 @@
 
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/room.h"
 #include "mads/madsv2/core/sound.h"
@@ -53,9 +55,47 @@ void section_4_init() {
 }
 
 void section_4_walker() {
+	char temp_buf[80];
+	int dark_background = false;
+	int no_walker = false;
+
+	sound_queue(N_NoiseFade);
+
+	Common::strcpy_s(temp_buf, player.series_name);
+
+	if (new_room == 401 || new_room == 402 || new_room == 403 && global[player_persona] == PLAYER_IS_KING) {
+		global[perform_displacements] = false;
+	} else {
+		global[perform_displacements] = true;
+	}
+
+	if (new_room == 603) {
+		dark_background = false;
+	}
+
+	if (no_walker || global[no_load_walker]) {
+		player.series_name[0] = 0;
+	} else if (!player.force_series) {
+		if (global[player_persona] == PLAYER_IS_KING) {
+			Common::strcpy_s(player.series_name, "KG");
+		} else {
+			Common::strcpy_s(player.series_name, "PD");
+		}
+		if (dark_background)
+			Common::strcat_s(player.series_name, "D");
+	}
+
+	if (strcmp(temp_buf, player.series_name) != 0) player.walker_must_reload = true;
+
+	player.scaling_velocity = true;
 }
 
 void section_4_interface() {
+	RGBcolor text_color = { 43, 29, 15 };
+
+	Common::strcpy_s(kernel.interface, kernel_interface_name(7));
+
+	pal_change_color(INTER_MESSAGE_COLOR, 56, 47, 32);
 }
 
 void section_4_music() {
