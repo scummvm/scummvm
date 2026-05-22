@@ -279,6 +279,11 @@ private:
 	int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
 	bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
 	bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
+	int16 _mouseVirtualRawX; // Virtual DOS mouse X used by original-input recentering
+	int16 _mouseVirtualRawY; // Virtual DOS mouse Y used by original-input recentering
+	int16 _mouseVirtualPrevLogicalX;
+	int16 _mouseVirtualPrevLogicalY;
+	bool _mouseVirtualValid;
 	int16 _joystickAxisX;   // Rebel-specific left-stick X captured from keymapper axis events
 	int16 _joystickAxisY;   // Rebel-specific left-stick Y captured from keymapper axis events
 	uint32 _lastJoystickAxisEventTime;
@@ -452,9 +457,9 @@ private:
 	int _menuFrameCounter;
 
 	// Options submenu state — RunGameOptionsMenu (0x14B42)
-	static const int kOptionsItemCount = 8;
+	static const int kOptionsItemCount = 9;
 	bool _optionsActive;     // True when showing options instead of main menu
-	int _optionsSel;         // 0..7 selected option row
+	int _optionsSel;         // 0..8 selected option row
 	bool _levelSelectActive; // True when showing level-select submenu
 	int _levelSelectSel;     // 0=Level1 ... N-1=Back
 	int _startLevel;         // 1-based start level for "Start New Game"
@@ -464,9 +469,9 @@ private:
 	bool _optMusicEnabled;    // DAT_22b7: music on/off
 	bool _optSfxEnabled;      // DAT_22b8: sfx+voice on/off
 	bool _optTextEnabled;     // DAT_22b9: dialogue text on/off
+	bool _optEnhancedControls; // ScummVM option: current responsive controls vs original control law
 	bool _optControlsYFlip;   // DAT_22be: Y-axis inversion
 	int  _optVolume;          // DAT_22c1: master volume 0..127
-	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
 
 	// High scores / TOP PILOTS display — data at DS:0x1D0
 	static const int kHighScoreCount = 10;

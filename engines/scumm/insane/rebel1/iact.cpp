@@ -47,6 +47,12 @@ inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue,
 
 const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
 const int16 kRA1Op09AimYScale[5] = { 256, 252, 240, 221, 196 };
+const int kRA1DosMouseCenterX = 0x140;
+const int kRA1DosMouseCenterY = 100;
+const int kRA1DosMouseSafeLeft = 0x0AA;
+const int kRA1DosMouseSafeRight = 0x1D6;
+const int kRA1DosMouseSafeTop = 0x32;
+const int kRA1DosMouseSafeBottom = 0x96;
 
 // Level 15 final approach 0x5D damage/event codes consumed by
 // RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
@@ -729,8 +735,9 @@ void InsaneRebel1::updateFlightVariantCursor() {
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
 // ScummVM's absolute 320x200 mouse space.
 // Preserve the DOS bias/offset persistence and one-frame jump latch from
-// FUN_231BE, but avoid hard recentring the host mouse into the DOS safe window.
-// The actual frame-averaging behavior stays untouched.
+// FUN_231BE. Original-input mode also emulates FUN_23115's DOS mouse recenter;
+// gameplay hides and locks the cursor, so this follows the original without
+// exposing a visible pointer jump.
 void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick) {
 	if (usedJoystick)
 		*usedJoystick = false;
@@ -759,6 +766,7 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (_optControlsYFlip)
 			inputY = -inputY;
 
+		_mouseVirtualValid = false;
 		return;
 	}
 
@@ -777,6 +785,7 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (_optControlsYFlip)
 			inputY = -inputY;
 
+		_mouseVirtualValid = false;
 		return;
 	}
 
@@ -790,19 +799,60 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (_optControlsYFlip)
 			inputY = -inputY;
 
+		_mouseVirtualValid = false;
 		return;
 	}
 
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
-	const int16 rawX = (int16)(logicalX << 1);
-	const int16 rawY = logicalY;
-	const int16 deltaX = (int16)(logicalX - kRA1CenterX);
-	const int16 deltaY = (int16)(logicalY - kRA1CenterY);
-	const int16 normX = (int16)(((int32)deltaX * 127) / 160);
-	const int16 normY = (int16)(((int32)deltaY * 127) / 100);
-	int16 biasX = (int16)((rawX + _mouseOffsetX - 0x140) >> 2);
-	int16 biasY = (int16)((rawY + _mouseOffsetY - 100) >> 1);
+	int16 rawX = (int16)(logicalX << 1);
+	int16 rawY = logicalY;
+
+	if (!_optEnhancedControls) {
+		if (!_mouseVirtualValid) {
+			_mouseVirtualRawX = rawX;
+			_mouseVirtualRawY = rawY;
+			_mouseVirtualValid = true;
+		} else {
+			_mouseVirtualRawX = (int16)CLIP<int>(
+				_mouseVirtualRawX + ((logicalX - _mouseVirtualPrevLogicalX) << 1),
+				-32768, 32767);
+			_mouseVirtualRawY = (int16)CLIP<int>(
+				_mouseVirtualRawY + (logicalY - _mouseVirtualPrevLogicalY),
+				-32768, 32767);
+		}
+		_mouseVirtualPrevLogicalX = logicalX;
+		_mouseVirtualPrevLogicalY = logicalY;
+
+		rawX = _mouseVirtualRawX;
+		rawY = _mouseVirtualRawY;
+
+		if (rawX < kRA1DosMouseSafeLeft || rawX > kRA1DosMouseSafeRight ||
+			rawY < kRA1DosMouseSafeTop || rawY > kRA1DosMouseSafeBottom) {
+			_mouseOffsetX = (int16)CLIP<int>(
+				(int)_mouseOffsetX + rawX - kRA1DosMouseCenterX, -32768, 32767);
+			_mouseOffsetY = (int16)CLIP<int>(
+				(int)_mouseOffsetY + rawY - kRA1DosMouseCenterY, -32768, 32767);
+			rawX = kRA1DosMouseCenterX;
+			rawY = kRA1DosMouseCenterY;
+			_mouseVirtualRawX = rawX;
+			_mouseVirtualRawY = rawY;
+			_mouseVirtualPrevLogicalX = kRA1CenterX;
+			_mouseVirtualPrevLogicalY = kRA1CenterY;
+			_vm->_mouse.x = kRA1CenterX;
+			_vm->_mouse.y = kRA1CenterY;
+			smush_warpMouse(kRA1CenterX, kRA1CenterY, -1);
+			debug(2, "RA1 original input virtual recenter: offset=(%d,%d) mouse=(%d,%d)",
+				_mouseOffsetX, _mouseOffsetY, logicalX, logicalY);
+		}
+	} else {
+		_mouseVirtualValid = false;
+	}
+
+	const int16 normX = (int16)(((int32)(logicalX - kRA1CenterX) * 127) / 160);
+	const int16 normY = (int16)(((int32)(logicalY - kRA1CenterY) * 127) / 100);
+	int16 biasX = (int16)((rawX + _mouseOffsetX - kRA1DosMouseCenterX) >> 2);
+	int16 biasY = (int16)((rawY + _mouseOffsetY - kRA1DosMouseCenterY) >> 1);
 
 	if (biasY < 0x65) {
 		const bool largeJump =
@@ -825,8 +875,11 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		_mouseBiasLatch = true;
 	}
 
-	const int16 scaledX = (int16)(normX + biasX);
-	const int16 scaledY = (int16)(normY + biasY);
+	// In original mouse mode, FUN_2309C centers the joystick contribution when
+	// joystick is disabled, so FUN_231BE's mouse output is just the bias term.
+	// Enhanced mode keeps ScummVM's pre-existing centered mouse axis plus bias.
+	const int16 scaledX = _optEnhancedControls ? (int16)(normX + biasX) : biasX;
+	const int16 scaledY = _optEnhancedControls ? (int16)(normY + biasY) : biasY;
 
 	_mouseBiasX = biasX;
 	_mouseBiasY = biasY;
@@ -941,7 +994,8 @@ void InsaneRebel1::updateShipPhysics() {
 
 	// --- Step 4: Position accumulator deltas ---
 	// X delta: drift + slide coupling - cross-coupling
-	int32 rng = _turbulenceEnabled ? (int32)_vm->_rnd.getRandomNumber(199) : 100;  // 0-199, centered at 100
+	const bool originalTurbulence = !_optEnhancedControls;
+	int32 rng = originalTurbulence ? (int32)_vm->_rnd.getRandomNumber(199) : 100;  // RandScaleByte(200), centered at 100
 	int32 crossTermX;
 	if (_liftSmooth < 0)
 		crossTermX = ((int32)_tuning.lift * _liftSmooth * _rollAccum) >> 11;
@@ -1016,8 +1070,9 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_shipBank.numSprites > 0)
 		_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
 
-	debug(1, "RA1 ship input: frame=%d source=%s usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
-		_gameCounter, inputSourceName, usedJoystick,
+	debug(1, "RA1 ship input: frame=%d source=%s controls=%s turbulence=%d usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
+		_gameCounter, inputSourceName,
+		_optEnhancedControls ? "enhanced" : "original", originalTurbulence, usedJoystick,
 		rawInputX, rawInputY, inputX, inputY,
 		_joystickAxisX, _joystickAxisY,
 		_vm->getActionState(kScummActionInsaneLeft),
@@ -1256,15 +1311,16 @@ void InsaneRebel1::updateTurretPhysics() {
 		const int16 rawInputX = inputX;
 		const int16 rawInputY = inputY;
 
-		if (usedJoystick) {
+		if (usedJoystick && _optEnhancedControls) {
 			// First-person turret/cockpit stages are noticeably more sensitive on
 			// joystick than on mouse, so damp only the joystick-driven input here.
 			inputX /= 2;
 			inputY /= 2;
 		}
 
-		debug("RA1 turret input: source=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
+		debug("RA1 turret input: source=%s controls=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
 			usedJoystick ? "joystick-actions" : "mouse-path",
+			_optEnhancedControls ? "enhanced" : "original",
 			_vm->_mouse.x, _vm->_mouse.y,
 			_vm->getActionState(kScummActionInsaneLeft),
 			_vm->getActionState(kScummActionInsaneRight),
@@ -1355,9 +1411,9 @@ void InsaneRebel1::updateScreenFlashPalette() {
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
 void InsaneRebel1::updateGameOp0BPhysics() {
-	// Control feel tweak: original uses full 10-sample average in FUN_1CDA7.
-	// We keep the same pipeline but average over fewer samples for responsiveness.
-	const int kGameOp0BSmoothWindow = 2;
+	// Original FUN_1CDA7 uses the full 10-sample history. Enhanced controls keep
+	// the same pipeline but average fewer samples for responsiveness.
+	const int gameOp0BSmoothWindow = _optEnhancedControls ? 2 : kInputHistorySize;
 
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
@@ -1491,7 +1547,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	else if (_activeInputSource == kInputSourceJoystickDigital)
 		inputSourceName = "joystick-dpad";
 
-	if (usedJoystick) {
+	if (usedJoystick && _optEnhancedControls) {
 		// The 0x0B first-person handler is shared by multiple RA1 stages. Smooth
 		// analog stick input over time so these sections keep full reach without
 		// feeling hyper-sensitive, while leaving mouse behavior untouched.
@@ -1510,9 +1566,11 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 	_inputAxisDeltaX = inputX;
 
-	debug("RA1 GAME 0x0B input: frame=%d source=%s view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+	debug("RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
 		_gameCounter,
 		inputSourceName,
+		_optEnhancedControls ? "enhanced" : "original",
+		gameOp0BSmoothWindow,
 		_perspectiveX, _perspectiveY,
 		_health, _prevDamageFlags,
 		_joystickAxisX, _joystickAxisY,
@@ -1533,13 +1591,13 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 
 	int sumInputX = 0;
 	int sumInputY = 0;
-	for (int i = 0; i < kGameOp0BSmoothWindow; i++) {
+	for (int i = 0; i < gameOp0BSmoothWindow; i++) {
 		sumInputX += _inputHistoryX[i];
 		sumInputY += _inputHistoryY[i];
 	}
 
-	_avgInputX = (int16)(sumInputX / kGameOp0BSmoothWindow);
-	_avgInputY = (int16)(-sumInputY / kGameOp0BSmoothWindow);
+	_avgInputX = (int16)(sumInputX / gameOp0BSmoothWindow);
+	_avgInputY = (int16)(-sumInputY / gameOp0BSmoothWindow);
 	_avgInputX = CLIP<int16>(_avgInputX, -0xA0, 0xA0);
 	_avgInputY = CLIP<int16>(_avgInputY, -0x46, 0x41);
 
@@ -1555,13 +1613,13 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 
 	int sumViewX = 0;
 	int sumViewY = 0;
-	for (int i = 0; i < kGameOp0BSmoothWindow; i++) {
+	for (int i = 0; i < gameOp0BSmoothWindow; i++) {
 		sumViewX += _viewHistoryX[i];
 		sumViewY += _viewHistoryY[i];
 	}
 
-	int16 avgViewX = (int16)(sumViewX / kGameOp0BSmoothWindow);
-	int16 avgViewY = (int16)(sumViewY / kGameOp0BSmoothWindow);
+	int16 avgViewX = (int16)(sumViewX / gameOp0BSmoothWindow);
+	int16 avgViewY = (int16)(sumViewY / gameOp0BSmoothWindow);
 	_perspectiveX = CLIP<int16>((int16)((avgViewX >> 1) + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)((avgViewY >> 1) + 0x17), 0, 0x2E);
 	resetProjectionTable();
@@ -1844,6 +1902,11 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_mousePrevBiasY = 0;
 		_mouseBiasLatch = false;
 		_mouseRecentering = false;
+		_mouseVirtualRawX = kRA1DosMouseCenterX;
+		_mouseVirtualRawY = kRA1DosMouseCenterY;
+		_mouseVirtualPrevLogicalX = kRA1CenterX;
+		_mouseVirtualPrevLogicalY = kRA1CenterY;
+		_mouseVirtualValid = false;
 		_level2JoystickFilteredX = 0;
 		_level2JoystickFilteredY = 0;
 

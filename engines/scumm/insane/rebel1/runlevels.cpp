@@ -1994,6 +1994,11 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window
 	smush_warpMouse(160, 100, -1);
+	_mouseVirtualRawX = 0x140;
+	_mouseVirtualRawY = 100;
+	_mouseVirtualPrevLogicalX = kRA1CenterX;
+	_mouseVirtualPrevLogicalY = kRA1CenterY;
+	_mouseVirtualValid = false;
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 

@@ -167,11 +167,11 @@ bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
 			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
 			return true;
 		case kScummActionInsaneLeft:
-			if (_optionsSel == 6)
+			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, -5);
 			return true;
 		case kScummActionInsaneRight:
-			if (_optionsSel == 6)
+			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, 5);
 			return true;
 		case kScummActionInsaneAttack:
@@ -402,14 +402,14 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_a:
-			// Volume down when on volume row (row 6)
-			if (_optionsSel == 6)
+			// Volume down when on volume row (row 7)
+			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, -5);
 			return true;
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_d:
-			// Volume up when on volume row (row 6)
-			if (_optionsSel == 6)
+			// Volume up when on volume row (row 7)
+			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, 5);
 			return true;
 		case Common::KEYCODE_RETURN:
@@ -596,7 +596,8 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 			_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
 			_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
 			_optTextEnabled   ? "DIALOGUE TEXT IS ON"      : "DIALOGUE TEXT IS OFF",
-			_optControlsYFlip ? "CONTROLS ARE Y-FLIPPED"  : "CONTROLS ARE NORMAL",
+			_optEnhancedControls ? "INPUT STYLE ENHANCED" : "INPUT STYLE ORIGINAL",
+			_optControlsYFlip ? "Y AXIS IS INVERTED"      : "Y AXIS IS NORMAL",
 			volLine,
 			diffLine
 		};
@@ -746,12 +747,15 @@ void InsaneRebel1::runOptionsMenu() {
 				_optTextEnabled = !_optTextEnabled;
 				ConfMan.setBool("subtitles", _optTextEnabled);
 				break;
-			case 5: // Toggle Y-flip controls
+			case 5: // Toggle enhanced/original input style
+				_optEnhancedControls = !_optEnhancedControls;
+				break;
+			case 6: // Toggle Y-flip controls
 				_optControlsYFlip = !_optControlsYFlip;
 				break;
-			case 6: // Volume — adjusted via left/right in notifyEvent
+			case 7: // Volume — adjusted via left/right in notifyEvent
 				break;
-			case 7: // Cycle difficulty
+			case 8: // Cycle difficulty
 				_difficulty = (_difficulty + 1) % 3;
 				loadTuningForLevel(0);
 				break;
