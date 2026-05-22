@@ -995,7 +995,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (_room->_pixelsShadows != nullptr) {
 		byte shadowLevel = 0xFF; // 0xFF = no shadow
 		int feetY = _alfredState.y;
-		if (feetY >= 0 && feetY < 400 && _room->_pixelsShadows != nullptr) {
+		if (feetY < 400) {
 			for (int col = 0; col < finalWidth; col++) {
 				int checkX = _alfredState.x + col;
 				if (checkX >= 0 && checkX < 640) {
@@ -1107,7 +1107,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 					// Trigger ring on phone on every start of animation 2 in room 9
 					if (_room->_currentRoomNumber == 9 && sprite->index == 3) {
-						if (sprite->curAnimIndex == 1 && animData.curLoop == 0) {
+						if (sprite->curAnimIndex == 1) {
 							byte soundFileIndex = _room->_roomSfx[2];
 							_sound->playSound(soundFileIndex, 2);
 						}
