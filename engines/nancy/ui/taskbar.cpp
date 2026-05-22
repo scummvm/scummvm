@@ -108,7 +108,7 @@ void Taskbar::handleInput(NancyInput &input) {
 
 	int newHovered = -1;
 	for (uint i = 0; i < TASK::kNumButtons; ++i) {
-		if (taskData->buttons[i].button.destRect.contains(input.mousePos)) {
+		if (taskData->buttons[i].button.destRect.contains(input.mousePos) && _buttonStates[i] != kButtonDisabled) {
 			newHovered = i;
 			break;
 		}
