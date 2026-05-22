@@ -261,6 +261,11 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_mousePrevBiasY = 0;
 	_mouseBiasLatch = false;
 	_mouseRecentering = false;
+	_mouseVirtualRawX = 0x140;
+	_mouseVirtualRawY = 100;
+	_mouseVirtualPrevLogicalX = kRA1CenterX;
+	_mouseVirtualPrevLogicalY = kRA1CenterY;
+	_mouseVirtualValid = false;
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
 	_lastJoystickAxisEventTime = 0;
@@ -326,13 +331,13 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_levelSelectActive = false;
 	_levelSelectSel = 0;
 	_startLevel = 1;
-	_turbulenceEnabled = true;
 
 	// Options — read initial state from ScummVM mixer
 	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
 	_optTextEnabled = true;
+	_optEnhancedControls = true;
 	_optControlsYFlip = false;
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
