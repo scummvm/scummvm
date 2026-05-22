@@ -1522,7 +1522,6 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 			if (((_alfredState.y + _alfredState.h) < hotspot->y) ||
 				(_alfredState.y <= hotspot->y + hotspot->h &&
 				 hotspot->zOrder <= ((399 - _alfredState.y) / 2) + 10)) {
-				calculatedDirection = ALFRED_DOWN; // Face DOWN
 			} else {
 				calculatedDirection = ALFRED_UP; // Face UP
 			}
@@ -1540,7 +1539,6 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 		else if (((_alfredState.y + _alfredState.h) < hotspot->y) ||
 				 (_alfredState.y <= hotspot->y + hotspot->h &&
 				  (hotspot->actionFlags & 0x80) == 0x80)) {
-			calculatedDirection = ALFRED_DOWN; // Face DOWN
 		} else {
 			calculatedDirection = ALFRED_UP; // Face UP
 		}
