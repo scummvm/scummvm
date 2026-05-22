@@ -19,12 +19,15 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/room.h"
+#include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section4.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -56,6 +59,76 @@ void section_4_interface() {
 }
 
 void section_4_music() {
+	if (sound_off) {
+		sound_queue(N_NoiseOff);
+
+	} else switch (room_id) {
+	case 401:
+	case 402:
+	case 403:
+	case 404:
+	case 405:
+	case 454:
+		sound_play(N_WindWhistles);
+		break;
+	}
+
+	if (music_off) {
+		sound_queue(N_MusicFade);
+		goto done;
+	}
+
+	switch (new_room) {
+	case 404:
+	case 454:
+		if (room_id != 120) {
+			sound_play(N_Bk404Music);
+		}
+		break;
+
+	case 406:
+		sound_play(N_NoiseOff);
+		if (global[dance_music_on]) {
+			sound_play(N_BellyDanceMusic);
+		} else {
+			sound_play(N_Bk406Music);
+		}
+		break;
+
+	case 401:
+	case 402:
+	case 403:
+	case 405:
+		sound_play(N_BackgroundMus);
+		break;
+
+	case 408:
+		sound_play(N_Bk408Music);
+		break;
+
+	case 409:
+		sound_play(N_Bk409Music);
+		break;
+
+	case 410:
+		sound_play(N_Bk410Music);
+		break;
+
+	case 411:
+		sound_play(N_RocAndSoulEgg);
+		break;
+
+	case 412:
+		sound_play(N_DeathFountain);
+		break;
+
+	default:
+		sound_play(N_BackgroundMus);
+		break;
+	}
+
+done:
+	;
 }
 
 void section_4_constructor() {

@@ -35,11 +35,21 @@ enum {
 	N_TakeObjectSnd      =  26,
 	N_PlayerDies         =  27,
 	N_InvokeCrystalBall  =  28,
+	N_DungeonMus         =  32,
+	N_DungeonIntro       =  33,
+	N_OminousMus         =  34,
 	N_SealMus            =  35,
 	N_UnderGroundMus     =  36,
 	N_WayStationMus      =  37,
+	N_Bk112Mus           =  38,
+	N_Bk115Mus           =  39,
+	N_Bk116Mus           =  40,
+	N_Bk119Mus           =  41,
 	N_Angels             =  42,
+	N_SwordFightMus      =  44,
 	N_QueenMother        =  45,
+	N_WalkingMus         =  46,
+	N_RoyalDecreeMus     =  47,
 	N_TurnDiaryPage      =  65,
 	N_WallGrinds         =  67,
 	N_RushingWater       =  71,
@@ -56,7 +66,9 @@ enum {
 	N_McMornTipsTable    = 100,
 
 	// Section 2
-	N_BackgroundMus      =  16,
+	N_Bk203Music         =  32,
+	N_SlathanMus         =  34,
+	N_DreamMusic         =  35,
 	N_GuardCollapses     =  65,
 	N_TentaclesSplash    =  66,
 	N_LavaPlops          =  68,
@@ -65,6 +77,8 @@ enum {
 	N_PoolMonsterEatsPid =  72,
 
 	// Section 3
+	N_MazeMusic          =  32,
+	N_ToadRing           =  33,
 	N_ToadEatsPlayer     =  70,
 	N_RalphIsRed         =  71,
 	N_EveryoneScatter    =  72,
@@ -72,9 +86,14 @@ enum {
 
 	// Section 4
 	N_WindWhistles       =  29,
+	N_DeathFountain      =  32,
 	N_Bk404Music         =  33,
 	N_Bk406Music         =  35,
 	N_BellyDanceMusic    =  36,
+	N_Bk409Music         =  37,
+	N_Bk410Music         =  38,
+	N_RocAndSoulEgg      =  39,
+	N_Bk408Music         =  40,
 	N_GamePieceSnd       =  66,
 	N_FlameBurst         =  67,
 	N_SnakeHiss          =  68,
@@ -83,12 +102,34 @@ enum {
 	N_StepOnFloatingDisk =  77,
 	N_004CryOfDismay     =  78,
 
+	// Section 5
+	N_ShakMus            =  32,
+	N_Battle             =  33,
+	N_Hermit             =  34,
+
+	// Section 6
+	N_Bk603Music         =  32,
+	N_Bk604Music         =  33,
+	N_Bk605Music         =  34,
+	N_Bk605WithRope      =  35,
+	N_Bk606Music         =  36,
+	N_Bk609Music         =  37,
+	N_Bk612Music         =  38,
+	N_WaterFlows         =  39,
+	N_Bk614Music         =  40,
+	N_EerieSounds        =  96,
+
 	// Section 9/General
 	N_AllFade            =   1,
+	N_MusicFade          =   3,
+	N_NoiseOff           =   4,
+	N_NoiseFade          =   5,
+	N_BackgroundMus      =  16,
 	N_MusicBoxOn         =  17,
 	N_MusicBoxOff        =  18,
 	N_BlowBirdCall       =  30,
-	N_ListenToFlies      =  31
+	N_ListenToFlies      =  31,
+	N_WeddingMus         =  62
 };
 
 } // namespace Dragonsphere

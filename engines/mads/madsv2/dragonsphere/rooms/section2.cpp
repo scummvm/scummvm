@@ -19,12 +19,15 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/room.h"
+#include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section2.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -49,6 +52,41 @@ void section_2_interface() {
 }
 
 void section_2_music() {
+	if (sound_off) {
+		sound_queue(N_NoiseOff);
+	}
+
+	if (music_off) {
+		sound_queue(N_MusicFade);
+		goto done;
+	}
+
+	switch (new_room) {
+	case 201:
+		sound_play(N_BackgroundMus);
+		break;
+
+	case 203:
+		sound_play(N_Bk203Music);
+		break;
+
+	case 204:
+		sound_play(N_DreamMusic);
+		break;
+
+	case 202:
+	case 205:
+	case 206:
+		sound_play(N_SlathanMus);
+		break;
+
+	default:
+		sound_play(N_BackgroundMus);
+		break;
+	}
+
+done:
+	;
 }
 
 void section_2_constructor() {

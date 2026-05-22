@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/pal.h"
@@ -28,6 +29,7 @@
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section9.h"
 #include "mads/madsv2/dragonsphere/dragonsphere.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -53,13 +55,20 @@ void section_9_interface() {
 }
 
 void section_9_music() {
-	if (!g_engine->_soundFlag)
-		sound_queue(4);
+	if (sound_off) {
+		sound_queue(N_NoiseOff);
+	}
 
-	if (!g_engine->_musicFlag)
-		sound_queue(3);
-	else if (new_room == 909)
-		sound_play(62);
+	if (music_off) {
+		sound_queue(N_MusicFade);
+		goto done;
+	}
+
+	if (new_room == 909)
+		sound_play(N_WeddingMus);
+
+done:
+	;
 }
 
 void section_9_constructor() {

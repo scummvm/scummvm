@@ -19,12 +19,15 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/room.h"
+#include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section6.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -53,6 +56,72 @@ void section_6_interface() {
 }
 
 void section_6_music() {
+	if (sound_off) {
+		sound_queue(N_NoiseOff);
+	}
+
+	if (music_off) {
+		sound_queue(N_MusicFade);
+		goto done;
+	}
+
+	switch (new_room) {
+	case 601:
+		if (global[vines_have_player]) {
+			sound_play(N_EerieSounds);
+		} else {
+			sound_play(N_BackgroundMus);
+		}
+		break;
+
+	case 603:
+		sound_play(N_Bk603Music);
+		break;
+
+	case 604:
+		sound_play(N_Bk604Music);
+		break;
+
+	case 605:
+		if (global[rope_is_alive]) {
+			sound_play(N_Bk605WithRope);
+		} else {
+			sound_play(N_Bk605Music);
+		}
+		break;
+
+	case 606:
+	case 607:
+		sound_play(N_Bk606Music);
+		break;
+
+	case 609:
+		sound_play(N_Bk609Music);
+		break;
+
+	case 612:
+		sound_play(N_Bk612Music);
+		break;
+
+	case 613:
+		sound_play(N_WaterFlows);
+		break;
+
+	case 614:
+		if (global[wizard_dead]) {
+			sound_play(N_BackgroundMus);
+		} else {
+			sound_play(N_Bk614Music);
+		}
+		break;
+
+	default:
+		sound_play(N_BackgroundMus);
+		break;
+	}
+
+done:
+	;
 }
 
 void section_6_constructor() {

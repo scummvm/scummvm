@@ -19,12 +19,15 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/room.h"
+#include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -63,6 +66,96 @@ void section_1_interface() {
 }
 
 void section_1_music() {
+	if (sound_off) {
+		sound_play(N_NoiseOff);
+	}
+
+	if (music_off) {
+		sound_play(N_MusicFade);
+		goto done;
+	}
+
+	switch (new_room) {
+	case 104:
+		if (global[player_persona] == PLAYER_IS_PID) {
+			sound_play(N_SwordFightMus);
+		} else {
+			sound_play(N_BackgroundMus);
+		}
+		break;
+
+	case 106:
+		if (global[end_of_game]) {
+			sound_play(N_RoyalDecreeMus);
+		} else {
+			sound_play(N_BackgroundMus);
+		}
+		break;
+
+	case 108:
+		if (player_has_been_in_room(109)) {
+			sound_play(N_DungeonMus);
+		} else {
+			sound_play(N_DungeonIntro);
+		}
+		break;
+
+	case 109:
+		sound_play(N_DungeonMus);
+		break;
+
+	case 110:
+		sound_play(N_WayStationMus);
+		break;
+
+	case 111:
+		sound_play(N_OminousMus);
+		break;
+
+	case 112:
+		sound_play(N_Bk112Mus);
+		break;
+
+	case 113:
+		sound_play(N_NoiseFade);
+		if (global[player_is_seal]) {
+			sound_play(N_SealMus);
+		} else {
+			sound_play(N_UnderGroundMus);
+		}
+		break;
+
+	case 114:
+		sound_play(N_UnderGroundMus);
+		break;
+
+	case 115:
+		sound_play(N_Bk115Mus);
+		break;
+
+	case 116:
+		sound_play(N_Bk116Mus);
+		break;
+
+	case 117:
+		sound_play(N_SealMus);
+		break;
+
+	case 119:
+		sound_play(N_Bk119Mus);
+		break;
+
+	case 120:
+		sound_play(N_WalkingMus);
+		break;
+
+	default:
+		sound_play(N_BackgroundMus);
+		break;
+	}
+
+done:
+	;
 }
 
 void section_1_constructor() {
