@@ -266,12 +266,12 @@ struct AlfredSpecialAnimOffset {
  * Each Anim has its own speed, loopCount and movement!
  */
 struct Anim {
-	int nframes;
+	int nframes = 0;
 	int curFrame = 0;
 	int curLoop = 0;
-	byte **animData;
-	byte loopCount;
-	byte speed;
+	byte **animData = nullptr;
+	byte loopCount = 0;
+	byte speed = 0;
 	byte elpapsedFrames = 0;
 	uint16 movementFlags = 0;
 };
@@ -358,10 +358,10 @@ struct TalkingAnims {
 };
 
 struct Description {
-	byte itemId;
-	byte index;
+	byte itemId = 0;
+	byte index = 0;
 	bool isAction = false;
-	uint16 actionTrigger;
+	uint16 actionTrigger = 0;
 	Common::String text;
 };
 
@@ -458,19 +458,19 @@ struct Sticker {
 };
 
 struct PaletteAnimRotate {
-	byte startIndex;
-	byte paletteMode;
-	byte unknown;
-	byte delay;
-	byte unknownBytes[7];
-	byte flags;
+	byte startIndex = 0;
+	byte paletteMode = 0;
+	byte unknown = 0;
+	byte delay = 0;
+	byte unknownBytes[7] = {0};
+	byte flags = 0;
 	byte curFrameCount = 0;
 };
 
 struct PaletteAnim {
-	byte startIndex;
-	byte paletteMode;
-	byte data[10]; // Based on mode its a rotate or fade
+	byte startIndex = 0;
+	byte paletteMode = 0;
+	byte data[10] = {0}; // Based on mode its a rotate or fade
 	byte curFrame = 0;
 	byte tickCount = 0;
 };
@@ -516,9 +516,9 @@ struct ChoiceOption {
 };
 
 struct ResetEntry {
-	uint16 room;
-	uint16 offset;
-	byte dataSize;
+	uint16 room = 0;
+	uint16 offset = 0;
+	byte dataSize = 0;
 	byte *data = nullptr;
 };
 
