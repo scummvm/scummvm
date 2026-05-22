@@ -452,14 +452,15 @@ private:
 	int _menuFrameCounter;
 
 	// Options submenu state — RunGameOptionsMenu (0x14B42)
-	static const int kOptionsItemCount = 9; // 8 options + BACK
+	static const int kOptionsItemCount = 8;
 	bool _optionsActive;     // True when showing options instead of main menu
-	int _optionsSel;         // 0..8 selected option row
+	int _optionsSel;         // 0..7 selected option row
 	bool _levelSelectActive; // True when showing level-select submenu
 	int _levelSelectSel;     // 0=Level1 ... N-1=Back
 	int _startLevel;         // 1-based start level for "Start New Game"
 
 	// Per-option state (matching original RunGameOptionsMenu globals)
+	bool _optRookieOneFemale; // DAT_22c3: Rookie One gender
 	bool _optMusicEnabled;    // DAT_22b7: music on/off
 	bool _optSfxEnabled;      // DAT_22b8: sfx+voice on/off
 	bool _optTextEnabled;     // DAT_22b9: dialogue text on/off
