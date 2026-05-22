@@ -226,6 +226,11 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_liftSmooth = 0;
 	_posAccumX = 0;
 	_posAccumY = 0;
+	_turretFrameShipOffsetX = 0;
+	_turretFrameShipOffsetY = 0;
+	_turretFrameShipCenterX = kRA1CenterX;
+	_turretFrameShipCenterY = kRA1CenterY;
+	_turretFrameShipCenterValid = false;
 	_driftParam = 0;
 
 	// Original startup initializes the options difficulty/tuning index to 1.
