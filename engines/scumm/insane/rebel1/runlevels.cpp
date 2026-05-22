@@ -1600,7 +1600,8 @@ bool InsaneRebel1::runLevel14() {
 		_posAccumY = 0;
 		_perspectiveX = 0;
 		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
+		_levelGameplayPhase = 1;
+		_level14SuccessFrames = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -1620,6 +1621,8 @@ bool InsaneRebel1::runLevel14() {
 			_gameLatch5F = 0;
 			resetGameplayFlagsFromTuning();
 			_killCount = 0;
+			_levelGameplayPhase = 2;
+			_level14SuccessFrames = 0;
 
 			playInteractiveVideo("LVL14/L14PLAY2.ANM");
 			if (_vm->shouldQuit())

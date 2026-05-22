@@ -315,6 +315,18 @@ inline bool isLevel12DamageLatch(uint16 code) {
 	}
 }
 
+inline bool isLevel14Phase2DamageLatch(uint16 code) {
+	switch (code) {
+	case 0x0008:
+	case 0x000E:
+	case 0x0010:
+	case 0x0012:
+		return true;
+	default:
+		return false;
+	}
+}
+
 inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
 	switch (frame) {
 	case 0x006A:
@@ -471,6 +483,42 @@ bool InsaneRebel1::isFrameObjectPrimarySet(int16 objectId) const {
 
 	const byte bit = (byte)(0x80 >> (bitIndex & 7));
 	return (_frameObjectState[byteIndex] & bit) != 0;
+}
+
+// Port helpers for RunLevel14Flow. The original checks DAT_7614..7616 and
+// DAT_7605..7606 inline, then increments a local 60-frame completion counter.
+bool InsaneRebel1::areLevel14Phase1TargetsDestroyed() const {
+	return isFrameObjectPrimarySet(168) &&
+		isFrameObjectPrimarySet(169) &&
+		isFrameObjectPrimarySet(170) &&
+		isFrameObjectPrimarySet(171) &&
+		isFrameObjectPrimarySet(172) &&
+		isFrameObjectPrimarySet(173) &&
+		isFrameObjectPrimarySet(174) &&
+		isFrameObjectPrimarySet(175) &&
+		isFrameObjectPrimarySet(176) &&
+		isFrameObjectPrimarySet(177) &&
+		isFrameObjectPrimarySet(178) &&
+		isFrameObjectPrimarySet(179) &&
+		isFrameObjectPrimarySet(180) &&
+		isFrameObjectPrimarySet(181) &&
+		isFrameObjectPrimarySet(182) &&
+		isFrameObjectPrimarySet(183);
+}
+
+bool InsaneRebel1::areLevel14Phase2TargetsDestroyed() const {
+	return isFrameObjectPrimarySet(45) &&
+		isFrameObjectPrimarySet(46) &&
+		isFrameObjectPrimarySet(47) &&
+		isFrameObjectPrimarySet(48) &&
+		isFrameObjectPrimarySet(49) &&
+		isFrameObjectPrimarySet(50) &&
+		isFrameObjectPrimarySet(51) &&
+		isFrameObjectPrimarySet(52) &&
+		isFrameObjectPrimarySet(53) &&
+		isFrameObjectPrimarySet(54) &&
+		isFrameObjectPrimarySet(55) &&
+		isFrameObjectPrimarySet(56);
 }
 
 bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
@@ -1279,6 +1327,8 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
 	const bool level15FinalPhase = (_currentLevel == 14 && _levelGameplayPhase == 2);
+	const bool level14Phase1 = (_currentLevel == 13 && _levelGameplayPhase == 1);
+	const bool level14Phase2 = (_currentLevel == 13 && _levelGameplayPhase == 2);
 	bool level2AsteroidHit = false;
 
 	if (_gameLatch5D == 0xFFFF ||
@@ -1287,13 +1337,21 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		(_currentLevel == 5 && isLevel6DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 9 && isLevel10DamageLatch(_gameLatch5D)) ||
 		(_currentLevel == 11 && isLevel12DamageLatch(_gameLatch5D)) ||
+		(level14Phase2 && isLevel14Phase2DamageLatch(_gameLatch5D)) ||
 		(level15FinalPhase && isLevel15FinalDamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
-	if (_gameLatch5F != 0 &&
-		((_currentLevel == 3 || _currentLevel == 9 || _currentLevel == 11 || level15FinalPhase)
-			? (_vm->_rnd.getRandomNumber(2) == 0)
-			: (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)))
-		_damageFlags |= 0x80;
+	if (_gameLatch5F != 0 && !level14Phase2) {
+		bool randomProjectileHit = false;
+		if (level14Phase1)
+			randomProjectileHit = (_vm->_rnd.getRandomNumber(3) == 0);
+		else if (_currentLevel == 3 || _currentLevel == 9 || _currentLevel == 11 || level15FinalPhase)
+			randomProjectileHit = (_vm->_rnd.getRandomNumber(2) == 0);
+		else
+			randomProjectileHit = (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0);
+
+		if (randomProjectileHit)
+			_damageFlags |= 0x80;
+	}
 
 	if (_currentLevel == 5 && hasLevel6PerspectiveHazard((uint16)_frameCounter, _perspectiveX, _perspectiveY))
 		_damageFlags |= 0x20;
@@ -1490,6 +1548,15 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			}
 		}
 		if (_levelGameplayPhase == 1 && _frameCounter >= 0x564)
+			_vm->_smushVideoShouldFinish = true;
+	}
+
+	if (_currentLevel == 13 && (_levelGameplayPhase == 1 || _levelGameplayPhase == 2)) {
+		const bool targetsDestroyed = (_levelGameplayPhase == 1) ?
+			areLevel14Phase1TargetsDestroyed() : areLevel14Phase2TargetsDestroyed();
+		if (targetsDestroyed && _level14SuccessFrames < 0x3C)
+			_level14SuccessFrames++;
+		if (_level14SuccessFrames >= 0x3C)
 			_vm->_smushVideoShouldFinish = true;
 	}
 

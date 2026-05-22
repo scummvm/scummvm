@@ -175,6 +175,8 @@ private:
 	void updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
 	void applyFrameObjectHitState(int16 targetIdx);
 	bool isFrameObjectPrimarySet(int16 objectId) const;
+	bool areLevel14Phase1TargetsDestroyed() const;
+	bool areLevel14Phase2TargetsDestroyed() const;
 
 	// Shooting pipeline — FUN_1CCA0 (0x1CCA0) shot spawner,
 	// FUN_1C0EF (0x1C0EF) target detection, FUN_1C940 (0x1C940) shot processing
@@ -508,6 +510,7 @@ private:
 	int16 _shieldGenHitsA;   // Hits on _protectedTargetA
 	int16 _shieldGenHitsB;   // Hits on _protectedTargetB
 	int16 _level5SuccessFramesRemaining; // DOS RunLevel5Flow: 20-frame hold after the third kill
+	int16 _level14SuccessFrames; // RunLevel14Flow: 60-frame hold after required targets are destroyed
 
 	// Level 15 torpedo success latch. The original derives this from
 	// g_gameplayPhaseFlags bit 1, which is the primary object-state bit for object 7.
