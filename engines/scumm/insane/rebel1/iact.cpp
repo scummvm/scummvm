@@ -30,7 +30,8 @@ namespace Scumm {
 
 inline int16 applyRebel1AnalogDeadzone(int16 axisValue) {
 	const int deadZone = MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000;
-	return (ABS(axisValue) <= deadZone) ? 0 : axisValue;
+	const int axis = axisValue;
+	return (ABS(axis) <= deadZone) ? 0 : axisValue;
 }
 
 inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue, int16 axisMax) {
@@ -746,6 +747,21 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0) -
 		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0);
 
+	if (joyX != 0 || joyY != 0) {
+		_activeInputSource = kInputSourceJoystickDigital;
+
+		if (usedJoystick)
+			*usedJoystick = true;
+
+		inputX = joyX * 127;
+		inputY = joyY * 127;
+
+		if (_optControlsYFlip)
+			inputY = -inputY;
+
+		return;
+	}
+
 	if (_activeInputSource == kInputSourceJoystickAnalog) {
 		if (usedJoystick)
 			*usedJoystick = true;
@@ -764,12 +780,12 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		return;
 	}
 
-	if (_activeInputSource == kInputSourceJoystickDigital || joyX != 0 || joyY != 0) {
+	if (_activeInputSource == kInputSourceJoystickDigital) {
 		if (usedJoystick)
 			*usedJoystick = true;
 
-		inputX = joyX * 127;
-		inputY = joyY * 127;
+		inputX = 0;
+		inputY = 0;
 
 		if (_optControlsYFlip)
 			inputY = -inputY;
@@ -901,9 +917,17 @@ void InsaneRebel1::updateShipPhysics() {
 	// not raw mouse coordinates. Reuse the same centered-axis law here.
 	int16 inputX = 0;
 	int16 inputY = 0;
-	preprocessMouseAxes(inputX, inputY);
+	bool usedJoystick = false;
+	preprocessMouseAxes(inputX, inputY, &usedJoystick);
+	const int16 rawInputX = inputX;
+	const int16 rawInputY = inputY;
 	inputX = CLIP<int16>(inputX, -127, 127);
 	inputY = CLIP<int16>(inputY, -127, 127);
+	const char *inputSourceName = "mouse";
+	if (_activeInputSource == kInputSourceJoystickAnalog)
+		inputSourceName = "joystick-analog";
+	else if (_activeInputSource == kInputSourceJoystickDigital)
+		inputSourceName = "joystick-dpad";
 
 	// --- Step 2: Roll accumulator (_74CA) ---
 	// Normal mode: accumulate; mode 0x10: snap to input
@@ -991,6 +1015,18 @@ void InsaneRebel1::updateShipPhysics() {
 
 	if (_shipBank.numSprites > 0)
 		_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
+
+	debug(1, "RA1 ship input: frame=%d source=%s usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
+		_gameCounter, inputSourceName, usedJoystick,
+		rawInputX, rawInputY, inputX, inputY,
+		_joystickAxisX, _joystickAxisY,
+		_vm->getActionState(kScummActionInsaneLeft),
+		_vm->getActionState(kScummActionInsaneRight),
+		_vm->getActionState(kScummActionInsaneUp),
+		_vm->getActionState(kScummActionInsaneDown),
+		_rollAccum, _liftSmooth,
+		_shipPosX, _shipPosY, _perspectiveX, _perspectiveY, _shipDirIndex,
+		_currentLevel, _flyControlMode, _activeGameOpcode);
 
 	// --- Step 9: Damage/event bit synthesis + damage processing ---
 	// RA1 FUN_1B297-style latches from GAME opcodes:

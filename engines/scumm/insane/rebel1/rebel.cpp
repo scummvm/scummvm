@@ -263,6 +263,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_mouseRecentering = false;
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
+	_lastJoystickAxisEventTime = 0;
 	_level2JoystickFilteredX = 0;
 	_level2JoystickFilteredY = 0;
 	_activeInputSource = kInputSourceMouse;

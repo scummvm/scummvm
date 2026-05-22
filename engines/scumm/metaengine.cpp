@@ -1128,21 +1128,25 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act = new Action("RA1STICKUP", _("Stick up"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisUp);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1STICKDOWN", _("Stick down"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisDown);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1STICKLEFT", _("Stick left"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisLeft);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1STICKRIGHT", _("Stick right"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisRight);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1FIRE", _("Fire / select"));
