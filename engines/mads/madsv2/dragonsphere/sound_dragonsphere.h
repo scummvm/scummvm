@@ -336,6 +336,29 @@ public:
 	int command(int commandId, int param) override;
 };
 
+
+class ASound6 : public ASound {
+private:
+	typedef int (ASound6:: *CommandPtr)();
+	int command0();
+	int command1();
+	int command2();
+	int command3();
+	int command4();
+	int command5();
+	int command6();
+	int command7();
+	int command8();
+
+	static const CommandPtr _commandList[98];
+
+public:
+	ASound6(Audio::Mixer *mixer, OPL::OPL *opl);
+	~ASound6() override {
+	}
+	int command(int commandId, int param) override;
+};
+
 class ASound9 : public ASound {
 private:
 	typedef int (ASound9:: *CommandPtr)();
