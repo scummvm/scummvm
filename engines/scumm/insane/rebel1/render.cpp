@@ -641,6 +641,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderLevel13EnemyShots(renderBitmap, pitch, width, height);
 
 	renderExplosions(renderBitmap, pitch, width, height);
+	handleLevel14Play2BSplice(curFrame, maxFrame);
 
 	if (_currentLevel == 10)
 		renderLevel11HitsOverlay(renderBitmap, pitch, width, height);
@@ -739,6 +740,31 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	_prevTargetProx = _targetProximity;
 	_targetProximity = 0;
 	_lastHitTarget = 0;
+}
+
+// handleLevel14Play2BSplice — RunLevel14Flow (0x1ACD1) queues L14PLY2B.ANM
+// from inside the L14PLAY2 loop when the current clip reaches maxFrame - 0x0F.
+// This helper is a ScummVM-side extraction; the original keeps the PlayAnmFile
+// call inline and passes the old L14PLAY2 timeline frame to the ANM frame gate.
+void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
+	if (_currentLevel != 13 || _levelGameplayPhase != 2 || _level14Play2BSpliced ||
+			_level14Play2BSplicePending || maxFrame < 0x0F)
+		return;
+
+	if (curFrame != maxFrame - 0x0F)
+		return;
+
+	_level14Play2BSpliced = true;
+	_level14Play2BSplicePending = true;
+	_level14Play2BSpliceFrame = curFrame;
+
+	// Original after PlayAnmFile("LVL14/L14PLY2B.ANM", 0x860, maxFrame-0x0F, 1, -1):
+	//   g_extendedPhaseFlags &= 0xFA;
+	//   DAT_7604 &= 0xBF;
+	// In the port's object-state storage those are the first and third primary bytes.
+	_frameObjectState[0] &= 0xFA;
+	_frameObjectState[2] &= 0xBF;
+	_vm->_smushVideoShouldFinish = true;
 }
 
 // renderGostScorePopup — Per-kill score glyph from RenderGostOverlaySlots (0x1C9CD).

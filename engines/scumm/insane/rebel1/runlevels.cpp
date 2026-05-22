@@ -1558,7 +1558,8 @@ bool InsaneRebel1::runLevel13() {
 
 // Level 14 flow (RunLevel14Flow, 0x1ACB0): Surface Cannon
 // Two interactive phases: L14PLAY (targeting cannons) + L14PLAY2 (exhaust port approach).
-// Original: L14INTRO → L14PLAY → L14PLAY2 → L14END/L14NEW/L14DEATH
+// Original: L14INTRO → L14PLAY → L14PLAY2 → optional L14PLY2B splice
+//   → L14END/L14NEW/L14DEATH
 bool InsaneRebel1::runLevel14() {
 	debug(1, "InsaneRebel1: Running level 14");
 
@@ -1623,10 +1624,26 @@ bool InsaneRebel1::runLevel14() {
 			_killCount = 0;
 			_levelGameplayPhase = 2;
 			_level14SuccessFrames = 0;
+			_level14Play2BSplicePending = false;
+			_level14Play2BSpliced = false;
+			_level14Play2BSpliceFrame = 0;
 
 			playInteractiveVideo("LVL14/L14PLAY2.ANM");
 			if (_vm->shouldQuit())
 				return false;
+
+			if (_health >= 0 && _level14Play2BSplicePending) {
+				const int32 spliceFrame = _level14Play2BSpliceFrame;
+				_level14Play2BSplicePending = false;
+
+				// DOS queues L14PLY2B from the L14PLAY2 loop with startFrame
+				// equal to L14PLAY2's old timeline frame. L14PLY2B itself is the
+				// continuation clip, so the port starts it from frame 0 but uses
+				// the non-zero frame argument to preserve gameplay/video state.
+				playInteractiveVideo("LVL14/L14PLY2B.ANM", spliceFrame);
+				if (_vm->shouldQuit())
+					return false;
+			}
 		}
 
 		if (_health >= 0) {
@@ -1894,6 +1911,13 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
 		}
+	} else if (_currentLevel == 13 && resumingRoute) {
+		// RunLevel14Flow calls PlayAnmFile("LVL14/L14PLY2B.ANM", 0x860,
+		// oldMaxFrame-0x0F, 1, -1). That frame number belongs to L14PLAY2's
+		// timeline; L14PLY2B is already the continuation clip and starts at its
+		// matching lead-in frame. Preserve the current state, but do not seek.
+		debug(1, "RA1 L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
+			(int)startFrame);
 	}
 
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window

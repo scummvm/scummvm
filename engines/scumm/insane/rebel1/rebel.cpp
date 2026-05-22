@@ -306,6 +306,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_pendingRouteStartFrame = 0;
 	_pendingRouteCutoverFrame = -1;
 	_levelGameplayPhase = 0;
+	_level14Play2BSplicePending = false;
+	_level14Play2BSpliced = false;
+	_level14Play2BSpliceFrame = 0;
 	_level5SuccessFramesRemaining = 0;
 	_level14SuccessFrames = 0;
 	_menuActive = false;
