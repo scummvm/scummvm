@@ -841,6 +841,53 @@ void NoctropolisEngine::playInventoryStinger() {
 	((NoctropolisInventory *)_inventory)->_topItemIndex = 0;
 }
 
+void NoctropolisEngine::showNightdiveCredits() {
+	const Font *font = _fonts.getFont(1);
+
+	const Common::Path nightDive("DARK/nds.png");
+	if (!Common::File().exists(nightDive))
+		return;
+
+	_events->clearEvents();
+	_screen->fillRect(Common::Rect(345, 0, 640, 400), 0);
+
+	Font::_fontColors[1] = 0xff;
+	font->drawString(_screen, "NIGHT DIVE STUDIOS IS:", Common::Point(0x15b, 0x28));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "EXECUTIVE PRODUCER-", Common::Point(0x15b, 0x36));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "STEPHEN KICK", Common::Point(0x1e3, 0x44));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "CHIEF ENGINEER-", Common::Point(0x15b, 0x52));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "JAMES HALEY", Common::Point(0x1e3, 0x60));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "KEX RENDERING TECH-", Common::Point(0x15b, 0x6e));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "SAMUEL VILLARREAL", Common::Point(0x1e3, 0x7c));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "VIDEO PLAYER-", Common::Point(0x15b, 0x8a));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "BRENT ERICKSON", Common::Point(0x1e3, 0x98));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "QA LEAD-", Common::Point(0x15b, 0xa6));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "DANIEL GRAYSHON", Common::Point(0x1e3, 0xb4));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "PLAYTESTING-", Common::Point(0x15b, 0xc2));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "SAMUEL VILLARREAL", Common::Point(0x1e3, 0xd0));
+	Font::_fontColors[1] = 0xed;
+	font->drawString(_screen, "TECHNICAL ADVISOR-", Common::Point(0x15b, 0xde));
+	Font::_fontColors[1] = 0xee;
+	font->drawString(_screen, "BRENT ERICKSON", Common::Point(0x1e3, 0xec));
+
+	_events->_vbCount = 7200;
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+		_events->pollEventsAndWait();
+	}
+}
+
 Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
 	Common::Error result = AccessEngine::synchronize(s);
 
