@@ -1868,7 +1868,12 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 	_frameDataOffset = 0;
 	_maxChannelsUsed = 0;
 
-	if (version < kFileVer400) {
+	if (version < kFileVer100) {
+		_framesStreamSize = _framesStream->readUint32();
+		_numChannelsDisplayed = 24;
+
+		_firstFramePosition = _framesStream->pos();
+	} else if (version < kFileVer400) {
 		_framesStreamSize = _framesStream->readUint32();
 		_numChannelsDisplayed = 30;
 

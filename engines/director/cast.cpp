@@ -355,6 +355,16 @@ bool Cast::loadConfig() {
 		stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 	}
 	if (!stream) {
+		if (g_director->getVersion() < 100) {
+			// D1 and below did not have a config chunk, use defaults
+			debugC(1, kDebugLoading, "Cast::loadConfig(): No config chunk found, using defaults for cast libID %d (%s)", _castLibID, _castName.c_str());
+			_version = g_director->getVersion() == 20 ? kFileVer020 : kFileVer010;
+			_frameRate = 15;
+			_movieRect = Common::Rect(512, 342);
+			_bitdepth = 1;
+			return true;
+		}
+
 		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
 		return false;
 	}
@@ -484,7 +494,15 @@ bool Cast::loadConfig() {
 		debugC(1, kDebugLoading, "Cast::loadConfig(): field17: %d, field18: %d, field19: %d, movieDepth: %d, field22: %d field23: %d",
 			_field17, _field18, _field19, _movieDepth, _field22, _field23);
 	} else {
-		_movieDepth = _bitdepth; // D2 and below
+		// D2 and below
+
+		_field17 = 0;
+		_field18 = 0;
+		_field19 = 0;
+
+		_movieDepth = _bitdepth;
+		_field22 = 0;
+		_field23 = 0;
 	}
 
 	if (_version >= kFileVer400) {
