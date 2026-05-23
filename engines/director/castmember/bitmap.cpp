@@ -91,10 +91,11 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			_bitsPerPixel = stream.readUint16();
 			int clutId = stream.readSint16();
 
-			if (clutId <= 0) // builtin palette
+			if (clutId < 0) // builtin palette (negative IDs map to system palettes)
 				_clut = CastMemberID(clutId - 1, -1);
-			else
+			else if (clutId > 0)
 				_clut = CastMemberID(clutId, DEFAULT_CAST_LIB);
+			// clutId == 0 means "use movie's current palette"; leave _clut as null CastMemberID(0,0)
 		} else {
 			_bitsPerPixel = 1;
 			_clut = CastMemberID(kClutSystemMac, -1);
@@ -138,14 +139,30 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			}
 			int clutId = stream.readSint16();
 
-			if (clutId <= 0) // builtin palette
+			if (clutId < 0) // builtin palette (negative IDs map to system palettes)
 				_clut = CastMemberID(clutId - 1, -1);
 			else if (clutId > 0) {
-				if (clutCastLib == -1) {
+				if (clutCastLib <= 0) {
+					// clutCastLib <= 0 means no explicit cast lib was specified:
+					//   -1: ScummVM write convention for "same cast as bitmap"
+					//    0: Mac Director 6 convention for "primary/default palette cast"
+					// Try the bitmap's own cast first, then search all movie casts
+					// for a registered palette with this member ID.
 					clutCastLib = _cast->_castLibID;
+					Movie *paletteMovie = _cast->getMovie();
+					if (paletteMovie && !g_director->hasPalette(CastMemberID(clutId, clutCastLib))) {
+						for (auto &castPair : *paletteMovie->getCasts()) {
+							CastMemberID candidate(clutId, castPair._key);
+							if (g_director->hasPalette(candidate)) {
+								clutCastLib = castPair._key;
+								break;
+							}
+						}
+					}
 				}
 				_clut = CastMemberID(clutId, clutCastLib);
 			}
+			// clutId == 0 means "use movie's current palette"; leave _clut as null CastMemberID(0,0)
 			if (stream.pos() < stream.size()) {
 				// castSize > 26 bytes on D4, > 28 bytes on D5
 				stream.readUint16();
@@ -210,14 +227,30 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 				}
 				int clutId = stream.readSint16();
 
-				if (clutId <= 0) // builtin palette
+				if (clutId < 0) // builtin palette (negative IDs map to system palettes)
 					_clut = CastMemberID(clutId - 1, -1);
 				else if (clutId > 0) {
-					if (clutCastLib == -1) {
+					if (clutCastLib <= 0) {
+						// clutCastLib <= 0 means no explicit cast lib was specified:
+						//   -1: ScummVM write convention for "same cast as bitmap"
+						//    0: Mac Director 6 convention for "primary/default palette cast"
+						// Try the bitmap's own cast first, then search all movie casts
+						// for a registered palette with this member ID.
 						clutCastLib = _cast->_castLibID;
+						Movie *paletteMovie = _cast->getMovie();
+						if (paletteMovie && !g_director->hasPalette(CastMemberID(clutId, clutCastLib))) {
+							for (auto &castPair : *paletteMovie->getCasts()) {
+								CastMemberID candidate(clutId, castPair._key);
+								if (g_director->hasPalette(candidate)) {
+									clutCastLib = castPair._key;
+									break;
+								}
+							}
+						}
 					}
 					_clut = CastMemberID(clutId, clutCastLib);
 				}
+				// clutId == 0 means "use movie's current palette"; leave _clut as null CastMemberID(0,0)
 			} else {
 				_bitsPerPixel = 1;
 			}

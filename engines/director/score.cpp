@@ -760,7 +760,23 @@ void Score::update() {
 			bool prevDis = _disableGoPlayUpdateStage;
 			_disableGoPlayUpdateStage = true;
 
-			_movie->broadcastEvent(kEventPrepareFrame);
+			// In Director 6, the event order per frame is:
+			//   beginSprite → prepareFrame → (render) → enterFrame → exitFrame
+			// createScriptInstances normally runs inside updateSprites (rendering),
+			// which is too late for prepareFrame. We run it here first so that
+			// the frame script channel instance (_scriptChannelScriptInstance) and
+			// the sprite behavior _scriptInstanceList entries are populated when
+			// prepareFrame fires.
+			// The second call from updateSprites is harmless (guarded by _scriptInstanceList.size()).
+			createScriptInstances(_curFrameNumber);
+
+			// prepareFrame must be dispatched like enterFrame/exitFrame via
+			// processEvent(), NOT broadcastEvent(). broadcastEvent() only walks
+			// sprite channels that have behaviors and never reaches the frame
+			// script channel (_scriptChannelScriptInstance). Many D6 titles (e.g.
+			// TKKG2's "SA" audio behavior) put their prepareFrame handler on the
+			// frame script channel, so it must go through the kFrameHandler path.
+			_movie->processEvent(kEventPrepareFrame);
 
 			_disableGoPlayUpdateStage = prevDis;
 		}

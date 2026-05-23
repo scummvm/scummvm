@@ -1204,11 +1204,21 @@ void LB::b_getAt(int nargs) {
 	case ARRAY:
 	case POINT:
 	case RECT:
-		ARRBOUNDSCHECK(index, list);
+		// Original Director returns VOID for out-of-bounds access rather than erroring
+		if (index - 1 < 0 || index > (int)list.u.farr->arr.size()) {
+			debugC(3, kDebugLingoExec, "b_getAt: index out of bounds (%d of %d), returning VOID", index, (int)list.u.farr->arr.size());
+			g_lingo->pushVoid();
+			break;
+		}
 		g_lingo->push(list.u.farr->arr[index - 1]);
 		break;
 	case PARRAY:
-		ARRBOUNDSCHECK(index, list);
+		// Original Director returns VOID for out-of-bounds access rather than erroring
+		if (index - 1 < 0 || index > (int)list.u.parr->arr.size()) {
+			debugC(3, kDebugLingoExec, "b_getAt: index out of bounds (%d of %d), returning VOID", index, (int)list.u.parr->arr.size());
+			g_lingo->pushVoid();
+			break;
+		}
 		g_lingo->push(list.u.parr->arr[index - 1].v);
 		break;
 	default:

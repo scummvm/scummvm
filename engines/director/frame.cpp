@@ -860,8 +860,24 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 26:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
-			if (!g_director->hasPalette(_mainChannels.palette.paletteId))
-				_mainChannels.palette.paletteId = CastMemberID();
+			if (!g_director->hasPalette(_mainChannels.palette.paletteId)) {
+				// Mac Director may store castLib=0 as a "default palette cast" sentinel.
+				// Search all movie casts for a palette with this member number.
+				if (_mainChannels.palette.paletteId.castLib == 0 && _mainChannels.palette.paletteId.member > 0) {
+					Movie *palMovie = _score->getMovie();
+					if (palMovie) {
+						for (auto &castPair : *palMovie->getCasts()) {
+							CastMemberID candidate(_mainChannels.palette.paletteId.member, castPair._key);
+							if (g_director->hasPalette(candidate)) {
+								_mainChannels.palette.paletteId = candidate;
+								break;
+							}
+						}
+					}
+				}
+				if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+					_mainChannels.palette.paletteId = CastMemberID();
+			}
 			if (!_mainChannels.palette.paletteId.isNull())
 				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;
@@ -1271,8 +1287,24 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 120+2:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
-			if (!g_director->hasPalette(_mainChannels.palette.paletteId))
-				_mainChannels.palette.paletteId = CastMemberID();
+			if (!g_director->hasPalette(_mainChannels.palette.paletteId)) {
+				// Mac Director may store castLib=0 as a "default palette cast" sentinel.
+				// Search all movie casts for a palette with this member number.
+				if (_mainChannels.palette.paletteId.castLib == 0 && _mainChannels.palette.paletteId.member > 0) {
+					Movie *palMovie = _score->getMovie();
+					if (palMovie) {
+						for (auto &castPair : *palMovie->getCasts()) {
+							CastMemberID candidate(_mainChannels.palette.paletteId.member, castPair._key);
+							if (g_director->hasPalette(candidate)) {
+								_mainChannels.palette.paletteId = candidate;
+								break;
+							}
+						}
+					}
+				}
+				if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+					_mainChannels.palette.paletteId = CastMemberID();
+			}
 			if (!_mainChannels.palette.paletteId.isNull())
 				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;
@@ -1728,8 +1760,25 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 240+2:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
-			if (!g_director->hasPalette(_mainChannels.palette.paletteId))
-				_mainChannels.palette.paletteId = CastMemberID();
+			if (!g_director->hasPalette(_mainChannels.palette.paletteId)) {
+				// Mac Director 6 may store castLib=0 as a "default palette cast" sentinel.
+				// When the explicit ID fails, search all movie casts for a palette with
+				// this member number before giving up.
+				if (_mainChannels.palette.paletteId.castLib == 0 && _mainChannels.palette.paletteId.member > 0) {
+					Movie *palMovie = _score->getMovie();
+					if (palMovie) {
+						for (auto &castPair : *palMovie->getCasts()) {
+							CastMemberID candidate(_mainChannels.palette.paletteId.member, castPair._key);
+							if (g_director->hasPalette(candidate)) {
+								_mainChannels.palette.paletteId = candidate;
+								break;
+							}
+						}
+					}
+				}
+				if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+					_mainChannels.palette.paletteId = CastMemberID();
+			}
 			if (!_mainChannels.palette.paletteId.isNull())
 				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;

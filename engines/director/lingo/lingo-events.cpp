@@ -863,9 +863,30 @@ void Score::createScriptInstances(int frameNum) {
 		Channel *channel = _channels[i];
 		Sprite *sprite = channel->_sprite;
 
-		// The frame does not belong to the range
-		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame)
+		// The frame does not belong to the range.
+		// If the channel has not been set up yet (startFrame == -1), setClean() has not
+		// run for this frame yet — e.g. createScriptInstances was called early to allow
+		// prepareFrame to fire before rendering. Fall back to the current frame's sprite
+		// info to detect new sprites entering this frame.
+		if (channel->_startFrame == -1) {
+			if (i < (int)_currentFrame->_sprites.size()) {
+				Sprite *nextSprite = _currentFrame->_sprites[i];
+				if (nextSprite && nextSprite->_spriteInfo.startFrame == frameNum) {
+					// New sprite enters on this channel at this frame.
+					// Use it for behavior instantiation and pre-set the channel range
+					// so that subsequent calls (from updateSprites) find it correctly.
+					sprite = nextSprite;
+					channel->_startFrame = nextSprite->_spriteInfo.startFrame;
+					channel->_endFrame   = nextSprite->_spriteInfo.endFrame;
+				} else {
+					continue;
+				}
+			} else {
+				continue;
+			}
+		} else if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
 			continue;
+		}
 
 		// We create scriptInstance only for new sprites
 		if (channel->_scriptInstanceList.size() != 0)
