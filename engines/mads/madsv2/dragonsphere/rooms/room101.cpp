@@ -149,7 +149,7 @@ void room_101_init() {
 	ss[fx_door]        = kernel_load_series(kernel_name('x', 2), 0);
 	ss[fx_sconce_fire] = kernel_load_series(kernel_name('x', 3), 0);
 	ss[fx_draped_cape] = kernel_load_series(kernel_name('a', 5), 0);
-	ss[fx_open_door]   = kernel_load_series("PD", 0);
+	ss[fx_open_door]   = kernel_load_series("*KGRD_6", 0);
 
 	seq[fx_fire]        = kernel_seq_forward(ss[fx_fire],        false, 7, 0, 0, 0);
 	seq[fx_fire_shadow] = kernel_seq_forward(ss[fx_fire_shadow], false, 7, 0, 0, 0);
