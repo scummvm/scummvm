@@ -83,17 +83,15 @@ void DirectorSound::playFile(Common::String filename, int soundChannel) {
 	AudioFileDecoder af(filename);
 	Audio::AudioStream *sound = af.getAudioStream(false, false, DisposeAfterUse::YES);
 
-	if (!sound) {
-		debugC(1, kDebugSound, "DirectorSound::playFile(): channel %d, '%s' -> no audio stream decoded", soundChannel, filename.c_str());
+	// The file may have failed to open or decode (e.g. an empty/relative path);
+	// don't hand a null stream to the mixer.
+	if (!sound)
 		return;
-	}
 
 	cancelFade(soundChannel);
 	stopSound(soundChannel);
 
 	setChannelDefaultVolume(soundChannel);
-	debugC(1, kDebugSound, "DirectorSound::playFile(): channel %d, '%s', enabled: %d, volume: %d (default %d)",
-		soundChannel, filename.c_str(), _enable, getChannelVolume(soundChannel), g_director->_defaultVolume);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, sound, -1, getChannelVolume(soundChannel));
 	_channels[soundChannel]->originalRate = (int)_mixer->getChannelRate(_channels[soundChannel]->handle);
 	if (_channels[soundChannel]->pitchShiftPercent != 100) {

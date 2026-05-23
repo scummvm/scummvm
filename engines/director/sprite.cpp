@@ -368,6 +368,14 @@ bool Sprite::isActive() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
+	// D6+ sprites carry their scripts as behaviors rather than via _scriptId.
+	// respondsToMouse() already accounts for this; isActive() must too, otherwise
+	// `the clickOn` (which uses getActiveSpriteIDFromPos -> isActive) returns 0 for
+	// behavior-driven sprites even though they were clicked. TKKG2 relies on
+	// `the clickOn` to identify the clicked character sprite for character changes.
+	if (g_director->getVersion() >= 600 && _behaviors.size() > 0)
+		return true;
+
 	return (_movie->getScriptContext(kScoreScript, _scriptId) != nullptr)
 			|| (_movie->getScriptContext(kCastScript, _castId) != nullptr);
 }

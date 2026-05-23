@@ -3516,6 +3516,12 @@ void LB::b_sendAllSprites(int nargs) {
 	if (!score)
 		return;
 
+	// Ensure the current frame's sprite behaviors are instantiated before
+	// resolving the message (see b_sendSprite for the rationale). Otherwise a
+	// message sent during startMovie/initHotspots falls through to a me-less
+	// handler call, leaving `me` VOID.
+	score->createScriptInstances(score->getCurrentFrameNum());
+
 	bool anyHandled = false;
 	for (uint ch = 1; ch < score->_channels.size(); ch++) {
 		Channel *channel = score->_channels[ch];
@@ -3567,6 +3573,15 @@ void LB::b_sendSprite(int nargs) {
 	Channel *channel = score->getChannelById((uint16)spriteNum);
 	if (!channel)
 		return;
+
+	// The sprite's behaviors may not have been instantiated yet, e.g. when
+	// sendSprite is called from startMovie/initHotspots before the score has
+	// rendered the frame. Without an instance, the message would fall through
+	// to a plain (me-less) handler below, leaving `me` VOID and crashing on the
+	// first property access. Instantiate the current frame's behaviors first so
+	// the message reaches the real behavior instance with a valid `me`.
+	if (channel->_scriptInstanceList.empty() && channel->_sprite && !channel->_sprite->_behaviors.empty())
+		score->createScriptInstances(score->getCurrentFrameNum());
 
 	bool handled = false;
 	for (uint i = 0; i < channel->_scriptInstanceList.size(); i++) {

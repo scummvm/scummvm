@@ -2620,6 +2620,16 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		LC::call(_builtinFuncs[propName], 1, true);
 		return;
 	}
+	// Accessing a property on VOID (e.g. an uninitialised "me", or a getAt() that
+	// returned VOID for an out-of-bounds index) is not a fatal error in original
+	// Director: it simply yields VOID. Several TKKG behaviors rely on this (e.g.
+	// initHotspots -> isHot, where the hotspot list can contain/return VOID),
+	// otherwise scene initialisation aborts with an "Uncaught Lingo error".
+	if (obj.type == VOID) {
+		debugC(3, kDebugLingoExec, "Lingo::getObjectProp: property '%s' on VOID object, returning VOID", propName.c_str());
+		g_lingo->push(d);
+		return;
+	}
 	g_lingo->lingoError("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	g_lingo->push(d);
 }

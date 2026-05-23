@@ -1155,6 +1155,14 @@ void Score::setLastPalette() {
 			return;
 	}
 
+	// The resolved palette can still be the bogus {castLib 0, negative member}
+	// value (e.g. via the movie default palette, which is often {-1,0} for these
+	// scene movies). That is not a real palette; switching to it would display
+	// the scene with the wrong (Mac system) palette. Keep the palette currently
+	// in effect instead.
+	if (currentPalette.castLib == 0 && currentPalette.member < 0)
+		return;
+
 	// If the palette is defined in the frame and doesn't match
 	// the current one, set it
 	bool paletteChanged = (currentPalette != g_director->_lastPalette) && (!currentPalette.isNull());
@@ -1165,9 +1173,22 @@ void Score::setLastPalette() {
 
 		// Switch to a new palette immediately if:
 		// - this is color cycling mode, or
-		// - the cached palette ID is different (i.e. we jumped in the score)
-		if (_currentFrame->_mainChannels.palette.colorCycling || isCachedPalette)
+		// - the cached palette ID is different (i.e. we jumped in the score), or
+		// - this is a normal (non-fade) palette set from the frame.
+		//
+		// In all these cases the whole stage must be re-rendered against the new
+		// palette. Otherwise only the per-frame dirty rectangles (e.g. a moving
+		// character) get the new palette while the static background keeps the old
+		// one, which shows up as a brighter/mismatched rectangle around the moving
+		// sprite (observed in TKKG1/TKKG2 when a figure carrying its own palette
+		// "member 1 of castLib 2" walks into the scene).
+		if (_currentFrame->_mainChannels.palette.colorCycling || isCachedPalette
+				|| _currentFrame->_mainChannels.palette.normal) {
 			g_director->setPalette(g_director->_lastPalette);
+			// Force a full-stage redraw so the background is re-rendered with the
+			// new palette, not just the dirty rectangles.
+			_window->_resetScreen = true;
+		}
 	}
 
 }

@@ -860,6 +860,10 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 26:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
+			// See case 240+2: {castLib 0, negative member} is not a valid palette;
+			// drop it so it is neither used nor cached.
+			if (_mainChannels.palette.paletteId.castLib == 0 && _mainChannels.palette.paletteId.member < 0)
+				_mainChannels.palette.paletteId = CastMemberID();
 			if (!g_director->hasPalette(_mainChannels.palette.paletteId)) {
 				// Mac Director may store castLib=0 as a "default palette cast" sentinel.
 				// Search all movie casts for a palette with this member number.
@@ -1287,6 +1291,10 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 120+2:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
+			// See case 240+2: {castLib 0, negative member} is not a valid palette;
+			// drop it so it is neither used nor cached.
+			if (_mainChannels.palette.paletteId.castLib == 0 && _mainChannels.palette.paletteId.member < 0)
+				_mainChannels.palette.paletteId = CastMemberID();
 			if (!g_director->hasPalette(_mainChannels.palette.paletteId)) {
 				// Mac Director may store castLib=0 as a "default palette cast" sentinel.
 				// Search all movie casts for a palette with this member number.
@@ -1760,6 +1768,13 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 240+2:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
+			// A palette of {castLib 0, negative member} (e.g. {0,-1}) is not a valid
+			// reference (castLib 0 is no real cast; a genuine built-in uses castLib -1).
+			// hasPalette() would still accept it as the built-in Mac palette via its
+			// member<0 normalization. Treat it as "no palette" so it is neither used
+			// nor cached into scoreCachedPaletteId, keeping the scene's real palette.
+			if (_mainChannels.palette.paletteId.castLib == 0 && _mainChannels.palette.paletteId.member < 0)
+				_mainChannels.palette.paletteId = CastMemberID();
 			if (!g_director->hasPalette(_mainChannels.palette.paletteId)) {
 				// Mac Director 6 may store castLib=0 as a "default palette cast" sentinel.
 				// When the explicit ID fails, search all movie casts for a palette with
