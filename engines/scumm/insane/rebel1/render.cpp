@@ -773,14 +773,14 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 // The original does not draw a hardcoded pixel cross; it renders glyph markers
 // whose state depends on _targetProximity.
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
-	const char kRA1TorpedoIndicator[] = "<d";
+	const char kRA1TorpedoIndicator[] = "<<d";
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const int overlayY = ra1OverlayViewOffsetY(this);
 	if (markerBank.numSprites > 0) {
 		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
-		const bool altMarkerSet = (_gameplayFlags75ff & 0x2) != 0;
+		const bool altMarkerSet = isTorpedoModeActive();
 
 		// DAT_75FF bit 2 suppresses the fixed lock/readiness overlay.
 		if ((_gameplayFlags75ff & 0x4) == 0) {
@@ -879,6 +879,9 @@ void InsaneRebel1::renderGostScorePopup(byte *dst, int pitch, int width, int hei
 // renderGostSlots — FUN_1C9CD (0x1C9CD). Hit explosion animations at target positions.
 // Renders explosion sprites from bangBank + per-kill score popup glyphs.
 void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) {
+	if ((_gameplayFlags75fe & 0x10) != 0)
+		return;
+
 	if (_bangBank.numSprites <= 0) {
 		// Warn if there are active GOST slots but no bang sprites to render
 		for (int i = 0; i < kMaxGostSlots; i++) {
@@ -1013,7 +1016,7 @@ void InsaneRebel1::renderLevel13EnemyShots(byte *dst, int pitch, int width, int 
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
 	const char kRA1TorpedoTrailLeft[] = "<<&";
 	const char kRA1TorpedoTrailRight[] = "<<'";
-	const bool torpedoMode = (_gameplayFlags75ff & 0x2) != 0;
+	const bool torpedoMode = isTorpedoModeActive();
 
 	if (_laserBank.numSprites <= 0 && !torpedoMode)
 		return;

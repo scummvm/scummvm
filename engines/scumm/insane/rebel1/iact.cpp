@@ -1715,6 +1715,10 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	// g_gameplayPhaseFlags & 2 becomes set.
 	if (_currentLevel == 14 && _levelGameplayPhase == 2) {
 		if (_frameCounter == 0x18A) {
+			// Original writes the 16-bit flags word: g_hudDisableFlags |= 0x210.
+			// Low byte bit 0x10 suppresses normal hit feedback in the torpedo phase;
+			// high byte bit 0x02 switches targeting/shot rendering to torpedoes.
+			_gameplayFlags75fe |= 0x10;
 			_gameplayFlags75ff |= 2;
 			_protectedTargetA = 0x67;
 			_protectedTargetB = 0x69;
@@ -1730,6 +1734,18 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	debug(7, "RA1 GAME 0x0B: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
 		_shipPosX, _shipPosY, _avgInputX, _avgInputY,
 		_perspectiveX, _perspectiveY, _health, _screenFlash);
+}
+
+bool InsaneRebel1::isTorpedoModeActive() const {
+	if ((_gameplayFlags75ff & 0x2) == 0)
+		return false;
+
+	// The original high-byte flag is only intentionally armed by the level 4
+	// torpedo run and the level 15 exhaust-port run. Gate the port's rendering
+	// and shot behavior to those phases so stale route/retry state cannot turn
+	// ordinary laser sections into torpedo mode.
+	return (_currentLevel == 3 && _levelGameplayPhase == 2) ||
+		(_currentLevel == 14 && _levelGameplayPhase == 2);
 }
 
 
@@ -2289,14 +2305,15 @@ void InsaneRebel1::processShot() {
 
 	const int16 cursorX = getGameplayCursorX();
 	const int16 cursorY = getGameplayCursorY();
-	_shotSlots[slot].timer = (_gameplayFlags75ff & 0x2) ? 2 : 5;
+	const bool torpedoMode = isTorpedoModeActive();
+	_shotSlots[slot].timer = torpedoMode ? 2 : 5;
 	_shotSlots[slot].posX = cursorX;
 	_shotSlots[slot].posY = cursorY;
 	_shotSlots[slot].centerX = originX;
 	_shotSlots[slot].centerY = originY;
 	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
-	playSfx((_gameplayFlags75ff & 0x2) ? kSfxAlert : kSfxLaserShot, 127, 0);
+	playSfx(torpedoMode ? kSfxAlert : kSfxLaserShot, 127, 0);
 
 	if (effectiveOpcode == 0x09 || _currentLevel == 4) {
 		debug(1, "RA1 shot: opcode=0x%02x frame=%d slot=%d cursor=(%d,%d) origin=(%d,%d) dir=%d mode=%d",
@@ -2406,7 +2423,8 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						int16 hitCenterY = (top + bottom) / 2;
 						projectGameplayPoint(hitCenterX, hitCenterY);
 						const int sfxPan = CLIP((hitCenterX - kRA1CenterX) * 127 / kRA1CenterX, -127, 127);
-						playSfx(kSfxExplode, 127, sfxPan);
+						if ((_gameplayFlags75fe & 0x10) == 0)
+							playSfx(kSfxExplode, 127, sfxPan);
 
 						debug(3, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
 							targetIdx, gi, _gostSlots[gi].posX, _gostSlots[gi].posY,

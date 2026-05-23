@@ -193,6 +193,7 @@ private:
 
 	// Shooting pipeline — FUN_1CCA0 (0x1CCA0) shot spawner,
 	// FUN_1C0EF (0x1C0EF) target detection, FUN_1C940 (0x1C940) shot processing
+	bool isTorpedoModeActive() const;
 	void processShot();
 	void checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
 
