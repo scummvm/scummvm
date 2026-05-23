@@ -1011,12 +1011,18 @@ void Scene::load(bool fromSaveFile) {
 		_sceneState.currentScene.paletteID = 0;
 	}
 
-	_viewport.loadVideo(_sceneState.summary.videoFile,
-						_sceneState.currentScene.frameID,
-						_sceneState.currentScene.verticalOffset,
-						_sceneState.summary.panningType,
-						_sceneState.summary.videoFormat,
-						_sceneState.summary.palettes.size() ? _sceneState.summary.palettes[(byte)_sceneState.currentScene.paletteID] : Common::Path());
+	if (_sceneState.summary.videoFile != "NO_ART_SCENE") {
+		const Common::Path palettePath = !_sceneState.summary.palettes.empty() ?
+			_sceneState.summary.palettes[(byte)_sceneState.currentScene.paletteID] :
+			Common::Path();
+
+		_viewport.loadVideo(_sceneState.summary.videoFile,
+							_sceneState.currentScene.frameID,
+							_sceneState.currentScene.verticalOffset,
+							_sceneState.summary.panningType,
+							_sceneState.summary.videoFormat,
+							palettePath);
+	}
 
 	if (_viewport.getFrameCount() <= 1) {
 		_viewport.disableEdges(kLeft | kRight);
