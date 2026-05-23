@@ -418,6 +418,54 @@ void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	}
 }
 
+// ScummVM-side helper only: the original keeps this shot-sprite math inline in
+// several GAME handlers. It is collapsed here because the direction/lerp/render
+// sequence is identical for one-beam shot sprites.
+void renderAimedShotSprite(byte *dst, int pitch, int width, int height,
+		const RA1SpriteBank &laserBank, int startX, int startY, int targetX, int targetY,
+		int lerp) {
+	if (laserBank.numSprites <= 0)
+		return;
+
+	const int dir = ra1ShotDirection((int16)startX, (int16)startY, (int16)targetX, (int16)targetY);
+	const int sprIdx = MIN<int>(ABS(dir), laserBank.numSprites - 1);
+	const uint32 flags = 0x83 | ((dir < 0) ? 0x2000 : 0);
+	const int interpX = startX + (((targetX - startX) * lerp) >> 3);
+	const int interpY = startY + (((targetY - startY) * lerp) >> 3);
+
+	renderSpriteWithFlags(dst, pitch, width, height,
+		interpX, interpY, laserBank.sprites[sprIdx], flags);
+}
+
+void renderAimedShotPair(byte *dst, int pitch, int width, int height,
+		const RA1SpriteBank &laserBank, int start1X, int start1Y, int start2X, int start2Y,
+		int targetX, int targetY, int lerp) {
+	renderAimedShotSprite(dst, pitch, width, height, laserBank,
+		start1X, start1Y, targetX, targetY, lerp);
+	renderAimedShotSprite(dst, pitch, width, height, laserBank,
+		start2X, start2Y, targetX, targetY, lerp);
+}
+
+// ScummVM-side helper for the 0x0B fallback edge-beam path. The original keeps
+// the bucket lookup inline with the renderer, but both left/right beams share it.
+void renderBucketedShotSprite(byte *dst, int pitch, int width, int height,
+		const RA1SpriteBank &laserBank, int startX, int startY, int targetX, int targetY,
+		int lerp, int frame, uint32 flags) {
+	if (laserBank.numSprites <= 0)
+		return;
+
+	const int dir = ra1ShotDirection((int16)startX, (int16)startY, (int16)targetX, (int16)targetY);
+	const int sprIdx = frame + ra1ShotDirectionBucket(dir);
+	if (sprIdx < 0 || sprIdx >= laserBank.numSprites)
+		return;
+
+	const int interpX = startX + (((targetX - startX) * lerp) >> 3);
+	const int interpY = startY + (((targetY - startY) * lerp) >> 3);
+
+	renderSpriteWithFlags(dst, pitch, width, height,
+		interpX, interpY, laserBank.sprites[sprIdx], flags);
+}
+
 void InsaneRebel1::getTurretShipCenter(int16 &x, int16 &y) const {
 	if (_currentLevel == 0 && _flyControlMode == 2) {
 		// Port helper: original Level 1 part 2 keeps g_perspectiveX/Y at the
@@ -1021,16 +1069,10 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				const int srcY = _shotSlots[i].centerY;
 				const int dstX = _shotSlots[i].posX;
 				const int dstY = _shotSlots[i].posY;
-				const int dir = ra1ShotDirection((int16)srcX, (int16)srcY,
-					(int16)dstX, (int16)dstY);
-				const int sprIdx = MIN<int>(ABS(dir), _laserBank.numSprites - 1);
-				const uint32 flags = 0x83 | ((dir < 0) ? 0x2000 : 0);
 				const int onFootLerp = kOnFootShotLerp[timer];
-				const int interpX = srcX + (((dstX - srcX) * onFootLerp) >> 3);
-				const int interpY = srcY + (((dstY - srcY) * onFootLerp) >> 3);
 
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interpX, interpY, _laserBank.sprites[sprIdx], flags);
+				renderAimedShotSprite(dst, pitch, width, height, _laserBank,
+					srcX, srcY, dstX, dstY, onFootLerp);
 				continue;
 			}
 
@@ -1065,21 +1107,8 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				if (!haveEmitters)
 					continue;
 
-				const int dir1 = ra1ShotDirection((int16)start1X, (int16)start1Y, (int16)targetX, (int16)targetY);
-				const int dir2 = ra1ShotDirection((int16)start2X, (int16)start2Y, (int16)targetX, (int16)targetY);
-				const int sprIdx1 = MIN<int>(ABS(dir1), _laserBank.numSprites - 1);
-				const int sprIdx2 = MIN<int>(ABS(dir2), _laserBank.numSprites - 1);
-				const uint32 flags1 = 0x83 | ((dir1 < 0) ? 0x2000 : 0);
-				const uint32 flags2 = 0x83 | ((dir2 < 0) ? 0x2000 : 0);
-				const int interp1X = start1X + (((targetX - start1X) * lerp) >> 3);
-				const int interp1Y = start1Y + (((targetY - start1Y) * lerp) >> 3);
-				const int interp2X = start2X + (((targetX - start2X) * lerp) >> 3);
-				const int interp2Y = start2Y + (((targetY - start2Y) * lerp) >> 3);
-
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interp1X, interp1Y, _laserBank.sprites[sprIdx1], flags1);
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interp2X, interp2Y, _laserBank.sprites[sprIdx2], flags2);
+				renderAimedShotPair(dst, pitch, width, height, _laserBank,
+					start1X, start1Y, start2X, start2Y, targetX, targetY, lerp);
 				continue;
 			}
 
@@ -1099,17 +1128,6 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				const int start1Y = shipBaseY + emit.y1;
 				const int start2X = shipBaseX + emit.x2;
 				const int start2Y = shipBaseY + emit.y2;
-				const int dir1 = ra1ShotDirection((int16)start1X, (int16)start1Y, (int16)targetX, (int16)targetY);
-				const int dir2 = ra1ShotDirection((int16)start2X, (int16)start2Y, (int16)targetX, (int16)targetY);
-				const int sprIdx1 = MIN<int>(ABS(dir1), _laserBank.numSprites - 1);
-				const int sprIdx2 = MIN<int>(ABS(dir2), _laserBank.numSprites - 1);
-				const uint32 flags1 = 0x83 | ((dir1 < 0) ? 0x2000 : 0);
-				const uint32 flags2 = 0x83 | ((dir2 < 0) ? 0x2000 : 0);
-				const int interp1X = start1X + (((targetX - start1X) * lerp) >> 3);
-				const int interp1Y = start1Y + (((targetY - start1Y) * lerp) >> 3);
-				const int interp2X = start2X + (((targetX - start2X) * lerp) >> 3);
-				const int interp2Y = start2Y + (((targetY - start2Y) * lerp) >> 3);
-
 				if (_currentLevel == 4) {
 					debug(1, "RA1 op09 shotRender: frame=%d timer=%d shipBase=(%d,%d) target=(%d,%d) emit1=(%d,%d) emit2=(%d,%d) dir=%d variant=%d mode=%d",
 						_gameCounter, timer, shipBaseX, shipBaseY, targetX, targetY,
@@ -1117,10 +1135,8 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 						_shotSlots[i].variant, _flyControlMode);
 				}
 
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interp1X, interp1Y, _laserBank.sprites[sprIdx1], flags1);
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interp2X, interp2Y, _laserBank.sprites[sprIdx2], flags2);
+				renderAimedShotPair(dst, pitch, width, height, _laserBank,
+					start1X, start1Y, start2X, start2Y, targetX, targetY, lerp);
 				continue;
 			}
 
@@ -1159,25 +1175,10 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 
 			const int startLeftX = overlayX + leftStartX;
 			const int startRightX = overlayX + rightStartX;
-			const int dirLeft = ra1ShotDirection((int16)startLeftX, (int16)leftStartY, (int16)targetX, (int16)targetY);
-			const int dirRight = ra1ShotDirection((int16)startRightX, (int16)rightStartY, (int16)targetX, (int16)targetY);
-			const int bucketLeft = ra1ShotDirectionBucket(dirLeft);
-			const int bucketRight = ra1ShotDirectionBucket(dirRight);
-			const int sprIdxLeft = frame + bucketLeft;
-			const int sprIdxRight = frame + bucketRight;
-			const int interpLeftX = startLeftX + (((targetX - startLeftX) * lerp) >> 3);
-			const int interpLeftY = leftStartY + (((targetY - leftStartY) * lerp) >> 3);
-			const int interpRightX = startRightX + (((targetX - startRightX) * lerp) >> 3);
-			const int interpRightY = rightStartY + (((targetY - rightStartY) * lerp) >> 3);
-
-			if (sprIdxLeft >= 0 && sprIdxLeft < _laserBank.numSprites) {
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interpLeftX, interpLeftY, _laserBank.sprites[sprIdxLeft], leftFlags);
-			}
-			if (sprIdxRight >= 0 && sprIdxRight < _laserBank.numSprites) {
-				renderSpriteWithFlags(dst, pitch, width, height,
-					interpRightX, interpRightY, _laserBank.sprites[sprIdxRight], rightFlags);
-			}
+			renderBucketedShotSprite(dst, pitch, width, height, _laserBank,
+				startLeftX, leftStartY, targetX, targetY, lerp, frame, leftFlags);
+			renderBucketedShotSprite(dst, pitch, width, height, _laserBank,
+				startRightX, rightStartY, targetX, targetY, lerp, frame, rightFlags);
 		}
 	}
 }
