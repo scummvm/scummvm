@@ -32,6 +32,7 @@
 
 namespace Scumm {
 
+const int kRA1MainMenuItemCount = 6;
 const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
 const int kRA1LevelSelectRowsPerCol = 8;
 const int kRA1NumLevels = 15;
@@ -43,6 +44,11 @@ const int kRA1MenuFrameH = 0x0f;
 const int kRA1MenuRowH = 0x0f;
 const byte kRA1MenuFrameColor = 0xdf;
 const uint32 kRA1JoystickAxisEscGuardMs = 250;
+// Original picker traversal uses fixed max indices, not strlen(): passcodes
+// stop at 0x1d and high-score names stop at 0x37.
+const char kRA1TextEntryPickerChars[] = "^`_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const int kRA1PasscodePickerCount = 0x1d + 1;
+const int kRA1NamePickerCount = 0x37 + 1;
 
 static int getRebel1MenuAxisDirection(int16 axisValue) {
 	if (axisValue >= kRA1MenuAxisThreshold)
@@ -105,6 +111,68 @@ static int getRebel1MenuCenteredX(int textWidth) {
 	return (kRA1MenuLogicalWidth - textWidth) / 2;
 }
 
+static const char *getRebel1TextEntryPickerChars(bool) {
+	return kRA1TextEntryPickerChars;
+}
+
+static int getRebel1TextEntryPickerCount(bool passcodeMode) {
+	return passcodeMode ? kRA1PasscodePickerCount : kRA1NamePickerCount;
+}
+
+static int getRebel1PasscodeDifficulty(int passwordIndex) {
+	return (passwordIndex - 1) % 3;
+}
+
+static int getRebel1PasscodeStartLevel(int passwordIndex) {
+	// Original main-menu control flow groups passcodes by difficulty:
+	// 1-3 resume after chapter 3, 4-6 after chapter 6, 7-9 after chapter 10,
+	// 10-12 after chapter 14, and 13-15 jump to the final ending sequence.
+	switch ((passwordIndex - 1) / 3) {
+	case 0:
+		return 4;
+	case 1:
+		return 7;
+	case 2:
+		return 11;
+	case 3:
+		return 15;
+	case 4:
+		return kRA1NumLevels + 1;
+	default:
+		return 0;
+	}
+}
+
+static char normalizeRebel1PasscodeChar(char c) {
+	if (c >= 'a' && c <= 'z')
+		return c - ('a' - 'A');
+	return c;
+}
+
+static bool isRebel1TextEntryChar(bool passcodeMode, char c) {
+	if (passcodeMode) {
+		c = normalizeRebel1PasscodeChar(c);
+		return c >= 'A' && c <= 'Z';
+	}
+
+	return c == ' ' || c == '_' ||
+		(c >= 'A' && c <= 'Z') ||
+		(c >= 'a' && c <= 'z');
+}
+
+static void appendRebel1TextEntryChar(char *buffer, int bufferSize, int maxChars, bool passcodeMode, char c) {
+	if (!buffer || bufferSize <= 0)
+		return;
+
+	c = passcodeMode ? normalizeRebel1PasscodeChar(c) : c;
+	const int len = strlen(buffer);
+	if (len >= maxChars || len >= bufferSize - 1)
+		return;
+
+	buffer[len] = c;
+	buffer[len + 1] = '\0';
+}
+
 static void drawRebel1MenuFrame(byte *dst, int pitch, int width, int height, int x, int y, int w) {
 	if (!dst || width <= 0 || height <= 0)
 		return;
@@ -124,9 +192,134 @@ static void drawRebel1MenuFrame(byte *dst, int pitch, int width, int height, int
 	}
 }
 
+void InsaneRebel1::beginTextEntry(bool passcodeMode) {
+	_textEntryActive = true;
+	_textEntryPasscodeMode = passcodeMode;
+	_textEntryDone = false;
+	_textEntryCanceled = false;
+	_textEntryPickerIndex = 3; // First letter in the original picker string.
+	_textEntryPickerOffsetX = 0;
+	// The DOS buffers include a leading '<' font marker and cap strlen() at 8.
+	_textEntryMaxChars = 8;
+	_textEntryBuffer[0] = '\0';
+
+	if (passcodeMode && _maxChapterUnlocked > 0) {
+		const char *password = getChapterCompletePassword(_maxChapterUnlocked);
+		if (password) {
+			Common::strlcpy(_textEntryBuffer, password, sizeof(_textEntryBuffer));
+			_textEntryPickerIndex = 1;
+		}
+	}
+}
+
+void InsaneRebel1::finishTextEntry(bool canceled) {
+	_textEntryCanceled = canceled;
+	if (!canceled)
+		_textEntryDone = true;
+	_textEntryActive = false;
+	_vm->_smushVideoShouldFinish = true;
+}
+
+void InsaneRebel1::selectTextEntryChar() {
+	if (!_textEntryActive)
+		return;
+
+	const char *pickerChars = getRebel1TextEntryPickerChars(_textEntryPasscodeMode);
+	const int pickerCount = getRebel1TextEntryPickerCount(_textEntryPasscodeMode);
+	if (_textEntryPickerIndex < 0 || _textEntryPickerIndex >= pickerCount)
+		return;
+
+	const char ch = pickerChars[_textEntryPickerIndex];
+	if (ch == '^') {
+		const int len = strlen(_textEntryBuffer);
+		if (len > 0)
+			_textEntryBuffer[len - 1] = '\0';
+	} else if (ch == '`') {
+		finishTextEntry(false);
+	} else if (ch == '_') {
+		appendRebel1TextEntryChar(_textEntryBuffer, sizeof(_textEntryBuffer),
+			_textEntryMaxChars, _textEntryPasscodeMode, ' ');
+	} else {
+		appendRebel1TextEntryChar(_textEntryBuffer, sizeof(_textEntryBuffer),
+			_textEntryMaxChars, _textEntryPasscodeMode, ch);
+	}
+}
+
+bool InsaneRebel1::handleTextEntryAction(ScummAction action) {
+	if (!_textEntryActive)
+		return false;
+
+	const int pickerCount = getRebel1TextEntryPickerCount(_textEntryPasscodeMode);
+	switch (action) {
+	case kScummActionInsaneLeft:
+		_textEntryPickerIndex = (_textEntryPickerIndex + pickerCount - 1) % pickerCount;
+		_textEntryPickerOffsetX = -7;
+		return true;
+	case kScummActionInsaneRight:
+		_textEntryPickerIndex = (_textEntryPickerIndex + 1) % pickerCount;
+		_textEntryPickerOffsetX = 7;
+		return true;
+	case kScummActionInsaneAttack:
+		selectTextEntryChar();
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool InsaneRebel1::handleTextEntryKey(const Common::Event &event) {
+	if (!_textEntryActive || event.type != Common::EVENT_KEYDOWN)
+		return false;
+
+	const int pickerCount = getRebel1TextEntryPickerCount(_textEntryPasscodeMode);
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_LEFT:
+		_textEntryPickerIndex = (_textEntryPickerIndex + pickerCount - 1) % pickerCount;
+		_textEntryPickerOffsetX = -7;
+		return true;
+	case Common::KEYCODE_RIGHT:
+		_textEntryPickerIndex = (_textEntryPickerIndex + 1) % pickerCount;
+		_textEntryPickerOffsetX = 7;
+		return true;
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		finishTextEntry(false);
+		return true;
+	case Common::KEYCODE_ESCAPE:
+		finishTextEntry(true);
+		return true;
+	case Common::KEYCODE_BACKSPACE: {
+		const int len = strlen(_textEntryBuffer);
+		if (len > 0)
+			_textEntryBuffer[len - 1] = '\0';
+		return true;
+	}
+	case Common::KEYCODE_SPACE:
+		appendRebel1TextEntryChar(_textEntryBuffer, sizeof(_textEntryBuffer),
+			_textEntryMaxChars, _textEntryPasscodeMode, ' ');
+		return true;
+	default:
+		break;
+	}
+
+	char ch = (char)event.kbd.ascii;
+	if (ch == '\0')
+		ch = (char)event.kbd.keycode;
+	if (isRebel1TextEntryChar(_textEntryPasscodeMode, ch)) {
+		appendRebel1TextEntryChar(_textEntryBuffer, sizeof(_textEntryBuffer),
+			_textEntryMaxChars, _textEntryPasscodeMode, ch);
+		return true;
+	}
+
+	return true;
+}
+
 bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
 	if (!_menuActive || _highScoresActive)
 		return false;
+
+	if (_textEntryActive)
+		return handleTextEntryAction(action);
 
 	if (_levelSelectActive) {
 		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
@@ -185,10 +378,10 @@ bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
 
 	switch (action) {
 	case kScummActionInsaneUp:
-		_menuSelection = (_menuSelection + 4) % 5;
+		_menuSelection = (_menuSelection + kRA1MainMenuItemCount - 1) % kRA1MainMenuItemCount;
 		return true;
 	case kScummActionInsaneDown:
-		_menuSelection = (_menuSelection + 1) % 5;
+		_menuSelection = (_menuSelection + 1) % kRA1MainMenuItemCount;
 		return true;
 	case kScummActionInsaneAttack:
 		_menuConfirmed = true;
@@ -350,6 +543,9 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		}
 	}
 
+	if (_menuActive && _textEntryActive && event.type == Common::EVENT_KEYDOWN)
+		return handleTextEntryKey(event);
+
 	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
 		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
 		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
@@ -432,11 +628,11 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_w:
-			_menuSelection = (_menuSelection + 4) % 5;
+			_menuSelection = (_menuSelection + kRA1MainMenuItemCount - 1) % kRA1MainMenuItemCount;
 			return true;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_s:
-			_menuSelection = (_menuSelection + 1) % 5;
+			_menuSelection = (_menuSelection + 1) % kRA1MainMenuItemCount;
 			return true;
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
@@ -449,12 +645,13 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		case Common::KEYCODE_3:
 		case Common::KEYCODE_4:
 		case Common::KEYCODE_5:
+		case Common::KEYCODE_6:
 			_menuSelection = event.kbd.keycode - Common::KEYCODE_1;
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		case Common::KEYCODE_ESCAPE:
-			_menuSelection = 4;
+			_menuSelection = kRA1MainMenuItemCount - 1;
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -555,6 +752,11 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	auto drawTitleText = [&](int x, int y, const char *text) {
 		drawFontBankString(dst, pitch, width, height, x, y, text);
 	};
+
+	if (_textEntryActive) {
+		renderTextEntryOverlay(dst, pitch, width, height);
+		return;
+	}
 
 	if (_highScoresActive) {
 		// --- TOP PILOTS high score display ---
@@ -662,9 +864,10 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	}
 
 	// --- Main menu ---
-	const char *kMenuItems[5] = {
+	const char *kMenuItems[kRA1MainMenuItemCount] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
+		"ENTER PASSCODE",
 		"LEVEL SELECT",
 		"CONTINUE DEMO",
 		"EXIT TO DOS"
@@ -676,7 +879,7 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	drawTitleText(titleX, 30, "MAIN MENU");
 
 	// Draw menu items centered horizontally
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < kRA1MainMenuItemCount; i++) {
 		const int textW = getTalkTextWidth(kMenuItems[i]);
 		const int textX = getRebel1MenuCenteredX(textW);
 		const int y = 0x3c + i * kRA1MenuRowH;
@@ -687,6 +890,45 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 			drawRebel1MenuFrame(dst, pitch, width, height,
 				kRA1MenuFrameX, (i + 1) * kRA1MenuRowH + 0x2c, kRA1MenuFrameW);
 	}
+}
+
+void InsaneRebel1::renderTextEntryOverlay(byte *dst, int pitch, int width, int height) {
+	auto makeTalkText = [](const char *text) {
+		Common::String out("<");
+		out += text;
+		return out;
+	};
+	auto drawCenteredTalkText = [&](int y, const char *text) {
+		Common::String styled = makeTalkText(text);
+		const int textW = getFontBankStringWidth(styled.c_str());
+		drawFontBankString(dst, pitch, width, height,
+			getRebel1MenuCenteredX(textW), y, styled.c_str());
+	};
+	auto drawCenteredRawChar = [&](int centerX, int y, char ch) {
+		char text[2] = { ch, '\0' };
+		const int textW = getFontBankStringWidth(text);
+		drawFontBankString(dst, pitch, width, height, centerX - textW / 2, y, text);
+	};
+
+	if (_textEntryPasscodeMode) {
+		drawCenteredTalkText(0x4b, "ENTER PASSCODE");
+		drawCenteredTalkText(0x5f, _textEntryBuffer);
+	} else {
+		char scoreText[40];
+		Common::sprintf_s(scoreText, "SCORE: %ld", (long)_score);
+		drawCenteredTalkText(0x37, scoreText);
+		drawCenteredTalkText(0x4b, "NEW HIGH SCORE");
+		drawCenteredTalkText(0x5f, _textEntryBuffer);
+	}
+
+	const char *pickerChars = getRebel1TextEntryPickerChars(_textEntryPasscodeMode);
+	const int pickerCount = getRebel1TextEntryPickerCount(_textEntryPasscodeMode);
+	const int prevIndex = (_textEntryPickerIndex + pickerCount - 1) % pickerCount;
+	const int nextIndex = (_textEntryPickerIndex + 1) % pickerCount;
+	drawCenteredRawChar(0x91 + _textEntryPickerOffsetX, 0x6e, pickerChars[prevIndex]);
+	drawCenteredRawChar(0xa0 + _textEntryPickerOffsetX, 0x6e, pickerChars[_textEntryPickerIndex]);
+	drawCenteredRawChar(0xaf + _textEntryPickerOffsetX, 0x6e, pickerChars[nextIndex]);
+	_textEntryPickerOffsetX = 0;
 }
 
 int InsaneRebel1::runMainMenu() {
@@ -702,13 +944,84 @@ int InsaneRebel1::runMainMenu() {
 		_menuActive = false;
 
 		if (_vm->shouldQuit())
-			return 5;
+			return kRA1MainMenuItemCount;
 
 		if (_menuConfirmed)
 			return _menuSelection + 1;
 	}
 
-	return 5;
+	return kRA1MainMenuItemCount;
+}
+
+int InsaneRebel1::runPasscodeEntryDialog() {
+	beginTextEntry(true);
+
+	while (!_vm->shouldQuit() && !_textEntryDone && !_textEntryCanceled) {
+		_menuActive = true;
+		_menuConfirmed = false;
+		_menuFrameCounter = 0;
+		clearVideoBuffer();
+		playCinematic("OPEN/O1OPTION.ANM");
+		_menuActive = false;
+	}
+
+	if (_vm->shouldQuit() || _textEntryCanceled)
+		return 0;
+
+	for (int i = 1; i <= kRA1NumLevels; i++) {
+		const char *password = getChapterCompletePassword(i);
+		if (password && !scumm_stricmp(_textEntryBuffer, password)) {
+			const int targetLevel = getRebel1PasscodeStartLevel(i);
+			if (targetLevel == 0)
+				return 0;
+
+			_difficulty = getRebel1PasscodeDifficulty(i);
+			_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, i);
+			if (targetLevel <= kRA1NumLevels)
+				_startLevel = targetLevel;
+			debug(1, "RA1 passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+				i, password, _difficulty, targetLevel);
+			return targetLevel;
+		}
+	}
+
+	debug(1, "RA1 passcode rejected: '%s'", _textEntryBuffer);
+	return 0;
+}
+
+bool InsaneRebel1::runHighScoreNameEntry() {
+	int slot = 0;
+	while (slot < kHighScoreCount && _highScores[slot].score >= _score)
+		slot++;
+	if (slot >= kHighScoreCount)
+		return false;
+
+	for (int i = kHighScoreCount - 1; i > slot; i--)
+		_highScores[i] = _highScores[i - 1];
+
+	_highScores[slot].score = _score;
+	_highScores[slot].difficulty = _difficulty;
+	Common::strlcpy(_highScores[slot].name, "<", sizeof(_highScores[slot].name));
+	_highScoreEntryIndex = slot;
+
+	beginTextEntry(false);
+	while (!_vm->shouldQuit() && !_textEntryDone && !_textEntryCanceled) {
+		_menuActive = true;
+		_menuConfirmed = false;
+		_menuFrameCounter = 0;
+		clearVideoBuffer();
+		playCinematic("OPEN/O1OPTION.ANM");
+		_menuActive = false;
+	}
+
+	Common::String storedName("<");
+	storedName += _textEntryBuffer;
+	Common::strlcpy(_highScores[slot].name, storedName.c_str(), sizeof(_highScores[slot].name));
+	_highScores[slot].difficulty = _difficulty;
+	_highScoreEntryIndex = -1;
+	debug(1, "RA1 high score inserted: slot=%d name=%s score=%ld difficulty=%d",
+		slot, _highScores[slot].name, (long)_highScores[slot].score, _highScores[slot].difficulty);
+	return true;
 }
 
 void InsaneRebel1::runOptionsMenu() {

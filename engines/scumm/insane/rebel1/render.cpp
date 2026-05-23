@@ -1274,13 +1274,20 @@ void InsaneRebel1::beginChapterSummaryOverlay(int revealOffsetFromEnd, int stopO
 	}
 }
 
-// The DOS table is stored as 15 XOR-0xAA encoded, 20-byte passcode slots at
-// DS:0x00A4. RunChapterCompleteSummaryScreen indexes it with passwordIndex-1.
+// ScummVM keeps the passcodes in clear text. The DOS table is XOR-0xAA
+// encoded in 15 20-byte slots at DS:0x00A4.
 static const char *const kChapterCompletePasswords[] = {
 	"FALCON", "BIGGS", "ACKBAR", "ANOAT", "KAIBURR",
 	"FORNAX", "YUZZEM", "MYNOCK", "BESPIN", "BRIGIA",
 	"DAGOBAH", "KESSEL", "GREEDO", "MIMBAN", "ORGANA"
 };
+
+const char *InsaneRebel1::getChapterCompletePassword(int passwordIndex) const {
+	if (passwordIndex < 1 || passwordIndex > (int)ARRAYSIZE(kChapterCompletePasswords))
+		return nullptr;
+
+	return kChapterCompletePasswords[passwordIndex - 1];
+}
 
 // drawChapterSummaryOverlay — RunChapterCompleteSummaryScreen (0x15E42), shared by
 // the RA1 runlevel flows that call it. This helper is a ScummVM-side extraction;
@@ -1325,12 +1332,13 @@ void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, in
 	}
 
 	if (_chapterSummary.passwordIndex > 0 &&
-			_chapterSummary.passwordIndex <= ARRAYSIZE(kChapterCompletePasswords) &&
 			revealBaseFrame + 10 < curFrame) {
-		char passwordText[40];
-		Common::sprintf_s(passwordText, "Password: %s",
-			kChapterCompletePasswords[_chapterSummary.passwordIndex - 1]);
-		drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x73, passwordText);
+		const char *password = getChapterCompletePassword(_chapterSummary.passwordIndex);
+		if (password) {
+			char passwordText[40];
+			Common::sprintf_s(passwordText, "Password: %s", password);
+			drawCenteredRebel1String(this, dst, pitch, width, height, centerX, 0x73, passwordText);
+		}
 	}
 }
 
