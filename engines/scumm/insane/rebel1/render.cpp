@@ -467,24 +467,18 @@ void renderBucketedShotSprite(byte *dst, int pitch, int width, int height,
 }
 
 void InsaneRebel1::getTurretShipCenter(int16 &x, int16 &y) const {
-	if (_currentLevel == 0 && _flyControlMode == 2) {
-		// Port helper: original Level 1 part 2 keeps g_perspectiveX/Y at the
-		// screen center and draws the overhead ship at g_shipOffsetX/Y from
-		// FUN_1E6A7. In this port _perspectiveX/Y stores the clamped camera
-		// offset passed to SetCameraOffset(), so recover the ship center from
-		// the movement accumulators instead.
-		if (_turretFrameShipCenterValid) {
-			x = _turretFrameShipCenterX;
-			y = _turretFrameShipCenterY;
-		} else {
-			x = (int16)(kRA1CenterX + (int16)(_posAccumX >> 8));
-			y = (int16)(kRA1CenterY + (int16)(_posAccumY >> 8));
-		}
+	// Port helper: original FUN_1E6A7 keeps g_perspectiveX/Y at screen center
+	// and draws the ship at g_perspective + g_shipOffset. In this port
+	// _perspectiveX/Y stores the clamped camera offset passed to SetCameraOffset(),
+	// so recover the ship center from the movement accumulators instead.
+	if (_turretFrameShipCenterValid) {
+		x = _turretFrameShipCenterX;
+		y = _turretFrameShipCenterY;
 		return;
 	}
 
-	x = (int16)(kRA1CenterX + (_perspectiveX - 0x20));
-	y = (int16)(kRA1CenterY + (_perspectiveY - 0x17));
+	x = (int16)(kRA1CenterX + (int16)(_posAccumX >> 8));
+	y = (int16)(kRA1CenterY + (int16)(_posAccumY >> 8));
 }
 
 // procPreRendering — Sets viewport window offset (FUN_224FD at 0x224FD).
@@ -689,18 +683,16 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderGostSlots(renderBitmap, pitch, width, height);
 		renderTargeting(renderBitmap, pitch, width, height);
 
-		// FUN_1D79C (GAME 0x0A) owns the cursor center in stage-2 turret mode.
+		// FUN_1D79C (GAME 0x0A) owns the cursor center in turret/combat mode.
 		// The preceding overlay/shot pass uses the previous frame's cursor; the
 		// handler then publishes the next cursor position from the current
-		// pre-physics ship offset. In L1PLAY2 the following 0x08 handler updates
-		// the camera afterward, so source-space anchors and the final viewport
-		// crop intentionally observe different moments in the frame.
+		// pre-physics ship offset. The following 0x08 handler updates the camera
+		// afterward, so source-space anchors and the final viewport crop
+		// intentionally observe different moments in the frame.
 		if (turretTargetingMode) {
-			const bool useTurretFrameCenter =
-				(_currentLevel == 0 && _flyControlMode == 2 && _turretFrameShipCenterValid);
-			const int16 shipOffsetX = useTurretFrameCenter ?
+			const int16 shipOffsetX = _turretFrameShipCenterValid ?
 				_turretFrameShipOffsetX : (int16)(_posAccumX >> 8);
-			const int16 shipOffsetY = useTurretFrameCenter ?
+			const int16 shipOffsetY = _turretFrameShipCenterValid ?
 				_turretFrameShipOffsetY : (int16)(_posAccumY >> 8);
 			_shipPosX = (int16)(kRA1CenterX + shipOffsetX);
 			_shipPosY = (int16)((kRA1CenterY + shipOffsetY - 0x23) - (shipOffsetY >> 3));

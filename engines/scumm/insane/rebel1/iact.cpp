@@ -739,10 +739,10 @@ void InsaneRebel1::updateFlightVariantCursor() {
 
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
 // ScummVM's absolute 320x200 mouse space.
-// Preserve the DOS bias/offset persistence and one-frame jump latch from
-// FUN_231BE. Original-input mode also emulates FUN_23115's DOS mouse recenter;
-// gameplay hides and locks the cursor, so this follows the original without
-// exposing a visible pointer jump.
+// Original-input mode preserves the DOS bias/offset persistence and one-frame
+// jump latch from FUN_231BE, plus FUN_23115's DOS mouse recenter behavior.
+// Enhanced controls are ScummVM-only: they bypass the original recentering state
+// and expose a stable absolute centered mouse axis instead.
 void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick) {
 	if (usedJoystick)
 		*usedJoystick = false;
@@ -810,52 +810,64 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
+
+	if (_optEnhancedControls) {
+		_mouseVirtualValid = false;
+		_mouseBiasLatch = false;
+		_mouseBiasX = 0;
+		_mouseBiasY = 0;
+		_mousePrevBiasX = 0;
+		_mousePrevBiasY = 0;
+
+		inputX = (int16)CLIP<int32>(((int32)(logicalX - kRA1CenterX) * 127) / kRA1CenterX, -127, 127);
+		inputY = (int16)CLIP<int32>(((int32)(logicalY - kRA1CenterY) * 127) / kRA1CenterY, -127, 127);
+
+		if (_optControlsYFlip)
+			inputY = -inputY;
+
+		return;
+	}
+
 	int16 rawX = (int16)(logicalX << 1);
 	int16 rawY = logicalY;
 
-	if (!_optEnhancedControls) {
-		if (!_mouseVirtualValid) {
-			_mouseVirtualRawX = rawX;
-			_mouseVirtualRawY = rawY;
-			_mouseVirtualValid = true;
-		} else {
-			_mouseVirtualRawX = (int16)CLIP<int>(
-				_mouseVirtualRawX + ((logicalX - _mouseVirtualPrevLogicalX) << 1),
-				-32768, 32767);
-			_mouseVirtualRawY = (int16)CLIP<int>(
-				_mouseVirtualRawY + (logicalY - _mouseVirtualPrevLogicalY),
-				-32768, 32767);
-		}
-		_mouseVirtualPrevLogicalX = logicalX;
-		_mouseVirtualPrevLogicalY = logicalY;
-
-		rawX = _mouseVirtualRawX;
-		rawY = _mouseVirtualRawY;
-
-		if (rawX < kRA1DosMouseSafeLeft || rawX > kRA1DosMouseSafeRight ||
-			rawY < kRA1DosMouseSafeTop || rawY > kRA1DosMouseSafeBottom) {
-			_mouseOffsetX = (int16)CLIP<int>(
-				(int)_mouseOffsetX + rawX - kRA1DosMouseCenterX, -32768, 32767);
-			_mouseOffsetY = (int16)CLIP<int>(
-				(int)_mouseOffsetY + rawY - kRA1DosMouseCenterY, -32768, 32767);
-			rawX = kRA1DosMouseCenterX;
-			rawY = kRA1DosMouseCenterY;
-			_mouseVirtualRawX = rawX;
-			_mouseVirtualRawY = rawY;
-			_mouseVirtualPrevLogicalX = kRA1CenterX;
-			_mouseVirtualPrevLogicalY = kRA1CenterY;
-			_vm->_mouse.x = kRA1CenterX;
-			_vm->_mouse.y = kRA1CenterY;
-			smush_warpMouse(kRA1CenterX, kRA1CenterY, -1);
-			debug(2, "RA1 original input virtual recenter: offset=(%d,%d) mouse=(%d,%d)",
-				_mouseOffsetX, _mouseOffsetY, logicalX, logicalY);
-		}
+	if (!_mouseVirtualValid) {
+		_mouseVirtualRawX = rawX;
+		_mouseVirtualRawY = rawY;
+		_mouseVirtualValid = true;
 	} else {
-		_mouseVirtualValid = false;
+		_mouseVirtualRawX = (int16)CLIP<int>(
+			_mouseVirtualRawX + ((logicalX - _mouseVirtualPrevLogicalX) << 1),
+			-32768, 32767);
+		_mouseVirtualRawY = (int16)CLIP<int>(
+			_mouseVirtualRawY + (logicalY - _mouseVirtualPrevLogicalY),
+			-32768, 32767);
+	}
+	_mouseVirtualPrevLogicalX = logicalX;
+	_mouseVirtualPrevLogicalY = logicalY;
+
+	rawX = _mouseVirtualRawX;
+	rawY = _mouseVirtualRawY;
+
+	if (rawX < kRA1DosMouseSafeLeft || rawX > kRA1DosMouseSafeRight ||
+		rawY < kRA1DosMouseSafeTop || rawY > kRA1DosMouseSafeBottom) {
+		_mouseOffsetX = (int16)CLIP<int>(
+			(int)_mouseOffsetX + rawX - kRA1DosMouseCenterX, -32768, 32767);
+		_mouseOffsetY = (int16)CLIP<int>(
+			(int)_mouseOffsetY + rawY - kRA1DosMouseCenterY, -32768, 32767);
+		rawX = kRA1DosMouseCenterX;
+		rawY = kRA1DosMouseCenterY;
+		_mouseVirtualRawX = rawX;
+		_mouseVirtualRawY = rawY;
+		_mouseVirtualPrevLogicalX = kRA1CenterX;
+		_mouseVirtualPrevLogicalY = kRA1CenterY;
+		_vm->_mouse.x = kRA1CenterX;
+		_vm->_mouse.y = kRA1CenterY;
+		smush_warpMouse(kRA1CenterX, kRA1CenterY, -1);
+		debug(2, "RA1 original input virtual recenter: offset=(%d,%d) mouse=(%d,%d)",
+			_mouseOffsetX, _mouseOffsetY, logicalX, logicalY);
 	}
 
-	const int16 normX = (int16)(((int32)(logicalX - kRA1CenterX) * 127) / 160);
-	const int16 normY = (int16)(((int32)(logicalY - kRA1CenterY) * 127) / 100);
 	int16 biasX = (int16)((rawX + _mouseOffsetX - kRA1DosMouseCenterX) >> 2);
 	int16 biasY = (int16)((rawY + _mouseOffsetY - kRA1DosMouseCenterY) >> 1);
 
@@ -879,12 +891,6 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		biasY = _mousePrevBiasY;
 		_mouseBiasLatch = true;
 	}
-
-	// In original mouse mode, FUN_2309C centers the joystick contribution when
-	// joystick is disabled, so FUN_231BE's mouse output is just the bias term.
-	// Enhanced mode keeps ScummVM's pre-existing centered mouse axis plus bias.
-	const int16 scaledX = _optEnhancedControls ? (int16)(normX + biasX) : biasX;
-	const int16 scaledY = _optEnhancedControls ? (int16)(normY + biasY) : biasY;
 
 	_mouseBiasX = biasX;
 	_mouseBiasY = biasY;
@@ -931,8 +937,8 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		_mouseOffsetY -= 4;
 	}
 
-	inputX = CLIP<int16>(scaledX, -0xA0, 0xA0);
-	inputY = CLIP<int16>(scaledY, -127, 127);
+	inputX = CLIP<int16>(biasX, -0xA0, 0xA0);
+	inputY = CLIP<int16>(biasY, -127, 127);
 
 	// Controls Y-flip option (DAT_22be in original)
 	if (_optControlsYFlip)
@@ -1260,18 +1266,16 @@ void InsaneRebel1::updateTurretPhysics() {
 		_damageCooldown = 0;
 	}
 
-	// GAME 0x0A appears before 0x08 in L1PLAY2.ANM. The original therefore
+	// GAME 0x0A appears before 0x08 in turret/combat ANMs. The original
 	// draws shots/targeting and the ship from this pre-physics center, then
 	// updates the camera offset at the end of 0x08 for the final viewport copy.
 	const int16 preMoveOffsetX = (int16)(_posAccumX >> 8);
 	const int16 preMoveOffsetY = (int16)(_posAccumY >> 8);
-	if (_currentLevel == 0 && _flyControlMode == 2) {
-		_turretFrameShipOffsetX = preMoveOffsetX;
-		_turretFrameShipOffsetY = preMoveOffsetY;
-		_turretFrameShipCenterX = (int16)(kRA1CenterX + preMoveOffsetX);
-		_turretFrameShipCenterY = (int16)(kRA1CenterY + preMoveOffsetY);
-		_turretFrameShipCenterValid = true;
-	}
+	_turretFrameShipOffsetX = preMoveOffsetX;
+	_turretFrameShipOffsetY = preMoveOffsetY;
+	_turretFrameShipCenterX = (int16)(kRA1CenterX + preMoveOffsetX);
+	_turretFrameShipCenterY = (int16)(kRA1CenterY + preMoveOffsetY);
+	_turretFrameShipCenterValid = true;
 
 	// Damage gate from FUN_1E6A7.
 	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer <= 0) {
@@ -1316,9 +1320,9 @@ void InsaneRebel1::updateTurretPhysics() {
 		const int16 rawInputX = inputX;
 		const int16 rawInputY = inputY;
 
-		if (usedJoystick && _optEnhancedControls) {
-			// First-person turret/cockpit stages are noticeably more sensitive on
-			// joystick than on mouse, so damp only the joystick-driven input here.
+		if (usedJoystick && _optEnhancedControls && _flyControlMode == 2) {
+			// ScummVM-only concession for Level 1 part 2. The original 0x08 handler
+			// uses raw axes directly; do not damp Level 13's surface controls.
 			inputX /= 2;
 			inputY /= 2;
 		}
