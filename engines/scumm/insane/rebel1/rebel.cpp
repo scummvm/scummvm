@@ -40,115 +40,115 @@ namespace Scumm {
 // 21 sub-levels x 3 difficulties x 13 fields
 // Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill, time, levelPts, bonus, flags
 const int16 kTuningTable[21][3][13] = {
-	// Sub-level 0: "1A" (Flight Training - canyon flight)
+	// Sub-level 0: "1A" (Flight Training part 1)
 	{
 		{ 100, 100,  60, 110,   0,   0,  15,   0,   0,   5,  500,  100, 2048 },  // Easy
 		{ 100, 105,  60, 115,   0,   0,  25,   0,   0,   5, 1000,  200, 2048 },  // Normal
 		{ 105, 110,  65, 120,   0,   0,  30,   0,   0,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Sub-level 1: "1B" (Flight Training - asteroid flight)
+	// Sub-level 1: "1B" (Flight Training part 2)
 	{
 		{ 100,  16, 120,   0,   7,   0,  15,   0,  25,   5,  500,  100, 3072 },  // Easy
 		{ 100,  18, 120,   0,   5,   0,  20,   0,  50,   5, 1000,  200, 3072 },  // Normal
 		{ 100,  20, 150,   0,   1,   0,  25,   0,  75,  10, 1500,  500, 3074 },  // Hard
 	},
-	// Sub-level 2: "2" (Planet Kolaador)
+	// Sub-level 2: "2" (Asteroid Field Training)
 	{
 		{   0,   0,   0,   0,   4,  15,  25,   0,  25,  10,  500,  100, 2048 },  // Easy
 		{   0,   0,   0,   0,   2,  18,  30,   0,  50,  10, 1000,  200, 2048 },  // Normal
 		{   0,   0,   0,   0,   0,  20,  35,   0,  75,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Sub-level 3: "3" (Star Destroyer Attack)
+	// Sub-level 3: "3" (Planet Kolaador)
 	{
 		{  70, 100, 150,  90,   0,   0,  20,   0,   0,   5, 1000,  100, 2048 },  // Easy
 		{  72, 105, 155, 105,   0,   0,  25,   0,   0,   5, 2000,  200, 2048 },  // Normal
 		{  75, 110, 160, 110,   0,   0,  28,   0,   0,  10, 3000,  500, 2050 },  // Hard
 	},
-	// Sub-level 4: "4A" (Tatooine Attack)
+	// Sub-level 4: "4A" (Star Destroyer Attack part 1)
 	{
 		{   0,   0,   0,   0,   2,  11,   0,   4,  25,   5,  500,  750, 2048 },  // Easy
 		{   0,   0,   0,   0,   1,  25,   0,   6,  50,   5, 1000, 1500, 2048 },  // Normal
 		{   0,   0,   0,   0,   1,  28,   0,   6,  75,  10, 1500, 2000, 2050 },  // Hard
 	},
-	// Sub-level 5: "4B" (Tatooine Attack part 2)
+	// Sub-level 5: "4B" (Star Destroyer Attack part 2)
 	{
 		{   0,   0,   0,   0,   3,  20,   0,   2,  50,   5,  500,  750, 2064 },  // Easy
 		{   0,   0,   0,   0,   1,  25,   0,   5, 100,   5, 1000, 1500, 2064 },  // Normal
 		{   0,   0,   0,   0,   1,  28,   0,   6, 200,  10, 1500, 2000, 2064 },  // Hard
 	},
-	// Sub-level 6: "5A" (Imperial Probe Droids - speeder)
+	// Sub-level 6: "5A" (Tatooine Attack part 1)
 	{
 		{  70, 150,  50,  25,  10,   0,  20,   0,  25,   5,  500,   15, 3072 },  // Easy
 		{  72, 165, 155,  30,   8,   0,  30,   0,  50,   5, 1000,   30, 3072 },  // Normal
 		{ 110, 190,  55,  65,   3,   0,  33,   0,  75,  10, 1500,   75, 3074 },  // Hard
 	},
-	// Sub-level 7: "5B" (Imperial Walkers)
+	// Sub-level 7: "5B" (Tatooine Attack part 2)
 	{
 		{   0,   0,   0,   0,   5,   0,   0,   2,  25,   0,  500,   15, 2048 },  // Easy
 		{   0,   0,   0,   0,   3,   0,   0,   5,  50,   5, 1000,   30, 2048 },  // Normal
 		{   0,   0,   0,   0,   1,   0,   0,   6,  75,  10, 1500,   75, 2050 },  // Hard
 	},
-	// Sub-level 8: "6" (Stormtroopers)
+	// Sub-level 8: "6" (Asteroid Field Chase)
 	{
 		{   0,   0,   0,   0,   2,  20,  20,   0,  25,   5,  500,  100, 2048 },  // Easy
 		{   0,   0,   0,   0,   1,  25,  30,   0,  50,   5, 1000,  200, 2048 },  // Normal
 		{   0,   0,   0,   0,   0,  28,  33,   0,  75,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Sub-level 9: "7" (Protect Rebel Transport)
+	// Sub-level 9: "7" (Imperial Probe Droids)
 	{
 		{ 100, 150, 150,  25,   7,   0,  12,   2,  50,   5,  500,  100, 3072 },  // Easy
 		{ 100, 160, 200,  35,   4,   0,  30,   4, 100,   5, 1000,  200, 3072 },  // Normal
 		{ 100, 180, 250,  50,   3,   0,  33,   5, 100,  10, 1500,  500, 3074 },  // Hard
 	},
-	// Sub-level 10: "8" (Death Star surface)
+	// Sub-level 10: "8" (Imperial Walkers)
 	{
 		{   0,   0,   0,   0,   0,   0,  30,   0,  25,   0, 1000,  100, 3074 },  // Easy
 		{   0,   0,   0,   0,   0,   0,  36,   0,  50,   0, 2000,  200, 3074 },  // Normal
 		{   0,   0,   0,   0,   0,   0,  39,   0,  75,   0, 3000,  500, 3074 },  // Hard
 	},
-	// Sub-level 11: "9A" (Death Star turrets part 1)
+	// Sub-level 11: "9A" (Stormtroopers part 1)
 	{
 		{   0,   0,   0,   0,   4,   0,   0,  15,  25,   0, 1000,  100, 3074 },  // Easy
 		{   0,   0,   0,   0,   2,   0,   0,  25,  50,   0, 2000,  200, 3078 },  // Normal
 		{   0,   0,   0,   0,   0,   0,   0,  30,  75,   0, 3000,  500, 3078 },  // Hard
 	},
-	// Sub-level 12: "9B" (Death Star turrets part 2)
+	// Sub-level 12: "9B" (Stormtroopers part 2)
 	{
 		{   0,   0,   0,   0,   0,   0,   0,  15,  25,   0, 1000,  100, 3098 },  // Easy
 		{   0,   0,   0,   0,   0,   0,   0,  25,  50,   0, 2000,  200, 3098 },  // Normal
 		{   0,   0,   0,   0,   0,   0,   0,  30,  75,   0, 3000,  500, 3098 },  // Hard
 	},
-	// Sub-level 13: "10" (Death Star trench approach)
+	// Sub-level 13: "10" (Protect Rebel Transport)
 	{
 		{   0,   0,   0,   0,   3,  10,   0,   5,  25,   5,  500,  200, 2048 },  // Easy
 		{   0,   0,   0,   0,   1,  16,   0,   5,  50,   5, 1000,  400, 2048 },  // Normal
 		{   0,   0,   0,   0,   0,  18,   0,   7,  75,  10, 1500, 1000, 2050 },  // Hard
 	},
-	// Sub-level 14: "11" (Death Star trench - speeder)
+	// Sub-level 14: "11" (Yavin Training)
 	{
 		{  70, 150, 150,  25,  12,   0,  30,   0,  50,   5,  500,  200, 3072 },  // Easy
 		{  72, 165, 155,  30,   7,   0,  36,   0,  50,   5, 1000,  400, 3072 },  // Normal
 		{  75, 170, 160,  33,   3,   0,  39,   0,  75,  10, 1500, 1000, 3074 },  // Hard
 	},
-	// Sub-level 15: "12" (Death Star trench run)
+	// Sub-level 15: "12" (TIE Attack)
 	{
 		{   0,   0,   0,   0,   4,  13,   0,   5,  25,   5,  500,  100, 2048 },  // Easy
 		{   0,   0,   0,   0,   2,  20,   0,   5,  50,   5, 1000,  200, 2048 },  // Normal
 		{   0,   0,   0,   0,   0,  23,   0,   5,  75,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Sub-level 16: "13" (Asteroid belt chase)
+	// Sub-level 16: "13" (Death Star Surface)
 	{
 		{ 100,  16, 120,   0,  20,   0,  35,   8,  75,   5,  500,  100, 3072 },  // Easy
 		{ 100,  18, 120,   0,  18,   0,  36,  10, 100,   5, 1000,  200, 3072 },  // Normal
 		{ 100,  20, 150,   0,  15,   0,  39,  12, 200,  10, 1500,  500, 3074 },  // Hard
 	},
-	// Sub-level 17: "14A" (Star Destroyer attack 2 part 1)
+	// Sub-level 17: "14A" (Surface Cannon part 1)
 	{
 		{   0,   0,   0,   0,   0,  20,  35,   8,  25,   0, 1000,  100, 2048 },  // Easy
 		{   0,   0,   0,   0,   0,  27,  36,  12,  50,   0, 2000,  200, 2048 },  // Normal
 		{   0,   0,   0,   0,   0,  28,  39,  12,  75,   0, 3000,  500, 2050 },  // Hard
 	},
-	// Sub-level 18: "14B" (Star Destroyer attack 2 part 2)
+	// Sub-level 18: "14B" (Surface Cannon part 2)
 	{
 		{   0,   0,   0,   0,  10,  20,  35,   8,  25,   0, 1000,  100, 2048 },  // Easy
 		{   0,   0,   0,   0,   5,  25,  36,  10,  50,   0, 2000,  200, 2048 },  // Normal

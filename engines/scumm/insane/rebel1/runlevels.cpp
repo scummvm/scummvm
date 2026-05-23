@@ -613,7 +613,7 @@ bool InsaneRebel1::runLevel4() {
 
 	_currentLevel = 3;
 	loadLevelSprites(4);
-	// DOS RunLevel4Flow launches L4PLAY1/2.ANM with gameplay selector 4.
+	// DOS RunLevel4Flow launches L4PLAY1.ANM with selector 4 and L4PLAY2.ANM with selector 5.
 	loadTuningForLevel(4);
 
 	beginLevelTitleOverlay(3);
@@ -622,6 +622,7 @@ bool InsaneRebel1::runLevel4() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
+		loadTuningForLevel(4);
 		_flyControlMode = 1;
 		_health = kMaxHealth;
 		_damageFlags = 0;
@@ -661,6 +662,7 @@ bool InsaneRebel1::runLevel4() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
+			loadTuningForLevel(5);
 			resetGameplayFlagsFromTuning();
 			_killCount = 0;
 			_levelGameplayPhase = 2;
@@ -902,7 +904,8 @@ bool InsaneRebel1::runLevel7() {
 
 	_currentLevel = 6;
 	loadLevelSprites(7);
-	loadTuningForLevel(6);
+	// DOS RunLevel7Flow starts L7PLAY1.ANM with initLevelFlag=9.
+	loadTuningForLevel(9);
 
 	beginLevelTitleOverlay(6);
 	playCinematic("LVL7/L7INTRO.ANM");
@@ -1124,7 +1127,8 @@ bool InsaneRebel1::runLevel9() {
 
 	_currentLevel = 8;
 	loadLevelSprites(9);
-	loadTuningForLevel(8);
+	// DOS RunLevel9Flow alternates selectors 0x0B and 0x0C across its playable routes.
+	loadTuningForLevel(0x0B);
 
 	beginLevelTitleOverlay(8);
 	playCinematic("LVL9/L9INTRO.ANM");
@@ -1132,6 +1136,7 @@ bool InsaneRebel1::runLevel9() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
+		loadTuningForLevel(0x0B);
 		_flyControlMode = 0;
 		_health = kMaxHealth;
 		_damageFlags = 0;
@@ -1173,6 +1178,7 @@ bool InsaneRebel1::runLevel9() {
 		_avgInputY = 0;
 
 		while (!_vm->shouldQuit()) {
+			loadTuningForLevel(0x0B);
 			playInteractiveVideo("LVL9/L9PLAY1.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1185,6 +1191,7 @@ bool InsaneRebel1::runLevel9() {
 
 			_shipPosX = kRA1CenterX;
 			_posAccumX = 0;
+			loadTuningForLevel(0x0C);
 			playInteractiveVideo("LVL9/L9PLAY2.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1208,6 +1215,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_vm->shouldQuit())
 				return false;
 
+			loadTuningForLevel(0x0B);
 			playInteractiveVideo("LVL9/L9PLAY3A.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1228,6 +1236,7 @@ bool InsaneRebel1::runLevel9() {
 
 			_shipPosX = kRA1CenterX;
 			_posAccumX = 0;
+			loadTuningForLevel(0x0C);
 			playInteractiveVideo("LVL9/L9PLAY4.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1245,6 +1254,7 @@ bool InsaneRebel1::runLevel9() {
 				if (_vm->shouldQuit())
 					return false;
 
+				loadTuningForLevel(0x0B);
 				playInteractiveVideo("LVL9/L9PLAY5.ANM");
 				if (_vm->shouldQuit())
 					return false;
@@ -1257,6 +1267,7 @@ bool InsaneRebel1::runLevel9() {
 
 				_shipPosX = kRA1CenterX;
 				_posAccumX = 0;
+				loadTuningForLevel(0x0C);
 				playInteractiveVideo("LVL9/L9PLAY6.ANM");
 				if (_vm->shouldQuit())
 					return false;
@@ -1281,6 +1292,7 @@ bool InsaneRebel1::runLevel9() {
 					return false;
 			}
 
+			loadTuningForLevel(0x0B);
 			playInteractiveVideo("LVL9/L9PLAY7.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1311,7 +1323,8 @@ bool InsaneRebel1::runLevel10() {
 
 	_currentLevel = 9;
 	loadLevelSprites(10);
-	loadTuningForLevel(9);
+	// DOS RunLevel10Flow starts L10PLAY.ANM with initLevelFlag=0x0D.
+	loadTuningForLevel(0x0D);
 
 	beginLevelTitleOverlay(9);
 	playCinematic("LVL10/L10INTRO.ANM");
@@ -1391,7 +1404,9 @@ bool InsaneRebel1::runLevel11() {
 
 	_currentLevel = 10;
 	loadLevelSprites(11);
-	loadTuningForLevel(10);
+	// DOS RunLevel11Flow starts L11PLAY.ANM with initLevelFlag=0x0E.
+	// Row 10 has zero roll/slide tuning, which prevents horizontal aiming.
+	loadTuningForLevel(0x0E);
 
 	beginLevelTitleOverlay(10);
 	playCinematic("LVL11/L11INTRO.ANM");
@@ -1486,7 +1501,8 @@ bool InsaneRebel1::runLevel12() {
 
 	_currentLevel = 11;
 	loadLevelSprites(12);
-	loadTuningForLevel(11);
+	// DOS RunLevel12Flow starts L12PLAY.ANM with initLevelFlag=0x0F.
+	loadTuningForLevel(0x0F);
 
 	beginLevelTitleOverlay(11);
 	playCinematic("LVL12/L12INTRO.ANM");
@@ -1506,6 +1522,7 @@ bool InsaneRebel1::runLevel12() {
 		_killCount = 0;
 
 		while (!_vm->shouldQuit()) {
+			loadTuningForLevel(0x0F);
 			_frameCounter = 0;
 			_gameCounter = 0;
 			_activeGameOpcode = 0;
@@ -1580,7 +1597,8 @@ bool InsaneRebel1::runLevel13() {
 	_currentLevel = 12;
 	loadLevelSprites(13);
 	loadRA1Nut("LVL13/L13LASR2.NUT", _enemyLaserBank);
-	loadTuningForLevel(12);
+	// DOS RunLevel13Flow starts L13PLAY.ANM with initLevelFlag=0x10.
+	loadTuningForLevel(0x10);
 
 	beginLevelTitleOverlay(12);
 	playCinematic("LVL13/L13INTRO.ANM");
@@ -1661,7 +1679,8 @@ bool InsaneRebel1::runLevel14() {
 
 	_currentLevel = 13;
 	loadLevelSprites(14);
-	loadTuningForLevel(13);
+	// DOS RunLevel14Flow uses selector 0x11 for L14PLAY and 0x12 for L14PLAY2.
+	loadTuningForLevel(0x11);
 
 	beginLevelTitleOverlay(13);
 	playCinematic("LVL14/L14INTRO.ANM");
@@ -1669,6 +1688,7 @@ bool InsaneRebel1::runLevel14() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
+		loadTuningForLevel(0x11);
 		_flyControlMode = 1;
 		_health = kMaxHealth;
 		_damageFlags = 0;
@@ -1716,6 +1736,7 @@ bool InsaneRebel1::runLevel14() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
+			loadTuningForLevel(0x12);
 			resetGameplayFlagsFromTuning();
 			_killCount = 0;
 			_levelGameplayPhase = 2;
@@ -1772,7 +1793,8 @@ bool InsaneRebel1::runLevel15() {
 
 	_currentLevel = 14;
 	loadLevelSprites(15);
-	loadTuningForLevel(14);
+	// DOS RunLevel1GameLoop uses selector 0x13 for L15PLAY1 and 0x14 for L15PLAY2.
+	loadTuningForLevel(0x13);
 
 	beginLevelTitleOverlay(14);
 	playCinematic("LVL15/L15INTRO.ANM");
@@ -1780,6 +1802,7 @@ bool InsaneRebel1::runLevel15() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
+		loadTuningForLevel(0x13);
 		_flyControlMode = 1;
 		_health = kMaxHealth;
 		_damageFlags = 0;
@@ -1834,6 +1857,7 @@ bool InsaneRebel1::runLevel15() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
+			loadTuningForLevel(0x14);
 			resetGameplayFlagsFromTuning();
 			_killCount = 0;
 			_torpedoFired = false;
