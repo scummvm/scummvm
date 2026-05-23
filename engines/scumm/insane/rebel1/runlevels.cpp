@@ -1122,9 +1122,18 @@ bool InsaneRebel1::runLevel8() {
 bool InsaneRebel1::runLevel9() {
 	debug(1, "InsaneRebel1: Running level 9");
 
-	const int randPath1 = _vm->_rnd.getRandomNumber(1);
-	const int randPath2 = _vm->_rnd.getRandomNumber(1);
-	const int randPath3 = _vm->_rnd.getRandomNumber(1);
+	// DOS RunLevel9Flow calls RandScaleByte(2) three times before the intro.
+	// That helper advances a byte seed with seed = seed * 9 + 0x35 and returns
+	// (2 * seed) >> 8. Do not use ScummVM's session RNG here: it can turn the
+	// original right-side route into the capture/restart branch.
+	uint8 originalRouteSeed = 0;
+	auto getOriginalRouteBit = [&originalRouteSeed]() {
+		originalRouteSeed = (uint8)(originalRouteSeed * 9 + 0x35);
+		return (2 * originalRouteSeed) >> 8;
+	};
+	const int randPath1 = getOriginalRouteBit();
+	const int randPath2 = getOriginalRouteBit();
+	const int randPath3 = getOriginalRouteBit();
 	auto playLevel9PathSelector = [&](const char *filename) {
 		while (!_vm->shouldQuit()) {
 			// DOS zeros g_shipOffsetX around the 0x1A-only selector clips.
