@@ -759,6 +759,15 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 	if (codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA1_SCATTER)
 		return false;
 
+	// RA1 block codecs are column-major tile streams, not row-prefixed RLE
+	// streams. Preserve the source data and let smushDecodeRA1Block() consume
+	// offscreen tiles while clipping destination pixels.
+	if (codec == SMUSH_CODEC_RA1_DELTA || codec == SMUSH_CODEC_RA1_BLOCK) {
+		left += _fobjOffsetX;
+		top += _fobjOffsetY;
+		return false;
+	}
+
 	// RA1 codec 21 is source-X sensitive: generic left clipping would reduce
 	// the destination width without skipping the corresponding source columns.
 	// Keep only the global FOBJ offset here and let the codec clip each run.
