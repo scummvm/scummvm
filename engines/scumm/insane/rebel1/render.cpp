@@ -841,9 +841,10 @@ void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	// Original after PlayAnmFile("LVL14/L14PLY2B.ANM", 0x860, maxFrame-0x0F, 1, -1):
 	//   g_extendedPhaseFlags &= 0xFA;
 	//   DAT_7604 &= 0xBF;
-	// In the port's object-state storage those are the first and third primary bytes.
-	_frameObjectState[0] &= 0xFA;
-	_frameObjectState[2] &= 0xBF;
+	// g_extendedPhaseFlags is primary byte 1 because g_gameplayPhaseFlags starts
+	// at byte 0 of the original frame-object state array.
+	clearFrameObjectPrimaryBits(1, 0x05);
+	clearFrameObjectPrimaryBits(2, 0x40);
 	_vm->_smushVideoShouldFinish = true;
 }
 

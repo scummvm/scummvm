@@ -504,40 +504,33 @@ bool InsaneRebel1::isFrameObjectPrimarySet(int16 objectId) const {
 	return (_frameObjectState[byteIndex] & bit) != 0;
 }
 
+bool InsaneRebel1::areFrameObjectPrimaryBitsSet(int byteIndex, byte mask) const {
+	if (byteIndex < 0 || byteIndex >= 0x96 || byteIndex >= kFrameObjectStateBytes)
+		return false;
+
+	return (_frameObjectState[byteIndex] & mask) == mask;
+}
+
+void InsaneRebel1::clearFrameObjectPrimaryBits(int byteIndex, byte mask) {
+	if (byteIndex < 0 || byteIndex >= 0x96 || byteIndex >= kFrameObjectStateBytes)
+		return;
+
+	_frameObjectState[byteIndex] &= ~mask;
+}
+
 // Port helpers for RunLevel14Flow. The original checks DAT_7614..7616 and
 // DAT_7605..7606 inline, then increments a local 60-frame completion counter.
 bool InsaneRebel1::areLevel14Phase1TargetsDestroyed() const {
-	return isFrameObjectPrimarySet(168) &&
-		isFrameObjectPrimarySet(169) &&
-		isFrameObjectPrimarySet(170) &&
-		isFrameObjectPrimarySet(171) &&
-		isFrameObjectPrimarySet(172) &&
-		isFrameObjectPrimarySet(173) &&
-		isFrameObjectPrimarySet(174) &&
-		isFrameObjectPrimarySet(175) &&
-		isFrameObjectPrimarySet(176) &&
-		isFrameObjectPrimarySet(177) &&
-		isFrameObjectPrimarySet(178) &&
-		isFrameObjectPrimarySet(179) &&
-		isFrameObjectPrimarySet(180) &&
-		isFrameObjectPrimarySet(181) &&
-		isFrameObjectPrimarySet(182) &&
-		isFrameObjectPrimarySet(183);
+	// g_gameplayPhaseFlags starts at primary byte 0; DAT_7614 is byte 0x12.
+	return areFrameObjectPrimaryBitsSet(0x12, 0x01) &&
+		areFrameObjectPrimaryBitsSet(0x13, 0xFF) &&
+		areFrameObjectPrimaryBitsSet(0x14, 0xFE);
 }
 
 bool InsaneRebel1::areLevel14Phase2TargetsDestroyed() const {
-	return isFrameObjectPrimarySet(45) &&
-		isFrameObjectPrimarySet(46) &&
-		isFrameObjectPrimarySet(47) &&
-		isFrameObjectPrimarySet(48) &&
-		isFrameObjectPrimarySet(49) &&
-		isFrameObjectPrimarySet(50) &&
-		isFrameObjectPrimarySet(51) &&
-		isFrameObjectPrimarySet(52) &&
-		isFrameObjectPrimarySet(53) &&
-		isFrameObjectPrimarySet(54) &&
-		isFrameObjectPrimarySet(55) &&
-		isFrameObjectPrimarySet(56);
+	// Phase 2 checks DAT_7605 low nibble and all of DAT_7606.
+	return areFrameObjectPrimaryBitsSet(0x03, 0x0F) &&
+		areFrameObjectPrimaryBitsSet(0x04, 0xFF);
 }
 
 bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
@@ -1714,15 +1707,15 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 
 	// Level 15 Phase 2: enable torpedo at frame 0x18A, expose the protected
-	// target IDs used by the original flow, and finish when object-state bit
-	// 0x7602 & 2 becomes set.
+	// target IDs used by the original flow, and finish when
+	// g_gameplayPhaseFlags & 2 becomes set.
 	if (_currentLevel == 14 && _levelGameplayPhase == 2) {
 		if (_frameCounter == 0x18A) {
 			_gameplayFlags75ff |= 2;
 			_protectedTargetA = 0x67;
 			_protectedTargetB = 0x69;
 		}
-		if (isFrameObjectPrimarySet(7)) {
+		if (areFrameObjectPrimaryBitsSet(0, 0x02)) {
 			_torpedoFired = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
