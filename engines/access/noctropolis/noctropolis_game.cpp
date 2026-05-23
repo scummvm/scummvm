@@ -186,7 +186,7 @@ Common::Error NoctropolisEngine::loadGameState(int slot) {
 void NoctropolisEngine::doFlashLogo() {
 	_events->hideCursor();
 
-	_files->loadScreen(Common::Path("DARK/FLASH.SCN"));
+	_files->loadScreen(Common::Path("FLASH.SCN"));
 	_screen->fadeIn();
 	if (shouldQuit())
 		return;

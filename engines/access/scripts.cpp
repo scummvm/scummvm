@@ -911,6 +911,12 @@ void Scripts::cmdSetVideo_v3() {
 	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, noFrame=%d)", pt.x, pt.y, cellIndex, noFrame);
 
 	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename);
+	if (!_vm->_files->existFile(vidpath)) {
+		// Try removing "DARK/" from video file names -
+		// for the demo the are in DEMO/
+		Common::StringArray parts = vidpath.splitComponents();
+		vidpath = Common::Path::joinComponents(parts.begin() + 1, parts.end());
+	}
 	_vm->_video->setVideo(_vm->_screen, pt, vidpath, 0);
 
 	((VideoPlayer_v2 *)_vm->_video)->setDrawBorder(noFrame == 0);
