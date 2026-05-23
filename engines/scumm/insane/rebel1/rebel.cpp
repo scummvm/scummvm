@@ -354,6 +354,15 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		_highScores[i].difficulty = kDefaultScores[i].difficulty;
 	}
 	_highScoresActive = false;
+	_textEntryActive = false;
+	_textEntryPasscodeMode = false;
+	_textEntryDone = false;
+	_textEntryCanceled = false;
+	_textEntryPickerIndex = 0;
+	_textEntryPickerOffsetX = 0;
+	_textEntryMaxChars = 0;
+	_highScoreEntryIndex = -1;
+	memset(_textEntryBuffer, 0, sizeof(_textEntryBuffer));
 
 	// Shooting/targeting state
 	_playerFired = false;

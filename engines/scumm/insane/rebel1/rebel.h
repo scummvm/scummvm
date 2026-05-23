@@ -113,7 +113,8 @@ private:
 	void clearVideoBuffer();
 
 	// Main menu loop on O1OPTION.ANM background (0x15968)
-	// Returns: 1=Start New Game, 2=Game Options, 3=Level Select, 4=Continue Demo, 5=Exit
+	// Returns: 1=Start New Game, 2=Game Options, 3=Enter Passcode,
+	// 4=Level Select, 5=Continue Demo, 6=Exit
 	int runMainMenu();
 	int runLevelSelectMenu();
 
@@ -161,6 +162,7 @@ private:
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
+	void renderTextEntryOverlay(byte *dst, int pitch, int width, int height);
 	void renderExplosions(byte *dst, int pitch, int width, int height);
 	void renderTargetBoxes(byte *dst, int pitch, int width, int height);
 	void renderTargeting(byte *dst, int pitch, int width, int height);
@@ -402,7 +404,7 @@ private:
 	byte _deathCauseIndicator;   // 0x772E: non-zero = player died; selects death animation variant
 	byte _hudRenderFlag;         // 0x7600: 0xFF when HUD should render (set by combat mode handlers)
 	byte _hudDirtyFlag;          // 0x7601: 0xFF after HUD redraw (set by renderHUD)
-	int16 _maxChapterUnlocked;   // 0x7730: highest chapter with valid passcode (0=none, set on completion)
+	int16 _maxChapterUnlocked;   // 0x7730: highest unlocked passcode slot (0=none)
 
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;
@@ -451,11 +453,19 @@ private:
 
 	// Main menu / options state
 	void runOptionsMenu();
+	int runPasscodeEntryDialog();
+	bool runHighScoreNameEntry();
 	bool handleControllerMenuAction(ScummAction action);
 	bool handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY);
+	bool handleTextEntryAction(ScummAction action);
+	bool handleTextEntryKey(const Common::Event &event);
+	void beginTextEntry(bool passcodeMode);
+	void finishTextEntry(bool canceled);
+	void selectTextEntryChar();
+	const char *getChapterCompletePassword(int passwordIndex) const;
 	bool _menuActive;
 	bool _menuConfirmed;
-	int _menuSelection; // 0..4 maps to return values 1..5
+	int _menuSelection; // 0..5 maps to return values 1..6
 	int _menuFrameCounter;
 
 	// Options submenu state — RunGameOptionsMenu (0x14B42)
@@ -485,6 +495,18 @@ private:
 	HighScoreEntry _highScores[kHighScoreCount];
 	bool _highScoresActive;  // True when showing TOP PILOTS overlay
 	void showHighScores();
+
+	// Character picker shared by RunPasscodeEntryDialog and RunHighScoreNameEntry.
+	static const int kTextEntryBufferSize = 20;
+	bool _textEntryActive;
+	bool _textEntryPasscodeMode;
+	bool _textEntryDone;
+	bool _textEntryCanceled;
+	int _textEntryPickerIndex;
+	int _textEntryPickerOffsetX;
+	int _textEntryMaxChars;
+	int _highScoreEntryIndex;
+	char _textEntryBuffer[kTextEntryBufferSize];
 
 	// Shooting state — FUN_1CCA0 (0x1CCA0)
 	bool _playerFired;       // 0x7570: current fire-button state

@@ -262,7 +262,8 @@ void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlo
 	playCinematic(filename);
 	_chapterSummary.active = false;
 	_score += _tuning.levelPts + bonusValue1 + bonusValue2;
-	_maxChapterUnlocked = MAX(_maxChapterUnlocked, unlockedChapter);
+	if (passwordIndex != 0)
+		_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, passwordIndex);
 }
 
 void InsaneRebel1::clearVideoBuffer() {
@@ -556,7 +557,7 @@ bool InsaneRebel1::runLevel3() {
 
 		if (_health >= 0) {
 			playChapterCompleteCinematic("LVL3/L3END.ANM", 3, 0x69, 5,
-				nullptr, nullptr, 0, nullptr, nullptr, 0, 3);
+				nullptr, nullptr, 0, nullptr, nullptr, 0, _difficulty + 1);
 			return !_vm->shouldQuit();
 		}
 
@@ -836,7 +837,7 @@ bool InsaneRebel1::runLevel6() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x27, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x26, 0x0C, _tuning.bonus);
 			playChapterCompleteCinematic("LVL6/L6END.ANM", 6, 0x4B, 5,
-				" ", accuracyText, bonus, nullptr, nullptr, 0, 6);
+				" ", accuracyText, bonus, nullptr, nullptr, 0, _difficulty + 4);
 			return !_vm->shouldQuit();
 		}
 
@@ -1331,7 +1332,7 @@ bool InsaneRebel1::runLevel10() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x3E, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x3D, 0x32, _tuning.bonus);
 			playChapterCompleteCinematic("LVL10/L10END.ANM", 10, 0x4B, 5,
-				" ", accuracyText, bonus, nullptr, nullptr, 0, 10);
+				" ", accuracyText, bonus, nullptr, nullptr, 0, _difficulty + 7);
 			return !_vm->shouldQuit();
 		}
 
@@ -1711,7 +1712,7 @@ bool InsaneRebel1::runLevel14() {
 
 		if (_health >= 0) {
 			playChapterCompleteCinematic("LVL14/L14END.ANM", 14, 0x69, 5,
-				nullptr, nullptr, 0, nullptr, nullptr, 0, 14);
+				nullptr, nullptr, 0, nullptr, nullptr, 0, _difficulty + 10);
 			return !_vm->shouldQuit();
 		}
 
@@ -1827,7 +1828,7 @@ bool InsaneRebel1::runLevel15() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x58, false);
 			playChapterCompleteCinematic("LVL15/L15END1.ANM", 15, 0x122, 0xA5,
 				"Part I", accuracyText, targetBonus,
-				"Part II", "Torpedo on mark", 10000, 15);
+				"Part II", "Torpedo on mark", 10000, _difficulty + 13);
 			return !_vm->shouldQuit();
 		}
 
@@ -1867,6 +1868,27 @@ void InsaneRebel1::runGame() {
 		&InsaneRebel1::runLevel14,
 		&InsaneRebel1::runLevel15
 	};
+	const int numLevels = (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
+	auto runLevelsFrom = [&](int startLevel) {
+		const int firstLevel = CLIP<int>(startLevel, 1, numLevels);
+		bool completed = true;
+		_health = kMaxHealth;
+		_lives = 3;
+		_score = 0;
+		_prevScore = 0;
+
+		for (int level = firstLevel;
+			 level <= numLevels && completed && !_vm->shouldQuit();
+			 ++level) {
+			completed = (this->*kLevelRunners[level - 1])();
+			if (completed && level < numLevels)
+				_startLevel = level + 1;
+		}
+
+		if (!_vm->shouldQuit())
+			runHighScoreNameEntry();
+		_currentLevel = 0;
+	};
 
 	// Play intro sequence (logo + opening)
 	playIntroSequence();
@@ -1882,18 +1904,7 @@ void InsaneRebel1::runGame() {
 		switch (menuResult) {
 		case 1: {
 			// START NEW GAME — sequential play from _startLevel
-			const int numLevels = (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
-			const int startLevel = CLIP<int>(_startLevel, 1, numLevels);
-			bool completed = true;
-
-			for (int level = startLevel;
-				 level <= numLevels && completed && !_vm->shouldQuit();
-				 ++level) {
-				completed = (this->*kLevelRunners[level - 1])();
-				if (completed && level < numLevels)
-					_startLevel = level + 1;
-			}
-			_currentLevel = 0;
+			runLevelsFrom(_startLevel);
 			break;
 		}
 		case 2:
@@ -1901,23 +1912,48 @@ void InsaneRebel1::runGame() {
 			runOptionsMenu();
 			break;
 		case 3: {
-			// Level Select — launch directly
-			int selectedLevel = runLevelSelectMenu();
-			if (selectedLevel >= 1 && selectedLevel <= (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]))) {
-				_startLevel = selectedLevel;
-				(this->*kLevelRunners[selectedLevel - 1])();
+			// Enter Passcode — original RunPasscodeEntryDialog starts the
+			// game from the decoded chapter when a valid passcode is entered.
+			const int passcodeLevel = runPasscodeEntryDialog();
+			if (passcodeLevel >= 1 && passcodeLevel <= numLevels)
+				runLevelsFrom(passcodeLevel);
+			else if (passcodeLevel == numLevels + 1) {
+				_health = kMaxHealth;
+				_lives = 3;
+				_score = 0;
+				_prevScore = 0;
+				playCinematic("FIN/FNFINAL.ANM");
+				if (!_vm->shouldQuit())
+					runHighScoreNameEntry();
 				_currentLevel = 0;
 			}
 			break;
 		}
-		case 4:
+		case 4: {
+			// Level Select — ScummVM-only direct launcher, kept separate from
+			// original passcode-start flow so it does not force sequential play.
+			int selectedLevel = runLevelSelectMenu();
+			if (selectedLevel >= 1 && selectedLevel <= numLevels) {
+				_startLevel = selectedLevel;
+				_health = kMaxHealth;
+				_lives = 3;
+				_score = 0;
+				_prevScore = 0;
+				(this->*kLevelRunners[selectedLevel - 1])();
+				if (!_vm->shouldQuit())
+					runHighScoreNameEntry();
+				_currentLevel = 0;
+			}
+			break;
+		}
+		case 5:
 			// CONTINUE DEMO — attract mode.
 			// Original shows TOP PILOTS (O1SCORE.ANM) then loops O1OPEN.ANM.
 			showHighScores();
 			if (!_vm->shouldQuit())
 				playCinematic("OPEN/O1OPEN.ANM");
 			break;
-		case 5:
+		case 6:
 			// Exit
 			return;
 		default:
