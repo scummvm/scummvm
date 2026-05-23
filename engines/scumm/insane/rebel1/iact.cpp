@@ -90,6 +90,18 @@ inline bool hasLevel15FinalSweepDamage(uint16 frameCounter, int16 perspectiveX) 
 	}
 }
 
+inline bool ra1DispatcherHudOnlyWhenDisabled(uint32 opcode) {
+	switch (opcode) {
+	case 0x07:
+	case 0x08:
+	case 0x0B:
+	case 0x1A:
+		return true;
+	default:
+		return false;
+	}
+}
+
 inline bool isLevel2DamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0003:
@@ -1724,7 +1736,8 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 }
 
 
-// updateOnFootPhysics — HandleGameOp19_OnFootSequence (0x19) + HandleGameOp1A_OnFootVariant (0x1A).
+// updateOnFootPhysics — ScummVM-side glue for original on-foot GAME handlers
+// HandleGameOp19_OnFootSequence (0x19) and HandleGameOp1A_OnFootVariant (0x1A).
 // On-foot handler for Level 9 (Stormtroopers). Character walks left/right, crosshair tracks mouse.
 //
 // Original has TWO separate variable pairs:
@@ -1735,7 +1748,9 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
 const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
 
-void InsaneRebel1::updateOnFootPhysics() {
+// Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
+// this implementation; the original code dispatches the opcode handler directly.
+void InsaneRebel1::updateOnFootSequence() {
 	// --- First-frame initialization (0x19 counter==0) ---
 	if (!_onFootInitialized) {
 		_onFootInitialized = true;
@@ -1796,15 +1811,6 @@ void InsaneRebel1::updateOnFootPhysics() {
 			_shipDirIndex = 4;  // Walk left
 	}
 
-	// --- 0x1A: Crosshair positioning (HandleGameOp1A_OnFootVariant) ---
-	// shipPosX/Y = mouse_input + crosshair_center + character_offset
-	int16 inputX = 0, inputY = 0;
-	preprocessMouseAxes(inputX, inputY);
-	inputX = CLIP<int16>(inputX, -100, 100);
-	int16 inputYNeg = CLIP<int16>((int16)(-inputY), -0x4B, 0x0F);
-	_shipPosX = inputX + kOnFootCenterX + _onFootCharX;
-	_shipPosY = inputYNeg + kOnFootCenterY + _onFootCharY - 0x32;
-
 	// --- Scripted damage latches → damageFlags (matching FUN_1B297 pattern) ---
 	// GAME 0x5D/0x5F set latches; convert to damage flags before the check.
 	if (_gameLatch5D == 0xFFFF)
@@ -1814,9 +1820,10 @@ void InsaneRebel1::updateOnFootPhysics() {
 		_damageFlags |= 0x80;
 
 	// --- Damage handling (from HandleGameOp19_OnFootSequence) ---
-	// On-foot uses single tuning value (DAT_00001b29 offset = miss) for all damage types.
+	// On-foot damage uses the same heavy-damage tuning byte as ship shot/collision
+	// damage in the original, not the miss penalty.
 	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
-		_health -= _tuning.miss;
+		_health -= _tuning.shot;
 		if (_health < 0) {
 			_deathTimer = 15;
 			_deathCauseIndicator = (_damageFlags & 0x80) ? 2 : 1;
@@ -1826,6 +1833,32 @@ void InsaneRebel1::updateOnFootPhysics() {
 		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 5;
 	}
+}
+
+// Port split matching HandleGameOp1A_OnFootVariant. The helper name is new to
+// this implementation; the original code dispatches the opcode handler directly.
+void InsaneRebel1::updateOnFootAimVariant() {
+	// --- 0x1A: Crosshair positioning (HandleGameOp1A_OnFootVariant) ---
+	// shipPosX/Y = mouse_input + crosshair_center + character_offset
+	int16 inputX = 0, inputY = 0;
+	preprocessMouseAxes(inputX, inputY);
+	inputX = CLIP<int16>(inputX, -100, 100);
+	int16 inputYNeg = CLIP<int16>((int16)(-inputY), -0x4B, 0x0F);
+	_shipPosX = inputX + kOnFootCenterX + _onFootCharX;
+	_shipPosY = inputYNeg + kOnFootCenterY + _onFootCharY - 0x32;
+}
+
+void InsaneRebel1::updateOnFootPhysics() {
+	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
+	const bool sequenceOpcode =
+		hasFrameGameOpcode(0x19) || (!haveFrameGameOpcodes && _activeGameOpcode == 0x19);
+	const bool aimOpcode =
+		hasFrameGameOpcode(0x1A) || (!haveFrameGameOpcodes && _activeGameOpcode == 0x1A);
+
+	if (sequenceOpcode)
+		updateOnFootSequence();
+	if (aimOpcode)
+		updateOnFootAimVariant();
 
 	if (_damageCooldown > 0)
 		_damageCooldown--;
@@ -1870,10 +1903,31 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 	uint32 opcode = b.readUint32BE();
 	uint32 param1 = b.readUint32BE();
 
+	// FUN_1BE1B applies two global gates before the opcode switch. Bit 0 of
+	// g_combatModeFlags skips gameplay dispatch entirely; bit 5 of g_hudDisableFlags
+	// suppresses the handlers while still requesting HUD refresh for a few opcodes.
+	if (_gameplayFlags75ff & 1) {
+		debug(7, "RA1 GAME 0x%02x: skipped by combat mode flags=0x%02x",
+			opcode, _gameplayFlags75ff);
+		return;
+	}
+	if (_gameplayFlags75fe & 0x20) {
+		if (ra1DispatcherHudOnlyWhenDisabled(opcode))
+			_hudRenderFlag = 0xFF;
+		debug(7, "RA1 GAME 0x%02x: skipped by HUD disable flags=0x%02x",
+			opcode, _gameplayFlags75fe);
+		return;
+	}
+
 	switch (opcode) {
 	case 0x5E:
 		// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
 		// This is not a pure control-mode assignment.
+		if (_frameDispatchFlags & 0x40) {
+			debug(7, "RA1 GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
+				_frameDispatchFlags);
+			break;
+		}
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
 		_damageCooldown = 0;

@@ -303,6 +303,8 @@ private:
 
 	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
 	void updateOnFootPhysics();
+	void updateOnFootSequence();
+	void updateOnFootAimVariant();
 	int16 _onFootCharX;      // Character draw X (g_shipOffsetX in original)
 	int16 _onFootCharY;      // Character draw Y (g_shipOffsetY in original)
 	int16 _onFootAnimCounter; // DAT_0000828a: fire animation counter
