@@ -457,7 +457,7 @@ void VideoPlayer_v2::handleSoundChunk(bool init) {
 	}
 
 	uint16 soundSize = _videoData->_stream->readUint16LE();
-	byte *soundData = new byte[soundSize];
+	byte *soundData = (byte *)malloc(soundSize);
 
 	_videoData->_stream->read(soundData, soundSize);
 
