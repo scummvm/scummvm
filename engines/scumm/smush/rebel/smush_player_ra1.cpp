@@ -61,6 +61,64 @@ static void ra1ApplyCenteredFetchPlacement(InsaneRebel1 *rebel1, int width, int 
 	top -= ((projectedTop - top) >> 2);
 }
 
+static bool ra1EnsureBuffer(byte *&buffer, int32 &bufferSize, int32 neededSize) {
+	if (neededSize <= 0)
+		return false;
+	if (buffer != nullptr && bufferSize >= neededSize)
+		return true;
+
+	byte *newBuffer = (byte *)realloc(buffer, neededSize);
+	if (newBuffer == nullptr)
+		return false;
+
+	buffer = newBuffer;
+	bufferSize = neededSize;
+	return true;
+}
+
+static void ra1CopyFadeRun(byte *dst, const byte *src, int srcPitch, int width, int height,
+		int dstPos, int srcPos, int count) {
+	const int frameSize = width * height;
+	if (dstPos < 0 || srcPos < 0 || count <= 0 || dstPos >= frameSize || srcPos >= frameSize)
+		return;
+
+	count = MIN(count, frameSize - dstPos);
+	count = MIN(count, frameSize - srcPos);
+	while (count > 0) {
+		const int srcX = srcPos % width;
+		const int dstX = dstPos % width;
+		const int run = MIN(count, width - srcX);
+		const int rowRun = MIN(run, width - dstX);
+		memcpy(dst + dstPos, src + (srcPos / width) * srcPitch + srcX, rowRun);
+		srcPos += rowRun;
+		dstPos += rowRun;
+		count -= rowRun;
+	}
+}
+
+static void ra1RememberDisplayedFrame(byte *&buffer, int32 &bufferSize, int &storedWidth,
+		int &storedHeight, bool &valid, const byte *src, int pitch, int width, int height) {
+	if (src == nullptr || width <= 0 || height <= 0)
+		return;
+
+	const int32 neededSize = width * height;
+	if (!ra1EnsureBuffer(buffer, bufferSize, neededSize))
+		return;
+
+	if (buffer == src && pitch == width) {
+		// Already displaying the retained FADE buffer.
+	} else if (pitch == width) {
+		memcpy(buffer, src, neededSize);
+	} else {
+		for (int y = 0; y < height; ++y)
+			memcpy(buffer + y * width, src + y * pitch, width);
+	}
+
+	storedWidth = width;
+	storedHeight = height;
+	valid = true;
+}
+
 SmushPlayerRebel1::SmushPlayerRebel1(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane)
 	: SmushPlayer(scumm, imuseDigital, insane) {
 	initGamePlayerFields();
@@ -86,6 +144,12 @@ void SmushPlayerRebel1::initGamePlayerFields() {
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
 	_ra1FrameSourceSkipY = 0;
+	_ra1FadeFrame = nullptr;
+	_ra1FadeFrameSize = 0;
+	_ra1FadeFrameWidth = 0;
+	_ra1FadeFrameHeight = 0;
+	_ra1FadeFrameValid = false;
+	_ra1UseFadeFrame = false;
 }
 
 void SmushPlayerRebel1::destroyGamePlayerFields() {
@@ -98,6 +162,9 @@ void SmushPlayerRebel1::destroyGamePlayerFields() {
 	free(_ra1PresentationBuffer);
 	_ra1PresentationBuffer = nullptr;
 	_ra1PresentationBufferSize = 0;
+	free(_ra1FadeFrame);
+	_ra1FadeFrame = nullptr;
+	_ra1FadeFrameSize = 0;
 }
 
 void SmushPlayerRebel1::resetGameVideoState() {
@@ -112,6 +179,7 @@ void SmushPlayerRebel1::resetGameVideoState() {
 	_ra1ObjOverlayHeight = 0;
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
+	_ra1UseFadeFrame = false;
 }
 
 void SmushPlayerRebel1::releaseGameVideoState() {
@@ -137,6 +205,14 @@ void SmushPlayerRebel1::releaseGameVideoState() {
 	free(_ra1PresentationBuffer);
 	_ra1PresentationBuffer = nullptr;
 	_ra1PresentationBufferSize = 0;
+
+	free(_ra1FadeFrame);
+	_ra1FadeFrame = nullptr;
+	_ra1FadeFrameSize = 0;
+	_ra1FadeFrameWidth = 0;
+	_ra1FadeFrameHeight = 0;
+	_ra1FadeFrameValid = false;
+	_ra1UseFadeFrame = false;
 }
 
 bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStream &b) {
@@ -250,7 +326,140 @@ SmushFont *SmushPlayerRebel1::getGameFont(int font) {
 }
 
 void SmushPlayerRebel1::adjustGamePalette() {
+	for (int i = 0; i < ARRAYSIZE(_pal); ++i)
+		_shiftedDeltaPal[i] = _pal[i] << 7;
+	memset(_deltaPal, 0, sizeof(_deltaPal));
 	_pal[0] = _pal[1] = _pal[2] = 0;
+}
+
+void SmushPlayerRebel1::ra1HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 4) {
+		b.skip(subSize);
+		return;
+	}
+
+	const uint32 command = b.readUint32BE();
+	const int32 payloadBytes = subSize - 4;
+
+	if (command == 0 || command == 2) {
+		_deltaPal[0] = 0;
+		_shiftedDeltaPal[0] = 0;
+		int32 remaining = payloadBytes;
+		if (remaining >= 2) {
+			// The original loop starts at palette component 1, leaving component
+			// 0 black and ignoring the first delta word in the XPAL payload.
+			b.skip(2);
+			remaining -= 2;
+		}
+
+		for (int i = 1; i < ARRAYSIZE(_pal); ++i) {
+			_shiftedDeltaPal[i] = _pal[i] << 7;
+			if (remaining >= 2) {
+				_deltaPal[i] = b.readSint16LE();
+				remaining -= 2;
+			} else {
+				_deltaPal[i] = 0;
+			}
+		}
+
+		if (remaining > 0)
+			b.skip(remaining);
+
+		// Command 2 in the DOS dispatcher first restores the palette state before
+		// loading a new delta table. ScummVM keeps the active palette in _pal, so
+		// marking it dirty is the corresponding visible-side effect.
+		if (command == 2)
+			setDirtyColors(0, 255);
+		return;
+	}
+
+	if (payloadBytes > 0)
+		b.skip(payloadBytes);
+
+	for (int i = 1; i < ARRAYSIZE(_pal); ++i) {
+		_shiftedDeltaPal[i] += _deltaPal[i];
+		_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
+	}
+	_pal[0] = _pal[1] = _pal[2] = 0;
+	setDirtyColors(0, 255);
+}
+
+void SmushPlayerRebel1::ra1HandleFade(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize <= 24 || _dst == nullptr || _width <= 0 || _height <= 0) {
+		b.skip(subSize);
+		return;
+	}
+
+	byte *fadeData = (byte *)malloc(subSize);
+	if (fadeData == nullptr) {
+		b.skip(subSize);
+		return;
+	}
+	b.read(fadeData, subSize);
+
+	int fadeWidth = kRA1PresentationScreenWidth;
+	int fadeHeight = kRA1PresentationScreenHeight;
+	if (subSize >= 16 && READ_BE_UINT32(fadeData) == MKTAG('F','D','H','D')) {
+		const int headerWidth = READ_LE_UINT16(fadeData + 12);
+		const int headerHeight = READ_LE_UINT16(fadeData + 14);
+		if (headerWidth > 0 && headerHeight > 0) {
+			fadeWidth = headerWidth;
+			fadeHeight = headerHeight;
+		}
+	}
+
+	fadeWidth = MIN(fadeWidth, MIN(_vm->_screenWidth, _width - _scrollX));
+	fadeHeight = MIN(fadeHeight, MIN(_vm->_screenHeight, _height - _scrollY));
+	if (fadeWidth <= 0 || fadeHeight <= 0) {
+		free(fadeData);
+		return;
+	}
+
+	const int32 fadeFrameSize = fadeWidth * fadeHeight;
+	if (!ra1EnsureBuffer(_ra1FadeFrame, _ra1FadeFrameSize, fadeFrameSize)) {
+		free(fadeData);
+		return;
+	}
+
+	if (!_ra1FadeFrameValid ||
+			_ra1FadeFrameWidth != fadeWidth || _ra1FadeFrameHeight != fadeHeight) {
+		memset(_ra1FadeFrame, 0, fadeFrameSize);
+		_ra1FadeFrameValid = true;
+	}
+	_ra1FadeFrameWidth = fadeWidth;
+	_ra1FadeFrameHeight = fadeHeight;
+
+	const byte *control = fadeData + 24;
+	int32 remaining = subSize - 24;
+	const byte *src = _dst + _scrollY * _width + _scrollX;
+	int srcPos = 0;
+	int dstPos = 0;
+
+	while (remaining > 0 && dstPos < fadeFrameSize && srcPos < fadeFrameSize) {
+		byte op = *control++;
+		remaining--;
+
+		int count = op & 0x7F;
+		if (count == 0) {
+			if (remaining < 2)
+				break;
+			count = READ_LE_UINT16(control);
+			control += 2;
+			remaining -= 2;
+		}
+
+		if (op & 0x80) {
+			srcPos += count;
+			dstPos += count;
+		} else {
+			ra1CopyFadeRun(_ra1FadeFrame, src, _width, fadeWidth, fadeHeight, dstPos, srcPos, count);
+			srcPos += count;
+			dstPos += count;
+		}
+	}
+
+	_ra1UseFadeFrame = true;
+	free(fadeData);
 }
 
 bool SmushPlayerRebel1::handleGameAnimHeader(byte *headerContent) {
@@ -734,7 +943,8 @@ static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize)
 
 		if (subType == MKTAG('F', 'R', 'M', 'E'))
 			break;
-		if (subType == MKTAG('G', 'A', 'M', 'E')) {
+		if (subType == MKTAG('G', 'A', 'M', 'E') ||
+				subType == MKTAG('G', 'A', 'M', '2')) {
 			b.seek(frameStart, SEEK_SET);
 			return true;
 		}
@@ -843,7 +1053,7 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 			handleTextResource(subType, subSize, b);
 			break;
 		case MKTAG('X','P','A','L'):
-			handleDeltaPalette(subSize, b);
+			ra1HandleDeltaPalette(subSize, b);
 			break;
 		case MKTAG('I','A','C','T'):
 			handleIACT(subSize, b);
@@ -860,7 +1070,8 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 		case MKTAG('G','O','S','T'):
 			handleGameGost(subSize, b);
 			break;
-		case MKTAG('G','A','M','E'): {
+		case MKTAG('G','A','M','E'):
+		case MKTAG('G','A','M','2'): {
 			InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
 			rebel1->handleGameChunk(subSize, b);
 			break;
@@ -880,6 +1091,7 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 
 					bool recognized = (embTag == MKTAG('F','O','B','J') ||
 					                   embTag == MKTAG('G','A','M','E') ||
+					                   embTag == MKTAG('G','A','M','2') ||
 					                   embTag == MKTAG('P','S','A','D'));
 
 					if (!recognized || embSize > (uint32)embRemaining) {
@@ -903,7 +1115,7 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 							_ra1ObjOverlayWidth = READ_LE_UINT16(objBuf + objPos + 14);
 							_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
 						}
-					} else if (embTag == MKTAG('G','A','M','E')) {
+					} else if (embTag == MKTAG('G','A','M','E') || embTag == MKTAG('G','A','M','2')) {
 						Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
 						InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
 						rebel1->handleGameChunk(embSize, embStream);
@@ -925,8 +1137,9 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 			frameSize = 0;
 			continue;
 		}
-		case MKTAG('G','A','M','2'):
 		case MKTAG('F','A','D','E'):
+			ra1HandleFade(subSize, b);
+			break;
 		case MKTAG('S','E','G','A'):
 		case MKTAG('A','D','L',' '):
 		case MKTAG('A','D','L','2'):
@@ -993,21 +1206,37 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 	if (_dst == nullptr || _width <= 0 || _height <= 0)
 		return;
 
+	const bool useFadeFrame = _ra1UseFadeFrame && _ra1FadeFrameValid && _ra1FadeFrame != nullptr;
+	if (useFadeFrame) {
+		src = _ra1FadeFrame;
+		srcPitch = _ra1FadeFrameWidth;
+		width = MIN(width, _ra1FadeFrameWidth);
+		height = MIN(height, _ra1FadeFrameHeight);
+	}
+
 	if (!_insane || !static_cast<InsaneRebel1 *>(_insane)->isInteractiveVideoActive() ||
 			_vm->_screenWidth != kRA1PresentationScreenWidth ||
 			_vm->_screenHeight != kRA1PresentationScreenHeight) {
 		SmushPlayer::handleGameUpdateScreen(src, srcPitch, width, height);
+		ra1RememberDisplayedFrame(_ra1FadeFrame, _ra1FadeFrameSize,
+			_ra1FadeFrameWidth, _ra1FadeFrameHeight, _ra1FadeFrameValid,
+			src, srcPitch, width, height);
+		_ra1UseFadeFrame = false;
 		return;
 	}
 
 	int ra1ViewX = _ra1ViewportOffsetX;
 	int ra1ViewY = _ra1ViewportOffsetY;
 
-	const int srcX = CLIP(_scrollX + ra1ViewX + kRA1PresentationBorder, 0, _width - 1);
-	const int srcY = CLIP(_scrollY + ra1ViewY + kRA1PresentationBorder, 0, _height - 1);
+	const byte *sourceBase = useFadeFrame ? src : _dst;
+	const int sourcePitch = useFadeFrame ? srcPitch : _width;
+	const int sourceWidth = useFadeFrame ? width : _width;
+	const int sourceHeight = useFadeFrame ? height : _height;
+	const int srcX = useFadeFrame ? 0 : CLIP(_scrollX + ra1ViewX + kRA1PresentationBorder, 0, sourceWidth - 1);
+	const int srcY = useFadeFrame ? 0 : CLIP(_scrollY + ra1ViewY + kRA1PresentationBorder, 0, sourceHeight - 1);
 
-	int frameWidth = MIN<int>(_width - srcX, kRA1PresentationWidth);
-	int frameHeight = MIN<int>(_height - srcY, kRA1PresentationHeight);
+	int frameWidth = MIN<int>(sourceWidth - srcX, kRA1PresentationWidth);
+	int frameHeight = MIN<int>(sourceHeight - srcY, kRA1PresentationHeight);
 	if (frameWidth <= 0 || frameHeight <= 0)
 		return;
 
@@ -1023,16 +1252,21 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 
 	// ResetPlaybackViewport() (0x20A53) initializes the interactive draw window
 	// to (4,4,312,192), leaving a black presentation frame around cockpit scenes.
-	const byte *dst = _dst + srcY * _width + srcX;
+	const byte *dst = sourceBase + srcY * sourcePitch + srcX;
 	byte *presentationDst = _ra1PresentationBuffer +
 		kRA1PresentationBorder * kRA1PresentationScreenWidth + kRA1PresentationBorder;
 	for (int y = 0; y < frameHeight; y++) {
 		memcpy(presentationDst + y * kRA1PresentationScreenWidth,
-			dst + y * _width, frameWidth);
+			dst + y * sourcePitch, frameWidth);
 	}
 
 	SmushPlayer::handleGameUpdateScreen(_ra1PresentationBuffer,
 		kRA1PresentationScreenWidth, kRA1PresentationScreenWidth, kRA1PresentationScreenHeight);
+	ra1RememberDisplayedFrame(_ra1FadeFrame, _ra1FadeFrameSize,
+		_ra1FadeFrameWidth, _ra1FadeFrameHeight, _ra1FadeFrameValid,
+		_ra1PresentationBuffer, kRA1PresentationScreenWidth,
+		kRA1PresentationScreenWidth, kRA1PresentationScreenHeight);
+	_ra1UseFadeFrame = false;
 }
 
 SmushFont *SmushPlayerRebel1::ra1GetFont(int font) {
