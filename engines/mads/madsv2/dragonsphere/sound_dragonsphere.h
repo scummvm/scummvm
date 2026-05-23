@@ -22,7 +22,7 @@
 #ifndef MADS_DRAGONSPHERE_SOUND_H
 #define MADS_DRAGONSPHERE_SOUND_H
 
-#include "mads/madsv2/core/asound.h"
+#include "mads/madsv2/dragonsphere/asound.h"
 
 namespace MADS {
 namespace MADSV2 {

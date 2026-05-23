@@ -22,7 +22,7 @@
 #ifndef MADS_PHANTOM_SOUND_H
 #define MADS_PHANTOM_SOUND_H
 
-#include "mads/madsv2/core/asound.h"
+#include "mads/madsv2/phantom/asound.h"
 
 namespace MADS {
 namespace MADSV2 {

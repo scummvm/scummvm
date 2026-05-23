@@ -20,10 +20,11 @@
  */
 
 #include "audio/fmopl.h"
-#include "mads/madsv2/core/asound.h"
+#include "mads/madsv2/phantom/asound.h"
 
 namespace MADS {
 namespace MADSV2 {
+namespace Phantom {
 
 bool AdlibChannel::_isDisabled;
 
@@ -1890,5 +1891,6 @@ uint16 ASound::readWord_impl() {
 	return lo | (hi << 8);
 }
 
+} // namespace Phantom
 } // namespace MADSV2
 } // namespace MADS

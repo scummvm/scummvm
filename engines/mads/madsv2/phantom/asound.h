@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADS_CORE_ASOUND_H
-#define MADS_CORE_ASOUND_H
+#ifndef MADS_PHANTOM_ASOUND_H
+#define MADS_PHANTOM_ASOUND_H
 
 #include "common/mutex.h"
 #include "common/queue.h"
@@ -29,6 +29,7 @@
 
 namespace MADS {
 namespace MADSV2 {
+namespace Phantom {
 
 #define ADLIB_CHANNEL_COUNT 9
 
@@ -122,7 +123,8 @@ struct AdlibSample {
 	uint16 _freqBase = 0;
 	uint16 _outerLoopPtr = 0;
 
-	AdlibSample() {}
+	AdlibSample() {
+	}
 	AdlibSample(Common::SeekableReadStream &s);
 };
 
@@ -359,10 +361,10 @@ protected:
 	 */
 	int command0();
 
-	 /*
-	  * Fade out all channels (calls command2 + command4 via
-	  * the command3/command5 helpers that enable pending-stop on each channel).
-	  */
+	/*
+	 * Fade out all channels (calls command2 + command4 via
+	 * the command3/command5 helpers that enable pending-stop on each channel).
+	 */
 	int command1();
 
 	/**
@@ -444,7 +446,8 @@ public:
 	/**
 	 * Destructor
 	 */
-	~ASound() override {}
+	~ASound() override {
+	}
 
 	/**
 	 * Stop all currently playing sounds
@@ -467,6 +470,7 @@ public:
 	}
 };
 
+} // namespace Phantom
 } // namespace MADSV2
 } // namespace MADS
 

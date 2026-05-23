@@ -62,7 +62,6 @@ MODULE_OBJS += \
 	madsv2/animview/functions.o \
 	madsv2/textview/textview.o \
 	madsv2/core/anim.o \
-	madsv2/core/asound.o \
 	madsv2/core/attr.o \
 	madsv2/core/buffer.o \
 	madsv2/core/camera.o \
@@ -175,18 +174,13 @@ MODULE_OBJS += \
 	madsv2/phantom/rooms/room505.o \
 	madsv2/phantom/rooms/room506.o \
 	madsv2/phantom/phantom.o \
+	madsv2/phantom/asound.o \
 	madsv2/phantom/catacombs.o \
 	madsv2/phantom/global.o \
 	madsv2/phantom/main_menu.o \
 	madsv2/phantom/menus.o \
 	madsv2/phantom/main.o \
 	madsv2/phantom/sound_phantom.o \
-	madsv2/dragonsphere/dragonsphere.o \
-	madsv2/dragonsphere/global.o \
-	madsv2/dragonsphere/main.o \
-	madsv2/dragonsphere/main_menu.o \
-	madsv2/dragonsphere/menus.o \
-	madsv2/dragonsphere/sound_dragonsphere.o \
 	madsv2/dragonsphere/mads/mads.o \
 	madsv2/dragonsphere/rooms/section1.o \
 	madsv2/dragonsphere/rooms/room101.o \
@@ -259,6 +253,13 @@ MODULE_OBJS += \
 	madsv2/dragonsphere/rooms/room613.o \
 	madsv2/dragonsphere/rooms/room614.o \
 	madsv2/dragonsphere/rooms/room909.o \
+	madsv2/dragonsphere/dragonsphere.o \
+	madsv2/dragonsphere/asound.o \
+	madsv2/dragonsphere/global.o \
+	madsv2/dragonsphere/main.o \
+	madsv2/dragonsphere/main_menu.o \
+	madsv2/dragonsphere/menus.o \
+	madsv2/dragonsphere/sound_dragonsphere.o \
 	madsv2/forest/forest.o
 endif
 
