@@ -46,6 +46,7 @@ enum {
 	words_rug                  =  18,
 	words_carpet               =  19,
 	words_wall                 =  20,
+	words_use                  =  21,
 	words_chest                =  23,
 	words_window               =  24,
 	words_tapestry             =  26,
