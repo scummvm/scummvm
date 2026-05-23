@@ -487,14 +487,16 @@ void InsaneRebel1::getTurretShipCenter(int16 &x, int16 &y) const {
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameGameOpcodeMask = 0;
 	_frameDispatchFlags = 0;
+	_hudRenderFlag = 0;
 	_gameOp0BPhysicsUpdatedThisFrame = false;
 	_turretFrameShipCenterValid = false;
 
 	if (_interactiveVideoActive && _player) {
 		const bool usePerspectiveViewport =
-			_activeGameOpcode == 0x07 || _activeGameOpcode == 0x08 ||
-			_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
-			_activeGameOpcode == 0x0B;
+			_frameHasGameChunk &&
+			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x08 ||
+			 _activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
+			 _activeGameOpcode == 0x0B);
 		// Only gameplay handlers that actually execute FUN_224FD own the scrolling
 		// 320x200 window inside the 384x242 buffer. Interactive movies with no
 		// GAME stream (for example LVL4/L4PLAY2.ANM) keep a static camera.
@@ -570,19 +572,23 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (height == 0) height = _screenHeight;
 	int pitch = width;
 
-	// Set HUD render flag when interactive gameplay is active (0x7600)
-	_hudRenderFlag = 0xFF;
+	if (!_frameHasGameChunk) {
+		syncViewportOffset(false);
+		_fireCooldown = _playerFired ? 1 : 0;
+		return;
+	}
 
 	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
+	const bool allowImplicitGameplayMode = _frameHasGameChunk && !haveFrameGameOpcodes;
 	const bool gameOp0BMode = hasFrameGameOpcode(0x0B) ||
-		(!haveFrameGameOpcodes && _activeGameOpcode == 0x0B);
+		(allowImplicitGameplayMode && _activeGameOpcode == 0x0B);
 	const bool onFootMode = hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
-		(!haveFrameGameOpcodes &&
+		(allowImplicitGameplayMode &&
 			(_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A));
 	const bool turretMode = hasFrameGameOpcode(0x08) || hasFrameGameOpcode(0x0A) ||
-		(!haveFrameGameOpcodes && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
+		(allowImplicitGameplayMode && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
 	const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
-		(!haveFrameGameOpcodes &&
+		(allowImplicitGameplayMode &&
 			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
 	if (gameOp0BMode) {
 		// GAME 0x0B scrolling cockpit/surface handler — FUN_1CDA7.
@@ -661,16 +667,16 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const bool hasTargetingPipeline =
 		hasFrameGameOpcode(0x09) || hasFrameGameOpcode(0x0A) ||
 		hasFrameGameOpcode(0x0B) || hasFrameGameOpcode(0x1A) ||
-		(!haveFrameGameOpcodes &&
+		(allowImplicitGameplayMode &&
 			(_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
 			 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A));
 	if (hasTargetingPipeline) {
 		const bool flightVariantTargetingMode =
 			hasFrameGameOpcode(0x09) ||
-			(!haveFrameGameOpcodes && _activeGameOpcode == 0x09);
+			(allowImplicitGameplayMode && _activeGameOpcode == 0x09);
 		const bool turretTargetingMode =
 			hasFrameGameOpcode(0x0A) ||
-			(!haveFrameGameOpcodes && _activeGameOpcode == 0x0A);
+			(allowImplicitGameplayMode && _activeGameOpcode == 0x0A);
 		renderTargetBoxes(renderBitmap, pitch, width, height);
 		processShot();
 		renderLaserShots(renderBitmap, pitch, width, height);
@@ -728,7 +734,8 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderLevel8Overlay(renderBitmap, pitch, width, height, viewportX, viewportY);
 	}
 
-	renderHUD(renderBitmap, pitch, width, height);
+	if (gameOp0BMode || onFootMode || turretMode || flightMode || _hudRenderFlag != 0)
+		renderHUD(renderBitmap, pitch, width, height);
 	_fireCooldown = _playerFired ? 1 : 0;
 }
 
@@ -829,6 +836,11 @@ void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	_level14Play2BSpliced = true;
 	_level14Play2BSplicePending = true;
 	_level14Play2BSpliceFrame = curFrame;
+
+	// DOS queues the continuation from inside the active playback loop, so the
+	// STOR/FTCH video state remains live across the L14PLAY2 -> L14PLY2B jump.
+	if (_player)
+		_player->setPreserveGameVideoStateOnRelease(true);
 
 	// Original after PlayAnmFile("LVL14/L14PLY2B.ANM", 0x860, maxFrame-0x0F, 1, -1):
 	//   g_extendedPhaseFlags &= 0xFA;

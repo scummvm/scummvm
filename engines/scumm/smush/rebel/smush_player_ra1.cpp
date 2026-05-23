@@ -242,7 +242,8 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 				// directly — no projection-based FTCH placement. Level 4 phase 2
 				// also stores a full-width screen-space patch (320x180) that DOS
 				// restores without the centered 1/4 projection warp.
-				if (fullWidthStoredPatch || gameOp == 0x19 || gameOp == 0x1A) {
+				if (fullWidthStoredPatch || gameOp == 0x0B ||
+						gameOp == 0x19 || gameOp == 0x1A) {
 					left += _ra1ViewportOffsetX;
 					top += _ra1ViewportOffsetY;
 				} else {
@@ -976,13 +977,14 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 	if (_insane) {
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 		bool interactive = rebel1->isInteractiveVideoActive();
+		const bool frameHasGameChunk = interactive && ra1FrameHasGameChunk(b, frameSize);
+		rebel1->setFrameHasGameChunk(frameHasGameChunk);
 		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
 		bool forceClear = interactive &&
 			(activeOpcode == 0x0B ||
 			 (activeOpcode == 0 && rebel1->getCurrentLevel() == 1));
 
-		preserveFrameHistory = interactive && !forceClear &&
-			ra1FrameHasGameChunk(b, frameSize);
+		preserveFrameHistory = interactive && !forceClear && frameHasGameChunk;
 	}
 
 	// Restore clean frame for delta source
