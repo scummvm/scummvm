@@ -63,6 +63,8 @@ static const int16 kRA1MaxY = 180;
 static const int16 kRA1FocalX = 43;
 static const int16 kRA1FocalY = 25;
 
+int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2);
+
 /**
  * Star Wars: Rebel Assault (RA1) game logic.
  * Adapts RA2 Handler 7 (ship flight) physics for RA1's 384x242 resolution.
@@ -172,6 +174,8 @@ private:
 	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
+	void renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
+		bool drawTargetBoxes);
 	void handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame);
 	void renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height);
 	void resetEnemyShotSlots();
@@ -309,9 +313,10 @@ private:
 	void restoreScreenFlashPalette();
 
 	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
-	void updateOnFootPhysics();
+	void initOnFootSequence();
 	void updateOnFootSequence();
 	void updateOnFootAimVariant();
+	void finishOnFootFrame();
 	int16 _onFootCharX;      // Character draw X (g_shipOffsetX in original)
 	int16 _onFootCharY;      // Character draw Y (g_shipOffsetY in original)
 	int16 _onFootAnimCounter; // DAT_0000828a: fire animation counter
@@ -558,6 +563,7 @@ private:
 
 	int16 _killCount;        // 0x75D0: targets destroyed this stage
 	int16 _lastHitTarget;    // 0x75D6: recent-kill latch, allows at most one hit per frame
+	bool _frameObjectHitRevealPending; // DispatchSmushFrameChunks local_14 high-id reveal latch
 
 	// Incoming enemy projectile slots used by Level 13 RunLevel13Flow.
 	static const int kMaxEnemyShotSlots = 5;

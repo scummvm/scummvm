@@ -385,6 +385,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_gostSlotIdx = 0;
 	_killCount = 0;
 	_lastHitTarget = 0;
+	_frameObjectHitRevealPending = false;
 	resetEnemyShotSlots();
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
