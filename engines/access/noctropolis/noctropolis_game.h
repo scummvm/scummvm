@@ -91,6 +91,7 @@ public:
 	void doLastComic();
 	void doSpecialComic();
 	void doUpsell();
+	void showNightdiveCredits();
 
 	/** Play SFX for item added to inv, debounced */
 	void playInventoryStinger();
