@@ -34,47 +34,37 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
 /**
  * Room local variables
  */
 struct Scratch {
-	int16 x02;
-	int16 x04;
-	int16 x06;
-	int16 x08;
-	int16 x0a;
-	int16 x0c;
-	int16 x20;
-	int16 x22;
-	int16 x24;
-	int16 x26;
-	int16 x28;
-	int16 x2a;
-	int16 x3c;
-	int16 x3e;
-	int16 x44;
-	int16 x46;
-	int16 x48;
-	int16 x4a;
-	int16 x4c;
-	int16 x4e;
-	int16 x50;
-	int16 x54;
-	int16 x56;
-	int32 x58;
-	int32 x5c;
-	int32 x60;
-	int16 x64;
-	int16 x66;
-	int16 x68;
-	int16 x6a;
-	int16 x6c;
+	int16 sprite[15];       /* Sprite series handles */
+	int16 sequence[15];     /* Sequence handles      */
+	int16 animation[4];     /* Animation handles     */
+
+	int16 prev_door_seq;        /* outgoing door seq handle held during door-close synch */
+	int16 fireplace_examined;   /* flag: -1 once fireplace has been looked at */
+	int16 queen_prev_frame;     /* last animation-B frame seen (book mode change detection) */
+	int16 queen_frame;          /* current animation-B frame */
+	int16 king_frame;           /* current animation-C frame */
+	int16 queen_action;         /* queen animation state (CONV0_WALK_IN … CONV0_LEAVE) */
+	int16 king_action;          /* king animation state (CONV0_KING_SLEEP/TALK/GET_UP) */
+	int16 pending_queen_action; /* queen action queued by conversation, consumed in daemon */
+	int16 pending_king_action;  /* king action queued by conversation/pre-parser, consumed in daemon */
+	int32 tick_accum;           /* accumulated game ticks for idle-animation timer */
+	int32 elapsed_ticks;        /* last computed elapsed-tick delta */
+	int32 last_clock;           /* clock snapshot used to compute elapsed_ticks */
+	int16 timer_target;         /* random tick count at which next idle animation fires */
+	int16 queen_anim_mode;      /* animation-B processing mode: 0=off, 1=book, 2=queen */
+	int16 king_anim_mode;       /* animation-C processing mode: 0=done, 3=intro active */
+	int16 resume_conv;          /* flag: -1 = call conv_run on next queen frame-69 pass */
+	int16 suppress_command;     /* flag: -1 = silently consume next parser command (bed-exit interlock) */
 };
+
+#define local (&scratch)
+#define ss    local->sprite
+#define seq   local->sequence
+#define aa    local->animation
 
 
 /* ========================= Sprite Series =================== */
@@ -154,49 +144,49 @@ static Scratch scratch;
 void room_101_init() {
 	conv_get(0);
 
-	scratch.x02 = kernel_load_series(kernel_name('x', 0), 0);
-	scratch.x04 = kernel_load_series(kernel_name('x', 1), 0);
-	scratch.x06 = kernel_load_series(kernel_name('x', 2), 0);
-	scratch.x08 = kernel_load_series(kernel_name('x', 3), 0);
-	scratch.x0a = kernel_load_series(kernel_name('a', 5), 0);
-	scratch.x0c = kernel_load_series("PD", 0);
+	ss[fx_fire]        = kernel_load_series(kernel_name('x', 0), 0);
+	ss[fx_fire_shadow] = kernel_load_series(kernel_name('x', 1), 0);
+	ss[fx_door]        = kernel_load_series(kernel_name('x', 2), 0);
+	ss[fx_sconce_fire] = kernel_load_series(kernel_name('x', 3), 0);
+	ss[fx_draped_cape] = kernel_load_series(kernel_name('a', 5), 0);
+	ss[fx_open_door]   = kernel_load_series("PD", 0);
 
-	scratch.x20 = kernel_seq_forward(scratch.x02, false, 7, 0, 0, 0);
-	scratch.x22 = kernel_seq_forward(scratch.x04, false, 7, 0, 0, 0);
-	scratch.x26 = kernel_seq_forward(scratch.x08, false, 7, 0, 0, 0);
+	seq[fx_fire]        = kernel_seq_forward(ss[fx_fire],        false, 7, 0, 0, 0);
+	seq[fx_fire_shadow] = kernel_seq_forward(ss[fx_fire_shadow], false, 7, 0, 0, 0);
+	seq[fx_sconce_fire] = kernel_seq_forward(ss[fx_sconce_fire], false, 7, 0, 0, 0);
 
 	if (global[crawled_out_of_bed_101] != 0) {
-		scratch.x28 = kernel_seq_stamp(scratch.x0a, 0, 8);
-		kernel_seq_depth(scratch.x28, 11);
+		seq[fx_draped_cape] = kernel_seq_stamp(ss[fx_draped_cape], 0, 8);
+		kernel_seq_depth(seq[fx_draped_cape], 11);
 	}
 
-	scratch.x46 = 0;
+	scratch.fireplace_examined = 0;
 
 	if (player.been_here_before == 0 || conv_restore_running == 0) {
-		scratch.x50 = 1;
+		scratch.king_action = 1;
 		player.walker_visible = 0;
 		player.commands_allowed = 0;
-		scratch.x56 = 0;
-		scratch.x68 = 3;
+		scratch.pending_king_action = 0;
+		scratch.king_anim_mode = 3;
 
-		scratch.x3e = kernel_run_animation(kernel_name('C', -1), 0);
-		scratch.x4e = 1;
-		scratch.x54 = 0;
-		scratch.x58 = 0;
-		scratch.x6a = 0;
-		scratch.x66 = 2;
-		scratch.x6c = 0;
+		aa[1] = kernel_run_animation(kernel_name('C', -1), 0);
+		scratch.queen_action = 1;
+		scratch.pending_queen_action = 0;
+		scratch.tick_accum = 0;
+		scratch.resume_conv = 0;
+		scratch.queen_anim_mode = 2;
+		scratch.suppress_command = 0;
 
-		scratch.x3c = kernel_run_animation(kernel_name('B', -1), 0);
+		aa[0] = kernel_run_animation(kernel_name('B', -1), 0);
 
 		if (conv_restore_running != 0) {
 			goto done;
 		}
 
 		conv_run(0);
-		scratch.x4e = 3;
-		scratch.x50 = 1;
-		kernel_reset_animation(scratch.x3c, 69);
+		scratch.queen_action = 3;
+		scratch.king_action = 1;
+		kernel_reset_animation(aa[0], 69);
 		goto done;
 	}
 
@@ -205,26 +195,26 @@ void room_101_init() {
 		player.x = 114;
 		player.y = 152;
 		player.facing = 9;
-		scratch.x24 = kernel_seq_stamp(scratch.x06, 0, -1);
-		kernel_seq_depth(scratch.x24, 12);
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+		kernel_seq_depth(seq[fx_door], 12);
 		goto done;
 	}
 
 	if (previous_room != -2) {
-		scratch.x24 = kernel_seq_stamp(scratch.x06, 0, -2);
-		kernel_seq_depth(scratch.x24, 12);
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -2);
+		kernel_seq_depth(seq[fx_door], 12);
 		player_first_walk(330, 126, 4, 4, 134, 297, 0);
 		player_walk_trigger(80);
 		goto done;
 	}
 
 	// previous_room == -2
-	scratch.x24 = kernel_seq_stamp(scratch.x06, 0, -1);
-	kernel_seq_depth(scratch.x24, 12);
+	seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+	kernel_seq_depth(seq[fx_door], 12);
 
-	if (scratch.x50 == 1) {
+	if (scratch.king_action == 1) {
 		player.walker_visible = 0;
-		scratch.x3e = kernel_run_animation(kernel_name('C', -1), 0);
+		aa[1] = kernel_run_animation(kernel_name('C', -1), 0);
 	}
 
 done:
@@ -235,42 +225,35 @@ static void room_101_anim1() {
 	int val = imath_random(1, 6);
 
 	switch (val) {
-	case 1: scratch.x64 = 200; break;
-	case 2: scratch.x64 = 300; break;
-	case 3: scratch.x64 = 400; break;
-	case 4: scratch.x64 = 500; break;
-	case 5: scratch.x64 = 600; break;
-	case 6: scratch.x64 = 700; break;
+	case 1: scratch.timer_target = 200; break;
+	case 2: scratch.timer_target = 300; break;
+	case 3: scratch.timer_target = 400; break;
+	case 4: scratch.timer_target = 500; break;
+	case 5: scratch.timer_target = 600; break;
+	case 6: scratch.timer_target = 700; break;
 	default:
 		break;
 	}
 }
 
 static void room_101_anim2(int16 *ptr) {
-	// Compute elapsed ticks since last update (32-bit)
-	int32 elapsed = kernel.clock - scratch.x60;
-	scratch.x5c = elapsed;
+	int32 elapsed = kernel.clock - scratch.last_clock;
+	scratch.elapsed_ticks = elapsed;
 
-	// Clamp elapsed to max of 4 ticks, then accumulate into scratch[0x58/0x5a
 	if (elapsed < 0 || elapsed > 4) {
-		// Out of range: clamp to 1
-		scratch.x58 += 1;
+		scratch.tick_accum += 1;
 	} else {
-		// In range [0..4]: accumulate actual elapsed
-		scratch.x58 += elapsed;
+		scratch.tick_accum += elapsed;
 	}
 
-	// Update last-clock snapshot
-	scratch.x60 = kernel.clock;
+	scratch.last_clock = kernel.clock;
 
-	// Sign-extend scratch[0x64] to 32-bit and compare against accumulated ticks
-	int32 target = scratch.x64;
+	int32 target = scratch.timer_target;
 
-	if (target > scratch.x58) {
-		// Accumulated ticks haven't reached target yet
-		if (scratch.x4e == 7) {
+	if (target > scratch.tick_accum) {
+		if (scratch.queen_action == 7) {
 			player.commands_allowed = 0;
-		} else if (scratch.x4a == 'E') {
+		} else if (scratch.queen_frame == 'E') {
 			*ptr = 'B';
 			return;
 		}
@@ -279,21 +262,20 @@ static void room_101_anim2(int16 *ptr) {
 		return;
 	}
 
-	// Accumulated ticks reached/exceeded target: reset accumulators
-	scratch.x58 = 0;
-	scratch.x64 = 0;
+	scratch.tick_accum = 0;
+	scratch.timer_target = 0;
 
-	if (scratch.x4e == 7) {
+	if (scratch.queen_action == 7) {
 		player.commands_allowed = 0;
 		*ptr = 'a';
 		return;
 	}
 
-	if (scratch.x4a == 'E') {
-		scratch.x4e = 4;
+	if (scratch.queen_frame == 'E') {
+		scratch.queen_action = 4;
 	} else {
 		*ptr = 'B';
-		scratch.x4e = 3;
+		scratch.queen_action = 3;
 		return;
 	}
 
@@ -301,42 +283,42 @@ static void room_101_anim2(int16 *ptr) {
 }
 
 void room_101_daemon() {
-	int16 var_4 = -1;  // target frame for anim B (scratch.x3c)
-	int16 var_2 = -1;  // target frame for anim C (scratch.x3e)
+	int16 var_4 = -1;  // target frame for anim B (aa[0])
+	int16 var_2 = -1;  // target frame for anim C (aa[1])
 	int frame_c = 0;
 	int trig;
 
-	// --- Block 1: Handle anim B (scratch.x3c) when mode == 1 ---
-	int bx = scratch.x3c;
-	if (kernel_anim[bx].anim != 0 && scratch.x66 == 1) {
-		if (kernel_anim[bx].frame != scratch.x48) {
+	// --- Block 1: Handle anim B (aa[0]) when queen_anim_mode == 1 (book) ---
+	int bx = aa[0];
+	if (kernel_anim[bx].anim != 0 && scratch.queen_anim_mode == 1) {
+		if (kernel_anim[bx].frame != scratch.queen_prev_frame) {
 			var_4 = -1;
-			scratch.x48 = kernel_anim[bx].frame;
+			scratch.queen_prev_frame = kernel_anim[bx].frame;
 
 			if (kernel_anim[bx].frame - 9 == 0) {
 				text_show(10107);
 			}
 
-			if (var_4 >= 0 && kernel_anim[bx].frame != var_4) {
-				kernel_reset_animation(scratch.x3c, var_4);
-				scratch.x48 = var_4;
+			if (var_4 >= 0 && kernel_anim[aa[0]].frame != var_4) {
+				kernel_reset_animation(aa[0], var_4);
+				scratch.queen_prev_frame = var_4;
 			}
 		}
 	}
 
-	// --- Block 2: Handle anim B (scratch.x3c) when mode == 2 ---
-	if (scratch.x66 == 2) {
-		bx = scratch.x3c;
-		if (kernel_anim[bx].frame != scratch.x4a) {
-			scratch.x4a = kernel_anim[bx].frame;
+	// --- Block 2: Handle anim B (aa[0]) when queen_anim_mode == 2 (queen) ---
+	if (scratch.queen_anim_mode == 2) {
+		bx = aa[0];
+		if (kernel_anim[bx].frame != scratch.queen_frame) {
+			scratch.queen_frame = kernel_anim[bx].frame;
 			var_4 = -1;
 
-			if (scratch.x54 > 0) {
-				scratch.x4e = scratch.x54;
-				scratch.x54 = 0;
+			if (scratch.pending_queen_action > 0) {
+				scratch.queen_action = scratch.pending_queen_action;
+				scratch.pending_queen_action = 0;
 			}
 
-			int frame = scratch.x4a;
+			int frame = scratch.queen_frame;
 			if (frame == 69) {
 				goto block_frame69;
 			} else if (frame > 69) {
@@ -346,17 +328,17 @@ void room_101_daemon() {
 				frame -= 48;
 				if (frame == 0) {
 					// original frame was 48
-					if (scratch.x4e == 1) {
-						scratch.x4e = 3;
-						scratch.x6a = -1;
+					if (scratch.queen_action == 1) {
+						scratch.queen_action = 3;
+						scratch.resume_conv = -1;
 						var_4 = 'B';
 					}
 				} else {
 					frame -= 18;
 					if (frame == 0) {
 						// original frame was 66
-						if (scratch.x4e == 2) {
-							scratch.x4e = 3;
+						if (scratch.queen_action == 2) {
+							scratch.queen_action = 3;
 						}
 					}
 					// else: default, fall through with var_4 == -1
@@ -364,36 +346,36 @@ void room_101_daemon() {
 			}
 
 			// Apply var_4 to anim B if valid
-			if (var_4 >= 0 && kernel_anim[scratch.x3c].frame != var_4) {
-				kernel_reset_animation(scratch.x3c, var_4);
-				scratch.x4a = var_4;
+			if (var_4 >= 0 && kernel_anim[aa[0]].frame != var_4) {
+				kernel_reset_animation(aa[0], var_4);
+				scratch.queen_frame = var_4;
 			}
 		}
 	}
 
-	// --- Block 3: Handle anim C (scratch.x3e) when mode == 3 ---
-	bx = scratch.x3e;
+	// --- Block 3: Handle anim C (aa[1]) when king_anim_mode == 3 ---
+	bx = aa[1];
 	if (kernel_anim[bx].anim == 0) goto check_trigger;
-	if (scratch.x68 != 3) goto check_trigger;
-	if (kernel_anim[bx].frame == scratch.x4c) goto check_trigger;
+	if (scratch.king_anim_mode != 3) goto check_trigger;
+	if (kernel_anim[bx].frame == scratch.king_frame) goto check_trigger;
 
-	scratch.x4c = kernel_anim[bx].frame;
+	scratch.king_frame = kernel_anim[bx].frame;
 	var_2 = -1;
 
-	if (scratch.x56 > 0) {
-		scratch.x50 = scratch.x56;
-		scratch.x56 = 0;
+	if (scratch.pending_king_action > 0) {
+		scratch.king_action = scratch.pending_king_action;
+		scratch.pending_king_action = 0;
 	}
 
-	frame_c = scratch.x4c;
+	frame_c = scratch.king_frame;
 	switch (frame_c) {
 	case 3:
-		if (scratch.x50 == 1) var_2 = 0;
-		if (scratch.x50 == 3) var_2 = 0x1D;
+		if (scratch.king_action == 1) var_2 = 0;
+		if (scratch.king_action == 3) var_2 = 0x1D;
 		break;
 	case 29:
 		conv_release();
-		scratch.x50 = 1;
+		scratch.king_action = 1;
 		var_2 = 0;
 		break;
 	case 64:
@@ -404,10 +386,10 @@ void room_101_daemon() {
 		text_show(10116);
 		break;
 	case 148:
-		scratch.x28 = kernel_seq_stamp(scratch.x0a, 0, 8);
-		kernel_seq_depth(scratch.x28, 11);
-		kernel_synch(1, scratch.x28, 3, scratch.x3e);
-		scratch.x50 = 0;
+		seq[fx_draped_cape] = kernel_seq_stamp(ss[fx_draped_cape], 0, 8);
+		kernel_seq_depth(seq[fx_draped_cape], 11);
+		kernel_synch(1, seq[fx_draped_cape], 3, aa[1]);
+		scratch.king_action = 0;
 		player.x = 76;
 		player.y = 100;
 		player.walker_visible = -1;
@@ -420,15 +402,15 @@ void room_101_daemon() {
 	}
 
 	// Apply var_2 to anim C if valid
-	if (var_2 >= 0 && kernel_anim[scratch.x3e].frame != var_2) {
-		kernel_reset_animation(scratch.x3e, var_2);
-		scratch.x4c = var_2;
+	if (var_2 >= 0 && kernel_anim[aa[1]].frame != var_2) {
+		kernel_reset_animation(aa[1], var_2);
+		scratch.king_frame = var_2;
 	}
 
 check_trigger:
 	if (kernel.trigger == 'F') {
 		player.commands_allowed = -1;
-		scratch.x68 = 0;
+		scratch.king_anim_mode = 0;
 		text_show(10140);
 	}
 
@@ -438,20 +420,20 @@ check_trigger:
 	trig = kernel.trigger - 80;
 	if (trig == 0) {
 		// trigger == 80: loc_3915E
-		kernel_seq_delete(scratch.x24);
+		kernel_seq_delete(seq[fx_door]);
 		sound_play(25);
-		scratch.x24 = kernel_seq_backward(scratch.x06, 0, 6, 1, 0, 0);
-		kernel_seq_depth(scratch.x24, 14);
-		kernel_seq_range(scratch.x24, 1, 4);
-		kernel_seq_trigger(scratch.x24, 0, 0, 81);
+		seq[fx_door] = kernel_seq_backward(ss[fx_door], 0, 6, 1, 0, 0);
+		kernel_seq_depth(seq[fx_door], 14);
+		kernel_seq_range(seq[fx_door], 1, 4);
+		kernel_seq_trigger(seq[fx_door], 0, 0, 81);
 		return;
 	}
 	if (trig == 1) {
 		// trigger == 81: loc_391AA
-		scratch.x44 = scratch.x24;
-		scratch.x24 = kernel_seq_stamp(scratch.x06, 0, -1);
-		kernel_seq_depth(scratch.x24, 14);
-		kernel_synch(1, scratch.x24, 1, scratch.x44);
+		scratch.prev_door_seq = seq[fx_door];
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+		kernel_seq_depth(seq[fx_door], 14);
+		kernel_synch(1, seq[fx_door], 1, scratch.prev_door_seq);
 		player.commands_allowed = -1;
 		return;
 	}
@@ -460,12 +442,12 @@ check_trigger:
 
 	// --- frame == 69 block (called from block 2) ---
 block_frame69:
-	if (scratch.x4e == 3 || scratch.x4e == 4) {
-		if (scratch.x6a != 0) {
+	if (scratch.queen_action == 3 || scratch.queen_action == 4) {
+		if (scratch.resume_conv != 0) {
 			conv_run(0);
-			scratch.x6a = 0;
+			scratch.resume_conv = 0;
 		}
-		switch (scratch.x4e) {
+		switch (scratch.queen_action) {
 		case 7:
 			player.commands_allowed = 0;
 			var_4 = 'a';
@@ -483,22 +465,22 @@ block_frame69:
 		default:
 			break;
 		}
-	} else if (scratch.x4e == 7) {
+	} else if (scratch.queen_action == 7) {
 		player.commands_allowed = 0;
 		var_4 = 'a';
-	} else if (scratch.x4e == 2) {
+	} else if (scratch.queen_action == 2) {
 		var_4 = '0';
-	} else if (scratch.x4e == 5) {
+	} else if (scratch.queen_action == 5) {
 		var_4 = 'G';
-	} else if (scratch.x4e == 6) {
+	} else if (scratch.queen_action == 6) {
 		room_101_anim1();
 		room_101_anim2(&var_4);
 	}
 
 	// Apply var_4 and return to block 2 exit
-	if (var_4 >= 0 && kernel_anim[scratch.x3c].frame != var_4) {
-		kernel_reset_animation(scratch.x3c, var_4);
-		scratch.x4a = var_4;
+	if (var_4 >= 0 && kernel_anim[aa[0]].frame != var_4) {
+		kernel_reset_animation(aa[0], var_4);
+		scratch.queen_frame = var_4;
 	}
 	return;
 
@@ -512,25 +494,25 @@ block_frame_gt69:
 	frame_c -= 26;
 	if (frame_c == 0) {
 		// original was 97 ('a'): loc_3900C
-		scratch.x4e = 3;
+		scratch.queen_action = 3;
 		var_4 = 'B';
 		goto apply_var4_and_continue;
 	}
 	frame_c -= 54;
 	if (frame_c == 0) {
 		// original was 177: loc_39016
-		scratch.x24 = kernel_seq_stamp(scratch.x06, 0, -1);
-		kernel_seq_depth(scratch.x24, 14);
-		kernel_synch(1, scratch.x24, 3, scratch.x3c);
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+		kernel_seq_depth(seq[fx_door], 14);
+		kernel_synch(1, seq[fx_door], 3, aa[0]);
 		player.commands_allowed = -1;
-		scratch.x66 = 0;
+		scratch.queen_anim_mode = 0;
 	}
 	// fall through to apply var_4
 
 apply_var4_and_continue:
-	if (var_4 >= 0 && kernel_anim[scratch.x3c].frame != var_4) {
-		kernel_reset_animation(scratch.x3c, var_4);
-		scratch.x4a = var_4;
+	if (var_4 >= 0 && kernel_anim[aa[0]].frame != var_4) {
+		kernel_reset_animation(aa[0], var_4);
+		scratch.queen_frame = var_4;
 	}
 }
 
@@ -541,21 +523,21 @@ void room_101_pre_parser() {
 			player_parse(8, 0) == 0 &&
 			player_parse(7, 0) == 0 &&
 			player_parse(12, 0) == 0 &&
-			scratch.x50 == 1 &&
+			scratch.king_action == 1 &&
 			player.need_to_walk != 0) {
 		player.commands_allowed = 0;
 		player.ready_to_walk = 0;
-		scratch.x56 = 3;
+		scratch.pending_king_action = 3;
 		global[crawled_out_of_bed_101] = -1;
-		scratch.x6c = -1;
+		scratch.suppress_command = -1;
 	}
 
 	if (player_parse(47, 46, 0) != 0) {
-		if (scratch.x50 == 1) {
+		if (scratch.king_action == 1) {
 			player.commands_allowed = 0;
-			scratch.x56 = 3;
+			scratch.pending_king_action = 3;
 			global[crawled_out_of_bed_101] = -1;
-			scratch.x6c = -1;
+			scratch.suppress_command = -1;
 			player_cancel_command();
 		}
 	}
@@ -568,7 +550,7 @@ static void process_conversation_queen() {
 			conv_you_trigger(1);
 			break;
 		case 1:
-			scratch.x54 = 2;
+			scratch.pending_queen_action = 2;
 			break;
 		}
 	}
@@ -581,15 +563,15 @@ static void process_conversation_queen() {
 			break;
 		case 1:
 			conv_hold();
-			scratch.x56 = 2;
+			scratch.pending_king_action = 2;
 			conv_you_trigger(2);
 			break;
 		case 2:
-			scratch.x54 = 6;
+			scratch.pending_queen_action = 6;
 			conv_me_trigger(3);
 			break;
 		case 3:
-			scratch.x54 = 7;
+			scratch.pending_queen_action = 7;
 			break;
 		}
 	}
@@ -601,11 +583,11 @@ static void process_conversation_queen() {
 			return;
 		case 1:
 			conv_hold();
-			scratch.x56 = 2;
+			scratch.pending_king_action = 2;
 			conv_you_trigger(2);
 			return;
 		case 2:
-			scratch.x54 = 5;
+			scratch.pending_queen_action = 5;
 			return;
 		}
 	}
@@ -617,8 +599,8 @@ void room_101_parser() {
 		goto handled;
 	}
 
-	if (scratch.x6c) {
-		scratch.x6c = 0;
+	if (scratch.suppress_command) {
+		scratch.suppress_command = 0;
 		goto handled;
 	}
 
@@ -629,33 +611,33 @@ void room_101_parser() {
 
 	// Door to queen's room: walk(37), open(6), use(10) + door(36)
 	if (player_parse(37, 36, 0) || player_parse(6, 36, 0) || player_parse(10, 36, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto done;
-		if (scratch.x68 == 3) goto done;
+		if (kernel_anim[aa[1]].anim != 0) goto done;
+		if (scratch.king_anim_mode == 3) goto done;
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = 0;
 			player.walker_visible = 0;
-			scratch.x2a = kernel_seq_pingpong(scratch.x0c, false, 7, 0, 0, 2);
-			kernel_seq_player(scratch.x2a, -1);
-			kernel_seq_trigger(scratch.x2a, 2, 2, 1);
-			kernel_seq_trigger(scratch.x2a, 0, 0, 3);
+			seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], false, 7, 0, 0, 2);
+			kernel_seq_player(seq[fx_open_door], -1);
+			kernel_seq_trigger(seq[fx_open_door], 2, 2, 1);
+			kernel_seq_trigger(seq[fx_open_door], 0, 0, 3);
 			goto handled;
 		case 1:
-			kernel_seq_delete(scratch.x24);
+			kernel_seq_delete(seq[fx_door]);
 			sound_play(24);
-			scratch.x24 = kernel_seq_forward(scratch.x06, false, 7, 0, 0, 1);
-			kernel_seq_depth(scratch.x24, 12);
-			kernel_seq_trigger(scratch.x24, 0, 0, 2);
+			seq[fx_door] = kernel_seq_forward(ss[fx_door], false, 7, 0, 0, 1);
+			kernel_seq_depth(seq[fx_door], 12);
+			kernel_seq_trigger(seq[fx_door], 0, 0, 2);
 			goto handled;
 		case 2:
-			scratch.x44 = scratch.x24;
-			scratch.x24 = kernel_seq_stamp(scratch.x06, false, 5);
-			kernel_seq_depth(scratch.x24, 12);
-			kernel_synch(1, scratch.x24, 1, scratch.x44);
+			scratch.prev_door_seq = seq[fx_door];
+			seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 5);
+			kernel_seq_depth(seq[fx_door], 12);
+			kernel_synch(1, seq[fx_door], 1, scratch.prev_door_seq);
 			goto handled;
 		case 3:
 			player.walker_visible = -1;
-			kernel_synch(2, 0, 1, scratch.x2a);
+			kernel_synch(2, 0, 1, seq[fx_open_door]);
 			player_walk(319, 129, 6);
 			player.walk_off_edge_to_room = 102;
 			goto handled;
@@ -665,8 +647,8 @@ void room_101_parser() {
 
 	// Exit south to room 103: walk(39) + exit(38)
 	if (player_parse(39, 38, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto done;
-		if (scratch.x68 == 3) goto done;
+		if (kernel_anim[aa[1]].anim != 0) goto done;
+		if (scratch.king_anim_mode == 3) goto done;
 		new_room = 103;
 		goto handled;
 	}
@@ -677,12 +659,12 @@ void room_101_parser() {
 		case 0:
 			player.commands_allowed = 0;
 			player.walker_visible = 0;
-			scratch.x66 = 1;
-			scratch.x3c = kernel_run_animation(kernel_name('A', -1), 1);
+			scratch.queen_anim_mode = 1;
+			aa[0] = kernel_run_animation(kernel_name('A', -1), 1);
 			goto handled;
 		case 1:
 			player.walker_visible = -1;
-			kernel_synch(2, 0, 3, scratch.x3c);
+			kernel_synch(2, 0, 3, aa[0]);
 			if (!(global[player_score_flags] & 2)) {
 				global[player_score_flags] |= 2;
 				global[player_score] += 3;
@@ -696,7 +678,7 @@ void room_101_parser() {
 	// Look verbs: look(3), examine(30)
 	if (player_parse(3, 0) || player_parse(30, 0)) {
 		if (player_parse(21, 0)) {
-			if (kernel_anim[scratch.x3e].anim != 0 && scratch.x68 == 3)
+			if (kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3)
 				text_show(10139);
 			else
 				text_show(10102);
@@ -705,7 +687,7 @@ void room_101_parser() {
 		if (player_parse(16, 0)) { text_show(10104); goto handled; }
 		if (player_parse(33, 0)) { text_show(10105); goto handled; }
 		if (player_parse(27, 0)) {
-			if (kernel_anim[scratch.x3e].anim != 0 && scratch.x68 == 3)
+			if (kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3)
 				text_show(10108);
 			else
 				text_show(10109);
@@ -716,7 +698,7 @@ void room_101_parser() {
 		if (player_parse(45, 0)) { text_show(10112); goto handled; }
 		if (player_parse(329, 0)) { text_show(10113); goto handled; }
 		if (player_parse(31, 0)) {
-			if (kernel_anim[scratch.x3e].anim != 0 && scratch.x68 == 3)
+			if (kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3)
 				text_show(10114);
 			else
 				text_show(10115);
@@ -727,9 +709,9 @@ void room_101_parser() {
 		if (player_parse(35, 0)) { text_show(10119); goto handled; }
 		if (player_parse(38, 0)) { text_show(10121); goto handled; }
 		if (player_parse(22, 0)) {
-			if ((kernel_anim[scratch.x3e].anim != 0 && scratch.x68 == 3) || scratch.x46 == 0) {
+			if ((kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3) || scratch.fireplace_examined == 0) {
 				text_show(10123);
-				scratch.x46 = -1;
+				scratch.fireplace_examined = -1;
 			} else {
 				text_show(10124);
 			}
@@ -749,56 +731,56 @@ void room_101_parser() {
 
 	// Take/use/push/pull verbs — also reached by look fallthrough when no noun matched
 	if ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(21, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10103);
 		goto handled;
 	}
 	if (player_parse(4, 33, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10106);
 		goto handled;
 	}
 	if ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(35, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10120);
 		goto handled;
 	}
 	if ((player_parse(4, 0) || player_parse(10, 0)) && player_parse(42, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10132);
 		goto handled;
 	}
 	if (player_parse(6, 24, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10137);
 		goto handled;
 	}
 	if (player_parse(6, 23, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10135);
 		goto handled;
 	}
 	if (player_parse(6, 22, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10125);
 		goto handled;
 	}
 	if ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(38, 0)) {
-		if (kernel_anim[scratch.x3e].anim != 0) goto handled;
-		if (scratch.x68 == 3) goto handled;
+		if (kernel_anim[aa[1]].anim != 0) goto handled;
+		if (scratch.king_anim_mode == 3) goto handled;
 		text_show(10122);
 		goto handled;
 	}
 	if (player_parse(10, 18, 0)) {
 		// Unlike other use-verb blocks, blocking here falls through rather than consuming command
-		if (kernel_anim[scratch.x3e].anim == 0 && scratch.x68 != 3) {
+		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3) {
 			text_show(10130);
 			goto handled;
 		}
@@ -825,37 +807,26 @@ void room_101_error() {
 }
 
 void room_101_synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(scratch.x02);
-	s.syncAsSint16LE(scratch.x04);
-	s.syncAsSint16LE(scratch.x06);
-	s.syncAsSint16LE(scratch.x08);
-	s.syncAsSint16LE(scratch.x0a);
-	s.syncAsSint16LE(scratch.x0c);
-	s.syncAsSint16LE(scratch.x20);
-	s.syncAsSint16LE(scratch.x22);
-	s.syncAsSint16LE(scratch.x24);
-	s.syncAsSint16LE(scratch.x26);
-	s.syncAsSint16LE(scratch.x28);
-	s.syncAsSint16LE(scratch.x2a);
-	s.syncAsSint16LE(scratch.x3c);
-	s.syncAsSint16LE(scratch.x3e);
-	s.syncAsSint16LE(scratch.x44);
-	s.syncAsSint16LE(scratch.x46);
-	s.syncAsSint16LE(scratch.x48);
-	s.syncAsSint16LE(scratch.x4a);
-	s.syncAsSint16LE(scratch.x4c);
-	s.syncAsSint16LE(scratch.x4e);
-	s.syncAsSint16LE(scratch.x50);
-	s.syncAsSint16LE(scratch.x54);
-	s.syncAsSint16LE(scratch.x56);
-	s.syncAsSint32LE(scratch.x58);
-	s.syncAsSint32LE(scratch.x5c);
-	s.syncAsSint32LE(scratch.x60);
-	s.syncAsSint16LE(scratch.x64);
-	s.syncAsSint16LE(scratch.x66);
-	s.syncAsSint16LE(scratch.x68);
-	s.syncAsSint16LE(scratch.x6a);
-	s.syncAsSint16LE(scratch.x6c);
+	for (int i = 0; i < 15; i++) s.syncAsSint16LE(local->sprite[i]);
+	for (int i = 0; i < 15; i++) s.syncAsSint16LE(local->sequence[i]);
+	for (int i = 0; i < 4; i++)  s.syncAsSint16LE(local->animation[i]);
+	s.syncAsSint16LE(scratch.prev_door_seq);
+	s.syncAsSint16LE(scratch.fireplace_examined);
+	s.syncAsSint16LE(scratch.queen_prev_frame);
+	s.syncAsSint16LE(scratch.queen_frame);
+	s.syncAsSint16LE(scratch.king_frame);
+	s.syncAsSint16LE(scratch.queen_action);
+	s.syncAsSint16LE(scratch.king_action);
+	s.syncAsSint16LE(scratch.pending_queen_action);
+	s.syncAsSint16LE(scratch.pending_king_action);
+	s.syncAsSint32LE(scratch.tick_accum);
+	s.syncAsSint32LE(scratch.elapsed_ticks);
+	s.syncAsSint32LE(scratch.last_clock);
+	s.syncAsSint16LE(scratch.timer_target);
+	s.syncAsSint16LE(scratch.queen_anim_mode);
+	s.syncAsSint16LE(scratch.king_anim_mode);
+	s.syncAsSint16LE(scratch.resume_conv);
+	s.syncAsSint16LE(scratch.suppress_command);
 }
 
 void room_101_preload() {
