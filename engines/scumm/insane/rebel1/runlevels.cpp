@@ -235,6 +235,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	debug(1, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
+	restoreScreenFlashPalette();
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve
@@ -2032,6 +2033,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
+	restoreScreenFlashPalette();
 	if (!resumingRoute)
 		clearBit(0);
 	_interactiveVideoActive = true;

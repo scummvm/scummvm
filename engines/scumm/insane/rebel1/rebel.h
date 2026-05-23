@@ -86,6 +86,7 @@ public:
 
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b);
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
+	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
 	int getCurrentLevel() const { return _currentLevel; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	uint16 getEffectiveGameOpcode() const;
@@ -359,6 +360,7 @@ private:
 	// Kept for legacy call sites; frame-accurate dispatch uses _frameGameOpcodeMask.
 	uint16 _activeGameOpcode;
 	uint32 _frameGameOpcodeMask;
+	bool _frameHasGameChunk;
 	uint16 _frameDispatchFlags;
 	bool _gameOp0BPhysicsUpdatedThisFrame;
 

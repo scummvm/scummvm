@@ -1899,6 +1899,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	uint32 opcode = b.readUint32BE();
 	uint32 param1 = b.readUint32BE();
+	_frameHasGameChunk = true;
 
 	// FUN_1BE1B applies two global gates before the opcode switch. Bit 0 of
 	// g_combatModeFlags skips gameplay dispatch entirely; bit 5 of g_hudDisableFlags
