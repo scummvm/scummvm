@@ -188,6 +188,21 @@ enum {
 };
 
 enum {
+	conv031_hello_only   =  0,
+	conv031_whoare_only  =  1,
+	conv031_wellwell_b_b =  3,
+	conv031_wellwell     =  4,
+	conv031_exit_b_b     = 11
+};
+
+enum {
+	conv032_pid_dies_b_b   =  5,
+	conv032_pain_b_b       = 14,
+	conv032_pain           = 15,
+	conv032_pid_death_b_b  = 20
+};
+
+enum {
 	conv033_six_only     =  4,
 	conv033_exit_b_b     =  7
 };
@@ -205,6 +220,13 @@ enum {
 
 enum {
 	conv035_exit_b_b    =  3
+};
+
+enum {
+	conv036_question2_b_b    =  7,
+	conv036_question3_b_b    = 15,
+	conv036_die_b_b          = 24,
+	conv036_ok_b_b           = 26
 };
 
 enum {

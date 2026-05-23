@@ -556,9 +556,9 @@ static void room_116_parser() {
 		goto handled;
 	}
 
-	if (player_parse(words_walk_through, words_door_to_darkness, 0) ||
-			player_parse(words_open, 228, 0) ||
-			player_parse(words_pull, 228, 0)) {
+	if (player_parse(words_walk_through, words_doorway_to_south, 0) ||
+			player_parse(words_open, words_doorway_to_south, 0) ||
+			player_parse(words_pull, words_doorway_to_south, 0)) {
 		if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
 			conv_run(CONVERSATION_WITH_KING);
 			conv_export_value(global[king_status] == KING_WITH_SOUL ? 1 : 0);
@@ -783,7 +783,7 @@ static void room_116_parser() {
 		} else if (player_parse(words_door_to_north, 0)) {
 			text_show(11605);
 			goto handled;
-		} else if (player_parse(words_door_to_darkness, 0)) {
+		} else if (player_parse(words_doorway_to_south, 0)) {
 			text_show(11606);
 			goto handled;
 		} else if (player_parse(words_king, 0) && global[king_status] == KING_CAPTIVE) {
