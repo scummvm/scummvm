@@ -1829,7 +1829,44 @@ done:
 }
 
 void room_614_synchronize(Common::Serializer &s) {
-	
+	for (int i = 0; i < 19; i++) s.syncAsSint16LE(local->sprite[i]);
+	for (int i = 0; i < 19; i++) s.syncAsSint16LE(local->sequence[i]);
+	for (int i = 0; i < 8; i++)  s.syncAsSint16LE(local->animation[i]);
+	s.syncAsSint16LE(local->prevent);
+	s.syncAsSint16LE(local->doofus);
+	s.syncAsSint16LE(local->stone_taking_count);
+	s.syncAsSint16LE(local->king_enter_frame);
+	s.syncAsSint16LE(local->king_enter_action);
+	s.syncAsSint16LE(local->king_enter_talk_count);
+	s.syncAsSint16LE(local->anim_0_running);
+	s.syncAsSint16LE(local->king_float_frame);
+	s.syncAsSint16LE(local->king_float_action);
+	s.syncAsSint16LE(local->king_float_talk_count);
+	s.syncAsSint16LE(local->anim_1_running);
+	s.syncAsSint16LE(local->pid_float_frame);
+	s.syncAsSint16LE(local->pid_float_action);
+	s.syncAsSint16LE(local->pid_float_talk_count);
+	s.syncAsSint16LE(local->anim_2_running);
+	s.syncAsSint16LE(local->wiz_float_frame);
+	s.syncAsSint16LE(local->wiz_float_action);
+	s.syncAsSint16LE(local->wiz_float_talk_count);
+	s.syncAsSint16LE(local->anim_3_running);
+	s.syncAsSint16LE(local->wiz_zap_frame);
+	s.syncAsSint16LE(local->wiz_zap_action);
+	s.syncAsSint16LE(local->anim_4_running);
+	s.syncAsSint16LE(local->wiz_murder_frame);
+	s.syncAsSint16LE(local->wiz_murder_action);
+	s.syncAsSint16LE(local->anim_5_running);
+	s.syncAsSint16LE(local->wiz_ice_frame);
+	s.syncAsSint16LE(local->wiz_ice_action);
+	s.syncAsSint16LE(local->anim_6_running);
+	s.syncAsSint16LE(local->wiz_end_frame);
+	s.syncAsSint16LE(local->wiz_end_action);
+	s.syncAsSint16LE(local->anim_7_running);
+	s.syncAsSint32LE(local->clock);
+	s.syncAsSint32LE(local->death_timer);
+	s.syncAsSint16LE(local->activate_timer);
+	s.syncAsSint16LE(local->did_not_throw);
 }
 
 void room_614_preload() {

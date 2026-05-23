@@ -431,7 +431,13 @@ done:
 }
 
 void room_612_synchronize(Common::Serializer &s) {
-	
+	for (int i = 0; i < 15; i++) s.syncAsSint16LE(local->sprite[i]);
+	for (int i = 0; i < 15; i++) s.syncAsSint16LE(local->sequence[i]);
+	for (int i = 0; i < 4; i++)  s.syncAsSint16LE(local->animation[i]);
+	s.syncAsSint16LE(local->last_arc);
+	s.syncAsSint16LE(local->tele_frame);
+	s.syncAsSint16LE(local->anim_0_running);
+	s.syncAsSint16LE(local->count);
 }
 
 void room_612_preload() {

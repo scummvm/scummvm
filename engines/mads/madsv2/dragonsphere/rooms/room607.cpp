@@ -670,7 +670,12 @@ done:
 }
 
 void room_607_synchronize(Common::Serializer &s) {
-	
+	for (int i = 0; i < 15; i++) s.syncAsSint16LE(local->sprite[i]);
+	for (int i = 0; i < 15; i++) s.syncAsSint16LE(local->sequence[i]);
+	for (int i = 0; i < 4; i++)  s.syncAsSint16LE(local->animation[i]);
+	s.syncAsSint16LE(local->pour_frame);
+	s.syncAsSint16LE(local->anim_0_running);
+	s.syncAsSint16LE(local->prevent);
 }
 
 void room_607_preload(void) {
