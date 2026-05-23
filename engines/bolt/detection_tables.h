@@ -39,7 +39,7 @@ const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 	{
@@ -52,7 +52,7 @@ const ADGameDescription gameDescriptions[] = {
 		},
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 	{
@@ -65,7 +65,7 @@ const ADGameDescription gameDescriptions[] = {
 		},
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_DEMO,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 	
