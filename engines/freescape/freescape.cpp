@@ -1321,6 +1321,7 @@ void FreescapeEngine::initGameState() {
 
 	_flyMode = false;
 	_noClipMode = false;
+	_hasFallen = false;
 	_playerWasCrushed = false;
 	_shootingFrames = 0;
 	_delayedShootObject = nullptr;
@@ -1432,6 +1433,14 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 
 	_flyMode = stream->readByte();
 	_noClipMode = false;
+	// Reset transient "player has fallen" state. Otherwise, having fallen out
+	// of the world before saving (or loading in-game right after a fall)
+	// persists and immediately ends the loaded game. Falling also tilts the
+	// camera (_roll) in some games and that value is not stored in the save,
+	// so reset it as well. Reported for Driller (Amiga), but applies to all games.
+	_hasFallen = false;
+	_roll = 0;
+	_avoidRenderingFrames = 0;
 	_playerHeightNumber = stream->readSint32LE();
 	_playerStepIndex = stream->readUint32LE();
 	_countdown = stream->readUint32LE();
