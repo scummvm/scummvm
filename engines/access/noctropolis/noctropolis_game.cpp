@@ -165,8 +165,8 @@ void NoctropolisEngine::drawOverlays() {
 }
 
 void NoctropolisEngine::drawDeathTimer() {
-  if (!_flags[200])
-	return;
+	if (!_flags[200])
+		return;
 
 	int seconds = _timers[0x12]._timer / 60;
 	Common::String time = Common::String::format("%02d:%02d", seconds / 60, seconds % 60);

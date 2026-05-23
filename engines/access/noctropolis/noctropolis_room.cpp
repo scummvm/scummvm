@@ -303,9 +303,9 @@ int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
 	_vm->_scale = _vm->_stilScaleOff;
 	if (_vm->_stilScaleOff == 0) {
 		_vm->_scale = (_vm->_scaleI *
-						(((_vm->_scaleH2 << 8) +
+						((((_vm->_scaleH2 << 8) +
 						  _vm->_scaleT1 *
-						  (_vm->_scaleN1 + (stil->_rawPlayer.y - _vm->_scaleMaxY)) & 0xff00)
+						  (_vm->_scaleN1 + (stil->_rawPlayer.y - _vm->_scaleMaxY))) & 0xff00)
 						 / (uint)_vm->_scaleH1) >> 8);
 	}
 	_vm->_screen->setScaleTable(_vm->_scale);

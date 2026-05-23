@@ -45,7 +45,7 @@ extern const int16 TRAV_ICONS[];
 
 class NoctropolisResources : public Resources {
 public:
-	NoctropolisResources(AccessEngine *_vm);
+	NoctropolisResources(AccessEngine *vm);
 	~NoctropolisResources();
 
 	const byte *getCursor(int num) const override;

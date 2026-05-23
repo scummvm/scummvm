@@ -1806,7 +1806,7 @@ static constexpr const char *ASKITEMS[4][33] = {
 
 ///////////////////////////////////////////////////////////////
 
-NoctropolisResources::NoctropolisResources(AccessEngine *_vm) : Resources(_vm), _fontChaleteu(nullptr), _fontSystemeu(nullptr),
+NoctropolisResources::NoctropolisResources(AccessEngine *vm) : Resources(vm), _fontChaleteu(nullptr), _fontSystemeu(nullptr),
 _fontSml3x5(nullptr), _fontNaples12(nullptr), _fontGothiceu(nullptr), _fontChaletse(nullptr),_fontComicseu(nullptr)
 {
 }
