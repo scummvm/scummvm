@@ -490,6 +490,7 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_hudRenderFlag = 0;
 	_gameOp0BPhysicsUpdatedThisFrame = false;
 	_turretFrameShipCenterValid = false;
+	_frameObjectHitRevealPending = false;
 
 	if (_interactiveVideoActive && _player) {
 		const bool usePerspectiveViewport =
@@ -582,14 +583,17 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const bool allowImplicitGameplayMode = _frameHasGameChunk && !haveFrameGameOpcodes;
 	const bool gameOp0BMode = hasFrameGameOpcode(0x0B) ||
 		(allowImplicitGameplayMode && _activeGameOpcode == 0x0B);
-	const bool onFootMode = hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
-		(allowImplicitGameplayMode &&
-			(_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A));
+	const bool onFootSequenceMode = hasFrameGameOpcode(0x19) ||
+		(allowImplicitGameplayMode && _activeGameOpcode == 0x19);
+	const bool onFootAimMode = hasFrameGameOpcode(0x1A) ||
+		(allowImplicitGameplayMode && _activeGameOpcode == 0x1A);
+	const bool onFootMode = onFootSequenceMode || onFootAimMode;
 	const bool turretMode = hasFrameGameOpcode(0x08) || hasFrameGameOpcode(0x0A) ||
 		(allowImplicitGameplayMode && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
 	const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
 		(allowImplicitGameplayMode &&
 			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
+	bool shotOverlayHandled = false;
 	if (gameOp0BMode) {
 		// GAME 0x0B scrolling cockpit/surface handler — FUN_1CDA7.
 		if (!_gameOp0BPhysicsUpdatedThisFrame) {
@@ -609,21 +613,58 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	} else if (onFootMode) {
 		// On-foot handler — opcodes 0x19/0x1A (Level 9 Stormtroopers)
-		updateOnFootPhysics();
-
-		if (_health < 0 && _deathTimer < 2) {
+		if (_currentLevel == 8 && onFootAimMode && !onFootSequenceMode && _killCount > 0) {
 			_fireCooldown = _playerFired ? 1 : 0;
 			_vm->_smushVideoShouldFinish = true;
 			return;
 		}
 
-		// Draw character sprite at on-foot position (DrawFobjGlyph with flag 0x80)
-		if (_shipBank.numSprites > 0 && _shipDirIndex >= 0 &&
+		if (onFootSequenceMode)
+			initOnFootSequence();
+
+		// Original LVL9 frames dispatch GAME 0x1A before 0x19. That means the
+		// shot overlay uses the current crosshair/pose and is then covered by the
+		// character DrawFobjGlyph from 0x19; the 0x19 pose update is for the next
+		// frame. Keep that ordering explicit here.
+		if (onFootAimMode) {
+			shotOverlayHandled = true;
+			if (_health >= 0) {
+				// HandleGameOp5A_ObjectOrSceneTrigger can snap g_shipPos to the
+				// target center before the shot overlay runs. The ScummVM player
+				// defers GAME 0x1A until after FOBJ dispatch, so preserve that
+				// snap instead of immediately replacing it with raw input again.
+				const bool preserveTargetSnap = (_targetProximity == 2 && _tuning.snap > 0);
+				const int16 snappedTargetX = _shipPosX;
+				const int16 snappedTargetY = _shipPosY;
+
+				updateOnFootAimVariant();
+				if (preserveTargetSnap) {
+					_shipPosX = snappedTargetX;
+					_shipPosY = snappedTargetY;
+				}
+				renderShotOverlayPipeline(renderBitmap, pitch, width, height, false);
+			}
+		}
+
+		// Draw character sprite at on-foot position (DrawFobjGlyph with flag 0x80).
+		// GAME 0x1A-only selector clips reuse the targeting handler but do not
+		// draw the walking character.
+		if (onFootSequenceMode && _shipBank.numSprites > 0 && _shipDirIndex >= 0 &&
 			_shipDirIndex < _shipBank.numSprites) {
 			const RA1Sprite &spr = _shipBank.sprites[_shipDirIndex];
 			int drawX = _onFootCharX + spr.xoffs;
 			int drawY = _onFootCharY + spr.yoffs;
 			renderSprite(renderBitmap, pitch, width, height, drawX, drawY, spr);
+		}
+
+		if (onFootSequenceMode)
+			updateOnFootSequence();
+		finishOnFootFrame();
+
+		if (_health < 0 && _deathTimer < 2) {
+			_fireCooldown = _playerFired ? 1 : 0;
+			_vm->_smushVideoShouldFinish = true;
+			return;
 		}
 	} else {
 		// Dispatch movement path by GAME handler family:
@@ -665,11 +706,12 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// in handlers 0x09/0x0A/0x0B/0x1A. LVL1 stage-2 works because the stream emits
 	// both 0x0A and 0x08 in the same frame, not because 0x08 owns the overlay path.
 	const bool hasTargetingPipeline =
-		hasFrameGameOpcode(0x09) || hasFrameGameOpcode(0x0A) ||
-		hasFrameGameOpcode(0x0B) || hasFrameGameOpcode(0x1A) ||
-		(allowImplicitGameplayMode &&
+		!shotOverlayHandled &&
+		(hasFrameGameOpcode(0x09) || hasFrameGameOpcode(0x0A) ||
+		 hasFrameGameOpcode(0x0B) || hasFrameGameOpcode(0x1A) ||
+		 (allowImplicitGameplayMode &&
 			(_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
-			 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A));
+			 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A)));
 	if (hasTargetingPipeline) {
 		const bool flightVariantTargetingMode =
 			hasFrameGameOpcode(0x09) ||
@@ -677,17 +719,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		const bool turretTargetingMode =
 			hasFrameGameOpcode(0x0A) ||
 			(allowImplicitGameplayMode && _activeGameOpcode == 0x0A);
-		renderTargetBoxes(renderBitmap, pitch, width, height);
-		processShot();
-		renderLaserShots(renderBitmap, pitch, width, height);
-		// Timer decrement AFTER rendering (original decrements inside the render loop).
-		// This ensures timer==5 first frame is rendered with gun barrel offset and lerp=1.
-		for (int i = 0; i < kMaxShotSlots; i++) {
-			if (_shotSlots[i].timer > 0)
-				_shotSlots[i].timer--;
-		}
-		renderGostSlots(renderBitmap, pitch, width, height);
-		renderTargeting(renderBitmap, pitch, width, height);
+		renderShotOverlayPipeline(renderBitmap, pitch, width, height, true);
 
 		// FUN_1D79C (GAME 0x0A) owns the cursor center in turret/combat mode.
 		// The preceding overlay/shot pass uses the previous frame's cursor; the
@@ -705,7 +737,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		} else if (flightVariantTargetingMode) {
 			updateFlightVariantCursor();
 		}
-	} else {
+	} else if (!shotOverlayHandled) {
 		// Keep lock/target accumulators quiescent when current handler doesn't
 		// execute FUN_1C940/FUN_1CCA0/FUN_1C9CD/FUN_1CB22.
 		_targetProximity = 0;
@@ -737,6 +769,30 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (gameOp0BMode || onFootMode || turretMode || flightMode || _hudRenderFlag != 0)
 		renderHUD(renderBitmap, pitch, width, height);
 	_fireCooldown = _playerFired ? 1 : 0;
+}
+
+// ScummVM helper that groups the common shot/lock overlay calls used by the
+// original GAME handlers. GAME 0x1A uses the same pipeline without the target
+// box draw; 0x09/0x0A/0x0B include DrawTargetIndicators first.
+void InsaneRebel1::renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
+		bool drawTargetBoxes) {
+	if (drawTargetBoxes) {
+		renderTargetBoxes(dst, pitch, width, height);
+	} else {
+		_prevTargetCount = _targetCount;
+		_targetCount = 0;
+	}
+
+	processShot();
+	renderLaserShots(dst, pitch, width, height);
+	// Timer decrement AFTER rendering (original decrements inside the render loop).
+	// This ensures timer==5 first frame is rendered with gun barrel offset and lerp=1.
+	for (int i = 0; i < kMaxShotSlots; i++) {
+		if (_shotSlots[i].timer > 0)
+			_shotSlots[i].timer--;
+	}
+	renderGostSlots(dst, pitch, width, height);
+	renderTargeting(dst, pitch, width, height);
 }
 
 // renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.
@@ -882,35 +938,25 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	if ((_gameplayFlags75fe & 0x10) != 0)
 		return;
 
-	if (_bangBank.numSprites <= 0) {
-		// Warn if there are active GOST slots but no bang sprites to render
-		for (int i = 0; i < kMaxGostSlots; i++) {
-			if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
-				debug(1, "RA1 renderGostSlots: bangBank empty but gost slot %d active (target=%d frame=%d)",
-					i, _gostSlots[i].targetId, _gostSlots[i].frame);
-				_gostSlots[i].targetId = 0;  // Clear stale slot
-			}
-		}
-		return;
-	}
-
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const bool projectGostMarkers = (getEffectiveGameOpcode() == 0x0B);
 	for (int i = 0; i < kMaxGostSlots; i++) {
 		if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
-			int sprIdx = _gostSlots[i].frame;
-			if (sprIdx >= _bangBank.numSprites)
-				sprIdx = _bangBank.numSprites - 1;
-
-			const RA1Sprite &spr = _bangBank.sprites[sprIdx];
 			int16 centerX = _gostSlots[i].posX;
 			int16 centerY = _gostSlots[i].posY;
 			if (projectGostMarkers)
 				centerX = (int16)(centerX - _perspectiveX);
 
-			int drawX = overlayX + centerX - spr.width / 2;
-			int drawY = centerY - spr.height / 2;
-			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+			if (_bangBank.numSprites > 0) {
+				int sprIdx = _gostSlots[i].frame;
+				if (sprIdx >= _bangBank.numSprites)
+					sprIdx = _bangBank.numSprites - 1;
+
+				const RA1Sprite &spr = _bangBank.sprites[sprIdx];
+				int drawX = overlayX + centerX - spr.width / 2;
+				int drawY = centerY - spr.height / 2;
+				renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+			}
 
 			// Per-kill score popup glyph — RenderGostOverlaySlots (0x1CA35)
 			// Suppressed when DAT_75FF bit 3 is set.
@@ -920,8 +966,6 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 			}
 
 			_gostSlots[i].frame++;
-			if (_gostSlots[i].frame >= 10)
-				_gostSlots[i].targetId = 0;  // Animation complete
 		}
 	}
 }
@@ -1027,14 +1071,15 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	// DAT_2413: on-foot lerp table (timer 5 = 1, not 0 like flight mode).
 	const int kOnFootShotLerp[6] = { 0, 8, 7, 6, 4, 1 };
 	// DAT_240e: gun barrel X offset indexed by shipDirIndex (for timer==5 first frame).
+	// Indices 11..19 are the active firing poses from L9PILOT.NUT.
 	const int16 kOnFootGunBarrelX[20] = {
-		4, 0, 8, 8, 7, 6, 4, 1, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, -56, -47, -23, -13, 0, 13, 30, 54, 59
 	};
 	// DAT_2420: gun barrel Y offset indexed by shipDirIndex (for timer==5 first frame).
 	const int16 kOnFootGunBarrelY[20] = {
-		0, 0, -56, -47, -23, -13, 0, 13, 30, 54,
-		59, -3, -19, -24, -30, -28, -30, -29, -20, -5
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, -3, -19, -24, -30, -28, -30, -29, -20, -5
 	};
 	const int spritesPerSet = 5;
 	const int overlayX = ra1OverlayViewOffsetX(this);

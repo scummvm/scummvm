@@ -1125,6 +1125,30 @@ bool InsaneRebel1::runLevel9() {
 	const int randPath1 = _vm->_rnd.getRandomNumber(1);
 	const int randPath2 = _vm->_rnd.getRandomNumber(1);
 	const int randPath3 = _vm->_rnd.getRandomNumber(1);
+	auto playLevel9PathSelector = [&](const char *filename) {
+		while (!_vm->shouldQuit()) {
+			// DOS zeros g_shipOffsetX around the 0x1A-only selector clips.
+			// Keep the selector cursor centered instead of inheriting the last
+			// walking offset from the previous stormtrooper segment.
+			_onFootCharX = 0;
+			_onFootCharY = 0;
+			_shipPosX = kRA1CenterX;
+			_shipPosY = kRA1CenterY;
+			_posAccumX = 0;
+			_posAccumY = 0;
+			_killCount = 0;
+			_lastHitTarget = 0;
+
+			playInteractiveVideo(filename);
+			if (_vm->shouldQuit() || _health < 0)
+				return -1;
+			if (_killCount > 0)
+				return (_shipPosX < kRA1CenterX) ? 0 : 1;
+
+			debug(1, "RA1 L9 selector '%s' ended without target hit; replaying", filename);
+		}
+		return -1;
+	};
 
 	_currentLevel = 8;
 	loadLevelSprites(9);
@@ -1190,17 +1214,16 @@ bool InsaneRebel1::runLevel9() {
 			if (_vm->shouldQuit())
 				return false;
 
-			_shipPosX = kRA1CenterX;
-			_posAccumX = 0;
 			loadTuningForLevel(0x0C);
-			playInteractiveVideo("LVL9/L9PLAY2.ANM");
+			const int side1 = playLevel9PathSelector("LVL9/L9PLAY2.ANM");
 			if (_vm->shouldQuit())
 				return false;
 			if (_health < 0)
 				break;
+			if (side1 < 0)
+				return false;
 
 			_gameplayFlags75fe |= 4;
-			const int side1 = (_shipPosX < kRA1CenterX) ? 0 : 1;
 			playCinematic(side1 == 0 ? "LVL9/L9PLAY2A.ANM" : "LVL9/L9PLAY2B.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1235,17 +1258,16 @@ bool InsaneRebel1::runLevel9() {
 			if (_vm->shouldQuit())
 				return false;
 
-			_shipPosX = kRA1CenterX;
-			_posAccumX = 0;
 			loadTuningForLevel(0x0C);
-			playInteractiveVideo("LVL9/L9PLAY4.ANM");
+			const int side2 = playLevel9PathSelector("LVL9/L9PLAY4.ANM");
 			if (_vm->shouldQuit())
 				return false;
 			if (_health < 0)
 				break;
+			if (side2 < 0)
+				return false;
 
 			_gameplayFlags75fe |= 4;
-			const int side2 = (_shipPosX < kRA1CenterX) ? 0 : 1;
 			playCinematic(side2 == 0 ? "LVL9/L9PLAY4A.ANM" : "LVL9/L9PLAY4B.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -1266,17 +1288,16 @@ bool InsaneRebel1::runLevel9() {
 				if (_vm->shouldQuit())
 					return false;
 
-				_shipPosX = kRA1CenterX;
-				_posAccumX = 0;
 				loadTuningForLevel(0x0C);
-				playInteractiveVideo("LVL9/L9PLAY6.ANM");
+				const int side3 = playLevel9PathSelector("LVL9/L9PLAY6.ANM");
 				if (_vm->shouldQuit())
 					return false;
 				if (_health < 0)
 					break;
+				if (side3 < 0)
+					return false;
 
 				_gameplayFlags75fe |= 4;
-				const int side3 = (_shipPosX < kRA1CenterX) ? 0 : 1;
 				if (side3 == randPath3) {
 					playCinematic("LVL9/L9CUT6A.ANM");
 					if (_vm->shouldQuit())

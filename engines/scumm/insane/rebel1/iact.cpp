@@ -549,16 +549,33 @@ bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top
 
 	const byte bit = (byte)(0x80 >> (bitIndex & 7));
 	const int altIndex = byteIndex + 0x96;
-	const bool primarySet = (_frameObjectState[byteIndex] & bit) != 0;
-	const bool secondarySet = (altIndex < kFrameObjectStateBytes) && ((_frameObjectState[altIndex] & bit) != 0);
 	const int16 right = left + width;
 	const int16 bottom = top + height;
 
+	if (objectId >= 0x280 && _frameObjectHitRevealPending) {
+		// DispatchSmushFrameChunks keeps a one-object latch after a target hit.
+		// The following high-id FOBJ clears its hidden bit and becomes the
+		// replacement/death frame. This is used heavily by Level 9 troopers.
+		_frameObjectState[byteIndex] &= ~bit;
+		_frameObjectHitRevealPending = false;
+		debug(5, "RA1 FOBJ reveal: object=%d frameObjectByte=%d bit=0x%02x",
+			objectId, byteIndex, bit);
+	}
+
+	const bool primarySet = (_frameObjectState[byteIndex] & bit) != 0;
+	const bool secondarySet = (altIndex < kFrameObjectStateBytes) && ((_frameObjectState[altIndex] & bit) != 0);
+
 	if (objectId > 0 && objectId < 0x280) {
-		if (!primarySet || secondarySet)
+		if (!primarySet || secondarySet) {
+			const int16 previousKillCount = _killCount;
 			checkTargetHit(objectId - 1, left, top, right, bottom);
-		else
+			const bool updatedPrimarySet = (_frameObjectState[byteIndex] & bit) != 0;
+			_frameObjectHitRevealPending =
+				(_killCount != previousKillCount) && !primarySet && updatedPrimarySet;
+		} else {
+			_frameObjectHitRevealPending = false;
 			updateGostSlotPosition(objectId - 1, left, top, right, bottom);
+		}
 	}
 
 	const bool updatedPrimarySet = (_frameObjectState[byteIndex] & bit) != 0;
@@ -1749,7 +1766,7 @@ bool InsaneRebel1::isTorpedoModeActive() const {
 }
 
 
-// updateOnFootPhysics — ScummVM-side glue for original on-foot GAME handlers
+// ScummVM-side splits for the original on-foot GAME handlers:
 // HandleGameOp19_OnFootSequence (0x19) and HandleGameOp1A_OnFootVariant (0x1A).
 // On-foot handler for Level 9 (Stormtroopers). Character walks left/right, crosshair tracks mouse.
 //
@@ -1763,7 +1780,7 @@ const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
 
 // Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
 // this implementation; the original code dispatches the opcode handler directly.
-void InsaneRebel1::updateOnFootSequence() {
+void InsaneRebel1::initOnFootSequence() {
 	// --- First-frame initialization (0x19 counter==0) ---
 	if (!_onFootInitialized) {
 		_onFootInitialized = true;
@@ -1780,8 +1797,14 @@ void InsaneRebel1::updateOnFootSequence() {
 		_perspectiveY = 0;
 		resetProjectionTable();
 	}
+}
 
-	// --- 0x19: Character walk animation + damage ---
+// Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
+// this implementation; the original code dispatches the opcode handler directly.
+void InsaneRebel1::updateOnFootSequence() {
+	initOnFootSequence();
+
+	// --- 0x19: Post-draw character walk animation + damage ---
 	// Track fire button for animation
 	if (!_playerFired)
 		_onFootAnimCounter = 0;
@@ -1801,19 +1824,16 @@ void InsaneRebel1::updateOnFootSequence() {
 		// Right edge: snap to center, step character right
 		_shipDirIndex = 15;
 		_onFootCharX += 0x3A;
-	} else if (_onFootAnimCounter < 5 && !_playerFired) {
-		// Aim direction from crosshair toward character (QuantizeDirection8Way)
-		int16 dx = _shipPosX - (_onFootCharX + kOnFootCenterX);
-		int16 aimDir = 0;
-		if (dx > 30)
-			aimDir = 4;
-		else if (dx > 10)
-			aimDir = 2;
-		else if (dx < -30)
-			aimDir = -4;
-		else if (dx < -10)
-			aimDir = -2;
-		_shipDirIndex = CLIP<int16>(aimDir + 15, 11, 19);
+	} else if (_onFootAnimCounter < 5 && !(_playerFired && _fireCooldown == 0)) {
+		// Original calls QuantizeDirection8Way with the cursor and character
+		// center, but the DOS on-foot axis is mirrored relative to the screen
+		// coordinates used by this port. Use the visual screen-space vector so
+		// L9PILOT.NUT poses 11..14 aim left and 16..19 aim right.
+		const int16 centerX = _onFootCharX + kOnFootCenterX;
+		const int16 centerY = _onFootCharY + kOnFootCenterY;
+		const int16 aimDir = CLIP<int16>(
+			(int16)ra1ShotDirection(centerX, centerY, _shipPosX, _shipPosY), -4, 4);
+		_shipDirIndex = aimDir + 15;
 	} else {
 		// Walking based on mouse input direction
 		int16 inputX = 0, inputY = 0;
@@ -1861,18 +1881,7 @@ void InsaneRebel1::updateOnFootAimVariant() {
 	_shipPosY = inputYNeg + kOnFootCenterY + _onFootCharY - 0x32;
 }
 
-void InsaneRebel1::updateOnFootPhysics() {
-	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
-	const bool sequenceOpcode =
-		hasFrameGameOpcode(0x19) || (!haveFrameGameOpcodes && _activeGameOpcode == 0x19);
-	const bool aimOpcode =
-		hasFrameGameOpcode(0x1A) || (!haveFrameGameOpcodes && _activeGameOpcode == 0x1A);
-
-	if (sequenceOpcode)
-		updateOnFootSequence();
-	if (aimOpcode)
-		updateOnFootAimVariant();
-
+void InsaneRebel1::finishOnFootFrame() {
 	if (_damageCooldown > 0)
 		_damageCooldown--;
 
