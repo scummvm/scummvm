@@ -185,7 +185,9 @@ void ConversationSound::readTerseCaptionText(Common::SeekableReadStream &stream)
 	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
 	assert(convo);
 
-	_text = convo->texts[key];
+	// WORKAROUND: Return an empty string for captions that aren't found.
+	// Happens with some conversations in Nancy10 (e.g. when calling the Rawleys).
+	_text = convo->texts.getValOrDefault(key, "");
 }
 
 void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
