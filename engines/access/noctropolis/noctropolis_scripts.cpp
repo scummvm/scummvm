@@ -132,6 +132,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		_vm->_player->load();
 		_vm->_screen->setManPalette();
 		_vm->_screen->setPalette();
+		break;
 	case 7:
 		vm->_midi->loadMusic(98, param1);
 		break;

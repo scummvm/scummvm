@@ -222,15 +222,15 @@ void NoctropolisPlayer::walk() {
 void NoctropolisPlayer::setDirFromScript(byte newDir) {
 	// The opposite of _animNumForDir above.
 	switch (newDir) {
-	case 0: _playerDirection = UP;
-	case 1: _playerDirection = UPRIGHT;
-	case 2: _playerDirection = RIGHT;
-	case 3: _playerDirection = DOWNRIGHT;
-	case 4: _playerDirection = DOWN;
-	case 5: _playerDirection = DOWNLEFT;
-	case 6: _playerDirection = LEFT;
-	case 7: _playerDirection = UPLEFT;
-	default: _playerDirection = NONE;
+	case 0: _playerDirection = UP;			break;
+	case 1: _playerDirection = UPRIGHT;		break;
+	case 2: _playerDirection = RIGHT; 		break;
+	case 3: _playerDirection = DOWNRIGHT;	break;
+	case 4: _playerDirection = DOWN;		break;
+	case 5: _playerDirection = DOWNLEFT;	break;
+	case 6: _playerDirection = LEFT;		break;
+	case 7: _playerDirection = UPLEFT;		break;
+	default: _playerDirection = NONE;		break;
 	}
 }
 
