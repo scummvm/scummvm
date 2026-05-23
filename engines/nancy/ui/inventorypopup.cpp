@@ -127,8 +127,15 @@ void InventoryPopup::rebuildVisibleList() {
 	const uint16 numItems = MIN<uint16>(g_nancy->getStaticData().numItems,
 										_invData->itemDescriptions.size());
 
+	const int16 heldItem = NancySceneState.getHeldItem();
+
 	for (uint16 id = 0; id < numItems; ++id) {
 		if (NancySceneState.hasItem(id) != g_nancy->_true)
+			continue;
+
+		// `hasItem` reports the held item as owned; the player is already
+		// carrying it, so don't list it in the grid too.
+		if ((int16)id == heldItem)
 			continue;
 
 		const INV::ItemDescription &desc = _invData->itemDescriptions[id];
@@ -304,6 +311,14 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		input.mousePos.x - _screenPosition.left + _uiivData->header.normalDestRect.left,
 		input.mousePos.y - _screenPosition.top  + _uiivData->header.normalDestRect.top);
 
+	// Nancy 10+ only blends the held-item sprite onto kNormal / kHotspot
+	// cursors. Switch to kHotspot when holding so the item stays visible
+	// while hovering popup widgets.
+	const CursorManager::CursorType hoverCursor =
+		NancySceneState.getHeldItem() == -1
+			? CursorManager::kHotspotArrow
+			: CursorManager::kHotspot;
+
 	// Scrollbar interaction takes priority while dragging.
 	const UISliderRecord &slider = _uiivData->header.slider;
 	if (_uiivData->header.sliderEnabled) {
@@ -322,7 +337,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		const bool overScrollbar = thumbInChunk.contains(chunkMouse);
 
 		if (_scrollbarDragging) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+			g_nancy->_cursor->setCursorType(hoverCursor);
 
 			const int newThumbTop = chunkMouse.y - _scrollbarGrabOffset;
 			const int clamped = CLIP<int>(newThumbTop, track.top, track.top + travel);
@@ -345,7 +360,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			_needsRedraw = true;
 		}
 		if (overScrollbar) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+			g_nancy->_cursor->setCursorType(hoverCursor);
 			if (slider.isDraggable && (input.input & NancyInput::kLeftMouseButtonDown)) {
 				_scrollbarDragging = true;
 				_scrollbarGrabOffset = chunkMouse.y - thumbY;
@@ -373,7 +388,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			_needsRedraw = true;
 		}
 		if (overClose) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+			g_nancy->_cursor->setCursorType(hoverCursor);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.eatMouseInput();
 				close();
@@ -382,28 +397,68 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		}
 	}
 
-	int newHovered = -1;
+	// If the player is already holding an item, any click on the slot grid
+	// puts it back into the inventory. Otherwise a click on an occupied
+	// slot picks that item up (or navigates to its close-up scene).
+	const int16 heldItem = NancySceneState.getHeldItem();
+
+	int hoveredSlot = -1;
 	for (uint i = 0; i < kSlotsPerPage; ++i) {
 		if (i >= _uiivData->slotDestRects.size())
 			break;
-		if (_slotItemIDs[i] < 0)
+		if (!_uiivData->slotDestRects[i].contains(chunkMouse))
 			continue;
-		if (_uiivData->slotDestRects[i].contains(chunkMouse)) {
-			newHovered = (int)i;
-			break;
-		}
+		if (heldItem == -1 && _slotItemIDs[i] < 0)
+			continue;
+		hoveredSlot = (int)i;
+		break;
 	}
 
-	if (newHovered != -1) {
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+	if (hoveredSlot != -1) {
+		g_nancy->_cursor->setCursorType(hoverCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			const int16 itemID = _slotItemIDs[newHovered];
-			if (itemID >= 0) {
-				// Pick the item up: it leaves the inventory and becomes
-				// the held item (cursor sprite)
-				NancySceneState.removeItemFromInventory(itemID, true);
+			if (heldItem != -1) {
+				const int16 slotItem = _slotItemIDs[hoveredSlot];
+
+				// Empty slot: drop the held item back into the inventory
+				// and keep the popup open. Occupied slot: swap — held
+				// item goes into the inventory, the clicked item becomes
+				// the new held item.
+				NancySceneState.addItemToInventory(heldItem);
+				if (slotItem >= 0 && slotItem != heldItem) {
+					NancySceneState.removeItemFromInventory(slotItem, true);
+				}
 				refreshGrid();
+				input.eatMouseInput();
+				return;
+			}
+
+			const int16 itemID = _slotItemIDs[hoveredSlot];
+			if (itemID >= 0) {
+				const INV::ItemDescription &item = _invData->itemDescriptions[itemID];
+				const byte disabled = NancySceneState.getItemDisabledState(itemID);
+
+				if (disabled) {
+					if (disabled == 2) {
+						NancySceneState.playItemCantSound(itemID);
+					}
+					input.eatMouseInput();
+					return;
+				}
+
+				const bool pickUp = item.keepItem != kInvItemNewSceneView;
+				NancySceneState.removeItemFromInventory(itemID, pickUp);
+
+				if (item.keepItem == kInvItemNewSceneView) {
+					// Close-up view: stash the item and warp to its scene.
+					NancySceneState.pushScene(itemID);
+					SceneChangeDescription sceneChange;
+					sceneChange.sceneID = item.sceneID;
+					sceneChange.continueSceneSound = item.sceneSoundFlag;
+					NancySceneState.changeScene(sceneChange);
+				}
+
 				close();
 				input.eatMouseInput();
 				return;
@@ -433,7 +488,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			continue;
 		}
 
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+		g_nancy->_cursor->setCursorType(hoverCursor);
 
 		drawFilterTab(i, true);
 
