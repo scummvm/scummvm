@@ -316,6 +316,15 @@ Blade Runner
    * - Eugene Sandulenko
      -
 
+Bolt
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Andrea Boscarino
+     -
+
 Buried
 ^^^^^^
 
@@ -1053,6 +1062,15 @@ Pegasus
 
    * - Matthew Hoops
      - (retired)
+
+Pelrock
+^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gabriel Sanmartín
+     -
 
 Petka
 ^^^^^
