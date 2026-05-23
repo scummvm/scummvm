@@ -332,6 +332,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PopInvViewPriorScene();
 	case 126:
 		return new GoInvViewScene();
+	case 128:
+		// Nancy 10+
+		return new CellPhonePopCellSceneFromStack();
 	case 130:
 		// Nancy 10+
 		warning("ChangeCellPhoneInfo - not implemented yet");

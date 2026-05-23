@@ -187,6 +187,19 @@ protected:
 	Common::String getRecordTypeName() const override { return "AddSearchLink"; }
 };
 
+// Returns from a cellphone-driven conversation scene to the pre-call scene.
+// sceneID == kNoScene pops the saved scene; any other sceneID overrides it.
+class CellPhonePopCellSceneFromStack : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	SceneChangeDescription _sceneChange;
+
+protected:
+	Common::String getRecordTypeName() const override { return "CellPhonePopCellSceneFromStack"; }
+};
+
 // Changes the in-game time. Used prior to the introduction of SetPlayerClock.
 class BumpPlayerClock : public ActionRecord {
 public:

@@ -238,6 +238,23 @@ void AddSearchLink::execute() {
 	finishExecution();
 }
 
+void CellPhonePopCellSceneFromStack::readData(Common::SeekableReadStream &stream) {
+	_sceneChange.readData(stream);
+}
+
+void CellPhonePopCellSceneFromStack::execute() {
+	if (_sceneChange.sceneID == kNoScene) {
+		NancySceneState.popScene(false);
+	} else {
+		NancySceneState.changeScene(_sceneChange);
+	}
+
+	// Conversation is over; take the phone down.
+	NancySceneState.getCellPhonePopup().close();
+
+	finishExecution();
+}
+
 void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 	_relative = stream.readByte();
 	_hours = stream.readUint16LE();
