@@ -187,38 +187,6 @@ static void game_main(int argc, const char **argv) {
 		art_hags_are_on_hd = false;
 	}
 
-#if 0
-	if (config_file.cd_version_installed) {
-		strcpy(temp_buf_2, "x:\\forest.exe");
-		temp_buf_2[0] = env_cd_drive;
-		if (!fileio_exist(temp_buf_2)) {
-			problem();
-			printf("Please throw the Once Upon A Forest CD into drive %c:\n", (char)env_cd_drive);
-			printf("and type 'OUAF'. If your CD-ROM drive letter has changed, run\n");
-			printf("INSTALL to reconfigure this option.\n\n");
-			goto done;
-		}
-	}
-
-	if (!fileio_exist("config.for")) {
-		problem();
-		printf("Before you can run Once Upon A Forest, you need to run 'INSTALL' to configure\n");
-		printf("the game for you your hardware.  Type 'INSTALL' and hit 'ENTER' when you have\n");
-		printf("finished reading this.\n\n");
-		goto done;
-	}
-
-	mem_you_got = mem_used + mem_avail_at_start;
-
-	if (mem_you_got < 569000) {
-		need_to_free = 569000 - mem_you_got;
-		problem();
-		printf("You need at least 588,000 bytes of conventional memory to play\n");
-		printf("Once Upon A Forest. You'll need to free up another %6ld bytes.\n\n", need_to_free);
-		/* printf("to play this game.\n\n"); */
-		goto done;
-	}
-#endif
 	himem_startup();
 
 	himem_shutdown();
@@ -258,6 +226,8 @@ void dragonsphere_main() {
 		selected_item = -1;
 
 	while (!g_engine->shouldQuit()) {
+		g_engine->getScreen()->clear();
+
 		switch (selected_item) {
 		case -1:
 			main_menu_main();
@@ -286,7 +256,7 @@ void dragonsphere_main() {
 			return;
 
 		case 3:
-			AnimView::animview_main("@phantom");
+			AnimView::animview_main("@dragon");
 			selected_item = -1;
 			break;
 

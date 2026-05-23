@@ -1567,7 +1567,6 @@ static void room_605_parser() {
 	}
 }
 
-
 void room_605_synchronize(Common::Serializer &s) {
 	for (int i = 0; i < 23; i++) s.syncAsSint16LE(local->sprite[i]);
 	for (int i = 0; i < 23; i++) s.syncAsSint16LE(local->sequence[i]);
