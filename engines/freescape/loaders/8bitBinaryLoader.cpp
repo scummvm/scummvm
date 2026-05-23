@@ -561,6 +561,10 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		assert(color > 0);
 		byte firingInterval = readField(file, 8);
 		uint16 firingRange = readPtr(file) / 2;
+		// Driller Amiga/ST stores sensor ranges in the original 64-units-per-cell
+		// coordinate space. ScummVM normalizes Driller geometry to 32 units per cell.
+		if (isDriller() && (isAmiga() || isAtariST()))
+			firingRange = firingRange / 2;
 		if (isDark())
 			firingRange = firingRange / 2;
 		byte sensorAxis = readField(file, 8);

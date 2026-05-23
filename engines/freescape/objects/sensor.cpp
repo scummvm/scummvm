@@ -68,6 +68,7 @@ Sensor::Sensor(
 void Sensor::scale(int factor) {
 	_origin = _origin / factor;
 	_size = _size / factor;
+	_firingRange = _firingRange / factor;
 }
 
 Object *Sensor::duplicate() {
@@ -105,7 +106,8 @@ bool Sensor::playerDetected(const Math::Vector3d &position, Area *area) {
 	}
 
 	if (detected) {
-		detected = ABS(diff.x() + ABS(diff.y())) + ABS(diff.z()) <= _firingRange;
+		float distance = ABS(diff.x()) + ABS(diff.y()) + ABS(diff.z());
+		detected = distance < _firingRange;
 	}
 
 	return detected;
