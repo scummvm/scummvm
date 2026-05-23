@@ -141,6 +141,7 @@ private:
 	// Play a passive cinematic (no game callback, skippable)
 	// startFrame > 0: fast-forward (decode without display) to that frame
 	void playCinematic(const char *filename, int32 startFrame = 0);
+	void playLevelTransitionCutscene(int level);
 	void playChapterCompleteCinematic(const char *filename, int16 unlockedChapter,
 		int revealOffsetFromEnd, int stopOffsetFromEnd,
 		const char *bonusLabel1 = nullptr, const char *detailText1 = nullptr, int bonusValue1 = 0,

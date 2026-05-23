@@ -266,6 +266,38 @@ void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlo
 		_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, passwordIndex);
 }
 
+void InsaneRebel1::playLevelTransitionCutscene(int level) {
+	switch (level) {
+	case 4:
+		// Original successor path 0x6d7d, reached after chapter 3 and by the
+		// FALCON/BIGGS/WEDGE passcode group. This is separate from RunLevel4Flow
+		// (0x6ee4), which starts with LVL4/L4INTRO.ANM.
+		playCinematic("CUT1/C1BLOCK.ANM");
+		if (_vm->shouldQuit())
+			break;
+		playCinematic("CUT1/C1DARTH1.ANM");
+		if (_vm->shouldQuit())
+			break;
+		playCinematic("CUT1/C1C3PO.ANM");
+		if (_vm->shouldQuit())
+			break;
+		playCinematic("CUT1/C1DARTH2.ANM");
+		break;
+	case 7:
+		// Original successor path 0x7d52, reached after chapter 6 and by the
+		// chapter-6 passcode group, before RunLevel7Flow (0x7dcc).
+		playCinematic("CUT2/C2CUT2.ANM");
+		break;
+	case 11:
+		// Original successor path 0x9f3a, reached after chapter 10 and by the
+		// chapter-10 passcode group, before RunLevel11Flow (0x9f9f).
+		playCinematic("CUT3/C3BOOM.ANM");
+		break;
+	default:
+		break;
+	}
+}
+
 void InsaneRebel1::clearVideoBuffer() {
 	if (_vm->_screenWidth <= 0 || _vm->_screenHeight <= 0)
 		return;
@@ -1872,6 +1904,7 @@ void InsaneRebel1::runGame() {
 	auto runLevelsFrom = [&](int startLevel) {
 		const int firstLevel = CLIP<int>(startLevel, 1, numLevels);
 		bool completed = true;
+		int lastCompletedLevel = 0;
 		_health = kMaxHealth;
 		_lives = 3;
 		_score = 0;
@@ -1880,11 +1913,20 @@ void InsaneRebel1::runGame() {
 		for (int level = firstLevel;
 			 level <= numLevels && completed && !_vm->shouldQuit();
 			 ++level) {
+			playLevelTransitionCutscene(level);
+			if (_vm->shouldQuit())
+				break;
+
 			completed = (this->*kLevelRunners[level - 1])();
-			if (completed && level < numLevels)
-				_startLevel = level + 1;
+			if (completed) {
+				lastCompletedLevel = level;
+				if (level < numLevels)
+					_startLevel = level + 1;
+			}
 		}
 
+		if (!_vm->shouldQuit() && completed && lastCompletedLevel == numLevels)
+			playCinematic("FIN/FNFINAL.ANM");
 		if (!_vm->shouldQuit())
 			runHighScoreNameEntry();
 		_currentLevel = 0;
@@ -1930,20 +1972,11 @@ void InsaneRebel1::runGame() {
 			break;
 		}
 		case 4: {
-			// Level Select — ScummVM-only direct launcher, kept separate from
-			// original passcode-start flow so it does not force sequential play.
+			// Level Select — ScummVM-only start point. Continue through the
+			// original successor flow so post-level cinematics still play.
 			int selectedLevel = runLevelSelectMenu();
-			if (selectedLevel >= 1 && selectedLevel <= numLevels) {
-				_startLevel = selectedLevel;
-				_health = kMaxHealth;
-				_lives = 3;
-				_score = 0;
-				_prevScore = 0;
-				(this->*kLevelRunners[selectedLevel - 1])();
-				if (!_vm->shouldQuit())
-					runHighScoreNameEntry();
-				_currentLevel = 0;
-			}
+			if (selectedLevel >= 1 && selectedLevel <= numLevels)
+				runLevelsFrom(selectedLevel);
 			break;
 		}
 		case 5:
