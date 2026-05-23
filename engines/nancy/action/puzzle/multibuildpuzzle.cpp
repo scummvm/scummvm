@@ -436,6 +436,8 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_selectedPiece != -1) {
+		g_nancy->_cursor->setCursorType(dragCursor);
+
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			int sel = _selectedPiece;
 			_selectedPiece = -1;
