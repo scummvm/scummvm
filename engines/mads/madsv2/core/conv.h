@@ -207,6 +207,7 @@ extern int16 *conv_vars0ValPtr;
 extern int conv_restore_running;
 extern ConvControl conv_control;
 extern int16 *conv_my_next_start;
+extern bool conv_show_boxes;
 
 extern void conv_system_init();
 extern void conv_system_cleanup();

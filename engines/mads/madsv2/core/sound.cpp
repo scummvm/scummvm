@@ -30,7 +30,7 @@ int sound_play(int soundNum) {
 	return sound_queue(soundNum);
 }
 
-int sound_queue(int soundNum) {
+int sound_queue(int soundNum, int /*distance*/) {
 	return g_engine->_soundManager->command(soundNum);
 }
 

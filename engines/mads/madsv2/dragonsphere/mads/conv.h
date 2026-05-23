@@ -111,6 +111,17 @@ enum {
 };
 
 enum {
+	conv015_seeher_show      =  0,
+	conv015_seeher_who       =  1,
+	conv015_seeher_comeout   =  2,
+	conv015_answer_go        =  6,
+	conv015_react_gohome     =  9,
+	conv015_gift3_b_b        = 19,
+	conv015_kiss_b_b         = 27,
+	conv015_exit_b_b         = 32
+};
+
+enum {
 	conv017_exit_b_b    = 4,
 	conv016_exit_b_b    = 5,
 };
@@ -140,6 +151,48 @@ enum {
 };
 
 enum {
+	conv026_last_one     = 10,
+	conv026_exit_b_b     = 17
+};
+
+enum {
+	conv027_hello_only       =  0,
+	conv027_seven_only       =  2,
+	conv027_stopper_monk     =  4,
+	conv027_explain_one      =  6,
+	conv027_next_one         =  7,
+	conv027_last_one         =  8,
+	conv027_quickie_b_b      = 12,
+	conv027_quickie_only     = 13,
+	conv027_hem_only         = 14,
+	conv027_one_only         = 15,
+	conv027_two_only         = 16,
+	conv027_four_only        = 19,
+	conv027_inter2_only      = 21,
+	conv027_amulet_only      = 22,
+	conv027_inter2_b_b       = 24,
+	conv027_six_only         = 25,
+	conv027_amulet_b_b       = 27,
+	conv027_eight_only       = 28,
+	conv027_kiss_b_b         = 30,
+	conv027_nogood_hidewhat  = 31,
+	conv027_exit_b_b         = 34,
+	conv027_restart          = 35,
+	conv027_restart_only     = 35,
+	conv027_ten_only         = 36
+};
+
+enum {
+	conv028_didnot_innocent = 9,
+	conv028_exit_b_b        = 26
+};
+
+enum {
+	conv033_six_only     =  4,
+	conv033_exit_b_b     =  7
+};
+
+enum {
 	conv034_five_b_b    =  4,
 	conv034_seven_only  =  7,
 	conv034_eight_b_b   =  9,
@@ -152,6 +205,11 @@ enum {
 
 enum {
 	conv035_exit_b_b    =  3
+};
+
+enum {
+	conv037_next_b_b         =  2,
+	conv037_exit_b_b         =  5
 };
 
 enum {
@@ -199,6 +257,121 @@ enum {
 	conv041_exit_b_b         = 64,
 	conv041_exit_d_d         = 66,
 	conv041_exit_f_f         = 68
+};
+
+enum {
+	conv042_pre_poem         =  0,
+	conv042_one_first        =  1,
+	conv042_one_second       =  2,
+	conv042_one_third        =  3,
+	conv042_one_restart      =  4,
+	conv042_one_abort        =  5,
+
+	conv042_two_first        =  6,
+	conv042_two_second       =  7,
+	conv042_two_third        =  8,
+	conv042_two_restart      =  9,
+	conv042_two_abort        = 10,
+
+	conv042_three_first      = 11,
+	conv042_three_second     = 12,
+	conv042_three_third      = 13,
+	conv042_three_restart    = 14,
+	conv042_three_abort      = 15,
+
+	conv042_four_first       = 16,
+	conv042_four_second      = 17,
+	conv042_four_third       = 18,
+	conv042_four_restart     = 19,
+	conv042_four_abort       = 20,
+
+	conv042_five_first       = 21,
+	conv042_five_second      = 22,
+	conv042_five_third       = 23,
+	conv042_five_restart     = 24,
+	conv042_five_abort       = 25,
+
+	conv042_six_first        = 26,
+	conv042_six_second       = 27,
+	conv042_six_third        = 28,
+	conv042_six_restart      = 29,
+	conv042_six_abort        = 30,
+
+	conv042_seven_first      = 31,
+	conv042_seven_second     = 32,
+	conv042_seven_third      = 33,
+	conv042_seven_restart    = 34,
+	conv042_seven_abort      = 35,
+
+	conv042_eight_first      = 36,
+	conv042_eight_second     = 37,
+	conv042_eight_third      = 38,
+	conv042_eight_restart    = 39,
+	conv042_eight_abort      = 40,
+
+	conv042_nine_first       = 41,
+	conv042_nine_second      = 42,
+	conv042_nine_third       = 43,
+	conv042_nine_restart     = 44,
+	conv042_nine_abort       = 45,
+
+	conv042_ten_first        = 46,
+	conv042_ten_second       = 47,
+	conv042_ten_third        = 48,
+	conv042_ten_restart      = 49,
+	conv042_ten_abort        = 50,
+
+	conv042_eleven_first     = 51,
+	conv042_eleven_second    = 52,
+	conv042_eleven_third     = 53,
+	conv042_eleven_restart   = 54,
+	conv042_eleven_abort     = 55,
+
+	conv042_twelve_first     = 56,
+	conv042_twelve_second    = 57,
+	conv042_twelve_third     = 58,
+	conv042_twelve_restart   = 59,
+	conv042_twelve_abort     = 60,
+
+	conv042_thirteen_first   = 61,
+	conv042_thirteen_second  = 62,
+	conv042_thirteen_third   = 63,
+	conv042_thirteen_restart = 64,
+	conv042_thirteen_abort   = 65,
+
+	conv042_fourteen_first   = 66,
+	conv042_fourteen_second  = 67,
+	conv042_fourteen_third   = 68,
+	conv042_fourteen_restart = 69,
+	conv042_fourteen_abort   = 70,
+
+	conv042_easy_14_first    = 71,
+	conv042_easy_14_second   = 72,
+	conv042_easy_14_third    = 73,
+	conv042_easy_14_restart  = 74,
+	conv042_easy_14_abort    = 75,
+
+	conv042_fifteen_first    = 76,
+	conv042_fifteen_second   = 77,
+	conv042_fifteen_third    = 78,
+	conv042_fifteen_restart  = 79,
+	conv042_fifteen_abort    = 80,
+
+	conv042_sixteen_first    = 81,
+	conv042_sixteen_second   = 82,
+	conv042_sixteen_third    = 83,
+	conv042_sixteen_restart  = 84,
+	conv042_sixteen_abort    = 85,
+
+	conv042_seventeen_first  = 86,
+	conv042_seventeen_second = 87,
+	conv042_seventeen_third  = 88,
+	conv042_seventeen_restart= 89,
+	conv042_seventeen_abort  = 90,
+
+	conv042_exit_b_b         = 93,
+	conv042_later_b_b        = 94,
+	conv042_whoops_b_b       = 96,
 };
 
 enum {

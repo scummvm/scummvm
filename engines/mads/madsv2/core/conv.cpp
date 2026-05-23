@@ -57,6 +57,7 @@ Box conv_box;
 int16 *conv_my_next_start;
 int conv_error_code;
 int conv_dlg_script_ptr, conv_dlg_script_end;
+bool conv_show_boxes;
 
 struct MemoryWriteStreamDynamic : public Common::MemoryWriteStreamDynamic {
 public:
@@ -1217,6 +1218,8 @@ report:
 void conv_run(int convId) {
 	char name[80];
 	int idx;
+
+	conv_show_boxes = true;
 
 	// Validate convId is loaded (non-fatal: report error but continue, matching original)
 	if (conv_indexes[convId] < 2)

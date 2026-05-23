@@ -31,7 +31,7 @@ constexpr int sound_board_roland = 1;
 constexpr bool global_prefer_roland = false;
 
 extern int sound_play(int soundNum);
-extern int sound_queue(int soundNum);
+extern int sound_queue(int soundNum, int distance = 0);
 extern void sound_queue_hold();
 extern void sound_queue_flush();
 

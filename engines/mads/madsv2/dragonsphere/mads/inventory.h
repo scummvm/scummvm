@@ -49,6 +49,7 @@ enum {
 	soul_egg            = 17,
 	magic_belt          = 18,
 	amulet              = 19,
+	mud                 = 20,
 	feathers            = 21,
 	flask_full_of_acid  = 24,
 	dead_rat            = 27,

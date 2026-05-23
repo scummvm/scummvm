@@ -106,6 +106,14 @@ enum {
 	N_ShakMus            =  32,
 	N_Battle             =  33,
 	N_Hermit             =  34,
+	N_KissMusic          =  35,
+	N_TheKiss            =  36,
+	N_TenseMusic         =  38,
+	N_005Waterfall       =  42,
+	N_FarEchos           =  67,
+	N_RockClatter        =  68,
+	N_CryOfDismay        =  72,
+	N_005FlyingInsect    =  78,
 
 	// Section 6
 	N_Bk603Music         =  32,
