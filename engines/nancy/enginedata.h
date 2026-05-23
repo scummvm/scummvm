@@ -583,9 +583,17 @@ struct UICL : public EngineData {
 	};
 
 	struct Contact {
-		byte unknownPrefix[13];   // 13 bytes preceding the name (purpose not yet determined)
-		Common::String name;      // 20-byte null-terminated contact name
-		byte unknownSuffix[8];    // 8 bytes following the name (purpose not yet determined)
+		// Prefix layout:
+		//   [0..1]   visibility flag (10 = always, 11 = never, else =
+		//            scene event-flag index; contact hidden until set).
+		//   [2..8]   7-digit dial pattern (slot indices 0..9).
+		//   [9]      '\n' terminator.
+		//   [10..12] unused.
+		byte unknownPrefix[13];
+		Common::String name;      // 20-byte null-terminated
+		// Suffix layout: [0..1] sceneID, [2..3] frameID,
+		// [4..5] event-flag label, [6] event-flag value, [7] unused.
+		byte unknownSuffix[8];
 	};
 
 	struct SrcDestRectPair {
