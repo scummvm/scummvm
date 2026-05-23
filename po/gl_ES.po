@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-19 20:01+0000\n"
+"POT-Creation-Date: 2026-05-23 05:21+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -89,7 +89,7 @@ msgstr "Pechar"
 #. I18N: Opens the help screen.
 #: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:959
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
-#: engines/access/metaengine.cpp:356 engines/bladerunner/metaengine.cpp:321
+#: engines/access/metaengine.cpp:360 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
@@ -2651,7 +2651,7 @@ msgid ""
 msgstr "Eng~a~dir xogo..."
 
 #: gui/options.cpp:2966 engines/engine.cpp:647
-#: engines/access/metaengine.cpp:294 engines/drascula/metaengine.cpp:255
+#: engines/access/metaengine.cpp:298 engines/drascula/metaengine.cpp:255
 #: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
 #: engines/ultima/nuvie/metaengine.cpp:71
 #, fuzzy
@@ -3952,7 +3952,7 @@ msgstr "Menú do xogo"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:221
+#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:225
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
@@ -6043,7 +6043,7 @@ msgstr "Iniciador"
 msgid "Check for Updates..."
 msgstr "Buscar actualizacións..."
 
-#: engines/access/metaengine.cpp:211 engines/alcachofa/metaengine.cpp:94
+#: engines/access/metaengine.cpp:215 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
 #: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
@@ -6068,20 +6068,20 @@ msgstr "Buscar actualizacións..."
 msgid "Default keymappings"
 msgstr "~O~pcións..."
 
-#: engines/access/metaengine.cpp:215
+#: engines/access/metaengine.cpp:219
 #, fuzzy
 #| msgid "Highlight next dialogue"
 msgid "Move / Interact / Skip"
 msgstr "Destacar diálogo seguinte"
 
-#: engines/access/metaengine.cpp:227 engines/sherlock/metaengine.cpp:483
+#: engines/access/metaengine.cpp:231 engines/sherlock/metaengine.cpp:483
 #, fuzzy
 #| msgid "Skip line"
 msgid "Skip movie"
 msgstr "Omitir liña"
 
 #. I18N: Move Actor to upwards direction
-#: engines/access/metaengine.cpp:233 engines/asylum/metaengine.cpp:171
+#: engines/access/metaengine.cpp:237 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:302 engines/hypno/metaengine.cpp:356
@@ -6092,7 +6092,7 @@ msgid "Move up"
 msgstr "Mover cara atrás"
 
 #. I18N: Move Actor to downwards direction
-#: engines/access/metaengine.cpp:240 engines/asylum/metaengine.cpp:177
+#: engines/access/metaengine.cpp:244 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:290 engines/hypno/metaengine.cpp:342
@@ -6104,7 +6104,7 @@ msgstr "Cancelar descarga"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
-#: engines/access/metaengine.cpp:247 engines/asylum/metaengine.cpp:183
+#: engines/access/metaengine.cpp:251 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:284 engines/hypno/metaengine.cpp:335
@@ -6118,7 +6118,7 @@ msgstr "Mover á esquerda"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
-#: engines/access/metaengine.cpp:254 engines/asylum/metaengine.cpp:189
+#: engines/access/metaengine.cpp:258 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:296 engines/hypno/metaengine.cpp:349
@@ -6131,35 +6131,35 @@ msgid "Move right"
 msgstr "Mover á dereita"
 
 #. I18N: Move Actor to top-left direction
-#: engines/access/metaengine.cpp:261 engines/cine/metaengine.cpp:405
+#: engines/access/metaengine.cpp:265 engines/cine/metaengine.cpp:405
 #: engines/efh/metaengine.cpp:314
 #, fuzzy
 msgid "Move up-left"
 msgstr "Mover á esquerda"
 
 #. I18N: Move Actor to top-right direction
-#: engines/access/metaengine.cpp:266 engines/cine/metaengine.cpp:411
+#: engines/access/metaengine.cpp:270 engines/cine/metaengine.cpp:411
 #: engines/efh/metaengine.cpp:320
 #, fuzzy
 msgid "Move up-right"
 msgstr "Mover á dereita"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/access/metaengine.cpp:271 engines/cine/metaengine.cpp:417
+#: engines/access/metaengine.cpp:275 engines/cine/metaengine.cpp:417
 #: engines/efh/metaengine.cpp:326
 #, fuzzy
 msgid "Move down-left"
 msgstr "Cancelar descarga"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/access/metaengine.cpp:276 engines/cine/metaengine.cpp:423
+#: engines/access/metaengine.cpp:280 engines/cine/metaengine.cpp:423
 #: engines/efh/metaengine.cpp:332
 #, fuzzy
 msgid "Move down-right"
 msgstr "Mover á dereita"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
-#: engines/access/metaengine.cpp:281 engines/bbvs/metaengine.cpp:124
+#: engines/access/metaengine.cpp:285 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/petka/metaengine.cpp:130 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:231 engines/sherlock/metaengine.cpp:405
@@ -6170,7 +6170,7 @@ msgstr "Mover á dereita"
 msgid "Look"
 msgstr "Mirar"
 
-#: engines/access/metaengine.cpp:289 engines/drascula/metaengine.cpp:240
+#: engines/access/metaengine.cpp:293 engines/drascula/metaengine.cpp:240
 #: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
@@ -6180,13 +6180,13 @@ msgstr "Mirar"
 msgid "Open"
 msgstr "Abrir"
 
-#: engines/access/metaengine.cpp:299 engines/scumm/help.cpp:128
+#: engines/access/metaengine.cpp:303 engines/scumm/help.cpp:128
 #: engines/ultima/nuvie/metaengine.cpp:70
 msgid "Get"
 msgstr "Coller"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/access/metaengine.cpp:304 engines/access/metaengine.cpp:325
+#: engines/access/metaengine.cpp:308 engines/access/metaengine.cpp:329
 #: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
 #: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:86
@@ -6206,11 +6206,11 @@ msgstr "Coller"
 msgid "Use"
 msgstr "Usar"
 
-#: engines/access/metaengine.cpp:309
+#: engines/access/metaengine.cpp:313
 msgid "Goto"
 msgstr ""
 
-#: engines/access/metaengine.cpp:314 engines/access/metaengine.cpp:345
+#: engines/access/metaengine.cpp:318 engines/access/metaengine.cpp:349
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
 #: engines/efh/metaengine.cpp:506 engines/petka/metaengine.cpp:158
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
@@ -6221,11 +6221,11 @@ msgstr ""
 msgid "Talk"
 msgstr "Falar"
 
-#: engines/access/metaengine.cpp:319 engines/scumm/help.cpp:175
+#: engines/access/metaengine.cpp:323 engines/scumm/help.cpp:175
 msgid "Travel"
 msgstr "Viaxar"
 
-#: engines/access/metaengine.cpp:330 engines/cine/metaengine.cpp:332
+#: engines/access/metaengine.cpp:334 engines/cine/metaengine.cpp:332
 #: engines/petka/metaengine.cpp:144 engines/saga/metaengine.cpp:394
 #: engines/supernova/metaengine.cpp:331
 #, fuzzy
@@ -6234,7 +6234,7 @@ msgid "Take"
 msgstr "Quitar"
 
 #. I18N: Action in In Cold Blood
-#: engines/access/metaengine.cpp:335 engines/alcachofa/metaengine.cpp:116
+#: engines/access/metaengine.cpp:339 engines/alcachofa/metaengine.cpp:116
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
@@ -6254,23 +6254,23 @@ msgstr "Quitar"
 msgid "Inventory"
 msgstr "Inventario"
 
-#: engines/access/metaengine.cpp:340 engines/ultima/ultima4/metaengine.cpp:51
+#: engines/access/metaengine.cpp:344 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
 msgstr ""
 
-#: engines/access/metaengine.cpp:350 engines/bbvs/metaengine.cpp:142
+#: engines/access/metaengine.cpp:354 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:503
 #: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "Ir a"
 
-#: engines/access/metaengine.cpp:361
+#: engines/access/metaengine.cpp:365
 #, fuzzy
 msgid "Open save/load menu"
 msgstr "Inserir disco de gardado/carga"
 
-#: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
+#: engines/access/resources.cpp:46 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:461 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:312
@@ -6280,7 +6280,7 @@ msgstr "Inserir disco de gardado/carga"
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Non se puido localizar o ficheiro de datos do motor %s."
 
-#: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:1009
+#: engines/access/resources.cpp:54 engines/drascula/drascula.cpp:1009
 #: engines/hugo/hugo.cpp:473 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/teenagent/resources.cpp:329 engines/tony/tony.cpp:200
@@ -6289,7 +6289,7 @@ msgstr "Non se puido localizar o ficheiro de datos do motor %s."
 msgid "The '%s' engine data file is corrupt."
 msgstr "O ficheiro de datos do motor %s está danado."
 
-#: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:1020
+#: engines/access/resources.cpp:63 engines/drascula/drascula.cpp:1020
 #: engines/hugo/hugo.cpp:483 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
 #: engines/toon/toon.cpp:5449
