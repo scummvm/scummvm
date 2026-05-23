@@ -23,25 +23,17 @@
 #define NANCY_UI_CELLPHONEPOPUP_H
 
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/enginedata.h"
 #include "engines/nancy/renderobject.h"
-#include "engines/nancy/sound.h"
 
 namespace Nancy {
 
 struct NancyInput;
-struct UICL;
 
 namespace UI {
 
-// Nancy 10+ cell phone popup driven by the UICL chunk.
-//
-// Implemented modes: welcome screen, call-placement (dial → ring →
-// lookup → pickup → connect → invalid), directory list, no-signal
-// overlay.
-//
-// TODO: email, contact search, help, and browser modes are not
-// implemented; web/email/redial sub-buttons and the in-call menu
-// are unhooked.
+// Nancy 10+ cell phone popup, driven by the UICL chunk.
+// TODO: email, search, help, browser modes; in-call menu; redial.
 class CellPhonePopup : public RenderObject {
 public:
 	CellPhonePopup();
@@ -56,29 +48,26 @@ public:
 	void close();
 	void toggle() { if (_isVisible) close(); else open(); }
 
-	// Replaces the welcome graphic with the No Signal / No Access /
-	// Old Email Only labels and disables outgoing calls.
-	// TODO: hook this up to the scene event flag that drives it in
-	// the original engine.
+	// Swaps the welcome graphic for the No Signal / No Access / Old Email
+	// Only labels and blocks outgoing calls. TODO: hook to scene flag.
 	void setNoSignal(bool noSignal);
 
 private:
 	enum ScreenState : int {
-		kWelcome          = 0,  // idle / dial-pad accepting input
-		kDialing          = 1,  // digit accumulating
-		kPlaceCall        = 2,  // start outgoing-ring sound
+		kWelcome          = 0,
+		kDialing          = 1,
+		kPlaceCall        = 2,
 		kWaitOutgoingRing = 3,
-		kLookupContact    = 4,  // match dial buffer, start pickup
+		kLookupContact    = 4,
 		kWaitPickup       = 5,
-		kConnected        = 6,  // trigger contact scene change
-		kInvalidNumber    = 7,  // start invalid-number sound
+		kConnected        = 6,
+		kInvalidNumber    = 7,
 		kWaitInvalid      = 8,
-		kDirectory        = 9   // contact list, scrollable
+		kDirectory        = 9
 	};
 
-	// Drawing helpers
-	void drawChrome();              // popup overlay + persistent labels + buttons
-	void drawScreenContent();       // LCD area: dispatches on _screenState
+	void drawChrome();
+	void drawScreenContent();
 	void drawStatusIcons();
 	void drawWebDirLabels();
 	void drawDialLabel();
@@ -92,8 +81,9 @@ private:
 	void drawDirectoryList();
 	void drawDirHeading();
 	void drawDirectoryArrows();
+	void drawWelcomeScreen();
+	void drawBackLabel();
 
-	// State machine helpers
 	void resetDialPad();
 	void enterScreenState(ScreenState newState);
 	void appendDigit(byte slotIndex);
@@ -102,52 +92,47 @@ private:
 	void triggerContactCallSceneChange(uint contactIndex);
 	int findContactByDialBuffer() const;
 
-	// Directory helpers
 	uint maxDirectoryRows() const;
 	uint directoryRowAt(const Common::Point &chunkMouse) const;
 	Common::Rect directoryRowRect(uint visibleIndex) const;
 	void startCallToContact(uint contactIndex);
 	// Visible (deduplicated) row -> raw contact index, or -1.
 	int contactIndexForVisibleRow(uint visibleRow) const;
-	// Total deduplicated contacts in the directory list.
 	uint deduplicatedContactCount() const;
+	// True when the contact's visibility flag is currently unlocked.
+	bool isContactVisible(const UICL::Contact &c) const;
+	// Popup-local rect of the Back hotspot in directory mode.
+	Common::Rect backLabelHitRect() const;
+	// Move the directory selection by delta, scrolling as needed.
+	void moveDirectorySelection(int delta);
 
-	// Mouse hit-test helpers
 	Common::Point mouseToChunkCoords(const Common::Point &mouse) const;
 
 	const UICL *_uiclData;
 
-	// Chrome image (header.imageName).
+	// Chrome (header.imageName) and sprite atlas (overlayImageName).
 	Graphics::ManagedSurface _overlayImage;
-	// Sprite atlas (overlayImageName). Source for every non-chrome
-	// blit: status icons, labels, headings, call/close buttons.
 	Graphics::ManagedSurface _spritesImage;
 
 	bool _closeButtonHovered = false;
 
 	ScreenState _screenState = kWelcome;
 
-	// '0'..'9' chars of the digits the player has dialed. Convert with
-	// `c - '0'` to recover the slot index that the contact prefix stores.
+	// Dialed digits as '0'..'9' chars; convert with `c - '0'` to get
+	// the slot index that matches a contact's dial prefix.
 	Common::String _dialedNumber;
 
-	// Active dial-tone / ring / pickup / invalid-number cue. The
-	// original engine reuses one channel for all of them.
 	SoundDescription _callSound;
 
-	// Contact index resolved during kLookupContact, valid through
-	// kWaitPickup; -1 means the number didn't match.
+	// Resolved during kLookupContact, valid through kWaitPickup; -1 = miss.
 	int _resolvedContact = -1;
 
-	// Dial-pad slot under the cursor, or -1.
 	int _hoveredSlot = -1;
 
-	// Index of the first deduplicated contact rendered in directory mode.
-	// Updated by the up/down arrow sub-buttons.
+	// First visible deduplicated contact, and the active row within the page.
 	uint _directoryScroll = 0;
+	uint _directorySelection = 0;
 
-	// When true, the LCD shows the status labels and outgoing calls
-	// are blocked. See setNoSignal().
 	bool _noSignal = false;
 };
 

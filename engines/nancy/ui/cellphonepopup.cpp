@@ -74,6 +74,7 @@ void CellPhonePopup::init() {
 	_dialedNumber.clear();
 	_resolvedContact = -1;
 	_directoryScroll = 0;
+	_directorySelection = 0;
 
 	drawChrome();
 	drawScreenContent();
@@ -107,6 +108,7 @@ void CellPhonePopup::open() {
 	_dialedNumber.clear();
 	_resolvedContact = -1;
 	_directoryScroll = 0;
+	_directorySelection = 0;
 	_closeButtonHovered = false;
 
 	drawChrome();
@@ -141,9 +143,7 @@ void CellPhonePopup::updateGraphics() {
 		return;
 	}
 
-	// TODO: Process states 0xa..0x10 (web/email/search/help/browser)
-	// are not implemented — the corresponding screen states are
-	// missing from the enum too.
+	// TODO: web/email/search/help/browser modes not implemented.
 	switch (_screenState) {
 	case kWelcome:
 	case kDialing:
@@ -166,7 +166,11 @@ void CellPhonePopup::updateGraphics() {
 		break;
 
 	case kLookupContact: {
-		_resolvedContact = findContactByDialBuffer();
+		// Directory-mode calls pre-resolve the contact, so only fall back
+		// to dial-buffer lookup when the contact isn't already known.
+		if (_resolvedContact == -1) {
+			_resolvedContact = findContactByDialBuffer();
+		}
 		if (_resolvedContact == -1) {
 			enterScreenState(kInvalidNumber);
 		} else if (playSoundIfPresent(_uiclData->pickupSound)) {
@@ -185,13 +189,15 @@ void CellPhonePopup::updateGraphics() {
 		break;
 
 	case kConnected:
+		// Trigger the scene change once, then sit in kConnected so the
+		// connecting sprite stays on screen for the duration of the
+		// conversation. AR 128 closes the popup when the call ends.
 		if (_resolvedContact >= 0 &&
 				_resolvedContact < (int)_uiclData->contacts.size()) {
 			triggerContactCallSceneChange((uint)_resolvedContact);
+			_resolvedContact = -1;
+			resetDialPad();
 		}
-		_resolvedContact = -1;
-		resetDialPad();
-		enterScreenState(kWelcome);
 		break;
 
 	case kInvalidNumber:
@@ -218,18 +224,14 @@ void CellPhonePopup::updateGraphics() {
 // --------------------------------------------------------------------
 
 void CellPhonePopup::drawChrome() {
-	// Chrome reads from the primary overlay; all other blits use _spritesImage.
 	_drawSurface.blitFrom(_overlayImage, _uiclData->header.normalSrcRect,
 							Common::Point(0, 0));
 	drawCloseButton(_closeButtonHovered ? 1 : 0);
-	drawWebDirLabels();
 	drawCallButtonState(0);
 	_needsRedraw = true;
 }
 
 void CellPhonePopup::drawScreenContent() {
-	// Repaint chrome (clears the LCD strip), then layer state-specific
-	// content on top.
 	drawChrome();
 
 	if (_screenState != kConnected) {
@@ -238,10 +240,11 @@ void CellPhonePopup::drawScreenContent() {
 
 	switch (_screenState) {
 	case kWelcome:
-		// Welcome graphic is baked into the chrome; only the status-label
-		// overlay is layered on top when the carrier is unreachable.
+		drawWebDirLabels();
 		if (_noSignal) {
 			drawStatusLabels();
+		} else {
+			drawWelcomeScreen();
 		}
 		break;
 
@@ -249,6 +252,7 @@ void CellPhonePopup::drawScreenContent() {
 	case kPlaceCall:
 	case kWaitOutgoingRing:
 	case kLookupContact:
+		drawWebDirLabels();
 		drawDialLabel();
 		drawTypeMessage();
 		drawDialedNumber();
@@ -266,7 +270,6 @@ void CellPhonePopup::drawScreenContent() {
 		break;
 
 	case kDirectory:
-		drawDirHeading();
 		drawDirectoryList();
 		drawDirectoryArrows();
 		break;
@@ -422,8 +425,6 @@ void CellPhonePopup::drawCloseButton(uint state) {
 }
 
 void CellPhonePopup::drawStatusLabels() {
-	// Three stacked lines (No Signal / No Access / Old Email Only)
-	// at statusTextX with Y offsets -10 / +20 / +50.
 	const Font *font = g_nancy->_graphics->getFont(_uiclData->fontId1);
 	if (!font) {
 		return;
@@ -457,11 +458,7 @@ void CellPhonePopup::drawDirHeading() {
 }
 
 void CellPhonePopup::drawDirectoryList() {
-	// The chunk stores one entry per dial-pattern variant, so several
-	// entries can share a name. Collapse by name to avoid showing the
-	// same contact multiple times.
-	// TODO: also sort by name and respect per-entry visibility flags,
-	// the way the original engine's contact-filter pass does.
+	// Contacts have one record per dial-pattern variant; collapse by name.
 	const Font *font = g_nancy->_graphics->getFont(_uiclData->fontId2);
 	if (!font) {
 		return;
@@ -476,7 +473,7 @@ void CellPhonePopup::drawDirectoryList() {
 			contactIdx < _uiclData->contacts.size() && visibleRow < maxRows;
 			++contactIdx) {
 		const UICL::Contact &c = _uiclData->contacts[contactIdx];
-		if (c.name.empty()) {
+		if (c.name.empty() || !isContactVisible(c)) {
 			continue;
 		}
 
@@ -492,7 +489,6 @@ void CellPhonePopup::drawDirectoryList() {
 		}
 		seenNames.push_back(c.name);
 
-		// _directoryScroll counts deduplicated entries.
 		if (visited < _directoryScroll) {
 			++visited;
 			continue;
@@ -507,8 +503,31 @@ void CellPhonePopup::drawDirectoryList() {
 	}
 }
 
+void CellPhonePopup::drawWelcomeScreen() {
+	const UICL::SrcDestRectPair &ws = _uiclData->welcomeScreen;
+	if (ws.srcRect.isEmpty() || ws.destRect.isEmpty()) {
+		return;
+	}
+	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
+	_drawSurface.blitFrom(_spritesImage, ws.srcRect,
+							Common::Point(ws.destRect.left - chunkOrigin.x,
+											ws.destRect.top - chunkOrigin.y));
+}
+
+void CellPhonePopup::drawBackLabel() {
+	const UICL::ThreeRectWidget &back = _uiclData->subButtons[2];
+	if (back.srcRectIdle.isEmpty() || back.destRect.isEmpty()) {
+		return;
+	}
+
+	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
+	_drawSurface.blitFrom(_spritesImage, back.srcRectIdle,
+							Common::Point(back.destRect.left - chunkOrigin.x,
+											back.destRect.top - chunkOrigin.y));
+}
+
 void CellPhonePopup::drawDirectoryArrows() {
-	// Sub-buttons 1 and 2 carry the up/down scroll arrows for list modes.
+	// Up/down scroll arrows are not in the chrome image; blit on every redraw.
 	const UICL::ThreeRectWidget &up = _uiclData->subButtons[1];
 	const UICL::ThreeRectWidget &down = _uiclData->subButtons[2];
 
@@ -524,6 +543,21 @@ void CellPhonePopup::drawDirectoryArrows() {
 								Common::Point(down.destRect.left - chunkOrigin.x,
 												down.destRect.top - chunkOrigin.y));
 	}
+
+	// Selection indicator next to the active row.
+	const Common::Rect &arrowSrc = _uiclData->dirArrowSrc;
+	if (arrowSrc.isEmpty()) {
+		return;
+	}
+	const uint maxRows = maxDirectoryRows();
+	if (_directorySelection >= maxRows) {
+		return;
+	}
+	const Common::Rect rowRect = directoryRowRect(_directorySelection);
+	const int arrowX = MAX(0, rowRect.left - arrowSrc.width() - 2);
+	const int arrowY = rowRect.top;
+	_drawSurface.blitFrom(_spritesImage, arrowSrc,
+							Common::Point(arrowX, arrowY));
 }
 
 // --------------------------------------------------------------------
@@ -535,14 +569,12 @@ void CellPhonePopup::resetDialPad() {
 }
 
 void CellPhonePopup::enterScreenState(ScreenState newState) {
-	// Always redraw, even when newState == _screenState, so successive
-	// digit entries in kDialing each refresh the readout.
+	// Always redraw, so successive digit entries refresh the readout.
 	_screenState = newState;
 	drawScreenContent();
 }
 
 void CellPhonePopup::appendDigit(byte slotIndex) {
-	// 11-char cap matches the LCD readout buffer width.
 	if (_dialedNumber.size() >= 11) {
 		return;
 	}
@@ -561,8 +593,7 @@ bool CellPhonePopup::playSoundIfPresent(const Common::Path &soundName) {
 
 	_callSound.name = nameStr;
 	if (_callSound.channelID == 0) {
-		// TODO: read the channel from the chunk's per-call channel slot
-		// instead of hardcoding it.
+		// TODO: should come from the per-call channel slot in the chunk.
 		_callSound.channelID = 28;
 	}
 	_callSound.volume = 100;
@@ -586,23 +617,25 @@ int CellPhonePopup::findContactByDialBuffer() const {
 		return -1;
 	}
 
-	// Contact prefix bytes are slot indices (0..9); _dialedNumber holds
-	// '0'..'9' chars, so convert each char back to its slot index.
+	// Dial pattern lives in prefix[2..], terminated by '\n'.
 	const uint dialLen = _dialedNumber.size();
+	const uint kDialOffset = 2;
 	for (uint i = 0; i < _uiclData->contacts.size(); ++i) {
 		const UICL::Contact &c = _uiclData->contacts[i];
+		if (!isContactVisible(c)) {
+			continue;
+		}
 		bool match = true;
 		for (uint b = 0; b < dialLen; ++b) {
 			const byte slotIdx = (byte)(_dialedNumber[b] - '0');
-			if (slotIdx != c.unknownPrefix[b]) {
+			if (kDialOffset + b >= sizeof(c.unknownPrefix) ||
+					slotIdx != c.unknownPrefix[kDialOffset + b]) {
 				match = false;
 				break;
 			}
 		}
-		// Require the prefix to terminate at the dialed length so a
-		// partial dial doesn't match a longer number.
-		if (match && dialLen < sizeof(c.unknownPrefix) &&
-				c.unknownPrefix[dialLen] == '\n') {
+		if (match && kDialOffset + dialLen < sizeof(c.unknownPrefix) &&
+				c.unknownPrefix[kDialOffset + dialLen] == '\n') {
 			return (int)i;
 		}
 	}
@@ -614,31 +647,35 @@ void CellPhonePopup::triggerContactCallSceneChange(uint contactIndex) {
 		return;
 	}
 
-	// Suffix layout: [0..1]=sceneID, [4..5]=eventFlag label, [6]=eventFlag value.
 	const UICL::Contact &c = _uiclData->contacts[contactIndex];
 
 	const uint16 sceneID = (uint16)c.unknownSuffix[0] | ((uint16)c.unknownSuffix[1] << 8);
-	if (sceneID == 9999) {
-		return; // "no scene" sentinel
+	if (sceneID == kNoScene) {
+		return;
 	}
+	const uint16 frameID = (uint16)c.unknownSuffix[2] | ((uint16)c.unknownSuffix[3] << 8);
 	const int16 eventFlagLabel = (int16)((uint16)c.unknownSuffix[4] |
 											((uint16)c.unknownSuffix[5] << 8));
 	const byte eventFlagValue = c.unknownSuffix[6];
 
 	SceneChangeDescription scene;
 	scene.sceneID = sceneID;
-	scene.frameID = 0;
+	scene.frameID = frameID;
 	scene.verticalOffset = 0;
-	scene.continueSceneSound = kContinueSceneSound;
+	// The destination scene's sound carries the conversation audio.
+	scene.continueSceneSound = kLoadSceneSound;
 
 	if (eventFlagLabel != -1) {
 		NancySceneState.setEventFlag(eventFlagLabel,
 										eventFlagValue ? g_nancy->_true : g_nancy->_false);
 	}
 
+	// Pushed so AR 128 in the conversation scene can return the player here.
+	NancySceneState.pushScene();
+
 	NancySceneState.changeScene(scene);
 
-	setVisible(false);
+	// Phone stays on screen through the conversation; AR 128 closes it.
 }
 
 // --------------------------------------------------------------------
@@ -646,7 +683,6 @@ void CellPhonePopup::triggerContactCallSceneChange(uint contactIndex) {
 // --------------------------------------------------------------------
 
 uint CellPhonePopup::maxDirectoryRows() const {
-	// fontId2 is the list font; fontId1 is the (larger) dial readout.
 	const Font *font = g_nancy->_graphics->getFont(_uiclData->fontId2);
 	if (!font) {
 		return 0;
@@ -657,15 +693,10 @@ uint CellPhonePopup::maxDirectoryRows() const {
 		return 0;
 	}
 
-	// TODO: derive the real visible-row count from the layout
-	// FUN_004d8476 sets up at directory entry (case 0xe). For now,
-	// cap at the LCD height divided by row pitch.
-	const int rowH = arrow.height() + 8;
-	if (rowH <= 0) {
-		return 0;
-	}
-	// Approximate LCD strip height as welcomeScreen height.
-	const int lcdH = _uiclData->welcomeScreen.destRect.height();
+	const int rowH = MAX(arrow.height() + 4, 14);
+	const Common::Rect &ws = _uiclData->welcomeScreen.destRect;
+	const int firstRowOffset = 22;
+	const int lcdH = MAX(0, ws.height() - firstRowOffset);
 	return MAX<int>(1, lcdH / rowH);
 }
 
@@ -675,27 +706,66 @@ Common::Rect CellPhonePopup::directoryRowRect(uint visibleIndex) const {
 		return Common::Rect();
 	}
 
-	// Row layout: X start = dirArrowSrc.right + 5,
-	//             Y start = dirArrowSrc.top - 5,
-	//             pitch  = dirArrowSrc.height() + 8.
 	const Common::Rect &arrow = _uiclData->dirArrowSrc;
-	const int rowH = arrow.height() + 8;
-	const int xScreen = arrow.right + 5;
-	const int yScreen = arrow.top - 5 + (int)visibleIndex * rowH;
-	const int x = xScreen - _screenPosition.left;
-	const int y = yScreen - _screenPosition.top;
-	const int width = _screenPosition.width() - x - 4;
-	return Common::Rect(x, y, x + width, y + rowH);
+	const int rowH = MAX(arrow.height() + 4, 14);
+	const Common::Rect &ws = _uiclData->welcomeScreen.destRect;
+	const int lcdLeft = ws.left - _screenPosition.left;
+	const int lcdTop  = ws.top  - _screenPosition.top;
+	const int lcdWidth = ws.width();
+	const int firstRowOffset = 22;
+
+	const int x = lcdLeft + arrow.width() + 4;
+	const int y = lcdTop + firstRowOffset + (int)visibleIndex * rowH;
+	const int width = MAX(0, lcdWidth - (arrow.width() + 4) - 2);
+	// Clamp to the LCD so a row rect can't leak onto the keypad below.
+	const int lcdBottom = lcdTop + ws.height();
+	const int rowBottom = MIN(y + rowH, lcdBottom);
+	if (rowBottom <= y) {
+		return Common::Rect();
+	}
+	return Common::Rect(x, y, x + width, rowBottom);
+}
+
+bool CellPhonePopup::isContactVisible(const UICL::Contact &c) const {
+	const uint16 flag = (uint16)c.unknownPrefix[0] | ((uint16)c.unknownPrefix[1] << 8);
+	if (flag == 10) {
+		return true;
+	}
+	if (flag == 11) {
+		return false;
+	}
+	return NancySceneState.getEventFlag((int16)flag, g_nancy->_true);
+}
+
+Common::Rect CellPhonePopup::backLabelHitRect() const {
+	// Back overlays the Web/Dir label area. Returns popup-local coordinates.
+	Common::Rect hit;
+	const Common::Rect &web = _uiclData->webLabel.destRect;
+	const Common::Rect &dir = _uiclData->dirLabel.destRect;
+	if (!web.isEmpty()) {
+		hit = web;
+	}
+	if (!dir.isEmpty()) {
+		if (hit.isEmpty()) {
+			hit = dir;
+		} else {
+			hit.extend(dir);
+		}
+	}
+	if (hit.isEmpty()) {
+		return hit;
+	}
+	hit.translate(-_screenPosition.left, -_screenPosition.top);
+	return hit;
 }
 
 int CellPhonePopup::contactIndexForVisibleRow(uint visibleRow) const {
-	// Mirrors the dedup walk in drawDirectoryList.
 	Common::Array<Common::String> seenNames;
 	uint visited = 0;
 	uint visibleSoFar = 0;
 	for (uint i = 0; i < _uiclData->contacts.size(); ++i) {
 		const UICL::Contact &c = _uiclData->contacts[i];
-		if (c.name.empty()) {
+		if (c.name.empty() || !isContactVisible(c)) {
 			continue;
 		}
 		bool duplicate = false;
@@ -722,8 +792,47 @@ int CellPhonePopup::contactIndexForVisibleRow(uint visibleRow) const {
 	return -1;
 }
 
+void CellPhonePopup::moveDirectorySelection(int delta) {
+	if (_screenState != kDirectory || delta == 0) {
+		return;
+	}
+
+	const uint total = deduplicatedContactCount();
+	const uint maxRows = maxDirectoryRows();
+	if (total == 0 || maxRows == 0) {
+		return;
+	}
+
+	uint absolute = _directoryScroll + _directorySelection;
+
+	if (delta < 0) {
+		const uint dec = (uint)(-delta);
+		if (dec >= absolute) {
+			absolute = 0;
+		} else {
+			absolute -= dec;
+		}
+	} else {
+		absolute += (uint)delta;
+		if (absolute >= total) {
+			absolute = total - 1;
+		}
+	}
+
+	if (absolute < _directoryScroll) {
+		_directoryScroll = absolute;
+		_directorySelection = 0;
+	} else if (absolute >= _directoryScroll + maxRows) {
+		_directorySelection = maxRows - 1;
+		_directoryScroll = absolute - _directorySelection;
+	} else {
+		_directorySelection = absolute - _directoryScroll;
+	}
+
+	drawScreenContent();
+}
+
 uint CellPhonePopup::directoryRowAt(const Common::Point &chunkMouse) const {
-	// directoryRowRect returns popup-local rects; convert the mouse too.
 	const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
 									chunkMouse.y - _screenPosition.top);
 	const uint maxRows = maxDirectoryRows();
@@ -741,16 +850,14 @@ void CellPhonePopup::startCallToContact(uint contactIndex) {
 	}
 	const UICL::Contact &c = _uiclData->contacts[contactIndex];
 
-	// Rebuild _dialedNumber from the contact prefix (slot indices,
-	// terminated by '\n') so the call flow's lookup matches.
+	// Rebuild _dialedNumber so the call flow's lookup matches.
 	_dialedNumber.clear();
-	for (uint b = 0; b < sizeof(c.unknownPrefix); ++b) {
+	for (uint b = 2; b < sizeof(c.unknownPrefix); ++b) {
 		const byte v = c.unknownPrefix[b];
 		if (v == '\n') {
 			break;
 		}
 		if (v > 9) {
-			// Non-digit slot index: abort so the call hits kInvalidNumber.
 			_dialedNumber.clear();
 			break;
 		}
@@ -766,7 +873,7 @@ uint CellPhonePopup::deduplicatedContactCount() const {
 	Common::Array<Common::String> seen;
 	for (uint i = 0; i < _uiclData->contacts.size(); ++i) {
 		const UICL::Contact &c = _uiclData->contacts[i];
-		if (c.name.empty()) {
+		if (c.name.empty() || !isContactVisible(c)) {
 			continue;
 		}
 		bool dup = false;
@@ -788,7 +895,6 @@ uint CellPhonePopup::deduplicatedContactCount() const {
 // --------------------------------------------------------------------
 
 Common::Point CellPhonePopup::mouseToChunkCoords(const Common::Point &mouse) const {
-	// Chunk destRects are screen coords, so chunk-mouse == screen-mouse.
 	return mouse;
 }
 
@@ -797,14 +903,14 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		return;
 	}
 
-	// Transient call-flow states ignore everything except the close X.
+	// Mid-call states accept only the close X.
 	const bool transientCallState =
 		_screenState == kPlaceCall || _screenState == kWaitOutgoingRing ||
 		_screenState == kLookupContact || _screenState == kWaitPickup ||
 		_screenState == kConnected || _screenState == kInvalidNumber ||
 		_screenState == kWaitInvalid;
 
-	// Close (X) — checked first so it wins overlap.
+	// Close (X) wins on overlap.
 	if (_uiclData->header.secondaryButtonEnabled) {
 		const UIButtonRecord &closeBtn = _uiclData->header.secondaryButton;
 		Common::Rect closeScreen = closeBtn.destRect;
@@ -831,51 +937,61 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	}
 
 	if (transientCallState) {
-		if (_screenPosition.contains(input.mousePos)) {
-			input.eatMouseInput();
-		}
+		// Block the viewport from seeing the cursor (edge-pan, etc.).
+		input.eatMouseInput();
 		return;
 	}
 
 	const Common::Point chunkMouse = mouseToChunkCoords(input.mousePos);
 
-	// Directory mode: scroll arrows + click-to-call on a contact row.
 	if (_screenState == kDirectory) {
 		const Common::Rect &upDst = _uiclData->subButtons[1].destRect;
 		const Common::Rect &downDst = _uiclData->subButtons[2].destRect;
 
+		// Up/down move the selection; scrolling kicks in at page edges.
 		if (upDst.contains(chunkMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				if (_directoryScroll > 0) {
-					--_directoryScroll;
-					drawScreenContent();
-				}
+				moveDirectorySelection(-1);
 				input.eatMouseInput();
 				return;
 			}
 		} else if (downDst.contains(chunkMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				const uint total = deduplicatedContactCount();
-				const uint rows = maxDirectoryRows();
-				const uint maxScroll = total > rows ? total - rows : 0;
-				if (_directoryScroll < maxScroll) {
-					++_directoryScroll;
-					drawScreenContent();
-				}
+				moveDirectorySelection(+1);
 				input.eatMouseInput();
 				return;
 			}
 		}
 
+		// Invisible Back hotspot. Gated so it can't intercept up/down clicks.
+		const Common::Rect backHit = backLabelHitRect();
+		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
+										chunkMouse.y - _screenPosition.top);
+		const bool overUpDown =
+			upDst.contains(chunkMouse) || downDst.contains(chunkMouse);
+		if (!overUpDown && !backHit.isEmpty() && backHit.contains(popupMouse)) {
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				_directoryScroll = 0;
+				_directorySelection = 0;
+				_dialedNumber.clear();
+				enterScreenState(kWelcome);
+				input.eatMouseInput();
+				return;
+			}
+		}
+
+		// Row click selects (the call button does the actual call).
 		const uint row = directoryRowAt(chunkMouse);
 		if (row != (uint)-1) {
 			const int contactIdx = contactIndexForVisibleRow(row);
 			if (contactIdx >= 0) {
 				g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					startCallToContact((uint)contactIdx);
+					_directorySelection = row;
+					drawScreenContent();
 					input.eatMouseInput();
 					return;
 				}
@@ -885,11 +1001,38 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		// can override the directory by starting a fresh dial.
 	}
 
+	// Call/talk button. Checked before the dial-pad loop so an overlapping
+	// slot can't eat it. The keypad Talk key is slot 12; the callButton
+	// widget covers a different region.
+	if (_uiclData->callButton.destRect.contains(chunkMouse) ||
+			_uiclData->dialPadSlots[12].destRect.contains(chunkMouse)) {
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (!_noSignal) {
+				if (_screenState == kDirectory) {
+					const int contactIdx =
+						contactIndexForVisibleRow(_directorySelection);
+					if (contactIdx >= 0) {
+						// Pre-resolve so kLookupContact skips the dial-buffer
+						// match and the ring/pickup animation still plays.
+						_resolvedContact = contactIdx;
+						enterScreenState(kPlaceCall);
+					}
+				} else if (!_dialedNumber.empty()) {
+					enterScreenState(kPlaceCall);
+				}
+			}
+			input.eatMouseInput();
+			return;
+		}
+	}
+
 	// Dial-pad slot behaviour:
 	//   0..9   - digit input
-	//   10, 11 - *, # (no-op for now)
-	//   12     - welcome / dial toggle (TODO: hook up)
-	//   13     - web mode (TODO: not implemented)
+	//   10, 11 - *, # (no-op)
+	//   12     - call/talk key (handled above)
+	//   13     - web mode (TODO)
 	//   14     - directory toggle
 	int newHovered = -1;
 	for (uint i = 0; i < UICL::kNumDialPadSlots; ++i) {
@@ -919,42 +1062,24 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			} else if (newHovered == 14) {
 				if (_screenState == kDirectory) {
 					_directoryScroll = 0;
+					_directorySelection = 0;
 					enterScreenState(kWelcome);
 				} else {
 					_dialedNumber.clear();
 					_directoryScroll = 0;
+					_directorySelection = 0;
 					enterScreenState(kDirectory);
 				}
 			}
-			// TODO: slots 10/11 (*, #), slot 12 (mode toggle), slot 13
-			// (web mode) are unimplemented; they fall through as no-ops.
-
 			input.eatMouseInput();
 			return;
 		}
 	}
 
-	// Call button — disabled while in no-signal mode.
-	if (_uiclData->callButton.destRect.contains(chunkMouse)) {
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+	// TODO: sub-buttons (email/search/help/browser/in-call menu) not hooked up.
 
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			if (!_dialedNumber.empty() && !_noSignal) {
-				enterScreenState(kPlaceCall);
-			}
-			input.eatMouseInput();
-			return;
-		}
-	}
-
-	// TODO: sub-buttons (10 entries in _uiclData->subButtons) are not
-	// hooked up — they drive email/search/help/browser modes and the
-	// in-call menu in the original.
-
-	// Swallow any remaining click so it doesn't fall through to the scene.
-	if (_screenPosition.contains(input.mousePos)) {
-		input.eatMouseInput();
-	}
+	// Block the viewport from acting on the cursor while the phone is up.
+	input.eatMouseInput();
 }
 
 } // End of namespace UI
