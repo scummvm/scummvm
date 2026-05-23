@@ -60,6 +60,8 @@ protected:
 
 private:
 	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
+	void ra1HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);
+	void ra1HandleFade(int32 subSize, Common::SeekableReadStream &b);
 	SmushFont *ra1GetFont(int font);
 	void ra1HandleText(int32 subSize, Common::SeekableReadStream &b);
 
@@ -85,6 +87,15 @@ private:
 	int _ra1ViewportOffsetX;
 	int _ra1ViewportOffsetY;
 	int _ra1FrameSourceSkipY;
+
+	// RA1 FADE chunks update the visible 320x200 screen through a sparse
+	// copy mask, separate from the decoded frame buffer.
+	byte *_ra1FadeFrame;
+	int32 _ra1FadeFrameSize;
+	int _ra1FadeFrameWidth;
+	int _ra1FadeFrameHeight;
+	bool _ra1FadeFrameValid;
+	bool _ra1UseFadeFrame;
 };
 
 } // End of namespace Scumm
