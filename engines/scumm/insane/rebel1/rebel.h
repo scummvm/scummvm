@@ -185,6 +185,8 @@ private:
 	void updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
 	void applyFrameObjectHitState(int16 targetIdx);
 	bool isFrameObjectPrimarySet(int16 objectId) const;
+	bool areFrameObjectPrimaryBitsSet(int byteIndex, byte mask) const;
+	void clearFrameObjectPrimaryBits(int byteIndex, byte mask);
 	bool areLevel14Phase1TargetsDestroyed() const;
 	bool areLevel14Phase2TargetsDestroyed() const;
 
@@ -580,7 +582,7 @@ private:
 	int16 _level14SuccessFrames; // RunLevel14Flow: 60-frame hold after required targets are destroyed
 
 	// Level 15 torpedo success latch. The original derives this from
-	// g_gameplayPhaseFlags bit 1, which is the primary object-state bit for object 7.
+	// g_gameplayPhaseFlags bit 1, which is _frameObjectState primary byte 0 bit 0x02.
 	bool _torpedoFired;
 
 	// Level 8 walker-specific state — RunLevel8Flow (0x18546)
