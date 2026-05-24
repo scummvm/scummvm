@@ -178,6 +178,8 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 	ser.skip(1, kGameTypeNancy1);
 
+	// Count of extra 6-byte entries that sit between the header and the
+	// video descs in the original layout. Always 0 in practice.
 	ser.skip(2, kGameTypeNancy10);
 
 	uint16 numVideoDescs = 0;
@@ -185,6 +187,12 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
 		_videoDescs[i].readData(stream);
+	}
+
+	// Nancy 10+ tail: 16 trailing bytes after the video descs. Purpose
+	// not yet identified.
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		stream.skip(16);
 	}
 }
 
