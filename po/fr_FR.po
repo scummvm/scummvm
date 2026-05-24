@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-23 19:15+0000\n"
-"PO-Revision-Date: 2026-05-19 00:22+0000\n"
+"PO-Revision-Date: 2026-05-24 13:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -9158,10 +9158,8 @@ msgstr "Menu d'information"
 
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
 #: engines/freescape/movement.cpp:119
-#, fuzzy
-#| msgid "Toggle resizable window"
 msgid "Toggle red/blue 3D"
-msgstr "Act. / Désact. fenêtre redimensionnable"
+msgstr "Act. / Désact. la 3D rouge/bleu"
 
 #: engines/freescape/games/castle/castle.cpp:456
 msgid "Select prince"
