@@ -276,7 +276,7 @@ static void room_103_parser() {
 		return;
 	}
 
-	if (player_parse(37, 36, 0) || player_parse(6, 36, 0) || player_parse(10, 36, 0)) {
+	if (player_said_2(walk_through, door_to_queens_room) || player_said_2(open, door_to_queens_room) || player_said_2(pull, door_to_queens_room)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -337,20 +337,20 @@ static void room_103_parser() {
 		return;
 	}
 
-	if (player_parse(37, 249, 0) || player_parse(6, 249, 0) || player_parse(10, 249, 0)) {
+	if (player_said_2(walk_through, door_to_meeting_room) || player_said_2(open, door_to_meeting_room) || player_said_2(pull, door_to_meeting_room)) {
 		new_room = 104;
 		player.command_ready = false;
 		return;
 	}
 
-	if (player_parse(37, 250, 0) || player_parse(6, 250, 0) || player_parse(10, 250, 0)) {
+	if (player_said_2(walk_through, door_to_ballroom) || player_said_2(open, door_to_ballroom) || player_said_2(pull, door_to_ballroom)) {
 		new_room = 105;
 		player.command_ready = false;
 		return;
 	}
 
-	if (player_parse(3, 0) || player_parse(30, 0)) {
-		if (player_parse(26, 0)) {
+	if (player_said_1(look) || player_said_1(look_at)) {
+		if (player_said_1(tapestry)) {
 			if (inter_point_x <= END_HALL_TAPESTRY_X && inter_point_y <= END_HALL_TAPESTRY_Y)
 				text_show(10302);
 			else
@@ -358,46 +358,46 @@ static void room_103_parser() {
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(246, 0)) { text_show(10305); player.command_ready = false; return; }
-		if (player_parse(36, 0))  { text_show(10307); player.command_ready = false; return; }
-		if (player_parse(245, 0)) { text_show(10308); player.command_ready = false; return; }
-		if (player_parse(570, 0)) { text_show(10309); player.command_ready = false; return; }
-		if (player_parse(198, 0)) { text_show(10311); player.command_ready = false; return; }
-		if (player_parse(248, 0)) { text_show(10312); player.command_ready = false; return; }
-		if (player_parse(247, 0)) { text_show(10314); player.command_ready = false; return; }
-		if (player_parse(244, 0)) { text_show(10315); player.command_ready = false; return; }
-		if (player_parse(44, 0))  { text_show(10317); player.command_ready = false; return; }
-		if (player_parse(41, 0))  { text_show(10320); player.command_ready = false; return; }
-		if (player_parse(40, 0))  { text_show(10322); player.command_ready = false; return; }
-		if (player_parse(250, 0)) { text_show(10323); player.command_ready = false; return; }
-		if (player_parse(249, 0)) { text_show(10324); player.command_ready = false; return; }
+		if (player_said_1(coat_of_arms)) { text_show(10305); player.command_ready = false; return; }
+		if (player_said_1(door_to_queens_room))  { text_show(10307); player.command_ready = false; return; }
+		if (player_said_1(door_to_king_s_room)) { text_show(10308); player.command_ready = false; return; }
+		if (player_said_1(cedar_chest)) { text_show(10309); player.command_ready = false; return; }
+		if (player_said_1(table)) { text_show(10311); player.command_ready = false; return; }
+		if (player_said_1(small_window)) { text_show(10312); player.command_ready = false; return; }
+		if (player_said_1(large_window)) { text_show(10314); player.command_ready = false; return; }
+		if (player_said_1(battle_axes)) { text_show(10315); player.command_ready = false; return; }
+		if (player_said_1(bust))  { text_show(10317); player.command_ready = false; return; }
+		if (player_said_1(decoration))  { text_show(10320); player.command_ready = false; return; }
+		if (player_said_1(wall_plaque))  { text_show(10322); player.command_ready = false; return; }
+		if (player_said_1(door_to_ballroom)) { text_show(10323); player.command_ready = false; return; }
+		if (player_said_1(door_to_meeting_room)) { text_show(10324); player.command_ready = false; return; }
 	}
 
-	if ((player_parse(4, 0) || player_parse(10, 0)) && player_parse(244, 0)) {
+	if ((player_said_1(take) || player_said_1(pull)) && player_said_1(battle_axes)) {
 		text_show(10316);
 		player.command_ready = false;
 		return;
 	}
 
-	if ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(26, 0)) {
+	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(tapestry)) {
 		text_show(10304);
 		player.command_ready = false;
 		return;
 	}
 
-	if (player_parse(10, 246, 0)) {
+	if (player_said_2(pull, coat_of_arms)) {
 		text_show(10306);
 		player.command_ready = false;
 		return;
 	}
 
-	if (player_parse(6, 570, 0)) {
+	if (player_said_2(open, cedar_chest)) {
 		text_show(10310);
 		player.command_ready = false;
 		return;
 	}
 
-	if (player_parse(6, 248, 0) || player_parse(6, 247, 0)) {
+	if (player_said_2(open, small_window) || player_said_2(open, large_window)) {
 		text_show(10313);
 		player.command_ready = false;
 		return;

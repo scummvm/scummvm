@@ -32,32 +32,42 @@ namespace Dragonsphere {
 // Each conversation gets its own enum block named after its .CON file.
 
 enum {
-	conv002_counter_only = 0,
-	conv002_banter_random = 1,
-	conv002_flirt_rand = 2
+	conv001_exit_b_b         = 10,
+	conv001_bear_b_b         = 13,
+	conv001_unbear_b_b       = 16,
+	conv001_sixteen_b_b      = 19,
+	conv001_pre_25_b_b       = 30,
+	conv001_twentyfive       = 31,
+	conv001_end_b_b          = 38
 };
 
 enum {
-	conv003_replies_b_b = 2,
-	conv003_exit_b_b = 8,
-	conv003_replies_defeat = 5
+	conv002_counter_only     =  0,
+	conv002_banter_random    =  1,
+	conv002_flirt_rand       =  2
 };
 
 enum {
-	conv004_seen_only = 0,
-	conv004_resolved_only = 1,
-	conv004_am_only = 2,
-	conv004_wait_only = 3,
-	conv004_thanks_only = 4,
-	conv004_nay_only = 5,
-	conv004_queen_only = 6,
-	conv004_fathers_only = 7,
-	conv004_last_only = 8,
-	conv004_exit_b_b = 10
+	conv003_replies_b_b      =  2,
+	conv003_exit_b_b         =  8,
+	conv003_replies_defeat   =  5
 };
 
 enum {
-	conv005_exit_b_b = 16
+	conv004_seen_only        =  0,
+	conv004_resolved_only    =  1,
+	conv004_am_only          =  2,
+	conv004_wait_only        =  3,
+	conv004_thanks_only      =  4,
+	conv004_nay_only         =  5,
+	conv004_queen_only       =  6,
+	conv004_fathers_only     =  7,
+	conv004_last_only        =  8,
+	conv004_exit_b_b         = 10
+};
+
+enum {
+	conv005_exit_b_b         = 16
 };
 
 enum {

@@ -190,15 +190,8 @@ static Scratch scratch;
 
 #define LENGTH_OF_LIFE            1300 
 
-// Vocabulary word IDs (raw integers from disassembly; VOCABH.DB/VOCAB.DB)
-//   words_MacMorn=350, words_wall_panel=276, words_secret_door=275
-//   words_table=198, words_books=274, words_tapestry=26 (✓ verified)
-//   words_Queen_Mother=347, words_king=291, words_doorway=277
-//   words_walk_through=37 (✓), words_walk_to=13 (✓)
 
-// ---------------------------------------------------------------------------
-
-void room_104_init() {
+static void room_104_init() {
 	conv_get(CONV_FINALE);
 
 	// Palette-only loads for Pid persona (prevent palette fragmentation)
@@ -264,7 +257,7 @@ void room_104_init() {
 
 		// Stamp the correct tapestry sprite based on current state
 		if (global[tapestry_status] == TAPESTRY_CLOSED ||
-		    global[tapestry_status] == TAPESTRY_CLOSED2) {
+			global[tapestry_status] == TAPESTRY_CLOSED2) {
 			kernel_flip_hotspot(276, false);  // words_wall_panel
 			kernel_flip_hotspot(275, false);  // words_secret_door
 			seq[fx_tapestry_closed] = kernel_seq_stamp(ss[fx_tapestry_closed], false, KERNEL_FIRST);
@@ -278,17 +271,17 @@ void room_104_init() {
 
 		// Adjust secret door / wall panel hotspots based on books state
 		if (global[books_status] == BOOKS_PRESENT ||
-		    global[books_status] == BOOKS_PRESENT2) {
+			global[books_status] == BOOKS_PRESENT2) {
 			if (global[tapestry_status] == TAPESTRY_OPENED ||
-			    global[tapestry_status] == TAPESTRY_OPENED2) {
+				global[tapestry_status] == TAPESTRY_OPENED2) {
 				kernel_flip_hotspot(275, false);  // words_secret_door
 			}
 		} else if (global[books_status] == BOOKS_PULLED ||
-		           global[books_status] == BOOKS_PULLED2) {
+			       global[books_status] == BOOKS_PULLED2) {
 			seq[fx_wall_open_close] = kernel_seq_stamp(ss[fx_wall_open_close], false, KERNEL_LAST);
 			kernel_seq_depth(seq[fx_wall_open_close], 8);
 			if (global[tapestry_status] == TAPESTRY_OPENED ||
-			    global[tapestry_status] == TAPESTRY_OPENED2) {
+				global[tapestry_status] == TAPESTRY_OPENED2) {
 				kernel_flip_hotspot(276, false);   // words_wall_panel
 				kernel_flip_hotspot(275, true);    // words_secret_door (true in release binary)
 			}
@@ -314,9 +307,9 @@ void room_104_init() {
 		seq[fx_open_doorway] = kernel_seq_stamp(ss[fx_open_doorway], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_open_doorway], 8);
 		local->doorway_id = kernel_add_dynamic(277, 37, SYNTAX_SINGULAR,
-		                        seq[fx_open_doorway], 0, 0, 0, 0);
+			                    seq[fx_open_doorway], 0, 0, 0, 0);
 		kernel_dynamic_walk(local->doorway_id, WALK_TO_DOORWAY_X, WALK_TO_DOORWAY_Y,
-		                    FACING_NORTHEAST);
+			                FACING_NORTHEAST);
 
 		global[books_status] = BOOKS_NOT_PRESENT;
 		kernel_flip_hotspot_loc(26, false, TAP_HS_CLOSED_X, TAP_HS_CLOSED_Y);  // words_tapestry
@@ -380,7 +373,7 @@ void room_104_init() {
 
 		{
 			int16 id = kernel_add_dynamic(347, 13, SYNTAX_FEM_NOT_PROPER,
-			                              KERNEL_NONE, 0, 0, 0, 0);  // words_Queen_Mother
+				                          KERNEL_NONE, 0, 0, 0, 0);  // words_Queen_Mother
 			kernel_dynamic_hot[id].prep = PREP_ON;
 			kernel_dynamic_anim(id, aa[2], 0);
 		}
@@ -389,7 +382,7 @@ void room_104_init() {
 
 		{
 			int16 id = kernel_add_dynamic(291, 13, SYNTAX_MASC_NOT_PROPER,
-			                              KERNEL_NONE, 0, 0, 0, 0);  // words_king
+				                          KERNEL_NONE, 0, 0, 0, 0);  // words_king
 			kernel_dynamic_hot[id].prep = PREP_ON;
 			kernel_dynamic_anim(id, aa[0], 0);
 		}
@@ -399,8 +392,8 @@ void room_104_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_LAST);
 		kernel_seq_depth(seq[fx_door], 14);
 		player_first_walk(START_X_ROOM_103, START_Y_ROOM_103, FACING_SOUTH,
-		                  WALK_TO_X_FROM_103, WALK_TO_Y_FROM_103, FACING_SOUTH,
-		                  false);
+			              WALK_TO_X_FROM_103, WALK_TO_Y_FROM_103, FACING_SOUTH,
+			              false);
 		player_walk_trigger(ROOM_104_DOOR_CLOSES);
 
 	} else {
@@ -436,7 +429,7 @@ void room_104_init() {
 
 			{
 				int16 id = kernel_add_dynamic(347, 13, SYNTAX_FEM_NOT_PROPER,
-				                              KERNEL_NONE, 0, 0, 0, 0);  // words_Queen_Mother
+					                          KERNEL_NONE, 0, 0, 0, 0);  // words_Queen_Mother
 				kernel_dynamic_hot[id].prep = PREP_ON;
 				kernel_dynamic_anim(id, aa[2], 0);
 			}
@@ -445,7 +438,7 @@ void room_104_init() {
 
 			{
 				int16 id = kernel_add_dynamic(291, 13, SYNTAX_MASC_NOT_PROPER,
-				                              KERNEL_NONE, 0, 0, 0, 0);  // words_king
+					                          KERNEL_NONE, 0, 0, 0, 0);  // words_king
 				kernel_dynamic_hot[id].prep = PREP_ON;
 				kernel_dynamic_anim(id, aa[0], 0);
 			}
@@ -490,13 +483,13 @@ static void room_104_process_conversation_finale() {
 
 	// Player-choice (b_b) node dispatch
 	switch (player_verb) {
-	case 38:  // conv001_end_b_b
+	case conv001_end_b_b:
 		global[end_of_game] = true;
 		new_room = 106;
 		break;
 
-	case 30:  // conv001_pre_25_b_b
-		*conv_my_next_start = 31;  // conv001_twentyfive
+	case conv001_pre_25_b_b:
+		*conv_my_next_start = conv001_twentyfive;
 		conv_abort();
 		if (global[llanie_status] == IS_SAVED) {
 			aa[3]                  = kernel_run_animation(kernel_name('l', 1), 0);
@@ -505,28 +498,28 @@ static void room_104_process_conversation_finale() {
 		}
 		break;
 
-	case 10:  // conv001_exit_b_b
+	case conv001_exit_b_b:
 		if (!kernel.trigger)
 			local->mac_action = MAC_TABLE;
 		me_trig_flag  = true;
 		you_trig_flag = true;
 		break;
 
-	case 13:  // conv001_bear_b_b
+	case conv001_bear_b_b:
 		local->pid_action = PID_BEAR;
 		conv_hold();
 		me_trig_flag  = true;
 		you_trig_flag = true;
 		break;
 
-	case 16:  // conv001_unbear_b_b
+	case conv001_unbear_b_b:
 		if (!kernel.trigger)
 			local->mac_action = MAC_UNBEAR;
 		me_trig_flag  = true;
 		you_trig_flag = true;
 		break;
 
-	case 19:  // conv001_sixteen_b_b
+	case conv001_sixteen_b_b:
 		local->death_timer    = 0;
 		local->clock          = 0;
 		local->activate_timer = true;
@@ -537,11 +530,18 @@ static void room_104_process_conversation_finale() {
 
 	// Trigger dispatch
 	switch (kernel.trigger) {
-	case ROOM_104_YOU_TALK:  // 81
+	case ROOM_104_YOU_TALK:
 		// Per-node character action: which character speaks this NPC line?
 		switch (player_verb) {
 		// Mac talks (if idle, set to talking)
-		case 0: case 2: case 4: case 5: case 7: case 8: case 11: case 17:
+		case 0:
+		case 2:
+		case 4:
+		case 5:
+		case 7:
+		case 8:
+		case 11:
+		case 17:
 			if (local->mac_action == MAC_SHUT_UP)
 				local->mac_action = MAC_TALK;
 			local->pid_action = PID_SHUT_UP;
@@ -608,11 +608,11 @@ static void room_104_process_conversation_finale() {
 	local->pid_talk_count      = 0;
 }
 
-void room_104_pre_parser() {
+static void room_104_pre_parser() {
 	// verb(pull/open/close/push) AND tapestry: redirect walk to tapestry area when
 	// the interaction point is in the right side of the room (inter_point_x > 280)
-	if ((player_parse(10, 0) || player_parse(6, 0) || player_parse(11, 0) || player_parse(5, 0)) &&
-	     player_parse(26, 0)) {  // tapestry
+	if ((player_said_1(pull) || player_said_1(open) || player_said_1(close) || player_said_1(push)) &&
+			player_said_1(tapestry)) {
 		if (inter_point_x > 280) {
 			player_walk(WALK_TO_DOORWAY_X, WALK_TO_DOORWAY_Y, FACING_NORTHEAST);
 		}
@@ -620,16 +620,16 @@ void room_104_pre_parser() {
 
 	// For Pid persona, cancel any walk when the player tries actions that require
 	// cutscene handling rather than walking
-	if (player_parse(37, 176, 0) ||    // walk_through + door_to_throne_room
-	    player_parse(37, 197, 0) ||    // walk_through + door_to_hallway
-	    player_parse(37, 277, 0) ||    // walk_through + doorway
-	    ((player_parse(10, 0) || player_parse(6, 0) || player_parse(5, 0)) && player_parse(26, 0)) ||   // pull/open/push + tapestry
-	    ((player_parse(10, 0) || player_parse(11, 0) || player_parse(5, 0)) && player_parse(26, 0)) ||  // pull/close/push + tapestry
-	    ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(18, 0)) ||  // push/pull + rug
-	    player_parse(35, 0) ||         // fireplace_screen
-	    player_parse(200, 0) ||        // trophy
-	    player_parse(203, 0) ||        // loveseat
-	    player_parse(6, 201, 0)) {     // open + reading_bench
+	if (player_said_2(walk_through, door_to_throne_room) ||
+			player_said_2(walk_through, door_to_hallway) ||
+			player_said_2(walk_through, doorway) ||
+			((player_said_1(pull) || player_said_1(open) || player_said_1(push)) && player_said_1(tapestry)) ||
+			((player_said_1(pull) || player_said_1(close) || player_said_1(push)) && player_said_1(tapestry)) ||
+			((player_said_1(push) || player_said_1(pull)) && player_said_1(rug)) ||
+			player_said_1(fireplace_screen) ||
+			player_said_1(trophy) ||
+			player_said_1(loveseat) ||
+			player_said_2(open, reading_bench)) {
 		if (global[player_persona] == PLAYER_IS_PID) {
 			player_cancel_walk();
 		}
@@ -649,7 +649,6 @@ static void handle_animation_king() {
 		king_reset_frame = -1;
 
 		switch (local->king_frame) {
-
 		case 22:
 			if (local->king_action == KING_INVISIBLE) {
 				king_reset_frame = 21;
@@ -724,7 +723,6 @@ static void handle_animation_king() {
 	}
 }
 
-
 static void handle_animation_mac() {
 	int mac_reset_frame;
 
@@ -733,7 +731,6 @@ static void handle_animation_mac() {
 		mac_reset_frame = -1;
 
 		switch (local->mac_frame) {
-
 		case 25:  /* almost end of Macmorn drawing sword */
 			player.commands_allowed = true;
 			break;
@@ -785,7 +782,8 @@ static void handle_animation_mac() {
 			kernel_synch(KERNEL_ANIM, aa[4], KERNEL_ANIM, aa[1]);
 			break;
 
-		case 112: /* end of throw table */
+		case 112:
+			/* end of throw table */
 			mac_reset_frame = 8;    /* draw sword */
 			local->mac_action = MAC_SHUT_UP;
 			break;
@@ -857,18 +855,21 @@ static void handle_animation_mac() {
 			}
 			break;
 
-		case 76:   /* end of MacMorn laughing over Pid's death */
+		case 76:
+			/* end of MacMorn laughing over Pid's death */
 			conv_reset(CONV_FINALE);
 			text_show(10467);
 			global[no_load_walker] = false;
 			new_room = 119;
 			break;
 
-		case 82:  /* part way into un-bearing pid */
+		case 82:
+			/* part way into un-bearing pid */
 			local->pid_action = PID_UNBEAR;
 			break;
 
-		case 97:  /* somewhere into flipping table */
+		case 97:
+			/* somewhere into flipping table */
 			local->activate_timer = true;
 			kernel_seq_delete(seq[fx_table]);
 			seq[fx_table] = kernel_seq_forward(ss[fx_table], false, 10, 0, 0, 1);
@@ -885,7 +886,6 @@ static void handle_animation_mac() {
 		}
 	}
 }
-
 
 static void handle_animation_mac_2() {
 	int mac_reset_frame;
@@ -1038,7 +1038,6 @@ static void handle_animation_twinkles() {
 		twinkles_reset_frame = -1;
 
 		switch (local->twinkles_frame) {
-
 		case 1:   /* keep her invisible behind wall */
 			if (local->twinkles_action == TWINKLES_INVISIBLE) {
 				twinkles_reset_frame = 0;
@@ -1068,9 +1067,7 @@ static void handle_animation_twinkles() {
 		case 37:  /* end of coming into room and freeze */
 		case 38:  /* end of freeze 2                    */
 		case 47:  /* end of talk                        */
-
 			switch (local->twinkles_action) {
-
 			case TWINKLES_TALK:
 				twinkles_reset_frame = 38;  /* talk */
 				local->twinkles_action = TWINKLES_SHUT_UP;
@@ -1105,7 +1102,6 @@ static void handle_animation_twinkles() {
 	}
 }
 
-
 static void handle_animation_death() {
 	int death_reset_frame;
 
@@ -1114,7 +1110,6 @@ static void handle_animation_death() {
 		death_reset_frame = -1;
 
 		switch (local->death_frame) {
-
 		case 11:
 			global_speech_go(7); /* hurl */
 			break;
@@ -1291,7 +1286,7 @@ static void handle_animation_pid() {
 	}
 }
 
-void room_104_daemon(void) {
+static void room_104_daemon() {
 	int reset_frame;
 	int temp;  /* for synching purposes */
 	long dif;  /* for timer stuff       */
@@ -1373,7 +1368,6 @@ void room_104_daemon(void) {
 	}
 
 	if (kernel.trigger == ROOM_104_RUN_P2) {
-
 		kernel_abort_animation(aa[4]);
 
 		aa[4] = kernel_run_animation(kernel_name('p', 2), 0);
@@ -1451,7 +1445,7 @@ void room_104_daemon(void) {
 	}
 }
 
-void room_104_parser() {
+static void room_104_parser() {
 	int16 temp;   // used for kernel_synch old-sequence argument
 
 	// Active conversation: dispatch to the finale processor
@@ -1464,27 +1458,28 @@ void room_104_parser() {
 	// Room description on look_around
 	if (player.look_around) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10401);  // text_104_01
+			text_show(10401);
 		} else {
-			text_show(10437);  // text_104_37
+			text_show(10437);
 		}
 		player.command_ready = false;
 		return;
 	}
 
 	// walk_through / open / pull + door_to_throne_room (176)
-	if (player_parse(37, 176, 0) || player_parse(6, 176, 0) || player_parse(10, 176, 0)) {
+	if (player_said_2(walk_through, door_to_throne_room) || player_said_2(open, door_to_throne_room) ||
+			player_said_2(pull, door_to_throne_room)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
 			new_room = 106;
 		} else {
-			text_show(10434);  // text_104_34
+			text_show(10434);
 		}
 		player.command_ready = false;
 		return;
 	}
 
 	// walk_through / open / pull + door_to_hallway (197)
-	if (player_parse(37, 197, 0) || player_parse(6, 197, 0) || player_parse(10, 197, 0)) {
+	if (player_said_2(walk_through, door_to_hallway) || player_said_2(open, door_to_hallway) || player_said_2(pull, door_to_hallway)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
 			switch (kernel.trigger) {
 			case 0:
@@ -1536,16 +1531,16 @@ void room_104_parser() {
 				break;
 			}
 		} else {
-			text_show(10434);  // text_104_34
+			text_show(10434);
 		}
 		player.command_ready = false;
 		return;
 	}
 
 	// pull / take / open + books (274) — open the bookcase
-	if (player_parse(10, 274, 0) || player_parse(4, 274, 0) || player_parse(6, 274, 0)) {
+	if (player_said_2(pull, books) || player_said_2(take, books) || player_said_2(open, books)) {
 		if (global[books_status] == BOOKS_PRESENT ||
-		    global[books_status] == BOOKS_PRESENT2 || kernel.trigger) {
+			global[books_status] == BOOKS_PRESENT2 || kernel.trigger) {
 			switch (kernel.trigger) {
 			case 0:
 				player.commands_allowed = false;
@@ -1567,7 +1562,7 @@ void room_104_parser() {
 				kernel_synch(KERNEL_SERIES, seq[fx_wall_open_close], KERNEL_SERIES, temp);
 				kernel_seq_depth(seq[fx_wall_open_close], 8);
 				if (global[tapestry_status] == TAPESTRY_OPENED ||
-				    global[tapestry_status] == TAPESTRY_OPENED2) {
+					global[tapestry_status] == TAPESTRY_OPENED2) {
 					kernel_flip_hotspot(276, false);  // words_wall_panel
 					kernel_flip_hotspot(275, true);   // words_secret_door
 				}
@@ -1582,12 +1577,12 @@ void room_104_parser() {
 					global[player_score] += 2;
 					global[books_status] = BOOKS_PULLED;
 					if (global[tapestry_status] == TAPESTRY_OPENED ||
-					    global[tapestry_status] == TAPESTRY_OPENED2) {
-						text_show(10428);  // text_104_28
+						global[tapestry_status] == TAPESTRY_OPENED2) {
+						text_show(10428);
 					} else {
 						sound_play(N_BooksRumble);
 						sound_play(N_WallGrinds);
-						text_show(10427);  // text_104_27
+						text_show(10427);
 					}
 				} else {
 					sound_play(94);        // N_BooksRumble
@@ -1603,7 +1598,7 @@ void room_104_parser() {
 	}
 
 	// push + books (274) — close the bookcase
-	if (player_parse(5, 274, 0)) {
+	if (player_said_2(push, books)) {
 		if (global[books_status] == BOOKS_PULLED || global[books_status] == BOOKS_PULLED2) {
 			switch (kernel.trigger) {
 			case 0:
@@ -1625,7 +1620,7 @@ void room_104_parser() {
 				break;
 			case 2:
 				if (global[tapestry_status] == TAPESTRY_OPENED ||
-				    global[tapestry_status] == TAPESTRY_OPENED2) {
+					global[tapestry_status] == TAPESTRY_OPENED2) {
 					kernel_flip_hotspot(276, true);   // words_wall_panel
 					kernel_flip_hotspot(275, false);  // words_secret_door
 				}
@@ -1637,7 +1632,7 @@ void room_104_parser() {
 				break;
 			case 4:
 				if (global[books_status] == BOOKS_PULLED) {
-					text_show(10429);  // text_104_29
+					text_show(10429);
 				}
 				global[books_status] = BOOKS_PRESENT2;
 				player.commands_allowed = true;
@@ -1649,11 +1644,11 @@ void room_104_parser() {
 	}
 
 	// pull / open / push + tapestry (26) — open the tapestry
-	if (player_parse(10, 26, 0) || player_parse(6, 26, 0) || player_parse(5, 26, 0)) {
+	if (player_said_2(pull, tapestry) || player_said_2(open, tapestry) || player_said_2(push, tapestry)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
 			if (inter_point_x >= CORRECT_TAPESTRY_X) {
 				if (global[tapestry_status] == TAPESTRY_CLOSED ||
-				    global[tapestry_status] == TAPESTRY_CLOSED2) {
+					global[tapestry_status] == TAPESTRY_CLOSED2) {
 					switch (kernel.trigger) {
 					case 0:
 						kernel_seq_delete(seq[fx_tapestry_closed]);
@@ -1670,7 +1665,7 @@ void room_104_parser() {
 						kernel_flip_hotspot_loc(26, true,  TAP_HS_OPEN_X,   TAP_HS_OPEN_Y);
 						kernel_flip_hotspot_loc(26, false, TAP_HS_CLOSED_X, TAP_HS_CLOSED_Y);
 						if (global[books_status] == BOOKS_PULLED ||
-						    global[books_status] == BOOKS_PULLED2) {
+							global[books_status] == BOOKS_PULLED2) {
 							kernel_flip_hotspot(276, false);  // wall_panel
 							kernel_flip_hotspot(275, true);   // secret_door
 						} else {
@@ -1684,12 +1679,12 @@ void room_104_parser() {
 							global[tapestry_status] = TAPESTRY_OPENED;
 							global[player_score] += 2;
 							if (global[books_status] == BOOKS_NOT_PRESENT ||
-							    global[books_status] == BOOKS_PRESENT ||
-							    global[books_status] == BOOKS_PRESENT2) {
-								text_show(10424);  // text_104_24
+								global[books_status] == BOOKS_PRESENT ||
+								global[books_status] == BOOKS_PRESENT2) {
+								text_show(10424);
 							} else if (global[books_status] == BOOKS_PULLED ||
-							           global[books_status] == BOOKS_PULLED2) {
-								text_show(10425);  // text_104_25
+								       global[books_status] == BOOKS_PULLED2) {
+								text_show(10425);
 							}
 						} else {
 							global[tapestry_status] = TAPESTRY_OPENED2;
@@ -1702,23 +1697,23 @@ void room_104_parser() {
 				}
 				// tapestry already open: fall through to close-tapestry check below
 			} else {
-				text_show(10404);  // text_104_04
+				text_show(10404);
 				player.command_ready = false;
 				return;
 			}
 		} else {
-			text_show(10445);  // text_104_45
+			text_show(10445);
 			player.command_ready = false;
 			return;
 		}
 	}
 
 	// pull / close / push + tapestry (26) — close the tapestry
-	if (player_parse(10, 26, 0) || player_parse(11, 26, 0) || player_parse(5, 26, 0)) {
+	if (player_said_2(pull, tapestry) || player_said_2(close, tapestry) || player_said_2(push, tapestry)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
 			if (inter_point_x >= CORRECT_TAPESTRY_X) {
 				if (global[tapestry_status] == TAPESTRY_OPENED ||
-				    global[tapestry_status] == TAPESTRY_OPENED2) {
+					global[tapestry_status] == TAPESTRY_OPENED2) {
 					switch (kernel.trigger) {
 					case 0:
 						player.commands_allowed  = false;
@@ -1748,7 +1743,7 @@ void room_104_parser() {
 				}
 			}
 		} else {
-			text_show(10445);  // text_104_45
+			text_show(10445);
 			player.command_ready = false;
 			return;
 		}
@@ -1757,15 +1752,13 @@ void room_104_parser() {
 	// ---------------------------------------------------------------------------
 	// look / look_at block
 	// ---------------------------------------------------------------------------
-	if (player_parse(3, 0) || player_parse(17, 0)) {  // look(3) or look_at(17) — TODO: verify look_at ID
-
-		if (player_parse(3, 274, 0) || player_parse(17, 274, 0) ||   // books
-		    player_parse(3, 199, 0) || player_parse(17, 199, 0)) {    // bookshelf
+	if (player_said_1(look) || player_said_1(look_at)) {
+		if (player_said_1(books) || player_said_1(bookshelf)) {
 			if (global[player_persona] == PLAYER_IS_KING) {
 				if (global[books_status] == BOOKS_NOT_PRESENT) {
 					kernel_flip_hotspot(274, true);
 					global[books_status] = BOOKS_PRESENT;
-					text_show(10418);  // text_104_18
+					text_show(10418);
 					player.command_ready = false;
 					return;
 				} else if (global[books_status] == BOOKS_PRESENT) {
@@ -1773,62 +1766,62 @@ void room_104_parser() {
 					player.command_ready = false;
 					return;
 				} else if (global[books_status] == BOOKS_PULLED ||
-				           global[books_status] == BOOKS_PULLED2) {
-					text_show(10419);  // text_104_19
+					       global[books_status] == BOOKS_PULLED2) {
+					text_show(10419);
 					player.command_ready = false;
 					return;
 				} else if (global[books_status] == BOOKS_PRESENT2) {
-					text_show(10420);  // text_104_20
+					text_show(10420);
 					player.command_ready = false;
 					return;
 				}
 			} else {
-				text_show(10439);  // text_104_39
+				text_show(10439);
 				player.command_ready = false;
 				return;
 			}
 		}
 
-		if (player_parse(3, 34, 0) || player_parse(17, 34, 0)) {   // fireplace (34)
+		if (player_said_1(fireplace)) {
 			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10402);  // text_104_02
+				text_show(10402);
 			} else {
-				text_show(10438);  // text_104_38
+				text_show(10438);
 			}
 			player.command_ready = false;
 			return;
 		}
 
-		if (player_parse(3, 26, 0) || player_parse(17, 26, 0)) {   // tapestry (26)
+		if (player_said_1(tapestry)) {
 			if (global[player_persona] == PLAYER_IS_KING) {
 				if (inter_point_x >= ARCHER_TAPESTRY_BEGIN_X && inter_point_x <= ARCHER_TAPESTRY_END_X) {
-					text_show(10403);  // text_104_03
+					text_show(10403);
 					player.command_ready = false;
 					return;
 				} else if (inter_point_x >= CASTLE_TAPESTRY_BEGIN_X && inter_point_x <= CASTLE_TAPESTRY_END_X) {
-					text_show(10422);  // text_104_22
+					text_show(10422);
 					player.command_ready = false;
 					return;
 				} else {
 					if (global[tapestry_status] == TAPESTRY_OPENED ||
-					    global[tapestry_status] == TAPESTRY_OPENED2) {
-						text_show(10460);  // text_104_60
+						global[tapestry_status] == TAPESTRY_OPENED2) {
+						text_show(10460);
 					} else {
-						text_show(10423);  // text_104_23
+						text_show(10423);
 					}
 					player.command_ready = false;
 					return;
 				}
 			} else {
-				text_show(10439);  // text_104_39
+				text_show(10439);
 				player.command_ready = false;
 				return;
 			}
 		}
 
-		if (player_parse(3, 18, 0) || player_parse(17, 18, 0)) {   // rug (18)
+		if (player_said_1(rug)) {
 			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10405);  // text_104_05
+				text_show(10405);
 			} else {
 				text_show(10439);
 			}
@@ -1836,9 +1829,9 @@ void room_104_parser() {
 			return;
 		}
 
-		if (player_parse(3, 35, 0) || player_parse(17, 35, 0)) {   // fireplace_screen (35)
+		if (player_said_1(fireplace_screen)) {
 			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10407);  // text_104_07
+				text_show(10407);
 			} else {
 				text_show(10439);
 			}
@@ -1846,70 +1839,9 @@ void room_104_parser() {
 			return;
 		}
 
-		if (player_parse(3, 176, 0) || player_parse(17, 176, 0)) {  // door_to_throne_room (176)
+		if (player_said_1(door_to_throne_room)) {
 			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10409);  // text_104_09
-			} else {
-				text_show(10434);  // text_104_34
-			}
-			player.command_ready = false;
-			return;
-		}
-
-		if (player_parse(3, 204, 0) || player_parse(17, 204, 0)) {  // sconce — TODO: verify ID=204
-			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10410);  // text_104_10
-			} else {
-				text_show(10440);  // text_104_40
-			}
-			player.command_ready = false;
-			return;
-		}
-
-		// wood_basket — TODO: unknown vocab ID; needs disassembly verification
-		// if (player_parse(3, ???, 0) || player_parse(17, ???, 0)) {
-		//     if (global[player_persona] == PLAYER_IS_KING) {
-		//         text_show(10411);  // text_104_11
-		//     } else {
-		//         text_show(10439);
-		//     }
-		//     player.command_ready = false;
-		//     return;
-		// }
-
-		if (player_parse(3, 200, 0) || player_parse(17, 200, 0)) {  // trophy (200)
-			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10412);  // text_104_12
-			} else {
-				text_show(10441);  // text_104_41
-			}
-			player.command_ready = false;
-			return;
-		}
-
-		if (player_parse(3, 201, 0) || player_parse(17, 201, 0)) {  // reading_bench (201)
-			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10414);  // text_104_14
-			} else {
-				text_show(10439);
-			}
-			player.command_ready = false;
-			return;
-		}
-
-		if (player_parse(3, 203, 0) || player_parse(17, 203, 0)) {  // loveseat (203)
-			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10416);  // text_104_16
-			} else {
-				text_show(10439);
-			}
-			player.command_ready = false;
-			return;
-		}
-
-		if (player_parse(3, 197, 0) || player_parse(17, 197, 0)) {  // door_to_hallway (197)
-			if (global[player_persona] == PLAYER_IS_KING) {
-				text_show(10421);  // text_104_21
+				text_show(10409);
 			} else {
 				text_show(10434);
 			}
@@ -1917,139 +1849,192 @@ void room_104_parser() {
 			return;
 		}
 
-		if (player_parse(3, 275, 0) || player_parse(17, 275, 0)) {  // secret_door (275)
-			text_show(10430);  // text_104_30
-			player.command_ready = false;
-			return;
-		}
-
-		if (player_parse(3, 277, 0) || player_parse(17, 277, 0) ||
-		    player_parse(37, 277, 0) || player_parse(6, 277, 0)) {  // doorway variants
-			if (global[player_persona] == PLAYER_IS_PID) {
-				text_show(10432);  // text_104_32
-				player.command_ready = false;
-				return;
-			}
-		}
-
-		if (player_parse(3, 276, 0)) {  // look + wall_panel (276) — look_at not in original
-			if (global[books_status] == BOOKS_NOT_PRESENT ||
-			    global[books_status] == BOOKS_PRESENT) {
-				text_show(10435);  // text_104_35
+		if (player_said_1(sconce)) {
+			if (global[player_persona] == PLAYER_IS_KING) {
+				text_show(10410);
 			} else {
-				text_show(10436);  // text_104_36
+				text_show(10440);
 			}
 			player.command_ready = false;
 			return;
 		}
 
-		if (player_parse(3, 291, 0) || player_parse(17, 291, 0)) {  // king (291)
+		if (player_said_1(basket)) {
+			if (global[player_persona] == PLAYER_IS_KING) {
+			    text_show(10411);
+			} else {
+			    text_show(10439);
+			}
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(trophy)) {
+			if (global[player_persona] == PLAYER_IS_KING) {
+				text_show(10412);
+			} else {
+				text_show(10441);
+			}
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(reading_bench)) {
+			if (global[player_persona] == PLAYER_IS_KING) {
+				text_show(10414);
+			} else {
+				text_show(10439);
+			}
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(loveseat)) {
+			if (global[player_persona] == PLAYER_IS_KING) {
+				text_show(10416);
+			} else {
+				text_show(10439);
+			}
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(door_to_hallway)) {
+			if (global[player_persona] == PLAYER_IS_KING) {
+				text_show(10421);
+			} else {
+				text_show(10434);
+			}
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(secret_door)) {
+			text_show(10430);
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(doorway)) {
 			if (global[player_persona] == PLAYER_IS_PID) {
-				text_show(10443);  // text_104_43
+				text_show(10432);
 				player.command_ready = false;
 				return;
 			}
 		}
 
-		if (player_parse(3, 414, 0) || player_parse(17, 414, 0)) {  // music_box (414)
+		if (player_said_1(wall_panel)) {
+			if (global[books_status] == BOOKS_NOT_PRESENT ||
+				global[books_status] == BOOKS_PRESENT) {
+				text_show(10435);
+			} else {
+				text_show(10436);
+			}
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(king)) {
+			if (global[player_persona] == PLAYER_IS_PID) {
+				text_show(10443);
+				player.command_ready = false;
+				return;
+			}
+		}
+
+		if (player_said_1(music_box)) {
 			if (global[no_load_walker]) {
-				// TODO: object_examine(magic_music_box, 843, 0);
-				//   magic_music_box = inventory object ID — needs verification
-				//   843 = text_008_43 message ID
+				object_examine(magic_music_box, 843, 0);
 				player.command_ready = false;
 				return;
 			}
 		}
 
-		if (player_parse(3, 350, 0) || player_parse(17, 350, 0)) {  // MacMorn (350) — PID only here
+		if (player_said_1(MacMorn)) {
 			if (global[player_persona] == PLAYER_IS_PID) {
-				text_show(10444);  // text_104_44
+				text_show(10444);
 				player.command_ready = false;
 				return;
 			}
-			// King looking at MacMorn: falls through to second MacMorn check at end of look block
 		}
 
-		if (player_parse(3, 198, 0) || player_parse(17, 198, 0)) {  // table (198)
+		if (player_said_1(table)) {
 			if (global[player_persona] == PLAYER_IS_PID) {
-				text_show(10455);  // text_104_55
+				text_show(10455);
 			} else {
 				if (inter_point_x < 174) {
-					text_show(10451);  // text_104_51
+					text_show(10451);
 				} else {
-					text_show(10448);  // text_104_48
+					text_show(10448);
 				}
 			}
 			player.command_ready = false;
 			return;
 		}
 
-		if (player_parse(3, 237, 0) || player_parse(17, 237, 0)) {  // decoration (237)
+		if (player_said_1(decoration)) {
 			if (global[player_persona] == PLAYER_IS_PID) {
 				text_show(10439);
 			} else {
-				text_show(10449);  // text_104_49
+				text_show(10449);
 			}
 			player.command_ready = false;
 			return;
 		}
 
-		if (player_parse(3, 56, 0) || player_parse(17, 56, 0)) {  // sword (56)
+		if (player_said_1(sword)) {
 			if (global[player_persona] == PLAYER_IS_PID) {
 				text_show(10439);
 			} else {
-				text_show(10450);  // text_104_50
+				text_show(10450);
 			}
 			player.command_ready = false;
 			return;
 		}
 
-		// floor — TODO: unknown vocab ID; needs disassembly verification
-		// if (player_parse(3, ???, 0) || player_parse(17, ???, 0)) {
-		//     if (global[player_persona] == PLAYER_IS_PID) {
-		//         text_show(10439);
-		//         player.command_ready = false;
-		//         return;
-		//     }
-		// }
+		if (player_said_1(floor)) {
+			if (global[player_persona] == PLAYER_IS_PID) {
+				text_show(10439);
+				player.command_ready = false;
+				return;
+			}
+		}
 
-		// wall — TODO: unknown vocab ID; needs disassembly verification
-		// if (player_parse(3, ???, 0) || player_parse(17, ???, 0)) {
-		//     if (global[player_persona] == PLAYER_IS_PID) {
-		//         text_show(10439);
-		//         player.command_ready = false;
-		//         return;
-		//     }
-		// }
+		if (player_said_1(wall)) {
+			if (global[player_persona] == PLAYER_IS_PID) {
+			    text_show(10439);
+			    player.command_ready = false;
+			    return;
+			}
+		}
 
-		// candlestick — TODO: unknown vocab ID; needs disassembly verification
-		// if (player_parse(3, ???, 0) || player_parse(17, ???, 0)) {
-		//     if (global[player_persona] == PLAYER_IS_PID) {
-		//         text_show(10439);
-		//     } else {
-		//         text_show(10461);  // text_104_61
-		//     }
-		//     player.command_ready = false;
-		//     return;
-		// }
-
-		if (player_parse(3, 347, 0) || player_parse(17, 347, 0)) {  // Queen_Mother (347)
-			text_show(10456);  // text_104_56
+		if (player_said_1(candlestick)) {
+			if (global[player_persona] == PLAYER_IS_PID) {
+			    text_show(10439);
+			} else {
+			    text_show(10461);
+			}
 			player.command_ready = false;
 			return;
 		}
 
-		if (player_parse(3, 350, 0) || player_parse(17, 350, 0)) {  // MacMorn (350) — King reach
-			text_show(10444);  // text_104_44
+		if (player_said_1(Queen_Mother)) {
+			text_show(10456);
+			player.command_ready = false;
+			return;
+		}
+
+		if (player_said_1(MacMorn)) {
+			text_show(10444);
 			player.command_ready = false;
 			return;
 		}
 	}  // end look/look_at block
 
 	// push / pull + rug (18)
-	if (player_parse(5, 18, 0) || player_parse(10, 18, 0)) {
+	if (player_said_2(push, rug) || player_said_2(pull, rug)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10406);  // text_104_06
+			text_show(10406);
 		} else {
 			text_show(10445);
 		}
@@ -2058,9 +2043,9 @@ void room_104_parser() {
 	}
 
 	// push / pull + fireplace_screen (35)
-	if (player_parse(5, 35, 0) || player_parse(10, 35, 0)) {
+	if (player_said_2(push, fireplace_screen) || player_said_2(pull, fireplace_screen)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10408);  // text_104_08
+			text_show(10408);
 		} else {
 			text_show(10445);
 		}
@@ -2069,9 +2054,9 @@ void room_104_parser() {
 	}
 
 	// push / pull + trophy (200)
-	if (player_parse(5, 200, 0) || player_parse(10, 200, 0)) {
+	if (player_said_2(push, trophy) || player_said_2(pull, trophy)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10413);  // text_104_13
+			text_show(10413);
 		} else {
 			text_show(10445);
 		}
@@ -2080,9 +2065,9 @@ void room_104_parser() {
 	}
 
 	// open + reading_bench (201)
-	if (player_parse(6, 201, 0)) {
+	if (player_said_2(open, reading_bench)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10415);  // text_104_15
+			text_show(10415);
 		} else {
 			text_show(10445);
 		}
@@ -2091,9 +2076,9 @@ void room_104_parser() {
 	}
 
 	// push / pull + loveseat (203)
-	if (player_parse(5, 203, 0) || player_parse(10, 203, 0)) {
+	if (player_said_2(push, loveseat) || player_said_2(pull, loveseat)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10417);  // text_104_17
+			text_show(10417);
 		} else {
 			text_show(10445);
 		}
@@ -2102,39 +2087,38 @@ void room_104_parser() {
 	}
 
 	// open / push / pull + secret_door (275) or wall_panel (276)
-	if (player_parse(6, 275, 0) || player_parse(6, 276, 0) ||
-	    player_parse(5, 275, 0) || player_parse(5, 276, 0) ||
-	    player_parse(10, 275, 0) || player_parse(10, 276, 0)) {
-		text_show(10431);  // text_104_31
+	if (player_said_2(open, secret_door) || player_said_2(open, wall_panel) ||
+		player_said_2(push, secret_door) || player_said_2(push, wall_panel) ||
+		player_said_2(pull, secret_door) || player_said_2(pull, wall_panel)) {
+		text_show(10431);
 		player.command_ready = false;
 		return;
 	}
 
-	// invoke (47) + signet_ring — TODO: verify signet_ring vocab ID
-	// if (player_parse(47, ???, 0)) {
-	//     if (global[player_persona] == PLAYER_IS_PID) {
-	//         text_show(10433);  // text_104_33
-	//         player.command_ready = false;
-	//         return;
-	//     }
-	// }
+	if (player_said_2(invoke, signet_ring)) {
+		if (global[player_persona] == PLAYER_IS_PID) {
+		    text_show(10433);
+		    player.command_ready = false;
+		    return;
+		}
+	}
 
 	// put (7) + tentacle_parts (125) + wall_panel (276)
-	if (player_parse(7, 125, 276, 0)) {
+	if (player_said_3(put, tentacle_parts, wall_panel)) {
 		if (global[player_persona] == PLAYER_IS_KING) {
-			text_show(10446);  // text_104_46
+			text_show(10446);
 			player.command_ready = false;
 			return;
 		}
 	}
 
 	// shift_into_bear (116) — bear transformation in finale
-	if (player_parse(116, 0)) {
+	if (player_said_1(shift_into_bear)) {
 		if (local->anim_0_running) {
 			if (local->has_been_bear) {
-				text_show(10457);  // text_104_57
+				text_show(10457);
 			} else if (local->amulet_works) {
-				text_show(10459);  // text_104_59
+				text_show(10459);
 			} else {
 				local->has_been_bear = true;
 				global[player_score] += 2;
@@ -2154,8 +2138,8 @@ void room_104_parser() {
 	}
 
 	// sword(56)+attack(57)/carve_up(58)/thrust(87) on MacMorn(350), or take(4)+sword(56)
-	if (player_parse(56, 57, 350, 0) || player_parse(56, 58, 350, 0) ||
-	    player_parse(56, 87, 350, 0) || player_parse(4, 56, 0)) {
+	if (player_said_3(sword, attack, MacMorn) || player_said_3(sword, carve_up, MacMorn) ||
+		player_said_3(sword, thrust, MacMorn) || player_said_2(take, sword)) {
 		if (local->anim_0_running) {
 			local->activate_timer = false;
 			local->pid_action     = PID_DRAW_SWORD;
@@ -2182,7 +2166,7 @@ void room_104_parser() {
 	}
 
 	// invoke (47) + amulet (46)
-	if (player_parse(47, 46, 0)) {
+	if (player_said_2(invoke, amulet)) {
 		if (local->anim_0_running) {
 			if (local->amulet_works) {
 				local->activate_timer   = false;
@@ -2198,14 +2182,12 @@ void room_104_parser() {
 				kernel_synch(KERNEL_SERIES, seq[fx_e5], KERNEL_NOW, 0);
 
 				ss[fx_e3] = kernel_load_series(kernel_name('e', 3),
-				                               PAL_MAP_ALL_TO_CLOSEST | PAL_MAP_ANY_TO_CLOSEST);
+					                           PAL_MAP_ALL_TO_CLOSEST | PAL_MAP_ANY_TO_CLOSEST);
 				aa[1]                 = kernel_run_animation(kernel_name('m', 2), 0);
 				local->anim_1_running = false;
 				local->anim_5_running = true;
 			} else {
-				// TODO: object_examine(amulet_obj_id, 945, 0);
-				//   amulet_obj_id = inventory object ID for amulet — needs verification
-				//   945 = text_009_45 message ID
+				object_examine(amulet, 945, 0);
 			}
 			player.command_ready = false;
 			return;
@@ -2213,61 +2195,59 @@ void room_104_parser() {
 	}
 
 	// sword+attack/carve_up/thrust on Queen_Mother (347)
-	if (player_parse(56, 57, 347, 0) || player_parse(56, 58, 347, 0) ||
-	    player_parse(56, 87, 347, 0)) {
-		text_show(10458);  // text_104_58
+	if (player_said_3(sword, attack, Queen_Mother) || player_said_3(sword, carve_up, Queen_Mother) ||
+		player_said_3(sword, thrust, Queen_Mother)) {
+		text_show(10458);
 		player.command_ready = false;
 		return;
 	}
 
 	// talk_to (8) + MacMorn (350)
-	if (player_parse(8, 350, 0)) {
-		text_show(10464);  // text_104_64
+	if (player_said_2(talk_to, MacMorn)) {
+		text_show(10464);
 		player.command_ready = false;
 		return;
 	}
 
 	// talk_to (8) + Queen_Mother (347)
-	if (player_parse(8, 347, 0)) {
-		text_show(10463);  // text_104_63
+	if (player_said_2(talk_to, Queen_Mother)) {
+		text_show(10463);
 		player.command_ready = false;
 		return;
 	}
 
 	// talk_to (8) + king (291)
-	if (player_parse(8, 291, 0)) {
-		text_show(10465);  // text_104_65
+	if (player_said_2(talk_to, king)) {
+		text_show(10465);
 		player.command_ready = false;
 		return;
 	}
 
-	// pour_contents_of + MacMorn — TODO: verify pour_contents_of vocab ID
-	// if (player_parse(???, 350, 0)) {
-	//     text_show(10462);  // text_104_62
-	//     player.command_ready = false;
-	//     return;
-	// }
+	// pour_contents_of (99) + MacMorn (350)
+	if (player_said_2(pour_contents_of, MacMorn)) {
+		text_show(10462);
+		player.command_ready = false;
+		return;
+	}
 
-	// walk_across (41) / walk_to (13) when Queen is in room
 	if (local->anim_2_running) {
-		if (player_parse(41, 0) || player_parse(13, 0)) {
-			text_show(10445);  // text_104_45
+		if (player_said_1(walk_across) || player_said_1(walk_to)) {
+			text_show(10445);
 			player.command_ready = false;
 			return;
 		}
 	}
 
-	// take (4) + candlestick — TODO: verify candlestick vocab ID
-	// if (player_parse(4, ???, 0)) {
-	//     text_show(10468);  // text_104_68
-	//     player.command_ready = false;
-	//     return;
-	// }
+	if (player_said_2(take, candlestick)) {
+		text_show(10468);
+		player.command_ready = false;
+		return;
+	}
 
 	// open (6) + music_box (414) when in finale scene
-	if (player_parse(6, 414, 0)) {
+	if (player_said_2(open, music_box)) {
 		if (global[no_load_walker]) {
-			text_show(10470);  // text_104_70
+			text_show(10470);
 			player.command_ready = false;
 			return;
 		}
