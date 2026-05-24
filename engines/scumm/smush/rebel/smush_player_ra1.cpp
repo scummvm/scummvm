@@ -972,6 +972,7 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 	uint8 *audioChunk = nullptr;
 	_skipNext = false;
 	handleGameFrameStart();
+	const bool fastForwarding = isFastForwardingCurrentFrame();
 
 	bool preserveFrameHistory = false;
 	if (_insane) {
@@ -1083,8 +1084,10 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 			break;
 		case MKTAG('G','A','M','E'):
 		case MKTAG('G','A','M','2'): {
-			InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
-			rebel1->handleGameChunk(subSize, b);
+			if (!fastForwarding) {
+				InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
+				rebel1->handleGameChunk(subSize, b);
+			}
 			break;
 		}
 		case MKTAG('O','B','J','\0'): {
@@ -1127,9 +1130,11 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 							_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
 						}
 					} else if (embTag == MKTAG('G','A','M','E') || embTag == MKTAG('G','A','M','2')) {
-						Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
-						InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
-						rebel1->handleGameChunk(embSize, embStream);
+						if (!fastForwarding) {
+							Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+							InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
+							rebel1->handleGameChunk(embSize, embStream);
+						}
 					} else if (embTag == MKTAG('P','S','A','D')) {
 						if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
 							uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
@@ -1200,10 +1205,10 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 		_ra1HasCleanFrame = false;
 	}
 
-	if (_insanity)
+	if (_insanity && !fastForwarding)
 		_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 
-	if (_width != 0 && _height != 0)
+	if (_width != 0 && _height != 0 && !fastForwarding)
 		updateScreen();
 
 	_frame++;

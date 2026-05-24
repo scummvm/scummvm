@@ -581,6 +581,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
 	const bool allowImplicitGameplayMode = _frameHasGameChunk && !haveFrameGameOpcodes;
+
 	const bool gameOp0BMode = hasFrameGameOpcode(0x0B) ||
 		(allowImplicitGameplayMode && _activeGameOpcode == 0x0B);
 	const bool onFootSequenceMode = hasFrameGameOpcode(0x19) ||
@@ -747,8 +748,16 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		_lastHitTarget = 0;
 	}
 
+	// RunLevel7Flow tests route branches after PumpFrontendFrame, using the
+	// decoded logical route timeline and updated GAME 0x09 cursor state.
+	if (_currentLevel == 6)
+		checkDynamicLevelBranch(curFrame);
+
 	if (_currentLevel == 12)
 		renderLevel13EnemyShots(renderBitmap, pitch, width, height);
+
+	if (_currentLevel == 6)
+		renderLevel7RouteOverlays(renderBitmap, pitch, width, height);
 
 	renderExplosions(renderBitmap, pitch, width, height);
 	handleLevel14Play2BSplice(curFrame, maxFrame);
@@ -984,6 +993,70 @@ void InsaneRebel1::renderLevel11HitsOverlay(byte *dst, int pitch, int width, int
 
 void InsaneRebel1::resetEnemyShotSlots() {
 	memset(_enemyShotSlots, 0, sizeof(_enemyShotSlots));
+}
+
+// Port helper for Level 7 RunLevel7Flow. The original keeps this warning and
+// single incoming projectile slot inline in the L7PLAY frontend loop.
+void InsaneRebel1::renderLevel7RouteOverlays(byte *dst, int pitch, int width, int height) {
+	if (_currentLevel != 6 || !_interactiveVideoActive || _health < 0)
+		return;
+
+	if (_level7WarningFrames != 0) {
+		const int16 oldWarningFrames = _level7WarningFrames;
+		_level7WarningFrames--;
+
+		if ((oldWarningFrames & 7) == 0)
+			playSfx(kSfxLockOn, 127, 0);
+
+		const char *warningText = nullptr;
+		const int16 warningX = getGameplayCursorX();
+		if (_level7WarningFrames < 0x0B) {
+			warningText = (_level7WarningThreshold < warningX) ? "<<_" : "<<`";
+		} else if ((_level7WarningFrames & 4) != 0) {
+			warningText = "<<`_";
+		}
+
+		if (warningText != nullptr)
+			drawFontBankString(dst, pitch, width, height, 0x11C, 0x16, warningText);
+	}
+
+	const int targetCount = CLIP<int>(_prevTargetCount, 0, kMaxTargetBoxes);
+	EnemyShotSlot &slot = _enemyShotSlots[0];
+
+	int16 playerX = (int16)(_shipPosX - kRA1CenterX + _perspectiveX);
+	int16 playerY = (int16)(_shipPosY - kRA1CenterY + _perspectiveY);
+	unprojectGameplayPoint(playerX, playerY);
+
+	if (slot.timer == 0 && targetCount > 0 && _vm->_rnd.getRandomNumber(14) == 0) {
+		const int targetIdx = _vm->_rnd.getRandomNumber(targetCount - 1);
+		slot.startX = _targetBoxX[targetIdx];
+		slot.startY = _targetBoxY[targetIdx];
+		slot.targetX = playerX;
+		slot.targetY = playerY;
+		slot.timer = 7;
+		slot.direction = ra1ProjectileDirectionWithFlags(slot.startX, slot.startY,
+			slot.targetX, slot.targetY, slot.flags);
+		playSfx(kSfxBlast, 127, 0);
+	}
+
+	if (slot.timer == 0)
+		return;
+
+	const int progress = 9 - slot.timer;
+	const int drawX = slot.startX + (((slot.targetX - slot.startX) * progress) >> 2);
+	const int drawY = slot.startY + (((slot.targetY - slot.startY) * progress) >> 2);
+	const RA1SpriteBank &laserBank = (_enemyLaserBank.numSprites > 0) ? _enemyLaserBank : _laserBank;
+	if (slot.direction >= 0 && slot.direction < laserBank.numSprites) {
+		renderSpriteWithFlags(dst, pitch, width, height, drawX, drawY,
+			laserBank.sprites[slot.direction], slot.flags | 0x3);
+	}
+
+	slot.timer--;
+	if (drawX - 0x14 < playerX && playerX < drawX + 0x14 &&
+		drawY - 0x1E < playerY && playerY < drawY + 0x1E) {
+		_damageFlags |= 0x80;
+		slot.timer = 0;
+	}
 }
 
 // Port helper for Level 13 RunLevel13Flow. The original stores this state in

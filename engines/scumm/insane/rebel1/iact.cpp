@@ -621,21 +621,28 @@ void InsaneRebel1::resetProjectionTable() {
 	rebuildProjectionTable(0, 1);
 }
 
-void InsaneRebel1::checkDynamicLevelBranch() {
+void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 	if (!_interactiveVideoActive || _levelRouteIndex < 0)
 		return;
 
 	if ((_currentLevel == 6 || _currentLevel == 7) && _pendingRouteIndex >= 0) {
-		const uint32 routeFrame = (_currentLevel == 7) ? (uint32)_gameCounter : _frameCounter;
+		const uint32 routeFrame = (_currentLevel == 6 && curFrame >= 0) ?
+			(uint32)curFrame : (uint32)_gameCounter;
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
 			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
-			if (_player)
+			// Level 7 route switches open the destination ANM as a fresh file.
+			// Keep Rebel runtime state, but do not carry SMUSH decoder state
+			// from the previous route into the new file.
+			if (_player && _currentLevel != 6)
 				_player->setPreserveGameVideoStateOnRelease(true);
 			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1 L%d cutover: route=%d -> %d at frame=%u (resumeTimelineFrame=%d)",
+			const int32 resumeFrame = (_currentLevel == 6 && _pendingRouteStartFrame < 0) ?
+				0 : _pendingRouteStartFrame;
+			debug(1, "RA1 L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
 				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,
-				(unsigned)routeFrame, (int)_pendingRouteStartFrame);
+				_currentLevel == 6 ? "localFrame" : "frame",
+				(unsigned)routeFrame, (int)resumeFrame);
 		}
 		return;
 	}
@@ -644,23 +651,48 @@ void InsaneRebel1::checkDynamicLevelBranch() {
 		return;
 
 	if (_currentLevel == 6) {
+		// RunLevel7Flow compares the branch table against g_frameCounter. The
+		// playback callback writes that value from the ANM-local frame index,
+		// not from the decoded GAME counter embedded in these non-linear files.
+		if (curFrame < 0)
+			return;
+		const uint32 routeFrame = (uint32)curFrame;
+		// GAME 0x09 publishes its branch-tested position in g_shipPosX.
+		// ScummVM keeps the drawn ship center and the 0x09 aim cursor split,
+		// so compare the effective gameplay cursor here.
+		const int16 branchX = getGameplayCursorX();
 		const int route = CLIP<int>(_levelRouteIndex, 0, 5);
 		for (int nextRoute = 1; nextRoute < 6; ++nextRoute) {
 			const int triggerFrame = kLevel7BranchFrames[route][nextRoute];
-			if (triggerFrame <= 0 || nextRoute == route || _frameCounter != (uint32)(triggerFrame - 1))
+			if (triggerFrame <= 0)
+				continue;
+
+			const uint32 decisionFrame = (uint32)(triggerFrame - 1);
+			if (routeFrame + 0x1E == decisionFrame) {
+				_level7WarningFrames = 0x1E;
+				_level7WarningThreshold = kLevel7BranchThreshold[nextRoute];
+			}
+
+			if (routeFrame != decisionFrame)
 				continue;
 
 			const bool takeBranch = (kLevel7BranchDir[nextRoute] > 0)
-				? (_shipPosX > kLevel7BranchThreshold[nextRoute])
-				: (_shipPosX < kLevel7BranchThreshold[nextRoute]);
-			if (!takeBranch)
+				? (branchX > kLevel7BranchThreshold[nextRoute])
+				: (branchX < kLevel7BranchThreshold[nextRoute]);
+			if (!takeBranch) {
+				if (routeFrame == decisionFrame)
+					debug(1, "RA1 L7 branch miss: route=%d candidate=%d localFrame=%u gameFrame=%d shipX=%d dir=%d threshold=%d",
+						route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, branchX,
+						kLevel7BranchDir[nextRoute], kLevel7BranchThreshold[nextRoute]);
 				continue;
+			}
 
 			_pendingRouteIndex = nextRoute;
-			_pendingRouteCutoverFrame = (int32)_frameCounter + 7;
-			_pendingRouteStartFrame = _pendingRouteCutoverFrame;
-			debug(1, "RA1 L7 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
-				route, nextRoute, (unsigned)_frameCounter, _shipPosX,
+			_pendingRouteCutoverFrame = (int32)routeFrame + 7;
+			_pendingRouteStartFrame = (int32)routeFrame;
+			_level7WarningFrames = 0;
+			debug(1, "RA1 L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d",
+				route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, (unsigned)decisionFrame, branchX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
 			return;
 		}
@@ -1188,7 +1220,8 @@ void InsaneRebel1::updateShipPhysics() {
 		_pathBranchEnabled = false;
 	}
 
-	checkDynamicLevelBranch();
+	if (_currentLevel != 6)
+		checkDynamicLevelBranch();
 
 	debug(7, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
 		_shipPosX, _shipPosY, _rollAccum, _liftSmooth,
@@ -1235,11 +1268,10 @@ void InsaneRebel1::updateTurretShipDirection(int16 offsetY) {
 }
 
 void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
-	// Original 0x0D/0x0E collision compares projected script zones against the
-	// drawn ship center (base center + g_shipOffset). This port draws into a
-	// 384x242 source buffer and later crops by the camera offset, so convert that
-	// source-buffer anchor to the visible screen-space point used by the projected
-	// zones.
+	// Original 0x0D/0x0E collision compares script zones transformed by
+	// FUN_2248C against the source-buffer ship center (base center +
+	// g_shipOffset). Keep this in the same 384x242 space; the final viewport
+	// crop is only a presentation step.
 	//
 	// In Level 1 part 2, HandleGameOp0A_TurretVariant reuses _shipPos for the
 	// targeting cursor, so collision must read the movement accumulator instead.
@@ -1249,11 +1281,6 @@ void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
 	} else {
 		x = _shipPosX;
 		y = _shipPosY;
-	}
-
-	if (_interactiveVideoActive) {
-		x = (int16)(x - _perspectiveX);
-		y = (int16)(y - _perspectiveY);
 	}
 }
 
@@ -2083,7 +2110,10 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 			int16 centerX = corridorLeft + corridorWidth / 2;
 			int16 centerY = corridorTop + corridorHeight / 2;
-			projectGameplayPoint(centerX, centerY);
+			// DOS FUN_1C54D calls FUN_2248C here, which adds the current
+			// camera offset to the scripted rectangle center before testing it
+			// against the source-buffer ship center.
+			unprojectGameplayPoint(centerX, centerY);
 
 			_corridorLeftX = centerX - corridorWidth / 2;
 			_corridorTopY = centerY - corridorHeight / 2;
@@ -2101,7 +2131,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			const byte oldDirectionalFlags = _damageFlags & 0x0F;
 			if (_health >= 0) {
 				if (collisionShipX < _corridorLeftX) {
-					_posAccumX = (int32)(_corridorLeftX + _perspectiveX - kRA1CenterX) * 0x100;
+					_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
 					if (!suppressDirectionalDamage) {
 						if (_rollAccum < 0x100)
 							_rollAccum = 0x100;
@@ -2109,7 +2139,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 					}
 				}
 				if (collisionShipX > _corridorRightX) {
-					_posAccumX = (int32)(_corridorRightX + _perspectiveX - kRA1CenterX) * 0x100;
+					_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
 					if (!suppressDirectionalDamage) {
 						if (_rollAccum > -0x100)
 							_rollAccum = -0x100;
@@ -2117,12 +2147,12 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 					}
 				}
 				if (collisionShipY < _corridorTopY) {
-					_posAccumY = (int32)(_corridorTopY + _perspectiveY - kRA1CenterY) * 0x100 + 0x100;
+					_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
 					if (!suppressDirectionalDamage)
 						_damageFlags |= 0x01;
 				}
 				if (collisionShipY > _corridorBottomY) {
-					_posAccumY = (int32)(_corridorBottomY + _perspectiveY - kRA1CenterY) * 0x100 - 0x100;
+					_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
 					if (!suppressDirectionalDamage)
 						_damageFlags |= 0x08;
 				}
@@ -2154,7 +2184,8 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 			int16 centerX = zoneLeft + zoneWidth / 2;
 			int16 centerY = zoneTop + zoneHeight / 2;
-			projectGameplayPoint(centerX, centerY);
+			// Same transform as opcode 0x0D/FUN_1C54D.
+			unprojectGameplayPoint(centerX, centerY);
 
 			zoneLeft = centerX - zoneWidth / 2;
 			zoneTop = centerY - zoneHeight / 2;
