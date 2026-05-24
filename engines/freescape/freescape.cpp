@@ -1437,7 +1437,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	// of the world before saving (or loading in-game right after a fall)
 	// persists and immediately ends the loaded game. Falling also tilts the
 	// camera (_roll) in some games and that value is not stored in the save,
-	// so reset it as well. Reported for Driller (Amiga), but applies to all games.
+	// so reset it as well.
 	_hasFallen = false;
 	_roll = 0;
 	_avoidRenderingFrames = 0;
@@ -1447,6 +1447,13 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_ticks = 0;
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
 		gotoArea(areaID, -1); // Do not change position nor rotation
+
+	// Refresh the engine-level sensor (turret) cache from the loaded area.
+	// gotoArea() is called here with entranceID -1, which does not run
+	// traverseEntrance() and therefore does not repopulate _sensors, so the
+	// previously visited area's sensors would otherwise leak into the loaded
+	// area at the same room coordinates.
+	_sensors = _currentArea->getSensors();
 
 	if (isDriller() && _playerHeightNumber == -1) {
 		_playerHeight = 2;
