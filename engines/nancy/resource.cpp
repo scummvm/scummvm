@@ -301,14 +301,16 @@ void ResourceManager::list(const Common::String &treeName, Common::Array<Common:
 		if (!tree) {
 			return;
 		}
-		outList = tree->getPathsForType(type);
+		Common::Array<Common::Path> result = tree->getPathsForType(type);
+		outList.insert_at(outList.size(), result);
 	} else {
 		for (uint i = 0; i < _cifTreeNames.size(); ++i) {
 			// No provided tree name, check inside every loaded tree
 			Common::String upper = _cifTreeNames[i];
 			upper.toUppercase();
 			const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
-			outList = tree->getPathsForType(type);
+			Common::Array<Common::Path> result = tree->getPathsForType(type);
+			outList.insert_at(outList.size(), result);
 		}
 	}
 }
