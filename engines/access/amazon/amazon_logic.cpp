@@ -357,8 +357,13 @@ void Opening::doTitle() {
 			_vm->_events->_vbCount = 70;
 			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0 && !_skipStart) {
 				_vm->_events->pollEventsAndWait();
-				if (_vm->_events->_rightButton)
-					_skipStart = true;
+				bool skip = _vm->_events->_rightButton;
+				if (_vm->_events->peekAction() == kActionSkip) {
+					Common::CustomEventType event;
+					_vm->_events->getAction(event);
+					skip = true;
+				}
+				_skipStart = skip;
 			}
 		}
 		if (_vm->shouldQuit())

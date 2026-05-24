@@ -287,8 +287,14 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 				_sound->loadSoundTable(0, _narateFile + 99, _sndSubFile);
 				_sound->playSound(0);
 
-				while(_sound->isSFXPlaying() && !shouldQuit())
+				while(_sound->isSFXPlaying() && !shouldQuit()) {
 					_events->pollEvents();
+					if (_events->peekAction() == kActionSkip) {
+						Common::CustomEventType action;
+						_events->getAction(action);
+						_sound->stopSound();
+					}
+				}
 
 				_scripts->cmdFreeSound();
 
@@ -319,8 +325,14 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 		_sound->loadAndAddSound(_narateFile + 99, _sndSubFile);
 		_sound->playSound(0);
 
-		while(_sound->isSFXPlaying() && !shouldQuit())
+		while(_sound->isSFXPlaying() && !shouldQuit()) {
 			_events->pollEvents();
+			if (_events->peekAction() == kActionSkip) {
+				Common::CustomEventType action;
+				_events->getAction(action);
+				_sound->stopSound();
+			}
+		}
 
 		_scripts->cmdFreeSound();
 
