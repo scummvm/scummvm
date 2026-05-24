@@ -230,9 +230,9 @@ void Menu::plasmaEffectRenderFrame() {
 			c += _plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
 			c += _plasmaEffectPtr[(i + 1) + (j + 1) * PLASMA_WIDTH]; // bottom-right
 
-			/* And the 2 least significant bits are used as a
+			/* And the 3 least significant bits are used as a
 			 * randomizing parameter for statistically fading the flames */
-			c = (c >> 3) | ((c & 0x0003) << 13);
+			c = (c >> 3) | ((c & 0x0007) << 13);
 
 			if (!(c & 0x6500) &&
 				(j >= (PLASMA_HEIGHT - 4) || c > 0)) {
