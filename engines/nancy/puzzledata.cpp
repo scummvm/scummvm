@@ -277,6 +277,37 @@ float TableData::getComboValue(uint16 index) const {
 	return index < comboValues.size() ? comboValues[index] : kNoTableValue;
 }
 
+void CellPhoneData::synchronize(Common::Serializer &ser) {
+	ser.syncAsByte(noSignal);
+	ser.syncAsByte(batteryLow);
+	ser.syncAsByte(seeded);
+
+	uint16 numContacts = (uint16)contacts.size();
+	ser.syncAsUint16LE(numContacts);
+
+	if (ser.isLoading()) {
+		contacts.resize(numContacts);
+	}
+
+	char nameBuf[21];
+	for (uint16 i = 0; i < numContacts; ++i) {
+		UICL::Contact &c = contacts[i];
+		ser.syncBytes(c.unknownPrefix, sizeof(c.unknownPrefix));
+
+		if (ser.isSaving()) {
+			memset(nameBuf, 0, sizeof(nameBuf));
+			Common::strlcpy(nameBuf, c.name.c_str(), sizeof(nameBuf));
+		}
+		ser.syncBytes((byte *)nameBuf, 20);
+		if (ser.isLoading()) {
+			nameBuf[20] = '\0';
+			c.name = nameBuf;
+		}
+
+		ser.syncBytes(c.unknownSuffix, sizeof(c.unknownSuffix));
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -297,6 +328,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new JournalData();
 	case TableData::getTag():
 		return new TableData();
+	case CellPhoneData::getTag():
+		return new CellPhoneData();
 	default:
 		return nullptr;
 	}

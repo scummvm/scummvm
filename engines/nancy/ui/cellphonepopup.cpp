@@ -24,6 +24,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 
@@ -70,7 +71,21 @@ void CellPhonePopup::init() {
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
 
-	_contacts = _uiclData->contacts;
+	// Persistent state lives in CellPhoneData (saved across the game).
+	// First-time init seeds the runtime contact list from the chunk;
+	// subsequent inits (e.g. after a load) restore the saved state.
+	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
+	if (cellData) {
+		if (!cellData->seeded) {
+			cellData->contacts = _uiclData->contacts;
+			cellData->seeded = true;
+		}
+		_contacts = cellData->contacts;
+		_noSignal = cellData->noSignal;
+		_batteryLow = cellData->batteryLow;
+	} else {
+		_contacts = _uiclData->contacts;
+	}
 
 	_screenState = kWelcome;
 	_dialedNumber.clear();
@@ -96,6 +111,10 @@ void CellPhonePopup::setNoSignal(bool noSignal) {
 		return;
 	}
 	_noSignal = noSignal;
+	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
+	if (cellData) {
+		cellData->noSignal = noSignal;
+	}
 	if (_isVisible) {
 		drawScreenContent();
 	}
@@ -106,6 +125,10 @@ void CellPhonePopup::setBatteryLow(bool low) {
 		return;
 	}
 	_batteryLow = low;
+	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
+	if (cellData) {
+		cellData->batteryLow = low;
+	}
 	if (_isVisible) {
 		drawScreenContent();
 	}
@@ -114,18 +137,24 @@ void CellPhonePopup::setBatteryLow(bool low) {
 void CellPhonePopup::upsertContact(const UICL::Contact &c) {
 	// Match against the 11-byte dial pattern (prefix[2..12]). If an entry
 	// already carries that pattern, overwrite it; otherwise append.
+	bool replaced = false;
 	for (uint i = 0; i < _contacts.size(); ++i) {
 		if (memcmp(_contacts[i].unknownPrefix + 2,
 					c.unknownPrefix + 2, 11) == 0) {
 			_contacts[i] = c;
-			if (_isVisible && _screenState == kDirectory) {
-				drawScreenContent();
-			}
-			return;
+			replaced = true;
+			break;
 		}
 	}
+	if (!replaced) {
+		_contacts.push_back(c);
+	}
 
-	_contacts.push_back(c);
+	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
+	if (cellData) {
+		cellData->contacts = _contacts;
+	}
+
 	if (_isVisible && _screenState == kDirectory) {
 		drawScreenContent();
 	}
@@ -134,6 +163,14 @@ void CellPhonePopup::upsertContact(const UICL::Contact &c) {
 void CellPhonePopup::open() {
 	if (_isVisible) {
 		return;
+	}
+
+	// Re-pull persistent state in case a save was loaded after init().
+	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
+	if (cellData && cellData->seeded) {
+		_contacts = cellData->contacts;
+		_noSignal = cellData->noSignal;
+		_batteryLow = cellData->batteryLow;
 	}
 
 	_screenState = kWelcome;

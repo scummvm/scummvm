@@ -24,6 +24,7 @@
 #include "common/hashmap.h"
 
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/enginedata.h"
 
 #ifndef NANCY_PUZZLEDATA_H
 #define NANCY_PUZZLEDATA_H
@@ -165,6 +166,23 @@ struct TableData : public PuzzleData {
 
 	Common::Array<int16> singleValues;
 	Common::Array<float> comboValues;
+};
+
+// Nancy 10+ cellphone state mutated by the ChangeCellPhoneInfo and
+// SetCellPhoneBatteryAndSignal action records, persisted between saves.
+struct CellPhoneData : public PuzzleData {
+	CellPhoneData() {}
+	virtual ~CellPhoneData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('C', 'E', 'L', 'L'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	bool noSignal = false;
+	bool batteryLow = false;
+	// Loaded set to true once the popup has seeded the contact list from
+	// the UICL chunk; we then own it as runtime data.
+	bool seeded = false;
+	Common::Array<UICL::Contact> contacts;
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);
