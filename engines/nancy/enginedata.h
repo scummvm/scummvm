@@ -526,7 +526,10 @@ enum TaskButton {
 struct TASK : public EngineData {
 	struct ButtonRecord {
 		UIButtonRecord button;
-		byte unknownPad[16];
+		// Source rect for the notification sprite (the badge shown on
+		// the middle three buttons when the popup has new content).
+		// Empty for buttons that don't carry a notification.
+		Common::Rect notificationSrcRect;
 		Common::String clickSoundName[3];
 	};
 

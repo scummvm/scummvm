@@ -895,7 +895,7 @@ TASK::TASK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	char nameBuf[34];
 	for (uint i = 0; i < kNumButtons; ++i) {
 		readUIButton(*chunkStream, buttons[i].button);
-		chunkStream->read(buttons[i].unknownPad, sizeof(buttons[i].unknownPad));
+		readRect(*chunkStream, buttons[i].notificationSrcRect);
 		for (uint s = 0; s < kNumAltSounds; ++s) {
 			chunkStream->read(nameBuf, 33);
 			nameBuf[33] = '\0';
