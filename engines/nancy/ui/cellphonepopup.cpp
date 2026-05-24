@@ -70,6 +70,8 @@ void CellPhonePopup::init() {
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
 
+	_contacts = _uiclData->contacts;
+
 	_screenState = kWelcome;
 	_dialedNumber.clear();
 	_resolvedContact = -1;
@@ -95,6 +97,36 @@ void CellPhonePopup::setNoSignal(bool noSignal) {
 	}
 	_noSignal = noSignal;
 	if (_isVisible) {
+		drawScreenContent();
+	}
+}
+
+void CellPhonePopup::setBatteryLow(bool low) {
+	if (_batteryLow == low) {
+		return;
+	}
+	_batteryLow = low;
+	if (_isVisible) {
+		drawScreenContent();
+	}
+}
+
+void CellPhonePopup::upsertContact(const UICL::Contact &c) {
+	// Match against the 11-byte dial pattern (prefix[2..12]). If an entry
+	// already carries that pattern, overwrite it; otherwise append.
+	for (uint i = 0; i < _contacts.size(); ++i) {
+		if (memcmp(_contacts[i].unknownPrefix + 2,
+					c.unknownPrefix + 2, 11) == 0) {
+			_contacts[i] = c;
+			if (_isVisible && _screenState == kDirectory) {
+				drawScreenContent();
+			}
+			return;
+		}
+	}
+
+	_contacts.push_back(c);
+	if (_isVisible && _screenState == kDirectory) {
 		drawScreenContent();
 	}
 }
@@ -193,7 +225,7 @@ void CellPhonePopup::updateGraphics() {
 		// connecting sprite stays on screen for the duration of the
 		// conversation. AR 128 closes the popup when the call ends.
 		if (_resolvedContact >= 0 &&
-				_resolvedContact < (int)_uiclData->contacts.size()) {
+				_resolvedContact < (int)_contacts.size()) {
 			triggerContactCallSceneChange((uint)_resolvedContact);
 			_resolvedContact = -1;
 			resetDialPad();
@@ -291,8 +323,11 @@ void CellPhonePopup::drawStatusIcons() {
 												_uiclData->signalSpriteDest.top - chunkOrigin.y));
 	}
 
-	if (!_uiclData->batterySpriteSrc.isEmpty() && !_uiclData->batterySpriteDest.isEmpty()) {
-		_drawSurface.blitFrom(_spritesImage, _uiclData->batterySpriteSrc,
+	const Common::Rect &batterySrc = _batteryLow && !_uiclData->batterySpriteSrcAlt.isEmpty()
+		? _uiclData->batterySpriteSrcAlt
+		: _uiclData->batterySpriteSrc;
+	if (!batterySrc.isEmpty() && !_uiclData->batterySpriteDest.isEmpty()) {
+		_drawSurface.blitFrom(_spritesImage, batterySrc,
 								Common::Point(_uiclData->batterySpriteDest.left - chunkOrigin.x,
 												_uiclData->batterySpriteDest.top - chunkOrigin.y));
 	}
@@ -470,9 +505,9 @@ void CellPhonePopup::drawDirectoryList() {
 	uint visited = 0;
 
 	for (uint contactIdx = 0;
-			contactIdx < _uiclData->contacts.size() && visibleRow < maxRows;
+			contactIdx < _contacts.size() && visibleRow < maxRows;
 			++contactIdx) {
-		const UICL::Contact &c = _uiclData->contacts[contactIdx];
+		const UICL::Contact &c = _contacts[contactIdx];
 		if (c.name.empty() || !isContactVisible(c)) {
 			continue;
 		}
@@ -620,8 +655,8 @@ int CellPhonePopup::findContactByDialBuffer() const {
 	// Dial pattern lives in prefix[2..], terminated by '\n'.
 	const uint dialLen = _dialedNumber.size();
 	const uint kDialOffset = 2;
-	for (uint i = 0; i < _uiclData->contacts.size(); ++i) {
-		const UICL::Contact &c = _uiclData->contacts[i];
+	for (uint i = 0; i < _contacts.size(); ++i) {
+		const UICL::Contact &c = _contacts[i];
 		if (!isContactVisible(c)) {
 			continue;
 		}
@@ -643,11 +678,11 @@ int CellPhonePopup::findContactByDialBuffer() const {
 }
 
 void CellPhonePopup::triggerContactCallSceneChange(uint contactIndex) {
-	if (contactIndex >= _uiclData->contacts.size()) {
+	if (contactIndex >= _contacts.size()) {
 		return;
 	}
 
-	const UICL::Contact &c = _uiclData->contacts[contactIndex];
+	const UICL::Contact &c = _contacts[contactIndex];
 
 	const uint16 sceneID = (uint16)c.unknownSuffix[0] | ((uint16)c.unknownSuffix[1] << 8);
 	if (sceneID == kNoScene) {
@@ -763,8 +798,8 @@ int CellPhonePopup::contactIndexForVisibleRow(uint visibleRow) const {
 	Common::Array<Common::String> seenNames;
 	uint visited = 0;
 	uint visibleSoFar = 0;
-	for (uint i = 0; i < _uiclData->contacts.size(); ++i) {
-		const UICL::Contact &c = _uiclData->contacts[i];
+	for (uint i = 0; i < _contacts.size(); ++i) {
+		const UICL::Contact &c = _contacts[i];
 		if (c.name.empty() || !isContactVisible(c)) {
 			continue;
 		}
@@ -845,10 +880,10 @@ uint CellPhonePopup::directoryRowAt(const Common::Point &chunkMouse) const {
 }
 
 void CellPhonePopup::startCallToContact(uint contactIndex) {
-	if (contactIndex >= _uiclData->contacts.size()) {
+	if (contactIndex >= _contacts.size()) {
 		return;
 	}
-	const UICL::Contact &c = _uiclData->contacts[contactIndex];
+	const UICL::Contact &c = _contacts[contactIndex];
 
 	// Rebuild _dialedNumber so the call flow's lookup matches.
 	_dialedNumber.clear();
@@ -871,8 +906,8 @@ void CellPhonePopup::startCallToContact(uint contactIndex) {
 
 uint CellPhonePopup::deduplicatedContactCount() const {
 	Common::Array<Common::String> seen;
-	for (uint i = 0; i < _uiclData->contacts.size(); ++i) {
-		const UICL::Contact &c = _uiclData->contacts[i];
+	for (uint i = 0; i < _contacts.size(); ++i) {
+		const UICL::Contact &c = _contacts[i];
 		if (c.name.empty() || !isContactVisible(c)) {
 			continue;
 		}

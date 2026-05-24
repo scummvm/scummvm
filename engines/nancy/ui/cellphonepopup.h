@@ -49,8 +49,15 @@ public:
 	void toggle() { if (_isVisible) close(); else open(); }
 
 	// Swaps the welcome graphic for the No Signal / No Access / Old Email
-	// Only labels and blocks outgoing calls. TODO: hook to scene flag.
+	// Only labels and blocks outgoing calls.
 	void setNoSignal(bool noSignal);
+
+	// Swaps the battery sprite for the low/dead variant.
+	void setBatteryLow(bool low);
+
+	// Insert or replace a contact (matched by its 11-byte dial pattern).
+	// Used by AR 130 to add/modify entries at runtime.
+	void upsertContact(const UICL::Contact &c);
 
 private:
 	enum ScreenState : int {
@@ -110,6 +117,10 @@ private:
 
 	const UICL *_uiclData;
 
+	// Runtime contact list, seeded from _uiclData->contacts and then
+	// mutable (AR 130 inserts/replaces entries).
+	Common::Array<UICL::Contact> _contacts;
+
 	// Chrome (header.imageName) and sprite atlas (overlayImageName).
 	Graphics::ManagedSurface _overlayImage;
 	Graphics::ManagedSurface _spritesImage;
@@ -134,6 +145,7 @@ private:
 	uint _directorySelection = 0;
 
 	bool _noSignal = false;
+	bool _batteryLow = false;
 };
 
 } // End of namespace UI
