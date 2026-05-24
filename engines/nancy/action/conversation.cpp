@@ -187,7 +187,12 @@ void ConversationSound::readTerseCaptionText(Common::SeekableReadStream &stream)
 
 	// WORKAROUND: Return an empty string for captions that aren't found.
 	// Happens with some conversations in Nancy10 (e.g. when calling the Rawleys).
-	_text = convo->texts.getValOrDefault(key, "");
+	if (convo->texts.contains(key)) {
+		_text = convo->texts[key];
+	} else {
+		warning("Convo key not found: %s", key.c_str());
+		_text = "";
+	}
 }
 
 void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
