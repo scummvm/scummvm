@@ -140,7 +140,7 @@ struct Scratch {
 #define RANDOM_HIGHEST_NUMBER 6
 
 
-static Scratch scratch;
+Scratch scratch;
 
 static void room_101_init() {
 	conv_get(0);
@@ -149,7 +149,7 @@ static void room_101_init() {
 	ss[fx_fire_shadow] = kernel_load_series(kernel_name('x', 1), 0);
 	ss[fx_door]        = kernel_load_series(kernel_name('x', 2), 0);
 	ss[fx_sconce_fire] = kernel_load_series(kernel_name('x', 3), 0);
-	ss[fx_draped_cape] = kernel_load_series(kernel_name('a', 5), 0);
+	ss[fx_draped_cape] = kernel_load_series(kernel_name(97, 5), 0);
 	ss[fx_open_door]   = kernel_load_series("*KGRD_6", 0);
 
 	seq[fx_fire]        = kernel_seq_forward(ss[fx_fire],        false, 7, 0, 0, 0);
@@ -178,7 +178,7 @@ static void room_101_init() {
 		scratch.queen_anim_mode = 2;
 		scratch.suppress_command = 0;
 
-		aa[0] = kernel_run_animation(kernel_name('B', -1), 0);
+		aa[0] = kernel_run_animation(kernel_name(66, -1), 0);
 
 		if (conv_restore_running != 0) {
 			goto done;
@@ -254,12 +254,12 @@ static void room_101_anim2(int16 *ptr) {
 	if (target > scratch.tick_accum) {
 		if (scratch.queen_action == 7) {
 			player.commands_allowed = 0;
-		} else if (scratch.queen_frame == 'E') {
-			*ptr = 'B';
+		} else if (scratch.queen_frame == 69) {
+			*ptr = 66;
 			return;
 		}
 
-		*ptr = 'E';
+		*ptr = 69;
 		return;
 	}
 
@@ -268,19 +268,19 @@ static void room_101_anim2(int16 *ptr) {
 
 	if (scratch.queen_action == 7) {
 		player.commands_allowed = 0;
-		*ptr = 'a';
+		*ptr = 97;
 		return;
 	}
 
-	if (scratch.queen_frame == 'E') {
+	if (scratch.queen_frame == 69) {
 		scratch.queen_action = 4;
 	} else {
-		*ptr = 'B';
+		*ptr = 66;
 		scratch.queen_action = 3;
 		return;
 	}
 
-	*ptr = 'E';
+	*ptr = 69;
 }
 
 static void room_101_daemon() {
@@ -308,23 +308,21 @@ static void room_101_daemon() {
 
 			frame = scratch.queen_frame;
 
-			if (frame < 69) {
-				if (frame == 48) {
-					if (scratch.queen_action == 1) {
-						scratch.queen_action = 3;
-						scratch.resume_conv = -1;
-						frame = 66;
-					}
-				} else if (frame == 66) {
-					if (scratch.queen_action == 2) {
-						scratch.queen_action = 3;
-					}
+			if (frame == 48) {
+				if (scratch.queen_action == 1) {
+					scratch.queen_action = 3;
+					scratch.resume_conv = true;
+					frame = 66;
+				}
+			} else if (frame == 66) {
+				if (scratch.queen_action == 2) {
+					scratch.queen_action = 3;
 				}
 			} else if (frame == 69 || frame == 71) {
 				if (scratch.queen_action == 3 || scratch.queen_action == 4) {
-					if (scratch.resume_conv != 0) {
+					if (scratch.resume_conv) {
 						conv_run(0);
-						scratch.resume_conv = 0;
+						scratch.resume_conv = false;
 					}
 					switch (scratch.queen_action) {
 					case 7:
@@ -548,8 +546,9 @@ void room_101_parser() {
 		goto handled;
 	}
 
-	// Door to queen's room: walk(37), open(6), use(10) + door(36)
-	if (player_parse(37, 36, 0) || player_parse(6, 36, 0) || player_parse(10, 36, 0)) {
+	if (player_said_2(walk_through, queens_door) ||
+			player_said_2(open, queens_door) ||
+			player_said_2(pull, queens_door)) {
 		if (kernel_anim[aa[1]].anim != 0) goto done;
 		if (scratch.king_anim_mode == 3) goto done;
 		switch (kernel.trigger) {
@@ -584,22 +583,20 @@ void room_101_parser() {
 		goto handled;
 	}
 
-	// Exit south to room 103: walk(39) + exit(38)
-	if (player_parse(39, 38, 0)) {
+	if (player_said_2(walk_through, exit)) {
 		if (kernel_anim[aa[1]].anim != 0) goto done;
 		if (scratch.king_anim_mode == 3) goto done;
 		new_room = 103;
 		goto handled;
 	}
 
-	// Open/read book: open(6) + book(33)
-	if (player_parse(6, 33, 0)) {
+	if (player_said_2(open, book)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = 0;
 			player.walker_visible = 0;
 			scratch.queen_anim_mode = 1;
-			aa[0] = kernel_run_animation(kernel_name('A', -1), 1);
+			aa[0] = kernel_run_animation(kernel_name(97, -1), 1);
 			goto handled;
 		case 1:
 			player.walker_visible = -1;
@@ -614,9 +611,8 @@ void room_101_parser() {
 		goto handled;
 	}
 
-	// Look verbs: look(3), examine(30)
 	if (player_said_1(look) || player_said_1(look_at)) {
-		if (player_parse(21, 0)) {
+		if (player_said_1(bed)) {
 			if (kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3)
 				text_show(10139);
 			else
@@ -627,11 +623,11 @@ void room_101_parser() {
 			text_show(10104);
 			goto handled;
 		}
-		if (player_parse(33, 0)) {
+		if (player_said_1(book)) {
 			text_show(10105);
 			goto handled;
 		}
-		if (player_parse(27, 0)) {
+		if (player_said_1(dressing_screen)) {
 			if (kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3)
 				text_show(10108);
 			else
@@ -646,7 +642,7 @@ void room_101_parser() {
 			text_show(10111);
 			goto handled;
 		}
-		if (player_parse(45, 0)) {
+		if (player_said_1(arch)) {
 			text_show(10112);
 			goto handled;
 		}
@@ -654,14 +650,14 @@ void room_101_parser() {
 			text_show(10113);
 			goto handled;
 		}
-		if (player_parse(31, 0)) {
+		if (player_said_1(bedroom_wall)) {
 			if (kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3)
 				text_show(10114);
 			else
 				text_show(10115);
 			goto handled;
 		}
-		if (player_parse(32, 0)) {
+		if (player_said_1(castle_walls)) {
 			text_show(10117);
 			goto handled;
 		}
@@ -673,11 +669,11 @@ void room_101_parser() {
 			text_show(10119);
 			goto handled;
 		}
-		if (player_parse(38, 0)) {
+		if (player_said_1(tapestry)) {
 			text_show(10121);
 			goto handled;
 		}
-		if (player_parse(22, 0)) {
+		if (player_said_1(pillow)) {
 			if ((kernel_anim[aa[1]].anim != 0 && scratch.king_anim_mode == 3) || scratch.fireplace_examined == 0) {
 				text_show(10123);
 				scratch.fireplace_examined = -1;
@@ -686,16 +682,15 @@ void room_101_parser() {
 			}
 			goto handled;
 		}
-		if (player_parse(29, 0)) {
+		if (player_said_1(royal_crest)) {
 			text_show(10126);
 			goto handled;
 		}
-		if (player_parse(44, 0)) {
+		if (player_said_1(bust)) {
 			text_show(10127);
 			goto handled;
 		}
-		if (player_parse(38, 0)) {
-			// dead code: noun 38 already matched above
+		if (player_said_1(hall_doorway)) {
 			text_show(10128);
 			goto handled;
 		}
@@ -703,11 +698,11 @@ void room_101_parser() {
 			text_show(10129);
 			goto handled;
 		}
-		if (player_parse(42, 0)) {
+		if (player_said_1(swords)) {
 			text_show(10131);
 			goto handled;
 		}
-		if (player_parse(25, 0)) {
+		if (player_said_1(nightstand)) {
 			text_show(10133);
 			goto handled;
 		}
@@ -715,7 +710,7 @@ void room_101_parser() {
 			text_show(10134);
 			goto handled;
 		}
-		if (player_said_1(crown) || player_parse(569, 0)) {
+		if (player_said_1(crown) || player_said_1(robe)) {
 			text_show(10141);
 			goto handled;
 		}
@@ -723,19 +718,18 @@ void room_101_parser() {
 			text_show(10136);
 			goto handled;
 		}
-		if (player_parse(36, 0)) {
+		if (player_said_1(queens_door)) {
 			text_show(10138);
 			goto handled;
 		}
 	}
 
-	// Take/use/push/pull verbs — also reached by look fallthrough when no noun matched
-	if ((player_said_1(push) || player_said_1(pull)) && player_parse(21, 0)) {
+	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(bed)) {
 		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3)
 			text_show(10103);
 		goto handled;
 	}
-	if (player_parse(4, 33, 0)) {
+	if (player_said_2(take, book)) {
 		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3)
 			text_show(10106);
 		goto handled;
@@ -745,7 +739,7 @@ void room_101_parser() {
 			text_show(10120);
 		goto handled;
 	}
-	if ((player_said_1(take) || player_said_1(pull)) && player_parse(42, 0)) {
+	if ((player_said_1(take) || player_said_1(pull)) && player_said_1(swords)) {
 		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3)
 			text_show(10132);
 		goto handled;
@@ -760,12 +754,12 @@ void room_101_parser() {
 			text_show(10135);
 		goto handled;
 	}
-	if (player_parse(6, 22, 0)) {
+	if (player_said_2(open, pillow)) {
 		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3)
 			text_show(10125);
 		goto handled;
 	}
-	if ((player_said_1(push) || player_said_1(pull)) && player_parse(38, 0)) {
+	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(hall_doorway)) {
 		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3)
 			text_show(10122);
 		goto handled;
@@ -777,11 +771,11 @@ void room_101_parser() {
 			goto handled;
 		}
 	}
-	if (player_parse(4, 569, 0) || player_said_2(take, crown)) {
+	if (player_said_2(take, robe) || player_said_2(take, crown)) {
 		text_show(10142);
 		goto handled;
 	}
-	if (player_parse(28, 27, 0)) {
+	if (player_said_2(walk_behind, dressing_screen)) {
 		if (player.x == 76 && player.y == 100) {
 			text_show(10143);
 			goto handled;
@@ -793,9 +787,6 @@ handled:
 	player.command_ready = false;
 done:
 	;
-}
-
-void room_101_error() {
 }
 
 void room_101_synchronize(Common::Serializer &s) {
