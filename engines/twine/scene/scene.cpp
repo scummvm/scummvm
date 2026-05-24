@@ -613,6 +613,11 @@ void Scene::changeCube() {
 
 	_engine->_grid->initGrid(_newCube);
 
+	// LBA2: load per-island palette from XPL data
+	if (_engine->isLBA2()) {
+		_engine->_screens->choicePalette();
+	}
+
 	if (_flagChgCube == ScenePositionType::kZone) {
 		_sceneStart = _zoneHeroPos;
 	} else if (_flagChgCube == ScenePositionType::kScene || _flagChgCube == ScenePositionType::kNoPosition) {

@@ -23,63 +23,115 @@
 #define TWINE_HOLOMAPV2_H
 
 #include "twine/holomap.h"
-
-#define MAX_OBJECTIF 50
-#define MAX_CUBE 255
+#include "twine/shared.h"
 
 namespace TwinE {
 
-/**
- * The Holomap shows the hero position. The arrows (@c RESSHQR_HOLOARROWMDL) represent important places in your quest - they automatically disappear once that part of
- * the quest is done (@c clrHoloPos()). You can rotate the holoamp by pressing ctrl+cursor keys - but only using the cursor keys, you can scroll through the
- * text for the visible arrows.
- */
+#define HOLO_MAX_OBJECTIF 50
+#define HOLO_MAX_CUBE 255
+#define HOLO_MAX_ARROW (HOLO_MAX_OBJECTIF + HOLO_MAX_CUBE)
+
+// Globe mesh parameters (LBA2 uses 4x angle factor)
+#define HOLO_STEP_ANGLE 128
+#define HOLO_GLOBE_ALPHA_STEPS ((LBAAngles::ANGLE_360 / HOLO_STEP_ANGLE) + 1) // 33
+#define HOLO_GLOBE_BETA_STEPS ((LBAAngles::ANGLE_180 / HOLO_STEP_ANGLE) + 1)  // 17 (alpha from -90 to +90 = 180 degrees)
+// Actually: alpha from -1024 to 1024 step 128 = 17 rows, beta from 0 to 4096 step 128 = 32 cols + 1 wrap = 33
+#define HOLO_GLOBE_COLS 33
+#define HOLO_GLOBE_ROWS 17
+#define HOLO_GLOBE_VERTICES (HOLO_GLOBE_COLS * HOLO_GLOBE_ROWS)
+#define HOLO_GLOBE_QUADS ((HOLO_GLOBE_COLS - 1) * (HOLO_GLOBE_ROWS - 1)) // 512
+
+#define HOLO_RAYON_PLANET 1000
+#define HOLO_ZOOM_PLANET 8000
+#define HOLO_ZOOM_INIT_PLANET 3000
+
 class HolomapV2 : public Holomap {
 private:
 	using Super = Holomap;
 
 public:
-	HolomapV2(TwinEEngine *engine) : Super(engine) {}
-	virtual ~HolomapV2() = default;
-
 	struct Location {
-		int32 X = 0; // Position Island X Y Z
+		int32 X = 0;
 		int32 Y = 0;
 		int32 Z = 0;
-		int32 Alpha = 0; // Position Planet Alpha, Beta and Altitude
+		int32 Alpha = 0;
 		int32 Beta = 0;
 		int32 Alt = 0;
 		int32 Mess = 0;
-		int8 ObjFix = 0;    // Eventual Obj Inventory 3D (FREE NOT USED!)
-		uint8 FlagHolo = 0u; // Flag for Planet display, active, etc.
+		int8 ObjFix = 0;
+		uint8 FlagHolo = 0u;
 		uint8 Planet = 0u;
 		uint8 Island = 0u;
 	};
 	static_assert(sizeof(Location) == 32, "Invalid Location size");
-	Location _locations[MAX_OBJECTIF + MAX_CUBE];
 
-	/**
-	 * Set Holomap location position
-	 * @param locationIdx Scene where position must be set
-	 */
+private:
+	Location _locations[HOLO_MAX_ARROW];
+
+	// Globe mesh data
+	IVec3 _holomapSurface[HOLO_GLOBE_VERTICES];
+
+	struct HolomapProjectedPos {
+		int16 x1 = 0; // screen X
+		int16 y1 = 0; // screen Y
+		uint16 x2 = 0; // texture U
+		uint16 y2 = 0; // texture V
+	};
+	HolomapProjectedPos _projectedSurfacePositions[HOLO_GLOBE_VERTICES];
+
+	struct HolomapSort {
+		int16 z = 0;
+		uint16 projectedPosIdx = 0;
+	};
+	HolomapSort _holomapSort[HOLO_GLOBE_QUADS];
+
+	// Globe rendering state
+	int32 _holoAlpha = 0;
+	int32 _holoBeta = 0;
+	int32 _holoGamma = 0;
+	int32 _zoomPlanet = HOLO_ZOOM_INIT_PLANET;
+	int32 _zoomPlanetDest = HOLO_ZOOM_PLANET;
+
+	// Camera interpolation
+	int32 _destAlpha = 0;
+	int32 _destBeta = 0;
+	int32 _moveTimer = 0;
+	bool _automove = false;
+
+	// Objective/selection state
+	int32 _numObjectif = -1;
+	int32 _oldObjectif = -1;
+
+	// UI state
+	bool _flagRedraw = true;
+	bool _flagPal = true;
+	bool _flagHoloEnd = false;
+
+	// Holomap image
+	uint8 *_holomapImagePtr = nullptr;
+	int32 _holomapImageSize = 0;
+
+	void computeCoorMapping();
+	void computeCoorGlobe(Common::SeekableReadStream *surfaceStream);
+	void computeGlobeProj();
+	void drawHoloMap();
+	void drawListHoloGlobe(bool frontFace);
+	void drawReticule();
+	bool goToArrow();
+
+	int32 distance(float dist) const;
+	int32 scale(float val) const;
+
+public:
+	HolomapV2(TwinEEngine *engine) : Super(engine) {}
+	virtual ~HolomapV2() = default;
+
 	bool setHoloPos(int32 locationIdx) override;
-
 	bool loadLocations() override;
-
 	const char *getLocationName(int index) const override;
-
-	/**
-	 * Clear Holomap location position
-	 * @param locationIdx Scene where position must be cleared
-	 */
 	void clrHoloPos(int32 locationIdx) override;
-
 	void holoTraj(int32 trajectoryIndex) override;
-
-	/** Load Holomap content */
 	void initHoloDatas() override;
-
-	/** Main holomap process loop */
 	void holoMap() override;
 };
 

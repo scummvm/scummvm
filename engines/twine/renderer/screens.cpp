@@ -34,22 +34,69 @@
 #include "twine/audio/music.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/gamestate.h"
+#include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
 
 int32 Screens::mapLba2Palette(int32 palIndex) {
+	// LBA2 palette indices:
+	// 0 = PtrPalNormal (main palette from ress.hqr index 0)
+	// 1 = PtrPalCurrent (current island palette - already in _ptrPal after ChoicePalette)
+	// 2 = PtrPalEclair (lightning palette from ress.hqr index 10)
+	// 3 = PtrPalBlack (black palette from ress.hqr index 9)
 	static const int32 palettes[] {
 		RESSHQR_MAINPAL,
-		-1, // TODO: current palette
-		RESSHQR_BLACKPAL,
-		RESSHQR_ECLAIRPAL
+		-1, // current palette (special case: use _ptrPal as-is)
+		RESSHQR_ECLAIRPAL,
+		RESSHQR_BLACKPAL
 	};
 	if (palIndex < 0 || palIndex >= ARRAYSIZE(palettes)) {
 		return -1;
 	}
 	return palettes[palIndex];
+}
+
+// LBA2 XPL header structure
+#define RESS_XPL0 27
+#define RESS_XPL00 42
+
+void Screens::choicePalette() {
+	if (!_engine->isLBA2()) {
+		return;
+	}
+
+	int32 xplIndex;
+	// Interior scenes or Citadel after storm (chapter >= 2) use the interior palette
+	const bool tempeteFinie = _engine->_gameState->hasGameFlag(253) >= 2;
+	if (_engine->_scene->_island == 0 && tempeteFinie) {
+		xplIndex = RESS_XPL00;
+	} else {
+		xplIndex = RESS_XPL0 + _engine->_scene->_island;
+	}
+
+	uint8 *xplData = nullptr;
+	const int32 xplSize = HQR::getAllocEntry(&xplData, Resources::HQR_RESS_FILE, xplIndex);
+	if (xplSize == 0 || xplData == nullptr) {
+		warning("Failed to load XPL palette data for index %i", xplIndex);
+		return;
+	}
+
+	// XPL header: field at offset 4 is OffsetPalette
+	const int32 offsetPalette = READ_LE_INT32(xplData + 4);
+	if (offsetPalette + 768 > xplSize) {
+		warning("XPL palette offset out of bounds");
+		free(xplData);
+		return;
+	}
+
+	// Load palette from XPL data
+	const uint8 *palData = xplData + offsetPalette;
+	_ptrPal = Graphics::Palette(palData, NUMOFCOLORS);
+
+	free(xplData);
 }
 
 bool Screens::adelineLogo() {

@@ -50,6 +50,9 @@ public:
 
 	int32 mapLba2Palette(int32 palIndex);
 
+	/** LBA2: Load the per-island XPL palette for the current scene */
+	void choicePalette();
+
 	/** main palette */
 	Graphics::Palette _ptrPal{0};
 	Graphics::Palette _palettePcx{0};

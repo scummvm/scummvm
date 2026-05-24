@@ -251,8 +251,8 @@ void Menu::plasmaEffectRenderFrame() {
 
 void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 	if (_engine->isLBA2()) {
-		// TODO: effects are handled differently here.
-		return;
+		// LBA2 uses palette bank 12 (192) for selected items
+		color = 192;
 	}
 	const int32 max_value = color + 15;
 
@@ -453,7 +453,12 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 
 void Menu::menuDemo() {
 	// TODO: lba2 only show the credits only in the main menu and you could force it by pressing shift+c
-	// TODO: lba2 has a cd audio track (2) for the credits
+	if (_engine->isLBA2()) {
+		_engine->_music->playCdTrack(2);
+		_engine->_menuOptions->showCredits();
+		_engine->_screens->loadMenuImage(false);
+		return;
+	}
 	_engine->_menuOptions->showCredits();
 	if (_engine->_movie->playMovie(FLA_DRAGON3)) {
 		if (!_engine->_screens->loadImageDelay(TwineImage(Resources::HQR_RESS_FILE, 15, 16), 3)) {

@@ -204,22 +204,36 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::PALETTE(%i)", palIndex);
 	engine->saveTimer(false);
-	HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
-	engine->setPalette(engine->_screens->_ptrPal);
-	engine->_screens->_flagPalettePcx = true;
+	if (palIndex == -1) {
+		// Index 1 = current palette (already in _ptrPal from ChoicePalette)
+		engine->setPalette(engine->_screens->_ptrPal);
+	} else {
+		HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
+		engine->setPalette(engine->_screens->_ptrPal);
+	}
 	engine->restoreTimer();
 	return 0;
 }
 
 int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
+	const int32 rawIndex = ctx.stream.readByte();
+	const int32 palIndex = engine->_screens->mapLba2Palette(rawIndex);
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_TO_PAL(%i)", palIndex);
 	engine->saveTimer(false);
-	HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
-	engine->_screens->fadeToPal(engine->_screens->_ptrPal);
-	engine->_screens->_flagPalettePcx = true;
-	if (palIndex == 3) { // Black palette?
+	if (rawIndex == 3) {
+		// Black palette requested - fade to black
+		engine->_screens->fadeToBlack(engine->_screens->_ptrPal);
+		HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
 		engine->_screens->_flagFade = true;
+	} else if (palIndex == -1) {
+		// Index 1 = current palette (already in _ptrPal)
+		engine->_screens->fadeToPal(engine->_screens->_ptrPal);
+	} else {
+		// Cross-fade from current to target palette
+		Graphics::Palette targetPal{0};
+		HQR::getPaletteEntry(targetPal, Resources::HQR_RESS_FILE, palIndex);
+		engine->_screens->fadePalToPal(engine->_screens->_ptrPal, targetPal);
+		engine->_screens->_ptrPal = targetPal;
 	}
 	engine->restoreTimer();
 	return 0;
@@ -616,10 +630,8 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->_flagFade = true;
 
 	engine->_movie->playMovie(movie);
-	// TODO: lba2 is doing more stuff here - reset the cinema mode, init the scene and palette stuff
-	// if (CubeMode==CUBE_INTERIEUR) InitGrille( NumCube ) ;
-	// RazListPartFlow() ;
-	// ChoicePalette() ;
+	// Restore scene palette after movie
+	engine->_screens->choicePalette();
 	engine->setPalette(engine->_screens->_ptrPal);
 	engine->_screens->_flagFade = true;
 	engine->restoreTimer();
