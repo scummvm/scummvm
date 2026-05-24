@@ -50,6 +50,7 @@ enum {
 	N_QueenMother        =  45,
 	N_WalkingMus         =  46,
 	N_RoyalDecreeMus     =  47,
+	N_ScoreIncreased     =  64,
 	N_TurnDiaryPage      =  65,
 	N_WallGrinds         =  67,
 	N_RushingWater       =  71,

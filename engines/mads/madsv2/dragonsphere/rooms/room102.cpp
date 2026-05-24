@@ -87,8 +87,6 @@ static Scratch scratch;
 #define DIARY1  1
 #define DIARY2  2
 
-// ---------------------------------------------------------------------------
-
 static void room_102_init() {
 	// Load sprite series (fx_reach_diaries / kgrh_9 is intentionally skipped)
 	ss[fx_diary1]      = kernel_load_series(kernel_name('p', 0), false);
@@ -217,7 +215,7 @@ static void room_102_daemon() {
 		case ROOM_102_DOOR_CLOSES + 1:
 			local->temp  = seq[fx_door];
 			seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
-			kernel_seq_depth(seq[fx_door], KERNEL_LAST);
+			kernel_seq_depth(seq[fx_door], 14);
 			kernel_synch(KERNEL_SERIES, seq[fx_door], KERNEL_SERIES, local->temp);
 			player.commands_allowed = true;
 			break;

@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/dragonsphere/global.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 #include "mads/madsv2/dragonsphere/mads/words.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room101.h"
@@ -61,6 +62,8 @@ struct Scratch {
 	int16 resume_conv;          /* flag: -1 = call conv_run on next queen frame-69 pass */
 	int16 suppress_command;     /* flag: -1 = silently consume next parser command (bed-exit interlock) */
 };
+
+Scratch scratch;
 
 #define local (&scratch)
 #define ss    local->sprite
@@ -140,8 +143,6 @@ struct Scratch {
 #define RANDOM_HIGHEST_NUMBER 6
 
 
-Scratch scratch;
-
 static void room_101_init() {
 	conv_get(0);
 
@@ -163,7 +164,7 @@ static void room_101_init() {
 
 	scratch.fireplace_examined = 0;
 
-	if (player.been_here_before == 0 || conv_restore_running == 0) {
+	if (!player.been_here_before || !conv_restore_running) {
 		scratch.king_action = 1;
 		player.walker_visible = 0;
 		player.commands_allowed = 0;
@@ -190,31 +191,30 @@ static void room_101_init() {
 		goto done;
 	}
 
-	// player.been_here_before != 0 && conv_restore_running != 0
 	if (previous_room == 103) {
-		player.x = 114;
-		player.y = 152;
+		player.x = START_X_ROOM_103;
+		player.y = START_Y_ROOM_103;
 		player.facing = 9;
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
 		kernel_seq_depth(seq[fx_door], 12);
 		goto done;
 	}
 
-	if (previous_room != -2) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -2);
 		kernel_seq_depth(seq[fx_door], 12);
-		player_first_walk(330, 126, 4, 4, 134, 297, 0);
-		player_walk_trigger(80);
+		player_first_walk(START_X_ROOM_102, START_Y_ROOM_102, FACING_WEST,
+			WALK_TO_X_FROM_102, WALK_TO_Y_FROM_102, FACING_WEST, 0);
+		player_walk_trigger(ROOM_101_DOOR_CLOSES);
 		goto done;
-	}
+	} else {
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+		kernel_seq_depth(seq[fx_door], 12);
 
-	// previous_room == -2
-	seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
-	kernel_seq_depth(seq[fx_door], 12);
-
-	if (scratch.king_action == 1) {
-		player.walker_visible = 0;
-		aa[1] = kernel_run_animation(kernel_name('C', -1), 0);
+		if (scratch.king_action == 1) {
+			player.walker_visible = 0;
+			aa[1] = kernel_run_animation(kernel_name('C', -1), 0);
+		}
 	}
 
 done:
@@ -384,7 +384,7 @@ static void room_101_daemon() {
 			break;
 		case 64:
 			global[player_score]++;
-			sound_play(64);
+			sound_play(N_ScoreIncreased);
 			break;
 		case 105:
 			text_show(10116);
@@ -411,27 +411,27 @@ static void room_101_daemon() {
 		}
 	}
 
-	if (kernel.trigger == 70) {
+	switch (kernel.trigger) {
+	case 70:
 		player.commands_allowed = true;
 		scratch.king_anim_mode = 0;
 		text_show(10140);
-	}
+		break;
 
-	switch (kernel.trigger) {
-	case 80:
+	case ROOM_101_DOOR_CLOSES:
 		kernel_seq_delete(seq[fx_door]);
-		sound_play(25);
-		seq[fx_door] = kernel_seq_backward(ss[fx_door], 0, 6, 1, 0, 0);
+		sound_play(N_DoorCloses);
+		seq[fx_door] = kernel_seq_backward(ss[fx_door], false, 6, 0, 0, 1);
 		kernel_seq_depth(seq[fx_door], 14);
 		kernel_seq_range(seq[fx_door], 1, 4);
 		kernel_seq_trigger(seq[fx_door], 0, 0, 81);
 		break;
 
-	case 81:
+	case ROOM_101_DOOR_CLOSES + 1:
 		scratch.prev_door_seq = seq[fx_door];
-		seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_door], 14);
-		kernel_synch(1, seq[fx_door], 1, scratch.prev_door_seq);
+		kernel_synch(KERNEL_SERIES, seq[fx_door], KERNEL_SERIES, scratch.prev_door_seq);
 		player.commands_allowed = true;
 		break;
 
@@ -517,7 +517,7 @@ static void process_conversation_queen() {
 	}
 }
 
-void room_101_parser() {
+static void room_101_parser() {
 	if (player.look_around) {
 		text_show(10101);
 		goto handled;
@@ -533,9 +533,9 @@ void room_101_parser() {
 		goto handled;
 	}
 
-	if (player_said_2(walk_through, queens_door) ||
-			player_said_2(open, queens_door) ||
-			player_said_2(pull, queens_door)) {
+	if (player_said_2(walk_through, door_to_queens_room) ||
+			player_said_2(open, door_to_queens_room) ||
+			player_said_2(pull, door_to_queens_room)) {
 		if (kernel_anim[aa[1]].anim != 0) goto done;
 		if (scratch.king_anim_mode == 3) goto done;
 		switch (kernel.trigger) {
@@ -549,7 +549,7 @@ void room_101_parser() {
 			goto handled;
 		case 1:
 			kernel_seq_delete(seq[fx_door]);
-			sound_play(24);
+			sound_play(N_DoorOpens);
 			seq[fx_door] = kernel_seq_forward(ss[fx_door], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door], 12);
 			kernel_seq_trigger(seq[fx_door], 0, 0, 2);
@@ -570,11 +570,11 @@ void room_101_parser() {
 		goto handled;
 	}
 
-	if (player_said_2(walk_through, exit)) {
-		if (kernel_anim[aa[1]].anim != 0) goto done;
-		if (scratch.king_anim_mode == 3) goto done;
-		new_room = 103;
-		goto handled;
+	if (player_said_2(walk_into, hall_to_south)) {
+		if (!kernel_anim[aa[0]].anim && scratch.king_anim_mode != 3) {
+			new_room = 103;
+			goto handled;
+		}
 	}
 
 	if (player_said_2(open, book)) {
@@ -677,7 +677,7 @@ void room_101_parser() {
 			text_show(10127);
 			goto handled;
 		}
-		if (player_said_1(hall_doorway)) {
+		if (player_said_1(hall_to_south)) {
 			text_show(10128);
 			goto handled;
 		}
@@ -705,7 +705,7 @@ void room_101_parser() {
 			text_show(10136);
 			goto handled;
 		}
-		if (player_said_1(queens_door)) {
+		if (player_said_1(door_to_queens_room)) {
 			text_show(10138);
 			goto handled;
 		}
@@ -746,7 +746,7 @@ void room_101_parser() {
 			text_show(10125);
 		goto handled;
 	}
-	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(hall_doorway)) {
+	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(hall_to_south)) {
 		if (kernel_anim[aa[1]].anim == 0 && scratch.king_anim_mode != 3)
 			text_show(10122);
 		goto handled;

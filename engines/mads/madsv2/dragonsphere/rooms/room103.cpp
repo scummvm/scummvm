@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/dragonsphere/mads/words.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
@@ -41,6 +42,8 @@ struct Scratch {
 	int16 sequence[15];  // seq[] — sequence handles
 	int16 animation[4];  // aa[]  — animation handles (unused in room 103)
 };
+
+static Scratch scratch;
 
 #define local (&scratch)
 #define ss    local->sprite
@@ -59,7 +62,7 @@ struct Scratch {
 #define fx_fire_sconce_3    8  /* rm103y7 */
 #define fx_door_101         9  /* rm103x0 */
 #define fx_door_102        10  /* rm103x1 */
-#define fx_open_door       11  /* kgrd_8; aKgrd6+4 in disasm — TODO: confirm string */
+#define fx_open_door       11  /* kgrd_8 */
 
 /* ========================== Triggers ======================= */
 
@@ -88,9 +91,7 @@ struct Scratch {
 #define RIGHT_HALLWAY         320
 
 
-static Scratch scratch;
-
-void room_103_init() {
+static void room_103_init() {
 	kernel.disable_fastwalk = true;
 
 	// Load series in disassembly order: y0..y7, x0, x1, open_door
@@ -104,7 +105,7 @@ void room_103_init() {
 	ss[fx_fire_sconce_3]  = kernel_load_series(kernel_name('y', 7), 0);
 	ss[fx_door_101]       = kernel_load_series(kernel_name('x', 0), 0);
 	ss[fx_door_102]       = kernel_load_series(kernel_name('x', 1), 0);
-	ss[fx_open_door]      = kernel_load_series("kgrd_8", 0);
+	ss[fx_open_door]      = kernel_load_series("*kgrd_9", 0);
 
 	// Start ambient loops in disassembly order: y0..y7 with phase offsets
 	seq[fx_candle_flame_1] = kernel_seq_forward(ss[fx_candle_flame_1], false, 7, 0, 0, 0);
@@ -160,7 +161,7 @@ void room_103_init() {
 	section_1_music();
 }
 
-void room_103_daemon() {
+static void room_103_daemon() {
 	int16 temp;
 
 	switch (kernel.trigger) {
@@ -200,10 +201,10 @@ void room_103_daemon() {
 	}
 }
 
-void room_103_pre_parser() {
+static void room_103_pre_parser() {
 }
 
-void room_103_parser() {
+static void room_103_parser() {
 	int16 temp;
 
 	if (player.look_around) {
@@ -212,7 +213,9 @@ void room_103_parser() {
 		return;
 	}
 
-	if (player_parse(37, 245, 0) || player_parse(6, 245, 0) || player_parse(10, 245, 0)) {
+	if (player_said_2(walk_through, door_to_king_s_room) ||
+		player_said_2(open, door_to_king_s_room) ||
+		player_said_2(pull, door_to_king_s_room)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
