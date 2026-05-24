@@ -36,6 +36,7 @@
 #include "engines/nancy/action/puzzle/arcadepuzzle.h"
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
+#include "engines/nancy/action/puzzle/beadpuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
@@ -468,7 +469,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 242:
 		// return new MagnetMazePuzzle();
 	case 243:
-		// return new BeadPuzzle();
+		return new BeadPuzzle();
 	case 244:
 		// return new GridMapPuzzle();
 	// -- Nancy 11 and up --

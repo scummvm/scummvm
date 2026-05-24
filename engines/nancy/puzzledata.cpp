@@ -221,6 +221,10 @@ static void syncInt16Array(Common::Serializer &ser, Common::Array<int16> &arr) {
 	ser.syncArray(arr.data(), num, Common::Serializer::Sint16LE);
 }
 
+void BeadPuzzleData::synchronize(Common::Serializer &ser) {
+	syncInt16Array(ser, placedBeads);
+}
+
 void SortPuzzleData::synchronize(Common::Serializer &ser) {
 	syncInt16Array(ser, currentState);
 	syncInt16Array(ser, solvedState);
@@ -337,6 +341,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new AssemblyPuzzleData();
 	case QuizPuzzleData::getTag():
 		return new QuizPuzzleData();
+	case BeadPuzzleData::getTag():
+		return new BeadPuzzleData();
 	case SortPuzzleData::getTag():
 		return new SortPuzzleData();
 	case JournalData::getTag():

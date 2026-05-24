@@ -115,6 +115,17 @@ struct AssemblyPuzzleData : public SimplePuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('A', 'S', 'M', 'B'); }
 };
 
+// Placed bead-type ids on the thread.
+struct BeadPuzzleData : public PuzzleData {
+	BeadPuzzleData() {}
+	virtual ~BeadPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('B', 'E', 'A', 'D'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<int16> placedBeads;
+};
+
 // Cached current/solved tile layouts for a SortPuzzle. Each cell is encoded as
 // 4 consecutive int16s: srcRow, srcCol, value, isEmpty. The first two int16s
 // of each array are the grid rows and cols.
