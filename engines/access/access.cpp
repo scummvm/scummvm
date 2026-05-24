@@ -190,7 +190,7 @@ void AccessEngine::initialize() {
 	_player = Player::init(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
-	_midi = new MusicManager(this);
+	_midi = new MusicManagerMIDI(this);
 	_curPlayer = _player;
 
 	syncSoundSettings();

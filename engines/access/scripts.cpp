@@ -351,7 +351,7 @@ void Scripts::cmdEndObject_v3() {
 			_vm->_bubbleBox->placeBubble(subtitle);
 		}
 
-		warning("TODO: duck the sound here.. SetRelVolume(0x32);");
+		debug("cmdEndObject_v3: TODO: duck music volume to 50%% here.");
 
 		VideoPlayer_v2 vidPlayer(_vm);
 		vidPlayer.VideoPlayer::setVideo(_vm->_screen, Common::Point(100, 100), Common::Path(vidfile), 0);
@@ -1173,7 +1173,7 @@ void Scripts::cmdCharSpeak_v3() {
 	_vm->_screen->_printOrg = _charsOrg;
 	_vm->_screen->_printStart = _charsOrg;
 
-	// TODO: Duck (reduce) music volume to 50%
+	//debug("cmdCharSpeak_v3: duck music volume to 50%% here.");
 
 	Common::String str = _data->readString();
 	debugC(1, kDebugScripts, "cmdCharSpeak(%d, %d, str=\"%s\")", x, y, str.c_str());
@@ -2001,7 +2001,7 @@ void Scripts::cmdLockInterface() {
 void Scripts::cmdUnlockInterface() {
 	debugC(1, kDebugScripts, "cmdUnlockInterface()");
 	_vm->_events->_interfaceOff = false;
-	warning("TODO: cmdUnlockInterface - restore cursor");
+	debug("TODO: cmdUnlockInterface - restore cursor");
 	_vm->_events->setCursor(CURSOR_ARROW);
 }
 

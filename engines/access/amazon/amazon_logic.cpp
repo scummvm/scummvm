@@ -1337,7 +1337,7 @@ void Cast::doCast(int param1) {
 			break;
 
 		if (_yCam < -7550) {
-			while (!_vm->shouldQuit() && !_vm->_midi->checkMidiDone())
+			while (!_vm->shouldQuit() && _vm->_midi->isPlaying())
 				_vm->_events->pollEventsAndWait();
 			break;
 		}

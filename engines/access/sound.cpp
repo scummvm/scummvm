@@ -26,6 +26,7 @@
 #include "audio/midiparser.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/decoders/vorbis.h"
 #include "audio/miles.h"
 #include "audio/midiparser_smf.h"
 
@@ -264,7 +265,28 @@ void SoundManager::freeSounds() {
 
 /******************************************************************************************/
 
-MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
+MusicManager::~MusicManager() {
+	delete _music;
+	delete _tempMusic;
+}
+
+void MusicManager::loadMusic(int fileNum, int subfile) {
+	debugC(1, kDebugSound, "loadMusic(%d, %d)", fileNum, subfile);
+
+	_music = _vm->_files->loadFile(fileNum, subfile);
+}
+
+
+void MusicManager::freeMusic() {
+	debugC(3, kDebugSound, "freeMusic");
+
+	delete _music;
+	_music = nullptr;
+}
+
+/*******************/
+
+MusicManagerMIDI::MusicManagerMIDI(AccessEngine *vm) : MusicManager(vm), Audio::MidiPlayer() {
 	_music = nullptr;
 	_tempMusic = nullptr;
 	_isLooping = false;
@@ -327,12 +349,10 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	}
 }
 
-MusicManager::~MusicManager() {
-	delete _music;
-	delete _tempMusic;
+MusicManagerMIDI::~MusicManagerMIDI() {
 }
 
-void MusicManager::send(uint32 b) {
+void MusicManagerMIDI::send(uint32 b) {
 	// Pass data directly to driver
 	_driver->send(b);
 #if 0
@@ -344,7 +364,7 @@ void MusicManager::send(uint32 b) {
 #endif
 }
 
-void MusicManager::midiPlay() {
+void MusicManagerMIDI::midiPlay() {
 	debugC(1, kDebugSound, "midiPlay");
 
 	if (!_driver)
@@ -403,12 +423,7 @@ void MusicManager::midiPlay() {
 	}
 }
 
-bool MusicManager::checkMidiDone() {
-	debugC(1, kDebugSound, "checkMidiDone");
-	return (!_isPlaying);
-}
-
-void MusicManager::midiRepeat() {
+void MusicManagerMIDI::midiRepeat() {
 	debugC(1, kDebugSound, "midiRepeat");
 
 	if (!_driver)
@@ -422,7 +437,7 @@ void MusicManager::midiRepeat() {
 		_parser->setTrack(0);
 }
 
-void MusicManager::stopSong() {
+void MusicManagerMIDI::stopSong() {
 	debugC(1, kDebugSound, "stopSong");
 
 	if (!_driver)
@@ -431,19 +446,7 @@ void MusicManager::stopSong() {
 	stop();
 }
 
-void MusicManager::loadMusic(int fileNum, int subfile) {
-	debugC(1, kDebugSound, "loadMusic(%d, %d)", fileNum, subfile);
-
-	_music = _vm->_files->loadFile(fileNum, subfile);
-}
-
-void MusicManager::loadMusic(FileIdent file) {
-	debugC(1, kDebugSound, "loadMusic(%d, %d)", file._fileNum, file._subFile);
-
-	_music = _vm->_files->loadFile(file);
-}
-
-void MusicManager::newMusic(int musicId, int mode) {
+void MusicManagerMIDI::newMusic(int musicId, int mode) {
 	debugC(1, kDebugSound, "newMusic(%d, %d)", musicId, mode);
 
 	if (!_driver)
@@ -467,14 +470,7 @@ void MusicManager::newMusic(int musicId, int mode) {
 		midiPlay();
 }
 
-void MusicManager::freeMusic() {
-	debugC(3, kDebugSound, "freeMusic");
-
-	delete _music;
-	_music = nullptr;
-}
-
-void MusicManager::startMusicFade() {
+void MusicManagerMIDI::startMusicFade() {
 	debugC(3, kDebugSound, "fadeMusic");
 	if (!isPlaying())
 		return;
@@ -483,11 +479,106 @@ void MusicManager::startMusicFade() {
 	warning("TODO: Implement MusicManager::fadeMusic - fade over 700ms from startVol %d", startVol);
 }
 
-void MusicManager::setLoop(bool loop) {
+void MusicManagerMIDI::setLoop(bool loop) {
 	debugC(3, kDebugSound, "setLoop");
 
 	_isLooping = loop;
 	if (_parser)
 		_parser->property(MidiParser::mpAutoLoop, _isLooping);
 }
+
+/******************/
+
+#ifdef USE_VORBIS
+
+MusicManagerOGG::MusicManagerOGG(AccessEngine *vm) : MusicManager(vm) {
+	_handle = new Audio::SoundHandle();
+}
+
+MusicManagerOGG::~MusicManagerOGG() {
+	delete _handle;
+}
+
+void MusicManagerOGG::midiPlay() {
+	if (isPlaying())
+		stopSong();
+
+	if (!_music) {
+		warning("midiPlay called with nothing loaded");
+		return;
+	}
+
+	Audio::SeekableAudioStream *audio = Audio::makeVorbisStream(_music->_stream, DisposeAfterUse::NO);
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, _handle,
+		   audio, -1, _vm->_mixer->kMaxChannelVolume, 0,
+		   DisposeAfterUse::YES);
+}
+
+bool MusicManagerOGG::isPlaying() {
+	return _vm->_mixer->isSoundHandleActive(*_handle);
+}
+
+void MusicManagerOGG::midiRepeat() {
+
+}
+
+void MusicManagerOGG::stopSong() {
+	_vm->_mixer->stopHandle(*_handle);
+}
+
+void MusicManagerOGG::newMusic(int musicId, int mode) {
+	debugC(1, kDebugSound, "newMusic(%d, %d)", musicId, mode);
+
+	bool doLoop = false;
+
+	if (mode == 1) {
+		// Resume previous music
+		stopSong();
+		freeMusic();
+		_music = _tempMusic;
+		_tempMusic = nullptr;
+		doLoop = true;
+	} else {
+		doLoop = (mode == 2);
+		_tempMusic = _music;
+		stopSong();
+		loadMusic(98, musicId);
+	}
+
+	if (_music)
+		midiPlay();
+
+	if (doLoop)
+		setLoop(true);
+}
+
+void MusicManagerOGG::loadMusic(int fileNum, int subfile) {
+	Common::Path path = Common::Path(Common::String::format("MUSIC/M%02d.ogg", subfile));
+	if (!_vm->_files->existFile(path)) {
+		warning("Don't have requested music file %s", path.toString().c_str());
+		return;
+	}
+
+	_music = _vm->_files->loadRawFile(path);
+}
+
+void MusicManagerOGG::startMusicFade() {
+	warning("TODO: Implement MusicManagerOGG::startMusicFade");
+}
+
+void MusicManagerOGG::setLoop(bool loop) {
+	if (loop)
+		_vm->_mixer->loopChannel(*_handle);
+}
+
+void MusicManagerOGG::syncVolume() {
+	bool mute = ConfMan.getBool("mute");
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+		mute ? 0 : ConfMan.getInt("music_volume"));
+}
+
+
+#endif // USE_VORBIS
+
+
 } // End of namespace Access

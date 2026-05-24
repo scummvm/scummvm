@@ -96,15 +96,14 @@ FileManager::~FileManager() {
 Resource *FileManager::loadFile(int fileNum, int subfile) {
 	Resource *res = nullptr;
 	const Common::Path &filepath = _vm->_res->FILENAMES[fileNum];
-	Common::File file;
 
 	// Noctropolis remastered has music in OGG or MID format broken
 	// out into the individual files.
-	if (_vm->getGameID() == kGameNoctropolis && fileNum == 98 && !file.exists(filepath)) {
+	if (_vm->getGameID() == kGameNoctropolis && fileNum == 98 && !SearchMan.hasFile(filepath)) {
 		Common::Path path = Common::Path(Common::String::format("MUSIC/M%02d.mid", subfile));
 		// TODO: Also check for OGG file here.  Make it a configuration
 		// variable - originally hidef_music, default true.
-		if (file.exists(path))
+		if (SearchMan.hasFile(path))
 			res = loadRawFile(path);
 	} else {
 		res = new Resource();

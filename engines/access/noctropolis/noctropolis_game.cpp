@@ -58,6 +58,16 @@ void NoctropolisEngine::initObjects() {
 
 	// Current defaults to screen in Noctropolis.
 	_current = _screen;
+
+	// If we are using "high definition" audio then replace the midi manager
+	if (ConfMan.getBool("ogg_music") && SearchMan.hasFile("MUSIC/M00.ogg")) {
+#ifdef USE_VORBIS
+		delete _midi;
+		_midi = new MusicManagerOGG(this);
+#else
+		warning("OGG music requested but Vorbis support not in build - falling back to MIDI");
+#endif // USE_VORBIS
+	}
 }
 
 void NoctropolisEngine::setupGame() {
@@ -845,7 +855,7 @@ void NoctropolisEngine::showNightdiveCredits() {
 	const Font *font = _fonts.getFont(1);
 
 	const Common::Path nightDive("DARK/nds.png");
-	if (!Common::File().exists(nightDive))
+	if (!SearchMan.hasFile(nightDive))
 		return;
 
 	_events->clearEvents();

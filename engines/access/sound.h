@@ -99,41 +99,75 @@ public:
 	bool hasSounds() const { return _soundTable.size() > 0 && _soundTable[0]._res; }
 };
 
-class MusicManager : public Audio::MidiPlayer {
-private:
-	AccessEngine *_vm;
+class MusicManager : public Manager {
+public:
+	MusicManager(AccessEngine *vm) : Manager(vm), _music(nullptr), _tempMusic(nullptr) {};
+	virtual ~MusicManager();
 
+	bool isMusicLoaded() { return _music != nullptr; }
+	void freeMusic();
+	virtual void loadMusic(int fileNum, int subfile);
+	void loadMusic(FileIdent ident) { loadMusic(ident._fileNum, ident._subFile); };
+
+	virtual void midiPlay() = 0;
+	virtual bool isPlaying() = 0;
+	virtual void midiRepeat() = 0;
+	virtual void stopSong() = 0;
+	virtual void newMusic(int musicId, int mode) = 0;
+	virtual void startMusicFade() = 0;
+	virtual void setLoop(bool loop) = 0;
+	virtual void syncVolume() = 0;
+
+protected:
+	Resource *_music;
 	Resource *_tempMusic;
 
+};
+
+class MusicManagerMIDI : private Audio::MidiPlayer, public MusicManager {
+private:
 	// MidiDriver_BASE interface implementation
 	void send(uint32 b) override;
 
 public:
-	Resource *_music;
+	MusicManagerMIDI(AccessEngine *vm);
+	~MusicManagerMIDI() override;
+
+	void midiPlay() override;
+	bool isPlaying() override { return MidiPlayer::isPlaying(); }
+	void midiRepeat() override;
+	void stopSong() override;
+	void newMusic(int musicId, int mode) override;
+	void startMusicFade() override;
+	void setLoop(bool loop) override;
+
+	void syncVolume() override { MidiPlayer::syncVolume(); }
+};
+
+#ifdef USE_VORBIS
+
+class MusicManagerOGG : public MusicManager {
+private:
+	Audio::SoundHandle *_handle;
 
 public:
-	MusicManager(AccessEngine *vm);
-	~MusicManager() override;
+	MusicManagerOGG(AccessEngine *vm);
+	~MusicManagerOGG() override;
 
-	void midiPlay();
+	void midiPlay() override;
+	bool isPlaying() override;
+	void midiRepeat() override;
+	void stopSong() override;
+	void newMusic(int musicId, int mode) override;
+	void startMusicFade() override;
+	void setLoop(bool loop) override;
+	void syncVolume() override;
 
-	bool checkMidiDone();
-
-	void midiRepeat();
-
-	void stopSong();
-
-	void newMusic(int musicId, int mode);
-
-	void freeMusic();
-
-	void startMusicFade();
-
-	void loadMusic(int fileNum, int subfile);
-	void loadMusic(FileIdent file);
-
-	void setLoop(bool loop);
+	void loadMusic(int fileNum, int subfile) override;
 };
+
+#endif
+
 } // End of namespace Access
 
 #endif /* ACCESS_SOUND_H*/

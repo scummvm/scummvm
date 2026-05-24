@@ -325,7 +325,7 @@ void Room::roomInit() {
 }
 
 void Room::clearRoom() {
-	if (_vm->_midi->_music) {
+	if (_vm->_midi->isMusicLoaded()) {
 		_vm->_midi->stopSong();
 		_vm->_midi->freeMusic();
 	}
