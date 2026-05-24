@@ -19,10 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/castle/ay.music.h"
 #include "freescape/games/castle/castle.h"
 #include "freescape/language/8bitDetokeniser.h"
 
@@ -530,6 +532,9 @@ void CastleEngine::loadAssetsCPCFullGame() {
 			it._value->addObjectFromArea(id, _areaMap[255]);
 		}
 	}
+
+	if (ConfMan.getBool("ay_music"))
+		_playerMusic = new CastleAYMusicPlayer(_mixer);
 }
 
 void CastleEngine::drawCPCUI(Graphics::Surface *surface) {
