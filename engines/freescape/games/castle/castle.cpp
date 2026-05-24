@@ -36,6 +36,7 @@
 #include "freescape/gfx.h"
 #include "freescape/games/castle/castle.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
@@ -113,6 +114,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_menuRunIndicator = nullptr;
 	_menuFxOnIndicator = nullptr;
 	_menuFxOffIndicator = nullptr;
+	_playerMusic = nullptr;
 
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
@@ -259,6 +261,11 @@ CastleEngine::~CastleEngine() {
 	if (_menuFxOffIndicator) {
 		_menuFxOffIndicator->free();
 		delete _menuFxOffIndicator;
+	}
+
+	if (_playerMusic) {
+		_playerMusic->stopMusic();
+		delete _playerMusic;
 	}
 }
 
@@ -714,6 +721,9 @@ void CastleEngine::initGameState() {
 
 	_droppingGateStartTicks = 0;
 	_thunderFrameDuration = 0;
+
+	if (_playerMusic)
+		_playerMusic->startMusic();
 }
 
 bool CastleEngine::checkIfGameEnded() {

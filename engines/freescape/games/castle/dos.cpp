@@ -20,10 +20,12 @@
  */
 
 #include "common/file.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/castle/castle.h"
+#include "freescape/games/castle/opl.music.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
@@ -301,6 +303,9 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		stream = decryptFile("CMEDF");
 		load8bitBinary(stream, 0, 16);
 		delete stream;
+
+		if (ConfMan.getBool("opl_music"))
+			_playerMusic = new CastleOPLMusicPlayer();
 	} else
 		error("Not implemented yet");
 
@@ -433,6 +438,9 @@ void CastleEngine::loadAssetsDOSDemo() {
 		stream = decryptFile("CDEDF");
 		load8bitBinary(stream, 0, 16);
 		delete stream;
+
+		if (ConfMan.getBool("opl_music"))
+			_playerMusic = new CastleOPLMusicPlayer();
 	} else
 		error("Not implemented yet");
 

@@ -21,6 +21,8 @@
 
 namespace Freescape {
 
+class MusicPlayer;
+
 struct RiddleText {
 	int8 _dx;
 	int8 _dy;
@@ -175,6 +177,7 @@ public:
 	Common::String _ghostInAreaMessage;
 
 	Common::Array<byte> _modData; // Embedded ProTracker module (Amiga demo)
+	MusicPlayer *_playerMusic;
 	Common::Array<int> _keysCollected;
 	bool _useRockTravel;
 	int _spiritsMeter;
