@@ -22,6 +22,8 @@
 #ifndef NANCY_ACTION_SECONDARYVIDEO_H
 #define NANCY_ACTION_SECONDARYVIDEO_H
 
+#include "engines/nancy/cursor.h"
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/video.h"
 #include "engines/nancy/action/actionrecord.h"
 
@@ -70,6 +72,10 @@ public:
 
 	bool canHaveHotspot() const override { return true; }
 	bool isViewportRelative() const override { return true; }
+
+	CursorManager::CursorType getHoverCursor() const override {
+		return g_nancy->getGameType() >= kGameTypeNancy10 ? CursorManager::kHotspotTalk : CursorManager::kHotspot;
+	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
