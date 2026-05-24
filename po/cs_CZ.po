@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-24 15:21+0000\n"
+"POT-Creation-Date: 2026-05-24 23:49+0000\n"
 "PO-Revision-Date: 2026-02-09 20:22+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2836,7 +2836,7 @@ msgstr "Nahrát"
 msgid "Playback"
 msgstr "Přehrát"
 
-#: gui/recorderdialog.cpp:76 gui/widgets/grid.cpp:338
+#: gui/recorderdialog.cpp:76 gui/widgets/grid.cpp:341
 msgid "Edit"
 msgstr "Upravit"
 
@@ -3045,15 +3045,15 @@ msgstr ""
 "Toto nastavení můžete změnit později\n"
 "ve volbách v kartě Různé."
 
-#: gui/widget.cpp:465 gui/widget.cpp:467 gui/widget.cpp:472 gui/widget.cpp:474
+#: gui/widget.cpp:475 gui/widget.cpp:477 gui/widget.cpp:482 gui/widget.cpp:484
 msgid "Clear value"
 msgstr "Vymazat hodnotu"
 
-#: gui/widgets/grid.cpp:332
+#: gui/widgets/grid.cpp:335
 msgid "Play"
 msgstr "Hrát"
 
-#: gui/widgets/grid.cpp:335
+#: gui/widgets/grid.cpp:338
 #, fuzzy
 msgid "Saves"
 msgstr "Uložit"

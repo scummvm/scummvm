@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-24 15:21+0000\n"
+"POT-Creation-Date: 2026-05-24 23:49+0000\n"
 "PO-Revision-Date: 2026-05-23 21:54+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2872,7 +2872,7 @@ msgstr "Grabar"
 msgid "Playback"
 msgstr "Reproducción"
 
-#: gui/recorderdialog.cpp:76 gui/widgets/grid.cpp:338
+#: gui/recorderdialog.cpp:76 gui/widgets/grid.cpp:341
 msgid "Edit"
 msgstr "Editar"
 
@@ -3082,15 +3082,15 @@ msgstr ""
 "Puedes cambiar esta opción más adelante\n"
 "en la pestaña Otras del menú de opciones."
 
-#: gui/widget.cpp:465 gui/widget.cpp:467 gui/widget.cpp:472 gui/widget.cpp:474
+#: gui/widget.cpp:475 gui/widget.cpp:477 gui/widget.cpp:482 gui/widget.cpp:484
 msgid "Clear value"
 msgstr "Limpiar contenido"
 
-#: gui/widgets/grid.cpp:332
+#: gui/widgets/grid.cpp:335
 msgid "Play"
 msgstr "Jugar"
 
-#: gui/widgets/grid.cpp:335
+#: gui/widgets/grid.cpp:338
 msgid "Saves"
 msgstr "Guardados"
 
