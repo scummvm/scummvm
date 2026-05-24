@@ -40,19 +40,6 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-// ---------------------------------------------------------------------------
-// Scratch layout (matches ROOM102.MAC)
-//
-//   game.scratch offsets:
-//     sprite[0..14]       = 0x00..0x1C  (int16 each)
-//     sequence[0..14]     = 0x1E..0x3A
-//     animation[0..3]     = 0x3C..0x42
-//     diary1_id           = 0x44
-//     diary2_id           = 0x46
-//     diary_frame         = 0x48
-//     animation_running   = 0x4A
-//     temp                = 0x4C
-// ---------------------------------------------------------------------------
 struct Scratch {
 	int16 sprite[15];           // ss[]  — series handles
 	int16 sequence[15];         // seq[] — sequence handles
@@ -100,20 +87,9 @@ static Scratch scratch;
 #define DIARY1  1
 #define DIARY2  2
 
-// Vocabulary word IDs (from VOCAB.DB; formula: 1-based-line + 13)
-//   Hardcoded verbs (VOCABH.DB):
-//     look=3, take=4, push=5, open=6, pull=10, close=11, walk_to=13
-//   VOCAB.DB-derived nouns (verified against disassembly where noted):
-//     walk_through=37 (✓), look_at=30 (✓)
-//     floor=16, rug=18, wall=20, bed=21, chest=23, window=24, nightstand=25
-//     tapestry=26 (✓), fireplace=34, fireplace_screen=35
-//     decoration=41 (✓), ceiling=196, door_to_hallway=197
-//     wood_basket=204, door_to_king_s_room=245 (✓)
-//     flowers=251, shutters=252, bookcase=253, diaries=264, sconce=329
-
 // ---------------------------------------------------------------------------
 
-void room_102_init() {
+static void room_102_init() {
 	// Load sprite series (fx_reach_diaries / kgrh_9 is intentionally skipped)
 	ss[fx_diary1]      = kernel_load_series(kernel_name('p', 0), false);
 	ss[fx_diary2]      = kernel_load_series(kernel_name('p', 1), false);
@@ -167,10 +143,10 @@ void room_102_init() {
 	section_1_music();
 }
 
-void room_102_pre_parser() {
+static void room_102_pre_parser() {
 }
 
-void room_102_daemon() {
+static void room_102_daemon() {
 	int16 reset_frame;
 
 	// --- Diary 1 reading sequence ---
@@ -249,15 +225,16 @@ void room_102_daemon() {
 	}
 }
 
-void room_102_parser() {
+static void room_102_parser() {
 	if (player.look_around) {
 		text_show(10201);
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Walk through / open / pull: door to King's room (room 101) ---
-	if (player_parse(37, 245, 0) || player_parse(6, 245, 0) || player_parse(10, 245, 0)) {
+	if (player_said_2(walk_through, door_to_king_s_room) ||
+			player_said_2(open, door_to_king_s_room) ||
+			player_said_2(pull, door_to_king_s_room)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -291,15 +268,15 @@ void room_102_parser() {
 		return;
 	}
 
-	// --- Walk through / open / pull: door to hallway (room 103) ---
-	if (player_parse(37, 197, 0) || player_parse(6, 197, 0) || player_parse(10, 197, 0)) {
+	if (player_said_2(walk_through, door_to_hallway) ||
+			player_said_2(open, door_to_hallway) ||
+			player_said_2(pull, door_to_hallway)) {
 		new_room = 103;
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Take / open: diaries ---
-	if (player_parse(4, 264, 0) || player_parse(6, 264, 0)) {
+	if (player_said_2(take, diaries) || player_said_2(open, diaries)) {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed  = false;
@@ -345,148 +322,142 @@ void room_102_parser() {
 		return;
 	}
 
-	// --- Look / look at ---
-	if (player_parse(3, 0) || player_parse(30, 0)) {
-		if (player_parse(34, 0)) {
+	if (player_said_1(look_at) || player_said_1(look_at)) {
+		if (player_said_1(fireplace)) {
 			text_show(10202);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(21, 0)) {
+		if (player_said_1(bed)) {
 			text_show(10203);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(252, 0)) {
+		if (player_said_1(shutters)) {
 			text_show(10204);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(18, 0)) {
+		if (player_said_1(rug)) {
 			text_show(10206);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(253, 0)) {
+		if (player_said_1(bookcase)) {
 			text_show(10208);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(264, 0)) {
+		if (player_said_1(diaries)) {
 			text_show(10209);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(245, 0)) {
+		if (player_said_1(door_to_king_s_room)) {
 			text_show(10215);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(251, 0)) {
+		if (player_said_1(flowers)) {
 			text_show(10216);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(24, 0)) {
+		if (player_said_1(window)) {
 			text_show(10217);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(204, 0)) {
+		if (player_said_1(basket)) {
 			text_show(10219);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(35, 0)) {
+		if (player_said_1(fireplace_screen)) {
 			text_show(10220);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(25, 0)) {
+		if (player_said_1(nightstand)) {
 			text_show(10222);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(197, 0)) {
+		if (player_said_1(door_to_hallway)) {
 			text_show(10223);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(23, 0)) {
+		if (player_said_1(chest)) {
 			text_show(10224);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(26, 0)) {
+		if (player_said_1(tapestry)) {
 			text_show(10226);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(329, 0)) {
+		if (player_said_1(sconce)) {
 			text_show(10227);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(16, 0)) {
+		if (player_said_1(floor)) {
 			text_show(10228);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(20, 0)) {
+		if (player_said_1(wall)) {
 			text_show(10229);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(41, 0)) {
+		if (player_said_1(decoration)) {
 			text_show(10230);
 			player.command_ready = false;
 			return;
 		}
-		if (player_parse(196, 0)) {
+		if (player_said_1(ceiling)) {
 			text_show(10231);
 			player.command_ready = false;
 			return;
 		}
-		return;  // no noun matched inside look — do not clear command_ready
+		// no noun matched inside look — do not clear command_ready
+		return;
 	}
 
-	// --- Open chest ---
-	if (player_parse(6, 23, 0)) {
+	if (player_said_2(open, chest)) {
 		text_show(10224);
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Take flowers ---
-	if (player_parse(4, 251, 0)) {
+	if (player_said_2(take, flowers)) {
 		text_show(10225);
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Open window ---
-	if (player_parse(6, 24, 0)) {
+	if (player_said_2(open, window)) {
 		text_show(10218);
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Push / pull fireplace screen ---
-	if ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(35, 0)) {
+	if ((player_said_1(push) || player_said_1(pull)) && player_said_1(fireplace_screen)) {
 		text_show(10221);
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Close shutters ---
-	if (player_parse(11, 252, 0)) {
+	if (player_said_2(close, shutters)) {
 		text_show(10205);
 		player.command_ready = false;
 		return;
 	}
 
-	// --- Pull rug ---
-	if (player_parse(10, 18, 0)) {
+	if (player_said_2(pull, rug)) {
 		text_show(10207);
 		player.command_ready = false;
 		return;
@@ -502,9 +473,6 @@ void room_102_synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(local->diary_frame);
 	s.syncAsSint16LE(local->animation_running);
 	s.syncAsSint16LE(local->temp);
-}
-
-void room_102_error() {
 }
 
 void room_102_preload() {
