@@ -240,7 +240,6 @@ ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &
 }
 
 void ActionManager::processActionRecords() {
-	_recordsWereExecuted = false;
 	_activatedRecordsThisFrame.clear();
 
 	for (auto record : _records) {
@@ -251,7 +250,7 @@ void ActionManager::processActionRecords() {
 		// Process dependencies every call. We make sure to ignore cursor dependencies,
 		// as they are only handled when calling from handleInput()
 		processDependency(record->_dependencies, *record, record->canHaveHotspot());
-		record->_isActive = record->_dependencies.satisfied;
+		record->_isActive = _previousRecordWasExecuted = record->_dependencies.satisfied;
 
 		if (record->_isActive) {
 			if(record->_state == ActionRecord::kBegin) {
@@ -259,7 +258,6 @@ void ActionManager::processActionRecords() {
 			}
 
 			record->execute();
-			_recordsWereExecuted = true;
 		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState.getState() == State::Scene::kLoad) {
@@ -560,7 +558,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kDefaultAR:
-			dep.satisfied = !_recordsWereExecuted;
+			dep.satisfied = !_previousRecordWasExecuted;
 			break;
 		default:
 			warning("Unimplemented Dependency type %i", (int)dep.type);
@@ -575,7 +573,7 @@ void ActionManager::clearActionRecords() {
 	}
 	_records.clear();
 	_activatedRecordsThisFrame.clear();
-	_recordsWereExecuted = false;
+	_previousRecordWasExecuted = false;
 }
 
 void ActionManager::onPause(bool pause) {
