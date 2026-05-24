@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-23 19:15+0000\n"
+"POT-Creation-Date: 2026-05-24 15:21+0000\n"
 "PO-Revision-Date: 2026-05-06 08:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -123,7 +123,7 @@ msgstr "Вверх"
 #: gui/saveload-dialog.cpp:456 gui/saveload-dialog.cpp:540
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 base/main.cpp:604
+#: gui/unknown-game-dialog.cpp:53 base/main.cpp:608
 #: dists/android.strings.xml.cpp:46 engines/engine.cpp:800
 #: engines/engine.cpp:825 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
@@ -331,7 +331,7 @@ msgstr "Сейчас работает другое хранилище. Вы хо
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
 #: gui/launcher.cpp:534 gui/launcher.cpp:1938 gui/options.cpp:3485
-#: gui/options.cpp:3859 base/main.cpp:604
+#: gui/options.cpp:3859 base/main.cpp:608
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -379,7 +379,7 @@ msgstr "Содержимое кода JSON имеет неверный форм�
 #: gui/fluidsynth-dialog.cpp:154 gui/massadd.cpp:90 gui/message.cpp:156
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2418 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1244 base/main.cpp:671 base/main.cpp:696
+#: gui/saveload-dialog.cpp:1244 base/main.cpp:675 base/main.cpp:700
 #: dists/android.strings.xml.cpp:33 engines/engine.cpp:846
 #: backends/platform/wii/options.cpp:46 engines/buried/buried.cpp:622
 #: engines/buried/saveload.cpp:83
@@ -985,7 +985,7 @@ msgid "Sine"
 msgstr "Синусоида"
 
 #. I18N: Hardware key on controller
-#: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:47
+#: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/psp2/psp2.cpp:49 engines/dragons/metaengine.cpp:188
 msgid "Triangle"
 msgstr "Треугольная"
@@ -3070,12 +3070,12 @@ msgstr "Играть"
 msgid "Saves"
 msgstr "Сохранения"
 
-#: base/main.cpp:604
+#: base/main.cpp:608
 msgid "Bad config file format. overwrite?"
 msgstr "Неверный формат файла конфигурации. Переписать его?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:653
+#: base/main.cpp:657
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3119,12 +3119,12 @@ msgstr ""
 "Повторите шаги 1 и 6 для каждой игры."
 
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:673 base/main.cpp:698
+#: base/main.cpp:677 base/main.cpp:702
 msgid "Read Later"
 msgstr "Читать позже"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:680
+#: base/main.cpp:684
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3162,7 +3162,7 @@ msgstr ""
 "\"Выбрать\".\n"
 "Повторите шаги 1 и 6 для каждой игры."
 
-#: base/main.cpp:844 base/main.cpp:893
+#: base/main.cpp:866 base/main.cpp:915
 msgid "Error running game:"
 msgstr "Ошибка запуска игры:"
 
@@ -4498,7 +4498,7 @@ msgstr "Правый курок"
 #: backends/platform/sdl/miyoo/miyoo.cpp:74
 #: backends/platform/sdl/miyoo/miyoo.cpp:101
 #: backends/platform/sdl/opendingux/opendingux.cpp:64
-#: backends/platform/sdl/ps3/ps3.cpp:57 backends/platform/sdl/psp2/psp2.cpp:56
+#: backends/platform/sdl/ps3/ps3.cpp:58 backends/platform/sdl/psp2/psp2.cpp:56
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad up"
 msgstr "Крестовина вверх"
@@ -4509,7 +4509,7 @@ msgstr "Крестовина вверх"
 #: backends/platform/sdl/miyoo/miyoo.cpp:75
 #: backends/platform/sdl/miyoo/miyoo.cpp:102
 #: backends/platform/sdl/opendingux/opendingux.cpp:65
-#: backends/platform/sdl/ps3/ps3.cpp:58 backends/platform/sdl/psp2/psp2.cpp:57
+#: backends/platform/sdl/ps3/ps3.cpp:59 backends/platform/sdl/psp2/psp2.cpp:57
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad down"
 msgstr "Крестовина вниз"
@@ -4520,7 +4520,7 @@ msgstr "Крестовина вниз"
 #: backends/platform/sdl/miyoo/miyoo.cpp:76
 #: backends/platform/sdl/miyoo/miyoo.cpp:103
 #: backends/platform/sdl/opendingux/opendingux.cpp:66
-#: backends/platform/sdl/ps3/ps3.cpp:59 backends/platform/sdl/psp2/psp2.cpp:58
+#: backends/platform/sdl/ps3/ps3.cpp:60 backends/platform/sdl/psp2/psp2.cpp:58
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad left"
 msgstr "Крестовина влево"
@@ -4531,7 +4531,7 @@ msgstr "Крестовина влево"
 #: backends/platform/sdl/miyoo/miyoo.cpp:77
 #: backends/platform/sdl/miyoo/miyoo.cpp:104
 #: backends/platform/sdl/opendingux/opendingux.cpp:67
-#: backends/platform/sdl/ps3/ps3.cpp:60 backends/platform/sdl/psp2/psp2.cpp:59
+#: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad right"
 msgstr "Крестовина вправо"
@@ -4550,26 +4550,26 @@ msgstr "Правый триггер"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/opendingux/opendingux.cpp:78
-#: backends/platform/sdl/ps3/ps3.cpp:67 backends/platform/sdl/psp2/psp2.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:68 backends/platform/sdl/psp2/psp2.cpp:64
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left stick X"
 msgstr "Левый стик ось X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/opendingux/opendingux.cpp:79
-#: backends/platform/sdl/ps3/ps3.cpp:68 backends/platform/sdl/psp2/psp2.cpp:65
+#: backends/platform/sdl/ps3/ps3.cpp:69 backends/platform/sdl/psp2/psp2.cpp:65
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left stick Y"
 msgstr "Левый стик ось Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#: backends/platform/sdl/ps3/ps3.cpp:69 backends/platform/sdl/psp2/psp2.cpp:66
+#: backends/platform/sdl/ps3/ps3.cpp:70 backends/platform/sdl/psp2/psp2.cpp:66
 #: backends/platform/sdl/switch/switch.cpp:60
 msgid "Right stick X"
 msgstr "Правый стик ось X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#: backends/platform/sdl/ps3/ps3.cpp:70 backends/platform/sdl/psp2/psp2.cpp:67
+#: backends/platform/sdl/ps3/ps3.cpp:71 backends/platform/sdl/psp2/psp2.cpp:67
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right stick Y"
 msgstr "Правый стик ось Y"
@@ -4857,7 +4857,7 @@ msgstr "Y"
 #: backends/platform/sdl/miyoo/miyoo.cpp:67
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
-#: backends/platform/sdl/ps3/ps3.cpp:49 backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/sdl/ps3/ps3.cpp:50 backends/platform/sdl/psp2/psp2.cpp:51
 #: engines/bagel/metaengine.cpp:64 engines/efh/metaengine.cpp:397
 #: engines/got/metaengine.cpp:76 engines/hypno/metaengine.cpp:363
 #: engines/mm/mm1/metaengine.cpp:50 engines/mm/mm1/metaengine.cpp:97
@@ -4874,7 +4874,7 @@ msgstr "Выбор"
 #: backends/platform/sdl/miyoo/miyoo.cpp:69
 #: backends/platform/sdl/miyoo/miyoo.cpp:96
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
-#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
 #: engines/sludge/keymapper_tables.h:349
 msgid "Start"
 msgstr "Пуск"
@@ -6091,14 +6091,14 @@ msgstr "Лицензия Catharon"
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
 #: backends/platform/sdl/miyoo/miyoo.cpp:106
-#: backends/platform/sdl/ps3/ps3.cpp:65
+#: backends/platform/sdl/ps3/ps3.cpp:66
 msgid "L2"
 msgstr "L2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:81
 #: backends/platform/sdl/miyoo/miyoo.cpp:108
-#: backends/platform/sdl/ps3/ps3.cpp:66
+#: backends/platform/sdl/ps3/ps3.cpp:67
 msgid "R2"
 msgstr "R2"
 
@@ -6115,45 +6115,45 @@ msgstr "Меню"
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:110
 #: backends/platform/sdl/opendingux/opendingux.cpp:73
-#: backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/sdl/ps3/ps3.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
 msgstr "L3"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:112
-#: backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/sdl/ps3/ps3.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
 msgstr "R3"
 
 #. I18N: Hardware key on controller
-#: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:43
+#: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:200
 msgid "Cross"
 msgstr "Крест"
 
 #. I18N: Hardware key on controller
-#: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:45
+#: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:194
 msgid "Circle"
 msgstr "Круг"
 
 #. I18N: Hardware key on controller
-#: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:47
+#: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/dragons/metaengine.cpp:182
 msgid "Square"
 msgstr "Квадрат"
 
-#: backends/platform/sdl/ps3/ps3.cpp:50
+#: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "PS"
 msgstr "PS"
 
-#: backends/platform/sdl/ps3/ps3.cpp:55
+#: backends/platform/sdl/ps3/ps3.cpp:56
 msgid "L1"
 msgstr "L1"
 
-#: backends/platform/sdl/ps3/ps3.cpp:56
+#: backends/platform/sdl/ps3/ps3.cpp:57
 msgid "R1"
 msgstr "R1"
 
