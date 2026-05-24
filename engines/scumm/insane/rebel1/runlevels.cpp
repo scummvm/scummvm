@@ -887,11 +887,13 @@ bool InsaneRebel1::runLevel7() {
 		int route = 0;
 		int32 routeStartFrame = 0;
 		int32 routeSourceFrame = 0;
+		int32 routeVideoStartFrame = 0;
 		while (!_vm->shouldQuit()) {
 			_levelRouteIndex = route;
 			_pendingRouteIndex = -1;
 			_pendingRouteStartFrame = routeSourceFrame;
 			_pendingRouteCutoverFrame = -1;
+			_pendingRouteVideoStartFrame = routeVideoStartFrame;
 			playInteractiveVideo(kLevel7Segments[route], routeStartFrame);
 			if (_vm->shouldQuit())
 				return false;
@@ -904,9 +906,10 @@ bool InsaneRebel1::runLevel7() {
 
 			route = _pendingRouteIndex;
 			routeSourceFrame = _pendingRouteStartFrame;
+			routeVideoStartFrame = _pendingRouteVideoStartFrame;
 			// DOS does not seek the destination route ANM here. The ANM-local
-			// decision frame is used by the playback gate/cutoff, while
-			// L7PLAY2..6 open from their first frame.
+			// decision frame is used by the playback gate/cutoff; ScummVM
+			// starts at the already-advanced gate target after the cutover.
 			routeStartFrame = 0;
 		}
 
@@ -914,6 +917,7 @@ bool InsaneRebel1::runLevel7() {
 		_pendingRouteIndex = -1;
 		_pendingRouteStartFrame = 0;
 		_pendingRouteCutoverFrame = -1;
+		_pendingRouteVideoStartFrame = 0;
 		_level7WarningFrames = 0;
 		_level7WarningThreshold = 0;
 
@@ -2022,16 +2026,18 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	splayer->setFastForwardToFrame(0);
 	if (_currentLevel == 6 && level7RouteSplice) {
 		// DOS opens the route ANM from the beginning, then the armed frame gate
-		// suppresses destination local frame 0 because the L7 arm-frame table is 1.
-		videoStartFrame = 1;
+		// suppresses until the adjusted target. With ScummVM's delayed cutover,
+		// the destination must advance by the source tail already displayed.
+		videoStartFrame = (_pendingRouteVideoStartFrame > 0) ?
+			_pendingRouteVideoStartFrame : 1;
 		videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
 		if (videoOffset < 0) {
-			debug(1, "RA1 L7 route switch: route=%d gateFrame=%d offset lookup failed",
+			debug(1, "RA1 L7 route switch: route=%d destinationFrame=%d offset lookup failed",
 				_levelRouteIndex, (int)videoStartFrame);
 			videoStartFrame = 0;
 			videoOffset = 0;
 		} else {
-			debug(1, "RA1 L7 route switch: route=%d decisionLocalFrame=%d opens destination at gateFrame=%d offset=0x%x",
+			debug(1, "RA1 L7 route switch: route=%d decisionLocalFrame=%d opens destination at localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)_pendingRouteStartFrame,
 				(int)videoStartFrame, (unsigned)videoOffset);
 		}

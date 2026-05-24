@@ -312,6 +312,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_pendingRouteIndex = -1;
 	_pendingRouteStartFrame = 0;
 	_pendingRouteCutoverFrame = -1;
+	_pendingRouteVideoStartFrame = 0;
 	_level7WarningFrames = 0;
 	_level7WarningThreshold = 0;
 	_levelGameplayPhase = 0;
