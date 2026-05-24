@@ -89,262 +89,650 @@ void DragonSoundManager::loadDriver(int sectionNumber) {
 /* ASound1  (asound.dr1)                                                  *
  *-----------------------------------------------------------------------*/
 
-const ASound1::CommandPtr ASound1::_commandList[40] = {
-	&ASound1::command0,  &ASound1::command1,  &ASound1::command2,  &ASound1::command3,
-	&ASound1::command4,  &ASound1::command5,  &ASound1::command6,  &ASound1::command7,
-	&ASound1::command8,  nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound1::command16, nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound1::command24, &ASound1::command25, &ASound1::command26, &ASound1::command27,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound1::command32, &ASound1::command33, &ASound1::command34, &ASound1::command35,
-	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39
+// Cast a derived-class void loader to the base CallbackFunction type.
+// Safe under single inheritance: same function address, only static type changes.
+#define MAKE_CALLBACK(cls, fn) \
+	reinterpret_cast<ASound::CallbackFunction>(&cls::fn)
+
+const ASound1::CommandPtr ASound1::_commandList[102] = {
+	// commands 0-8  (off_11A14)
+	&ASound1::command0,   &ASound1::command1,   &ASound1::command2,   &ASound1::command3,
+	&ASound1::command4,   &ASound1::command5,   &ASound1::command6,   &ASound1::command7,
+	&ASound1::command8,
+	// 9-15 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	// commands 16-18, 19=no-op  (off_11A26)
+	&ASound1::command16,  &ASound1::command17,  &ASound1::command18,  nullptr,
+	// 20-23 absent
+	nullptr, nullptr, nullptr, nullptr,
+	// commands 24-31, then no-op for slot 32  (off_11A2E)
+	&ASound1::command24,  &ASound1::command25,  &ASound1::command26,  &ASound1::command27,
+	&ASound1::command28,  &ASound1::command29,  &ASound1::command30,  &ASound1::command31,
+	// commands 32-48, 49=no-op  (funcs_12251)
+	&ASound1::command32,  &ASound1::command33,  &ASound1::command34,  &ASound1::command35,
+	&ASound1::command36,  &ASound1::command37,  &ASound1::command38,  &ASound1::command39,
+	&ASound1::command40,  &ASound1::command41,  &ASound1::command42,  &ASound1::command43,
+	&ASound1::command44,  &ASound1::command45,  &ASound1::command46,  &ASound1::command47,
+	&ASound1::command48,  nullptr,
+	// 50-63 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	// commands 64-101  (off_11A64); slot 92 and slot 98 are no-ops
+	&ASound1::command64,  &ASound1::command65,  &ASound1::command66,  &ASound1::command67,
+	&ASound1::command68,  &ASound1::command69,  &ASound1::command70,  &ASound1::command71,
+	&ASound1::command72,  &ASound1::command73,  &ASound1::command74,  &ASound1::command75,
+	&ASound1::command76,  &ASound1::command77,  &ASound1::command78,  &ASound1::command79,
+	&ASound1::command80,  &ASound1::command81,  &ASound1::command82,  &ASound1::command83,
+	&ASound1::command84,  &ASound1::command85,  &ASound1::command86,  &ASound1::command87,
+	&ASound1::command88,  &ASound1::command89,  &ASound1::command90,  &ASound1::command91,
+	nullptr,              &ASound1::command93,  &ASound1::command94,  &ASound1::command95,
+	&ASound1::command96,  &ASound1::command97,  nullptr,              &ASound1::command99,
+	&ASound1::command100, &ASound1::command101
 };
 
 ASound1::ASound1(Audio::Mixer *mixer, OPL::OPL *opl)
 		: ASound(mixer, opl, "asound.dr1", 0x2520, 0x49e0) {
-	// Load sound samples
 	auto samplesStream = getDataStream(0x1dc);
 	for (int i = 0; i < 182; ++i)
 		_samples.push_back(AdlibSample(samplesStream));
 }
 
 int ASound1::command(int commandId, int param) {
-	if (commandId > 39 || !_commandList[commandId])
+	if (commandId > 101 || !_commandList[commandId])
 		return 0;
-	
 	return (this->*_commandList[commandId])();
 }
 
 // commands 0-8: delegate to base ASound
-int ASound1::command0() { return ASound::command0(); }
-int ASound1::command1() { return ASound::command1(); }
-int ASound1::command2() { return ASound::command2(); }
-int ASound1::command3() { return ASound::command3(); }
-int ASound1::command4() { return ASound::command4(); }
-int ASound1::command5() { return ASound::command5(); }
-int ASound1::command6() { return ASound::command6(); }
-int ASound1::command7() { return ASound::command7(); }
-int ASound1::command8() { return ASound::command8(); }
-
-int ASound1::commandMusic0() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x1ECA));
-	_channels[1]->load(loadData(0x1FBF));
-	_channels[2]->load(loadData(0x2037));
-	_channels[3]->load(loadData(0x20EE));
-	_channels[4]->load(loadData(0x219B));
-	_channels[5]->load(loadData(0x21AF));
-	return 0;
-}
-
-int ASound1::commandMusic1() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x3418));
-	_channels[1]->load(loadData(0x34EB));
-	_channels[2]->load(loadData(0x359B));
-	_channels[3]->load(loadData(0x3658));
-	_channels[4]->load(loadData(0x3667));
-	_channels[5]->load(loadData(0x3677));
-	return 0;
-}
-
-int ASound1::commandMusic2() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x3688));
-	_channels[1]->load(loadData(0x387B));
-	_channels[2]->load(loadData(0x3A01));
-	_channels[3]->load(loadData(0x3BC6));
-	_channels[4]->load(loadData(0x3D31));
-	_channels[5]->load(loadData(0x3D41));
-	return 0;
-}
-
-int ASound1::commandMusic3() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x3D52));
-	_channels[1]->load(loadData(0x3FD3));
-	_channels[2]->load(loadData(0x41FF));
-	_channels[3]->load(loadData(0x420C));
-	_channels[4]->load(loadData(0x4219));
-	_channels[5]->load(loadData(0x4229));
-	return 0;
-}
+int ASound1::command0()  { return ASound::command0(); }
+int ASound1::command1()  { return ASound::command1(); }
+int ASound1::command2()  { return ASound::command2(); }
+int ASound1::command3()  { return ASound::command3(); }
+int ASound1::command4()  { return ASound::command4(); }
+int ASound1::command5()  { return ASound::command5(); }
+int ASound1::command6()  { return ASound::command6(); }
+int ASound1::command7()  { return ASound::command7(); }
+int ASound1::command8()  { return ASound::command8(); }
 
 // ---------------------------------------------------------------------------
-// command16 - random background music
-//
-// If channel 0 is active and already playing one of the five known music
-// pieces (identified by their starting offset in field_17), leave it alone.
-// Otherwise pick a piece at random: the original uses getRandomNumber() & 7,
-// discarding 0 and indexing a four-entry table repeated twice (entries 1-3
-// -> pieces 1-3, entries 4-7 -> same pieces again with entry 4 wrapping to
-// piece 0).  We reproduce this with a modulo-4 on a non-zero value.
+// command16 - music piece A (castle interior theme)
+// isSoundActive guard + isMusicChannelsActive deferred-callback pattern.
+// counter = period = 0x90; sets musicIndex = 0x10.
 // ---------------------------------------------------------------------------
+void ASound1::loadCommand16() {
+	resetCallbackTimer(0x90);
+	setMusicIndex(0x10);
+	ASound::command1();
+	_channels[0]->load(loadData(0x262C));
+	_channels[1]->load(loadData(0x26DA));
+	_channels[2]->load(loadData(0x2752));
+	_channels[3]->load(loadData(0x27CE));
+	_channels[4]->load(loadData(0x2826));
+	_channels[5]->load(loadData(0x284D));
+	_channels[6]->load(loadData(0x286D));
+}
+
 int ASound1::command16() {
-	if (_channels[0]->_activeCount) {
-		// Special offset checks
-		int f = _channels[0]->_loopStartPtr - &_soundData[0];
-
-		if (f == 0 || f == 0x1ECA || f == 0x21C4 ||
-		    f == 0x3418 || f == 0x3688 || f == 0x3D52)
-			return 0;
+	byte *pData = loadData(0x262C);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand16();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand16));
 	}
-
-	int idx;
-	do {
-		idx = getRandomNumber() & 3;
-	} while (idx == 0);
-	_musicIndex = idx;
-
-	typedef int (ASound1::*MusicPtr)();
-	static const MusicPtr musicTable[4] = {
-		&ASound1::commandMusic0,
-		&ASound1::commandMusic1,
-		&ASound1::commandMusic2,
-		&ASound1::commandMusic3
-	};
-	return (this->*musicTable[idx])();
+	return 0;
 }
 
 // ---------------------------------------------------------------------------
-// commands 24-27 - upper channel pool
+// command17 - special music piece (7 channels)
+// Uses isAnyChannelActive: if any channel busy, skip entirely.
+// No isSoundActive guard; no deferred callback.
+// counter = period = 0x60; no musicIndex update.
 // ---------------------------------------------------------------------------
+int ASound1::command17() {
+	if (isAnyChannelActive())
+		return 0;
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x43CE));
+	_channels[1]->load(loadData(0x4403));
+	_channels[2]->load(loadData(0x4436));
+	_channels[3]->load(loadData(0x444F));
+	_channels[4]->load(loadData(0x4482));
+	_channels[5]->load(loadData(0x4490));
+	_channels[6]->load(loadData(0x44A8));
+	return 0;
+}
 
+// ---------------------------------------------------------------------------
+// command18 - re-entrant music launcher (delegate to base ASound::command18)
+// ---------------------------------------------------------------------------
+int ASound1::command18() { return ASound::command18(); }
+
+// ---------------------------------------------------------------------------
+// commands 24-31 - sound effects via findFreeChannelFull
+// ---------------------------------------------------------------------------
 int ASound1::command24() {
-	playSound(0x173A);
-	playSound(0x176D);
+	findFreeChannelFull(loadData(0x44E1));
+	findFreeChannelFull(loadData(0x4516));
 	return 0;
 }
 
 int ASound1::command25() {
-	playSound(0x179B);
-	playSound(0x17C7);
+	findFreeChannelFull(loadData(0x4546));
+	findFreeChannelFull(loadData(0x4574));
 	return 0;
 }
 
-int ASound1::command26() {
-	playSound(0x17F5);
-	return 0;
-}
+int ASound1::command26() { findFreeChannelFull(loadData(0x45A4)); return 0; }
+int ASound1::command27() { findFreeChannelFull(loadData(0x45B0)); return 0; }
+int ASound1::command28() { findFreeChannelFull(loadData(0x46CF)); return 0; }
+int ASound1::command29() { findFreeChannelFull(loadData(0x45E4)); return 0; }
+int ASound1::command30() { findFreeChannelFull(loadData(0x461C)); return 0; }
 
-int ASound1::command27() {
-	playSound(0x1801);
+// command31 - writes transposition byte 0x67 into the sound block before loading
+int ASound1::command31() {
+	*loadData(0x4680) = 0x67;
+	findFreeChannelFull(loadData(0x467D));
 	return 0;
 }
 
 // ---------------------------------------------------------------------------
-// commands 32-39
+// commands 32-48 - music piece loaders
+// All use: isSoundActive guard → isMusicChannelsActive → defer or load.
+// Exceptions: command35 uses command3 (not command1); command43/48 are
+// special (no deferred callback; modify sound data bytes directly);
+// command44 uses asymmetric counter/period; command46 uses isAnyChannelActive
+// as the outer guard instead of isSoundActive.
 // ---------------------------------------------------------------------------
 
-// command32 - no guard, no fade, load ch0-5
+void ASound1::loadCommand32() {
+	resetCallbackTimer(0xB0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x299A));
+	_channels[1]->load(loadData(0x29E3));
+	_channels[2]->load(loadData(0x2A45));
+	_channels[3]->load(loadData(0x2A6F));
+	_channels[4]->load(loadData(0x2A9F));
+	_channels[5]->load(loadData(0x2AAE));
+}
+
 int ASound1::command32() {
-	_channels[0]->load(loadData(0x2522));
-	_channels[1]->load(loadData(0x255D));
-	_channels[2]->load(loadData(0x2591));
-	_channels[3]->load(loadData(0x25BB));
-	_channels[4]->load(loadData(0x25E7));
-	_channels[5]->load(loadData(0x2613));
+	byte *pData = loadData(0x299A);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand32();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand32));
+	}
 	return 0;
 }
 
-// command33 - isSoundActive guard, command1, load ch0-5
+void ASound1::loadCommand33() {
+	resetCallbackTimer(0xB0);
+	setMusicIndex(0x21);
+	ASound::command1();
+	_channels[0]->load(loadData(0x2ABE));
+	_channels[1]->load(loadData(0x2B64));
+	_channels[2]->load(loadData(0x2BC8));
+	_channels[3]->load(loadData(0x2C03));
+	_channels[4]->load(loadData(0x2C82));
+	_channels[5]->load(loadData(0x2C9A));
+}
+
 int ASound1::command33() {
-	byte *pData = loadData(0x266C);
+	byte *pData = loadData(0x2ABE);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x2929));
-		_channels[2]->load(loadData(0x2B1D));
-		_channels[3]->load(loadData(0x2D37));
-		_channels[4]->load(loadData(0x2EC3));
-		_channels[5]->load(loadData(0x3033));
+		if (!isMusicChannelsActive())
+			loadCommand33();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand33));
 	}
 	return 0;
 }
 
-// command34 - isSoundActive guard, stop(), load ch0-5
+void ASound1::loadCommand34() {
+	resetCallbackTimer(0x50);
+	ASound::command1();
+	_channels[0]->load(loadData(0x3A74));
+	_channels[1]->load(loadData(0x3AE1));
+	_channels[2]->load(loadData(0x3AFD));
+	_channels[3]->load(loadData(0x3B19));
+	_channels[4]->load(loadData(0x3B26));
+	_channels[5]->load(loadData(0x3B33));
+}
+
 int ASound1::command34() {
-	byte *pData = loadData(0x1852);
+	byte *pData = loadData(0x3A74);
 	if (!isSoundActive(pData)) {
-		stop();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x1AA9));
-		_channels[2]->load(loadData(0x1BC4));
-		_channels[3]->load(loadData(0x1CF1));
-		_channels[4]->load(loadData(0x1DF2));
-		_channels[5]->load(loadData(0x1EBE));
+		if (!isMusicChannelsActive())
+			loadCommand34();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand34));
 	}
 	return 0;
 }
 
-// command35 - isSoundActive guard, command2 (lower-bank fade),
-// load ch0-5
+// command35 uses command3 (pending-stop fade) instead of command1
+void ASound1::loadCommand35() {
+	resetCallbackTimer(0x60);
+	ASound::command3();
+	_channels[0]->load(loadData(0x38A4));
+	_channels[1]->load(loadData(0x393C));
+	_channels[2]->load(loadData(0x39C2));
+	_channels[3]->load(loadData(0x3A0E));
+	_channels[4]->load(loadData(0x3A3E));
+	_channels[5]->load(loadData(0x3A54));
+	_channels[6]->load(loadData(0x3A63));
+}
+
 int ASound1::command35() {
-	byte *pData = loadData(0x0C36);
+	byte *pData = loadData(0x393C);
 	if (!isSoundActive(pData)) {
-		ASound::command2();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x0D7F));
-		_channels[2]->load(loadData(0x0E48));
-		_channels[3]->load(loadData(0x0F10));
-		_channels[4]->load(loadData(0x0FB2));
-		_channels[5]->load(loadData(0x1096));
+		if (!isMusicChannelsActive())
+			loadCommand35();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand35));
 	}
 	return 0;
 }
 
-// command36 - isSoundActive guard, command2 (lower-bank fade),
-// load ch0-5
+void ASound1::loadCommand36() {
+	resetCallbackTimer(0x80);
+	ASound::command1();
+	_channels[0]->load(loadData(0x3F36));
+	_channels[1]->load(loadData(0x3FFA));
+	_channels[2]->load(loadData(0x40E9));
+	_channels[3]->load(loadData(0x417D));
+	_channels[4]->load(loadData(0x41ED));
+	_channels[5]->load(loadData(0x41FC));
+}
+
 int ASound1::command36() {
-	byte *pData = loadData(0x1190);
+	byte *pData = loadData(0x3F36);
 	if (!isSoundActive(pData)) {
-		ASound::command2();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x12D7));
-		_channels[2]->load(loadData(0x13AA));
-		_channels[3]->load(loadData(0x1476));
-		_channels[4]->load(loadData(0x1528));
-		_channels[5]->load(loadData(0x1614));
+		if (!isMusicChannelsActive())
+			loadCommand36();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand36));
 	}
 	return 0;
 }
 
-// command37 - isSoundActive guard, command1, four loadAny
-// calls starting from channel 0
+void ASound1::loadCommand37() {
+	resetCallbackTimer(0xC0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x4220));
+	_channels[1]->load(loadData(0x4285));
+	_channels[2]->load(loadData(0x42F0));
+	_channels[3]->load(loadData(0x42FF));
+	_channels[4]->load(loadData(0x4310));
+	_channels[5]->load(loadData(0x431C));
+}
+
 int ASound1::command37() {
-	byte *pData = loadData(0x3220);
+	byte *pData = loadData(0x4220);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		findFreeChannel(pData);
-		findFreeChannel(loadData(0x326A));
-		findFreeChannel(loadData(0x3293));
-		findFreeChannel(loadData(0x32AC));
+		if (!isMusicChannelsActive())
+			loadCommand37();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand37));
 	}
 	return 0;
 }
 
-// command38 - alias for commandMusic0; also the direct dispatch
-// target for command 38.
+void ASound1::loadCommand38() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x12CA));
+	_channels[1]->load(loadData(0x13BF));
+	_channels[2]->load(loadData(0x14A2));
+	_channels[3]->load(loadData(0x15DB));
+	_channels[4]->load(loadData(0x16D3));
+	_channels[5]->load(loadData(0x1715));
+}
+
 int ASound1::command38() {
-	return commandMusic0();
-}
-
-// command39 - isSoundActive guard, command1, load ch0-5
-int ASound1::command39() {
-	byte *pData = loadData(0x423A);
+	byte *pData = loadData(0x12CA);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x43DF));
-		_channels[2]->load(loadData(0x44F7));
-		_channels[3]->load(loadData(0x45ED));
-		_channels[4]->load(loadData(0x46F9));
-		_channels[5]->load(loadData(0x48AF));
+		if (!isMusicChannelsActive())
+			loadCommand38();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand38));
 	}
 	return 0;
 }
+
+void ASound1::loadCommand39() {
+	resetCallbackTimer(0xB0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x179C));
+	_channels[1]->load(loadData(0x17F1));
+	_channels[2]->load(loadData(0x1857));
+	_channels[3]->load(loadData(0x18B1));
+	_channels[4]->load(loadData(0x18C0));
+	_channels[5]->load(loadData(0x18CF));
+}
+
+int ASound1::command39() {
+	byte *pData = loadData(0x179C);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand39();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand39));
+	}
+	return 0;
+}
+
+void ASound1::loadCommand40() {
+	resetCallbackTimer(0xA8);
+	ASound::command1();
+	_channels[0]->load(loadData(0x18DE));
+	_channels[1]->load(loadData(0x1A57));
+	_channels[2]->load(loadData(0x1C0D));
+	_channels[3]->load(loadData(0x1ED6));
+	_channels[4]->load(loadData(0x20FE));
+	_channels[5]->load(loadData(0x239B));
+}
+
+int ASound1::command40() {
+	byte *pData = loadData(0x18DE);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand40();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand40));
+	}
+	return 0;
+}
+
+void ASound1::loadCommand41() {
+	resetCallbackTimer(0x90);
+	ASound::command1();
+	_channels[0]->load(loadData(0x23D2));
+	_channels[1]->load(loadData(0x2440));
+	_channels[2]->load(loadData(0x261C));
+	_channels[3]->load(loadData(0x24BA));
+	_channels[4]->load(loadData(0x259A));
+	_channels[5]->load(loadData(0x25EF));
+}
+
+int ASound1::command41() {
+	byte *pData = loadData(0x23D2);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand41();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand41));
+	}
+	return 0;
+}
+
+void ASound1::loadCommand42() {
+	resetCallbackTimer(144);
+	setMusicIndex(0x29);
+	ASound::command1();
+	_channels[0]->load(loadData(0x1192));
+	_channels[1]->load(loadData(0x11C8));
+	_channels[2]->load(loadData(0x11FB));
+	_channels[3]->load(loadData(0x123C));
+	_channels[4]->load(loadData(0x126E));
+	_channels[5]->load(loadData(0x128B));
+	_channels[6]->load(loadData(0x12A1));
+}
+
+int ASound1::command42() {
+	byte *pData = loadData(0x1192);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand42();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand42));
+	}
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// loadMusicPitchBend - shared loader for command43 and command48
+// Resets timer to 0x54, fades current music, loads the pitch-bend piece
+// (6 channels starting at 0x287C).
+// ---------------------------------------------------------------------------
+void ASound1::loadMusicPitchBend() {
+	resetCallbackTimer(0x54);
+	ASound::command1();
+	_channels[0]->load(loadData(0x287C));
+	_channels[1]->load(loadData(0x28C8));
+	_channels[2]->load(loadData(0x290F));
+	_channels[3]->load(loadData(0x2938));
+	_channels[4]->load(loadData(0x295B));
+	_channels[5]->load(loadData(0x298C));
+}
+
+// command43 - set pitch-bend variant byte to 0x2F (bent), mark script var,
+// then start the pitch-bend piece only if it is not already playing.
+int ASound1::command43() {
+	*loadData(0x28C9) = 0x2F;
+	setScriptVar(14, 1);
+	if (!isSoundActive(loadData(0x287C))) {
+		loadMusicPitchBend();
+		setMusicIndex(0x10);
+	}
+	return 0;
+}
+
+// command44 - asymmetric timer: counter=0x60 but period=0xE0
+void ASound1::loadCommand44() {
+	resetCallbackTimerEx(0x60, 0xE0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x3B40));
+	_channels[1]->load(loadData(0x3B9E));
+	_channels[2]->load(loadData(0x3F26));
+	_channels[3]->load(loadData(0x3C25));
+	_channels[4]->load(loadData(0x3DB4));
+	_channels[5]->load(loadData(0x3E8B));
+}
+
+int ASound1::command44() {
+	byte *pData = loadData(0x3B40);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand44();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand44));
+	}
+	return 0;
+}
+
+void ASound1::loadCommand45() {
+	resetCallbackTimer(0x60);
+	setMusicIndex(0x2D);
+	ASound::command1();
+	_channels[0]->load(loadData(0x32A0));
+	_channels[1]->load(loadData(0x33E1));
+	_channels[2]->load(loadData(0x34CE));
+	_channels[3]->load(loadData(0x35DB));
+	_channels[4]->load(loadData(0x36CB));
+	_channels[5]->load(loadData(0x3873));
+}
+
+int ASound1::command45() {
+	byte *pData = loadData(0x32A0);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand45();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand45));
+	}
+	return 0;
+}
+
+// command46 - uses isAnyChannelActive as the outer guard (not isSoundActive),
+// then isMusicChannelsActive for the defer/immediate decision.
+void ASound1::loadCommand46() {
+	resetCallbackTimer(0x90);
+	ASound::command1();
+	_channels[0]->load(loadData(0x432E));
+	_channels[1]->load(loadData(0x4385));
+	_channels[2]->load(loadData(0x43B8));
+	_channels[3]->load(loadData(0x43C3));
+}
+
+int ASound1::command46() {
+	if (isAnyChannelActive())
+		return 0;
+	if (!isMusicChannelsActive())
+		loadCommand46();
+	else
+		scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand46));
+	return 0;
+}
+
+void ASound1::loadCommand47() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x12C4));
+	_channels[1]->load(loadData(0x13B2));
+	_channels[2]->load(loadData(0x149C));
+	_channels[3]->load(loadData(0x15D5));
+	_channels[4]->load(loadData(0x16F4));
+	_channels[5]->load(loadData(0x1759));
+}
+
+int ASound1::command47() {
+	byte *pData = loadData(0x12C4);
+	if (!isSoundActive(pData)) {
+		if (!isMusicChannelsActive())
+			loadCommand47();
+		else
+			scheduleCallback(MAKE_CALLBACK(ASound1, loadCommand47));
+	}
+	return 0;
+}
+
+// command48 - set pitch-bend variant byte to 0x1B (normal), then load if not active
+int ASound1::command48() {
+	*loadData(0x28C9) = 0x1B;
+	setScriptVar(14, 0);
+	if (!isSoundActive(loadData(0x287C))) {
+		loadMusicPitchBend();
+		setMusicIndex(0x28);
+	}
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// commands 64-101 - SFX loaders via findFreeChannelFull / findFreeChannel /
+// direct channel load.
+// ---------------------------------------------------------------------------
+int ASound1::command64()  { findFreeChannelFull(loadData(0x2D20)); return 0; }
+int ASound1::command65()  { findFreeChannelFull(loadData(0x2D35)); return 0; }
+int ASound1::command66()  { findFreeChannelFull(loadData(0x2D3F)); return 0; }
+int ASound1::command67()  { findFreeChannelFull(loadData(0x2D4B)); return 0; }
+int ASound1::command68()  { findFreeChannelFull(loadData(0x2D59)); return 0; }
+
+int ASound1::command69() {
+	findFreeChannelFull(loadData(0x2D78));
+	findFreeChannelFull(loadData(0x2D8E));
+	return 0;
+}
+
+int ASound1::command70()  { findFreeChannelFull(loadData(0x2DA0)); return 0; }
+
+// command71 - load directly into channel 8
+int ASound1::command71() { _channels[8]->load(loadData(0x2DB9)); return 0; }
+
+int ASound1::command72()  { findFreeChannelFull(loadData(0x2DC7)); return 0; }
+int ASound1::command73()  { findFreeChannelFull(loadData(0x2DAC)); return 0; }
+
+int ASound1::command74() {
+	findFreeChannelFull(loadData(0x2DD5));
+	findFreeChannelFull(loadData(0x2DDE));
+	return 0;
+}
+
+int ASound1::command75()  { findFreeChannelFull(loadData(0x2DF2)); return 0; }
+int ASound1::command76()  { findFreeChannelFull(loadData(0x2E0D)); return 0; }
+
+int ASound1::command77() {
+	findFreeChannelFull(loadData(0x2E1C));
+	findFreeChannelFull(loadData(0x2E28));
+	return 0;
+}
+
+int ASound1::command78()  { findFreeChannelFull(loadData(0x2E4C)); return 0; }
+int ASound1::command79()  { findFreeChannelFull(loadData(0x2E34)); return 0; }
+int ASound1::command80()  { findFreeChannelFull(loadData(0x2E5E)); return 0; }
+
+// command81 - loads the same data block twice (as in the original)
+int ASound1::command81() {
+	findFreeChannelFull(loadData(0x2EA4));
+	findFreeChannelFull(loadData(0x2EA4));
+	return 0;
+}
+
+int ASound1::command82()  { findFreeChannelFull(loadData(0x2ECB)); return 0; }
+int ASound1::command83()  { findFreeChannelFull(loadData(0x2EE3)); return 0; }
+int ASound1::command84()  { findFreeChannelFull(loadData(0x2EF5)); return 0; }
+int ASound1::command85()  { findFreeChannelFull(loadData(0x2EFF)); return 0; }
+
+// command86 - load directly into channel 7
+int ASound1::command86() { _channels[7]->load(loadData(0x2F0C)); return 0; }
+
+int ASound1::command87() {
+	findFreeChannelFull(loadData(0x2D67));
+	findFreeChannelFull(loadData(0x2D89));
+	return 0;
+}
+
+int ASound1::command88()  { findFreeChannelFull(loadData(0x2F24)); return 0; }
+int ASound1::command89()  { findFreeChannelFull(loadData(0x2F2E)); return 0; }
+
+int ASound1::command90() {
+	findFreeChannelFull(loadData(0x2CAA));
+	findFreeChannelFull(loadData(0x2CD4));
+	return 0;
+}
+
+int ASound1::command91() {
+	findFreeChannelFull(loadData(0x2CDF));
+	findFreeChannelFull(loadData(0x2D15));
+	return 0;
+}
+
+// command92 = nullptr (no-op, slot mapped to null in _commandList)
+
+int ASound1::command93() {
+	findFreeChannelFull(loadData(0x2F3C));
+	findFreeChannelFull(loadData(0x2F45));
+	return 0;
+}
+
+int ASound1::command94()  { findFreeChannelFull(loadData(0x2F57)); return 0; }
+
+// command95 - four-voice piece using findFreeChannel (not Full)
+int ASound1::command95() {
+	findFreeChannel(loadData(0x2F6B));
+	findFreeChannel(loadData(0x2FD7));
+	findFreeChannel(loadData(0x302E));
+	findFreeChannel(loadData(0x3045));
+	return 0;
+}
+
+int ASound1::command96()  { findFreeChannelFull(loadData(0x305C)); return 0; }
+
+// command97 = sub_11F98 in original
+int ASound1::command97() {
+	findFreeChannelFull(loadData(0x307E));
+	findFreeChannelFull(loadData(0x3094));
+	return 0;
+}
+
+// command98 = nullptr (no-op, slot mapped to null in _commandList)
+
+int ASound1::command99()  { findFreeChannelFull(loadData(0x30B0)); return 0; }
+int ASound1::command100() { findFreeChannelFull(loadData(0x30BA)); return 0; }
+int ASound1::command101() { findFreeChannelFull(loadData(0x30C4)); return 0; }
 
 /*-----------------------------------------------------------------------*/
 
@@ -352,55 +740,53 @@ int ASound1::command39() {
 /* ASound2  (asound.dr2)                                                  *
  *-----------------------------------------------------------------------*/
 
-const ASound2::CommandPtr ASound2::_commandList[73] = {
-	// commands 0-8  (asound_commands1)
+const ASound2::CommandPtr ASound2::_commandList[76] = {
+	// 0-8: delegate to base
 	&ASound2::command0,  &ASound2::command1,  &ASound2::command2,  &ASound2::command3,
 	&ASound2::command4,  &ASound2::command5,  &ASound2::command6,  &ASound2::command7,
 	&ASound2::command8,
-	// 9-15 absent
+	// 9-15: nullptr
 	nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// command 16  (asound_commands2)
-	&ASound2::command16,
-	// 17-23 absent
-	nullptr,             nullptr,             nullptr,
+	// 16-19: off_11A26
+	&ASound2::command16, &ASound2::command17, &ASound2::command18, nullptr,
+	// 20-23: nullptr
 	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 24-27  (asound_commands3)
+	// 24-31: off_11A2E
 	&ASound2::command24, &ASound2::command25, &ASound2::command26, &ASound2::command27,
-	// 28-31 absent
-	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 32-35  (asound_commands4)
+	&ASound2::command28, &ASound2::command29, &ASound2::command30, &ASound2::command31,
+	// 32-36: funcs_11C87 (slot 36 = no-op)
 	&ASound2::command32, &ASound2::command33, &ASound2::command34, &ASound2::command35,
-	// 36-63 absent
+	nullptr,
+	// 37-63: nullptr
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	nullptr,             nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	// commands 64-72  (asound_commands5)
-	&ASound2::command64, &ASound2::command65, &ASound2::command66, &ASound2::command67,
-	&ASound2::command68, &ASound2::command69, &ASound2::command70, &ASound2::command71,
-	&ASound2::command72
+	nullptr,             nullptr,             nullptr,
+	// 64-75: off_11A4A (slots 73-75 = no-ops)
+	&ASound2::command64,    &ASound2::command65, &ASound2::command66,    &ASound2::command67,
+	&ASound2::command68,    &ASound2::command69_70, &ASound2::command69_70, &ASound2::command71,
+	&ASound2::command72,    nullptr,             nullptr,             nullptr
 };
 
 ASound2::ASound2(Audio::Mixer *mixer, OPL::OPL *opl)
 		: ASound(mixer, opl, "asound.dr2", 0x1fa0, 0x2950) {
-	// Load sound samples
 	auto samplesStream = getDataStream(0x1dc);
 	for (int i = 0; i < 182; ++i)
 		_samples.push_back(AdlibSample(samplesStream));
 }
 
 int ASound2::command(int commandId, int param) {
-	if (commandId > 72 || !_commandList[commandId])
+	if (commandId > 75 || !_commandList[commandId])
 		return 0;
-
+	if (commandId >= 32 && commandId < 64)
+		setMusicIndex(commandId);
 	return (this->*_commandList[commandId])();
 }
 
-// commands 0-8: delegate to base ASound
 int ASound2::command0() { return ASound::command0(); }
 int ASound2::command1() { return ASound::command1(); }
 int ASound2::command2() { return ASound::command2(); }
@@ -411,165 +797,228 @@ int ASound2::command6() { return ASound::command6(); }
 int ASound2::command7() { return ASound::command7(); }
 int ASound2::command8() { return ASound::command8(); }
 
-// ---------------------------------------------------------------------------
-// command16 - isSoundActive guard, command1, load ch0-5
-// ---------------------------------------------------------------------------
+void ASound2::loadCommand16() {
+	resetCallbackTimer(0x60);
+	setMusicIndex(0x10);
+	ASound::command1();
+	_channels[0]->load(loadData(0x2584));
+	_channels[1]->load(loadData(0x25E0));
+	_channels[2]->load(loadData(0x2630));
+	_channels[3]->load(loadData(0x2640));
+}
+
 int ASound2::command16() {
-	byte *pData = loadData(0x0C36);
+	byte *pData = loadData(0x2584);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x0C8E));
-		_channels[2]->load(loadData(0x0CF4));
-		_channels[3]->load(loadData(0x0D4E));
-		_channels[4]->load(loadData(0x0DA3));
-		_channels[5]->load(loadData(0x0DB1));
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound2, loadCommand16));
+		else
+			loadCommand16();
 	}
 	return 0;
 }
 
-// ---------------------------------------------------------------------------
-// commands 24-27 (asound_commands3) - upper channel pool
-// ---------------------------------------------------------------------------
+int ASound2::command17() {
+	byte *pData = loadData(0x2268);
+	if (!isSoundActive(pData)) {
+		resetCallbackTimer(0x60);
+		ASound::command1();
+		_channels[0]->load(pData);
+		_channels[1]->load(loadData(0x229D));
+		_channels[2]->load(loadData(0x22D0));
+		_channels[3]->load(loadData(0x22E9));
+		_channels[4]->load(loadData(0x231C));
+		_channels[5]->load(loadData(0x232A));
+		_channels[8]->load(loadData(0x2342));
+	}
+	return 0;
+}
+
+int ASound2::command18() {
+	ASound::command1();
+	if (getMusicIndex() <= 18)
+		return command16();
+	return (this->*_commandList[getMusicIndex()])();
+}
 
 int ASound2::command24() {
-	playSound(0x1A4A);
-	playSound(0x1A7D);
+	playSound(0x237B);
+	playSound(0x23B0);
 	return 0;
 }
 
 int ASound2::command25() {
-	playSound(0x1AAB);
-	playSound(0x1AD7);
+	playSound(0x23E0);
+	playSound(0x240E);
 	return 0;
 }
 
 int ASound2::command26() {
-	playSound(0x1B05);
+	playSound(0x243E);
 	return 0;
 }
 
 int ASound2::command27() {
-	playSound(0x1B11);
+	playSound(0x244A);
 	return 0;
 }
 
-// ---------------------------------------------------------------------------
-// commands 32-35 (asound_commands4)
-// ---------------------------------------------------------------------------
+int ASound2::command28() {
+	playSound(0x2569);
+	return 0;
+}
 
-// command32 - command1, six loadAny calls from channel 0
-int ASound2::command32() {
+int ASound2::command29() {
+	playSound(0x247E);
+	return 0;
+}
+
+int ASound2::command30() {
+	playSound(0x24B6);
+	return 0;
+}
+
+int ASound2::command31() {
+	*loadData(0x251A) = 0x67;
+	playSound(0x2517);
+	return 0;
+}
+
+void ASound2::loadCommand32() {
+	resetCallbackTimer(0x60);
 	ASound::command1();
-	findFreeChannel(loadData(0x1BE4));
-	findFreeChannel(loadData(0x1CB7));
-	findFreeChannel(loadData(0x1E1E));
-	findFreeChannel(loadData(0x1EC8));
-	findFreeChannel(loadData(0x1ED8));
-	findFreeChannel(loadData(0x1EEF));
+	_channels[0]->load(loadData(0x1192));
+	_channels[1]->load(loadData(0x1201));
+	_channels[2]->load(loadData(0x127A));
+	_channels[3]->load(loadData(0x1360));
+	_channels[4]->load(loadData(0x144A));
+	_channels[5]->load(loadData(0x1514));
+}
+
+int ASound2::command32() {
+	byte *pData = loadData(0x1192);
+	if (!isSoundActive(pData)) {
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound2, loadCommand32));
+		else
+			loadCommand32();
+	}
 	return 0;
 }
 
-// command33 - isSoundActive guard, command1, load ch0-7
+void ASound2::loadCommand33() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x155E));
+	_channels[1]->load(loadData(0x162B));
+	_channels[2]->load(loadData(0x16E9));
+	_channels[3]->load(loadData(0x17B2));
+	_channels[4]->load(loadData(0x189C));
+	_channels[5]->load(loadData(0x1921));
+	_channels[8]->load(loadData(0x19DF));
+}
+
 int ASound2::command33() {
-	byte *pData = loadData(0x1B62);
+	byte *pData = loadData(0x155E);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x1B97));
-		_channels[2]->load(loadData(0x1BA5));
-		_channels[3]->load(loadData(0x1BB3));
-		_channels[4]->load(loadData(0x1BC1));
-		_channels[5]->load(loadData(0x1BC5));
-		_channels[6]->load(loadData(0x1BC9));
-		_channels[7]->load(loadData(0x1BD5));
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound2, loadCommand33));
+		else
+			loadCommand33();
 	}
 	return 0;
 }
 
-// command34 - isSoundActive guard, command1, load ch0-6
+void ASound2::loadCommand34() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x1FDA));
+	_channels[1]->load(loadData(0x2071));
+	_channels[2]->load(loadData(0x20C0));
+	_channels[3]->load(loadData(0x2116));
+	_channels[4]->load(loadData(0x2126));
+	_channels[5]->load(loadData(0x2180));
+	_channels[8]->load(loadData(0x2190));
+}
+
 int ASound2::command34() {
-	byte *pData = loadData(0x0DC0);
+	byte *pData = loadData(0x1FDA);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x0FAF));
-		_channels[2]->load(loadData(0x1206));
-		_channels[3]->load(loadData(0x139A));
-		_channels[4]->load(loadData(0x1565));
-		_channels[5]->load(loadData(0x1833));
-		_channels[6]->load(loadData(0x18CD));
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound2, loadCommand34));
+		else
+			loadCommand34();
 	}
 	return 0;
 }
 
-// command35 - isSoundActive guard, command1, load ch0-6
+void ASound2::loadCommand35() {
+	resetCallbackTimerEx(0xC0, 0x50);
+	ASound::command1();
+	_channels[0]->load(loadData(0x1A2C));
+	_channels[1]->load(loadData(0x1B74));
+	_channels[2]->load(loadData(0x1C06));
+	_channels[3]->load(loadData(0x1CE3));
+	_channels[4]->load(loadData(0x1DDE));
+	_channels[5]->load(loadData(0x1E91));
+	_channels[8]->load(loadData(0x1F62));
+}
+
 int ASound2::command35() {
-	byte *pData = loadData(0x1F02);
+	byte *pData = loadData(0x1A2C);
 	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x1F66));
-		_channels[2]->load(loadData(0x1F70));
-		_channels[3]->load(loadData(0x1F8D));
-		_channels[4]->load(loadData(0x1FCE));
-		_channels[5]->load(loadData(0x1FF7));
-		_channels[6]->load(loadData(0x202E));
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound2, loadCommand35));
+		else
+			loadCommand35();
 	}
 	return 0;
 }
-
-// ---------------------------------------------------------------------------
-// commands 64-72 (asound_commands5) - upper channel pool
-// ---------------------------------------------------------------------------
 
 int ASound2::command64() {
-	playSound(0x1928);
+	playSound(0x219E);
+	playSound(0x21A8);
 	return 0;
 }
 
 int ASound2::command65() {
-	playSound(0x193C);
+	playSound(0x1F92);
+	playSound(0x1FAB);
+	playSound(0x1FBE);
+	playSound(0x1FC9);
 	return 0;
 }
 
 int ASound2::command66() {
-	playSound(0x1946);
-	playSound(0x195C);
+	playSound(0x21B2);
 	return 0;
 }
 
 int ASound2::command67() {
-	playSound(0x196D);
+	playSound(0x21BC);
+	playSound(0x21C5);
 	return 0;
 }
 
-// no-op
 int ASound2::command68() {
+	playSound(0x21E7);
 	return 0;
 }
 
-int ASound2::command69() {
-	playSound(0x197F);
-	playSound(0x19A5);
-	playSound(0x19CB);
-	return 0;
-}
-
-int ASound2::command70() {
-	playSound(0x19E5);
-	playSound(0x19F1);
+int ASound2::command69_70() {
+	playSound(0x24EF);
+	playSound(0x2503);
 	return 0;
 }
 
 int ASound2::command71() {
-	playSound(0x19FF);
+	playSound(0x21FC);
 	return 0;
 }
 
 int ASound2::command72() {
-	playSound(0x1A0D);
-	playSound(0x1A10);
+	playSound(0x2242);
+	playSound(0x224F);
 	return 0;
 }
 
@@ -1393,25 +1842,32 @@ int ASound6::command8() {
 
 /*-----------------------------------------------------------------------*/
 
-const ASound9::CommandPtr ASound9::_commandList[72] = {
-	&ASound9::command0,  &ASound9::command1,  &ASound9::command2,  &ASound9::command3,
-	&ASound9::command4,  &ASound9::command5,  &ASound9::command6,  &ASound9::command7,
-	&ASound9::command8,  nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound9::command16, nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound9::command24, &ASound9::command25, &ASound9::command26, &ASound9::command27,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound9::command32, &ASound9::command33, &ASound9::command34, &ASound9::command35,
-	&ASound9::command36, &ASound9::command37, &ASound9::command38, &ASound9::command39,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	nullptr,             nullptr,             nullptr,             nullptr,
-	&ASound9::command64, &ASound9::command65, &ASound9::command66, &ASound9::command67,
-	&ASound9::command68, &ASound9::command69, &ASound9::command70, &ASound9::command71
+const ASound9::CommandPtr ASound9::_commandList[65] = {
+	// 0-8: delegate to base
+	&ASound9::command0,    &ASound9::command1,    &ASound9::command2,    &ASound9::command3,
+	&ASound9::command4,    &ASound9::command5,    &ASound9::command6,    &ASound9::command7,
+	&ASound9::command8,
+	// 9-15: nullptr (not in any dispatch range)
+	nullptr,               nullptr,               nullptr,               nullptr,
+	nullptr,               nullptr,               nullptr,
+	// 16-19: nullptr (off_11A26, all null)
+	nullptr,               nullptr,               nullptr,               nullptr,
+	// 20-23: nullptr
+	nullptr,               nullptr,               nullptr,               nullptr,
+	// 24-31: nullptr (off_11A2E, all null)
+	nullptr,               nullptr,               nullptr,               nullptr,
+	nullptr,               nullptr,               nullptr,               nullptr,
+	// 32-63: music/SFX (off_11A3E)
+	&ASound9::command32,   &ASound9::command33_47, &ASound9::command34,  &ASound9::command35,
+	&ASound9::command36,   &ASound9::command37,   &ASound9::command38,   &ASound9::command39,
+	&ASound9::command40,   &ASound9::command41,   &ASound9::command42,   &ASound9::command43,
+	nullptr,               &ASound9::command45,   &ASound9::command46,   &ASound9::command33_47,
+	&ASound9::command48,   &ASound9::command49,   &ASound9::command50,   &ASound9::command51,
+	&ASound9::command52,   &ASound9::command53,   &ASound9::command54,   &ASound9::command55,
+	nullptr,               &ASound9::command57,   &ASound9::command58,   &ASound9::command59,
+	nullptr,               &ASound9::command61,   &ASound9::command62,   &ASound9::command63,
+	// 64: nullptr (off_11A80, single null entry)
+	nullptr,
 };
 
 ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) :
@@ -1423,207 +1879,559 @@ ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) :
 }
 
 int ASound9::command(int commandId, int param) {
-	if (commandId > 71 || !_commandList[commandId])
+	if (commandId > 64 || !_commandList[commandId])
 		return 0;
-	
 	return (this->*_commandList[commandId])();
 }
 
-// commands 0-8: delegate to base ASound
-int ASound9::command0() {
-	return ASound::command0();
-}
-int ASound9::command1() {
-	return ASound::command1();
-}
-int ASound9::command2() {
-	return ASound::command2();
-}
-int ASound9::command3() {
-	return ASound::command3();
-}
-int ASound9::command4() {
-	return ASound::command4();
-}
-int ASound9::command5() {
-	return ASound::command5();
-}
-int ASound9::command6() {
-	return ASound::command6();
-}
-int ASound9::command7() {
-	return ASound::command7();
-}
-int ASound9::command8() {
-	return ASound::command8();
-}
+// Commands 0-8: delegate to base
+int ASound9::command0() { return ASound::command0(); }
+int ASound9::command1() { return ASound::command1(); }
+int ASound9::command2() { return ASound::command2(); }
+int ASound9::command3() { return ASound::command3(); }
+int ASound9::command4() { return ASound::command4(); }
+int ASound9::command5() { return ASound::command5(); }
+int ASound9::command6() { return ASound::command6(); }
+int ASound9::command7() { return ASound::command7(); }
+int ASound9::command8() { return ASound::command8(); }
 
-int ASound9::command24() {
-	playSound(0x203E);
-	playSound(0x2071);
-	return 0;
-}
+// ---------------------------------------------------------------------------
+// Music command 32 — deferred loader (isMusicChannelsActive pattern B)
+// ---------------------------------------------------------------------------
 
-int ASound9::command25() {
-	playSound(0x209F);
-	playSound(0x20CB);
-	return 0;
-}
-
-int ASound9::command26() {
-	playSound(0x20F9);
-	return 0;
-}
-
-int ASound9::command27() {
-	playSound(0x2105);
-	return 0;
+void ASound9::loadCommand32() {
+	ASound::command1();
+	resetCallbackTimerEx(0x62, 0x54);
+	_channels[0]->load(loadData(0x1192));
+	_channels[1]->load(loadData(0x11DA));
+	_channels[2]->load(loadData(0x128F));
+	_channels[3]->load(loadData(0x12C2));
+	_channels[4]->load(loadData(0x13FB));
+	_channels[5]->load(loadData(0x156B));
+	_channels[8]->load(loadData(0x14EA));
 }
 
 int ASound9::command32() {
-	ASound::command1();
-	findFreeChannel(loadData(0x2B16));
-	findFreeChannel(loadData(0x2B6C));
-	findFreeChannel(loadData(0x2BB6));
-	findFreeChannel(loadData(0x2E88));
-	findFreeChannel(loadData(0x2E98));
-	findFreeChannel(loadData(0x2EA3));
-	findFreeChannel(loadData(0x2EAE));
-	findFreeChannel(loadData(0x2EB7));
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand32));
+	else
+		loadCommand32();
 	return 0;
 }
 
-int ASound9::command33() {
+// ---------------------------------------------------------------------------
+// Music command 33/47 — shared deferred loader
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand33_47() {
+	ASound::command1();
+	resetCallbackTimerEx(0x54, 0x46);
+	_channels[0]->load(loadData(0x21A6));
+	_channels[1]->load(loadData(0x2219));
+	_channels[2]->load(loadData(0x225F));
+	_channels[4]->load(loadData(0x239A));
+	_channels[5]->load(loadData(0x23FC));
+	_channels[6]->load(loadData(0x2563));
+	_channels[3]->load(loadData(0x264A));
+	_channels[7]->load(loadData(0x2657));
+	_channels[8]->load(loadData(0x231E));
+}
+
+int ASound9::command33_47() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand33_47));
+	else
+		loadCommand33_47();
 	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 34
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand34() {
+	ASound::command1();
+	resetCallbackTimer(0x38);
+	_channels[0]->load(loadData(0x2664));
+	_channels[1]->load(loadData(0x285C));
+	_channels[2]->load(loadData(0x2A61));
+	_channels[8]->load(loadData(0x2C64));
+	_channels[4]->load(loadData(0x2DE3));
+	_channels[5]->load(loadData(0x2EE6));
+	_channels[6]->load(loadData(0x2F31));
 }
 
 int ASound9::command34() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x31D0));
-	_channels[1]->load(loadData(0x3221));
-	_channels[2]->load(loadData(0x3282));
-	_channels[3]->load(loadData(0x32CB));
-	_channels[4]->load(loadData(0x331A));
-	_channels[5]->load(loadData(0x3369));
-	_channels[6]->load(loadData(0x33B0));
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand34));
+	else
+		loadCommand34();
 	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 35
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand35() {
+	ASound::command1();
+	resetCallbackTimer(0x50);
+	_channels[0]->load(loadData(0x2F7E));
+	_channels[1]->load(loadData(0x2FC7));
+	_channels[2]->load(loadData(0x300E));
+	_channels[3]->load(loadData(0x30D2));
+	_channels[8]->load(loadData(0x3148));
+	_channels[5]->load(loadData(0x31D2));
+	_channels[6]->load(loadData(0x326A));
 }
 
 int ASound9::command35() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x295E));
-	_channels[1]->load(loadData(0x299E));
-	_channels[2]->load(loadData(0x29C3));
-	_channels[3]->load(loadData(0x29E8));
-	_channels[4]->load(loadData(0x2A46));
-	_channels[5]->load(loadData(0x2AA5));
-	_channels[6]->load(loadData(0x2AE0));
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand35));
+	else
+		loadCommand35();
 	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 36
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand36() {
+	ASound::command1();
+	resetCallbackTimer(0x28);
+	_channels[0]->load(loadData(0x33D4));
+	_channels[1]->load(loadData(0x345F));
+	_channels[2]->load(loadData(0x34D5));
+	_channels[3]->load(loadData(0x3505));
+	_channels[4]->load(loadData(0x37D1));
+	_channels[5]->load(loadData(0x3895));
+	_channels[8]->load(loadData(0x383D));
 }
 
 int ASound9::command36() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x30AA));
-	_channels[1]->load(loadData(0x30DD));
-	_channels[2]->load(loadData(0x3109));
-	_channels[3]->load(loadData(0x313D));
-	_channels[4]->load(loadData(0x3175));
-	_channels[5]->load(loadData(0x319B));
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand36));
+	else
+		loadCommand36();
 	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 37
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand37() {
+	ASound::command1();
+	resetCallbackTimer(0x50);
+	_channels[0]->load(loadData(0x38D8));
+	_channels[1]->load(loadData(0x393D));
+	_channels[2]->load(loadData(0x39A1));
+	_channels[3]->load(loadData(0x3A05));
+	_channels[4]->load(loadData(0x3A89));
+	_channels[8]->load(loadData(0x3A97));
+	_channels[5]->load(loadData(0x3AF3));
 }
 
 int ASound9::command37() {
-	ASound::command1();
-	_channels[0]->load(loadData(0x2156));
-	_channels[1]->load(loadData(0x21A6));
-	_channels[2]->load(loadData(0x228E));
-	_channels[3]->load(loadData(0x22F7));
-	_channels[4]->load(loadData(0x2351));
-	_channels[5]->load(loadData(0x25A8));
-	_channels[6]->load(loadData(0x28BF));
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand37));
+	else
+		loadCommand37();
 	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 38
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand38() {
+	ASound::command1();
+	resetCallbackTimer(0x28);
+	_channels[0]->load(loadData(0x3C5C));
+	_channels[1]->load(loadData(0x3CE9));
+	_channels[2]->load(loadData(0x3D69));
+	_channels[3]->load(loadData(0x3505));
+	_channels[4]->load(loadData(0x3D95));
+	_channels[8]->load(loadData(0x3DF9));
+	_channels[6]->load(loadData(0x3E45));
 }
 
 int ASound9::command38() {
-	byte *pData = loadData(0x11BC);
-	if (!isSoundActive(pData)) {
-		ASound::command1();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x1477));
-		_channels[2]->load(loadData(0x158D));
-		_channels[3]->load(loadData(0x1777));
-		_channels[4]->load(loadData(0x1977));
-		_channels[5]->load(loadData(0x1BC5));
-		_channels[6]->load(loadData(0x1CFF));
-		_channels[7]->load(loadData(0x1EAF));
-	}
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand38));
+	else
+		loadCommand38();
 	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 39
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand39() {
+	ASound::command1();
+	resetCallbackTimer(0x28);
+	_channels[0]->load(loadData(0x3E6E));
+	_channels[1]->load(loadData(0x3EE3));
+	_channels[2]->load(loadData(0x3F55));
+	_channels[3]->load(loadData(0x4049));
+	_channels[4]->load(loadData(0x44E3));
+	_channels[5]->load(loadData(0x459B));
+	_channels[8]->load(loadData(0x4571));
 }
 
 int ASound9::command39() {
-	byte *pData = loadData(0x0C36);
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand39));
+	else
+		loadCommand39();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 40
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand40() {
+	ASound::command1();
+	resetCallbackTimer(0x38);
+	_channels[0]->load(loadData(0x2664));
+	_channels[1]->load(loadData(0x285C));
+	_channels[2]->load(loadData(0x2A61));
+	_channels[8]->load(loadData(0x4692));
+	_channels[4]->load(loadData(0x479F));
+	_channels[5]->load(loadData(0x4841));
+	_channels[6]->load(loadData(0x4875));
+}
+
+int ASound9::command40() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand40));
+	else
+		loadCommand40();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 41
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand41() {
+	ASound::command1();
+	resetCallbackTimer(0x54);
+	_channels[0]->load(loadData(0x157A));
+	_channels[1]->load(loadData(0x1629));
+	_channels[2]->load(loadData(0x1A68));
+	_channels[8]->load(loadData(0x1BA2));
+	_channels[4]->load(loadData(0x1C58));
+	_channels[5]->load(loadData(0x1D38));
+	_channels[6]->load(loadData(0x1FC2));
+}
+
+int ASound9::command41() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand41));
+	else
+		loadCommand41();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 42
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand42() {
+	ASound::command1();
+	resetCallbackTimerEx(0xA8, 0x50);
+	_channels[0]->load(loadData(0x15B3));
+	_channels[1]->load(loadData(0x163A));
+	_channels[2]->load(loadData(0x1AE1));
+	_channels[3]->load(loadData(0x1613));
+	_channels[8]->load(loadData(0x1BE7));
+	_channels[4]->load(loadData(0x1C8F));
+	_channels[5]->load(loadData(0x1E1B));
+	_channels[6]->load(loadData(0x205F));
+}
+
+int ASound9::command42() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand42));
+	else
+		loadCommand42();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 43 — direct load (no deferred path)
+// ---------------------------------------------------------------------------
+
+int ASound9::command43() {
+	ASound::command1();
+	resetCallbackTimer(0x60);
+	_channels[0]->load(loadData(0x4A00));
+	_channels[1]->load(loadData(0x4A5F));
+	_channels[2]->load(loadData(0x4AAB));
+	_channels[3]->load(loadData(0x4D7D));
+	_channels[4]->load(loadData(0x4D93));
+	_channels[5]->load(loadData(0x4D9E));
+	_channels[6]->load(loadData(0x4DA9));
+	_channels[7]->load(loadData(0x4DB2));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// SFX commands 45, 46
+// ---------------------------------------------------------------------------
+
+int ASound9::command45() {
+	playSound(0x48AA);
+	playSound(0x490A);
+	return 0;
+}
+
+int ASound9::command46() {
+	playSound(0x4955);
+	playSound(0x49AA);
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// SFX commands 48, 49, 50
+// ---------------------------------------------------------------------------
+
+int ASound9::command48() { playSound(0x54C3); return 0; }
+int ASound9::command49() { playSound(0x54CD); return 0; }
+int ASound9::command50() { playSound(0x54D7); return 0; }
+
+// ---------------------------------------------------------------------------
+// Music command 51 — deferred loader (timer set before command1)
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand51() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x4DBE));
+	_channels[1]->load(loadData(0x4E56));
+	_channels[2]->load(loadData(0x4EDC));
+	_channels[3]->load(loadData(0x4F32));
+	_channels[4]->load(loadData(0x4F62));
+	_channels[5]->load(loadData(0x4F75));
+	_channels[6]->load(loadData(0x4F84));
+	_channels[7]->load(loadData(0x4F95));
+}
+
+int ASound9::command51() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand51));
+	else
+		loadCommand51();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Music command 52 — isSoundActive guard + deferred loader
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand52() {
+	resetCallbackTimer(0x54);
+	ASound::command1();
+	_channels[0]->load(loadData(0x4FAA));
+	_channels[1]->load(loadData(0x5211));
+	_channels[2]->load(loadData(0x524A));
+	_channels[3]->load(loadData(0x526E));
+	_channels[4]->load(loadData(0x5469));
+	_channels[5]->load(loadData(0x5475));
+	_channels[6]->load(loadData(0x548E));
+}
+
+int ASound9::command52() {
+	byte *pData = loadData(0x4FAA);
 	if (!isSoundActive(pData)) {
-		ASound::command0();
-		_channels[0]->load(pData);
-		_channels[1]->load(loadData(0x0D7D));
-		_channels[2]->load(loadData(0x0E50));
-		_channels[3]->load(loadData(0x0F1C));
-		_channels[4]->load(loadData(0x0FCE));
-		_channels[5]->load(loadData(0x10BA));
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand52));
+		else
+			loadCommand52();
 	}
 	return 0;
 }
 
-int ASound9::command64() {
-	playSound(0x2EC6);
+// ---------------------------------------------------------------------------
+// Command 53 — delayed fade: arms a one-shot timer to call command1
+// ---------------------------------------------------------------------------
+
+void ASound9::command53_loader() {
+	ASound::command1();
+}
+
+int ASound9::command53() {
+	resetCallbackTimer(0x708);
+	scheduleCallback(MAKE_CALLBACK(ASound9, command53_loader));
 	return 0;
 }
 
-int ASound9::command65() {
-	playSound(0x2EDA);
+// ---------------------------------------------------------------------------
+// Music command 54 — isSoundActive guard + deferred loader
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand54() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x5548));
+	_channels[1]->load(loadData(0x555E));
+	_channels[2]->load(loadData(0x556F));
+	_channels[3]->load(loadData(0x558F));
+}
+
+int ASound9::command54() {
+	byte *pData = loadData(0x5548);
+	if (!isSoundActive(pData)) {
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand54));
+		else
+			loadCommand54();
+	}
 	return 0;
 }
 
-int ASound9::command66() {
-	_channels[0]->load(loadData(0x2EE4));
-	_channels[1]->load(loadData(0x2F0E));
-	_channels[2]->load(loadData(0x2F3E));
-	_channels[3]->load(loadData(0x2F6E));
-	_channels[4]->load(loadData(0x2EE4));
-	_channels[5]->load(loadData(0x2F0E));
-	_channels[6]->load(loadData(0x2F3E));
-	_channels[7]->load(loadData(0x2F6E));
+// ---------------------------------------------------------------------------
+// Music command 55 — isSoundActive guard + deferred loader
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand55() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x5712));
+	_channels[1]->load(loadData(0x57EA));
+	_channels[2]->load(loadData(0x5A1E));
+	_channels[3]->load(loadData(0x5ACA));
+	_channels[4]->load(loadData(0x5AEE));
+	_channels[5]->load(loadData(0x5B4E));
+	_channels[6]->load(loadData(0x5BBB));
+	_channels[7]->load(loadData(0x5BC8));
+	_channels[8]->load(loadData(0x5BE0));
+}
+
+int ASound9::command55() {
+	byte *pData = loadData(0x5712);
+	if (!isSoundActive(pData)) {
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand55));
+		else
+			loadCommand55();
+	}
 	return 0;
 }
 
-int ASound9::command67() {
-	_channels[6]->load(loadData(0x2F9E));
-	_channels[7]->load(loadData(0x2FBD));
-	_channels[8]->load(loadData(0x2FCC));
+// ---------------------------------------------------------------------------
+// Music command 57 — isSoundActive guard + deferred loader
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand57() {
+	resetCallbackTimer(0x30);
+	ASound::command1();
+	_channels[0]->load(loadData(0x5CD6));
+	_channels[1]->load(loadData(0x5D5E));
+	_channels[2]->load(loadData(0x5DD1));
+	_channels[3]->load(loadData(0x5E0F));
+	_channels[4]->load(loadData(0x5E54));
+	_channels[5]->load(loadData(0x5F36));
+	_channels[6]->load(loadData(0x5F97));
+	_channels[7]->load(loadData(0x5FEC));
+	_channels[8]->load(loadData(0x5ECD));
+}
+
+int ASound9::command57() {
+	byte *pData = loadData(0x5CD6);
+	if (!isSoundActive(pData)) {
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand57));
+		else
+			loadCommand57();
+	}
 	return 0;
 }
 
-int ASound9::command68() {
-	playSound(0x2FEB);
+// ---------------------------------------------------------------------------
+// Music command 58 — music-channel isSoundActive guard + deferred loader
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand58() {
+	resetCallbackTimer(0x90);
+	ASound::command1();
+	_channels[0]->load(loadData(0x5BEE));
+	_channels[1]->load(loadData(0x5C23));
+	_channels[2]->load(loadData(0x5C3E));
+	_channels[3]->load(loadData(0x5C7E));
+	_channels[4]->load(loadData(0x5C9D));
+	_channels[5]->load(loadData(0x5CA8));
+	_channels[6]->load(loadData(0x5CC8));
+}
+
+int ASound9::command58() {
+	byte *pData = loadData(0x5BEE);
+	if (!isSoundActive(pData)) {
+		if (isMusicChannelsActive())
+			scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand58));
+		else
+			loadCommand58();
+	}
 	return 0;
 }
 
-int ASound9::command69() {
-	playSound(0x2FF5);
-	playSound(0x301B);
-	playSound(0x3041);
+// ---------------------------------------------------------------------------
+// Music command 59 — direct load (no deferred, no timer)
+// ---------------------------------------------------------------------------
+
+int ASound9::command59() {
+	ASound::command1();
+	_channels[0]->load(loadData(0x55AE));
+	_channels[1]->load(loadData(0x5637));
+	_channels[2]->load(loadData(0x5621));
+	_channels[3]->load(loadData(0x56DF));
 	return 0;
 }
 
-int ASound9::command70() {
-	playSound(0x305B);
-	playSound(0x3064);
+// ---------------------------------------------------------------------------
+// Command 61 — stop SFX channels then play three SFX voices
+// ---------------------------------------------------------------------------
+
+int ASound9::command61() {
+	ASound::command5();
+	playSound(0x54E1);
+	playSound(0x5507);
+	playSound(0x552D);
 	return 0;
 }
 
-int ASound9::command71() {
-	playSound(0x306D);
-	playSound(0x308A);
+// ---------------------------------------------------------------------------
+// Music command 62 — deferred loader (channels 0-2, 5-6 only)
+// ---------------------------------------------------------------------------
+
+void ASound9::loadCommand62() {
+	ASound::command1();
+	resetCallbackTimer(0x40);
+	_channels[0]->load(loadData(0x6006));
+	_channels[1]->load(loadData(0x6204));
+	_channels[2]->load(loadData(0x6409));
+	_channels[5]->load(loadData(0x660C));
+	_channels[6]->load(loadData(0x667F));
+}
+
+int ASound9::command62() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASound9, loadCommand62));
+	else
+		loadCommand62();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// SFX command 63
+// ---------------------------------------------------------------------------
+
+int ASound9::command63() {
+	playSound(0x66EC);
 	return 0;
 }
 
