@@ -26,6 +26,9 @@
 #define	INFO_TRI	1
 #define	INFO_ANIM	2
 
+// LBA2 body flags
+#define MASK_OBJECT_ANIMATED (1 << 8)
+
 namespace TwinE {
 
 void BodyData::reset() {
@@ -206,33 +209,140 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	} else {
 		// T_BODY_HEADER (lba2)
 		const uint32 flags = stream.readUint32LE();
-		animated = (flags & INFO_ANIM) != 0;
-		stream.skip(4); // int16 size of header and int16 dummy
+		animated = (flags & MASK_OBJECT_ANIMATED) != 0;
+		stream.skip(4); // int16 SizeHeader and int16 Dummy
 		bbox.mins.x = stream.readSint32LE();
 		bbox.maxs.x = stream.readSint32LE();
 		bbox.mins.y = stream.readSint32LE();
 		bbox.maxs.y = stream.readSint32LE();
 		bbox.mins.z = stream.readSint32LE();
 		bbox.maxs.z = stream.readSint32LE();
-		stream.seek(0x20);
-#if 0
-		const uint32 bonesSize = stream.readUint32LE();
-		const uint32 bonesOffset = stream.readUint32LE();
-		const uint32 verticesSize = stream.readUint32LE();
-		const uint32 verticesOffset = stream.readUint32LE();
-		const uint32 normalsSize = stream.readUint32LE();
-		const uint32 normalsOffset = stream.readUint32LE();
-		const uint32 unk1Size = stream.readUint32LE();
-		const uint32 unk1Offset = stream.readUint32LE();
-		const uint32 polygonsSize = stream.readUint32LE();
-		const uint32 polygonsOffset = stream.readUint32LE();
-		const uint32 linesSize = stream.readUint32LE();
-		const uint32 linesOffset = stream.readUint32LE();
-		const uint32 spheresSize = stream.readUint32LE();
-		const uint32 spheresOffset = stream.readUint32LE();
-		const uint32 uvGroupsSize = stream.readUint32LE();
-		const uint32 uvGroupsOffset = stream.readUint32LE();
-#endif
+
+		// Offset table
+		const int32 nbGroupes = stream.readSint32LE();
+		const int32 offGroupes = stream.readSint32LE();
+		const int32 nbPoints = stream.readSint32LE();
+		const int32 offPoints = stream.readSint32LE();
+		const int32 nbNormals = stream.readSint32LE();
+		const int32 offNormals = stream.readSint32LE();
+		/*const int32 nbNormFaces =*/ stream.readSint32LE();
+		/*const int32 offNormFaces =*/ stream.readSint32LE();
+		const int32 nbPolys = stream.readSint32LE();
+		const int32 offPolys = stream.readSint32LE();
+		const int32 nbLines = stream.readSint32LE();
+		const int32 offLines = stream.readSint32LE();
+		const int32 nbSpheres = stream.readSint32LE();
+		const int32 offSpheres = stream.readSint32LE();
+		/*const int32 nbTextures =*/ stream.readSint32LE();
+		/*const int32 offTextures =*/ stream.readSint32LE();
+
+		// Load vertices (4 x int16 per point: x, y, z, pad)
+		stream.seek(offPoints);
+		_vertices.reserve(nbPoints);
+		for (int32 i = 0; i < nbPoints; ++i) {
+			const int16 x = stream.readSint16LE();
+			const int16 y = stream.readSint16LE();
+			const int16 z = stream.readSint16LE();
+			stream.skip(2); // padding
+			_vertices.push_back({x, y, z, 0});
+		}
+
+		// Load bones/groupes (4 x uint16: OrgGroupe, OrgPoint, NbPts, NbNorm)
+		stream.seek(offGroupes);
+		_bones.reserve(nbGroupes);
+		int16 vertexOffset = 0;
+		for (int32 i = 0; i < nbGroupes; ++i) {
+			const uint16 orgGroupe = stream.readUint16LE();
+			const uint16 orgPoint = stream.readUint16LE();
+			const uint16 nbPts = stream.readUint16LE();
+			const uint16 nbNorm = stream.readUint16LE();
+
+			BodyBone bone;
+			bone.parent = (i == 0) ? 0xffff : orgGroupe;
+			bone.vertex = orgPoint;
+			bone.firstVertex = vertexOffset;
+			bone.numVertices = nbPts;
+			bone.numNormals = nbNorm;
+			bone.initalBoneState.type = BoneType::TYPE_ROTATE;
+			bone.initalBoneState.x = 0;
+			bone.initalBoneState.y = 0;
+			bone.initalBoneState.z = 0;
+
+			for (int j = 0; j < nbPts; ++j) {
+				if (vertexOffset + j < (int)_vertices.size()) {
+					_vertices[vertexOffset + j].bone = i;
+				}
+			}
+			vertexOffset += nbPts;
+
+			_bones.push_back(bone);
+			_boneStates[i] = bone.initalBoneState;
+		}
+
+		// Load normals (4 x int16: x, y, z, prenormalizedRange)
+		stream.seek(offNormals);
+		_normals.reserve(nbNormals);
+		for (int32 i = 0; i < nbNormals; ++i) {
+			BodyNormal normal;
+			normal.x = stream.readSint16LE();
+			normal.y = stream.readSint16LE();
+			normal.z = stream.readSint16LE();
+			normal.prenormalizedRange = stream.readUint16LE();
+			_normals.push_back(normal);
+		}
+
+		// Load polygons
+		stream.seek(offPolys);
+		_polygons.reserve(nbPolys);
+		for (int32 i = 0; i < nbPolys; ++i) {
+			BodyPolygon poly;
+			poly.materialType = stream.readByte();
+			const uint8 numVerts = stream.readByte();
+			poly.intensity = stream.readSint16LE();
+
+			int16 normal = -1;
+			if (poly.materialType == MAT_FLAT || poly.materialType == MAT_GRANIT) {
+				normal = stream.readSint16LE();
+			}
+
+			poly.indices.reserve(numVerts);
+			poly.normals.reserve(numVerts);
+			for (int k = 0; k < numVerts; ++k) {
+				if (poly.materialType >= MAT_GOURAUD) {
+					normal = stream.readSint16LE();
+				}
+				const uint16 vertexIndex = stream.readUint16LE() / 6;
+				poly.indices.push_back(vertexIndex);
+				poly.normals.push_back(normal);
+			}
+			_polygons.push_back(poly);
+		}
+
+		// Load lines
+		stream.seek(offLines);
+		_lines.reserve(nbLines);
+		for (int32 i = 0; i < nbLines; ++i) {
+			BodyLine line;
+			stream.skip(1);
+			line.color = stream.readByte();
+			stream.skip(2);
+			line.vertex1 = stream.readUint16LE() / 6;
+			line.vertex2 = stream.readUint16LE() / 6;
+			_lines.push_back(line);
+		}
+
+		// Load spheres
+		stream.seek(offSpheres);
+		_spheres.reserve(nbSpheres);
+		for (int32 i = 0; i < nbSpheres; ++i) {
+			BodySphere sphere;
+			sphere.fillType = stream.readByte();
+			sphere.color = stream.readUint16LE();
+			stream.readByte();
+			sphere.radius = stream.readUint16LE();
+			sphere.vertex = stream.readUint16LE() / 6;
+			_spheres.push_back(sphere);
+		}
 	}
 
 	return !stream.err();
