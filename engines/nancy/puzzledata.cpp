@@ -213,6 +213,19 @@ void TableData::synchronize(Common::Serializer &ser) {
 	ser.syncArray(comboValues.data(), num, Common::Serializer::FloatLE);
 }
 
+static void syncInt16Array(Common::Serializer &ser, Common::Array<int16> &arr) {
+	uint16 num = (uint16)arr.size();
+	ser.syncAsUint16LE(num);
+	if (ser.isLoading())
+		arr.resize(num);
+	ser.syncArray(arr.data(), num, Common::Serializer::Sint16LE);
+}
+
+void SortPuzzleData::synchronize(Common::Serializer &ser) {
+	syncInt16Array(ser, currentState);
+	syncInt16Array(ser, solvedState);
+}
+
 void QuizPuzzleData::synchronize(Common::Serializer &ser) {
 	// Serialize as: numScenes, then for each scene: sceneID, numBoxes, box data
 	uint16 numScenes = (uint16)boxCorrect.size();
@@ -324,6 +337,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new AssemblyPuzzleData();
 	case QuizPuzzleData::getTag():
 		return new QuizPuzzleData();
+	case SortPuzzleData::getTag():
+		return new SortPuzzleData();
 	case JournalData::getTag():
 		return new JournalData();
 	case TableData::getTag():

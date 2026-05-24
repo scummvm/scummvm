@@ -61,6 +61,7 @@
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
+#include "engines/nancy/action/puzzle/sortpuzzle.h"
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
 #include "engines/nancy/action/puzzle/soundmatchpuzzle.h"
 #include "engines/nancy/action/puzzle/spigotpuzzle.h"
@@ -461,7 +462,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new MemoryPuzzle();
 	// -- Nancy 10 and up --
 	case 239:
-		//return new SortPuzzle();
+		return new SortPuzzle();
 	case 241:
 		// return new DotConnectPuzzle();
 	case 242:

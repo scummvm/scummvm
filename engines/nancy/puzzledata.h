@@ -115,6 +115,20 @@ struct AssemblyPuzzleData : public SimplePuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('A', 'S', 'M', 'B'); }
 };
 
+// Cached current/solved tile layouts for a SortPuzzle. Each cell is encoded as
+// 4 consecutive int16s: srcRow, srcCol, value, isEmpty. The first two int16s
+// of each array are the grid rows and cols.
+struct SortPuzzleData : public PuzzleData {
+	SortPuzzleData() {}
+	virtual ~SortPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('S', 'O', 'R', 'T'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<int16> currentState;
+	Common::Array<int16> solvedState;
+};
+
 struct QuizPuzzleData : public PuzzleData {
 	QuizPuzzleData() {}
 	virtual ~QuizPuzzleData() {}
