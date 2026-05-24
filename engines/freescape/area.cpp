@@ -87,6 +87,14 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 
 	_lastTick = 0;
 	_lastDepthLayerTick = 0;
+	_lastFov = 0.0f;
+	_lastAspectRatio = 0.0f;
+	_lastNearClipPlane = 0.0f;
+	_lastFarClipPlane = 0.0f;
+	_lastDepthLayerFov = 0.0f;
+	_lastDepthLayerAspectRatio = 0.0f;
+	_lastDepthLayerNearClipPlane = 0.0f;
+	_lastDepthLayerFarClipPlane = 0.0f;
 	_lastRenderDepthLayer = kRenderDepthAll;
 	_lastForegroundDistance = 0.0f;
 }
@@ -227,6 +235,78 @@ void Area::resetArea() {
 }
 
 
+static float aabbMaxProjection(const Math::AABB &aabb, const Math::Vector3d &axis) {
+	const Math::Vector3d min = aabb.getMin();
+	const Math::Vector3d max = aabb.getMax();
+	Math::Vector3d support(
+		axis.x() >= 0.0f ? max.x() : min.x(),
+		axis.y() >= 0.0f ? max.y() : min.y(),
+		axis.z() >= 0.0f ? max.z() : min.z());
+
+	return support.dotProduct(axis);
+}
+
+static float aabbMinProjection(const Math::AABB &aabb, const Math::Vector3d &axis) {
+	const Math::Vector3d min = aabb.getMin();
+	const Math::Vector3d max = aabb.getMax();
+	Math::Vector3d support(
+		axis.x() >= 0.0f ? min.x() : max.x(),
+		axis.y() >= 0.0f ? min.y() : max.y(),
+		axis.z() >= 0.0f ? min.z() : max.z());
+
+	return support.dotProduct(axis);
+}
+
+static bool aabbIntersectsHalfSpace(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &normal, float padding) {
+	return aabbMaxProjection(aabb, normal) - camera.dotProduct(normal) >= -padding;
+}
+
+static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &direction, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
+	if (!aabb.isValid())
+		return false;
+
+	Math::Vector3d front = direction.getNormalized();
+	if (front.getSquareMagnitude() == 0.0f)
+		return true;
+
+	const Math::Vector3d worldUp(0.0f, 1.0f, 0.0f);
+	Math::Vector3d right = Math::Vector3d::crossProduct(front, worldUp);
+	if (right.getSquareMagnitude() < 0.0001f)
+		right = Math::Vector3d(1.0f, 0.0f, 0.0f);
+	else
+		right.normalize();
+	Math::Vector3d up = Math::Vector3d::crossProduct(right, front).getNormalized();
+
+	const float padding = 32.0f;
+	const float horizontalScale = tan(Math::deg2rad(fov) / 2.0f) * 1.25f;
+	const float verticalScale = MAX(horizontalScale / MAX(aspectRatio, 0.001f), horizontalScale);
+	const float minDepth = aabbMinProjection(aabb, front) - camera.dotProduct(front);
+	const float maxDepth = aabbMaxProjection(aabb, front) - camera.dotProduct(front);
+
+	if (maxDepth < nearClipPlane - padding)
+		return false;
+	if (minDepth > farClipPlane + padding)
+		return false;
+
+	if (!aabbIntersectsHalfSpace(aabb, camera, front * horizontalScale + right, padding))
+		return false;
+	if (!aabbIntersectsHalfSpace(aabb, camera, front * horizontalScale - right, padding))
+		return false;
+	if (!aabbIntersectsHalfSpace(aabb, camera, front * verticalScale + up, padding))
+		return false;
+	if (!aabbIntersectsHalfSpace(aabb, camera, front * verticalScale - up, padding))
+		return false;
+
+	return true;
+}
+
+static bool objectIsSortCandidate(Object *obj, const Math::Vector3d &camera, const Math::Vector3d &direction, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
+	if (!obj || obj->isDestroyed() || obj->isInvisible() || !obj->isGeometric())
+		return false;
+
+	return aabbIntersectsViewVolume(obj->_occlusionBox, camera, direction, fov, aspectRatio, nearClipPlane, farClipPlane);
+}
+
 static float aabbNearestDepth(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &direction) {
 	const Math::Vector3d min = aabb.getMin();
 	const Math::Vector3d max = aabb.getMax();
@@ -280,10 +360,12 @@ static bool objectInDepthLayer(Object *obj, const Math::Vector3d &camera, const 
 	return depthLayer == Area::kRenderDepthForeground ? foreground : !foreground;
 }
 
-void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait) {
+void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	bool runAnimation = animationTicks != _lastTick;
 	bool cameraChanged = camera != _lastCameraPosition;
-	bool sort = runAnimation || cameraChanged || _sortedObjects.empty();
+	bool directionChanged = direction != _lastCameraDirection;
+	bool projectionChanged = fov != _lastFov || aspectRatio != _lastAspectRatio || nearClipPlane != _lastNearClipPlane || farClipPlane != _lastFarClipPlane;
+	bool sort = runAnimation || cameraChanged || directionChanged || projectionChanged || _sortedObjects.empty();
 
 	assert(_drawableObjects.size() > 0);
 	if (sort)
@@ -316,7 +398,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 			}
 
-			if (sort)
+			if (sort && objectIsSortCandidate(obj, camera, direction, fov, aspectRatio, nearClipPlane, farClipPlane))
 				_sortedObjects.push_back(obj);
 		}
 	}
@@ -449,15 +531,23 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 			gfx->drawAABB(obj->_occlusionBox, 255, 0, 0);
 	}
 	_lastTick = animationTicks;
-	if (sort)
+	if (sort) {
 		_lastCameraPosition = camera;
+		_lastCameraDirection = direction;
+		_lastFov = fov;
+		_lastAspectRatio = aspectRatio;
+		_lastNearClipPlane = nearClipPlane;
+		_lastFarClipPlane = farClipPlane;
+	}
 }
 
-void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, RenderDepthLayer depthLayer, float foregroundDistance) {
+void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, RenderDepthLayer depthLayer, float foregroundDistance, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	bool runAnimation = depthLayer != kRenderDepthBackground && animationTicks != _lastDepthLayerTick;
 	bool cameraChanged = camera != _lastDepthLayerCameraPosition;
+	bool directionChanged = direction != _lastDepthLayerCameraDirection;
+	bool projectionChanged = fov != _lastDepthLayerFov || aspectRatio != _lastDepthLayerAspectRatio || nearClipPlane != _lastDepthLayerNearClipPlane || farClipPlane != _lastDepthLayerFarClipPlane;
 	bool layerChanged = depthLayer != _lastRenderDepthLayer || (depthLayer != kRenderDepthAll && ABS(foregroundDistance - _lastForegroundDistance) > 0.001f);
-	bool sort = runAnimation || cameraChanged || layerChanged || _depthLayerSortedObjects.empty();
+	bool sort = runAnimation || cameraChanged || directionChanged || projectionChanged || layerChanged || _depthLayerSortedObjects.empty();
 	Math::Vector3d normalizedDirection = direction.getNormalized();
 
 	assert(_drawableObjects.size() > 0);
@@ -493,7 +583,9 @@ void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math:
 				continue;
 			}
 
-			if (sort && objectInDepthLayer(obj, camera, normalizedDirection, depthLayer, foregroundDistance))
+			if (sort &&
+					objectInDepthLayer(obj, camera, normalizedDirection, depthLayer, foregroundDistance) &&
+					objectIsSortCandidate(obj, camera, direction, fov, aspectRatio, nearClipPlane, farClipPlane))
 				_depthLayerSortedObjects.push_back(obj);
 		}
 	}
@@ -629,6 +721,11 @@ void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math:
 		_lastDepthLayerTick = animationTicks;
 	if (sort) {
 		_lastDepthLayerCameraPosition = camera;
+		_lastDepthLayerCameraDirection = direction;
+		_lastDepthLayerFov = fov;
+		_lastDepthLayerAspectRatio = aspectRatio;
+		_lastDepthLayerNearClipPlane = nearClipPlane;
+		_lastDepthLayerFarClipPlane = farClipPlane;
 		_lastRenderDepthLayer = depthLayer;
 		_lastForegroundDistance = foregroundDistance;
 	}
