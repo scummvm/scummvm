@@ -182,30 +182,30 @@ IVec3 Renderer::setAngleCamera(int32 alpha, int32 beta, int32 gamma) {
 }
 
 IVec3 Renderer::worldRotatePoint(const IVec3& vec) {
-	const int32 vx = (_matrixWorld.row1.x * vec.x + _matrixWorld.row1.y * vec.y + _matrixWorld.row1.z * vec.z) / SCENE_SIZE_HALF;
-	const int32 vy = (_matrixWorld.row2.x * vec.x + _matrixWorld.row2.y * vec.y + _matrixWorld.row2.z * vec.z) / SCENE_SIZE_HALF;
-	const int32 vz = (_matrixWorld.row3.x * vec.x + _matrixWorld.row3.y * vec.y + _matrixWorld.row3.z * vec.z) / SCENE_SIZE_HALF;
+	const int32 vx = (_matrixWorld.row1.x * vec.x + _matrixWorld.row1.y * vec.y + _matrixWorld.row1.z * vec.z) >> 14;
+	const int32 vy = (_matrixWorld.row2.x * vec.x + _matrixWorld.row2.y * vec.y + _matrixWorld.row2.z * vec.z) >> 14;
+	const int32 vz = (_matrixWorld.row3.x * vec.x + _matrixWorld.row3.y * vec.y + _matrixWorld.row3.z * vec.z) >> 14;
 	return IVec3(vx, vy, vz);
 }
 
 IVec3 Renderer::longWorldRot(int32 x, int32 y, int32 z) {
-	const int64 vx = ((int64)_matrixWorld.row1.x * (int64)x + (int64)_matrixWorld.row1.y * (int64)y + (int64)_matrixWorld.row1.z * (int64)z) / SCENE_SIZE_HALF;
-	const int64 vy = ((int64)_matrixWorld.row2.x * (int64)x + (int64)_matrixWorld.row2.y * (int64)y + (int64)_matrixWorld.row2.z * (int64)z) / SCENE_SIZE_HALF;
-	const int64 vz = ((int64)_matrixWorld.row3.x * (int64)x + (int64)_matrixWorld.row3.y * (int64)y + (int64)_matrixWorld.row3.z * (int64)z) / SCENE_SIZE_HALF;
+	const int64 vx = ((int64)_matrixWorld.row1.x * (int64)x + (int64)_matrixWorld.row1.y * (int64)y + (int64)_matrixWorld.row1.z * (int64)z) >> 14;
+	const int64 vy = ((int64)_matrixWorld.row2.x * (int64)x + (int64)_matrixWorld.row2.y * (int64)y + (int64)_matrixWorld.row2.z * (int64)z) >> 14;
+	const int64 vz = ((int64)_matrixWorld.row3.x * (int64)x + (int64)_matrixWorld.row3.y * (int64)y + (int64)_matrixWorld.row3.z * (int64)z) >> 14;
 	return IVec3((int32)vx, (int32)vy, (int32)vz);
 }
 
 IVec3 Renderer::longInverseRot(int32 x, int32 y, int32 z) {
-	const int64 vx = ((int64)_matrixWorld.row1.x * (int64)x + (int64)_matrixWorld.row2.x * (int64)y + (int64)_matrixWorld.row3.x * (int64)z) / SCENE_SIZE_HALF;
-	const int64 vy = ((int64)_matrixWorld.row1.y * (int64)x + (int64)_matrixWorld.row2.y * (int64)y + (int64)_matrixWorld.row3.y * (int64)z) / SCENE_SIZE_HALF;
-	const int64 vz = ((int64)_matrixWorld.row1.z * (int64)x + (int64)_matrixWorld.row2.z * (int64)y + (int64)_matrixWorld.row3.z * (int64)z) / SCENE_SIZE_HALF;
+	const int64 vx = ((int64)_matrixWorld.row1.x * (int64)x + (int64)_matrixWorld.row2.x * (int64)y + (int64)_matrixWorld.row3.x * (int64)z) >> 14;
+	const int64 vy = ((int64)_matrixWorld.row1.y * (int64)x + (int64)_matrixWorld.row2.y * (int64)y + (int64)_matrixWorld.row3.y * (int64)z) >> 14;
+	const int64 vz = ((int64)_matrixWorld.row1.z * (int64)x + (int64)_matrixWorld.row2.z * (int64)y + (int64)_matrixWorld.row3.z * (int64)z) >> 14;
 	return IVec3((int32)vx, (int32)vy, (int32)vz);
 }
 
 IVec3 Renderer::rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z) {
-	const int32 vx = (matrix.row1.x * x + matrix.row1.y * y + matrix.row1.z * z) / SCENE_SIZE_HALF;
-	const int32 vy = (matrix.row2.x * x + matrix.row2.y * y + matrix.row2.z * z) / SCENE_SIZE_HALF;
-	const int32 vz = (matrix.row3.x * x + matrix.row3.y * y + matrix.row3.z * z) / SCENE_SIZE_HALF;
+	const int32 vx = (matrix.row1.x * x + matrix.row1.y * y + matrix.row1.z * z) >> 14;
+	const int32 vy = (matrix.row2.x * x + matrix.row2.y * y + matrix.row2.z * z) >> 14;
+	const int32 vz = (matrix.row3.x * x + matrix.row3.y * y + matrix.row3.z * z) >> 14;
 	return IVec3(vx, vy, vz);
 }
 
@@ -246,12 +246,12 @@ void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVe
 		pDest->row2.x = pSrc->row2.x;
 		pDest->row3.x = pSrc->row3.x;
 
-		pDest->row1.y = (pSrc->row1.z * nSin + pSrc->row1.y * nCos) / SCENE_SIZE_HALF;
-		pDest->row1.z = (pSrc->row1.z * nCos - pSrc->row1.y * nSin) / SCENE_SIZE_HALF;
-		pDest->row2.y = (pSrc->row2.z * nSin + pSrc->row2.y * nCos) / SCENE_SIZE_HALF;
-		pDest->row2.z = (pSrc->row2.z * nCos - pSrc->row2.y * nSin) / SCENE_SIZE_HALF;
-		pDest->row3.y = (pSrc->row3.z * nSin + pSrc->row3.y * nCos) / SCENE_SIZE_HALF;
-		pDest->row3.z = (pSrc->row3.z * nCos - pSrc->row3.y * nSin) / SCENE_SIZE_HALF;
+		pDest->row1.y = (pSrc->row1.z * nSin + pSrc->row1.y * nCos) >> 14;
+		pDest->row1.z = (pSrc->row1.z * nCos - pSrc->row1.y * nSin) >> 14;
+		pDest->row2.y = (pSrc->row2.z * nSin + pSrc->row2.y * nCos) >> 14;
+		pDest->row2.z = (pSrc->row2.z * nCos - pSrc->row2.y * nSin) >> 14;
+		pDest->row3.y = (pSrc->row3.z * nSin + pSrc->row3.y * nCos) >> 14;
+		pDest->row3.z = (pSrc->row3.z * nCos - pSrc->row3.y * nSin) >> 14;
 		pSrc = pDest;
 	}
 
@@ -263,12 +263,12 @@ void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVe
 		tmp.row2.z = pSrc->row2.z;
 		tmp.row3.z = pSrc->row3.z;
 
-		tmp.row1.x = (pSrc->row1.y * nSin + pSrc->row1.x * nCos) / SCENE_SIZE_HALF;
-		tmp.row1.y = (pSrc->row1.y * nCos - pSrc->row1.x * nSin) / SCENE_SIZE_HALF;
-		tmp.row2.x = (pSrc->row2.y * nSin + pSrc->row2.x * nCos) / SCENE_SIZE_HALF;
-		tmp.row2.y = (pSrc->row2.y * nCos - pSrc->row2.x * nSin) / SCENE_SIZE_HALF;
-		tmp.row3.x = (pSrc->row3.y * nSin + pSrc->row3.x * nCos) / SCENE_SIZE_HALF;
-		tmp.row3.y = (pSrc->row3.y * nCos - pSrc->row3.x * nSin) / SCENE_SIZE_HALF;
+		tmp.row1.x = (pSrc->row1.y * nSin + pSrc->row1.x * nCos) >> 14;
+		tmp.row1.y = (pSrc->row1.y * nCos - pSrc->row1.x * nSin) >> 14;
+		tmp.row2.x = (pSrc->row2.y * nSin + pSrc->row2.x * nCos) >> 14;
+		tmp.row2.y = (pSrc->row2.y * nCos - pSrc->row2.x * nSin) >> 14;
+		tmp.row3.x = (pSrc->row3.y * nSin + pSrc->row3.x * nCos) >> 14;
+		tmp.row3.y = (pSrc->row3.y * nCos - pSrc->row3.x * nSin) >> 14;
 
 		pSrc = &tmp;
 	}
@@ -291,12 +291,12 @@ void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVe
 			pDest->row3.y = pSrc->row3.y;
 		}
 
-		pDest->row1.x = (pSrc->row1.x * nCos - pSrc->row1.z * nSin) / SCENE_SIZE_HALF;
-		pDest->row1.z = (pSrc->row1.x * nSin + pSrc->row1.z * nCos) / SCENE_SIZE_HALF;
-		pDest->row2.x = (pSrc->row2.x * nCos - pSrc->row2.z * nSin) / SCENE_SIZE_HALF;
-		pDest->row2.z = (pSrc->row2.x * nSin + pSrc->row2.z * nCos) / SCENE_SIZE_HALF;
-		pDest->row3.x = (pSrc->row3.x * nCos - pSrc->row3.z * nSin) / SCENE_SIZE_HALF;
-		pDest->row3.z = (pSrc->row3.x * nSin + pSrc->row3.z * nCos) / SCENE_SIZE_HALF;
+		pDest->row1.x = (pSrc->row1.x * nCos - pSrc->row1.z * nSin) >> 14;
+		pDest->row1.z = (pSrc->row1.x * nSin + pSrc->row1.z * nCos) >> 14;
+		pDest->row2.x = (pSrc->row2.x * nCos - pSrc->row2.z * nSin) >> 14;
+		pDest->row2.z = (pSrc->row2.x * nSin + pSrc->row2.z * nCos) >> 14;
+		pDest->row3.x = (pSrc->row3.x * nCos - pSrc->row3.z * nSin) >> 14;
+		pDest->row3.z = (pSrc->row3.x * nSin + pSrc->row3.z * nCos) >> 14;
 	} else if (pSrc != pDest) {
 		*pDest = *pSrc;
 	}
@@ -314,9 +314,9 @@ bool isPolygonVisible(const ComputedVertex *vertices) { // TestVuePoly
 void Renderer::rotList(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix, const IVec3 &destPos) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
-		destPoints->x = (int16)(((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + destPos.x);
-		destPoints->y = (int16)(((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + destPos.y);
-		destPoints->z = (int16)(((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + destPos.z);
+		destPoints->x = (int16)(((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) >> 14) + destPos.x);
+		destPoints->y = (int16)(((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) >> 14) + destPos.y);
+		destPoints->z = (int16)(((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) >> 14) + destPos.z);
 
 		destPoints++;
 	}
@@ -358,9 +358,9 @@ void Renderer::transRotList(const Common::Array<BodyVertex> &vertices, int32 fir
 		const int16 tmpY = (int16)(vertex.y + angleVec.y);
 		const int16 tmpZ = (int16)(vertex.z + angleVec.z);
 
-		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
-		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
-		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
+		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) >> 14) + destPos.x;
+		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) >> 14) + destPos.y;
+		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) >> 14) + destPos.z;
 
 		destPoints++;
 	}

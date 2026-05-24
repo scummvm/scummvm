@@ -635,19 +635,15 @@ BlockEntry Grid::getBlockEntry(int32 xmap, int32 ymap, int32 zmap) const {
 ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
+	if (collision.x < 0 || collision.x >= SIZE_CUBE_X || collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
+		return ShapeType::kNone;
+	}
+
 	if (collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (collision.x < 0 || collision.x >= SIZE_CUBE_X) {
-		return ShapeType::kNone;
-	}
-
-	if (collision.y < 0 || collision.y >= SIZE_CUBE_Y) {
-		return ShapeType::kNone;
-	}
-
-	if (collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
+	if (collision.y >= SIZE_CUBE_Y) {
 		return ShapeType::kNone;
 	}
 
@@ -660,9 +656,9 @@ ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 }
 
 const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
-	_engine->_collision->_collision.x = (x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
-	_engine->_collision->_collision.y = y / SIZE_BRICK_Y;
-	_engine->_collision->_collision.z = (z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
+	_engine->_collision->_collision.x = (x + DEMI_BRICK_XZ) >> 9;
+	_engine->_collision->_collision.y = y >> 8;
+	_engine->_collision->_collision.z = (z + DEMI_BRICK_XZ) >> 9;
 	return _engine->_collision->_collision;
 }
 
@@ -684,12 +680,12 @@ bool Grid::shouldCheckWaterCol(int32 actorIdx) const {
 ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 actorIdx) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
-	if (collision.y <= -1) {
-		return ShapeType::kSolid;
-	}
-
 	if (collision.x < 0 || collision.x >= SIZE_CUBE_X || collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
 		return ShapeType::kNone;
+	}
+
+	if (collision.y <= -1) {
+		return ShapeType::kSolid;
 	}
 
 	bool checkWater = shouldCheckWaterCol(actorIdx);
