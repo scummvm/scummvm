@@ -55,12 +55,19 @@ public:
 		kCustom2Hotspot			= 19,
 		kNormalArrow			= 20,
 		kHotspotArrow			= 21,
+		kHotspotTalk			= 22,	// Speech-bubble hover cursor (Nancy 10+)
 
 		// Cursors in Nancy10 and newer games. Each cursor type stores
 		// two consecutive entries in the chunk: an idle slot at
 		// (type * 2) and a hotspot/highlighted slot at (type * 2 + 1).
 		kNewNormal 				= 0,	// Type 0 idle  — Eyeglass
 		kNewHotspot 			= 1,	// Type 0 hotspot — Eyeglass highlighted (only "hotspot" variant we expose)
+		kNewUse					= 2,	// Type 1 idle  — Used for interaction with characters and objects
+		kNewHotspotUse			= 3,	// Type 1 hotspot
+		kNewLockedUse			= 4,	// Type 2 idle
+		kNewHotspotLockedUse	= 5,	// Type 2 hotspot
+		kNewTalk				= 6,	// Type 3 idle  — Speech-bubble (talking to characters)
+		kNewHotspotTalk			= 7,	// Type 3 hotspot
 		kNewNormalArrow			= 8,	// Type 4 idle  — when the cursor is over the taskbar
 		kNewHotspotArrow		= 9,	// Type 4 hotspot
 		kNewExit 				= 10,	// Type 5 idle  — Used for movement and exiting puzzles
