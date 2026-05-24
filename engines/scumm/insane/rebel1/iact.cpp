@@ -690,10 +690,12 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			_pendingRouteIndex = nextRoute;
 			_pendingRouteCutoverFrame = (int32)routeFrame + 7;
 			_pendingRouteStartFrame = (int32)routeFrame;
+			_pendingRouteVideoStartFrame = 1 + (_pendingRouteCutoverFrame - _pendingRouteStartFrame);
 			_level7WarningFrames = 0;
-			debug(1, "RA1 L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d",
+			debug(1, "RA1 L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d destFrame=%d",
 				route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, (unsigned)decisionFrame, branchX,
-				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
+				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame,
+				(int)_pendingRouteVideoStartFrame);
 			return;
 		}
 	}

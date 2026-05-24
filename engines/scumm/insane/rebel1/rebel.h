@@ -457,6 +457,7 @@ private:
 	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
 	int32 _pendingRouteStartFrame; // Resume/frame-gate target for branch-driven route switches
 	int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (branchFrame + 7)
+	int32 _pendingRouteVideoStartFrame; // L7 destination ANM-local frame after gate adjustment
 	int16 _level7WarningFrames;  // RunLevel7Flow local_38: 30-frame branch warning countdown
 	int16 _level7WarningThreshold; // Collapses RunLevel7Flow local_40 into its DAT_2361 threshold
 	int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
