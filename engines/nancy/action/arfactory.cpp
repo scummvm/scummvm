@@ -42,6 +42,7 @@
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
+#include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
@@ -465,7 +466,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 239:
 		return new SortPuzzle();
 	case 241:
-		// return new DotConnectPuzzle();
+		return new DotConnectPuzzle();
 	case 242:
 		// return new MagnetMazePuzzle();
 	case 243:
