@@ -335,10 +335,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 128:
 		// Nancy 10+
 		return new CellPhonePopCellSceneFromStack();
+	case 129:
+		// Nancy 10+
+		return new SetCellPhoneBatteryAndSignal();
 	case 130:
 		// Nancy 10+
-		warning("ChangeCellPhoneInfo - not implemented yet");
-		return nullptr;
+		return new ChangeCellPhoneInfo();
 	case 131:
 		// Nancy 10+
 		return new AddSearchLink();
