@@ -301,9 +301,8 @@ void HolomapV1::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta, int16 s
 	const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + size));
 	_engine->_renderer->setFollowCamera(0, 0, 0, angle.x, angle.y, angle.z, distance(zDistanceTrajectory));
 	_engine->_interface->unsetClip();
-	const IVec3 &m1 = _engine->_renderer->worldRotatePoint(m);
 	Common::Rect dirtyRect;
-	_engine->_renderer->renderIsoModel(m1, alpha, beta, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
+	_engine->_renderer->renderIsoModel(m, alpha, beta, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
 	_engine->copyBlockPhys(dirtyRect);
 }
 
