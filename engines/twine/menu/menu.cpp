@@ -260,20 +260,19 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 
 	const uint8 *in = _plasmaEffectPtr + 5 * PLASMA_WIDTH;
 	uint8 *out = (uint8 *)_engine->_imageBuffer.getBasePtr(0, 0);
+	const int32 bufWidth = _engine->_imageBuffer.w;
 
+	// Write plasma at native 320x25 resolution, each source row doubled vertically
+	// to produce 320x50 output matching the original DoFire rendering
 	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
-		int32 yOffset = y * _engine->_imageBuffer.w;
 		const uint8 *colPtr = &in[y * PLASMA_WIDTH];
+		uint8 *row0 = out + (y * 2) * bufWidth;
+		uint8 *row1 = row0 + bufWidth;
 		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
 			const uint8 c = MIN(*colPtr / 2 + color, max_value);
-			/* 2x2 squares sharing the same pixel color: */
-			const int32 target = 2 * yOffset;
-			out[target + 0] = c;
-			out[target + 1] = c;
-			out[target + _engine->_imageBuffer.w + 0] = c;
-			out[target + _engine->_imageBuffer.w + 1] = c;
+			row0[x] = c;
+			row1[x] = c;
 			++colPtr;
-			++yOffset;
 		}
 	}
 	const Common::Rect prect(0, 0, PLASMA_WIDTH, PLASMA_HEIGHT);
