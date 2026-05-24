@@ -618,8 +618,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[0];
 		_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
 		_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
-	} else if (isAmiga()) {
-		// Unclear why these colors are always overwritten
+	} else if (isAmiga() || isAtariST()) {
+		// Unclear why these colors are always overwritten (the Atari ST build
+		// shares the Amiga rendering and needs the same 3D-world greys).
 		byte (*palette)[16][3] = (byte (*)[16][3])_gfx->_palette;
 
 		(*palette)[1][0] = 0x44;
@@ -1534,7 +1535,7 @@ void CastleEngine::loadAssets() {
 	_outOfReachMessage = _messagesList[7];
 	_noEffectMessage = _messagesList[8];
 
-	if (!isAmiga() && !isCPC()) {
+	if (!isAmiga() && !isAtariST() && !isCPC()) {
 		Graphics::Surface *tmp;
 		tmp = loadBundledImage("castle_gate", !isDOS());
 		_gameOverBackgroundFrame = new Graphics::ManagedSurface;
@@ -2049,6 +2050,10 @@ void CastleEngine::updateTimeVariables() {
 void CastleEngine::borderScreen() {
 	if (isAmiga() && isDemo())
 		return; // Skip character selection
+	if (isAtariST()) {
+		playAtariIntro();
+		return;
+	}
 	if (isAmiga()) {
 		if (playAmigaIntro())
 			return;
@@ -2291,7 +2296,7 @@ void CastleEngine::drawLiftingGate(Graphics::Surface *surface) {
 	else if (isCPC())
 		duration = 100;
 
-	if ((_gameStateControl == kFreescapeGameStateStart || _gameStateControl == kFreescapeGameStateRestart) && _ticks <= duration) { // Draw the _gameOverBackgroundFrame gate lifting up slowly
+	if (_gameOverBackgroundFrame && (_gameStateControl == kFreescapeGameStateStart || _gameStateControl == kFreescapeGameStateRestart) && _ticks <= duration) { // Draw the _gameOverBackgroundFrame gate lifting up slowly
 		int gate_w = _gameOverBackgroundFrame->w;
 		int gate_h = _gameOverBackgroundFrame->h;
 

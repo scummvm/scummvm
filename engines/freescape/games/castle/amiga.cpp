@@ -69,10 +69,50 @@ byte kAmigaCastleRiddlePalette[16][3] = {
 	{0xee, 0xcc, 0x66},
 };
 
+// Data offsets used by the intro player. The Amiga and Atari ST builds share
+// the same intro engine/data but lay everything out at different offsets (the
+// Atari intro lives in J.PRG), so the offsets are parameterised here.
+struct CastleIntroLayout {
+	int scrollPlaneA, scrollPlaneB, staticPlane;
+	int fillBands, overlay;
+	int logo, foreground;
+	int sprite1, sprite2, selSprite, objSprite, objArrow;
+	int char1Slot, char2Slot, motionSlot;
+	int motionStatic1, motionSelect, motionLoop;
+	int palBlack, palMain, palSelect;
+	int langTableEN, langTableFR, langTableDE;
+	int palScale; // 0: palette channels are 4-bit (Amiga); 1: 3-bit (Atari ST), scale up
+};
+
+static const CastleIntroLayout kAmigaIntroLayout = {
+	0x247c, 0x2d64, 0x4664,     // scrollPlaneA/B, staticPlane
+	0x5ba4, 0x5c0c,             // fillBands, overlay
+	0x14ff4, 0x1ac74,           // logo, foreground
+	0x700c, 0xd4ac, 0x108ac, 0x12dec, 0x136dc, // sprite1/2/sel/obj/arrow
+	0x1e26, 0x1eb8, 0x1f4a,     // char1Slot, char2Slot, motionSlot
+	0x2054, 0x2256, 0x21b0,     // motionStatic1, motionSelect, motionLoop
+	0x1dc6, 0x1de6, 0x1e06,     // palBlack, palMain, palSelect
+	0x1cf2, 0x1d2e, 0x1d6a,     // langTable EN/FR/DE
+	0
+};
+
+static const CastleIntroLayout kAtariIntroLayout = {
+	0x22, 0x90a, 0x220a,
+	0x374a, 0x37b2,
+	0x12b9a, 0x1881a,
+	0x4bb2, 0xb052, 0xe452, 0x10992, 0x11282,
+	0x1b32a, 0x1b3bc, 0x1b44e,
+	0x1b558, 0x1b75a, 0x1b6b4,
+	0x1b2ca, 0x1b2ea, 0x1b30a,
+	0x1b178, 0x1b1b4, 0x1b1f0,
+	1
+};
+
 class CastleAmigaIntroPlayer {
 public:
-	CastleAmigaIntroPlayer(CastleEngine *engine, const Common::Array<byte> &introText)
-	    : _engine(engine), _data(introText) {
+	CastleAmigaIntroPlayer(CastleEngine *engine, const Common::Array<byte> &introText,
+	                       const CastleIntroLayout &layout = kAmigaIntroLayout)
+	    : _engine(engine), _data(introText), _l(layout) {
 		_screen[0].resize(kScreenBytes);
 		_screen[1].resize(kScreenBytes);
 		reset();
@@ -85,10 +125,10 @@ public:
 		drawBaseScreen();
 		drawStaticLogo();
 		drawStaticForeground();
-		fadePalette(0x1dc6);
+		fadePalette(_l.palBlack);
 		pageFlip();
 		displayFrame(false, false);
-		fadePalette(0x1de6);
+		fadePalette(_l.palMain);
 
 		int key = 0;
 		while (!_aborted) {
@@ -111,7 +151,7 @@ public:
 
 		_phaseDone = 0;
 		_renderMode = 2;
-		_motionPtr = 0x2054;
+		_motionPtr = _l.motionStatic1;
 		updateAnimation();
 
 		clearDrawBuffer();
@@ -119,11 +159,11 @@ public:
 		drawMovingCharacters();
 		drawOverlay();
 		drawLanguageText();
-		fadePalette(0x1dc6);
+		fadePalette(_l.palBlack);
 		pageFlip();
 		displayFrame(false, false);
 		displayFrame(false, false);
-		fadePalette(0x1e06);
+		fadePalette(_l.palSelect);
 
 		setSelectionMouseEnabled(true);
 		while (!_aborted) {
@@ -157,17 +197,17 @@ public:
 		_choiceState = 0;
 		_phaseDone = 0;
 		clearDrawBuffer();
-		_motionPtr = 0x2256;
+		_motionPtr = _l.motionSelect;
 		updateAnimation();
 		drawBaseScreen();
 		drawStaticForeground();
 		drawAnimatedObject();
 		drawStaticLogo();
-		fadePalette(0x1dc6);
+		fadePalette(_l.palBlack);
 		pageFlip();
 		displayFrame(false, false);
 		displayFrame(false, false);
-		fadePalette(0x1de6);
+		fadePalette(_l.palMain);
 
 		int guard = 0;
 		while (!_aborted && !_phaseDone && guard++ < 600) {
@@ -196,6 +236,7 @@ private:
 
 	CastleEngine *_engine;
 	const Common::Array<byte> &_data;
+	const CastleIntroLayout &_l;
 	Common::Array<byte> _screen[2];
 	uint16 _palette[32];
 	int _displayBuffer;
@@ -256,9 +297,9 @@ private:
 		_renderMode = 1;
 		_arrowFrame = 0;
 		_choice = 1;
-		_character1Ptr = READ_BE_UINT32(_data.data() + 0x1e26);
-		_character2Ptr = READ_BE_UINT32(_data.data() + 0x1eb8);
-		_motionPtr = READ_BE_UINT32(_data.data() + 0x1f4a);
+		_character1Ptr = READ_BE_UINT32(_data.data() + _l.char1Slot);
+		_character2Ptr = READ_BE_UINT32(_data.data() + _l.char2Slot);
+		_motionPtr = READ_BE_UINT32(_data.data() + _l.motionSlot);
 	}
 
 	static int16 highWord(int32 value) {
@@ -305,9 +346,9 @@ private:
 
 	void drawBaseScreen() {
 		int dst = 38 * kRowBytes;
-		dst = drawScrollingPlane(0x247c, _scrollA, 57, dst);
-		dst = drawScrollingFourPlane(0x2d64, _scrollB, 40, dst);
-		dst = drawStaticFourPlane(0x4664, 33, dst);
+		dst = drawScrollingPlane(_l.scrollPlaneA, _scrollA, 57, dst);
+		dst = drawScrollingFourPlane(_l.scrollPlaneB, _scrollB, 40, dst);
+		dst = drawStaticFourPlane(_l.staticPlane, 33, dst);
 		drawFillBands(dst);
 	}
 
@@ -401,7 +442,7 @@ private:
 	}
 
 	void drawFillBands(int dst) {
-		int src = 0x5ba4;
+		int src = _l.fillBands;
 		for (int band = 0; band < 13; band++) {
 			int count = READ_BE_UINT16(_data.data() + src);
 			src += 2;
@@ -422,7 +463,7 @@ private:
 	}
 
 	void drawOverlay() {
-		int src = 0x5c0c;
+		int src = _l.overlay;
 		int dst = 0x1a18;
 		for (int row = 0; row < 30; row++) {
 			for (int col = 0; col < 20; col++) {
@@ -476,18 +517,18 @@ private:
 	}
 
 	void drawStaticLogo() {
-		drawMaskedBlock4(0x14ff4, 0x820, 0x94, 20);
+		drawMaskedBlock4(_l.logo, 0x820, 0x94, 20);
 	}
 
 	void drawStaticForeground() {
-		drawMaskedBlock4(0x1ac74, 0, 0x27, 20);
+		drawMaskedBlock4(_l.foreground, 0, 0x27, 20);
 	}
 
 	void drawMovingCharacters() {
-		drawLargeSprite4(0x700c, _sprite1Frame, 0xe60, _sprite1X, _sprite1Y, 0x73, 0x20, 0x08, 4);
-		drawLargeSprite4(0xd4ac, _sprite2Frame, 0xd00, _sprite2X, _sprite2Y, 0x68, 0x20, 0x08, 4);
+		drawLargeSprite4(_l.sprite1, _sprite1Frame, 0xe60, _sprite1X, _sprite1Y, 0x73, 0x20, 0x08, 4);
+		drawLargeSprite4(_l.sprite2, _sprite2Frame, 0xd00, _sprite2X, _sprite2Y, 0x68, 0x20, 0x08, 4);
 		if (_choiceState != 0 && _selectionLift == 0) {
-			drawLargeSprite4(0x108ac, 0, 0, _selectionX - 0x20, _selectionY - 0x76, 0x95, 0x40, 0x10, 8);
+			drawLargeSprite4(_l.selSprite, 0, 0, _selectionX - 0x20, _selectionY - 0x76, 0x95, 0x40, 0x10, 8);
 			return;
 		}
 		drawAnimatedObject();
@@ -499,10 +540,10 @@ private:
 			_selectionLift = 0;
 			objectVisible = false;
 		} else {
-			drawSprite1(0x12dec + _objectFrame * 0x34, _objectX, _objectY, 13);
+			drawSprite1(_l.objSprite + _objectFrame * 0x34, _objectX, _objectY, 13);
 		}
 		if (objectVisible && _renderMode == 3) {
-			int src = 0x136dc;
+			int src = _l.objArrow;
 			if (_choice != 2)
 				src += 0x36;
 			src += _arrowFrame * 18;
@@ -706,10 +747,10 @@ private:
 
 	int currentLanguageTextTable() const {
 		if (_engine->_language == Common::FR_FRA)
-			return 0x1d2e;
+			return _l.langTableFR;
 		if (_engine->_language == Common::DE_DEU)
-			return 0x1d6a;
-		return 0x1cf2;
+			return _l.langTableDE;
+		return _l.langTableEN;
 	}
 
 	int selectionSplitX() const {
@@ -792,6 +833,12 @@ private:
 				uint16 cur = _palette[i];
 				int channels[3] = {cur & 0xf, (cur >> 4) & 0xf, (cur >> 8) & 0xf};
 				int targets[3] = {dst & 0xf, (dst >> 4) & 0xf, (dst >> 8) & 0xf};
+				if (_l.palScale) {
+					// Atari ST palettes store 3-bit channels (0-7); expand to
+					// the 4-bit range the player and display expect.
+					for (int c = 0; c < 3; c++)
+						targets[c] = ((targets[c] & 0x7) << 1) | ((targets[c] & 0x7) >> 2);
+				}
 				for (int c = 0; c < 3; c++) {
 					int diff = targets[c] - channels[c];
 					if (ABS(diff) >= threshold && diff != 0)
@@ -839,7 +886,7 @@ private:
 
 		if (READ_BE_UINT32(_data.data() + _motionPtr) == 0xffffffff) {
 			_phaseDone = 1;
-			_motionPtr = 0x21b0;
+			_motionPtr = _l.motionLoop;
 		}
 		_objectFrame = (int16)READ_BE_UINT16(_data.data() + _motionPtr);
 		_objectX = (int16)READ_BE_UINT16(_data.data() + _motionPtr + 2);
@@ -1762,6 +1809,48 @@ bool CastleEngine::playAmigaIntro() {
 
 	if (_mixer->isSoundHandleActive(introMusicHandle))
 		_mixer->stopHandle(introMusicHandle);
+
+	_gfx->clear(0, 0, 0, true);
+	return played;
+}
+
+bool CastleEngine::playAtariIntro() {
+	// The Atari ST intro is the separate J.PRG program (Huffman-packed, not
+	// Copylock-protected). Decompress it to obtain the intro data, which uses
+	// the same engine as the Amiga intro but at the offsets in kAtariIntroLayout.
+	Common::File probe;
+	if (!probe.open("J.PRG"))
+		return false; // No intro program provided; skip.
+	probe.close();
+
+	Common::SeekableReadStream *stream = decompressAtari("J.PRG");
+	int size = stream->size();
+	if (size <= 0x1c) {
+		delete stream;
+		return false;
+	}
+	stream->seek(0);
+	uint16 magic = stream->readUint16BE();
+	uint32 textSize = stream->readUint32BE();
+	if (magic != 0x601a || textSize == 0 || textSize + 0x1c > (uint32)size) {
+		delete stream;
+		return false;
+	}
+	Common::Array<byte> introText;
+	introText.resize(textSize);
+	stream->seek(0x1c);
+	stream->read(introText.data(), textSize);
+	delete stream;
+
+	// TODO(castle-atari): locate and play the intro music (the Amiga build uses
+	// a separate "musicdat" ProTracker module; the Atari equivalent still needs
+	// to be found). The intro currently plays silently.
+
+	bool selectedPrincess = false;
+	CastleAmigaIntroPlayer player(this, introText, kAtariIntroLayout);
+	bool played = player.run(selectedPrincess);
+	if (played)
+		_selectedPrincess = selectedPrincess;
 
 	_gfx->clear(0, 0, 0, true);
 	return played;

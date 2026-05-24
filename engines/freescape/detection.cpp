@@ -895,6 +895,23 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
 	},
+	// Full Castle Master, Atari ST.
+	// The player must provide the Copylock-decrypted game executable as "M.PRG"
+	// and the intro program as "J.PRG" (both Huffman-packed; the engine
+	// decompresses them at load time).
+	{
+		"castlemaster",
+		"",
+		{
+			{"M.PRG", 0, "70975b6656cd00a52ddede00d9ef3e64", 266232},
+			{"J.PRG", 0, "4934cf2f304b8ae5327e92b773acd35c", 58514},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
 	{
 		"castlemaster",
 		"",

@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	freescape.o \
 	games/castle/castle.o \
 	games/castle/amiga.o \
+	games/castle/atari.o \
 	games/castle/c64.o \
 	games/castle/cpc.o \
 	games/castle/dos.o \

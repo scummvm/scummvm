@@ -67,11 +67,13 @@ public:
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
 	void loadAssetsAmigaFullGame() override;
+	void loadAssetsAtariFullGame() override;
 	void loadAssetsZXFullGame() override;
 	void loadAssetsCPCFullGame() override;
 	void borderScreen() override;
 	void selectCharacterScreen();
 	bool playAmigaIntro();
+	bool playAtariIntro();
 	void drawOption();
 
 	void initZX();
@@ -186,6 +188,7 @@ public:
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
+	Common::SeekableReadStream *decompressAtari(const Common::Path &filename);
 	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);
 	void loadDOSFonts(Common::SeekableReadStream *file, int pos);
 	void drawFullscreenRiddleAndWait(uint16 riddle);
