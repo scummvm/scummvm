@@ -162,7 +162,7 @@ private:
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();
-	void checkDynamicLevelBranch();
+	void checkDynamicLevelBranch(int32 curFrame = -1);
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
@@ -177,6 +177,7 @@ private:
 	void renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
 		bool drawTargetBoxes);
 	void handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame);
+	void renderLevel7RouteOverlays(byte *dst, int pitch, int width, int height);
 	void renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height);
 	void resetEnemyShotSlots();
 	void renderLevel13EnemyShots(byte *dst, int pitch, int width, int height);
@@ -408,7 +409,7 @@ private:
 	int16 _damageCooldown;       // 0x74D8: invulnerability timer (10 frames after hit)
 	int16 _deathTimer;           // 0x756A: death animation countdown (30 on death)
 	int16 _screenFlash;          // 0x7736: screen flash timer on hit
-	uint32 _frameCounter;        // 0x7740: global frame counter
+	uint32 _frameCounter;        // Gameplay handler frame accumulator
 	bool _screenShakeEnabled;    // 0x41AC: when true, SetCameraOffset adds ±2 random jitter
 	byte _screenFlashBasePalette[0x300];
 	bool _screenFlashBasePaletteValid;
@@ -449,13 +450,15 @@ private:
 	// Original sets nextSceneA/nextSceneB when GAME 0x07 counter == 394 (0x18A).
 	// We check ship position at that counter value to decide left vs right path.
 	static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
-	int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
+	int32 _gameCounter;          // GAME chunk field1/logical counter
 	bool _pathBranchEnabled;     // True when branching is active for this video
 	bool _rightPathSelected;     // True if player branched into L1PLAY1R
 	int _levelRouteIndex;        // Current mid-level route/segment for branching levels
 	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
-	int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches
+	int32 _pendingRouteStartFrame; // Resume/frame-gate target for branch-driven route switches
 	int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (branchFrame + 7)
+	int16 _level7WarningFrames;  // RunLevel7Flow local_38: 30-frame branch warning countdown
+	int16 _level7WarningThreshold; // Collapses RunLevel7Flow local_40 into its DAT_2361 threshold
 	int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
 	// RunLevel14Flow queues L14PLY2B at L14PLAY2 maxFrame-0x0F.
 	bool _level14Play2BSplicePending;
