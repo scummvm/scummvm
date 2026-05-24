@@ -178,16 +178,15 @@ static void room_101_init() {
 		scratch.queen_anim_mode = 2;
 		scratch.suppress_command = 0;
 
-		aa[0] = kernel_run_animation(kernel_name(66, -1), 0);
+		aa[0] = kernel_run_animation(kernel_name('B', -1), 0);
 
-		if (conv_restore_running != 0) {
-			goto done;
+		if (!conv_restore_running) {
+			conv_run(0);
+			scratch.queen_action = 3;
+			scratch.king_action = 1;
+			kernel_reset_animation(aa[0], 69);
 		}
 
-		conv_run(0);
-		scratch.queen_action = 3;
-		scratch.king_action = 1;
-		kernel_reset_animation(aa[0], 69);
 		goto done;
 	}
 
@@ -254,6 +253,8 @@ static void room_101_anim2(int16 *ptr) {
 	if (target > scratch.tick_accum) {
 		if (scratch.queen_action == 7) {
 			player.commands_allowed = 0;
+			*ptr = 97;
+			return;
 		} else if (scratch.queen_frame == 69) {
 			*ptr = 66;
 			return;
@@ -324,24 +325,8 @@ static void room_101_daemon() {
 						conv_run(0);
 						scratch.resume_conv = false;
 					}
-					switch (scratch.queen_action) {
-					case 7:
-						player.commands_allowed = 0;
-						frame = 97;
-						break;
-					case 2:
-						frame = 48;
-						break;
-					case 5:
-						frame = 71;
-						break;
-					case 6:
-						room_101_anim1();
-						room_101_anim2(&frame);
-						break;
-					default:
-						break;
-					}
+					room_101_anim1();
+					room_101_anim2(&frame);
 				} else if (scratch.queen_action == 7) {
 					player.commands_allowed = 0;
 					frame = 97;
@@ -357,6 +342,8 @@ static void room_101_daemon() {
 				scratch.queen_action = 3;
 				frame = 66;
 			} else if (frame == 151) {
+				seq[fx_door] = kernel_seq_stamp(ss[fx_door], 0, -1);
+				kernel_seq_depth(seq[fx_door], 14);
 				kernel_synch(1, seq[fx_door], 3, aa[0]);
 				player.commands_allowed = true;
 				scratch.queen_anim_mode = 0;
