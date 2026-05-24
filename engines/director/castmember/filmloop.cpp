@@ -36,6 +36,7 @@
 #include "director/window.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/filmloop.h"
+#include "director/picture.h"
 
 
 namespace Director {
@@ -132,6 +133,15 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 		scaleY = (float)bbox.height() / _initialRect.height();
 	}
 
+	// Film loop placement/scaling diagnostics. Enable with: --debugflags=images --debuglevel=3
+	// If the placement bbox differs from the film loop's _initialRect, the sub-sprites
+	// get stretched (needToScale=1), which shows up as a distorted/oversized figure.
+	debugC(3, kDebugImages, "FilmLoopCastMember::getSubChannels(): cast %d, frame %d, %d sprites: filmloop _initialRect %dx%d@%d,%d, placement bbox %dx%d@%d,%d, needToScale %d (scaleX %.3f scaleY %.3f)",
+		_castId, frame, (int)spriteIds.size(),
+		_initialRect.width(), _initialRect.height(), _initialRect.left, _initialRect.top,
+		bbox.width(), bbox.height(), bbox.left, bbox.top,
+		needToScale, scaleX, scaleY);
+
 	// copy the sprites in order to the list
 	for (auto &iter : spriteIds) {
 		Sprite src = *_score->_scoreCache[frame]->_sprites[iter];
@@ -158,8 +168,49 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 			src._startPoint.x = (src._startPoint.x - _initialRect.left) + bbox.left;
 			src._startPoint.y = (src._startPoint.y - _initialRect.top) + bbox.top;
 
+			// Film-loop cells store each sprite at the loop's full canvas size,
+			// while the per-frame bitmaps are content-cropped to different widths
+			// and positioned inside that canvas via their registration point (the
+			// varying regX - initialRect.left is what makes the figure walk).
+			// Drawing them at the stored canvas width would stretch every frame by
+			// a different factor (and scale the registration offset), producing a
+			// distorted, oversized figure inside a fixed rectangle. Restore the
+			// bitmap's native size so it renders 1:1, anchored by its unscaled
+			// registration offset. Bitmaps already stored at native size (e.g.
+			// full-frame film loops) are unaffected.
+			if (src._cast && src._cast->_type == kCastBitmap) {
+				src._width = src._cast->_initialRect.width();
+				src._height = src._cast->_initialRect.height();
+			}
+
 			debugCN(5, kDebugImages, ", no scaling");
 		}
+
+		// Sub-sprite ink/transparency diagnostics (--debugflags=images --debuglevel=3).
+		// Each sub-sprite is drawn with its OWN ink; if the figure sub-sprite uses an
+		// opaque ink (Copy) or its background colour is not keyed, an opaque rectangle
+		// shows around the figure. Sample the raw bitmap's corners + centre: a uniform
+		// keyable margin means the background should be transparent (Fall 1); a textured
+		// margin means a baked scene background (Fall 2).
+		Common::Rect natRect = src._cast ? src._cast->_initialRect : Common::Rect();
+		int pTL = -1, pTR = -1, pBL = -1, pBR = -1, pC = -1;
+		if (src._cast && src._cast->_type == kCastBitmap) {
+			Picture *pic = ((BitmapCastMember *)src._cast)->_picture;
+			if (pic && pic->_surface.getPixels() && pic->_surface.format.bytesPerPixel == 1) {
+				const Graphics::Surface &s = pic->_surface;
+				int xr = s.w - 1, yb = s.h - 1, xc = s.w / 2, yc = s.h / 2;
+				pTL = *(const byte *)s.getBasePtr(0, 0);
+				pTR = *(const byte *)s.getBasePtr(xr, 0);
+				pBL = *(const byte *)s.getBasePtr(0, yb);
+				pBR = *(const byte *)s.getBasePtr(xr, yb);
+				pC  = *(const byte *)s.getBasePtr(xc, yc);
+			}
+		}
+		debugC(3, kDebugImages, "  film-loop sub-sprite %d: cast %s, ink %d, blend %d, NAT %dx%d, sprW/H %dx%d, final pos %d,%d, stretch %d, corners[TL=%d TR=%d BL=%d BR=%d C=%d]",
+			iter, src._castId.asString().c_str(), src._ink, src._blendAmount,
+			natRect.width(), natRect.height(), src._width, src._height,
+			src._startPoint.x, src._startPoint.y, src._stretch,
+			pTL, pTR, pBL, pBR, pC);
 
 		// Film loop frames are constructed as a series of Channels, much like how a normal frame
 		// is rendered by the Score. We don't include a pointer to the current Score here,

@@ -2023,7 +2023,10 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d", _numFrames);
 
 	if (_version >= kFileVer600) {
-		for (uint i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
+		// Note: use "i + 1 < size()" rather than "i < size() - 1" so that an
+		// empty detail list (size() == 0, e.g. an empty VWSC score) does not
+		// underflow the unsigned subtraction and run ~4 billion iterations.
+		for (uint i = 0; i + 1 < _spriteDetailAccessed.size(); i++) {
 			int size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
 			if (!_spriteDetailAccessed[i] && size > 0) {
 				int type = i % 3;
