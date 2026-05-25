@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-25 12:09+0000\n"
-"PO-Revision-Date: 2026-05-05 14:12+0000\n"
+"PO-Revision-Date: 2026-05-25 15:48+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3848,6 +3848,10 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"ATTENZIONE: Il gioco che stai avviando è stato aggiunto a ScummVM di "
+"recente, ed è ancora in fase di test.\n"
+"Se riscontri bug o altre stranezze, cortesemente apri una segnalazione sul "
+"nostro bugtracker."
 
 #: engines/engine.cpp:861
 #, c-format
@@ -9128,10 +9132,8 @@ msgstr "Menù informazioni"
 
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
 #: engines/freescape/movement.cpp:119
-#, fuzzy
-#| msgid "Toggle resizable window"
 msgid "Toggle red/blue 3D"
-msgstr "Attiva/Disattiva finestra ridimensionabile"
+msgstr "Attiva/Disattiva modalità 3D rosso/blu"
 
 #: engines/freescape/games/castle/castle.cpp:463
 msgid "Select prince"
