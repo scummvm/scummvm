@@ -47,44 +47,44 @@ namespace Dragonsphere {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[16];            // ss[]  — series handles
-	int16 sequence[16];          // seq[] — sequence handles
-	int16 animation[6];          // aa[]  — animation handles
-	int16 doorway_id;            // 0x4C — dynamic hotspot handle for open doorway
-	int16 wall_panel_id;         // 0x4E — dynamic hotspot handle for wall panel
-	int16 secret_door_id;        // 0x50 — dynamic hotspot handle for secret door
-	int16 tapestry_frame;        // 0x52 — last anim frame seen (tapestry sequence)
-	int16 animation_running;     // 0x54 — which tapestry animation is running
-	int16 king_frame;            // 0x56 — last anim frame seen (King)
-	int16 king_action;           // 0x58 — current King animation state
-	int16 king_talk_count;       // 0x5A — King talking counter
-	int16 anim_0_running;        // 0x5C — King animation active flag
-	int16 mac_frame;             // 0x5E — last anim frame seen (MacMorn)
-	int16 mac_action;            // 0x60 — current MacMorn animation state
-	int16 mac_talk_count;        // 0x62 — MacMorn talking counter
-	int16 anim_1_running;        // 0x64 — MacMorn animation active flag
-	int16 queen_frame;           // 0x66 — last anim frame seen (Queen)
-	int16 queen_action;          // 0x68 — current Queen animation state
-	int16 queen_talk_count;      // 0x6A — Queen talking counter
-	int16 anim_2_running;        // 0x6C — Queen animation active flag
-	int16 twinkles_frame;        // 0x6E — last anim frame seen (Twinkles)
-	int16 twinkles_action;       // 0x70 — current Twinkles animation state
-	int16 twinkles_talk_count;   // 0x72 — Twinkles freeze counter
-	int16 anim_3_running;        // 0x74 — Twinkles animation active flag
-	int16 pid_frame;             // 0x76 — last anim frame seen (Pid)
-	int16 pid_action;            // 0x78 — current Pid animation state
-	int16 pid_talk_count;        // 0x7A — Pid freeze counter
-	int16 anim_4_running;        // 0x7C — Pid animation active flag
-	int32 clock;                 // 0x7E — general timer (long in original)
-	int32 death_timer;           // 0x82 — counts to 8 sec to kill Pid (long in original)
-	int16 activate_timer;        // 0x86 — T = start counting death_timer
-	int16 has_been_bear;         // 0x88 — Pid has completed bear transformation
-	int16 mac_2_frame;           // 0x8A — last anim frame seen (MacMorn death)
-	int16 anim_5_running;        // 0x8C — MacMorn death animation active flag
-	int16 amulet_works;          // 0x8E — amulet is functional
-	int16 pid_drawn_sword;       // 0x90 — Pid has drawn his sword
-	int16 death_frame;           // 0x92 — last anim frame seen (death sequence)
-	int16 anim_6_running;        // 0x94 — death animation active flag
+	int16 sprite[16];
+	int16 sequence[16];
+	int16 animation[6];
+	int16 doorway_id;
+	int16 wall_panel_id;
+	int16 secret_door_id;
+	int16 tapestry_frame;
+	int16 animation_running;
+	int16 king_frame;
+	int16 king_action;
+	int16 king_talk_count;
+	int16 anim_0_running;
+	int16 mac_frame;
+	int16 mac_action;
+	int16 mac_talk_count;
+	int16 anim_1_running;
+	int16 queen_frame;
+	int16 queen_action;
+	int16 queen_talk_count;
+	int16 anim_2_running;
+	int16 twinkles_frame;
+	int16 twinkles_action;
+	int16 twinkles_talk_count;
+	int16 anim_3_running;
+	int16 pid_frame;
+	int16 pid_action;
+	int16 pid_talk_count;
+	int16 anim_4_running;
+	int32 clock;
+	int32 death_timer;
+	int16 activate_timer;
+	int16 has_been_bear;
+	int16 mac_2_frame;
+	int16 anim_5_running;
+	int16 amulet_works;
+	int16 pid_drawn_sword;
+	int16 death_frame;
+	int16 anim_6_running;
 };
 
 static Scratch scratch;

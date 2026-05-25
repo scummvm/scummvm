@@ -42,42 +42,24 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-// ---------------------------------------------------------------------------
-// Scratch layout (matches ROOM105.MAC)
-//
-//   game.scratch offsets:
-//     sprite[0..14]    = 0x00..0x1C
-//     sequence[0..14]  = 0x1E..0x3A
-//     animation[0..3]  = 0x3C..0x42
-//     temp             = 0x44
-//     maid_frame       = 0x46
-//     new_action       = 0x48
-//     last_action      = 0x4A
-//     maid_talking     = 0x4C
-//     situp            = 0x4E
-//     good_number      = 0x50
-//     maid_id[0]       = 0x52
-//     maid_id[1]       = 0x54
-//     bucket_id        = 0x56
-//     bone_id          = 0x58
-//     goblet_id        = 0x5A
-// ---------------------------------------------------------------------------
 struct Scratch {
-	int16 sprite[15];       // ss[]  — sprite series handles
-	int16 sequence[15];     // seq[] — sequence handles
-	int16 animation[4];     // aa[]  — animation handles
-	int16 temp;             // 0x44
-	int16 maid_frame;       // 0x46
-	int16 new_action;       // 0x48
-	int16 last_action;      // 0x4A
-	int16 maid_talking;     // 0x4C
-	int16 situp;            // 0x4E
-	int16 good_number;      // 0x50
-	int16 maid_id[2];       // 0x52
-	int16 bucket_id;        // 0x56
-	int16 bone_id;          // 0x58
-	int16 goblet_id;        // 0x5A
+	int16 sprite[15];
+	int16 sequence[15];
+	int16 animation[4];
+	int16 temp;
+	int16 maid_frame;
+	int16 new_action;
+	int16 last_action;
+	int16 maid_talking;
+	int16 situp;
+	int16 good_number;
+	int16 maid_id[2];
+	int16 bucket_id;
+	int16 bone_id;
+	int16 goblet_id;
 };
+
+static Scratch scratch;
 
 #define local (&scratch)
 #define ss    local->sprite
@@ -111,7 +93,7 @@ struct Scratch {
 #define WALK_TO_BONE_X       255
 #define WALK_TO_BONE_Y       145
 
-#define WALK_TO_GOBLET_X     63
+#define WALK_TO_GOBLET_X     65
 #define WALK_TO_GOBLET_Y     142
 
 /* cursor points */
@@ -166,14 +148,12 @@ struct Scratch {
 #define ROOM_105_TAKE_BONE2       84
 #define ROOM_105_TAKE_BONE3       85
 
-static Scratch scratch;
 
-
-void room_105_init() {
+static void room_105_init() {
 	ss[fx_fire_left]  = kernel_load_series(kernel_name('x', 0), false);
 	ss[fx_fire_right] = kernel_load_series(kernel_name('x', 1), false);
 	ss[fx_door]       = kernel_load_series(kernel_name('x', 2), false);
-	ss[fx_open_door]  = kernel_load_series("*KGRD_8", false);
+	ss[fx_open_door]  = kernel_load_series("*kgrd_8", false);
 
 	seq[fx_fire_left]  = kernel_seq_forward(ss[fx_fire_left],  false, 7, 0, 0, 0);
 	seq[fx_fire_right] = kernel_seq_forward(ss[fx_fire_right], false, 7, 3, 0, 0);
@@ -191,20 +171,20 @@ void room_105_init() {
 
 	if (object_is_here(goblet)) {
 		ss[fx_goblet]      = kernel_load_series(kernel_name('p', 1), false);
-		ss[fx_take_goblet] = kernel_load_series("*KGRM1_8", false);
+		ss[fx_take_goblet] = kernel_load_series("*kgrm_6", false);
 		seq[fx_goblet]     = kernel_seq_stamp(ss[fx_goblet], false, KERNEL_FIRST);
 		local->goblet_id   = kernel_add_dynamic(words_goblet, words_walk_to, SYNTAX_SINGULAR, seq[fx_goblet], 0, 0, 0, 0);
 		kernel_seq_depth(seq[fx_goblet], 6);
-		kernel_dynamic_walk(local->goblet_id, 63, 142, FACING_WEST);
+		kernel_dynamic_walk(local->goblet_id, WALK_TO_GOBLET_X, WALK_TO_GOBLET_Y, FACING_WEST);
 	}
 
 	if (object_is_here(bone)) {
 		ss[fx_bone]      = kernel_load_series(kernel_name('p', 0), false);
-		ss[fx_take_bone] = kernel_load_series("*KGRD_8", false);
+		ss[fx_take_bone] = kernel_load_series("*kgrl_6", false);
 		seq[fx_bone]     = kernel_seq_stamp(ss[fx_bone], false, KERNEL_FIRST);
 		local->bone_id   = kernel_add_dynamic(words_bone, words_walk_to, SYNTAX_SINGULAR, seq[fx_bone], 0, 0, 0, 0);
 		kernel_seq_depth(seq[fx_bone], 6);
-		kernel_dynamic_walk(local->bone_id, 255, 145, FACING_EAST);
+		kernel_dynamic_walk(local->bone_id, WALK_TO_BONE_X, WALK_TO_BONE_Y, FACING_EAST);
 	}
 
 	conv_get(2);
@@ -234,7 +214,7 @@ void room_105_init() {
 	section_1_music();
 }
 
-void room_105_get_random() {
+static void room_105_get_random() {
 	int random;
 
 	local->last_action = local->new_action;
@@ -254,7 +234,7 @@ void room_105_get_random() {
 	}
 }
 
-void room_105_random_wipebrow() {
+static void room_105_random_wipebrow() {
 	int random;
 
 	local->last_action = local->new_action;
@@ -270,7 +250,7 @@ void room_105_random_wipebrow() {
 	}
 }
 
-void room_105_daemon() {
+static void room_105_daemon() {
 	int reset_frame;
 
 	/* Control scullery maid animation */
@@ -446,7 +426,7 @@ void room_105_daemon() {
 	}
 }
 
-void room_105_conversation() {
+static void room_105_conversation() {
 	if (player_verb == conv002_counter_only) {
 		if (!local->situp) {
 			local->situp = true;
@@ -473,12 +453,12 @@ void room_105_conversation() {
 	}
 }
 
-void room_105_pre_parser() {
-	if (player_parse(words_talk_to, words_scullery_maid, 0))
+static void room_105_pre_parser() {
+	if (player_said_2(talk_to, scullery_maid))
 		local->situp = -1;
 }
 
-void room_105_parser() {
+static void room_105_parser() {
 	int temp;
 
 	if (player.look_around) {
@@ -585,7 +565,6 @@ void room_105_parser() {
 				break;
 
 			case 1:
-				/* sound_queue (N_PickUpObject006);*/
 				kernel_seq_delete(seq[fx_goblet]);
 				kernel_delete_dynamic(local->goblet_id);
 				sound_play(N_TakeObjectSnd);
@@ -613,14 +592,11 @@ void room_105_parser() {
 				seq[fx_take_bone] = kernel_seq_pingpong(ss[fx_take_bone],
 					false, 6, 0, 0, 2);
 				kernel_seq_player(seq[fx_take_bone], true);
-				kernel_seq_trigger(seq[fx_take_bone],
-					KERNEL_TRIGGER_SPRITE, 6, 1);
-				kernel_seq_trigger(seq[fx_take_bone],
-					KERNEL_TRIGGER_EXPIRE, 0, 2);
+				kernel_seq_trigger(seq[fx_take_bone], KERNEL_TRIGGER_SPRITE, 6, 1);
+				kernel_seq_trigger(seq[fx_take_bone], KERNEL_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
-				/* sound_queue (N_PickUpObject006);*/
 				kernel_seq_delete(seq[fx_bone]);
 				sound_play(N_TakeObjectSnd);
 				kernel_delete_dynamic(local->bone_id);
@@ -642,14 +618,12 @@ void room_105_parser() {
 		}
 	}
 
-	if (player_said_2(take, bone) && player_has(bone) &&
-		player.main_object_source == STROKE_INTERFACE) {
+	if (player_said_2(take, bone) && player_has(bone) && player.main_object_source == STROKE_INTERFACE) {
 		text_show(40112);
 		goto handled;
 	}
 
 	if (player_said_1(look) || player_said_1(look_at)) {
-
 		if (player_said_1(floor)) {
 			text_show(10502);
 			goto handled;
