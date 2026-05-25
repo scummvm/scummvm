@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	font.o \
 	freescape.o \
 	games/castle/castle.o \
+	games/castle/castle.musicdata.o \
 	games/castle/amiga.o \
 	games/castle/atari.o \
 	games/castle/ay.music.o \

@@ -59,9 +59,17 @@ private:
 		uint16 delay;
 		byte instrument;
 		int8 transpose;
+		byte currentNote;
+		uint16 baseSIDFrequency;
+		int16 sidFrequencyOffset;
+		uint16 baseFrequencyFnum;
+		byte baseFrequencyBlock;
 		uint16 frequencyFnum;
 		byte frequencyBlock;
+		byte vibratoStep;
+		bool vibratoReverse;
 		bool keyOn;
+		bool gateReleased;
 
 		void reset(const byte *channelOrderList);
 	};
@@ -80,6 +88,8 @@ private:
 	void setOPLInstrument(int channel, byte instrument);
 	void noteOn(int channel, byte note);
 	void noteOff(int channel);
+	void gateOff(int channel);
+	void applyFrameEffects(int channel);
 	void setFrequency(int channel, uint16 fnum, byte block);
 	void writeFrequency(int channel, uint16 fnum, byte block);
 	void noteToFnumBlock(int note, uint16 &fnum, byte &block) const;

@@ -30,23 +30,6 @@ using namespace Freescape::CastleMusicData;
 
 namespace Freescape {
 
-// AY-3-8910 period table (95 entries, same note numbering as the Castle OPL
-// table and Total Eclipse AY player). AY clock = 1MHz.
-const uint16 kAYPeriods[] = {
-	    0,  3657,  3455,  3265,  3076,  2908,  2743,  2589,
-	 2447,  2309,  2176,  2055,  1939,  1832,  1728,  1632,
-	 1540,  1454,  1371,  1295,  1222,  1153,  1088,  1027,
-	  970,   915,   864,   816,   770,   726,   686,   647,
-	  611,   577,   544,   514,   485,   458,   432,   406,
-	  385,   363,   343,   324,   305,   288,   272,   257,
-	  242,   229,   216,   204,   192,   182,   171,   162,
-	  153,   144,   136,   128,   121,   114,   108,   102,
-	   96,    91,    86,    81,    76,    72,    68,    64,
-	   61,    57,    54,    51,    48,    45,    43,    40,
-	   38,    36,    34,    32,    30,    29,    27,    25,
-	   24,    23,    21,    20,    19,    18,    17
-};
-
 const byte kAYInstrumentVolumes[] = {
 	13, 11, 10, 11, 13, 13, 14, 12
 };
@@ -65,33 +48,18 @@ const uint16 kDecayReleaseRate[16] = {
 	0x001A, 0x0009, 0x0005, 0x0003
 };
 
-const int8 kVibrato10[] = { 0, 20, 10, -10, -20, 15, 5, -20 };
-const int8 kVibrato18[] = { 0, 3, -3, 3, -3, 3, -3, 3 };
-const int8 kVibrato20[] = { 0, -100, -100, -100, -100, -100, -100, -100 };
-const uint32 kSIDToAYPeriodScale = 1079000;
+const uint32 kSIDToAYPeriodScale = 1064276;
 
-const int8 *getVibratoTable(byte vibrato) {
-	switch (vibrato) {
-	case 0x10:
-		return kVibrato10;
-	case 0x18:
-		return kVibrato18;
-	case 0x20:
-		return kVibrato20;
-	default:
-		return nullptr;
-	}
+uint16 sidFrequencyToAYPeriod(uint16 sidFrequency) {
+	if (sidFrequency == 0)
+		return 0;
+
+	return CLIP<uint32>((kSIDToAYPeriodScale + (sidFrequency / 2)) / sidFrequency, 1, 4095);
 }
 
-uint16 applySIDFrequencyOffset(uint16 basePeriod, int16 frequencyOffset) {
-	if (basePeriod == 0 || frequencyOffset == 0)
-		return basePeriod;
-
-	int32 sidFrequency = (kSIDToAYPeriodScale + (basePeriod / 2)) / basePeriod;
-	sidFrequency = MAX<int32>(1, sidFrequency + frequencyOffset);
-
-	uint32 period = (kSIDToAYPeriodScale + (sidFrequency / 2)) / sidFrequency;
-	return CLIP<uint32>(period, 1, 4095);
+uint16 applySIDFrequencyOffset(uint16 baseSIDFrequency, int16 frequencyOffset) {
+	int32 sidFrequency = MAX<int32>(1, (int32)baseSIDFrequency + frequencyOffset);
+	return sidFrequencyToAYPeriod(sidFrequency);
 }
 
 void CastleAYMusicPlayer::ChannelState::reset(const byte *channelOrderList) {
@@ -104,6 +72,7 @@ void CastleAYMusicPlayer::ChannelState::reset(const byte *channelOrderList) {
 	instrument = 0;
 	transpose = 0;
 	currentNote = 0;
+	baseSIDFrequency = 0;
 	basePeriod = 0;
 	currentPeriod = 0;
 	adsrVolume = 0;
@@ -361,9 +330,8 @@ void CastleAYMusicPlayer::noteOn(int channel, byte note) {
 	}
 
 	int effectiveNote = note + c.transpose + 20;
-	uint16 period = 0;
-	noteToPeriod(effectiveNote, period);
-	c.basePeriod = period;
+	c.baseSIDFrequency = getCastleSIDFrequency(effectiveNote);
+	c.basePeriod = sidFrequencyToAYPeriod(c.baseSIDFrequency);
 	c.sidFrequencyOffset = 0;
 	c.vibratoStep = 1;
 	c.vibratoReverse = false;
@@ -386,6 +354,7 @@ void CastleAYMusicPlayer::noteOff(int channel) {
 	c.adsrPhase = kPhaseOff;
 	c.adsrVolume = 0;
 	c.currentNote = 0;
+	c.baseSIDFrequency = 0;
 	c.basePeriod = 0;
 	c.sidFrequencyOffset = 0;
 	setReg(8 + channel, 0);
@@ -404,16 +373,16 @@ void CastleAYMusicPlayer::noteToPeriod(int note, uint16 &period) const {
 	if (note > kMaxNote)
 		note = kMaxNote;
 
-	period = kAYPeriods[note];
+	period = sidFrequencyToAYPeriod(getCastleSIDFrequency(note));
 }
 
 void CastleAYMusicPlayer::applyFrameEffects(int channel) {
 	ChannelState &c = _channels[channel];
-	if (c.adsrPhase == kPhaseOff || c.currentNote == 0 || c.basePeriod == 0)
+	if (c.adsrPhase == kPhaseOff || c.currentNote == 0 || c.baseSIDFrequency == 0)
 		return;
 
 	const InstrumentData &instrument = kInstruments[c.instrument % ARRAYSIZE(kInstruments)];
-	const int8 *vibratoTable = getVibratoTable(instrument.vibrato);
+	const int8 *vibratoTable = getCastleVibratoTable(instrument.vibrato);
 	if (!vibratoTable)
 		return;
 
@@ -425,7 +394,7 @@ void CastleAYMusicPlayer::applyFrameEffects(int channel) {
 		c.vibratoReverse = !c.vibratoReverse;
 	}
 
-	uint16 period = applySIDFrequencyOffset(c.basePeriod, c.sidFrequencyOffset);
+	uint16 period = applySIDFrequencyOffset(c.baseSIDFrequency, c.sidFrequencyOffset);
 	writeChannelPeriod(channel, period);
 	if (c.noiseEnabled)
 		writeNoisePeriod(period);
@@ -515,14 +484,7 @@ void CastleAYMusicPlayer::writeNoisePeriod(uint16 period) {
 }
 
 byte CastleAYMusicPlayer::sidControlForInstrument(byte instrument) const {
-	const InstrumentData &instrumentData = kInstruments[instrument % ARRAYSIZE(kInstruments)];
-
-	// Castle SID waveform sequence 5 switches the audible part of the note to
-	// triangle; on AY this maps to the tone generator rather than noise.
-	if (instrumentData.effect == 0x05)
-		return 0x11;
-
-	return instrumentData.control;
+	return getCastleSIDControlForInstrument(instrument);
 }
 
 byte CastleAYMusicPlayer::instrumentVolumeScale(byte instrument) const {

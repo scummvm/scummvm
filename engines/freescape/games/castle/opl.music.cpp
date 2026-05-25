@@ -112,9 +112,17 @@ void CastleOPLMusicPlayer::ChannelState::reset(const byte *channelOrderList) {
 	delay = 0;
 	instrument = 0;
 	transpose = 0;
+	currentNote = 0;
+	baseSIDFrequency = 0;
+	sidFrequencyOffset = 0;
+	baseFrequencyFnum = 0;
+	baseFrequencyBlock = 0;
 	frequencyFnum = 0;
 	frequencyBlock = 0;
+	vibratoStep = 1;
+	vibratoReverse = false;
 	keyOn = false;
+	gateReleased = true;
 }
 
 // ============================================================================
@@ -224,8 +232,17 @@ void CastleOPLMusicPlayer::noteOn(int channel, byte note) {
 
 	uint16 fnum = 0;
 	byte block = 0;
-	noteToFnumBlock(note + _channels[channel].transpose + 20, fnum, block);
+	int effectiveNote = note + _channels[channel].transpose + 20;
+	noteToFnumBlock(effectiveNote, fnum, block);
+	_channels[channel].currentNote = CLIP<int>(effectiveNote, 0, kMaxNote);
+	_channels[channel].baseSIDFrequency = getCastleSIDFrequency(effectiveNote);
+	_channels[channel].sidFrequencyOffset = 0;
+	_channels[channel].baseFrequencyFnum = fnum;
+	_channels[channel].baseFrequencyBlock = block;
+	_channels[channel].vibratoStep = 1;
+	_channels[channel].vibratoReverse = false;
 	_channels[channel].keyOn = true;
+	_channels[channel].gateReleased = false;
 	setFrequency(channel, fnum, block);
 }
 
@@ -234,6 +251,19 @@ void CastleOPLMusicPlayer::noteOff(int channel) {
 		return;
 
 	_channels[channel].keyOn = false;
+	_channels[channel].gateReleased = true;
+	_channels[channel].currentNote = 0;
+	_channels[channel].baseSIDFrequency = 0;
+	_channels[channel].sidFrequencyOffset = 0;
+	writeFrequency(channel, _channels[channel].frequencyFnum, _channels[channel].frequencyBlock);
+}
+
+void CastleOPLMusicPlayer::gateOff(int channel) {
+	if (!_opl || _channels[channel].gateReleased)
+		return;
+
+	_channels[channel].keyOn = false;
+	_channels[channel].gateReleased = true;
 	writeFrequency(channel, _channels[channel].frequencyFnum, _channels[channel].frequencyBlock);
 }
 
@@ -247,8 +277,10 @@ void CastleOPLMusicPlayer::onTimer() {
 
 	for (int i = 0; i < kChannelCount; i++) {
 		if (_channels[i].delay > 0) {
-			// The SID release tail covers its early gate-off; a hard OPL key-off
-			// here creates audible gaps, so hold until the next note or rest.
+			const InstrumentData &instrument = kInstruments[_channels[i].instrument % ARRAYSIZE(kInstruments)];
+			if (_channels[i].currentNote != 0 && _channels[i].delay == instrument.gateOffTime)
+				gateOff(i);
+			applyFrameEffects(i);
 			_channels[i].delay--;
 			continue;
 		}
@@ -257,6 +289,36 @@ void CastleOPLMusicPlayer::onTimer() {
 	}
 
 	_tick++;
+}
+
+void CastleOPLMusicPlayer::applyFrameEffects(int channel) {
+	ChannelState &c = _channels[channel];
+	if (c.currentNote == 0 || c.baseSIDFrequency == 0 || c.baseFrequencyFnum == 0)
+		return;
+
+	const InstrumentData &instrument = kInstruments[c.instrument % ARRAYSIZE(kInstruments)];
+	const int8 *vibratoTable = getCastleVibratoTable(instrument.vibrato);
+	if (!vibratoTable)
+		return;
+
+	int8 sidDelta = vibratoTable[c.vibratoStep & 0x07];
+	c.sidFrequencyOffset += c.vibratoReverse ? -sidDelta : sidDelta;
+	c.vibratoStep++;
+	if (c.vibratoStep >= 8) {
+		c.vibratoStep = 1;
+		c.vibratoReverse = !c.vibratoReverse;
+	}
+
+	int32 sidFrequency = MAX<int32>(1, (int32)c.baseSIDFrequency + c.sidFrequencyOffset);
+	uint32 scaledFnum = ((uint32)c.baseFrequencyFnum * sidFrequency + (c.baseSIDFrequency / 2)) / c.baseSIDFrequency;
+	byte block = c.baseFrequencyBlock;
+
+	while (scaledFnum > 0x3FF && block < 7) {
+		scaledFnum = (scaledFnum + 1) >> 1;
+		block++;
+	}
+
+	setFrequency(channel, MIN<uint32>(scaledFnum, 0x3FF), block);
 }
 
 // ============================================================================

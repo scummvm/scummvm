@@ -71,6 +71,7 @@ private:
 		byte instrument;
 		int8 transpose;
 		byte currentNote;
+		uint16 baseSIDFrequency;
 		uint16 basePeriod;
 		uint16 currentPeriod;
 		uint16 adsrVolume;
