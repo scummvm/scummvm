@@ -31,6 +31,24 @@ namespace Access {
 
 namespace Noctropolis {
 
+// Helper struct because Polygon cannot be constructed constexpr
+struct ProtoPolygon {
+	Common::Point points[10];
+
+	operator Polygon() const {
+		Polygon result;
+
+		constexpr Common::Point defaultPoint;
+		for (const auto &point : points) {
+			if (point == defaultPoint)
+				break;
+			result.points.emplace_back(point);
+		}
+
+		return result;
+	}
+};
+
 struct ComicBox {
 	byte style;
 	byte textColor;
@@ -42,14 +60,14 @@ struct ComicBox {
 };
 
 struct ComicBlock {
-	const struct Polygon *polygon;
+	const struct ProtoPolygon *polygon;
 	int32 soundFileIndex, soundResIndex;
 	const struct ComicBox *boxes;
 	int32 numBoxes;
 };
 
 struct ComicPage {
-	Common::Path filename;
+	const char *filename;
 	int32 musicFileIndex, musicResIndex;
 	bool musicRepeat;
 	int unk;

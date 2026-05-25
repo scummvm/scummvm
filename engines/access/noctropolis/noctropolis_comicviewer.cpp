@@ -114,7 +114,8 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 		int hotspotIndex = -1;
 		for (int i = 0; i < page->numBlocks; i++) {
 			const ComicBlock &hotspot = page->blocks[i];
-			if (hotspot.polygon->pointInside(_vm->_events->_mousePos.x, _vm->_events->_mousePos.y)) {
+			const auto polygon = static_cast<Polygon>(*hotspot.polygon);
+			if (polygon.pointInside(_vm->_events->_mousePos.x, _vm->_events->_mousePos.y)) {
 				hotspotIndex = i;
 				break;
 			}
