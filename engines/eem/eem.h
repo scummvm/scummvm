@@ -332,6 +332,7 @@ private:
 	/// (`_DrawGallery_Floppy @ 154e:0050`).
 	void floppyKDHint(uint kdSlot, const byte *kdIdx,
 					  const byte *bufBase, uint32 mysSize);
+	void displayScrapbookExtra(uint mysteryNum);
 	void accuseDrawGallery(int highlighted,
 						   Common::Array<Common::Rect> &rects,
 						   Common::Array<int> &suspects, uint8 num,
@@ -530,6 +531,8 @@ private:
 	/// Site whose entrance animation has already played this mystery.
 	/// Lives on the engine because PDA/gallery destroys+recreates SiteScreen.
 	int _lastSiteArrivalAnim = -1;
+
+	bool _restoredContentDataLoaded = false;
 
 	/// `MIDI.C` family (`_MIDIPlayFile`/`_MIDIPlay`/`_StopMIDI`/
 	/// `_StartTravelMusic` @ 20a2:00e2-05c9). Constructed lazily in `run()`.

@@ -66,6 +66,17 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_RESTORED_CONTENT,
+		{
+			_s("Enable restored content"),
+			_s("Restore floppy release extras in the CD version, including pre-scrapbook conversations and first-try badges."),
+			"restored_content",
+			false,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
