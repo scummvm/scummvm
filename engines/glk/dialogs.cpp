@@ -572,12 +572,8 @@ void GlkOptionsWidget::load() {
 		{ _gfontPopUps[0], g_conf->_gStyles, "gfont" }
 	};
 
-	for (auto &opt : fontOptions) {
-		if (g_conf)
-			setFontPopUp(opt.popup, true, opt.styles[style_Normal].font, nullptr, _domain);
-		else
-			setFontPopUp(opt.popup, false, (FACES)0, opt.confKeyPrefix, _domain);
-	}
+	for (auto &opt : fontOptions)
+		setFontPopUp(opt.popup, true, opt.styles[style_Normal].font, nullptr, _domain);
 
 	for (auto &opt : colorOptions) {
 		if (g_conf) {
@@ -892,7 +888,7 @@ static void saveFontPopUp(GUI::PopUpWidget *popup, WindowStyle *styles, const ch
 	FACES selectedFont = (FACES)popup->getSelectedTag();
 	for (int i = 0; i < style_NUMSTYLES; ++i) {
 		styles[i].font = selectedFont;
-		Common::String key = Common::String::format("%s%d", confKeyPrefix, i);
+		Common::String key = Common::String::format("%s_%d", confKeyPrefix, i);
 		ConfMan.set(key, Screen::getFontName(selectedFont), domain);
 	}
 }

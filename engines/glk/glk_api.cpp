@@ -480,7 +480,7 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 		break;
 
 	case stylehint_Proportional:
-		if (wintype == wintype_TextBuffer) {
+		if (wintype == wintype_TextBuffer && !ConfMan.hasKey(Common::String::format("tfont_%u", style))) {
 			p = val > 0;
 			b = styles[style].isBold();
 			i = styles[style].isItalic();
