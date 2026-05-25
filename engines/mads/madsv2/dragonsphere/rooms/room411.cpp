@@ -66,6 +66,8 @@ struct Scratch {
 	int16 prevent;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -95,8 +97,6 @@ struct Scratch {
 
 #define BIRD_X          122
 #define BIRD_Y           95
-
-static Scratch scratch;
 
 
 static void handle_animation_bird_1() {

@@ -47,12 +47,12 @@ struct Scratch {
 	int16 guard_id;         /* hotspot id for guard */
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 /* ========================= Sprites ========================= */
 

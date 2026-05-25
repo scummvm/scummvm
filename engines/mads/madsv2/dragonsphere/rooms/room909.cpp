@@ -37,38 +37,25 @@ namespace Dragonsphere {
 namespace Rooms {
 
 
+struct Scratch {
+	int16 sprite[15];       // ss[] — series handles
+	int16 sequence[15];     // seq[] — sequence handles
+	int16 animation[4];     // aa[] — animation handles
+	int16 prev_anim_frame;  // last observed animation frame (for frame-change detection)
+};
+
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
 
-/**
- * Room local variables (field names encode game.scratch byte offsets).
- *
- * Layout verified against disassembly of room_909_init / room_909_anim:
- *   x00 = game.scratch+0x00  series handle: kernel_name('x', 0)
- *   x02 = game.scratch+0x02  series handle: kernel_name('x', 1)
- *   x04 = game.scratch+0x04  series handle: kernel_name('x', 2)
- *   x1e = game.scratch+0x1E  seq handle: forward sequence for series x0
- *   x20 = game.scratch+0x20  seq handle: forward sequence for series x1
- *   x22 = game.scratch+0x22  seq handle: forward sequence for series x2
- *   x3c = game.scratch+0x3C  animation handle: kernel_name('w', 1)
- *   x44 = game.scratch+0x44  last observed animation frame (change detector)
- */
-struct Scratch {
-	int16 x00;         // sprite series: kernel_name('x', 0)
-	int16 x02;         // sprite series: kernel_name('x', 1)
-	int16 x04;         // sprite series: kernel_name('x', 2)
-	int16 _pad06[12];  // offsets 0x06..0x1C (unused in this room)
-	int16 x1e;         // seq: forward play of series x0, depth 12, range [-1..-2]
-	int16 x20;         // seq: forward play of series x1, depth 12, range [-1..-2]
-	int16 x22;         // seq: forward play of series x2, depth 12, range [-1..-2]
-	int16 _pad24[12];  // offsets 0x24..0x3B (unused in this room)
-	int16 x3c;         // animation handle: kernel_name('w', 1)
-	int16 _pad3e[3];   // offsets 0x3E..0x43 (unused in this room)
-	int16 x44;         // last observed animation frame (for frame-change detection)
-};
+/* ========================= Sprite Series =================== */
 
+#define fx_bg0  0
+#define fx_bg1  1
+#define fx_bg2  2
 
 /* ========================= Triggers ======================== */
 
@@ -83,32 +70,30 @@ struct Scratch {
 #define FRAME_LOOP_RESET        106   // 0x6A: reset animation to FRAME_TIMING_TRIGGER
 
 
-static Scratch scratch;
-
-void room_909_init() {
+static void room_909_init() {
 	player.commands_allowed = 0;
 	player.walker_visible = 0;
 	viewing_at_y = 22;
 	kernel_init_dialog();
 	kernel_set_interface_mode(2);
 
-	scratch.x00 = kernel_load_series(kernel_name('x', 0), 0);
-	scratch.x02 = kernel_load_series(kernel_name('x', 1), 0);
-	scratch.x04 = kernel_load_series(kernel_name('x', 2), 0);
+	ss[fx_bg0] = kernel_load_series(kernel_name('x', 0), 0);
+	ss[fx_bg1] = kernel_load_series(kernel_name('x', 1), 0);
+	ss[fx_bg2] = kernel_load_series(kernel_name('x', 2), 0);
 
-	scratch.x1e = kernel_seq_forward(scratch.x00, false, 6, 0, 0, 0);
-	kernel_seq_depth(scratch.x1e, 12);
-	kernel_seq_range(scratch.x1e, -1, -2);
+	seq[fx_bg0] = kernel_seq_forward(ss[fx_bg0], false, 6, 0, 0, 0);
+	kernel_seq_depth(seq[fx_bg0], 12);
+	kernel_seq_range(seq[fx_bg0], -1, -2);
 
-	scratch.x20 = kernel_seq_forward(scratch.x02, false, 6, 0, 0, 0);
-	kernel_seq_depth(scratch.x20, 12);
-	kernel_seq_range(scratch.x20, -1, -2);
+	seq[fx_bg1] = kernel_seq_forward(ss[fx_bg1], false, 6, 0, 0, 0);
+	kernel_seq_depth(seq[fx_bg1], 12);
+	kernel_seq_range(seq[fx_bg1], -1, -2);
 
-	scratch.x22 = kernel_seq_forward(scratch.x04, false, 6, 0, 0, 0);
-	kernel_seq_depth(scratch.x22, 12);
-	kernel_seq_range(scratch.x22, -1, -2);
+	seq[fx_bg2] = kernel_seq_forward(ss[fx_bg2], false, 6, 0, 0, 0);
+	kernel_seq_depth(seq[fx_bg2], 12);
+	kernel_seq_range(seq[fx_bg2], -1, -2);
 
-	scratch.x3c = kernel_run_animation(kernel_name('w', 1), 0);
+	aa[0] = kernel_run_animation(kernel_name('w', 1), 0);
 
 	section_9_music();
 }
@@ -122,19 +107,19 @@ void room_909_init() {
  * Called once per tick from room_909_daemon.
  */
 static void room_909_anim() {
-	int16 var_2;
-	int   cur_frame = kernel_anim[scratch.x3c].frame;
+	int16 frame;
+	int   cur_frame = kernel_anim[aa[0]].frame;
 
-	if (cur_frame == scratch.x44)
+	if (cur_frame == scratch.prev_anim_frame)
 		return;
 
-	var_2 = -1;
-	scratch.x44 = (int16)cur_frame;
+	frame = -1;
+	scratch.prev_anim_frame = (int16)cur_frame;
 
 	// Frame dispatch (ascending subtraction chain, mirroring original assembly)
 	if (cur_frame == FRAME_LOOP_RESET) {
 		// Frame 106: reset animation back to frame 105 so it loops continuously
-		var_2 = FRAME_TIMING_TRIGGER;
+		frame = FRAME_TIMING_TRIGGER;
 
 	} else if (cur_frame < FRAME_LOOP_RESET) {
 		int remaining = cur_frame;
@@ -171,13 +156,13 @@ static void room_909_anim() {
 	// cur_frame > FRAME_LOOP_RESET: no action
 
 apply:
-	if (var_2 >= 0) {
-		kernel_reset_animation(scratch.x3c, var_2);
-		scratch.x44 = var_2;
+	if (frame >= 0) {
+		kernel_reset_animation(aa[0], frame);
+		scratch.prev_anim_frame = frame;
 	}
 }
 
-void room_909_daemon() {
+static void room_909_daemon() {
 	room_909_anim();
 
 	if (kernel.trigger != TRIGGER_SHOW_SCORE)
@@ -190,9 +175,9 @@ void room_909_daemon() {
 
 	// Populate text_index[] before calling text_show(99) so the score-screen
 	// text can substitute the values via [INDEX N] commands.
-	// text_index[0] = current score  (word_86A44 in original DS data segment)
-	// text_index[1] = maximum score  (word_86A46)
-	// text_index[2] = rank tier 1-9  (word_86A48)
+	// text_index[0] = current score 
+	// text_index[1] = maximum score
+	// text_index[2] = rank tier 1-9
 	text_index[1] = 250;
 	text_index[0] = score;
 
@@ -213,21 +198,21 @@ void room_909_daemon() {
 	text_show(99);
 }
 
-void room_909_pre_parser() {
+static void room_909_pre_parser() {
 }
 
-void room_909_parser() {
+static void room_909_parser() {
 }
 
 void room_909_synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(scratch.x00);
-	s.syncAsSint16LE(scratch.x02);
-	s.syncAsSint16LE(scratch.x04);
-	s.syncAsSint16LE(scratch.x1e);
-	s.syncAsSint16LE(scratch.x20);
-	s.syncAsSint16LE(scratch.x22);
-	s.syncAsSint16LE(scratch.x3c);
-	s.syncAsSint16LE(scratch.x44);
+	s.syncAsSint16LE(ss[fx_bg0]);
+	s.syncAsSint16LE(ss[fx_bg1]);
+	s.syncAsSint16LE(ss[fx_bg2]);
+	s.syncAsSint16LE(seq[fx_bg0]);
+	s.syncAsSint16LE(seq[fx_bg1]);
+	s.syncAsSint16LE(seq[fx_bg2]);
+	s.syncAsSint16LE(aa[0]);
+	s.syncAsSint16LE(scratch.prev_anim_frame);
 }
 
 void room_909_preload() {

@@ -51,6 +51,8 @@ struct Scratch {
 	int16 count;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -86,8 +88,6 @@ struct Scratch {
 
 #define PLAYER_END_X            73
 #define PLAYER_END_Y            153
-
-static Scratch scratch;
 
 
 static void room_612_init() {

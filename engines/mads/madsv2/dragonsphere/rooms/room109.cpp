@@ -55,12 +55,12 @@ struct Scratch {
 	int16 anim_1_running;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 /* ========================= Sprites ========================= */
 
@@ -339,7 +339,6 @@ static void process_conversation_queen() {
 	local->queen_talk_count = 0;
 }
 
-
 static void room_109_pre_parser() {
 	if (player_said_1(door_to_guardroom)) {
 		if (!player_said_1(walk_through)) {
@@ -373,7 +372,7 @@ static void room_109_parser() {
 		goto handled;
 	}
 
-	/* take out later */
+	// Hidden dev hack that was forgotten to be removed
 	if (player_said_2(talk_to, floor_grate)) {
 		new_room = 117;
 		goto handled;
@@ -420,28 +419,20 @@ static void room_109_parser() {
 		}
 	}
 
-	if ((player_said_1(open) || player_said_1(pull) ||
-		player_said_1(push) || player_said_1(take)) &&
-		player_said_1(bedding)) {
-		/* if (player_not_seal) */
+	if ((player_said_1(open) || player_said_1(pull) || player_said_1(push) ||
+			player_said_1(take)) && player_said_1(bedding)) {
 		text_show(10908);
 		goto handled;
 	}
 
 	if (player_said_2(pull, manacles)) {
-		/* if (player_not_seal) */
 		text_show(10910);
 		goto handled;
 	}
 
-	if ((player_said_1(open) || player_said_1(pull) ||
-		player_said_1(push)) &&
-		player_said_1(floor_grate)) {
-		/* if (player_not_seal) */
+	if ((player_said_1(open) || player_said_1(pull) || player_said_1(push)) &&
+			player_said_1(floor_grate)) {
 		text_show(10905);
-		/*  } else {
-		  text_show(10914);
-		  }*/
 		goto handled;
 	}
 

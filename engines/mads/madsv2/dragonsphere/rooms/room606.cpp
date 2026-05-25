@@ -67,7 +67,9 @@ struct Scratch {
 	int16 dyn_blue_stone;
 };
 
-#define local ((Scratch *)(&game.scratch[0]))
+static Scratch scratch;
+
+#define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation

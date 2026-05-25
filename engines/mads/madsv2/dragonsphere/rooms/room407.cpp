@@ -75,11 +75,12 @@ struct Scratch {
 	int16 will_give;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
 
 /* ========================= Sprite Series =================== */
 
@@ -116,8 +117,6 @@ struct Scratch {
 #define NOT_THERE               0
 #define CAN_GIVE                1
 #define HOSIED                  2
-
-static Scratch scratch;
 
 
 static void update_scores() {

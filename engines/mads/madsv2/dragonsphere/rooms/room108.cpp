@@ -38,11 +38,6 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
 struct Scratch {
 	int16 sprite[15];       /* Sprite series handles */
 	int16 sequence[15];     /* Sequence handles      */
@@ -51,6 +46,13 @@ struct Scratch {
 	int16 eye_frame;        /* Which animation frame is being held for blinking eyes */
 	int16 temp;             /* used for synching purposes */
 };
+
+static Scratch scratch;
+
+#define local (&scratch)
+#define ss    local->sprite
+#define seq   local->sequence
+#define aa    local->animation
 
 /* ========================= Sprites ========================= */
 
@@ -86,8 +88,6 @@ struct Scratch {
 
 #define BOTTOM_OF_STAIRS_X   154
 #define BOTTOM_OF_STAIRS_Y   89
-
-static Scratch scratch;
 
 static void room_108_init() {
 	/* Load sprite series */
@@ -133,7 +133,6 @@ static void get_random_eyes(int16 *new_frame) {
 
 	random = imath_random(0, 15);
 	switch (random) {
-
 	case 0:
 		*new_frame = 0;
 		break;
@@ -277,7 +276,7 @@ static void room_108_daemon() {
 	}
 }
 
-void room_108_pre_parser(void) {
+static void room_108_pre_parser(void) {
 	if (player_said_1(doorway_to_cell) && player.need_to_walk) {
 		if (!player_said_1(walk_through)) {
 			player.need_to_walk = false;
@@ -289,8 +288,7 @@ void room_108_pre_parser(void) {
 	}
 }
 
-
-void room_108_parser(void) {
+static void room_108_parser(void) {
 	int temp;
 
 	if (player.look_around) {
@@ -441,7 +439,6 @@ handled:
 done:
 	;
 }
-
 
 void room_108_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);

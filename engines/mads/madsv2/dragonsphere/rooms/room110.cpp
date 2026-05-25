@@ -95,13 +95,12 @@ struct Scratch {
 	int16 speech_playing;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
-
 
 /* ========================= Sprites ========================= */
 

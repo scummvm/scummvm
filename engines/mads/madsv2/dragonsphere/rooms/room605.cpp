@@ -69,7 +69,9 @@ struct Scratch {
 	int16 prevent_2;
 };
 
-#define local ((Scratch *)(&game.scratch[0]))
+static Scratch scratch;
+
+#define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation

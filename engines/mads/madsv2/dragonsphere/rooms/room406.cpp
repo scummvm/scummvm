@@ -94,6 +94,8 @@ struct Scratch {
 	int16 panning;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -139,8 +141,6 @@ struct Scratch {
 
 #define PANNING_TO_DANCE        1
 #define PANNING_AWAY_FROM_DANCE 2
-
-static Scratch scratch;
 
 
 static void set_406_mount_position() {

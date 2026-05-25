@@ -62,12 +62,12 @@ struct Scratch {
 	int16 face_7_on;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-
 
 /* ========================= Sprite Series =================== */
 
@@ -101,8 +101,6 @@ struct Scratch {
 #define LEAVE                   2
 
 #define CONV_46_PID             46
-
-static Scratch scratch;
 
 
 static void room_408_init() {

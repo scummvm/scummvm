@@ -55,12 +55,12 @@ struct Scratch {
 	char message[20];     /* String to say to dog */
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 /* ========================= Sprites ========================= */
 

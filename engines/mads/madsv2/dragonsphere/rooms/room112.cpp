@@ -46,12 +46,12 @@ struct Scratch {
 	int16 animation[4];     /* Animation handles     */
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 /* ======================== Triggers ========================= */
 

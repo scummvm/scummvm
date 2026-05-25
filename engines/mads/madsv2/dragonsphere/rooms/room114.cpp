@@ -52,13 +52,12 @@ struct Scratch {
 	int16 anim_1_running;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
-
 
 /* ========================= Sprites ========================= */
 

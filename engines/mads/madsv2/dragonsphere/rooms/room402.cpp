@@ -46,12 +46,12 @@ struct Scratch {
 	int16 moving;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 #define fx_red_rocks            1
 #define fx_distant_dune         2

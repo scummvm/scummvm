@@ -72,12 +72,14 @@ struct Scratch {
 	int16 prevent;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
 
-static Scratch scratch;
+/* ========================= Sprite Series =================== */
 
 #define fx_rock_l       0
 #define fx_rock_r       1
@@ -86,6 +88,8 @@ static Scratch scratch;
 #define fx_face_left    4
 #define fx_face_right   5
 #define fx_take         6
+
+/* ======================== Others ========================== */
 
 #define ROOM_203_EYE            60
 #define ROOM_203_FACE_LEFT      64

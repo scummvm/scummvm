@@ -45,6 +45,8 @@ struct Scratch {
 	int16 moving;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -109,8 +111,6 @@ struct Scratch {
 #define FROM_WEST_Y_1           143
 #define FROM_WEST_X_2           15
 #define FROM_WEST_Y_2           143
-
-static Scratch scratch;
 
 
 static void room_403_init() {

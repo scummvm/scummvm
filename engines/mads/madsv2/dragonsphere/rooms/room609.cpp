@@ -55,6 +55,8 @@ struct Scratch {
 	int16 prevent;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -86,8 +88,6 @@ struct Scratch {
 
 #define DEATH_X                 164
 #define DEATH_Y                 134
-
-static Scratch scratch;
 
 
 static void room_609_init() {

@@ -58,6 +58,8 @@ struct Scratch {
 	int16 fire;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -103,8 +105,6 @@ struct Scratch {
 #define PID_SLIDE_JUMP          3
 
 #define FIRE                    60
-
-static Scratch scratch;
 
 
 static void which_pillar_409(int *it, int *new_x, int *new_y, int *adjoining) {

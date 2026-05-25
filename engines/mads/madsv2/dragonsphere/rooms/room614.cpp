@@ -93,11 +93,12 @@ struct Scratch {
 	int16 did_not_throw;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
 
 /* ========================= Sprite Series =================== */
 
@@ -164,8 +165,6 @@ struct Scratch {
 
 #define CIRCLE_X                256
 #define CIRCLE_Y                61
-
-static Scratch scratch;
 
 
 static void room_614_init() {

@@ -46,12 +46,12 @@ struct Scratch {
 	int16 animation[4];     /* Animation handles     */
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 /* ========================= Sprites ========================= */
 
@@ -134,11 +134,9 @@ static void room_117_daemon() {
 }
 
 static void room_117_pre_parser() {
-	// No implementation
 }
 
 static void room_117_parser() {
-	// No implementation
 }
 
 void room_117_synchronize(Common::Serializer &s) {

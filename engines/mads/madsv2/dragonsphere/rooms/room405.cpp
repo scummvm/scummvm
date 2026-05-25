@@ -74,6 +74,8 @@ struct Scratch {
 	int16 anim_6_running;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -116,8 +118,6 @@ struct Scratch {
 #define PLAYER_Y_FROM_406       124
 #define SHAMAN_X                96
 #define SHAMAN_Y                137
-
-static Scratch scratch;
 
 
 static void handle_animation_guard() {

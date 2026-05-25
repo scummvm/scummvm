@@ -59,6 +59,8 @@ struct Scratch {
 	int16 num;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -81,8 +83,6 @@ struct Scratch {
 #define WALK_3_Y                112
 #define WALK_4_X                1
 #define WALK_4_Y                104
-
-static Scratch scratch;
 
 
 static void set_dune_1_position() {

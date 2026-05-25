@@ -53,6 +53,8 @@ struct Scratch {
 	int16 old_y;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -71,25 +73,19 @@ struct Scratch {
 #define fx_king_melt            8       /* rm613a1  */
 #define fx_door                 9       /* rm613x0  */
 
-/* ========================= Triggers ======================== */
-
-
-
 /* ========================= Other Macros ==================== */
 
-#define PLAYER_X_FROM_606	       25 
+#define PLAYER_X_FROM_606	        25 
 #define PLAYER_Y_FROM_606	       132 
-#define WALK_TO_X_FROM_606             61 
-#define WALK_TO_Y_FROM_606             132
+#define WALK_TO_X_FROM_606          61 
+#define WALK_TO_Y_FROM_606         132
 
 #define PLAYER_X_FROM_614	       613
 #define PLAYER_Y_FROM_614	       132
-#define WALK_TO_X_FROM_614             578
-#define WALK_TO_Y_FROM_614             132
+#define WALK_TO_X_FROM_614         578
+#define WALK_TO_Y_FROM_614         132
 
-#define RIGHT_HALF                     320
-
-static Scratch scratch;
+#define RIGHT_HALF                 320
 
 
 static void room_613_init() {

@@ -61,6 +61,8 @@ struct Scratch {
 	int16 face_4_on;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
@@ -102,8 +104,6 @@ struct Scratch {
 
 #define PLAYER_X_FROM_409       137
 #define PLAYER_Y_FROM_409       149
-
-static Scratch scratch;
 
 
 static void room_410_init() {

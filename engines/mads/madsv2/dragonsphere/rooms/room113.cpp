@@ -55,13 +55,12 @@ struct Scratch {
 	int16 clicked_on;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
-
 
 /* ========================= Sprites ========================= */
 

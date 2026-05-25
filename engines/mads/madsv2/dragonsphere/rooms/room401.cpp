@@ -54,12 +54,12 @@ struct Scratch {
 	int16 cut_scene;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 #define fx_red_blue_tent        0
 #define fx_bones                1

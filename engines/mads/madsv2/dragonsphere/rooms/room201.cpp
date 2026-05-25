@@ -124,13 +124,12 @@ struct Scratch {
 	byte cut_scene;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
-
 
 /* ========================= Sprite Series =================== */
 
