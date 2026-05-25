@@ -25,7 +25,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      forgot to add a news entry here. Whoops!
    - Several inaccuracies from the character logic have been fixed,
      which means that some rare issues concerning characters behavior
-	   should now be gone.
+     should now be gone.
 
  MM:
    - Reworked keymapper for MM1.
@@ -49,8 +49,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SLUDGE:
    - Added two more games to detection, "Sam and Max Flintlocked" and
-	   "Full Moon".
+     "Full Moon".
 
+ TwinE:
+   - Fixed soft lock collision bug with bulldozer
+   - Fixed wrong scaling for plasma menu effect
+   - Fixed holomap model rendering
+   - Disable autosaves while driving a vehicle
 
 #### 2026.2.0 "Railmonicon" (2026-03-28)
 
