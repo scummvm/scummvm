@@ -286,7 +286,7 @@ void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	surface->fillRect(Common::Rect(87, 156, 104, 166), back);
-	drawCompass(surface, 94, 156, _yaw - 30, 11, 75, yellow);
+	drawCompass(surface, 94, 156, compassYaw() - 30, 11, 75, yellow);
 	surface->fillRect(Common::Rect(224, 151, 235, 160), back);
 	drawCompass(surface, 223, 156, _pitch - 30, 12, 60, yellow);
 }

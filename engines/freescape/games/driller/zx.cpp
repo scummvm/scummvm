@@ -161,7 +161,7 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 		surface->fillRect(shieldBar, front);
 	}
 
-	drawCompass(surface, 103, 160, _yaw - 30, 10, 75, front);
+	drawCompass(surface, 103, 160, compassYaw() - 30, 10, 75, front);
 	drawCompass(surface, 220 - 3, 160, _pitch - 30, 10, 60, front);
 }
 

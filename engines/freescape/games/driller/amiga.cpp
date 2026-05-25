@@ -543,9 +543,7 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	// then scrolling N/E/S/W needle (SPRCOG) drawn on top one line below.
 	// Background at x=$32→48, y=$8E=142. Needle at y=$8E+1=143.
 	if (!_compassYawFrames.empty()) {
-		float yaw = _yaw;
-		if (yaw < 0) yaw += 360;
-		if (yaw >= 360) yaw -= 360;
+		float yaw = compassYaw();
 		int rot = ((int)(yaw / 5.0f)) % 72;
 		surface->copyRectToSurfaceWithKey(*_compassYawFrames[rot], 49, 143,
 			Common::Rect(_compassYawFrames[rot]->w, _compassYawFrames[rot]->h), transparent);

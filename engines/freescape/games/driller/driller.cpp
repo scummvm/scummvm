@@ -541,43 +541,59 @@ void DrillerEngine::pressedKey(const int keycode) {
 		clearTemporalMessages();
 		Common::Point gasPocket = _currentArea->_gasPocketPosition;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
+		debugC(1, kFreescapeDebugMove, "DRILL deploy requested area=%u name='%s' scale=%u fly=%d energy=%d automatic=%d",
+			_currentArea->getAreaID(), _currentArea->_name.c_str(), _currentArea->getScale(),
+			_flyMode ? 1 : 0, _gameStateVars[k8bitVariableEnergy], _useAutomaticDrilling ? 1 : 0);
+		debugC(1, kFreescapeDebugMove, "DRILL player world=(%.2f,%.2f,%.2f) ui=(X=%04d,T=%04d,Y=%04d) yaw=%.2f pitch=%.2f front=(%.4f,%.4f,%.4f)",
+			_position.x(), _position.y(), _position.z(), int(2 * _position.x()), int(2 * _position.z()), int(2 * _position.y()),
+			_yaw, _pitch, _cameraFront.x(), _cameraFront.y(), _cameraFront.z());
 		if (gasPocketRadius == 0) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: area has no gas pocket");
 			insertTemporaryMessage(_messagesList[2], _countdown - 2);
 			return;
 		}
 
 		if (_flyMode) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: player is in probe/flight mode");
 			insertTemporaryMessage(_messagesList[8], _countdown - 2);
 			return;
 		}
 
 		if (drillDeployed(_currentArea)) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: rig already deployed in this area");
 			insertTemporaryMessage(_messagesList[12], _countdown - 2);
 			return;
 		}
 
 		if (_gameStateVars[k8bitVariableEnergy] < 5) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: energy too low (%d)", _gameStateVars[k8bitVariableEnergy]);
 			insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			return;
 		}
 
 		Math::Vector3d drill = drillPosition();
-		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
-		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drill.x(), drill.y(), drill.z());
-		debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
+		const Math::Vector3d drillCenter(drill.x(), drill.y(), drill.z() + 128.0f);
+		debugC(1, kFreescapeDebugMove, "DRILL render anchor world=(%.2f,%.2f,%.2f) ui=(X=%04d,T=%04d,Y=%04d) cell=(%d,%d) center=(%.2f,%.2f) centerCell=(%d,%d)",
+			drill.x(), drill.y(), drill.z(), int(2 * drill.x()), int(2 * drill.z()), int(2 * drill.y()),
+			int(drill.x() / 32.0f), int(drill.z() / 32.0f), drillCenter.x(), drillCenter.z(),
+			int(drillCenter.x() / 32.0f), int(drillCenter.z() / 32.0f));
 
 		if (!checkDrill(drill)) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: placement check failed before gas distance was evaluated");
 			insertTemporaryMessage(_messagesList[4], _countdown - 2);
 			return;
 		}
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-		const Math::Vector3d gasPocket3D(gasPocket.x, drill.y(), gasPocket.y);
-		float distanceToPocket = (gasPocket3D - drill).length();
-		debugC(1, kFreescapeDebugMove, "Gas pocket position: %f %f %f", gasPocket3D.x(), gasPocket3D.y(), gasPocket3D.z());
-		debugC(1, kFreescapeDebugMove, "Distance to gas pocket: %f", distanceToPocket);
+		const Math::Vector3d gasPocket3D(gasPocket.x, drillCenter.y(), gasPocket.y);
+		const float distanceToPocket = (gasPocket3D - drillCenter).length();
+		debugC(1, kFreescapeDebugMove, "DRILL gas pocket raw=(%d,%d,r=%u) world=(%d,%d) radius=%u",
+			gasPocket.x / 32, gasPocket.y / 32, gasPocketRadius / 32, gasPocket.x, gasPocket.y, gasPocketRadius);
+		debugC(1, kFreescapeDebugMove, "DRILL gas distance renderCenter=(%.2f,%.2f) gasWorld=(%d,%d) euclidean=%.2f worldRadius=%u",
+			drillCenter.x(), drillCenter.z(), gasPocket.x, gasPocket.y, distanceToPocket, gasPocketRadius);
 
-		float success = _useAutomaticDrilling ? 100.0 : 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
+		float success = _useAutomaticDrilling ? 100.0f : 100.0f * (1.0f - distanceToPocket / gasPocketRadius);
+		debugC(1, kFreescapeDebugMove, "DRILL gas computed success=%.2f automatic=%d", success, _useAutomaticDrilling ? 1 : 0);
 		// Play the "processing" sound up front (matches BTF660 in the
 		// original Amiga code, where sound 5 starts before the
 		// RIG POSITIONED / NO GAS FOUND messages are displayed and
@@ -587,6 +603,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 		addDrill(drill, success > 0);
 		if (success <= 0) {
+			debugC(1, kFreescapeDebugMove, "DRILL result: no gas found");
 			insertTemporaryMessage(_messagesList[9], _countdown - 4);
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigNoGas;
 			return;
@@ -602,8 +619,9 @@ void DrillerEngine::pressedKey(const int keycode) {
 		insertTemporaryMessage(successMessage, _countdown - 6);
 		_drillSuccessByArea[_currentArea->getAreaID()] = uint32(success);
 		_gameStateVars[k8bitVariableScore] += uint32(maxScore * uint32(success)) / 100;
+		debugC(1, kFreescapeDebugMove, "DRILL result: gas found success=%.2f maxScore=%d score=%d", success, maxScore, _gameStateVars[k8bitVariableScore]);
 
-		if (success >= 50.0) {
+		if (success >= 50.0f) {
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigInPlace;
 			_gameStateVars[32]++;
 		} else
@@ -658,12 +676,26 @@ void DrillerEngine::pressedKey(const int keycode) {
 Math::Vector3d DrillerEngine::drillPosition() {
 	Math::Vector3d position = _position;
 	position.setValue(1, position.y() - _playerHeight);
-	position = position + 300 * getProjectionToPlane(_cameraFront, Math::Vector3d(0, 1, 0));
+	Math::Vector3d forward = getProjectionToPlane(_cameraFront, Math::Vector3d(0, 1, 0));
+	if (forward.length() > 0.0f)
+		forward.normalize();
 
 	Object *obj = (GeometricObject *)_areaMap[255]->objectWithID(255); // Drill base
 	assert(obj);
-	position.setValue(2, position.z() - 128);
+	const Math::Vector3d center = position + forward * 192.0f;
+	position.setValue(0, center.x());
+	position.setValue(2, center.z() - obj->getSize().z() / 2.0f);
 	return position;
+}
+
+float DrillerEngine::compassYaw() const {
+	float yaw = _yaw + 90.0f;
+	while (yaw < 0.0f)
+		yaw += 360.0f;
+	while (yaw >= 360.0f)
+		yaw -= 360.0f;
+
+	return yaw;
 }
 
 bool DrillerEngine::drillDeployed(Area *area) {
@@ -682,7 +714,8 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	origin.setValue(2, origin.z() + 128);
 
 	_drillBase->setOrigin(origin);
-	if (_currentArea->checkCollisions(_drillBase->_boundingBox).empty())
+	ObjectArray collisions = _currentArea->checkCollisions(_drillBase->_boundingBox);
+	if (collisions.empty())
 		return false;
 
 	origin.setValue(0, origin.x() - 128);
@@ -696,13 +729,15 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	obj->setOrigin(origin);
 
 	// This bounding box is too large and can result in the drill to float next to a wall
-	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
+	collisions = _currentArea->checkCollisions(obj->_boundingBox);
+	if (!collisions.empty())
 		return false;
 
 	origin.setValue(1, origin.y() + 15);
 	obj->setOrigin(origin);
 
-	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
+	collisions = _currentArea->checkCollisions(obj->_boundingBox);
+	if (!collisions.empty())
 		return false;
 
 	origin.setValue(1, origin.y() - 10);
@@ -720,7 +755,8 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 
 	obj = (GeometricObject *)obj->duplicate();
 	obj->setOrigin(origin);
-	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
+	collisions = _currentArea->checkCollisions(obj->_boundingBox);
+	if (!collisions.empty())
 		return false;
 
 	// Undo offset
@@ -740,7 +776,8 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
 
 	obj->setOrigin(origin);
-	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
+	collisions = _currentArea->checkCollisions(obj->_boundingBox);
+	if (!collisions.empty())
 		return false;
 
 	// Undo offset

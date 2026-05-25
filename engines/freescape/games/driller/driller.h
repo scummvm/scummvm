@@ -84,6 +84,7 @@ private:
 	bool drillDeployed(Area *area);
 	GeometricObject *_drillBase;
 	Math::Vector3d drillPosition();
+	float compassYaw() const;
 	void addDrill(const Math::Vector3d position, bool gasFound);
 	bool checkDrill(const Math::Vector3d position);
 	void removeDrill(Area *area);
