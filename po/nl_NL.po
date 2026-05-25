@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-24 23:49+0000\n"
+"POT-Creation-Date: 2026-05-25 12:09+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6478,7 +6478,7 @@ msgid "Climb"
 msgstr "Klimmen"
 
 #: engines/access/metaengine.cpp:354 engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:504
+#: engines/freescape/games/castle/castle.cpp:511
 #: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
@@ -7193,7 +7193,7 @@ msgid "Whether textures should be linearly filtered"
 msgstr "Of texturen lineair moeten worden gefilterd"
 
 #: engines/alcachofa/metaengine.cpp:98 engines/cine/metaengine.cpp:347
-#: engines/freescape/games/castle/castle.cpp:521
+#: engines/freescape/games/castle/castle.cpp:528
 msgid "Activate"
 msgstr "Activeren"
 
@@ -7648,7 +7648,7 @@ msgstr "Privacy van aanwijzingen in-/uitschakelen"
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/dgds/metaengine.cpp:75 engines/dm/metaengine.cpp:174
 #: engines/drascula/metaengine.cpp:285 engines/efh/metaengine.cpp:272
-#: engines/freescape/games/castle/castle.cpp:466
+#: engines/freescape/games/castle/castle.cpp:473
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:125
 #: engines/freescape/games/eclipse/eclipse.cpp:330
@@ -7676,7 +7676,7 @@ msgstr "Spel opslaan"
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
 #: engines/dgds/metaengine.cpp:74 engines/drascula/metaengine.cpp:260
 #: engines/efh/metaengine.cpp:279 engines/efh/metaengine.cpp:613
-#: engines/freescape/games/castle/castle.cpp:471
+#: engines/freescape/games/castle/castle.cpp:478
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:130
 #: engines/freescape/games/eclipse/eclipse.cpp:335
@@ -7726,7 +7726,7 @@ msgstr "Aanwijzingen database"
 #: engines/bladerunner/metaengine.cpp:375 engines/cruise/metaengine.cpp:229
 #: engines/darkseed/metaengine.cpp:60 engines/dragons/metaengine.cpp:223
 #: engines/efh/metaengine.cpp:373 engines/efh/metaengine.cpp:619
-#: engines/freescape/games/castle/castle.cpp:479
+#: engines/freescape/games/castle/castle.cpp:486
 #: engines/freescape/games/dark/dark.cpp:236
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:340
@@ -8174,7 +8174,7 @@ msgid "Strafe right"
 msgstr "Rechts straffen"
 
 #: engines/colony/metaengine.cpp:127
-#: engines/freescape/games/castle/castle.cpp:489
+#: engines/freescape/games/castle/castle.cpp:496
 #: engines/freescape/games/dark/dark.cpp:252
 #: engines/freescape/games/driller/driller.cpp:149
 #: engines/freescape/games/eclipse/eclipse.cpp:353
@@ -8184,7 +8184,7 @@ msgid "Rotate left"
 msgstr "Draai Linksom"
 
 #: engines/colony/metaengine.cpp:132
-#: engines/freescape/games/castle/castle.cpp:494
+#: engines/freescape/games/castle/castle.cpp:501
 #: engines/freescape/games/dark/dark.cpp:257
 #: engines/freescape/games/driller/driller.cpp:154
 #: engines/freescape/games/eclipse/eclipse.cpp:358
@@ -8200,7 +8200,7 @@ msgid "Look behind"
 msgstr "Kijk omlaag"
 
 #: engines/colony/metaengine.cpp:152
-#: engines/freescape/games/castle/castle.cpp:516
+#: engines/freescape/games/castle/castle.cpp:523
 #: engines/freescape/games/eclipse/eclipse.cpp:396
 #, fuzzy
 #| msgid "Face Forward"
@@ -8867,7 +8867,7 @@ msgstr "Verdedigen"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
-#: engines/efh/metaengine.cpp:530 engines/freescape/games/castle/castle.cpp:499
+#: engines/efh/metaengine.cpp:530 engines/freescape/games/castle/castle.cpp:506
 #: engines/grim/grim.cpp:501 engines/grim/grim.cpp:596
 #: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197 engines/ultima/ultima8/metaengine.cpp:56
@@ -9101,19 +9101,19 @@ msgstr "Info-menu"
 msgid "Toggle red/blue 3D"
 msgstr "Schakel aanpasbaar venster in/uit"
 
-#: engines/freescape/games/castle/castle.cpp:456
+#: engines/freescape/games/castle/castle.cpp:463
 #, fuzzy
 #| msgid "Select Prince"
 msgid "Select prince"
 msgstr "Selecteer Prince"
 
-#: engines/freescape/games/castle/castle.cpp:461
+#: engines/freescape/games/castle/castle.cpp:468
 #, fuzzy
 #| msgid "Select Princess"
 msgid "Select princess"
 msgstr "Selecteer prinses"
 
-#: engines/freescape/games/castle/castle.cpp:484
+#: engines/freescape/games/castle/castle.cpp:491
 #: engines/freescape/games/dark/dark.cpp:246
 #: engines/freescape/games/driller/driller.cpp:143
 #: engines/freescape/games/eclipse/eclipse.cpp:348
@@ -9121,11 +9121,11 @@ msgstr "Selecteer prinses"
 msgid "Toggle sound"
 msgstr "Geluid in- en uitschakelen"
 
-#: engines/freescape/games/castle/castle.cpp:510
+#: engines/freescape/games/castle/castle.cpp:517
 msgid "Crawl"
 msgstr "Kruip"
 
-#: engines/freescape/games/castle/castle.cpp:527
+#: engines/freescape/games/castle/castle.cpp:534
 msgid "Run (hold)"
 msgstr ""
 
