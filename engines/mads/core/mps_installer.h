@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADS_MPS_INSTALLER_H
-#define MADS_MPS_INSTALLER_H
+#ifndef MADS_CORE_INSTALLER_H
+#define MADS_CORE_INSTALLER_H
 
 #include "common/archive.h"
 #include "common/ptr.h"
@@ -29,7 +29,6 @@
 #include "common/hash-str.h"
 
 namespace MADS {
-namespace Nebular {
 
 class MpsInstaller : public Common::MemcachingCaseInsensitiveArchive {
 public:
@@ -86,7 +85,6 @@ private:
 	Common::Path _baseName;
 };
 
-} // namespace Nebular
 } // namespace MADS
 
 #endif

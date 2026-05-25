@@ -32,7 +32,7 @@
 #include "mads/nebular/core/msurface.h"
 #include "mads/nebular/core/resources.h"
 #include "mads/nebular/core/sprites.h"
-#include "mads/nebular/core/mps_installer.h"
+#include "mads/core/mps_installer.h"
 
 namespace MADS {
 namespace Nebular {

@@ -26,10 +26,9 @@
 #include "common/util.h"
 #include "common/memstream.h"
 #include "common/compression/dcl.h"
-#include "mads/nebular/core/mps_installer.h"
+#include "mads/core/mps_installer.h"
 
 namespace MADS {
-namespace Nebular {
 
 MpsInstaller *MpsInstaller::open(const Common::Path &baseName) {
 	Common::File indexFile;
@@ -156,5 +155,4 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 	return Common::SharedArchiveContents(uncompressedBuf, desc._uncompressedSize);
 }
 
-} // namespace Nebular
 } // namespace MADS

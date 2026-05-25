@@ -208,6 +208,22 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Dragonsphere Microprose DOS English
+		{
+			"dragonsphere",
+			0,
+			AD_ENTRY2s("mpslabs.001", "0d2143364be8e12b9807e111ffbe4fb5", 771220,
+				"mpslabs.idx", "db604f6e665516c59bebe60b404abe44", 4636),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			GF_INSTALLER | ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_EASY_MOUSE)
+		},
+		GType_Dragonsphere,
+		0
+	},
+
+	{
 		// Dragonsphere DOS English demo
 		{
 			"dragonsphere",

@@ -46,6 +46,7 @@
 #include "mads/madsv2/dragonsphere/mads/inventory.h"
 #include "mads/madsv2/dragonsphere/mads/sounds.h"
 #include "mads/madsv2/dragonsphere/mads/words.h"
+#include "mads/core/mps_installer.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -58,6 +59,13 @@ Common::Error DragonsphereEngine::run() {
 
 	// Create a debugger console
 	setDebugger(new Console());
+
+	// Set up to read mpslabs installer archive if needed
+	if (_gameDescription->desc.flags & GF_INSTALLER) {
+		Common::Archive *arch = MpsInstaller::open("MPSLABS");
+		if (arch)
+			SearchMan.add("mpslabs", arch);
+	}
 
 	// Set up sound manager
 	_soundManager = new DragonSoundManager(_mixer, _soundFlag);

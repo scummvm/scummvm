@@ -1,6 +1,7 @@
 MODULE := engines/mads
 
 MODULE_OBJS := \
+	core/mps_installer.o \
 	core/sound_manager.o \
 	nebular/nebular.o \
 	nebular/debugger.o \
@@ -38,7 +39,6 @@ MODULE_OBJS := \
 	nebular/core/menu_views.o \
 	nebular/core/messages.o \
 	nebular/core/msurface.o \
-	nebular/core/mps_installer.o \
 	nebular/core/palette.o \
 	nebular/core/player.o \
 	nebular/core/rails.o \
