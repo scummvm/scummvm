@@ -586,8 +586,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		else
 			playSound(_soundIndexStart, false, _soundFxHandle);
 
-		// Start ProTracker background music for Amiga demo
-		if (isAmiga() && !_modData.empty() && !_mixer->isSoundHandleActive(_musicHandle)) {
+		// Start ProTracker background music for Amiga and Atari ST builds.
+		if ((isAmiga() || isAtariST()) && !_modData.empty() && !_mixer->isSoundHandleActive(_musicHandle)) {
 			Common::MemoryReadStream modStream(_modData.data(), _modData.size());
 			Audio::AudioStream *musicStream = Audio::makeProtrackerStream(&modStream);
 			if (musicStream)

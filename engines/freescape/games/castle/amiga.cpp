@@ -1842,15 +1842,22 @@ bool CastleEngine::playAtariIntro() {
 	stream->read(introText.data(), textSize);
 	delete stream;
 
-	// TODO(castle-atari): locate and play the intro music (the Amiga build uses
-	// a separate "musicdat" ProTracker module; the Atari equivalent still needs
-	// to be found). The intro currently plays silently.
+	Audio::SoundHandle introMusicHandle;
+	if (!_modData.empty()) {
+		Common::MemoryReadStream modStream(_modData.data(), _modData.size());
+		Audio::AudioStream *musicStream = Audio::makeProtrackerStream(&modStream);
+		if (musicStream)
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &introMusicHandle, musicStream);
+	}
 
 	bool selectedPrincess = false;
 	CastleAmigaIntroPlayer player(this, introText, kAtariIntroLayout);
 	bool played = player.run(selectedPrincess);
 	if (played)
 		_selectedPrincess = selectedPrincess;
+
+	if (_mixer->isSoundHandleActive(introMusicHandle))
+		_mixer->stopHandle(introMusicHandle);
 
 	_gfx->clear(0, 0, 0, true);
 	return played;

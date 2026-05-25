@@ -124,6 +124,42 @@ Common::SeekableReadStream *CastleEngine::decompressAtari(const Common::Path &fi
 	return new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES);
 }
 
+static uint32 getProTrackerModuleSize(Common::SeekableReadStream *file, uint32 offset) {
+	int64 oldPos = file->pos();
+	uint32 result = 0;
+
+	if (offset + 1084 <= (uint32)file->size()) {
+		file->seek(offset + 1080);
+		if (file->readUint32BE() == 0x4d2e4b2e) {
+			file->seek(offset + 950);
+			byte songLength = file->readByte();
+			file->readByte();
+
+			if (songLength > 0 && songLength <= 128) {
+				byte highestPattern = 0;
+				for (int i = 0; i < 128; i++) {
+					byte pattern = file->readByte();
+					if (i < songLength)
+						highestPattern = MAX(highestPattern, pattern);
+				}
+
+				uint32 sampleBytes = 0;
+				for (int i = 0; i < 31; i++) {
+					file->seek(offset + 20 + i * 30 + 22);
+					sampleBytes += file->readUint16BE() * 2;
+				}
+
+				uint32 moduleSize = 1084 + (highestPattern + 1) * 1024 + sampleBytes;
+				if (offset + moduleSize <= (uint32)file->size())
+					result = moduleSize;
+			}
+		}
+	}
+
+	file->seek(oldPos);
+	return result;
+}
+
 extern byte kAmigaCastlePalette[16][3];
 extern byte kAmigaCastleRiddlePalette[16][3];
 
@@ -351,6 +387,16 @@ void CastleEngine::loadAssetsAtariFullGame() {
 	// the Amiga bytes in any plane format, so they are not loaded yet; the info
 	// menu is guarded against the missing surfaces. The mouse cursor / crosshair
 	// sprites also still need to be located.
+
+	// The full Atari ST binary embeds the same ProTracker module used by the
+	// Amiga full game. It starts at TEXT $10F9A / stream offset $10FB6.
+	static const uint32 kAtariMusicDataOffset = 0x10fb6;
+	uint32 modSize = getProTrackerModuleSize(file, kAtariMusicDataOffset);
+	if (modSize > 0) {
+		_modData.resize(modSize);
+		file->seek(kAtariMusicDataOffset);
+		file->read(_modData.data(), modSize);
+	}
 
 	delete file;
 }
