@@ -22,9 +22,6 @@
 #ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_SPECIAL_COMIC_H
 #define ACCESS_NOCTROPOLIS_NOCTROPOLIS_SPECIAL_COMIC_H
 
-#include "access/resources.h"
-#include "access/polygon.h"
-
 namespace Access {
 
 namespace Noctropolis {

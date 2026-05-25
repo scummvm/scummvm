@@ -24,7 +24,6 @@
 
 #include "common/rect.h"
 #include "access/noctropolis/noctropolis_game.h"
-#include "access/resources.h"
 #include "access/polygon.h"
 
 namespace Access {
