@@ -2095,8 +2095,16 @@ void CastleEngine::borderScreen() {
 		delete surface;
 	}
 
-	if (isC64())
-		return;
+	if (isC64()) {
+		// The bundled C64 border preserves the original loader text in the
+		// view area; clear it before drawing ScummVM's character selection.
+		if (_border) {
+			_border->fillRect(_viewArea, _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0, 0));
+			delete _borderTexture;
+			_borderTexture = nullptr;
+			loadBorder();
+		}
+	}
 
 	if (!isCastleMaster2())
 		selectCharacterScreen();
