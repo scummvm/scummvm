@@ -193,6 +193,8 @@ private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
 	Common::SeekableReadStream *decompressAtari(const Common::Path &filename);
 	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);
+	void loadMessagesC64(Common::SeekableReadStream *file, int offset, int number);
+	void loadRiddlesC64(Common::SeekableReadStream *file, int offset, int number);
 	void loadDOSFonts(Common::SeekableReadStream *file, int pos);
 	void drawFullscreenRiddleAndWait(uint16 riddle);
 	void drawFullscreenEndGameAndWait();

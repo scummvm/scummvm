@@ -608,7 +608,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
 	_gfx->clearColorPairArray();
-	if (isCPC())
+	if (isCPC() || isC64())
 		_gfx->fillColorPairArray();
 
 	swapPalette(areaID);
@@ -1545,7 +1545,7 @@ void CastleEngine::loadAssets() {
 	_outOfReachMessage = _messagesList[7];
 	_noEffectMessage = _messagesList[8];
 
-	if (!isAmiga() && !isAtariST() && !isCPC()) {
+	if (!isAmiga() && !isAtariST() && !isCPC() && !isC64()) {
 		Graphics::Surface *tmp;
 		tmp = loadBundledImage("castle_gate", !isDOS());
 		_gameOverBackgroundFrame = new Graphics::ManagedSurface;
@@ -2095,6 +2095,9 @@ void CastleEngine::borderScreen() {
 		delete surface;
 	}
 
+	if (isC64())
+		return;
+
 	if (!isCastleMaster2())
 		selectCharacterScreen();
 }
@@ -2120,7 +2123,7 @@ void CastleEngine::selectCharacterScreen() {
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	surface->fillRect(_fullscreenViewArea, color);
 
-	if (isSpectrum() || isCPC() || isAmiga()) {
+	if (isSpectrum() || isCPC() || isC64() || isAmiga()) {
 		if (_language == Common::ES_ESP) {
 			// No accent in "príncipe" since it is not supported by the font
 			lines.push_back(centerAndPadString("*******************", 21));
@@ -2197,17 +2200,23 @@ void CastleEngine::selectCharacterScreen() {
 	CursorMan.showMouse(true);
 
 	// Calculate tap/click rectangles from actual rendered text positions.
-	// lines[5] = prince, lines[6] = princess for ZX/CPC.
+	// lines[5] = prince, lines[6] = princess for 8-bit text menus.
 	// For DOS, use riddle text line positions.
 	Common::Rect princeSelector, princessSelector;
-	if (isSpectrum() || isCPC() || isAmiga()) {
+	if (isSpectrum() || isCPC() || isC64() || isAmiga()) {
 		int x = _viewArea.left + 3;
 		int lineHeight = 12; // Castle Master line spacing in drawStringsInSurface
 		int princeY = _viewArea.top + 3 + 5 * lineHeight;
 		int princessY = _viewArea.top + 3 + 6 * lineHeight;
-		// Use the full padded line (what's actually rendered on screen)
-		princeSelector = _font.getBoundingBox(lines[5], x, princeY);
-		princessSelector = _font.getBoundingBox(lines[6], x, princessY);
+		if (_fontLoaded) {
+			// Use the full padded line (what's actually rendered on screen)
+			princeSelector = _font.getBoundingBox(lines[5], x, princeY);
+			princessSelector = _font.getBoundingBox(lines[6], x, princessY);
+		} else {
+			int selectorWidth = 21 * 9;
+			princeSelector = Common::Rect(x, princeY, x + selectorWidth, princeY + lineHeight);
+			princessSelector = Common::Rect(x, princessY, x + selectorWidth, princessY + lineHeight);
+		}
 	} else {
 		// DOS: text comes from _riddleList[21], calculate from actual riddle line positions
 		Common::Array<RiddleText> selectMessage = _riddleList[21]._lines;
@@ -2341,6 +2350,9 @@ void CastleEngine::drawDroppingGate(Graphics::Surface *surface) {
 		return; // No gate dropping when the player escaped
 
 	if (_droppingGateStartTicks <= 0)
+		return;
+
+	if (!_gameOverBackgroundFrame)
 		return;
 
 	uint32 keyColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x24, 0xA5);
