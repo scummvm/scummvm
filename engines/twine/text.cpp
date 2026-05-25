@@ -313,6 +313,9 @@ void Text::initItemFoundText(InventoryItems index) { // OpenDialNoWindow
 }
 
 void Text::initDial(TextBankId bankIdx) {
+	if (bankIdx == TextBankId::None) {
+		return;
+	}
 	// don't load if we already have the dialogue text bank loaded
 	if (bankIdx == _currentBankIdx) {
 		return;
