@@ -103,6 +103,7 @@
 #include "director/lingo/xlibs/m/msfile.h"
 #include "director/lingo/xlibs/m/mystisle.h"
 #include "director/lingo/xlibs/m/mazexobj.h"
+#include "director/lingo/xlibs/m/myfolder.h"
 #include "director/lingo/xlibs/o/openbleedwindowxcmd.h"
 #include "director/lingo/xlibs/o/orthoplayxobj.h"
 #include "director/lingo/xlibs/p/paco.h"
@@ -331,6 +332,7 @@ static const struct XLibProto {
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MSFile,             kXObj,          400),   // D4
 	XLIBDEF(MuiXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(MyFolderXObj,			kXObj,					400),	// D4
 	XLIBDEF(MystIsleXObj,		kXObj,			400),	// D4
 	XLIBDEF(OSCheckXtra,		kXtraObj,		400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3

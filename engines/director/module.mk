@@ -135,6 +135,7 @@ MODULE_OBJS = \
 	lingo/xlibs/m/mystisle.o \
 	lingo/xlibs/b/blockthedrawingxobj.o \
 	lingo/xlibs/m/mazexobj.o \
+	lingo/xlibs/m/myfolder.o \
 	lingo/xlibs/o/openbleedwindowxcmd.o \
  	lingo/xlibs/p/playsoundmoviexobj.o \
  	lingo/xlibs/s/savenrestorexobj.o \
