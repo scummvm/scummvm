@@ -45,6 +45,7 @@ public:
 	Common::Array<Common::Rect> _upHotspots;
 	Common::Array<Common::Rect> _downHotspots;
 	Common::Array<byte> _correctSequence;
+	uint16 _iconsPerDial = 10;
 	SoundDescription _clickSound;
 	SceneChangeWithFlag _solveExitScene;
 	uint16 _solveSoundDelay = 0;
