@@ -63,6 +63,9 @@ private:
 	// enter, space, ...
 	int16 _heroActionKey = 0;
 	int32 _previousLoopActionKey = 0;
+	// alt (throw magic ball / sabre)
+	int16 _heroAttackKey = 0;
+	int32 _previousLoopAttackKey = 0;
 	// cursor keys
 	ChangedCursorKeys _changedCursorKeys;
 	ChangedCursorKeys _previousChangedCursorKeys;

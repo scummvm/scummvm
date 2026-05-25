@@ -237,8 +237,10 @@ void Movements::ChangedCursorKeys::update(TwinEEngine *engine) {
 void Movements::update() {
 	_previousChangedCursorKeys = _changedCursorKeys;
 	_previousLoopActionKey = _heroActionKey;
+	_previousLoopAttackKey = _heroAttackKey;
 
 	_heroActionKey = _engine->_input->isHeroActionActive();
+	_heroAttackKey = _engine->_input->isActionActive(TwinEActionType::ThrowMagicBall, false);
 	_changedCursorKeys.update(_engine);
 }
 
@@ -328,10 +330,11 @@ void Movements::processManualMovementExecution(int actorIdx) {
 	if (actor->isAttackWeaponAnimationActive()) {
 		return;
 	}
-	if (!_changedCursorKeys || _actionNormal) {
+	// Original: if (!MyFire OR ActionNormal) - skip movement when fire buttons are held
+	if ((!_heroActionKey && !_heroAttackKey) || _actionNormal) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			if (_lastJoyFlag && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
+			if (_lastJoyFlag && (_heroActionKey != _previousLoopActionKey || _heroAttackKey != _previousLoopAttackKey || _changedCursorKeys != _previousChangedCursorKeys)) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx);
 			}
 		}
