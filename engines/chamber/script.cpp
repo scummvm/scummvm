@@ -3344,6 +3344,7 @@ uint16 CMD_4_EnergyLevel(void) {
 		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, cur_image_offs);
 	}
 
+	clearButtons();
 	do {
 		IFGM_PlaySample(28);
 		animPortrait(1, anim, 10);
