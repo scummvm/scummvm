@@ -368,10 +368,10 @@ void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
 			// now so Stiletto and Peter can have different scale factors in Noctropolis
 			ie._offsetY = (part._offsetY - frame->_baseY - part._position.y) * _scaling / 256;
 			ie._scaleOverride = _scaling;
-			const SpriteFrame *frame = ie._spritesPtr->getFrame(ie._frameNumber);
+			const SpriteFrame *spriteFrame = ie._spritesPtr->getFrame(ie._frameNumber);
 			ie._sizeOverride = Common::Point(
-				_vm->_screen->_scaleTable1[frame->w],
-				_vm->_screen->_scaleTable1[frame->h]
+				_vm->_screen->_scaleTable1[spriteFrame->w],
+				_vm->_screen->_scaleTable1[spriteFrame->h]
 			);
 		} else {
 			ie._offsetY = part._offsetY - ie._position.y;
