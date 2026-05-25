@@ -22,6 +22,7 @@
 #ifndef EEM_SITE_H
 #define EEM_SITE_H
 
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 
@@ -88,7 +89,7 @@ struct Hotspot {
 
 /// Site / scene controller. Mirrors `_DrawSearchButtons @ 2404:0a8f` /
 /// `_SearchButtons @ 2404:0bfb` site loop.
-class SiteScreen {
+class SiteScreen : public Common::EventObserver {
 public:
 	SiteScreen(EEMEngine *vm, Mystery *mystery)
 		: _vm(vm), _mystery(mystery) {}
@@ -100,6 +101,8 @@ public:
 	void run();
 
 private:
+	bool notifyEvent(const Common::Event &event) override;
+
 	void renderBackground(uint siteNum);
 	void renderHotspots(uint siteNum);
 	int  hotspotAtPoint(uint siteNum, int x, int y) const;
@@ -139,6 +142,12 @@ private:
 
 	/// Restore the snapshot taken at `captureBgSnapshot` time.
 	void restoreBgSnapshot();
+
+	/// Push pixels written through `lockScreen()` back through the backend's
+	/// normal screen-copy path. The SDL/OpenGL screenshot code captures the
+	/// presented backend buffer, so site frames must not leave partner/NPC
+	/// sprites only in the locked software surface.
+	void syncCompositedScreen();
 
 	/// scanColorCycles: scan Loop 1 for ColorCycle entries (animId == -1),
 	/// cache (start, end) palette ranges. Mirrors `_DoSiteLoop @ 168d:03f4` init scan.
