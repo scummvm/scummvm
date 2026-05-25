@@ -101,7 +101,10 @@ void MyFolderXObj::m_myFolder(int nargs) {
 	g_lingo->push(Datum(""));
 }
 
-XOBJSTUBNR(MyFolderXObj::m_dispose)
+void MyFolderXObj::m_dispose(int nargs) {
+	g_lingo->_state->me.u.obj->dispose();
+	g_lingo->push(g_lingo->_state->me);
+}
 XOBJSTUB(MyFolderXObj::m_do, "")
 
 }

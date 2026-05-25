@@ -77,6 +77,7 @@
 #include "director/lingo/xlibs/g/getscreensizexfcn.h"
 #include "director/lingo/xlibs/g/getsoundinlevel.h"
 #include "director/lingo/xlibs/g/gpid.h"
+#include "director/lingo/xlibs/g/getuinfo.h"
 #include "director/lingo/xlibs/h/henry.h"
 #include "director/lingo/xlibs/h/hitmap.h"
 #include "director/lingo/xlibs/i/inixobj.h"
@@ -303,6 +304,7 @@ static const struct XLibProto {
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetSoundInLevelXObj,kXObj,			400),	// D4
+	XLIBDEF(GetUInfoXObj,			kXObj,					400),	// D4
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
 	XLIBDEF(HenryXObj,			kXObj,			400),	// D4
 	XLIBDEF(HitMap,				kXObj,			400),	// D4
