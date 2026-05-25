@@ -52,10 +52,11 @@ For a more comprehensive changelog of the latest experimental code, see:
      "Full Moon".
 
  TwinE:
-   - Fixed soft lock collision bug with bulldozer
-   - Fixed wrong scaling for plasma menu effect
-   - Fixed holomap model rendering
-   - Disable autosaves while driving a vehicle
+   - Fixed soft lock collision bug with bulldozer.
+   - Fixed wrong scaling for plasma menu effect.
+   - Fixed holomap model rendering.
+   - Disable autosaves while driving a vehicle.
+
 
 #### 2026.2.0 "Railmonicon" (2026-03-28)
 
