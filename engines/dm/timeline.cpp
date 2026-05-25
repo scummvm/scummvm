@@ -482,11 +482,16 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 	if (doorState == kDMDoorStateDestroyed)
 		return;
 
-	if (event->_Cu.A._effect == kDMSensorEffectToggle)
+	if (event->_Cu.A._effect == kDMSensorEffectToggle) {
 		event->_Cu.A._effect = (doorState == kDMDoorStateOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
-	else if (event->_Cu.A._effect == kDMSensorEffectSet) {
-		if ((doorState == kDMDoorStateOpen) || (doorState == kDMDoorStateClosed))
-			return;
+	} else {
+		if (event->_Cu.A._effect == kDMSensorEffectSet) {
+			if (doorState == kDMDoorStateOpen)
+           		return;
+		} else if (event->_Cu.A._effect == kDMSensorEffectClear) {
+			if (doorState == kDMDoorStateClosed)
+            	return;
+		}
 	}
 	event->_type = kDMEventTypeDoorAnimation;
 	addEventGetEventIndex(event);
