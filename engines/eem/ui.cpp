@@ -3707,6 +3707,7 @@ void EEMEngine::doAccuse() {
 	const int foundPoints = _mystery.foundPoints();
 	uint entryKDSpeak = 0;
 	uint16 entryTextOff = 0xFFFF;
+	uint16 entryVoiceOverride = 0xFFFF;
 	bool canAccuse = false;
 	Common::String entryText;
 	if (foundPoints == 0) {
@@ -3714,6 +3715,11 @@ void EEMEngine::doAccuse() {
 		entryText = "3We're not ready to solve this mystery yet.  "
 					"Let's keep investigating until we have some more solid "
 					"evidence to make our case!";
+		// Practice mystery M0 ships the matching ZeroText takes as the
+		// final two SDB entries, but its KD digital table points kdspeak 9
+		// at earlier hint clips. Use the otherwise unreferenced pair.
+		if (_mystery.number() == 0)
+			entryVoiceOverride = (_partner == kPartnerJake) ? 105 : 104;
 	} else if (foundPoints < 0x32) {
 		entryKDSpeak = 0;
 		entryTextOff = READ_LE_UINT16(entryKdIdx + 0);
@@ -3766,8 +3772,12 @@ void EEMEngine::doAccuse() {
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
 								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
-		if (_audio)
-			_audio->sayKDDigital(entryKdIdx, entryKDSpeak, _partner);
+		if (_audio) {
+			if (entryVoiceOverride != 0xFFFF)
+				_audio->spoolSound(entryVoiceOverride);
+			else
+				_audio->sayKDDigital(entryKdIdx, entryKDSpeak, _partner);
+		}
 		waitForInput(60000);
 	}
 	if (!canAccuse) {
@@ -4330,7 +4340,8 @@ void EEMEngine::doAccuse() {
 			_music->stop();
 
 		// `_DifferenceAnimation("scrapbk.ani")` @ 1df2:0848.
-		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
+		playAnm(Common::Path("SCRAPBK.ANI"), 120,
+				/* holdLastFrame= */ false);
 
 		// `_ShowOneScrap @ 1f78:0773` = `_DisplayEnding(num, 1)`.
 		doShowEnding(mn);
