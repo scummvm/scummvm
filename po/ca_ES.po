@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-25 12:09+0000\n"
-"PO-Revision-Date: 2026-05-12 22:22+0000\n"
+"PO-Revision-Date: 2026-05-26 04:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -8651,10 +8651,8 @@ msgstr "Menú d'informació"
 
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
 #: engines/freescape/movement.cpp:119
-#, fuzzy
-#| msgid "Toggle resizable window"
 msgid "Toggle red/blue 3D"
-msgstr "Commuta la finestra redimensionable"
+msgstr "Commuta el vermell/blau en 3D"
 
 #: engines/freescape/games/castle/castle.cpp:463
 msgid "Select prince"
@@ -15292,7 +15290,7 @@ msgstr "Commuta el mode de raigs X"
 
 #: engines/ultima/nuvie/metaengine.cpp:140
 msgid "Heal party"
-msgstr ""
+msgstr "Cura el grup"
 
 #: engines/ultima/nuvie/metaengine.cpp:141
 msgid "Teleport to cursor"
@@ -15304,75 +15302,75 @@ msgstr "Commuta els trucs (cheats)"
 
 #: engines/ultima/nuvie/metaengine.cpp:146
 msgid "Solo mode as Avatar"
-msgstr ""
+msgstr "Mode solitari com a Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:147
 msgid "Solo mode as party member 2"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:148
 msgid "Solo mode as party member 3"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:149
 msgid "Solo mode as party member 4"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:150
 msgid "Solo mode as party member 5"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:151
 msgid "Solo mode as party member 6"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Solo mode as party member 7"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Solo mode as party member 8"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Solo mode as party member 9"
-msgstr ""
+msgstr "Mode solitari com a membre del grup 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for Avatar"
-msgstr ""
+msgstr "Mostra les estadístiques de l'Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 2"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 3"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 4"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 5"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 6"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:161
 msgid "Show stats for party member 7"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show stats for party member 8"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show stats for party member 9"
-msgstr ""
+msgstr "Mostra les estadístiques per al membre del grup 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:164
 msgid "Show inventory for Avatar"
@@ -15380,80 +15378,80 @@ msgstr "Mostra l'inventari de l'Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 2"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 3"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 4"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 5"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 6"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:170
 msgid "Show inventory for party member 7"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show inventory for party member 8"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:172
 msgid "Show inventory for party member 9"
-msgstr ""
+msgstr "Mostra l'inventari per al membre del grup 9"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:174
 msgid "Show doll gump for Avatar"
-msgstr ""
+msgstr "Mostra el menú emergent per a l'Avatar"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:176
 msgid "Show doll gump for party member 2"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 2"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:178
 msgid "Show doll gump for party member 3"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 3"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:180
 msgid "Show doll gump for party member 4"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 4"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:182
 msgid "Show doll gump for party member 5"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 5"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:184
 msgid "Show doll gump for party member 6"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 6"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:186
 msgid "Show doll gump for party member 7"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 7"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:188
 msgid "Show doll gump for party member 8"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 8"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:190
 msgid "Show doll gump for party member 9"
-msgstr ""
+msgstr "Mostra el menú emergent per al membre del grup 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:196
 #: engines/ultima/nuvie/metaengine.cpp:201
@@ -15478,7 +15476,7 @@ msgstr "Transfereix el personatge"
 
 #: engines/ultima/ultima8/metaengine.cpp:46
 msgid "Draw weapon / Combat"
-msgstr ""
+msgstr "Desenfunda l'arma / Combat"
 
 #: engines/ultima/ultima8/metaengine.cpp:51
 msgid "Move back"
@@ -15490,7 +15488,7 @@ msgstr "Ressalta els objectes"
 
 #: engines/ultima/ultima8/metaengine.cpp:63
 msgid "Use bedroll"
-msgstr ""
+msgstr "Utilitza un farcell"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Open backpack"
@@ -15506,7 +15504,7 @@ msgstr "Obre el mini-mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
 msgid "Use recall"
-msgstr ""
+msgstr "Utilitza el recordatori"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 msgid "Open inventory & statistics"
