@@ -104,6 +104,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	ARRAYCLEAR(_travel);
 	_startTravelItem = _startTravelBox = 0;
 	ARRAYCLEAR(_ask);
+	ARRAYCLEAR(_asked);
 	_startAboutItem = _startAboutBox = 0;
 	_keepAskPosition = false;
 	_bcnt = 0;

@@ -33,7 +33,8 @@ ComicResource::ComicResource(const ComicPage *pages[], int npages) {
 
 ////////////////
 
-ComicViewer::ComicViewer(NoctropolisEngine *vm) : _vm(vm) {
+ComicViewer::ComicViewer(NoctropolisEngine *vm) : _vm(vm), _comic(nullptr),
+	_bubbleSprites(nullptr), _currPage(0) {
 }
 
 ComicViewer::~ComicViewer() {

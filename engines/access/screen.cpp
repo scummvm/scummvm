@@ -42,6 +42,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	Graphics::Screen::create(_vm->getScreenWidth(), _vm->getScreenHeight());
 	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
 	Common::fill(&_manPal[0], &_manPal[0x84], 0);
+	Common::fill(&_stilPal[0], &_stilPal[99], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
 	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
 	_savedPaletteCount = 0;

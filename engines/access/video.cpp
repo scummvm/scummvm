@@ -27,7 +27,8 @@
 namespace Access {
 
 VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm), _videoData(nullptr),
-_videoFrame(0), _soundFrame(0), _videoEnd(false), _soundFlag(false), _vidSurface(nullptr) {
+_videoFrame(0), _soundFrame(0), _videoEnd(false), _soundFlag(false),
+_vidSurface(nullptr) {
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -242,7 +243,14 @@ void VideoPlayer_v1::copyVideo() {
 //////////////////////////////////////////////////
 
 VideoPlayer_v2::VideoPlayer_v2(AccessEngine *vm, bool setPal) : VideoPlayer(vm), _audioStream(nullptr),
-_frame(nullptr), _nextFrameTime(0), _setPal(setPal), _startMs(0), _drawBorder(false) {
+_frame(nullptr), _nextFrameTime(0), _setPal(setPal), _startMs(0), _drawBorder(false), _delayTotal(0)
+{
+	_header._id = 0;
+	_header._version = 0;
+	_header._frameCount = _header._frameIncr = 0;
+	_header._width = _header._height = 0;
+	_header._unk = 0;
+	_header._flags = VIDEOFLAG_NONE;
 }
 
 void VideoPlayer_v2::setVideo(const Common::Point &pt) {

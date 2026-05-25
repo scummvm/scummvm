@@ -37,6 +37,7 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_sequence = 0;
 	_endFlag = false;
 	_continuenceType = 0;
+	_continuenceFlag = false;
 	_returnCode = 0;
 	_scriptCommand = 0;
 	_choice = 0;

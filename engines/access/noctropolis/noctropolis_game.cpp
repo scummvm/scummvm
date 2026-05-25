@@ -40,10 +40,12 @@ AccessEngine(syst, gameDesc), _invScript(nullptr), _stil(nullptr), _loadFlag(fal
 _travScrollX(0), _travScrollY(0), _travScrollCol(0), _travScrollRow(0), _stilFlag1(_flags[205]),
 _stilFlag2(_flags[234])
 {
+	ARRAYCLEAR(_minigameCurrentConfig);
 }
 
 NoctropolisEngine::~NoctropolisEngine() {
 	delete _invScript;
+	// _midi will be deleted in parent.
 }
 
 void NoctropolisEngine::initObjects() {
