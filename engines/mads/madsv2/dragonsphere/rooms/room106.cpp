@@ -40,11 +40,6 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
 /**
  * Room local variables
  */
@@ -85,6 +80,11 @@ struct Scratch {
 };
 
 static Scratch scratch;
+
+#define local (&scratch)
+#define ss    local->sprite
+#define seq   local->sequence
+#define aa    local->animation
 
 /* ========================= Sprites ========================= */
 

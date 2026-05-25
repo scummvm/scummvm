@@ -44,7 +44,6 @@ struct Scratch {
 	int16 sequence[15];     /* Sequence handles      */
 	int16 animation[4];     /* Animation handles     */
 
-
 	int16 temp;             /* for synching sprites */
 
 	int16 qm_frame;         /* animation frame being held for Queen mom stuff */
@@ -59,12 +58,12 @@ struct Scratch {
 	int16 prevent;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 /* ========================= Sprites ========================= */
 
@@ -123,7 +122,6 @@ static void room_107_init() {
 	}
 
 	conv_get(CONV_4_QUEENS);
-
 
 	/* Load sprite series */
 
@@ -198,9 +196,7 @@ static void room_107_init() {
 
 			player.commands_allowed = false;
 		}
-
 	} else {
-
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_door], 15);
 	}
@@ -246,7 +242,6 @@ static void handle_animation_qm() {
 		case 68:
 			if (local->anim_1_running) {
 				qm_reset_frame = 67;
-
 			} else {
 				kernel_abort_animation(aa[0]);
 				local->anim_0_running = false;
@@ -269,7 +264,6 @@ static void handle_animation_q() {
 		q_reset_frame = -1;
 
 		switch (local->q_frame) {
-
 		case 1:   /* end of freeze                       */
 		case 10:  /* end of talk                         */
 		case 27:  /* end of talk to QM (from other node) */
@@ -328,7 +322,7 @@ static void handle_animation_q() {
 	}
 }
 
-void room_107_daemon() {
+static void room_107_daemon() {
 	if (local->anim_0_running) {
 		handle_animation_qm();
 	}
