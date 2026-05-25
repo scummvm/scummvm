@@ -6,6 +6,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für Nancy Drew: The Haunted Carousel hinzugefügt.
    - Unterstützung für Nancy Drew: Danger on Deception Island hinzugefügt.
+   - Unterstützung für Cartoon Carnival hinzugefügt.
 
  Allgemein:
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
@@ -37,9 +38,28 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler in der Animation des Kontroll-Rads am Strand von J'nanin behoben.
    - Die Kamera kann nun frei bewegt werden, nachdem ein Symbol am Uhren-Turm in J'nanin abgelegt wurde.
 
+ NANCY:
+   - Ein Fehler bei Rätseln mit herausgerissenen Buchstaben wurde behoben,
+     der alle Nancy-Spiele betraf, in denen solche Rätsel vorkommen.
+   - Mögliche Abstürze bei Rätseln mit herausgerissenen Buchstaben nach dem Laden eines Spielstandes wurden behoben.
+   - Bei Rätseln mit drehbaren Schlössern wird nun der richtige Mauszeiger angezeigt.
+   - Beim Laden eines gespeicherten Spiels über den Launcher oder das GMM wird nun direkt
+     die Spielszene aufgerufen, anstatt im Hauptmenü des Spiels zu starten.
+   - Die Schaltfläche "Spiel fortsetzen" wird nun korrekt verarbeitet, nachdem auf die Schaltfläche "Mehr Nancy" geklickt wurde.
+   - Es wurde ein seltener Fehler bei Klavierrätseln behoben, bei dem es zu einem Grafikfehler kam,
+     wenn auf eine Taste geklickt wurde, während eine andere noch gedrückt war.
+   - Es wurde ein Problem behoben, bei dem einige Sounds in "Nancy Drew: Secret of the Scarlet Hand" und neueren Spielen vorzeitig abbrachen.
+   - Die Animationsgeschwindigkeit und das Timing bei Drehpuzzles wurden angepasst.
+
  SLUDGE:
    - Zwei weitere Spiele wurden zur Erkennungs-Datenbank hinzugefügt:
      "Sam and Max Flintlocked" und "Full Moon".
+
+ TwinE:
+   - Fehler behoben, der bei Kollisionen mit dem Bulldozer zu einem Soft-Lock führte.
+   - Falsche Skalierung des Plasma-Menüeffekts behoben.
+   - Darstellung des Holomap-Modells korrigiert.
+   - Automatische Speicherung beim Fahren eines Fahrzeugs deaktiviert.
 
 
 #### 2026.2.0 "Railmonicon" (28.03.2026)
