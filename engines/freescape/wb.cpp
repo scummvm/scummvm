@@ -89,7 +89,7 @@ byte buildArpeggioTable(const byte intervals[8], byte mask, byte *outTable, byte
 
 // Default TEXT-relative offsets for Dark Side HDSMUSIC.AM
 // All addresses verified against disassembly of the 68000 code.
-static const WBTableOffsets kDarkSideOffsets = {
+const WBTableOffsets kDarkSideOffsets = {
 	0x0AAE, // periodTable: 48 x uint16 BE
 	0x0C42, // samplePtrTable: 16 x uint32 BE
 	0x0C82, // instrumentTable: 16 x 8 bytes
@@ -100,7 +100,7 @@ static const WBTableOffsets kDarkSideOffsets = {
 	16, 16, 10 // numSamples, numInstruments, numEnvelopes
 };
 
-static const uint32 kMaxPatternEntries = 128;
+const uint32 kMaxPatternEntries = 128;
 
 class WallyBebenStream : public Audio::Paula {
 public:

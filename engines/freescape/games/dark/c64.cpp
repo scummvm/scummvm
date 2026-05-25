@@ -30,10 +30,10 @@ namespace Freescape {
 
 extern byte kC64Palette[16][3];
 
-static const byte kDarkC64CompassMask[] = {0xfe, 0xfa, 0x69, 0xf5, 0xea};
-static const byte kDarkC64CompassColor1[] = {0xfc, 0x1f, 0xf1, 0xcb, 0x3b};
-static const byte kDarkC64CompassColor2[] = {0x0b, 0x0c, 0x0c, 0x0f, 0x0c};
-static const byte kDarkC64ModeIndicatorPalette[2][3][4] = {
+const byte kDarkC64CompassMask[] = {0xfe, 0xfa, 0x69, 0xf5, 0xea};
+const byte kDarkC64CompassColor1[] = {0xfc, 0x1f, 0xf1, 0xcb, 0x3b};
+const byte kDarkC64CompassColor2[] = {0x0b, 0x0c, 0x0c, 0x0f, 0x0c};
+const byte kDarkC64ModeIndicatorPalette[2][3][4] = {
 	{{0, 11, 15, 1}, {0, 11, 15, 2}, {0, 15, 1, 11}},
 	{{0, 15, 12, 11}, {0, 15, 12, 11}, {0, 15, 2, 11}}
 };
@@ -50,7 +50,7 @@ static int getDarkC64CompassTarget(float yaw) {
 	return target;
 }
 
-static const byte *getDarkC64IndicatorSprite(const byte *spriteData, byte pointer) {
+const byte *getDarkC64IndicatorSprite(const byte *spriteData, byte pointer) {
 	assert(pointer >= 3 && pointer <= 10);
 	return spriteData + (pointer - 3) * 64;
 }

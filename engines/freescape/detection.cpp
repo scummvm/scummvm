@@ -27,7 +27,7 @@
 
 namespace Freescape {
 
-static const PlainGameDescriptor freescapeGames[] = {
+const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "3D Kit Game"},
 	{"driller", "Driller"},
 	{"spacestationoblivion", "Space Station Oblivion"},
@@ -39,7 +39,7 @@ static const PlainGameDescriptor freescapeGames[] = {
 	{0, 0}
 };
 
-static const ADGameDescription gameDescriptions[] = {
+const ADGameDescription gameDescriptions[] = {
 	// Original Freescape games
 	// Driller
 	{
@@ -1233,7 +1233,7 @@ static const ADGameDescription gameDescriptions[] = {
 };
 } // End of namespace Freescape
 
-static const DebugChannelDef debugFlagList[] = {
+const DebugChannelDef debugFlagList[] = {
 	{Freescape::kFreescapeDebugMove, "move", ""},
 	{Freescape::kFreescapeDebugParser, "parser", ""},
 	{Freescape::kFreescapeDebugCode, "code", ""},

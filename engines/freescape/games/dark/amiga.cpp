@@ -29,8 +29,6 @@
 
 namespace Freescape {
 
-namespace {
-
 const int kAmigaGemdosHeaderSize = 0x1C;
 
 int amigaProgToFile(int address) {
@@ -108,8 +106,6 @@ void decodeMaskedAmigaSprite(Common::SeekableReadStream *file, Graphics::Managed
 		}
 	}
 }
-
-} // namespace
 
 void DarkEngine::loadAssetsAmigaFullGame() {
 	Common::File file;

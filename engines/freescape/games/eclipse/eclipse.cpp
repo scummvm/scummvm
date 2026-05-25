@@ -42,7 +42,7 @@
 namespace Freescape {
 
 // Wally Beben table offsets for Total Eclipse Amiga TEMUSIC.AM
-static const WBTableOffsets kEclipseAmigaMusicOffsets = {
+const WBTableOffsets kEclipseAmigaMusicOffsets = {
 	0x0ACA, // periodTable
 	0x0C5E, // samplePtrTable
 	0x0CA6, // instrumentTable

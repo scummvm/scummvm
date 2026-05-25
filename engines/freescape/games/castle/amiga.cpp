@@ -84,7 +84,7 @@ struct CastleIntroLayout {
 	int palScale; // 0: palette channels are 4-bit (Amiga); 1: 3-bit (Atari ST), scale up
 };
 
-static const CastleIntroLayout kAmigaIntroLayout = {
+const CastleIntroLayout kAmigaIntroLayout = {
 	0x247c, 0x2d64, 0x4664,     // scrollPlaneA/B, staticPlane
 	0x5ba4, 0x5c0c,             // fillBands, overlay
 	0x14ff4, 0x1ac74,           // logo, foreground
@@ -96,7 +96,7 @@ static const CastleIntroLayout kAmigaIntroLayout = {
 	0
 };
 
-static const CastleIntroLayout kAtariIntroLayout = {
+const CastleIntroLayout kAtariIntroLayout = {
 	0x22, 0x90a, 0x220a,
 	0x374a, 0x37b2,
 	0x12b9a, 0x1881a,

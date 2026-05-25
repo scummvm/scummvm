@@ -30,8 +30,6 @@ using namespace Freescape::CastleMusicData;
 
 namespace Freescape {
 
-namespace {
-
 // AY-3-8910 period table (95 entries, same note numbering as the Castle OPL
 // table and Total Eclipse AY player). AY clock = 1MHz.
 const uint16 kAYPeriods[] = {
@@ -95,8 +93,6 @@ uint16 applySIDFrequencyOffset(uint16 basePeriod, int16 frequencyOffset) {
 	uint32 period = (kSIDToAYPeriodScale + (sidFrequency / 2)) / sidFrequency;
 	return CLIP<uint32>(period, 1, 4095);
 }
-
-} // namespace
 
 void CastleAYMusicPlayer::ChannelState::reset(const byte *channelOrderList) {
 	orderList = channelOrderList;

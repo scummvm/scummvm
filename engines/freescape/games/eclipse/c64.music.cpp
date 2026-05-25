@@ -26,7 +26,7 @@
 
 namespace Freescape {
 
-static const int kSIDOffset[] = {0, 7, 14};
+const int kSIDOffset[] = {0, 7, 14};
 
 void EclipseC64MusicPlayer::ChannelState::reset() {
 	orderAddr = 0;

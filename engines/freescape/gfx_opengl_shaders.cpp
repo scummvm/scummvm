@@ -32,7 +32,7 @@
 
 namespace Freescape {
 
-static const GLfloat bitmapVertices[] = {
+const GLfloat bitmapVertices[] = {
 	// XS   YT
 	0.0, 0.0,
 	1.0, 0.0,

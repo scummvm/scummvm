@@ -218,7 +218,7 @@ bool Debugger::cmdShowOcclusion(int argc, const char **argv) {
 	return true;
 }
 
-static const char *objectTypeNames[] = {
+const char *const objectTypeNames[] = {
 	"Entrance",
 	"Cube",
 	"Sensor",

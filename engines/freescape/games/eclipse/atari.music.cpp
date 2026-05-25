@@ -48,16 +48,16 @@
 namespace Freescape {
 
 // TEXT-relative offsets for data tables within TEMUSIC.ST
-static const uint32 kTEPeriodTableOffset      = 0x0B24; // 96 x uint16 BE
-static const uint32 kTEArpeggioIntervalsOffset = 0x0CC8; // 8 bytes
-static const uint32 kTEInstrumentTableOffset   = 0x0D60; // 12 x 8 bytes
-static const uint32 kTESongTableOffset         = 0x0DC0; // 2 songs x 3 ch x uint32 BE
-static const uint32 kTEPatternPtrTableOffset   = 0x0DCC; // up to 31 x uint32 BE
+const uint32 kTEPeriodTableOffset      = 0x0B24; // 96 x uint16 BE
+const uint32 kTEArpeggioIntervalsOffset = 0x0CC8; // 8 bytes
+const uint32 kTEInstrumentTableOffset   = 0x0D60; // 12 x 8 bytes
+const uint32 kTESongTableOffset         = 0x0DC0; // 2 songs x 3 ch x uint32 BE
+const uint32 kTEPatternPtrTableOffset   = 0x0DCC; // up to 31 x uint32 BE
 
-static const int kTENumChannels    = 3;
-static const int kTENumPeriods     = 96;
-static const int kTENumInstruments = 12;
-static const int kTEMaxPatterns    = 31;
+const int kTENumChannels    = 3;
+const int kTENumPeriods     = 96;
+const int kTENumInstruments = 12;
+const int kTEMaxPatterns    = 31;
 
 class EclipseAtariMusicPlayer : public MusicPlayer {
 public:

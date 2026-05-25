@@ -30,9 +30,7 @@ using namespace Freescape::CastleMusicData;
 
 namespace Freescape {
 
-namespace {
-
-struct OPLBasePatch {
+struct CastleOPLBasePatch {
 	byte modChar;
 	byte carChar;
 	byte modLevel;
@@ -80,7 +78,7 @@ const uint16 kOPLFreqs[] = {
 const byte kOPLModOffset[] = { 0x00, 0x01, 0x02 };
 const byte kOPLCarOffset[] = { 0x03, 0x04, 0x05 };
 
-const OPLBasePatch kOPLBasePatches[] = {
+const CastleOPLBasePatch kOPLBasePatches[] = {
 	{ 0x21, 0x21, 0x22, 0x03, 0xF2, 0xF3, 0x74, 0x56, 0x00, 0x00, 0x04 },
 	{ 0x02, 0x01, 0x1E, 0x00, 0xE4, 0xF2, 0x64, 0x46, 0x00, 0x01, 0x06 },
 	{ 0x31, 0x21, 0x26, 0x06, 0xC3, 0xE3, 0x64, 0x47, 0x00, 0x00, 0x02 },
@@ -100,8 +98,6 @@ byte attenuateOPLLevel(byte level) {
 uint16 scaleDuration(byte duration) {
 	return MAX<uint16>(1, duration);
 }
-
-} // namespace
 
 // ============================================================================
 // ChannelState
@@ -203,7 +199,7 @@ void CastleOPLMusicPlayer::setOPLInstrument(int channel, byte instrument) {
 	if (!_opl)
 		return;
 
-	const OPLBasePatch &patch = kOPLBasePatches[instrument % ARRAYSIZE(kOPLBasePatches)];
+	const CastleOPLBasePatch &patch = kOPLBasePatches[instrument % ARRAYSIZE(kOPLBasePatches)];
 	byte mod = kOPLModOffset[channel];
 	byte car = kOPLCarOffset[channel];
 

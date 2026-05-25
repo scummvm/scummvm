@@ -29,7 +29,7 @@ namespace Freescape {
 
 // 21 SFX entries extracted from totec2.prg at $C802 (address $C802-$CB49).
 // Each entry is 40 bytes. Same descriptor format as Dark Side C64.
-static const C64SFXData kEclipseSFXData[21] = {
+const C64SFXData kEclipseSFXData[21] = {
 	// SFX #1: Noise, 2 notes, repeat 1
 	{2, 1, 0,
 	 {0x00, 0x44, 0x00, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

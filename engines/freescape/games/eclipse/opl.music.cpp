@@ -30,9 +30,7 @@ using namespace Freescape::EclipseMusicData;
 
 namespace Freescape {
 
-namespace {
-
-struct OPLBasePatch {
+struct EclipseOPLBasePatch {
 	byte modChar;
 	byte carChar;
 	byte modLevel;
@@ -85,7 +83,7 @@ const uint16 kOPLFreqs[] = {
 const byte kOPLModOffset[] = { 0x00, 0x01, 0x02 };
 const byte kOPLCarOffset[] = { 0x03, 0x04, 0x05 };
 
-const OPLBasePatch kOPLBasePatches[] = {
+const EclipseOPLBasePatch kOPLBasePatches[] = {
 	// 0: silent
 	{ 0x00, 0x00, 0x3F, 0x3F, 0x00, 0x00, 0x00 },
 	// 1: triangle - soft additive sine
@@ -128,8 +126,6 @@ byte getWaveformFamily(byte ctrl) {
 uint16 decodePulseWidth(byte packed) {
 	return ((packed & 0x0F) << 8) | (packed & 0xF0);
 }
-
-} // namespace
 
 // ============================================================================
 // ChannelState
@@ -265,7 +261,7 @@ void EclipseOPLMusicPlayer::setOPLInstrument(int channel, byte instrumentOffset)
 		patchIdx = 0;
 
 	byte ctrl = kInstruments[instrumentOffset + 0];
-	const OPLBasePatch &patch = kOPLBasePatches[getWaveformFamily(ctrl)];
+	const EclipseOPLBasePatch &patch = kOPLBasePatches[getWaveformFamily(ctrl)];
 	byte mod = kOPLModOffset[channel];
 	byte car = kOPLCarOffset[channel];
 

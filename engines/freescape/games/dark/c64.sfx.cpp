@@ -30,7 +30,7 @@ namespace Freescape {
 // 25 SFX entries extracted from dark2.prg at $C802 (address $C802-$CBEA).
 // Each entry is 40 bytes in the original 6502 format.
 // See SOUND_ANALYSIS.md for full documentation.
-static const C64SFXData kC64SFXData[25] = {
+const C64SFXData kC64SFXData[25] = {
 	// SFX #1: Shoot (Noise, high→silence)
 	{2, 1, 0,
 	 {0x00, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

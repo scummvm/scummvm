@@ -598,7 +598,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	// Unreachable
 }
 
-static const char *eclipseRoomName[] = {
+const char *const eclipseRoomName[] = {
 	"* SAHARA",
 	"HORAKHTY",
 	"NEPHTHYS",
@@ -610,7 +610,7 @@ static const char *eclipseRoomName[] = {
 	"????????"
 };
 
-static const char *eclipse2RoomName[] = {
+const char *const eclipse2RoomName[] = {
 	"\" SAHARA",
 	"ENTRANCE",
 	"\" SPHINX",
@@ -1251,7 +1251,6 @@ Common::SeekableReadStream *FreescapeEngine::decryptFileAmigaAtari(const Common:
 }
 
 
-namespace {
 // A simple implementation of memmem, which is a non-standard GNU extension.
 const void *local_memmem(const void *haystack, size_t haystack_len, const void *needle, size_t needle_len) {
 	if (needle_len == 0) {
@@ -1268,7 +1267,6 @@ const void *local_memmem(const void *haystack, size_t haystack_len, const void *
 	}
 	return nullptr;
 }
-} // namespace
 
 Common::SeekableReadStream *FreescapeEngine::decryptFileAtariVirtualWorlds(const Common::Path &filename) {
 	Common::File file;

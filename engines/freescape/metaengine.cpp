@@ -34,7 +34,7 @@
 #include "freescape/detection.h"
 
 
-static const ADExtraGuiOptionsMap optionsList[] = {
+const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_PRERECORDED_SOUNDS,
 		{
