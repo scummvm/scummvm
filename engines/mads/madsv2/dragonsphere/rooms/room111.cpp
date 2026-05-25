@@ -50,12 +50,12 @@ struct Scratch {
 	int16 prev_room;
 };
 
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
-
-static Scratch scratch;
 
 
 static void room_111_init() {
@@ -105,8 +105,6 @@ static void room_111_daemon() {
 					reset_frame = 29;
 				} else {
 					if (local->done_with_conv) {
-						/* reset_frame = 29; */
-						/* global[pre_room] = 110; */
 						new_room = 120;
 					} else {
 						switch (global[dragon_my_scene]) {

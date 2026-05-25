@@ -221,24 +221,30 @@ public:
 };
 
 /**
- * ASound3  (asound.ph3, _dataOffset = 0x20c0)
+ * ASound3  (asound.dr3, _dataOffset = 0x1F30, _dataSize = 0x2750)
  *
- * Dispatch table layout:
- *   asound_commands1: commands  0–8   (max=8,    base=0)
- *   asound_commands2: command   16    (max=0x10, base=0x10, 1 entry)
- *   asound_commands3: commands 24–27  (max=0x1B, base=0x18, 4 entries)
- *   asound_commands4: commands 32–37  (max=0x25, base=0x20, 6 entries)
- *   asound_commands5: commands 64–75  (max=0x4B, base=0x40, 12 entries)
- *     (command 76 = nullsub_8, silently ignored by bounds check)
+ * Dispatch table layout (five tables collapsed to flat [77]):
+ *   off_11A14:   commands  0–8   (base=0,    max=8)
+ *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
+ *   funcs_11C61: commands 32–34  (base=0x20, max=0x22; slot 34 = no-op)
+ *   off_11A46:   commands 64–76  (base=0x40, max=0x4C; slots 74–76 = no-ops)
+ *
+ * command16 sets _musicIndex = 0x10 for command18 re-entry.
+ * commands 32–33: _musicIndex saved by dispatcher for command18 re-entry.
+ *
+ * command31 and command64 both target the same sound block (0x23E9) but
+ * patch byte 0x23EC to 0x67 vs 0x78 for different pitch variants.
  */
 class ASound3 : public ASound {
 private:
 	typedef int (ASound3::*CommandPtr)();
 	static const CommandPtr _commandList[77];
 
-	// Internal helper: isSoundActive guard on 0xC36, load ch0–7.
-	// Called by command34 which then adds ch8.
-	void sub11CC6();
+	// Deferred loader callbacks (void, Pattern B)
+	void loadCommand16();
+	void loadCommand32();
+	void loadCommand33();
 
 	int command0();
 	int command1();
@@ -251,18 +257,20 @@ private:
 	int command8();
 
 	int command16();
+	int command17();
+	int command18();
 
 	int command24();
 	int command25();
 	int command26();
 	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
 
 	int command32();
 	int command33();
-	int command34();
-	int command35();
-	int command36();
-	int command37();
 
 	int command64();
 	int command65();
@@ -274,8 +282,6 @@ private:
 	int command71();
 	int command72();
 	int command73();
-	int command74();
-	int command75();
 
 public:
 	ASound3(Audio::Mixer *mixer, OPL::OPL *opl);
@@ -284,46 +290,54 @@ public:
 };
 
 /**
- * ASound4  (asound.ph4, _dataOffset = 0x1f90)
+ * ASound4  (asound.dr4, _dataOffset = 0x2120, _dataSize = 0x31D0)
  *
- * Dispatch table layout:
- *   asound_commands1: commands  0–8   (max=8,    base=0)
- *   asound_commands2: command   16    (max=0x10, base=0x10, 1 entry)
- *   asound_commands3: commands 24–27  (max=0x1B, base=0x18, 4 entries)
- *   asound_commands4: commands 64–70  (max=0x46, base=0x40, 7 entries)
- *     (Commands 32–63 are unreachable: the 0x20-range max constant = 0)
+ * Dispatch table layout (five tables collapsed to flat [82]):
+ *   off_11A14:   commands  0–8   (base=0,    max=8;    slot 5 = no-op)
+ *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
+ *   funcs_11E51: commands 32–41  (base=0x20, max=0x29; slots 34,41 = no-ops)
+ *   off_11A54:   commands 64–81  (base=0x40, max=0x51; slot 79 = no-op; slots 80,81 = stubs)
  *
- * commands 24 and 25 share the same handler (sub_11D0A).
+ * command16 sets _musicIndex = 0x10 for command18 re-entry.
+ * commands 32–33 and 35–40: _musicIndex saved by dispatcher for command18 re-entry.
+ *
+ * command31 patches _soundData[0x2E72] to 0x67 before playSound.
+ * commands 32–33 use ASound::command3() (partial fade) rather than command1().
+ * command39 loads only channels 0–5 (no channel 6).
  */
 class ASound4 : public ASound {
 private:
 	typedef int (ASound4::*CommandPtr)();
-	static const CommandPtr _commandList[71];
+	static const CommandPtr _commandList[82];
 
-	int command0();
-	int command1();
-	int command2();
-	int command3();
-	int command4();
-	int command5();
-	int command6();
-	int command7();
-	int command8();
+	// Deferred loader callbacks (void, Pattern B)
+	void loadCommand16();
+	void loadCommand32();
+	void loadCommand33();
+	void loadCommand35();
+	void loadCommand36();
+	void loadCommand37();
+	void loadCommand38();
+	void loadCommand39();
+	void loadCommand40();
 
-	int command16();
+	int command0(); int command1(); int command2(); int command3();
+	int command4(); int command6(); int command7(); int command8();
 
-	int command24();
-	int command25();
-	int command26();
-	int command27();
+	int command16(); int command17(); int command18();
 
-	int command64();
-	int command65();
-	int command66();
-	int command67();
-	int command68();
-	int command69();
-	int command70();
+	int command24(); int command25(); int command26(); int command27();
+	int command28(); int command29(); int command30(); int command31();
+
+	int command32(); int command33(); int command35(); int command36();
+	int command37(); int command38(); int command39(); int command40();
+
+	int command64(); int command65(); int command66(); int command67();
+	int command68(); int command69(); int command70(); int command71();
+	int command72(); int command73(); int command74(); int command75();
+	int command76(); int command77(); int command78();
+	int command80(); int command81();
 
 public:
 	ASound4(Audio::Mixer *mixer, OPL::OPL *opl);
@@ -332,65 +346,57 @@ public:
 };
 
 /**
- * ASound5  (asound.ph5, _dataOffset = 0x2140)
+ * ASound5  (asound.dr5, _dataOffset = 0x20D0, _dataSize = 0x2EE0)
  *
- * Dispatch table layout:
- *   asound_commands1: commands  0–8   (max=8,    base=0)
- *   asound_commands2: command   16    (max=0x10, base=0x10, 1 entry)
- *   asound_commands3: commands 24–27  (max=0x1B, base=0x18, 4 entries)
- *   asound_commands4: commands 32–39  (max=0x27, base=0x20, 8 entries)
- *   asound_commands5: commands 64–78  (max=0x4E, base=0x40, 15 entries)
- *     (command 79 = nullsub_8, silently ignored by bounds check)
+ * Dispatch table layout (five tables collapsed to flat [82]):
+ *   off_11A14:   commands  0–8   (base=0,    max=8)
+ *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   off_11A2E:   commands 24–32  (base=0x18, max=0x20; slot 32 = no-op/unreachable)
+ *   funcs_11E05: commands 32–39  (base=0x20, max=0x27; slot 39 = no-op)
+ *   off_11A50:   commands 64–81  (base=0x40, max=0x51; slot 79 = no-op; slots 80–81 = stubs)
  *
- * commands 36/35/34 load channels in non-sequential data order.
- * commands 70, 77, and 78 all play the same 0x40BA sound block.
+ * command16 and command32/33 set _musicIndex = 0x10 for command18 re-entry.
+ * command38 sets _musicIndex = 0x26; command36 sets it to 0x29 (beyond table).
+ * command17 uses a direct (non-deferred) load with inline resetCallbackTimer(0x60).
+ * command36 calls setMusicIndex(0x29) then playSound (no channel loads).
+ * command37 calls ASound::command1() then findFreeChannel (lower pool) ×6.
+ * command77 accesses _lastParam (stored by dispatcher) to branch on param value.
+ *
+ * _soundData[0x2B7E] — pitch-bend byte (command31 = 0x67, command78 = 0x7F)
+ * _soundData[0x2B4B] — velocity byte set by command77 (param≠0 path)
  */
 class ASound5 : public ASound {
 private:
 	typedef int (ASound5::*CommandPtr)();
-	static const CommandPtr _commandList[79];
+	static const CommandPtr _commandList[82];
 
-	int command0();
-	int command1();
-	int command2();
-	int command3();
-	int command4();
-	int command5();
-	int command6();
-	int command7();
+	// Deferred loader callbacks (void, Pattern B)
+	void loadCommand16();
+	void loadCommand32();
+	void loadCommand33();
+	void loadCommand34();
+	void loadCommand35();
+	void loadCommand38();
+
+	int _lastParam;    // param from command() stored for use by command77
+
+	int command0(); int command1(); int command2(); int command3();
+	int command4(); int command5(); int command6(); int command7();
 	int command8();
 
-	int command16();
+	int command16(); int command17(); int command18();
 
-	int command24();
-	int command25();
-	int command26();
-	int command27();
+	int command24(); int command25(); int command26(); int command27();
+	int command28(); int command29(); int command30(); int command31();
 
-	int command32();
-	int command33();
-	int command34();
-	int command35();
-	int command36();
-	int command37();
-	int command38();
-	int command39();
+	int command32(); int command33(); int command34(); int command35();
+	int command36(); int command37(); int command38();
 
-	int command64();
-	int command65();
-	int command66();
-	int command67();
-	int command68();
-	int command69();
-	int command70();
-	int command71();
-	int command72();
-	int command73();
-	int command74();
-	int command75();
-	int command76();
-	int command77();
-	int command78();
+	int command64(); int command65(); int command66(); int command67();
+	int command68(); int command69(); int command70(); int command71();
+	int command72(); int command73(); int command74(); int command75();
+	int command76(); int command77(); int command78();
+	int command80(); int command81();
 
 public:
 	ASound5(Audio::Mixer *mixer, OPL::OPL *opl);

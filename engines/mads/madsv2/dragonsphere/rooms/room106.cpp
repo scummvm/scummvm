@@ -86,7 +86,6 @@ struct Scratch {
 
 static Scratch scratch;
 
-
 /* ========================= Sprites ========================= */
 
 #define fx_fire_sconce       1   /* rm106y */
@@ -157,11 +156,10 @@ static Scratch scratch;
 #define CONV_34_CUT_SCENE    34
 
 
-void room_106_init() {
+static void room_106_init() {
 	int count;
 
 	if (global[end_of_game]) {
-
 		local->prevent = true;
 		local->anim_0_running = false;
 		local->anim_2_running = false;
@@ -194,13 +192,11 @@ void room_106_init() {
 			} else {
 				aa[0] = kernel_run_animation(kernel_name('e', 2), ROOM_106_END_GAME_1);
 			}
-
 		} else {
 			aa[0] = kernel_run_animation(kernel_name('e', 1), ROOM_106_END_GAME_1);
 		}
 
 	} else {
-
 		conv_get(CONV_3_MACMORN);
 
 		/* Load sprite series */
@@ -267,7 +263,6 @@ void room_106_init() {
 			}
 
 		} else if (previous_room == 118) {      /* Player comes from Courtyard */
-
 			local->prevent = true;
 
 			if (player.been_here_before) {
@@ -288,7 +283,6 @@ void room_106_init() {
 			player.facing = FACING_NORTHWEST;
 
 		} else if (previous_room == 614) {      /* Cut scene */
-
 			conv_get(CONV_34_CUT_SCENE);
 
 			kernel_init_dialog();  /* clear interface */
@@ -363,9 +357,7 @@ void room_106_init() {
 			}
 
 		} else if (previous_room == KERNEL_RESTORING_GAME) {
-
 			if (local->anim_1_running) {
-
 				for (count = 0; count < room_num_spots; count++) {
 					if (room_spots[count].vocab == words_king_s_throne) {
 						room_spots[count].verb = words_look_at;
@@ -405,7 +397,6 @@ void room_106_init() {
 	section_1_music();
 }
 
-
 static void handle_animation_mac() {
 	int mac_reset_frame;
 
@@ -414,7 +405,6 @@ static void handle_animation_mac() {
 		mac_reset_frame = -1;
 
 		switch (local->mac_frame) {
-
 		case 1:
 		case 151:
 			if (player.y < 110) {
@@ -442,9 +432,7 @@ static void handle_animation_mac() {
 		case 12:   /* end of talk */
 		case 13:   /* end of talk */
 		case 159:  /* end of standing */
-
 			if (local->mac_action == MAC_TALK) {
-
 				mac_reset_frame = imath_random(10, 12);
 				++local->mac_talk_count;
 				if (local->mac_talk_count > 15) {
@@ -463,9 +451,7 @@ static void handle_animation_mac() {
 		case 160:  /* end of talk                   */
 		case 161:  /* end of talk                   */
 		case 162:  /* end of talk                   */
-
 			switch (local->mac_action) {
-
 			case MAC_TALK:
 				mac_reset_frame = imath_random(159, 161);
 				++local->mac_talk_count;
@@ -531,7 +517,6 @@ static void handle_animation_mac() {
 	}
 }
 
-
 static void handle_animation_sit() {
 	int sit_reset_frame;
 
@@ -540,7 +525,6 @@ static void handle_animation_sit() {
 		sit_reset_frame = -1;
 
 		switch (local->sit_frame) {
-
 		case 31:
 			player.commands_allowed = true;
 			break;
@@ -549,7 +533,6 @@ static void handle_animation_sit() {
 		case 33:  /* end of look around 2      */
 		case 34:  /* end of look around 3      */
 		case 35:  /* end of look around 4      */
-
 			if (local->sit_action == LOOK) {
 				if (local->sit_count >= imath_random(10, 20)) {
 					local->sit_count = 0;
@@ -565,12 +548,14 @@ static void handle_animation_sit() {
 					++local->sit_count;
 				}
 
-			} else switch (local->sit_frame) {
-			case 31:
-			case 32:
-			case 33: sit_reset_frame = 35; player.commands_allowed = false; break;
-			case 34: sit_reset_frame = 32; break;
-			case 35: sit_reset_frame = 33; break;
+			} else {
+				switch (local->sit_frame) {
+				case 31:
+				case 32:
+				case 33: sit_reset_frame = 35; player.commands_allowed = false; break;
+				case 34: sit_reset_frame = 32; break;
+				case 35: sit_reset_frame = 33; break;
+				}
 			}
 			break;
 
@@ -591,7 +576,6 @@ static void handle_animation_sit() {
 	}
 }
 
-
 static void handle_animation_a_macmorn() {
 	int a_mac_reset_frame;
 	int random;
@@ -602,16 +586,8 @@ static void handle_animation_a_macmorn() {
 
 		switch (local->a_mac_frame) {
 
-		case 114: /* just when macmorn and queen leave bottom of screen */
-
-			/* Test for existance of PDD_6.SS.  If not here, */
-			/* then this is demo version else continue game. */
-			/* if (!env_exist (filename)) {
-			  text_show (10625);
-			  game.going = false;
-			  win_status = 1;
-			}  */
-
+		case 114:
+			/* just when MacMorn and queen leave bottom of screen */
 			new_room = 614;
 			break;
 
@@ -637,9 +613,7 @@ static void handle_animation_a_macmorn() {
 		case 40:  /* end of talk 2 */
 		case 41:  /* end of talk 3 */
 		case 50:  /* end of come from talk */
-
 			switch (local->a_mac_action) {
-
 			case MAC_TALK:
 				if (local->a_mac_talk_count == 0) {
 					random = imath_random(1, 2);
@@ -674,9 +648,7 @@ static void handle_animation_a_macmorn() {
 		case 44:  /* end of talk 1 */
 		case 45:  /* end of talk 2 */
 		case 46:  /* end of talk 3 */
-
 			switch (local->a_mac_action) {
-
 			case MAC_TALK:
 				a_mac_reset_frame = imath_random(43, 45);
 				++local->a_mac_talk_count;
@@ -707,8 +679,6 @@ static void handle_animation_a_macmorn() {
 	}
 }
 
-
-
 static void handle_animation_a_queen() {
 	int a_q_reset_frame;
 	int random;
@@ -718,15 +688,12 @@ static void handle_animation_a_queen() {
 		a_q_reset_frame = -1;
 
 		switch (local->a_q_frame) {
-
 		case 1:  /* on throne          */
 		case 2:  /* on throne          */
 		case 3:  /* on throne          */
 		case 16: /* end talk           */
 		case 37: /* end talk with fist */
-
 			switch (local->a_q_action) {
-
 			case QUEEN_TALK:
 				a_q_reset_frame = 3;
 				local->a_q_action = QUEEN_SHUT_UP;
@@ -769,9 +736,7 @@ static void handle_animation_a_queen() {
 
 		case 81:  /* end of get up from throne and freeze standing */
 		case 93:  /* end of talk                                   */
-
 			switch (local->a_q_action) {
-
 			case QUEEN_TALK:
 				a_q_reset_frame = 81;
 				local->a_q_action = QUEEN_SHUT_UP;
@@ -799,7 +764,6 @@ static void handle_animation_a_queen() {
 	}
 }
 
-
 static void handle_animation_a_qmother() {
 	int a_qm_reset_frame;
 	int random;
@@ -809,13 +773,10 @@ static void handle_animation_a_qmother() {
 		a_qm_reset_frame = -1;
 
 		switch (local->a_qm_frame) {
-
 		case 9:   /* end of freeze */
 		case 10:  /* end of freeze */
 		case 23:  /* end of freeze */
-
 			switch (local->a_qm_action) {
-
 			case QUEEN_TALK:
 				a_qm_reset_frame = 23;
 				break;
@@ -845,9 +806,7 @@ static void handle_animation_a_qmother() {
 			break;
 
 		case 18:  /* end of freeze */
-
 			switch (local->a_qm_action) {
-
 			case QUEEN_TALK:
 			case QUEEN_FIST:
 				a_qm_reset_frame = 18;
@@ -871,9 +830,7 @@ static void handle_animation_a_qmother() {
 		case 32:  /* end of talk   */
 		case 44:  /* end of talk   */
 		case 54:  /* end of talk   */
-
 			switch (local->a_qm_action) {
-
 			case QUEEN_TALK:
 				random = imath_random(1, 3);
 				switch (random) {
@@ -914,8 +871,7 @@ static void handle_animation_a_qmother() {
 	}
 }
 
-
-void room_106_daemon() {
+static void room_106_daemon() {
 	int temp;
 
 	if (local->anim_0_running) {
@@ -951,7 +907,6 @@ void room_106_daemon() {
 	/* Close either door 104 or 105 when player enters */
 
 	switch (kernel.trigger) {
-
 	case ROOM_106_DOOR_CLOSES: /* left door closes */
 		kernel_seq_delete(seq[fx_door_104]);
 		sound_play(N_DoorCloses);
@@ -1129,7 +1084,7 @@ static void process_conv_abduction() {
 	local->a_qm_talk_count = 0;
 }
 
-void room_106_pre_parser() {
+static void room_106_pre_parser() {
 	int count;
 
 	if (player_said_2(walk_through, door_to_courtyard) || player_said_2(open, door_to_courtyard) ||
@@ -1137,20 +1092,16 @@ void room_106_pre_parser() {
 		player.walk_off_edge_to_room = 118;
 	}
 
-	if ((player_said_1(look_at) || player_said_1(look)) &&
-		player_said_1(Dragonsphere)) {
-
+	if ((player_said_1(look_at) || player_said_1(look)) && player_said_1(Dragonsphere)) {
 		if (!(global[player_score_flags] & SCORE_LOOK_SPHERE_106)) {
 			global[player_score_flags] = global[player_score_flags] | SCORE_LOOK_SPHERE_106;
 			global[player_score] += 1;
 		}
 
 		player.need_to_walk = true;
-		/* player_walk(START_X_ROOM_111, START_Y_ROOM_111, FACING_NORTHEAST); */
 	}
 
 	if (local->anim_1_running) {
-
 		if ((player_said_1(look_at) || player_said_1(look)) &&
 			player_said_1(king_s_throne)) {
 			player.need_to_walk = false;
@@ -1172,7 +1123,7 @@ void room_106_pre_parser() {
 	}
 }
 
-void room_106_parser() {
+static void room_106_parser() {
 	int temp;
 	int count;
 
