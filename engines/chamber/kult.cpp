@@ -208,6 +208,7 @@ process:
 			updateUndrawCursor(target);
 			refreshSpritesData();
 			uint16 restart = runCommandKeepSp();
+			clearButtons();
 			if (restart == RUNCOMMAND_RESTART && g_vm->_shouldRestart)
 				return;
 			script_byte_vars.used_commands++;

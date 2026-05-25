@@ -116,6 +116,7 @@ void openInventory(uint16 filtermask, uint16 filtervalue) {
 	if (inv_count != 0) {
 		g_vm->_renderer->selectCursor(CURSOR_FINGER);
 		processInput();
+		clearButtons();
 		do {
 			pollInput();
 			checkInventoryItemHover(inv_count);

@@ -135,6 +135,7 @@ void actionsMenu(byte **pinfo) {
 
 	g_vm->_renderer->selectCursor(CURSOR_FINGER);
 	processInput();
+	clearButtons();
 
 	choice = 0;
 	act_dot_rects_cur = act_dot_rects;
@@ -181,6 +182,7 @@ void actionsMenu(byte **pinfo) {
 /*TODO: maybe rename to SpotsLoop*/
 void menuLoop(byte spotmask, byte spotvalue) {
 	processInput();
+	clearButtons();
 	do {
 		pollInput();
 		checkHotspots(spotmask, spotvalue);

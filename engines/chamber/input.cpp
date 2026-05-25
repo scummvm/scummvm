@@ -233,6 +233,8 @@ void pollInput(void) {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+			cursor_x = event.mouse.x;
+			cursor_y = event.mouse.y;
 			mouseButtons |= 1;
 			break;
 
@@ -241,6 +243,8 @@ void pollInput(void) {
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
+			cursor_x = event.mouse.x;
+			cursor_y = event.mouse.y;
 			mouseButtons |= 2;
 			break;
 
@@ -254,6 +258,11 @@ void pollInput(void) {
 	}
 
 	setInputButtons(mouseButtons);
+}
+
+void clearButtons(void) {
+	mouseButtons = 0;
+	setInputButtons(0);
 }
 
 void processInput(void) {
