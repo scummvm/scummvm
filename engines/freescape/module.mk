@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	games/castle/atari.o \
 	games/castle/ay.music.o \
 	games/castle/c64.o \
+	games/castle/c64.music.o \
 	games/castle/cpc.o \
 	games/castle/dos.o \
 	games/castle/opl.music.o \

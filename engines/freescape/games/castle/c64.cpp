@@ -23,6 +23,7 @@
 #include "graphics/managed_surface.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/castle/c64.music.h"
 #include "freescape/games/castle/castle.h"
 #include "freescape/language/8bitDetokeniser.h"
 
@@ -331,6 +332,8 @@ void CastleEngine::loadAssetsC64FullGame() {
 	_border = new Graphics::ManagedSurface();
 	_border->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	_border->fillRect(Common::Rect(0, 0, _screenW, _screenH), _gfx->_texturePixelFormat.ARGBToColor(0xff, 0, 0, 0));
+
+	_playerMusic = new CastleC64MusicPlayer();
 
 	// TODO: title screen is in BASIC loader (file 009) - not yet extracted
 }
