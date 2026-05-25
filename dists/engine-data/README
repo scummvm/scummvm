@@ -27,6 +27,10 @@ Those informations were stored in the original executables.
 darkseed.dat:
 This file contains essential game data used by the Darkseed engine.
 
+eem.dat:
+This file contains floppy-only scrapbook dialog data used by the Eagle Eye
+Mysteries engine.
+
 drascula.dat:
 This file contains essential game data used by the Drascula engine.
 

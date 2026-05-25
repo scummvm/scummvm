@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/path.h"
@@ -204,6 +205,16 @@ constexpr int kActionScreenDecorY = 0x87;
 constexpr byte kChooserCycleStart = 0x6f;
 constexpr byte kChooserCycleEnd = 0x73;
 constexpr uint32 kChooserCycleMillis = 100;
+const char kScrapbookExtraFilename[] = "SCRAPBK_EXTRA.ANI";
+const byte kScrapbookExtraMagic[] = {
+	'E', 'E', 'M', 'S', 'B', 'X', '0', '2'
+};
+constexpr uint16 kScrapbookExtraVersion = 2;
+constexpr uint16 kScrapbookExtraCaseCount = 55;
+constexpr uint16 kScrapbookExtraNoVoice = 0xFFFF;
+constexpr uint16 kScrapbookExtraMaxRecords = 16;
+constexpr uint kRestoredContentFirstMystery = 1;
+constexpr uint kRestoredContentLastMystery = 0x18;
 
 bool notebookButtonAt(int x, int y) {
 	return kPdaHelpRect.contains(x, y) ||
@@ -232,6 +243,26 @@ bool rectListContains(const Common::Array<Common::Rect> &rects, int x, int y) {
 			return true;
 	}
 	return false;
+}
+
+bool readScrapbookExtraText(Common::File &file, uint16 size,
+							Common::String &out) {
+	out.clear();
+	if (size == 0)
+		return true;
+
+	Common::Array<char> buf;
+	buf.resize(size);
+	if (file.read(buf.data(), size) != size)
+		return false;
+
+	out = Common::String(buf.data(), size);
+	return true;
+}
+
+bool restoredContentVoiceAppliesTo(uint mysteryNum) {
+	return mysteryNum >= kRestoredContentFirstMystery &&
+		   mysteryNum <= kRestoredContentLastMystery;
 }
 
 bool gallerySlotAt(const Common::Array<Common::Rect> &rects,
@@ -1087,7 +1118,8 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		return 0;
 
 	const bool showFirstTryBadge =
-		num < sizeof(_mysteriesSolved) && _mysteriesSolved[num] == 2;
+		num < sizeof(_mysteriesSolved) && _mysteriesSolved[num] == 2 &&
+		(floppyEnding || ConfMan.getBool("restored_content"));
 	Picture firstTryBadge;
 	const bool haveFirstTryBadge =
 		showFirstTryBadge &&
@@ -4343,6 +4375,8 @@ void EEMEngine::doAccuse() {
 		playAnm(Common::Path("SCRAPBK.ANI"), 120,
 				/* holdLastFrame= */ false);
 
+		displayScrapbookExtra(mn);
+
 		// `_ShowOneScrap @ 1f78:0773` = `_DisplayEnding(num, 1)`.
 		doShowEnding(mn);
 
@@ -4435,6 +4469,146 @@ void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 			break;
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+	}
+}
+
+void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
+	if (isFloppy() || !ConfMan.getBool("restored_content") ||
+		!_restoredContentDataLoaded ||
+		mysteryNum >= kScrapbookExtraCaseCount || !_font.isLoaded())
+		return;
+
+	Common::File file;
+	if (!file.open(Common::Path(kScrapbookExtraFilename))) {
+		warning("EEM restored content unavailable: %s missing",
+				kScrapbookExtraFilename);
+		return;
+	}
+
+	byte magic[sizeof(kScrapbookExtraMagic)];
+	if (file.read(magic, sizeof(magic)) != sizeof(magic) ||
+		memcmp(magic, kScrapbookExtraMagic, sizeof(magic)) != 0)
+		return;
+
+	const uint16 version = file.readUint16LE();
+	const uint16 caseCount = file.readUint16LE();
+	if (version != kScrapbookExtraVersion ||
+		caseCount > kScrapbookExtraCaseCount ||
+		mysteryNum >= caseCount)
+		return;
+
+	const uint32 tableOffset = (uint32)sizeof(kScrapbookExtraMagic) + 4 +
+		mysteryNum * 8;
+	if (!file.seek(tableOffset))
+		return;
+
+	const uint32 recordsOffset = file.readUint32LE();
+	const uint16 recordCount = file.readUint16LE();
+	(void)file.readUint16LE();
+	if (recordsOffset == 0 || recordCount == 0 ||
+		recordCount > kScrapbookExtraMaxRecords ||
+		!file.seek(recordsOffset))
+		return;
+
+	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	bg.clear();
+	if (Graphics::Surface *screen = g_system->lockScreen()) {
+		bg.simpleBlitFrom(*screen);
+		g_system->unlockScreen();
+	}
+
+	for (uint recordIdx = 0; recordIdx < recordCount && !shouldQuit();
+		 recordIdx++) {
+		const uint16 picId = file.readUint16LE();
+		const uint16 picX = file.readUint16LE();
+		const uint8 picY = file.readByte();
+		const uint8 balloonRaw = file.readByte();
+		const uint16 balloonX = file.readUint16LE();
+		const uint8 balloonY = file.readByte();
+		(void)file.readByte();
+		const uint16 voiceJake = file.readUint16LE();
+		const uint16 voiceJenny = file.readUint16LE();
+		const uint16 voiceNancy = file.readUint16LE();
+		const uint16 jakeTextSize = file.readUint16LE();
+		const uint16 jennyTextSize = file.readUint16LE();
+
+		if (file.eos() || file.err())
+			return;
+
+		Common::String rawJake;
+		Common::String rawJenny;
+		if (!readScrapbookExtraText(file, jakeTextSize, rawJake) ||
+			!readScrapbookExtraText(file, jennyTextSize, rawJenny))
+			return;
+
+		Common::String text = parseString(
+			_partner == kPartnerJake ? rawJake : rawJenny,
+			_playerName, _partner);
+		if (text.empty())
+			continue;
+
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.simpleBlitFrom(*bg.surfacePtr());
+
+		if (picId != 0 && picId != 0xFFFF) {
+			Picture pic;
+			if (_picsArchive.getPicture(picId, pic) &&
+				picX < kScreenWidth && picY < kScreenHeight) {
+				const byte transp = (byte)(pic.flags >> 8);
+				scratch.transBlitFrom(pic.surface,
+									  Common::Point(picX, picY),
+									  (uint32)transp);
+			}
+		}
+
+		const uint16 fittedBalloon = fitBalloonToText(balloonRaw, text);
+		const uint16 balloonId = fittedBalloon & 0x7F;
+		const bool flipBalloon = (fittedBalloon & 0x80) != 0;
+		Picture balloon;
+		const bool haveBalloon = balloonRaw != 0xFF &&
+			_balloonArchive.size() > balloonId &&
+			_balloonArchive.loadEntry(balloonId, balloon);
+
+		uint16 textXInset = 5;
+		uint16 textYInset = 4;
+		uint16 textWidth = 155;
+		if (haveBalloon) {
+			const byte transp = (byte)(balloon.flags >> 8);
+			scratch.transBlitFrom(balloon.surface,
+								  Common::Point(balloonX, balloonY),
+								  (uint32)transp, flipBalloon);
+			getBalloonInsets(balloonId, textXInset, textYInset, textWidth);
+		}
+
+		_font.drawWordWrapped(&scratch, balloonX + textXInset,
+							  balloonY + textYInset,
+							  MAX<int>(8, (int)textWidth), text,
+							  haveBalloon ? 0 : 0xF);
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, kScreenWidth, kScreenHeight);
+		g_system->updateScreen();
+
+		if (_audio && restoredContentVoiceAppliesTo(mysteryNum)) {
+			uint16 voice = kScrapbookExtraNoVoice;
+			if (recordIdx == 0 && voiceNancy != kScrapbookExtraNoVoice) {
+				voice = voiceNancy;
+			} else if (recordIdx == 1) {
+				voice = (_partner == kPartnerJake) ? voiceJake : voiceJenny;
+			} else {
+				voice = (_partner == kPartnerJake) ? voiceJenny : voiceJake;
+			}
+			if (voice != kScrapbookExtraNoVoice)
+				_audio->spoolSound(voice);
+		}
+
+		const bool skipRest = floppyDialogWaitForClick();
+		if (_audio)
+			_audio->stopSpool();
+		if (skipRest)
+			return;
 	}
 }
 

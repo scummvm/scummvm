@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/engine_data.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -198,6 +199,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	ConfMan.registerDefault("hide_highlight_boxes", false);
 	ConfMan.registerDefault("fit_dialog_balloons", false);
 	ConfMan.registerDefault("skip_repeated_cases", false);
+	ConfMan.registerDefault("restored_content", false);
 
 	_variant = (gameDesc && gameDesc->extra &&
 				Common::String(gameDesc->extra).contains("Floppy"))
@@ -287,6 +289,17 @@ void EEMEngine::applySkipRepeatedCasesOption() {
 Common::Error EEMEngine::run() {
 	// _SetMode13X @ 1000:0358 — VGA mode 13h.
 	initGraphics(kScreenWidth, kScreenHeight);
+
+	if (!isFloppy() && ConfMan.getBool("restored_content")) {
+		Common::U32String engineDataError;
+		if (!Common::load_engine_data("eem.dat", "eem", 1, 0,
+									  engineDataError)) {
+			warning("EEM restored content unavailable: %s",
+					Common::String(engineDataError).c_str());
+		} else {
+			_restoredContentDataLoaded = true;
+		}
+	}
 
 	if (!openArchives())
 		return Common::Error(Common::kReadingFailed, "EEM archive open failed");
