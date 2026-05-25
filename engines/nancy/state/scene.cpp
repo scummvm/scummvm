@@ -392,7 +392,7 @@ void Scene::setNoHeldItem() {
 byte Scene::hasItem(int16 id) const {
 	if (getHeldItem() == id) {
 		return g_nancy->_true;
-	} else if (id > 0 && (uint)id < _flags.items.size()) {
+	} else if (id >= 0 && (uint)id < _flags.items.size()) {
 		return _flags.items[id];
 	} else {
 		// TODO: Happens in Nancy10+. Gets called for item IDs
