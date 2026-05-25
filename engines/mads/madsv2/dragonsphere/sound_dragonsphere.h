@@ -405,25 +405,63 @@ public:
 };
 
 
+/**
+ * ASound6  (asound.dr6, _dataOffset = 0x2370, _dataSize = 0x3870)
+ * Dispatch table layout (five tables collapsed to flat [102]):
+ *   off_11A14:   commands  0– 8  (base=0,    max=8)
+ *   off_11A26:   commands 16–19  (base=0x10, max=0x13; slot 19 = no-op)
+ *   off_11A2E:   commands 24–31  (base=0x18, max=0x1F)
+ *   funcs_1204D: commands 32–47  (base=0x20, max=0x2F; slots 41–43, 46–47 = no-op)
+ *   off_11A60:   commands 64–101 (base=0x40, max=0x65; slot 99 = no-op)
+ */
 class ASound6 : public ASound {
 private:
-	typedef int (ASound6:: *CommandPtr)();
-	int command0();
-	int command1();
-	int command2();
-	int command3();
-	int command4();
-	int command5();
-	int command6();
-	int command7();
+	typedef int (ASound6::*CommandPtr)();
+	static const CommandPtr _commandList[102];
+
+	void loadCommand16();
+	void loadCommand32();   // shared deferred loader for commands 32 & 33
+	void loadCommand34();
+	void loadCommand35();
+	void loadCommand36();
+	void loadCommand37();
+	void loadCommand38();
+	void loadCommand39();
+	void loadCommand40();
+	void loadCommand44();
+	void loadCommand45();
+	void loadCommand96();
+
+	uint8 _cmd33Flag;   // byte_134D1: set by command33 to extend loadCommand32
+	int   _lastParam;   // param stored by command() for use by command64
+
+	int command0();  int command1();  int command2();  int command3();
+	int command4();  int command5();  int command6();  int command7();
 	int command8();
 
-	static const CommandPtr _commandList[98];
+	int command16(); int command17(); int command18();
+
+	int command24(); int command25(); int command26(); int command27();
+	int command28(); int command29(); int command30(); int command31();
+
+	int command32(); int command33(); int command34(); int command35();
+	int command36(); int command37(); int command38(); int command39();
+	int command40(); int command44(); int command45();
+
+	int command64(); int command65(); int command66(); int command67();
+	int command68(); int command69(); int command70(); int command71();
+	int command72(); int command73(); int command74(); int command75();
+	int command76(); int command77(); int command78(); int command79();
+	int command80(); int command81(); int command82(); int command83();
+	int command84(); int command85(); int command86(); int command87();
+	int command88(); int command89(); int command90(); int command91();
+	int command92(); int command93(); int command94(); int command95();
+	int command96(); int command97(); int command98();
+	int command100(); int command101();
 
 public:
 	ASound6(Audio::Mixer *mixer, OPL::OPL *opl);
-	~ASound6() override {
-	}
+	~ASound6() override {}
 	int command(int commandId, int param) override;
 };
 
