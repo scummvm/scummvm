@@ -2091,7 +2091,7 @@ static constexpr ComicBlock page_15_blocks[] = {
 
 static constexpr ComicPage page_15 = { "COMDATA/LEPG27.SCN", 98, 54, 0, 0, page_15_blocks, 4 };
 
-const struct ComicPage *LastComicPages[] = {
+const ComicPage *LastComicPages[] = {
 	&page_1,
 	&page_2,
 	&page_3,

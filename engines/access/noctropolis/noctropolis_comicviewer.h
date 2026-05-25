@@ -60,9 +60,9 @@ struct ComicBox {
 };
 
 struct ComicBlock {
-	const struct ProtoPolygon *polygon;
+	const ProtoPolygon *polygon;
 	int32 soundFileIndex, soundResIndex;
-	const struct ComicBox *boxes;
+	const ComicBox *boxes;
 	int32 numBoxes;
 };
 
@@ -71,7 +71,7 @@ struct ComicPage {
 	int32 musicFileIndex, musicResIndex;
 	bool musicRepeat;
 	int unk;
-	const struct ComicBlock *blocks;
+	const ComicBlock *blocks;
 	int32 numBlocks;
 };
 
