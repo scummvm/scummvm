@@ -35,6 +35,27 @@
 
 namespace EEM {
 
+const uint kSiteBackendActionFlushPriority = 100;
+
+class SiteBackendActionObserverRegistration {
+public:
+	SiteBackendActionObserverRegistration(Common::EventObserver *observer)
+		: _dispatcher(g_system->getEventManager()->getEventDispatcher()),
+		  _observer(observer) {
+		if (_dispatcher)
+			_dispatcher->registerObserver(_observer, kSiteBackendActionFlushPriority, false);
+	}
+
+	~SiteBackendActionObserverRegistration() {
+		if (_dispatcher)
+			_dispatcher->unregisterObserver(_observer);
+	}
+
+private:
+	Common::EventDispatcher *_dispatcher;
+	Common::EventObserver *_observer;
+};
+
 // Masked blit using `transp` = high byte of `pic.flags` (`_Rect_Move_Mask @ 1000:03fc`).
 void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 			   int x, int y, byte transp) {
@@ -843,6 +864,18 @@ void SiteScreen::notePartnerActivity() {
 		debugC(1, kDebugSite, "Partner impatience: reset to patient");
 }
 
+bool SiteScreen::notifyEvent(const Common::Event &event) {
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START)
+		return false;
+
+	if (_snapshotSite < 0 || g_system->isOverlayVisible())
+		return false;
+
+	syncCompositedScreen();
+	g_system->updateScreen();
+	return false;
+}
+
 void SiteScreen::run() {
 	if (!_mystery || !_mystery->isLoaded())
 		return;
@@ -851,6 +884,8 @@ void SiteScreen::run() {
 	uint cur = _mystery->_siteNumber;
 	if (cur >= _mystery->numSites())
 		cur = 0;
+	_snapshotSite = -1;
+	SiteBackendActionObserverRegistration backendActionRegistration(this);
 	enter(cur);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	updateHotspotCursor(cur, mouse.x, mouse.y);
@@ -1277,6 +1312,25 @@ void SiteScreen::restoreBgSnapshot() {
 	if (_bgSnapshot.w != kScreenWidth || _bgSnapshot.h != kScreenHeight)
 		return;
 	g_system->copyRectToScreen(_bgSnapshot.getPixels(), _bgSnapshot.pitch,
+							   0, 0, kScreenWidth, kScreenHeight);
+}
+
+void SiteScreen::syncCompositedScreen() {
+	// OpenGL screenshots read the current backbuffer. After a buffer swap,
+	// that backbuffer can contain an older site frame unless the engine keeps
+	// presenting the full composited screen, even while no animation tick
+	// fired. Copying the current game surface through copyRectToScreen keeps
+	// screenshots in sync without backend-specific changes.
+	Graphics::ManagedSurface snapshot(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+	snapshot.simpleBlitFrom(*screen);
+	g_system->unlockScreen();
+
+	g_system->copyRectToScreen(snapshot.getPixels(), snapshot.pitch,
 							   0, 0, kScreenWidth, kScreenHeight);
 }
 
