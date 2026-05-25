@@ -457,7 +457,7 @@ static constexpr ComicBlock page_7_blocks[] = {
 
 static constexpr ComicPage page_7 = { "COMDATA/SEPG07.SCN", 98, 59, 1, 0, page_7_blocks, 2 };
 
-const ComicPage *SpecialComicPages[] = {
+const ComicPage * const SpecialComicPages[] = {
 	&page_1,
 	&page_2,
 	&page_3,

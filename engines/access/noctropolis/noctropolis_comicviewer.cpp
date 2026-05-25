@@ -26,7 +26,7 @@ namespace Access {
 namespace Noctropolis {
 
 
-ComicResource::ComicResource(const ComicPage *pages[], int npages) {
+ComicResource::ComicResource(const ComicPage * const pages[], int npages) {
 	for (int i = 0; i < npages; i++)
 		_pages.push_back(pages[i]);
 }

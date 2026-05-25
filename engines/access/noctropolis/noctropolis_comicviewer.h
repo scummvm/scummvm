@@ -76,7 +76,7 @@ struct ComicPage {
 
 class ComicResource : public Resource {
 public:
-	ComicResource(const ComicPage *pages[], int npages);
+	ComicResource(const ComicPage * const pages[], int npages);
 	uint16 getCount() const { return _pages.size(); }
 	const ComicPage *getPage(int index) const { return _pages[index]; }
 

@@ -28,7 +28,7 @@ namespace Noctropolis {
 
 struct ComicPage;
 
-extern const ComicPage *LastComicPages[];
+extern const ComicPage * const LastComicPages[];
 
 } // end namespace Noctropolis
 
