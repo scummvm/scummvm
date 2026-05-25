@@ -423,7 +423,7 @@ int buffer_legal(const Buffer &walk, int orig_wrap,
 	for (int col = x_count; col > 0; col--) {
 		dAccum += y_count;
 
-		bool blocked = ((*ptr >> bit_pos) & 1) != 0;
+		bool blocked = ((*ptr >> (bit_pos - 1)) & 1) != 0;
 
 		if (blocked) {
 			if (!currently_illegal) {
@@ -437,7 +437,7 @@ int buffer_legal(const Buffer &walk, int orig_wrap,
 
 		while (dAccum >= x_count) {
 			dAccum -= x_count;
-			blocked = ((*ptr >> bit_pos) & 1) != 0;
+			blocked = ((*ptr >> (bit_pos - 1)) & 1) != 0;
 			if (blocked) {
 				if (!currently_illegal) {
 					currently_illegal = true;

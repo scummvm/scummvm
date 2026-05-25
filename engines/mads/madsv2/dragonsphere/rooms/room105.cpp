@@ -93,7 +93,7 @@ static Scratch scratch;
 #define WALK_TO_BONE_X       255
 #define WALK_TO_BONE_Y       145
 
-#define WALK_TO_GOBLET_X     65
+#define WALK_TO_GOBLET_X     63
 #define WALK_TO_GOBLET_Y     142
 
 /* cursor points */
