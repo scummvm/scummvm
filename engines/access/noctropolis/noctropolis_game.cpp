@@ -477,7 +477,6 @@ void NoctropolisEngine::doTravel() {
 		copyBF2Vid();
 
 		_screen->cyclePaletteForward();
-		selectedLoc = -1;
 		rawMouse = _events->calcRawMouse();
 
 		int boxResult = _room->checkBoxes1(rawMouse);

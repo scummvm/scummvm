@@ -47,7 +47,7 @@ void NoctropolisRoom::loadPlayer1() {
 	int numSubFiles = -1;
 	int objBase = -1;
 	int fileNum = -1;
-	int palOffset = 6;
+	int palOffset;
 	if (!(_roomFlag & kRoomFlagTopView)) {
 		palOffset = 6;
 		if ((int8)_roomFlag > -1) {
