@@ -114,7 +114,12 @@ void Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
 		_hotspotDesc.readData(stream);
 	} else {
 		_sceneChange.sceneID = stream.readUint16LE();
-		_sceneChange.continueSceneSound = kContinueSceneSound;
+		if (g_nancy->getGameType() >= kGameTypeNancy10 && _dynamicCursor) {
+			_sceneChange.frameID = stream.readUint16LE();
+			_sceneChange.continueSceneSound = stream.readUint16LE();
+		} else {
+			_sceneChange.continueSceneSound = kContinueSceneSound;
+		}
 		_sceneChange.listenerFrontVector.set(0, 0, 1);
 		readRect(stream, _hotspotDesc.coords);
 	}

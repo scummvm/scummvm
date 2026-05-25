@@ -107,8 +107,8 @@ protected:
 // hovering; all of them are handled in this class as well.
 class Hot1FrSceneChange : public SceneChange {
 public:
-	Hot1FrSceneChange(CursorManager::CursorType hoverCursor, bool dynamicCursor = false) :
-		_hoverCursor(hoverCursor), _dynamicCursor(dynamicCursor) {}
+	Hot1FrSceneChange(CursorManager::CursorType hoverCursor, bool dynamicCursor = false, bool isTerse = false) :
+		_hoverCursor(hoverCursor), _dynamicCursor(dynamicCursor), _isTerse(isTerse) {}
 	virtual ~Hot1FrSceneChange() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
