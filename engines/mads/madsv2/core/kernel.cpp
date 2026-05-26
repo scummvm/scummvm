@@ -685,19 +685,25 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 		goto done;
 	}
 
-	kernel_load_vocab();
-
 	pal_activate_shadow(&kernel_shadow_inter);
-	load_flags = ANIM_LOAD_BACKGROUND | ANIM_INTERFACE;
-	if (kernel.translating)
-		load_flags |= ANIM_LOAD_TRANSLATE;
-	inter_anim = (AnimInterPtr)anim_load(interface, &scr_inter_orig, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, load_flags);
-	if (!inter_anim) goto done;
 
-	if (!inter_anim->font) {
-		mem_free(inter_anim);
+	if (g_engine->getGameID() == GType_Dragonsphere) {
 		inter_anim = nullptr;
+
+	} else {
+		kernel_load_vocab();
+
+		load_flags = ANIM_LOAD_BACKGROUND | ANIM_INTERFACE;
+		if (kernel.translating)
+			load_flags |= ANIM_LOAD_TRANSLATE;
+		inter_anim = (AnimInterPtr)anim_load(interface, &scr_inter_orig, nullptr, nullptr,
+			nullptr, nullptr, nullptr, nullptr, nullptr, load_flags);
+		if (!inter_anim) goto done;
+
+		if (!inter_anim->font) {
+			mem_free(inter_anim);
+			inter_anim = nullptr;
+		}
 	}
 
 	// Set up interface background screen
@@ -2766,7 +2772,7 @@ done:
 }
 
 void kernel_set_interface_mode(int mode) {
-	if (mode != inter_input_mode) {
+	if (mode != inter_input_mode || g_engine->getGameID() == GType_Dragonsphere) {
 		char fname[80];
 		Common::strcpy_s(fname, kernel.interface);
 		char *dot = strchr(fname, '.');
