@@ -42,6 +42,9 @@
 namespace DM {
 
 LoadgameResult DMEngine::loadgame(int16 slot) {
+	if (slot >= 0)
+		_gameMode = kDMModeLoadSavedGame;
+
 	if (slot == -1 && _gameMode == kDMModeLoadSavedGame)
 		return kDMLoadgameFailure;
 
