@@ -124,39 +124,50 @@ uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
 	return MAX<uint>(1, ((int)insets.indDY - (int)insets.y) / lineH + 1);
 }
 
-// FUN_22dc_096c @ 22dc:096c: walks per-site dialog records at site_data[+6]
-// to skip hotspotIdx hotspots, returns _cluesFound flag for hotspot's first
-// text index.
-bool floppyHotspotSearched(EEM::Mystery &mystery, uint siteIdx,
-								   uint hotspotIdx) {
-	const byte *site = mystery.siteData(siteIdx);
+bool EEMEngine::floppyHotspotSearched(uint siteIdx, uint hotspotIdx) const {
+	// FUN_22dc_096c @ 22dc:096c: walks per-site dialog records at
+	// site_data[+6] to skip hotspotIdx hotspots, then returns _TextSeen for
+	// the selected hotspot's searched text index.
+	const byte *site = _mystery.siteData(siteIdx);
 	if (!site)
 		return false;
 	const uint16 dlgListOff = READ_LE_UINT16(site + 6);
-	const byte *bufBase = mystery.blobAt(0);
-	if (!bufBase || dlgListOff == 0 || dlgListOff >= mystery.dataSize())
+	const byte *bufBase = _mystery.blobAt(0);
+	const uint32 dsz = _mystery.dataSize();
+	if (!bufBase || dlgListOff == 0 || dlgListOff >= dsz)
 		return false;
 	uint32 off = dlgListOff;
 	for (uint h = 0; h < hotspotIdx; h++) {
-		const byte *rec = bufBase + off;
-		off += 11u + (uint)rec[10];
-		if (off >= mystery.dataSize())
+		if (off + 10 >= dsz)
+			return false;
+		const uint32 mainLen = 11u + (uint)bufBase[off + 10];
+		off += mainLen;
+		if (off >= dsz)
 			return false;
 		const uint contCount = (uint)(bufBase[off] & 0x7F);
 		off += 1;
 		for (uint c = 0; c < contCount; c++) {
-			const byte *cr = bufBase + off;
-			off += 11u + (uint)cr[10];
-			if (off >= mystery.dataSize())
+			if (off + 10 >= dsz)
+				return false;
+			off += 11u + (uint)bufBase[off + 10];
+			if (off >= dsz)
 				return false;
 		}
 	}
-	if (off + 11 >= mystery.dataSize())
+	if (off + 10 >= dsz)
 		return false;
-	const byte *mainRec = bufBase + off;
-	const uint8 textIdx = mainRec[11] & 0x7F;
+	const uint32 mainLen = 11u + (uint)bufBase[off + 10];
+	const uint32 contFlagsOff = off + mainLen;
+	if (contFlagsOff >= dsz)
+		return false;
+	uint32 searchedRecOff = off;
+	if ((bufBase[contFlagsOff] & 0x7F) != 0)
+		searchedRecOff = contFlagsOff + 1;
+	if (searchedRecOff + 11 >= dsz || bufBase[searchedRecOff + 10] == 0)
+		return false;
+	const uint8 textIdx = bufBase[searchedRecOff + 11] & 0x7F;
 	return textIdx < EEM::Mystery::kCluesFoundCap &&
-		   mystery._cluesFound[textIdx] != 0;
+		   _mystery._cluesFound[textIdx] != 0;
 }
 
 void EEMEngine::doHelp() {
@@ -215,7 +226,7 @@ void EEMEngine::doHelp() {
 		for (uint i = 0; i < chainCount; i++) {
 			const uint8 siteIdx    = hd[off + i * 2 + 0];
 			const uint8 hotspotIdx = hd[off + i * 2 + 1];
-			if (!floppyHotspotSearched(_mystery, siteIdx, hotspotIdx)) {
+			if (!floppyHotspotSearched(siteIdx, hotspotIdx)) {
 				anyChainUnseen = true;
 				break;
 			}
@@ -225,7 +236,7 @@ void EEMEngine::doHelp() {
 			for (uint i = 0; i < extraCount; i++) {
 				const uint8 siteIdx    = hd[extraStart + i * 2 + 0];
 				const uint8 hotspotIdx = hd[extraStart + i * 2 + 1];
-				if (!floppyHotspotSearched(_mystery, siteIdx, hotspotIdx)) {
+				if (!floppyHotspotSearched(siteIdx, hotspotIdx)) {
 					anyExtraUnseen = true;
 					break;
 				}
