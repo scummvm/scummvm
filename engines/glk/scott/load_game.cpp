@@ -88,25 +88,31 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	_G(_game) = &_G(_fallbackGame);
 
 	Common::String md5 = g_vm->getGameMD5();
-	const GlkDetectionEntry *p = SCOTT_GAMES;
+	Common::String filename = g_vm->getFilename();
 
-	while (p->_md5) {
-		if (md5.equalsC(p->_md5)) {
-			if (!scumm_stricmp(p->_extra, "")) {
-				_G(_fallbackGame)._gameID = SCOTTFREE;
-				break;
-			} else if (!scumm_stricmp(p->_extra, "ZXSpectrum")) {
-				loadZXSpectrum(f, md5);
-				break;
-			} else if (!scumm_stricmp(p->_extra, "C64")) {
-				loadC64(f, md5);
-				break;
-			} else {
-				loadTI994A(f);
-				break;
+	if (filename.hasSuffixIgnoreCase(".tap") || filename.hasSuffixIgnoreCase(".tzx")) {
+		loadZXSpectrumTape(f);
+	} else {
+		const GlkDetectionEntry *p = SCOTT_GAMES;
+
+		while (p->_md5) {
+			if (md5.equalsC(p->_md5)) {
+				if (!scumm_stricmp(p->_extra, "")) {
+					_G(_fallbackGame)._gameID = SCOTTFREE;
+					break;
+				} else if (!scumm_stricmp(p->_extra, "ZXSpectrum")) {
+					loadZXSpectrum(f, md5);
+					break;
+				} else if (!scumm_stricmp(p->_extra, "C64")) {
+					loadC64(f, md5);
+					break;
+				} else {
+					loadTI994A(f);
+					break;
+				}
 			}
+			++p;
 		}
-		++p;
 	}
 
 	if (CURRENT_GAME == SCOTTFREE || CURRENT_GAME == TI994A)

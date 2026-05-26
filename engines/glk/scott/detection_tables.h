@@ -186,7 +186,7 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY0("ghostking",		  "28d433d9f5d2de99dac460c5e1dfa9c5", 14206),
 
 	// ZX Spectrum games
-	DT_ENTRYP1("marveladventure", "ZXSpectrum", "0eec511d3cde815c73e5464ab0cdbef9", 40727, Common::kPlatformZX),
+	DT_ENTRYP1("marveladventure", "ZXSpectrum", "f669f2e3320b73c942dfab4cf5ad9a96", 41040, Common::kPlatformZX),
 
 	// 11 Mysterious Adventures
 	DT_ENTRYP1("goldenbaton",	"ZXSpectrum", "cb7dadc9d5f8bce453b9139265e4dd7d", 32060, Common::kPlatformZX),

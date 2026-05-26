@@ -38,6 +38,7 @@
 #include "glk/scott/command_parser.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/load_game.h"
+#include "glk/scott/load_zx_spectrum.h"
 #include "glk/scott/game_info.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/hulk.h"
@@ -121,6 +122,8 @@ void Scott::runGame() {
 		_topWidth = 80;
 		_topHeight = 10;
 	}
+
+	showZXSpectrumTapeTitleScreen();
 
 	if (CURRENT_GAME == TI994A) {
 		display(_G(_bottomWindow), "In this adventure, you may abbreviate any word \
