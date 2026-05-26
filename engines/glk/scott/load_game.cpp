@@ -35,7 +35,6 @@
 #include "glk/scott/globals.h"
 #include "glk/scott/command_parser.h"
 #include "glk/scott/decompress_text.h"
-#include "glk/scott/decompress_z80.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/detection_tables.h"
 #include "glk/scott/game_info.h"
@@ -50,33 +49,10 @@
 #include "glk/scott/gremlins.h"
 #include "glk/scott/seas_of_blood.h"
 #include "glk/scott/load_ti99_4a.h"
+#include "glk/scott/load_zx_spectrum.h"
 
 namespace Glk {
 namespace Scott {
-
-void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5) {
-	_G(_entireFile) = new uint8_t[_G(_fileLength)];
-	size_t result = f->read(_G(_entireFile), _G(_fileLength));
-	if (result != _G(_fileLength))
-		g_scott->fatal("File empty or read error!");
-
-	uint8_t *uncompressed = decompressZ80(_G(_entireFile), _G(_fileLength));
-	if (uncompressed != nullptr) {
-		delete[] _G(_entireFile);
-		_G(_entireFile) = uncompressed;
-		_G(_fileLength) = 0xc000;
-	}
-
-	int offset;
-	DictionaryType dict_type = getId(&offset);
-	if (dict_type == NOT_A_GAME)
-		return;
-
-	int index = _G(_md5Index)[md5];
-	if (tryLoading(_G(_games)[index], offset, 0)) {
-		_G(_game) = &_G(_games)[index];
-	}
-}
 
 void loadC64(Common::SeekableReadStream* f, Common::String md5) {
 	_G(_entireFile) = new uint8_t[_G(_fileLength)];

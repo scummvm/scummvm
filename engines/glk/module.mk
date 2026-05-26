@@ -250,6 +250,7 @@ MODULE_OBJS := \
 	scott/layout_text.o \
 	scott/line_drawing.o \
 	scott/load_ti99_4a.o \
+	scott/load_zx_spectrum.o \
 	scott/resource.o \
 	scott/restore_state.o \
 	scott/ring_buffer.o \
@@ -393,5 +394,6 @@ DETECT_OBJS += $(MODULE)/zcode/detection.o
 
 # Dependencies of detection objects
 DETECT_OBJS += $(MODULE)/blorb.o
+DETECT_OBJS += $(MODULE)/scott/load_zx_spectrum.o
 DETECT_OBJS += $(MODULE)/advsys/game.o
 endif
