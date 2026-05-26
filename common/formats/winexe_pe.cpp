@@ -297,7 +297,7 @@ WinResources::VersionInfo *PEResources::parseVersionInfo(SeekableReadStream *res
 
 			info->hash.setVal(key.encode(), value);
 		} else {
-			if (key == "VS_VERSION_INFO") {
+			if (key == U"VS_VERSION_INFO") {
 				if (!info->readVSVersionInfo(res))
 					return info;
 			}

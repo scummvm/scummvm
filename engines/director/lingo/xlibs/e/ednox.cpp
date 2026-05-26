@@ -124,8 +124,8 @@ XOBJSTUBNR(Ednox::m_dispose)
 
 void Ednox::m_getpathx(int nargs) {
 	/* int mMacMode = */ g_lingo->pop().asInt();
-	Common::U32String hStrIn = g_lingo->pop().asString();
-	/* Common::U32String hSection = */ g_lingo->pop().asString();
+	Common::String hStrIn = g_lingo->pop().asString();
+	/* Common::String hSection = */ g_lingo->pop().asString();
 	hStrIn.toLowercase();
 	if (hStrIn == "cdpath"){
 		g_lingo->push(Datum("d:\\"));
@@ -135,8 +135,8 @@ void Ednox::m_getpathx(int nargs) {
 }
 
 void Ednox::m_iscdx(int nargs) {
-	/* Common::U32String hStrIn = */ g_lingo->pop().asString();
-	Common::U32String hDrive = g_lingo->pop().asString();
+	/* Common::String hStrIn = */ g_lingo->pop().asString();
+	Common::String hDrive = g_lingo->pop().asString();
 	// g_lingo->printSTUBWithArglist("Ednox::m_iscdx", nargs);
 	if (hDrive == "d:\\"){
 		g_lingo->push(Datum("0"));
@@ -146,7 +146,7 @@ void Ednox::m_iscdx(int nargs) {
 }
 
 void Ednox::m_setdrivex(int nargs) {
-	// Common::U32String hStrIn = g_lingo->pop().asString();
+	// Common::String hStrIn = g_lingo->pop().asString();
 	g_lingo->printSTUBWithArglist("Ednox::m_setdrivex", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum("1"));
@@ -156,8 +156,8 @@ XOBJSTUB(Ednox::m_checksoundx, "")
 XOBJSTUB(Ednox::m_clearsoundx, "")
 
 void Ednox::m_deletedocumentfile(int nargs) {
-	// Common::U32String hFile = g_lingo->pop().asString();
-	// Common::U32String hDir = g_lingo->pop().asString();
+	// Common::String hFile = g_lingo->pop().asString();
+	// Common::String hDir = g_lingo->pop().asString();
 	g_lingo->printSTUBWithArglist("Ednox::m_deletedocumentfile", nargs);
 	g_lingo->dropStack(nargs);
 }
@@ -166,7 +166,7 @@ XOBJSTUB(Ednox::m_enabletaskswitch, "")
 XOBJSTUB(Ednox::m_disabletaskswitch, "")
 
 void Ednox::m_drawbkgndx(int nargs) {
-	// Common::U32String hBkgnd = g_lingo->pop().asString();
+	// Common::String hBkgnd = g_lingo->pop().asString();
 	g_lingo->printSTUBWithArglist("Ednox::m_drawbkgndx", nargs);
 }
 
@@ -253,7 +253,7 @@ XOBJSTUB(Ednox::m_playsoundx, "")
 XOBJSTUB(Ednox::m_restorex, "")
 
 void Ednox::m_savex(int nargs) {
-	// Common::U32String hStrIn = g_lingo->pop().asString();
+	// Common::String hStrIn = g_lingo->pop().asString();
 	g_lingo->printSTUBWithArglist("Ednox::m_savex", nargs);
 	g_lingo->dropStack(nargs);
 }
