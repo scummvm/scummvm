@@ -194,7 +194,7 @@ public:
 	// fool_jumble.cpp:
 	void jumbleRun();
 	void sub_130_c56();
-	void sub_130_c66();
+	void jumbleStoreState(); // sub_130_c66
 	void sub_130_d2e();
 	void sub_130_d90();
 	void sub_130_1004();
@@ -268,17 +268,17 @@ public:
 
 	// fool_sentence.cpp
 	void sentenceRun(); // sub_135_004
-	void sub_135_5b6();
+	void sentenceOnClick(); // sub_135_5b6
 	void sentenceAddLeft(); // sub_135_7d6
 	void sentenceAddRight(); // sub_135_7fa
-	void sub_135_81e();
-	void sub_135_86a();
-	void sub_135_94c();
-	void sub_135_9ba();
-	void sub_135_a34();
-	void sub_135_b16();
-	void sub_135_c1c();
-	void sub_135_cee();
+	void sentenceAddLeftRight(); // sub_135_81e
+	void sentenceReplace(); // sub_135_86a
+	void sentenceReverse(); // sub_135_94c
+	void sentenceUndo(); // sub_135_9ba
+	void sentenceDrawButton(); // sub_135_a34
+	void sentenceDrawBuffer(); // sub_135_b16
+	void sentenceStoreState(); // sub_135_c1c
+	void sentenceSuccess(); // sub_135_cee
 
 	// fool_maze.cpp
 	void mazeRun(); // sub_136_004
@@ -288,43 +288,43 @@ public:
 	void sub_136_ade();
 	void mazeHotspot(); // sub_136_b00
 	void mazePrintMessage(); // sub_136_d64
-	void sub_136_e4c();
-	void sub_136_ed8();
+	void mazePickUpItem(); // sub_136_e4c
+	void mazeUseItem(); // sub_136_ed8
 	void mazeWanderingWinds(); // sub_136_f74
-	void sub_136_115a();
+	void mazeDrawLetter(); // sub_136_115a
 	void sub_136_137c();
 	void sub_136_163c();
 	void sub_136_1650();
 	void mazeHiddenDoorOpen(); // sub_136_1756
 	void mazeHiddenDoorShut(); // sub_136_17a4
 	void sub_136_1806();
-	void sub_136_185a();
-	void mazeThornsClearTrigger(); // sub_136_1898
-	void sub_136_18f4();
-	void sub_136_1932();
+	void mazeSetTrigger(); // sub_136_185a
+	void mazeClearTrigger(); // sub_136_1898
+	void mazePickUpTone(); // sub_136_18f4
+	void mazeFireDemon(); // sub_136_1932
 	void sub_136_19d2();
-	void sub_136_1cf4();
-	void sub_136_1ddc();
-	void sub_136_1df4();
+	void mazeNoisySprite(); // sub_136_1cf4
+	void mazeDelay(); // sub_136_1ddc
+	void mazeYeetObject(); // sub_136_1df4
 	void mazeThornsGetScroll(); // sub_136_1e4c
 	void sub_136_21fa();
 	void sub_136_2200();
 	void mazeMovementTrail(); // sub_136_2208
 
-	void sub_136_24ae();
+	void mazeLoadTone(int16 offset); // sub_136_24ae
 	void mazePlayTone(); // sub_136_2538
 
-	void sub_136_2582();
+	void sub_136_2582(); // sub_136_2582
 	void mazeDrawPlayer(); // sub_136_2664
 	void mazeSetupMenu(); // sub_136_274e
-	void sub_136_2a7c();
-	void sub_136_2b30();
-	void sub_136_2be2();
-	void sub_136_2c96();
-	void sub_136_2d4c(); // sub_136_2d4c
-	void sub_136_2dd0();
-	void sub_136_2e52();
-	void sub_136_2ed6();
+	void mazeAddWallLeft(); // sub_136_2a7c
+	void mazeAddWallTop(); // sub_136_2b30
+	void mazeAddWallRight(); // sub_136_2be2
+	void mazeAddWallBottom(); // sub_136_2c96
+	void mazeDrawWallLeft(); // sub_136_2d4c
+	void mazeDrawWallTop(); // sub_136_2dd0
+	void mazeDrawWallRight(); // sub_136_2e52
+	void mazeDrawWallBottom(); // sub_136_2ed6
 	void mazeStoreState(); // sub_136_2f5c
 	void sub_136_3408();
 	void sub_136_342a();
@@ -359,7 +359,7 @@ public:
 
 	// fool_cards.cpp
 	void cardsRun(); // sub_139_004
-	void sub_139_4de();
+	void cardsReset(); // sub_139_4de
 	void sub_139_50e();
 	void cardsShuffleDeck(); // sub_139_51e
 	void cardsDrawTable(); // sub_139_582
@@ -591,9 +591,11 @@ private:
 	SourceMode var_i16_106c;
 	int16 var_i16_106e;
 	Common::U32String var_str_1070;
+	Common::U32String _sentenceBuffer; // var_str_1070
 	Common::U32String var_str_1170;
 	int16 var_i16_1270;
 	Common::U32String var_str_1272;
+	Common::U32String _sentenceGoal; // var_str_1272
 	int16 var_i16_1372;
 
 	Common::U32String var_str_1374;
@@ -697,8 +699,6 @@ private:
 
 	int16 var_i16_1e06;
 
-	Common::U32String var_str_1e08;
-
 	uint16 var_i16_1f08;
 	int16 var_i16_1f0a;
 	Common::U32String _metapuzzleSecretCodeCipher; // var_str_1f0c
@@ -772,8 +772,9 @@ private:
 	int16 arr_i16_4d20[52];
 	Common::SharedPtr<Cursor> _cursors[0x2b]; // arr_curs_4d88, 0x44
 	Pattern _patterns[0x51]; // arr_pat_58f4
-	int16 arr_i16_5bbc[64];
-	int16 arr_i16_5cbc[64];
+	int16 arr_i16_5bbc[128];
+	int16 arr_i16_5cbc[128];
+	int16 _mazeInvItemCount[128]; // arr_i16_5cbc
 	float arr_bcd_5dbc[8];
 	Handle arr_bytes_5dfc; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
