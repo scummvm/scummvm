@@ -3152,7 +3152,7 @@ void FoolGame::sub_144_004() {
 	_modalText[4] = Common::U32String("Congratulations!");
 	_modalText[5] = Common::U32String("And now it is time to show the Finale for the Fool's Errand.");
 	_modalText[6] = Common::U32String();
-	_modalText[6] = Common::U32String("Continue");
+	_modalText[7] = Common::U32String("Continue");
 	showChoiceModal(0xfa, 6, 1, 0);
 	if (!_screenOversized) {
 		g_toolbox->ClearMenuBar();

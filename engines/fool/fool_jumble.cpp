@@ -290,7 +290,7 @@ void FoolGame::jumbleRun() {
 				break;
 			}
 			if ((_stateFlags & kStateReturn) != 0) {
-				this->sub_130_c66();
+				this->jumbleStoreState();
 				_jumbleCurrentSubPuzzle = _jumbleSubPuzzleCount;
 			} else {
 				// 130:0956
@@ -381,17 +381,17 @@ void FoolGame::jumbleRun() {
 		} while (!((_activePuzzleSolved) && (this->var_i16_bfc == 1)));
 	}
 	// 130:0c4e
-	this->sub_130_c66();
+	this->jumbleStoreState();
 }
 
 void FoolGame::sub_130_c56() {
 	// 130:0c56
-	this->sub_130_c66();
+	this->jumbleStoreState();
 	this->saveGame();
 	_stateFlags = kStateNull;
 }
 
-void FoolGame::sub_130_c66() {
+void FoolGame::jumbleStoreState() {
 	// 130:0c66
 	if (_activePuzzleSolved) {
 		_activePuzzleStatus = 0x64;
@@ -425,7 +425,7 @@ void FoolGame::sub_130_d2e() {
 	_stateFlags = kStateNull;
 	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170)) {
 		this->getNextEvent(-1);
-		if (_event.what == 1) {
+		if (_event.what == kMouseDown) {
 			this->sub_130_1476();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -483,7 +483,7 @@ void FoolGame::sub_130_d90() {
 		if (_keyLastPressed != 0) {
 			this->sub_130_15da();
 		}
-		if (_event.what == 1) {
+		if (_event.what == kMouseDown) {
 			this->sub_130_1476();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -510,7 +510,7 @@ void FoolGame::sub_130_1004() {
 		if (_keyLastPressed != 0) {
 			this->sub_130_15da();
 		}
-		if (_event.what == 1) {
+		if (_event.what == kMouseDown) {
 			this->sub_130_1476();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -539,7 +539,7 @@ void FoolGame::sub_130_10a6() {
 	// 130:121c
 	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170) && (this->var_str_1070 != this->var_str_177c)) {
 		this->getNextEvent(-1);
-		if (_event.what == 1) {
+		if (_event.what == kMouseDown) {
 			this->sub_130_1476();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -568,7 +568,7 @@ void FoolGame::sub_130_1282() {
 			this->sub_130_15da();
 		}
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
-		if (_event.what == 1) {
+		if (_event.what == kMouseDown) {
 			this->sub_130_1476();
 		}
 		if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
