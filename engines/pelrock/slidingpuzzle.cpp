@@ -207,7 +207,7 @@ void SlidingPuzzle::puzzleLoop() {
 		}
 
 		// While any key is held, show the original (unscrambled) background.
-		if (_events->_isKeydown && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
+		if (_events->_isKeydown) {
 			showOriginalImage();
 		}
 		_events->_lastKeyEvent = Common::KEYCODE_INVALID;

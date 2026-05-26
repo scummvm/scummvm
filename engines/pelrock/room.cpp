@@ -613,7 +613,7 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 		return;
 	}
 	bool roomDone = false;
-	while (!alfredB.eos() && !roomDone) {
+	while (!alfredB.eos()) {
 		ResetEntry entry;
 		entry.room = alfredB.readUint16LE();
 		entry.offset = alfredB.readUint16LE();
@@ -1158,7 +1158,7 @@ void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 		error("RoomManager::resetMetadataDefaults(): Couldnt find file ALFRED.8");
 	}
 	bool roomDone = false;
-	while (!alfred8.eos() && !roomDone) {
+	while (!alfred8.eos()) {
 		ResetEntry entry;
 		entry.room = alfred8.readUint16LE();
 		entry.offset = alfred8.readUint16LE();
