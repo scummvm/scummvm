@@ -34,8 +34,8 @@ extern Toolbox *g_toolbox;
 void FoolGame::shipsRun() {
 	// 128:5140
 	fillRect(0x127, 0x6c, 0x137, 0x84, 0);
-	this->sub_128_6186();
-	this->sub_128_55c(_zbasic->str(OFF(0))); // "?"
+	this->waitForMouseUp();
+	this->drawPuzzleButton(_zbasic->str(OFF(0))); // "?"
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 
 	fillRect(0x127, 0x6c, 0x137, 0x84, 0);
@@ -74,7 +74,7 @@ void FoolGame::shipsRun() {
 	}
 	// 128:5396
 	if (_activePuzzleSolved) {
-		this->sub_128_6186();
+		this->waitForMouseUp();
 		this->playTone(0x14, 0x64, 0);
 		_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
 		_event.where.x += 5;
@@ -103,10 +103,10 @@ void FoolGame::shipsRun() {
 			}
 		}
 		// 128:5514
-		this->sub_128_3da(0x3c);
+		this->delay(0x3c);
 		if (_activePuzzleStatus < 0x64) {
 			// 128:5526
-			this->sub_128_6186();
+			this->waitForMouseUp();
 			_activePuzzleStatus = 0x64;
 			this->var_i16_7ce |= 2;
 			this->zoomRect(
@@ -122,8 +122,8 @@ void FoolGame::shipsRun() {
 				kPatCopy,
 				0x42
 			);
-			this->var_str_384 = _zbasic->str(OFF(1)); // behold the 1st key of thoth
-			this->sub_128_178a(0, 0);
+			// behold the 1st key of thoth
+			this->showBehold(0, 0, _zbasic->str(OFF(1)));
 		}
 		// 128:55aa
 	}

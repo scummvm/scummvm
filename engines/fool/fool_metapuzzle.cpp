@@ -43,7 +43,7 @@ void FoolGame::metapuzzleRun() {
 		var_i16_7ce |= 1;
 		copyScreen(0, arr_bmp_5dfc);
 		fillRect(0x127, 0x69, 0x138, 0x190, 0);
-		sub_128_69c(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+		fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 		fillRect(0x14, 0x67, SCREEN_HEIGHT, 0x1b1, 2);
 		var_i16_484 = 0;
 		for (int16 j = 0x1a; j <= 0x132; j += 0x23) {
@@ -202,7 +202,7 @@ void FoolGame::metapuzzleWheel() {
 	}
 	_zbasic->picture(6, 0x6d, _metapuzzleWheelPic);
 	sub_128_2664();
-	sub_128_61c2();
+	waitForClick();
 }
 
 void FoolGame::metapuzzleSecretCode() {
@@ -362,7 +362,7 @@ void FoolGame::sub_138_a90() {
 	_stateFlags = kStateReturn;
 	_activePuzzleBuffer = var_str_1272;
 	sub_128_2664();
-	sub_128_6186();
+	waitForMouseUp();
 	sub_128_d34(arr_i16_1eb8[0], arr_i16_1eb8[1], arr_i16_1eb8[2], arr_i16_1eb8[3], 0xc8);
 }
 
@@ -378,7 +378,7 @@ void FoolGame::metapuzzleOnOption() {
 	temp.bottom = arr_i16_4d20[var_i16_bfc*4+2];
 	temp.right = arr_i16_4d20[var_i16_bfc*4+3];
 	g_toolbox->InvertRect(temp);
-	sub_128_3da(3);
+	delay(3);
 	g_toolbox->InvertRect(temp);
 }
 

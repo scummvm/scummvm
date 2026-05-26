@@ -92,13 +92,13 @@ public:
 
 	void run();
 
-	void sub_128_004();
+	void foolRun(); // sub_128_004
 	void copyScreen(int16 put, BitMap &bmp); // sub_128_0a2
 	void openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename); // sub_128_11c
 	void sub_128_1e4(const Common::U32String &unk1);
 	void sub_128_2be(int16 unk2, int16 unk1);
 	void sub_128_342(int16 unk2, int16 unk1);
-	void sub_128_3da(int16 unk1);
+	void delay(int16 ticks); // sub_128_3da
 	void sub_128_406(int16 unk1);
 	int16 puzzlesReadByte(); // sub_128_428
 	int16 puzzlesReadShort(); // sub_128_446
@@ -106,10 +106,10 @@ public:
 	Common::String puzzlesReadString(); // sub_128_49a
 	void sub_128_4da(int16 unk1);
 	void playTone(int16 freq, int16 duration, int16 wait);
-	void sub_128_55c(const Common::U32String &unk1);
+	void drawPuzzleButton(const Common::U32String &symbol); // sub_128_55c
 	int16 sub_128_5fe();
 	OSErr sub_128_64c(int16 unk1);
-	void sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
+	void fillRect(int16 patternID, PatternMode mode, int16 top, int16 left, int16 bottom, int16 right); // sub_128_69c
 	void drawTarotCard(int16 rectID, int16 deckPos, int16 type); // sub_128_712
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
 	void sub_128_918(const Common::U32String &unk1);
@@ -119,7 +119,7 @@ public:
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep); // sub_128_dfe
 
-	void sub_128_178a(int16 unk2, int16 unk1);
+	void showBehold(int16 unk2, int16 unk1, const Common::U32String &message); // sub_128_178a
 	void setStateBits(uint16 bits); // sub_128_1c2c
 	void clearStateBits(uint16 bits); // sub_128_1c4a
 	void sub_128_1ef8();
@@ -133,7 +133,7 @@ public:
 	void storyRenderPage(); // sub_128_2202
 	void sub_128_2664();
 	void sub_128_26f6();
-	void sub_128_271a();
+	void fetchPuzzleData(); // sub_128_271a
 	void menuNewGame(); // sub_128_27d6
 	void sub_128_2808();
 	void menuOpenGame(); // sub_128_2988
@@ -142,7 +142,7 @@ public:
 	void menuSaveGameAs(); // sub_128_2a92
 	void menuQuit(); // sub_128_2ab6
 	void menuPrintStory(); // sub_128_2ae8
-	void sub_128_2b0a();
+	void printStory(); // sub_128_2b0a
 	void newGame(); // sub_128_2bc6
 	void openGame(); // sub_128_2e3e
 
@@ -182,8 +182,8 @@ public:
 	void sub_128_5fb4();
 	void sub_128_5fea();
 	void sub_128_6154();
-	void sub_128_6186();
-	void sub_128_61c2();
+	void waitForMouseUp(); // sub_128_6186
+	void waitForClick(); // sub_128_61c2
 	void sub_128_61ec(); // sub_128_61ec
 	void sub_128_6244();
 
@@ -196,26 +196,26 @@ public:
 	void sub_130_c56();
 	void jumbleStoreState(); // sub_130_c66
 	void sub_130_d2e();
-	void sub_130_d90();
+	void jumbleRunSubstitution(); // sub_130_d90
 	void sub_130_1004();
-	void sub_130_10a6();
-	void sub_130_1282();
+	void jumbleRunWordSquare(); // sub_130_10a6
+	void jumbleRunHiddenMessage(); // sub_130_1282
 	void sub_130_1426();
-	void sub_130_1476();
-	void sub_130_15da();
+	void jumbleOnClick(); // sub_130_1476
+	void jumbleOnKey(); // sub_130_15da
 	void sub_130_172c();
 	void sub_130_19ac();
-	void sub_130_19da();
+	void jumbleClickFixedSquare(); // sub_130_19da
 	void sub_130_1a16();
 	void sub_130_1c1a();
-	void sub_130_1c52();
+	void jumbleSelectSquare(); // sub_130_1c52
 	void sub_130_1c6c();
-	void sub_130_1dcc();
+	void jumbleDrawLetter(); // sub_130_1dcc
 	void sub_130_1e5c();
 	void sub_130_1e76();
 	void sub_130_201a();
-	void sub_130_2078();
-	void sub_130_2094();
+	void jumbleNextPosition(); // sub_130_2078
+	void jumblePreviousPosition(); // sub_130_2094
 	void sub_130_20aa();
 	void sub_130_20d2();
 	void sub_130_20fe();
@@ -420,7 +420,7 @@ public:
 	void humbugRun(); // sub_142_004
 	void humbugTrail(); // sub_142_0e6
 	void sub_142_370();
-	void sub_142_5f2();
+	void humbugSuccess(); // sub_142_5f2
 	void sub_142_630();
 
 	// fool_justice.cpp
@@ -492,9 +492,8 @@ private:
 	uint32 var_i32_692;
 	// this is normally a raw pointer to some memory,
 	// instead we track it as a handle + offset
-	uint32 var_ptr_696;
-	Handle var_bytes_696;
-	Common::String var_str_69a;
+	uint32 _puzzleDataPtr; // var_ptr_696
+	Handle _puzzleDataBuffer; // var_bytes_696
 	int16 var_i16_78a;
 	int16 var_i16_79e;
 	int16 var_i16_7a0;
@@ -548,7 +547,6 @@ private:
 	int16 _activePuzzleStatus; // var_i16_c04
 	Common::String _activePuzzleBuffer; // var_str_c06
 
-	int16 var_i16_d06;
 	int16 var_i16_d08;
 	int16 var_i16_d0a;
 	bool _activePuzzleSolved; // var_i16_d0c
@@ -590,6 +588,7 @@ private:
 	int16 var_i16_106a;
 	SourceMode var_i16_106c;
 	int16 var_i16_106e;
+	int16 _jumblePosition; // var_i16_106e
 	Common::U32String var_str_1070;
 	Common::U32String _sentenceBuffer; // var_str_1070
 	Common::U32String var_str_1170;
@@ -601,6 +600,7 @@ private:
 	Common::U32String var_str_1374;
 	Common::U32String var_str_1474;
 	int16 var_i16_1574;
+	int16 _jumbleSelected; // var_i16_1574
 	int16 var_i16_1576;
 
 	Common::U32String var_str_1578;
@@ -634,14 +634,14 @@ private:
 	int16 var_i16_1a98;
 	int16 var_i16_1a9a;
 	uint16 var_i16_1a9c;
-	int16 var_i16_1a9e;
+	int16 _jigsawPieceCount; // var_i16_1a9e
 	int16 var_i16_1aa0;
 	int16 _metapuzzleSecretCodeSpaceOffset; // var_i16_1aa2
 	int16 var_i16_1aa4;
 	int16 var_i16_1aa6;
 	int16 var_i16_1aa8;
 	int16 var_i16_1aaa;
-	PolyHandle var_poly_1aac;
+
 	int16 var_i16_1ab0;
 	int16 var_i16_1ab2;
 	int16 var_i16_1ab4;
@@ -776,7 +776,6 @@ private:
 	int16 arr_i16_5cbc[128];
 	int16 _mazeInvItemCount[128]; // arr_i16_5cbc
 	float arr_bcd_5dbc[8];
-	Handle arr_bytes_5dfc; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
 	BitMap _jigsawPieces[128];
 	int16 arr_i16_9894[0xa43];					// inside 5dfc, used for humbug

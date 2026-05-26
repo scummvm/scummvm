@@ -32,7 +32,7 @@ extern Toolbox *g_toolbox;
 void FoolGame::deathRun() {
 	// 141:0004
 	_zbasic->get(0x6c, 0x127, 0x84, 0x127, this->arr_bmp_c38c);
-	this->sub_128_55c(_zbasic->str(334));
+	this->drawPuzzleButton(Common::U32String("~")); // was: str(334)
 	g_toolbox->InvertRect(this->arr_rect_1910c);
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
@@ -62,8 +62,8 @@ void FoolGame::deathRun() {
 				return;
 			}
 			// 141:0200
-			if (_stateFlags == 2) {
-				_stateFlags = 0;
+			if (_stateFlags == kStateUndo) {
+				_stateFlags = kStateNull;
 			}
 			if (_stateFlags == kStateSaveGame) {
 				this->saveGame();
@@ -76,7 +76,7 @@ void FoolGame::deathRun() {
 		}
 		// 141:023a
 		_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_c38c);
-		this->sub_128_55c(_zbasic->str(335)); // "~"
+		this->drawPuzzleButton(Common::U32String("~")); // was: str(335))
 		this->var_i16_233a = 1;
 		// JMP 0x2be
 		while (_event.where.y < 0x14) {
@@ -84,8 +84,8 @@ void FoolGame::deathRun() {
 			// 141:0282
 			this->deathMoveBlackEye();
 			this->getNextEvent(-1);
-			if (_stateFlags == 2) {
-				_stateFlags = 0;
+			if (_stateFlags == kStateUndo) {
+				_stateFlags = kStateNull;
 			}
 			if (_stateFlags == kStateSaveGame) {
 				this->saveGame();
@@ -187,7 +187,7 @@ void FoolGame::deathMoveBlackEye() {
 		this->arr_rect_1eb8 = this->arr_rect_1ec0;
 		_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
 		_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
-		this->sub_128_3da(1);
+		this->delay(1);
 	}
 	// 141:0880
 }
@@ -214,7 +214,7 @@ void FoolGame::deathDrawZoom() {
 	for (int i = 1; i <= 2; i++) {
 		this->zoomRect(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x1a);
 	}
-	this->sub_128_69c(1, kNotPatXor, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+	this->fillRect(1, kNotPatXor, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 }
 
 
