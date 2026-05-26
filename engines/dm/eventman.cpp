@@ -1678,4 +1678,20 @@ void EventManager::highlightBoxDisable() {
 	}
 }
 
+void EventManager::highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) {
+	x1 = CLIP<int16>(x1, 0, _vm->_displayMan->_screenWidth - 1);
+	x2 = CLIP<int16>(x2, 0, _vm->_displayMan->_screenWidth - 1);
+	y1 = CLIP<int16>(y1, 0, _vm->_displayMan->_screenHeight - 1);
+	y2 = CLIP<int16>(y2, 0, _vm->_displayMan->_screenHeight - 1);
+
+	byte *screen = _vm->_displayMan->_bitmapScreen;
+	uint16 pitch = _vm->_displayMan->_screenWidth;
+
+	for (int16 y = y1; y <= y2; ++y) {
+		for (int16 x = x1; x <= x2; ++x) {
+			screen[y * pitch + x] ^= 0x0F;
+		}
+	}
+}
+
 } // end of namespace DM
