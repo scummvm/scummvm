@@ -167,9 +167,6 @@ void room_505_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
 }
 
-void room_505_error() {
-}
-
 void room_505_preload() {
 	room_init_code_pointer       = room_505_init;
 	room_pre_parser_code_pointer = room_505_pre_parser;

@@ -2295,9 +2295,6 @@ void room_104_synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(local->anim_6_running);
 }
 
-void room_104_error() {
-}
-
 void room_104_preload() {
 	room_init_code_pointer       = room_104_init;
 	room_pre_parser_code_pointer = room_104_pre_parser;

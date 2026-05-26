@@ -1561,9 +1561,6 @@ void room_406_preload() {
 	section_4_interface();
 }
 
-void room_406_error() {
-}
-
 } // namespace Rooms
 } // namespace Dragonsphere
 } // namespace MADSV2

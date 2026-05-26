@@ -901,9 +901,6 @@ done:
 	;
 }
 
-void room_302_error() {
-}
-
 void room_302_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)        s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)      s.syncAsSint16LE(v);
