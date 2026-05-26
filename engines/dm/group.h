@@ -37,7 +37,7 @@ namespace DM {
 	class CreatureInfo;
 
 /* Creature types */
-enum CreatureType {
+enum CreatureType : uint16 {
 	kDMCreatureTypeGiantScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION
 	kDMCreatureTypeSwampSlime = 1, // @ C01_CREATURE_SWAMP_SLIME_SLIME_DEVIL
 	kDMCreatureTypeGiggler = 2, // @ C02_CREATURE_GIGGLER
