@@ -183,9 +183,9 @@ void player_new_stop_walker() {
 	int abs_stop;
 	WalkerInfoPtr walker;
 
-	// WORKAROUND: For ROTP opera and final chandelier fight cutscene
+	// WORKAROUND: For ROTP opera and final chandelier fight cutscene, Dragonsphere globe cutscenes
 	id = player.series_base + player.series;
-	if (!series_list[id])
+	if (id < 0 || !series_list[id])
 		return;
 	walker = series_list[id]->walker;
 	if (!walker)
@@ -241,9 +241,9 @@ void player_select_series() {
 		player.mirror = MIRROR_MASK;
 	}
 
-	// WORKAROUND: For ROTP final confrontation on Chandelier
+	// WORKAROUND: For ROTP final confrontation on Chandelier, Dragonsphere globe cutscenes
 	id = player.series_base + player.series;
-	if (!series_list[id])
+	if (id < 0 || !series_list[id])
 		return;
 	walker = series_list[id]->walker;
 	if (!walker)
@@ -345,9 +345,9 @@ void player_stationary_update() {
 		goto done;
 	}
 
-	// WORKAROUND: For ROTP Opera scene and final chandelier fight
+	// WORKAROUND: For ROTP Opera scene and final chandelier fight, and Dragonsphere globe cutscenes
 	id = player.series_base + player.series;
-	if (!series_list[id])
+	if (id < 0 || !series_list[id])
 		return;
 	walker = series_list[id]->walker;
 	if (!walker)

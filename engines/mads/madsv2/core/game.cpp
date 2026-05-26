@@ -2199,7 +2199,10 @@ static void game_main_loop() {
 					cursor_id = room_spots[id].cursor_number;
 				} else {
 					id -= room_num_spots;
-					cursor_id = kernel_dynamic_hot[id].cursor;
+
+					// WORKAROUND: Dragonsphere globe cutscenes
+					if (id < kernel_num_dynamic)
+						cursor_id = kernel_dynamic_hot[id].cursor;
 				}
 				if (!cursor_id) cursor_id = 1;
 			}
