@@ -121,6 +121,10 @@ private:
 	/// Mirrors `_GetAnimation` + `_NewAnimation` tail of `_DoSiteLoop @ 168d:03f4`.
 	void renderPartner(uint siteNum, uint32 tickMs);
 
+	/// Floppy active speaker pose shown before `_HandleHotspotClick_Floppy`.
+	/// Uses `_SpeakerInfo_Floppy + 0x28/0x2d`, replacing the idle partner.
+	bool renderFloppyHotspotPartnerPose(uint siteNum);
+
 	/// renderStaticDrops: `_AddDrop` static decorations (Loop 2).
 	/// siteData[+0x4] count, siteData[+0xc] entries (6 bytes: {picId, x, y}).
 	void renderStaticDrops(uint siteNum);

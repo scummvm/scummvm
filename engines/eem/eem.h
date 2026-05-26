@@ -193,6 +193,10 @@ public:
 	/// Locates dialog records in site_data[+6] and dispatches them.
 	void displayFloppyHotspotDialog(uint siteNum, uint hotIdx);
 
+	/// `_HotspotSearched_Floppy @ 22dc:096c`. Walks the per-hotspot dialog
+	/// records and returns whether the hotspot's searched text index was seen.
+	bool floppyHotspotSearched(uint siteNum, uint hotspotIdx) const;
+
 	/// Active player name (= profile-save description).
 	const Common::String &playerName() const { return _playerName; }
 

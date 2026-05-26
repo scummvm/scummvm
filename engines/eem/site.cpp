@@ -1352,7 +1352,7 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	int    y;
 	if (_vm->isFloppy()) {
 		// `_DoSiteLoop_Floppy @ 1652:042b`: site_data+8 is a u16 OFFSET
-		// to a 10-byte speakerInfo struct:
+		// to `_SpeakerInfo_Floppy`; the first 10 bytes are the idle pair:
 		//   +0..1 Jake anim, +2..3 Jake X, +4 Jake Y,
 		//   +5..6 Jenny anim, +7..8 Jenny X, +9 Jenny Y.
 		const uint16 spkOff = READ_LE_UINT16(site + 8);
@@ -1410,6 +1410,44 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	g_system->unlockScreen();
 }
 
+bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
+	if (!_vm || !_vm->isFloppy() || !_mystery)
+		return false;
+
+	const byte *site = _mystery->siteData(siteNum);
+	if (!site)
+		return false;
+
+	const uint16 spkOff = READ_LE_UINT16(site + 8);
+	// `_OnSiteHotspotClicked_Floppy @ 1652:017a`: after restoring the site
+	// it loads the active pair from `_SpeakerInfo_Floppy + 0x28/0x2d`.
+	const uint poseOff = (_vm->getPartnerIndex() == kPartnerJake)
+		? 0x28 : 0x2d;
+	if ((uint32)spkOff + poseOff + 5 > _mystery->dataSize())
+		return false;
+
+	const byte *pose = _mystery->blobAt((uint32)spkOff + poseOff);
+	if (!pose)
+		return false;
+
+	const uint16 animId = READ_LE_UINT16(pose + 0);
+	const int x = (int)READ_LE_UINT16(pose + 2);
+	const int y = (int)pose[4];
+
+	Animation anim;
+	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
+		return false;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return false;
+
+	const uint frameIdx = partnerFrameAtTick(animId, (uint)anim.size(), 0);
+	blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
+	g_system->unlockScreen();
+	return true;
+}
+
 void SiteScreen::renderBackground(uint siteNum) {
 	// `_BuildBackground(sitepic, 0x42, 0x14)` from `_DoSiteLoop @
 	// 168d:03f4` / `_DisplayCorrect`:
@@ -1464,6 +1502,17 @@ void bumpHotspotEdgeColor(byte &color) {
 	color = (next > 0xFE) ? (byte)0xF9 : next;
 }
 
+byte currentWhitePaletteIndex(byte fallback) {
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	for (uint i = 0; i < 256; i++) {
+		const byte *rgb = palette + i * 3;
+		if (rgb[0] >= 0xFC && rgb[1] >= 0xFC && rgb[2] >= 0xFC)
+			return (byte)i;
+	}
+	return fallback;
+}
+
 void SiteScreen::renderHotspots(uint siteNum) {
 	// `_DrawSearchButtons`. Port adds optional "hide hint" setting.
 	if (ConfMan.getBool("hide_highlight_boxes"))
@@ -1502,9 +1551,14 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	//   +0xc..d extra         (CD cursor ID for `_SwitchMouse`; shipped = 0)
 	// Seen key = the +0xa ordinal (so unrelated hotspots on later sites
 	// don't inherit the first site's seen state after travel/reload).
-	// Floppy = 8-byte plain rect only; seen key falls back to row index.
+	// Floppy = 8-byte plain rect only; searched state is derived by
+	// walking the dialog record list, like `_HotspotSearched_Floppy`.
 	const bool floppy = _vm && _vm->isFloppy();
 	const uint stride = floppy ? 8 : 14;
+	// The floppy SITEPALS has at least one searchable site where 0xFF is
+	// yellow. The CD corrected that palette data; for floppy, draw with an
+	// existing white entry from the current palette instead of changing it.
+	const byte searchedColor = floppy ? currentWhitePaletteIndex(0xFF) : 0xFF;
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
 		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
@@ -1514,12 +1568,17 @@ void SiteScreen::renderHotspots(uint siteNum) {
 		const Common::Rect rect(MAX<int>(0, x1), MAX<int>(0, y1),
 								MIN<int>(screen->w, x2),
 								MIN<int>(screen->h, y2));
-		const uint seenKey = floppy ? i : READ_LE_UINT16(r + 0xa);
-		const bool seen = seenKey < Mystery::kHotSpotsCap &&
-						   _mystery->_hotSpotsSeen[seenKey];
+		bool seen = false;
+		if (floppy) {
+			seen = _vm->floppyHotspotSearched(siteNum, i);
+		} else {
+			const uint seenKey = READ_LE_UINT16(r + 0xa);
+			seen = seenKey < Mystery::kHotSpotsCap &&
+				   _mystery->_hotSpotsSeen[seenKey];
+		}
 		if (seen) {
-			// `_DrawSolidRect @ 172b:0506` — solid 0xFF (non-cycling).
-			screen->frameRect(rect, 0xFF);
+			// `_DrawSolidRect @ 172b:0506` — solid, non-cycling outline.
+			screen->frameRect(rect, searchedColor);
 		} else {
 			// `_DrawRect @ 172b:03e2` — walk all four edges incrementing
 			// the colour per pixel through palette indices 0xF9..0xFE,
@@ -1587,20 +1646,29 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	debugC(1, kDebugSite, "Site %u: hotspot %u clicked", siteNum, hotIdx);
 
 	// Floppy: 8-byte rects only (no clue metadata @ +0xa/+8). Dialog
-	// records live in a separate list @ `site_data[+6]`. Seen key =
-	// array index (only ordinal available).
+	// records live in a separate list @ `site_data[+6]`.
 	if (_vm->isFloppy()) {
 		if (hotIdx < Mystery::kHotSpotsCap)
 			_mystery->_hotSpotsSeen[hotIdx] = 1;
 		_mystery->_searchLocationNumber = (uint16)hotIdx;
+
 		// Snapshot `_cluesFound` before dialog → autosave on new clue.
 		// Floppy side-effect path is `displayFloppyDialogRecords`
 		// (clues.cpp), not `displayClue` → autosave must be duplicated.
 		byte before[Mystery::kCluesFoundCap];
 		memcpy(before, _mystery->_cluesFound, sizeof(before));
+
+		restoreBgSnapshot();
+		const uint32 now = g_system->getMillis();
+		renderAnimatedDrops(siteNum, now);
+		if (!renderFloppyHotspotPartnerPose(siteNum))
+			renderPartner(siteNum, now);
+		g_system->updateScreen();
+
 		_vm->setPartnerEraseBg(&_bgSnapshot);
 		_vm->displayFloppyHotspotDialog(siteNum, hotIdx);
 		_vm->setPartnerEraseBg(nullptr);
+
 		bool foundNewClue = false;
 		for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
 			if (!before[i] && _mystery->_cluesFound[i]) {
