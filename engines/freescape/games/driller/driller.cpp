@@ -605,7 +605,9 @@ void DrillerEngine::pressedKey(const int keycode) {
 		if (success <= 0) {
 			debugC(1, kFreescapeDebugMove, "DRILL result: no gas found");
 			insertTemporaryMessage(_messagesList[9], _countdown - 4);
-			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigNoGas;
+			uint16 areaID = _currentArea->getAreaID();
+			_drillStatusByArea[areaID] = kDrillerRigNoGas;
+			_drillSuccessByArea[areaID] = 0;
 			return;
 		}
 		Common::String maxScoreMessage = _messagesList[5];
@@ -655,18 +657,23 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 
 		uint16 areaID = _currentArea->getAreaID();
-		if (_drillStatusByArea[areaID] > 0) {
-			if (_drillStatusByArea[areaID] == kDrillerRigInPlace)
+		uint32 drillStatus = _drillStatusByArea[areaID];
+		if (drillStatus > 0) {
+			if (drillStatus == kDrillerRigInPlace)
 				_gameStateVars[32]--;
 			_drillStatusByArea[areaID] = kDrillerNoRig;
 		}
 		removeDrill(_currentArea);
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
-		int maxScore = _drillMaxScoreByArea[_currentArea->getAreaID()];
-		uint32 success = _drillSuccessByArea[_currentArea->getAreaID()];
+		int maxScore = _drillMaxScoreByArea[areaID];
+		uint32 success = (drillStatus == kDrillerRigInPlace || drillStatus == kDrillerRigOutOfPlace) ? _drillSuccessByArea[areaID] : 0;
 		uint32 scoreToRemove = uint32(maxScore * success) / 100;
-		assert(scoreToRemove <= uint32(_gameStateVars[k8bitVariableScore]));
+		if (scoreToRemove > uint32(_gameStateVars[k8bitVariableScore])) {
+			warning("Driller: rig score mismatch in area %d, clamping score removal", areaID);
+			scoreToRemove = uint32(_gameStateVars[k8bitVariableScore]);
+		}
 		_gameStateVars[k8bitVariableScore] -= scoreToRemove;
+		_drillSuccessByArea[areaID] = 0;
 		executeMovementConditions();
 		if (isDOS() || isAmiga() || isAtariST())
 			playSound(_soundIndexAreaChange, false, _soundFxHandle);
