@@ -108,7 +108,6 @@ static Scratch scratch;
 #define fx_pid_in_well                   2    /* rm110b0 */
 #define fx_reach_fruit                   3    /* kgrh_9  */
 
-
 /* ======================== Triggers ========================= */
 
 #define ROOM_110_GOT_FRUIT               70
@@ -222,14 +221,6 @@ static Scratch scratch;
 /*                              */
 /* hand on chin:      74 - 90   */
 /*                              */
-
-/* conversations */
-/* conv008.con   */
-/* conv014.con   */
-/* conv009.con   */
-/* conv006.con   */
-/* conv007.con   */
-/* conv010.con   */
 
 #define CONV_FAERIE         8
 #define CONV_SLATHAN        14
@@ -687,8 +678,6 @@ static void room_110_init() {
 
 	global[invoked_from_111] = false;
 
-	/* kernel_timing_trigger (10, MUSIC); */
-
 	section_1_music();
 }
 
@@ -700,13 +689,10 @@ static void handle_animation_guard_king() {
 		guard_king_reset_frame = -1;
 
 		switch (local->guard_king_frame) {
-
 		case 1:   /* end of freeze */
 		case 11:  /* end of talk   */
 		case 17:  /* end of talk   */
-
 			switch (local->guard_king_action) {
-
 			case CONV7_SHUT_UP:
 				guard_king_reset_frame = 0;
 				break;
@@ -748,7 +734,6 @@ static void handle_animation_guard_pid() {
 		guard_pid_reset_frame = -1;
 
 		switch (local->guard_pid_frame) {
-
 		case 29:
 			global_speech_go(7); /* hurl */
 			break;
@@ -1068,7 +1053,7 @@ static void room_110_merchant_random_moves() {
 				}
 			}
 		}
-	}                    /* gotta love them braces! */
+	}
 }
 
 static void room_110_merchant_noone_talking() {
@@ -1574,7 +1559,6 @@ static void room_110_daemon() {
 					local->new_action[2] = CONV9_LOOK_AT_KING;
 					conv_release();
 				}
-
 				break;
 
 			case 54:
@@ -1620,12 +1604,8 @@ static void room_110_daemon() {
 
 			case 74:
 				/* end of turn to face merchant, must stand facing in */
-
-				/* if ((local->new_action[2] == CONV9_BOW_TURN_TO_MERCHANT) || */
-					/* (local->new_action[2] == CONV9_TALK_TURN_TO_MERCHANT)) { */
 				local->new_action[2] = CONV9_STAND_FACE_IN;
 				reset_frame[2] = 0;
-				/* } */
 				break;
 
 			}
@@ -1745,7 +1725,6 @@ static void room_110_daemon() {
 
 			}
 
-
 			if (reset_frame[3] >= 0) {
 				if (reset_frame[3] != kernel_anim[aa[3]].frame) {
 					kernel_reset_animation(aa[3], reset_frame[3]);
@@ -1757,7 +1736,6 @@ static void room_110_daemon() {
 
 	/* obtaining fruit from the merchant */
 	if (kernel.trigger == ROOM_110_GOT_FRUIT) {
-		/* sound_queue (N_PickUpObject006);*/
 		sound_play(N_TakeObjectSnd);
 		inter_give_to_player(fruit);
 		object_examine(fruit, 807, 0);
@@ -1853,16 +1831,14 @@ static void handle_conv_guard_pid() {
 	local->guard_pid_talk_count = 0;
 }
 
-
-void handle_conv_guard_heal() {
+static void handle_conv_guard_heal() {
 	if (player_verb == conv012_gash_b_b) {
 		player.x = 100;
 		new_room = 112;
 	}
 }
 
-
-void room_110_check_score() {
+static void room_110_check_score() {
 	switch (global[talked_to_status]) {
 
 	case TALKED_TO_NONE:
@@ -2026,7 +2002,7 @@ void room_110_check_score() {
 	}
 }
 
-void handle_conv_faerie() {
+static void handle_conv_faerie() {
 	if ((player_verb == conv008_query_wish) ||
 		(player_verb == conv008_query_humans) ||
 		(player_verb == conv008_query_where) ||
@@ -2069,7 +2045,7 @@ void handle_conv_faerie() {
 	}
 }
 
-void handle_conv_slathan() {
+static void handle_conv_slathan() {
 	if (player_verb == conv014_heehee_only) {
 		switch (kernel.trigger) {
 		case 0:
@@ -2128,8 +2104,7 @@ void handle_conv_slathan() {
 	}
 }
 
-
-void handle_conv_soptus() {
+static void handle_conv_soptus() {
 	/* trigger 1 will not go into effect until conv is released in daemon */
 	if (player_verb == conv009_hello1a_only) {
 		switch (kernel.trigger) {
@@ -2199,7 +2174,7 @@ void handle_conv_soptus() {
 	}
 }
 
-void handle_conv_merchant() {
+static void handle_conv_merchant() {
 	if (player_verb == conv006_wares_greeting) {
 		switch (kernel.trigger) {
 		case 0:
@@ -2260,8 +2235,7 @@ void handle_conv_merchant() {
 	}
 }
 
-
-void room_110_pre_parser() {
+static void room_110_pre_parser() {
 	if (kernel.trigger == ROOM_110_GO_TO_120) {
 		player_cancel_command();
 		local->activate_timer = false;
@@ -2335,7 +2309,6 @@ void room_110_pre_parser() {
 			player_cancel_command();
 
 		} else if (player.need_to_walk) {
-
 			if (player_said_1(walk_down)) {
 				conv_reset(CONV_GUARD_PID);
 				player.commands_allowed = false;
