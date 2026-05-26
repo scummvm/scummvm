@@ -122,7 +122,7 @@ void EGARenderer::selectCursor(uint16 num) {
 			if (!bitA && !bitB)
 				*dst++ = 255; /*transparent*/
 			else if (bitB)
-				*dst++ = 15;  /*white*/
+				*dst++ = (cursor_color == 0xAA) ? 14 : 15;  /*yellow on hotspot, white otherwise*/
 			else
 				*dst++ = 0;   /*black*/
 		}
