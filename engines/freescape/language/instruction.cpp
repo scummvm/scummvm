@@ -419,7 +419,10 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 		uint8 b = 0;
 		uint32 color = 0;
 
-		if (src & (1 << 7)) {
+		if (src == 2 && dst == 0) {
+			// The Amiga interpreter handles SPFX $0200 by restoring the current area palette.
+			_currentArea->_colorRemaps.clear();
+		} else if (src & (1 << 7)) {
 			uint16 v = 0;
 			color = 0;
 			// Extract the color to replace from the src/dst values
