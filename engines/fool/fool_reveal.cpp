@@ -33,7 +33,7 @@ extern Toolbox *g_toolbox;
 // mask reveal puzzle
 void FoolGame::revealRun() {
 	// 134:0004
-	this->sub_128_271a();
+	this->fetchPuzzleData();
 	this->var_i16_c00 = 1;
 	this->arr_i16_1eb8[15] = puzzlesReadShort();
 	this->arr_i16_1eb8[16] = puzzlesReadShort();
@@ -174,7 +174,7 @@ void FoolGame::revealOnClick() {
 	this->revealSelectButton();
 	this->arr_i16_1eb8[19] ^= _bitLUT[this->arr_i16_3738[this->var_i16_7be]-1];
 	debugC(5, kDebugLoading, "reveal: %d, %04x, %04x", this->var_i16_7be, this->arr_i16_1eb8[19], this->arr_i16_1eb8[20]);
-	this->sub_128_6186();
+	this->waitForMouseUp();
 }
 
 void FoolGame::revealSelectButton() {
@@ -207,7 +207,7 @@ void FoolGame::revealSuccess() {
 		_activePuzzleStatus = 0x64;
 	}
 	this->sub_128_2664();
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	this->sub_128_d34(0x37, 0x13, 0xff, 0x1ee, 0xc8);
 }
 

@@ -32,7 +32,7 @@ extern Toolbox *g_toolbox;
 void FoolGame::sunMapRun() {
 	// 137:0004
 	this->var_i16_c00 = 1;
-	this->sub_128_69c(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+	this->fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 	this->arr_i16_1eb8[0] = 9;
 	this->arr_i16_1eb8[1] = 9;
 	this->arr_i16_1eb8[4] = 0x4b;
@@ -153,7 +153,7 @@ void FoolGame::sunMapOnClick() {
 	g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 	this->sunMapDropSelected();
 	this->sunMapCheckIfSolved();
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	_zbasic->menu(8, 3, 1, Common::U32String());
 	_menuDisabled = false;
 }
@@ -188,9 +188,9 @@ void FoolGame::sunMapDragSelect() {
 		this->arr_i16_4758[14] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
 		// 137:084c
 		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
-		this->sub_128_3da(2);
+		this->delay(2);
 		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
-		this->sub_128_3da(1);
+		this->delay(1);
 	} while (_event.what != kMouseUp);
 	// 137:087e
 }
@@ -244,9 +244,9 @@ void FoolGame::sunMapMoveSelected() {
 		this->arr_rect_4776.bottom = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].bottom;
 		this->arr_rect_4776.right = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].right;
 		g_toolbox->FrameRect(this->arr_rect_4776);
-		this->sub_128_3da(2);
+		this->delay(2);
 		g_toolbox->FrameRect(this->arr_rect_4776);
-		this->sub_128_3da(1);
+		this->delay(1);
 	} while (_event.what != kMouseDown);
 }
 
@@ -359,7 +359,7 @@ void FoolGame::sunMapRevealPiece() {
 		temp.bottom = this->arr_i16_4758[2];
 		temp.right = this->arr_i16_4758[3];
 		g_toolbox->FrameRect(temp);
-		this->sub_128_3da(1);
+		this->delay(1);
 	}
 	// 137:1550
 	_zbasic->picture(
@@ -367,7 +367,7 @@ void FoolGame::sunMapRevealPiece() {
 		_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top,
 		this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
 	);
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	this->sunMapCheckIfSolved();
 	_menuDisabled = false;
 }

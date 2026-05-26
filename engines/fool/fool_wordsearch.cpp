@@ -34,7 +34,7 @@ extern Toolbox *g_toolbox;
 // word search game
 void FoolGame::wordSearchRun() {
 	// 131:0004
-	this->sub_128_271a();
+	this->fetchPuzzleData();
 	this->var_str_188e = puzzlesReadString().decode(Common::kMacRoman);
 	for (int i = 0; i <= 0xe; i++) {
 		this->arr_i16_1eb8[i] = puzzlesReadShort();
@@ -308,7 +308,7 @@ void FoolGame::wordSearchOnClick() {
 	// 131:0c64
 	this->var_str_384 = _zbasic->index(1, this->var_i16_1a9a + this->var_i16_198e) + _zbasic->str(OFF(13)) + Common::U32String::format(" %d", this->var_i16_198e - this->var_i16_1990) + _zbasic->str(OFF(14));	// WORD... only X to go
 	this->wordSearchDrawFooter();
-	this->sub_128_6186();
+	this->waitForMouseUp();
 }
 
 void FoolGame::wordSearchBadSelect() {
@@ -323,7 +323,7 @@ void FoolGame::wordSearchBadSelect() {
 	this->var_i16_1a96 = -1;
 	this->var_i16_1a98 = -1;
 	this->var_i16_1a94 = 0;
-	this->sub_128_6186();
+	this->waitForMouseUp();
 }
 
 void FoolGame::wordSearchDrawFooter() {
@@ -376,7 +376,7 @@ void FoolGame::wordSearchSuccess() {
 		_activePuzzleStatus = 0x64;
 	}
 	// 131:0f52
-	this->sub_128_69c(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+	this->fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 	_zbasic->text(kFontPuzzle, this->arr_i16_1eb8[0xe], 0, kSrcOr);
 	for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
 		for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
@@ -398,7 +398,7 @@ void FoolGame::wordSearchSuccess() {
 	// 131:10e8
 	this->fillRect(0x1eb, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1);
 	this->sub_128_2664();
-	this->sub_128_61c2();
+	this->waitForClick();
 	_stateFlags = kStateReturn;
 }
 

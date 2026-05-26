@@ -34,7 +34,7 @@ extern Toolbox *g_toolbox;
 // sentence join game
 void FoolGame::sentenceRun() {
 	// 135:0004
-	this->sub_128_271a();
+	this->fetchPuzzleData();
 	this->var_i16_c00 = 1;
 	this->arr_i16_3738[0] = 0xbf;
 	this->arr_i16_3738[2] = 0xe1;
@@ -176,7 +176,7 @@ void FoolGame::sentenceOnClick() {
 		break;
 	}
 	this->sentenceDrawBuffer();
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	if (_sentenceBuffer == _sentenceGoal) {
 		return;
 	}
@@ -195,7 +195,7 @@ void FoolGame::sentenceOnClick() {
 	this->var_i16_7a2 = 0x124;
 	this->sub_128_918(_zbasic->str(OFF(4))); // click mouse to reset puzzle
 
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	this->var_i16_1abc = 1;
 	_stateFlags = kNullEvent;
 	// 135:07a0
@@ -325,7 +325,7 @@ void FoolGame::sentenceSuccess() {
 	}
 	// 135:0d40
 	this->sub_128_2664();
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	this->sub_128_d34(this->arr_i16_3738[0], this->arr_i16_3738[1], this->arr_i16_3738[2], this->arr_i16_3738[3], 0x64);
 }
 

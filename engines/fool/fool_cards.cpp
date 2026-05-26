@@ -42,7 +42,7 @@ void FoolGame::cardsRun() {
 	var_i16_2016 = 0;
 
 	// 139:0004
-	this->sub_128_271a();
+	this->fetchPuzzleData();
 	this->var_i16_c00 = 1;
 	// set up card bounding boxes
 	g_toolbox->SetRect(_screenGrid[1], 0x78, 0x19, 0xd1, 0xae);
@@ -199,7 +199,7 @@ void FoolGame::cardsDrawTable() {
 	this->sub_128_918(_zbasic->str(OFF(2))); // Yield
 	this->var_i16_2016 = 1;
 	this->var_i16_2010 = 1;
-	this->sub_128_6186();
+	this->waitForMouseUp();
 }
 
 void FoolGame::cardsOnClick() {
@@ -210,7 +210,7 @@ void FoolGame::cardsOnClick() {
 		// didn't click in the three cards area
 		if (g_toolbox->PtInRect(_event.where, this->arr_rect_4338)) {
 			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
-			this->sub_128_6186();
+			this->waitForMouseUp();
 			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
 			if (!g_toolbox->PtInRect(_event.where, this->arr_rect_4338))
 				return;
@@ -706,7 +706,7 @@ void FoolGame::sub_139_1d3e() {
 	if (_activePuzzleStatus < 0x64) {
 		_activePuzzleStatus = 0x64;
 	}
-	this->sub_128_6186();
+	this->waitForMouseUp();
 	this->sub_128_2664();
 	this->sub_128_d34(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xc8);
 }
