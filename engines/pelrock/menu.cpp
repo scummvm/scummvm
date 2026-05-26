@@ -855,8 +855,6 @@ void MenuManager::drawButtons() {
 	case MAIN_MENU:
 		break;
 	case ORIGINAL_SAVE:
-		drawSaves();
-		break;
 	case ORIGINAL_LOAD:
 		drawSaves();
 		break;

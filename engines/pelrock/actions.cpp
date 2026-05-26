@@ -327,6 +327,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[kTextUnPocoRespeto]);
 		break;
 	case 264:
+	case 353:
 		// skip to root after the next one
 		_state->setCurrentRoot(room, rootIndex + 2, 0);
 		break;
@@ -411,11 +412,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	}
 	case 349:
-		_state->setFlag(FLAG_MERCHANT_SLOGANS, _state->getFlag(FLAG_MERCHANT_SLOGANS) + 1);
-		if (_state->getFlag(FLAG_MERCHANT_SLOGANS) == 2) {
-			_state->setCurrentRoot(room, rootIndex + 1, 1);
-		}
-		break;
 	case 350:
 		_state->setFlag(FLAG_MERCHANT_SLOGANS, _state->getFlag(FLAG_MERCHANT_SLOGANS) + 1);
 		if (_state->getFlag(FLAG_MERCHANT_SLOGANS) == 2) {
@@ -443,9 +439,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[kTextMejorMeLargo], 1);
 		break;
 		// end merchants
-	case 353:
-		_state->setCurrentRoot(room, rootIndex + 2, 0);
-		break;
 	case 354:
 		if (_state->hasInventoryItem(105)) {
 			addInventoryItem(105);
