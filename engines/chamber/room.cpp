@@ -251,6 +251,7 @@ void selectSpotCursor(void) {
 		cursor_shape = souri_data + curs * (CURSOR_WIDTH * CURSOR_HEIGHT / 4);
 	else
 		cursor_shape = souri_data + curs * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / 4;
+	g_vm->_renderer->selectCursor(curs);
 }
 
 #define kBgW 8
@@ -566,9 +567,8 @@ void animRoomDoorOpen(byte index) {
 	oldheight = info->layer[1].height;
 
 	for (i = 0; i < oldheight / 2; i++) {
-#if 0
 		drawRoomDoor();
-#endif
+		waitVBlank();
 		info->layer[1].height -= 2;
 		if (g_vm->_videoMode == Common::kRenderEGA)
 			info->layer[1].pixels += info->layer[1].width * 4 * 2;
@@ -606,6 +606,7 @@ void animRoomDoorClose(byte index) {
 	for (i = 0; i < oldheight / 2; i++) {
 #if 0
 		drawRoomDoor();
+		waitVBlank();
 #endif
 		info->layer[1].height += 2;
 		if (g_vm->_videoMode == Common::kRenderEGA)

@@ -1516,6 +1516,7 @@ If go through a door, play door's opening animation
 */
 uint16 SCR_42_LoadZone(void) {
 	byte index;
+	bool door_animated = false;
 
 	script_ptr++;
 	index = *script_ptr++;
@@ -1528,6 +1529,7 @@ uint16 SCR_42_LoadZone(void) {
 			script_byte_vars.last_door = script_byte_vars.cur_spot_flags & 7;
 		else if ((script_byte_vars.cur_spot_flags & ((SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8))) == SPOTFLG_8) {
 			skip_zone_transition = 1;
+			door_animated = true;
 			animRoomDoorOpen(script_byte_vars.cur_spot_idx);
 			script_byte_vars.last_door = script_byte_vars.cur_spot_flags & 7;
 		} else
@@ -1552,6 +1554,10 @@ uint16 SCR_42_LoadZone(void) {
 	prepareAspirant();
 	drawPersons();
 	script_byte_vars.cur_spot_flags = 0;
+
+	if (door_animated)
+		g_vm->_renderer->backBufferToRealFull();
+
 	return 0;
 }
 
