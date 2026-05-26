@@ -131,32 +131,32 @@ static void room_118_parser() {
 		goto handled;
 	}
 
-	if (player_parse(3, 0) || player_parse(30, 0)) {
-		if (player_parse(171, 0)) { text_show(11802); goto handled; }
-		if (player_parse(157, 0)) { text_show(11803); goto handled; }
-		if (player_parse(161, 0)) { text_show(11804); goto handled; }
-		if (player_parse(160, 0)) { text_show(11806); goto handled; }
-		if (player_parse(159, 0)) { text_show(11807); goto handled; }
-		if (player_parse(24, 0))  { text_show(11809); goto handled; }
-		if (player_parse(164, 0)) { text_show(11810); goto handled; }
-		if (player_parse(180, 0)) { text_show(11811); goto handled; }
-		if (player_parse(272, 0)) { text_show(11812); goto handled; }
+	if (player_said_1(look) || player_said_1(look_at)) {
+		if (player_said_1(courtyard)) { text_show(11802); goto handled; }
+		if (player_said_1(castle_gate)) { text_show(11803); goto handled; }
+		if (player_said_1(haystack)) { text_show(11804); goto handled; }
+		if (player_said_1(barrels)) { text_show(11806); goto handled; }
+		if (player_said_1(barrel)) { text_show(11807); goto handled; }
+		if (player_said_1(window))  { text_show(11809); goto handled; }
+		if (player_said_1(gate_to_throne_room)) { text_show(11810); goto handled; }
+		if (player_said_1(battlement)) { text_show(11811); goto handled; }
+		if (player_said_1(guard)) { text_show(11812); goto handled; }
 	}
 
-	if (player_parse(8, 272, 0)) {
+	if (player_said_2(talk_to, guard)) {
 		text_show(11813);
 		goto handled;
 	}
 
-	if (player_parse(6, 0)) {
-		if (player_parse(160, 0) || player_parse(159, 0)) {
+	if (player_said_1(open)) {
+		if (player_said_1(barrels) || player_said_1(barrel)) {
 			text_show(11808);
 			goto handled;
 		}
 	}
 
-	if (player_parse(6, 0) || player_parse(10, 0) || player_parse(162, 0)) {
-		if (player_parse(161, 0)) {
+	if (player_said_1(open) || player_said_1(pull) || player_said_1(root_through)) {
+		if (player_said_1(haystack)) {
 			text_show(11805);
 			goto handled;
 		}
