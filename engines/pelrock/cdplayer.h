@@ -65,7 +65,7 @@ private:
 	byte *_palette;
 	byte *_controls;
 	Common::String trackNames[31];
-	byte *buttons[5][2];
+	byte *_buttons[5][2];
 	Common::Rect _buttonRects[5] = {
 		Common::Rect(Common::Point(17, 46), 37, 26),  // Stop
 		Common::Rect(Common::Point(57, 48), 33, 23),  // Pause

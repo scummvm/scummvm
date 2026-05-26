@@ -33,7 +33,7 @@ static const uint32 kRoomNamesOffset = 299797;      // JUEGO.EXE — room name s
 static const uint32 kRoomNamesSize = 1297;
 
 BackgroundBook::BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res, RoomManager *room)
-	: _events(eventMan), _res(res), _room(room) {
+	: _events(eventMan), _res(res), _room(room), _buttons{{nullptr}} {
 	init();
 }
 
@@ -91,7 +91,6 @@ void BackgroundBook::checkMouse(int x, int y) {
 			int itemIndex = (y - 72) / g_engine->_smallFont->getFontHeight();
 			int roomIndex = firstItem + itemIndex;
 			if (roomIndex < (int)_roomNames.size()) {
-				_events->_leftMouseClicked = false;
 				int finalRoomIndex = roomIndex < 10 ? roomIndex : roomIndex + 2;
 				showRoom(finalRoomIndex);
 			}

@@ -80,7 +80,7 @@ private:
 	Common::Array<LibraryBook> _libraryBooks;
 	uint _currentResult;
 	int _memorizedBookIndex; // Index of book that was memorized (-1 if none)
-	int _lineHeight;
+	int _lineHeight = 0;
 	Common::String _titleMsg;
 	Common::String _authorMsg;
 

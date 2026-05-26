@@ -32,7 +32,7 @@ static const uint32 kCDPlayerTrackNamesOffset = 301203;  // JUEGO.EXE — track 
 static const uint32 kCDPlayerControlsOffset   = 2214760; // ALFRED.7 — controls sprite
 
 CDPlayer::CDPlayer(PelrockEventManager *eventMan, ResourceManager *res, SoundManager *sound)
-	: _events(eventMan), _res(res), _sound(sound) {
+	: _events(eventMan), _res(res), _sound(sound), _buttons{{nullptr}}, _selectedTrack(2), _selectedButton(NO_CDBUTTON) {
 	init();
 }
 
@@ -98,9 +98,9 @@ void CDPlayer::drawScreen() {
 void CDPlayer::drawButtons() {
 	for (int i = 0; i < 5; i++) {
 		if (_selectedButton == i) {
-			drawSpriteToBuffer(_compositeScreen, buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+			drawSpriteToBuffer(_compositeScreen, _buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
 		} else {
-			drawSpriteToBuffer(_compositeScreen, buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+			drawSpriteToBuffer(_compositeScreen, _buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
 		}
 	}
 }
@@ -122,8 +122,8 @@ void CDPlayer::cleanup() {
 	}
 
 	for (int i = 0; i < 5; i++) {
-		delete[] buttons[i][0];
-		delete[] buttons[i][1];
+		delete[] _buttons[i][0];
+		delete[] _buttons[i][1];
 	}
 
 	g_engine->_screen->markAllDirty();
@@ -203,8 +203,8 @@ void CDPlayer::loadControls() {
 		for (int j = 0; j < 2; j++) {
 			int w = _buttonRects[i].width();
 			int h = _buttonRects[i].height();
-			buttons[i][j] = new byte[w * h];
-			Common::copy(rawData + pos, rawData + pos + w * h, buttons[i][j]);
+			_buttons[i][j] = new byte[w * h];
+			Common::copy(rawData + pos, rawData + pos + w * h, _buttons[i][j]);
 			pos += w * h;
 		}
 	}
