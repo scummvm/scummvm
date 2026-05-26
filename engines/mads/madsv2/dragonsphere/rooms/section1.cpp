@@ -55,7 +55,7 @@ extern void room_116_preload();
 extern void room_117_preload();
 extern void room_118_preload();
 extern void room_119_preload();
-
+extern void room_120_preload();
 
 void section_1_init() {
 	player.scaling_velocity = true;
@@ -310,6 +310,9 @@ void section_1_constructor() {
 		break;
 	case 119:
 		room_preload_code_pointer = room_119_preload;
+		break;
+	case 120:
+		room_preload_code_pointer = room_120_preload;
 		break;
 	}
 

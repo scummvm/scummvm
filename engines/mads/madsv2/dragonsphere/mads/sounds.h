@@ -64,6 +64,7 @@ enum {
 	N_MagicDoorUnlocked  =  89,
 	N_JumpDownWell       =  93,
 	N_BooksRumble        =  94,
+	N_WorldEmerges       =  95,
 	N_McMornTipsTable    = 100,
 
 	// Section 2

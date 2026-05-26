@@ -287,12 +287,25 @@ void MADSV2Engine::pollEvents() {
 		if (isMouse)
 			_mousePos = e.mouse;
 
-		if (e.type == Common::EVENT_KEYDOWN)
+		if (e.type == Common::EVENT_KEYDOWN && !isSpecialKey(e.kbd.keycode))
 			_keyEvents.push(e.kbd);
 		if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
 				KEYBINDING_ACTIONS[e.customType] != Common::KEYCODE_INVALID)
 			_keyEvents.push(Common::KeyState(KEYBINDING_ACTIONS[e.customType]));
 	}
+}
+
+bool MADSV2Engine::isSpecialKey(Common::KeyCode key) const {
+	static const Common::KeyCode KEYS[] = {
+		Common::KEYCODE_LCTRL, Common::KEYCODE_LALT, Common::KEYCODE_RSHIFT, Common::KEYCODE_RALT,
+	};
+
+	for (const Common::KeyCode &kc : KEYS) {
+		if (kc == key)
+			return true;
+	}
+
+	return false;
 }
 
 void MADSV2Engine::checkForTimerFunction() {

@@ -41,6 +41,7 @@ class MADSV2Engine : public MADSEngine {
 private:
 	void initGlobals();
 	void syncGame(Common::Serializer &s);
+	bool isSpecialKey(Common::KeyCode key) const;
 	
 protected:
 	Graphics::Screen *_screen = nullptr;
