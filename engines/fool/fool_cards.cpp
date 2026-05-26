@@ -133,8 +133,8 @@ void FoolGame::cardsRun() {
 			}
 		}
 		// 139:04a4
-		if (_stateFlags == 2) {
-			this->sub_139_4de();
+		if (_stateFlags == kStateUndo) {
+			this->cardsReset();
 		}
 		if (_stateFlags == kStateSaveGame) {
 			this->cardsStoreState();
@@ -151,7 +151,7 @@ void FoolGame::cardsRun() {
 	}
 }
 
-void FoolGame::sub_139_4de() {
+void FoolGame::cardsReset() {
 	this->arr_i16_1eb8[5] = 0;
 	this->arr_i16_1eb8[6] = 0;
 	this->var_i16_2012 = 0;

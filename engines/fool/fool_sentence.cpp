@@ -54,7 +54,7 @@ void FoolGame::sentenceRun() {
 	this->arr_i32_192c0[0] = g_toolbox->GetPicture(this->var_i16_1066);
 	this->arr_i16_1eb8[0] = puzzlesReadShort();
 	_zbasic->indexRawSet(puzzlesReadString(), 1, 0);
-	this->var_str_1272 = puzzlesReadString().decode(Common::kMacRoman);
+	_sentenceGoal = puzzlesReadString().decode(Common::kMacRoman);
 	this->var_str_384 = puzzlesReadString().decode(Common::kMacRoman);
 	this->var_str_384 = _zbasic->str(OFF(0)) + this->var_str_384 + _zbasic->str(OFF(1)); // to reveal XXXXX
 	// 135:0152
@@ -95,57 +95,53 @@ void FoolGame::sentenceRun() {
 		// 135:0408
 		if (this->arr_i16_4338[this->var_i16_68a] == 1) {
 			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, 1);
-			this->sub_135_a34();
+			this->sentenceDrawButton();
 		}
 		// 135:044a
 	}
 	// 135:0466
 	if (_activePuzzleBuffer.empty()) { // was: str(OFF(3))
-		this->var_str_1070 = _zbasic->index(1, 0);
+		_sentenceBuffer = _zbasic->index(1, 0);
 	} else {
 		// 135:049a
 		this->var_i16_1372 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, this->arr_i16_1eb8[0]+1, 2));
-		this->var_str_1070 = _zbasic->midStr(_activePuzzleBuffer, this->arr_i16_1eb8[0]+3, this->var_i16_1372);
+		_sentenceBuffer = _zbasic->midStr(_activePuzzleBuffer, this->arr_i16_1eb8[0]+3, this->var_i16_1372).decode(Common::kMacRoman);
 	}
 	// 135:04f2
-	this->sub_135_b16();
+	this->sentenceDrawBuffer();
 	_stateFlags = kStateNull;
-	if (this->var_str_1070 == this->var_str_1272) {
-		_activePuzzleSolved = true;
-	} else {
-		_activePuzzleSolved = false;
-	}
+	_activePuzzleSolved = _sentenceBuffer == _sentenceGoal;
 	// 135:0520
 	do {
 		this->getNextEvent(-1);
 		if (_event.what == kMouseDown) {
-			this->sub_135_5b6();
+			this->sentenceOnClick();
 		}
 		// 135:0538
-		if (this->var_str_1070 == this->var_str_1272) {
+		if (_sentenceBuffer == _sentenceGoal) {
 			_activePuzzleSolved = true;
 		}
 		// 135:0552
 		if (_stateFlags == kStateUndo) {
-			this->sub_135_9ba();
+			sentenceUndo();
 			_stateFlags = kStateNull;
 		}
 		// 135:0566
 		if (_stateFlags == kStateSaveGame) {
-			this->sub_135_c1c();
+			sentenceStoreState();
 			this->saveGame();
 		}
 		// 135:0578
 	} while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved));
 	// 135:05a0
 	if (_activePuzzleSolved) {
-		this->sub_135_cee();
+		sentenceSuccess();
 	}
-	this->sub_135_c1c();
+	sentenceStoreState();
 	// JMP 0xd9c
 }
 
-void FoolGame::sub_135_5b6() {
+void FoolGame::sentenceOnClick() {
 	// 135:05b6
 	this->var_i16_1abc = 0;
 	if ((_event.where.x < this->arr_i16_1eb8[2]) || (_event.where.y < 0xf2))
@@ -161,27 +157,27 @@ void FoolGame::sub_135_5b6() {
 	// 135:06aa
 	switch (this->arr_i16_4338[this->var_i16_103a + this->arr_i16_1eb8[0]]-1) {
 	case 0:
-		this->sentenceAddLeft();
+		sentenceAddLeft();
 		break;
 	case 1:
-		this->sentenceAddRight();
+		sentenceAddRight();
 		break;
 	case 2:
-		this->sub_135_81e();
+		sentenceAddLeftRight();
 		break;
 	case 3:
-		this->sub_135_86a();
+		sentenceReplace();
 		break;
 	case 4:
-		this->sub_135_94c();
+		sentenceReverse();
 		break;
 	default:
-		warning("sub_135_5b6: breaking out of switch");
+		warning("sentenceOnClick: breaking out of switch");
 		break;
 	}
-	this->sub_135_b16();
+	this->sentenceDrawBuffer();
 	this->sub_128_6186();
-	if (this->var_str_1070 == this->var_str_1272) {
+	if (_sentenceBuffer == _sentenceGoal) {
 		return;
 	}
 	// 135:0714
@@ -208,71 +204,70 @@ void FoolGame::sub_135_5b6() {
 	}
 	// 135:07c8
 	if (_stateFlags == kNullEvent) {
-		this->sub_135_9ba();
+		sentenceUndo();
 	}
 }
 
 void FoolGame::sentenceAddLeft() {
 	// 135:07d6
-	this->var_str_1070 = _zbasic->index(1, this->var_i16_103a) + this->var_str_1070;
+	_sentenceBuffer = _zbasic->index(1, this->var_i16_103a) + _sentenceBuffer;
 }
 
 void FoolGame::sentenceAddRight() {
 	// 135:07fa
-	this->var_str_1070 += _zbasic->index(1, this->var_i16_103a);
+	_sentenceBuffer += _zbasic->index(1, this->var_i16_103a);
 }
 
-void FoolGame::sub_135_81e() {
+void FoolGame::sentenceAddLeftRight() {
 	// 135:0813
-	this->var_str_1070 = _zbasic->index(1, this->var_i16_103a)
-		+ this->var_str_1070
+	_sentenceBuffer = _zbasic->index(1, this->var_i16_103a)
+		+ _sentenceBuffer
 		+ _zbasic->index(1, this->var_i16_103a + this->arr_i16_1eb8[0]);
 }
 
-void FoolGame::sub_135_86a() {
+void FoolGame::sentenceReplace() {
 	// 135:086a
 	this->var_i16_9f2 = _zbasic->index(1, this->var_i16_103a).size();
 	while (true) {
 		// 135:0884
-		this->var_i16_484 = this->var_str_1070.size();
-		this->var_i16_1abe = _zbasic->instr(1, this->var_str_1070, _zbasic->index(1, this->var_i16_103a));
+		this->var_i16_484 = _sentenceBuffer.size();
+		this->var_i16_1abe = _zbasic->instr(1, _sentenceBuffer, _zbasic->index(1, this->var_i16_103a));
 		if (this->var_i16_1abe == 0)
 			return;
 		// 135:08bc
 		if ((this->var_i16_484 - this->var_i16_1abe + 1 - this->var_i16_9f2) < 0)
 			return;
-		this->var_str_1070 = _zbasic->leftStr(this->var_str_1070, this->var_i16_1abe - 1)
+		_sentenceBuffer = _zbasic->leftStr(_sentenceBuffer, this->var_i16_1abe - 1)
 			+ _zbasic->index(1, this->var_i16_103a + this->arr_i16_1eb8[0])
-			+ _zbasic->rightStr(this->var_str_1070, this->var_i16_484 - this->var_i16_1abe + 1 - this->var_i16_9f2);
+			+ _zbasic->rightStr(_sentenceBuffer, this->var_i16_484 - this->var_i16_1abe + 1 - this->var_i16_9f2);
 	}
 	// should never reach here
-	this->sub_135_94c();
 }
 
-void FoolGame::sub_135_94c() {
+void FoolGame::sentenceReverse() {
 	// 135:094c
-	this->var_i16_484 = this->var_str_1070.size();
-	this->var_str_384.clear(); // was: str(OFF(5))
+	this->var_i16_484 = _sentenceBuffer.size();
+	Common::U32String buffer; // was: str(OFF(5))
 	for (int16 i = this->var_i16_484; i >= 1; i--) {
-		this->var_str_384 += _zbasic->midStr(this->var_str_1070, i, 1);
+		buffer += _zbasic->midStr(_sentenceBuffer, i, 1);
 	}
-	this->var_str_1070 = this->var_str_384;
+	_sentenceBuffer = buffer;
 }
 
-void FoolGame::sub_135_9ba() {
+void FoolGame::sentenceUndo() {
 	// 135:09ba
 	this->arr_i16_1eb8[4] = 0;
 	Common::Rect temp(this->arr_i16_3738[5], this->arr_i16_3738[4], this->arr_i16_3738[7], this->arr_i16_3738[6]);
 	g_toolbox->FillRect(temp, _patterns[2]);
 	for (this->var_i16_68a = 1; this->var_i16_68a <= this->arr_i16_1eb8[0]; this->var_i16_68a++) {
 		this->arr_i16_4338[this->var_i16_68a] = 1;
-		this->sub_135_a34();
+		this->sentenceDrawButton();
 	}
-	this->var_str_1070 = _zbasic->index(1, 0);
-	this->sub_135_b16();
+	_sentenceBuffer = _zbasic->index(1, 0);
+	this->sentenceDrawBuffer();
 }
 
-void FoolGame::sub_135_a34() {
+void FoolGame::sentenceDrawButton() {
 	// 135:0a34
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 	this->var_str_384 = Common::U32String::format("%d", this->var_i16_68a) + _zbasic->str(OFF(6)); // ' '
@@ -283,10 +278,10 @@ void FoolGame::sub_135_a34() {
 	g_toolbox->DrawString(this->var_str_384);
 }
 
-void FoolGame::sub_135_b16() {
+void FoolGame::sentenceDrawBuffer() {
 	// 135:0b16
 	_zbasic->text(kFontLarge, 0x18, 0, kSrcOr);
-	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_1070);
+	this->var_i16_484 = g_toolbox->StringWidth(_sentenceBuffer);
 	if (this->var_i16_484 < this->arr_i16_1eb8[4]) {
 		this->var_i16_484 = this->arr_i16_1eb8[4];
 	} else {
@@ -298,10 +293,10 @@ void FoolGame::sub_135_b16() {
 	Common::Rect temp(this->arr_i16_3738[1], this->arr_i16_3738[0], this->arr_i16_3738[3], this->arr_i16_3738[2]);
 	g_toolbox->FillRect(temp, _patterns[0]);
 	g_toolbox->MoveTo(0x100 - (this->var_i16_484 / 2), 0xd9);
-	g_toolbox->DrawString(this->var_str_1070);
+	g_toolbox->DrawString(_sentenceBuffer);
 }
 
-void FoolGame::sub_135_c1c() {
+void FoolGame::sentenceStoreState() {
 	// 135:0c1c
 	_activePuzzleBuffer.clear(); // was: str(OFF(7))
 	if (this->var_i16_1abc != 0) {
@@ -315,16 +310,15 @@ void FoolGame::sub_135_c1c() {
 		_activePuzzleBuffer += this->var_str_384;
 	}
 	// 135:0cba
-	Common::String temp = this->var_str_1070.encode(Common::kMacRoman);
+	Common::String temp = _sentenceBuffer.encode(Common::kMacRoman);
 	this->var_i16_1372 = (int16)temp.size();
 	_activePuzzleBuffer += _zbasic->encodeInt(this->var_i16_1372) + temp;
 }
 
-void FoolGame::sub_135_cee() {
+void FoolGame::sentenceSuccess() {
 	// 135:0cee
 	if (_activePuzzleStatus < 0x64) {
 		_activePuzzleStatus = 0x64;
-		this->var_i16_68a = 1;
 		for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, 0);
 		}
