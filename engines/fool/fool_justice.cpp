@@ -48,8 +48,8 @@ void FoolGame::justiceRun() {
 			// 142:08a2
 			this->zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x1a);
 			_activePuzzleStatus = 0x63;
-			this->var_str_384 = _zbasic->str(OFF(0)); // behold the 3rd key of thoth
-			this->sub_128_178a(0x3f, 1);
+			// behold the 3rd key of thoth
+			this->showBehold(0x3f, 1, _zbasic->str(OFF(0)));
 		}
 	}
 	// 142:0906
@@ -78,7 +78,7 @@ void FoolGame::justiceRun() {
 
 void FoolGame::sub_142_9be() {
 	// 142:09be
-	this->sub_128_271a();
+	this->fetchPuzzleData();
 	for (int16 i = 1; i <= 0x19; i++) {
 		_zbasic->indexRawSet(puzzlesReadString(), 1, i);
 	}
@@ -216,7 +216,7 @@ void FoolGame::justiceOnClick() {
 			_activePuzzleSolved = false;
 		}
 	}
-	this->sub_128_6186();
+	this->waitForMouseUp();
 }
 
 void FoolGame::justiceZoom() {
@@ -266,7 +266,7 @@ void FoolGame::justiceStoreState() {
 
 void FoolGame::justiceResetGrid() {
 	// 142:11fe
-	this->sub_128_3da(0x28);
+	this->delay(0x28);
 	_activePuzzleBuffer.clear();
 	for (int16 i = 1; i <= 0x19; i++) {
 		this->playTone(_zbasic->rndInt(0x1f4) + 0x14, 0x28, 1);

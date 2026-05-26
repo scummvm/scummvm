@@ -32,7 +32,7 @@ extern Toolbox *g_toolbox;
 
 void FoolGame::straightPathRun() {
 	// 143:0004
-	sub_128_271a();
+	fetchPuzzleData();
 	for (int16 i = 0; i <= 0xe; i++) {
 		arr_i16_1eb8[i] = puzzlesReadShort();
 	}
@@ -160,7 +160,7 @@ void FoolGame::straightPathOnClick() {
 		}
 	}
 	// 143:077e
-	sub_128_6186();
+	waitForMouseUp();
 }
 
 void FoolGame::straightPathReset() {
@@ -211,7 +211,7 @@ void FoolGame::straightPathSuccess() {
 	}
 	g_toolbox->PenNormal();
 	sub_128_2664();
-	sub_128_61c2();
+	waitForClick();
 }
 
 

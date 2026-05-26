@@ -38,7 +38,7 @@ void FoolGame::humbugRun() {
 		if (!_activePuzzleSolved) {
 			return;
 		}
-		this->sub_142_5f2();
+		this->humbugSuccess();
 		if (_puzzleCompletionStatus[0x34] > 2) {
 			_activePuzzleStatus = 0x64;
 			return;
@@ -46,8 +46,8 @@ void FoolGame::humbugRun() {
 		// 142:004e
 		_activePuzzleStatus = 0x63;
 		this->zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
-		this->var_str_384 = _zbasic->str(OFF(0)); // behold the 2nd key of thoth
-		this->sub_128_178a(0x17, 0);
+		// behold the 2nd key of thoth
+		this->showBehold(0x17, 0, _zbasic->str(OFF(0)));
 	}
 	// 142:00b2
 	if (_activePuzzleStatus == 0x63) {
@@ -56,7 +56,7 @@ void FoolGame::humbugRun() {
 	if (_activePuzzleStatus >= 0x64) {
 		this->humbugTrail();
 		if (_activePuzzleSolved) {
-			this->sub_142_5f2();
+			this->humbugSuccess();
 		}
 	}
 	// 142:00e2
@@ -74,10 +74,10 @@ void FoolGame::humbugTrail() {
 		_zbasic->menu(8, 4, 1, _zbasic->str(OFF(4))); // if the two become one.
 	}
 	// 142:0166
-	this->sub_128_271a();
+	this->fetchPuzzleData();
 	this->sub_128_4da(0);
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
-	this->sub_128_55c(_zbasic->str(OFF(5))); // ~
+	this->drawPuzzleButton(_zbasic->str(OFF(5))); // ~
 	// eye button
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	for (int16 i = 1; i <= 0xa42; i++) {
@@ -188,7 +188,7 @@ void FoolGame::sub_142_370() {
 	// 142:05f0
 }
 
-void FoolGame::sub_142_5f2() {
+void FoolGame::humbugSuccess() {
 	// 142:05f2
 	this->zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
 }
@@ -222,7 +222,7 @@ void FoolGame::sub_142_630() {
 		}
 		// 142:07ca
 		_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
-		this->sub_128_6186();
+		this->waitForMouseUp();
 		this->sub_128_2664();
 		this->var_i16_484 = 0;
 		this->var_i16_7e4 = 0;

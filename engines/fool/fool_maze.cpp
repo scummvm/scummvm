@@ -32,7 +32,7 @@ extern Toolbox *g_toolbox;
 
 void FoolGame::mazeRun() {
 	// 136:0004
-	sub_128_271a();
+	fetchPuzzleData();
 	sub_128_4da(0);
 	for (int16 i = 0; i <= 0x17; i++) {
 		arr_i16_1eb8[i] = puzzlesReadShort();
@@ -996,7 +996,7 @@ void FoolGame::mazeThornsGetScroll() {
 void FoolGame::sub_136_21fa() {
 	warning(__func__);
 	// 136:21fa
-	sub_128_6186();
+	waitForMouseUp();
 }
 
 void FoolGame::sub_136_2200() {
@@ -1528,7 +1528,7 @@ void FoolGame::sub_136_3a70() {
 	if (_activePuzzle == 0x57) {
 		_activePuzzleStatus = 0x64;
 		sub_128_2664();
-		sub_128_61c2();
+		waitForClick();
 	} else {
 		// 136:3a8e
 		if (_activePuzzleStatus < 0x64) {
