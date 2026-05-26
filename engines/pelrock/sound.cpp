@@ -202,6 +202,8 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 
 		uint32 pcmSize = sound.size - headerSize;
 		byte *pcmData = (byte *)malloc(pcmSize);
+		assert(pcmData);
+		assert(data);
 		memcpy(pcmData, data + headerSize, pcmSize);
 		free(data);
 

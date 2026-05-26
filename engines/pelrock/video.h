@@ -46,7 +46,6 @@ struct AudioEffect : Effect {
 };
 
 struct Subtitle : Effect {
-	uint16 startFrame;
 	uint16 endFrame;
 	uint16 x;
 	uint16 y;
