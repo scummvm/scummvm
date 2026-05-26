@@ -206,7 +206,7 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	boxA._rect.bottom += 4;
 	evtMan.showMouse();
 	displMan._drawFloorAndCeilingRequested = true;
-	Box boxB(0, 0, boxA._rect.right - boxA._rect.left + 3, boxA._rect.bottom - boxA._rect.top + 3);
+	Box boxB(0, boxA._rect.right - boxA._rect.left + 3, 0, boxA._rect.bottom - boxA._rect.top + 3);
 	displMan.blitToBitmap(displMan._bitmapScreen, displMan._bitmapViewport,
 										boxB, boxA._rect.left, boxA._rect.top, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 200, 25);
 	_vm->delay(1);
