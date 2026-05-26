@@ -28,7 +28,8 @@
 namespace MADS {
 namespace MADSV2 {
 
-constexpr int CONV_MAX_SLOTS = 40;
+// Return of the Phantom needs 40, Dragonsphere needs 70
+constexpr int CONV_MAX_SLOTS = 70;
 constexpr int CONV_MAX_DATA = 5;
 
 enum ConvStatus {
