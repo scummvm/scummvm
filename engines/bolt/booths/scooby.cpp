@@ -55,7 +55,7 @@ void BoltEngine::displayPicClipHack(byte *pic, int16 offsetX, int16 offsetY, int
 	_scoobyTempPic.paletteCount = 0;
 	_scoobyTempPic.flags = 0;
 
-	if (*pic & 2)
+	if (READ_UINT16(pic) & 0x0002)
 		_scoobyTempPic.flags |= 2;
 
 	_xp->displayPic(&_scoobyTempPic,
@@ -1755,14 +1755,14 @@ int16 BoltEngine::helpScooby() {
 			if (hoveredEntry == nullptr)
 				break;
 
-			selection = READ_UINT16(hoveredEntry);
+			selection = (int16)READ_UINT32(hoveredEntry);
 
 			if (READ_UINT32(hoveredEntry) != 2)
 				break;
 			if (wasPlaying != 0)
 				break;
 
-			if (startAnimation(_rtfHandle, 0x1C)) {
+			if (startAnimation(_rtfHandle, _isDemo ? 23 : 28)) {
 				animFrameIdx = 0;
 				isPlaying = 1;
 			}

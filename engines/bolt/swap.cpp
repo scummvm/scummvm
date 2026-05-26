@@ -83,7 +83,7 @@ void BoltEngine::swapSpriteHeader() {
 	WRITE_UINT16(data + 0x0C, READ_BE_INT16(data + 0x0C));
 	WRITE_UINT16(data + 0x16, READ_BE_INT16(data + 0x16));
 
-	if (!(data[0] & 0x10)) {
+	if (!(READ_UINT16(data) & 0x0010)) {
 		uint32 idx = _resolvedPtrs.size();
 		_resolvedPtrs.push_back(data + 0x18);
 		WRITE_UINT32(data + 0x12, idx | 0x80000000);

@@ -77,10 +77,11 @@ void BoltEngine::boltPict2Pict(XPPicDesc *dest, byte *boltSprite) {
 	dest->paletteCount = 0;
 	dest->flags = 0;
 
-	if (boltSprite[1] & 0x01)
+	uint16 sprFlags = READ_UINT16(boltSprite);
+	if (sprFlags & 0x0100)
 		dest->flags |= 1;
 
-	if (boltSprite[0] & 0x02)
+	if (sprFlags & 0x0002)
 		dest->flags |= 2;
 }
 

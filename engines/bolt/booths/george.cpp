@@ -928,14 +928,14 @@ int16 BoltEngine::helpGeorge() {
 			if (!_georgeActiveHelpObject)
 				break;
 
-			switch (READ_UINT16(_georgeActiveHelpObject)) {
+			switch (READ_UINT32(_georgeActiveHelpObject)) {
 			case 0:
 			case 1:
-				if (READ_UINT16(_georgeActiveHelpObject) == 1) {
+				if (READ_UINT32(_georgeActiveHelpObject) == 1) {
 					_georgeHelpActive = 0;
 				}
 
-				exitCode = READ_UINT16(_georgeActiveHelpObject);
+				exitCode = (int16)READ_UINT32(_georgeActiveHelpObject);
 				break;
 			case 2:
 				if (animPlaying)
@@ -944,7 +944,7 @@ int16 BoltEngine::helpGeorge() {
 				if (animReady)
 					break;
 
-				if (startAnimation(_rtfHandle, 30)) {
+				if (startAnimation(_rtfHandle, _isDemo ? 25 : 30)) {
 					_georgeHelpStep = 0;
 					animPlaying = 1;
 				}

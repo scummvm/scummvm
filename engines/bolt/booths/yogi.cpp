@@ -587,7 +587,7 @@ void BoltEngine::yogiHandleActionButton(int16 x, int16 y) {
 			setYogiColors(0);
 		}
 		if (!_yogiHotSpotCount && !stoppedAnim) {
-			_yogiHotSpotCount = startAnimation(_rtfHandle, 0x1D);
+			_yogiHotSpotCount = startAnimation(_rtfHandle, _isDemo ? 24 : 29);
 			_yogiAnimActive = 0;
 		}
 	} else {

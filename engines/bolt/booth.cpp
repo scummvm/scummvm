@@ -889,9 +889,9 @@ void BoltEngine::blastColors(byte **paletteTable, int16 index, int16 mode) {
 
 	for (int16 i = 0; i < count; i++) {
 		int16 off = i * 6;
-		localPalette[si] = entry[4 + off];
-		localPalette[si + 1] = entry[6 + off];
-		localPalette[si + 2] = entry[8 + off];
+		localPalette[si]     = READ_UINT16(entry + 4 + off) & 0xFF;
+		localPalette[si + 1] = READ_UINT16(entry + 6 + off) & 0xFF;
+		localPalette[si + 2] = READ_UINT16(entry + 8 + off) & 0xFF;
 		si += 3;
 	}
 
