@@ -1305,10 +1305,15 @@ void Renderer::drawBackground(uint8 color) {
 	uint8 r2, g2, b2;
 
 	if (_colorRemaps && _colorRemaps->contains(color)) {
-		color = (*_colorRemaps)[color];
-		if (_renderMode == Common::kRenderCPC && isEncodedCPCDirectColor(color))
-			color = decodeCPCDirectColor(color);
-		readFromPalette(color, r1, g1, b1);
+		int mappedColor = (*_colorRemaps)[color];
+		if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST)
+			_texturePixelFormat.colorToRGB(mappedColor, r1, g1, b1);
+		else {
+			color = mappedColor;
+			if (_renderMode == Common::kRenderCPC && isEncodedCPCDirectColor(color))
+				color = decodeCPCDirectColor(color);
+			readFromPalette(color, r1, g1, b1);
+		}
 		clear(r1, g1, b1);
 		return;
 	}

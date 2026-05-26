@@ -410,51 +410,120 @@ void FreescapeEngine::executePrint(FCLInstruction &instruction) {
 	_currentAreaMessages.push_back(_messagesList[index]);
 }
 
+uint32 spfxBasePaletteColor(FreescapeEngine *engine, uint8 index) {
+	index &= 0x0f;
+	uint8 r = engine->_gfx->_palette[3 * index + 0];
+	uint8 g = engine->_gfx->_palette[3 * index + 1];
+	uint8 b = engine->_gfx->_palette[3 * index + 2];
+	return engine->_gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+}
+
+uint32 spfxDirectPaletteColor(FreescapeEngine *engine, uint16 value) {
+	uint8 r = (value >> 8) & 0x0f;
+	uint8 g = (value >> 4) & 0x0f;
+	uint8 b = value & 0x0f;
+
+	if (engine->isAtariST()) {
+		r = ((r & 0x07) << 1) | ((r & 0x07) >> 2);
+		g = ((g & 0x07) << 1) | ((g & 0x07) >> 2);
+		b = ((b & 0x07) << 1) | ((b & 0x07) >> 2);
+	}
+
+	r = (r << 4) | r;
+	g = (g << 4) | g;
+	b = (b << 4) | b;
+	return engine->_gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+}
+
+uint32 spfxActivePaletteColor(FreescapeEngine *engine, uint8 index) {
+	index &= 0x0f;
+	if (engine->_currentArea->_colorRemaps.contains(index))
+		return (uint32)engine->_currentArea->_colorRemaps[index];
+	return spfxBasePaletteColor(engine, index);
+}
+
+void spfxSetActivePaletteColor(FreescapeEngine *engine, uint8 index, uint32 color) {
+	index &= 0x0f;
+	if (color == spfxBasePaletteColor(engine, index))
+		engine->_currentArea->unremapColor(index);
+	else
+		engine->_currentArea->remapColor(index, color);
+}
+
+void spfxFillRange(FreescapeEngine *engine, uint8 start, uint8 end, uint32 color) {
+	if (end < start)
+		return;
+
+	for (int i = start; i <= end; i++)
+		spfxSetActivePaletteColor(engine, i, color);
+}
+
+void spfxRestoreRange(FreescapeEngine *engine, uint8 start, uint8 end) {
+	if (end < start)
+		return;
+
+	for (int i = start; i <= end; i++)
+		engine->_currentArea->unremapColor(i);
+}
+
+void spfxRotateLeft(FreescapeEngine *engine, uint8 start, uint8 end) {
+	if (end <= start)
+		return;
+
+	uint32 color = spfxActivePaletteColor(engine, start);
+	for (int i = start; i < end; i++)
+		spfxSetActivePaletteColor(engine, i, spfxActivePaletteColor(engine, i + 1));
+	spfxSetActivePaletteColor(engine, end, color);
+}
+
+void spfxRotateRight(FreescapeEngine *engine, uint8 start, uint8 end) {
+	if (end <= start)
+		return;
+
+	uint32 color = spfxActivePaletteColor(engine, end);
+	for (int i = end; i > start; i--)
+		spfxSetActivePaletteColor(engine, i, spfxActivePaletteColor(engine, i - 1));
+	spfxSetActivePaletteColor(engine, start, color);
+}
+
 void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 	uint16 src = instruction._source;
 	uint16 dst = instruction._destination;
 	if (isAmiga() || isAtariST()) {
-		uint8 r = 0;
-		uint8 g = 0;
-		uint8 b = 0;
-		uint32 color = 0;
+		uint16 raw = ((src & 0xff) << 8) | (dst & 0xff);
+		if (raw & 0x8000) {
+			uint16 color = raw & 0x7770;
+			if (isAmiga())
+				color >>= 3;
+			else
+				color >>= 4;
 
-		if (src == 2 && dst == 0) {
-			// The Amiga interpreter handles SPFX $0200 by restoring the current area palette.
-			_currentArea->_colorRemaps.clear();
-		} else if (src & (1 << 7)) {
-			uint16 v = 0;
-			color = 0;
-			// Extract the color to replace from the src/dst values
-			v = (src & 0x77) << 8;
-			v = v | (dst & 0x70);
-			v = v >> 4;
-
-			// Convert the color to RGB
-			r = (v & 0xf00) >> 8;
-			r = r << 4 | r;
-			r = r & 0xff;
-
-			g = (v & 0xf0) >> 4;
-			g = g << 4 | g;
-			g = g & 0xff;
-
-			b = v & 0xf;
-			b = b << 4 | b;
-			b = b & 0xff;
-
-			color = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-			_currentArea->remapColor(dst & 0x0f, color); // src & 0x77, dst & 0x0f
-		} else if ((src & 0xf0) >> 4 == 1) {
-			_gfx->readFromPalette(src & 0x0f, r, g, b);
-			color = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-			for (int i = 1; i < 16; i++)
-				_currentArea->remapColor(i, color);
-		} else if ((src & 0x0f) == 1) {
-			_gfx->readFromPalette(dst & 0x0f, r, g, b);
-			color = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-			for (int i = 1; i < 16; i++)
-				_currentArea->remapColor(i, color);
+			spfxSetActivePaletteColor(this, raw & 0x0f, spfxDirectPaletteColor(this, color));
+		} else if ((raw & 0xf000) == 0x1000) {
+			spfxFillRange(this, (raw >> 4) & 0x0f, raw & 0x0f, spfxBasePaletteColor(this, (raw >> 8) & 0x0f));
+		} else {
+			switch (raw & 0x0f00) {
+			case 0x0000:
+				spfxSetActivePaletteColor(this, raw & 0x0f, spfxBasePaletteColor(this, (raw >> 4) & 0x0f));
+				break;
+			case 0x0100:
+				spfxFillRange(this, 0, 14, spfxBasePaletteColor(this, raw & 0x0f));
+				break;
+			case 0x0200:
+				_currentArea->_colorRemaps.clear();
+				break;
+			case 0x0300:
+				spfxRestoreRange(this, (raw >> 4) & 0x0f, raw & 0x0f);
+				break;
+			case 0x0400:
+				spfxRotateLeft(this, (raw >> 4) & 0x0f, raw & 0x0f);
+				break;
+			case 0x0500:
+				spfxRotateRight(this, (raw >> 4) & 0x0f, raw & 0x0f);
+				break;
+			default:
+				break;
+			}
 		}
 	} else {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
