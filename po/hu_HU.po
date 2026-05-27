@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-25 12:09+0000\n"
+"POT-Creation-Date: 2026-05-27 06:56+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7952,7 +7952,7 @@ msgstr "Nyom publikálása"
 #: engines/drascula/metaengine.cpp:285 engines/efh/metaengine.cpp:272
 #: engines/freescape/games/castle/castle.cpp:473
 #: engines/freescape/games/dark/dark.cpp:226
-#: engines/freescape/games/driller/driller.cpp:125
+#: engines/freescape/games/driller/driller.cpp:119
 #: engines/freescape/games/eclipse/eclipse.cpp:330
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
@@ -7980,7 +7980,7 @@ msgstr "Játék mentés"
 #: engines/efh/metaengine.cpp:279 engines/efh/metaengine.cpp:613
 #: engines/freescape/games/castle/castle.cpp:478
 #: engines/freescape/games/dark/dark.cpp:231
-#: engines/freescape/games/driller/driller.cpp:130
+#: engines/freescape/games/driller/driller.cpp:124
 #: engines/freescape/games/eclipse/eclipse.cpp:335
 #: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:198
 #: engines/mohawk/myst_stacks/menu.cpp:283
@@ -8036,7 +8036,7 @@ msgstr "Nyom Adatbázis"
 #: engines/efh/metaengine.cpp:373 engines/efh/metaengine.cpp:619
 #: engines/freescape/games/castle/castle.cpp:486
 #: engines/freescape/games/dark/dark.cpp:236
-#: engines/freescape/games/driller/driller.cpp:135
+#: engines/freescape/games/driller/driller.cpp:129
 #: engines/freescape/games/eclipse/eclipse.cpp:340
 #: engines/mads/metaengine.cpp:399 engines/phoenixvr/metaengine.cpp:80
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
@@ -8527,7 +8527,7 @@ msgstr "Oldalazás jobbra"
 #: engines/colony/metaengine.cpp:127
 #: engines/freescape/games/castle/castle.cpp:496
 #: engines/freescape/games/dark/dark.cpp:252
-#: engines/freescape/games/driller/driller.cpp:149
+#: engines/freescape/games/driller/driller.cpp:143
 #: engines/freescape/games/eclipse/eclipse.cpp:353
 #, fuzzy
 #| msgid "Rotate Left"
@@ -8537,7 +8537,7 @@ msgstr "Forgatás Balra"
 #: engines/colony/metaengine.cpp:132
 #: engines/freescape/games/castle/castle.cpp:501
 #: engines/freescape/games/dark/dark.cpp:257
-#: engines/freescape/games/driller/driller.cpp:154
+#: engines/freescape/games/driller/driller.cpp:148
 #: engines/freescape/games/eclipse/eclipse.cpp:358
 #, fuzzy
 #| msgid "Rotate Right"
@@ -9615,7 +9615,7 @@ msgstr "Királykisasszony kiválasztása"
 
 #: engines/freescape/games/castle/castle.cpp:491
 #: engines/freescape/games/dark/dark.cpp:246
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:137
 #: engines/freescape/games/eclipse/eclipse.cpp:348
 #: engines/hugo/metaengine.cpp:154
 msgid "Toggle sound"
@@ -9630,7 +9630,7 @@ msgid "Run (hold)"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:262
-#: engines/freescape/games/driller/driller.cpp:188
+#: engines/freescape/games/driller/driller.cpp:182
 #: engines/ultima/ultima8/metaengine.cpp:97
 #, fuzzy
 #| msgid "Move left"
@@ -9638,7 +9638,7 @@ msgid "Roll left"
 msgstr "Mozgás balra"
 
 #: engines/freescape/games/dark/dark.cpp:267
-#: engines/freescape/games/driller/driller.cpp:193
+#: engines/freescape/games/driller/driller.cpp:187
 #: engines/ultima/ultima8/metaengine.cpp:98
 #, fuzzy
 #| msgid "Move right"
@@ -9647,14 +9647,14 @@ msgstr "Mozgás jobbra"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:273
-#: engines/freescape/games/driller/driller.cpp:160
+#: engines/freescape/games/driller/driller.cpp:154
 #, fuzzy
 #| msgid "Increasing Volume"
 msgid "Increase turn angle"
 msgstr "Hangerõ növelése"
 
 #: engines/freescape/games/dark/dark.cpp:278
-#: engines/freescape/games/driller/driller.cpp:165
+#: engines/freescape/games/driller/driller.cpp:159
 #, fuzzy
 #| msgid "Decreasing Volume"
 msgid "Decrease turn angle"
@@ -9662,7 +9662,7 @@ msgstr "Hangerõ csökkentése"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:284
-#: engines/freescape/games/driller/driller.cpp:171
+#: engines/freescape/games/driller/driller.cpp:165
 #, fuzzy
 #| msgid "Increase Step Size"
 msgid "Increase step size"
@@ -9670,21 +9670,21 @@ msgstr "Lépés táv növelése"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:290
-#: engines/freescape/games/driller/driller.cpp:177
+#: engines/freescape/games/driller/driller.cpp:171
 #, fuzzy
 #| msgid "Decrease Step Size"
 msgid "Decrease step size"
 msgstr "Lépés táv csökkentése"
 
 #: engines/freescape/games/dark/dark.cpp:295
-#: engines/freescape/games/driller/driller.cpp:182
+#: engines/freescape/games/driller/driller.cpp:176
 #, fuzzy
 #| msgid "Rise/Fly up"
 msgid "Rise / Fly up"
 msgstr "Felemelkedés/Repülés"
 
 #: engines/freescape/games/dark/dark.cpp:301
-#: engines/freescape/games/driller/driller.cpp:198
+#: engines/freescape/games/driller/driller.cpp:192
 #, fuzzy
 #| msgid "Lower/Fly down"
 msgid "Lower / Fly down"
@@ -9697,12 +9697,12 @@ msgid "Enable / Disable jetpack"
 msgstr "Jetpack ki/be kapcsolás"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:205
+#: engines/freescape/games/driller/driller.cpp:199
 msgid "Deploy drilling rig"
 msgstr "Olajfúró telepítése"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:212
+#: engines/freescape/games/driller/driller.cpp:206
 msgid "Collect drilling rig"
 msgstr "Olajfúró begyűjtése"
 
