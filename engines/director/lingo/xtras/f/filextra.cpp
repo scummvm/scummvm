@@ -20,8 +20,10 @@
  */
 
 #include "common/system.h"
+#include "common/fs.h"
 
 #include "director/director.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -153,12 +155,57 @@ XOBJSTUB(FileXtra::m_RenameFile, 0)
 XOBJSTUB(FileXtra::m_DeleteFile, 0)
 XOBJSTUB(FileXtra::m_CopyFile, 0)
 XOBJSTUB(FileXtra::m_GetFileModDate, 0)
-XOBJSTUB(FileXtra::m_DirectoryExists, 0)
+// DirectoryExists string dirName
+// FileXtra convention: returns 0 if the directory exists, a negative error
+// code otherwise.
+void FileXtra::m_DirectoryExists(int nargs) {
+	ARGNUMCHECK(1)
+	Common::String dirName = g_lingo->pop().asString();
+
+	Common::Path path = findPath(dirName, true, true, true);
+	g_lingo->push(Datum(path.empty() ? -1 : 0));
+}
+
+// DirectoryToList string dirName
+// Returns a Lingo list of the files and folders in dirName. Folder names are
+// suffixed with the platform path delimiter. Returns VOID if dirName is not a
+// valid directory (matching the original FileXtra behaviour).
+void FileXtra::m_DirectoryToList(int nargs) {
+	ARGNUMCHECK(1)
+	Common::String dirName = g_lingo->pop().asString();
+
+	Datum result;
+
+	Common::Path path = findPath(dirName, true, true, true);
+	if (path.empty()) {
+		warning("FileXtra::m_DirectoryToList(): directory not found: %s", dirName.c_str());
+		g_lingo->push(result);
+		return;
+	}
+
+	Common::FSNode dir(path);
+	Common::FSList fslist;
+	if (!dir.isDirectory() || !dir.getChildren(fslist, Common::FSNode::kListAll)) {
+		g_lingo->push(result);
+		return;
+	}
+
+	result.type = ARRAY;
+	result.u.farr = new FArray();
+	for (auto &node : fslist) {
+		Common::String name = node.getName();
+		if (node.isDirectory())
+			name += g_director->_dirSeparator;
+		result.u.farr->arr.push_back(Datum(name));
+	}
+
+	g_lingo->push(result);
+}
+
 XOBJSTUB(FileXtra::m_CreateDirectory, 0)
 XOBJSTUB(FileXtra::m_DeleteDirectory, 0)
 XOBJSTUB(FileXtra::m_XDeleteDirectory, 0)
 XOBJSTUB(FileXtra::m_CopyDirectory, 0)
 XOBJSTUB(FileXtra::m_XCopyDirectory, 0)
-XOBJSTUB(FileXtra::m_DirectoryToList, 0)
 
 }
