@@ -801,7 +801,41 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 
 	debugC(1, kDebugLingoExec, "   Instantiated behavior %s", behavior->toString().c_str());
 
-	// No initializer, we are done
+	// Seed properties from the behavior's getPropertyDescriptionList #default
+	// values. Director initialises behavior properties to these declared
+	// defaults; the score's initializerParams (applied below) then override
+	// them. Without this, a placement with empty/absent params leaves the
+	// properties VOID instead of their default (e.g. #default: EMPTY -> "").
+	{
+		Symbol descSym = instance.u.obj->getMethod("getPropertyDescriptionList");
+		if (descSym.type != VOIDSYM) {
+			g_lingo->push(instance);
+			int callFrame = g_lingo->_state->callstack.size();
+			LC::call(descSym, 1, true);
+			g_lingo->execute(callFrame);
+			Datum descList = g_lingo->pop();
+
+			if (descList.type == PARRAY) {
+				for (uint k = 0; k < descList.u.parr->arr.size(); k++) {
+					Datum propName = descList.u.parr->arr[k].p;
+					Datum propDesc = descList.u.parr->arr[k].v;
+					if (propDesc.type != PARRAY)
+						continue;
+
+					// Each property's description is itself a proplist; pull
+					// out its #default entry and assign it to the instance.
+					for (uint d = 0; d < propDesc.u.parr->arr.size(); d++) {
+						if (propDesc.u.parr->arr[d].p.asString().equalsIgnoreCase("default")) {
+							instance.u.obj->setProp(propName.asString(), propDesc.u.parr->arr[d].v);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// No initializer, the defaults seeded above are all we have
 	if (behavior->initializerIndex == 0)
 		return instance;
 
