@@ -56,6 +56,7 @@ public:
 		kNormalArrow			= 20,
 		kHotspotArrow			= 21,
 		kHotspotTalk			= 22,	// Speech-bubble hover cursor (Nancy 10+)
+		kDragHand				= 23,	// Hand cursor used when dragging an item (Nancy 10+)
 
 		// Cursors in Nancy10 and newer games. Each cursor type stores
 		// two consecutive entries in the chunk: an idle slot at
