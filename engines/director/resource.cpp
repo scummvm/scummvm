@@ -603,7 +603,17 @@ void Window::loadXtrasFromPath() {
 	// five layers deep in nested folders within this folder,
 	// and they'll still be recognized.
 	Common::ArchiveMemberList targets;
+	// Xtras folder at the game/search root.
 	SearchMan.listMatchingMembers(targets, Common::Path("xtras/*"), true);
+	// Director treats the Xtras folder as the one on the same level as the
+	// application. For titles whose projector is nested below the game root
+	// (e.g. installers under SETUP/WINxx/), the Xtras folder is not at the root.
+	// Match an "xtras" folder at any depth as well. matchPathComponents=false
+	// lets '*' span path separators; the leading "*/" requires a real path
+	// segment before "xtras/" so unrelated names ending in "xtras" are skipped.
+	// openXLib() dedups by xlib name, so overlaps with the root search above
+	// (and across WINxx/WIN95 variants) are harmless.
+	SearchMan.listMatchingMembers(targets, Common::Path("*/xtras/*"), false);
 	for (auto &it : targets) {
 		if (it->isDirectory())
 			continue;
