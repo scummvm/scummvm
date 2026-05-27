@@ -214,6 +214,14 @@ void Textbox::clear() {
 }
 
 void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
+	// WORKAROUND: Don't draw debug strings in the textbox. Refer to bug
+	// #16745 for a case in Nancy9, scene 2579 (after making a sandwich).
+	// TODO: Check why this text doesn't appear in the original. All the
+	// dependencies of the associated AR are satisfied.
+	Common::String debugString = Common::String::format("%d *** ", NancySceneState.getSceneInfo().sceneID);
+	if (text.contains(debugString))
+		return;
+
 	HypertextParser::addTextLine(text);
 
 	if (autoClearTime != 0) {
