@@ -797,6 +797,7 @@ static void player_walk_directly(int walk_form) {
 void player_new_command() {
 	int count;
 	int walk_spot;
+	int id;
 
 	player_cancel_command();
 
@@ -866,10 +867,11 @@ void player_new_command() {
 
 	// Be sure player moves immediately even if in the middle of a long
 	// stop-walker frame.
-	// WORKAROUND: For ROTP chandelier fight cutscene
-	if (!series_list[player.series_base + player.series])
+	// WORKAROUND: For ROTP chandelier fight cutscene and Dragonsphere cutscenes
+	id = player.series_base + player.series;
+	if (id < 0 || !series_list[id])
 		return;
-	WalkerInfoPtr walker = series_list[player.series_base + player.series]->walker;
+	WalkerInfoPtr walker = series_list[id]->walker;
 	if (!walker)
 		return;
 
