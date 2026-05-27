@@ -354,7 +354,7 @@ int DialogManager::selectChoice(Common::Array<Common::String> &choices, Graphics
 
 			if (_events->_mouseClickY >= overlayY) {
 				int selectedIndex = (_events->_mouseClickY - overlayY - 2) / kChoiceHeight;
-				if (selectedIndex >= 0 && selectedIndex < (int)choices.size()) {
+				if (selectedIndex < (int)choices.size()) {
 					_dialogActive = false;
 					g_engine->_chrono->resumeCounter();
 					return selectedIndex;
@@ -578,9 +578,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 		if (!skipToChoices) {
 			state.position = readAndDisplayDialogue(conversationData, dataSize, state.position);
-		}
-
-		if (!skipToChoices) {
 			ConversationEndResult endResult = checkConversationEnd(conversationData, dataSize, state.position, state.currentRoot);
 			// Dispatch action for both 0xF8 (action+end) and 0xEB (action+continue)
 			if (endResult.hasAction) {
@@ -999,7 +996,6 @@ void DialogManager::maybeDisableChoice(Common::Array<Pelrock::ChoiceOption> *cho
 				byte idx = data[scanPos + 1];
 				if (idx == (byte)currentLevel) {
 					currentChoicePos = scanPos;
-					isCurrentFB = true;
 					foundParent = true;
 					break;
 				}
