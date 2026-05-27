@@ -137,10 +137,12 @@ int popup_create(int horiz_pieces, int x, int y) {
 	box->text_width = (box->text_xs / box_param.font->max_x_size) << 1;
 
 	box->screen_buffer.data = NULL;
+	box->orig_buffer.data   = NULL;
 	box->depth_buffer.data  = NULL;
 
 	box->screen_saved = false;
-	box->depth_saved = false;
+	box->orig_saved   = false;
+	box->depth_saved  = false;
 
 	box->active = true;
 
@@ -520,19 +522,13 @@ int popup_draw(int save_screen, int depth_code) {
 	if (save_screen) {
 		matte_map_work_screen();
 
-		if (depth_code) {
-			buffer_init(&box->screen_buffer, box->xs, box->ys);
-			if (box->screen_buffer.data != NULL)
-				buffer_rect_copy_2(scr_orig, box->screen_buffer,
-					box->x + picture_map.pan_offset_x,
-					box->y + picture_map.pan_offset_y,
-					0, 0, box->xs, box->ys);
-		} else {
-			buffer_init(&box->screen_buffer, box->xs, box->ys);
-			if (box->screen_buffer.data != NULL)
-				buffer_rect_copy_2(scr_main, box->screen_buffer,
-					box->x, box->y, 0, 0, box->xs, box->ys);
-		}
+		// Always save from scr_main — it spans both the game area and the
+		// interface strip, so dialogs that overlap the interface are handled
+		// without any buffer splitting.
+		buffer_init(&box->screen_buffer, box->xs, box->ys);
+		if (box->screen_buffer.data != NULL)
+			buffer_rect_copy_2(scr_main, box->screen_buffer,
+				box->x, box->y, 0, 0, box->xs, box->ys);
 
 		box->screen_saved = (box->screen_buffer.data != NULL);
 
@@ -550,14 +546,36 @@ int popup_draw(int save_screen, int depth_code) {
 			box->depth_x = box->depth_x >> 1;
 			box->depth_xs = box->depth_xs >> 1;
 
-			buffer_init(&box->depth_buffer, box->depth_xs, box->ys);
-			if (box->depth_buffer.data != NULL)
-				buffer_rect_copy_2(scr_depth, box->depth_buffer,
-					box->depth_x,
-					box->y + picture_map.pan_offset_y,
-					0, 0, box->depth_xs, box->ys);
+			// Clip to scr_depth bounds — the interface strip has no depth data.
+			int depth_ys = MAX(0, MIN(box->ys, scr_depth.y - (box->y + picture_map.pan_offset_y)));
+
+			if (depth_ys > 0) {
+				buffer_init(&box->depth_buffer, box->depth_xs, depth_ys);
+				if (box->depth_buffer.data != NULL)
+					buffer_rect_copy_2(scr_depth, box->depth_buffer,
+						box->depth_x,
+						box->y + picture_map.pan_offset_y,
+						0, 0, box->depth_xs, depth_ys);
+			}
 
 			box->depth_saved = (box->depth_buffer.data != NULL);
+
+			// Also save the corresponding scr_orig region so that matte_frame()'s
+			// IMAGE_REFRESH path (which blits scr_orig → scr_work → scr_main) does
+			// not re-introduce popup pixels into the game area after we close.
+			// Clip to scr_orig.y — the interface strip has no orig data.
+			int orig_ys = MAX(0, MIN(box->ys, scr_orig.y - (box->y + picture_map.pan_offset_y)));
+
+			if (orig_ys > 0) {
+				buffer_init(&box->orig_buffer, box->xs, orig_ys);
+				if (box->orig_buffer.data != NULL)
+					buffer_rect_copy_2(scr_orig, box->orig_buffer,
+						box->x + picture_map.pan_offset_x,
+						box->y + picture_map.pan_offset_y,
+						0, 0, box->xs, orig_ys);
+			}
+
+			box->orig_saved = (box->orig_buffer.data != NULL);
 		}
 	}
 
@@ -751,21 +769,36 @@ void popup_destroy(void) {
 	int xs, ys;
 
 	if (box->active && box->screen_saved) {
+		// Always restore the screen from scr_main — it spans both the game
+		// area and the interface strip, so no buffer split is required.
+		matte_map_work_screen();
+		if (box->screen_buffer.data != NULL) {
+			buffer_rect_copy_2(box->screen_buffer, scr_main,
+				0, 0, box->x, box->y, box->xs, box->ys);
+			buffer_free(&box->screen_buffer);
+		}
+
 		if (box->depth_saved) {
-			if (box->screen_buffer.data != NULL) {
-				buffer_rect_copy_2(box->screen_buffer, scr_orig,
-					0, 0,
-					box->x + picture_map.pan_offset_x,
-					box->y + picture_map.pan_offset_y,
-					box->xs, box->ys);
-				buffer_free(&box->screen_buffer);
-			}
 			if (box->depth_buffer.data != NULL) {
 				buffer_rect_copy_2(box->depth_buffer, scr_depth,
 					0, 0,
 					box->depth_x, box->y + picture_map.pan_offset_y,
-					box->depth_xs, box->ys);
+					box->depth_xs, box->depth_buffer.y);
 				buffer_free(&box->depth_buffer);
+			}
+
+			// Restore scr_orig before matte_refresh_work() so that the next
+			// matte_frame() IMAGE_REFRESH blit doesn't propagate popup pixels
+			// from scr_orig back into the game area of scr_main.
+			if (box->orig_saved) {
+				if (box->orig_buffer.data != NULL) {
+					buffer_rect_copy_2(box->orig_buffer, scr_orig,
+						0, 0,
+						box->x + picture_map.pan_offset_x,
+						box->y + picture_map.pan_offset_y,
+						box->orig_buffer.x, box->orig_buffer.y);
+					buffer_free(&box->orig_buffer);
+				}
 			}
 
 			matte_guard_depth_0 = false;
@@ -787,16 +820,21 @@ void popup_destroy(void) {
 				mouse_show();
 
 				matte_disable_screen_update = false;
-			}
+			} else {
+				matte_map_work_screen();
 
+				x = box->x;
+				y = box->y;
+				xs = box->xs;
+				ys = box->ys;
+
+				buffer_conform(&scr_main, &x, &y, &xs, &ys);
+
+				mouse_hide();
+				video_update(&scr_main, x, y, x, y, xs, ys);
+				mouse_show();
+			}
 		} else {
-			matte_map_work_screen();
-			if (box->screen_buffer.data != NULL) {
-				buffer_rect_copy_2(box->screen_buffer, scr_main,
-					0, 0, box->x, box->y, box->xs, box->ys);
-				buffer_free(&box->screen_buffer);
-			}
-
 			matte_map_work_screen();
 
 			x = box->x;
@@ -807,9 +845,7 @@ void popup_destroy(void) {
 			buffer_conform(&scr_main, &x, &y, &xs, &ys);
 
 			mouse_hide();
-			video_update(&scr_main, x, y,
-				x, y,
-				xs, ys);
+			video_update(&scr_main, x, y, x, y, xs, ys);
 			mouse_show();
 		}
 	}
@@ -821,7 +857,8 @@ void popup_destroy(void) {
 	}
 
 	box->screen_saved = false;
-	box->depth_saved = false;
+	box->orig_saved   = false;
+	box->depth_saved  = false;
 	box->active = false;
 }
 

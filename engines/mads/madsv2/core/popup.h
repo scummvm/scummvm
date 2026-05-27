@@ -177,10 +177,12 @@ typedef struct {
 	int preserve_handle;
 	int depth_preserve_handle;
 
-	Buffer screen_buffer;     /* Direct copy of screen area under popup */
-	Buffer depth_buffer;      /* Direct copy of depth area under popup  */
+	Buffer screen_buffer;  /* scr_main copy covering the full popup rect       */
+	Buffer orig_buffer;    /* scr_orig copy for the game-area portion (depth)  */
+	Buffer depth_buffer;   /* scr_depth copy (clipped to depth-buffer height)  */
 
 	int screen_saved;
+	int orig_saved;
 	int depth_saved;
 
 	word fill_accum;
