@@ -3368,12 +3368,12 @@ T0115015_DrawProjectileAsObject:
 
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
 			group = (Group *)dungeon.getThingData(groupThing);
-			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
 			CreatureInfo *creatureInfo = &dungeon._creatureInfos[group->_type];
 			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
 			creatureSize = getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
+		activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
 		objectAspect = (ObjectAspect *)creatureAspectStruct;
 		AL_0_creatureIndexRed = _vm->_groupMan->getCreatureOrdinalInCell(group, cellYellowBear);
 
