@@ -261,7 +261,60 @@ MODULE_OBJS += \
 	madsv2/dragonsphere/main_menu.o \
 	madsv2/dragonsphere/menus.o \
 	madsv2/dragonsphere/sound_dragonsphere.o \
-	madsv2/forest/forest.o
+	madsv2/forest/forest.o \
+	madsv2/forest/asound.o \
+	madsv2/forest/forest.o \
+	madsv2/forest/global.o \
+	madsv2/forest/main.o \
+	madsv2/forest/main_menu.o \
+	madsv2/forest/menus.o \
+	madsv2/forest/sound_forest.o \
+	madsv2/forest/mads/mads.o \
+	madsv2/forest/rooms/room101.o \
+	madsv2/forest/rooms/room103.o \
+	madsv2/forest/rooms/room104.o \
+	madsv2/forest/rooms/room106.o \
+	madsv2/forest/rooms/room107.o \
+	madsv2/forest/rooms/room199.o \
+	madsv2/forest/rooms/room201.o \
+	madsv2/forest/rooms/room203.o \
+	madsv2/forest/rooms/room204.o \
+	madsv2/forest/rooms/room205.o \
+	madsv2/forest/rooms/room210.o \
+	madsv2/forest/rooms/room211.o \
+	madsv2/forest/rooms/room220.o \
+	madsv2/forest/rooms/room221.o \
+	madsv2/forest/rooms/room301.o \
+	madsv2/forest/rooms/room302.o \
+	madsv2/forest/rooms/room303.o \
+	madsv2/forest/rooms/room304.o \
+	madsv2/forest/rooms/room305.o \
+	madsv2/forest/rooms/room306.o \
+	madsv2/forest/rooms/room307.o \
+	madsv2/forest/rooms/room308.o \
+	madsv2/forest/rooms/room321.o \
+	madsv2/forest/rooms/room322.o \
+	madsv2/forest/rooms/room401.o \
+	madsv2/forest/rooms/room402.o \
+	madsv2/forest/rooms/room403.o \
+	madsv2/forest/rooms/room404.o \
+	madsv2/forest/rooms/room405.o \
+	madsv2/forest/rooms/room420.o \
+	madsv2/forest/rooms/room501.o \
+	madsv2/forest/rooms/room503.o \
+	madsv2/forest/rooms/room509.o \
+	madsv2/forest/rooms/room510.o \
+	madsv2/forest/rooms/room520.o \
+	madsv2/forest/rooms/room901.o \
+	madsv2/forest/rooms/room903.o \
+	madsv2/forest/rooms/room904.o \
+	madsv2/forest/rooms/section1.o \
+	madsv2/forest/rooms/section2.o \
+	madsv2/forest/rooms/section3.o \
+	madsv2/forest/rooms/section4.o \
+	madsv2/forest/rooms/section5.o \
+	madsv2/forest/rooms/section9.o
+
 endif
 
 # This module can be built as a plugin

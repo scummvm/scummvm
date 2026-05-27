@@ -19,38 +19,21 @@
  *
  */
 
-#ifndef MADS_FOREST_H
-#define MADS_FOREST_H
+#ifndef MADS_FOREST_SECTION2_H
+#define MADS_FOREST_SECTION2_H
 
-#include "mads/madsv2/engine.h"
+#include "mads/madsv2/core/general.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
+namespace Rooms {
 
-class ForestEngine : public MADSV2Engine {
-private:
-	static void global_object_examine();
+extern void section_2_walker();
+extern void section_2_interface();
+extern void section_2_music();
 
-public:
-	ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {}
-	~ForestEngine() override {}
-
-	Common::Error run() override;
-	void syncRoom(Common::Serializer &s) override;
-
-	void global_init_code() override;
-	void section_music(int section_num) override;
-	void global_section_constructor() override;
-	void global_daemon_code() override;
-	void global_pre_parser_code() override;
-	void global_parser_code() override;
-	void global_error_code() override;
-	void global_room_init() override;
-	void global_sound_driver() override;
-};
-
+} // namespace Rooms
 } // namespace Forest
 } // namespace MADSV2
 } // namespace MADS

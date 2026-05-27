@@ -19,40 +19,48 @@
  *
  */
 
-#ifndef MADS_FOREST_H
-#define MADS_FOREST_H
-
-#include "mads/madsv2/engine.h"
+#include "common/endian.h"
+#include "common/file.h"
+#include "common/md5.h"
+#include "common/textconsole.h"
+#include "mads/madsv2/forest/sound_forest.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-class ForestEngine : public MADSV2Engine {
-private:
-	static void global_object_examine();
+void ForestSoundManager::validate() {
+	Common::File f;
+	static const char *const MD5[] = {
+		"cac84f53ccf18ca56f4c03352037790f",
+		"2dcdbe18ca5225384cdb97ceb7f5642a",
+		"c6001b0dfe32cb9399ab60742b631c2e",
+		"1596b657c6171e13714eaf114bf94641",
+		"ecbb8bdf1e2e36fcacedce79761e625b",
+		nullptr,
+		nullptr,
+		nullptr,
+		"379fcc9af2142f15a3e7166eee6dd49d"
+	};
 
-public:
-	ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {}
-	~ForestEngine() override {}
+	for (int i = 1; i <= 9; ++i) {
+		if (i == 7 || i == 8)
+			continue;
+		Common::Path filename(Common::String::format("asound.dr%d", i));
+		if (!f.open(filename))
+			error("Could not process - %s", filename.toString().c_str());
+		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
+		f.close();
 
-	Common::Error run() override;
-	void syncRoom(Common::Serializer &s) override;
+		if (md5str != MD5[i - 1])
+			error("Invalid sound file - %s", filename.toString().c_str());
+	}
+}
 
-	void global_init_code() override;
-	void section_music(int section_num) override;
-	void global_section_constructor() override;
-	void global_daemon_code() override;
-	void global_pre_parser_code() override;
-	void global_parser_code() override;
-	void global_error_code() override;
-	void global_room_init() override;
-	void global_sound_driver() override;
-};
+void ForestSoundManager::loadDriver(int sectionNumber) {
+	// TODO
+}
 
 } // namespace Forest
 } // namespace MADSV2
 } // namespace MADS
-
-#endif

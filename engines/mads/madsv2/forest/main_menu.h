@@ -19,37 +19,38 @@
  *
  */
 
-#ifndef MADS_FOREST_H
-#define MADS_FOREST_H
+#ifndef MADS_FOREST_MAIN_MENU_H
+#define MADS_FOREST_MAIN_MENU_H
 
-#include "mads/madsv2/engine.h"
+#include "common/str.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-class ForestEngine : public MADSV2Engine {
-private:
-	static void global_object_examine();
+#define COMMAND_LINE_MAX        10
 
-public:
-	ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {}
-	~ForestEngine() override {}
+#define FRAME_RATE              1
+#define MENU_FRAME_RATE         3
 
-	Common::Error run() override;
-	void syncRoom(Common::Serializer &s) override;
+#define NUM_MENU_ITEMS          6
 
-	void global_init_code() override;
-	void section_music(int section_num) override;
-	void global_section_constructor() override;
-	void global_daemon_code() override;
-	void global_pre_parser_code() override;
-	void global_parser_code() override;
-	void global_error_code() override;
-	void global_room_init() override;
-	void global_sound_driver() override;
-};
+#define MENU_APPEARING          0
+#define MENU_ACCEPTING_COMMANDS 1
+#define MENU_DISAPPEARING       2
+
+#define MENU_HIGH_SPRITE        15
+
+typedef struct {
+	int handle;           /* Sprite series handle */
+	int active;           /* Menu item is active  */
+	int status;           /* Current status       */
+} MenuItem;
+
+extern bool new_background;
+extern int selected_item;
+
+extern void menu_control();
 
 } // namespace Forest
 } // namespace MADSV2

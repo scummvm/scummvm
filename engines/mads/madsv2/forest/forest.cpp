@@ -21,11 +21,34 @@
 
 #include "engines/util.h"
 #include "mads/madsv2/console.h"
-#include "mads/madsv2/forest/forest.h"
+#include "mads/madsv2/core/attr.h"
+#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/object.h"
+#include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/rail.h"
 #include "mads/madsv2/core/screen.h"
+#include "mads/madsv2/core/sound.h"
+#include "mads/madsv2/core/text.h"
+#include "mads/madsv2/forest/forest.h"
+#include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/forest/main.h"
+#include "mads/madsv2/forest/sound_forest.h"
+#include "mads/madsv2/forest/rooms/section1.h"
+#include "mads/madsv2/forest/rooms/section2.h"
+#include "mads/madsv2/forest/rooms/section3.h"
+#include "mads/madsv2/forest/rooms/section4.h"
+#include "mads/madsv2/forest/rooms/section5.h"
+#include "mads/madsv2/forest/rooms/section9.h"
+#include "mads/madsv2/forest/mads/inventory.h"
+#include "mads/madsv2/forest/mads/sounds.h"
+#include "mads/madsv2/forest/mads/words.h"
+#include "mads/core/mps_installer.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -39,135 +62,74 @@ Common::Error ForestEngine::run() {
 	// Create a debugger console
 	setDebugger(new Console());
 
+	// Set up to read mpslabs installer archive if needed
+	if (_gameDescription->desc.flags & GF_INSTALLER) {
+		Common::Archive *arch = MpsInstaller::open("MPSLABS");
+		if (arch)
+			SearchMan.add("mpslabs", arch);
+	}
+
 	// Set up sound manager
-	_soundManager = nullptr; // new ForestSoundManager(_mixer, _soundFlag);
-	//_soundManager->validate();
+	_soundManager = new ForestSoundManager(_mixer, _soundFlag);
+	_soundManager->validate();
 
 	// Run the game
-	// TODO
+	Forest::forest_main();
 
 	return Common::kNoError;
 }
 
 void ForestEngine::global_init_code() {
+	int count;
 
+	for (count = 0; count < GLOBAL_LIST_SIZE; count++) {
+		global[count] = 0;
+	}
+
+	player.facing = FACING_NORTH;
+	player.turn_to_facing = FACING_NORTH;
 }
 
 void ForestEngine::section_music(int section_num) {
-
-}
-
-void ForestEngine::global_object_sprite() {
-
-}
-
-void ForestEngine::stop_walker_basic() {
-	int random;
-	int count;
-	int how_many;
-
-	random = imath_random(1, 30000);
-
-	switch (player.facing) {
-	case FACING_SOUTH:
-		if (random < 500) {
-			how_many = imath_random(4, 10);
-			for (count = 0; count < how_many; count++) {
-				player_add_stop_walker((random < 250) ? 1 : 2, 0);
-			}
-		} else if (random < 750) {
-			for (count = 0; count < 4; count++) {
-				player_add_stop_walker(1, 0);
-			}
-
-			player_add_stop_walker(0, 0);
-
-			for (count = 0; count < 4; count++) {
-				player_add_stop_walker(2, 0);
-			}
-
-			player_add_stop_walker(0, 0);
-		}
-		break;
-
-	case FACING_SOUTHEAST:
-	case FACING_SOUTHWEST:
-	case FACING_NORTHEAST:
-	case FACING_NORTHWEST:
-		if (random < 150) {
-			player_add_stop_walker(-1, 0);
-			player_add_stop_walker(1, 0);
-			for (count = 0; count < 6; count++) {
-				player_add_stop_walker(0, 0);
-			}
-		}
-		break;
-
-	case FACING_EAST:
-	case FACING_WEST:
-		if (random < 250) {
-			player_add_stop_walker(-1, 0);
-			how_many = imath_random(2, 6);
-			for (count = 0; count < how_many; count++) {
-				player_add_stop_walker(2, 0);
-			}
-			player_add_stop_walker(1, 0);
-			player_add_stop_walker(0, 0);
-			player_add_stop_walker(0, 0);
-		} else if (random < 500) {
-			WRITE_LE_UINT32(&global[walker_timing], kernel.clock);
-		}
-		break;
-
-	case FACING_NORTH:
-		if (random < 250) {
-			player_add_stop_walker(-1, 0);
-			how_many = imath_random(3, 7);
-			for (count = 0; count < how_many; count++) {
-				player_add_stop_walker(2, 0);
-			}
-			player_add_stop_walker(1, 0);
-			player_add_stop_walker(0, 0);
-		}
-		break;
-
+	switch (section_num) {
+	case 1: Rooms::section_1_music(); break;
+	case 2: Rooms::section_2_music(); break;
+	case 3: Rooms::section_3_music(); break;
+	case 4: Rooms::section_4_music(); break;
+	case 5: Rooms::section_5_music(); break;
+	case 9: Rooms::section_9_music(); break;
 	}
 }
 
-void ForestEngine::stop_walker_tricks() {
-
-}
-
 void ForestEngine::global_section_constructor() {
-
+	Forest::global_section_constructor();
 }
 
 void ForestEngine::syncRoom(Common::Serializer &s) {
-
+	Forest::sync_room(s);
 }
 
 void ForestEngine::global_daemon_code() {
-
 }
 
 void ForestEngine::global_pre_parser_code() {
-
 }
 
 void ForestEngine::global_parser_code() {
+}
 
+void ForestEngine::global_object_examine() {
 }
 
 void ForestEngine::global_error_code() {
-
 }
 
 void ForestEngine::global_room_init() {
-
 }
 
 void ForestEngine::global_sound_driver() {
-
+	Common::strcpy_s(kernel.sound_driver, "/");
+	env_catint(kernel.sound_driver, new_section, 1);
 }
 
 } // namespace Forest
