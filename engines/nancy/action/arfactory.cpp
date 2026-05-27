@@ -43,6 +43,7 @@
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
+#include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
@@ -472,7 +473,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 243:
 		return new BeadPuzzle();
 	case 244:
-		// return new GridMapPuzzle();
+		return new GridMapPuzzle();
 	// -- Nancy 11 and up --
 	case 245:
 		// return new TypingQuizPuzzle();

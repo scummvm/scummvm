@@ -26,6 +26,7 @@ MODULE_OBJS = \
   action/puzzle/cubepuzzle.o \
   action/puzzle/cuttingpuzzle.o \
   action/puzzle/dotconnectpuzzle.o \
+  action/puzzle/gridmappuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/leverpuzzle.o \
   action/puzzle/mazechasepuzzle.o \

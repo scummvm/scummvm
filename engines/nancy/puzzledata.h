@@ -140,6 +140,18 @@ struct SortPuzzleData : public PuzzleData {
 	Common::Array<int16> solvedState;
 };
 
+// Per-item (inMap, inItems, mapRow, mapCol, itemsRow, itemsCol) packed as
+// 6 int16s.
+struct GridMapPuzzleData : public PuzzleData {
+	GridMapPuzzleData() {}
+	virtual ~GridMapPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('G', 'M', 'A', 'P'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<int16> itemState;
+};
+
 struct QuizPuzzleData : public PuzzleData {
 	QuizPuzzleData() {}
 	virtual ~QuizPuzzleData() {}

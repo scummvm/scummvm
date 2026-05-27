@@ -230,6 +230,10 @@ void SortPuzzleData::synchronize(Common::Serializer &ser) {
 	syncInt16Array(ser, solvedState);
 }
 
+void GridMapPuzzleData::synchronize(Common::Serializer &ser) {
+	syncInt16Array(ser, itemState);
+}
+
 void QuizPuzzleData::synchronize(Common::Serializer &ser) {
 	// Serialize as: numScenes, then for each scene: sceneID, numBoxes, box data
 	uint16 numScenes = (uint16)boxCorrect.size();
@@ -345,6 +349,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new BeadPuzzleData();
 	case SortPuzzleData::getTag():
 		return new SortPuzzleData();
+	case GridMapPuzzleData::getTag():
+		return new GridMapPuzzleData();
 	case JournalData::getTag():
 		return new JournalData();
 	case TableData::getTag():
