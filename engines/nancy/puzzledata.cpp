@@ -283,7 +283,7 @@ int16 TableData::getSingleValue(uint16 index) const {
 }
 
 void TableData::setComboValue(uint16 index, float value) {
-	if (comboValues.size() < index) {
+	if (comboValues.size() <= index) {
 		comboValues.resize(index + 1, kNoTableValue);
 	}
 
