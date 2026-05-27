@@ -192,6 +192,11 @@ void MenuButton::draw() {
 		: _isClicked ? _graphicClicked
 		: wasSelected() ? _graphicHovered
 		: _graphicNormal;
+
+	// In V2 the normal graphic has no animation and is just baked into the background
+	if (!graphic.hasAnimation())
+		return;
+
 	graphic.update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(graphic, true, BlendMode::AdditiveAlpha);
 }
@@ -268,6 +273,20 @@ void OptionsMenuButton::trigger() {
 	g_engine->menu().triggerOptionsAction((OptionsMenuAction)actionId());
 }
 
+OptionsMenuButtonV2::OptionsMenuButtonV2(Room *room, SeekableReadStream &stream)
+	: OptionsMenuButton(room, stream) {}
+
+void OptionsMenuButtonV2::update() {
+	MenuButton::update();
+	if (g_engine->input().wasMenuKeyPressed())
+		onClick();
+}
+
+void OptionsMenuButtonV2::trigger() {
+	// there is only one button, but its ID is the same as SubtitlesOn, so we override it here
+	g_engine->menu().triggerOptionsAction(OptionsMenuAction::MainMenu);
+}
+
 const char *MainMenuButton::typeName() const { return "MainMenuButton"; }
 
 MainMenuButton::MainMenuButton(Room *room, SeekableReadStream &stream)
@@ -275,24 +294,116 @@ MainMenuButton::MainMenuButton(Room *room, SeekableReadStream &stream)
 
 void MainMenuButton::update() {
 	MenuButton::update();
-	const auto action = (MainMenuAction)actionId();
+	const auto action = this->action();
 	if (g_engine->input().wasMenuKeyPressed() &&
 		(action == MainMenuAction::ContinueGame || action == MainMenuAction::NewGame))
 		onClick();
 }
 
 void MainMenuButton::trigger() {
-	g_engine->menu().triggerMainMenuAction((MainMenuAction)actionId());
+	g_engine->menu().triggerMainMenuAction(action());
+}
+
+MainMenuAction MainMenuButton::action() const {
+	return (MainMenuAction)actionId();
+}
+
+MainMenuButtonV2::MainMenuButtonV2(Room *room, SeekableReadStream &stream)
+	: MainMenuButton(room, stream) {}
+
+MainMenuAction MainMenuButtonV2::action() const {
+	if (actionId() <= 7)
+		return (MainMenuAction)actionId();
+	else if (actionId() == 8)
+		return MainMenuAction::Accept;
+	else if (actionId() == 9)
+		return MainMenuAction::Cancel;
+	else {
+		warning("Unknown V2 main menu button: %d", (int)actionId());
+		return MainMenuAction::ContinueGame;
+	}
 }
 
 const char *PushButton::typeName() const { return "PushButton"; }
 
 PushButton::PushButton(Room *room, SeekableReadStream &stream)
 	: PhysicalObject(room, stream)
-	, _alwaysVisible(readBool(stream))
-	, _graphic1(stream)
-	, _graphic2(stream)
+	, _isChecked(readBool(stream))
+	, _graphicHovered(stream)
+	, _graphicChecked(stream)
 	, _actionId(stream.readSint32LE()) {}
+
+void PushButton::draw() {
+	if (!isEnabled())
+		return;
+
+	Graphic *graphic = nullptr;
+	if (_isChecked)
+		graphic = &_graphicChecked;
+	else if (wasSelected() && _graphicHovered.hasAnimation())
+		graphic = &_graphicHovered;
+
+	if (graphic != nullptr) {
+		graphic->update();
+		g_engine->drawQueue().add<AnimationDrawRequest>(*graphic, true, BlendMode::AdditiveAlpha);
+	}
+}
+
+void PushButton::update() {
+	PhysicalObject::update();
+	if (_clickTime != 0) {
+		if (g_engine->getMillis() - _clickTime > 5) {
+			_clickTime = 0;
+			trigger();
+		}
+	}
+}
+
+void PushButton::loadResources() {
+	_clickTime = 0;
+	_graphicChecked.loadResources();
+	_graphicHovered.loadResources();
+}
+
+void PushButton::freeResources() {
+	_graphicChecked.freeResources();
+	_graphicHovered.freeResources();
+}
+
+void PushButton::onHoverUpdate() {}
+
+void PushButton::onClick() {
+	_clickTime = g_engine->getMillis();
+}
+
+void PushButton::trigger() {
+	OptionsMenuAction action;
+	// these are V2 actions as CPushButton is only used in V2
+	switch (_actionId) {
+	case 0:
+		action = OptionsMenuAction::SubtitlesOn;
+		break;
+	case 1:
+		action = OptionsMenuAction::SubtitlesOff;
+		break;
+	case 2:
+		action = OptionsMenuAction::Cursor0;
+		break;
+	case 3:
+		action = OptionsMenuAction::Cursor1;
+		break;
+	case 4:
+		action = OptionsMenuAction::Cursor2;
+		break;
+	case 5:
+		action = OptionsMenuAction::Cursor3;
+		break;
+	default:
+		warning("Unknown push button action: %d", (int)_actionId);
+		return;
+	}
+	g_engine->menu().triggerOptionsAction(action);
+}
 
 const char *EditBox::typeName() const { return "EditBox"; }
 
@@ -410,7 +521,6 @@ SlideButtonV2::SlideButtonV2(Room *room, SeekableReadStream &stream)
 	_minPos = Shape(stream).firstPoint();
 	_maxPos = Shape(stream).firstPoint();
 	_graphicIdle = Graphic(stream);
-	_graphicHovered = _graphicIdle;
 	_graphicClicked = Graphic(stream);
 }
 
@@ -425,14 +535,11 @@ SlideButtonV3::SlideButtonV3(Room *room, SeekableReadStream &stream)
 }
 
 void SlideButton::draw() {
-	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
-	scumm_assert(optionsMenu != nullptr);
-
 	Graphic *activeGraphic;
-	if (optionsMenu->currentSlideButton() == this && g_engine->input().isMouseLeftDown())
+	if (g_engine->menu().currentSlideButton() == this && g_engine->input().isMouseLeftDown())
 		activeGraphic = &_graphicClicked;
 	else
-		activeGraphic = isMouseOver() ? &_graphicHovered : &_graphicIdle;
+		activeGraphic = isMouseOver() && _graphicHovered.hasAnimation() ? &_graphicHovered : &_graphicIdle;
 	activeGraphic->update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha);
 }
@@ -440,11 +547,11 @@ void SlideButton::draw() {
 void SlideButton::update() {
 	const auto mousePos = g_engine->input().mousePos2D();
 	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
-	scumm_assert(optionsMenu != nullptr);
+	SlideButton *&currentSlideButton = g_engine->menu().currentSlideButton();
 
-	if (optionsMenu->currentSlideButton() == this) {
+	if (currentSlideButton == this) {
 		if (!g_engine->input().isMouseLeftDown()) {
-			optionsMenu->currentSlideButton() = nullptr;
+			currentSlideButton = nullptr;
 			g_engine->menu().triggerOptionsValue((OptionsMenuValue)_valueId, _value);
 			update(); // to update the position
 		} else {
@@ -460,8 +567,9 @@ void SlideButton::update() {
 			return;
 		_graphicHovered.topLeft() = _graphicIdle.topLeft();
 		if (g_engine->input().wasMouseLeftPressed())
-			optionsMenu->currentSlideButton() = this;
-		optionsMenu->clearLastSelectedObject();
+			currentSlideButton = this;
+		if (optionsMenu != nullptr) // in V2 this is a normal room not a OptionsMenu
+			optionsMenu->clearLastSelectedObject();
 		g_engine->player().selectedObject() = nullptr;
 	}
 }

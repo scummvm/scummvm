@@ -58,8 +58,9 @@ void Player::resetCursor() {
 }
 
 void Player::updateCursor() {
-	// TODO: V2 has additional cursor frames. How are they used?
-	if (g_engine->isV1() || g_engine->isV2() || g_engine->menu().isOpen())
+	if (g_engine->isV2())
+		_cursorFrameI = g_engine->config().cursor();
+	else if (g_engine->isV1() || g_engine->menu().isOpen())
 		_cursorFrameI = 0;
 	else if (_selectedObject == nullptr)
 		_cursorFrameI = !g_engine->input().isMouseLeftDown() || _pressedObject != nullptr ? 6 : 7;

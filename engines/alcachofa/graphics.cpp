@@ -616,8 +616,8 @@ void Animation::prerenderFrame(int32 frameI) {
 
 struct TexCoords {
 	TexCoords(const Rect &inner, int16 outerW, int16 outerH) {
-		_min = Vector2d(0.5f / outerW, 0.5f / outerH);
-		_max = Vector2d((inner.width() - 0.5f) / outerW, (inner.height() - 0.5f) / outerH);
+		_min = Vector2d(0.0f, 0.0f);
+		_max = Vector2d((inner.width()) / (float)outerW, (inner.height()) / (float)outerH);
 	}
 
 	Vector2d _min, _max;

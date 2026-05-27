@@ -55,6 +55,13 @@ public:
 	inline ObjectIterator beginObjects() const { return _objects.begin(); }
 	inline ObjectIterator endObjects() const { return _objects.end(); }
 
+	template<class TObjectType>
+	TObjectType &getRequiredObjectByName(const char *name) const {
+		TObjectType *obj = dynamic_cast<TObjectType *>(getObjectByName(name));
+		scumm_assert(obj != nullptr);
+		return *obj;
+	}
+
 	void update();
 	void draw();
 	virtual bool updateInput();
@@ -111,12 +118,10 @@ public:
 	void loadResources() override;
 
 	void clearLastSelectedObject(); // to reset arm animation
-	inline SlideButton *&currentSlideButton() { return _currentSlideButton; }
 
 private:
 	ShapeObject *_lastSelectedObject = nullptr;
 	ObjectBase *_idleArm = nullptr;
-	SlideButton *_currentSlideButton = nullptr;
 };
 
 class ConnectMenu final : public Room {

@@ -89,7 +89,7 @@ Common::Error AlcachofaEngine::run() {
 	_script.reset(new Script());
 	_player.reset(new Player());
 	_globalUI.reset(isV1() || isV2() ? static_cast<GlobalUI *>(new GlobalUIV1()) : new GlobalUIV3());
-	_menu.reset(isV1() ? static_cast<Menu *>(new MenuV1()) : new MenuV3());
+	_menu.reset(Menu::create());
 	setMillis(0);
 	game().onLoadedGameFiles();
 
@@ -454,11 +454,13 @@ void Config::registerDefaults() {
 	ConfMan.registerDefault("music_volume", c._musicVolume);
 	ConfMan.registerDefault("speech_volume", c._speechVolume);
 	ConfMan.registerDefault("sfx_volume", c._speechVolume);
+	ConfMan.registerDefault("cursor", c._cursor);
 }
 
 void Config::loadFromScummVM() {
 	_musicVolume = (uint8)CLIP(ConfMan.getInt("music_volume"), 0, 255);
 	_speechVolume = (uint8)CLIP(ConfMan.getInt("speech_volume"), 0, 255);
+	_cursor = (uint8)CLIP(ConfMan.getInt("cursor"), 0, (int)kMaxCursor);
 	_subtitles = ConfMan.getBool("subtitles");
 	_highQuality = ConfMan.getBool("high_quality");
 	_bits32 = ConfMan.getBool("32_bits");
@@ -473,6 +475,7 @@ void Config::saveToScummVM() {
 	ConfMan.setInt("music_volume", _musicVolume);
 	ConfMan.setInt("speech_volume", _speechVolume);
 	ConfMan.setInt("sfx_volume", _speechVolume);
+	ConfMan.setInt("cursor", _cursor);
 	ConfMan.flushToDisk();
 	// ^ a bit unfortunate, that means if you change in-game it overrides.
 	// if you set it in ScummVMs dialog it sticks

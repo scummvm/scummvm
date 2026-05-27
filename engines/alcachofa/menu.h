@@ -27,6 +27,10 @@
 namespace Alcachofa {
 
 class Room;
+class SlideButton;
+
+// the order of these enums are compatible to V3 the first to be developed
+// any other version needs some translation
 
 enum class MainMenuAction : int32 {
 	ContinueGame = 0,
@@ -37,10 +41,12 @@ enum class MainMenuAction : int32 {
 	Exit,
 	NextSave,
 	PrevSave,
-	NewGame,
+	NewGame, // unused in any game
 	AlsoExit, // there seems to be no difference to Exit
 
 	ConfirmSavestate, // only used in V1
+	Accept, // only used in V2
+	Cancel, // only used in V2
 };
 
 enum class OptionsMenuAction : int32 {
@@ -50,16 +56,23 @@ enum class OptionsMenuAction : int32 {
 	LowQuality,
 	Bits32,
 	Bits16,
-	MainMenu
+	MainMenu,
+
+	Cursor0, // only used in V2
+	Cursor1,
+	Cursor2,
+	Cursor3,
 };
 
 enum class OptionsMenuValue : int32 {
 	Music = 0,
-	Speech = 1
+	Speech = 1,
+	Sensitivity = 2 // only used in V2 and no effect for ScummVM
 };
 
 class Menu {
 public:
+	static Menu *create();
 	Menu();
 	virtual ~Menu();
 
@@ -67,6 +80,7 @@ public:
 	inline uint32 millisBeforeMenu() const { return _millisBeforeMenu; }
 	inline Room *previousRoom() { return _previousRoom; }
 	inline FakeSemaphore &interactionSemaphore() { return _interactionSemaphore; }
+	inline SlideButton *&currentSlideButton() { return _currentSlideButton; }
 
 	void triggerLoad();
 	void resetAfterLoad();
@@ -100,6 +114,7 @@ protected:
 		_selectedSavefileI = 0;
 	Room *_previousRoom = nullptr;
 	FakeSemaphore _interactionSemaphore; // to prevent ScummVM loading during button clicks
+	SlideButton *_currentSlideButton = nullptr; // due to V2 we cannot store this in OptionsMenu
 	Common::String _selectedSavefileDescription = "<unset>";
 	Common::Array<Common::String> _savefiles;
 	Graphics::ManagedSurface
@@ -115,6 +130,17 @@ public:
 protected:
 	void updateSelectedSavefile(bool hasJustSaved) override;
 	void setOptionsState() override;
+};
+
+class MenuV2 : public Menu {
+public:
+	void updateOpeningMenu() override;
+	void triggerMainMenuAction(MainMenuAction action) override;
+
+protected:
+	void updateSelectedSavefile(bool hasJustSaved) override;
+	void setOptionsState() override;
+	void toggleMessageBox(bool show);
 };
 
 class MenuV1 : public Menu {

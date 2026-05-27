@@ -60,12 +60,20 @@ static ObjectBase *readRoomObject(Room *room, const String &type, SeekableReadSt
 		return new Item(room, stream);
 	else if (type == PhysicalObject::kClassName)
 		return new PhysicalObject(room, stream);
-	else if (type == MainMenuButton::kClassName)
-		return new MainMenuButton(room, stream);
+	else if (type == MainMenuButton::kClassName) {
+		if (g_engine->isV2())
+			return new MainMenuButtonV2(room, stream);
+		else
+			return new MainMenuButton(room, stream);
+	}
 	else if (type == InternetMenuButton::kClassName)
 		return new InternetMenuButton(room, stream);
-	else if (type == OptionsMenuButton::kClassName)
-		return new OptionsMenuButton(room, stream);
+	else if (type == OptionsMenuButton::kClassName) {
+		if (g_engine->isV2())
+			return new OptionsMenuButtonV2(room, stream);
+		else
+			return new OptionsMenuButton(room, stream);
+	}
 	else if (type == EditBox::kClassName) {
 		if (g_engine->isV2())
 			return new EditBoxV2(room, stream);
@@ -396,7 +404,6 @@ bool OptionsMenu::updateInput() {
 void OptionsMenu::loadResources() {
 	Room::loadResources();
 	_lastSelectedObject = nullptr;
-	_currentSlideButton = nullptr;
 	_idleArm = getObjectByName("Brazo");
 }
 

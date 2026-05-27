@@ -224,7 +224,7 @@ public:
 	const char *typeName() const override;
 };
 
-class OptionsMenuButton final : public MenuButton {
+class OptionsMenuButton : public MenuButton {
 public:
 	static constexpr const char *kClassName = "CBotonMenuOpciones";
 	OptionsMenuButton(Room *room, Common::SeekableReadStream &stream);
@@ -234,7 +234,15 @@ public:
 	const char *typeName() const override;
 };
 
-class MainMenuButton final : public MenuButton {
+class OptionsMenuButtonV2 : public OptionsMenuButton {
+public:
+	OptionsMenuButtonV2(Room *room, Common::SeekableReadStream &stream);
+
+	void update() override;
+	void trigger() override;
+};
+
+class MainMenuButton : public MenuButton {
 public:
 	static constexpr const char *kClassName = "CBotonMenuPrincipal";
 	MainMenuButton(Room *room, Common::SeekableReadStream &stream);
@@ -242,19 +250,40 @@ public:
 	void update() override;
 	void trigger() override;
 	const char *typeName() const override;
+protected:
+	virtual MainMenuAction action() const;
 };
 
-class PushButton final : public PhysicalObject {
+class MainMenuButtonV2 final : public MainMenuButton {
+public:
+	MainMenuButtonV2(Room *room, Common::SeekableReadStream &stream);
+
+protected:
+	MainMenuAction action() const override;
+};
+
+// this is a variant of a CheckBox only used in V2
+class PushButton : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CPushButton";
 	PushButton(Room *room, Common::SeekableReadStream &stream);
 
+	inline bool &isChecked() { return _isChecked; }
+
+	void draw() override;
+	void update() override;
+	void loadResources() override;
+	void freeResources() override;
+	void onHoverUpdate() override;
+	void onClick() override;
+	virtual void trigger();
 	const char *typeName() const override;
 
 private:
-	bool _alwaysVisible;
-	Graphic _graphic1, _graphic2;
-	int32 _actionId;
+	bool _isChecked = false;
+	Graphic _graphicHovered, _graphicChecked;
+	int32 _actionId = -1;
+	uint32 _clickTime = 0;
 };
 
 class EditBox : public PhysicalObject {

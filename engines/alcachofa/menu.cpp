@@ -63,6 +63,17 @@ static void convertToGrayscale(ManagedSurface &surface) {
 	}
 }
 
+Menu *Menu::create() {
+	if (g_engine->isV1())
+		return new MenuV1();
+	else if (g_engine->isV2())
+		return new MenuV2();
+	else if (g_engine->isV3())
+		return new MenuV3();
+	else
+		error("Menu is not implemented for this engine version");
+}
+
 Menu::Menu()
 	: _interactionSemaphore("menu")
 	, _saveFileMgr(g_system->getSavefileManager()) {}
@@ -110,6 +121,13 @@ void MenuV1::updateOpeningMenu() {
 		switchToState(MainMenuAction::ConfirmSavestate);
 }
 
+void MenuV2::updateOpeningMenu() {
+	bool willOpen = _openAtNextFrame;
+	Menu::updateOpeningMenu();
+	if (willOpen)
+		toggleMessageBox(false);
+}
+
 static int parseSavestateSlot(const String &filename) {
 	if (filename.size() < 5) // minimal name would be "t.###"
 		return 1;
@@ -150,18 +168,28 @@ void MenuV1::updateSelectedSavefile(bool hasJustSaved) {
 	captureObject->toggle(isInCorrectState && !isOnNewSlot());
 }
 
+void MenuV2::updateSelectedSavefile(bool hasJustSaved) {
+	Menu::updateSelectedSavefile(hasJustSaved);
+
+	auto getButton = [ ] (const char *name) -> MenuButton &{
+		return g_engine->player().currentRoom()->getRequiredObjectByName<MenuButton>(name);
+	};
+
+	getButton("CARGAR").isInteractable() = !isOnNewSlot();
+	getButton("ANTERIOR").toggle(_selectedSavefileI > 0);
+	getButton("SIGUIENTE").toggle(!isOnNewSlot());
+}
+
 void MenuV3::updateSelectedSavefile(bool hasJustSaved) {
 	Menu::updateSelectedSavefile(hasJustSaved);
 
-	auto getButton = [ ] (const char *name) {
-		MenuButton *button = dynamic_cast<MenuButton *>(g_engine->player().currentRoom()->getObjectByName(name));
-		scumm_assert(button != nullptr);
-		return button;
+	auto getButton = [ ] (const char *name) -> MenuButton& {
+		return g_engine->player().currentRoom()->getRequiredObjectByName<MenuButton>(name);
 	};
 
-	getButton("CARGAR")->isInteractable() = !isOnNewSlot();
-	getButton("ANTERIOR")->toggle(_selectedSavefileI > 0);
-	getButton("SIGUIENTE")->toggle(!isOnNewSlot());
+	getButton("CARGAR").isInteractable() = !isOnNewSlot();
+	getButton("ANTERIOR").toggle(_selectedSavefileI > 0);
+	getButton("SIGUIENTE").toggle(!isOnNewSlot());
 }
 
 bool Menu::tryReadOldSavefile() {
@@ -225,8 +253,10 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 		g_engine->fadeExit();
 		break;
 	case MainMenuAction::NewGame:
-		// this action might be unused just like the only room it would appear: MENUPRINCIPALINICIO
-		g_engine->script().createProcess(MainCharacterKind::None, g_engine->world().initScriptName());
+		// this action is unused just like the only room it would appear: MENUPRINCIPALINICIO
+		// it also breaks the engine in very funny ways so let's not do anything instead
+		// g_engine->script().createProcess(MainCharacterKind::None, g_engine->world().initScriptName());
+		warning("MainMenuAction::NewGame triggered!");
 		break;
 	default:
 		g_engine->game().unknownMenuAction((int32)action);
@@ -269,6 +299,35 @@ void MenuV1::triggerMainMenuAction(MainMenuAction action) {
 			_selectedSavefileI = maxSavegameI == 0 ? 0 : (_selectedSavefileI + 1) % maxSavegameI;
 			updateSelectedSavefile(false);
 		}
+		break;
+	default:
+		Menu::triggerMainMenuAction(action);
+		break;
+	}
+}
+
+void MenuV2::triggerMainMenuAction(MainMenuAction action) {
+	switch (action) {
+	case MainMenuAction::NextSave:
+		if (_selectedSavefileI < _savefiles.size()) {
+			_selectedSavefileI++;
+			updateSelectedSavefile(false);
+		}
+		break;
+	case MainMenuAction::PrevSave:
+		if (_selectedSavefileI > 0) {
+			_selectedSavefileI--;
+			updateSelectedSavefile(false);
+		}
+		break;
+	case MainMenuAction::Exit:
+		toggleMessageBox(true);
+		break;
+	case MainMenuAction::Cancel:
+		toggleMessageBox(false);
+		break;
+	case MainMenuAction::Accept:
+		Menu::triggerMainMenuAction(MainMenuAction::Exit);
 		break;
 	default:
 		Menu::triggerMainMenuAction(action);
@@ -337,49 +396,59 @@ void Menu::triggerSave() {
 }
 
 void Menu::openOptionsMenu() {
+	_currentSlideButton = nullptr;
 	setOptionsState();
 	g_engine->player().changeRoom("MENUOPCIONES", true);
 }
 
 void MenuV1::setOptionsState() {}
 
+void MenuV2::setOptionsState() {
+	Config &config = g_engine->config();
+	Room *optionsMenu = g_engine->world().getRoomByName("MENUOPCIONES");
+	scumm_assert(optionsMenu != nullptr);
+	auto getSlideButton = [&] (const char *name) -> SlideButton& {
+		return optionsMenu->getRequiredObjectByName<SlideButton>(name);
+	};
+	auto getPushButton = [&] (const char *name) -> PushButton& {
+		return optionsMenu->getRequiredObjectByName<PushButton>(name);
+	};
+
+	// there is a mouse sensitivity slider, this does not exist in ScummVM, so we ignore it
+	getSlideButton("VOLUMENCD").value() = config.musicVolume() / 255.0f;
+	getSlideButton("VOLUMENAUDIO").value() = config.speechVolume() / 255.0f;
+
+	getPushButton("CURSOR0").isChecked() = config.cursor() == 0;
+	getPushButton("CURSOR1").isChecked() = config.cursor() == 1;
+	getPushButton("CURSOR2").isChecked() = config.cursor() == 2;
+	getPushButton("CURSOR3").isChecked() = config.cursor() == 3;
+	getPushButton("TEXTOSON").isChecked() = config.subtitles();
+	getPushButton("TEXTOSOFF").isChecked() = !config.subtitles();
+}
+
 void MenuV3::setOptionsState() {
 	Config &config = g_engine->config();
 	Room *optionsMenu = g_engine->world().getRoomByName("MENUOPCIONES");
 	scumm_assert(optionsMenu != nullptr);
-
-	auto getSlideButton = [&] (const char *name) {
-		SlideButton *slideButton = dynamic_cast<SlideButton *>(optionsMenu->getObjectByName(name));
-		scumm_assert(slideButton != nullptr);
-		return slideButton;
+	auto getSlideButton = [&] (const char *name) -> SlideButton& {
+		return optionsMenu->getRequiredObjectByName<SlideButton>(name);
 	};
-	SlideButton
-		*slideMusicVolume = getSlideButton("Slider Musica"),
-		*slideSpeechVolume = getSlideButton("Slider Sonido");
-	slideMusicVolume->value() = config.musicVolume() / 255.0f;
-	slideSpeechVolume->value() = config.speechVolume() / 255.0f;
+	auto getCheckBox = [&] (const char *name) -> CheckBox& {
+		return optionsMenu->getRequiredObjectByName<CheckBox>(name);
+	};
+
+	getSlideButton("Slider Musica").value() = config.musicVolume() / 255.0f;
+	getSlideButton("Slider Sonido").value() = config.speechVolume() / 255.0f;
 
 	if (!config.bits32())
 		config.highQuality() = false;
-	auto getCheckBox = [&] (const char *name) {
-		CheckBox *checkBox = dynamic_cast<CheckBox *>(optionsMenu->getObjectByName(name));
-		scumm_assert(checkBox != nullptr);
-		return checkBox;
-	};
-	CheckBox
-		*checkSubtitlesOn = getCheckBox("Boton ON"),
-		*checkSubtitlesOff = getCheckBox("Boton OFF"),
-		*check32Bits = getCheckBox("Boton 32 Bits"),
-		*check16Bits = getCheckBox("Boton 16 Bits"),
-		*checkHighQuality = getCheckBox("Boton Alta"),
-		*checkLowQuality = getCheckBox("Boton Baja");
-	checkSubtitlesOn->isChecked() = config.subtitles();
-	checkSubtitlesOff->isChecked() = !config.subtitles();
-	check32Bits->isChecked() = config.bits32();
-	check16Bits->isChecked() = !config.bits32();
-	checkHighQuality->isChecked() = config.highQuality();
-	checkLowQuality->isChecked() = !config.highQuality();
-	checkHighQuality->toggle(config.bits32());
+	getCheckBox("Boton ON").isChecked() = config.subtitles();
+	getCheckBox("Boton OFF").isChecked() = !config.subtitles();
+	getCheckBox("Boton 32 Bits").isChecked() = config.bits32();
+	getCheckBox("Boton 16 Bits").isChecked() = !config.bits32();
+	getCheckBox("Boton Alta").isChecked() = config.highQuality();
+	getCheckBox("Boton Baja").isChecked() = !config.highQuality();
+	getCheckBox("Boton Alta").toggle(config.bits32());
 }
 
 void Menu::triggerOptionsAction(OptionsMenuAction action) {
@@ -404,6 +473,18 @@ void Menu::triggerOptionsAction(OptionsMenuAction action) {
 	case OptionsMenuAction::Bits16:
 		config.bits32() = false;
 		break;
+	case OptionsMenuAction::Cursor0:
+		config.cursor() = 0;
+		break;
+	case OptionsMenuAction::Cursor1:
+		config.cursor() = 1;
+		break;
+	case OptionsMenuAction::Cursor2:
+		config.cursor() = 2;
+		break;
+	case OptionsMenuAction::Cursor3:
+		config.cursor() = 3;
+		break;
 	case OptionsMenuAction::MainMenu:
 		continueMainMenu();
 		break;
@@ -422,6 +503,8 @@ void Menu::triggerOptionsValue(OptionsMenuValue valueId, float value) {
 		break;
 	case OptionsMenuValue::Speech:
 		config.speechVolume() = CLIP<uint8>((uint8)(value * 255), 0, 255);
+		break;
+	case OptionsMenuValue::Sensitivity:
 		break;
 	default:
 		warning("Unknown options menu value: %d", (int32)valueId);
@@ -454,6 +537,24 @@ void MenuV1::switchToState(MainMenuAction state) {
 		_selectedSavefileI = _savefiles.size();
 		updateSelectedSavefile(false);
 	}
+}
+
+void MenuV2::toggleMessageBox(bool show) {
+	auto getButton = [&] (const char *name) -> MenuButton& {
+		return g_engine->player().currentRoom()->getRequiredObjectByName<MenuButton>(name);
+	};
+
+	getButton("MBACEPTAR").toggle(show);
+	getButton("MBCANCELAR").toggle(show);
+
+	getButton("ANTERIOR").toggle(!show);
+	getButton("SIGUIENTE").toggle(!show);
+	getButton("CARGAR").toggle(!show);
+	getButton("GRABAR").toggle(!show);
+	getButton("INTERNET").toggle(!show);
+	getButton("OPCIONES").toggle(!show);
+	getButton("JUGAR").toggle(!show);
+	getButton("SALIR").toggle(!show);
 }
 
 }
