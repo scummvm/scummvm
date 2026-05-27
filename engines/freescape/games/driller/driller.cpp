@@ -81,11 +81,6 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_maxEnergy = 63;
 	_maxShield = 63;
 
-	Math::Vector3d drillBaseOrigin = Math::Vector3d(0, 0, 0);
-	Math::Vector3d drillBaseSize = Math::Vector3d(3, 2, 3);
-	_drillBase = new GeometricObject(kCubeType, 0, 0, drillBaseOrigin, drillBaseSize, nullptr, nullptr, nullptr, FCLInstructionVector(), "");
-	assert(!_drillBase->isDestroyed() && !_drillBase->isInvisible());
-
 	if (isDemo()) {
 		_demoMode = !_disableDemoMode; // Most of the driller demos are non-interactive
 		_angleRotationIndex = 0;
@@ -106,7 +101,6 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 DrillerEngine::~DrillerEngine() {
 	delete _playerMusic;
 	delete _playerC64Sfx;
-	delete _drillBase;
 
 	if (_borderExtra) {
 		delete _borderExtra;
@@ -585,15 +579,21 @@ void DrillerEngine::pressedKey(const int keycode) {
 		}
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-		const Math::Vector3d gasPocket3D(gasPocket.x, drillCenter.y(), gasPocket.y);
-		const float distanceToPocket = (gasPocket3D - drillCenter).length();
+		const int areaScale = MAX<int>(_currentArea->getScale(), 1);
+		const int drillRawX = int(drillCenter.x() * areaScale / 32.0f);
+		const int drillRawZ = int(drillCenter.z() * areaScale / 32.0f);
+		const int gasRawX = gasPocket.x / 32;
+		const int gasRawZ = gasPocket.y / 32;
+		const int gasRadiusRaw = MAX<int>(gasPocketRadius / 32, 1);
+		// BTF6 scores the rig from raw-cell Manhattan distance, not Euclidean distance.
+		const uint distanceToPocket = ABS(gasRawX - drillRawX) + ABS(gasRawZ - drillRawZ);
 		debugC(1, kFreescapeDebugMove, "DRILL gas pocket raw=(%d,%d,r=%u) world=(%d,%d) radius=%u",
 			gasPocket.x / 32, gasPocket.y / 32, gasPocketRadius / 32, gasPocket.x, gasPocket.y, gasPocketRadius);
-		debugC(1, kFreescapeDebugMove, "DRILL gas distance renderCenter=(%.2f,%.2f) gasWorld=(%d,%d) euclidean=%.2f worldRadius=%u",
-			drillCenter.x(), drillCenter.z(), gasPocket.x, gasPocket.y, distanceToPocket, gasPocketRadius);
+		debugC(1, kFreescapeDebugMove, "DRILL gas distance renderCenter=(%.2f,%.2f) rawCenter=(%d,%d) gasRaw=(%d,%d) manhattan=%u rawRadius=%d",
+			drillCenter.x(), drillCenter.z(), drillRawX, drillRawZ, gasRawX, gasRawZ, distanceToPocket, gasRadiusRaw);
 
-		float success = _useAutomaticDrilling ? 100.0f : 100.0f * (1.0f - distanceToPocket / gasPocketRadius);
-		debugC(1, kFreescapeDebugMove, "DRILL gas computed success=%.2f automatic=%d", success, _useAutomaticDrilling ? 1 : 0);
+		int success = _useAutomaticDrilling ? 100 : 100 - int((100 * distanceToPocket) / gasRadiusRaw);
+		debugC(1, kFreescapeDebugMove, "DRILL gas computed success=%d automatic=%d", success, _useAutomaticDrilling ? 1 : 0);
 		// Play the "processing" sound up front (matches BTF660 in the
 		// original Amiga code, where sound 5 starts before the
 		// RIG POSITIONED / NO GAS FOUND messages are displayed and
@@ -615,15 +615,15 @@ void DrillerEngine::pressedKey(const int keycode) {
 		maxScoreMessage.replace(2, 6, Common::String::format("%d", maxScore));
 		insertTemporaryMessage(maxScoreMessage, _countdown - 4);
 		Common::String successMessage = _messagesList[6];
-		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
+		successMessage.replace(0, 4, Common::String::format("%d", success));
 		while (successMessage.size() < 14)
 			successMessage += " ";
 		insertTemporaryMessage(successMessage, _countdown - 6);
 		_drillSuccessByArea[_currentArea->getAreaID()] = uint32(success);
 		_gameStateVars[k8bitVariableScore] += uint32(maxScore * uint32(success)) / 100;
-		debugC(1, kFreescapeDebugMove, "DRILL result: gas found success=%.2f maxScore=%d score=%d", success, maxScore, _gameStateVars[k8bitVariableScore]);
+		debugC(1, kFreescapeDebugMove, "DRILL result: gas found success=%d maxScore=%d score=%d", success, maxScore, _gameStateVars[k8bitVariableScore]);
 
-		if (success >= 50.0f) {
+		if (success >= 50) {
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigInPlace;
 			_gameStateVars[32]++;
 		} else
@@ -710,88 +710,87 @@ bool DrillerEngine::drillDeployed(Area *area) {
 }
 
 bool DrillerEngine::checkDrill(const Math::Vector3d position) {
-	GeometricObject *obj = nullptr;
-	Math::Vector3d origin = position;
+	const int areaScale = MAX<int>(_currentArea->getScale(), 1);
+	const float rawScale = areaScale / 32.0f;
+	const int drillCenterX = int(position.x() * rawScale);
+	const int drillCenterZ = int((position.z() + 128.0f) * rawScale);
+	const int drillY = int(position.y() * rawScale);
 
-	int16 id;
-	int heightLastObject;
-
-	origin.setValue(0, origin.x() + 128);
-	origin.setValue(1, origin.y() - 5);
-	origin.setValue(2, origin.z() + 128);
-
-	_drillBase->setOrigin(origin);
-	ObjectArray collisions = _currentArea->checkCollisions(_drillBase->_boundingBox);
-	if (collisions.empty())
+	// BTF604/BTF607 validate a 12-cell footprint against raw room bounds and cube objects.
+	if (drillCenterX <= 6 || drillCenterX >= 121 || drillCenterZ <= 6 || drillCenterZ >= 121) {
+		debugC(1, kFreescapeDebugMove, "DRILL rejected: original footprint bounds failed rawCenter=(%d,%d)", drillCenterX, drillCenterZ);
 		return false;
+	}
 
-	origin.setValue(0, origin.x() - 128);
-	origin.setValue(2, origin.z() - 128);
+	if (drillY != 0) {
+		const int floorX = drillCenterX - 1;
+		const int floorZ = drillCenterZ - 1;
+		bool supported = false;
+		ObjectMap *objects = _currentArea->getObjectsByID();
+		for (auto &it : *objects) {
+			Object *obj = it._value;
+			if (obj->isDestroyed() || obj->isInvisible() || obj->getType() != kCubeType)
+				continue;
 
-	id = 255;
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	origin.setValue(1, origin.y() + 6);
-	obj->setOrigin(origin);
+			GeometricObject *gobj = (GeometricObject *)obj;
+			const int objX = int(gobj->getOrigin().x() * rawScale);
+			const int objY = int(gobj->getOrigin().y() * rawScale);
+			const int objZ = int(gobj->getOrigin().z() * rawScale);
+			const int objSizeX = int(gobj->getSize().x() * rawScale);
+			const int objSizeY = int(gobj->getSize().y() * rawScale);
+			const int objSizeZ = int(gobj->getSize().z() * rawScale);
 
-	// This bounding box is too large and can result in the drill to float next to a wall
-	collisions = _currentArea->checkCollisions(obj->_boundingBox);
-	if (!collisions.empty())
-		return false;
+			if (objY + objSizeY != drillY)
+				continue;
+			if (floorX < objX || floorZ < objZ)
+				continue;
+			if (floorX > objX + objSizeX - 2)
+				continue;
+			if (floorZ <= objZ + objSizeZ - 2) {
+				supported = true;
+				break;
+			}
+		}
 
-	origin.setValue(1, origin.y() + 15);
-	obj->setOrigin(origin);
+		if (!supported) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: original floor support failed rawFloor=(%d,%d,%d)", floorX, drillY, floorZ);
+			return false;
+		}
+	}
 
-	collisions = _currentArea->checkCollisions(obj->_boundingBox);
-	if (!collisions.empty())
-		return false;
+	const int footprintOffset = drillY == 0 ? 5 : 6;
+	const int footprintX = drillCenterX - footprintOffset;
+	const int footprintZ = drillCenterZ - footprintOffset;
+	ObjectMap *objects = _currentArea->getObjectsByID();
+	for (auto &it : *objects) {
+		Object *obj = it._value;
+		if (obj->isDestroyed() || obj->isInvisible() || obj->getType() != kCubeType)
+			continue;
 
-	origin.setValue(1, origin.y() - 10);
-	heightLastObject = obj->getSize().y();
-	delete obj;
+		GeometricObject *gobj = (GeometricObject *)obj;
+		const int objX = int(gobj->getOrigin().x() * rawScale);
+		const int objY = int(gobj->getOrigin().y() * rawScale);
+		const int objZ = int(gobj->getOrigin().z() * rawScale);
+		const int objSizeX = int(gobj->getSize().x() * rawScale);
+		const int objSizeY = int(gobj->getSize().y() * rawScale);
+		const int objSizeZ = int(gobj->getSize().z() * rawScale);
 
-	id = 254;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	// Set position for object
-	origin.setValue(0, origin.x() - obj->getSize().x() / 5);
-	origin.setValue(1, origin.y() + heightLastObject);
-	origin.setValue(2, origin.z() - obj->getSize().z() / 5);
+		if (objY + objSizeY <= drillY)
+			continue;
+		if (footprintX < objX - 11)
+			continue;
+		if (drillY < objY - 22)
+			continue;
+		if (footprintZ < objZ - 11)
+			continue;
+		if (footprintX >= objX + objSizeX)
+			continue;
+		if (footprintZ < objZ + objSizeZ) {
+			debugC(1, kFreescapeDebugMove, "DRILL rejected: original object footprint hit obj=%d rawFootprint=(%d,%d,%d)", obj->getObjectID(), footprintX, drillY, footprintZ);
+			return false;
+		}
+	}
 
-	obj = (GeometricObject *)obj->duplicate();
-	obj->setOrigin(origin);
-	collisions = _currentArea->checkCollisions(obj->_boundingBox);
-	if (!collisions.empty())
-		return false;
-
-	// Undo offset
-	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
-	heightLastObject = obj->getSize().y();
-	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
-	delete obj;
-
-	id = 253;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-
-	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
-	origin.setValue(1, origin.y() + heightLastObject);
-	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
-
-	obj->setOrigin(origin);
-	collisions = _currentArea->checkCollisions(obj->_boundingBox);
-	if (!collisions.empty())
-		return false;
-
-	// Undo offset
-	// origin.setValue(0, origin.x() - obj->getSize().x() / 5);
-	heightLastObject = obj->getSize().y();
-	// origin.setValue(2, origin.z() - obj->getSize().z() / 5);
-	delete obj;
 	return true;
 }
 

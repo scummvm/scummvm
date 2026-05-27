@@ -82,7 +82,6 @@ private:
 	int _finalAreaWinConditionIndex;
 	int _amigaAtariEndGameStep;
 	bool drillDeployed(Area *area);
-	GeometricObject *_drillBase;
 	Math::Vector3d drillPosition();
 	float compassYaw() const;
 	void addDrill(const Math::Vector3d position, bool gasFound);
