@@ -605,6 +605,7 @@ void Window::loadXtrasFromPath() {
 	// and they'll still be recognized.
 	Common::ArchiveMemberList targets;
 	SearchMan.listMatchingMembers(targets, Common::Path("xtras/*"), true);
+	SearchMan.listMatchingMembers(targets, Common::Path("*/xtras/*"), false);
 	for (auto &it : targets) {
 		if (it->isDirectory())
 			continue;
