@@ -21,14 +21,17 @@
 
 #include "engines/util.h"
 #include "mads/madsv2/console.h"
+#include "mads/madsv2/core/attr.h"
 #include "mads/madsv2/core/conv.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/rail.h"
 #include "mads/madsv2/core/screen.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
@@ -1299,6 +1302,184 @@ void DragonsphereEngine::global_room_init() {
 void DragonsphereEngine::global_sound_driver() {
 	Common::strcpy_s(kernel.sound_driver, "/");
 	env_catint(kernel.sound_driver, new_section, 1);
+}
+
+void DragonsphereEngine::player_keep_walking() {
+	int at_x, at_y;
+	int walk_code;
+	int id;
+	int new_facing = false;
+	int temp_velocity;
+	int angle_scale;
+	int angle_range;
+
+	int countt;
+	int rum = 400;
+	int countt2 = global[oasis] - 1;
+
+	while (player.walking && !player.walk_off_edge && (player.x == player.target_x) && (player.y == player.target_y)) {
+		if (rail_solution_stack_pointer == 0) {
+			if (player.walk_off_edge_to_room) {
+
+				if (room_id == 302) {
+					if (player_said_2(walk_down, path_to_east) && game.difficulty == 0) {
+						if (!player_has_been_in_room(303)) {
+							global[bubble_wont_attack] = false;
+						}
+					}
+				}
+
+				if (room_id == 401 || room_id == 402 || room_id == 403) {
+					if (player_said_1(desert_to_east) || player_said_1(desert_to_west)) {
+						if (player_has_been_in_room(405) && player_said_1(desert_to_west)) {
+							global[from_direction] = FROM_EAST;
+							player.walk_off_edge_to_room = 405;
+
+						} else if (player_has_been_in_room(405) && player_said_1(desert_to_east)) {
+							global[pre_room] = 401;
+							if (player.walk_off_edge_to_room != 111) {
+								player.walk_off_edge_to_room = 120;
+							}
+
+						} else if (player_said_1(desert_to_east) && global[desert_room] % 7 == 0) {
+							global[pre_room] = 401;
+							if (player.walk_off_edge_to_room != 111) {
+								player.walk_off_edge_to_room = 120;
+							}
+
+						} else if (player_said_1(desert_to_east)) {
+							++global[desert_room];
+							global[from_direction] = FROM_WEST;
+
+						} else if (player_said_1(desert_to_west)) {
+							--global[desert_room];
+							global[from_direction] = FROM_EAST;
+						}
+
+						if (player.walk_off_edge_to_room != 120 &&
+							player.walk_off_edge_to_room != 111 &&
+							player.walk_off_edge_to_room != 405) for (countt = 0; countt < 77; countt++) {
+							++rum; if (rum == 404) rum = 401;
+							++countt2; if (countt2 == 78) countt2 = 1;
+
+							if (countt2 == global[desert_room]) {
+								if (global[desert_room] == 42)                 rum = 401;
+								if (global[desert_room] == global[oasis])      rum = 454;
+								if (global[desert_room] == global[fire_holes]) rum = 412;
+
+								if (player_said_1(desert_to_east) || player_said_1(desert_to_west)) {
+									if (room_id == rum) {
+										player.walk_off_edge_to_room = room_id;
+									} else {
+										player.walk_off_edge_to_room = rum;
+									}
+								}
+								goto over;
+							}
+						}
+					}
+				}
+
+over:
+				if ((room_id == 401 || room_id == 402 || room_id == 403) &&
+					!player_has_been_in_room(405)) {
+					++global[desert_counter];
+					if (global[desert_counter] == 6) {
+						player.walk_off_edge_to_room = 404;
+					}
+				}
+
+				player.walk_off_edge = player.walk_off_edge_to_room;
+				player.walk_anywhere = true;
+				player.walk_off_edge_to_room = 0;
+				player.commands_allowed = false;
+				new_facing = false;
+
+			} else {
+				player.walking = false;
+				player_set_final_facing();
+				new_facing = true;
+			}
+
+		} else {
+			id = rail_solution_stack[--rail_solution_stack_pointer];
+			player.target_x = room->rail[id].x;
+			player.target_y = room->rail[id].y;
+			new_facing = true;
+		}
+	}
+
+	if (new_facing) {
+		if (player.walking) player_set_facing();
+	}
+
+	if (player.facing != player.turn_to_facing) {
+		player_keep_turning();
+	} else {
+		if (!player.walking) {
+			player_new_stop_walker();
+			player_activate_trigger();
+		}
+	}
+
+	temp_velocity = player.velocity;
+
+	if (player.scaling_velocity && (player.total_distance > 0)) {
+		angle_range = 100 - player.scale;
+		angle_scale = player.scale + ((angle_range * (player.x_count - 1)) / player.total_distance);
+		temp_velocity = (int)(((long)temp_velocity * ((long)player.scale * (long)angle_scale)) / 10000L);
+		temp_velocity = MAX(temp_velocity, 1);
+	}
+
+	if (player.walking && (player.facing == player.turn_to_facing)) {
+		at_x = player.x;
+		at_y = player.y;
+		walk_code = false;
+		player.special_code = 0;
+
+		if (player.dist_accum < temp_velocity) {
+			do {
+				if (player.pixel_accum < player.x_count) {
+					player.pixel_accum += player.y_count;
+				}
+				if (player.pixel_accum >= player.x_count) {
+					if ((player.y_counter > 0) || player.walk_off_edge) at_y += player.sign_y;
+					player.y_counter--;
+					player.pixel_accum -= player.x_count;
+				}
+				if (player.pixel_accum < player.x_count) {
+					if ((player.x_counter > 0) || player.walk_off_edge) at_x += player.sign_x;
+					player.x_counter--;
+				}
+
+				if (!player.walk_anywhere && !(player.walk_off_edge || player.walk_off_edge_to_room)) {
+					walk_code |= attr_walk(&scr_walk, at_x, at_y);
+					if (!player.special_code) {
+						player.special_code = attr_special(&scr_special, at_x, at_y);
+					}
+				}
+
+				player.dist_accum += player.delta_distance;
+			} while ((player.dist_accum < temp_velocity) && (!walk_code) &&
+				((player.x_counter > 0) || (player.y_counter > 0) || (player.walk_off_edge)));
+		}
+
+		player.dist_accum -= temp_velocity;
+
+		if (walk_code) {
+			player_cancel_command();
+		} else {
+			if (!player.walk_off_edge) {
+				if (player.x_counter <= 0)
+					at_x = player.target_x;
+				if (player.y_counter <= 0)
+					at_y = player.target_y;
+			}
+
+			player.x = at_x;
+			player.y = at_y;
+		}
+	}
 }
 
 } // namespace Dragonsphere

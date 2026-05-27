@@ -33,6 +33,7 @@
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/himem.h"
 #include "mads/madsv2/core/object.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -265,7 +266,7 @@ void player_select_series() {
 	player.sprite_changed = true;
 }
 
-static void player_activate_trigger() {
+void player_activate_trigger() {
 	int count;
 
 	player.commands_allowed |= player.enable_at_target;
@@ -283,12 +284,7 @@ static void player_activate_trigger() {
 	}
 }
 
-/**
- * When the player needs to turn to face a different direction
- * than his current facing, this routine rotates him one place
- * in the right direction.
- */
-static void player_keep_turning() {
+void player_keep_turning() {
 	int clockwise_count = 0;
 	int clockwise_sum = 0;
 	int counter_clockwise_count = 0;
@@ -478,105 +474,7 @@ void player_set_sprite() {
 }
 
 void player_keep_walking() {
-	int at_x, at_y;
-	int walk_code;
-	int id;
-	int new_facing = false;
-	int temp_velocity;
-	int angle_scale;
-	int angle_range;
-
-	while (player.walking && !player.walk_off_edge && (player.x == player.target_x) && (player.y == player.target_y)) {
-		if (rail_solution_stack_pointer == 0) {
-			if (player.walk_off_edge_to_room) {
-				player.walk_off_edge = player.walk_off_edge_to_room;
-				player.walk_anywhere = true;
-				player.walk_off_edge_to_room = 0;
-				player.commands_allowed = false;
-				new_facing = false;
-			} else {
-				player.walking = false;
-				player_set_final_facing();
-				new_facing = true;
-			}
-		} else {
-			id = rail_solution_stack[--rail_solution_stack_pointer];
-			player.target_x = room->rail[id].x;
-			player.target_y = room->rail[id].y;
-			new_facing = true;
-		}
-	}
-
-	if (new_facing) {
-		if (player.walking) player_set_facing();
-	}
-
-	if (player.facing != player.turn_to_facing) {
-		player_keep_turning();
-	} else {
-		if (!player.walking) {
-			player_new_stop_walker();
-			player_activate_trigger();
-		}
-	}
-
-	temp_velocity = player.velocity;
-
-	if (player.scaling_velocity && (player.total_distance > 0)) {
-		angle_range = 100 - player.scale;
-		angle_scale = player.scale + ((angle_range * (player.x_count - 1)) / player.total_distance);
-		temp_velocity = (int)(((long)temp_velocity * ((long)player.scale * (long)angle_scale)) / 10000L);
-		temp_velocity = MAX(temp_velocity, 1);
-	}
-
-	if (player.walking && (player.facing == player.turn_to_facing)) {
-		at_x = player.x;
-		at_y = player.y;
-		walk_code = false;
-		player.special_code = 0;
-
-		if (player.dist_accum < temp_velocity) {
-
-			do {
-				if (player.pixel_accum < player.x_count) {
-					player.pixel_accum += player.y_count;
-				}
-				if (player.pixel_accum >= player.x_count) {
-					if ((player.y_counter > 0) || player.walk_off_edge) at_y += player.sign_y;
-					player.y_counter--;
-					player.pixel_accum -= player.x_count;
-				}
-				if (player.pixel_accum < player.x_count) {
-					if ((player.x_counter > 0) || player.walk_off_edge) at_x += player.sign_x;
-					player.x_counter--;
-				}
-
-				if (!player.walk_anywhere && !(player.walk_off_edge || player.walk_off_edge_to_room)) {
-					walk_code |= attr_walk(&scr_walk, at_x, at_y);
-					if (!player.special_code) {
-						player.special_code = attr_special(&scr_special, at_x, at_y);
-					}
-				}
-
-				player.dist_accum += player.delta_distance;
-			} while ((player.dist_accum < temp_velocity) && (!walk_code) &&
-				((player.x_counter > 0) || (player.y_counter > 0) || (player.walk_off_edge)));
-
-		}
-
-		player.dist_accum -= temp_velocity;
-
-		if (walk_code) {
-			player_cancel_command();
-		} else {
-			if (!player.walk_off_edge) {
-				if (player.x_counter <= 0) at_x = player.target_x;
-				if (player.y_counter <= 0) at_y = player.target_y;
-			}
-			player.x = at_x;
-			player.y = at_y;
-		}
-	}
+	g_engine->player_keep_walking();
 }
 
 int player_search_image() {

@@ -333,6 +333,15 @@ extern void player_demand_location(int x, int y);
 extern void player_first_walk(int from_x, int from_y, int from_facing,
 	int to_x, int to_y, int to_facing, int enable_at_target);
 
+/**
+ * When the player needs to turn to face a different direction
+ * than his current facing, this routine rotates him one place
+ * in the right direction.
+ */
+extern void player_keep_turning();
+
+extern void player_activate_trigger();
+
 } // namespace MADSV2
 } // namespace MADS
 

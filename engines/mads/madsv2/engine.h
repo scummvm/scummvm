@@ -112,6 +112,7 @@ public:
 	virtual void global_room_init() = 0;
 	virtual void global_sound_driver() = 0;
 	virtual void global_verb_filter() {}
+	virtual void player_keep_walking();
 
 	void playSpeech(Audio::AudioStream *stream);
 	void stopSpeech();
