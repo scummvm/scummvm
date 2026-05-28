@@ -19,7 +19,6 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneScript(uint16 sceneIndex, Comm
 	fileStream->seek(sceneDataOffset - 0x8);
 	uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
-	
 
 	// Read the script from there
 	// We read 80h bytes
@@ -40,11 +39,9 @@ Common::Array<uint32> Macs2::Scenes::ReadSpecialAnimsOffsets(uint16 sceneIndex, 
 	Common::Array<uint32> result;
 	result.resize(0x80 / 4);
 
-
 	// Calculate the offset of the script data offset
 	// This addressing can be found in the l0037_2856 code block
 	// TODO: This part is copy-pasted and could be refactored into one proper loading function
-
 
 	uint16 sceneDataOffset = sceneIndex * 0xC;
 	// Offset of the data in [0752h] global
@@ -57,7 +54,7 @@ Common::Array<uint32> Macs2::Scenes::ReadSpecialAnimsOffsets(uint16 sceneIndex, 
 	// Read the script from there
 	// We read 80h bytes for the special animations offsets
 	fileStream->read(result.data(), 0x80);
-	
+
 	return result;
 }
 
@@ -108,8 +105,8 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x10] = "Holzfass"; // leer
 	ObjectNames[0x11] = "Bowiemesser";
 	ObjectNames[0x17] = "Hutschachtel"; // leer und offen
-	ObjectNames[0x18] = "Damenhut"; // Mit Schleier
-	ObjectNames[0x1a] = "Eimer"; // leer
+	ObjectNames[0x18] = "Damenhut";     // Mit Schleier
+	ObjectNames[0x1a] = "Eimer";        // leer
 	ObjectNames[0x1b] = "Feuerhaken";
 	ObjectNames[0x23] = "Tasse"; // leer
 	ObjectNames[0x24] = "Axt";
@@ -170,10 +167,10 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0x97] = "Lederbeutel"; // voll Sand
 	ObjectNames[0x99] = "Brecheisen";
 	ObjectNames[0x9B] = "Dynamit";
-	ObjectNames[0x9A] = "Sand"; // brennend
+	ObjectNames[0x9A] = "Sand";   // brennend
 	ObjectNames[0x9C] = "Fackel"; // brennend
 	ObjectNames[0x9D] = "Fackel"; //
-	ObjectNames[0x9F] = "Figur"; // zusammengesetzt
+	ObjectNames[0x9F] = "Figur";  // zusammengesetzt
 	ObjectNames[0x98] = "Bohlen";
 	ObjectNames[0x9D] = "Holzfigur"; // Von links
 	ObjectNames[0xA0] = "Holzfigur"; // von Rechts
@@ -241,7 +238,6 @@ Common::MemoryReadStream *Macs2::GameObject::GetScriptStream() {
 
 Macs2::AnimationReader::AnimationReader(const Common::Array<uint8> &blob) {
 	readStream = new Common::MemoryReadStreamEndian(blob.data(), blob.size(), false);
-
 }
 
 uint16 Macs2::AnimationReader::readNumAnimations() {
@@ -284,7 +280,6 @@ void Macs2::AnimationReader::SeekToAnimation(uint16 index) {
 	for (int i = 0; i < index; i++) {
 		SkipCurrentAnimationFrame();
 	}
-	
 }
 
 void Macs2::AnimationReader::SkipCurrentAnimationFrame() {

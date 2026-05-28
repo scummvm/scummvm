@@ -36,50 +36,43 @@ struct FocusMessage : public Message {
 	UIElement *_priorView = nullptr;
 	FocusMessage() : Message() {}
 	FocusMessage(UIElement *priorView) : Message(),
-		_priorView(priorView) {}
+										 _priorView(priorView) {}
 };
 
 struct UnfocusMessage : public Message {};
 
 struct KeypressMessage : public Message, public Common::KeyState {
 	KeypressMessage() : Message() {}
-	KeypressMessage(const Common::KeyState &ks) :
-		Message(), Common::KeyState(ks) {}
+	KeypressMessage(const Common::KeyState &ks) : Message(), Common::KeyState(ks) {}
 };
 
 struct MouseMessage : public Message {
-	enum Button { MB_LEFT, MB_RIGHT, MB_MIDDLE };
+	enum Button { MB_LEFT,
+				  MB_RIGHT,
+				  MB_MIDDLE };
 	Button _button;
 	Common::Point _pos;
 
 	MouseMessage() : Message(), _button(MB_LEFT) {}
-	MouseMessage(Button btn, const Common::Point &pos) :
-		Message(), _button(btn), _pos(pos) {}
+	MouseMessage(Button btn, const Common::Point &pos) : Message(), _button(btn), _pos(pos) {}
 	MouseMessage(Common::EventType type, const Common::Point &pos);
 };
 struct MouseDownMessage : public MouseMessage {
 	MouseDownMessage() : MouseMessage() {}
-	MouseDownMessage(Button btn, const Common::Point &pos) :
-		MouseMessage(btn, pos) {}
-	MouseDownMessage(Common::EventType type, const Common::Point &pos) :
-		MouseMessage(type, pos) {}
+	MouseDownMessage(Button btn, const Common::Point &pos) : MouseMessage(btn, pos) {}
+	MouseDownMessage(Common::EventType type, const Common::Point &pos) : MouseMessage(type, pos) {}
 };
 struct MouseUpMessage : public MouseMessage {
 	MouseUpMessage() : MouseMessage() {}
-	MouseUpMessage(Button btn, const Common::Point &pos) :
-		MouseMessage(btn, pos) {}
-	MouseUpMessage(Common::EventType type, const Common::Point &pos) :
-		MouseMessage(type, pos) {}
+	MouseUpMessage(Button btn, const Common::Point &pos) : MouseMessage(btn, pos) {}
+	MouseUpMessage(Common::EventType type, const Common::Point &pos) : MouseMessage(type, pos) {}
 };
 
-struct MouseMoveMessage: public MouseMessage{
+struct MouseMoveMessage : public MouseMessage {
 	MouseMoveMessage() : MouseMessage() {}
-	MouseMoveMessage(Button btn, const Common::Point& pos) :
-		MouseMessage(btn, pos) {}
-	MouseMoveMessage(Common::EventType type, const Common::Point& pos) :
-		MouseMessage(type, pos) {}
+	MouseMoveMessage(Button btn, const Common::Point &pos) : MouseMessage(btn, pos) {}
+	MouseMoveMessage(Common::EventType type, const Common::Point &pos) : MouseMessage(type, pos) {}
 };
-
 
 struct GameMessage : public Message {
 	Common::String _name;
@@ -88,11 +81,10 @@ struct GameMessage : public Message {
 
 	GameMessage() : Message(), _value(-1) {}
 	GameMessage(const Common::String &name) : Message(),
-		_name(name), _value(-1) {}
+											  _name(name), _value(-1) {}
 	GameMessage(const Common::String &name, int value) : Message(),
-		_name(name), _value(value) {}
-	GameMessage(const Common::String &name, const Common::String &value) :
-		Message(), _name(name), _stringValue(value) {}
+														 _name(name), _value(value) {}
+	GameMessage(const Common::String &name, const Common::String &value) : Message(), _name(name), _stringValue(value) {}
 };
 
 struct ValueMessage : public Message {
@@ -100,7 +92,7 @@ struct ValueMessage : public Message {
 
 	ValueMessage() : Message(), _value(0) {}
 	ValueMessage(int value) : Message(),
-		_value(value) {}
+							  _value(value) {}
 };
 
 struct ActionMessage : public Message {
@@ -108,7 +100,7 @@ struct ActionMessage : public Message {
 	ActionMessage() : Message(), _action(0) {
 	}
 	ActionMessage(int action) : Message(),
-		_action(action) {
+								_action(action) {
 	}
 };
 

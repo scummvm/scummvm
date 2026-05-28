@@ -21,26 +21,21 @@
 
 #include "common/translation.h"
 
-#include "macs2/metaengine.h"
 #include "macs2/detection.h"
 #include "macs2/macs2.h"
+#include "macs2/metaengine.h"
 
 namespace Macs2 {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+	{GAMEOPTION_ORIGINAL_SAVELOAD,
+	 {_s("Use original save/load screens"),
+	  _s("Use the original save/load screens instead of the ScummVM ones"),
+	  "original_menus",
+	  false,
+	  0,
+	  0}},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 } // End of namespace Macs2
 
@@ -55,7 +50,7 @@ Common::Error Macs2MetaEngine::createInstance(OSystem *syst, Engine **engine, co
 
 bool Macs2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+		   (f == kSupportsLoadingDuringStartup);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MACS2)
