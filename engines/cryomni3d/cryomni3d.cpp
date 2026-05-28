@@ -225,6 +225,8 @@ void CryOmni3DEngine::setCursor(const Graphics::Cursor &cursor) const {
 }
 
 void CryOmni3DEngine::setCursor(uint cursorId) const {
+	if (cursorId >= _sprites.getSpritesCount())
+		return;
 	const Graphics::Cursor &cursor = _sprites.getCursor(cursorId);
 	CursorMan.replaceCursor(&cursor);
 }
@@ -253,6 +255,9 @@ bool CryOmni3DEngine::pollEvents() {
 			transitionalMask |= Common::EventManager::LBUTTON;
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 			transitionalMask |= Common::EventManager::RBUTTON;
+		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+			// Accumulate relative motion for locked-cursor FPS look.
+			_mouseRel += event.relMouse;
 		}
 		hasEvents = true;
 	}
@@ -369,6 +374,8 @@ void CryOmni3DEngine::copySubPalette(byte *dst, const byte *src, uint start, uin
 }
 
 void CryOmni3DEngine::setPalette(const byte *colors, uint start, uint num) {
+	if (g_system->getScreenFormat().bytesPerPixel > 1)
+		return;
 	if (start < _lockPaletteStartRW) {
 		colors = colors + 3 * (_lockPaletteStartRW - start);
 		start = _lockPaletteStartRW;
@@ -383,6 +390,8 @@ void CryOmni3DEngine::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void CryOmni3DEngine::fadeOutPalette() {
+	if (g_system->getScreenFormat().bytesPerPixel > 1)
+		return;
 	byte palOut[256 * 3];
 	uint16 palWork[256 * 3];
 	uint16 delta[256 * 3];
@@ -413,6 +422,8 @@ void CryOmni3DEngine::fadeOutPalette() {
 }
 
 void CryOmni3DEngine::fadeInPalette(const byte *palette) {
+	if (g_system->getScreenFormat().bytesPerPixel > 1)
+		return;
 	byte palOut[256 * 3];
 	uint16 palWork[256 * 3];
 	uint16 delta[256 * 3];
@@ -444,6 +455,10 @@ void CryOmni3DEngine::fadeInPalette(const byte *palette) {
 }
 
 void CryOmni3DEngine::setBlackPalette() {
+	if (g_system->getScreenFormat().bytesPerPixel > 1) {
+		g_system->updateScreen();
+		return;
+	}
 	byte pal[256 * 3];
 	memset(pal, 0, 256 * 3);
 	g_system->getPaletteManager()->setPalette(pal, 0, 256);

@@ -35,6 +35,10 @@
 #include "cryomni3d/versailles/engine.h"
 #endif
 
+#ifdef ENABLE_ATLANTIS
+#include "cryomni3d/atlantis/engine.h"
+#endif
+
 #include "cryomni3d/detection.h"
 
 namespace CryOmni3D {
@@ -102,6 +106,28 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 
+	// Atlantis partitions save slots into per-player blocks of 100; load the
+	// player-profile names so each save can be labelled with its owner.  For
+	// other games this file is absent and no prefix is applied.
+	Common::String playerNames[5];
+	{
+		Common::InSaveFile *pin = saveMan->openForLoading("atlantis-players.dat");
+		if (pin) {
+			if (pin->readUint32BE() == 0x41504c52u /* 'APLR' */
+			        && pin->readUint32BE() >= 1) {
+				uint32 count = pin->readUint32BE();
+				for (uint32 i = 0; i < count && i < 5 && !pin->eos(); i++) {
+					uint16 len = pin->readUint16BE();
+					Common::String name;
+					for (uint16 j = 0; j < len && !pin->eos(); j++)
+						name += (char)pin->readByte();
+					playerNames[i] = name;
+				}
+			}
+			delete pin;
+		}
+	}
+
 	char saveName[kSaveDescriptionLen + 1];
 	saveName[kSaveDescriptionLen] = '\0';
 	Common::StringArray filenames = saveMan->listSavefiles(getSavegameFilePattern(target));
@@ -114,11 +140,15 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 4 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 4);
 
-		if (slotNum >= 1 && slotNum <= 99) {
+		if (slotNum >= 1 && slotNum <= 999) {
 			Common::InSaveFile *in = saveMan->openForLoading(*file);
 			if (in) {
 				if (in->read(saveName, kSaveDescriptionLen) == kSaveDescriptionLen) {
-					saveList.push_back(SaveStateDescriptor(this, slotNum - 1, saveName));
+					Common::String desc(saveName);
+					int player = (slotNum - 1) / 100;
+					if (player >= 0 && player < 5 && !playerNames[player].empty())
+						desc = playerNames[player] + ": " + desc;
+					saveList.push_back(SaveStateDescriptor(this, slotNum - 1, desc));
 				}
 				delete in;
 			}
@@ -145,6 +175,13 @@ Common::Error CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine
 	case GType_HNM_PLAYER:
 		*engine = new CryOmni3DEngine_HNMPlayer(syst, gd);
 		return Common::kNoError;
+	case GType_ATLANTIS:
+#ifdef ENABLE_ATLANTIS
+		*engine = new Atlantis::CryOmni3DEngine_Atlantis(syst, gd);
+		return Common::kNoError;
+#else
+		return Common::Error(Common::kUnsupportedGameidError, _s("Atlantis: The Lost Tale support is not compiled in"));
+#endif
 	default:
 		return Common::kUnsupportedGameidError;
 	}

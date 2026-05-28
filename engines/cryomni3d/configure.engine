@@ -1,3 +1,4 @@
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
-add_engine cryomni3d "Cryo Omni3D games" yes "versailles" "" "highres hnm"
+add_engine cryomni3d "Cryo Omni3D games" yes "versailles atlantis" "" "highres hnm"
 add_engine versailles "Versailles 1685" yes
+add_engine atlantis "Atlantis: The Lost Tale" yes

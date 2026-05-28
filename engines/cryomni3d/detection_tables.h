@@ -23,6 +23,7 @@ namespace CryOmni3D {
 
 #define GUI_OPTIONS_VERSAILLES                   GUIO3(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOASPECT)
 #define GUI_OPTIONS_HNM_PLAYER                   GUIO4(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOASPECT)
+#define GUI_OPTIONS_ATLANTIS                     GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 
 // To correctly detect root we need files from various places: CD1, CD2, HDD, on-CD install files
 // We use files common to all installations except the documentation links and the binary
@@ -611,10 +612,27 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ATLANTIS.UBB", "f5b41b857678a61d7f9bd6eb41916ce5", 106611456),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
-			GUI_OPTIONS_HNM_PLAYER
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUI_OPTIONS_ATLANTIS
 		},
-		GType_HNM_PLAYER,
+		GType_ATLANTIS,
+		0,
+	},
+
+	// Atlantis: The Lost Tales
+	// English Windows CD (4-disc; detected via BIGCD1.BIG)
+	{
+		{
+			"atlantis",
+			"",
+			AD_ENTRY2s("atlantis.exe", "83ba66f0b9e49535c1592ba1fd071a0a", 714240,
+			           "BIGCD1.BIG",  "e68fd05b1b84914204fcf195c06bc180", 635406545),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ATLANTIS
+		},
+		GType_ATLANTIS,
 		0,
 	},
 
@@ -649,6 +667,12 @@ static const char *const directoryGlobs[] = {
 	"DATAV_HD",
 	/* lien_doc.* */
 	"TEXTES",
+
+	/** Atlantis: The Lost Tale **/
+	/* ATL_DOS/ */
+	"ATL_DOS",
+	/* DEMOS1/ */
+	"DEMOS1",
 
 	/** End of list **/
 	nullptr

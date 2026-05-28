@@ -28,12 +28,21 @@ namespace CryOmni3D {
 
 class Omni3DManager {
 public:
-	Omni3DManager() : _vfov(0), _alpha(0), _beta(0), _xSpeed(0), _ySpeed(0), _alphaMin(0), _alphaMax(0),
+	Omni3DManager() : _hfov(0), _vfov(0), _alpha(0), _beta(0), _xSpeed(0), _ySpeed(0), _alphaMin(0), _alphaMax(0),
 		_betaMin(0), _betaMax(0), _helperValue(0), _dirty(true), _dirtyCoords(true),
-		_sourceSurface(nullptr) {}
+		_bytesPerPixel(1), _sourceSurface(nullptr) {}
 	virtual ~Omni3DManager();
 
 	void init(double hfov);
+	// Call after init() to switch to a non-paletted pixel format (e.g. 16bpp for Atlantis).
+	void setPixelFormat(const Graphics::PixelFormat &fmt);
+
+	// Change the camera FOV without resetting alpha/beta/speeds.  Used by the
+	// Atlantis dialog renderer to apply the per-cam FOV table (cam2..cam5)
+	// extracted from atlantis.exe at VA 0x00496080.  Recomputes the
+	// projection helpers; the next getSurface() call re-renders.
+	void setHFov(double hfov);
+	double getHFov() const;
 
 	void setSourceSurface(const Graphics::Surface *surface) { _sourceSurface = surface; _dirty = true; }
 
@@ -58,6 +67,7 @@ public:
 private:
 	void updateImageCoords();
 
+	double _hfov;  // last hfov passed to init()/setHFov(); needed for FOV save/restore
 	double _vfov;
 
 	double _alpha, _beta;
@@ -75,6 +85,7 @@ private:
 
 	bool _dirty;
 	bool _dirtyCoords;
+	uint _bytesPerPixel;
 	const Graphics::Surface *_sourceSurface;
 	Graphics::Surface _surface;
 };

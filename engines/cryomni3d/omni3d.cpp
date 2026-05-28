@@ -31,6 +31,16 @@ void Omni3DManager::init(double hfov) {
 	_xSpeed = 0.;
 	_ySpeed = 0.;
 
+	setHFov(hfov);
+
+	_bytesPerPixel = 1;
+	_surface.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	clearConstraints();
+}
+
+void Omni3DManager::setHFov(double hfov) {
+	_hfov = hfov;
+
 	double oppositeSide = tan(hfov / 2.) / (4. / 3.);
 	double vf = atan2(oppositeSide, 1.);
 	_vfov = (M_PI_2 - vf - (13. / 180.*M_PI)) * 10. / 9.;
@@ -61,12 +71,23 @@ void Omni3DManager::init(double hfov) {
 		}
 	}
 
-	_surface.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	clearConstraints();
+	_dirty = true;
+	_dirtyCoords = true;
+}
+
+double Omni3DManager::getHFov() const {
+	return _hfov;
 }
 
 Omni3DManager::~Omni3DManager() {
 	_surface.free();
+}
+
+void Omni3DManager::setPixelFormat(const Graphics::PixelFormat &fmt) {
+	_bytesPerPixel = fmt.bytesPerPixel;
+	_surface.free();
+	_surface.create(640, 480, fmt);
+	_dirty = true;
 }
 
 void Omni3DManager::updateCoords(int xDelta, int yDelta, bool useOldSpeed) {
@@ -189,6 +210,10 @@ const Graphics::Surface *Omni3DManager::getSurface() {
 		uint off = 2;
 		byte *dst = (byte *)_surface.getBasePtr(0, 0);
 		const byte *src = (const byte *)_sourceSurface->getBasePtr(0, 0);
+		const uint bpp = _bytesPerPixel;
+		const uint dstRowStep  = 640 * bpp;
+		const uint dstTileBack = (16 * 640 - 16) * bpp;
+		const uint dstRowSkip  = 15 * 640 * bpp;
 
 		for (uint i = 0; i < 30; i++) {
 			for (uint j = 0; j < 40; j++) {
@@ -213,23 +238,35 @@ const Graphics::Surface *Omni3DManager::getSurface() {
 					uint deltaX = x1 * 32;
 					uint deltaY = y1;
 
-					for (uint x = 0; x < 16; x++) {
-						uint srcOff = (py & 0x1ff800) | (px >> 21);
-						dst[x] = src[srcOff];
-						px += deltaX;
-						py += deltaY;
+					if (bpp == 1) {
+						for (uint x = 0; x < 16; x++) {
+							uint srcOff = (py & 0x1ff800) | (px >> 21);
+							dst[x] = src[srcOff];
+							px += deltaX;
+							py += deltaY;
+						}
+					} else {
+						// 16bpp: srcOff is pixel index, write uint16
+						uint16 *dst16 = (uint16 *)dst;
+						const uint16 *src16 = (const uint16 *)src;
+						for (uint x = 0; x < 16; x++) {
+							uint srcOff = (py & 0x1ff800) | (px >> 21);
+							dst16[x] = src16[srcOff];
+							px += deltaX;
+							py += deltaY;
+						}
 					}
-					dst += 640;
+					dst += dstRowStep;
 
 					x1 += dx1;
 					y1 += dy1;
 					x2 += dx2;
 					y2 += dy2;
 				}
-				dst -= 16 * 640 - 16;
+				dst -= dstTileBack;
 				off += 2;
 			}
-			dst += 15 * 640;
+			dst += dstRowSkip;
 			off += 2;
 		}
 

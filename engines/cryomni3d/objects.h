@@ -55,7 +55,7 @@ public:
 	// Takes ownership of the pointer
 	void setViewCallback(ViewCallback callback) { _viewCallback = callback; }
 
-	void rename(uint newIdOBJ) { _idOBJ = newIdOBJ; }
+	void rename(uint newIdOBJ) { _idOBJ = newIdOBJ; _valid = true; }
 
 private:
 	uint _idOBJ;

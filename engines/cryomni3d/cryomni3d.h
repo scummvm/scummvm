@@ -50,6 +50,10 @@ namespace Image {
 class ImageDecoder;
 }
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 /**
  * This is the namespace of the Cryo Omni3D engine.
  *
@@ -68,6 +72,10 @@ enum {
 	kDebugFile = 1,
 	kDebugVariable,
 	kDebugSaveLoad,
+	kDebugScript,   // Atlantis: CON script interpreter, game flow, dialog
+	kDebugMesh,     // Atlantis: F3DC dialog mouth-mesh pipeline
+	kDebugVideo,    // Atlantis: SPW/SPF sprite + video compositing
+	kDebugMusic,    // Atlantis: music playlist
 };
 
 enum DragStatus {
@@ -120,6 +128,13 @@ public:
 	bool pollEvents();
 	Common::Point getMousePos();
 	void setMousePos(const Common::Point &point);
+	// Relative mouse motion accumulated since the last call, then cleared.
+	// Used for FPS-style look when the cursor is locked (g_system->lockMouse).
+	Common::Point takeMouseRelative() {
+		Common::Point p = _mouseRel;
+		_mouseRel = Common::Point(0, 0);
+		return p;
+	}
 	uint getCurrentMouseButton() { return _lastMouseButton; }
 	Common::KeyState getNextKey();
 	bool checkKeysPressed();
@@ -134,6 +149,11 @@ public:
 	virtual bool displayPlaceDocumentation() = 0;
 	virtual uint displayOptions() = 0;
 	virtual bool shouldAbort() { return g_engine->shouldQuit(); }
+
+	// Optional per-game hook for drawing an inventory object icon inside slot rect r.
+	// Called by the toolbar after the background slot is drawn.  Default: no-op.
+	virtual void drawInventoryIcon(Graphics::ManagedSurface &dst, const Object *obj,
+	                               const Common::Rect &r) {}
 
 	virtual void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const = 0;
 	virtual void setupPalette(const byte *colors, uint start, uint num) = 0;
@@ -164,6 +184,7 @@ protected:
 
 	DragStatus _dragStatus;
 	Common::Point _dragStart;
+	Common::Point _mouseRel;   // relative motion accumulated by pollEvents()
 	uint _lastMouseButton;
 	uint _autoRepeatNextEvent;
 

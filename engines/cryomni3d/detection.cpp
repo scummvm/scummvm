@@ -41,6 +41,10 @@ static const DebugChannelDef debugFlagList[] = {
 	{CryOmni3D::kDebugFile, "File", "Track File Accesses"},
 	{CryOmni3D::kDebugVariable, "Variable", "Track Variable Accesses"},
 	{CryOmni3D::kDebugSaveLoad, "SaveLoad", "Track Save/Load Function"},
+	{CryOmni3D::kDebugScript, "Script", "Atlantis CON script / game flow / dialog"},
+	{CryOmni3D::kDebugMesh, "Mesh", "Atlantis F3DC dialog mouth-mesh pipeline"},
+	{CryOmni3D::kDebugVideo, "Video", "Atlantis sprite + video compositing"},
+	{CryOmni3D::kDebugMusic, "Music", "Atlantis music playlist"},
 	DEBUG_CHANNEL_END
 };
 
