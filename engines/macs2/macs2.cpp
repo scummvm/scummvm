@@ -552,7 +552,7 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 		// TODO: There is a lot more going on in the function that does this. It is around
 		// -- Caller (1): 01e7:7a5b
 		// --Caller(2) : 01e7 : 8820
-		Macs2::BackgroundAnimationBlob::Func1480(currentBlob.Blob, true, 0x64 + current.numFrames);
+		Macs2::BackgroundAnimationBlob::advanceAnimFrame(currentBlob.Blob, true, 0x64 + current.numFrames);
 	}
 }
 
@@ -755,9 +755,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->activeInventoryItem = nullptr;
 	currentView->isShowingMainMenu = false;
 	currentView->clearOverlayTextEntries();
-	_scriptExecutor->global1040 = false;
-	_scriptExecutor->global1042 = false;
-	_scriptExecutor->global1F4C = false;
+	_scriptExecutor->inventoryActionFlag = false;
+	_scriptExecutor->inventoryCombineFlag = false;
+	_scriptExecutor->mapPanelActive = false;
 	_scriptExecutor->overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
@@ -1195,7 +1195,7 @@ void Macs2Engine::ScheduleRun(bool initScene) {
 	scheduledRunIsInitScene = initScene;
 }
 
-uint16 Macs2Engine::Func0E8C(const Common::Point &p) {
+uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
 	// TODO: Check against screen extent
 	uint8 value = _pathfindingMap.getPixel(p.x, p.y);
 	if (value < 0xC8 || value > 0xEF) {
@@ -1324,7 +1324,7 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 
 	*targetBlob = data;
 	if (decodeBlob) {
-		BackgroundAnimationBlob::Func1480(*targetBlob, true, 2);
+		BackgroundAnimationBlob::advanceAnimFrame(*targetBlob, true, 2);
 	}
 }
 
@@ -1514,7 +1514,7 @@ bool Macs2Engine::tick() {
 		bool shouldRunInit = scheduledRunIsInitScene;
 		scheduledRunIsInitScene = false;
 		// TODO: Not sure if it is correct setting this one here as well
-		_scriptExecutor->global1032 = true;
+		_scriptExecutor->isRepeatRun = true;
 		_scriptExecutor->Run(shouldRunInit);
 	}
 	return Events::tick();
@@ -1604,7 +1604,7 @@ AnimFrame BackgroundAnimationBlob::GetCurrentFrame() {
 	// TODO: Check the arguments used by the original
 	// TODO: TBC: There seem to be two used sets of args, false and 0 for getting the current
 	// frame and true and 2 for advancing the frame
-	uint16 offset = Func1480(Blob, true, 0x2);
+	uint16 offset = advanceAnimFrame(Blob, true, 0x2);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(Blob.data(), Blob.size());
 	offset += 6;
 	stream->seek(offset);
@@ -1613,7 +1613,7 @@ AnimFrame BackgroundAnimationBlob::GetCurrentFrame() {
 	return result;
 }
 
-uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8) {
+uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8) {
 	uint16 s = blob.size();
 	if (s == 0x767) {
 		s = 1;
@@ -1774,7 +1774,7 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	return bp12;
 }
 
-uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
+uint16 BackgroundAnimationBlob::getAnimFrameCount(Common::Array<uint8> &blob) {
 	// [bp-2h]
 	uint16 result;
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(blob.data(), blob.size());

@@ -140,8 +140,8 @@ struct BackgroundAnimationBlob {
 	uint32 FrameIndex;
 	AnimFrame GetFrame(uint32 index);
 	AnimFrame GetCurrentFrame();
-	static uint16 Func1480(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
-	static uint16 Func168C(Common::Array<uint8> &blob);
+	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
+	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
 };
 
 enum DebugFlag {
@@ -364,7 +364,7 @@ public:
 	// Schedules a run of the script the next time the executor is ticked
 	void ScheduleRun(bool initScene = false);
 
-	uint16 Func0E8C(const Common::Point &p);
+	uint16 getWalkabilityAt(const Common::Point &p);
 
 	int MeasureString(Common::String &s);
 
