@@ -263,7 +263,6 @@ MODULE_OBJS += \
 	madsv2/dragonsphere/sound_dragonsphere.o \
 	madsv2/forest/forest.o \
 	madsv2/forest/asound.o \
-	madsv2/forest/forest.o \
 	madsv2/forest/global.o \
 	madsv2/forest/main.o \
 	madsv2/forest/main_menu.o \
