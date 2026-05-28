@@ -60,7 +60,7 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	Common::DumpFile df;
 	// TODO: Read from args
 	Common::String path = "C:\\Users\\Flori\\Downloads\\test.dmp";
-	df.open(path);
+	df.open(Common::Path(path));
 	for (auto currentObject : GameObjects::instance().Objects) {
 		df.writeString(Common::String::format("Object %.2xh\n", currentObject->Index));
 		for (int i = 0; i < currentObject->Blobs.size(); i++) {

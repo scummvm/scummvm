@@ -1,3 +1,4 @@
 begin_section("Macs2");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Florian Mehm", "", "");
+	add_person("Martin Gerhardy", "mgerhardy", "");
 end_section();

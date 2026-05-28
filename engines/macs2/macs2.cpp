@@ -47,7 +47,7 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 	// TODO: Should we pass the stream as pointer or reference?
 	stream->seek(offs);
 
-	Graphics::ManagedSurface result = new Graphics::Surface();
+	Graphics::ManagedSurface result;
 	result.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	
 
