@@ -383,6 +383,7 @@ public:
 
 	void startFading();
 	void startFadeToBlack();
+	void startFadingWithSpeed(uint16 speed);
 
 	void DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
 	void DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);

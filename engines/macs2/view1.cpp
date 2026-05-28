@@ -94,8 +94,8 @@ void View1::OpenInventory(GameObject *newInventorySource) {
 	_isShowingInventory = true;
 	inventoryPage = 0;
 	activeInventoryItem = nullptr;
-	g_engine->_scriptExecutor->global1040 = false;
-	g_engine->_scriptExecutor->global1042 = false;
+	g_engine->_scriptExecutor->inventoryActionFlag = false;
+	g_engine->_scriptExecutor->inventoryCombineFlag = false;
 	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
 		g_engine->SetCursorMode(Script::MouseMode::Use);
 		UpdateCursor();
@@ -111,8 +111,8 @@ void View1::CloseInventory() {
 	_isShowingInventory = false;
 	inventoryPage = 0;
 	activeInventoryItem = nullptr;
-	g_engine->_scriptExecutor->global1040 = false;
-	g_engine->_scriptExecutor->global1042 = false;
+	g_engine->_scriptExecutor->inventoryActionFlag = false;
+	g_engine->_scriptExecutor->inventoryCombineFlag = false;
 
 	if (shouldResumeExternalInventory) {
 		g_engine->SetCursorMode(g_engine->_scriptExecutor->savedExternalInventoryMouseMode);
@@ -253,7 +253,7 @@ AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 	stream.seek(23, SEEK_SET);
 
-	uint16 offset = Macs2::BackgroundAnimationBlob::Func1480(gameObject->Blobs[index], true, 0);
+	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[index], true, 0);
 	offset += 6;
 	stream.seek(offset, SEEK_SET);
 	offset += 6;
@@ -584,10 +584,15 @@ void View1::drawPath(Graphics::ManagedSurface &s) {
 void View1::openMainMenu(Common::Point clickedPosition) {
 
 	isShowingMainMenu = true;
-	// Let's prototype the icon size first
-	Common::Point iconMaxSize(20, 20);
-	iconMaxSize += Common::Point(6, 6);
-	Common::Point inventorySize(iconMaxSize.x * 3 + 0x10, iconMaxSize.y * 3 + 0x10);
+	// Calculate button size from actual icon dimensions (matching original)
+	uint16 maxW = 0, maxH = 0;
+	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
+		if (g_engine->imageResources[i].Width > maxW) maxW = g_engine->imageResources[i].Width;
+		if (g_engine->imageResources[i].Height > maxH) maxH = g_engine->imageResources[i].Height;
+	}
+	uint16 btnW = maxW + 6;
+	uint16 btnH = maxH + 6;
+	Common::Point inventorySize(btnW * 3 + 0x10, btnH * 3 + 0x10);
 	Common::Point upperLeft = clickedPosition - inventorySize / 2;
 	if (upperLeft.x < 0) {
 		upperLeft.x += ABS(upperLeft.x);
@@ -611,18 +616,30 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 
 void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	DrawBorder(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
-	uint16 currentX = mainMenuRect.left;
-	uint16 currentY = mainMenuRect.top;
+
+	// 3x3 grid layout matching openActionBarAtPosition (1008:3fba)
+	// Each button is sized to the largest icon + 6px padding, centered in cell
+	uint16 maxW = 0, maxH = 0;
+	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
+		if (g_engine->imageResources[i].Width > maxW) maxW = g_engine->imageResources[i].Width;
+		if (g_engine->imageResources[i].Height > maxH) maxH = g_engine->imageResources[i].Height;
+	}
+	uint16 btnW = maxW + 6;
+	uint16 btnH = maxH + 6;
+
 	mainMenuButtonLocations.resize(9);
-	for (int i = 0; i < 9; i++) {
-		AnimFrame &currentFrame = g_engine->imageResources[i];
-		DrawSprite(currentX, currentY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
-		mainMenuButtonLocations[i] = Common::Rect(Common::Point(currentX, currentY), currentFrame.Width, currentFrame.Height);
-		currentX += currentFrame.Width + 4;
-		if (i > 0 && i % 3 == 0) {
-			currentX = mainMenuRect.left;
-			currentY += currentFrame.Height;
-		}
+	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
+		int col = i % 3;
+		int row = i / 3;
+		uint16 cellX = mainMenuRect.left + 8 + col * btnW;
+		uint16 cellY = mainMenuRect.top + 8 + row * btnH;
+
+		AnimFrame &frame = g_engine->imageResources[i];
+		// Center icon within cell
+		uint16 iconX = cellX + (btnW - frame.Width) / 2;
+		uint16 iconY = cellY + (btnH - frame.Height) / 2;
+		DrawSprite(iconX, iconY, frame.Width, frame.Height, frame.Data, s, false);
+		mainMenuButtonLocations[i] = Common::Rect(cellX, cellY, cellX + btnW, cellY + btnH);
 	}
 }
 
@@ -682,12 +699,22 @@ void View1::startFading() {
 	beginFadeCursorSuppression();
 	currentFadeValue = 0x40;
 	fadeMode = FadeMode::FromBlack;
+	// Default speed - original uses the script's transitionSpeed parameter
+	fadeDelta = 4;
 }
 
 void View1::startFadeToBlack() {
 	beginFadeCursorSuppression();
 	currentFadeValue = 0;
 	fadeMode = FadeMode::ToBlack;
+	fadeDelta = 4;
+}
+
+void View1::startFadingWithSpeed(uint16 speed) {
+	beginFadeCursorSuppression();
+	currentFadeValue = 0x40;
+	fadeMode = FadeMode::FromBlack;
+	fadeDelta = speed > 0 ? speed : 4;
 }
 
 void View1::beginFadeCursorSuppression() {
@@ -794,7 +821,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				// right number prefix like here 419 instead of 19?
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + firstObject->Index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
-				g_engine->_scriptExecutor->global1042 = true;
+				g_engine->_scriptExecutor->inventoryCombineFlag = true;
 				g_engine->RunScriptExecutor(false);
 			}
 
@@ -827,6 +854,13 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						OpenInventory(GameObjects::instance().GetProtagonistObject());
 					} break;
 
+					case static_cast<int>(MainMenuButtonIndex::Map): {
+						isShowingMainMenu = false;
+					} break;
+					case static_cast<int>(MainMenuButtonIndex::SaveLoad): {
+						isShowingMainMenu = false;
+						g_engine->openMainMenuDialog();
+					} break;
 					case static_cast<int>(MainMenuButtonIndex::Close): {
 						isShowingMainMenu = false;
 					} break;
@@ -836,8 +870,15 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			UpdateCursor();
 		}
 
-		// Handle no other interactions during a script
+		// Handle interactions during script execution
+		// From handleInput: clicks still dismiss text boxes and dialogue choices
 		if (g_engine->_scriptExecutor->IsExecuting()) {
+			if (_isShowingStringBox) {
+				clearStringBox();
+			}
+			if (_isShowingDialogueChoice) {
+				// Handle dialogue choice click
+			}
 			return true;
 		}
 
@@ -889,15 +930,16 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// Handle no other interactions during a script
 		if (g_engine->_scriptExecutor->IsExecuting()) {
 			// From handleInput: right-click during script execution opens the
-			// map/save panel if no UI is blocking.
+			// map/save panel ONLY if none of these are active:
+			// - IsSceneInitRun, text box, dialogue, overlay, sound/music waits
 			if (!_isShowingStringBox && !_isShowingDialogueChoice &&
 				!g_engine->_scriptExecutor->overlayTextStageActive &&
 				!g_engine->_scriptExecutor->waitForSoundPlayback &&
 				!g_engine->_scriptExecutor->waitForMusicControl &&
-				!g_engine->_scriptExecutor->waitForAdlibReady) {
-				// Toggle the save/load panel (ScummVM uses native save dialog)
-				// TODO: Implement the original's 10-slot save/load panel
-				// For now, open ScummVM's save/load dialog
+				!g_engine->_scriptExecutor->waitForAdlibReady &&
+				g_engine->_scriptExecutor->canOpenSaveMenu()) {
+				// Use ScummVM's native save/load dialog
+				g_engine->openMainMenuDialog();
 			}
 			return true;
 		}
@@ -2212,7 +2254,7 @@ void Character::SetPosition(const Common::Point &newPosition) {
 uint16 Character::GetVerticalOffset() const {
 	// See for example l0037_8F1F for this calculation
 	// l0037_8F1F:
-	uint16 result = g_engine->Func0E8C(GetPosition()); // [bp-0Ch]
+	uint16 result = g_engine->getWalkabilityAt(GetPosition()); // [bp-0Ch]
 	if (result >= 0xC8) {
 		// l0037_8F38:
 		result = 0;
@@ -2357,9 +2399,9 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	Common::Array<uint8> &blob = GameObject->useOverloadAnimation ? GameObject->overloadAnimation : GameObject->Blobs[blobIndex];
 
 	// Update pass
-	BackgroundAnimationBlob::Func1480(blob, true, 2);
+	BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
 	// Retrieval pass
-	uint16 offset = BackgroundAnimationBlob::Func1480(blob, false, 0x0);
+	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(blob, false, 0x0);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
@@ -2386,7 +2428,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 		return nullptr;
 	}
 
-	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[portraitBlobIndex], true, 2);
+	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(GameObject->Blobs[portraitBlobIndex], true, 2);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
@@ -2482,7 +2524,7 @@ void Character::Update() {
 			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
 			if (ExecuteScriptOnFinishLerp) {
 				ExecuteScriptOnFinishLerp = false;
-				g_engine->_scriptExecutor->global1032 = true;
+				g_engine->_scriptExecutor->isRepeatRun = true;
 				g_engine->ScheduleRun();
 			}
 			return;
@@ -2506,7 +2548,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->global1032 = true;
+			g_engine->_scriptExecutor->isRepeatRun = true;
 			g_engine->ScheduleRun();
 		}
 		return;
@@ -2547,7 +2589,7 @@ void Character::Update() {
 		}
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->global1032 = true;
+			g_engine->_scriptExecutor->isRepeatRun = true;
 			g_engine->ScheduleRun();
 		}
 		return;
