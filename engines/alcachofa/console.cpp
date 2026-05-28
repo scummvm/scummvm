@@ -344,7 +344,7 @@ bool Console::cmdPlaySound(int argc, const char **args) {
 		return true;
 	}
 
-	if (tolower(args[0][5]) == 'V')
+	if (tolower(args[0][4]) == 'v')
 		g_engine->sounds().playVoice(args[1]);
 	else
 		g_engine->sounds().playSFX(args[1]);
