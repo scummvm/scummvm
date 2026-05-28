@@ -589,7 +589,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		if (curSpell->getType() == kDMSpellTypeProjectileOpenDoor)
 			skillLevel <<= 1;
 
-		championMan.isProjectileSpellCast(champIndex, Thing(curSpell->getType() + _vm->_thingFirstExplosion.toUint16()), CLIP(21, (powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 255), 0);
+		championMan.isProjectileSpellCast(champIndex, Thing(curSpell->getType() + _vm->_thingFirstExplosion.toUint16()), CLIP((powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 21, 255), 0);
 		break;
 	case kDMSpellKindOther: {
 		TimelineEvent newEvent;

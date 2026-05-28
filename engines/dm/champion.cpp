@@ -661,7 +661,7 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 	if (getFlag(curChampion->_wounds, (slotIndex == kDMSlotReadyHand) ? kDMWoundReadHand : kDMWoundActionHand))
 		strength >>= 1;
 
-	return CLIP(0, strength >> 1, 100);
+	return CLIP(strength >> 1, 0, 100);
 }
 
 Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex) {
@@ -883,7 +883,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	if (_partyIsSleeping)
 		woundDefense >>= 1;
 
-	return CLIP(0, woundDefense >> 1, 100);
+	return CLIP(woundDefense >> 1, 0, 100);
 }
 
 uint16 ChampionMan::getStatisticAdjustedAttack(Champion *champ, uint16 statIndex, uint16 attack) {
@@ -920,7 +920,7 @@ void ChampionMan::wakeUp() {
 
 int16 ChampionMan::getThrowingStaminaCost(Thing thing) {
 	int16 weight = _vm->_dungeonMan->getObjectWeight(thing) >> 1;
-	int16 staminaCost = CLIP<int16>(1, weight, 10);
+	int16 staminaCost = CLIP<int16>(weight, 1, 10);
 
 	while ((weight -= 10) > 0)
 		staminaCost += weight >> 1;
@@ -979,7 +979,7 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 		Skill *curSkill = &curChampion->_skills[skillIndex];
 		curSkill->_experience += exp;
 		if (curSkill->_temporaryExperience < 32000)
-			curSkill->_temporaryExperience += CLIP(1, exp >> 3, 100);
+			curSkill->_temporaryExperience += CLIP(exp >> 3, 1, 100);
 
 		curSkill = &curChampion->_skills[baseSkillIndex];
 		if (skillIndex >= kDMSkillSwing)
@@ -1121,7 +1121,7 @@ bool ChampionMan::isLucky(Champion *champ, uint16 percentage) {
 
 	unsigned char *curStat = champ->_statistics[kDMStatLuck];
 	bool retVal = (_vm->getRandomNumber(curStat[kDMStatCurrent]) > percentage);
-	curStat[kDMStatCurrent] = CLIP<unsigned char>(curStat[kDMStatMinimum], curStat[kDMStatCurrent] + (retVal ? -2 : 2), curStat[kDMStatMaximum]);
+	curStat[kDMStatCurrent] = CLIP<unsigned char>(curStat[kDMStatCurrent] + (retVal ? -2 : 2), curStat[kDMStatMinimum], curStat[kDMStatMaximum]);
 	return retVal;
 }
 
@@ -1660,7 +1660,7 @@ void ChampionMan::applyTimeEffects() {
 				staminaGainCycleCount += 2;
 
 			int16 staminaLoss = 0;
-			int16 staminaAmount = CLIP(1, (championPtr->_maxStamina >> 8) - 1, 6);
+			int16 staminaAmount = CLIP((championPtr->_maxStamina >> 8) - 1, 1, 6);
 			if (_partyIsSleeping)
 				staminaAmount <<= 1;
 
