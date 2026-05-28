@@ -22,200 +22,199 @@
 #ifndef MACS2_ADLIB_H
 #define MACS2_ADLIB_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 
 namespace Common {
 class MemoryReadStream;
 class MemorySeekableReadWriteStream;
 
-}
+} // namespace Common
 
 namespace OPL {
-	class OPL;
+class OPL;
 }
 
 namespace Macs2 {
 
-	class StreamHandler : public Common::SeekableReadStream {
-		private:
-			Common::MemorySeekableReadWriteStream *_stream = nullptr;
-			int64 _pos = 0;
-		public:
-			StreamHandler(Common::MemorySeekableReadWriteStream *s);
+class StreamHandler : public Common::SeekableReadStream {
+private:
+	Common::MemorySeekableReadWriteStream *_stream = nullptr;
+	int64 _pos = 0;
 
-			StreamHandler(Common::Array<uint8>* data);
+public:
+	StreamHandler(Common::MemorySeekableReadWriteStream *s);
 
-	
-		bool eos() const override;
-		uint32 read(void *dataPtr, uint32 dataSize) override;
-		int64 pos() const override;
-		int64 size() const override;
-		bool seek(int64 offset, int whence) override;
-		byte peekByte();
-		byte peekByteAtOffset(int64 offset, int whence);
-		uint16 peekWord();
-	};
+	StreamHandler(Common::Array<uint8> *data);
 
-	class Adlib {
+	bool eos() const override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offset, int whence) override;
+	byte peekByte();
+	byte peekByteAtOffset(int64 offset, int whence);
+	uint16 peekWord();
+};
 
-	private:
-		OPL::OPL *_opl;
+class Adlib {
 
-		void SIS_LogEntry(uint16 seg, uint16 off, Common::String msg = "");
+private:
+	OPL::OPL *_opl;
 
-		void Func1A03();
+	void SIS_LogEntry(uint16 seg, uint16 off, Common::String msg = "");
 
-		// 01D7:1AA7
-		void OnTimer();
+	void Func1A03();
 
-		// TODO: Consider pointer vs. passing by value
-		StreamHandler* Func19BE_SH(StreamHandler* inHandler, uint16 seekDelta);
+	// 01D7:1AA7
+	void OnTimer();
 
-		void Func244D(StreamHandler *song);
+	// TODO: Consider pointer vs. passing by value
+	StreamHandler *Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta);
 
-		// TODO: Maybe need to add the caller
-		uint16 Func24FD();
+	void Func244D(StreamHandler *song);
 
-		// TODO: Maybe we need to add the caller, fn0017_24FD proc
-		uint16 Func2686();
+	// TODO: Maybe need to add the caller
+	uint16 Func24FD();
 
-		uint8 Func2779(uint8 arg1);
+	// TODO: Maybe we need to add the caller, fn0017_24FD proc
+	uint16 Func2686();
 
-		// Writes a value to the target register
-		void Func2792(byte registerIndex, byte value);
-		void Func2792r(byte value, byte registerIndex) {
-			Func2792(registerIndex, value);
-		}
+	uint8 Func2779(uint8 arg1);
 
-		void Func27E4();
-		
-		// TODO: Consider adding the caller
-		void Func2839(uint8 bpp0A, StreamHandler* sh);
+	// Writes a value to the target register
+	void Func2792(byte registerIndex, byte value);
+	void Func2792r(byte value, byte registerIndex) {
+		Func2792(registerIndex, value);
+	}
 
-		void Func294E(uint16 bppA, uint8 bpp8, uint16 bpp6);
+	void Func27E4();
 
-		// TODO: Where initialized?
-		uint8 g36;
+	// TODO: Consider adding the caller
+	void Func2839(uint8 bpp0A, StreamHandler *sh);
 
-		// Array accessed as [di + 37h]
-		Common::Array<uint8> gArray37;
+	void Func294E(uint16 bppA, uint8 bpp8, uint16 bpp6);
 
-		// Array accessed as [di + 8dh]
-		Common::Array<uint8> gArray8d;
+	// TODO: Where initialized?
+	uint8 g36;
 
-		// Array accesed as [di + 57]
-		Common::Array<uint8> gArray57;
+	// Array accessed as [di + 37h]
+	Common::Array<uint8> gArray37;
 
-		// Array accessed as [di + 5C]
-		Common::Array<uint8> gArray5C;
+	// Array accessed as [di + 8dh]
+	Common::Array<uint8> gArray8d;
 
-		// Array accessed as [di + 69]
-		// Used for looking up data in 27E4, loaded from the executable
-		Common::Array<uint8> gArray69;
+	// Array accesed as [di + 57]
+	Common::Array<uint8> gArray57;
 
-		// Array accesed as [di + 96]
-		Common::Array<uint8> gArray96;
+	// Array accessed as [di + 5C]
+	Common::Array<uint8> gArray5C;
 
-		// Array accessed as [di+9Fh] - from 0x0001B69F
-		Common::Array<uint8> gArray9F;
+	// Array accessed as [di + 69]
+	// Used for looking up data in 27E4, loaded from the executable
+	Common::Array<uint8> gArray69;
 
-		// Array accessed as [di+11Fh] - from 0x0001B71F
-		Common::Array<uint8> gArray11F;
+	// Array accesed as [di + 96]
+	Common::Array<uint8> gArray96;
 
-		// [223Eh] - Seems to be a 16 bit value - Initial value?
-		// TODO: Could also be a 32 bit or pointer with 2240
-		uint16 g223E;
+	// Array accessed as [di+9Fh] - from 0x0001B69F
+	Common::Array<uint8> gArray9F;
 
-		// Memory being pointed to by [2244] and [2246]
-		StreamHandler *shMem2244;
+	// Array accessed as [di+11Fh] - from 0x0001B71F
+	Common::Array<uint8> gArray11F;
 
-		// Memory being pointed to by [2248] and [224A]
-		StreamHandler* shMem2248;
+	// [223Eh] - Seems to be a 16 bit value - Initial value?
+	// TODO: Could also be a 32 bit or pointer with 2240
+	uint16 g223E;
 
-		// Global word variable [2240h]
-		uint16 g2240;
+	// Memory being pointed to by [2244] and [2246]
+	StreamHandler *shMem2244;
 
-		// Global byte varialbe [2242]
-		uint8 g2242 = 1;
+	// Memory being pointed to by [2248] and [224A]
+	StreamHandler *shMem2248;
 
-		// Global word variable [224Eh]
-		uint16 g224E;
+	// Global word variable [2240h]
+	uint16 g2240;
 
-		// Memory being pointed to by [2250] and [2252]
-		StreamHandler *shMem2250 = nullptr;
+	// Global byte varialbe [2242]
+	uint8 g2242 = 1;
 
-		// 	[2254h] and [2256h]
-		uint32 _nextEventTimer;
+	// Global word variable [224Eh]
+	uint16 g224E;
 
-		// [2258h] - TODO: Not sure about size - Initialization
-		// Initialized in fn0017_24FD
-		uint8 g2258;
+	// Memory being pointed to by [2250] and [2252]
+	StreamHandler *shMem2250 = nullptr;
 
-		// [2259h] - TODO: Not sure about size - Initialization
-		uint8 g2259;
+	// 	[2254h] and [2256h]
+	uint32 _nextEventTimer;
 
-		// [225Eh] - TODO: Not sure about size - Initialization
-		uint8 g225E;
+	// [2258h] - TODO: Not sure about size - Initialization
+	// Initialized in fn0017_24FD
+	uint8 g2258;
 
-		// Array at [di + 226F] - TODO: Initialization, values, ...?
-		Common::Array<uint8> gArray226F;
+	// [2259h] - TODO: Not sure about size - Initialization
+	uint8 g2259;
 
-		// [2291h] - Not sure how used - initialization?
-		// TODO: Not sure if this is not actually a byte value
-		uint16 g2291;
+	// [225Eh] - TODO: Not sure about size - Initialization
+	uint8 g225E;
 
-		// [2296h] - TODO: Initialization
-		uint16 g2296;
+	// Array at [di + 226F] - TODO: Initialization, values, ...?
+	Common::Array<uint8> gArray226F;
 
-		// [2298h] - Set in 24FD
-		// TODO: Hardcoded to 5 for now
-		uint16 g2298 = 5;
+	// [2291h] - Not sure how used - initialization?
+	// TODO: Not sure if this is not actually a byte value
+	uint16 g2291;
 
-		// [225Ah] - TODO: Initial value?
-		// TODO: could also be a 32-bit value or a pointer together
-		// with 225C
-		uint16 g225A;
+	// [2296h] - TODO: Initialization
+	uint16 g2296;
 
-		uint16 g225C;
+	// [2298h] - Set in 24FD
+	// TODO: Hardcoded to 5 for now
+	uint16 g2298 = 5;
 
-		// Array at [222Ch] - accessed with byte values
-		// TODO: Initialization, access pattern
-		Common::Array<uint8> gArray222C;
+	// [225Ah] - TODO: Initial value?
+	// TODO: could also be a 32-bit value or a pointer together
+	// with 225C
+	uint16 g225A;
 
-		// Array at [225Fh] - accessed with byte values
-		// TODO: Initialization, access pattern
-		Common::Array<uint8> gArray225F;
+	uint16 g225C;
 
-		// Array at [227Fh] - accessed with byte values
-		// TODO: Initialization, access pattern, size
-		Common::Array<uint8> gArray227F;
+	// Array at [222Ch] - accessed with byte values
+	// TODO: Initialization, access pattern
+	Common::Array<uint8> gArray222C;
 
-		// Array at [2288h] - accessed with byte values
-		// TODO: Initialization, access pattern, size
-		Common::Array<uint8> gArray2288;
+	// Array at [225Fh] - accessed with byte values
+	// TODO: Initialization, access pattern
+	Common::Array<uint8> gArray225F;
 
-		// Array at [229Ch] - accessed with byte values
-		// TODO: Initialization, access pattern, size
-		// Seems to save copies of values written to registers
-		// Trying with an initial size of 255 bytes
-		Common::Array<uint8> gArray229C;
+	// Array at [227Fh] - accessed with byte values
+	// TODO: Initialization, access pattern, size
+	Common::Array<uint8> gArray227F;
 
-		// Array at [2235h] - accessed with bytes values
-		// TODO: Initialization, access pattern, size
-		Common::Array<uint8> gArray2235;
+	// Array at [2288h] - accessed with byte values
+	// TODO: Initialization, access pattern, size
+	Common::Array<uint8> gArray2288;
 
-		bool g229A;
+	// Array at [229Ch] - accessed with byte values
+	// TODO: Initialization, access pattern, size
+	// Seems to save copies of values written to registers
+	// Trying with an initial size of 255 bytes
+	Common::Array<uint8> gArray229C;
 
-		// [229Bh] - seems to contain song byte - TODO: Initial value?
-		uint8 g229B;
+	// Array at [2235h] - accessed with bytes values
+	// TODO: Initialization, access pattern, size
+	Common::Array<uint8> gArray2235;
 
-		// fn0017_2A80: 0017:2A80
-		void Func2A80(uint8 bpp6, uint8 bpp8, uint8 reg_base);
-	
+	bool g229A;
 
-		public:
+	// [229Bh] - seems to contain song byte - TODO: Initial value?
+	uint8 g229B;
+
+	// fn0017_2A80: 0017:2A80
+	void Func2A80(uint8 bpp6, uint8 bpp8, uint8 reg_base);
+
+public:
 	void Init();
 
 	void Deinit();
@@ -231,12 +230,10 @@ namespace Macs2 {
 
 	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
 
-	private:
+private:
 	Common::Array<uint8> _activeSongData;
 	StreamHandler *_activeSongStream = nullptr;
-
-		
-	};
+};
 
 } // namespace Macs2
 

@@ -20,8 +20,8 @@
  */
 
 #include "adlib.h"
-#include "audio/mixer.h"
 #include "audio/fmopl.h"
+#include "audio/mixer.h"
 #include "common/debug.h"
 #include <common/memstream.h>
 
@@ -33,8 +33,6 @@ void Adlib::Func2792(byte registerIndex, byte value) {
 	// _opl->write(0x388, registerIndex);
 	_opl->writeReg(registerIndex, value);
 	gArray229C[registerIndex] = value;
-
-	
 
 	/*
 
@@ -76,47 +74,47 @@ l0017_27E0:
 
 void Adlib::Func27E4() {
 	// AI-reverse engineered by DeepSeek v1 via Perplexity
-		uint16 local_counter; // bp-2h (2-byte local variable)
+	uint16 local_counter; // bp-2h (2-byte local variable)
 
-		// First loop section (27EF-27F2 labels)
-		local_counter = 0;
-		do { // l0017_27F2
-			// if (local_counter >= 9)
-			//	break; // Original jmp condition
-			// Note: Deepseek put this here as well as the bottom where it is
-			// originally
+	// First loop section (27EF-27F2 labels)
+	local_counter = 0;
+	do { // l0017_27F2
+		// if (local_counter >= 9)
+		//	break; // Original jmp condition
+		// Note: Deepseek put this here as well as the bottom where it is
+		// originally
 
-			// Body of first loop
-			uint16 param = local_counter + 0xB0;
-			// Note: Deepseek got confused about the arguments being pushed (as did I
-			// the first time I saw it)
-			uint8 result = Func2779(param);
-			// Note: Local hallucination where it mixes it up with a string operation
-			result &= 0xDF;                                     // Convert to uppercase
-			Func2792(param, result);
+		// Body of first loop
+		uint16 param = local_counter + 0xB0;
+		// Note: Deepseek got confused about the arguments being pushed (as did I
+		// the first time I saw it)
+		uint8 result = Func2779(param);
+		// Note: Local hallucination where it mixes it up with a string operation
+		result &= 0xDF; // Convert to uppercase
+		Func2792(param, result);
 
-			// l0017_27EF
-			local_counter++;
-		} while (local_counter <= 8); // cmp 8h, jnz 27EFh
+		// l0017_27EF
+		local_counter++;
+	} while (local_counter <= 8); // cmp 8h, jnz 27EFh
 
-		// TODO: Continue from here
+	// TODO: Continue from here
 
-		// Second loop section (2813-281D labels)
-		local_counter = 0;
-		do { // l0017_281D
-			// Access memory at [di+69h]
+	// Second loop section (2813-281D labels)
+	local_counter = 0;
+	do { // l0017_281D
+		// Access memory at [di+69h]
 
-			uint8 mem_value = gArray69[local_counter];
-			uint16 param = mem_value + 0x40;
+		uint8 mem_value = gArray69[local_counter];
+		uint16 param = mem_value + 0x40;
 
-			Func2792(param, 0xFF);
+		Func2792(param, 0xFF);
 
-			// l0017_281A
-			// Note: Deepseek again mixed up the order in the loop a bit,
-			// but is seems to be equivalent in effect
-			local_counter++;
-		} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
-	}
+		// l0017_281A
+		// Note: Deepseek again mixed up the order in the loop a bit,
+		// but is seems to be equivalent in effect
+		local_counter++;
+	} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
+}
 
 uint16 Adlib::Func2686() {
 	// Ignoring this code for now, maybe just fancy sync stuff not needed on the emulator
@@ -314,7 +312,6 @@ uint16 Adlib::Func24FD() {
 		gArray2235[loop_counter] = 0xFF;
 	}
 
-	
 	// l0017_25C3:
 	Func1A03();
 
@@ -367,25 +364,25 @@ CLEANUP_2648: // [Original label: l0017_2648]
 	return return_value;
 }
 
-void Adlib::Func2839(uint8 bpp0A, StreamHandler* sh) {
+void Adlib::Func2839(uint8 bpp0A, StreamHandler *sh) {
 	uint8 bp1 = gArray8d[bpp0A];
 	uint8 bp2 = gArray96[bpp0A];
-	
+
 	uint8 value = sh->peekByteAtOffset(0, SEEK_CUR);
 	Func2792(bp1 + 0x20, value);
-	
+
 	value = sh->peekByteAtOffset(1, SEEK_CUR);
 	Func2792(bp2 + 0x20, value);
-	
+
 	value = sh->peekByteAtOffset(2, SEEK_CUR);
 	Func2792(bp1 + 0x40, value);
-	
+
 	value = sh->peekByteAtOffset(3, SEEK_CUR);
 	Func2792(bp2 + 0x40, value);
-	
+
 	value = sh->peekByteAtOffset(4, SEEK_CUR);
 	Func2792(bp1 + 0x60, value);
-	
+
 	value = sh->peekByteAtOffset(5, SEEK_CUR);
 	Func2792(bp2 + 0x60, value);
 
@@ -394,7 +391,7 @@ void Adlib::Func2839(uint8 bpp0A, StreamHandler* sh) {
 
 	value = sh->peekByteAtOffset(7, SEEK_CUR);
 	Func2792(bp2 + 0x80, value);
-	
+
 	value = sh->peekByteAtOffset(8, SEEK_CUR);
 	Func2792(bp1 + 0xE0, value);
 
@@ -539,7 +536,7 @@ void Adlib::OnTimer() {
 		for (;;) {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
-			
+
 			debug("Loop iteration, [2250] value: %.2X at offset %lX", current, shMem2250->pos());
 			if (current & 0x80) {
 				// The first bit of the read value was 0
@@ -555,10 +552,9 @@ void Adlib::OnTimer() {
 			uint8 bp3 = g229B & 0x0F;
 			uint8 bp6 = g229B;
 			uint8 bp4 = shMem2250->peekByte();
-			StreamHandler* bp10 = Func19BE_SH(shMem2250, 1);
-			StreamHandler* bp12;
+			StreamHandler *bp10 = Func19BE_SH(shMem2250, 1);
+			StreamHandler *bp12;
 			uint8 bp5 = bp10->peekByte();
-
 
 			if ((bp6 & 0xF0) == 0x90) {
 				// l0017_1BA1:
@@ -574,7 +570,7 @@ void Adlib::OnTimer() {
 						SIS_LogEntry(0x01D7, 0x1BE4);
 						uint8 bp8 = 0;
 						do {
-							// l0017_1BE9:			
+							// l0017_1BE9:
 							if (g2291 <= bp8) {
 								break;
 							}
@@ -593,139 +589,139 @@ void Adlib::OnTimer() {
 							// l0017_1C15:
 							bp8++;
 						} while (true);
-					// l0017_1C1A:
-					if (g2291 == bp8) {
-						// l0017_1C27:
-						SIS_LogEntry(0x01D7, 0x1C27);
-						uint16 bp0C = 0;
-						bp8 = g2291;
-						uint16 bp16 = g2291 - 1;
-						if (bp16 > 0) {
-							SIS_LogEntry(0x01D7, 0x1C44);
-							uint16 bp0A = 0;
-							do {
-								// l0017_1C49:
-								// l0017_1C4C:
-								if (gArray222C[bp0A] != 0) {
-									// l0017_1C56:
-									gArray222C[bp0A]++;
+						// l0017_1C1A:
+						if (g2291 == bp8) {
+							// l0017_1C27:
+							SIS_LogEntry(0x01D7, 0x1C27);
+							uint16 bp0C = 0;
+							bp8 = g2291;
+							uint16 bp16 = g2291 - 1;
+							if (bp16 > 0) {
+								SIS_LogEntry(0x01D7, 0x1C44);
+								uint16 bp0A = 0;
+								do {
+									// l0017_1C49:
+									// l0017_1C4C:
+									if (gArray222C[bp0A] != 0) {
+										// l0017_1C56:
+										gArray222C[bp0A]++;
+									}
+									// l0017_1C5D:
+									if (gArray222C[bp0A] > bp0C) {
+										// l0017_1C6B:
+										bp0C = gArray222C[bp0A];
+										bp8 = bp0A;
+									}
+									// l0017_1C7D:
+									if (bp0A == bp16) {
+										break;
+									}
+									// l0017_1C44:
+									// Original has this at the top but skips
+									// it for the first round
+									bp0A++;
+								} while (true);
+							}
+							// l0017_1C85:
+							if (bp0C != 0) {
+								// l0017_1C8B:
+								SIS_LogEntry(0x01D7, 0x1C8B);
+								gArray222C[bp8] = 0;
+								gArray227F[bp8] = bp3;
+								if (gArray225F[bp3] != gArray2288[bp8]) {
+									// l0017_1CB1:
+									SIS_LogEntry(0x01D7, 0x1CB1);
+									gArray2288[bp8] = gArray225F[bp3];
+									StreamHandler *shBP12 = Func19BE_SH(shMem2248, gArray2288[bp8] << 0x4);
+									Func2839(bp8, shBP12);
 								}
-								// l0017_1C5D:
-								if (gArray222C[bp0A] > bp0C) {
-									// l0017_1C6B:
-									bp0C = gArray222C[bp0A];
-									bp8 = bp0A;
-								}
-								// l0017_1C7D:
-								if (bp0A == bp16) {
-									break;
-								}
-								// l0017_1C44:
-								// Original has this at the top but skips
-								// it for the first round
-								bp0A++;
-							} while (true);
-						}
-						// l0017_1C85:
-						if (bp0C != 0) {
-							// l0017_1C8B:
-							SIS_LogEntry(0x01D7, 0x1C8B);
-							gArray222C[bp8] = 0;
-							gArray227F[bp8] = bp3;
-							if (gArray225F[bp3] != gArray2288[bp8]) {
-								// l0017_1CB1:
-								SIS_LogEntry(0x01D7, 0x1CB1);
-								gArray2288[bp8] = gArray225F[bp3];
-								StreamHandler* shBP12 = Func19BE_SH(shMem2248, gArray2288[bp8] << 0x4);
-								Func2839(bp8, shBP12);
 							}
 						}
-					}
-					// l0017_1CF2:
-					if (g2291 != bp8) {
-						SIS_LogEntry(0x01D7, 0x1CFF);
-						// l0017_1CFF:
-						gArray2235[bp8] = bp4;
-						uint8 value = gArray225F[bp3];
-						bp10 = Func19BE_SH(shMem2248, value << 0x4);
-						uint8 temp = bp5;
-						temp &= 0x7F;
-						// dx
-						uint8 temp2 = temp >> 0x1;
-						temp = 0x3F;
-						temp -= temp2;
-						temp = temp >> 0x1;
-						bp1 = temp;
-						bp1 = bp1 >> 1;
-	
-						bp12 = Func19BE_SH(bp10, 0x2);
+						// l0017_1CF2:
+						if (g2291 != bp8) {
+							SIS_LogEntry(0x01D7, 0x1CFF);
+							// l0017_1CFF:
+							gArray2235[bp8] = bp4;
+							uint8 value = gArray225F[bp3];
+							bp10 = Func19BE_SH(shMem2248, value << 0x4);
+							uint8 temp = bp5;
+							temp &= 0x7F;
+							// dx
+							uint8 temp2 = temp >> 0x1;
+							temp = 0x3F;
+							temp -= temp2;
+							temp = temp >> 0x1;
+							bp1 = temp;
+							bp1 = bp1 >> 1;
 
-						temp = g225E;
-						// bx
-						temp2 = temp;
-						temp = bp12->peekByte();
-						temp &= 0x3F;
-						// dx
-						uint8 temp3 = temp;
-						temp = 0x3F;
-						temp -= temp3;
-						temp3 = temp;
-						uint16 tempW = bp1;
-						tempW *= temp3;
-						tempW /= 0x3F;
-						tempW += temp2;
-						// dx word
-						uint16 temp2W = tempW;
-						// ax
-						temp = bp12->peekByte() & 0x3F;
-						// TODO: Cast to 8 bit here
-						bp2 = temp2W + temp;
+							bp12 = Func19BE_SH(bp10, 0x2);
 
-						bp12 = Func19BE_SH(bp10, 0x3);
-						// TODO: Identical section but final assignment is different
-						temp = g225E;
-						// bx
-						temp2 = temp;
-						temp = bp12->peekByte();
-						temp &= 0x3F;
-						// dx
-						temp3 = temp;
-						temp = 0x3F;
-						temp -= temp3;
-						temp3 = temp;
-						tempW = bp1;
-						tempW *= temp3;
-						tempW /= 0x3F;
-						tempW += temp2;
-						// dx word
-						temp2W = tempW;
-						// ax
-						temp = bp12->peekByte() & 0x3F;
-						// TODO: Cast to 8 bit here
-						bp1 = temp2W + temp;
-						if (bp1 > 0x3F) {
-							// l0017_1DEC:
-							bp1 = 0x3F;
-						}
-						// l0017_1DF0:
-						if (bp2 > 0x3F) {
-							// l0017_1DF6:
-							bp2 = 0x3F;
-						}
-						// 1DFAh
-						Func2792(bp8 + 0xb0, 0);
+							temp = g225E;
+							// bx
+							temp2 = temp;
+							temp = bp12->peekByte();
+							temp &= 0x3F;
+							// dx
+							uint8 temp3 = temp;
+							temp = 0x3F;
+							temp -= temp3;
+							temp3 = temp;
+							uint16 tempW = bp1;
+							tempW *= temp3;
+							tempW /= 0x3F;
+							tempW += temp2;
+							// dx word
+							uint16 temp2W = tempW;
+							// ax
+							temp = bp12->peekByte() & 0x3F;
+							// TODO: Cast to 8 bit here
+							bp2 = temp2W + temp;
 
-						uint8 result = Func2779(gArray96[bp8] + 0x40);
-						Func2792(gArray96[bp8] + 0x40, (result & 0xC0) + bp1);
-						result = Func2779(gArray8d[bp8] + 0x40);
+							bp12 = Func19BE_SH(bp10, 0x3);
+							// TODO: Identical section but final assignment is different
+							temp = g225E;
+							// bx
+							temp2 = temp;
+							temp = bp12->peekByte();
+							temp &= 0x3F;
+							// dx
+							temp3 = temp;
+							temp = 0x3F;
+							temp -= temp3;
+							temp3 = temp;
+							tempW = bp1;
+							tempW *= temp3;
+							tempW /= 0x3F;
+							tempW += temp2;
+							// dx word
+							temp2W = tempW;
+							// ax
+							temp = bp12->peekByte() & 0x3F;
+							// TODO: Cast to 8 bit here
+							bp1 = temp2W + temp;
+							if (bp1 > 0x3F) {
+								// l0017_1DEC:
+								bp1 = 0x3F;
+							}
+							// l0017_1DF0:
+							if (bp2 > 0x3F) {
+								// l0017_1DF6:
+								bp2 = 0x3F;
+							}
+							// 1DFAh
+							Func2792(bp8 + 0xb0, 0);
 
-						// Note that we again push one more copy of the
-						// value which is not used in g2779 above.
-						Func2792(gArray8d[bp8] + 0x40,
-									(result & 0xC0) + bp2);
-						
-						gArray226F[bp3] = 0;							
-						Func294E(bp8, bp4, gArray226F[bp3]);
+							uint8 result = Func2779(gArray96[bp8] + 0x40);
+							Func2792(gArray96[bp8] + 0x40, (result & 0xC0) + bp1);
+							result = Func2779(gArray8d[bp8] + 0x40);
+
+							// Note that we again push one more copy of the
+							// value which is not used in g2779 above.
+							Func2792(gArray8d[bp8] + 0x40,
+									 (result & 0xC0) + bp2);
+
+							gArray226F[bp3] = 0;
+							Func294E(bp8, bp4, gArray226F[bp3]);
 						}
 					} else {
 						//			// l0017_1E94:
@@ -876,7 +872,7 @@ void Adlib::OnTimer() {
 				//	}
 			}
 			//	// l0017_21A3 and l0017_21AC:
-			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0 ) {
+			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0) {
 				// l0017_21B5:
 				SIS_LogEntry(0x01D7, 0x21B5);
 				shMem2250 = Func19BE_SH(shMem2250, 0x2);
@@ -899,66 +895,65 @@ void Adlib::OnTimer() {
 				} else if (bp4 == 0x67) {
 					SIS_LogEntry(0x01D7, 0x2231);
 					debug("Unimplemented");
-			//				// TODO: Continue from here
-			//				// l0017_2231:
-			//				if (bp5 != 0) {
-			//					// l0017_2237:
-			//					g2291 = 0x6;
-			//					Func2792(0xBD, 0x20);
-			//				} else {
-			//					// l0017_2247:
-			//					g2291 = 0x9;
-			//					Func2792(0xBD, 0);
-			//				} // l0017_2258:
-						} else if (bp4 == 0x69) {
-			//					// l0017_225C:
-							SIS_LogEntry(0x01D7, 0x225C);
-							debug("Unimplemented");
-			//					// TODO: Check if the neg works out the right way
-			//					bp5 = -bp5;
-			//					gArray226F[bp3] = bp5;
-			//					uint8 bp16 = g2291 - 1;
-			//					if (0 <= bp16) {
-			//						// l0017_2289:
-			//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-			//							// l0017_228C:
-			//							if (gArray227F[bp8] != bp3) {
-			//								continue;
-			//							}
-			//							// l0017_2298:
-			//							if (gArray222C[bp8] != 0) {
-			//								continue;
-			//							}
+					//				// TODO: Continue from here
+					//				// l0017_2231:
+					//				if (bp5 != 0) {
+					//					// l0017_2237:
+					//					g2291 = 0x6;
+					//					Func2792(0xBD, 0x20);
+					//				} else {
+					//					// l0017_2247:
+					//					g2291 = 0x9;
+					//					Func2792(0xBD, 0);
+					//				} // l0017_2258:
+				} else if (bp4 == 0x69) {
+					//					// l0017_225C:
+					SIS_LogEntry(0x01D7, 0x225C);
+					debug("Unimplemented");
+					//					// TODO: Check if the neg works out the right way
+					//					bp5 = -bp5;
+					//					gArray226F[bp3] = bp5;
+					//					uint8 bp16 = g2291 - 1;
+					//					if (0 <= bp16) {
+					//						// l0017_2289:
+					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
+					//							// l0017_228C:
+					//							if (gArray227F[bp8] != bp3) {
+					//								continue;
+					//							}
+					//							// l0017_2298:
+					//							if (gArray222C[bp8] != 0) {
+					//								continue;
+					//							}
 
-			//							// l0017_22A2:
-			//							Func294E(bp8, gArray2235[bp8], bp5);
-			//						}
-			//					}
-							// l0017_22C1:
-						} else if (bp4 == 0x68) {
-			//					// l0017_22C5:
-							SIS_LogEntry(0x01D7, 0x22C5);
-							debug("Unimplemented");
-			//					gArray226F[bp3] = bp5;
-			//					uint16 bp16 = g2291 - 1;
-			//					if (0 <= bp16) {
-			//						// l0017_22E3:
-			//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-			//							// l0017_22EB:
-			//							if (gArray227F[bp8] != bp3) {
-			//								continue;
-			//							}
-			//							// l0017_22F7:
-			//							if (gArray222C[bp8] != 0) {
-			//								continue;
-			//							}
-			//							// l0017_2301:
-			//							Func294E(bp8, gArray2235[bp8], bp5);
-			//						}
-			//					}
-			//				}
-			//
-					
+					//							// l0017_22A2:
+					//							Func294E(bp8, gArray2235[bp8], bp5);
+					//						}
+					//					}
+					// l0017_22C1:
+				} else if (bp4 == 0x68) {
+					//					// l0017_22C5:
+					SIS_LogEntry(0x01D7, 0x22C5);
+					debug("Unimplemented");
+					//					gArray226F[bp3] = bp5;
+					//					uint16 bp16 = g2291 - 1;
+					//					if (0 <= bp16) {
+					//						// l0017_22E3:
+					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
+					//							// l0017_22EB:
+					//							if (gArray227F[bp8] != bp3) {
+					//								continue;
+					//							}
+					//							// l0017_22F7:
+					//							if (gArray222C[bp8] != 0) {
+					//								continue;
+					//							}
+					//							// l0017_2301:
+					//							Func294E(bp8, gArray2235[bp8], bp5);
+					//						}
+					//					}
+					//				}
+					//
 				}
 			}
 			// l0017_231E:
@@ -971,35 +966,35 @@ void Adlib::OnTimer() {
 			}
 			// l0017_2355:
 			if ((bp6 & 0xF0) == 0xD0) {
-			//		// l0017_235E:
+				//		// l0017_235E:
 				SIS_LogEntry(0x01D7, 0x235E);
-			debug("Unimplemented");
-			//		Macs2::StreamHandler *sh2252;
-			//		Macs2::StreamHandler *sh225A;
-			//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
-			//		sh2252 = shResult;
-			//		// TODO: Check if this is the right way to handle the plus operation
-			//		sh225A->seek(1, SEEK_CUR);
+				debug("Unimplemented");
+				//		Macs2::StreamHandler *sh2252;
+				//		Macs2::StreamHandler *sh225A;
+				//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
+				//		sh2252 = shResult;
+				//		// TODO: Check if this is the right way to handle the plus operation
+				//		sh225A->seek(1, SEEK_CUR);
 			}
 			// l0017_237E:
 			if ((bp6 & 0xF0) == 0xF0) {
-			//		// l0017_2387:
+				//		// l0017_2387:
 				SIS_LogEntry(0x01D7, 0x2387);
-			debug("Unimplemented");
-			//		if (bp4 == 0x2F) {
-			//			// l0017_238D:
-			//			Macs2::StreamHandler *sh2244;
-			//			Macs2::StreamHandler *sh2250;
-			//			sh2250 = sh2244;
-			//			// TODO: Setting 225C and 225A to 0 - ?
-			//			// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
-			//			// mov	byte ptr [2259h],0h
-			//			// mov byte ptr[2242h], 1h
-			//			Func1A03();
-			//		} else {
-			//			// l0017_23B4:
-			//			// TODO: Identical code as the previous branch?
-			//		}
+				debug("Unimplemented");
+				//		if (bp4 == 0x2F) {
+				//			// l0017_238D:
+				//			Macs2::StreamHandler *sh2244;
+				//			Macs2::StreamHandler *sh2250;
+				//			sh2250 = sh2244;
+				//			// TODO: Setting 225C and 225A to 0 - ?
+				//			// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
+				//			// mov	byte ptr [2259h],0h
+				//			// mov byte ptr[2242h], 1h
+				//			Func1A03();
+				//		} else {
+				//			// l0017_23B4:
+				//			// TODO: Identical code as the previous branch?
+				//		}
 			} else {
 				// l0017_23DB:
 				SIS_LogEntry(0x01D7, 0x23DB);
@@ -1018,14 +1013,13 @@ void Adlib::OnTimer() {
 				g2242 = 1;
 				Func1A03();
 			}
-			
+
 			// l0017_2416:
 			if (_nextEventTimer != 0) {
 				break;
 			}
 		}
-	}
-	else {
+	} else {
 		// This is the jump target from 1B00 from before the big loop
 		// l0017_2425:
 		if ((g2258 & 0xC2) != 0) {
@@ -1077,12 +1071,12 @@ void Adlib::Func244D(StreamHandler *song) {
 
 	cmp	byte ptr [0036h],0h
 	jz	2460h
-	
+
 l0017_2458:
 	mov	word ptr [bp-2h],3h
 	jmp	24F6h
 	*/
-	StreamHandler* sh = Func19BE_SH(song, 0x6);
+	StreamHandler *sh = Func19BE_SH(song, 0x6);
 	uint16 delta = sh->peekWord();
 	shMem2248 = Func19BE_SH(song, delta);
 	sh = Func19BE_SH(song, 0x8);
@@ -1104,7 +1098,6 @@ l0017_24F6:
 	retf	4h*/
 }
 
-
 void Adlib::SIS_LogEntry(uint16 seg, uint16 off, Common::String msg) {
 	if (msg.empty()) {
 		debug("Entered %.4X:%.4X", seg, off);
@@ -1121,7 +1114,7 @@ void Adlib::Func1A03() {
 	uint8 continueCondition;
 	do {
 		bp1 = shMem2250->peekByte();
-		
+
 		// TODO: Not sure what this does in practice
 		_nextEventTimer = _nextEventTimer << 7;
 		_nextEventTimer += bp1 & 0x7F;
@@ -1281,7 +1274,6 @@ void Adlib::SetVolume(uint16 volume) {
 	if (volume > 100)
 		volume = 100;
 
-	
 	// Volume is handled by the mixer
 }
 
@@ -1302,7 +1294,6 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 
 	gArray11F.resize(size);
 	LoadData(fileStream, 0x0001B71F, size, gArray11F.data());
-
 }
 
 void Adlib::LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {

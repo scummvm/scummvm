@@ -20,24 +20,24 @@
  */
 
 #include "macs2/macs2.h"
-#include "macs2/detection.h"
-#include "macs2/console.h"
-#include "common/scummsys.h"
+#include "adlib.h"
+#include "audio/fmopl.h"
+#include "audio/mixer.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
-#include "graphics/surface.h"
-#include "graphics/pixelformat.h"
-#include "audio/fmopl.h"
-#include "audio/mixer.h"
-#include "view1.h"
-#include "adlib.h"
 #include "gameobjects.h"
+#include "graphics/palette.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
+#include "macs2/console.h"
+#include "macs2/detection.h"
+#include "view1.h"
 
 namespace Macs2 {
 
@@ -49,10 +49,9 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 
 	Graphics::ManagedSurface result;
 	result.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	
 
 	// TODO: Fix length
-	uint8* data = new uint8[1024];
+	uint8 *data = new uint8[1024];
 
 	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
 	// try to RLE something which would be better not RLE encoded.
@@ -62,10 +61,10 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 		uint16 length = stream->readUint16LE();
 		stream->read(data, length);
 		uint16 remainingPixels = 320;
-		uint8* dataPointer = data;
+		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
-			const uint8& value = dataPointer[0];
+			const uint8 &value = dataPointer[0];
 			dataPointer++;
 			if (value != 0xF0) {
 				/* if (x >= 320) {
@@ -75,12 +74,11 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 				result.setPixel(x, y, value);
 				remainingPixels--;
 				x++;
-			}
-			else {
+			} else {
 				// We need to decode the RLE data
-				const uint8& runlength = dataPointer[0];
+				const uint8 &runlength = dataPointer[0];
 				dataPointer++;
-				const uint8& encodedValue = dataPointer[0];
+				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
 				for (int i = 0; i < runlength; i++) {
 					/* if (x >= 320) {
@@ -97,7 +95,7 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 	return result;
 }
 
-int previewNumFrames(int64 offs, Common::File& file) {
+int previewNumFrames(int64 offs, Common::File &file) {
 	file.seek(offs);
 	int64 numBytes = file.readUint32LE();
 	// byte* data = new byte[numBytes];
@@ -119,7 +117,6 @@ int previewNumFrames(int64 offs, Common::File& file) {
 	file.seek(offs);
 	return numFrames;
 }
-
 
 void Macs2Engine::readResourceFile() {
 	{
@@ -208,7 +205,7 @@ void Macs2Engine::readResourceFile() {
 			if (unknown5 != 0) {
 				debug("Object %.4x need to mirror blob %4.x", i, j);
 			}
-			
+
 			// Seek forward for the next 2+1+1 bytes reads
 			// _fileStream->seek(0x4, SEEK_CUR);
 		}
@@ -365,7 +362,6 @@ void Macs2Engine::readResourceFile() {
 	// TODO: Get rid of these
 	_borderWidth = _borderSprite.Width;
 	_borderHeight = _borderSprite.Height;
-	
 
 	// And the highlight part
 	_fileStream->seek(0x6962);
@@ -385,7 +381,7 @@ void Macs2Engine::readResourceFile() {
 
 	// The flag animation frames
 	_fileStream->seek(0x00250D47);
-	_flagData = new byte * [3];
+	_flagData = new byte *[3];
 	_flagWidths = new uint16[3];
 	_flagHeights = new uint16[3];
 	_flagWidths[0] = _fileStream->readUint16LE();
@@ -405,7 +401,6 @@ void Macs2Engine::readResourceFile() {
 	_flagData[2] = new byte[_flagWidths[2] * _flagHeights[2]];
 	_fileStream->read(_flagData[2], _flagWidths[2] * _flagHeights[2]);
 
-
 	// Load the strings for the scene
 	_fileStream->seek(0x000D2F22);
 	numBytesStrings = _fileStream->readUint16LE();
@@ -423,9 +418,6 @@ void Macs2Engine::readResourceFile() {
 
 	// This is the walkability map - TBC if that's really it and how it works
 	_pathfindingMap = readRLEImage(0x00249CC1, _fileStream);
-
-	
-	
 
 	// Load the data for the mouse cursor
 
@@ -447,7 +439,6 @@ void Macs2Engine::readResourceFile() {
 		_fileStream->seek(0x6, SEEK_CUR);
 	}
 
-
 	// Load a frame of animation from the protagonist
 	// Crawling towards the left
 	// _fileStream->seek(0x000C95A8);
@@ -457,7 +448,6 @@ void Macs2Engine::readResourceFile() {
 	// _fileStream->seek(0x000D0B26);
 
 	_fileStream->seek(0x006AB0FD);
-	
 
 	_guyWidth = _fileStream->readUint16LE();
 	_guyHeight = _fileStream->readUint16LE();
@@ -469,7 +459,6 @@ void Macs2Engine::readResourceFile() {
 	_shadingTable = new byte[256];
 	_fileStream->read(_shadingTable, 256);
 
-	
 	// Load the objects data
 	_fileStream->seek(0x6a5913);
 
@@ -518,7 +507,7 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 
 	for (int i = 0; i < _numBackgroundAnimations; i++) {
 		BackgroundAnimationBlob &currentBlob = _backgroundAnimationsBlobs[i];
-		
+
 		BackgroundAnimation &current = _backgroundAnimations[i];
 		// Local offset +0h
 		current.X = stream->readUint16LE();
@@ -585,7 +574,7 @@ void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Macs2") {
+																			 _gameDescription(gameDesc), _randomSource("Macs2") {
 	g_engine = this;
 	_scriptExecutor = new Script::ScriptExecutor();
 	_scriptExecutor->_engine = this;
@@ -606,8 +595,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 Macs2Engine::~Macs2Engine() {
 	clearCurrentSoundData();
-	_adlib->Deinit(); 
-
+	_adlib->Deinit();
 }
 
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
@@ -675,8 +663,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	}
 
 	// Continuing with data, even if we don't know all uses yet
-	//Common::Array<uint8> unknownData1;
-	//unknownData1.resize(0x100);
+	// Common::Array<uint8> unknownData1;
+	// unknownData1.resize(0x100);
 	_fileStream->read(_shadingTable, 0x100);
 
 	_fileStream->readByte(); // unknownByte1
@@ -695,7 +683,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Offset 301Bh
 	Graphics::ManagedSurface unknownRLE3 = readRLEImage(_fileStream->pos(), _fileStream);
-	
+
 	// Offset 401Fh
 	// This is the first map used in 0037:10C4 for the lookup of interacted hotspots
 	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
@@ -710,7 +698,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->read(array5023.data(), 0xa0);
 
 	word50D3 = _fileStream->readUint16LE();
-
 
 	array50D5.clear();
 	array50D5.resize(0x20 / 2);
@@ -732,7 +719,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	word51FD = _fileStream->readUint16LE();
 	word51FF = _fileStream->readUint16LE();
 	word5201 = _fileStream->readUint16LE();
-	
+
 	word5203 = _fileStream->readUint16LE();
 	word5205 = _fileStream->readUint16LE();
 
@@ -751,11 +738,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// We read 80h bytes
 	array520D.resize(0x80 / 4);
 	_fileStream->read(array520D.data(), 0x80);
-
-
-	
-	
-
 
 	// TODO: There are some more data points missing from the function
 
@@ -823,7 +805,7 @@ bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
 	return false;
 }
 
-uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y){
+uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y) {
 	// TODO: Handle only the basic case, and add an exception handling for the special case
 	// Look up the value from the map
 	// TODO: Implement the checks for bounds
@@ -833,9 +815,8 @@ uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y){
 	}
 	error("Unhandled code in walkability check encountered");
 	return 0;
-	
 }
-bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16& result) {
+bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16 &result) {
 	for (auto current : PathfindingOverrides) {
 		if (current.Index == index && current.Active) {
 			result = current.OverrideValue;
@@ -860,7 +841,7 @@ uint8 Macs2Engine::GetPathfindingOverride2(uint16 index) {
 	return 0;
 }
 
-void Macs2Engine::RemovePathfindingOverride(uint16 index){
+void Macs2Engine::RemovePathfindingOverride(uint16 index) {
 	for (uint i = 0; i < PathfindingOverrides.size(); i++) {
 		PathfindingAreaOverride &current = PathfindingOverrides[i];
 		if (current.Index == index) {
@@ -897,19 +878,17 @@ bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	uint16 walkability = 0;
 	int stopFlag = 0;
 
-	
 	if (steep) {
 		walkability = getWalkabilityAt(y, x);
 		stopFlag = false; // (*plotProc)(y, x, data);
-	}	
-	else {
+	} else {
 		walkability = getWalkabilityAt(x, y);
 		stopFlag = false; // (*plotProc)(x, y, data);
 	}
 	if (walkability > 0x0C7) {
 		return false;
 	}
-	
+
 	while (x != x2 && !stopFlag) {
 		x += x_step;
 		err += delta_err;
@@ -933,18 +912,17 @@ bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	return true;
 }
 
-void Macs2Engine::CalculatePath(const Common::Point& source, const Common::Point& destination) {
+void Macs2Engine::CalculatePath(const Common::Point &source, const Common::Point &destination) {
 	_path.clear();
 	// Check if the destination is reachable at first
 	if (isPathWalkable(source.x, source.y, destination.x, destination.y)) {
 		_path.push_back(source);
 		_path.push_back(destination);
 	}
-
 }
 
 // Does what 9F23 does
-uint16 ScriptReadWord(Common::MemoryReadStream* stream) {
+uint16 ScriptReadWord(Common::MemoryReadStream *stream) {
 	const int64 pos = stream->pos();
 	const uint16 result = stream->readUint16LE();
 	debug("Script read (word): %.4x at offset %.4x", result, (uint32)pos);
@@ -952,7 +930,7 @@ uint16 ScriptReadWord(Common::MemoryReadStream* stream) {
 }
 
 // Does pretty much what 9F07 does
-byte ScriptReadByte(Common::MemoryReadStream* stream) {
+byte ScriptReadByte(Common::MemoryReadStream *stream) {
 
 	const int64 pos = stream->pos();
 	const byte result = stream->readByte();
@@ -966,7 +944,6 @@ byte ScriptReadByte(Common::MemoryReadStream* stream) {
 void Func9F4DClean(Common::MemoryReadStream *stream, uint16 &out1, uint16 &out2) {
 	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
 	debug("-- Entering 9F4D");
-
 
 	/*
 		;; Make space for Ch bytes
@@ -984,16 +961,10 @@ void Func9F4DClean(Common::MemoryReadStream *stream, uint16 &out1, uint16 &out2)
 	jnz	9F72h
 	*/
 
-
-
-
-
-
-
 	debug("-- Leaving 94FD");
 }
 
-void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
+void Func9F4D(Common::MemoryReadStream *stream, uint16 &out1, uint16 &out2) {
 	debug("-- Entering 9F4D");
 	// Read an opcode (would be 0037:9F07) - [bp-1h]
 	byte opcode = ScriptReadByte(stream);
@@ -1021,8 +992,7 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 			debug("-- Leaving 94FD");
 			return;
 		}
-	} else
-	if (opcode == 0x02) {
+	} else if (opcode == 0x02) {
 		// TODO: We need to start handling opcode2 in this case
 		if (value == 0x0a) {
 			// TODO: This is too verbatim, only to get me to pass the script once. In reality, we are accessing a saved variable in this and similar cases based on the second value
@@ -1031,47 +1001,42 @@ void Func9F4D(Common::MemoryReadStream * stream, uint16& out1, uint16& out2) {
 			debug("-- Leaving 94FD");
 			return;
 		}
-	}
-	else
-	if (opcode == 0xFF) {
+	} else if (opcode == 0xFF) {
 		if (value == 0x02) {
 			// TODO: Look up clicked hotspot instead
 			out1 = 0x0801;
 			out2 = 0x0000;
 			return;
 		} else
-		// TODO: Long list of opcode handling here
-		if (value == 0x26) {
-			// TODO: Implement this part:
-	/* l0037_A19E:
-		cmp	byte ptr[1014h], 0h
-			jz	0A1B1h
+			// TODO: Long list of opcode handling here
+			if (value == 0x26) {
+				// TODO: Implement this part:
+				/* l0037_A19E:
+					cmp	byte ptr[1014h], 0h
+						jz	0A1B1h
 
-			l0037_A1A5 :
-		mov	word ptr[bp - 4h], 1h
-			mov	word ptr[bp - 2h], 0h
-			jmp	0A1B9h
+						l0037_A1A5 :
+					mov	word ptr[bp - 4h], 1h
+						mov	word ptr[bp - 2h], 0h
+						jmp	0A1B9h
 
-			l0037_A1B1 :
-		xor ax, ax
-			mov[bp - 4h], ax
-			mov[bp - 2h], ax */
+						l0037_A1B1 :
+					xor ax, ax
+						mov[bp - 4h], ax
+						mov[bp - 2h], ax */
 
-			// For now just returning 0 by default
-			out1 = 0;
-			out2 = 0;
-			debug("-- Leaving 94FD");
-			return;
-		}
-	}
-	else {
+				// For now just returning 0 by default
+				out1 = 0;
+				out2 = 0;
+				debug("-- Leaving 94FD");
+				return;
+			}
+	} else {
 		ScriptNoEntry
 	}
 }
 
-
-
-void FuncA3D2(Common::MemoryReadStream* stream) {
+void FuncA3D2(Common::MemoryReadStream *stream) {
 	debug("-- Entering A3D2");
 	uint16 skipValue = 1; // [bp-4h] - TODO: Better name
 	// TODO: Figure out end condition
@@ -1094,13 +1059,12 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 		// Do the skipping
 		stream->seek(val, SEEK_CUR);
 		debug("A3D2 skipping %u bytes for opcode %.2x (%u)", val, opcode, skipValue);
-			
+
 		// TODO: Add a log here
 		if (skipValue != 0) {
 			// Continue the loop if there is data left in the stream
 			// TODO: Check for remaining script data
-		}
-		else {
+		} else {
 			if (skipValue != 0) {
 				// TODO: Implement:
 				// mov	word ptr [1028h],1Dh
@@ -1113,12 +1077,11 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 	debug("-- Leaving A3D2");
 }
 
-
 void Macs2Engine::PlaySound() {
 	OPL::OPL *_opl = OPL::Config::create();
 	_opl->init();
-	
-	#define CALLBACKS_PER_SECOND 10
+
+#define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Macs2Engine>(this, &Macs2Engine::OnTimer), CALLBACKS_PER_SECOND);
 	// _opl->write(0x388, 0x00);
 	/*  _opl->writeReg(0x388, 0xA0);
@@ -1138,7 +1101,7 @@ void Macs2Engine::PlaySound() {
 	// _opl->writeReg(0xB0, 0x31);
 
 	/*
-	    REGISTER     VALUE     DESCRIPTION
+		REGISTER     VALUE     DESCRIPTION
  |        20          01      Set the modulator's multiple to 1
  |        40          10      Set the modulator's level to about 40 dB
  |        60          F0      Modulator attack:  quick;   decay:   long
@@ -1150,7 +1113,7 @@ void Macs2Engine::PlaySound() {
  |        83          77      Carrier sustain: medium;  release: medium
  |        B0          31      Turn the voice on; set the octave and freq MSB
  |
- |   To turn the voice off, set register B0h to 11h (or, in fact, any value 
+ |   To turn the voice off, set register B0h to 11h (or, in fact, any value
  |   which leaves bit 5 clear).  It's generally preferable, of course, to
  |   induce a delay before doing so.
  |*/
@@ -1158,7 +1121,6 @@ void Macs2Engine::PlaySound() {
 
 void Macs2Engine::OnTimer() {
 }
-
 
 void Macs2Engine::NextCursorMode() {
 	// TODO: Adjust for final min and max
@@ -1210,11 +1172,11 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 	do {
 		// TODO: Not sure if this should be a byte or a word
 		// TODO: To check if it's important that we clear the first half of the word
-		uint16 lookup = a[i-1];
+		uint16 lookup = a[i - 1];
 		if (lookup == firstLookup) {
 			// TODO: Not sure if this lookup is at the right position here
 			if (HotspotOverrides[i] != 0xFFFF) {
-				return 0x800 + HotspotOverrides [i];
+				return 0x800 + HotspotOverrides[i];
 			}
 			// TODO: Add the 5BD1h lookup part
 			// This would check for a value other than FFh in that array
@@ -1260,7 +1222,6 @@ int Macs2Engine::MeasureString(Common::String &s) {
 		}
 	}
 
-
 	for (auto current = s.begin(); current != s.end(); current++) {
 		found = FindGlyph(*current, currentGlyph);
 		if (!found) {
@@ -1279,7 +1240,6 @@ int Macs2Engine::MeasureStringsVertically(Common::StringArray sa) {
 	return sa.size() * (maxGlyphHeight + 2);
 }
 
-
 int Macs2Engine::MeasureStrings(Common::StringArray sa) {
 	int max = -1;
 	for (auto iter = sa.begin(); iter != sa.end(); iter++) {
@@ -1297,18 +1257,17 @@ Common::StringArray Macs2Engine::DecodeStrings(Common::MemoryReadStream *stream,
 	byte x;
 	byte y;
 	byte r;
-	
+
 	for (int i = 0; i < numStrings; i++) {
 		Common::String currentLine;
 		uint16 length = stream->readUint16LE();
-		byte currentByte; 
-		for (int index = 1; index < length+1; index++) {
+		byte currentByte;
+		for (int index = 1; index < length + 1; index++) {
 			currentByte = stream->readByte();
 			x = (byte)(index * index * 0x0c);
 			y = (byte)(currentByte ^ index);
 			r = (byte)(x ^ y);
 			currentLine += (char)r;
-			
 		}
 		result[i] = currentLine;
 	}
@@ -1380,7 +1339,6 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	_fileStream->read(data->data(), size);
 	StreamHandler *sh = new StreamHandler(data);
 	_adlib->SetSong(sh);
-	
 }
 
 void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {
@@ -1425,9 +1383,8 @@ void Macs2Engine::playTestSound() {
 	_fileStream->seek(0x000B66DE + 4, SEEK_SET);
 	_fileStream->read(audioStream->_data.data(), audioStream->_data.size());
 	_fileStream->seek(oldPos, SEEK_SET);
-	// TODO: Convert 8 bit to 16 signed 
+	// TODO: Convert 8 bit to 16 signed
 	mixer->playStream(soundType, &soundHandle, audioStream);
-	
 }
 
 Common::String Macs2Engine::getGameId() const {
@@ -1445,7 +1402,7 @@ Common::Error Macs2Engine::run() {
 
 	// Initialize Adlib
 	_adlib->Init();
-	
+
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
@@ -1472,7 +1429,6 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		changeScene(Scenes::instance().CurrentSceneIndex, false);
 	}
 
-
 	// Sync script variables
 	int32 numVariables = _scriptExecutor->_variables.size();
 	// TODO: Assuming that this array will always be the same size
@@ -1480,7 +1436,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(_scriptExecutor->_variables[i].a);
 		s.syncAsUint16LE(_scriptExecutor->_variables[i].b);
 	}
-	
+
 	// Iterate over objects
 	// Iterate over characters?
 	// TODO: Why save the indices? Would only make sense if we saved other data as well
@@ -1516,7 +1472,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			currentCharacter = new Character();
 			currentCharacter->GameObject = GameObjects::instance().Objects[characterIndex - 1];
 			currentView->characters.push_back(currentCharacter);
-		}		
+		}
 	}
 
 	/* uint32 numInventoryItems;
@@ -1591,7 +1547,7 @@ void AnimFrame::ReadFromStream(Common::MemoryReadStream *stream) {
 	stream->read(Data, Width * Height);
 }
 
-bool AnimFrame::PixelHit(const Common::Point& point) const {
+bool AnimFrame::PixelHit(const Common::Point &point) const {
 	// TODO: We are ignoring z painting for now
 	if (point.x < 0 || point.x >= Width || point.y < 0 || point.y >= Height) {
 		return false;
@@ -1641,7 +1597,7 @@ AnimFrame BackgroundAnimationBlob::GetCurrentFrame() {
 	// TODO: TBC: There seem to be two used sets of args, false and 0 for getting the current
 	// frame and true and 2 for advancing the frame
 	uint16 offset = Func1480(Blob, true, 0x2);
-	Common::MemoryReadStream* stream = new Common::MemoryReadStream(Blob.data(), Blob.size());
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(Blob.data(), Blob.size());
 	offset += 6;
 	stream->seek(offset);
 	AnimFrame result;
@@ -1656,7 +1612,6 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	}
 	Common::MemorySeekableReadWriteStream stream(blob.data(), blob.size());
 
-
 	/* Arguments:
 	Argument - Byte value: [bp+06]: 00 - Determines if we save the result
 	Argument - Value between 0 and something around A4: [bp+08]: 0000 - The important one
@@ -1665,7 +1620,6 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	Argument - Address: [bp+12]: 0000:04bf
 	*/
 
-	
 	// bp-22h
 	uint16 bp22 = stream.readUint16LE();
 	// bp-6h
@@ -1686,7 +1640,7 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 		bp8 = 0x00;
 		bp10 = 0x00;
 		bp6 = 0x01;
-		
+
 	} else if (bpp8 >= 0x65) {
 		if (bpp8 <= 0xA4) {
 			bp6 = bpp8 - 0x64;
@@ -1737,7 +1691,7 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	}
 	// l00B7_1554:
 	uint16 cx = bp0C - 0xA;
-	stream.seek(0xB,SEEK_SET);
+	stream.seek(0xB, SEEK_SET);
 	stream.seek(bp0E, SEEK_CUR);
 	uint16 bp24 = stream.readUint16LE();
 	if (cx > bp24) {
@@ -1759,7 +1713,7 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 
 	// l00B7_158D:
 	// TODO: Due to difference in implementation of the loop, I don't need to rewind,
-	// but am probably doing a 
+	// but am probably doing a
 	// stream.seek(-6, SEEK_CUR);
 	uint16 bp12 = stream.pos();
 	// TODO: Check if indendation is right here
@@ -1836,7 +1790,6 @@ uint16 BackgroundAnimationBlob::Func168C(Common::Array<uint8> &blob) {
 	result = bp4;
 	return result;
 }
-
 
 int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int numSamplesRead = 0;

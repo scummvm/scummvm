@@ -44,11 +44,13 @@ private:
 	Common::Rect _bounds;
 	Common::Rect &_innerBounds;
 	int _borderSize = 0;
+
 public:
 	const int16 &left;
 	const int16 &top;
 	const int16 &right;
 	const int16 &bottom;
+
 public:
 	Bounds(Common::Rect &innerBounds);
 	operator const Common::Rect &() const { return _bounds; }
@@ -64,8 +66,10 @@ public:
  */
 class UIElement {
 	friend class Events;
+
 private:
 	int _timeoutCtr = 0;
+
 protected:
 	UIElement *_parent;
 	Common::Array<UIElement *> _children;
@@ -73,6 +77,7 @@ protected:
 	Bounds _bounds;
 	bool _needsRedraw = true;
 	Common::String _name;
+
 protected:
 	/**
 	 * Set a delay countdown in seconds, after which timeout() is called
@@ -114,6 +119,7 @@ private:
 	 * Finds a view globally
 	 */
 	static UIElement *findViewGlobally(const Common::String &name);
+
 public:
 	UIElement(const Common::String &name, UIElement *uiParent);
 	UIElement(const Common::String &name);
@@ -204,27 +210,29 @@ public:
 	 */
 	virtual UIElement *findView(const Common::String &name);
 
-	/**
-	 * Handles events
-	 */
-	#define MESSAGE(NAME) \
-	protected: \
-		virtual bool msg##NAME(const NAME##Message &e) { \
-			for (Common::Array<UIElement *>::iterator it = _children.begin(); \
-					it != _children.end(); ++it) { \
-				if ((*it)->msg##NAME(e)) return true; \
-			} \
-			return false; \
-		} \
-	public: \
-		bool send(const Common::String &viewName, const NAME##Message &msg) { \
-			UIElement *view = UIElement::findViewGlobally(viewName); \
-			assert(view); \
-			return view->msg##NAME(msg); \
-		} \
-		bool send(const NAME##Message &msg) { \
-			return send("Root", msg); \
-		} \
+/**
+ * Handles events
+ */
+#define MESSAGE(NAME)                                                     \
+protected:                                                                \
+	virtual bool msg##NAME(const NAME##Message &e) {                      \
+		for (Common::Array<UIElement *>::iterator it = _children.begin(); \
+			 it != _children.end(); ++it) {                               \
+			if ((*it)->msg##NAME(e))                                      \
+				return true;                                              \
+		}                                                                 \
+		return false;                                                     \
+	}                                                                     \
+                                                                          \
+public:                                                                   \
+	bool send(const Common::String &viewName, const NAME##Message &msg) { \
+		UIElement *view = UIElement::findViewGlobally(viewName);          \
+		assert(view);                                                     \
+		return view->msg##NAME(msg);                                      \
+	}                                                                     \
+	bool send(const NAME##Message &msg) {                                 \
+		return send("Root", msg);                                         \
+	}
 
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
@@ -235,7 +243,7 @@ public:
 	MESSAGE(Game);
 	MESSAGE(Value);
 	MESSAGE(MouseMove);
-	#undef MESSAGE
+#undef MESSAGE
 };
 
 /**
@@ -249,6 +257,7 @@ class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
+
 protected:
 	/**
 	 * Process an event
@@ -260,27 +269,26 @@ protected:
 	 */
 	virtual bool shouldQuit() const = 0;
 
-	/**
-	 * Overrides events we want to only go to the focused view
-	 */
-	#define MESSAGE(NAME) \
-		bool msg##NAME(const NAME##Message &e) override { \
-			return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
-		}
+/**
+ * Overrides events we want to only go to the focused view
+ */
+#define MESSAGE(NAME)                                                 \
+	bool msg##NAME(const NAME##Message &e) override {                 \
+		return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
+	}
 	MESSAGE(Action);
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
-	#undef MESSAGE
+#undef MESSAGE
 public:
 	Events();
 	virtual ~Events();
 
 	// TODO: Consider a better place
 	uint32 currentMillis;
-	
 
 	/**
 	 * Main game loop
@@ -327,8 +335,7 @@ public:
 	 * Returns the view prior to the current view, if any
 	 */
 	UIElement *priorView() const {
-		return _views.size() < 2 ? nullptr :
-			_views[_views.size() - 2];
+		return _views.size() < 2 ? nullptr : _views[_views.size() - 2];
 	}
 
 	/**
