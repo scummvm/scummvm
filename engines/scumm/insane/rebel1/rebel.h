@@ -186,6 +186,15 @@ private:
 	void playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame);
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
 	void loadLevelSprites(int level);
+	void handleGameOpcode5EReset(uint32 param1);
+	void handleGameOpcode5DLinkLatch(uint32 param1);
+	void handleGameOpcode5FRandomHitLatch(uint32 param1);
+	void handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableReadStream &b, uint32 param1);
+	void handleGameOpcode0DCorridor(int32 subSize, Common::SeekableReadStream &b, uint32 param1);
+	void handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStream &b, uint32 param1);
+	void handleGameOpcode0BFirstPerson(int32 subSize, Common::SeekableReadStream &b, uint32 param1);
+	void handleGameOpcode5ATarget(int32 subSize, Common::SeekableReadStream &b, uint32 param1);
+	void handleGameCounterOpcode(uint32 opcode, int32 subSize, Common::SeekableReadStream &b, uint32 param1);
 	void updateShipPhysics();
 	void updateTurretPhysics();
 	void updateTurretShipDirection(int16 offsetY);

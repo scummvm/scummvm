@@ -1945,6 +1945,331 @@ void InsaneRebel1::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 void InsaneRebel1::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
+void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
+	// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
+	// This is not a pure control-mode assignment.
+	if (_frameDispatchFlags & 0x40) {
+		debug(7, "RA1 GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
+			_frameDispatchFlags);
+		return;
+	}
+
+	_damageFlags = 0;
+	_prevDamageFlags = 0;
+	_damageCooldown = 0;
+	_deathTimer = 0;
+	_screenFlash = 0;
+	_screenShakeEnabled = false;
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
+	_driftParam = 0;
+	_rollAccum = 0;
+	_liftSmooth = 0;
+	_posAccumX = 0;
+	_posAccumY = 0;
+	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+	memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+	memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+	_inputAxisDeltaX = 0;
+	_avgInputX = 0;
+	_avgInputY = 0;
+	_mouseOffsetX = 0;
+	_mouseOffsetY = 0;
+	_mouseBiasX = 0;
+	_mouseBiasY = 0;
+	_mousePrevBiasX = 0;
+	_mousePrevBiasY = 0;
+	_mouseBiasLatch = false;
+	_mouseRecentering = false;
+	_mouseVirtualRawX = kRA1DosMouseCenterX;
+	_mouseVirtualRawY = kRA1DosMouseCenterY;
+	_mouseVirtualPrevLogicalX = kRA1CenterX;
+	_mouseVirtualPrevLogicalY = kRA1CenterY;
+	_mouseVirtualValid = false;
+	_level2JoystickFilteredX = 0;
+	_level2JoystickFilteredY = 0;
+
+	_playerFired = false;
+	_fireCooldown = 0;
+	memset(_shotSlots, 0, sizeof(_shotSlots));
+	_shotAlternator = 0;
+	_shotSideToggle = false;
+	_targetProximity = 0;
+	_prevTargetProx = 0;
+	_targetAnimCounter = 0;
+	_targetCount = 0;
+	_prevTargetCount = 0;
+	memset(_targetBoxX, 0, sizeof(_targetBoxX));
+	memset(_targetBoxY, 0, sizeof(_targetBoxY));
+	memset(_targetBoxVariant, 0, sizeof(_targetBoxVariant));
+	memset(_gostSlots, 0, sizeof(_gostSlots));
+	_gostSlotIdx = 0;
+	_killCount = 0;
+	_lastHitTarget = 0;
+
+	// Field1 == 0 corresponds to baseline recenter behavior in the original.
+	if ((int32)param1 == 0) {
+		_perspectiveX = 0x20;
+		_perspectiveY = 0x17;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+	}
+
+	_activeGameOpcode = 0;
+	_frameGameOpcodeMask = 0;
+	_frameDispatchFlags = 0;
+	resetProjectionTable();
+	if ((int32)param1 == 0)
+		syncViewportOffset(true);
+
+	// Original RunLevel8Flow initializes its separate g_level8HitboxBuffer
+	// after the first L8PLAY runtime reset. We fold that mask into the
+	// secondary half of _frameObjectState; route resumes preserve it.
+	if (_currentLevel == 7)
+		memset(_frameObjectState + 150, 0xFF, 150);
+
+	debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
+}
+
+void InsaneRebel1::handleGameOpcode5DLinkLatch(uint32 param1) {
+	if ((uint16)param1 == 0xFFFF) {
+		_gameLatch5D = 0xFFFF;
+	} else if (param1 > 0) {
+		const int bitIndex = (int)param1 - 1;
+		const int byteIndex = bitIndex >> 3;
+		if (byteIndex >= 0 && byteIndex < 0x96 &&
+			(_frameObjectState[byteIndex] & (byte)(0x80 >> (bitIndex & 7))) == 0) {
+			_gameLatch5D = (uint16)param1;
+		}
+	}
+
+	debug(5, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
+}
+
+void InsaneRebel1::handleGameOpcode5FRandomHitLatch(uint32 param1) {
+	if (param1 > 0) {
+		const int bitIndex = (int)param1 - 1;
+		const int byteIndex = bitIndex >> 3;
+		if (byteIndex >= 0 && byteIndex < 0x96 &&
+			(_frameObjectState[byteIndex] & (byte)(0x80 >> (bitIndex & 7))) == 0) {
+			_gameLatch5F = (uint16)param1;
+		}
+	}
+
+	debug(5, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
+}
+
+void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
+	_activeGameOpcode = 0x07;
+	_frameGameOpcodeMask |= (1u << 0x07);
+	// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
+	// f1 is the original's _DAT_7740 (game frame counter)
+	// f3 is the drift/wind parameter combined with tuning table
+	_gameCounter = param1;
+	if (subSize >= 20) {
+		b.readUint32BE(); // f2 (max frames, unused in physics)
+		_driftParam = (int16)(int32)b.readUint32BE();
+		b.readUint32BE(); // f4 (unused in original assembly)
+		debug(7, "RA1 GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
+	}
+}
+
+void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
+	// Corridor boundaries: per-frame flight corridor
+	// Original params: left, top, WIDTH, HEIGHT (not right/bottom!)
+	// FUN_1C54D computes center = (left+width/2, top+height/2), transforms, then checks edges.
+	if (subSize < 20)
+		return;
+
+	int16 corridorLeft = (int16)param1;
+	int16 corridorTop = (int16)b.readUint32BE();
+	int16 corridorWidth = (int16)b.readUint32BE();
+	int16 corridorHeight = (int16)b.readUint32BE();
+
+	int16 centerX = corridorLeft + corridorWidth / 2;
+	int16 centerY = corridorTop + corridorHeight / 2;
+	// DOS FUN_1C54D calls FUN_2248C here, which adds the current
+	// camera offset to the scripted rectangle center before testing it
+	// against the source-buffer ship center.
+	unprojectGameplayPoint(centerX, centerY);
+
+	_corridorLeftX = centerX - corridorWidth / 2;
+	_corridorTopY = centerY - corridorHeight / 2;
+	_corridorRightX = _corridorLeftX + corridorWidth;
+	_corridorBottomY = _corridorTopY + corridorHeight;
+
+	// Apply 0x0D immediately so it sees the same pre-physics ship state as
+	// the other per-frame GAME latches. Deferring this until after 0x07/0x09
+	// movement made right-wall hits fire too early when steering into a wall.
+	int16 collisionShipX = _shipPosX;
+	int16 collisionShipY = _shipPosY;
+	getCollisionShipCenter(collisionShipX, collisionShipY);
+
+	const bool suppressDirectionalDamage = (_frameDispatchFlags & 0x10) != 0;
+	const byte oldDirectionalFlags = _damageFlags & 0x0F;
+	if (_health >= 0) {
+		if (collisionShipX < _corridorLeftX) {
+			_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
+			if (!suppressDirectionalDamage) {
+				if (_rollAccum < 0x100)
+					_rollAccum = 0x100;
+				_damageFlags |= 0x04;
+			}
+		}
+		if (collisionShipX > _corridorRightX) {
+			_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
+			if (!suppressDirectionalDamage) {
+				if (_rollAccum > -0x100)
+					_rollAccum = -0x100;
+				_damageFlags |= 0x02;
+			}
+		}
+		if (collisionShipY < _corridorTopY) {
+			_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
+			if (!suppressDirectionalDamage)
+				_damageFlags |= 0x01;
+		}
+		if (collisionShipY > _corridorBottomY) {
+			_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
+			if (!suppressDirectionalDamage)
+				_damageFlags |= 0x08;
+		}
+	}
+	if ((_damageFlags & 0x0F) != oldDirectionalFlags) {
+		debug(1, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
+			collisionShipX, collisionShipY,
+			_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
+			_damageFlags, suppressDirectionalDamage ? 1 : 0);
+	}
+
+	debug(5, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
+		corridorLeft, corridorTop, corridorWidth, corridorHeight,
+		_perspectiveX, _perspectiveY,
+		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
+}
+
+void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
+	// Secondary collision zone (FUN_1C6E9): AABB test, sets damageFlags bit 4 (0x10)
+	// Original params: left, top, WIDTH, HEIGHT (same as 0x0D)
+	if (subSize < 20)
+		return;
+
+	int16 zoneLeft = (int16)param1;
+	int16 zoneTop = (int16)b.readUint32BE();
+	int16 zoneWidth = (int16)b.readUint32BE();
+	int16 zoneHeight = (int16)b.readUint32BE();
+	const int16 rawZoneLeft = zoneLeft;
+	const int16 rawZoneTop = zoneTop;
+
+	int16 centerX = zoneLeft + zoneWidth / 2;
+	int16 centerY = zoneTop + zoneHeight / 2;
+	// Same transform as opcode 0x0D/FUN_1C54D.
+	unprojectGameplayPoint(centerX, centerY);
+
+	zoneLeft = centerX - zoneWidth / 2;
+	zoneTop = centerY - zoneHeight / 2;
+	int16 zoneRight = zoneLeft + zoneWidth;
+	int16 zoneBottom = zoneTop + zoneHeight;
+	int16 collisionShipX = _shipPosX;
+	int16 collisionShipY = _shipPosY;
+	getCollisionShipCenter(collisionShipX, collisionShipY);
+
+	if (_health >= 0 &&
+		collisionShipX > zoneLeft && collisionShipX < zoneRight &&
+		collisionShipY > zoneTop && collisionShipY < zoneBottom) {
+		_damageFlags |= 0x10;
+		debug(1, "RA1 0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
+			collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
+			rawZoneLeft, rawZoneTop, zoneWidth, zoneHeight,
+			_perspectiveX, _perspectiveY, _damageFlags);
+	}
+	debug(7, "RA1 GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
+		collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
+		_perspectiveX, _perspectiveY, _damageFlags);
+}
+
+void InsaneRebel1::handleGameOpcode0BFirstPerson(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
+	_activeGameOpcode = 0x0B;
+	_frameGameOpcodeMask |= (1u << 0x0B);
+	// GAME 0x0B per-frame handler (FUN_1CDA7).
+	// field1 = frame counter, field2 = max frames
+	_gameCounter = param1;
+	if (subSize >= 20) {
+		uint32 maxFrames = b.readUint32BE(); // field2 (max frames)
+		b.readUint32BE(); // field3
+		b.readUint32BE(); // field4
+
+		// RA1 scripts drive progression with GAME counters. Finish 0x0B-driven
+		// interactive videos once the script counter reaches the terminal frame.
+		if (_interactiveVideoActive && maxFrames > 0 &&
+			_gameCounter >= (int32)maxFrames - 1) {
+			_vm->_smushVideoShouldFinish = true;
+			debug(1, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
+		}
+	}
+	debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
+	if (!_gameOp0BPhysicsUpdatedThisFrame) {
+		updateGameOp0BPhysics();
+		_gameOp0BPhysicsUpdatedThisFrame = true;
+		syncViewportOffset(true);
+	}
+}
+
+void InsaneRebel1::handleGameOpcode5ATarget(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
+	// Target detection — HandleGameOp5A (0x1C0EF). AABB from video stream.
+	// Original checks event mask: if target already killed, skip to GOST update.
+	if (subSize < 24)
+		return;
+
+	int16 targetIdx = (int16)param1;
+	int16 left = (int16)b.readUint32BE();
+	int16 top = (int16)b.readUint32BE();
+	int16 w = (int16)b.readUint32BE();
+	int16 h = (int16)b.readUint32BE();
+	int16 right = left + w;
+	int16 bottom = top + h;
+
+	if (targetIdx >= 0) {
+		const int byteIdx = targetIdx >> 3;
+		if (byteIdx >= 0 && byteIdx < 0x96 && byteIdx < kFrameObjectStateBytes) {
+			const byte bit = (byte)(0x80 >> (targetIdx & 7));
+			const int altIdx = byteIdx + 0x96;
+			const bool primarySet = (_frameObjectState[byteIdx] & bit) != 0;
+			const bool secondarySet = (altIdx < kFrameObjectStateBytes) &&
+				((_frameObjectState[altIdx] & bit) != 0);
+
+			if (!primarySet || secondarySet) {
+				checkTargetHit(targetIdx, left, top, right, bottom);
+			} else {
+				updateGostSlotPosition(targetIdx, left, top, right, bottom);
+			}
+		} else {
+			checkTargetHit(targetIdx, left, top, right, bottom);
+		}
+	}
+	debug(5, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
+		targetIdx, left, top, right, bottom, _targetProximity);
+}
+
+void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
+	_activeGameOpcode = (uint16)opcode;
+	_frameGameOpcodeMask |= (1u << opcode);
+	_gameCounter = param1;
+	if (subSize >= 20) {
+		uint32 param2 = b.readUint32BE();
+		uint32 param3 = b.readUint32BE();
+		uint32 param4 = b.readUint32BE();
+		if (opcode == 0x09 && _currentLevel == 4) {
+			debug(1, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
+				_gameCounter, param2, param3, param4, _frameGameOpcodeMask);
+		} else {
+			debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
+				opcode, _gameCounter, param2, param3, param4);
+		}
+	}
+}
+
 // handleGameChunk — FUN_1BE1B (0x1BE1B). Central GAME opcode dispatcher.
 // Reads 7x32-bit BE integers from GAME chunk, routes to per-opcode handlers.
 void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b) {
@@ -1973,305 +2298,35 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	switch (opcode) {
 	case 0x5E:
-		// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
-		// This is not a pure control-mode assignment.
-		if (_frameDispatchFlags & 0x40) {
-			debug(7, "RA1 GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
-				_frameDispatchFlags);
-			break;
-		}
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		_driftParam = 0;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_inputAxisDeltaX = 0;
-		_avgInputX = 0;
-		_avgInputY = 0;
-		_mouseOffsetX = 0;
-		_mouseOffsetY = 0;
-		_mouseBiasX = 0;
-		_mouseBiasY = 0;
-		_mousePrevBiasX = 0;
-		_mousePrevBiasY = 0;
-		_mouseBiasLatch = false;
-		_mouseRecentering = false;
-		_mouseVirtualRawX = kRA1DosMouseCenterX;
-		_mouseVirtualRawY = kRA1DosMouseCenterY;
-		_mouseVirtualPrevLogicalX = kRA1CenterX;
-		_mouseVirtualPrevLogicalY = kRA1CenterY;
-		_mouseVirtualValid = false;
-		_level2JoystickFilteredX = 0;
-		_level2JoystickFilteredY = 0;
-
-		// Shooting/targeting reset
-		_playerFired = false;
-		_fireCooldown = 0;
-		memset(_shotSlots, 0, sizeof(_shotSlots));
-		_shotAlternator = 0;
-		_shotSideToggle = false;
-		_targetProximity = 0;
-		_prevTargetProx = 0;
-		_targetAnimCounter = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		memset(_targetBoxX, 0, sizeof(_targetBoxX));
-		memset(_targetBoxY, 0, sizeof(_targetBoxY));
-		memset(_targetBoxVariant, 0, sizeof(_targetBoxVariant));
-		memset(_gostSlots, 0, sizeof(_gostSlots));
-		_gostSlotIdx = 0;
-		_killCount = 0;
-		_lastHitTarget = 0;
-
-		// Field1 == 0 corresponds to baseline recenter behavior in the original.
-		if ((int32)param1 == 0) {
-			_perspectiveX = 0x20;
-			_perspectiveY = 0x17;
-			_shipPosX = kRA1CenterX;
-			_shipPosY = kRA1CenterY;
-		}
-
-		_activeGameOpcode = 0;
-		_frameGameOpcodeMask = 0;
-		_frameDispatchFlags = 0;
-		resetProjectionTable();
-		if ((int32)param1 == 0)
-			syncViewportOffset(true);
-
-		// Original RunLevel8Flow initializes its separate g_level8HitboxBuffer
-		// after the first L8PLAY runtime reset. We fold that mask into the
-		// secondary half of _frameObjectState; route resumes preserve it.
-		if (_currentLevel == 7)
-			memset(_frameObjectState + 150, 0xFF, 150);
-
-		debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
+		handleGameOpcode5EReset(param1);
 		break;
 
 	case 0x5D:
-		if ((uint16)param1 == 0xFFFF) {
-			_gameLatch5D = 0xFFFF;
-		} else if (param1 > 0) {
-			const int bitIndex = (int)param1 - 1;
-			const int byteIndex = bitIndex >> 3;
-			if (byteIndex >= 0 && byteIndex < 0x96 &&
-				(_frameObjectState[byteIndex] & (byte)(0x80 >> (bitIndex & 7))) == 0) {
-				_gameLatch5D = (uint16)param1;
-			}
-		}
-		debug(5, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
+		handleGameOpcode5DLinkLatch(param1);
 		break;
 
 	case 0x5F:
-		if (param1 > 0) {
-			const int bitIndex = (int)param1 - 1;
-			const int byteIndex = bitIndex >> 3;
-			if (byteIndex >= 0 && byteIndex < 0x96 &&
-				(_frameObjectState[byteIndex] & (byte)(0x80 >> (bitIndex & 7))) == 0) {
-				_gameLatch5F = (uint16)param1;
-			}
-		}
-		debug(5, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
+		handleGameOpcode5FRandomHitLatch(param1);
 		break;
 
 	case 0x07:
-		_activeGameOpcode = 0x07;
-		_frameGameOpcodeMask |= (1u << 0x07);
-		// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
-		// f1 is the original's _DAT_7740 (game frame counter)
-		// f3 is the drift/wind parameter combined with tuning table
-		_gameCounter = param1;
-		if (subSize >= 20) {
-			b.readUint32BE(); // f2 (max frames, unused in physics)
-			_driftParam = (int16)(int32)b.readUint32BE();
-			b.readUint32BE(); // f4 (unused in original assembly)
-			debug(7, "RA1 GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
-		}
+		handleGameOpcode07ShipFlight(subSize, b, param1);
 		break;
 
 	case 0x0D:
-		// Corridor boundaries: per-frame flight corridor
-		// Original params: left, top, WIDTH, HEIGHT (not right/bottom!)
-		// FUN_1C54D computes center = (left+width/2, top+height/2), transforms, then checks edges.
-		if (subSize >= 20) {
-			int16 corridorLeft = (int16)param1;
-			int16 corridorTop = (int16)b.readUint32BE();
-			int16 corridorWidth = (int16)b.readUint32BE();
-			int16 corridorHeight = (int16)b.readUint32BE();
-
-			int16 centerX = corridorLeft + corridorWidth / 2;
-			int16 centerY = corridorTop + corridorHeight / 2;
-			// DOS FUN_1C54D calls FUN_2248C here, which adds the current
-			// camera offset to the scripted rectangle center before testing it
-			// against the source-buffer ship center.
-			unprojectGameplayPoint(centerX, centerY);
-
-			_corridorLeftX = centerX - corridorWidth / 2;
-			_corridorTopY = centerY - corridorHeight / 2;
-			_corridorRightX = _corridorLeftX + corridorWidth;
-			_corridorBottomY = _corridorTopY + corridorHeight;
-
-			// Apply 0x0D immediately so it sees the same pre-physics ship state as
-			// the other per-frame GAME latches. Deferring this until after 0x07/0x09
-			// movement made right-wall hits fire too early when steering into a wall.
-			int16 collisionShipX = _shipPosX;
-			int16 collisionShipY = _shipPosY;
-			getCollisionShipCenter(collisionShipX, collisionShipY);
-
-			const bool suppressDirectionalDamage = (_frameDispatchFlags & 0x10) != 0;
-			const byte oldDirectionalFlags = _damageFlags & 0x0F;
-			if (_health >= 0) {
-				if (collisionShipX < _corridorLeftX) {
-					_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
-					if (!suppressDirectionalDamage) {
-						if (_rollAccum < 0x100)
-							_rollAccum = 0x100;
-						_damageFlags |= 0x04;
-					}
-				}
-				if (collisionShipX > _corridorRightX) {
-					_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
-					if (!suppressDirectionalDamage) {
-						if (_rollAccum > -0x100)
-							_rollAccum = -0x100;
-						_damageFlags |= 0x02;
-					}
-				}
-				if (collisionShipY < _corridorTopY) {
-					_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
-					if (!suppressDirectionalDamage)
-						_damageFlags |= 0x01;
-				}
-				if (collisionShipY > _corridorBottomY) {
-					_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
-					if (!suppressDirectionalDamage)
-						_damageFlags |= 0x08;
-				}
-			}
-			if ((_damageFlags & 0x0F) != oldDirectionalFlags) {
-				debug(1, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
-					collisionShipX, collisionShipY,
-					_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
-					_damageFlags, suppressDirectionalDamage ? 1 : 0);
-			}
-
-			debug(5, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
-				corridorLeft, corridorTop, corridorWidth, corridorHeight,
-				_perspectiveX, _perspectiveY,
-				_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
-		}
+		handleGameOpcode0DCorridor(subSize, b, param1);
 		break;
 
 	case 0x0E:
-		// Secondary collision zone (FUN_1C6E9): AABB test, sets damageFlags bit 4 (0x10)
-		// Original params: left, top, WIDTH, HEIGHT (same as 0x0D)
-		if (subSize >= 20) {
-			int16 zoneLeft = (int16)param1;
-			int16 zoneTop = (int16)b.readUint32BE();
-			int16 zoneWidth = (int16)b.readUint32BE();
-			int16 zoneHeight = (int16)b.readUint32BE();
-			const int16 rawZoneLeft = zoneLeft;
-			const int16 rawZoneTop = zoneTop;
-
-			int16 centerX = zoneLeft + zoneWidth / 2;
-			int16 centerY = zoneTop + zoneHeight / 2;
-			// Same transform as opcode 0x0D/FUN_1C54D.
-			unprojectGameplayPoint(centerX, centerY);
-
-			zoneLeft = centerX - zoneWidth / 2;
-			zoneTop = centerY - zoneHeight / 2;
-			int16 zoneRight = zoneLeft + zoneWidth;
-			int16 zoneBottom = zoneTop + zoneHeight;
-			int16 collisionShipX = _shipPosX;
-			int16 collisionShipY = _shipPosY;
-			getCollisionShipCenter(collisionShipX, collisionShipY);
-
-			if (_health >= 0 &&
-				collisionShipX > zoneLeft && collisionShipX < zoneRight &&
-				collisionShipY > zoneTop && collisionShipY < zoneBottom) {
-				_damageFlags |= 0x10;
-				debug(1, "RA1 0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
-					collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
-					rawZoneLeft, rawZoneTop, zoneWidth, zoneHeight,
-					_perspectiveX, _perspectiveY, _damageFlags);
-			}
-			debug(7, "RA1 GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
-				collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
-				_perspectiveX, _perspectiveY, _damageFlags);
-		}
+		handleGameOpcode0EZone(subSize, b, param1);
 		break;
 
 	case 0x0B:
-		_activeGameOpcode = 0x0B;
-		_frameGameOpcodeMask |= (1u << 0x0B);
-		// GAME 0x0B per-frame handler (FUN_1CDA7).
-		// field1 = frame counter, field2 = max frames
-		_gameCounter = param1;
-		if (subSize >= 20) {
-			uint32 maxFrames = b.readUint32BE(); // field2 (max frames)
-			b.readUint32BE(); // field3
-			b.readUint32BE(); // field4
-
-			// RA1 scripts drive progression with GAME counters. Finish 0x0B-driven
-			// interactive videos once the script counter reaches the terminal frame.
-			if (_interactiveVideoActive && maxFrames > 0 &&
-				_gameCounter >= (int32)maxFrames - 1) {
-				_vm->_smushVideoShouldFinish = true;
-				debug(1, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
-			}
-		}
-		debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
-		if (!_gameOp0BPhysicsUpdatedThisFrame) {
-			updateGameOp0BPhysics();
-			_gameOp0BPhysicsUpdatedThisFrame = true;
-			syncViewportOffset(true);
-		}
+		handleGameOpcode0BFirstPerson(subSize, b, param1);
 		break;
 
 	case 0x5A:
-		// Target detection — HandleGameOp5A (0x1C0EF). AABB from video stream.
-		// Original checks event mask: if target already killed, skip to GOST update.
-		if (subSize >= 24) {
-			int16 targetIdx = (int16)param1;
-			int16 left = (int16)b.readUint32BE();
-			int16 top = (int16)b.readUint32BE();
-			int16 w = (int16)b.readUint32BE();
-			int16 h = (int16)b.readUint32BE();
-			int16 right = left + w;
-			int16 bottom = top + h;
-
-			if (targetIdx >= 0) {
-				const int byteIdx = targetIdx >> 3;
-				if (byteIdx >= 0 && byteIdx < 0x96 && byteIdx < kFrameObjectStateBytes) {
-					const byte bit = (byte)(0x80 >> (targetIdx & 7));
-					const int altIdx = byteIdx + 0x96;
-					const bool primarySet = (_frameObjectState[byteIdx] & bit) != 0;
-					const bool secondarySet = (altIdx < kFrameObjectStateBytes) &&
-						((_frameObjectState[altIdx] & bit) != 0);
-
-					if (!primarySet || secondarySet) {
-						checkTargetHit(targetIdx, left, top, right, bottom);
-					} else {
-						updateGostSlotPosition(targetIdx, left, top, right, bottom);
-					}
-				} else {
-					checkTargetHit(targetIdx, left, top, right, bottom);
-				}
-			}
-			debug(5, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
-				targetIdx, left, top, right, bottom, _targetProximity);
-		}
+		handleGameOpcode5ATarget(subSize, b, param1);
 		break;
 
 	case 0x08:
@@ -2279,21 +2334,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 	case 0x0A:
 	case 0x19:
 	case 0x1A:
-		_activeGameOpcode = (uint16)opcode;
-		_frameGameOpcodeMask |= (1u << opcode);
-		_gameCounter = param1;
-		if (subSize >= 20) {
-			uint32 param2 = b.readUint32BE();
-			uint32 param3 = b.readUint32BE();
-			uint32 param4 = b.readUint32BE();
-			if (opcode == 0x09 && _currentLevel == 4) {
-				debug(1, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
-					_gameCounter, param2, param3, param4, _frameGameOpcodeMask);
-			} else {
-				debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
-					opcode, _gameCounter, param2, param3, param4);
-			}
-		}
+		handleGameCounterOpcode(opcode, subSize, b, param1);
 		break;
 
 	default:
