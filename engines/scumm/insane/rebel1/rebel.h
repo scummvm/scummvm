@@ -150,6 +150,14 @@ private:
 		const char *bonusLabel1 = nullptr, const char *detailText1 = nullptr, int bonusValue1 = 0,
 		const char *bonusLabel2 = nullptr, const char *detailText2 = nullptr, int bonusValue2 = 0,
 		int passwordIndex = 0);
+	bool playDeathOrRetry(const char *retryVideo, const char *gameOverVideo);
+	void resetLevelDamageState();
+	void resetLevelFrameState();
+	void resetLevelTargetingState(bool resetKillCount = true);
+	void resetLevelFlightState(int16 shipDirIndex = 17);
+	void resetLevelInputHistory(bool resetAxisDeltaX = false);
+	void resetLevelAttemptState(int16 flyControlMode, int16 gameplayPhase,
+		int16 shipDirIndex = 17, bool resetAxisDeltaX = false);
 
 	// Play interactive gameplay video (with ship physics + HUD)
 	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
