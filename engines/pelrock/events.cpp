@@ -63,7 +63,6 @@ void PelrockEventManager::pollEvent() {
 				_leftMouseClicked = true;
 				_releaseX = _event.mouse.x;
 				_releaseY = _event.mouse.y;
-				_longClicked = false;
 			} else {
 				_leftMouseClicked = false;
 			}
