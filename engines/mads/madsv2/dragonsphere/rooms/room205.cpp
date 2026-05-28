@@ -496,7 +496,7 @@ static void room_205_pre_parser() {
 	}
 
 	if (player_said_2(walk_to, shifter_village) ||
-	    player_said_2(walk_across, ground) && inter_point_y < 117) {
+	    (player_said_2(walk_across, ground) && inter_point_y < 117)) {
 		if (global[slime_healed]) {
 			switch (kernel.trigger) {
 			case 0:
@@ -611,7 +611,7 @@ static void room_205_parser() {
 	}
 
 	if (player_said_2(walk_to, shifter_village) ||
-	    player_said_2(walk_across, ground) && inter_point_y < 117) {
+	    (player_said_2(walk_across, ground) && inter_point_y < 117)) {
 		if (global[slime_healed]) {
 			new_room = 206;
 

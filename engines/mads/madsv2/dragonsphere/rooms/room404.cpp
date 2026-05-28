@@ -302,7 +302,8 @@ static void room_404_init() {
 	if (global[desert_counter] == 6) {
 		aa[1] = kernel_run_animation(kernel_name('d', 1), 1);
 		local->anim_1_running = true;
-		kernel_reset_animation(aa[25], 30);
+		// WORKAROUND: Invalid line from the original commented out
+		//kernel_reset_animation(aa[25], 30);
 
 	} else if (previous_room == 120 || previous_room != KERNEL_RESTORING_GAME) {
 		ss[fx_dune_1] = kernel_load_series(kernel_name('x', 0), false);

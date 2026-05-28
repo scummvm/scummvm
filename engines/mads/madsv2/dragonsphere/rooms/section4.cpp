@@ -63,7 +63,7 @@ void section_4_walker() {
 
 	Common::strcpy_s(temp_buf, player.series_name);
 
-	if (new_room == 401 || new_room == 402 || new_room == 403 && global[player_persona] == PLAYER_IS_KING) {
+	if (new_room == 401 || new_room == 402 || (new_room == 403 && global[player_persona] == PLAYER_IS_KING)) {
 		global[perform_displacements] = false;
 	} else {
 		global[perform_displacements] = true;
