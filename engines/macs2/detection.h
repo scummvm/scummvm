@@ -42,12 +42,12 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Macs2
 
-class Macs2MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Macs2MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:
 	Macs2MetaEngineDetection();
-	~Macs2MetaEngineDetection() override {}
+	~Macs2MetaEngineDetection() {}
 
 	const char *getName() const override {
 		return "macs2";

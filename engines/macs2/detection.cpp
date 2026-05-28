@@ -39,7 +39,7 @@ const DebugChannelDef Macs2MetaEngineDetection::debugFlagList[] = {
 };
 
 Macs2MetaEngineDetection::Macs2MetaEngineDetection() : AdvancedMetaEngineDetection(Macs2::gameDescriptions,
-	sizeof(ADGameDescription), Macs2::macs2Games) {
+	Macs2::macs2Games) {
 }
 
 REGISTER_PLUGIN_STATIC(MACS2_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Macs2MetaEngineDetection);

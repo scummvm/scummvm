@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/debug.h"
 #include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "macs2/view1.h"
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
@@ -2099,7 +2100,7 @@ bool Character::FindPath(Common::Point target) {
 	// Current path
 	// Array of points already visited
 
-	// return true;
+	return result;
 }
 
 bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target) {
