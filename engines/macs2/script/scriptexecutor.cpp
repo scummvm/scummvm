@@ -2770,17 +2770,17 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 			activeDialogueSpeakerObjectID = 0;
 			SetCurrentSceneScriptAt(0);
-		} else if (opcode1 == 0x038) {
+		} else if (opcode1 == 0x38) {
 			// scriptLoadOverlayFont (1008:d749). Loads a font resource for
 			// overlay text and sets overlayTextStageActive = true.
 			ReadByte();
 			overlayTextStageActive = true;
-		} else if (opcode1 == 0x039) {
+		} else if (opcode1 == 0x39) {
 			// scriptEndOverlayText (1008:d80f). Clears the overlay text stage.
 			if (overlayTextStageActive) {
 				overlayTextStageActive = false;
 			}
-		} else if (opcode1 == 0x03A) {
+		} else if (opcode1 == 0x3A) {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView == nullptr) {
 				warning("Ignoring overlay text entry without an active View1");
@@ -2833,18 +2833,18 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				entry.text = entry.text.substr(0, 0x28);
 			}
 			currentView->addOverlayTextEntry(entry);
-		} else if (opcode1 == 0x03B) {
+		} else if (opcode1 == 0x3B) {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView != nullptr) {
 				currentView->clearOverlayTextEntries();
 			}
-		} else if (opcode1 == 0x03C) {
+		} else if (opcode1 == 0x3C) {
 			const uint16 fadeSpeed = scriptReadValue16();
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView != nullptr && fadeSpeed != 0) {
 				currentView->startFadeToBlack();
 			}
-		} else if (opcode1 == 0x03D) {
+		} else if (opcode1 == 0x3D) {
 			const uint16 fadeSpeed = scriptReadValue16();
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView != nullptr && fadeSpeed != 0) {
