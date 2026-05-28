@@ -154,13 +154,23 @@ void APCStreamImpl::queuePacket(Common::SeekableReadStream *data) {
 int16 APCStreamImpl::decodeIMA(byte code, Status *status) {
 	int32 E = (2 * (code & 0x7) + 1) * status->step / 8;
 	int32 diff = (code & 0x08) ? -E : E;
-	// In Cryo APC data is only truncated and not CLIPed as expected
-	int16 samp = (status->last + diff);
+	// The original Cryo decoder (atlantis.exe FUN_004101ce) accumulates the
+	// predictor in full 32-bit precision and truncates to int16 only when it
+	// emits each sample; the running predictor itself is never clamped or
+	// truncated and is carried at full width from one sample to the next.
+	// Keeping `last` full width is what stops the differential predictor from
+	// diverging.  This code previously stored the truncated int16 back into
+	// the predictor, so a single out-of-range sample wrapped around the
+	// modulus and the wrapped value then fed forward into every following
+	// sample as sustained distortion (audible on loud, dynamic music, but not
+	// on low-dynamic material such as speech, which is why it long went
+	// unnoticed).
+	status->last += diff;
+	int16 samp = (int16)status->last;
 
 	int32 index = status->stepIndex + Ima_ADPCMStream::_stepAdjustTable[code];
 	index = CLIP<int32>(index, 0, ARRAYSIZE(Ima_ADPCMStream::_imaTable) - 1);
 
-	status->last = samp;
 	status->stepIndex = index;
 	status->step = Ima_ADPCMStream::_imaTable[index];
 
