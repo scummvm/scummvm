@@ -447,6 +447,8 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 352:
 	case 355:
 	case 291:
+	case 285:
+	case 363:
 		toJail();
 		break;
 	case 356:
@@ -456,9 +458,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	//  hermit
 	case 366:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
-		break;
-	case 363:
-		toJail();
 		break;
 	case 367: // accept riddle
 		_state->setCurrentRoot(room, 27, 0);
@@ -563,9 +562,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 295:
 		addInventoryItem(84);
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
-		break;
-	case 285:
-		toJail();
 		break;
 	case 374:
 	case 372:
