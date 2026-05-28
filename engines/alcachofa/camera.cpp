@@ -179,7 +179,7 @@ void CameraV1::preUpdate() {
 
 void CameraV1::update() {
 	auto deltaTime = (g_engine->getMillis() - _lastUpdateTime) / 1000.0f;
-	auto newCenter = _appliedCenter;
+	auto newCenter = _usedCenter;
 
 	if (_followTarget != nullptr) {
 		// this threshold is responsible for the jitter while following
@@ -201,7 +201,7 @@ void CameraV1::update() {
 		updateLerping(newCenter, deltaTime, _lerpSpeed);
 	}
 
-	setAppliedCenter(newCenter);
+	setAppliedCenter(_usedCenter = newCenter);
 }
 
 void CameraV1::updateLerping(Vector3d &newCenter, float deltaTime, float speed) {
@@ -219,11 +219,11 @@ void CameraV1::updateLerping(Vector3d &newCenter, float deltaTime, float speed) 
 
 void CameraV2::update() {
 	auto deltaTime = (g_engine->getMillis() - _lastUpdateTime) / 1000.0f;
-	auto newCenter = _appliedCenter;
+	auto newCenter = _usedCenter;
 
 	if (_followTarget != nullptr) {
 		_target = as3D(_followTarget->position());
-		auto delta = _target - _appliedCenter;
+		auto delta = _target - _usedCenter;
 		_isLerping |= MAX(fabsf(delta.x()), fabsf(delta.y())) > 35.0f;
 
 		if (_isLerping) {
@@ -238,7 +238,7 @@ void CameraV2::update() {
 	} else if (_isLerping)
 		updateLerping(newCenter, deltaTime, _lerpSpeed);
 
-	setAppliedCenter(newCenter);
+	setAppliedCenter(_usedCenter = newCenter);
 }
 
 void CameraV1::setRoomBounds(Graphic &background) {
@@ -263,7 +263,7 @@ void CameraV1::setFollow(WalkingCharacter *target) {
 	_followTarget = target;
 	_isLerping = false;
 	if (target != nullptr)
-		setAppliedCenter(as3D(target->position()));
+		setAppliedCenter(_usedCenter = as3D(target->position()));
 }
 
 void CameraV2::setFollow(WalkingCharacter *target) {
@@ -302,7 +302,7 @@ void CameraV1::onCloseMenu() {
 }
 
 void CameraV1::syncGame(Serializer &s) {
-	syncVector(s, _appliedCenter);
+	syncVector(s, _usedCenter);
 	syncMatrix(s, _mat3Dto2D);
 	syncMatrix(s, _mat2Dto3D);
 	syncFollowTarget(s, _followTarget);
@@ -310,6 +310,7 @@ void CameraV1::syncGame(Serializer &s) {
 	s.syncAsByte(_isLerping);
 	s.syncAsFloatLE(_lerpSpeed);
 	s.syncAsUint32LE(_lastUpdateTime);
+	_appliedCenter = _usedCenter;
 } 
 
 void CameraV1::lerpOrSet(Point target, int32 mode) {
@@ -321,15 +322,15 @@ void CameraV1::lerpOrSet(Point target, int32 mode) {
 	if (mode == 1) {
 		// snap to target
 		_isLerping = false;
-		_appliedCenter = _target;
+		_usedCenter = _target;
 	} else if (mode <= 0) {
 		// fixed speed, overshoot target
-		_target.x() += copysignf(100, _appliedCenter.x() - _target.x());
-		_target.y() += copysignf(100, _appliedCenter.y() - _target.y());
+		_target.x() += copysignf(100, _usedCenter.x() - _target.x());
+		_target.y() += copysignf(100, _usedCenter.y() - _target.y());
 		_lerpSpeed = 350.0f;
 	} else {
 		// dynamic speed
-		_lerpSpeed = MAX(1.0f, _target.getDistanceTo(_appliedCenter) / mode);
+		_lerpSpeed = MAX(1.0f, _target.getDistanceTo(_usedCenter) / mode);
 	}
 }
 
@@ -350,7 +351,7 @@ struct CamV1DisguiseTask final : public Task {
 
 	TaskReturn run() override {
 		if (_startTime == 0) {
-			_startPosition = _camera._appliedCenter;
+			_startPosition = _camera._usedCenter;
 			_startTime = g_engine->getMillis();
 		}
 		if (_durationMs <= 0 || g_engine->getMillis() - _startTime >= (uint32)_durationMs)
@@ -364,7 +365,7 @@ struct CamV1DisguiseTask final : public Task {
 			newPosition.y() += 100 - t;
 		else if (t >= 200)
 			newPosition.y() += t - 200;
-		_camera._appliedCenter = newPosition;
+		_camera._usedCenter = newPosition;
 		_camera.setFollow(nullptr);
 
 		return TaskReturn::yield();
@@ -414,9 +415,9 @@ void CameraV3::preUpdate() {
 void CameraV3::setRoomBounds(Graphic &background) {
 	auto bgSize = background.animation().imageSize(0);
 	/* The fallback fixes a bug where if the background image is invalid the original engine
-		* would not update the background size. This would be around 1024,768 due to
-		* previous rooms in the bug instances I found.
-		*/
+	 * would not update the background size. This would be around 1024,768 due to
+	 * previous rooms in the bug instances I found.
+	 */
 	if (bgSize == Point(0, 0))
 		bgSize = Point(1024, 768);
 

@@ -99,7 +99,11 @@ protected:
 	void updateLerping(Math::Vector3d &newCenter, float deltaTime, float speed);
 
 	WalkingCharacter *_followTarget = nullptr;
-	Math::Vector3d _target;
+	Math::Vector3d
+		_usedCenter, // in V2 the used center is not clipped (that would _appliedCenter)
+					 // in menus this variable stays in room space and is clipped to the one valid menu pos
+					 // as such it acts like the state backup in CameraV3
+		_target;
 	bool _isLerping = false;
 	float _lerpSpeed = 0.0f;
 	uint32 _lastUpdateTime = 0;
