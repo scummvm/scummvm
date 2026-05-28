@@ -190,9 +190,9 @@ class GameObject;
 			
 
 			// fn0037_A3D2 - scriptSkipBlock: skips nested opcode blocks
-			void FuncA3D2();
-			// fn0037_A37A - scriptFuncA37A: alternate skip (for opcode 8)
-			void FuncA37A();
+			void scriptSkipBlock();
+			// fn0037_A37A - scriptscriptSkipAlternate: alternate skip (for opcode 8)
+			void scriptSkipAlternate();
 
 			// Implementation of opcode 13
 			// 0037h:0A439h
@@ -203,38 +203,38 @@ class GameObject;
 			bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 			bool loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 
-			// void Func101D(uint16 x, uint16 y);
+			// void getAreaAtPoint(uint16 x, uint16 y);
 			
 			// fn0037_9F4D - scriptReadValue: reads a typed value from the script stream
-			void Func9F4D(uint16 &out1, uint16 &out2);
+			void scriptReadValuePair(uint16 &out1, uint16 &out2);
 
 			// Function to be used if we only want to have the script be advanced
 			// due to a skipped implementation
-			void Func9F4D_Placeholder();
+			void scriptReadValue_Placeholder();
 
 			// Combines both 16 bit values into a 32 bit value
-			uint32 Func9F4D_32();
+			uint32 scriptReadValue32();
 
 			// Returns only the first of the two 16 bit values
-			uint16 Func9F4D_16();
+			uint16 scriptReadValue16();
 
 			// Saves the given value in a script variable
 			// fn0037_A334 - scriptSaveVariable: saves value to a script variable
-			void FuncA334(uint32 value);
+			void scriptSaveVariable(uint32 value);
 
 			// fn0037_C991 proc
 			// Implements a walk to
-			void FuncC991();
+			void scriptLoadSpecialAnimImpl();
 
 			// Implements opcode 28 - TODO: What exactly?
 			// fn0037_C8E4 - scriptStopAnimation
-		void FuncC8E4();
+		void scriptStopAnimationImpl();
 
 			// fn0037_B6BE - scriptChangeAnimation
-			void FuncB6BE_actual();
+			void scriptChangeAnimationImpl();
 
 			// Implements opcode 0e - changing scene animations
-			void FuncB6BE();
+			void scriptChangeAnimationWrapper();
 
 			
 
@@ -268,14 +268,14 @@ class GameObject;
 			MouseMode savedExternalInventoryMouseMode = MouseMode::Use;
 
 			// Implements a lookup in the "areas" map
-			uint16 Func101D(uint16 x, uint16 y);
+			uint16 getAreaAtPoint(uint16 x, uint16 y);
 
 			// Determines if we actually look something up when looking up 9F4D FF 27
 			// in the obstacles/pathfinding map
 			// Should be 1 while we execute a "character stopped walking" script,
 			// otherwise 0
-			bool global103A = false;
-			bool global1032 = false;
+			bool pathWalkableResult = false;
+			bool isRepeatRun = false;
 
 			// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
 			int chosenDialogueOption = 0;
@@ -297,18 +297,18 @@ class GameObject;
 			uint16 _interactedOtherObjectID = 0;
 
 			// Is set to true in opcode 2C if an object is inside another target object
-			bool global103C = false;
-			bool global103E = false;
-			bool global06BE = true;
-		// [102Ah] - separate from global06BE (sound). Controls whether the
+			bool inventoryCheckResult = false;
+			bool animBlobRangeTestResult = false;
+			bool soundEnabled = true;
+		// [102Ah] - separate from soundEnabled (sound). Controls whether the
 		// player can fast-forward the current script section via button 8.
 		// Set by opcode 0x1C, cleared by opcode 0x1D.
 		bool scriptSkippable = false;
-			bool global06C0 = true;
-			bool global1F4C = false;
+			bool musicEnabled = true;
+			bool mapPanelActive = false;
 			bool overlayTextStageActive = false;
-			bool global1040 = false;
-			bool global1042 = false;
+			bool inventoryActionFlag = false;
+			bool inventoryCombineFlag = false;
 			Common::Array<uint8> musicSlots[2];
 			uint16 activeMusicSlot = 0;
 			uint16 musicControlMode = 0;
@@ -359,6 +359,11 @@ class GameObject;
 				// return isRunningScript || isAwaitingCallback;
 			}
 
+
+			// Returns true if the save/load menu can be opened (no blocking state)
+			bool canOpenSaveMenu() const {
+				return !IsSceneInitRun && !isFrameWaitActive && !isTimerActive;
+			}
 
 			// Mutex indicating if the A3D2 function is active
 			bool isSkipping = false;

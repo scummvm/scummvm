@@ -65,36 +65,36 @@ private:
 
 	void SIS_LogEntry(uint16 seg, uint16 off, Common::String msg = "");
 
-	void Func1A03();
+	void adlibReadDeltaTime();
 
 	// 01D7:1AA7
 	void OnTimer();
 
 	// TODO: Consider pointer vs. passing by value
-	StreamHandler *Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta);
+	StreamHandler *adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta);
 
-	void Func244D(StreamHandler *song);
+	void adlibPlaySong(StreamHandler *song);
 
 	// TODO: Maybe need to add the caller
-	uint16 Func24FD();
+	uint16 adlibTickHandler();
 
 	// TODO: Maybe we need to add the caller, fn0017_24FD proc
-	uint16 Func2686();
+	uint16 adlibStopMusic();
 
-	uint8 Func2779(uint8 arg1);
+	uint8 adlibGetOperator(uint8 arg1);
 
 	// Writes a value to the target register
-	void Func2792(byte registerIndex, byte value);
-	void Func2792r(byte value, byte registerIndex) {
-		Func2792(registerIndex, value);
+	void adlibWriteReg(byte registerIndex, byte value);
+	void adlibWriteRegr(byte value, byte registerIndex) {
+		adlibWriteReg(registerIndex, value);
 	}
 
-	void Func27E4();
+	void adlibSetInstrument();
 
 	// TODO: Consider adding the caller
-	void Func2839(uint8 bpp0A, StreamHandler *sh);
+	void adlibSetFrequency(uint8 bpp0A, StreamHandler *sh);
 
-	void Func294E(uint16 bppA, uint8 bpp8, uint16 bpp6);
+	void adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6);
 
 	// TODO: Where initialized?
 	uint8 g36;
@@ -212,7 +212,7 @@ private:
 	uint8 g229B;
 
 	// fn0017_2A80: 0017:2A80
-	void Func2A80(uint8 bpp6, uint8 bpp8, uint8 reg_base);
+	void adlibProcessEvent(uint8 bpp6, uint8 bpp8, uint8 reg_base);
 
 public:
 	void Init();
