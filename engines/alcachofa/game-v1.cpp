@@ -183,6 +183,10 @@ public:
 		return Point(g_system->getWidth() / 2, 150);
 	}
 
+	Point getObjectNameOffset() override {
+		return Point(0, -50);
+	}
+
 	const char *getMenuRoom() override {
 		return "MENU";
 	}
