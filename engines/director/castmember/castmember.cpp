@@ -26,6 +26,7 @@
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/castmember/castmember.h"
+#include "director/castmember/script.h"
 #include "director/lingo/lingo-the.h"
 #include "director/util.h"
 
@@ -321,7 +322,12 @@ void CastMember::setField(int field, const Datum &d) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
 			return;
 		}
-		_cast->_lingoArchive->replaceCode(*d.u.s, kCastScript, _castId);
+		{
+			ScriptType scriptType = kCastScript;
+			if (_type == kCastLingoScript)
+				scriptType = static_cast<ScriptCastMember *>(this)->_scriptType;
+			_cast->_lingoArchive->replaceCode(*d.u.s, scriptType, _castId);
+		}
 		castInfo->script = d.asString();
 		return;
 	case kTheWidth:
