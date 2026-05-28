@@ -300,6 +300,10 @@ class GameObject;
 			bool global103C = false;
 			bool global103E = false;
 			bool global06BE = true;
+		// [102Ah] - separate from global06BE (sound). Controls whether the
+		// player can fast-forward the current script section via button 8.
+		// Set by opcode 0x1C, cleared by opcode 0x1D.
+		bool scriptSkippable = false;
 			bool global06C0 = true;
 			bool global1F4C = false;
 			bool overlayTextStageActive = false;

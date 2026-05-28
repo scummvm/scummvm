@@ -62,8 +62,14 @@ private:
 	uint32 Duration;
 
 	bool IsLerping = false;
-	// TODO: Need to consistently reset this one to false
 	bool LerpIgnoresObstacles = false;
+
+	// Bresenham pixel-stepping state from walkAlongPath (1008:1b8f)
+	// These replace the time-based lerp for accurate movement
+	int16 _stepDeltaX = 0;      // abs(endX - startX) - runtime[2]
+	int16 _stepDeltaY = 0;      // abs(endY - startY) - runtime[3]
+	int16 _stepError = 0;       // Bresenham error accumulator - runtime[0x18]
+	bool _stepDirectionSet = false; // runtime+0x33: direction has been calculated
 
 	// If this is set, a lerp to a location becomes picking up
 	// TODO: Replace by more proper task implementation later
