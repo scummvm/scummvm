@@ -2118,6 +2118,7 @@ void PelrockEngine::endingScene() {
 		}
 
 		if (isIdleAnim) {
+			assert(sprite->numAnims == 2);
 			Anim idleAnim;
 			idleAnim.nframes = 1;
 			idleAnim.loopCount = 1;
