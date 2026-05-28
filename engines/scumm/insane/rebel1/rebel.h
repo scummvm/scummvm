@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 #include "common/events.h"
 #include "scumm/insane/insane.h"
+#include "scumm/insane/rebel/rebel_audio.h"
 #include "scumm/smush/rebel/smush_player_ra1.h"
 
 namespace Scumm {
@@ -452,12 +453,8 @@ private:
 	static const int16 kDeathTimerInit = 30;
 	static const int16 kDamageCooldownInit = 10;
 
-	// Audio state (same structure as RA2)
-	static const int kMaxAudioTracks = 4;
-	Audio::QueuingAudioStream *_audioStreams[kMaxAudioTracks];
-	Audio::SoundHandle _audioHandles[kMaxAudioTracks];
-	bool _audioTrackActive[kMaxAudioTracks];
-	int _audioSampleRate;
+	// Streamed SMUSH audio
+	RebelAudio _audio;
 	static const int kNumSfx = 8;
 	enum SfxSlot {
 		kSfxLaserShot = 0,

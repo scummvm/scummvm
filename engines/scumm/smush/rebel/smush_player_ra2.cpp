@@ -488,12 +488,6 @@ void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b)
 	}
 }
 
-void SmushPlayer::ensureMultiFont() {
-	if (!_multiFont) {
-		_multiFont = new SmushMultiFont(_vm, this, true);
-	}
-}
-
 /**
  * RA2-specific text rendering using SmushMultiFont for inline font switching.
  */
@@ -558,35 +552,6 @@ void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 }
 
 /**
- * Apply RA2 FOBJ position offsets and clamp to buffer bounds.
- * Modifies left, top, width, height in place.
- * When srcSkipY is non-null, outputs the number of source rows to skip
- * when top is clipped from negative (for codecs with row-size prefixes).
- */
-void SmushPlayer::adjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
-	left += _fobjOffsetX;
-	top += _fobjOffsetY;
-
-	int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
-	if (top < 0) {
-		if (srcSkipY)
-			*srcSkipY = -top;
-		height += top;
-		top = 0;
-	}
-	if (left < 0) {
-		width += left;
-		left = 0;
-	}
-	if (top + height > bufHeight) {
-		height = bufHeight - top;
-	}
-	if (left + width > pitch) {
-		width = pitch - left;
-	}
-}
-
-/**
  * Dispatch to RA2-specific codec functions.
  * Returns true if the codec was handled, false for standard codecs.
  */
@@ -630,37 +595,6 @@ void SmushPlayerRebel2::ra2StoreFobjData(int codec, const byte *data, int32 data
 	_storedFobjWidth = width;
 	_storedFobjHeight = height;
 	_storeFrame = false;
-}
-
-/**
- * Cache the most recent frame FOBJ for GOST re-rendering.
- */
-void SmushPlayer::rememberLastFobj(int codec, const byte *data, int32 dataSize,
-									  int left, int top, int width, int height) {
-	if (dataSize <= 0) {
-		_hasFrameFobjForGost = false;
-		return;
-	}
-
-	byte *newData = (byte *)realloc(_lastFobjData, dataSize);
-	if (newData == nullptr) {
-		warning("SmushPlayer::rememberLastFobj: Failed to allocate %d bytes", dataSize);
-		free(_lastFobjData);
-		_lastFobjData = nullptr;
-		_lastFobjDataSize = 0;
-		_hasFrameFobjForGost = false;
-		return;
-	}
-
-	_lastFobjData = newData;
-	memcpy(_lastFobjData, data, dataSize);
-	_lastFobjDataSize = dataSize;
-	_lastFobjCodec = codec;
-	_lastFobjLeft = left;
-	_lastFobjTop = top;
-	_lastFobjWidth = width;
-	_lastFobjHeight = height;
-	_hasFrameFobjForGost = true;
 }
 
 /**
@@ -798,35 +732,6 @@ void SmushPlayerRebel2::handleGameProcessAudio(int16 feedSize) {
 		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
 		rebel2->processAudioFrame(feedSize);
 	}
-}
-
-// Masked region management — used by InsaneRebel2
-
-void SmushPlayer::addMaskedRegion(const Common::Rect &rect) {
-	for (Common::List<Common::Rect>::iterator it = _maskedRegions.begin(); it != _maskedRegions.end(); ++it) {
-		if (*it == rect) {
-			return; // Already exists
-		}
-	}
-	_maskedRegions.push_back(rect);
-}
-
-void SmushPlayer::removeMaskedRegion(const Common::Rect &rect) {
-	for (Common::List<Common::Rect>::iterator it = _maskedRegions.begin(); it != _maskedRegions.end(); ++it) {
-		if (*it == rect) {
-			_maskedRegions.erase(it);
-			return;
-		}
-	}
-}
-
-void SmushPlayer::clearMaskedRegions() {
-	_maskedRegions.clear();
-}
-
-void SmushPlayer::setScrollOffset(int x, int y) {
-	_scrollX = MAX(0, x);
-	_scrollY = MAX(0, y);
 }
 
 } // End of namespace Scumm

@@ -1557,8 +1557,9 @@ void InsaneRebel1::runGame() {
 }
 
 void InsaneRebel1::resetInteractiveVideoAudio() {
+	const int sampleRate = _audio.sampleRate();
 	terminateAudio();
-	initAudio(_audioSampleRate);
+	initAudio(sampleRate);
 }
 
 void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {

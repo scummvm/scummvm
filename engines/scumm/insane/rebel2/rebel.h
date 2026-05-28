@@ -27,6 +27,7 @@
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
+#include "scumm/insane/rebel/rebel_audio.h"
 
 #include "common/keyboard.h"
 #include "common/list.h"
@@ -1222,12 +1223,7 @@ public:
 	// ---------------------------------------------------------------------------
 	// RA2 doesn't use iMUSE -- audio is handled directly through the mixer.
 
-	static const int kRA2MaxAudioTracks = 4;
-
-	Audio::QueuingAudioStream *_audioStreams[kRA2MaxAudioTracks];
-	Audio::SoundHandle _audioHandles[kRA2MaxAudioTracks];
-	bool _audioTrackActive[kRA2MaxAudioTracks];
-	int _audioSampleRate;
+	RebelAudio _audio;
 
 	// Initialize audio system for RA2
 	void initAudio(int sampleRate);
