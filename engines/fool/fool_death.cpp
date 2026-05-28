@@ -39,13 +39,13 @@ void FoolGame::deathRun() {
 	this->deathDrawZoom();
 	this->fillRect(0x14f, 0, 0x156, 0x7, 0x2);
 	this->fillRect(0x14f, 0x1f9, 0x156, 0x200, 2);
-	this->arr_rect_1eb8.top = 0x1e;
-	this->arr_rect_1eb8.left = 0x190;
-	this->arr_rect_1eb8.bottom = 0x2e;
-	this->arr_rect_1eb8.right = 0x1a8;
+	_deathBlackEye.top = 0x1e;
+	_deathBlackEye.left = 0x190;
+	_deathBlackEye.bottom = 0x2e;
+	_deathBlackEye.right = 0x1a8;
 	// 141:0122
-	_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
-	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->get(_deathBlackEye.left, _deathBlackEye.top, _deathBlackEye.right, _deathBlackEye.bottom, this->arr_bmp_bbbc);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_b3ec, kSrcCopy);
 	_event.where.y = 0x14;
 	// JMP 0x3c2
 	while (true) {
@@ -55,7 +55,7 @@ void FoolGame::deathRun() {
 			// 141:01cc
 			this->getNextEvent(-1);
 			this->deathMoveBlackEye();
-			if (g_toolbox->PtInRect(_event.where, this->arr_rect_1eb8)) {
+			if (g_toolbox->PtInRect(_event.where, _deathBlackEye)) {
 				this->deathCaught();
 				// 141:09f6
 				this->deathDrawWhiteEye();
@@ -77,7 +77,7 @@ void FoolGame::deathRun() {
 		// 141:023a
 		_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_c38c);
 		this->drawPuzzleButton(Common::U32String("~")); // was: str(335))
-		this->var_i16_233a = 1;
+		_deathWhiteEyeNeedsDraw = true;
 		// JMP 0x2be
 		while (_event.where.y < 0x14) {
 			// cursor is over the top menu, safe
@@ -103,7 +103,7 @@ void FoolGame::deathRun() {
 					// JMP 0x9a2
 					// 141:09a2
 					this->deathDrawWhiteEye();
-					_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kSrcCopy);
+					_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_bbbc, kSrcCopy);
 					this->deathDrawZoom();
 					if (_activePuzzleStatus < 0x64) {
 						_activePuzzleStatus = 0x64;
@@ -121,7 +121,7 @@ void FoolGame::deathRun() {
 		g_toolbox->PenPat(_patterns[1]);
 		g_toolbox->PenSize(0x17, 0x10);
 		for (int i = 0; i <= 5; i++) {
-			g_toolbox->MoveTo(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top);
+			g_toolbox->MoveTo(_deathBlackEye.left, _deathBlackEye.top);
 			g_toolbox->LineTo(0x6c, 0x127);
 			g_toolbox->Delay(0);
 		}
@@ -135,9 +135,9 @@ void FoolGame::deathRun() {
 
 void FoolGame::deathMoveBlackEye() {
 	// 141:03ca
-	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
-	this->var_i16_68a = _event.where.x - 0xc - this->arr_rect_1eb8.left;
-	this->var_i16_68c = _event.where.y - 8 - this->arr_rect_1eb8.top;
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_b3ec, kSrcCopy);
+	this->var_i16_68a = _event.where.x - 0xc - _deathBlackEye.left;
+	this->var_i16_68c = _event.where.y - 8 - _deathBlackEye.top;
 	// 141:0452
 	if (this->var_i16_68c < -4) {
 		this->var_i16_68c = -4;
@@ -151,42 +151,43 @@ void FoolGame::deathMoveBlackEye() {
 	if (this->var_i16_68a > 6) {
 		this->var_i16_68a = 6;
 	}
-	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_b3ec, kSrcCopy);
 	// 141:04ce
-	this->arr_rect_1ec0.top = this->arr_rect_1eb8.top + this->var_i16_68c;
-	this->arr_rect_1ec0.left = this->arr_rect_1eb8.left + this->var_i16_68a;
-	this->arr_rect_1ec0.bottom = this->arr_rect_1eb8.bottom + this->var_i16_68c;
-	this->arr_rect_1ec0.right = this->arr_rect_1eb8.right + this->var_i16_68a;
+	Common::Rect newPos; // arr_rect_1ec0
+	newPos.top = _deathBlackEye.top + this->var_i16_68c;
+	newPos.left = _deathBlackEye.left + this->var_i16_68a;
+	newPos.bottom = _deathBlackEye.bottom + this->var_i16_68c;
+	newPos.right = _deathBlackEye.right + this->var_i16_68a;
 
-	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_b3ec, kSrcCopy);
 	// 141:05a2
-	if (this->arr_rect_1ec0.top < 0x14) {
-		this->arr_rect_1ec0.top = 0x14;
-		this->arr_rect_1ec0.bottom = 0x24;
+	if (newPos.top < 0x14) {
+		newPos.top = 0x14;
+		newPos.bottom = 0x24;
 	}
 	// 141:05dc
-	if (this->arr_rect_1ec0.left < 0) {
-		this->arr_rect_1ec0.left = 0;
-		this->arr_rect_1ec0.right = 0x18;
+	if (newPos.left < 0) {
+		newPos.left = 0;
+		newPos.right = 0x18;
 	}
 	// 141:060c
-	if (this->arr_rect_1ec0.bottom > SCREEN_HEIGHT) {
-		this->arr_rect_1ec0.top = 0x146;
-		this->arr_rect_1ec0.bottom = 0x156;
+	if (newPos.bottom > SCREEN_HEIGHT) {
+		newPos.top = 0x146;
+		newPos.bottom = 0x156;
 	}
-	if (this->arr_rect_1ec0.right > SCREEN_WIDTH) {
-		this->arr_rect_1ec0.left = 0x1e8;
-		this->arr_rect_1ec0.right = 0x200;
+	if (newPos.right > SCREEN_WIDTH) {
+		newPos.left = 0x1e8;
+		newPos.right = 0x200;
 	}
-	_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_b3ec, kSrcCopy);
 	// 141:06bc
-	if (!((this->arr_rect_1eb8.top == this->arr_rect_1ec0.top) &&
-		((this->arr_rect_1eb8.left == this->arr_rect_1ec0.left)))) {
+	if (!((_deathBlackEye.top == newPos.top) &&
+		((_deathBlackEye.left == newPos.left)))) {
 		// 141:0722
-		_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kSrcCopy);
-		this->arr_rect_1eb8 = this->arr_rect_1ec0;
-		_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
-		_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kSrcCopy);
+		_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_bbbc, kSrcCopy);
+		_deathBlackEye = newPos;
+		_zbasic->get(_deathBlackEye.left, _deathBlackEye.top, _deathBlackEye.right, _deathBlackEye.bottom, this->arr_bmp_bbbc);
+		_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, this->arr_bmp_b3ec, kSrcCopy);
 		this->delay(1);
 	}
 	// 141:0880
@@ -194,18 +195,18 @@ void FoolGame::deathMoveBlackEye() {
 
 void FoolGame::deathDrawWhiteEye() {
 	// 141:0882
-	if (this->var_i16_233a != 0) {
+	if (_deathWhiteEyeNeedsDraw) {
 		_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
 	}
 	// 141:08b0
-	this->var_i16_233a = 0;
+	_deathWhiteEyeNeedsDraw = false;
 }
 
 void FoolGame::deathCaught() {
 	// 141:08b8
 	this->deathDrawWhiteEye();
 	this->sub_128_4da(0);
-	this->zoomRect(this->arr_rect_1eb8.top, this->arr_rect_1eb8.left, this->arr_rect_1eb8.bottom, this->arr_rect_1eb8.right, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
+	this->zoomRect(_deathBlackEye.top, _deathBlackEye.left, _deathBlackEye.bottom, _deathBlackEye.right, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
 	this->sub_128_4da(1);
 }
 

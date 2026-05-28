@@ -324,9 +324,9 @@ void FoolGame::sentenceSuccess() {
 		}
 	}
 	// 135:0d40
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForMouseUp();
-	this->sub_128_d34(this->arr_i16_3738[0], this->arr_i16_3738[1], this->arr_i16_3738[2], this->arr_i16_3738[3], 0x64);
+	this->flashRect(this->arr_i16_3738[0], this->arr_i16_3738[1], this->arr_i16_3738[2], this->arr_i16_3738[3], 0x64);
 }
 
 

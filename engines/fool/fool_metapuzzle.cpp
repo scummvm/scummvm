@@ -201,7 +201,7 @@ void FoolGame::metapuzzleWheel() {
 		zoomRect(arr_i16_4d20[0x30], arr_i16_4d20[0x30 + 1], arr_i16_4d20[0x30 + 2], arr_i16_4d20[0x30 + 3], 0x6e, 7, 0x100, 0x5d, 0x1, kPatXor, 0x1a);
 	}
 	_zbasic->picture(6, 0x6d, _metapuzzleWheelPic);
-	sub_128_2664();
+	menuClickMessage();
 	waitForClick();
 }
 
@@ -361,9 +361,9 @@ void FoolGame::sub_138_a90() {
 	// 138:0a90
 	_stateFlags = kStateReturn;
 	_activePuzzleBuffer = var_str_1272;
-	sub_128_2664();
+	menuClickMessage();
 	waitForMouseUp();
-	sub_128_d34(arr_i16_1eb8[0], arr_i16_1eb8[1], arr_i16_1eb8[2], arr_i16_1eb8[3], 0xc8);
+	flashRect(arr_i16_1eb8[0], arr_i16_1eb8[1], arr_i16_1eb8[2], arr_i16_1eb8[3], 0xc8);
 }
 
 void FoolGame::metapuzzleOnOption() {

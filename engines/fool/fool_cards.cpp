@@ -707,8 +707,8 @@ void FoolGame::sub_139_1d3e() {
 		_activePuzzleStatus = 0x64;
 	}
 	this->waitForMouseUp();
-	this->sub_128_2664();
-	this->sub_128_d34(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xc8);
+	this->menuClickMessage();
+	this->flashRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xc8);
 }
 
 

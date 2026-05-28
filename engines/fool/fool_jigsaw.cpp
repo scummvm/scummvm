@@ -414,7 +414,7 @@ void FoolGame::jigsawSuccess() {
 		}
 	}
 	// 132:149c
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForClick();
 }
 

@@ -210,7 +210,7 @@ void FoolGame::straightPathSuccess() {
 		}
 	}
 	g_toolbox->PenNormal();
-	sub_128_2664();
+	menuClickMessage();
 	waitForClick();
 }
 

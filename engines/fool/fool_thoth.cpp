@@ -1076,8 +1076,8 @@ void FoolGame::hermitScreenBehold() {
 	// 140:28bc
 	if (_puzzleCompletionStatus[0x68] > 4) {
 		this->waitForMouseUp();
-		this->sub_128_2664();
-		this->sub_128_d34(0x29, 0x37, 0x142, 0x1c9, 0x96);
+		this->menuClickMessage();
+		this->flashRect(0x29, 0x37, 0x142, 0x1c9, 0x96);
 		_activePuzzleSolved = true;
 	} else {
 		// 140:290c
@@ -1090,7 +1090,7 @@ void FoolGame::hermitScreenBehold() {
 
 void FoolGame::sub_140_2968() {
 	// 140:2968
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForClick();
 	_activePuzzleSolved = true;
 }

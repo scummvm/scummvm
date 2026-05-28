@@ -1527,7 +1527,7 @@ void FoolGame::sub_136_3a70() {
 	// 136:3a70
 	if (_activePuzzle == 0x57) {
 		_activePuzzleStatus = 0x64;
-		sub_128_2664();
+		menuClickMessage();
 		waitForClick();
 	} else {
 		// 136:3a8e

@@ -116,7 +116,7 @@ public:
 	void zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 patternID, PatternMode mode, int16 steps); // sub_128_962
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void getNextEvent(uint32 mask); // sub_128_c6a
-	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
+	void flashRect(int16 top, int16 left, int16 bottom, int16 right, int16 millis); // sub_128_d34
 	void showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep); // sub_128_dfe
 
 	void showBehold(int16 unk2, int16 unk1, const Common::U32String &message); // sub_128_178a
@@ -131,7 +131,7 @@ public:
 	void menuChapterSelect(); // sub_128_2126
 	void sub_128_21c8();
 	void storyRenderPage(); // sub_128_2202
-	void sub_128_2664();
+	void menuClickMessage(); // sub_128_2664
 	void sub_128_26f6();
 	void fetchPuzzleData(); // sub_128_271a
 	void menuNewGame(); // sub_128_27d6
@@ -251,7 +251,7 @@ public:
 	void polyominoRun(); // sub_133_004
 	void polyominoOnClick(); // sub_133_87c
 	void polyominoCancelMove(); // sub_133_eb2
-	void polyominoMove(); // sub_133_f04
+	void polyominoMove(int16 x, int16 y); // sub_133_f04
 	void polyominoOnClickFixed(); // sub_133_10a0
 	void polyominoReset(); // sub_133_11cc
 	void polyominoDrawFrame(); // sub_133_12d4
@@ -463,7 +463,6 @@ private:
 	int16 var_i16_34;
 	int16 var_i16_36;
 	int16 var_i16_38;
-	int16 var_i16_3a;
 	int16 var_i16_42;
 	int16 var_i16_44;
 	EventRecord _event; // var_ev_46
@@ -581,8 +580,8 @@ private:
 	int16 var_i16_105c;
 	int16 var_i16_105e;
 	int16 var_i16_1060;
-	int16 var_i16_1062;
-	int16 var_i16_1064;
+	int16 _polyominoPosX; // var_i16_1062
+	int16 _polyominoPosY; // var_i16_1064
 	int16 var_i16_1066;
 	int16 _jumbleGameType; // var_i16_1068
 	int16 var_i16_106a;
@@ -642,7 +641,7 @@ private:
 	int16 var_i16_1aa8;
 	int16 var_i16_1aaa;
 
-	int16 var_i16_1ab0;
+	int16 var_i16_1ab0; // var_i16_1ab0
 	int16 var_i16_1ab2;
 	int16 var_i16_1ab4;
 	int16 var_i16_1ab6;
@@ -730,7 +729,7 @@ private:
 	int16 var_i16_2332;
 
 	int16 var_i16_2338;
-	int16 var_i16_233a;
+	bool _deathWhiteEyeNeedsDraw; // var_i16_233a
 	int16 var_i16_233e;
 	int16 var_i16_233c;
 
@@ -753,8 +752,7 @@ private:
 	int16 _pageLines[202]; // arr_i16_1dee
 	int16 arr_i16_1eb8[0x29];
 	// used just for death?
-	Common::Rect arr_rect_1eb8;
-	Common::Rect arr_rect_1ec0;
+	Common::Rect _deathBlackEye; // arr_rect_1eb8
 	Common::Rect _screenGrid[0x200]; // arr_rect_1f38
 	int16 arr_i16_2f38[0x400]; // arr_i16_2f38, 96x32?
 	int16 arr_i16_3738[0x200];
@@ -766,7 +764,7 @@ private:
 	int16 arr_i16_4758[15];
 	Common::Rect arr_rect_4776;
 	int16 arr_i16_47d8[0x100];
-	PicHandle arr_pic_49d8[0x80];
+	PicHandle _polyominoPics[0x80]; // arr_pic_49d8
 	int16 _sunMapTileID[0x52]; // arr_i16_4bd8
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[52];
