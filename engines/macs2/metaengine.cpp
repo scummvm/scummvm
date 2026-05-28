@@ -48,10 +48,6 @@ const char *Macs2MetaEngine::getName() const {
 	return "macs2";
 }
 
-const ADExtraGuiOptionsMap *Macs2MetaEngine::getAdvancedExtraGuiOptions() const {
-	return Macs2::optionsList;
-}
-
 Common::Error Macs2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Macs2::Macs2Engine(syst, desc);
 	return Common::kNoError;

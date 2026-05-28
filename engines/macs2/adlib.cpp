@@ -1282,7 +1282,7 @@ void Adlib::SetVolume(uint16 volume) {
 		volume = 100;
 
 	const byte mixerVolume = static_cast<byte>((volume * Audio::Mixer::kMaxChannelVolume) / 100);
-	_opl->setVolume(mixerVolume);
+	// Volume is handled by the mixer
 }
 
 void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
