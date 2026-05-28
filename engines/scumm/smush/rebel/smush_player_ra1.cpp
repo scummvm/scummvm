@@ -723,9 +723,175 @@ static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize)
 	return false;
 }
 
+void SmushPlayerRebel1::ra1HandleFrameAudioChunk(int32 subSize, Common::SeekableReadStream &b) {
+	if (_compressedFileMode || isFastForwardingCurrentFrame())
+		return;
+
+	uint8 *audioChunk = (uint8 *)malloc(subSize + 8);
+	if (audioChunk == nullptr)
+		return;
+
+	b.seek(-8, SEEK_CUR);
+	b.read(audioChunk, subSize + 8);
+	feedAudio(audioChunk, 0, 127, 0, 0);
+	free(audioChunk);
+}
+
+void SmushPlayerRebel1::ra1HandleGameFrameChunk(int32 subSize, Common::SeekableReadStream &b, bool fastForwarding) {
+	if (!fastForwarding && _insane) {
+		InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
+		rebel1->handleGameChunk(subSize, b);
+	}
+}
+
+void SmushPlayerRebel1::ra1HandleObjOverlayFrameChunk(int32 objDataSize, Common::SeekableReadStream &b, bool fastForwarding) {
+	if (objDataSize <= 0)
+		return;
+
+	byte *objBuf = (byte *)malloc(objDataSize);
+	if (objBuf == nullptr)
+		return;
+
+	b.read(objBuf, objDataSize);
+
+	int32 objPos = 0;
+	while (objPos + 8 < objDataSize) {
+		uint32 embTag = READ_BE_UINT32(objBuf + objPos);
+		uint32 embSize = READ_BE_UINT32(objBuf + objPos + 4);
+		int32 embRemaining = objDataSize - objPos - 8;
+
+		bool recognized = (embTag == MKTAG('F','O','B','J') ||
+		                   embTag == MKTAG('G','A','M','E') ||
+		                   embTag == MKTAG('G','A','M','2') ||
+		                   embTag == MKTAG('P','S','A','D'));
+
+		if (!recognized || embSize > (uint32)embRemaining) {
+			objPos++;
+			continue;
+		}
+
+		if (embTag == MKTAG('F','O','B','J') && embSize >= 14) {
+			Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+			handleFrameObject(embSize, embStream);
+
+			if (_ra1ObjOverlayData == nullptr ||
+			    (int32)embSize > _ra1ObjOverlayDataSize) {
+				free(_ra1ObjOverlayData);
+				_ra1ObjOverlayDataSize = embSize;
+				_ra1ObjOverlayData = (byte *)malloc(embSize);
+				memcpy(_ra1ObjOverlayData, objBuf + objPos + 8, embSize);
+				_ra1ObjOverlayCodec = objBuf[objPos + 8] & 0xFF;
+				_ra1ObjOverlayLeft = (int16)READ_LE_UINT16(objBuf + objPos + 10);
+				_ra1ObjOverlayTop = (int16)READ_LE_UINT16(objBuf + objPos + 12);
+				_ra1ObjOverlayWidth = READ_LE_UINT16(objBuf + objPos + 14);
+				_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
+			}
+		} else if (embTag == MKTAG('G','A','M','E') || embTag == MKTAG('G','A','M','2')) {
+			Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+			ra1HandleGameFrameChunk(embSize, embStream, fastForwarding);
+		} else if (embTag == MKTAG('P','S','A','D')) {
+			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
+				uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
+				if (audioBuf == nullptr)
+					break;
+				memcpy(audioBuf, objBuf + objPos, embSize + 8);
+				feedAudio(audioBuf, 0, 127, 0, 0);
+				free(audioBuf);
+			}
+		}
+
+		objPos += 8 + embSize;
+		if (embSize & 1)
+			objPos++;
+	}
+
+	free(objBuf);
+}
+
+bool SmushPlayerRebel1::ra1HandleUnknownFrameChunk(uint32 subType, int32 subSize) {
+	// Original FUN_1FDBC: unknown uppercase tag -> silently stop
+	byte tb0 = (subType >> 24) & 0xFF, tb1 = (subType >> 16) & 0xFF;
+	byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
+	if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
+	    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
+		debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
+		return true;
+	}
+
+	error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
+	return false;
+}
+
+bool SmushPlayerRebel1::ra1DispatchFrameChunk(uint32 subType, int32 subSize, int32 &frameSize,
+		Common::SeekableReadStream &b, bool fastForwarding) {
+	switch (subType) {
+	case MKTAG('N','P','A','L'):
+		handleNewPalette(subSize, b);
+		break;
+	case MKTAG('F','O','B','J'):
+		handleFrameObject(subSize, b);
+		break;
+	case MKTAG('Z','F','O','B'):
+		handleZlibFrameObject(subSize, b);
+		break;
+	case MKTAG('P','S','A','D'):
+	case MKTAG('P','V','O','C'):
+		ra1HandleFrameAudioChunk(subSize, b);
+		break;
+	case MKTAG('T','R','E','S'):
+	case MKTAG('T','E','X','T'):
+		handleTextResource(subType, subSize, b);
+		break;
+	case MKTAG('X','P','A','L'):
+		ra1HandleDeltaPalette(subSize, b);
+		break;
+	case MKTAG('I','A','C','T'):
+		handleIACT(subSize, b);
+		break;
+	case MKTAG('S','T','O','R'):
+		handleStore(subSize, b);
+		break;
+	case MKTAG('F','T','C','H'):
+		handleFetch(subSize, b);
+		break;
+	case MKTAG('S','K','I','P'):
+		_insane->procSKIP(subSize, b);
+		break;
+	case MKTAG('G','O','S','T'):
+		handleGameGost(subSize, b);
+		break;
+	case MKTAG('G','A','M','E'):
+	case MKTAG('G','A','M','2'):
+		ra1HandleGameFrameChunk(subSize, b, fastForwarding);
+		break;
+	case MKTAG('O','B','J','\0'):
+		ra1HandleObjOverlayFrameChunk(frameSize - 8, b, fastForwarding);
+		frameSize = 0;
+		return true;
+	case MKTAG('F','A','D','E'):
+		ra1HandleFade(subSize, b);
+		break;
+	case MKTAG('S','E','G','A'):
+	case MKTAG('A','D','L',' '):
+	case MKTAG('A','D','L','2'):
+	case MKTAG('S','B','L',' '):
+	case MKTAG('S','B','L','2'):
+	case MKTAG('P','S','D','2'):
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame: skipping chunk %s (%d bytes)", tag2str(subType), subSize);
+		break;
+	default:
+		if (ra1HandleUnknownFrameChunk(subType, subSize)) {
+			frameSize = 0;
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
 void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame(%d)", _frame);
-	uint8 *audioChunk = nullptr;
 	_skipNext = false;
 	handleGameFrameStart();
 	const bool fastForwarding = isFastForwardingCurrentFrame();
@@ -795,144 +961,8 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 			break;
 		}
 
-		switch (subType) {
-		case MKTAG('N','P','A','L'):
-			handleNewPalette(subSize, b);
-			break;
-		case MKTAG('F','O','B','J'):
-			handleFrameObject(subSize, b);
-			break;
-		case MKTAG('Z','F','O','B'):
-			handleZlibFrameObject(subSize, b);
-			break;
-		case MKTAG('P','S','A','D'):
-		case MKTAG('P','V','O','C'):
-			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
-				audioChunk = (uint8 *)malloc(subSize + 8);
-				b.seek(-8, SEEK_CUR);
-				b.read(audioChunk, subSize + 8);
-				feedAudio(audioChunk, 0, 127, 0, 0);
-				free(audioChunk);
-				audioChunk = nullptr;
-			}
-			break;
-		case MKTAG('T','R','E','S'):
-		case MKTAG('T','E','X','T'):
-			handleTextResource(subType, subSize, b);
-			break;
-		case MKTAG('X','P','A','L'):
-			ra1HandleDeltaPalette(subSize, b);
-			break;
-		case MKTAG('I','A','C','T'):
-			handleIACT(subSize, b);
-			break;
-		case MKTAG('S','T','O','R'):
-			handleStore(subSize, b);
-			break;
-		case MKTAG('F','T','C','H'):
-			handleFetch(subSize, b);
-			break;
-		case MKTAG('S','K','I','P'):
-			_insane->procSKIP(subSize, b);
-			break;
-		case MKTAG('G','O','S','T'):
-			handleGameGost(subSize, b);
-			break;
-		case MKTAG('G','A','M','E'):
-		case MKTAG('G','A','M','2'): {
-			if (!fastForwarding) {
-				InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
-				rebel1->handleGameChunk(subSize, b);
-			}
-			break;
-		}
-		case MKTAG('O','B','J','\0'): {
-			// RA1 object overlay chunk: variable-size header + embedded FOBJ/GAME/PSAD.
-			int32 objDataSize = frameSize - 8;
-			if (objDataSize > 0) {
-				byte *objBuf = (byte *)malloc(objDataSize);
-				b.read(objBuf, objDataSize);
-
-				int32 objPos = 0;
-				while (objPos + 8 < objDataSize) {
-					uint32 embTag = READ_BE_UINT32(objBuf + objPos);
-					uint32 embSize = READ_BE_UINT32(objBuf + objPos + 4);
-					int32 embRemaining = objDataSize - objPos - 8;
-
-					bool recognized = (embTag == MKTAG('F','O','B','J') ||
-					                   embTag == MKTAG('G','A','M','E') ||
-					                   embTag == MKTAG('G','A','M','2') ||
-					                   embTag == MKTAG('P','S','A','D'));
-
-					if (!recognized || embSize > (uint32)embRemaining) {
-						objPos++;
-						continue;
-					}
-
-					if (embTag == MKTAG('F','O','B','J') && embSize >= 14) {
-						Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
-						handleFrameObject(embSize, embStream);
-
-						if (_ra1ObjOverlayData == nullptr ||
-						    (int32)embSize > _ra1ObjOverlayDataSize) {
-							free(_ra1ObjOverlayData);
-							_ra1ObjOverlayDataSize = embSize;
-							_ra1ObjOverlayData = (byte *)malloc(embSize);
-							memcpy(_ra1ObjOverlayData, objBuf + objPos + 8, embSize);
-							_ra1ObjOverlayCodec = objBuf[objPos + 8] & 0xFF;
-							_ra1ObjOverlayLeft = (int16)READ_LE_UINT16(objBuf + objPos + 10);
-							_ra1ObjOverlayTop = (int16)READ_LE_UINT16(objBuf + objPos + 12);
-							_ra1ObjOverlayWidth = READ_LE_UINT16(objBuf + objPos + 14);
-							_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
-						}
-					} else if (embTag == MKTAG('G','A','M','E') || embTag == MKTAG('G','A','M','2')) {
-						if (!fastForwarding) {
-							Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
-							InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
-							rebel1->handleGameChunk(embSize, embStream);
-						}
-					} else if (embTag == MKTAG('P','S','A','D')) {
-						if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
-							uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
-							memcpy(audioBuf, objBuf + objPos, embSize + 8);
-							feedAudio(audioBuf, 0, 127, 0, 0);
-							free(audioBuf);
-						}
-					}
-
-					objPos += 8 + embSize;
-					if (embSize & 1)
-						objPos++;
-				}
-				free(objBuf);
-			}
-			frameSize = 0;
+		if (ra1DispatchFrameChunk(subType, subSize, frameSize, b, fastForwarding))
 			continue;
-		}
-		case MKTAG('F','A','D','E'):
-			ra1HandleFade(subSize, b);
-			break;
-		case MKTAG('S','E','G','A'):
-		case MKTAG('A','D','L',' '):
-		case MKTAG('A','D','L','2'):
-		case MKTAG('S','B','L',' '):
-		case MKTAG('S','B','L','2'):
-		case MKTAG('P','S','D','2'):
-			debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame: skipping chunk %s (%d bytes)", tag2str(subType), subSize);
-			break;
-		default: {
-			// Original FUN_1FDBC: unknown uppercase tag → silently stop
-			byte tb0 = (subType >> 24) & 0xFF, tb1 = (subType >> 16) & 0xFF;
-			byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
-			if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
-			    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
-				debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
-				frameSize = 0;
-				continue;
-			}
-			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
-		}
-		}
 
 		frameSize -= subSize + 8;
 		b.seek(subOffset + subSize, SEEK_SET);
