@@ -300,7 +300,8 @@ void SortPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+	g_nancy->_cursor->setCursorType(_hasHeld ? CursorManager::kDragHand
+	                                         : CursorManager::kHotspot);
 	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;
 

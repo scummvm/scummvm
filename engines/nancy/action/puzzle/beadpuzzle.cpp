@@ -279,7 +279,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		if ((int)_placed.size() < (int)_numSlots &&
 		    !_removeHotspot.isEmpty() &&
 		    _removeHotspot.contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->stopSound(_pickupSound);
 				if (_placeSound.name != "NO SOUND") {
@@ -299,7 +299,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		if (_heldBead >= 0 && _heldBead < (int)_numBeadTypes &&
 		    !_pickupHotspots[_heldBead].isEmpty() &&
 		    _pickupHotspots[_heldBead].contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_heldBead = -1;
 				g_nancy->_sound->stopSound(_pickupSound);
