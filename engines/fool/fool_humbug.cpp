@@ -223,7 +223,7 @@ void FoolGame::sub_142_630() {
 		// 142:07ca
 		_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 		this->waitForMouseUp();
-		this->sub_128_2664();
+		this->menuClickMessage();
 		this->var_i16_484 = 0;
 		this->var_i16_7e4 = 0;
 		this->var_i16_9f2 = 0;

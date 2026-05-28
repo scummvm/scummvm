@@ -206,9 +206,9 @@ void FoolGame::revealSuccess() {
 	if (_activePuzzleStatus < 0x64) {
 		_activePuzzleStatus = 0x64;
 	}
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForMouseUp();
-	this->sub_128_d34(0x37, 0x13, 0xff, 0x1ee, 0xc8);
+	this->flashRect(0x37, 0x13, 0xff, 0x1ee, 0xc8);
 }
 
 }

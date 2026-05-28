@@ -397,7 +397,7 @@ void FoolGame::wordSearchSuccess() {
 	}
 	// 131:10e8
 	this->fillRect(0x1eb, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1);
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForClick();
 	_stateFlags = kStateReturn;
 }
