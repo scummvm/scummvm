@@ -635,20 +635,20 @@ void FoolGame::getNextEvent(uint32 unk1) {
 	}
 }
 
-void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::flashRect(int16 top, int16 left, int16 bottom, int16 right, int16 millis) {
 	// flash a rectangle on the screen until we get a click
 	// 128:0d34
 	Common::Rect bounds; // arr_rect_5b7c
-	bounds.top = unk5;
-	bounds.left = unk4;
-	bounds.bottom = unk3;
-	bounds.right = unk2;
+	bounds.top = top;
+	bounds.left = left;
+	bounds.bottom = bottom;
+	bounds.right = right;
 	while (_event.modifiers & kModMouseButtonUp) {
 		// 128:0d94
 		do {
 			// FIXME: Flashing far too intense
 			g_toolbox->InvertRect(bounds);
-			this->var_i16_3a = 0;
+			int ticks = 0;
 			do {
 				// originally this used getNextEvent, but we avoid that here
 				// so that menu events don't get intercepted.
@@ -658,9 +658,9 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 				this->var_i16_78a = g_toolbox->GetNextEvent(-1, _event);
 				if (_event.what == kNullEvent) {
 					g_toolbox->Delay(0);
-					this->var_i16_3a += 1;
+					ticks += 1;
 				}
-			} while (!((this->var_i16_3a >= (unk1*60/1000)) || ((_event.modifiers & kModMouseButtonUp) == 0)));
+			} while (!((ticks >= (millis*60/1000)) || ((_event.modifiers & kModMouseButtonUp) == 0)));
 		} while ((_event.modifiers & kModMouseButtonUp) != 0);
 	}
 }
@@ -1171,7 +1171,7 @@ void FoolGame::storyRenderPage() {
 	// 128:2662
 }
 
-void FoolGame::sub_128_2664() {
+void FoolGame::menuClickMessage() {
 	// 128:2664
 	// hide menu and replace with "click mouse to continue" message
 	g_toolbox->SetPort(this->var_i32_8);
@@ -2313,7 +2313,7 @@ void FoolGame::menuAbout() {
 	_zbasic->text(kFontSmall, 0x9, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7a2 += 0xe;
 	this->sub_128_918(_zbasic->str(_zstrOffset[kOffsetVersion])); // version string
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForClick();
 	g_toolbox->DrawMenuBar();
 	this->copyScreen(0x1, this->arr_bmp_138bc);

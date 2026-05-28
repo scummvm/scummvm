@@ -324,7 +324,7 @@ void FoolGame::jumbleRun() {
 	}
 	// if we're here, the puzzle is solved
 	g_toolbox->PenNormal();
-	this->sub_128_2664();
+	this->menuClickMessage();
 	this->waitForMouseUp();
 	this->sub_128_61ec();
 	// 130:0a90
