@@ -207,6 +207,7 @@ void HotMultiframeMultiSceneChange::execute() {
 		} else {
 			_onFalse.execute();
 		}
+		_isDone = true;
 
 		break;
 	}
