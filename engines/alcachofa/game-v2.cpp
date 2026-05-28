@@ -278,7 +278,7 @@ public:
 	}
 
 	String getMusicPath(int32 trackId) override {
-		const Room *room = g_engine->player().currentRoom();
+		const Room *room = g_engine->player().lastGameRoom();
 		const char *dirName = room != nullptr && room->mapIndex() == 1 ? "Music_Cleopatra" : "Music";
 		return String::format("%s/Track%02d", dirName, trackId);
 	}

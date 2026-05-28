@@ -56,6 +56,7 @@ public:
 	void stopLastDialogCharacters();
 	void setActiveCharacter(MainCharacterKind kind);
 	bool isAllowedToOpenMenu();
+	Room *lastGameRoom() const; // used for saves and music chapter
 	void syncGame(Common::Serializer &s);
 
 private:

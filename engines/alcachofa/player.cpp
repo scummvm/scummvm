@@ -359,6 +359,19 @@ bool Player::isAllowedToOpenMenu() {
 		   !_isInTemporaryRoom; // we cannot reliably store this state across multiple room changes
 }
 
+Room *Player::lastGameRoom() const {
+	// save from in-game menu
+	if (g_engine->menu().isOpen() && g_engine->menu().previousRoom() != nullptr)
+		return g_engine->menu().previousRoom();
+
+	// save from ScummVM while in inventory
+	if (currentRoom() == &g_engine->world().inventory() && _roomBeforeInventory != nullptr)
+		return _roomBeforeInventory;
+
+	// save from ScumnmVM global menu or autosave in normal gameplay
+	return currentRoom(); // this *could* still return nullptr but only at the very start of the engine	
+}
+
 void Player::syncGame(Serializer &s) {
 	auto characterKind = activeCharacterKind();
 	syncEnum(s, characterKind);
@@ -378,11 +391,8 @@ void Player::syncGame(Serializer &s) {
 
 	String roomName;
 	if (s.isSaving()) {
-		bool isInInventory = currentRoom() == &g_engine->world().inventory();
-		roomName =
-			g_engine->menu().isOpen() ? g_engine->menu().previousRoom()->name() // save from in-game menu
-			: isInInventory && _roomBeforeInventory != nullptr ? _roomBeforeInventory->name() // save from ScummVM while in inventory
-			: currentRoom()->name(); // save from ScumnmVM global menu or autosave in normal gameplay
+		// only call lastGameRoom if we are saving, a load-on-start might not have a current room yet
+		roomName = lastGameRoom()->name();
 	}
 	s.syncString(roomName);
 	if (s.isLoading()) {
