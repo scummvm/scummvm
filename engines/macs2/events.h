@@ -29,7 +29,7 @@
 
 namespace Macs2 {
 
-#define FRAME_RATE 20
+#define FRAME_RATE 70
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
 class Events;
