@@ -146,17 +146,16 @@ uint32 ScriptCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// 2 bytes for type and unk1 + 2 byte for castType and flags ma(see Cast::loadCastData() for Director 4 only
 		return 2 + 2;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		// type and unk1: 2 bytes
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1200) {
 		return 2;
 	} else {
-		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+		warning("ScriptCastMember::getCastDataSize(): invalid or unhandled Script version: %d", _cast->_version);
 		return 0;
 	}
 }
 
 void ScriptCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
-	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer1200) {
 		writeStream->writeByte(0);		// unknown
 
 		switch (_scriptType) {

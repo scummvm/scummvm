@@ -389,7 +389,7 @@ uint32 CastMember::writeCAStResource(Common::SeekableWriteStream *writeStream) {
 		if (castInfoToWrite) {
 			_cast->writeCastInfo(writeStream, _castId);
 		}
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1200) {
 		writeStream->writeUint32BE((uint32)_type);
 		writeStream->writeUint32BE(castInfoToWrite);
 		writeStream->writeUint32BE(castDataToWrite);
@@ -445,8 +445,7 @@ uint32 CastMember::getCastResourceSize() {
 		if (_flags1 != 0xFF) {
 			headerSize += 1;
 		}
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		// Header size for director version 5
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1200) {
 		headerSize = 12;		// See Cast::loadCastData() for director version 5
 	}
 
