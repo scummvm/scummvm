@@ -166,9 +166,35 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 			audioSampleRate = ((audioflags >> 4) & 6) * 11025;
 			_audioTrack = new APCAudioTrack(audioSampleRate, stereo, getSoundType());
 		}
+		// Peek at the first video chunk to determine if this is a warp-mode (IW) file.
+		// Warp mode uses a keyframe-only panorama decoder and is mutually exclusive with
+		// video mode (which allocates a second buffer for inter-frame delta decoding).
+		bool hnm6WarpMode = false;
+		{
+			int64 savedPos = _stream->pos();
+			uint32 scSize = _stream->readUint32LE() & 0x00ffffff;
+			uint32 scRemaining = scSize >= 4 ? scSize - 4 : 0;
+			while (scRemaining >= 8) {
+				uint32 cSize = _stream->readUint32LE();
+				uint16 cType = _stream->readUint16BE();
+				_stream->skip(2); // flags
+				if (cType == MKTAG16('I', 'W')) {
+					hnm6WarpMode = true;
+					break;
+				} else if (cType == MKTAG16('I', 'X')) {
+					break;
+				}
+				// Skip non-video chunks (audio etc.)
+				uint32 alignedSize = ((cSize + 3) / 4) * 4;
+				if (alignedSize < 8) break;
+				_stream->skip(alignedSize - 8);
+				scRemaining -= MIN(alignedSize, scRemaining);
+			}
+			_stream->seek(savedPos);
+		}
 		_videoTrack = new HNM6VideoTrack(width, height, frameSize, frameCount,
 		                                 _regularFrameDelayMs, audioSampleRate,
-		                                 _format);
+		                                 _format, hnm6WarpMode);
 	} else {
 		// We should never be here
 		close();
@@ -200,7 +226,7 @@ void HNMDecoder::readNextPacket() {
 	// We are called to feed a frame
 	// Each chunk is packetized and a packet seems to contain only one frame
 	uint32 superchunkRemaining = _stream->readUint32LE();
-	if (!superchunkRemaining) {
+	if (!superchunkRemaining || _stream->eos()) {
 		if (!_loop) {
 			error("End of file but still requesting data");
 		} else {
@@ -222,7 +248,25 @@ void HNMDecoder::readNextPacket() {
 		_dataBufferAlloc = superchunkRemaining;
 	}
 	if (_stream->read(_dataBuffer, superchunkRemaining) != superchunkRemaining) {
-		error("Not enough data in file");
+		if (!_loop) {
+			error("Not enough data in file");
+		}
+		// UBB2 files may not have a zero-terminator at EOF; treat as end of stream and loop.
+		_videoTrack->restart();
+		_stream->seek(64, SEEK_SET);
+		superchunkRemaining = _stream->readUint32LE() & 0x00ffffff;
+		if (superchunkRemaining < 4) {
+			error("Invalid superchunk header after loop restart");
+		}
+		superchunkRemaining -= 4;
+		if (_dataBufferAlloc < superchunkRemaining) {
+			delete[] _dataBuffer;
+			_dataBuffer = new byte[superchunkRemaining];
+			_dataBufferAlloc = superchunkRemaining;
+		}
+		if (_stream->read(_dataBuffer, superchunkRemaining) != superchunkRemaining) {
+			error("Not enough data in file after loop restart");
+		}
 	}
 
 	// We use -1 here to discrimate a possibly empty sound frame
@@ -245,6 +289,8 @@ void HNMDecoder::readNextPacket() {
 			error("Chunk has a bogus size");
 		}
 
+		debug(5, "HNM chunk: type='%c%c' (0x%04x) size=%u",
+		      (char)(chunkType >> 8), (char)(chunkType & 0xff), chunkType, chunkSize);
 		if (chunkType == MKTAG16('S', 'D') ||
 		    chunkType == MKTAG16('A', 'A') ||
 		    chunkType == MKTAG16('B', 'B')) {
@@ -657,10 +703,46 @@ void HNMDecoder::HNM5VideoTrack::decodeChunk(byte *data, uint32 size,
 	if (chunkType == MKTAG16('P', 'L')) {
 		decodePalette(data, size);
 	} else if (chunkType == MKTAG16('I', 'V')) {
-		decodeFrame(data, size);
+		if (_dialogCodec)
+			decodeFrameAtlantisDialog(data, size);
+		else
+			decodeFrame(data, size);
+	} else if (chunkType == MKTAG16('I', 'A')) {
+		// IA chunk in Atlantis dialog UBBs carries the FUN_00450b08
+		// compositor opcode stream (SKIP/RUN/RUN-shaded), NOT inline
+		// audio.  When opcode capture is enabled, stash the payload
+		// verbatim for the engine to walk after the frame is decoded.
+		// Other HNM consumers leave _captureOpcodes false and the
+		// chunk is silently discarded as before.
+		if (_captureOpcodes) {
+			if (_opcodesAlloc < size) {
+				delete[] _opcodes;
+				_opcodes = new byte[size];
+				_opcodesAlloc = size;
+			}
+			memcpy(_opcodes, data, size);
+			_opcodesSize = size;
+		}
 	} else {
-		error("HNM5: Got %d chunk: size %d", chunkType, size);
+		warning("HNM5: Unknown chunk type 0x%04x: size %d, skipping", chunkType, size);
 	}
+}
+
+void HNMDecoder::setDialogCodec(bool b) {
+	if (HNM5VideoTrack *v5 = dynamic_cast<HNM5VideoTrack *>(_videoTrack))
+		v5->setDialogCodec(b);
+}
+
+void HNMDecoder::setCaptureOpcodeStream(bool b) {
+	if (HNM5VideoTrack *v5 = dynamic_cast<HNM5VideoTrack *>(_videoTrack))
+		v5->setCaptureOpcodes(b);
+}
+
+const byte *HNMDecoder::getOpcodeStream(uint32 &size) const {
+	if (HNM5VideoTrack *v5 = dynamic_cast<HNM5VideoTrack *>(_videoTrack))
+		return v5->getOpcodes(size);
+	size = 0;
+	return nullptr;
 }
 
 static inline byte *HNM5_getSourcePtr(byte *&data, uint32 &size,
@@ -901,6 +983,115 @@ static const byte HNM5_WIDTHS[3][32] = {
 	}, /* 4 */
 };
 
+// Atlantis: The Lost Tale dialog video 'IV' codec (FUN_0041101f in atlantis.exe).
+// All non-control tokens are 3 bytes: [count_code, u16lo, u16hi].
+//   count = (count_code & 0x1f) + 1 bytes per row-pair.
+// Mode 0x28 (keyframe): src = dst + u16off - 65536 (backward LZ in output buffer).
+// All other modes: src = prev + (dst - curr) + u16off - 0x8000 (inter-frame ref).
+// Strip control: [0xe0, next_mode] = advance 2 rows; [0xe0, 0x00, cnt, col] = RLE fill.
+// Opcode 0x20: [0x20, count] = copy count+1 bytes from same position in prev frame.
+void HNMDecoder::HNM5VideoTrack::decodeFrameAtlantisDialog(byte *data, uint32 size) {
+	SWAP(_frameBufferC, _frameBufferP);
+
+	if (size < 2) {
+		_surface.setPixels(_frameBufferC);
+		return;
+	}
+
+	int mode = data[1];
+	debug(3, "AtlantisDialog IV: size=%u mode=0x%02x", size, mode);
+
+	if (mode == 1) {
+		_surface.setPixels(_frameBufferC);
+		return;
+	}
+
+	byte *tokens  = data + 2;
+	byte *tokEnd  = data + size;
+	byte *curr    = _frameBufferC;
+	byte *prev    = _frameBufferP;
+	int   pitch   = _surface.pitch;
+	int   frameBytes = pitch * _surface.h;
+	byte *currEnd = curr + frameBytes;
+	byte *prevEnd = prev + frameBytes;
+	ptrdiff_t prevDiff = prev - curr;
+
+	byte *dst       = curr;
+	byte *stripBase = curr;
+	bool  done      = false;
+
+	// Copy n bytes from src rows N and N+1 to dst rows N and N+1.
+	// sBuf/sBufEnd guard source reads; byte-by-byte loop supports LZ self-overlap.
+	auto copy2 = [&](byte *d, byte *s, int n, byte *sBuf, byte *sBufEnd) {
+		for (int i = 0; i < n; i++) {
+			byte *s0 = s + i;
+			byte *s1 = s + pitch + i;
+			byte v0 = (s0 >= sBuf && s0 < sBufEnd) ? *s0 : 0;
+			byte v1 = (s1 >= sBuf && s1 < sBufEnd) ? *s1 : 0;
+			if (d + i < currEnd)         d[i]         = v0;
+			if (d + pitch + i < currEnd) (d + pitch)[i] = v1;
+		}
+	};
+
+	while (!done && tokens < tokEnd) {
+		byte b0 = tokens[0];
+
+		if (b0 == 0xe0) {
+			if (tokens + 2 > tokEnd) break;
+			byte b1 = tokens[1];
+			if (b1 == 0) {
+				if (tokens + 4 > tokEnd) break;
+				int  cnt = tokens[2] + 1;
+				byte col = tokens[3];
+				tokens += 4;
+				byte *d1 = dst + pitch;
+				for (int i = 0; i < cnt; i++, dst++, d1++) {
+					if (dst < currEnd) *dst = col;
+					if (d1  < currEnd) *d1  = col;
+				}
+			} else {
+				tokens    += 2;
+				stripBase += 2 * pitch;
+				dst        = stripBase;
+				if (b1 == 1) done = true; else mode = b1;
+			}
+			continue;
+		}
+
+		if (b0 == 0x20) {
+			if (tokens + 2 > tokEnd) break;
+			int cnt = tokens[1] + 1;
+			tokens += 2;
+			byte *src = dst + prevDiff;
+			copy2(dst, src, cnt, prev, prevEnd);
+			dst += cnt;
+			continue;
+		}
+
+		// 3-byte token: [count_code, u16lo, u16hi]
+		if (tokens + 3 > tokEnd) break;
+		uint16 u16off = READ_LE_UINT16(tokens + 1);
+		int    cnt    = (b0 & 0x1f) + 1;
+		tokens += 3;
+
+		byte *src;
+		byte *sBuf, *sBufEnd;
+		if (mode == 0x28) {
+			src  = dst + ((ptrdiff_t)(uint32)u16off - 65536);
+			sBuf = curr; sBufEnd = currEnd;
+			if (src < curr) src = curr;
+		} else {
+			src  = dst + prevDiff + ((ptrdiff_t)u16off - 0x8000);
+			sBuf = prev; sBufEnd = prevEnd;
+			if (src < prev) src = prev;
+		}
+		copy2(dst, src, cnt, sBuf, sBufEnd);
+		dst += cnt;
+	}
+
+	_surface.setPixels(_frameBufferC);
+}
+
 void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
@@ -1037,10 +1228,12 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 
 HNMDecoder::HNM6VideoTrack::HNM6VideoTrack(uint32 width, uint32 height, uint32 frameSize,
         uint32 frameCount, uint32 regularFrameDelayMs, uint32 audioSampleRate,
-        const Graphics::PixelFormat &format) :
+        const Graphics::PixelFormat &format, bool warpMode) :
 	HNMVideoTrack(frameCount, regularFrameDelayMs, audioSampleRate),
-	_decoder(Image::createHNM6Decoder(width, height, format, frameSize, true)),
+	_decoder(Image::createHNM6Decoder(width, height, format, frameSize, !warpMode)),
 	_surface(nullptr) {
+	if (warpMode)
+		_decoder->setWarpMode(true);
 }
 
 HNMDecoder::HNM6VideoTrack::~HNM6VideoTrack() {
@@ -1067,6 +1260,8 @@ void HNMDecoder::HNM6VideoTrack::decodeChunk(byte *data, uint32 size,
         uint16 chunkType, uint16 flags) {
 	if (chunkType == MKTAG16('I', 'X') ||
 	    chunkType == MKTAG16('I', 'W')) {
+		// IW chunks use the warp (panorama) decoder; IX uses the standard decoder.
+		_decoder->setWarpMode(chunkType == MKTAG16('I', 'W'));
 		Common::MemoryReadStream stream(data, size);
 		_surface = _decoder->decodeFrame(stream);
 	} else {

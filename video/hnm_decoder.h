@@ -63,6 +63,22 @@ public:
 	void close() override;
 
 	void setRegularFrameDelay(uint32 regularFrameDelay) { _regularFrameDelayMs = regularFrameDelay; }
+	void setDialogCodec(bool b);
+	/** Atlantis dialog UBBs interleave the IV (CLUT8 video) chunk with an IA
+	 *  chunk that contains the per-frame compositor opcode stream (3 op
+	 *  types — SKIP / RUN-shaded / RUN-per-pixel-shade — consumed by the
+	 *  original engine's FUN_00450b08 to bleed the cyclo through SKIP
+	 *  pixels).  ScummVM's HNM5 decoder normally treats IA as "inline
+	 *  audio" and discards it.  When opcode capture is enabled the most
+	 *  recent IA payload is stashed verbatim for the consumer to read.
+	 *  Default off; only HNM5 honours the flag — Versailles/Eden see no
+	 *  behavioural change. */
+	void setCaptureOpcodeStream(bool b);
+	/** Returns the most recent IA chunk's payload (nullptr if capture
+	 *  disabled or no IA chunk seen yet for this frame).  `size` receives
+	 *  the payload length in bytes.  Pointer is valid until the next
+	 *  decodeNextFrame() call. */
+	const byte *getOpcodeStream(uint32 &size) const;
 
 private:
 	class HNMVideoTrack : public VideoTrack {
@@ -147,21 +163,38 @@ private:
 		               uint32 regularFrameDelayMs, uint32 audioSampleRate,
 		               const byte *initialPalette = nullptr) :
 			HNM45VideoTrack(width, height, frameSize, frameCount, regularFrameDelayMs, audioSampleRate,
-			                initialPalette) {}
+			                initialPalette), _dialogCodec(false),
+			_captureOpcodes(false), _opcodes(nullptr), _opcodesSize(0), _opcodesAlloc(0) {}
+		~HNM5VideoTrack() override { delete[] _opcodes; }
+
 		/** Decode a video chunk. */
 		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;
 
+		void setDialogCodec(bool b) { _dialogCodec = b; }
+		void setCaptureOpcodes(bool b) { _captureOpcodes = b; }
+		const byte *getOpcodes(uint32 &size) const { size = _opcodesSize; return _opcodes; }
+
 	protected:
 		/** Really decode */
 		void decodeFrame(byte *data, uint32 size);
+		/** Atlantis: The Lost Tale dialog video 'IV' codec (FUN_0041101f) */
+		void decodeFrameAtlantisDialog(byte *data, uint32 size);
+
+		bool _dialogCodec;
+
+		// IA-chunk capture for Atlantis dialog compositor.
+		bool   _captureOpcodes;
+		byte  *_opcodes;
+		uint32 _opcodesSize;
+		uint32 _opcodesAlloc;
 	};
 
 	class HNM6VideoTrack : public HNMVideoTrack {
 	public:
 		HNM6VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
 		               uint32 regularFrameDelayMs, uint32 audioSampleRate,
-		               const Graphics::PixelFormat &format);
+		               const Graphics::PixelFormat &format, bool warpMode = false);
 		~HNM6VideoTrack() override;
 
 		uint16 getWidth() const override;
