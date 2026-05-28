@@ -28,7 +28,13 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-//enum {};
+enum {
+	// General (shared) sounds
+	N_AllFade = 1,
+	N_MusicFade = 3,
+	N_NoiseOff = 4,
+	N_NoiseFade = 5
+};
 
 } // namespace Forest
 } // namespace MADSV2

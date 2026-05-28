@@ -19,60 +19,59 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "mads/madsv2/core/conv.h"
 #include "mads/madsv2/core/game.h"
-#include "mads/madsv2/core/imath.h"
-#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/core/sound.h"
-#include "mads/madsv2/core/text.h"
-#include "mads/madsv2/forest/mads/inventory.h"
-#include "mads/madsv2/forest/mads/sounds.h"
-#include "mads/madsv2/forest/mads/words.h"
-#include "mads/madsv2/forest/global.h"
-#include "mads/madsv2/forest/rooms/section1.h"
+#include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mouse.h"
+#include "mads/madsv2/forest/rooms/section9.h"
 #include "mads/madsv2/forest/rooms/room901.h"
+#include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/forest/forest.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
-struct Scratch {
-	int16 sprite[15];       /* Sprite series handles */
-	int16 sequence[15];     /* Sequence handles      */
-	int16 animation[4];     /* Animation handles     */
-
-	int16 dragon_frame;     /* frame animation is on */
-
-	int16 done_with_conv;   /* T if done with conv   */
-	int16 prev_room;
-};
-
-static Scratch scratch;
-
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
+/* Triggers */
+#define START_INTRO  100
 
 static void room_901_init() {
+	global[g009] = 0;
+	global[g010] = 0;
+	player.walker_visible = false;
+	viewing_at_y = 22;
+	mouse_hide();
+
+	if (ConfMan.getBool("seen_intro")) {
+		new_room = 904;
+	} else {
+		ConfMan.setBool("seen_intro", true);
+		ConfMan.flushToDisk();
+
+		kernel_timing_trigger(300, START_INTRO);
+	}
 }
 
 static void room_901_daemon() {
+	if (mouse_any_stroke || g_engine->hasPendingKey() || kernel.trigger == START_INTRO) {
+		g_engine->flushKeys();
+		mouse_hide();
+		new_room = 903;
+	}
 }
 
 static void room_901_pre_parser() {
+	new_room = 903;
 }
 
 static void room_901_parser() {
 }
 
 void room_901_synchronize(Common::Serializer &s) {
-	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
-	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
-	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	// Room has no scratch area
 }
 
 void room_901_preload() {
@@ -81,8 +80,10 @@ void room_901_preload() {
 	room_parser_code_pointer = room_901_parser;
 	room_daemon_code_pointer = room_901_daemon;
 
-	section_1_walker();
-	section_1_interface();
+	global[g016] = true;
+	mouse_hide();
+	section_9_walker();
+	section_9_interface();
 }
 
 } // namespace Rooms

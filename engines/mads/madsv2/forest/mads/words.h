@@ -28,7 +28,9 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-//enum {};
+enum {
+	dummy = 0
+};
 
 } // namespace Forest
 } // namespace MADSV2

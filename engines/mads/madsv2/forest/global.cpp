@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
@@ -159,6 +160,11 @@ void sync_room(Common::Serializer &s) {
 	case 904: Rooms::room_904_synchronize(s); break;
 	default: break;
 	}
+}
+
+void global_digi_play(int num) {
+	// TODO
+	warning("TODO: global_digi_play");
 }
 
 } // namespace Forest

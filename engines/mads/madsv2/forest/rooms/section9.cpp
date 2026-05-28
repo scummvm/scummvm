@@ -44,9 +44,24 @@ void section_9_init() {
 }
 
 void section_9_walker() {
+	char temp_buf[80];
+	Common::strcpy_s(temp_buf, player.series_name);
+	global[g017] = true;
+
+	if (!global[g016]) {
+		*player.series_name = '\0';
+	} else if (!player.force_series) {
+		Common::strcpy_s(player.series_name, "B");
+	}
+
+	if (strcmp(temp_buf, player.series_name) != 0)
+		player.walker_must_reload = true;
+	player.scaling_velocity = true;
 }
 
 void section_9_interface() {
+	Common::strcpy_s(kernel.interface, kernel_interface_name(0));
+	pal_change_color(254, 56, 47, 32);
 }
 
 void section_9_music() {

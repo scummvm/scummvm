@@ -29,8 +29,17 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+enum {
+	g009 =  9,
+	g010 = 10,
+	g016 = 16,
+	g017 = 17
+};
+
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
+
+extern void global_digi_play(int num);
 
 } // namespace Forest
 } // namespace MADSV2

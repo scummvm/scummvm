@@ -24,13 +24,15 @@
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/sounds.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/global.h"
-#include "mads/madsv2/forest/rooms/section1.h"
+#include "mads/madsv2/forest/rooms/section9.h"
 #include "mads/madsv2/forest/rooms/room904.h"
 
 namespace MADS {
@@ -38,29 +40,23 @@ namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
-struct Scratch {
-	int16 sprite[15];       /* Sprite series handles */
-	int16 sequence[15];     /* Sequence handles      */
-	int16 animation[4];     /* Animation handles     */
-
-	int16 dragon_frame;     /* frame animation is on */
-
-	int16 done_with_conv;   /* T if done with conv   */
-	int16 prev_room;
-};
-
-static Scratch scratch;
-
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
+/* Triggers */
+#define TRIGGER0  100
+#define TRIGGER1  101
 
 
 static void room_904_init() {
+	mouse_hide();
+	global[g009] = false;
+	global[g010] = false;
+	viewing_at_y = 22;
+	kernel_timing_trigger(20, TRIGGER1);
+	kernel_run_animation("*rm903i", TRIGGER0);
+	player.walker_visible = false;
 }
 
 static void room_904_daemon() {
+	// TODO: room_904_daemon
 }
 
 static void room_904_pre_parser() {
@@ -70,9 +66,7 @@ static void room_904_parser() {
 }
 
 void room_904_synchronize(Common::Serializer &s) {
-	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
-	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
-	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	// Room has no scratch area
 }
 
 void room_904_preload() {
@@ -81,8 +75,10 @@ void room_904_preload() {
 	room_parser_code_pointer = room_904_parser;
 	room_daemon_code_pointer = room_904_daemon;
 
-	section_1_walker();
-	section_1_interface();
+	global[g016] = true;
+	kernel.activate_menu = false;
+	section_9_walker();
+	section_9_interface();
 }
 
 } // namespace Rooms
