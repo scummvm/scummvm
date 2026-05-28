@@ -29,6 +29,7 @@
 
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/smush/rebel/anim_ra1.h"
 #include "scumm/smush/rebel/codec_ra1.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/rebel/codec_ra2.h"
@@ -690,33 +691,20 @@ void SmushPlayerRebel1::handleFrameObject(int32 subSize, Common::SeekableReadStr
 static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize) {
 	const int64 frameStart = b.pos();
 	int32 remaining = frameSize;
-
-	while (remaining > 1) {
-		if ((b.pos() & 1) && remaining > 0) {
-			const byte pad = b.readByte();
-			if (pad == 0) {
-				remaining--;
-			} else {
-				b.seek(-1, SEEK_CUR);
-			}
-		}
-		if (remaining < 8)
+	RA1FrameChunkIterator chunks(b, remaining);
+	RA1AnimChunk chunk;
+	while (chunks.next(chunk)) {
+		if (chunk.tag == MKTAG('F', 'R', 'M', 'E'))
 			break;
-
-		const uint32 subType = b.readUint32BE();
-		const int32 subSize = b.readUint32BE();
-		const int64 subDataPos = b.pos();
-
-		if (subType == MKTAG('F', 'R', 'M', 'E'))
-			break;
-		if (subType == MKTAG('G', 'A', 'M', 'E') ||
-				subType == MKTAG('G', 'A', 'M', '2')) {
+		if (chunk.tag == MKTAG('G', 'A', 'M', 'E') ||
+				chunk.tag == MKTAG('G', 'A', 'M', '2')) {
 			b.seek(frameStart, SEEK_SET);
 			return true;
 		}
 
-		remaining -= subSize + 8;
-		b.seek(subDataPos + subSize, SEEK_SET);
+		if (!chunks.fits(chunk))
+			break;
+		chunks.skip(chunk);
 	}
 
 	b.seek(frameStart, SEEK_SET);
@@ -928,44 +916,21 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 			memset(_dst, 0, _width * _height);
 	}
 
-	while (frameSize > 0) {
-		// RA1 exits when <=1 byte remains
-		if (frameSize <= 1) {
-			if (frameSize == 1)
-				b.skip(1);
-			break;
-		}
-
-		// RA1 top-of-loop alignment (FUN_1FDBC)
-		if ((b.pos() & 1) && frameSize > 0) {
-			byte peek = b.readByte();
-			if (peek == 0) {
-				frameSize--;
-			} else {
-				b.seek(-1, SEEK_CUR);
-			}
-		}
-
-		if (frameSize < 8) {
-			b.skip(frameSize);
-			break;
-		}
-
-		uint32 subType = b.readUint32BE();
-		int32 subSize = b.readUint32BE();
-		int32 subOffset = b.pos();
+	RA1FrameChunkIterator chunks(b, frameSize);
+	RA1AnimChunk chunk;
+	while (chunks.next(chunk)) {
+		const int32 subSize = (int32)chunk.size;
 
 		// Guard against consuming next frame marker
-		if (subType == MKTAG('F','R','M','E')) {
-			b.seek(-8, SEEK_CUR);
+		if (chunk.tag == MKTAG('F','R','M','E')) {
+			b.seek(chunk.offset, SEEK_SET);
 			break;
 		}
 
-		if (ra1DispatchFrameChunk(subType, subSize, frameSize, b, fastForwarding))
+		if (ra1DispatchFrameChunk(chunk.tag, subSize, frameSize, b, fastForwarding))
 			continue;
 
-		frameSize -= subSize + 8;
-		b.seek(subOffset + subSize, SEEK_SET);
+		chunks.skip(chunk);
 		// RA1 uses top-of-loop alignment, not bottom-of-loop padding
 	}
 

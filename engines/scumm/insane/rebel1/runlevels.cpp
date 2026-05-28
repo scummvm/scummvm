@@ -26,6 +26,7 @@
 
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/smush/rebel/anim_ra1.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/insane/rebel1/rebel.h"
 
@@ -44,26 +45,22 @@ int32 findAnimFrameChunkOffset(ScummEngine_v7 *vm, const char *filename, int32 t
 	int32 result = -1;
 	if (file->size() >= 8) {
 		file->readUint32BE();
-		file->readUint32BE();
+		const uint32 animSize = file->readUint32BE();
+		const int64 animEnd = MIN<int64>((int64)file->pos() + animSize, file->size());
 
 		int32 frameIndex = 0;
-		while (file->pos() + 8 <= file->size()) {
-			const int32 chunkOffset = (int32)file->pos();
-			const uint32 chunkTag = file->readUint32BE();
-			const int32 chunkSize = (int32)file->readUint32BE();
-			const int32 nextChunkOffset = chunkOffset + 8 + chunkSize + ((chunkSize & 1) ? 1 : 0);
-			if (nextChunkOffset < chunkOffset || nextChunkOffset > file->size())
-				break;
-
-			if (chunkTag == MKTAG('F', 'R', 'M', 'E')) {
+		RA1AnimStreamChunkIterator chunks(*file, animEnd);
+		RA1AnimChunk chunk;
+		while (chunks.next(chunk)) {
+			if (chunk.tag == MKTAG('F', 'R', 'M', 'E')) {
 				if (frameIndex == targetFrame) {
-					result = chunkOffset;
+					result = (int32)chunk.offset;
 					break;
 				}
 				frameIndex++;
 			}
 
-			file->seek(nextChunkOffset, SEEK_SET);
+			chunks.skip(chunk);
 		}
 	}
 
@@ -86,40 +83,28 @@ int32 findAnimFrameChunkOffsetByGameCounter(ScummEngine_v7 *vm, const char *file
 	int32 result = -1;
 	if (file->size() >= 8) {
 		file->readUint32BE();
-		file->readUint32BE();
+		const uint32 animSize = file->readUint32BE();
+		const int64 animEnd = MIN<int64>((int64)file->pos() + animSize, file->size());
 
 		int32 frameIndex = 0;
-		while (file->pos() + 8 <= file->size()) {
-			const int32 chunkOffset = (int32)file->pos();
-			const uint32 chunkTag = file->readUint32BE();
-			const int32 chunkSize = (int32)file->readUint32BE();
-			const int32 chunkDataOffset = (int32)file->pos();
-			const int32 nextChunkOffset = chunkOffset + 8 + chunkSize + ((chunkSize & 1) ? 1 : 0);
-			if (nextChunkOffset < chunkOffset || nextChunkOffset > file->size())
-				break;
-
-			if (chunkTag == MKTAG('F', 'R', 'M', 'E')) {
-				const int32 frameEnd = chunkDataOffset + chunkSize;
-				while (file->pos() + 8 <= frameEnd) {
-					const int32 subChunkOffset = (int32)file->pos();
-					const uint32 subChunkTag = file->readUint32BE();
-					const int32 subChunkSize = (int32)file->readUint32BE();
-					const int32 subChunkDataOffset = (int32)file->pos();
-					const int32 nextSubChunkOffset = subChunkDataOffset + subChunkSize + ((subChunkSize & 1) ? 1 : 0);
-					if (nextSubChunkOffset < subChunkOffset || nextSubChunkOffset > frameEnd)
-						break;
-
-					if (subChunkTag == MKTAG('G', 'A', 'M', 'E') && subChunkSize >= 8) {
+		RA1AnimStreamChunkIterator chunks(*file, animEnd);
+		RA1AnimChunk chunk;
+		while (chunks.next(chunk)) {
+			if (chunk.tag == MKTAG('F', 'R', 'M', 'E')) {
+				RA1AnimStreamChunkIterator subChunks(*file, chunk.endOffset);
+				RA1AnimChunk subChunk;
+				while (subChunks.next(subChunk)) {
+					if (subChunk.tag == MKTAG('G', 'A', 'M', 'E') && subChunk.size >= 8) {
 						const uint32 opcode = file->readUint32BE();
 						const int32 counter = (int32)file->readUint32BE();
 						if (opcode == 0x0B && counter >= targetCounter) {
 							localFrame = frameIndex;
-							result = chunkOffset;
+							result = (int32)chunk.offset;
 							break;
 						}
 					}
 
-					file->seek(nextSubChunkOffset, SEEK_SET);
+					subChunks.skip(subChunk);
 				}
 
 				if (result >= 0)
@@ -128,7 +113,7 @@ int32 findAnimFrameChunkOffsetByGameCounter(ScummEngine_v7 *vm, const char *file
 				frameIndex++;
 			}
 
-			file->seek(nextChunkOffset, SEEK_SET);
+			chunks.skip(chunk);
 		}
 	}
 

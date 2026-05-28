@@ -25,6 +25,7 @@
 #include "scumm/scumm_v7.h"
 #include "scumm/file.h"
 #include "scumm/insane/rebel1/rebel.h"
+#include "scumm/smush/rebel/anim_ra1.h"
 #include "scumm/smush/rebel/codec_ra1.h"
 
 namespace Scumm {
@@ -86,45 +87,25 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 	// Pass 1: Parse ANIM chunks properly and collect FRME->FOBJ offsets in-order.
 	uint32 decodedSize = 0;
 	uint16 foundSprites = 0;
-	uint32 chunkOffset = 0;
-	while (chunkOffset + 8 <= animSize && foundSprites < expectedSprites) {
-		uint32 chunkTag = READ_BE_UINT32(data + chunkOffset);
-		uint32 chunkSize = READ_BE_UINT32(data + chunkOffset + 4);
-		uint32 chunkDataOffset = chunkOffset + 8;
-		uint32 chunkEnd = chunkDataOffset + chunkSize;
-		if (chunkEnd > animSize)
-			break;
-
-		if (chunkTag == MKTAG('F','R','M','E')) {
-			uint32 subOffset = chunkDataOffset;
-			while (subOffset + 8 <= chunkEnd) {
-				uint32 subTag = READ_BE_UINT32(data + subOffset);
-				uint32 subSize = READ_BE_UINT32(data + subOffset + 4);
-				uint32 subDataOffset = subOffset + 8;
-				uint32 subEnd = subDataOffset + subSize;
-				if (subEnd > chunkEnd)
-					break;
-
-				if (subTag == MKTAG('F','O','B','J') && subOffset + 22 <= animSize) {
-					uint16 w = READ_LE_UINT16(data + subOffset + 14);
-					uint16 h = READ_LE_UINT16(data + subOffset + 16);
+	RA1AnimChunkIterator chunks(data, animSize);
+	RA1AnimChunk chunk;
+	while (chunks.next(chunk) && foundSprites < expectedSprites) {
+		if (chunk.tag == MKTAG('F','R','M','E')) {
+			RA1AnimChunkIterator subChunks(data, (uint32)chunk.dataOffset, (uint32)chunk.endOffset);
+			RA1AnimChunk subChunk;
+			while (subChunks.next(subChunk)) {
+				if (subChunk.tag == MKTAG('F','O','B','J') && subChunk.size >= 14) {
+					uint16 w = READ_LE_UINT16(data + subChunk.dataOffset + 6);
+					uint16 h = READ_LE_UINT16(data + subChunk.dataOffset + 8);
 					decodedSize += (uint32)w * (uint32)h;
-					fobjOffsets[foundSprites] = subOffset;
+					fobjOffsets[foundSprites] = (uint32)subChunk.offset;
 					break;
 				}
-
-				subOffset = subEnd;
-				if (subSize & 1)
-					subOffset++;
 			}
 			// Always increment for every FRME to preserve char-to-glyph alignment.
 			// Empty FRMEs (no FOBJ) keep fobjOffsets[i] = 0, decoded as blank sprites.
 			foundSprites++;
 		}
-
-		chunkOffset = chunkEnd;
-		if (chunkSize & 1)
-			chunkOffset++;
 	}
 
 	bank.decodedData = (byte *)calloc(decodedSize ? decodedSize : 1, 1);
