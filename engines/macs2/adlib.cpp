@@ -29,7 +29,7 @@ namespace Macs2 {
 
 void Adlib::Func2792(byte registerIndex, byte value) {
 	// fn0017_2792 proc
-	debug("OPL: Write %.2x to port %.2x", value, registerIndex);
+	
 	// _opl->write(0x388, registerIndex);
 	_opl->writeReg(registerIndex, value);
 	gArray229C[registerIndex] = value;
@@ -476,7 +476,7 @@ void Adlib::OnTimer() {
 		return;
 	}
 
-	debug("Entered OnTimer");
+	
 
 	// fn0017_1AA7 proc
 
@@ -537,7 +537,6 @@ void Adlib::OnTimer() {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
 
-			debug("Loop iteration, [2250] value: %.2X at offset %lX", current, shMem2250->pos());
 			if (current & 0x80) {
 				// The first bit of the read value was 0
 				// l0017_1B27:
@@ -726,7 +725,7 @@ void Adlib::OnTimer() {
 					} else {
 						//			// l0017_1E94:
 						SIS_LogEntry(0x01D7, 0x1E94);
-						debug("Unimplemented");
+						{ StreamHandler *shI = Func19BE_SH(shMem2248, gArray225F[bp3] << 0x4); uint8 pc = bp3 >= 0xB ? (bp3 < 0x10 ? gArray57[bp3 - 0xB] : bp3) : bp3; if (pc < 9) { Func2839(pc, shI); gArray226F[bp3] = 0; Func294E(pc, bp4, 0); } }
 						//			// TODO: These pushes are not arguments for 19BE
 						//			// push	word ptr [224Ah]
 						//			// push word ptr[2248h]
@@ -894,7 +893,7 @@ void Adlib::OnTimer() {
 					// l0017_222D:
 				} else if (bp4 == 0x67) {
 					SIS_LogEntry(0x01D7, 0x2231);
-					debug("Unimplemented");
+					if (bp5 != 0) { g2291 = 6; Func2792(0xBD, 0x20); } else { g2291 = 9; Func2792(0xBD, 0); }
 					//				// TODO: Continue from here
 					//				// l0017_2231:
 					//				if (bp5 != 0) {
@@ -909,7 +908,7 @@ void Adlib::OnTimer() {
 				} else if (bp4 == 0x69) {
 					//					// l0017_225C:
 					SIS_LogEntry(0x01D7, 0x225C);
-					debug("Unimplemented");
+					{ uint8 bv = (uint8)(-(int8)bp5); gArray226F[bp3] = bv; for (uint8 i = 0; i < g2291; i++) { if (gArray227F[i] == bp3 && gArray222C[i] == 0) Func294E(i, gArray2235[i], bv); } }
 					//					// TODO: Check if the neg works out the right way
 					//					bp5 = -bp5;
 					//					gArray226F[bp3] = bp5;
@@ -934,7 +933,7 @@ void Adlib::OnTimer() {
 				} else if (bp4 == 0x68) {
 					//					// l0017_22C5:
 					SIS_LogEntry(0x01D7, 0x22C5);
-					debug("Unimplemented");
+					{ gArray226F[bp3] = bp5; for (uint8 i = 0; i < g2291; i++) { if (gArray227F[i] == bp3 && gArray222C[i] == 0) Func294E(i, gArray2235[i], bp5); } }
 					//					gArray226F[bp3] = bp5;
 					//					uint16 bp16 = g2291 - 1;
 					//					if (0 <= bp16) {
@@ -968,7 +967,7 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0xD0) {
 				//		// l0017_235E:
 				SIS_LogEntry(0x01D7, 0x235E);
-				debug("Unimplemented");
+				shMem2250 = Func19BE_SH(shMem2250, 0x1); g225A++;
 				//		Macs2::StreamHandler *sh2252;
 				//		Macs2::StreamHandler *sh225A;
 				//		Macs2::StreamHandler *shResult = Func19BE_SH(sh2252, 0x1);
@@ -980,7 +979,7 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0xF0) {
 				//		// l0017_2387:
 				SIS_LogEntry(0x01D7, 0x2387);
-				debug("Unimplemented");
+				if (bp4 == 0x2F) { shMem2250 = shMem2244; g225A = 0; g225E = 0; g2259 = 0; g2242 = 1; Func1A03(); } else { shMem2250 = Func19BE_SH(shMem2250, 0x1); g225A++; }
 				//		if (bp4 == 0x2F) {
 				//			// l0017_238D:
 				//			Macs2::StreamHandler *sh2244;
@@ -1025,7 +1024,7 @@ void Adlib::OnTimer() {
 		if ((g2258 & 0xC2) != 0) {
 			// l0017_242E:
 			SIS_LogEntry(0x01D7, 0x242E);
-			debug("Unimplemented");
+			g2258 &= ~0xC2;
 			// TODO: I think this just calls the function again
 			// Func1A74();
 		}
@@ -1059,8 +1058,6 @@ StreamHandler *Adlib::Func19BE_SH(StreamHandler *inHandler, uint16 seekDelta) {
 	// l0017_19EA
 	pos += seekDelta;
 	result->seek(pos, SEEK_SET);
-	debug("Adlib seek by %.2x new offset %04x",
-		  seekDelta, pos);
 
 	return result;
 }
@@ -1100,9 +1097,9 @@ l0017_24F6:
 
 void Adlib::SIS_LogEntry(uint16 seg, uint16 off, Common::String msg) {
 	if (msg.empty()) {
-		debug("Entered %.4X:%.4X", seg, off);
+		// debug("Entered %.4X:%.4X", seg, off);
 	} else {
-		debug(msg.c_str());
+		// debug(msg.c_str());
 	}
 }
 
@@ -1121,7 +1118,6 @@ void Adlib::Func1A03() {
 		shMem2250 = Func19BE_SH(shMem2250, 1);
 		g225A++;
 		continueCondition = bp1 & 0x80;
-		debug("1A03 iteration - Value: %.2x at offset %ld Next timer: %.8x Continuation: %.2x", bp1, shMem2250->pos(), _nextEventTimer, continueCondition);
 	} while (continueCondition != 0);
 }
 
