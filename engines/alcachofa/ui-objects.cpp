@@ -518,8 +518,8 @@ SlideButton::SlideButton(Room *room, SeekableReadStream &stream)
 SlideButtonV2::SlideButtonV2(Room *room, SeekableReadStream &stream)
 	: SlideButton(room, stream) {
 	_valueId = stream.readSint32LE();
-	_minPos = Shape(stream).firstPoint();
-	_maxPos = Shape(stream).firstPoint();
+	_minPos = Shape(stream).firstPoint(); //-V656
+	_maxPos = Shape(stream).firstPoint(); //-V656
 	_graphicIdle = Graphic(stream);
 	_graphicClicked = Graphic(stream);
 }
@@ -527,8 +527,8 @@ SlideButtonV2::SlideButtonV2(Room *room, SeekableReadStream &stream)
 SlideButtonV3::SlideButtonV3(Room *room, SeekableReadStream &stream)
 	: SlideButton(room, stream) {
 	_valueId = stream.readSint32LE();
-	_minPos = Shape(stream).firstPoint();
-	_maxPos = Shape(stream).firstPoint();
+	_minPos = Shape(stream).firstPoint(); //-V656
+	_maxPos = Shape(stream).firstPoint(); //-V656
 	_graphicIdle = Graphic(stream);
 	_graphicHovered = Graphic(stream);
 	_graphicClicked = Graphic(stream);
