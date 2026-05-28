@@ -124,7 +124,7 @@ void Score::setPuppetTempo(int16 puppetTempo) {
 }
 
 CastMemberID Score::getCurrentPalette() {
-	return g_director->_lastPalette;
+	return _vm->_lastPalette;
 }
 
 bool Score::processImmediateFrameScript(Common::String s, int id) {
@@ -353,11 +353,11 @@ void Score::step() {
 	update();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
-		warning("Score::startLoop(): ran frame %0d", g_director->_framesRan);
-		g_director->_framesRan++;
+		warning("Score::startLoop(): ran frame %0d", _vm->_framesRan);
+		_vm->_framesRan++;
 	}
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > kFewFamesMaxCounter) {
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && _vm->_framesRan > kFewFamesMaxCounter) {
 		warning("Score::startLoop(): exiting due to debug few frames only");
 		_playState = kPlayStopped;
 		return;
@@ -545,8 +545,8 @@ void Score::updateNextFrameTime() {
 			} else if (tempo <= 120) {
 				// FPS
 				_currentFrameRate = tempo;
-				if (g_director->_fpsLimit)
-					_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
+				if (_vm->_fpsLimit)
+					_currentFrameRate = MIN(_vm->_fpsLimit, _currentFrameRate);
 				_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
 			} else {
@@ -600,8 +600,8 @@ void Score::updateNextFrameTime() {
 			} else if (tempo == 246) {
 				// FPS
 				_currentFrameRate = tempoCuePoint;
-				if (g_director->_fpsLimit)
-					_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
+				if (_vm->_fpsLimit)
+					_currentFrameRate = MIN(_vm->_fpsLimit, _currentFrameRate);
 				_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
 			} else {
@@ -853,7 +853,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, boo
 		incrementFilmLoops();
 		_window->render();
 		_skipTransition = false;
-	} else if (g_director->_playbackPaused) {
+	} else if (_vm->_playbackPaused) {
 		updateSprites(mode);
 		incrementFilmLoops();
 		_window->render();
@@ -1012,8 +1012,8 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		if (debugChannelSet(-1, kDebugFast))
 			frameRate = 30;
 
-		if (g_director->_fpsLimit)
-			frameRate = MIN((int)g_director->_fpsLimit, frameRate);
+		if (_vm->_fpsLimit)
+			frameRate = MIN((int)_vm->_fpsLimit, frameRate);
 
 		int frameDelay = 1000 / 60;
 		int fadeFrames = kFadeColorFrames[frameRate - 1];
@@ -1023,8 +1023,8 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 
 		// Copy the current palette into the snapshot buffer
 		memset(_paletteSnapshotBuffer, 0, 768);
-		memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
-		PaletteV4 *destPal = g_director->getPalette(currentPalette);
+		memcpy(_paletteSnapshotBuffer, _vm->getPalette(), _vm->getPaletteColorCount() * 3);
+		PaletteV4 *destPal = _vm->getPalette(currentPalette);
 		if (!destPal) {
 			warning("Unable to fetch palette %s", currentPalette.asString().c_str());
 			return false;
@@ -1033,7 +1033,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		if (_currentFrame->_mainChannels.palette.normal) {
 			// If the target palette ID is the same as the previous palette ID,
 			// a normal fade is a no-op.
-			if (_currentFrame->_mainChannels.palette.paletteId == g_director->_lastPalette) {
+			if (_currentFrame->_mainChannels.palette.paletteId == _vm->_lastPalette) {
 				return false;
 			}
 
@@ -1049,20 +1049,20 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 					i + 1,
 					fadeFrames
 				);
-				g_director->setPalette(calcPal, 256);
-				g_director->draw();
+				_vm->setPalette(calcPal, 256);
+				_vm->draw();
 				if (_activeFade) {
 					_activeFade = _soundManager->fadeChannels();
 				}
 				// On click, stop loop and reset palette
-				if (_vm->processEvents(true)) {
+				if (_vm->processSysEvents(true)) {
 					debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-					g_director->setPalette(currentPalette);
+					_vm->setPalette(currentPalette);
 					return true;
 				}
 				uint32 endTime = g_system->getMillis();
 				int diff = (int)frameDelay - (int)(endTime - startTime);
-				g_director->delayMillis(MAX(0, diff));
+				_vm->delayMillis(MAX(0, diff));
 			}
 
 		} else {
@@ -1092,20 +1092,20 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 					i + 1,
 					fadeFrames
 				);
-				g_director->setPalette(calcPal, 256);
-				g_director->draw();
+				_vm->setPalette(calcPal, 256);
+				_vm->draw();
 				if (_activeFade) {
 					_activeFade = _soundManager->fadeChannels();
 				}
 				// On click, stop loop and reset palette
-				if (_vm->processEvents(true)) {
+				if (_vm->processSysEvents(true)) {
 					debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-					g_director->setPalette(currentPalette);
+					_vm->setPalette(currentPalette);
 					return true;
 				}
 				uint32 endTime = g_system->getMillis();
 				int diff = (int)frameDelay - (int)(endTime - startTime);
-				g_director->delayMillis(MAX(0, diff));
+				_vm->delayMillis(MAX(0, diff));
 			}
 		}
 	}
@@ -1120,19 +1120,19 @@ void Score::setLastPalette() {
 	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
 	// Director allows you to use palette IDs for cast members
 	// that have long since been erased. Check all of them.
-	if (!g_director->hasPalette(currentPalette))
+	if (!_vm->hasPalette(currentPalette))
 		currentPalette = CastMemberID();
 	// Palette not specified in the frame
 	if (currentPalette.isNull()) {
 		// Use the score cached palette ID
 		isCachedPalette = true;
 		currentPalette = _currentFrame->_mainChannels.scoreCachedPaletteId;
-		if (!g_director->hasPalette(currentPalette))
+		if (!_vm->hasPalette(currentPalette))
 			currentPalette = CastMemberID();
 		// The cached ID is created before the cast gets loaded; if it's zero,
 		// this corresponds to the movie default palette.
 		if (currentPalette.isNull()) {
-			currentPalette = g_director->getCurrentMovie()->_defaultPalette;
+			currentPalette = _vm->getCurrentMovie()->_defaultPalette;
 		}
 		// If for whatever reason this doesn't resolve, abort.
 		if (currentPalette.isNull())
@@ -1141,17 +1141,17 @@ void Score::setLastPalette() {
 
 	// If the palette is defined in the frame and doesn't match
 	// the current one, set it
-	bool paletteChanged = (currentPalette != g_director->_lastPalette) && (!currentPalette.isNull());
+	bool paletteChanged = (currentPalette != _vm->_lastPalette) && (!currentPalette.isNull());
 	if (paletteChanged) {
 		debugC(2, kDebugImages, "Score::setLastPalette(): palette changed to %s, from %s", currentPalette.asString().c_str(), isCachedPalette ? "cache" :"frame");
-		g_director->_lastPalette = currentPalette;
+		_vm->_lastPalette = currentPalette;
 		_paletteTransitionIndex = 0;
 
 		// Switch to a new palette immediately if:
 		// - this is color cycling mode, or
 		// - the cached palette ID is different (i.e. we jumped in the score)
 		if (_currentFrame->_mainChannels.palette.colorCycling || isCachedPalette)
-			g_director->setPalette(g_director->_lastPalette);
+			_vm->setPalette(_vm->_lastPalette);
 	}
 
 }
@@ -1184,8 +1184,8 @@ void Score::renderPaletteCycle(RenderMode mode) {
 		return;
 
 	// Apply the global FPS limit if required
-	if (g_director->_fpsLimit)
-		speed = MIN((int)g_director->_fpsLimit, speed);
+	if (_vm->_fpsLimit)
+		speed = MIN((int)_vm->_fpsLimit, speed);
 
 	if (debugChannelSet(-1, kDebugFast))
 		speed = 30;
@@ -1200,12 +1200,12 @@ void Score::renderPaletteCycle(RenderMode mode) {
 		if (_currentFrame->_mainChannels.palette.overTime) {
 			// Do a single color step in one frame transition
 			debugC(2, kDebugImages, "Score::renderPaletteCycle(): color cycle palette %s, from colors %d to %d, by 1 frame", currentPalette.asString().c_str(), firstColor, lastColor);
-			g_director->shiftPalette(firstColor, lastColor, false);
-			g_director->draw();
+			_vm->shiftPalette(firstColor, lastColor, false);
+			_vm->draw();
 		} else {
 			// Short circuit for few frames renderer
 			if (debugChannelSet(-1, kDebugFast)) {
-				g_director->setPalette(currentPalette);
+				_vm->setPalette(currentPalette);
 				return;
 			}
 
@@ -1215,43 +1215,43 @@ void Score::renderPaletteCycle(RenderMode mode) {
 			for (int i = 0; i < _currentFrame->_mainChannels.palette.cycleCount; i++) {
 				for (int j = 0; j < steps; j++) {
 					uint32 startTime = g_system->getMillis();
-					g_director->shiftPalette(firstColor, lastColor, false);
-					g_director->draw();
+					_vm->shiftPalette(firstColor, lastColor, false);
+					_vm->draw();
 					if (_activeFade) {
 						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
-					if (_vm->processEvents(true)) {
-						g_director->setPalette(currentPalette);
+					if (_vm->processSysEvents(true)) {
+						_vm->setPalette(currentPalette);
 						return;
 					}
 					uint32 endTime = g_system->getMillis();
 					int diff = (int)delay - (int)(endTime - startTime);
-					g_director->delayMillis(MAX(0, diff));
+					_vm->delayMillis(MAX(0, diff));
 				}
 				if (_currentFrame->_mainChannels.palette.autoReverse) {
 					for (int j = 0; j < steps; j++) {
 						uint32 startTime = g_system->getMillis();
-						g_director->shiftPalette(firstColor, lastColor, true);
-						g_director->draw();
+						_vm->shiftPalette(firstColor, lastColor, true);
+						_vm->draw();
 						if (_activeFade) {
 							_activeFade = _soundManager->fadeChannels();
 						}
 						// On click, stop loop and reset palette
-						if (_vm->processEvents(true)) {
-							g_director->setPalette(currentPalette);
+						if (_vm->processSysEvents(true)) {
+							_vm->setPalette(currentPalette);
 							return;
 						}
 						uint32 endTime = g_system->getMillis();
 						int diff = (int)delay - (int)(endTime - startTime);
-						g_director->delayMillis(MAX(0, diff));
+						_vm->delayMillis(MAX(0, diff));
 					}
 				}
 			}
 		}
 	} else {
 		// Transition from the current palette to a new palette
-		PaletteV4 *destPal = g_director->getPalette(currentPalette);
+		PaletteV4 *destPal = _vm->getPalette(currentPalette);
 		if (!destPal) {
 			warning("Score::renderPaletteCycle(): no match for palette id %s", currentPalette.asString().c_str());
 			return;
@@ -1264,7 +1264,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 			if (_paletteTransitionIndex == 0) {
 				// Copy the current palette into the snapshot buffer
 				memset(_paletteSnapshotBuffer, 0, 768);
-				memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
+				memcpy(_paletteSnapshotBuffer, _vm->getPalette(), _vm->getPaletteColorCount() * 3);
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), frameCount);
 			}
 
@@ -1312,14 +1312,14 @@ void Score::renderPaletteCycle(RenderMode mode) {
 					);
 				}
 			}
-			g_director->setPalette(calcPal, 256);
+			_vm->setPalette(calcPal, 256);
 			_paletteTransitionIndex++;
 			_paletteTransitionIndex %= frameCount;
 		} else {
 			// Short circuit for fast renderer
 			if (debugChannelSet(-1, kDebugFast)) {
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): setting palette to %s", currentPalette.asString().c_str());
-				g_director->setPalette(currentPalette);
+				_vm->setPalette(currentPalette);
 				return;
 			}
 
@@ -1342,8 +1342,8 @@ void Score::renderPaletteCycle(RenderMode mode) {
 				if (debugChannelSet(-1, kDebugFast))
 					frameRate = 30;
 
-				if (g_director->_fpsLimit)
-					frameRate = MIN((int)g_director->_fpsLimit, frameRate);
+				if (_vm->_fpsLimit)
+					frameRate = MIN((int)_vm->_fpsLimit, frameRate);
 
 				int frameDelay = 1000 / 60;
 				int fadeFrames = kFadeColorFrames[frameRate - 1];
@@ -1351,22 +1351,22 @@ void Score::renderPaletteCycle(RenderMode mode) {
 					fadeFrames = kFadeColorFramesD5[frameRate - 1];
 
 				// Wait for a fixed time
-				g_director->setPalette(fadePal, 256);
-				g_director->draw();
+				_vm->setPalette(fadePal, 256);
+				_vm->draw();
 				for (int i = 0; i < kFadeColorWait; i++) {
 					uint32 startTime = g_system->getMillis();
 					if (_activeFade) {
 						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
-					if (_vm->processEvents(true)) {
+					if (_vm->processSysEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-						g_director->setPalette(currentPalette);
+						_vm->setPalette(currentPalette);
 						return;
 					}
 					uint32 endTime = g_system->getMillis();
 					int diff = (int)frameDelay - (int)(endTime - startTime);
-					g_director->delayMillis(MAX(0, diff));
+					_vm->delayMillis(MAX(0, diff));
 				}
 
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), fadeFrames);
@@ -1380,20 +1380,20 @@ void Score::renderPaletteCycle(RenderMode mode) {
 						i + 1,
 						fadeFrames
 					);
-					g_director->setPalette(calcPal, 256);
-					g_director->draw();
+					_vm->setPalette(calcPal, 256);
+					_vm->draw();
 					if (_activeFade) {
 						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
-					if (_vm->processEvents(true)) {
+					if (_vm->processSysEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-						g_director->setPalette(currentPalette);
+						_vm->setPalette(currentPalette);
 						return;
 					}
 					uint32 endTime = g_system->getMillis();
 					int diff = (int)frameDelay - (int)(endTime - startTime);
-					g_director->delayMillis(MAX(0, diff));
+					_vm->delayMillis(MAX(0, diff));
 				}
 
 			}
@@ -1435,8 +1435,8 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 
 			// try to use the cursor read from exe file.
 			// currently, we are using mac arrow to represent custom win cursor since we didn't find where it stores. So i comment it out here.
-//			if (g_director->getPlatform() == Common::kPlatformWindows && _channels[spriteId]->_cursor._cursorType == Graphics::kMacCursorCustom)
-//				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, g_director->_winCursor[_channels[spriteId]->_cursor._cursorResId]);
+//			if (_vm->getPlatform() == Common::kPlatformWindows && _channels[spriteId]->_cursor._cursorType == Graphics::kMacCursorCustom)
+//				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, _vm->_winCursor[_channels[spriteId]->_cursor._cursorResId]);
 			_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
 			_currentCursor = _channels[spriteId]->_cursor.getRef();
 			return;
@@ -1531,9 +1531,9 @@ void Score::screenShot() {
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 
 	Common::String currentPath = _vm->getCurrentPath().c_str();
-	Common::replace(currentPath, Common::String(g_director->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
+	Common::replace(currentPath, Common::String(_vm->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), Common::punycode_encodefilename(_movie->getMacName()).c_str());
-	Common::Path filename = dumpScriptName(prefix.c_str(), kMovieScript, g_director->_framesRan, "png");
+	Common::Path filename = dumpScriptName(prefix.c_str(), kMovieScript, _vm->_framesRan, "png");
 
 	const char *buildNumber = getenv("BUILD_NUMBER");
 
@@ -1543,7 +1543,7 @@ void Score::screenShot() {
 		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
 
 		Common::Path buildDir(Common::String::format("%s/%s", ConfMan.get("screenshotpath").c_str(),
-			g_director->getTargetName().c_str()), '/');
+			_vm->getTargetName().c_str()), '/');
 
 		// We run for the first time, let's check if we had the directory previously
 		if (_previousBuildBotBuild == -1) {
@@ -1559,7 +1559,7 @@ void Score::screenShot() {
 
 		// Now we try to find any previous dump
 		while (prevbuild > 0) {
-			filename = buildDir.join(Common::Path(Common::String::format("%d/%s-%d.png", prevbuild, prefix.c_str(), g_director->_framesRan), '/'));
+			filename = buildDir.join(Common::Path(Common::String::format("%d/%s-%d.png", prevbuild, prefix.c_str(), _vm->_framesRan), '/'));
 
 			Common::FSNode fs(filename);
 
@@ -1594,7 +1594,7 @@ void Score::screenShot() {
 		// the screenshot was different from the previous one.
 		//
 		// Regenerate file name with the correct build number
-		filename = buildDir.join(Common::Path(Common::String::format("%s/%s-%d.png", buildNumber, prefix.c_str(), g_director->_framesRan), '/'));
+		filename = buildDir.join(Common::Path(Common::String::format("%s/%s-%d.png", buildNumber, prefix.c_str(), _vm->_framesRan), '/'));
 	}
 
 	Common::DumpFile screenshotFile;
@@ -1613,7 +1613,7 @@ void Score::screenShot() {
 }
 
 uint16 Score::getSpriteIDOfActiveWidget() {
-	Graphics::MacWidget *active = g_director->_wm->getActiveWidget();
+	Graphics::MacWidget *active = _vm->_wm->getActiveWidget();
 	if (!active)
 		return 0;
 	for (int i = _channels.size() - 1; i >= 0; i--) {
@@ -2404,16 +2404,16 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 Common::String Score::formatChannelInfo() {
 	Frame &frame = *_currentFrame;
 	Common::String result;
-	CastMemberID defaultPalette = g_director->getCurrentMovie()->_defaultPalette;
+	CastMemberID defaultPalette = _vm->getCurrentMovie()->_defaultPalette;
 	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d, currentFPS: %d\n",
 		frame._mainChannels.tempo, frame._mainChannels.skipFrameFlag, frame._mainChannels.blend, _currentFrameRate);
 	if (!frame._mainChannels.palette.paletteId.isNull()) {
 		result += Common::String::format("PAL:    paletteId: %s, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d, currentId: %s, defaultId: %s\n",
 			frame._mainChannels.palette.paletteId.asString().c_str(), frame._mainChannels.palette.firstColor, frame._mainChannels.palette.lastColor, frame._mainChannels.palette.flags,
 			frame._mainChannels.palette.cycleCount, frame._mainChannels.palette.speed, frame._mainChannels.palette.frameCount,
-			frame._mainChannels.palette.fade, frame._mainChannels.palette.delay, frame._mainChannels.palette.style, g_director->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
+			frame._mainChannels.palette.fade, frame._mainChannels.palette.delay, frame._mainChannels.palette.style, _vm->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
 	} else {
-		result += Common::String::format("PAL:    paletteId: 000, currentId: %s, defaultId: %s\n", g_director->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
+		result += Common::String::format("PAL:    paletteId: 000, currentId: %s, defaultId: %s\n", _vm->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
 	}
 	result += Common::String::format("TRAN:   transType: %d, transDuration: %d, transChunkSize: %d\n",
 		frame._mainChannels.transType, frame._mainChannels.transDuration, frame._mainChannels.transChunkSize);

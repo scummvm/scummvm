@@ -293,7 +293,7 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 }
 
 bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void *ptr) {
-	return g_director->getCurrentMovie()->processEvent(event);
+	return g_director->getCurrentMovie()->processSysEvent(event);
 }
 
 Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont) {

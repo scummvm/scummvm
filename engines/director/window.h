@@ -187,7 +187,7 @@ public:
 	static void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 
 	// events.cpp
-	bool processEvent(Common::Event &event);
+	bool processSysEvent(Common::Event &event);
 	bool processWMEvent(Graphics::WindowClick click, Common::Event &event);
 	void sendWindowEvent(LEvent event);
 

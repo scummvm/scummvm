@@ -244,7 +244,7 @@ public:
 
 	// events.cpp
 	bool pollEvent(Common::Event &event);
-	bool processEvents(bool captureClick = false, bool skipWindowManager = false);
+	bool processSysEvents(bool captureClick = false, bool skipWindowManager = false);
 	void processEventQUIT();
 	int getMacTicks();
 	Common::Array<Common::Event> _injectedEvents;

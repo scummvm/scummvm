@@ -611,6 +611,22 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 	queueEvent(_inputEventQueue, event, targetId, pos);
 }
 
+
+bool Movie::processInputEvent(LEvent event, int targetId, Common::Point pos) {
+	if (!_lingo->_state->callstack.empty()) {
+		// We're in the middle of executing something else, queue input event for later
+		queueInputEvent(event, targetId, pos);
+		return true;
+	}
+	// Try and process event inline
+	Common::Queue<LingoEvent> queue;
+	queueEvent(queue, event, targetId, pos);
+	_vm->setCurrentWindow(this->getWindow());
+	_lingo->processEvents(queue, true);
+	return _lingo->_passEvent;
+}
+
+
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
