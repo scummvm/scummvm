@@ -3122,6 +3122,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (waitForSoundPlayback) {
 			if (!_engine->isCurrentSoundPlaying()) {
 				waitForSoundPlayback = false;
+				_mouseMode = Script::MouseMode::Walk;
 				Run();
 			}
 			return;
@@ -3130,6 +3131,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (waitForMusicControl) {
 			if (musicControlMode == 0) {
 				waitForMusicControl = false;
+				_mouseMode = Script::MouseMode::Walk;
 				Run();
 			}
 			return;
@@ -3138,6 +3140,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (waitForAdlibReady) {
 			if (_engine->getAdlib()->isPlaybackReady()) {
 				waitForAdlibReady = false;
+				_mouseMode = Script::MouseMode::Walk;
 				Run();
 			}
 			return;
@@ -3149,6 +3152,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 			if (frameWaitTicksRemaining == 0) {
 				isFrameWaitActive = false;
+				_mouseMode = Script::MouseMode::Walk;
 				Run();
 			}
 		}
@@ -3175,6 +3179,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	void ScriptExecutor::StartFrameWait(uint16 duration) {
 		isFrameWaitActive = true;
 		frameWaitTicksRemaining = duration;
+		// Hide cursor during wait (original saves mode then sets Disabled)
+		if (_mouseMode != Script::MouseMode::Disabled) {
+			_mouseMode = Script::MouseMode::Disabled;
+		}
 	}
 
 	void ScriptExecutor::EndFrameWait() {

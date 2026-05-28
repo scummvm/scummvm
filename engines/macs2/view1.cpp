@@ -169,8 +169,19 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 	return nullptr;
 }
 void View1::UpdateCursor(const byte *palette) {
+	// Handle special cursor modes
+	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Disabled) {
+		CursorMan.showMouse(false);
+		return;
+	}
+	CursorMan.showMouse(true);
+
+	// For PanelUse/PanelCursor, fall back to Use cursor visually
 	int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
-	if (mode < 0 || mode >= kNumLoadedCursors) {
+	if (mode >= kNumLoadedCursors) {
+		mode = (int)Script::MouseMode::Use - (int)Script::MouseMode::Talk;
+	}
+	if (mode < 0) {
 		warning("Invalid cursor mode %d, falling back to Use cursor", mode);
 		mode = (int)Script::MouseMode::Use - (int)Script::MouseMode::Talk;
 	}
@@ -878,21 +889,23 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// Handle no other interactions during a script
 		if (g_engine->_scriptExecutor->IsExecuting()) {
 			// From handleInput: right-click during script execution opens the
-			// map/save panel (g_wUiPanelState=4) but only if no dialogue, text
-			// box, overlay text, or sound wait is active.
-			// TODO: Implement map/save panel opening here
+			// map/save panel if no UI is blocking.
+			if (!_isShowingStringBox && !_isShowingDialogueChoice &&
+				!g_engine->_scriptExecutor->overlayTextStageActive &&
+				!g_engine->_scriptExecutor->waitForSoundPlayback &&
+				!g_engine->_scriptExecutor->waitForMusicControl &&
+				!g_engine->_scriptExecutor->waitForAdlibReady) {
+				// Toggle the save/load panel (ScummVM uses native save dialog)
+				// TODO: Implement the original's 10-slot save/load panel
+				// For now, open ScummVM's save/load dialog
+			}
 			return true;
 		}
 
-		// From handleInput (1008:e8bf): right-click when g_wUiPanelState==0
-		// opens the action bar at the mouse position (openActionBarAtPosition),
-		// setting g_wUiPanelState=1. The original does NOT cycle cursor modes -
-		// that's done via the action bar buttons.
+		// From handleInput (1008:e8bf): right-click when not executing
+		// opens the action bar at the mouse position.
 		if (!isShowingMainMenu) {
-			isShowingMainMenu = true;
-			// TODO: Position the action bar at the click position as the
-			// original does with openActionBarAtPosition(mouseY, mouseX,
-			// adjustedY, adjustedX)
+			openMainMenu(msg._pos);
 		} else {
 			isShowingMainMenu = false;
 		}
