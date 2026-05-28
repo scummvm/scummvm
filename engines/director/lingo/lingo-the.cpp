@@ -2192,21 +2192,10 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	}
 
 	CastMemberID id = id1.asMemberID();
-	Cast *sharedCast = movie->getSharedCast();
-	Cast *cast = movie->getCast(id);
-	int maxID = 0;
-
-	if (sharedCast) {
-		maxID = MAX(maxID, sharedCast->getCastMaxID());
-	}
-	if (cast) {
-		maxID = MAX(maxID, cast->getCastMaxID());
-	}
-
 	CastMember *member = movie->getCastMember(id);
 
 	if (!member) {
-		if (id.member >= 1 && id.member <= maxID) {
+		if (id.member >= 1 && id.member <= movie->getMaxCastID()) {
 			debugC(1, kDebugLingoExec,
 				  "Lingo::setTheCast(): %s not found, ignoring (empty slot within cast bounds)",
 				  id.asString().c_str());
@@ -2222,6 +2211,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			return;
 		}
 		CastMember *replacement = (CastMember *)d.u.obj;
+		Cast *cast = movie->getCast(id);
 		cast->duplicateCastMember(replacement, nullptr, id.member);
 		return;
 	}
