@@ -127,6 +127,7 @@ public:
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
 	bool isValidCastMember(CastMemberID memberID, CastType type);
 	const Stxt *getStxt(CastMemberID memberID);
+	int getMaxCastID();
 
 
 	LingoArchive *getMainLingoArch();

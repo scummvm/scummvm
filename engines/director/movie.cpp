@@ -708,6 +708,17 @@ const Stxt *Movie::getStxt(CastMemberID memberID) {
 	return result;
 }
 
+int Movie::getMaxCastID() {
+	int max = 0;
+	for (auto &it : _casts) {
+		max = MAX(max, it._value->getCastMaxID());
+	}
+	if (_sharedCast) {
+		max = MAX(max, _sharedCast->getCastMaxID());
+	}
+	return max;
+}
+
 LingoArchive *Movie::getMainLingoArch() {
 	return _casts.getVal(DEFAULT_CAST_LIB)->_lingoArchive;
 }
