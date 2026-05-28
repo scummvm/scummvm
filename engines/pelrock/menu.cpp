@@ -668,7 +668,6 @@ void MenuManager::drawScreen() {
 }
 
 void MenuManager::drawInventoryIcons() {
-	bool debugIcons = false;
 	for (uint i = 0; i < 4; i++) {
 		uint itemIndex = _curInventoryPage * 4 + i;
 		if (g_engine->_state->inventoryItems.size() <= itemIndex)
@@ -676,10 +675,6 @@ void MenuManager::drawInventoryIcons() {
 		InventoryObject item = g_engine->_res->getIconForObject(g_engine->_state->inventoryItems[itemIndex]);
 		Common::Point slot = _inventorySlots[i];
 		drawSpriteToBuffer(_compositeBuffer, item.iconData, slot.x, slot.y, 60, 60, 1);
-		if (debugIcons) {
-			drawRect(&_compositeBuffer, slot.x, slot.y, 60, 60, 13);
-			drawText(_compositeBuffer, g_engine->_smallFont, Common::String::format("ID %d", g_engine->_state->inventoryItems[itemIndex]), slot.x + 2, slot.y + 2, 640, 13);
-		}
 	}
 }
 
@@ -964,9 +959,6 @@ void MenuManager::drawMainButtons() {
 
 	buf = button == SAVE_GAME_BUTTON ? _saveButtons[1] : _saveButtons[0];
 	drawSpriteToBuffer(_compositeBuffer, buf, _saveGameRect.left, _saveGameRect.top, _saveGameRect.width(), _saveGameRect.height(), kTransparentColor);
-
-	buf = button == LOAD_GAME_BUTTON ? _loadButtons[1] : _loadButtons[0];
-	drawSpriteToBuffer(_compositeBuffer, buf, _loadGameRect.left, _loadGameRect.top, _loadGameRect.width(), _loadGameRect.height(), kTransparentColor);
 
 	buf = button == LOAD_GAME_BUTTON ? _loadButtons[1] : _loadButtons[0];
 	drawSpriteToBuffer(_compositeBuffer, buf, _loadGameRect.left, _loadGameRect.top, _loadGameRect.width(), _loadGameRect.height(), kTransparentColor);
