@@ -264,9 +264,9 @@ enum {
 };
 
 enum {
-	conv040_enter_b_b        =  4,
+	conv040_leave_b_b        =  4,
 	conv040_repeater         =  7,
-	conv040_leave_b_b        =  8
+	conv040_enter_b_b        =  8
 };
 
 enum {
