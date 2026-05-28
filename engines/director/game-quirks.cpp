@@ -312,6 +312,10 @@ const struct Quirk {
 	{ "puppetmotel", Common::kPlatformWindows, &quirkForceFileIOXtra },
 	{ "puppetmotel", Common::kPlatformMacintosh, &quirkForceFileIOXtra },
 
+	// Pink Gear Collection uses the Xtra version, but loads it manually with openXLib.
+	{ "pinkgear", Common::kPlatformWindows, &quirkForceFileIOXtra },
+	{ "pinkgear", Common::kPlatformMacintosh, &quirkForceFileIOXtra },
+
 	// Stay Tooned is D5, but expects the XObject version to be used.
 	{ "staytooned", Common::kPlatformWindows, &quirkForceFileIOXObj },
 	{ "staytooned", Common::kPlatformMacintosh, &quirkForceFileIOXObj },

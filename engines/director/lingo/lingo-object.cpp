@@ -156,6 +156,7 @@
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/f/filextra.h"
+#include "director/lingo/xtras/g/getdir.h"
 #include "director/lingo/xtras/k/keypoll.h"
 #include "director/lingo/xtras/m/masterapp.h"
 #include "director/lingo/xtras/m/mui.h"
@@ -297,6 +298,7 @@ static const struct XLibProto {
 	XLIBDEF(FlushXObj,			kXObj,			300),	// D3
 	XLIBDEF(FPlayXObj,			kXObj,			200),	// D2
 	XLIBDEF(GenUtilsXObj,		kXObj,			400),	// D4
+	XLIBDEF(GetDirXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetSoundInLevelXObj,kXObj,			400),	// D4
