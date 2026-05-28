@@ -33,6 +33,22 @@ namespace Scumm {
 class ScummEngine_v7;
 class SmushFont;
 
+enum RA1MenuCommand {
+	kRA1MenuCommandNone = 0,
+	kRA1MenuCommandUp,
+	kRA1MenuCommandDown,
+	kRA1MenuCommandLeft,
+	kRA1MenuCommandRight,
+	kRA1MenuCommandAccept,
+	kRA1MenuCommandCancel,
+	kRA1MenuCommandSelect1,
+	kRA1MenuCommandSelect2,
+	kRA1MenuCommandSelect3,
+	kRA1MenuCommandSelect4,
+	kRA1MenuCommandSelect5,
+	kRA1MenuCommandSelect6
+};
+
 // Simple sprite bank for RA1 NUT files (ANIM v1 with odd-alignment padding).
 // Separate from NutRenderer to avoid modifying shared NUT parsing code.
 struct RA1Sprite {
@@ -484,10 +500,13 @@ private:
 	void runOptionsMenu();
 	int runPasscodeEntryDialog();
 	bool runHighScoreNameEntry();
+	bool handleMenuCommand(RA1MenuCommand command);
 	bool handleControllerMenuAction(ScummAction action);
 	bool handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY);
 	bool handleTextEntryAction(ScummAction action);
 	bool handleTextEntryKey(const Common::Event &event);
+	void playMenuBackground();
+	bool runTextEntryMenuLoop();
 	void beginTextEntry(bool passcodeMode);
 	void finishTextEntry(bool canceled);
 	void selectTextEntryChar();
@@ -524,6 +543,13 @@ private:
 	HighScoreEntry _highScores[kHighScoreCount];
 	bool _highScoresActive;  // True when showing TOP PILOTS overlay
 	void showHighScores();
+	int getMenuTalkTextWidth(const char *text);
+	void drawMenuTalkText(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
+	void drawMenuTitleText(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
+	void renderHighScoresOverlay(byte *dst, int pitch, int width, int height);
+	void renderOptionsOverlay(byte *dst, int pitch, int width, int height);
+	void renderLevelSelectOverlay(byte *dst, int pitch, int width, int height);
+	void renderMainMenuItems(byte *dst, int pitch, int width, int height);
 
 	// Character picker shared by RunPasscodeEntryDialog and RunHighScoreNameEntry.
 	static const int kTextEntryBufferSize = 20;

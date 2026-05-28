@@ -149,6 +149,60 @@ static char normalizeRebel1PasscodeChar(char c) {
 	return c;
 }
 
+static RA1MenuCommand getRebel1MenuCommandFromAction(ScummAction action) {
+	switch (action) {
+	case kScummActionInsaneUp:
+		return kRA1MenuCommandUp;
+	case kScummActionInsaneDown:
+		return kRA1MenuCommandDown;
+	case kScummActionInsaneLeft:
+		return kRA1MenuCommandLeft;
+	case kScummActionInsaneRight:
+		return kRA1MenuCommandRight;
+	case kScummActionInsaneAttack:
+		return kRA1MenuCommandAccept;
+	default:
+		return kRA1MenuCommandNone;
+	}
+}
+
+static RA1MenuCommand getRebel1MenuCommandFromKey(const Common::KeyState &kbd) {
+	switch (kbd.keycode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_w:
+		return kRA1MenuCommandUp;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_s:
+		return kRA1MenuCommandDown;
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_a:
+		return kRA1MenuCommandLeft;
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_d:
+		return kRA1MenuCommandRight;
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_SPACE:
+		return kRA1MenuCommandAccept;
+	case Common::KEYCODE_ESCAPE:
+		return kRA1MenuCommandCancel;
+	case Common::KEYCODE_1:
+		return kRA1MenuCommandSelect1;
+	case Common::KEYCODE_2:
+		return kRA1MenuCommandSelect2;
+	case Common::KEYCODE_3:
+		return kRA1MenuCommandSelect3;
+	case Common::KEYCODE_4:
+		return kRA1MenuCommandSelect4;
+	case Common::KEYCODE_5:
+		return kRA1MenuCommandSelect5;
+	case Common::KEYCODE_6:
+		return kRA1MenuCommandSelect6;
+	default:
+		return kRA1MenuCommandNone;
+	}
+}
+
 static bool isRebel1TextEntryChar(bool passcodeMode, char c) {
 	if (passcodeMode) {
 		c = normalizeRebel1PasscodeChar(c);
@@ -314,35 +368,38 @@ bool InsaneRebel1::handleTextEntryKey(const Common::Event &event) {
 	return true;
 }
 
-bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
-	if (!_menuActive || _highScoresActive)
+bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
+	if (!_menuActive || _highScoresActive || command == kRA1MenuCommandNone)
 		return false;
 
 	if (_textEntryActive)
-		return handleTextEntryAction(action);
+		return false;
 
 	if (_levelSelectActive) {
 		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
 		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
 
-		switch (action) {
-		case kScummActionInsaneUp:
+		switch (command) {
+		case kRA1MenuCommandUp:
 			row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
 			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
 			return true;
-		case kScummActionInsaneDown:
+		case kRA1MenuCommandDown:
 			row = (row + 1) % kRA1LevelSelectRowsPerCol;
 			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
 			return true;
-		case kScummActionInsaneLeft:
+		case kRA1MenuCommandLeft:
 			if (col > 0)
 				_levelSelectSel -= kRA1LevelSelectRowsPerCol;
 			return true;
-		case kScummActionInsaneRight:
+		case kRA1MenuCommandRight:
 			if (col < 1)
 				_levelSelectSel += kRA1LevelSelectRowsPerCol;
 			return true;
-		case kScummActionInsaneAttack:
+		case kRA1MenuCommandCancel:
+			_levelSelectSel = kRA1LevelSelectItemCount - 1; // Back
+			// fall through
+		case kRA1MenuCommandAccept:
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -352,22 +409,25 @@ bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
 	}
 
 	if (_optionsActive) {
-		switch (action) {
-		case kScummActionInsaneUp:
+		switch (command) {
+		case kRA1MenuCommandUp:
 			_optionsSel = (_optionsSel + kOptionsItemCount - 1) % kOptionsItemCount;
 			return true;
-		case kScummActionInsaneDown:
+		case kRA1MenuCommandDown:
 			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
 			return true;
-		case kScummActionInsaneLeft:
+		case kRA1MenuCommandLeft:
 			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, -5);
 			return true;
-		case kScummActionInsaneRight:
+		case kRA1MenuCommandRight:
 			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, 5);
 			return true;
-		case kScummActionInsaneAttack:
+		case kRA1MenuCommandCancel:
+			_optionsSel = 0;
+			// fall through
+		case kRA1MenuCommandAccept:
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -376,20 +436,43 @@ bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
 		}
 	}
 
-	switch (action) {
-	case kScummActionInsaneUp:
+	switch (command) {
+	case kRA1MenuCommandUp:
 		_menuSelection = (_menuSelection + kRA1MainMenuItemCount - 1) % kRA1MainMenuItemCount;
 		return true;
-	case kScummActionInsaneDown:
+	case kRA1MenuCommandDown:
 		_menuSelection = (_menuSelection + 1) % kRA1MainMenuItemCount;
 		return true;
-	case kScummActionInsaneAttack:
+	case kRA1MenuCommandCancel:
+		_menuSelection = kRA1MainMenuItemCount - 1;
+		// fall through
+	case kRA1MenuCommandAccept:
+		_menuConfirmed = true;
+		_vm->_smushVideoShouldFinish = true;
+		return true;
+	case kRA1MenuCommandSelect1:
+	case kRA1MenuCommandSelect2:
+	case kRA1MenuCommandSelect3:
+	case kRA1MenuCommandSelect4:
+	case kRA1MenuCommandSelect5:
+	case kRA1MenuCommandSelect6:
+		_menuSelection = command - kRA1MenuCommandSelect1;
 		_menuConfirmed = true;
 		_vm->_smushVideoShouldFinish = true;
 		return true;
 	default:
 		return false;
 	}
+}
+
+bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
+	if (!_menuActive || _highScoresActive)
+		return false;
+
+	if (_textEntryActive)
+		return handleTextEntryAction(action);
+
+	return handleMenuCommand(getRebel1MenuCommandFromAction(action));
 }
 
 bool InsaneRebel1::handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY) {
@@ -406,9 +489,9 @@ bool InsaneRebel1::handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY) {
 	const int newY = getRebel1MenuAxisDirection(_joystickAxisY);
 
 	if (newY != oldY && newY != 0)
-		return handleControllerMenuAction((newY > 0) != _optControlsYFlip ? kScummActionInsaneDown : kScummActionInsaneUp);
+		return handleMenuCommand((newY > 0) != _optControlsYFlip ? kRA1MenuCommandDown : kRA1MenuCommandUp);
 	if (newX != oldX && newX != 0)
-		return handleControllerMenuAction(newX > 0 ? kScummActionInsaneRight : kScummActionInsaneLeft);
+		return handleMenuCommand(newX > 0 ? kRA1MenuCommandRight : kRA1MenuCommandLeft);
 
 	return false;
 }
@@ -546,119 +629,9 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (_menuActive && _textEntryActive && event.type == Common::EVENT_KEYDOWN)
 		return handleTextEntryKey(event);
 
-	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
-		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
-		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_w:
-			row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
-			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
-			return true;
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_s:
-			row = (row + 1) % kRA1LevelSelectRowsPerCol;
-			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
-			return true;
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_a:
-			if (col > 0)
-				_levelSelectSel -= kRA1LevelSelectRowsPerCol;
-			return true;
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_d:
-			if (col < 1)
-				_levelSelectSel += kRA1LevelSelectRowsPerCol;
-			return true;
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-		case Common::KEYCODE_SPACE:
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		case Common::KEYCODE_ESCAPE:
-			_levelSelectSel = kRA1LevelSelectItemCount - 1; // Back
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		default:
-			break;
-		}
-	}
-
-	if (_menuActive && _optionsActive && event.type == Common::EVENT_KEYDOWN) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_w:
-			_optionsSel = (_optionsSel + kOptionsItemCount - 1) % kOptionsItemCount;
-			return true;
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_s:
-			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
-			return true;
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_a:
-			// Volume down when on volume row (row 7)
-			if (_optionsSel == 7)
-				setRebel1Volume(_vm, _optVolume, -5);
-			return true;
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_d:
-			// Volume up when on volume row (row 7)
-			if (_optionsSel == 7)
-				setRebel1Volume(_vm, _optVolume, 5);
-			return true;
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-		case Common::KEYCODE_SPACE:
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		case Common::KEYCODE_ESCAPE:
-			_optionsSel = 0;
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		default:
-			break;
-		}
-	}
-
-	if (_menuActive && !_optionsActive && !_levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_w:
-			_menuSelection = (_menuSelection + kRA1MainMenuItemCount - 1) % kRA1MainMenuItemCount;
-			return true;
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_s:
-			_menuSelection = (_menuSelection + 1) % kRA1MainMenuItemCount;
-			return true;
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-		case Common::KEYCODE_SPACE:
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_2:
-		case Common::KEYCODE_3:
-		case Common::KEYCODE_4:
-		case Common::KEYCODE_5:
-		case Common::KEYCODE_6:
-			_menuSelection = event.kbd.keycode - Common::KEYCODE_1;
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		case Common::KEYCODE_ESCAPE:
-			_menuSelection = kRA1MainMenuItemCount - 1;
-			_menuConfirmed = true;
-			_vm->_smushVideoShouldFinish = true;
-			return true;
-		default:
-			break;
-		}
-	}
+	if (_menuActive && event.type == Common::EVENT_KEYDOWN &&
+		handleMenuCommand(getRebel1MenuCommandFromKey(event.kbd)))
+		return true;
 
 	// Shooting: mouse button during interactive gameplay — FUN_1CCA0 (0x1CCA0)
 	if (_interactiveVideoActive && !_menuActive) {
@@ -731,138 +704,127 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	return false;
 }
 
-void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
-	_menuFrameCounter++;
-	auto makeTalkText = [](const char *text) {
-		Common::String out("<");
-		out += text;
-		return out;
-	};
-	auto getTalkTextWidth = [&](const char *text) {
-		Common::String styled = makeTalkText(text);
-		return getFontBankStringWidth(styled.c_str());
-	};
-	auto drawTalkText = [&](int x, int y, const char *text) {
-		Common::String styled = makeTalkText(text);
-		drawFontBankString(dst, pitch, width, height, x, y, styled.c_str());
-	};
-	auto getTitleTextWidth = [&](const char *text) {
-		return getFontBankStringWidth(text);
-	};
-	auto drawTitleText = [&](int x, int y, const char *text) {
-		drawFontBankString(dst, pitch, width, height, x, y, text);
-	};
+int InsaneRebel1::getMenuTalkTextWidth(const char *text) {
+	Common::String styled("<");
+	styled += text;
+	return getFontBankStringWidth(styled.c_str());
+}
 
-	if (_textEntryActive) {
-		renderTextEntryOverlay(dst, pitch, width, height);
-		return;
+void InsaneRebel1::drawMenuTalkText(byte *dst, int pitch, int width, int height,
+		int x, int y, const char *text) {
+	Common::String styled("<");
+	styled += text;
+	drawFontBankString(dst, pitch, width, height, x, y, styled.c_str());
+}
+
+void InsaneRebel1::drawMenuTitleText(byte *dst, int pitch, int width, int height,
+		int x, int y, const char *text) {
+	drawFontBankString(dst, pitch, width, height, x, y, text);
+}
+
+void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int height) {
+	// --- TOP PILOTS high score display ---
+	// Original renders over O1SCORE.ANM. Title appears after frame 20,
+	// entries fade in one per frame. We show all immediately.
+	const int titleW = getMenuTalkTextWidth("TOP PILOTS");
+	drawMenuTalkText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 10, "TOP PILOTS");
+
+	for (int i = 0; i < kHighScoreCount; i++) {
+		const int y = 25 + i * 14;
+		// Name (left side)
+		drawFontBankString(dst, pitch, width, height, 40, y, _highScores[i].name);
+		// Score + difficulty glyph (right side) — original format "<%ld %c"
+		// Difficulty byte 0/1/2 + 0x7B = '{','|','}' tech font glyphs (easy/normal/hard)
+		char scoreLine[32];
+		Common::sprintf_s(scoreLine, "<%ld %c",
+			(long)_highScores[i].score,
+			(char)(_highScores[i].difficulty + 0x7B));
+		drawFontBankString(dst, pitch, width, height, 220, y, scoreLine);
 	}
+}
 
-	if (_highScoresActive) {
-		// --- TOP PILOTS high score display ---
-		// Original renders over O1SCORE.ANM. Title appears after frame 20,
-		// entries fade in one per frame. We show all immediately.
-		const int titleW = getTalkTextWidth("TOP PILOTS");
-		drawTalkText(getRebel1MenuCenteredX(titleW), 10, "TOP PILOTS");
+void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int height) {
+	// --- Options submenu (matching original RunGameOptionsMenu) ---
+	const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
-		for (int i = 0; i < kHighScoreCount; i++) {
-			const int y = 25 + i * 14;
-			// Name (left side)
-			drawFontBankString(dst, pitch, width, height, 40, y, _highScores[i].name);
-			// Score + difficulty glyph (right side) — original format "<%ld %c"
-			// Difficulty byte 0/1/2 + 0x7B = '{','|','}' tech font glyphs (easy/normal/hard)
-			char scoreLine[32];
-			Common::sprintf_s(scoreLine, "<%ld %c",
-				(long)_highScores[i].score,
-				(char)(_highScores[i].difficulty + 0x7B));
-			drawFontBankString(dst, pitch, width, height, 220, y, scoreLine);
-		}
-		return;
+	const int titleW = getFontBankStringWidth("GAME OPTIONS");
+	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "GAME OPTIONS");
+
+	// Build dynamic option strings for each row
+	char diffLine[64], volLine[64];
+	Common::sprintf_s(diffLine, "DIFFICULTY IS %s", kDiffNames[CLIP(_difficulty, 0, 2)]);
+	Common::sprintf_s(volLine, "VOLUME AT %d PERCENT", (_optVolume * 100) / 127);
+
+	const char *optItems[kOptionsItemCount] = {
+		"EXIT MENU",
+		_optRookieOneFemale ? "ROOKIE1 IS FEMALE" : "ROOKIE1 IS MALE",
+		_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
+		_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
+		_optTextEnabled   ? "DIALOGUE TEXT IS ON"      : "DIALOGUE TEXT IS OFF",
+		_optEnhancedControls ? "INPUT STYLE ENHANCED" : "INPUT STYLE ORIGINAL",
+		_optControlsYFlip ? "Y AXIS IS INVERTED"      : "Y AXIS IS NORMAL",
+		volLine,
+		diffLine
+	};
+
+	for (int i = 0; i < kOptionsItemCount; i++) {
+		const int textW = getMenuTalkTextWidth(optItems[i]);
+		const int textX = getRebel1MenuCenteredX(textW);
+		const int y = 0x2d + i * kRA1MenuRowH;
+		drawMenuTalkText(dst, pitch, width, height, textX, y, optItems[i]);
+
+		if (i == _optionsSel)
+			drawRebel1MenuFrame(dst, pitch, width, height,
+				kRA1MenuFrameX, (i + 1) * kRA1MenuRowH + 0x1d, kRA1MenuFrameW);
 	}
+}
 
-	if (_optionsActive) {
-		// --- Options submenu (matching original RunGameOptionsMenu) ---
-		const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
+void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int height) {
+	// --- ScummVM level select submenu, styled like the original frontend menus ---
+	const int titleW = getFontBankStringWidth("LEVEL SELECT");
+	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
 
-		const int titleW = getTitleTextWidth("GAME OPTIONS");
-		drawTitleText(getRebel1MenuCenteredX(titleW), 15, "GAME OPTIONS");
+	const char *kLevelItems[kRA1LevelSelectItemCount] = {
+		" 1 TRAINING",
+		" 2 ASTEROIDS",
+		" 3 KOLAADOR",
+		" 4 STAR DESTR",
+		" 5 TATOOINE",
+		" 6 AST CHASE",
+		" 7 PROBES",
+		" 8 WALKERS",
+		" 9 TROOPERS",
+		"10 TRANSPORT",
+		"11 YAVIN",
+		"12 TIE ATK",
+		"13 DS SURFACE",
+		"14 CANNON",
+		"15 DS TRENCH",
+		"BACK"
+	};
 
-		// Build dynamic option strings for each row
-		char diffLine[64], volLine[64];
-		Common::sprintf_s(diffLine, "DIFFICULTY IS %s", kDiffNames[CLIP(_difficulty, 0, 2)]);
-		Common::sprintf_s(volLine, "VOLUME AT %d PERCENT", (_optVolume * 100) / 127);
+	const int menuY = 0x2d;
+	const int leftFrameX = 20;
+	const int rightFrameX = 170;
+	const int columnW = 130;
 
-		const char *optItems[kOptionsItemCount] = {
-			"EXIT MENU",
-			_optRookieOneFemale ? "ROOKIE1 IS FEMALE" : "ROOKIE1 IS MALE",
-			_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
-			_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
-			_optTextEnabled   ? "DIALOGUE TEXT IS ON"      : "DIALOGUE TEXT IS OFF",
-			_optEnhancedControls ? "INPUT STYLE ENHANCED" : "INPUT STYLE ORIGINAL",
-			_optControlsYFlip ? "Y AXIS IS INVERTED"      : "Y AXIS IS NORMAL",
-			volLine,
-			diffLine
-		};
+	for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
+		const int col = i / kRA1LevelSelectRowsPerCol;
+		const int row = i % kRA1LevelSelectRowsPerCol;
+		const int frameX = (col == 0) ? leftFrameX : rightFrameX;
+		const int y = menuY + row * kRA1MenuRowH;
+		const int textW = getMenuTalkTextWidth(kLevelItems[i]);
+		const int textX = frameX + (columnW - textW) / 2;
 
-		for (int i = 0; i < kOptionsItemCount; i++) {
-			const int textW = getTalkTextWidth(optItems[i]);
-			const int textX = getRebel1MenuCenteredX(textW);
-			const int y = 0x2d + i * kRA1MenuRowH;
-			drawTalkText(textX, y, optItems[i]);
+		drawMenuTalkText(dst, pitch, width, height, textX, y, kLevelItems[i]);
 
-			if (i == _optionsSel)
-				drawRebel1MenuFrame(dst, pitch, width, height,
-					kRA1MenuFrameX, (i + 1) * kRA1MenuRowH + 0x1d, kRA1MenuFrameW);
-		}
-		return;
+		if (i == _levelSelectSel)
+			drawRebel1MenuFrame(dst, pitch, width, height,
+				frameX, row * kRA1MenuRowH + 0x2c, columnW);
 	}
+}
 
-	if (_levelSelectActive) {
-		// --- ScummVM level select submenu, styled like the original frontend menus ---
-		const int titleW = getTitleTextWidth("LEVEL SELECT");
-		drawTitleText(getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
-
-		const char *kLevelItems[kRA1LevelSelectItemCount] = {
-			" 1 TRAINING",
-			" 2 ASTEROIDS",
-			" 3 KOLAADOR",
-			" 4 STAR DESTR",
-			" 5 TATOOINE",
-			" 6 AST CHASE",
-			" 7 PROBES",
-			" 8 WALKERS",
-			" 9 TROOPERS",
-			"10 TRANSPORT",
-			"11 YAVIN",
-			"12 TIE ATK",
-			"13 DS SURFACE",
-			"14 CANNON",
-			"15 DS TRENCH",
-			"BACK"
-		};
-
-		const int menuY = 0x2d;
-		const int leftFrameX = 20;
-		const int rightFrameX = 170;
-		const int columnW = 130;
-
-		for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
-			const int col = i / kRA1LevelSelectRowsPerCol;
-			const int row = i % kRA1LevelSelectRowsPerCol;
-			const int frameX = (col == 0) ? leftFrameX : rightFrameX;
-			const int y = menuY + row * kRA1MenuRowH;
-			const int textW = getTalkTextWidth(kLevelItems[i]);
-			const int textX = frameX + (columnW - textW) / 2;
-
-			drawTalkText(textX, y, kLevelItems[i]);
-
-			if (i == _levelSelectSel)
-				drawRebel1MenuFrame(dst, pitch, width, height,
-					frameX, row * kRA1MenuRowH + 0x2c, columnW);
-		}
-		return;
-	}
-
+void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int height) {
 	// --- Main menu ---
 	const char *kMenuItems[kRA1MainMenuItemCount] = {
 		"START NEW GAME",
@@ -874,17 +836,17 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	};
 
 	// Center title
-	const int titleW = getTitleTextWidth("MAIN MENU");
+	const int titleW = getFontBankStringWidth("MAIN MENU");
 	const int titleX = getRebel1MenuCenteredX(titleW);
-	drawTitleText(titleX, 30, "MAIN MENU");
+	drawMenuTitleText(dst, pitch, width, height, titleX, 30, "MAIN MENU");
 
 	// Draw menu items centered horizontally
 	for (int i = 0; i < kRA1MainMenuItemCount; i++) {
-		const int textW = getTalkTextWidth(kMenuItems[i]);
+		const int textW = getMenuTalkTextWidth(kMenuItems[i]);
 		const int textX = getRebel1MenuCenteredX(textW);
 		const int y = 0x3c + i * kRA1MenuRowH;
 
-		drawTalkText(textX, y, kMenuItems[i]);
+		drawMenuTalkText(dst, pitch, width, height, textX, y, kMenuItems[i]);
 
 		if (i == _menuSelection)
 			drawRebel1MenuFrame(dst, pitch, width, height,
@@ -892,17 +854,36 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	}
 }
 
+void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
+	_menuFrameCounter++;
+
+	if (_textEntryActive) {
+		renderTextEntryOverlay(dst, pitch, width, height);
+		return;
+	}
+
+	if (_highScoresActive) {
+		renderHighScoresOverlay(dst, pitch, width, height);
+		return;
+	}
+
+	if (_optionsActive) {
+		renderOptionsOverlay(dst, pitch, width, height);
+		return;
+	}
+
+	if (_levelSelectActive) {
+		renderLevelSelectOverlay(dst, pitch, width, height);
+		return;
+	}
+
+	renderMainMenuItems(dst, pitch, width, height);
+}
+
 void InsaneRebel1::renderTextEntryOverlay(byte *dst, int pitch, int width, int height) {
-	auto makeTalkText = [](const char *text) {
-		Common::String out("<");
-		out += text;
-		return out;
-	};
 	auto drawCenteredTalkText = [&](int y, const char *text) {
-		Common::String styled = makeTalkText(text);
-		const int textW = getFontBankStringWidth(styled.c_str());
-		drawFontBankString(dst, pitch, width, height,
-			getRebel1MenuCenteredX(textW), y, styled.c_str());
+		const int textW = getMenuTalkTextWidth(text);
+		drawMenuTalkText(dst, pitch, width, height, getRebel1MenuCenteredX(textW), y, text);
 	};
 	auto drawCenteredRawChar = [&](int centerX, int y, char ch) {
 		char text[2] = { ch, '\0' };
@@ -931,17 +912,28 @@ void InsaneRebel1::renderTextEntryOverlay(byte *dst, int pitch, int width, int h
 	_textEntryPickerOffsetX = 0;
 }
 
+void InsaneRebel1::playMenuBackground() {
+	_menuActive = true;
+	_menuConfirmed = false;
+	_menuFrameCounter = 0;
+	clearVideoBuffer();
+	playCinematic("OPEN/O1OPTION.ANM");
+	_menuActive = false;
+}
+
+bool InsaneRebel1::runTextEntryMenuLoop() {
+	while (!_vm->shouldQuit() && !_textEntryDone && !_textEntryCanceled)
+		playMenuBackground();
+
+	return !_vm->shouldQuit() && !_textEntryCanceled;
+}
+
 int InsaneRebel1::runMainMenu() {
 	debug(1, "InsaneRebel1: Main menu");
 
 	_menuSelection = 0;
 	while (!_vm->shouldQuit()) {
-		_menuActive = true;
-		_menuConfirmed = false;
-		_menuFrameCounter = 0;
-		clearVideoBuffer();
-		playCinematic("OPEN/O1OPTION.ANM");
-		_menuActive = false;
+		playMenuBackground();
 
 		if (_vm->shouldQuit())
 			return kRA1MainMenuItemCount;
@@ -956,16 +948,7 @@ int InsaneRebel1::runMainMenu() {
 int InsaneRebel1::runPasscodeEntryDialog() {
 	beginTextEntry(true);
 
-	while (!_vm->shouldQuit() && !_textEntryDone && !_textEntryCanceled) {
-		_menuActive = true;
-		_menuConfirmed = false;
-		_menuFrameCounter = 0;
-		clearVideoBuffer();
-		playCinematic("OPEN/O1OPTION.ANM");
-		_menuActive = false;
-	}
-
-	if (_vm->shouldQuit() || _textEntryCanceled)
+	if (!runTextEntryMenuLoop())
 		return 0;
 
 	for (int i = 1; i <= kRA1NumLevels; i++) {
@@ -1005,14 +988,7 @@ bool InsaneRebel1::runHighScoreNameEntry() {
 	_highScoreEntryIndex = slot;
 
 	beginTextEntry(false);
-	while (!_vm->shouldQuit() && !_textEntryDone && !_textEntryCanceled) {
-		_menuActive = true;
-		_menuConfirmed = false;
-		_menuFrameCounter = 0;
-		clearVideoBuffer();
-		playCinematic("OPEN/O1OPTION.ANM");
-		_menuActive = false;
-	}
+	runTextEntryMenuLoop();
 
 	Common::String storedName("<");
 	storedName += _textEntryBuffer;
@@ -1029,12 +1005,7 @@ void InsaneRebel1::runOptionsMenu() {
 	_optionsActive = true;
 
 	while (!_vm->shouldQuit()) {
-		_menuActive = true;
-		_menuConfirmed = false;
-		_menuFrameCounter = 0;
-		clearVideoBuffer();
-		playCinematic("OPEN/O1OPTION.ANM");
-		_menuActive = false;
+		playMenuBackground();
 
 		if (_vm->shouldQuit())
 			break;
@@ -1083,12 +1054,7 @@ int InsaneRebel1::runLevelSelectMenu() {
 	_levelSelectActive = true;
 
 	while (!_vm->shouldQuit()) {
-		_menuActive = true;
-		_menuConfirmed = false;
-		_menuFrameCounter = 0;
-		clearVideoBuffer();
-		playCinematic("OPEN/O1OPTION.ANM");
-		_menuActive = false;
+		playMenuBackground();
 
 		if (_vm->shouldQuit())
 			break;
