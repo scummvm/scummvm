@@ -383,7 +383,12 @@ uint32 CastMember::writeCAStResource(Common::SeekableWriteStream *writeStream) {
 		if (castInfoToWrite) {
 			_cast->writeCastInfo(writeStream, _castId);
 		}
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1200) {
+		// Director 5 and up share the same 12-byte CASt header (castType,
+		// castInfoSize, castDataSize); loadCastData() handles them with a single
+		// ">= kFileVer500" branch ("After D5 there are no changes"). This must
+		// therefore cover D6+ as well, otherwise D6 movies (e.g. TKKG2, version
+		// 0x4C7) write only the 8-byte CASt header with no body. D12 unverified.
 		writeStream->writeUint32BE((uint32)_type);
 		writeStream->writeUint32BE(castInfoToWrite);
 		writeStream->writeUint32BE(castDataToWrite);
@@ -439,8 +444,11 @@ uint32 CastMember::getCastResourceSize() {
 		if (_flags1 != 0xFF) {
 			headerSize += 1;
 		}
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		// Header size for director version 5
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1200) {
+		// Header size for Director 5 and up. loadCastData() reads the same
+		// 12-byte CASt header (castType, castInfoSize, castDataSize) for every
+		// version from D5 onwards ("After D5 there are no changes"), so the
+		// size accounting must cover D6+ too. D12 is not yet verified.
 		headerSize = 12;		// See Cast::loadCastData() for director version 5
 	}
 

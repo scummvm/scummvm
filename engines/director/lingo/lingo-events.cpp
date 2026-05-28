@@ -350,7 +350,15 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				return;
 
 			if (_vm->getVersion() >= 600) {
-				if (_score->_scriptChannelScriptInstance.type == OBJECT) {
+				// Only resolve the frame script-channel behavior if it actually
+				// has a handler for this event. Otherwise a handler-less frame
+				// behavior (e.g. a "go the frame" Loop with only on exitFrame)
+				// would be run as a no-op for keyDown/mouseDown yet still consume
+				// the pass-through (_passEvent = passByDefault = false), swallowing
+				// the subsequent movie-level handler. This matches the cast-handler
+				// branch below, which checks _eventHandlers.contains(event.event).
+				if (_score->_scriptChannelScriptInstance.type == OBJECT &&
+						_score->_scriptChannelScriptInstance.u.obj->getMethod(_lingo->_eventHandlerTypes[event.event]).type != VOIDSYM) {
 					event.scriptType = kScoreScript;
 					event.scriptId = CastMemberID(); // No ID for the script channel script
 					event.scriptInstance = _score->_scriptChannelScriptInstance.u.obj;

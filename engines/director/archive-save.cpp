@@ -64,7 +64,12 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	_size = getArchiveSize(builtResources);
 	saveFile->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR"
 
-	saveFile->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive, except header and size
+	// The RIFX chunk size field = size of everything after this size field, i.e.
+	// rifxType(4) + all sub-chunks = getArchiveSize + 4 (== total file size - 8).
+	// Use the freshly recomputed size, NOT getResourceSize() which returns the
+	// stale ORIGINAL size from the loaded archive (which left the RIFX header
+	// disagreeing with the mmap/actual file -- TKKG2 savegame).
+	saveFile->writeUint32LE(getArchiveSize(builtResources) + 4);
 	saveFile->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
 
 	switch (_rifxType) {
@@ -167,7 +172,28 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		case MKTAG('V', 'W', 'S', 'C'):
-			movie->getScore()->writeVWSCResource(saveFile, it->offset);
+			// Option A: the savegame does not modify the score, and the D6 score
+			// re-serializer (writeVWSCResource) is not byte-faithful for D6 -- it
+			// omits the leading sprite-detail offset table and emits fixed-size
+			// channels, producing a score that differs from (and is larger than)
+			// the original. Copy the original VWSC bytes verbatim instead, exactly
+			// like the default (unmodified-resource) path.
+			saveFile->seek(it->offset, SEEK_SET);
+			saveFile->writeUint32LE(it->tag);
+			saveFile->writeUint32LE(it->size);
+			saveFile->writeStream(getResource(it->tag, it->index));
+			break;
+
+		case MKTAG('f', 'r', 'e', 'e'):
+		case MKTAG('j', 'u', 'n', 'k'):
+			// Placeholder/empty chunks: rebuildResources() reserves only the
+			// 8-byte header (size 0). Write exactly that. The default case would
+			// write getResource() content, which for these stale slots is
+			// unrelated data and overruns into the following resources, corrupting
+			// the archive (TKKG2 savegame: junk slots emitted up to 6655 bytes).
+			saveFile->seek(it->offset, SEEK_SET);
+			saveFile->writeUint32LE(it->tag);
+			saveFile->writeUint32LE(0);
 			break;
 
 		default:
@@ -276,13 +302,23 @@ bool RIFXArchive::writeAfterBurnerMap(Common::SeekableWriteStream *writeStream) 
 bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->seek(offset);
 
+	// The number of entries we actually write is the number of mappings held in
+	// _keyData. We only keep the entries we parsed on load, which can be fewer
+	// than the original used/capacity counts (empty slots are dropped), and
+	// rebuildResources() reserved exactly getKeyTableResourceSize() bytes for
+	// this resource. The chunk's own size field and entry counts must therefore
+	// be derived from what we actually write -- not from the original values --
+	// otherwise a reader trusts the (too-large) counts and reads past the real
+	// KEY* into the following resource, corrupting the archive (TKKG2 savegame).
+	uint32 numEntries = (getKeyTableResourceSize() - 12) / 12;
+
 	writeStream->writeUint32LE(MKTAG('K', 'E', 'Y', '*'));
-	writeStream->writeUint32LE(getResourceSize(MKTAG('K', 'E', 'Y', '*'), getResourceIDList(MKTAG('K', 'E', 'Y', '*'))[0]));
+	writeStream->writeUint32LE(getKeyTableResourceSize());
 
 	writeStream->writeUint16LE(_keyTableEntrySize);
 	writeStream->writeUint16LE(_keyTableEntrySize2);
-	writeStream->writeUint32LE(_keyTableEntryCount);
-	writeStream->writeUint32LE(_keyTableUsedCount);
+	writeStream->writeUint32LE(numEntries);
+	writeStream->writeUint32LE(numEntries);
 
 	debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: writing key table:");
 
@@ -571,8 +607,10 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			break;
 
 		case MKTAG('V', 'W', 'S', 'C'):
-			resSize = movie->getScore()->getVWSCResourceSize();
-			it->size = resSize;
+			// Option A: keep the original VWSC size; we copy the score verbatim in
+			// writeToFile rather than re-serializing it (see there). it->size is the
+			// original size carried over from _resources.
+			resSize = it->size;
 			it->offset = currentSize;
 			currentSize += resSize + 8;		// The size doesn't include the header and the size entry
 			break;
@@ -597,10 +635,13 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			it->index, tag2str(it->tag), it->size, it->offset, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
 	}
 
-	// Now that all sizes have been updated, we can safely calculate the overall archive size
+	// Now that all sizes have been updated, set the RIFX resource's own size. The
+	// RIFX chunk's data is rifxType(4) + all sub-chunks, so its size (excluding the
+	// 8-byte tag+size header) is getArchiveSize + 4 -- the same value written into
+	// the RIFX header size field, keeping the mmap entry and header consistent.
 	for (auto &it : builtResources) {
 		if (it->tag == MKTAG('R', 'I', 'F', 'X') || it->tag == MKTAG('X', 'F', 'I', 'R')) {
-			it->size = getArchiveSize(builtResources) + 8;
+			it->size = getArchiveSize(builtResources) + 4;
 		}
 	}
 
