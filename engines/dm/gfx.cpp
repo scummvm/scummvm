@@ -3580,12 +3580,12 @@ T0115077_DrawSecondHalfSquareCreature:
 		else if (viewLane != kDMViewLaneCenter) /* Lane right */
 			AL_4_xPos += 100;
 
-		boxByteGreen._rect.right = CLIP(0, AL_4_xPos + byteWidth, 223);
+		boxByteGreen._rect.right = CLIP(AL_4_xPos + byteWidth, 0, 223);
 
 		if (!boxByteGreen._rect.right)
 			goto T0115126_CreatureNotVisible;
 		int16 AL_0_creaturePosX;
-		boxByteGreen._rect.left = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
+		boxByteGreen._rect.left = CLIP(AL_4_xPos - byteWidth + 1, 0, 223);
 		if (boxByteGreen._rect.left) {
 			if (boxByteGreen._rect.left == 223)
 				goto T0115126_CreatureNotVisible;
@@ -3845,7 +3845,7 @@ T0115200_DrawExplosion:
 					continue;
 				boxByteGreen._rect.right = AL_4_xPos;
 				AL_4_xPos = explosionCoordinates[0];
-				boxByteGreen._rect.left = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
+				boxByteGreen._rect.left = CLIP(AL_4_xPos - byteWidth + 1, 0, 223);
 
 				if (boxByteGreen._rect.left)
 					AL_4_xPos = paddingPixelCount;
