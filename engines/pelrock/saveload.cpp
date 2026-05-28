@@ -349,8 +349,6 @@ Common::Error PelrockEngine::syncGame(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		SaveGameData saveGame;
-		if (saveGame.gameState != nullptr)
-			delete saveGame.gameState;
 		saveGame.gameState = new GameStateData();
 		result = syncSaveData(s, &(saveGame));
 		loadGame(saveGame);

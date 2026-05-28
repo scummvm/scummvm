@@ -2383,6 +2383,8 @@ void PelrockEngine::antiPiracyEffect() {
 	// Generate noise
 	const int kNoiseLength = 8000; // ~1 second at 8000 Hz, will loop
 	byte *noiseData = (byte *)malloc(kNoiseLength);
+	if (!noiseData)
+		return;
 	for (int i = 0; i < kNoiseLength; i++) {
 		noiseData[i] = (byte)((getRandomNumber(255)));
 	}
