@@ -161,6 +161,12 @@ private:
 
 	// Play interactive gameplay video (with ship physics + HUD)
 	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
+	void resetInteractiveVideoAudio();
+	void setupInteractiveVideoState(int32 startFrame);
+	void resolveSeek(const char *filename, int32 startFrame, int32 &videoOffset, int32 &videoStartFrame);
+	void captureInteractiveVideoInput();
+	void releaseInteractiveVideoInput();
+	void playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame);
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
 	void loadLevelSprites(int level);
 	void updateShipPhysics();

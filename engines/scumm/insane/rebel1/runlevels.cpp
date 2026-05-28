@@ -1556,19 +1556,16 @@ void InsaneRebel1::runGame() {
 	}
 }
 
-// Play interactive gameplay video (with ship physics + HUD).
-void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
-	debug(1, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
+void InsaneRebel1::resetInteractiveVideoAudio() {
+	terminateAudio();
+	initAudio(_audioSampleRate);
+}
+
+void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
 	const bool resumingRoute = startFrame > 0;
 	const bool preserveRuntimeState = resumingRoute || level7RouteSplice;
 	const bool preserveVideoState = resumingRoute && !level7RouteSplice;
-	int32 videoStartFrame = 0;
-	int32 videoOffset = 0;
-
-	// Stop any leftover audio from previous video
-	terminateAudio();
-	initAudio(_audioSampleRate);
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
@@ -1588,6 +1585,15 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	splayer->setCurVideoFlags(0x28);
 	splayer->setFastForwardFromFrame(0);
 	splayer->setFastForwardToFrame(0);
+}
+
+void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &videoOffset, int32 &videoStartFrame) {
+	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
+	const bool resumingRoute = startFrame > 0;
+
+	videoStartFrame = 0;
+	videoOffset = 0;
+
 	if (_currentLevel == 6 && level7RouteSplice) {
 		// DOS opens the route ANM from the beginning, then the armed frame gate
 		// suppresses until the adjusted target. With ScummVM's delayed cutover,
@@ -1630,6 +1636,10 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 		debug(1, "RA1 L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
 			(int)startFrame);
 	}
+}
+
+void InsaneRebel1::captureInteractiveVideoInput() {
+	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
 
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window.
 	// Level 7 route splices happen inside one original gameplay loop, so keep
@@ -1644,11 +1654,29 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	}
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
+}
 
-	splayer->play(filename, 12, videoOffset, videoStartFrame);
-	_interactiveVideoActive = false;
-
+void InsaneRebel1::releaseInteractiveVideoInput() {
 	g_system->lockMouse(false);
+}
+
+void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame) {
+	_vm->_splayer->play(filename, 12, videoOffset, videoStartFrame);
+	_interactiveVideoActive = false;
+}
+
+// Play interactive gameplay video (with ship physics + HUD).
+void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
+	debug(1, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
+	int32 videoStartFrame = 0;
+	int32 videoOffset = 0;
+
+	resetInteractiveVideoAudio();
+	setupInteractiveVideoState(startFrame);
+	resolveSeek(filename, startFrame, videoOffset, videoStartFrame);
+	captureInteractiveVideoInput();
+	playInteractiveVideoFile(filename, videoOffset, videoStartFrame);
+	releaseInteractiveVideoInput();
 }
 
 } // End of namespace Scumm
