@@ -169,7 +169,7 @@ void ButtonV1::onClick() {
 MenuV1 &ButtonV1::menu() {
 	auto menuPtr = dynamic_cast<MenuV1 *>(&g_engine->menu());
 	assert(menuPtr != nullptr);
-	return *menuPtr;
+	return *menuPtr; //-V522
 }
 
 const char *MenuButton::typeName() const { return "MenuButton"; }
