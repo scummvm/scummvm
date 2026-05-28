@@ -2348,15 +2348,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 			object->RuntimeSlotValues[slotID - 1] = value;
 		} else if (opcode1 == 0x1c) {
-			// Original: sets g_wScriptSkippable [102Ah] = 1
-			// In ScummVM this was mapped to global06BE which controls sound playback.
-			// TODO: The original uses [102Ah] for script skip and [06BEh] for sound.
-			// These are two different globals. Need to separate them - add a dedicated
-			// _scriptSkippable field and stop using global06BE for this opcode.
-			global06BE = true;
+			// Sets g_wScriptSkippable [102Ah] = 1
+			scriptSkippable = true;
 		} else if (opcode1 == 0x1d) {
-			// Original: sets g_wScriptSkippable [102Ah] = 0
-			global06BE = false;
+			// Sets g_wScriptSkippable [102Ah] = 0
+			scriptSkippable = false;
 		} else if (opcode1 == 0x1e) {
 			// This is playing an animation
 			// fn0037_BD58 proc
