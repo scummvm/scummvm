@@ -102,6 +102,7 @@ class SmushDeltaBlocksDecoder;
 class SmushDeltaGlyphsDecoder;
 class IMuseDigital;
 class Insane;
+class RebelAudio;
 class SmushPlayerRebel1;
 class SmushPlayerRebel2;
 
@@ -109,6 +110,7 @@ class SmushPlayer {
 	friend class Insane;
 	friend class InsaneRebel1;
 	friend class InsaneRebel2;
+	friend class RebelAudio;
 	friend class SmushPlayerRebel1;
 	friend class SmushPlayerRebel2;
 	friend class SmushMultiFont;

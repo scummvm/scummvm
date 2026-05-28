@@ -133,6 +133,7 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
+	insane/rebel/rebel_audio.o \
 	insane/rebel1/rebel.o \
 	insane/rebel1/audio.o \
 	insane/rebel1/iact.o \
@@ -155,6 +156,7 @@ MODULE_OBJS += \
 	smush/rebel/codec_ra1.o \
 	smush/rebel/codec_ra2.o \
 	smush/rebel/smush_multi_font.o \
+	smush/rebel/smush_player_rebel.o \
 	smush/rebel/smush_player_ra1.o \
 	smush/rebel/smush_player_ra2.o
 
