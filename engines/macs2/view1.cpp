@@ -20,6 +20,7 @@
  */
 
 #include "macs2/view1.h"
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "graphics/palette.h"
@@ -1552,8 +1553,14 @@ void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 }
 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
-	// int i = -1;
-	for (auto current : characters) {
+	// Y-sort characters (quicksort by Y position, ascending = back to front)
+	// from sortObjectListByY / buildSortedObjectList (1008:8cf2)
+	Common::Array<Character *> sorted(characters);
+	Common::sort(sorted.begin(), sorted.end(), [](Character *a, Character *b) {
+		return a->GetPosition().y < b->GetPosition().y;
+	});
+
+	for (auto current : sorted) {
 		int index = current->GameObject->Index;
 		if (!current->GameObject->IsVisible) {
 			continue;
@@ -2042,29 +2049,16 @@ uint8 Character::LookupWalkability(const Common::Point &p) const {
 		return 0x00;
 	}
 	uint32 value = g_engine->_pathfindingMap.getPixel(p.x, p.y);
-	if (value < 0xC8 || value > 0xEF) {
-		return value;
-	}
-
-	// Look up the value in the structure
-	// uint16 lookup = value + ((value << 1) << 1);
-	// TODO: Handle lookup based on byte ptr es:[di+4EA5h]
-	bool lookedUpValue = false;
-	if (value == 0xCD) {
-		// TODO: Hardcoded test case
-		return 0x00;
-	}
-	if (value == 0xCB) {
-		// TODO: Hardcoded test, for pathfinding should finally look up exactly how this works
-		return 0x00;
-	}
-	if (!lookedUpValue) {
+	// Values 0xC8..0xEF use the pathfinding override table (opcode 0x12)
+	if (value >= 0xC8 && value <= 0xEF) {
+		uint16 overrideResult;
+		if (g_engine->GetPathfindingOverride(value, overrideResult)) {
+			return (uint8)overrideResult;
+		}
+		// Override not active - return non-walkable
 		return 0xFF;
-	} else {
-		// TODO: Look up based on es:[di+4EA6h]
-		uint8 overrideValue = 0x00;
-		return overrideValue;
 	}
+	return (uint8)value;
 }
 
 bool Character::IsWalkable(const Common::Point &p) const {
@@ -2418,35 +2412,16 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	StartPosition = GetPosition();
 	EndPosition = target;
-	// float Angle =
 	StartTime = g_events->currentMillis;
 	Duration = duration;
 	IsLerping = true;
 	LerpIgnoresObstacles = ignoreObstacles;
 
-	// Calculate orientation
-	Common::Point direction = EndPosition - StartPosition;
-	Math::Vector2d directionVector = Math::Vector2d(direction.x, direction.y);
-	directionVector.normalize();
-
-	Math::Angle angle = directionVector.getAngle();
-	// Rotate so that we start at the top and add half of 45 degrees so that we have
-	// the right offset for the angles
-	float degrees = angle.getDegrees() + 90.0f;
-	if (degrees < 0.0f) {
-		degrees += 360.0f;
-	}
-	float degreesAdjusted = degrees + 25.0f;
-	if (degreesAdjusted > 360.0f) {
-		degreesAdjusted -= 360.0f;
-	}
-	uint8 segment = degreesAdjusted / (360.0f / 8.0f);
-	// TODO: Try out first which values we get
-	Common::String message = Common::String::format("Degrees: %f Segment: %u", degrees, segment);
-	debug(message.c_str());
-	// Need to offset by one as the game handles the first one (straight away from
-	// the camera) as index 1, not 0
-	GameObject->Orientation = segment + 1;
+	// Reset Bresenham state - direction will be calculated on first Update()
+	_stepDirectionSet = false;
+	_stepDeltaX = abs(EndPosition.x - StartPosition.x);
+	_stepDeltaY = abs(EndPosition.y - StartPosition.y);
+	_stepError = 0;
 }
 
 void Character::StartPickup(Macs2::GameObject *object) {
@@ -2523,94 +2498,118 @@ void Character::Update() {
 		}
 		return;
 	}
-	uint32 endTime = StartTime + Duration;
-	bool isDone = endTime < g_events->currentMillis;
+	// Bresenham pixel-stepping from walkAlongPath (1008:1b8f).
+	// Each frame: calculate walk speed from depth, step that many pixels.
+	Common::Point pos = GetPosition();
+	// Depth-scaled walk speed from walkAlongPath (1008:1b8f):
+	// speed = animSpeed * (word5201 + depthAtPos) / 100
+	int depthAtPos = 0;
+	Common::Rect screenRect(320, 200);
+	if (screenRect.contains(pos)) {
+		depthAtPos = g_engine->_depthMap.getPixel(pos.x, pos.y);
+	}
+	int walkSpeed = (2 * ((int)g_engine->word5201 + depthAtPos)) / 100;
+	if (walkSpeed < 1) walkSpeed = 1;
 
-	if (isDone) {
+
+	// Check if we have arrived at the target
+	if (pos == EndPosition) {
 		if (IsFollowingPath) {
-			// Set up a new lerp
 			IsFollowingPath = TryFollowPath();
-			if (IsFollowingPath) {
-				return;
-			}
+			if (IsFollowingPath) return;
 		}
-
 		IsLerping = false;
 		if (hasMotionVerticalOffset) {
 			GameObject->Unknown = motionTargetVerticalOffset;
 			motionProgress = motionDistanceUnits;
 			hasMotionVerticalOffset = false;
 		}
-		// Go to the same orientation but standing
-		GameObject->Orientation += 8;
-
-		// Check if we need to pick something up
+		// Standing orientation = walking direction + 8
+		if (GameObject->Orientation < 9) GameObject->Orientation += 8;
 		if (pickedUpObject != nullptr) {
-			// Start the timer
 			pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
-			// TODO: Actual implementation lives somewhere around
-			// l0037_E81B
 			previousOrientation = GameObject->Orientation;
 			GameObject->Orientation = 0x11;
 			return;
 		}
-
-		// Check if we need to execute the script
-		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
 			g_engine->_scriptExecutor->global1032 = true;
 			g_engine->ScheduleRun();
 		}
-
-		// TODO: This muddles the logic a bit since I also have the executescriptonfinish,
-		// should be unified. The game code sets the flag [1020] to true when a move is finished,
-		// which in turn unlocks running the script function
-		// TODO: Should look at game code how exactly it is handled there
-		if (!g_engine->_scriptExecutor->IsExecuting()) {
-			g_engine->_scriptExecutor->Rewind();
-			// TODO: Get rid of the different copies of the position
-			// View1 *currentView = (View1 *)g_engine->findView("View1");
-			g_engine->ScheduleRun();
-		}
 		return;
 	}
 
-	float progress = (float)(g_events->currentMillis - StartTime) / (float)Duration;
-	if (hasMotionVerticalOffset) {
-		if (progress < 0.0f) {
-			progress = 0.0f;
-		} else if (progress > 1.0f) {
-			progress = 1.0f;
-		}
 
-		if (motionDistanceUnits != 0) {
-			motionProgress = (uint16)(motionDistanceUnits * progress);
-			if (motionProgress > motionDistanceUnits) {
-				motionProgress = motionDistanceUnits;
-			}
+	// Calculate direction if not yet set (first frame of movement)
+	if (!_stepDirectionSet) {
+		_stepDirectionSet = true;
+		uint16 absDx = abs(EndPosition.x - pos.x);
+		uint16 absDy = abs(EndPosition.y - pos.y);
+		// Determine 8-directional orientation from walkAlongPath
+		uint8 dir = GameObject->Orientation;
+		if (dir > 8 && dir < 17) dir -= 8;
+		if (pos.y > EndPosition.y && absDx <= absDy) dir = 1; // North
+		if (pos.x < EndPosition.x && absDy <= absDx) dir = 3; // East
+		if (pos.y < EndPosition.y && absDx <= absDy) dir = 5; // South
+		if (pos.x > EndPosition.x && absDy <= absDx) dir = 7; // West
+		// Diagonals: deltaX/4 < deltaY && deltaY/2 < deltaX
+		if (absDx > (absDy >> 2) && absDy > (absDx >> 1)) {
+			if (pos.y > EndPosition.y && pos.x < EndPosition.x) dir = 2;
+			if (pos.y < EndPosition.y && pos.x < EndPosition.x) dir = 4;
+			if (pos.y < EndPosition.y && pos.x > EndPosition.x) dir = 6;
+			if (pos.y > EndPosition.y && pos.x > EndPosition.x) dir = 8;
 		}
+		GameObject->Orientation = dir;
+		_stepDeltaX = absDx;
+		_stepDeltaY = absDy;
+		_stepError = 0;
+	}
 
-		const int32 verticalOffsetDelta = (int32)motionTargetVerticalOffset - (int32)motionStartVerticalOffset;
-		GameObject->Unknown = (uint16)((int32)motionStartVerticalOffset + (int32)(verticalOffsetDelta * progress));
-	}
-	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
-	if (!LerpIgnoresObstacles && HandleWalkability(this)) {
-		IsLerping = false;
-		if (hasMotionVerticalOffset) {
-			hasMotionVerticalOffset = false;
+
+	// Step pixels (Bresenham line algorithm)
+	int pixelsMoved = 0;
+	for (int step = 0; step < walkSpeed; step++) {
+		Common::Point prevPos = pos;
+		if (_stepError < _stepDeltaX) {
+			// Step along X axis
+			if (EndPosition.x != pos.x) pixelsMoved++;
+			if (EndPosition.x < pos.x) pos.x--;
+			else if (EndPosition.x > pos.x) pos.x++;
+			_stepError += _stepDeltaY;
+		} else {
+			// Step along Y axis
+			if (EndPosition.y != pos.y) pixelsMoved++;
+			if (EndPosition.y < pos.y) pos.y--;
+			else if (EndPosition.y > pos.y) pos.y++;
+			_stepError -= _stepDeltaX;
 		}
-		// Go the the same orientation but standing
-		GameObject->Orientation += 8;
-		// TODO: Copy & paste code
-		if (!g_engine->_scriptExecutor->IsExecuting()) {
-			g_engine->_scriptExecutor->Rewind();
-			// TODO: Get rid of the different copies of the position
-			// TODO: Not sure if we should set g_engine->_scriptExecutor->global1032 = false;
-			// View1 *currentView = (View1 *)g_engine->findView("View1");
-			g_engine->ScheduleRun();
+		// Check walkability after each step
+		if (!IsWalkable(pos)) {
+			pos = prevPos;
+			// Stop movement - hit a wall
+			EndPosition = pos;
+			break;
+		}
+		// Check if we reached the target
+		if (pos == EndPosition) break;
+	}
+
+
+	// Update motion vertical offset if active
+	if (hasMotionVerticalOffset && motionDistanceUnits != 0) {
+		uint16 totalDist = _stepDeltaX + _stepDeltaY;
+		if (totalDist > 0) {
+			int32 distWalked = abs(pos.x - StartPosition.x) + abs(pos.y - StartPosition.y);
+			float progress = (float)distWalked / (float)totalDist;
+			if (progress > 1.0f) progress = 1.0f;
+			int32 vDelta = (int32)motionTargetVerticalOffset - (int32)motionStartVerticalOffset;
+			GameObject->Unknown = (uint16)((int32)motionStartVerticalOffset + (int32)(vDelta * progress));
 		}
 	}
+
+
+	SetPosition(pos);
 }
 
 bool Button::IsPointInside(const Common::Point &p) const {

@@ -1437,15 +1437,23 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(_scriptExecutor->_variables[i].b);
 	}
 
-	// Iterate over objects
-	// Iterate over characters?
-	// TODO: Why save the indices? Would only make sense if we saved other data as well
-	GameObjects::instance().Objects.size(); // numObjects
+	// Iterate over objects - save all fields matching original format
+	GameObjects::instance().Objects.size();
 	for (auto currentObject : GameObjects::instance().Objects) {
-		s.syncAsUint16LE(currentObject->Index);
-		s.syncAsSint16LE(currentObject->Position.x);
-		s.syncAsSint16LE(currentObject->Position.y);
+		s.syncAsUint16LE(currentObject->Position.x);
+		s.syncAsUint16LE(currentObject->Position.y);
 		s.syncAsUint16LE(currentObject->SceneIndex);
+		s.syncAsUint16LE(currentObject->Orientation);
+		s.syncAsUint16LE(currentObject->Unknown);
+	}
+
+	// Script executor state
+	s.syncAsUint16LE(_scriptExecutor->_interactedObjectID);
+	s.syncAsUint16LE(_scriptExecutor->_interactedOtherObjectID);
+	uint16 mouseMode = (uint16)_scriptExecutor->_mouseMode;
+	s.syncAsUint16LE(mouseMode);
+	if (s.isLoading()) {
+		_scriptExecutor->_mouseMode = (Script::MouseMode)mouseMode;
 	}
 
 	// Handle the view
