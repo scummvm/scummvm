@@ -64,7 +64,8 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	_size = getArchiveSize(builtResources);
 	saveFile->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR"
 
-	saveFile->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive, except header and size
+	// We need to recompute the chunk size here, to accommodate any resournce changes
+	saveFile->writeUint32LE(getArchiveSize(builtResources) + 4);
 	saveFile->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
 
 	switch (_rifxType) {
@@ -155,8 +156,8 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		case MKTAG('S', 'C', 'V', 'W'):
-			{
 
+			{
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
@@ -278,13 +279,15 @@ bool RIFXArchive::writeAfterBurnerMap(Common::SeekableWriteStream *writeStream) 
 bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->seek(offset);
 
+	uint32 numEntries = (getKeyTableResourceSize() - 12) / 12;
+
 	writeStream->writeUint32LE(MKTAG('K', 'E', 'Y', '*'));
-	writeStream->writeUint32LE(getResourceSize(MKTAG('K', 'E', 'Y', '*'), getResourceIDList(MKTAG('K', 'E', 'Y', '*'))[0]));
+	writeStream->writeUint32LE(getKeyTableResourceSize());
 
 	writeStream->writeUint16LE(_keyTableEntrySize);
 	writeStream->writeUint16LE(_keyTableEntrySize2);
-	writeStream->writeUint32LE(_keyTableEntryCount);
-	writeStream->writeUint32LE(_keyTableUsedCount);
+	writeStream->writeUint32LE(numEntries);
+	writeStream->writeUint32LE(numEntries);
 
 	debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: writing key table:");
 
@@ -602,7 +605,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// Now that all sizes have been updated, we can safely calculate the overall archive size
 	for (auto &it : builtResources) {
 		if (it->tag == MKTAG('R', 'I', 'F', 'X') || it->tag == MKTAG('X', 'F', 'I', 'R')) {
-			it->size = getArchiveSize(builtResources) + 8;
+			it->size = getArchiveSize(builtResources) + 4;
 		}
 	}
 

@@ -2462,8 +2462,14 @@ void Score::writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 o
 	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 		mainChannelSize = kMainChannelSizeD5;
+	} else if (_version >= kFileVer600 && _version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
+	} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+		channelSize = kSprChannelSizeD7;
+		mainChannelSize = kMainChannelSizeD7;
 	} else {
-		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6+ not supported yet");
+		warning("Score::writeVWSCResource: Writing this Director version is not supported yet");
 		return;
 	}
 
@@ -2523,6 +2529,10 @@ void Score::writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, ui
 			writeSpriteDataD4(writeStream, sprite);
 		} else if (_version >= kFileVer500 && _version < kFileVer600) {
 			writeSpriteDataD5(writeStream, sprite);
+		} else if (_version >= kFileVer600 && _version < kFileVer700) {
+			writeSpriteDataD6(writeStream, sprite);
+		} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+			writeSpriteDataD7(writeStream, sprite);
 		}
 	}
 }
@@ -2533,11 +2543,18 @@ uint32 Score::getVWSCResourceSize() {
 	if (_version >= kFileVer400 && _version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
 		mainChannelSize = kMainChannelSizeD4;
-	} else if (_version >= kFileVer500) {
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 		mainChannelSize = kMainChannelSizeD5;
+	} else if (_version >= kFileVer600 && _version < kFileVer700) {
+		// Must match writeVWSCResource()/Frame::readChannel() (D6: main channel 144).
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
+	} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+		channelSize = kSprChannelSizeD7;
+		mainChannelSize = kMainChannelSizeD7;
 	} else {
-		warning("FilmLoopCastMember::getSCVWResourceSize: Director version unsupported");
+		warning("Score::getVWSCResourceSize: Director version unsupported");
 	}
 
 	uint32 framesSize = 0;
