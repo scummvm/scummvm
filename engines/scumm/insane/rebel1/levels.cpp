@@ -25,37 +25,9 @@
 #include "scumm/scumm_v7.h"
 #include "scumm/file.h"
 #include "scumm/insane/rebel1/rebel.h"
+#include "scumm/smush/rebel/codec_ra1.h"
 
 namespace Scumm {
-
-// From smush/codec1.cpp
-void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-
-void decodeBomp(byte *dst, const byte *src, int width, int height, int pitch) {
-	while (height--) {
-		byte *dstNext = dst + pitch;
-		const byte *srcNext = src + 2 + READ_LE_UINT16(src);
-		src += 2;
-		int len = width;
-		byte *d = dst;
-		do {
-			int offs = READ_LE_UINT16(src); src += 2;
-			d += offs;
-			len -= offs;
-			if (len <= 0)
-				break;
-			int w = READ_LE_UINT16(src) + 1; src += 2;
-			len -= w;
-			if (len < 0)
-				w += len;
-			memcpy(d, src, w);
-			src += w;
-			d += w;
-		} while (len > 0);
-		dst = dstNext;
-		src = srcNext;
-	}
-}
 
 void resetSpriteBank(RA1SpriteBank &bank) {
 	delete[] bank.sprites;
@@ -175,17 +147,21 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 
 		int pixelCount = bank.sprites[i].width * bank.sprites[i].height;
 		const byte *fobjData = data + fobjOffset + 22;
+		const uint32 fobjSize = READ_BE_UINT32(data + fobjOffset + 4);
+		const int fobjDataSize = (fobjSize >= 14) ? (int)(fobjSize - 14) : 0;
 
 		if (codec == 21) {
 			bank.sprites[i].data = decPtr;
-			decodeBomp(decPtr, fobjData, bank.sprites[i].width,
-					   bank.sprites[i].height, bank.sprites[i].width);
+			smushDecodeRA1SkipCopy(decPtr, fobjData, 0, 0, bank.sprites[i].width,
+				bank.sprites[i].height, bank.sprites[i].width, bank.sprites[i].width,
+				bank.sprites[i].height, fobjDataSize);
 		} else if (codec == 1) {
 			// RA1 codec 1 in NUTs (e.g. LVL2/L2LASER.NUT): RLE where color 0 is transparent.
 			// Decode into a zero-cleared sprite buffer so skipped pixels stay transparent.
 			bank.sprites[i].data = decPtr;
 			smushDecodeRA1Transparent(decPtr, fobjData, 0, 0,
-				bank.sprites[i].width, bank.sprites[i].height, bank.sprites[i].width);
+				bank.sprites[i].width, bank.sprites[i].height, bank.sprites[i].width,
+				fobjDataSize);
 		} else {
 			bank.sprites[i].width = 0;
 			bank.sprites[i].height = 0;
