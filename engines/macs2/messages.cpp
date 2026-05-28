@@ -24,7 +24,7 @@
 namespace Macs2 {
 
 MouseMessage::MouseMessage(Common::EventType type,
-		const Common::Point &pos) : Message(), _pos(pos) {
+						   const Common::Point &pos) : Message(), _pos(pos) {
 	switch (type) {
 	case Common::EVENT_RBUTTONUP:
 		_button = MB_RIGHT;

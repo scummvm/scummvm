@@ -19,9 +19,9 @@
  *
  */
 
+#include "macs2/events.h"
 #include "common/config-manager.h"
 #include "graphics/screen.h"
-#include "macs2/events.h"
 #include "macs2/macs2.h"
 #include "macs2/views.h"
 
@@ -40,7 +40,7 @@ Events::~Events() {
 void Events::runGame() {
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
-	Views views;	// Loads all views in the structure
+	Views views; // Loads all views in the structure
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -53,7 +53,7 @@ void Events::runGame() {
 	while (!_views.empty() && !shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_QUIT ||
-					e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_views.clear();
 				break;
 			} else {
@@ -64,7 +64,6 @@ void Events::runGame() {
 		if (_views.empty())
 			break;
 
-		
 		g_system->delayMillis(10);
 		// TODO: Consider if this is the best place
 		currentMillis = g_system->getMillis();
@@ -92,12 +91,12 @@ void Events::processEvent(Common::Event &ev) {
 		msgMouseDown(MouseDownMessage(MouseDownMessage::MB_LEFT, ev.mouse));
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		//case Common::EVENT_MBUTTONDOWN:
+		// case Common::EVENT_MBUTTONDOWN:
 		msgMouseDown(MouseDownMessage(MouseDownMessage::MB_RIGHT, ev.mouse));
 		break;
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
-		//case Common::EVENT_MBUTTONUP:
+		// case Common::EVENT_MBUTTONUP:
 		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
 		break;
 	case Common::EVENT_MOUSEMOVE:
@@ -196,11 +195,10 @@ void Events::addKeypress(const Common::KeyCode kc) {
 
 /*------------------------------------------------------------------------*/
 
-Bounds::Bounds(Common::Rect &innerBounds) :
-		_bounds(0, 0, 320, 200),
-		_innerBounds(innerBounds),
-		left(_bounds.left), top(_bounds.top),
-		right(_bounds.right), bottom(_bounds.bottom) {
+Bounds::Bounds(Common::Rect &innerBounds) : _bounds(0, 0, 320, 200),
+											_innerBounds(innerBounds),
+											left(_bounds.left), top(_bounds.top),
+											right(_bounds.right), bottom(_bounds.bottom) {
 }
 
 Bounds &Bounds::operator=(const Common::Rect &r) {
@@ -218,14 +216,12 @@ void Bounds::setBorderSize(size_t borderSize) {
 
 /*------------------------------------------------------------------------*/
 
-UIElement::UIElement(const Common::String &name) :
-		_name(name), _parent(g_engine), _bounds(_innerBounds) {
+UIElement::UIElement(const Common::String &name) : _name(name), _parent(g_engine), _bounds(_innerBounds) {
 	g_engine->_children.push_back(this);
 }
 
-UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
-		_name(name), _parent(uiParent),
-		_bounds(_innerBounds) {
+UIElement::UIElement(const Common::String &name, UIElement *uiParent) : _name(name), _parent(uiParent),
+																		_bounds(_innerBounds) {
 	if (_parent)
 		_parent->_children.push_back(this);
 }

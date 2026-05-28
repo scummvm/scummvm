@@ -28,10 +28,10 @@ namespace Macs2 {
 
 enum Macs2DebugChannels {
 	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
+	kDebugPath = 1 << 1,
+	kDebugScan = 1 << 2,
 	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4,
+	kDebugScript = 1 << 4,
 };
 
 extern const PlainGameDescriptor macs2Games[];

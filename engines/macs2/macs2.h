@@ -22,91 +22,89 @@
 #ifndef MACS2_H
 #define MACS2_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
+#include "audio/mixer.h"
 #include "common/array.h"
+#include "common/error.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/util.h"
-#include "common/file.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
-#include "audio/mixer.h"
 
+#include "audio/audiostream.h"
 #include "macs2/detection.h"
 #include "macs2/events.h"
 #include "macs2/script/scriptexecutor.h"
 #include <common/memstream.h>
-#include "audio/audiostream.h"
 
 namespace Macs2 {
 
-	class MacsAudioStream : public Audio::SeekableAudioStream {
+class MacsAudioStream : public Audio::SeekableAudioStream {
 public:
-		Common::Array<byte> _data;
-		int64 pos;
+	Common::Array<byte> _data;
+	int64 pos;
 
-		virtual ~MacsAudioStream() {}
+	virtual ~MacsAudioStream() {}
 
-		/**
-		 * Fill the given buffer with up to @p numSamples samples.
-		 *
-		 * Data must be in native endianness, 16 bits per sample, signed. For stereo
-		 * stream, the buffer will be filled with interleaved left and right channel
-		 * samples, starting with the left sample. Furthermore, the samples in the
-		 * left and right are summed up. So if you request 4 samples from a stereo
-		 * stream, you will get a total of two left channel and two right channel
-		 * samples.
-		 *
-		 * @return The actual number of samples read, or -1 if a critical error occurred.
-		 *
-		 * @note You *must* check whether the returned value is less than what you requested.
-		 *       This indicates that the stream is fully used up.
-		 *
-		 */
-		virtual int readBuffer(int16 *buffer, const int numSamples);
+	/**
+	 * Fill the given buffer with up to @p numSamples samples.
+	 *
+	 * Data must be in native endianness, 16 bits per sample, signed. For stereo
+	 * stream, the buffer will be filled with interleaved left and right channel
+	 * samples, starting with the left sample. Furthermore, the samples in the
+	 * left and right are summed up. So if you request 4 samples from a stereo
+	 * stream, you will get a total of two left channel and two right channel
+	 * samples.
+	 *
+	 * @return The actual number of samples read, or -1 if a critical error occurred.
+	 *
+	 * @note You *must* check whether the returned value is less than what you requested.
+	 *       This indicates that the stream is fully used up.
+	 *
+	 */
+	virtual int readBuffer(int16 *buffer, const int numSamples);
 
-		/** Check whether this is a stereo stream. */
-		virtual bool isStereo() const;
+	/** Check whether this is a stereo stream. */
+	virtual bool isStereo() const;
 
-		/** Sample rate of the stream. */
-		virtual int getRate() const;
+	/** Sample rate of the stream. */
+	virtual int getRate() const;
 
-		/**
-		 * Check whether end of data has been reached.
-		 *
-		 * If this returns true, it indicates that at this time there is no data
-		 * available in the stream. However, there might be more data in the future.
-		 *
-		 * This is used by e.g. a rate converter to decide whether to keep on
-		 * converting data or to stop.
-		 */
-		virtual bool endOfData() const;
-	
+	/**
+	 * Check whether end of data has been reached.
+	 *
+	 * If this returns true, it indicates that at this time there is no data
+	 * available in the stream. However, there might be more data in the future.
+	 *
+	 * This is used by e.g. a rate converter to decide whether to keep on
+	 * converting data or to stop.
+	 */
+	virtual bool endOfData() const;
+
 	virtual bool seek(const Audio::Timestamp &where);
 
-		virtual Audio::Timestamp getLength() const;
-	};
+	virtual Audio::Timestamp getLength() const;
+};
 
-	struct Macs2GameDescription;
+struct Macs2GameDescription;
 
 // enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
 class Adlib;
 
-
-
 struct GlyphData {
-	byte* Data;
+	byte *Data;
 	char ASCII;
 	uint16 Width;
 	uint16 Height;
 
 	void ReadFromeFile(Common::File &file);
-	void ReadFromMemory(Common::MemoryReadStream* stream);
+	void ReadFromMemory(Common::MemoryReadStream *stream);
 };
 
 struct Sprite {
@@ -142,11 +140,9 @@ struct BackgroundAnimationBlob {
 	uint32 FrameIndex;
 	AnimFrame GetFrame(uint32 index);
 	AnimFrame GetCurrentFrame();
-	static uint16 Func1480(Common::Array<uint8>& blob, bool bpp6, uint16 bpp8);
+	static uint16 Func1480(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
 	static uint16 Func168C(Common::Array<uint8> &blob);
 };
-
-
 
 enum DebugFlag {
 	DEBUG_RLE = 1 << 10,
@@ -169,7 +165,7 @@ class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	
+
 	Adlib *_adlib;
 
 protected:
@@ -213,8 +209,8 @@ public:
 	// This is the depth map
 	Graphics::ManagedSurface _depthMap;
 
-	byte _pal[256 * 3] = { 0 };
-	byte _palVanilla[256 * 3] = { 0 };
+	byte _pal[256 * 3] = {0};
+	byte _palVanilla[256 * 3] = {0};
 
 	Common::Array<Common::String> debugOutput;
 
@@ -223,7 +219,7 @@ public:
 	// This is the override list living at [5BD1]
 	Common::Array<uint16> HotspotOverrides;
 
-	bool GetPathfindingOverride(uint16 index, uint16& result);
+	bool GetPathfindingOverride(uint16 index, uint16 &result);
 	void SetPathfindingOverride(uint16 index, uint16 overrideValue);
 
 	// This one implements the lookup relative to es:[di+4EA8h] vs. the other one at es:[di+4EA5h] and es:[di+4EA6h]
@@ -245,7 +241,7 @@ public:
 
 	void CalculatePath(const Common::Point &source, const Common::Point &destination);
 
-	byte* _charData;
+	byte *_charData;
 	char _charASCII;
 	uint16 _charWidth;
 	uint16 _charHeight;
@@ -260,38 +256,38 @@ public:
 
 	bool FindGlyph(char c, GlyphData &out) const;
 
-	byte** _cursorData;
-	uint16* _cursorWidths;
-	uint16* _cursorHeights;
+	byte **_cursorData;
+	uint16 *_cursorWidths;
+	uint16 *_cursorHeights;
 
 	// TODO: Need a data structure for this by now or check if a bitmap with transparent pixels for blitting exists in ScummVM
-	byte* _guyData;
+	byte *_guyData;
 	uint16 _guyWidth;
 	uint16 _guyHeight;
 
 	Sprite _borderSprite;
-	byte* _borderData;
+	byte *_borderData;
 	uint16 _borderWidth;
 	uint16 _borderHeight;
 
-	byte* _shadingTable;
+	byte *_shadingTable;
 
 	Sprite _borderHighlightSprite;
-	byte* _borderHighlightData;
+	byte *_borderHighlightData;
 	uint16 _borderHighlightWidth;
 	uint16 _borderHighlightHeight;
 
 	Sprite _borderShadowSprite;
 
-	byte** _flagData;
-	uint16* _flagWidths;
-	uint16* _flagHeights;
+	byte **_flagData;
+	uint16 *_flagWidths;
+	uint16 *_flagHeights;
 
 	uint16 _numBackgroundAnimations;
 	BackgroundAnimation *_backgroundAnimations;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
-	byte* mapData;
+	byte *mapData;
 
 	Common::MemoryReadStream *_fileStream;
 
@@ -350,13 +346,10 @@ public:
 
 	uint16 GetInteractedBackgroundHotspot(const Common::Point &p);
 
-
-
-	
 	AnimFrame _stick;
-	
+
 	Common::Array<uint16> inventoryIconIndices;
-	
+
 	void RunScriptExecutor(bool firstRun = false) {
 		_scriptExecutor->Run(firstRun);
 	}
@@ -399,10 +392,9 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		return (f == kSupportsLoadingDuringRuntime) ||
+			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {

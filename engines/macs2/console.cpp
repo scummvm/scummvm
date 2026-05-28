@@ -20,12 +20,11 @@
  */
 
 #include "macs2/console.h"
-#include "macs2/view1.h"
-#include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
+#include "macs2/macs2.h"
+#include "macs2/view1.h"
 
 #include <cstdlib>
-
 
 namespace Macs2 {
 
@@ -51,8 +50,7 @@ bool Console::Cmd_toggleAutoClick(int argc, const char **argv) {
 	View1 *currentView = (View1 *)g_engine->findView("View1");
 	currentView->autoclickActive = !currentView->autoclickActive;
 	debugPrintf("Auto clicking set to %s.\n",
-				currentView->autoclickActive ? "on" : "off"
-		);
+				currentView->autoclickActive ? "on" : "off");
 	return true;
 }
 
@@ -88,11 +86,11 @@ bool Console::Cmd_marker(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_addItem(int argc, const char** argv) {
+bool Console::Cmd_addItem(int argc, const char **argv) {
 	// TODO: Just realizing this - can we have multiple of an item in the inventory?
 	// TODO: Check args count
 	int index = parseHexArg(argv[1]);
-	for (GameObject* obj : GameObjects::instance().Objects) {
+	for (GameObject *obj : GameObjects::instance().Objects) {
 		if (obj->Index == index) {
 			obj->SceneIndex = 0x1;
 		}
@@ -102,7 +100,7 @@ bool Console::Cmd_addItem(int argc, const char** argv) {
 
 bool Console::Cmd_removeItem(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
-	for (GameObject* obj : GameObjects::instance().Objects) {
+	for (GameObject *obj : GameObjects::instance().Objects) {
 		if (obj->Index == index) {
 			obj->SceneIndex = 0x0;
 		}
@@ -117,7 +115,7 @@ bool Console::Cmd_setOrientation(int argc, const char **argv) {
 		index = parseHexArg(argv[2]);
 	}
 	GameObjects::instance().GetObjectByIndex(index)->Orientation = orientation;
-	
+
 	return true;
 }
 

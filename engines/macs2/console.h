@@ -38,8 +38,6 @@ private:
 	bool Cmd_dumpScript(int argc, const char **argv);
 	bool Cmd_set(int argc, const char **argv);
 
-
-
 public:
 	Console();
 	~Console() override;
