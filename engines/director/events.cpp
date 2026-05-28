@@ -52,7 +52,7 @@ bool DirectorEngine::pollEvent(Common::Event &event) {
 	return g_system->getEventManager()->pollEvent(event);
 }
 
-bool DirectorEngine::processEvents(bool captureClick, bool skipWindowManager) {
+bool DirectorEngine::processSysEvents(bool captureClick, bool skipWindowManager) {
 	debugC(9, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debugC(9, kDebugEvents, "@@@@   Processing events");
 	debugC(9, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
@@ -133,16 +133,25 @@ void DirectorEngine::processEventQUIT() {
 	}
 }
 
-bool Window::processEvent(Common::Event &event) {
+bool Window::processSysEvent(Common::Event &event) {
 	bool flag = false;
 
-	if (_currentMovie && _currentMovie->processEvent(event))
-		flag = true;
+	if (g_lingo) {
+		Window *prev = g_director->getCurrentWindow();
+		g_director->setCurrentWindow(this);
+		g_lingo->switchStateFromWindow();
+
+		if (_currentMovie && _currentMovie->processSysEvent(event))
+			flag = true;
+
+		g_director->setCurrentWindow(prev);
+		g_lingo->switchStateFromWindow();
+	}
 
 	return flag;
 }
 
-bool Movie::processEvent(Common::Event &event) {
+bool Movie::processSysEvent(Common::Event &event) {
 	// When in GUI message box is being shown, movie may record clicking on the message box as a movie event
 	// Make sure that these events (mouseUp, mouseDown) are not recorded in the movie
 	if (_inGuiMessageBox) {
@@ -151,10 +160,11 @@ bool Movie::processEvent(Common::Event &event) {
 
 	Score *sc = getScore();
 	if (sc->getCurrentFrameNum() > sc->getFramesNum()) {
-		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrameNum(), sc->getFramesNum());
+		warning("Movie::processSysEvent: request to access frame %d of %d", sc->getCurrentFrameNum(), sc->getFramesNum());
 		return false;
 	}
 	uint16 spriteId = 0;
+	bool result = true;
 
 	if (event.mouse != Common::Point(-1, -1)) {
 		if (g_director->getVersion() < 400)
@@ -235,7 +245,7 @@ bool Movie::processEvent(Common::Event &event) {
 				}
 			}
 		}
-		return true;
+		return result;
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -248,7 +258,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 			if (g_director->getVersion() >= 600) {
 				if (_lastClickedSpriteId && _lastClickedSpriteId != spriteId) {
-					queueInputEvent(kEventMouseUpOutSide, _lastClickedSpriteId, pos);
+					processInputEvent(kEventMouseUpOutSide, _lastClickedSpriteId, pos);
 				}
 			}
 
@@ -276,24 +286,24 @@ bool Movie::processEvent(Common::Event &event) {
 				}
 			}
 
-			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
-			queueInputEvent(ev, 0, pos);
+			debugC(3, kDebugEvents, "Movie::processSysEvent(): Button Down @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
+			result = processInputEvent(ev, 0, pos);
 
 			// D5 has special behavior here
 			if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
 				if (_lastClickedSpriteId)
-					queueInputEvent(kEventMouseEnter, _lastClickedSpriteId, pos);
+					processInputEvent(kEventMouseEnter, _lastClickedSpriteId, pos);
 			}
 		}
 
-		return true;
+		return result;
 
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 		{
 			pos = event.mouse;
 
-			debugC(3, kDebugEvents, "Movie::processEvent(): Button Up @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
+			debugC(3, kDebugEvents, "Movie::processSysEvent(): Button Up @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
 
 			LEvent ev = kEventMouseUp;
 			// In D5 and up, right mouse clicks don't trigger the mouseUp handler.
@@ -311,17 +321,17 @@ bool Movie::processEvent(Common::Event &event) {
 				}
 			}
 
-			queueInputEvent(ev, 0, pos);
+			result = processInputEvent(ev, 0, pos);
 
 			// D5 has special behavior here
 			if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
 				if (spriteId)
-					queueInputEvent(kEventMouseLeave, spriteId, pos);
+					processInputEvent(kEventMouseLeave, spriteId, pos);
 			}
 
 			sc->renderCursor(pos);
 		}
-		return true;
+		return result;
 
 	case Common::EVENT_KEYDOWN:
 		_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
@@ -361,14 +371,14 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_timeOutKeyDown)
 			_lastTimeOut = _lastEventTime;
 
-		queueInputEvent(kEventKeyDown, sc->getSpriteIDOfActiveWidget());
+		result = processInputEvent(kEventKeyDown, sc->getSpriteIDOfActiveWidget());
 		g_director->loadSlowdownCooloff();
-		return true;
+		return result;
 
 	case Common::EVENT_KEYUP:
-		queueInputEvent(kEventKeyUp, sc->getSpriteIDOfActiveWidget());
+		result = processInputEvent(kEventKeyUp, sc->getSpriteIDOfActiveWidget());
 		_keyFlags = event.kbd.flags;
-		return true;
+		return result;
 
 	default:
 		break;
@@ -421,7 +431,7 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 		break;
 	}
 
-	flag |= processEvent(event);
+	flag |= processSysEvent(event);
 	return flag;
 }
 

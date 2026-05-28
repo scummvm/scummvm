@@ -135,7 +135,7 @@ public:
 	Symbol getHandler(const Common::String &name, uint16 castLibHint = 0);
 
 	// lingo/lingo-events.cpp
-	bool processEvent(Common::Event &event);
+	bool processSysEvent(Common::Event &event);
 	void broadcastEvent(LEvent event);
 
 	// lingo/lingo-events.cpp
@@ -143,6 +143,7 @@ public:
 	void resolveScriptEvent(LingoEvent &event);
 	void processEvent(LEvent event, int targetId = 0);
 	void queueInputEvent(LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
+	bool processInputEvent(LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
 
 	Common::String formatMovieInfo();
 

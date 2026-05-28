@@ -358,7 +358,7 @@ Common::Error DirectorEngine::run() {
 
 	while (loop) {
 		if (_stage->getCurrentMovie())
-			processEvents();
+			processSysEvents();
 
 		setCurrentWindow(_stage);
 		g_lingo->switchStateFromWindow();

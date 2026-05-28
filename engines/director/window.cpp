@@ -617,7 +617,7 @@ bool Window::loadNextMovie() {
 			while (delay != 0) {
 				uint32 dec = MIN((uint32)10, delay);
 				// Skip delay if mouse is clicked
-				if (g_director->processEvents(true, true)) {
+				if (g_director->processSysEvents(true, true)) {
 					g_director->loadSlowdownCooloff();
 					break;
 				}

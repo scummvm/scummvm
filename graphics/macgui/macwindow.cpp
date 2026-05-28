@@ -618,7 +618,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 			return result;
 
 		if (_wm->getActiveWidget())
-			return _wm->getActiveWidget()->processEvent(event) || result;
+			return result && _wm->getActiveWidget()->processEvent(event);
 
 		return result;
 
