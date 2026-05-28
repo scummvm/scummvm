@@ -196,6 +196,81 @@ void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlo
 		_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, passwordIndex);
 }
 
+bool InsaneRebel1::playDeathOrRetry(const char *retryVideo, const char *gameOverVideo) {
+	if (_lives > 0) {
+		playCinematic(retryVideo);
+		if (_vm->shouldQuit())
+			return false;
+		_lives--;
+		return true;
+	}
+
+	playCinematic(gameOverVideo);
+	return false;
+}
+
+void InsaneRebel1::resetLevelDamageState() {
+	_health = kMaxHealth;
+	_damageFlags = 0;
+	_prevDamageFlags = 0;
+	_damageCooldown = 0;
+	_deathTimer = 0;
+	_screenFlash = 0;
+	_screenShakeEnabled = false;
+	_deathCauseIndicator = 0;
+}
+
+void InsaneRebel1::resetLevelFrameState() {
+	_frameCounter = 0;
+	_gameCounter = 0;
+	_activeGameOpcode = 0;
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
+}
+
+void InsaneRebel1::resetLevelTargetingState(bool resetKillCount) {
+	if (resetKillCount)
+		_killCount = 0;
+	_targetCount = 0;
+	_prevTargetCount = 0;
+	_lastHitTarget = 0;
+}
+
+void InsaneRebel1::resetLevelFlightState(int16 shipDirIndex) {
+	_shipPosX = kRA1CenterX;
+	_shipPosY = kRA1CenterY;
+	_shipDirIndex = shipDirIndex;
+	_rollAccum = 0;
+	_liftSmooth = 0;
+	_posAccumX = 0;
+	_posAccumY = 0;
+	_perspectiveX = 0;
+	_perspectiveY = 0;
+}
+
+void InsaneRebel1::resetLevelInputHistory(bool resetAxisDeltaX) {
+	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+	memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+	memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+	if (resetAxisDeltaX)
+		_inputAxisDeltaX = 0;
+	_avgInputX = 0;
+	_avgInputY = 0;
+}
+
+void InsaneRebel1::resetLevelAttemptState(int16 flyControlMode, int16 gameplayPhase,
+		int16 shipDirIndex, bool resetAxisDeltaX) {
+	_flyControlMode = flyControlMode;
+	resetLevelDamageState();
+	resetLevelFrameState();
+	resetGameplayFlagsFromTuning();
+	resetLevelTargetingState();
+	resetLevelFlightState(shipDirIndex);
+	_levelGameplayPhase = gameplayPhase;
+	resetLevelInputHistory(resetAxisDeltaX);
+}
+
 void InsaneRebel1::playLevelTransitionCutscene(int level) {
 	switch (level) {
 	case 4:
@@ -301,32 +376,10 @@ bool InsaneRebel1::runLevel1() {
 	while (!_vm->shouldQuit()) {
 		bool stage2Started = false;
 
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
+		resetLevelDamageState();
+		resetLevelFrameState();
+		resetLevelTargetingState();
+		resetLevelFlightState();
 		_pathBranchEnabled = true;
 		_rightPathSelected = false;
 		_flyControlMode = 1;
@@ -398,15 +451,8 @@ bool InsaneRebel1::runLevel1() {
 		if (_vm->shouldQuit())
 			return false;
 
-		if (_lives <= 0) {
-			playCinematic("LVL1/L1DEATH.ANM");
+		if (!playDeathOrRetry("LVL1/L1NEW.ANM", "LVL1/L1DEATH.ANM"))
 			return false;
-		}
-
-		playCinematic("LVL1/L1NEW.ANM");
-		if (_vm->shouldQuit())
-			return false;
-		_lives--;
 	}
 
 	return false;
@@ -427,26 +473,10 @@ bool InsaneRebel1::runLevel2() {
 
 	while (!_vm->shouldQuit()) {
 		_flyControlMode = 0;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelDamageState();
+		resetLevelFrameState();
+		resetLevelInputHistory();
 		_killCount = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
 
 		playInteractiveVideo("LVL2/L2PLAY.ANM");
 		if (_vm->shouldQuit())
@@ -460,15 +490,9 @@ bool InsaneRebel1::runLevel2() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL2/L2NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL2/L2NEW.ANM", "LVL2/L2DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL2/L2DEATH.ANM");
 		return false;
 	}
 
@@ -490,28 +514,12 @@ bool InsaneRebel1::runLevel3() {
 
 	while (!_vm->shouldQuit()) {
 		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
+		resetLevelDamageState();
+		resetLevelFrameState();
 		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelInputHistory();
 
 		playInteractiveVideo("LVL3/L3PLAY.ANM");
 		if (_vm->shouldQuit())
@@ -523,15 +531,9 @@ bool InsaneRebel1::runLevel3() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL3/L3NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL3/L3NEW.ANM", "LVL3/L3DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL3/L3DEATH.ANM");
 		return false;
 	}
 
@@ -554,19 +556,8 @@ bool InsaneRebel1::runLevel4() {
 	while (!_vm->shouldQuit()) {
 		loadTuningForLevel(4);
 		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
+		resetLevelDamageState();
+		resetLevelFrameState();
 		_pendingRouteStartFrame = 0;
 		resetGameplayFlagsFromTuning();
 		_killCount = 0;
@@ -610,15 +601,9 @@ bool InsaneRebel1::runLevel4() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL4/L4NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL4/L4NEW.ANM", "LVL4/L4DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL4/L4DEATH.ANM");
 		return false;
 	}
 
@@ -641,57 +626,17 @@ bool InsaneRebel1::runLevel5() {
 	while (!_vm->shouldQuit()) {
 		loadRA1Nut("LVL5/L5LASER.NUT", _laserBank);
 		loadTuningForLevel(6);
-		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 1;
+		resetLevelAttemptState(1, 1);
 		_level5SuccessFramesRemaining = 0x14;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
 
 		playInteractiveVideo("LVL5/L5PLAY.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
 		if (_health < 0) {
-			if (_lives > 0) {
-				playCinematic("LVL5/L5NEW.ANM");
-				if (_vm->shouldQuit())
-					return false;
-				_lives--;
+			if (playDeathOrRetry("LVL5/L5NEW.ANM", "LVL5/L5DEATH.ANM"))
 				continue;
-			}
 
-			playCinematic("LVL5/L5DEATH.ANM");
 			return false;
 		}
 
@@ -738,15 +683,9 @@ bool InsaneRebel1::runLevel5() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL5/L5NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL5/L5NEW.ANM", "LVL5/L5DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL5/L5DEATH.ANM");
 		return false;
 	}
 
@@ -769,28 +708,12 @@ bool InsaneRebel1::runLevel6() {
 
 	while (!_vm->shouldQuit()) {
 		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
+		resetLevelDamageState();
+		resetLevelFrameState();
 		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelInputHistory();
 
 		playInteractiveVideo("LVL6/L6PLAY.ANM");
 		if (_vm->shouldQuit())
@@ -805,15 +728,9 @@ bool InsaneRebel1::runLevel6() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL6/L6NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL6/L6NEW.ANM", "LVL6/L6DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL6/L6DEATH.ANM");
 		return false;
 	}
 
@@ -844,42 +761,8 @@ bool InsaneRebel1::runLevel7() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
-		_flyControlMode = 3;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
+		resetLevelAttemptState(3, 0);
 		_driftParam = 0x19;
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
 		resetEnemyShotSlots();
 		_level7WarningFrames = 0;
 		_level7WarningThreshold = 0;
@@ -929,15 +812,9 @@ bool InsaneRebel1::runLevel7() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL7/L7NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL7/L7NEW.ANM", "LVL7/L7DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL7/L7DEATH.ANM");
 		return false;
 	}
 
@@ -966,42 +843,7 @@ bool InsaneRebel1::runLevel8() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
-		_flyControlMode = 3;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_inputAxisDeltaX = 0;
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelAttemptState(3, 0, 17, true);
 
 		// Walker-specific state — RunLevel8Flow (0x18546)
 		_walkerHealth = 100;
@@ -1046,15 +888,9 @@ bool InsaneRebel1::runLevel8() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL8/L8NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL8/L8NEW.ANM", "LVL8/L8DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL8/L8DEATH.ANM");
 		return false;
 	}
 
@@ -1113,45 +949,11 @@ bool InsaneRebel1::runLevel9() {
 
 	while (!_vm->shouldQuit()) {
 		loadTuningForLevel(0x0B);
-		_flyControlMode = 0;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 15;  // On-foot center direction
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
+		resetLevelAttemptState(0, 0, 15);  // On-foot center direction
 		_onFootCharX = 0;
 		_onFootCharY = 0;
 		_onFootAnimCounter = 0;
 		_onFootInitialized = false;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
 
 		while (!_vm->shouldQuit()) {
 			loadTuningForLevel(0x0B);
@@ -1276,15 +1078,9 @@ bool InsaneRebel1::runLevel9() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL9/L9NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL9/L9NEW.ANM", "LVL9/L9DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL9/L9DEATH.ANM");
 		return false;
 	}
 
@@ -1305,41 +1101,7 @@ bool InsaneRebel1::runLevel10() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
-		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelAttemptState(1, 0);
 
 		playInteractiveVideo("LVL10/L10PLAY.ANM");
 		if (_vm->shouldQuit())
@@ -1354,15 +1116,9 @@ bool InsaneRebel1::runLevel10() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL10/L10NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL10/L10NEW.ANM", "LVL10/L10DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL10/L10DEATH.ANM");
 		return false;
 	}
 
@@ -1387,41 +1143,7 @@ bool InsaneRebel1::runLevel11() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
-		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelAttemptState(1, 0);
 		_turretEmitterLeftX = 25;
 		_turretEmitterLeftY = 15;
 
@@ -1451,15 +1173,9 @@ bool InsaneRebel1::runLevel11() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL11/L11NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL11/L11NEW.ANM", "LVL11/L11DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL11/L11DEATH.ANM");
 		return false;
 	}
 
@@ -1484,44 +1200,18 @@ bool InsaneRebel1::runLevel12() {
 
 	while (!_vm->shouldQuit()) {
 		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
+		resetLevelDamageState();
 		_killCount = 0;
 
 		while (!_vm->shouldQuit()) {
 			loadTuningForLevel(0x0F);
-			_frameCounter = 0;
-			_gameCounter = 0;
-			_activeGameOpcode = 0;
-			_gameLatch5D = 0;
-			_gameLatch5F = 0;
+			resetLevelFrameState();
 			_damageFlags = 0;
 			resetGameplayFlagsFromTuning();
-			_targetCount = 0;
-			_prevTargetCount = 0;
-			_lastHitTarget = 0;
-			_shipPosX = kRA1CenterX;
-			_shipPosY = kRA1CenterY;
-			_shipDirIndex = 17;
-			_rollAccum = 0;
-			_liftSmooth = 0;
-			_posAccumX = 0;
-			_posAccumY = 0;
-			_perspectiveX = 0;
-			_perspectiveY = 0;
+			resetLevelTargetingState(false);
+			resetLevelFlightState();
 			_levelGameplayPhase = 0;
-			memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-			memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-			memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-			memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-			_avgInputX = 0;
-			_avgInputY = 0;
+			resetLevelInputHistory();
 
 			playInteractiveVideo("LVL12/L12PLAY.ANM");
 			if (_vm->shouldQuit())
@@ -1546,15 +1236,9 @@ bool InsaneRebel1::runLevel12() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL12/L12NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL12/L12NEW.ANM", "LVL12/L12DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL12/L12DEATH.ANM");
 		return false;
 	}
 
@@ -1579,41 +1263,7 @@ bool InsaneRebel1::runLevel13() {
 		return false;
 
 	while (!_vm->shouldQuit()) {
-		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelAttemptState(1, 0);
 		resetEnemyShotSlots();
 
 		playInteractiveVideo("LVL13/L13PLAY.ANM");
@@ -1628,15 +1278,9 @@ bool InsaneRebel1::runLevel13() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL13/L13NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL13/L13NEW.ANM", "LVL13/L13DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL13/L13DEATH.ANM");
 		return false;
 	}
 
@@ -1662,42 +1306,8 @@ bool InsaneRebel1::runLevel14() {
 
 	while (!_vm->shouldQuit()) {
 		loadTuningForLevel(0x11);
-		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 1;
+		resetLevelAttemptState(1, 1);
 		_level14SuccessFrames = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
 
 		// Phase 1: targeting surface cannons
 		playInteractiveVideo("LVL14/L14PLAY.ANM");
@@ -1742,15 +1352,9 @@ bool InsaneRebel1::runLevel14() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL14/L14NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL14/L14NEW.ANM", "LVL14/L14DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL14/L14DEATH.ANM");
 		return false;
 	}
 
@@ -1776,41 +1380,7 @@ bool InsaneRebel1::runLevel15() {
 
 	while (!_vm->shouldQuit()) {
 		loadTuningForLevel(0x13);
-		_flyControlMode = 1;
-		_health = kMaxHealth;
-		_damageFlags = 0;
-		_prevDamageFlags = 0;
-		_damageCooldown = 0;
-		_deathTimer = 0;
-		_screenFlash = 0;
-		_screenShakeEnabled = false;
-		_deathCauseIndicator = 0;
-		_frameCounter = 0;
-		_gameCounter = 0;
-		_activeGameOpcode = 0;
-		_gameLatch5D = 0;
-		_gameLatch5F = 0;
-		resetGameplayFlagsFromTuning();
-		_killCount = 0;
-		_targetCount = 0;
-		_prevTargetCount = 0;
-		_lastHitTarget = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
-		_rollAccum = 0;
-		_liftSmooth = 0;
-		_posAccumX = 0;
-		_posAccumY = 0;
-		_perspectiveX = 0;
-		_perspectiveY = 0;
-		_levelGameplayPhase = 0;
-		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
-		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
-		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
-		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
-		_avgInputX = 0;
-		_avgInputY = 0;
+		resetLevelAttemptState(1, 0);
 
 		// Phase 1: trench run
 		_levelGameplayPhase = 1;
@@ -1861,15 +1431,9 @@ bool InsaneRebel1::runLevel15() {
 			return !_vm->shouldQuit();
 		}
 
-		if (_lives > 0) {
-			playCinematic("LVL15/L15NEW.ANM");
-			if (_vm->shouldQuit())
-				return false;
-			_lives--;
+		if (playDeathOrRetry("LVL15/L15NEW.ANM", "LVL15/L15DEATH.ANM"))
 			continue;
-		}
 
-		playCinematic("LVL15/L15DEATH.ANM");
 		return false;
 	}
 
