@@ -339,7 +339,7 @@ public:
 	bool hasCurrentSound() const { return !_currentSoundData.empty(); }
 	bool isCurrentSoundPlaying() const;
 
-	void playTestSound();
+
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 word50D3;
@@ -396,10 +396,6 @@ public:
 	int MeasureStringsVertically(Common::StringArray sa);
 
 	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
-
-	void PlaySound();
-
-	void OnTimer();
 
 	uint32 getFeatures() const;
 
