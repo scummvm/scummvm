@@ -264,7 +264,7 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 		for (int16 thingIndex = 0; thingIndex < thingCount; ++thingIndex) {
 			dummyThing.setIndex(thingIndex);
 			int16 iconIndex = _vm->_objectMan->getIconIndex(dummyThing);
-			if (iconIndex != -1) {
+			if (iconIndex >= 0 && iconIndex < kDMObjectNameCount) {
 				const char *displayName = _vm->_objectMan->_objectNames[iconIndex];
 				if (cstrEquals(displayName, requestedItemName.c_str())) {
 					uint16 *newThingData = new uint16[(thingCount + 1) * thingTypeSize];
