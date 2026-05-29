@@ -182,7 +182,7 @@ void Macs2Engine::readResourceFile() {
 		for (int j = 1; j < 0x15; j++) {
 			// We're at l0037_0A3E here
 			// TODO: Compare places and read values with the game
-			uint16 unknown1 = _fileStream->readUint16LE();
+			_fileStream->readUint16LE(); // unknown1 // _fileStream->readUint16LE();
 			uint16 unknown2 = _fileStream->readUint16LE();
 			uint32 dataSize = _fileStream->readUint32LE();
 			uint8 *data = new uint8[dataSize];
@@ -193,11 +193,11 @@ void Macs2Engine::readResourceFile() {
 			// Load three values here
 			// l0037_0B62:
 			// Data at offset +Ch
-			uint16 unknown4 = _fileStream->readUint16LE();
+			_fileStream->readUint16LE(); // unknown4
 			// Data at offset +Eh
 			uint16 unknown5 = _fileStream->readByte();
 			// Local variable [bp-5h]
-			uint16 unknown6 = _fileStream->readByte();
+			_fileStream->readByte(); // unknown6
 			gameObject->BlobMirrorFlags.push_back(unknown5 != 0);
 
 			// In order to get to l0037_0BBA: where the blob will be mirrored,
@@ -317,7 +317,7 @@ void Macs2Engine::readResourceFile() {
 		for (int j = 0; j < 4; j++) {
 			indices.push_back(_fileStream->readByte());
 		}
-		uint16 numConnections = _fileStream->readUint16LE();
+		_fileStream->readUint16LE(); // numConnections
 	}
 
 	// return check_cast<uint8>((c * 259 + 33) >> 6);
@@ -553,11 +553,11 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 		// file.seek(endPos);
 		// TODO: Figure out the trailing values?
 		// Data at offset +Ch
-		uint16 unknown1 = stream->readUint16LE();
+		stream->readUint16LE(); // unknown1
 		// Data at offset +Fh
-		uint16 unknown2 = stream->readByte();
+		stream->readByte(); // unknown2
 		// Local variable [bp-5h]
-		uint16 unknown3 = stream->readByte();
+		stream->readByte(); // unknown3
 
 		// Initialize the blob
 		// TODO: There is a lot more going on in the function that does this. It is around
@@ -595,11 +595,11 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(DEBUG_SV, "sv", "Verbose script debugging log");
 	// We have a fixed 0x10 number of entries
 	HotspotOverrides.resize(0x11);
-	for (int i = 0; i < HotspotOverrides.size(); i++) {
+	for (uint i = 0; i < HotspotOverrides.size(); i++) {
 		HotspotOverrides[i] = 0xFFFF;
 	}
 	pathfindingValueRemaps.resize(0x100);
-	for (int i = 0; i < pathfindingValueRemaps.size(); i++) {
+	for (uint i = 0; i < pathfindingValueRemaps.size(); i++) {
 		pathfindingValueRemaps[i] = 0;
 	}
 }
@@ -642,7 +642,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 			if (value != 0xF0) {
 				_bgImageShip.setPixel(x, y, value);
 				remainingPixels--;
-				debugC(DEBUG_RLE, "RLE : Literal pixel % .2x, remaining row data % .4x bytes.", value, remainingPixels);
+				debugC(DEBUG_RLE, "RLE : Literal pixel %.2x, remaining row data %.4x bytes.", value, remainingPixels);
 				x++;
 			} else {
 				// We need to decode the RLE data
@@ -679,9 +679,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	//unknownData1.resize(0x100);
 	_fileStream->read(_shadingTable, 0x100);
 
-	uint8 unknownByte1 = _fileStream->readByte();
-	uint8 unknownByte2 = _fileStream->readByte();
-	uint8 unknownByte3 = _fileStream->readByte();
+	_fileStream->readByte(); // unknownByte1
+	_fileStream->readByte(); // unknownByte2
+	_fileStream->readByte(); // unknownByte3
 
 	// Offset 1013h
 	Graphics::ManagedSurface unknownRLE1 = readRLEImage(_fileStream->pos(), _fileStream);
@@ -699,7 +699,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Offset 401Fh
 	// This is the first map used in 0037:10C4 for the lookup of interacted hotspots
 	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
-	_map = bgMap;
+	_map.copyFrom(bgMap);
 
 	// Pretty sure that this is the pathfinding points. We address them starting
 	// at 1, and add 5019 to the address, and we multiply by 0xA to get the data
@@ -763,7 +763,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	View1 *currentView = (View1 *)findView("View1");
 
 	// Refresh the surface
-	currentView->_backgroundSurface = _bgImageShip;
+	currentView->_backgroundSurface.copyFrom(_bgImageShip);
 	currentView->_paletteDirty = true;
 	currentView->clearStringBox(false);
 	currentView->_drawnStringBox.clear();
@@ -861,7 +861,7 @@ uint8 Macs2Engine::GetPathfindingOverride2(uint16 index) {
 }
 
 void Macs2Engine::RemovePathfindingOverride(uint16 index){
-	for (int i = 0; i < PathfindingOverrides.size(); i++) {
+	for (uint i = 0; i < PathfindingOverrides.size(); i++) {
 		PathfindingAreaOverride &current = PathfindingOverrides[i];
 		if (current.Index == index) {
 			PathfindingOverrides.remove_at(i);
@@ -1116,7 +1116,7 @@ void FuncA3D2(Common::MemoryReadStream* stream) {
 
 void Macs2Engine::PlaySound() {
 	OPL::OPL *_opl = OPL::Config::create();
-	int status = _opl->init();
+	_opl->init();
 	
 	#define CALLBACKS_PER_SECOND 10
 	_opl->start(new Common::Functor0Mem<void, Macs2Engine>(this, &Macs2Engine::OnTimer), CALLBACKS_PER_SECOND);
@@ -1350,11 +1350,11 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 		targetBlob = &go->overloadAnimation;
 		go->overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
 		go->overloadAnimationMirrored = false;
-	} else if (slotIndex - 1 < go->Blobs.size()) {
+	} else if ((uint)(slotIndex - 1) < go->Blobs.size()) {
 		targetBlob = &go->Blobs[slotIndex - 1];
-		if (slotIndex - 1 < go->BlobSourceKeys.size())
+		if ((uint)(slotIndex - 1) < go->BlobSourceKeys.size())
 			go->BlobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
-		if (slotIndex - 1 < go->BlobMirrorFlags.size())
+		if ((uint)(slotIndex - 1) < go->BlobMirrorFlags.size())
 			go->BlobMirrorFlags[slotIndex - 1] = false;
 	}
 
@@ -1484,7 +1484,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// Iterate over objects
 	// Iterate over characters?
 	// TODO: Why save the indices? Would only make sense if we saved other data as well
-	uint32 numObjects = GameObjects::instance().Objects.size();
+	GameObjects::instance().Objects.size(); // numObjects
 	for (auto currentObject : GameObjects::instance().Objects) {
 		s.syncAsUint16LE(currentObject->Index);
 		s.syncAsSint16LE(currentObject->Position.x);
@@ -1503,7 +1503,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(bytesSynced);
 	assert(bytesSynced + 4 == s.bytesSynced());
 	s.syncAsUint32LE(numCharacters);
-	for (int i = 0; i < numCharacters; i++) {
+	for (uint32 i = 0; i < numCharacters; i++) {
 		uint32 characterIndex;
 		if (s.isSaving()) {
 			characterIndex = currentView->characters[i]->GameObject->Index;
@@ -1621,7 +1621,7 @@ Sprite AnimFrame::AsSprite() {
 AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	AnimationReader animReader(Blob);
 	uint16 numAnimations = animReader.readNumAnimations();
-	debug("Number of animation frames for background object: %.4", numAnimations);
+	debug("Number of animation frames for background object: %.4x", numAnimations);
 
 	// TODO: Check consistency between 0 and 1 based indexing
 	animReader.SeekToAnimation((index - 1) % numAnimations);
@@ -1747,8 +1747,8 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	// l00B7_156D:
 	for (; cx > 1; cx--) {
 		// TODO: Check if the logic for the loop works out like this
-		uint16 bp1A = stream.readUint16LE();
-		uint16 bp1C = stream.readUint16LE();
+		stream.readUint16LE(); // bp1A
+		stream.readUint16LE(); // bp1C
 		stream.seek(0x2, SEEK_CUR);
 		uint16 bp16 = stream.readUint16LE();
 		uint16 bp18 = stream.readUint16LE();
