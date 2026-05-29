@@ -600,7 +600,16 @@ Macs2Engine::~Macs2Engine() {
 }
 
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
-	// TODO: Release old resources
+	// Release old scene resources
+	if (_backgroundAnimations != nullptr) {
+		for (int i = 0; i < _numBackgroundAnimations; i++) {
+			delete[] _backgroundAnimations[i].Frames;
+		}
+		delete[] _backgroundAnimations;
+		_backgroundAnimations = nullptr;
+	}
+	_backgroundAnimationsBlobs.clear();
+	_numBackgroundAnimations = 0;
 
 	// Background image
 	// [0752h] is pointing to 3000h bytes data starting at Ch + 4h in the file
@@ -758,7 +767,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->clearOverlayTextEntries();
 	_scriptExecutor->inventoryActionFlag = false;
 	_scriptExecutor->inventoryCombineFlag = false;
-	_scriptExecutor->soundSystemActive = false;
 	_scriptExecutor->overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
@@ -782,18 +790,10 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	Scenes::instance().CurrentSceneSpecialAnimOffsets = Scenes::instance().ReadSpecialAnimsOffsets(newSceneIndex, _fileStream);
 	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
 
-	if (newSceneIndex == 0x6) {
-		// TODO: Test code for song playing
-		loadSongFromSceneData(7);
-	}
-
 	if (executeScript) {
 		// Start the execution
 		_scriptExecutor->Run(true);
 	}
-
-	// TODO: Other important areas
-	playTestSound();
 }
 
 bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
@@ -807,15 +807,19 @@ bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
 }
 
 uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y) {
-	// TODO: Handle only the basic case, and add an exception handling for the special case
-	// Look up the value from the map
-	// TODO: Implement the checks for bounds
-	uint16 value = _pathfindingMap.getPixel(x, y);
-	if (value < 0x0C8 || value > 0x0EF) {
-		return value;
+	if (x >= 320 || y >= 200) {
+		return 0;
 	}
-	error("Unhandled code in walkability check encountered");
-	return 0;
+	uint16 value = _pathfindingMap.getPixel(x, y);
+	if (value >= 0xC8 && value <= 0xEF) {
+		// Pathfinding override range: check override table
+		uint16 overrideResult;
+		if (GetPathfindingOverride(value, overrideResult)) {
+			return overrideResult;
+		}
+		return 0xFF; // Override disabled = non-walkable
+	}
+	return value;
 }
 bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16 &result) {
 	for (auto current : PathfindingOverrides) {
@@ -1078,50 +1082,6 @@ void FuncA3D2(Common::MemoryReadStream *stream) {
 	debug("-- Leaving A3D2");
 }
 
-void Macs2Engine::PlaySound() {
-	OPL::OPL *_opl = OPL::Config::create();
-	_opl->init();
-
-#define CALLBACKS_PER_SECOND 10
-	_opl->start(new Common::Functor0Mem<void, Macs2Engine>(this, &Macs2Engine::OnTimer), CALLBACKS_PER_SECOND);
-	// _opl->write(0x388, 0x00);
-	/*  _opl->writeReg(0x388, 0xA0);
-	_opl->writeReg(0x389, 0x36);
-	_opl->writeReg(0x388, 0x20);
-	_opl->writeReg(0x389, 0x20); */
-	// initialize();
-	/* _opl->writeReg(0x20, 0x01);
-	_opl->writeReg(0x40, 0x10);
-	_opl->writeReg(0x60, 0xF0);
-	_opl->writeReg(0x80, 0x77);
-	_opl->writeReg(0xA0, 0x98);
-	_opl->writeReg(0x23, 0x01);
-	_opl->writeReg(0x43, 0x00);
-	_opl->writeReg(0x63, 0xF0);
-	_opl->writeReg(0x83, 0x77); */
-	// _opl->writeReg(0xB0, 0x31);
-
-	/*
-		REGISTER     VALUE     DESCRIPTION
- |        20          01      Set the modulator's multiple to 1
- |        40          10      Set the modulator's level to about 40 dB
- |        60          F0      Modulator attack:  quick;   decay:   long
- |        80          77      Modulator sustain: medium;  release: medium
- |        A0          98      Set voice frequency's LSB (it'll be a D#)
- |        23          01      Set the carrier's multiple to 1
- |        43          00      Set the carrier to maximum volume (about 47 dB)
- |        63          F0      Carrier attack:  quick;   decay:   long
- |        83          77      Carrier sustain: medium;  release: medium
- |        B0          31      Turn the voice on; set the octave and freq MSB
- |
- |   To turn the voice off, set register B0h to 11h (or, in fact, any value
- |   which leaves bit 5 clear).  It's generally preferable, of course, to
- |   induce a delay before doing so.
- |*/
-}
-
-void Macs2Engine::OnTimer() {
-}
 
 void Macs2Engine::NextCursorMode() {
 	// TODO: Adjust for final min and max
@@ -1445,20 +1405,7 @@ bool Macs2Engine::isCurrentSoundPlaying() const {
 	return g_system->getMixer()->isSoundHandleActive(_currentSoundHandle);
 }
 
-void Macs2Engine::playTestSound() {
-	Audio::Mixer *mixer = g_system->getMixer();
-	Audio::Mixer::SoundType soundType = Audio::Mixer::SoundType::kPlainSoundType;
-	Audio::SoundHandle soundHandle;
-	MacsAudioStream *audioStream = new MacsAudioStream();
-	audioStream->pos = 0;
-	audioStream->_data.resize(0x1E42);
-	const int64 oldPos = _fileStream->pos();
-	_fileStream->seek(0x000B66DE + 4, SEEK_SET);
-	_fileStream->read(audioStream->_data.data(), audioStream->_data.size());
-	_fileStream->seek(oldPos, SEEK_SET);
-	// TODO: Convert 8 bit to 16 signed
-	mixer->playStream(soundType, &soundHandle, audioStream);
-}
+
 
 Common::String Macs2Engine::getGameId() const {
 	return _gameDescription->gameId;

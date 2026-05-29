@@ -48,23 +48,12 @@ static Common::String joinDebugStrings(const Common::StringArray &strings) {
 
 
 ScriptExecutor::ScriptExecutor() {
-	// TODO: Hardcoded values for testing
 	constexpr int numVariables = 1000;
 	_variables.resize(numVariables);
 	for (int i = 0; i < numVariables; i++) {
 		_variables[i].a = 0;
 		_variables[i].b = 0;
 	}
-	/* _variables[0xb].a = 0x3;
-	// TODO: This needs to be set for opening the box to work
-	_variables[0xe].a = 0x1;
-	_interactedObjectID = 0x080a; 
-	// Hardcoding for the box to start open for testing
-	*/
-	// Hardcoded values for failed throw at leopard below
-	// _interactedObjectID = 0x409;
-	// _variables[0xa].a = 0x1;
-	// _variables[0x26].a = 0x1;
 }
 
 Common::String ScriptExecutor::IdentifyScriptOpcode(uint8 opcode, uint8 opcode2) {
@@ -483,7 +472,7 @@ else if (value == 0x6) {
 	return;
 	} else if (value == 0xb) {
 
-		out1 = (uint16)IsRepeatRun;
+		out1 = (uint16)repeatRunFlag;
 		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -1052,8 +1041,11 @@ uint16 ScriptExecutor::scriptReadValue16() {
 }
 
 void ScriptExecutor::scriptSaveVariable(uint32 value) {
-	// TODO: Why is this byte never really used?
-	ReadByte(); // unused byte
+	uint8 subOpcode = ReadByte();
+	if (subOpcode == 0x00 || subOpcode == 0xFF) {
+		warning("scriptSaveVariable: invalid sub-opcode 0x%02x (error 0x16)", subOpcode);
+		return;
+	}
 
 	uint16 variableID = ReadWord();
 	SetVariableValue(variableID, value);
@@ -1429,30 +1421,12 @@ void ScriptExecutor::DumpWholeScript() {
 	}
 
 bool ScriptExecutor::IsRelevantObject(const GameObject *obj) {
-	// It can be the protagonist
-	if (obj->Index == 1) {
-		return true;
-	}
-	// It can be in the scene
-	if (obj->SceneIndex == Scenes::instance().CurrentSceneIndex) {
-		return true;
-	}
-
-	// It can be in the inventory
-	// TODO: Don't hardcode the index of the protagonist
-	if (obj->SceneIndex == 1) {
-		return true;
-	}
-
-	// It can be in the inventory
-	// TODO: To check if this only applies if the inventory is open
-	// TODO: Also keep storage container inventories in mind
-	// TODO: Any others?
-	// TODO: How exactly does the ordering work?
-	// TODO: Where do we decide when to use which scripts and when not?
-
-
-	return false;
+	// Original logic (runScriptExecutor at 1008:e3e7):
+	// An object is relevant if it has runtime data allocated (non-null pointer at object+0xa).
+	// In ScummVM, this corresponds to having a non-empty Script array (the script data
+	// lives in the runtime allocation at offset +0x187). The caller already checks Script.size(),
+	// so we just need to confirm the object is initialized (has data offset set).
+	return obj->DataOffset != 0;
 }
 
 void ScriptExecutor::Step() {
@@ -1541,7 +1515,7 @@ bool ScriptExecutor::LoadNextScript() {
 	if (IsSceneInitRun) {
 		// We need to start again at the scene object
 		IsSceneInitRun = false;
-		IsRepeatRun = true;
+		repeatRunFlag = true;
 		executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 		_stream = Scenes::instance().CurrentSceneScript;
 		if (!_stream || _stream->size() == 0) {
@@ -1553,9 +1527,9 @@ bool ScriptExecutor::LoadNextScript() {
 		return true;
 	}
 
-	if (IsRepeatRun) {
+	if (repeatRunFlag) {
 		// We are done
-		IsRepeatRun = false;
+		repeatRunFlag = false;
 		return false;
 	}
 
@@ -1704,7 +1678,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 ExecutionResult Script::ScriptExecutor::ExecuteScript() {
-	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance().CurrentSceneIndex, IsSceneInitRun, IsRepeatRun);
+	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance().CurrentSceneIndex, IsSceneInitRun, repeatRunFlag);
 	isRunningScript = true;
 	// TODO: Check if we can somehow interrupt something that we are waiting on,
 	// thereby ending the scripte early
@@ -2038,14 +2012,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Exception for 0x401 since we assume the protagonist is always in the scene
 			// TODO: Even more evidence that we need a refactor!
 			if (sceneID > 0x400) {
-				// This is the special case of adding a child to an object
-				// TODO: This is hardcoded to fit to the special case of the hat,
-				// with this addition, the function needs to be refactored to still
-				// remain readable
-				GameObject* parentObject = GameObjects::instance().Objects[sceneID - 0x400 - 1];
+				// Attaching object as child of another object (scene > 0x400 means parent objectID = scene - 0x400)
 				GameObject *childObject = GameObjects::instance().Objects[objectID - 1];
-				childObject->SceneIndex = parentObject->Index;
-				// TODO: Clean up
+				childObject->SceneIndex = sceneID;
 				EndBuffering(lastOpcodeTriggeredSkip);
 				continue;
 			}
@@ -2097,8 +2066,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				}
 			}
 			// TODO: Not sure if we should handle this earlier
-			if (sceneID == 0x401) {
-				// This is the character, so put it into his inventory
+			if (sceneID == Scenes::instance().CurrentActorIndex + 0x400) {
+				// This is the protagonist's inventory
 				currentView->inventoryItems.push_back(GameObjects::instance().Objects[objectID - 1]);
 			} else if (sceneID == 0) {
 				// Check if it is in the inventory
@@ -2116,6 +2085,12 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				}
 				assert(!currentView->HasDuplicateCharacters());
 			}
+
+			// If the moved object is the one whose script is currently executing,
+			// terminate its script (original: sets scriptEndPosition=0, scriptPosition=0)
+			if ((int)objectID == _executingScriptObjectID) {
+				_stream->seek(0, SEEK_END);
+			}
 		} else if (opcode1 == 0x0c) {
 			// Scene change from scriptChangeScene (1008:ad6e).
 			// Original behavior:
@@ -2131,7 +2106,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			//   8. Set cursor to Walk (0x16)
 			//   9. Set script position to end, executing object to 0x201
 			//  10. If script was NOT already executing: run repeat pass
-			//      (IsRepeatRun=1) -> runScriptExecutor -> (IsRepeatRun=0)
+			//      (repeatRunFlag=1) -> runScriptExecutor -> (repeatRunFlag=0)
 			//  11. If script WAS executing: error 0x17
 			uint32 newSceneID = scriptReadValue32();
 			const uint16 transitionMode = scriptReadValue16();
@@ -2354,21 +2329,36 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// Sets g_wScriptSkippable [102Ah] = 0
 			scriptSkippable = false;
 		} else if (opcode1 == 0x1e) {
-			// This is playing an animation
-			// fn0037_BD58 proc
-			// TODO: Skipped for now until the animation system is more in the focus
+			// scriptPlayAnimation (1008:bd58)
 			uint32 objectID = scriptReadValue32() - 0x400;
-			uint32 animationID = scriptReadValue16();
-			uint32 offset = scriptReadValue16();
+			uint32 slotID = scriptReadValue16();
+			uint32 frameOffset = scriptReadValue16();
+
+			if (objectID < 1 || objectID > 0x200) {
+				warning("Opcode 0x1E: invalid object %u", objectID);
+				continue;
+			}
 			GameObject *gameObject = GameObjects::GetObjectByIndex(objectID);
-			if (animationID == 0x15) {
+			if (gameObject == nullptr) {
+				warning("Opcode 0x1E: missing object %u", objectID);
+				continue;
+			}
+			if (slotID < 1 || slotID > 0x15) {
+				warning("Opcode 0x1E: invalid slot %u for object %u", slotID, objectID);
+				continue;
+			}
+
+			if (slotID == 0x15) {
 				gameObject->useOverloadAnimation = true;
 				BackgroundAnimationBlob::advanceAnimFrame(gameObject->overloadAnimation,
-												  true, offset + 0x64);
-				
+												  true, frameOffset + 0x64);
 			} else {
-				BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[animationID - 1],
-												  true, offset + 0x64);
+				if (slotID - 1 >= gameObject->Blobs.size() || gameObject->Blobs[slotID - 1].empty()) {
+					warning("Opcode 0x1E: no blob data for object %u slot %u", objectID, slotID);
+					continue;
+				}
+				BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[slotID - 1],
+												  true, frameOffset + 0x64);
 			}
 			
 		} else if (opcode1 == 0x1f) {
@@ -2500,12 +2490,15 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			_stream->seek(3, SEEK_CUR);
 		
 		} else if (opcode1 == 0x25) {
-			// TODO: No visual difference, so only implementing mocked reads here
-			// TODO: There is the weird "rewind" in the log here, to be investigated separately
-			uint16 throwaway1;
-			uint16 throwaway2;
-			scriptReadValuePair(throwaway1, throwaway2);
-			scriptReadValuePair(throwaway1, throwaway2);
+			// Subtracts two values read and saves them to a script variable
+			// ;; fn0037_C82E: 0037:C82E
+			uint32 a = scriptReadValue32();
+			uint32 b = scriptReadValue32();
+
+			uint32 result = a - b;
+			_stream->seek(-6, SEEK_CUR);
+			scriptSaveVariable(result);
+			_stream->seek(3, SEEK_CUR);
 		}
 		else if (opcode1 == 0x26) {
 			// This one loads a special animation set
@@ -3081,7 +3074,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// if we always reset this object
 			// TODO: Watch out for issues caused by this
 			_executingScriptObjectID = 0;
-			IsRepeatRun = false;
+			repeatRunFlag = false;
 			IsSceneInitRun = firstRun;
 		}
 		_state = ExecutorState::Executing;
@@ -3123,6 +3116,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			if (!_engine->isCurrentSoundPlaying()) {
 				waitForSoundPlayback = false;
 				Run();
+			} else {
+				debug("Waiting for sound playback to finish (handle active)");
 			}
 			return;
 		}
