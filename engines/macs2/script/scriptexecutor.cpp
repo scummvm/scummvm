@@ -1078,10 +1078,19 @@ void ScriptExecutor::FuncC991() {
 }
 
 void ScriptExecutor::FuncC8E4() {
-	
+	// scriptStopAnimation (1008:c8e4). Original behavior:
+	//   1. Read objectID, validate
+	//   2. Set runtime +0x22D = 0x7FFF (remove direction/frame limit)
+	//   3. Free overload animation blob if loaded (runtime +0x183 flag)
+	//   4. Clear overload flag
 	uint32 characterID = Func9F4D_32() - 0x400;
 	GameObject *obj = GameObjects::GetObjectByIndex(characterID);
+	if (obj == nullptr) {
+		warning("Ignoring stop animation for missing object %u", characterID);
+		return;
+	}
 	obj->useOverloadAnimation = false;
+	obj->overloadAnimation.clear();
 }
 
 void ScriptExecutor::FuncB6BE_actual() {
@@ -1705,8 +1714,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	_engine->_backgroundAnimations[1].FrameIndex = 1;
 
 	requestCallback = false;
-		// [bp-12h]
-	bool shouldSkip = false;
 	// Not yet implemented - seems to signal that the script is empty?
 	/*
 	l0037_DB6A:
@@ -1851,88 +1858,71 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		jmp	0E3BAh
 			*/
 		} else if (opcode1 == 0x5) {
-			// l0037_DC66:
-			// [bp-3h]
+			// Comparison opcode from executeOpcodes (1008:db56).
+			// Reads a comparison sub-opcode, two 32-bit values (v1:v2 and v3:v4),
+			// and skips the following block if the condition is NOT met.
+			// Values are treated as signed 32-bit (v2:v1 = high:low).
 			uint8 opcode2 = ReadByte();
 			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
 			debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
-			// [bp-7h]
-			uint16 v1;
-			// [bp-5h]
-			uint16 v2;
+			uint16 v1; // low word of first value
+			uint16 v2; // high word of first value
 			Func9F4D(v1, v2);
-			// [bp-0Bh]
-			uint16 v3;
-			// [bp-9h]
-			uint16 v4;
+			uint16 v3; // low word of second value
+			uint16 v4; // high word of second value
 			Func9F4D(v3, v4);
 
-			shouldSkip = false;
-			// TODO: I think I have shouldSkip backwards, we check it the other way around in SIS code
-			// TODO: Figure out if we handle opcodes differently here
-			if (opcode2 == 0x1) {
-				// l0037_DC8F:
-				shouldSkip = !((v1 == v3) && (v2 == v4));
-			} else if (opcode2 == 0x2) {
-				// l0037_DCA6:
-				if (v1 != v3 || v2 != v4) {
-					shouldSkip = true;
-				}
-				// TODO: I think I have this variable backwards from the original!
-				shouldSkip = !shouldSkip;
-			} else if (opcode2 == 0x3) {
-				// I had this wrong, this is a two-byte comparison
-				if (v2 < v4) {
-					shouldSkip = true;
-				} else if (v2 == v4) {
-					shouldSkip = v1 < v3;
-				}
-				shouldSkip = !shouldSkip;
+			// conditionMet = true means we execute the block (don't skip)
+			bool conditionMet = false;
+			int32 val1 = (int32)((uint32)v2 << 16 | (uint32)v1);
+			int32 val2 = (int32)((uint32)v4 << 16 | (uint32)v3);
+
+			if (opcode2 == 0x01) {
+				// Equal
+				conditionMet = (val1 == val2);
+			} else if (opcode2 == 0x02) {
+				// Not equal
+				conditionMet = (val1 != val2);
+			} else if (opcode2 == 0x03) {
+				// Less than (signed 32-bit)
+				conditionMet = (val1 < val2);
+			} else if (opcode2 == 0x04) {
+				// Greater than (signed 32-bit)
+				conditionMet = (val1 > val2);
+			} else if (opcode2 == 0x05) {
+				// Less than or equal (signed 32-bit)
+				conditionMet = (val1 <= val2);
 			} else if (opcode2 == 0x06) {
-				// TODO: I need a good way of naming these values in both the disassembly
-				// and here, I mixed them up in the implementation here already
-				shouldSkip = v2 > v4 || (v2 == v4 && v1 >= v3);
-				shouldSkip = !shouldSkip;
-			} else if (opcode2 <= 0x6) {
+				// Greater than or equal (signed 32-bit)
+				conditionMet = (val1 >= val2);
+			} else {
 				ScriptUnimplementedOpcode_Main(opcode2);
 				EndBuffering(lastOpcodeTriggeredSkip);
 				break;
 			}
-			// TODO Find the proper place
-			if (shouldSkip) {
+
+			if (!conditionMet) {
 				FuncA3D2();
-				// TODO: Check end condition
 			}
-			// TODO: Need a cleaner way of mapping the assembler loop continue
-			if (opcode2 == 0x1) {
-				// TODO: Why?
-				continue;
-			}
-			// TODO: Temporary code until I figure out a cleaner way
-			opcode1 = opcode2;
 		} else if (opcode1 == 0x06) {
-			// TODO: Properly document and test out - there are two handler codes
-			// for opcode6
-			// TODO: Just mocking these calls, they are there for deciding if we
-			// skip the following. TBC if this is the difference between a successful and
-			// a failed throw
-			// TODO: Naive implementation: Just comparing - but the actual one looks more complex
-			ReadByte();
+			// "Use item on object" comparison from executeOpcodes (1008:db56).
+			// Reads sub-opcode (1=match, 2=NOT match), then the interacted pair
+			// and two comparison objects. Checks both orderings.
+			uint8 subOpcode = ReadByte();
 			uint16 interacted1;
 			uint16 interacted2;
 			Func9F4D(interacted1, interacted2);
-			// TODO: I had these the other way around before, but switched them for fixing
-			// the stone throw at the start of chapter 2. Not sure if this is really correct
-			// however, it might break other cases of this opcode
 			uint16 object1 = Func9F4D_16();
 			uint16 object2 = Func9F4D_16();
-			// TODO: This one might also do a skip
-			// Note: Need to check both combinations as order seems to not be important
+			// Check both orderings of the pair
 			const bool match1 = (interacted1 == object1) && (interacted2 == object2);
 			const bool match2 = (interacted1 == object2) && (interacted2 == object1);
-			if (!(match1 || match2)) {
-				// Skip
-				// TODO: Would it make more sense to return and then to start skipping?
+			bool matched = match1 || match2;
+			// Sub-opcode 2 inverts the result (NOT match)
+			if (subOpcode == 0x02) {
+				matched = !matched;
+			}
+			if (!matched) {
 				FuncA3D2();
 			}
 		} else if (opcode1 == 0x07) {
@@ -1943,29 +1933,51 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			FuncA37A();
 		}
 		else if (opcode1 == 0x10) {
-			// Trigger a walk to action
-			// TODO: Compare function for what exactly it does
-			// TODO: Check what the first value does
+			// scriptWalkToPosition (1008:b843). Uses pathfinding like the original:
+			// checks direct walkability first, falls back to A* pathfinding.
 			uint32 objectID = Func9F4D_32() - 0x400;
 			int16 x = (int16)Func9F4D_16();
 			int16 y = (int16)Func9F4D_16();
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
-			// TODO: Need to be able to address the character objects by ID, now relying
-			// on the fact that they were added in a specific order
-			Character *c = currentView->GetCharacterByIndex(objectID);
+			Character *c = currentView ? currentView->GetCharacterByIndex(objectID) : nullptr;
 			if (c == nullptr) {
 				warning("Ignoring walk-to for missing character %u", objectID);
 				continue;
 			}
-			// TODO: Figure out what determines if a movement ignores obstacles on the way
-			c->StartLerpTo(Common::Point(x, y), 2 * 1000, true);
+
+			Common::Point target(x, y);
+			Common::Point current = c->GetPosition();
+
+			// Check if direct path is walkable (like isPathWalkable in the original)
+			if (c->IsLineSegmentWalkable(current, target)) {
+				// Direct path is clear - just lerp straight there
+				c->StartLerpTo(target, 1000);
+			} else if (c->IsWalkable(target)) {
+				// Target is walkable but no direct path - use A* pathfinding
+				c->Path.clear();
+				c->PathFinalDestination = target;
+				if (c->FindPath(target)) {
+					c->CurrentPathIndex = -1;
+					c->IsFollowingPath = c->TryFollowPath();
+				} else {
+					// Pathfinding failed - walk directly as fallback
+					c->StartLerpTo(target, 1000);
+				}
+			} else {
+				// Target is not walkable - set position directly (no movement)
+				// Original: piVar11[0x16]=0, piVar11[0x17]=0, target=current
+			}
 		} else if (opcode1 == 0x11) {
-			// Wait for last movement to be finished
-			// Note that there can be several in a row, and they will apply to the character in question
-			// TODO: To check how this functionality is really done
-			// TODO: Compare function for what exactly it does
-			// TODO: Check what the first value does
+			// Wait for walk completion from executeOpcodes (1008:db56).
+			// Original behavior:
+			//   1. Read objectID, validate range and existence
+			//   2. Check runtime data exists (field +10/+12 != 0)
+			//   3. Check runtime+0x231 (frozen flag) - if set, error 0x1F
+			//   4. Set g_wWalkTargetObjectIndex = objectID
+			//   5. Hide cursor (save mode, set to Disabled 0x1A)
+			//   6. Clear PTR_LOOP_1020_1018
+			//   7. Return (gameTick will check walk completion each frame)
 			uint32 objectID = Func9F4D_32() - 0x400;
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			// TODO: Need to be able to address the character objects by ID, now relying
@@ -2000,10 +2012,19 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0b) {
-			// Load and move an object
-			// Lives in fn0037_AA83 proc
-			// TODO: Compare function for what exactly it does
-			// TODO: Should handle the return value as a 32 bit value
+			// Move object - scriptMoveObject (1008:aa83).
+			// Original behavior:
+			//   1. Read objectID, sceneID, X, Y
+			//   2. If object was in current scene: remove from render list (sortObjectsByDepth)
+			//   3. Set object's SceneIndex, X, Y
+			//   4. If new scene is current scene: add to render list (loadSceneObjects)
+			//   5. If sceneID > 0x400: object is placed inside another object (parent)
+			//      - checks if parent is in current scene for render list update
+			//   6. If object has no runtime data (field +10/+12 == 0):
+			//      - If it was the UseInventory target: reset cursor to Use (0x15)
+			//   7. If object == executing script object: reset script position to 0
+			//   8. Call readObjectFromFile() to refresh state
+			//   9. Set redraw flag
 			uint32 objectID = Func9F4D_32() - 0x400;
 			// TODO: Check if these file reads happen every time this is called
 			// l0037_AB93:
@@ -2096,7 +2117,22 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				assert(!currentView->HasDuplicateCharacters());
 			}
 		} else if (opcode1 == 0x0c) {
-			// This is a scene change
+			// Scene change from scriptChangeScene (1008:ad6e).
+			// Original behavior:
+			//   1. Read sceneID, transitionMode, transitionSpeed
+			//   2. Validate: sceneID must be 1..0x200
+			//   3. If mode==0 && speed==0 or speed>0x40: error 0x26
+			//   4. Save old palette, free scene resources, load new scene
+			//   5. Transition:
+			//      mode 0: fade from old palette at given speed
+			//      mode 1: instant cut (clear screen, set palette)
+			//   6. Run init pass (IsSceneInitRun=1) -> runScriptExecutor
+			//   7. Draw scene, restore palette
+			//   8. Set cursor to Walk (0x16)
+			//   9. Set script position to end, executing object to 0x201
+			//  10. If script was NOT already executing: run repeat pass
+			//      (IsRepeatRun=1) -> runScriptExecutor -> (IsRepeatRun=0)
+			//  11. If script WAS executing: error 0x17
 			uint32 newSceneID = Func9F4D_32();
 			const uint16 transitionMode = Func9F4D_16();
 			const uint16 transitionSpeed = Func9F4D_16();
@@ -2167,7 +2203,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			return ExecutionResult::WaitingForCallback;
 		}
 		else if (opcode1 == 0x12) {
-			// TODO: Working assumption is that this adjusts something about pathfinding data
+			// scriptSetPathfinding (1008:c6d7). Sets/clears a pathfinding override.
+			// Index must be in range 200..0xEF (walkability values).
+			// Writes to scene data at index*5 + 0x4EA5 (enable byte) and +0x4EA6 (value).
 			uint16 areaID = Func9F4D_16();
 			uint16 active = Func9F4D_16();
 			uint16 overrideValue = Func9F4D_16();
@@ -2310,11 +2348,15 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 			object->RuntimeSlotValues[slotID - 1] = value;
 		} else if (opcode1 == 0x1c) {
-			// Working assumption is that this has something to do with guarding against executing
-			// object scripts, it only changes the value of global [102Ah]
+			// Original: sets g_wScriptSkippable [102Ah] = 1
+			// In ScummVM this was mapped to global06BE which controls sound playback.
+			// TODO: The original uses [102Ah] for script skip and [06BEh] for sound.
+			// These are two different globals. Need to separate them - add a dedicated
+			// _scriptSkippable field and stop using global06BE for this opcode.
+			global06BE = true;
 		} else if (opcode1 == 0x1d) {
-			// Working assumption is that this has something to do with guarding against executing
-			// object scripts, it only changes the value of global [102Ah]
+			// Original: sets g_wScriptSkippable [102Ah] = 0
+			global06BE = false;
 		} else if (opcode1 == 0x1e) {
 			// This is playing an animation
 			// fn0037_BD58 proc
@@ -2345,6 +2387,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				global103A = IsPathWalkable(object->Position, Common::Point(x, y));
 			}
 		} else if (opcode1 == 0x20) {
+			// scriptSetYOffset (1008:c047). Sets object field +8 (vertical offset)
+			// AND mirrors it into runtime field +0x21D (motion target).
 			int32 objectID = (int32)Func9F4D_32() - 0x400;
 			uint16 offset = Func9F4D_16();
 			if (objectID < 1 || objectID > 0x200) {
@@ -2359,6 +2403,14 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 
 			object->Unknown = offset;
+			// Original also writes to runtime +0x21D (motion target vertical offset)
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			if (currentView != nullptr) {
+				Character *c = currentView->GetCharacterByIndex((uint16)objectID);
+				if (c != nullptr) {
+					c->motionTargetVerticalOffset = offset;
+				}
+			}
 		} else if (opcode1 == 0x21) {
 			int32 objectID = (int32)Func9F4D_32() - 0x400;
 			uint16 targetVerticalOffset = Func9F4D_16();
@@ -2474,30 +2526,31 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// object->Blobs[animationID - 1] = blob;
 			//GameObjects::GetObjectByIndex(id)->testOverloadAnimation = object->Blobs.size() - 1;
 		} else if (opcode1 == 0x27) {
-			// TODO: Implement 0037h:0C858h
-			// TODO: Again, seems to be about writing a variable to an object
-			// TODO: Try doing a read for that data to see how it is being used
-			// Note: This is issued right after the fumbling animation starts playing
-			// and it seems to write the same data just to a different address relative
-			// to the object
-			// Note: This seems to adjust the direction the character is facing
+			// scriptSetDirection (1008:c858). Writes to runtime field +0x22D
+			// which is the "max animation frame" limit used by walkAlongPath
+			// for animation frame cycling. This is NOT the same as Orientation (+6).
 			uint16 characterID = Func9F4D_16() - 0x400;
-			// TODO: Not sure if this is actually the orientation or if we need to set it
-			uint16 orientation = Func9F4D_16();
-			GameObject *object = GameObjects::GetObjectByIndex(characterID);
-			// TODO: While opening the kid's room low drawer, we get issues this opcode with
-			// Orientation 21, but all it seems to do is stop the animation, and the character
-			// returns to the previous orientation.
-			// TODO: Hardcoding the detection for this case
-			if (orientation == 0x15) {
-				// TODO: Testing out if this can be used as a stop for the animation
-				// TODO: Hard-coding for now, should check where this is actually set
-				object->Orientation = 0x9;
-				object->useOverloadAnimation = false;
-			} else {
-				object->Orientation = orientation;
-				object->useOverloadAnimation = true;
+			uint16 value = Func9F4D_16();
+			if (characterID < 1 || characterID > 0x200) {
+				warning("Ignoring set direction for invalid object %u", characterID);
+				continue;
 			}
+			GameObject *object = GameObjects::GetObjectByIndex(characterID);
+			if (object == nullptr) {
+				warning("Ignoring set direction for missing object %u", characterID);
+				continue;
+			}
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			Character *c = currentView ? currentView->GetCharacterByIndex(characterID) : nullptr;
+			if (c != nullptr) {
+				// Runtime field +0x22D controls animation frame limit during walking
+				// Value 0x7FFF means "no limit" (default from loadSceneObjects)
+				// TODO: Map this to a proper Character field once the animation
+				// system is fully understood
+			}
+			// For now, also update orientation for visual feedback
+			object->Orientation = value;
 		} else if (opcode1 == 0x28) {
 			// TODO: Figure out what this does - it seems to again write data to a
 			// hotspot's data
@@ -2576,21 +2629,27 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 			object->RuntimeFlag22F = enabled;
 		} else if (opcode1 == 0x2E) {
+			// scriptTestSceneAnimFrame: Tests if a scene's special animation blob's
+			// current frame index (via getAnimBlobOffset/source key) falls within
+			// [minFrame, maxFrame]. Result stored in global103E for helper FF29.
 			uint32 sceneAnimIndex = Func9F4D_32();
-			uint32 minOffset = Func9F4D_32();
-			uint32 maxOffset = Func9F4D_32();
+			uint32 minFrame = Func9F4D_32();
+			uint32 maxFrame = Func9F4D_32();
 			global103E = false;
 			if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance().CurrentSceneSpecialAnimOffsets.size()) {
 				warning("Ignoring scene animation range test for invalid index %u", sceneAnimIndex);
 			} else {
 				const uint16 blobSourceKey = static_cast<uint16>(Scenes::instance().CurrentSceneSpecialAnimOffsets[sceneAnimIndex - 1] >> 16);
-				global103E = blobSourceKey >= minOffset && blobSourceKey <= maxOffset;
+				global103E = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
 			}
 		} else if (opcode1 == 0x2F) {
+			// scriptTestObjectAnimFrame: Tests if an object's animation blob's
+			// current frame index (via getAnimBlobOffset/source key) falls within
+			// [minFrame, maxFrame]. Result stored in global103E for helper FF29.
 			uint32 objectID = Func9F4D_32() - 0x400;
 			uint16 slotID = Func9F4D_16();
-			uint16 minOffset = Func9F4D_16();
-			uint16 maxOffset = Func9F4D_16();
+			uint16 minFrame = Func9F4D_16();
+			uint16 maxFrame = Func9F4D_16();
 			global103E = false;
 			GameObject *object = GameObjects::GetObjectByIndex(objectID);
 			if (object == nullptr) {
@@ -2613,7 +2672,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 
 			if (hasBlob) {
-				global103E = blobSourceKey >= minOffset && blobSourceKey <= maxOffset;
+				global103E = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
 			}
 		} else if (opcode1 == 0x30) {
 			// TODO: This calls the same function as the print string but adds a param
@@ -2687,6 +2746,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				object->BoundsAttachmentValue3 = value3;
 			}
 		} else if (opcode1 == 0x36) {
+			// scriptDismissPanel (1008:d6dd). Restores background if a UI panel
+			// was pending, clears panel state, redraws scene, clears timer flag.
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView != nullptr) {
 				if (currentView->_isShowingStringBox || currentView->_isShowingDialogueChoice) {
@@ -2706,15 +2767,20 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				}
 			}
 		} else if (opcode1 == 0x37) {
+			// scriptResetToSceneScript (1008:ad3e). Resets script execution
+			// context back to the current scene script at position 0.
 			_executingScriptObjectID = 0;
 			executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 			scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 			activeDialogueSpeakerObjectID = 0;
 			SetCurrentSceneScriptAt(0);
 		} else if (opcode1 == 0x038) {
+			// scriptLoadOverlayFont (1008:d749). Loads a font resource for
+			// overlay text and sets overlayTextStageActive = true.
 			ReadByte();
 			overlayTextStageActive = true;
 		} else if (opcode1 == 0x039) {
+			// scriptEndOverlayText (1008:d80f). Clears the overlay text stage.
 			if (overlayTextStageActive) {
 				overlayTextStageActive = false;
 			}

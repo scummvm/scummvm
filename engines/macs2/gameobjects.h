@@ -80,6 +80,21 @@ public:
 	// These are the values read by the code around l0037_082D:
 	Common::Point Position;
 	uint16 SceneIndex;
+	// 8-directional movement system from walkAlongPath (1008:1b8f).
+	// Direction codes 1-8 are walking directions, 9-16 are standing (idle) variants.
+	// The direction is chosen based on the angle between current and target position:
+	//   1 = North (up)         - deltaY dominates, target above
+	//   2 = NorthEast          - diagonal (deltaX/4 < deltaY < deltaX*2)
+	//   3 = East (right)       - deltaX dominates, target to the right
+	//   4 = SouthEast          - diagonal
+	//   5 = South (down)       - deltaY dominates, target below
+	//   6 = SouthWest          - diagonal
+	//   7 = West (left)        - deltaX dominates, target to the left
+	//   8 = NorthWest          - diagonal
+	//   9-16 = Standing idle variants (walking direction + 8)
+	//   17 (0x11) = Pickup animation
+	// Each direction has a validity flag at runtime offset +0x43 + (dir-1)*0x20
+	// that indicates whether the object has animation data for that direction.
 	uint16 Orientation;
 	uint16 Unknown;
 	uint16 RuntimeValue217 = 0;
@@ -88,11 +103,15 @@ public:
 	bool RuntimeFlag22F = false;
 	bool IsClickable = true;
 	bool IsVisible = true;
+	// Runtime field +0x231: "frozen/attached" flag. Set by scriptSetObjectBounds (opcode 0x35).
+	// When set, the object cannot be walked (opcode 0x11 returns error 0x1F)
+	// and walkAlongPath skips movement for this object.
+	// Cleared when objectA == objectB in scriptSetObjectBounds.
 	bool HasBoundsAttachment = false;
-	uint16 BoundsAttachmentObjectID = 0;
-	uint16 BoundsAttachmentValue1 = 0;
-	uint16 BoundsAttachmentValue2 = 0;
-	uint16 BoundsAttachmentValue3 = 0;
+	uint16 BoundsAttachmentObjectID = 0;  // +0x232
+	uint16 BoundsAttachmentValue1 = 0;    // +0x234
+	uint16 BoundsAttachmentValue2 = 0;    // +0x236
+	uint16 BoundsAttachmentValue3 = 0;    // +0x238
 
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.

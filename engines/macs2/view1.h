@@ -80,11 +80,10 @@ private:
 
 	// fn0037_0E8C proc
 	uint8 LookupWalkability(const Common::Point &p) const;
-	bool IsWalkable(const Common::Point &p) const;
-
-	bool IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
 
 public:
+	bool IsWalkable(const Common::Point &p) const;
+	bool IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
 	Common::Array<uint8> PathfindingOverlay;
 	Character();
 
@@ -182,7 +181,17 @@ public:
 	int _offset = 0;
 	bool _paletteDirty = true;
 
-	uint32 _frameDelayFlag = 100;
+	// Background animation timing from gameTick (1008:e556).
+	// The original game increments a tick counter each frame (~70Hz DOS timer)
+	// and advances background animations when the counter exceeds a threshold:
+	//   Mode 2 (word5203==2): threshold = 0x27 (39 ticks, ~557ms at 70Hz)
+	//   Mode 3 (word5203==3): threshold from scene data (variable, typically smaller)
+	// We convert to milliseconds for ScummVM's variable frame rate.
+	static constexpr uint32 kBgAnimTicksMode2 = 39;  // 0x27 ticks
+	static constexpr uint32 kDosTimerHz = 70;
+	static constexpr uint32 kBgAnimDelayMode2Ms = (kBgAnimTicksMode2 * 1000) / kDosTimerHz; // ~557ms
+
+	uint32 _frameDelayFlag = kBgAnimDelayMode2Ms;
 	int32 _nextFrameFlag = _frameDelayFlag;
 	uint32 _lastMillis = 0;
 	bool _hasTicked = false;
@@ -198,6 +207,35 @@ public:
 	uint16 _dialogueChoiceCount = 0;
 
 	bool _isShowingInventory = false;
+
+	// Map/Save/Load panel from handleMapPanelClick (1008:86a4).
+	// This is a combined panel opened by right-click during script execution
+	// or by action bar button 8. It has two areas:
+	//
+	// 1. Text slot list (10 slots, 12px tall each, max 21 chars):
+	//    - Sub-mode 1 (save): clicking a slot opens text input for save name
+	//    - Sub-mode 2 (map/travel): clicking a slot triggers travel
+	//    Slot names stored at scene data offset 0x1f52 + slot*0x15 (Pascal strings)
+	//
+	// 2. Bottom button bar (7 buttons):
+	//    Button 1 = Enter save mode (sub-mode=1)
+	//    Button 2 = Enter map/travel mode (sub-mode=2)
+	//    Button 3 = Toggle music on/off
+	//    Button 4 = Page scroll (cycles 0->1->2->0)
+	//    Button 5 = Confirm save (double-click pattern)
+	//    Button 6 = Confirm load (double-click pattern)
+	//    Button 7 = Play music / close panel
+	//
+	// The panel also supports the "map mode" (scene+0x61db != 0) where
+	// clicking on the depth map previews/selects scenes.
+	enum class MapPanelSubMode {
+		None = 0,
+		SaveSlots = 1,
+		MapTravel = 2
+	};
+	bool _isMapPanelActive = false;
+	MapPanelSubMode _mapPanelSubMode = MapPanelSubMode::None;
+	uint16 _mapPanelPageIndex = 0;
 
 	SpeechActData currentSpeechActData;
 
@@ -280,6 +318,36 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+
+	// Input state machine from handleInput (1008:e8bf).
+	// The original game's input handler has two major branches:
+	//
+	// 1. NORMAL MODE (scene data offset 0x61db == 0):
+	//    Two sub-modes based on whether a script is executing (0f88):
+	//    a) Script NOT executing: Full interaction
+	//       - Left click + Walk mode (0x16): pathfind to click position
+	//       - Left click + other modes: hit-test hotspots/characters, run script
+	//       - Right click: open action bar popup (g_wUiPanelState=1)
+	//       - Button flag 8 (skip): fast-forward script to opcode 0x1D
+	//    b) Script IS executing: Limited interaction
+	//       - Left click: dismiss text boxes, dialogue choices, timer clicks
+	//       - Right click: open map/save panel (state=4) if no UI is blocking
+	//
+	// 2. MAP MODE (scene data offset 0x61db != 0):
+	//    - Left click: getDepthAtPoint() at click position
+	//      depth 1..0xF9: preview that scene image
+	//      depth 0xFF: full scene change back to main scene
+	//
+	// UI Panel States (g_wUiPanelState):
+	//   0 = Normal gameplay
+	//   1 = Action bar (right-click popup)
+	//   2 = Inventory panel
+	//   3 = Dialogue/save panel
+	//   4 = Map panel
+	//
+	// Panel dismissal uses keyboard scancode in PTR_LOOP_1020_0fe8:
+	//   6 = close inventory/dialogue panels
+	//   7 = close map panel
 	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	void draw() override;
@@ -370,16 +438,20 @@ public:
 		Close = 5
 	};
 
+	// Action bar button layout from handleActionBarClick (1008:42dc).
+	// The action bar is a 3x3 grid of buttons, centered on the right-click
+	// position. Each button is sized to fit the largest cursor icon + 6px padding.
+	// The panel is clamped to screen bounds (320x200).
 	enum class MainMenuButtonIndex {
-		Talk = 0,
-		Look = 1,
-		Use = 2,
-		Walk = 3,
-		Inventory = 4,
-		InventoryUse = 5,
-		Help = 6,
-		Settings = 7,
-		Close = 8
+		Talk = 0,       // Sets cursor mode to 0x13 (Talk)
+		Look = 1,       // Sets cursor mode to 0x14 (Look)
+		Use = 2,        // Sets cursor mode to 0x15 (Use)
+		Walk = 3,       // Sets cursor mode to 0x16 (Walk)
+		Inventory = 4,  // Opens inventory panel (g_wHasSavedUiBackground=1)
+		InventoryUse = 5, // Uses selected inventory item (cursor 0x17), only if item selected
+		Map = 6,        // Enters map mode (sets scene+0x61db=1), only if not disabled
+		SaveLoad = 7,   // Opens dialogue/save panel (g_wHasSavedUiBackground=3)
+		Close = 8       // Implicit close (clicking outside any button)
 	};
 
 	Common::Array<Common::Rect> mainMenuButtonLocations;
