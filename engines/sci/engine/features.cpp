@@ -41,6 +41,9 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 #ifdef ENABLE_SCI32
 	_sci21KernelType = SCI_VERSION_NONE;
 #endif
+	if (g_sci->getGameId() == GID_KQ7 && g_sci->getLanguage() == Common::HE_ISR) {
+		ConfMan.setBool("subtitles", true);
+	}
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 	if (!ConfMan.getBool("use_cdaudio"))
 		_usesCdTrack = false;
