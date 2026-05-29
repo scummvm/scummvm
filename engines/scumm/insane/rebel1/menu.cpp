@@ -922,20 +922,20 @@ void InsaneRebel1::playMenuBackground() {
 }
 
 bool InsaneRebel1::runTextEntryMenuLoop() {
-	while (!_vm->shouldQuit() && !_textEntryDone && !_textEntryCanceled)
+	while (!shouldAbortGameFlow() && !_textEntryDone && !_textEntryCanceled)
 		playMenuBackground();
 
-	return !_vm->shouldQuit() && !_textEntryCanceled;
+	return !shouldAbortGameFlow() && !_textEntryCanceled;
 }
 
 int InsaneRebel1::runMainMenu() {
 	debug(1, "InsaneRebel1: Main menu");
 
 	_menuSelection = 0;
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		playMenuBackground();
 
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return kRA1MainMenuItemCount;
 
 		if (_menuConfirmed)
@@ -1004,10 +1004,10 @@ void InsaneRebel1::runOptionsMenu() {
 	_optionsSel = 0;
 	_optionsActive = true;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		playMenuBackground();
 
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			break;
 
 		if (_menuConfirmed) {
@@ -1053,10 +1053,10 @@ int InsaneRebel1::runLevelSelectMenu() {
 	_levelSelectSel = CLIP(_startLevel - 1, 0, kRA1NumLevels - 1);
 	_levelSelectActive = true;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		playMenuBackground();
 
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			break;
 
 		if (_menuConfirmed) {

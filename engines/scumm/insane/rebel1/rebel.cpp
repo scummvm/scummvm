@@ -274,6 +274,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_activeInputSource = kInputSourceMouse;
 
 	_currentLevel = 0;
+	_resumeLevel = 1;
+	_activeSaveSlot = -1;
+	_loadRequested = false;
 	_flyControlMode = 0;
 	_turretEmitterLeftX = 0;
 	_turretEmitterLeftY = 0;

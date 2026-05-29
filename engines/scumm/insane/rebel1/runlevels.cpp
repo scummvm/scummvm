@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -147,6 +148,9 @@ static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillT
 // startFrame > 0: fast-forward (decode without display/audio) to that frame.
 void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	debug(1, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
+	if (shouldAbortGameFlow())
+		return;
+
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
 	restoreScreenFlashPalette();
@@ -184,7 +188,7 @@ void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlo
 bool InsaneRebel1::playDeathOrRetry(const char *retryVideo, const char *gameOverVideo) {
 	if (_lives > 0) {
 		playCinematic(retryVideo);
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 		_lives--;
 		return true;
@@ -263,13 +267,13 @@ void InsaneRebel1::playLevelTransitionCutscene(int level) {
 		// FALCON/BIGGS/WEDGE passcode group. This is separate from RunLevel4Flow
 		// (0x6ee4), which starts with LVL4/L4INTRO.ANM.
 		playCinematic("CUT1/C1BLOCK.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			break;
 		playCinematic("CUT1/C1DARTH1.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			break;
 		playCinematic("CUT1/C1C3PO.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			break;
 		playCinematic("CUT1/C1DARTH2.ANM");
 		break;
@@ -315,7 +319,7 @@ void InsaneRebel1::playIntroSequence() {
 
 	// LucasArts logo (original: PUSH 0x57cc, CALL FUN_1BA32 with flags 0x0420)
 	playCinematic("OPEN/O1LOGO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return;
 	clearVideoBuffer();
 
@@ -351,14 +355,14 @@ bool InsaneRebel1::runLevel1() {
 
 	beginLevelTitleOverlay(0);
 	playCinematic("LVL1/L1HANGAR.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
 	playCinematic("LVL1/L1CU1.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		bool stage2Started = false;
 
 		resetLevelDamageState();
@@ -371,24 +375,24 @@ bool InsaneRebel1::runLevel1() {
 		loadTuningForLevel(0);
 
 		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_rightPathSelected && _health >= 0) {
 			_pathBranchEnabled = false;
 			_flyControlMode = 1;
 			playInteractiveVideo("LVL1/L1PLAY1R.ANM", 0x187);
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 		}
 		_pathBranchEnabled = false;
 
 		if (_health >= 0) {
 			playCinematic("LVL1/L1CU2.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
-			while (!_vm->shouldQuit()) {
+			while (!shouldAbortGameFlow()) {
 				// RunLevel1Flow calls L1PLAY2 with gameplay selector 1. This is
 				// the "1B" tuning row: snap/kill values are enabled and the
 				// lock/fire text overlay is suppressed.
@@ -405,7 +409,7 @@ bool InsaneRebel1::runLevel1() {
 				stage2Started = true;
 
 				playInteractiveVideo("LVL1/L1PLAY2.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 
 				if (_health < 0)
@@ -420,11 +424,11 @@ bool InsaneRebel1::runLevel1() {
 					playChapterCompleteCinematic("LVL1/L1END.ANM", 1, 0x78, 5,
 						"Part I", pathText, pathBonus,
 						"Part II", accuracyText, targetBonus);
-					return !_vm->shouldQuit();
+					return !shouldAbortGameFlow();
 				}
 
 				playCinematic("LVL1/L1RETRY.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 			}
 		}
@@ -433,7 +437,7 @@ bool InsaneRebel1::runLevel1() {
 			playCinematic("LVL1/L1CRASHB.ANM");
 		else
 			playCinematic("LVL1/L1CRASHA.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (!playDeathOrRetry("LVL1/L1NEW.ANM", "LVL1/L1DEATH.ANM"))
@@ -453,10 +457,10 @@ bool InsaneRebel1::runLevel2() {
 
 	beginLevelTitleOverlay(1);
 	playCinematic("LVL2/L2INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		_flyControlMode = 0;
 		resetLevelDamageState();
 		resetLevelFrameState();
@@ -464,7 +468,7 @@ bool InsaneRebel1::runLevel2() {
 		_killCount = 0;
 
 		playInteractiveVideo("LVL2/L2PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -472,7 +476,7 @@ bool InsaneRebel1::runLevel2() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x18, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x17, 0x0C, _tuning.bonus);
 			playChapterCompleteCinematic("LVL2/L2END.ANM", 2, 0x69, 10, " ", accuracyText, bonus);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL2/L2NEW.ANM", "LVL2/L2DEATH.ANM"))
@@ -494,10 +498,10 @@ bool InsaneRebel1::runLevel3() {
 
 	beginLevelTitleOverlay(2);
 	playCinematic("LVL3/L3INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		_flyControlMode = 1;
 		resetLevelDamageState();
 		resetLevelFrameState();
@@ -507,13 +511,13 @@ bool InsaneRebel1::runLevel3() {
 		resetLevelInputHistory();
 
 		playInteractiveVideo("LVL3/L3PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
 			playChapterCompleteCinematic("LVL3/L3END.ANM", 3, 0x69, 5,
 				nullptr, nullptr, 0, nullptr, nullptr, 0, _difficulty + 1);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL3/L3NEW.ANM", "LVL3/L3DEATH.ANM"))
@@ -535,10 +539,10 @@ bool InsaneRebel1::runLevel4() {
 
 	beginLevelTitleOverlay(3);
 	playCinematic("LVL4/L4INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		loadTuningForLevel(4);
 		_flyControlMode = 1;
 		resetLevelDamageState();
@@ -559,7 +563,7 @@ bool InsaneRebel1::runLevel4() {
 		playInteractiveVideo("LVL4/L4PLAY1.ANM");
 		_protectedTargetA = 0;
 		_protectedTargetB = 0;
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -573,7 +577,7 @@ bool InsaneRebel1::runLevel4() {
 			_killCount = 0;
 			_levelGameplayPhase = 2;
 			playInteractiveVideo("LVL4/L4PLAY2.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 		}
 
@@ -583,7 +587,7 @@ bool InsaneRebel1::runLevel4() {
 			playChapterCompleteCinematic(torpedoHit ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM",
 				4, 0x69, 5, " ", torpedoHit ? "Torpedo Hit" : "Torpedo Missed",
 				torpedoHit ? _tuning.bonus : 0);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL4/L4NEW.ANM", "LVL4/L4DEATH.ANM"))
@@ -605,17 +609,17 @@ bool InsaneRebel1::runLevel5() {
 
 	beginLevelTitleOverlay(4);
 	playCinematic("LVL5/L5INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		loadRA1Nut("LVL5/L5LASER.NUT", _laserBank);
 		loadTuningForLevel(6);
 		resetLevelAttemptState(1, 1);
 		_level5SuccessFramesRemaining = 0x14;
 
 		playInteractiveVideo("LVL5/L5PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health < 0) {
@@ -629,7 +633,7 @@ bool InsaneRebel1::runLevel5() {
 			if (_lives > 0) {
 				_lives--;
 				playCinematic("LVL5/L5RETRY.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 				continue;
 			}
@@ -639,7 +643,7 @@ bool InsaneRebel1::runLevel5() {
 		}
 
 		playCinematic("LVL5/L5BINTRO.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		loadRA1Nut("LVL5/L5LASER2.NUT", _laserBank);
@@ -651,7 +655,7 @@ bool InsaneRebel1::runLevel5() {
 		_levelGameplayPhase = 2;
 		_level5SuccessFramesRemaining = 0;
 		playInteractiveVideo("LVL5/L5PLAY2.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -665,7 +669,7 @@ bool InsaneRebel1::runLevel5() {
 			if (_killCount >= 0x4C)
 				bonus += (_killCount - 0x4B) * _tuning.bonus;
 			playChapterCompleteCinematic("LVL5/L5END.ANM", 5, 0x69, 5, " ", accuracyText, bonus);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL5/L5NEW.ANM", "LVL5/L5DEATH.ANM"))
@@ -688,10 +692,10 @@ bool InsaneRebel1::runLevel6() {
 
 	beginLevelTitleOverlay(5);
 	playCinematic("LVL6/L6INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		_flyControlMode = 1;
 		resetLevelDamageState();
 		resetLevelFrameState();
@@ -701,7 +705,7 @@ bool InsaneRebel1::runLevel6() {
 		resetLevelInputHistory();
 
 		playInteractiveVideo("LVL6/L6PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -710,7 +714,7 @@ bool InsaneRebel1::runLevel6() {
 			const int bonus = calculateThresholdBonus(_killCount, 0x26, 0x0C, _tuning.bonus);
 			playChapterCompleteCinematic("LVL6/L6END.ANM", 6, 0x4B, 5,
 				" ", accuracyText, bonus, nullptr, nullptr, 0, _difficulty + 4);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL6/L6NEW.ANM", "LVL6/L6DEATH.ANM"))
@@ -742,10 +746,10 @@ bool InsaneRebel1::runLevel7() {
 
 	beginLevelTitleOverlay(6);
 	playCinematic("LVL7/L7INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		resetLevelAttemptState(3, 0);
 		_driftParam = 0x19;
 		resetEnemyShotSlots();
@@ -756,14 +760,14 @@ bool InsaneRebel1::runLevel7() {
 		int32 routeStartFrame = 0;
 		int32 routeSourceFrame = 0;
 		int32 routeVideoStartFrame = 0;
-		while (!_vm->shouldQuit()) {
+		while (!shouldAbortGameFlow()) {
 			_levelRouteIndex = route;
 			_pendingRouteIndex = -1;
 			_pendingRouteStartFrame = routeSourceFrame;
 			_pendingRouteCutoverFrame = -1;
 			_pendingRouteVideoStartFrame = routeVideoStartFrame;
 			playInteractiveVideo(kLevel7Segments[route], routeStartFrame);
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (_health < 0)
@@ -794,7 +798,7 @@ bool InsaneRebel1::runLevel7() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x33, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x32, 0x14, _tuning.bonus);
 			playChapterCompleteCinematic("LVL7/L7END.ANM", 7, 0x69, 5, " ", accuracyText, bonus);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL7/L7NEW.ANM", "LVL7/L7DEATH.ANM"))
@@ -824,10 +828,10 @@ bool InsaneRebel1::runLevel8() {
 
 	beginLevelTitleOverlay(7);
 	playCinematic("LVL8/L8INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		resetLevelAttemptState(3, 0, 17, true);
 
 		// Walker-specific state — RunLevel8Flow (0x18546)
@@ -837,13 +841,13 @@ bool InsaneRebel1::runLevel8() {
 
 		int route = 0;
 		int32 routeStartFrame = 0;
-		while (!_vm->shouldQuit()) {
+		while (!shouldAbortGameFlow()) {
 			_levelRouteIndex = route;
 			_pendingRouteIndex = -1;
 			_pendingRouteStartFrame = routeStartFrame;
 			_pendingRouteCutoverFrame = -1;
 			playInteractiveVideo(kLevel8Routes[route], routeStartFrame);
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (_health < 0)
@@ -870,7 +874,7 @@ bool InsaneRebel1::runLevel8() {
 
 		if (_health >= 0) {
 			playChapterCompleteCinematic("LVL8/L8END.ANM", 8, 0x5F, 5);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL8/L8NEW.ANM", "LVL8/L8DEATH.ANM"))
@@ -898,7 +902,7 @@ bool InsaneRebel1::runLevel9() {
 	const int randPath2 = getOriginalRouteBit();
 	const int randPath3 = getOriginalRouteBit();
 	auto playLevel9PathSelector = [&](const char *filename) {
-		while (!_vm->shouldQuit()) {
+		while (!shouldAbortGameFlow()) {
 			// DOS zeros g_shipOffsetX around the 0x1A-only selector clips.
 			// Keep the selector cursor centered instead of inheriting the last
 			// walking offset from the previous stormtrooper segment.
@@ -912,7 +916,7 @@ bool InsaneRebel1::runLevel9() {
 			_lastHitTarget = 0;
 
 			playInteractiveVideo(filename);
-			if (_vm->shouldQuit() || _health < 0)
+			if (shouldAbortGameFlow() || _health < 0)
 				return -1;
 			if (_killCount > 0)
 				return (_shipPosX < kRA1CenterX) ? 0 : 1;
@@ -929,10 +933,10 @@ bool InsaneRebel1::runLevel9() {
 
 	beginLevelTitleOverlay(8);
 	playCinematic("LVL9/L9INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		loadTuningForLevel(0x0B);
 		resetLevelAttemptState(0, 0, 15);  // On-foot center direction
 		_onFootCharX = 0;
@@ -940,21 +944,21 @@ bool InsaneRebel1::runLevel9() {
 		_onFootAnimCounter = 0;
 		_onFootInitialized = false;
 
-		while (!_vm->shouldQuit()) {
+		while (!shouldAbortGameFlow()) {
 			loadTuningForLevel(0x0B);
 			playInteractiveVideo("LVL9/L9PLAY1.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 			if (_health < 0)
 				break;
 
 			playCinematic("LVL9/L9CUT1.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			loadTuningForLevel(0x0C);
 			const int side1 = playLevel9PathSelector("LVL9/L9PLAY2.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 			if (_health < 0)
 				break;
@@ -963,42 +967,42 @@ bool InsaneRebel1::runLevel9() {
 
 			_gameplayFlags75fe |= 4;
 			playCinematic(side1 == 0 ? "LVL9/L9PLAY2A.ANM" : "LVL9/L9PLAY2B.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (side1 == randPath1) {
 				playCinematic("LVL9/L9CUT2A.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 				continue;
 			}
 
 			playCinematic("LVL9/L9CUT2B.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			loadTuningForLevel(0x0B);
 			playInteractiveVideo("LVL9/L9PLAY3A.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 			if (_health < 0)
 				break;
 
 			if (_killCount < 15) {
 				playInteractiveVideo("LVL9/L9PLAY3B.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 				if (_health < 0)
 					break;
 			}
 
 			playCinematic("LVL9/L9CUT3.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			loadTuningForLevel(0x0C);
 			const int side2 = playLevel9PathSelector("LVL9/L9PLAY4.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 			if (_health < 0)
 				break;
@@ -1007,28 +1011,28 @@ bool InsaneRebel1::runLevel9() {
 
 			_gameplayFlags75fe |= 4;
 			playCinematic(side2 == 0 ? "LVL9/L9PLAY4A.ANM" : "LVL9/L9PLAY4B.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (side2 == randPath2) {
 				playCinematic(side2 == 0 ? "LVL9/L9CUT4AX.ANM" : "LVL9/L9CUT4B.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 
 				loadTuningForLevel(0x0B);
 				playInteractiveVideo("LVL9/L9PLAY5.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 				if (_health < 0)
 					break;
 
 				playCinematic("LVL9/L9CUT5.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 
 				loadTuningForLevel(0x0C);
 				const int side3 = playLevel9PathSelector("LVL9/L9PLAY6.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 				if (_health < 0)
 					break;
@@ -1038,29 +1042,29 @@ bool InsaneRebel1::runLevel9() {
 				_gameplayFlags75fe |= 4;
 				if (side3 == randPath3) {
 					playCinematic("LVL9/L9CUT6A.ANM");
-					if (_vm->shouldQuit())
+					if (shouldAbortGameFlow())
 						return false;
 					continue;
 				}
 
 				playCinematic("LVL9/L9CUT6B.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 			} else {
 				playCinematic(side2 == 0 ? "LVL9/L9CUT4A.ANM" : "LVL9/L9CUT4BX.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 			}
 
 			loadTuningForLevel(0x0B);
 			playInteractiveVideo("LVL9/L9PLAY7.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 			if (_health < 0)
 				break;
 
 			playChapterCompleteCinematic("LVL9/L9END.ANM", 9, 0x69, 5);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL9/L9NEW.ANM", "LVL9/L9DEATH.ANM"))
@@ -1082,14 +1086,14 @@ bool InsaneRebel1::runLevel10() {
 
 	beginLevelTitleOverlay(9);
 	playCinematic("LVL10/L10INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		resetLevelAttemptState(1, 0);
 
 		playInteractiveVideo("LVL10/L10PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -1098,7 +1102,7 @@ bool InsaneRebel1::runLevel10() {
 			const int bonus = calculateThresholdBonus(_killCount, 0x3D, 0x32, _tuning.bonus);
 			playChapterCompleteCinematic("LVL10/L10END.ANM", 10, 0x4B, 5,
 				" ", accuracyText, bonus, nullptr, nullptr, 0, _difficulty + 7);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL10/L10NEW.ANM", "LVL10/L10DEATH.ANM"))
@@ -1124,17 +1128,17 @@ bool InsaneRebel1::runLevel11() {
 
 	beginLevelTitleOverlay(10);
 	playCinematic("LVL11/L11INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		resetLevelAttemptState(1, 0);
 		_turretEmitterLeftX = 25;
 		_turretEmitterLeftY = 15;
 
-		while (!_vm->shouldQuit()) {
+		while (!shouldAbortGameFlow()) {
 			playInteractiveVideo("LVL11/L11PLAY.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (_health < 0)
@@ -1146,7 +1150,7 @@ bool InsaneRebel1::runLevel11() {
 
 			// Not enough kills — retry
 			playCinematic("LVL11/L11RETRY.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 		}
 
@@ -1155,7 +1159,7 @@ bool InsaneRebel1::runLevel11() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x60, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x5F, 0x0F, _tuning.bonus);
 			playChapterCompleteCinematic("LVL11/L11END.ANM", 11, 0x69, 5, " ", accuracyText, bonus);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL11/L11NEW.ANM", "LVL11/L11DEATH.ANM"))
@@ -1180,15 +1184,15 @@ bool InsaneRebel1::runLevel12() {
 
 	beginLevelTitleOverlay(11);
 	playCinematic("LVL12/L12INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		_flyControlMode = 1;
 		resetLevelDamageState();
 		_killCount = 0;
 
-		while (!_vm->shouldQuit()) {
+		while (!shouldAbortGameFlow()) {
 			loadTuningForLevel(0x0F);
 			resetLevelFrameState();
 			_damageFlags = 0;
@@ -1199,12 +1203,12 @@ bool InsaneRebel1::runLevel12() {
 			resetLevelInputHistory();
 
 			playInteractiveVideo("LVL12/L12PLAY.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (_levelGameplayPhase == 1) {
 				playCinematic("LVL12/L12RETRY.ANM");
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 				if (_health < 0)
 					break;
@@ -1218,7 +1222,7 @@ bool InsaneRebel1::runLevel12() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x58, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x57, 0x46, _tuning.bonus);
 			playChapterCompleteCinematic("LVL12/L12END.ANM", 12, 0x69, 5, " ", accuracyText, bonus);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL12/L12NEW.ANM", "LVL12/L12DEATH.ANM"))
@@ -1244,15 +1248,15 @@ bool InsaneRebel1::runLevel13() {
 
 	beginLevelTitleOverlay(12);
 	playCinematic("LVL13/L13INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		resetLevelAttemptState(1, 0);
 		resetEnemyShotSlots();
 
 		playInteractiveVideo("LVL13/L13PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -1260,7 +1264,7 @@ bool InsaneRebel1::runLevel13() {
 			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x146, true);
 			const int bonus = calculateThresholdBonus(_killCount, 0x145, 0x14, _tuning.bonus);
 			playChapterCompleteCinematic("LVL13/L13END.ANM", 13, 0x69, 5, " ", accuracyText, bonus);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL13/L13NEW.ANM", "LVL13/L13DEATH.ANM"))
@@ -1286,17 +1290,17 @@ bool InsaneRebel1::runLevel14() {
 
 	beginLevelTitleOverlay(13);
 	playCinematic("LVL14/L14INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		loadTuningForLevel(0x11);
 		resetLevelAttemptState(1, 1);
 		_level14SuccessFrames = 0;
 
 		// Phase 1: targeting surface cannons
 		playInteractiveVideo("LVL14/L14PLAY.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
@@ -1314,7 +1318,7 @@ bool InsaneRebel1::runLevel14() {
 			_level14Play2BSpliceFrame = 0;
 
 			playInteractiveVideo("LVL14/L14PLAY2.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			if (_health >= 0 && _level14Play2BSplicePending) {
@@ -1326,7 +1330,7 @@ bool InsaneRebel1::runLevel14() {
 				// continuation clip, so the port starts it from frame 0 but uses
 				// the non-zero frame argument to preserve gameplay/video state.
 				playInteractiveVideo("LVL14/L14PLY2B.ANM", spliceFrame);
-				if (_vm->shouldQuit())
+				if (shouldAbortGameFlow())
 					return false;
 			}
 		}
@@ -1334,7 +1338,7 @@ bool InsaneRebel1::runLevel14() {
 		if (_health >= 0) {
 			playChapterCompleteCinematic("LVL14/L14END.ANM", 14, 0x69, 5,
 				nullptr, nullptr, 0, nullptr, nullptr, 0, _difficulty + 10);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL14/L14NEW.ANM", "LVL14/L14DEATH.ANM"))
@@ -1360,23 +1364,23 @@ bool InsaneRebel1::runLevel15() {
 
 	beginLevelTitleOverlay(14);
 	playCinematic("LVL15/L15INTRO.ANM");
-	if (_vm->shouldQuit())
+	if (shouldAbortGameFlow())
 		return false;
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldAbortGameFlow()) {
 		loadTuningForLevel(0x13);
 		resetLevelAttemptState(1, 0);
 
 		// Phase 1: trench run
 		_levelGameplayPhase = 1;
 		playInteractiveVideo("LVL15/L15PLAY1.ANM");
-		if (_vm->shouldQuit())
+		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
 			// Torpedo lock cutscene
 			playCinematic("LVL15/L15INTR2.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 
 			// Phase 2: final approach and torpedo shot. The DOS flow enables
@@ -1392,7 +1396,7 @@ bool InsaneRebel1::runLevel15() {
 			_levelGameplayPhase = 2;
 
 			playInteractiveVideo("LVL15/L15PLAY2.ANM");
-			if (_vm->shouldQuit())
+			if (shouldAbortGameFlow())
 				return false;
 		}
 
@@ -1413,7 +1417,7 @@ bool InsaneRebel1::runLevel15() {
 			playChapterCompleteCinematic("LVL15/L15END1.ANM", 15, 0x122, 0xA5,
 				"Part I", accuracyText, targetBonus,
 				"Part II", "Torpedo on mark", 10000, _difficulty + 13);
-			return !_vm->shouldQuit();
+			return !shouldAbortGameFlow();
 		}
 
 		if (playDeathOrRetry("LVL15/L15NEW.ANM", "LVL15/L15DEATH.ANM"))
@@ -1447,52 +1451,85 @@ void InsaneRebel1::runGame() {
 		&InsaneRebel1::runLevel15
 	};
 	const int numLevels = (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
-	auto runLevelsFrom = [&](int startLevel) {
-		const int firstLevel = CLIP<int>(startLevel, 1, numLevels);
-		bool completed = true;
-		int lastCompletedLevel = 0;
-		_health = kMaxHealth;
-		_lives = 3;
-		_score = 0;
-		_prevScore = 0;
+	auto runLevelsFrom = [&](int startLevel, bool resetRunState) {
+		int firstLevel = CLIP<int>(startLevel, 1, numLevels);
 
-		for (int level = firstLevel;
-			 level <= numLevels && completed && !_vm->shouldQuit();
-			 ++level) {
-			playLevelTransitionCutscene(level);
-			if (_vm->shouldQuit())
-				break;
+		while (!_vm->shouldQuit()) {
+			_loadRequested = false;
+			bool completed = true;
+			int lastCompletedLevel = 0;
 
-			completed = (this->*kLevelRunners[level - 1])();
-			if (completed) {
-				lastCompletedLevel = level;
-				if (level < numLevels)
-					_startLevel = level + 1;
+			_health = kMaxHealth;
+			if (resetRunState) {
+				_lives = 3;
+				_score = 0;
+				_prevScore = 0;
 			}
-		}
+			resetRunState = false;
 
-		if (!_vm->shouldQuit() && completed && lastCompletedLevel == numLevels)
-			playCinematic("FIN/FNFINAL.ANM");
-		if (!_vm->shouldQuit())
-			runHighScoreNameEntry();
-		_currentLevel = 0;
+			for (int level = firstLevel;
+				 level <= numLevels && completed && !shouldAbortGameFlow();
+				 ++level) {
+				_resumeLevel = level;
+				playLevelTransitionCutscene(level);
+				if (shouldAbortGameFlow())
+					break;
+
+				completed = (this->*kLevelRunners[level - 1])();
+				if (completed) {
+					lastCompletedLevel = level;
+					if (level < numLevels) {
+						_startLevel = level + 1;
+						_resumeLevel = _startLevel;
+						autosaveProgress();
+					}
+				}
+			}
+
+			if (_loadRequested) {
+				firstLevel = getCurrentSaveLevel();
+				continue;
+			}
+
+			if (!shouldAbortGameFlow() && completed && lastCompletedLevel == numLevels)
+				playCinematic("FIN/FNFINAL.ANM");
+			if (!shouldAbortGameFlow())
+				runHighScoreNameEntry();
+			_currentLevel = 0;
+			return;
+		}
 	};
 
-	// Play intro sequence (logo + opening)
-	playIntroSequence();
-	if (_vm->shouldQuit())
-		return;
+	bool loadedStartupSave = false;
+	if (ConfMan.hasKey("save_slot")) {
+		const int saveSlot = ConfMan.getInt("save_slot");
+		if (loadGameState(saveSlot, true).getCode() == Common::kNoError) {
+			loadedStartupSave = true;
+			runLevelsFrom(_resumeLevel, false);
+		}
+	}
+
+	if (!loadedStartupSave) {
+		// Play intro sequence (logo + opening)
+		playIntroSequence();
+		if (shouldAbortGameFlow())
+			return;
+	}
 
 	// Main menu → gameplay loop
 	while (!_vm->shouldQuit()) {
 		int menuResult = runMainMenu();
+		if (_loadRequested) {
+			runLevelsFrom(_resumeLevel, false);
+			continue;
+		}
 		if (_vm->shouldQuit())
 			return;
 
 		switch (menuResult) {
 		case 1: {
 			// START NEW GAME — sequential play from _startLevel
-			runLevelsFrom(_startLevel);
+			runLevelsFrom(_startLevel, true);
 			break;
 		}
 		case 2:
@@ -1504,14 +1541,14 @@ void InsaneRebel1::runGame() {
 			// game from the decoded chapter when a valid passcode is entered.
 			const int passcodeLevel = runPasscodeEntryDialog();
 			if (passcodeLevel >= 1 && passcodeLevel <= numLevels)
-				runLevelsFrom(passcodeLevel);
+				runLevelsFrom(passcodeLevel, true);
 			else if (passcodeLevel == numLevels + 1) {
 				_health = kMaxHealth;
 				_lives = 3;
 				_score = 0;
 				_prevScore = 0;
 				playCinematic("FIN/FNFINAL.ANM");
-				if (!_vm->shouldQuit())
+				if (!shouldAbortGameFlow())
 					runHighScoreNameEntry();
 				_currentLevel = 0;
 			}
@@ -1522,14 +1559,14 @@ void InsaneRebel1::runGame() {
 			// original successor flow so post-level cinematics still play.
 			int selectedLevel = runLevelSelectMenu();
 			if (selectedLevel >= 1 && selectedLevel <= numLevels)
-				runLevelsFrom(selectedLevel);
+				runLevelsFrom(selectedLevel, true);
 			break;
 		}
 		case 5:
 			// CONTINUE DEMO — attract mode.
 			// Original shows TOP PILOTS (O1SCORE.ANM) then loops O1OPEN.ANM.
 			showHighScores();
-			if (!_vm->shouldQuit())
+			if (!shouldAbortGameFlow())
 				playCinematic("OPEN/O1OPEN.ANM");
 			break;
 		case 6:
@@ -1654,6 +1691,9 @@ void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOff
 // Play interactive gameplay video (with ship physics + HUD).
 void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
 	debug(1, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
+	if (shouldAbortGameFlow())
+		return;
+
 	int32 videoStartFrame = 0;
 	int32 videoOffset = 0;
 

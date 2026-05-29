@@ -126,6 +126,9 @@ public:
 
 	// Game flow (matching original at 0x15597)
 	void runGame();
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
+	Common::Error loadGameState(int slot, bool startupLoad = false);
+	bool shouldAbortGameFlow() const { return _vm->shouldQuit() || _loadRequested; }
 
 private:
 	// Intro sequence: O1LOGO → O1OPEN (0x155ef-0x158f8)
@@ -168,6 +171,19 @@ private:
 		const char *bonusLabel2 = nullptr, const char *detailText2 = nullptr, int bonusValue2 = 0,
 		int passwordIndex = 0);
 	bool playDeathOrRetry(const char *retryVideo, const char *gameOverVideo);
+	void autosaveProgress();
+	int getAutosaveTargetSlot() const;
+	int getCurrentSaveLevel() const;
+	struct SaveState {
+		int resumeLevel;
+		int lives;
+		int score;
+		int prevScore;
+		int difficulty;
+		int maxChapterUnlocked;
+	};
+	Common::Error writeSaveState(int slot, const Common::String &desc, const SaveState &state) const;
+	bool readSaveState(int slot, SaveState &state, Common::String *desc = nullptr) const;
 	void resetLevelDamageState();
 	void resetLevelFrameState();
 	void resetLevelTargetingState(bool resetKillCount = true);
@@ -365,6 +381,9 @@ private:
 
 	// Current level index (0-based: 0=LVL1, 1=LVL2, etc.)
 	int _currentLevel;
+	int _resumeLevel;             // 1-based level used when saving/restoring RA1 progress
+	int _activeSaveSlot;          // Last manually saved or loaded slot; -1 means use autosave slot
+	bool _loadRequested;          // Runtime load requested while unwinding the current video flow
 
 	// Intro title overlay (RunTwoLineTextSplash from original)
 	bool _introTextActive;
@@ -461,6 +480,7 @@ private:
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;
 	static const int16 kDamageCooldownInit = 10;
+	enum { kNumLevels = 15 };
 
 	// Streamed SMUSH audio
 	RebelAudio _audio;
