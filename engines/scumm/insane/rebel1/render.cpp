@@ -1692,28 +1692,50 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		hudOriginY = ra1Player()->_ra1ViewportOffsetY;
 	}
 
-	int hudX = hudOriginX + bar.xoffs;
-	int hudY = hudOriginY + bar.yoffs;
+	const int hudX = hudOriginX + bar.xoffs;
+	const int hudY = hudOriginY + bar.yoffs;
+	// FUN_1BBCB draws DISPLAY.NUT at x=5 with a 4..315 clip rect. The HUD
+	// masks/text below use the unshifted screen-space coordinate origin.
+	const int hudPlateX = hudX + 5;
+	const int hudPlateY = hudY;
 
 	// DOS RA1 draws the HUD plate through DrawFobjGlyph(..., flags=0x181),
 	// which selects the opaque blit path. Keep zero-valued pixels black instead
 	// of treating them as transparent.
 	if (bar.data && bar.width > 0 && bar.height > 0) {
-		int drawX = hudX, drawY = hudY, drawW = bar.width, drawH = bar.height;
+		int drawX = hudPlateX, drawY = hudPlateY, drawW = bar.width, drawH = bar.height;
 		int srcOffX = 0, srcOffY = 0;
+		const int clipLeft = hudX + 4;
+		const int clipTop = hudY;
+		const int clipRight = hudX + 315;
+		const int clipBottom = hudY + 19;
+		if (drawX < clipLeft) {
+			srcOffX = clipLeft - drawX;
+			drawW -= srcOffX;
+			drawX = clipLeft;
+		}
+		if (drawY < clipTop) {
+			srcOffY = clipTop - drawY;
+			drawH -= srcOffY;
+			drawY = clipTop;
+		}
+		if (drawX + drawW - 1 > clipRight) drawW = clipRight - drawX + 1;
+		if (drawY + drawH - 1 > clipBottom) drawH = clipBottom - drawY + 1;
 		if (drawX < 0) { srcOffX = -drawX; drawW += drawX; drawX = 0; }
 		if (drawY < 0) { srcOffY = -drawY; drawH += drawY; drawY = 0; }
 		if (drawX + drawW > width) drawW = width - drawX;
 		if (drawY + drawH > height) drawH = height - drawY;
 
-		for (int iy = 0; iy < drawH; iy++) {
-			const byte *s = bar.data + (srcOffY + iy) * bar.width + srcOffX;
-			byte *d = dst + (drawY + iy) * pitch + drawX;
-			memcpy(d, s, drawW);
+		if (drawW > 0 && drawH > 0) {
+			for (int iy = 0; iy < drawH; iy++) {
+				const byte *s = bar.data + (srcOffY + iy) * bar.width + srcOffX;
+				byte *d = dst + (drawY + iy) * pitch + drawX;
+				memcpy(d, s, drawW);
+			}
 		}
 
 		debug(5, "RA1 HUD: drawn at (%d,%d) size=%dx%d",
-			hudX, hudY, bar.width, bar.height);
+			hudPlateX, hudPlateY, bar.width, bar.height);
 	}
 
 	// Draw health bar from FUN_1BBCB (0x1BBCB) + FUN_21D66 (0x21D66):
