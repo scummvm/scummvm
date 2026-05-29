@@ -21,6 +21,7 @@
 
 #include "macs2/view1.h"
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "graphics/palette.h"
@@ -750,6 +751,12 @@ bool View1::msgFocus(const FocusMessage &msg) {
 
 bool View1::msgMouseDown(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
+		// Handle original save/load panel clicks
+		if (_isMapPanelActive) {
+			handleOriginalSaveLoadClick(msg._pos);
+			return true;
+		}
+
 		// Handle string boxes
 		if (_isShowingStringBox) {
 			clearStringBox();
@@ -938,8 +945,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				!g_engine->_scriptExecutor->waitForMusicControl &&
 				!g_engine->_scriptExecutor->waitForAdlibReady &&
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
-				// Use ScummVM's native save/load dialog
-				g_engine->openMainMenuDialog();
+				if (ConfMan.getBool("original_menus")) {
+					openOriginalSaveLoadPanel();
+				} else {
+					g_engine->openMainMenuDialog();
+				}
 			}
 			return true;
 		}
@@ -965,8 +975,13 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 }
 
 bool View1::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
-	// close();
+	// Ctrl+T cycles game speed mode 0→1→2→0 (original: g_wGameSpeedMode at 1020:0214)
+	if (msg.keycode == Common::KEYCODE_t && (msg.flags & Common::KBD_CTRL)) {
+		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
+		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
+		return true;
+	}
+
 	if (_isShowingStringBox && !_isShowingDialogueChoice) {
 		clearStringBox();
 		return true;
@@ -1150,6 +1165,10 @@ void View1::draw() {
 
 	if (isShowingMainMenu) {
 		drawMainMenu(s);
+	}
+
+	if (_isMapPanelActive) {
+		drawOriginalSaveLoadPanel(s);
 	}
 
 	if (activeInventoryItem != nullptr) {
@@ -2672,6 +2691,198 @@ bool Button::IsPointInside(const Common::Point &p) const {
 }
 
 void Button::Render(Graphics::ManagedSurface &s) {
+}
+
+void View1::openOriginalSaveLoadPanel() {
+	_isMapPanelActive = true;
+	_mapPanelSubMode = MapPanelSubMode::None;
+	_saveConfirmArmed = false;
+	_loadConfirmArmed = false;
+
+	// Load existing save slot names
+	for (int idx = 0; idx < 30; idx++) {
+		SaveStateDescriptor desc = g_engine->getMetaEngine()->querySaveMetaInfos(
+			g_engine->getGameId().c_str(), idx);
+		if (desc.getSaveSlot() != -1) {
+			_saveSlotNames[idx] = desc.getDescription();
+		} else {
+			_saveSlotNames[idx] = "";
+		}
+	}
+	redraw();
+}
+
+void View1::closeOriginalSaveLoadPanel() {
+	_isMapPanelActive = false;
+	_mapPanelSubMode = MapPanelSubMode::None;
+	redraw();
+}
+
+void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
+	if (!_isMapPanelActive)
+		return;
+
+	// Panel dimensions matching original: centered, 10 slots of 12px + button bar
+	const int panelW = 200;
+	const int panelH = 156; // 10*12 + 8 padding + 28 button area
+	const int panelX = (320 - panelW) / 2;
+	const int panelY = (200 - panelH) / 2;
+
+	// Draw panel background
+	drawDarkRectangle(panelX, panelY, panelW, panelH);
+	DrawBorder(Common::Point(panelX, panelY), Common::Point(panelW, panelH), s);
+
+	// Draw 10 save slots for current page
+	for (int slot = 0; slot < 10; slot++) {
+		int idx = _mapPanelPageIndex * 10 + slot;
+		int slotY = panelY + 4 + slot * 12;
+		int slotX = panelX + 4;
+		int slotW = panelW - 8;
+
+		// Slot background
+		drawDarkRectangle(slotX, slotY, slotW, 12);
+
+		// Slot text
+		Common::String label;
+		if (_saveSlotNames[idx].empty()) {
+			label = Common::String::format("- Slot %d -", idx + 1);
+		} else {
+			label = _saveSlotNames[idx];
+		}
+		renderString(slotX + 2, slotY + 2, label);
+	}
+
+	// Draw bottom button bar
+	int btnY = panelY + 4 + 10 * 12 + 4;
+	int btnW = 26;
+	int btnH = 16;
+	int btnX = panelX + 4;
+
+	const char *btnLabels[] = {"Ld", "Sv", "Mu", "Pg", "OK", "OK", "X"};
+	for (int i = 0; i < 7; i++) {
+		Common::Point bPos(btnX + i * (btnW + 2), btnY);
+		Common::Point bSize(btnW, btnH);
+
+		bool pressed = false;
+		if (i == 0 && _mapPanelSubMode == MapPanelSubMode::SaveSlots)
+			pressed = true;
+		if (i == 1 && _mapPanelSubMode == MapPanelSubMode::MapTravel)
+			pressed = true;
+
+		if (pressed) {
+			DrawPressedBorderOuterHighlights(bPos, bSize, s);
+		} else {
+			DrawBorderOuterHighlights(bPos, bSize, s);
+		}
+		renderString(bPos.x + 4, bPos.y + 4, btnLabels[i]);
+	}
+
+	// Page indicator
+	Common::String pageStr = Common::String::format("Page %d/3", _mapPanelPageIndex + 1);
+	renderString(panelX + panelW - 60, btnY + 4, pageStr);
+}
+
+void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
+	const int panelW = 200;
+	const int panelH = 156;
+	const int panelX = (320 - panelW) / 2;
+	const int panelY = (200 - panelH) / 2;
+
+	// Check if click is outside panel → close
+	if (pos.x < panelX || pos.x > panelX + panelW ||
+		pos.y < panelY || pos.y > panelY + panelH) {
+		closeOriginalSaveLoadPanel();
+		return;
+	}
+
+	// Check slot clicks
+	for (int slot = 0; slot < 10; slot++) {
+		int slotY = panelY + 4 + slot * 12;
+		int slotX = panelX + 4;
+		int slotW = panelW - 8;
+
+		if (pos.x >= slotX && pos.x <= slotX + slotW &&
+			pos.y >= slotY && pos.y <= slotY + 12) {
+			int idx = _mapPanelPageIndex * 10 + slot;
+
+			if (_mapPanelSubMode == MapPanelSubMode::SaveSlots) {
+				// Load from this slot
+				if (!_saveSlotNames[idx].empty()) {
+					if (_loadConfirmArmed) {
+						closeOriginalSaveLoadPanel();
+						g_engine->loadGameState(idx);
+					} else {
+						_loadConfirmArmed = true;
+						_saveConfirmArmed = false;
+					}
+				}
+			} else if (_mapPanelSubMode == MapPanelSubMode::MapTravel) {
+				// Save to this slot
+				if (_saveConfirmArmed) {
+					Common::String name = _saveSlotNames[idx].empty()
+						? Common::String::format("Save %d", idx + 1)
+						: _saveSlotNames[idx];
+					closeOriginalSaveLoadPanel();
+					g_engine->saveGameState(idx, name);
+				} else {
+					_saveConfirmArmed = true;
+					_loadConfirmArmed = false;
+				}
+			}
+			redraw();
+			return;
+		}
+	}
+
+	// Check button bar clicks
+	int btnY = panelY + 4 + 10 * 12 + 4;
+	int btnW = 26;
+	int btnH = 16;
+	int btnX = panelX + 4;
+
+	if (pos.y >= btnY && pos.y <= btnY + btnH) {
+		for (int i = 0; i < 7; i++) {
+			int bx = btnX + i * (btnW + 2);
+			if (pos.x >= bx && pos.x <= bx + btnW) {
+				switch (i) {
+				case 0: // Load mode
+					_mapPanelSubMode = MapPanelSubMode::SaveSlots;
+					_saveConfirmArmed = false;
+					_loadConfirmArmed = false;
+					break;
+				case 1: // Save mode
+					_mapPanelSubMode = MapPanelSubMode::MapTravel;
+					_saveConfirmArmed = false;
+					_loadConfirmArmed = false;
+					break;
+				case 2: // Toggle music
+					g_engine->_scriptExecutor->soundSystemActive =
+						!g_engine->_scriptExecutor->soundSystemActive;
+					break;
+				case 3: // Page scroll
+					_mapPanelPageIndex = (_mapPanelPageIndex + 1) % 3;
+					_saveConfirmArmed = false;
+					_loadConfirmArmed = false;
+					break;
+				case 4: // Confirm save (double-click)
+					if (_mapPanelSubMode == MapPanelSubMode::MapTravel) {
+						_saveConfirmArmed = true;
+					}
+					break;
+				case 5: // Confirm load (double-click)
+					if (_mapPanelSubMode == MapPanelSubMode::SaveSlots) {
+						_loadConfirmArmed = true;
+					}
+					break;
+				case 6: // Close
+					closeOriginalSaveLoadPanel();
+					return;
+				}
+				redraw();
+				return;
+			}
+		}
+	}
 }
 
 } // namespace Macs2

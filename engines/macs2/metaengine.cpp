@@ -53,6 +53,10 @@ bool Macs2MetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSupportsLoadingDuringStartup);
 }
 
+const ADExtraGuiOptionsMap *Macs2MetaEngine::getAdvancedExtraGuiOptions() const {
+	return Macs2::optionsList;
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(MACS2)
 REGISTER_PLUGIN_DYNAMIC(MACS2, PLUGIN_TYPE_ENGINE, Macs2MetaEngine);
 #else
