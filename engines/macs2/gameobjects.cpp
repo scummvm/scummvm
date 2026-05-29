@@ -199,7 +199,7 @@ Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
 }
 
 Macs2::GameObject *Macs2::GameObjects::GetObjectByIndex(uint16 index) {
-	if (index - 1 >= instance().Objects.size()) {
+	if ((uint)(index - 1) >= instance().Objects.size()) {
 		return nullptr;
 	}
 	return instance().Objects[index - 1];
@@ -288,8 +288,8 @@ void Macs2::AnimationReader::SeekToAnimation(uint16 index) {
 }
 
 void Macs2::AnimationReader::SkipCurrentAnimationFrame() {
-	uint16 value1 = readStream->readUint16();
-	uint16 value2 = readStream->readUint16();
+	readStream->readUint16(); // value1
+	readStream->readUint16(); // value2
 	readStream->seek(2, SEEK_CUR);
 	uint16 width = readStream->readUint16();
 	uint16 height = readStream->readUint16();

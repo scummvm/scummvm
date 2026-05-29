@@ -63,7 +63,7 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	df.open(Common::Path(path));
 	for (auto currentObject : GameObjects::instance().Objects) {
 		df.writeString(Common::String::format("Object %.2xh\n", currentObject->Index));
-		for (int i = 0; i < currentObject->Blobs.size(); i++) {
+		for (uint i = 0; i < currentObject->Blobs.size(); i++) {
 			auto currentBlob = currentObject->Blobs[i];
 			df.writeString(Common::String::format("Blob %.2xh\n", i));
 			for (const uint8 value : currentBlob) {
