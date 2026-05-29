@@ -141,7 +141,7 @@ class GameObject;
 			// [1012h] global - current assumption is that this guards script runs that
 			// [1012h] g_wRepeatRunFlag - set during the repeat script pass
 			// that runs after scene init to process object scripts
-			bool IsRepeatRun = false;
+			bool repeatRunFlag = false;
 
 			uint16 executingObjectIndex;
 
@@ -305,7 +305,7 @@ class GameObject;
 		// Set by opcode 0x1C, cleared by opcode 0x1D.
 		bool scriptSkippable = false;
 			bool musicEnabled = true;
-			bool soundSystemActive = false;
+			bool soundSystemActive = true;
 			bool overlayTextStageActive = false;
 			bool inventoryActionFlag = false;
 			bool inventoryCombineFlag = false;

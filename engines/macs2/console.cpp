@@ -20,6 +20,7 @@
  */
 
 #include "macs2/console.h"
+#include "macs2/adlib.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
 #include "macs2/view1.h"
@@ -44,6 +45,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("record", WRAP_METHOD(Console, Cmd_inputRecord));
 	registerCmd("playback", WRAP_METHOD(Console, Cmd_inputPlayback));
 	registerCmd("stoprecord", WRAP_METHOD(Console, Cmd_inputStop));
+	registerCmd("dumpopl", WRAP_METHOD(Console, Cmd_dumpOpl));
 }
 
 Console::~Console() {
@@ -58,9 +60,12 @@ bool Console::Cmd_toggleAutoClick(int argc, const char **argv) {
 }
 
 bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: dumpblobs <path>\n");
+		return true;
+	}
 	Common::DumpFile df;
-	// TODO: Read from args
-	Common::String path = "C:\\Users\\Flori\\Downloads\\test.dmp";
+	Common::String path = argv[1];
 	df.open(Common::Path(path));
 	for (auto currentObject : GameObjects::instance().Objects) {
 		df.writeString(Common::String::format("Object %.2xh\n", currentObject->Index));
@@ -159,6 +164,18 @@ bool Console::Cmd_inputPlayback(int argc, const char **argv) {
 bool Console::Cmd_inputStop(int argc, const char **argv) {
 	g_engine->stopInputRecording();
 	debugPrintf("Input recording/playback stopped\n");
+	return true;
+}
+
+bool Console::Cmd_dumpOpl(int argc, const char **argv) {
+	if (argc < 2) {
+		// Toggle off if already dumping
+		g_engine->getAdlib()->stopOplDump();
+		debugPrintf("OPL dump stopped\n");
+		return true;
+	}
+	g_engine->getAdlib()->startOplDump(Common::Path(argv[1]));
+	debugPrintf("OPL dump started: %s\n", argv[1]);
 	return true;
 }
 

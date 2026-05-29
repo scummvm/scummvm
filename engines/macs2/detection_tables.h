@@ -32,8 +32,7 @@ const ADGameDescription gameDescriptions[] = {
 	 AD_ENTRY1s("RESOURCE.MCS", "b8646d5cc2e45442a414220b1a65ba73", 8621636),
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
-	 // TODO: Unstable
-	 ADGF_NO_FLAGS,
+	 ADGF_UNSTABLE,
 	 GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)},
 	{"sis",
 	 nullptr,
@@ -41,8 +40,7 @@ const ADGameDescription gameDescriptions[] = {
 	 AD_ENTRY1s("RESOURCE.MCS", "5a6cdeecdabae42872ab9278ab895bad", 8621636),
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
-	 // TODO: Unstable
-	 ADGF_NO_FLAGS,
+	 ADGF_UNSTABLE,
 	 GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)},
 
 	AD_TABLE_END_MARKER};
