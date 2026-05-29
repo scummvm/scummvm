@@ -594,6 +594,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 Macs2Engine::~Macs2Engine() {
+	stopInputRecording();
 	clearCurrentSoundData();
 	_adlib->Deinit();
 }
@@ -757,7 +758,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->clearOverlayTextEntries();
 	_scriptExecutor->inventoryActionFlag = false;
 	_scriptExecutor->inventoryCombineFlag = false;
-	_scriptExecutor->mapPanelActive = false;
+	_scriptExecutor->soundSystemActive = false;
 	_scriptExecutor->overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
@@ -1193,6 +1194,78 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 void Macs2Engine::ScheduleRun(bool initScene) {
 	runScheduled = true;
 	scheduledRunIsInitScene = initScene;
+}
+
+void Macs2Engine::startInputRecording(const Common::Path &filename) {
+	Common::DumpFile *f = new Common::DumpFile();
+	if (!f->open(filename)) {
+		warning("Failed to open recording file %s", filename.toString().c_str());
+		delete f;
+		return;
+	}
+	// Write header matching original format: 12-byte magic "AHFFMCSR0100"
+	f->write("AHFFMCSR0100", 12);
+	_inputRecordStream = f;
+	_inputMode = InputMode::Record;
+	_inputFrameCounter = 0;
+	debug("Input recording started: %s", filename.toString().c_str());
+}
+
+void Macs2Engine::startInputPlayback(const Common::Path &filename) {
+	Common::File *f = new Common::File();
+	if (!f->open(filename)) {
+		warning("Failed to open playback file %s", filename.toString().c_str());
+		delete f;
+		return;
+	}
+	// Skip 12-byte header
+	f->skip(12);
+	// Read first record's frame counter to prime the playback target
+	_inputPlaybackEndFrame = f->readUint16LE();
+	_inputPlaybackStream = f;
+	_inputMode = InputMode::Playback;
+	_inputFrameCounter = 0;
+	debug("Input playback started: %s (first event at frame %u)", filename.toString().c_str(), _inputPlaybackEndFrame);
+}
+
+void Macs2Engine::stopInputRecording() {
+	if (_inputRecordStream) {
+		_inputRecordStream->finalize();
+		delete _inputRecordStream;
+		_inputRecordStream = nullptr;
+	}
+	if (_inputPlaybackStream) {
+		delete _inputPlaybackStream;
+		_inputPlaybackStream = nullptr;
+	}
+	_inputMode = InputMode::None;
+}
+
+void Macs2Engine::recordInputFrame(uint16 mouseX, uint16 mouseY, uint16 buttons) {
+	if (_inputRecordStream) {
+		_inputFrameCounter++;
+		_inputRecordStream->writeUint16LE(_inputFrameCounter);
+		_inputRecordStream->writeUint16LE(mouseX);
+		_inputRecordStream->writeUint16LE(mouseY);
+		_inputRecordStream->writeUint16LE(buttons);
+	}
+}
+
+bool Macs2Engine::readInputFrame(uint16 &mouseX, uint16 &mouseY, uint16 &buttons) {
+	if (!_inputPlaybackStream || _inputPlaybackStream->eos())
+		return false;
+	// Format: each record is [frameCounter(2), mouseX(2), mouseY(2), buttons(2)]
+	// Playback waits until current frame >= next record's frame counter
+	if (_inputFrameCounter < _inputPlaybackEndFrame)
+		return false;
+	mouseX = _inputPlaybackStream->readUint16LE();
+	mouseY = _inputPlaybackStream->readUint16LE();
+	buttons = _inputPlaybackStream->readUint16LE();
+	if (_inputPlaybackStream->eos())
+		return false;
+	// Read next record's frame counter (or detect end)
+	_inputPlaybackEndFrame = _inputPlaybackStream->readUint16LE();
+	return !_inputPlaybackStream->eos();
 }
 
 uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
