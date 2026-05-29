@@ -1277,15 +1277,6 @@ bool View1::tick() {
 		}
 		// TODO: Handle cleaner
 		_nextFrameFlag = _frameDelayFlag;
-		// TODO: Check if this is necessary
-
-		// Proper update of the background anims
-		// TODO: Hardcoding start to 2 to have the manually flipped animations not change automatically
-		for (int i = 2; i < g_engine->_numBackgroundAnimations; i++) {
-			BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
-			current.FrameIndex++;
-			current.FrameIndex = current.FrameIndex % current.numFrames;
-		}
 
 		// TODO: Piggybacking the guy on this
 		_guyFrameIndex++;

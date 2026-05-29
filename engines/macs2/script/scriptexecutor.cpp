@@ -1684,9 +1684,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	// thereby ending the scripte early
 	isAwaitingCallback = false;
 
-	// TODO: Hardcoded to test the box closing
-	_engine->_backgroundAnimations[1].FrameIndex = 1;
-
 	requestCallback = false;
 	// Not yet implemented - seems to signal that the script is empty?
 	/*
