@@ -2049,7 +2049,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 					}
 					currentIndex++;
 				}
-				if (foundIndex > 0) {
+				if (foundIndex >= 0) {
 					currentView->inventoryItems.remove_at(foundIndex);
 				}
 				assert(!currentView->HasDuplicateCharacters());
