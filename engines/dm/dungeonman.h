@@ -354,11 +354,11 @@ public:
 	explicit Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isAudible() { return (_attributes >> 15) & 1; }
-	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
+	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 3); }
 	bool getAbsoluteRotation() { return (_attributes >> 12) & 1; }
-	Direction getRotation() { return (Direction)((_attributes >> 10) & 1); }
-	byte getTargetMapY() { return (_attributes >> 5) & 0xF; }
-	byte getTargetMapX() { return _attributes & 0xF; }
+	Direction getRotation() { return (Direction)((_attributes >> 10) & 3); }
+	byte getTargetMapY() { return (_attributes >> 5) & 0x1F; }
+	byte getTargetMapX() { return _attributes & 0x1F; }
 	uint16 getTargetMapIndex() { return _destMapIndex >> 8; }
 }; // @ TELEPORTER
 
@@ -388,7 +388,7 @@ public:
 	uint16 getData() { return (_datAndType >> 7) & 0x1FF; } // @ M40_DATA
 	static uint16 getDataMask1(uint16 data) { return (data >> 7) & 0xF; } // @ M42_MASK1
 	static uint16 getDataMask2(uint16 data) { return (data >> 11) & 0xF; } // @ M43_MASK2
-	void setData(uint16 dat) { _datAndType = dat; } // @ M41_SET_DATA
+	void setData(uint16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
 
 	bool getAttrOnlyOnce() { return (_attributes >> 2) & 1; }
