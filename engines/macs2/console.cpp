@@ -45,7 +45,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("record", WRAP_METHOD(Console, Cmd_inputRecord));
 	registerCmd("playback", WRAP_METHOD(Console, Cmd_inputPlayback));
 	registerCmd("stoprecord", WRAP_METHOD(Console, Cmd_inputStop));
-	registerCmd("dumpopl", WRAP_METHOD(Console, Cmd_dumpOpl));
+
 }
 
 Console::~Console() {
@@ -164,18 +164,6 @@ bool Console::Cmd_inputPlayback(int argc, const char **argv) {
 bool Console::Cmd_inputStop(int argc, const char **argv) {
 	g_engine->stopInputRecording();
 	debugPrintf("Input recording/playback stopped\n");
-	return true;
-}
-
-bool Console::Cmd_dumpOpl(int argc, const char **argv) {
-	if (argc < 2) {
-		// Toggle off if already dumping
-		g_engine->getAdlib()->stopOplDump();
-		debugPrintf("OPL dump stopped\n");
-		return true;
-	}
-	g_engine->getAdlib()->startOplDump(Common::Path(argv[1]));
-	debugPrintf("OPL dump started: %s\n", argv[1]);
 	return true;
 }
 
