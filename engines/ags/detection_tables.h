@@ -1575,7 +1575,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "goosequest1", "Goose Quest 1" },
 	{ "gotalight", "Got a Light?" },
 	{ "gpslostadventure", "G.P.'s Lost Adventure" },
-	{ "gracilisiv", "Gracillis VI: Lost Connection" },
+	{ "gracilisvi", "Gracillis VI: Lost Connection" },
 	{ "grandadvest", "Grandad and The Quest for The Holey Vest" },
 	{ "grandkitchenescape", "Grand Kitchen Escape" },
 	{ "granville1", "The Granville Chronicles - Part 1: The Rebellion Begins" },
@@ -3797,12 +3797,15 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "badcoral", "Bad to the Coral" },
 	{ "beachbelly", "Beach Belly Bloodbath" },
 	{ "bearingdown", "Bearing Down" },
+	{ "blackcomet", "Black Comet" },
 	{ "bookertail", "Booker Tail" },
 	{ "brainrot", "Brainrot!" },
 	{ "bugadv", "Bug Adventure Game" },
 	{ "burncloset", "Burn Down The Closet: a game about being agender" },
+	{ "catsfault", "It's all CATS' fault" },
 	{ "db0oops", "Double-0-Oops!" },
 	{ "evanquest", "Surrealist Tales: Evan's Quest" },
+	{ "fifthbell", "The Fifth Bell" },
 	{ "gregorags", "Gregor" },
 	{ "holeags", "H.O.L.E. - The Hypogean Opening Lithotypical Expedition" },
 	{ "lionelbusqueda", "Lionel y La Busqueda del Acta Perdida" },
@@ -3815,6 +3818,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "principessasangue", "Principessa della magia del sangue" },
 	{ "raorchard", "The Round-about Orchard: A tiny OtGW fan game" },
 	{ "remembersmile", "Remember to Smile!" },
+	{ "schooled", "School'd" },
 	{ "sequencebreak", "Sequence Break" },
 	{ "sinkholesy", "Sinkhole Sy" },
 	{ "snarl", "Snarl" },
@@ -3823,6 +3827,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "theescapeags", "The Escape" },
 	{ "theriftags", "The Rift" },
 	{ "ultrasecreto", "Ultrasecreto - Prólogo" },
+	{ "umbraadv", "Umbra's Adventure" },
 	{ "valbourg", "Mystère à Valbourg" },
 	{ "vasafasa", "The Vasa Fasa" },
 	{ "weightgravity", "Weight of Gravity" },
@@ -4383,6 +4388,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "b9e0b0bbbb82a04d9c83efa455610eda", 11728709),  // Post-Jam v11
 	UNSUPPORTED_DEMO_ENTRY_EN("bearingdown", "Bear Game.ags", "f5271361fcbad7c5d588d863272a560b", 2576138),
 	UNSUPPORTED_DEMO_ENTRY_EN("bookertail", "Bookertail.ags", "036588310f7c60c40ae97be9f2ea641c", 8593198),
+	UNSUPPORTED_GAME_ENTRY_EN("blackcomet", "BlackComet.ags", "35c78ae37fad8495724872a0958d43d6", 2351438),
 	UNSUPPORTED_GAME_ENTRY_EN("brainrot", "brainrot.ags", "6f6d233e14167a68c257eb0599cd9234", 417226),
 	UNSUPPORTED_GAME_ENTRY_EN("brownieadv1", "Brownie1.exe", "a3a797d0ea4bacd17e75d06edc5a7c4b", 166779573),  // GOG v8.0
 	UNSUPPORTED_DEMO_ENTRY_EN("brownieadvfinal", "BA3ANR.exe", "ba3b67bd973d39c10871303118bbd31c", 207511283),
@@ -4395,12 +4401,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.ags", "e0fcd3d59fb160e504700ab8a0101e2f", 4147230),
 	UNSUPPORTED_GAME_ENTRY("bvsr", "BvR.ags", "a22b468346036f972fcb5f7353bf935a", 4225798),  // v1.0.3 Eng-Deu
 	UNSUPPORTED_GAME_ENTRY_EN("carnivalags", "Carnival.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 312099935),
+	UNSUPPORTED_DEMO_ENTRY("catsfault", "ItAllCatsFault.ags", "d81133ee8769cefc86ef8db30a52eadd", 145028486),  // Eng-Rus
 	UNSUPPORTED_DEMO_ENTRY("chuckisland", "Chuck et l'ile aux Geants.ags", "d72d0f45296f9085690d244da1e73d22", 43544604),  // En-Fr
 	UNSUPPORTED_DEMO_ENTRY_EN("cowisland", "LoCI.exe", "0e59f2bebcd30d717a16922376357c71", 7623538),
 	UNSUPPORTED_GAME_ENTRY_EN("cowisland", "LoCI.exe", "0e59f2bebcd30d717a16922376357c71", 8969147),  // Steam
 	UNSUPPORTED_GAME_ENTRY_EN("db0oops", "db0oops.exe", "0ce1f999753709e6bb9d0aac5ab3c5b8", 85067623),
 	UNSUPPORTED_GAME_ENTRY_EN("detentionrampage", "DetentionRR.ags", "58efd28bb8afec118e0c05ccd58313ec", 89454076),
 	UNSUPPORTED_GAME_ENTRY_EN("evanquest", "Evan's Quest.ags", "dc22667b05d7850a1baf5b03abb3060a", 552593),
+	UNSUPPORTED_DEMO_ENTRY_EN("fifthbell", "The Fifth Bell.ags", "63b681362829477b94506c71508b021d", 4113424005),
 	UNSUPPORTED_DEMO_ENTRY_EN("gregorags", "GregorDemo.ags", "c320c1099720c6074ddad87d0782e1cf", 8044720),
 	UNSUPPORTED_GAME_ENTRY_EN("holeags", "HOLE_AGS.ags", "8361748898173f96456b0ea966b32db3", 13689500),
 	UNSUPPORTED_DEMO_ENTRY_EN("input", "Cyber_320.ags", "7abdf06274bdb9dfa2cdba0188a9c02f", 490613151),  // v0.2
@@ -4427,6 +4435,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("projectdevonia", "PDM.ags", "52ace52f870a3219d60af095aace1631", 40150955),  // En-De v1.0.4
 	UNSUPPORTED_GAME_ENTRY_EN("raorchard", "OtGW Fan Game.ags", "3630f3417d103c9ab942cd4b1fb15825", 57489965),  // itch.io client
 	UNSUPPORTED_GAME_ENTRY_EN("remembersmile", "socialcues.ags", "47b9859ee2ad917ea71e09db5d6e39b6", 1554396),
+	UNSUPPORTED_GAME_ENTRY_EN("schooled", "Schoold.ags", "392f36864840694d66791eca00b5f310", 34396465),
 	UNSUPPORTED_GAME_ENTRY_EN("sequencebreak", "Sequence Break.exe", "a9661d5c5313a1ab1eabc97c412401e4", 24895535),  // PoC Win
 	UNSUPPORTED_GAME_ENTRY_EN("sequencebreak", "Sequence Break.ags", "81561910dd2cf232a9aca096aad16411", 21778459),  // PoC Linux
 	UNSUPPORTED_GAME_ENTRY_EN("sequencebreak", "Sequence Break.ags", "1a80f829b0739c6db5ac4141eb880b82", 28319904),  // PoC Win/Linux v2
@@ -4443,6 +4452,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("theriftags", "TheRift.ags", "7208dcd6fa4eb2b6c69cf506fbd103b3", 4612299),
 	UNSUPPORTED_GAME_ENTRY("ultrasecreto", "UltraSecreto.ags", "b4eac3a05a3d442691a061478e4c747b", 12085980),  // v1.0.3
 	UNSUPPORTED_GAME_ENTRY("ultrasecreto", "UltraSecreto.ags", "6e6a8755fdf5a14e5e0dc1aeb1c4b7e8", 11828134),  // v1.0.4
+	UNSUPPORTED_GAME_ENTRY_EN("umbraadv", "umbraGame.ags", "9e7cfa6b7e63b32669e57e11c60bece6", 649267),
 	UNSUPPORTED_GAME_ENTRY_LANG("valbourg", "Valbourg.ags", "5bf37570e233f46d14aea5470711d43c", 53013006, Common::FR_FRA),
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "0bffe4b12ae8f62bf7c0b9b51f7173e8", 50323076),
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "ca487ef688d4fa464986b5ff18d15a23", 59310114),
@@ -5761,6 +5771,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("endacopia", "Endacopia.exe", "67dcfaf952fcc9451cafd2c47cab159b", 89224364),  // Win
 	DEMO_ENTRY_EN("endacopia", "Endacopia.ags", "b80e86f0ec4d745d1e8503918b47dfe4", 86090392),
 	DEMO_ENTRY_EN("endacopia", "game.ags", "67dcfaf952fcc9451cafd2c47cab159b", 89224364),  // Mac
+	DEMO_ENTRY_EN("endacopia", "Endacopia Demo.ags", "4fdc141cb9b076fba20fed68ec8ae186", 72678066),  // Steam Demo
 	DEMO_ENTRY("englishhaunting", "An English Haunting DEMO.exe", "5528c91a1e289389553f97b50ef67bcd", 245477194),  // Eng-Esp
 	DEMO_ENTRY_EN("enterthestory", "Enter The Story.exe", "0514661a4ba6772cf0db0cf839fc7003", 19589742),
 	DEMO_ENTRY_EN("ericmegalith", "eric.exe", "06a03fe35791b0578068ab1873455463", 83259322),
@@ -7595,8 +7606,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("gotalight", "gotalight.exe", "daa21f03e41b5d3e7fd7558be3f8616e", 4019593),
 	GAME_ENTRY_EN("gpslostadventure", "G.P.s Lost Adventure [Wells8892].exe", "06a03fe35791b0578068ab1873455463", 4181945),
 	GAME_ENTRY_EN("gpslostadventure", "GPs_LostAdventure.exe", "06a03fe35791b0578068ab1873455463", 4181945),
-	GAME_ENTRY_EN("gracilisiv", "gracilis_vi.ags", "f8d13f0f295d5a52c830697dfeb16206", 44074481),  // Win v1.7
-	GAME_ENTRY_EN("gracilisiv", "gracilis_vi.ags", "82bfde57536f7a0f7e57d884bcfce61c", 44074299),  // Web v1.6
+	GAME_ENTRY_EN("gracilisvi", "gracilis_vi.ags", "f8d13f0f295d5a52c830697dfeb16206", 44074481),  // Win v1.7
+	GAME_ENTRY_EN("gracilisvi", "gracilis_vi.ags", "82bfde57536f7a0f7e57d884bcfce61c", 44074299),  // Web v1.6
 	GAME_ENTRY_EN("grandadvest", "GrandadVest.exe", "8d1ff95c16500befbdc72260d461d73f", 20824973),  // Windows
 	GAME_ENTRY_EN("grandadvest", "GrandadVest.ags", "cd8d065607f8e9dbed2e7329d57e445a", 17716089),  // Linux
 	GAME_ENTRY_EN("grandkitchenescape", "GrandKitchenEscape.exe", "310db16c989e9bbfa3973bc1bb6215f7", 28327560),  // Windows
