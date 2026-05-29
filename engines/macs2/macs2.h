@@ -284,8 +284,8 @@ public:
 	uint16 *_flagWidths;
 	uint16 *_flagHeights;
 
-	uint16 _numBackgroundAnimations;
-	BackgroundAnimation *_backgroundAnimations;
+	uint16 _numBackgroundAnimations = 0;
+	BackgroundAnimation *_backgroundAnimations = nullptr;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
 	byte *mapData;
