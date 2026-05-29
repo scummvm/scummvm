@@ -3287,6 +3287,15 @@ uint16 SCR_6A_Unused(void) {
 }
 
 /*
+EGA-only opcode (kultega.bin): redraw room statics.
+The CGA script (TEMPL.BIN) uses SCR_13 for the same purpose; the EGA build
+re-numbered this command to 0x6B. Behaviour and operand are identical.
+*/
+uint16 SCR_6B_RedrawRoomStatics(void) {
+	return SCR_13_RedrawRoomStatics();
+}
+
+/*
 Open room's items inventory
 */
 uint16 CMD_1_RoomObjects(void) {
@@ -4389,6 +4398,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_68_PlaySfx,
 	SCR_69_playSound,
 	SCR_6A_Unused,
+	SCR_6B_RedrawRoomStatics,   /*EGA-only; same as SCR_13*/
 };
 #define MAX_SCR_HANDLERS ARRAYSIZE(script_handlers)
 
@@ -4430,7 +4440,7 @@ uint16 RunScript(byte *code) {
 #endif
 
 
-		if (opcode == 0 || opcode >= 107)
+		if (opcode == 0 || opcode >= MAX_SCR_HANDLERS)
 			break;
 
 		status = script_handlers[opcode]();
