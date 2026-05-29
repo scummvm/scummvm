@@ -231,6 +231,7 @@ public:
 
 	// fn0037_1196
 	bool isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void snapToWalkablePosition(Common::Point &target, const Common::Point &charPos);
 
 	uint16 _pathfindingPoints[32];
 	Common::Array<PathfindingPoint> pathfindingPoints;

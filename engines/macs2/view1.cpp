@@ -909,6 +909,9 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			Common::Point target = msg._pos;
 			Common::Point charPos = protagonist->GetPosition();
 
+			// Snap target to nearest walkable position (1008:9be2)
+			g_engine->snapToWalkablePosition(target, charPos);
+
 			// Original logic from handleInput (1008:e8bf):
 			// If direct path is walkable, walk directly. Otherwise use pathfinding network.
 			if (protagonist->isPathWalkable(charPos, target)) {

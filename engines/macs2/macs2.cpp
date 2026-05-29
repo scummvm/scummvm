@@ -821,6 +821,73 @@ uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y) {
 	}
 	return value;
 }
+
+void Macs2Engine::snapToWalkablePosition(Common::Point &target, const Common::Point &charPos) {
+	// Simplified snapToWalkablePosition (1008:9be2):
+	// If target is non-walkable, scan downward then upward to find walkable pixel.
+	// Then apply gradient push away from nearby walls.
+	if (getWalkabilityAt(target.x, target.y) < 200)
+		return; // Already walkable
+
+	// Scan downward
+	for (int y = target.y; y < 200; y++) {
+		if (getWalkabilityAt(target.x, y) < 200) {
+			target.y = y;
+			goto applyPush;
+		}
+	}
+	// Scan upward
+	for (int y = target.y; y >= 0; y--) {
+		if (getWalkabilityAt(target.x, y) < 200) {
+			target.y = y;
+			goto applyPush;
+		}
+	}
+	// Scan X toward character
+	if (charPos.x < target.x) {
+		for (int x = target.x; x >= 0; x--) {
+			if (getWalkabilityAt(x, target.y) < 200) {
+				target.x = x;
+				goto applyPush;
+			}
+		}
+	} else {
+		for (int x = target.x; x < 320; x++) {
+			if (getWalkabilityAt(x, target.y) < 200) {
+				target.x = x;
+				goto applyPush;
+			}
+		}
+	}
+	// All failed — fall back to character position
+	target = charPos;
+	return;
+
+applyPush:
+	// Gradient-based wall push (sample ±1, ±2 pixels)
+	int pushX = 0, pushY = 0;
+	if (getWalkabilityAt(target.x + 1, target.y) >= 200) pushX--;
+	if (getWalkabilityAt(target.x - 1, target.y) >= 200) pushX++;
+	if (getWalkabilityAt(target.x, target.y + 1) >= 200) pushY--;
+	if (getWalkabilityAt(target.x, target.y - 1) >= 200) pushY++;
+	if (getWalkabilityAt(target.x + 2, target.y) >= 200) pushX--;
+	if (getWalkabilityAt(target.x - 2, target.y) >= 200) pushX++;
+	if (getWalkabilityAt(target.x, target.y + 2) >= 200) pushY--;
+	if (getWalkabilityAt(target.x, target.y - 2) >= 200) pushY++;
+
+	while (pushX != 0 || pushY != 0) {
+		if (pushX < 0 && getWalkabilityAt(target.x - 1, target.y) < 200) { target.x--; pushX++; }
+		if (pushX > 0 && getWalkabilityAt(target.x + 1, target.y) < 200) { target.x++; pushX--; }
+		if (pushY < 0 && getWalkabilityAt(target.x, target.y - 1) < 200) { target.y--; pushY++; }
+		if (pushY > 0 && getWalkabilityAt(target.x, target.y + 1) < 200) { target.y++; pushY--; }
+		// Safety: break if push can't move
+		if (pushX < 0 && getWalkabilityAt(target.x - 1, target.y) >= 200) pushX = 0;
+		if (pushX > 0 && getWalkabilityAt(target.x + 1, target.y) >= 200) pushX = 0;
+		if (pushY < 0 && getWalkabilityAt(target.x, target.y - 1) >= 200) pushY = 0;
+		if (pushY > 0 && getWalkabilityAt(target.x, target.y + 1) >= 200) pushY = 0;
+	}
+}
+
 bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16 &result) {
 	for (auto current : PathfindingOverrides) {
 		if (current.Index == index && current.Active) {
