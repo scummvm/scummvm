@@ -1357,7 +1357,7 @@ void Macs2Engine::playCurrentSound() {
 
 	stopCurrentSound();
 	MacsAudioStream *audioStream = new MacsAudioStream();
-	audioStream->pos = 0;
+	audioStream->pos = 2; // Skip 2-byte header (original: size = stored_size - 2)
 	audioStream->_data = _currentSoundData;
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_currentSoundHandle, audioStream);
 }
