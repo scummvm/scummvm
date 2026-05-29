@@ -46,16 +46,18 @@ class GameObject;
 		};
 		// Order of cursors when loading from the file is
 		//  { Talk = 0, Look = 1, Touch = 2, Walk = 3};
+		// Cursor mode values from setCursorMode (1008:3ea5) and handleInput.
+		// Each mode indexes into the cursor image array at _PTR_LOOP_1020_075a
+		// (16 bytes per entry: data ptr, size, width, height, hotspot x/y).
 		enum class MouseMode {
 			Talk = 0x13,
-			// TODO: Confirm
 			Look = 0x14,
 			Use = 0x15,
-			// TODO: Check if correct
 			Walk = 0x16,
-			// TODO: Check if correct
 			UseInventory = 0x17,
-			PanelUse = 0x18
+			PanelUse = 0x18,     // Used in map mode
+			PanelCursor = 0x19,  // Used when action bar is open
+			Disabled = 0x1A      // Hidden/disabled cursor
 		};
 
 		enum class ExecutorState {
@@ -187,7 +189,9 @@ class GameObject;
 
 			
 
+			// fn0037_A3D2 - scriptSkipBlock: skips nested opcode blocks
 			void FuncA3D2();
+			// fn0037_A37A - scriptFuncA37A: alternate skip (for opcode 8)
 			void FuncA37A();
 
 			// Implementation of opcode 13
@@ -201,6 +205,7 @@ class GameObject;
 
 			// void Func101D(uint16 x, uint16 y);
 			
+			// fn0037_9F4D - scriptReadValue: reads a typed value from the script stream
 			void Func9F4D(uint16 &out1, uint16 &out2);
 
 			// Function to be used if we only want to have the script be advanced
@@ -214,6 +219,7 @@ class GameObject;
 			uint16 Func9F4D_16();
 
 			// Saves the given value in a script variable
+			// fn0037_A334 - scriptSaveVariable: saves value to a script variable
 			void FuncA334(uint32 value);
 
 			// fn0037_C991 proc
@@ -221,8 +227,10 @@ class GameObject;
 			void FuncC991();
 
 			// Implements opcode 28 - TODO: What exactly?
-			void FuncC8E4();
+			// fn0037_C8E4 - scriptStopAnimation
+		void FuncC8E4();
 
+			// fn0037_B6BE - scriptChangeAnimation
 			void FuncB6BE_actual();
 
 			// Implements opcode 0e - changing scene animations

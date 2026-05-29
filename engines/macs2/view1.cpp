@@ -26,6 +26,7 @@
 #include "graphics/paletteman.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
+#include "macs2/adlib.h"
 #include <graphics/cursorman.h>
 #include <math/angle.h>
 #include <math/vector2d.h>
@@ -200,7 +201,7 @@ void View1::UpdateCursor(const byte *palette) {
 	CursorMan.replaceCursor(rgbaCursor.data(), width, height, width >> 1, height >> 1, 0, false, &rgbaCursorFormat);
 	// Enable a cursor palette so the backend won't re-blit the cursor on
 	// every screen palette change. The macs2 engine uses RGBA cursors with
-	// baked-in palette colors, so the cursor palette content is irrelevant â€”
+	// baked-in palette colors, so the cursor palette content is irrelevant -
 	// it just needs to exist to prevent the backend's setPalette() from
 	// triggering blitCursor() which can corrupt the RLE-accelerated surface.
 	byte dummyPalette[256 * 3] = {};
@@ -875,11 +876,25 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 	} else if (msg._button == MouseMessage::MB_RIGHT) {
 		// Handle no other interactions during a script
 		if (g_engine->_scriptExecutor->IsExecuting()) {
+			// From handleInput: right-click during script execution opens the
+			// map/save panel (g_wUiPanelState=4) but only if no dialogue, text
+			// box, overlay text, or sound wait is active.
+			// TODO: Implement map/save panel opening here
 			return true;
 		}
 
-		g_engine->NextCursorMode();
-		// TODO: Adjust for actual min value
+		// From handleInput (1008:e8bf): right-click when g_wUiPanelState==0
+		// opens the action bar at the mouse position (openActionBarAtPosition),
+		// setting g_wUiPanelState=1. The original does NOT cycle cursor modes -
+		// that's done via the action bar buttons.
+		if (!isShowingMainMenu) {
+			isShowingMainMenu = true;
+			// TODO: Position the action bar at the click position as the
+			// original does with openActionBarAtPosition(mouseY, mouseX,
+			// adjustedY, adjustedX)
+		} else {
+			isShowingMainMenu = false;
+		}
 		UpdateCursor();
 		return true;
 	}
@@ -1129,6 +1144,35 @@ bool View1::tick() {
 	//	_pal[i * 3 + 1] = (i + _offset) % 256;
 	//  g_system->getPaletteManager()->setPalette(_pal, 0, 256);
 
+	// Music fade tick from gameTick (1008:e556).
+	// Processes volume fade in/out each frame when active.
+	Script::ScriptExecutor *se = g_engine->_scriptExecutor;
+	if (se->activeMusicSlot != 0 && se->musicControlMode != 0) {
+		if (se->musicControlMode == 1) {
+			// Fade out: volume -= step
+			int vol = (int)se->musicControlVolume - (int)se->musicControlParam;
+			if (vol < 1) {
+				se->musicControlMode = 0;
+				se->musicControlVolume = 0;
+				vol = 0;
+			} else {
+				se->musicControlVolume = vol;
+			}
+			g_engine->getAdlib()->SetVolume(se->musicControlVolume);
+		} else {
+			// Fade in: volume += step. When >= 63: stop music.
+			int vol = (int)se->musicControlVolume + (int)se->musicControlParam;
+			if (vol >= 0x3F) {
+				se->musicControlMode = 0;
+				se->activeMusicSlot = 0;
+				g_engine->getAdlib()->StopMusic();
+			} else {
+				se->musicControlVolume = vol;
+				g_engine->getAdlib()->SetVolume(se->musicControlVolume);
+			}
+		}
+	}
+
 	// Below is redundant since we're only cycling the palette, but it demonstrates
 	// how to trigger the view to do further draws after the first time, since views
 	// don't automatically keep redrawing unless you tell it to
@@ -1142,7 +1186,9 @@ bool View1::tick() {
 	uint32 delta = tick_time - _lastMillis;
 	_nextFrameFlag -= delta;
 
-	// TODO: Consider the case of frame skipping
+	// Background animation advance - original gameTick uses a tick counter
+	// that resets when exceeding the mode-dependent threshold (mode 2: 39 ticks,
+	// mode 3: scene-specific value from word5205).
 	if (_nextFrameFlag <= 0) {
 		_flagFrameIndex++;
 		if (_flagFrameIndex == 3) {
@@ -1920,35 +1966,74 @@ uint16 View1::GetHitObjectID(const Common::Point &pos) const {
 }
 
 bool Character::HandleWalkability(Character *c) {
-	// TODO: Disabling it as it seems like I have it slightly off, it causes us to wrap around
-	// when walking off the right of the screen in scene 11
-	return false;
-	// Read the map to find out if we moved into a non-walkable area
-	// TODO: This is where the lerping will be off, since the game does this
-	// every time it adjusts by one pixel
-	// TODO: To check if the game actually moves by one pixel each frame only or
-	// íf it has a loop to do more than one per frame
+	// Wall-sliding obstacle avoidance from walkAlongPath (1008:1b8f).
+	// When the character steps into a non-walkable pixel (walkability >= 200),
+	// the original code samples walkability at +/-1 and +/-2 pixels in each
+	// axis to build a gradient vector, then slides the character along that
+	// vector until it reaches a walkable position.
 	if (c->GameObject->Index != 1) {
-		// Other characters will always be able to walk normally
 		return false;
 	}
 	if (g_engine->_scriptExecutor->IsExecuting()) {
-		// We don't care for walkability
-		// TODO: Probably set by some opcode in the game actually
 		return false;
 	}
 
-	// TODO: For now, only handle walking into the left
-	if (!IsWalkable(c->GetPosition())) {
-		for (int deltaX = 0; deltaX != 20; deltaX++) {
-			if (IsWalkable(Common::Point(c->GetPosition().x + deltaX, c->GetPosition().y))) {
-				c->SetPosition(Common::Point(c->GetPosition().x + deltaX, c->GetPosition().y));
-				return true;
-			}
+	Common::Point pos = c->GetPosition();
+	if (IsWalkable(pos)) {
+		return false;
+	}
+
+	// Build a push vector by sampling the walkability map around the current
+	// position. Non-walkable neighbors push us away from them.
+	int pushX = 0;
+	int pushY = 0;
+
+	// Sample at distance 1
+	if (!IsWalkable(Common::Point(pos.x + 1, pos.y)))
+		pushX -= 1;
+	if (!IsWalkable(Common::Point(pos.x - 1, pos.y)))
+		pushX += 1;
+	if (!IsWalkable(Common::Point(pos.x, pos.y + 1)))
+		pushY -= 1;
+	if (!IsWalkable(Common::Point(pos.x, pos.y - 1)))
+		pushY += 1;
+
+	// Sample at distance 2 for stronger gradient
+	if (!IsWalkable(Common::Point(pos.x + 2, pos.y)))
+		pushX -= 1;
+	if (!IsWalkable(Common::Point(pos.x - 2, pos.y)))
+		pushX += 1;
+	if (!IsWalkable(Common::Point(pos.x, pos.y + 2)))
+		pushY -= 1;
+	if (!IsWalkable(Common::Point(pos.x, pos.y - 2)))
+		pushY += 1;
+
+	// Slide along the push vector
+	while (pushX != 0 || pushY != 0) {
+		if (pushX < 0) {
+			if (IsWalkable(Common::Point(pos.x - 1, pos.y)))
+				pos.x -= 1;
+			pushX += 1;
+		}
+		if (pushX > 0) {
+			if (IsWalkable(Common::Point(pos.x + 1, pos.y)))
+				pos.x += 1;
+			pushX -= 1;
+		}
+		if (pushY < 0) {
+			if (IsWalkable(Common::Point(pos.x, pos.y - 1)))
+				pos.y -= 1;
+			pushY += 1;
+		}
+		if (pushY > 0) {
+			if (IsWalkable(Common::Point(pos.x, pos.y + 1)))
+				pos.y += 1;
+			pushY -= 1;
 		}
 	}
 
-	return false;
+	c->SetPosition(pos);
+	return true;
 }
 
 uint8 Character::LookupWalkability(const Common::Point &p) const {
@@ -2321,6 +2406,15 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 	*/
 }
 
+// NOTE: The original game (walkAlongPath at 1008:1b8f) does NOT use time-based
+// lerping. Instead it uses pixel-by-pixel Bresenham stepping each frame, with
+// speed scaled by depth (perspective). The walk click flow is:
+//   1. snapToWalkablePosition() adjusts target to nearest walkable pixel
+//   2. isPathWalkable() checks if direct line is clear
+//   3. If not: calculatePath() does A* pathfinding through waypoints
+//   4. walkAlongPath() steps 1 pixel per axis per frame, scaled by depth
+// The current lerp-based approach is a simplification that should eventually
+// be replaced with the original pixel-stepping for accurate movement speed.
 void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	StartPosition = GetPosition();
 	EndPosition = target;
