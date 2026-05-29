@@ -358,6 +358,28 @@ public:
 	// TODO: Feels like this should be more elegantly solved, also check how the game does this
 	// Is required for example after a scene change
 	bool scheduledRunIsInitScene = false;
+
+	// Game speed mode from original binary (g_wGameSpeedMode at 1020:0214).
+	// Cycled by Ctrl+T: 0=normal, 1=fast (no frame wait), 2=slow (wait for tick>=0x12).
+	uint16 _gameSpeedMode = 0;
+
+	// Input record/playback system from original binary.
+	// Original usage: MCSEXEC filename /rRecFile or /pPlayFile
+	// Record writes per-frame: mouseX(2), mouseY(2), buttons(2)
+	// Playback reads the same and also a leading frame-count word.
+	enum class InputMode { None, Record, Playback };
+	InputMode _inputMode = InputMode::None;
+	Common::WriteStream *_inputRecordStream = nullptr;
+	Common::SeekableReadStream *_inputPlaybackStream = nullptr;
+	uint32 _inputFrameCounter = 0;
+	uint32 _inputPlaybackEndFrame = 0;
+
+	void startInputRecording(const Common::Path &filename);
+	void startInputPlayback(const Common::Path &filename);
+	void stopInputRecording();
+	void recordInputFrame(uint16 mouseX, uint16 mouseY, uint16 buttons);
+	bool readInputFrame(uint16 &mouseX, uint16 &mouseY, uint16 &buttons);
+
 	Common::Array<uint8> _currentSoundData;
 	Audio::SoundHandle _currentSoundHandle;
 

@@ -68,7 +68,23 @@ void Events::runGame() {
 		// TODO: Consider if this is the best place
 		currentMillis = g_system->getMillis();
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
-			nextFrameTime = currTime + FRAME_DELAY;
+			// Game speed mode (original: g_wGameSpeedMode cycled by Ctrl+T)
+			// Mode 0: normal (tick every FRAME_DELAY ms = ~14ms at 70Hz)
+			// Mode 1: fast (tick every frame, no wait)
+			// Mode 2: slow (tick only when 0x12=18 ticks have elapsed, ~257ms)
+			uint32 frameDelay;
+			switch (g_engine->_gameSpeedMode) {
+			case 1:
+				frameDelay = 0;
+				break;
+			case 2:
+				frameDelay = (18 * 1000) / FRAME_RATE;
+				break;
+			default:
+				frameDelay = FRAME_DELAY;
+				break;
+			}
+			nextFrameTime = currTime + frameDelay;
 			tick();
 			drawElements();
 			_screen->update();

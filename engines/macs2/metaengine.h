@@ -31,6 +31,8 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
 #endif // MACS2_METAENGINE_H

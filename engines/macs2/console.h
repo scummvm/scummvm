@@ -37,6 +37,9 @@ private:
 	bool Cmd_setOrientation(int argc, const char **argv);
 	bool Cmd_dumpScript(int argc, const char **argv);
 	bool Cmd_set(int argc, const char **argv);
+	bool Cmd_inputRecord(int argc, const char **argv);
+	bool Cmd_inputPlayback(int argc, const char **argv);
+	bool Cmd_inputStop(int argc, const char **argv);
 
 public:
 	Console();

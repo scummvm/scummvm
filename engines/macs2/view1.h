@@ -235,6 +235,14 @@ public:
 	bool _isMapPanelActive = false;
 	MapPanelSubMode _mapPanelSubMode = MapPanelSubMode::None;
 	uint16 _mapPanelPageIndex = 0;
+	bool _saveConfirmArmed = false;
+	bool _loadConfirmArmed = false;
+	Common::String _saveSlotNames[30]; // 3 pages x 10 slots
+
+	void openOriginalSaveLoadPanel();
+	void drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s);
+	void handleOriginalSaveLoadClick(const Common::Point &pos);
+	void closeOriginalSaveLoadPanel();
 
 	SpeechActData currentSpeechActData;
 

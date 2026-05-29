@@ -41,6 +41,9 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
 	registerCmd("dumpScript", WRAP_METHOD(Console, Cmd_dumpScript));
 	registerCmd("set", WRAP_METHOD(Console, Cmd_set));
+	registerCmd("record", WRAP_METHOD(Console, Cmd_inputRecord));
+	registerCmd("playback", WRAP_METHOD(Console, Cmd_inputPlayback));
+	registerCmd("stoprecord", WRAP_METHOD(Console, Cmd_inputStop));
 }
 
 Console::~Console() {
@@ -130,6 +133,32 @@ bool Console::Cmd_set(int argc, const char **argv) {
 	int v1 = parseHexArg(argv[2]);
 	int v2 = parseHexArg(argv[3]);
 	g_engine->_scriptExecutor->SetVariableValue(index, v1, v2);
+	return true;
+}
+
+bool Console::Cmd_inputRecord(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: record <filename>\n");
+		return true;
+	}
+	g_engine->startInputRecording(Common::Path(argv[1]));
+	debugPrintf("Recording input to %s\n", argv[1]);
+	return true;
+}
+
+bool Console::Cmd_inputPlayback(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: playback <filename>\n");
+		return true;
+	}
+	g_engine->startInputPlayback(Common::Path(argv[1]));
+	debugPrintf("Playing back input from %s\n", argv[1]);
+	return true;
+}
+
+bool Console::Cmd_inputStop(int argc, const char **argv) {
+	g_engine->stopInputRecording();
+	debugPrintf("Input recording/playback stopped\n");
 	return true;
 }
 
