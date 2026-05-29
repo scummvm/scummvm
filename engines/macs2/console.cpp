@@ -45,7 +45,6 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("record", WRAP_METHOD(Console, Cmd_inputRecord));
 	registerCmd("playback", WRAP_METHOD(Console, Cmd_inputPlayback));
 	registerCmd("stoprecord", WRAP_METHOD(Console, Cmd_inputStop));
-
 }
 
 Console::~Console() {
