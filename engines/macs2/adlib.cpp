@@ -25,71 +25,30 @@
 #include "common/debug.h"
 #include <common/memstream.h>
 
+#define CALLBACKS_PER_SECOND 120
+
 namespace Macs2 {
 
 void Adlib::adlibWriteReg(byte registerIndex, byte value) {
-	// fn0017_2792 proc
-	
+
 	// _opl->write(0x388, registerIndex);
 	_opl->writeReg(registerIndex, value);
 	gArray229C[registerIndex] = value;
-
-	/*
-
-	l0017_27B2:
-	inc	word ptr [bp-2h]
-
-l0017_27B5:
-	mov	dx,388h
-	in	al,dx
-	mov	[bp-3h],al
-	cmp	word ptr [bp-2h],6h
-	jnz	27B2h
-
-l0017_27C2:
-	;; The last pushed value is what we write out
-	mov	al,[bp+6h]
-	mov	dx,389h
-	out	dx,al
-	xor	ax,ax
-	mov	[bp-2h],ax
-	jmp	27D3h
-
-l0017_27D0:
-	inc	word ptr [bp-2h]
-
-l0017_27D3:
-	mov	dx,388h
-	in	al,dx
-	mov	[bp-3h],al
-	cmp	word ptr [bp-2h],24h
-	jnz	27D0h
-
-l0017_27E0:
-	leave
-	retf	4h
-
-	*/
 }
 
 void Adlib::adlibSetInstrument() {
-	// AI-reverse engineered by DeepSeek v1 via Perplexity
 	uint16 local_counter; // bp-2h (2-byte local variable)
 
 	// First loop section (27EF-27F2 labels)
 	local_counter = 0;
-	do { // l0017_27F2
+	do {
 		// if (local_counter >= 9)
-		//	break; // Original jmp condition
-		// Note: Deepseek put this here as well as the bottom where it is
 		// originally
 
 		// Body of first loop
 		uint16 param = local_counter + 0xB0;
-		// Note: Deepseek got confused about the arguments being pushed (as did I
 		// the first time I saw it)
 		uint8 result = adlibGetOperator(param);
-		// Note: Local hallucination where it mixes it up with a string operation
 		result &= 0xDF; // Convert to uppercase
 		adlibWriteReg(param, result);
 
@@ -101,8 +60,7 @@ void Adlib::adlibSetInstrument() {
 
 	// Second loop section (2813-281D labels)
 	local_counter = 0;
-	do { // l0017_281D
-		// Access memory at [di+69h]
+	do {
 
 		uint8 mem_value = gArray69[local_counter];
 		uint16 param = mem_value + 0x40;
@@ -110,148 +68,19 @@ void Adlib::adlibSetInstrument() {
 		adlibWriteReg(param, 0xFF);
 
 		// l0017_281A
-		// Note: Deepseek again mixed up the order in the loop a bit,
-		// but is seems to be equivalent in effect
 		local_counter++;
 	} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
 }
 
 uint16 Adlib::adlibStopMusic() {
 	// Ignoring this code for now, maybe just fancy sync stuff not needed on the emulator
-	/*
-
-	fn0017_2686 proc
-	enter	108h,0h
-	mov	byte ptr [0062h],7h
-	mov	word ptr [0063h],220h
-	xor	ax,ax
-	mov	[bp-4h],ax
-	cli
-	mov	al,0FFh
-	out	21h,al
-	xor	ax,ax
-	mov	[bp-8h],ax
-	jmp	26A9h
-
-l0017_26A6:
-	inc	word ptr [bp-8h]
-
-l0017_26A9:
-	mov	word ptr [0065h],3E8h
-	mov	word ptr [0067h],3E8h
-	push	4h
-	push	80h
-	call	far 0017h:2792h
-	push	3h
-	push	0C0h
-	call	far 0017h:2792h
-	xor	ax,ax
-	mov	[0067h],ax
-	push	4h
-	push	2h
-	call	far 0017h:2792h
-	mov	dx,388h
-	in	al,dx
-	and	al,20h
-	cmp	al,20h
-	jnz	26E7h
-
-l0017_26DF:
-	mov	word ptr [bp-2h],2h
-	jmp	2774h
-
-l0017_26E7:
-	mov	dx,388h
-	in	al,dx
-	and	al,20h
-	or	al,al
-	jnz	270Ch
-
-l0017_26F1:
-	cmp	word ptr [bp-4h],0FFh
-	jnc	270Ch
-
-l0017_26F7:
-	inc	word ptr [bp-4h]
-	xor	ax,ax
-	mov	[bp-6h],ax
-	jmp	2704h
-
-l0017_2701:
-	inc	word ptr [bp-6h]
-
-l0017_2704:
-	cmp	word ptr [bp-6h],63h
-	jnz	2701h
-
-l0017_270A:
-	jmp	26E7h
-
-l0017_270C:
-	cmp	word ptr [bp-4h],0FFh
-	jnz	2719h
-
-l0017_2712:
-	mov	word ptr [bp-2h],2h
-	jmp	2774h
-
-l0017_2719:
-	cmp	word ptr [bp-8h],0h
-	jz	2727h
-
-l0017_271F:
-	mov	ax,[bp-4h]
-	shr	ax,1h
-	mov	[bp-4h],ax
-
-l0017_2727:
-	cmp	word ptr [bp-8h],7h
-	jz	2730h
-
-l0017_272D:
-	jmp	26A6h
-
-l0017_2730:
-	mov	al,0h
-	out	21h,al
-	sti
-	mov	ax,[bp-4h]
-	xor	dx,dx
-	mov	cx,46h
-	div	cx
-	mov	[0065h],ax
-	imul	ax,[0065h],7h
-	mov	[0067h],ax
-	mov	word ptr [bp-4h],2h
-	jmp	2754h
-
-	inc	word ptr [bp-4h]
-	*/
-	// l0017_2751:
-	// l0017_2754:
 	// Reset all register to 0
 	for (int i = 2; i < 256; i++) {
 		adlibWriteReg(i, 0);
 	}
 
-	// l0017_2766:
 	// Waveform select of register 1
 	adlibWriteReg(0x1, 0x20);
-	/*
-
-
-	push	1h
-	push	20h
-	call	far 0017h:2792h
-	xor	ax,ax
-	mov	[bp-2h],ax
-
-l0017_2774:
-	mov	ax,[bp-2h]
-	leave
-	retf
-
-		*/
 	// TODO: Hardcoded zero return until this function is implementedf
 	return 0;
 }
@@ -261,15 +90,12 @@ uint8 Adlib::adlibGetOperator(uint8 arg1) {
 }
 
 uint16 Adlib::adlibTickHandler() {
-	// This function was reverse-engineered with Deepseek R1
 	// Local variables (BP-2 = return value, BP-4/BG-6 temps)
 	uint16 return_value;
 	// uint16 temp_var;
 	uint16 loop_counter;
 
-	// [Original label: fn0017_24FD proc]
-
-	if (g36 != 0) { // [Original label: l0017_2508]
+	if (g36 != 0) {
 		return_value = 3;
 		goto CLEANUP_2648;
 	}
@@ -283,8 +109,6 @@ uint16 Adlib::adlibTickHandler() {
 	// [Original label: l0017_2527]
 	// Following code corresponds to the memory/port operations
 	adlibWriteReg(0x1, 0x20);
-	// Additional far call to 17:2FBE
-	// That call saves the interrupt vector - not implementing this
 	// for now
 
 	// Original clears interrupts here
@@ -298,7 +122,6 @@ uint16 Adlib::adlibTickHandler() {
 	g223E = 0;
 	g2240 = 0;
 
-	// Loop 1: Initialize 225Fh-226Fh [Original labels: 257A-2593]
 	for (loop_counter = 0; loop_counter <= 0x0F; ++loop_counter) {
 		gArray225F[loop_counter] = 0;
 		gArray226F[loop_counter] = 0;
@@ -312,7 +135,6 @@ uint16 Adlib::adlibTickHandler() {
 		gArray2235[loop_counter] = 0xFF;
 	}
 
-	// l0017_25C3:
 	adlibReadDeltaTime();
 
 	// Device/hardware operations (timer/speaker?)
@@ -322,45 +144,23 @@ uint16 Adlib::adlibTickHandler() {
 		temp = temp % 0x12;
 		g224E -= temp;
 		g2296 = 0;
-		g2298 = g224E / 0x12;
+		// Original: g2298 = g224E / 0x12, then PIT is reprogrammed so that
+		// Since our OPL callback fires at a fixed 120 Hz, we compute g2298
+		// to produce the same effective rate: 120 / g2298 = ~20 Hz → g2298 = 6.
+		g2298 = CALLBACKS_PER_SECOND / 20;
 
-		// TODO: This part sets the frequency of the timer,
-		// leaving it out for now.
-		/*
-		mov	ax,[224Eh]
-	xor	dx,dx
-	mov	cx,ax
-	mov	bx,dx
-	mov	ax,0AE3Ch
-	mov	dx,10h
-	call	far 00CDh:0CD4h
-	mov	[bp-4h],ax
-	mov	ax,[bp-4h]
-	and	ax,0FFh
-	out	40h,al
-	mov	ax,[bp-4h]
-	shr	ax,8h
-	out	40h,al
-		*/
+		// The original reprograms the PIT here: divisor = 0x10AE3C / g224E.
+		// This changes the ISR rate, but the g2298 divider compensates so the
+		// effective music event rate is always ~19.65 Hz regardless of tempo.
+		// We achieve the same by fixing g2298 = CALLBACKS_PER_SECOND / 20 above.
 	}
 
-	// l0017_2629:
 	// This part sets an interrupt
-	// TODO: Leaving out for now
-	/*
-	push	8h
-	mov	di,1A9Fh
-	mov	ax,17h
-	push	ax
-	push	di
-	call	far 0017h:2FD6h
-	*/
 	g36 = 1;
 	g2258 = 0x10;
-	// TODO: Enable interrupts - sti
 	return_value = 0;
 
-CLEANUP_2648: // [Original label: l0017_2648]
+CLEANUP_2648:
 	return return_value;
 }
 
@@ -405,33 +205,20 @@ void Adlib::adlibSetFrequency(uint8 bpp0A, StreamHandler *sh) {
 void Adlib::adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6) {
 	uint16 bp4;
 	uint8 bp6;
-	/*
-	;; Arguments:
-	;; [bp+0Ah]: The channel index
-	;; [bp+8h]: The index into the note data structure
-	;; [bp+6h]: TODO: Seems to be 0 for a lot (all) of the note heights?
-
-	*/
 	uint8 al = gArray9F[bpp8];
 	uint16 dx = al;
 	al = gArray11F[bpp8];
 	// TODO: Check if we need 16 bits
 	uint16 bp2 = (al << 0x8) + dx;
 	if (bpp6 != 0) {
-		// l0017_297F:
 		if (bpp6 < 0x80) {
-			// l0017_2985:
 			if (bpp8 < 0x7F) {
-				// l0017_298B:
 				bp6 = bpp8 + 1;
 			} else {
-				// l0017_2996:
 				bp6 = 0x7F;
 			}
-			// l0017_299B:
 			dx = gArray9F[bp6];
 			bp4 = (gArray11F[bp6] << 0x8) + dx;
-			// Multiplication using 00CDh:0C97h
 			// eax:edx = eax:edx * ebx:ecx
 			// TODO: Check actual possible range of result
 			uint64 product = bpp6 * (bp4 - bp2);
@@ -440,29 +227,22 @@ void Adlib::adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6) {
 			// TODO: Check if we can ever overrun
 			bp2 = bp2 + product;
 		} else {
-			// l0017_29EB:
 			if (bpp8 > 0) {
-				// l0017_29F1:
 				bp6 = bpp8 - 1; // TODO: xor ah, ah
 			} else {
-				// l0017_29FC:#
 				bp6 = 0;
 			}
-			// l0017_2A01:
 
 			bp4 = (gArray11F[bp6] << 0x8) + gArray9F[bp6];
-			// Multiplication using 00CDh:0C97h
 			// eax:edx = eax:edx * ebx:ecx
 			// TODO: Check actual possible range of result
 			uint64 product = bpp6 * (bp2 - bp4);
 			// Right shift done by 0D7A proc
-			// Result is in ax:dx
 			product = product >> 0x7;
 			// TODO: Check ranges
 			bp2 = bp2 - product;
 		}
 	}
-	// l0017_2A4F:
 
 	// My version relies on the 16 bit value being correctly cast to 8 bit
 	adlibWriteReg(bppA + 0xA0, bp2 & 0xFF);
@@ -476,76 +256,43 @@ void Adlib::OnTimer() {
 		return;
 	}
 
-	
-
-	// fn0017_1AA7 proc
-
 	g2296++;
 
 	if (g2296 >= g2298) {
 		// Every nth time we execute this code
-		// l0017_1ABD:
-		SIS_LogEntry(0x01D7, 0x1ABD);
 		g2296 = 0;
 
-		/* TODO: Skipped parts with a function pointer
-		xor	ax,ax
-		mov	[2296h],ax
-		pushf
-		call	dword ptr [2292h]
-		mov	byte ptr [229Ah],1h
-		jmp	1AD3h
-		*/
 		g229A = true;
 	} else {
-		// l0017_1ACE:
-		SIS_LogEntry(0x01D7, 0x1ACE);
 		g229A = false;
 	}
-	// l0017_1AD3:
 	if (!g229A) {
-		// l0017_1ADA:
-		// TODO: Nothing to do in our implementation, the original confirms we are handling the
 		// interrupt
 	}
-	// l0017_1ADE:
 	g2258 = g2258 & 0xDF;
 	if (g2258 & 0x2) {
 		// [2258] & 2 was not zero
-		// l0017_1AEF:
-		SIS_LogEntry(0x01D7, 0x1AEF);
 		g2258 |= 0x40;
 	}
-	// l0017_1AF7:
 
 	// TODO: This is a huge jump, maybe should go for a separate function
 	if (!(g2258 & 0xC3)) {
-		// l0017_1B03:
-		SIS_LogEntry(0x01D7, 0x1B03);
 		if (_nextEventTimer != 0) {
 			_nextEventTimer--;
-			// Original code also sends the "End of Interrupt" signal, which
 			// we don't need
 			return;
 		}
 
-		// l0017_1B19:
-		// TODO: Code does a cli, but probably neglible
-
 		// TODO: Handle the loop properly
 		for (;;) {
-			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
 
 			if (current & 0x80) {
 				// The first bit of the read value was 0
-				// l0017_1B27:
-				SIS_LogEntry(0x01D7, 0x1B27);
 				g229B = g223E = shMem2250->peekByte();
 				shMem2250 = adlibSeekStream(shMem2250, 1);
 				g225A++;
 			}
-			// l0017_1B5F:
 			uint8 bp1;
 			uint8 bp2;
 			uint8 bp3 = g229B & 0x0F;
@@ -556,90 +303,60 @@ void Adlib::OnTimer() {
 			uint8 bp5 = bp10->peekByte();
 
 			if ((bp6 & 0xF0) == 0x90) {
-				// l0017_1BA1:
-				SIS_LogEntry(0x01D7, 0x1BA1);
 				if (bp5 != 0) {
-					// l0017_1BAA:
-					SIS_LogEntry(0x01D7, 0x1BAA);
 					shMem2250 = adlibSeekStream(shMem2250, 0x2);
 					g225A += 2;
 
 					if (g2291 == 0x09 || bp3 < 0x0B) {
-						// l0017_1BE4:
-						SIS_LogEntry(0x01D7, 0x1BE4);
 						uint8 bp8 = 0;
 						do {
-							// l0017_1BE9:
 							if (g2291 <= bp8) {
 								break;
 							}
-							// l0017_1BF3:
 							if (gArray222C[bp8] == 0) {
-								// l0017_1BFD:
 								uint8 v = gArray227F[bp8];
 								if (v == bp3) {
-									// l0017_1C09:
 									uint8 v2 = gArray2235[bp8];
 									if (v2 == bp4) {
 										break;
 									}
 								}
 							}
-							// l0017_1C15:
 							bp8++;
 						} while (true);
-						// l0017_1C1A:
 						if (g2291 == bp8) {
-							// l0017_1C27:
-							SIS_LogEntry(0x01D7, 0x1C27);
 							uint16 bp0C = 0;
 							bp8 = g2291;
 							uint16 bp16 = g2291 - 1;
 							if (bp16 > 0) {
-								SIS_LogEntry(0x01D7, 0x1C44);
 								uint16 bp0A = 0;
 								do {
-									// l0017_1C49:
-									// l0017_1C4C:
 									if (gArray222C[bp0A] != 0) {
-										// l0017_1C56:
 										gArray222C[bp0A]++;
 									}
-									// l0017_1C5D:
 									if (gArray222C[bp0A] > bp0C) {
-										// l0017_1C6B:
 										bp0C = gArray222C[bp0A];
 										bp8 = bp0A;
 									}
-									// l0017_1C7D:
 									if (bp0A == bp16) {
 										break;
 									}
-									// l0017_1C44:
 									// Original has this at the top but skips
 									// it for the first round
 									bp0A++;
 								} while (true);
 							}
-							// l0017_1C85:
 							if (bp0C != 0) {
-								// l0017_1C8B:
-								SIS_LogEntry(0x01D7, 0x1C8B);
 								gArray222C[bp8] = 0;
 								gArray227F[bp8] = bp3;
 								if (gArray225F[bp3] != gArray2288[bp8]) {
-									// l0017_1CB1:
-									SIS_LogEntry(0x01D7, 0x1CB1);
 									gArray2288[bp8] = gArray225F[bp3];
 									StreamHandler *shBP12 = adlibSeekStream(shMem2248, gArray2288[bp8] << 0x4);
 									adlibSetFrequency(bp8, shBP12);
 								}
 							}
 						}
-						// l0017_1CF2:
 						if (g2291 != bp8) {
-							SIS_LogEntry(0x01D7, 0x1CFF);
-							// l0017_1CFF:
 							gArray2235[bp8] = bp4;
 							uint8 value = gArray225F[bp3];
 							bp10 = adlibSeekStream(shMem2248, value << 0x4);
@@ -699,70 +416,51 @@ void Adlib::OnTimer() {
 							// TODO: Cast to 8 bit here
 							bp1 = temp2W + temp;
 							if (bp1 > 0x3F) {
-								// l0017_1DEC:
 								bp1 = 0x3F;
 							}
-							// l0017_1DF0:
 							if (bp2 > 0x3F) {
-								// l0017_1DF6:
 								bp2 = 0x3F;
 							}
-							// 1DFAh
 							adlibWriteReg(bp8 + 0xb0, 0);
 
 							uint8 result = adlibGetOperator(gArray96[bp8] + 0x40);
 							adlibWriteReg(gArray96[bp8] + 0x40, (result & 0xC0) + bp1);
 							result = adlibGetOperator(gArray8d[bp8] + 0x40);
 
-							// Note that we again push one more copy of the
-							// value which is not used in g2779 above.
 							adlibWriteReg(gArray8d[bp8] + 0x40,
-									 (result & 0xC0) + bp2);
+										  (result & 0xC0) + bp2);
 
 							gArray226F[bp3] = 0;
 							adlibSetupChannel(bp8, bp4, gArray226F[bp3]);
 						}
 					} else {
-						//			// l0017_1E94:
-						SIS_LogEntry(0x01D7, 0x1E94);
-						{ StreamHandler *shI = adlibSeekStream(shMem2248, gArray225F[bp3] << 0x4); uint8 pc = bp3 >= 0xB ? (bp3 < 0x10 ? gArray57[bp3 - 0xB] : bp3) : bp3; if (pc < 9) { adlibSetFrequency(pc, shI); gArray226F[bp3] = 0; adlibSetupChannel(pc, bp4, 0); } }
+						{
+							StreamHandler *shI = adlibSeekStream(shMem2248, gArray225F[bp3] << 0x4);
+							uint8 pc = bp3 >= 0xB ? (bp3 < 0x10 ? gArray57[bp3 - 0xB] : bp3) : bp3;
+							if (pc < 9) {
+								adlibSetFrequency(pc, shI);
+								gArray226F[bp3] = 0;
+								adlibSetupChannel(pc, bp4, 0);
+							}
+						}
 						//			// TODO: These pushes are not arguments for 19BE
-						//			// push	word ptr [224Ah]
-						//			// push word ptr[2248h]
-						//			// TODO: xor ah, ah
 						//			// Note: Original code returns a pointer via ax:dx, we just save the offset here so far
 						//			// Original code saves results to bp10 and bp0E
 						//			bp10 = Func19BE(gArray225F[bp3] << 0x4);
-						//			// TODO: Several xor ah,ahs in here
 						//			uint8 bp8 = gArray57[bp3 - 0xB];
 						//			if (bp3 == 0xB) {
-						//				// l0017_1ED1:
 						//				// TODO: These pushes are not arguments for 19BE
-						//				// push	word ptr [224Ah]
-						//				// push word ptr[2248h]
-						//				// TODO: Some xor ah,ah in here
 						//				uint16 bp14 = Func19BE(gArray225F[bp3] << 0x4);
 
-						//				// TODO: xor ah,ah
 						//				adlibSetFrequency(gArray5C[bp3 - 0xB], bp14);
 						//
 						//			} else {
-						//				// l0017_1F12:
-						//				// TODO: Not sure if the way of using [bp-10h] is working
 						//				adlibWriteReg(bp8 + 0x20, peekByteAt(bp10));
 						//				// TODO: Really need to rework 19BE implementation
-						//				// TODO: Actual call and arguments for 19BE
-						//				/*
-						//				push	word ptr [bp-0Eh]
-						//				push	word ptr [bp-10h]
-						//				push	2h
-						//				call	far 0017h:19BEh
-						//				*/
 						//				// TODO: Need to start applying these
 						//				Common::MemorySeekableReadWriteStream streamBP0E(nullptr, 0);
 						//				Common::MemorySeekableReadWriteStream r19BE = Func19BE_2(streamBP0E, 2);
 						//				// TODO: For some reason, the argument for 2729 is pushed before
-						//				// the call to 19BE above
 						//				//
 						//				adlibWriteReg(bp8 + 0x40, r19BE.readByte());
 						//
@@ -777,17 +475,13 @@ void Adlib::OnTimer() {
 						//				StreamHandler *r19BE_SH = adlibSeekStream(shBP0E, 0x8);
 						//				adlibWriteReg(bp8 + 0xE0, r19BE_SH->readByte());
 						//			}
-						//			// l0017_1FA9:
-						//			// TODO: xor ah,ah
 						//			StreamHandler* shBP10 = adlibSeekStream(shMem2248, (gArray225F[bp3] << 0x4) + 0x3);
 						//
 						//			bp1 = gArray37[((shBP10->peekByte() & 0x3F) >> 0x4) << 0x3 + (bp5 >> 4)];
 						//			bp1 += g225E;
 						//			if (bp1 > 0x3F) {
-						//				// l0017_200C:
 						//				bp1 = 0x3F;
 						//			}
-						//			// l0017_2010:
 						//			adlibWriteReg(gArray5C[bp3 - 0x0B], 0);
 						//			uint8 r2779 = adlibGetOperator(bp8 + 0x40);
 						//			adlibWriteReg(bp8 + 0x40, bp1 + (r2779 & 0xC0));
@@ -799,66 +493,45 @@ void Adlib::OnTimer() {
 						//			adlibWriteReg(0xBD, (1 << dx) | bx);
 						//			//    TODO: Continue from here
 						//		}
-						//		// TODO: This must be 2097h
 
 						//		// TODO: I think I lost the indentation level for this one:
 					}
-					// l0017_2095:
-					// jmp 209Bh
 					// TODO: Not sure if this should really be an else
 				} else {
 					// l0017_2097
-					SIS_LogEntry(0x01D7, 0x2097);
 					// TODO: Confirm that the following code is correct
 					bp6 = 0x80;
 				}
 			}
-			// l0017_209B:
 			if ((bp6 & 0xF0) == 0x80) {
-				// l0017_20A7:
-				SIS_LogEntry(0x01D7, 0x20A7);
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);
 				g225A += 2;
 				uint8 bp16 = g2291 - 1;
 				if (g2291 > 0) {
-					// l0017_20E1:
-					SIS_LogEntry(0x01D7, 0x20E1);
 					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
-						// l0017_20E9:
 						if (gArray222C[bp0A] != 0) {
-							// l0017_20F3:
 							gArray222C[bp0A]++;
 						}
 					}
 				}
-				//		// l0017_2102 and l0017_2109:
 				//		if (g2291 == 0x09 || bp3 < 0x0B) {
-				//			// l0017_210F:
 				//			uint8 bp8 = 0;
-				//			// l0017_2114:
 				//			while (g2291 > bp8) {
-				//				// l0017_211E:
 				//				// TODO: Continue here
 				//				if (gArray222C[bp8] == 0) {
-				//					// l0017_2128:
 				//					if (gArray227F[bp8] == bp3) {
-				//						// l0017_2134:
 				//						if (gArray2235[bp8] == bp4) {
 				//							break;
 				//						}
 				//					}
 				//				}
-				//				// l0017_2140:
 				//				bp8++;
 				//			}
-				//			// l0017_2145:
 				//			if (g2291 != bp8) {
-				//				// l0017_214F:
 				//				adlibProcessEvent(bp8, bp4, gArray226F[bp3]);
 				//				gArray222C[bp8] = 1;
 				//			}
 				//		} else {
-				//			// l0017_2172:
 				//			uint8 bx = adlibGetOperator(0xBD);
 				//			uint8 dx = bp3;
 				//			uint8 ax = 0x0F - dx;
@@ -870,84 +543,75 @@ void Adlib::OnTimer() {
 				//		}
 				//	}
 			}
-			//	// l0017_21A3 and l0017_21AC:
 			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0) {
-				// l0017_21B5:
-				SIS_LogEntry(0x01D7, 0x21B5);
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);
 				g225A += 0x2;
 			}
-			// l0017_21DF:
 			if ((bp6 & 0xF0) == 0xB0) { // Scope ends 231E
-				// l0017_21EB:
-				SIS_LogEntry(0x01D7, 0x21EB);
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);
 				g225A += 0x2;
 
 				// Big if-else that ends at 231E
 				if (bp4 == 0x66) {
-					// l0017_221C:
-					SIS_LogEntry(0x01D7, 0x221C);
 					g2259 = bp5;
 					g2258 = g2258 | 0x20;
-					// l0017_222D:
 				} else if (bp4 == 0x67) {
-					SIS_LogEntry(0x01D7, 0x2231);
-					if (bp5 != 0) { g2291 = 6; adlibWriteReg(0xBD, 0x20); } else { g2291 = 9; adlibWriteReg(0xBD, 0); }
+					if (bp5 != 0) {
+						g2291 = 6;
+						adlibWriteReg(0xBD, 0x20);
+					} else {
+						g2291 = 9;
+						adlibWriteReg(0xBD, 0);
+					}
 					//				// TODO: Continue from here
-					//				// l0017_2231:
 					//				if (bp5 != 0) {
-					//					// l0017_2237:
 					//					g2291 = 0x6;
 					//					adlibWriteReg(0xBD, 0x20);
 					//				} else {
-					//					// l0017_2247:
 					//					g2291 = 0x9;
 					//					adlibWriteReg(0xBD, 0);
-					//				} // l0017_2258:
 				} else if (bp4 == 0x69) {
-					//					// l0017_225C:
-					SIS_LogEntry(0x01D7, 0x225C);
-					{ uint8 bv = (uint8)(-(int8)bp5); gArray226F[bp3] = bv; for (uint8 i = 0; i < g2291; i++) { if (gArray227F[i] == bp3 && gArray222C[i] == 0) adlibSetupChannel(i, gArray2235[i], bv); } }
-					//					// TODO: Check if the neg works out the right way
+					{
+						uint8 bv = (uint8)(-(int8)bp5);
+						gArray226F[bp3] = bv;
+						for (uint8 i = 0; i < g2291; i++) {
+							if (gArray227F[i] == bp3 && gArray222C[i] == 0)
+								adlibSetupChannel(i, gArray2235[i], bv);
+						}
+					}
 					//					bp5 = -bp5;
 					//					gArray226F[bp3] = bp5;
 					//					uint8 bp16 = g2291 - 1;
 					//					if (0 <= bp16) {
-					//						// l0017_2289:
 					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-					//							// l0017_228C:
 					//							if (gArray227F[bp8] != bp3) {
 					//								continue;
 					//							}
-					//							// l0017_2298:
 					//							if (gArray222C[bp8] != 0) {
 					//								continue;
 					//							}
 
-					//							// l0017_22A2:
 					//							adlibSetupChannel(bp8, gArray2235[bp8], bp5);
 					//						}
 					//					}
-					// l0017_22C1:
 				} else if (bp4 == 0x68) {
-					//					// l0017_22C5:
-					SIS_LogEntry(0x01D7, 0x22C5);
-					{ gArray226F[bp3] = bp5; for (uint8 i = 0; i < g2291; i++) { if (gArray227F[i] == bp3 && gArray222C[i] == 0) adlibSetupChannel(i, gArray2235[i], bp5); } }
+					{
+						gArray226F[bp3] = bp5;
+						for (uint8 i = 0; i < g2291; i++) {
+							if (gArray227F[i] == bp3 && gArray222C[i] == 0)
+								adlibSetupChannel(i, gArray2235[i], bp5);
+						}
+					}
 					//					gArray226F[bp3] = bp5;
 					//					uint16 bp16 = g2291 - 1;
 					//					if (0 <= bp16) {
-					//						// l0017_22E3:
 					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-					//							// l0017_22EB:
 					//							if (gArray227F[bp8] != bp3) {
 					//								continue;
 					//							}
-					//							// l0017_22F7:
 					//							if (gArray222C[bp8] != 0) {
 					//								continue;
 					//							}
-					//							// l0017_2301:
 					//							adlibSetupChannel(bp8, gArray2235[bp8], bp5);
 					//						}
 					//					}
@@ -955,19 +619,14 @@ void Adlib::OnTimer() {
 					//
 				}
 			}
-			// l0017_231E:
 			if ((bp6 & 0xF0) == 0xC0) {
-				// l0017_2327:
-				SIS_LogEntry(0x01D7, 0x2327);
 				shMem2250 = adlibSeekStream(shMem2250, 0x1);
 				g225A++;
 				gArray225F[bp3] = bp4;
 			}
-			// l0017_2355:
 			if ((bp6 & 0xF0) == 0xD0) {
-				//		// l0017_235E:
-				SIS_LogEntry(0x01D7, 0x235E);
-				shMem2250 = adlibSeekStream(shMem2250, 0x1); g225A++;
+				shMem2250 = adlibSeekStream(shMem2250, 0x1);
+				g225A++;
 				//		Macs2::StreamHandler *sh2252;
 				//		Macs2::StreamHandler *sh225A;
 				//		Macs2::StreamHandler *shResult = adlibSeekStream(sh2252, 0x1);
@@ -975,37 +634,33 @@ void Adlib::OnTimer() {
 				//		// TODO: Check if this is the right way to handle the plus operation
 				//		sh225A->seek(1, SEEK_CUR);
 			}
-			// l0017_237E:
 			if ((bp6 & 0xF0) == 0xF0) {
-				//		// l0017_2387:
-				SIS_LogEntry(0x01D7, 0x2387);
-				if (bp4 == 0x2F) { shMem2250 = shMem2244; g225A = 0; g225E = 0; g2259 = 0; g2242 = 1; adlibReadDeltaTime(); } else { shMem2250 = adlibSeekStream(shMem2250, 0x1); g225A++; }
+				if (bp4 == 0x2F) {
+					shMem2250 = shMem2244;
+					g225A = 0;
+					g225E = 0;
+					g2259 = 0;
+					g2242 = 1;
+					adlibReadDeltaTime();
+				} else {
+					shMem2250 = adlibSeekStream(shMem2250, 0x1);
+					g225A++;
+				}
 				//		if (bp4 == 0x2F) {
-				//			// l0017_238D:
 				//			Macs2::StreamHandler *sh2244;
 				//			Macs2::StreamHandler *sh2250;
 				//			sh2250 = sh2244;
 				//			// TODO: Setting 225C and 225A to 0 - ?
 				//			// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
-				//			// mov	byte ptr [2259h],0h
-				//			// mov byte ptr[2242h], 1h
 				//			adlibReadDeltaTime();
 				//		} else {
-				//			// l0017_23B4:
-				//			// TODO: Identical code as the previous branch?
 				//		}
 			} else {
-				// l0017_23DB:
-				SIS_LogEntry(0x01D7, 0x23DB);
 				adlibReadDeltaTime();
 			}
-			// l0017_23E0:
 
-			// Deepseek R1 figured out that this part was just checking
 			// this inequality by using the msw and lsw
 			if (_nextEventTimer > 0x0FFF) {
-				// l0017_23F1:
-				SIS_LogEntry(0x01D7, 0x23F1);
 				shMem2250 = shMem2244;
 				g225A = 0;
 				g2259 = 0;
@@ -1013,36 +668,26 @@ void Adlib::OnTimer() {
 				adlibReadDeltaTime();
 			}
 
-			// l0017_2416:
 			if (_nextEventTimer != 0) {
 				break;
 			}
 		}
 	} else {
 		// This is the jump target from 1B00 from before the big loop
-		// l0017_2425:
 		if ((g2258 & 0xC2) != 0) {
-			// l0017_242E:
-			SIS_LogEntry(0x01D7, 0x242E);
 			g2258 &= ~0xC2;
 			// TODO: I think this just calls the function again
 			// Func1A74();
 		}
-		// l0017_2433:
 		adlibSetInstrument();
 	}
 
 	// l0017_2422
-	// TODO: sti
 
-	// l0017_2438:
 	if (g229A == 0) {
 		// l0017_243F
 		// TODO
-		// mov al,20h
-		// out 20h,al
 	}
-	// l0017_2443:
 	// Just epilogue and interrupt return
 }
 
@@ -1050,8 +695,6 @@ StreamHandler *Adlib::adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta
 	StreamHandler *result = new StreamHandler(*inHandler);
 	uint16 pos = result->pos();
 	if (seekDelta > 0xFFF8) {
-		// l0017_19D8:
-		// TODO: Confirm that this works as expected and if it is every used in
 		// the actual game
 		pos &= 0xF;
 	}
@@ -1064,15 +707,6 @@ StreamHandler *Adlib::adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta
 
 void Adlib::adlibPlaySong(StreamHandler *song) {
 	// TODO: No idea yet what [0036] does
-	/*
-
-	cmp	byte ptr [0036h],0h
-	jz	2460h
-
-l0017_2458:
-	mov	word ptr [bp-2h],3h
-	jmp	24F6h
-	*/
 	StreamHandler *sh = adlibSeekStream(song, 0x6);
 	uint16 delta = sh->peekWord();
 	shMem2248 = adlibSeekStream(song, delta);
@@ -1084,35 +718,16 @@ l0017_2458:
 	sh = adlibSeekStream(song, 0xC);
 	g224E = sh->peekWord();
 	adlibTickHandler();
-	// TODO: We should in theory return the resut of 24FD
-	/*
-	call	far 0017h:24FDh
-	mov	[bp-2h],ax
-
-l0017_24F6:
-	mov	ax,[bp-2h]
-	leave
-	retf	4h*/
-}
-
-void Adlib::SIS_LogEntry(uint16 seg, uint16 off, Common::String msg) {
-	if (msg.empty()) {
-		// debug("Entered %.4X:%.4X", seg, off);
-	} else {
-		// debug(msg.c_str());
-	}
 }
 
 void Adlib::adlibReadDeltaTime() {
 
 	_nextEventTimer = 0;
 	uint8 bp1;
-	// l0017_1A0F:
 	uint8 continueCondition;
 	do {
 		bp1 = shMem2250->peekByte();
 
-		// TODO: Not sure what this does in practice
 		_nextEventTimer = _nextEventTimer << 7;
 		_nextEventTimer += bp1 & 0x7F;
 		shMem2250 = adlibSeekStream(shMem2250, 1);
@@ -1122,30 +737,18 @@ void Adlib::adlibReadDeltaTime() {
 }
 
 void Adlib::adlibProcessEvent(uint8 blend_param, uint8 index, uint8 reg_base) {
-	// AI-reverse engineered by Deepseek
 	// Initial value calculation
-	// [bp-2h]
 	uint16 base_value = (gArray11F[index] << 8) | gArray9F[index];
 	if (blend_param != 0) {
-		// l0017_2AB1:
 		if (blend_param < 0x80) { // Forward blend case
-			// l0017_2AB7:
 			// Calculate next index with clamping
-			// l0017_2ABD: and l0017_2AC8:
-			// [bp-6h]
 			uint8 next_idx = (index < 0x7F) ? index + 1 : 0x7F;
-			// l0017_2ACD:
-			// [bp-4h]
 			uint16 next_value = (gArray11F[next_idx] << 8) | gArray9F[next_idx];
-			// Linear interpolation - handled in register only in assembler
 			int16 delta = next_value - base_value;
 			base_value += static_cast<uint16>((delta * blend_param) / 7);
 		} else { // Reverse blend case
-			// l0017_2B1D:
 			// Calculate previous index with clamping
-			// [bp-6h]
 			uint8 prev_idx = (index > 0) ? index - 1 : 0;
-			// l0017_2B33:
 			uint16 prev_value = (gArray11F[prev_idx] << 8) | gArray9F[prev_idx];
 
 			// Reverse interpolation
@@ -1154,7 +757,6 @@ void Adlib::adlibProcessEvent(uint8 blend_param, uint8 index, uint8 reg_base) {
 		}
 	}
 
-	// l0017_2B81:
 	// Write results to sound chip registers
 	uint8 low_reg = 0xA0 + reg_base;  // Low byte register
 	uint8 high_reg = 0xB0 + reg_base; // High byte register
@@ -1180,7 +782,6 @@ void Adlib::Init() {
 	gArray2288.resize(0x9);
 	gArray2235.resize(0x9);
 
-#define CALLBACKS_PER_SECOND 120
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
 	// adlibReadDeltaTime();
@@ -1232,7 +833,6 @@ void Adlib::Init() {
 	adlibWriteReg(0x43, 0x04);
 	adlibWriteReg(0x40, 0x54);
 
-
 	// Just for the hell of it, try to send the first note on to see if it works
 	adlibWriteReg(0xa0, 0x98);
 	adlibWriteReg(0xb0, 0x29);
@@ -1274,7 +874,6 @@ void Adlib::SetVolume(uint16 volume) {
 }
 
 void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
-	// TODO: Figure out the actual sizes
 	constexpr uint32 size = 255;
 	gArray69.resize(size);
 	LoadData(fileStream, 0x0001B669, size, gArray69.data());

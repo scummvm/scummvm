@@ -63,11 +63,8 @@ class Adlib {
 private:
 	OPL::OPL *_opl;
 
-	void SIS_LogEntry(uint16 seg, uint16 off, Common::String msg = "");
-
 	void adlibReadDeltaTime();
 
-	// 01D7:1AA7
 	void OnTimer();
 
 	// TODO: Consider pointer vs. passing by value

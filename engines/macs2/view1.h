@@ -66,9 +66,9 @@ private:
 
 	// Bresenham pixel-stepping state from walkAlongPath (1008:1b8f)
 	// These replace the time-based lerp for accurate movement
-	int16 _stepDeltaX = 0;      // abs(endX - startX) - runtime[2]
-	int16 _stepDeltaY = 0;      // abs(endY - startY) - runtime[3]
-	int16 _stepError = 0;       // Bresenham error accumulator - runtime[0x18]
+	int16 _stepDeltaX = 0;          // abs(endX - startX) - runtime[2]
+	int16 _stepDeltaY = 0;          // abs(endY - startY) - runtime[3]
+	int16 _stepError = 0;           // Bresenham error accumulator - runtime[0x18]
 	bool _stepDirectionSet = false; // runtime+0x33: direction has been calculated
 
 	// If this is set, a lerp to a location becomes picking up
@@ -190,12 +190,13 @@ public:
 	// Background animation timing from gameTick (1008:e556).
 	// The original game increments a tick counter each frame (~70Hz DOS timer)
 	// and advances background animations when the counter exceeds a threshold:
-	//   Mode 2 (word5203==2): threshold = 0x27 (39 ticks, ~557ms at 70Hz)
-	//   Mode 3 (word5203==3): threshold from scene data (variable, typically smaller)
-	// We convert to milliseconds for ScummVM's variable frame rate.
-	static constexpr uint32 kBgAnimTicksMode2 = 39;  // 0x27 ticks
-	static constexpr uint32 kDosTimerHz = 70;
-	static constexpr uint32 kBgAnimDelayMode2Ms = (kBgAnimTicksMode2 * 1000) / kDosTimerHz; // ~557ms
+	// Background animation timing from gameTick (1008:e556).
+	// g_wBgAnimTickCounter is incremented once per game frame (~20fps).
+	// Mode 2 (word5203==2): threshold = 0x27 (39 game frames, ~1950ms at 20fps)
+	// Mode 3 (word5203==3): threshold from scene data (variable, typically smaller)
+	static constexpr uint32 kBgAnimTicksMode2 = 39; // 0x27 ticks
+	static constexpr uint32 kGameFrameRate = 20;
+	static constexpr uint32 kBgAnimDelayMode2Ms = (kBgAnimTicksMode2 * 1000) / kGameFrameRate; // ~1950ms
 
 	uint32 _frameDelayFlag = kBgAnimDelayMode2Ms;
 	int32 _nextFrameFlag = _frameDelayFlag;
@@ -458,15 +459,15 @@ public:
 	// position. Each button is sized to fit the largest cursor icon + 6px padding.
 	// The panel is clamped to screen bounds (320x200).
 	enum class MainMenuButtonIndex {
-		Talk = 0,       // Sets cursor mode to 0x13 (Talk)
-		Look = 1,       // Sets cursor mode to 0x14 (Look)
-		Use = 2,        // Sets cursor mode to 0x15 (Use)
-		Walk = 3,       // Sets cursor mode to 0x16 (Walk)
-		Inventory = 4,  // Opens inventory panel (g_wHasSavedUiBackground=1)
+		Talk = 0,         // Sets cursor mode to 0x13 (Talk)
+		Look = 1,         // Sets cursor mode to 0x14 (Look)
+		Use = 2,          // Sets cursor mode to 0x15 (Use)
+		Walk = 3,         // Sets cursor mode to 0x16 (Walk)
+		Inventory = 4,    // Opens inventory panel (g_wHasSavedUiBackground=1)
 		InventoryUse = 5, // Uses selected inventory item (cursor 0x17), only if item selected
-		Map = 6,        // Enters map mode (sets scene+0x61db=1), only if not disabled
-		SaveLoad = 7,   // Opens dialogue/save panel (g_wHasSavedUiBackground=3)
-		Close = 8       // Implicit close (clicking outside any button)
+		Map = 6,          // Enters map mode (sets scene+0x61db=1), only if not disabled
+		SaveLoad = 7,     // Opens dialogue/save panel (g_wHasSavedUiBackground=3)
+		Close = 8         // Implicit close (clicking outside any button)
 	};
 
 	Common::Array<Common::Rect> mainMenuButtonLocations;
