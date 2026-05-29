@@ -434,67 +434,45 @@ void Adlib::OnTimer() {
 							adlibSetupChannel(bp8, bp4, gArray226F[bp3]);
 						}
 					} else {
-						{
-							StreamHandler *shI = adlibSeekStream(shMem2248, gArray225F[bp3] << 0x4);
-							uint8 pc = bp3 >= 0xB ? (bp3 < 0x10 ? gArray57[bp3 - 0xB] : bp3) : bp3;
-							if (pc < 9) {
-								adlibSetFrequency(pc, shI);
-								gArray226F[bp3] = 0;
-								adlibSetupChannel(pc, bp4, 0);
-							}
+						// Percussion mode (channels >= 0xB)
+						StreamHandler *shI = adlibSeekStream(shMem2248, gArray225F[bp3] << 0x4);
+						uint8 opIdx = gArray57[bp3 - 0xB]; // operator index
+
+						if (bp3 == 0xB) {
+							// Bass drum: just set frequency
+							adlibSetFrequency(gArray5C[bp3 - 0xB], shI);
+						} else {
+							// Other percussion: load instrument registers
+							adlibWriteReg(opIdx + 0x20, shI->peekByte());
+							StreamHandler *sh2 = adlibSeekStream(shI, 2);
+							adlibWriteReg(opIdx + 0x40, sh2->peekByte());
+							StreamHandler *sh4 = adlibSeekStream(shI, 4);
+							adlibWriteReg(opIdx + 0x60, sh4->peekByte());
+							StreamHandler *sh6 = adlibSeekStream(shI, 6);
+							adlibWriteReg(opIdx + 0x80, sh6->peekByte());
+							StreamHandler *sh8 = adlibSeekStream(shI, 8);
+							adlibWriteReg(opIdx + 0xE0, sh8->peekByte());
 						}
-						//			// TODO: These pushes are not arguments for 19BE
-						//			// Note: Original code returns a pointer via ax:dx, we just save the offset here so far
-						//			// Original code saves results to bp10 and bp0E
-						//			bp10 = Func19BE(gArray225F[bp3] << 0x4);
-						//			uint8 bp8 = gArray57[bp3 - 0xB];
-						//			if (bp3 == 0xB) {
-						//				// TODO: These pushes are not arguments for 19BE
-						//				uint16 bp14 = Func19BE(gArray225F[bp3] << 0x4);
 
-						//				adlibSetFrequency(gArray5C[bp3 - 0xB], bp14);
-						//
-						//			} else {
-						//				adlibWriteReg(bp8 + 0x20, peekByteAt(bp10));
-						//				// TODO: Really need to rework 19BE implementation
-						//				// TODO: Need to start applying these
-						//				Common::MemorySeekableReadWriteStream streamBP0E(nullptr, 0);
-						//				Common::MemorySeekableReadWriteStream r19BE = Func19BE_2(streamBP0E, 2);
-						//				// TODO: For some reason, the argument for 2729 is pushed before
-						//				//
-						//				adlibWriteReg(bp8 + 0x40, r19BE.readByte());
-						//
-						//				Common::MemorySeekableReadWriteStream r19BE_2 = Func19BE_2(streamBP0E, 0x4);
-						//				adlibWriteReg(bp8 + 0x60, r19BE_2.readByte());
+						// Volume calculation for percussion
+						StreamHandler *sh3 = adlibSeekStream(shMem2248, (gArray225F[bp3] << 0x4) + 3);
+						uint8 volIdx = ((sh3->peekByte() & 0x3F) >> 4) * 8 + (bp5 >> 4);
+						if (volIdx < gArray37.size()) {
+							bp1 = gArray37[volIdx] + g225E;
+							if (bp1 > 0x3F) bp1 = 0x3F;
+						} else {
+							bp1 = g225E;
+						}
 
-						//				Common::MemorySeekableReadWriteStream r19BE_3 = Func19BE_2(streamBP0E, 0x6);
-						//				adlibWriteReg(bp8 + 0x80, r19BE_3.readByte());
+						// Key off, set volume, trigger
+						adlibWriteReg(gArray5C[bp3 - 0xB] + 0xB0, 0);
+						uint8 reg40val = adlibGetOperator(opIdx + 0x40);
+						adlibWriteReg(opIdx + 0x40, bp1 + (reg40val & 0xC0));
+						adlibSetupChannel(gArray5C[bp3 - 0xB], bp4, 0);
 
-						//				StreamHandler *shBP0E = new StreamHandler(&streamBP0E);
-						//				// TODO: Who deletes these when?
-						//				StreamHandler *r19BE_SH = adlibSeekStream(shBP0E, 0x8);
-						//				adlibWriteReg(bp8 + 0xE0, r19BE_SH->readByte());
-						//			}
-						//			StreamHandler* shBP10 = adlibSeekStream(shMem2248, (gArray225F[bp3] << 0x4) + 0x3);
-						//
-						//			bp1 = gArray37[((shBP10->peekByte() & 0x3F) >> 0x4) << 0x3 + (bp5 >> 4)];
-						//			bp1 += g225E;
-						//			if (bp1 > 0x3F) {
-						//				bp1 = 0x3F;
-						//			}
-						//			adlibWriteReg(gArray5C[bp3 - 0x0B], 0);
-						//			uint8 r2779 = adlibGetOperator(bp8 + 0x40);
-						//			adlibWriteReg(bp8 + 0x40, bp1 + (r2779 & 0xC0));
-
-						//			adlibProcessEvent(gArray5C[bp3 - 0x0B], bp4, 0);
-						//			uint8 bx = adlibGetOperator(0xBD);
-						//			uint8 dx = bp3;
-						//			dx = 0x0F - dx;
-						//			adlibWriteReg(0xBD, (1 << dx) | bx);
-						//			//    TODO: Continue from here
-						//		}
-
-						//		// TODO: I think I lost the indentation level for this one:
+						// Set percussion bit in register 0xBD
+						uint8 bdVal = adlibGetOperator(0xBD);
+						adlibWriteReg(0xBD, bdVal | (1 << (0xF - bp3)));
 					}
 					// TODO: Not sure if this should really be an else
 				} else {
@@ -526,6 +504,10 @@ void Adlib::OnTimer() {
 						adlibSetupChannel(bp8, bp4, gArray226F[bp3]);
 						gArray222C[bp8] = 1;
 					}
+				} else {
+					// Percussion note-off: clear bit in register 0xBD
+					uint8 bdVal = adlibGetOperator(0xBD);
+					adlibWriteReg(0xBD, bdVal & ~(1 << (0xF - bp3)));
 				}
 			}
 			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0) {
@@ -874,6 +856,12 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 
 	gArray11F.resize(size);
 	LoadData(fileStream, 0x0001B71F, size, gArray11F.data());
+
+	// Percussion lookup tables (hardcoded in data segment)
+	gArray37 = {28,25,23,18,14,11,8,2, 50,42,37,35,34,32,30,2, 55,50,49,48,45,43,40,2, 60,60,58,56,54,52,50,2};
+	// gArray4c[ch] for ch>=0xB == gArray57[ch-0xB], gArray51[ch] for ch>=0xB == gArray5C[ch-0xB]
+	gArray57 = {19, 20, 18, 21, 17};            // percussion alternate channel
+	gArray5C = {6, 7, 8, 8, 7};                 // percussion frequency channel
 }
 
 void Adlib::LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
