@@ -1114,34 +1114,6 @@ void ScriptExecutor::scriptChangeAnimationImpl() {
 	BackgroundAnimationBlob::advanceAnimFrame(blob.Blob, true, bp4 + 0x64);
 }
 
-void ScriptExecutor::scriptChangeAnimationWrapper() {
-	// TODO: This is a very simplistic implementation, there's a lot
-	// to be discovered how this works exaclty
-	uint16 id1;
-	uint16 id2;
-	// TODO: Should handle this as a 32 bit number
-	scriptReadValuePair(id1, id2);
-	uint16 animFrame;
-	uint16 throwaway;
-	scriptReadValuePair(animFrame, throwaway);
-
-	// TODO: Access the animation based on the ID
-	// Can do it hardcoded for now, but will need to figure out the relationship
-	// further down the road
-
-	// Subtracting an additional 1 since mine are indexed from 0 and not 1 like the game does
-	uint16 id = id1 - 0x1000 - 1;
-	// TODO: This is not accurate, but in practice we should be able to get by with just ping-
-	// ponging between animations. In actual practice, we need to read the data correctly
-	// and apply the logic from the 1480 function to it
-	_engine->_backgroundAnimations[id].FrameIndex++;
-	// TODO: Implement proper wrap around based on 1480
-	_engine->_backgroundAnimationsBlobs[id].FrameIndex++;
-	_engine->_backgroundAnimations[id].FrameIndex = (_engine->_backgroundAnimations[id].FrameIndex + 1) % _engine->_backgroundAnimations[id].numFrames;
-	
-
-}
-
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
 	// TODO: Need to be careful, there are different functions accessing
