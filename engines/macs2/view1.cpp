@@ -900,15 +900,32 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
 		if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
-			// TODO: Should address the protagonist differently
-			// TODO: Sort out the different modes and only define them once
 			Character *protagonist = GetCharacterByIndex(1);
 			if (protagonist == nullptr) {
 				warning("Ignoring walk click without protagonist character in the active scene");
 				return true;
 			}
 
-			protagonist->StartLerpTo(msg._pos, 1000);
+			Common::Point target = msg._pos;
+			Common::Point charPos = protagonist->GetPosition();
+
+			// Original logic from handleInput (1008:e8bf):
+			// If direct path is walkable, walk directly. Otherwise use pathfinding network.
+			if (protagonist->IsLineSegmentWalkable(charPos, target)) {
+				protagonist->StartLerpTo(target, 1000);
+			} else {
+				protagonist->PathFinalDestination = target;
+				protagonist->Path.clear();
+				bool found = protagonist->FindPath(target);
+				if (found) {
+					protagonist->IsFollowingPath = true;
+					protagonist->CurrentPathIndex = -1;
+					protagonist->TryFollowPath();
+				} else {
+					// No path found — walk directly (will get stuck on obstacles)
+					protagonist->StartLerpTo(target, 1000);
+				}
+			}
 			return true;
 		}
 
