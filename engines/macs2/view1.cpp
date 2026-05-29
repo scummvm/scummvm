@@ -1652,16 +1652,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	});
 
 	for (auto current : sorted) {
-		int index = current->GameObject->Index;
 		if (!current->GameObject->IsVisible) {
-			continue;
-		}
-		// TODO: Object 50h is a special one, it is the invisible object that moves along the
-		// ground during the stick throw. Need to check how this is handled it the game
-		// TODO: I'm kind of guessing that nr. 10 also is not visible, it does not appear
-		// to have a lot of data to it. Random guess maybe this is the cup which is static?
-		// TODO: Check what objects 17 and 18 and 23 in the machine room scene might be
-		if (is_in_list<uint16, 0x50, 0x17, 0x18, 0x23>(index)) { // || index == 0x10) {
 			continue;
 		}
 
@@ -1677,7 +1668,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
 		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
 		// Only output debug values for the character
-		uint16 scalingFactor = CalculateCharacterScaling(depth, index == 1);
+		uint16 scalingFactor = CalculateCharacterScaling(depth, current->GameObject->Index == 1);
 		// Adjust the position based on the scale
 		// TODO: Search where this is done in the game code
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
