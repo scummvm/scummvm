@@ -911,16 +911,16 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 			// Original logic from handleInput (1008:e8bf):
 			// If direct path is walkable, walk directly. Otherwise use pathfinding network.
-			if (protagonist->IsLineSegmentWalkable(charPos, target)) {
+			if (protagonist->isPathWalkable(charPos, target)) {
 				protagonist->StartLerpTo(target, 1000);
 			} else {
 				protagonist->PathFinalDestination = target;
 				protagonist->Path.clear();
-				bool found = protagonist->FindPath(target);
+				bool found = protagonist->calculatePath(target);
 				if (found) {
 					protagonist->IsFollowingPath = true;
 					protagonist->CurrentPathIndex = -1;
-					protagonist->TryFollowPath();
+					protagonist->walkAlongPath();
 				} else {
 					// No path found — walk directly (will get stuck on obstacles)
 					protagonist->StartLerpTo(target, 1000);
@@ -1065,7 +1065,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		GetCharacterByIndex(1)->PathFinalDestination = mousePos;
 		GetCharacterByIndex(1)->Path.clear();
 		// g_engine->_path.clear();
-		bool pathfindingResult = characters[0]->FindPath(mousePos);
+		bool pathfindingResult = characters[0]->calculatePath(mousePos);
 		GetCharacterByIndex(1)->IsFollowingPath = pathfindingResult;
 		GetCharacterByIndex(1)->CurrentPathIndex = -1;
 
@@ -2154,7 +2154,7 @@ bool Character::IsWalkable(const Common::Point &p) const {
 	return walkability < 0xC8;
 }
 
-bool Character::IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2, bool print) {
+bool Character::isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print) {
 	int x1 = p1.x;
 	int y1 = p1.y;
 	int x2 = p2.x;
@@ -2200,7 +2200,7 @@ Character::Character() {
 	ExecuteScriptOnFinishLerp = false;
 }
 
-bool Character::FindPath(Common::Point target) {
+bool Character::calculatePath(Common::Point target) {
 	// First naive implementation
 	// Find the closest reachable start point
 	// Check if we can reach the target
@@ -2213,7 +2213,7 @@ bool Character::FindPath(Common::Point target) {
 	const Common::Point &charPosition = GameObjects::instance().GetProtagonistObject()->Position;
 	for (int i = 0; i < numPoints; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
-		if (IsLineSegmentWalkable(charPosition, current.Position)) {
+		if (isPathWalkable(charPosition, current.Position)) {
 			uint dist = charPosition.sqrDist(current.Position);
 			if (dist < minLength) {
 				minLength = dist;
@@ -2232,9 +2232,9 @@ bool Character::FindPath(Common::Point target) {
 	Common::Array<bool> visited;
 	visited.resize(16);
 	debug("Best entry point: %u at distance %u", minIndex, minLength);
-	bool result = VisitPathfindingNode(minIndex, visited, target);
+	bool result = findShortestPath(minIndex, visited, target);
 	PathfindingPoint &entryPoint = g_engine->pathfindingPoints[minIndex];
-	IsLineSegmentWalkable(charPosition, entryPoint.Position, true);
+	isPathWalkable(charPosition, entryPoint.Position, true);
 	// Now handle searching for the end point, for this, keep track of nodes we already visited
 	// Args:
 	// Target position
@@ -2244,7 +2244,7 @@ bool Character::FindPath(Common::Point target) {
 	return result;
 }
 
-bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target) {
+bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, const Common::Point &target) {
 	if (visited[index] == true) {
 		// We have visited this node before
 		return false;
@@ -2256,17 +2256,17 @@ bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited,
 	g_engine->_path.push_back(currentPosition);
 
 	// Check if we can reach the target from here
-	if (IsLineSegmentWalkable(currentPosition, target)) {
-		IsLineSegmentWalkable(currentPosition, target, true);
+	if (isPathWalkable(currentPosition, target)) {
+		isPathWalkable(currentPosition, target, true);
 		return true;
 	}
 
 	// See if the adjacent points are good
 	for (uint i = 0; i < currentPoint.adjacentPoints.size(); i++) {
 		const uint16 currentAdjacentIndex = currentPoint.adjacentPoints[i];
-		if (VisitPathfindingNode(currentAdjacentIndex - 1, visited, target)) {
+		if (findShortestPath(currentAdjacentIndex - 1, visited, target)) {
 			const PathfindingPoint &adjacentPoint = g_engine->pathfindingPoints[currentAdjacentIndex - 1];
-			IsLineSegmentWalkable(currentPoint.Position, adjacentPoint.Position, true);
+			isPathWalkable(currentPoint.Position, adjacentPoint.Position, true);
 			return true;
 		}
 	}
@@ -2300,7 +2300,7 @@ uint16 Character::GetVerticalOffset() const {
 	return result;
 }
 
-bool Character::TryFollowPath() {
+bool Character::walkAlongPath() {
 	CurrentPathIndex++;
 	if ((uint)CurrentPathIndex == Path.size()) {
 		// This means we now need to move to the final destination
@@ -2603,7 +2603,7 @@ void Character::Update() {
 	// Check if we have arrived at the target
 	if (pos == EndPosition) {
 		if (IsFollowingPath) {
-			IsFollowingPath = TryFollowPath();
+			IsFollowingPath = walkAlongPath();
 			if (IsFollowingPath)
 				return;
 		}

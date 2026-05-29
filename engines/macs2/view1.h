@@ -89,7 +89,7 @@ private:
 
 public:
 	bool IsWalkable(const Common::Point &p) const;
-	bool IsLineSegmentWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
+	bool isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
 	Common::Array<uint8> PathfindingOverlay;
 	Character();
 
@@ -97,9 +97,9 @@ public:
 	int16 CurrentPathIndex;
 	Common::Point PathFinalDestination;
 
-	bool FindPath(Common::Point target);
+	bool calculatePath(Common::Point target);
 
-	bool VisitPathfindingNode(uint16 index, Common::Array<bool> &visited, const Common::Point &target);
+	bool findShortestPath(uint16 index, Common::Array<bool> &visited, const Common::Point &target);
 
 	bool IsFollowingPath = false;
 
@@ -110,7 +110,7 @@ public:
 	uint16 GetVerticalOffset() const;
 
 	// Returns false if we are at the end of the path already or the path is not valid
-	bool TryFollowPath();
+	bool walkAlongPath();
 
 	// Set by opcode 11h
 	bool ExecuteScriptOnFinishLerp = false;
