@@ -88,15 +88,21 @@ else ifeq ($(platform), rpi4_64)
    HAVE_OPENGLES2 := 1
    HAVE_NEON := 1
 
-# webOS (32 bit)
+# webOS (32/64 bit)
 else ifeq ($(platform), webos)
    TARGET = $(TARGET_NAME)_libretro.so
-   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -marm -DARM
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC -static-libgcc -static-libstdc++
-   CFLAGS += -fPIC -mcpu=cortex-a9 -mtune=cortex-a53 -mfloat-abi=softfp -fomit-frame-pointer -ffast-math
+   CFLAGS += -fPIC -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -frtti -std=c++11
    HAVE_OPENGLES2 := 1
    HAVE_NEON := 1
+   ifneq (,$(findstring aarch64,$(CROSS_COMPILE)))
+      CFLAGS += -mcpu=cortex-a53 -mtune=cortex-a76
+   else
+      DEFINES += -marm
+      CFLAGS += -mcpu=cortex-a9 -mtune=cortex-a53 -mfloat-abi=softfp
+   endif
 
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
