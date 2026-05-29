@@ -139,9 +139,8 @@ class GameObject;
 
 				
 			// [1012h] global - current assumption is that this guards script runs that
-			// are not guarded by the [1014h] global
-			// TODO: I think I had this one right before, the meaning of "is repeated run"
-			// could be better
+			// [1012h] g_wRepeatRunFlag - set during the repeat script pass
+			// that runs after scene init to process object scripts
 			bool IsRepeatRun = false;
 
 			uint16 executingObjectIndex;
@@ -226,7 +225,7 @@ class GameObject;
 			// Implements a walk to
 			void scriptLoadSpecialAnimImpl();
 
-			// Implements opcode 28 - TODO: What exactly?
+			// Implements opcode 0x28 - stops the current animation on an object
 			// fn0037_C8E4 - scriptStopAnimation
 		void scriptStopAnimationImpl();
 
@@ -247,8 +246,8 @@ class GameObject;
 			void EndBuffering(bool shouldMark = false);
 
 			// Global [0F92h], seems to be 0 if we execute the script of the scene
-			// and the object ID if we execute the script of another object
-			// TODO: Confirm that this covers all uses
+			// Global [0F92h] g_wExecutingScriptObjectId: 0 when executing the
+			// scene script, otherwise the object index whose script is running.
 			uint16 _executingScriptObjectID;
 			
 
@@ -281,7 +280,8 @@ class GameObject;
 			int chosenDialogueOption = 0;
 			uint16 activeDialogueSpeakerObjectID = 0;
 
-			// TODO: Identify number of variables and default values
+			// 0x2000 bytes / 4 bytes per var = 2048 variables max (indices 1-0x800).
+			// All zeroed on init by memsetBytes in loadResourceFile.
 			Common::Array<ScriptVariable> _variables;
 
 			void SetVariableValue(uint16 index, uint16 a, uint16 b);
@@ -305,7 +305,7 @@ class GameObject;
 		// Set by opcode 0x1C, cleared by opcode 0x1D.
 		bool scriptSkippable = false;
 			bool musicEnabled = true;
-			bool mapPanelActive = false;
+			bool soundSystemActive = false;
 			bool overlayTextStageActive = false;
 			bool inventoryActionFlag = false;
 			bool inventoryCombineFlag = false;
@@ -322,10 +322,7 @@ class GameObject;
 			uint16 pickupTargetObjectID = 0;
 			MouseMode savedPickupMouseMode = MouseMode::Use;
 
-			// TODO: Mockup variable to simulate conditions where the scripting
-			// function would be called again, like after a walk to event
-			// TODO: Rename to reflect this
-			// TODO: Check if used like this consistently - not really, let's get rid of it
+			// Legacy flag for script callback scheduling. Marked for removal.
 			bool requestCallback = false;
 
 			Macs2::Macs2Engine* _engine;

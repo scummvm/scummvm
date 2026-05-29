@@ -29,8 +29,11 @@
 
 namespace Macs2 {
 
+// Timer ISR fires at ~21.6 Hz (PIT divisor 0xd7b0 = 55216, 1193182/55216).
+// Main loop processes a game frame when tick counter > 1 (every ~2 ticks).
+// Effective game frame rate: ~20 fps (confirmed by previous testing).
 #define FRAME_RATE 70
-#define FRAME_DELAY (1000 / FRAME_RATE)
+#define FRAME_DELAY (1000 / 20)
 
 class Events;
 

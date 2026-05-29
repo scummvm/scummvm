@@ -1001,12 +1001,12 @@ l0037_A324:
 
 */
 	else if (value == 0x30) {
-		out1 = (musicEnabled && mapPanelActive) ? 1 : 0;
+		out1 = (musicEnabled && soundSystemActive) ? 1 : 0;
 		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x31) {
-		out1 = (soundEnabled && mapPanelActive) ? 1 : 0;
+		out1 = (soundEnabled && soundSystemActive) ? 1 : 0;
 		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -1993,8 +1993,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			c->RegisterWaitForMovementFinishedEvent();
 			requestCallback = false;
 			isAwaitingCallback = true;
-			// TODO: Could be special for me with the short timer times, but it can happen
-			// that things happen out of order if not ending any timers active
+			// NOTE: EndTimer prevents race conditions from overlapping waits
+			
 			EndTimer();
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
@@ -2150,8 +2150,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			requestCallback = false;
 			g_engine->ScheduleRun(true);
 			isAwaitingCallback = true;
-			// TODO: Could be special for me with the short timer times, but it can happen
-			// that things happen out of order if not ending any timers active
+			// NOTE: EndTimer prevents race conditions from overlapping waits
+			
 			EndTimer();
 			EndFrameWait();
 			EndBuffering(lastOpcodeTriggeredSkip);
@@ -2182,8 +2182,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			activeDialogueSpeakerObjectID = objectID;
 			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
 			isAwaitingCallback = true;
-			// TODO: Could be special for me with the short timer times, but it can happen
-			// that things happen out of order if not ending any timers active
+			// NOTE: EndTimer prevents race conditions from overlapping waits
+			
 			EndTimer();
 			EndFrameWait();
 			EndBuffering(lastOpcodeTriggeredSkip);
@@ -2258,8 +2258,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				speakerObjectID, x, y, side, DialogueChoices.size());
 			currentView->ShowDialogueChoice(speakerObjectID, DialogueChoices, Common::Point(x, y), side);
 			requestCallback = false;
-			// TODO: Could be special for me with the short timer times, but it can happen
-			// that things happen out of order if not ending any timers active
+			// NOTE: EndTimer prevents race conditions from overlapping waits
+			
 			EndTimer();
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
@@ -2304,8 +2304,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			actor->StartPickup(targetObject);
 			requestCallback = false;
 			isAwaitingCallback = true;
-			// TODO: Could be special for me with the short timer times, but it can happen
-			// that things happen out of order if not ending any timers active
+			// NOTE: EndTimer prevents race conditions from overlapping waits
+			
 			EndTimer();
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
@@ -2872,7 +2872,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				_engine->playCurrentSound();
 			}
 		} else if (opcode1 == 0x41) {
-			if (soundEnabled && mapPanelActive) {
+			if (soundEnabled && soundSystemActive) {
 				waitForSoundPlayback = true;
 				EndTimer();
 				EndBuffering(lastOpcodeTriggeredSkip);
@@ -2901,7 +2901,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 
-			if (!musicEnabled || !mapPanelActive) {
+			if (!musicEnabled || !soundSystemActive) {
 				activeMusicSlot = slotID;
 				continue;
 			}
@@ -2939,7 +2939,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 
-			if (!musicEnabled || !mapPanelActive) {
+			if (!musicEnabled || !soundSystemActive) {
 				activeMusicSlot = 0;
 				continue;
 			}
@@ -2956,7 +2956,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				}
 			}
 		} else if (opcode1 == 0x47) {
-			if (mapPanelActive && musicEnabled) {
+			if (soundSystemActive && musicEnabled) {
 				waitForMusicControl = true;
 				EndTimer();
 				EndBuffering(lastOpcodeTriggeredSkip);
@@ -2970,7 +2970,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 
 			if (activeMusicSlot == slotID) {
-				if (musicEnabled && mapPanelActive)
+				if (musicEnabled && soundSystemActive)
 					_engine->getAdlib()->StopMusic();
 				activeMusicSlot = 0;
 			}
@@ -3050,7 +3050,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 			g_engine->pathfindingValueRemaps[sourceValue] = targetValue;
 		} else if (opcode1 == 0x4E) {
-			if (mapPanelActive && musicEnabled) {
+			if (soundSystemActive && musicEnabled) {
 				waitForAdlibReady = true;
 				EndTimer();
 				EndBuffering(lastOpcodeTriggeredSkip);

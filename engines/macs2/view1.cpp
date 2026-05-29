@@ -26,9 +26,9 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
+#include "macs2/adlib.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
-#include "macs2/adlib.h"
 #include <graphics/cursorman.h>
 #include <math/angle.h>
 #include <math/vector2d.h>
@@ -588,8 +588,10 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 	// Calculate button size from actual icon dimensions (matching original)
 	uint16 maxW = 0, maxH = 0;
 	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
-		if (g_engine->imageResources[i].Width > maxW) maxW = g_engine->imageResources[i].Width;
-		if (g_engine->imageResources[i].Height > maxH) maxH = g_engine->imageResources[i].Height;
+		if (g_engine->imageResources[i].Width > maxW)
+			maxW = g_engine->imageResources[i].Width;
+		if (g_engine->imageResources[i].Height > maxH)
+			maxH = g_engine->imageResources[i].Height;
 	}
 	uint16 btnW = maxW + 6;
 	uint16 btnH = maxH + 6;
@@ -622,8 +624,10 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	// Each button is sized to the largest icon + 6px padding, centered in cell
 	uint16 maxW = 0, maxH = 0;
 	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
-		if (g_engine->imageResources[i].Width > maxW) maxW = g_engine->imageResources[i].Width;
-		if (g_engine->imageResources[i].Height > maxH) maxH = g_engine->imageResources[i].Height;
+		if (g_engine->imageResources[i].Width > maxW)
+			maxW = g_engine->imageResources[i].Width;
+		if (g_engine->imageResources[i].Height > maxH)
+			maxH = g_engine->imageResources[i].Height;
 	}
 	uint16 btnW = maxW + 6;
 	uint16 btnH = maxH + 6;
@@ -2583,14 +2587,15 @@ void Character::Update() {
 		depthAtPos = g_engine->_depthMap.getPixel(pos.x, pos.y);
 	}
 	int walkSpeed = (2 * ((int)g_engine->word5201 + depthAtPos)) / 100;
-	if (walkSpeed < 1) walkSpeed = 1;
-
+	if (walkSpeed < 1)
+		walkSpeed = 1;
 
 	// Check if we have arrived at the target
 	if (pos == EndPosition) {
 		if (IsFollowingPath) {
 			IsFollowingPath = TryFollowPath();
-			if (IsFollowingPath) return;
+			if (IsFollowingPath)
+				return;
 		}
 		IsLerping = false;
 		if (hasMotionVerticalOffset) {
@@ -2599,7 +2604,8 @@ void Character::Update() {
 			hasMotionVerticalOffset = false;
 		}
 		// Standing orientation = walking direction + 8
-		if (GameObject->Orientation < 9) GameObject->Orientation += 8;
+		if (GameObject->Orientation < 9)
+			GameObject->Orientation += 8;
 		if (pickedUpObject != nullptr) {
 			pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
 			previousOrientation = GameObject->Orientation;
@@ -2614,7 +2620,6 @@ void Character::Update() {
 		return;
 	}
 
-
 	// Calculate direction if not yet set (first frame of movement)
 	if (!_stepDirectionSet) {
 		_stepDirectionSet = true;
@@ -2622,17 +2627,26 @@ void Character::Update() {
 		uint16 absDy = abs(EndPosition.y - pos.y);
 		// Determine 8-directional orientation from walkAlongPath
 		uint8 dir = GameObject->Orientation;
-		if (dir > 8 && dir < 17) dir -= 8;
-		if (pos.y > EndPosition.y && absDx <= absDy) dir = 1; // North
-		if (pos.x < EndPosition.x && absDy <= absDx) dir = 3; // East
-		if (pos.y < EndPosition.y && absDx <= absDy) dir = 5; // South
-		if (pos.x > EndPosition.x && absDy <= absDx) dir = 7; // West
+		if (dir > 8 && dir < 17)
+			dir -= 8;
+		if (pos.y > EndPosition.y && absDx <= absDy)
+			dir = 1; // North
+		if (pos.x < EndPosition.x && absDy <= absDx)
+			dir = 3; // East
+		if (pos.y < EndPosition.y && absDx <= absDy)
+			dir = 5; // South
+		if (pos.x > EndPosition.x && absDy <= absDx)
+			dir = 7; // West
 		// Diagonals: deltaX/4 < deltaY && deltaY/2 < deltaX
 		if (absDx > (absDy >> 2) && absDy > (absDx >> 1)) {
-			if (pos.y > EndPosition.y && pos.x < EndPosition.x) dir = 2;
-			if (pos.y < EndPosition.y && pos.x < EndPosition.x) dir = 4;
-			if (pos.y < EndPosition.y && pos.x > EndPosition.x) dir = 6;
-			if (pos.y > EndPosition.y && pos.x > EndPosition.x) dir = 8;
+			if (pos.y > EndPosition.y && pos.x < EndPosition.x)
+				dir = 2;
+			if (pos.y < EndPosition.y && pos.x < EndPosition.x)
+				dir = 4;
+			if (pos.y < EndPosition.y && pos.x > EndPosition.x)
+				dir = 6;
+			if (pos.y > EndPosition.y && pos.x > EndPosition.x)
+				dir = 8;
 		}
 		GameObject->Orientation = dir;
 		_stepDeltaX = absDx;
@@ -2640,22 +2654,27 @@ void Character::Update() {
 		_stepError = 0;
 	}
 
-
 	// Step pixels (Bresenham line algorithm)
 	int pixelsMoved = 0;
 	for (int step = 0; step < walkSpeed; step++) {
 		Common::Point prevPos = pos;
 		if (_stepError < _stepDeltaX) {
 			// Step along X axis
-			if (EndPosition.x != pos.x) pixelsMoved++;
-			if (EndPosition.x < pos.x) pos.x--;
-			else if (EndPosition.x > pos.x) pos.x++;
+			if (EndPosition.x != pos.x)
+				pixelsMoved++;
+			if (EndPosition.x < pos.x)
+				pos.x--;
+			else if (EndPosition.x > pos.x)
+				pos.x++;
 			_stepError += _stepDeltaY;
 		} else {
 			// Step along Y axis
-			if (EndPosition.y != pos.y) pixelsMoved++;
-			if (EndPosition.y < pos.y) pos.y--;
-			else if (EndPosition.y > pos.y) pos.y++;
+			if (EndPosition.y != pos.y)
+				pixelsMoved++;
+			if (EndPosition.y < pos.y)
+				pos.y--;
+			else if (EndPosition.y > pos.y)
+				pos.y++;
 			_stepError -= _stepDeltaX;
 		}
 		// Check walkability after each step
@@ -2666,9 +2685,9 @@ void Character::Update() {
 			break;
 		}
 		// Check if we reached the target
-		if (pos == EndPosition) break;
+		if (pos == EndPosition)
+			break;
 	}
-
 
 	// Update motion vertical offset if active
 	if (hasMotionVerticalOffset && motionDistanceUnits != 0) {
@@ -2676,12 +2695,12 @@ void Character::Update() {
 		if (totalDist > 0) {
 			int32 distWalked = abs(pos.x - StartPosition.x) + abs(pos.y - StartPosition.y);
 			float progress = (float)distWalked / (float)totalDist;
-			if (progress > 1.0f) progress = 1.0f;
+			if (progress > 1.0f)
+				progress = 1.0f;
 			int32 vDelta = (int32)motionTargetVerticalOffset - (int32)motionStartVerticalOffset;
 			GameObject->Unknown = (uint16)((int32)motionStartVerticalOffset + (int32)(vDelta * progress));
 		}
 	}
-
 
 	SetPosition(pos);
 }
@@ -2820,8 +2839,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 				// Save to this slot
 				if (_saveConfirmArmed) {
 					Common::String name = _saveSlotNames[idx].empty()
-						? Common::String::format("Save %d", idx + 1)
-						: _saveSlotNames[idx];
+											  ? Common::String::format("Save %d", idx + 1)
+											  : _saveSlotNames[idx];
 					closeOriginalSaveLoadPanel();
 					g_engine->saveGameState(idx, name);
 				} else {
