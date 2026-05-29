@@ -508,40 +508,25 @@ void Adlib::OnTimer() {
 				g225A += 2;
 				uint8 bp16 = g2291 - 1;
 				if (g2291 > 0) {
-					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
+					for (uint8 bp0A = 0; bp0A <= bp16; bp0A++) {
 						if (gArray222C[bp0A] != 0) {
 							gArray222C[bp0A]++;
 						}
 					}
 				}
-				//		if (g2291 == 0x09 || bp3 < 0x0B) {
-				//			uint8 bp8 = 0;
-				//			while (g2291 > bp8) {
-				//				// TODO: Continue here
-				//				if (gArray222C[bp8] == 0) {
-				//					if (gArray227F[bp8] == bp3) {
-				//						if (gArray2235[bp8] == bp4) {
-				//							break;
-				//						}
-				//					}
-				//				}
-				//				bp8++;
-				//			}
-				//			if (g2291 != bp8) {
-				//				adlibProcessEvent(bp8, bp4, gArray226F[bp3]);
-				//				gArray222C[bp8] = 1;
-				//			}
-				//		} else {
-				//			uint8 bx = adlibGetOperator(0xBD);
-				//			uint8 dx = bp3;
-				//			uint8 ax = 0x0F - dx;
-				//			dx = ax;
-				//			ax = 1 << dx;
-				//			dx = ax;
-				//			ax = (0xFF - dx) & bx;
-				//			adlibWriteReg(0xBD, ax);
-				//		}
-				//	}
+				if (g2291 == 0x09 || bp3 < 0x0B) {
+					uint8 bp8 = 0;
+					while (g2291 > bp8) {
+						if (gArray222C[bp8] == 0 && gArray227F[bp8] == bp3 && gArray2235[bp8] == bp4) {
+							break;
+						}
+						bp8++;
+					}
+					if (g2291 != bp8) {
+						adlibSetupChannel(bp8, bp4, gArray226F[bp3]);
+						gArray222C[bp8] = 1;
+					}
+				}
 			}
 			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0) {
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);

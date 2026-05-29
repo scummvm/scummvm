@@ -233,7 +233,7 @@ class GameObject;
 			void scriptChangeAnimationImpl();
 
 			// Implements opcode 0e - changing scene animations
-			void scriptChangeAnimationWrapper();
+
 
 			
 
