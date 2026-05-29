@@ -1596,9 +1596,9 @@ void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 				uint16 finalX = x + currentTargetX;
 				uint16 finalY = y + currentTargetY;
 				if (finalX < s.w && finalY < s.h) {
-					// Check for depth
+					// Depth test: draw pixel only if background depth < character depth
+					// Validated against drawSpriteTransparent (1010:0ed1): *pbVar12 < param_4
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
-					// TODO: Check which relation has to hold
 					if (!useDepth || bgDepth < depth) {
 						s.setPixel(finalX, finalY, val);
 					}
