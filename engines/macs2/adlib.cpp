@@ -266,7 +266,7 @@ uint16 Adlib::Func24FD() {
 	// This function was reverse-engineered with Deepseek R1
 	// Local variables (BP-2 = return value, BP-4/BG-6 temps)
 	uint16 return_value;
-	uint16 temp_var;
+	// uint16 temp_var;
 	uint16 loop_counter;
 
 	// [Original label: fn0017_24FD proc]
@@ -539,8 +539,8 @@ void Adlib::OnTimer() {
 		for (;;) {
 			//	// l0017_1B1A:
 			uint8 current = shMem2250->peekByte();
-			int64 pos = shMem2250->pos();
-			debug("Loop iteration, [2250] value: %.2X at offset %.2X", current, shMem2250->pos());
+			
+			debug("Loop iteration, [2250] value: %.2X at offset %lX", current, shMem2250->pos());
 			if (current & 0x80) {
 				// The first bit of the read value was 0
 				// l0017_1B27:
@@ -825,7 +825,7 @@ void Adlib::OnTimer() {
 				shMem2250 = Func19BE_SH(shMem2250, 0x2);
 				g225A += 2;
 				uint8 bp16 = g2291 - 1;
-				if (0 <= bp16) {
+				if (g2291 > 0) {
 					// l0017_20E1:
 					SIS_LogEntry(0x01D7, 0x20E1);
 					for (uint8 bp0A = 0; bp0A != bp16; bp0A++) {
@@ -1128,7 +1128,7 @@ void Adlib::Func1A03() {
 		shMem2250 = Func19BE_SH(shMem2250, 1);
 		g225A++;
 		continueCondition = bp1 & 0x80;
-		debug("1A03 iteration - Value: %.2x at offset %.4x Next timer: %.8x Continuation: %.2x", bp1, shMem2250->pos(), _nextEventTimer, continueCondition);
+		debug("1A03 iteration - Value: %.2x at offset %ld Next timer: %.8x Continuation: %.2x", bp1, shMem2250->pos(), _nextEventTimer, continueCondition);
 	} while (continueCondition != 0);
 }
 
@@ -1179,7 +1179,7 @@ void Adlib::Func2A80(uint8 blend_param, uint8 index, uint8 reg_base) {
 
 void Adlib::Init() {
 	_opl = OPL::Config::create();
-	int status = _opl->init();
+	_opl->init();
 
 	gArray229C.resize(256);
 
@@ -1281,7 +1281,7 @@ void Adlib::SetVolume(uint16 volume) {
 	if (volume > 100)
 		volume = 100;
 
-	const byte mixerVolume = static_cast<byte>((volume * Audio::Mixer::kMaxChannelVolume) / 100);
+	
 	// Volume is handled by the mixer
 }
 

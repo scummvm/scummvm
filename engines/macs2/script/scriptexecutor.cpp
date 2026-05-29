@@ -1035,7 +1035,7 @@ void ScriptExecutor::Func9F4D_Placeholder() {
 }
 
 uint32 ScriptExecutor::Func9F4D_32() {
-	uint32 result;
+	
 	uint16 out1;
 	uint16 out2;
 	Func9F4D(out1, out2);
@@ -1053,7 +1053,7 @@ uint16 ScriptExecutor::Func9F4D_16() {
 
 void ScriptExecutor::FuncA334(uint32 value) {
 	// TODO: Why is this byte never really used?
-	uint8 b = ReadByte();
+	ReadByte(); // unused byte
 
 	uint16 variableID = ReadWord();
 	SetVariableValue(variableID, value);
@@ -1065,7 +1065,7 @@ void ScriptExecutor::FuncC991() {
 	uint16 objectID2;
 	Func9F4D(objectID1, objectID2);
 	// [bp-2h]
-	uint16 offset1 = objectID1 - 0x400;
+	// uint16 offset1 = objectID1 - 0x400;
 	// TODO: Should handle this as a double word
 	objectID1 -= 0x400;
 
@@ -1106,7 +1106,7 @@ void ScriptExecutor::FuncB6BE_actual() {
 	id -= 1;
 
 	BackgroundAnimationBlob& blob = _engine->_backgroundAnimationsBlobs[id];
-	uint16 result168C = BackgroundAnimationBlob::Func168C(blob.Blob);
+	BackgroundAnimationBlob::Func168C(blob.Blob);
 	// TODO: We should be doing some checking on the result value
 
 	// TODO: Do some comparison with [bp-4h]
@@ -1136,7 +1136,7 @@ void ScriptExecutor::FuncB6BE() {
 	_engine->_backgroundAnimations[id].FrameIndex++;
 	// TODO: Implement proper wrap around based on 1480
 	_engine->_backgroundAnimationsBlobs[id].FrameIndex++;
-	_engine->_backgroundAnimations[id].FrameIndex = _engine->_backgroundAnimations[id].FrameIndex++ % _engine->_backgroundAnimations[id].numFrames;
+	_engine->_backgroundAnimations[id].FrameIndex = (_engine->_backgroundAnimations[id].FrameIndex + 1) % _engine->_backgroundAnimations[id].numFrames;
 	
 
 }
@@ -1398,9 +1398,9 @@ void ScriptExecutor::DumpWholeScript() {
 			// Show a dialogue option
 			uint32 objectID = Func9F4D_32() - 0x400;
 			debug("Object ID of speaker: %.4x.\n", objectID);
-			uint16 x = Func9F4D_16();
-			uint16 y = Func9F4D_16();
-			uint16 side = Func9F4D_16();
+			Func9F4D_16(); // x
+			Func9F4D_16(); // y
+			Func9F4D_16(); // side
 			uint32 offset = ReadWord();
 			uint32 numLines = ReadWord();
 
@@ -1483,7 +1483,7 @@ void ScriptExecutor::Step() {
 		}
 	}
 	// Rewind and reset to the scene script after we are done executing
-	executingObjectIndex == Scenes::instance().CurrentSceneIndex;
+	executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 	SetScript(Scenes::instance().CurrentSceneScript);
 	if (_stream && _stream->size() > 0) {
 		_stream->seek(0, SEEK_SET);
@@ -2605,7 +2605,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				blobSourceKey = object->overloadAnimationSourceKey;
 			} else if (slotID >= 1 && slotID <= object->Blobs.size()) {
 				hasBlob = !object->Blobs[slotID - 1].empty();
-				if (slotID - 1 < object->BlobSourceKeys.size())
+				if ((uint)(slotID - 1) < object->BlobSourceKeys.size())
 					blobSourceKey = object->BlobSourceKeys[slotID - 1];
 			} else {
 				warning("Ignoring object animation range test for invalid slot %u on object %u", slotID, objectID);

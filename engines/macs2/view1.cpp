@@ -150,7 +150,7 @@ void View1::TransferInventoryItem(GameObject *item, GameObject *targetContainer)
 }
 
 int View1::FindInventoryItem(GameObject *item) {
-	for (int i = 0; i != inventoryItems.size(); i++) {
+	for (uint i = 0; i != inventoryItems.size(); i++) {
 		if (inventoryItems[i] == item) {
 			return i;
 		}
@@ -208,7 +208,7 @@ void View1::UpdateCursor(const byte *palette) {
 	CursorMan.replaceCursorPalette(dummyPalette, 0, 256);
 }
 View1::View1() : UIElement("View1") {
-		_backgroundSurface = g_engine->_bgImageShip;
+		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 		currentSpeechActData.onRightSide = false;
 		UpdateCursor();
 		setViewPaletteSafely(this, g_engine->_pal);
@@ -444,8 +444,8 @@ View1::View1() : UIElement("View1") {
 
 void View1::showStringBox(const Common::StringArray &sa) {
 	// This calculation can be found at l0037_B368:
-	int borderWidth = 10;
-	int padding = 3;
+	// int borderWidth = 10;
+	// int padding = 3;
 	int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
 	int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
 	debug("Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
@@ -568,7 +568,7 @@ void View1::handleFading() {
 		if (g_engine->_path.size() < 2) {
 			return;
 		}
-		for (int i = 0; i < g_engine->_path.size() - 1; i++) {
+		for (uint i = 0; i < g_engine->_path.size() - 1; i++) {
 			s.drawLine(g_engine->_path[i].x, g_engine->_path[i].y, g_engine->_path[i + 1].x, g_engine->_path[i + 1].y, 0xFF);
 		}
 	}
@@ -650,7 +650,7 @@ void View1::handleFading() {
 
 	int View1::GetCharacterArrayIndex(const Character *c) const {
 		// TODO: Check if there is a find function somewhere
-		for (int i = 0; i < characters.size(); i++) {
+		for (uint i = 0; i < characters.size(); i++) {
 			if (characters[i] == c) {
 				return i;
 			}
@@ -839,7 +839,7 @@ void View1::handleFading() {
 
 
 			// uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
-			uint32 value = g_engine->_map.getPixel(msg._pos.x, msg._pos.y);
+			// uint32 value = g_engine->_map.getPixel(msg._pos.x, msg._pos.y);
 			// g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 			//g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
@@ -926,18 +926,18 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		g_engine->changeScene(0x6);
 	}
 	if (msg.ascii == (uint16)'d') {
-		_backgroundSurface = g_engine->_depthMap;
+		_backgroundSurface.copyFrom(g_engine->_depthMap);
 		redraw();
 	}
 	if (msg.ascii == (uint16)'m') {
 		// _backgroundSurface = g_engine->_map;
-		_backgroundSurface = g_engine->_pathfindingMap;
+		_backgroundSurface.copyFrom(g_engine->_pathfindingMap);
 		redraw();
 	} else if (msg.ascii == (uint16)'x') {
 		CalculateCharacterScaling(0x79);
 	}
 	else if (msg.ascii == (uint16)'b') {
-		_backgroundSurface = g_engine->_bgImageShip;
+		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 		startFading();
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
@@ -1429,7 +1429,7 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 			if (val != 0) {
 				uint16 finalX = x + currentTargetX;
 				uint16 finalY = y + currentTargetY;
-				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h)
+				if (finalX < s.w && finalY < s.h)
 					s.setPixel(finalX, finalY, val);
 			}
 			xScaling += 0x64;
@@ -1487,7 +1487,7 @@ void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 			if (val != 0) {
 				uint16 finalX = x + currentTargetX;
 				uint16 finalY = y + currentTargetY;
-				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
+				if (finalX < s.w && finalY < s.h) {
 					// Check for depth
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
 					// TODO: Check which relation has to hold
@@ -1525,7 +1525,7 @@ void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 }
 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
-	int i = -1;
+	// int i = -1;
 	for (auto current : characters) {
 		int index = current->GameObject->Index;
 		if (!current->GameObject->IsVisible) {
@@ -1987,7 +1987,7 @@ uint8 Character::LookupWalkability(const Common::Point &p) const {
 	}
 
 	// Look up the value in the structure
-	uint16 lookup = value + ((value << 1) << 1);
+	// uint16 lookup = value + ((value << 1) << 1);
 	// TODO: Handle lookup based on byte ptr es:[di+4EA5h]
 	bool lookedUpValue = false;
 	if (value == 0xCD) {
@@ -2121,7 +2121,7 @@ bool Character::VisitPathfindingNode(uint16 index, Common::Array<bool> &visited,
 	}
 
 	// See if the adjacent points are good
-	for (int i = 0; i < currentPoint.adjacentPoints.size(); i++) {
+	for (uint i = 0; i < currentPoint.adjacentPoints.size(); i++) {
 		const uint16 currentAdjacentIndex = currentPoint.adjacentPoints[i];
 		if (VisitPathfindingNode(currentAdjacentIndex - 1, visited, target)) {
 			const PathfindingPoint &adjacentPoint = g_engine->pathfindingPoints[currentAdjacentIndex - 1];
@@ -2161,12 +2161,12 @@ uint16 Character::GetVerticalOffset() const {
 
 bool Character::TryFollowPath() {
 	CurrentPathIndex++;
-	if (CurrentPathIndex == Path.size()) {
+	if ((uint)CurrentPathIndex == Path.size()) {
 		// This means we now need to move to the final destination
 		StartLerpTo(PathFinalDestination, 1000);
 		return true;
 	}
-	if (CurrentPathIndex == Path.size() + 1) {
+	if ((uint)CurrentPathIndex == Path.size() + 1) {
 		return false;
 	}
 	const uint16 currentPathPointIndex = Path[CurrentPathIndex]; // -1;
@@ -2352,7 +2352,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	StartPosition = GetPosition();
 	EndPosition = target;
-	float Angle =
+	// float Angle =
 	StartTime = g_events->currentMillis;
 	Duration = duration;
 	IsLerping = true;
@@ -2509,7 +2509,7 @@ void Character::Update() {
 		if (!g_engine->_scriptExecutor->IsExecuting()) {
 			g_engine->_scriptExecutor->Rewind();
 			// TODO: Get rid of the different copies of the position
-			View1 *currentView = (View1 *)g_engine->findView("View1");
+			// View1 *currentView = (View1 *)g_engine->findView("View1");
 			g_engine->ScheduleRun();
 		}
 		return;
@@ -2546,7 +2546,7 @@ void Character::Update() {
 			g_engine->_scriptExecutor->Rewind();
 			// TODO: Get rid of the different copies of the position
 			// TODO: Not sure if we should set g_engine->_scriptExecutor->global1032 = false;
-			View1 *currentView = (View1 *)g_engine->findView("View1");
+			// View1 *currentView = (View1 *)g_engine->findView("View1");
 			g_engine->ScheduleRun();
 		}
 	}
