@@ -42,6 +42,10 @@
 #include "scumm/he/sprite_he.h"
 #include "scumm/verbs.h"
 
+#ifdef ENABLE_SCUMM_7_8
+#include "scumm/insane/rebel1/rebel.h"
+#endif
+
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/thumbnail.h"
@@ -76,6 +80,14 @@ struct SaveInfoSection {
 #pragma mark -
 
 Common::Error ScummEngine::loadGameState(int slot) {
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1) {
+		InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
+		if (rebel)
+			return rebel->loadGameState(slot);
+	}
+#endif
+
 	requestLoad(slot);
 	return Common::kNoError;
 }
@@ -83,6 +95,11 @@ Common::Error ScummEngine::loadGameState(int slot) {
 bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
+
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1)
+		return true;
+#endif
 
 	// FIXME: For now always allow loading in V0-V3 games
 	// FIXME: Actually, we might wish to support loading in more places.
@@ -139,6 +156,14 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1) {
+		InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
+		if (rebel)
+			return rebel->saveGameState(slot, desc, isAutosave);
+	}
+#endif
+
 	requestSave(slot, desc);
 	return Common::kNoError;
 }
@@ -146,6 +171,11 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, b
 bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
+
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1)
+		return true;
+#endif
 
 	// Disallow saving in v0-v3 games when a 'prequel' to a cutscene is shown.
 	// This is a blank screen with text, and while this is shown, saving should

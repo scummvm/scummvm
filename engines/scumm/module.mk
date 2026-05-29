@@ -141,6 +141,7 @@ MODULE_OBJS += \
 	insane/rebel1/menu.o \
 	insane/rebel1/render.o \
 	insane/rebel1/runlevels.o \
+	insane/rebel1/saveload.o \
 	insane/rebel2/rebel.o \
 	insane/rebel2/audio.o \
 	insane/rebel2/iact.o \
