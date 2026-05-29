@@ -367,7 +367,9 @@ public:
 	// Original usage: MCSEXEC filename /rRecFile or /pPlayFile
 	// Record writes per-frame: mouseX(2), mouseY(2), buttons(2)
 	// Playback reads the same and also a leading frame-count word.
-	enum class InputMode { None, Record, Playback };
+	enum class InputMode { None,
+						   Record,
+						   Playback };
 	InputMode _inputMode = InputMode::None;
 	Common::WriteStream *_inputRecordStream = nullptr;
 	Common::SeekableReadStream *_inputPlaybackStream = nullptr;

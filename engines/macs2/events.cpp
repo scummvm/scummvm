@@ -69,16 +69,16 @@ void Events::runGame() {
 		currentMillis = g_system->getMillis();
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			// Game speed mode (original: g_wGameSpeedMode cycled by Ctrl+T)
-			// Mode 0: normal (tick every FRAME_DELAY ms = ~14ms at 70Hz)
+			// Mode 0: normal (tick every FRAME_DELAY ms = ~28ms at 35Hz game rate)
 			// Mode 1: fast (tick every frame, no wait)
-			// Mode 2: slow (tick only when 0x12=18 ticks have elapsed, ~257ms)
+			// Mode 2: slow (tick only when 0x12=18 game frames have elapsed, ~514ms)
 			uint32 frameDelay;
 			switch (g_engine->_gameSpeedMode) {
 			case 1:
 				frameDelay = 0;
 				break;
 			case 2:
-				frameDelay = (18 * 1000) / FRAME_RATE;
+				frameDelay = 18 * FRAME_DELAY;
 				break;
 			default:
 				frameDelay = FRAME_DELAY;
@@ -346,7 +346,7 @@ int UIElement::getRandomNumber(int maxNumber) {
 }
 
 void UIElement::delaySeconds(uint seconds) {
-	_timeoutCtr = seconds * FRAME_RATE;
+	_timeoutCtr = seconds * (1000 / FRAME_DELAY);
 }
 
 void UIElement::delayFrames(uint frames) {
