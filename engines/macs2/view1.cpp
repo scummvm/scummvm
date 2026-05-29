@@ -243,13 +243,14 @@ View1::View1() : UIElement("View1") {
 
 AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 	AnimFrame *result = new AnimFrame();
-	int index = 5 - 1;
-	if (is_in_list<uint16, 0x10, 0x11, 0x17, 0x18, 0x1B, 0x22, 0x23, 0x19, 0x1A, 0x14, 0x1C, 0x1D, 0x3C, 0x98>(gameObject->Index)) {
-		// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
-		// TODO Figure out these - the mug has a different blob
-		index = 0x13;
+	// Inventory icon is always in blob slot 0x14 (zero-based index 0x13)
+	// Original: runtime offset +0x16c/+0x16e, validity at +0x173
+	int index = 0x13;
+	if (index >= (int)gameObject->Blobs.size() || gameObject->Blobs[index].empty()) {
+		warning("GetInventoryIcon: no icon blob for object %u", gameObject->Index);
+		delete result;
+		return nullptr;
 	}
-	index = 0x13;
 	Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 	stream.seek(23, SEEK_SET);
@@ -912,9 +913,10 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		// Check if we hit something
+		// Original order: getHotspotAtPoint first, then drawCharactersAndHitTest overrides.
+		// Our order (objects first, fallback to background) produces the same result.
 		uint16 index = GetHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
 		if (index == 0) {
-			// TODO: Check which we should test first in practice, objects or background
 			index = g_engine->GetInteractedBackgroundHotspot(msg._pos);
 		}
 		if (index != 0) {
