@@ -917,15 +917,6 @@ bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	return true;
 }
 
-void Macs2Engine::CalculatePath(const Common::Point &source, const Common::Point &destination) {
-	_path.clear();
-	// Check if the destination is reachable at first
-	if (isPathWalkable(source.x, source.y, destination.x, destination.y)) {
-		_path.push_back(source);
-		_path.push_back(destination);
-	}
-}
-
 void Macs2Engine::NextCursorMode() {
 	// TODO: Adjust for final min and max
 	// TODO: Properly handle

@@ -1921,16 +1921,16 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Common::Point current = c->GetPosition();
 
 			// Check if direct path is walkable (like isPathWalkable in the original)
-			if (c->IsLineSegmentWalkable(current, target)) {
+			if (c->isPathWalkable(current, target)) {
 				// Direct path is clear - just lerp straight there
 				c->StartLerpTo(target, 1000);
 			} else if (c->IsWalkable(target)) {
 				// Target is walkable but no direct path - use A* pathfinding
 				c->Path.clear();
 				c->PathFinalDestination = target;
-				if (c->FindPath(target)) {
+				if (c->calculatePath(target)) {
 					c->CurrentPathIndex = -1;
-					c->IsFollowingPath = c->TryFollowPath();
+					c->IsFollowingPath = c->walkAlongPath();
 				} else {
 					// Pathfinding failed - walk directly as fallback
 					c->StartLerpTo(target, 1000);
