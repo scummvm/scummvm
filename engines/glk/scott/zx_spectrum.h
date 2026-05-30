@@ -22,7 +22,6 @@
 #ifndef GLK_SCOTT_ZX_SPECTRUM_H
 #define GLK_SCOTT_ZX_SPECTRUM_H
 
-#include "common/str.h"
 #include "common/stream.h"
 #include "glk/scott/types.h"
 
