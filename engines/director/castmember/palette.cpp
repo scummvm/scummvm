@@ -183,7 +183,8 @@ void PaletteCastMember::writePaletteData(Common::SeekableWriteStream *writeStrea
 		writeStream->writeUint16BE(pal[3 * i + 2] << 8);
 	}
 
-	if (debugChannelSet(7, kDebugSaving)) {
+	// FIXME: can't dereference SeekableWriteStream
+	/* if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = nullptr;
 		dumpData = (byte *)calloc(castSize, sizeof(byte));
 		auto dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize + 8);
@@ -196,7 +197,7 @@ void PaletteCastMember::writePaletteData(Common::SeekableWriteStream *writeStrea
 		dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
 		free(dumpData);
 		delete dumpStream;
-	}
+	}*/
 }
 
 }	// End of namespace Director

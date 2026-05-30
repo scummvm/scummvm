@@ -360,7 +360,8 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 
 	}
 
-	if (debugChannelSet(7, kDebugSaving)) {
+	// FIXME: can't dereference SeekableWriteStream
+	/*if (debugChannelSet(7, kDebugSaving)) {
 		// Adding +8 because the stream doesn't include the header and the entry for the size itself
 		byte *dumpData = (byte *)calloc(filmloopSize + 8, sizeof(byte));
 
@@ -374,7 +375,7 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 		dumpFile("FilmLoopData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, filmloopSize);
 		free(dumpData);
 		delete dumpStream;
-	}
+	}*/
 }
 
 uint32 FilmLoopCastMember::getSCVWResourceSize() {

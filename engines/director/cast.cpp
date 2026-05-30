@@ -694,7 +694,8 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 		writeStream->writeSint16BE(_windowDragRegionMaskId.member);
 	}
 
-	if (debugChannelSet(7, kDebugSaving)) {
+	// FIXME: can't dereference SeekableWriteStream
+	/*if (debugChannelSet(7, kDebugSaving)) {
 		// Adding +8 because the stream doesn't include the header and the entry for the size itself
 		byte *dumpData = (byte *)calloc(configSize + 8, sizeof(byte));
 
@@ -708,7 +709,7 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 		dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
 		free(dumpData);
 		delete dumpStream;
-	}
+	}*/
 
 }
 
@@ -950,7 +951,8 @@ void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res)
 
 	debugC(5, kDebugSaving, "Cast::saveCastData()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
 
-	if (debugChannelSet(7, kDebugSaving)) {
+	// FIXME: can't dereference SeekableWriteStream
+	/*if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = (byte *)calloc(castSize + 8, sizeof(byte));
 		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize + 8);
 
@@ -962,7 +964,7 @@ void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res)
 		dumpFile(castType2str(type), res->index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize + 8);
 		free(dumpData);
 		delete dumpStream;
-	}
+	}*/
 }
 
 void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId) {
