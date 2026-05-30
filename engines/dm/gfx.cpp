@@ -2642,10 +2642,10 @@ void DisplayMan::loadCurrentMapGraphics() {
 	}
 
 	for (uint16 index = kDMDerivedBitmapFirstDoorButton, counter = 0; counter < k1_DoorButtonCount; counter++) {
-		uint16 *coords = _doorButtonCoordSets[_doorButtonCoordSet[counter]][1];
-		_derivedBitmapByteCount[index++] = coords[4] * coords[5];
-		coords += 6;
-		_derivedBitmapByteCount[index++] = coords[4] * coords[5];
+		uint16 (*rowPtr)[6] = _doorButtonCoordSets[_doorButtonCoordSet[counter]] + 1;
+		_derivedBitmapByteCount[index++] = (*rowPtr)[4] * (*rowPtr)[5];
+		rowPtr++;
+		_derivedBitmapByteCount[index++] = (*rowPtr)[4] * (*rowPtr)[5];
 	}
 
 	applyCreatureReplColors(9, 8);
