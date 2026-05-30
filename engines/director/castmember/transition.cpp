@@ -126,12 +126,12 @@ Common::String TransitionCastMember::formatInfo() {
 }
 
 uint32 TransitionCastMember::getCastDataSize() {
-	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
 		// Ignored 1 byte
 		// _chunkSize 1 byte
 		// _transType 1 byte
 		// _flags 1 byte
-		// _durationMiilis 2 bytes
+		// _durationMillis 2 bytes
 		return 6;
 	} else {
 		warning("TransitionCastMember()::getCastDataSize(): CastMember version invalid or not handled");
@@ -140,12 +140,12 @@ uint32 TransitionCastMember::getCastDataSize() {
 }
 
 void TransitionCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
-	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer1100) {
 		writeStream->writeByte(0);
 		writeStream->writeByte(_chunkSize);
 		writeStream->writeByte((uint8)_transType);
 		writeStream->writeByte(_flags);
-		writeStream->writeUint16LE(_durationMillis);
+		writeStream->writeUint16BE(_durationMillis);
 	} else {
 		warning("TransitionCastMember()::writeCastData(): CastMember version invalid or not handled");
 	}

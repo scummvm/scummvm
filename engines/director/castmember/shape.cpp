@@ -222,10 +222,10 @@ uint32 ShapeCastMember::getCastDataSize() {
 	// For Director 4 : 1 byte extra for casttype (See Cast::loadCastData())
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		return 17 + 1;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
 		return 17;
 	} else {
-		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+		warning("ShapeCastMember::getCastDataSize(): invalid or unhandled cast version: %d", _cast->_version);
 		return 0;
 	}
 }

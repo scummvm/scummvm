@@ -740,7 +740,7 @@ uint32 DigitalVideoCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// It has been observed that the DigitalVideoCastMember has _flags set to 0x00
 		return (_flags1 == 0xFF) ? 13 : 14;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
 		return 8 + 4;
 	}
 
