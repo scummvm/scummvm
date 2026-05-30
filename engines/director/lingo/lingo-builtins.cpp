@@ -2428,9 +2428,10 @@ void LB::b_startTimer(int nargs) {
 }
 
 void LB::b_stopEvent(int nargs) {
-	warning("STUB: b_stopEvent");
-	// TEquivalent to the dontPassEvent command used in earlier
-	//versions of Director, this command also applies to sprite scripts.
+	// Equivalent to the dontPassEvent command used in earlier versions of
+	// Director; this command also applies to sprite scripts. It prevents the
+	// current event message from being passed to subsequent locations in the
+	// message hierarchy.
 	g_lingo->_passEvent = false;
 }
 
