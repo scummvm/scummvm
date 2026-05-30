@@ -831,8 +831,11 @@ Square DungeonMan::getRelSquare(Direction dir, int16 stepsForward, int16 stepsRi
 }
 
 int16 DungeonMan::getSquareFirstThingIndex(int16 mapX, int16 mapY) {
+	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight))
+		return -1;
+
 	unsigned char *curSquare = _currMapData[mapX];
-	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight) || !getFlag(curSquare[mapY], kDMSquareMaskThingListPresent))
+	if (!getFlag(curSquare[mapY], kDMSquareMaskThingListPresent))
 		return -1;
 
 	int16 curMapY = 0;
