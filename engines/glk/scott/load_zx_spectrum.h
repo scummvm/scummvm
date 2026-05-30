@@ -40,7 +40,7 @@
 namespace Glk {
 namespace Scott {
 
-void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5);
+void loadZXSpectrum(Common::SeekableReadStream *f, const Common::String &md5);
 void loadZXSpectrumTape(Common::SeekableReadStream *f);
 void showZXSpectrumTapeTitleScreen();
 

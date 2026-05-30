@@ -402,7 +402,7 @@ int detectC64(uint8_t **sf, size_t *extent) {
 	if (*extent > MAX_LENGTH || *extent < MIN_LENGTH)
 		return 0;
 
-	Common::String md5 = g_vm->getGameMD5();
+	const auto &md5 = g_vm->getGameMD5();
 	int index = _G(_md5Index)[md5];
 	if (g_C64Registry[index]._id == SAVAGE_ISLAND_C64) {
 		return savageIslandMenu(sf, extent, index);
