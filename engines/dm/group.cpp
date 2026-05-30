@@ -1105,12 +1105,14 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 
 
 	dungeon.mapCoordsAfterRelMovement((Direction)dir, 1, 0, mapX, mapY);
+	if ((mapX < 0) || (mapX >= dungeon._currMapWidth) || (mapY < 0) || (mapY >= dungeon._currMapHeight)) {
+		_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
+		return false;
+	}
 	uint16 curSquare = dungeon._currMapData[mapX][mapY];
 	int16 curSquareType = Square(curSquare).getType();
 	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
-		!(((mapX >= 0) && (mapX < dungeon._currMapWidth)) &&
-		 ((mapY >= 0) && (mapY < dungeon._currMapHeight)) &&
-		  (curSquareType != kDMElementTypeWall) &&
+		!((curSquareType != kDMElementTypeWall) &&
 		  (curSquareType != kDMElementTypeStairs) &&
 		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, kDMSquareMaskPitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, kDMSquareMaskPitOpen) || getFlag(creatureInfo->_attributes, kDMCreatureMaskLevitation)) &&
 		 ((curSquareType != kDMElementTypeFakeWall) || getFlag(curSquare, kDMSquareMaskFakeWallOpen) || (getFlag(curSquare, kDMSquareMaskFakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
