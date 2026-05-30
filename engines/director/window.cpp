@@ -91,6 +91,10 @@ Window::~Window() {
 		delete _frozenLingoStates[i];
 	if (_puppetTransition)
 		delete _puppetTransition;
+	if (_isModal) {
+		_wm->setLockedWidget(nullptr);
+		_isModal = false;
+	}
 	g_director->_wm->removeWindow(_window);
 	g_director->_wm->removeMarked();
 	_window = nullptr;
