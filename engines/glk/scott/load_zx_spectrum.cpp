@@ -49,7 +49,7 @@ namespace Scott {
 
 #define TITLE_SCREEN g_globals->_spectrumTitleScreen
 
-static void loadZXSpectrumGame(Common::String md5) {
+static void loadZXSpectrumGame(const Common::String &md5) {
 	int offset;
 	DictionaryType dict_type = getId(&offset);
 	if (dict_type == NOT_A_GAME)
@@ -61,7 +61,7 @@ static void loadZXSpectrumGame(Common::String md5) {
 	}
 }
 
-void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5) {
+void loadZXSpectrum(Common::SeekableReadStream *f, const Common::String &md5) {
 	TITLE_SCREEN.clear();
 
 	_G(_entireFile) = new uint8_t[_G(_fileLength)];

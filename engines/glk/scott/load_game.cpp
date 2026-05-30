@@ -87,8 +87,8 @@ void loadGameFile(Common::SeekableReadStream *f) {
 
 	_G(_game) = &_G(_fallbackGame);
 
-	Common::String md5 = g_vm->getGameMD5();
-	Common::String filename = g_vm->getFilename();
+	const auto &md5 = g_vm->getGameMD5();
+	const auto &filename = g_vm->getFilename();
 
 	if (filename.hasSuffixIgnoreCase(".tap") || filename.hasSuffixIgnoreCase(".tzx")) {
 		loadZXSpectrumTape(f);
