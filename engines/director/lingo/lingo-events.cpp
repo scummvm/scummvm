@@ -500,7 +500,27 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		// In D2-3, specific objects handle each event, with no passing
 		switch(event) {
 		case kEventMouseUp:
+			if (_vm->getVersion() >= 300) {
+				uint16 spriteId = _score->getMouseSpriteIDFromPos(pos);
+				Sprite *sprite = _score->getSpriteById(spriteId);
+				if (sprite && sprite->_immediate)
+					break;
+			}
+			// fall through
 		case kEventMouseDown:
+			if (_vm->getVersion() >= 300) {
+				uint16 spriteId = _score->getMouseSpriteIDFromPos(pos);
+				Sprite *sprite = _score->getSpriteById(spriteId);
+				if (sprite && sprite->_immediate) {
+					queue.push(LingoEvent(kEventMouseDown, eventId, kSpriteHandler, false, pos));
+					queue.push(LingoEvent(kEventMouseDown, eventId, kCastHandler, false, pos));
+					_nextEventId++;
+					int mouseUpEventId = _nextEventId;
+					queue.push(LingoEvent(kEventMouseUp, mouseUpEventId, kSpriteHandler, false, pos));
+					queue.push(LingoEvent(kEventMouseUp, mouseUpEventId, kCastHandler, false, pos));
+					break;
+				}
+			}
 			queue.push(LingoEvent(event, eventId, kSpriteHandler, false, pos));
 			queue.push(LingoEvent(event, eventId, kCastHandler, false, pos));
 			break;
@@ -534,11 +554,28 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		 * Once one of these objects handles the event, any event handlers queued
 		 * for the same event will be ignored unless the pass command was called.
 		 */
+
+		uint16 spriteId = _score->getMouseSpriteIDFromPos(pos);
+		Sprite *sprite = _score->getSpriteById(spriteId);
+
 		switch (event) {
 		case kEventKeyUp:
 		case kEventKeyDown:
 		case kEventMouseUp:
+			if (sprite && sprite->_immediate) {
+				break;
+			}
+			// fall through
 		case kEventMouseDown:
+			if (sprite && sprite->_immediate) {
+				queue.push(LingoEvent(kEventMouseDown, eventId, kSpriteHandler, false, pos, spriteId));
+				queue.push(LingoEvent(kEventMouseDown, eventId, kCastHandler, false, pos, spriteId));
+				_nextEventId++;
+				int mouseUpEventId = _nextEventId;
+				queue.push(LingoEvent(kEventMouseUp, mouseUpEventId, kSpriteHandler, false, pos, spriteId));
+				queue.push(LingoEvent(kEventMouseUp, mouseUpEventId, kCastHandler, false, pos, spriteId));
+				break;
+			}
 		case kEventRightMouseUp:
 		case kEventRightMouseDown:
 		case kEventBeginSprite:
