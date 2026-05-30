@@ -766,10 +766,16 @@ void DirectorSound::processCuePoints() {
 		const SoundID &lastPlayedSound = channel->lastPlayedSound;
 		if (lastPlayedSound.type == kSoundCast) {
 			CastMemberID memberID(lastPlayedSound.u.cast.member, lastPlayedSound.u.cast.castLib);
-			SoundCastMember *soundCast = (SoundCastMember *)_window->getCurrentMovie()->getCastMember(memberID);
+			CastMember *member = _window->getCurrentMovie()->getCastMember(memberID);
 
-			if (!soundCast)
+			// The sound channel can reference a cast member that is not (or no
+			// longer) a sound -- e.g. when the member ID resolves to a bitmap.
+			// Guard the downcast; otherwise we read _cuePoints off an unrelated
+			// object (here a BitmapCastMember) and crash in a release build.
+			if (!member || member->_type != kCastSound)
 				continue;
+
+			SoundCastMember *soundCast = (SoundCastMember *)member;
 
 			if (soundCast->_cuePoints.empty())
 				continue;
