@@ -115,7 +115,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 		int hotspotIndex = -1;
 		for (int i = 0; i < page->numBlocks; i++) {
 			const ComicBlock &hotspot = page->blocks[i];
-			if (hotspot.polygon->pointInside(_vm->_events->_mousePos.x, _vm->_events->_mousePos.y)) {
+			if (Polygon::pointInside(hotspot.polygon, _vm->_events->_mousePos.x, _vm->_events->_mousePos.y)) {
 				hotspotIndex = i;
 				break;
 			}
@@ -181,7 +181,7 @@ static void drawString(const char *str, const Font *font, Screen *screen, int x,
 }
 
 bool ComicViewer::drawBubble(const ComicBox &bubble) {
-	static const struct {
+	static constexpr struct {
 		struct { int16 px, py; } positions[4];
 		int16 sprites[3];
 	} kBubbleDef[] = {

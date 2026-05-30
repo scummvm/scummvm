@@ -23,14 +23,18 @@
 
 namespace Access {
 
-bool Polygon::pointInside(int16 x, int16 y) const {
+namespace Polygon {
+
+bool pointInside(const int16 (*points)[2], int16 x, int16 y) {
 	bool result = false;
-	int16 j = points.size() - 1;
-	for (uint k = 0; k < points.size(); k++) {
-		if ((points[k].y <= y && y < points[j].y) ||
-			(points[j].y <= y && y < points[k].y)) {
-			if (x < (points[j].x - points[k].x) * (y - points[k].y) /
-			  (points[j].y - points[k].y) + points[k].x) {
+	uint j = 0;
+	while (points[j][0] >= 0 && points[j][1] >= 0)
+		j++;
+	for (uint k = 0; points[k][0] >= 0 && points[k][1] >= 0; k++) {
+		if ((points[k][1] <= y && y < points[j][1]) ||
+			(points[j][1] <= y && y < points[k][1])) {
+			if (x < (points[j][0] - points[k][0]) * (y - points[k][1]) /
+			  (points[j][1] - points[k][1]) + points[k][0]) {
 			  result = !result;
 			}
 		}
@@ -38,5 +42,7 @@ bool Polygon::pointInside(int16 x, int16 y) const {
 	}
 	return result;
 }
+
+} // end namespace Polygon
 
 } // end namespace Access

@@ -1510,7 +1510,7 @@ void Scripts::cmdDispAbout_v3() {
 	// Graphical ask box for Noctropolis
 	debugC(1, kDebugScripts, "cmdDispAbout_v3()");
 
-	static const struct { int16 x1, y1, x2, y2; } askItemPos[] = {
+	static constexpr struct { int16 x1, y1, x2, y2; } askItemPos[] = {
 		{84, 0, 126, 48},
 		{42, 24, 84, 72},
 		{126, 24, 168, 72},
