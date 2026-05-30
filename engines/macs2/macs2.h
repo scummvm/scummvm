@@ -161,6 +161,12 @@ struct PathfindingAreaOverride {
 	uint16 OverrideValue;
 };
 
+// Area override table at scene+0x4EA8 (indexed by pathfinding value 0xC8..0xEF)
+// Set by opcode 0x4D, read by getAreaAtPoint (1008:101d)
+#define AREA_OVERRIDE_MIN 0xC8
+#define AREA_OVERRIDE_MAX 0xEF
+#define AREA_OVERRIDE_COUNT (AREA_OVERRIDE_MAX - AREA_OVERRIDE_MIN + 1)
+
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -180,6 +186,8 @@ protected:
 	}
 
 	// TODO: Switch stream to an LE stream
+
+public:
 	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
 
 	void readResourceFile();
@@ -216,6 +224,9 @@ public:
 
 	Common::Array<PathfindingAreaOverride> PathfindingOverrides;
 
+	// Area override table at scene+value*5+0x4EA8 (for getAreaAtPoint)
+	uint16 _areaOverrides[AREA_OVERRIDE_COUNT] = {0};
+
 	// This is the override list living at [5BD1]
 	Common::Array<uint16> HotspotOverrides;
 
@@ -240,20 +251,22 @@ public:
 
 	Common::Array<Macs2::AnimFrame> imageResources;
 
-
-
 	byte *_charData;
 	char _charASCII;
 	uint16 _charWidth;
 	uint16 _charHeight;
 
 	GlyphData _glyphs[256];
-	// TODO: THis count could be read from the file as well
+	GlyphData _overlayGlyphs[256];
+	uint16 numOverlayGlyphs = 0;
+	uint16 maxOverlayGlyphHeight = 0;
+	bool loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID);
+	// Font glyph count (79 glyphs in the resource file's font data)
 	uint16 numGlyphs = 79;
 	uint16 maxGlyphHeight;
 
 	AnimFrame _animFrames[6];
-	// TODO: Figure out how the game knows that there are 6 frames - and confirm that there are only 6 frames
+	// 6 flag/decoration animation frames at fixed file offset 0x6A5941, each followed by 6 padding bytes
 
 	bool FindGlyph(char c, GlyphData &out) const;
 
@@ -272,6 +285,10 @@ public:
 	uint16 _borderHeight;
 
 	byte *_shadingTable;
+
+	// Map scene offsets from resource file (scene+0x5DDB, 256 entries × 4 bytes).
+	// Each entry is a file offset to a scene preview image for map mode.
+	uint32 _mapSceneOffsets[256] = {0};
 
 	Sprite _borderHighlightSprite;
 	byte *_borderHighlightData;
@@ -339,8 +356,6 @@ public:
 	void stopCurrentSound();
 	bool hasCurrentSound() const { return !_currentSoundData.empty(); }
 	bool isCurrentSoundPlaying() const;
-
-
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 word50D3;
@@ -425,17 +440,32 @@ public:
 		return true;
 	}
 
+	Common::Error loadGameState(int slot) override;
+
 	/**
 	 * Uses a serializer to allow implementing savegame
 	 * loading and saving using a single method
 	 */
 	Common::Error syncGame(Common::Serializer &s);
 
+	/**
+	 * Load an original DOS save game file (SAVEGAME.N format)
+	 */
+	Common::Error loadOriginalSave(Common::SeekableReadStream *stream);
+
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);
 	}
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
+		// Peek at first 12 bytes to detect original DOS save format
+		char magic[12];
+		stream->read(magic, 12);
+		stream->seek(0);
+		if (memcmp(magic, "AHFFMSGM0100", 12) == 0) {
+			return loadOriginalSave(stream);
+		}
+		// Otherwise it's our ScummVM format (starts with version uint32)
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}

@@ -38,7 +38,6 @@ Events::~Events() {
 }
 
 void Events::runGame() {
-	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
 	Views views; // Loads all views in the structure
 
@@ -48,6 +47,15 @@ void Events::runGame() {
 		g_engine->loadGameState(saveSlot);
 
 	addView("View1");
+
+	// DOS timer ISR fires at ~21.6Hz (PIT divisor 0xD7B0 = 55216, 1193182/55216).
+	// Main loop processes a game frame when g_wTimerTickCounter > 1 (every ~2 ticks).
+	// Effective game frame rate: ~10.8fps (every ~92ms).
+	// We use wall-clock timing to match the original rate precisely.
+	uint32 lastTickTime = g_system->getMillis();
+	// One timer tick = 1000/21.6 ≈ 46.3ms. Game ticks every 2 timer ticks = ~92.6ms.
+	static constexpr uint32 kTimerTickMs = 46;
+	uint16 timerTickCounter = 0;
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {
@@ -64,31 +72,37 @@ void Events::runGame() {
 		if (_views.empty())
 			break;
 
-		g_system->delayMillis(10);
-		// TODO: Consider if this is the best place
 		currentMillis = g_system->getMillis();
-		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
-			// Game speed mode (original: g_wGameSpeedMode cycled by Ctrl+T)
-			// Mode 0: normal (tick every FRAME_DELAY ms = ~28ms at 35Hz game rate)
-			// Mode 1: fast (tick every frame, no wait)
-			// Mode 2: slow (tick only when 0x12=18 game frames have elapsed, ~514ms)
-			uint32 frameDelay;
-			switch (g_engine->_gameSpeedMode) {
-			case 1:
-				frameDelay = 0;
-				break;
-			case 2:
-				frameDelay = 18 * FRAME_DELAY;
-				break;
-			default:
-				frameDelay = FRAME_DELAY;
-				break;
-			}
-			nextFrameTime = currTime + frameDelay;
+
+		// Accumulate timer ticks based on elapsed wall-clock time
+		uint32 elapsed = currentMillis - lastTickTime;
+		if (elapsed >= kTimerTickMs) {
+			uint16 ticks = elapsed / kTimerTickMs;
+			timerTickCounter += ticks;
+			lastTickTime += ticks * kTimerTickMs;
+		}
+
+		bool doTick = false;
+		switch (g_engine->_gameSpeedMode) {
+		case 1: // fast mode: tick every frame
+			doTick = true;
+			break;
+		case 2: // slow mode: tick when counter >= 0x12
+			doTick = (timerTickCounter >= 0x12);
+			break;
+		default: // normal: tick when counter > 1
+			doTick = (timerTickCounter > 1);
+			break;
+		}
+
+		if (doTick) {
+			timerTickCounter = 0;
 			tick();
 			drawElements();
 			_screen->update();
 		}
+
+		g_system->delayMillis(10); // Short sleep for responsiveness; timing is wall-clock based
 	}
 
 	delete _screen;
