@@ -76,6 +76,10 @@ public:
 	uint16 overloadAnimationSourceKey = 0;
 	bool overloadAnimationMirrored = false;
 	bool useOverloadAnimation = false;
+	// Runtime field +0x22D: when the character's orientation matches this value,
+	// the renderer uses animation slot 0x15 (overload) instead of the normal slot.
+	// Initialized to 0x7FFF (never match). Set by opcode 0x27.
+	uint16 overloadAnimTriggerDirection = 0x7FFF;
 
 	// These are the values read by the code around l0037_082D:
 	Common::Point Position;
@@ -118,6 +122,7 @@ public:
 	Common::Array<Common::Array<uint8>> Blobs;
 	Common::Array<uint16> BlobSourceKeys;
 	Common::Array<bool> BlobMirrorFlags;
+	Common::Array<uint16> BlobSpeeds; // Per-animation walk speed (runtime+slot*16+0x30)
 
 	// The object-specific script
 	// TODO: Random thought - do objects have their own space for script variables?

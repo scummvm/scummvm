@@ -33,6 +33,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	SaveStateList listSaves(const char *target) const override;
 };
 
 #endif // MACS2_METAENGINE_H

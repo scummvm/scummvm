@@ -67,15 +67,12 @@ private:
 
 	void OnTimer();
 
-	// TODO: Consider pointer vs. passing by value
 	StreamHandler *adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta);
 
 	void adlibPlaySong(StreamHandler *song);
 
-	// TODO: Maybe need to add the caller
 	uint16 adlibTickHandler();
 
-	// TODO: Maybe we need to add the caller, fn0017_24FD proc
 	uint16 adlibStopMusic();
 
 	uint8 adlibGetOperator(uint8 arg1);
@@ -88,21 +85,20 @@ private:
 
 	void adlibSetInstrument();
 
-	// TODO: Consider adding the caller
 	void adlibSetFrequency(uint8 bpp0A, StreamHandler *sh);
 
 	void adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6);
 
-	// TODO: Where initialized?
-	uint8 g36;
+	// [0036h] - Set to 1 after successful initialization
+	uint8 _isInitialized = 0;
 
-	// Array accessed as [di + 37h]
+	// Array accessed as [di + 37h] - volume lookup table
 	Common::Array<uint8> gArray37;
 
-	// Array accessed as [di + 8dh]
+	// Array accessed as [di + 8dh] - OPL operator 2 mapping per voice
 	Common::Array<uint8> gArray8d;
 
-	// Array accesed as [di + 57]
+	// Array accesed as [di + 57] - percussion operator mapping
 	Common::Array<uint8> gArray57;
 
 	// Array accessed as [di + 5C]
@@ -112,7 +108,7 @@ private:
 	// Used for looking up data in 27E4, loaded from the executable
 	Common::Array<uint8> gArray69;
 
-	// Array accesed as [di + 96]
+	// Array accesed as [di + 96] - OPL operator 1 mapping per voice
 	Common::Array<uint8> gArray96;
 
 	// Array accessed as [di+9Fh] - from 0x0001B69F
@@ -121,92 +117,82 @@ private:
 	// Array accessed as [di+11Fh] - from 0x0001B71F
 	Common::Array<uint8> gArray11F;
 
-	// [223Eh] - Seems to be a 16 bit value - Initial value?
-	// TODO: Could also be a 32 bit or pointer with 2240
-	uint16 g223E;
+	// [223Eh] - Current MIDI status byte (high byte of running status)
+	uint16 _currentEventStatus = 0;
 
-	// Memory being pointed to by [2244] and [2246]
-	StreamHandler *shMem2244;
+	// Memory being pointed to by [2244] and [2246] - song start pointer
+	StreamHandler *shMem2244 = nullptr;
 
-	// Memory being pointed to by [2248] and [224A]
-	StreamHandler *shMem2248;
+	// Memory being pointed to by [2248] and [224A] - instrument data pointer
+	StreamHandler *shMem2248 = nullptr;
 
-	// Global word variable [2240h]
-	uint16 g2240;
+	// [2240h] - Current MIDI status high (always 0 for single-byte status)
+	uint16 _currentEventStatusHi = 0;
 
-	// Global byte varialbe [2242]
-	uint8 g2242 = 1;
+	// [2242h] - Playback ready flag: 1 when song has looped/ended
+	uint8 _playbackReady = 1;
 
-	// Global word variable [224Eh]
-	uint16 g224E;
+	// [224Eh] - Timer frequency parameter from song header
+	uint16 _timerFrequency = 0;
 
-	// Memory being pointed to by [2250] and [2252]
+	// Memory being pointed to by [2250] and [2252] - current playback position
 	StreamHandler *shMem2250 = nullptr;
 
-	// 	[2254h] and [2256h]
-	uint32 _nextEventTimer;
+	// [2254h] and [2256h] - delta time until next event (32-bit)
+	uint32 _nextEventTimer = 0;
 
-	// [2258h] - TODO: Not sure about size - Initialization
-	// Initialized in fn0017_24FD
-	uint8 g2258;
+	// [2258h] - Status/control flags byte
+	// bit0: unused, bit1: stop requested, bit4: busy/processing
+	// bit5: loop event pending, bit6: stop acknowledged
+	uint8 _statusFlags = 0;
 
-	// [2259h] - TODO: Not sure about size - Initialization
-	uint8 g2259;
+	// [2259h] - Loop count from controller 0x66, reset on song end
+	uint8 _loopCount = 0;
 
-	// [225Eh] - TODO: Not sure about size - Initialization
-	uint8 g225E;
+	// [225Eh] - Master volume offset (added to OPL volume calculations)
+	uint8 _masterVolume = 0;
 
-	// Array at [di + 226F] - TODO: Initialization, values, ...?
-	Common::Array<uint8> gArray226F;
+	// [226Fh] - Pitch bend value per MIDI channel (16 entries, init 0)
+	Common::Array<uint8> _channelPitchBend;
 
-	// [2291h] - Not sure how used - initialization?
-	// TODO: Not sure if this is not actually a byte value
-	uint16 g2291;
+	// [2291h] - Number of active OPL channels (9=melodic, 6=percussion)
+	uint16 _numOplChannels = 0;
 
-	// [2296h] - TODO: Initialization
-	uint16 g2296;
+	// [2296h] - Timer subdivision counter (counts up to _timerSubdivThreshold)
+	uint16 _timerSubdivCounter = 0;
 
-	// [2298h] - Set in 24FD
-	// TODO: Hardcoded to 5 for now
-	uint16 g2298 = 5;
+	// [2298h] - Timer subdivision threshold (ISR fires music event every N ticks)
+	uint16 _timerSubdivThreshold = 5;
 
-	// [225Ah] - TODO: Initial value?
-	// TODO: could also be a 32-bit value or a pointer together
-	// with 225C
-	uint16 g225A;
+	// [225Ah] - Stream bytes consumed counter (low word)
+	uint16 _streamBytesConsumed = 0;
 
-	uint16 g225C;
+	// [225Ch] - Stream bytes consumed counter (high word)
+	uint16 _streamBytesConsumedHi = 0;
 
-	// Array at [222Ch] - accessed with byte values
-	// TODO: Initialization, access pattern
-	Common::Array<uint8> gArray222C;
+	// [222Ch] - Voice allocation age (9 entries, 0=active, >0=idle ticks since release)
+	Common::Array<uint8> _voiceAge;
 
-	// Array at [225Fh] - accessed with byte values
-	// TODO: Initialization, access pattern
-	Common::Array<uint8> gArray225F;
+	// [225Fh] - MIDI program/instrument assigned per channel (16 entries, init 0)
+	Common::Array<uint8> _channelPrograms;
 
-	// Array at [227Fh] - accessed with byte values
-	// TODO: Initialization, access pattern, size
-	Common::Array<uint8> gArray227F;
+	// [227Fh] - Which MIDI channel each OPL voice is assigned to (9 entries, init 0xFF=none)
+	Common::Array<uint8> _voiceMidiChannel;
 
-	// Array at [2288h] - accessed with byte values
-	// TODO: Initialization, access pattern, size
-	Common::Array<uint8> gArray2288;
+	// [2288h] - Current instrument loaded per OPL voice (9 entries, init 0xFF=none)
+	Common::Array<uint8> _voiceInstrument;
 
-	// Array at [229Ch] - accessed with byte values
-	// TODO: Initialization, access pattern, size
-	// Seems to save copies of values written to registers
-	// Trying with an initial size of 255 bytes
+	// [229Ch] - Shadow of OPL register values written
 	Common::Array<uint8> gArray229C;
 
-	// Array at [2235h] - accessed with bytes values
-	// TODO: Initialization, access pattern, size
-	Common::Array<uint8> gArray2235;
+	// [2235h] - Current note playing per OPL voice (9 entries, init 0xFF=none)
+	Common::Array<uint8> _voiceNote;
 
-	bool g229A;
+	// [229Ah] - Set to true when timer subdivision fires (ISR tick flag)
+	bool _isTimerTick = false;
 
-	// [229Bh] - seems to contain song byte - TODO: Initial value?
-	uint8 g229B;
+	// [229Bh] - Current MIDI running status byte for event parsing
+	uint8 _currentMidiStatus = 0;
 
 	// fn0017_2A80: 0017:2A80
 	void adlibProcessEvent(uint8 bpp6, uint8 bpp8, uint8 reg_base);
@@ -219,7 +205,7 @@ public:
 	void SetSong(Macs2::StreamHandler *sh);
 	void PlaySongData(const Common::Array<uint8> &data);
 	void StopMusic();
-	bool isPlaybackReady() const { return g2242 != 0; }
+	bool isPlaybackReady() const { return _playbackReady != 0; }
 
 	void SetVolume(uint16 volume);
 

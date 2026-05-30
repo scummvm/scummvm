@@ -130,7 +130,7 @@ public:
 
 	// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
-	Macs2::AnimFrame *GetCurrentPortrait(bool onRightSide = false);
+	Macs2::AnimFrame *GetCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 2);
 	void StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 
 	void StartPickup(Macs2::GameObject *object);
@@ -160,6 +160,13 @@ struct SpeechActData {
 	Common::Array<Common::String> strings;
 	Common::Point position;
 	bool onRightSide;
+	// Mouth animation counter from handleTimerCallback (1008:d38b).
+	// Decremented each frame. Controls which portrait frame is drawn:
+	// >1: draw frame 2 from primary portrait blob (+0x14C)
+	// ==0: draw frame 1 from alternate portrait blob (+0x15C) (mouth open)
+	// <0: draw frame 2 from alternate portrait blob (+0x15C) (mouth closed)
+	int16 mouthAnimCounter = 0;
+	bool mouthAnimActive = false;
 };
 
 struct ScalingValues {
@@ -185,16 +192,12 @@ public:
 	// and advances background animations when the counter exceeds a threshold:
 	// Background animation timing from gameTick (1008:e556).
 	// g_wBgAnimTickCounter is incremented once per game frame (~20fps).
-	// Mode 2 (word5203==2): threshold = 0x27 (39 game frames, ~1950ms at 20fps)
-	// Mode 3 (word5203==3): threshold from scene data (variable, typically smaller)
-	static constexpr uint32 kBgAnimTicksMode2 = 39; // 0x27 ticks
+	// Mode 2 (word5203==2): threshold = 0x27 (39 game frames)
+	// Mode 3 (word5203==3): threshold = 1 (every 2 game frames)
 	static constexpr uint32 kGameFrameRate = 20;
-	static constexpr uint32 kBgAnimDelayMode2Ms = (kBgAnimTicksMode2 * 1000) / kGameFrameRate; // ~1950ms
 
-	uint32 _frameDelayFlag = kBgAnimDelayMode2Ms;
-	int32 _nextFrameFlag = _frameDelayFlag;
-	uint32 _lastMillis = 0;
-	bool _hasTicked = false;
+	uint32 _bgAnimTickCounter = 0;
+
 	uint32 _flagFrameIndex = 0;
 
 	uint32 _guyFrameIndex = 0;
@@ -251,14 +254,14 @@ public:
 
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
 
-	void drawStringBackground(uint16 x, uint16 y, uint16 width, uint16 height);
-
 	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
 	void drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s);
 	void drawCurrentSpeaker(Graphics::ManagedSurface &s);
 
 	void renderString(uint16 x, uint16 y, Common::String s);
 	void renderString(const Common::Point pos, const Common::String &s);
+	void renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
+	int measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
 
 	void showStringBox(const Common::StringArray &sa);
 
@@ -361,9 +364,7 @@ public:
 	void draw() override;
 	bool tick() override;
 
-	void drawInventory(Graphics::ManagedSurface &s);
 	void drawInventory2(Graphics::ManagedSurface &s);
-	GameObject *getClickedInventoryItem(const Common::Point &p);
 	GameObject *getClickedInventoryItem2(const Common::Point &p);
 
 	Common::Point inventoryGridUpperLeft;
@@ -383,8 +384,8 @@ public:
 	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
 	void clearStringBox(bool continueScript = true);
 
-	void startFading();
-	void startFadeToBlack();
+	void startFading(uint16 speed = 4);
+	void startFadeToBlack(uint16 speed = 4);
 	void startFadingWithSpeed(uint16 speed);
 
 	void DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
