@@ -47,7 +47,7 @@
 namespace Glk {
 namespace Scott {
 
-#define TITLE_SCREEN g_scott->_spectrumTitleScreen
+#define TITLE_SCREEN g_globals->_spectrumTitleScreen
 
 static void loadZXSpectrumGame(Common::String md5) {
 	int offset;

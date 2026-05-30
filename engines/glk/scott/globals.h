@@ -221,6 +221,8 @@ public:
 	uint8_t *_ti99ExplicitActions = nullptr;
 	uint8_t **_verbActionOffsets = nullptr;
 
+	Common::Array<byte> _spectrumTitleScreen;
+
 public:
 	Globals();
 	~Globals();

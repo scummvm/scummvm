@@ -193,9 +193,6 @@ private:
 	void printTitleScreenGrid();
 
 public:
-	Common::Array<byte> _spectrumTitleScreen;
-
-public:
 	void drawImage(int image);
 	void output(const Common::String &a);
 	void output(const Common::U32String &a);
