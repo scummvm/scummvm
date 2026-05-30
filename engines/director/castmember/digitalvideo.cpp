@@ -740,7 +740,11 @@ uint32 DigitalVideoCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// It has been observed that the DigitalVideoCastMember has _flags set to 0x00
 		return (_flags1 == 0xFF) ? 13 : 14;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
+		// The loader reads initialRect(8) + _vflags(4) regardless of version, so
+		// D6+ uses the same 12-byte layout as D5. Cover it here too -- otherwise
+		// saving a D6 digital video emits a 0-byte member while writeCastData()
+		// still writes 12 bytes.
 		return 8 + 4;
 	}
 

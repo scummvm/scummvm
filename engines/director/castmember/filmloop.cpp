@@ -318,7 +318,11 @@ uint32 FilmLoopCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// It has been observed that the FilmCastMember has _flags as 0x00
 		return 8 + 4 + 2 + 2;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer700) {
+		// D5 and D6 share the same cast-data layout (the loader reads them in a
+		// single ">= kFileVer400 && < kFileVer700" branch), so D6 must be covered
+		// here too -- otherwise saving a D6 film loop emits a 0-byte member while
+		// writeCastData() still writes 14 bytes.
 		return 8 + 4 + 2;
 	}
 

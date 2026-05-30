@@ -222,10 +222,14 @@ uint32 ShapeCastMember::getCastDataSize() {
 	// For Director 4 : 1 byte extra for casttype (See Cast::loadCastData())
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		return 17 + 1;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
+		// D5 through D10 share the same shape layout (the loader reads them in a
+		// single ">= kFileVer400 && < kFileVer1100" branch), so D6+ must be
+		// covered here too -- otherwise saving a D6 shape emits a 0-byte member
+		// while writeCastData() still writes 17 bytes.
 		return 17;
 	} else {
-		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+		warning("ShapeCastMember::getCastDataSize(): invalid or unhandled cast version: %d", _cast->_version);
 		return 0;
 	}
 }
