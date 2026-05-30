@@ -32,6 +32,7 @@
 
 #include "common/str.h"
 #include "common/scummsys.h"
+#include "common/ptr.h"
 #include "glk/scott/scott.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/c64_checksums.h"
@@ -413,31 +414,34 @@ int detectC64(uint8_t **sf, size_t *extent) {
 	}
 	if (g_C64Registry[index]._type == TYPE_D64) {
 		int newlength;
-		uint8_t *largest_file = getLargestFile(*sf, *extent, &newlength);
-		uint8_t *appendix = nullptr;
+		Common::ScopedPtr<uint8_t, Common::ArrayDeleter<uint8_t> > largestFile(getLargestFile(*sf, *extent, &newlength));
+		Common::ScopedPtr<uint8_t, Common::ArrayDeleter<uint8_t> > appendix;
 		int appendixlen = 0;
 
 		if (g_C64Registry[index]._appendFile != nullptr) {
-			appendix = getFileNamed(*sf, *extent, &appendixlen, g_C64Registry[index]._appendFile);
-			if (appendix == nullptr)
+			appendix.reset(getFileNamed(*sf, *extent, &appendixlen, g_C64Registry[index]._appendFile));
+			if (!appendix)
 				error("detectC64(): Appending file failed");
 			appendixlen -= 2;
 		}
 
-		uint8_t *megabuf = new uint8_t[newlength + appendixlen];
-		memcpy(megabuf, largest_file, newlength);
-		if (appendix != nullptr) {
-			memcpy(megabuf + newlength + g_C64Registry[index]._parameter, appendix + 2, appendixlen);
-			newlength += appendixlen;
-		}
-		delete[] appendix;
+		if (!largestFile)
+			error("detectC64(): Failed loading largest file");
 
-		if (largest_file) {
-			*sf = megabuf;
-			*extent = newlength;
+		size_t newExtent = newlength;
+		Common::ScopedPtr<uint8_t, Common::ArrayDeleter<uint8_t> > replacement;
+		if (appendix) {
+			replacement.reset(new uint8_t[newlength + appendixlen]);
+			memcpy(replacement.get(), largestFile.get(), newlength);
+			memcpy(replacement.get() + newlength + g_C64Registry[index]._parameter, appendix.get() + 2, appendixlen);
+			newExtent += appendixlen;
+		} else {
+			replacement.reset(largestFile.release());
 		}
-		delete[] largest_file;
 
+		delete[] *sf;
+		*sf = replacement.release();
+		*extent = newExtent;
 	} else if (g_C64Registry[index]._type == TYPE_T64) {
 		uint8_t *file_records = *sf + 64;
 		int number_of_records = READ_LE_UINT16(&(*sf)[36]);
@@ -449,10 +453,11 @@ int detectC64(uint8_t **sf, size_t *extent) {
 			size = *extent - offset;
 		else
 			size = end_addr - start_addr;
-		uint8_t *first_file = new uint8_t[size + 2];
-		memcpy(first_file + 2, *sf + offset, size);
-		memcpy(first_file, file_records + 2, 2);
-		*sf = first_file;
+		Common::ScopedPtr<uint8_t, Common::ArrayDeleter<uint8_t> > firstFile(new uint8_t[size + 2]);
+		memcpy(firstFile.get() + 2, *sf + offset, size);
+		memcpy(firstFile.get(), file_records + 2, 2);
+		delete[] *sf;
+		*sf = firstFile.release();
 		*extent = size + 2;
 	}
 	return decrunchC64(sf, extent, g_C64Registry[index]);
