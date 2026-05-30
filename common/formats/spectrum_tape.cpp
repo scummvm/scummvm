@@ -37,6 +37,39 @@ struct SpectrumTapeHeader {
 	uint16 param2 = 0;
 };
 
+enum TzxBlockId {
+	kTzxBlockStandardSpeedData = 0x10,
+	kTzxBlockTurboSpeedData = 0x11,
+	kTzxBlockPureTone = 0x12,
+	kTzxBlockPulseSequence = 0x13,
+	kTzxBlockPureData = 0x14,
+	kTzxBlockDirectRecording = 0x15,
+	kTzxBlockC64RomData = 0x16,
+	kTzxBlockC64TurboTapeData = 0x17,
+	kTzxBlockCswRecording = 0x18,
+	kTzxBlockGeneralizedData = 0x19,
+	kTzxBlockPause = 0x20,
+	kTzxBlockGroupStart = 0x21,
+	kTzxBlockGroupEnd = 0x22,
+	kTzxBlockJumpTo = 0x23,
+	kTzxBlockLoopStart = 0x24,
+	kTzxBlockLoopEnd = 0x25,
+	kTzxBlockCallSequence = 0x26,
+	kTzxBlockReturnFromSequence = 0x27,
+	kTzxBlockSelect = 0x28,
+	kTzxBlockStopTape48k = 0x2a,
+	kTzxBlockSetSignalLevel = 0x2b,
+	kTzxBlockTextDescription = 0x30,
+	kTzxBlockMessage = 0x31,
+	kTzxBlockArchiveInfo = 0x32,
+	kTzxBlockHardwareType = 0x33,
+	kTzxBlockEmulationInfo = 0x34,
+	kTzxBlockCustomInfo = 0x35,
+	kTzxBlockSnapshot = 0x40,
+	kTzxBlockKansasCityStandard = 0x4b,
+	kTzxBlockGlue = 0x5a
+};
+
 static bool readBytes(SeekableReadStream &stream, Array<byte> &out, uint32 len) {
 	out.resize(len);
 	return len == 0 || stream.read(out.data(), len) == len;
@@ -227,7 +260,7 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 			return false;
 
 		switch (id) {
-		case 0x10: { // Standard Speed Data Block
+		case kTzxBlockStandardSpeedData: { // Standard Speed Data Block
 			Array<byte> data;
 			if (!readPayload(stream, data, 4))
 				return false;
@@ -240,15 +273,15 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x11: // Turbo Speed Data Block
+		case kTzxBlockTurboSpeedData: // Turbo Speed Data Block
 			if (!readTzxDataBlock(stream, blocks, id, 0x12, 0x0f))
 				return false;
 			break;
-		case 0x12: // Pure Tone
+		case kTzxBlockPureTone: // Pure Tone
 			if (!readSizedBlock(stream, blocks, id, 4))
 				return false;
 			break;
-		case 0x13: { // Pulse Sequence
+		case kTzxBlockPulseSequence: { // Pulse Sequence
 			byte count = stream.readByte();
 			if (stream.err())
 				return false;
@@ -261,11 +294,11 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x14: // Pure Data Block
+		case kTzxBlockPureData: // Pure Data Block
 			if (!readTzxDataBlock(stream, blocks, id, 0x0a, 0x07))
 				return false;
 			break;
-		case 0x15: { // Direct Recording
+		case kTzxBlockDirectRecording: { // Direct Recording
 			Array<byte> data;
 			if (!readPayload(stream, data, 8))
 				return false;
@@ -278,34 +311,34 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x16: // C64 ROM type data
-		case 0x17: // C64 turbo tape data
+		case kTzxBlockC64RomData: // C64 ROM type data
+		case kTzxBlockC64TurboTapeData: // C64 turbo tape data
 			if (!readLengthPrefixedBlock(stream, blocks, id, 4, 4))
 				return false;
 			break;
-		case 0x18: // CSW recording
-		case 0x19: // Generalized data
+		case kTzxBlockCswRecording: // CSW recording
+		case kTzxBlockGeneralizedData: // Generalized data
 			if (!readLengthPrefixedBlock(stream, blocks, id, 4))
 				return false;
 			break;
-		case 0x20: // Pause
-		case 0x23: // Jump to
-		case 0x24: // Loop start
+		case kTzxBlockPause: // Pause
+		case kTzxBlockJumpTo: // Jump to
+		case kTzxBlockLoopStart: // Loop start
 			if (!readSizedBlock(stream, blocks, id, 2))
 				return false;
 			break;
-		case 0x21: // Group start
-		case 0x30: // Text description
+		case kTzxBlockGroupStart: // Group start
+		case kTzxBlockTextDescription: // Text description
 			if (!readLengthPrefixedBlock(stream, blocks, id, 1))
 				return false;
 			break;
-		case 0x22: // Group end
-		case 0x25: // Loop end
-		case 0x27: // Return from sequence
+		case kTzxBlockGroupEnd: // Group end
+		case kTzxBlockLoopEnd: // Loop end
+		case kTzxBlockReturnFromSequence: // Return from sequence
 			if (!appendBlock(blocks, id, Array<byte>()))
 				return false;
 			break;
-		case 0x26: { // Call sequence
+		case kTzxBlockCallSequence: { // Call sequence
 			uint16 count = stream.readUint16LE();
 			if (stream.err())
 				return false;
@@ -318,20 +351,20 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x28: // Select
-		case 0x32: // Archive info
+		case kTzxBlockSelect: // Select
+		case kTzxBlockArchiveInfo: // Archive info
 			if (!readLengthPrefixedBlock(stream, blocks, id, 2))
 				return false;
 			break;
-		case 0x2a: // Stop the tape (48k)
+		case kTzxBlockStopTape48k: // Stop the tape (48k)
 			if (!readSizedBlock(stream, blocks, id, 4))
 				return false;
 			break;
-		case 0x2b: // Set signal level
+		case kTzxBlockSetSignalLevel: // Set signal level
 			if (!readSizedBlock(stream, blocks, id, 5))
 				return false;
 			break;
-		case 0x31: { // Message
+		case kTzxBlockMessage: { // Message
 			Array<byte> data;
 			if (!readPayload(stream, data, 2))
 				return false;
@@ -343,7 +376,7 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x33: { // Hardware type
+		case kTzxBlockHardwareType: { // Hardware type
 			byte count = stream.readByte();
 			if (stream.err())
 				return false;
@@ -356,11 +389,11 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x34: // Emulation info
+		case kTzxBlockEmulationInfo: // Emulation info
 			if (!readSizedBlock(stream, blocks, id, 8))
 				return false;
 			break;
-		case 0x35: { // Custom info
+		case kTzxBlockCustomInfo: { // Custom info
 			Array<byte> data;
 			if (!readPayload(stream, data, 0x14))
 				return false;
@@ -373,7 +406,7 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x40: { // Snapshot
+		case kTzxBlockSnapshot: { // Snapshot
 			Array<byte> data;
 			if (!readPayload(stream, data, 4))
 				return false;
@@ -386,11 +419,11 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 				return false;
 			break;
 		}
-		case 0x4b: // Kansas City Standard
+		case kTzxBlockKansasCityStandard: // Kansas City Standard
 			if (!readLengthPrefixedBlock(stream, blocks, id, 4))
 				return false;
 			break;
-		case 0x5a: // Glue
+		case kTzxBlockGlue: // Glue
 			if (!readSizedBlock(stream, blocks, id, 9))
 				return false;
 			break;
