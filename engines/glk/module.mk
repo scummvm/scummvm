@@ -395,6 +395,5 @@ DETECT_OBJS += $(MODULE)/zcode/detection.o
 
 # Dependencies of detection objects
 DETECT_OBJS += $(MODULE)/blorb.o
-DETECT_OBJS += $(MODULE)/scott/load_zx_spectrum.o
 DETECT_OBJS += $(MODULE)/advsys/game.o
 endif
