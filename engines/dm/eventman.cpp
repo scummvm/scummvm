@@ -530,7 +530,7 @@ void EventManager::buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 			_mousePointerType = k4_pointerTypeAutoselect;
 		else {
 			championIdx++;
-			if (championIdx == _vm->_inventoryMan->_inventoryChampionOrdinal)
+			if (championIdx == (uint16)_vm->_inventoryMan->_inventoryChampionOrdinal)
 				_mousePointerType = k0_pointerTypeArrow;
 			else if (mousePosY <= 6)
 				_mousePointerType = k0_pointerTypeArrow;

@@ -1604,7 +1604,7 @@ void ChampionMan::unpoison(int16 champIndex) {
 
 	TimelineEvent *eventPtr = _vm->_timeline->_events;
 	for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventPtr++, eventIndex++) {
-		if ((eventPtr->_type == kDMEventTypePoisonChampion) && (eventPtr->_priority == champIndex))
+		if ((eventPtr->_type == kDMEventTypePoisonChampion) && ((int16)eventPtr->_priority == champIndex))
 			_vm->_timeline->deleteEvent(eventIndex);
 	}
 	_champions[champIndex]._poisonEventCount = 0;
