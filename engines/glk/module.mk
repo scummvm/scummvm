@@ -251,6 +251,7 @@ MODULE_OBJS := \
 	scott/line_drawing.o \
 	scott/load_ti99_4a.o \
 	scott/load_zx_spectrum.o \
+	scott/zx_spectrum.o \
 	scott/resource.o \
 	scott/restore_state.o \
 	scott/ring_buffer.o \

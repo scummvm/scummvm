@@ -19,19 +19,8 @@
  *
  */
 
-/*
- * Based on ScottFree interpreter version 1.14 developed by Swansea
- * University Computer Society without disassembly of any other game
- * drivers, only of game databases as permitted by EEC law (for purposes
- * of compatibility).
- *
- * Licensed under GPLv2
- *
- * https://github.com/angstsmurf/spatterlight/tree/master/terps/scott
- */
-
-#ifndef GLK_SCOTT_LOAD_ZX_SPECTRUM_H
-#define GLK_SCOTT_LOAD_ZX_SPECTRUM_H
+#ifndef GLK_SCOTT_ZX_SPECTRUM_H
+#define GLK_SCOTT_ZX_SPECTRUM_H
 
 #include "common/str.h"
 #include "common/stream.h"
@@ -40,9 +29,13 @@
 namespace Glk {
 namespace Scott {
 
-void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5);
-void loadZXSpectrumTape(Common::SeekableReadStream *f);
-void showZXSpectrumTapeTitleScreen();
+struct ZXSpectrumTapeData {
+	Common::Array<byte> screen;
+	Common::Array<byte> code;
+};
+
+extern bool extractZXSpectrumTapeData(Common::SeekableReadStream &stream, ZXSpectrumTapeData &tape);
+extern Common::String computeZXSpectrumTapeCodeMD5(Common::SeekableReadStream &stream, uint32 *codeSize = nullptr);
 
 } // End of namespace Scott
 } // End of namespace Glk

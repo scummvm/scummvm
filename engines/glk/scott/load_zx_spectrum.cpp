@@ -39,6 +39,7 @@
 #include "glk/scott/decompress_z80.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/load_zx_spectrum.h"
+#include "glk/scott/zx_spectrum.h"
 #include "glk/scott/resource.h"
 #include "glk/scott/scott.h"
 #include "image/scr.h"
@@ -47,53 +48,6 @@ namespace Glk {
 namespace Scott {
 
 static Common::Array<byte> g_zxSpectrumTapeTitleScreen;
-
-struct ZXSpectrumTapeData {
-	Common::Array<byte> screen;
-	Common::Array<byte> code;
-};
-
-static bool extractZXSpectrumTapeData(Common::SeekableReadStream &stream, ZXSpectrumTapeData &tape) {
-	Common::SpectrumTapeBlocks blocks;
-	if (!Common::parseSpectrumTape(stream, blocks))
-		return false;
-
-	Common::SpectrumTapeArchive archive(blocks);
-	Common::ArchiveMemberList files;
-	archive.listMembers(files);
-
-	tape.screen.clear();
-	tape.code.clear();
-	for (const Common::ArchiveMemberPtr &file : files) {
-		Common::ScopedPtr<Common::SeekableReadStream> payload(file->createReadStream());
-		if (!payload)
-			continue;
-
-		Common::Array<byte> data;
-		data.resize(payload->size());
-		if (!data.empty() && payload->read(data.data(), data.size()) != data.size())
-			return false;
-
-		if (file->getPathInArchive().baseName().hasSuffixIgnoreCase(".scr"))
-			tape.screen = data;
-		else if (data.size() >= tape.code.size())
-			tape.code = data;
-	}
-
-	return !tape.code.empty();
-}
-
-Common::String computeZXSpectrumTapeCodeMD5(Common::SeekableReadStream &stream, uint32 *codeSize) {
-	ZXSpectrumTapeData tape;
-	if (!extractZXSpectrumTapeData(stream, tape))
-		return Common::String();
-
-	if (codeSize)
-		*codeSize = tape.code.size();
-
-	Common::MemoryReadStream codeStream(tape.code.data(), tape.code.size());
-	return Common::computeStreamMD5AsString(codeStream);
-}
 
 static void loadZXSpectrumGame(Common::String md5) {
 	int offset;

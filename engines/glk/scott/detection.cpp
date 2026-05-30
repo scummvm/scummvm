@@ -36,7 +36,7 @@
 #include "glk/blorb.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/detection_tables.h"
-#include "glk/scott/load_zx_spectrum.h"
+#include "glk/scott/zx_spectrum.h"
 
 namespace Glk {
 namespace Scott {
