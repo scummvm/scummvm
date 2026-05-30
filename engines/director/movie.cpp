@@ -135,6 +135,12 @@ void Movie::setArchive(Archive *archive) {
 		// D4 or lower, only 1 cast
 		_cast->setArchive(archive);
 	}
+	// The cast-lib mapping (MCsL) may be empty or may not list the default
+	// internal library (e.g. TKKG2's score.dxr). In that case the main cast was
+	// never given an archive, so loadConfig() would fail with "No archive
+	// specified" and the movie load aborts. Fall back to the movie's own archive.
+	if (!_cast->getArchive())
+		_cast->setArchive(archive);
 	// Frame Labels
 	if ((r = archive->getMovieResourceIfPresent(MKTAG('V', 'W', 'L', 'B')))) {
 		_score->loadLabels(*r);
@@ -369,7 +375,12 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
 	_remapPalettesWhenNeeded = (fileInfo.flags & kMovieFlagRemapPalettesWhenNeeded) != 0;
 
-	_script = fileInfo.strings[0].readString(false);
+	// A VWFI resource can carry fewer entries than usual (e.g. TKKG2's score.dxr
+	// has an empty info table). Guard every access so we don't read past the end.
+	uint numStrings = fileInfo.strings.size();
+
+	if (numStrings > 0)
+		_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, 0);
@@ -377,12 +388,15 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	if (!_script.empty())
 		_cast->_lingoArchive->addCode(_script, kMovieScript, 0, nullptr, kLPPTrimGarbage);
 
-	_changedBy = fileInfo.strings[1].readString();
-	_createdBy = fileInfo.strings[2].readString();
-	_origDirectory = fileInfo.strings[3].readString();
+	if (numStrings > 1)
+		_changedBy = fileInfo.strings[1].readString();
+	if (numStrings > 2)
+		_createdBy = fileInfo.strings[2].readString();
+	if (numStrings > 3)
+		_origDirectory = fileInfo.strings[3].readString();
 
 	uint16 preload = 0;
-	if (fileInfo.strings[4].len) {
+	if (numStrings > 4 && fileInfo.strings[4].len) {
 		if (stream.isBE())
 			preload = READ_BE_INT16(fileInfo.strings[4].data);
 		else
