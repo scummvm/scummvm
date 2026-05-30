@@ -22,8 +22,6 @@
 #ifndef ACCESS_POLYGON_H
 #define ACCESS_POLYGON_H
 
-#include "common/types.h"
-#include "common/array.h"
 #include "common/rect.h"
 
 namespace Access {
