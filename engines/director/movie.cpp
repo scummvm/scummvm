@@ -135,6 +135,12 @@ void Movie::setArchive(Common::SharedPtr<Archive> archive) {
 		// D4 or lower, only 1 cast
 		_cast->setArchive(archive);
 	}
+
+	// The cast-lib mapping (MCsL) may be empty or may not list the default
+	// internal library
+	if (!_cast->getArchive())
+		_cast->setArchive(archive);
+
 	// Frame Labels
 	if ((r = archive->getMovieResourceIfPresent(MKTAG('V', 'W', 'L', 'B')))) {
 		_score->loadLabels(*r);
