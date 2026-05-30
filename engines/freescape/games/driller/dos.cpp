@@ -20,9 +20,11 @@
  */
 
 #include "common/file.h"
+#include "common/config-manager.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/driller/driller.h"
+#include "freescape/games/driller/opl.music.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
@@ -285,6 +287,9 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat);
 		_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat);
 	}
+
+	if (ConfMan.getBool("opl_music"))
+		_playerMusic = new DrillerOPLMusicPlayer();
 }
 
 void DrillerEngine::loadAssetsDOSDemo() {

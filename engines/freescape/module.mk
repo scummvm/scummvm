@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	games/driller/cpc.o \
 	games/driller/dos.o \
 	games/driller/driller.o \
+	games/driller/opl.music.o \
 	games/driller/sounds.o \
 	games/driller/zx.o \
 	games/eclipse/amiga.o \

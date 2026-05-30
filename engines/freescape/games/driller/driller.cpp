@@ -267,8 +267,10 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 			playSound(_soundIndexStart, true, _soundFxHandle);
 		} else {
 			playSound(_soundIndexStart, true, _soundFxHandle);
-			// Start playing music, if any, in any supported format
-			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
+			if (_playerMusic)
+				_playerMusic->startMusic();
+			else
+				playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
 		}
 
 	} else if (areaID == 127) {
