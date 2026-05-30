@@ -182,7 +182,7 @@ static void drawString(const char *str, const Font *font, Screen *screen, int x,
 
 bool ComicViewer::drawBubble(const ComicBox &bubble) {
 	static constexpr struct {
-		struct { int16 px, py; } positions[4];
+		Common::Point positions[4];
 		int16 sprites[3];
 	} kBubbleDef[] = {
 		{{{-43, -13}, {+159, -9}, {-44, +63}, {+150, +61}}, {3, 6, 0}},
@@ -245,8 +245,8 @@ bool ComicViewer::drawBubble(const ComicBox &bubble) {
 		else
 			defIndex = 2;
 
-		bubbleX += kBubbleDef[defIndex].positions[style].px;
-		bubbleY += kBubbleDef[defIndex].positions[style].py;
+		bubbleX += kBubbleDef[defIndex].positions[style].x;
+		bubbleY += kBubbleDef[defIndex].positions[style].y;
 
 		if (color == 246) {
 			textColor = 255;

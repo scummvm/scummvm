@@ -85,7 +85,7 @@ private:
 	Font *_fontChaletse;
 	Font *_fontComicseu;
 
-	Common::Array<const int16(*)[2]> _menus;
+	Common::Array<const Common::Point *> _menus;
 };
 
 } // end namespace Noctropolis

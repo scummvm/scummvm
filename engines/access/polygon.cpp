@@ -25,16 +25,16 @@ namespace Access {
 
 namespace Polygon {
 
-bool pointInside(const int16 (*points)[2], int16 x, int16 y) {
+bool pointInside(const Common::Point * const points, int16 x, int16 y) {
 	bool result = false;
 	uint j = 0;
-	while (points[j][0] >= 0 && points[j][1] >= 0)
+	while (points[j] != LISTEND)
 		j++;
-	for (uint k = 0; points[k][0] >= 0 && points[k][1] >= 0; k++) {
-		if ((points[k][1] <= y && y < points[j][1]) ||
-			(points[j][1] <= y && y < points[k][1])) {
-			if (x < (points[j][0] - points[k][0]) * (y - points[k][1]) /
-			  (points[j][1] - points[k][1]) + points[k][0]) {
+	for (uint k = 0; points[k].x >= 0 && points[k].y >= 0; k++) {
+		if ((points[k].y <= y && y < points[j].y) ||
+			(points[j].y <= y && y < points[k].y)) {
+			if (x < (points[j].x - points[k].x) * (y - points[k].y) /
+			  (points[j].y - points[k].y) + points[k].x) {
 			  result = !result;
 			}
 		}

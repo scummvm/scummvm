@@ -41,7 +41,7 @@ struct ComicBox {
 };
 
 struct ComicBlock {
-	const int16 (*polygon)[2];
+	const Common::Point *polygon;
 	int32 soundFileIndex, soundResIndex;
 	const struct ComicBox *boxes;
 	int32 numBoxes;
