@@ -29,7 +29,8 @@
 namespace Access {
 
 namespace Polygon {
-	bool pointInside(const int16 (*points)[2], int16 x, int16 y);
+	bool pointInside(const Common::Point *points, int16 x, int16 y);
+	constexpr Common::Point LISTEND = { -1, -1 };
 }
 
 } // end namespace Access

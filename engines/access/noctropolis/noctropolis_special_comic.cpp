@@ -28,7 +28,7 @@ namespace Access {
 
 namespace Noctropolis {
 
-static constexpr int16 poly_p1_b0[][2] = {
+static constexpr Common::Point poly_p1_b0[] = {
 	{ 376, 89 },
 	{ 427, 104 },
 	{ 450, 145 },
@@ -37,7 +37,7 @@ static constexpr int16 poly_p1_b0[][2] = {
 	{ 320, 182 },
 	{ 305, 145 },
 	{ 328, 104 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p1_b0_boxes[] = {
@@ -46,12 +46,12 @@ static constexpr struct ComicBox block_p1_b0_boxes[] = {
 
 static constexpr struct ComicBlock block_p1_0 = { poly_p1_b0, -1, -1, block_p1_b0_boxes, 1 };
 
-static constexpr int16 poly_p1_b1[][2] = {
+static constexpr Common::Point poly_p1_b1[] = {
 	{ 187, 0 },
 	{ 451, 0 },
 	{ 451, 95 },
 	{ 187, 95 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p1_b1_boxes[] = {
@@ -60,12 +60,12 @@ static constexpr struct ComicBox block_p1_b1_boxes[] = {
 
 static constexpr struct ComicBlock block_p1_1 = { poly_p1_b1, -1, -1, block_p1_b1_boxes, 1 };
 
-static constexpr int16 poly_p1_b2[][2] = {
+static constexpr Common::Point poly_p1_b2[] = {
 	{ 187, 95 },
 	{ 451, 95 },
 	{ 451, 210 },
 	{ 187, 210 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p1_b2_boxes[] = {
@@ -75,13 +75,13 @@ static constexpr struct ComicBox block_p1_b2_boxes[] = {
 
 static constexpr struct ComicBlock block_p1_2 = { poly_p1_b2, -1, -1, block_p1_b2_boxes, 2 };
 
-static constexpr int16 poly_p1_b3[][2] = {
+static constexpr Common::Point poly_p1_b3[] = {
 	{ 187, 210 },
 	{ 283, 210 },
 	{ 283, 312 },
 	{ 233, 337 },
 	{ 187, 314 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p1_b3_boxes[] = {
@@ -91,13 +91,13 @@ static constexpr struct ComicBox block_p1_b3_boxes[] = {
 
 static constexpr struct ComicBlock block_p1_3 = { poly_p1_b3, -1, -1, block_p1_b3_boxes, 2 };
 
-static constexpr int16 poly_p1_b4[][2] = {
+static constexpr Common::Point poly_p1_b4[] = {
 	{ 187, 314 },
 	{ 233, 337 },
 	{ 283, 312 },
 	{ 283, 399 },
 	{ 187, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p1_b4_boxes[] = {
@@ -106,12 +106,12 @@ static constexpr struct ComicBox block_p1_b4_boxes[] = {
 
 static constexpr struct ComicBlock block_p1_4 = { poly_p1_b4, -1, -1, block_p1_b4_boxes, 1 };
 
-static constexpr int16 poly_p1_b5[][2] = {
+static constexpr Common::Point poly_p1_b5[] = {
 	{ 283, 210 },
 	{ 451, 210 },
 	{ 451, 399 },
 	{ 283, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p1_b5_boxes[] = {
@@ -132,12 +132,12 @@ static constexpr struct ComicBlock page_1_blocks[] = {
 
 static struct ComicPage page_1 = { "COMDATA/SEPG01.SCN", 98, 55, 1, 0, page_1_blocks, 6 };
 
-static constexpr int16 poly_p2_b0[][2] = {
+static constexpr Common::Point poly_p2_b0[] = {
 	{ 369, 36 },
 	{ 450, 36 },
 	{ 450, 150 },
 	{ 369, 150 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p2_b0_boxes[] = {
@@ -146,12 +146,12 @@ static constexpr struct ComicBox block_p2_b0_boxes[] = {
 
 static constexpr struct ComicBlock block_p2_0 = { poly_p2_b0, -1, -1, block_p2_b0_boxes, 1 };
 
-static constexpr int16 poly_p2_b1[][2] = {
+static constexpr Common::Point poly_p2_b1[] = {
 	{ 187, 0 },
 	{ 450, 0 },
 	{ 450, 217 },
 	{ 187, 217 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p2_b1_boxes[] = {
@@ -160,12 +160,12 @@ static constexpr struct ComicBox block_p2_b1_boxes[] = {
 
 static constexpr struct ComicBlock block_p2_1 = { poly_p2_b1, -1, -1, block_p2_b1_boxes, 1 };
 
-static constexpr int16 poly_p2_b2[][2] = {
+static constexpr Common::Point poly_p2_b2[] = {
 	{ 187, 150 },
 	{ 285, 217 },
 	{ 322, 399 },
 	{ 187, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p2_b2_boxes[] = {
@@ -176,12 +176,12 @@ static constexpr struct ComicBox block_p2_b2_boxes[] = {
 
 static constexpr struct ComicBlock block_p2_2 = { poly_p2_b2, -1, -1, block_p2_b2_boxes, 3 };
 
-static constexpr int16 poly_p2_b3[][2] = {
+static constexpr Common::Point poly_p2_b3[] = {
 	{ 285, 217 },
 	{ 450, 217 },
 	{ 450, 296 },
 	{ 302, 296 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p2_b3_boxes[] = {
@@ -190,12 +190,12 @@ static constexpr struct ComicBox block_p2_b3_boxes[] = {
 
 static constexpr struct ComicBlock block_p2_3 = { poly_p2_b3, -1, -1, block_p2_b3_boxes, 1 };
 
-static constexpr int16 poly_p2_b4[][2] = {
+static constexpr Common::Point poly_p2_b4[] = {
 	{ 302, 296 },
 	{ 450, 296 },
 	{ 450, 399 },
 	{ 322, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p2_b4_boxes[] = {
@@ -214,12 +214,12 @@ static constexpr struct ComicBlock page_2_blocks[] = {
 
 static struct ComicPage page_2 = { "COMDATA/SEPG02.SCN", 98, 55, 1, 0, page_2_blocks, 5 };
 
-static constexpr int16 poly_p3_b0[][2] = {
+static constexpr Common::Point poly_p3_b0[] = {
 	{ 187, 0 },
 	{ 451, 0 },
 	{ 451, 186 },
 	{ 187, 186 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p3_b0_boxes[] = {
@@ -228,12 +228,12 @@ static constexpr struct ComicBox block_p3_b0_boxes[] = {
 
 static constexpr struct ComicBlock block_p3_0 = { poly_p3_b0, -1, -1, block_p3_b0_boxes, 1 };
 
-static constexpr int16 poly_p3_b1[][2] = {
+static constexpr Common::Point poly_p3_b1[] = {
 	{ 187, 186 },
 	{ 451, 186 },
 	{ 451, 399 },
 	{ 187, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p3_b1_boxes[] = {
@@ -253,12 +253,12 @@ static constexpr struct ComicBlock page_3_blocks[] = {
 
 static struct ComicPage page_3 = { "COMDATA/SEPG03.SCN", 98, 56, 0, 0, page_3_blocks, 2 };
 
-static constexpr int16 poly_p4_b0[][2] = {
+static constexpr Common::Point poly_p4_b0[] = {
 	{ 187, 0 },
 	{ 451, 0 },
 	{ 451, 399 },
 	{ 187, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p4_b0_boxes[] = {
@@ -273,12 +273,12 @@ static constexpr struct ComicBlock page_4_blocks[] = {
 
 static struct ComicPage page_4 = { "COMDATA/SEPG04.SCN", 98, 57, 1, 0, page_4_blocks, 1 };
 
-static constexpr int16 poly_p5_b0[][2] = {
+static constexpr Common::Point poly_p5_b0[] = {
 	{ 187, 0 },
 	{ 451, 0 },
 	{ 451, 78 },
 	{ 187, 78 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p5_b0_boxes[] = {
@@ -287,12 +287,12 @@ static constexpr struct ComicBox block_p5_b0_boxes[] = {
 
 static constexpr struct ComicBlock block_p5_0 = { poly_p5_b0, -1, -1, block_p5_b0_boxes, 1 };
 
-static constexpr int16 poly_p5_b1[][2] = {
+static constexpr Common::Point poly_p5_b1[] = {
 	{ 187, 78 },
 	{ 343, 78 },
 	{ 343, 185 },
 	{ 187, 185 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p5_b1_boxes[] = {
@@ -302,12 +302,12 @@ static constexpr struct ComicBox block_p5_b1_boxes[] = {
 
 static constexpr struct ComicBlock block_p5_1 = { poly_p5_b1, -1, -1, block_p5_b1_boxes, 2 };
 
-static constexpr int16 poly_p5_b2[][2] = {
+static constexpr Common::Point poly_p5_b2[] = {
 	{ 343, 78 },
 	{ 451, 78 },
 	{ 451, 167 },
 	{ 343, 167 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p5_b2_boxes[] = {
@@ -316,12 +316,12 @@ static constexpr struct ComicBox block_p5_b2_boxes[] = {
 
 static constexpr struct ComicBlock block_p5_2 = { poly_p5_b2, -1, -1, block_p5_b2_boxes, 1 };
 
-static constexpr int16 poly_p5_b3[][2] = {
+static constexpr Common::Point poly_p5_b3[] = {
 	{ 187, 185 },
 	{ 333, 185 },
 	{ 333, 399 },
 	{ 187, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p5_b3_boxes[] = {
@@ -330,12 +330,12 @@ static constexpr struct ComicBox block_p5_b3_boxes[] = {
 
 static constexpr struct ComicBlock block_p5_3 = { poly_p5_b3, -1, -1, block_p5_b3_boxes, 1 };
 
-static constexpr int16 poly_p5_b4[][2] = {
+static constexpr Common::Point poly_p5_b4[] = {
 	{ 333, 167 },
 	{ 451, 167 },
 	{ 451, 399 },
 	{ 333, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p5_b4_boxes[] = {
@@ -354,12 +354,12 @@ static constexpr struct ComicBlock page_5_blocks[] = {
 
 static struct ComicPage page_5 = { "COMDATA/SEPG05.SCN", 98, 58, 1, 0, page_5_blocks, 5 };
 
-static constexpr int16 poly_p6_b0[][2] = {
+static constexpr Common::Point poly_p6_b0[] = {
 	{ 188, 0 },
 	{ 320, 0 },
 	{ 320, 107 },
 	{ 188, 107 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p6_b0_boxes[] = {
@@ -368,12 +368,12 @@ static constexpr struct ComicBox block_p6_b0_boxes[] = {
 
 static constexpr struct ComicBlock block_p6_0 = { poly_p6_b0, -1, -1, block_p6_b0_boxes, 1 };
 
-static constexpr int16 poly_p6_b1[][2] = {
+static constexpr Common::Point poly_p6_b1[] = {
 	{ 320, 0 },
 	{ 451, 0 },
 	{ 451, 107 },
 	{ 320, 107 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p6_b1_boxes[] = {
@@ -382,12 +382,12 @@ static constexpr struct ComicBox block_p6_b1_boxes[] = {
 
 static constexpr struct ComicBlock block_p6_1 = { poly_p6_b1, -1, -1, block_p6_b1_boxes, 1 };
 
-static constexpr int16 poly_p6_b2[][2] = {
+static constexpr Common::Point poly_p6_b2[] = {
 	{ 188, 107 },
 	{ 320, 107 },
 	{ 320, 210 },
 	{ 188, 210 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p6_b2_boxes[] = {
@@ -396,12 +396,12 @@ static constexpr struct ComicBox block_p6_b2_boxes[] = {
 
 static constexpr struct ComicBlock block_p6_2 = { poly_p6_b2, -1, -1, block_p6_b2_boxes, 1 };
 
-static constexpr int16 poly_p6_b3[][2] = {
+static constexpr Common::Point poly_p6_b3[] = {
 	{ 320, 107 },
 	{ 451, 107 },
 	{ 451, 210 },
 	{ 320, 210 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p6_b3_boxes[] = {
@@ -410,12 +410,12 @@ static constexpr struct ComicBox block_p6_b3_boxes[] = {
 
 static constexpr struct ComicBlock block_p6_3 = { poly_p6_b3, -1, -1, block_p6_b3_boxes, 1 };
 
-static constexpr int16 poly_p6_b4[][2] = {
+static constexpr Common::Point poly_p6_b4[] = {
 	{ 188, 210 },
 	{ 320, 210 },
 	{ 320, 399 },
 	{ 188, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p6_b4_boxes[] = {
@@ -424,12 +424,12 @@ static constexpr struct ComicBox block_p6_b4_boxes[] = {
 
 static constexpr struct ComicBlock block_p6_4 = { poly_p6_b4, -1, -1, block_p6_b4_boxes, 1 };
 
-static constexpr int16 poly_p6_b5[][2] = {
+static constexpr Common::Point poly_p6_b5[] = {
 	{ 320, 210 },
 	{ 451, 210 },
 	{ 451, 399 },
 	{ 320, 399 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p6_b5_boxes[] = {
@@ -449,12 +449,12 @@ static constexpr struct ComicBlock page_6_blocks[] = {
 
 static struct ComicPage page_6 = { "COMDATA/SEPG06.SCN", 98, 58, 1, 0, page_6_blocks, 6 };
 
-static constexpr int16 poly_p7_b0[][2] = {
+static constexpr Common::Point poly_p7_b0[] = {
 	{ 354, 4 },
 	{ 441, 4 },
 	{ 441, 123 },
 	{ 354, 123 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p7_b0_boxes[] = {
@@ -463,12 +463,12 @@ static constexpr struct ComicBox block_p7_b0_boxes[] = {
 
 static constexpr struct ComicBlock block_p7_0 = { poly_p7_b0, -1, -1, block_p7_b0_boxes, 1 };
 
-static constexpr int16 poly_p7_b1[][2] = {
+static constexpr Common::Point poly_p7_b1[] = {
 	{ 187, 0 },
 	{ 451, 0 },
 	{ 451, 188 },
 	{ 187, 188 },
-	{ -1, -1 },
+	Polygon::LISTEND,
 };
 
 static constexpr struct ComicBox block_p7_b1_boxes[] = {
