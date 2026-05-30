@@ -47,7 +47,7 @@
 namespace Glk {
 namespace Scott {
 
-static Common::Array<byte> g_zxSpectrumTapeTitleScreen;
+#define TITLE_SCREEN g_scott->_spectrumTitleScreen
 
 static void loadZXSpectrumGame(Common::String md5) {
 	int offset;
@@ -62,7 +62,7 @@ static void loadZXSpectrumGame(Common::String md5) {
 }
 
 void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5) {
-	g_zxSpectrumTapeTitleScreen.clear();
+	TITLE_SCREEN.clear();
 
 	_G(_entireFile) = new uint8_t[_G(_fileLength)];
 	size_t result = f->read(_G(_entireFile), _G(_fileLength));
@@ -80,13 +80,13 @@ void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5) {
 }
 
 void loadZXSpectrumTape(Common::SeekableReadStream *f) {
-	g_zxSpectrumTapeTitleScreen.clear();
+	TITLE_SCREEN.clear();
 
 	ZXSpectrumTapeData tape;
 	if (!extractZXSpectrumTapeData(*f, tape))
 		return;
 
-	g_zxSpectrumTapeTitleScreen = tape.screen;
+	TITLE_SCREEN = tape.screen;
 
 	_G(_fileLength) = tape.code.size();
 	_G(_entireFile) = new uint8_t[_G(_fileLength)];
@@ -99,10 +99,10 @@ void loadZXSpectrumTape(Common::SeekableReadStream *f) {
 }
 
 static Graphics::ManagedSurface *decodeZXSpectrumTitleScreen() {
-	if (g_zxSpectrumTapeTitleScreen.size() != 6912)
+	if (TITLE_SCREEN.size() != 6912)
 		return nullptr;
 
-	Common::Array<byte> titleScreen = g_zxSpectrumTapeTitleScreen;
+	Common::Array<byte> titleScreen = TITLE_SCREEN;
 	if (CURRENT_GAME == HULK) {
 		byte *attrs = titleScreen.data() + 6144;
 		for (int row = 22; row < 24; row++) {
@@ -165,7 +165,7 @@ static void drawZXSpectrumTitleScreen(winid_t win, const Graphics::ManagedSurfac
 }
 
 void showZXSpectrumTapeTitleScreen() {
-	if (!g_scott->glk_gestalt(gestalt_Graphics, 0) || g_zxSpectrumTapeTitleScreen.empty())
+	if (!g_scott->glk_gestalt(gestalt_Graphics, 0) || TITLE_SCREEN.empty())
 		return;
 
 	Graphics::ManagedSurface *surface = decodeZXSpectrumTitleScreen();
