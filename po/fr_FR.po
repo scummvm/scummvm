@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2026-05-24 13:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -9806,7 +9806,7 @@ msgstr "Ce fichier Glulx est une version trop récente pour être exécutée."
 msgid "Could not start Quest game"
 msgstr "Impossible de lancer le jeu Quest"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 msgid "Saved.\n"
 msgstr "Sauvegarder.\n"
 

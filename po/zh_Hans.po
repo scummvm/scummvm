@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -10102,7 +10102,7 @@ msgstr "Glulx 文件版本过高，无法执行。"
 msgid "Could not start Quest game"
 msgstr "无法启动 Quest 游戏"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 msgid "Saved.\n"
 msgstr "已保存。\n"
 

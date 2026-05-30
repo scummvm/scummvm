@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -9926,7 +9926,7 @@ msgstr "Αυτή η έκδοση αρχείου Glulx είναι πολύ νέα
 msgid "Could not start Quest game"
 msgstr "Αδυναμία εκκίνησης παιχνιδιού Quest"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 msgid "Saved.\n"
 msgstr "Αποθηκεύτηκε.\n"
 

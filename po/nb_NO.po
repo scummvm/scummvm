@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -10416,7 +10416,7 @@ msgstr "Denne Glulx-filen er en for ny versjon til å kjøre."
 msgid "Could not start Quest game"
 msgstr "Kunne ikke starte Quest-spillet"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 msgid "Saved.\n"
 msgstr "Lagret.\n"
 

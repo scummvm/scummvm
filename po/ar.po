@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2026-02-24 22:26+0000\n"
 "Last-Translator: Mohamed Shaaban <mohmedbashamedo@hotmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -10000,7 +10000,7 @@ msgstr "يعد ملف Glulx هذا إصدارًا جديدًا جدًا بحيث
 msgid "Could not start Quest game"
 msgstr "لا يمكن بدء لعبة السعي"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 msgid "Saved.\n"
 msgstr "محفوظ.\n"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -9832,7 +9832,7 @@ msgstr ""
 msgid "Could not start Quest game"
 msgstr "Kon Quest spel niet starten"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 msgid "Saved.\n"
 msgstr "Opgeslagen.\n"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-27 06:56+0000\n"
+"POT-Creation-Date: 2026-05-30 09:30+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -9779,7 +9779,7 @@ msgstr ""
 msgid "Could not start Quest game"
 msgstr "Non se puido cambiar ao modo de vídeo: '"
 
-#: engines/glk/scott/scott.cpp:681
+#: engines/glk/scott/scott.cpp:684
 #, fuzzy
 msgid "Saved.\n"
 msgstr "Gardar"
