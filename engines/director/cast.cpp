@@ -891,6 +891,17 @@ void Cast::loadCast() {
 	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
 		debugC(4, kDebugLoading, "'SCRF' resource skipped");
 	}
+
+	// When dumping, force-load every bitmap so its decoded image gets
+	// exported as PNG. Bitmaps are otherwise loaded lazily (only when
+	// shown on stage), so without this only the few displayed members
+	// would be dumped.
+	if (ConfMan.getBool("dump_scripts")) {
+		for (auto &it : *_loadedCast) {
+			if (it._value && it._value->_type == kCastBitmap)
+				it._value->load();
+		}
+	}
 }
 
 void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res) {
