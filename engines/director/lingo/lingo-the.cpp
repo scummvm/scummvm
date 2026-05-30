@@ -2060,6 +2060,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (!d.asInt()) {
 			// TODO: Properly reset sprite properties after puppet disabled.
 			sprite->_moveable = false;
+			// Returning control to the score also clears any implicit auto-puppet
+			// flags, so the sprite can be replaced by score data again instead of
+			// staying frozen on screen.
+			sprite->_autoPuppet = kAPNone;
 		}
 		break;
 	case kTheRect:
