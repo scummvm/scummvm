@@ -31,7 +31,8 @@ enum Macs2DebugChannels {
 	kDebugPath = 1 << 1,
 	kDebugScan = 1 << 2,
 	kDebugFilePath = 1 << 3,
-	kDebugScript = 1 << 4,
+	kDebugInput = 1 << 4,
+	kDebugScript = 1 << 5,
 };
 
 extern const PlainGameDescriptor macs2Games[];

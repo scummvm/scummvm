@@ -20,6 +20,7 @@
  */
 
 #include "common/translation.h"
+#include "common/savefile.h"
 
 #include "macs2/detection.h"
 #include "macs2/macs2.h"
@@ -55,6 +56,53 @@ bool Macs2MetaEngine::hasFeature(MetaEngineFeature f) const {
 
 const ADExtraGuiOptionsMap *Macs2MetaEngine::getAdvancedExtraGuiOptions() const {
 	return Macs2::optionsList;
+}
+
+SaveStateList Macs2MetaEngine::listSaves(const char *target) const {
+	// Get standard ScummVM saves first
+	SaveStateList saves = AdvancedMetaEngine::listSaves(target);
+
+	// Also look for original DOS saves (SAVEGAME.0 through SAVEGAME.9)
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	for (int slot = 0; slot < 10; slot++) {
+		Common::String origName = Common::String::format("SAVEGAME.%d", slot);
+		Common::InSaveFile *f = saveFileMan->openForLoading(origName);
+		if (!f) {
+			// Also try lowercase
+			origName = Common::String::format("savegame.%d", slot);
+			f = saveFileMan->openForLoading(origName);
+		}
+		if (f) {
+			// Validate magic
+			char magic[12];
+			f->read(magic, 12);
+			if (memcmp(magic, "AHFFMSGM0100", 12) == 0) {
+				// Read slot name (Pascal string: 1 byte length + up to 20 chars)
+				byte nameLen = f->readByte();
+				if (nameLen > 20) nameLen = 20;
+				char name[21];
+				f->read(name, nameLen);
+				name[nameLen] = '\0';
+				// Use slots 100+ for original saves to avoid conflicts
+				int scummSlot = 100 + slot;
+				// Check if this slot is already in the list
+				bool found = false;
+				for (const auto &s : saves) {
+					if (s.getSaveSlot() == scummSlot) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					Common::String desc = Common::String::format("[DOS] %s", name);
+					saves.push_back(SaveStateDescriptor(this, scummSlot, desc));
+				}
+			}
+			delete f;
+		}
+	}
+
+	return saves;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MACS2)

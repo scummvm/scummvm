@@ -23,6 +23,7 @@
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
@@ -35,7 +36,7 @@
 
 namespace Macs2 {
 namespace {
-constexpr int kNumLoadedCursors = 5;
+constexpr int kNumLoadedCursors = 33;
 
 Common::String joinDebugStrings(const Common::StringArray &strings) {
 	Common::String result;
@@ -52,14 +53,14 @@ void logRenderedText(const char *kind, int x, int y, const Common::String &text)
 }
 
 void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
-	memcpy(colors, sourcePalette, 256 * 3);
+	// Original fadePaletteToBlack/FromBlack: subtracts fadeValue from raw 6-bit VGA
+	// palette values (0-63), clamping to 0. Then scales to 8-bit for ScummVM.
 	for (uint i = 0; i < 256 * 3; ++i) {
-		if (colors[i] < fadeValue) {
-			colors[i] = 0;
-		} else {
-			colors[i] -= fadeValue;
-		}
-		colors[i] = (colors[i] * 259 + 33) >> 6;
+		int raw = sourcePalette[i]; // 6-bit value (0-63)
+		int faded = raw - fadeValue;
+		if (faded < 0)
+			faded = 0;
+		colors[i] = (faded * 259 + 33) >> 6; // 6-bit to 8-bit
 	}
 }
 
@@ -170,21 +171,14 @@ Character *View1::GetCharacterByIndex(uint16 index) {
 	return nullptr;
 }
 void View1::UpdateCursor(const byte *palette) {
-	// Handle special cursor modes
-	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Disabled) {
-		CursorMan.showMouse(false);
-		return;
-	}
 	CursorMan.showMouse(true);
 
-	// For PanelUse/PanelCursor, fall back to Use cursor visually
-	int mode = (int)g_engine->_scriptExecutor->_mouseMode - (int)Script::MouseMode::Talk;
-	if (mode >= kNumLoadedCursors) {
-		mode = (int)Script::MouseMode::Use - (int)Script::MouseMode::Talk;
-	}
-	if (mode < 0) {
-		warning("Invalid cursor mode %d, falling back to Use cursor", mode);
-		mode = (int)Script::MouseMode::Use - (int)Script::MouseMode::Talk;
+	// Original indexes cursor array as: base + mode * 16 - 16, i.e. 0-based index = mode - 1.
+	// The array has 33 entries (indices 0-32). Cursor modes 0x13-0x1A map to entries 18-25.
+	int mode = (int)g_engine->_scriptExecutor->_mouseMode - 1;
+	if (mode < 0 || mode >= kNumLoadedCursors) {
+		warning("Invalid cursor mode %d, falling back to Walk cursor", mode);
+		mode = (int)Script::MouseMode::Walk - 1;
 	}
 
 	if (g_engine->_cursorData[mode] == nullptr || g_engine->_cursorWidths[mode] == 0 || g_engine->_cursorHeights[mode] == 0) {
@@ -252,13 +246,12 @@ AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		return nullptr;
 	}
 	Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
-	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	stream.seek(23, SEEK_SET);
 
-	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[index], true, 0);
-	offset += 6;
-	stream.seek(offset, SEEK_SET);
-	offset += 6;
+	// Original calls getAnimFrameWidth(1, ...) with mode=1 to reset to frame 1
+	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[index], true, 1);
+	// Frame data: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
+	// Skip the 6-byte header to reach width/height/pixels for ReadFromStream
+	stream.seek(offset + 6, SEEK_SET);
 	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
@@ -275,81 +268,6 @@ void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
 			if (currentX < 320 && currentY < 200)
 				s.setPixel(currentX, currentY, newValue);
 		}
-	}
-}
-
-void View1::drawStringBackground(uint16 x, uint16 y, uint16 width, uint16 height) {
-	Graphics::ManagedSurface s = getSurface();
-
-	// TODO: Look up how we determine the width of the right border
-	constexpr int borderWidth = 10;
-	constexpr int highlightWidth = 2;
-	// Draw the background
-	// Draw the border segments
-	drawDarkRectangle(x, y, width, height);
-
-	// TODO: Is this the same calculation?
-	uint16 xSegments = (width / g_engine->_borderWidth) + 1;
-	uint16 ySegments = (height / g_engine->_borderHeight) + 1;
-
-	// First the left side
-	Common::Rect clippingRect(x, y, x + borderWidth, y + height);
-	int currentX = x;
-	int currentY = y;
-	for (int iy = 0; iy < ySegments; iy++) {
-		// DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
-		DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
-		currentY += g_engine->_borderHeight;
-	}
-
-	// Top
-	clippingRect = Common::Rect(x, y, x + width, y + borderWidth);
-	currentX = x;
-	currentY = y;
-	for (int ix = 0; ix < xSegments; ix++) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
-		currentX += g_engine->_borderWidth;
-	}
-
-	// Right
-	// TODO: Need to figure out the margin here
-	currentX = x + width - borderWidth;
-	currentY = y;
-	clippingRect = Common::Rect(currentX, y, x + width, y + height);
-	for (int iy = 0; iy < ySegments; iy++) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
-		currentY += g_engine->_borderHeight;
-	}
-
-	// Bottom
-	currentX = x;
-	currentY = y + height - borderWidth;
-	clippingRect = Common::Rect(x, currentY, x + width, y + height);
-	for (int ix = 0; ix < xSegments; ix++) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
-		currentX += g_engine->_borderWidth;
-	}
-
-	// Highlight on the top and left
-	// TODO: Check if it's also done to the inside of the frame
-	// TODO: Refactor code to have less copy paste
-	// First the left side
-	clippingRect = Common::Rect(x, y, x + highlightWidth, y + height);
-	currentX = x;
-	currentY = y;
-	for (int iy = 0; iy < ySegments; iy++) {
-		// DrawSprite(currentX, currentY, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderData, s);
-		DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderHighlightData, s);
-		currentY += g_engine->_borderHeight;
-	}
-
-	// Top
-	clippingRect = Common::Rect(x, y, x + width, y + highlightWidth);
-	currentX = x;
-	currentY = y;
-	for (int ix = 0; ix < xSegments; ix++) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, g_engine->_borderWidth, g_engine->_borderHeight, g_engine->_borderHighlightData, s);
-		currentX += g_engine->_borderWidth;
 	}
 }
 
@@ -375,11 +293,21 @@ void View1::drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s) {
 }
 
 void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
-	// TODO: Draw the border
+	// Mouth animation from handleTimerCallback (1008:d38b).
+	// Cycles between frame 1 (mouth open) and frame 2 (mouth closed)
+	// based on a decrementing counter, creating a talking animation.
+	bool useAlternateBlob = false;
+	if (currentSpeechActData.mouthAnimActive) {
+		if (currentSpeechActData.mouthAnimCounter <= 0) {
+			useAlternateBlob = true;
+		}
+	}
 
-	AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait(currentSpeechActData.onRightSide);
-	AnimFrame *leftPortrait = currentSpeechActData.speaker->GetCurrentPortrait(false);
-	AnimFrame *rightPortrait = currentSpeechActData.speaker->GetCurrentPortrait(true);
+	// Select portrait blob: primary (Blobs[17]) during countdown, alternate (Blobs[18]) after
+	// Mode 0: render current frame without advancing (advance happens in tick())
+	AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait(useAlternateBlob, 0);
+	AnimFrame *leftPortrait = currentSpeechActData.speaker->GetCurrentPortrait(false, 0);
+	AnimFrame *rightPortrait = currentSpeechActData.speaker->GetCurrentPortrait(true, 0);
 	if (frame == nullptr) {
 		return;
 	}
@@ -400,25 +328,71 @@ void View1::renderString(uint16 x, uint16 y, Common::String s) {
 	Graphics::ManagedSurface surf = getSurface();
 	uint16 currentX = x;
 	uint16 currentY = y;
+
+	// First pass: find widest glyph (drawTextString at 1010:21b1 does this)
+	uint16 widestGlyph = 1;
+	for (auto iter = s.begin(); iter != s.end(); iter++) {
+		GlyphData data;
+		if (g_engine->FindGlyph(*iter, data)) {
+			widestGlyph = MAX(widestGlyph, data.Width);
+		}
+	}
+
+	// Second pass: render with correct spacing
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
 		bool found = g_engine->FindGlyph(*iter, data);
 		if (found) {
 			DrawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf, false);
 			currentX += data.Width + 1;
-			// TODO: Add reference to where this is defined
 		} else {
 			if ((byte)*iter != ' ') {
 				warning("Missing glyph for character 0x%02x while rendering \"%s\" at (%u,%u)", (byte)*iter, s.c_str(), x, y);
 			}
-			// TODO: Different character for not found?
-			currentX += 10;
+			currentX += widestGlyph;
 		}
 	}
 }
 
 void View1::renderString(const Common::Point pos, const Common::String &s) {
 	renderString(pos.x, pos.y, s);
+}
+
+int View1::measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) {
+	int width = 0;
+	uint16 widestGlyph = 1;
+	for (uint i = 0; i < numGlyphs; i++) {
+		widestGlyph = MAX(widestGlyph, glyphs[i].Width);
+	}
+	for (auto iter = s.begin(); iter != s.end(); iter++) {
+		bool found = false;
+		for (uint i = 0; i < numGlyphs; i++) {
+			if (glyphs[i].ASCII == *iter) { width += glyphs[i].Width + 1; found = true; break; }
+		}
+		if (!found) width += widestGlyph;
+	}
+	return width;
+}
+
+void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) {
+	Graphics::ManagedSurface surf = getSurface();
+	uint16 currentX = x;
+	uint16 widestGlyph = 1;
+	for (uint i = 0; i < numGlyphs; i++) {
+		widestGlyph = MAX(widestGlyph, glyphs[i].Width);
+	}
+	for (auto iter = s.begin(); iter != s.end(); iter++) {
+		bool found = false;
+		for (uint i = 0; i < numGlyphs; i++) {
+			if (glyphs[i].ASCII == *iter) {
+				DrawSprite(currentX, y, glyphs[i].Width, glyphs[i].Height, glyphs[i].Data, surf, false);
+				currentX += glyphs[i].Width + 1;
+				found = true;
+				break;
+			}
+		}
+		if (!found) currentX += widestGlyph;
+	}
 }
 
 void View1::addOverlayTextEntry(const OverlayTextEntry &entry) {
@@ -438,17 +412,21 @@ void View1::drawOverlayTextEntries() {
 	for (const OverlayTextEntry &entry : _overlayTextEntries) {
 		int x = entry.position.x;
 		Common::String text = entry.text;
+		// Use overlay font if loaded, otherwise fall back to main font
+		const GlyphData *font = g_engine->numOverlayGlyphs > 0 ? g_engine->_overlayGlyphs : g_engine->_glyphs;
+		uint16 fontCount = g_engine->numOverlayGlyphs > 0 ? g_engine->numOverlayGlyphs : g_engine->numGlyphs;
+
 		if (entry.alignment == 1) {
-			x -= g_engine->MeasureString(text);
+			x -= measureStringWithFont(text, font, fontCount);
 		} else if (entry.alignment == 2) {
-			x -= g_engine->MeasureString(text) / 2;
+			x -= measureStringWithFont(text, font, fontCount) / 2;
 		}
 
 		if (x < 0)
 			x = 0;
 
 		logRenderedText("Overlay", x, entry.position.y, text);
-		renderString(x, entry.position.y, text);
+		renderStringWithFont(x, entry.position.y, text, font, fontCount);
 	}
 }
 
@@ -464,7 +442,6 @@ void View1::showStringBox(const Common::StringArray &sa) {
 		   "Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
 		   sa.size(), stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
 
-	// drawStringBackground(x, y, totalWidth, totalHeight);
 	Graphics::ManagedSurface s = getSurface();
 	DrawBorder(stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
 	// TODO range based
@@ -491,34 +468,8 @@ void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Gr
 }
 
 void View1::handleFading() {
-	if (fadeMode == FadeMode::None) {
-		return;
-	}
-
-	if (fadeMode == FadeMode::FromBlack) {
-		currentFadeValue -= fadeDelta;
-		if (currentFadeValue <= 0) {
-			currentFadeValue = -1;
-			fadeMode = FadeMode::None;
-			setViewPaletteSafely(this, g_engine->_pal);
-			endFadeCursorSuppression(g_engine->_pal);
-			_paletteDirty = false;
-			return;
-		}
-	} else {
-		currentFadeValue += fadeDelta;
-		if (currentFadeValue >= 0x40) {
-			byte colors[256 * 3];
-			currentFadeValue = 0x40;
-			fadeMode = FadeMode::None;
-			buildFadedPalette(colors, g_engine->_palVanilla, currentFadeValue);
-			setViewPaletteSafely(this, colors);
-			endFadeCursorSuppression(colors);
-			return;
-		}
-	}
-
-	applyPaletteWithFade(this, g_engine->_palVanilla, currentFadeValue);
+	// Fading is now blocking (handled in startFadeToBlack/startFadingWithSpeed).
+	// This is kept as a no-op for safety in case fadeMode is somehow set externally.
 }
 
 void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
@@ -619,7 +570,11 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 }
 
 void View1::drawMainMenu(Graphics::ManagedSurface &s) {
-	DrawBorder(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
+	// Original openActionBarAtPosition (1008:3fba) calls:
+	// 1. drawBorderSide(height, width, y, x) — tiles border texture over ENTIRE panel
+	// 2. drawBorderOuterHighlights(height, width, y, x) — draws edge highlights
+	DrawBorderSide(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
+	DrawBorderOuterHighlights(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
 
 	// 3x3 grid layout matching openActionBarAtPosition (1008:3fba)
 	// Each button is sized to the largest icon + 6px padding, centered in cell
@@ -639,6 +594,9 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 		int row = i / 3;
 		uint16 cellX = mainMenuRect.left + 8 + col * btnW;
 		uint16 cellY = mainMenuRect.top + 8 + row * btnH;
+
+		// Original draws drawBorderOuterHighlights per button cell
+		DrawBorderOuterHighlights(Common::Point(cellX, cellY), Common::Point(btnW, btnH), s);
 
 		AnimFrame &frame = g_engine->imageResources[i];
 		// Center icon within cell
@@ -668,6 +626,7 @@ void View1::clearStringBox(bool continueScript) {
 	_isShowingDialogueChoice = false;
 	_dialogueChoiceCount = 0;
 	currentSpeechActData.speaker = nullptr;
+	currentSpeechActData.mouthAnimActive = false;
 	redraw();
 	if (continueScript && _continueScriptAfterUI) {
 		_continueScriptAfterUI = false;
@@ -701,26 +660,122 @@ bool View1::HasDuplicateCharacters() const {
 	return false;
 }
 
-void View1::startFading() {
-	beginFadeCursorSuppression();
-	currentFadeValue = 0x40;
-	fadeMode = FadeMode::FromBlack;
-	// Default speed - original uses the script's transitionSpeed parameter
-	fadeDelta = 4;
+void View1::startFading(uint16 speed) {
+	startFadingWithSpeed(speed);
 }
 
-void View1::startFadeToBlack() {
+void View1::startFadeToBlack(uint16 speed) {
+	// Blocking fade to black matching DOS fadePaletteToBlack (1010:00ba):
+	// Starts at fadeValue=0, increments by speed each iteration.
+	// Exits when fadeValue > 0x40, then writes all-black palette.
+	if (speed == 0)
+		speed = 4;
 	beginFadeCursorSuppression();
-	currentFadeValue = 0;
-	fadeMode = FadeMode::ToBlack;
-	fadeDelta = 4;
+
+	// Ensure current frame is on screen before fading
+	Graphics::ManagedSurface *screen = g_events->getScreen();
+	g_system->copyRectToScreen((const byte *)screen->getPixels(),
+		screen->pitch, 0, 0, 320, 200);
+
+	uint fadeValue = 0;
+	while (fadeValue <= 0x40 && !g_system->getEventManager()->shouldQuit()) {
+		uint32 frameStart = g_system->getMillis();
+
+		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
+		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
+			g_events->getScreen()->pitch, 0, 0, 320, 200);
+		g_system->updateScreen();
+
+		Common::Event evt;
+		while (g_system->getEventManager()->pollEvent(evt)) {
+			if (evt.type == Common::EVENT_QUIT)
+				break;
+		}
+
+		// Original syncs to VGA vsync during palette writes. On real hardware
+		// writing 768 bytes to the DAC takes most of one frame period.
+		uint32 elapsed = g_system->getMillis() - frameStart;
+		if (elapsed < 16)
+			g_system->delayMillis(16 - elapsed);
+		fadeValue += speed;
+	}
+
+	// Final: set all black
+	byte colors[256 * 3];
+	memset(colors, 0, sizeof(colors));
+	setViewPaletteSafely(this, colors);
+	g_system->updateScreen();
+
+	currentFadeValue = 0x40;
+	fadeMode = FadeMode::None;
+	endFadeCursorSuppression(colors);
 }
 
 void View1::startFadingWithSpeed(uint16 speed) {
+	// Blocking fade from black matching DOS fadePaletteFromBlack (1010:012f):
+	// Original starts at fadeValue = fadeSpeed + 0x40, subtracts fadeSpeed each
+	// iteration until underflow or zero, then writes the full target palette.
+	// Each iteration waits for VGA vsync (~14ms at 70Hz).
+	if (speed == 0)
+		speed = 4;
 	beginFadeCursorSuppression();
-	currentFadeValue = 0x40;
-	fadeMode = FadeMode::FromBlack;
-	fadeDelta = speed > 0 ? speed : 4;
+
+	// Set palette to black before blitting new scene pixels
+	byte blackPal[256 * 3];
+	memset(blackPal, 0, sizeof(blackPal));
+	g_system->getPaletteManager()->setPalette(blackPal, 0, 256);
+
+	// Draw the new scene to the screen surface (invisible because palette is black)
+	Graphics::ManagedSurface s = getSurface();
+	s.blitFrom(_backgroundSurface);
+	drawBackgroundAnimations(s);
+	DrawCharacters(s);
+
+	// Copy pixels to the system screen
+	g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
+		g_events->getScreen()->pitch, 0, 0, 320, 200);
+	g_system->updateScreen();
+
+	// Fade from black: original starts at speed + 0x40 to guarantee first frame
+	// is fully black (max 6-bit value is 0x3F, so subtracting 0x44 always clamps to 0)
+	int fadeValue = speed + 0x40;
+	while (!g_system->getEventManager()->shouldQuit()) {
+		uint32 frameStart = g_system->getMillis();
+
+		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
+		// Re-copy pixels so the backend redraws with the new palette
+		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
+			g_events->getScreen()->pitch, 0, 0, 320, 200);
+		g_system->updateScreen();
+
+		Common::Event evt;
+		while (g_system->getEventManager()->pollEvent(evt)) {
+			if (evt.type == Common::EVENT_QUIT)
+				break;
+		}
+
+		uint32 elapsed = g_system->getMillis() - frameStart;
+		if (elapsed < 16)
+			g_system->delayMillis(16 - elapsed);
+
+		// Check exit: original exits when subtraction underflows or reaches 0
+		if (fadeValue < (int)speed) {
+			break;
+		}
+		fadeValue -= speed;
+		if (fadeValue == 0) {
+			break;
+		}
+	}
+
+	// Final: write the full target palette (matches original's exit path)
+	setViewPaletteSafely(this, g_engine->_pal);
+	g_system->updateScreen();
+
+	currentFadeValue = -1;
+	fadeMode = FadeMode::None;
+	_paletteDirty = false;
+	endFadeCursorSuppression(g_engine->_pal);
 }
 
 void View1::beginFadeCursorSuppression() {
@@ -756,6 +811,39 @@ bool View1::msgFocus(const FocusMessage &msg) {
 
 bool View1::msgMouseDown(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
+		// Map mode (depth-based scene preview) from handleInput (1008:e8bf).
+		// When currentMode == VM_MAP, clicking on the depth map previews scenes.
+		if (currentMode == ViewMode::VM_MAP) {
+			Common::Rect screenRect(320, 200);
+			if (screenRect.contains(msg._pos)) {
+				uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
+				if (depth > 0 && depth < 0xFA) {
+					// Preview scene at depth index: fade, load scene image, display, fade back.
+					// Original: seeks to file offset from map scene offsets table (scene+0x5DDB+depth*4),
+					// decodes RLE background, reads palette, decodes depth map, displays with fade.
+					startFadeToBlack();
+					// Load the scene background image at the depth-indexed file offset
+					uint32 sceneTableOffset = 0xC + 0x4 + depth * 0xC;
+					g_engine->_fileStream->seek(sceneTableOffset - 0xC, SEEK_SET);
+					uint32 bgOffset = g_engine->_fileStream->readUint32LE();
+					if (bgOffset != 0) {
+						Graphics::ManagedSurface preview = g_engine->readRLEImage(bgOffset, g_engine->_fileStream);
+						_backgroundSurface.copyFrom(preview);
+					}
+					startFading();
+					redraw();
+				} else if (depth == 0xFF) {
+					// Return to normal mode: reload current scene, clear map flag
+					currentMode = ViewMode::VM_GAME;
+					g_engine->SetCursorMode(Script::MouseMode::Walk);
+					UpdateCursor();
+					g_engine->changeScene(Scenes::instance().CurrentSceneIndex, false);
+					g_engine->ScheduleRun(true);
+				}
+			}
+			return true;
+		}
+
 		// Handle original save/load panel clicks
 		if (_isMapPanelActive) {
 			handleOriginalSaveLoadClick(msg._pos);
@@ -796,22 +884,29 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Close): {
-						CloseInventory();
+						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
+							// Original button 6 with mode 0x17: preserve the selected item
+							// Sets g_wActiveInventoryItemId and g_wInteractedInventoryItemId
+							// so the item can be used on scene objects after closing
+							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + activeInventoryItem->Index;
+							g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + activeInventoryItem->Index;
+						} else {
+							activeInventoryItem = nullptr;
+						}
+						_isShowingInventory = false;
+						inventoryPage = 0;
+						UpdateCursor();
 						return true;
 					}
 					}
 				}
 			}
 
-			// Check if we hit an item
-			// TODO: Skipping this for now while we only have one item
+			// Check if we hit an inventory item
 			GameObject *clickedObject = getClickedInventoryItem2(msg._pos);
-			// TODO: Reminder that we need to highlight the clicked button for a moment
 
-			// TODO: Maybe handled better elsewhere - examining inventory items
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
-				// TODO: Does the scripting engine expect always the objects with the
-				// right number prefix like here 419 instead of 19?
+				// Look at item: object ID uses 0x400 prefix (confirmed from original handleInventoryClick)
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->Index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				g_engine->RunScriptExecutor(false);
@@ -819,19 +914,26 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			}
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
 				activeInventoryItem = clickedObject;
+				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->Index;
 				AnimFrame *icon = GetInventoryIcon(activeInventoryItem);
-				CursorMan.replaceCursor((void *)icon->Data, icon->Width, icon->Height, icon->Width / 2, icon->Height / 2, 0);
-				g_engine->_scriptExecutor->_mouseMode = Script::MouseMode::UseInventory;
+				if (icon != nullptr) {
+					// Original copies item icon frame into cursor array slot 0x17 (UseInventory)
+					// so the cursor shows the picked-up item
+					int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
+					delete[] g_engine->_cursorData[cursorSlot];
+					uint32 pixelSize = icon->Width * icon->Height;
+					g_engine->_cursorData[cursorSlot] = new byte[pixelSize];
+					memcpy(g_engine->_cursorData[cursorSlot], icon->Data, pixelSize);
+					g_engine->_cursorWidths[cursorSlot] = icon->Width;
+					g_engine->_cursorHeights[cursorSlot] = icon->Height;
+				}
+				g_engine->SetCursorMode(Script::MouseMode::UseInventory);
+				UpdateCursor();
 				return true;
 			}
 			if (activeInventoryItem != nullptr && clickedObject != nullptr) {
-				// Trigger a use item on item
-				GameObject *firstObject = activeInventoryItem;
-				// TODO: We should check if the active object still exists afterwards and only
-				// then deactivate it
-				// TODO: Does the scripting engine expect always the objects with the
-				// right number prefix like here 419 instead of 19?
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + firstObject->Index;
+				// Use item on item (combine): confirmed from original handleInventoryClick button 5 + mode 0x17
+				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + activeInventoryItem->Index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
 				g_engine->_scriptExecutor->inventoryCombineFlag = true;
 				g_engine->RunScriptExecutor(false);
@@ -868,6 +970,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 					case static_cast<int>(MainMenuButtonIndex::Map): {
 						isShowingMainMenu = false;
+						// Enter map mode (sets scene+0x61db equivalent)
+						// from handleActionBarClick (1008:42dc) button 6
+						currentMode = ViewMode::VM_MAP;
+						g_engine->SetCursorMode(Script::MouseMode::PanelUse);
+						UpdateCursor();
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::SaveLoad): {
 						isShowingMainMenu = false;
@@ -880,6 +987,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				}
 			}
 			UpdateCursor();
+			return true;
 		}
 
 		// Handle interactions during script execution
@@ -1001,6 +1109,18 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 }
 
 bool View1::msgKeypress(const KeypressMessage &msg) {
+	// Button 8 skip from handleInput (1008:e8bf):
+	// ESC during a skippable script section fast-forwards through opcodes
+	// until opcode 0x1D is found (which clears the skippable flag).
+	if (msg.keycode == Common::KEYCODE_ESCAPE &&
+		g_engine->_scriptExecutor->scriptSkippable &&
+		g_engine->_scriptExecutor->IsExecuting()) {
+		if (g_engine->_scriptExecutor->skipToEndOfSkippableSection()) {
+			g_engine->_scriptExecutor->Run();
+		}
+		return true;
+	}
+
 	// Ctrl+T cycles game speed mode 0→1→2→0 (original: g_wGameSpeedMode at 1020:0214)
 	if (msg.keycode == Common::KEYCODE_t && (msg.flags & Common::KBD_CTRL)) {
 		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
@@ -1093,78 +1213,21 @@ void View1::draw() {
 	s.blitFrom(_backgroundSurface);
 	// Handle highlighting
 
-	/*
-	for (int x = 0; x < s.w; x++) {
-		for (int y = 0; y < s.h; y++) {
-			if (g_engine->_map.getPixel(x, y) == 0x2) {
-				s.setPixel(x, y, 0xFF);
+	// Debug: visualize hotspot map regions
+	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
+		for (int x = 0; x < s.w; x++) {
+			for (int y = 0; y < s.h; y++) {
+				if (g_engine->_map.getPixel(x, y) != 0x0) {
+					s.setPixel(x, y, 0xFF);
+				}
 			}
 		}
 	}
-	*/
 
 	drawBackgroundAnimations(s);
 	DrawCharacters(s);
 	drawOverlayTextEntries();
 
-	// Draw the character
-
-	// uint16 charX = 50;
-	// uint16 charY = 100;
-	// TODO: I don't have the right offset yet plus there must be some trick to reading sequential frames, probl. need
-	// to seek in between frames
-	// AnimFrame &f = g_engine->_animFrames[_guyFrameIndex];
-	// DrawSprite(charX, charY, f.Width, f.Height, f.Data, s);
-	// DrawSpriteAdvanced(charX, charY, f.Width, f.Height, 26, f.Data, s);
-	/* for (int x = 0; x < g_engine->_charWidth; x++) {
-		for (int y = 0; y < g_engine->_charHeight; y++) {
-			uint8 val = g_engine->_charData[y * g_engine->_charWidth + x];
-			if (val != 0) {
-				s.setPixel(charX + x, charY + y, val);
-			}
-		}
-	} */
-
-	// Draw the border part
-	/* uint16 borderX = 100;
-	uint16 borderY = 50;
-	for (int x = 0; x < g_engine->_borderWidth; x++) {
-		for (int y = 0; y < g_engine->_borderHeight; y++) {
-			uint8 val = g_engine->_borderData[y * g_engine->_borderWidth + x];
-			if (val != 0) {
-				s.setPixel(borderX + x, borderY + y, val);
-			}
-		}
-	} */
-
-	// And the highlight part
-	/* borderX = 150;
-	borderY = 100;
-	for (int x = 0; x < g_engine->_borderHighlightWidth; x++) {
-		for (int y = 0; y < g_engine->_borderHighlightHeight; y++) {
-			uint8 val = g_engine->_borderHighlightData[y * g_engine->_borderHighlightWidth + x];
-			if (val != 0) {
-				s.setPixel(borderX + x, borderY + y, val);
-			}
-		}
-	}
-	*/
-
-	// DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
-	// DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
-
-	// Draw the mouse cursor
-	// DrawSprite(100, 100, g_engine->_cursorWidth, g_engine->_cursorHeight, g_engine->_cursorData, s);
-
-	// Draw the animation frame
-	// DrawSprite(180, 80, g_engine->_guyWidth, g_engine->_guyHeight, g_engine->_guyData, s);
-
-	// for (int i = 0; i < 100; ++i)
-	//	s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-
-	// Draw a shaded rectangle
-	// drawDarkRectangle(50, 50, 100, 50);
-	// drawStringBackground(50, 50, 100, 50);
 	if (_isShowingStringBox) {
 		showStringBox(_drawnStringBox);
 		if (currentSpeechActData.speaker != nullptr) {
@@ -1173,19 +1236,9 @@ void View1::draw() {
 		}
 	}
 
-	// Draw all glyphs
-	// drawGlyphs(g_engine->_glyphs, g_engine->numGlyphs, 10, 10, s);
-
-	// DrawSprite(108, 14, g_engine->_flagWidths[_flagFrameIndex], g_engine->_flagHeights[_flagFrameIndex], g_engine->_flagData[_flagFrameIndex], s);
-	;
-	// renderString(200, 100, "Hello, world!");
-
-	// DrawSprite(100, 100, g_engine->_stick.Width, g_engine->_stick.Height, g_engine->_stick.Data, s);
-
 	// We keep the inventory on but don't draw it in case we display a string
 	// i.e. a description of an item
 	if (_isShowingInventory && !_isShowingStringBox) {
-		// drawInventory(s);
 		drawInventory2(s);
 	}
 
@@ -1197,15 +1250,16 @@ void View1::draw() {
 		drawOriginalSaveLoadPanel(s);
 	}
 
-	if (activeInventoryItem != nullptr) {
-		AnimFrame *icon = GetInventoryIcon(activeInventoryItem);
-		DrawSprite(0x00, 0x00, icon->Width, icon->Height, icon->Data, s, false);
-	}
+	// Active inventory item is now shown via the cursor (UpdateCursor uses _cursorData slot 0x16)
 
-	drawPathfindingPoints(s);
-	drawPath(s);
+	if (DebugMan.isDebugChannelEnabled(kDebugPath)) {
+		drawPathfindingPoints(s);
+		drawPath(s);
+	}
 	// drawBackgroundAnimationNumbers(s);
-	drawDebugOutput(s);
+	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
+		drawDebugOutput(s);
+	}
 
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -1221,13 +1275,15 @@ void View1::draw() {
 				renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->Index));
 			}
 		}
-	} else {
+	} else if (DebugMan.isDebugChannelEnabled(kDebugInput)) {
 		// Draw the position next to it
 		renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%u %u", mousePos.x, mousePos.y));
 	}
 
 	// Render the scaling factors
-	renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
+	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
+		renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
+	}
 
 	// DrawImageResources(s);
 }
@@ -1241,9 +1297,6 @@ bool View1::tick() {
 	}
 	// Cycle the palette
 	++_offset;
-	// for (int i = 0; i < 256; ++i)
-	//	_pal[i * 3 + 1] = (i + _offset) % 256;
-	//  g_system->getPaletteManager()->setPalette(_pal, 0, 256);
 
 	// Music fade tick from gameTick (1008:e556).
 	// Processes volume fade in/out each frame when active.
@@ -1281,35 +1334,65 @@ bool View1::tick() {
 	//	redraw();
 
 	// Update the flag
-	// TODO: Think about all these and compare other implementations, e.g. if we should rather update anims in draw
-	// TODO: Consider wraparout
-	uint32 tick_time = g_events->currentMillis;
-	uint32 delta = tick_time - _lastMillis;
-	_nextFrameFlag -= delta;
+	// Background animation advance - matching original gameTick (1008:e556):
+	// g_wBgAnimTickCounter is incremented once per game frame (~10.8fps).
+	// Mode 3 (word5203==3): advance when counter > 1 (every 2 game frames ≈ 185ms)
+	// Mode 2 (word5203==2): advance when counter > 0x27 (every 39 game frames ≈ 3.6s)
+	_bgAnimTickCounter++;
 
-	// Background animation advance - original gameTick uses a tick counter
-	// that resets when exceeding the mode-dependent threshold (mode 2: 39 ticks,
-	// mode 3: scene-specific value from word5205).
-	if (_nextFrameFlag <= 0) {
+	if (_bgAnimTickCounter > 1 && g_engine->word5203 == 3) {
+		_bgAnimTickCounter = 0;
 		_flagFrameIndex++;
 		if (_flagFrameIndex == 3) {
 			_flagFrameIndex = 0;
 		}
-		// TODO: Handle cleaner
-		_nextFrameFlag = _frameDelayFlag;
-
-		// TODO: Piggybacking the guy on this
 		_guyFrameIndex++;
 		_guyFrameIndex = _guyFrameIndex % 6;
-
-		// And the animations overall
-		for (Character *currentCharacter : characters) {
-			currentCharacter->animationIndex++;
+		// Advance background animation blobs (original: updateBackgroundAnimations)
+		for (auto &blob : g_engine->_backgroundAnimationsBlobs) {
+			BackgroundAnimationBlob::advanceAnimFrame(blob.Blob, true, 2);
 		}
 		redraw();
 	}
 
-	_lastMillis = tick_time;
+	if (_bgAnimTickCounter > 0x27 && g_engine->word5203 == 2) {
+		_bgAnimTickCounter = 0;
+		_flagFrameIndex++;
+		if (_flagFrameIndex == 3) {
+			_flagFrameIndex = 0;
+		}
+		_guyFrameIndex++;
+		_guyFrameIndex = _guyFrameIndex % 6;
+		// Advance background animation blobs (original: updateBackgroundAnimations)
+		for (auto &blob : g_engine->_backgroundAnimationsBlobs) {
+			BackgroundAnimationBlob::advanceAnimFrame(blob.Blob, true, 2);
+		}
+		redraw();
+	}
+
+	// Advance portrait animation once per tick (matching handleDialogueInput 1008:b4bd)
+	if (_isShowingStringBox && currentSpeechActData.speaker != nullptr && currentSpeechActData.mouthAnimActive) {
+		Character *speaker = currentSpeechActData.speaker;
+		if (currentSpeechActData.mouthAnimCounter < 1) {
+			// counter < 1: advance alternate blob (Blobs[18]) with mode 2
+			if (speaker->GameObject->Blobs.size() > 18 && !speaker->GameObject->Blobs[18].empty()) {
+				BackgroundAnimationBlob::advanceAnimFrame(speaker->GameObject->Blobs[18], true, 2);
+			}
+		} else {
+			currentSpeechActData.mouthAnimCounter--;
+			if (currentSpeechActData.mouthAnimCounter < 1) {
+				// just hit 0: reset alternate blob (Blobs[18]) with mode 1
+				if (speaker->GameObject->Blobs.size() > 18 && !speaker->GameObject->Blobs[18].empty()) {
+					BackgroundAnimationBlob::advanceAnimFrame(speaker->GameObject->Blobs[18], true, 1);
+				}
+			} else {
+				// counter > 0: advance primary blob (Blobs[17]) with mode 2
+				if (speaker->GameObject->Blobs.size() > 17 && !speaker->GameObject->Blobs[17].empty()) {
+					BackgroundAnimationBlob::advanceAnimFrame(speaker->GameObject->Blobs[17], true, 2);
+				}
+			}
+		}
+	}
 
 	int i = 0;
 	for (auto currentCharacter : characters) {
@@ -1317,26 +1400,8 @@ bool View1::tick() {
 		i++;
 	}
 
+	redraw();
 	return true;
-}
-
-void View1::drawInventory(Graphics::ManagedSurface &s) {
-	Common::Rect inventoryRect(0x36, 0x2C, 0x10A, 0x82);
-	drawDarkRectangle(0x36, 0x2c, 0x10A - 0x36, 0x82 - 0x2c);
-	// TODO: Add proper grid, add y as well
-	int x = 0;
-	int y = 0;
-	int rowHeight = 0;
-	for (GameObject *currentItem : inventoryItems) {
-		AnimFrame *icon = GetInventoryIcon(currentItem);
-		DrawSprite(0x36 + x, 0x2c + y, icon->Width, icon->Height, icon->Data, s, false);
-		x += icon->Width;
-		rowHeight = MAX<int>(icon->Height, rowHeight);
-		if (x > inventoryRect.width()) {
-			x = 0;
-			y += rowHeight;
-		}
-	}
 }
 
 void View1::drawInventory2(Graphics::ManagedSurface &s) {
@@ -1357,28 +1422,36 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 
 	for (GameObject *currentInventoryObject : inventoryItems) {
 		AnimFrame *icon = GetInventoryIcon(currentInventoryObject);
-		if (icon->Width < 250) {
-			// TODO: One of the items taken in chapter 4 during one of the first three
-			// screens seems to have a faulty width which
-			// throws off the calculation
+		if (icon == nullptr) {
+			continue;
+		}
+		if (icon->Width > 0 && icon->Width < 250) {
 			maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->Width);
 		}
-
-		// TODO: Not sure if this one is needed
-		maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->Height);
+		if (icon->Height > 0 && icon->Height < 250) {
+			maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->Height);
+		}
 	}
 
+	// Original adds +6 to button dimensions before using them (g_wActionBarButtonWidth += 6)
+	uint16 buttonW = maxWidthButtonIcon + 6;
+	uint16 buttonH = maxHeightButtonIcon + 6;
+
 	// TODO: Verify these in emulator
-	uint16 widthCandidate1 = (maxWidthButtonIcon + 4) * 6 + 4;
+	uint16 widthCandidate1 = (buttonW + 4) * 6 + 4;
 	uint16 widthCandidate2 = (maxWidthInventoryIcon + 6 + 4) * 5 + 0xC;
 	uint16 width = MAX(widthCandidate1, widthCandidate2); // [0FD8h]
 
 	// Height calculation
-	uint16 height = (maxHeightInventoryIcon + 6 + 4) * 2 + maxHeightButtonIcon + 0x6 + 0x10; // [0FDAh]
+	uint16 height = (maxHeightInventoryIcon + 6 + 4) * 2 + buttonH + 0x10; // [0FDAh]
 
 	// Position calculation - TODO: Proper position
 	uint16 x = s.w / 2 - width / 2;  // [0FD4h]
 	uint16 y = s.h / 2 - height / 2; // [0FD6h]
+
+	// Original: g_wInventorySlotWidth += 6 happens here
+	uint16 slotW = maxWidthInventoryIcon + 6;
+	uint16 slotH = maxHeightInventoryIcon + 6;
 
 	Graphics::ManagedSurface *buffer = new Graphics::ManagedSurface(s.w, s.h, s.format);
 	buffer->rawBlitFrom(s, Common::Rect(0, 0, s.w, s.h), Common::Point(0, 0));
@@ -1386,102 +1459,82 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	DrawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
 	DrawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
 
-	uint16 buttonX = (s.w / 2) - (maxWidthButtonIcon + 4) * 3 + 2;
-	uint16 buttonY = y + height - 4 - maxHeightButtonIcon;
+	uint16 buttonX = (s.w / 2) - (buttonW + 4) * 3 + 2;
+	uint16 buttonY = y + height - 4 - buttonH;
 
 	// Draw the buttons at the bottom
 	for (int i = 0; i < 6; i++) {
 		uint16 index = g_engine->inventoryIconIndices[i];
 		AnimFrame &currentFrame = g_engine->imageResources[index - 1];
-		DrawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(maxWidthButtonIcon, maxHeightButtonIcon), s);
-		uint16 iconX = (maxWidthButtonIcon / 2 + buttonX) - currentFrame.Width / 2;
-		uint16 iconY = (maxHeightButtonIcon / 2 + buttonY) - currentFrame.Height / 2;
-		inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), maxWidthButtonIcon, maxHeightButtonIcon);
+		DrawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
+		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame.Width / 2;
+		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame.Height / 2;
+		inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
 		DrawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
-		buttonX += maxWidthButtonIcon + 4;
+		buttonX += buttonW + 4;
 	}
-	Common::Rect sourceRect(Common::Point((s.w / 2) - ((maxWidthInventoryIcon + 4) * 5 + 4) / 2 + 1, y + 5),
-							(maxWidthInventoryIcon + 4) * 5 + 2, (maxHeightInventoryIcon + 4) * 2 + 2);
+	Common::Rect sourceRect(Common::Point((s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 1, y + 5),
+							(slotW + 4) * 5 + 2, (slotH + 4) * 2 + 2);
 	s.rawBlitFrom(*buffer, sourceRect, Common::Point(sourceRect.left, sourceRect.top));
 
 	DrawBorderOuterHighlights(Common::Point(
-								  (s.w / 2) - ((maxWidthInventoryIcon + 4) * 5 + 4) / 2,
+								  (s.w / 2) - ((slotW + 4) * 5 + 4) / 2,
 								  y + 4),
 							  Common::Point(
-								  (maxWidthInventoryIcon + 4) * 5 + 4,
-								  (maxHeightInventoryIcon + 4) * 2 + 4),
+								  (slotW + 4) * 5 + 4,
+								  (slotH + 4) * 2 + 4),
 							  s);
 
-	uint16 itemX = x + 8;
-	uint16 itemY = x + 8;
+	// Original: slotWidth = maxWidth + 6, slotHeight = maxHeight + 6 (already added above for hit testing)
+	// Original X start: centered on screen based on slot grid, NOT panel-relative
+	// local_e = ((screenWidth/2) - ((slotWidth+4)*5 + 4)/2) + 4
+	// local_10 = panelY + 8
+	uint16 itemX = (s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 4;
+	uint16 itemY = y + 8;
 	inventoryGridUpperLeft.x = itemX;
 	inventoryGridUpperLeft.y = itemY;
-	inventorySlotSize.x = maxWidthInventoryIcon;
-	inventorySlotSize.y = maxHeightInventoryIcon;
-	// TODO: Align with original code's pagingation and ordering logic
-	uint16 itemIndex = inventoryPage * 5;
+	// Original adds +6 to slot dimensions for hit testing (g_wInventorySlotWidth += 6)
+	inventorySlotSize.x = slotW;
+	inventorySlotSize.y = slotH;
+	// Original: local_12 counts from 10 down, showing up to 10 items (5 per row, 2 rows)
+	uint16 itemIndex = inventoryPage * 10;
+	uint16 itemXStart = itemX;
 	// Now the inventory icons themselves
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
-			if (itemIndex > inventoryItems.size() - 1) {
-				break;
-			}
-			itemIndex++;
-			// TODO: Seems like this can happen if we take all items out
-			// of another inventory
 			if (itemIndex >= inventoryItems.size()) {
 				break;
 			}
 			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex]);
-			// ;; x = slotWidth / 2 + currentX - imageWidth / 2
-			//  ;; y = slotHeight / 2 + currentY - imageHeight / 2
-			DrawSprite(maxWidthInventoryIcon / 2 + itemX - icon->Width / 2,
-					   maxHeightInventoryIcon / 2 + itemY - icon->Height / 2,
-					   icon->Width, icon->Height, icon->Data, s, false);
-			itemX += maxWidthInventoryIcon + 4;
+			if (icon != nullptr) {
+				// Original: (slotWidth/2 + local_e) - (frameWidth/2)
+				DrawSprite(slotW / 2 + itemX - icon->Width / 2,
+						   slotH / 2 + itemY - icon->Height / 2,
+						   icon->Width, icon->Height, icon->Data, s, false);
+			}
+			itemIndex++;
+			itemX += slotW + 4;
 		}
-		itemX = x + 8;
-		itemY += maxHeightInventoryIcon + 4;
+		itemX = itemXStart;
+		itemY += slotH + 4;
 	}
-}
-
-GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
-	// TODO: Add proper grid, add y as well
-	Common::Rect inventoryRect(0x36, 0x2C, 0x10A, 0x82);
-	int x = 0;
-	int y = 0;
-	int rowHeight = 0;
-	for (GameObject *currentItem : inventoryItems) {
-		AnimFrame *icon = GetInventoryIcon(currentItem);
-		Common::Rect currentRect(Common::Point(0x36 + x, 0x2c + y), icon->Width, icon->Height);
-		if (currentRect.contains(p)) {
-			return currentItem;
-		}
-		x += icon->Width;
-		rowHeight = MAX<int>(rowHeight, icon->Height);
-		if (x > inventoryRect.width()) {
-			x = 0;
-			y += rowHeight;
-		}
-	}
-	return nullptr;
 }
 
 GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
 
 	Common::Rect currentInventorySlot(inventoryGridUpperLeft, inventoryGridUpperLeft + inventorySlotSize);
 
-	uint16 itemIndex = inventoryPage * 5;
+	uint16 itemIndex = inventoryPage * 10;
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
 			if (itemIndex >= inventoryItems.size()) {
-				break;
+				return nullptr;
 			}
 			if (currentInventorySlot.contains(p)) {
 				return inventoryItems[itemIndex];
 			}
 			itemIndex++;
-			currentInventorySlot.moveTo(currentInventorySlot.left + inventorySlotSize.x, currentInventorySlot.top);
+			currentInventorySlot.moveTo(currentInventorySlot.left + inventorySlotSize.x + 4, currentInventorySlot.top);
 		}
 		currentInventorySlot.moveTo(inventoryGridUpperLeft.x, currentInventorySlot.top + inventorySlotSize.y + 4);
 	}
@@ -1499,7 +1552,8 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
 					// Check for depth
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
-					// TODO: Check which relation has to hold
+					// Depth test: draw pixel only if depth map value < character depth
+					// (verified: drawSpriteTransparent at 1010:0ed1 uses *depthMap < param_4)
 					if (!useDepth || bgDepth < depth) {
 						s.setPixel(x + actualX, y + currentY, val);
 					}
@@ -1656,6 +1710,17 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 			continue;
 		}
 
+		// Bounds attachment from drawAllCharacters (1008:90a2):
+		// When HasBoundsAttachment is set, position is relative to parent object.
+		if (current->GameObject->HasBoundsAttachment) {
+			GameObject *parent = GameObjects::GetObjectByIndex(current->GameObject->BoundsAttachmentObjectID);
+			if (parent != nullptr) {
+				current->GameObject->Position.x = parent->Position.x + (int16)current->GameObject->BoundsAttachmentValue1;
+				current->GameObject->Position.y = parent->Position.y + (int16)current->GameObject->BoundsAttachmentValue2;
+				current->GameObject->Unknown = parent->Unknown + (int16)current->GameObject->BoundsAttachmentValue3;
+			}
+		}
+
 		AnimFrame *frame = current->GetCurrentAnimationFrame();
 		bool mirror = current->shouldMirrorCurrentAnimation;
 
@@ -1666,7 +1731,9 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 			continue;
 		}
 		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
-		g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
+		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
+			g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
+		}
 		// Only output debug values for the character
 		uint16 scalingFactor = CalculateCharacterScaling(depth, current->GameObject->Index == 1);
 		// Adjust the position based on the scale
@@ -1676,18 +1743,14 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		Common::Point actualPosition = current->GetPosition() - Common::Point(0, current->GetVerticalOffset());
 		DrawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s);
 
-		Common::String number = Common::String::format("%u", scalingFactor);
-		// number = Common::String::format("%u", scalingFactor);
-		// number = Common::String::format("%u", current->GameObject->Index);
-		number = Common::String::format("%u", current->GameObject->Orientation);
-		renderString(current->GetPosition(), number.c_str());
-		// Draw the white dot
-		// TODO: Why does it not work for the others apart from the player?
-		Common::Rect screenRect(0, 0, 320, 200);
-		if (screenRect.contains(current->GetPosition())) {
-			s.setPixel(current->GetPosition().x, current->GetPosition().y, 0xFF);
+		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
+			Common::String number = Common::String::format("%u", current->GameObject->Orientation);
+			renderString(current->GetPosition(), number.c_str());
+			Common::Rect screenRect(0, 0, 320, 200);
+			if (screenRect.contains(current->GetPosition())) {
+				s.setPixel(current->GetPosition().x, current->GetPosition().y, 0xFF);
+			}
 		}
-		// DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
 	}
 }
 
@@ -1723,6 +1786,14 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	}
 
 	currentSpeechActData.position = portraitBoxPosition;
+	// Activate mouth animation (handleTimerCallback 1008:d38b)
+	currentSpeechActData.mouthAnimActive = (currentSpeechActData.speaker != nullptr);
+	// Original: PTR_LOOP_1020_1004 = sum of all line lengths (total character count)
+	int16 totalChars = 0;
+	for (const Common::String &line : strings) {
+		totalChars += line.size();
+	}
+	currentSpeechActData.mouthAnimCounter = (totalChars > 0) ? totalChars : 1;
 	stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 	debug("Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
 		  characterIndex, position.x, position.y, onRightSide ? 1 : 0,
@@ -1744,16 +1815,15 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	constexpr uint16 width = 6;
 	debugC(kDebugScript, "Render border: pos=(%d,%d) size=(%d,%d)", pos.x, pos.y, size.x, size.y);
 
-	// TODO: Not sure what cmp	word ptr [2026h],1h does
-	// Draw the background
+	// g_wMapPanelPageIndex == 1: draw shaded background + 4 border sides
+	// g_wMapPanelPageIndex != 1: fill entire area with border texture (not implemented)
+	// Currently always using mode 1 path.
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
 
 	// Left side
 	DrawBorderSide(pos, Common::Point(width, size.y), s);
 
-	// Right side
-	// TODO: Check if we have the right offset on the right, I missed the part about adding
-	// the width originally
+	// Right side (verified: drawBorderSide(6, height, x+width-6, y) in disassembly)
 	DrawBorderSide(pos + Common::Point(size.x - width, 0), Common::Point(width, size.y), s);
 
 	// Top side
@@ -1767,96 +1837,30 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	// Set up clipping rect on one side
 	// Draw the texture enough times in x and y to fill the clipping rect
 
-	// Draw the highlights and shadows
-	// TODO: Compare with the code at l0037_A6FA: especially what
-	// the skipped (image argument 0) calls do or if I took care of them
-	//
-	// Top side highlight
+	// Highlights and shadows (outer edge, inner edge, inner border)
+	// Top highlight
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
-
-	// Left side highlight
+	// Left highlight
 	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
-
 	// Bottom shadow
 	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
-
-	// Right side shadow
+	// Right shadow
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
-
-	// Top shadow
+	// Inner top shadow
 	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x1011, s);
-
-	// Left shadow
+	// Inner left shadow
 	DrawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x1011, s);
-
-	// Bottom highlight
+	// Inner bottom highlight
 	DrawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x1012, s);
-
-	// Right highlight
+	// Inner right highlight
 	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x1012, s);
-
-	/*
-
-	;; These here should be the shadow parts
-	;; Args are x and y (+C, +A), width (+8) and height (+6)
-	;; Arguments pushed: X+6, Y + 6, W - Bh, Lowlight color
-	x + 6, y + 6, w-Bh
-	call	far 0037h:3737h
-	mov	ax,[bp+0Ch]
-	add	ax,6h
-	push	ax
-	mov	ax,[bp+0Ah]
-	add	ax,6h
-	push	ax
-	mov	ax,[bp+6h]
-	sub	ax,0Bh
-	push	ax
-	les	di,[bp-4h]
-	mov	al,es:[di+1011h]
-	xor	ah,ah
-	push	ax
-	call	far 0037h:3876h
-	mov	ax,[bp+0Ch]
-	add	ax,6h
-	push	ax
-	mov	ax,[bp+0Ah]
-	add	ax,[bp+6h]
-	sub	ax,6h
-	push	ax
-	mov	ax,[bp+8h]
-	sub	ax,0Bh
-	push	ax
-	les	di,[bp-4h]
-	mov	al,es:[di+1012h]
-	xor	ah,ah
-	push	ax
-	call	far 0037h:3737h
-	mov	ax,[bp+0Ch]
-	add	ax,[bp+8h]
-	sub	ax,6h
-	push	ax
-	mov	ax,[bp+0Ah]
-	add	ax,6h
-	push	ax
-	mov	ax,[bp+6h]
-	sub	ax,0Bh
-	push	ax
-	les	di,[bp-4h]
-	mov	al,es:[di+1012h]
-	xor	ah,ah
-	push	ax
-	call	far 0037h:3876h*/
 }
 
-// TODO: Probably a misnomer
+// drawBorderSide (1008:39b5)
 void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	// 0037h:39B5h
-
-	// Clipping rectangle setup at l0037_39FE:
+	// Clipping region: (x+1, y+1) to (x+width, y+height) per disassembly
 	Common::Rect clippingRect(pos + Common::Point(1, 1), pos + size);
-	// TODO: Should check which texture we actually use at the moment
-
-	// TODO: Check which area we actually fill
+	// Texture: border sprite from cursor image array at offset 0x1f0 (mode 1)
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 	const Sprite &sprite = g_engine->_borderSprite;
@@ -1908,15 +1912,9 @@ Macs2::Sprite *View1::GetUISprite(uint32 offset) {
 }
 
 void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s) {
-
-	// 0037:3AF5 (in fn0037_3AD4)
-
-	// TODO: There is quite some setup going on in this function before we get to the drawing
-
+	// drawHorizontalBorderHighlight (1008:3737)
+	// Sets clipping region to 1px tall horizontal strip, tiles the highlight/shadow sprite.
 	Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
-	// TODO: Should check which texture we actually use at the moment
-
-	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 
@@ -1931,15 +1929,9 @@ void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 }
 
 void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s) {
-	// TODO: Only copy&paste from horizontal so far, need to check original code
-	// TODO: Add the assembly location we are at
-
-	// TODO: There is quite some setup going on in this function before we get to the drawing
-
+	// drawVerticalBorderHighlight (1008:3876)
+	// Sets clipping region to 1px wide vertical strip, tiles the highlight/shadow sprite.
 	Common::Rect clippingRect(pos, pos + Common::Point(1, height));
-	// TODO: Should check which texture we actually use at the moment
-
-	// TODO: Check which area we actually fill
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 
@@ -2035,23 +2027,46 @@ uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValue
 }
 
 uint16 View1::GetHitObjectID(const Common::Point &pos) const {
-	// TODO: Naive implementation for now
-	for (auto currentCharacter : characters) {
+	// Matches drawCharactersAndHitTest (1008:8d65): characters are tested back-to-front
+	// (sorted by Y ascending), and depth testing ensures clicks don't hit characters
+	// hidden behind foreground objects.
+	Common::Array<Character *> sorted(characters);
+	Common::sort(sorted.begin(), sorted.end(), [](Character *a, Character *b) {
+		return a->GetPosition().y < b->GetPosition().y;
+	});
+
+	uint16 hitResult = 0;
+	for (auto currentCharacter : sorted) {
 		if (!currentCharacter->GameObject->IsVisible || !currentCharacter->GameObject->IsClickable) {
 			continue;
 		}
 		auto animFrame = currentCharacter->GetCurrentAnimationFrame();
-
-		// Saved point of the object is at the bottom in the middle, frame local space starts
-		// at top left
-		Common::Point localPoint = pos - (currentCharacter->GetPosition() - animFrame->GetBottomMiddleOffset());
-		bool isHit = animFrame->PixelHit(localPoint);
-		if (isHit) {
-			return 0x0400 + currentCharacter->GameObject->Index;
+		if (animFrame == nullptr) {
+			continue;
 		}
+
+		Common::Point localPoint = pos - (currentCharacter->GetPosition() - animFrame->GetBottomMiddleOffset());
+		if (localPoint.x < 0 || localPoint.x >= animFrame->Width ||
+			localPoint.y < 0 || localPoint.y >= animFrame->Height) {
+			continue;
+		}
+		if (animFrame->Data[localPoint.y * animFrame->Width + localPoint.x] == 0) {
+			continue;
+		}
+
+		// Depth test: character is only clickable if depth map allows drawing at this position
+		uint8 characterDepth = currentCharacter->GetPosition().y;
+		if (pos.x >= 0 && pos.x < 320 && pos.y >= 0 && pos.y < 200) {
+			uint8 bgDepth = g_engine->_depthMap.getPixel(pos.x, pos.y);
+			if (bgDepth >= characterDepth) {
+				continue;
+			}
+		}
+
+		// Back-to-front: last hit wins (frontmost character)
+		hitResult = 0x0400 + currentCharacter->GameObject->Index;
 	}
-	// TODO: Ignore background image lookup for now
-	return 0x0000;
+	return hitResult;
 }
 
 bool Character::HandleWalkability(Character *c) {
@@ -2279,11 +2294,8 @@ void Character::SetPosition(const Common::Point &newPosition) {
 }
 
 uint16 Character::GetVerticalOffset() const {
-	// See for example l0037_8F1F for this calculation
-	// l0037_8F1F:
-	uint16 result = g_engine->getWalkabilityAt(GetPosition()); // [bp-0Ch]
+	uint16 result = g_engine->getWalkabilityAt(GetPosition());
 	if (result >= 0xC8) {
-		// l0037_8F38:
 		result = 0;
 	}
 
@@ -2353,17 +2365,6 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 			mirror = true;
 		}
 	}
-	/* if (IsLerping) {
-		// We are walking
-		blobIndex = GameObject->Orientation + 1;
-	} else {
-		// We are standing
-		blobIndex = GameObject->Orientation + 9;
-	} */
-	// TODO: The game saves the orientation already adjusted for animation state
-	/* if (blobIndex > 8 + 9) {
-		blobIndex = 9;
-	} */
 	// If we don't have this direction, try others until we find one that we have
 	// TODO: Log this properly or even assert
 	if (GameObject->Blobs[blobIndex].size() == 0) {
@@ -2379,55 +2380,25 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 
 	if (GameObject->useOverloadAnimation) {
 		mirror ^= GameObject->overloadAnimationMirrored;
+	} else if (GameObject->overloadAnimTriggerDirection != 0x7FFF &&
+			   GameObject->overloadAnimTriggerDirection == GameObject->Orientation &&
+			   !GameObject->overloadAnimation.empty()) {
+		// runtime+0x22D match: use overload animation slot (0x15)
+		mirror ^= GameObject->overloadAnimationMirrored;
 	} else if (blobIndex >= 0 && blobIndex < (int)GameObject->BlobMirrorFlags.size()) {
 		mirror ^= GameObject->BlobMirrorFlags[blobIndex];
 	}
 	shouldMirrorCurrentAnimation = mirror;
-	/*
-	// int offset = 0x1C;
 
-	// TODO: Need to figure out the access pattern more systematically
-	if (GameObject->Index == 0x8) {
-		blobIndex = 4;
-	//	offset = 23;
-	} else if (GameObject->Index == 0x0a) {
-		// TODO: Figure out how we find these
-		blobIndex = 6;
-	} else if (GameObject->Index == 0x21) {
-		blobIndex = 0x11;
-	} else if (GameObject->Index == 0x10) {
-		blobIndex = 0x0c;
-	}
-	*/
+	// Select blob: overload if explicitly set OR if trigger direction matches
+	bool useOverload = GameObject->useOverloadAnimation ||
+		(GameObject->overloadAnimTriggerDirection != 0x7FFF &&
+		 GameObject->overloadAnimTriggerDirection == GameObject->Orientation &&
+		 !GameObject->overloadAnimation.empty());
+	Common::Array<uint8> &blob = useOverload ? GameObject->overloadAnimation : GameObject->Blobs[blobIndex];
 
-	// Old code from before 1480 implementation here
-	/* AnimationReader testReader(this->GameObject->Blobs[blobIndex]);
-	uint16 numAnimations = testReader.readNumAnimations();
-	debug("Number of animation frames: %.4", numAnimations);
-
-	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
-	stream.seek(0xA, SEEK_SET);
-	uint16 offset = stream.readUint16LE();
-	offset += 0x8;
-	stream.seek(offset, SEEK_CUR);
-
-	AnimFrame* result = new AnimFrame();
-
-	// TODO: Handle properly
-	// Skip ahead to the right frame in the animation
-	// TODO: No hardcoded number of animations
-	// TODO: Check for one-off errors
-	testReader.SeekToAnimation((animationIndex - 1) % numAnimations);
-	// testReader.SeekToAnimation(0);
-	// Skip ahead to the width and height
-	testReader.readStream->seek(6, SEEK_CUR
-	*/
-
-	Common::Array<uint8> &blob = GameObject->useOverloadAnimation ? GameObject->overloadAnimation : GameObject->Blobs[blobIndex];
-
-	// Update pass
+	// Advance and retrieve current frame (called once per draw = once per tick)
 	BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
-	// Retrieval pass
 	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(blob, false, 0x0);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
@@ -2436,10 +2407,9 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	stream.seek(offset);
 	result->ReadFromStream(&stream);
 	return result;
-	// TODO: Think about proper memory management
 }
 
-Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
+Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide, uint16 frameIndex) {
 	if (GameObject->Blobs.size() <= 17) {
 		return nullptr;
 	}
@@ -2455,7 +2425,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 		return nullptr;
 	}
 
-	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(GameObject->Blobs[portraitBlobIndex], true, 2);
+	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(GameObject->Blobs[portraitBlobIndex], true, frameIndex);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
@@ -2463,23 +2433,6 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide) {
 	stream.seek(offset);
 	result->ReadFromStream(&stream);
 	return result;
-	// TODO: Think about proper memory management
-
-	// Old code below from before 1480 implementation
-	/* AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
-	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (is_in_list<uint16, 2, 4, 6, 0xd, 0xf, 0x12, 0x16, 0x4D>(GameObject->Index)) {
-		// GameObject->Index == 2 || GameObject->Index == 4 || GameObject->Index == 6 || GameObject->Index == 0xd || GameObject ->Index == 0xf) {
-		stream.seek(35, SEEK_SET);
-	} else {
-		stream.seek(36, SEEK_SET);
-	}
-
-	result->ReadFromStream(&stream);
-	return result;
-	// TODO: Think about proper memory management
-	*/
 }
 
 // NOTE: The original game (walkAlongPath at 1008:1b8f) does NOT use time-based
@@ -2590,7 +2543,15 @@ void Character::Update() {
 	if (screenRect.contains(pos)) {
 		depthAtPos = g_engine->_depthMap.getPixel(pos.x, pos.y);
 	}
-	int walkSpeed = (2 * ((int)g_engine->word5201 + depthAtPos)) / 100;
+	// Per-animation speed from blob data (runtime+orientation*16+0x30)
+	uint16 animSpeed = 2; // default fallback
+	uint8 orient = GameObject->Orientation;
+	if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < GameObject->BlobSpeeds.size()) {
+		animSpeed = GameObject->BlobSpeeds[orient - 1];
+		if (animSpeed == 0)
+			animSpeed = 2;
+	}
+	int walkSpeed = ((int)animSpeed * ((int)g_engine->word5201 + depthAtPos)) / 100;
 	if (walkSpeed < 1)
 		walkSpeed = 1;
 
@@ -2684,7 +2645,49 @@ void Character::Update() {
 		// Check walkability after each step
 		if (!IsWalkable(pos)) {
 			pos = prevPos;
-			// Stop movement - hit a wall
+			// Wall-sliding from walkAlongPath (1008:1b8f):
+			// Sample ±1 and ±2 pixels to build a push vector, then slide.
+			int pushX = 0, pushY = 0;
+			if (LookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200)
+				pushX = -1;
+			if (LookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200)
+				pushX += 1;
+			if (LookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200)
+				pushY = -1;
+			if (LookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200)
+				pushY += 1;
+			if (LookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200)
+				pushX -= 1;
+			if (LookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200)
+				pushX += 1;
+			if (LookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200)
+				pushY -= 1;
+			if (LookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200)
+				pushY += 1;
+			// Apply push vector pixel by pixel
+			while (pushX != 0 || pushY != 0) {
+				if (pushX < 0) {
+					if (LookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200)
+						pos.x--;
+					pushX++;
+				}
+				if (pushX > 0) {
+					if (LookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200)
+						pos.x++;
+					pushX--;
+				}
+				if (pushY < 0) {
+					if (LookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200)
+						pos.y--;
+					pushY++;
+				}
+				if (pushY > 0) {
+					if (LookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200)
+						pos.y++;
+					pushY--;
+				}
+			}
+			// Update target to slid position
 			EndPosition = pos;
 			break;
 		}

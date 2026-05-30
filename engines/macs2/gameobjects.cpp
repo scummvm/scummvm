@@ -70,14 +70,11 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Com
 	uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
 
-	// TODO: Continue here:
 	// This lives in l0037_A4FC:
 
 	// Read the script from there
 	// Size - lives in global [0F84h]
 	uint16 size = fileStream->readUint16LE();
-
-	// TODO: More things to document from l0037_A532:
 
 	// Stringdata lives in the pointer [0F80h]
 	uint8 *stringData = new uint8[size];
@@ -190,7 +187,6 @@ void Macs2::GameObjects::Init() {
 	ObjectNames[0xB4] = "Tomahawk";
 }
 
-// TODO: Add all to namespace?
 Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
 	return instance().GetObjectByIndex(1);
 }
@@ -215,14 +211,11 @@ Common::MemoryReadStream *Macs2::GameObjects::ReadGameObjectStrings(uint16 index
 	uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
 
-	// TODO: Continue here:
 	// This lives in l0037_A4FC:
 
 	// Read the script from there
 	// Size - lives in global [0F84h]
 	uint16 size = fileStream->readUint16LE();
-
-	// TODO: More things to document from l0037_A532:
 
 	// Stringdata lives in the pointer [0F80h]
 	uint8 *stringData = new uint8[size];
@@ -255,13 +248,11 @@ uint16 Macs2::AnimationReader::readNumAnimations() {
 	readStream->readUint16();
 	// bp-10h
 	readStream->readUint16();
+	// Offset 0xA: number of command bytes in the control section (bp-0Eh in advanceAnimFrame)
+	uint16 commandSectionLength = readStream->readUint16() + 1;
 
-	// bp-0Eh
-	// TODO: Naming probably off
-	uint16 firstFrameAdditionalOffset = readStream->readUint16() + 1;
-
-	// Navigate to where bp-24h is saved
-	readStream->seek(0x0B + firstFrameAdditionalOffset);
+	// Frame count (bp-24h) is stored right after the header + command section
+	readStream->seek(0x0B + commandSectionLength);
 
 	// bp-24h
 	uint16 result = readStream->readUint16();
@@ -271,12 +262,10 @@ uint16 Macs2::AnimationReader::readNumAnimations() {
 void Macs2::AnimationReader::SeekToAnimation(uint16 index) {
 	// Read bp-0Eh directly
 	readStream->seek(0xA, SEEK_SET);
-	// bp-0Eh
-	// TODO: Naming probably off
-	uint16 firstFrameAdditionalOffset = readStream->readUint16() + 1;
+	// Offset 0xA: command section length (bp-0Eh in advanceAnimFrame)
+	uint16 commandSectionLength = readStream->readUint16() + 1;
 	// Skip reading bp-24h
-	readStream->seek(0x0B + firstFrameAdditionalOffset + 0x2, SEEK_SET);
-	// TODO: Check for one-off errors
+	readStream->seek(0x0B + commandSectionLength + 0x2, SEEK_SET);
 	for (int i = 0; i < index; i++) {
 		SkipCurrentAnimationFrame();
 	}

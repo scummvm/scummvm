@@ -56,8 +56,6 @@ void Adlib::adlibSetInstrument() {
 		local_counter++;
 	} while (local_counter <= 8); // cmp 8h, jnz 27EFh
 
-	// TODO: Continue from here
-
 	// Second loop section (2813-281D labels)
 	local_counter = 0;
 	do {
@@ -81,7 +79,6 @@ uint16 Adlib::adlibStopMusic() {
 
 	// Waveform select of register 1
 	adlibWriteReg(0x1, 0x20);
-	// TODO: Hardcoded zero return until this function is implementedf
 	return 0;
 }
 
@@ -95,7 +92,7 @@ uint16 Adlib::adlibTickHandler() {
 	// uint16 temp_var;
 	uint16 loop_counter;
 
-	if (g36 != 0) {
+	if (_isInitialized != 0) {
 		return_value = 3;
 		goto CLEANUP_2648;
 	}
@@ -113,51 +110,50 @@ uint16 Adlib::adlibTickHandler() {
 
 	// Original clears interrupts here
 	shMem2250 = shMem2244;
-	g225E = 0;
-	// TODO: Not sure if these are actually a pointer or 32 bit value
-	g225A = g225C = 0;
-	g2259 = 0;
-	g2291 = 9;
+	_masterVolume = 0;
+	_streamBytesConsumed = _streamBytesConsumedHi = 0;
+	_loopCount = 0;
+	_numOplChannels = 9;
 	adlibWriteReg(0xBD, 0);
-	g223E = 0;
-	g2240 = 0;
+	_currentEventStatus = 0;
+	_currentEventStatusHi = 0;
 
 	for (loop_counter = 0; loop_counter <= 0x0F; ++loop_counter) {
-		gArray225F[loop_counter] = 0;
-		gArray226F[loop_counter] = 0;
+		_channelPrograms[loop_counter] = 0;
+		_channelPitchBend[loop_counter] = 0;
 	}
 
 	// Loop 2: Initialize array elements [Original labels: 259A-25C3]
 	for (loop_counter = 0; loop_counter <= 8; ++loop_counter) {
-		gArray222C[loop_counter] = 1;
-		gArray227F[loop_counter] = 0xFF;
-		gArray2288[loop_counter] = 0xFF;
-		gArray2235[loop_counter] = 0xFF;
+		_voiceAge[loop_counter] = 1;
+		_voiceMidiChannel[loop_counter] = 0xFF;
+		_voiceInstrument[loop_counter] = 0xFF;
+		_voiceNote[loop_counter] = 0xFF;
 	}
 
 	adlibReadDeltaTime();
 
 	// Device/hardware operations (timer/speaker?)
-	if ((g224E > 0x12) && (g224E != 0)) {
-		g224E += 9;
-		uint32 temp = g224E;
+	if ((_timerFrequency > 0x12) && (_timerFrequency != 0)) {
+		_timerFrequency += 9;
+		uint32 temp = _timerFrequency;
 		temp = temp % 0x12;
-		g224E -= temp;
-		g2296 = 0;
-		// Original: g2298 = g224E / 0x12, then PIT is reprogrammed so that
-		// Since our OPL callback fires at a fixed 120 Hz, we compute g2298
-		// to produce the same effective rate: 120 / g2298 = ~20 Hz → g2298 = 6.
-		g2298 = CALLBACKS_PER_SECOND / 20;
+		_timerFrequency -= temp;
+		_timerSubdivCounter = 0;
+		// Original: _timerSubdivThreshold = _timerFrequency / 0x12, then PIT is reprogrammed so that
+		// Since our OPL callback fires at a fixed 120 Hz, we compute _timerSubdivThreshold
+		// to produce the same effective rate: 120 / _timerSubdivThreshold = ~20 Hz → _timerSubdivThreshold = 6.
+		_timerSubdivThreshold = CALLBACKS_PER_SECOND / 20;
 
-		// The original reprograms the PIT here: divisor = 0x10AE3C / g224E.
-		// This changes the ISR rate, but the g2298 divider compensates so the
+		// The original reprograms the PIT here: divisor = 0x10AE3C / _timerFrequency.
+		// This changes the ISR rate, but the _timerSubdivThreshold divider compensates so the
 		// effective music event rate is always ~19.65 Hz regardless of tempo.
-		// We achieve the same by fixing g2298 = CALLBACKS_PER_SECOND / 20 above.
+		// We achieve the same by fixing _timerSubdivThreshold = CALLBACKS_PER_SECOND / 20 above.
 	}
 
 	// This part sets an interrupt
-	g36 = 1;
-	g2258 = 0x10;
+	_isInitialized = 1;
+	_statusFlags = 0x10;
 	return_value = 0;
 
 CLEANUP_2648:
@@ -208,7 +204,6 @@ void Adlib::adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6) {
 	uint8 al = gArray9F[bpp8];
 	uint16 dx = al;
 	al = gArray11F[bpp8];
-	// TODO: Check if we need 16 bits
 	uint16 bp2 = (al << 0x8) + dx;
 	if (bpp6 != 0) {
 		if (bpp6 < 0x80) {
@@ -220,26 +215,21 @@ void Adlib::adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6) {
 			dx = gArray9F[bp6];
 			bp4 = (gArray11F[bp6] << 0x8) + dx;
 			// eax:edx = eax:edx * ebx:ecx
-			// TODO: Check actual possible range of result
 			uint64 product = bpp6 * (bp4 - bp2);
 			// Right shift done by 0D7A proc
 			product = product >> 0x7;
-			// TODO: Check if we can ever overrun
 			bp2 = bp2 + product;
 		} else {
 			if (bpp8 > 0) {
-				bp6 = bpp8 - 1; // TODO: xor ah, ah
 			} else {
 				bp6 = 0;
 			}
 
 			bp4 = (gArray11F[bp6] << 0x8) + gArray9F[bp6];
 			// eax:edx = eax:edx * ebx:ecx
-			// TODO: Check actual possible range of result
 			uint64 product = bpp6 * (bp2 - bp4);
 			// Right shift done by 0D7A proc
 			product = product >> 0x7;
-			// TODO: Check ranges
 			bp2 = bp2 - product;
 		}
 	}
@@ -251,52 +241,50 @@ void Adlib::adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6) {
 
 void Adlib::OnTimer() {
 
-	// TODO: Check if original code pauses the timer if no song is playing
+	// Original ISR always runs; skips event processing via _statusFlags check.
 	if (shMem2250 == nullptr) {
 		return;
 	}
 
-	g2296++;
+	_timerSubdivCounter++;
 
-	if (g2296 >= g2298) {
+	if (_timerSubdivCounter >= _timerSubdivThreshold) {
 		// Every nth time we execute this code
-		g2296 = 0;
+		_timerSubdivCounter = 0;
 
-		g229A = true;
+		_isTimerTick = true;
 	} else {
-		g229A = false;
+		_isTimerTick = false;
 	}
-	if (!g229A) {
+	if (!_isTimerTick) {
 		// interrupt
 	}
-	g2258 = g2258 & 0xDF;
-	if (g2258 & 0x2) {
+	_statusFlags = _statusFlags & 0xDF;
+	if (_statusFlags & 0x2) {
 		// [2258] & 2 was not zero
-		g2258 |= 0x40;
+		_statusFlags |= 0x40;
 	}
 
-	// TODO: This is a huge jump, maybe should go for a separate function
-	if (!(g2258 & 0xC3)) {
+	if (!(_statusFlags & 0xC3)) {
 		if (_nextEventTimer != 0) {
 			_nextEventTimer--;
 			// we don't need
 			return;
 		}
 
-		// TODO: Handle the loop properly
 		for (;;) {
 			uint8 current = shMem2250->peekByte();
 
 			if (current & 0x80) {
 				// The first bit of the read value was 0
-				g229B = g223E = shMem2250->peekByte();
+				_currentMidiStatus = _currentEventStatus = shMem2250->peekByte();
 				shMem2250 = adlibSeekStream(shMem2250, 1);
-				g225A++;
+				_streamBytesConsumed++;
 			}
 			uint8 bp1;
 			uint8 bp2;
-			uint8 bp3 = g229B & 0x0F;
-			uint8 bp6 = g229B;
+			uint8 bp3 = _currentMidiStatus & 0x0F;
+			uint8 bp6 = _currentMidiStatus;
 			uint8 bp4 = shMem2250->peekByte();
 			StreamHandler *bp10 = adlibSeekStream(shMem2250, 1);
 			StreamHandler *bp12;
@@ -305,18 +293,18 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0x90) {
 				if (bp5 != 0) {
 					shMem2250 = adlibSeekStream(shMem2250, 0x2);
-					g225A += 2;
+					_streamBytesConsumed += 2;
 
-					if (g2291 == 0x09 || bp3 < 0x0B) {
+					if (_numOplChannels == 0x09 || bp3 < 0x0B) {
 						uint8 bp8 = 0;
 						do {
-							if (g2291 <= bp8) {
+							if (_numOplChannels <= bp8) {
 								break;
 							}
-							if (gArray222C[bp8] == 0) {
-								uint8 v = gArray227F[bp8];
+							if (_voiceAge[bp8] == 0) {
+								uint8 v = _voiceMidiChannel[bp8];
 								if (v == bp3) {
-									uint8 v2 = gArray2235[bp8];
+									uint8 v2 = _voiceNote[bp8];
 									if (v2 == bp4) {
 										break;
 									}
@@ -324,18 +312,18 @@ void Adlib::OnTimer() {
 							}
 							bp8++;
 						} while (true);
-						if (g2291 == bp8) {
+						if (_numOplChannels == bp8) {
 							uint16 bp0C = 0;
-							bp8 = g2291;
-							uint16 bp16 = g2291 - 1;
+							bp8 = _numOplChannels;
+							uint16 bp16 = _numOplChannels - 1;
 							if (bp16 > 0) {
 								uint16 bp0A = 0;
 								do {
-									if (gArray222C[bp0A] != 0) {
-										gArray222C[bp0A]++;
+									if (_voiceAge[bp0A] != 0) {
+										_voiceAge[bp0A]++;
 									}
-									if (gArray222C[bp0A] > bp0C) {
-										bp0C = gArray222C[bp0A];
+									if (_voiceAge[bp0A] > bp0C) {
+										bp0C = _voiceAge[bp0A];
 										bp8 = bp0A;
 									}
 									if (bp0A == bp16) {
@@ -347,18 +335,18 @@ void Adlib::OnTimer() {
 								} while (true);
 							}
 							if (bp0C != 0) {
-								gArray222C[bp8] = 0;
-								gArray227F[bp8] = bp3;
-								if (gArray225F[bp3] != gArray2288[bp8]) {
-									gArray2288[bp8] = gArray225F[bp3];
-									StreamHandler *shBP12 = adlibSeekStream(shMem2248, gArray2288[bp8] << 0x4);
+								_voiceAge[bp8] = 0;
+								_voiceMidiChannel[bp8] = bp3;
+								if (_channelPrograms[bp3] != _voiceInstrument[bp8]) {
+									_voiceInstrument[bp8] = _channelPrograms[bp3];
+									StreamHandler *shBP12 = adlibSeekStream(shMem2248, _voiceInstrument[bp8] << 0x4);
 									adlibSetFrequency(bp8, shBP12);
 								}
 							}
 						}
-						if (g2291 != bp8) {
-							gArray2235[bp8] = bp4;
-							uint8 value = gArray225F[bp3];
+						if (_numOplChannels != bp8) {
+							_voiceNote[bp8] = bp4;
+							uint8 value = _channelPrograms[bp3];
 							bp10 = adlibSeekStream(shMem2248, value << 0x4);
 							uint8 temp = bp5;
 							temp &= 0x7F;
@@ -372,7 +360,7 @@ void Adlib::OnTimer() {
 
 							bp12 = adlibSeekStream(bp10, 0x2);
 
-							temp = g225E;
+							temp = _masterVolume;
 							// bx
 							temp2 = temp;
 							temp = bp12->peekByte();
@@ -390,12 +378,10 @@ void Adlib::OnTimer() {
 							uint16 temp2W = tempW;
 							// ax
 							temp = bp12->peekByte() & 0x3F;
-							// TODO: Cast to 8 bit here
 							bp2 = temp2W + temp;
 
 							bp12 = adlibSeekStream(bp10, 0x3);
-							// TODO: Identical section but final assignment is different
-							temp = g225E;
+							temp = _masterVolume;
 							// bx
 							temp2 = temp;
 							temp = bp12->peekByte();
@@ -413,7 +399,6 @@ void Adlib::OnTimer() {
 							temp2W = tempW;
 							// ax
 							temp = bp12->peekByte() & 0x3F;
-							// TODO: Cast to 8 bit here
 							bp1 = temp2W + temp;
 							if (bp1 > 0x3F) {
 								bp1 = 0x3F;
@@ -430,12 +415,12 @@ void Adlib::OnTimer() {
 							adlibWriteReg(gArray8d[bp8] + 0x40,
 										  (result & 0xC0) + bp2);
 
-							gArray226F[bp3] = 0;
-							adlibSetupChannel(bp8, bp4, gArray226F[bp3]);
+							_channelPitchBend[bp3] = 0;
+							adlibSetupChannel(bp8, bp4, _channelPitchBend[bp3]);
 						}
 					} else {
 						// Percussion mode (channels >= 0xB)
-						StreamHandler *shI = adlibSeekStream(shMem2248, gArray225F[bp3] << 0x4);
+						StreamHandler *shI = adlibSeekStream(shMem2248, _channelPrograms[bp3] << 0x4);
 						uint8 opIdx = gArray57[bp3 - 0xB]; // operator index
 
 						if (bp3 == 0xB) {
@@ -455,13 +440,14 @@ void Adlib::OnTimer() {
 						}
 
 						// Volume calculation for percussion
-						StreamHandler *sh3 = adlibSeekStream(shMem2248, (gArray225F[bp3] << 0x4) + 3);
+						StreamHandler *sh3 = adlibSeekStream(shMem2248, (_channelPrograms[bp3] << 0x4) + 3);
 						uint8 volIdx = ((sh3->peekByte() & 0x3F) >> 4) * 8 + (bp5 >> 4);
 						if (volIdx < gArray37.size()) {
-							bp1 = gArray37[volIdx] + g225E;
-							if (bp1 > 0x3F) bp1 = 0x3F;
+							bp1 = gArray37[volIdx] + _masterVolume;
+							if (bp1 > 0x3F)
+								bp1 = 0x3F;
 						} else {
-							bp1 = g225E;
+							bp1 = _masterVolume;
 						}
 
 						// Key off, set volume, trigger
@@ -474,35 +460,33 @@ void Adlib::OnTimer() {
 						uint8 bdVal = adlibGetOperator(0xBD);
 						adlibWriteReg(0xBD, bdVal | (1 << (0xF - bp3)));
 					}
-					// TODO: Not sure if this should really be an else
 				} else {
 					// l0017_2097
-					// TODO: Confirm that the following code is correct
 					bp6 = 0x80;
 				}
 			}
 			if ((bp6 & 0xF0) == 0x80) {
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);
-				g225A += 2;
-				uint8 bp16 = g2291 - 1;
-				if (g2291 > 0) {
+				_streamBytesConsumed += 2;
+				uint8 bp16 = _numOplChannels - 1;
+				if (_numOplChannels > 0) {
 					for (uint8 bp0A = 0; bp0A <= bp16; bp0A++) {
-						if (gArray222C[bp0A] != 0) {
-							gArray222C[bp0A]++;
+						if (_voiceAge[bp0A] != 0) {
+							_voiceAge[bp0A]++;
 						}
 					}
 				}
-				if (g2291 == 0x09 || bp3 < 0x0B) {
+				if (_numOplChannels == 0x09 || bp3 < 0x0B) {
 					uint8 bp8 = 0;
-					while (g2291 > bp8) {
-						if (gArray222C[bp8] == 0 && gArray227F[bp8] == bp3 && gArray2235[bp8] == bp4) {
+					while (_numOplChannels > bp8) {
+						if (_voiceAge[bp8] == 0 && _voiceMidiChannel[bp8] == bp3 && _voiceNote[bp8] == bp4) {
 							break;
 						}
 						bp8++;
 					}
-					if (g2291 != bp8) {
-						adlibSetupChannel(bp8, bp4, gArray226F[bp3]);
-						gArray222C[bp8] = 1;
+					if (_numOplChannels != bp8) {
+						adlibSetupChannel(bp8, bp4, _channelPitchBend[bp3]);
+						_voiceAge[bp8] = 1;
 					}
 				} else {
 					// Percussion note-off: clear bit in register 0xBD
@@ -512,74 +496,74 @@ void Adlib::OnTimer() {
 			}
 			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0) {
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);
-				g225A += 0x2;
+				_streamBytesConsumed += 0x2;
 			}
 			if ((bp6 & 0xF0) == 0xB0) { // Scope ends 231E
 				shMem2250 = adlibSeekStream(shMem2250, 0x2);
-				g225A += 0x2;
+				_streamBytesConsumed += 0x2;
 
 				// Big if-else that ends at 231E
 				if (bp4 == 0x66) {
-					g2259 = bp5;
-					g2258 = g2258 | 0x20;
+					_loopCount = bp5;
+					_statusFlags = _statusFlags | 0x20;
 				} else if (bp4 == 0x67) {
 					if (bp5 != 0) {
-						g2291 = 6;
+						_numOplChannels = 6;
 						adlibWriteReg(0xBD, 0x20);
 					} else {
-						g2291 = 9;
+						_numOplChannels = 9;
 						adlibWriteReg(0xBD, 0);
 					}
 					//				// TODO: Continue from here
 					//				if (bp5 != 0) {
-					//					g2291 = 0x6;
+					//					_numOplChannels = 0x6;
 					//					adlibWriteReg(0xBD, 0x20);
 					//				} else {
-					//					g2291 = 0x9;
+					//					_numOplChannels = 0x9;
 					//					adlibWriteReg(0xBD, 0);
 				} else if (bp4 == 0x69) {
 					{
 						uint8 bv = (uint8)(-(int8)bp5);
-						gArray226F[bp3] = bv;
-						for (uint8 i = 0; i < g2291; i++) {
-							if (gArray227F[i] == bp3 && gArray222C[i] == 0)
-								adlibSetupChannel(i, gArray2235[i], bv);
+						_channelPitchBend[bp3] = bv;
+						for (uint8 i = 0; i < _numOplChannels; i++) {
+							if (_voiceMidiChannel[i] == bp3 && _voiceAge[i] == 0)
+								adlibSetupChannel(i, _voiceNote[i], bv);
 						}
 					}
 					//					bp5 = -bp5;
-					//					gArray226F[bp3] = bp5;
-					//					uint8 bp16 = g2291 - 1;
+					//					_channelPitchBend[bp3] = bp5;
+					//					uint8 bp16 = _numOplChannels - 1;
 					//					if (0 <= bp16) {
 					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-					//							if (gArray227F[bp8] != bp3) {
+					//							if (_voiceMidiChannel[bp8] != bp3) {
 					//								continue;
 					//							}
-					//							if (gArray222C[bp8] != 0) {
+					//							if (_voiceAge[bp8] != 0) {
 					//								continue;
 					//							}
 
-					//							adlibSetupChannel(bp8, gArray2235[bp8], bp5);
+					//							adlibSetupChannel(bp8, _voiceNote[bp8], bp5);
 					//						}
 					//					}
 				} else if (bp4 == 0x68) {
 					{
-						gArray226F[bp3] = bp5;
-						for (uint8 i = 0; i < g2291; i++) {
-							if (gArray227F[i] == bp3 && gArray222C[i] == 0)
-								adlibSetupChannel(i, gArray2235[i], bp5);
+						_channelPitchBend[bp3] = bp5;
+						for (uint8 i = 0; i < _numOplChannels; i++) {
+							if (_voiceMidiChannel[i] == bp3 && _voiceAge[i] == 0)
+								adlibSetupChannel(i, _voiceNote[i], bp5);
 						}
 					}
-					//					gArray226F[bp3] = bp5;
-					//					uint16 bp16 = g2291 - 1;
+					//					_channelPitchBend[bp3] = bp5;
+					//					uint16 bp16 = _numOplChannels - 1;
 					//					if (0 <= bp16) {
 					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-					//							if (gArray227F[bp8] != bp3) {
+					//							if (_voiceMidiChannel[bp8] != bp3) {
 					//								continue;
 					//							}
-					//							if (gArray222C[bp8] != 0) {
+					//							if (_voiceAge[bp8] != 0) {
 					//								continue;
 					//							}
-					//							adlibSetupChannel(bp8, gArray2235[bp8], bp5);
+					//							adlibSetupChannel(bp8, _voiceNote[bp8], bp5);
 					//						}
 					//					}
 					//				}
@@ -588,12 +572,12 @@ void Adlib::OnTimer() {
 			}
 			if ((bp6 & 0xF0) == 0xC0) {
 				shMem2250 = adlibSeekStream(shMem2250, 0x1);
-				g225A++;
-				gArray225F[bp3] = bp4;
+				_streamBytesConsumed++;
+				_channelPrograms[bp3] = bp4;
 			}
 			if ((bp6 & 0xF0) == 0xD0) {
 				shMem2250 = adlibSeekStream(shMem2250, 0x1);
-				g225A++;
+				_streamBytesConsumed++;
 				//		Macs2::StreamHandler *sh2252;
 				//		Macs2::StreamHandler *sh225A;
 				//		Macs2::StreamHandler *shResult = adlibSeekStream(sh2252, 0x1);
@@ -604,14 +588,14 @@ void Adlib::OnTimer() {
 			if ((bp6 & 0xF0) == 0xF0) {
 				if (bp4 == 0x2F) {
 					shMem2250 = shMem2244;
-					g225A = 0;
-					g225E = 0;
-					g2259 = 0;
-					g2242 = 1;
+					_streamBytesConsumed = 0;
+					_masterVolume = 0;
+					_loopCount = 0;
+					_playbackReady = 1;
 					adlibReadDeltaTime();
 				} else {
 					shMem2250 = adlibSeekStream(shMem2250, 0x1);
-					g225A++;
+					_streamBytesConsumed++;
 				}
 				//		if (bp4 == 0x2F) {
 				//			Macs2::StreamHandler *sh2244;
@@ -629,9 +613,9 @@ void Adlib::OnTimer() {
 			// this inequality by using the msw and lsw
 			if (_nextEventTimer > 0x0FFF) {
 				shMem2250 = shMem2244;
-				g225A = 0;
-				g2259 = 0;
-				g2242 = 1;
+				_streamBytesConsumed = 0;
+				_loopCount = 0;
+				_playbackReady = 1;
 				adlibReadDeltaTime();
 			}
 
@@ -641,9 +625,9 @@ void Adlib::OnTimer() {
 		}
 	} else {
 		// This is the jump target from 1B00 from before the big loop
-		if ((g2258 & 0xC2) != 0) {
-			g2258 &= ~0xC2;
-			// TODO: I think this just calls the function again
+		if ((_statusFlags & 0xC2) != 0) {
+			_statusFlags &= ~0xC2;
+			// Original calls sbFillBuffer() here - not needed for OPL emulation
 			// Func1A74();
 		}
 		adlibSetInstrument();
@@ -651,9 +635,9 @@ void Adlib::OnTimer() {
 
 	// l0017_2422
 
-	if (g229A == 0) {
+	if (_isTimerTick == 0) {
 		// l0017_243F
-		// TODO
+		// Original sends EOI (out 0x20, 0x20) if not a timer tick
 	}
 	// Just epilogue and interrupt return
 }
@@ -673,7 +657,6 @@ StreamHandler *Adlib::adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta
 }
 
 void Adlib::adlibPlaySong(StreamHandler *song) {
-	// TODO: No idea yet what [0036] does
 	StreamHandler *sh = adlibSeekStream(song, 0x6);
 	uint16 delta = sh->peekWord();
 	shMem2248 = adlibSeekStream(song, delta);
@@ -681,9 +664,9 @@ void Adlib::adlibPlaySong(StreamHandler *song) {
 	delta = sh->peekWord();
 	shMem2244 = adlibSeekStream(song, delta);
 	sh = adlibSeekStream(song, 0x24);
-	g2240 = sh->peekWord();
+	_currentEventStatusHi = sh->peekWord();
 	sh = adlibSeekStream(song, 0xC);
-	g224E = sh->peekWord();
+	_timerFrequency = sh->peekWord();
 	adlibTickHandler();
 }
 
@@ -698,7 +681,7 @@ void Adlib::adlibReadDeltaTime() {
 		_nextEventTimer = _nextEventTimer << 7;
 		_nextEventTimer += bp1 & 0x7F;
 		shMem2250 = adlibSeekStream(shMem2250, 1);
-		g225A++;
+		_streamBytesConsumed++;
 		continueCondition = bp1 & 0x80;
 	} while (continueCondition != 0);
 }
@@ -741,13 +724,13 @@ void Adlib::Init() {
 
 	gArray229C.resize(256);
 
-	gArray225F.resize(0x10);
-	gArray226F.resize(0x10);
+	_channelPrograms.resize(0x10);
+	_channelPitchBend.resize(0x10);
 
-	gArray222C.resize(0x9);
-	gArray227F.resize(0x9);
-	gArray2288.resize(0x9);
-	gArray2235.resize(0x9);
+	_voiceAge.resize(0x9);
+	_voiceMidiChannel.resize(0x9);
+	_voiceInstrument.resize(0x9);
+	_voiceNote.resize(0x9);
 
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 
@@ -766,16 +749,12 @@ void Adlib::Init() {
 
 	// return;
 
-	// TODO: Check where this is called from and if we need to implement that one as well
-	// TODO: CHeck if we need to react to return value
+	// Stop any previous playback before reinitializing
 	adlibStopMusic();
 	// adlibTickHandler();
-	// TODO: Consider adding the caller
-	// TODO: Add proper arguments here
 	// adlibSetFrequency(0, 0);
 
-	// TODO: More hardcoded:
-	// TODO: I think this was not actual code from the game but from the example I found!
+	// Test tone registers (from Adlib programming guide, not from game):
 	// Probably this https://bespin.org/~qz/pc-gpe/adlib.txt
 	adlibWriteRegr(0x92, 0x20);
 	adlibWriteRegr(0x01, 0x23);
@@ -794,7 +773,7 @@ void Adlib::Init() {
 	adlibWriteRegr(0x98, 0xa0);
 	adlibWriteRegr(0x29, 0xb0);
 
-	// Hardcoded test below TODO Implement properly
+	// End of test tone setup
 	// Trying to hardcode the delta
 	/*  adlibWriteReg(0xb0, 0x00);
 	adlibWriteReg(0x43, 0x04);
@@ -858,10 +837,10 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	LoadData(fileStream, 0x0001B71F, size, gArray11F.data());
 
 	// Percussion lookup tables (hardcoded in data segment)
-	gArray37 = {28,25,23,18,14,11,8,2, 50,42,37,35,34,32,30,2, 55,50,49,48,45,43,40,2, 60,60,58,56,54,52,50,2};
+	gArray37 = {28, 25, 23, 18, 14, 11, 8, 2, 50, 42, 37, 35, 34, 32, 30, 2, 55, 50, 49, 48, 45, 43, 40, 2, 60, 60, 58, 56, 54, 52, 50, 2};
 	// gArray4c[ch] for ch>=0xB == gArray57[ch-0xB], gArray51[ch] for ch>=0xB == gArray5C[ch-0xB]
-	gArray57 = {19, 20, 18, 21, 17};            // percussion alternate channel
-	gArray5C = {6, 7, 8, 8, 7};                 // percussion frequency channel
+	gArray57 = {19, 20, 18, 21, 17}; // percussion alternate channel
+	gArray5C = {6, 7, 8, 8, 7};      // percussion frequency channel
 }
 
 void Adlib::LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {

@@ -97,9 +97,9 @@ class GameObject;
 			 * run a second time
 			 * A run can remain within one function call or it can have time-dependent phases during
 			 * which execution is paused and we wait (e.g. a timed wait event)
-			 * After the scene script, we need to run the scripts for all objects in the scene as
-			 * well as all the items in the inventory (TODO: Still need to find the place in code
-			 * where this is done and see how exactly it works)
+			 * After the scene script, we iterate executingObjectId from 1 to 0x200,
+			 * executing the script of each object that has runtime data allocated
+			 * (confirmed from runScriptExecutor at 1008:e3e7).
 			 * 
 			 */
 
@@ -258,6 +258,9 @@ class GameObject;
 			int64 _streamDumpPosition;
 			void DumpWholeScript();
 
+			// Button 8 skip from handleInput (1008:e8bf)
+			bool skipToEndOfSkippableSection();
+
 
 			// This is where a secondary inventory was last opened,
 			// when it is closed, we need to execute from here
@@ -291,7 +294,8 @@ class GameObject;
 
 			Common::Point GetCharPosition();
 
-			MouseMode _mouseMode = MouseMode::Use;
+			MouseMode _mouseMode = MouseMode::Walk;
+			MouseMode _cursorModeBeforeWait = MouseMode::Walk;
 
 			uint16 _interactedObjectID = 0;
 			uint16 _interactedOtherObjectID = 0;
@@ -365,9 +369,9 @@ class GameObject;
 			// Mutex indicating if the A3D2 function is active
 			bool isSkipping = false;
 
-			// Resets the script to the beginning
-			// TODO: CHeck where this happens vs. leaving it at the place it is when leaving
-			// the function in the game code
+			// Resets the script to the beginning.
+			// Confirmed: runScriptExecutor (1008:e3e7) sets position=0 on fresh runs
+			// (g_wScriptIsExecuting==0). Mid-execution pauses resume from current position.
 			void Rewind();
 
 	};
