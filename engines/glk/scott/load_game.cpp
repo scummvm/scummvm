@@ -54,7 +54,7 @@
 namespace Glk {
 namespace Scott {
 
-void loadC64(Common::SeekableReadStream* f, Common::String md5) {
+void loadC64(Common::SeekableReadStream* f) {
 	_G(_entireFile) = new uint8_t[_G(_fileLength)];
 	size_t result = f->read(_G(_entireFile), _G(_fileLength));
 	if (result != _G(_fileLength))
@@ -104,7 +104,7 @@ void loadGameFile(Common::SeekableReadStream *f) {
 					loadZXSpectrum(f, md5);
 					break;
 				} else if (!scumm_stricmp(p->_extra, "C64")) {
-					loadC64(f, md5);
+					loadC64(f);
 					break;
 				} else {
 					loadTI994A(f);
