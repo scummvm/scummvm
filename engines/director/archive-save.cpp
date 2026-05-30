@@ -47,11 +47,36 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	}
 
 	Common::String saveFileName = g_director->getTargetName() + "-" + filename;
+
+	// We may be saving over the very file this archive was loaded from: TKKG2
+	// re-saves "score.dxr" over the savegame it loaded. openForSaving() below
+	// truncates that file, after which every verbatim-copied resource read from
+	// _stream (getResource) would return zero bytes -- silently zeroing MCsL,
+	// Sord, VWFI, VWSC, etc. and corrupting the savegame. Snapshot the source
+	// bytes into memory first and read resources from that copy for the duration
+	// of the write, then restore the original stream.
+	Common::SeekableReadStream *origStream = _stream;
+	byte *srcSnapshot = nullptr;
+	if (_stream) {
+		uint32 savedPos = _stream->pos();
+		_stream->seek(0);
+		uint32 srcSize = _stream->size();
+		srcSnapshot = (byte *)malloc(srcSize);
+		_stream->read(srcSnapshot, srcSize);
+		_stream->seek(savedPos);
+		_stream = new Common::MemoryReadStream(srcSnapshot, srcSize, DisposeAfterUse::NO);
+	}
+
 	// Don't open the save file as compressed which doesn't support seeking
 	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(saveFileName, false);
 
 	if (!saveFile) {
 		warning("RIFXArchive::writeToFile: Failed to open file %s for saving", saveFileName.c_str());
+		if (srcSnapshot) {
+			delete _stream;
+			_stream = origStream;
+			free(srcSnapshot);
+		}
 		return false;
 	}
 
@@ -217,9 +242,18 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	}
 
 	delete saveFile;
+
 	for (auto it : builtResources) {
 		delete it;
 	}
+
+	// Restore the original source stream and free the in-memory snapshot.
+	if (srcSnapshot) {
+		delete _stream;
+		_stream = origStream;
+		free(srcSnapshot);
+	}
+
 	return true;
 }
 
