@@ -1085,7 +1085,8 @@ uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStrea
 	writeStream->writeString(rawText);
 	writeStream->seek(currentPos);
 
-	if (debugChannelSet(7, kDebugSaving)) {
+	// FIXME: can't dereference SeekableWriteStream
+	/*if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = nullptr;
 		dumpData = (byte *)calloc(stxtSize, sizeof(byte));
 		Common::MemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, stxtSize);
@@ -1098,7 +1099,7 @@ uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStrea
 		dumpFile("TextData", _castId, MKTAG('S', 'T', 'X', 'T'), dumpData, getSTXTResourceSize() + 8);
 		free(dumpData);
 		delete dumpStream;
-	}
+	}*/
 
 	return stxtSize + 8;
 }
