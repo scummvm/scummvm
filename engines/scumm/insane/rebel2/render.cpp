@@ -2126,7 +2126,6 @@ void InsaneRebel2::renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int
 	const int cursorHeight = 10;
 
 	CursorMan.showMouse(false);
-	_vm->_system->showMouse(false);
 
 	const int cursorX = _vm->_mouse.x;
 	const int cursorY = _vm->_mouse.y;
