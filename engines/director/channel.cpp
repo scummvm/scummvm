@@ -510,6 +510,41 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 		if (_sprite->_puppet || _sprite->_autoPuppet || (!nextSprite->isQDShape() && partial)) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
+
+			// When Lingo overrides only a sprite's cast member (`set the member of
+			// sprite`) on a sprite the score is still animating, the member is
+			// auto-puppeted but the position should keep following the score --
+			// otherwise the swapped-in member is stranded at the previous member's
+			// stale loc. We re-sync the position from the score only in exactly
+			// that case: the member was puppeted to something different than the
+			// score expects, the loc itself wasn't puppeted, and the score
+			// actually specified a position this frame (kSCBStartPoint). This
+			// deliberately leaves alone sprites whose member matches the score
+			// (their own loc is authoritative) and never touches anything but the
+			// position.
+			if (!_sprite->_puppet && _sprite->getAutoPuppet(kAPCast) &&
+					_sprite->_castId != nextSprite->_castId &&
+					!_sprite->getAutoPuppet(kAPLoc) && !_sprite->getAutoPuppet(kAPLocH) &&
+					!_sprite->getAutoPuppet(kAPLocV) && !_sprite->getAutoPuppet(kAPBbox) &&
+					!_sprite->getAutoPuppet(kAPRect) &&
+					(nextSprite->_copyBackMask & kSCBStartPoint) &&
+					_sprite->_startPoint != nextSprite->_startPoint) {
+				// Only adopt the score position if it actually places the sprite on
+				// the stage. A cleared/transitioning score track reports a (0,0)
+				// loc which, for a centre-registered sprite, would shove it mostly
+				// off the top-left -- never an intended placement (e.g. the
+				// full-screen backgrounds during a scene change). The genuine cases
+				// (the localised logo) land on-screen.
+				Common::Point regOff = _sprite->_cast ?
+					_sprite->_cast->getRegistrationOffset(_sprite->_width, _sprite->_height) :
+					Common::Point(0, 0);
+				int newLeft = nextSprite->_startPoint.x - regOff.x;
+				int newTop = nextSprite->_startPoint.y - regOff.y;
+				if (newLeft > -_sprite->_width / 2 && newTop > -_sprite->_height / 2) {
+					_sprite->_startPoint = nextSprite->_startPoint;
+					setDirty();
+				}
+			}
 		} else {
 			previousCastId = _sprite->_castId;
 			replaceSprite(nextSprite);
