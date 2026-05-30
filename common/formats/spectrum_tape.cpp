@@ -288,7 +288,7 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 			Array<byte> data;
 			data.resize(1 + count * 2);
 			data[0] = count;
-			if (count != 0 && stream.read(data.data() + 1, count * 2) != count * 2)
+			if (count != 0 && (int)stream.read(data.data() + 1, count * 2) != count * 2)
 				return false;
 			if (!appendBlock(blocks, id, data))
 				return false;
@@ -345,7 +345,7 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 			Array<byte> data;
 			data.resize(2 + count * 2);
 			WRITE_LE_UINT16(data.data(), count);
-			if (count != 0 && stream.read(data.data() + 2, count * 2) != count * 2)
+			if (count != 0 && (int)stream.read(data.data() + 2, count * 2) != count * 2)
 				return false;
 			if (!appendBlock(blocks, id, data))
 				return false;
@@ -383,7 +383,7 @@ static bool parseTzx(SeekableReadStream &stream, SpectrumTapeBlocks &blocks) {
 			Array<byte> data;
 			data.resize(1 + count * 3);
 			data[0] = count;
-			if (count != 0 && stream.read(data.data() + 1, count * 3) != count * 3)
+			if (count != 0 && (int)stream.read(data.data() + 1, count * 3) != count * 3)
 				return false;
 			if (!appendBlock(blocks, id, data))
 				return false;
