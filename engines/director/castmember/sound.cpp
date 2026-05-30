@@ -303,7 +303,8 @@ void SoundCastMember::setField(int field, const Datum &d) {
 // Similar to PaletteCastMember, SoundCastMember has no data in the 'CASt' resource or is ignored
 // This is the data in 'CASt' resource
 uint32 SoundCastMember::getCastDataSize() {
-	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer700) {
+		// D5+  sound lives in snd/sndH children
 		return 0;
 	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// (castType (see Cast::loadCastData() for Director 4 only) 1 byte
