@@ -15,31 +15,20 @@
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/Flags.h>
 #include <cxxtest/StdValueTraits.h>
-
-#if defined(_CXXTEST_HAVE_STD)
-#ifdef _CXXTEST_OLD_STD
-#   include <iostream.h>
-#   include <string.h>
-#else // !_CXXTEST_OLD_STD
-#   include <iostream>
-#   include <cstring>
-#endif // _CXXTEST_OLD_STD
-#endif
+#include <cxxtest/OutputStream.h>
 
 namespace CxxTest
 {
 
-#if defined(_CXXTEST_HAVE_STD)
-inline void print_help(const char* name)
+inline void print_help(OutputStream &os, const char* name)
 {
-    CXXTEST_STD(cerr) << name << " <suitename>" << CXXTEST_STD(endl);
-    CXXTEST_STD(cerr) << name << " <suitename> <testname>" << CXXTEST_STD(endl);
-    CXXTEST_STD(cerr) << name << " -h" << CXXTEST_STD(endl);
-    CXXTEST_STD(cerr) << name << " --help" << CXXTEST_STD(endl);
-    CXXTEST_STD(cerr) << name << " --help-tests" << CXXTEST_STD(endl);
-    CXXTEST_STD(cerr) << name << " -v             Enable tracing output." << CXXTEST_STD(endl);
+    os << name << " <suitename>" << endl;
+    os << name << " <suitename> <testname>" << endl;
+    os << name << " -h" << endl;
+    os << name << " --help" << endl;
+    os << name << " --help-tests" << endl;
+    os << name << " -v             Enable tracing output." << endl;
 }
-#endif
 
 
 template <class TesterT>
@@ -53,6 +42,12 @@ int Main(TesterT& tmp, int argc, char* argv[])
 //
 
 #if defined(_CXXTEST_HAVE_STD)
+    StdOStreamAdapter out(CXXTEST_STD(cout));
+    StdOStreamAdapter err(CXXTEST_STD(cerr));
+#else
+    StdioFileAdapter out(stdout);
+    StdioFileAdapter err(stderr);
+#endif // _CXXTEST_HAVE_STD
 //
 // Print command-line syntax
 //
@@ -60,17 +55,17 @@ int Main(TesterT& tmp, int argc, char* argv[])
     {
         if ((CXXTEST_STD(strcmp)(argv[i], "-h") == 0) || (CXXTEST_STD(strcmp)(argv[i], "--help") == 0))
         {
-            print_help(argv[0]);
+            print_help(err, argv[0]);
             return 0;
         }
         else if ((CXXTEST_STD(strcmp)(argv[1], "--help-tests") == 0))
         {
-            CXXTEST_STD(cout) << "Suite/Test Names" << CXXTEST_STD(endl);
-            CXXTEST_STD(cout) << "---------------------------------------------------------------------------" << CXXTEST_STD(endl);
+            out << "Suite/Test Names" << endl;
+            out << "---------------------------------------------------------------------------" << endl;
             for (SuiteDescription *sd = RealWorldDescription().firstSuite(); sd; sd = sd->next())
                 for (TestDescription *td = sd->firstTest(); td; td = td->next())
                 {
-                    CXXTEST_STD(cout) << td->suiteName() << " " << td->testName() << CXXTEST_STD(endl);
+                    out << td->suiteName() << " " << td->testName() << endl;
                 }
             return 0;
         }
@@ -87,7 +82,7 @@ int Main(TesterT& tmp, int argc, char* argv[])
         }
         else
         {
-            CXXTEST_STD(cerr) << "ERROR: unknown option '" << argv[1] << "'" << CXXTEST_STD(endl);
+            err << "ERROR: unknown option '" << argv[1] << "'" << endl;
             return -1;
         }
         for (int i = 1; i < (argc - 1); i++)
@@ -106,7 +101,7 @@ int Main(TesterT& tmp, int argc, char* argv[])
         status = leaveOnly(argv[1]);
         if (!status)
         {
-            CXXTEST_STD(cerr) << "ERROR: unknown suite '" << argv[1] << "'" << CXXTEST_STD(endl);
+            err << "ERROR: unknown suite '" << argv[1] << "'" << endl;
             return -1;
         }
     }
@@ -115,11 +110,10 @@ int Main(TesterT& tmp, int argc, char* argv[])
         status = leaveOnly(argv[1], argv[2]);
         if (!status)
         {
-            CXXTEST_STD(cerr) << "ERROR: unknown test '" << argv[1] << "::" << argv[2] << "'" << CXXTEST_STD(endl);
+            err << "ERROR: unknown test '" << argv[1] << "::" << argv[2] << "'" << endl;
             return -1;
         }
     }
-#endif
 
     tmp.process_commandline(argc, argv);
     return tmp.run();
