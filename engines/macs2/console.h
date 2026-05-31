@@ -34,6 +34,10 @@ private:
 	bool Cmd_marker(int argc, const char **argv);
 	bool Cmd_addItem(int argc, const char **argv);
 	bool Cmd_removeItem(int argc, const char **argv);
+	bool Cmd_giveAll(int argc, const char **argv);
+	bool Cmd_listScenes(int argc, const char **argv);
+	bool Cmd_changeScene(int argc, const char **argv);
+	bool Cmd_scene(int argc, const char **argv);
 	bool Cmd_setOrientation(int argc, const char **argv);
 	bool Cmd_dumpScript(int argc, const char **argv);
 	bool Cmd_set(int argc, const char **argv);
