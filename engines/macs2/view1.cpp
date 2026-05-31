@@ -22,8 +22,8 @@
 #include "macs2/view1.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
@@ -367,9 +367,14 @@ int View1::measureStringWithFont(const Common::String &s, const GlyphData *glyph
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		bool found = false;
 		for (uint i = 0; i < numGlyphs; i++) {
-			if (glyphs[i].ASCII == *iter) { width += glyphs[i].Width + 1; found = true; break; }
+			if (glyphs[i].ASCII == *iter) {
+				width += glyphs[i].Width + 1;
+				found = true;
+				break;
+			}
 		}
-		if (!found) width += widestGlyph;
+		if (!found)
+			width += widestGlyph;
 	}
 	return width;
 }
@@ -391,7 +396,8 @@ void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, co
 				break;
 			}
 		}
-		if (!found) currentX += widestGlyph;
+		if (!found)
+			currentX += widestGlyph;
 	}
 }
 

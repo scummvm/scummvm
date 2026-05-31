@@ -748,7 +748,8 @@ void ScriptExecutor::Step() {
 						_cursorModeBeforeWait = _mouseMode;
 						_engine->SetCursorMode(MouseMode::Disabled);
 						View1 *v = (View1 *)_engine->findView("View1");
-						if (v) v->UpdateCursor();
+						if (v)
+							v->UpdateCursor();
 					}
 					return;
 				}
@@ -776,7 +777,8 @@ void ScriptExecutor::Step() {
 	if (_mouseMode == MouseMode::Disabled) {
 		_engine->SetCursorMode(_cursorModeBeforeWait);
 		View1 *v = (View1 *)_engine->findView("View1");
-		if (v) v->UpdateCursor();
+		if (v)
+			v->UpdateCursor();
 	}
 }
 
@@ -904,6 +906,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		byte length = ReadByte(); // [bp-2h]
 		expectedEndLocation += length + 2;
 
+		// TODO: convert this into a function lookup table and extract all opcode handling into separate functions, this is just for easier reading
 		if (opcode1 == 0x01) {
 			// This writes to a script variable
 			ReadByte();
@@ -911,8 +914,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			ScriptVariable var;
 			scriptReadValuePair(var.a, var.b);
 			_variables[variableIndex] = var;
-		}
-		else if (opcode1 == 0x02) {
+		} else if (opcode1 == 0x02) {
 			// Padding/type byte (same as opcode 0x01) - read and discarded
 			ReadByte();
 			uint16 variableIndex = ReadWord();
@@ -926,8 +928,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			value2 |= value1;
 			value3 |= 0x00;
 			SetVariableValue(variableIndex, value2, value3);
-		}
-		else if (opcode1 == 0x03) {
+		} else if (opcode1 == 0x03) {
 			uint16 res1;
 			uint16 res2;
 			scriptReadValuePair(res1, res2);
@@ -936,8 +937,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				scriptSkipBlock();
 			}
 			expectedEndLocation = _stream->pos();
-		}
-		else if (opcode1 == 0x04) {
+		} else if (opcode1 == 0x04) {
 			uint16 result1;
 			uint16 result2;
 			scriptReadValuePair(result1, result2);
@@ -2293,6 +2293,92 @@ void ScriptExecutor::EndFrameWait() {
 
 void ScriptExecutor::Rewind() {
 	_stream->seek(0);
+}
+
+uint32 ScriptExecutor::GetScriptPosition() const {
+	return _stream ? (uint32)_stream->pos() : 0;
+}
+
+uint32 ScriptExecutor::GetScriptEndPosition() const {
+	return _stream ? (uint32)_stream->size() : 0;
+}
+
+uint32 ScriptExecutor::GetVariableValue(int index) const {
+	if (index < 0 || index >= (int)_variables.size())
+		return 0;
+	return _variables[index].a | ((uint32)_variables[index].b << 16);
+}
+
+uint32 ScriptExecutor::GetSpecialValue(uint16 value) {
+	uint16 out1 = 0;
+	uint16 out2 = 0;
+	switch (value) {
+	case 0x01:
+		if (_mouseMode == MouseMode::Use) {
+			out1 = _interactedObjectID;
+		} else if (_mouseMode == MouseMode::UseInventory) {
+			out1 = _interactedObjectID | (_interactedOtherObjectID << 16);
+			out2 = _interactedOtherObjectID;
+		}
+		break;
+	case 0x02:
+		out1 = (_mouseMode == MouseMode::Look) ? _interactedObjectID : 0;
+		break;
+	case 0x03:
+		out1 = (_mouseMode == MouseMode::Talk) ? _interactedObjectID : 0;
+		break;
+	case 0x04: {
+		const Common::Point &charPos = GetCharPosition();
+		out1 = getAreaAtPoint(charPos.x, charPos.y);
+		break;
+	}
+	case 0x0B:
+		out1 = repeatRunFlag ? 1 : 0;
+		break;
+	case 0x0D:
+		out1 = chosenDialogueOption;
+		break;
+	case 0x23:
+		out1 = pathWalkableResult ? 1 : 0;
+		break;
+	case 0x24: {
+		const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+		out1 = actor ? actor->Position.x : 0;
+		break;
+	}
+	case 0x25: {
+		const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+		out1 = actor ? actor->Position.y : 0;
+		break;
+	}
+	case 0x26:
+		out1 = IsSceneInitRun ? 1 : 0;
+		break;
+	case 0x28:
+		out1 = inventoryCheckResult ? 1 : 0;
+		break;
+	case 0x2A: {
+		View1 *v = (View1 *)_engine->findView("View1");
+		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->isShowingMainMenu);
+		out1 = (inventoryCombineFlag && !uiOpen) ? 1 : 0;
+		break;
+	}
+	case 0x2B: {
+		View1 *v = (View1 *)_engine->findView("View1");
+		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->isShowingMainMenu);
+		out1 = (inventoryActionFlag && !uiOpen) ? 1 : 0;
+		break;
+	}
+	case 0x2D:
+		out1 = Scenes::instance().CurrentSceneIndex;
+		break;
+	case 0x2F:
+		out1 = Scenes::instance().LastSceneIndex;
+		break;
+	default:
+		break;
+	}
+	return out1 | ((uint32)out2 << 16);
 }
 
 } // namespace Script

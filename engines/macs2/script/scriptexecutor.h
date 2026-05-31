@@ -360,6 +360,14 @@ class GameObject;
 				// return isRunningScript || isAwaitingCallback;
 			}
 
+			uint32 GetScriptPosition() const;
+			uint32 GetScriptEndPosition() const;
+			uint16 GetExecutingObjectId() const { return executingObjectIndex; }
+			uint32 GetVariableValue(int index) const;
+
+			// Computes the read-only runtime value for a type 0xFF special
+			// (FF:value), matching scriptReadValuePair. For debugger display only.
+			uint32 GetSpecialValue(uint16 value);
 
 			// Returns true if the save/load menu can be opened (no blocking state)
 			bool canOpenSaveMenu() const {
