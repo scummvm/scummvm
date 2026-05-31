@@ -93,6 +93,14 @@ public:
 	Common::Array<uint8> PathfindingOverlay;
 	Character();
 
+	// Debug accessors for pathfinding state
+	bool isLerping() const { return IsLerping; }
+	bool isDirectionSet() const { return _stepDirectionSet; }
+	int16 getStepError() const { return _stepError; }
+	int16 getStepDeltaX() const { return _stepDeltaX; }
+	int16 getStepDeltaY() const { return _stepDeltaY; }
+	Common::Point getEndPosition() const { return EndPosition; }
+
 	Common::Array<uint16> Path;
 	int16 CurrentPathIndex;
 	Common::Point PathFinalDestination;
@@ -183,6 +191,7 @@ public:
 
 	AnimFrame *GetInventoryIcon(GameObject *gameObject);
 
+	// TODO: use Palette class from graphics
 	byte _pal[256 * 3] = {0};
 	int _offset = 0;
 	bool _paletteDirty = true;

@@ -122,7 +122,8 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 bool Console::Cmd_giveAll(int argc, const char **argv) {
 	int count = 0;
 	for (GameObject *obj : GameObjects::instance().Objects) {
-		if (obj->Index <= 1) continue;
+		if (obj->Index <= 1)
+			continue;
 		if (!obj->Blobs.empty() && obj->Blobs.size() > 0x13 && !obj->Blobs[0x13].empty()) {
 			obj->SceneIndex = 1;
 			count++;
