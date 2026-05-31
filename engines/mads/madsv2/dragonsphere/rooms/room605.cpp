@@ -394,7 +394,7 @@ static void room_605_init() {
 	ss[fx_object_in_freezer]  = kernel_load_series(kernel_name('y', 5), false);
 	ss[fx_reach_into_freezer] = kernel_load_series(kernel_name('a', 0), false);
 
-	for (count = 10; count < 33; count++) {
+	for (count = 10; count < 32; count++) {
 		flag_used[count] = false;
 	}
 
