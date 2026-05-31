@@ -1007,64 +1007,47 @@ void Macs2Engine::RemovePathfindingOverride(uint16 index) {
 };
 
 bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	// TODO: need to figure out which algorithm the game uses exactly
+	// Exact reimplementation of isPathWalkable (1008:1196).
+	// Original params: (param_1=y1, param_2=x1, param_3=y2, param_4=x2)
+	// Traces from (x2,y2) toward (x1,y1). Checks walkability only on major-axis steps.
+	// Uses unsigned 16-bit error accumulator with wrapping arithmetic.
+	uint16 error = 0;
+	int16 curX = x2;
+	int16 curY = y2;
+	uint16 absDx = (uint16)abs((int)(x2 - x1));
+	uint16 absDy = (uint16)abs((int)(y2 - y1));
+	bool result = true;
 
-	// Trace a line between p1 and p2
-	// Look up in the map if we are walkable
-
-	// Bresenham's line algorithm, as described by Wikipedia
-	const bool steep = ABS(y2 - y1) > ABS(x2 - x1);
-
-	if (steep) {
-		SWAP(x1, y1);
-		SWAP(x2, y2);
-	}
-
-	const int delta_x = ABS(x2 - x1);
-	const int delta_y = ABS(y2 - y1);
-	const int delta_err = delta_y;
-	int x = x1;
-	int y = y1;
-	int err = 0;
-
-	const int x_step = (x1 < x2) ? 1 : -1;
-	const int y_step = (y1 < y2) ? 1 : -1;
-
-	uint16 walkability = 0;
-	int stopFlag = 0;
-
-	if (steep) {
-		walkability = getWalkabilityAt(y, x);
-		stopFlag = false; // (*plotProc)(y, x, data);
-	} else {
-		walkability = getWalkabilityAt(x, y);
-		stopFlag = false; // (*plotProc)(x, y, data);
-	}
-	if (walkability > 0x0C7) {
-		return false;
-	}
-
-	while (x != x2 && !stopFlag) {
-		x += x_step;
-		err += delta_err;
-		if (2 * err > delta_x) {
-			y += y_step;
-			err -= delta_x;
-		}
-		if (steep) {
-			walkability = getWalkabilityAt(y, x);
-			stopFlag = false; // (*plotProc)(y, x, data);
+	do {
+		bool steppedX;
+		if (error >= absDx) {
+			if (y1 < y2)
+				curY--;
+			if (y1 > y2)
+				curY++;
+			error -= absDx;
+			steppedX = false;
 		} else {
-			walkability = getWalkabilityAt(x, y);
-			stopFlag = false; // (*plotProc)(x, y, data);
+			if (x1 < x2)
+				curX--;
+			if (x1 > x2)
+				curX++;
+			error += absDy;
+			steppedX = true;
 		}
-		if (walkability > 0x0C7) {
-			return false;
-		}
-	}
-	// return stopFlag;
 
-	return true;
+		// Check walkability only on major-axis steps
+		if (absDx > absDy && steppedX) {
+			if (getWalkabilityAt(curX, curY) >= 0xC8)
+				result = false;
+		}
+		if (absDx <= absDy && !steppedX) {
+			if (getWalkabilityAt(curX, curY) >= 0xC8)
+				result = false;
+		}
+	} while (curX != x1 || curY != y1);
+
+	return result;
 }
 
 void Macs2Engine::NextCursorMode() {
