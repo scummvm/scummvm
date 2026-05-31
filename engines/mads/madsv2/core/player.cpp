@@ -40,6 +40,7 @@ namespace MADSV2 {
 
 Player player;
 Player2 player2;
+static Player saved_player;
 
 static const byte player_facing_to_series[10] = { 0, 7, 4, 3, 6, 0, 2, 5, 0, 1 };
 const byte player_clockwise[10] = { 9, 4, 1, 2, 7, 9, 3, 8, 9, 6 };
@@ -1029,6 +1030,56 @@ void player_walk_trigger(int trigger) {
 	for (count = 0; count < 3; count++) {
 		player.walk_trigger_words[count] = player2.words[count];
 	}
+}
+
+void save_player() {
+	saved_player.x                  = player.x;
+	saved_player.y                  = player.y;
+	saved_player.facing             = player.facing;
+	saved_player.center_of_gravity  = player.center_of_gravity;
+	saved_player.walking            = player.walking;
+	saved_player.need_to_walk       = player.need_to_walk;
+	saved_player.sprite_changed     = player.sprite_changed;
+	saved_player.frame_delay        = player.frame_delay;
+	saved_player.commands_allowed   = player.commands_allowed;
+	saved_player.walker_visible     = player.walker_visible;
+	saved_player.walk_freedom       = player.walk_freedom;
+	saved_player.series_base        = player.series_base;
+	saved_player.command_ready      = player.command_ready;
+	saved_player.num_rooms_been_in  = player.num_rooms_been_in;
+	saved_player.special_code       = player.special_code;
+	saved_player.next_special_code  = player.next_special_code;
+	saved_player.scaling_velocity   = player.scaling_velocity;
+	saved_player.walker_is_loaded   = player.walker_is_loaded;
+	saved_player.walker_must_reload = player.walker_must_reload;
+	saved_player.walker_loads_first = player.walker_loads_first;
+	saved_player.walk_trigger       = player.walk_trigger;
+	saved_player.enable_at_target   = player.enable_at_target;
+}
+
+void restore_player() {
+	player.x                  = saved_player.x;
+	player.y                  = saved_player.y;
+	player.facing             = saved_player.facing;
+	player.center_of_gravity  = saved_player.center_of_gravity;
+	player.walking            = saved_player.walking;
+	player.need_to_walk       = saved_player.need_to_walk;
+	player.sprite_changed     = saved_player.sprite_changed;
+	player.frame_delay        = saved_player.frame_delay;
+	player.commands_allowed   = saved_player.commands_allowed;
+	player.walker_visible     = saved_player.walker_visible;
+	player.walk_freedom       = saved_player.walk_freedom;
+	player.series_base        = saved_player.series_base;
+	player.command_ready      = saved_player.command_ready;
+	player.num_rooms_been_in  = saved_player.num_rooms_been_in;
+	player.special_code       = saved_player.special_code;
+	player.next_special_code  = saved_player.next_special_code;
+	player.scaling_velocity   = saved_player.scaling_velocity;
+	player.walker_is_loaded   = saved_player.walker_is_loaded;
+	player.walker_must_reload = saved_player.walker_must_reload;
+	player.walker_loads_first = saved_player.walker_loads_first;
+	player.walk_trigger       = saved_player.walk_trigger;
+	player.enable_at_target   = saved_player.enable_at_target;
 }
 
 } // namespace MADSV2

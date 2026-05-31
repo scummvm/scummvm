@@ -364,6 +364,7 @@ extern int kernel_screen_fade;
 
 
 extern Animation kernel_anim[KERNEL_MAX_ANIMATIONS];
+extern bool stop_speech_on_run_animation;
 
 /*  Old animation stuff
 extern AnimPtr kernel_animation;

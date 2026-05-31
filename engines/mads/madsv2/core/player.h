@@ -342,6 +342,16 @@ extern void player_keep_turning();
 
 extern void player_activate_trigger();
 
+/**
+ * Saves the current player state to a static buffer for later restoration.
+ */
+extern void save_player();
+
+/**
+ * Restores the player state previously saved by save_player().
+ */
+extern void restore_player();
+
 } // namespace MADSV2
 } // namespace MADS
 

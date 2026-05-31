@@ -29,6 +29,8 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+int16 flags[40];
+
 namespace Rooms {
 
 // Section preloads

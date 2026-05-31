@@ -30,5 +30,9 @@ void midi_play(const char *name) {
 	// TODO
 }
 
+void midi_stop() {
+	// TODO
+}
+
 } // namespace MADSV2
 } // namespace MADS

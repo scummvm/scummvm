@@ -96,6 +96,7 @@ int kernel_allow_peel = false;
 
 int kernel_panning_speed = 0;
 int kernel_screen_fade   = 0;
+bool stop_speech_on_run_animation = false;
 
 Animation kernel_anim[KERNEL_MAX_ANIMATIONS];
 
@@ -2977,6 +2978,7 @@ void init_kernel() {
 	random_message_color = 0;
 	random_message_duration = 0;
 	memset(kernel_interface_loaded, 0, sizeof(kernel_interface_loaded));
+	stop_speech_on_run_animation = false;
 }
 
 void kernel_random_frame(int handle, int16 *frame, int mode) {
