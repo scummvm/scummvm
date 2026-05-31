@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-30 09:30+0000\n"
+"POT-Creation-Date: 2026-05-31 14:10+0000\n"
 "PO-Revision-Date: 2026-04-19 13:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -340,7 +340,7 @@ msgstr "En annan lagring fungerar just nu. Vill du avbryta den?"
 #: engines/hypno/metaengine.cpp:192 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/mm/mm1/metaengine.cpp:54 engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4365
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4467
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:328
@@ -359,7 +359,7 @@ msgstr "Ja"
 #: engines/hypno/metaengine.cpp:198 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/mm/mm1/metaengine.cpp:52 engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4365
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4467
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:329
@@ -387,7 +387,7 @@ msgstr "JSON-koden innehåller fel."
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4377
+#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4479
 #: engines/sword1/control.cpp:2816
 msgid "OK"
 msgstr "OK"
@@ -1053,7 +1053,7 @@ msgstr "Interagera"
 #: engines/dragons/metaengine.cpp:158 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:70 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1040
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1064
 #: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/ultima/ultima0/metaengine.cpp:45
@@ -1074,7 +1074,7 @@ msgstr "Upp"
 #: engines/dragons/metaengine.cpp:164 engines/freescape/movement.cpp:44
 #: engines/got/metaengine.cpp:71 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:1007
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:1031
 #: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/ultima/ultima0/metaengine.cpp:46
@@ -1095,7 +1095,7 @@ msgstr "Ner"
 #: engines/dragons/metaengine.cpp:170 engines/glk/dialogs.cpp:371
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1020
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1044
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:141
@@ -1115,7 +1115,7 @@ msgstr "Vänster"
 #: engines/dragons/metaengine.cpp:176 engines/glk/dialogs.cpp:373
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1027
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1051
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:142
@@ -3390,7 +3390,7 @@ msgstr "Grafisk äventyrsspelmotor"
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
-#: engines/scumm/scumm.cpp:4377 engines/sludge/keymapper_tables.h:95
+#: engines/scumm/scumm.cpp:4479 engines/sludge/keymapper_tables.h:95
 #: engines/sludge/keymapper_tables.h:144 engines/sludge/keymapper_tables.h:223
 #: engines/sludge/keymapper_tables.h:343 engines/sludge/keymapper_tables.h:355
 #: engines/sludge/keymapper_tables.h:416 engines/sludge/keymapper_tables.h:429
@@ -3622,7 +3622,7 @@ msgstr ""
 "ytterligare hjälp."
 
 #: engines/dialogs.cpp:201 engines/ags/ags.cpp:359
-#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:167
+#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:197
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
 "Det här spelet saknar stöd för sparning från menyn. Använd gränssnittet i "
@@ -3642,7 +3642,7 @@ msgstr ""
 "och instruktioner för hur du kan få mer hjälp."
 
 #: engines/dialogs.cpp:242 engines/ags/ags.cpp:344
-#: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:99
+#: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:116
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
 "Det här spelet saknar stöd för inläsning från menyn. Använd gränssnittet i "
@@ -7027,7 +7027,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Snabbinläsning eller sparning av spel stöds inte på denna plats"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3319
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3418
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -7038,7 +7038,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3306
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3405
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -7049,7 +7049,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3339
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3438
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7540,7 +7540,7 @@ msgstr "Växla strid"
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
 #: engines/phoenixvr/metaengine.cpp:85 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1066 engines/supernova/metaengine.cpp:309
+#: engines/scumm/metaengine.cpp:1090 engines/supernova/metaengine.cpp:309
 #: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -8208,7 +8208,7 @@ msgstr "Prata/Interagera"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1053
+#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1077
 #: engines/ultima/ultima0/metaengine.cpp:82
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
@@ -10236,7 +10236,7 @@ msgstr "Aktivera fusk för oändlig ammunition"
 msgid "Player ammo will never decrease."
 msgstr "Spelarens ammunition kommer aldrig att minska."
 
-#: engines/hypno/metaengine.cpp:70
+#: engines/hypno/metaengine.cpp:70 engines/scumm/metaengine.cpp:891
 msgid "Unlock all levels"
 msgstr "Lås upp alla nivåer"
 
@@ -12619,7 +12619,7 @@ msgid "Your Name:"
 msgstr "Ditt namn:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4383
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4485
 msgid "Host"
 msgstr "Värd"
 
@@ -12629,7 +12629,7 @@ msgid "Querying games..."
 msgstr "Söker efter spel..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4383
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4485
 msgid "Join"
 msgstr "Gå med"
 
@@ -13587,32 +13587,121 @@ msgstr "Aktivera stämningsljud"
 msgid "Enable ambience sounds."
 msgstr "Aktivera stämningsljud."
 
-#: engines/scumm/metaengine.cpp:1001
+#: engines/scumm/metaengine.cpp:882
+#, fuzzy
+#| msgctxt "Options menu"
+#| msgid "High resolution on"
+msgid "High resolution mode"
+msgstr "Högupplöst grafik på"
+
+#: engines/scumm/metaengine.cpp:883
+msgid "Run the game in 640x400 high resolution mode instead of 320x200"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:892
+#, fuzzy
+#| msgid "All levels will be available to play."
+msgid "All levels will be available without requiring passwords"
+msgstr "Alla nivåer kommer att finnas tillgängliga att spela."
+
+#: engines/scumm/metaengine.cpp:1025
 msgid "Down left"
 msgstr "Nedåt vänster"
 
-#: engines/scumm/metaengine.cpp:1014
+#: engines/scumm/metaengine.cpp:1038
 msgid "Down right"
 msgstr "Nedåt höger"
 
-#: engines/scumm/metaengine.cpp:1034
+#: engines/scumm/metaengine.cpp:1058
 msgid "Up left"
 msgstr "Uppåt vänster"
 
-#: engines/scumm/metaengine.cpp:1047
+#: engines/scumm/metaengine.cpp:1071
 msgid "Up right"
 msgstr "Uppåt höger"
 
-#: engines/scumm/metaengine.cpp:1059
+#: engines/scumm/metaengine.cpp:1083
 msgid "Switch weapon"
 msgstr "Byt vapen"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1073
+#: engines/scumm/metaengine.cpp:1097
 msgid "Win the bike fight cheat"
 msgstr "Vinn cykelkampsfusket"
 
-#: engines/scumm/saveload.cpp:1960
+#: engines/scumm/metaengine.cpp:1106
+msgid "Rebel Assault controls"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:1108 engines/scumm/metaengine.cpp:1170
+msgid "Aim up / menu up"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1176
+msgid "Aim down / menu down"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1182
+msgid "Aim left / menu left"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1188
+msgid "Aim right / menu right"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:1128
+#, fuzzy
+#| msgid "Pick up"
+msgid "Stick up"
+msgstr "Ta"
+
+#: engines/scumm/metaengine.cpp:1134
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Stick down"
+msgstr "Bläddra nedåt"
+
+#: engines/scumm/metaengine.cpp:1140
+#, fuzzy
+#| msgid "Slide left"
+msgid "Stick left"
+msgstr "Glid vänster"
+
+#: engines/scumm/metaengine.cpp:1146
+#, fuzzy
+#| msgid "Slide right"
+msgid "Stick right"
+msgstr "Glid höger"
+
+#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1194
+#, fuzzy
+#| msgid "Move / Select"
+msgid "Fire / select"
+msgstr "Flytta / Välj"
+
+#: engines/scumm/metaengine.cpp:1157
+#, fuzzy
+#| msgid "Backspace"
+msgid "Back / skip"
+msgstr "Backsteg"
+
+#: engines/scumm/metaengine.cpp:1168
+msgid "Rebel Assault II controls"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:1199
+#, fuzzy
+#| msgid "Move back"
+msgid "Cover / back"
+msgstr "Stega bakåt"
+
+#: engines/scumm/metaengine.cpp:1204
+#, fuzzy
+#| msgid "Skip main menu"
+msgid "Skip / menu"
+msgstr "Hoppa över huvudmeny"
+
+#: engines/scumm/saveload.cpp:1990
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
@@ -13636,7 +13725,7 @@ msgstr ""
 "Ändra ljudkonfigurationen därefter för att kunna läsa in denna sparfil "
 "ordentligt."
 
-#: engines/scumm/scumm.cpp:316
+#: engines/scumm/scumm.cpp:320
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -13649,12 +13738,12 @@ msgstr ""
 "Korrigering av bildförhållande kan uppnås genom att beskära upplösningen "
 "till 320x200, under fliken \"motor\"."
 
-#: engines/scumm/scumm.cpp:1356
+#: engines/scumm/scumm.cpp:1362
 #, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr "Detta spel kräver körbara '%s' Macintosh-filen för sina typsnitt."
 
-#: engines/scumm/scumm.cpp:1365
+#: engines/scumm/scumm.cpp:1371
 #, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
@@ -13662,7 +13751,7 @@ msgstr ""
 "Detta spel kräver den körbara '%s' Macintosh-filen för sin musik och "
 "typsnitt."
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1375
 #, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
@@ -13671,25 +13760,25 @@ msgstr ""
 "Kunde inte hitta den körbara Macintosh-filen för '%s' att läsa in resurser "
 "från. %s kommer att inaktiveras."
 
-#: engines/scumm/scumm.cpp:1370
+#: engines/scumm/scumm.cpp:1376
 msgid "The Mac GUI"
 msgstr "Mac-gränssnittet"
 
-#: engines/scumm/scumm.cpp:1370
+#: engines/scumm/scumm.cpp:1376
 msgid "The music and the Mac GUI"
 msgstr "Musiken och Mac-gränssnittet"
 
-#: engines/scumm/scumm.cpp:1399
+#: engines/scumm/scumm.cpp:1405
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr "Kunde inte öppna Macintosh-resursfilen %s"
 
-#: engines/scumm/scumm.cpp:1402
+#: engines/scumm/scumm.cpp:1408
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr "Kunde inte hitta resursgren i Macintosh-resursfilen %s"
 
-#: engines/scumm/scumm.cpp:1409
+#: engines/scumm/scumm.cpp:1415
 #, c-format
 msgid ""
 "'%s' appears to be the wrong Dig executable. It may be the launcher one "
@@ -13702,7 +13791,7 @@ msgstr ""
 "dialogdefinitionerna. Leta efter en \"The Dig f\"-mapp på din cd. Vilken som "
 "helst av dess undermappar bör vara vad du behöver."
 
-#: engines/scumm/scumm.cpp:1570
+#: engines/scumm/scumm.cpp:1581
 msgid ""
 "It appears your ScummVM version was not built with TrueType Fonts support.\n"
 "\n"
@@ -13716,7 +13805,7 @@ msgstr ""
 "utsträckning\n"
 "kommer en del av grafiken på skärmen att saknas."
 
-#: engines/scumm/scumm.cpp:1836
+#: engines/scumm/scumm.cpp:1915
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -13726,7 +13815,7 @@ msgstr ""
 "kompression stöds inte längre för detta spel, ljud kommer att inaktiveras.\n"
 "Kopiera spelet från originalmedia utan kompression."
 
-#: engines/scumm/scumm.cpp:2326
+#: engines/scumm/scumm.cpp:2405
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -13735,7 +13824,7 @@ msgstr ""
 "Stöd för Native MIDI kräver Roland-uppdateringen från LucasArts,\n"
 "men %s saknas. Använder AdLib istället."
 
-#: engines/scumm/scumm.cpp:2341
+#: engines/scumm/scumm.cpp:2420
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -13743,7 +13832,7 @@ msgstr ""
 "Denna specifika version av Monkey Island 1 är känd för att sakna\n"
 "några resurser som krävs för MT-32. Använd AdLib istället."
 
-#: engines/scumm/scumm.cpp:4259
+#: engines/scumm/scumm.cpp:4361
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -13753,7 +13842,7 @@ msgstr ""
 "Maniac Mansion-filerna placeras i 'Maniac'-katalogen i 'Tentacle'-katalogen. "
 "Spelet måste även läggas till i ScummVM."
 
-#: engines/scumm/scumm.cpp:4383
+#: engines/scumm/scumm.cpp:4485
 msgid "Would you like to host or join a network play session?"
 msgstr "Vill du stå värd för eller gå med i en session för nätverksspel?"
 
@@ -17586,10 +17675,6 @@ msgstr ""
 
 #~ msgid "Show memory consumption"
 #~ msgstr "Visa minnesförbrukning"
-
-#~ msgctxt "Options menu"
-#~ msgid "High resolution on"
-#~ msgstr "Högupplöst grafik på"
 
 #~ msgctxt "Options menu"
 #~ msgid "High resolution off"
