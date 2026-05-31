@@ -622,8 +622,19 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
+	// This may be invoked synchronously from deep inside another movie's Lingo
+	// execution (e.g. `set the fileName of window ...` triggers a stopMovie
+	// event on the window's old movie). Switching the current window to this
+	// movie's window is required so the event handlers resolve against the
+	// right movie, but we must restore it afterwards, otherwise the caller's
+	// movie-relative lookups (handlers, `script ...`, cast members) would keep
+	// targeting this window's movie. The main loop only resets the current
+	// window at frame boundaries, which is too late for nested calls.
+	Window *savedWindow = _vm->getCurrentWindow();
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
+	if (savedWindow)
+		_vm->setCurrentWindow(savedWindow);
 }
 
 void Movie::broadcastEvent(LEvent event) {
@@ -634,8 +645,14 @@ void Movie::broadcastEvent(LEvent event) {
 			queueEvent(queue, event, i);
 		}
 	}
+	// See processEvent(): restore the current window after dispatching, so a
+	// nested broadcast does not leave the current window pointing at this
+	// movie's window for the caller.
+	Window *savedWindow = _vm->getCurrentWindow();
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
+	if (savedWindow)
+		_vm->setCurrentWindow(savedWindow);
 }
 
 void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
