@@ -704,8 +704,19 @@ bool Movie::processInputEvent(LEvent event, int targetId, Common::Point pos) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
+
+	// Hold a reference across the dispatch: setCurrentWindow() below drops the
+	// one the engine held, and the handlers we are about to run can close the
+	// window we mean to go back to.
+	Window *savedWindow = _vm->getCurrentWindow();
+	if (savedWindow)
+		savedWindow->incRefCount();
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
+	if (savedWindow) {
+		_vm->setCurrentWindow(savedWindow);
+		savedWindow->decRefCount();
+	}
 }
 
 void Movie::broadcastEvent(LEvent event) {
@@ -721,8 +732,17 @@ void Movie::broadcastEvent(LEvent event) {
 	// the event exactly once, after every behavior.
 	queueEvent(queue, event, 0);
 
+	// Restore the current window after dispatching, holding a reference across
+	// it for the same reason as in processEvent() above.
+	Window *savedWindow = _vm->getCurrentWindow();
+	if (savedWindow)
+		savedWindow->incRefCount();
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
+	if (savedWindow) {
+		_vm->setCurrentWindow(savedWindow);
+		savedWindow->decRefCount();
+	}
 }
 
 void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
