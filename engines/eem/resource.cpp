@@ -131,7 +131,7 @@ bool DBDArchive::loadEntry(uint num, Picture &out) {
 	}
 
 	// _GetFromDB @ 172b:105d. Leading u16 = frame count (always 1 for pictures).
-	(void)_dbd.readUint16LE();
+	_dbd.skip(2);
 	return readFrame(_dbd, entry.compressed != 0, out);
 }
 

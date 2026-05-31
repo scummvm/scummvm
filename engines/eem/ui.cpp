@@ -4504,7 +4504,7 @@ void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 
 	const uint32 recordsOffset = file.readUint32LE();
 	const uint16 recordCount = file.readUint16LE();
-	(void)file.readUint16LE();
+	file.skip(2);                  // reserved
 	if (recordsOffset == 0 || recordCount == 0 ||
 		recordCount > kScrapbookExtraMaxRecords ||
 		!file.seek(recordsOffset))
@@ -4526,7 +4526,7 @@ void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 		const uint8 balloonRaw = file.readByte();
 		const uint16 balloonX = file.readUint16LE();
 		const uint8 balloonY = file.readByte();
-		(void)file.readByte();
+		file.skip(1);              // reserved
 		const uint16 voiceJake = file.readUint16LE();
 		const uint16 voiceJenny = file.readUint16LE();
 		const uint16 voiceNancy = file.readUint16LE();
