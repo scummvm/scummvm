@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef SCUMM_SMUSH_PLAYER_RA2_H
+#if !defined(SCUMM_SMUSH_PLAYER_RA2_H) && defined(ENABLE_SCUMM_7_8)
 #define SCUMM_SMUSH_PLAYER_RA2_H
 
 #include "scumm/smush/smush_player.h"
