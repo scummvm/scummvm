@@ -97,10 +97,29 @@ enum class ScriptExecutionState {
  */
 class ScriptExecutor {
 private:
+	void scriptOpcode0x01();
 	void scriptOpcode0x02();
 	void scriptOpcode0x03();
 	void scriptOpcode0x04();
+	bool scriptOpcode0x05();
+	void scriptOpcode0x06();
+	void scriptOpcode0x07();
+	void scriptOpcode0x08();
+	void scriptOpcode0x09();
+	void scriptOpcode0x0A();
+	bool scriptOpcode0x0B();
+	ExecutionResult scriptOpcode0x0C();
+	bool scriptOpcode0x10();
+	ExecutionResult scriptOpcode0x11();
+	void scriptOpcode0x14();
 	void scriptOpcode0x13();
+	void scriptOpcode0x0E();
+	void scriptOpcode0x0F();
+	void scriptOpcode0x12();
+	void scriptOpcode0x2E();
+	void scriptOpcode0x39();
+	void scriptOpcode0x3D();
+	void scriptOpcode0x3F();
 
 	inline void ScriptUnimplementedOpcode(const char *source, uint16 opcode) {
 		debug("Unimplemented opcode (%s): %.2x.", source, opcode);
@@ -206,9 +225,6 @@ private:
 	// Implements opcode 0x28 - stops the current animation on an object
 	// fn0037_C8E4 - scriptStopAnimation
 	void scriptStopAnimationImpl();
-
-	// fn0037_B6BE - scriptChangeAnimation
-	void scriptChangeAnimationImpl();
 
 	// Implements opcode 0e - changing scene animations
 
