@@ -903,9 +903,13 @@ void matte_frame(int special_effect, int full_screen) {
 				y = image_list[id2].y - picture_map.pan_y - (sprite->ys - 1);
 			}
 			if ((image_list[id2].depth <= 1) && !matte_guard_depth_0) {
-				sprite_draw(series_list[image_list[id2].series_id],
-					image_list[id2].sprite_id,
-					&scr_work, x, y);
+				// WORKAROUND: Only allow sprites within limits, avoiding crash in Dragonsphere
+				// Hightower cutscene when attacking monster
+				SeriesPtr s = series_list[image_list[id2].series_id];
+				if (image_list[id2].sprite_id <= s->num_sprites)
+					sprite_draw(series_list[image_list[id2].series_id],
+						image_list[id2].sprite_id,
+						&scr_work, x, y);
 			} else {
 				sprite_draw_3d_big(series_list[image_list[id2].series_id],
 					image_list[id2].sprite_id,

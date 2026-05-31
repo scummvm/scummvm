@@ -118,10 +118,9 @@ void ConvVariable::load(Common::SeekableReadStream *src) {
 	type = src->readSint16LE();
 
 	if (flag == 0xffff) {
-		// Original shouldn't have pointer variables by default, except for
-		// some placeholder entries in the Manager's Office, which have
-		// matching segment & offset values. So are obviously not used
-		assert(val == type);
+		// Originals can have placeholder entries for pointers. Such as for Phantom in Manager's Office,
+		// and in Dragonsphere at the Hightower entrance. For ScummVM we simply reset them to be
+		// standard immediate values until such time as a proper pointer is set
 		val = type = 0;
 
 	} else if (isPtr) {
