@@ -316,17 +316,12 @@ void EEMEngine::doInitClues() {
 						  && _aniArchive.loadAnimation(0x19, nancy)
 						  && !nancy.empty();
 
-	// Cycle game animation once at _CheckFrameRate cadence (~7 fps, 140 ms
-	// per _UpdateAnimations call — `LastFrame + 0xe` cs in _InitFrameCounter
-	// @ 1a35:01ae). Original loop @ 1a35:0507:
-	//   uVar9 = 1;
-	//   while (uVar9 != gameNum) {
-	//     if (_CheckFrameRate || skipped) { _UpdateAnimations(); uVar9++; }
-	//   }
-	// So `gameNum - 1` _UpdateAnimations calls; each call advances every
+	// Cycle the game animation once at _CheckFrameRate cadence (~7 fps, 140 ms
+	// per tick; _InitFrameCounter @ 1a35:01ae). The original loop @ 1a35:0507
+	// makes `gameNum - 1` _UpdateAnimations calls, each advancing every
 	// registered slot by one script tick. _DoInitClues @ 1a35:0507/0541
-	// hard-codes the SCRIPT index to Jake's IDs (0x17/0x18/0x19) regardless
-	// of partner, so we look up scripts by those IDs unconditionally.
+	// hard-codes Jake's script IDs (0x17/0x18/0x19) regardless of partner, so
+	// we look up scripts by those IDs unconditionally.
 	if (haveGame || haveBook || haveNancy) {
 		const uint kCheckFrameRateMs = 140;
 		const uint baseFrames = haveGame ? game.size() : 8;
@@ -802,14 +797,9 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			g_system->updateScreen();
 		}
 
-		// _DisplayClue @ 2404:0833-085a — per-clue voice gate:
-		//   if (clue[+0x18] != 0 && voiceOn && voiceAvail) {
-		//       iVar6 = clue[+0x18];                  // Jenny default
-		//       if (Partner == 0) iVar6 = clue[+0x1a]; // Jake override
-		//       _SpoolSound(iVar6 - 1);
-		//   }
-		// Gate is on the Jenny slot regardless of partner; entries with
-		// +0x18 == 0 but +0x1a set are text-only.
+		// _DisplayClue @ 2404:0833-085a — per-clue voice gate. The gate is on
+		// the Jenny slot regardless of partner; entries with +0x18 == 0 but
+		// +0x1a set are text-only.
 		if (_audio) {
 			const uint16 voiceJenny = READ_LE_UINT16(c + 0x18);
 			if (voiceJenny != 0 && voiceJenny != 0xFFFF) {
