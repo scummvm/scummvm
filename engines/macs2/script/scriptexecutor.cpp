@@ -1443,6 +1443,253 @@ void Script::ScriptExecutor::scriptOpcode0x1D() {
 	scriptSkippable = false;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x1E() {
+	// scriptPlayAnimation (1008:bd58).
+	uint32 objectID = scriptReadValue32() - 0x400;
+	uint32 slotID = scriptReadValue16();
+	uint32 frameOffset = scriptReadValue16();
+
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Opcode 0x1E: invalid object %u", objectID);
+		return false;
+	}
+	GameObject *gameObject = GameObjects::GetObjectByIndex(objectID);
+	if (gameObject == nullptr) {
+		warning("Opcode 0x1E: missing object %u", objectID);
+		return false;
+	}
+	if (slotID < 1 || slotID > 0x15) {
+		warning("Opcode 0x1E: invalid slot %u for object %u", slotID, objectID);
+		return false;
+	}
+
+	if (slotID == 0x15) {
+		gameObject->useOverloadAnimation = true;
+		BackgroundAnimationBlob::advanceAnimFrame(gameObject->overloadAnimation,
+												  true, frameOffset + 0x64);
+	} else {
+		if (slotID - 1 >= gameObject->Blobs.size() || gameObject->Blobs[slotID - 1].empty()) {
+			warning("Opcode 0x1E: no blob data for object %u slot %u", objectID, slotID);
+			return false;
+		}
+		BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[slotID - 1],
+												  true, frameOffset + 0x64);
+	}
+
+	return true;
+}
+
+void Script::ScriptExecutor::scriptOpcode0x1F() {
+	uint32 objectID = scriptReadValue32() - 0x400;
+	uint32 x = scriptReadValue32();
+	uint32 y = scriptReadValue32();
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	pathWalkableResult = false;
+	if (object == nullptr) {
+		warning("Ignoring pathfinding test for invalid object %u", objectID);
+	} else {
+		pathWalkableResult = IsPathWalkable(object->Position, Common::Point(x, y));
+	}
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x20() {
+	// scriptSetYOffset (1008:c047). Sets object field +8 (vertical offset)
+	// AND mirrors it into runtime field +0x21D (motion target).
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	uint16 offset = scriptReadValue16();
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring vertical offset set for invalid object %d", objectID);
+		return false;
+	}
+
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	if (object == nullptr) {
+		warning("Ignoring vertical offset set for missing object %d", objectID);
+		return false;
+	}
+
+	object->Unknown = offset;
+	// Original also writes to runtime +0x21D (motion target vertical offset)
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr) {
+		Character *c = currentView->GetCharacterByIndex((uint16)objectID);
+		if (c != nullptr) {
+			c->motionTargetVerticalOffset = offset;
+		}
+	}
+	return true;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x21() {
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	uint16 targetVerticalOffset = scriptReadValue16();
+	uint16 verticalOffsetDelta = scriptReadValue16();
+	uint16 motionDistance = scriptReadValue16();
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring motion setup for invalid object %d", objectID);
+		return false;
+	}
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	Character *character = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	if (object == nullptr || character == nullptr) {
+		warning("Ignoring motion setup for missing character object %d", objectID);
+		return false;
+	}
+
+	character->motionStartVerticalOffset = object->Unknown;
+	character->motionTargetVerticalOffset = targetVerticalOffset;
+	character->motionVerticalOffsetDelta = verticalOffsetDelta;
+	character->motionDistanceUnits = motionDistance;
+	character->motionProgress = 0;
+	character->hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->Unknown;
+	return true;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x22() {
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	uint16 animIndex = scriptReadValue16();
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring orientation set for invalid object %d", objectID);
+		return false;
+	}
+
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	if (object == nullptr) {
+		warning("Ignoring orientation set for missing object %d", objectID);
+		return false;
+	}
+
+	if (animIndex < 9 || animIndex > 0x10) {
+		warning("Ignoring out-of-range orientation %u for object %d", animIndex, objectID);
+		return false;
+	}
+
+	object->Orientation = animIndex;
+	return true;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x23() {
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	uint32 x = scriptReadValue32();
+	uint32 y = scriptReadValue32();
+	uint16 targetVerticalOffset = scriptReadValue16();
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring move-to-position for invalid object %d", objectID);
+		return false;
+	}
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	Character *c = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
+	if (object == nullptr || c == nullptr) {
+		warning("Ignoring move-to-position for missing character object %d", objectID);
+		return false;
+	}
+
+	const Common::Point target(x, y);
+	if (!IsPathWalkable(object->Position, target) && _engine->getWalkabilityAt(target) < 0xC8) {
+		warning("Ignoring move-to-position for blocked target (%u,%u) on object %d", x, y, objectID);
+		return false;
+	}
+
+	c->IsFollowingPath = false;
+	c->motionStartVerticalOffset = object->Unknown;
+	c->motionTargetVerticalOffset = targetVerticalOffset;
+	c->motionVerticalOffsetDelta = ABS<int32>((int32)object->Unknown - (int32)targetVerticalOffset);
+	c->motionDistanceUnits = ABS<int32>((int32)x - object->Position.x) + ABS<int32>((int32)y - object->Position.y);
+	c->motionProgress = 0;
+	c->hasMotionVerticalOffset = true;
+	c->StartLerpTo(Common::Point(x, y), 2 * 1000);
+	isAwaitingCallback = true;
+	return true;
+}
+
+void Script::ScriptExecutor::scriptOpcode0x24() {
+	// Adds two values read and saves them to a script variable.
+	// ;; fn0037_C7E6: 0037:C7E6
+	uint32 a = scriptReadValue32();
+	uint32 b = scriptReadValue32();
+
+	uint32 result = a + b;
+	// Go back to the first value being pointed to.
+	// In this case, 9F4D and A334 can use the same data, since the
+	// index of the script variable will be in the word at offset 1.
+	_stream->seek(-6, SEEK_CUR);
+	scriptSaveVariable(result);
+	// Skip forward across the second 9F4D read's data.
+	_stream->seek(3, SEEK_CUR);
+}
+
+void Script::ScriptExecutor::scriptOpcode0x25() {
+	// Subtracts two values read and saves them to a script variable.
+	// ;; fn0037_C82E: 0037:C82E
+	uint32 a = scriptReadValue32();
+	uint32 b = scriptReadValue32();
+
+	uint32 result = a - b;
+	_stream->seek(-6, SEEK_CUR);
+	scriptSaveVariable(result);
+	_stream->seek(3, SEEK_CUR);
+}
+
+void Script::ScriptExecutor::scriptOpcode0x26() {
+	// This one loads a special animation set.
+	uint32 id = scriptReadValue32() - 0x400;
+	// scriptLoadSpecialAnim (1008:c991): 2nd value is the decode/enable flag (runtime +0x182).
+	// Non-zero -> enable the overload animation (and the original decodes the blob now).
+	uint16 decodeFlag = scriptReadValue16();
+	uint8 animationID = ReadByte();
+	Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
+	GameObject *object = GameObjects::GetObjectByIndex(id);
+	object->overloadAnimation = blob;
+	object->overloadAnimationMirrored = false;
+	object->useOverloadAnimation = (decodeFlag != 0);
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x27() {
+	// scriptSetDirection (1008:c858). Writes to runtime field +0x22D.
+	// When the character's orientation matches this value, the renderer
+	// uses animation slot 0x15 (overload animation) instead of the normal slot.
+	// Value 0x7FFF means "never match" (default from loadSceneObjects).
+	uint16 characterID = scriptReadValue16() - 0x400;
+	uint16 value = scriptReadValue16();
+	if (characterID < 1 || characterID > 0x200) {
+		warning("Ignoring set direction for invalid object %u", characterID);
+		return false;
+	}
+	GameObject *object = GameObjects::GetObjectByIndex(characterID);
+	if (object == nullptr) {
+		warning("Ignoring set direction for missing object %u", characterID);
+		return false;
+	}
+	object->overloadAnimTriggerDirection = value;
+	return true;
+}
+
+void Script::ScriptExecutor::scriptOpcode0x28() {
+	// scriptStopAnimation (1008:c8e4) - clears overload animation for an object.
+	scriptStopAnimationImpl();
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x29() {
+	uint32 objectID = scriptReadValue32();
+	objectID -= 0x400;
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	GameObject *inventorySource = GameObjects::GetObjectByIndex(objectID);
+	if (inventorySource == nullptr) {
+		warning("Invalid inventory source object %u", objectID);
+		return false;
+	}
+	savedExternalInventoryMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
+	hasPendingExternalInventoryResume = true;
+	externalInventorySourceObjectID = objectID;
+	secondaryInventoryLocation = _stream->pos();
+	currentView->OpenInventory(inventorySource);
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -1611,6 +1858,45 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			scriptOpcode0x1C();
 		} else if (opcode1 == 0x1d) {
 			scriptOpcode0x1D();
+		} else if (opcode1 == 0x1e) {
+			if (!scriptOpcode0x1E()) {
+				continue;
+			}
+		} else if (opcode1 == 0x1f) {
+			scriptOpcode0x1F();
+		} else if (opcode1 == 0x20) {
+			if (!scriptOpcode0x20()) {
+				continue;
+			}
+		} else if (opcode1 == 0x21) {
+			if (!scriptOpcode0x21()) {
+				continue;
+			}
+		} else if (opcode1 == 0x22) {
+			if (!scriptOpcode0x22()) {
+				continue;
+			}
+		} else if (opcode1 == 0x23) {
+			if (!scriptOpcode0x23()) {
+				continue;
+			}
+		} else if (opcode1 == 0x24) {
+			scriptOpcode0x24();
+		} else if (opcode1 == 0x25) {
+			scriptOpcode0x25();
+		} else if (opcode1 == 0x26) {
+			scriptOpcode0x26();
+		} else if (opcode1 == 0x27) {
+			if (!scriptOpcode0x27()) {
+				continue;
+			}
+		} else if (opcode1 == 0x28) {
+			scriptOpcode0x28();
+		} else if (opcode1 == 0x29) {
+			if (scriptOpcode0x29()) {
+				return ExecutionResult::WaitingForCallback;
+			}
+			continue;
 		} else if (opcode1 == 0x0b) {
 			if (!scriptOpcode0x0B()) {
 				continue;
@@ -1629,224 +1915,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x14) {
 			// Opcode 0x14: consume/skip a word value (confirmed: just calls scriptReadWord in disassembly)
 			ReadWord();
-		} else if (opcode1 == 0x1e) {
-			// scriptPlayAnimation (1008:bd58)
-			uint32 objectID = scriptReadValue32() - 0x400;
-			uint32 slotID = scriptReadValue16();
-			uint32 frameOffset = scriptReadValue16();
-
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Opcode 0x1E: invalid object %u", objectID);
-				continue;
-			}
-			GameObject *gameObject = GameObjects::GetObjectByIndex(objectID);
-			if (gameObject == nullptr) {
-				warning("Opcode 0x1E: missing object %u", objectID);
-				continue;
-			}
-			if (slotID < 1 || slotID > 0x15) {
-				warning("Opcode 0x1E: invalid slot %u for object %u", slotID, objectID);
-				continue;
-			}
-
-			if (slotID == 0x15) {
-				gameObject->useOverloadAnimation = true;
-				BackgroundAnimationBlob::advanceAnimFrame(gameObject->overloadAnimation,
-														  true, frameOffset + 0x64);
-			} else {
-				if (slotID - 1 >= gameObject->Blobs.size() || gameObject->Blobs[slotID - 1].empty()) {
-					warning("Opcode 0x1E: no blob data for object %u slot %u", objectID, slotID);
-					continue;
-				}
-				BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[slotID - 1],
-														  true, frameOffset + 0x64);
-			}
-
-		} else if (opcode1 == 0x1f) {
-			uint32 objectID = scriptReadValue32() - 0x400;
-			uint32 x = scriptReadValue32();
-			uint32 y = scriptReadValue32();
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			pathWalkableResult = false;
-			if (object == nullptr) {
-				warning("Ignoring pathfinding test for invalid object %u", objectID);
-			} else {
-				pathWalkableResult = IsPathWalkable(object->Position, Common::Point(x, y));
-			}
-		} else if (opcode1 == 0x20) {
-			// scriptSetYOffset (1008:c047). Sets object field +8 (vertical offset)
-			// AND mirrors it into runtime field +0x21D (motion target).
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			uint16 offset = scriptReadValue16();
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring vertical offset set for invalid object %d", objectID);
-				continue;
-			}
-
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			if (object == nullptr) {
-				warning("Ignoring vertical offset set for missing object %d", objectID);
-				continue;
-			}
-
-			object->Unknown = offset;
-			// Original also writes to runtime +0x21D (motion target vertical offset)
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr) {
-				Character *c = currentView->GetCharacterByIndex((uint16)objectID);
-				if (c != nullptr) {
-					c->motionTargetVerticalOffset = offset;
-				}
-			}
-		} else if (opcode1 == 0x21) {
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			uint16 targetVerticalOffset = scriptReadValue16();
-			uint16 verticalOffsetDelta = scriptReadValue16();
-			uint16 motionDistance = scriptReadValue16();
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring motion setup for invalid object %d", objectID);
-				continue;
-			}
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			Character *character = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			if (object == nullptr || character == nullptr) {
-				warning("Ignoring motion setup for missing character object %d", objectID);
-				continue;
-			}
-
-			character->motionStartVerticalOffset = object->Unknown;
-			character->motionTargetVerticalOffset = targetVerticalOffset;
-			character->motionVerticalOffsetDelta = verticalOffsetDelta;
-			character->motionDistanceUnits = motionDistance;
-			character->motionProgress = 0;
-			character->hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->Unknown;
-		} else if (opcode1 == 0x22) {
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			uint16 animIndex = scriptReadValue16();
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring orientation set for invalid object %d", objectID);
-				continue;
-			}
-
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			if (object == nullptr) {
-				warning("Ignoring orientation set for missing object %d", objectID);
-				continue;
-			}
-
-			if (animIndex < 9 || animIndex > 0x10) {
-				warning("Ignoring out-of-range orientation %u for object %d", animIndex, objectID);
-				continue;
-			}
-
-			object->Orientation = animIndex;
-		} else if (opcode1 == 0x23) {
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			uint32 x = scriptReadValue32();
-			uint32 y = scriptReadValue32();
-			uint16 targetVerticalOffset = scriptReadValue16();
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring move-to-position for invalid object %d", objectID);
-				continue;
-			}
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			Character *c = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
-			if (object == nullptr || c == nullptr) {
-				warning("Ignoring move-to-position for missing character object %d", objectID);
-				continue;
-			}
-
-			const Common::Point target(x, y);
-			if (!IsPathWalkable(object->Position, target) && _engine->getWalkabilityAt(target) < 0xC8) {
-				warning("Ignoring move-to-position for blocked target (%u,%u) on object %d", x, y, objectID);
-				continue;
-			}
-
-			c->IsFollowingPath = false;
-			c->motionStartVerticalOffset = object->Unknown;
-			c->motionTargetVerticalOffset = targetVerticalOffset;
-			c->motionVerticalOffsetDelta = ABS<int32>((int32)object->Unknown - (int32)targetVerticalOffset);
-			c->motionDistanceUnits = ABS<int32>((int32)x - object->Position.x) + ABS<int32>((int32)y - object->Position.y);
-			c->motionProgress = 0;
-			c->hasMotionVerticalOffset = true;
-			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
-			isAwaitingCallback = true;
-		} else if (opcode1 == 0x24) {
-			// Adds two values read and saves them to a script variable
-			// ;; fn0037_C7E6: 0037:C7E6
-			uint32 a = scriptReadValue32();
-			uint32 b = scriptReadValue32();
-
-			uint32 result = a + b;
-			// Go back to the first value being pointed to
-			// In this case, 9F4D and A334 can use the same data, since the
-			// index of the script variable will be in the word at offset 1
-			_stream->seek(-6, SEEK_CUR);
-			scriptSaveVariable(result);
-			// Skip forward across the second 9F4D read's data
-			_stream->seek(3, SEEK_CUR);
-
-		} else if (opcode1 == 0x25) {
-			// Subtracts two values read and saves them to a script variable
-			// ;; fn0037_C82E: 0037:C82E
-			uint32 a = scriptReadValue32();
-			uint32 b = scriptReadValue32();
-
-			uint32 result = a - b;
-			_stream->seek(-6, SEEK_CUR);
-			scriptSaveVariable(result);
-			_stream->seek(3, SEEK_CUR);
-		} else if (opcode1 == 0x26) {
-			// This one loads a special animation set
-			uint32 id = scriptReadValue32() - 0x400;
-			// scriptLoadSpecialAnim (1008:c991): 2nd value is the decode/enable flag (runtime +0x182).
-			// Non-zero -> enable the overload animation (and the original decodes the blob now).
-			uint16 decodeFlag = scriptReadValue16();
-			uint8 animationID = ReadByte();
-			Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
-			GameObject *object = GameObjects::GetObjectByIndex(id);
-			object->overloadAnimation = blob;
-			object->overloadAnimationMirrored = false;
-			object->useOverloadAnimation = (decodeFlag != 0);
-		} else if (opcode1 == 0x27) {
-			// scriptSetDirection (1008:c858). Writes to runtime field +0x22D.
-			// When the character's orientation matches this value, the renderer
-			// uses animation slot 0x15 (overload animation) instead of the normal slot.
-			// Value 0x7FFF means "never match" (default from loadSceneObjects).
-			uint16 characterID = scriptReadValue16() - 0x400;
-			uint16 value = scriptReadValue16();
-			if (characterID < 1 || characterID > 0x200) {
-				warning("Ignoring set direction for invalid object %u", characterID);
-				continue;
-			}
-			GameObject *object = GameObjects::GetObjectByIndex(characterID);
-			if (object == nullptr) {
-				warning("Ignoring set direction for missing object %u", characterID);
-				continue;
-			}
-			object->overloadAnimTriggerDirection = value;
-		} else if (opcode1 == 0x28) {
-			// scriptStopAnimation (1008:c8e4) - clears overload animation for an object
-			scriptStopAnimationImpl();
-		} else if (opcode1 == 0x29) {
-			uint32 objectID = scriptReadValue32();
-			objectID -= 0x400;
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			GameObject *inventorySource = GameObjects::GetObjectByIndex(objectID);
-			if (inventorySource == nullptr) {
-				warning("Invalid inventory source object %u", objectID);
-				continue;
-			}
-			savedExternalInventoryMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
-			hasPendingExternalInventoryResume = true;
-			externalInventorySourceObjectID = objectID;
-			secondaryInventoryLocation = _stream->pos();
-			currentView->OpenInventory(inventorySource);
-			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x2A) {
 			uint32 objectID = scriptReadValue32() - 0x400;
 			uint16 slotID = scriptReadValue16();
