@@ -250,7 +250,7 @@ void AudioPlayer::spoolSound(uint num) {
 	//   byte 0 = Sound Blaster Time Constant
 	//   byte 1 = total AIL playback blocks (internal to AIL DDS; unused here)
 	const byte tc          = sdb.readByte();
-	(void)sdb.readByte(); // AIL block count, unused outside AIL
+	sdb.skip(1); // AIL block count, unused outside AIL
 
 	// SB Time Constant formula: rate = 1000000 / (256 - tc).
 	// e.g. tc=0xD2 -> 22 kHz. tc=0xFF would divide by 1 (1 MHz, nonsense); clamp.

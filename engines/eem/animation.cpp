@@ -101,12 +101,10 @@ bool ANMDecoder::open(const Common::Path &path) {
 		return false;
 	}
 
-	(void)_file.readUint16LE();        // header[+0]: ignored
+	_file.skip(2);                     // header[+0]: ignored
 	_height = _file.readUint16LE();    // header[+2]
 	_width  = _file.readUint16LE();    // header[+4]
-	(void)_file.readUint16LE();        // header[+6]
-	(void)_file.readUint16LE();        // header[+8]
-	(void)_file.readUint16LE();        // header[+10]
+	_file.skip(6);                     // header[+6..+10]: ignored
 
 	if (_width == 0 || _height == 0) {
 		warning("ANMDecoder: zero dimensions in %s", path.toString().c_str());
