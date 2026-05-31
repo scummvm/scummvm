@@ -1154,6 +1154,40 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0C() {
 	return ExecutionResult::WaitingForCallback;
 }
 
+ExecutionResult Script::ScriptExecutor::scriptOpcode0x0D() {
+	// Show a dialogue option.
+	uint32 objectID = scriptReadValue32() - 0x400;
+	uint16 x = scriptReadValue16();
+	uint16 y = scriptReadValue16();
+	uint16 side = scriptReadValue16();
+	uint32 offset = ReadWord();
+	uint32 numLines = ReadWord();
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+
+	Common::Array<Common::String> strings;
+	if (_executingScriptObjectID == 0) {
+		strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+	} else {
+		Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		strings = g_engine->DecodeStrings(s, offset, numLines);
+	}
+
+	debugC(kDebugScript,
+		   "Opcode 0D dialogue: speaker=%u rawPos=(%u,%u) side=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
+		   objectID, x, y, side, offset, numLines, _executingScriptObjectID, joinDebugStrings(strings).c_str());
+
+	activeDialogueSpeakerObjectID = objectID;
+	currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
+	isAwaitingCallback = true;
+	// NOTE: EndTimer prevents race conditions from overlapping waits
+
+	EndTimer();
+	EndFrameWait();
+	EndBuffering(lastOpcodeTriggeredSkip);
+	return ExecutionResult::WaitingForCallback;
+}
+
 bool Script::ScriptExecutor::scriptOpcode0x10() {
 	// scriptWalkToPosition (1008:b843). Uses pathfinding like the original:
 	// checks direct walkability first, falls back to A* pathfinding.
@@ -1254,6 +1288,55 @@ void Script::ScriptExecutor::scriptOpcode0x13() {
 void Script::ScriptExecutor::scriptOpcode0x14() {
 	// If we reach opcode 14 regularly, just discard the payload and continue.
 	ReadWord();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x15() {
+	// Mark that we are gathering strings for setting up a dialogue choice.
+	DialogueChoices.clear();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x16() {
+	// Add a dialogue choice.
+	uint16 index = scriptReadValue16();
+	// We don't save the index, instead we make sure that we add them in the right
+	// order and use the array to keep track.
+	// TODO: Removed this assert, during the dialogue in the beginning of chapter
+	// 3 (at the fort) an index of 3 came up when only one item had been there before.
+	// Not sure if the way of handling it still works or reflects the game, needs
+	// to be tested.
+	// assert(index - 1 == DialogueChoices.size());
+	uint16 offset = ReadWord();
+	uint16 numLines = ReadWord();
+	Common::StringArray lines;
+	if (_executingScriptObjectID == 0) {
+		lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+	} else {
+		Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		lines = _engine->DecodeStrings(stringsStream, offset, numLines);
+	}
+	debugC(kDebugScript,
+		   "Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
+		   index, offset, numLines, _executingScriptObjectID, joinDebugStrings(lines).c_str());
+	DialogueChoices.push_back(lines);
+}
+
+ExecutionResult Script::ScriptExecutor::scriptOpcode0x17() {
+	// Finish the dialogue choice.
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	uint32 x = scriptReadValue32();
+	uint32 y = scriptReadValue32();
+	uint16 side = scriptReadValue16();
+	const uint16 speakerObjectID = activeDialogueSpeakerObjectID != 0 ? activeDialogueSpeakerObjectID : _executingScriptObjectID;
+	debugC(kDebugScript,
+		   "Opcode 17 choice box: speaker=%u rawPos=(%u,%u) side=%u choiceCount=%u",
+		   speakerObjectID, x, y, side, DialogueChoices.size());
+	currentView->ShowDialogueChoice(speakerObjectID, DialogueChoices, Common::Point(x, y), side);
+	requestCallback = false;
+	// NOTE: EndTimer prevents race conditions from overlapping waits
+
+	EndTimer();
+	EndBuffering(lastOpcodeTriggeredSkip);
+	return ExecutionResult::WaitingForCallback;
 }
 
 void Script::ScriptExecutor::scriptOpcode0x0F() {
@@ -1399,6 +1482,12 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x0a) {
 			scriptOpcode0x0A();
 			return ExecutionResult::WaitingForCallback;
+		} else if (opcode1 == 0x15) {
+			scriptOpcode0x15();
+		} else if (opcode1 == 0x16) {
+			scriptOpcode0x16();
+		} else if (opcode1 == 0x17) {
+			return scriptOpcode0x17();
 		} else if (opcode1 == 0x0b) {
 			if (!scriptOpcode0x0B()) {
 				continue;
@@ -1406,37 +1495,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x0c) {
 			return scriptOpcode0x0C();
 		} else if (opcode1 == 0x0d) {
-			// Show a dialogue option
-			uint32 objectID = scriptReadValue32() - 0x400;
-			uint16 x = scriptReadValue16();
-			uint16 y = scriptReadValue16();
-			uint16 side = scriptReadValue16();
-			uint32 offset = ReadWord();
-			uint32 numLines = ReadWord();
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-
-			Common::Array<Common::String> strings;
-			if (_executingScriptObjectID == 0) {
-				strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
-			} else {
-				Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-				strings = g_engine->DecodeStrings(s, offset, numLines);
-			}
-
-			debugC(kDebugScript,
-				   "Opcode 0D dialogue: speaker=%u rawPos=(%u,%u) side=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
-				   objectID, x, y, side, offset, numLines, _executingScriptObjectID, joinDebugStrings(strings).c_str());
-
-			activeDialogueSpeakerObjectID = objectID;
-			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
-			isAwaitingCallback = true;
-			// NOTE: EndTimer prevents race conditions from overlapping waits
-
-			EndTimer();
-			EndFrameWait();
-			EndBuffering(lastOpcodeTriggeredSkip);
-			return ExecutionResult::WaitingForCallback;
+			return scriptOpcode0x0D();
 		} else if (opcode1 == 0x0E) {
 			scriptOpcode0x0E();
 		} else if (opcode1 == 0x0F) {
@@ -1447,50 +1506,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x14) {
 			// Opcode 0x14: consume/skip a word value (confirmed: just calls scriptReadWord in disassembly)
 			ReadWord();
-		} else if (opcode1 == 0x15) {
-			// Mark that we are gathering strings for setting up a dialogue choice
-			DialogueChoices.clear();
-		} else if (opcode1 == 0x16) {
-			// Add a dialogue choice
-			uint16 index = scriptReadValue16();
-			// We don't save the index, instead we make sure that we add them in the right
-			// order and use the array to keep track
-			// TODO: Removed this assert, during the dialogue in the beginning of chapter
-			// 3 (at the fort) an index of 3 came up when only one item had been there before
-			// Not sure if the way of handling it still works or reflects the game, needs
-			// to be tested
-			// assert(index - 1 == DialogueChoices.size());
-			uint16 offset = ReadWord();
-			uint16 numLines = ReadWord();
-			Common::StringArray lines;
-			if (_executingScriptObjectID == 0) {
-				lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
-			} else {
-				Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-				lines = _engine->DecodeStrings(stringsStream, offset, numLines);
-			}
-			debugC(kDebugScript,
-				   "Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
-				   index, offset, numLines, _executingScriptObjectID, joinDebugStrings(lines).c_str());
-			DialogueChoices.push_back(lines);
-		} else if (opcode1 == 0x17) {
-			// Finish the dialogue choice
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			uint32 x = scriptReadValue32();
-			uint32 y = scriptReadValue32();
-			uint16 side = scriptReadValue16();
-			const uint16 speakerObjectID = activeDialogueSpeakerObjectID != 0 ? activeDialogueSpeakerObjectID : _executingScriptObjectID;
-			debugC(kDebugScript,
-				   "Opcode 17 choice box: speaker=%u rawPos=(%u,%u) side=%u choiceCount=%u",
-				   speakerObjectID, x, y, side, DialogueChoices.size());
-			currentView->ShowDialogueChoice(speakerObjectID, DialogueChoices, Common::Point(x, y), side);
-			requestCallback = false;
-			// NOTE: EndTimer prevents race conditions from overlapping waits
-
-			EndTimer();
-			EndBuffering(lastOpcodeTriggeredSkip);
-			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x18) {
 			// Set the stream to the end and let the calling code figure out that we are done
 			// for this run

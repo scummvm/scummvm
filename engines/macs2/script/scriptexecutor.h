@@ -109,9 +109,13 @@ private:
 	void scriptOpcode0x0A();
 	bool scriptOpcode0x0B();
 	ExecutionResult scriptOpcode0x0C();
+	ExecutionResult scriptOpcode0x0D();
 	bool scriptOpcode0x10();
 	ExecutionResult scriptOpcode0x11();
 	void scriptOpcode0x14();
+	void scriptOpcode0x15();
+	void scriptOpcode0x16();
+	ExecutionResult scriptOpcode0x17();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
