@@ -399,7 +399,7 @@ void ScriptExecutor::scriptStopAnimationImpl() {
 	obj->overloadAnimation.clear();
 }
 
-void ScriptExecutor::scriptChangeAnimationImpl() {
+void ScriptExecutor::scriptOpcode0x0E() {
 	// bp-2h
 	uint32 id = scriptReadValue32();
 	id -= 0x1000;
@@ -854,6 +854,15 @@ uint16 Script::ScriptExecutor::ReadWord() {
 	return result;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x01() {
+	// This writes to a script variable.
+	ReadByte();
+	uint16 variableIndex = ReadWord();
+	ScriptVariable var;
+	scriptReadValuePair(var.a, var.b);
+	_variables[variableIndex] = var;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x02() {
 	// Padding/type byte (same as opcode 0x01) - read and discarded
 	ReadByte();
@@ -893,6 +902,337 @@ void Script::ScriptExecutor::scriptOpcode0x04() {
 	expectedEndLocation = _stream->pos();
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x05() {
+	// Comparison opcode from executeOpcodes (1008:db56).
+	// Reads a comparison sub-opcode, two 32-bit values (v1:v2 and v3:v4),
+	// and skips the following block if the condition is NOT met.
+	// Values are treated as signed 32-bit (v2:v1 = high:low).
+	uint8 opcode2 = ReadByte();
+	Common::String opcodeInfo = IdentifyScriptOpcode(0x5, opcode2);
+	debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
+	uint16 v1; // low word of first value
+	uint16 v2; // high word of first value
+	scriptReadValuePair(v1, v2);
+	uint16 v3; // low word of second value
+	uint16 v4; // high word of second value
+	scriptReadValuePair(v3, v4);
+
+	// conditionMet = true means we execute the block (don't skip)
+	bool conditionMet = false;
+	const int32 val1 = (int32)((uint32)v2 << 16 | (uint32)v1);
+	const int32 val2 = (int32)((uint32)v4 << 16 | (uint32)v3);
+
+	if (opcode2 == 0x01) {
+		// Equal
+		conditionMet = (val1 == val2);
+	} else if (opcode2 == 0x02) {
+		// Not equal
+		conditionMet = (val1 != val2);
+	} else if (opcode2 == 0x03) {
+		// Less than (signed 32-bit)
+		conditionMet = (val1 < val2);
+	} else if (opcode2 == 0x04) {
+		// Greater than (signed 32-bit)
+		conditionMet = (val1 > val2);
+	} else if (opcode2 == 0x05) {
+		// Less than or equal (signed 32-bit)
+		conditionMet = (val1 <= val2);
+	} else if (opcode2 == 0x06) {
+		// Greater than or equal (signed 32-bit)
+		conditionMet = (val1 >= val2);
+	} else {
+		ScriptUnimplementedOpcode_Main(opcode2);
+		return false;
+	}
+
+	if (!conditionMet) {
+		scriptSkipBlock();
+	}
+
+	return true;
+}
+
+void Script::ScriptExecutor::scriptOpcode0x06() {
+	// "Use item on object" comparison from executeOpcodes (1008:db56).
+	// Reads sub-opcode (1=match, 2=NOT match), then the interacted pair
+	// and two comparison objects. Checks both orderings.
+	uint8 subOpcode = ReadByte();
+	uint16 interacted1;
+	uint16 interacted2;
+	scriptReadValuePair(interacted1, interacted2);
+	uint16 object1 = scriptReadValue16();
+	uint16 object2 = scriptReadValue16();
+	const bool match1 = (interacted1 == object1) && (interacted2 == object2);
+	const bool match2 = (interacted1 == object2) && (interacted2 == object1);
+	bool matched = match1 || match2;
+	if (subOpcode == 0x02) {
+		matched = !matched;
+	}
+	if (!matched) {
+		scriptSkipBlock();
+	}
+}
+
+void Script::ScriptExecutor::scriptOpcode0x07() {
+	// Opcode 0x07: no-op (confirmed: no handler in disassembly, falls through to loop).
+	// It has no specific case handling code in the original.
+}
+
+void Script::ScriptExecutor::scriptOpcode0x08() {
+	// This is some kind of skipping as well.
+	scriptSkipAlternate();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x09() {
+	// ExecuteScript does not currently have a dedicated opcode 0x09 dispatch branch.
+}
+
+void Script::ScriptExecutor::scriptOpcode0x0A() {
+	// l0037_DDE8:
+	ScriptPrintString();
+	// Ends execution (confirmed: jumps to e3bd in disassembly).
+	EndBuffering(lastOpcodeTriggeredSkip);
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x0B() {
+	// scriptMoveObject (1008:aa83). Moves an object to a new scene/position.
+	// Handles render list updates for both source and destination scenes.
+	uint32 objectID = scriptReadValue32() - 0x400;
+	uint16 sceneID = scriptReadValue16();
+	int16 x = (int16)scriptReadValue16();
+	int16 y = (int16)scriptReadValue16();
+
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Opcode 0x0B: invalid object %u", objectID);
+		return false;
+	}
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Opcode 0x0B: missing object %u", objectID);
+		return false;
+	}
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	const uint16 currentScene = Scenes::instance().CurrentSceneIndex;
+	const uint16 actorIndex = Scenes::instance().CurrentActorIndex;
+
+	// Step 1: Remove from render list if object was visible in current scene.
+	// Original checks: object in current scene, OR in protagonist's inventory,
+	// OR inside a container that is in the current scene.
+	if (objectID != actorIndex) {
+		bool wasInCurrentScene = (object->SceneIndex == currentScene);
+		if (!wasInCurrentScene && object->SceneIndex == actorIndex + 0x400) {
+			wasInCurrentScene = true; // was in protagonist's inventory
+		}
+		if (!wasInCurrentScene && object->SceneIndex > 0x400) {
+			GameObject *parent = GameObjects::GetObjectByIndex(object->SceneIndex - 0x400);
+			if (parent != nullptr && parent->SceneIndex == currentScene) {
+				wasInCurrentScene = true; // was in a container in current scene
+			}
+		}
+		if (wasInCurrentScene) {
+			Character *c = currentView->GetCharacterByIndex(objectID);
+			if (c != nullptr) {
+				int idx = currentView->GetCharacterArrayIndex(c);
+				if (idx >= 0)
+					currentView->characters.remove_at(idx);
+			}
+		}
+	}
+
+	// Step 2: Update object fields
+	object->SceneIndex = sceneID;
+	object->Position = Common::Point(x, y);
+
+	// Step 3: Add to render list if object is now visible in current scene.
+	if (objectID != actorIndex) {
+		bool isInCurrentScene = (sceneID == currentScene);
+		if (!isInCurrentScene && sceneID == actorIndex + 0x400) {
+			isInCurrentScene = true; // now in protagonist's inventory
+		}
+		if (!isInCurrentScene && sceneID > 0x400) {
+			GameObject *parent = GameObjects::GetObjectByIndex(sceneID - 0x400);
+			if (parent != nullptr && parent->SceneIndex == currentScene) {
+				isInCurrentScene = true; // now in a container in current scene
+			}
+		}
+		if (isInCurrentScene && sceneID == currentScene) {
+			// Add as character to render list
+			Character *c = currentView->GetCharacterByIndex(objectID);
+			if (c == nullptr) {
+				c = new Character();
+				c->GameObject = object;
+				currentView->characters.push_back(c);
+			}
+			c->SetPosition(Common::Point(x, y));
+		}
+	}
+
+	// Step 4: Update inventory tracking
+	if (sceneID == actorIndex + 0x400) {
+		// Moved into protagonist's inventory
+		bool alreadyInInventory = false;
+		for (auto item : currentView->inventoryItems) {
+			if (item->Index == objectID) {
+				alreadyInInventory = true;
+				break;
+			}
+		}
+		if (!alreadyInInventory)
+			currentView->inventoryItems.push_back(object);
+	} else {
+		// Remove from inventory if it was there
+		for (uint i = 0; i < currentView->inventoryItems.size(); i++) {
+			if (currentView->inventoryItems[i]->Index == objectID) {
+				currentView->inventoryItems.remove_at(i);
+				break;
+			}
+		}
+	}
+
+	// Step 5: If object has no runtime data and was the UseInventory target,
+	// reset cursor to Use (0x15)
+	if (object->Blobs.empty()) {
+		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
+			_engine->SetCursorMode(MouseMode::Use);
+			currentView->UpdateCursor();
+		}
+		// Original also rewrites the saved (pre-wait) cursor mode: 0x17 -> 0x15.
+		if (_interactedObjectID == objectID + 0x400 && savedPickupMouseMode == MouseMode::UseInventory) {
+			savedPickupMouseMode = MouseMode::Use;
+		}
+	}
+
+	// Step 6: If moved object is the one whose script is currently executing,
+	// terminate its script (original: sets scriptEndPosition=0, scriptPosition=0)
+	if ((int)objectID == _executingScriptObjectID) {
+		_stream->seek(0, SEEK_END);
+	}
+
+	return true;
+}
+
+ExecutionResult Script::ScriptExecutor::scriptOpcode0x0C() {
+	// Scene change from scriptChangeScene (1008:ad6e).
+	// Original behavior:
+	//   1. Read sceneID, transitionMode, transitionSpeed
+	//   2. Validate: sceneID must be 1..0x200
+	//   3. If mode==0 && speed==0 or speed>0x40: error 0x26
+	//   4. Save old palette, free scene resources, load new scene
+	//   5. Transition:
+	//      mode 0: fade from old palette at given speed
+	//      mode 1: instant cut (clear screen, set palette)
+	//   6. Run init pass (IsSceneInitRun=1) -> runScriptExecutor
+	//   7. Draw scene, restore palette
+	//   8. Set cursor to Walk (0x16)
+	//   9. Set script position to end, executing object to 0x201
+	//  10. If script was NOT already executing: run repeat pass
+	//      (repeatRunFlag=1) -> runScriptExecutor -> (repeatRunFlag=0)
+	//  11. If script WAS executing: error 0x17
+	uint32 newSceneID = scriptReadValue32();
+	const uint16 transitionMode = scriptReadValue16();
+	const uint16 transitionSpeed = scriptReadValue16();
+	g_engine->changeScene(newSceneID, false);
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
+		currentView->startFadingWithSpeed(transitionSpeed);
+	}
+	// Confirmed: executeOpcodes jumps to end-execution path after scriptChangeScene
+	// in the game code
+	// Confirmed: scriptChangeScene resets interactedObjectID and interactedInventoryItemId
+	// or if there is another mechanism for this
+	_interactedObjectID = 0;
+	_interactedOtherObjectID = 0;
+	requestCallback = false;
+	g_engine->ScheduleRun(true);
+	isAwaitingCallback = true;
+	// NOTE: EndTimer prevents race conditions from overlapping waits
+
+	EndTimer();
+	EndFrameWait();
+	EndBuffering(lastOpcodeTriggeredSkip);
+	return ExecutionResult::WaitingForCallback;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x10() {
+	// scriptWalkToPosition (1008:b843). Uses pathfinding like the original:
+	// checks direct walkability first, falls back to A* pathfinding.
+	uint32 objectID = scriptReadValue32() - 0x400;
+	int16 x = (int16)scriptReadValue16();
+	int16 y = (int16)scriptReadValue16();
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	Character *c = currentView ? currentView->GetCharacterByIndex(objectID) : nullptr;
+	if (c == nullptr) {
+		warning("Ignoring walk-to for missing character %u", objectID);
+		return false;
+	}
+
+	Common::Point target(x, y);
+	Common::Point current = c->GetPosition();
+
+	// Check if direct path is walkable (like isPathWalkable in the original)
+	if (c->isPathWalkable(current, target)) {
+		// Direct path is clear - just lerp straight there
+		c->StartLerpTo(target, 1000);
+	} else if (c->IsWalkable(target)) {
+		// Target is walkable but no direct path - use A* pathfinding
+		c->Path.clear();
+		c->PathFinalDestination = target;
+		if (c->calculatePath(target)) {
+			c->CurrentPathIndex = -1;
+			c->IsFollowingPath = c->walkAlongPath();
+		} else {
+			// Pathfinding failed - walk directly as fallback
+			c->StartLerpTo(target, 1000);
+		}
+	} else {
+		// Target is not walkable - set position directly (no movement)
+		// Original: piVar11[0x16]=0, piVar11[0x17]=0, target=current
+	}
+
+	return true;
+}
+
+ExecutionResult Script::ScriptExecutor::scriptOpcode0x11() {
+	// Wait for walk completion from executeOpcodes (1008:db56).
+	// Original: validates object, checks runtime data exists, checks frozen flag,
+	// sets g_wWalkTargetObjectIndex, hides cursor, returns to gameTick.
+	// gameTick checks walk completion each frame.
+	uint32 objectID = scriptReadValue32() - 0x400;
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Opcode 0x11: invalid object %u", objectID);
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return ExecutionResult::ScriptFinished;
+	}
+	GameObject *walkObject = GameObjects::GetObjectByIndex(objectID);
+	if (walkObject == nullptr) {
+		warning("Opcode 0x11: missing object %u", objectID);
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return ExecutionResult::ScriptFinished;
+	}
+	// Original checks runtime+0x231 (frozen/attached flag) → error 0x1F
+	if (walkObject->HasBoundsAttachment) {
+		warning("Opcode 0x11: object %u is frozen (bounds attached)", objectID);
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return ExecutionResult::ScriptFinished;
+	}
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	Character *c = currentView->GetCharacterByIndex(objectID);
+	if (c == nullptr) {
+		// Original: error code 2 (no runtime data). Script execution stops.
+		warning("Opcode 0x11: no character for object %u (no runtime data)", objectID);
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return ExecutionResult::ScriptFinished;
+	}
+	c->RegisterWaitForMovementFinishedEvent();
+	requestCallback = false;
+	isAwaitingCallback = true;
+	EndTimer();
+	EndBuffering(lastOpcodeTriggeredSkip);
+	return ExecutionResult::WaitingForCallback;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x13() {
 	uint16 tag = ReadWord();
 	_stream->seek(0, SEEK_SET);
@@ -909,6 +1249,73 @@ void Script::ScriptExecutor::scriptOpcode0x13() {
 		}
 	}
 	expectedEndLocation = _stream->pos();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x14() {
+	// If we reach opcode 14 regularly, just discard the payload and continue.
+	ReadWord();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x0F() {
+	// The original interpreter stores a frame countdown that is decremented
+	// once per game tick, rather than using a wall-clock timer.
+	uint16 duration = scriptReadValue16();
+	requestCallback = false;
+	StartFrameWait(duration);
+	isAwaitingCallback = true;
+	EndBuffering(lastOpcodeTriggeredSkip);
+}
+
+void Script::ScriptExecutor::scriptOpcode0x12() {
+	// scriptSetPathfinding (1008:c6d7). Sets/clears a pathfinding override.
+	// Index must be in range 200..0xEF (walkability values).
+	// Writes to scene data at index*5 + 0x4EA5 (enable byte) and +0x4EA6 (value).
+	uint16 areaID = scriptReadValue16();
+	uint16 active = scriptReadValue16();
+	uint16 overrideValue = scriptReadValue16();
+	if (active) {
+		g_engine->SetPathfindingOverride(areaID, overrideValue);
+	} else {
+		g_engine->RemovePathfindingOverride(areaID);
+	}
+}
+
+void Script::ScriptExecutor::scriptOpcode0x2E() {
+	// scriptTestSceneAnimFrame: Tests if a scene's special animation blob's
+	// current frame index (via getAnimBlobOffset/source key) falls within
+	// [minFrame, maxFrame]. Result stored in animBlobRangeTestResult for helper FF29.
+	// Index is 0x1000-based in the bytecode (matches opcode 0x0E scriptChangeAnimation,
+	// binary scriptTestSceneAnimFrame at 1008:... subtracts 0x1000).
+	uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	uint32 minFrame = scriptReadValue32();
+	uint32 maxFrame = scriptReadValue32();
+	animBlobRangeTestResult = false;
+	if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance().CurrentSceneSpecialAnimOffsets.size()) {
+		warning("Ignoring scene animation range test for invalid index %u", sceneAnimIndex);
+	} else {
+		const uint16 blobSourceKey = static_cast<uint16>(Scenes::instance().CurrentSceneSpecialAnimOffsets[sceneAnimIndex - 1] >> 16);
+		animBlobRangeTestResult = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
+	}
+}
+
+void Script::ScriptExecutor::scriptOpcode0x39() {
+	if (overlayTextStageActive) {
+		overlayTextStageActive = false;
+	}
+}
+
+void Script::ScriptExecutor::scriptOpcode0x3D() {
+	const uint16 fadeSpeed = scriptReadValue16();
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr && fadeSpeed != 0) {
+		currentView->startFading(fadeSpeed);
+	}
+}
+
+void Script::ScriptExecutor::scriptOpcode0x3F() {
+	if (soundEnabled)
+		_engine->stopCurrentSound();
+	_engine->clearCurrentSoundData();
 }
 
 ExecutionResult Script::ScriptExecutor::ExecuteScript() {
@@ -961,12 +1368,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 		// TODO: convert this into a function lookup table and extract all opcode handling into separate functions, this is just for easier reading
 		if (opcode1 == 0x01) {
-			// This writes to a script variable
-			ReadByte();
-			uint16 variableIndex = ReadWord();
-			ScriptVariable var;
-			scriptReadValuePair(var.a, var.b);
-			_variables[variableIndex] = var;
+			scriptOpcode0x01();
 		} else if (opcode1 == 0x02) {
 			scriptOpcode0x02();
 		} else if (opcode1 == 0x03) {
@@ -974,317 +1376,35 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x04) {
 			scriptOpcode0x04();
 		} else if (opcode1 == 0x5) {
-			// Comparison opcode from executeOpcodes (1008:db56).
-			// Reads a comparison sub-opcode, two 32-bit values (v1:v2 and v3:v4),
-			// and skips the following block if the condition is NOT met.
-			// Values are treated as signed 32-bit (v2:v1 = high:low).
-			uint8 opcode2 = ReadByte();
-			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
-			debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
-			uint16 v1; // low word of first value
-			uint16 v2; // high word of first value
-			scriptReadValuePair(v1, v2);
-			uint16 v3; // low word of second value
-			uint16 v4; // high word of second value
-			scriptReadValuePair(v3, v4);
-
-			// conditionMet = true means we execute the block (don't skip)
-			bool conditionMet = false;
-			int32 val1 = (int32)((uint32)v2 << 16 | (uint32)v1);
-			int32 val2 = (int32)((uint32)v4 << 16 | (uint32)v3);
-
-			if (opcode2 == 0x01) {
-				// Equal
-				conditionMet = (val1 == val2);
-			} else if (opcode2 == 0x02) {
-				// Not equal
-				conditionMet = (val1 != val2);
-			} else if (opcode2 == 0x03) {
-				// Less than (signed 32-bit)
-				conditionMet = (val1 < val2);
-			} else if (opcode2 == 0x04) {
-				// Greater than (signed 32-bit)
-				conditionMet = (val1 > val2);
-			} else if (opcode2 == 0x05) {
-				// Less than or equal (signed 32-bit)
-				conditionMet = (val1 <= val2);
-			} else if (opcode2 == 0x06) {
-				// Greater than or equal (signed 32-bit)
-				conditionMet = (val1 >= val2);
-			} else {
-				ScriptUnimplementedOpcode_Main(opcode2);
+			if (!scriptOpcode0x05()) {
 				EndBuffering(lastOpcodeTriggeredSkip);
 				break;
 			}
-
-			if (!conditionMet) {
-				scriptSkipBlock();
-			}
 		} else if (opcode1 == 0x06) {
-			// "Use item on object" comparison from executeOpcodes (1008:db56).
-			// Reads sub-opcode (1=match, 2=NOT match), then the interacted pair
-			// and two comparison objects. Checks both orderings.
-			uint8 subOpcode = ReadByte();
-			uint16 interacted1;
-			uint16 interacted2;
-			scriptReadValuePair(interacted1, interacted2);
-			uint16 object1 = scriptReadValue16();
-			uint16 object2 = scriptReadValue16();
-			// Check both orderings of the pair
-			const bool match1 = (interacted1 == object1) && (interacted2 == object2);
-			const bool match2 = (interacted1 == object2) && (interacted2 == object1);
-			bool matched = match1 || match2;
-			// Sub-opcode 2 inverts the result (NOT match)
-			if (subOpcode == 0x02) {
-				matched = !matched;
-			}
-			if (!matched) {
-				scriptSkipBlock();
-			}
+			scriptOpcode0x06();
 		} else if (opcode1 == 0x07) {
-			// Opcode 0x07: no-op (confirmed: no handler in disassembly, falls through to loop)
-			// It has no specific case handling code in the original
+			scriptOpcode0x07();
 		} else if (opcode1 == 0x08) {
-			// This is some kind of skipping as well
-			scriptSkipAlternate();
+			scriptOpcode0x08();
 		} else if (opcode1 == 0x10) {
-			// scriptWalkToPosition (1008:b843). Uses pathfinding like the original:
-			// checks direct walkability first, falls back to A* pathfinding.
-			uint32 objectID = scriptReadValue32() - 0x400;
-			int16 x = (int16)scriptReadValue16();
-			int16 y = (int16)scriptReadValue16();
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			Character *c = currentView ? currentView->GetCharacterByIndex(objectID) : nullptr;
-			if (c == nullptr) {
-				warning("Ignoring walk-to for missing character %u", objectID);
+			if (!scriptOpcode0x10()) {
 				continue;
 			}
-
-			Common::Point target(x, y);
-			Common::Point current = c->GetPosition();
-
-			// Check if direct path is walkable (like isPathWalkable in the original)
-			if (c->isPathWalkable(current, target)) {
-				// Direct path is clear - just lerp straight there
-				c->StartLerpTo(target, 1000);
-			} else if (c->IsWalkable(target)) {
-				// Target is walkable but no direct path - use A* pathfinding
-				c->Path.clear();
-				c->PathFinalDestination = target;
-				if (c->calculatePath(target)) {
-					c->CurrentPathIndex = -1;
-					c->IsFollowingPath = c->walkAlongPath();
-				} else {
-					// Pathfinding failed - walk directly as fallback
-					c->StartLerpTo(target, 1000);
-				}
-			} else {
-				// Target is not walkable - set position directly (no movement)
-				// Original: piVar11[0x16]=0, piVar11[0x17]=0, target=current
-			}
 		} else if (opcode1 == 0x11) {
-			// Wait for walk completion from executeOpcodes (1008:db56).
-			// Original: validates object, checks runtime data exists, checks frozen flag,
-			// sets g_wWalkTargetObjectIndex, hides cursor, returns to gameTick.
-			// gameTick checks walk completion each frame.
-			uint32 objectID = scriptReadValue32() - 0x400;
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Opcode 0x11: invalid object %u", objectID);
-				EndBuffering(lastOpcodeTriggeredSkip);
-				return ExecutionResult::ScriptFinished;
-			}
-			GameObject *walkObject = GameObjects::GetObjectByIndex(objectID);
-			if (walkObject == nullptr) {
-				warning("Opcode 0x11: missing object %u", objectID);
-				EndBuffering(lastOpcodeTriggeredSkip);
-				return ExecutionResult::ScriptFinished;
-			}
-			// Original checks runtime+0x231 (frozen/attached flag) → error 0x1F
-			if (walkObject->HasBoundsAttachment) {
-				warning("Opcode 0x11: object %u is frozen (bounds attached)", objectID);
-				EndBuffering(lastOpcodeTriggeredSkip);
-				return ExecutionResult::ScriptFinished;
-			}
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			Character *c = currentView->GetCharacterByIndex(objectID);
-			if (c == nullptr) {
-				// Original: error code 2 (no runtime data). Script execution stops.
-				warning("Opcode 0x11: no character for object %u (no runtime data)", objectID);
-				EndBuffering(lastOpcodeTriggeredSkip);
-				return ExecutionResult::ScriptFinished;
-			}
-			c->RegisterWaitForMovementFinishedEvent();
-			requestCallback = false;
-			isAwaitingCallback = true;
-			EndTimer();
-			EndBuffering(lastOpcodeTriggeredSkip);
-			return ExecutionResult::WaitingForCallback;
+			return scriptOpcode0x11();
 		} else if (opcode1 == 0x13) {
 			scriptOpcode0x13();
 		} else if (opcode1 == 0x14) {
-			// If we reach opcode 14 regularly, just discard the payload and continue
-			ReadWord();
+			scriptOpcode0x14();
 		} else if (opcode1 == 0x0a) {
-			// l0037_DDE8:
-			ScriptPrintString();
-			// Ends execution (confirmed: jumps to e3bd in disassembly)
-			EndBuffering(lastOpcodeTriggeredSkip);
+			scriptOpcode0x0A();
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0b) {
-			// scriptMoveObject (1008:aa83). Moves an object to a new scene/position.
-			// Handles render list updates for both source and destination scenes.
-			uint32 objectID = scriptReadValue32() - 0x400;
-			uint16 sceneID = scriptReadValue16();
-			int16 x = (int16)scriptReadValue16();
-			int16 y = (int16)scriptReadValue16();
-
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Opcode 0x0B: invalid object %u", objectID);
+			if (!scriptOpcode0x0B()) {
 				continue;
-			}
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Opcode 0x0B: missing object %u", objectID);
-				continue;
-			}
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			const uint16 currentScene = Scenes::instance().CurrentSceneIndex;
-			const uint16 actorIndex = Scenes::instance().CurrentActorIndex;
-
-			// Step 1: Remove from render list if object was visible in current scene.
-			// Original checks: object in current scene, OR in protagonist's inventory,
-			// OR inside a container that is in the current scene.
-			if (objectID != actorIndex) {
-				bool wasInCurrentScene = (object->SceneIndex == currentScene);
-				if (!wasInCurrentScene && object->SceneIndex == actorIndex + 0x400) {
-					wasInCurrentScene = true; // was in protagonist's inventory
-				}
-				if (!wasInCurrentScene && object->SceneIndex > 0x400) {
-					GameObject *parent = GameObjects::GetObjectByIndex(object->SceneIndex - 0x400);
-					if (parent != nullptr && parent->SceneIndex == currentScene) {
-						wasInCurrentScene = true; // was in a container in current scene
-					}
-				}
-				if (wasInCurrentScene) {
-					Character *c = currentView->GetCharacterByIndex(objectID);
-					if (c != nullptr) {
-						int idx = currentView->GetCharacterArrayIndex(c);
-						if (idx >= 0)
-							currentView->characters.remove_at(idx);
-					}
-				}
-			}
-
-			// Step 2: Update object fields
-			object->SceneIndex = sceneID;
-			object->Position = Common::Point(x, y);
-
-			// Step 3: Add to render list if object is now visible in current scene.
-			if (objectID != actorIndex) {
-				bool isInCurrentScene = (sceneID == currentScene);
-				if (!isInCurrentScene && sceneID == actorIndex + 0x400) {
-					isInCurrentScene = true; // now in protagonist's inventory
-				}
-				if (!isInCurrentScene && sceneID > 0x400) {
-					GameObject *parent = GameObjects::GetObjectByIndex(sceneID - 0x400);
-					if (parent != nullptr && parent->SceneIndex == currentScene) {
-						isInCurrentScene = true; // now in a container in current scene
-					}
-				}
-				if (isInCurrentScene && sceneID == currentScene) {
-					// Add as character to render list
-					Character *c = currentView->GetCharacterByIndex(objectID);
-					if (c == nullptr) {
-						c = new Character();
-						c->GameObject = object;
-						currentView->characters.push_back(c);
-					}
-					c->SetPosition(Common::Point(x, y));
-				}
-			}
-
-			// Step 4: Update inventory tracking
-			if (sceneID == actorIndex + 0x400) {
-				// Moved into protagonist's inventory
-				bool alreadyInInventory = false;
-				for (auto item : currentView->inventoryItems) {
-					if (item->Index == objectID) {
-						alreadyInInventory = true;
-						break;
-					}
-				}
-				if (!alreadyInInventory)
-					currentView->inventoryItems.push_back(object);
-			} else {
-				// Remove from inventory if it was there
-				for (uint i = 0; i < currentView->inventoryItems.size(); i++) {
-					if (currentView->inventoryItems[i]->Index == objectID) {
-						currentView->inventoryItems.remove_at(i);
-						break;
-					}
-				}
-			}
-
-			// Step 5: If object has no runtime data and was the UseInventory target,
-			// reset cursor to Use (0x15)
-			if (object->Blobs.empty()) {
-				if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
-					_engine->SetCursorMode(MouseMode::Use);
-					currentView->UpdateCursor();
-				}
-				// Original also rewrites the saved (pre-wait) cursor mode: 0x17 -> 0x15.
-				if (_interactedObjectID == objectID + 0x400 && savedPickupMouseMode == MouseMode::UseInventory) {
-					savedPickupMouseMode = MouseMode::Use;
-				}
-			}
-
-			// Step 6: If moved object is the one whose script is currently executing,
-			// terminate its script (original: sets scriptEndPosition=0, scriptPosition=0)
-			if ((int)objectID == _executingScriptObjectID) {
-				_stream->seek(0, SEEK_END);
 			}
 		} else if (opcode1 == 0x0c) {
-			// Scene change from scriptChangeScene (1008:ad6e).
-			// Original behavior:
-			//   1. Read sceneID, transitionMode, transitionSpeed
-			//   2. Validate: sceneID must be 1..0x200
-			//   3. If mode==0 && speed==0 or speed>0x40: error 0x26
-			//   4. Save old palette, free scene resources, load new scene
-			//   5. Transition:
-			//      mode 0: fade from old palette at given speed
-			//      mode 1: instant cut (clear screen, set palette)
-			//   6. Run init pass (IsSceneInitRun=1) -> runScriptExecutor
-			//   7. Draw scene, restore palette
-			//   8. Set cursor to Walk (0x16)
-			//   9. Set script position to end, executing object to 0x201
-			//  10. If script was NOT already executing: run repeat pass
-			//      (repeatRunFlag=1) -> runScriptExecutor -> (repeatRunFlag=0)
-			//  11. If script WAS executing: error 0x17
-			uint32 newSceneID = scriptReadValue32();
-			const uint16 transitionMode = scriptReadValue16();
-			const uint16 transitionSpeed = scriptReadValue16();
-			g_engine->changeScene(newSceneID, false);
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
-				currentView->startFadingWithSpeed(transitionSpeed);
-			}
-			// Confirmed: executeOpcodes jumps to end-execution path after scriptChangeScene
-			// in the game code
-			// Confirmed: scriptChangeScene resets interactedObjectID and interactedInventoryItemId
-			// or if there is another mechanism for this
-			_interactedObjectID = 0;
-			_interactedOtherObjectID = 0;
-			requestCallback = false;
-			g_engine->ScheduleRun(true);
-			isAwaitingCallback = true;
-			// NOTE: EndTimer prevents race conditions from overlapping waits
-
-			EndTimer();
-			EndFrameWait();
-			EndBuffering(lastOpcodeTriggeredSkip);
-			return ExecutionResult::WaitingForCallback;
+			return scriptOpcode0x0C();
 		} else if (opcode1 == 0x0d) {
 			// Show a dialogue option
 			uint32 objectID = scriptReadValue32() - 0x400;
@@ -1318,35 +1438,18 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0E) {
-			scriptChangeAnimationImpl();
+			scriptOpcode0x0E();
 		} else if (opcode1 == 0x0F) {
-			// The original interpreter stores a frame countdown that is decremented
-			// once per game tick, rather than using a wall-clock timer.
-			uint16 duration = scriptReadValue16();
-			requestCallback = false;
-			StartFrameWait(duration);
-			isAwaitingCallback = true;
-			EndBuffering(lastOpcodeTriggeredSkip);
+			scriptOpcode0x0F();
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x12) {
-			// scriptSetPathfinding (1008:c6d7). Sets/clears a pathfinding override.
-			// Index must be in range 200..0xEF (walkability values).
-			// Writes to scene data at index*5 + 0x4EA5 (enable byte) and +0x4EA6 (value).
-			uint16 areaID = scriptReadValue16();
-			uint16 active = scriptReadValue16();
-			uint16 overrideValue = scriptReadValue16();
-			if (active) {
-				g_engine->SetPathfindingOverride(areaID, overrideValue);
-			} else {
-				g_engine->RemovePathfindingOverride(areaID);
-			}
+			scriptOpcode0x12();
 		} else if (opcode1 == 0x14) {
 			// Opcode 0x14: consume/skip a word value (confirmed: just calls scriptReadWord in disassembly)
 			ReadWord();
 		} else if (opcode1 == 0x15) {
 			// Mark that we are gathering strings for setting up a dialogue choice
 			DialogueChoices.clear();
-
 		} else if (opcode1 == 0x16) {
 			// Add a dialogue choice
 			uint16 index = scriptReadValue16();
@@ -1755,21 +1858,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 			object->RuntimeFlag22F = enabled;
 		} else if (opcode1 == 0x2E) {
-			// scriptTestSceneAnimFrame: Tests if a scene's special animation blob's
-			// current frame index (via getAnimBlobOffset/source key) falls within
-			// [minFrame, maxFrame]. Result stored in animBlobRangeTestResult for helper FF29.
-			// Index is 0x1000-based in the bytecode (matches opcode 0x0E scriptChangeAnimation,
-			// binary scriptTestSceneAnimFrame at 1008:... subtracts 0x1000).
-			uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
-			uint32 minFrame = scriptReadValue32();
-			uint32 maxFrame = scriptReadValue32();
-			animBlobRangeTestResult = false;
-			if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance().CurrentSceneSpecialAnimOffsets.size()) {
-				warning("Ignoring scene animation range test for invalid index %u", sceneAnimIndex);
-			} else {
-				const uint16 blobSourceKey = static_cast<uint16>(Scenes::instance().CurrentSceneSpecialAnimOffsets[sceneAnimIndex - 1] >> 16);
-				animBlobRangeTestResult = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
-			}
+			scriptOpcode0x2E();
 		} else if (opcode1 == 0x2F) {
 			// scriptTestObjectAnimFrame: Tests if an object's animation blob's
 			// current frame index (via getAnimBlobOffset/source key) falls within
@@ -1917,9 +2006,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			}
 		} else if (opcode1 == 0x39) {
 			// scriptEndOverlayText (1008:d80f). Clears the overlay text stage.
-			if (overlayTextStageActive) {
-				overlayTextStageActive = false;
-			}
+			scriptOpcode0x39();
 		} else if (opcode1 == 0x3A) {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView == nullptr) {
@@ -1988,11 +2075,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				currentView->startFadeToBlack(fadeSpeed);
 			}
 		} else if (opcode1 == 0x3D) {
-			const uint16 fadeSpeed = scriptReadValue16();
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr && fadeSpeed != 0) {
-				currentView->startFading(fadeSpeed);
-			}
+			scriptOpcode0x3D();
 		} else if (opcode1 == 0x3E) {
 			const uint8 resourceIndex = ReadByte();
 			Common::Array<uint8> soundData;
@@ -2003,9 +2086,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				_engine->stopCurrentSound();
 			_engine->setCurrentSoundData(soundData);
 		} else if (opcode1 == 0x3F) {
-			if (soundEnabled)
-				_engine->stopCurrentSound();
-			_engine->clearCurrentSoundData();
+			scriptOpcode0x3F();
 		} else if (opcode1 == 0x40) {
 			if (soundEnabled) {
 				if (!_engine->hasCurrentSound()) {
