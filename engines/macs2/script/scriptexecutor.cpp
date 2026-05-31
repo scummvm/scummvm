@@ -178,23 +178,6 @@ void ScriptExecutor::scriptSkipAlternate() {
 	isSkipping = false;
 }
 
-void ScriptExecutor::SkipUntil14() {
-	uint16 tag = ReadWord();
-	_stream->seek(0, SEEK_SET);
-	while (_stream->pos() < _stream->size()) {
-		uint8 opcode = ReadByte();
-		uint8 length = ReadByte();
-		if (opcode == 0x14) {
-			uint16 tag14 = ReadWord();
-			if (tag14 == tag) {
-				return;
-			}
-		} else {
-			_stream->seek(length, SEEK_CUR);
-		}
-	}
-}
-
 bool ScriptExecutor::skipToEndOfSkippableSection() {
 	// Button 8 skip from handleInput (1008:e8bf):
 	// Reads opcode+length pairs, advances stream by length bytes,
@@ -871,6 +854,63 @@ uint16 Script::ScriptExecutor::ReadWord() {
 	return result;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x02() {
+	// Padding/type byte (same as opcode 0x01) - read and discarded
+	ReadByte();
+	uint16 variableIndex = ReadWord();
+	// We skip the left shift and just read the first value directly
+	uint16 throwaway;
+	uint16 value1;
+	scriptReadValuePair(throwaway, value1);
+	uint16 value2;
+	uint16 value3;
+	scriptReadValuePair(value2, value3);
+	value2 |= value1;
+	value3 |= 0x00;
+	SetVariableValue(variableIndex, value2, value3);
+}
+
+void Script::ScriptExecutor::scriptOpcode0x03() {
+	uint16 res1;
+	uint16 res2;
+	scriptReadValuePair(res1, res2);
+	expectedEndLocation = _stream->pos();
+	if (res1 | res2) {
+		scriptSkipBlock();
+	}
+	expectedEndLocation = _stream->pos();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x04() {
+	uint16 result1;
+	uint16 result2;
+	scriptReadValuePair(result1, result2);
+	expectedEndLocation = _stream->pos();
+	// If any bit is set in the result, we skip, otherwise we fall through and continue the loop
+	if ((result1 | result2) == 0) {
+		scriptSkipBlock();
+	}
+	expectedEndLocation = _stream->pos();
+}
+
+void Script::ScriptExecutor::scriptOpcode0x13() {
+	uint16 tag = ReadWord();
+	_stream->seek(0, SEEK_SET);
+	while (_stream->pos() < _stream->size()) {
+		uint8 opcode = ReadByte();
+		uint8 length = ReadByte();
+		if (opcode == 0x14) {
+			uint16 tag14 = ReadWord();
+			if (tag14 == tag) {
+				return;
+			}
+		} else {
+			_stream->seek(length, SEEK_CUR);
+		}
+	}
+	expectedEndLocation = _stream->pos();
+}
+
 ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance().CurrentSceneIndex, IsSceneInitRun, repeatRunFlag);
 	isRunningScript = true;
@@ -928,38 +968,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			scriptReadValuePair(var.a, var.b);
 			_variables[variableIndex] = var;
 		} else if (opcode1 == 0x02) {
-			// Padding/type byte (same as opcode 0x01) - read and discarded
-			ReadByte();
-			uint16 variableIndex = ReadWord();
-			// We skip the left shift and just read the first value directly
-			uint16 throwaway;
-			uint16 value1;
-			scriptReadValuePair(throwaway, value1);
-			uint16 value2;
-			uint16 value3;
-			scriptReadValuePair(value2, value3);
-			value2 |= value1;
-			value3 |= 0x00;
-			SetVariableValue(variableIndex, value2, value3);
+			scriptOpcode0x02();
 		} else if (opcode1 == 0x03) {
-			uint16 res1;
-			uint16 res2;
-			scriptReadValuePair(res1, res2);
-			expectedEndLocation = _stream->pos();
-			if (res1 | res2) {
-				scriptSkipBlock();
-			}
-			expectedEndLocation = _stream->pos();
+			scriptOpcode0x03();
 		} else if (opcode1 == 0x04) {
-			uint16 result1;
-			uint16 result2;
-			scriptReadValuePair(result1, result2);
-			expectedEndLocation = _stream->pos();
-			// If any bit is set in the result, we skip, otherwise we fall through and continue the loop
-			if ((result1 | result2) == 0) {
-				scriptSkipBlock();
-			}
-			expectedEndLocation = _stream->pos();
+			scriptOpcode0x04();
 		} else if (opcode1 == 0x5) {
 			// Comparison opcode from executeOpcodes (1008:db56).
 			// Reads a comparison sub-opcode, two 32-bit values (v1:v2 and v3:v4),
@@ -1108,8 +1121,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x13) {
-			SkipUntil14();
-			expectedEndLocation = _stream->pos();
+			scriptOpcode0x13();
 		} else if (opcode1 == 0x14) {
 			// If we reach opcode 14 regularly, just discard the payload and continue
 			ReadWord();
