@@ -1339,6 +1339,110 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x17() {
 	return ExecutionResult::WaitingForCallback;
 }
 
+ExecutionResult Script::ScriptExecutor::scriptOpcode0x18() {
+	// Set the stream to the end and let the calling code figure out that we are done
+	// for this run.
+	_stream->seek(_stream->size(), SEEK_SET);
+	EndBuffering(lastOpcodeTriggeredSkip);
+	return ExecutionResult::ScriptFinished;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x19() {
+	// Walk to and pick up an object.
+	uint32 actorIndex = scriptReadValue32() - 0x400;
+	uint32 objectIndex = scriptReadValue32() - 0x400;
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	Character *actor = currentView->GetCharacterByIndex(actorIndex);
+	GameObject *targetObject = GameObjects::GetObjectByIndex(objectIndex);
+	if (pickupInProgress) {
+		EndTimer();
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return true;
+	}
+	if (actor == nullptr || targetObject == nullptr) {
+		warning("Invalid pickup request for actor %u target %u", actorIndex, objectIndex);
+		return false;
+	}
+	if (actorIndex == objectIndex || targetObject->SceneIndex == actor->GameObject->Index) {
+		warning("Ignoring invalid pickup request for actor %u target %u", actorIndex, objectIndex);
+		return false;
+	}
+	if (targetObject->SceneIndex != actor->GameObject->SceneIndex) {
+		warning("Ignoring pickup across scenes for actor %u target %u", actorIndex, objectIndex);
+		return false;
+	}
+	pickupInProgress = true;
+	pickupActorObjectID = actorIndex;
+	pickupTargetObjectID = objectIndex;
+	savedPickupMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
+	currentView->activeInventoryItem = nullptr;
+	_engine->SetCursorMode(savedPickupMouseMode);
+	currentView->UpdateCursor();
+	actor->StartPickup(targetObject);
+	requestCallback = false;
+	isAwaitingCallback = true;
+	// NOTE: EndTimer prevents race conditions from overlapping waits
+
+	EndTimer();
+	EndBuffering(lastOpcodeTriggeredSkip);
+	return true;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x1A() {
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	uint16 value217 = scriptReadValue16();
+	uint16 value219 = scriptReadValue16();
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring object runtime setup for invalid object %d", objectID);
+		return false;
+	}
+
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	if (object == nullptr) {
+		warning("Ignoring object runtime setup for missing object %d", objectID);
+		return false;
+	}
+
+	object->RuntimeValue217 = value217;
+	object->RuntimeValue219 = value219;
+	return true;
+}
+
+bool Script::ScriptExecutor::scriptOpcode0x1B() {
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	uint16 slotID = scriptReadValue16();
+	uint16 value = scriptReadValue16();
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring object slot setup for invalid object %d", objectID);
+		return false;
+	}
+
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	if (object == nullptr) {
+		warning("Ignoring object slot setup for missing object %d", objectID);
+		return false;
+	}
+
+	if (slotID < 1 || slotID > ARRAYSIZE(object->RuntimeSlotValues)) {
+		warning("Ignoring object slot setup for invalid slot %u on object %d", slotID, objectID);
+		return false;
+	}
+
+	object->RuntimeSlotValues[slotID - 1] = value;
+	return true;
+}
+
+void Script::ScriptExecutor::scriptOpcode0x1C() {
+	// Sets g_wScriptSkippable [102Ah] = 1.
+	scriptSkippable = true;
+}
+
+void Script::ScriptExecutor::scriptOpcode0x1D() {
+	// Sets g_wScriptSkippable [102Ah] = 0.
+	scriptSkippable = false;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -1488,6 +1592,25 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			scriptOpcode0x16();
 		} else if (opcode1 == 0x17) {
 			return scriptOpcode0x17();
+		} else if (opcode1 == 0x18) {
+			return scriptOpcode0x18();
+		} else if (opcode1 == 0x19) {
+			if (scriptOpcode0x19()) {
+				return ExecutionResult::WaitingForCallback;
+			}
+			continue;
+		} else if (opcode1 == 0x1a) {
+			if (!scriptOpcode0x1A()) {
+				continue;
+			}
+		} else if (opcode1 == 0x1b) {
+			if (!scriptOpcode0x1B()) {
+				continue;
+			}
+		} else if (opcode1 == 0x1c) {
+			scriptOpcode0x1C();
+		} else if (opcode1 == 0x1d) {
+			scriptOpcode0x1D();
 		} else if (opcode1 == 0x0b) {
 			if (!scriptOpcode0x0B()) {
 				continue;
@@ -1506,96 +1629,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x14) {
 			// Opcode 0x14: consume/skip a word value (confirmed: just calls scriptReadWord in disassembly)
 			ReadWord();
-		} else if (opcode1 == 0x18) {
-			// Set the stream to the end and let the calling code figure out that we are done
-			// for this run
-			_stream->seek(_stream->size(), SEEK_SET);
-			EndBuffering(lastOpcodeTriggeredSkip);
-			return ExecutionResult::ScriptFinished;
-		} else if (opcode1 == 0x19) {
-			// Walk to and pick up an object
-			uint32 actorIndex = scriptReadValue32() - 0x400;
-			uint32 objectIndex = scriptReadValue32() - 0x400;
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			Character *actor = currentView->GetCharacterByIndex(actorIndex);
-			GameObject *targetObject = GameObjects::GetObjectByIndex(objectIndex);
-			if (pickupInProgress) {
-				EndTimer();
-				EndBuffering(lastOpcodeTriggeredSkip);
-				return ExecutionResult::WaitingForCallback;
-			}
-			if (actor == nullptr || targetObject == nullptr) {
-				warning("Invalid pickup request for actor %u target %u", actorIndex, objectIndex);
-				continue;
-			}
-			if (actorIndex == objectIndex || targetObject->SceneIndex == actor->GameObject->Index) {
-				warning("Ignoring invalid pickup request for actor %u target %u", actorIndex, objectIndex);
-				continue;
-			}
-			if (targetObject->SceneIndex != actor->GameObject->SceneIndex) {
-				warning("Ignoring pickup across scenes for actor %u target %u", actorIndex, objectIndex);
-				continue;
-			}
-			pickupInProgress = true;
-			pickupActorObjectID = actorIndex;
-			pickupTargetObjectID = objectIndex;
-			savedPickupMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
-			currentView->activeInventoryItem = nullptr;
-			_engine->SetCursorMode(savedPickupMouseMode);
-			currentView->UpdateCursor();
-			actor->StartPickup(targetObject);
-			requestCallback = false;
-			isAwaitingCallback = true;
-			// NOTE: EndTimer prevents race conditions from overlapping waits
-
-			EndTimer();
-			EndBuffering(lastOpcodeTriggeredSkip);
-			return ExecutionResult::WaitingForCallback;
-		} else if (opcode1 == 0x1a) {
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			uint16 value217 = scriptReadValue16();
-			uint16 value219 = scriptReadValue16();
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring object runtime setup for invalid object %d", objectID);
-				continue;
-			}
-
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			if (object == nullptr) {
-				warning("Ignoring object runtime setup for missing object %d", objectID);
-				continue;
-			}
-
-			object->RuntimeValue217 = value217;
-			object->RuntimeValue219 = value219;
-		} else if (opcode1 == 0x1b) {
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			uint16 slotID = scriptReadValue16();
-			uint16 value = scriptReadValue16();
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring object slot setup for invalid object %d", objectID);
-				continue;
-			}
-
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			if (object == nullptr) {
-				warning("Ignoring object slot setup for missing object %d", objectID);
-				continue;
-			}
-
-			if (slotID < 1 || slotID > ARRAYSIZE(object->RuntimeSlotValues)) {
-				warning("Ignoring object slot setup for invalid slot %u on object %d", slotID, objectID);
-				continue;
-			}
-
-			object->RuntimeSlotValues[slotID - 1] = value;
-		} else if (opcode1 == 0x1c) {
-			// Sets g_wScriptSkippable [102Ah] = 1
-			scriptSkippable = true;
-		} else if (opcode1 == 0x1d) {
-			// Sets g_wScriptSkippable [102Ah] = 0
-			scriptSkippable = false;
 		} else if (opcode1 == 0x1e) {
 			// scriptPlayAnimation (1008:bd58)
 			uint32 objectID = scriptReadValue32() - 0x400;
