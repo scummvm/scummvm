@@ -218,7 +218,7 @@ static void room_407_init() {
 		local->last_spin = -1;
 		local->his_score_int = 0;
 		local->my_score_int = 0;
-		local->will_give = true;
+		local->will_give = -1;
 	}
 
 	if (global[player_persona] == PLAYER_IS_PID) {

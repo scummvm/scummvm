@@ -739,11 +739,27 @@ static void conv_param_load(ConvScriptParams *params) {
 // paramNum: 0 = param1, 1 = param2
 // ---------------------------------------------------------------------------
 static int16 conv_scr_get_param(ConvScriptParams *params, int paramNum) {
+	int16 result;
+
 	if (paramNum) {
-		return params->param2IsVar == 1 ? *conv_get_variable(params->param2) : params->param2;
+		if (params->param2IsVar < 1) {
+			result = params->param2;
+		} else {
+			result = *conv_get_variable(params->param2);
+			if (params->param2IsVar == 2)
+				result = !result ? 1 : 0;
+		}
 	} else {
-		return params->param1IsVar == 1 ? *conv_get_variable(params->param1) : params->param1;
+		if (params->param1IsVar < 1) {
+			result = params->param1;
+		} else {
+			result = *conv_get_variable(params->param1);
+			if (params->param1IsVar == 2)
+				result = !result ? 1 : 0;
+		}
 	}
+
+	return result;
 }
 
 // ---------------------------------------------------------------------------
