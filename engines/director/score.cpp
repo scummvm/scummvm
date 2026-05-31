@@ -86,6 +86,7 @@ Score::Score(Movie *movie, bool haveInteractivity) {
 	_activeFade = false;
 	_exitFrameCalled = false;
 	_stopPlayCalled = false;
+	_playbackPaused = false;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
@@ -440,7 +441,7 @@ bool Score::isWaitingForNextFrame() {
 void Score::updateCurrentFrame() {
 	uint32 nextFrameNumberToLoad = _curFrameNumber;
 
-	if (!_vm->_playbackPaused) {
+	if (!_playbackPaused) {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
 			// when jumping.
@@ -506,7 +507,7 @@ void Score::updateCurrentFrame() {
 		// Finally, update the channels and buffer any dirty rectangles.
 		// This will ignore any channel data that is overridden with the puppet flag.
 		updateSprites(kRenderModeNormal, true);
-	} else if (!_vm->_playbackPaused) {
+	} else if (!_playbackPaused) {
 		// Loading the same frame; e.g. "go to frame".
 		// This is mostly a no-op, however any sprite changes for
 		// non-puppet sprites will be reverted.
@@ -626,7 +627,7 @@ void Score::update() {
 	}
 
 	// Process timeout events independently of the frame delay
-	if (_haveInteractivity && !_vm->_playbackPaused) {
+	if (_haveInteractivity && !_playbackPaused) {
 		if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
 			_movie->processEvent(kEventTimeout);
 			_movie->_lastTimeOut = _vm->getMacTicks();
@@ -651,7 +652,7 @@ void Score::update() {
 	}
 
 	// For previous frame
-	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+	if (!_window->_newMovieStarted && !_playbackPaused) {
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// exitFrame is not called in this case.
@@ -685,7 +686,7 @@ void Score::update() {
 	}
 
 	// Kill behaviors if they are going to expire next frame
-	if (!_vm->_playbackPaused)
+	if (!_playbackPaused)
 		killScriptInstances(_nextFrame ? _nextFrame : _curFrameNumber + 1);
 
 	CastMemberID oldSound1 = _currentFrame->_mainChannels.sound1;
@@ -716,7 +717,7 @@ void Score::update() {
 		// Director 4 and below will allow infinite recursion via the perFrameHook.
 		if (_version < kFileVer500) {
 			// new frame, first call the perFrameHook (if one exists)
-			if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+			if (!_window->_newMovieStarted && !_playbackPaused) {
 				// Call the perFrameHook as soon as a frame switch is done.
 				// If there is a transition, the perFrameHook is called
 				// after each transition subframe instead of here.
@@ -742,7 +743,7 @@ void Score::update() {
 		// Director 5 and above actually check for recursion for the perFrameHook.
 		if (_version >= kFileVer500) {
 			// new frame, first call the perFrameHook (if one exists)
-			if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+			if (!_window->_newMovieStarted && !_playbackPaused) {
 				// Call the perFrameHook as soon as a frame switch is done.
 				// If there is a transition, the perFrameHook is called
 				// after each transition subframe instead of here.
@@ -812,7 +813,7 @@ void Score::update() {
 	// then call the stepMovie hook (if one exists)
 	// D4 and above only call it if _allowOutdatedLingo is enabled.
 	count = _window->frozenLingoStateCount();
-	if (!_vm->_playbackPaused && (_version < kFileVer400 || _movie->_allowOutdatedLingo)) {
+	if (!_playbackPaused && (_version < kFileVer400 || _movie->_allowOutdatedLingo)) {
 		_movie->processEvent(kEventStepMovie);
 	}
 	// If this stepMovie call is frozen, drop the next enterFrame event
@@ -827,7 +828,7 @@ void Score::update() {
 
 	// then call the enterFrame hook (if one exists)
 	count = _window->frozenLingoStateCount();
-	if (!_vm->_playbackPaused) {
+	if (!_playbackPaused) {
 		_exitFrameCalled = false;
 		if (_version >= kFileVer400) {
 			_movie->processEvent(kEventEnterFrame);
@@ -848,7 +849,7 @@ void Score::update() {
 	if (!_nextFrame && _window->_nextMovie.movie.empty() && !processFrozenScripts())
 		return;
 
-	if (!_vm->_playbackPaused) {
+	if (!_playbackPaused) {
 		if (_movie->_timeOutPlay)
 			_movie->_lastTimeOut = _vm->getMacTicks();
 	}
@@ -869,7 +870,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, boo
 		incrementFilmLoops();
 		_window->render();
 		_skipTransition = false;
-	} else if (g_director->_playbackPaused) {
+	} else if (_playbackPaused) {
 		updateSprites(mode);
 		incrementFilmLoops();
 		_window->render();

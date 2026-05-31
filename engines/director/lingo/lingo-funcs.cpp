@@ -40,10 +40,11 @@
 namespace Director {
 
 void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
-	_vm->_playbackPaused = false;
-
 	if (!_vm->getCurrentMovie())
 		return;
+
+	// A `go` resumes the current movie's playback head.
+	_vm->getCurrentMovie()->getScore()->_playbackPaused = false;
 
 	if (movie.type == VOID && frame.type == VOID)
 		return;

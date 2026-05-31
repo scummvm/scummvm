@@ -227,6 +227,9 @@ public:
 	bool _activeFade;
 	bool _exitFrameCalled;
 	bool _stopPlayCalled;
+	// Whether this movie's playback head is paused (Lingo `pause`/`continue`).
+	// This is per-movie: pausing a MIAW must not freeze the stage and vice versa.
+	bool _playbackPaused;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
