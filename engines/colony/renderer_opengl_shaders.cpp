@@ -693,7 +693,7 @@ void OpenGLShaderRenderer::setDepthState(bool testEnabled, bool writeEnabled) {
 }
 
 void OpenGLShaderRenderer::setDepthRange(float nearVal, float farVal) {
-	glDepthRange(nearVal, farVal);
+	glDepthRangef(nearVal, farVal);
 }
 
 void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY,
@@ -767,7 +767,7 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 void OpenGLShaderRenderer::end3D() {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-	glDepthRange(0.0, 1.0);
+	glDepthRangef(0.0f, 1.0f);
 	glDisable(GL_SCISSOR_TEST);
 
 	// Restore the 2D viewport so subsequent overlay draws (dashboard, menu,
