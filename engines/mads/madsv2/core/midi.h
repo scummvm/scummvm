@@ -29,6 +29,7 @@ namespace MADSV2 {
 
 extern void midi_play(const char *name);
 extern void midi_stop();
+inline void midi_loop() {}
 
 } // namespace MADSV2
 } // namespace MADS

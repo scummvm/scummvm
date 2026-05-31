@@ -20,10 +20,13 @@
  */
 
 #include "common/textconsole.h"
-#include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/core/digi.h"
+#include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/core/error.h"
+#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/forest/extra.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -167,6 +170,18 @@ void sync_room(Common::Serializer &s) {
 void global_digi_play(int num) {
 	// TODO
 	warning("TODO: global_digi_play");
+}
+
+void global_daemon_code() {
+	global[player_selected_object] = -1;
+
+	digi_read_another_chunk();
+
+	if (global[9]) midi_loop();  // please loop the damn music
+
+	if (section_id != 9) {
+		do_interface_for_ouaf();
+	}
 }
 
 } // namespace Forest

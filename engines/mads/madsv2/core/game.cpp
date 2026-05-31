@@ -63,9 +63,9 @@
 #include "mads/madsv2/core/camera.h"
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/text.h"
-#include "mads/madsv2/core/extra.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/screen.h"
+#include "mads/madsv2/forest/extra.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -1678,55 +1678,10 @@ static void game_system_maintenance() {
 	}
 }
 
-
-void do_interface_for_ouaf() {
-	if (mouse_y > 156 &&
-		mouse_stop_stroke &&
-		player.commands_allowed &&
-		/* global[4] == -1 && */
-		!kernel.trigger &&
-		/* player.command_ready && */
-		inter_input_mode == INTER_LIMITED_SENTENCES &&
-		!global[2]  /* inventory_is_displayed */
-		/* pl conv_control.running < 0 */) {
-		if (room_id == 199) {  // Taranjeet's Journal
-
-			leave_journal();
-
-		} else if (mouse_x < 64) {
-			display_journal();
-		} else if (mouse_x < 139) {
-			display_inventory();
-		} else if (mouse_x < 195) {
-		} else if (mouse_x < 250) {
-			solve_me_selected();
-		} else {
-			door_selected();
-		}
-	}
-
-
-	if (kernel.trigger == 40) {
-		display_inventory();
-	}
-}
-
-
 /**
  * Calls, in proper order, all daemon code for this framing round.
  */
 static void game_daemon_code() {
-#if 0
-	global[4] = -1;  // turn off global[player_selected_object]
-
-	digi_read_another_chunk();
-
-	if (global[9]) midi_loop();  // please loop the damn music
-
-	if (section_id != 9) {
-		do_interface_for_ouaf();
-	}
-#endif
 	kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 
 	game_exec_function(room_daemon_code_pointer);

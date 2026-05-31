@@ -26,7 +26,7 @@
 
 namespace MADS {
 namespace MADSV2 {
-
+namespace Forest {
 
 #define JOURNAL_FLY            1 
 #define BP_FLY                 2
@@ -49,10 +49,10 @@ extern void fly_on_screen(int flying_object);
 extern void fly_off_screen(int flying_object);
 
 extern void display_inventory(void);
-extern void display_journal(void);
-extern void leave_journal(void);
 extern void solve_me_selected(void);
 extern void door_selected(void);
+
+extern void do_interface_for_ouaf();
 
 extern void extra_spinning_object(void);
 extern void extra_inven_preserve_palette(void);
@@ -62,6 +62,7 @@ extern void extra_change_animation(int handle, int x, int y, byte scale, byte de
 extern void extra_shift_animation(int handle, int x, int y, byte scale);
 extern void extra_blank_knothole(void);
 
+} // namespace Forest
 } // namespace MADSV2
 } // namespace MADS
 

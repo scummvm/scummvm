@@ -110,6 +110,7 @@ void ForestEngine::syncRoom(Common::Serializer &s) {
 }
 
 void ForestEngine::global_daemon_code() {
+	Forest::global_daemon_code();
 }
 
 void ForestEngine::global_pre_parser_code() {

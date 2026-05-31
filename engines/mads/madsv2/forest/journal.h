@@ -28,6 +28,9 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+extern void display_journal();
+extern void leave_journal();
+extern void open_journal();
 extern void close_journal();
 
 } // namespace Forest

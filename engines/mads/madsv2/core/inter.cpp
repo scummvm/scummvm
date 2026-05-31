@@ -45,7 +45,7 @@
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/error.h"
-#include "mads/madsv2/core/extra.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/engine.h"
 
 namespace MADS {
@@ -1850,7 +1850,8 @@ done:
 
 void inter_turn_off_object(void) {
 	if (inter_object_series >= 0) {
-		delete_sprite_in_interface(inter_object_series);
+		if (g_engine->getGameID() == GType_Forest)
+			Forest::delete_sprite_in_interface(inter_object_series);
 		matte_deallocate_series(inter_object_series, false);
 		inter_base_time = timer_read();
 		inter_object_series = -1;
@@ -1956,7 +1957,7 @@ void inter_spin_object(int object_id) {
 		SERIES_BONUS_OBJECT);
 
 	if (g_engine->getGameID() == GType_Forest) {
-		stamp_sprite_to_interface(OUAF_OBJECT_X, OUAF_OBJECT_Y, 1, inter_object_series);
+		Forest::stamp_sprite_to_interface(OUAF_OBJECT_X, OUAF_OBJECT_Y, 1, inter_object_series);
 		paul_object_showing = object_id;
 	}
 

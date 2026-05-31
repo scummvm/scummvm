@@ -88,7 +88,7 @@ static Scratch scratch;
 static void room_101_init1() {
 	global[g009] = -1;
 	viewing_at_y = 22;
-	global[g010] = 0;
+	global[player_score] = 0;
 	player.walker_visible = false;
 	player.commands_allowed = false;
 	mouse_hide();
@@ -107,7 +107,7 @@ static void room_101_init1() {
 
 static void room_101_init2() {
 	player.commands_allowed = false;
-	global[g010] = 0;
+	global[player_score] = 0;
 
 	ss[3] = kernel_load_series(kernel_name('p', 7), 0);
 	seq[3] = kernel_seq_stamp(ss[3], 0, -1);
@@ -140,7 +140,7 @@ static void room_101_init2() {
 
 static void room_101_init3() {
 	player.commands_allowed = 0;
-	global[g010] = 0;
+	global[player_score] = 0;
 	global[g009] = 0;
 	midi_stop();
 	global[g131] = 0;
@@ -308,7 +308,7 @@ static void room_101_parser() {
 		goto handled;
 	}
 
-	if (global[walker_converse] >= 0) {
+	if (global[player_selected_object] >= 0) {
 		goto handled;
 	}
 

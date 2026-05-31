@@ -20,12 +20,19 @@
  */
 
 #include "common/textconsole.h"
+#include "mads/madsv2/core/global.h"
+#include "mads/madsv2/core/inter.h"
+#include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
-#include "mads/madsv2/core/extra.h"
+#include "mads/madsv2/core/mouse.h"
+#include "mads/madsv2/core/player.h"
+#include "mads/madsv2/forest/extra.h"
+#include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/forest/journal.h"
 
 namespace MADS {
 namespace MADSV2 {
-
+namespace Forest {
 
 void fly_on_screen(int flying_object) {
 	error("TODO: fly_on_screen");
@@ -37,14 +44,6 @@ void fly_off_screen(int flying_object) {
 
 void display_inventory(void) {
 	error("TODO: display_inventory");
-}
-
-void display_journal(void) {
-	error("TODO: display_journal");
-}
-
-void leave_journal(void) {
-	error("TODO: leave_journal");
 }
 
 void solve_me_selected(void) {
@@ -79,6 +78,37 @@ void extra_blank_knothole(void) {
 	error("TODO: extra_blank_knothole");
 }
 
+void do_interface_for_ouaf() {
+	if (mouse_y > 156 &&
+		mouse_stop_stroke &&
+		player.commands_allowed &&
+		/* global[4] == -1 && */
+		!kernel.trigger &&
+		/* player.command_ready && */
+		inter_input_mode == INTER_LIMITED_SENTENCES &&
+		!global[inventory_is_displayed]
+		/* pl conv_control.running < 0 */) {
+		if (room_id == 199) {
+			// Taranjeet's Journal
+			leave_journal();
 
+		} else if (mouse_x < 64) {
+			display_journal();
+		} else if (mouse_x < 139) {
+			display_inventory();
+		} else if (mouse_x < 195) {
+		} else if (mouse_x < 250) {
+			solve_me_selected();
+		} else {
+			door_selected();
+		}
+	}
+
+	if (kernel.trigger == 40) {
+		display_inventory();
+	}
+}
+
+} // namespace Forest
 } // namespace MADSV2
 } // namespace MADS

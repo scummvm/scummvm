@@ -63,42 +63,8 @@ constexpr int NO  = 0;
 
 /* ==================== System variables ===================== */
 
-#define walker_timing                   0   /* Stop walker timing (long) */
-#define walker_timing_2                 1
-#define inventory_is_displayed          2   /* T if inventory is being displayed */
-#define player_hyperwalked              3   /* T if player hit spacebar in room */
-#define player_selected_object          4   /* will be >= 0 (to hold selected object) else -1 */
-#define candle_is_on                    5   /* T if candle flame is on in interface */
-
-
-/* ================= Global to all sections ================== */
-
-#if 0
-#define player_score                    10  /* player's score of the game   */
-#define player_score_flags              11  /* 16 flags for checking if player increased score */
-#define dont_load_walker                12  /* if T, will not load walker in section code */
-#define perform_displacements           13  /* if T, will do displacements */
-#define intro                           14  /* if T, Intro is in progress */
-#define outro                           15  /* if T, Outro is in progress */
-#endif
-
-/* =================== Section 1  20 - 39 ==================== */
-
-#define section_1_variable              20  /* put description here */
-
-/* =================== Section 2  40 - 59 ==================== */
-
-
-/* =================== Section 3  60 - 79 ==================== */
-
-
-/* =================== Section 4  80 - 99 ==================== */
-
-
-/* ================== Section 5  100 - 119 =================== */
-
-
-/* ================== Section 6  120 - 139 =================== */
+constexpr int walker_timing                   = 0;   /* Stop walker timing (long) */
+constexpr int walker_timing_2                 = 1;
 
 
 extern char global_release_name[];

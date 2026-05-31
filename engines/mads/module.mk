@@ -76,7 +76,6 @@ MODULE_OBJS += \
 	madsv2/core/ems.o \
 	madsv2/core/env.o \
 	madsv2/core/error.o \
-	madsv2/core/extra.o \
 	madsv2/core/fileio.o \
 	madsv2/core/font.o \
 	madsv2/core/game.o \
@@ -265,6 +264,7 @@ MODULE_OBJS += \
 	madsv2/dragonsphere/sound_dragonsphere.o \
 	madsv2/forest/forest.o \
 	madsv2/forest/asound.o \
+	madsv2/forest/extra.o \
 	madsv2/forest/global.o \
 	madsv2/forest/journal.o \
 	madsv2/forest/main.o \

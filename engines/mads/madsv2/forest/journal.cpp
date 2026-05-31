@@ -25,6 +25,18 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+void display_journal() {
+	// TODO
+}
+
+void leave_journal() {
+	// TODO
+}
+
+void open_journal() {
+	// TODO
+}
+
 void close_journal() {
 	// TODO
 }

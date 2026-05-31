@@ -29,22 +29,23 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-enum {
-	kWalkerTiming2            =   1,
-	stop_walker_disabled      =   2,
-	temp_interface            =   3,
-	walker_converse           =   4,
+enum {	
+	walker_timing             =   0,   /* Stop walker timing (long) */
+	walker_timing_2           =   1,
+	inventory_is_displayed    =   2,   /* T if inventory is being displayed */
+	g003                      =   3,
+	player_selected_object    =   4,
 	walker_converse_state     =   5,
 	walker_converse_now       =   6,
-	_007                      =   7,
+	g007                      =   7,
 	g008                      =   8,
 	g009                      =   9,
-	g010                      =  10,
-	g011                      =  11,
-	g012                      =  12,
-	g013                      =  13,
-	g014                      =  14,
-	g015                      =  15,
+	player_score              =  10,  /* player's score of the game   */
+	player_score_flags        =  11,  /* 16 flags for checking if player increased score */
+	dont_load_walker          =  12,  /* if T, will not load walker in section code */
+	perform_displacements     =  13,  /* if T, will do displacements */
+	intro                     =  14,  /* if T, Intro is in progress */
+	outro                     =  15,  /* if T, Outro is in progress */
 	g016                      =  16,
 	g017                      =  17,
 	g018                      =  18,
@@ -242,12 +243,13 @@ enum {
 	g210                      = 210
 };
 
+extern int16 flags[40];
+
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 
 extern void global_digi_play(int num);
-
-extern int16 flags[40];
+extern void global_daemon_code();
 
 } // namespace Forest
 } // namespace MADSV2

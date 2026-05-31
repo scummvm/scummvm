@@ -50,7 +50,7 @@ namespace Rooms {
 static void room_903_init() {
 	mouse_hide();
 	global[g009] = false;
-	global[g010] = false;
+	global[player_score] = false;
 	viewing_at_y = 22;
 	kernel_timing_trigger(20, TRIGGER1);
 	kernel_run_animation("*rm903i", TRIGGER0);
