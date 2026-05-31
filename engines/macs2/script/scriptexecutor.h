@@ -122,6 +122,18 @@ private:
 	bool scriptOpcode0x1B();
 	void scriptOpcode0x1C();
 	void scriptOpcode0x1D();
+	bool scriptOpcode0x1E();
+	void scriptOpcode0x1F();
+	bool scriptOpcode0x20();
+	bool scriptOpcode0x21();
+	bool scriptOpcode0x22();
+	bool scriptOpcode0x23();
+	void scriptOpcode0x24();
+	void scriptOpcode0x25();
+	void scriptOpcode0x26();
+	bool scriptOpcode0x27();
+	void scriptOpcode0x28();
+	bool scriptOpcode0x29();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
