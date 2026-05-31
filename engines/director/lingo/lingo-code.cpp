@@ -1784,7 +1784,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 					nargs++;
 				}
 			}
-		} else if (funcSym.nargs > nargs || funcSym.maxArgs < nargs) {
+		} else if (funcSym.nargs > nargs) {
 			warning("Incorrect number of arguments for builtin '%s' (%d, expected %d to %d). Dropping %d stack items.",
 						funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs);
 
@@ -1796,6 +1796,19 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 				g_lingo->pushVoid();
 
 			return;
+		} else if (funcSym.maxArgs < nargs) {
+			// Lingo ignores extra (trailing) arguments passed to a builtin, and
+			// several games rely on this -- e.g. "Mütze & Co" calls getLast(list, 2)
+			// even though getLast() takes a single argument. The surplus arguments
+			// are the last ones pushed, i.e. on top of the stack, so drop them and
+			// call the builtin normally instead of erroring out.
+			debugC(1, kDebugLingoExec, "Dropping %d extra argument(s) for builtin '%s' (%d, expected %d to %d)",
+						nargs - funcSym.maxArgs, funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs);
+
+			while (nargs > funcSym.maxArgs) {
+				g_lingo->pop();
+				nargs--;
+			}
 		}
 	}
 
