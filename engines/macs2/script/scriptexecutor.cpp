@@ -1198,7 +1198,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				// Moved into protagonist's inventory
 				bool alreadyInInventory = false;
 				for (auto item : currentView->inventoryItems) {
-					if (item->Index == objectID) { alreadyInInventory = true; break; }
+					if (item->Index == objectID) {
+						alreadyInInventory = true;
+						break;
+					}
 				}
 				if (!alreadyInInventory)
 					currentView->inventoryItems.push_back(object);
@@ -1215,17 +1218,18 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// Step 5: If object has no runtime data and was the UseInventory target,
 			// reset cursor to Use (0x15)
 			if (object->Blobs.empty()) {
-				if (objectID == _interactedObjectID && _mouseMode == MouseMode::UseInventory) {
+				if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
 					_engine->SetCursorMode(MouseMode::Use);
 					currentView->UpdateCursor();
+				}
+				// Original also rewrites the saved (pre-wait) cursor mode: 0x17 -> 0x15.
+				if (_interactedObjectID == objectID + 0x400 && savedPickupMouseMode == MouseMode::UseInventory) {
+					savedPickupMouseMode = MouseMode::Use;
 				}
 			}
 
 			// Step 6: If moved object is the one whose script is currently executing,
 			// terminate its script (original: sets scriptEndPosition=0, scriptPosition=0)
-			if ((int)objectID == _executingScriptObjectID) {
-				_stream->seek(0, SEEK_END);
-			}
 			if ((int)objectID == _executingScriptObjectID) {
 				_stream->seek(0, SEEK_END);
 			}
@@ -1636,14 +1640,15 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x26) {
 			// This one loads a special animation set
 			uint32 id = scriptReadValue32() - 0x400;
-			// No idea yet what this one does
-			scriptReadValue_Placeholder();
+			// scriptLoadSpecialAnim (1008:c991): 2nd value is the decode/enable flag (runtime +0x182).
+			// Non-zero -> enable the overload animation (and the original decodes the blob now).
+			uint16 decodeFlag = scriptReadValue16();
 			uint8 animationID = ReadByte();
 			Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
 			GameObject *object = GameObjects::GetObjectByIndex(id);
 			object->overloadAnimation = blob;
 			object->overloadAnimationMirrored = false;
-			object->useOverloadAnimation = false;
+			object->useOverloadAnimation = (decodeFlag != 0);
 		} else if (opcode1 == 0x27) {
 			// scriptSetDirection (1008:c858). Writes to runtime field +0x22D.
 			// When the character's orientation matches this value, the renderer
@@ -1741,7 +1746,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// scriptTestSceneAnimFrame: Tests if a scene's special animation blob's
 			// current frame index (via getAnimBlobOffset/source key) falls within
 			// [minFrame, maxFrame]. Result stored in animBlobRangeTestResult for helper FF29.
-			uint32 sceneAnimIndex = scriptReadValue32();
+			// Index is 0x1000-based in the bytecode (matches opcode 0x0E scriptChangeAnimation,
+			// binary scriptTestSceneAnimFrame at 1008:... subtracts 0x1000).
+			uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
 			uint32 minFrame = scriptReadValue32();
 			uint32 maxFrame = scriptReadValue32();
 			animBlobRangeTestResult = false;
@@ -1791,8 +1798,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
-			uint16 volume = scriptReadValue16();
-			g_engine->getAdlib()->SetVolume(volume);
+			// scriptSetVolume (1008:ce0b): clamp the value to 0..100 (signed), as the original does.
+			int16 volume = (int16)scriptReadValue16();
+			if (volume < 0)
+				volume = 0;
+			if (volume > 100)
+				volume = 100;
+			g_engine->getAdlib()->SetVolume((uint16)volume);
 		} else if (opcode1 == 0x32) {
 			uint16 objectID = scriptReadValue16() - 0x0400;
 			const uint16 clickable = scriptReadValue16();
