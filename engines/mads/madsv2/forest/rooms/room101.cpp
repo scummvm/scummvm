@@ -64,6 +64,11 @@ static void room_101_daemon() {
 }
 
 static void room_101_pre_parser() {
+	if (player_parse(13, 16, 0))
+		player.walk_off_edge_to_room = 104;
+
+	if (player_parse(13, 17, 0))
+		player.walk_off_edge_to_room = 106;
 }
 
 static void room_101_parser() {

@@ -625,6 +625,10 @@ extern int kernel_background_startup(int new_room, int initial_variant);
 
 extern void init_kernel();
 
+extern void kernel_random_frame(int handle, int16 *frame, int mode);
+extern void kernel_translate_anim(int handle, int delta_x, int delta_y, int delta_scale);
+extern void kernel_position_anim(int handle, int x, int y, int scale, int depth);
+
 } // namespace MADSV2
 } // namespace MADS
 

@@ -2979,5 +2979,54 @@ void init_kernel() {
 	memset(kernel_interface_loaded, 0, sizeof(kernel_interface_loaded));
 }
 
+void kernel_random_frame(int handle, int16 *frame, int mode) {
+	int16 newFrame = -1;
+
+	if (kernel_anim[handle].frame == *frame)
+		return;
+
+	int16 currentFrame = (int16)kernel_anim[handle].frame;
+	*frame = currentFrame;
+
+	if (currentFrame >= 1 && currentFrame <= 8) {
+		if (mode == 0)
+			newFrame = 0;
+		else if (mode == 1)
+			newFrame = 7;
+		else
+			newFrame = (int16)imath_random(1, 6);
+	}
+
+	if (newFrame >= 0) {
+		kernel_reset_animation(handle, newFrame);
+		*frame = newFrame;
+	}
+}
+
+void kernel_translate_anim(int handle, int delta_x, int delta_y, int delta_scale) {
+	Animation &k_anim = kernel_anim[handle];
+	Anim *anim = k_anim.anim;
+
+	for (int count = 0; count < anim->num_frames; ++count) {
+		Image &image = anim->image[count];
+		image.x += delta_x;
+		image.y += delta_y;
+		image.scale += delta_scale;
+	}
+}
+
+void kernel_position_anim(int handle, int x, int y, int scale, int depth) {
+	Animation &k_anim = kernel_anim[handle];
+	Anim *anim = k_anim.anim;
+
+	for (int count = 0; count < anim->num_frames; ++count) {
+		Image &image = anim->image[count];
+		image.x = x;
+		image.y = y;
+		image.scale = scale;
+		image.depth = depth;
+	}
+}
+
 } // namespace MADSV2
 } // namespace MADS

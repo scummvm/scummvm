@@ -72,6 +72,7 @@ MODULE_OBJS += \
 	madsv2/core/cursor.o \
 	madsv2/core/cycle.o \
 	madsv2/core/dialog.o \
+	madsv2/core/digi.o \
 	madsv2/core/ems.o \
 	madsv2/core/env.o \
 	madsv2/core/error.o \
@@ -96,6 +97,7 @@ MODULE_OBJS += \
 	madsv2/core/matte.o \
 	madsv2/core/mcga.o \
 	madsv2/core/mem.o \
+	madsv2/core/midi.o \
 	madsv2/core/mouse.o \
 	madsv2/core/object.o \
 	madsv2/core/pack.o \
@@ -264,6 +266,7 @@ MODULE_OBJS += \
 	madsv2/forest/forest.o \
 	madsv2/forest/asound.o \
 	madsv2/forest/global.o \
+	madsv2/forest/journal.o \
 	madsv2/forest/main.o \
 	madsv2/forest/main_menu.o \
 	madsv2/forest/menus.o \
