@@ -139,12 +139,12 @@ bool AudioPlayer::readSdxIndex(const Common::Path &sdxPath) {
 
 // _InitMysterySounds @ 202f:05cb. Strings "m%u.sdx" @ 29be:144f, "m%u.sdb" @ 29be:145b.
 bool AudioPlayer::initMysterySounds(uint mysteryNum) {
-	cleanMysterySounds();
-
 	const Common::String sdxName = Common::String::format("M%u.SDX", mysteryNum);
 	const Common::String sdbName = Common::String::format("M%u.SDB", mysteryNum);
 	const Common::Path sdxPath(sdxName);
 	const Common::Path sdbPath(sdbName);
+
+	cleanMysterySounds();
 
 	if (!readSdxIndex(sdxPath)) {
 		_sdxIndex.clear();
