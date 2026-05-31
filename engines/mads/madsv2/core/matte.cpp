@@ -368,16 +368,21 @@ static void make_matte(ImagePtr image, MattePtr matte) {
 		matte->x = image->x - picture_map.pan_x;
 		matte->y = image->y - picture_map.pan_y;
 
-		sprite = &series_list[image->series_id]->index[(image->sprite_id & SPRITE_MASK) - 1];
-
-		if (image->scale == IMAGE_UNSCALED) {
-			xs = sprite->xs;
-			ys = sprite->ys;
+		if (!series_list[image->series_id]) {
+			// WORKAROUND: Handle invalid sprites
+			xs = ys = 0;
 		} else {
-			xs = (50 + (sprite->xs * image->scale)) / 100;
-			ys = (50 + (sprite->ys * image->scale)) / 100;
-			matte->x -= (xs >> 1);
-			matte->y -= (ys - 1);
+			sprite = &series_list[image->series_id]->index[(image->sprite_id & SPRITE_MASK) - 1];
+
+			if (image->scale == IMAGE_UNSCALED) {
+				xs = sprite->xs;
+				ys = sprite->ys;
+			} else {
+				xs = (50 + (sprite->xs * image->scale)) / 100;
+				ys = (50 + (sprite->ys * image->scale)) / 100;
+				matte->x -= (xs >> 1);
+				matte->y -= (ys - 1);
+			}
 		}
 	}
 
