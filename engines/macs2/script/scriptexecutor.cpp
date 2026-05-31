@@ -462,32 +462,45 @@ uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 }
 
 bool ScriptExecutor::IsPathWalkable(const Common::Point &from, const Common::Point &to) {
-	int x1 = from.x;
-	int y1 = from.y;
-	const int x2 = to.x;
-	const int y2 = to.y;
-	const int dx = abs(x2 - x1);
-	const int dy = abs(y2 - y1);
-	const int sx = (x1 < x2) ? 1 : -1;
-	const int sy = (y1 < y2) ? 1 : -1;
-	int err = dx - dy;
+	// Exact reimplementation of isPathWalkable (1008:1196).
+	// Traces from 'to' toward 'from'. Checks walkability only on major-axis steps.
+	int16 x1 = from.x, y1 = from.y, x2 = to.x, y2 = to.y;
+	uint16 error = 0;
+	int16 curX = x2;
+	int16 curY = y2;
+	uint16 absDx = (uint16)abs((int)(x2 - x1));
+	uint16 absDy = (uint16)abs((int)(y2 - y1));
 
-	while (true) {
-		if (getAreaAtPoint(x1, y1) >= 0xC8)
-			return false;
-		if (x1 == x2 && y1 == y2)
-			return true;
+	if (curX == x1 && curY == y1)
+		return true;
 
-		const int e2 = 2 * err;
-		if (e2 > -dy) {
-			err -= dy;
-			x1 += sx;
+	do {
+		bool steppedX;
+		if (error >= absDx) {
+			if (y1 < y2)
+				curY--;
+			if (y1 > y2)
+				curY++;
+			error -= absDx;
+			steppedX = false;
+		} else {
+			if (x1 < x2)
+				curX--;
+			if (x1 > x2)
+				curX++;
+			error += absDy;
+			steppedX = true;
 		}
-		if (e2 < dx) {
-			err += dx;
-			y1 += sy;
+		if (absDx > absDy && steppedX) {
+			if (getAreaAtPoint(curX, curY) >= 0xC8)
+				return false;
 		}
-	}
+		if (absDx <= absDy && !steppedX) {
+			if (getAreaAtPoint(curX, curY) >= 0xC8)
+				return false;
+		}
+	} while (curX != x1 || curY != y1);
+	return true;
 }
 
 bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset) {
