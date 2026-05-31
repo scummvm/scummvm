@@ -60,17 +60,17 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 	for (int y = 0; y < 200; y++) {
 		uint16 length = stream->readUint16LE();
 		stream->read(data, length);
-		uint16 remainingPixels = 320;
+		// Signed, matching the original decodeRLERows (1008:0666): a final RLE run that
+		// overshoots the row width drives this negative and terminates the row. Using an
+		// unsigned counter here underflows and runs away, over-reading the encoded data and
+		// corrupting this row and every row after it (spurious walkability values).
+		int16 remainingPixels = 320;
 		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
 			const uint8 &value = dataPointer[0];
 			dataPointer++;
 			if (value != 0xF0) {
-				/* if (x >= 320) {
-					// TODO: This happens during loading the map
-					break;
-				}*/
 				result.setPixel(x, y, value);
 				remainingPixels--;
 				x++;
@@ -80,11 +80,7 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 				dataPointer++;
 				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
-				for (int i = 0; i < runlength; i++) {
-					/* if (x >= 320) {
-						// TODO: This happens for loading the map - maybe this code is a bit different?
-						break;
-					} */
+				for (int i = 0; i < runlength && x < 320; i++) {
 					result.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
@@ -645,7 +641,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		uint16 length = _fileStream->readUint16LE();
 		_fileStream->read(data, length);
 		debugC(DEBUG_RLE, "RLE: Row %.4x with %.4x bytes of data.", y, length);
-		uint16 remainingPixels = 320;
+		int16 remainingPixels = 320; // signed: see readRLEImage (matches decodeRLERows 1008:0666)
 		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
@@ -662,7 +658,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 				dataPointer++;
 				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
-				for (int i = 0; i < runlength; i++) {
+				for (int i = 0; i < runlength && x < 320; i++) {
 					_bgImageShip.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
