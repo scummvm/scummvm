@@ -38,6 +38,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "macs2/console.h"
+#include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "view1.h"
 
@@ -813,7 +814,8 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 	// Original (1008:d749): looks up file offset from scene/object resource table
 	// at scene+0x5209+index*4 (same table as loadIndexedResource/array520D),
 	// seeks to offset+0x10, then calls loadFontData.
-	if (resourceIndex == 0) return false;
+	if (resourceIndex == 0)
+		return false;
 
 	const int64 oldPos = _fileStream->pos();
 	uint32 address = 0;
@@ -1405,6 +1407,14 @@ Common::Error Macs2Engine::run() {
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
+
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	callbacks.init = onImGuiInit;
+	callbacks.render = onImGuiRender;
+	callbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
 
 	runGame();
 

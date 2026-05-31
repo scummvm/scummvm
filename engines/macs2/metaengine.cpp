@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/translation.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "macs2/detection.h"
 #include "macs2/macs2.h"
@@ -79,7 +79,8 @@ SaveStateList Macs2MetaEngine::listSaves(const char *target) const {
 			if (memcmp(magic, "AHFFMSGM0100", 12) == 0) {
 				// Read slot name (Pascal string: 1 byte length + up to 20 chars)
 				byte nameLen = f->readByte();
-				if (nameLen > 20) nameLen = 20;
+				if (nameLen > 20)
+					nameLen = 20;
 				char name[21];
 				f->read(name, nameLen);
 				name[nameLen] = '\0';

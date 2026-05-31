@@ -3,6 +3,7 @@ MODULE := engines/macs2
 MODULE_OBJS = \
 	macs2.o \
 	console.o \
+	debugtools.o \
 	events.o \
 	messages.o \
 	metaengine.o \
