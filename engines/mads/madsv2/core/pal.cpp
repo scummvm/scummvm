@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/debug.h"
+#include "mads/madsv2/engine.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/color.h"
@@ -424,7 +426,8 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 		// existing mapping.  The only reasons not to are  A) if we have
 		// found a (shadowing) match; and  B) if we are defining an initial
 		// background and therefore should not have any matches.
-		conduct_search = !found && !defining_background && cycle_mask != 0;
+		conduct_search = !found && !defining_background &&
+			(cycle_mask != 0 || g_engine->getGameID() == GType_Dragonsphere);
 
 		if (conduct_search) {
 			// Now, decide whether we need an exact match or are willing to just
