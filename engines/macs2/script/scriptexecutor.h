@@ -116,6 +116,12 @@ private:
 	void scriptOpcode0x15();
 	void scriptOpcode0x16();
 	ExecutionResult scriptOpcode0x17();
+	ExecutionResult scriptOpcode0x18();
+	bool scriptOpcode0x19();
+	bool scriptOpcode0x1A();
+	bool scriptOpcode0x1B();
+	void scriptOpcode0x1C();
+	void scriptOpcode0x1D();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
