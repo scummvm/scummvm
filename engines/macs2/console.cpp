@@ -39,6 +39,10 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("marker", WRAP_METHOD(Console, Cmd_marker));
 	registerCmd("addItem", WRAP_METHOD(Console, Cmd_addItem));
 	registerCmd("removeItem", WRAP_METHOD(Console, Cmd_removeItem));
+	registerCmd("giveAll", WRAP_METHOD(Console, Cmd_giveAll));
+	registerCmd("listScenes", WRAP_METHOD(Console, Cmd_listScenes));
+	registerCmd("changeScene", WRAP_METHOD(Console, Cmd_changeScene));
+	registerCmd("scene", WRAP_METHOD(Console, Cmd_scene));
 	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
 	registerCmd("dumpScript", WRAP_METHOD(Console, Cmd_dumpScript));
 	registerCmd("set", WRAP_METHOD(Console, Cmd_set));
@@ -115,6 +119,21 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_giveAll(int argc, const char **argv) {
+	int count = 0;
+	for (GameObject *obj : GameObjects::instance().Objects) {
+		if (obj->Index <= 1) continue;
+		if (!obj->Blobs.empty() && obj->Blobs.size() > 0x13 && !obj->Blobs[0x13].empty()) {
+			obj->SceneIndex = 1;
+			count++;
+		}
+	}
+	View1 *currentView = (View1 *)g_engine->findView("View1");
+	currentView->SetInventorySource(GameObjects::instance().GetProtagonistObject());
+	debugPrintf("Added %d items with inventory icons to protagonist inventory.\n", count);
+	return true;
+}
+
 bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	int orientation = parseHexArg(argv[1]);
 	int index = 1;
@@ -163,6 +182,38 @@ bool Console::Cmd_inputPlayback(int argc, const char **argv) {
 bool Console::Cmd_inputStop(int argc, const char **argv) {
 	g_engine->stopInputRecording();
 	debugPrintf("Input recording/playback stopped\n");
+	return true;
+}
+
+bool Console::Cmd_listScenes(int argc, const char **argv) {
+	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance().CurrentSceneIndex, Scenes::instance().CurrentSceneIndex);
+	debugPrintf("Scenes with data:\n");
+	for (int i = 1; i <= 512; i++) {
+		uint32 offset = 0xC + 0x4 + (i - 1) * 0xC;
+		g_engine->_fileStream->seek(offset + 8, SEEK_SET);
+		uint32 sceneDataOffset = g_engine->_fileStream->readUint32LE();
+		if (sceneDataOffset != 0) {
+			debugPrintf("  Scene %3d (0x%03x) - data at 0x%06x\n", i, i, sceneDataOffset);
+		}
+	}
+	return true;
+}
+
+bool Console::Cmd_changeScene(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: changeScene <sceneIndex>\n");
+		debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance().CurrentSceneIndex, Scenes::instance().CurrentSceneIndex);
+		return true;
+	}
+	int sceneIndex = parseHexArg(argv[1]);
+	debugPrintf("Changing to scene %d (0x%x)\n", sceneIndex, sceneIndex);
+	g_engine->changeScene(sceneIndex);
+	return false; // close debugger to let scene load
+}
+
+bool Console::Cmd_scene(int argc, const char **argv) {
+	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance().CurrentSceneIndex, Scenes::instance().CurrentSceneIndex);
+	debugPrintf("Previous scene: %d (0x%x)\n", Scenes::instance().LastSceneIndex, Scenes::instance().LastSceneIndex);
 	return true;
 }
 
