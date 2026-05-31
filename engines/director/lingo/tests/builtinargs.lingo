@@ -1,0 +1,15 @@
+-- Surplus (trailing) arguments to a builtin: Lingo silently ignores them for the
+-- LIST builtins (getLast/getAt/getOne/getPos/count) The scalar/math
+-- builtins reject surplus args instead. Verified against real Director 5/6/7.
+
+-- List builtins drop the surplus argument and run normally.
+set theList to [10, 20, 30]
+scummvmAssertEqual(getLast(theList, 2), 30)
+scummvmAssertEqual(getLast(theList), 30)
+scummvmAssertEqual(getAt([1, 2, 3], 2, 99), 2)
+
+-- Scalar/math builtins reject a surplus argument (real Director raises "One
+-- parameter expected"); ScummVM rejects the call and yields VOID rather than the
+-- wrongly truncated result.
+scummvmAssertEqual(voidP(abs(-7, 99)), 1)
+scummvmAssertEqual(voidP(integer(5, "ignored")), 1)

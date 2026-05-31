@@ -1811,7 +1811,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 					nargs++;
 				}
 			}
-		} else if (funcSym.nargs > nargs || funcSym.maxArgs < nargs) {
+		} else if (funcSym.nargs > nargs) {
 			warning("Incorrect number of arguments for builtin '%s' (%d, expected %d to %d). Dropping %d stack items.",
 						funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs);
 
@@ -1823,6 +1823,31 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 				g_lingo->pushVoid();
 
 			return;
+		} else if (funcSym.maxArgs < nargs) {
+			// Lingo silently ignores surplus (trailing) arguments to the LIST
+			// builtins (getLast/getAt/getOne/getPos/count), and games rely on it --
+			// Verified against real Director 5/6/7: only the list builtins tolerate extra arguments
+			// Drop the surplus only for list builtins;
+			if (funcSym.type == FBLTIN_LIST || funcSym.type == HBLTIN_LIST) {
+				debugC(1, kDebugLingoExec, "Dropping %d extra argument(s) for builtin '%s' (%d, expected %d to %d)",
+							nargs - funcSym.maxArgs, funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs);
+
+				while (nargs > funcSym.maxArgs) {
+					g_lingo->pop();
+					nargs--;
+				}
+			} else {
+				warning("Incorrect number of arguments for builtin '%s' (%d, expected %d to %d). Dropping %d stack items.",
+							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs);
+
+				for (int i = 0; i < nargs; i++)
+					g_lingo->pop();
+
+				if (allowRetVal)
+					g_lingo->pushVoid();
+
+				return;
+			}
 		}
 	}
 
