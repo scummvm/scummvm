@@ -1664,6 +1664,23 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		}
 	}
 
+	// Lingo builtin functions in the "List" category have very strange override mechanics.
+	// If the first argument is an ARRAY or PARRAY (or POINT/RECT), it will use the builtin.
+	// Otherwise, it will fall back to whatever handler is defined globally.
+	//
+	// This must be decided before the me-object method lookup below: a parent/movie
+	// script that defines its own handler with the same name as a list builtin (e.g. a
+	// custom `getLast`) would otherwise shadow the builtin when calling it on a list from
+	// within one of its own methods (where `me` is an object holding that method).
+	bool useListBuiltin = false;
+	if (g_lingo->_builtinListHandlers.contains(name) && nargs >= 1) {
+		Datum firstArg = g_lingo->peek(nargs - 1);
+		if (firstArg.type == ARRAY || firstArg.type == PARRAY ||
+				firstArg.type == POINT || firstArg.type == RECT) {
+			useListBuiltin = true;
+		}
+	}
+
 	// If we're calling from within a me object, and it has a function handler with a
 	// matching name, include the me object in the CFrame (so we still get property lookups).
 	// Doesn't matter that the first arg isn't the me object (which would have been caught
@@ -1672,7 +1689,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	// If the method is called from outside and without the object as the first arg,
 	// it will still work using the normal getHandler lookup.
 	// However properties will return garbage (the number 3??).
-	if (g_lingo->_state->me.type == OBJECT) {
+	if (!useListBuiltin && g_lingo->_state->me.type == OBJECT) {
 		AbstractObject *target = g_lingo->_state->me.u.obj;
 		funcSym = target->getMethod(name);
 		if (funcSym.type != VOIDSYM) {
@@ -1684,16 +1701,8 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	// Handler
 	funcSym = g_lingo->getHandler(name);
 
-	if (g_lingo->_builtinListHandlers.contains(name) && nargs >= 1) {
-		// Lingo builtin functions in the "List" category have very strange override mechanics.
-		// If the first argument is an ARRAY or PARRAY, it will use the builtin.
-		// Otherwise, it will fall back to whatever handler is defined globally.
-		Datum firstArg = g_lingo->peek(nargs - 1);
-		if (firstArg.type == ARRAY || firstArg.type == PARRAY ||
-				firstArg.type == POINT || firstArg.type == RECT) {
-			funcSym = g_lingo->_builtinListHandlers[name];
-		}
-	}
+	if (useListBuiltin)
+		funcSym = g_lingo->_builtinListHandlers[name];
 
 	if (funcSym.type == VOIDSYM) { // The built-ins could be overridden
 		// Builtin
