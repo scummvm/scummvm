@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/memstream.h"
 #include "common/util.h"
@@ -2510,13 +2511,18 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	}
 	convertedText[dstIdx] = '\0';
 
-	// Draw the text string (with converted character indices)
-	if (textFlags & 0x04) {
-		// Word-wrapped text
-		_rebelMsgFont->drawStringWrap(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
-	} else {
-		// Single-line text
-		_rebelMsgFont->drawString(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+	// Draw the text string (with converted character indices), but only when subtitles are
+	// enabled — opcode 9 is a subtitle/message path, so it honors ScummVM's global
+	// "subtitles" setting and the in-game TEXT toggle (same ConfMan key). The chunk is
+	// still fully parsed above so stream consumption is unaffected.
+	if (ConfMan.getBool("subtitles")) {
+		if (textFlags & 0x04) {
+			// Word-wrapped text
+			_rebelMsgFont->drawStringWrap(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+		} else {
+			// Single-line text
+			_rebelMsgFont->drawString(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+		}
 	}
 
 	debug("Rebel2 Opcode 9: Rendered subtitle at (%d,%d) flags=0x%x clip=(%d,%d,%d,%d)",

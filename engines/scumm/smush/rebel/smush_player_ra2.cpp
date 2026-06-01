@@ -24,6 +24,7 @@
 // Overrides the virtual hooks defined in SmushPlayer to provide
 // Rebel Assault 2 specific video, font, text and codec handling.
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/system.h"
@@ -189,7 +190,12 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 bool SmushPlayerRebel2::handleGameTextRendering(const char *str, int fontId, int color,
 												int pos_x, int pos_y, int left, int top,
 												int width, int height, TextStyleFlags flg) {
-	ra2HandleTextResource(str, fontId, color, pos_x, pos_y, left, top, width, height, flg);
+	// RA2 dialogue subtitles. Only render them when subtitles are enabled — this honors
+	// both ScummVM's global "subtitles" setting and the in-game TEXT toggle (which writes
+	// the same ConfMan key). Still return true so the base handler treats the chunk as
+	// handled. Querying ConfMan per chunk also lets the setting take effect mid-video.
+	if (ConfMan.getBool("subtitles"))
+		ra2HandleTextResource(str, fontId, color, pos_x, pos_y, left, top, width, height, flg);
 	return true;
 }
 

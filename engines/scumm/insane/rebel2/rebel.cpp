@@ -454,7 +454,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
 	_optVoicesEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
-	_optTextEnabled = true;
+	// Initialize the dialogue-text (subtitles) toggle from ScummVM's global setting so the
+	// game and the in-game TEXT menu label reflect it. The menu toggle writes the same
+	// "subtitles" key, which the text-render paths gate on.
+	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optControlsFlipped = false;
 	_optRapidFire = false;
 	_optVolumeLevel = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2;

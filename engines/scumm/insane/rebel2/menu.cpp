@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/util.h"
@@ -1797,6 +1798,7 @@ int InsaneRebel2::processOptionsInput() {
 					break;
 				case 3:  // Text toggle
 					_optTextEnabled = !_optTextEnabled;
+					ConfMan.setBool("subtitles", _optTextEnabled);
 					break;
 				case 4:  // Controls toggle
 					_optControlsFlipped = !_optControlsFlipped;
