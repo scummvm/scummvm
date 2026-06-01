@@ -147,7 +147,7 @@ static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillT
 // Reuses RA2's pattern: reset handler, set cinematic flags, play video.
 // startFrame > 0: fast-forward (decode without display/audio) to that frame.
 void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
-	debug(1, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
+	debugC(DEBUG_INSANE, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
 	if (shouldAbortGameFlow())
 		return;
 
@@ -315,7 +315,7 @@ void InsaneRebel1::clearVideoBuffer() {
 //   1. O1LOGO.ANM — LucasArts logo
 //   2. O1OPEN.ANM — Star Wars opening crawl
 void InsaneRebel1::playIntroSequence() {
-	debug(1, "InsaneRebel1: Playing intro sequence");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Playing intro sequence");
 
 	// LucasArts logo (original: PUSH 0x57cc, CALL FUN_1BA32 with flags 0x0420)
 	playCinematic("OPEN/O1LOGO.ANM");
@@ -347,7 +347,7 @@ void InsaneRebel1::playIntroSequence() {
 //     lives==0: L1DEATH → return to menu
 
 bool InsaneRebel1::runLevel1() {
-	debug(1, "InsaneRebel1: Running level 1");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 1");
 
 	_currentLevel = 0;
 	loadTuningForLevel(0);
@@ -448,7 +448,7 @@ bool InsaneRebel1::runLevel1() {
 }
 
 bool InsaneRebel1::runLevel2() {
-	debug(1, "InsaneRebel1: Running level 2");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 2");
 
 	_currentLevel = 1;
 	loadLevelSprites(2);
@@ -489,7 +489,7 @@ bool InsaneRebel1::runLevel2() {
 }
 
 bool InsaneRebel1::runLevel3() {
-	debug(1, "InsaneRebel1: Running level 3");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 3");
 
 	_currentLevel = 2;
 	loadLevelSprites(3);
@@ -530,7 +530,7 @@ bool InsaneRebel1::runLevel3() {
 }
 
 bool InsaneRebel1::runLevel4() {
-	debug(1, "InsaneRebel1: Running level 4");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 4");
 
 	_currentLevel = 3;
 	loadLevelSprites(4);
@@ -600,7 +600,7 @@ bool InsaneRebel1::runLevel4() {
 }
 
 bool InsaneRebel1::runLevel5() {
-	debug(1, "InsaneRebel1: Running level 5");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 5");
 
 	_currentLevel = 4;
 	loadLevelSprites(5);
@@ -682,7 +682,7 @@ bool InsaneRebel1::runLevel5() {
 }
 
 bool InsaneRebel1::runLevel6() {
-	debug(1, "InsaneRebel1: Running level 6");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 6");
 
 	_currentLevel = 5;
 	loadLevelSprites(6);
@@ -727,7 +727,7 @@ bool InsaneRebel1::runLevel6() {
 }
 
 bool InsaneRebel1::runLevel7() {
-	debug(1, "InsaneRebel1: Running level 7");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 7");
 
 	const char *const kLevel7Segments[] = {
 		"LVL7/L7PLAY1.ANM",
@@ -811,7 +811,7 @@ bool InsaneRebel1::runLevel7() {
 }
 
 bool InsaneRebel1::runLevel8() {
-	debug(1, "InsaneRebel1: Running level 8");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 8");
 
 	const char *const kLevel8Routes[] = {
 		"LVL8/L8PLAY.ANM",
@@ -887,7 +887,7 @@ bool InsaneRebel1::runLevel8() {
 }
 
 bool InsaneRebel1::runLevel9() {
-	debug(1, "InsaneRebel1: Running level 9");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 9");
 
 	// DOS RunLevel9Flow calls RandScaleByte(2) three times before the intro.
 	// That helper advances a byte seed with seed = seed * 9 + 0x35 and returns
@@ -921,7 +921,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_killCount > 0)
 				return (_shipPosX < kRA1CenterX) ? 0 : 1;
 
-			debug(1, "RA1 L9 selector '%s' ended without target hit; replaying", filename);
+			debugC(DEBUG_INSANE, "RA1 L9 selector '%s' ended without target hit; replaying", filename);
 		}
 		return -1;
 	};
@@ -1077,7 +1077,7 @@ bool InsaneRebel1::runLevel9() {
 }
 
 bool InsaneRebel1::runLevel10() {
-	debug(1, "InsaneRebel1: Running level 10");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 10");
 
 	_currentLevel = 9;
 	loadLevelSprites(10);
@@ -1118,7 +1118,7 @@ bool InsaneRebel1::runLevel10() {
 // Turret-style level. Single interactive phase with kill-count retry.
 // Original: L11INTRO → L11PLAY (turret, killCount>4 to pass) → L11RETRY → retry/L11END
 bool InsaneRebel1::runLevel11() {
-	debug(1, "InsaneRebel1: Running level 11");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 11");
 
 	_currentLevel = 10;
 	loadLevelSprites(11);
@@ -1175,7 +1175,7 @@ bool InsaneRebel1::runLevel11() {
 // Single interactive phase with mid-level retry mechanism.
 // Original: L12INTRO → L12PLAY → (retry at specific frame) → L12END
 bool InsaneRebel1::runLevel12() {
-	debug(1, "InsaneRebel1: Running level 12");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 12");
 
 	_currentLevel = 11;
 	loadLevelSprites(12);
@@ -1238,7 +1238,7 @@ bool InsaneRebel1::runLevel12() {
 // Flight level with enemy projectile system (original has 5-slot projectile tracking).
 // Original: L13INTRO → L13PLAY → L13END/L13NEW/L13DEATH
 bool InsaneRebel1::runLevel13() {
-	debug(1, "InsaneRebel1: Running level 13");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 13");
 
 	_currentLevel = 12;
 	loadLevelSprites(13);
@@ -1281,7 +1281,7 @@ bool InsaneRebel1::runLevel13() {
 // Original: L14INTRO → L14PLAY → L14PLAY2 → optional L14PLY2B splice
 //   → L14END/L14NEW/L14DEATH
 bool InsaneRebel1::runLevel14() {
-	debug(1, "InsaneRebel1: Running level 14");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 14");
 
 	_currentLevel = 13;
 	loadLevelSprites(14);
@@ -1355,7 +1355,7 @@ bool InsaneRebel1::runLevel14() {
 // Original: L15INTRO → L15PLAY1 (trench run) → L15INTR2 (torpedo lock cutscene)
 //   → L15PLAY2 (final approach + torpedo) → L15END1/L15NEW/L15DEATH
 bool InsaneRebel1::runLevel15() {
-	debug(1, "InsaneRebel1: Running level 15");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 15");
 
 	_currentLevel = 14;
 	loadLevelSprites(15);
@@ -1401,7 +1401,7 @@ bool InsaneRebel1::runLevel15() {
 		}
 
 		if (_health >= 0 && !_torpedoFired) {
-			debug(1, "InsaneRebel1: Level 15 torpedo run ended without exhaust-port hit");
+			debugC(DEBUG_INSANE, "InsaneRebel1: Level 15 torpedo run ended without exhaust-port hit");
 			return false;
 		}
 
@@ -1625,30 +1625,30 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 			_pendingRouteVideoStartFrame : 1;
 		videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
 		if (videoOffset < 0) {
-			debug(1, "RA1 L7 route switch: route=%d destinationFrame=%d offset lookup failed",
+			debugC(DEBUG_INSANE, "RA1 L7 route switch: route=%d destinationFrame=%d offset lookup failed",
 				_levelRouteIndex, (int)videoStartFrame);
 			videoStartFrame = 0;
 			videoOffset = 0;
 		} else {
-			debug(1, "RA1 L7 route switch: route=%d decisionLocalFrame=%d opens destination at localFrame=%d offset=0x%x",
+			debugC(DEBUG_INSANE, "RA1 L7 route switch: route=%d decisionLocalFrame=%d opens destination at localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)_pendingRouteStartFrame,
 				(int)videoStartFrame, (unsigned)videoOffset);
 		}
 	} else if (_currentLevel == 7 && resumingRoute) {
 		videoOffset = findAnimFrameChunkOffsetByGameCounter(_vm, filename, startFrame, videoStartFrame);
 		if (videoOffset < 0) {
-			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d GAME counter lookup failed",
+			debugC(DEBUG_INSANE, "RA1 L8 resume: route=%d timelineFrame=%d GAME counter lookup failed",
 				_levelRouteIndex, (int)startFrame);
 			videoStartFrame = startFrame;
 			videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
 		}
 		if (videoOffset < 0) {
-			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d localFrame=%d offset lookup failed",
+			debugC(DEBUG_INSANE, "RA1 L8 resume: route=%d timelineFrame=%d localFrame=%d offset lookup failed",
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame);
 			videoStartFrame = 0;
 			videoOffset = 0;
 		} else {
-			debug(1, "RA1 L8 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
+			debugC(DEBUG_INSANE, "RA1 L8 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
 		}
 	} else if (_currentLevel == 13 && resumingRoute) {
@@ -1656,7 +1656,7 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 		// oldMaxFrame-0x0F, 1, -1). That frame number belongs to L14PLAY2's
 		// timeline; L14PLY2B is already the continuation clip and starts at its
 		// matching lead-in frame. Preserve the current state, but do not seek.
-		debug(1, "RA1 L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
+		debugC(DEBUG_INSANE, "RA1 L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
 			(int)startFrame);
 	}
 }
@@ -1690,7 +1690,7 @@ void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOff
 
 // Play interactive gameplay video (with ship physics + HUD).
 void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
-	debug(1, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
+	debugC(DEBUG_INSANE, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
 	if (shouldAbortGameFlow())
 		return;
 

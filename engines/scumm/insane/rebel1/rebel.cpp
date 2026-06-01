@@ -192,7 +192,7 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
 
-	debug(1, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
+	debugC(DEBUG_INSANE, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
 		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
 		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
 		_tuning.miss, _tuning.wham, _tuning.shot, _tuning.kill,
@@ -404,17 +404,17 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	resetFrameObjectState();
 
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
-		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
+		debugC(DEBUG_INSANE, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TECHFONT.NUT", _hudFontBank)) {
-		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _hudFontBank.numSprites);
+		debugC(DEBUG_INSANE, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _hudFontBank.numSprites);
 	} else {
 		warning("InsaneRebel1: failed to load RA1 HUD font bank (TECHFONT/TALKFONT)");
 	}
 
 	if (loadRA1Nut("SYS/TITLFONT.NUT", _titleFontBank)) {
-		debug(1, "InsaneRebel1: title glyph font loaded from SYS/TITLFONT.NUT (%d chars)", _titleFontBank.numSprites);
+		debugC(DEBUG_INSANE, "InsaneRebel1: title glyph font loaded from SYS/TITLFONT.NUT (%d chars)", _titleFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _titleFontBank)) {
-		debug(1, "InsaneRebel1: title glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _titleFontBank.numSprites);
+		debugC(DEBUG_INSANE, "InsaneRebel1: title glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _titleFontBank.numSprites);
 	} else {
 		warning("InsaneRebel1: failed to load title font bank (TITLFONT/TALKFONT)");
 	}
@@ -422,9 +422,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	// FUN_1CB22 uses "<<" layer markers that resolve to TECHFONT in the original.
 	// Keep a dedicated TECH font bank for targeting markers/lock indicators.
 	if (loadRA1Nut("SYS/TECHFONT.NUT", _techFontBank)) {
-		debug(1, "InsaneRebel1: targeting glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _techFontBank.numSprites);
+		debugC(DEBUG_INSANE, "InsaneRebel1: targeting glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _techFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _techFontBank)) {
-		debug(1, "InsaneRebel1: targeting glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _techFontBank.numSprites);
+		debugC(DEBUG_INSANE, "InsaneRebel1: targeting glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _techFontBank.numSprites);
 	} else {
 		warning("InsaneRebel1: failed to load targeting font bank (TECHFONT/TALKFONT)");
 	}

@@ -639,7 +639,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			_vm->_smushVideoShouldFinish = true;
 			const int32 resumeFrame = (_currentLevel == 6 && _pendingRouteStartFrame < 0) ?
 				0 : _pendingRouteStartFrame;
-			debug(1, "RA1 L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
+			debugC(DEBUG_INSANE, "RA1 L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
 				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,
 				_currentLevel == 6 ? "localFrame" : "frame",
 				(unsigned)routeFrame, (int)resumeFrame);
@@ -681,7 +681,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 				: (branchX < kLevel7BranchThreshold[nextRoute]);
 			if (!takeBranch) {
 				if (routeFrame == decisionFrame)
-					debug(1, "RA1 L7 branch miss: route=%d candidate=%d localFrame=%u gameFrame=%d shipX=%d dir=%d threshold=%d",
+					debugC(DEBUG_INSANE, "RA1 L7 branch miss: route=%d candidate=%d localFrame=%u gameFrame=%d shipX=%d dir=%d threshold=%d",
 						route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, branchX,
 						kLevel7BranchDir[nextRoute], kLevel7BranchThreshold[nextRoute]);
 				continue;
@@ -692,7 +692,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			_pendingRouteStartFrame = (int32)routeFrame;
 			_pendingRouteVideoStartFrame = 1 + (_pendingRouteCutoverFrame - _pendingRouteStartFrame);
 			_level7WarningFrames = 0;
-			debug(1, "RA1 L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d destFrame=%d",
+			debugC(DEBUG_INSANE, "RA1 L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d destFrame=%d",
 				route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, (unsigned)decisionFrame, branchX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame,
 				(int)_pendingRouteVideoStartFrame);
@@ -1213,9 +1213,9 @@ void InsaneRebel1::updateShipPhysics() {
 		if (_shipPosX > kRA1CenterX) {
 			_rightPathSelected = true;
 			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1: Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
+			debugC(DEBUG_INSANE, "RA1: Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		} else {
-			debug(1, "RA1: Left path retained (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
+			debugC(DEBUG_INSANE, "RA1: Left path retained (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		}
 		_pathBranchEnabled = false;
 	}
@@ -1552,13 +1552,13 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		// FUN_1CDA7 dispatches g_sfxDamageHit, initialized from SYS/BOOM.SAD.
 		playSfx(kSfxBoom, 127, 0);
 		if (_currentLevel == 1) {
-			debug(1, "RA1 L2 player hit: frame=%u view=(%d,%d) latch=%u asteroid=%d flags=0x%02x health=%d->%d",
+			debugC(DEBUG_INSANE, "RA1 L2 player hit: frame=%u view=(%d,%d) latch=%u asteroid=%d flags=0x%02x health=%d->%d",
 				(unsigned)(uint16)_gameCounter, _perspectiveX, _perspectiveY,
 				(unsigned)_gameLatch5D, level2AsteroidHit ? 1 : 0,
 				appliedDamageFlags, oldHealth, _health);
 		}
 		if (level8WalkerPlayerHit) {
-			debug(1, "RA1 L8 player hit by walker: route=%d frame=%u view=(%d,%d) flags=0x%02x health=%d->%d",
+			debugC(DEBUG_INSANE, "RA1 L8 player hit by walker: route=%d frame=%u view=(%d,%d) flags=0x%02x health=%d->%d",
 				CLIP<int>(_levelRouteIndex, 0, 2), (unsigned)(uint16)_gameCounter,
 				_perspectiveX, _perspectiveY, appliedDamageFlags, oldHealth, _health);
 		}
@@ -1691,7 +1691,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			const bool target215Destroyed = isFrameObjectPrimarySet(215);
 			if (!target211Destroyed || !target213Destroyed || !target215Destroyed) {
 				_levelGameplayPhase = 1;
-				debug(1, "RA1 L12 retry armed: frame=0x%04x targets=(%d,%d,%d)",
+				debugC(DEBUG_INSANE, "RA1 L12 retry armed: frame=0x%04x targets=(%d,%d,%d)",
 					_frameCounter,
 					target211Destroyed ? 1 : 0,
 					target213Destroyed ? 1 : 0,
@@ -2135,7 +2135,7 @@ void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableRea
 		}
 	}
 	if ((_damageFlags & 0x0F) != oldDirectionalFlags) {
-		debug(1, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
+		debugC(DEBUG_INSANE, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
 			collisionShipX, collisionShipY,
 			_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
 			_damageFlags, suppressDirectionalDamage ? 1 : 0);
@@ -2177,7 +2177,7 @@ void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStr
 		collisionShipX > zoneLeft && collisionShipX < zoneRight &&
 		collisionShipY > zoneTop && collisionShipY < zoneBottom) {
 		_damageFlags |= 0x10;
-		debug(1, "RA1 0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
+		debugC(DEBUG_INSANE, "RA1 0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
 			collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
 			rawZoneLeft, rawZoneTop, zoneWidth, zoneHeight,
 			_perspectiveX, _perspectiveY, _damageFlags);
@@ -2203,7 +2203,7 @@ void InsaneRebel1::handleGameOpcode0BFirstPerson(int32 subSize, Common::Seekable
 		if (_interactiveVideoActive && maxFrames > 0 &&
 			_gameCounter >= (int32)maxFrames - 1) {
 			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
+			debugC(DEBUG_INSANE, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
 		}
 	}
 	debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
@@ -2397,7 +2397,7 @@ void InsaneRebel1::processShot() {
 	playSfx(torpedoMode ? kSfxAlert : kSfxLaserShot, 127, 0);
 
 	if (effectiveOpcode == 0x09 || _currentLevel == 4) {
-		debug(1, "RA1 shot: opcode=0x%02x frame=%d slot=%d cursor=(%d,%d) origin=(%d,%d) dir=%d mode=%d",
+		debugC(DEBUG_INSANE, "RA1 shot: opcode=0x%02x frame=%d slot=%d cursor=(%d,%d) origin=(%d,%d) dir=%d mode=%d",
 			effectiveOpcode, _gameCounter, slot, cursorX, cursorY, originX, originY,
 			_shipDirIndex, _flyControlMode);
 	} else {

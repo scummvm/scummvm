@@ -516,7 +516,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	}
 
 	if (event.type == Common::EVENT_JOYBUTTON_DOWN || event.type == Common::EVENT_JOYBUTTON_UP) {
-		debug(1, "RA1 input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "RA1 input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
 			event.joystick.button, event.type == Common::EVENT_JOYBUTTON_DOWN,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY);
@@ -595,7 +595,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
 
-		debug(1, "RA1 input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
+		debugC(DEBUG_INSANE, "RA1 input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
 			getRebel1ActionName(event.customType), event.customType, pressed,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY,
@@ -655,10 +655,10 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_MAINMENU && _interactiveVideoActive && !_menuActive) {
 		const uint32 now = _vm->_system->getMillis();
 		const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
-		debug(1, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
 			elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
 		if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-			debug(1, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+			debugC(DEBUG_INSANE, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
 			return true;
 		}
 	}
@@ -668,11 +668,11 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			const uint32 now = _vm->_system->getMillis();
 			const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
-			debug(1, "RA1 input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
+			debugC(DEBUG_INSANE, "RA1 input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
 				event.kbd.ascii, event.kbd.flags, event.kbdRepeat,
 				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
 			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-				debug(1, "RA1 input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				debugC(DEBUG_INSANE, "RA1 input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
 				return true;
 			}
 
@@ -929,7 +929,7 @@ bool InsaneRebel1::runTextEntryMenuLoop() {
 }
 
 int InsaneRebel1::runMainMenu() {
-	debug(1, "InsaneRebel1: Main menu");
+	debugC(DEBUG_INSANE, "InsaneRebel1: Main menu");
 
 	_menuSelection = 0;
 	while (!shouldAbortGameFlow()) {
@@ -962,13 +962,13 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 			_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, i);
 			if (targetLevel <= kRA1NumLevels)
 				_startLevel = targetLevel;
-			debug(1, "RA1 passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+			debugC(DEBUG_INSANE, "RA1 passcode accepted: slot=%d password=%s difficulty=%d target=%d",
 				i, password, _difficulty, targetLevel);
 			return targetLevel;
 		}
 	}
 
-	debug(1, "RA1 passcode rejected: '%s'", _textEntryBuffer);
+	debugC(DEBUG_INSANE, "RA1 passcode rejected: '%s'", _textEntryBuffer);
 	return 0;
 }
 
@@ -995,7 +995,7 @@ bool InsaneRebel1::runHighScoreNameEntry() {
 	Common::strlcpy(_highScores[slot].name, storedName.c_str(), sizeof(_highScores[slot].name));
 	_highScores[slot].difficulty = _difficulty;
 	_highScoreEntryIndex = -1;
-	debug(1, "RA1 high score inserted: slot=%d name=%s score=%ld difficulty=%d",
+	debugC(DEBUG_INSANE, "RA1 high score inserted: slot=%d name=%s score=%ld difficulty=%d",
 		slot, _highScores[slot].name, (long)_highScores[slot].score, _highScores[slot].difficulty);
 	return true;
 }

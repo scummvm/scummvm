@@ -1908,7 +1908,7 @@ void InsaneRebel1::updateLevel8WalkerState() {
 			_pendingRouteIndex = newRoute;
 			_pendingRouteCutoverFrame = _gameCounter + 7;
 			_pendingRouteStartFrame = _pendingRouteCutoverFrame;
-			debug(1, "RA1 L8 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
+			debugC(DEBUG_INSANE, "RA1 L8 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
 				route, newRoute, (unsigned)_gameCounter, _shipPosX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
 		}

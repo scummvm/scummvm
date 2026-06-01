@@ -156,7 +156,7 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 	free(fobjOffsets);
 
 	free(data);
-	debug(1, "InsaneRebel1::loadRA1Nut('%s'): expected=%d found=%d decoded=%d bytes",
+	debugC(DEBUG_INSANE, "InsaneRebel1::loadRA1Nut('%s'): expected=%d found=%d decoded=%d bytes",
 		  filename, expectedSprites, foundSprites, decodedSize);
 	return true;
 }
@@ -169,14 +169,14 @@ void InsaneRebel1::loadLevelSprites(int level) {
 		if (!loadRA1Nut(legacyBankFile.c_str(), _shipBank)) {
 			Common::String pilotFile = Common::String::format("LVL%d/L%dPILOT.NUT", level, level);
 			if (!loadRA1Nut(pilotFile.c_str(), _shipBank))
-				debug(1, "InsaneRebel1: No BANK1/BANK/PILOT for level %d", level);
+				debugC(DEBUG_INSANE, "InsaneRebel1: No BANK1/BANK/PILOT for level %d", level);
 		}
 	}
 
 	// Secondary ship bank used by some level-specific handlers (e.g. LVL1 mode-2).
 	Common::String bankFileAlt = Common::String::format("LVL%d/L%dBANK2.NUT", level, level);
 	if (!loadRA1Nut(bankFileAlt.c_str(), _shipBankAlt)) {
-		debug(1, "InsaneRebel1: No BANK2 for level %d", level);
+		debugC(DEBUG_INSANE, "InsaneRebel1: No BANK2 for level %d", level);
 	}
 
 	loadRA1Nut("SYS/DISPLAY.NUT", _displayBank);
