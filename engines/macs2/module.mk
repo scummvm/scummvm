@@ -2,6 +2,7 @@ MODULE := engines/macs2
 
 MODULE_OBJS = \
 	macs2.o \
+	saveload.o \
 	console.o \
 	debugtools.o \
 	events.o \

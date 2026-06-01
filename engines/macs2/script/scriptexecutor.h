@@ -378,6 +378,8 @@ public:
 	uint32 getScriptPosition() const;
 	uint32 getScriptEndPosition() const;
 	uint16 getExecutingObjectId() const { return _executingObjectIndex; }
+	uint16 getFrameWaitCounter() const { return _frameWaitTicksRemaining; }
+	void setFrameWaitCounter(uint16 val) { _frameWaitTicksRemaining = val; }
 	uint32 getVariableValue(int index) const;
 
 	// Computes the read-only runtime value for a type 0xFF special
