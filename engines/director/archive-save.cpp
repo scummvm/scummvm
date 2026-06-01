@@ -30,6 +30,7 @@
 #include "director/score.h"
 #include "director/window.h"
 #include "director/sprite.h"
+#include "director/util.h"
 
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
@@ -46,7 +47,13 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 		filename = movie->getMacName();
 	}
 
-	Common::String saveFileName = g_director->getTargetName() + "-" + filename;
+	// Normalise the name the same way the movie loader does (convertPath strips
+	// the drive letter / Mac-style separators), so the key the save is stored
+	// under matches the one used when the movie is later loaded by fileName.
+	// Otherwise e.g. saving "C:\SCORES.DXR" and loading it back (which resolves
+	// to "SCORES.DXR") would not find the saved file. ("Ein Fall fuer Muetze &
+	// Co" saves player profiles to such a drive-qualified path.)
+	Common::String saveFileName = g_director->getTargetName() + "-" + convertPath(filename);
 
 	// We may be saving over the very file this archive was loaded from: TKKG2
 	// re-saves "score.dxr" over the savegame it loaded. openForSaving() below
@@ -773,7 +780,10 @@ SavedArchive::SavedArchive(Common::String target) {
 	for (auto saveFileName : saveFileList) {
 		// Derive the original file name from the save file name
 		// Save files are named target_name-save_filename
-		Common::String origFileName = saveFileName.substr(target.size() + 1);
+		// Normalise it with convertPath so the key matches the path the movie
+		// loader resolves to (it strips drive letters etc.); otherwise a movie
+		// saved as e.g. "C:\SCORES.DXR" could never be loaded back by fileName.
+		Common::String origFileName = convertPath(saveFileName.substr(target.size() + 1));
 		debugC(3, kDebugLoading, "Found save file: %s -> %s", saveFileName.c_str(), origFileName.c_str());
 
 		_files[origFileName] = saveFileName;
