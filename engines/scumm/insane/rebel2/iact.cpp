@@ -801,11 +801,14 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	//   -> velocity history averaging -> physics delta (clamped +/-12/frame)
 	//   -> position clamping -> corridor collision -> perspective offsets
 	//
-	// Level data table (DAT_0047e0e8 + level*0x242 + difficulty*0x22):
-	//   offset 0: smoothing param (>>4 +1 = window size)
+	// Level data table (DAT_0047e0e8 + difficulty*0x242 + levelType*0x22):
 	//   offset 2: Y speed          offset 4: X speed (levelSpeed)
-	//   offset 6: wind multiplier  offset 14: corridor damage
-	// We don't have the actual level data, so we use calibrated defaults.
+	//   offset 6: wind multiplier
+	// Our extracted difficulty table starts at DAT_0047e0f0, so for Handler 7
+	// level types these fields map to lift/slide/drift of the preceding row.
+	const int flightParamIndex = CLIP(_rebelLevelType - 1, 0, 16);
+	const LevelDifficultyParams &flightParams =
+		kDifficultyTable[CLIP(_difficulty, 0, 5)][flightParamIndex];
 
 	// Step 1: Mouse input as offset from screen center.
 	// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100.
@@ -836,7 +839,6 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	}
 	_velocityHistory[0] = scaledInputX;
 
-	// Window size = (levelData[0] >> 4) + 1. Calibrated default: 5.
 	const int smoothWindow = 5;
 	int velSum = 0;
 	for (int i = 0; i < smoothWindow; i++) {
@@ -845,8 +847,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	_smoothedVelocity = (int16)(velSum / smoothWindow);  // DAT_0044370c
 
 	// Step 4: Wind history (lines 158-173).
-	// Wind multiplier comes from level data[6]. Without data, use 0 (no wind).
-	const int16 windMult = 0;
+	const int16 windMult = flightParams.driftRate;
 	int windSumX = 0, windSumY = 0;
 	for (int i = 14; i > 0; i--) {
 		_windHistoryX[i] = _windHistoryX[i - 1];
@@ -863,12 +864,8 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	int16 windEffectY = (int16)((windMult * (windSumY + _windParamY)) / 15);
 
 	// Step 5: Position delta (lines 174-242).
-	// levelSpeed (offset 4): calibrated so max velocity (127) -> delta 12.
-	//   8 = (speed * 127) >> 9 -> speed around 32
-	// levelYSpeed (offset 2): calibrated so max input (127) -> delta ~6.
-	//   6 = (speed * 127) >> 10 -> speed around 48
-	const int16 levelSpeed = 32;
-	const int16 levelYSpeed = 48;
+	const int16 levelSpeed = flightParams.slideRate;
+	const int16 levelYSpeed = flightParams.liftRate;
 	int16 absSmoothVel = ABS(_smoothedVelocity);
 	int16 positionDeltaX;
 

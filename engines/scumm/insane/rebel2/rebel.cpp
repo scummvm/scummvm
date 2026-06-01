@@ -1596,7 +1596,12 @@ Common::Point InsaneRebel2::getGameplayAimPoint() {
 	// Pure getter (queried many times per frame): the aim/reticle follows the virtual
 	// mouse position. Directional controls pan that position incrementally once per frame
 	// via updateGameplayAimFromGamepad(), rather than snapping the reticle to a screen edge.
-	return Common::Point(_vm->_mouse.x, _vm->_mouse.y);
+	int y = _vm->_mouse.y;
+	if (_optControlsFlipped) {
+		// Original DAT_0047a7fe reverses only the up/down gameplay axis.
+		y = CLIP<int>(200 - y, 0, 199);
+	}
+	return Common::Point(_vm->_mouse.x, y);
 }
 
 // Apply the user's configured analog deadzone so a resting stick reports no
