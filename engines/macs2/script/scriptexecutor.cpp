@@ -2473,9 +2473,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x12) {
 			scriptOpcode0x12();
-		} else if (opcode1 == 0x14) {
-			// Opcode 0x14: consume/skip a word value (confirmed: just calls scriptReadWord in disassembly)
-			ReadWord();
 		} else if (opcode1 == 0x2A) {
 			scriptOpcode0x2A();
 		} else if (opcode1 == 0x2B) {
