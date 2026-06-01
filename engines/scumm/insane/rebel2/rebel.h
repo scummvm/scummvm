@@ -296,7 +296,9 @@ public:
 	enum PilotMenuMode {
 		kPilotModeSelect = 0,     // Normal pilot list selection
 		kPilotModeNameInput = 1,  // Typing a new pilot name
-		kPilotModeDifficulty = 2  // Difficulty submenu
+		kPilotModeDifficulty = 2, // Difficulty submenu
+		kPilotModeCopySelect = 3, // Selecting source pilot to copy
+		kPilotModeDeleteSelect = 4 // Selecting pilot to delete
 	};
 	PilotMenuMode _pilotMenuMode;
 	Common::String _pilotNameInput;      // Current name being typed
