@@ -2108,6 +2108,47 @@ bool Script::ScriptExecutor::scriptOpcode0x43() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x44() {
+	const uint16 slotID = scriptReadValue16();
+	const uint16 startMuted = scriptReadValue16();
+	const uint16 fadeParam = scriptReadValue16();
+	if (slotID < 1 || slotID > 2) {
+		warning("Ignoring music start for invalid slot %u", slotID);
+		return false;
+	}
+
+	if (!musicEnabled || !soundSystemActive) {
+		activeMusicSlot = slotID;
+		return false;
+	}
+
+	if (activeMusicSlot != 0) {
+		_engine->getAdlib()->StopMusic();
+		activeMusicSlot = 0;
+	}
+
+	if (musicSlots[slotID - 1].empty()) {
+		warning("Ignoring music start for empty slot %u", slotID);
+		return false;
+	}
+
+	_engine->getAdlib()->PlaySongData(musicSlots[slotID - 1]);
+	if (startMuted == 0) {
+		musicControlMode = 1;
+		musicControlParam = fadeParam;
+		musicControlVolume = 0x3F;
+		_engine->getAdlib()->SetVolume(musicControlVolume);
+	} else {
+		musicControlMode = 0;
+		musicControlParam = 0;
+		musicControlVolume = 0;
+		_engine->getAdlib()->SetVolume(0);
+	}
+
+	activeMusicSlot = slotID;
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2362,43 +2403,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x44) {
-			const uint16 slotID = scriptReadValue16();
-			const uint16 startMuted = scriptReadValue16();
-			const uint16 fadeParam = scriptReadValue16();
-			if (slotID < 1 || slotID > 2) {
-				warning("Ignoring music start for invalid slot %u", slotID);
+			if (!scriptOpcode0x44()) {
 				continue;
 			}
-
-			if (!musicEnabled || !soundSystemActive) {
-				activeMusicSlot = slotID;
-				continue;
-			}
-
-			if (activeMusicSlot != 0) {
-				_engine->getAdlib()->StopMusic();
-				activeMusicSlot = 0;
-			}
-
-			if (musicSlots[slotID - 1].empty()) {
-				warning("Ignoring music start for empty slot %u", slotID);
-				continue;
-			}
-
-			_engine->getAdlib()->PlaySongData(musicSlots[slotID - 1]);
-			if (startMuted == 0) {
-				musicControlMode = 1;
-				musicControlParam = fadeParam;
-				musicControlVolume = 0x3F;
-				_engine->getAdlib()->SetVolume(musicControlVolume);
-			} else {
-				musicControlMode = 0;
-				musicControlParam = 0;
-				musicControlVolume = 0;
-				_engine->getAdlib()->SetVolume(0);
-			}
-
-			activeMusicSlot = slotID;
 		} else if (opcode1 == 0x45) {
 			const uint16 slotID = scriptReadValue16();
 			const uint16 stopImmediately = scriptReadValue16();
