@@ -34,9 +34,11 @@ namespace UI {
 Taskbar::Taskbar() :
 		RenderObject(7),
 		_hoveredButton(-1),
-		_clickedButton(-1) {
+		_clickedButton(-1),
+		_currentScene(-1) {
 	for (uint i = 0; i < TASK::kNumButtons; ++i) {
 		_buttonStates[i] = kButtonIdle;
+		_enabled[i] = true;
 	}
 }
 
@@ -72,9 +74,14 @@ void Taskbar::drawButton(uint index, ButtonState state) {
 	auto *taskData = GetEngineData(TASK);
 	assert(taskData);
 
-	const UIButtonRecord &btn = taskData->buttons[index].button;
+	const TASK::ButtonRecord &rec = taskData->buttons[index];
+	const UIButtonRecord &btn = rec.button;
 
-	Common::Rect src = btn.sourceRects[state];
+	// The notification sprite lives outside the standard sourceRects
+	// array, in its own per-button rect.
+	Common::Rect src = (state == kButtonNotification)
+		? rec.notificationSrcRect
+		: btn.sourceRects[state];
 	if (src.isEmpty())
 		src = btn.sourceRects[kButtonIdle];
 	if (src.isEmpty())
@@ -96,8 +103,86 @@ void Taskbar::drawButton(uint index, ButtonState state) {
 	_needsRedraw = true;
 }
 
+Taskbar::ButtonState Taskbar::restingState(uint index) const {
+	if (index >= TASK::kNumButtons) {
+		return kButtonIdle;
+	}
+	if (!_enabled[index]) {
+		return kButtonDisabled;
+	}
+	const ButtonOverride &o = _overrides[index];
+	if (o.active && _currentScene >= o.startScene && _currentScene <= o.endScene) {
+		return o.state;
+	}
+	return kButtonIdle;
+}
+
+bool Taskbar::isButtonActive(uint index) const {
+	return _enabled[index] && restingState(index) != kButtonDisabled;
+}
+
 void Taskbar::toggleButton(uint index, bool enabled) {
-	drawButton(index, enabled ? kButtonIdle : kButtonDisabled);
+	if (index >= TASK::kNumButtons) {
+		return;
+	}
+	_enabled[index] = enabled;
+	if ((int)index != _hoveredButton) {
+		drawButton(index, restingState(index));
+	}
+}
+
+void Taskbar::setNotification(uint buttonIndex, int16 startScene, int16 endScene) {
+	if (buttonIndex >= TASK::kNumButtons) {
+		return;
+	}
+	_overrides[buttonIndex].active = true;
+	_overrides[buttonIndex].state = kButtonNotification;
+	_overrides[buttonIndex].startScene = startScene;
+	_overrides[buttonIndex].endScene = endScene;
+
+	// Re-render this button immediately unless the player is currently
+	// hovering it (hover takes priority over the override sprite).
+	if ((int)buttonIndex != _hoveredButton) {
+		drawButton(buttonIndex, restingState(buttonIndex));
+	}
+}
+
+void Taskbar::setDisabledRange(uint buttonIndex, int16 startScene, int16 endScene) {
+	if (buttonIndex >= TASK::kNumButtons) {
+		return;
+	}
+	_overrides[buttonIndex].active = true;
+	_overrides[buttonIndex].state = kButtonDisabled;
+	_overrides[buttonIndex].startScene = startScene;
+	_overrides[buttonIndex].endScene = endScene;
+
+	if ((int)buttonIndex != _hoveredButton) {
+		drawButton(buttonIndex, restingState(buttonIndex));
+	}
+}
+
+void Taskbar::clearButtonOverride(uint buttonIndex) {
+	if (buttonIndex >= TASK::kNumButtons) {
+		return;
+	}
+	_overrides[buttonIndex].active = false;
+
+	if ((int)buttonIndex != _hoveredButton) {
+		drawButton(buttonIndex, restingState(buttonIndex));
+	}
+}
+
+void Taskbar::updateNotificationStates(int16 currentSceneID) {
+	_currentScene = currentSceneID;
+	for (uint i = 0; i < TASK::kNumButtons; ++i) {
+		if ((int)i == _hoveredButton) {
+			continue;
+		}
+		const ButtonState desired = restingState(i);
+		if (_buttonStates[i] != desired) {
+			drawButton(i, desired);
+		}
+	}
 }
 
 void Taskbar::handleInput(NancyInput &input) {
@@ -108,18 +193,18 @@ void Taskbar::handleInput(NancyInput &input) {
 
 	int newHovered = -1;
 	for (uint i = 0; i < TASK::kNumButtons; ++i) {
-		if (taskData->buttons[i].button.destRect.contains(input.mousePos) && _buttonStates[i] != kButtonDisabled) {
+		if (isButtonActive(i) && taskData->buttons[i].button.destRect.contains(input.mousePos)) {
 			newHovered = i;
 			break;
 		}
 	}
 
-	// Update hover graphic on enter/exit. Always revert the previously-
-	// hovered button (even from kButtonPressed) so it never gets stuck
-	// after the cursor leaves.
+	// Update hover graphic on enter/exit. The previously-hovered button
+	// returns to its resting sprite (idle or notification) so it doesn't
+	// get stuck in hover/pressed after the cursor leaves.
 	if (newHovered != _hoveredButton) {
 		if (_hoveredButton != -1) {
-			drawButton(_hoveredButton, kButtonIdle);
+			drawButton(_hoveredButton, restingState(_hoveredButton));
 		}
 		if (newHovered != -1) {
 			drawButton(newHovered, kButtonHover);
@@ -141,6 +226,12 @@ void Taskbar::handleInput(NancyInput &input) {
 	} else if (input.input & NancyInput::kLeftMouseButtonUp) {
 		// Mouse released over the button: trigger the click action and
 		// snap the sprite back to hover (the cursor is still over it).
+		// Acknowledging the click also clears a pending notification
+		// for this button, so re-opening the popup doesn't keep blinking.
+		// A scene-ranged disable override is left intact.
+		if (_overrides[newHovered].state == kButtonNotification) {
+			_overrides[newHovered].active = false;
+		}
 		drawButton(newHovered, kButtonHover);
 		_clickedButton = newHovered;
 

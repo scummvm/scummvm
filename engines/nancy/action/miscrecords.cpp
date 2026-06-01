@@ -191,17 +191,65 @@ void FrameTextBox::execute() {
 
 void ControlUIItems::readData(Common::SeekableReadStream &stream) {
 	_uiButton = stream.readUint16LE();
-	_flagA = stream.readByte();
+	_autoOpenOrBadgeSound = stream.readByte();
 	_flagB  = stream.readByte();
-	_scene1 = stream.readSint16LE();
-	_scene2 = stream.readSint16LE();
+	_startScene = stream.readSint16LE();
+	_endScene = stream.readSint16LE();
 }
 
 void ControlUIItems::execute() {
-	// TODO: finish this
+	// Value 1 auto-opens the popup selected by _uiButton. For the cell
+	// phone, _startScene (when set) is the scene to jump to once it opens,
+	// which places a call that starts a conversation there.
+	if (_autoOpenOrBadgeSound == 1) {
+		switch (_uiButton) {
+		case kUITypeInventory:
+			NancySceneState.getInventoryPopup().open();
+			break;
+		case kUITypeNotebook:
+			NancySceneState.getNotebookPopup().open();
+			break;
+		case kUITypeCellphone:
+			NancySceneState.getCellPhonePopup().open();
 
-	NancySceneState.getTaskbar()->toggleButton(_uiButton, _flagA != 0);
-	debug("ControlUIItems: UIButton=%d, flagA=%d, flagB=%d, scene1=%d, scene2=%d", _uiButton, _flagA, _flagB, _scene1, _scene2);
+			if (_startScene != (int16)kNoScene) {
+				SceneChangeDescription scene;
+				scene.sceneID = _startScene;
+				scene.frameID = 0;
+				scene.verticalOffset = 0;
+				// The destination scene's sound carries the conversation audio.
+				scene.continueSceneSound = kLoadSceneSound;
+
+				// Pushed so AR 128 in the conversation scene can return here.
+				NancySceneState.pushScene();
+				NancySceneState.changeScene(scene);
+			}
+			break;
+		default:
+			break;
+		}
+	} else {
+		// Otherwise this AR toggles whether the button is disabled while the
+		// player is in scene range [_startScene, _endScene]. _flagB != 0 sets
+		// the toggle (a _startScene of 9997 means "from scene 0", with the
+		// range capped at 9997); _flagB == 0 clears it once a bound is 9999
+		// (kNoScene). The _autoOpenOrBadgeSound value selects the button's
+		// click sound in the original (not yet implemented).
+		UI::Taskbar *taskbar = NancySceneState.getTaskbar();
+		if (taskbar) {
+			if (_flagB != 0) {
+				int16 start = _startScene;
+				int16 end = _endScene;
+				if (_startScene == 9997) {
+					start = 0;
+					end = 9997;
+				}
+				taskbar->setDisabledRange(_uiButton, start, end);
+			} else if (_startScene == (int16)kNoScene || _endScene == (int16)kNoScene) {
+				taskbar->clearButtonOverride(_uiButton);
+			}
+		}
+	}
 
 	finishExecution();
 }

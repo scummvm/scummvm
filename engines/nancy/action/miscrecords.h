@@ -148,10 +148,10 @@ public:
 	void execute() override;
 
 	uint16 _uiButton = 0;
-	byte _flagA = 0;    // 0, 1 or 10
+	byte _autoOpenOrBadgeSound = 0; // 1 = auto-open popup; 0/10 = notification-badge click-sound selector
 	byte _flagB = 0;    // 0 = clear, 1 = enable+remember scene
-	int16 _scene1 = 0;  // start scene id (9999 = none)
-	int16 _scene2 = 0;  // end scene id (9999 = none)
+	int16 _startScene = 0; // start scene id (9999 = none); also the auto-open cell phone's call target
+	int16 _endScene = 0;   // end scene id (9999 = none)
 
 protected:
 	Common::String getRecordTypeName() const override { return "ControlUIItems"; }

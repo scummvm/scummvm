@@ -1059,11 +1059,9 @@ void Scene::load(bool fromSaveFile) {
 		_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 	}
 
-	// Enable all task buttons
-	// TODO: This should be done elsewhere
+	// Re-evaluate taskbar notification states against the new scene.
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
-		for (int i = 0; i < 5; ++i)
-			_taskbar->toggleButton(i, true);
+		_taskbar->updateNotificationStates(_sceneState.currentScene.sceneID);
 	}
 
 	delete sceneIFF;

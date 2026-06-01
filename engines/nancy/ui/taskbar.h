@@ -42,7 +42,24 @@ public:
 	void registerGraphics() override;
 	void handleInput(NancyInput &input);
 
+	// Enable / disable a taskbar button. A disabled button is rendered
+	// in its disabled sprite and ignores clicks.
 	void toggleButton(uint index, bool enabled);
+
+	// Configure a per-button override that is active only while the player
+	// is in a scene whose ID falls in [startScene, endScene]. The button
+	// renders in its notification (badge) sprite, or its disabled sprite,
+	// for that range; outside it reverts to idle.
+	// setDisabledRange is driven by AR 29 (ControlUIItems, _flagB != 0).
+	// setNotification renders the badge sprite; the source that should drive
+	// it has not been identified yet (it is NOT ControlUIItems).
+	void setNotification(uint buttonIndex, int16 startScene, int16 endScene);
+	void setDisabledRange(uint buttonIndex, int16 startScene, int16 endScene);
+	void clearButtonOverride(uint buttonIndex);
+
+	// Re-evaluate which buttons should currently show their override
+	// sprite. Call after a scene change so the range check kicks in.
+	void updateNotificationStates(int16 currentSceneID);
 
 	// Returns the index of the button that was clicked this frame, or -1
 	// if none. Cleared on the next call to handleInput().
@@ -50,19 +67,36 @@ public:
 
 private:
 	enum ButtonState {
-		kButtonIdle     = 0,
-		kButtonHover    = 1,
-		kButtonPressed  = 2,
-		kButtonDisabled = 3
+		kButtonIdle         = 0,
+		kButtonHover        = 1,
+		kButtonPressed      = 2,
+		kButtonDisabled     = 3,   // not clickable
+		kButtonNotification = 4    // popup has new content (badge sprite)
+	};
+
+	// A scene-ranged sprite override for one button. While active and the
+	// current scene is within [startScene, endScene] the button renders in
+	// `state` (kButtonNotification or kButtonDisabled).
+	struct ButtonOverride {
+		bool active = false;
+		ButtonState state = kButtonIdle;
+		int16 startScene = -1;
+		int16 endScene = -1;
 	};
 
 	void drawButton(uint index, ButtonState state);
+	ButtonState restingState(uint index) const;
+	// True when the button currently accepts hover/click (not disabled).
+	bool isButtonActive(uint index) const;
 
 	Graphics::ManagedSurface _backgroundImage; // TASK::imageName (e.g. "Frame")
 	Graphics::ManagedSurface _buttonImage;     // buttons' primaryImageName (e.g. "UIShared_OVL")
 	int _hoveredButton;
 	int _clickedButton;
+	int16 _currentScene;
+	bool _enabled[5];
 	ButtonState _buttonStates[5];
+	ButtonOverride _overrides[5];
 };
 
 } // End of namespace UI
