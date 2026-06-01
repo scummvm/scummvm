@@ -301,8 +301,8 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		if (length >= 10) {
 			script->seek(dataStart + 6);
 			uint16 o = script->readUint16LE(), n = script->readUint16LE();
-			if (n > 0 && n < 50 && Scenes::instance().CurrentSceneStrings) {
-				auto ss = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, o, n);
+			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
+				auto ss = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, o, n);
 				if (!ss.empty())
 					result = Common::String::format(" \"%s\"", ss[0].c_str());
 			}
@@ -323,8 +323,8 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		Common::String o = decodeScriptValue(script), x = decodeScriptValue(script), y = decodeScriptValue(script), sd = decodeScriptValue(script);
 		if (script->pos() + 4 <= dataStart + length) {
 			uint16 off = script->readUint16LE(), n = script->readUint16LE();
-			if (n > 0 && n < 50 && Scenes::instance().CurrentSceneStrings) {
-				auto ss = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, off, n);
+			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
+				auto ss = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, off, n);
 				if (!ss.empty()) {
 					result = Common::String::format(" obj=%s \"%s\"", o.c_str(), ss[0].c_str());
 					break;
@@ -370,8 +370,8 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		Common::String idx = decodeScriptValue(script);
 		if (script->pos() + 4 <= dataStart + length) {
 			uint16 off = script->readUint16LE(), n = script->readUint16LE();
-			if (n > 0 && n < 50 && Scenes::instance().CurrentSceneStrings) {
-				auto ss = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, off, n);
+			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
+				auto ss = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, off, n);
 				if (!ss.empty()) {
 					result = Common::String::format(" idx=%s \"%s\"", idx.c_str(), ss[0].c_str());
 					break;
@@ -613,13 +613,13 @@ static void showScriptWindow() {
 	ImGui::SetNextWindowSize(ImVec2(700, 500), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Scene Script", &_showScript)) {
 		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
-		int currentScene = Scenes::instance().CurrentSceneIndex;
+		int currentScene = Scenes::instance()._currentSceneIndex;
 		ImGui::Text("Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
 					currentScene, exec->getScriptPosition(), exec->getScriptEndPosition(),
-					exec->isExecuting() ? "RUNNING" : "Idle", exec->GetExecutingObjectId());
+					exec->isExecuting() ? "RUNNING" : "Idle", exec->getExecutingObjectId());
 		ImGui::Separator();
 
-		Common::MemoryReadStream *script = Scenes::instance().CurrentSceneScript;
+		Common::MemoryReadStream *script = Scenes::instance()._currentSceneScript;
 		if (script) {
 			if (_cachedSceneIndex != currentScene) {
 				_cachedDecompile = decompileScript(script);
@@ -707,19 +707,19 @@ static void showCharactersWindow() {
 	if (ImGui::Begin("Characters", &_showCharacters)) {
 		View1 *view = (View1 *)g_engine->findView("View1");
 		if (view) {
-			for (uint i = 0; i < view->characters.size(); i++) {
-				Character *c = view->characters[i];
-				if (!c || !c->GameObject)
+			for (uint i = 0; i < view->_characters.size(); i++) {
+				Character *c = view->_characters[i];
+				if (!c || !c->_gameObject)
 					continue;
-				Common::Point pos = c->GetPosition();
-				Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->GameObject->Index, pos.x, pos.y, i);
+				Common::Point pos = c->getPosition();
+				Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->_gameObject->_index, pos.x, pos.y, i);
 				if (ImGui::CollapsingHeader(header.c_str())) {
 					ImGui::Text("Orient: %u  Anim: %u  VOffset: %u",
-								c->GameObject->Orientation, c->animationIndex, c->GetVerticalOffset());
+								c->_gameObject->Orientation, c->_animationIndex, c->getVerticalOffset());
 					ImGui::Text("Visible: %s  Clickable: %s  Frozen: %s",
-								c->GameObject->IsVisible ? "Y" : "N",
-								c->GameObject->IsClickable ? "Y" : "N",
-								c->GameObject->HasBoundsAttachment ? "Y" : "N");
+								c->_gameObject->IsVisible ? "Y" : "N",
+								c->_gameObject->IsClickable ? "Y" : "N",
+								c->_gameObject->HasBoundsAttachment ? "Y" : "N");
 
 					// Pathfinding state
 					ImGui::Separator();
@@ -727,11 +727,11 @@ static void showCharactersWindow() {
 					ImGui::Text("  Lerping: %s  DirSet: %s  FollowPath: %s",
 								c->isLerping() ? "Y" : "N",
 								c->isDirectionSet() ? "Y" : "N",
-								c->IsFollowingPath ? "Y" : "N");
+								c->_isFollowingPath ? "Y" : "N");
 					if (c->isLerping()) {
 						Common::Point end = c->getEndPosition();
 						ImGui::Text("  Target: (%d,%d)  Final: (%d,%d)",
-									end.x, end.y, c->PathFinalDestination.x, c->PathFinalDestination.y);
+									end.x, end.y, c->_pathFinalDestination.x, c->_pathFinalDestination.y);
 						ImGui::Text("  Bresenham: dX=%d dY=%d err=%d",
 									c->getStepDeltaX(), c->getStepDeltaY(), c->getStepError());
 
@@ -740,9 +740,9 @@ static void showCharactersWindow() {
 						if (pos.y >= (int)g_engine->word51FD)
 							depth = ((int)pos.y - (int)g_engine->word51FD) * (int)g_engine->word51FF / 100;
 						uint16 animSpd = 2;
-						uint8 orient = c->GameObject->Orientation;
-						if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < c->GameObject->BlobSpeeds.size()) {
-							animSpd = c->GameObject->BlobSpeeds[orient - 1];
+						uint8 orient = c->_gameObject->Orientation;
+						if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < c->_gameObject->BlobSpeeds.size()) {
+							animSpd = c->_gameObject->BlobSpeeds[orient - 1];
 							if (animSpd == 0)
 								animSpd = 2;
 						}
@@ -752,28 +752,28 @@ static void showCharactersWindow() {
 						ImGui::Text("  Speed: %d (anim=%u depth=%d w5201=%u)",
 									spd, animSpd, depth, g_engine->word5201);
 					}
-					if (c->IsFollowingPath && !c->Path.empty()) {
-						ImGui::Text("  Path[%d/%u]: ", c->CurrentPathIndex, (uint)c->Path.size());
+					if (c->_isFollowingPath && !c->_path.empty()) {
+						ImGui::Text("  Path[%d/%u]: ", c->_currentPathIndex, (uint)c->_path.size());
 						ImGui::SameLine();
-						for (uint p = 0; p < c->Path.size(); p++) {
+						for (uint p = 0; p < c->_path.size(); p++) {
 							if (p > 0)
 								ImGui::SameLine(0, 2);
-							if ((int)p == c->CurrentPathIndex)
-								ImGui::TextColored(ImVec4(0, 1, 0, 1), "%u", c->Path[p]);
+							if ((int)p == c->_currentPathIndex)
+								ImGui::TextColored(ImVec4(0, 1, 0, 1), "%u", c->_path[p]);
 							else
-								ImGui::Text("%u", c->Path[p]);
+								ImGui::Text("%u", c->_path[p]);
 						}
 					}
 
 					// Direction availability
-					if (c->GameObject->Blobs.size() >= 8) {
+					if (c->_gameObject->Blobs.size() >= 8) {
 						ImGui::Text("  DirAvail: ");
 						ImGui::SameLine();
 						const char *dirNames[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 						for (int d = 0; d < 8; d++) {
 							if (d > 0)
 								ImGui::SameLine(0, 4);
-							bool avail = d < (int)c->GameObject->Blobs.size() && !c->GameObject->Blobs[d].empty();
+							bool avail = d < (int)c->_gameObject->Blobs.size() && !c->_gameObject->Blobs[d].empty();
 							if (avail)
 								ImGui::TextColored(ImVec4(0, 1, 0, 1), "%s", dirNames[d]);
 							else
@@ -795,13 +795,13 @@ static void showInventoryWindow() {
 		View1 *view = (View1 *)g_engine->findView("View1");
 		if (view) {
 			ImGui::Text("Source: obj %u | Active: %s | Showing: %s",
-						view->inventorySource ? view->inventorySource->Index : 0,
-						view->activeInventoryItem ? Common::String::format("0x%x", view->activeInventoryItem->Index).c_str() : "None",
+						view->_inventorySource ? view->_inventorySource->_index : 0,
+						view->_activeInventoryItem ? Common::String::format("0x%x", view->_activeInventoryItem->_index).c_str() : "None",
 						view->_isShowingInventory ? "Y" : "N");
 			ImGui::Separator();
-			for (uint i = 0; i < view->inventoryItems.size(); i++) {
-				GameObject *obj = view->inventoryItems[i];
-				ImGui::Text("  [%u] obj 0x%x scene=%d", i, obj->Index, obj->SceneIndex);
+			for (uint i = 0; i < view->_inventoryItems.size(); i++) {
+				GameObject *obj = view->_inventoryItems[i];
+				ImGui::Text("  [%u] obj 0x%x scene=%d", i, obj->_index, obj->SceneIndex);
 			}
 		}
 	}
@@ -887,11 +887,11 @@ static void showSceneMapsWindow() {
 					}
 				}
 				// Draw character positions
-				for (uint i = 0; i < view->characters.size(); i++) {
-					Character *c = view->characters[i];
-					if (!c || !c->GameObject)
+				for (uint i = 0; i < view->_characters.size(); i++) {
+					Character *c = view->_characters[i];
+					if (!c || !c->_gameObject)
 						continue;
-					Common::Point pos = c->GetPosition();
+					Common::Point pos = c->getPosition();
 					if (pos.x >= 1 && pos.x < 319 && pos.y >= 1 && pos.y < 199) {
 						for (int d = -3; d <= 3; d++) {
 							overlayComposite.setPixel(pos.x + d, pos.y, 0x04);
@@ -919,7 +919,7 @@ static void showSceneMapsWindow() {
 					uint8 val = surface->getPixel(mx, my);
 					if (val >= 0xC8 && val <= 0xEF) {
 						uint16 overrideResult;
-						bool overrideActive = g_engine->GetPathfindingOverride(val, overrideResult);
+						bool overrideActive = g_engine->getPathfindingOverride(val, overrideResult);
 						if (overrideActive)
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone → %u = %s]",
 											  mx, my, val, val, overrideResult,
@@ -946,8 +946,8 @@ static void showSceneMapsWindow() {
 		// Node detail table
 		if (ImGui::CollapsingHeader("Node Graph", ImGuiTreeNodeFlags_DefaultOpen)) {
 			View1 *view = (View1 *)g_engine->findView("View1");
-			Character *protagonist = view ? view->GetCharacterByIndex(1) : nullptr;
-			Common::Point charPos = protagonist ? protagonist->GetPosition() : Common::Point(0, 0);
+			Character *protagonist = view ? view->getCharacterByIndex(1) : nullptr;
+			Common::Point charPos = protagonist ? protagonist->getPosition() : Common::Point(0, 0);
 
 			for (int i = 0; i < (int)g_engine->pathfindingPoints.size(); i++) {
 				const PathfindingPoint &pt = g_engine->pathfindingPoints[i];
@@ -956,8 +956,8 @@ static void showSceneMapsWindow() {
 				// Check if node is in current path
 				bool inPath = false;
 				if (protagonist) {
-					for (uint p = 0; p < protagonist->Path.size(); p++) {
-						if (protagonist->Path[p] == (uint16)i) {
+					for (uint p = 0; p < protagonist->_path.size(); p++) {
+						if (protagonist->_path[p] == (uint16)i) {
 							inPath = true;
 							break;
 						}
@@ -980,24 +980,24 @@ static void showSceneMapsWindow() {
 								   reachable ? " (R)" : "",
 								   inPath ? " *PATH*" : "");
 			}
-			if (protagonist && !protagonist->Path.empty()) {
+			if (protagonist && !protagonist->_path.empty()) {
 				ImGui::Separator();
 				ImGui::Text("Active path: ");
 				ImGui::SameLine();
-				for (uint p = 0; p < protagonist->Path.size(); p++) {
+				for (uint p = 0; p < protagonist->_path.size(); p++) {
 					if (p > 0) {
 						ImGui::SameLine(0, 2);
 						ImGui::Text("->");
 						ImGui::SameLine(0, 2);
 					}
-					ImGui::Text("%u", protagonist->Path[p]);
+					ImGui::Text("%u", protagonist->_path[p]);
 					ImGui::SameLine(0, 0);
 				}
 				ImGui::NewLine();
 				ImGui::Text("PathIdx: %d/%u  Following: %s  Dest: (%d,%d)",
-							protagonist->CurrentPathIndex, (uint)protagonist->Path.size(),
-							protagonist->IsFollowingPath ? "Y" : "N",
-							protagonist->PathFinalDestination.x, protagonist->PathFinalDestination.y);
+							protagonist->_currentPathIndex, (uint)protagonist->_path.size(),
+							protagonist->_isFollowingPath ? "Y" : "N",
+							protagonist->_pathFinalDestination.x, protagonist->_pathFinalDestination.y);
 			}
 		}
 	}
@@ -1034,7 +1034,7 @@ void onImGuiRender() {
 				g_engine->_gameSpeedMode = 2;
 			ImGui::EndMenu();
 		}
-		ImGui::Text("| Scene: %d | Speed: %s", Scenes::instance().CurrentSceneIndex,
+		ImGui::Text("| Scene: %d | Speed: %s", Scenes::instance()._currentSceneIndex,
 					g_engine->_gameSpeedMode == 0 ? "Normal" : (g_engine->_gameSpeedMode == 1 ? "Fast" : "Slow"));
 		ImGui::EndMainMenuBar();
 	}

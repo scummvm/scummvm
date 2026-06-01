@@ -8,7 +8,7 @@ DECLARE_SINGLETON(Macs2::Scenes);
 
 } // namespace Common
 
-Common::MemoryReadStream *Macs2::Scenes::ReadSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
+Common::MemoryReadStream *Macs2::Scenes::readSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
 	// Calculate the offset of the script data offset
 	// This addressing can be found in the l0037_2856 code block
 
@@ -35,7 +35,7 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneScript(uint16 sceneIndex, Comm
 	return new Common::MemoryReadStream(scriptData, scriptSize);
 }
 
-Common::Array<uint32> Macs2::Scenes::ReadSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
+Common::Array<uint32> Macs2::Scenes::readSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
 	Common::Array<uint32> result;
 	result.resize(0x80 / 4);
 
@@ -58,7 +58,7 @@ Common::Array<uint32> Macs2::Scenes::ReadSpecialAnimsOffsets(uint16 sceneIndex, 
 	return result;
 }
 
-Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
+Common::MemoryReadStream *Macs2::Scenes::readSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
 	// Calculate the offset of the script data offset
 	// This addressing can be found in the l0037_2856 code block
 
@@ -84,8 +84,8 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Com
 	// Note: We save the current scene number to [0F86h] - maybe "scene we have strings loaded for"?
 }
 
-Common::Array<uint8> Macs2::Scenes::ReadSpecialAnimBlob(uint16 index, Common::MemoryReadStream *fileStream) {
-	uint32 offset = CurrentSceneSpecialAnimOffsets[index - 1];
+Common::Array<uint8> Macs2::Scenes::readSpecialAnimBlob(uint16 index, Common::MemoryReadStream *fileStream) {
+	uint32 offset = _currentSceneSpecialAnimOffsets[index - 1];
 	fileStream->seek(offset, SEEK_SET);
 	uint32 length = fileStream->readUint32LE();
 	// Skip a string - note the original code adds 0x4 for the previously read size since
@@ -96,109 +96,109 @@ Common::Array<uint8> Macs2::Scenes::ReadSpecialAnimBlob(uint16 index, Common::Me
 	return result;
 }
 
-void Macs2::GameObjects::Init() {
-	ObjectNames.resize(0xFF);
+void Macs2::GameObjects::init() {
+	_objectNames.resize(0xFF);
 	// TODO: Make a text file instead
-	ObjectNames[0x10] = "Holzfass"; // leer
-	ObjectNames[0x11] = "Bowiemesser";
-	ObjectNames[0x17] = "Hutschachtel"; // leer und offen
-	ObjectNames[0x18] = "Damenhut";     // Mit Schleier
-	ObjectNames[0x1a] = "Eimer";        // leer
-	ObjectNames[0x1b] = "Feuerhaken";
-	ObjectNames[0x23] = "Tasse"; // leer
-	ObjectNames[0x24] = "Axt";
-	ObjectNames[0x24] = "Whiskyglas"; // leer
-	ObjectNames[0x2E] = "Whiykglas";
-	ObjectNames[0x30] = "Schürhaken";
-	ObjectNames[0x43] = "Koffer"; // geschlossen
-	ObjectNames[0x47] = "Messer";
-	ObjectNames[0x49] = "Kartonschachtel";
-	ObjectNames[0x52] = "Stoffbeutel"; // Mit Murmeln
-	ObjectNames[0x53] = "Blasebalg";
-	ObjectNames[0x54] = "Brennholz";
-	ObjectNames[0x55] = "Brot";
-	ObjectNames[0x56] = "Brotmesser";
-	ObjectNames[0x57] = "Brot";
-	ObjectNames[0x58] = "Bücher";
-	ObjectNames[0x59] = "Clownpuppe";
-	ObjectNames[0x5B] = "Blechdose";
-	ObjectNames[0x5D] = "Papierdrache";
-	ObjectNames[0x5E] = "Blecheimer";
-	ObjectNames[0x61] = "Schnapsflasche";
-	ObjectNames[0x62] = "Kerze"; // mit Flamme
-	ObjectNames[0x65] = "Spitzhacke";
-	ObjectNames[0x66] = "Kerze";
-	ObjectNames[0x67] = "Kerzen";
-	ObjectNames[0x6B] = "Korkenzieher";
-	ObjectNames[0x6A] = "Holzkohle";
-	ObjectNames[0x6B] = "Korkenzieher";
-	ObjectNames[0x6C] = "Kronleuchter"; // ohne Schirme
-	ObjectNames[0x6D] = "Kronleuchter"; // mit Schirmen
-	ObjectNames[0x70] = "Musketen";
-	ObjectNames[0x72] = "Rad";
-	ObjectNames[0x74] = "Schaufel";
-	ObjectNames[0x70] = "Musketen";
-	ObjectNames[0x73] = "Salpeter";
-	ObjectNames[0x74] = "Schüssel"; // mit Teig
-	ObjectNames[0x76] = "Lampenschirm";
-	ObjectNames[0x77] = "Lampenschirme";
-	ObjectNames[0x78] = "Messingschlüssel";
-	ObjectNames[0x7C] = "Schüssel"; // mit Schwefel
-	ObjectNames[0x7E] = "Schwarzpulver";
-	ObjectNames[0x7F] = "Schwefel";
-	ObjectNames[0x82] = "Seil";
-	ObjectNames[0x83] = "Socken";
-	ObjectNames[0x84] = "Spachtel";
-	ObjectNames[0x85] = "Holzente";
-	ObjectNames[0x86] = "Streichholz";
-	ObjectNames[0x82] = "Seil";
-	ObjectNames[0x88] = "Tasse"; // mit Öl
-	ObjectNames[0x89] = "Teig";
-	ObjectNames[0x8A] = "Topflappen";
-	ObjectNames[0x8B] = "Windlicht";
-	ObjectNames[0x8C] = "Wolle";
-	ObjectNames[0x8D] = "Wolle"; // mit Alkohol
-	ObjectNames[0x8E] = "Holzwürfel";
-	ObjectNames[0x8F] = "Brief";
-	ObjectNames[0x96] = "Lederbeutel"; // leer
-	ObjectNames[0x97] = "Lederbeutel"; // voll Sand
-	ObjectNames[0x99] = "Brecheisen";
-	ObjectNames[0x9B] = "Dynamit";
-	ObjectNames[0x9A] = "Sand";   // brennend
-	ObjectNames[0x9C] = "Fackel"; // brennend
-	ObjectNames[0x9D] = "Fackel"; //
-	ObjectNames[0x9F] = "Figur";  // zusammengesetzt
-	ObjectNames[0x98] = "Bohlen";
-	ObjectNames[0x9D] = "Holzfigur"; // Von links
-	ObjectNames[0xA0] = "Holzfigur"; // von Rechts
-	ObjectNames[0xA1] = "Seilzug";
-	ObjectNames[0xA2] = "Haken";
-	ObjectNames[0xA3] = "Haken und Seil";
-	ObjectNames[0xA4] = "Kacheln";
-	ObjectNames[0xA6] = "Nase";
-	ObjectNames[0xAC] = "Sand";
-	ObjectNames[0xAD] = "Griff";
-	ObjectNames[0xAE] = "Seil";
-	ObjectNames[0xAF] = "Sicheln";
-	ObjectNames[0xB0] = "Eisen"; // Zwei Eisen
-	ObjectNames[0xB1] = "Eisen";
-	ObjectNames[0xB2] = "Schraubenzieher";
-	ObjectNames[0xB3] = "Eisenstange";
-	ObjectNames[0xB4] = "Tomahawk";
+	_objectNames[0x10] = "Holzfass"; // leer
+	_objectNames[0x11] = "Bowiemesser";
+	_objectNames[0x17] = "Hutschachtel"; // leer und offen
+	_objectNames[0x18] = "Damenhut";     // Mit Schleier
+	_objectNames[0x1a] = "Eimer";        // leer
+	_objectNames[0x1b] = "Feuerhaken";
+	_objectNames[0x23] = "Tasse"; // leer
+	_objectNames[0x24] = "Axt";
+	_objectNames[0x24] = "Whiskyglas"; // leer
+	_objectNames[0x2E] = "Whiykglas";
+	_objectNames[0x30] = "Schürhaken";
+	_objectNames[0x43] = "Koffer"; // geschlossen
+	_objectNames[0x47] = "Messer";
+	_objectNames[0x49] = "Kartonschachtel";
+	_objectNames[0x52] = "Stoffbeutel"; // Mit Murmeln
+	_objectNames[0x53] = "Blasebalg";
+	_objectNames[0x54] = "Brennholz";
+	_objectNames[0x55] = "Brot";
+	_objectNames[0x56] = "Brotmesser";
+	_objectNames[0x57] = "Brot";
+	_objectNames[0x58] = "Bücher";
+	_objectNames[0x59] = "Clownpuppe";
+	_objectNames[0x5B] = "Blechdose";
+	_objectNames[0x5D] = "Papierdrache";
+	_objectNames[0x5E] = "Blecheimer";
+	_objectNames[0x61] = "Schnapsflasche";
+	_objectNames[0x62] = "Kerze"; // mit Flamme
+	_objectNames[0x65] = "Spitzhacke";
+	_objectNames[0x66] = "Kerze";
+	_objectNames[0x67] = "Kerzen";
+	_objectNames[0x6B] = "Korkenzieher";
+	_objectNames[0x6A] = "Holzkohle";
+	_objectNames[0x6B] = "Korkenzieher";
+	_objectNames[0x6C] = "Kronleuchter"; // ohne Schirme
+	_objectNames[0x6D] = "Kronleuchter"; // mit Schirmen
+	_objectNames[0x70] = "Musketen";
+	_objectNames[0x72] = "Rad";
+	_objectNames[0x74] = "Schaufel";
+	_objectNames[0x70] = "Musketen";
+	_objectNames[0x73] = "Salpeter";
+	_objectNames[0x74] = "Schüssel"; // mit Teig
+	_objectNames[0x76] = "Lampenschirm";
+	_objectNames[0x77] = "Lampenschirme";
+	_objectNames[0x78] = "Messingschlüssel";
+	_objectNames[0x7C] = "Schüssel"; // mit Schwefel
+	_objectNames[0x7E] = "Schwarzpulver";
+	_objectNames[0x7F] = "Schwefel";
+	_objectNames[0x82] = "Seil";
+	_objectNames[0x83] = "Socken";
+	_objectNames[0x84] = "Spachtel";
+	_objectNames[0x85] = "Holzente";
+	_objectNames[0x86] = "Streichholz";
+	_objectNames[0x82] = "Seil";
+	_objectNames[0x88] = "Tasse"; // mit Öl
+	_objectNames[0x89] = "Teig";
+	_objectNames[0x8A] = "Topflappen";
+	_objectNames[0x8B] = "Windlicht";
+	_objectNames[0x8C] = "Wolle";
+	_objectNames[0x8D] = "Wolle"; // mit Alkohol
+	_objectNames[0x8E] = "Holzwürfel";
+	_objectNames[0x8F] = "Brief";
+	_objectNames[0x96] = "Lederbeutel"; // leer
+	_objectNames[0x97] = "Lederbeutel"; // voll Sand
+	_objectNames[0x99] = "Brecheisen";
+	_objectNames[0x9B] = "Dynamit";
+	_objectNames[0x9A] = "Sand";   // brennend
+	_objectNames[0x9C] = "Fackel"; // brennend
+	_objectNames[0x9D] = "Fackel"; //
+	_objectNames[0x9F] = "Figur";  // zusammengesetzt
+	_objectNames[0x98] = "Bohlen";
+	_objectNames[0x9D] = "Holzfigur"; // Von links
+	_objectNames[0xA0] = "Holzfigur"; // von Rechts
+	_objectNames[0xA1] = "Seilzug";
+	_objectNames[0xA2] = "Haken";
+	_objectNames[0xA3] = "Haken und Seil";
+	_objectNames[0xA4] = "Kacheln";
+	_objectNames[0xA6] = "Nase";
+	_objectNames[0xAC] = "Sand";
+	_objectNames[0xAD] = "Griff";
+	_objectNames[0xAE] = "Seil";
+	_objectNames[0xAF] = "Sicheln";
+	_objectNames[0xB0] = "Eisen"; // Zwei Eisen
+	_objectNames[0xB1] = "Eisen";
+	_objectNames[0xB2] = "Schraubenzieher";
+	_objectNames[0xB3] = "Eisenstange";
+	_objectNames[0xB4] = "Tomahawk";
 }
 
-Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
-	return instance().GetObjectByIndex(1);
+Macs2::GameObject *Macs2::GameObjects::getProtagonistObject() {
+	return instance().getObjectByIndex(1);
 }
 
-Macs2::GameObject *Macs2::GameObjects::GetObjectByIndex(uint16 index) {
-	if ((uint)(index - 1) >= instance().Objects.size()) {
+Macs2::GameObject *Macs2::GameObjects::getObjectByIndex(uint16 index) {
+	if ((uint)(index - 1) >= instance()._objects.size()) {
 		return nullptr;
 	}
-	return instance().Objects[index - 1];
+	return instance()._objects[index - 1];
 }
 
-Common::MemoryReadStream *Macs2::GameObjects::ReadGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream) {
+Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream) {
 	// TODO: Copy&Pasted code from ReadSceneStrings
 	// Calculate the offset of the script data offset
 	// This addressing can be found in the l0037_2856 code block
@@ -225,57 +225,57 @@ Common::MemoryReadStream *Macs2::GameObjects::ReadGameObjectStrings(uint16 index
 	// Note: We save the current scene number to [0F86h] - maybe "scene we have strings loaded for"?
 }
 
-Common::MemoryReadStream *Macs2::GameObject::GetScriptStream() {
+Common::MemoryReadStream *Macs2::GameObject::getScriptStream() {
 	return new Common::MemoryReadStream(Script.data(), Script.size());
 }
 
 Macs2::AnimationReader::AnimationReader(const Common::Array<uint8> &blob) {
-	readStream = new Common::MemoryReadStreamEndian(blob.data(), blob.size(), false);
+	_readStream = new Common::MemoryReadStreamEndian(blob.data(), blob.size(), false);
 }
 
 uint16 Macs2::AnimationReader::readNumAnimations() {
 	// Read the header
 
-	readStream->seek(0, SEEK_SET);
+	_readStream->seek(0, SEEK_SET);
 
 	// bp-22h
-	readStream->readUint16();
+	_readStream->readUint16();
 	// bp-6h
-	readStream->readUint16();
+	_readStream->readUint16();
 	// bp-8h
-	readStream->readUint16();
+	_readStream->readUint16();
 	// bp-0Ah
-	readStream->readUint16();
+	_readStream->readUint16();
 	// bp-10h
-	readStream->readUint16();
+	_readStream->readUint16();
 	// Offset 0xA: number of command bytes in the control section (bp-0Eh in advanceAnimFrame)
-	uint16 commandSectionLength = readStream->readUint16() + 1;
+	uint16 commandSectionLength = _readStream->readUint16() + 1;
 
 	// Frame count (bp-24h) is stored right after the header + command section
-	readStream->seek(0x0B + commandSectionLength);
+	_readStream->seek(0x0B + commandSectionLength);
 
 	// bp-24h
-	uint16 result = readStream->readUint16();
+	uint16 result = _readStream->readUint16();
 	return result;
 }
 
-void Macs2::AnimationReader::SeekToAnimation(uint16 index) {
+void Macs2::AnimationReader::seekToAnimation(uint16 index) {
 	// Read bp-0Eh directly
-	readStream->seek(0xA, SEEK_SET);
+	_readStream->seek(0xA, SEEK_SET);
 	// Offset 0xA: command section length (bp-0Eh in advanceAnimFrame)
-	uint16 commandSectionLength = readStream->readUint16() + 1;
+	uint16 commandSectionLength = _readStream->readUint16() + 1;
 	// Skip reading bp-24h
-	readStream->seek(0x0B + commandSectionLength + 0x2, SEEK_SET);
+	_readStream->seek(0x0B + commandSectionLength + 0x2, SEEK_SET);
 	for (int i = 0; i < index; i++) {
-		SkipCurrentAnimationFrame();
+		skipCurrentAnimationFrame();
 	}
 }
 
-void Macs2::AnimationReader::SkipCurrentAnimationFrame() {
-	readStream->readUint16(); // value1
-	readStream->readUint16(); // value2
-	readStream->seek(2, SEEK_CUR);
-	uint16 width = readStream->readUint16();
-	uint16 height = readStream->readUint16();
-	readStream->seek(width * height, SEEK_CUR);
+void Macs2::AnimationReader::skipCurrentAnimationFrame() {
+	_readStream->readUint16(); // value1
+	_readStream->readUint16(); // value2
+	_readStream->seek(2, SEEK_CUR);
+	uint16 width = _readStream->readUint16();
+	uint16 height = _readStream->readUint16();
+	_readStream->seek(width * height, SEEK_CUR);
 }
