@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-01 16:27+0000\n"
+"POT-Creation-Date: 2026-06-01 19:59+0000\n"
 "PO-Revision-Date: 2026-06-01 18:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6181,7 +6181,7 @@ msgstr "R2"
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
-#: engines/toltecs/metaengine.cpp:252
+#: engines/scumm/metaengine.cpp:1183 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "Menu"
 
@@ -13744,61 +13744,69 @@ msgstr "Gagner les bagarres en bécane (cheat)"
 msgid "Rebel Assault controls"
 msgstr "Contrôles de Rebel Assault"
 
-#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1182
+#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1196
 msgid "Aim up / menu up"
 msgstr "Visée haut / Menu haut"
 
-#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1187
+#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1201
 msgid "Aim down / menu down"
 msgstr "Visée bas / Menu bas"
 
-#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1192
+#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1206
 msgid "Aim left / menu left"
 msgstr "Visée gauche / menu gauche"
 
-#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1197
+#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1211
 msgid "Aim right / menu right"
 msgstr "Visée droite / Menu droite"
 
-#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
+#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1216
 msgid "Stick up"
 msgstr "Manche haut"
 
-#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1209
+#: engines/scumm/metaengine.cpp:1147 engines/scumm/metaengine.cpp:1223
 msgid "Stick down"
 msgstr "Manche bas"
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1216
+#: engines/scumm/metaengine.cpp:1154 engines/scumm/metaengine.cpp:1230
 msgid "Stick left"
 msgstr "Manche gauche"
 
-#: engines/scumm/metaengine.cpp:1158 engines/scumm/metaengine.cpp:1223
+#: engines/scumm/metaengine.cpp:1161 engines/scumm/metaengine.cpp:1237
 msgid "Stick right"
 msgstr "Manche droite"
 
-#: engines/scumm/metaengine.cpp:1164 engines/scumm/metaengine.cpp:1230
+#: engines/scumm/metaengine.cpp:1168 engines/scumm/metaengine.cpp:1244
 msgid "Fire / select"
 msgstr "Tirer / Sélectionner"
 
-#: engines/scumm/metaengine.cpp:1169
-msgid "Back / skip"
-msgstr "Retour / passer"
+#: engines/scumm/metaengine.cpp:1173
+#, fuzzy
+#| msgid "Move back"
+msgid "Menu back"
+msgstr "Reculer"
 
-#: engines/scumm/metaengine.cpp:1180
+#: engines/scumm/metaengine.cpp:1178
+#, fuzzy
+#| msgid "Skip / menu"
+msgid "Skip / menu back"
+msgstr "Passer / menu"
+
+#: engines/scumm/metaengine.cpp:1194
 msgid "Rebel Assault II controls"
 msgstr "Contrôles de Rebel Assault II"
 
-#: engines/scumm/metaengine.cpp:1235
+#: engines/scumm/metaengine.cpp:1249
 msgid "Cover / back"
 msgstr "Couverture / retour"
 
-#: engines/scumm/metaengine.cpp:1241
+#: engines/scumm/metaengine.cpp:1255
 #, fuzzy
 #| msgid "Skip walk"
 msgid "Skip / back"
 msgstr "Passer le déplacement"
 
-#: engines/scumm/metaengine.cpp:1248
+#: engines/scumm/metaengine.cpp:1262
 msgid "Skip / menu"
 msgstr "Passer / menu"
 
@@ -17397,6 +17405,9 @@ msgstr ""
 "contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
 "résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
 "titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
+
+#~ msgid "Back / skip"
+#~ msgstr "Retour / passer"
 
 #~ msgid "N"
 #~ msgstr "N"

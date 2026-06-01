@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-01 16:27+0000\n"
+"POT-Creation-Date: 2026-06-01 19:59+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -6179,7 +6179,7 @@ msgstr "R2"
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
-#: engines/toltecs/metaengine.cpp:252
+#: engines/scumm/metaengine.cpp:1183 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "菜单"
 
@@ -14094,75 +14094,81 @@ msgstr "自行车战争获胜作弊"
 msgid "Rebel Assault controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1182
+#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1196
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1187
+#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1201
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1192
+#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1206
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1197
+#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1211
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
+#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1216
 #, fuzzy
 #| msgid "Pick up"
 msgid "Stick up"
 msgstr "捡起"
 
-#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1209
+#: engines/scumm/metaengine.cpp:1147 engines/scumm/metaengine.cpp:1223
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Stick down"
 msgstr "向下滚动"
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1216
+#: engines/scumm/metaengine.cpp:1154 engines/scumm/metaengine.cpp:1230
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Stick left"
 msgstr "向左滑行"
 
-#: engines/scumm/metaengine.cpp:1158 engines/scumm/metaengine.cpp:1223
+#: engines/scumm/metaengine.cpp:1161 engines/scumm/metaengine.cpp:1237
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Stick right"
 msgstr "向右滑行"
 
-#: engines/scumm/metaengine.cpp:1164 engines/scumm/metaengine.cpp:1230
+#: engines/scumm/metaengine.cpp:1168 engines/scumm/metaengine.cpp:1244
 #, fuzzy
 #| msgid "Move left"
 msgid "Fire / select"
 msgstr "向左移动"
 
-#: engines/scumm/metaengine.cpp:1169
+#: engines/scumm/metaengine.cpp:1173
 #, fuzzy
-#| msgid "Backspace"
-msgid "Back / skip"
-msgstr "退格"
+#| msgid "Move Back"
+msgid "Menu back"
+msgstr "向后移动"
 
-#: engines/scumm/metaengine.cpp:1180
+#: engines/scumm/metaengine.cpp:1178
+#, fuzzy
+#| msgid "Skip main menu"
+msgid "Skip / menu back"
+msgstr "跳过主菜单"
+
+#: engines/scumm/metaengine.cpp:1194
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1235
+#: engines/scumm/metaengine.cpp:1249
 #, fuzzy
 #| msgid "Move Back"
 msgid "Cover / back"
 msgstr "向后移动"
 
-#: engines/scumm/metaengine.cpp:1241
+#: engines/scumm/metaengine.cpp:1255
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip / back"
 msgstr "跳过对话"
 
-#: engines/scumm/metaengine.cpp:1248
+#: engines/scumm/metaengine.cpp:1262
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu"
@@ -18179,6 +18185,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Backspace"
+#~ msgid "Back / skip"
+#~ msgstr "退格"
 
 #, fuzzy
 #~| msgid "No"

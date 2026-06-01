@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-01 16:27+0000\n"
+"POT-Creation-Date: 2026-06-01 19:59+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6013,7 +6013,7 @@ msgstr "R2 버튼"
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
-#: engines/toltecs/metaengine.cpp:252
+#: engines/scumm/metaengine.cpp:1183 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "메뉴"
 
@@ -13374,75 +13374,81 @@ msgstr "자전거 대결에서 승리하는 치트"
 msgid "Rebel Assault controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1182
+#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1196
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1187
+#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1201
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1192
+#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1206
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1197
+#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1211
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
+#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1216
 #, fuzzy
 #| msgid "Pick up"
 msgid "Stick up"
 msgstr "줍기"
 
-#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1209
+#: engines/scumm/metaengine.cpp:1147 engines/scumm/metaengine.cpp:1223
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Stick down"
 msgstr "아래로 스크롤"
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1216
+#: engines/scumm/metaengine.cpp:1154 engines/scumm/metaengine.cpp:1230
 #, fuzzy
 #| msgid "Slide left"
 msgid "Stick left"
 msgstr "왼쪽으로 슬라이드"
 
-#: engines/scumm/metaengine.cpp:1158 engines/scumm/metaengine.cpp:1223
+#: engines/scumm/metaengine.cpp:1161 engines/scumm/metaengine.cpp:1237
 #, fuzzy
 #| msgid "Slide right"
 msgid "Stick right"
 msgstr "오른쪽 슬라이드"
 
-#: engines/scumm/metaengine.cpp:1164 engines/scumm/metaengine.cpp:1230
+#: engines/scumm/metaengine.cpp:1168 engines/scumm/metaengine.cpp:1244
 #, fuzzy
 #| msgid "Move / Select"
 msgid "Fire / select"
 msgstr "이동 / 선택"
 
-#: engines/scumm/metaengine.cpp:1169
+#: engines/scumm/metaengine.cpp:1173
 #, fuzzy
-#| msgid "Backspace"
-msgid "Back / skip"
-msgstr "Backspace 키"
+#| msgid "Move back"
+msgid "Menu back"
+msgstr "뒤로 이동"
 
-#: engines/scumm/metaengine.cpp:1180
+#: engines/scumm/metaengine.cpp:1178
+#, fuzzy
+#| msgid "Skip main menu"
+msgid "Skip / menu back"
+msgstr "메인 메뉴 건너뛰기"
+
+#: engines/scumm/metaengine.cpp:1194
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1235
+#: engines/scumm/metaengine.cpp:1249
 #, fuzzy
 #| msgid "Move back"
 msgid "Cover / back"
 msgstr "뒤로 이동"
 
-#: engines/scumm/metaengine.cpp:1241
+#: engines/scumm/metaengine.cpp:1255
 #, fuzzy
 #| msgid "Skip walk"
 msgid "Skip / back"
 msgstr "걷기 건너뛰기"
 
-#: engines/scumm/metaengine.cpp:1248
+#: engines/scumm/metaengine.cpp:1262
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu"
@@ -16955,6 +16961,11 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#, fuzzy
+#~| msgid "Backspace"
+#~ msgid "Back / skip"
+#~ msgstr "Backspace 키"
 
 #, fuzzy
 #~| msgid "No"
