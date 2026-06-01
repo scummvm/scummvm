@@ -1194,18 +1194,6 @@ void View1::draw() {
 	s.blitFrom(_backgroundSurface);
 	// Handle highlighting
 
-	// Debug: visualize hotspot map regions
-	// TODO: IMGUI: move hotspots to imgui debug scene maps
-	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-		for (int x = 0; x < s.w; x++) {
-			for (int y = 0; y < s.h; y++) {
-				if (g_engine->_map.getPixel(x, y) != 0x0) {
-					s.setPixel(x, y, 0xFF);
-				}
-			}
-		}
-	}
-
 	drawBackgroundAnimations(s);
 	drawCharacters(s);
 	drawOverlayTextEntries();
@@ -1234,15 +1222,6 @@ void View1::draw() {
 
 	// Active inventory item is now shown via the cursor (UpdateCursor uses _cursorData slot 0x16)
 
-	// TODO: IMGUI: visualize this in a debug window instead of drawing on the main view
-	if (DebugMan.isDebugChannelEnabled(kDebugPath)) {
-		drawPathfindingPoints(s);
-		drawPath(s);
-	}
-	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-		drawDebugOutput(s);
-	}
-
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
@@ -1266,9 +1245,6 @@ void View1::draw() {
 	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 		renderString(0, 0, Common::String::format("%u %u", _scalingValues.characterY, _scalingValues.scalingFactor));
 	}
-
-	// TODO: IMGUI: debug window that renders this
-	// drawImageResources(s);
 }
 
 bool View1::tick() {
