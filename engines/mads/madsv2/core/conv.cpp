@@ -1689,13 +1689,16 @@ done:
 }
 
 void conv_reset(int id) {
-	if (conv_slots[id]) {
+	// WORKAROUND: Only allowing freeing by slot within the allowed range
+	if (id < CONV_MAX_DATA && conv_slots[id]) {
 		mem_free(conv_data[id]);
 		mem_free(conv[id]);
 		conv_data[id] = nullptr;
 		conv[id] = nullptr;
 		conv_slots[id] = 0;
 	}
+
+	conv_indexes[id] = 0;
 }
 
 int conv_append(Common::WriteStream *handle) {
