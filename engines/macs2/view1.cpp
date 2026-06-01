@@ -122,7 +122,7 @@ void View1::CloseInventory() {
 		SetInventorySource(GameObjects::instance().GetProtagonistObject());
 		g_engine->_scriptExecutor->hasPendingExternalInventoryResume = false;
 		g_engine->_scriptExecutor->externalInventorySourceObjectID = 0;
-		g_engine->_scriptExecutor->SetCurrentSceneScriptAt(g_engine->_scriptExecutor->secondaryInventoryLocation);
+		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->secondaryInventoryLocation);
 		g_engine->RunScriptExecutor();
 		return;
 	}
@@ -1063,7 +1063,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			activeInventoryItem = nullptr;
 
 			// Set the script
-			g_engine->_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
+			g_engine->_scriptExecutor->setScript(Scenes::instance().CurrentSceneScript);
 			// TODO: Not sure where the original code rewinds the script
 			Scenes::instance().CurrentSceneScript->seek(0, SEEK_SET);
 			g_engine->RunScriptExecutor(false);
@@ -1122,7 +1122,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		g_engine->_scriptExecutor->scriptSkippable &&
 		g_engine->_scriptExecutor->IsExecuting()) {
 		if (g_engine->_scriptExecutor->skipToEndOfSkippableSection()) {
-			g_engine->_scriptExecutor->Run();
+			g_engine->_scriptExecutor->run();
 		}
 		return true;
 	}
