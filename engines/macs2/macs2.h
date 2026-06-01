@@ -433,28 +433,16 @@ public:
 
 	/**
 	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
+	 * loading and saving using a single method.
+	 * Produces binary-compatible saves with the original DOS game.
 	 */
 	Common::Error syncGame(Common::Serializer &s);
-
-	/**
-	 * Load an original DOS save game file (SAVEGAME.N format)
-	 */
-	Common::Error loadOriginalSave(Common::SeekableReadStream *stream);
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);
 	}
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		// Peek at first 12 bytes to detect original DOS save format
-		char magic[12];
-		stream->read(magic, 12);
-		stream->seek(0);
-		if (memcmp(magic, "AHFFMSGM0100", 12) == 0) {
-			return loadOriginalSave(stream);
-		}
-		// Otherwise it's our ScummVM format (starts with version uint32)
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
