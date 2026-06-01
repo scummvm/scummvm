@@ -1881,6 +1881,29 @@ bool Script::ScriptExecutor::scriptOpcode0x35() {
 	return true;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x36() {
+	// scriptDismissPanel (1008:d6dd). Restores background if a UI panel
+	// was pending, clears panel state, redraws scene, clears timer flag.
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr) {
+		if (currentView->_isShowingStringBox || currentView->_isShowingDialogueChoice) {
+			currentView->_continueScriptAfterUI = false;
+			currentView->clearStringBox(false);
+		}
+
+		if (currentView->_isShowingInventory) {
+			hasPendingExternalInventoryResume = false;
+			externalInventorySourceObjectID = 0;
+			currentView->CloseInventory();
+		}
+
+		if (currentView->isShowingMainMenu) {
+			currentView->isShowingMainMenu = false;
+			currentView->redraw();
+		}
+	}
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2148,26 +2171,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x36) {
-			// scriptDismissPanel (1008:d6dd). Restores background if a UI panel
-			// was pending, clears panel state, redraws scene, clears timer flag.
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr) {
-				if (currentView->_isShowingStringBox || currentView->_isShowingDialogueChoice) {
-					currentView->_continueScriptAfterUI = false;
-					currentView->clearStringBox(false);
-				}
-
-				if (currentView->_isShowingInventory) {
-					hasPendingExternalInventoryResume = false;
-					externalInventorySourceObjectID = 0;
-					currentView->CloseInventory();
-				}
-
-				if (currentView->isShowingMainMenu) {
-					currentView->isShowingMainMenu = false;
-					currentView->redraw();
-				}
-			}
+			scriptOpcode0x36();
 		} else if (opcode1 == 0x37) {
 			// scriptResetToSceneScript (1008:ad3e). Resets script execution
 			// context back to the current scene script at position 0.
