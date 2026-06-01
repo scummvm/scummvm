@@ -24,6 +24,7 @@
 // Keep these in a dedicated file so the shared smush_player.cpp stays close
 // to upstream while RA1 behavior is isolated in one place.
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 
@@ -320,7 +321,13 @@ bool SmushPlayerRebel1::handleGameTextResource(uint32 subType, int32 subSize, Co
 	if (subType != MKTAG('T','E','X','T'))
 		return false;
 
-	ra1HandleText(subSize, b);
+	// RA1 dialogue subtitles. Only render them when subtitles are enabled — this honors
+	// both ScummVM's global "subtitles" setting and the in-game DIALOGUE TEXT toggle
+	// (which writes the same ConfMan key). Still return true so the base handler doesn't
+	// try to parse RA1's custom TEXT format. Querying ConfMan per chunk also lets the
+	// setting take effect mid-video.
+	if (ConfMan.getBool("subtitles"))
+		ra1HandleText(subSize, b);
 	return true;
 }
 
