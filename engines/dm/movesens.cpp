@@ -937,7 +937,7 @@ void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX,
 
 void MovesensMan::triggerLocalEffect(SensorEffect localEffect, int16 effX, int16 effY, int16 effCell) {
 	if (localEffect == kDMSensorEffectAddExperience) {
-		addSkillExperience(kDMSkillSteal, 300, localEffect != kDMSensorEffectNone);
+		addSkillExperience(kDMSkillSteal, 300, effCell != kDMCellAny);
 		return;
 	}
 	_sensorRotationEffect = localEffect;
