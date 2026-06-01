@@ -2187,6 +2187,23 @@ bool Script::ScriptExecutor::scriptOpcode0x47() {
 	return false;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x46() {
+	const uint16 slotID = scriptReadValue16();
+	if (slotID < 1 || slotID > 2) {
+		warning("Ignoring music free for invalid slot %u", slotID);
+		return false;
+	}
+
+	if (activeMusicSlot == slotID) {
+		if (musicEnabled && soundSystemActive) {
+			_engine->getAdlib()->StopMusic();
+		}
+		activeMusicSlot = 0;
+	}
+	musicSlots[slotID - 1].clear();
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2453,18 +2470,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				return ExecutionResult::WaitingForCallback;
 			}
 		} else if (opcode1 == 0x46) {
-			const uint16 slotID = scriptReadValue16();
-			if (slotID < 1 || slotID > 2) {
-				warning("Ignoring music free for invalid slot %u", slotID);
+			if (!scriptOpcode0x46()) {
 				continue;
 			}
-
-			if (activeMusicSlot == slotID) {
-				if (musicEnabled && soundSystemActive)
-					_engine->getAdlib()->StopMusic();
-				activeMusicSlot = 0;
-			}
-			musicSlots[slotID - 1].clear();
 		} else if (opcode1 == 0x48) {
 			// Retrieve object x and use A334 to save it to a script variable
 			int32 objectID = (int32)scriptReadValue32() - 0x400;
