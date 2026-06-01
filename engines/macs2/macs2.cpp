@@ -772,7 +772,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->clearOverlayTextEntries();
 	_scriptExecutor->_inventoryActionFlag = false;
 	_scriptExecutor->_inventoryCombineFlag = false;
-	_scriptExecutor->_overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->_characters) {
