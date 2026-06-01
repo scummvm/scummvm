@@ -1794,6 +1794,13 @@ bool Script::ScriptExecutor::scriptOpcode0x2F() {
 	return true;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x30() {
+	// Opcode 0x30: scriptPrintString with flag=1 (vs opcode 0x0A with flag=0)
+	// which changes behaviour in the function.
+	ScriptPrintString(true);
+	EndBuffering(lastOpcodeTriggeredSkip);
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2040,11 +2047,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x30) {
-			// Opcode 0x30: scriptPrintString with flag=1 (vs opcode 0x0A with flag=0)
-			// which changes behaviour in the function
-			ScriptPrintString(true);
-			// Ends execution (confirmed: jumps to e3bd in disassembly)
-			EndBuffering(lastOpcodeTriggeredSkip);
+			scriptOpcode0x30();
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
 			// scriptSetVolume (1008:ce0b): clamp the value to 0..100 (signed), as the original does.
