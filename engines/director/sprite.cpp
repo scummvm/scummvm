@@ -640,11 +640,14 @@ void Sprite::replaceFrom(Sprite *nextSprite) {
 		return;
 	}
 
-	// If the cast member is the same, persist the editable flag
+	// The editable flag is read from the score every frame (colorcode bit
+	// 0x40), so it must follow the score even when the cast member does not
+	// change: a field that the score turns editable on the same member has to
+	// take effect (e.g. the login name fields in "Ein Fall fuer Muetze & Co",
+	// which become editable on the same member when "new member" is clicked).
+	// Lingo-controlled editability is handled separately via sprite puppeting,
+	// which returns above before reaching this point.
 	bool editable = nextSprite->_editable;
-	if (_castId == nextSprite->_castId) {
-		editable = _editable;
-	}
 
 	bool immediate = _immediate;
 
