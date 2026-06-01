@@ -325,6 +325,7 @@ public:
 	bool _waitForSoundPlayback = false;
 	bool _waitForMusicControl = false;
 	bool _waitForAdlibReady = false;
+	bool _debugPaused = false;
 	bool _pickupInProgress = false;
 	uint16 _pickupActorObjectID = 0;
 	uint16 _pickupTargetObjectID = 0;
