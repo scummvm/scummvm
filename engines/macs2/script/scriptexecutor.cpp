@@ -1759,6 +1759,41 @@ bool Script::ScriptExecutor::scriptOpcode0x2D() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x2F() {
+	// scriptTestObjectAnimFrame: Tests if an object's animation blob's
+	// current frame index (via getAnimBlobOffset/source key) falls within
+	// [minFrame, maxFrame]. Result stored in animBlobRangeTestResult for helper FF29.
+	uint32 objectID = scriptReadValue32() - 0x400;
+	uint16 slotID = scriptReadValue16();
+	uint16 minFrame = scriptReadValue16();
+	uint16 maxFrame = scriptReadValue16();
+	animBlobRangeTestResult = false;
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Ignoring object animation range test for invalid object %u", objectID);
+		return false;
+	}
+
+	uint16 blobSourceKey = 0;
+	bool hasBlob = false;
+	if (slotID == 0x15) {
+		hasBlob = !object->overloadAnimation.empty();
+		blobSourceKey = object->overloadAnimationSourceKey;
+	} else if (slotID >= 1 && slotID <= object->Blobs.size()) {
+		hasBlob = !object->Blobs[slotID - 1].empty();
+		if ((uint)(slotID - 1) < object->BlobSourceKeys.size())
+			blobSourceKey = object->BlobSourceKeys[slotID - 1];
+	} else {
+		warning("Ignoring object animation range test for invalid slot %u on object %u", slotID, objectID);
+		return false;
+	}
+
+	if (hasBlob) {
+		animBlobRangeTestResult = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
+	}
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2001,36 +2036,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x2E) {
 			scriptOpcode0x2E();
 		} else if (opcode1 == 0x2F) {
-			// scriptTestObjectAnimFrame: Tests if an object's animation blob's
-			// current frame index (via getAnimBlobOffset/source key) falls within
-			// [minFrame, maxFrame]. Result stored in animBlobRangeTestResult for helper FF29.
-			uint32 objectID = scriptReadValue32() - 0x400;
-			uint16 slotID = scriptReadValue16();
-			uint16 minFrame = scriptReadValue16();
-			uint16 maxFrame = scriptReadValue16();
-			animBlobRangeTestResult = false;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Ignoring object animation range test for invalid object %u", objectID);
+			if (!scriptOpcode0x2F()) {
 				continue;
-			}
-
-			uint16 blobSourceKey = 0;
-			bool hasBlob = false;
-			if (slotID == 0x15) {
-				hasBlob = !object->overloadAnimation.empty();
-				blobSourceKey = object->overloadAnimationSourceKey;
-			} else if (slotID >= 1 && slotID <= object->Blobs.size()) {
-				hasBlob = !object->Blobs[slotID - 1].empty();
-				if ((uint)(slotID - 1) < object->BlobSourceKeys.size())
-					blobSourceKey = object->BlobSourceKeys[slotID - 1];
-			} else {
-				warning("Ignoring object animation range test for invalid slot %u on object %u", slotID, objectID);
-				continue;
-			}
-
-			if (hasBlob) {
-				animBlobRangeTestResult = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
 			}
 		} else if (opcode1 == 0x30) {
 			// Opcode 0x30: scriptPrintString with flag=1 (vs opcode 0x0A with flag=0)
