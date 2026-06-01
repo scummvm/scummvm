@@ -1031,7 +1031,7 @@ static void showSceneMapsWindow() {
 					if (!c || !c->_gameObject)
 						continue;
 					Common::Point pos = c->getPosition();
-					if (pos.x >= 1 && pos.x < 319 && pos.y >= 1 && pos.y < 199) {
+					if (pos.x >= 3 && pos.x < 317 && pos.y >= 3 && pos.y < 197) {
 						for (int d = -3; d <= 3; d++) {
 							overlayComposite.setPixel(pos.x + d, pos.y, 0x04);
 							overlayComposite.setPixel(pos.x, pos.y + d, 0x04);
