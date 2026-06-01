@@ -1914,6 +1914,16 @@ void Script::ScriptExecutor::scriptOpcode0x37() {
 	SetCurrentSceneScriptAt(0);
 }
 
+void Script::ScriptExecutor::scriptOpcode0x38() {
+	// scriptLoadOverlayFont (1008:d749). Loads a font resource for
+	// overlay text into the overlay font buffer.
+	uint8 resourceIndex = ReadByte();
+	overlayTextStageActive = true;
+	if (!_engine->loadOverlayFont(resourceIndex, _executingScriptObjectID)) {
+		warning("Opcode 0x38: failed to load overlay font resource %u", resourceIndex);
+	}
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2185,14 +2195,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x37) {
 			scriptOpcode0x37();
 		} else if (opcode1 == 0x38) {
-			// scriptLoadOverlayFont (1008:d749). Loads a font resource for
-			// overlay text into the overlay font buffer.
-			uint8 resourceIndex = ReadByte();
-			overlayTextStageActive = true;
-			// Load overlay font from resource file using the indexed file offset
-			if (!_engine->loadOverlayFont(resourceIndex, _executingScriptObjectID)) {
-				warning("Opcode 0x38: failed to load overlay font resource %u", resourceIndex);
-			}
+			scriptOpcode0x38();
 		} else if (opcode1 == 0x39) {
 			// scriptEndOverlayText (1008:d80f). Clears the overlay text stage.
 			scriptOpcode0x39();
