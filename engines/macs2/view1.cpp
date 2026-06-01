@@ -2400,52 +2400,53 @@ void Character::registerWaitForMovementFinishedEvent() {
 
 void Character::update() {
 	if (!_isLerping && !_isFollowingPath) {
-		if (_pickupAnimationEndTime > 0.0f && _pickupAnimationEndTime < g_engine->currentMillis) {
-			// Finish picking up
-			_gameObject->Orientation = _previousOrientation;
-			_pickupAnimationEndTime = -1.0f;
+		// Pickup animation frame counter logic from drawAllCharacters (1008:90a2).
+		// While orientation == 0x11, counter increments each frame.
+		// At _pickupFrameStart: item is transferred to inventory.
+		// At _pickupFrameEnd: animation ends, orientation/cursor restored.
+		if (_pickedUpObject != nullptr && _gameObject->Orientation == 0x11) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");
-			Character *pickedUpCharacter = currentView->getCharacterByIndex(_pickedUpObject->_index);
-			if (pickedUpCharacter != nullptr) {
-				int index = currentView->getCharacterArrayIndex(pickedUpCharacter);
-				if (index >= 0) {
-					currentView->_characters.remove_at(index);
+
+			// At _pickupFrameStart: transfer item to inventory
+			if (!_pickupItemTransferred && _pickupFrameCounter == _gameObject->_pickupFrameStart) {
+				_pickupItemTransferred = true;
+				Character *pickedUpCharacter = currentView->getCharacterByIndex(_pickedUpObject->_index);
+				if (pickedUpCharacter != nullptr) {
+					int index = currentView->getCharacterArrayIndex(pickedUpCharacter);
+					if (index >= 0) {
+						currentView->_characters.remove_at(index);
+					}
+				}
+				_pickedUpObject->SceneIndex = _gameObject->_index;
+				if (currentView->_inventorySource != nullptr && currentView->_inventorySource->_index == _gameObject->_index) {
+					currentView->_inventoryItems.push_back(_pickedUpObject);
 				}
 			}
-			_pickedUpObject->SceneIndex = _gameObject->_index;
-			if (currentView->_inventorySource != nullptr && currentView->_inventorySource->_index == _gameObject->_index) {
-				currentView->_inventoryItems.push_back(_pickedUpObject);
+
+			// At _pickupFrameEnd: end pickup animation
+			if (_pickupFrameCounter == _gameObject->_pickupFrameEnd) {
+				_gameObject->Orientation = _previousOrientation;
+				if (g_engine->_scriptExecutor->_pickupInProgress) {
+					g_engine->_scriptExecutor->_pickupInProgress = false;
+					g_engine->_scriptExecutor->_pickupActorObjectID = 0;
+					g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
+					g_engine->setCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
+					currentView->updateCursor();
+				}
+				g_engine->_scriptExecutor->_walkTargetObjectIndex = 0;
+				_pickedUpObject = nullptr;
+				g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
+				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
+				if (_executeScriptOnFinishLerp) {
+					_executeScriptOnFinishLerp = false;
+					g_engine->_scriptExecutor->_isRepeatRun = true;
+					g_engine->scheduleRun();
+				}
+				return;
 			}
-			if (g_engine->_scriptExecutor->_pickupInProgress) {
-				g_engine->_scriptExecutor->_pickupInProgress = false;
-				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
-				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
-				g_engine->setCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
-				currentView->updateCursor();
-			}
-			_pickedUpObject = nullptr;
-			// From here on the interacted object should become 0
-			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
-			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
-			if (_executeScriptOnFinishLerp) {
-				_executeScriptOnFinishLerp = false;
-				g_engine->_scriptExecutor->_isRepeatRun = true;
-				g_engine->scheduleRun();
-			}
+
+			_pickupFrameCounter++;
 			return;
-		}
-		if (_pickedUpObject != nullptr && _pickupAnimationEndTime < 0.0f) {
-			View1 *currentView = (View1 *)g_engine->findView("View1");
-			if (g_engine->_scriptExecutor->_pickupInProgress) {
-				g_engine->_scriptExecutor->_pickupInProgress = false;
-				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
-				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
-				g_engine->setCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
-				currentView->updateCursor();
-			}
-			_pickedUpObject = nullptr;
-			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
-			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
 		}
 
 		// We might have gotten the 0x11 command after we stopped moving
@@ -2509,7 +2510,8 @@ void Character::update() {
 		if (_gameObject->Orientation < 9)
 			_gameObject->Orientation += 8;
 		if (_pickedUpObject != nullptr) {
-			_pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
+			_pickupFrameCounter = 0;
+			_pickupItemTransferred = false;
 			_previousOrientation = _gameObject->Orientation;
 			_gameObject->Orientation = 0x11;
 			return;
