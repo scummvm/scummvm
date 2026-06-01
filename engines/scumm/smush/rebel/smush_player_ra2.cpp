@@ -120,17 +120,8 @@ void SmushPlayerRebel2::initGameVideoState() {
 		if ((_curVideoFlags & 0x08) == 0) {
 			// Cinematic mode (flags 0x20) - clear buffer for fresh video
 			memset(_dst, 0, vs->w * vs->h);
-		} else {
-			// Gameplay mode (flags 0x28) - do nothing, preserve existing screen content
-			if (debugChannelSet(-1, DEBUG_SMUSH)) {
-				int nonZero = 0;
-				for (int i = 0; i < vs->w * vs->h; i++) {
-					if (_dst[i] != 0) nonZero++;
-				}
-				debugC(DEBUG_SMUSH, "SmushPlayer::init: Preserving screen for gameplay video (%dx%d, %d%% non-zero)",
-					vs->w, vs->h, (nonZero * 100) / (vs->w * vs->h));
-			}
 		}
+		// Gameplay mode (flags 0x28): no-op, the existing screen content is preserved.
 	}
 }
 
