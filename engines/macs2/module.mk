@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	macs2.o \
 	saveload.o \
 	console.o \
-	debugtools.o \
 	events.o \
 	messages.o \
 	metaengine.o \
@@ -12,6 +11,11 @@ MODULE_OBJS = \
 	gameobjects.o \
 	adlib.o \
 	script/scriptexecutor.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugtools.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MACS2), DYNAMIC_PLUGIN)
