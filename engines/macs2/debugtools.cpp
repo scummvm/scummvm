@@ -976,6 +976,10 @@ static void showSceneMapsWindow() {
 				selectedTab = 3;
 				ImGui::EndTabItem();
 			}
+			if (ImGui::BeginTabItem("Hotspot Overlay")) {
+				selectedTab = 5;
+				ImGui::EndTabItem();
+			}
 			if (ImGui::BeginTabItem("Object Map")) {
 				selectedTab = 4;
 				ImGui::EndTabItem();
@@ -1045,6 +1049,26 @@ static void showSceneMapsWindow() {
 		} else if (selectedTab == 4) {
 			// Object Map: use background image
 			surface = &g_engine->_bgImageShip;
+		} else if (selectedTab == 5) {
+			// Hotspot Overlay: hotspot map with character positions and override info
+			static Graphics::ManagedSurface hotspotOverlay;
+			hotspotOverlay.copyFrom(g_engine->_map);
+			View1 *view = (View1 *)g_engine->findView("View1");
+			if (view) {
+				for (uint i = 0; i < view->_characters.size(); i++) {
+					Character *c = view->_characters[i];
+					if (!c || !c->_gameObject || !c->_gameObject->IsClickable)
+						continue;
+					Common::Point pos = c->getPosition();
+					if (pos.x >= 3 && pos.x < 317 && pos.y >= 3 && pos.y < 197) {
+						for (int d = -3; d <= 3; d++) {
+							hotspotOverlay.setPixel(pos.x + d, pos.y, 0x04);
+							hotspotOverlay.setPixel(pos.x, pos.y + d, 0x04);
+						}
+					}
+				}
+			}
+			surface = &hotspotOverlay;
 		}
 
 		if (surface && surface->w > 0 && surface->h > 0) {
