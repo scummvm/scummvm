@@ -155,9 +155,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading())
 		_scriptExecutor->_cursorModeBeforeWait = (Script::MouseMode)savedCursorMode;
 
-	// g_wClipRectDirty [0xfec]: 1 byte - TODO: not mapped, save 0
-	uint8 clipRectDirty = 0;
+	// g_wClipRectDirty [0xfec]: 1 byte - flags clip region needs full-screen reset
+	uint8 clipRectDirty = _clipRectDirty ? 1 : 0;
 	s.syncAsByte(clipRectDirty);
+	if (s.isLoading())
+		_clipRectDirty = clipRectDirty != 0;
 
 	// g_wWalkTargetObjectIndex (duplicate) [0x1016]: 2 bytes
 	s.syncAsUint16LE(_scriptExecutor->_walkTargetObjectIndex);
@@ -308,34 +310,30 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 	}
 
-	// --- Scene data: timer params [+0x53C3..+0x53CF]: 4 x 4 bytes ---
-	// TODO: timer state not fully mapped - save zeros
 	for (int i = 0; i < 4; i++) {
-		uint32 timerParam = 0;
-		s.syncAsUint32LE(timerParam);
+		s.syncAsUint32LE(_sceneTimerParams[i]);
 	}
 
 	// --- Animation blob offsets (variable length) ---
 	// Original: for each special anim (1..count), save 2-byte offset from getAnimBlobOffset
-	// We save the count from the scene, then 2 bytes per entry
 	uint16 numSpecialAnims = (uint16)_backgroundAnimationsBlobs.size();
-	// The original doesn't write the count here - it reads it from scene data at +0x50F5
-	// which was already loaded by changeScene. We just need to write the offsets.
 	for (uint16 i = 0; i < numSpecialAnims; i++) {
-		// TODO: animation blob offset tracking not implemented - save 0
-		uint16 animOffset = 0;
+		uint16 animOffset = (i < _backgroundAnimationsBlobs.size()) ?
+		                    (uint16)_backgroundAnimationsBlobs[i]._frameIndex : 0;
 		s.syncAsUint16LE(animOffset);
+		if (s.isLoading() && i < _backgroundAnimationsBlobs.size())
+			_backgroundAnimationsBlobs[i]._frameIndex = animOffset;
 	}
 
 	// --- PCM sound: size (2 bytes) + data (variable) ---
-	// TODO: PCM sound buffer not tracked in ScummVM - save size=0
-	uint16 pcmSoundSize = 0;
+	uint16 pcmSoundSize = (uint16)_currentSoundData.size();
 	s.syncAsUint16LE(pcmSoundSize);
-	if (s.isLoading() && pcmSoundSize > 0) {
-		// Skip PCM data we can't use
-		byte dummy;
-		for (uint16 i = 0; i < pcmSoundSize; i++)
-			s.syncAsByte(dummy);
+	if (pcmSoundSize > 0) {
+		if (s.isLoading())
+			_currentSoundData.resize(pcmSoundSize);
+		s.syncBytes(_currentSoundData.data(), pcmSoundSize);
+	} else if (s.isLoading()) {
+		_currentSoundData.clear();
 	}
 
 	// --- Active music slot (2 bytes) ---
@@ -407,49 +405,72 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// BoundsAttachmentValue3 [+0x238]: 2 bytes
 		s.syncAsUint16LE(obj->BoundsAttachmentValue3);
 
-		// Runtime fields [+0x00..+0x0A]: 6 x uint16 (walk state)
-		// TODO: walk state not fully mapped - save zeros
-		for (int i = 0; i < 6; i++) {
-			uint16 walkState = 0;
-			s.syncAsUint16LE(walkState);
+		// Runtime walk state [+0x00..+0x0A]: targetX, targetY, deltaX, deltaY, finalX, finalY
+		// Find the Character for this object (exists after changeScene on load too)
+		Character *chr = nullptr;
+		if (view1) {
+			for (uint ci = 0; ci < view1->_characters.size(); ci++) {
+				if (view1->_characters[ci] && view1->_characters[ci]->_gameObject == obj) {
+					chr = view1->_characters[ci];
+					break;
+				}
+			}
+		}
+		uint16 targetX = chr ? (uint16)chr->_endPosition.x : 0;
+		uint16 targetY = chr ? (uint16)chr->_endPosition.y : 0;
+		uint16 deltaX = chr ? (uint16)chr->_stepDeltaX : 0;
+		uint16 deltaY = chr ? (uint16)chr->_stepDeltaY : 0;
+		uint16 finalX = chr ? (uint16)chr->_pathFinalDestination.x : 0;
+		uint16 finalY = chr ? (uint16)chr->_pathFinalDestination.y : 0;
+		s.syncAsUint16LE(targetX);
+		s.syncAsUint16LE(targetY);
+		s.syncAsUint16LE(deltaX);
+		s.syncAsUint16LE(deltaY);
+		s.syncAsUint16LE(finalX);
+		s.syncAsUint16LE(finalY);
+		if (s.isLoading() && chr) {
+			chr->_endPosition.x = (int16)targetX;
+			chr->_endPosition.y = (int16)targetY;
+			chr->_stepDeltaX = (int16)deltaX;
+			chr->_stepDeltaY = (int16)deltaY;
+			chr->_pathFinalDestination.x = (int16)finalX;
+			chr->_pathFinalDestination.y = (int16)finalY;
 		}
 
-		// [+0x0C]: 0x20 bytes (32 bytes) - TODO: unknown block, save zeros
-		byte unknownBlock0C[32] = {0};
-		s.syncBytes(unknownBlock0C, 32);
+		// [+0x0C]: 0x20 bytes (path node index list)
+		byte pathBlock[32] = {0};
+		s.syncBytes(pathBlock, 32);
 
-		// [+0x2C]: 2 bytes - TODO: unknown
-		uint16 unknown2C = 0;
-		s.syncAsUint16LE(unknown2C);
+		// [+0x2C]: 2 bytes - path current index
+		uint16 pathIndex = 0;
+		s.syncAsUint16LE(pathIndex);
 
-		// [+0x2E]: 2 bytes - TODO: unknown
-		uint16 unknown2E = 0;
-		s.syncAsUint16LE(unknown2E);
+		// [+0x2E]: 2 bytes - path length
+		uint16 pathLength = 0;
+		s.syncAsUint16LE(pathLength);
 
-		// [+0x30]: 2 bytes - TODO: unknown
-		uint16 unknown30 = 0;
-		s.syncAsUint16LE(unknown30);
+		// [+0x30]: 2 bytes - step accumulator
+		uint16 stepAccum = 0;
+		s.syncAsUint16LE(stepAccum);
 
-		// [+0x32]: 1 byte - IsClickable
-		uint8 isClickable = obj->IsClickable ? 1 : 0;
-		s.syncAsByte(isClickable);
-		if (s.isLoading())
-			obj->IsClickable = isClickable != 0;
+		// [+0x32]: 1 byte - walk step flag (Bresenham related)
+		uint8 walkStepFlag = 0;
+		s.syncAsByte(walkStepFlag);
 
-		// [+0x33]: 1 byte - IsVisible
-		uint8 isVisible = obj->IsVisible ? 1 : 0;
-		s.syncAsByte(isVisible);
-		if (s.isLoading())
-			obj->IsVisible = isVisible != 0;
+		// [+0x33]: 1 byte - direction set flag (_stepDirectionSet)
+		uint8 directionSet = chr ? (chr->_stepDirectionSet ? 1 : 0) : 0;
+		s.syncAsByte(directionSet);
+		if (s.isLoading() && chr)
+			chr->_stepDirectionSet = directionSet != 0;
 
 		// RuntimeValue217 [+0x20D]: 2 bytes
 		s.syncAsUint16LE(obj->RuntimeValue217);
 		// [+0x20F]: 2 bytes
 		s.syncAsUint16LE(obj->RuntimeValue219);
-		// [+0x211]: 2 bytes - TODO: unknown, save 0
+		// [+0x211]: 2 bytes - path index/length/accumulator - walk interrupted, save 0
 		uint16 runtime211 = 0;
 		s.syncAsUint16LE(runtime211);
-		// [+0x213]: 2 bytes - TODO: unknown, save 0
+		// [+0x213]: 2 bytes - path index/length/accumulator - walk interrupted, save 0
 		uint16 runtime213 = 0;
 		s.syncAsUint16LE(runtime213);
 
@@ -484,15 +505,22 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading())
 			obj->useOverloadAnimation = useOverload != 0;
 
-		// [+0x184]: 1 byte - TODO: unknown, save 0
-		uint8 unknown184 = 0;
-		s.syncAsByte(unknown184);
-		// [+0x185]: 1 byte - TODO: unknown, save 0
-		uint8 unknown185 = 0;
-		s.syncAsByte(unknown185);
-		// [+0x186]: 1 byte - TODO: unknown, save 0
-		uint8 unknown186 = 0;
-		s.syncAsByte(unknown186);
+		// [+0x184]: 1 byte - hasInventoryIcon (loaded from resource, checked by inventory UI)
+		// Not tracked separately in ScummVM - determined by blob presence
+		uint8 hasInventoryIcon = 0;
+		s.syncAsByte(hasInventoryIcon);
+
+		// [+0x185]: 1 byte - isClickable (set by opcode 0x32)
+		uint8 isClickable = obj->IsClickable ? 1 : 0;
+		s.syncAsByte(isClickable);
+		if (s.isLoading())
+			obj->IsClickable = isClickable != 0;
+
+		// [+0x186]: 1 byte - isVisible (set by opcode 0x33)
+		uint8 isVisible = obj->IsVisible ? 1 : 0;
+		s.syncAsByte(isVisible);
+		if (s.isLoading())
+			obj->IsVisible = isVisible != 0;
 
 		// Script size [+0x18B]: 2 bytes
 		uint16 scriptSize = (uint16)obj->Script.size();

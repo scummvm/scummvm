@@ -829,15 +829,15 @@ static void showCharactersWindow() {
 					ImGui::Separator();
 					ImGui::Text("Movement:");
 					ImGui::Text("  Lerping: %s  DirSet: %s  FollowPath: %s",
-								c->isLerping() ? "Y" : "N",
-								c->isDirectionSet() ? "Y" : "N",
+								c->_isLerping ? "Y" : "N",
+								c->_stepDirectionSet ? "Y" : "N",
 								c->_isFollowingPath ? "Y" : "N");
-					if (c->isLerping()) {
-						Common::Point end = c->getEndPosition();
+					if (c->_isLerping) {
+						Common::Point end = c->_endPosition;
 						ImGui::Text("  Target: (%d,%d)  Final: (%d,%d)",
 									end.x, end.y, c->_pathFinalDestination.x, c->_pathFinalDestination.y);
 						ImGui::Text("  Bresenham: dX=%d dY=%d err=%d",
-									c->getStepDeltaX(), c->getStepDeltaY(), c->getStepError());
+									c->_stepDeltaX, c->_stepDeltaY, c->_stepError);
 
 						// Walk speed calculation
 						int depth = 0;

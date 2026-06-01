@@ -122,7 +122,6 @@ public:
 	Common::Array<uint16> BlobSpeeds; // Per-animation walk speed (runtime+slot*16+0x30)
 
 	// The object-specific script
-	// TODO: Random thought - do objects have their own space for script variables?
 	Common::Array<uint8> Script;
 
 	Common::MemoryReadStream *getScriptStream();
