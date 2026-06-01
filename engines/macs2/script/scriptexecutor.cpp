@@ -191,115 +191,9 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 	}
 
 	// Type 0xFF: special runtime values
-	switch (value) {
-	case 0x01:
-		if (_mouseMode == MouseMode::Use) {
-			out1 = _interactedObjectID;
-		} else if (_mouseMode == MouseMode::UseInventory) {
-			out1 = _interactedObjectID | (_interactedOtherObjectID << 16);
-			out2 = _interactedOtherObjectID;
-		}
-		break;
-	case 0x02:
-		out1 = (_mouseMode == MouseMode::Look) ? _interactedObjectID : 0;
-		break;
-	case 0x03:
-		out1 = (_mouseMode == MouseMode::Talk) ? _interactedObjectID : 0;
-		break;
-	case 0x04: {
-		const Common::Point &charPos = getCharPosition();
-		out1 = getAreaAtPoint(charPos.x, charPos.y);
-		break;
-	}
-	case 0x05:
-		break; // no-op
-	case 0x06:
-		out1 = 1;
-		break;
-	case 0x07:
-	case 0x08:
-	case 0x09:
-		out1 = 0;
-		break;
-	case 0x0A:
-		out1 = 1;
-		break;
-	case 0x0B:
-		out1 = _repeatRunFlag ? 1 : 0;
-		break;
-	case 0x0C:
-		out1 = 1;
-		break;
-	case 0x0D:
-		out1 = _chosenDialogueOption;
-		break;
-	case 0x23:
-		out1 = _pathWalkableResult ? 1 : 0;
-		break;
-	case 0x24: {
-		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
-		out1 = actor ? actor->Position.x : 0;
-		break;
-	}
-	case 0x25: {
-		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
-		out1 = actor ? actor->Position.y : 0;
-		break;
-	}
-	case 0x26:
-		out1 = _isSceneInitRun ? 1 : 0;
-		break;
-	case 0x27: {
-		if (_isRepeatRun) {
-			const Common::Point &charPos = getCharPosition();
-			out1 = getAreaAtPoint(charPos.x, charPos.y);
-		}
-		break;
-	}
-	case 0x28:
-		out1 = _inventoryCheckResult ? 1 : 0;
-		break;
-	case 0x29:
-		out1 = _animBlobRangeTestResult ? 1 : 0;
-		break;
-	case 0x2A: {
-		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
-		out1 = (_inventoryCombineFlag && !uiOpen) ? 1 : 0;
-		break;
-	}
-	case 0x2B: {
-		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
-		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
-		break;
-	}
-	case 0x2C:
-		out1 = (_mouseMode == MouseMode::PanelUse) ? _interactedObjectID : 0;
-		break;
-	case 0x2D:
-		out1 = Scenes::instance()._currentSceneIndex;
-		break;
-	case 0x2E:
-		out1 = 2;
-		break;
-	case 0x2F:
-		out1 = Scenes::instance()._lastSceneIndex;
-		break;
-	case 0x30:
-		out1 = (_musicEnabled && _soundSystemActive) ? 1 : 0;
-		break;
-	case 0x31:
-		out1 = (_soundEnabled && _soundSystemActive) ? 1 : 0;
-		break;
-	default:
-		if (value >= 0x0E && value <= 0x22) {
-			out1 = value - 0x0D;
-		} else {
-			warning("scriptReadValuePair: unknown special value 0x%02x", value);
-		}
-		break;
-	}
+	uint32 special = getSpecialValue(value);
+	out1 = special & 0xFFFF;
+	out2 = (special >> 16) & 0xFFFF;
 }
 
 uint32 ScriptExecutor::scriptReadValue32() {
@@ -2578,8 +2472,24 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		out1 = getAreaAtPoint(charPos.x, charPos.y);
 		break;
 	}
+	case 0x05:
+		break;
+	case 0x06:
+		out1 = 1;
+		break;
+	case 0x07:
+	case 0x08:
+	case 0x09:
+		out1 = 0;
+		break;
+	case 0x0A:
+		out1 = 1;
+		break;
 	case 0x0B:
 		out1 = _repeatRunFlag ? 1 : 0;
+		break;
+	case 0x0C:
+		out1 = 1;
 		break;
 	case 0x0D:
 		out1 = _chosenDialogueOption;
@@ -2600,8 +2510,18 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	case 0x26:
 		out1 = _isSceneInitRun ? 1 : 0;
 		break;
+	case 0x27: {
+		if (_isRepeatRun) {
+			const Common::Point &charPos = getCharPosition();
+			out1 = getAreaAtPoint(charPos.x, charPos.y);
+		}
+		break;
+	}
 	case 0x28:
 		out1 = _inventoryCheckResult ? 1 : 0;
+		break;
+	case 0x29:
+		out1 = _animBlobRangeTestResult ? 1 : 0;
 		break;
 	case 0x2A: {
 		View1 *v = (View1 *)_engine->findView("View1");
@@ -2615,13 +2535,30 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
+	case 0x2C:
+		out1 = (_mouseMode == MouseMode::PanelUse) ? _interactedObjectID : 0;
+		break;
 	case 0x2D:
 		out1 = Scenes::instance()._currentSceneIndex;
+		break;
+	case 0x2E:
+		out1 = 2;
 		break;
 	case 0x2F:
 		out1 = Scenes::instance()._lastSceneIndex;
 		break;
+	case 0x30:
+		out1 = (_musicEnabled && _soundSystemActive) ? 1 : 0;
+		break;
+	case 0x31:
+		out1 = (_soundEnabled && _soundSystemActive) ? 1 : 0;
+		break;
 	default:
+		if (value >= 0x0E && value <= 0x22) {
+			out1 = value - 0x0D;
+		} else {
+			warning("getSpecialValue: unknown special value 0x%02x", value);
+		}
 		break;
 	}
 	return out1 | ((uint32)out2 << 16);

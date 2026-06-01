@@ -40,6 +40,41 @@ static bool _showSceneMaps = false;
 static bool _showImageResources = false;
 static bool _showDebugOutput = false;
 
+static const struct {
+	uint16 id;
+	const char *name;
+} kSpecialNames[] = {
+	{0x01, "interactedUse"},
+	{0x02, "interactedLook"},
+	{0x03, "interactedTalk"},
+	{0x04, "areaAtActor"},
+	{0x0B, "isRepeatRun"},
+	{0x0D, "dialogueResult"},
+	{0x23, "pathWalkable"},
+	{0x24, "actorX"},
+	{0x25, "actorY"},
+	{0x26, "isSceneInit"},
+	{0x27, "areaRepeatRun"},
+	{0x28, "invCheck"},
+	{0x29, "animBlobRange"},
+	{0x2A, "invCombine"},
+	{0x2B, "invAction"},
+	{0x2C, "interactedMap"},
+	{0x2D, "curScene"},
+	{0x2E, "const2"},
+	{0x2F, "prevScene"},
+	{0x30, "musicActive"},
+	{0x31, "soundActive"},
+};
+
+static const char *getSpecialName(uint16 val) {
+	for (const auto &s : kSpecialNames) {
+		if (s.id == val)
+			return s.name;
+	}
+	return nullptr;
+}
+
 static const char *getOpcodeName(uint8 opcode) {
 	switch (opcode) {
 	case 0x01:
@@ -230,40 +265,12 @@ static Common::String decodeScriptValue(Common::MemoryReadStream *script) {
 	if (type == 0x00)
 		return Common::String::format("%u", val);
 	if (type == 0xFF) {
-		switch (val) {
-		case 0x01:
-			return "interactedUse";
-		case 0x02:
-			return "interactedLook";
-		case 0x03:
-			return "interactedTalk";
-		case 0x04:
-			return "areaAtActor";
-		case 0x0B:
-			return "isRepeatRun";
-		case 0x0D:
-			return "dialogueResult";
-		case 0x23:
-			return "pathWalkable";
-		case 0x24:
-			return "actorX";
-		case 0x25:
-			return "actorY";
-		case 0x26:
-			return "isSceneInit";
-		case 0x28:
-			return "invCheck";
-		case 0x2A:
-			return "invCombine";
-		case 0x2B:
-			return "invAction";
-		case 0x2D:
-			return "curScene";
-		case 0x2F:
-			return "prevScene";
-		default:
-			return Common::String::format("special[0x%02x]", val);
-		}
+		const char *name = getSpecialName(val);
+		if (name)
+			return name;
+		if (val >= 0x0E && val <= 0x22)
+			return Common::String::format("%u", val - 0x0D);
+		return Common::String::format("special[0x%02x]", val);
 	}
 	return Common::String::format("var[%u]", val);
 }
@@ -873,27 +880,7 @@ static void showVariablesWindow() {
 			ImGui::Text("Is Repeat Run: %s", exec->_isRepeatRun ? "Y" : "N");
 		}
 		if (ImGui::CollapsingHeader("Runtime Specials (FF, read-only)", ImGuiTreeNodeFlags_DefaultOpen)) {
-			static const struct {
-				uint16 id;
-				const char *name;
-			} specials[] = {
-				{0x01, "interactedUse"},
-				{0x02, "interactedLook"},
-				{0x03, "interactedTalk"},
-				{0x04, "areaAtActor"},
-				{0x0B, "isRepeatRun"},
-				{0x0D, "dialogueResult"},
-				{0x23, "pathWalkable"},
-				{0x24, "actorX"},
-				{0x25, "actorY"},
-				{0x26, "isSceneInit"},
-				{0x28, "invCheck"},
-				{0x2A, "invCombine"},
-				{0x2B, "invAction"},
-				{0x2D, "curScene"},
-				{0x2F, "prevScene"},
-			};
-			for (const auto &s : specials) {
+			for (const auto &s : kSpecialNames) {
 				uint32 val = exec->getSpecialValue(s.id);
 				ImGui::Text("%-15s (FF:%02x) = %u (0x%x)", s.name, s.id, val, val);
 			}
@@ -1204,76 +1191,60 @@ static void showSceneMapsWindow() {
 				if (selectedTab == 4) {
 					ImDrawList *dl = ImGui::GetWindowDrawList();
 					ImVec2 imgOrigin = ImGui::GetItemRectMin();
-					View1 *view = (View1 *)g_engine->findView("View1");
 					static int _selectedObjectIdx = -1;
-					static bool _selectedIsCharacter = true;
-					int scrollX = view ? view->_offset : 0;
 					uint16 sceneIdx = (uint16)Scenes::instance()._currentSceneIndex;
 
 					// Draw all scene objects from GameObjects
-					if (view) {
-						int objDrawIdx = 0;
+					int objCount = 0;
+					for (auto obj : GameObjects::instance()._objects) {
+						if (obj->SceneIndex != sceneIdx)
+							continue;
+						Common::Point pos = obj->Position;
+						float sx = pos.x * scale;
+						float sy = pos.y * scale;
+						ImVec2 center(imgOrigin.x + sx, imgOrigin.y + sy);
+						uint32 col;
+						if (!obj->IsVisible)
+							col = IM_COL32(128, 128, 128, 200);
+						else if (obj->IsClickable)
+							col = IM_COL32(0, 255, 0, 255);
+						else
+							col = IM_COL32(255, 255, 0, 255);
+						dl->AddCircleFilled(center, MAX(4.0f * scale, 3.0f), col);
+						char buf[8];
+						snprintf(buf, sizeof(buf), "%x", obj->_index);
+						ImVec2 textPos(center.x + 5, center.y - 6);
+						dl->AddText(textPos, IM_COL32(255, 255, 255, 255), buf);
+						objCount++;
+					}
+					// Handle clicks on objects
+					if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+						ImVec2 mousePos2 = ImGui::GetMousePos();
+						int clickIdx = 0;
 						for (auto obj : GameObjects::instance()._objects) {
-							if (obj->SceneIndex != sceneIdx)
-								continue;
-							Common::Point pos = obj->Position;
-							float sx = (pos.x - scrollX) * scale;
-							float sy = pos.y * scale;
-							if (sx < 0 || sx > 320.0f * scale || sy < 0 || sy > 200.0f * scale) {
-								objDrawIdx++;
-								continue;
-							}
-							ImVec2 center(imgOrigin.x + sx, imgOrigin.y + sy);
-							uint32 col;
-							if (!obj->IsVisible)
-								col = IM_COL32(128, 128, 128, 200);
-							else if (obj->IsClickable)
-								col = IM_COL32(0, 255, 0, 255);
-							else
-								col = IM_COL32(255, 255, 0, 255);
-							dl->AddCircleFilled(center, 4.0f * scale, col);
-							char buf[8];
-							snprintf(buf, sizeof(buf), "%x", obj->_index);
-							ImVec2 textPos(center.x + 5, center.y - 6);
-							dl->AddText(textPos, IM_COL32(255, 255, 255, 255), buf);
-							objDrawIdx++;
-						}
-						// Handle clicks on objects
-						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
-							ImVec2 mousePos = ImGui::GetMousePos();
-							int clickIdx = 0;
-							for (auto obj : GameObjects::instance()._objects) {
-								if (obj->SceneIndex != sceneIdx) {
-									clickIdx++;
-									continue;
-								}
-								Common::Point pos = obj->Position;
-								float sx = imgOrigin.x + (pos.x - scrollX) * scale;
-								float sy = imgOrigin.y + pos.y * scale;
-								if (fabs(mousePos.x - sx) < 8 && fabs(mousePos.y - sy) < 8) {
-									_selectedObjectIdx = clickIdx;
-									_selectedIsCharacter = false;
-									break;
-								}
+							if (obj->SceneIndex != sceneIdx) {
 								clickIdx++;
+								continue;
 							}
+							float sx = imgOrigin.x + obj->Position.x * scale;
+							float sy = imgOrigin.y + obj->Position.y * scale;
+							if (fabs(mousePos2.x - sx) < 8 && fabs(mousePos2.y - sy) < 8) {
+								_selectedObjectIdx = clickIdx;
+								break;
+							}
+							clickIdx++;
 						}
 					}
 					// Show selected object details
-					if (_selectedObjectIdx >= 0 && !_selectedIsCharacter) {
+					if (_selectedObjectIdx >= 0) {
 						int idx = 0;
 						for (auto obj : GameObjects::instance()._objects) {
 							if (idx == _selectedObjectIdx) {
 								ImGui::Separator();
 								ImGui::Text("Object 0x%x  Scene:%u  Pos:(%d,%d)  Orient:%u",
 											obj->_index, obj->SceneIndex, obj->Position.x, obj->Position.y, obj->Orientation);
-								ImGui::Text("Visible:%s  Clickable:%s  Frozen:%s",
-											obj->IsVisible ? "Y" : "N", obj->IsClickable ? "Y" : "N",
-											obj->HasBoundsAttachment ? "Y" : "N");
-								if (obj->HasBoundsAttachment)
-									ImGui::Text("  Bounds: obj=%u v1=%u v2=%u v3=%u",
-												obj->BoundsAttachmentObjectID, obj->BoundsAttachmentValue1,
-												obj->BoundsAttachmentValue2, obj->BoundsAttachmentValue3);
+								ImGui::Text("Visible:%s  Clickable:%s",
+											obj->IsVisible ? "Y" : "N", obj->IsClickable ? "Y" : "N");
 								ImGui::Text("Blobs: %u  Script: %u bytes",
 											(uint)obj->Blobs.size(), (uint)obj->Script.size());
 								break;
@@ -1281,6 +1252,7 @@ static void showSceneMapsWindow() {
 							idx++;
 						}
 					}
+					ImGui::Text("Objects in scene: %d", objCount);
 				}
 
 				// Show value at mouse hover
