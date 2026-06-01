@@ -1699,6 +1699,42 @@ void Script::ScriptExecutor::scriptOpcode0x2A() {
 	g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x2B() {
+	const uint16 objectID = scriptReadValue16() - 0x400;
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Ignoring object refresh for invalid object %u", objectID);
+		return false;
+	}
+	if (object->Blobs.empty()) {
+		warning("Ignoring object refresh for unloaded object %u", objectID);
+		return false;
+	}
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView == nullptr) {
+		return false;
+	}
+
+	Character *character = currentView->GetCharacterByIndex(objectID);
+	const int currentIndex = currentView->GetCharacterArrayIndex(character);
+	if (object->SceneIndex != Scenes::instance().CurrentSceneIndex) {
+		if (currentIndex >= 0) {
+			currentView->characters.remove_at(currentIndex);
+		}
+		return false;
+	}
+
+	if (character == nullptr) {
+		character = new Character();
+		character->GameObject = object;
+	} else if (currentIndex >= 0) {
+		currentView->characters.remove_at(currentIndex);
+	}
+
+	currentView->characters.push_back(character);
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -1927,38 +1963,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x2A) {
 			scriptOpcode0x2A();
 		} else if (opcode1 == 0x2B) {
-			const uint16 objectID = scriptReadValue16() - 0x400;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Ignoring object refresh for invalid object %u", objectID);
+			if (!scriptOpcode0x2B()) {
 				continue;
 			}
-			if (object->Blobs.empty()) {
-				warning("Ignoring object refresh for unloaded object %u", objectID);
-				continue;
-			}
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView == nullptr) {
-				continue;
-			}
-
-			Character *character = currentView->GetCharacterByIndex(objectID);
-			const int currentIndex = currentView->GetCharacterArrayIndex(character);
-			if (object->SceneIndex != Scenes::instance().CurrentSceneIndex) {
-				if (currentIndex >= 0) {
-					currentView->characters.remove_at(currentIndex);
-				}
-				continue;
-			}
-
-			if (character == nullptr) {
-				character = new Character();
-				character->GameObject = object;
-			} else if (currentIndex >= 0) {
-				currentView->characters.remove_at(currentIndex);
-			}
-
-			currentView->characters.push_back(character);
 		} else if (opcode1 == 0x2C) {
 			uint16 objectID = scriptReadValue16() - 0x400;
 			uint16 parentID = scriptReadValue16();
