@@ -1185,6 +1185,18 @@ static void showSceneMapsWindow() {
 			}
 		}
 
+		// Hotspot override table for Hotspot Overlay tab
+		if (selectedTab == 5) {
+			ImGui::Separator();
+			ImGui::Text("Hotspot Overrides:");
+			for (uint i = 0; i < g_engine->_hotspotOverrides.size(); i++) {
+				if (g_engine->_hotspotOverrides[i] != 0xFFFF) {
+					ImGui::SameLine();
+					ImGui::Text("[%u]→0x%x", i, g_engine->_hotspotOverrides[i]);
+				}
+			}
+		}
+
 		// Scene data info
 		ImGui::Separator();
 		ImGui::Text("word51FD=%u  word51FF=%u  word5201=%u",
@@ -1334,6 +1346,22 @@ static void showDebugOutputWindow() {
 	ImGui::End();
 }
 
+static bool _showTextLog = false;
+static void showTextLogWindow() {
+	if (!_showTextLog)
+		return;
+	ImGui::SetNextWindowSize(ImVec2(500, 200), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Text Log", &_showTextLog)) {
+		if (ImGui::BeginChild("TextLogScroll", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
+			for (const Common::String &line : g_engine->_textLog)
+				ImGui::TextUnformatted(line.c_str());
+		}
+		ImGui::EndChild();
+		g_engine->_textLog.clear();
+	}
+	ImGui::End();
+}
+
 void onImGuiInit() {
 	ImGui::GetIO().Fonts->AddFontDefault();
 }
@@ -1355,6 +1383,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Scene Maps", NULL, &_showSceneMaps);
 			ImGui::MenuItem("Image Resources", NULL, &_showImageResources);
 			ImGui::MenuItem("Debug Output", NULL, &_showDebugOutput);
+			ImGui::MenuItem("Text Log", NULL, &_showTextLog);
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Speed")) {
@@ -1364,6 +1393,23 @@ void onImGuiRender() {
 				g_engine->_gameSpeedMode = 1;
 			if (ImGui::MenuItem("Slow", NULL, g_engine->_gameSpeedMode == 2))
 				g_engine->_gameSpeedMode = 2;
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Tools")) {
+			if (ImGui::MenuItem("Quick Start (Scene 6)"))
+				g_engine->changeScene(0x6);
+			ImGui::Separator();
+			static int sceneInput = 1;
+			ImGui::SetNextItemWidth(60);
+			ImGui::InputInt("##scn", &sceneInput, 1, 10);
+			ImGui::SameLine();
+			if (ImGui::MenuItem("Change Scene")) {
+				if (sceneInput > 0 && sceneInput <= 512)
+					g_engine->changeScene((uint32)sceneInput);
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Run Script Executor"))
+				g_engine->runScriptExecutor(true);
 			ImGui::EndMenu();
 		}
 		ImGui::Text("| Scene: %d | Speed: %s", Scenes::instance()._currentSceneIndex,
@@ -1379,6 +1425,7 @@ void onImGuiRender() {
 	showSceneMapsWindow();
 	showImageResourcesWindow();
 	showDebugOutputWindow();
+	showTextLogWindow();
 }
 
 void onImGuiCleanup() {
