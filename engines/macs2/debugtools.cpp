@@ -616,7 +616,7 @@ static void showScriptWindow() {
 		int currentScene = Scenes::instance().CurrentSceneIndex;
 		ImGui::Text("Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
 					currentScene, exec->getScriptPosition(), exec->getScriptEndPosition(),
-					exec->IsExecuting() ? "RUNNING" : "Idle", exec->GetExecutingObjectId());
+					exec->isExecuting() ? "RUNNING" : "Idle", exec->GetExecutingObjectId());
 		ImGui::Separator();
 
 		Common::MemoryReadStream *script = Scenes::instance().CurrentSceneScript;
@@ -639,7 +639,7 @@ static void showScriptWindow() {
 					ImGui::Text("%04x: %s%s", l.offset, ind.c_str(), l.text.c_str());
 					if (isCurrent) {
 						ImGui::PopStyleColor();
-						if (exec->IsExecuting())
+						if (exec->isExecuting())
 							ImGui::SetScrollHereY(0.5f);
 					}
 				}
@@ -660,8 +660,8 @@ static void showVariablesWindow() {
 			ImGui::Text("Mouse Mode: 0x%x", (int)exec->_mouseMode);
 			ImGui::Text("Interacted Object: 0x%x", exec->_interactedObjectID);
 			ImGui::Text("Interacted Other: 0x%x", exec->_interactedOtherObjectID);
-			ImGui::Text("Script Skippable: %s", exec->scriptSkippable ? "Y" : "N");
-			ImGui::Text("Inventory Action/Combine: %s/%s", exec->inventoryActionFlag ? "Y" : "N", exec->inventoryCombineFlag ? "Y" : "N");
+			ImGui::Text("Script Skippable: %s", exec->_scriptSkippable ? "Y" : "N");
+			ImGui::Text("Inventory Action/Combine: %s/%s", exec->_inventoryActionFlag ? "Y" : "N", exec->_inventoryCombineFlag ? "Y" : "N");
 		}
 		if (ImGui::CollapsingHeader("Runtime Specials (FF, read-only)", ImGuiTreeNodeFlags_DefaultOpen)) {
 			static const struct {

@@ -197,16 +197,16 @@ private:
 	// [1014h] global - current assumption is that this is set when we run
 	// the script for the scene initialization and reset when we run when the
 	// scene is active
-	bool IsSceneInitRun = false;
+	bool _isSceneInitRun = false;
 
 	// [1012h] global - current assumption is that this guards script runs that
 	// [1012h] g_wRepeatRunFlag - set during the repeat script pass
 	// that runs after scene init to process object scripts
-	bool repeatRunFlag = false;
+	bool _repeatRunFlag = false;
 
-	uint16 executingObjectIndex;
+	uint16 _executingObjectIndex;
 
-	ScriptExecutionState scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
+	ScriptExecutionState _scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 
 	// Returns true if the object is relevant to be executing in the current scene
 	bool isRelevantObject(const GameObject *obj) const;
@@ -218,31 +218,29 @@ private:
 
 	// Depending on the current state, chooses the next script to run
 	// and adjusts the state
-	// Should return true iff a new script was loaded
-	bool LoadNextScript();
+	// Should return true if a new script was loaded
+	bool loadNextScript();
 
-	bool isTimerActive = false;
-	uint32 timerEndMillis;
-	bool isFrameWaitActive = false;
-	uint16 frameWaitTicksRemaining = 0;
+	bool _isTimerActive = false;
+	uint32 _timerEndMillis;
+	bool _isFrameWaitActive = false;
+	uint16 _frameWaitTicksRemaining = 0;
 
 	// We use this array to gather the dialogue choices as they come in
-	Common::Array<Common::StringArray> DialogueChoices;
+	Common::Array<Common::StringArray> _dialogueChoices;
 
-	// TODO: Put in a git module
-	Common::String IdentifyScriptOpcode(uint8 opcode, uint8 opcode2);
-	Common::String IdentifyHelperOpcode(uint8 opcode, uint16 value);
+	Common::String identifyScriptOpcode(uint8 opcode, uint8 opcode2);
+	Common::String identifyHelperOpcode(uint8 opcode, uint16 value);
 
-	// Does pretty much what 9F07 does
 	byte readByte();
 	uint16 readUint16();
 
 	// We use this to keep track of whether we have read all bytes we should have read
-	uint32 expectedEndLocation;
+	uint32 _expectedEndLocation;
 
-	// fn0037_A3D2 - scriptSkipBlock: skips nested opcode blocks
+	// scriptSkipBlock: skips nested opcode blocks
 	void scriptSkipBlock();
-	// fn0037_A37A - scriptscriptSkipAlternate: alternate skip (for opcode 8)
+	// scriptSkipAlternate: alternate skip (for opcode 8)
 	void scriptSkipAlternate();
 
 	bool IsPathWalkable(const Common::Point &from, const Common::Point &to);
@@ -250,9 +248,7 @@ private:
 	bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 	bool loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 
-	// void getAreaAtPoint(uint16 x, uint16 y);
-
-	// fn0037_9F4D - scriptReadValue: reads a typed value from the script stream
+	// scriptReadValue: reads a typed value from the script stream
 	void scriptReadValuePair(uint16 &out1, uint16 &out2);
 
 	// Combines both 16 bit values into a 32 bit value
@@ -262,24 +258,12 @@ private:
 	uint16 scriptReadValue16();
 
 	// Saves the given value in a script variable
-	// fn0037_A334 - scriptSaveVariable: saves value to a script variable
-	void scriptSaveVariable(uint32 value);
+	void scriptSaveVariableHelper(uint32 value);
 
-	// fn0037_C991 proc
-	// Implements a walk to
-	void scriptLoadSpecialAnimImpl();
+	void scriptPrintString(bool alignRight = false);
 
-	// Implements opcode 0x28 - stops the current animation on an object
-	// fn0037_C8E4 - scriptStopAnimation
-	void scriptStopAnimationImpl();
-
-	// Implements opcode 0e - changing scene animations
-
-	// 01E7:A903
-	void ScriptPrintString(bool alignRight = false);
-
-	Common::StringArray debugBuffer;
-	bool lastOpcodeTriggeredSkip = false;
+	Common::StringArray _debugBuffer;
+	bool _lastOpcodeTriggeredSkip = false;
 	void BeginBuffering();
 	void endBuffering(bool shouldMark = false);
 
@@ -289,42 +273,31 @@ private:
 	uint16 _executingScriptObjectID;
 
 public:
-	int64 _streamDumpPosition;
-	void DumpWholeScript();
+	ScriptExecutor();
 
-	// Button 8 skip from handleInput (1008:e8bf)
-	bool skipToEndOfSkippableSection();
+	int64 _streamDumpPosition;
 
 	// This is where a secondary inventory was last opened,
 	// when it is closed, we need to execute from here
-	uint32 secondaryInventoryLocation;
-	bool hasPendingExternalInventoryResume = false;
-	uint16 externalInventorySourceObjectID = 0;
-	MouseMode savedExternalInventoryMouseMode = MouseMode::Use;
-
-	// Implements a lookup in the "areas" map
-	uint16 getAreaAtPoint(uint16 x, uint16 y);
+	uint32 _secondaryInventoryLocation;
+	bool _hasPendingExternalInventoryResume = false;
+	uint16 _externalInventorySourceObjectID = 0;
+	MouseMode _savedExternalInventoryMouseMode = MouseMode::Use;
 
 	// Determines if we actually look something up when looking up 9F4D FF 27
 	// in the obstacles/pathfinding map
 	// Should be 1 while we execute a "character stopped walking" script,
 	// otherwise 0
-	bool pathWalkableResult = false;
-	bool isRepeatRun = false;
+	bool _pathWalkableResult = false;
+	bool _isRepeatRun = false;
 
 	// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
-	int chosenDialogueOption = 0;
-	uint16 activeDialogueSpeakerObjectID = 0;
+	int _chosenDialogueOption = 0;
+	uint16 _activeDialogueSpeakerObjectID = 0;
 
 	// 0x2000 bytes / 4 bytes per var = 2048 variables max (indices 1-0x800).
 	// All zeroed on init by memsetBytes in loadResourceFile.
 	Common::Array<ScriptVariable> _variables;
-
-	void SetVariableValue(uint16 index, uint16 a, uint16 b);
-
-	void setVariableValue(uint16 index, uint32 value);
-
-	Common::Point GetCharPosition();
 
 	MouseMode _mouseMode = MouseMode::Walk;
 	MouseMode _cursorModeBeforeWait = MouseMode::Walk;
@@ -333,37 +306,53 @@ public:
 	uint16 _interactedOtherObjectID = 0;
 
 	// Is set to true in opcode 2C if an object is inside another target object
-	bool inventoryCheckResult = false;
-	bool animBlobRangeTestResult = false;
-	bool soundEnabled = true;
+	bool _inventoryCheckResult = false;
+	bool _animBlobRangeTestResult = false;
+	bool _soundEnabled = true;
 	// [102Ah] - separate from soundEnabled (sound). Controls whether the
 	// player can fast-forward the current script section via button 8.
 	// Set by opcode 0x1C, cleared by opcode 0x1D.
-	bool scriptSkippable = false;
-	bool musicEnabled = true;
-	bool soundSystemActive = true;
-	bool overlayTextStageActive = false;
-	bool inventoryActionFlag = false;
-	bool inventoryCombineFlag = false;
-	Common::Array<uint8> musicSlots[2];
-	uint16 activeMusicSlot = 0;
-	uint16 musicControlMode = 0;
-	uint16 musicControlParam = 0;
-	uint16 musicControlVolume = 0;
-	bool waitForSoundPlayback = false;
-	bool waitForMusicControl = false;
-	bool waitForAdlibReady = false;
-	bool pickupInProgress = false;
-	uint16 pickupActorObjectID = 0;
-	uint16 pickupTargetObjectID = 0;
-	MouseMode savedPickupMouseMode = MouseMode::Use;
+	bool _scriptSkippable = false;
+	bool _musicEnabled = true;
+	bool _soundSystemActive = true;
+	bool _overlayTextStageActive = false;
+	bool _inventoryActionFlag = false;
+	bool _inventoryCombineFlag = false;
+	Common::Array<uint8> _musicSlots[2];
+	uint16 _activeMusicSlot = 0;
+	uint16 _musicControlMode = 0;
+	uint16 _musicControlParam = 0;
+	uint16 _musicControlVolume = 0;
+	bool _waitForSoundPlayback = false;
+	bool _waitForMusicControl = false;
+	bool _waitForAdlibReady = false;
+	bool _pickupInProgress = false;
+	uint16 _pickupActorObjectID = 0;
+	uint16 _pickupTargetObjectID = 0;
+	MouseMode _savedPickupMouseMode = MouseMode::Use;
 
 	// Legacy flag for script callback scheduling. Marked for removal.
-	bool requestCallback = false;
+	bool _requestCallback = false;
+	bool _isRunningScript = false;
+	bool _isAwaitingCallback = false;
+	// Mutex indicating if the A3D2 function is active
+	bool _isSkipping = false;
 
 	Macs2::Macs2Engine *_engine;
 
-	ScriptExecutor();
+	void DumpWholeScript();
+
+	// Button 8 skip from handleInput (1008:e8bf)
+	bool skipToEndOfSkippableSection();
+
+	// Implements a lookup in the "areas" map
+	uint16 getAreaAtPoint(uint16 x, uint16 y);
+
+	void SetVariableValue(uint16 index, uint16 a, uint16 b);
+
+	void setVariableValue(uint16 index, uint32 value);
+
+	Common::Point GetCharPosition();
 
 	ExecutionResult executeScript();
 
@@ -383,18 +372,15 @@ public:
 	void startFrameWait(uint16 duration);
 	void endFrameWait();
 
-	bool isRunningScript = false;
-	bool isAwaitingCallback = false;
-
-	// TODO: Impplement mutexes correctly
-	bool IsExecuting() const {
+	bool isExecuting() const {
+		// TODO: Implement mutexes correctly
+		// return _isRunningScript || _isAwaitingCallback;
 		return _state != ExecutorState::Idle;
-		// return isRunningScript || isAwaitingCallback;
 	}
 
 	uint32 getScriptPosition() const;
 	uint32 getScriptEndPosition() const;
-	uint16 GetExecutingObjectId() const { return executingObjectIndex; }
+	uint16 GetExecutingObjectId() const { return _executingObjectIndex; }
 	uint32 getVariableValue(int index) const;
 
 	// Computes the read-only runtime value for a type 0xFF special
@@ -403,19 +389,16 @@ public:
 
 	// Returns true if the save/load menu can be opened (no blocking state)
 	bool canOpenSaveMenu() const {
-		return !IsSceneInitRun && !isFrameWaitActive && !isTimerActive;
+		return !_isSceneInitRun && !_isFrameWaitActive && !_isTimerActive;
 	}
-
-	// Mutex indicating if the A3D2 function is active
-	bool isSkipping = false;
 
 	// Resets the script to the beginning.
 	// Confirmed: runScriptExecutor (1008:e3e7) sets position=0 on fresh runs
 	// (g_wScriptIsExecuting==0). Mid-execution pauses resume from current position.
 	void rewind();
 };
-} // namespace Script
 
+} // namespace Script
 } // namespace Macs2
 
 #endif
