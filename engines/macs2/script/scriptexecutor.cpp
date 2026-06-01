@@ -2093,6 +2093,21 @@ void Script::ScriptExecutor::scriptOpcode0x42() {
 	}
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x43() {
+	const uint16 slotID = scriptReadValue16();
+	const uint8 resourceIndex = ReadByte();
+	if (slotID < 1 || slotID > 2) {
+		warning("Ignoring music load for invalid slot %u", slotID);
+		return false;
+	}
+
+	Common::Array<uint8> slotData;
+	if (loadMusicResource(slotData, resourceIndex)) {
+		musicSlots[slotID - 1] = slotData;
+	}
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2343,16 +2358,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x42) {
 			scriptOpcode0x42();
 		} else if (opcode1 == 0x43) {
-			const uint16 slotID = scriptReadValue16();
-			const uint8 resourceIndex = ReadByte();
-			if (slotID < 1 || slotID > 2) {
-				warning("Ignoring music load for invalid slot %u", slotID);
+			if (!scriptOpcode0x43()) {
 				continue;
 			}
-
-			Common::Array<uint8> slotData;
-			if (loadMusicResource(slotData, resourceIndex))
-				musicSlots[slotID - 1] = slotData;
 		} else if (opcode1 == 0x44) {
 			const uint16 slotID = scriptReadValue16();
 			const uint16 startMuted = scriptReadValue16();
