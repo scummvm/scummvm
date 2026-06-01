@@ -62,11 +62,14 @@ private:
 	bool _lerpIgnoresObstacles = false;
 
 	// If this is set, a lerp to a location becomes picking up
-	// TODO: Replace by more proper task implementation later
 	Macs2::GameObject *_pickedUpObject = nullptr;
 
-	// Simple timer to keep track of how long we play the picking up animation
-	float _pickupAnimationEndTime = -1.0f;
+	// Frame counter for pickup animation (runtime+0x215).
+	// Increments each frame while orientation == 0x11.
+	// At _pickupFrameStart: item is transferred to inventory.
+	// At _pickupFrameEnd: animation ends, orientation restored.
+	uint16 _pickupFrameCounter = 0;
+	bool _pickupItemTransferred = false;
 
 	uint8 _previousOrientation;
 

@@ -342,7 +342,10 @@ public:
 	// Raw scene timer params at +0x53C3..+0x53CF (4 dwords, saved for binary compat)
 	uint32 _sceneTimerParams[4] = {0};
 
-	// Clip rect dirty flag [0xfec] - signals clip region needs full-screen reset
+	// Clip rect dirty flag [0xfec] - in the original DOS engine this signaled the VGA
+	// blitter to reset the clip region to full screen before the next partial-region
+	// updates (a dirty-rect optimization). Not used in ScummVM because we redraw the
+	// full backbuffer each frame via ManagedSurface. Kept only for save/load compatibility.
 	bool _clipRectDirty = false;
 
 	uint16 getHotspotAtPoint(const Common::Point &p);
