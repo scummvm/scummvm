@@ -2480,8 +2480,20 @@ void Character::update() {
 	if (walkSpeed < 1)
 		walkSpeed = 1;
 
-	// Check if we have arrived at the target
-	if (pos == _endPosition) {
+	// Proximity arrival check from walkAlongPath (1008:1b8f):
+	// Original checks if character is within walkSpeed pixels of target in both axes.
+	bool arrived = (abs(pos.x - _endPosition.x) <= walkSpeed) &&
+	               (abs(pos.y - _endPosition.y) <= walkSpeed);
+	if (arrived) {
+		// _snapToTarget (runtime+0x22F): when set, snap character to exact target
+		// position on arrival. When clear, leave character at last stepped pixel
+		// and update the target to match (original: target = currentPos).
+		if (_gameObject->_snapToTarget) {
+			pos = _endPosition;
+			setPosition(pos);
+		} else {
+			_endPosition = pos;
+		}
 		if (_isFollowingPath) {
 			_isFollowingPath = walkAlongPath();
 			if (_isFollowingPath)
