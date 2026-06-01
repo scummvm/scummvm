@@ -57,6 +57,7 @@ public:
 	// Menu input event queue - events are captured by notifyEvent() and processed by processMenuInput()
 	Common::Queue<Common::Event> _menuEventQueue;
 	bool _menuInputActive;  // True when we're capturing menu input events
+	bool _virtualKeyboardActive;
 
 	// ---------------------------------------------------------------------------
 	// Menu System
@@ -125,6 +126,9 @@ public:
 
 	// Reset menu state for fresh start
 	void resetMenu();
+	bool isMenuTextInputActive() const;
+	void setVirtualKeyboardVisible(bool visible);
+	void updateMenuVirtualKeyboard();
 
 	// ---------------------------------------------------------------------------
 	// Chapter Selection Screen (FUN_00415CF8)

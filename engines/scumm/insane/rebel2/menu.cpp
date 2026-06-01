@@ -50,6 +50,35 @@ void InsaneRebel2::resetMenu() {
 	_menuInactivityTimer = 0;
 	_menuRepeatDelay = 0;
 	_menuSelectionConfirmed = false;
+	setVirtualKeyboardVisible(false);
+}
+
+bool InsaneRebel2::isMenuTextInputActive() const {
+	if (!_menuInputActive)
+		return false;
+
+	if (_gameState == kStatePilotSelect && _pilotMenuMode == kPilotModeNameInput)
+		return true;
+
+	return _gameState == kStateChapterSelect &&
+	       _chapterSelection >= 0 &&
+	       _chapterSelection < 16 &&
+	       !_chapterUnlocked[_chapterSelection];
+}
+
+void InsaneRebel2::setVirtualKeyboardVisible(bool visible) {
+	if (!_vm->_system->hasFeature(OSystem::kFeatureVirtualKeyboard))
+		return;
+
+	if (_virtualKeyboardActive == visible)
+		return;
+
+	_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, visible);
+	_virtualKeyboardActive = visible;
+}
+
+void InsaneRebel2::updateMenuVirtualKeyboard() {
+	setVirtualKeyboardVisible(isMenuTextInputActive());
 }
 
 // unlockAllChapters -- Debug mode unlock (FUN_00415CF8 lines 60-71, DAT_0047ab34=='d').
@@ -716,6 +745,7 @@ int InsaneRebel2::runChapterSelect() {
 	_passwordInput = "";
 	_menuRepeatDelay = 0;
 	_gameState = kStateChapterSelect;
+	updateMenuVirtualKeyboard();
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
@@ -753,6 +783,7 @@ int InsaneRebel2::runChapterSelect() {
 		splayer->play("OPEN/O_LEVEL.SAN", 12);
 
 		if (_vm->shouldQuit()) {
+			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kChapterSelectQuit;
 		}
@@ -771,6 +802,7 @@ int InsaneRebel2::runChapterSelect() {
 		if (_chapterSelection == 16) {
 			// BACK selected (index 16 = 17th item)
 			debug("Rebel2: BACK to main menu selected");
+			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kChapterSelectBack;
 		}
@@ -780,6 +812,7 @@ int InsaneRebel2::runChapterSelect() {
 				// Unlocked chapter — play it
 				_selectedChapter = _chapterSelection;
 				debug("Rebel2: Chapter %d selected (unlocked)", _selectedChapter + 1);
+				setVirtualKeyboardVisible(false);
 				_menuInputActive = false;
 				return kChapterSelectPlay;
 			}
@@ -801,6 +834,7 @@ int InsaneRebel2::runChapterSelect() {
 					// Update iactBit for video preview (original jumps to LAB_00415d88)
 					setBit(16 - _chapterSelection);
 					_passwordInput.clear();
+					updateMenuVirtualKeyboard();
 					debug("Rebel2: Chapter %d unlocked via password", _chapterSelection + 1);
 					continue;  // Re-render with updated unlock state
 				}
@@ -811,6 +845,7 @@ int InsaneRebel2::runChapterSelect() {
 		}
 	}
 
+	setVirtualKeyboardVisible(false);
 	_menuInputActive = false;
 	return kChapterSelectQuit;
 }
@@ -838,6 +873,7 @@ int InsaneRebel2::processChapterSelectInput() {
 				_passwordInput.clear();
 				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
 				_previewOffsetY = _chapterSelection * -50 + 75;
+				updateMenuVirtualKeyboard();
 				debug("ChapterSelect: Selection changed to %d (UP) offsetY=%d", _chapterSelection, _previewOffsetY);
 				break;
 
@@ -850,6 +886,7 @@ int InsaneRebel2::processChapterSelectInput() {
 				_passwordInput.clear();
 				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
 				_previewOffsetY = _chapterSelection * -50 + 75;
+				updateMenuVirtualKeyboard();
 				debug("ChapterSelect: Selection changed to %d (DOWN) offsetY=%d", _chapterSelection, _previewOffsetY);
 				break;
 
@@ -863,6 +900,7 @@ int InsaneRebel2::processChapterSelectInput() {
 
 			case Common::KEYCODE_ESCAPE:
 				// ESC = Back to main menu (same as selecting BACK)
+				setVirtualKeyboardVisible(false);
 				result = 16;  // BACK index
 				debug("ChapterSelect: ESC pressed - back to menu");
 				break;
@@ -897,6 +935,7 @@ int InsaneRebel2::processChapterSelectInput() {
 					if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
 						_chapterSelection = i;
 						_previewOffsetY = _chapterSelection * -50 + 75;
+						updateMenuVirtualKeyboard();
 						result = _chapterSelection;
 						debug("ChapterSelect: Item %d selected (mouse)", _chapterSelection);
 						break;
@@ -918,6 +957,7 @@ int InsaneRebel2::processChapterSelectInput() {
 						if (i != _chapterSelection) {
 							_chapterSelection = i;
 							_previewOffsetY = _chapterSelection * -50 + 75;
+							updateMenuVirtualKeyboard();
 							debug(5, "ChapterSelect: Hover changed to %d", _chapterSelection);
 						}
 						break;
@@ -1183,6 +1223,7 @@ int InsaneRebel2::runLevelSelect() {
 	_pilotMenuMode = kPilotModeSelect;
 	_pilotNameInput = "";
 	_pilotEditIndex = -1;
+	updateMenuVirtualKeyboard();
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
@@ -1195,6 +1236,7 @@ int InsaneRebel2::runLevelSelect() {
 		splayer->play(menuVideo.c_str(), 12);
 
 		if (_vm->shouldQuit()) {
+			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kLevelSelectQuit;
 		}
@@ -1233,6 +1275,7 @@ int InsaneRebel2::runLevelSelect() {
 				Common::strlcpy(_pilots[_pilotEditIndex].name, _pilotNameInput.c_str(),
 				                sizeof(_pilots[_pilotEditIndex].name));
 			}
+			setVirtualKeyboardVisible(false);
 			_pilotMenuMode = kPilotModeDifficulty;
 			_gameState = kStateDifficultySelect;
 			_difficultySelection = 2;
@@ -1280,6 +1323,7 @@ int InsaneRebel2::runLevelSelect() {
 
 			debug("Rebel2: Pilot '%s' selected (slot %d, difficulty %d)",
 			      _pilots[_activePilot].name, _activePilot, _difficulty);
+			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kLevelSelectPlay;
 
@@ -1291,6 +1335,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotNameInput = "";
 				_pilotMenuMode = kPilotModeNameInput;
 				_levelItemCount = _numPilots + 4;
+				updateMenuVirtualKeyboard();
 				debug("Rebel2: NEW PILOT - entering name for slot %d", newIdx);
 			}
 			continue;
@@ -1317,11 +1362,13 @@ int InsaneRebel2::runLevelSelect() {
 
 		} else if (_levelSelection == _numPilots + 3) {
 			// RETURN TO MAIN MENU
+			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kLevelSelectBack;
 		}
 	}
 
+	setVirtualKeyboardVisible(false);
 	_menuInputActive = false;
 	return kLevelSelectQuit;
 }
@@ -1343,6 +1390,7 @@ int InsaneRebel2::processLevelSelectInput() {
 				    event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					// Confirm name — signal back to runLevelSelect()
 					if (_pilotNameInput.size() > 0) {
+						setVirtualKeyboardVisible(false);
 						_menuSelectionConfirmed = true;
 						_vm->_smushVideoShouldFinish = true;
 						debug("PilotName: confirmed '%s'", _pilotNameInput.c_str());
@@ -1354,6 +1402,7 @@ int InsaneRebel2::processLevelSelectInput() {
 					}
 					_pilotMenuMode = kPilotModeSelect;
 					_levelItemCount = _numPilots + 4;
+					updateMenuVirtualKeyboard();
 					debug("PilotName: cancelled");
 				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 					// Backspace — remove last character
@@ -1378,6 +1427,7 @@ int InsaneRebel2::processLevelSelectInput() {
 				}
 				_pilotMenuMode = kPilotModeSelect;
 				_levelItemCount = _numPilots + 4;
+				updateMenuVirtualKeyboard();
 			}
 		}
 		return -1;

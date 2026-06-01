@@ -505,6 +505,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Initialize menu input capture system
 	_menuInputActive = false;
+	_virtualKeyboardActive = false;
 
 	// Analog stick state for gamepad aiming (mirrors RA1's analog model).
 	// Ingested from EVENT_CUSTOM_BACKEND_ACTION_AXIS, read with a deadzone and
@@ -526,6 +527,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 
 InsaneRebel2::~InsaneRebel2() {
+	setVirtualKeyboardVisible(false);
+
 	// Unregister EventObserver
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
@@ -875,6 +878,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		// gamepad trigger; consuming here breaks the dispatch loop (events.cpp) before the
 		// map is updated, leaving fire dead. The menu/paused branches above already
 		// consumed (and returned true for) the cases they handle.
+	}
+
+	if (_menuInputActive && isMenuTextInputActive() && event.type == Common::EVENT_KEYDOWN) {
+		_menuEventQueue.push(event);
+		return true;
 	}
 
 	const bool gameplayMenuTrigger = (event.type == Common::EVENT_MAINMENU) ||
