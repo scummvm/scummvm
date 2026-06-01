@@ -204,8 +204,8 @@ public:
 	// and advances background animations when the counter exceeds a threshold:
 	// Background animation timing from gameTick (1008:e556).
 	// g_wBgAnimTickCounter is incremented once per game frame (~20fps).
-	// Mode 2 (word5203==2): threshold = 0x27 (39 game frames)
-	// Mode 3 (word5203==3): threshold = 1 (every 2 game frames)
+	// Mode 2 (_bgAnimMode==2): threshold = 0x27 (39 game frames)
+	// Mode 3 (_bgAnimMode==3): threshold = 1 (every 2 game frames)
 	static constexpr uint32 kGameFrameRate = 20;
 
 	uint32 _bgAnimTickCounter = 0;

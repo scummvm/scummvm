@@ -425,11 +425,11 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 	uint32 address = 0;
 
 	if (_executingScriptObjectID == 0) {
-		if (resourceIndex > _engine->array520D.size()) {
+		if (resourceIndex > _engine->_sceneResourceOffsets.size()) {
 			warning("Ignoring resource load for missing scene resource %u", resourceIndex);
 			return false;
 		}
-		address = _engine->array520D[resourceIndex - 1];
+		address = _engine->_sceneResourceOffsets[resourceIndex - 1];
 	} else {
 		GameObject *object = GameObjects::getObjectByIndex(_executingScriptObjectID);
 		if (object == nullptr || object->_dataOffset == 0) {

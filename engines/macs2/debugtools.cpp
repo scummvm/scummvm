@@ -841,8 +841,8 @@ static void showCharactersWindow() {
 
 						// Walk speed calculation
 						int depth = 0;
-						if (pos.y >= (int)g_engine->word51FD)
-							depth = ((int)pos.y - (int)g_engine->word51FD) * (int)g_engine->word51FF / 100;
+						if (pos.y >= (int)g_engine->_walkDepthThresholdY)
+							depth = ((int)pos.y - (int)g_engine->_walkDepthThresholdY) * (int)g_engine->_walkDepthScaleFactor / 100;
 						uint16 animSpd = 2;
 						uint8 orient = c->_gameObject->Orientation;
 						if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < c->_gameObject->BlobSpeeds.size()) {
@@ -850,11 +850,11 @@ static void showCharactersWindow() {
 							if (animSpd == 0)
 								animSpd = 2;
 						}
-						int spd = (int)animSpd * ((int)g_engine->word5201 + depth) / 100;
+						int spd = (int)animSpd * ((int)g_engine->_walkBaseSpeedPct + depth) / 100;
 						if (spd < 1)
 							spd = 1;
 						ImGui::Text("  Speed: %d (anim=%u depth=%d w5201=%u)",
-									spd, animSpd, depth, g_engine->word5201);
+									spd, animSpd, depth, g_engine->_walkBaseSpeedPct);
 					}
 					if (c->_isFollowingPath && !c->_path.empty()) {
 						ImGui::Text("  Path[%d/%u]: ", c->_currentPathIndex, (uint)c->_path.size());
@@ -1199,8 +1199,8 @@ static void showSceneMapsWindow() {
 
 		// Scene data info
 		ImGui::Separator();
-		ImGui::Text("word51FD=%u  word51FF=%u  word5201=%u",
-					g_engine->word51FD, g_engine->word51FF, g_engine->word5201);
+		ImGui::Text("_walkDepthThresholdY=%u  _walkDepthScaleFactor=%u  _walkBaseSpeedPct=%u",
+					g_engine->_walkDepthThresholdY, g_engine->_walkDepthScaleFactor, g_engine->_walkBaseSpeedPct);
 		ImGui::Text("Pathfinding points: %u  Path nodes: %u",
 					(uint)g_engine->pathfindingPoints.size(), (uint)g_engine->_path.size());
 
