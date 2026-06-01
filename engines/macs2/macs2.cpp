@@ -723,8 +723,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	_numHotspots = _fileStream->readUint16LE();
 
-	_numHotspots = _fileStream->readUint16LE();
-
 	_hotspotColorTable.clear();
 	_hotspotColorTable.resize(0x20 / 2);
 	_fileStream->read(_hotspotColorTable.data(), 0x20);
