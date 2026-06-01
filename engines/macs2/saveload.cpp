@@ -601,6 +601,19 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		view1->setInventorySource(GameObjects::instance().getProtagonistObject());
 		view1->updateCursor();
 		view1->_paletteDirty = true;
+
+		// Reconstruct walk-wait callback state from _walkTargetObjectIndex.
+		// In the original, gameTick polls this each frame to detect walk arrival.
+		// In ScummVM, we use WaitingForCallback + _executeScriptOnFinishLerp.
+		if (_scriptExecutor->_walkTargetObjectIndex != 0) {
+			Character *walkChar = view1->getCharacterByIndex(_scriptExecutor->_walkTargetObjectIndex);
+			if (walkChar) {
+				walkChar->registerWaitForMovementFinishedEvent();
+				_scriptExecutor->_requestCallback = false;
+				_scriptExecutor->_isAwaitingCallback = true;
+				_scriptExecutor->setWaitingForCallback();
+			}
+		}
 	}
 
 	return Common::kNoError;

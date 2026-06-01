@@ -276,6 +276,8 @@ private:
 public:
 	ScriptExecutor();
 
+	void setWaitingForCallback() { _state = ExecutorState::WaitingForCallback; }
+
 	// This is where a secondary inventory was last opened,
 	// when it is closed, we need to execute from here
 	uint32 _secondaryInventoryLocation;
