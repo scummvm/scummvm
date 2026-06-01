@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-31 14:10+0000\n"
+"POT-Creation-Date: 2026-06-01 14:35+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -14519,43 +14519,43 @@ msgstr ""
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1176
+#: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1175
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1182
+#: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1180
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1188
+#: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1185
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1128
+#: engines/scumm/metaengine.cpp:1128 engines/scumm/metaengine.cpp:1190
 #, fuzzy
 #| msgid "Pick up"
 msgid "Stick up"
 msgstr "Pegar"
 
-#: engines/scumm/metaengine.cpp:1134
+#: engines/scumm/metaengine.cpp:1134 engines/scumm/metaengine.cpp:1196
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Stick down"
 msgstr "Rolar para baixo"
 
-#: engines/scumm/metaengine.cpp:1140
+#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Stick left"
 msgstr "Deslizar para Esquerda"
 
-#: engines/scumm/metaengine.cpp:1146
+#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1208
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Stick right"
 msgstr "Deslizar para Direita"
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1194
+#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1214
 #, fuzzy
 #| msgid "Move left"
 msgid "Fire / select"
@@ -14571,13 +14571,13 @@ msgstr "Retroceder"
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1199
+#: engines/scumm/metaengine.cpp:1219
 #, fuzzy
 #| msgid "Move Back"
 msgid "Cover / back"
 msgstr "Mover para Trás"
 
-#: engines/scumm/metaengine.cpp:1204
+#: engines/scumm/metaengine.cpp:1224
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu"

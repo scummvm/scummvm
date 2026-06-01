@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-31 14:10+0000\n"
+"POT-Creation-Date: 2026-06-01 14:35+0000\n"
 "PO-Revision-Date: 2026-06-01 09:35+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -13722,35 +13722,35 @@ msgstr "Controles de Rebel Assault"
 msgid "Aim up / menu up"
 msgstr "Apuntar arriba/Subir menú"
 
-#: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1176
+#: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1175
 msgid "Aim down / menu down"
 msgstr "Apuntar abajo/Bajar menú"
 
-#: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1182
+#: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1180
 msgid "Aim left / menu left"
 msgstr "Apuntar a izda./Menú a izda."
 
-#: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1188
+#: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1185
 msgid "Aim right / menu right"
 msgstr "Apuntar a dcha./Menú a dcha."
 
-#: engines/scumm/metaengine.cpp:1128
+#: engines/scumm/metaengine.cpp:1128 engines/scumm/metaengine.cpp:1190
 msgid "Stick up"
 msgstr "Stick hacia arriba"
 
-#: engines/scumm/metaengine.cpp:1134
+#: engines/scumm/metaengine.cpp:1134 engines/scumm/metaengine.cpp:1196
 msgid "Stick down"
 msgstr "Stick hacia abajo"
 
-#: engines/scumm/metaengine.cpp:1140
+#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
 msgid "Stick left"
 msgstr "Stick hacia la izquierda"
 
-#: engines/scumm/metaengine.cpp:1146
+#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1208
 msgid "Stick right"
 msgstr "Stick hacia la derecha"
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1194
+#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1214
 msgid "Fire / select"
 msgstr "Disparar/Seleccionar"
 
@@ -13762,11 +13762,11 @@ msgstr "Volver/Omitir"
 msgid "Rebel Assault II controls"
 msgstr "Controles de Rebel Assault II"
 
-#: engines/scumm/metaengine.cpp:1199
+#: engines/scumm/metaengine.cpp:1219
 msgid "Cover / back"
 msgstr "Cubrirse/Volver"
 
-#: engines/scumm/metaengine.cpp:1204
+#: engines/scumm/metaengine.cpp:1224
 msgid "Skip / menu"
 msgstr "Omitir/Menú"
 
