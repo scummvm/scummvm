@@ -361,6 +361,12 @@ void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
+CursorManager::CursorType EventFlagsMultiHS::getHoverCursor() const {
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getHeldItem() >= 0)
+		return CursorManager::kHotspot;
+	return _hoverCursor;
+}
+
 void EventFlagsMultiHS::execute() {
 	switch (_state) {
 	case kBegin:

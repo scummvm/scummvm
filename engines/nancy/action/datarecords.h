@@ -120,7 +120,7 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	CursorManager::CursorType getHoverCursor() const override;
 
 	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
 	Common::Array<HotspotDescription> _hotspots;
