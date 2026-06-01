@@ -275,14 +275,12 @@ void AddSearchLink::readData(Common::SeekableReadStream &stream) {
 
 	_extra  = stream.readSint16LE();
 	_flag = stream.readSint16LE();
-	_scene = stream.readSint16LE();
+	_eventFlag = stream.readSint16LE();
 }
 
 void AddSearchLink::execute() {
-	// TODO: finish this
-
-	debug("AddSearchLink: mode=%d, key=%s, value=%s, extra=%d, scene1=%d, scene2=%d", _mode, _key.c_str(), _value.c_str(), _extra, _flag, _scene);
-
+	//NancySceneState.getCellPhonePopup().addSearchLink(
+	//	_mode, _key, _value, _extra, _flag, _eventFlag);
 	finishExecution();
 }
 

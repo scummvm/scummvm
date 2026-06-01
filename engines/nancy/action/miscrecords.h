@@ -178,11 +178,11 @@ public:
 	void execute() override;
 
 	int16 _mode = 0;
-	Common::String _key;
-	Common::String _value;
-	int16 _extra = 0;
-	int16 _flag = 0;
-	int16 _scene = 0;
+	Common::String _key;          // CVTX key for the list row text (both modes)
+	Common::String _value;        // body CVTX key (mode 0/email); unused for mode 1
+	int16 _extra = 0;             // page index (mode 1); unused for mode 0
+	int16 _flag = 0;              // stored but unused by the original; reserved
+	int16 _eventFlag = 0;         // event-flag index set when the entry is opened
 
 protected:
 	Common::String getRecordTypeName() const override { return "AddSearchLink"; }
