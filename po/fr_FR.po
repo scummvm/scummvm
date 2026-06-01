@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-01 16:27+0000\n"
-"PO-Revision-Date: 2026-06-01 09:35+0000\n"
+"PO-Revision-Date: 2026-06-01 18:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13742,7 +13742,7 @@ msgstr "Gagner les bagarres en bécane (cheat)"
 
 #: engines/scumm/metaengine.cpp:1118
 msgid "Rebel Assault controls"
-msgstr "Contrôles Rebel Assault"
+msgstr "Contrôles de Rebel Assault"
 
 #: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1182
 msgid "Aim up / menu up"
@@ -13786,7 +13786,7 @@ msgstr "Retour / passer"
 
 #: engines/scumm/metaengine.cpp:1180
 msgid "Rebel Assault II controls"
-msgstr "Contrôles Rebel Assault II"
+msgstr "Contrôles de Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1235
 msgid "Cover / back"
