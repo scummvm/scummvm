@@ -79,8 +79,8 @@ public:
 	void loadSoundTable(int idx, int fileNum, int subfile, int priority = 1);
 
 	// load and add a single sound resource to the table
-	void loadAndAddSound(int fileNum, int subfile, int priority = 1);
-	void loadAndAddSound(const FileIdent &ident, int priority = 1);
+	int loadAndAddSound(int fileNum, int subfile, int priority = 1);
+	int loadAndAddSound(const FileIdent &ident, int priority = 1);
 
 	bool hasLoadedSound(const FileIdent &ident) const;
 

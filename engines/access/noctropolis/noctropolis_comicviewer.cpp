@@ -78,7 +78,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);
 	delete bubbleData;
 
-	bool playedSound = false;
+	int loadedSoundIdx = -1;
 
 	while (result == kPageResultNone) {
 		_vm->_events->pollEvents();
@@ -128,11 +128,12 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 				const ComicBlock &hotspot = page->blocks[hotspotIndex];
 
 				if (hotspot.soundFileIndex >= 0) {
-					_vm->_sound->loadSoundTable(1, hotspot.soundFileIndex, hotspot.soundResIndex);
-					_vm->_sound->playSound(1);
-					playedSound = true;
+					if (loadedSoundIdx >= 0)
+						_vm->_sound->freeSound(loadedSoundIdx);
+					loadedSoundIdx = _vm->_sound->loadAndAddSound(hotspot.soundFileIndex, hotspot.soundResIndex);
+					_vm->_sound->playSound(loadedSoundIdx);
 				}
-				// TODO: Play hotspot sound
+
 				for (int bubbleIndex = 0; bubbleIndex < hotspot.numBoxes; bubbleIndex++) {
 					const ComicBox &bubble = hotspot.boxes[bubbleIndex];
 					// Slightly lazy, just save/restore whole screen when
@@ -157,9 +158,8 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 		}
 	}
 
-	if (playedSound) {
-		_vm->_sound->freeSound(1);
-	}
+	if (loadedSoundIdx >= 0)
+		_vm->_sound->freeSound(loadedSoundIdx);
 
 	delete _bubbleSprites;
 

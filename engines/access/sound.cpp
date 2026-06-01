@@ -84,13 +84,14 @@ void SoundManager::loadSoundTable(int idx, int fileNum, int subfile, int priorit
 	_soundTable[idx] = SoundEntry(soundResource, priority, fileNum, subfile);
 }
 
-void SoundManager::loadAndAddSound(const FileIdent &ident, int priority) {
-	loadAndAddSound(ident._fileNum, ident._subFile);
+int SoundManager::loadAndAddSound(const FileIdent &ident, int priority) {
+	return loadAndAddSound(ident._fileNum, ident._subFile);
 }
 
-void SoundManager::loadAndAddSound(int fileNum, int subfile, int priority) {
+int SoundManager::loadAndAddSound(int fileNum, int subfile, int priority) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
 	_soundTable.push_back(SoundEntry(res, priority, fileNum, subfile));
+	return _soundTable.size() - 1;
 }
 
 bool SoundManager::hasLoadedSound(const FileIdent &ident) const {
@@ -107,7 +108,10 @@ void SoundManager::freeSound(int idx) {
 	stopSound();
 	assert(!isSoundQueued(idx));
 	delete _soundTable[idx]._res;
-	_soundTable[idx] = SoundEntry();
+	if (idx == (int)_soundTable.size() - 1)
+		_soundTable.pop_back();
+	else
+		_soundTable[idx] = SoundEntry();
 }
 
 void SoundManager::playSound(int soundIndex, bool loop /* = false */) {
