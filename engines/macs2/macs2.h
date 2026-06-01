@@ -232,9 +232,9 @@ public:
 	uint8 getPathfindingOverride2(uint16 index);
 	void removePathfindingOverride(uint16 index);
 
-	uint16 getWalkabilityAt(uint16 x, uint16 y);
-	bool isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void snapToWalkablePosition(Common::Point &target, const Common::Point &charPos);
+	uint16 getWalkabilityAt(int16 y, int16 x);
+	bool isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2);
+	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX);
 
 	// This is the override list living at [5BD1]
 	Common::Array<uint16> _hotspotOverrides;

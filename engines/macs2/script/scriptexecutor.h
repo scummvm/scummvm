@@ -244,7 +244,6 @@ private:
 	// scriptSkipAlternate: alternate skip (for opcode 8)
 	void scriptSkipAlternate();
 
-	bool isPathWalkable(const Common::Point &from, const Common::Point &to);
 	bool loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset = 0x189);
 	bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 	bool loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex);

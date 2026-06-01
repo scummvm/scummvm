@@ -868,109 +868,149 @@ bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 	return false;
 }
 
-uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y) {
-	if (x >= 320 || y >= 200) {
+// getWalkabilityAt (1008:0e8c)
+// Params: (param_1=y, param_2=x)
+// Bounds: x<0 || x>=320 || y<0 || y>=200 → return 0
+// Lookup: scene[y*4 + 0x2017] → row pointer, then byte at [rowPtr + x]
+// Values 0xC8..0xEF: override range - checks scene[value*5 + 0x4EA5]:
+//   If override disabled (flag==0): returns 0xFF
+//   If override enabled (flag!=0): returns scene[value*5 + 0x4EA6]
+uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
+	if (x < 0 || x >= 320 || y < 0 || y >= 200) {
 		return 0;
 	}
 	uint16 value = _pathfindingMap.getPixel(x, y);
 	if (value >= 0xC8 && value <= 0xEF) {
-		// Pathfinding override range: check override table
 		uint16 overrideResult;
 		if (getPathfindingOverride(value, overrideResult)) {
 			return overrideResult;
 		}
-		return 0xFF; // Override disabled = non-walkable
+		return 0xFF;
 	}
 	return value;
 }
 
-void Macs2Engine::snapToWalkablePosition(Common::Point &target, const Common::Point &charPos) {
-	// Simplified snapToWalkablePosition (1008:9be2):
-	// If target is non-walkable, scan downward then upward to find walkable pixel.
-	// Then apply gradient push away from nearby walls.
-	if (getWalkabilityAt(target.x, target.y) < 200)
-		return; // Already walkable
+// snapToWalkablePosition (1008:9be2)
+// Params: (pTargetY, pTargetX, charY, charX)
+// Modifies *pTargetY and *pTargetX in place.
+void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) {
+	int16 savedX = *pTargetX;
+	int16 savedY = *pTargetY;
 
-	// Scan downward
-	for (int y = target.y; y < 200; y++) {
-		if (getWalkabilityAt(target.x, y) < 200) {
-			target.y = y;
-			goto applyPush;
+	// Phase 1: Scan downward with depth constraint
+	// Condition: walkability >= 200 OR (targetY - walkability) < savedY
+	while (true) {
+		uint16 w = getWalkabilityAt(*pTargetY, savedX);
+		if (w < 200 && (*pTargetY - (int16)w >= savedY)) {
+			break;
 		}
-	}
-	// Scan upward
-	for (int y = target.y; y >= 0; y--) {
-		if (getWalkabilityAt(target.x, y) < 200) {
-			target.y = y;
-			goto applyPush;
+		if (*pTargetY >= 199) {
+			break;
 		}
+		*pTargetY = *pTargetY + 1;
 	}
-	// Scan X toward character
-	if (charPos.x < target.x) {
-		for (int x = target.x; x >= 0; x--) {
-			if (getWalkabilityAt(x, target.y) < 200) {
-				target.x = x;
-				goto applyPush;
+
+	// Phase 2: Continue scanning to bottom for best depth match
+	int16 scanY = *pTargetY;
+	while (scanY <= 199) {
+		uint16 w = getWalkabilityAt(scanY, *pTargetX);
+		if (scanY - (int16)w == savedY) {
+			*pTargetY = scanY;
+		}
+		if (scanY == 199) {
+			break;
+		}
+		scanY++;
+	}
+
+	// Phase 3: If at screen bottom and still non-walkable, scan upward
+	if (*pTargetY == 199) {
+		uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
+		if (w >= 200) {
+			while (w >= 200 && *pTargetY > 0) {
+				*pTargetY = *pTargetY - 1;
+				w = getWalkabilityAt(*pTargetY, *pTargetX);
 			}
 		}
-	} else {
-		for (int x = target.x; x < 320; x++) {
-			if (getWalkabilityAt(x, target.y) < 200) {
-				target.x = x;
-				goto applyPush;
+	}
+
+	// Phase 4: If still non-walkable, scan X toward character
+	uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
+	if (w >= 200) {
+		*pTargetX = savedX;
+		*pTargetY = savedY;
+		if (charX < *pTargetX) {
+			while (true) {
+				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
+				if (w2 < 200)
+					break;
+				if (*pTargetX <= 0)
+					break;
+				*pTargetX = *pTargetX - 1;
+			}
+		} else {
+			while (true) {
+				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
+				if (w2 < 200)
+					break;
+				if (*pTargetX >= 319)
+					break;
+				*pTargetX = *pTargetX + 1;
 			}
 		}
+		// Phase 5: If all failed, fall back to character position
+		uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
+		if (w2 >= 200) {
+			*pTargetX = charX;
+			*pTargetY = charY;
+		}
 	}
-	// All failed — fall back to character position
-	target = charPos;
-	return;
 
-applyPush:
-	// Gradient-based wall push (sample ±1, ±2 pixels)
-	int pushX = 0, pushY = 0;
-	if (getWalkabilityAt(target.x + 1, target.y) >= 200)
+	// Phase 6: Gradient-based wall push
+	int16 pushX = 0;
+	int16 pushY = 0;
+	if (getWalkabilityAt(*pTargetY, *pTargetX + 1) >= 200)
 		pushX--;
-	if (getWalkabilityAt(target.x - 1, target.y) >= 200)
+	if (getWalkabilityAt(*pTargetY, *pTargetX - 1) >= 200)
 		pushX++;
-	if (getWalkabilityAt(target.x, target.y + 1) >= 200)
+	if (getWalkabilityAt(*pTargetY + 1, *pTargetX) >= 200)
 		pushY--;
-	if (getWalkabilityAt(target.x, target.y - 1) >= 200)
+	if (getWalkabilityAt(*pTargetY - 1, *pTargetX) >= 200)
 		pushY++;
-	if (getWalkabilityAt(target.x + 2, target.y) >= 200)
+	if (getWalkabilityAt(*pTargetY, *pTargetX + 2) >= 200)
 		pushX--;
-	if (getWalkabilityAt(target.x - 2, target.y) >= 200)
+	if (getWalkabilityAt(*pTargetY, *pTargetX - 2) >= 200)
 		pushX++;
-	if (getWalkabilityAt(target.x, target.y + 2) >= 200)
+	if (getWalkabilityAt(*pTargetY + 2, *pTargetX) >= 200)
 		pushY--;
-	if (getWalkabilityAt(target.x, target.y - 2) >= 200)
+	if (getWalkabilityAt(*pTargetY - 2, *pTargetX) >= 200)
 		pushY++;
 
 	while (pushX != 0 || pushY != 0) {
-		if (pushX < 0 && getWalkabilityAt(target.x - 1, target.y) < 200) {
-			target.x--;
+		if (pushX < 0) {
+			if (getWalkabilityAt(*pTargetY, *pTargetX - 1) < 200) {
+				*pTargetX = *pTargetX - 1;
+			}
 			pushX++;
 		}
-		if (pushX > 0 && getWalkabilityAt(target.x + 1, target.y) < 200) {
-			target.x++;
+		if (pushX > 0) {
+			if (getWalkabilityAt(*pTargetY, *pTargetX + 1) < 200) {
+				*pTargetX = *pTargetX + 1;
+			}
 			pushX--;
 		}
-		if (pushY < 0 && getWalkabilityAt(target.x, target.y - 1) < 200) {
-			target.y--;
+		if (pushY < 0) {
+			if (getWalkabilityAt(*pTargetY - 1, *pTargetX) < 200) {
+				*pTargetY = *pTargetY - 1;
+			}
 			pushY++;
 		}
-		if (pushY > 0 && getWalkabilityAt(target.x, target.y + 1) < 200) {
-			target.y++;
+		if (pushY > 0) {
+			if (getWalkabilityAt(*pTargetY + 1, *pTargetX) < 200) {
+				*pTargetY = *pTargetY + 1;
+			}
 			pushY--;
 		}
-		// Safety: break if push can't move
-		if (pushX < 0 && getWalkabilityAt(target.x - 1, target.y) >= 200)
-			pushX = 0;
-		if (pushX > 0 && getWalkabilityAt(target.x + 1, target.y) >= 200)
-			pushX = 0;
-		if (pushY < 0 && getWalkabilityAt(target.x, target.y - 1) >= 200)
-			pushY = 0;
-		if (pushY > 0 && getWalkabilityAt(target.x, target.y + 1) >= 200)
-			pushY = 0;
 	}
 }
 
@@ -1009,11 +1049,12 @@ void Macs2Engine::removePathfindingOverride(uint16 index) {
 	}
 };
 
-bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	// Exact reimplementation of isPathWalkable (1008:1196).
-	// Original params: (param_1=y1, param_2=x1, param_3=y2, param_4=x2)
-	// Traces from (x2,y2) toward (x1,y1). Checks walkability only on major-axis steps.
-	// Uses unsigned 16-bit error accumulator with wrapping arithmetic.
+// isPathWalkable (1008:1196)
+// Params: (param_1=y1, param_2=x1, param_3=y2, param_4=x2)
+// Traces from (x2,y2) toward (x1,y1). Checks walkability only on major-axis steps.
+// Uses unsigned 16-bit error accumulator with wrapping arithmetic.
+// Returns true if entire line is walkable (all sampled pixels < 0xC8).
+bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 	uint16 error = 0;
 	int16 curX = x2;
 	int16 curY = y2;
@@ -1026,26 +1067,25 @@ bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		if (error >= absDx) {
 			if (y1 < y2)
 				curY--;
-			if (y1 > y2)
+			if (y2 < y1)
 				curY++;
 			error -= absDx;
 			steppedX = false;
 		} else {
 			if (x1 < x2)
 				curX--;
-			if (x1 > x2)
+			if (x2 < x1)
 				curX++;
 			error += absDy;
 			steppedX = true;
 		}
 
-		// Check walkability only on major-axis steps
 		if (absDx > absDy && steppedX) {
-			if (getWalkabilityAt(curX, curY) >= 0xC8)
+			if (getWalkabilityAt(curY, curX) >= 0xC8)
 				result = false;
 		}
 		if (absDx <= absDy && !steppedX) {
-			if (getWalkabilityAt(curX, curY) >= 0xC8)
+			if (getWalkabilityAt(curY, curX) >= 0xC8)
 				result = false;
 		}
 	} while (curX != x1 || curY != y1);
