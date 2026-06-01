@@ -510,6 +510,9 @@ public:
 	// recenter the reticle (the cursor is locked ~center during gameplay, so a gamepad
 	// "click" lands at center). See notifyEvent()/updateGameplayAimFromGamepad().
 	bool _gamepadAimActive;
+	uint32 _lastGameplayMenuCloseTime;
+	uint32 _lastMenuGamepadNavigationTime;
+	void openGameplayMainMenu(SmushPlayer *splayer);
 	bool isBitSet(int n) override;
 	void setBit(int n) override;
 

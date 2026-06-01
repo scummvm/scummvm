@@ -499,6 +499,8 @@ enum ScummAction {
 	kScummActionInsaneAttack,
 	kScummActionInsaneSwitch,
 	kScummActionInsaneCheat,
+	kScummActionInsaneBack,
+	kScummActionInsaneSkip,
 
 	kScummActionCount
 };

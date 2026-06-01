@@ -1019,6 +1019,18 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	Action *act;
 
+	if (gameId == "rebel2") {
+		for (uint i = 0; i < keymaps.size(); ++i) {
+			if (keymaps[i]->getId() == "engine-default") {
+				delete keymaps.remove_at(i);
+				Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
+				engineKeyMap->setPartialMatchAllowed(false);
+				keymaps.insert_at(i, engineKeyMap);
+				break;
+			}
+		}
+	}
+
 	if (gameId == "ft") {
 		Keymap *insaneKeymap = new Keymap(Keymap::kKeymapTypeGame, insaneKeymapId, "SCUMM - Bike Fights");
 
@@ -1191,24 +1203,28 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisUp);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_HAT_Y-");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2STICKDOWN", _("Stick down"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisDown);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_HAT_Y+");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2STICKLEFT", _("Stick left"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisLeft);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
+		act->addDefaultInputMapping("JOY_HAT_X-");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2STICKRIGHT", _("Stick right"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisRight);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
+		act->addDefaultInputMapping("JOY_HAT_X+");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2FIRE", _("Fire / select"));
@@ -1218,12 +1234,20 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("RA2COVER", _("Cover / back"));
 		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
+		act->addDefaultInputMapping("JOY_X");
+		act->addDefaultInputMapping("JOY_Y");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2SKIP", _("Skip / back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSkip);
 		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+		act->addDefaultInputMapping("AC_BACK");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2BACK", _("Skip / menu"));
-		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
-		act->addDefaultInputMapping("JOY_Y");
+		act->setCustomEngineActionEvent(kScummActionInsaneBack);
+		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_START");
 		rebel2Keymap->addAction(act);
 

@@ -51,6 +51,47 @@
 
 namespace Scumm {
 
+const int kRA2MenuAxisThreshold = Common::JOYAXIS_MAX / 5;
+const uint32 kRA2MenuGamepadNavigationDebounceMs = 250;
+const uint32 kRA2MenuGamepadMouseSuppressMs = 250;
+
+bool isRebel2RawMenuAxis(int axis) {
+	return axis == Common::JOYSTICK_AXIS_LEFT_STICK_X ||
+	       axis == Common::JOYSTICK_AXIS_LEFT_STICK_Y ||
+	       axis == Common::JOYSTICK_AXIS_RIGHT_STICK_X ||
+	       axis == Common::JOYSTICK_AXIS_RIGHT_STICK_Y ||
+	       axis == Common::JOYSTICK_AXIS_HAT_X ||
+	       axis == Common::JOYSTICK_AXIS_HAT_Y ||
+	       axis >= 8;
+}
+
+Common::KeyCode getRebel2RawMenuAxisKey(int axis, int16 position) {
+	const bool horizontalAxis = axis == Common::JOYSTICK_AXIS_LEFT_STICK_X ||
+	                            axis == Common::JOYSTICK_AXIS_RIGHT_STICK_X ||
+	                            axis == Common::JOYSTICK_AXIS_HAT_X ||
+	                            (axis >= 8 && (axis % 2) == 0);
+	const bool verticalAxis = axis == Common::JOYSTICK_AXIS_LEFT_STICK_Y ||
+	                          axis == Common::JOYSTICK_AXIS_RIGHT_STICK_Y ||
+	                          axis == Common::JOYSTICK_AXIS_HAT_Y ||
+	                          (axis >= 8 && (axis % 2) != 0);
+
+	if (!horizontalAxis && !verticalAxis)
+		return Common::KEYCODE_INVALID;
+
+	if (position >= kRA2MenuAxisThreshold)
+		return horizontalAxis ? Common::KEYCODE_RIGHT : Common::KEYCODE_DOWN;
+	if (position <= -kRA2MenuAxisThreshold)
+		return horizontalAxis ? Common::KEYCODE_LEFT : Common::KEYCODE_UP;
+
+	return Common::KEYCODE_INVALID;
+}
+
+bool isRebel2MenuDirectionKey(Common::KeyCode keycode) {
+	return keycode == Common::KEYCODE_UP ||
+	       keycode == Common::KEYCODE_DOWN ||
+	       keycode == Common::KEYCODE_LEFT ||
+	       keycode == Common::KEYCODE_RIGHT;
+}
 
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_vm = scumm;
@@ -471,6 +512,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
 	_gamepadAimActive = false;
+	_lastGameplayMenuCloseTime = 0;
+	_lastMenuGamepadNavigationTime = 0;
 
 	// Initialize level state tracking for multi-phase levels
 	_currentPhase = 1;
@@ -525,6 +568,23 @@ InsaneRebel2::~InsaneRebel2() {
 	}
 }
 
+void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
+	if (!splayer)
+		return;
+
+	if (_pauseOverlayActive) {
+		_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
+		_pauseOverlayActive = false;
+	}
+
+	if (!splayer->_paused)
+		splayer->pause();
+
+	_vm->openMainMenuDialog();
+	splayer->unpause();
+	_lastGameplayMenuCloseTime = _vm->_system->getMillis();
+}
+
 // notifyEvent -- EventObserver callback for global input dispatch.
 // Handles ESC (skip) and SPACE (pause) regardless of menu state.
 // Pause behavior matches original FUN_405A21: SPACE pauses, ANY key unpauses.
@@ -558,11 +618,82 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		}
 	}
 
+	if (_menuInputActive && event.type == Common::EVENT_JOYAXIS_MOTION) {
+		const int axis = event.joystick.axis;
+
+		if (!isRebel2RawMenuAxis(axis))
+			return false;
+
+		const Common::KeyCode keycode = getRebel2RawMenuAxisKey(axis, event.joystick.position);
+		if (keycode == Common::KEYCODE_INVALID)
+			return true;
+
+		const uint32 now = _vm->_system->getMillis();
+		if (_lastMenuGamepadNavigationTime != 0 &&
+				now - _lastMenuGamepadNavigationTime < kRA2MenuGamepadNavigationDebounceMs)
+			return true;
+
+		_lastMenuGamepadNavigationTime = now;
+		Common::Event syntheticEvent = Common::Event();
+		syntheticEvent.type = Common::EVENT_KEYDOWN;
+		syntheticEvent.kbd.keycode = keycode;
+		_menuEventQueue.push(syntheticEvent);
+		return true;
+	}
+
 	// Analog stick → reticle velocity (mirrors RA1's analog model). The mapped
 	// axis actions carry a signed position; a centered stick reports position 0.
 	// We ignore a recentre that would fight the opposite direction so a quick
 	// flick doesn't get cancelled by the trailing zero of the other axis half.
 	if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+		if (_menuInputActive) {
+			if (event.joystick.position == 0) {
+				switch (event.customType) {
+				case kScummBackendActionRebel2AxisUp:
+				case kScummBackendActionRebel2AxisDown:
+					return true;
+				case kScummBackendActionRebel2AxisLeft:
+				case kScummBackendActionRebel2AxisRight:
+					return true;
+				default:
+					break;
+				}
+				return true;
+			}
+
+			Common::KeyCode keycode = Common::KEYCODE_INVALID;
+			switch (event.customType) {
+			case kScummBackendActionRebel2AxisUp:
+				keycode = Common::KEYCODE_UP;
+				break;
+			case kScummBackendActionRebel2AxisDown:
+				keycode = Common::KEYCODE_DOWN;
+				break;
+			case kScummBackendActionRebel2AxisLeft:
+				keycode = Common::KEYCODE_LEFT;
+				break;
+			case kScummBackendActionRebel2AxisRight:
+				keycode = Common::KEYCODE_RIGHT;
+				break;
+			default:
+				break;
+			}
+
+			if (keycode != Common::KEYCODE_INVALID) {
+				const uint32 now = _vm->_system->getMillis();
+				if (_lastMenuGamepadNavigationTime != 0 &&
+						now - _lastMenuGamepadNavigationTime < kRA2MenuGamepadNavigationDebounceMs)
+					return true;
+
+				_lastMenuGamepadNavigationTime = now;
+				Common::Event syntheticEvent = Common::Event();
+				syntheticEvent.type = Common::EVENT_KEYDOWN;
+				syntheticEvent.kbd.keycode = keycode;
+				_menuEventQueue.push(syntheticEvent);
+				return true;
+			}
+		}
+
 		const int16 axisPosition = (event.joystick.position == Common::JOYAXIS_MIN)
 			? Common::JOYAXIS_MAX : event.joystick.position;
 
@@ -595,6 +726,67 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
+		const bool menuState = _gameState == kStateMainMenu ||
+		                       _gameState == kStatePilotSelect ||
+		                       _gameState == kStateDifficultySelect ||
+		                       _gameState == kStateChapterSelect ||
+		                       _gameState == kStateOptions ||
+		                       _gameState == kStateTopPilots;
+
+		if (event.customType == kScummActionInsaneSkip) {
+			if (!pressed)
+				return true;
+
+			if (_menuInputActive && menuState) {
+				Common::Event syntheticEvent = Common::Event();
+				syntheticEvent.type = Common::EVENT_KEYDOWN;
+				syntheticEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+				syntheticEvent.kbd.ascii = Common::ASCII_ESCAPE;
+				_menuEventQueue.push(syntheticEvent);
+				return true;
+			}
+
+			if (_gameState == kStateGameplay && _rebelHandler != 0) {
+				debug("Rebel2: Skip/back action ignored during gameplay");
+				return true;
+			}
+
+			debug("Rebel2: Skip/back action - skipping video");
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
+
+		if (event.customType == kScummActionInsaneBack) {
+			if (!pressed)
+				return true;
+
+			if (_menuInputActive && menuState) {
+				Common::Event syntheticEvent = Common::Event();
+				syntheticEvent.type = Common::EVENT_KEYDOWN;
+				syntheticEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+				syntheticEvent.kbd.ascii = Common::ASCII_ESCAPE;
+				_menuEventQueue.push(syntheticEvent);
+				return true;
+			}
+
+			if (_gameState == kStateGameplay && _rebelHandler != 0) {
+				if (_lastGameplayMenuCloseTime != 0) {
+					const uint32 elapsedSinceMenuClose = _vm->_system->getMillis() - _lastGameplayMenuCloseTime;
+					if (elapsedSinceMenuClose < 500) {
+						debug("Rebel2: Ignoring repeated gameplay menu action (%u ms)", elapsedSinceMenuClose);
+						return true;
+					}
+				}
+
+				debug("Rebel2: Back/menu action during gameplay - opening ScummVM menu");
+				openGameplayMainMenu(splayer);
+				return true;
+			}
+
+			debug("Rebel2: Back/menu action - skipping video");
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
 
 		if (pressed && splayer && splayer->_paused && _gameState == kStateGameplay) {
 			debug("Rebel2: Joystick action while paused - unpausing");
@@ -634,6 +826,12 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				case kScummActionInsaneSwitch:
 					keycode = Common::KEYCODE_ESCAPE;
 					break;
+				case kScummActionInsaneBack:
+					keycode = Common::KEYCODE_ESCAPE;
+					break;
+				case kScummActionInsaneSkip:
+					keycode = Common::KEYCODE_ESCAPE;
+					break;
 				default:
 					break;
 				}
@@ -642,7 +840,9 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			case kStateTopPilots:
 				if (event.customType == kScummActionInsaneAttack)
 					keycode = Common::KEYCODE_RETURN;
-				else if (event.customType == kScummActionInsaneSwitch)
+				else if (event.customType == kScummActionInsaneSwitch ||
+				         event.customType == kScummActionInsaneBack ||
+				         event.customType == kScummActionInsaneSkip)
 					keycode = Common::KEYCODE_ESCAPE;
 				break;
 
@@ -651,6 +851,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 
 			if (keycode != Common::KEYCODE_INVALID) {
+				if (isRebel2MenuDirectionKey(keycode)) {
+					const uint32 now = _vm->_system->getMillis();
+					if (_lastMenuGamepadNavigationTime != 0 &&
+							now - _lastMenuGamepadNavigationTime < kRA2MenuGamepadNavigationDebounceMs)
+						return true;
+					_lastMenuGamepadNavigationTime = now;
+				}
+
 				Common::Event syntheticEvent = Common::Event();
 				syntheticEvent.type = Common::EVENT_KEYDOWN;
 				syntheticEvent.kbd.keycode = keycode;
@@ -669,7 +877,40 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		// consumed (and returned true for) the cases they handle.
 	}
 
+	const bool gameplayMenuTrigger = (event.type == Common::EVENT_MAINMENU) ||
+		(event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE);
+	if (gameplayMenuTrigger && _gameState == kStateGameplay && _lastGameplayMenuCloseTime != 0) {
+		const uint32 elapsedSinceMenuClose = _vm->_system->getMillis() - _lastGameplayMenuCloseTime;
+		if (elapsedSinceMenuClose < 500) {
+			debug("Rebel2: Ignoring repeated gameplay menu trigger (%u ms)", elapsedSinceMenuClose);
+			return true;
+		}
+	}
+
+	if (event.type == Common::EVENT_MAINMENU && splayer &&
+			_gameState == kStateGameplay && _rebelHandler != 0) {
+		debug("Rebel2: Main menu action during gameplay - opening ScummVM menu");
+		openGameplayMainMenu(splayer);
+		return true;
+	}
+
 	if (event.type == Common::EVENT_KEYDOWN) {
+		// Gamepad buttons mapped to ESC can lose their key-up while the GMM is open,
+		// leaving the key repeat source to synthesize another ESC immediately after
+		// returning to gameplay. Treat repeats as part of the original press.
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE && event.kbdRepeat) {
+			debug("Rebel2: Ignoring repeated ESC keydown");
+			return true;
+		}
+		if (_menuInputActive && event.kbdRepeat &&
+				(event.kbd.keycode == Common::KEYCODE_UP ||
+				 event.kbd.keycode == Common::KEYCODE_DOWN ||
+				 event.kbd.keycode == Common::KEYCODE_LEFT ||
+				 event.kbd.keycode == Common::KEYCODE_RIGHT)) {
+			debug("Rebel2: Ignoring repeated menu direction keydown");
+			return true;
+		}
+
 		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
 		// ESC additionally opens the ScummVM menu (original: quit key exits level).
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
@@ -682,9 +923,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			splayer->unpause();
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _rebelHandler != 0) {
 				debug("Rebel2: ESC during pause - opening ScummVM menu");
-				splayer->pause();
-				_vm->openMainMenuDialog();
-				splayer->unpause();
+				openGameplayMainMenu(splayer);
 			}
 			return true;
 		}
@@ -709,12 +948,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				} else if (_gameState == kStateGameplay && _rebelHandler != 0) {
 					// During active gameplay (handler != 0): pause and open ScummVM menu.
 					debug("Rebel2: ESC pressed during gameplay - opening ScummVM menu");
-					bool wasPaused = splayer->_paused;
-					if (!wasPaused)
-						splayer->pause();
-					_vm->openMainMenuDialog();
-					if (!wasPaused)
-						splayer->unpause();
+					openGameplayMainMenu(splayer);
 				} else {
 					// During cutscenes/intros/mission briefings: skip video
 					debug("Rebel2: ESC pressed - skipping video");
@@ -762,11 +996,15 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_MOUSEMOVE:
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		// Queue these events for processing in processMenuInput()
 		_menuEventQueue.push(event);
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		if (_lastMenuGamepadNavigationTime == 0 ||
+				_vm->_system->getMillis() - _lastMenuGamepadNavigationTime >= kRA2MenuGamepadMouseSuppressMs)
+			_menuEventQueue.push(event);
 		break;
 	default:
 		break;
