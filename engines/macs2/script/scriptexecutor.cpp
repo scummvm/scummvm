@@ -2149,6 +2149,34 @@ bool Script::ScriptExecutor::scriptOpcode0x44() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x45() {
+	const uint16 slotID = scriptReadValue16();
+	const uint16 stopImmediately = scriptReadValue16();
+	const uint16 fadeParam = scriptReadValue16();
+	if (slotID < 1 || slotID > 2) {
+		warning("Ignoring music stop for invalid slot %u", slotID);
+		return false;
+	}
+
+	if (!musicEnabled || !soundSystemActive) {
+		activeMusicSlot = 0;
+		return false;
+	}
+
+	if (activeMusicSlot == slotID) {
+		if (stopImmediately == 0) {
+			musicControlMode = 2;
+			musicControlParam = fadeParam;
+		} else {
+			_engine->getAdlib()->StopMusic();
+			musicControlMode = 0;
+			musicControlParam = 0;
+			activeMusicSlot = 0;
+		}
+	}
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2407,29 +2435,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x45) {
-			const uint16 slotID = scriptReadValue16();
-			const uint16 stopImmediately = scriptReadValue16();
-			const uint16 fadeParam = scriptReadValue16();
-			if (slotID < 1 || slotID > 2) {
-				warning("Ignoring music stop for invalid slot %u", slotID);
+			if (!scriptOpcode0x45()) {
 				continue;
-			}
-
-			if (!musicEnabled || !soundSystemActive) {
-				activeMusicSlot = 0;
-				continue;
-			}
-
-			if (activeMusicSlot == slotID) {
-				if (stopImmediately == 0) {
-					musicControlMode = 2;
-					musicControlParam = fadeParam;
-				} else {
-					_engine->getAdlib()->StopMusic();
-					musicControlMode = 0;
-					musicControlParam = 0;
-					activeMusicSlot = 0;
-				}
 			}
 		} else if (opcode1 == 0x47) {
 			if (soundSystemActive && musicEnabled) {
