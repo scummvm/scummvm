@@ -681,6 +681,17 @@ static void showScriptWindow() {
 		ImGui::SameLine();
 		ImGui::Checkbox("Follow PC", &_scriptFollowPC);
 		ImGui::SameLine();
+		if (ImGui::Button("Copy")) {
+			Common::String full;
+			for (uint i = 0; i < _cachedDecompile.size(); i++) {
+				const DecompiledLine &l = _cachedDecompile[i];
+				for (int j = 0; j < l.indent; j++)
+					full += "  ";
+				full += Common::String::format("%04x: %s\n", l.offset, l.text.c_str());
+			}
+			g_system->setTextInClipboard(Common::U32String(full));
+		}
+		ImGui::SameLine();
 		ImGui::Text("| Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
 					currentScene, exec->getScriptPosition(), exec->getScriptEndPosition(),
 					exec->isExecuting() ? (_scriptDebugPaused ? "PAUSED" : "RUNNING") : "Idle",
