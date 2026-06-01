@@ -182,18 +182,8 @@ private:
 	void scriptOpcode0x3D();
 	void scriptOpcode0x3F();
 
-	inline void ScriptUnimplementedOpcode(const char *source, uint16 opcode) {
+	inline void scriptUnimplementedOpcode(const char *source, uint16 opcode) {
 		debug("Unimplemented opcode (%s): %.2x.", source, opcode);
-	}
-
-	inline void ScriptUnimplementedOpcode_Helper(uint16 opcode) {
-		// TODO: Could this also be done with a template?
-		ScriptUnimplementedOpcode("Helper", opcode);
-	}
-
-	inline void ScriptUnimplementedOpcode_Main(uint16 opcode) {
-		// TODO: Could this also be done with a template?
-		ScriptUnimplementedOpcode("Main", opcode);
 	}
 
 	// State variables from here
@@ -218,13 +208,13 @@ private:
 
 	ScriptExecutionState scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 
-	// Returns true iff the object is relevant to be executing in the current scene
-	bool IsRelevantObject(const GameObject *obj);
+	// Returns true if the object is relevant to be executing in the current scene
+	bool isRelevantObject(const GameObject *obj) const;
 
 	// Handles the next step of execution based on the current state.
 	// Can be run right after a previous step or be called after execution was paused
 	// Needs to update the state to be valid again
-	void Step();
+	void step();
 
 	// Depending on the current state, chooses the next script to run
 	// and adjusts the state
@@ -244,8 +234,8 @@ private:
 	Common::String IdentifyHelperOpcode(uint8 opcode, uint16 value);
 
 	// Does pretty much what 9F07 does
-	byte ReadByte();
-	uint16 ReadWord();
+	byte readByte();
+	uint16 readUint16();
 
 	// We use this to keep track of whether we have read all bytes we should have read
 	uint32 expectedEndLocation;
@@ -264,10 +254,6 @@ private:
 
 	// fn0037_9F4D - scriptReadValue: reads a typed value from the script stream
 	void scriptReadValuePair(uint16 &out1, uint16 &out2);
-
-	// Function to be used if we only want to have the script be advanced
-	// due to a skipped implementation
-	void scriptReadValue_Placeholder();
 
 	// Combines both 16 bit values into a 32 bit value
 	uint32 scriptReadValue32();
@@ -295,7 +281,7 @@ private:
 	Common::StringArray debugBuffer;
 	bool lastOpcodeTriggeredSkip = false;
 	void BeginBuffering();
-	void EndBuffering(bool shouldMark = false);
+	void endBuffering(bool shouldMark = false);
 
 	// Global [0F92h], seems to be 0 if we execute the script of the scene
 	// Global [0F92h] g_wExecutingScriptObjectId: 0 when executing the
@@ -336,7 +322,7 @@ public:
 
 	void SetVariableValue(uint16 index, uint16 a, uint16 b);
 
-	void SetVariableValue(uint16 index, uint32 value);
+	void setVariableValue(uint16 index, uint32 value);
 
 	Common::Point GetCharPosition();
 
@@ -379,23 +365,23 @@ public:
 
 	ScriptExecutor();
 
-	ExecutionResult ExecuteScript();
+	ExecutionResult executeScript();
 
 	// Will execute the script and any object scripts until execution should be stopped
 	// TODO: Consider if we should let the executor also figure out where to get the
 	// first script from
-	void Run(bool firstRun = false);
+	void run(bool firstRun = false);
 
-	void SetScript(Common::MemoryReadStream *stream);
+	void setScript(Common::MemoryReadStream *stream);
 
-	void SetCurrentSceneScriptAt(uint32 offset);
+	void setCurrentSceneScriptAt(uint32 offset);
 
 	void tick();
 
-	void StartTimer(uint32 duration);
-	void EndTimer();
-	void StartFrameWait(uint16 duration);
-	void EndFrameWait();
+	void startTimer(uint32 duration);
+	void endTimer();
+	void startFrameWait(uint16 duration);
+	void endFrameWait();
 
 	bool isRunningScript = false;
 	bool isAwaitingCallback = false;
@@ -406,14 +392,14 @@ public:
 		// return isRunningScript || isAwaitingCallback;
 	}
 
-	uint32 GetScriptPosition() const;
-	uint32 GetScriptEndPosition() const;
+	uint32 getScriptPosition() const;
+	uint32 getScriptEndPosition() const;
 	uint16 GetExecutingObjectId() const { return executingObjectIndex; }
-	uint32 GetVariableValue(int index) const;
+	uint32 getVariableValue(int index) const;
 
 	// Computes the read-only runtime value for a type 0xFF special
 	// (FF:value), matching scriptReadValuePair. For debugger display only.
-	uint32 GetSpecialValue(uint16 value);
+	uint32 getSpecialValue(uint16 value);
 
 	// Returns true if the save/load menu can be opened (no blocking state)
 	bool canOpenSaveMenu() const {
@@ -426,7 +412,7 @@ public:
 	// Resets the script to the beginning.
 	// Confirmed: runScriptExecutor (1008:e3e7) sets position=0 on fresh runs
 	// (g_wScriptIsExecuting==0). Mid-execution pauses resume from current position.
-	void Rewind();
+	void rewind();
 };
 } // namespace Script
 

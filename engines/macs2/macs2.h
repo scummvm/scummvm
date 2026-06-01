@@ -367,7 +367,7 @@ public:
 	Common::Array<uint16> inventoryIconIndices;
 
 	void RunScriptExecutor(bool firstRun = false) {
-		_scriptExecutor->Run(firstRun);
+		_scriptExecutor->run(firstRun);
 	}
 
 	bool runScheduled = false;
