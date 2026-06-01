@@ -1981,6 +1981,13 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptOpcode0x
 	return OpcodeControlFlow::Fallthrough;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x3B() {
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr) {
+		currentView->clearOverlayTextEntries();
+	}
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2265,10 +2272,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				return ExecutionResult::ScriptFinished;
 			}
 		} else if (opcode1 == 0x3B) {
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr) {
-				currentView->clearOverlayTextEntries();
-			}
+			scriptOpcode0x3B();
 		} else if (opcode1 == 0x3C) {
 			const uint16 fadeSpeed = scriptReadValue16();
 			View1 *currentView = (View1 *)_engine->findView("View1");
