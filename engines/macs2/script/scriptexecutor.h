@@ -135,6 +135,7 @@ private:
 	void scriptOpcode0x28();
 	bool scriptOpcode0x29();
 	void scriptOpcode0x2A();
+	bool scriptOpcode0x2B();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
