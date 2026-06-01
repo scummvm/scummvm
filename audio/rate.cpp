@@ -60,10 +60,10 @@ private:
 	 * but only until some point (depends largely on cache size, target
 	 * processor and various other factors), at which it will decrease again.
 	 */
-	st_sample_t _buffer[512];
+	int16 _buffer[512];
 
 	/** Current position inside the buffer */
-	const st_sample_t *_bufferPos;
+	const int16 *_bufferPos;
 
 	/** Size of data currently loaded into the buffer */
 	int _bufferSize;
@@ -75,14 +75,25 @@ private:
 	frac_t _outPosFrac;
 
 	/** Last sample(s) in the input stream (left/right channel) */
-	st_sample_t _inLastL, _inLastR;
-	
-	/** Current sample(s) in the input stream (left/right channel) */
-	st_sample_t _inCurL, _inCurR;
+	int16 _inLastL, _inLastR;
 
-	int copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
-	int simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
-	int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+	/** Current sample(s) in the input stream (left/right channel) */
+	int16 _inCurL, _inCurR;
+
+	template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+	int commonConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val, int outputSamples);
+
+	template<st_volume_t volL = static_cast<st_volume_t>(-1), st_volume_t volR = static_cast<st_volume_t>(-1), typename st_sample_t, MixMode mixMode>
+	int copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val);
+	template<st_volume_t volL = static_cast<st_volume_t>(-1), st_volume_t volR = static_cast<st_volume_t>(-1), typename st_sample_t, MixMode mixMode>
+	int downsampleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val);
+	template<st_volume_t volL = static_cast<st_volume_t>(-1), st_volume_t volR = static_cast<st_volume_t>(-1), typename st_sample_t, MixMode mixMode>
+	int upsampleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val);
+	template<st_volume_t volL = static_cast<st_volume_t>(-1), st_volume_t volR = static_cast<st_volume_t>(-1), typename st_sample_t, MixMode mixMode>
+	int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val);
+
+	template<typename st_sample_t, MixMode mixMode>
+	int convertForType(AudioStream &input, byte *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR);
 
 	// keep a single printConvertType shared across all RateConverter_Impl specializations.
 	// PrintContext must be trivially destructible: it lives in a function-scope static and
@@ -110,7 +121,7 @@ public:
 	RateConverter_Impl(st_rate_t inputRate, st_rate_t outputRate);
 	virtual ~RateConverter_Impl() {}
 
-	int convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) override;
+	int convert(AudioStream &input, byte *outBuffer, uint outBytesPerSample, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r, MixMode mixMode) override;
 
 	void setInputRate(st_rate_t inputRate) override { _inRate = inputRate; }
 	void setOutputRate(st_rate_t outputRate) override { _outRate = outputRate; }
@@ -122,13 +133,10 @@ public:
 };
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
-int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
-	PRINT_OUTPUT_RATE;
-
-	st_sample_t *outStart, *outEnd;
-
-	outStart = outBuffer;
-	outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
+template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::commonConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val, int outputSamples) {
+	const st_sample_t *outStart = outBuffer;
+	const st_sample_t *outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
 
 	while (outBuffer < outEnd) {
 		// Check if we have to refill the buffer
@@ -140,50 +148,112 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStr
 				return (outBuffer - outStart) / (outStereo ? 2 : 1);
 		}
 
-		// Mix the data into the output buffer
-		st_sample_t inL, inR;
-		inL = *_bufferPos++;
-		inR = (inStereo ? *_bufferPos++ : inL);
-		_bufferSize -= (inStereo ? 2 : 1);
+		// Process as many samples as we can from the current buffer
+		const int count = MIN(
+			_bufferSize / (inStereo ? 2 : 1),
+			(int)(outEnd - outBuffer) / (outStereo ? 2 : 1) / outputSamples);
+		_bufferSize -= count * (inStereo ? 2 : 1);
 
-		st_sample_t outL, outR;
-		outL = (inL * (int)volL) / Audio::Mixer::kMaxMixerVolume;
-		outR = (inR * (int)volR) / Audio::Mixer::kMaxMixerVolume;
+		if (volL | volR) {
+			// Mix the data into the output buffer
+			for (int i = 0; i < count; ++i) {
+				int16 inL, inR;
 
-		if (outStereo) {
-			// Output left channel
-			clampedAdd(outBuffer[reverseStereo    ], outL);
+				if (inStereo) {
+					if (volL != 0)
+						inL = *_bufferPos++;
+					else
+						_bufferPos++;
 
-			// Output right channel
-			clampedAdd(outBuffer[reverseStereo ^ 1], outR);
+					if (volR != 0)
+						inR = *_bufferPos++;
+					else
+						_bufferPos++;
+				} else {
+					if (volL != 0) {
+						inL = *_bufferPos++;
+						if (volR != 0)
+							inR = inL;
+					} else {
+						inR = *_bufferPos++;
+					}
+				}
 
-			outBuffer += 2;
+				st_sample_t outL, outR;
+
+				if (volL != 0) {
+					if (volL != Audio::Mixer::kMaxMixerVolume)
+						outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+					else
+						outL = inL;
+				}
+
+				if (volR != 0) {
+					if (volR != Audio::Mixer::kMaxMixerVolume)
+						outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+					else
+						outR = inR;
+				}
+
+				// TODO: could be unrolled
+				for (int j = 0; j < outputSamples; ++j) {
+					if (outStereo) {
+						// Output left channel
+						if (volL != 0)
+							processSample<mixMode>(outBuffer[reverseStereo    ], outL);
+
+						// Output right channel
+						if (volR != 0)
+							processSample<mixMode>(outBuffer[reverseStereo ^ 1], outR);
+					} else {
+						// Output mono channel
+						st_sample_t monoOut;
+						if (volL != 0 && volR != 0)
+							monoOut = (outL + outR) / 2;
+						else if (volL != 0)
+							monoOut = outL / 2;
+						else if (volR != 0)
+							monoOut = outR / 2;
+						processSample<mixMode>(outBuffer[0], monoOut);
+					}
+					outBuffer += (outStereo ? 2 : 1);
+				}
+			}
 		} else {
-			// Output mono channel
-			clampedAdd(outBuffer[0], (outL + outR) / 2);
-
-			outBuffer += 1;
+			_bufferPos += count * (inStereo ? 2 : 1);
+			outBuffer += count * outputSamples * (outStereo ? 2 : 1);
 		}
 	}
-
 	return (outBuffer - outStart) / (outStereo ? 2 : 1);
 }
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
-int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val) {
+	PRINT_OUTPUT_RATE;
+
+	return commonConvert<volL, volR, st_sample_t, mixMode>(input, outBuffer, numSamples, volL_val, volR_val, 1);
+}
+
+template<bool inStereo, bool outStereo, bool reverseStereo>
+template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::downsampleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val) {
 	PRINT_OUTPUT_RATE;
 
 	// How much to increment _outPos by
-	frac_t outPos_inc = _inRate / _outRate;
+	const frac_t outPos_inc = _inRate / _outRate;
 
-	st_sample_t *outStart, *outEnd;
-
-	outStart = outBuffer;
-	outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
+	const st_sample_t *outStart = outBuffer;
+	const st_sample_t *outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
 
 	while (outBuffer < outEnd) {
 		// Read enough input samples so that _outPos >= 0
-		do {
+		while (_outPos >= 0) {
+			const int skip = MIN((int)_outPos + 1, _bufferSize / (inStereo ? 2 : 1));
+			_bufferPos += skip * (inStereo ? 2 : 1);
+			_bufferSize -= skip * (inStereo ? 2 : 1);
+			_outPos -= skip;
+
 			// Check if we have to refill the buffer
 			if (_bufferSize == 0) {
 				_bufferPos = _buffer;
@@ -192,54 +262,106 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioS
 				if (_bufferSize <= 0)
 					return (outBuffer - outStart) / (outStereo ? 2 : 1);
 			}
+		}
 
-			_bufferSize -= (inStereo ? 2 : 1);
-			_outPos--;
+		// Process as many samples as we can from the current buffer
+		const int count = MIN(
+			_bufferSize / (inStereo ? 2 : 1) / outPos_inc,
+			(int)(outEnd - outBuffer) / (outStereo ? 2 : 1));
+		_bufferSize -= count * outPos_inc * (inStereo ? 2 : 1);
+		_outPos = outPos_inc - 1;
 
-			if (_outPos >= 0) {
-				_bufferPos += (inStereo ? 2 : 1);
+		// Frame stride remaining after reading one frame
+		const int stride = (outPos_inc - 1) * (inStereo ? 2 : 1);
+
+		if (volL | volR) {
+			for (int i = 0; i < count; ++i) {
+				int16 inL, inR;
+
+				if (inStereo) {
+					if (volL != 0)
+						inL = *_bufferPos++;
+					else
+						_bufferPos++;
+
+					if (volR != 0)
+						inR = *_bufferPos++;
+					else
+						_bufferPos++;
+				} else {
+					if (volL != 0) {
+						inL = *_bufferPos++;
+						if (volR != 0)
+							inR = inL;
+					} else {
+						inR = *_bufferPos++;
+					}
+				}
+
+				_bufferPos += stride;
+
+				st_sample_t outL, outR;
+				if (volL != 0) {
+					if (volL != Audio::Mixer::kMaxMixerVolume)
+						outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+					else
+						outL = inL;
+				}
+				if (volR != 0) {
+					if (volR != Audio::Mixer::kMaxMixerVolume)
+						outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+					else
+						outR = inR;
+				}
+
+				if (outStereo) {
+					// Output left channel
+					if (volL != 0)
+						processSample<mixMode>(outBuffer[reverseStereo    ], outL);
+
+					// Output right channel
+					if (volR != 0)
+						processSample<mixMode>(outBuffer[reverseStereo ^ 1], outR);
+				} else {
+					// Output mono channel
+					st_sample_t monoOut;
+					if (volL != 0 && volR != 0)
+						monoOut = (outL + outR) / 2;
+					else if (volL != 0)
+						monoOut = outL / 2;
+					else if (volR != 0)
+						monoOut = outR / 2;
+					processSample<mixMode>(outBuffer[0], monoOut);
+				}
+
+				outBuffer += (outStereo ? 2 : 1);
 			}
-		} while (_outPos >= 0);
-
-		st_sample_t inL, inR;
-		inL = *_bufferPos++;
-		inR = (inStereo ? *_bufferPos++ : inL);
-
-		// Increment output position
-		_outPos += outPos_inc;
-
-		st_sample_t outL, outR;
-		outL = (inL * (int)volL) / Audio::Mixer::kMaxMixerVolume;
-		outR = (inR * (int)volR) / Audio::Mixer::kMaxMixerVolume;
-
-		if (outStereo) {
-			// output left channel
-			clampedAdd(outBuffer[reverseStereo    ], outL);
-
-			// output right channel
-			clampedAdd(outBuffer[reverseStereo ^ 1], outR);
-
-			outBuffer += 2;
 		} else {
-			// output mono channel
-			clampedAdd(outBuffer[0], (outL + outR) / 2);
-
-			outBuffer += 1;
+			_bufferPos += count * outPos_inc * (inStereo ? 2 : 1);
+			outBuffer += count * (outStereo ? 2 : 1);
 		}
 	}
 	return (outBuffer - outStart) / (outStereo ? 2 : 1);
 }
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
-int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::upsampleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val) {
+	PRINT_OUTPUT_RATE;
+
+	return commonConvert<volL, volR, st_sample_t, mixMode>(input, outBuffer, numSamples, volL_val, volR_val, _outRate / _inRate);
+}
+
+template<bool inStereo, bool outStereo, bool reverseStereo>
+template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val) {
 	PRINT_OUTPUT_RATE;
 
 	// How much to increment _outPosFrac by
-	frac_t outPos_inc = (_inRate << FRAC_BITS_LOW) / _outRate;
+	const frac_t outPos_inc = (_inRate << FRAC_BITS_LOW) / _outRate;
 
-	st_sample_t *outStart, *outEnd;
-	outStart = outBuffer;
-	outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
+	const st_sample_t *outStart = outBuffer;
+	const st_sample_t *outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
 
 	while (outBuffer < outEnd) {
 		// Read enough input samples so that _outPosFrac < 0
@@ -254,12 +376,21 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(A
 			}
 
 			_bufferSize -= (inStereo ? 2 : 1);
-			_inLastL = _inCurL;
-			_inCurL = *_bufferPos++;
+
+			if (volL != 0 || (!inStereo && volR != 0)) {
+				_inLastL = _inCurL;
+				_inCurL = *_bufferPos++;
+			} else {
+				_bufferPos++;
+			}
 
 			if (inStereo) {
-				_inLastR = _inCurR;
-				_inCurR = *_bufferPos++;
+				if (volR != 0) {
+					_inLastR = _inCurR;
+					_inCurR = *_bufferPos++;
+				} else {
+					_bufferPos++;
+				}
 			}
 
 			_outPosFrac -= FRAC_ONE_LOW;
@@ -268,31 +399,57 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(A
 		// Loop as long as the _outPos trails behind, and as long as there is
 		// still space in the output buffer.
 		while (_outPosFrac < (frac_t)FRAC_ONE_LOW && outBuffer < outEnd) {
-			// Interpolate
-			st_sample_t inL, inR;
-			inL = (st_sample_t)(_inLastL + (((_inCurL - _inLastL) * _outPosFrac + FRAC_HALF_LOW) >> FRAC_BITS_LOW));
-			inR = (inStereo ?
-						(st_sample_t)(_inLastR + (((_inCurR - _inLastR) * _outPosFrac + FRAC_HALF_LOW) >> FRAC_BITS_LOW)) :
+			if (volL | volR) {
+				// Interpolate
+				int16 inL, inR;
+
+				if (volL != 0 || (!inStereo && volR != 0)) {
+					inL = (int16)(_inLastL + (((_inCurL - _inLastL) * _outPosFrac + FRAC_HALF_LOW) >> FRAC_BITS_LOW));
+				}
+
+				if (volR != 0) {
+					inR = (inStereo ?
+						(int16)(_inLastR + (((_inCurR - _inLastR) * _outPosFrac + FRAC_HALF_LOW) >> FRAC_BITS_LOW)) :
 						inL);
+				}
 
-			st_sample_t outL, outR;
-			outL = (inL * (int)volL) / Audio::Mixer::kMaxMixerVolume;
-			outR = (inR * (int)volR) / Audio::Mixer::kMaxMixerVolume;
+				st_sample_t outL, outR;
+				if (volL != 0) {
+					if (volL != Audio::Mixer::kMaxMixerVolume)
+						outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+					else
+						outL = inL;
+				}
 
-			if (outStereo) {
-				// Output left channel
-				clampedAdd(outBuffer[reverseStereo    ], outL);
+				if (volR != 0) {
+					if (volR != Audio::Mixer::kMaxMixerVolume)
+						outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+					else
+						outR = inR;
+				}
 
-				// Output right channel
-				clampedAdd(outBuffer[reverseStereo ^ 1], outR);
+				if (outStereo) {
+					// Output left channel
+					if (volL != 0)
+						processSample<mixMode>(outBuffer[reverseStereo    ], outL);
 
-				outBuffer += 2;
-			} else {
-				// Output mono channel
-				clampedAdd(outBuffer[0], (outL + outR) / 2);
-
-				outBuffer += 1;
+					// Output right channel
+					if (volR != 0)
+						processSample<mixMode>(outBuffer[reverseStereo ^ 1], outR);
+				} else {
+					// Output mono channel
+					st_sample_t monoOut;
+					if (volL != 0 && volR != 0)
+						monoOut = (outL + outR) / 2;
+					else if (volL != 0)
+						monoOut = outL / 2;
+					else
+						monoOut = outR / 2;
+					processSample<mixMode>(outBuffer[0], monoOut);
+				}
 			}
+
+			outBuffer += (outStereo ? 2 : 1);
 
 			// Increment output position
 			_outPosFrac += outPos_inc;
@@ -315,17 +472,71 @@ RateConverter_Impl<inStereo, outStereo, reverseStereo>::RateConverter_Impl(st_ra
 	_bufferPos(nullptr) {}
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
-int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+template<typename st_sample_t, MixMode mixMode>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convertForType(AudioStream &input, byte *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
 	assert(input.isStereo() == inStereo);
 
+	constexpr auto kMax = Audio::Mixer::kMaxMixerVolume;
+
 	if (_inRate == _outRate) {
-		return copyConvert(input, outBuffer, numSamples, volL, volR);
+		if (volL == 0 && volR == 0)
+			return copyConvert<0, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == 0 && volR == kMax)
+			return copyConvert<0, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == 0)
+			return copyConvert<kMax, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == kMax)
+			return copyConvert<kMax, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else
+			return copyConvert<static_cast<st_volume_t>(-1), static_cast<st_volume_t>(-1), st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+	} else if ((_inRate % _outRate) == 0 && (_inRate < 65536)) {
+		if (volL == 0 && volR == 0)
+			return downsampleConvert<0, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == 0 && volR == kMax)
+			return downsampleConvert<0, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == 0)
+			return downsampleConvert<kMax, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == kMax)
+			return downsampleConvert<kMax, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else
+			return downsampleConvert<static_cast<st_volume_t>(-1), static_cast<st_volume_t>(-1), st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+	} else if ((_outRate % _inRate) == 0) {
+		if (volL == 0 && volR == 0)
+			return upsampleConvert<0, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == 0 && volR == kMax)
+			return upsampleConvert<0, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == 0)
+			return upsampleConvert<kMax, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == kMax)
+			return upsampleConvert<kMax, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else
+			return upsampleConvert<static_cast<st_volume_t>(-1), static_cast<st_volume_t>(-1), st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
 	} else {
-		if ((_inRate % _outRate) == 0 && (_inRate < 65536)) {
-			return simpleConvert(input, outBuffer, numSamples, volL, volR);
-		} else {
-			return interpolateConvert(input, outBuffer, numSamples, volL, volR);
-		}
+		if (volL == 0 && volR == 0)
+			return interpolateConvert<0, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == 0 && volR == kMax)
+			return interpolateConvert<0, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == 0)
+			return interpolateConvert<kMax, 0, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else if (volL == kMax && volR == kMax)
+			return interpolateConvert<kMax, kMax, st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+		else
+			return interpolateConvert<static_cast<st_volume_t>(-1), static_cast<st_volume_t>(-1), st_sample_t, mixMode>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
+	}
+}
+
+template<bool inStereo, bool outStereo, bool reverseStereo>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convert(AudioStream &input, byte *outBuffer, uint outBytesPerSample, st_size_t numSamples, st_volume_t volL, st_volume_t volR, MixMode mixMode) {
+	if (outBytesPerSample == sizeof(int32)) {
+		if (mixMode == MIX_ADD)
+			return convertForType<int32, MIX_ADD>(input, outBuffer, numSamples, volL, volR);
+		else
+			return convertForType<int32, MIX_CLAMPED_ADD>(input, outBuffer, numSamples, volL, volR);
+	} else {
+		if (mixMode == MIX_ADD)
+			return convertForType<int16, MIX_ADD>(input, outBuffer, numSamples, volL, volR);
+		else
+			return convertForType<int16, MIX_CLAMPED_ADD>(input, outBuffer, numSamples, volL, volR);
 	}
 }
 
