@@ -1014,11 +1014,15 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			Common::Point charPos = protagonist->getPosition();
 
 			// Snap target to nearest walkable position (1008:9be2)
-			g_engine->snapToWalkablePosition(target, charPos);
+			int16 targetY = target.y;
+			int16 targetX = target.x;
+			g_engine->snapToWalkablePosition(&targetY, &targetX, charPos.y, charPos.x);
+			target.x = targetX;
+			target.y = targetY;
 
 			// Original logic from handleInput (1008:e8bf):
 			// If direct path is walkable, walk directly. Otherwise use pathfinding network.
-			if (protagonist->isPathWalkable(charPos, target)) {
+			if (g_engine->isPathWalkable(charPos.y, charPos.x, target.y, target.x)) {
 				protagonist->startLerpTo(target, 1000);
 			} else {
 				protagonist->_pathFinalDestination = target;
@@ -2088,9 +2092,6 @@ bool Character::isWalkable(const Common::Point &p) const {
 	return walkability < 0xC8;
 }
 
-bool Character::isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print) {
-	return g_engine->isPathWalkable(p1.x, p1.y, p2.x, p2.y);
-}
 
 Character::Character() {
 	_pathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
@@ -2110,7 +2111,7 @@ bool Character::calculatePath(Common::Point target) {
 	const Common::Point &charPosition = GameObjects::instance().getProtagonistObject()->Position;
 	for (int i = 0; i < numPoints; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
-		if (isPathWalkable(charPosition, current._position)) {
+		if (g_engine->isPathWalkable(charPosition.y, charPosition.x, current._position.y, current._position.x)) {
 			uint dist = charPosition.sqrDist(current._position);
 			if (dist < minLength) {
 				minLength = dist;
@@ -2131,7 +2132,7 @@ bool Character::calculatePath(Common::Point target) {
 	debug("Best entry point: %u at distance %u", minIndex, minLength);
 	bool result = findShortestPath(minIndex, visited, target);
 	PathfindingPoint &entryPoint = g_engine->pathfindingPoints[minIndex];
-	isPathWalkable(charPosition, entryPoint._position, true);
+	g_engine->isPathWalkable(charPosition.y, charPosition.x, entryPoint._position.y, entryPoint._position.x);
 	// Now handle searching for the end point, for this, keep track of nodes we already visited
 	// Args:
 	// Target position
@@ -2153,8 +2154,7 @@ bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, con
 	g_engine->_path.push_back(currentPosition);
 
 	// Check if we can reach the target from here
-	if (isPathWalkable(currentPosition, target)) {
-		isPathWalkable(currentPosition, target, true);
+	if (g_engine->isPathWalkable(currentPosition.y, currentPosition.x, target.y, target.x)) {
 		return true;
 	}
 
@@ -2163,7 +2163,7 @@ bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, con
 		const uint16 currentAdjacentIndex = currentPoint._adjacentPoints[i];
 		if (findShortestPath(currentAdjacentIndex - 1, visited, target)) {
 			const PathfindingPoint &adjacentPoint = g_engine->pathfindingPoints[currentAdjacentIndex - 1];
-			isPathWalkable(currentPoint._position, adjacentPoint._position, true);
+			g_engine->isPathWalkable(currentPoint._position.y, currentPoint._position.x, adjacentPoint._position.y, adjacentPoint._position.x);
 			return true;
 		}
 	}
@@ -2490,30 +2490,43 @@ void Character::update() {
 	// Calculate direction if not yet set (first frame of movement)
 	if (!_stepDirectionSet) {
 		_stepDirectionSet = true;
-		uint16 absDx = abs(_endPosition.x - pos.x);
-		uint16 absDy = abs(_endPosition.y - pos.y);
-		// Determine 8-directional orientation from walkAlongPath
+		// Phase 0 from walkAlongPath (1008:1b8f): direction calculation.
+		// In the original this returns after setting direction (1-frame turn delay).
+		// We calculate direction but continue to stepping in the same frame.
+		uint16 absDx = abs(pos.x - _endPosition.x);
+		uint16 absDy = abs(pos.y - _endPosition.y);
 		uint8 dir = _gameObject->Orientation;
 		if (dir > 8 && dir < 17)
 			dir -= 8;
-		if (pos.y > _endPosition.y && absDx <= absDy)
+		if (dir > 16)
+			dir = 1;
+		// Cardinal directions (only if animation available for that direction)
+		if (_endPosition.y < pos.y && absDx <= absDy &&
+			_gameObject->Blobs.size() > 0 && !_gameObject->Blobs[0].empty())
 			dir = 1; // North
-		if (pos.x < _endPosition.x && absDy <= absDx)
+		if (pos.x < _endPosition.x && absDy <= absDx &&
+			_gameObject->Blobs.size() > 2 && !_gameObject->Blobs[2].empty())
 			dir = 3; // East
-		if (pos.y < _endPosition.y && absDx <= absDy)
+		if (pos.y < _endPosition.y && absDx <= absDy &&
+			_gameObject->Blobs.size() > 4 && !_gameObject->Blobs[4].empty())
 			dir = 5; // South
-		if (pos.x > _endPosition.x && absDy <= absDx)
+		if (_endPosition.x < pos.x && absDy <= absDx &&
+			_gameObject->Blobs.size() > 6 && !_gameObject->Blobs[6].empty())
 			dir = 7; // West
-		// Diagonals: deltaX/4 < deltaY && deltaY/2 < deltaX
-		if (absDx > (absDy >> 2) && absDy > (absDx >> 1)) {
-			if (pos.y > _endPosition.y && pos.x < _endPosition.x)
-				dir = 2;
-			if (pos.y < _endPosition.y && pos.x < _endPosition.x)
-				dir = 4;
-			if (pos.y < _endPosition.y && pos.x > _endPosition.x)
-				dir = 6;
-			if (pos.y > _endPosition.y && pos.x > _endPosition.x)
-				dir = 8;
+		// Diagonals: absDx/4 < absDy AND absDy/2 < absDx
+		if ((absDx >> 2) < absDy && (absDy >> 1) < absDx) {
+			if (_endPosition.y < pos.y && pos.x < _endPosition.x &&
+				_gameObject->Blobs.size() > 1 && !_gameObject->Blobs[1].empty())
+				dir = 2; // NE
+			if (pos.x < _endPosition.x && pos.y < _endPosition.y &&
+				_gameObject->Blobs.size() > 3 && !_gameObject->Blobs[3].empty())
+				dir = 4; // SE
+			if (pos.y < _endPosition.y && _endPosition.x < pos.x &&
+				_gameObject->Blobs.size() > 5 && !_gameObject->Blobs[5].empty())
+				dir = 6; // SW
+			if (_endPosition.x < pos.x && _endPosition.y < pos.y &&
+				_gameObject->Blobs.size() > 7 && !_gameObject->Blobs[7].empty())
+				dir = 8; // NW
 		}
 		_gameObject->Orientation = dir;
 		_stepDeltaX = absDx;

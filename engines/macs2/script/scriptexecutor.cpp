@@ -373,10 +373,6 @@ uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	return result;
 }
 
-bool ScriptExecutor::isPathWalkable(const Common::Point &from, const Common::Point &to) {
-	return _engine->isPathWalkable(from.x, from.y, to.x, to.y);
-}
-
 bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset) {
 	if (resourceIndex == 0) {
 		warning("Ignoring resource load for zero resource index");
@@ -986,7 +982,7 @@ bool Script::ScriptExecutor::scriptWalkToPosition() {
 	Common::Point current = c->getPosition();
 
 	// Check if direct path is walkable (like isPathWalkable in the original)
-	if (c->isPathWalkable(current, target)) {
+	if (_engine->isPathWalkable(current.y, current.x, target.y, target.x)) {
 		// Direct path is clear - just lerp straight there
 		c->startLerpTo(target, 1000);
 	} else if (c->isWalkable(target)) {
@@ -1268,7 +1264,7 @@ void Script::ScriptExecutor::scriptTestPathfinding() {
 	if (object == nullptr) {
 		warning("Ignoring pathfinding test for invalid object %u", objectID);
 	} else {
-		_pathWalkableResult = isPathWalkable(object->Position, Common::Point(x, y));
+		_pathWalkableResult = _engine->isPathWalkable(object->Position.y, object->Position.x, y, x);
 	}
 }
 
@@ -1369,7 +1365,7 @@ bool Script::ScriptExecutor::scriptMoveToPosition() {
 	}
 
 	const Common::Point target(x, y);
-	if (!isPathWalkable(object->Position, target) && _engine->getWalkabilityAt(target) < 0xC8) {
+	if (!_engine->isPathWalkable(object->Position.y, object->Position.x, y, x) && _engine->getWalkabilityAt(target) < 0xC8) {
 		warning("Ignoring move-to-position for blocked target (%u,%u) on object %d", x, y, objectID);
 		return false;
 	}

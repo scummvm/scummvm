@@ -98,7 +98,6 @@ public:
 	Common::Array<uint8> _pathfindingOverlay;
 
 	bool isWalkable(const Common::Point &p) const;
-	bool isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
 	bool calculatePath(Common::Point target);
 	bool findShortestPath(uint16 index, Common::Array<bool> &visited, const Common::Point &target);
 	// Returns false if we are at the end of the path already or the path is not valid
