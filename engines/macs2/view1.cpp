@@ -50,7 +50,9 @@ Common::String joinDebugStrings(const Common::StringArray &strings) {
 }
 
 void logRenderedText(const char *kind, int x, int y, const Common::String &text) {
-	debug("%s text at (%d,%d): %s", kind, x, y, text.c_str());
+	Common::U32String u32text(text.c_str(), Common::kDos850);
+	Common::String utf8text(u32text);
+	g_engine->_textLog.push_back(Common::String::format("%s text at (%d,%d): ", kind, x, y) + utf8text);
 }
 
 void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
@@ -432,11 +434,10 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	// int padding = 3;
 	int totalWidth = g_engine->measureStrings(sa) + 0x12;
 	int totalHeight = g_engine->measureStringsVertically(sa) + 0x10;
-	debug("Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
-		  sa.size(), _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
-	debugC(kDebugScript,
-		   "Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
-		   sa.size(), _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
+	g_engine->_textLog.push_back(Common::String::format(
+		"Render text box: lines=%u pos=(%d,%d) size=(%d,%d) text=\"", sa.size(),
+		_stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight) +
+		Common::String(Common::U32String(joinDebugStrings(sa).c_str(), Common::kDos850)) + "\"");
 
 	Graphics::ManagedSurface s = getSurface();
 	drawBorder(_stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
@@ -1127,28 +1128,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 			}
 		}
 	}
-	if (msg.ascii == (uint16)'c') {
-		g_engine->changeScene(0x6);
-	}
-	if (msg.ascii == (uint16)'d') {
-		_backgroundSurface.copyFrom(g_engine->_depthMap);
-		redraw();
-	}
-	if (msg.ascii == (uint16)'m') {
-		// _backgroundSurface = g_engine->_map;
-		_backgroundSurface.copyFrom(g_engine->_pathfindingMap);
-		redraw();
-	} else if (msg.ascii == (uint16)'x') {
-		calculateCharacterScaling(0x79);
-	} else if (msg.ascii == (uint16)'b') {
+	if (msg.ascii == (uint16)'b') {
 		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 		startFading();
 		redraw();
-	} else if (msg.ascii == (uint16)'s') {
-		// g_engine->ExecuteScript(g_engine->_scriptStream);
-		g_engine->runScriptExecutor(true);
-		// Also test the lerping
-		getCharacterByIndex(1)->startLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
 		if (!_isShowingInventory) {
 			openInventory(GameObjects::instance().getProtagonistObject());
