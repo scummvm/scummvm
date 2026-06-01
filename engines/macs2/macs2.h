@@ -339,6 +339,12 @@ public:
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 _numHotspots;
 
+	// Raw scene timer params at +0x53C3..+0x53CF (4 dwords, saved for binary compat)
+	uint32 _sceneTimerParams[4] = {0};
+
+	// Clip rect dirty flag [0xfec] - signals clip region needs full-screen reset
+	bool _clipRectDirty = false;
+
 	uint16 getHotspotAtPoint(const Common::Point &p);
 
 	AnimFrame _stick;
