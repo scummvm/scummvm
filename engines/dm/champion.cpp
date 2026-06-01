@@ -2613,7 +2613,8 @@ void ChampionMan::renameChampion(Champion *champ) {
 			}
 			if (curCharacterIndex == 0) {
 				renamedChampionString = champ->_name;
-				curCharacterIndex = strlen(renamedChampionString) - 1;
+				int16 nameLen = (int16)strlen(renamedChampionString);
+				curCharacterIndex = nameLen > 0 ? nameLen - 1 : 0;
 				renamedChampionStringMode = kDMRenameChampionName;
 				textPosX = 177 + (curCharacterIndex * 6);
 				textPosY = 91;
