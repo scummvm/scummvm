@@ -712,6 +712,23 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	array5023.resize(0xa0);
 	_fileStream->read(array5023.data(), 0xa0);
 
+	// Rebuild pathfindingPoints from array5023 (16 nodes × 10 bytes each)
+	pathfindingPoints.clear();
+	Common::MemoryReadStream nodeStream(array5023.data(), 0xa0);
+	for (int i = 0; i < 16; i++) {
+		PathfindingPoint current;
+		current.Index = i;
+		current.Position.x = nodeStream.readUint16LE();
+		current.Position.y = nodeStream.readUint16LE();
+		uint8 adj[4];
+		nodeStream.read(adj, 4);
+		uint16 numConnections = nodeStream.readUint16LE();
+		current.adjacentPoints.clear();
+		for (uint16 j = 0; j < numConnections && j < 4; j++)
+			current.adjacentPoints.push_back(adj[j]);
+		pathfindingPoints.push_back(current);
+	}
+
 	word50D3 = _fileStream->readUint16LE();
 
 	array50D5.clear();
