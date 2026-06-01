@@ -67,6 +67,10 @@ static bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, 
 void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	Insane::procPreRendering(renderBitmap);
 
+	// Pan the reticle from held directional controls (on-screen/physical gamepad dpad,
+	// keyboard arrows) once per frame. No-op outside gameplay; mouse aiming is unaffected.
+	updateGameplayAimFromGamepad();
+
 	// Reset opcode 6 init flag at the start of each new video.
 	// This ensures the per-wave init (clearBit, link table reset, wave state)
 	// fires exactly once per wave video, not every frame.

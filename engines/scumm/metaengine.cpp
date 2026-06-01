@@ -1170,25 +1170,45 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act = new Action("RA2UP", _("Aim up / menu up"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUp);
 		act->addDefaultInputMapping("JOY_UP");
-		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2DOWN", _("Aim down / menu down"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDown);
 		act->addDefaultInputMapping("JOY_DOWN");
-		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2LEFT", _("Aim left / menu left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneLeft);
 		act->addDefaultInputMapping("JOY_LEFT");
-		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2RIGHT", _("Aim right / menu right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneRight);
 		act->addDefaultInputMapping("JOY_RIGHT");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKUP", _("Stick up"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisUp);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKDOWN", _("Stick down"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisDown);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKLEFT", _("Stick left"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisLeft);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKRIGHT", _("Stick right"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisRight);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
 		rebel2Keymap->addAction(act);
 
 		act = new Action("RA2FIRE", _("Fire / select"));

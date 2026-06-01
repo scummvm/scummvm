@@ -465,6 +465,13 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Initialize menu input capture system
 	_menuInputActive = false;
 
+	// Analog stick state for gamepad aiming (mirrors RA1's analog model).
+	// Ingested from EVENT_CUSTOM_BACKEND_ACTION_AXIS, read with a deadzone and
+	// integrated as velocity into the reticle in updateGameplayAimFromGamepad().
+	_joystickAxisX = 0;
+	_joystickAxisY = 0;
+	_gamepadAimActive = false;
+
 	// Initialize level state tracking for multi-phase levels
 	_currentPhase = 1;
 	_deathFrame = 0;
@@ -523,6 +530,67 @@ InsaneRebel2::~InsaneRebel2() {
 // Pause behavior matches original FUN_405A21: SPACE pauses, ANY key unpauses.
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Keep the gamepad reticle authoritative against stray pointer events. During
+	// gameplay the cursor is locked ~screen-center (levels.cpp lockMouse), so any
+	// spurious pointer event — e.g. a gamepad "fire" surfacing as a button-down —
+	// carries that centered position, and SCUMM's input layer copies it straight
+	// into _mouse on button-down (scumm/input.cpp), yanking the reticle to center on
+	// every shot. We observe before ScummEngine (priority 1 > kEventManPriority), so
+	// dropping the event here prevents the clobber. Firing is driven by the
+	// kScummActionInsaneAttack action, not the pointer, so this does not affect shots.
+	// A genuine mouse/touch motion (nonzero relative delta) hands control back.
+	if (_gamepadAimActive && _gameState == kStateGameplay && !_menuInputActive) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			if (event.relMouse.x != 0 || event.relMouse.y != 0) {
+				_gamepadAimActive = false; // real pointer motion takes over
+				break;
+			}
+			return true; // drop zero-delta artifact (e.g. locked-cursor recentre)
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			return true; // drop stray button-down that would recenter the reticle
+			// Let LBUTTONUP/RBUTTONUP fall through so the backend _buttonState latch
+			// always clears and can never stick when a real mouse later takes over.
+		default:
+			break;
+		}
+	}
+
+	// Analog stick → reticle velocity (mirrors RA1's analog model). The mapped
+	// axis actions carry a signed position; a centered stick reports position 0.
+	// We ignore a recentre that would fight the opposite direction so a quick
+	// flick doesn't get cancelled by the trailing zero of the other axis half.
+	if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+		const int16 axisPosition = (event.joystick.position == Common::JOYAXIS_MIN)
+			? Common::JOYAXIS_MAX : event.joystick.position;
+
+		switch (event.customType) {
+		case kScummBackendActionRebel2AxisUp:
+			if (event.joystick.position == 0 && _joystickAxisY > 0)
+				return true;
+			_joystickAxisY = -axisPosition;
+			return true;
+		case kScummBackendActionRebel2AxisDown:
+			if (event.joystick.position == 0 && _joystickAxisY < 0)
+				return true;
+			_joystickAxisY = axisPosition;
+			return true;
+		case kScummBackendActionRebel2AxisLeft:
+			if (event.joystick.position == 0 && _joystickAxisX > 0)
+				return true;
+			_joystickAxisX = -axisPosition;
+			return true;
+		case kScummBackendActionRebel2AxisRight:
+			if (event.joystick.position == 0 && _joystickAxisX < 0)
+				return true;
+			_joystickAxisX = axisPosition;
+			return true;
+		default:
+			break;
+		}
+	}
 
 	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
@@ -593,10 +661,12 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 		}
 
-		if (event.customType == kScummActionInsaneAttack ||
-			event.customType == kScummActionInsaneSwitch) {
-			return true;
-		}
+		// Do NOT consume Attack/Switch during gameplay: like the dpad actions, these
+		// custom-action events must fall through to ScummEngine::parseEvent() so it keeps
+		// _actionMap in sync (input.cpp). processMouse() reads getActionState() for the
+		// gamepad trigger; consuming here breaks the dispatch loop (events.cpp) before the
+		// map is updated, leaving fire dead. The menu/paused branches above already
+		// consumed (and returned true for) the cases they handle.
 	}
 
 	if (event.type == Common::EVENT_KEYDOWN) {
@@ -1285,29 +1355,58 @@ int32 InsaneRebel2::processMouse() {
 }
 
 Common::Point InsaneRebel2::getGameplayAimPoint() {
-	Common::Point aimPos(_vm->_mouse.x, _vm->_mouse.y);
+	// Pure getter (queried many times per frame): the aim/reticle follows the virtual
+	// mouse position. Directional controls pan that position incrementally once per frame
+	// via updateGameplayAimFromGamepad(), rather than snapping the reticle to a screen edge.
+	return Common::Point(_vm->_mouse.x, _vm->_mouse.y);
+}
 
+// Apply the user's configured analog deadzone so a resting stick reports no
+// motion. Mirrors RA1's applyRebel1AnalogDeadzone (iact.cpp).
+static inline int16 applyRebel2AnalogDeadzone(int16 axisValue) {
+	const int deadZone = MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000;
+	return (ABS((int)axisValue) <= deadZone) ? 0 : axisValue;
+}
+
+void InsaneRebel2::updateGameplayAimFromGamepad() {
 	if (_menuInputActive || _gameState != kStateGameplay)
-		return aimPos;
+		return;
 
-	int dx = 0;
-	int dy = 0;
+	// Velocity model ported from RA1 (insane/rebel1/iact.cpp preprocessMouseAxes):
+	// the digital dpad pans at full rate, while the analog stick pans proportionally
+	// to its deflection past the deadzone. This replaces the old edge-snap that pinned
+	// the reticle to the screen borders. Mouse input is untouched: with nothing held the
+	// reticle simply follows _vm->_mouse as before.
+	int velX = 0;
+	int velY = 0;
 
-	if (_vm->getActionState(kScummActionInsaneLeft))
-		dx--;
-	if (_vm->getActionState(kScummActionInsaneRight))
-		dx++;
-	if (_vm->getActionState(kScummActionInsaneUp))
-		dy--;
-	if (_vm->getActionState(kScummActionInsaneDown))
-		dy++;
+	const int dpadX = (_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
+	                  (_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
+	const int dpadY = (_vm->getActionState(kScummActionInsaneDown) ? 1 : 0) -
+	                  (_vm->getActionState(kScummActionInsaneUp) ? 1 : 0);
 
-	if (dx || dy) {
-		aimPos.x = (dx < 0) ? 0 : (dx > 0) ? 319 : 160;
-		aimPos.y = (dy < 0) ? 0 : (dy > 0) ? 199 : 100;
+	if (dpadX || dpadY) {
+		velX = dpadX * 127;
+		velY = dpadY * 127;
+	} else {
+		const int16 ax = applyRebel2AnalogDeadzone(_joystickAxisX);
+		const int16 ay = applyRebel2AnalogDeadzone(_joystickAxisY);
+		velX = CLIP<int>((int)ax * 127 / Common::JOYAXIS_MAX, -127, 127);
+		velY = CLIP<int>((int)ay * 127 / Common::JOYAXIS_MAX, -127, 127);
 	}
 
-	return aimPos;
+	if (!velX && !velY)
+		return;
+
+	// The gamepad is now driving the reticle: mark it the active aim source so
+	// notifyEvent() suppresses stray pointer events that would recenter it on fire.
+	_gamepadAimActive = true;
+
+	// Integrate velocity into the reticle, clamped to the 320x200 play area.
+	// kStep sets the max pixels-per-frame at full deflection; tune for feel.
+	const int kStep = 8;
+	_vm->_mouse.x = (int16)CLIP<int>(_vm->_mouse.x + velX * kStep / 127, 0, 319);
+	_vm->_mouse.y = (int16)CLIP<int>(_vm->_mouse.y + velY * kStep / 127, 0, 199);
 }
 
 bool InsaneRebel2::isBitSet(int n) {

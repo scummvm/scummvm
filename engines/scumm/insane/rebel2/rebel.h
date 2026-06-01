@@ -492,6 +492,21 @@ public:
 
 	int32 processMouse() override;
 	Common::Point getGameplayAimPoint();
+	// Per-frame: pan the gameplay reticle incrementally from the held directional controls
+	// (on-screen/physical gamepad dpad, keyboard arrows) instead of snapping it to a screen
+	// edge. Call once per frame; getGameplayAimPoint() stays a pure getter.
+	void updateGameplayAimFromGamepad();
+
+	// Analog stick state, ingested from EVENT_CUSTOM_BACKEND_ACTION_AXIS in notifyEvent()
+	// and read (with a deadzone) by updateGameplayAimFromGamepad(). Signed; 0 = centered.
+	int16 _joystickAxisX;
+	int16 _joystickAxisY;
+
+	// True once the gamepad has driven the gameplay reticle, until a genuine mouse/touch
+	// motion takes over. While set, notifyEvent() drops stray pointer events so they can't
+	// recenter the reticle (the cursor is locked ~center during gameplay, so a gamepad
+	// "click" lands at center). See notifyEvent()/updateGameplayAimFromGamepad().
+	bool _gamepadAimActive;
 	bool isBitSet(int n) override;
 	void setBit(int n) override;
 

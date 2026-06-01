@@ -403,6 +403,9 @@ int InsaneRebel2::runLevel(int levelId) {
 	smush_warpMouse(160, 100, -1);
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
+	// Start each level with the centered cursor as the authoritative aim source;
+	// the first gamepad input reclaims it (see updateGameplayAimFromGamepad).
+	_gamepadAimActive = false;
 
 	// Initialize common player state
 	_playerLives = 3;
