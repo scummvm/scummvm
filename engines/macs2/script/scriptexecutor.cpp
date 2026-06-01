@@ -2297,6 +2297,16 @@ bool Script::ScriptExecutor::scriptOpcode0x4D() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x4E() {
+	if (soundSystemActive && musicEnabled) {
+		waitForAdlibReady = true;
+		EndTimer();
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return true;
+	}
+	return false;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2589,10 +2599,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x4E) {
-			if (soundSystemActive && musicEnabled) {
-				waitForAdlibReady = true;
-				EndTimer();
-				EndBuffering(lastOpcodeTriggeredSkip);
+			if (scriptOpcode0x4E()) {
 				return ExecutionResult::WaitingForCallback;
 			}
 		} else {
