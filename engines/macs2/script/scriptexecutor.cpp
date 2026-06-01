@@ -1747,6 +1747,18 @@ bool Script::ScriptExecutor::scriptOpcode0x2C() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x2D() {
+	const uint16 objectID = scriptReadValue16() - 0x400;
+	const bool enabled = scriptReadValue16() != 0;
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Ignoring object runtime flag for invalid object %u", objectID);
+		return false;
+	}
+	object->RuntimeFlag22F = enabled;
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -1983,14 +1995,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x2D) {
-			const uint16 objectID = scriptReadValue16() - 0x400;
-			const bool enabled = scriptReadValue16() != 0;
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Ignoring object runtime flag for invalid object %u", objectID);
+			if (!scriptOpcode0x2D()) {
 				continue;
 			}
-			object->RuntimeFlag22F = enabled;
 		} else if (opcode1 == 0x2E) {
 			scriptOpcode0x2E();
 		} else if (opcode1 == 0x2F) {
