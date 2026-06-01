@@ -31,6 +31,9 @@
 
 namespace Scumm {
 
+static const int kRebel2GameplayAimCenterX = 160;
+static const int kRebel2GameplayAimCenterY = 100;
+
 // ---------------------------------------------------------------------------
 // Level Loading System
 // ---------------------------------------------------------------------------
@@ -363,6 +366,17 @@ void InsaneRebel2::playCreditsSequence() {
 	splayer->play("OPEN/O_CREDIT.SAN", 12);
 }
 
+void InsaneRebel2::centerGameplayAim() {
+	_vm->_mouse.x = kRebel2GameplayAimCenterX;
+	_vm->_mouse.y = kRebel2GameplayAimCenterY;
+
+	_joystickAxisX = 0;
+	_joystickAxisY = 0;
+	_gamepadAimActive = false;
+
+	smush_warpMouse(kRebel2GameplayAimCenterX, kRebel2GameplayAimCenterY, -1);
+}
+
 // runLevel -- Main level dispatcher, calls per-level handlers.
 int InsaneRebel2::runLevel(int levelId) {
 
@@ -400,12 +414,9 @@ int InsaneRebel2::runLevel(int levelId) {
 	// The original hides the cursor (ShowCursor(0)) and relies on Windows confining
 	// the mouse to the game window. Without locking, the cursor can escape the
 	// ScummVM window making the ship uncontrollable.
-	smush_warpMouse(160, 100, -1);
+	centerGameplayAim();
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
-	// Start each level with the centered cursor as the authoritative aim source;
-	// the first gamepad input reclaims it (see updateGameplayAimFromGamepad).
-	_gamepadAimActive = false;
 
 	// Initialize common player state
 	_playerLives = 3;

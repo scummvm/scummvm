@@ -459,6 +459,9 @@ public:
 	// Play retry video (phase-specific for multi-phase levels)
 	void playLevelRetryVariant(int levelId, int phase);
 
+	// Reset gameplay aim to the original centered mouse/joystick baseline.
+	void centerGameplayAim();
+
 	// Level state tracking for multi-phase levels
 	int _currentPhase;        // Current gameplay phase (1, 2, 3 for Level 2; 1, 2 for Level 3/6)
 	int _deathFrame;          // Frame number where player died (for death video selection)
