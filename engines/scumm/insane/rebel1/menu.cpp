@@ -91,6 +91,10 @@ static const char *getRebel1ActionName(Common::CustomEventType customType) {
 		return "attack";
 	case kScummActionInsaneSwitch:
 		return "switch";
+	case kScummActionInsaneBack:
+		return "back";
+	case kScummActionInsaneSkip:
+		return "skip";
 	default:
 		return "other";
 	}
@@ -171,6 +175,8 @@ static RA1MenuCommand getRebel1MenuCommandFromAction(ScummAction action) {
 		return kRA1MenuCommandRight;
 	case kScummActionInsaneAttack:
 		return kRA1MenuCommandAccept;
+	case kScummActionInsaneSkip:
+		return kRA1MenuCommandCancel;
 	default:
 		return kRA1MenuCommandNone;
 	}
@@ -325,6 +331,10 @@ bool InsaneRebel1::handleTextEntryAction(ScummAction action) {
 		return true;
 	case kScummActionInsaneAttack:
 		selectTextEntryChar();
+		return true;
+	case kScummActionInsaneSwitch:
+	case kScummActionInsaneSkip:
+		finishTextEntry(true);
 		return true;
 	default:
 		return false;
@@ -481,6 +491,12 @@ bool InsaneRebel1::handleControllerMenuAction(ScummAction action) {
 
 	if (_textEntryActive)
 		return handleTextEntryAction(action);
+
+	if (action == kScummActionInsaneSwitch || action == kScummActionInsaneSkip) {
+		if (_levelSelectActive || _optionsActive)
+			return handleMenuCommand(kRA1MenuCommandCancel);
+		return true;
+	}
 
 	return handleMenuCommand(getRebel1MenuCommandFromAction(action));
 }
@@ -692,13 +708,40 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			_activeInputSource = kInputSourceJoystickDigital;
 		}
 
-		if (_highScoresActive && pressed && event.customType == kScummActionInsaneAttack) {
+		if (event.customType == kScummActionInsaneBack) {
+			if (!pressed)
+				return true;
+			if (_player) {
+				const bool wasPaused = _player->_paused;
+				if (!wasPaused)
+					_player->pause();
+				_vm->openMainMenuDialog();
+				if (!wasPaused)
+					_player->unpause();
+			}
+			return true;
+		}
+
+		if (_highScoresActive && pressed &&
+			(event.customType == kScummActionInsaneAttack ||
+			 event.customType == kScummActionInsaneSwitch ||
+			 event.customType == kScummActionInsaneSkip)) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
 
 		if (pressed && handleControllerMenuAction((ScummAction)event.customType))
 			return true;
+
+		if (event.customType == kScummActionInsaneSkip) {
+			if (!pressed)
+				return true;
+			if (!_interactiveVideoActive) {
+				_vm->_smushVideoShouldFinish = true;
+				return true;
+			}
+			return true;
+		}
 
 		if (_interactiveVideoActive && !_menuActive && event.customType == kScummActionInsaneAttack) {
 			_playerFired = pressed;
@@ -732,14 +775,30 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 
-	if (event.type == Common::EVENT_MAINMENU && _interactiveVideoActive && !_menuActive) {
+	if (event.type == Common::EVENT_MAINMENU) {
+		if (_menuActive || _highScoresActive)
+			return true;
+
 		const uint32 now = _vm->_system->getMillis();
 		const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
-		debugC(DEBUG_INSANE, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
-			elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
-		if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-			debugC(DEBUG_INSANE, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
-			return true;
+
+		if (_interactiveVideoActive && !_menuActive) {
+			debugC(DEBUG_INSANE, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
+				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
+			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
+				debugC(DEBUG_INSANE, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				return true;
+			}
+
+			if (_player) {
+				const bool wasPaused = _player->_paused;
+				if (!wasPaused)
+					_player->pause();
+				_vm->openMainMenuDialog();
+				if (!wasPaused)
+					_player->unpause();
+				return true;
+			}
 		}
 	}
 

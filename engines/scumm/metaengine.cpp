@@ -1019,7 +1019,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	Action *act;
 
-	if (gameId == "rebel2") {
+	if (gameId == "rebel1" || gameId == "rebel2") {
 		for (uint i = 0; i < keymaps.size(); ++i) {
 			if (keymaps[i]->getId() == "engine-default") {
 				delete keymaps.remove_at(i);
@@ -1141,24 +1141,28 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisUp);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_HAT_Y-");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1STICKDOWN", _("Stick down"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisDown);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_HAT_Y+");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1STICKLEFT", _("Stick left"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisLeft);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
+		act->addDefaultInputMapping("JOY_HAT_X-");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1STICKRIGHT", _("Stick right"));
 		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisRight);
 		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
 		act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
+		act->addDefaultInputMapping("JOY_HAT_X+");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1FIRE", _("Fire / select"));
@@ -1166,11 +1170,21 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		rebel1Keymap->addAction(act);
 
-		act = new Action("RA1BACK", _("Back / skip"));
-		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+		act = new Action("RA1CANCEL", _("Menu back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
+		act->addDefaultInputMapping("JOY_X");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1SKIP", _("Skip / menu back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSkip);
 		act->addDefaultInputMapping("JOY_B");
-		act->addDefaultInputMapping("JOY_Y");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1BACK", _("Menu"));
+		act->setCustomEngineActionEvent(kScummActionInsaneBack);
+		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("JOY_START");
+		act->addDefaultInputMapping("AC_BACK");
 		rebel1Keymap->addAction(act);
 
 		keymaps.push_back(rebel1Keymap);
