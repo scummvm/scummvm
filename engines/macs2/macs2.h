@@ -144,11 +144,6 @@ struct BackgroundAnimationBlob {
 	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
 };
 
-enum DebugFlag {
-	DEBUG_RLE = 1 << 10,
-	DEBUG_SV = 1 << 11
-};
-
 struct PathfindingPoint {
 	uint8 Index;
 	Common::Point Position;
@@ -405,7 +400,7 @@ public:
 	int measureStrings(Common::StringArray sa);
 	int measureStringsVertically(Common::StringArray sa);
 
-	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
+	Common::StringArray decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
 
 	uint32 getFeatures() const;
 

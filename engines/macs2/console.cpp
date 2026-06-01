@@ -44,7 +44,6 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("changeScene", WRAP_METHOD(Console, Cmd_changeScene));
 	registerCmd("scene", WRAP_METHOD(Console, Cmd_scene));
 	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
-	registerCmd("dumpScript", WRAP_METHOD(Console, Cmd_dumpScript));
 	registerCmd("set", WRAP_METHOD(Console, Cmd_set));
 	registerCmd("record", WRAP_METHOD(Console, Cmd_inputRecord));
 	registerCmd("playback", WRAP_METHOD(Console, Cmd_inputPlayback));
@@ -143,12 +142,6 @@ bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	}
 	GameObjects::instance().getObjectByIndex(index)->Orientation = orientation;
 
-	return true;
-}
-
-bool Console::Cmd_dumpScript(int argc, const char **argv) {
-
-	g_engine->_scriptExecutor->dumpWholeScript();
 	return true;
 }
 

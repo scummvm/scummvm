@@ -243,7 +243,7 @@ private:
 	// scriptSkipAlternate: alternate skip (for opcode 8)
 	void scriptSkipAlternate();
 
-	bool IsPathWalkable(const Common::Point &from, const Common::Point &to);
+	bool isPathWalkable(const Common::Point &from, const Common::Point &to);
 	bool loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset = 0x189);
 	bool loadSoundResource(Common::Array<uint8> &outData, uint8 resourceIndex);
 	bool loadMusicResource(Common::Array<uint8> &outData, uint8 resourceIndex);
@@ -264,7 +264,7 @@ private:
 
 	Common::StringArray _debugBuffer;
 	bool _lastOpcodeTriggeredSkip = false;
-	void BeginBuffering();
+	void beginBuffering();
 	void endBuffering(bool shouldMark = false);
 
 	// Global [0F92h], seems to be 0 if we execute the script of the scene
@@ -274,8 +274,6 @@ private:
 
 public:
 	ScriptExecutor();
-
-	int64 _streamDumpPosition;
 
 	// This is where a secondary inventory was last opened,
 	// when it is closed, we need to execute from here
@@ -339,8 +337,6 @@ public:
 	bool _isSkipping = false;
 
 	Macs2::Macs2Engine *_engine;
-
-	void dumpWholeScript();
 
 	// Button 8 skip from handleInput (1008:e8bf)
 	bool skipToEndOfSkippableSection();

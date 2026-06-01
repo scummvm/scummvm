@@ -66,11 +66,6 @@ Common::String ScriptExecutor::identifyHelperOpcode(uint8 opcode, uint16 value) 
 
 inline void ScriptExecutor::scriptSkipBlock() {
 	_lastOpcodeTriggeredSkip = true;
-	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Entering A3D2");
-	} else {
-		debug("-- Skipping using A3D2");
-	}
 
 	_isSkipping = true;
 	if (_expectedEndLocation != _stream->pos()) {
@@ -82,7 +77,6 @@ inline void ScriptExecutor::scriptSkipBlock() {
 	while ((skipDepth != 0) && (_stream->pos() < _stream->size())) {
 		const byte opcode = readByte();
 		if (_stream->pos() >= _stream->size()) {
-			debugC(DEBUG_SV, "- A3D2 hit end of stream after opcode %.2x [%d]", opcode, skipDepth);
 			break;
 		}
 		const byte length = readByte();
@@ -100,36 +94,19 @@ inline void ScriptExecutor::scriptSkipBlock() {
 
 		const int64 remainingBytes = _stream->size() - _stream->pos();
 		if (length > remainingBytes) {
-			debugC(DEBUG_SV, "- A3D2 clamping truncated block: opcode %.2x length %u remaining %lld [%d]",
-				   opcode, length, (long long)remainingBytes, skipDepth);
 			_stream->seek(_stream->size(), SEEK_SET);
 			break;
 		}
 
 		_stream->seek(length, SEEK_CUR);
-		debugC(DEBUG_SV, "- A3D2 skipping %u bytes for opcode %.2x [%d]", length, opcode, skipDepth);
-	}
-
-	if (skipDepth != 0) {
-		debugC(DEBUG_SV, "- A3D2 left skip block early at %lld/%lld [%d]",
-			   (long long)_stream->pos(), (long long)_stream->size(), skipDepth);
 	}
 
 	// Fix up the expected location after skipping
 	_expectedEndLocation = _stream->pos();
-	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Leaving A3D2");
-	}
 	_isSkipping = false;
 }
 
 void ScriptExecutor::scriptSkipAlternate() {
-	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Entering A37A");
-	} else {
-		debug("-- Skipping using A37A");
-	}
-
 	_isSkipping = true;
 	if (_expectedEndLocation != _stream->pos()) {
 		warning("Macs2::ScriptExecutor::scriptSkipAlternate resyncing stream from %u to %u",
@@ -140,7 +117,6 @@ void ScriptExecutor::scriptSkipAlternate() {
 	while ((skipDepth != 0) && (_stream->pos() < _stream->size())) {
 		const byte opcode = readByte();
 		if (_stream->pos() >= _stream->size()) {
-			debugC(DEBUG_SV, "- A37A hit end of stream after opcode %.2x [%d]", opcode, skipDepth);
 			break;
 		}
 		const byte length = readByte();
@@ -155,26 +131,15 @@ void ScriptExecutor::scriptSkipAlternate() {
 
 		const int64 remainingBytes = _stream->size() - _stream->pos();
 		if (length > remainingBytes) {
-			debugC(DEBUG_SV, "- A37A clamping truncated block: opcode %.2x length %u remaining %lld [%d]",
-				   opcode, length, (long long)remainingBytes, skipDepth);
 			_stream->seek(_stream->size(), SEEK_SET);
 			break;
 		}
 
 		_stream->seek(length, SEEK_CUR);
-		debugC(DEBUG_SV, "- A37A skipping %u bytes for opcode %.2x [%d]", length, opcode, skipDepth);
-	}
-
-	if (skipDepth != 0) {
-		debugC(DEBUG_SV, "- A37A left skip block early at %lld/%lld [%d]",
-			   (long long)_stream->pos(), (long long)_stream->size(), skipDepth);
 	}
 
 	// Fix up the expected location after skipping
 	_expectedEndLocation = _stream->pos();
-	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Leaving A37A");
-	}
 	_isSkipping = false;
 }
 
@@ -407,7 +372,7 @@ uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	return result;
 }
 
-bool ScriptExecutor::IsPathWalkable(const Common::Point &from, const Common::Point &to) {
+bool ScriptExecutor::isPathWalkable(const Common::Point &from, const Common::Point &to) {
 	// Exact reimplementation of isPathWalkable (1008:1196).
 	// Traces from 'to' toward 'from'. Checks walkability only on major-axis steps.
 	int16 x1 = from.x, y1 = from.y, x2 = to.x, y2 = to.y;
@@ -516,10 +481,10 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 
 	Common::StringArray strings;
 	if (_executingScriptObjectID == 0) {
-		strings = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, bp2, bp4);
+		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, bp2, bp4);
 	} else {
 		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = g_engine->DecodeStrings(s, bp2, bp4);
+		strings = g_engine->decodeStrings(s, bp2, bp4);
 	}
 
 	if (alignRight) {
@@ -531,7 +496,7 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 	currentView->setStringBoxAt(strings, Common::Point(x, y));
 }
 
-void ScriptExecutor::BeginBuffering() {
+void ScriptExecutor::beginBuffering() {
 	_lastOpcodeTriggeredSkip = false;
 	_debugBuffer.clear();
 }
@@ -558,116 +523,6 @@ Common::Point ScriptExecutor::getCharPosition() {
 	if (!actor)
 		actor = GameObjects::getProtagonistObject();
 	return actor ? actor->Position : Common::Point();
-}
-
-void ScriptExecutor::dumpWholeScript() {
-	// TODO: Probably should not hard code this, with this in place, the
-	// variable for saving the old position is superfluous
-	setCurrentSceneScriptAt(0);
-	_streamDumpPosition = 0;
-	_expectedEndLocation = _stream->pos();
-
-	// Disable buffering
-	_lastOpcodeTriggeredSkip = false;
-
-	// Keep track of the depth of the skipping
-	uint16 skipValue = 0;
-
-	// The loop comprises the first labels in the file
-	// l0037_DB73:
-	for (;;) {
-		// TODO: Just for breaking out at the moment when end conditions fail to work
-		if (_stream->eos()) {
-			break;
-		}
-		// TODO: Probably only one of these is necessary
-		if (_stream->size() == 0 || _stream->pos() >= _stream->size() - 1) {
-			break;
-		}
-
-		// Make sure we have read all the bytes we should have read
-		// TODO: Think about if we should also check this on exiting the function,
-		// maybe we miss some cases like this
-		if (_stream->pos() != _expectedEndLocation) {
-			warning("Macs2::ScriptExecutor::DumpWholeScript resyncing stream from %u to %u",
-					(uint32)_expectedEndLocation, (uint32)_stream->pos());
-			_expectedEndLocation = _stream->pos();
-		}
-
-		// Read an opcode and length
-		byte opcode1 = readByte(); // [bp - 1h]
-		// TODO: For the sake of easier reading the logs, jumping out if we
-		// read a 0 opcode.
-		if (opcode1 == 0x00) {
-			continue;
-		}
-		Common::String opcodeInfo;
-		if (opcode1 != 0x5) {
-			opcodeInfo = identifyScriptOpcode(opcode1, 0);
-		}
-		debug("[%u] - First block opcode: %.2x %s", skipValue, opcode1, opcodeInfo.c_str());
-		byte length = readByte(); // [bp-2h]
-		_expectedEndLocation += length + 2;
-
-		if (opcode1 == 0x04) {
-			uint16 result1;
-			uint16 result2;
-			scriptReadValuePair(result1, result2);
-		} else if (opcode1 == 0x5) {
-			// l0037_DC66:
-			// [bp-3h]
-			uint8 opcode2 = readByte();
-			opcodeInfo = identifyScriptOpcode(opcode1, opcode2);
-			debug("[%u] - Second block opcode: %.2x %s", skipValue, opcode2, opcodeInfo.c_str());
-			// [bp-7h]
-			uint16 v1;
-			// [bp-5h]
-			uint16 v2;
-			scriptReadValuePair(v1, v2);
-			// [bp-0Bh]
-			uint16 v3;
-			// [bp-9h]
-			uint16 v4;
-			scriptReadValuePair(v3, v4);
-		}
-
-		if (opcode1 >= 3) {
-			if (opcode1 <= 6) {
-				skipValue++;
-			}
-		}
-		if (opcode1 == 8) {
-			if (skipValue == 1) {
-				skipValue--;
-			}
-		}
-		if (opcode1 == 7) {
-			skipValue--;
-		}
-
-		if (opcode1 == 0x0d) {
-			// Show a dialogue option
-			uint32 objectID = scriptReadValue32() - 0x400;
-			debug("Object ID of speaker: %.4x.\n", objectID);
-			scriptReadValue16(); // x
-			scriptReadValue16(); // y
-			scriptReadValue16(); // side
-			uint32 offset = readUint16();
-			uint32 numLines = readUint16();
-
-			// TODO: We are assuming that we are dumping the scene script, if not,
-			// we would have to check for the executing object as well
-			Common::Array<Common::String> strings;
-			strings = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
-
-			for (Common::String &currentLine : strings) {
-				debug("String: %s", currentLine.c_str());
-			}
-		}
-		_stream->seek(_expectedEndLocation);
-		endBuffering(false);
-	}
-	_stream->seek(_streamDumpPosition, SEEK_SET);
 }
 
 bool ScriptExecutor::isRelevantObject(const GameObject *obj) const {
@@ -1127,10 +982,10 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0D() {
 
 	Common::Array<Common::String> strings;
 	if (_executingScriptObjectID == 0) {
-		strings = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
+		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
 	} else {
 		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = g_engine->DecodeStrings(s, offset, numLines);
+		strings = g_engine->decodeStrings(s, offset, numLines);
 	}
 
 	debugC(kDebugScript,
@@ -1269,10 +1124,10 @@ void Script::ScriptExecutor::scriptOpcode0x16() {
 	uint16 numLines = readUint16();
 	Common::StringArray lines;
 	if (_executingScriptObjectID == 0) {
-		lines = _engine->DecodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
+		lines = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
 	} else {
 		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		lines = _engine->DecodeStrings(stringsStream, offset, numLines);
+		lines = _engine->decodeStrings(stringsStream, offset, numLines);
 	}
 	debugC(kDebugScript,
 		   "Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
@@ -1448,7 +1303,7 @@ void Script::ScriptExecutor::scriptOpcode0x1F() {
 	if (object == nullptr) {
 		warning("Ignoring pathfinding test for invalid object %u", objectID);
 	} else {
-		_pathWalkableResult = IsPathWalkable(object->Position, Common::Point(x, y));
+		_pathWalkableResult = isPathWalkable(object->Position, Common::Point(x, y));
 	}
 }
 
@@ -1549,7 +1404,7 @@ bool Script::ScriptExecutor::scriptOpcode0x23() {
 	}
 
 	const Common::Point target(x, y);
-	if (!IsPathWalkable(object->Position, target) && _engine->getWalkabilityAt(target) < 0xC8) {
+	if (!isPathWalkable(object->Position, target) && _engine->getWalkabilityAt(target) < 0xC8) {
 		warning("Ignoring move-to-position for blocked target (%u,%u) on object %d", x, y, objectID);
 		return false;
 	}
@@ -1928,10 +1783,10 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptOpcode0x
 
 	Common::StringArray strings;
 	if (_executingScriptObjectID == 0) {
-		strings = _engine->DecodeStrings(Scenes::instance()._currentSceneStrings, stringOffset, 1);
+		strings = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, stringOffset, 1);
 	} else {
 		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = _engine->DecodeStrings(stringsStream, stringOffset, 1);
+		strings = _engine->decodeStrings(stringsStream, stringOffset, 1);
 	}
 	if (strings.empty()) {
 		warning("Ignoring empty overlay text entry at offset %u", stringOffset);
