@@ -1904,6 +1904,16 @@ void Script::ScriptExecutor::scriptOpcode0x36() {
 	}
 }
 
+void Script::ScriptExecutor::scriptOpcode0x37() {
+	// scriptResetToSceneScript (1008:ad3e). Resets script execution
+	// context back to the current scene script at position 0.
+	_executingScriptObjectID = 0;
+	executingObjectIndex = Scenes::instance().CurrentSceneIndex;
+	scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
+	activeDialogueSpeakerObjectID = 0;
+	SetCurrentSceneScriptAt(0);
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2173,13 +2183,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x36) {
 			scriptOpcode0x36();
 		} else if (opcode1 == 0x37) {
-			// scriptResetToSceneScript (1008:ad3e). Resets script execution
-			// context back to the current scene script at position 0.
-			_executingScriptObjectID = 0;
-			executingObjectIndex = Scenes::instance().CurrentSceneIndex;
-			scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
-			activeDialogueSpeakerObjectID = 0;
-			SetCurrentSceneScriptAt(0);
+			scriptOpcode0x37();
 		} else if (opcode1 == 0x38) {
 			// scriptLoadOverlayFont (1008:d749). Loads a font resource for
 			// overlay text into the overlay font buffer.
