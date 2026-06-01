@@ -58,8 +58,10 @@ static const char *getOpcodeName(uint8 opcode) {
 		return "endIf";
 	case 0x08:
 		return "else";
+	case 0x09:
+		return "nop09";
 	case 0x0A:
-		return "printString";
+		return "printStringLeft";
 	case 0x0B:
 		return "moveObject";
 	case 0x0C:
@@ -67,17 +69,17 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x0D:
 		return "showDialogue";
 	case 0x0E:
-		return "changeAnim";
+		return "changeAnimation";
 	case 0x0F:
 		return "frameWait";
 	case 0x10:
-		return "walkTo";
+		return "walkToPosition";
 	case 0x11:
 		return "waitForWalk";
 	case 0x12:
-		return "setPathOverride";
+		return "setPathfinding";
 	case 0x13:
-		return "loadAnim";
+		return "skipUntil14";
 	case 0x14:
 		return "skipWord";
 	case 0x15:
@@ -93,93 +95,93 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x1A:
 		return "setPickupFrames";
 	case 0x1B:
-		return "setAnimSpeed";
+		return "setupObject";
 	case 0x1C:
 		return "setSkippable";
 	case 0x1D:
 		return "clearSkippable";
 	case 0x1E:
-		return "loadAnimBlob";
+		return "playAnimation";
 	case 0x1F:
-		return "setPosition";
+		return "testPathfinding";
 	case 0x20:
-		return "setVerticalOffset";
+		return "setYOffset";
 	case 0x21:
 		return "setMotion";
 	case 0x22:
-		return "setAnimIndex";
+		return "setOrientation";
 	case 0x23:
 		return "moveToPosition";
 	case 0x24:
-		return "add";
+		return "addValues";
 	case 0x25:
-		return "subtract";
+		return "subValues";
 	case 0x26:
 		return "loadSpecialAnim";
 	case 0x27:
-		return "setMaxAnimFrame";
+		return "setDirection";
 	case 0x28:
-		return "nop28";
+		return "stopAnimation";
 	case 0x29:
-		return "loadSong";
+		return "openInventory";
 	case 0x2A:
-		return "loadAnimFromScene";
+		return "loadObjectAnim";
 	case 0x2B:
-		return "setShading";
+		return "checkObjectData";
 	case 0x2C:
-		return "setParent";
+		return "checkInventory";
 	case 0x2D:
-		return "setScaling";
+		return "setObjectFlag";
 	case 0x2E:
-		return "checkAnimRange";
+		return "testSceneAnimFrame";
 	case 0x2F:
-		return "checkBlobRange";
+		return "testObjectAnimFrame";
 	case 0x30:
-		return "nop30";
+		return "printStringRight";
 	case 0x31:
 		return "setVolume";
 	case 0x32:
-		return "setClickable";
+		return "setObjectClickable";
 	case 0x33:
-		return "setVisible";
+		return "setObjectVisible";
 	case 0x34:
-		return "setHotspotRemap";
+		return "setHotspotOverride";
 	case 0x35:
-		return "setBoundsAttach";
+		return "setObjectBounds";
 	case 0x36:
 		return "dismissAllPanels";
 	case 0x37:
-		return "resetScript";
+		return "resetToSceneScript";
 	case 0x38:
 		return "loadOverlayFont";
 	case 0x39:
 		return "endOverlayText";
 	case 0x3A:
-		return "addOverlayEntry";
+		return "addOverlayTextEntry";
 	case 0x3B:
-		return "clearOverlayEntries";
+		return "clearOverlayText";
 	case 0x3C:
 		return "fadeToBlack";
 	case 0x3D:
 		return "fadeFromBlack";
 	case 0x3E:
-		return "loadSoundRes";
+		return "loadPcmSound";
 	case 0x3F:
-		return "clearSound";
+		return "freePcmSound";
 	case 0x40:
-		return "playSound";
+		return "playPcmSound";
 	case 0x41:
 		return "waitForSound";
 	case 0x42:
-		return "stopSound";
+		return "stopPcmSound";
 	case 0x43:
 		return "loadMusicSlot";
 	case 0x44:
-		return "playMusic";
+		return "playMusicSlot";
 	case 0x45:
-		return "stopMusic";
+		return "stopMusicSlot";
 	case 0x46:
-		return "freeMusic";
+		return "freeMusicSlot";
 	case 0x47:
 		return "waitForMusic";
 	case 0x48:
@@ -187,13 +189,13 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x49:
 		return "getObjectY";
 	case 0x4A:
-		return "getObjectField";
+		return "getObjectField8";
 	case 0x4B:
-		return "getObjectOrient";
+		return "getObjectOrientation";
 	case 0x4C:
-		return "clearActorItems";
+		return "clearActorInventory";
 	case 0x4D:
-		return "setAreaRemap";
+		return "setPathfindingRemap";
 	case 0x4E:
 		return "waitForAdlib";
 	default:
