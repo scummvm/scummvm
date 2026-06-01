@@ -276,7 +276,7 @@ public:
 
 	byte *_shadingTable;
 
-	// Map scene offsets from resource file (scene+0x5DDB, 256 entries × 4 bytes).
+	// Map scene offsets from resource file (scene+0x5DDB, 256 entries x 4 bytes).
 	// Each entry is a file offset to a scene preview image for map mode.
 	uint32 _mapSceneOffsets[256] = {0};
 
@@ -300,8 +300,8 @@ public:
 	Common::MemoryReadStream *_fileStream;
 
 	// Common::MemoryReadStream* _stringsStream;
-	uint16 numBytesStrings;
-	byte *stringsData;
+	uint16 _numBytesStrings;
+	byte *_stringsData;
 
 	// CursorMode _cursorMode = CursorMode::Touch;
 
@@ -311,29 +311,18 @@ public:
 
 	void dumpStream(Common::MemoryReadStream *s, uint16 len);
 
-	// Offset 5023h of current scene data
-	// TODO: Consider moving somewhere else
-	Common::Array<uint8> array5023;
+	Common::Array<uint16> _hotspotColorTable;
+	Common::Array<uint16> _pathfindingValueRemaps;
 
-	Common::Array<uint16> array50D5;
-	Common::Array<uint16> pathfindingValueRemaps;
+	uint16 _numPathfindingPoints;
+	uint16 _walkDepthThresholdY;
+	uint16 _walkDepthScaleFactor;
+	uint16 _walkBaseSpeedPct;
 
-	// [51F7h]
-	uint16 numPathfindingPoints;
+	uint16 _bgAnimMode;
+	uint16 _bgAnimParam;
 
-	// [51FDh]
-	uint16 word51FD;
-
-	// [51FFh]
-	uint16 word51FF;
-
-	// [5201h]
-	uint16 word5201;
-
-	uint16 word5203;
-	uint16 word5205;
-
-	Common::Array<uint32> array520D;
+	Common::Array<uint32> _sceneResourceOffsets;
 
 	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool decodeBlob = false);
 
@@ -348,7 +337,7 @@ public:
 	bool isCurrentSoundPlaying() const;
 
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
-	uint16 word50D3;
+	uint16 _numHotspots;
 
 	uint16 getHotspotAtPoint(const Common::Point &p);
 
@@ -360,10 +349,10 @@ public:
 		_scriptExecutor->run(firstRun);
 	}
 
-	bool runScheduled = false;
+	bool _runScheduled = false;
 	// TODO: Feels like this should be more elegantly solved, also check how the game does this
 	// Is required for example after a scene change
-	bool scheduledRunIsInitScene = false;
+	bool _scheduledRunIsInitScene = false;
 
 	// Game speed mode from original binary (g_wGameSpeedMode at 1020:0214).
 	// Cycled by Ctrl+T: 0=normal, 1=fast (no frame wait), 2=slow (wait for tick>=0x12).
