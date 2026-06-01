@@ -74,7 +74,7 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 		_rebelOp6Initialized = false;
 	}
 
-	// For Level 2 gameplay (Handler 8 only), restore the background BEFORE FOBJ decoding.
+	// For Level 2 handler 8 gameplay, restore the background BEFORE FOBJ decoding.
 	// The tiny FOBJ sprites (7x10, 9x38 pixels) only draw new sprite positions but don't
 	// clear old ones. By restoring the full background each frame, we ensure old sprite
 	// positions are erased before new ones are drawn.
@@ -2267,10 +2267,9 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 				_level2BackgroundLoaded = true;
 				foundBackground = true;
 
-				// Copy to render bitmap immediately if provided.
-				// Only copy when render buffer pitch is 320 (standard screen size).
-				// For oversized buffers, the FOBJ/FETCH system handles background rendering.
-				if (renderBitmap) {
+				// Handler 25 uses this buffer as a lookup mask; the retail code does not
+				// copy it to the live screen. Handler 8 still uses it as a restore source.
+				if (renderBitmap && _rebelHandler != 25) {
 					int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
 					if (bufferPitch == 320) {
 						for (int by = 0; by < 200; by++) {

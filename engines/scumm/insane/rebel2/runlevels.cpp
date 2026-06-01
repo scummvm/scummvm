@@ -235,6 +235,9 @@ void InsaneRebel2::resetLevelAttemptState(int initialPhase) {
 	_playerShield = 255;
 	_playerDamage = 0;
 	_currentPhase = initialPhase;
+	resetDamageFlash();
+	_damageHighFlashCounter = 0;
+	_damageShakeCounter = 0;
 
 	_rebelAutopilot = 0;
 	_rebelDamageLevel = 0;
@@ -252,6 +255,28 @@ void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
 	_rebelKillCounter = 0;
 	_rebelHitCounter = 0;
 	resetLevelWaveState();
+
+	delete _grd001Sprite;
+	_grd001Sprite = nullptr;
+	delete _grd002Sprite;
+	_grd002Sprite = nullptr;
+	_grdShotOriginTableLoaded = false;
+
+	static const int handler25FrameSlots[] = { 4, 6, 7, 10, 12, 13 };
+	for (uint i = 0; i < ARRAYSIZE(handler25FrameSlots); ++i) {
+		EmbeddedSanFrame &frame = _rebelEmbeddedHud[handler25FrameSlots[i]];
+		free(frame.pixels);
+		frame.pixels = nullptr;
+		frame.width = 0;
+		frame.height = 0;
+		frame.renderX = 0;
+		frame.renderY = 0;
+		frame.valid = false;
+	}
+
+	free(_level2Background);
+	_level2Background = nullptr;
+	_level2BackgroundLoaded = false;
 
 	if (clearEnemies)
 		_enemies.clear();

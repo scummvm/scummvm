@@ -387,6 +387,56 @@ void SmushPlayerRebel2::adjustGamePalette() {
 	memset(_deltaPal, 0, sizeof(_deltaPal));
 }
 
+bool SmushPlayerRebel2::shouldLoadAnimHeaderPalette() const {
+	// Original RA2 AHDR handler skips the embedded palette when video flag 0x400 is set.
+	return (_curVideoFlags & 0x400) == 0;
+}
+
+void SmushPlayerRebel2::ra2HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 4) {
+		b.skip(subSize);
+		return;
+	}
+
+	b.readUint16LE();
+	const uint16 xpalCommand = b.readUint16LE();
+
+	if (xpalCommand != 0 && xpalCommand != 512) {
+		if (subSize > 4)
+			b.skip(subSize - 4);
+
+		for (int i = 0; i < 768; ++i) {
+			_shiftedDeltaPal[i] += _deltaPal[i];
+			_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
+		}
+		setDirtyColors(0, 255);
+		return;
+	}
+
+	const int32 deltaBytes = 0x300 * 2;
+	if (subSize < 4 + deltaBytes) {
+		b.skip(subSize - 4);
+		return;
+	}
+
+	int16 deltaPal[0x300];
+	for (int i = 0; i < 768; ++i)
+		deltaPal[i] = b.readSint16LE();
+
+	if (xpalCommand == 512 && subSize >= 4 + deltaBytes + 0x300) {
+		b.read(_pal, 0x300);
+	} else if (subSize > 4 + deltaBytes) {
+		b.skip(subSize - 4 - deltaBytes);
+	}
+
+	for (int i = 0; i < 768; ++i) {
+		_shiftedDeltaPal[i] = _pal[i] << 7;
+		_deltaPal[i] = deltaPal[i];
+	}
+
+	setDirtyColors(0, 255);
+}
+
 /**
  * RA2-specific handleAnimHeader fixup: when AHDR reports 0x0 dimensions,
  * use screen dimensions instead.
@@ -510,18 +560,31 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
 
 /**
  * RA2-specific buffer selection for non-standard FOBJ dimensions.
- * Returns the destination buffer to use and updates _dst, _width, _height.
+ * Returns true when the dimensions are valid and updates _dst, _width, _height as needed.
  */
-void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
+bool SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 	// Rebel2 uses a special buffer for all non-matching frames.
 	// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
 	// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null)
-	int bufSize = width * height;
-	if (bufSize > _vm->_screenWidth * _vm->_screenHeight) {
+	const int64 bufSize64 = (int64)width * height;
+	if (width <= 0 || height <= 0 || bufSize64 > INT_MAX) {
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Skipping invalid FOBJ dimensions %dx%d", width, height);
+		return false;
+	}
+
+	const int bufSize = (int)bufSize64;
+	const int screenSize = _vm->_screenWidth * _vm->_screenHeight;
+	if (bufSize > screenSize) {
 		// Frame is larger than screen - need special buffer
 		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+			byte *newSpecialBuffer = (byte *)malloc(bufSize);
+			if (newSpecialBuffer == nullptr) {
+				warning("SmushPlayerRebel2::ra2SelectFrameBuffer: Failed to allocate %d bytes for FOBJ %dx%d",
+					bufSize, width, height);
+				return false;
+			}
 			free(_specialBuffer);
-			_specialBuffer = (byte *)malloc(bufSize);
+			_specialBuffer = newSpecialBuffer;
 			_specialBufferSize = bufSize;
 			_width = width;
 			_height = height;
@@ -531,7 +594,7 @@ void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 		}
 	}
 
-	if (bufSize > _vm->_screenWidth * _vm->_screenHeight &&
+	if (bufSize > screenSize &&
 	    _specialBuffer != nullptr && _specialBufferSize >= bufSize) {
 		_dst = _specialBuffer;
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using _specialBuffer for oversized FOBJ %dx%d", width, height);
@@ -548,6 +611,8 @@ void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 				width, height);
 		}
 	}
+
+	return true;
 }
 
 /**
@@ -656,8 +721,7 @@ void SmushPlayerRebel2::handleGameParseNextFrame() {
 
 bool SmushPlayerRebel2::handleGameFrameBufferSelect(int codec, int width, int height) {
 	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)) {
-		ra2SelectFrameBuffer(width, height);
-		return true;
+		return ra2SelectFrameBuffer(width, height);
 	}
 	return false;
 }
@@ -719,6 +783,12 @@ bool SmushPlayerRebel2::handleGameSkipChunk(uint32 subType, int32 subSize, Commo
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameSkipChunk: SKIP consumed chunk %s frame=%d", tag2str(subType), _frame);
 		return true;
 	}
+
+	if (subType == MKTAG('X','P','A','L')) {
+		ra2HandleDeltaPalette(subSize, b);
+		return true;
+	}
+
 	return false;
 }
 

@@ -2339,11 +2339,9 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0.
 	processMouse();
 
-	// NOTE: Level 2 background is drawn ONCE during IACT opcode 8 par4=5 processing
-	// (in procIACT when the background ANIM is first loaded). The 0x08 video flag
-	// (preserve background) prevents the frame buffer from being cleared, so the
-	// background persists. FOBJ sprites (enemies) are then decoded on top by SMUSH.
-	// We do NOT redraw the background here as that would overwrite FOBJ content.
+	// NOTE: Level 2 handler 8's background is restored in procPreRendering before
+	// SMUSH decodes the frame's FOBJ sprites. Handler 25 draws its corridor overlay
+	// from IACT opcode 6 instead. Redrawing either here would overwrite enemies.
 
 	// --- HUD Drawing Order (from FUN_004089ab / FUN_40D836 assembly analysis) ---
 	// Original assembly render order for handler 0x26:

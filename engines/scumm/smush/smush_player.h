@@ -311,6 +311,7 @@ protected:
 	virtual bool shouldAlwaysShowSubtitles() const { return false; }
 	virtual SmushFont *getGameFont(int font) { return nullptr; }
 	virtual void adjustGamePalette() {}
+	virtual bool shouldLoadAnimHeaderPalette() const { return true; }
 	virtual bool handleGameAnimHeader(byte *headerContent) { return false; }
 	virtual bool handleGameSetupStrings() { return false; }
 	virtual void handleGameParseNextFrame() {}

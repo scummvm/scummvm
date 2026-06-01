@@ -1155,7 +1155,7 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			}
 		}
 
-		if (!_skipPalette) {
+		if (!_skipPalette && shouldLoadAnimHeaderPalette()) {
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
 			adjustGamePalette();

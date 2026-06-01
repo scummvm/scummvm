@@ -42,6 +42,7 @@ protected:
 	bool shouldAlwaysShowSubtitles() const override { return true; }
 	SmushFont *getGameFont(int font) override;
 	void adjustGamePalette() override;
+	bool shouldLoadAnimHeaderPalette() const override;
 	bool handleGameAnimHeader(byte *headerContent) override;
 	bool handleGameSetupStrings() override;
 	void handleGameParseNextFrame() override;
@@ -65,9 +66,10 @@ private:
 	void ra2HandleTextResource(const char *str, int fontId, int color,
 							   int pos_x, int pos_y, int left, int top,
 							   int width, int height, TextStyleFlags flg);
-	void ra2SelectFrameBuffer(int width, int height);
+	bool ra2SelectFrameBuffer(int width, int height);
 	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 						int width, int height, int pitch, int dataSize);
+	void ra2HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);
 	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 						  int left, int top, int width, int height);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
