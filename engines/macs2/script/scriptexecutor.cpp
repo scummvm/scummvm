@@ -1801,6 +1801,16 @@ void Script::ScriptExecutor::scriptOpcode0x30() {
 	EndBuffering(lastOpcodeTriggeredSkip);
 }
 
+void Script::ScriptExecutor::scriptOpcode0x31() {
+	// scriptSetVolume (1008:ce0b): clamp the value to 0..100 (signed), as the original does.
+	int16 volume = (int16)scriptReadValue16();
+	if (volume < 0)
+		volume = 0;
+	if (volume > 100)
+		volume = 100;
+	g_engine->getAdlib()->SetVolume((uint16)volume);
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2050,13 +2060,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			scriptOpcode0x30();
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
-			// scriptSetVolume (1008:ce0b): clamp the value to 0..100 (signed), as the original does.
-			int16 volume = (int16)scriptReadValue16();
-			if (volume < 0)
-				volume = 0;
-			if (volume > 100)
-				volume = 100;
-			g_engine->getAdlib()->SetVolume((uint16)volume);
+			scriptOpcode0x31();
 		} else if (opcode1 == 0x32) {
 			uint16 objectID = scriptReadValue16() - 0x0400;
 			const uint16 clickable = scriptReadValue16();
