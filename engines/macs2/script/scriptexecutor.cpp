@@ -1690,6 +1690,15 @@ bool Script::ScriptExecutor::scriptOpcode0x29() {
 	return true;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x2A() {
+	uint32 objectID = scriptReadValue32() - 0x400;
+	uint16 slotID = scriptReadValue16();
+	const bool decodeBlob = scriptReadValue16() != 0;
+	uint8 arrayIndex = ReadByte();
+
+	g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -1916,12 +1925,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// Opcode 0x14: consume/skip a word value (confirmed: just calls scriptReadWord in disassembly)
 			ReadWord();
 		} else if (opcode1 == 0x2A) {
-			uint32 objectID = scriptReadValue32() - 0x400;
-			uint16 slotID = scriptReadValue16();
-			const bool decodeBlob = scriptReadValue16() != 0;
-			uint8 arrayIndex = ReadByte();
-
-			g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
+			scriptOpcode0x2A();
 		} else if (opcode1 == 0x2B) {
 			const uint16 objectID = scriptReadValue16() - 0x400;
 			GameObject *object = GameObjects::GetObjectByIndex(objectID);
