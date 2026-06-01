@@ -262,6 +262,18 @@ static void drawRebel1MenuFrame(byte *dst, int pitch, int width, int height, int
 	}
 }
 
+int InsaneRebel1::getMainMenuItemCount() const {
+	return _unlockAllLevels ? kRA1MainMenuItemCount : kRA1MainMenuItemCount - 1;
+}
+
+int InsaneRebel1::getMainMenuResultForSelection(int selection) const {
+	if (selection < 0 || selection >= getMainMenuItemCount())
+		return kRA1MainMenuItemCount;
+	if (_unlockAllLevels || selection < 3)
+		return selection + 1;
+	return selection + 2;
+}
+
 void InsaneRebel1::beginTextEntry(bool passcodeMode) {
 	_textEntryActive = true;
 	_textEntryPasscodeMode = passcodeMode;
@@ -456,15 +468,17 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 		}
 	}
 
+	const int mainMenuItemCount = getMainMenuItemCount();
+
 	switch (command) {
 	case kRA1MenuCommandUp:
-		_menuSelection = (_menuSelection + kRA1MainMenuItemCount - 1) % kRA1MainMenuItemCount;
+		_menuSelection = (_menuSelection + mainMenuItemCount - 1) % mainMenuItemCount;
 		return true;
 	case kRA1MenuCommandDown:
-		_menuSelection = (_menuSelection + 1) % kRA1MainMenuItemCount;
+		_menuSelection = (_menuSelection + 1) % mainMenuItemCount;
 		return true;
 	case kRA1MenuCommandCancel:
-		_menuSelection = kRA1MainMenuItemCount - 1;
+		_menuSelection = mainMenuItemCount - 1;
 		// fall through
 	case kRA1MenuCommandAccept:
 		_menuConfirmed = true;
@@ -475,11 +489,15 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 	case kRA1MenuCommandSelect3:
 	case kRA1MenuCommandSelect4:
 	case kRA1MenuCommandSelect5:
-	case kRA1MenuCommandSelect6:
-		_menuSelection = command - kRA1MenuCommandSelect1;
+	case kRA1MenuCommandSelect6: {
+		const int selection = command - kRA1MenuCommandSelect1;
+		if (selection >= mainMenuItemCount)
+			return false;
+		_menuSelection = selection;
 		_menuConfirmed = true;
 		_vm->_smushVideoShouldFinish = true;
 		return true;
+	}
 	default:
 		return false;
 	}
@@ -563,7 +581,8 @@ bool InsaneRebel1::handleMenuMouse(const Common::Event &event) {
 		}
 	} else {
 		selection = &_menuSelection;
-		for (int i = 0; i < kRA1MainMenuItemCount; i++) {
+		const int mainMenuItemCount = getMainMenuItemCount();
+		for (int i = 0; i < mainMenuItemCount; i++) {
 			const int frameY = (i + 1) * kRA1MenuRowH + kRA1MainMenuFrameYBase;
 			if (mx >= kRA1MenuFrameX && mx < kRA1MenuFrameX + kRA1MenuFrameW &&
 				my >= frameY && my < frameY + kRA1MenuFrameH) {
@@ -962,7 +981,7 @@ void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int
 
 void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int height) {
 	// --- Main menu ---
-	const char *kMenuItems[kRA1MainMenuItemCount] = {
+	const char *const kMenuItems[kRA1MainMenuItemCount] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
 		"ENTER PASSCODE",
@@ -970,6 +989,15 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 		"CONTINUE DEMO",
 		"EXIT TO DOS"
 	};
+	const char *const kMenuItemsLocked[kRA1MainMenuItemCount - 1] = {
+		"START NEW GAME",
+		"GAME OPTIONS",
+		"ENTER PASSCODE",
+		"CONTINUE DEMO",
+		"EXIT TO DOS"
+	};
+	const char *const *menuItems = _unlockAllLevels ? kMenuItems : kMenuItemsLocked;
+	const int mainMenuItemCount = getMainMenuItemCount();
 
 	// Center title
 	const int titleW = getFontBankStringWidth("MAIN MENU");
@@ -977,12 +1005,12 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 	drawMenuTitleText(dst, pitch, width, height, titleX, 30, "MAIN MENU");
 
 	// Draw menu items centered horizontally
-	for (int i = 0; i < kRA1MainMenuItemCount; i++) {
-		const int textW = getMenuTalkTextWidth(kMenuItems[i]);
+	for (int i = 0; i < mainMenuItemCount; i++) {
+		const int textW = getMenuTalkTextWidth(menuItems[i]);
 		const int textX = getRebel1MenuCenteredX(textW);
 		const int y = 0x3c + i * kRA1MenuRowH;
 
-		drawMenuTalkText(dst, pitch, width, height, textX, y, kMenuItems[i]);
+		drawMenuTalkText(dst, pitch, width, height, textX, y, menuItems[i]);
 
 		if (i == _menuSelection)
 			drawRebel1MenuFrame(dst, pitch, width, height,
@@ -1086,7 +1114,7 @@ int InsaneRebel1::runMainMenu() {
 			return kRA1MainMenuItemCount;
 
 		if (_menuConfirmed)
-			return _menuSelection + 1;
+			return getMainMenuResultForSelection(_menuSelection);
 	}
 
 	return kRA1MainMenuItemCount;
@@ -1197,6 +1225,9 @@ void InsaneRebel1::runOptionsMenu() {
 }
 
 int InsaneRebel1::runLevelSelectMenu() {
+	if (!_unlockAllLevels)
+		return 0;
+
 	_levelSelectSel = CLIP(_startLevel - 1, 0, kRA1NumLevels - 1);
 	_levelSelectActive = true;
 

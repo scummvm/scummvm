@@ -482,6 +482,7 @@ private:
 	byte _hudRenderFlag;         // 0x7600: 0xFF when HUD should render (set by combat mode handlers)
 	byte _hudDirtyFlag;          // 0x7601: 0xFF after HUD redraw (set by renderHUD)
 	int16 _maxChapterUnlocked;   // 0x7730: highest unlocked passcode slot (0=none)
+	bool _unlockAllLevels;       // ScummVM option: expose level select without passcodes
 
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;
@@ -543,6 +544,8 @@ private:
 	bool handleMenuMouse(const Common::Event &event);
 	bool handleTextEntryAction(ScummAction action);
 	bool handleTextEntryKey(const Common::Event &event);
+	int getMainMenuItemCount() const;
+	int getMainMenuResultForSelection(int selection) const;
 	void playMenuBackground();
 	bool runTextEntryMenuLoop();
 	void beginTextEntry(bool passcodeMode);
@@ -551,7 +554,7 @@ private:
 	const char *getChapterCompletePassword(int passwordIndex) const;
 	bool _menuActive;
 	bool _menuConfirmed;
-	int _menuSelection; // 0..5 maps to return values 1..6
+	int _menuSelection; // Visible main-menu row; mapped to return values by getMainMenuResultForSelection().
 	int _menuFrameCounter;
 
 	// Options submenu state — RunGameOptionsMenu (0x14B42)
