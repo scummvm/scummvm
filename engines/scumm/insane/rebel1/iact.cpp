@@ -1222,6 +1222,7 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_pathBranchEnabled && _gameCounter >= kPathBranchCounter) {
 		if (_shipPosX > kRA1CenterX) {
 			_rightPathSelected = true;
+			preserveInteractiveVideoAudioState();
 			_vm->_smushVideoShouldFinish = true;
 			debugC(DEBUG_INSANE, "RA1: Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		} else {

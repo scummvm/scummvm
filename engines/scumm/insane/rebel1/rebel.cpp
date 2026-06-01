@@ -313,6 +313,10 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_hudDirtyFlag = 0;
 	_maxChapterUnlocked = 0;
 	_interactiveVideoActive = false;
+	_restoreInteractiveVideoAudioState = false;
+	memset(_savedInteractiveVideoTrackState, 0, sizeof(_savedInteractiveVideoTrackState));
+	memset(_savedInteractiveVideoTrackGroupId, 0, sizeof(_savedInteractiveVideoTrackGroupId));
+	_savedInteractiveVideoTrackCount = 0;
 	_gameCounter = 0;
 	_pathBranchEnabled = false;
 	_rightPathSelected = false;

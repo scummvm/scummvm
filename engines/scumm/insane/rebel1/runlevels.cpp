@@ -1552,6 +1552,42 @@ void InsaneRebel1::resetInteractiveVideoAudio() {
 	initAudio(sampleRate);
 }
 
+void InsaneRebel1::preserveInteractiveVideoAudioState() {
+	SmushPlayer *splayer = _vm->_splayer;
+
+	_restoreInteractiveVideoAudioState = false;
+	_savedInteractiveVideoTrackCount = 0;
+	if (!splayer)
+		return;
+
+	_savedInteractiveVideoTrackCount = MIN<int>(splayer->_smushNumTracks, SMUSH_MAX_TRACKS);
+	for (int i = 0; i < _savedInteractiveVideoTrackCount; i++) {
+		_savedInteractiveVideoTrackState[i] = splayer->_smushTracks[i].state;
+		_savedInteractiveVideoTrackGroupId[i] = splayer->_smushTracks[i].groupId;
+	}
+
+	_restoreInteractiveVideoAudioState = true;
+}
+
+void InsaneRebel1::restoreInteractiveVideoAudioState() {
+	if (!_restoreInteractiveVideoAudioState)
+		return;
+
+	_restoreInteractiveVideoAudioState = false;
+	if (_vm->shouldQuit() || _vm->_saveLoadFlag)
+		return;
+
+	SmushPlayer *splayer = _vm->_splayer;
+	if (!splayer)
+		return;
+
+	const int trackCount = MIN<int>(_savedInteractiveVideoTrackCount, splayer->_smushNumTracks);
+	for (int i = 0; i < trackCount; i++) {
+		splayer->_smushTracks[i].state = _savedInteractiveVideoTrackState[i];
+		splayer->_smushTracks[i].groupId = _savedInteractiveVideoTrackGroupId[i];
+	}
+}
+
 void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
 	const bool resumingRoute = startFrame > 0;
@@ -1658,6 +1694,7 @@ void InsaneRebel1::releaseInteractiveVideoInput() {
 
 void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame) {
 	_vm->_splayer->play(filename, 12, videoOffset, videoStartFrame);
+	restoreInteractiveVideoAudioState();
 	_interactiveVideoActive = false;
 }
 
@@ -1669,8 +1706,10 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 
 	int32 videoStartFrame = 0;
 	int32 videoOffset = 0;
+	const bool preserveRuntimeState = (startFrame > 0) || (_currentLevel == 6 && _levelRouteIndex > 0);
 
-	resetInteractiveVideoAudio();
+	if (!preserveRuntimeState)
+		resetInteractiveVideoAudio();
 	setupInteractiveVideoState(startFrame);
 	resolveSeek(filename, startFrame, videoOffset, videoStartFrame);
 	captureInteractiveVideoInput();

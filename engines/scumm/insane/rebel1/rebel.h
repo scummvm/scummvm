@@ -199,6 +199,8 @@ private:
 	// Play interactive gameplay video (with ship physics + HUD)
 	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
 	void resetInteractiveVideoAudio();
+	void preserveInteractiveVideoAudioState();
+	void restoreInteractiveVideoAudioState();
 	void setupInteractiveVideoState(int32 startFrame);
 	void resolveSeek(const char *filename, int32 startFrame, int32 &videoOffset, int32 &videoStartFrame);
 	void captureInteractiveVideoInput();
@@ -488,6 +490,10 @@ private:
 
 	// Streamed SMUSH audio
 	RebelAudio _audio;
+	bool _restoreInteractiveVideoAudioState;
+	int16 _savedInteractiveVideoTrackState[SMUSH_MAX_TRACKS];
+	int _savedInteractiveVideoTrackGroupId[SMUSH_MAX_TRACKS];
+	int _savedInteractiveVideoTrackCount;
 	static const int kNumSfx = 8;
 	enum SfxSlot {
 		kSfxLaserShot = 0,

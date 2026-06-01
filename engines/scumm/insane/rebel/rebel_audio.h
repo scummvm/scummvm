@@ -48,6 +48,8 @@ public:
 private:
 	static const int kMaxTracks = 4;
 
+	bool processAudioCodes(SmushPlayer *player, int idx, int32 &tmpFeedSize, int &mixVolume);
+
 	ScummEngine_v7 *_vm;
 	Audio::QueuingAudioStream *_streams[kMaxTracks];
 	Audio::SoundHandle _handles[kMaxTracks];
