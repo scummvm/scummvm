@@ -1735,6 +1735,18 @@ bool Script::ScriptExecutor::scriptOpcode0x2B() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x2C() {
+	uint16 objectID = scriptReadValue16() - 0x400;
+	uint16 parentID = scriptReadValue16();
+	const GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Ignoring inventory check for invalid object %u", objectID);
+		return false;
+	}
+	inventoryCheckResult = object->SceneIndex == parentID;
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -1967,14 +1979,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x2C) {
-			uint16 objectID = scriptReadValue16() - 0x400;
-			uint16 parentID = scriptReadValue16();
-			const GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Ignoring inventory check for invalid object %u", objectID);
+			if (!scriptOpcode0x2C()) {
 				continue;
 			}
-			inventoryCheckResult = object->SceneIndex == parentID;
 		} else if (opcode1 == 0x2D) {
 			const uint16 objectID = scriptReadValue16() - 0x400;
 			const bool enabled = scriptReadValue16() != 0;
