@@ -623,6 +623,37 @@ static Common::Array<DecompiledLine> decompileScript(Common::MemoryReadStream *s
 
 static Common::Array<DecompiledLine> _cachedDecompile;
 static int _cachedSceneIndex = -1;
+bool _scriptDebugPaused = false;
+bool _scriptDebugStepRequested = false;
+static bool _scriptFollowPC = true;
+static Common::Array<uint32> _collapsedBlocks; // offsets of collapsed if/else blocks
+
+static bool isBlockCollapsed(uint32 offset) {
+	for (uint i = 0; i < _collapsedBlocks.size(); i++)
+		if (_collapsedBlocks[i] == offset) return true;
+	return false;
+}
+
+static void toggleBlockCollapse(uint32 offset) {
+	for (uint i = 0; i < _collapsedBlocks.size(); i++) {
+		if (_collapsedBlocks[i] == offset) {
+			_collapsedBlocks.remove_at(i);
+			return;
+		}
+	}
+	_collapsedBlocks.push_back(offset);
+}
+
+// Called from ScriptExecutor before executing each opcode
+bool scriptDebuggerShouldPause() {
+	if (!_scriptDebugPaused)
+		return false;
+	if (_scriptDebugStepRequested) {
+		_scriptDebugStepRequested = false;
+		return false; // allow one step
+	}
+	return true; // stay paused
+}
 
 static void showScriptWindow() {
 	if (!_showScript)
@@ -631,9 +662,29 @@ static void showScriptWindow() {
 	if (ImGui::Begin("Scene Script", &_showScript)) {
 		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 		int currentScene = Scenes::instance()._currentSceneIndex;
-		ImGui::Text("Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
+
+		// --- Debugger toolbar ---
+		if (_scriptDebugPaused) {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 0.2f, 1.0f));
+			if (ImGui::Button("Continue"))
+				_scriptDebugPaused = false;
+			ImGui::PopStyleColor();
+			ImGui::SameLine();
+			if (ImGui::Button("Step"))
+				_scriptDebugStepRequested = true;
+		} else {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.6f, 0.2f, 0.2f, 1.0f));
+			if (ImGui::Button("Pause"))
+				_scriptDebugPaused = true;
+			ImGui::PopStyleColor();
+		}
+		ImGui::SameLine();
+		ImGui::Checkbox("Follow PC", &_scriptFollowPC);
+		ImGui::SameLine();
+		ImGui::Text("| Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
 					currentScene, exec->getScriptPosition(), exec->getScriptEndPosition(),
-					exec->isExecuting() ? "RUNNING" : "Idle", exec->getExecutingObjectId());
+					exec->isExecuting() ? (_scriptDebugPaused ? "PAUSED" : "RUNNING") : "Idle",
+					exec->getExecutingObjectId());
 		ImGui::Separator();
 
 		Common::MemoryReadStream *script = Scenes::instance()._currentSceneScript;
@@ -641,22 +692,53 @@ static void showScriptWindow() {
 			if (_cachedSceneIndex != currentScene) {
 				_cachedDecompile = decompileScript(script);
 				_cachedSceneIndex = currentScene;
+				_collapsedBlocks.clear();
 			}
 			uint32 currentPos = exec->getScriptPosition();
 			if (ImGui::BeginChild("ScriptView", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
+				int skipUntilIndent = -1; // for collapsed block skipping
 				for (uint i = 0; i < _cachedDecompile.size(); i++) {
 					const DecompiledLine &l = _cachedDecompile[i];
+
+					// Skip lines inside collapsed blocks
+					if (skipUntilIndent >= 0) {
+						if (l.indent > skipUntilIndent)
+							continue;
+						skipUntilIndent = -1;
+					}
+
 					uint32 nextOff = (i + 1 < _cachedDecompile.size()) ? _cachedDecompile[i + 1].offset : exec->getScriptEndPosition();
 					bool isCurrent = (currentPos >= l.offset && currentPos < nextOff);
+
+					// Check if this is a collapsible block header (if/else/compare/ifInteraction)
+					bool isBlockHeader = (l.text.hasPrefix("ifTrue") || l.text.hasPrefix("ifFalse") ||
+					                      l.text.hasPrefix("compare") || l.text.hasPrefix("ifInteraction") ||
+					                      l.text.hasPrefix("else"));
+					bool isCollapsed = isBlockCollapsed(l.offset);
+
 					if (isCurrent)
 						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
+
 					Common::String ind;
 					for (int j = 0; j < l.indent; j++)
 						ind += "  ";
-					ImGui::Text("%04x: %s%s", l.offset, ind.c_str(), l.text.c_str());
+
+					if (isBlockHeader) {
+						// Clickable collapse toggle
+						const char *arrow = isCollapsed ? "[+]" : "[-]";
+						Common::String label = Common::String::format("%04x: %s%s %s", l.offset, ind.c_str(), arrow, l.text.c_str());
+						if (ImGui::Selectable(label.c_str(), false, ImGuiSelectableFlags_None)) {
+							toggleBlockCollapse(l.offset);
+						}
+						if (isCollapsed)
+							skipUntilIndent = l.indent;
+					} else {
+						ImGui::Text("%04x: %s%s", l.offset, ind.c_str(), l.text.c_str());
+					}
+
 					if (isCurrent) {
 						ImGui::PopStyleColor();
-						if (exec->isExecuting())
+						if (_scriptFollowPC && exec->isExecuting())
 							ImGui::SetScrollHereY(0.5f);
 					}
 				}
@@ -724,13 +806,15 @@ static void showCharactersWindow() {
 	if (!_showCharacters)
 		return;
 	ImGui::SetNextWindowSize(ImVec2(550, 450), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Characters", &_showCharacters)) {
+	if (ImGui::Begin("Scene Objects", &_showCharacters)) {
 		View1 *view = (View1 *)g_engine->findView("View1");
 		if (view) {
-			for (uint i = 0; i < view->_characters.size(); i++) {
-				Character *c = view->_characters[i];
-				if (!c || !c->_gameObject)
-					continue;
+			// Active characters (objects with runtime animation data)
+			if (ImGui::CollapsingHeader("Active Characters", ImGuiTreeNodeFlags_DefaultOpen)) {
+				for (uint i = 0; i < view->_characters.size(); i++) {
+					Character *c = view->_characters[i];
+					if (!c || !c->_gameObject)
+						continue;
 				Common::Point pos = c->getPosition();
 				Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->_gameObject->_index, pos.x, pos.y, i);
 				if (ImGui::CollapsingHeader(header.c_str())) {
@@ -802,6 +886,33 @@ static void showCharactersWindow() {
 					}
 				}
 			}
+			} // end Active Characters header
+
+			// All other objects in this scene (not active characters)
+			uint16 sceneIdx = (uint16)Scenes::instance()._currentSceneIndex;
+			if (ImGui::CollapsingHeader("Other Scene Objects")) {
+				for (auto obj : GameObjects::instance()._objects) {
+					if (obj->SceneIndex != sceneIdx)
+						continue;
+					// Skip objects already shown as active characters
+					bool isActive = false;
+					for (uint i = 0; i < view->_characters.size(); i++) {
+						if (view->_characters[i] && view->_characters[i]->_gameObject == obj) {
+							isActive = true;
+							break;
+						}
+					}
+					if (isActive)
+						continue;
+					Common::String hdr = Common::String::format("obj=0x%x (%d,%d) vis=%s click=%s###scnobj%u",
+						obj->_index, obj->Position.x, obj->Position.y,
+						obj->IsVisible ? "Y" : "N", obj->IsClickable ? "Y" : "N", obj->_index);
+					if (ImGui::CollapsingHeader(hdr.c_str())) {
+						ImGui::Text("Orient: %u  Unknown: %u", obj->Orientation, obj->Unknown);
+						ImGui::Text("Blobs: %u  Script: %u bytes", (uint)obj->Blobs.size(), (uint)obj->Script.size());
+					}
+				}
+			}
 		}
 	}
 	ImGui::End();
@@ -863,6 +974,10 @@ static void showSceneMapsWindow() {
 			}
 			if (ImGui::BeginTabItem("Hotspot Map")) {
 				selectedTab = 3;
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Object Map")) {
+				selectedTab = 4;
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();
@@ -927,6 +1042,9 @@ static void showSceneMapsWindow() {
 			surface = &overlayComposite;
 		} else if (selectedTab == 3) {
 			surface = &g_engine->_map;
+		} else if (selectedTab == 4) {
+			// Object Map: use background image
+			surface = &g_engine->_bgImageShip;
 		}
 
 		if (surface && surface->w > 0 && surface->h > 0) {
@@ -947,6 +1065,72 @@ static void showSceneMapsWindow() {
 							snprintf(buf, sizeof(buf), "%d", i);
 							ImVec2 pos(imgOrigin.x + pt.Position.x * scale + 4, imgOrigin.y + pt.Position.y * scale - 4);
 							dl->AddText(pos, IM_COL32(255, 255, 0, 255), buf);
+						}
+					}
+				}
+
+				// Draw object positions and clickable IDs on Object Map
+				if (selectedTab == 4) {
+					ImDrawList *dl = ImGui::GetWindowDrawList();
+					ImVec2 imgOrigin = ImGui::GetItemRectMin();
+					View1 *view = (View1 *)g_engine->findView("View1");
+					static int _selectedObjectIdx = -1;
+					if (view) {
+						int scrollX = view->_offset;
+						for (uint i = 0; i < view->_characters.size(); i++) {
+							Character *c = view->_characters[i];
+							if (!c || !c->_gameObject)
+								continue;
+							Common::Point pos = c->getPosition();
+							float sx = (pos.x - scrollX) * scale;
+							float sy = pos.y * scale;
+							if (sx < 0 || sx > 320.0f * scale || sy < 0 || sy > 200.0f * scale)
+								continue;
+							ImVec2 center(imgOrigin.x + sx, imgOrigin.y + sy);
+							// Draw marker
+							uint32 col = c->_gameObject->IsVisible ? IM_COL32(0, 255, 0, 255) : IM_COL32(128, 128, 128, 200);
+							dl->AddCircleFilled(center, 4.0f * scale, col);
+							// Draw object ID label
+							char buf[8];
+							snprintf(buf, sizeof(buf), "%x", c->_gameObject->_index);
+							ImVec2 textPos(center.x + 5, center.y - 6);
+							dl->AddText(textPos, IM_COL32(255, 255, 255, 255), buf);
+						}
+						// Handle clicks on objects
+						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+							ImVec2 mousePos = ImGui::GetMousePos();
+							for (uint i = 0; i < view->_characters.size(); i++) {
+								Character *c = view->_characters[i];
+								if (!c || !c->_gameObject)
+									continue;
+								Common::Point pos = c->getPosition();
+								float sx = imgOrigin.x + (pos.x - scrollX) * scale;
+								float sy = imgOrigin.y + pos.y * scale;
+								if (fabs(mousePos.x - sx) < 8 && fabs(mousePos.y - sy) < 8) {
+									_selectedObjectIdx = (int)i;
+									break;
+								}
+							}
+						}
+					}
+					// Show selected object details
+					if (_selectedObjectIdx >= 0 && view &&
+						(uint)_selectedObjectIdx < view->_characters.size()) {
+						ImGui::Separator();
+						Character *c = view->_characters[_selectedObjectIdx];
+						if (c && c->_gameObject) {
+							GameObject *obj = c->_gameObject;
+							ImGui::Text("Object 0x%x  Scene:%u  Pos:(%d,%d)  Orient:%u",
+										obj->_index, obj->SceneIndex, obj->Position.x, obj->Position.y, obj->Orientation);
+							ImGui::Text("Visible:%s  Clickable:%s  Frozen:%s",
+										obj->IsVisible ? "Y" : "N", obj->IsClickable ? "Y" : "N",
+										obj->HasBoundsAttachment ? "Y" : "N");
+							if (obj->HasBoundsAttachment)
+								ImGui::Text("  Bounds: obj=%u v1=%u v2=%u v3=%u",
+											obj->BoundsAttachmentObjectID, obj->BoundsAttachmentValue1,
+											obj->BoundsAttachmentValue2, obj->BoundsAttachmentValue3);
+							ImGui::Text("Blobs: %u  Script: %u bytes",
+										(uint)obj->Blobs.size(), (uint)obj->Script.size());
 						}
 					}
 				}
@@ -1141,7 +1325,7 @@ void onImGuiRender() {
 		if (ImGui::BeginMenu("Debug")) {
 			ImGui::MenuItem("Script", NULL, &_showScript);
 			ImGui::MenuItem("Variables", NULL, &_showVariables);
-			ImGui::MenuItem("Characters", NULL, &_showCharacters);
+			ImGui::MenuItem("Scene Objects", NULL, &_showCharacters);
 			ImGui::MenuItem("Inventory", NULL, &_showInventory);
 			ImGui::MenuItem("Animations", NULL, &_showAnimations);
 			ImGui::MenuItem("Scene Maps", NULL, &_showSceneMaps);

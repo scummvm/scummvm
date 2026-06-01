@@ -26,6 +26,7 @@
 #include "macs2/adlib.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
+#include "macs2/debugtools.h"
 #include <macs2/view1.h>
 
 namespace Macs2 {
@@ -555,13 +556,15 @@ void ScriptExecutor::step() {
 				if (result == ExecutionResult::WaitingForCallback) {
 					// We need to change our state as well now
 					_state = ExecutorState::WaitingForCallback;
-					// Original: save cursor mode, then set to Disabled 0x1A (hourglass)
-					if (_mouseMode != MouseMode::Disabled) {
-						_cursorModeBeforeWait = _mouseMode;
-						_engine->setCursorMode(MouseMode::Disabled);
-						View1 *v = (View1 *)_engine->findView("View1");
-						if (v)
-							v->updateCursor();
+					if (!_debugPaused) {
+						// Original: save cursor mode, then set to Disabled 0x1A (hourglass)
+						if (_mouseMode != MouseMode::Disabled) {
+							_cursorModeBeforeWait = _mouseMode;
+							_engine->setCursorMode(MouseMode::Disabled);
+							View1 *v = (View1 *)_engine->findView("View1");
+							if (v)
+								v->updateCursor();
+						}
 					}
 					return;
 				}
@@ -2171,6 +2174,13 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 		}
 
 		// Read an opcode and length
+#ifdef USE_IMGUI
+		if (scriptDebuggerShouldPause()) {
+			_debugPaused = true;
+			_state = ExecutorState::Executing; // preserve state for resume
+			return ExecutionResult::WaitingForCallback;
+		}
+#endif
 		byte opcode1 = readByte(); // [bp - 1h]
 		// TODO: For the sake of easier reading the logs, jumping out if we
 		// read a 0 opcode.
@@ -2510,6 +2520,18 @@ void ScriptExecutor::tick() {
 			_waitForAdlibReady = false;
 			run();
 		}
+		return;
+	}
+
+	if (_debugPaused) {
+#ifdef USE_IMGUI
+		if (!_scriptDebugPaused || _scriptDebugStepRequested) {
+			_debugPaused = false;
+			run();
+		}
+#else
+		_debugPaused = false;
+#endif
 		return;
 	}
 

@@ -26,6 +26,11 @@ namespace Macs2 {
 void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
+// Returns true if the script debugger wants the executor to pause before the next opcode
+bool scriptDebuggerShouldPause();
+// Direct access to debugger state for tick() resume logic
+extern bool _scriptDebugPaused;
+extern bool _scriptDebugStepRequested;
 } // namespace Macs2
 
 #endif // MACS2_DEBUGTOOLS_H
