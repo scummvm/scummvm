@@ -2052,6 +2052,20 @@ void Script::ScriptExecutor::scriptOpcode0x3D() {
 	}
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x3E() {
+	const uint8 resourceIndex = ReadByte();
+	Common::Array<uint8> soundData;
+	if (!loadSoundResource(soundData, resourceIndex)) {
+		return false;
+	}
+
+	if (_engine->hasCurrentSound() && soundEnabled) {
+		_engine->stopCurrentSound();
+	}
+	_engine->setCurrentSoundData(soundData);
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2286,14 +2300,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x3D) {
 			scriptOpcode0x3D();
 		} else if (opcode1 == 0x3E) {
-			const uint8 resourceIndex = ReadByte();
-			Common::Array<uint8> soundData;
-			if (!loadSoundResource(soundData, resourceIndex))
+			if (!scriptOpcode0x3E()) {
 				continue;
-
-			if (_engine->hasCurrentSound() && soundEnabled)
-				_engine->stopCurrentSound();
-			_engine->setCurrentSoundData(soundData);
+			}
 		} else if (opcode1 == 0x3F) {
 			scriptOpcode0x3F();
 		} else if (opcode1 == 0x40) {
