@@ -1372,13 +1372,12 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	if (_menuInputActive || _gameState != kStateGameplay)
 		return;
 
-	// Velocity model ported from RA1 (insane/rebel1/iact.cpp preprocessMouseAxes):
-	// the digital dpad pans at full rate, while the analog stick pans proportionally
-	// to its deflection past the deadzone. This replaces the old edge-snap that pinned
-	// the reticle to the screen borders. Mouse input is untouched: with nothing held the
-	// reticle simply follows _vm->_mouse as before.
-	int velX = 0;
-	int velY = 0;
+	// The analog stick still reports the original joystick-style centered axis range
+	// [-127,127], while the dpad follows the original keyboard handler's normal
+	// movement step (FUN_405822: 3 units, or 5 with the DOS fast modifier).
+	int deltaX = 0;
+	int deltaY = 0;
+	bool activeGamepadAim = false;
 
 	const int dpadX = (_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
 	                  (_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
@@ -1386,16 +1385,25 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	                  (_vm->getActionState(kScummActionInsaneUp) ? 1 : 0);
 
 	if (dpadX || dpadY) {
-		velX = dpadX * 127;
-		velY = dpadY * 127;
+		const int kOriginalDigitalStep = 3;
+		deltaX = dpadX * kOriginalDigitalStep;
+		deltaY = dpadY * kOriginalDigitalStep;
+		activeGamepadAim = true;
 	} else {
 		const int16 ax = applyRebel2AnalogDeadzone(_joystickAxisX);
 		const int16 ay = applyRebel2AnalogDeadzone(_joystickAxisY);
-		velX = CLIP<int>((int)ax * 127 / Common::JOYAXIS_MAX, -127, 127);
-		velY = CLIP<int>((int)ay * 127 / Common::JOYAXIS_MAX, -127, 127);
+		const int velX = CLIP<int>((int)ax * 127 / Common::JOYAXIS_MAX, -127, 127);
+		const int velY = CLIP<int>((int)ay * 127 / Common::JOYAXIS_MAX, -127, 127);
+
+		if (velX || velY) {
+			const int kAnalogMaxStep = 8;
+			deltaX = velX * kAnalogMaxStep / 127;
+			deltaY = velY * kAnalogMaxStep / 127;
+			activeGamepadAim = true;
+		}
 	}
 
-	if (!velX && !velY)
+	if (!activeGamepadAim)
 		return;
 
 	// The gamepad is now driving the reticle: mark it the active aim source so
@@ -1403,10 +1411,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	_gamepadAimActive = true;
 
 	// Integrate velocity into the reticle, clamped to the 320x200 play area.
-	// kStep sets the max pixels-per-frame at full deflection; tune for feel.
-	const int kStep = 8;
-	_vm->_mouse.x = (int16)CLIP<int>(_vm->_mouse.x + velX * kStep / 127, 0, 319);
-	_vm->_mouse.y = (int16)CLIP<int>(_vm->_mouse.y + velY * kStep / 127, 0, 199);
+	_vm->_mouse.x = (int16)CLIP<int>(_vm->_mouse.x + deltaX, 0, 319);
+	_vm->_mouse.y = (int16)CLIP<int>(_vm->_mouse.y + deltaY, 0, 199);
 }
 
 bool InsaneRebel2::isBitSet(int n) {
