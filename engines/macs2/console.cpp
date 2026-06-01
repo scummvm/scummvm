@@ -56,9 +56,9 @@ Console::~Console() {
 
 bool Console::Cmd_toggleAutoClick(int argc, const char **argv) {
 	View1 *currentView = (View1 *)g_engine->findView("View1");
-	currentView->autoclickActive = !currentView->autoclickActive;
+	currentView->_autoclickActive = !currentView->_autoclickActive;
 	debugPrintf("Auto clicking set to %s.\n",
-				currentView->autoclickActive ? "on" : "off");
+				currentView->_autoclickActive ? "on" : "off");
 	return true;
 }
 
@@ -70,8 +70,8 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	Common::DumpFile df;
 	Common::String path = argv[1];
 	df.open(Common::Path(path));
-	for (auto currentObject : GameObjects::instance().Objects) {
-		df.writeString(Common::String::format("Object %.2xh\n", currentObject->Index));
+	for (auto currentObject : GameObjects::instance()._objects) {
+		df.writeString(Common::String::format("Object %.2xh\n", currentObject->_index));
 		for (uint i = 0; i < currentObject->Blobs.size(); i++) {
 			auto currentBlob = currentObject->Blobs[i];
 			df.writeString(Common::String::format("Blob %.2xh\n", i));
@@ -101,8 +101,8 @@ bool Console::Cmd_addItem(int argc, const char **argv) {
 	// TODO: Just realizing this - can we have multiple of an item in the inventory?
 	// TODO: Check args count
 	int index = parseHexArg(argv[1]);
-	for (GameObject *obj : GameObjects::instance().Objects) {
-		if (obj->Index == index) {
+	for (GameObject *obj : GameObjects::instance()._objects) {
+		if (obj->_index == index) {
 			obj->SceneIndex = 0x1;
 		}
 	}
@@ -111,8 +111,8 @@ bool Console::Cmd_addItem(int argc, const char **argv) {
 
 bool Console::Cmd_removeItem(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
-	for (GameObject *obj : GameObjects::instance().Objects) {
-		if (obj->Index == index) {
+	for (GameObject *obj : GameObjects::instance()._objects) {
+		if (obj->_index == index) {
 			obj->SceneIndex = 0x0;
 		}
 	}
@@ -121,8 +121,8 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 
 bool Console::Cmd_giveAll(int argc, const char **argv) {
 	int count = 0;
-	for (GameObject *obj : GameObjects::instance().Objects) {
-		if (obj->Index <= 1)
+	for (GameObject *obj : GameObjects::instance()._objects) {
+		if (obj->_index <= 1)
 			continue;
 		if (!obj->Blobs.empty() && obj->Blobs.size() > 0x13 && !obj->Blobs[0x13].empty()) {
 			obj->SceneIndex = 1;
@@ -130,7 +130,7 @@ bool Console::Cmd_giveAll(int argc, const char **argv) {
 		}
 	}
 	View1 *currentView = (View1 *)g_engine->findView("View1");
-	currentView->SetInventorySource(GameObjects::instance().GetProtagonistObject());
+	currentView->setInventorySource(GameObjects::instance().getProtagonistObject());
 	debugPrintf("Added %d items with inventory icons to protagonist inventory.\n", count);
 	return true;
 }
@@ -141,14 +141,14 @@ bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	if (argc > 2) {
 		index = parseHexArg(argv[2]);
 	}
-	GameObjects::instance().GetObjectByIndex(index)->Orientation = orientation;
+	GameObjects::instance().getObjectByIndex(index)->Orientation = orientation;
 
 	return true;
 }
 
 bool Console::Cmd_dumpScript(int argc, const char **argv) {
 
-	g_engine->_scriptExecutor->DumpWholeScript();
+	g_engine->_scriptExecutor->dumpWholeScript();
 	return true;
 }
 
@@ -156,7 +156,7 @@ bool Console::Cmd_set(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
 	int v1 = parseHexArg(argv[2]);
 	int v2 = parseHexArg(argv[3]);
-	g_engine->_scriptExecutor->SetVariableValue(index, v1, v2);
+	g_engine->_scriptExecutor->setVariableValue(index, v1, v2);
 	return true;
 }
 
@@ -187,7 +187,7 @@ bool Console::Cmd_inputStop(int argc, const char **argv) {
 }
 
 bool Console::Cmd_listScenes(int argc, const char **argv) {
-	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance().CurrentSceneIndex, Scenes::instance().CurrentSceneIndex);
+	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance()._currentSceneIndex, Scenes::instance()._currentSceneIndex);
 	debugPrintf("Scenes with data:\n");
 	for (int i = 1; i <= 512; i++) {
 		uint32 offset = 0xC + 0x4 + (i - 1) * 0xC;
@@ -203,7 +203,7 @@ bool Console::Cmd_listScenes(int argc, const char **argv) {
 bool Console::Cmd_changeScene(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: changeScene <sceneIndex>\n");
-		debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance().CurrentSceneIndex, Scenes::instance().CurrentSceneIndex);
+		debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance()._currentSceneIndex, Scenes::instance()._currentSceneIndex);
 		return true;
 	}
 	int sceneIndex = parseHexArg(argv[1]);
@@ -213,8 +213,8 @@ bool Console::Cmd_changeScene(int argc, const char **argv) {
 }
 
 bool Console::Cmd_scene(int argc, const char **argv) {
-	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance().CurrentSceneIndex, Scenes::instance().CurrentSceneIndex);
-	debugPrintf("Previous scene: %d (0x%x)\n", Scenes::instance().LastSceneIndex, Scenes::instance().LastSceneIndex);
+	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance()._currentSceneIndex, Scenes::instance()._currentSceneIndex);
+	debugPrintf("Previous scene: %d (0x%x)\n", Scenes::instance()._lastSceneIndex, Scenes::instance()._lastSceneIndex);
 	return true;
 }
 

@@ -139,7 +139,7 @@ struct BackgroundAnimationBlob {
 	Common::Array<uint8> Blob;
 	uint32 FrameIndex;
 	AnimFrame GetFrame(uint32 index);
-	AnimFrame GetCurrentFrame();
+	AnimFrame getCurrentFrame();
 	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
 	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
 };
@@ -185,8 +185,6 @@ protected:
 		return Engine::shouldQuit();
 	}
 
-	// TODO: Switch stream to an LE stream
-
 public:
 	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
 
@@ -197,59 +195,55 @@ public:
 	void readExecutable();
 
 	// Assumes that the stream is at the location of the number of background animations
-	void ReadBackgroundAnimations(Common::MemoryReadStream *stream);
+	void readBackgroundAnimations(Common::MemoryReadStream *stream);
 
 	// Assumes that the stream is at the start of the right section
-	void ReadImageResources(Common::MemoryReadStream *stream);
+	void readImageResources(Common::MemoryReadStream *stream);
 
 public:
-	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
+	Macs2Engine(OSystem *osystem, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
 
 	void changeScene(uint32 newSceneIndex, bool executeScript = true);
 
 	Script::ScriptExecutor *_scriptExecutor;
-	struct Graphics::ManagedSurface _bgImageShip;
+	Graphics::ManagedSurface _bgImageShip;
 	Graphics::ManagedSurface _map;
-	// Note: This is used both for pathfinding as well as for area IDs
-	Graphics::ManagedSurface _pathfindingMap;
 
 	// This is the depth map
 	Graphics::ManagedSurface _depthMap;
 
+	// TODO: use Graphics::Palette for this
 	byte _pal[256 * 3] = {0};
 	byte _palVanilla[256 * 3] = {0};
 
-	Common::Array<Common::String> debugOutput;
+	Common::Array<Common::String> _debugOutput;
 
-	Common::Array<PathfindingAreaOverride> PathfindingOverrides;
+	// Note: This is used both for pathfinding as well as for area IDs
+	Graphics::ManagedSurface _pathfindingMap;
 
+	Common::Array<PathfindingAreaOverride> _pathfindingOverrides;
 	// Area override table at scene+value*5+0x4EA8 (for getAreaAtPoint)
 	uint16 _areaOverrides[AREA_OVERRIDE_COUNT] = {0};
+	uint16 _pathfindingPoints[32];
+	Common::Array<PathfindingPoint> pathfindingPoints;
+	Common::Array<Common::Point> _path;
 
-	// This is the override list living at [5BD1]
-	Common::Array<uint16> HotspotOverrides;
-
-	bool GetPathfindingOverride(uint16 index, uint16 &result);
-	void SetPathfindingOverride(uint16 index, uint16 overrideValue);
+	bool getPathfindingOverride(uint16 index, uint16 &result);
+	void setPathfindingOverride(uint16 index, uint16 overrideValue);
 
 	// This one implements the lookup relative to es:[di+4EA8h] vs. the other one at es:[di+4EA5h] and es:[di+4EA6h]
-	uint8 GetPathfindingOverride2(uint16 index);
-	void RemovePathfindingOverride(uint16 index);
+	uint8 getPathfindingOverride2(uint16 index);
+	void removePathfindingOverride(uint16 index);
 
-	// fn0037_0E8C proc
 	uint16 getWalkabilityAt(uint16 x, uint16 y);
-
-	// fn0037_1196
 	bool isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void snapToWalkablePosition(Common::Point &target, const Common::Point &charPos);
 
-	uint16 _pathfindingPoints[32];
-	Common::Array<PathfindingPoint> pathfindingPoints;
+	// This is the override list living at [5BD1]
+	Common::Array<uint16> _hotspotOverrides;
 
-	Common::Array<Common::Point> _path;
-
-	Common::Array<Macs2::AnimFrame> imageResources;
+	Common::Array<Macs2::AnimFrame> _imageResources;
 
 	byte *_charData;
 	char _charASCII;
@@ -268,7 +262,7 @@ public:
 	AnimFrame _animFrames[6];
 	// 6 flag/decoration animation frames at fixed file offset 0x6A5941, each followed by 6 padding bytes
 
-	bool FindGlyph(char c, GlyphData &out) const;
+	bool findGlyph(char c, GlyphData &out) const;
 
 	byte **_cursorData;
 	uint16 *_cursorWidths;
@@ -305,7 +299,7 @@ public:
 	BackgroundAnimation *_backgroundAnimations = nullptr;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
-	byte *mapData;
+	byte *_mapData;
 
 	Common::MemoryReadStream *_fileStream;
 
@@ -408,8 +402,8 @@ public:
 
 	int MeasureString(Common::String &s);
 
-	int MeasureStrings(Common::StringArray sa);
-	int MeasureStringsVertically(Common::StringArray sa);
+	int measureStrings(Common::StringArray sa);
+	int measureStringsVertically(Common::StringArray sa);
 
 	Common::StringArray DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
 

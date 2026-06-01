@@ -28,6 +28,7 @@
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "macs2/adlib.h"
+#include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
 #include <graphics/cursorman.h>
@@ -71,7 +72,7 @@ void setViewPaletteSafely(View1 *view, const byte *colors) {
 		CursorMan.showMouse(false);
 
 	if (shouldTouchCursor)
-		view->UpdateCursor(colors);
+		view->updateCursor(colors);
 
 	g_system->getPaletteManager()->setPalette(colors, 0, 256);
 
@@ -86,40 +87,40 @@ void applyPaletteWithFade(View1 *view, const byte *sourcePalette, int fadeValue)
 }
 } // namespace
 
-void View1::OpenInventory(GameObject *newInventorySource) {
+void View1::openInventory(GameObject *newInventorySource) {
 	if (newInventorySource == nullptr) {
 		warning("Tried to open inventory for a null source");
 		return;
 	}
 
-	SetInventorySource(newInventorySource);
+	setInventorySource(newInventorySource);
 	_isShowingInventory = true;
-	inventoryPage = 0;
-	activeInventoryItem = nullptr;
+	_inventoryPage = 0;
+	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
 		g_engine->SetCursorMode(Script::MouseMode::Use);
-		UpdateCursor();
+		updateCursor();
 	}
 }
 
-void View1::CloseInventory() {
+void View1::closeInventory() {
 	if (!_isShowingInventory) {
 		return;
 	}
 
-	const bool shouldResumeExternalInventory = !IsInventorySourceProtagonist() && g_engine->_scriptExecutor->_hasPendingExternalInventoryResume;
+	const bool shouldResumeExternalInventory = !isInventorySourceProtagonist() && g_engine->_scriptExecutor->_hasPendingExternalInventoryResume;
 	_isShowingInventory = false;
-	inventoryPage = 0;
-	activeInventoryItem = nullptr;
+	_inventoryPage = 0;
+	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 
 	if (shouldResumeExternalInventory) {
 		g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedExternalInventoryMouseMode);
-		UpdateCursor();
-		SetInventorySource(GameObjects::instance().GetProtagonistObject());
+		updateCursor();
+		setInventorySource(GameObjects::instance().getProtagonistObject());
 		g_engine->_scriptExecutor->_hasPendingExternalInventoryResume = false;
 		g_engine->_scriptExecutor->_externalInventorySourceObjectID = 0;
 		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->_secondaryInventoryLocation);
@@ -127,50 +128,50 @@ void View1::CloseInventory() {
 		return;
 	}
 
-	if (!IsInventorySourceProtagonist()) {
-		SetInventorySource(GameObjects::instance().GetProtagonistObject());
+	if (!isInventorySourceProtagonist()) {
+		setInventorySource(GameObjects::instance().getProtagonistObject());
 	}
 }
 
-void View1::SetInventorySource(GameObject *newInventorySource) {
-	inventorySource = newInventorySource;
+void View1::setInventorySource(GameObject *newInventorySource) {
+	_inventorySource = newInventorySource;
 	// TODO: Make sure the assignment per object is saved correctly
-	inventoryItems.clear();
+	_inventoryItems.clear();
 
-	for (GameObject *currentObject : GameObjects::instance().Objects) {
-		if (currentObject->SceneIndex == inventorySource->Index) {
-			inventoryItems.push_back(currentObject);
+	for (GameObject *currentObject : GameObjects::instance()._objects) {
+		if (currentObject->SceneIndex == _inventorySource->_index) {
+			_inventoryItems.push_back(currentObject);
 		}
 	}
 }
-bool View1::IsInventorySourceProtagonist() const {
-	return inventorySource->Index == 1;
+bool View1::isInventorySourceProtagonist() const {
+	return _inventorySource->_index == 1;
 }
-void View1::TransferInventoryItem(GameObject *item, GameObject *targetContainer) {
-	int index = FindInventoryItem(item);
-	inventoryItems.remove_at(index);
-	item->SceneIndex = targetContainer->Index;
+void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer) {
+	int index = findInventoryItem(item);
+	_inventoryItems.remove_at(index);
+	item->SceneIndex = targetContainer->_index;
 }
 
-int View1::FindInventoryItem(GameObject *item) {
-	for (uint i = 0; i != inventoryItems.size(); i++) {
-		if (inventoryItems[i] == item) {
+int View1::findInventoryItem(GameObject *item) {
+	for (uint i = 0; i != _inventoryItems.size(); i++) {
+		if (_inventoryItems[i] == item) {
 			return i;
 		}
 	}
 	return -1;
 }
 
-Character *View1::GetCharacterByIndex(uint16 index) {
+Character *View1::getCharacterByIndex(uint16 index) {
 	// TODO: Consider a map
-	for (Character *c : characters) {
-		if (c->GameObject->Index == index) {
+	for (Character *c : _characters) {
+		if (c->_gameObject->_index == index) {
 			return c;
 		}
 	}
 	return nullptr;
 }
-void View1::UpdateCursor(const byte *palette) {
+void View1::updateCursor(const byte *palette) {
 	CursorMan.showMouse(true);
 
 	// Original indexes cursor array as: base + mode * 16 - 16, i.e. 0-based index = mode - 1.
@@ -214,10 +215,11 @@ void View1::UpdateCursor(const byte *palette) {
 	byte dummyPalette[256 * 3] = {};
 	CursorMan.replaceCursorPalette(dummyPalette, 0, 256);
 }
+
 View1::View1() : UIElement("View1") {
 	_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 	currentSpeechActData.onRightSide = false;
-	UpdateCursor();
+	updateCursor();
 	setViewPaletteSafely(this, g_engine->_pal);
 	_paletteDirty = false;
 	CursorMan.showMouse(true);
@@ -226,22 +228,22 @@ View1::View1() : UIElement("View1") {
 	Character *protagonist = new Character();
 	// TODO: Need to properly handle the offset
 	// TODO: Remember that the game starts enumerating objects at 1 and not at 0
-	protagonist->GameObject = GameObjects::instance().Objects[0x0];
-	characters.push_back(protagonist);
-	inventorySource = protagonist->GameObject;
+	protagonist->_gameObject = GameObjects::instance()._objects[0x0];
+	_characters.push_back(protagonist);
+	_inventorySource = protagonist->_gameObject;
 
 	// inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
 
-	inventoryButtonLocations.resize(6);
+	_inventoryButtonLocations.resize(6);
 }
 
-AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
+AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 	AnimFrame *result = new AnimFrame();
 	// Inventory icon is always in blob slot 0x14 (zero-based index 0x13)
 	// Original: runtime offset +0x16c/+0x16e, validity at +0x173
 	int index = 0x13;
 	if (index >= (int)gameObject->Blobs.size() || gameObject->Blobs[index].empty()) {
-		warning("GetInventoryIcon: no icon blob for object %u", gameObject->Index);
+		warning("GetInventoryIcon: no icon blob for object %u", gameObject->_index);
 		delete result;
 		return nullptr;
 	}
@@ -253,8 +255,8 @@ AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 	// Skip the 6-byte header to reach width/height/pixels for ReadFromStream
 	stream.seek(offset + 6, SEEK_SET);
 	result->ReadFromStream(&stream);
-	return result;
 	// TODO: Think about proper memory management
+	return result;
 }
 
 void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
@@ -273,22 +275,10 @@ void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
 
 void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
 	for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
-		/*  if (i != 7) {
-			continue;
-		} */
 		BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 		BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
-		// AnimFrame &currentFrame = current.Frames[current.FrameIndex];
-		// AnimFrame currentFrame = currentBlob.GetFrame(currentBlob.FrameIndex);
-		AnimFrame currentFrame = currentBlob.GetCurrentFrame();
-		DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
-	}
-}
-
-void View1::drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s) {
-	for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
-		BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
-		renderString(current.X, current.Y, Common::String::format("%u", i));
+		AnimFrame currentFrame = currentBlob.getCurrentFrame();
+		drawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
 	}
 }
 
@@ -305,9 +295,9 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 
 	// Select portrait blob: primary (Blobs[17]) during countdown, alternate (Blobs[18]) after
 	// Mode 0: render current frame without advancing (advance happens in tick())
-	AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait(useAlternateBlob, 0);
-	AnimFrame *leftPortrait = currentSpeechActData.speaker->GetCurrentPortrait(false, 0);
-	AnimFrame *rightPortrait = currentSpeechActData.speaker->GetCurrentPortrait(true, 0);
+	AnimFrame *frame = currentSpeechActData.speaker->getCurrentPortrait(useAlternateBlob, 0);
+	AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false, 0);
+	AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true, 0);
 	if (frame == nullptr) {
 		return;
 	}
@@ -317,11 +307,11 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->Width : 0, rightPortrait ? rightPortrait->Width : 0);
 	const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->Height : 0, rightPortrait ? rightPortrait->Height : 0);
 	const Common::Point borderSize(portraitWidth + 0xD, portraitHeight + 0xD);
-	DrawBorder(currentSpeechActData.position, borderSize, s);
+	drawBorder(currentSpeechActData.position, borderSize, s);
 
 	// Draw the portrait over the border
 	Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
-	DrawSprite(pos, frame->Width, frame->Height, frame->Data, s, false);
+	drawSprite(pos, frame->Width, frame->Height, frame->Data, s, false);
 }
 
 void View1::renderString(uint16 x, uint16 y, Common::String s) {
@@ -333,7 +323,7 @@ void View1::renderString(uint16 x, uint16 y, Common::String s) {
 	uint16 widestGlyph = 1;
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
-		if (g_engine->FindGlyph(*iter, data)) {
+		if (g_engine->findGlyph(*iter, data)) {
 			widestGlyph = MAX(widestGlyph, data.Width);
 		}
 	}
@@ -341,9 +331,9 @@ void View1::renderString(uint16 x, uint16 y, Common::String s) {
 	// Second pass: render with correct spacing
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
-		bool found = g_engine->FindGlyph(*iter, data);
+		bool found = g_engine->findGlyph(*iter, data);
 		if (found) {
-			DrawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf, false);
+			drawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf, false);
 			currentX += data.Width + 1;
 		} else {
 			if ((byte)*iter != ' ') {
@@ -390,7 +380,7 @@ void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, co
 		bool found = false;
 		for (uint i = 0; i < numGlyphs; i++) {
 			if (glyphs[i].ASCII == *iter) {
-				DrawSprite(currentX, y, glyphs[i].Width, glyphs[i].Height, glyphs[i].Data, surf, false);
+				drawSprite(currentX, y, glyphs[i].Width, glyphs[i].Height, glyphs[i].Data, surf, false);
 				currentX += glyphs[i].Width + 1;
 				found = true;
 				break;
@@ -440,21 +430,21 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	// This calculation can be found at l0037_B368:
 	// int borderWidth = 10;
 	// int padding = 3;
-	int totalWidth = g_engine->MeasureStrings(sa) + 0x12;
-	int totalHeight = g_engine->MeasureStringsVertically(sa) + 0x10;
+	int totalWidth = g_engine->measureStrings(sa) + 0x12;
+	int totalHeight = g_engine->measureStringsVertically(sa) + 0x10;
 	debug("Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
-		  sa.size(), stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
+		  sa.size(), _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
 	debugC(kDebugScript,
 		   "Render text box: lines=%u borderPos=(%d,%d) borderSize=(%d,%d) text=\"%s\"",
-		   sa.size(), stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
+		   sa.size(), _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(sa).c_str());
 
 	Graphics::ManagedSurface s = getSurface();
-	DrawBorder(stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
+	drawBorder(_stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
 	// TODO range based
-	int lineOffset = stringBoxPosition.y + 0x9;
+	int lineOffset = _stringBoxPosition.y + 0x9;
 	for (auto iter = sa.begin(); iter < sa.end(); iter++) {
-		logRenderedText("TextBox", stringBoxPosition.x + 0x9, lineOffset, *iter);
-		renderString(stringBoxPosition.x + 0x9, lineOffset, *iter);
+		logRenderedText("TextBox", _stringBoxPosition.x + 0x9, lineOffset, *iter);
+		renderString(_stringBoxPosition.x + 0x9, lineOffset, *iter);
 		lineOffset += g_engine->maxGlyphHeight + 2;
 	}
 }
@@ -468,49 +458,37 @@ void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Gr
 			currentY += currentData.Height;
 			currentX = x;
 		}
-		DrawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s, false);
+		drawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s, false);
 		currentX += currentData.Width;
 	}
 }
 
-void View1::handleFading() {
-	// Fading is now blocking (handled in startFadeToBlack/startFadingWithSpeed).
-	// This is kept as a no-op for safety in case fadeMode is somehow set externally.
-}
-
 void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
+	GlyphData xData;
+	g_engine->findGlyph('x', xData);
+	for (int i = 0; i < 16; i++) {
+		PathfindingPoint &current = g_engine->pathfindingPoints[i];
+		renderString(current.Position.x - xData.Width * 0.5, current.Position.y - xData.Height * 0.5, "x");
 
-	constexpr bool drawNodes = false;
-	if (drawNodes) {
+		Common::String number = Common::String::format("%u", i);
+		renderString(current.Position.x - xData.Width * 0.5 + 10, current.Position.y - xData.Height * 0.5 + 10, number.c_str());
 
-		GlyphData xData;
-		g_engine->FindGlyph('x', xData);
-		int numLines = 0;
-		for (int i = 0; i < 16; i++) {
-			PathfindingPoint &current = g_engine->pathfindingPoints[i];
-			renderString(current.Position.x - xData.Width * 0.5, current.Position.y - xData.Height * 0.5, "x");
-
-			Common::String number = Common::String::format("%u", i);
-			renderString(current.Position.x - xData.Width * 0.5 + 10, current.Position.y - xData.Height * 0.5 + 10, number.c_str());
-
-			for (uint8 adjacentIndex : current.adjacentPoints) {
-				if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
-					continue;
-				}
-				PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
-				s.drawLine(current.Position.x, current.Position.y, other.Position.x, other.Position.y, 0xFFFFFFFF);
-				numLines++;
+		for (uint8 adjacentIndex : current.adjacentPoints) {
+			if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
+				continue;
 			}
+			PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
+			s.drawLine(current.Position.x, current.Position.y, other.Position.x, other.Position.y, 0xFFFFFFFF);
 		}
 	}
 
 	// Draw the test results
-	Macs2::Character *c = GetCharacterByIndex(1);
+	Macs2::Character *c = getCharacterByIndex(1);
 	// Handle the protagonist not being in the scene
 	if (c == nullptr) {
 		return;
 	}
-	Common::Array<uint8> &overlay = c->PathfindingOverlay;
+	const Common::Array<uint8> &overlay = c->_pathfindingOverlay;
 	for (int y = 0; y < 200; y++) {
 		for (int x = 0; x < 320; x++) {
 			const uint8 currentValue = overlay[y * 320 + x];
@@ -525,7 +503,7 @@ void View1::drawDebugOutput(Graphics::ManagedSurface &s) {
 	uint16 x = 0;
 	uint16 y = 0;
 	constexpr uint16 deltaY = 20;
-	for (const Common::String &current : g_engine->debugOutput) {
+	for (const Common::String &current : g_engine->_debugOutput) {
 		renderString(x, y, current);
 		y += deltaY;
 	}
@@ -541,15 +519,14 @@ void View1::drawPath(Graphics::ManagedSurface &s) {
 }
 
 void View1::openMainMenu(Common::Point clickedPosition) {
-
-	isShowingMainMenu = true;
+	_isShowingMainMenu = true;
 	// Calculate button size from actual icon dimensions (matching original)
 	uint16 maxW = 0, maxH = 0;
-	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
-		if (g_engine->imageResources[i].Width > maxW)
-			maxW = g_engine->imageResources[i].Width;
-		if (g_engine->imageResources[i].Height > maxH)
-			maxH = g_engine->imageResources[i].Height;
+	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
+		if (g_engine->_imageResources[i].Width > maxW)
+			maxW = g_engine->_imageResources[i].Width;
+		if (g_engine->_imageResources[i].Height > maxH)
+			maxH = g_engine->_imageResources[i].Height;
 	}
 	uint16 btnW = maxW + 6;
 	uint16 btnH = maxH + 6;
@@ -570,46 +547,46 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 		upperLeft.y -= lowerRight.y - 200;
 	}
 	lowerRight = upperLeft + inventorySize;
-	mainMenuRect = Common::Rect(upperLeft, lowerRight);
-	assert(mainMenuRect.width() == inventorySize.x && mainMenuRect.height() == inventorySize.y);
-	isShowingMainMenu = true;
+	_mainMenuRect = Common::Rect(upperLeft, lowerRight);
+	assert(_mainMenuRect.width() == inventorySize.x && _mainMenuRect.height() == inventorySize.y);
+	_isShowingMainMenu = true;
 }
 
 void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	// Original openActionBarAtPosition (1008:3fba) calls:
 	// 1. drawBorderSide(height, width, y, x) — tiles border texture over ENTIRE panel
 	// 2. drawBorderOuterHighlights(height, width, y, x) — draws edge highlights
-	DrawBorderSide(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
-	DrawBorderOuterHighlights(Common::Point(mainMenuRect.left, mainMenuRect.top), Common::Point(mainMenuRect.width(), mainMenuRect.height()), s);
+	drawBorderSide(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), s);
+	drawBorderOuterHighlights(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), s);
 
 	// 3x3 grid layout matching openActionBarAtPosition (1008:3fba)
 	// Each button is sized to the largest icon + 6px padding, centered in cell
 	uint16 maxW = 0, maxH = 0;
-	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
-		if (g_engine->imageResources[i].Width > maxW)
-			maxW = g_engine->imageResources[i].Width;
-		if (g_engine->imageResources[i].Height > maxH)
-			maxH = g_engine->imageResources[i].Height;
+	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
+		if (g_engine->_imageResources[i].Width > maxW)
+			maxW = g_engine->_imageResources[i].Width;
+		if (g_engine->_imageResources[i].Height > maxH)
+			maxH = g_engine->_imageResources[i].Height;
 	}
 	uint16 btnW = maxW + 6;
 	uint16 btnH = maxH + 6;
 
-	mainMenuButtonLocations.resize(9);
-	for (int i = 0; i < 9 && i < (int)g_engine->imageResources.size(); i++) {
+	_mainMenuButtonLocations.resize(9);
+	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
 		int col = i % 3;
 		int row = i / 3;
-		uint16 cellX = mainMenuRect.left + 8 + col * btnW;
-		uint16 cellY = mainMenuRect.top + 8 + row * btnH;
+		uint16 cellX = _mainMenuRect.left + 8 + col * btnW;
+		uint16 cellY = _mainMenuRect.top + 8 + row * btnH;
 
 		// Original draws drawBorderOuterHighlights per button cell
-		DrawBorderOuterHighlights(Common::Point(cellX, cellY), Common::Point(btnW, btnH), s);
+		drawBorderOuterHighlights(Common::Point(cellX, cellY), Common::Point(btnW, btnH), s);
 
-		AnimFrame &frame = g_engine->imageResources[i];
+		AnimFrame &frame = g_engine->_imageResources[i];
 		// Center icon within cell
 		uint16 iconX = cellX + (btnW - frame.Width) / 2;
 		uint16 iconY = cellY + (btnH - frame.Height) / 2;
-		DrawSprite(iconX, iconY, frame.Width, frame.Height, frame.Data, s, false);
-		mainMenuButtonLocations[i] = Common::Rect(cellX, cellY, cellX + btnW, cellY + btnH);
+		drawSprite(iconX, iconY, frame.Width, frame.Height, frame.Data, s, false);
+		_mainMenuButtonLocations[i] = Common::Rect(cellX, cellY, cellX + btnW, cellY + btnH);
 	}
 }
 
@@ -623,7 +600,7 @@ void View1::setStringBox(const Common::StringArray &sa) {
 }
 
 void View1::setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos) {
-	stringBoxPosition = pos;
+	_stringBoxPosition = pos;
 	setStringBox(sa);
 }
 
@@ -643,25 +620,25 @@ void View1::clearStringBox(bool continueScript) {
 	}
 }
 
-int View1::GetCharacterArrayIndex(const Character *c) const {
+int View1::getCharacterArrayIndex(const Character *c) const {
 	// TODO: Check if there is a find function somewhere
-	for (uint i = 0; i < characters.size(); i++) {
-		if (characters[i] == c) {
+	for (uint i = 0; i < _characters.size(); i++) {
+		if (_characters[i] == c) {
 			return i;
 		}
 	}
 	return -1;
 }
 
-bool View1::HasDuplicateCharacters() const {
+bool View1::hasDuplicateCharacters() const {
 	Common::Array<uint16> uniqueIDs;
-	for (Macs2::Character *current : characters) {
+	for (Macs2::Character *current : _characters) {
 		for (uint16 currentID : uniqueIDs) {
-			if (currentID == current->GameObject->Index) {
+			if (currentID == current->_gameObject->_index) {
 				return true;
 			}
 		}
-		uniqueIDs.push_back(current->GameObject->Index);
+		uniqueIDs.push_back(current->_gameObject->_index);
 	}
 	return false;
 }
@@ -712,8 +689,8 @@ void View1::startFadeToBlack(uint16 speed) {
 	setViewPaletteSafely(this, colors);
 	g_system->updateScreen();
 
-	currentFadeValue = 0x40;
-	fadeMode = FadeMode::None;
+	_currentFadeValue = 0x40;
+	_fadeMode = FadeMode::None;
 	endFadeCursorSuppression(colors);
 }
 
@@ -735,7 +712,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	Graphics::ManagedSurface s = getSurface();
 	s.blitFrom(_backgroundSurface);
 	drawBackgroundAnimations(s);
-	DrawCharacters(s);
+	drawCharacters(s);
 
 	// Copy pixels to the system screen
 	g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
@@ -778,8 +755,8 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	setViewPaletteSafely(this, g_engine->_pal);
 	g_system->updateScreen();
 
-	currentFadeValue = -1;
-	fadeMode = FadeMode::None;
+	_currentFadeValue = -1;
+	_fadeMode = FadeMode::None;
 	_paletteDirty = false;
 	endFadeCursorSuppression(g_engine->_pal);
 }
@@ -802,7 +779,7 @@ void View1::endFadeCursorSuppression(const byte *palette) {
 	}
 
 	_cursorSuppressedForFade = false;
-	UpdateCursor(palette);
+	updateCursor(palette);
 	if (_cursorWasVisibleBeforeFade) {
 		CursorMan.showMouse(true);
 	}
@@ -819,7 +796,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
 		// Map mode (depth-based scene preview) from handleInput (1008:e8bf).
 		// When currentMode == VM_MAP, clicking on the depth map previews scenes.
-		if (currentMode == ViewMode::VM_MAP) {
+		if (_currentMode == ViewMode::VM_MAP) {
 			Common::Rect screenRect(320, 200);
 			if (screenRect.contains(msg._pos)) {
 				uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
@@ -840,10 +817,10 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					redraw();
 				} else if (depth == 0xFF) {
 					// Return to normal mode: reload current scene, clear map flag
-					currentMode = ViewMode::VM_GAME;
+					_currentMode = ViewMode::VM_GAME;
 					g_engine->SetCursorMode(Script::MouseMode::Walk);
-					UpdateCursor();
-					g_engine->changeScene(Scenes::instance().CurrentSceneIndex, false);
+					updateCursor();
+					g_engine->changeScene(Scenes::instance()._currentSceneIndex, false);
 					g_engine->ScheduleRun(true);
 				}
 			}
@@ -865,27 +842,27 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		if (_isShowingInventory) {
 
 			for (int i = 0; i < 6; i++) {
-				const Common::Rect &current = inventoryButtonLocations[i];
+				const Common::Rect &current = _inventoryButtonLocations[i];
 				if (current.contains(msg._pos)) {
 					switch (i) {
 					case static_cast<int>(InventoryButtonIndex::Look): {
 						g_engine->SetCursorMode(Script::MouseMode::Look);
-						UpdateCursor();
+						updateCursor();
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Hand): {
 						g_engine->SetCursorMode(Script::MouseMode::Use);
-						UpdateCursor();
+						updateCursor();
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Up): {
-						if (inventoryPage > 0) {
-							inventoryPage--;
+						if (_inventoryPage > 0) {
+							_inventoryPage--;
 						}
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Down): {
 						// Check how many pages we have
-						uint16 numPages = (uint16)ceil((double)inventoryItems.size() / 5.0);
-						if (inventoryPage < numPages - 2) {
-							inventoryPage++;
+						uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
+						if (_inventoryPage < numPages - 2) {
+							_inventoryPage++;
 						}
 
 					} break;
@@ -894,14 +871,14 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 							// Original button 6 with mode 0x17: preserve the selected item
 							// Sets g_wActiveInventoryItemId and g_wInteractedInventoryItemId
 							// so the item can be used on scene objects after closing
-							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + activeInventoryItem->Index;
-							g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + activeInventoryItem->Index;
+							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+							g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
 						} else {
-							activeInventoryItem = nullptr;
+							_activeInventoryItem = nullptr;
 						}
 						_isShowingInventory = false;
-						inventoryPage = 0;
-						UpdateCursor();
+						_inventoryPage = 0;
+						updateCursor();
 						return true;
 					}
 					}
@@ -909,19 +886,19 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			}
 
 			// Check if we hit an inventory item
-			GameObject *clickedObject = getClickedInventoryItem2(msg._pos);
+			GameObject *clickedObject = getClickedInventoryItem(msg._pos);
 
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
 				// Look at item: object ID uses 0x400 prefix (confirmed from original handleInventoryClick)
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->Index;
+				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				g_engine->RunScriptExecutor(false);
 				return true;
 			}
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
-				activeInventoryItem = clickedObject;
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->Index;
-				AnimFrame *icon = GetInventoryIcon(activeInventoryItem);
+				_activeInventoryItem = clickedObject;
+				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
+				AnimFrame *icon = getInventoryIcon(_activeInventoryItem);
 				if (icon != nullptr) {
 					// Original copies item icon frame into cursor array slot 0x17 (UseInventory)
 					// so the cursor shows the picked-up item
@@ -934,13 +911,13 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					g_engine->_cursorHeights[cursorSlot] = icon->Height;
 				}
 				g_engine->SetCursorMode(Script::MouseMode::UseInventory);
-				UpdateCursor();
+				updateCursor();
 				return true;
 			}
-			if (activeInventoryItem != nullptr && clickedObject != nullptr) {
+			if (_activeInventoryItem != nullptr && clickedObject != nullptr) {
 				// Use item on item (combine): confirmed from original handleInventoryClick button 5 + mode 0x17
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + activeInventoryItem->Index;
-				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
+				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
 				g_engine->_scriptExecutor->_inventoryCombineFlag = true;
 				g_engine->RunScriptExecutor(false);
 			}
@@ -948,51 +925,51 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			return true;
 		}
 
-		if (isShowingMainMenu) {
+		if (_isShowingMainMenu) {
 			for (int i = 0; i < 9; i++) {
-				const Common::Rect &current = mainMenuButtonLocations[i];
+				const Common::Rect &current = _mainMenuButtonLocations[i];
 				if (current.contains(msg._pos)) {
 					switch (i) {
 					case static_cast<int>(MainMenuButtonIndex::Talk): {
 						g_engine->SetCursorMode(Script::MouseMode::Talk);
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Look): {
 						g_engine->SetCursorMode(Script::MouseMode::Look);
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Use): {
 						g_engine->SetCursorMode(Script::MouseMode::Use);
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Walk): {
 						g_engine->SetCursorMode(Script::MouseMode::Walk);
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Inventory): {
-						isShowingMainMenu = false;
-						OpenInventory(GameObjects::instance().GetProtagonistObject());
+						_isShowingMainMenu = false;
+						openInventory(GameObjects::instance().getProtagonistObject());
 					} break;
 
 					case static_cast<int>(MainMenuButtonIndex::Map): {
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 						// Enter map mode (sets scene+0x61db equivalent)
 						// from handleActionBarClick (1008:42dc) button 6
-						currentMode = ViewMode::VM_MAP;
+						_currentMode = ViewMode::VM_MAP;
 						g_engine->SetCursorMode(Script::MouseMode::PanelUse);
-						UpdateCursor();
+						updateCursor();
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::SaveLoad): {
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 						g_engine->openMainMenuDialog();
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Close): {
-						isShowingMainMenu = false;
+						_isShowingMainMenu = false;
 					} break;
 					}
 				}
 			}
-			UpdateCursor();
+			updateCursor();
 			return true;
 		}
 
@@ -1014,14 +991,14 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
 		if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
-			Character *protagonist = GetCharacterByIndex(1);
+			Character *protagonist = getCharacterByIndex(1);
 			if (protagonist == nullptr) {
 				warning("Ignoring walk click without protagonist character in the active scene");
 				return true;
 			}
 
 			Common::Point target = msg._pos;
-			Common::Point charPos = protagonist->GetPosition();
+			Common::Point charPos = protagonist->getPosition();
 
 			// Snap target to nearest walkable position (1008:9be2)
 			g_engine->snapToWalkablePosition(target, charPos);
@@ -1029,18 +1006,18 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			// Original logic from handleInput (1008:e8bf):
 			// If direct path is walkable, walk directly. Otherwise use pathfinding network.
 			if (protagonist->isPathWalkable(charPos, target)) {
-				protagonist->StartLerpTo(target, 1000);
+				protagonist->startLerpTo(target, 1000);
 			} else {
-				protagonist->PathFinalDestination = target;
-				protagonist->Path.clear();
+				protagonist->_pathFinalDestination = target;
+				protagonist->_path.clear();
 				bool found = protagonist->calculatePath(target);
 				if (found) {
-					protagonist->IsFollowingPath = true;
-					protagonist->CurrentPathIndex = -1;
+					protagonist->_isFollowingPath = true;
+					protagonist->_currentPathIndex = -1;
 					protagonist->walkAlongPath();
 				} else {
 					// No path found — walk directly (will get stuck on obstacles)
-					protagonist->StartLerpTo(target, 1000);
+					protagonist->startLerpTo(target, 1000);
 				}
 			}
 			return true;
@@ -1049,23 +1026,23 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// Check if we hit something
 		// Original order: getHotspotAtPoint first, then drawCharactersAndHitTest overrides.
 		// Our order (objects first, fallback to background) produces the same result.
-		uint16 index = GetHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
+		uint16 index = getHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
 		if (index == 0) {
 			index = g_engine->GetInteractedBackgroundHotspot(msg._pos);
 		}
 		if (index != 0) {
 			debug("*** New interaction started");
 			g_engine->_scriptExecutor->_interactedObjectID = index;
-			g_engine->_scriptExecutor->_interactedOtherObjectID = activeInventoryItem != nullptr ? activeInventoryItem->Index + 0x0400 : 0x0000;
+			g_engine->_scriptExecutor->_interactedOtherObjectID = _activeInventoryItem != nullptr ? _activeInventoryItem->_index + 0x0400 : 0x0000;
 
 			// TODO: We need to keep better track of whether the inventory item
 			// is actually gone, resetting for now like this
-			activeInventoryItem = nullptr;
+			_activeInventoryItem = nullptr;
 
 			// Set the script
-			g_engine->_scriptExecutor->setScript(Scenes::instance().CurrentSceneScript);
+			g_engine->_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 			// TODO: Not sure where the original code rewinds the script
-			Scenes::instance().CurrentSceneScript->seek(0, SEEK_SET);
+			Scenes::instance()._currentSceneScript->seek(0, SEEK_SET);
 			g_engine->RunScriptExecutor(false);
 			// TODO: For the case of clicking an object, this reset happens at l0037_EFD3:
 			// Not sure where and if it happens for an inventory interaction
@@ -1096,12 +1073,12 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 		// From handleInput (1008:e8bf): right-click when not executing
 		// opens the action bar at the mouse position.
-		if (!isShowingMainMenu) {
+		if (!_isShowingMainMenu) {
 			openMainMenu(msg._pos);
 		} else {
-			isShowingMainMenu = false;
+			_isShowingMainMenu = false;
 		}
-		UpdateCursor();
+		updateCursor();
 		return true;
 	}
 	return false;
@@ -1140,13 +1117,13 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	if (msg.ascii == (uint16)'t') {
-		if (_isShowingInventory && activeInventoryItem != nullptr) {
-			if (inventorySource->Index == 1) {
+		if (_isShowingInventory && _activeInventoryItem != nullptr) {
+			if (_inventorySource->_index == 1) {
 				// TODO: Need to handle this case, the game can figure out that there is a container
 				// in the current room as seen in room 3 of the boat
 			} else {
-				TransferInventoryItem(activeInventoryItem, GameObjects::instance().GetProtagonistObject());
-				activeInventoryItem = nullptr;
+				transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
+				_activeInventoryItem = nullptr;
 			}
 		}
 	}
@@ -1162,7 +1139,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		_backgroundSurface.copyFrom(g_engine->_pathfindingMap);
 		redraw();
 	} else if (msg.ascii == (uint16)'x') {
-		CalculateCharacterScaling(0x79);
+		calculateCharacterScaling(0x79);
 	} else if (msg.ascii == (uint16)'b') {
 		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 		startFading();
@@ -1171,17 +1148,17 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
 		g_engine->RunScriptExecutor(true);
 		// Also test the lerping
-		GetCharacterByIndex(1)->StartLerpTo(Common::Point(200, 100), 5000);
+		getCharacterByIndex(1)->startLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
 		if (!_isShowingInventory) {
-			OpenInventory(GameObjects::instance().GetProtagonistObject());
+			openInventory(GameObjects::instance().getProtagonistObject());
 		} else {
-			CloseInventory();
+			closeInventory();
 		}
 	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
 		// Register a dialogue choice and act upon it
 		uint8 numberPressed = msg.ascii - '1' + 1;
-		TriggerDialogueChoice(numberPressed);
+		triggerDialogueChoice(numberPressed);
 	} else if (msg.ascii == 'p') {
 
 		/*  characters[0]->IsFollowingPath = true;
@@ -1191,13 +1168,13 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		characters[0]->Path.push_back(11);
 		characters[0]->Path.push_back(9); */
 		const Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		GetCharacterByIndex(1)->PathFinalDestination = mousePos;
-		GetCharacterByIndex(1)->Path.clear();
+		Character *chr = getCharacterByIndex(1);
+		chr->_pathFinalDestination = mousePos;
+		chr->_path.clear();
 		// g_engine->_path.clear();
-		bool pathfindingResult = characters[0]->calculatePath(mousePos);
-		GetCharacterByIndex(1)->IsFollowingPath = pathfindingResult;
-		GetCharacterByIndex(1)->CurrentPathIndex = -1;
-
+		bool pathfindingResult = _characters[0]->calculatePath(mousePos);
+		chr->_isFollowingPath = pathfindingResult;
+		chr->_currentPathIndex = -1;
 	} else if (msg.ascii == 'n') {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		openMainMenu(mousePos);
@@ -1207,12 +1184,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 }
 
 void View1::draw() {
-	if (_paletteDirty && currentFadeValue < 0) {
+	if (_paletteDirty && _currentFadeValue < 0) {
 		setViewPaletteSafely(this, g_engine->_pal);
 		_paletteDirty = false;
 	}
-
-	handleFading();
 
 	Graphics::ManagedSurface s = getSurface();
 
@@ -1220,6 +1195,7 @@ void View1::draw() {
 	// Handle highlighting
 
 	// Debug: visualize hotspot map regions
+	// TODO: IMGUI: move hotspots to imgui debug scene maps
 	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 		for (int x = 0; x < s.w; x++) {
 			for (int y = 0; y < s.h; y++) {
@@ -1231,7 +1207,7 @@ void View1::draw() {
 	}
 
 	drawBackgroundAnimations(s);
-	DrawCharacters(s);
+	drawCharacters(s);
 	drawOverlayTextEntries();
 
 	if (_isShowingStringBox) {
@@ -1245,10 +1221,10 @@ void View1::draw() {
 	// We keep the inventory on but don't draw it in case we display a string
 	// i.e. a description of an item
 	if (_isShowingInventory && !_isShowingStringBox) {
-		drawInventory2(s);
+		drawInventory(s);
 	}
 
-	if (isShowingMainMenu) {
+	if (_isShowingMainMenu) {
 		drawMainMenu(s);
 	}
 
@@ -1258,11 +1234,11 @@ void View1::draw() {
 
 	// Active inventory item is now shown via the cursor (UpdateCursor uses _cursorData slot 0x16)
 
+	// TODO: IMGUI: visualize this in a debug window instead of drawing on the main view
 	if (DebugMan.isDebugChannelEnabled(kDebugPath)) {
 		drawPathfindingPoints(s);
 		drawPath(s);
 	}
-	// drawBackgroundAnimationNumbers(s);
 	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 		drawDebugOutput(s);
 	}
@@ -1272,13 +1248,13 @@ void View1::draw() {
 
 	if (_isShowingInventory) {
 		// Show the ID of the hovered item
-		GameObject *hoveredObject = getClickedInventoryItem2(mousePos);
+		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
-			Common::String name = GameObjects::instance().ObjectNames[hoveredObject->Index];
+			Common::String name = GameObjects::instance()._objectNames[hoveredObject->_index];
 			if (!name.empty()) {
 				renderString(mousePos.x + 20, mousePos.y + 20, name);
 			} else {
-				renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->Index));
+				renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->_index));
 			}
 		}
 	} else if (DebugMan.isDebugChannelEnabled(kDebugInput)) {
@@ -1288,18 +1264,19 @@ void View1::draw() {
 
 	// Render the scaling factors
 	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-		renderString(0, 0, Common::String::format("%u %u", scalingValues.characterY, scalingValues.scalingFactor));
+		renderString(0, 0, Common::String::format("%u %u", _scalingValues.characterY, _scalingValues.scalingFactor));
 	}
 
-	// DrawImageResources(s);
+	// TODO: IMGUI: debug window that renders this
+	// drawImageResources(s);
 }
 
 bool View1::tick() {
 	// TODO: Check if this pattern works or it would be better different
 	// TODO: Check if loading also works with this pattern
-	if (!started) {
-		g_engine->changeScene(Scenes::instance().CurrentSceneIndex);
-		started = true;
+	if (!_started) {
+		g_engine->changeScene(Scenes::instance()._currentSceneIndex);
+		_started = true;
 	}
 	// Cycle the palette
 	++_offset;
@@ -1381,43 +1358,41 @@ bool View1::tick() {
 		Character *speaker = currentSpeechActData.speaker;
 		if (currentSpeechActData.mouthAnimCounter < 1) {
 			// counter < 1: advance alternate blob (Blobs[18]) with mode 2
-			if (speaker->GameObject->Blobs.size() > 18 && !speaker->GameObject->Blobs[18].empty()) {
-				BackgroundAnimationBlob::advanceAnimFrame(speaker->GameObject->Blobs[18], true, 2);
+			if (speaker->_gameObject->Blobs.size() > 18 && !speaker->_gameObject->Blobs[18].empty()) {
+				BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->Blobs[18], true, 2);
 			}
 		} else {
 			currentSpeechActData.mouthAnimCounter--;
 			if (currentSpeechActData.mouthAnimCounter < 1) {
 				// just hit 0: reset alternate blob (Blobs[18]) with mode 1
-				if (speaker->GameObject->Blobs.size() > 18 && !speaker->GameObject->Blobs[18].empty()) {
-					BackgroundAnimationBlob::advanceAnimFrame(speaker->GameObject->Blobs[18], true, 1);
+				if (speaker->_gameObject->Blobs.size() > 18 && !speaker->_gameObject->Blobs[18].empty()) {
+					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->Blobs[18], true, 1);
 				}
 			} else {
 				// counter > 0: advance primary blob (Blobs[17]) with mode 2
-				if (speaker->GameObject->Blobs.size() > 17 && !speaker->GameObject->Blobs[17].empty()) {
-					BackgroundAnimationBlob::advanceAnimFrame(speaker->GameObject->Blobs[17], true, 2);
+				if (speaker->_gameObject->Blobs.size() > 17 && !speaker->_gameObject->Blobs[17].empty()) {
+					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->Blobs[17], true, 2);
 				}
 			}
 		}
 	}
 
-	int i = 0;
-	for (auto currentCharacter : characters) {
-		currentCharacter->Update();
-		i++;
+	for (auto currentCharacter : _characters) {
+		currentCharacter->update();
 	}
 
 	redraw();
 	return true;
 }
 
-void View1::drawInventory2(Graphics::ManagedSurface &s) {
+void View1::drawInventory(Graphics::ManagedSurface &s) {
 	// First, draw the whole background
 	// Happens around l0037_47A1:
 
 	uint16 maxWidthButtonIcon = 0;  // [0FE0h]
 	uint16 maxHeightButtonIcon = 0; // [0FE2h]
 	for (uint16 index : g_engine->inventoryIconIndices) {
-		AnimFrame &currentFrame = g_engine->imageResources[index - 1];
+		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
 		maxWidthButtonIcon = MAX(maxWidthButtonIcon, currentFrame.Width);
 		// TODO: Not sure if this one is needed
 		maxHeightButtonIcon = MAX(maxHeightButtonIcon, currentFrame.Height);
@@ -1426,8 +1401,8 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	uint16 maxWidthInventoryIcon = 0x20;  // [0FDCh]
 	uint16 maxHeightInventoryIcon = 0x20; // [0FDEh]
 
-	for (GameObject *currentInventoryObject : inventoryItems) {
-		AnimFrame *icon = GetInventoryIcon(currentInventoryObject);
+	for (GameObject *currentInventoryObject : _inventoryItems) {
+		AnimFrame *icon = getInventoryIcon(currentInventoryObject);
 		if (icon == nullptr) {
 			continue;
 		}
@@ -1462,8 +1437,8 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	Graphics::ManagedSurface *buffer = new Graphics::ManagedSurface(s.w, s.h, s.format);
 	buffer->rawBlitFrom(s, Common::Rect(0, 0, s.w, s.h), Common::Point(0, 0));
 
-	DrawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
-	DrawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
+	drawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
+	drawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
 
 	uint16 buttonX = (s.w / 2) - (buttonW + 4) * 3 + 2;
 	uint16 buttonY = y + height - 4 - buttonH;
@@ -1471,19 +1446,19 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	// Draw the buttons at the bottom
 	for (int i = 0; i < 6; i++) {
 		uint16 index = g_engine->inventoryIconIndices[i];
-		AnimFrame &currentFrame = g_engine->imageResources[index - 1];
-		DrawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
+		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
+		drawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
 		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame.Width / 2;
 		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame.Height / 2;
-		inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
-		DrawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
+		_inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
+		drawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
 		buttonX += buttonW + 4;
 	}
 	Common::Rect sourceRect(Common::Point((s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 1, y + 5),
 							(slotW + 4) * 5 + 2, (slotH + 4) * 2 + 2);
 	s.rawBlitFrom(*buffer, sourceRect, Common::Point(sourceRect.left, sourceRect.top));
 
-	DrawBorderOuterHighlights(Common::Point(
+	drawBorderOuterHighlights(Common::Point(
 								  (s.w / 2) - ((slotW + 4) * 5 + 4) / 2,
 								  y + 4),
 							  Common::Point(
@@ -1497,24 +1472,24 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	// local_10 = panelY + 8
 	uint16 itemX = (s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 4;
 	uint16 itemY = y + 8;
-	inventoryGridUpperLeft.x = itemX;
-	inventoryGridUpperLeft.y = itemY;
+	_inventoryGridUpperLeft.x = itemX;
+	_inventoryGridUpperLeft.y = itemY;
 	// Original adds +6 to slot dimensions for hit testing (g_wInventorySlotWidth += 6)
-	inventorySlotSize.x = slotW;
-	inventorySlotSize.y = slotH;
+	_inventorySlotSize.x = slotW;
+	_inventorySlotSize.y = slotH;
 	// Original: local_12 counts from 10 down, showing up to 10 items (5 per row, 2 rows)
-	uint16 itemIndex = inventoryPage * 10;
+	uint16 itemIndex = _inventoryPage * 10;
 	uint16 itemXStart = itemX;
 	// Now the inventory icons themselves
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
-			if (itemIndex >= inventoryItems.size()) {
+			if (itemIndex >= _inventoryItems.size()) {
 				break;
 			}
-			AnimFrame *icon = GetInventoryIcon(inventoryItems[itemIndex]);
+			AnimFrame *icon = getInventoryIcon(_inventoryItems[itemIndex]);
 			if (icon != nullptr) {
 				// Original: (slotWidth/2 + local_e) - (frameWidth/2)
-				DrawSprite(slotW / 2 + itemX - icon->Width / 2,
+				drawSprite(slotW / 2 + itemX - icon->Width / 2,
 						   slotH / 2 + itemY - icon->Height / 2,
 						   icon->Width, icon->Height, icon->Data, s, false);
 			}
@@ -1526,28 +1501,27 @@ void View1::drawInventory2(Graphics::ManagedSurface &s) {
 	}
 }
 
-GameObject *View1::getClickedInventoryItem2(const Common::Point &p) {
+GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
+	Common::Rect currentInventorySlot(_inventoryGridUpperLeft, _inventoryGridUpperLeft + _inventorySlotSize);
 
-	Common::Rect currentInventorySlot(inventoryGridUpperLeft, inventoryGridUpperLeft + inventorySlotSize);
-
-	uint16 itemIndex = inventoryPage * 10;
+	uint16 itemIndex = _inventoryPage * 10;
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
-			if (itemIndex >= inventoryItems.size()) {
+			if (itemIndex >= _inventoryItems.size()) {
 				return nullptr;
 			}
 			if (currentInventorySlot.contains(p)) {
-				return inventoryItems[itemIndex];
+				return _inventoryItems[itemIndex];
 			}
 			itemIndex++;
-			currentInventorySlot.moveTo(currentInventorySlot.left + inventorySlotSize.x + 4, currentInventorySlot.top);
+			currentInventorySlot.moveTo(currentInventorySlot.left + _inventorySlotSize.x + 4, currentInventorySlot.top);
 		}
-		currentInventorySlot.moveTo(inventoryGridUpperLeft.x, currentInventorySlot.top + inventorySlotSize.y + 4);
+		currentInventorySlot.moveTo(_inventoryGridUpperLeft.x, currentInventorySlot.top + _inventorySlotSize.y + 4);
 	}
 	return nullptr;
 }
 
-void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
+void View1::drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
 	for (int currentX = 0; currentX < width; currentX++) {
 		int actualX = mirrored ? width - currentX - 1 : currentX;
 		for (int currentY = 0; currentY < height; currentY++) {
@@ -1569,11 +1543,11 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 	}
 }
 
-void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
-	DrawSprite(pos.x, pos.y, width, height, data, s, mirrored, useDepth, depth);
+void View1::drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
+	drawSprite(pos.x, pos.y, width, height, data, s, mirrored, useDepth, depth);
 }
 
-void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s) {
+void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s) {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
 			uint8 val = data[currentY * width + currentX];
@@ -1587,11 +1561,11 @@ void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 	}
 }
 
-void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
-	DrawSpriteClipped(x, y, clippingRect, sprite.Width, sprite.Height, sprite.Data.data(), s);
+void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
+	drawSpriteClipped(x, y, clippingRect, sprite.Width, sprite.Height, sprite.Data.data(), s);
 }
 
-void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s) {
+void View1::drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s) {
 	int xScaling = 0;
 	int yScaling = 0;
 
@@ -1639,11 +1613,11 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 	}
 }
 
-void View1::DrawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s) {
-	DrawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite.Data.data(), s);
+void View1::drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s) {
+	drawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite.Data.data(), s);
 }
 
-void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s) {
+void View1::drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s) {
 	const uint16 &x = pos.x;
 	const uint16 &y = pos.y;
 	const uint16 &width = sprite.Width;
@@ -1703,83 +1677,83 @@ void View1::DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 	}
 }
 
-void View1::DrawCharacters(Graphics::ManagedSurface &s) {
+void View1::drawCharacters(Graphics::ManagedSurface &s) {
 	// Y-sort characters (quicksort by Y position, ascending = back to front)
 	// from sortObjectListByY / buildSortedObjectList (1008:8cf2)
-	Common::Array<Character *> sorted(characters);
+	Common::Array<Character *> sorted(_characters);
 	Common::sort(sorted.begin(), sorted.end(), [](Character *a, Character *b) {
-		return a->GetPosition().y < b->GetPosition().y;
+		return a->getPosition().y < b->getPosition().y;
 	});
 
 	for (auto current : sorted) {
-		if (!current->GameObject->IsVisible) {
+		if (!current->_gameObject->IsVisible) {
 			continue;
 		}
 
 		// Bounds attachment from drawAllCharacters (1008:90a2):
 		// When HasBoundsAttachment is set, position is relative to parent object.
-		if (current->GameObject->HasBoundsAttachment) {
-			GameObject *parent = GameObjects::GetObjectByIndex(current->GameObject->BoundsAttachmentObjectID);
+		if (current->_gameObject->HasBoundsAttachment) {
+			GameObject *parent = GameObjects::getObjectByIndex(current->_gameObject->BoundsAttachmentObjectID);
 			if (parent != nullptr) {
-				current->GameObject->Position.x = parent->Position.x + (int16)current->GameObject->BoundsAttachmentValue1;
-				current->GameObject->Position.y = parent->Position.y + (int16)current->GameObject->BoundsAttachmentValue2;
-				current->GameObject->Unknown = parent->Unknown + (int16)current->GameObject->BoundsAttachmentValue3;
+				current->_gameObject->Position.x = parent->Position.x + (int16)current->_gameObject->BoundsAttachmentValue1;
+				current->_gameObject->Position.y = parent->Position.y + (int16)current->_gameObject->BoundsAttachmentValue2;
+				current->_gameObject->Unknown = parent->Unknown + (int16)current->_gameObject->BoundsAttachmentValue3;
 			}
 		}
 
-		AnimFrame *frame = current->GetCurrentAnimationFrame();
-		bool mirror = current->shouldMirrorCurrentAnimation;
+		AnimFrame *frame = current->getCurrentAnimationFrame();
+		bool mirror = current->_shouldMirrorCurrentAnimation;
 
 		// AnimFrame *frame = current->GetCurrentPortrait();
-		uint8 depth = current->GetPosition().y;
+		uint8 depth = current->getPosition().y;
 		if (depth == 0) {
 			// TODO: This is a quick fix for the issue of the gangster at the beginning not being removed properly
 			continue;
 		}
-		uint8 bgDepth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
+		uint8 bgDepth = g_engine->_depthMap.getPixel(current->getPosition().x, current->getPosition().y);
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 			g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
 		}
 		// Only output debug values for the character
-		uint16 scalingFactor = CalculateCharacterScaling(depth, current->GameObject->Index == 1);
+		uint16 scalingFactor = calculateCharacterScaling(depth, current->_gameObject->_index == 1);
 		// Adjust the position based on the scale
 		// TODO: Search where this is done in the game code
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		// DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
-		Common::Point actualPosition = current->GetPosition() - Common::Point(0, current->GetVerticalOffset());
-		DrawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s);
+		Common::Point actualPosition = current->getPosition() - Common::Point(0, current->getVerticalOffset());
+		drawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s);
 
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-			Common::String number = Common::String::format("%u", current->GameObject->Orientation);
-			renderString(current->GetPosition(), number.c_str());
+			Common::String number = Common::String::format("%u", current->_gameObject->Orientation);
+			renderString(current->getPosition(), number.c_str());
 			Common::Rect screenRect(0, 0, 320, 200);
-			if (screenRect.contains(current->GetPosition())) {
-				s.setPixel(current->GetPosition().x, current->GetPosition().y, 0xFF);
+			if (screenRect.contains(current->getPosition())) {
+				s.setPixel(current->getPosition().x, current->getPosition().y, 0xFF);
 			}
 		}
 	}
 }
 
-void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
+void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
 	setStringBox(strings);
 	_isShowingDialogueChoice = false;
 	_dialogueChoiceCount = 0;
 	_continueScriptAfterUI = true;
 
-	currentSpeechActData.speaker = GetCharacterByIndex(characterIndex);
+	currentSpeechActData.speaker = getCharacterByIndex(characterIndex);
 	currentSpeechActData.strings = strings;
 	currentSpeechActData.position = position;
 	currentSpeechActData.onRightSide = onRightSide;
 
-	const int totalWidth = g_engine->MeasureStrings(strings) + 0x12;
-	const int totalHeight = g_engine->MeasureStringsVertically(strings) + 0x10;
+	const int totalWidth = g_engine->measureStrings(strings) + 0x12;
+	const int totalHeight = g_engine->measureStringsVertically(strings) + 0x10;
 	int stringBoxX = position.x;
 	int stringBoxY = position.y;
 	Common::Point portraitBoxPosition = position;
 
 	if (currentSpeechActData.speaker != nullptr) {
-		AnimFrame *leftPortrait = currentSpeechActData.speaker->GetCurrentPortrait(false);
-		AnimFrame *rightPortrait = currentSpeechActData.speaker->GetCurrentPortrait(true);
+		AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false);
+		AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true);
 		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->Width : 0, rightPortrait ? rightPortrait->Width : 0);
 		if (portraitWidth > 0) {
 			if (onRightSide) {
@@ -1800,23 +1774,23 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 		totalChars += line.size();
 	}
 	currentSpeechActData.mouthAnimCounter = (totalChars > 0) ? totalChars : 1;
-	stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
+	_stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 	debug("Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
 		  characterIndex, position.x, position.y, onRightSide ? 1 : 0,
 		  currentSpeechActData.position.x, currentSpeechActData.position.y,
-		  stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
+		  _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 	debugC(kDebugScript,
 		   "Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
 		   characterIndex, position.x, position.y, onRightSide ? 1 : 0,
 		   currentSpeechActData.position.x, currentSpeechActData.position.y,
-		   stringBoxPosition.x, stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
+		   _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 
-	if (autoclickActive) {
+	if (_autoclickActive) {
 		clearStringBox();
 	}
 }
 
-void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+void View1::drawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// fn0037_A65D proc
 	constexpr uint16 width = 6;
 	debugC(kDebugScript, "Render border: pos=(%d,%d) size=(%d,%d)", pos.x, pos.y, size.x, size.y);
@@ -1827,16 +1801,16 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
 
 	// Left side
-	DrawBorderSide(pos, Common::Point(width, size.y), s);
+	drawBorderSide(pos, Common::Point(width, size.y), s);
 
 	// Right side (verified: drawBorderSide(6, height, x+width-6, y) in disassembly)
-	DrawBorderSide(pos + Common::Point(size.x - width, 0), Common::Point(width, size.y), s);
+	drawBorderSide(pos + Common::Point(size.x - width, 0), Common::Point(width, size.y), s);
 
 	// Top side
-	DrawBorderSide(pos, Common::Point(size.x, width), s);
+	drawBorderSide(pos, Common::Point(size.x, width), s);
 
 	// Bottom side
-	DrawBorderSide(pos + Common::Point(0, size.y - width), Common::Point(size.x, width), s);
+	drawBorderSide(pos + Common::Point(0, size.y - width), Common::Point(size.x, width), s);
 
 	// Add the function for filling a side of the border
 	// Algorithm
@@ -1845,25 +1819,25 @@ void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Grap
 
 	// Highlights and shadows (outer edge, inner edge, inner border)
 	// Top highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
 	// Left highlight
-	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
+	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
 	// Bottom shadow
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
 	// Right shadow
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
 	// Inner top shadow
-	DrawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x1011, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x1011, s);
 	// Inner left shadow
-	DrawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x1011, s);
+	drawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x1011, s);
 	// Inner bottom highlight
-	DrawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x1012, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x1012, s);
 	// Inner right highlight
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x1012, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x1012, s);
 }
 
 // drawBorderSide (1008:39b5)
-void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// Clipping region: (x+1, y+1) to (x+width, y+height) per disassembly
 	Common::Rect clippingRect(pos + Common::Point(1, 1), pos + size);
 	// Texture: border sprite from cursor image array at offset 0x1f0 (mode 1)
@@ -1873,7 +1847,7 @@ void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, 
 
 	while (currentY < clippingRect.bottom) {
 		while (currentX < clippingRect.right) {
-			DrawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
+			drawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
 			currentX += sprite.Width;
 		}
 		currentX = clippingRect.left;
@@ -1881,30 +1855,29 @@ void View1::DrawBorderSide(const Common::Point &pos, const Common::Point &size, 
 	}
 }
 
-void View1::DrawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-
-	DrawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
-	DrawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
+void View1::drawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	drawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
+	drawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
+	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
 }
 
-void View1::DrawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	DrawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
-	DrawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1011, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1011, s);
-	DrawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
-	DrawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
+void View1::drawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	drawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
+	drawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1011, s);
+	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1011, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
 }
 
-Macs2::Sprite *View1::GetUISprite(uint32 offset) {
+Macs2::Sprite *View1::getUISprite(uint32 offset) {
 	if (offset == 0x1012) {
 		return &g_engine->_borderHighlightSprite;
 	} else if (offset == 0x1011) {
@@ -1917,58 +1890,58 @@ Macs2::Sprite *View1::GetUISprite(uint32 offset) {
 	return nullptr;
 }
 
-void View1::DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s) {
+void View1::drawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s) {
 	// drawHorizontalBorderHighlight (1008:3737)
 	// Sets clipping region to 1px tall horizontal strip, tiles the highlight/shadow sprite.
 	Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 
-	const Sprite *sprite = GetUISprite(spriteAddress);
+	const Sprite *sprite = getUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
 	}
 	while (currentX < clippingRect.right) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
+		drawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
 		currentX += sprite->Width;
 	}
 }
 
-void View1::DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s) {
+void View1::drawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s) {
 	// drawVerticalBorderHighlight (1008:3876)
 	// Sets clipping region to 1px wide vertical strip, tiles the highlight/shadow sprite.
 	Common::Rect clippingRect(pos, pos + Common::Point(1, height));
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 
-	const Sprite *sprite = GetUISprite(spriteAddress);
+	const Sprite *sprite = getUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
 	}
 
 	while (currentY < clippingRect.bottom) {
-		DrawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
+		drawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
 		currentY += sprite->Height;
 	}
 }
 
-void View1::DrawImageResources(Graphics::ManagedSurface &s) {
+void View1::drawImageResources(Graphics::ManagedSurface &s) {
 	uint16 x = 0;
 	uint16 y = 0;
 	uint16 currentMaxHeight = 0;
-	for (AnimFrame &current : g_engine->imageResources) {
+	for (AnimFrame &current : g_engine->_imageResources) {
 		if (x + current.Width > 320) {
 			y += currentMaxHeight;
 			x = 0;
 			currentMaxHeight = 0;
 		}
-		DrawSprite(Common::Point(x, y), current.Width, current.Height, current.Data, s, false);
+		drawSprite(Common::Point(x, y), current.Width, current.Height, current.Data, s, false);
 		x += current.Width;
 		currentMaxHeight = MAX(current.Height, currentMaxHeight);
 	}
 }
 
-void View1::ShowDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
+void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
 	Common::StringArray joinedLines;
 	for (auto &currentLines : choices) {
 		for (auto &currentLine : currentLines) {
@@ -1976,19 +1949,19 @@ void View1::ShowDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 		}
 	}
 
-	ShowSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
+	showSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
 	_isShowingDialogueChoice = true;
 	_dialogueChoiceCount = choices.size();
 }
 
-void View1::TriggerDialogueChoice(uint8 index) {
+void View1::triggerDialogueChoice(uint8 index) {
 	if (!_isShowingDialogueChoice || index < 1 || index > _dialogueChoiceCount) {
 		warning("Ignoring dialogue choice %u without an active matching choice UI", index);
 		return;
 	}
 
 	// TODO: Confirm that these two are really set accordingly
-	g_engine->_scriptExecutor->SetVariableValue(0x0d, index, 0);
+	g_engine->_scriptExecutor->setVariableValue(0x0d, index, 0);
 	g_engine->_scriptExecutor->_chosenDialogueOption = index;
 
 	// TODO: Should check where this happens, but seems like we need to close the
@@ -2000,7 +1973,7 @@ void View1::TriggerDialogueChoice(uint8 index) {
 	g_engine->RunScriptExecutor();
 }
 
-uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValues) {
+uint16 View1::calculateCharacterScaling(uint16 characterY, bool updateDebugValues) {
 	// l0037_93F4: 	scummvm.exe!Macs2::View1::msgKeypress(const Macs2::KeypressMessage & msg) Line 542	C++
 
 	int32 eax = g_engine->word51FD;
@@ -2009,7 +1982,7 @@ uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValue
 	int32 ebx = edx;
 	eax = characterY;
 	if (updateDebugValues) {
-		scalingValues.characterY = characterY;
+		_scalingValues.characterY = characterY;
 	}
 	// TODO: Check this case when it happens
 	// assert(eax >= ecx);
@@ -2027,31 +2000,31 @@ uint16 View1::CalculateCharacterScaling(uint16 characterY, bool updateDebugValue
 	edx = 0;
 	eax += ebx;
 	if (updateDebugValues) {
-		scalingValues.scalingFactor = eax;
+		_scalingValues.scalingFactor = eax;
 	}
 	return eax;
 }
 
-uint16 View1::GetHitObjectID(const Common::Point &pos) const {
+uint16 View1::getHitObjectID(const Common::Point &pos) const {
 	// Matches drawCharactersAndHitTest (1008:8d65): characters are tested back-to-front
 	// (sorted by Y ascending), and depth testing ensures clicks don't hit characters
 	// hidden behind foreground objects.
-	Common::Array<Character *> sorted(characters);
+	Common::Array<Character *> sorted(_characters);
 	Common::sort(sorted.begin(), sorted.end(), [](Character *a, Character *b) {
-		return a->GetPosition().y < b->GetPosition().y;
+		return a->getPosition().y < b->getPosition().y;
 	});
 
 	uint16 hitResult = 0;
 	for (auto currentCharacter : sorted) {
-		if (!currentCharacter->GameObject->IsVisible || !currentCharacter->GameObject->IsClickable) {
+		if (!currentCharacter->_gameObject->IsVisible || !currentCharacter->_gameObject->IsClickable) {
 			continue;
 		}
-		auto animFrame = currentCharacter->GetCurrentAnimationFrame();
+		auto animFrame = currentCharacter->getCurrentAnimationFrame();
 		if (animFrame == nullptr) {
 			continue;
 		}
 
-		Common::Point localPoint = pos - (currentCharacter->GetPosition() - animFrame->GetBottomMiddleOffset());
+		Common::Point localPoint = pos - (currentCharacter->getPosition() - animFrame->GetBottomMiddleOffset());
 		if (localPoint.x < 0 || localPoint.x >= animFrame->Width ||
 			localPoint.y < 0 || localPoint.y >= animFrame->Height) {
 			continue;
@@ -2061,7 +2034,7 @@ uint16 View1::GetHitObjectID(const Common::Point &pos) const {
 		}
 
 		// Depth test: character is only clickable if depth map allows drawing at this position
-		uint8 characterDepth = currentCharacter->GetPosition().y;
+		uint8 characterDepth = currentCharacter->getPosition().y;
 		if (pos.x >= 0 && pos.x < 320 && pos.y >= 0 && pos.y < 200) {
 			uint8 bgDepth = g_engine->_depthMap.getPixel(pos.x, pos.y);
 			if (bgDepth >= characterDepth) {
@@ -2070,7 +2043,7 @@ uint16 View1::GetHitObjectID(const Common::Point &pos) const {
 		}
 
 		// Back-to-front: last hit wins (frontmost character)
-		hitResult = 0x0400 + currentCharacter->GameObject->Index;
+		hitResult = 0x0400 + currentCharacter->_gameObject->_index;
 	}
 	return hitResult;
 }
@@ -2081,15 +2054,15 @@ bool Character::HandleWalkability(Character *c) {
 	// the original code samples walkability at +/-1 and +/-2 pixels in each
 	// axis to build a gradient vector, then slides the character along that
 	// vector until it reaches a walkable position.
-	if (c->GameObject->Index != 1) {
+	if (c->_gameObject->_index != 1) {
 		return false;
 	}
 	if (g_engine->_scriptExecutor->isExecuting()) {
 		return false;
 	}
 
-	Common::Point pos = c->GetPosition();
-	if (IsWalkable(pos)) {
+	Common::Point pos = c->getPosition();
+	if (isWalkable(pos)) {
 		return false;
 	}
 
@@ -2099,54 +2072,54 @@ bool Character::HandleWalkability(Character *c) {
 	int pushY = 0;
 
 	// Sample at distance 1
-	if (!IsWalkable(Common::Point(pos.x + 1, pos.y)))
+	if (!isWalkable(Common::Point(pos.x + 1, pos.y)))
 		pushX -= 1;
-	if (!IsWalkable(Common::Point(pos.x - 1, pos.y)))
+	if (!isWalkable(Common::Point(pos.x - 1, pos.y)))
 		pushX += 1;
-	if (!IsWalkable(Common::Point(pos.x, pos.y + 1)))
+	if (!isWalkable(Common::Point(pos.x, pos.y + 1)))
 		pushY -= 1;
-	if (!IsWalkable(Common::Point(pos.x, pos.y - 1)))
+	if (!isWalkable(Common::Point(pos.x, pos.y - 1)))
 		pushY += 1;
 
 	// Sample at distance 2 for stronger gradient
-	if (!IsWalkable(Common::Point(pos.x + 2, pos.y)))
+	if (!isWalkable(Common::Point(pos.x + 2, pos.y)))
 		pushX -= 1;
-	if (!IsWalkable(Common::Point(pos.x - 2, pos.y)))
+	if (!isWalkable(Common::Point(pos.x - 2, pos.y)))
 		pushX += 1;
-	if (!IsWalkable(Common::Point(pos.x, pos.y + 2)))
+	if (!isWalkable(Common::Point(pos.x, pos.y + 2)))
 		pushY -= 1;
-	if (!IsWalkable(Common::Point(pos.x, pos.y - 2)))
+	if (!isWalkable(Common::Point(pos.x, pos.y - 2)))
 		pushY += 1;
 
 	// Slide along the push vector
 	while (pushX != 0 || pushY != 0) {
 		if (pushX < 0) {
-			if (IsWalkable(Common::Point(pos.x - 1, pos.y)))
+			if (isWalkable(Common::Point(pos.x - 1, pos.y)))
 				pos.x -= 1;
 			pushX += 1;
 		}
 		if (pushX > 0) {
-			if (IsWalkable(Common::Point(pos.x + 1, pos.y)))
+			if (isWalkable(Common::Point(pos.x + 1, pos.y)))
 				pos.x += 1;
 			pushX -= 1;
 		}
 		if (pushY < 0) {
-			if (IsWalkable(Common::Point(pos.x, pos.y - 1)))
+			if (isWalkable(Common::Point(pos.x, pos.y - 1)))
 				pos.y -= 1;
 			pushY += 1;
 		}
 		if (pushY > 0) {
-			if (IsWalkable(Common::Point(pos.x, pos.y + 1)))
+			if (isWalkable(Common::Point(pos.x, pos.y + 1)))
 				pos.y += 1;
 			pushY -= 1;
 		}
 	}
 
-	c->SetPosition(pos);
+	c->setPosition(pos);
 	return true;
 }
 
-uint8 Character::LookupWalkability(const Common::Point &p) const {
+uint8 Character::lookupWalkability(const Common::Point &p) const {
 	Common::Rect screenRect(320, 200);
 	if (!screenRect.contains(p)) {
 		return 0x00;
@@ -2155,7 +2128,7 @@ uint8 Character::LookupWalkability(const Common::Point &p) const {
 	// Values 0xC8..0xEF use the pathfinding override table (opcode 0x12)
 	if (value >= 0xC8 && value <= 0xEF) {
 		uint16 overrideResult;
-		if (g_engine->GetPathfindingOverride(value, overrideResult)) {
+		if (g_engine->getPathfindingOverride(value, overrideResult)) {
 			return (uint8)overrideResult;
 		}
 		// Override not active - return non-walkable
@@ -2164,8 +2137,8 @@ uint8 Character::LookupWalkability(const Common::Point &p) const {
 	return (uint8)value;
 }
 
-bool Character::IsWalkable(const Common::Point &p) const {
-	uint8 walkability = LookupWalkability(p);
+bool Character::isWalkable(const Common::Point &p) const {
+	uint8 walkability = lookupWalkability(p);
 	return walkability < 0xC8;
 }
 
@@ -2186,9 +2159,9 @@ bool Character::isPathWalkable(const Common::Point &p1, const Common::Point &p2,
 	bool result = true;
 	while (true) {
 		Common::Point currentPoint(x1, y1);
-		bool isCurrentWalkable = IsWalkable(currentPoint);
+		bool isCurrentWalkable = isWalkable(currentPoint);
 		if (print)
-			PathfindingOverlay[y1 * 320 + x1] = isCurrentWalkable ? 100 : 50;
+			_pathfindingOverlay[y1 * 320 + x1] = isCurrentWalkable ? 100 : 50;
 		if (!isCurrentWalkable) { // If the point is not walkable, save for later
 			result = false;
 		}
@@ -2211,8 +2184,8 @@ bool Character::isPathWalkable(const Common::Point &p1, const Common::Point &p2,
 }
 
 Character::Character() {
-	PathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
-	ExecuteScriptOnFinishLerp = false;
+	_pathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
+	_executeScriptOnFinishLerp = false;
 }
 
 bool Character::calculatePath(Common::Point target) {
@@ -2225,7 +2198,7 @@ bool Character::calculatePath(Common::Point target) {
 	constexpr uint16 numPoints = 16;
 	uint minLength = std::numeric_limits<uint>::max();
 	int minIndex = -1;
-	const Common::Point &charPosition = GameObjects::instance().GetProtagonistObject()->Position;
+	const Common::Point &charPosition = GameObjects::instance().getProtagonistObject()->Position;
 	for (int i = 0; i < numPoints; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
 		if (isPathWalkable(charPosition, current.Position)) {
@@ -2267,7 +2240,7 @@ bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, con
 	visited[index] = true;
 	const PathfindingPoint &currentPoint = g_engine->pathfindingPoints[index];
 	const Common::Point &currentPosition = currentPoint.Position;
-	Path.push_back(index);
+	_path.push_back(index);
 	g_engine->_path.push_back(currentPosition);
 
 	// Check if we can reach the target from here
@@ -2287,52 +2260,52 @@ bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, con
 	}
 	// None we good, remove us from the path and return
 	g_engine->_path.remove_at(g_engine->_path.size() - 1);
-	Path.remove_at(Path.size() - 1);
+	_path.remove_at(_path.size() - 1);
 	return false;
 }
 
-Common::Point Character::GetPosition() const {
-	return GameObject->Position;
+Common::Point Character::getPosition() const {
+	return _gameObject->Position;
 }
 
-void Character::SetPosition(const Common::Point &newPosition) {
-	GameObject->Position = newPosition;
+void Character::setPosition(const Common::Point &newPosition) {
+	_gameObject->Position = newPosition;
 }
 
-uint16 Character::GetVerticalOffset() const {
-	uint16 result = g_engine->getWalkabilityAt(GetPosition());
+uint16 Character::getVerticalOffset() const {
+	uint16 result = g_engine->getWalkabilityAt(getPosition());
 	if (result >= 0xC8) {
 		result = 0;
 	}
 
-	if (GameObject->Unknown != 0) {
-		result = (result * GameObject->Unknown) / 100;
+	if (_gameObject->Unknown != 0) {
+		result = (result * _gameObject->Unknown) / 100;
 	}
 
 	return result;
 }
 
 bool Character::walkAlongPath() {
-	CurrentPathIndex++;
-	if ((uint)CurrentPathIndex == Path.size()) {
+	_currentPathIndex++;
+	if ((uint)_currentPathIndex == _path.size()) {
 		// This means we now need to move to the final destination
-		StartLerpTo(PathFinalDestination, 1000);
+		startLerpTo(_pathFinalDestination, 1000);
 		return true;
 	}
-	if ((uint)CurrentPathIndex == Path.size() + 1) {
+	if ((uint)_currentPathIndex == _path.size() + 1) {
 		return false;
 	}
-	const uint16 currentPathPointIndex = Path[CurrentPathIndex]; // -1;
+	const uint16 currentPathPointIndex = _path[_currentPathIndex]; // -1;
 	// Set up a lerp
-	Common::String output = Common::String::format("%u - %u", CurrentPathIndex, currentPathPointIndex);
-	g_engine->debugOutput.push_back(output);
+	Common::String output = Common::String::format("%u - %u", _currentPathIndex, currentPathPointIndex);
+	g_engine->_debugOutput.push_back(output);
 	PathfindingPoint &current = g_engine->pathfindingPoints[currentPathPointIndex];
-	StartLerpTo(current.Position, 1000);
+	startLerpTo(current.Position, 1000);
 	return true;
 }
 
 bool Character::isAnimationMirrored() const {
-	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
+	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(_gameObject->Orientation);
 }
 
 uint8 Character::getMirroredAnimation(uint8 original) const {
@@ -2353,18 +2326,18 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 	return original;
 }
 
-Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
+Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 	// We choose looking towards the screen first
-	int blobIndex = GameObject->Orientation - 1;
+	int blobIndex = _gameObject->Orientation - 1;
 	bool mirror = false;
 
 	if (isAnimationMirrored()) {
-		const int mirroredBlobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
-		const bool hasOriginalBlob = blobIndex >= 0 && blobIndex < (int)GameObject->Blobs.size() && !GameObject->Blobs[blobIndex].empty();
-		const bool hasMirroredSourceBlob = mirroredBlobIndex >= 0 && mirroredBlobIndex < (int)GameObject->Blobs.size() &&
-										   !GameObject->Blobs[mirroredBlobIndex].empty();
+		const int mirroredBlobIndex = getMirroredAnimation(_gameObject->Orientation) - 1;
+		const bool hasOriginalBlob = blobIndex >= 0 && blobIndex < (int)_gameObject->Blobs.size() && !_gameObject->Blobs[blobIndex].empty();
+		const bool hasMirroredSourceBlob = mirroredBlobIndex >= 0 && mirroredBlobIndex < (int)_gameObject->Blobs.size() &&
+										   !_gameObject->Blobs[mirroredBlobIndex].empty();
 		const bool hasDistinctOriginalFacing = hasOriginalBlob &&
-											   (!hasMirroredSourceBlob || GameObject->Blobs[blobIndex] != GameObject->Blobs[mirroredBlobIndex]);
+											   (!hasMirroredSourceBlob || _gameObject->Blobs[blobIndex] != _gameObject->Blobs[mirroredBlobIndex]);
 
 		if (!hasDistinctOriginalFacing && hasMirroredSourceBlob) {
 			blobIndex = mirroredBlobIndex;
@@ -2373,35 +2346,35 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	}
 	// If we don't have this direction, try others until we find one that we have
 	// TODO: Log this properly or even assert
-	if (GameObject->Blobs[blobIndex].size() == 0) {
+	if (_gameObject->Blobs[blobIndex].size() == 0) {
 		// TODO: Consider a placeholder or an assert to figure out these cases
-		debug("No animation blob found for object %.4x with orientation %.4x", GameObject->Index, GameObject->Orientation);
+		debug("No animation blob found for object %.4x with orientation %.4x", _gameObject->_index, _gameObject->Orientation);
 		for (int i = 0; i < 0x11; i++) {
-			if (GameObject->Blobs[i].size() != 0) {
+			if (_gameObject->Blobs[i].size() != 0) {
 				blobIndex = i;
 				break;
 			}
 		}
 	}
 
-	if (GameObject->useOverloadAnimation) {
-		mirror ^= GameObject->overloadAnimationMirrored;
-	} else if (GameObject->overloadAnimTriggerDirection != 0x7FFF &&
-			   GameObject->overloadAnimTriggerDirection == GameObject->Orientation &&
-			   !GameObject->overloadAnimation.empty()) {
+	if (_gameObject->useOverloadAnimation) {
+		mirror ^= _gameObject->overloadAnimationMirrored;
+	} else if (_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
+			   _gameObject->overloadAnimTriggerDirection == _gameObject->Orientation &&
+			   !_gameObject->overloadAnimation.empty()) {
 		// runtime+0x22D match: use overload animation slot (0x15)
-		mirror ^= GameObject->overloadAnimationMirrored;
-	} else if (blobIndex >= 0 && blobIndex < (int)GameObject->BlobMirrorFlags.size()) {
-		mirror ^= GameObject->BlobMirrorFlags[blobIndex];
+		mirror ^= _gameObject->overloadAnimationMirrored;
+	} else if (blobIndex >= 0 && blobIndex < (int)_gameObject->BlobMirrorFlags.size()) {
+		mirror ^= _gameObject->BlobMirrorFlags[blobIndex];
 	}
-	shouldMirrorCurrentAnimation = mirror;
+	_shouldMirrorCurrentAnimation = mirror;
 
 	// Select blob: overload if explicitly set OR if trigger direction matches
-	bool useOverload = GameObject->useOverloadAnimation ||
-		(GameObject->overloadAnimTriggerDirection != 0x7FFF &&
-		 GameObject->overloadAnimTriggerDirection == GameObject->Orientation &&
-		 !GameObject->overloadAnimation.empty());
-	Common::Array<uint8> &blob = useOverload ? GameObject->overloadAnimation : GameObject->Blobs[blobIndex];
+	bool useOverload = _gameObject->useOverloadAnimation ||
+		(_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
+		 _gameObject->overloadAnimTriggerDirection == _gameObject->Orientation &&
+		 !_gameObject->overloadAnimation.empty());
+	Common::Array<uint8> &blob = useOverload ? _gameObject->overloadAnimation : _gameObject->Blobs[blobIndex];
 
 	// Advance and retrieve current frame (called once per draw = once per tick)
 	BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
@@ -2415,27 +2388,27 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	return result;
 }
 
-Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide, uint16 frameIndex) {
-	if (GameObject->Blobs.size() <= 17) {
+Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIndex) {
+	if (_gameObject->Blobs.size() <= 17) {
 		return nullptr;
 	}
 
 	uint portraitBlobIndex = 17;
-	if (onRightSide && GameObject->Blobs.size() > 18 && !GameObject->Blobs[18].empty()) {
+	if (onRightSide && _gameObject->Blobs.size() > 18 && !_gameObject->Blobs[18].empty()) {
 		portraitBlobIndex = 18;
-	} else if (GameObject->Blobs[portraitBlobIndex].empty() && GameObject->Blobs.size() > 18 && !GameObject->Blobs[18].empty()) {
+	} else if (_gameObject->Blobs[portraitBlobIndex].empty() && _gameObject->Blobs.size() > 18 && !_gameObject->Blobs[18].empty()) {
 		portraitBlobIndex = 18;
 	}
 
-	if (GameObject->Blobs[portraitBlobIndex].empty()) {
+	if (_gameObject->Blobs[portraitBlobIndex].empty()) {
 		return nullptr;
 	}
 
-	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(GameObject->Blobs[portraitBlobIndex], true, frameIndex);
+	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(_gameObject->Blobs[portraitBlobIndex], true, frameIndex);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(GameObject->Blobs[portraitBlobIndex].data(), GameObject->Blobs[portraitBlobIndex].size());
+	Common::MemoryReadStream stream(_gameObject->Blobs[portraitBlobIndex].data(), _gameObject->Blobs[portraitBlobIndex].size());
 	stream.seek(offset);
 	result->ReadFromStream(&stream);
 	return result;
@@ -2450,81 +2423,81 @@ Macs2::AnimFrame *Character::GetCurrentPortrait(bool onRightSide, uint16 frameIn
 //   4. walkAlongPath() steps 1 pixel per axis per frame, scaled by depth
 // The current lerp-based approach is a simplification that should eventually
 // be replaced with the original pixel-stepping for accurate movement speed.
-void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
-	StartPosition = GetPosition();
-	EndPosition = target;
-	StartTime = g_events->currentMillis;
-	Duration = duration;
-	IsLerping = true;
-	LerpIgnoresObstacles = ignoreObstacles;
+void Character::startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
+	_startPosition = getPosition();
+	_endPosition = target;
+	_startTime = g_events->currentMillis;
+	_duration = duration;
+	_isLerping = true;
+	_lerpIgnoresObstacles = ignoreObstacles;
 
 	// Reset Bresenham state - direction will be calculated on first Update()
 	_stepDirectionSet = false;
-	_stepDeltaX = abs(EndPosition.x - StartPosition.x);
-	_stepDeltaY = abs(EndPosition.y - StartPosition.y);
+	_stepDeltaX = abs(_endPosition.x - _startPosition.x);
+	_stepDeltaY = abs(_endPosition.y - _startPosition.y);
 	_stepError = 0;
 }
 
-void Character::StartPickup(Macs2::GameObject *object) {
-	pickedUpObject = object;
-	ExecuteScriptOnFinishLerp = true;
-	StartLerpTo(pickedUpObject->Position, 1000);
+void Character::startPickup(Macs2::GameObject *object) {
+	_pickedUpObject = object;
+	_executeScriptOnFinishLerp = true;
+	startLerpTo(_pickedUpObject->Position, 1000);
 }
 
-void Character::RegisterWaitForMovementFinishedEvent() {
+void Character::registerWaitForMovementFinishedEvent() {
 
 	// For now, we are treating this one as a flag to send an event
 	// even if we are not lerping, so that we have a delay between action 0x11
 	// and the new execution
-	ExecuteScriptOnFinishLerp = true;
+	_executeScriptOnFinishLerp = true;
 }
 
-void Character::Update() {
-	if (!IsLerping && !IsFollowingPath) {
-		if (pickupAnimationEndTime > 0.0f && pickupAnimationEndTime < g_engine->currentMillis) {
+void Character::update() {
+	if (!_isLerping && !_isFollowingPath) {
+		if (_pickupAnimationEndTime > 0.0f && _pickupAnimationEndTime < g_engine->currentMillis) {
 			// Finish picking up
-			GameObject->Orientation = previousOrientation;
-			pickupAnimationEndTime = -1.0f;
+			_gameObject->Orientation = _previousOrientation;
+			_pickupAnimationEndTime = -1.0f;
 			View1 *currentView = (View1 *)g_engine->findView("View1");
-			Character *pickedUpCharacter = currentView->GetCharacterByIndex(pickedUpObject->Index);
+			Character *pickedUpCharacter = currentView->getCharacterByIndex(_pickedUpObject->_index);
 			if (pickedUpCharacter != nullptr) {
-				int index = currentView->GetCharacterArrayIndex(pickedUpCharacter);
+				int index = currentView->getCharacterArrayIndex(pickedUpCharacter);
 				if (index >= 0) {
-					currentView->characters.remove_at(index);
+					currentView->_characters.remove_at(index);
 				}
 			}
-			pickedUpObject->SceneIndex = GameObject->Index;
-			if (currentView->inventorySource != nullptr && currentView->inventorySource->Index == GameObject->Index) {
-				currentView->inventoryItems.push_back(pickedUpObject);
+			_pickedUpObject->SceneIndex = _gameObject->_index;
+			if (currentView->_inventorySource != nullptr && currentView->_inventorySource->_index == _gameObject->_index) {
+				currentView->_inventoryItems.push_back(_pickedUpObject);
 			}
 			if (g_engine->_scriptExecutor->_pickupInProgress) {
 				g_engine->_scriptExecutor->_pickupInProgress = false;
 				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
 				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
 				g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
-				currentView->UpdateCursor();
+				currentView->updateCursor();
 			}
-			pickedUpObject = nullptr;
+			_pickedUpObject = nullptr;
 			// From here on the interacted object should become 0
 			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
 			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
-			if (ExecuteScriptOnFinishLerp) {
-				ExecuteScriptOnFinishLerp = false;
+			if (_executeScriptOnFinishLerp) {
+				_executeScriptOnFinishLerp = false;
 				g_engine->_scriptExecutor->_isRepeatRun = true;
 				g_engine->ScheduleRun();
 			}
 			return;
 		}
-		if (pickedUpObject != nullptr && pickupAnimationEndTime < 0.0f) {
+		if (_pickedUpObject != nullptr && _pickupAnimationEndTime < 0.0f) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");
 			if (g_engine->_scriptExecutor->_pickupInProgress) {
 				g_engine->_scriptExecutor->_pickupInProgress = false;
 				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
 				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
 				g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
-				currentView->UpdateCursor();
+				currentView->updateCursor();
 			}
-			pickedUpObject = nullptr;
+			_pickedUpObject = nullptr;
 			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
 			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
 		}
@@ -2532,8 +2505,8 @@ void Character::Update() {
 		// We might have gotten the 0x11 command after we stopped moving
 		// TODO: Check if the code handles this similarly
 		// TODO: Consider which run function to use
-		if (ExecuteScriptOnFinishLerp) {
-			ExecuteScriptOnFinishLerp = false;
+		if (_executeScriptOnFinishLerp) {
+			_executeScriptOnFinishLerp = false;
 			g_engine->_scriptExecutor->_isRepeatRun = true;
 			g_engine->ScheduleRun();
 		}
@@ -2541,7 +2514,7 @@ void Character::Update() {
 	}
 	// Bresenham pixel-stepping from walkAlongPath (1008:1b8f).
 	// Each frame: calculate walk speed from depth, step that many pixels.
-	Common::Point pos = GetPosition();
+	Common::Point pos = getPosition();
 	// Depth-scaled walk speed from walkAlongPath (1008:1b8f):
 	// speed = animSpeed * (word5201 + depthAtPos) / 100
 	int depthAtPos = 0;
@@ -2551,9 +2524,9 @@ void Character::Update() {
 	}
 	// Per-animation speed from blob data (runtime+orientation*16+0x30)
 	uint16 animSpeed = 2; // default fallback
-	uint8 orient = GameObject->Orientation;
-	if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < GameObject->BlobSpeeds.size()) {
-		animSpeed = GameObject->BlobSpeeds[orient - 1];
+	uint8 orient = _gameObject->Orientation;
+	if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < _gameObject->BlobSpeeds.size()) {
+		animSpeed = _gameObject->BlobSpeeds[orient - 1];
 		if (animSpeed == 0)
 			animSpeed = 2;
 	}
@@ -2562,29 +2535,29 @@ void Character::Update() {
 		walkSpeed = 1;
 
 	// Check if we have arrived at the target
-	if (pos == EndPosition) {
-		if (IsFollowingPath) {
-			IsFollowingPath = walkAlongPath();
-			if (IsFollowingPath)
+	if (pos == _endPosition) {
+		if (_isFollowingPath) {
+			_isFollowingPath = walkAlongPath();
+			if (_isFollowingPath)
 				return;
 		}
-		IsLerping = false;
-		if (hasMotionVerticalOffset) {
-			GameObject->Unknown = motionTargetVerticalOffset;
-			motionProgress = motionDistanceUnits;
-			hasMotionVerticalOffset = false;
+		_isLerping = false;
+		if (_hasMotionVerticalOffset) {
+			_gameObject->Unknown = _motionTargetVerticalOffset;
+			_motionProgress = _motionDistanceUnits;
+			_hasMotionVerticalOffset = false;
 		}
 		// Standing orientation = walking direction + 8
-		if (GameObject->Orientation < 9)
-			GameObject->Orientation += 8;
-		if (pickedUpObject != nullptr) {
-			pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
-			previousOrientation = GameObject->Orientation;
-			GameObject->Orientation = 0x11;
+		if (_gameObject->Orientation < 9)
+			_gameObject->Orientation += 8;
+		if (_pickedUpObject != nullptr) {
+			_pickupAnimationEndTime = g_events->currentMillis + 1000.0f;
+			_previousOrientation = _gameObject->Orientation;
+			_gameObject->Orientation = 0x11;
 			return;
 		}
-		if (ExecuteScriptOnFinishLerp) {
-			ExecuteScriptOnFinishLerp = false;
+		if (_executeScriptOnFinishLerp) {
+			_executeScriptOnFinishLerp = false;
 			g_engine->_scriptExecutor->_isRepeatRun = true;
 			g_engine->ScheduleRun();
 		}
@@ -2594,32 +2567,32 @@ void Character::Update() {
 	// Calculate direction if not yet set (first frame of movement)
 	if (!_stepDirectionSet) {
 		_stepDirectionSet = true;
-		uint16 absDx = abs(EndPosition.x - pos.x);
-		uint16 absDy = abs(EndPosition.y - pos.y);
+		uint16 absDx = abs(_endPosition.x - pos.x);
+		uint16 absDy = abs(_endPosition.y - pos.y);
 		// Determine 8-directional orientation from walkAlongPath
-		uint8 dir = GameObject->Orientation;
+		uint8 dir = _gameObject->Orientation;
 		if (dir > 8 && dir < 17)
 			dir -= 8;
-		if (pos.y > EndPosition.y && absDx <= absDy)
+		if (pos.y > _endPosition.y && absDx <= absDy)
 			dir = 1; // North
-		if (pos.x < EndPosition.x && absDy <= absDx)
+		if (pos.x < _endPosition.x && absDy <= absDx)
 			dir = 3; // East
-		if (pos.y < EndPosition.y && absDx <= absDy)
+		if (pos.y < _endPosition.y && absDx <= absDy)
 			dir = 5; // South
-		if (pos.x > EndPosition.x && absDy <= absDx)
+		if (pos.x > _endPosition.x && absDy <= absDx)
 			dir = 7; // West
 		// Diagonals: deltaX/4 < deltaY && deltaY/2 < deltaX
 		if (absDx > (absDy >> 2) && absDy > (absDx >> 1)) {
-			if (pos.y > EndPosition.y && pos.x < EndPosition.x)
+			if (pos.y > _endPosition.y && pos.x < _endPosition.x)
 				dir = 2;
-			if (pos.y < EndPosition.y && pos.x < EndPosition.x)
+			if (pos.y < _endPosition.y && pos.x < _endPosition.x)
 				dir = 4;
-			if (pos.y < EndPosition.y && pos.x > EndPosition.x)
+			if (pos.y < _endPosition.y && pos.x > _endPosition.x)
 				dir = 6;
-			if (pos.y > EndPosition.y && pos.x > EndPosition.x)
+			if (pos.y > _endPosition.y && pos.x > _endPosition.x)
 				dir = 8;
 		}
-		GameObject->Orientation = dir;
+		_gameObject->Orientation = dir;
 		_stepDeltaX = absDx;
 		_stepDeltaY = absDy;
 		_stepError = 0;
@@ -2631,98 +2604,98 @@ void Character::Update() {
 		Common::Point prevPos = pos;
 		if (_stepError < _stepDeltaX) {
 			// Step along X axis
-			if (EndPosition.x != pos.x)
+			if (_endPosition.x != pos.x)
 				pixelsMoved++;
-			if (EndPosition.x < pos.x)
+			if (_endPosition.x < pos.x)
 				pos.x--;
-			else if (EndPosition.x > pos.x)
+			else if (_endPosition.x > pos.x)
 				pos.x++;
 			_stepError += _stepDeltaY;
 		} else {
 			// Step along Y axis
-			if (EndPosition.y != pos.y)
+			if (_endPosition.y != pos.y)
 				pixelsMoved++;
-			if (EndPosition.y < pos.y)
+			if (_endPosition.y < pos.y)
 				pos.y--;
-			else if (EndPosition.y > pos.y)
+			else if (_endPosition.y > pos.y)
 				pos.y++;
 			_stepError -= _stepDeltaX;
 		}
 		// Check walkability after each step
-		if (!IsWalkable(pos)) {
+		if (!isWalkable(pos)) {
 			pos = prevPos;
 			// Wall-sliding from walkAlongPath (1008:1b8f):
 			// Sample ±1 and ±2 pixels to build a push vector, then slide.
 			int pushX = 0, pushY = 0;
-			if (LookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200)
 				pushX = -1;
-			if (LookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200)
 				pushX += 1;
-			if (LookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200)
 				pushY = -1;
-			if (LookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200)
 				pushY += 1;
-			if (LookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200)
 				pushX -= 1;
-			if (LookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200)
 				pushX += 1;
-			if (LookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200)
 				pushY -= 1;
-			if (LookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200)
+			if (lookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200)
 				pushY += 1;
 			// Apply push vector pixel by pixel
 			while (pushX != 0 || pushY != 0) {
 				if (pushX < 0) {
-					if (LookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200)
+					if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200)
 						pos.x--;
 					pushX++;
 				}
 				if (pushX > 0) {
-					if (LookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200)
+					if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200)
 						pos.x++;
 					pushX--;
 				}
 				if (pushY < 0) {
-					if (LookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200)
+					if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200)
 						pos.y--;
 					pushY++;
 				}
 				if (pushY > 0) {
-					if (LookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200)
+					if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200)
 						pos.y++;
 					pushY--;
 				}
 			}
 			// Update target to slid position
-			EndPosition = pos;
+			_endPosition = pos;
 			break;
 		}
 		// Check if we reached the target
-		if (pos == EndPosition)
+		if (pos == _endPosition)
 			break;
 	}
 
 	// Update motion vertical offset if active
-	if (hasMotionVerticalOffset && motionDistanceUnits != 0) {
+	if (_hasMotionVerticalOffset && _motionDistanceUnits != 0) {
 		uint16 totalDist = _stepDeltaX + _stepDeltaY;
 		if (totalDist > 0) {
-			int32 distWalked = abs(pos.x - StartPosition.x) + abs(pos.y - StartPosition.y);
+			int32 distWalked = abs(pos.x - _startPosition.x) + abs(pos.y - _startPosition.y);
 			float progress = (float)distWalked / (float)totalDist;
 			if (progress > 1.0f)
 				progress = 1.0f;
-			int32 vDelta = (int32)motionTargetVerticalOffset - (int32)motionStartVerticalOffset;
-			GameObject->Unknown = (uint16)((int32)motionStartVerticalOffset + (int32)(vDelta * progress));
+			int32 vDelta = (int32)_motionTargetVerticalOffset - (int32)_motionStartVerticalOffset;
+			_gameObject->Unknown = (uint16)((int32)_motionStartVerticalOffset + (int32)(vDelta * progress));
 		}
 	}
 
-	SetPosition(pos);
+	setPosition(pos);
 }
 
-bool Button::IsPointInside(const Common::Point &p) const {
+bool Button::isPointInside(const Common::Point &p) const {
 	return false;
 }
 
-void Button::Render(Graphics::ManagedSurface &s) {
+void Button::render(Graphics::ManagedSurface &s) {
 }
 
 void View1::openOriginalSaveLoadPanel() {
@@ -2762,7 +2735,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 
 	// Draw panel background
 	drawDarkRectangle(panelX, panelY, panelW, panelH);
-	DrawBorder(Common::Point(panelX, panelY), Common::Point(panelW, panelH), s);
+	drawBorder(Common::Point(panelX, panelY), Common::Point(panelW, panelH), s);
 
 	// Draw 10 save slots for current page
 	for (int slot = 0; slot < 10; slot++) {
@@ -2802,9 +2775,9 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 			pressed = true;
 
 		if (pressed) {
-			DrawPressedBorderOuterHighlights(bPos, bSize, s);
+			drawPressedBorderOuterHighlights(bPos, bSize, s);
 		} else {
-			DrawBorderOuterHighlights(bPos, bSize, s);
+			drawBorderOuterHighlights(bPos, bSize, s);
 		}
 		renderString(bPos.x + 4, bPos.y + 4, btnLabels[i]);
 	}

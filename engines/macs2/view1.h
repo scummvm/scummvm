@@ -42,27 +42,26 @@ enum class FadeMode {
 };
 
 class Button {
-
 public:
-	Common::Point Position;
-	Common::Point Size;
-	Common::String Caption;
+	Common::Point _position;
+	Common::Point _size;
+	Common::String _caption;
 
-	bool IsPointInside(const Common::Point &p) const;
+	bool isPointInside(const Common::Point &p) const;
 
-	void Render(Graphics::ManagedSurface &s);
+	void render(Graphics::ManagedSurface &s);
 };
 
 class Character {
 private:
-	Common::Point StartPosition;
-	Common::Point EndPosition;
+	Common::Point _startPosition;
+	Common::Point _endPosition;
 
-	uint32 StartTime;
-	uint32 Duration;
+	uint32 _startTime;
+	uint32 _duration;
 
-	bool IsLerping = false;
-	bool LerpIgnoresObstacles = false;
+	bool _isLerping = false;
+	bool _lerpIgnoresObstacles = false;
 
 	// Bresenham pixel-stepping state from walkAlongPath (1008:1b8f)
 	// These replace the time-based lerp for accurate movement
@@ -73,81 +72,78 @@ private:
 
 	// If this is set, a lerp to a location becomes picking up
 	// TODO: Replace by more proper task implementation later
-	Macs2::GameObject *pickedUpObject = nullptr;
+	Macs2::GameObject *_pickedUpObject = nullptr;
 
 	// Simple timer to keep track of how long we play the picking up animation
-	float pickupAnimationEndTime = -1.0f;
+	float _pickupAnimationEndTime = -1.0f;
 
-	uint8 previousOrientation;
+	uint8 _previousOrientation;
 
 	// Handle when the character has moved into a non-walkable area, push them out if
 	// they did and return true, return false otherwise
 	bool HandleWalkability(Character *c);
 
 	// fn0037_0E8C proc
-	uint8 LookupWalkability(const Common::Point &p) const;
+	uint8 lookupWalkability(const Common::Point &p) const;
 
 public:
-	bool IsWalkable(const Common::Point &p) const;
-	bool isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
-	Common::Array<uint8> PathfindingOverlay;
 	Character();
 
 	// Debug accessors for pathfinding state
-	bool isLerping() const { return IsLerping; }
+	bool isLerping() const { return _isLerping; }
 	bool isDirectionSet() const { return _stepDirectionSet; }
 	int16 getStepError() const { return _stepError; }
 	int16 getStepDeltaX() const { return _stepDeltaX; }
 	int16 getStepDeltaY() const { return _stepDeltaY; }
-	Common::Point getEndPosition() const { return EndPosition; }
+	Common::Point getEndPosition() const { return _endPosition; }
 
-	Common::Array<uint16> Path;
-	int16 CurrentPathIndex;
-	Common::Point PathFinalDestination;
+	Common::Array<uint16> _path;
+	int16 _currentPathIndex;
+	Common::Point _pathFinalDestination;
+	bool _isFollowingPath = false;
+	Common::Array<uint8> _pathfindingOverlay;
 
+	bool isWalkable(const Common::Point &p) const;
+	// TODO: check Macs2Engine::isPathWalkable()
+	bool isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print = false);
 	bool calculatePath(Common::Point target);
-
 	bool findShortestPath(uint16 index, Common::Array<bool> &visited, const Common::Point &target);
-
-	bool IsFollowingPath = false;
-
-	Common::Point GetPosition() const;
-	void SetPosition(const Common::Point &newPosition);
-	Macs2::GameObject *GameObject;
-
-	uint16 GetVerticalOffset() const;
-
 	// Returns false if we are at the end of the path already or the path is not valid
 	bool walkAlongPath();
+	void startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
+	void startPickup(Macs2::GameObject *object);
+
+	Common::Point getPosition() const;
+	void setPosition(const Common::Point &newPosition);
+	Macs2::GameObject *_gameObject;
+
+	uint16 getVerticalOffset() const;
 
 	// Set by opcode 11h
-	bool ExecuteScriptOnFinishLerp = false;
+	bool _executeScriptOnFinishLerp = false;
 
 	// TODO: Handle properly
-	uint8 animationIndex = 1;
-	uint16 motionTargetVerticalOffset = 0;
-	uint16 motionVerticalOffsetDelta = 0;
-	uint16 motionDistanceUnits = 0;
-	uint16 motionProgress = 0;
-	uint16 motionStartVerticalOffset = 0;
-	bool hasMotionVerticalOffset = false;
-	bool shouldMirrorCurrentAnimation = false;
+	uint8 _animationIndex = 1;
+	uint16 _motionTargetVerticalOffset = 0;
+	uint16 _motionVerticalOffsetDelta = 0;
+	uint16 _motionDistanceUnits = 0;
+	uint16 _motionProgress = 0;
+	uint16 _motionStartVerticalOffset = 0;
+	bool _hasMotionVerticalOffset = false;
+	bool _shouldMirrorCurrentAnimation = false;
 
 	bool isAnimationMirrored() const;
 	uint8 getMirroredAnimation(uint8 original) const;
 
 	// TODO: Will need time handling
-	Macs2::AnimFrame *GetCurrentAnimationFrame();
-	Macs2::AnimFrame *GetCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 2);
-	void StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
-
-	void StartPickup(Macs2::GameObject *object);
+	Macs2::AnimFrame *getCurrentAnimationFrame();
+	Macs2::AnimFrame *getCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 2);
 
 	// Handles setting this character up to send an event to the script executor when finished
 	// and will send the event right away in case the last movement is already done
 	// TODO: Check if the code also handles it this way
-	void RegisterWaitForMovementFinishedEvent();
-	void Update();
+	void registerWaitForMovementFinishedEvent();
+	void update();
 };
 
 // cf https://stackoverflow.com/a/51497820
@@ -185,13 +181,13 @@ struct ScalingValues {
 class View1 : public UIElement {
 	// TODO: Clean up private and public
 public:
-	ScalingValues scalingValues;
+	ScalingValues _scalingValues;
 
-	ViewMode currentMode = ViewMode::VM_GAME;
+	ViewMode _currentMode = ViewMode::VM_GAME;
 
-	AnimFrame *GetInventoryIcon(GameObject *gameObject);
+	AnimFrame *getInventoryIcon(GameObject *gameObject);
 
-	// TODO: use Palette class from graphics
+	// TODO: use Graphics::Palette
 	byte _pal[256 * 3] = {0};
 	int _offset = 0;
 	bool _paletteDirty = true;
@@ -264,7 +260,6 @@ public:
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
 
 	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
-	void drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s);
 	void drawCurrentSpeaker(Graphics::ManagedSurface &s);
 
 	void renderString(uint16 x, uint16 y, Common::String s);
@@ -276,17 +271,15 @@ public:
 
 	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
 
-	void handleFading();
-
 	void drawPathfindingPoints(Graphics::ManagedSurface &s);
 
 	void drawDebugOutput(Graphics::ManagedSurface &s);
 
 	void drawPath(Graphics::ManagedSurface &s);
 
-	int currentFadeValue = -1;
-	int fadeDelta = 4;
-	FadeMode fadeMode = FadeMode::None;
+	int _currentFadeValue = -1;
+	int _fadeDelta = 4;
+	FadeMode _fadeMode = FadeMode::None;
 	bool _cursorSuppressedForFade = false;
 	bool _cursorWasVisibleBeforeFade = false;
 
@@ -294,47 +287,47 @@ public:
 	void endFadeCursorSuppression(const byte *palette);
 
 public:
-	bool started = false;
+	View1();
+	virtual ~View1() {}
+
+	bool _started = false;
 
 	// As long as this debug bool is active, apply any click possible whenever it makes sense
-	bool autoclickActive = false;
+	bool _autoclickActive = false;
 
-	Common::Array<Character *> characters;
+	Common::Array<Character *> _characters;
 
 	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
-	void SetInventorySource(GameObject *newInventorySource);
-	void OpenInventory(GameObject *newInventorySource);
-	void CloseInventory();
+	void setInventorySource(GameObject *newInventorySource);
+	void openInventory(GameObject *newInventorySource);
+	void closeInventory();
 
-	bool IsInventorySourceProtagonist() const;
+	bool isInventorySourceProtagonist() const;
 
 	// If this is the protagonist, we have our normal inventory
 	// If this is another object, it is the inventory of a storage container
-	GameObject *inventorySource;
+	GameObject *_inventorySource;
 
-	void TransferInventoryItem(GameObject *item, GameObject *targetContainer);
+	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
 
-	int FindInventoryItem(GameObject *item);
+	int findInventoryItem(GameObject *item);
 
 	// TODO: Find a better place for those
 	// The inventory items for the currently opened inventory
-	Common::Array<GameObject *> inventoryItems;
+	Common::Array<GameObject *> _inventoryItems;
 
 	// If this is not null, we are using this object
-	GameObject *activeInventoryItem = nullptr;
+	GameObject *_activeInventoryItem = nullptr;
 
-	Character *GetCharacterByIndex(uint16 index);
+	Character *getCharacterByIndex(uint16 index);
 
-	int GetCharacterArrayIndex(const Character *c) const;
-	bool HasDuplicateCharacters() const;
+	int getCharacterArrayIndex(const Character *c) const;
+	bool hasDuplicateCharacters() const;
 
 	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
 	// be so separated
-	void UpdateCursor(const byte *palette = nullptr);
+	void updateCursor(const byte *palette = nullptr);
 	bool isCursorSuppressedForFade() const { return _cursorSuppressedForFade; }
-
-	View1();
-	virtual ~View1() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
@@ -373,17 +366,17 @@ public:
 	void draw() override;
 	bool tick() override;
 
-	void drawInventory2(Graphics::ManagedSurface &s);
-	GameObject *getClickedInventoryItem2(const Common::Point &p);
+	void drawInventory(Graphics::ManagedSurface &s);
+	GameObject *getClickedInventoryItem(const Common::Point &p);
 
-	Common::Point inventoryGridUpperLeft;
-	Common::Point inventorySlotSize;
+	Common::Point _inventoryGridUpperLeft;
+	Common::Point _inventorySlotSize;
 
-	Common::Point stringBoxPosition;
+	Common::Point _stringBoxPosition;
 
-	Common::Rect mainMenuRect;
+	Common::Rect _mainMenuRect;
 
-	bool isShowingMainMenu = false;
+	bool _isShowingMainMenu = false;
 
 	void openMainMenu(Common::Point clickedPosition);
 
@@ -397,38 +390,38 @@ public:
 	void startFadeToBlack(uint16 speed = 4);
 	void startFadingWithSpeed(uint16 speed);
 
-	void DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
-	void DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
-	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
-	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
-	void DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
-	void DrawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s);
+	void drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
+	void drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
+	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
+	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
+	void drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
+	void drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s);
 
 	// The definitive version that can do everything
-	void DrawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s);
+	void drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s);
 
-	void DrawCharacters(Graphics::ManagedSurface &s);
+	void drawCharacters(Graphics::ManagedSurface &s);
 
-	void ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
-	void DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
-	void DrawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+	void showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
+	void drawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+	void drawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 	// fn0037_3AD4 proc
-	void DrawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+	void drawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 	// ;; fn0037_3CDE: 0037:3CDE
-	void DrawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
+	void drawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 
-	Macs2::Sprite *GetUISprite(uint32 offset);
+	Macs2::Sprite *getUISprite(uint32 offset);
 
 	// fn0037_3737 proc
-	void DrawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s);
+	void drawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s);
 	// 0037h:3876h
-	void DrawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s);
+	void drawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s);
 
-	void DrawImageResources(Graphics::ManagedSurface &s);
+	void drawImageResources(Graphics::ManagedSurface &s);
 
-	void ShowDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
+	void showDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
 
-	void TriggerDialogueChoice(uint8 index);
+	void triggerDialogueChoice(uint8 index);
 
 	struct OverlayTextEntry {
 		Common::Point position;
@@ -442,11 +435,11 @@ public:
 
 	Common::Array<OverlayTextEntry> _overlayTextEntries;
 
-	uint16 CalculateCharacterScaling(uint16 characterY, bool updateDebugValues = false);
+	uint16 calculateCharacterScaling(uint16 characterY, bool updateDebugValues = false);
 
-	uint16 GetHitObjectID(const Common::Point &pos) const;
+	uint16 getHitObjectID(const Common::Point &pos) const;
 
-	Common::Array<Common::Rect> inventoryButtonLocations;
+	Common::Array<Common::Rect> _inventoryButtonLocations;
 
 	enum class InventoryButtonIndex {
 		Look = 0,
@@ -473,9 +466,9 @@ public:
 		Close = 8         // Implicit close (clicking outside any button)
 	};
 
-	Common::Array<Common::Rect> mainMenuButtonLocations;
+	Common::Array<Common::Rect> _mainMenuButtonLocations;
 
-	uint16 inventoryPage = 0;
+	uint16 _inventoryPage = 0;
 };
 
 } // namespace Macs2

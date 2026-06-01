@@ -16,61 +16,58 @@ namespace Macs2 {
 
 class Scene {
 public:
-	Common::MemoryReadStream *Script;
+	Common::MemoryReadStream *_script;
 };
 
+// Data for scenes can be accessed:
+// Script data: Load from objects data [0752]: ID * 0xC, offset at [di-6] and [di-8h]
 class Scenes : public Common::Singleton<Scenes> {
-	// Data for scenes can be accessed:
-	// Script data: Load from objects data [0752]: ID * 0xC, offset at [di-6] and [di-8h]
-
 public:
-	Common::Array<Scene> Scenes;
+	Common::Array<Scene> _scenes;
 
 	// Global [077Ch]
-	int CurrentSceneIndex;
+	int _currentSceneIndex;
 
 	// Global [077Eh]
 	// TODO: Check what the initial value of this is
-	int LastSceneIndex;
+	int _lastSceneIndex;
 
 	// Global [0776h]
-	int CurrentActorIndex;
+	int _currentActorIndex;
 
 	// TODO: Handle properly as a field of the scene
-	class Common::MemoryReadStream *CurrentSceneScript;
+	class Common::MemoryReadStream *_currentSceneScript;
 
-	class Common::MemoryReadStream *CurrentSceneStrings;
-	Common::Array<uint32> CurrentSceneSpecialAnimOffsets;
+	class Common::MemoryReadStream *_currentSceneStrings;
+	Common::Array<uint32> _currentSceneSpecialAnimOffsets;
 
-	class Common::MemoryReadStream *ReadSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
-	Common::Array<uint32> ReadSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
-	class Common::MemoryReadStream *ReadSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
-	Common::Array<uint8> ReadSpecialAnimBlob(uint16 index, Common::MemoryReadStream *fileStream);
+	class Common::MemoryReadStream *readSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
+	Common::Array<uint32> readSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
+	class Common::MemoryReadStream *readSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
+	Common::Array<uint8> readSpecialAnimBlob(uint16 index, Common::MemoryReadStream *fileStream);
 };
 
 class AnimationReader {
-
-private:
 public:
-	Common::MemoryReadStreamEndian *readStream;
+	Common::MemoryReadStreamEndian *_readStream;
 
 	// TODO: Can the init list also go into the cpp file?
 	AnimationReader(const Common::Array<uint8> &blob);
 
 	uint16 readNumAnimations();
 
-	void SeekToAnimation(uint16 index);
+	void seekToAnimation(uint16 index);
 
 	// Expects us to be pointed at the header of an animation frame,
 	// will seek to the start of the next header
-	void SkipCurrentAnimationFrame();
+	void skipCurrentAnimationFrame();
 };
 
 class GameObject {
 public:
 	// Index of the object, starting at 1
-	uint16 Index;
-	uint32 DataOffset = 0;
+	uint16 _index;
+	uint32 _dataOffset = 0;
 
 	Common::Array<uint8> overloadAnimation;
 	uint16 overloadAnimationSourceKey = 0;
@@ -128,28 +125,27 @@ public:
 	// TODO: Random thought - do objects have their own space for script variables?
 	Common::Array<uint8> Script;
 
-	Common::MemoryReadStream *GetScriptStream();
+	Common::MemoryReadStream *getScriptStream();
 };
 
 class GameObjects : public Common::Singleton<GameObjects> {
-
 public:
 	// Maximum of 200h objects
 	// How to address them in the original code:
 	// mov	di,[bp+6h]
 	//	shl di, 2h;
 	// les di, [di + 77Ch]
-	Common::Array<GameObject *> Objects;
+	Common::Array<GameObject *> _objects;
 
-	Common::Array<Common::String> ObjectNames;
+	Common::Array<Common::String> _objectNames;
 
-	void Init();
+	void init();
 
-	static GameObject *GetProtagonistObject();
+	static GameObject *getProtagonistObject();
 
-	static GameObject *GetObjectByIndex(uint16 index);
+	static GameObject *getObjectByIndex(uint16 index);
 
-	static class Common::MemoryReadStream *ReadGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream);
+	static class Common::MemoryReadStream *readGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream);
 };
 
 } // namespace Macs2

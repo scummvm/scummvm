@@ -340,7 +340,7 @@ public:
 
 	Macs2::Macs2Engine *_engine;
 
-	void DumpWholeScript();
+	void dumpWholeScript();
 
 	// Button 8 skip from handleInput (1008:e8bf)
 	bool skipToEndOfSkippableSection();
@@ -348,11 +348,11 @@ public:
 	// Implements a lookup in the "areas" map
 	uint16 getAreaAtPoint(uint16 x, uint16 y);
 
-	void SetVariableValue(uint16 index, uint16 a, uint16 b);
+	void setVariableValue(uint16 index, uint16 a, uint16 b);
 
 	void setVariableValue(uint16 index, uint32 value);
 
-	Common::Point GetCharPosition();
+	Common::Point getCharPosition();
 
 	ExecutionResult executeScript();
 
@@ -380,7 +380,7 @@ public:
 
 	uint32 getScriptPosition() const;
 	uint32 getScriptEndPosition() const;
-	uint16 GetExecutingObjectId() const { return _executingObjectIndex; }
+	uint16 getExecutingObjectId() const { return _executingObjectIndex; }
 	uint32 getVariableValue(int index) const;
 
 	// Computes the read-only runtime value for a type 0xFF special
