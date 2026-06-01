@@ -100,7 +100,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
-		g_engine->SetCursorMode(Script::MouseMode::Use);
+		g_engine->setCursorMode(Script::MouseMode::Use);
 		updateCursor();
 	}
 }
@@ -118,13 +118,13 @@ void View1::closeInventory() {
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 
 	if (shouldResumeExternalInventory) {
-		g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedExternalInventoryMouseMode);
+		g_engine->setCursorMode(g_engine->_scriptExecutor->_savedExternalInventoryMouseMode);
 		updateCursor();
 		setInventorySource(GameObjects::instance().getProtagonistObject());
 		g_engine->_scriptExecutor->_hasPendingExternalInventoryResume = false;
 		g_engine->_scriptExecutor->_externalInventorySourceObjectID = 0;
 		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->_secondaryInventoryLocation);
-		g_engine->RunScriptExecutor();
+		g_engine->runScriptExecutor();
 		return;
 	}
 
@@ -614,7 +614,7 @@ void View1::clearStringBox(bool continueScript) {
 	if (continueScript && _continueScriptAfterUI) {
 		_continueScriptAfterUI = false;
 		// TODO: Check which one it should be
-		g_engine->RunScriptExecutor(false);
+		g_engine->runScriptExecutor(false);
 	} else if (!continueScript) {
 		_continueScriptAfterUI = false;
 	}
@@ -818,10 +818,10 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				} else if (depth == 0xFF) {
 					// Return to normal mode: reload current scene, clear map flag
 					_currentMode = ViewMode::VM_GAME;
-					g_engine->SetCursorMode(Script::MouseMode::Walk);
+					g_engine->setCursorMode(Script::MouseMode::Walk);
 					updateCursor();
 					g_engine->changeScene(Scenes::instance()._currentSceneIndex, false);
-					g_engine->ScheduleRun(true);
+					g_engine->scheduleRun(true);
 				}
 			}
 			return true;
@@ -846,11 +846,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				if (current.contains(msg._pos)) {
 					switch (i) {
 					case static_cast<int>(InventoryButtonIndex::Look): {
-						g_engine->SetCursorMode(Script::MouseMode::Look);
+						g_engine->setCursorMode(Script::MouseMode::Look);
 						updateCursor();
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Hand): {
-						g_engine->SetCursorMode(Script::MouseMode::Use);
+						g_engine->setCursorMode(Script::MouseMode::Use);
 						updateCursor();
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Up): {
@@ -892,7 +892,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				// Look at item: object ID uses 0x400 prefix (confirmed from original handleInventoryClick)
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
-				g_engine->RunScriptExecutor(false);
+				g_engine->runScriptExecutor(false);
 				return true;
 			}
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
@@ -910,7 +910,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					g_engine->_cursorWidths[cursorSlot] = icon->Width;
 					g_engine->_cursorHeights[cursorSlot] = icon->Height;
 				}
-				g_engine->SetCursorMode(Script::MouseMode::UseInventory);
+				g_engine->setCursorMode(Script::MouseMode::UseInventory);
 				updateCursor();
 				return true;
 			}
@@ -919,7 +919,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
 				g_engine->_scriptExecutor->_inventoryCombineFlag = true;
-				g_engine->RunScriptExecutor(false);
+				g_engine->runScriptExecutor(false);
 			}
 
 			return true;
@@ -931,19 +931,19 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				if (current.contains(msg._pos)) {
 					switch (i) {
 					case static_cast<int>(MainMenuButtonIndex::Talk): {
-						g_engine->SetCursorMode(Script::MouseMode::Talk);
+						g_engine->setCursorMode(Script::MouseMode::Talk);
 						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Look): {
-						g_engine->SetCursorMode(Script::MouseMode::Look);
+						g_engine->setCursorMode(Script::MouseMode::Look);
 						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Use): {
-						g_engine->SetCursorMode(Script::MouseMode::Use);
+						g_engine->setCursorMode(Script::MouseMode::Use);
 						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Walk): {
-						g_engine->SetCursorMode(Script::MouseMode::Walk);
+						g_engine->setCursorMode(Script::MouseMode::Walk);
 						_isShowingMainMenu = false;
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::Inventory): {
@@ -956,7 +956,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						// Enter map mode (sets scene+0x61db equivalent)
 						// from handleActionBarClick (1008:42dc) button 6
 						_currentMode = ViewMode::VM_MAP;
-						g_engine->SetCursorMode(Script::MouseMode::PanelUse);
+						g_engine->setCursorMode(Script::MouseMode::PanelUse);
 						updateCursor();
 					} break;
 					case static_cast<int>(MainMenuButtonIndex::SaveLoad): {
@@ -1028,7 +1028,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// Our order (objects first, fallback to background) produces the same result.
 		uint16 index = getHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
 		if (index == 0) {
-			index = g_engine->GetInteractedBackgroundHotspot(msg._pos);
+			index = g_engine->getHotspotAtPoint(msg._pos);
 		}
 		if (index != 0) {
 			debug("*** New interaction started");
@@ -1043,7 +1043,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			g_engine->_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 			// TODO: Not sure where the original code rewinds the script
 			Scenes::instance()._currentSceneScript->seek(0, SEEK_SET);
-			g_engine->RunScriptExecutor(false);
+			g_engine->runScriptExecutor(false);
 			// TODO: For the case of clicking an object, this reset happens at l0037_EFD3:
 			// Not sure where and if it happens for an inventory interaction
 			g_engine->_scriptExecutor->_interactedObjectID = 0;
@@ -1146,7 +1146,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
-		g_engine->RunScriptExecutor(true);
+		g_engine->runScriptExecutor(true);
 		// Also test the lerping
 		getCharacterByIndex(1)->startLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
@@ -1936,7 +1936,7 @@ void View1::triggerDialogueChoice(uint8 index) {
 	// schedule an unnecessary run
 	clearStringBox(false);
 	// TODO: Not sure about the first run variable here
-	g_engine->RunScriptExecutor();
+	g_engine->runScriptExecutor();
 }
 
 uint16 View1::calculateCharacterScaling(uint16 characterY, bool updateDebugValues) {
@@ -2440,7 +2440,7 @@ void Character::update() {
 				g_engine->_scriptExecutor->_pickupInProgress = false;
 				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
 				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
-				g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
+				g_engine->setCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
 				currentView->updateCursor();
 			}
 			_pickedUpObject = nullptr;
@@ -2450,7 +2450,7 @@ void Character::update() {
 			if (_executeScriptOnFinishLerp) {
 				_executeScriptOnFinishLerp = false;
 				g_engine->_scriptExecutor->_isRepeatRun = true;
-				g_engine->ScheduleRun();
+				g_engine->scheduleRun();
 			}
 			return;
 		}
@@ -2460,7 +2460,7 @@ void Character::update() {
 				g_engine->_scriptExecutor->_pickupInProgress = false;
 				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
 				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
-				g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
+				g_engine->setCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
 				currentView->updateCursor();
 			}
 			_pickedUpObject = nullptr;
@@ -2474,7 +2474,7 @@ void Character::update() {
 		if (_executeScriptOnFinishLerp) {
 			_executeScriptOnFinishLerp = false;
 			g_engine->_scriptExecutor->_isRepeatRun = true;
-			g_engine->ScheduleRun();
+			g_engine->scheduleRun();
 		}
 		return;
 	}
@@ -2525,7 +2525,7 @@ void Character::update() {
 		if (_executeScriptOnFinishLerp) {
 			_executeScriptOnFinishLerp = false;
 			g_engine->_scriptExecutor->_isRepeatRun = true;
-			g_engine->ScheduleRun();
+			g_engine->scheduleRun();
 		}
 		return;
 	}
