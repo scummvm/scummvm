@@ -350,11 +350,11 @@ void ScriptExecutor::scriptChangeAnimation() {
 	id -= 1;
 
 	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[id];
-	BackgroundAnimationBlob::getAnimFrameCount(blob.Blob);
+	BackgroundAnimationBlob::getAnimFrameCount(blob._blob);
 	// TODO: We should be doing some checking on the result value
 
 	// TODO: Do some comparison with [bp-4h]
-	BackgroundAnimationBlob::advanceAnimFrame(blob.Blob, true, bp4 + 0x64);
+	BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, bp4 + 0x64);
 }
 
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
@@ -1515,6 +1515,11 @@ bool Script::ScriptExecutor::scriptOpenInventory() {
 	_hasPendingExternalInventoryResume = true;
 	_externalInventorySourceObjectID = objectID;
 	_secondaryInventoryLocation = _stream->pos();
+	// Save script click state (original saves at 0xf94-0xf9a equivalents)
+	_savedScriptClickFlag = _scriptClickFlag;
+	_savedScriptClickX = _scriptClickX;
+	_savedScriptClickY = _scriptClickY;
+	_savedScriptClickResult = _scriptClickResult;
 	currentView->openInventory(inventorySource);
 	return true;
 }

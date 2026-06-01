@@ -125,6 +125,11 @@ void View1::closeInventory() {
 		setInventorySource(GameObjects::instance().getProtagonistObject());
 		g_engine->_scriptExecutor->_hasPendingExternalInventoryResume = false;
 		g_engine->_scriptExecutor->_externalInventorySourceObjectID = 0;
+		// Restore script click state (original: handleInput restores from saved values)
+		g_engine->_scriptExecutor->_scriptClickFlag = g_engine->_scriptExecutor->_savedScriptClickFlag;
+		g_engine->_scriptExecutor->_scriptClickX = g_engine->_scriptExecutor->_savedScriptClickX;
+		g_engine->_scriptExecutor->_scriptClickY = g_engine->_scriptExecutor->_savedScriptClickY;
+		g_engine->_scriptExecutor->_scriptClickResult = g_engine->_scriptExecutor->_savedScriptClickResult;
 		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->_secondaryInventoryLocation);
 		g_engine->runScriptExecutor();
 		return;
@@ -256,7 +261,7 @@ AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 	// Frame data: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
 	// Skip the 6-byte header to reach width/height/pixels for ReadFromStream
 	stream.seek(offset + 6, SEEK_SET);
-	result->ReadFromStream(&stream);
+	result->readFromStream(&stream);
 	// TODO: Think about proper memory management
 	return result;
 }
@@ -280,7 +285,7 @@ void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
 		BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 		BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
 		AnimFrame currentFrame = currentBlob.getCurrentFrame();
-		drawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
+		drawSprite(current._x, current._y, currentFrame._width, currentFrame._height, currentFrame._data, s, false);
 	}
 }
 
@@ -306,14 +311,14 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 
 	// See l0037_B462: for the calculations below
 	// Draw the border
-	const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->Width : 0, rightPortrait ? rightPortrait->Width : 0);
-	const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->Height : 0, rightPortrait ? rightPortrait->Height : 0);
+	const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
+	const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->_height : 0, rightPortrait ? rightPortrait->_height : 0);
 	const Common::Point borderSize(portraitWidth + 0xD, portraitHeight + 0xD);
 	drawBorder(currentSpeechActData.position, borderSize, s);
 
 	// Draw the portrait over the border
 	Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
-	drawSprite(pos, frame->Width, frame->Height, frame->Data, s, false);
+	drawSprite(pos, frame->_width, frame->_height, frame->_data, s, false);
 }
 
 void View1::renderString(uint16 x, uint16 y, Common::String s) {
@@ -326,7 +331,7 @@ void View1::renderString(uint16 x, uint16 y, Common::String s) {
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
 		if (g_engine->findGlyph(*iter, data)) {
-			widestGlyph = MAX(widestGlyph, data.Width);
+			widestGlyph = MAX(widestGlyph, data._width);
 		}
 	}
 
@@ -335,8 +340,8 @@ void View1::renderString(uint16 x, uint16 y, Common::String s) {
 		GlyphData data;
 		bool found = g_engine->findGlyph(*iter, data);
 		if (found) {
-			drawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf, false);
-			currentX += data.Width + 1;
+			drawSprite(currentX, currentY, data._width, data._height, data._data, surf, false);
+			currentX += data._width + 1;
 		} else {
 			if ((byte)*iter != ' ') {
 				warning("Missing glyph for character 0x%02x while rendering \"%s\" at (%u,%u)", (byte)*iter, s.c_str(), x, y);
@@ -354,13 +359,13 @@ int View1::measureStringWithFont(const Common::String &s, const GlyphData *glyph
 	int width = 0;
 	uint16 widestGlyph = 1;
 	for (uint i = 0; i < numGlyphs; i++) {
-		widestGlyph = MAX(widestGlyph, glyphs[i].Width);
+		widestGlyph = MAX(widestGlyph, glyphs[i]._width);
 	}
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		bool found = false;
 		for (uint i = 0; i < numGlyphs; i++) {
-			if (glyphs[i].ASCII == *iter) {
-				width += glyphs[i].Width + 1;
+			if (glyphs[i]._ascii == *iter) {
+				width += glyphs[i]._width + 1;
 				found = true;
 				break;
 			}
@@ -376,14 +381,14 @@ void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, co
 	uint16 currentX = x;
 	uint16 widestGlyph = 1;
 	for (uint i = 0; i < numGlyphs; i++) {
-		widestGlyph = MAX(widestGlyph, glyphs[i].Width);
+		widestGlyph = MAX(widestGlyph, glyphs[i]._width);
 	}
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		bool found = false;
 		for (uint i = 0; i < numGlyphs; i++) {
-			if (glyphs[i].ASCII == *iter) {
-				drawSprite(currentX, y, glyphs[i].Width, glyphs[i].Height, glyphs[i].Data, surf, false);
-				currentX += glyphs[i].Width + 1;
+			if (glyphs[i]._ascii == *iter) {
+				drawSprite(currentX, y, glyphs[i]._width, glyphs[i]._height, glyphs[i]._data, surf, false);
+				currentX += glyphs[i]._width + 1;
 				found = true;
 				break;
 			}
@@ -455,12 +460,12 @@ void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Gr
 	uint16 currentY = y;
 	for (int i = 0; i < count; i++) {
 		const Macs2::GlyphData &currentData = data[i];
-		if (currentX + currentData.Width > s.w) {
-			currentY += currentData.Height;
+		if (currentX + currentData._width > s.w) {
+			currentY += currentData._height;
 			currentX = x;
 		}
-		drawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s, false);
-		currentX += currentData.Width;
+		drawSprite(currentX, currentY, currentData._width, currentData._height, currentData._data, s, false);
+		currentX += currentData._width;
 	}
 }
 
@@ -469,17 +474,17 @@ void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 	g_engine->findGlyph('x', xData);
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
-		renderString(current.Position.x - xData.Width * 0.5, current.Position.y - xData.Height * 0.5, "x");
+		renderString(current._position.x - xData._width * 0.5, current._position.y - xData._height * 0.5, "x");
 
 		Common::String number = Common::String::format("%u", i);
-		renderString(current.Position.x - xData.Width * 0.5 + 10, current.Position.y - xData.Height * 0.5 + 10, number.c_str());
+		renderString(current._position.x - xData._width * 0.5 + 10, current._position.y - xData._height * 0.5 + 10, number.c_str());
 
-		for (uint8 adjacentIndex : current.adjacentPoints) {
+		for (uint8 adjacentIndex : current._adjacentPoints) {
 			if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
 				continue;
 			}
 			PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
-			s.drawLine(current.Position.x, current.Position.y, other.Position.x, other.Position.y, 0xFFFFFFFF);
+			s.drawLine(current._position.x, current._position.y, other._position.x, other._position.y, 0xFFFFFFFF);
 		}
 	}
 
@@ -524,10 +529,10 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 	// Calculate button size from actual icon dimensions (matching original)
 	uint16 maxW = 0, maxH = 0;
 	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
-		if (g_engine->_imageResources[i].Width > maxW)
-			maxW = g_engine->_imageResources[i].Width;
-		if (g_engine->_imageResources[i].Height > maxH)
-			maxH = g_engine->_imageResources[i].Height;
+		if (g_engine->_imageResources[i]._width > maxW)
+			maxW = g_engine->_imageResources[i]._width;
+		if (g_engine->_imageResources[i]._height > maxH)
+			maxH = g_engine->_imageResources[i]._height;
 	}
 	uint16 btnW = maxW + 6;
 	uint16 btnH = maxH + 6;
@@ -564,10 +569,10 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	// Each button is sized to the largest icon + 6px padding, centered in cell
 	uint16 maxW = 0, maxH = 0;
 	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
-		if (g_engine->_imageResources[i].Width > maxW)
-			maxW = g_engine->_imageResources[i].Width;
-		if (g_engine->_imageResources[i].Height > maxH)
-			maxH = g_engine->_imageResources[i].Height;
+		if (g_engine->_imageResources[i]._width > maxW)
+			maxW = g_engine->_imageResources[i]._width;
+		if (g_engine->_imageResources[i]._height > maxH)
+			maxH = g_engine->_imageResources[i]._height;
 	}
 	uint16 btnW = maxW + 6;
 	uint16 btnH = maxH + 6;
@@ -584,9 +589,9 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 
 		AnimFrame &frame = g_engine->_imageResources[i];
 		// Center icon within cell
-		uint16 iconX = cellX + (btnW - frame.Width) / 2;
-		uint16 iconY = cellY + (btnH - frame.Height) / 2;
-		drawSprite(iconX, iconY, frame.Width, frame.Height, frame.Data, s, false);
+		uint16 iconX = cellX + (btnW - frame._width) / 2;
+		uint16 iconY = cellY + (btnH - frame._height) / 2;
+		drawSprite(iconX, iconY, frame._width, frame._height, frame._data, s, false);
 		_mainMenuButtonLocations[i] = Common::Rect(cellX, cellY, cellX + btnW, cellY + btnH);
 	}
 }
@@ -905,11 +910,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					// so the cursor shows the picked-up item
 					int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
 					delete[] g_engine->_cursorData[cursorSlot];
-					uint32 pixelSize = icon->Width * icon->Height;
+					uint32 pixelSize = icon->_width * icon->_height;
 					g_engine->_cursorData[cursorSlot] = new byte[pixelSize];
-					memcpy(g_engine->_cursorData[cursorSlot], icon->Data, pixelSize);
-					g_engine->_cursorWidths[cursorSlot] = icon->Width;
-					g_engine->_cursorHeights[cursorSlot] = icon->Height;
+					memcpy(g_engine->_cursorData[cursorSlot], icon->_data, pixelSize);
+					g_engine->_cursorWidths[cursorSlot] = icon->_width;
+					g_engine->_cursorHeights[cursorSlot] = icon->_height;
 				}
 				g_engine->setCursorMode(Script::MouseMode::UseInventory);
 				updateCursor();
@@ -975,7 +980,8 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		// Handle interactions during script execution
-		// From handleInput: clicks still dismiss text boxes and dialogue choices
+		// From handleInput (1008:f0ad): clicks during script execution set the
+		// click state variables and resume the script executor.
 		if (g_engine->_scriptExecutor->isExecuting()) {
 			if (_isShowingStringBox) {
 				clearStringBox();
@@ -983,6 +989,12 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			if (_isShowingDialogueChoice) {
 				// Handle dialogue choice click
 			}
+			// Set script click state (original: g_wScriptClickFlag=0, X=mouseX, Y=mouseY, Result=1)
+			g_engine->_scriptExecutor->_scriptClickFlag = 0;
+			g_engine->_scriptExecutor->_scriptClickX = (uint16)msg._pos.x;
+			g_engine->_scriptExecutor->_scriptClickY = (uint16)msg._pos.y;
+			g_engine->_scriptExecutor->_scriptClickResult = 1;
+			g_engine->runScriptExecutor();
 			return true;
 		}
 
@@ -1282,7 +1294,7 @@ bool View1::tick() {
 		_guyFrameIndex = _guyFrameIndex % 6;
 		// Advance background animation blobs (original: updateBackgroundAnimations)
 		for (auto &blob : g_engine->_backgroundAnimationsBlobs) {
-			BackgroundAnimationBlob::advanceAnimFrame(blob.Blob, true, 2);
+			BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, 2);
 		}
 		redraw();
 	}
@@ -1297,7 +1309,7 @@ bool View1::tick() {
 		_guyFrameIndex = _guyFrameIndex % 6;
 		// Advance background animation blobs (original: updateBackgroundAnimations)
 		for (auto &blob : g_engine->_backgroundAnimationsBlobs) {
-			BackgroundAnimationBlob::advanceAnimFrame(blob.Blob, true, 2);
+			BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, 2);
 		}
 		redraw();
 	}
@@ -1342,9 +1354,9 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	uint16 maxHeightButtonIcon = 0; // [0FE2h]
 	for (uint16 index : g_engine->inventoryIconIndices) {
 		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
-		maxWidthButtonIcon = MAX(maxWidthButtonIcon, currentFrame.Width);
+		maxWidthButtonIcon = MAX(maxWidthButtonIcon, currentFrame._width);
 		// TODO: Not sure if this one is needed
-		maxHeightButtonIcon = MAX(maxHeightButtonIcon, currentFrame.Height);
+		maxHeightButtonIcon = MAX(maxHeightButtonIcon, currentFrame._height);
 	}
 
 	uint16 maxWidthInventoryIcon = 0x20;  // [0FDCh]
@@ -1355,11 +1367,11 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		if (icon == nullptr) {
 			continue;
 		}
-		if (icon->Width > 0 && icon->Width < 250) {
-			maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->Width);
+		if (icon->_width > 0 && icon->_width < 250) {
+			maxWidthInventoryIcon = MAX(maxWidthInventoryIcon, icon->_width);
 		}
-		if (icon->Height > 0 && icon->Height < 250) {
-			maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->Height);
+		if (icon->_height > 0 && icon->_height < 250) {
+			maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->_height);
 		}
 	}
 
@@ -1397,10 +1409,10 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		uint16 index = g_engine->inventoryIconIndices[i];
 		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
 		drawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
-		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame.Width / 2;
-		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame.Height / 2;
+		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame._width / 2;
+		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame._height / 2;
 		_inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
-		drawSprite(iconX, iconY, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
+		drawSprite(iconX, iconY, currentFrame._width, currentFrame._height, currentFrame._data, s, false);
 		buttonX += buttonW + 4;
 	}
 	Common::Rect sourceRect(Common::Point((s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 1, y + 5),
@@ -1438,9 +1450,9 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 			AnimFrame *icon = getInventoryIcon(_inventoryItems[itemIndex]);
 			if (icon != nullptr) {
 				// Original: (slotWidth/2 + local_e) - (frameWidth/2)
-				drawSprite(slotW / 2 + itemX - icon->Width / 2,
-						   slotH / 2 + itemY - icon->Height / 2,
-						   icon->Width, icon->Height, icon->Data, s, false);
+				drawSprite(slotW / 2 + itemX - icon->_width / 2,
+						   slotH / 2 + itemY - icon->_height / 2,
+						   icon->_width, icon->_height, icon->_data, s, false);
 			}
 			itemIndex++;
 			itemX += slotW + 4;
@@ -1511,7 +1523,7 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 }
 
 void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
-	drawSpriteClipped(x, y, clippingRect, sprite.Width, sprite.Height, sprite.Data.data(), s);
+	drawSpriteClipped(x, y, clippingRect, sprite._width, sprite._height, sprite._data.data(), s);
 }
 
 void View1::drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s) {
@@ -1563,15 +1575,15 @@ void View1::drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 }
 
 void View1::drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s) {
-	drawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite.Data.data(), s);
+	drawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite._data.data(), s);
 }
 
 void View1::drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s) {
 	const uint16 &x = pos.x;
 	const uint16 &y = pos.y;
-	const uint16 &width = sprite.Width;
-	const uint16 &height = sprite.Height;
-	const Common::Array<uint8> data = sprite.Data;
+	const uint16 &width = sprite._width;
+	const uint16 &height = sprite._height;
+	const Common::Array<uint8> data = sprite._data;
 	int xScaling = 0;
 	int yScaling = 0;
 
@@ -1670,7 +1682,7 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		// DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		Common::Point actualPosition = current->getPosition() - Common::Point(0, current->getVerticalOffset());
-		drawSpriteSuperAdvanced(actualPosition - frame->GetBottomMiddleOffset(scalingFactor), frame->AsSprite(), scalingFactor, mirror, true, depth, s);
+		drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s);
 
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 			Common::String number = Common::String::format("%u", current->_gameObject->Orientation);
@@ -1703,7 +1715,7 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	if (currentSpeechActData.speaker != nullptr) {
 		AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false);
 		AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true);
-		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->Width : 0, rightPortrait ? rightPortrait->Width : 0);
+		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
 		if (portraitWidth > 0) {
 			if (onRightSide) {
 				stringBoxX = position.x - portraitWidth - 0x12 - totalWidth;
@@ -1797,10 +1809,10 @@ void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, 
 	while (currentY < clippingRect.bottom) {
 		while (currentX < clippingRect.right) {
 			drawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
-			currentX += sprite.Width;
+			currentX += sprite._width;
 		}
 		currentX = clippingRect.left;
-		currentY += sprite.Height;
+		currentY += sprite._height;
 	}
 }
 
@@ -1852,7 +1864,7 @@ void View1::drawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	}
 	while (currentX < clippingRect.right) {
 		drawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
-		currentX += sprite->Width;
+		currentX += sprite->_width;
 	}
 }
 
@@ -1870,7 +1882,7 @@ void View1::drawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 
 	while (currentY < clippingRect.bottom) {
 		drawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
-		currentY += sprite->Height;
+		currentY += sprite->_height;
 	}
 }
 
@@ -1879,14 +1891,14 @@ void View1::drawImageResources(Graphics::ManagedSurface &s) {
 	uint16 y = 0;
 	uint16 currentMaxHeight = 0;
 	for (AnimFrame &current : g_engine->_imageResources) {
-		if (x + current.Width > 320) {
+		if (x + current._width > 320) {
 			y += currentMaxHeight;
 			x = 0;
 			currentMaxHeight = 0;
 		}
-		drawSprite(Common::Point(x, y), current.Width, current.Height, current.Data, s, false);
-		x += current.Width;
-		currentMaxHeight = MAX(current.Height, currentMaxHeight);
+		drawSprite(Common::Point(x, y), current._width, current._height, current._data, s, false);
+		x += current._width;
+		currentMaxHeight = MAX(current._height, currentMaxHeight);
 	}
 }
 
@@ -1958,12 +1970,12 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 			continue;
 		}
 
-		Common::Point localPoint = pos - (currentCharacter->getPosition() - animFrame->GetBottomMiddleOffset());
-		if (localPoint.x < 0 || localPoint.x >= animFrame->Width ||
-			localPoint.y < 0 || localPoint.y >= animFrame->Height) {
+		Common::Point localPoint = pos - (currentCharacter->getPosition() - animFrame->getBottomMiddleOffset());
+		if (localPoint.x < 0 || localPoint.x >= animFrame->_width ||
+			localPoint.y < 0 || localPoint.y >= animFrame->_height) {
 			continue;
 		}
-		if (animFrame->Data[localPoint.y * animFrame->Width + localPoint.x] == 0) {
+		if (animFrame->_data[localPoint.y * animFrame->_width + localPoint.x] == 0) {
 			continue;
 		}
 
@@ -2135,8 +2147,8 @@ bool Character::calculatePath(Common::Point target) {
 	const Common::Point &charPosition = GameObjects::instance().getProtagonistObject()->Position;
 	for (int i = 0; i < numPoints; i++) {
 		PathfindingPoint &current = g_engine->pathfindingPoints[i];
-		if (isPathWalkable(charPosition, current.Position)) {
-			uint dist = charPosition.sqrDist(current.Position);
+		if (isPathWalkable(charPosition, current._position)) {
+			uint dist = charPosition.sqrDist(current._position);
 			if (dist < minLength) {
 				minLength = dist;
 				minIndex = i;
@@ -2156,7 +2168,7 @@ bool Character::calculatePath(Common::Point target) {
 	debug("Best entry point: %u at distance %u", minIndex, minLength);
 	bool result = findShortestPath(minIndex, visited, target);
 	PathfindingPoint &entryPoint = g_engine->pathfindingPoints[minIndex];
-	isPathWalkable(charPosition, entryPoint.Position, true);
+	isPathWalkable(charPosition, entryPoint._position, true);
 	// Now handle searching for the end point, for this, keep track of nodes we already visited
 	// Args:
 	// Target position
@@ -2173,7 +2185,7 @@ bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, con
 	}
 	visited[index] = true;
 	const PathfindingPoint &currentPoint = g_engine->pathfindingPoints[index];
-	const Common::Point &currentPosition = currentPoint.Position;
+	const Common::Point &currentPosition = currentPoint._position;
 	_path.push_back(index);
 	g_engine->_path.push_back(currentPosition);
 
@@ -2184,11 +2196,11 @@ bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, con
 	}
 
 	// See if the adjacent points are good
-	for (uint i = 0; i < currentPoint.adjacentPoints.size(); i++) {
-		const uint16 currentAdjacentIndex = currentPoint.adjacentPoints[i];
+	for (uint i = 0; i < currentPoint._adjacentPoints.size(); i++) {
+		const uint16 currentAdjacentIndex = currentPoint._adjacentPoints[i];
 		if (findShortestPath(currentAdjacentIndex - 1, visited, target)) {
 			const PathfindingPoint &adjacentPoint = g_engine->pathfindingPoints[currentAdjacentIndex - 1];
-			isPathWalkable(currentPoint.Position, adjacentPoint.Position, true);
+			isPathWalkable(currentPoint._position, adjacentPoint._position, true);
 			return true;
 		}
 	}
@@ -2234,7 +2246,7 @@ bool Character::walkAlongPath() {
 	Common::String output = Common::String::format("%u - %u", _currentPathIndex, currentPathPointIndex);
 	g_engine->_debugOutput.push_back(output);
 	PathfindingPoint &current = g_engine->pathfindingPoints[currentPathPointIndex];
-	startLerpTo(current.Position, 1000);
+	startLerpTo(current._position, 1000);
 	return true;
 }
 
@@ -2318,7 +2330,7 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(blob.data(), blob.size());
 	stream.seek(offset);
-	result->ReadFromStream(&stream);
+	result->readFromStream(&stream);
 	return result;
 }
 
@@ -2344,7 +2356,7 @@ Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIn
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(_gameObject->Blobs[portraitBlobIndex].data(), _gameObject->Blobs[portraitBlobIndex].size());
 	stream.seek(offset);
-	result->ReadFromStream(&stream);
+	result->readFromStream(&stream);
 	return result;
 }
 

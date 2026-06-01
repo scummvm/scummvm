@@ -303,6 +303,17 @@ public:
 
 	uint16 _interactedObjectID = 0;
 	uint16 _interactedOtherObjectID = 0;
+	uint16 _walkTargetObjectIndex = 0;
+	// Script click state: set by handleInput when user clicks during script execution.
+	// Saved/restored by scriptOpenInventory across UI interactions.
+	uint16 _scriptClickFlag = 0;
+	uint16 _scriptClickX = 0;
+	uint16 _scriptClickY = 0;
+	uint16 _scriptClickResult = 0;
+	uint16 _savedScriptClickFlag = 0;
+	uint16 _savedScriptClickX = 0;
+	uint16 _savedScriptClickY = 0;
+	uint16 _savedScriptClickResult = 0;
 
 	// Is set to true in opcode 2C if an object is inside another target object
 	bool _inventoryCheckResult = false;
@@ -379,6 +390,7 @@ public:
 	uint32 getScriptPosition() const;
 	uint32 getScriptEndPosition() const;
 	uint16 getExecutingObjectId() const { return _executingObjectIndex; }
+	void setExecutingObjectId(uint16 id) { _executingObjectIndex = id; }
 	uint16 getFrameWaitCounter() const { return _frameWaitTicksRemaining; }
 	void setFrameWaitCounter(uint16 val) { _frameWaitTicksRemaining = val; }
 	uint32 getVariableValue(int index) const;
