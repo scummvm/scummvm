@@ -1811,6 +1811,18 @@ void Script::ScriptExecutor::scriptOpcode0x31() {
 	g_engine->getAdlib()->SetVolume((uint16)volume);
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x32() {
+	uint16 objectID = scriptReadValue16() - 0x0400;
+	const uint16 clickable = scriptReadValue16();
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Ignoring clickable toggle for invalid object %u", objectID);
+		return false;
+	}
+	object->IsClickable = clickable != 0;
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2062,14 +2074,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x31) {
 			scriptOpcode0x31();
 		} else if (opcode1 == 0x32) {
-			uint16 objectID = scriptReadValue16() - 0x0400;
-			const uint16 clickable = scriptReadValue16();
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Ignoring clickable toggle for invalid object %u", objectID);
+			if (!scriptOpcode0x32()) {
 				continue;
 			}
-			object->IsClickable = clickable != 0;
 		} else if (opcode1 == 0x33) {
 			uint16 objectID = scriptReadValue16() - 0x0400;
 			const uint16 visible = scriptReadValue16();
