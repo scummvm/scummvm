@@ -997,7 +997,7 @@ void InventoryMan::clickOnMouth() {
 		case kDMPotionTypeVi: {
 			uint16 healWoundIterationCount = MAX(1, (((Potion *)junkData)->getPower() / 42));
 			curChampion->_currHealth += curChampion->_maxHealth / counter;
-			int16 wounds = curChampion->_wounds;
+			uint16 wounds = curChampion->_wounds;
 			if (wounds) { /* If the champion is wounded */
 				counter = 10;
 				do {
