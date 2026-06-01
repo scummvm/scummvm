@@ -463,10 +463,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading() && chr)
 			chr->_stepDirectionSet = directionSet != 0;
 
-		// RuntimeValue217 [+0x20D]: 2 bytes
-		s.syncAsUint16LE(obj->RuntimeValue217);
-		// [+0x20F]: 2 bytes
-		s.syncAsUint16LE(obj->RuntimeValue219);
+		// _pickupFrameStart [+0x217]: 2 bytes
+		s.syncAsUint16LE(obj->_pickupFrameStart);
+		// _pickupFrameEnd [+0x219]: 2 bytes
+		s.syncAsUint16LE(obj->_pickupFrameEnd);
 		// [+0x211]: 2 bytes - path index/length/accumulator - walk interrupted, save 0
 		uint16 runtime211 = 0;
 		s.syncAsUint16LE(runtime211);
@@ -493,11 +493,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// overloadAnimTriggerDirection [+0x22D]: 2 bytes
 		s.syncAsUint16LE(obj->overloadAnimTriggerDirection);
 
-		// RuntimeFlag22F [+0x22F]: 1 byte
-		uint8 flag22F = obj->RuntimeFlag22F ? 1 : 0;
+		// _snapToTarget [+0x22F]: 1 byte
+		uint8 flag22F = obj->_snapToTarget ? 1 : 0;
 		s.syncAsByte(flag22F);
 		if (s.isLoading())
-			obj->RuntimeFlag22F = flag22F != 0;
+			obj->_snapToTarget = flag22F != 0;
 
 		// useOverloadAnimation [+0x230]: 1 byte
 		uint8 useOverload = obj->useOverloadAnimation ? 1 : 0;
