@@ -96,8 +96,8 @@ void View1::OpenInventory(GameObject *newInventorySource) {
 	_isShowingInventory = true;
 	inventoryPage = 0;
 	activeInventoryItem = nullptr;
-	g_engine->_scriptExecutor->inventoryActionFlag = false;
-	g_engine->_scriptExecutor->inventoryCombineFlag = false;
+	g_engine->_scriptExecutor->_inventoryActionFlag = false;
+	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
 		g_engine->SetCursorMode(Script::MouseMode::Use);
 		UpdateCursor();
@@ -109,20 +109,20 @@ void View1::CloseInventory() {
 		return;
 	}
 
-	const bool shouldResumeExternalInventory = !IsInventorySourceProtagonist() && g_engine->_scriptExecutor->hasPendingExternalInventoryResume;
+	const bool shouldResumeExternalInventory = !IsInventorySourceProtagonist() && g_engine->_scriptExecutor->_hasPendingExternalInventoryResume;
 	_isShowingInventory = false;
 	inventoryPage = 0;
 	activeInventoryItem = nullptr;
-	g_engine->_scriptExecutor->inventoryActionFlag = false;
-	g_engine->_scriptExecutor->inventoryCombineFlag = false;
+	g_engine->_scriptExecutor->_inventoryActionFlag = false;
+	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 
 	if (shouldResumeExternalInventory) {
-		g_engine->SetCursorMode(g_engine->_scriptExecutor->savedExternalInventoryMouseMode);
+		g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedExternalInventoryMouseMode);
 		UpdateCursor();
 		SetInventorySource(GameObjects::instance().GetProtagonistObject());
-		g_engine->_scriptExecutor->hasPendingExternalInventoryResume = false;
-		g_engine->_scriptExecutor->externalInventorySourceObjectID = 0;
-		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->secondaryInventoryLocation);
+		g_engine->_scriptExecutor->_hasPendingExternalInventoryResume = false;
+		g_engine->_scriptExecutor->_externalInventorySourceObjectID = 0;
+		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->_secondaryInventoryLocation);
 		g_engine->RunScriptExecutor();
 		return;
 	}
@@ -941,7 +941,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				// Use item on item (combine): confirmed from original handleInventoryClick button 5 + mode 0x17
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + activeInventoryItem->Index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
-				g_engine->_scriptExecutor->inventoryCombineFlag = true;
+				g_engine->_scriptExecutor->_inventoryCombineFlag = true;
 				g_engine->RunScriptExecutor(false);
 			}
 
@@ -998,7 +998,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 		// Handle interactions during script execution
 		// From handleInput: clicks still dismiss text boxes and dialogue choices
-		if (g_engine->_scriptExecutor->IsExecuting()) {
+		if (g_engine->_scriptExecutor->isExecuting()) {
 			if (_isShowingStringBox) {
 				clearStringBox();
 			}
@@ -1075,15 +1075,15 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		return true;
 	} else if (msg._button == MouseMessage::MB_RIGHT) {
 		// Handle no other interactions during a script
-		if (g_engine->_scriptExecutor->IsExecuting()) {
+		if (g_engine->_scriptExecutor->isExecuting()) {
 			// From handleInput: right-click during script execution opens the
 			// map/save panel ONLY if none of these are active:
 			// - IsSceneInitRun, text box, dialogue, overlay, sound/music waits
 			if (!_isShowingStringBox && !_isShowingDialogueChoice &&
-				!g_engine->_scriptExecutor->overlayTextStageActive &&
-				!g_engine->_scriptExecutor->waitForSoundPlayback &&
-				!g_engine->_scriptExecutor->waitForMusicControl &&
-				!g_engine->_scriptExecutor->waitForAdlibReady &&
+				!g_engine->_scriptExecutor->_overlayTextStageActive &&
+				!g_engine->_scriptExecutor->_waitForSoundPlayback &&
+				!g_engine->_scriptExecutor->_waitForMusicControl &&
+				!g_engine->_scriptExecutor->_waitForAdlibReady &&
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
 				if (ConfMan.getBool("original_menus")) {
 					openOriginalSaveLoadPanel();
@@ -1119,8 +1119,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	// ESC during a skippable script section fast-forwards through opcodes
 	// until opcode 0x1D is found (which clears the skippable flag).
 	if (msg.keycode == Common::KEYCODE_ESCAPE &&
-		g_engine->_scriptExecutor->scriptSkippable &&
-		g_engine->_scriptExecutor->IsExecuting()) {
+		g_engine->_scriptExecutor->_scriptSkippable &&
+		g_engine->_scriptExecutor->isExecuting()) {
 		if (g_engine->_scriptExecutor->skipToEndOfSkippableSection()) {
 			g_engine->_scriptExecutor->run();
 		}
@@ -1307,28 +1307,28 @@ bool View1::tick() {
 	// Music fade tick from gameTick (1008:e556).
 	// Processes volume fade in/out each frame when active.
 	Script::ScriptExecutor *se = g_engine->_scriptExecutor;
-	if (se->activeMusicSlot != 0 && se->musicControlMode != 0) {
-		if (se->musicControlMode == 1) {
+	if (se->_activeMusicSlot != 0 && se->_musicControlMode != 0) {
+		if (se->_musicControlMode == 1) {
 			// Fade out: volume -= step
-			int vol = (int)se->musicControlVolume - (int)se->musicControlParam;
+			int vol = (int)se->_musicControlVolume - (int)se->_musicControlParam;
 			if (vol < 1) {
-				se->musicControlMode = 0;
-				se->musicControlVolume = 0;
+				se->_musicControlMode = 0;
+				se->_musicControlVolume = 0;
 				vol = 0;
 			} else {
-				se->musicControlVolume = vol;
+				se->_musicControlVolume = vol;
 			}
-			g_engine->getAdlib()->SetVolume(se->musicControlVolume);
+			g_engine->getAdlib()->SetVolume(se->_musicControlVolume);
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
-			int vol = (int)se->musicControlVolume + (int)se->musicControlParam;
+			int vol = (int)se->_musicControlVolume + (int)se->_musicControlParam;
 			if (vol >= 0x3F) {
-				se->musicControlMode = 0;
-				se->activeMusicSlot = 0;
+				se->_musicControlMode = 0;
+				se->_activeMusicSlot = 0;
 				g_engine->getAdlib()->StopMusic();
 			} else {
-				se->musicControlVolume = vol;
-				g_engine->getAdlib()->SetVolume(se->musicControlVolume);
+				se->_musicControlVolume = vol;
+				g_engine->getAdlib()->SetVolume(se->_musicControlVolume);
 			}
 		}
 	}
@@ -1989,7 +1989,7 @@ void View1::TriggerDialogueChoice(uint8 index) {
 
 	// TODO: Confirm that these two are really set accordingly
 	g_engine->_scriptExecutor->SetVariableValue(0x0d, index, 0);
-	g_engine->_scriptExecutor->chosenDialogueOption = index;
+	g_engine->_scriptExecutor->_chosenDialogueOption = index;
 
 	// TODO: Should check where this happens, but seems like we need to close the
 	// options ourselves
@@ -2084,7 +2084,7 @@ bool Character::HandleWalkability(Character *c) {
 	if (c->GameObject->Index != 1) {
 		return false;
 	}
-	if (g_engine->_scriptExecutor->IsExecuting()) {
+	if (g_engine->_scriptExecutor->isExecuting()) {
 		return false;
 	}
 
@@ -2497,11 +2497,11 @@ void Character::Update() {
 			if (currentView->inventorySource != nullptr && currentView->inventorySource->Index == GameObject->Index) {
 				currentView->inventoryItems.push_back(pickedUpObject);
 			}
-			if (g_engine->_scriptExecutor->pickupInProgress) {
-				g_engine->_scriptExecutor->pickupInProgress = false;
-				g_engine->_scriptExecutor->pickupActorObjectID = 0;
-				g_engine->_scriptExecutor->pickupTargetObjectID = 0;
-				g_engine->SetCursorMode(g_engine->_scriptExecutor->savedPickupMouseMode);
+			if (g_engine->_scriptExecutor->_pickupInProgress) {
+				g_engine->_scriptExecutor->_pickupInProgress = false;
+				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
+				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
+				g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
 				currentView->UpdateCursor();
 			}
 			pickedUpObject = nullptr;
@@ -2510,18 +2510,18 @@ void Character::Update() {
 			g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
 			if (ExecuteScriptOnFinishLerp) {
 				ExecuteScriptOnFinishLerp = false;
-				g_engine->_scriptExecutor->isRepeatRun = true;
+				g_engine->_scriptExecutor->_isRepeatRun = true;
 				g_engine->ScheduleRun();
 			}
 			return;
 		}
 		if (pickedUpObject != nullptr && pickupAnimationEndTime < 0.0f) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");
-			if (g_engine->_scriptExecutor->pickupInProgress) {
-				g_engine->_scriptExecutor->pickupInProgress = false;
-				g_engine->_scriptExecutor->pickupActorObjectID = 0;
-				g_engine->_scriptExecutor->pickupTargetObjectID = 0;
-				g_engine->SetCursorMode(g_engine->_scriptExecutor->savedPickupMouseMode);
+			if (g_engine->_scriptExecutor->_pickupInProgress) {
+				g_engine->_scriptExecutor->_pickupInProgress = false;
+				g_engine->_scriptExecutor->_pickupActorObjectID = 0;
+				g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
+				g_engine->SetCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
 				currentView->UpdateCursor();
 			}
 			pickedUpObject = nullptr;
@@ -2534,7 +2534,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->isRepeatRun = true;
+			g_engine->_scriptExecutor->_isRepeatRun = true;
 			g_engine->ScheduleRun();
 		}
 		return;
@@ -2585,7 +2585,7 @@ void Character::Update() {
 		}
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->isRepeatRun = true;
+			g_engine->_scriptExecutor->_isRepeatRun = true;
 			g_engine->ScheduleRun();
 		}
 		return;
@@ -2888,8 +2888,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 					_loadConfirmArmed = false;
 					break;
 				case 2: // Toggle music
-					g_engine->_scriptExecutor->soundSystemActive =
-						!g_engine->_scriptExecutor->soundSystemActive;
+					g_engine->_scriptExecutor->_soundSystemActive =
+						!g_engine->_scriptExecutor->_soundSystemActive;
 					break;
 				case 3: // Page scroll
 					_mapPanelPageIndex = (_mapPanelPageIndex + 1) % 3;

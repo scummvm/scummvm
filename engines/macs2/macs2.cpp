@@ -775,9 +775,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->activeInventoryItem = nullptr;
 	currentView->isShowingMainMenu = false;
 	currentView->clearOverlayTextEntries();
-	_scriptExecutor->inventoryActionFlag = false;
-	_scriptExecutor->inventoryCombineFlag = false;
-	_scriptExecutor->overlayTextStageActive = false;
+	_scriptExecutor->_inventoryActionFlag = false;
+	_scriptExecutor->_inventoryCombineFlag = false;
+	_scriptExecutor->_overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->characters) {
@@ -1442,13 +1442,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// Sound/music state
-	s.syncAsByte(_scriptExecutor->soundSystemActive);
-	s.syncAsByte(_scriptExecutor->soundEnabled);
-	s.syncAsByte(_scriptExecutor->musicEnabled);
-	s.syncAsUint16LE(_scriptExecutor->activeMusicSlot);
-	s.syncAsUint16LE(_scriptExecutor->musicControlMode);
-	s.syncAsUint16LE(_scriptExecutor->musicControlParam);
-	s.syncAsUint16LE(_scriptExecutor->musicControlVolume);
+	s.syncAsByte(_scriptExecutor->_soundSystemActive);
+	s.syncAsByte(_scriptExecutor->_soundEnabled);
+	s.syncAsByte(_scriptExecutor->_musicEnabled);
+	s.syncAsUint16LE(_scriptExecutor->_activeMusicSlot);
+	s.syncAsUint16LE(_scriptExecutor->_musicControlMode);
+	s.syncAsUint16LE(_scriptExecutor->_musicControlParam);
+	s.syncAsUint16LE(_scriptExecutor->_musicControlVolume);
 
 	// Script executor state
 	uint16 mouseMode = (uint16)_scriptExecutor->_mouseMode;
@@ -1458,15 +1458,15 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_scriptExecutor->_interactedObjectID);
 	s.syncAsUint16LE(_scriptExecutor->_interactedOtherObjectID);
-	s.syncAsByte(_scriptExecutor->scriptSkippable);
-	s.syncAsByte(_scriptExecutor->pickupInProgress);
-	s.syncAsUint16LE(_scriptExecutor->pickupActorObjectID);
-	s.syncAsUint16LE(_scriptExecutor->pickupTargetObjectID);
-	s.syncAsByte(_scriptExecutor->isRepeatRun);
-	s.syncAsByte(_scriptExecutor->inventoryCheckResult);
-	s.syncAsByte(_scriptExecutor->animBlobRangeTestResult);
-	s.syncAsByte(_scriptExecutor->inventoryActionFlag);
-	s.syncAsByte(_scriptExecutor->inventoryCombineFlag);
+	s.syncAsByte(_scriptExecutor->_scriptSkippable);
+	s.syncAsByte(_scriptExecutor->_pickupInProgress);
+	s.syncAsUint16LE(_scriptExecutor->_pickupActorObjectID);
+	s.syncAsUint16LE(_scriptExecutor->_pickupTargetObjectID);
+	s.syncAsByte(_scriptExecutor->_isRepeatRun);
+	s.syncAsByte(_scriptExecutor->_inventoryCheckResult);
+	s.syncAsByte(_scriptExecutor->_animBlobRangeTestResult);
+	s.syncAsByte(_scriptExecutor->_inventoryActionFlag);
+	s.syncAsByte(_scriptExecutor->_inventoryCombineFlag);
 
 	// Area overrides (matching original's 0x200 byte block at DAT_1020_202a)
 	for (int i = 0; i < AREA_OVERRIDE_COUNT; i++) {
@@ -1548,7 +1548,7 @@ Common::Error Macs2Engine::loadOriginalSave(Common::SeekableReadStream *stream) 
 	}
 
 	// Sound system active (2 bytes)
-	_scriptExecutor->soundSystemActive = stream->readUint16LE() != 0;
+	_scriptExecutor->_soundSystemActive = stream->readUint16LE() != 0;
 
 	// Script state fields (matching original loadGameFromFile order):
 	// 0xf88: 1 byte - scriptIsExecuting
@@ -1565,13 +1565,13 @@ Common::Error Macs2Engine::loadOriginalSave(Common::SeekableReadStream *stream) 
 	stream->readUint16LE(); // 0xf9a
 
 	// g_wRepeatRunFlag: 1 byte
-	_scriptExecutor->isRepeatRun = stream->readByte() != 0;
+	_scriptExecutor->_isRepeatRun = stream->readByte() != 0;
 	// g_wFrameWaitCounter: 2 bytes
 	stream->readUint16LE(); // frame wait - not directly used
 	// g_wWalkTargetObjectIndex: 2 bytes
 	stream->readUint16LE(); // walk target
 	// g_wPickupInProgress: 2 bytes
-	_scriptExecutor->pickupInProgress = stream->readUint16LE() != 0;
+	_scriptExecutor->_pickupInProgress = stream->readUint16LE() != 0;
 	// 0xfd0: 2 bytes
 	stream->readUint16LE();
 	// 0xfea: 2 bytes
@@ -1597,25 +1597,25 @@ Common::Error Macs2Engine::loadOriginalSave(Common::SeekableReadStream *stream) 
 	// g_wInteractedInventoryItemId: 2 bytes
 	_scriptExecutor->_interactedOtherObjectID = stream->readUint16LE();
 	// g_wScriptSkippable: 1 byte
-	_scriptExecutor->scriptSkippable = stream->readByte() != 0;
+	_scriptExecutor->_scriptSkippable = stream->readByte() != 0;
 	// g_wPickupActorObjectId: 2 bytes
-	_scriptExecutor->pickupActorObjectID = stream->readUint16LE();
+	_scriptExecutor->_pickupActorObjectID = stream->readUint16LE();
 	// g_wPickupTargetObjectId: 2 bytes
-	_scriptExecutor->pickupTargetObjectID = stream->readUint16LE();
+	_scriptExecutor->_pickupTargetObjectID = stream->readUint16LE();
 	// g_wIsRepeatRun: 2 bytes
-	_scriptExecutor->isRepeatRun = stream->readUint16LE() != 0;
+	_scriptExecutor->_isRepeatRun = stream->readUint16LE() != 0;
 	// g_wInventoryCheckResult: 1 byte
-	_scriptExecutor->inventoryCheckResult = stream->readByte() != 0;
+	_scriptExecutor->_inventoryCheckResult = stream->readByte() != 0;
 	// g_wAnimBlobRangeTestResult: 1 byte
-	_scriptExecutor->animBlobRangeTestResult = stream->readByte() != 0;
+	_scriptExecutor->_animBlobRangeTestResult = stream->readByte() != 0;
 	// g_wInventoryActionFlag: 1 byte
-	_scriptExecutor->inventoryActionFlag = stream->readByte() != 0;
+	_scriptExecutor->_inventoryActionFlag = stream->readByte() != 0;
 	// g_wInventoryCombineFlag: 1 byte
-	_scriptExecutor->inventoryCombineFlag = stream->readByte() != 0;
+	_scriptExecutor->_inventoryCombineFlag = stream->readByte() != 0;
 	// g_wSoundSystemState: 2 bytes
 	uint16 soundState = stream->readUint16LE();
-	_scriptExecutor->soundEnabled = (soundState & 1) != 0;
-	_scriptExecutor->musicEnabled = (soundState & 2) != 0;
+	_scriptExecutor->_soundEnabled = (soundState & 1) != 0;
+	_scriptExecutor->_musicEnabled = (soundState & 2) != 0;
 
 	// Area overrides: 0x200 bytes
 	// Original has 256 uint16 values; we only use AREA_OVERRIDE_COUNT
@@ -1666,7 +1666,7 @@ bool Macs2Engine::tick() {
 		runScheduled = false;
 		bool shouldRunInit = scheduledRunIsInitScene;
 		scheduledRunIsInitScene = false;
-		_scriptExecutor->isRepeatRun = true;
+		_scriptExecutor->_isRepeatRun = true;
 		_scriptExecutor->run(shouldRunInit);
 	}
 	return Events::tick();
