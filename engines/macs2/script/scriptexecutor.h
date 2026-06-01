@@ -165,6 +165,7 @@ private:
 	bool scriptOpcode0x44();
 	bool scriptOpcode0x45();
 	bool scriptOpcode0x47();
+	bool scriptOpcode0x46();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
