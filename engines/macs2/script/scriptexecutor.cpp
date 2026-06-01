@@ -1852,6 +1852,35 @@ bool Script::ScriptExecutor::scriptOpcode0x34() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x35() {
+	uint16 objectID = scriptReadValue16() - 0x0400;
+	uint16 otherObjectID = scriptReadValue16() - 0x0400;
+	const uint16 value1 = scriptReadValue16();
+	const uint16 value2 = scriptReadValue16();
+	const uint16 value3 = scriptReadValue16();
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *otherObject = GameObjects::GetObjectByIndex(otherObjectID);
+	if (object == nullptr || otherObject == nullptr) {
+		warning("Ignoring bounds attachment for invalid objects %u -> %u", objectID, otherObjectID);
+		return false;
+	}
+
+	if (objectID == otherObjectID) {
+		object->HasBoundsAttachment = false;
+		object->BoundsAttachmentObjectID = 0;
+		object->BoundsAttachmentValue1 = 0;
+		object->BoundsAttachmentValue2 = 0;
+		object->BoundsAttachmentValue3 = 0;
+	} else {
+		object->HasBoundsAttachment = true;
+		object->BoundsAttachmentObjectID = otherObjectID;
+		object->BoundsAttachmentValue1 = value1;
+		object->BoundsAttachmentValue2 = value2;
+		object->BoundsAttachmentValue3 = value3;
+	}
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2115,30 +2144,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x35) {
-			uint16 objectID = scriptReadValue16() - 0x0400;
-			uint16 otherObjectID = scriptReadValue16() - 0x0400;
-			const uint16 value1 = scriptReadValue16();
-			const uint16 value2 = scriptReadValue16();
-			const uint16 value3 = scriptReadValue16();
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			GameObject *otherObject = GameObjects::GetObjectByIndex(otherObjectID);
-			if (object == nullptr || otherObject == nullptr) {
-				warning("Ignoring bounds attachment for invalid objects %u -> %u", objectID, otherObjectID);
+			if (!scriptOpcode0x35()) {
 				continue;
-			}
-
-			if (objectID == otherObjectID) {
-				object->HasBoundsAttachment = false;
-				object->BoundsAttachmentObjectID = 0;
-				object->BoundsAttachmentValue1 = 0;
-				object->BoundsAttachmentValue2 = 0;
-				object->BoundsAttachmentValue3 = 0;
-			} else {
-				object->HasBoundsAttachment = true;
-				object->BoundsAttachmentObjectID = otherObjectID;
-				object->BoundsAttachmentValue1 = value1;
-				object->BoundsAttachmentValue2 = value2;
-				object->BoundsAttachmentValue3 = value3;
 			}
 		} else if (opcode1 == 0x36) {
 			// scriptDismissPanel (1008:d6dd). Restores background if a UI panel
