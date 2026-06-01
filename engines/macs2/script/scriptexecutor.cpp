@@ -1924,6 +1924,63 @@ void Script::ScriptExecutor::scriptOpcode0x38() {
 	}
 }
 
+Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptOpcode0x3A() {
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView == nullptr) {
+		warning("Ignoring overlay text entry without an active View1");
+		scriptReadValue16();
+		scriptReadValue16();
+		scriptReadValue16();
+		ReadWord();
+		ReadWord();
+		return OpcodeControlFlow::Continue;
+	}
+
+	const uint16 x = scriptReadValue16();
+	const uint16 y = scriptReadValue16();
+	const uint8 alignment = scriptReadValue16();
+	const uint16 stringOffset = ReadWord();
+	const uint16 entryType = ReadWord();
+	if (!overlayTextStageActive) {
+		warning("Opcode 0x3A: overlay text entry at %u,%u without active stage (error 0x21)", x, y);
+		EndBuffering(lastOpcodeTriggeredSkip);
+		return OpcodeControlFlow::ScriptFinished;
+	}
+	if (currentView->_overlayTextEntries.size() >= 10) {
+		warning("Ignoring overlay text entry because the overlay list is full");
+		return OpcodeControlFlow::Continue;
+	}
+	if (entryType != 1) {
+		warning("Ignoring overlay text entry with unsupported entry type %u", entryType);
+		return OpcodeControlFlow::Continue;
+	}
+
+	Common::StringArray strings;
+	if (_executingScriptObjectID == 0) {
+		strings = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, stringOffset, 1);
+	} else {
+		Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		strings = _engine->DecodeStrings(stringsStream, stringOffset, 1);
+	}
+	if (strings.empty()) {
+		warning("Ignoring empty overlay text entry at offset %u", stringOffset);
+		return OpcodeControlFlow::Continue;
+	}
+	debugC(kDebugScript,
+			   "Opcode 3A overlay text: rawPos=(%u,%u) align=%u textOffset=%u entryType=%u scriptObject=%u text=\"%s\"",
+			   x, y, alignment, stringOffset, entryType, _executingScriptObjectID, strings[0].c_str());
+
+	View1::OverlayTextEntry entry;
+	entry.position = Common::Point(x, y);
+	entry.alignment = alignment;
+	entry.text = strings[0];
+	if (entry.text.size() > 0x28) {
+		entry.text = entry.text.substr(0, 0x28);
+	}
+	currentView->addOverlayTextEntry(entry);
+	return OpcodeControlFlow::Fallthrough;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2200,61 +2257,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// scriptEndOverlayText (1008:d80f). Clears the overlay text stage.
 			scriptOpcode0x39();
 		} else if (opcode1 == 0x3A) {
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView == nullptr) {
-				warning("Ignoring overlay text entry without an active View1");
-				scriptReadValue16();
-				scriptReadValue16();
-				scriptReadValue16();
-				ReadWord();
-				ReadWord();
+			const OpcodeControlFlow controlFlow = scriptOpcode0x3A();
+			if (controlFlow == OpcodeControlFlow::Continue) {
 				continue;
 			}
-
-			const uint16 x = scriptReadValue16();
-			const uint16 y = scriptReadValue16();
-			const uint8 alignment = scriptReadValue16();
-			const uint16 stringOffset = ReadWord();
-			const uint16 entryType = ReadWord();
-			if (!overlayTextStageActive) {
-				// Original sets g_wScriptErrorCode = 0x21 which terminates executeOpcodes.
-				// The main loop continues but this script run is aborted.
-				warning("Opcode 0x3A: overlay text entry at %u,%u without active stage (error 0x21)", x, y);
-				EndBuffering(lastOpcodeTriggeredSkip);
+			if (controlFlow == OpcodeControlFlow::ScriptFinished) {
 				return ExecutionResult::ScriptFinished;
 			}
-			if (currentView->_overlayTextEntries.size() >= 10) {
-				warning("Ignoring overlay text entry because the overlay list is full");
-				continue;
-			}
-			if (entryType != 1) {
-				warning("Ignoring overlay text entry with unsupported entry type %u", entryType);
-				continue;
-			}
-
-			Common::StringArray strings;
-			if (_executingScriptObjectID == 0) {
-				strings = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, stringOffset, 1);
-			} else {
-				Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-				strings = _engine->DecodeStrings(stringsStream, stringOffset, 1);
-			}
-			if (strings.empty()) {
-				warning("Ignoring empty overlay text entry at offset %u", stringOffset);
-				continue;
-			}
-			debugC(kDebugScript,
-				   "Opcode 3A overlay text: rawPos=(%u,%u) align=%u textOffset=%u entryType=%u scriptObject=%u text=\"%s\"",
-				   x, y, alignment, stringOffset, entryType, _executingScriptObjectID, strings[0].c_str());
-
-			View1::OverlayTextEntry entry;
-			entry.position = Common::Point(x, y);
-			entry.alignment = alignment;
-			entry.text = strings[0];
-			if (entry.text.size() > 0x28) {
-				entry.text = entry.text.substr(0, 0x28);
-			}
-			currentView->addOverlayTextEntry(entry);
 		} else if (opcode1 == 0x3B) {
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			if (currentView != nullptr) {
