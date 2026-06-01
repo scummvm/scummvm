@@ -37,6 +37,8 @@ static bool _showCharacters = false;
 static bool _showInventory = false;
 static bool _showAnimations = false;
 static bool _showSceneMaps = false;
+static bool _showImageResources = false;
+static bool _showDebugOutput = false;
 
 static const char *getOpcodeName(uint8 opcode) {
 	switch (opcode) {
@@ -841,6 +843,10 @@ static void showSceneMapsWindow() {
 				selectedTab = 2;
 				ImGui::EndTabItem();
 			}
+			if (ImGui::BeginTabItem("Hotspot Map")) {
+				selectedTab = 3;
+				ImGui::EndTabItem();
+			}
 			ImGui::EndTabBar();
 		}
 
@@ -901,6 +907,8 @@ static void showSceneMapsWindow() {
 				}
 			}
 			surface = &overlayComposite;
+		} else if (selectedTab == 3) {
+			surface = &g_engine->_map;
 		}
 
 		if (surface && surface->w > 0 && surface->h > 0) {
@@ -909,6 +917,21 @@ static void showSceneMapsWindow() {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
 				float scale = MIN(avail.x / 320.0f, avail.y / 200.0f);
 				ImGui::Image(texId, ImVec2(320.0f * scale, 200.0f * scale));
+
+				// Draw node IDs on the pathfinding overlay
+				if (selectedTab == 2) {
+					ImDrawList *dl = ImGui::GetWindowDrawList();
+					ImVec2 imgOrigin = ImGui::GetItemRectMin();
+					for (int i = 0; i < 16; i++) {
+						PathfindingPoint &pt = g_engine->pathfindingPoints[i];
+						if (pt.Position.x >= 0 && pt.Position.x < 320 && pt.Position.y >= 0 && pt.Position.y < 200) {
+							char buf[4];
+							snprintf(buf, sizeof(buf), "%d", i);
+							ImVec2 pos(imgOrigin.x + pt.Position.x * scale + 4, imgOrigin.y + pt.Position.y * scale - 4);
+							dl->AddText(pos, IM_COL32(255, 255, 0, 255), buf);
+						}
+					}
+				}
 
 				// Show value at mouse hover
 				ImVec2 imgPos = ImGui::GetItemRectMin();
@@ -1004,6 +1027,80 @@ static void showSceneMapsWindow() {
 	ImGui::End();
 }
 
+static void showImageResourcesWindow() {
+	if (!_showImageResources)
+		return;
+	ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Image Resources", &_showImageResources)) {
+		ImGui::Text("Count: %u", (uint)g_engine->_imageResources.size());
+		ImGui::Separator();
+		static Graphics::ManagedSurface imgSurface;
+		if (!g_engine->_imageResources.empty()) {
+			// Layout all image resources into a 320-wide surface
+			uint16 x = 0, y = 0, maxH = 0, totalH = 0;
+			for (const AnimFrame &f : g_engine->_imageResources) {
+				if (x + f.Width > 320) {
+					y += maxH;
+					x = 0;
+					maxH = 0;
+				}
+				maxH = MAX(maxH, f.Height);
+				x += f.Width;
+			}
+			totalH = y + maxH;
+			if (totalH == 0)
+				totalH = 1;
+
+			if (imgSurface.w != 320 || imgSurface.h != (int)totalH)
+				imgSurface.create(320, totalH, Graphics::PixelFormat::createFormatCLUT8());
+			imgSurface.fillRect(Common::Rect(320, totalH), 0);
+
+			x = 0;
+			y = 0;
+			maxH = 0;
+			for (const AnimFrame &f : g_engine->_imageResources) {
+				if (x + f.Width > 320) {
+					y += maxH;
+					x = 0;
+					maxH = 0;
+				}
+				// Blit raw pixel data
+				for (uint16 row = 0; row < f.Height && (y + row) < totalH; row++) {
+					for (uint16 col = 0; col < f.Width; col++) {
+						byte pixel = f.Data[row * f.Width + col];
+						if (pixel != 0)
+							imgSurface.setPixel(x + col, y + row, pixel);
+					}
+				}
+				maxH = MAX(maxH, f.Height);
+				x += f.Width;
+			}
+
+			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal, 256);
+			if (texId) {
+				ImVec2 avail = ImGui::GetContentRegionAvail();
+				float scale = MIN(avail.x / 320.0f, avail.y / (float)totalH);
+				if (scale < 1.0f)
+					scale = 1.0f;
+				ImGui::Image(texId, ImVec2(320.0f * scale, (float)totalH * scale));
+			}
+		}
+	}
+	ImGui::End();
+}
+
+static void showDebugOutputWindow() {
+	if (!_showDebugOutput)
+		return;
+	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Debug Output", &_showDebugOutput)) {
+		for (const Common::String &line : g_engine->_debugOutput) {
+			ImGui::TextUnformatted(line.c_str());
+		}
+	}
+	ImGui::End();
+}
+
 void onImGuiInit() {
 	ImGui::GetIO().Fonts->AddFontDefault();
 }
@@ -1023,6 +1120,8 @@ void onImGuiRender() {
 			ImGui::MenuItem("Inventory", NULL, &_showInventory);
 			ImGui::MenuItem("Animations", NULL, &_showAnimations);
 			ImGui::MenuItem("Scene Maps", NULL, &_showSceneMaps);
+			ImGui::MenuItem("Image Resources", NULL, &_showImageResources);
+			ImGui::MenuItem("Debug Output", NULL, &_showDebugOutput);
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Speed")) {
@@ -1045,6 +1144,8 @@ void onImGuiRender() {
 	showInventoryWindow();
 	showAnimationsWindow();
 	showSceneMapsWindow();
+	showImageResourcesWindow();
+	showDebugOutputWindow();
 }
 
 void onImGuiCleanup() {
