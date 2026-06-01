@@ -97,6 +97,12 @@ enum class ScriptExecutionState {
  */
 class ScriptExecutor {
 private:
+	enum class OpcodeControlFlow : uint8 {
+		Fallthrough,
+		Continue,
+		ScriptFinished
+	};
+
 	void scriptOpcode0x01();
 	void scriptOpcode0x02();
 	void scriptOpcode0x03();
@@ -148,6 +154,7 @@ private:
 	void scriptOpcode0x36();
 	void scriptOpcode0x37();
 	void scriptOpcode0x38();
+	OpcodeControlFlow scriptOpcode0x3A();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
