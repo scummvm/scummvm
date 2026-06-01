@@ -157,6 +157,7 @@ private:
 	OpcodeControlFlow scriptOpcode0x3A();
 	void scriptOpcode0x3B();
 	void scriptOpcode0x3C();
+	bool scriptOpcode0x3E();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
