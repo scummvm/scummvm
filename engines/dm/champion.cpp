@@ -2530,11 +2530,11 @@ void ChampionMan::renameChampion(Champion *champ) {
 						return;
 					}
 
+					Common::strcpy_s(champ->_name, championNameBackupString);
 					if (renamedChampionStringMode == kDMRenameChampionTitle)
 						renamedChampionString = champ->_title;
-
-					Common::strcpy_s(champ->_name, championNameBackupString);
-					renamedChampionString = champ->_name;
+					else
+						renamedChampionString = champ->_name;
 					curCharacterIndex = characterIndexBackup;
 				} else {
 					if ((mousePos.x >= 107) && (mousePos.x <= 175) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'BACKSPACE' button */
