@@ -98,10 +98,13 @@ public:
 	// that indicates whether the object has animation data for that direction.
 	uint16 Orientation;
 	uint16 Unknown;
-	uint16 RuntimeValue217 = 0;
-	uint16 RuntimeValue219 = 0;
+	// Runtime +0x217: frame index during pickup animation at which the item is grabbed
+	uint16 _pickupFrameStart = 0;
+	// Runtime +0x219: frame index at which pickup animation completes
+	uint16 _pickupFrameEnd = 0;
 	uint16 RuntimeSlotValues[0x15] = {0};
-	bool RuntimeFlag22F = false;
+	// Runtime +0x22F: when set, snap character position to exact target on walk arrival
+	bool _snapToTarget = false;
 	bool IsClickable = true;
 	bool IsVisible = true;
 	// Runtime field +0x231: "frozen/attached" flag. Set by scriptSetObjectBounds (opcode 0x35).

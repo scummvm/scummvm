@@ -131,7 +131,7 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x2C:
 		return "invCheck = checkInventory";
 	case 0x2D:
-		return "setObjectFlag";
+		return "setSnapToTarget";
 	case 0x2E:
 		return "animRangeTest = testSceneAnimFrame";
 	case 0x2F:

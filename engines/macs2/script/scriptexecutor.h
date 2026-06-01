@@ -144,7 +144,7 @@ private:
 	void scriptLoadObjectAnim();
 	bool scriptCheckObjectData();
 	bool scriptCheckInventory();
-	bool scriptSetObjectFlag();
+	bool scriptSetSnapToTarget();
 	bool scriptTestObjectAnimFrame();
 	void scriptPrintStringRight();
 	void scriptSetVolume();

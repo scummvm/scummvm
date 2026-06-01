@@ -1222,8 +1222,8 @@ bool Script::ScriptExecutor::scriptSetPickupFrames() {
 		return false;
 	}
 
-	object->RuntimeValue217 = value217;
-	object->RuntimeValue219 = value219;
+	object->_pickupFrameStart = value217;
+	object->_pickupFrameEnd = value219;
 	return true;
 }
 
@@ -1581,7 +1581,7 @@ bool Script::ScriptExecutor::scriptCheckInventory() {
 	return true;
 }
 
-bool Script::ScriptExecutor::scriptSetObjectFlag() {
+bool Script::ScriptExecutor::scriptSetSnapToTarget() {
 	const uint16 objectID = scriptReadValue16() - 0x400;
 	const bool enabled = scriptReadValue16() != 0;
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
@@ -1589,7 +1589,7 @@ bool Script::ScriptExecutor::scriptSetObjectFlag() {
 		warning("Ignoring object runtime flag for invalid object %u", objectID);
 		return false;
 	}
-	object->RuntimeFlag22F = enabled;
+	object->_snapToTarget = enabled;
 	return true;
 }
 
@@ -2325,7 +2325,7 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x2D) {
-			if (!scriptSetObjectFlag()) {
+			if (!scriptSetSnapToTarget()) {
 				continue;
 			}
 		} else if (opcode1 == 0x2E) {
