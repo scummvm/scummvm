@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-31 14:10+0000\n"
-"PO-Revision-Date: 2026-05-24 13:22+0000\n"
+"PO-Revision-Date: 2026-06-01 09:35+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13703,21 +13703,16 @@ msgid "Enable ambience sounds."
 msgstr "Active les sons d'ambiance."
 
 #: engines/scumm/metaengine.cpp:882
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "High resolution on"
 msgid "High resolution mode"
-msgstr "Haute résolution activée"
+msgstr "Mode Haute résolution"
 
 #: engines/scumm/metaengine.cpp:883
 msgid "Run the game in 640x400 high resolution mode instead of 320x200"
-msgstr ""
+msgstr "Lance le jeu en 640x400 haute résolution au lieu de 320x200"
 
 #: engines/scumm/metaengine.cpp:892
-#, fuzzy
-#| msgid "All levels will be available to play."
 msgid "All levels will be available without requiring passwords"
-msgstr "Tous les niveaux seront disponibles."
+msgstr "Tous les niveaux seront disponibles sans demander de mots de passe"
 
 #: engines/scumm/metaengine.cpp:1025
 msgid "Down left"
@@ -13746,75 +13741,59 @@ msgstr "Gagner les bagarres en bécane (cheat)"
 
 #: engines/scumm/metaengine.cpp:1106
 msgid "Rebel Assault controls"
-msgstr ""
+msgstr "Contrôles Rebel Assault"
 
 #: engines/scumm/metaengine.cpp:1108 engines/scumm/metaengine.cpp:1170
 msgid "Aim up / menu up"
-msgstr ""
+msgstr "Visée haut / Menu haut"
 
 #: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1176
 msgid "Aim down / menu down"
-msgstr ""
+msgstr "Visée bas / Menu bas"
 
 #: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1182
 msgid "Aim left / menu left"
-msgstr ""
+msgstr "Visée gauche / menu gauche"
 
 #: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1188
 msgid "Aim right / menu right"
-msgstr ""
+msgstr "Visée droite / Menu droite"
 
 #: engines/scumm/metaengine.cpp:1128
-#, fuzzy
-#| msgid "Pick up"
 msgid "Stick up"
-msgstr "Prendre"
+msgstr "Manche haut"
 
 #: engines/scumm/metaengine.cpp:1134
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Stick down"
-msgstr "Défiler vers le bas"
+msgstr "Manche bas"
 
 #: engines/scumm/metaengine.cpp:1140
-#, fuzzy
-#| msgid "Slide left"
 msgid "Stick left"
-msgstr "Faire un pas vers la gauche"
+msgstr "Manche gauche"
 
 #: engines/scumm/metaengine.cpp:1146
-#, fuzzy
-#| msgid "Slide right"
 msgid "Stick right"
-msgstr "Faire un pas vers la droite"
+msgstr "Manche droite"
 
 #: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1194
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Fire / select"
-msgstr "Se déplacer / Sélectionner"
+msgstr "Tirer / Sélectionner"
 
 #: engines/scumm/metaengine.cpp:1157
-#, fuzzy
-#| msgid "Backspace"
 msgid "Back / skip"
-msgstr "Retour arrière"
+msgstr "Retour / passer"
 
 #: engines/scumm/metaengine.cpp:1168
 msgid "Rebel Assault II controls"
-msgstr ""
+msgstr "Contrôles Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1199
-#, fuzzy
-#| msgid "Move back"
 msgid "Cover / back"
-msgstr "Reculer"
+msgstr "Couverture / retour"
 
 #: engines/scumm/metaengine.cpp:1204
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu"
-msgstr "Passer le menu principal"
+msgstr "Passer / menu"
 
 #: engines/scumm/saveload.cpp:1990
 #, c-format
