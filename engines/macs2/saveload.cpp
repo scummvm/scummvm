@@ -32,6 +32,7 @@ namespace Macs2 {
 
 Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	const char *SAVE_MAGIC = "AHFFMSGM0100";
+	View1 *view1 = (View1 *)findView("View1");
 
 	// --- Header: 12-byte magic ---
 	if (s.isSaving()) {
@@ -58,8 +59,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		Scenes::instance()._currentActorIndex = actorIndex;
 		Scenes::instance()._currentSceneIndex = sceneIndex;
-		View1 *currentView = (View1 *)findView("View1");
-		currentView->_started = true;
+		view1->_started = true;
 		changeScene(sceneIndex, false);
 	}
 
@@ -92,21 +92,25 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	uint16 executingObjectId = _scriptExecutor->getExecutingObjectId();
 	s.syncAsUint16LE(executingObjectId);
 
-	// g_wScriptClickFlag [0xf94]: 2 bytes - TODO: unknown, save 0
-	uint16 scriptClickFlag = 0;
-	s.syncAsUint16LE(scriptClickFlag);
+	if (s.isLoading()) {
+		// Restore script execution state - set the stream position
+		if (scriptIsExecuting && executingObjectId == 0) {
+			_scriptExecutor->setCurrentSceneScriptAt(scriptPosition);
+		}
+		_scriptExecutor->setExecutingObjectId(executingObjectId);
+	}
 
-	// g_wScriptClickX [0xf96]: 2 bytes - TODO: unknown, save 0
-	uint16 scriptClickX = 0;
-	s.syncAsUint16LE(scriptClickX);
+	// g_wScriptClickFlag [0xf94]: 2 bytes
+	s.syncAsUint16LE(_scriptExecutor->_scriptClickFlag);
 
-	// g_wScriptClickY [0xf98]: 2 bytes - TODO: unknown, save 0
-	uint16 scriptClickY = 0;
-	s.syncAsUint16LE(scriptClickY);
+	// g_wScriptClickX [0xf96]: 2 bytes
+	s.syncAsUint16LE(_scriptExecutor->_scriptClickX);
 
-	// g_wScriptClickResult [0xf9a]: 2 bytes - TODO: unknown, save 0
-	uint16 scriptClickResult = 0;
-	s.syncAsUint16LE(scriptClickResult);
+	// g_wScriptClickY [0xf98]: 2 bytes
+	s.syncAsUint16LE(_scriptExecutor->_scriptClickY);
+
+	// g_wScriptClickResult [0xf9a]: 2 bytes
+	s.syncAsUint16LE(_scriptExecutor->_scriptClickResult);
 
 	// --- Game state globals ---
 	// g_wRepeatRunFlag [0x1012]: 1 byte
@@ -121,9 +125,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading())
 		_scriptExecutor->setFrameWaitCounter(frameWaitCounter);
 
-	// g_wWalkTargetObjectIndex [0x1016]: 2 bytes - TODO: not mapped yet, save 0
-	uint16 walkTargetObjectIndex = 0;
-	s.syncAsUint16LE(walkTargetObjectIndex);
+	// g_wWalkTargetObjectIndex [0x1016]: 2 bytes
+	s.syncAsUint16LE(_scriptExecutor->_walkTargetObjectIndex);
 
 	// g_wPickupInProgress [0x1030]: 2 bytes
 	uint16 pickupInProgress = _scriptExecutor->_pickupInProgress ? 1 : 0;
@@ -131,9 +134,20 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading())
 		_scriptExecutor->_pickupInProgress = pickupInProgress != 0;
 
-	// g_wActiveInventoryItemId [0xfd0]: 2 bytes - TODO: not mapped yet, save 0
+	// g_wActiveInventoryItemId [0xfd0]: 2 bytes
 	uint16 activeInventoryItemId = 0;
+	if (s.isSaving() && view1->_activeInventoryItem)
+		activeInventoryItemId = view1->_activeInventoryItem->_index + 0x400;
 	s.syncAsUint16LE(activeInventoryItemId);
+	if (s.isLoading()) {
+		if (activeInventoryItemId >= 0x401 && activeInventoryItemId <= 0x600) {
+			uint16 idx = activeInventoryItemId - 0x400;
+			if (idx <= GameObjects::instance()._objects.size())
+				view1->_activeInventoryItem = GameObjects::instance()._objects[idx - 1];
+		} else {
+			view1->_activeInventoryItem = nullptr;
+		}
+	}
 
 	// g_wSavedCursorMode [0xfea]: 2 bytes
 	uint16 savedCursorMode = (uint16)_scriptExecutor->_cursorModeBeforeWait;
@@ -146,7 +160,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsByte(clipRectDirty);
 
 	// g_wWalkTargetObjectIndex (duplicate) [0x1016]: 2 bytes
-	s.syncAsUint16LE(walkTargetObjectIndex);
+	s.syncAsUint16LE(_scriptExecutor->_walkTargetObjectIndex);
 
 	// PTR_LOOP_1020_1018 [0x1018]: 2 bytes - mouse mode
 	uint16 mouseMode = (uint16)_scriptExecutor->_mouseMode;
@@ -166,7 +180,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	uint16 reserved101e = 0;
 	s.syncAsUint16LE(reserved101e);
 
-	// g_bMovementFinishedFlag [0x1020]: 1 byte - TODO: not mapped, save 0
+	// g_bMovementFinishedFlag [0x1020]: 1 byte
+	// Per-frame latch: cleared by drawAllCharacters, set by walkAlongPath when a
+	// character reaches destination, checked at end of frame. Always 0 is safe on load.
 	uint8 movementFinishedFlag = 0;
 	s.syncAsByte(movementFinishedFlag);
 
@@ -219,7 +235,6 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		_scriptExecutor->_inventoryCombineFlag = inventoryCombineFlag != 0;
 
 	// g_wInventoryObjectCount [0x222a]: 2 bytes - number of items in inventory list
-	View1 *view1 = (View1 *)findView("View1");
 	uint16 inventoryObjectCount = (uint16)view1->_inventoryItems.size();
 	s.syncAsUint16LE(inventoryObjectCount);
 
@@ -253,9 +268,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isSaving()) {
 			uint16 idx = AREA_OVERRIDE_MIN + i;
 			for (const auto &ov : _pathfindingOverrides) {
-				if (ov.Index == idx && ov.Active) {
+				if (ov._index == idx && ov._active) {
 					active = 1;
-					overrideValue = ov.OverrideValue;
+					overrideValue = ov._overrideValue;
 					break;
 				}
 			}
@@ -268,9 +283,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading()) {
 			if (active) {
 				PathfindingAreaOverride ov;
-				ov.Active = true;
-				ov.Index = AREA_OVERRIDE_MIN + i;
-				ov.OverrideValue = overrideValue;
+				ov._active = true;
+				ov._index = AREA_OVERRIDE_MIN + i;
+				ov._overrideValue = overrideValue;
 				_pathfindingOverrides.push_back(ov);
 			}
 			_areaOverrides[i] = remap;
@@ -547,18 +562,17 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// --- Post-load: rebuild view state ---
 	if (s.isLoading()) {
-		View1 *currentView = (View1 *)findView("View1");
-		currentView->_characters.clear();
+		view1->_characters.clear();
 		for (auto obj : GameObjects::instance()._objects) {
 			if (obj->SceneIndex == (uint16)Scenes::instance()._currentSceneIndex) {
 				Character *c = new Character();
 				c->_gameObject = obj;
-				currentView->_characters.push_back(c);
+				view1->_characters.push_back(c);
 			}
 		}
-		currentView->setInventorySource(GameObjects::instance().getProtagonistObject());
-		currentView->updateCursor();
-		currentView->_paletteDirty = true;
+		view1->setInventorySource(GameObjects::instance().getProtagonistObject());
+		view1->updateCursor();
+		view1->_paletteDirty = true;
 	}
 
 	return Common::kNoError;
