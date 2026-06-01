@@ -260,13 +260,13 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 			}
 		}
 
-		debug("RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
+		debugC(DEBUG_SMUSH, "RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
 			_frame, fetchId, left, top, storedCodec, _storedFobjWidth, _storedFobjHeight);
 		decodeFrameObject(storedCodec, _storedFobjData, left, top,
 			_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize,
 			storedParam, _storedFobjParm2);
 	} else {
-		debug("RA1 FTCH: frame=%d id=0x%08x with no stored FOBJ data", _frame, fetchId);
+		debugC(DEBUG_SMUSH, "RA1 FTCH: frame=%d id=0x%08x with no stored FOBJ data", _frame, fetchId);
 	}
 
 	return true;
@@ -283,7 +283,7 @@ void SmushPlayerRebel1::ra1HandleGost(int32 subSize, Common::SeekableReadStream 
 	const int32 ghostY = b.readSint32BE();
 
 	if (!_hasFrameFobjForGost || _lastFobjData == nullptr || _lastFobjDataSize <= 0) {
-		debug("RA1 GOST: frame=%d ignored type=0x%08x pos=(%d,%d) (no current-frame FOBJ cached)",
+		debugC(DEBUG_SMUSH, "RA1 GOST: frame=%d ignored type=0x%08x pos=(%d,%d) (no current-frame FOBJ cached)",
 			_frame, ghostType, ghostX, ghostY);
 		return;
 	}
@@ -300,12 +300,12 @@ void SmushPlayerRebel1::ra1HandleGost(int32 subSize, Common::SeekableReadStream 
 		priorityFlags = 0x6000;
 		break;
 	default:
-		debug("RA1 GOST: frame=%d ignored unknown type=0x%08x pos=(%d,%d)",
+		debugC(DEBUG_SMUSH, "RA1 GOST: frame=%d ignored unknown type=0x%08x pos=(%d,%d)",
 			_frame, ghostType, ghostX, ghostY);
 		return;
 	}
 
-	debug("RA1 GOST: frame=%d type=0x%08x flags=0x%04x pos=(%d,%d) size=%dx%d codec=%d",
+	debugC(DEBUG_SMUSH, "RA1 GOST: frame=%d type=0x%08x flags=0x%04x pos=(%d,%d) size=%dx%d codec=%d",
 		_frame, ghostType, priorityFlags, ghostX, ghostY,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
 
@@ -593,7 +593,7 @@ bool SmushPlayerRebel1::handleGameStoreFrame() {
 }
 
 void SmushPlayerRebel1::handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {
-	debug("RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
+	debugC(DEBUG_SMUSH, "RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
 		_frame, codec, left, top, width, height, dataSize, _storeFrame);
 }
 

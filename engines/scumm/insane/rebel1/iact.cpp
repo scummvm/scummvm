@@ -781,11 +781,9 @@ void InsaneRebel1::updateFlightVariantCursor() {
 	_flightAimY = CLIP<int32>(shipBaseY + ((liftTerm * kRA1Op09AimYScale[bucket]) >> 8),
 		kRA1MinY, kRA1MaxY);
 
-	if (_currentLevel == 4) {
-		debug(1, "RA1 op09 cursor: frame=%d shipBase=(%d,%d) shipPos=(%d,%d) aim=(%d,%d) roll=%d lift=%d bucket=%d dir=%d persp=(%d,%d)",
-			_gameCounter, shipBaseX, shipBaseY, _shipPosX, _shipPosY, _flightAimX, _flightAimY,
-			_rollAccum, _liftSmooth, bucket, _shipDirIndex, _perspectiveX, _perspectiveY);
-	}
+	debugC(DEBUG_INSANE, "RA1 op09 cursor: frame=%d shipBase=(%d,%d) shipPos=(%d,%d) aim=(%d,%d) roll=%d lift=%d bucket=%d dir=%d persp=(%d,%d)",
+		_gameCounter, shipBaseX, shipBaseY, _shipPosX, _shipPosY, _flightAimX, _flightAimY,
+		_rollAccum, _liftSmooth, bucket, _shipDirIndex, _perspectiveX, _perspectiveY);
 }
 
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
@@ -1132,7 +1130,7 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_shipBank.numSprites > 0)
 		_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
 
-	debug(1, "RA1 ship input: frame=%d source=%s controls=%s turbulence=%d usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
+	debugC(DEBUG_INSANE, "RA1 ship input: frame=%d source=%s controls=%s turbulence=%d usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
 		_gameCounter, inputSourceName,
 		_optEnhancedControls ? "enhanced" : "original", originalTurbulence, usedJoystick,
 		rawInputX, rawInputY, inputX, inputY,
@@ -1373,7 +1371,7 @@ void InsaneRebel1::updateTurretPhysics() {
 			inputY /= 2;
 		}
 
-		debug("RA1 turret input: source=%s controls=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
+		debugC(DEBUG_INSANE, "RA1 turret input: source=%s controls=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
 			usedJoystick ? "joystick-actions" : "mouse-path",
 			_optEnhancedControls ? "enhanced" : "original",
 			_vm->_mouse.x, _vm->_mouse.y,
@@ -1621,7 +1619,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 	_inputAxisDeltaX = inputX;
 
-	debug("RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+	debugC(DEBUG_INSANE, "RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
 		_gameCounter,
 		inputSourceName,
 		_optEnhancedControls ? "enhanced" : "original",
@@ -2260,8 +2258,8 @@ void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common:
 		uint32 param2 = b.readUint32BE();
 		uint32 param3 = b.readUint32BE();
 		uint32 param4 = b.readUint32BE();
-		if (opcode == 0x09 && _currentLevel == 4) {
-			debug(1, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
+		if (opcode == 0x09) {
+			debugC(DEBUG_INSANE, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
 				_gameCounter, param2, param3, param4, _frameGameOpcodeMask);
 		} else {
 			debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
@@ -2477,7 +2475,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						_killCount++;
 						applyFrameObjectHitState(targetIdx);
 
-						if (_currentLevel == 7) {
+						if (debugChannelSet(-1, DEBUG_INSANE)) {
 							Common::String damagedState;
 							Common::String hiddenState;
 							for (int objectId = 20; objectId <= 43; objectId++) {
@@ -2498,7 +2496,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 									damagedState += Common::String::format("%d,", objectId);
 							}
 
-							debug(1, "RA1 L8 armor: hitObject=%d damaged=[%s] hidden=[%s]",
+							debugC(DEBUG_INSANE, "RA1 L8 armor: hitObject=%d damaged=[%s] hidden=[%s]",
 								targetIdx + 1, damagedState.c_str(), hiddenState.c_str());
 						}
 

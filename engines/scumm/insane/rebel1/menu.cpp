@@ -509,7 +509,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 
 	if (event.type == Common::EVENT_JOYAXIS_MOTION) {
 		_lastJoystickAxisEventTime = _vm->_system->getMillis();
-		debug(1, "RA1 input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "RA1 input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
 			event.joystick.axis, event.joystick.position,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY);
@@ -532,12 +532,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		switch (event.customType) {
 		case kScummBackendActionRebel1AxisUp:
 			if (event.joystick.position == 0 && _joystickAxisY > 0) {
-				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisY = -axisPosition;
-			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -546,12 +546,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisDown:
 			if (event.joystick.position == 0 && _joystickAxisY < 0) {
-				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisY = axisPosition;
-			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -560,12 +560,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisLeft:
 			if (event.joystick.position == 0 && _joystickAxisX > 0) {
-				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisX = -axisPosition;
-			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -574,12 +574,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisRight:
 			if (event.joystick.position == 0 && _joystickAxisX < 0) {
-				debug(1, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisX = axisPosition;
-			debug(1, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -676,7 +676,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 				return true;
 			}
 
-			debug("Rebel1: ESC pressed during gameplay - opening ScummVM menu");
+			debugC(DEBUG_INSANE, "Rebel1: ESC pressed during gameplay - opening ScummVM menu");
 			const bool wasPaused = _player->_paused;
 			if (!wasPaused)
 				_player->pause();
@@ -689,13 +689,13 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		if (_interactiveVideoActive && !_menuActive &&
 			event.kbd.keycode == Common::KEYCODE_s &&
 			event.kbd.hasFlags(Common::KBD_SHIFT)) {
-			debug("Rebel1: Shift+S pressed - skipping gameplay section");
+			debugC(DEBUG_INSANE, "Rebel1: Shift+S pressed - skipping gameplay section");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
 
 		if (!_interactiveVideoActive && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			debug("Rebel1: ESC pressed - skipping cinematic");
+			debugC(DEBUG_INSANE, "Rebel1: ESC pressed - skipping cinematic");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}

@@ -1254,12 +1254,10 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				const int start1Y = shipBaseY + emit.y1;
 				const int start2X = shipBaseX + emit.x2;
 				const int start2Y = shipBaseY + emit.y2;
-				if (_currentLevel == 4) {
-					debug(1, "RA1 op09 shotRender: frame=%d timer=%d shipBase=(%d,%d) target=(%d,%d) emit1=(%d,%d) emit2=(%d,%d) dir=%d variant=%d mode=%d",
-						_gameCounter, timer, shipBaseX, shipBaseY, targetX, targetY,
-						start1X, start1Y, start2X, start2Y, _shipDirIndex,
-						_shotSlots[i].variant, _flyControlMode);
-				}
+				debugC(DEBUG_INSANE, "RA1 op09 shotRender: frame=%d timer=%d shipBase=(%d,%d) target=(%d,%d) emit1=(%d,%d) emit2=(%d,%d) dir=%d variant=%d mode=%d",
+					_gameCounter, timer, shipBaseX, shipBaseY, targetX, targetY,
+					start1X, start1Y, start2X, start2Y, _shipDirIndex,
+					_shotSlots[i].variant, _flyControlMode);
 
 				renderAimedShotPair(dst, pitch, width, height, _laserBank,
 					start1X, start1Y, start2X, start2Y, targetX, targetY, lerp);

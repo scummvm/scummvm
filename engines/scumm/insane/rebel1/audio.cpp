@@ -75,14 +75,14 @@ void InsaneRebel1::loadSfx() {
 		ScummFile *file = _vm->instantiateScummFile();
 		_vm->openFile(*file, kRA1SfxFiles[i]);
 		if (!file->isOpen()) {
-			debug("InsaneRebel1::loadSfx: could not open %s", kRA1SfxFiles[i]);
+			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: could not open %s", kRA1SfxFiles[i]);
 			delete file;
 			continue;
 		}
 
 		const uint32 fileSize = file->size();
 		if (fileSize < 16) {
-			debug("InsaneRebel1::loadSfx: %s too small (%u bytes)", kRA1SfxFiles[i], fileSize);
+			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: %s too small (%u bytes)", kRA1SfxFiles[i], fileSize);
 			file->close();
 			delete file;
 			continue;
@@ -90,7 +90,7 @@ void InsaneRebel1::loadSfx() {
 
 		const uint32 tag = file->readUint32BE();
 		if (tag != MKTAG('S', 'A', 'U', 'D')) {
-			debug("InsaneRebel1::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA1SfxFiles[i], tag);
+			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA1SfxFiles[i], tag);
 			file->close();
 			delete file;
 			continue;
@@ -108,7 +108,7 @@ void InsaneRebel1::loadSfx() {
 					file->read(pcm, pcmSize);
 					_sfxData[i] = pcm;
 					_sfxSize[i] = pcmSize;
-					debug("InsaneRebel1::loadSfx: loaded %s (%u bytes PCM)", kRA1SfxFiles[i], pcmSize);
+					debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: loaded %s (%u bytes PCM)", kRA1SfxFiles[i], pcmSize);
 				}
 				foundSdat = true;
 				break;
@@ -117,7 +117,7 @@ void InsaneRebel1::loadSfx() {
 		}
 
 		if (!foundSdat)
-			debug("InsaneRebel1::loadSfx: no SDAT chunk in %s", kRA1SfxFiles[i]);
+			debugC(DEBUG_INSANE, "InsaneRebel1::loadSfx: no SDAT chunk in %s", kRA1SfxFiles[i]);
 
 		file->close();
 		delete file;
