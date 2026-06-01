@@ -529,6 +529,8 @@ private:
 	bool handleMenuCommand(RA1MenuCommand command);
 	bool handleControllerMenuAction(ScummAction action);
 	bool handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY);
+	// ScummVM-exclusive feature: navigate/click the menus with the mouse.
+	bool handleMenuMouse(const Common::Event &event);
 	bool handleTextEntryAction(ScummAction action);
 	bool handleTextEntryKey(const Common::Event &event);
 	void playMenuBackground();
