@@ -134,8 +134,11 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		_initialRect = Movie::readRect(stream);
 		_maxHeight = stream.readUint16();
 		_textShadow = stream.readByte();
-		_textFlags = stream.readByte(); // 1: editable, 2: auto tab 4: don't wrap
-		_editable = _textFlags & 0x1;
+		_textFlags = stream.readByte(); // 0x1 and 0x2: editable, 4: don't wrap
+		// Both 0x1 and 0x2 are seen on editable fields. "Ein Fall fuer Muetze &
+		// Co" marks its editable login fields with 0x2 (| 0x4 don't-wrap), while
+		// other games use 0x1, so treat either bit as editable.
+		_editable = (_textFlags & 0x3) != 0;
 
 		_textHeight = stream.readUint16();
 		_textSlant = 0;
