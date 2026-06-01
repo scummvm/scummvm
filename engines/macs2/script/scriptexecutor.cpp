@@ -2267,6 +2267,23 @@ bool Script::ScriptExecutor::scriptOpcode0x4B() {
 	return true;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x4C() {
+	for (GameObject *object : GameObjects::instance().Objects) {
+		if (object != nullptr && object->SceneIndex == Scenes::instance().CurrentActorIndex + 0x400) {
+			object->SceneIndex = 0;
+		}
+	}
+
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr && currentView->inventorySource != nullptr) {
+		currentView->SetInventorySource(currentView->inventorySource);
+		if (currentView->activeInventoryItem != nullptr &&
+			currentView->activeInventoryItem->SceneIndex != currentView->inventorySource->Index) {
+			currentView->activeInventoryItem = nullptr;
+		}
+	}
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2553,20 +2570,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x4C) {
-			for (GameObject *object : GameObjects::instance().Objects) {
-				if (object != nullptr && object->SceneIndex == Scenes::instance().CurrentActorIndex + 0x400) {
-					object->SceneIndex = 0;
-				}
-			}
-
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr && currentView->inventorySource != nullptr) {
-				currentView->SetInventorySource(currentView->inventorySource);
-				if (currentView->activeInventoryItem != nullptr &&
-					currentView->activeInventoryItem->SceneIndex != currentView->inventorySource->Index) {
-					currentView->activeInventoryItem = nullptr;
-				}
-			}
+			scriptOpcode0x4C();
 		} else if (opcode1 == 0x4D) {
 			// scriptSetPathfindingRemap (1008:dafb). Writes to scene+value*5+0x4EA8.
 			const uint16 sourceValue = scriptReadValue16();
