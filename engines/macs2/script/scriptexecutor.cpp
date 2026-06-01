@@ -2087,6 +2087,12 @@ bool Script::ScriptExecutor::scriptOpcode0x41() {
 	return false;
 }
 
+void Script::ScriptExecutor::scriptOpcode0x42() {
+	if (soundEnabled) {
+		_engine->stopCurrentSound();
+	}
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2335,8 +2341,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				return ExecutionResult::WaitingForCallback;
 			}
 		} else if (opcode1 == 0x42) {
-			if (soundEnabled)
-				_engine->stopCurrentSound();
+			scriptOpcode0x42();
 		} else if (opcode1 == 0x43) {
 			const uint16 slotID = scriptReadValue16();
 			const uint8 resourceIndex = ReadByte();
