@@ -1988,6 +1988,14 @@ void Script::ScriptExecutor::scriptOpcode0x3B() {
 	}
 }
 
+void Script::ScriptExecutor::scriptOpcode0x3C() {
+	const uint16 fadeSpeed = scriptReadValue16();
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView != nullptr && fadeSpeed != 0) {
+		currentView->startFadeToBlack(fadeSpeed);
+	}
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2274,11 +2282,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x3B) {
 			scriptOpcode0x3B();
 		} else if (opcode1 == 0x3C) {
-			const uint16 fadeSpeed = scriptReadValue16();
-			View1 *currentView = (View1 *)_engine->findView("View1");
-			if (currentView != nullptr && fadeSpeed != 0) {
-				currentView->startFadeToBlack(fadeSpeed);
-			}
+			scriptOpcode0x3C();
 		} else if (opcode1 == 0x3D) {
 			scriptOpcode0x3D();
 		} else if (opcode1 == 0x3E) {
