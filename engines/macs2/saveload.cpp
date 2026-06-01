@@ -218,17 +218,28 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading())
 		_scriptExecutor->_inventoryCombineFlag = inventoryCombineFlag != 0;
 
-	// g_wSoundSystemState [0x222a]: 2 bytes - count of entries in inventory object list
-	// TODO: this is actually a count for the object tracking table below, not sound state
-	uint16 objectListCount = 0;
-	s.syncAsUint16LE(objectListCount);
+	// g_wInventoryObjectCount [0x222a]: 2 bytes - number of items in inventory list
+	View1 *view1 = (View1 *)findView("View1");
+	uint16 inventoryObjectCount = (uint16)view1->_inventoryItems.size();
+	s.syncAsUint16LE(inventoryObjectCount);
 
-	// --- Object tracking table [0x202a]: 0x200 bytes ---
-	// This is a byte array tracking which objects are in the actor's inventory scene.
-	// NOT the pathfinding area overrides (those are in scene data at +0x528D).
-	// TODO: not mapped in ScummVM yet - save zeros
-	byte objectTrackingTable[512] = {0};
-	s.syncBytes(objectTrackingTable, 512);
+	// --- Inventory object list [0x202a]: 0x200 bytes ---
+	// Byte array of object indices in the actor's inventory.
+	// Original stores as bytes (object index, 1-based).
+	byte inventoryObjectList[512] = {0};
+	if (s.isSaving()) {
+		for (uint16 i = 0; i < inventoryObjectCount && i < 512; i++)
+			inventoryObjectList[i] = (byte)view1->_inventoryItems[i]->_index;
+	}
+	s.syncBytes(inventoryObjectList, 512);
+	if (s.isLoading()) {
+		view1->_inventoryItems.clear();
+		for (uint16 i = 0; i < inventoryObjectCount && i < 512; i++) {
+			uint16 idx = inventoryObjectList[i];
+			if (idx > 0 && idx <= GameObjects::instance()._objects.size())
+				view1->_inventoryItems.push_back(GameObjects::instance()._objects[idx - 1]);
+		}
+	}
 
 	// --- Scene data: pathfinding overrides [+0x528D]: 200 bytes ---
 	// 40 entries × 5 bytes each (1 byte active + 2 bytes value + 2 bytes remap)

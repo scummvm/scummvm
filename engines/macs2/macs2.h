@@ -304,11 +304,11 @@ public:
 
 	// CursorMode _cursorMode = CursorMode::Touch;
 
-	void NextCursorMode();
+	void nextCursorMode();
 
-	void SetCursorMode(Script::MouseMode newMode);
+	void setCursorMode(Script::MouseMode newMode);
 
-	void DumpStream(Common::MemoryReadStream *s, uint16 len);
+	void dumpStream(Common::MemoryReadStream *s, uint16 len);
 
 	// Offset 5023h of current scene data
 	// TODO: Consider moving somewhere else
@@ -349,13 +349,13 @@ public:
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 word50D3;
 
-	uint16 GetInteractedBackgroundHotspot(const Common::Point &p);
+	uint16 getHotspotAtPoint(const Common::Point &p);
 
 	AnimFrame _stick;
 
 	Common::Array<uint16> inventoryIconIndices;
 
-	void RunScriptExecutor(bool firstRun = false) {
+	void runScriptExecutor(bool firstRun = false) {
 		_scriptExecutor->run(firstRun);
 	}
 
@@ -391,11 +391,11 @@ public:
 	Audio::SoundHandle _currentSoundHandle;
 
 	// Schedules a run of the script the next time the executor is ticked
-	void ScheduleRun(bool initScene = false);
+	void scheduleRun(bool initScene = false);
 
 	uint16 getWalkabilityAt(const Common::Point &p);
 
-	int MeasureString(Common::String &s);
+	int measureString(Common::String &s);
 
 	int measureStrings(Common::StringArray sa);
 	int measureStringsVertically(Common::StringArray sa);
