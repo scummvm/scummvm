@@ -374,45 +374,7 @@ uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 }
 
 bool ScriptExecutor::isPathWalkable(const Common::Point &from, const Common::Point &to) {
-	// Exact reimplementation of isPathWalkable (1008:1196).
-	// Traces from 'to' toward 'from'. Checks walkability only on major-axis steps.
-	int16 x1 = from.x, y1 = from.y, x2 = to.x, y2 = to.y;
-	uint16 error = 0;
-	int16 curX = x2;
-	int16 curY = y2;
-	uint16 absDx = (uint16)abs((int)(x2 - x1));
-	uint16 absDy = (uint16)abs((int)(y2 - y1));
-
-	if (curX == x1 && curY == y1)
-		return true;
-
-	do {
-		bool steppedX;
-		if (error >= absDx) {
-			if (y1 < y2)
-				curY--;
-			if (y1 > y2)
-				curY++;
-			error -= absDx;
-			steppedX = false;
-		} else {
-			if (x1 < x2)
-				curX--;
-			if (x1 > x2)
-				curX++;
-			error += absDy;
-			steppedX = true;
-		}
-		if (absDx > absDy && steppedX) {
-			if (getAreaAtPoint(curX, curY) >= 0xC8)
-				return false;
-		}
-		if (absDx <= absDy && !steppedX) {
-			if (getAreaAtPoint(curX, curY) >= 0xC8)
-				return false;
-		}
-	} while (curX != x1 || curY != y1);
-	return true;
+	return _engine->isPathWalkable(from.x, from.y, to.x, to.y);
 }
 
 bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset) {

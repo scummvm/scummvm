@@ -2089,44 +2089,7 @@ bool Character::isWalkable(const Common::Point &p) const {
 }
 
 bool Character::isPathWalkable(const Common::Point &p1, const Common::Point &p2, bool print) {
-	int x1 = p1.x;
-	int y1 = p1.y;
-	int x2 = p2.x;
-	int y2 = p2.y;
-
-	int dx = abs(x2 - x1);
-	int dy = abs(y2 - y1);
-
-	int sx = (x1 < x2) ? 1 : -1;
-	int sy = (y1 < y2) ? 1 : -1;
-
-	int err = dx - dy;
-
-	bool result = true;
-	while (true) {
-		Common::Point currentPoint(x1, y1);
-		bool isCurrentWalkable = isWalkable(currentPoint);
-		if (print)
-			_pathfindingOverlay[y1 * 320 + x1] = isCurrentWalkable ? 100 : 50;
-		if (!isCurrentWalkable) { // If the point is not walkable, save for later
-			result = false;
-		}
-
-		if (x1 == x2 && y1 == y2)
-			break; // Reached the end point
-
-		int e2 = 2 * err;
-		if (e2 > -dy) {
-			err -= dy;
-			x1 += sx;
-		}
-		if (e2 < dx) {
-			err += dx;
-			y1 += sy;
-		}
-	}
-
-	return result;
+	return g_engine->isPathWalkable(p1.x, p1.y, p2.x, p2.y);
 }
 
 Character::Character() {
