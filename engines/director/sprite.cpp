@@ -632,11 +632,7 @@ void Sprite::replaceFrom(Sprite *nextSprite) {
 		return;
 	}
 
-	// If the cast member is the same, persist the editable flag
 	bool editable = nextSprite->_editable;
-	if (_castId == nextSprite->_castId) {
-		editable = _editable;
-	}
 
 	bool immediate = _immediate;
 
