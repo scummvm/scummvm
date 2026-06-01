@@ -1731,9 +1731,6 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 				memcpy(d, s, drawW);
 			}
 		}
-
-		debug(5, "RA1 HUD: drawn at (%d,%d) size=%dx%d",
-			hudPlateX, hudPlateY, bar.width, bar.height);
 	}
 
 	// Draw health bar from FUN_1BBCB (0x1BBCB) + FUN_21D66 (0x21D66):

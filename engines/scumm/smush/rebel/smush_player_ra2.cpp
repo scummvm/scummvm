@@ -490,8 +490,8 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
 	ensureMultiFont();
 	_multiFont->setDefaultFont(fontId);
 
-	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2HandleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x flg=%d pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
-		  _frame, fontId, color, (int)flg, (int)flg, pos_x, pos_y, left, top, width, height, str);
+	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2HandleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
+		  _frame, fontId, color, (int)flg, pos_x, pos_y, left, top, width, height, str);
 
 	if (flg & kStyleWordWrap) {
 		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
@@ -533,8 +533,8 @@ void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 		if (_specialBuffer == nullptr) {
 			VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 			_dst = vs->getPixels(0, 0);
-			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d) _dst=%p",
-				width, height, 0, 0, (void*)_dst);
+			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d)",
+				width, height, 0, 0);
 		} else {
 			// Large frame was in this video, use _specialBuffer for compositing
 			_dst = _specialBuffer;
