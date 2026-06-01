@@ -200,6 +200,10 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 		_tuning.time, _tuning.levelPts, _tuning.bonus, _tuning.flags);
 }
 
+bool InsaneRebel1::isTouchscreenActive() const {
+	return g_system->hasFeature(OSystem::kFeatureTouchscreen);
+}
+
 void InsaneRebel1::resetGameplayFlagsFromTuning() {
 	const uint16 tuningFlags = (uint16)_tuning.flags;
 	_gameplayFlags75fe = tuningFlags & 0x00FF;

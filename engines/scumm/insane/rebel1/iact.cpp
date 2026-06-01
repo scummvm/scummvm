@@ -857,6 +857,16 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		return;
 	}
 
+	// On touchscreen devices aiming comes from the on-screen gamepad (joystick), never the
+	// absolute touch/cursor position; and we must not recenter the system cursor
+	// (smush_warpMouse below), which would inject spurious motion and drift the reticle.
+	if (isTouchscreenActive()) {
+		inputX = 0;
+		inputY = 0;
+		_mouseVirtualValid = false;
+		return;
+	}
+
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
 

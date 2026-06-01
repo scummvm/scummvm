@@ -577,7 +577,9 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (_vm->isPaused())
 		return false;
 
-	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
+	// On touchscreen devices, finger drags arrive as mouse-move events; do not let them
+	// hijack RA1 into absolute-cursor aiming (aiming there comes from the on-screen gamepad).
+	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering && !isTouchscreenActive()) {
 		_activeInputSource = kInputSourceMouse;
 	}
 
