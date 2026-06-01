@@ -1094,6 +1094,13 @@ static void showDebugOutputWindow() {
 		return;
 	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Debug Output", &_showDebugOutput)) {
+		Common::Point mousePos = g_system->getEventManager()->getMousePos();
+		ImGui::Text("Mouse: %u %u", mousePos.x, mousePos.y);
+		View1 *view = (View1 *)g_engine->findView("View1");
+		if (view) {
+			ImGui::Text("Scaling: characterY=%u factor=%u", view->_scalingValues.characterY, view->_scalingValues.scalingFactor);
+		}
+		ImGui::Separator();
 		for (const Common::String &line : g_engine->_debugOutput) {
 			ImGui::TextUnformatted(line.c_str());
 		}

@@ -1104,7 +1104,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
-	// Ctrl+T cycles game speed mode 0→1→2→0 (original: g_wGameSpeedMode at 1020:0214)
+	// Ctrl+T cycles game speed mode 0->1->2->0 (original: g_wGameSpeedMode at 1020:0214)
 	if (msg.keycode == Common::KEYCODE_t && (msg.flags & Common::KBD_CTRL)) {
 		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
 		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
@@ -1160,7 +1160,6 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		uint8 numberPressed = msg.ascii - '1' + 1;
 		triggerDialogueChoice(numberPressed);
 	} else if (msg.ascii == 'p') {
-
 		/*  characters[0]->IsFollowingPath = true;
 		characters[0]->CurrentPathIndex = -1;
 		characters[0]->Path.clear();
@@ -1201,7 +1200,6 @@ void View1::draw() {
 	if (_isShowingStringBox) {
 		showStringBox(_drawnStringBox);
 		if (currentSpeechActData.speaker != nullptr) {
-			// TODO: Improve addressing of the memory
 			drawCurrentSpeaker(s);
 		}
 	}
@@ -1236,14 +1234,6 @@ void View1::draw() {
 				renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->_index));
 			}
 		}
-	} else if (DebugMan.isDebugChannelEnabled(kDebugInput)) {
-		// Draw the position next to it
-		renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%u %u", mousePos.x, mousePos.y));
-	}
-
-	// Render the scaling factors
-	if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-		renderString(0, 0, Common::String::format("%u %u", _scalingValues.characterY, _scalingValues.scalingFactor));
 	}
 }
 
