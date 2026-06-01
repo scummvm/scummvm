@@ -2251,6 +2251,22 @@ bool Script::ScriptExecutor::scriptOpcode0x4A() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x4B() {
+	// Retrieve object orientation and use A334 to save it to a script variable.
+	int32 objectID = (int32)scriptReadValue32() - 0x400;
+	if (objectID < 1 || objectID > 0x200) {
+		warning("Ignoring object orientation query for invalid object %d", objectID);
+		return false;
+	}
+	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	if (object == nullptr) {
+		warning("Ignoring object orientation query for missing object %d", objectID);
+		return false;
+	}
+	scriptSaveVariable(object->Orientation);
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2533,18 +2549,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x4B) {
-			// Retrieve object orientation and use A334 to save it to a script variable
-			int32 objectID = (int32)scriptReadValue32() - 0x400;
-			if (objectID < 1 || objectID > 0x200) {
-				warning("Ignoring object orientation query for invalid object %d", objectID);
+			if (!scriptOpcode0x4B()) {
 				continue;
 			}
-			GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-			if (object == nullptr) {
-				warning("Ignoring object orientation query for missing object %d", objectID);
-				continue;
-			}
-			scriptSaveVariable(object->Orientation);
 		} else if (opcode1 == 0x4C) {
 			for (GameObject *object : GameObjects::instance().Objects) {
 				if (object != nullptr && object->SceneIndex == Scenes::instance().CurrentActorIndex + 0x400) {
