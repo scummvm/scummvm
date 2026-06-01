@@ -1117,11 +1117,6 @@ static void process_conv_32() {
 		local->wiz_ice_action = KILL_PID;
 		break;
 
-	case conv032_pid_death_b_b:
-		conv_abort();
-		local->wiz_float_action = KILL_PID;
-		break;
-
 	case 7:
 		*conv_my_next_start = 8;
 		conv_abort();
@@ -1136,11 +1131,23 @@ static void process_conv_32() {
 		local->wiz_float_action = WAITING_FOR_STONE;
 		break;
 
-	case 17:
-		*conv_my_next_start = 18;
+	case conv032_pain_b_b:
+		*conv_my_next_start = conv032_pain;
 		conv_abort();
 		local->activate_timer = true;
 		player.commands_allowed = true;
+		break;
+
+	case 17:
+		*conv_my_next_start = 18;
+		conv_abort();
+		local->wiz_ice_action = WAITING_FOR_STONE;
+		local->wiz_float_action = WAITING_FOR_STONE;
+		break;
+
+	case conv032_pid_death_b_b:
+		conv_abort();
+		local->wiz_float_action = KILL_PID;
 		break;
 
 	case 22:
@@ -1150,11 +1157,19 @@ static void process_conv_32() {
 		local->wiz_float_action = WAITING_FOR_STONE;
 		break;
 
-	case conv032_pain_b_b:
-		*conv_my_next_start = conv032_pain;
+	case 25:
+		*conv_my_next_start = 26;
 		conv_abort();
+		local->death_timer = 0;
+		local->clock = 0;
+		local->doofus = true;
 		local->activate_timer = true;
-		player.commands_allowed = true;
+		player.commands_allowed = false;
+		local->wiz_ice_action = BACK_TO_CAMERA;
+		local->wiz_float_action = BACK_TO_CAMERA;
+		break;
+
+	default:
 		break;
 	}
 
