@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-01 14:35+0000\n"
+"POT-Creation-Date: 2026-06-01 16:27+0000\n"
 "PO-Revision-Date: 2026-05-06 08:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1051,7 +1051,7 @@ msgstr "Взаимодействие"
 #: engines/dragons/metaengine.cpp:158 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:70 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1064
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1076
 #: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/ultima/ultima0/metaengine.cpp:45
@@ -1072,7 +1072,7 @@ msgstr "Вверх"
 #: engines/dragons/metaengine.cpp:164 engines/freescape/movement.cpp:44
 #: engines/got/metaengine.cpp:71 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:1031
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:1043
 #: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/ultima/ultima0/metaengine.cpp:46
@@ -1093,7 +1093,7 @@ msgstr "Вниз"
 #: engines/dragons/metaengine.cpp:170 engines/glk/dialogs.cpp:371
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1044
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1056
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:141
@@ -1113,7 +1113,7 @@ msgstr "Влево"
 #: engines/dragons/metaengine.cpp:176 engines/glk/dialogs.cpp:373
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1051
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1063
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:142
@@ -3896,6 +3896,7 @@ msgid "Game not implemented"
 msgstr "Игра не реализована"
 
 #: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
+#: engines/scumm/metaengine.cpp:1026
 msgid "Default game keymappings"
 msgstr "Раскладка клавиш игры по умолчанию"
 
@@ -7565,7 +7566,7 @@ msgstr "Переключить бой"
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
 #: engines/phoenixvr/metaengine.cpp:85 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1090 engines/supernova/metaengine.cpp:309
+#: engines/scumm/metaengine.cpp:1102 engines/supernova/metaengine.cpp:309
 #: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -8228,7 +8229,7 @@ msgstr "Говорить / Взаимодействовать"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1077
+#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1089
 #: engines/ultima/ultima0/metaengine.cpp:82
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
@@ -13555,98 +13556,104 @@ msgstr ""
 msgid "All levels will be available without requiring passwords"
 msgstr "Все уровни будут доступны для игры."
 
-#: engines/scumm/metaengine.cpp:1025
+#: engines/scumm/metaengine.cpp:1037
 msgid "Down left"
 msgstr "Вниз-влево"
 
-#: engines/scumm/metaengine.cpp:1038
+#: engines/scumm/metaengine.cpp:1050
 msgid "Down right"
 msgstr "Вниз-вправо"
 
-#: engines/scumm/metaengine.cpp:1058
+#: engines/scumm/metaengine.cpp:1070
 msgid "Up left"
 msgstr "Вверх-влево"
 
-#: engines/scumm/metaengine.cpp:1071
+#: engines/scumm/metaengine.cpp:1083
 msgid "Up right"
 msgstr "Вверх-вправо"
 
-#: engines/scumm/metaengine.cpp:1083
+#: engines/scumm/metaengine.cpp:1095
 msgid "Switch weapon"
 msgstr "Переключить оружие"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1097
+#: engines/scumm/metaengine.cpp:1109
 msgid "Win the bike fight cheat"
 msgstr "Чит для выигрыша боёв на байках"
 
-#: engines/scumm/metaengine.cpp:1106
+#: engines/scumm/metaengine.cpp:1118
 msgid "Rebel Assault controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1108 engines/scumm/metaengine.cpp:1170
+#: engines/scumm/metaengine.cpp:1120 engines/scumm/metaengine.cpp:1182
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1113 engines/scumm/metaengine.cpp:1175
+#: engines/scumm/metaengine.cpp:1125 engines/scumm/metaengine.cpp:1187
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1118 engines/scumm/metaengine.cpp:1180
+#: engines/scumm/metaengine.cpp:1130 engines/scumm/metaengine.cpp:1192
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1123 engines/scumm/metaengine.cpp:1185
+#: engines/scumm/metaengine.cpp:1135 engines/scumm/metaengine.cpp:1197
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1128 engines/scumm/metaengine.cpp:1190
+#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
 #, fuzzy
 #| msgid "Pick up"
 msgid "Stick up"
 msgstr "Поднять"
 
-#: engines/scumm/metaengine.cpp:1134 engines/scumm/metaengine.cpp:1196
+#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1209
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Stick down"
 msgstr "Прокрутить вниз"
 
-#: engines/scumm/metaengine.cpp:1140 engines/scumm/metaengine.cpp:1202
+#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1216
 #, fuzzy
 #| msgid "Slide left"
 msgid "Stick left"
 msgstr "Скользить влево"
 
-#: engines/scumm/metaengine.cpp:1146 engines/scumm/metaengine.cpp:1208
+#: engines/scumm/metaengine.cpp:1158 engines/scumm/metaengine.cpp:1223
 #, fuzzy
 #| msgid "Slide right"
 msgid "Stick right"
 msgstr "Скользить вправо"
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1214
+#: engines/scumm/metaengine.cpp:1164 engines/scumm/metaengine.cpp:1230
 #, fuzzy
 #| msgid "Move / Select"
 msgid "Fire / select"
 msgstr "Идти / Выбрать"
 
-#: engines/scumm/metaengine.cpp:1157
+#: engines/scumm/metaengine.cpp:1169
 #, fuzzy
 #| msgid "Backspace"
 msgid "Back / skip"
 msgstr "Backspace"
 
-#: engines/scumm/metaengine.cpp:1168
+#: engines/scumm/metaengine.cpp:1180
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1219
+#: engines/scumm/metaengine.cpp:1235
 #, fuzzy
 #| msgid "Move back"
 msgid "Cover / back"
 msgstr "Идти назад"
 
-#: engines/scumm/metaengine.cpp:1224
+#: engines/scumm/metaengine.cpp:1241
+#, fuzzy
+#| msgid "Skip walk"
+msgid "Skip / back"
+msgstr "Пропустить ходьбу"
+
+#: engines/scumm/metaengine.cpp:1248
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu"
