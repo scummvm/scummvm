@@ -1045,7 +1045,7 @@ bool Macs2Engine::isPathWalkable(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	return result;
 }
 
-void Macs2Engine::NextCursorMode() {
+void Macs2Engine::nextCursorMode() {
 	// Cycle through the 4 main cursor modes from the action bar:
 	// Talk(0x13) -> Look(0x14) -> Use(0x15) -> Walk(0x16) -> Talk
 	switch (_scriptExecutor->_mouseMode) {
@@ -1064,11 +1064,11 @@ void Macs2Engine::NextCursorMode() {
 	}
 }
 
-void Macs2Engine::SetCursorMode(Script::MouseMode newMode) {
+void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	_scriptExecutor->_mouseMode = newMode;
 }
 
-void Macs2Engine::DumpStream(Common::MemoryReadStream *s, uint16 len) {
+void Macs2Engine::dumpStream(Common::MemoryReadStream *s, uint16 len) {
 	int64 start_pos = s->pos();
 	Common::String result;
 	for (int i = 0; i < len; i++) {
@@ -1079,7 +1079,7 @@ void Macs2Engine::DumpStream(Common::MemoryReadStream *s, uint16 len) {
 	s->seek(start_pos, SEEK_SET);
 }
 
-uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
+uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
 	// TODO: Abstract the screen sizes
 	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200) {
@@ -1109,7 +1109,7 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 	return 0;
 }
 
-void Macs2Engine::ScheduleRun(bool initScene) {
+void Macs2Engine::scheduleRun(bool initScene) {
 	runScheduled = true;
 	scheduledRunIsInitScene = initScene;
 }
@@ -1204,7 +1204,7 @@ uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
 	return remappedValue != 0 ? remappedValue : 0xFF;
 }
 
-int Macs2Engine::MeasureString(Common::String &s) {
+int Macs2Engine::measureString(Common::String &s) {
 	int sum = 0;
 	GlyphData currentGlyph;
 	bool found = false;
@@ -1235,14 +1235,14 @@ int Macs2Engine::measureStringsVertically(Common::StringArray sa) {
 int Macs2Engine::measureStrings(Common::StringArray sa) {
 	int max = -1;
 	for (auto iter = sa.begin(); iter != sa.end(); iter++) {
-		max = MAX(MeasureString(*iter), max);
+		max = MAX(measureString(*iter), max);
 	}
 	return max;
 }
 
 Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
 	Common::StringArray result(numStrings);
-	DumpStream(stream, 64);
+	dumpStream(stream, 64);
 	stream->seek(offset);
 
 	byte x;

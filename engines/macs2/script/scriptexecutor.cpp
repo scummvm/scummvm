@@ -558,7 +558,7 @@ void ScriptExecutor::step() {
 					// Original: save cursor mode, then set to Disabled 0x1A (hourglass)
 					if (_mouseMode != MouseMode::Disabled) {
 						_cursorModeBeforeWait = _mouseMode;
-						_engine->SetCursorMode(MouseMode::Disabled);
+						_engine->setCursorMode(MouseMode::Disabled);
 						View1 *v = (View1 *)_engine->findView("View1");
 						if (v)
 							v->updateCursor();
@@ -586,7 +586,7 @@ void ScriptExecutor::step() {
 	g_engine->_scriptExecutor->_isRepeatRun = false;
 	// Original: restore cursor from Disabled when all scripts finish
 	if (_mouseMode == MouseMode::Disabled) {
-		_engine->SetCursorMode(_cursorModeBeforeWait);
+		_engine->setCursorMode(_cursorModeBeforeWait);
 		View1 *v = (View1 *)_engine->findView("View1");
 		if (v)
 			v->updateCursor();
@@ -909,7 +909,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	// reset cursor to Use (0x15)
 	if (object->Blobs.empty()) {
 		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
-			_engine->SetCursorMode(MouseMode::Use);
+			_engine->setCursorMode(MouseMode::Use);
 			currentView->updateCursor();
 		}
 		// Original also rewrites the saved (pre-wait) cursor mode: 0x17 -> 0x15.
@@ -959,7 +959,7 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 	_interactedObjectID = 0;
 	_interactedOtherObjectID = 0;
 	_requestCallback = false;
-	g_engine->ScheduleRun(true);
+	g_engine->scheduleRun(true);
 	_isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
@@ -1192,7 +1192,7 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 	_pickupTargetObjectID = objectIndex;
 	_savedPickupMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
 	currentView->_activeInventoryItem = nullptr;
-	_engine->SetCursorMode(_savedPickupMouseMode);
+	_engine->setCursorMode(_savedPickupMouseMode);
 	currentView->updateCursor();
 	actor->startPickup(targetObject);
 	_requestCallback = false;
