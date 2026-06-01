@@ -1823,6 +1823,18 @@ bool Script::ScriptExecutor::scriptOpcode0x32() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x33() {
+	uint16 objectID = scriptReadValue16() - 0x0400;
+	const uint16 visible = scriptReadValue16();
+	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	if (object == nullptr) {
+		warning("Ignoring visibility toggle for invalid object %u", objectID);
+		return false;
+	}
+	object->IsVisible = visible != 0;
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2078,14 +2090,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x33) {
-			uint16 objectID = scriptReadValue16() - 0x0400;
-			const uint16 visible = scriptReadValue16();
-			GameObject *object = GameObjects::GetObjectByIndex(objectID);
-			if (object == nullptr) {
-				warning("Ignoring visibility toggle for invalid object %u", objectID);
+			if (!scriptOpcode0x33()) {
 				continue;
 			}
-			object->IsVisible = visible != 0;
 		} else if (opcode1 == 0x34) {
 			// Sets an entry in the [5BD1] list for hotspot lookup
 			const uint16 v1 = scriptReadValue16() - 0x800;
