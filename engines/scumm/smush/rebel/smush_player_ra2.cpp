@@ -122,12 +122,14 @@ void SmushPlayerRebel2::initGameVideoState() {
 			memset(_dst, 0, vs->w * vs->h);
 		} else {
 			// Gameplay mode (flags 0x28) - do nothing, preserve existing screen content
-			int nonZero = 0;
-			for (int i = 0; i < vs->w * vs->h; i++) {
-				if (_dst[i] != 0) nonZero++;
+			if (debugChannelSet(-1, DEBUG_SMUSH)) {
+				int nonZero = 0;
+				for (int i = 0; i < vs->w * vs->h; i++) {
+					if (_dst[i] != 0) nonZero++;
+				}
+				debugC(DEBUG_SMUSH, "SmushPlayer::init: Preserving screen for gameplay video (%dx%d, %d%% non-zero)",
+					vs->w, vs->h, (nonZero * 100) / (vs->w * vs->h));
 			}
-			debug("SmushPlayer::init: Preserving screen for gameplay video (%dx%d, %d%% non-zero)",
-				vs->w, vs->h, (nonZero * 100) / (vs->w * vs->h));
 		}
 	}
 }
@@ -159,7 +161,7 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 	int16 ftchX = b.readSint16LE();
 	int16 ftchY = b.readSint16LE();
 
-	debug("SmushPlayer::handleFetch: frame=%d unknown=%d x=%d y=%d",
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch: frame=%d unknown=%d x=%d y=%d",
 		_frame, ftchUnknown, ftchX, ftchY);
 
 	// For Handler 25, skip FTCH because the frame buffer only contains the
@@ -169,14 +171,14 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
 		int handler = rebel2->getHandler();
 		if (handler == 25) {
-			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
 			return true;
 		}
 	}
 
 	// Re-decode stored FOBJ data with current offsets (matching original FUN_004246d0).
 	if (_storedFobjData != nullptr) {
-		debug("SmushPlayer FTCH: Re-decoding stored FOBJ codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
+		debugC(DEBUG_SMUSH, "SmushPlayer FTCH: Re-decoding stored FOBJ codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 			_storedFobjCodec, _storedFobjLeft, _storedFobjTop,
 			_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize);
 		decodeFrameObject(_storedFobjCodec, _storedFobjData,
@@ -184,7 +186,7 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 			_storedFobjWidth, _storedFobjHeight,
 			_storedFobjDataSize);
 	} else {
-		debug("SmushPlayer FTCH: No stored FOBJ data! (frame=%d)", _frame);
+		debugC(DEBUG_SMUSH, "SmushPlayer FTCH: No stored FOBJ data! (frame=%d)", _frame);
 	}
 
 	return true;
@@ -399,7 +401,7 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 	if (width == 0 && height == 0) {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
-		debug("SmushPlayer::handleAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
 	} else {
 		_width = width;
 		_height = height;
@@ -497,7 +499,7 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
 	ensureMultiFont();
 	_multiFont->setDefaultFont(fontId);
 
-	debug("SmushPlayer::handleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x flg=%d pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x flg=%d pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
 		  _frame, fontId, color, (int)flg, (int)flg, pos_x, pos_y, left, top, width, height, str);
 
 	if (flg & kStyleWordWrap) {
@@ -528,24 +530,24 @@ void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 			_height = height;
 			// Zero-fill the new buffer to avoid garbage in areas not written by FOBJ codec
 			memset(_specialBuffer, 0, bufSize);
-			debug("SmushPlayer: Allocated new _specialBuffer %dx%d (%d bytes)", width, height, bufSize);
+			debugC(DEBUG_SMUSH, "SmushPlayer: Allocated new _specialBuffer %dx%d (%d bytes)", width, height, bufSize);
 		}
 	}
 
 	if (bufSize > _vm->_screenWidth * _vm->_screenHeight &&
 	    _specialBuffer != nullptr && _specialBufferSize >= bufSize) {
 		_dst = _specialBuffer;
-		debug("SmushPlayer: Using _specialBuffer for oversized FOBJ %dx%d", width, height);
+		debugC(DEBUG_SMUSH, "SmushPlayer: Using _specialBuffer for oversized FOBJ %dx%d", width, height);
 	} else {
 		if (_specialBuffer == nullptr) {
 			VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 			_dst = vs->getPixels(0, 0);
-			debug("SmushPlayer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d) _dst=%p",
+			debugC(DEBUG_SMUSH, "SmushPlayer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d) _dst=%p",
 				width, height, 0, 0, (void*)_dst);
 		} else {
 			// Large frame was in this video, use _specialBuffer for compositing
 			_dst = _specialBuffer;
-			debug("SmushPlayer: Using _specialBuffer for small FOBJ %dx%d (compositing with large frame)",
+			debugC(DEBUG_SMUSH, "SmushPlayer: Using _specialBuffer for small FOBJ %dx%d (compositing with large frame)",
 				width, height);
 		}
 	}
@@ -612,7 +614,7 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 	int16 ghostY = b.readSint16LE();
 
 	if (!_hasFrameFobjForGost || _lastFobjData == nullptr || _lastFobjDataSize <= 0) {
-		debug("SmushPlayer GOST: frame=%d ignored (no current-frame FOBJ cached)", _frame);
+		debugC(DEBUG_SMUSH, "SmushPlayer GOST: frame=%d ignored (no current-frame FOBJ cached)", _frame);
 		return;
 	}
 
@@ -630,7 +632,7 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 	int left = _lastFobjLeft + ghostX;
 	int top = _lastFobjTop + ghostY;
 
-	debug("SmushPlayer GOST: frame=%d type=%d flags=0x%04x gostPos=(%d,%d) basePos=(%d,%d) finalPos=(%d,%d) size=%dx%d codec=%d",
+	debugC(DEBUG_SMUSH, "SmushPlayer GOST: frame=%d type=%d flags=0x%04x gostPos=(%d,%d) basePos=(%d,%d) finalPos=(%d,%d) size=%dx%d codec=%d",
 		_frame, ghostType, priorityFlags, ghostX, ghostY,
 		_lastFobjLeft, _lastFobjTop, left, top,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
@@ -698,7 +700,7 @@ bool SmushPlayerRebel2::handleGameStoreFrame() {
 }
 
 void SmushPlayerRebel2::handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {
-	debug("SmushPlayer FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
+	debugC(DEBUG_SMUSH, "SmushPlayer FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
 		_frame, codec, left, top, width, height, dataSize, _storeFrame, _width, _height);
 }
 
