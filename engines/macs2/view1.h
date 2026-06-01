@@ -55,20 +55,11 @@ public:
 class Character {
 private:
 	Common::Point _startPosition;
-	Common::Point _endPosition;
 
 	uint32 _startTime;
 	uint32 _duration;
 
-	bool _isLerping = false;
 	bool _lerpIgnoresObstacles = false;
-
-	// Bresenham pixel-stepping state from walkAlongPath (1008:1b8f)
-	// These replace the time-based lerp for accurate movement
-	int16 _stepDeltaX = 0;          // abs(endX - startX) - runtime[2]
-	int16 _stepDeltaY = 0;          // abs(endY - startY) - runtime[3]
-	int16 _stepError = 0;           // Bresenham error accumulator - runtime[0x18]
-	bool _stepDirectionSet = false; // runtime+0x33: direction has been calculated
 
 	// If this is set, a lerp to a location becomes picking up
 	// TODO: Replace by more proper task implementation later
@@ -89,13 +80,13 @@ private:
 public:
 	Character();
 
-	// Debug accessors for pathfinding state
-	bool isLerping() const { return _isLerping; }
-	bool isDirectionSet() const { return _stepDirectionSet; }
-	int16 getStepError() const { return _stepError; }
-	int16 getStepDeltaX() const { return _stepDeltaX; }
-	int16 getStepDeltaY() const { return _stepDeltaY; }
-	Common::Point getEndPosition() const { return _endPosition; }
+	// Walk state from walkAlongPath (1008:1b8f) - runtime offsets +0x00..+0x0A, +0x18, +0x33
+	Common::Point _endPosition;          // runtime[+0x00, +0x02]: next waypoint
+	int16 _stepDeltaX = 0;              // runtime[+0x04]: abs(endX - startX)
+	int16 _stepDeltaY = 0;              // runtime[+0x06]: abs(endY - startY)
+	int16 _stepError = 0;               // runtime[+0x18]: Bresenham error accumulator
+	bool _isLerping = false;            // walking active
+	bool _stepDirectionSet = false;     // runtime[+0x33]: direction has been calculated
 
 	Common::Array<uint16> _path;
 	int16 _currentPathIndex;
