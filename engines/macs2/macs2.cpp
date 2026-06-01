@@ -152,7 +152,7 @@ void Macs2Engine::readResourceFile() {
 	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(firstSceneIndex, _fileStream);
 	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(firstSceneIndex, _fileStream);
 	Scenes::instance().CurrentSceneSpecialAnimOffsets = Scenes::instance().ReadSpecialAnimsOffsets(firstSceneIndex, _fileStream);
-	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
+	_scriptExecutor->setScript(Scenes::instance().CurrentSceneScript);
 
 	// Load object data (512 entries max, matching original loadResourceFile)
 	for (int i = 1; i < 0x200; i++) {
@@ -798,11 +798,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(newSceneIndex, _fileStream);
 	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(newSceneIndex, _fileStream);
 	Scenes::instance().CurrentSceneSpecialAnimOffsets = Scenes::instance().ReadSpecialAnimsOffsets(newSceneIndex, _fileStream);
-	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
+	_scriptExecutor->setScript(Scenes::instance().CurrentSceneScript);
 
 	if (executeScript) {
 		// Start the execution
-		_scriptExecutor->Run(true);
+		_scriptExecutor->run(true);
 	}
 }
 
@@ -1667,7 +1667,7 @@ bool Macs2Engine::tick() {
 		bool shouldRunInit = scheduledRunIsInitScene;
 		scheduledRunIsInitScene = false;
 		_scriptExecutor->isRepeatRun = true;
-		_scriptExecutor->Run(shouldRunInit);
+		_scriptExecutor->run(shouldRunInit);
 	}
 	return Events::tick();
 }

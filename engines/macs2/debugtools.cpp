@@ -615,7 +615,7 @@ static void showScriptWindow() {
 		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 		int currentScene = Scenes::instance().CurrentSceneIndex;
 		ImGui::Text("Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
-					currentScene, exec->GetScriptPosition(), exec->GetScriptEndPosition(),
+					currentScene, exec->getScriptPosition(), exec->getScriptEndPosition(),
 					exec->IsExecuting() ? "RUNNING" : "Idle", exec->GetExecutingObjectId());
 		ImGui::Separator();
 
@@ -625,11 +625,11 @@ static void showScriptWindow() {
 				_cachedDecompile = decompileScript(script);
 				_cachedSceneIndex = currentScene;
 			}
-			uint32 currentPos = exec->GetScriptPosition();
+			uint32 currentPos = exec->getScriptPosition();
 			if (ImGui::BeginChild("ScriptView", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
 				for (uint i = 0; i < _cachedDecompile.size(); i++) {
 					const DecompiledLine &l = _cachedDecompile[i];
-					uint32 nextOff = (i + 1 < _cachedDecompile.size()) ? _cachedDecompile[i + 1].offset : exec->GetScriptEndPosition();
+					uint32 nextOff = (i + 1 < _cachedDecompile.size()) ? _cachedDecompile[i + 1].offset : exec->getScriptEndPosition();
 					bool isCurrent = (currentPos >= l.offset && currentPos < nextOff);
 					if (isCurrent)
 						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
@@ -685,13 +685,13 @@ static void showVariablesWindow() {
 				{0x2F, "prevScene"},
 			};
 			for (const auto &s : specials) {
-				uint32 val = exec->GetSpecialValue(s.id);
+				uint32 val = exec->getSpecialValue(s.id);
 				ImGui::Text("%-15s (FF:%02x) = %u (0x%x)", s.name, s.id, val, val);
 			}
 		}
 		if (ImGui::CollapsingHeader("Variables (non-zero)", ImGuiTreeNodeFlags_DefaultOpen)) {
 			for (int i = 0; i < 0x800; i++) {
-				uint32 val = exec->GetVariableValue(i);
+				uint32 val = exec->getVariableValue(i);
 				if (val != 0)
 					ImGui::Text("[%03x] = %u (0x%x)", i, val, val);
 			}

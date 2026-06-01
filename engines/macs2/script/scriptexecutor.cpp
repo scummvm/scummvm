@@ -80,12 +80,12 @@ inline void ScriptExecutor::scriptSkipBlock() {
 	}
 	int skipDepth = 1;
 	while ((skipDepth != 0) && (_stream->pos() < _stream->size())) {
-		const byte opcode = ReadByte();
+		const byte opcode = readByte();
 		if (_stream->pos() >= _stream->size()) {
 			debugC(DEBUG_SV, "- A3D2 hit end of stream after opcode %.2x [%d]", opcode, skipDepth);
 			break;
 		}
-		const byte length = ReadByte();
+		const byte length = readByte();
 		if (opcode >= 3) {
 			if (opcode <= 6) {
 				skipDepth++;
@@ -138,12 +138,12 @@ void ScriptExecutor::scriptSkipAlternate() {
 	}
 	int skipDepth = 1;
 	while ((skipDepth != 0) && (_stream->pos() < _stream->size())) {
-		const byte opcode = ReadByte();
+		const byte opcode = readByte();
 		if (_stream->pos() >= _stream->size()) {
 			debugC(DEBUG_SV, "- A37A hit end of stream after opcode %.2x [%d]", opcode, skipDepth);
 			break;
 		}
-		const byte length = ReadByte();
+		const byte length = readByte();
 		if (opcode >= 3) {
 			if (opcode <= 6) {
 				skipDepth++;
@@ -183,8 +183,8 @@ bool ScriptExecutor::skipToEndOfSkippableSection() {
 	// Reads opcode+length pairs, advances stream by length bytes,
 	// until opcode 0x1D is found or end of stream.
 	while (_stream->pos() < _stream->size() - 1) {
-		uint8 opcode = ReadByte();
-		uint8 length = ReadByte();
+		uint8 opcode = readByte();
+		uint8 length = readByte();
 		if (opcode == 0x1D) {
 			scriptSkippable = false;
 			return true;
@@ -203,8 +203,8 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 	out1 = 0;
 	out2 = 0;
 
-	byte type = ReadByte();
-	uint16 value = ReadWord();
+	byte type = readByte();
+	uint16 value = readUint16();
 
 	if (type == 0x00) {
 		out1 = value;
@@ -336,12 +336,7 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 	}
 }
 
-void ScriptExecutor::scriptReadValue_Placeholder() {
-	scriptReadValue32();
-}
-
 uint32 ScriptExecutor::scriptReadValue32() {
-
 	uint16 out1;
 	uint16 out2;
 	scriptReadValuePair(out1, out2);
@@ -357,18 +352,17 @@ uint16 ScriptExecutor::scriptReadValue16() {
 }
 
 void ScriptExecutor::scriptSaveVariable(uint32 value) {
-	uint8 subOpcode = ReadByte();
+	uint8 subOpcode = readByte();
 	if (subOpcode == 0x00 || subOpcode == 0xFF) {
 		warning("scriptSaveVariable: invalid sub-opcode 0x%02x (error 0x16)", subOpcode);
 		return;
 	}
 
-	uint16 variableID = ReadWord();
-	SetVariableValue(variableID, value);
+	uint16 variableID = readUint16();
+	setVariableValue(variableID, value);
 }
 
 void ScriptExecutor::scriptLoadSpecialAnimImpl() {
-
 	uint16 objectID1;
 	uint16 objectID2;
 	scriptReadValuePair(objectID1, objectID2);
@@ -546,8 +540,8 @@ void ScriptExecutor::ScriptPrintString(bool alignRight) {
 	uint16 x = scriptReadValue16();
 	uint16 y = scriptReadValue16();
 	// TODO: Several globals writes around this code
-	uint16 bp2 = ReadWord();
-	uint16 bp4 = ReadWord();
+	uint16 bp2 = readUint16();
+	uint16 bp4 = readUint16();
 
 	// TODO: Implement naive string printing here, refine later
 
@@ -573,7 +567,7 @@ void ScriptExecutor::BeginBuffering() {
 	debugBuffer.clear();
 }
 
-void ScriptExecutor::EndBuffering(bool shouldMark) {
+void ScriptExecutor::endBuffering(bool shouldMark) {
 	(void)shouldMark;
 	lastOpcodeTriggeredSkip = false;
 	debugBuffer.clear();
@@ -584,7 +578,7 @@ void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
 	_variables[index].b = b;
 }
 
-void ScriptExecutor::SetVariableValue(uint16 index, uint32 value) {
+void ScriptExecutor::setVariableValue(uint16 index, uint32 value) {
 	uint16 a = static_cast<uint16>(value >> 16);    // High 16 bits
 	uint16 b = static_cast<uint16>(value & 0xFFFF); // Low 16 bits
 	SetVariableValue(index, b, a);
@@ -600,7 +594,7 @@ Common::Point ScriptExecutor::GetCharPosition() {
 void ScriptExecutor::DumpWholeScript() {
 	// TODO: Probably should not hard code this, with this in place, the
 	// variable for saving the old position is superfluous
-	SetCurrentSceneScriptAt(0);
+	setCurrentSceneScriptAt(0);
 	_streamDumpPosition = 0;
 	expectedEndLocation = _stream->pos();
 
@@ -632,7 +626,7 @@ void ScriptExecutor::DumpWholeScript() {
 		}
 
 		// Read an opcode and length
-		byte opcode1 = ReadByte(); // [bp - 1h]
+		byte opcode1 = readByte(); // [bp - 1h]
 		// TODO: For the sake of easier reading the logs, jumping out if we
 		// read a 0 opcode.
 		if (opcode1 == 0x00) {
@@ -643,7 +637,7 @@ void ScriptExecutor::DumpWholeScript() {
 			opcodeInfo = IdentifyScriptOpcode(opcode1, 0);
 		}
 		debug("[%u] - First block opcode: %.2x %s", skipValue, opcode1, opcodeInfo.c_str());
-		byte length = ReadByte(); // [bp-2h]
+		byte length = readByte(); // [bp-2h]
 		expectedEndLocation += length + 2;
 
 		if (opcode1 == 0x04) {
@@ -653,7 +647,7 @@ void ScriptExecutor::DumpWholeScript() {
 		} else if (opcode1 == 0x5) {
 			// l0037_DC66:
 			// [bp-3h]
-			uint8 opcode2 = ReadByte();
+			uint8 opcode2 = readByte();
 			opcodeInfo = IdentifyScriptOpcode(opcode1, opcode2);
 			debug("[%u] - Second block opcode: %.2x %s", skipValue, opcode2, opcodeInfo.c_str());
 			// [bp-7h]
@@ -689,8 +683,8 @@ void ScriptExecutor::DumpWholeScript() {
 			scriptReadValue16(); // x
 			scriptReadValue16(); // y
 			scriptReadValue16(); // side
-			uint32 offset = ReadWord();
-			uint32 numLines = ReadWord();
+			uint32 offset = readUint16();
+			uint32 numLines = readUint16();
 
 			// TODO: We are assuming that we are dumping the scene script, if not,
 			// we would have to check for the executing object as well
@@ -702,12 +696,12 @@ void ScriptExecutor::DumpWholeScript() {
 			}
 		}
 		_stream->seek(expectedEndLocation);
-		EndBuffering(false);
+		endBuffering(false);
 	}
 	_stream->seek(_streamDumpPosition, SEEK_SET);
 }
 
-bool ScriptExecutor::IsRelevantObject(const GameObject *obj) {
+bool ScriptExecutor::isRelevantObject(const GameObject *obj) const {
 	// Original logic (runScriptExecutor at 1008:e3e7):
 	// An object is relevant if it has runtime data allocated (non-null pointer at object+0xa).
 	// In ScummVM, this corresponds to having a non-empty Script array (the script data
@@ -716,16 +710,14 @@ bool ScriptExecutor::IsRelevantObject(const GameObject *obj) {
 	return obj->DataOffset != 0;
 }
 
-void ScriptExecutor::Step() {
+void ScriptExecutor::step() {
 	bool shouldContinue = true;
 
 	while (shouldContinue) {
 		switch (_state) {
-		case ExecutorState::Idle: {
+		case ExecutorState::Idle:
 			// TODO: Check if there is a scheduled run
 			return;
-		};
-			break;
 		case ExecutorState::Executing: {
 			// Continue execution
 
@@ -735,7 +727,7 @@ void ScriptExecutor::Step() {
 				shouldContinue = LoadNextScript();
 			} else {
 				// Let the current script continue
-				ExecutionResult result = ExecuteScript();
+				ExecutionResult result = executeScript();
 				if (result == ExecutionResult::WaitingForCallback) {
 					// We need to change our state as well now
 					_state = ExecutorState::WaitingForCallback;
@@ -750,19 +742,18 @@ void ScriptExecutor::Step() {
 					return;
 				}
 			}
-		};
 			break;
+		}
 		case ExecutorState::WaitingForCallback: {
 			// TODO: Check if this can even occur i.e. if we even schedule something or if
 			// we always call the execute directly
-
-		};
 			break;
+		}
 		}
 	}
 	// Rewind and reset to the scene script after we are done executing
 	executingObjectIndex = Scenes::instance().CurrentSceneIndex;
-	SetScript(Scenes::instance().CurrentSceneScript);
+	setScript(Scenes::instance().CurrentSceneScript);
 	if (_stream && _stream->size() > 0) {
 		_stream->seek(0, SEEK_SET);
 	}
@@ -798,7 +789,7 @@ bool ScriptExecutor::LoadNextScript() {
 		candidateObject = GameObjects::GetObjectByIndex(executingObjectIndex);
 
 		// TODO: Check if this is a valid option
-		if (candidateObject && IsRelevantObject(candidateObject)) {
+		if (candidateObject && isRelevantObject(candidateObject)) {
 			if (candidateObject->Script.size() != 0) {
 				_stream = candidateObject->GetScriptStream();
 				_executingScriptObjectID = candidateObject->Index;
@@ -833,9 +824,9 @@ bool ScriptExecutor::LoadNextScript() {
 	}
 
 	return false;
-};
+}
 
-byte Script::ScriptExecutor::ReadByte() {
+byte Script::ScriptExecutor::readByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
 	// if (isSkipping) {
@@ -847,7 +838,7 @@ byte Script::ScriptExecutor::ReadByte() {
 	return result;
 }
 
-uint16 Script::ScriptExecutor::ReadWord() {
+uint16 Script::ScriptExecutor::readUint16() {
 	const int64 pos = _stream->pos();
 	const uint16 result = _stream->readUint16LE();
 	debug("Script read (word): %.4x at location %.4x", result, (uint32)pos);
@@ -856,8 +847,8 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 void Script::ScriptExecutor::scriptOpcode0x01() {
 	// This writes to a script variable.
-	ReadByte();
-	uint16 variableIndex = ReadWord();
+	readByte();
+	uint16 variableIndex = readUint16();
 	ScriptVariable var;
 	scriptReadValuePair(var.a, var.b);
 	_variables[variableIndex] = var;
@@ -865,8 +856,8 @@ void Script::ScriptExecutor::scriptOpcode0x01() {
 
 void Script::ScriptExecutor::scriptOpcode0x02() {
 	// Padding/type byte (same as opcode 0x01) - read and discarded
-	ReadByte();
-	uint16 variableIndex = ReadWord();
+	readByte();
+	uint16 variableIndex = readUint16();
 	// We skip the left shift and just read the first value directly
 	uint16 throwaway;
 	uint16 value1;
@@ -907,7 +898,7 @@ bool Script::ScriptExecutor::scriptOpcode0x05() {
 	// Reads a comparison sub-opcode, two 32-bit values (v1:v2 and v3:v4),
 	// and skips the following block if the condition is NOT met.
 	// Values are treated as signed 32-bit (v2:v1 = high:low).
-	uint8 opcode2 = ReadByte();
+	uint8 opcode2 = readByte();
 	Common::String opcodeInfo = IdentifyScriptOpcode(0x5, opcode2);
 	debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
 	uint16 v1; // low word of first value
@@ -941,7 +932,7 @@ bool Script::ScriptExecutor::scriptOpcode0x05() {
 		// Greater than or equal (signed 32-bit)
 		conditionMet = (val1 >= val2);
 	} else {
-		ScriptUnimplementedOpcode_Main(opcode2);
+		scriptUnimplementedOpcode("Condition", opcode2);
 		return false;
 	}
 
@@ -956,7 +947,7 @@ void Script::ScriptExecutor::scriptOpcode0x06() {
 	// "Use item on object" comparison from executeOpcodes (1008:db56).
 	// Reads sub-opcode (1=match, 2=NOT match), then the interacted pair
 	// and two comparison objects. Checks both orderings.
-	uint8 subOpcode = ReadByte();
+	uint8 subOpcode = readByte();
 	uint16 interacted1;
 	uint16 interacted2;
 	scriptReadValuePair(interacted1, interacted2);
@@ -991,7 +982,7 @@ void Script::ScriptExecutor::scriptOpcode0x0A() {
 	// l0037_DDE8:
 	ScriptPrintString();
 	// Ends execution (confirmed: jumps to e3bd in disassembly).
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endBuffering(lastOpcodeTriggeredSkip);
 }
 
 bool Script::ScriptExecutor::scriptOpcode0x0B() {
@@ -1148,9 +1139,9 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0C() {
 	isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
-	EndTimer();
-	EndFrameWait();
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endTimer();
+	endFrameWait();
+	endBuffering(lastOpcodeTriggeredSkip);
 	return ExecutionResult::WaitingForCallback;
 }
 
@@ -1160,8 +1151,8 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0D() {
 	uint16 x = scriptReadValue16();
 	uint16 y = scriptReadValue16();
 	uint16 side = scriptReadValue16();
-	uint32 offset = ReadWord();
-	uint32 numLines = ReadWord();
+	uint32 offset = readUint16();
+	uint32 numLines = readUint16();
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
 
@@ -1182,9 +1173,9 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0D() {
 	isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
-	EndTimer();
-	EndFrameWait();
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endTimer();
+	endFrameWait();
+	endBuffering(lastOpcodeTriggeredSkip);
 	return ExecutionResult::WaitingForCallback;
 }
 
@@ -1236,19 +1227,19 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x11() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Opcode 0x11: invalid object %u", objectID);
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endBuffering(lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
 	GameObject *walkObject = GameObjects::GetObjectByIndex(objectID);
 	if (walkObject == nullptr) {
 		warning("Opcode 0x11: missing object %u", objectID);
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endBuffering(lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
 	// Original checks runtime+0x231 (frozen/attached flag) → error 0x1F
 	if (walkObject->HasBoundsAttachment) {
 		warning("Opcode 0x11: object %u is frozen (bounds attached)", objectID);
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endBuffering(lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
 	View1 *currentView = (View1 *)_engine->findView("View1");
@@ -1256,25 +1247,25 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x11() {
 	if (c == nullptr) {
 		// Original: error code 2 (no runtime data). Script execution stops.
 		warning("Opcode 0x11: no character for object %u (no runtime data)", objectID);
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endBuffering(lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
 	c->RegisterWaitForMovementFinishedEvent();
 	requestCallback = false;
 	isAwaitingCallback = true;
-	EndTimer();
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endTimer();
+	endBuffering(lastOpcodeTriggeredSkip);
 	return ExecutionResult::WaitingForCallback;
 }
 
 void Script::ScriptExecutor::scriptOpcode0x13() {
-	uint16 tag = ReadWord();
+	uint16 tag = readUint16();
 	_stream->seek(0, SEEK_SET);
 	while (_stream->pos() < _stream->size()) {
-		uint8 opcode = ReadByte();
-		uint8 length = ReadByte();
+		uint8 opcode = readByte();
+		uint8 length = readByte();
 		if (opcode == 0x14) {
-			uint16 tag14 = ReadWord();
+			uint16 tag14 = readUint16();
 			if (tag14 == tag) {
 				return;
 			}
@@ -1287,7 +1278,7 @@ void Script::ScriptExecutor::scriptOpcode0x13() {
 
 void Script::ScriptExecutor::scriptOpcode0x14() {
 	// If we reach opcode 14 regularly, just discard the payload and continue.
-	ReadWord();
+	readUint16();
 }
 
 void Script::ScriptExecutor::scriptOpcode0x15() {
@@ -1305,8 +1296,8 @@ void Script::ScriptExecutor::scriptOpcode0x16() {
 	// Not sure if the way of handling it still works or reflects the game, needs
 	// to be tested.
 	// assert(index - 1 == DialogueChoices.size());
-	uint16 offset = ReadWord();
-	uint16 numLines = ReadWord();
+	uint16 offset = readUint16();
+	uint16 numLines = readUint16();
 	Common::StringArray lines;
 	if (_executingScriptObjectID == 0) {
 		lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
@@ -1334,8 +1325,8 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x17() {
 	requestCallback = false;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
-	EndTimer();
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endTimer();
+	endBuffering(lastOpcodeTriggeredSkip);
 	return ExecutionResult::WaitingForCallback;
 }
 
@@ -1343,7 +1334,7 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x18() {
 	// Set the stream to the end and let the calling code figure out that we are done
 	// for this run.
 	_stream->seek(_stream->size(), SEEK_SET);
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endBuffering(lastOpcodeTriggeredSkip);
 	return ExecutionResult::ScriptFinished;
 }
 
@@ -1356,8 +1347,8 @@ bool Script::ScriptExecutor::scriptOpcode0x19() {
 	Character *actor = currentView->GetCharacterByIndex(actorIndex);
 	GameObject *targetObject = GameObjects::GetObjectByIndex(objectIndex);
 	if (pickupInProgress) {
-		EndTimer();
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endTimer();
+		endBuffering(lastOpcodeTriggeredSkip);
 		return true;
 	}
 	if (actor == nullptr || targetObject == nullptr) {
@@ -1384,8 +1375,8 @@ bool Script::ScriptExecutor::scriptOpcode0x19() {
 	isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
-	EndTimer();
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endTimer();
+	endBuffering(lastOpcodeTriggeredSkip);
 	return true;
 }
 
@@ -1640,7 +1631,7 @@ void Script::ScriptExecutor::scriptOpcode0x26() {
 	// scriptLoadSpecialAnim (1008:c991): 2nd value is the decode/enable flag (runtime +0x182).
 	// Non-zero -> enable the overload animation (and the original decodes the blob now).
 	uint16 decodeFlag = scriptReadValue16();
-	uint8 animationID = ReadByte();
+	uint8 animationID = readByte();
 	Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
 	GameObject *object = GameObjects::GetObjectByIndex(id);
 	object->overloadAnimation = blob;
@@ -1694,7 +1685,7 @@ void Script::ScriptExecutor::scriptOpcode0x2A() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	uint16 slotID = scriptReadValue16();
 	const bool decodeBlob = scriptReadValue16() != 0;
-	uint8 arrayIndex = ReadByte();
+	uint8 arrayIndex = readByte();
 
 	g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
 }
@@ -1798,7 +1789,7 @@ void Script::ScriptExecutor::scriptOpcode0x30() {
 	// Opcode 0x30: scriptPrintString with flag=1 (vs opcode 0x0A with flag=0)
 	// which changes behaviour in the function.
 	ScriptPrintString(true);
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endBuffering(lastOpcodeTriggeredSkip);
 }
 
 void Script::ScriptExecutor::scriptOpcode0x31() {
@@ -1911,13 +1902,13 @@ void Script::ScriptExecutor::scriptOpcode0x37() {
 	executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 	scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	activeDialogueSpeakerObjectID = 0;
-	SetCurrentSceneScriptAt(0);
+	setCurrentSceneScriptAt(0);
 }
 
 void Script::ScriptExecutor::scriptOpcode0x38() {
 	// scriptLoadOverlayFont (1008:d749). Loads a font resource for
 	// overlay text into the overlay font buffer.
-	uint8 resourceIndex = ReadByte();
+	uint8 resourceIndex = readByte();
 	overlayTextStageActive = true;
 	if (!_engine->loadOverlayFont(resourceIndex, _executingScriptObjectID)) {
 		warning("Opcode 0x38: failed to load overlay font resource %u", resourceIndex);
@@ -1931,19 +1922,19 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptOpcode0x
 		scriptReadValue16();
 		scriptReadValue16();
 		scriptReadValue16();
-		ReadWord();
-		ReadWord();
+		readUint16();
+		readUint16();
 		return OpcodeControlFlow::Continue;
 	}
 
 	const uint16 x = scriptReadValue16();
 	const uint16 y = scriptReadValue16();
 	const uint8 alignment = scriptReadValue16();
-	const uint16 stringOffset = ReadWord();
-	const uint16 entryType = ReadWord();
+	const uint16 stringOffset = readUint16();
+	const uint16 entryType = readUint16();
 	if (!overlayTextStageActive) {
 		warning("Opcode 0x3A: overlay text entry at %u,%u without active stage (error 0x21)", x, y);
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endBuffering(lastOpcodeTriggeredSkip);
 		return OpcodeControlFlow::ScriptFinished;
 	}
 	if (currentView->_overlayTextEntries.size() >= 10) {
@@ -1967,8 +1958,8 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptOpcode0x
 		return OpcodeControlFlow::Continue;
 	}
 	debugC(kDebugScript,
-			   "Opcode 3A overlay text: rawPos=(%u,%u) align=%u textOffset=%u entryType=%u scriptObject=%u text=\"%s\"",
-			   x, y, alignment, stringOffset, entryType, _executingScriptObjectID, strings[0].c_str());
+		   "Opcode 3A overlay text: rawPos=(%u,%u) align=%u textOffset=%u entryType=%u scriptObject=%u text=\"%s\"",
+		   x, y, alignment, stringOffset, entryType, _executingScriptObjectID, strings[0].c_str());
 
 	View1::OverlayTextEntry entry;
 	entry.position = Common::Point(x, y);
@@ -2001,9 +1992,9 @@ void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// once per game tick, rather than using a wall-clock timer.
 	uint16 duration = scriptReadValue16();
 	requestCallback = false;
-	StartFrameWait(duration);
+	startFrameWait(duration);
 	isAwaitingCallback = true;
-	EndBuffering(lastOpcodeTriggeredSkip);
+	endBuffering(lastOpcodeTriggeredSkip);
 }
 
 void Script::ScriptExecutor::scriptOpcode0x12() {
@@ -2053,7 +2044,7 @@ void Script::ScriptExecutor::scriptOpcode0x3D() {
 }
 
 bool Script::ScriptExecutor::scriptOpcode0x3E() {
-	const uint8 resourceIndex = ReadByte();
+	const uint8 resourceIndex = readByte();
 	Common::Array<uint8> soundData;
 	if (!loadSoundResource(soundData, resourceIndex)) {
 		return false;
@@ -2080,8 +2071,8 @@ bool Script::ScriptExecutor::scriptOpcode0x40() {
 bool Script::ScriptExecutor::scriptOpcode0x41() {
 	if (soundEnabled && soundSystemActive) {
 		waitForSoundPlayback = true;
-		EndTimer();
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endTimer();
+		endBuffering(lastOpcodeTriggeredSkip);
 		return true;
 	}
 	return false;
@@ -2095,7 +2086,7 @@ void Script::ScriptExecutor::scriptOpcode0x42() {
 
 bool Script::ScriptExecutor::scriptOpcode0x43() {
 	const uint16 slotID = scriptReadValue16();
-	const uint8 resourceIndex = ReadByte();
+	const uint8 resourceIndex = readByte();
 	if (slotID < 1 || slotID > 2) {
 		warning("Ignoring music load for invalid slot %u", slotID);
 		return false;
@@ -2180,8 +2171,8 @@ bool Script::ScriptExecutor::scriptOpcode0x45() {
 bool Script::ScriptExecutor::scriptOpcode0x47() {
 	if (soundSystemActive && musicEnabled) {
 		waitForMusicControl = true;
-		EndTimer();
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endTimer();
+		endBuffering(lastOpcodeTriggeredSkip);
 		return true;
 	}
 	return false;
@@ -2300,8 +2291,8 @@ bool Script::ScriptExecutor::scriptOpcode0x4D() {
 bool Script::ScriptExecutor::scriptOpcode0x4E() {
 	if (soundSystemActive && musicEnabled) {
 		waitForAdlibReady = true;
-		EndTimer();
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endTimer();
+		endBuffering(lastOpcodeTriggeredSkip);
 		return true;
 	}
 	return false;
@@ -2313,7 +2304,7 @@ void Script::ScriptExecutor::scriptOpcode0x3F() {
 	_engine->clearCurrentSoundData();
 }
 
-ExecutionResult Script::ScriptExecutor::ExecuteScript() {
+ExecutionResult Script::ScriptExecutor::executeScript() {
 	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance().CurrentSceneIndex, IsSceneInitRun, repeatRunFlag);
 	isRunningScript = true;
 	// Confirmed: no interrupt mechanism exists. Wait states (frameWait, walkTarget,
@@ -2345,7 +2336,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		}
 
 		// Read an opcode and length
-		byte opcode1 = ReadByte(); // [bp - 1h]
+		byte opcode1 = readByte(); // [bp - 1h]
 		// TODO: For the sake of easier reading the logs, jumping out if we
 		// read a 0 opcode.
 		if (opcode1 == 0x00) {
@@ -2358,7 +2349,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			opcodeInfo = IdentifyScriptOpcode(opcode1, 0);
 		}
 		debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
-		byte length = ReadByte(); // [bp-2h]
+		byte length = readByte(); // [bp-2h]
 		expectedEndLocation += length + 2;
 
 		// TODO: convert this into a function lookup table and extract all opcode handling into separate functions, this is just for easier reading
@@ -2372,7 +2363,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			scriptOpcode0x04();
 		} else if (opcode1 == 0x5) {
 			if (!scriptOpcode0x05()) {
-				EndBuffering(lastOpcodeTriggeredSkip);
+				endBuffering(lastOpcodeTriggeredSkip);
 				break;
 			}
 		} else if (opcode1 == 0x06) {
@@ -2600,18 +2591,18 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				return ExecutionResult::WaitingForCallback;
 			}
 		} else {
-			ScriptUnimplementedOpcode_Main(opcode1);
-			EndBuffering(lastOpcodeTriggeredSkip);
+			scriptUnimplementedOpcode("Main", opcode1);
+			endBuffering(lastOpcodeTriggeredSkip);
 			break;
 		}
-		EndBuffering(lastOpcodeTriggeredSkip);
+		endBuffering(lastOpcodeTriggeredSkip);
 	}
 	isRunningScript = false;
 	debug("----- Scripting function left");
 	return ExecutionResult::ScriptFinished;
 }
 
-void ScriptExecutor::Run(bool firstRun) {
+void ScriptExecutor::run(bool firstRun) {
 	// Scene initialization run
 	// TODO: Need to better encapsulate this down the road
 	// TODO: Not sure which order is really right, need to check in SIS logs
@@ -2627,15 +2618,15 @@ void ScriptExecutor::Run(bool firstRun) {
 		IsSceneInitRun = firstRun;
 	}
 	_state = ExecutorState::Executing;
-	Step();
+	step();
 }
 
-void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
+void ScriptExecutor::setScript(Common::MemoryReadStream *stream) {
 	_stream = stream;
 }
 
-void ScriptExecutor::SetCurrentSceneScriptAt(uint32 offset) {
-	SetScript(Scenes::instance().CurrentSceneScript);
+void ScriptExecutor::setCurrentSceneScriptAt(uint32 offset) {
+	setScript(Scenes::instance().CurrentSceneScript);
 	_stream->seek(offset, SEEK_SET);
 }
 
@@ -2664,7 +2655,7 @@ void ScriptExecutor::tick() {
 	if (waitForSoundPlayback) {
 		if (!_engine->isCurrentSoundPlaying()) {
 			waitForSoundPlayback = false;
-			Run();
+			run();
 		} else {
 			debug("Waiting for sound playback to finish (handle active)");
 		}
@@ -2674,7 +2665,7 @@ void ScriptExecutor::tick() {
 	if (waitForMusicControl) {
 		if (musicControlMode == 0) {
 			waitForMusicControl = false;
-			Run();
+			run();
 		}
 		return;
 	}
@@ -2682,7 +2673,7 @@ void ScriptExecutor::tick() {
 	if (waitForAdlibReady) {
 		if (_engine->getAdlib()->isPlaybackReady()) {
 			waitForAdlibReady = false;
-			Run();
+			run();
 		}
 		return;
 	}
@@ -2693,7 +2684,7 @@ void ScriptExecutor::tick() {
 		}
 		if (frameWaitTicksRemaining == 0) {
 			isFrameWaitActive = false;
-			Run();
+			run();
 		}
 	}
 
@@ -2702,49 +2693,49 @@ void ScriptExecutor::tick() {
 			isTimerActive = false;
 			// TODO: Think about if this is the right way of executing it, or maybe we rather need
 			// to use Execute
-			Run();
+			run();
 		}
 	}
 }
 
-void ScriptExecutor::StartTimer(uint32 duration) {
+void ScriptExecutor::startTimer(uint32 duration) {
 	isTimerActive = true;
 	timerEndMillis = g_engine->currentMillis + duration;
 }
 
-void ScriptExecutor::EndTimer() {
+void ScriptExecutor::endTimer() {
 	isTimerActive = false;
 }
 
-void ScriptExecutor::StartFrameWait(uint16 duration) {
+void ScriptExecutor::startFrameWait(uint16 duration) {
 	isFrameWaitActive = true;
 	frameWaitTicksRemaining = duration;
 }
 
-void ScriptExecutor::EndFrameWait() {
+void ScriptExecutor::endFrameWait() {
 	isFrameWaitActive = false;
 	frameWaitTicksRemaining = 0;
 }
 
-void ScriptExecutor::Rewind() {
+void ScriptExecutor::rewind() {
 	_stream->seek(0);
 }
 
-uint32 ScriptExecutor::GetScriptPosition() const {
+uint32 ScriptExecutor::getScriptPosition() const {
 	return _stream ? (uint32)_stream->pos() : 0;
 }
 
-uint32 ScriptExecutor::GetScriptEndPosition() const {
+uint32 ScriptExecutor::getScriptEndPosition() const {
 	return _stream ? (uint32)_stream->size() : 0;
 }
 
-uint32 ScriptExecutor::GetVariableValue(int index) const {
+uint32 ScriptExecutor::getVariableValue(int index) const {
 	if (index < 0 || index >= (int)_variables.size())
 		return 0;
 	return _variables[index].a | ((uint32)_variables[index].b << 16);
 }
 
-uint32 ScriptExecutor::GetSpecialValue(uint16 value) {
+uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	uint16 out1 = 0;
 	uint16 out2 = 0;
 	switch (value) {
