@@ -302,7 +302,7 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 			script->seek(dataStart + 6);
 			uint16 o = script->readUint16LE(), n = script->readUint16LE();
 			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
-				auto ss = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, o, n);
+				auto ss = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, o, n);
 				if (!ss.empty())
 					result = Common::String::format(" \"%s\"", ss[0].c_str());
 			}
@@ -324,7 +324,7 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		if (script->pos() + 4 <= dataStart + length) {
 			uint16 off = script->readUint16LE(), n = script->readUint16LE();
 			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
-				auto ss = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, off, n);
+				auto ss = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, off, n);
 				if (!ss.empty()) {
 					result = Common::String::format(" obj=%s \"%s\"", o.c_str(), ss[0].c_str());
 					break;
@@ -371,7 +371,7 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		if (script->pos() + 4 <= dataStart + length) {
 			uint16 off = script->readUint16LE(), n = script->readUint16LE();
 			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
-				auto ss = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, off, n);
+				auto ss = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, off, n);
 				if (!ss.empty()) {
 					result = Common::String::format(" idx=%s \"%s\"", idx.c_str(), ss[0].c_str());
 					break;
