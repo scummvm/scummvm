@@ -55,6 +55,19 @@ void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 
 	readFilename(*ivFile, _videoName);
 
+	// WORKAROUND: In Nancy 9, the Feeding Frenzy mini-game plays 6 videos (the whales that pop up)
+	// with a normal arrow cursor. In such cases, the cursor manager reverts to the default arrow
+	// cursor, if an item is held (which, in this case is a fish). We replace these cursors with a
+	// normal one, which allows for the held item to be visible. Making this a workaround for that
+	// scene, since a change in that part of the cursor code would require a full regression test in
+	// all supported games. Fixes bug #16792.
+	const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
+	if (g_nancy->getGameType() == kGameTypeNancy9 && (sceneId == 2992 || sceneId == 2995 || sceneId == 2996)) {
+		if (_videoName.toString().contains("WhaleFeed") && _cursors[0] == CursorManager::kNormalArrow) {
+			_cursors[0] = CursorManager::kNormal;
+		}
+	}
+
 	uint32 numFrames = ivFile->readUint32LE();
 	_frames.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
