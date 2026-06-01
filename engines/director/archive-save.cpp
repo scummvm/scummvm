@@ -30,6 +30,7 @@
 #include "director/score.h"
 #include "director/window.h"
 #include "director/sprite.h"
+#include "director/util.h"
 
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
@@ -46,7 +47,11 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 		filename = movie->getMacName();
 	}
 
-	Common::String saveFileName = g_director->getTargetName() + "-" + filename;
+	// Normalise the name the same way the movie loader does, so the key 
+	// the save is stored under matches the one used when the movie is later loaded by fileName.
+	// Otherwise e.g. saving "C:\SCORES.DXR" and loading it back (which resolves
+	// to "SCORES.DXR") would not find the saved file.
+	Common::String saveFileName = g_director->getTargetName() + "-" + convertPath(filename);
 	// Don't open the save file as compressed which doesn't support seeking
 	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(saveFileName, false);
 
@@ -752,7 +757,8 @@ Common::SeekableReadStream *SavedArchive::createReadStreamForMember(const Common
 bool SavedArchive::_addFile(const Common::String &fileName) {
 	// Derive the original file name from the save file name
 	// Save files are named target_name-save_filename
-	Common::String origFileName = fileName.substr(_target.size() + 1);
+	// Normalise it with convertPath.
+	Common::String origFileName = convertPath(fileName.substr(_target.size() + 1));
 	if (!_files.contains(origFileName)) {
 		debugC(3, kDebugLoading, "Found save file: %s -> %s", fileName.c_str(), fileName.c_str());
 
