@@ -172,6 +172,7 @@ private:
 	bool scriptOpcode0x4B();
 	void scriptOpcode0x4C();
 	bool scriptOpcode0x4D();
+	bool scriptOpcode0x4E();
 	void scriptOpcode0x13();
 	void scriptOpcode0x0E();
 	void scriptOpcode0x0F();
