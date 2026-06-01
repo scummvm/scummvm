@@ -48,7 +48,7 @@ namespace Macs2 {
 class MacsAudioStream : public Audio::SeekableAudioStream {
 public:
 	Common::Array<byte> _data;
-	int64 pos;
+	int64 _pos;
 
 	virtual ~MacsAudioStream() {}
 
@@ -98,46 +98,46 @@ struct Macs2GameDescription;
 class Adlib;
 
 struct GlyphData {
-	byte *Data;
-	char ASCII;
-	uint16 Width;
-	uint16 Height;
+	byte *_data;
+	char _ascii;
+	uint16 _width;
+	uint16 _height;
 
-	void ReadFromeFile(Common::File &file);
-	void ReadFromMemory(Common::MemoryReadStream *stream);
+	void readFromeFile(Common::File &file);
+	void readFromMemory(Common::MemoryReadStream *stream);
 };
 
 struct Sprite {
-	uint16 Width;
-	uint16 Height;
-	Common::Array<uint8> Data;
+	uint16 _width;
+	uint16 _height;
+	Common::Array<uint8> _data;
 };
 
 struct AnimFrame {
-	byte *Data;
-	uint16 Width;
-	uint16 Height;
+	byte *_data;
+	uint16 _width;
+	uint16 _height;
 
-	void ReadFromeFile(Common::File &file);
-	void ReadFromStream(Common::MemoryReadStream *stream);
-	bool PixelHit(const Common::Point &point) const;
-	Common::Point GetBottomMiddleOffset(uint16 scale = 100) const;
-	Sprite AsSprite();
+	void readFromeFile(Common::File &file);
+	void readFromStream(Common::MemoryReadStream *stream);
+	bool pixelHit(const Common::Point &point) const;
+	Common::Point getBottomMiddleOffset(uint16 scale = 100) const;
+	Sprite asSprite();
 };
 
 struct BackgroundAnimation {
-	uint16 numFrames;
-	uint16 X;
-	uint16 Y;
-	AnimFrame *Frames;
-	uint32 FrameIndex;
+	uint16 _numFrames;
+	uint16 _x;
+	uint16 _y;
+	AnimFrame *_frames;
+	uint32 _frameIndex;
 };
 
 struct BackgroundAnimationBlob {
-	uint16 X;
-	uint16 Y;
-	Common::Array<uint8> Blob;
-	uint32 FrameIndex;
+	uint16 _x;
+	uint16 _y;
+	Common::Array<uint8> _blob;
+	uint32 _frameIndex;
 	AnimFrame GetFrame(uint32 index);
 	AnimFrame getCurrentFrame();
 	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
@@ -145,15 +145,15 @@ struct BackgroundAnimationBlob {
 };
 
 struct PathfindingPoint {
-	uint8 Index;
-	Common::Point Position;
-	Common::Array<uint8> adjacentPoints;
+	uint8 _index;
+	Common::Point _position;
+	Common::Array<uint8> _adjacentPoints;
 };
 
 struct PathfindingAreaOverride {
-	bool Active;
-	uint16 Index;
-	uint16 OverrideValue;
+	bool _active;
+	uint16 _index;
+	uint16 _overrideValue;
 };
 
 // Area override table at scene+0x4EA8 (indexed by pathfinding value 0xC8..0xEF)
@@ -437,7 +437,7 @@ public:
 		return syncGame(s);
 	}
 
-	virtual bool tick();
+	bool tick() override;
 };
 
 extern Macs2Engine *g_engine;

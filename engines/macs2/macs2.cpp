@@ -140,8 +140,8 @@ void Macs2Engine::readResourceFile() {
 	uint16 font1GlyphCount = _fileStream->readUint16LE();
 	maxGlyphHeight = 0;
 	for (uint i = 0; i < font1GlyphCount; i++) {
-		_glyphs[i].ReadFromMemory(_fileStream);
-		maxGlyphHeight = MAX(_glyphs[i].Height, maxGlyphHeight);
+		_glyphs[i].readFromMemory(_fileStream);
+		maxGlyphHeight = MAX(_glyphs[i]._height, maxGlyphHeight);
 	}
 	numGlyphs = font1GlyphCount;
 
@@ -293,13 +293,13 @@ void Macs2Engine::readResourceFile() {
 
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
-		current.Position.x = _fileStream->readUint16LE();
-		current.Position.y = _fileStream->readUint16LE();
+		current._position.x = _fileStream->readUint16LE();
+		current._position.y = _fileStream->readUint16LE();
 		_fileStream->seek(4, SEEK_CUR);
 		uint16 numConnections = _fileStream->readUint16LE();
 		_fileStream->seek(-6, SEEK_CUR);
 		for (int j = 0; j < numConnections; j++) {
-			current.adjacentPoints.push_back(_fileStream->readByte());
+			current._adjacentPoints.push_back(_fileStream->readByte());
 		}
 		_fileStream->seek(4 - numConnections + 2, SEEK_CUR);
 		pathfindingPoints.push_back(current);
@@ -337,21 +337,21 @@ void Macs2Engine::readResourceFile() {
 	// Load 6 flag/decoration animation frames from fixed resource file offset
 	_fileStream->seek(0x006A5941);
 	for (int i = 0; i < 6; i++) {
-		_animFrames[i].ReadFromStream(_fileStream);
+		_animFrames[i].readFromStream(_fileStream);
 		// There are 6 empty bytes until the next one
 		_fileStream->seek(6, SEEK_CUR);
 	}
 
 	// Load the data for a border part
 	AnimFrame &borderFrame = _imageResources[_imageResources.size() - 2];
-	_borderSprite.Data.assign(borderFrame.Data, borderFrame.Data + borderFrame.Width * borderFrame.Height);
-	_borderSprite.Width = borderFrame.Width;
-	_borderSprite.Height = borderFrame.Height;
-	_borderData = borderFrame.Data;
+	_borderSprite._data.assign(borderFrame._data, borderFrame._data + borderFrame._width * borderFrame._height);
+	_borderSprite._width = borderFrame._width;
+	_borderSprite._height = borderFrame._height;
+	_borderData = borderFrame._data;
 
 	// TODO: Get rid of these
-	_borderWidth = _borderSprite.Width;
-	_borderHeight = _borderSprite.Height;
+	_borderWidth = _borderSprite._width;
+	_borderHeight = _borderSprite._height;
 
 	// And the highlight part
 	_fileStream->seek(0x6962);
@@ -360,14 +360,14 @@ void Macs2Engine::readResourceFile() {
 	_borderHighlightHeight = _fileStream->readUint16LE();
 	_borderHighlightData = new byte[_borderHighlightWidth * _borderHighlightHeight];
 	_fileStream->read(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
-	_borderHighlightSprite.Width = _borderHighlightWidth;
-	_borderHighlightSprite.Height = _borderHighlightHeight;
-	_borderHighlightSprite.Data = Common::Array<uint8>(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
+	_borderHighlightSprite._width = _borderHighlightWidth;
+	_borderHighlightSprite._height = _borderHighlightHeight;
+	_borderHighlightSprite._data = Common::Array<uint8>(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
 
 	AnimFrame &shadowFrame = _imageResources[_imageResources.size() - 3];
-	_borderShadowSprite.Data.assign(shadowFrame.Data, shadowFrame.Data + shadowFrame.Width * shadowFrame.Height);
-	_borderShadowSprite.Width = shadowFrame.Width;
-	_borderShadowSprite.Height = shadowFrame.Height;
+	_borderShadowSprite._data.assign(shadowFrame._data, shadowFrame._data + shadowFrame._width * shadowFrame._height);
+	_borderShadowSprite._width = shadowFrame._width;
+	_borderShadowSprite._height = shadowFrame._height;
 
 	// The flag animation frames
 	_fileStream->seek(0x00250D47);
@@ -474,7 +474,7 @@ void Macs2Engine::readResourceFile() {
 
 	// Load the stick
 	_fileStream->seek(0x00708410);
-	_stick.ReadFromStream(_fileStream);
+	_stick.readFromStream(_fileStream);
 
 	/*
 	_fileStream->seek(0x000d4fbd);
@@ -520,18 +520,18 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 
 		BackgroundAnimation &current = _backgroundAnimations[i];
 		// Local offset +0h
-		current.X = stream->readUint16LE();
-		currentBlob.X = current.X;
+		current._x = stream->readUint16LE();
+		currentBlob._x = current._x;
 		// Local offset +2n
-		current.Y = stream->readUint16LE();
-		currentBlob.Y = current.Y;
+		current._y = stream->readUint16LE();
+		currentBlob._y = current._y;
 
 		// current.numFrames = previewNumFrames(file.pos(), file);
 		uint32 numBytes = stream->readUint32LE();
 
-		currentBlob.Blob.resize(numBytes);
+		currentBlob._blob.resize(numBytes);
 		int64 pos = stream->pos();
-		stream->read(currentBlob.Blob.data(), numBytes);
+		stream->read(currentBlob._blob.data(), numBytes);
 		stream->seek(pos, SEEK_SET);
 
 		// Skip to the intermediary data
@@ -539,13 +539,13 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 		stream->seek(10, SEEK_CUR);
 		uint16 nextNumBytes = stream->readUint16LE();
 		stream->seek(nextNumBytes, SEEK_CUR);
-		current.numFrames = stream->readUint16LE();
-		current.FrameIndex = 0;
-		current.Frames = new AnimFrame[current.numFrames];
-		for (int j = 0; j < current.numFrames; j++) {
+		current._numFrames = stream->readUint16LE();
+		current._frameIndex = 0;
+		current._frames = new AnimFrame[current._numFrames];
+		for (int j = 0; j < current._numFrames; j++) {
 			// Skip to width and height
 			stream->seek(6, SEEK_CUR);
-			current.Frames[j].ReadFromStream(stream);
+			current._frames[j].readFromStream(stream);
 		}
 		// TODO: This allows us to skip over a faulty implementation, but
 		// probably missing some valid data or loading wrong data
@@ -562,7 +562,7 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 		// TODO: There is a lot more going on in the function that does this. It is around
 		// -- Caller (1): 01e7:7a5b
 		// --Caller(2) : 01e7 : 8820
-		Macs2::BackgroundAnimationBlob::advanceAnimFrame(currentBlob.Blob, true, 0x64 + current.numFrames);
+		Macs2::BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 0x64 + current._numFrames);
 	}
 }
 
@@ -576,9 +576,9 @@ void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
 		AnimFrame frame;
 		// Move forward to skip the first word
 		stream->seek(0x2, SEEK_CUR);
-		frame.ReadFromStream(stream);
+		frame.readFromStream(stream);
 		_imageResources.push_back(frame);
-		debug("W: %u, H: %u", frame.Width, frame.Height);
+		debug("W: %u, H: %u", frame._width, frame._height);
 	}
 }
 
@@ -610,7 +610,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources
 	if (_backgroundAnimations != nullptr) {
 		for (int i = 0; i < _numBackgroundAnimations; i++) {
-			delete[] _backgroundAnimations[i].Frames;
+			delete[] _backgroundAnimations[i]._frames;
 		}
 		delete[] _backgroundAnimations;
 		_backgroundAnimations = nullptr;
@@ -709,15 +709,15 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	pathfindingPoints.clear();
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
-		current.Index = i;
-		current.Position.x = _fileStream->readUint16LE();
-		current.Position.y = _fileStream->readUint16LE();
+		current._index = i;
+		current._position.x = _fileStream->readUint16LE();
+		current._position.y = _fileStream->readUint16LE();
 		uint8 adj[4];
 		_fileStream->read(adj, 4);
 		uint16 numConnections = _fileStream->readUint16LE();
-		current.adjacentPoints.clear();
+		current._adjacentPoints.clear();
 		for (uint16 j = 0; j < numConnections && j < 4; j++)
-			current.adjacentPoints.push_back(adj[j]);
+			current._adjacentPoints.push_back(adj[j]);
 		pathfindingPoints.push_back(current);
 	}
 
@@ -853,8 +853,8 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 	numOverlayGlyphs = glyphCount;
 	maxOverlayGlyphHeight = 0;
 	for (uint i = 0; i < glyphCount; i++) {
-		_overlayGlyphs[i].ReadFromMemory(_fileStream);
-		maxOverlayGlyphHeight = MAX(maxOverlayGlyphHeight, _overlayGlyphs[i].Height);
+		_overlayGlyphs[i].readFromMemory(_fileStream);
+		maxOverlayGlyphHeight = MAX(maxOverlayGlyphHeight, _overlayGlyphs[i]._height);
 	}
 	_fileStream->seek(oldPos, SEEK_SET);
 	return true;
@@ -862,7 +862,7 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 
 bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 	for (int i = 0; i < numGlyphs; i++) {
-		if (_glyphs[i].ASCII == c) {
+		if (_glyphs[i]._ascii == c) {
 			out = _glyphs[i];
 			return true;
 		}
@@ -978,8 +978,8 @@ applyPush:
 
 bool Macs2Engine::getPathfindingOverride(uint16 index, uint16 &result) {
 	for (auto current : _pathfindingOverrides) {
-		if (current.Index == index && current.Active) {
-			result = current.OverrideValue;
+		if (current._index == index && current._active) {
+			result = current._overrideValue;
 			return true;
 		}
 	}
@@ -988,9 +988,9 @@ bool Macs2Engine::getPathfindingOverride(uint16 index, uint16 &result) {
 void Macs2Engine::setPathfindingOverride(uint16 index, uint16 overrideValue) {
 	removePathfindingOverride(index);
 	PathfindingAreaOverride override;
-	override.Active = true;
-	override.Index = index;
-	override.OverrideValue = overrideValue;
+	override._active = true;
+	override._index = index;
+	override._overrideValue = overrideValue;
 	_pathfindingOverrides.push_back(override);
 }
 
@@ -1004,7 +1004,7 @@ uint8 Macs2Engine::getPathfindingOverride2(uint16 index) {
 void Macs2Engine::removePathfindingOverride(uint16 index) {
 	for (uint i = 0; i < _pathfindingOverrides.size(); i++) {
 		PathfindingAreaOverride &current = _pathfindingOverrides[i];
-		if (current.Index == index) {
+		if (current._index == index) {
 			_pathfindingOverrides.remove_at(i);
 			return;
 		}
@@ -1222,7 +1222,7 @@ int Macs2Engine::measureString(Common::String &s) {
 	for (auto current = s.begin(); current != s.end(); current++) {
 		found = findGlyph(*current, currentGlyph);
 		if (found) {
-			widestGlyph = MAX(widestGlyph, currentGlyph.Width);
+			widestGlyph = MAX(widestGlyph, currentGlyph._width);
 		}
 	}
 
@@ -1231,7 +1231,7 @@ int Macs2Engine::measureString(Common::String &s) {
 		if (!found) {
 			sum += widestGlyph;
 		} else {
-			sum += currentGlyph.Width + 1;
+			sum += currentGlyph._width + 1;
 		}
 	}
 	return sum;
@@ -1358,7 +1358,7 @@ void Macs2Engine::playCurrentSound() {
 
 	stopCurrentSound();
 	MacsAudioStream *audioStream = new MacsAudioStream();
-	audioStream->pos = 2; // Skip 2-byte header (original: size = stored_size - 2)
+	audioStream->_pos = 2; // Skip 2-byte header (original: size = stored_size - 2)
 	audioStream->_data = _currentSoundData;
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_currentSoundHandle, audioStream);
 }
@@ -1378,7 +1378,6 @@ Common::String Macs2Engine::getGameId() const {
 }
 
 Common::Error Macs2Engine::run() {
-
 	GameObjects::instance().init();
 	readResourceFile();
 	readExecutable();
@@ -1425,9 +1424,6 @@ Common::Error Macs2Engine::loadGameState(int slot) {
 	return Engine::loadGameState(slot);
 }
 
-// syncGame is implemented in saveload.cpp (binary-compatible with original DOS format)
-// loadOriginalSave is no longer needed - syncGame handles both formats.
-
 bool Macs2Engine::tick() {
 	_scriptExecutor->tick();
 	if (_runScheduled) {
@@ -1440,68 +1436,68 @@ bool Macs2Engine::tick() {
 	return Events::tick();
 }
 
-void GlyphData::ReadFromeFile(Common::File &file) {
+void GlyphData::readFromeFile(Common::File &file) {
 	int64 stride = file.pos();
-	ASCII = file.readByte();
-	Width = file.readUint16LE();
-	Height = file.readUint16LE();
-	Data = new byte[Width * Height];
-	file.read(Data, Width * Height);
+	_ascii = file.readByte();
+	_width = file.readUint16LE();
+	_height = file.readUint16LE();
+	_data = new byte[_width * _height];
+	file.read(_data, _width * _height);
 	stride = file.pos() - stride;
 }
 
-void GlyphData::ReadFromMemory(Common::MemoryReadStream *stream) {
+void GlyphData::readFromMemory(Common::MemoryReadStream *stream) {
 	int64 stride = stream->pos();
-	ASCII = stream->readByte();
-	Width = stream->readUint16LE();
-	Height = stream->readUint16LE();
-	Data = new byte[Width * Height];
-	stream->read(Data, Width * Height);
+	_ascii = stream->readByte();
+	_width = stream->readUint16LE();
+	_height = stream->readUint16LE();
+	_data = new byte[_width * _height];
+	stream->read(_data, _width * _height);
 	stride = stream->pos() - stride;
 }
 
-void AnimFrame::ReadFromeFile(Common::File &file) {
-	Width = file.readUint16LE();
-	Height = file.readUint16LE();
-	Data = new byte[Width * Height];
-	file.read(Data, Width * Height);
+void AnimFrame::readFromeFile(Common::File &file) {
+	_width = file.readUint16LE();
+	_height = file.readUint16LE();
+	_data = new byte[_width * _height];
+	file.read(_data, _width * _height);
 }
 
-void AnimFrame::ReadFromStream(Common::MemoryReadStream *stream) {
-	Width = stream->readUint16LE();
-	Height = stream->readUint16LE();
-	Data = new byte[Width * Height];
-	stream->read(Data, Width * Height);
+void AnimFrame::readFromStream(Common::MemoryReadStream *stream) {
+	_width = stream->readUint16LE();
+	_height = stream->readUint16LE();
+	_data = new byte[_width * _height];
+	stream->read(_data, _width * _height);
 }
 
-bool AnimFrame::PixelHit(const Common::Point &point) const {
-	if (point.x < 0 || point.x >= Width || point.y < 0 || point.y >= Height) {
+bool AnimFrame::pixelHit(const Common::Point &point) const {
+	if (point.x < 0 || point.x >= _width || point.y < 0 || point.y >= _height) {
 		return false;
 	}
-	return Data[point.y * Width + point.x] != 0;
+	return _data[point.y * _width + point.x] != 0;
 }
 
-Common::Point AnimFrame::GetBottomMiddleOffset(uint16 scale) const {
+Common::Point AnimFrame::getBottomMiddleOffset(uint16 scale) const {
 	if (scale == 100) {
-		return Common::Point(Width / 2, Height);
+		return Common::Point(_width / 2, _height);
 	}
 	return Common::Point(
-		Width * scale / 200, // scaled width / 2
-		Height * scale / 100);
+		_width * scale / 200, // scaled width / 2
+		_height * scale / 100);
 }
 
-Sprite AnimFrame::AsSprite() {
+Sprite AnimFrame::asSprite() {
 	// TODO: Shows that the separation makes little sense
 	Sprite result;
-	result.Data.resize(Width * Height);
-	result.Data.assign(Data, Data + Width * Height);
-	result.Width = Width;
-	result.Height = Height;
+	result._data.resize(_width * _height);
+	result._data.assign(_data, _data + _width * _height);
+	result._width = _width;
+	result._height = _height;
 	return result;
 }
 
 AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
-	AnimationReader animReader(Blob);
+	AnimationReader animReader(_blob);
 	uint16 numAnimations = animReader.readNumAnimations();
 	debug("Number of animation frames for background object: %.4x", numAnimations);
 
@@ -1513,19 +1509,19 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 
 	AnimFrame result;
 
-	result.ReadFromStream(animReader._readStream);
+	result.readFromStream(animReader._readStream);
 	return result;
 	// TODO: Think about proper memory management
 }
 
 AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	// Mode 0: get current frame without advancing (advancement happens in View1::tick)
-	uint16 offset = advanceAnimFrame(Blob, false, 0x0);
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(Blob.data(), Blob.size());
+	uint16 offset = advanceAnimFrame(_blob, false, 0x0);
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(_blob.data(), _blob.size());
 	offset += 6;
 	stream->seek(offset);
 	AnimFrame result;
-	result.ReadFromStream(stream);
+	result.readFromStream(stream);
 	return result;
 }
 
@@ -1718,12 +1714,12 @@ uint16 BackgroundAnimationBlob::getAnimFrameCount(Common::Array<uint8> &blob) {
 int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int numSamplesRead = 0;
 	for (int i = 0; i < numSamples; i++) {
-		if (pos >= _data.size()) {
+		if (_pos >= _data.size()) {
 			return numSamplesRead;
 		}
-		buffer[i] = static_cast<int16>((static_cast<int>(_data[pos]) - 128) << 8);
+		buffer[i] = static_cast<int16>((static_cast<int>(_data[_pos]) - 128) << 8);
 		numSamplesRead++;
-		pos++;
+		_pos++;
 	}
 	return numSamplesRead;
 }
@@ -1737,7 +1733,7 @@ int MacsAudioStream::getRate() const {
 }
 
 bool MacsAudioStream::endOfData() const {
-	return pos >= _data.size();
+	return _pos >= _data.size();
 }
 
 bool MacsAudioStream::seek(const Audio::Timestamp &where) {
@@ -1746,7 +1742,7 @@ bool MacsAudioStream::seek(const Audio::Timestamp &where) {
 		return false;
 	}
 
-	pos = targetPos;
+	_pos = targetPos;
 	return true;
 }
 

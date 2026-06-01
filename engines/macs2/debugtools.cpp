@@ -947,7 +947,7 @@ static void showAnimationsWindow() {
 		ImGui::Text("BG Anims: %u", g_engine->_numBackgroundAnimations);
 		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
 			BackgroundAnimation &a = g_engine->_backgroundAnimations[i];
-			ImGui::Text("  [%d] pos=(%u,%u) frames=%u cur=%u", i, a.X, a.Y, a.numFrames, a.FrameIndex);
+			ImGui::Text("  [%d] pos=(%u,%u) frames=%u cur=%u", i, a._x, a._y, a._numFrames, a._frameIndex);
 		}
 	}
 	ImGui::End();
@@ -1002,23 +1002,23 @@ static void showSceneMapsWindow() {
 				// Draw pathfinding point nodes and connections
 				for (int i = 0; i < 16; i++) {
 					PathfindingPoint &pt = g_engine->pathfindingPoints[i];
-					if (pt.Position.x >= 0 && pt.Position.x < 320 && pt.Position.y >= 0 && pt.Position.y < 200) {
+					if (pt._position.x >= 0 && pt._position.x < 320 && pt._position.y >= 0 && pt._position.y < 200) {
 						// Draw cross at node
 						for (int d = -2; d <= 2; d++) {
-							int px = pt.Position.x + d, py = pt.Position.y;
+							int px = pt._position.x + d, py = pt._position.y;
 							if (px >= 0 && px < 320)
 								overlayComposite.setPixel(px, py, 0xFF);
-							px = pt.Position.x;
-							py = pt.Position.y + d;
+							px = pt._position.x;
+							py = pt._position.y + d;
 							if (py >= 0 && py < 200)
 								overlayComposite.setPixel(px, py, 0xFF);
 						}
 						// Draw connections
-						for (uint8 adj : pt.adjacentPoints) {
+						for (uint8 adj : pt._adjacentPoints) {
 							if (adj == 0 || adj > 16)
 								continue;
 							PathfindingPoint &other = g_engine->pathfindingPoints[adj - 1];
-							overlayComposite.drawLine(pt.Position.x, pt.Position.y, other.Position.x, other.Position.y, 0xFE);
+							overlayComposite.drawLine(pt._position.x, pt._position.y, other._position.x, other._position.y, 0xFE);
 						}
 					}
 				}
@@ -1084,10 +1084,10 @@ static void showSceneMapsWindow() {
 					ImVec2 imgOrigin = ImGui::GetItemRectMin();
 					for (int i = 0; i < 16; i++) {
 						PathfindingPoint &pt = g_engine->pathfindingPoints[i];
-						if (pt.Position.x >= 0 && pt.Position.x < 320 && pt.Position.y >= 0 && pt.Position.y < 200) {
+						if (pt._position.x >= 0 && pt._position.x < 320 && pt._position.y >= 0 && pt._position.y < 200) {
 							char buf[4];
 							snprintf(buf, sizeof(buf), "%d", i);
-							ImVec2 pos(imgOrigin.x + pt.Position.x * scale + 4, imgOrigin.y + pt.Position.y * scale - 4);
+							ImVec2 pos(imgOrigin.x + pt._position.x * scale + 4, imgOrigin.y + pt._position.y * scale - 4);
 							dl->AddText(pos, IM_COL32(255, 255, 0, 255), buf);
 						}
 					}
@@ -1213,7 +1213,7 @@ static void showSceneMapsWindow() {
 			for (int i = 0; i < (int)g_engine->pathfindingPoints.size(); i++) {
 				const PathfindingPoint &pt = g_engine->pathfindingPoints[i];
 				// Check reachability from character
-				bool reachable = protagonist && protagonist->isPathWalkable(charPos, pt.Position);
+				bool reachable = protagonist && protagonist->isPathWalkable(charPos, pt._position);
 				// Check if node is in current path
 				bool inPath = false;
 				if (protagonist) {
@@ -1227,14 +1227,14 @@ static void showSceneMapsWindow() {
 
 				ImVec4 color = inPath ? ImVec4(0, 1, 0, 1) : reachable ? ImVec4(0.5f, 1, 0.5f, 1)
 																	   : ImVec4(0.7f, 0.7f, 0.7f, 1);
-				ImGui::TextColored(color, "%2d: (%3d,%3d)", i, pt.Position.x, pt.Position.y);
+				ImGui::TextColored(color, "%2d: (%3d,%3d)", i, pt._position.x, pt._position.y);
 				ImGui::SameLine(150);
 				// Adjacency
 				Common::String adj;
-				for (uint j = 0; j < pt.adjacentPoints.size(); j++) {
+				for (uint j = 0; j < pt._adjacentPoints.size(); j++) {
 					if (j > 0)
 						adj += ",";
-					adj += Common::String::format("%d", pt.adjacentPoints[j] - 1);
+					adj += Common::String::format("%d", pt._adjacentPoints[j] - 1);
 				}
 				ImGui::TextColored(color, "-> [%s]%s%s",
 								   adj.empty() ? "isolated" : adj.c_str(),
@@ -1277,13 +1277,13 @@ static void showImageResourcesWindow() {
 			// Layout all image resources into a 320-wide surface
 			uint16 x = 0, y = 0, maxH = 0, totalH = 0;
 			for (const AnimFrame &f : g_engine->_imageResources) {
-				if (x + f.Width > 320) {
+				if (x + f._width > 320) {
 					y += maxH;
 					x = 0;
 					maxH = 0;
 				}
-				maxH = MAX(maxH, f.Height);
-				x += f.Width;
+				maxH = MAX(maxH, f._height);
+				x += f._width;
 			}
 			totalH = y + maxH;
 			if (totalH == 0)
@@ -1297,21 +1297,21 @@ static void showImageResourcesWindow() {
 			y = 0;
 			maxH = 0;
 			for (const AnimFrame &f : g_engine->_imageResources) {
-				if (x + f.Width > 320) {
+				if (x + f._width > 320) {
 					y += maxH;
 					x = 0;
 					maxH = 0;
 				}
 				// Blit raw pixel data
-				for (uint16 row = 0; row < f.Height && (y + row) < totalH; row++) {
-					for (uint16 col = 0; col < f.Width; col++) {
-						byte pixel = f.Data[row * f.Width + col];
+				for (uint16 row = 0; row < f._height && (y + row) < totalH; row++) {
+					for (uint16 col = 0; col < f._width; col++) {
+						byte pixel = f._data[row * f._width + col];
 						if (pixel != 0)
 							imgSurface.setPixel(x + col, y + row, pixel);
 					}
 				}
-				maxH = MAX(maxH, f.Height);
-				x += f.Width;
+				maxH = MAX(maxH, f._height);
+				x += f._width;
 			}
 
 			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal, 256);
