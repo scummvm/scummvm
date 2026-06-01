@@ -132,7 +132,7 @@ void Macs2Engine::readResourceFile() {
 
 	// Read the image resources (33 cursor/icon entries)
 	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300 + 0x800);
-	ReadImageResources(_fileStream);
+	readImageResources(_fileStream);
 	// Font 1 follows immediately after the 33 image resource entries.
 	// Original: 4-byte size field (skipped) + 2-byte glyph count + glyph data.
 	uint32 font1SizeField = _fileStream->readUint32LE(); // skip size field
@@ -146,13 +146,13 @@ void Macs2Engine::readResourceFile() {
 	numGlyphs = font1GlyphCount;
 
 	_fileStream->seek(0xC, SEEK_SET);
-	Scenes::instance().CurrentActorIndex = _fileStream->readUint16LE();
+	Scenes::instance()._currentActorIndex = _fileStream->readUint16LE();
 	uint16 firstSceneIndex = _fileStream->readUint16LE();
-	Scenes::instance().CurrentSceneIndex = firstSceneIndex;
-	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(firstSceneIndex, _fileStream);
-	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(firstSceneIndex, _fileStream);
-	Scenes::instance().CurrentSceneSpecialAnimOffsets = Scenes::instance().ReadSpecialAnimsOffsets(firstSceneIndex, _fileStream);
-	_scriptExecutor->setScript(Scenes::instance().CurrentSceneScript);
+	Scenes::instance()._currentSceneIndex = firstSceneIndex;
+	Scenes::instance()._currentSceneScript = Scenes::instance().readSceneScript(firstSceneIndex, _fileStream);
+	Scenes::instance()._currentSceneStrings = Scenes::instance().readSceneStrings(firstSceneIndex, _fileStream);
+	Scenes::instance()._currentSceneSpecialAnimOffsets = Scenes::instance().readSpecialAnimsOffsets(firstSceneIndex, _fileStream);
+	_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
 	// Load object data (512 entries max, matching original loadResourceFile)
 	for (int i = 1; i < 0x200; i++) {
@@ -168,8 +168,8 @@ void Macs2Engine::readResourceFile() {
 
 		_fileStream->seek(objectOffset, SEEK_SET);
 		GameObject *gameObject = new GameObject();
-		gameObject->Index = i;
-		gameObject->DataOffset = objectOffset;
+		gameObject->_index = i;
+		gameObject->_dataOffset = objectOffset;
 
 		// This loading happens around the l0037_082D: mark
 		uint16 x = _fileStream->readUint16LE();
@@ -233,7 +233,7 @@ void Macs2Engine::readResourceFile() {
 		gameObject->Script.resize(scriptLength);
 		_fileStream->read(gameObject->Script.data(), scriptLength);
 
-		GameObjects::instance().Objects.push_back(gameObject);
+		GameObjects::instance()._objects.push_back(gameObject);
 	}
 
 	// Test implementations below
@@ -343,7 +343,7 @@ void Macs2Engine::readResourceFile() {
 	}
 
 	// Load the data for a border part
-	AnimFrame &borderFrame = imageResources[imageResources.size() - 2];
+	AnimFrame &borderFrame = _imageResources[_imageResources.size() - 2];
 	_borderSprite.Data.assign(borderFrame.Data, borderFrame.Data + borderFrame.Width * borderFrame.Height);
 	_borderSprite.Width = borderFrame.Width;
 	_borderSprite.Height = borderFrame.Height;
@@ -364,7 +364,7 @@ void Macs2Engine::readResourceFile() {
 	_borderHighlightSprite.Height = _borderHighlightHeight;
 	_borderHighlightSprite.Data = Common::Array<uint8>(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
 
-	AnimFrame &shadowFrame = imageResources[imageResources.size() - 3];
+	AnimFrame &shadowFrame = _imageResources[_imageResources.size() - 3];
 	_borderShadowSprite.Data.assign(shadowFrame.Data, shadowFrame.Data + shadowFrame.Width * shadowFrame.Height);
 	_borderShadowSprite.Width = shadowFrame.Width;
 	_borderShadowSprite.Height = shadowFrame.Height;
@@ -507,7 +507,7 @@ void Macs2Engine::readExecutable() {
 	exeFileStream->read(inventoryIconIndices.data(), 12);
 }
 
-void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
+void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 	// Offset 50F5 in scene data
 	// TODO: Remove the non-blob implementation
 	_numBackgroundAnimations = stream->readUint16LE();
@@ -566,7 +566,7 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 	}
 }
 
-void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
+void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
 	// l0037_3355:
 	for (int i = 0; i < 0x21; i++) {
 		uint32 length = stream->readUint32LE();
@@ -577,7 +577,7 @@ void Macs2Engine::ReadImageResources(Common::MemoryReadStream *stream) {
 		// Move forward to skip the first word
 		stream->seek(0x2, SEEK_CUR);
 		frame.ReadFromStream(stream);
-		imageResources.push_back(frame);
+		_imageResources.push_back(frame);
 		debug("W: %u, H: %u", frame.Width, frame.Height);
 	}
 }
@@ -592,9 +592,9 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	DebugMan.addDebugChannel(DEBUG_RLE, "rle", "Verbose RLE decoding log");
 	DebugMan.addDebugChannel(DEBUG_SV, "sv", "Verbose script debugging log");
 	// We have a fixed 0x10 number of entries
-	HotspotOverrides.resize(0x11);
-	for (uint i = 0; i < HotspotOverrides.size(); i++) {
-		HotspotOverrides[i] = 0xFFFF;
+	_hotspotOverrides.resize(0x11);
+	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
+		_hotspotOverrides[i] = 0xFFFF;
 	}
 	pathfindingValueRemaps.resize(0x100);
 	for (uint i = 0; i < pathfindingValueRemaps.size(); i++) {
@@ -724,7 +724,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->read(array50D5.data(), 0x20);
 
 	// TODO: Remove the now superfluous one
-	ReadBackgroundAnimations(_fileStream);
+	readBackgroundAnimations(_fileStream);
 
 	// Offset 51F7h
 	numPathfindingPoints = _fileStream->readUint16LE();
@@ -772,33 +772,33 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->_continueScriptAfterUI = false;
 	currentView->currentSpeechActData = SpeechActData();
 	currentView->_isShowingInventory = false;
-	currentView->activeInventoryItem = nullptr;
-	currentView->isShowingMainMenu = false;
+	currentView->_activeInventoryItem = nullptr;
+	currentView->_isShowingMainMenu = false;
 	currentView->clearOverlayTextEntries();
 	_scriptExecutor->_inventoryActionFlag = false;
 	_scriptExecutor->_inventoryCombineFlag = false;
 	_scriptExecutor->_overlayTextStageActive = false;
 
 	// Stop all characters from sending leftover events
-	for (auto currentCharacter : currentView->characters) {
-		currentCharacter->ExecuteScriptOnFinishLerp = false;
+	for (auto currentCharacter : currentView->_characters) {
+		currentCharacter->_executeScriptOnFinishLerp = false;
 	}
-	currentView->characters.clear();
-	for (auto currentObject : GameObjects::instance().Objects) {
+	currentView->_characters.clear();
+	for (auto currentObject : GameObjects::instance()._objects) {
 		if (currentObject->SceneIndex == newSceneIndex) {
 			Character *c = new Character();
-			c->GameObject = currentObject;
-			currentView->characters.push_back(c);
+			c->_gameObject = currentObject;
+			currentView->_characters.push_back(c);
 		}
 	}
 
 	// Load the script and execute it
-	Scenes::instance().LastSceneIndex = Scenes::instance().CurrentSceneIndex;
-	Scenes::instance().CurrentSceneIndex = newSceneIndex;
-	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(newSceneIndex, _fileStream);
-	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(newSceneIndex, _fileStream);
-	Scenes::instance().CurrentSceneSpecialAnimOffsets = Scenes::instance().ReadSpecialAnimsOffsets(newSceneIndex, _fileStream);
-	_scriptExecutor->setScript(Scenes::instance().CurrentSceneScript);
+	Scenes::instance()._lastSceneIndex = Scenes::instance()._currentSceneIndex;
+	Scenes::instance()._currentSceneIndex = newSceneIndex;
+	Scenes::instance()._currentSceneScript = Scenes::instance().readSceneScript(newSceneIndex, _fileStream);
+	Scenes::instance()._currentSceneStrings = Scenes::instance().readSceneStrings(newSceneIndex, _fileStream);
+	Scenes::instance()._currentSceneSpecialAnimOffsets = Scenes::instance().readSpecialAnimsOffsets(newSceneIndex, _fileStream);
+	_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
 	if (executeScript) {
 		// Start the execution
@@ -823,12 +823,12 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 		}
 		address = array520D[resourceIndex - 1];
 	} else {
-		GameObject *object = GameObjects::GetObjectByIndex(executingObjectID);
-		if (object == nullptr || object->DataOffset == 0) {
+		GameObject *object = GameObjects::getObjectByIndex(executingObjectID);
+		if (object == nullptr || object->_dataOffset == 0) {
 			_fileStream->seek(oldPos, SEEK_SET);
 			return false;
 		}
-		_fileStream->seek(object->DataOffset + 0x189 + (resourceIndex - 1) * 4, SEEK_SET);
+		_fileStream->seek(object->_dataOffset + 0x189 + (resourceIndex - 1) * 4, SEEK_SET);
 		address = _fileStream->readUint32LE();
 	}
 
@@ -855,7 +855,7 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 	return true;
 }
 
-bool Macs2Engine::FindGlyph(char c, GlyphData &out) const {
+bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 	for (int i = 0; i < numGlyphs; i++) {
 		if (_glyphs[i].ASCII == c) {
 			out = _glyphs[i];
@@ -873,7 +873,7 @@ uint16 Macs2Engine::getWalkabilityAt(uint16 x, uint16 y) {
 	if (value >= 0xC8 && value <= 0xEF) {
 		// Pathfinding override range: check override table
 		uint16 overrideResult;
-		if (GetPathfindingOverride(value, overrideResult)) {
+		if (getPathfindingOverride(value, overrideResult)) {
 			return overrideResult;
 		}
 		return 0xFF; // Override disabled = non-walkable
@@ -971,8 +971,8 @@ applyPush:
 	}
 }
 
-bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16 &result) {
-	for (auto current : PathfindingOverrides) {
+bool Macs2Engine::getPathfindingOverride(uint16 index, uint16 &result) {
+	for (auto current : _pathfindingOverrides) {
 		if (current.Index == index && current.Active) {
 			result = current.OverrideValue;
 			return true;
@@ -980,27 +980,27 @@ bool Macs2Engine::GetPathfindingOverride(uint16 index, uint16 &result) {
 	}
 	return false;
 }
-void Macs2Engine::SetPathfindingOverride(uint16 index, uint16 overrideValue) {
-	RemovePathfindingOverride(index);
+void Macs2Engine::setPathfindingOverride(uint16 index, uint16 overrideValue) {
+	removePathfindingOverride(index);
 	PathfindingAreaOverride override;
 	override.Active = true;
 	override.Index = index;
 	override.OverrideValue = overrideValue;
-	PathfindingOverrides.push_back(override);
+	_pathfindingOverrides.push_back(override);
 }
 
-uint8 Macs2Engine::GetPathfindingOverride2(uint16 index) {
+uint8 Macs2Engine::getPathfindingOverride2(uint16 index) {
 	if (index < AREA_OVERRIDE_MIN || index > AREA_OVERRIDE_MAX) {
 		return 0;
 	}
 	return _areaOverrides[index - AREA_OVERRIDE_MIN];
 }
 
-void Macs2Engine::RemovePathfindingOverride(uint16 index) {
-	for (uint i = 0; i < PathfindingOverrides.size(); i++) {
-		PathfindingAreaOverride &current = PathfindingOverrides[i];
+void Macs2Engine::removePathfindingOverride(uint16 index) {
+	for (uint i = 0; i < _pathfindingOverrides.size(); i++) {
+		PathfindingAreaOverride &current = _pathfindingOverrides[i];
 		if (current.Index == index) {
-			PathfindingOverrides.remove_at(i);
+			_pathfindingOverrides.remove_at(i);
 			return;
 		}
 	}
@@ -1104,8 +1104,8 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 	do {
 		uint16 lookup = a[i - 1];
 		if (lookup == firstLookup) {
-			if (HotspotOverrides[i] != 0xFFFF) {
-				return 0x800 + HotspotOverrides[i];
+			if (_hotspotOverrides[i] != 0xFFFF) {
+				return 0x800 + _hotspotOverrides[i];
 			}
 			return 0x800 + i;
 		}
@@ -1215,14 +1215,14 @@ int Macs2Engine::MeasureString(Common::String &s) {
 	bool found = false;
 	uint16 widestGlyph = 0;
 	for (auto current = s.begin(); current != s.end(); current++) {
-		found = FindGlyph(*current, currentGlyph);
+		found = findGlyph(*current, currentGlyph);
 		if (found) {
 			widestGlyph = MAX(widestGlyph, currentGlyph.Width);
 		}
 	}
 
 	for (auto current = s.begin(); current != s.end(); current++) {
-		found = FindGlyph(*current, currentGlyph);
+		found = findGlyph(*current, currentGlyph);
 		if (!found) {
 			sum += widestGlyph;
 		} else {
@@ -1232,12 +1232,12 @@ int Macs2Engine::MeasureString(Common::String &s) {
 	return sum;
 }
 
-int Macs2Engine::MeasureStringsVertically(Common::StringArray sa) {
+int Macs2Engine::measureStringsVertically(Common::StringArray sa) {
 	// This is implemented around l0037_B318:
 	return sa.size() * (maxGlyphHeight + 2);
 }
 
-int Macs2Engine::MeasureStrings(Common::StringArray sa) {
+int Macs2Engine::measureStrings(Common::StringArray sa) {
 	int max = -1;
 	for (auto iter = sa.begin(); iter != sa.end(); iter++) {
 		max = MAX(MeasureString(*iter), max);
@@ -1281,7 +1281,7 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 		return;
 	}
 
-	GameObject *go = GameObjects::instance().GetObjectByIndex(objectIndex);
+	GameObject *go = GameObjects::instance().getObjectByIndex(objectIndex);
 	if (go == nullptr) {
 		warning("Tried to load animation for invalid object %u", objectIndex);
 		return;
@@ -1374,7 +1374,7 @@ Common::String Macs2Engine::getGameId() const {
 
 Common::Error Macs2Engine::run() {
 
-	GameObjects::instance().Init();
+	GameObjects::instance().init();
 	readResourceFile();
 	readExecutable();
 
@@ -1426,13 +1426,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		return Common::kReadingFailed;
 
 	// Core indices
-	s.syncAsSint32LE(Scenes::instance().CurrentActorIndex);
-	s.syncAsSint32LE(Scenes::instance().CurrentSceneIndex);
+	s.syncAsSint32LE(Scenes::instance()._currentActorIndex);
+	s.syncAsSint32LE(Scenes::instance()._currentSceneIndex);
 
 	View1 *currentView = (View1 *)findView("View1");
 	if (s.isLoading()) {
-		currentView->started = true;
-		changeScene(Scenes::instance().CurrentSceneIndex, false);
+		currentView->_started = true;
+		changeScene(Scenes::instance()._currentSceneIndex, false);
 	}
 
 	// Script variables (2048 × 4 bytes = 0x2000 bytes, matching original)
@@ -1474,7 +1474,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// All 512 objects: position, scene, orientation, unknown
-	for (auto obj : GameObjects::instance().Objects) {
+	for (auto obj : GameObjects::instance()._objects) {
 		s.syncAsUint16LE(obj->Position.x);
 		s.syncAsUint16LE(obj->Position.y);
 		s.syncAsUint16LE(obj->SceneIndex);
@@ -1497,26 +1497,26 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// Characters in current scene
 	uint32 numCharacters = 0;
 	if (s.isSaving())
-		numCharacters = currentView->characters.size();
+		numCharacters = currentView->_characters.size();
 	s.syncAsUint32LE(numCharacters);
 	if (s.isLoading())
-		currentView->characters.clear();
+		currentView->_characters.clear();
 	for (uint32 i = 0; i < numCharacters; i++) {
 		uint32 characterIndex = 0;
 		if (s.isSaving())
-			characterIndex = currentView->characters[i]->GameObject->Index;
+			characterIndex = currentView->_characters[i]->_gameObject->_index;
 		s.syncAsUint32LE(characterIndex);
 		if (s.isLoading()) {
 			Character *c = new Character();
-			c->GameObject = GameObjects::instance().Objects[characterIndex - 1];
-			currentView->characters.push_back(c);
+			c->_gameObject = GameObjects::instance()._objects[characterIndex - 1];
+			currentView->_characters.push_back(c);
 		}
 	}
 
 	// Rebuild inventory on load
 	if (s.isLoading()) {
-		currentView->SetInventorySource(GameObjects::instance().GetProtagonistObject());
-		currentView->UpdateCursor();
+		currentView->setInventorySource(GameObjects::instance().getProtagonistObject());
+		currentView->updateCursor();
 		currentView->_paletteDirty = true;
 	}
 
@@ -1534,12 +1534,12 @@ Common::Error Macs2Engine::loadOriginalSave(Common::SeekableReadStream *stream) 
 	stream->skip(21);
 
 	// Current actor index and scene index (2 bytes each, LE)
-	Scenes::instance().CurrentActorIndex = stream->readUint16LE();
-	Scenes::instance().CurrentSceneIndex = stream->readUint16LE();
+	Scenes::instance()._currentActorIndex = stream->readUint16LE();
+	Scenes::instance()._currentSceneIndex = stream->readUint16LE();
 
 	View1 *currentView = (View1 *)findView("View1");
-	currentView->started = true;
-	changeScene(Scenes::instance().CurrentSceneIndex, false);
+	currentView->_started = true;
+	changeScene(Scenes::instance()._currentSceneIndex, false);
 
 	// Script variables: 0x2000 bytes = 2048 vars × (uint16 a + uint16 b)
 	for (uint i = 0; i < _scriptExecutor->_variables.size(); i++) {
@@ -1645,16 +1645,16 @@ Common::Error Macs2Engine::loadOriginalSave(Common::SeekableReadStream *stream) 
 	// For now, we restore what we can and let changeScene rebuild the rest.
 
 	// Rebuild view state
-	currentView->characters.clear();
-	for (auto obj : GameObjects::instance().Objects) {
-		if (obj->SceneIndex == (uint16)Scenes::instance().CurrentSceneIndex) {
+	currentView->_characters.clear();
+	for (auto obj : GameObjects::instance()._objects) {
+		if (obj->SceneIndex == (uint16)Scenes::instance()._currentSceneIndex) {
 			Character *c = new Character();
-			c->GameObject = obj;
-			currentView->characters.push_back(c);
+			c->_gameObject = obj;
+			currentView->_characters.push_back(c);
 		}
 	}
-	currentView->SetInventorySource(GameObjects::instance().GetProtagonistObject());
-	currentView->UpdateCursor();
+	currentView->setInventorySource(GameObjects::instance().getProtagonistObject());
+	currentView->updateCursor();
 	currentView->_paletteDirty = true;
 
 	return Common::kNoError;
@@ -1738,19 +1738,19 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	debug("Number of animation frames for background object: %.4x", numAnimations);
 
 	// TODO: Check consistency between 0 and 1 based indexing
-	animReader.SeekToAnimation((index - 1) % numAnimations);
+	animReader.seekToAnimation((index - 1) % numAnimations);
 	// testReader.SeekToAnimation(0);
 	// Skip ahead to the width and height
-	animReader.readStream->seek(6, SEEK_CUR);
+	animReader._readStream->seek(6, SEEK_CUR);
 
 	AnimFrame result;
 
-	result.ReadFromStream(animReader.readStream);
+	result.ReadFromStream(animReader._readStream);
 	return result;
 	// TODO: Think about proper memory management
 }
 
-AnimFrame BackgroundAnimationBlob::GetCurrentFrame() {
+AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	// Mode 0: get current frame without advancing (advancement happens in View1::tick)
 	uint16 offset = advanceAnimFrame(Blob, false, 0x0);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(Blob.data(), Blob.size());

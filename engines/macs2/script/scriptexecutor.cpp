@@ -241,7 +241,7 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 		out1 = (_mouseMode == MouseMode::Talk) ? _interactedObjectID : 0;
 		break;
 	case 0x04: {
-		const Common::Point &charPos = GetCharPosition();
+		const Common::Point &charPos = getCharPosition();
 		out1 = getAreaAtPoint(charPos.x, charPos.y);
 		break;
 	}
@@ -271,12 +271,12 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 		out1 = _pathWalkableResult ? 1 : 0;
 		break;
 	case 0x24: {
-		const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 		out1 = actor ? actor->Position.x : 0;
 		break;
 	}
 	case 0x25: {
-		const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 		out1 = actor ? actor->Position.y : 0;
 		break;
 	}
@@ -285,7 +285,7 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 		break;
 	case 0x27: {
 		if (_isRepeatRun) {
-			const Common::Point &charPos = GetCharPosition();
+			const Common::Point &charPos = getCharPosition();
 			out1 = getAreaAtPoint(charPos.x, charPos.y);
 		}
 		break;
@@ -298,13 +298,13 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 		break;
 	case 0x2A: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->isShowingMainMenu);
+		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
 		out1 = (_inventoryCombineFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
 	case 0x2B: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->isShowingMainMenu);
+		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
 		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
@@ -312,13 +312,13 @@ void ScriptExecutor::scriptReadValuePair(uint16 &out1, uint16 &out2) {
 		out1 = (_mouseMode == MouseMode::PanelUse) ? _interactedObjectID : 0;
 		break;
 	case 0x2D:
-		out1 = Scenes::instance().CurrentSceneIndex;
+		out1 = Scenes::instance()._currentSceneIndex;
 		break;
 	case 0x2E:
 		out1 = 2;
 		break;
 	case 0x2F:
-		out1 = Scenes::instance().LastSceneIndex;
+		out1 = Scenes::instance()._lastSceneIndex;
 		break;
 	case 0x30:
 		out1 = (_musicEnabled && _soundSystemActive) ? 1 : 0;
@@ -399,7 +399,7 @@ uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	}
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
 	if (result > 199 && result < 0xFA) {
-		uint16 overrideValue = _engine->GetPathfindingOverride2(result);
+		uint16 overrideValue = _engine->getPathfindingOverride2(result);
 		if (overrideValue > 199) {
 			result = overrideValue;
 		}
@@ -465,12 +465,12 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 		}
 		address = _engine->array520D[resourceIndex - 1];
 	} else {
-		GameObject *object = GameObjects::GetObjectByIndex(_executingScriptObjectID);
-		if (object == nullptr || object->DataOffset == 0) {
+		GameObject *object = GameObjects::getObjectByIndex(_executingScriptObjectID);
+		if (object == nullptr || object->_dataOffset == 0) {
 			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectID, resourceIndex);
 			return false;
 		}
-		g_engine->_fileStream->seek(object->DataOffset + objectTableOffset + (resourceIndex - 1) * 4, SEEK_SET);
+		g_engine->_fileStream->seek(object->_dataOffset + objectTableOffset + (resourceIndex - 1) * 4, SEEK_SET);
 		address = g_engine->_fileStream->readUint32LE();
 	}
 
@@ -516,14 +516,14 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 
 	Common::StringArray strings;
 	if (_executingScriptObjectID == 0) {
-		strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, bp2, bp4);
+		strings = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, bp2, bp4);
 	} else {
-		Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
 		strings = g_engine->DecodeStrings(s, bp2, bp4);
 	}
 
 	if (alignRight) {
-		x -= g_engine->MeasureStrings(strings) + 0x12;
+		x -= g_engine->measureStrings(strings) + 0x12;
 	}
 
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
@@ -542,7 +542,7 @@ void ScriptExecutor::endBuffering(bool shouldMark) {
 	_debugBuffer.clear();
 }
 
-void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
+void ScriptExecutor::setVariableValue(uint16 index, uint16 a, uint16 b) {
 	_variables[index].a = a;
 	_variables[index].b = b;
 }
@@ -550,17 +550,17 @@ void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
 void ScriptExecutor::setVariableValue(uint16 index, uint32 value) {
 	uint16 a = static_cast<uint16>(value >> 16);    // High 16 bits
 	uint16 b = static_cast<uint16>(value & 0xFFFF); // Low 16 bits
-	SetVariableValue(index, b, a);
+	setVariableValue(index, b, a);
 }
 
-Common::Point ScriptExecutor::GetCharPosition() {
-	const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+Common::Point ScriptExecutor::getCharPosition() {
+	const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (!actor)
-		actor = GameObjects::GetProtagonistObject();
+		actor = GameObjects::getProtagonistObject();
 	return actor ? actor->Position : Common::Point();
 }
 
-void ScriptExecutor::DumpWholeScript() {
+void ScriptExecutor::dumpWholeScript() {
 	// TODO: Probably should not hard code this, with this in place, the
 	// variable for saving the old position is superfluous
 	setCurrentSceneScriptAt(0);
@@ -658,7 +658,7 @@ void ScriptExecutor::DumpWholeScript() {
 			// TODO: We are assuming that we are dumping the scene script, if not,
 			// we would have to check for the executing object as well
 			Common::Array<Common::String> strings;
-			strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+			strings = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
 
 			for (Common::String &currentLine : strings) {
 				debug("String: %s", currentLine.c_str());
@@ -676,7 +676,7 @@ bool ScriptExecutor::isRelevantObject(const GameObject *obj) const {
 	// In ScummVM, this corresponds to having a non-empty Script array (the script data
 	// lives in the runtime allocation at offset +0x187). The caller already checks Script.size(),
 	// so we just need to confirm the object is initialized (has data offset set).
-	return obj->DataOffset != 0;
+	return obj->_dataOffset != 0;
 }
 
 void ScriptExecutor::step() {
@@ -706,7 +706,7 @@ void ScriptExecutor::step() {
 						_engine->SetCursorMode(MouseMode::Disabled);
 						View1 *v = (View1 *)_engine->findView("View1");
 						if (v)
-							v->UpdateCursor();
+							v->updateCursor();
 					}
 					return;
 				}
@@ -721,8 +721,8 @@ void ScriptExecutor::step() {
 		}
 	}
 	// Rewind and reset to the scene script after we are done executing
-	_executingObjectIndex = Scenes::instance().CurrentSceneIndex;
-	setScript(Scenes::instance().CurrentSceneScript);
+	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
+	setScript(Scenes::instance()._currentSceneScript);
 	if (_stream && _stream->size() > 0) {
 		_stream->seek(0, SEEK_SET);
 	}
@@ -734,7 +734,7 @@ void ScriptExecutor::step() {
 		_engine->SetCursorMode(_cursorModeBeforeWait);
 		View1 *v = (View1 *)_engine->findView("View1");
 		if (v)
-			v->UpdateCursor();
+			v->updateCursor();
 	}
 }
 
@@ -755,14 +755,14 @@ bool ScriptExecutor::loadNextScript() {
 	GameObject *candidateObject = nullptr;
 	do {
 		_executingObjectIndex++;
-		candidateObject = GameObjects::GetObjectByIndex(_executingObjectIndex);
+		candidateObject = GameObjects::getObjectByIndex(_executingObjectIndex);
 
 		// TODO: Check if this is a valid option
 		if (candidateObject && isRelevantObject(candidateObject)) {
 			if (candidateObject->Script.size() != 0) {
-				_stream = candidateObject->GetScriptStream();
-				_executingScriptObjectID = candidateObject->Index;
-				debug("----- Switching execution to script for object: %.4x", candidateObject->Index);
+				_stream = candidateObject->getScriptStream();
+				_executingScriptObjectID = candidateObject->_index;
+				debug("----- Switching execution to script for object: %.4x", candidateObject->_index);
 				return true;
 			}
 		}
@@ -775,8 +775,8 @@ bool ScriptExecutor::loadNextScript() {
 		// We need to start again at the scene object
 		_isSceneInitRun = false;
 		_repeatRunFlag = true;
-		_executingObjectIndex = Scenes::instance().CurrentSceneIndex;
-		_stream = Scenes::instance().CurrentSceneScript;
+		_executingObjectIndex = Scenes::instance()._currentSceneIndex;
+		_stream = Scenes::instance()._currentSceneScript;
 		if (!_stream || _stream->size() == 0) {
 			return false;
 		}
@@ -836,7 +836,7 @@ void Script::ScriptExecutor::scriptOpcode0x02() {
 	scriptReadValuePair(value2, value3);
 	value2 |= value1;
 	value3 |= 0x00;
-	SetVariableValue(variableIndex, value2, value3);
+	setVariableValue(variableIndex, value2, value3);
 }
 
 void Script::ScriptExecutor::scriptOpcode0x03() {
@@ -966,15 +966,15 @@ bool Script::ScriptExecutor::scriptOpcode0x0B() {
 		warning("Opcode 0x0B: invalid object %u", objectID);
 		return false;
 	}
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Opcode 0x0B: missing object %u", objectID);
 		return false;
 	}
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	const uint16 currentScene = Scenes::instance().CurrentSceneIndex;
-	const uint16 actorIndex = Scenes::instance().CurrentActorIndex;
+	const uint16 currentScene = Scenes::instance()._currentSceneIndex;
+	const uint16 actorIndex = Scenes::instance()._currentActorIndex;
 
 	// Step 1: Remove from render list if object was visible in current scene.
 	// Original checks: object in current scene, OR in protagonist's inventory,
@@ -985,17 +985,17 @@ bool Script::ScriptExecutor::scriptOpcode0x0B() {
 			wasInCurrentScene = true; // was in protagonist's inventory
 		}
 		if (!wasInCurrentScene && object->SceneIndex > 0x400) {
-			GameObject *parent = GameObjects::GetObjectByIndex(object->SceneIndex - 0x400);
+			GameObject *parent = GameObjects::getObjectByIndex(object->SceneIndex - 0x400);
 			if (parent != nullptr && parent->SceneIndex == currentScene) {
 				wasInCurrentScene = true; // was in a container in current scene
 			}
 		}
 		if (wasInCurrentScene) {
-			Character *c = currentView->GetCharacterByIndex(objectID);
+			Character *c = currentView->getCharacterByIndex(objectID);
 			if (c != nullptr) {
-				int idx = currentView->GetCharacterArrayIndex(c);
+				int idx = currentView->getCharacterArrayIndex(c);
 				if (idx >= 0)
-					currentView->characters.remove_at(idx);
+					currentView->_characters.remove_at(idx);
 			}
 		}
 	}
@@ -1011,20 +1011,20 @@ bool Script::ScriptExecutor::scriptOpcode0x0B() {
 			isInCurrentScene = true; // now in protagonist's inventory
 		}
 		if (!isInCurrentScene && sceneID > 0x400) {
-			GameObject *parent = GameObjects::GetObjectByIndex(sceneID - 0x400);
+			GameObject *parent = GameObjects::getObjectByIndex(sceneID - 0x400);
 			if (parent != nullptr && parent->SceneIndex == currentScene) {
 				isInCurrentScene = true; // now in a container in current scene
 			}
 		}
 		if (isInCurrentScene && sceneID == currentScene) {
 			// Add as character to render list
-			Character *c = currentView->GetCharacterByIndex(objectID);
+			Character *c = currentView->getCharacterByIndex(objectID);
 			if (c == nullptr) {
 				c = new Character();
-				c->GameObject = object;
-				currentView->characters.push_back(c);
+				c->_gameObject = object;
+				currentView->_characters.push_back(c);
 			}
-			c->SetPosition(Common::Point(x, y));
+			c->setPosition(Common::Point(x, y));
 		}
 	}
 
@@ -1032,19 +1032,19 @@ bool Script::ScriptExecutor::scriptOpcode0x0B() {
 	if (sceneID == actorIndex + 0x400) {
 		// Moved into protagonist's inventory
 		bool alreadyInInventory = false;
-		for (auto item : currentView->inventoryItems) {
-			if (item->Index == objectID) {
+		for (auto item : currentView->_inventoryItems) {
+			if (item->_index == objectID) {
 				alreadyInInventory = true;
 				break;
 			}
 		}
 		if (!alreadyInInventory)
-			currentView->inventoryItems.push_back(object);
+			currentView->_inventoryItems.push_back(object);
 	} else {
 		// Remove from inventory if it was there
-		for (uint i = 0; i < currentView->inventoryItems.size(); i++) {
-			if (currentView->inventoryItems[i]->Index == objectID) {
-				currentView->inventoryItems.remove_at(i);
+		for (uint i = 0; i < currentView->_inventoryItems.size(); i++) {
+			if (currentView->_inventoryItems[i]->_index == objectID) {
+				currentView->_inventoryItems.remove_at(i);
 				break;
 			}
 		}
@@ -1055,7 +1055,7 @@ bool Script::ScriptExecutor::scriptOpcode0x0B() {
 	if (object->Blobs.empty()) {
 		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
 			_engine->SetCursorMode(MouseMode::Use);
-			currentView->UpdateCursor();
+			currentView->updateCursor();
 		}
 		// Original also rewrites the saved (pre-wait) cursor mode: 0x17 -> 0x15.
 		if (_interactedObjectID == objectID + 0x400 && _savedPickupMouseMode == MouseMode::UseInventory) {
@@ -1127,9 +1127,9 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0D() {
 
 	Common::Array<Common::String> strings;
 	if (_executingScriptObjectID == 0) {
-		strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+		strings = g_engine->DecodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
 	} else {
-		Common::MemoryReadStream *s = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
 		strings = g_engine->DecodeStrings(s, offset, numLines);
 	}
 
@@ -1138,7 +1138,7 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x0D() {
 		   objectID, x, y, side, offset, numLines, _executingScriptObjectID, joinDebugStrings(strings).c_str());
 
 	_activeDialogueSpeakerObjectID = objectID;
-	currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
+	currentView->showSpeechAct(objectID, strings, Common::Point(x, y), side);
 	_isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
@@ -1156,29 +1156,29 @@ bool Script::ScriptExecutor::scriptOpcode0x10() {
 	int16 y = (int16)scriptReadValue16();
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	Character *c = currentView ? currentView->GetCharacterByIndex(objectID) : nullptr;
+	Character *c = currentView ? currentView->getCharacterByIndex(objectID) : nullptr;
 	if (c == nullptr) {
 		warning("Ignoring walk-to for missing character %u", objectID);
 		return false;
 	}
 
 	Common::Point target(x, y);
-	Common::Point current = c->GetPosition();
+	Common::Point current = c->getPosition();
 
 	// Check if direct path is walkable (like isPathWalkable in the original)
 	if (c->isPathWalkable(current, target)) {
 		// Direct path is clear - just lerp straight there
-		c->StartLerpTo(target, 1000);
-	} else if (c->IsWalkable(target)) {
+		c->startLerpTo(target, 1000);
+	} else if (c->isWalkable(target)) {
 		// Target is walkable but no direct path - use A* pathfinding
-		c->Path.clear();
-		c->PathFinalDestination = target;
+		c->_path.clear();
+		c->_pathFinalDestination = target;
 		if (c->calculatePath(target)) {
-			c->CurrentPathIndex = -1;
-			c->IsFollowingPath = c->walkAlongPath();
+			c->_currentPathIndex = -1;
+			c->_isFollowingPath = c->walkAlongPath();
 		} else {
 			// Pathfinding failed - walk directly as fallback
-			c->StartLerpTo(target, 1000);
+			c->startLerpTo(target, 1000);
 		}
 	} else {
 		// Target is not walkable - set position directly (no movement)
@@ -1199,7 +1199,7 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x11() {
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
-	GameObject *walkObject = GameObjects::GetObjectByIndex(objectID);
+	GameObject *walkObject = GameObjects::getObjectByIndex(objectID);
 	if (walkObject == nullptr) {
 		warning("Opcode 0x11: missing object %u", objectID);
 		endBuffering(_lastOpcodeTriggeredSkip);
@@ -1212,14 +1212,14 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x11() {
 		return ExecutionResult::ScriptFinished;
 	}
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	Character *c = currentView->GetCharacterByIndex(objectID);
+	Character *c = currentView->getCharacterByIndex(objectID);
 	if (c == nullptr) {
 		// Original: error code 2 (no runtime data). Script execution stops.
 		warning("Opcode 0x11: no character for object %u (no runtime data)", objectID);
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
-	c->RegisterWaitForMovementFinishedEvent();
+	c->registerWaitForMovementFinishedEvent();
 	_requestCallback = false;
 	_isAwaitingCallback = true;
 	endTimer();
@@ -1269,9 +1269,9 @@ void Script::ScriptExecutor::scriptOpcode0x16() {
 	uint16 numLines = readUint16();
 	Common::StringArray lines;
 	if (_executingScriptObjectID == 0) {
-		lines = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
+		lines = _engine->DecodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
 	} else {
-		Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
 		lines = _engine->DecodeStrings(stringsStream, offset, numLines);
 	}
 	debugC(kDebugScript,
@@ -1290,7 +1290,7 @@ ExecutionResult Script::ScriptExecutor::scriptOpcode0x17() {
 	debugC(kDebugScript,
 		   "Opcode 17 choice box: speaker=%u rawPos=(%u,%u) side=%u choiceCount=%u",
 		   speakerObjectID, x, y, side, _dialogueChoices.size());
-	currentView->ShowDialogueChoice(speakerObjectID, _dialogueChoices, Common::Point(x, y), side);
+	currentView->showDialogueChoice(speakerObjectID, _dialogueChoices, Common::Point(x, y), side);
 	_requestCallback = false;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
 
@@ -1313,8 +1313,8 @@ bool Script::ScriptExecutor::scriptOpcode0x19() {
 	uint32 objectIndex = scriptReadValue32() - 0x400;
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	Character *actor = currentView->GetCharacterByIndex(actorIndex);
-	GameObject *targetObject = GameObjects::GetObjectByIndex(objectIndex);
+	Character *actor = currentView->getCharacterByIndex(actorIndex);
+	GameObject *targetObject = GameObjects::getObjectByIndex(objectIndex);
 	if (_pickupInProgress) {
 		endTimer();
 		endBuffering(_lastOpcodeTriggeredSkip);
@@ -1324,11 +1324,11 @@ bool Script::ScriptExecutor::scriptOpcode0x19() {
 		warning("Invalid pickup request for actor %u target %u", actorIndex, objectIndex);
 		return false;
 	}
-	if (actorIndex == objectIndex || targetObject->SceneIndex == actor->GameObject->Index) {
+	if (actorIndex == objectIndex || targetObject->SceneIndex == actor->_gameObject->_index) {
 		warning("Ignoring invalid pickup request for actor %u target %u", actorIndex, objectIndex);
 		return false;
 	}
-	if (targetObject->SceneIndex != actor->GameObject->SceneIndex) {
+	if (targetObject->SceneIndex != actor->_gameObject->SceneIndex) {
 		warning("Ignoring pickup across scenes for actor %u target %u", actorIndex, objectIndex);
 		return false;
 	}
@@ -1336,10 +1336,10 @@ bool Script::ScriptExecutor::scriptOpcode0x19() {
 	_pickupActorObjectID = actorIndex;
 	_pickupTargetObjectID = objectIndex;
 	_savedPickupMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
-	currentView->activeInventoryItem = nullptr;
+	currentView->_activeInventoryItem = nullptr;
 	_engine->SetCursorMode(_savedPickupMouseMode);
-	currentView->UpdateCursor();
-	actor->StartPickup(targetObject);
+	currentView->updateCursor();
+	actor->startPickup(targetObject);
 	_requestCallback = false;
 	_isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
@@ -1358,7 +1358,7 @@ bool Script::ScriptExecutor::scriptOpcode0x1A() {
 		return false;
 	}
 
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring object runtime setup for missing object %d", objectID);
 		return false;
@@ -1378,7 +1378,7 @@ bool Script::ScriptExecutor::scriptOpcode0x1B() {
 		return false;
 	}
 
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring object slot setup for missing object %d", objectID);
 		return false;
@@ -1413,7 +1413,7 @@ bool Script::ScriptExecutor::scriptOpcode0x1E() {
 		warning("Opcode 0x1E: invalid object %u", objectID);
 		return false;
 	}
-	GameObject *gameObject = GameObjects::GetObjectByIndex(objectID);
+	GameObject *gameObject = GameObjects::getObjectByIndex(objectID);
 	if (gameObject == nullptr) {
 		warning("Opcode 0x1E: missing object %u", objectID);
 		return false;
@@ -1443,7 +1443,7 @@ void Script::ScriptExecutor::scriptOpcode0x1F() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	uint32 x = scriptReadValue32();
 	uint32 y = scriptReadValue32();
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	_pathWalkableResult = false;
 	if (object == nullptr) {
 		warning("Ignoring pathfinding test for invalid object %u", objectID);
@@ -1462,7 +1462,7 @@ bool Script::ScriptExecutor::scriptOpcode0x20() {
 		return false;
 	}
 
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring vertical offset set for missing object %d", objectID);
 		return false;
@@ -1472,9 +1472,9 @@ bool Script::ScriptExecutor::scriptOpcode0x20() {
 	// Original also writes to runtime +0x21D (motion target vertical offset)
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr) {
-		Character *c = currentView->GetCharacterByIndex((uint16)objectID);
+		Character *c = currentView->getCharacterByIndex((uint16)objectID);
 		if (c != nullptr) {
-			c->motionTargetVerticalOffset = offset;
+			c->_motionTargetVerticalOffset = offset;
 		}
 	}
 	return true;
@@ -1491,19 +1491,19 @@ bool Script::ScriptExecutor::scriptOpcode0x21() {
 	}
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	Character *character = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	Character *character = currentView ? currentView->getCharacterByIndex((uint16)objectID) : nullptr;
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr || character == nullptr) {
 		warning("Ignoring motion setup for missing character object %d", objectID);
 		return false;
 	}
 
-	character->motionStartVerticalOffset = object->Unknown;
-	character->motionTargetVerticalOffset = targetVerticalOffset;
-	character->motionVerticalOffsetDelta = verticalOffsetDelta;
-	character->motionDistanceUnits = motionDistance;
-	character->motionProgress = 0;
-	character->hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->Unknown;
+	character->_motionStartVerticalOffset = object->Unknown;
+	character->_motionTargetVerticalOffset = targetVerticalOffset;
+	character->_motionVerticalOffsetDelta = verticalOffsetDelta;
+	character->_motionDistanceUnits = motionDistance;
+	character->_motionProgress = 0;
+	character->_hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->Unknown;
 	return true;
 }
 
@@ -1515,7 +1515,7 @@ bool Script::ScriptExecutor::scriptOpcode0x22() {
 		return false;
 	}
 
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring orientation set for missing object %d", objectID);
 		return false;
@@ -1541,8 +1541,8 @@ bool Script::ScriptExecutor::scriptOpcode0x23() {
 	}
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
-	Character *c = currentView ? currentView->GetCharacterByIndex((uint16)objectID) : nullptr;
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
+	Character *c = currentView ? currentView->getCharacterByIndex((uint16)objectID) : nullptr;
 	if (object == nullptr || c == nullptr) {
 		warning("Ignoring move-to-position for missing character object %d", objectID);
 		return false;
@@ -1554,14 +1554,14 @@ bool Script::ScriptExecutor::scriptOpcode0x23() {
 		return false;
 	}
 
-	c->IsFollowingPath = false;
-	c->motionStartVerticalOffset = object->Unknown;
-	c->motionTargetVerticalOffset = targetVerticalOffset;
-	c->motionVerticalOffsetDelta = ABS<int32>((int32)object->Unknown - (int32)targetVerticalOffset);
-	c->motionDistanceUnits = ABS<int32>((int32)x - object->Position.x) + ABS<int32>((int32)y - object->Position.y);
-	c->motionProgress = 0;
-	c->hasMotionVerticalOffset = true;
-	c->StartLerpTo(Common::Point(x, y), 2 * 1000);
+	c->_isFollowingPath = false;
+	c->_motionStartVerticalOffset = object->Unknown;
+	c->_motionTargetVerticalOffset = targetVerticalOffset;
+	c->_motionVerticalOffsetDelta = ABS<int32>((int32)object->Unknown - (int32)targetVerticalOffset);
+	c->_motionDistanceUnits = ABS<int32>((int32)x - object->Position.x) + ABS<int32>((int32)y - object->Position.y);
+	c->_motionProgress = 0;
+	c->_hasMotionVerticalOffset = true;
+	c->startLerpTo(Common::Point(x, y), 2 * 1000);
 	_isAwaitingCallback = true;
 	return true;
 }
@@ -1601,8 +1601,8 @@ void Script::ScriptExecutor::scriptOpcode0x26() {
 	// Non-zero -> enable the overload animation (and the original decodes the blob now).
 	uint16 decodeFlag = scriptReadValue16();
 	uint8 animationID = readByte();
-	Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
-	GameObject *object = GameObjects::GetObjectByIndex(id);
+	Common::Array<uint8> blob = Scenes::instance().readSpecialAnimBlob(animationID, g_engine->_fileStream);
+	GameObject *object = GameObjects::getObjectByIndex(id);
 	object->overloadAnimation = blob;
 	object->overloadAnimationMirrored = false;
 	object->useOverloadAnimation = (decodeFlag != 0);
@@ -1619,7 +1619,7 @@ bool Script::ScriptExecutor::scriptOpcode0x27() {
 		warning("Ignoring set direction for invalid object %u", characterID);
 		return false;
 	}
-	GameObject *object = GameObjects::GetObjectByIndex(characterID);
+	GameObject *object = GameObjects::getObjectByIndex(characterID);
 	if (object == nullptr) {
 		warning("Ignoring set direction for missing object %u", characterID);
 		return false;
@@ -1635,7 +1635,7 @@ void Script::ScriptExecutor::scriptOpcode0x28() {
 	//   3. Free overload animation blob if loaded (runtime +0x183 flag)
 	//   4. Clear overload flag
 	uint32 characterID = scriptReadValue32() - 0x400;
-	GameObject *obj = GameObjects::GetObjectByIndex(characterID);
+	GameObject *obj = GameObjects::getObjectByIndex(characterID);
 	if (obj == nullptr) {
 		warning("Ignoring stop animation for missing object %u", characterID);
 		return;
@@ -1648,7 +1648,7 @@ bool Script::ScriptExecutor::scriptOpcode0x29() {
 	uint32 objectID = scriptReadValue32();
 	objectID -= 0x400;
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	GameObject *inventorySource = GameObjects::GetObjectByIndex(objectID);
+	GameObject *inventorySource = GameObjects::getObjectByIndex(objectID);
 	if (inventorySource == nullptr) {
 		warning("Invalid inventory source object %u", objectID);
 		return false;
@@ -1657,7 +1657,7 @@ bool Script::ScriptExecutor::scriptOpcode0x29() {
 	_hasPendingExternalInventoryResume = true;
 	_externalInventorySourceObjectID = objectID;
 	_secondaryInventoryLocation = _stream->pos();
-	currentView->OpenInventory(inventorySource);
+	currentView->openInventory(inventorySource);
 	return true;
 }
 
@@ -1672,7 +1672,7 @@ void Script::ScriptExecutor::scriptOpcode0x2A() {
 
 bool Script::ScriptExecutor::scriptOpcode0x2B() {
 	const uint16 objectID = scriptReadValue16() - 0x400;
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring object refresh for invalid object %u", objectID);
 		return false;
@@ -1686,30 +1686,30 @@ bool Script::ScriptExecutor::scriptOpcode0x2B() {
 		return false;
 	}
 
-	Character *character = currentView->GetCharacterByIndex(objectID);
-	const int currentIndex = currentView->GetCharacterArrayIndex(character);
-	if (object->SceneIndex != Scenes::instance().CurrentSceneIndex) {
+	Character *character = currentView->getCharacterByIndex(objectID);
+	const int currentIndex = currentView->getCharacterArrayIndex(character);
+	if (object->SceneIndex != Scenes::instance()._currentSceneIndex) {
 		if (currentIndex >= 0) {
-			currentView->characters.remove_at(currentIndex);
+			currentView->_characters.remove_at(currentIndex);
 		}
 		return false;
 	}
 
 	if (character == nullptr) {
 		character = new Character();
-		character->GameObject = object;
+		character->_gameObject = object;
 	} else if (currentIndex >= 0) {
-		currentView->characters.remove_at(currentIndex);
+		currentView->_characters.remove_at(currentIndex);
 	}
 
-	currentView->characters.push_back(character);
+	currentView->_characters.push_back(character);
 	return true;
 }
 
 bool Script::ScriptExecutor::scriptOpcode0x2C() {
 	uint16 objectID = scriptReadValue16() - 0x400;
 	uint16 parentID = scriptReadValue16();
-	const GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	const GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring inventory check for invalid object %u", objectID);
 		return false;
@@ -1721,7 +1721,7 @@ bool Script::ScriptExecutor::scriptOpcode0x2C() {
 bool Script::ScriptExecutor::scriptOpcode0x2D() {
 	const uint16 objectID = scriptReadValue16() - 0x400;
 	const bool enabled = scriptReadValue16() != 0;
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring object runtime flag for invalid object %u", objectID);
 		return false;
@@ -1739,7 +1739,7 @@ bool Script::ScriptExecutor::scriptOpcode0x2F() {
 	uint16 minFrame = scriptReadValue16();
 	uint16 maxFrame = scriptReadValue16();
 	_animBlobRangeTestResult = false;
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring object animation range test for invalid object %u", objectID);
 		return false;
@@ -1785,7 +1785,7 @@ void Script::ScriptExecutor::scriptOpcode0x31() {
 bool Script::ScriptExecutor::scriptOpcode0x32() {
 	uint16 objectID = scriptReadValue16() - 0x0400;
 	const uint16 clickable = scriptReadValue16();
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring clickable toggle for invalid object %u", objectID);
 		return false;
@@ -1797,7 +1797,7 @@ bool Script::ScriptExecutor::scriptOpcode0x32() {
 bool Script::ScriptExecutor::scriptOpcode0x33() {
 	uint16 objectID = scriptReadValue16() - 0x0400;
 	const uint16 visible = scriptReadValue16();
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring visibility toggle for invalid object %u", objectID);
 		return false;
@@ -1816,9 +1816,9 @@ bool Script::ScriptExecutor::scriptOpcode0x34() {
 		return false;
 	}
 	if (v1 == v2) {
-		g_engine->HotspotOverrides[v1] = 0xFFFF;
+		g_engine->_hotspotOverrides[v1] = 0xFFFF;
 	} else {
-		g_engine->HotspotOverrides[v1] = v2;
+		g_engine->_hotspotOverrides[v1] = v2;
 	}
 	return true;
 }
@@ -1829,8 +1829,8 @@ bool Script::ScriptExecutor::scriptOpcode0x35() {
 	const uint16 value1 = scriptReadValue16();
 	const uint16 value2 = scriptReadValue16();
 	const uint16 value3 = scriptReadValue16();
-	GameObject *object = GameObjects::GetObjectByIndex(objectID);
-	GameObject *otherObject = GameObjects::GetObjectByIndex(otherObjectID);
+	GameObject *object = GameObjects::getObjectByIndex(objectID);
+	GameObject *otherObject = GameObjects::getObjectByIndex(otherObjectID);
 	if (object == nullptr || otherObject == nullptr) {
 		warning("Ignoring bounds attachment for invalid objects %u -> %u", objectID, otherObjectID);
 		return false;
@@ -1865,11 +1865,11 @@ void Script::ScriptExecutor::scriptOpcode0x36() {
 		if (currentView->_isShowingInventory) {
 			_hasPendingExternalInventoryResume = false;
 			_externalInventorySourceObjectID = 0;
-			currentView->CloseInventory();
+			currentView->closeInventory();
 		}
 
-		if (currentView->isShowingMainMenu) {
-			currentView->isShowingMainMenu = false;
+		if (currentView->_isShowingMainMenu) {
+			currentView->_isShowingMainMenu = false;
 			currentView->redraw();
 		}
 	}
@@ -1879,7 +1879,7 @@ void Script::ScriptExecutor::scriptOpcode0x37() {
 	// scriptResetToSceneScript (1008:ad3e). Resets script execution
 	// context back to the current scene script at position 0.
 	_executingScriptObjectID = 0;
-	_executingObjectIndex = Scenes::instance().CurrentSceneIndex;
+	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_activeDialogueSpeakerObjectID = 0;
 	setCurrentSceneScriptAt(0);
@@ -1928,9 +1928,9 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptOpcode0x
 
 	Common::StringArray strings;
 	if (_executingScriptObjectID == 0) {
-		strings = _engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, stringOffset, 1);
+		strings = _engine->DecodeStrings(Scenes::instance()._currentSceneStrings, stringOffset, 1);
 	} else {
-		Common::MemoryReadStream *stringsStream = GameObjects::ReadGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
+		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
 		strings = _engine->DecodeStrings(stringsStream, stringOffset, 1);
 	}
 	if (strings.empty()) {
@@ -1985,9 +1985,9 @@ void Script::ScriptExecutor::scriptOpcode0x12() {
 	uint16 active = scriptReadValue16();
 	uint16 overrideValue = scriptReadValue16();
 	if (active) {
-		g_engine->SetPathfindingOverride(areaID, overrideValue);
+		g_engine->setPathfindingOverride(areaID, overrideValue);
 	} else {
-		g_engine->RemovePathfindingOverride(areaID);
+		g_engine->removePathfindingOverride(areaID);
 	}
 }
 
@@ -2001,10 +2001,10 @@ void Script::ScriptExecutor::scriptOpcode0x2E() {
 	uint32 minFrame = scriptReadValue32();
 	uint32 maxFrame = scriptReadValue32();
 	_animBlobRangeTestResult = false;
-	if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance().CurrentSceneSpecialAnimOffsets.size()) {
+	if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance()._currentSceneSpecialAnimOffsets.size()) {
 		warning("Ignoring scene animation range test for invalid index %u", sceneAnimIndex);
 	} else {
-		const uint16 blobSourceKey = static_cast<uint16>(Scenes::instance().CurrentSceneSpecialAnimOffsets[sceneAnimIndex - 1] >> 16);
+		const uint16 blobSourceKey = static_cast<uint16>(Scenes::instance()._currentSceneSpecialAnimOffsets[sceneAnimIndex - 1] >> 16);
 		_animBlobRangeTestResult = blobSourceKey >= minFrame && blobSourceKey <= maxFrame;
 	}
 }
@@ -2182,7 +2182,7 @@ bool Script::ScriptExecutor::scriptOpcode0x48() {
 		warning("Ignoring object X query for invalid object %d", objectID);
 		return false;
 	}
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring object X query for missing object %d", objectID);
 		return false;
@@ -2198,7 +2198,7 @@ bool Script::ScriptExecutor::scriptOpcode0x49() {
 		warning("Ignoring object Y query for invalid object %d", objectID);
 		return false;
 	}
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring object Y query for missing object %d", objectID);
 		return false;
@@ -2213,7 +2213,7 @@ bool Script::ScriptExecutor::scriptOpcode0x4A() {
 		warning("Ignoring object field query for invalid object %d", objectID);
 		return false;
 	}
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring object field query for missing object %d", objectID);
 		return false;
@@ -2229,7 +2229,7 @@ bool Script::ScriptExecutor::scriptOpcode0x4B() {
 		warning("Ignoring object orientation query for invalid object %d", objectID);
 		return false;
 	}
-	GameObject *object = GameObjects::GetObjectByIndex((uint16)objectID);
+	GameObject *object = GameObjects::getObjectByIndex((uint16)objectID);
 	if (object == nullptr) {
 		warning("Ignoring object orientation query for missing object %d", objectID);
 		return false;
@@ -2239,18 +2239,18 @@ bool Script::ScriptExecutor::scriptOpcode0x4B() {
 }
 
 void Script::ScriptExecutor::scriptOpcode0x4C() {
-	for (GameObject *object : GameObjects::instance().Objects) {
-		if (object != nullptr && object->SceneIndex == Scenes::instance().CurrentActorIndex + 0x400) {
+	for (GameObject *object : GameObjects::instance()._objects) {
+		if (object != nullptr && object->SceneIndex == Scenes::instance()._currentActorIndex + 0x400) {
 			object->SceneIndex = 0;
 		}
 	}
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	if (currentView != nullptr && currentView->inventorySource != nullptr) {
-		currentView->SetInventorySource(currentView->inventorySource);
-		if (currentView->activeInventoryItem != nullptr &&
-			currentView->activeInventoryItem->SceneIndex != currentView->inventorySource->Index) {
-			currentView->activeInventoryItem = nullptr;
+	if (currentView != nullptr && currentView->_inventorySource != nullptr) {
+		currentView->setInventorySource(currentView->_inventorySource);
+		if (currentView->_activeInventoryItem != nullptr &&
+			currentView->_activeInventoryItem->SceneIndex != currentView->_inventorySource->_index) {
+			currentView->_activeInventoryItem = nullptr;
 		}
 	}
 }
@@ -2285,7 +2285,7 @@ void Script::ScriptExecutor::scriptOpcode0x3F() {
 }
 
 ExecutionResult Script::ScriptExecutor::executeScript() {
-	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance().CurrentSceneIndex, _isSceneInitRun, _repeatRunFlag);
+	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
 	_isRunningScript = true;
 	// Confirmed: no interrupt mechanism exists. Wait states (frameWait, walkTarget,
 	// pcmSound, musicControl, adlibReady) are resolved by gameTick externally.
@@ -2606,7 +2606,7 @@ void ScriptExecutor::setScript(Common::MemoryReadStream *stream) {
 }
 
 void ScriptExecutor::setCurrentSceneScriptAt(uint32 offset) {
-	setScript(Scenes::instance().CurrentSceneScript);
+	setScript(Scenes::instance()._currentSceneScript);
 	_stream->seek(offset, SEEK_SET);
 }
 
@@ -2734,7 +2734,7 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		out1 = (_mouseMode == MouseMode::Talk) ? _interactedObjectID : 0;
 		break;
 	case 0x04: {
-		const Common::Point &charPos = GetCharPosition();
+		const Common::Point &charPos = getCharPosition();
 		out1 = getAreaAtPoint(charPos.x, charPos.y);
 		break;
 	}
@@ -2748,12 +2748,12 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		out1 = _pathWalkableResult ? 1 : 0;
 		break;
 	case 0x24: {
-		const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 		out1 = actor ? actor->Position.x : 0;
 		break;
 	}
 	case 0x25: {
-		const GameObject *actor = GameObjects::instance().GetObjectByIndex(Scenes::instance().CurrentActorIndex);
+		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 		out1 = actor ? actor->Position.y : 0;
 		break;
 	}
@@ -2765,21 +2765,21 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	case 0x2A: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->isShowingMainMenu);
+		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
 		out1 = (_inventoryCombineFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
 	case 0x2B: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->isShowingMainMenu);
+		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
 		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
 	case 0x2D:
-		out1 = Scenes::instance().CurrentSceneIndex;
+		out1 = Scenes::instance()._currentSceneIndex;
 		break;
 	case 0x2F:
-		out1 = Scenes::instance().LastSceneIndex;
+		out1 = Scenes::instance()._lastSceneIndex;
 		break;
 	default:
 		break;
