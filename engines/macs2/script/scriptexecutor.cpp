@@ -1835,6 +1835,23 @@ bool Script::ScriptExecutor::scriptOpcode0x33() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x34() {
+	// Sets an entry in the [5BD1] list for hotspot lookup.
+	const uint16 v1 = scriptReadValue16() - 0x800;
+	const uint16 v2 = scriptReadValue16() - 0x800;
+
+	if (v1 < 0x1 || v1 > 0x10 || v2 < 0x1 || v2 > 0x10) {
+		warning("Ignoring hotspot override %.4x -> %.4x outside valid range", v1 + 0x800, v2 + 0x800);
+		return false;
+	}
+	if (v1 == v2) {
+		g_engine->HotspotOverrides[v1] = 0xFFFF;
+	} else {
+		g_engine->HotspotOverrides[v1] = v2;
+	}
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x0F() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
@@ -2094,20 +2111,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				continue;
 			}
 		} else if (opcode1 == 0x34) {
-			// Sets an entry in the [5BD1] list for hotspot lookup
-			const uint16 v1 = scriptReadValue16() - 0x800;
-			const uint16 v2 = scriptReadValue16() - 0x800;
-
-			if (v1 < 0x1 || v1 > 0x10 || v2 < 0x1 || v2 > 0x10) {
-				warning("Ignoring hotspot override %.4x -> %.4x outside valid range", v1 + 0x800, v2 + 0x800);
+			if (!scriptOpcode0x34()) {
 				continue;
-			}
-			if (v1 == v2) {
-				// l0037_CE92:
-				g_engine->HotspotOverrides[v1] = 0xFFFF;
-			} else {
-				// l0037_CEA5:
-				g_engine->HotspotOverrides[v1] = v2;
 			}
 		} else if (opcode1 == 0x35) {
 			uint16 objectID = scriptReadValue16() - 0x0400;
