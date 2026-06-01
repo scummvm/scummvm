@@ -46,7 +46,7 @@ public:
 	int getFontHeight() const override { return _fontHeight - 1; }
 	int getMaxCharWidth() const override { return _maxCharWidth; }
 	int getCharWidth(uint32 chr) const override;
-	int getKerningOffset(uint32 left, uint32 right) const override { return 1; }
+	int getKerningOffset(uint32 left, uint32 right) const override { return 0; }
 
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 

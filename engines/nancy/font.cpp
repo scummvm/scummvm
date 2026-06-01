@@ -51,7 +51,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	_color1CoordsOffset.y = stream.readUint32LE();
 
 	_spaceWidth = stream.readUint16LE();
-	_charSpace = stream.readSint16LE() - 1; // Account for the added pixel in readRect
+	_charSpace = stream.readSint16LE();
 
 	_uppercaseOffset					= stream.readUint16LE();
 	_lowercaseOffset					= stream.readUint16LE();
