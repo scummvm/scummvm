@@ -342,7 +342,16 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// --- All 512 objects (1..0x200) ---
+	// Original iterates 1..512 inclusive. ScummVM may have fewer objects.
+	uint16 numObjects = (uint16)GameObjects::instance()._objects.size();
 	for (uint16 objIdx = 0; objIdx < 512; objIdx++) {
+		if (objIdx >= numObjects) {
+			// Pad with empty object data for binary compatibility
+			uint16 zero16 = 0;
+			for (int i = 0; i < 5; i++)
+				s.syncAsUint16LE(zero16);
+			continue;
+		}
 		GameObject *obj = GameObjects::instance()._objects[objIdx];
 		// Original checks if object pointer is non-null (always true for us)
 		// Base fields: pos.x(2), pos.y(2), scene(2), orientation(2), unknown(2)
