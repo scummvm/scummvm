@@ -2284,6 +2284,19 @@ void Script::ScriptExecutor::scriptOpcode0x4C() {
 	}
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x4D() {
+	// scriptSetPathfindingRemap (1008:dafb). Writes to scene+value*5+0x4EA8.
+	const uint16 sourceValue = scriptReadValue16();
+	const uint16 targetValue = scriptReadValue16();
+	if (sourceValue < AREA_OVERRIDE_MIN || sourceValue > AREA_OVERRIDE_MAX ||
+		targetValue < AREA_OVERRIDE_MIN || targetValue > AREA_OVERRIDE_MAX) {
+		warning("Ignoring area remap %.4x -> %.4x outside valid range", sourceValue, targetValue);
+		return false;
+	}
+	g_engine->_areaOverrides[sourceValue - AREA_OVERRIDE_MIN] = targetValue;
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2572,15 +2585,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x4C) {
 			scriptOpcode0x4C();
 		} else if (opcode1 == 0x4D) {
-			// scriptSetPathfindingRemap (1008:dafb). Writes to scene+value*5+0x4EA8.
-			const uint16 sourceValue = scriptReadValue16();
-			const uint16 targetValue = scriptReadValue16();
-			if (sourceValue < AREA_OVERRIDE_MIN || sourceValue > AREA_OVERRIDE_MAX ||
-				targetValue < AREA_OVERRIDE_MIN || targetValue > AREA_OVERRIDE_MAX) {
-				warning("Ignoring area remap %.4x -> %.4x outside valid range", sourceValue, targetValue);
+			if (!scriptOpcode0x4D()) {
 				continue;
 			}
-			g_engine->_areaOverrides[sourceValue - AREA_OVERRIDE_MIN] = targetValue;
 		} else if (opcode1 == 0x4E) {
 			if (soundSystemActive && musicEnabled) {
 				waitForAdlibReady = true;
