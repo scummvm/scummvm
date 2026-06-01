@@ -581,7 +581,7 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 		return true;
 	}
 	default:
-		debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleGameCodecDecode: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
 			codec, left, top, width, height);
 		return true;
 	}

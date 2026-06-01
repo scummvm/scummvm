@@ -315,7 +315,7 @@ void InsaneRebel1::clearVideoBuffer() {
 //   1. O1LOGO.ANM — LucasArts logo
 //   2. O1OPEN.ANM — Star Wars opening crawl
 void InsaneRebel1::playIntroSequence() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Playing intro sequence");
+	debugC(DEBUG_INSANE, "InsaneRebel1::playIntroSequence: Playing intro sequence");
 
 	// LucasArts logo (original: PUSH 0x57cc, CALL FUN_1BA32 with flags 0x0420)
 	playCinematic("OPEN/O1LOGO.ANM");
@@ -347,7 +347,7 @@ void InsaneRebel1::playIntroSequence() {
 //     lives==0: L1DEATH → return to menu
 
 bool InsaneRebel1::runLevel1() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 1");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel1: Running level 1");
 
 	_currentLevel = 0;
 	loadTuningForLevel(0);
@@ -448,7 +448,7 @@ bool InsaneRebel1::runLevel1() {
 }
 
 bool InsaneRebel1::runLevel2() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 2");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel2: Running level 2");
 
 	_currentLevel = 1;
 	loadLevelSprites(2);
@@ -489,7 +489,7 @@ bool InsaneRebel1::runLevel2() {
 }
 
 bool InsaneRebel1::runLevel3() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 3");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel3: Running level 3");
 
 	_currentLevel = 2;
 	loadLevelSprites(3);
@@ -530,7 +530,7 @@ bool InsaneRebel1::runLevel3() {
 }
 
 bool InsaneRebel1::runLevel4() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 4");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel4: Running level 4");
 
 	_currentLevel = 3;
 	loadLevelSprites(4);
@@ -600,7 +600,7 @@ bool InsaneRebel1::runLevel4() {
 }
 
 bool InsaneRebel1::runLevel5() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 5");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel5: Running level 5");
 
 	_currentLevel = 4;
 	loadLevelSprites(5);
@@ -682,7 +682,7 @@ bool InsaneRebel1::runLevel5() {
 }
 
 bool InsaneRebel1::runLevel6() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 6");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel6: Running level 6");
 
 	_currentLevel = 5;
 	loadLevelSprites(6);
@@ -727,7 +727,7 @@ bool InsaneRebel1::runLevel6() {
 }
 
 bool InsaneRebel1::runLevel7() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 7");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel7: Running level 7");
 
 	const char *const kLevel7Segments[] = {
 		"LVL7/L7PLAY1.ANM",
@@ -811,7 +811,7 @@ bool InsaneRebel1::runLevel7() {
 }
 
 bool InsaneRebel1::runLevel8() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 8");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel8: Running level 8");
 
 	const char *const kLevel8Routes[] = {
 		"LVL8/L8PLAY.ANM",
@@ -887,7 +887,7 @@ bool InsaneRebel1::runLevel8() {
 }
 
 bool InsaneRebel1::runLevel9() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 9");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel9: Running level 9");
 
 	// DOS RunLevel9Flow calls RandScaleByte(2) three times before the intro.
 	// That helper advances a byte seed with seed = seed * 9 + 0x35 and returns
@@ -1077,7 +1077,7 @@ bool InsaneRebel1::runLevel9() {
 }
 
 bool InsaneRebel1::runLevel10() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 10");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel10: Running level 10");
 
 	_currentLevel = 9;
 	loadLevelSprites(10);
@@ -1118,7 +1118,7 @@ bool InsaneRebel1::runLevel10() {
 // Turret-style level. Single interactive phase with kill-count retry.
 // Original: L11INTRO → L11PLAY (turret, killCount>4 to pass) → L11RETRY → retry/L11END
 bool InsaneRebel1::runLevel11() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 11");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel11: Running level 11");
 
 	_currentLevel = 10;
 	loadLevelSprites(11);
@@ -1175,7 +1175,7 @@ bool InsaneRebel1::runLevel11() {
 // Single interactive phase with mid-level retry mechanism.
 // Original: L12INTRO → L12PLAY → (retry at specific frame) → L12END
 bool InsaneRebel1::runLevel12() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 12");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel12: Running level 12");
 
 	_currentLevel = 11;
 	loadLevelSprites(12);
@@ -1238,7 +1238,7 @@ bool InsaneRebel1::runLevel12() {
 // Flight level with enemy projectile system (original has 5-slot projectile tracking).
 // Original: L13INTRO → L13PLAY → L13END/L13NEW/L13DEATH
 bool InsaneRebel1::runLevel13() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 13");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel13: Running level 13");
 
 	_currentLevel = 12;
 	loadLevelSprites(13);
@@ -1281,7 +1281,7 @@ bool InsaneRebel1::runLevel13() {
 // Original: L14INTRO → L14PLAY → L14PLAY2 → optional L14PLY2B splice
 //   → L14END/L14NEW/L14DEATH
 bool InsaneRebel1::runLevel14() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 14");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel14: Running level 14");
 
 	_currentLevel = 13;
 	loadLevelSprites(14);
@@ -1355,7 +1355,7 @@ bool InsaneRebel1::runLevel14() {
 // Original: L15INTRO → L15PLAY1 (trench run) → L15INTR2 (torpedo lock cutscene)
 //   → L15PLAY2 (final approach + torpedo) → L15END1/L15NEW/L15DEATH
 bool InsaneRebel1::runLevel15() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Running level 15");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runLevel15: Running level 15");
 
 	_currentLevel = 14;
 	loadLevelSprites(15);
@@ -1401,7 +1401,7 @@ bool InsaneRebel1::runLevel15() {
 		}
 
 		if (_health >= 0 && !_torpedoFired) {
-			debugC(DEBUG_INSANE, "InsaneRebel1: Level 15 torpedo run ended without exhaust-port hit");
+			debugC(DEBUG_INSANE, "InsaneRebel1::runLevel15: Level 15 torpedo run ended without exhaust-port hit");
 			return false;
 		}
 

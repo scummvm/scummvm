@@ -676,7 +676,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 				return true;
 			}
 
-			debugC(DEBUG_INSANE, "Rebel1: ESC pressed during gameplay - opening ScummVM menu");
+			debugC(DEBUG_INSANE, "InsaneRebel1::notifyEvent: ESC pressed during gameplay - opening ScummVM menu");
 			const bool wasPaused = _player->_paused;
 			if (!wasPaused)
 				_player->pause();
@@ -689,13 +689,13 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		if (_interactiveVideoActive && !_menuActive &&
 			event.kbd.keycode == Common::KEYCODE_s &&
 			event.kbd.hasFlags(Common::KBD_SHIFT)) {
-			debugC(DEBUG_INSANE, "Rebel1: Shift+S pressed - skipping gameplay section");
+			debugC(DEBUG_INSANE, "InsaneRebel1::notifyEvent: Shift+S pressed - skipping gameplay section");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
 
 		if (!_interactiveVideoActive && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			debugC(DEBUG_INSANE, "Rebel1: ESC pressed - skipping cinematic");
+			debugC(DEBUG_INSANE, "InsaneRebel1::notifyEvent: ESC pressed - skipping cinematic");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
@@ -929,7 +929,7 @@ bool InsaneRebel1::runTextEntryMenuLoop() {
 }
 
 int InsaneRebel1::runMainMenu() {
-	debugC(DEBUG_INSANE, "InsaneRebel1: Main menu");
+	debugC(DEBUG_INSANE, "InsaneRebel1::runMainMenu: Main menu");
 
 	_menuSelection = 0;
 	while (!shouldAbortGameFlow()) {

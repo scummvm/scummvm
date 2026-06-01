@@ -274,7 +274,7 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 	}
 
 	if (!foundValidOffset) {
-		warning("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
+		warning("smushDecodeRA2Bomp: Codec 45 couldn't find valid RLE offset, using offset 0");
 	}
 
 	src += headerSkip;
