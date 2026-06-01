@@ -339,7 +339,9 @@ public:
 	// Offset 50D3h - This is used in 0037:10C4 to terminate the loop
 	uint16 _numHotspots;
 
-	// Raw scene timer params at +0x53C3..+0x53CF (4 dwords, saved for binary compat)
+	// Reserved/unused scene data fields at scene+0x53C3..+0x53CF (4 dwords).
+	// Zeroed on scene change, saved/loaded, but never read or written with meaningful
+	// values by any game logic. Kept only for save/load format compatibility.
 	uint32 _sceneTimerParams[4] = {0};
 
 	// Clip rect dirty flag [0xfec] - in the original DOS engine this signaled the VGA
