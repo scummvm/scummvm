@@ -393,9 +393,9 @@ void Macs2Engine::readResourceFile() {
 
 	// Load the strings for the scene
 	_fileStream->seek(0x000D2F22);
-	numBytesStrings = _fileStream->readUint16LE();
-	stringsData = new byte[numBytesStrings];
-	_fileStream->read(stringsData, numBytesStrings);
+	_numBytesStrings = _fileStream->readUint16LE();
+	_stringsData = new byte[_numBytesStrings];
+	_fileStream->read(_stringsData, _numBytesStrings);
 	// _stringsStream = new Common::MemoryReadStream(stringsData, numBytesStrings);
 
 	// Load the background map
@@ -594,9 +594,9 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
 		_hotspotOverrides[i] = 0xFFFF;
 	}
-	pathfindingValueRemaps.resize(0x100);
-	for (uint i = 0; i < pathfindingValueRemaps.size(); i++) {
-		pathfindingValueRemaps[i] = 0;
+	_pathfindingValueRemaps.resize(0x100);
+	for (uint i = 0; i < _pathfindingValueRemaps.size(); i++) {
+		_pathfindingValueRemaps[i] = 0;
 	}
 }
 
@@ -705,41 +705,35 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_map.copyFrom(bgMap);
 
 	// Pretty sure that this is the pathfinding points. We address them starting
-	// at 1, and add 5019 to the address, and we multiply by 0xA to get the data
-	// of the specific point
-	array5023.clear();
-	// We will address this array as words, so we are not using a byte array but a word array
-	array5023.resize(0xa0);
-	_fileStream->read(array5023.data(), 0xa0);
-
-	// Rebuild pathfindingPoints from array5023 (16 nodes × 10 bytes each)
+	// Load pathfinding nodes (16 entries x 10 bytes at scene+0x5023)
 	pathfindingPoints.clear();
-	Common::MemoryReadStream nodeStream(array5023.data(), 0xa0);
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
 		current.Index = i;
-		current.Position.x = nodeStream.readUint16LE();
-		current.Position.y = nodeStream.readUint16LE();
+		current.Position.x = _fileStream->readUint16LE();
+		current.Position.y = _fileStream->readUint16LE();
 		uint8 adj[4];
-		nodeStream.read(adj, 4);
-		uint16 numConnections = nodeStream.readUint16LE();
+		_fileStream->read(adj, 4);
+		uint16 numConnections = _fileStream->readUint16LE();
 		current.adjacentPoints.clear();
 		for (uint16 j = 0; j < numConnections && j < 4; j++)
 			current.adjacentPoints.push_back(adj[j]);
 		pathfindingPoints.push_back(current);
 	}
 
-	word50D3 = _fileStream->readUint16LE();
+	_numHotspots = _fileStream->readUint16LE();
 
-	array50D5.clear();
-	array50D5.resize(0x20 / 2);
-	_fileStream->read(array50D5.data(), 0x20);
+	_numHotspots = _fileStream->readUint16LE();
+
+	_hotspotColorTable.clear();
+	_hotspotColorTable.resize(0x20 / 2);
+	_fileStream->read(_hotspotColorTable.data(), 0x20);
 
 	// TODO: Remove the now superfluous one
 	readBackgroundAnimations(_fileStream);
 
 	// Offset 51F7h
-	numPathfindingPoints = _fileStream->readUint16LE();
+	_numPathfindingPoints = _fileStream->readUint16LE();
 
 	// Offset 51F9h
 	_fileStream->readUint16LE();
@@ -748,12 +742,12 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->readUint16LE();
 
 	// Offset 51FDh - 5201h
-	word51FD = _fileStream->readUint16LE();
-	word51FF = _fileStream->readUint16LE();
-	word5201 = _fileStream->readUint16LE();
+	_walkDepthThresholdY = _fileStream->readUint16LE();
+	_walkDepthScaleFactor = _fileStream->readUint16LE();
+	_walkBaseSpeedPct = _fileStream->readUint16LE();
 
-	word5203 = _fileStream->readUint16LE();
-	word5205 = _fileStream->readUint16LE();
+	_bgAnimMode = _fileStream->readUint16LE();
+	_bgAnimParam = _fileStream->readUint16LE();
 
 	// Seek to next place
 	// TODO: Duplicated seek address calculation code
@@ -768,8 +762,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->seek(sceneDataOffset2, SEEK_SET);
 
 	// We read 80h bytes
-	array520D.resize(0x80 / 4);
-	_fileStream->read(array520D.data(), 0x80);
+	_sceneResourceOffsets.resize(0x80 / 4);
+	_fileStream->read(_sceneResourceOffsets.data(), 0x80);
 
 	// TODO: There are some more data points missing from the function
 
@@ -819,7 +813,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID) {
 	// Original (1008:d749): looks up file offset from scene/object resource table
-	// at scene+0x5209+index*4 (same table as loadIndexedResource/array520D),
+	// at scene+0x5209+index*4 (same table as loadIndexedResource/_sceneResourceOffsets),
 	// seeks to offset+0x10, then calls loadFontData.
 	if (resourceIndex == 0)
 		return false;
@@ -828,11 +822,11 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 	uint32 address = 0;
 
 	if (executingObjectID == 0) {
-		if (resourceIndex > array520D.size()) {
+		if (resourceIndex > _sceneResourceOffsets.size()) {
 			_fileStream->seek(oldPos, SEEK_SET);
 			return false;
 		}
-		address = array520D[resourceIndex - 1];
+		address = _sceneResourceOffsets[resourceIndex - 1];
 	} else {
 		GameObject *object = GameObjects::getObjectByIndex(executingObjectID);
 		if (object == nullptr || object->_dataOffset == 0) {
@@ -1103,14 +1097,14 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	}
 
 	uint8 firstLookup = _map.getPixel(p.x, p.y);
-	uint16 numHotspots = word50D3;
+	uint16 numHotspots = _numHotspots;
 
 	uint8 i = 1;
 	if (i > numHotspots) {
 		return result;
 	}
 
-	Common::Array<uint16> a = array50D5;
+	Common::Array<uint16> a = _hotspotColorTable;
 
 	do {
 		uint16 lookup = a[i - 1];
@@ -1126,8 +1120,8 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 }
 
 void Macs2Engine::scheduleRun(bool initScene) {
-	runScheduled = true;
-	scheduledRunIsInitScene = initScene;
+	_runScheduled = true;
+	_scheduledRunIsInitScene = initScene;
 }
 
 void Macs2Engine::startInputRecording(const Common::Path &filename) {
@@ -1212,11 +1206,11 @@ uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
 		return value;
 	}
 
-	if (value >= pathfindingValueRemaps.size()) {
+	if (value >= _pathfindingValueRemaps.size()) {
 		return 0xFF;
 	}
 
-	const uint16 remappedValue = pathfindingValueRemaps[value];
+	const uint16 remappedValue = _pathfindingValueRemaps[value];
 	return remappedValue != 0 ? remappedValue : 0xFF;
 }
 
@@ -1287,7 +1281,7 @@ uint32 Macs2Engine::getFeatures() const {
 }
 
 void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool decodeBlob) {
-	if (arrayIndex == 0 || arrayIndex > array520D.size()) {
+	if (arrayIndex == 0 || arrayIndex > _sceneResourceOffsets.size()) {
 		warning("Invalid animation array index %u for object %u slot %u", arrayIndex, objectIndex, slotIndex);
 		return;
 	}
@@ -1304,7 +1298,7 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	}
 
 	// We need to account for the game starting indices at 1
-	uint32 address = array520D[arrayIndex - 1];
+	uint32 address = _sceneResourceOffsets[arrayIndex - 1];
 	_fileStream->seek(address);
 	uint32 size = _fileStream->readUint32LE();
 	_fileStream->seek(address + 0x4 + 0xC);
@@ -1337,7 +1331,7 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 
 void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 
-	uint32 address = array520D[dataIndex - 1];
+	uint32 address = _sceneResourceOffsets[dataIndex - 1];
 	_fileStream->seek(address);
 	uint32 size = _fileStream->readUint32LE();
 	// TODO: Also delete this one
@@ -1436,10 +1430,10 @@ Common::Error Macs2Engine::loadGameState(int slot) {
 
 bool Macs2Engine::tick() {
 	_scriptExecutor->tick();
-	if (runScheduled) {
-		runScheduled = false;
-		bool shouldRunInit = scheduledRunIsInitScene;
-		scheduledRunIsInitScene = false;
+	if (_runScheduled) {
+		_runScheduled = false;
+		bool shouldRunInit = _scheduledRunIsInitScene;
+		_scheduledRunIsInitScene = false;
 		_scriptExecutor->_isRepeatRun = true;
 		_scriptExecutor->run(shouldRunInit);
 	}

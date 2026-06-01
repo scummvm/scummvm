@@ -1268,11 +1268,11 @@ bool View1::tick() {
 	// Update the flag
 	// Background animation advance - matching original gameTick (1008:e556):
 	// g_wBgAnimTickCounter is incremented once per game frame (~10.8fps).
-	// Mode 3 (word5203==3): advance when counter > 1 (every 2 game frames ≈ 185ms)
-	// Mode 2 (word5203==2): advance when counter > 0x27 (every 39 game frames ≈ 3.6s)
+	// Mode 3 (_bgAnimMode==3): advance when counter > 1 (every 2 game frames ≈ 185ms)
+	// Mode 2 (_bgAnimMode==2): advance when counter > 0x27 (every 39 game frames ≈ 3.6s)
 	_bgAnimTickCounter++;
 
-	if (_bgAnimTickCounter > 1 && g_engine->word5203 == 3) {
+	if (_bgAnimTickCounter > 1 && g_engine->_bgAnimMode == 3) {
 		_bgAnimTickCounter = 0;
 		_flagFrameIndex++;
 		if (_flagFrameIndex == 3) {
@@ -1287,7 +1287,7 @@ bool View1::tick() {
 		redraw();
 	}
 
-	if (_bgAnimTickCounter > 0x27 && g_engine->word5203 == 2) {
+	if (_bgAnimTickCounter > 0x27 && g_engine->_bgAnimMode == 2) {
 		_bgAnimTickCounter = 0;
 		_flagFrameIndex++;
 		if (_flagFrameIndex == 3) {
@@ -1923,35 +1923,20 @@ void View1::triggerDialogueChoice(uint8 index) {
 }
 
 uint16 View1::calculateCharacterScaling(uint16 characterY, bool updateDebugValues) {
-	// l0037_93F4: 	scummvm.exe!Macs2::View1::msgKeypress(const Macs2::KeypressMessage & msg) Line 542	C++
+	// Calculates sprite scaling factor based on character Y position and scene depth params.
+	// Original at walkAlongPath (1008:1bb8). Formula (signed, no clamping):
+	//   depthOffset = (characterY - _walkDepthThresholdY) * _walkDepthScaleFactor / 100
+	//   scalingFactor = _walkBaseSpeedPct + depthOffset
 
-	int32 eax = g_engine->word51FD;
-	int32 edx = 0;
-	int32 ecx = eax;
-	int32 ebx = edx;
-	eax = characterY;
+	int32 depthOffset = ((int32)characterY - (int32)g_engine->_walkDepthThresholdY) *
+	                    (int32)g_engine->_walkDepthScaleFactor / 100;
+	int32 scalingFactor = (int32)g_engine->_walkBaseSpeedPct + depthOffset;
+
 	if (updateDebugValues) {
 		_scalingValues.characterY = characterY;
+		_scalingValues.scalingFactor = scalingFactor;
 	}
-	// TODO: Check this case when it happens
-	// assert(eax >= ecx);
-	eax -= ecx;
-	ebx = eax;
-	eax = g_engine->word51FF;
-	// TODO: Check this case when it happens
-	// assert(eax == 0);
-	edx = 0;
-	eax *= ebx;
-	ebx = 0x64;
-	eax /= ebx;
-	ebx = eax;
-	eax = g_engine->word5201;
-	edx = 0;
-	eax += ebx;
-	if (updateDebugValues) {
-		_scalingValues.scalingFactor = eax;
-	}
-	return eax;
+	return (uint16)scalingFactor;
 }
 
 uint16 View1::getHitObjectID(const Common::Point &pos) const {
@@ -2465,7 +2450,7 @@ void Character::update() {
 	// Each frame: calculate walk speed from depth, step that many pixels.
 	Common::Point pos = getPosition();
 	// Depth-scaled walk speed from walkAlongPath (1008:1b8f):
-	// speed = animSpeed * (word5201 + depthAtPos) / 100
+	// speed = animSpeed * (_walkBaseSpeedPct + depthAtPos) / 100
 	int depthAtPos = 0;
 	Common::Rect screenRect(320, 200);
 	if (screenRect.contains(pos)) {
@@ -2479,7 +2464,7 @@ void Character::update() {
 		if (animSpeed == 0)
 			animSpeed = 2;
 	}
-	int walkSpeed = ((int)animSpeed * ((int)g_engine->word5201 + depthAtPos)) / 100;
+	int walkSpeed = ((int)animSpeed * ((int)g_engine->_walkBaseSpeedPct + depthAtPos)) / 100;
 	if (walkSpeed < 1)
 		walkSpeed = 1;
 

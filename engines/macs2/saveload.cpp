@@ -63,7 +63,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		changeScene(sceneIndex, false);
 	}
 
-	// --- Script variables: 0x2000 bytes (2048 vars × 2 uint16) ---
+	// --- Script variables: 0x2000 bytes (2048 vars x 2 uint16) ---
 	for (uint i = 0; i < _scriptExecutor->_variables.size(); i++) {
 		s.syncAsUint16LE(_scriptExecutor->_variables[i].a);
 		s.syncAsUint16LE(_scriptExecutor->_variables[i].b);
@@ -242,7 +242,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// --- Scene data: pathfinding overrides [+0x528D]: 200 bytes ---
-	// 40 entries × 5 bytes each (1 byte active + 2 bytes value + 2 bytes remap)
+	// 40 entries x 5 bytes each (1 byte active + 2 bytes value + 2 bytes remap)
 	// indexed by pathfinding value 0xC8..0xEF
 	if (s.isLoading())
 		_pathfindingOverrides.clear();
@@ -277,7 +277,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 	}
 
-	// --- Scene data: hotspot overrides [+0x5BD3]: 32 bytes (16 × uint16) ---
+	// --- Scene data: hotspot overrides [+0x5BD3]: 32 bytes (16 x uint16) ---
 	if (s.isLoading())
 		_hotspotOverrides.clear();
 	for (int i = 0; i < 16; i++) {
@@ -293,7 +293,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 	}
 
-	// --- Scene data: timer params [+0x53C3..+0x53CF]: 4 × 4 bytes ---
+	// --- Scene data: timer params [+0x53C3..+0x53CF]: 4 x 4 bytes ---
 	// TODO: timer state not fully mapped - save zeros
 	for (int i = 0; i < 4; i++) {
 		uint32 timerParam = 0;
@@ -392,7 +392,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// BoundsAttachmentValue3 [+0x238]: 2 bytes
 		s.syncAsUint16LE(obj->BoundsAttachmentValue3);
 
-		// Runtime fields [+0x00..+0x0A]: 6 × uint16 (walk state)
+		// Runtime fields [+0x00..+0x0A]: 6 x uint16 (walk state)
 		// TODO: walk state not fully mapped - save zeros
 		for (int i = 0; i < 6; i++) {
 			uint16 walkState = 0;
@@ -438,7 +438,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		uint16 runtime213 = 0;
 		s.syncAsUint16LE(runtime213);
 
-		// RuntimeSlotValues [+0x21D..+0x22B]: 8 × uint16
+		// RuntimeSlotValues [+0x21D..+0x22B]: 8 x uint16
 		for (int i = 0; i < 8; i++) {
 			uint16 slotVal = (i < 0x15) ? obj->RuntimeSlotValues[i] : 0;
 			s.syncAsUint16LE(slotVal);
@@ -446,7 +446,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				obj->RuntimeSlotValues[i] = slotVal;
 		}
 
-		// [+0x215..+0x21B]: 4 × uint16 - more slot values
+		// [+0x215..+0x21B]: 4 x uint16 - more slot values
 		for (int i = 8; i < 12; i++) {
 			uint16 slotVal = (i < 0x15) ? obj->RuntimeSlotValues[i] : 0;
 			s.syncAsUint16LE(slotVal);
