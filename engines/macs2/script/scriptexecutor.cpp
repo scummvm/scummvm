@@ -2066,6 +2066,17 @@ bool Script::ScriptExecutor::scriptOpcode0x3E() {
 	return true;
 }
 
+bool Script::ScriptExecutor::scriptOpcode0x40() {
+	if (soundEnabled) {
+		if (!_engine->hasCurrentSound()) {
+			warning("Ignoring sound playback without loaded sound data");
+			return false;
+		}
+		_engine->playCurrentSound();
+	}
+	return true;
+}
+
 void Script::ScriptExecutor::scriptOpcode0x3F() {
 	if (soundEnabled)
 		_engine->stopCurrentSound();
@@ -2306,12 +2317,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x3F) {
 			scriptOpcode0x3F();
 		} else if (opcode1 == 0x40) {
-			if (soundEnabled) {
-				if (!_engine->hasCurrentSound()) {
-					warning("Ignoring sound playback without loaded sound data");
-					continue;
-				}
-				_engine->playCurrentSound();
+			if (!scriptOpcode0x40()) {
+				continue;
 			}
 		} else if (opcode1 == 0x41) {
 			if (soundEnabled && soundSystemActive) {
