@@ -103,7 +103,7 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x1E:
 		return "playAnimation";
 	case 0x1F:
-		return "testPathfinding";
+		return "pathWalkable = testPathfinding";
 	case 0x20:
 		return "setYOffset";
 	case 0x21:
@@ -129,13 +129,13 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x2B:
 		return "checkObjectData";
 	case 0x2C:
-		return "checkInventory";
+		return "invCheck = checkInventory";
 	case 0x2D:
 		return "setObjectFlag";
 	case 0x2E:
-		return "testSceneAnimFrame";
+		return "animRangeTest = testSceneAnimFrame";
 	case 0x2F:
-		return "testObjectAnimFrame";
+		return "animRangeTest = testObjectAnimFrame";
 	case 0x30:
 		return "printStringRight";
 	case 0x31:
@@ -352,12 +352,24 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		break;
 	}
 	case 0x11:
+	case 0x47: {
+		Common::String o = decodeScriptValue(script);
+		result = Common::String::format(" obj=%s", o.c_str());
+		break;
+	}
 	case 0x48:
 	case 0x49:
 	case 0x4A:
 	case 0x4B: {
+		// These opcodes read an object, then save to a variable (subOpcode + varIndex)
 		Common::String o = decodeScriptValue(script);
-		result = Common::String::format(" obj=%s", o.c_str());
+		if (script->pos() + 3 <= dataStart + length) {
+			script->readByte(); // subOpcode (always 0x01..0xFE)
+			uint16 varIdx = script->readUint16LE();
+			result = Common::String::format(" var[%u] = obj=%s", varIdx, o.c_str());
+		} else {
+			result = Common::String::format(" obj=%s", o.c_str());
+		}
 		break;
 	}
 	case 0x12: {
@@ -437,8 +449,10 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 	}
 	case 0x24:
 	case 0x25: {
+		// First value is both operand and save target (original seeks back to re-read it)
 		Common::String a = decodeScriptValue(script), b = decodeScriptValue(script);
-		result = Common::String::format(" %s, %s", a.c_str(), b.c_str());
+		const char *op = (opcode == 0x24) ? "+" : "-";
+		result = Common::String::format(" %s = %s %s %s", a.c_str(), a.c_str(), op, b.c_str());
 		break;
 	}
 	case 0x26: {
@@ -545,7 +559,6 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 	case 0x40:
 	case 0x41:
 	case 0x42:
-	case 0x47:
 	case 0x4C:
 	case 0x4E:
 		break;
@@ -666,6 +679,9 @@ static void showVariablesWindow() {
 			ImGui::Text("Interacted Other: 0x%x", exec->_interactedOtherObjectID);
 			ImGui::Text("Script Skippable: %s", exec->_scriptSkippable ? "Y" : "N");
 			ImGui::Text("Inventory Action/Combine: %s/%s", exec->_inventoryActionFlag ? "Y" : "N", exec->_inventoryCombineFlag ? "Y" : "N");
+			ImGui::Text("Path Walkable Result: %s", exec->_pathWalkableResult ? "Y" : "N");
+			ImGui::Text("Pickup In Progress: %s", exec->_pickupInProgress ? "Y" : "N");
+			ImGui::Text("Is Repeat Run: %s", exec->_isRepeatRun ? "Y" : "N");
 		}
 		if (ImGui::CollapsingHeader("Runtime Specials (FF, read-only)", ImGuiTreeNodeFlags_DefaultOpen)) {
 			static const struct {
