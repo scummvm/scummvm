@@ -589,8 +589,6 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_scriptExecutor->_engine = this;
 	_adlib = new Adlib();
 
-	DebugMan.addDebugChannel(DEBUG_RLE, "rle", "Verbose RLE decoding log");
-	DebugMan.addDebugChannel(DEBUG_SV, "sv", "Verbose script debugging log");
 	// We have a fixed 0x10 number of entries
 	_hotspotOverrides.resize(0x11);
 	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
@@ -640,7 +638,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		// TODO: Use the proper read function, it seems to be available
 		uint16 length = _fileStream->readUint16LE();
 		_fileStream->read(data, length);
-		debugC(DEBUG_RLE, "RLE: Row %.4x with %.4x bytes of data.", y, length);
 		int16 remainingPixels = 320; // signed: see readRLEImage (matches decodeRLERows 1008:0666)
 		uint8 *dataPointer = data;
 		uint16 x = 0;
@@ -650,7 +647,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 			if (value != 0xF0) {
 				_bgImageShip.setPixel(x, y, value);
 				remainingPixels--;
-				debugC(DEBUG_RLE, "RLE : Literal pixel %.2x, remaining row data %.4x bytes.", value, remainingPixels);
 				x++;
 			} else {
 				// We need to decode the RLE data
@@ -662,7 +658,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 					_bgImageShip.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
-				debugC(DEBUG_RLE, "RLE: Encoded pixel %.2x for %.2x reps, remaining row data %.4x bytes.", encodedValue, runlength, remainingPixels);
 			}
 		}
 	}
@@ -1245,7 +1240,7 @@ int Macs2Engine::measureStrings(Common::StringArray sa) {
 	return max;
 }
 
-Common::StringArray Macs2Engine::DecodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
+Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
 	Common::StringArray result(numStrings);
 	DumpStream(stream, 64);
 	stream->seek(offset);
