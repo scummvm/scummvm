@@ -988,43 +988,51 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			for (int i = 0; i < 9; i++) {
 				const Common::Rect &current = _mainMenuButtonLocations[i];
 				if (current.contains(msg._pos)) {
-					switch (i) {
-					case static_cast<int>(MainMenuButtonIndex::Talk): {
+					MainMenuButtonIndex buttonIndex = (MainMenuButtonIndex)i;
+					switch (buttonIndex) {
+					case MainMenuButtonIndex::Talk: {
 						g_engine->setCursorMode(Script::MouseMode::Talk);
 						_isShowingMainMenu = false;
-					} break;
-					case static_cast<int>(MainMenuButtonIndex::Look): {
+						break;
+					}
+					case MainMenuButtonIndex::Look: {
 						g_engine->setCursorMode(Script::MouseMode::Look);
 						_isShowingMainMenu = false;
-					} break;
-					case static_cast<int>(MainMenuButtonIndex::Use): {
+						break;
+					}
+					case MainMenuButtonIndex::Use: {
 						g_engine->setCursorMode(Script::MouseMode::Use);
 						_isShowingMainMenu = false;
-					} break;
-					case static_cast<int>(MainMenuButtonIndex::Walk): {
+						break;
+					}
+					case MainMenuButtonIndex::Walk: {
 						g_engine->setCursorMode(Script::MouseMode::Walk);
 						_isShowingMainMenu = false;
-					} break;
-					case static_cast<int>(MainMenuButtonIndex::Inventory): {
+						break;
+					}
+					case MainMenuButtonIndex::Inventory: {
 						_isShowingMainMenu = false;
 						openInventory(GameObjects::instance().getProtagonistObject());
-					} break;
-
-					case static_cast<int>(MainMenuButtonIndex::Map): {
+						break;
+					}
+					case MainMenuButtonIndex::Map: {
 						_isShowingMainMenu = false;
 						// Enter map mode (sets scene+0x61db equivalent)
 						// from handleActionBarClick (1008:42dc) button 6
 						_currentMode = ViewMode::VM_MAP;
 						g_engine->setCursorMode(Script::MouseMode::PanelUse);
 						updateCursor();
-					} break;
-					case static_cast<int>(MainMenuButtonIndex::SaveLoad): {
+						break;
+					}
+					case MainMenuButtonIndex::SaveLoad: {
 						_isShowingMainMenu = false;
 						g_engine->openMainMenuDialog();
-					} break;
-					case static_cast<int>(MainMenuButtonIndex::Close): {
+						break;
+					}
+					case MainMenuButtonIndex::Close: {
 						_isShowingMainMenu = false;
-					} break;
+						break;
+					}
 					}
 				}
 			}
@@ -1212,19 +1220,18 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
-	// TODO: only open ui components like inventory or main menu if the cursor is not in wait mode - otherwise this might
-	// hide the scene and you can't close those dialogs
-	if (msg.ascii == (uint16)'i') {
-		// Toggle the protagonist inventory panel.
-		if (!_isShowingInventory) {
-			openInventory(GameObjects::instance().getProtagonistObject());
-		} else {
-			closeInventory();
+	// Binary (handleInput 1008:edff): UI panels only open when not executing and cursor != Disabled.
+	if (!g_engine->_scriptExecutor->isExecuting() && g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::Disabled) {
+		if (msg.ascii == (uint16)'i') {
+			if (!_isShowingInventory) {
+				openInventory(GameObjects::instance().getProtagonistObject());
+			} else {
+				closeInventory();
+			}
+		} else if (msg.ascii == 'n') {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			openMainMenu(mousePos);
 		}
-	} else if (msg.ascii == 'n') {
-		// Open the action menu at the current mouse position.
-		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		openMainMenu(mousePos);
 	}
 
 	if (msg.ascii >= '1' && msg.ascii <= '9') {
