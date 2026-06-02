@@ -1907,7 +1907,7 @@ int InsaneRebel2::processOptionsInput() {
 					_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optVoicesEnabled);
 					break;
 				case 3:  // Text toggle
-					_optTextEnabled = !_optTextEnabled;
+					_optTextEnabled = !ConfMan.getBool("subtitles");
 					ConfMan.setBool("subtitles", _optTextEnabled);
 					break;
 				case 4:  // Controls toggle
@@ -1960,6 +1960,8 @@ void InsaneRebel2::drawOptionsOverlay(byte *renderBitmap, int pitch, int width, 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	if (!splayer)
 		return;
+
+	_optTextEnabled = ConfMan.getBool("subtitles");
 
 	// Build items array from TRS strings based on current toggle states
 	// TRS 89: title, 90/91: music, 92/93: sfx, 94/95: voices,

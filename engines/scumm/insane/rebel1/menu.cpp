@@ -900,6 +900,8 @@ void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int 
 
 void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int height) {
 	// --- Options submenu (matching original RunGameOptionsMenu) ---
+	_optTextEnabled = ConfMan.getBool("subtitles");
+
 	const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
 	const int titleW = getFontBankStringWidth("GAME OPTIONS");
@@ -1203,7 +1205,7 @@ void InsaneRebel1::runOptionsMenu() {
 				_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);
 				break;
 			case 4: // Toggle dialogue text
-				_optTextEnabled = !_optTextEnabled;
+				_optTextEnabled = !ConfMan.getBool("subtitles");
 				ConfMan.setBool("subtitles", _optTextEnabled);
 				break;
 			case 5: // Toggle enhanced/original input style
