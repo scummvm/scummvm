@@ -42,10 +42,13 @@
 #include "mads/madsv2/core/video.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/forest/extra.h"
+#include "mads/madsv2/dragonsphere/mads/inventory.h"
+#include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/engine.h"
 
 namespace MADS {
@@ -1939,7 +1942,13 @@ void inter_spin_object(int object_id) {
 	if (inter_object_routine == NULL) {
 		Common::strcpy_s(temp_buf, "*OB");
 
-		env_catint(temp_buf, object_id, 3);
+		// Special handling for the Polystone in Dragonsphere, which can mimic other items
+		int objectId = object_id;
+		if (g_engine->getGameID() == GType_Dragonsphere && object_id == Dragonsphere::polystone &&
+			global[Dragonsphere::object_imitated] != -1)
+			objectId = global[Dragonsphere::object_imitated];
+
+		env_catint(temp_buf, objectId, 3);
 
 		Common::strcat_s(temp_buf, "I");
 
