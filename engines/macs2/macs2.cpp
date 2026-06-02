@@ -1120,12 +1120,27 @@ int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &
 }
 
 // Binary walkableDistance (1008:1293): distance between two nodes IF walkable, else 0x500.
+// Uses binary search on precomputed squared-distance table (scene+0x61DC) for O(log n) sqrt.
 int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 	const Common::Point &a = pathfindingPoints[nodeA - 1]._position;
 	const Common::Point &b = pathfindingPoints[nodeB - 1]._position;
 	if (!isPathWalkable(a.y, a.x, b.y, b.x))
 		return 0x500;
-	return euclideanDistance(a, b);
+	// Binary search for integer sqrt(dx² + dy²), matching binary at 1008:1293
+	int32 dx = abs((int)(b.x - a.x));
+	int32 dy = abs((int)(b.y - a.y));
+	int32 distSq = dx * dx + dy * dy;
+	int result = 0x280;
+	int step = 0x280;
+	do {
+		step = step >> 1;
+		if ((int32)result * result >= distSq) {
+			result -= step;
+		} else {
+			result += step;
+		}
+	} while (step > 1);
+	return result;
 }
 
 // Binary buildPathFromNodes (1008:15a8): recursive DFS cost to reach a reachable node.
@@ -1146,11 +1161,24 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 
 	if (reachable[nodeIndex]) {
 		// Terminal: return walkable distance from this node to finalDest
-		// Binary: findPathNode(nodeY, nodeX, finalDestY, finalDestX)
+		// Binary calls walkableDistance(nodePos, finalDest) = findPathNode(1008:1293)
 		if (!isPathWalkable(nodePos.y, nodePos.x, finalDest.y, finalDest.x)) {
 			result = 0x500;
 		} else {
-			result = euclideanDistance(nodePos, finalDest);
+			int32 dx = abs((int)(finalDest.x - nodePos.x));
+			int32 dy = abs((int)(finalDest.y - nodePos.y));
+			int32 distSq = dx * dx + dy * dy;
+			int dist = 0x280;
+			int step = 0x280;
+			do {
+				step = step >> 1;
+				if ((int32)dist * dist >= distSq) {
+					dist -= step;
+				} else {
+					dist += step;
+				}
+			} while (step > 1);
+			result = dist;
 		}
 		visitedCount--;
 		return result;
