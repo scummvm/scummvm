@@ -492,12 +492,32 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		uint16 runtime213 = 0;
 		s.syncAsUint16LE(runtime213);
 
-		// [+0x21D..+0x22B]: 8 x uint16 - sprite bounds (lastX, lastY, lastW, lastH, drawX, drawY, drawW, drawH)
-		for (int i = 0; i < 8; i++) {
-			uint16 slotVal = (i < 0x15) ? obj->_runtimeSlotValues[i] : 0;
-			s.syncAsUint16LE(slotVal);
-			if (s.isLoading() && i < 0x15)
-				obj->_runtimeSlotValues[i] = slotVal;
+		// [+0x21D..+0x22B]: 8 x uint16 - motion vertical offset state + sprite draw bounds
+		// +0x21D: motion target vertical offset
+		// +0x21F: motion accumulator (unused in ScummVM currently)
+		// +0x221: motion threshold (unused in ScummVM currently)
+		// +0x223: motion step delta (unused in ScummVM currently)
+		// +0x225..+0x22B: transient sprite draw bounds (recalculated each frame)
+		uint16 motionTarget = chr ? chr->_motionTargetVerticalOffset : 0;
+		s.syncAsUint16LE(motionTarget);
+		if (s.isLoading() && chr)
+			chr->_motionTargetVerticalOffset = motionTarget;
+		uint16 motionDelta = chr ? chr->_motionVerticalOffsetDelta : 0;
+		s.syncAsUint16LE(motionDelta);
+		if (s.isLoading() && chr)
+			chr->_motionVerticalOffsetDelta = motionDelta;
+		uint16 motionDist = chr ? chr->_motionDistanceUnits : 0;
+		s.syncAsUint16LE(motionDist);
+		if (s.isLoading() && chr)
+			chr->_motionDistanceUnits = motionDist;
+		uint16 motionProgress = chr ? chr->_motionProgress : 0;
+		s.syncAsUint16LE(motionProgress);
+		if (s.isLoading() && chr)
+			chr->_motionProgress = motionProgress;
+		// +0x225..+0x22B: transient sprite bounds (recalculated, save for format compat)
+		for (int i = 0; i < 4; i++) {
+			uint16 boundsVal = 0;
+			s.syncAsUint16LE(boundsVal);
 		}
 
 		// [+0x215]: 2 bytes - pickup frame counter
@@ -519,10 +539,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(obj->overloadAnimTriggerDirection);
 
 		// _snapToTarget [+0x22F]: 1 byte
-		uint8 flag22F = obj->_snapToTarget ? 1 : 0;
-		s.syncAsByte(flag22F);
+		uint8 snapToTarget = obj->_snapToTarget ? 1 : 0;
+		s.syncAsByte(snapToTarget);
 		if (s.isLoading())
-			obj->_snapToTarget = flag22F != 0;
+			obj->_snapToTarget = snapToTarget != 0;
 
 		// useOverloadAnimation [+0x230]: 1 byte
 		uint8 useOverload = obj->useOverloadAnimation ? 1 : 0;
@@ -530,9 +550,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading())
 			obj->useOverloadAnimation = useOverload != 0;
 
-		// [+0x184]: 1 byte - hasInventoryIcon (loaded from resource, checked by inventory UI)
-		// Not tracked separately in ScummVM - determined by blob presence
-		uint8 hasInventoryIcon = 0;
+		// [+0x184]: 1 byte - hasInventoryIcon (loaded from resource file)
+		// Indicates presence of inventory icon blob (slot 0x14 = index 0x13)
+		uint8 hasInventoryIcon = (obj->_blobs.size() > 0x13 && !obj->_blobs[0x13].empty()) ? 1 : 0;
 		s.syncAsByte(hasInventoryIcon);
 
 		// [+0x185]: 1 byte - HasShading (per-object rendering flag from file)
