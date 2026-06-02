@@ -1150,7 +1150,7 @@ static void showSceneMapsWindow() {
 			surface = &g_engine->_shadowMap;
 		} else if (selectedTab == 4) {
 			// Object Map: use background image
-			surface = &g_engine->_bgImageShip;
+			surface = &g_engine->_sceneBackground;
 		} else if (selectedTab == 5) {
 			// Hotspot Overlay: hotspot map with character positions and override info
 			static Graphics::ManagedSurface hotspotOverlay;
@@ -1522,7 +1522,7 @@ void onImGuiRender() {
 			if (ImGui::MenuItem("Reset Background + Fade")) {
 				View1 *view = (View1 *)g_engine->findView("View1");
 				if (view) {
-					view->_backgroundSurface.copyFrom(g_engine->_bgImageShip);
+					view->_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 					view->startFading();
 					view->redraw();
 				}
