@@ -811,20 +811,27 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			if (screenRect.contains(msg._pos)) {
 				uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
 				if (depth > 0 && depth < 0xFA) {
-					// Preview scene at depth index: fade, load scene image, display, fade back.
-					// Original: seeks to file offset from map scene offsets table (scene+0x5DDB+depth*4),
-					// decodes RLE background, reads palette, decodes depth map, displays with fade.
-					startFadeToBlack();
-					// Load the scene background image at the depth-indexed file offset
-					uint32 sceneTableOffset = 0xC + 0x4 + depth * 0xC;
-					g_engine->_fileStream->seek(sceneTableOffset - 0xC, SEEK_SET);
-					uint32 bgOffset = g_engine->_fileStream->readUint32LE();
-					if (bgOffset != 0) {
-						Graphics::ManagedSurface preview = g_engine->readRLEImage(bgOffset, g_engine->_fileStream);
+					// Preview sub-scene at depth index.
+					// Binary: fileSeek(scene + 0x5DD7 + depth*4). Table starts at scene+0x5DD7.
+					g_engine->_fileStream->seek(g_engine->_mapSubSceneTableFilePos + depth * 4, SEEK_SET);
+					uint32 subSceneOffset = g_engine->_fileStream->readUint32LE();
+					if (subSceneOffset != 0 && subSceneOffset < (uint32)g_engine->_fileStream->size()) {
+						startFadeToBlack();
+						Graphics::ManagedSurface preview = g_engine->readRLEImage(subSceneOffset, g_engine->_fileStream);
 						_backgroundSurface.copyFrom(preview);
+						// Read sub-scene palette
+						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
+						memcpy(g_engine->_pal, g_engine->_palVanilla, 0x300);
+						for (int p = 0; p < 256 * 3; p++) {
+							g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
+						}
+						_paletteDirty = true;
+						// Read sub-scene depth map
+						Graphics::ManagedSurface subDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
+						g_engine->_depthMap.blitFrom(subDepth);
+						startFading();
+						redraw();
 					}
-					startFading();
-					redraw();
 				} else if (depth == 0xFF) {
 					// Return to normal mode: reload current scene, clear map flag
 					_currentMode = ViewMode::VM_GAME;
@@ -1028,11 +1035,35 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					}
 					case MainMenuButtonIndex::Map: {
 						_isShowingMainMenu = false;
-						// Enter map mode (sets scene+0x61db equivalent)
-						// from handleActionBarClick (1008:42dc) button 6
+						// Enter map mode from handleActionBarClick (1008:42dc) button 7.
+						// Binary checks g_wSpecialPaletteMode == 0 (map not disabled).
+						if (g_engine->_mapImageFileOffset == 0 ||
+							g_engine->_mapImageFileOffset >= (uint32)g_engine->_fileStream->size()) {
+							break;
+						}
+						// Load map background image, palette, and depth map from file.
+						// Binary: fileSeek(scene+0x5DDB), decodeRLERows, fileRead palette,
+						// decodeRLERows depth, drawRLEImage, setCursorMode(0x18).
+						startFadeToBlack();
+						Graphics::ManagedSurface mapBg = g_engine->readRLEImage(g_engine->_mapImageFileOffset, g_engine->_fileStream);
+						_backgroundSurface.copyFrom(mapBg);
+						// Read map palette (0x300 bytes immediately after the RLE image)
+						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
+						memcpy(g_engine->_pal, g_engine->_palVanilla, 0x300);
+						for (int p = 0; p < 256 * 3; p++) {
+							g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
+						}
+						_paletteDirty = true;
+						// Read map depth map (RLE image after palette)
+						Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
+						g_engine->_depthMap.blitFrom(mapDepth);
+						// Save file position of the sub-scene offset table (follows depth map).
+						g_engine->_mapSubSceneTableFilePos = g_engine->_fileStream->pos();
 						_currentMode = ViewMode::VM_MAP;
 						g_engine->setCursorMode(Script::MouseMode::PanelUse);
 						updateCursor();
+						startFading();
+						redraw();
 						break;
 					}
 					case MainMenuButtonIndex::SaveLoad: {
@@ -1155,6 +1186,10 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 		return true;
 	} else if (msg._button == MouseMessage::MB_RIGHT) {
+		// Map mode: right-click does nothing (binary: only left-click processed in map mode)
+		if (_currentMode == ViewMode::VM_MAP) {
+			return true;
+		}
 		// Handle no other interactions during a script
 		if (g_engine->_scriptExecutor->isExecuting()) {
 			// From handleInput: right-click during script execution opens the
@@ -1271,6 +1306,12 @@ void View1::draw() {
 	Graphics::ManagedSurface s = getSurface();
 
 	s.blitFrom(_backgroundSurface);
+
+	// In map mode, only the background (map image) is shown — no characters/animations/UI.
+	if (_currentMode == ViewMode::VM_MAP) {
+		return;
+	}
+
 	// Handle highlighting
 
 	drawBackgroundAnimations(s);
@@ -1322,6 +1363,12 @@ bool View1::tick() {
 	if (!_started) {
 		g_engine->changeScene(Scenes::instance()._currentSceneIndex);
 		_started = true;
+	}
+
+	// Map mode: no game logic runs (binary: handleInput skips everything when 0x61db set)
+	if (_currentMode == ViewMode::VM_MAP) {
+		redraw();
+		return true;
 	}
 	// Cycle the palette
 	++_offset;
