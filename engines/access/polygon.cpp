@@ -30,7 +30,8 @@ bool pointInside(const Common::Point * const points, int16 x, int16 y) {
 	uint j = 0;
 	while (points[j] != LISTEND)
 		j++;
-	for (uint k = 0; points[k].x >= 0 && points[k].y >= 0; k++) {
+	j--;
+	for (uint k = 0; points[k] != LISTEND; k++) {
 		if ((points[k].y <= y && y < points[j].y) ||
 			(points[j].y <= y && y < points[k].y)) {
 			if (x < (points[j].x - points[k].x) * (y - points[k].y) /

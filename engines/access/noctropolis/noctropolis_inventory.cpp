@@ -49,6 +49,8 @@ int NoctropolisInventory::displayInv() {
 
 	setUseItem(-1);
 
+	_vm->_events->setCursor(CURSOR_ARROW);
+
 	if (!_keepInventoryPosition) {
 		int16 warpMouseX, warpMouseY;
 		_inventoryBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 252, 640, warpMouseX);
@@ -83,6 +85,10 @@ int NoctropolisInventory::displayInv() {
 	while (selectedItem == -1 && !_vm->shouldQuitOrRestart()) {
 		int x = _vm->_events->_mousePos.x - _inventoryBase.x - 23;
 		int y = _vm->_events->_mousePos.y - _inventoryBase.y - 26;
+
+		Common::CustomEventType action;
+		if (_vm->_events->getAction(action) && action == kActionSkip)
+			break;
 
 		if (prevTopItemIndex != _topItemIndex) {
 
