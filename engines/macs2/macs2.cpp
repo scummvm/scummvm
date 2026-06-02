@@ -165,6 +165,8 @@ void Macs2Engine::readResourceFile() {
 	_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
 	// Load object data (512 entries max, matching original loadResourceFile)
+	// Original allocates all 512 slots, then frees unused ones. We pre-fill with nullptr.
+	GameObjects::instance()._objects.resize(0x200, nullptr);
 	for (int i = 1; i <= 0x200; i++) {
 		// The formula for the seek lives at l0037_0936
 		// The global [0752h] is loaded with 3000h bytes read from offset Ch + 4h in the file
@@ -173,7 +175,7 @@ void Macs2Engine::readResourceFile() {
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
 		if (objectOffset == 0) {
-			break;
+			continue;
 		}
 
 		_fileStream->seek(objectOffset, SEEK_SET);
@@ -244,7 +246,7 @@ void Macs2Engine::readResourceFile() {
 		gameObject->_script.resize(scriptLength);
 		_fileStream->read(gameObject->_script.data(), scriptLength);
 
-		GameObjects::instance()._objects.push_back(gameObject);
+		GameObjects::instance()._objects[i - 1] = gameObject;
 	}
 
 	// Initialize border sprites from cursor image array entries at fixed indices.
@@ -597,6 +599,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		currentView->_characters.push_back(actorChar);
 	}
 	for (auto currentObject : GameObjects::instance()._objects) {
+		if (currentObject == nullptr)
+			continue;
 		if (currentObject->_sceneIndex == newSceneIndex && currentObject->_index != Scenes::instance()._currentActorIndex) {
 			Character *c = new Character();
 			c->_gameObject = currentObject;

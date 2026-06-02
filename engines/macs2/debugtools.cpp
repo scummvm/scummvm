@@ -988,7 +988,7 @@ static void showCharactersWindow() {
 			uint16 sceneIdx = (uint16)Scenes::instance()._currentSceneIndex;
 			if (ImGui::CollapsingHeader("Other Scene Objects")) {
 				for (auto obj : GameObjects::instance()._objects) {
-					if (obj->_sceneIndex != sceneIdx)
+					if (obj == nullptr || obj->_sceneIndex != sceneIdx)
 						continue;
 					// Skip objects already shown as active characters
 					bool isActive = false;
@@ -1205,7 +1205,7 @@ static void showSceneMapsWindow() {
 					// Draw all scene objects from GameObjects
 					int objCount = 0;
 					for (auto obj : GameObjects::instance()._objects) {
-						if (obj->_sceneIndex != sceneIdx)
+						if (obj == nullptr || obj->_sceneIndex != sceneIdx)
 							continue;
 						Common::Point pos = obj->_position;
 						float sx = pos.x * scale;
@@ -1230,7 +1230,7 @@ static void showSceneMapsWindow() {
 						ImVec2 mousePos2 = ImGui::GetMousePos();
 						int clickIdx = 0;
 						for (auto obj : GameObjects::instance()._objects) {
-							if (obj->_sceneIndex != sceneIdx) {
+							if (obj == nullptr || obj->_sceneIndex != sceneIdx) {
 								clickIdx++;
 								continue;
 							}
@@ -1247,6 +1247,10 @@ static void showSceneMapsWindow() {
 					if (_selectedObjectIdx >= 0) {
 						int idx = 0;
 						for (auto obj : GameObjects::instance()._objects) {
+							if (obj == nullptr) {
+								idx++;
+								continue;
+							}
 							if (idx == _selectedObjectIdx) {
 								ImGui::Separator();
 								ImGui::Text("Object 0x%x  Scene:%u  Pos:(%d,%d)  Orient:%u",
