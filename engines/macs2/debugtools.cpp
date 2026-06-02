@@ -1040,8 +1040,8 @@ static void showAnimationsWindow() {
 		return;
 	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Animations", &_showAnimations)) {
-		ImGui::Text("BG Anims: %u", g_engine->_numBackgroundAnimations);
-		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
+		ImGui::Text("BG Anims: %u", (uint)g_engine->_backgroundAnimations.size());
+		for (int i = 0; i < (int)g_engine->_backgroundAnimations.size(); i++) {
 			BackgroundAnimation &a = g_engine->_backgroundAnimations[i];
 			ImGui::Text("  [%d] pos=(%u,%u) frames=%u cur=%u", i, a._x, a._y, a._numFrames, a._frameIndex);
 		}

@@ -257,11 +257,6 @@ public:
 
 	Common::Array<Macs2::AnimFrame> _imageResources;
 
-	byte *_charData;
-	char _charASCII;
-	uint16 _charWidth;
-	uint16 _charHeight;
-
 	GlyphData _glyphs[256];
 	GlyphData _overlayGlyphs[256];
 	uint16 numOverlayGlyphs = 0;
@@ -276,50 +271,16 @@ public:
 
 	bool findGlyph(char c, GlyphData &out) const;
 
-	byte **_cursorData;
-	uint16 *_cursorWidths;
-	uint16 *_cursorHeights;
-
-	// TODO: Need a data structure for this by now or check if a bitmap with transparent pixels for blitting exists in ScummVM
-	byte *_guyData;
-	uint16 _guyWidth;
-	uint16 _guyHeight;
-
-	Sprite _borderSprite;
-	byte *_borderData;
-	uint16 _borderWidth;
-	uint16 _borderHeight;
-
-	byte *_shadingTable;
+	Common::Array<byte> _shadingTable;
 
 	// Map scene offsets from resource file (scene+0x5DDB, 256 entries x 4 bytes).
 	// Each entry is a file offset to a scene preview image for map mode.
 	uint32 _mapSceneOffsets[256] = {0};
 
-	Sprite _borderHighlightSprite;
-	byte *_borderHighlightData;
-	uint16 _borderHighlightWidth;
-	uint16 _borderHighlightHeight;
-
-	Sprite _borderShadowSprite;
-
-	byte **_flagData;
-	uint16 *_flagWidths;
-	uint16 *_flagHeights;
-
-	uint16 _numBackgroundAnimations = 0;
-	BackgroundAnimation *_backgroundAnimations = nullptr;
+	Common::Array<BackgroundAnimation> _backgroundAnimations;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
-	byte *_mapData;
-
 	Common::MemoryReadStream *_fileStream;
-
-	// Common::MemoryReadStream* _stringsStream;
-	uint16 _numBytesStrings;
-	byte *_stringsData;
-
-	// CursorMode _cursorMode = CursorMode::Touch;
 
 	void nextCursorMode();
 
@@ -367,8 +328,6 @@ public:
 	bool _clipRectDirty = false;
 
 	uint16 getHotspotAtPoint(const Common::Point &p);
-
-	AnimFrame _stick;
 
 	Common::Array<uint16> inventoryIconIndices;
 
