@@ -803,6 +803,14 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	Scenes::instance()._currentSceneSpecialAnimOffsets = Scenes::instance().readSpecialAnimsOffsets(newSceneIndex, _fileStream);
 	_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
+	// Reset overrides before running the new scene's script (original placement:
+	// memsetBytes(0, 200, sceneData+0x528D) and memsetBytes(0xffff, 0x20, sceneData+0x5BD3)
+	// happen after all scene data is loaded, before script execution)
+	_pathfindingOverrides.clear();
+	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
+		_hotspotOverrides[i] = 0xFFFF;
+	}
+
 	if (executeScript) {
 		// Start the execution
 		_scriptExecutor->run(true);
