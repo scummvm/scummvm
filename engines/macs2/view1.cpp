@@ -2603,6 +2603,20 @@ void Character::update() {
 				pos.y++;
 			_stepError -= _stepDeltaX;
 		}
+		// Vertical offset Bresenham interpolation (binary runtime+0x21D/21F/221/223)
+		// Per-pixel: accum += stepDelta; while accum >= threshold: accum -= threshold, step ±1
+		if (_hasMotionVerticalOffset &&
+			((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->Unknown)) {
+			_motionProgress += _motionVerticalOffsetDelta;
+			while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
+				_motionProgress -= _motionDistanceUnits;
+				if (_motionTargetVerticalOffset < _gameObject->Unknown) {
+					_gameObject->Unknown--;
+				} else if (_motionTargetVerticalOffset > _gameObject->Unknown) {
+					_gameObject->Unknown++;
+				}
+			}
+		}
 		// Check walkability after each step
 		if (!isWalkable(pos)) {
 			pos = prevPos;
@@ -2666,16 +2680,17 @@ void Character::update() {
 		// The break above already cancelled the path
 	}
 
-	// Update motion vertical offset if active
-	if (_hasMotionVerticalOffset && _motionDistanceUnits != 0) {
-		uint16 totalDist = _stepDeltaX + _stepDeltaY;
-		if (totalDist > 0) {
-			int32 distWalked = abs(pos.x - _startPosition.x) + abs(pos.y - _startPosition.y);
-			float progress = (float)distWalked / (float)totalDist;
-			if (progress > 1.0f)
-				progress = 1.0f;
-			int32 vDelta = (int32)_motionTargetVerticalOffset - (int32)_motionStartVerticalOffset;
-			_gameObject->Unknown = (uint16)((int32)_motionStartVerticalOffset + (int32)(vDelta * progress));
+	// Binary: walkSpeed==0 special case - still run vertical offset once
+	if (walkSpeed == 0 && _hasMotionVerticalOffset &&
+		((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->Unknown)) {
+		_motionProgress += _motionVerticalOffsetDelta;
+		while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
+			_motionProgress -= _motionDistanceUnits;
+			if (_motionTargetVerticalOffset < _gameObject->Unknown) {
+				_gameObject->Unknown--;
+			} else if (_motionTargetVerticalOffset > _gameObject->Unknown) {
+				_gameObject->Unknown++;
+			}
 		}
 	}
 
