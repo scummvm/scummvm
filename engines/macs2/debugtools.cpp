@@ -1434,6 +1434,7 @@ static void showDebugOutputWindow() {
 		ImGui::Text("Mouse: %u %u", mousePos.x, mousePos.y);
 		View1 *view = (View1 *)g_engine->findView("View1");
 		if (view) {
+			ImGui::Text("Hover Area: 0x%04x  Hotspot: 0x%04x", view->_hoverAreaId, view->_hoverHotspotId);
 			ImGui::Text("Scaling: characterY=%u factor=%u", view->_scalingValues.characterY, view->_scalingValues.scalingFactor);
 		}
 		ImGui::Separator();

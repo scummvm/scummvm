@@ -333,6 +333,10 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 
+	// Debug: last hovered area/hotspot (updated every mouse move for ImGui)
+	uint16 _hoverAreaId = 0;
+	uint16 _hoverHotspotId = 0;
+
 	// Input state machine from handleInput (1008:e8bf).
 	// The original game's input handler has two major branches:
 	//
