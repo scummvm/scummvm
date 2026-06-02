@@ -1117,6 +1117,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				bool found = protagonist->calculatePath(target);
 				if (found) {
 					protagonist->_isFollowingPath = true;
+					protagonist->_isLerping = true;
 					protagonist->_currentPathIndex = -1;
 					protagonist->walkAlongPath();
 				} else {
@@ -2336,11 +2337,14 @@ bool Character::calculatePath(Common::Point target) {
 		}
 	}
 
-	// Step 5: Skip-forward optimization - skip nodes that can already see the destination
+	// Step 5: Skip-forward optimization - skip nodes the character can already reach directly.
+	// Binary: checks isPathWalkable(nextNode, charPos) — "can character see the next node?"
+	// Note: binary's calculatePath is called with swapped params, so its 'finalDest' param
+	// is actually the character position.
 	_currentPathIndex = 0;
 	while (_currentPathIndex + 1 < (int16)_path.size()) {
 		const Common::Point &nextNodePos = g_engine->pathfindingPoints[_path[_currentPathIndex + 1] - 1]._position;
-		if (!g_engine->isPathWalkable(nextNodePos.y, nextNodePos.x, target.y, target.x))
+		if (!g_engine->isPathWalkable(nextNodePos.y, nextNodePos.x, charPos.y, charPos.x))
 			break;
 		_currentPathIndex++;
 	}
@@ -2664,12 +2668,22 @@ void Character::update() {
 		arrived = false;
 	}
 	if (arrived) {
-		// _snapToTarget (runtime+0x22F): when set, snap character to exact target
-		// position on arrival. When clear, leave character at last stepped pixel
-		// and update the target to match (original: target = currentPos).
+		// Binary (22cd): check if target == finalDest (at final destination)
+		bool atFinalDest = (_endPosition.x == _pathFinalDestination.x &&
+						    _endPosition.y == _pathFinalDestination.y);
+
+		if (!atFinalDest && _isFollowingPath) {
+			// Mid-path waypoint arrival: advance to next node
+			// Binary (23b0): snap pos to current path node, advance pathIndex
+			_isFollowingPath = walkAlongPath();
+			return;
+		}
+
+		// Final destination arrival (or direct walk arrival)
 		if (_gameObject->_snapToTarget) {
 			pos = _endPosition;
 			setPosition(pos);
+			_pathFinalDestination = pos;
 		} else {
 			_endPosition = pos;
 			_pathFinalDestination = pos;
@@ -2677,13 +2691,8 @@ void Character::update() {
 				_motionTargetVerticalOffset = _gameObject->_verticalOffsetScale;
 			}
 		}
-		if (_isFollowingPath) {
-			_isFollowingPath = walkAlongPath();
-			// walkAlongPath returning true: more nodes, direction reset, return
-			// walkAlongPath returning false: target now = finalDest, keep walking
-			return;
-		}
 		_isLerping = false;
+		_isFollowingPath = false;
 		if (_hasMotionVerticalOffset) {
 			_gameObject->_verticalOffsetScale = _motionTargetVerticalOffset;
 			_motionProgress = _motionDistanceUnits;
@@ -2760,109 +2769,91 @@ void Character::update() {
 		return;
 	}
 
-	// Step pixels (Bresenham line algorithm)
+	// Phase 1: Bresenham stepping loop — exact 1:1 match of binary (1008:1ea1..2280)
+	// Binary: stepCounter from 1 to walkSpeed, NO early break. Loop always completes.
+	// After loop: if pixelsMoved != walkSpeed → revert pos to savedPos and cancel path.
 	int pixelsMoved = 0;
-	bool wallSlideOccurred = false;
-	Common::Point savedPos = pos; // savedX/savedY from binary
-	for (int step = 0; step < walkSpeed; step++) {
-		savedPos = pos; // Binary: savedX = posX, savedY = posY at start of each iteration
-		if (_stepError < _stepDeltaX) {
-			// Step along X axis
-			if (_endPosition.x != pos.x)
-				pixelsMoved++;
-			if (_endPosition.x < pos.x)
-				pos.x--;
-			else if (_endPosition.x > pos.x)
-				pos.x++;
-			_stepError += _stepDeltaY;
-		} else {
-			// Step along Y axis
-			if (_endPosition.y != pos.y)
-				pixelsMoved++;
-			if (_endPosition.y < pos.y)
-				pos.y--;
-			else if (_endPosition.y > pos.y)
-				pos.y++;
-			_stepError -= _stepDeltaX;
-		}
-		// Vertical offset Bresenham interpolation (binary runtime+0x21D/21F/221/223)
-		// Per-pixel: accum += stepDelta; while accum >= threshold: accum -= threshold, step ±1
-		if (_hasMotionVerticalOffset &&
-			((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->_verticalOffsetScale)) {
-			_motionProgress += _motionVerticalOffsetDelta;
-			while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
-				_motionProgress -= _motionDistanceUnits;
-				if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale) {
-					_gameObject->_verticalOffsetScale--;
-				} else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale) {
-					_gameObject->_verticalOffsetScale++;
+	Common::Point savedPos = pos;
+	if (walkSpeed > 0) {
+		for (int stepCounter = 1; stepCounter <= walkSpeed; stepCounter++) {
+			savedPos = pos; // Binary: savedX/savedY at top of each iteration
+			// Bresenham: if error >= deltaX → step Y, else step X
+			if (_stepError >= _stepDeltaX) {
+				// Step Y axis
+				if (_endPosition.y != pos.y)
+					pixelsMoved++;
+				if (_endPosition.y < pos.y)
+					pos.y--;
+				else if (_endPosition.y > pos.y)
+					pos.y++;
+				_stepError -= _stepDeltaX;
+			} else {
+				// Step X axis
+				if (_endPosition.x != pos.x)
+					pixelsMoved++;
+				if (_endPosition.x < pos.x)
+					pos.x--;
+				else if (_endPosition.x > pos.x)
+					pos.x++;
+				_stepError += _stepDeltaY;
+			}
+			// Vertical offset interpolation
+			if (_hasMotionVerticalOffset &&
+				((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->_verticalOffsetScale)) {
+				_motionProgress += _motionVerticalOffsetDelta;
+				while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
+					_motionProgress -= _motionDistanceUnits;
+					if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale)
+						_gameObject->_verticalOffsetScale--;
+					else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale)
+						_gameObject->_verticalOffsetScale++;
 				}
 			}
-		}
-		// Check walkability after each step
-		if (!isWalkable(pos)) {
-			pos = savedPos;
-			// Wall-sliding from walkAlongPath (1008:1b8f):
-			// Sample ±1 and ±2 pixels to build a push vector, then slide.
-			int pushX = 0, pushY = 0;
-			if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200)
-				pushX = -1;
-			if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200)
-				pushX += 1;
-			if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200)
-				pushY = -1;
-			if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200)
-				pushY += 1;
-			if (lookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200)
-				pushX -= 1;
-			if (lookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200)
-				pushX += 1;
-			if (lookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200)
-				pushY -= 1;
-			if (lookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200)
-				pushY += 1;
-			// Apply push vector pixel by pixel
-			while (pushX != 0 || pushY != 0) {
-				if (pushX < 0) {
-					if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200)
-						pos.x--;
-					pushX++;
+			// Walkability check — binary uses getWalkabilityAt(posY, posX) >= 0xC8
+			if (!isWalkable(pos)) {
+				// Revert position
+				pos = savedPos;
+				// Wall-sliding: build push vector from ±1 and ±2 samples
+				int pushX = 0, pushY = 0;
+				if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200) pushX--;
+				if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200) pushX++;
+				if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200) pushY--;
+				if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200) pushY++;
+				if (lookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200) pushX--;
+				if (lookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200) pushX++;
+				if (lookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200) pushY--;
+				if (lookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200) pushY++;
+				// Apply push vector
+				while (pushX != 0 || pushY != 0) {
+					if (pushX < 0) {
+						if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200) pos.x--;
+						pushX++;
+					}
+					if (pushX > 0) {
+						if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200) pos.x++;
+						pushX--;
+					}
+					if (pushY < 0) {
+						if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200) pos.y--;
+						pushY++;
+					}
+					if (pushY > 0) {
+						if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200) pos.y++;
+						pushY--;
+					}
 				}
-				if (pushX > 0) {
-					if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200)
-						pos.x++;
-					pushX--;
-				}
-				if (pushY < 0) {
-					if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200)
-						pos.y--;
-					pushY++;
-				}
-				if (pushY > 0) {
-					if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200)
-						pos.y++;
-					pushY--;
-				}
+				// Binary: target = finalDest = pos (cancel path, but loop continues)
+				_endPosition = pos;
+				_pathFinalDestination = pos;
+				_isFollowingPath = false;
+				_path.clear();
 			}
-			// Binary: cancel path (target=finalDest=currentPos)
-			// In the binary, the loop continues after this (remaining iterations are no-ops
-			// since target==pos), so savedPos ends up equal to the wall-slid position.
-			_endPosition = pos;
-			_pathFinalDestination = pos;
-			_isFollowingPath = false;
-			_path.clear();
-			wallSlideOccurred = true;
-			break;
+			// Binary: loop continues unconditionally until stepCounter == walkSpeed
 		}
-		// Check if we reached the target
-		if (pos == _endPosition)
-			break;
 	}
 
-	// Binary: if pixelsMoved != walkSpeed after step loop, revert position and cancel path.
-	// Exception: if wall-sliding already occurred, the character stays at the wall-slid
-	// position (binary: remaining loop iterations are no-ops, savedPos = wall-slid pos).
-	if (!wallSlideOccurred && pixelsMoved != walkSpeed) {
+	// Binary (2280): if pixelsMoved != walkSpeed → revert and cancel
+	if (pixelsMoved != walkSpeed) {
 		pos = savedPos;
 		_endPosition = pos;
 		_pathFinalDestination = pos;
