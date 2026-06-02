@@ -1075,7 +1075,10 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	Common::Array<uint16> a = _hotspotColorTable;
 
 	do {
-		uint16 lookup = a[i - 1];
+		if ((uint)(i - 1) >= a.size())
+			break;
+		// Binary compares only the low byte: *(char*)(scene + i*2 + 0x50D3)
+		uint8 lookup = (uint8)a[i - 1];
 		if (lookup == firstLookup) {
 			if (_hotspotOverrides[i] != 0xFFFF) {
 				return 0x800 + _hotspotOverrides[i];
