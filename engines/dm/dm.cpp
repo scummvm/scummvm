@@ -757,9 +757,9 @@ void DMEngine::drawEntrance() {
 	_dungeonMan->_currMapHeight = 5;
 	_dungeonMan->_currMapData = microDungeonCurrentMapData;
 
-	Map map; // uninitialized, won't be used
+	static Map map; // uninitialized, won't be used
 	_dungeonMan->_currMap = &map;
-	Square microDungeonSquares[25];
+	static Square microDungeonSquares[25];
 	for (uint16 i = 0; i < 25; ++i)
 		microDungeonSquares[i] = Square(kDMElementTypeWall, 0);
 
