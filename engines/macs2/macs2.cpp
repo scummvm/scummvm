@@ -180,8 +180,8 @@ void Macs2Engine::readResourceFile() {
 		gameObject->_verticalOffsetScale = _fileStream->readUint16LE();
 
 		for (int j = 1; j <= 0x15; j++) {
-			// Per-slot data in file: 2 bytes unknown1, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
-			_fileStream->readUint16LE(); // unknown1
+			// Per-slot data in file: 2 bytes animID, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
+			_fileStream->readUint16LE(); // runtime+0x24: animation slot ID (not used at runtime, editor metadata)
 			uint16 blobSourceKey = _fileStream->readUint16LE();
 			uint32 dataSize = _fileStream->readUint32LE();
 			uint8 *data = new uint8[dataSize];
