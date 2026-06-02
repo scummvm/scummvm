@@ -1129,48 +1129,72 @@ int Macs2Engine::pathNodeDistance(int nodeA, int nodeB) {
 }
 
 // Binary buildPathFromNodes (1008:15a8): recursive DFS cost to reach a reachable node.
-// Returns minimum total edge cost from nodeIndex to any reachable node.
-int Macs2Engine::buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount) {
-	// Use an iterative visited-stack approach matching binary's stack-based recursion
-	struct StackEntry { int node; int prev; };
-	Common::Array<int> visited;
-	visited.push_back(nodeIndex);
+// Full recursive DFS with visited-stack cycle detection matching binary exactly.
+// Terminal: returns pathNodeDistance(node, finalDest) when node is reachable.
+// Recursive: min(buildPathFromNodes(adj)) + pathNodeDistance(bestAdj, current).
+int Macs2Engine::buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest) {
+	// Static visited stack (matches binary's stack-frame approach, max 16 nodes)
+	static int visitedStack[17];
+	static int visitedCount = 0;
 
-	// Terminal: if node is reachable, return distance from node to finalDest
+	// Push current node to visited stack
+	visitedCount++;
+	visitedStack[visitedCount] = nodeIndex;
+
+	int result;
+	const Common::Point &nodePos = pathfindingPoints[nodeIndex - 1]._position;
+
 	if (reachable[nodeIndex]) {
-		return 0;
+		// Terminal: return walkable distance from this node to finalDest
+		// Binary: findPathNode(nodeY, nodeX, finalDestY, finalDestX)
+		if (!isPathWalkable(nodePos.y, nodePos.x, finalDest.y, finalDest.x)) {
+			result = 0x500;
+		} else {
+			result = euclideanDistance(nodePos, finalDest);
+		}
+		visitedCount--;
+		return result;
 	}
 
-	// Recursive: try all adjacent nodes (skip prevNode and visited)
 	int bestCost = 0x7777;
 	int bestAdj = 0;
 	const PathfindingPoint &pt = pathfindingPoints[nodeIndex - 1];
-	for (uint a = 0; a < pt._adjacentPoints.size(); a++) {
-		int adj = pt._adjacentPoints[a];
-		if (adj == prevNode) continue;
-		bool alreadyVisited = false;
-		for (uint v = 0; v < visited.size(); v++) {
-			if (visited[v] == adj) { alreadyVisited = true; break; }
-		}
-		if (alreadyVisited) continue;
+	int adjCount = (int)pt._adjacentPoints.size();
 
-		// Simple recursive approximation: use reachability + distance
-		if (reachable[adj]) {
-			const Common::Point &adjPos = pathfindingPoints[adj - 1]._position;
-			const Common::Point &curPos = pathfindingPoints[nodeIndex - 1]._position;
-			int cost = euclideanDistance(adjPos, curPos);
+	if (adjCount > 0) {
+		for (int i = 0; i < adjCount; i++) {
+			int adj = pt._adjacentPoints[i];
+			if (adj == prevNode) continue;
+
+			// Check visited stack
+			bool alreadyVisited = false;
+			for (int j = 1; j < visitedCount; j++) {
+				if (visitedStack[j] == adj) {
+					alreadyVisited = true;
+					break;
+				}
+			}
+			if (alreadyVisited) continue;
+
+			// Recursive call
+			int cost = buildPathFromNodesCost(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
 			if (cost < bestCost) {
-				bestCost = cost;
 				bestAdj = adj;
+				bestCost = cost;
 			}
 		}
 	}
 
 	if (bestCost < 0x7777) {
-		// Add edge cost from bestAdj to current node
-		return bestCost + pathNodeDistance(bestAdj, nodeIndex);
+		// Add edge cost: walkable distance from bestAdj to current node
+		result = bestCost + pathNodeDistance(bestAdj, nodeIndex);
+	} else {
+		result = 0x7777;
 	}
-	return 0x7777;
+
+	// Pop visited stack
+	visitedCount--;
+	return result;
 }
 
 void Macs2Engine::nextCursorMode() {
