@@ -1388,7 +1388,10 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 			return -projAspOrd;
 	}
 
-	return _objectInfos[getObjectInfoIndex(thing)]._objectAspectIndex;
+	int16 infoIndex = getObjectInfoIndex(thing);
+	if (infoIndex < 0 || infoIndex >= 180)
+		return 0;
+	return _objectInfos[infoIndex]._objectAspectIndex;
 }
 
 int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY) {
