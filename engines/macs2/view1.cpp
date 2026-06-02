@@ -1036,7 +1036,6 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					case MainMenuButtonIndex::Map: {
 						_isShowingMainMenu = false;
 						// Enter map mode from handleActionBarClick (1008:42dc) button 7.
-						// Binary checks g_wSpecialPaletteMode == 0 (map not disabled).
 						if (g_engine->_mapImageFileOffset == 0 ||
 							g_engine->_mapImageFileOffset >= (uint32)g_engine->_fileStream->size()) {
 							break;
