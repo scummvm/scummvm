@@ -1869,12 +1869,13 @@ bool Script::ScriptExecutor::scriptStopMusicSlot() {
 
 	if (_activeMusicSlot == slotID) {
 		if (stopImmediately == 0) {
+			// Binary: sets mode=2 (fade-out), step=fadeParam, volume=0
 			_musicControlMode = 2;
 			_musicControlParam = fadeParam;
+			_musicControlVolume = 0;
 		} else {
+			// Binary: adlibStopMusic(), activeSlot=0 (no mode/param clear)
 			_engine->getAdlib()->StopMusic();
-			_musicControlMode = 0;
-			_musicControlParam = 0;
 			_activeMusicSlot = 0;
 		}
 	}

@@ -1504,12 +1504,10 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	uint32 address = _sceneResourceOffsets[dataIndex - 1];
 	_fileStream->seek(address);
 	uint32 size = _fileStream->readUint32LE();
-	// TODO: Also delete this one
-	Common::Array<uint8> *data = new Common::Array<uint8>();
-	data->resize(size);
-	_fileStream->read(data->data(), size);
-	StreamHandler *sh = new StreamHandler(data);
-	_adlib->SetSong(sh);
+	Common::Array<uint8> data;
+	data.resize(size);
+	_fileStream->read(data.data(), size);
+	_adlib->PlaySongData(data);
 }
 
 void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {

@@ -29,760 +29,473 @@
 
 namespace Macs2 {
 
+// --- OPL register access ---
+
 void Adlib::adlibWriteReg(byte registerIndex, byte value) {
-
-	// _opl->write(0x388, registerIndex);
 	_opl->writeReg(registerIndex, value);
-	gArray229C[registerIndex] = value;
+	_regShadow[registerIndex] = value;
 }
 
+uint8 Adlib::adlibGetOperator(uint8 reg) {
+	return _regShadow[reg];
+}
+
+// --- adlibSetInstrument (1000:27e4) ---
+// Key-off all 9 channels, then set all operator volume registers to 0xFF (silence)
 void Adlib::adlibSetInstrument() {
-	uint16 local_counter; // bp-2h (2-byte local variable)
-
-	// First loop section (27EF-27F2 labels)
-	local_counter = 0;
-	do {
-		// if (local_counter >= 9)
-		// originally
-
-		// Body of first loop
-		uint16 param = local_counter + 0xB0;
-		// the first time I saw it)
-		uint8 result = adlibGetOperator(param);
-		result &= 0xDF; // Convert to uppercase
-		adlibWriteReg(param, result);
-
-		// l0017_27EF
-		local_counter++;
-	} while (local_counter <= 8); // cmp 8h, jnz 27EFh
-
-	// Second loop section (2813-281D labels)
-	local_counter = 0;
-	do {
-
-		uint8 mem_value = gArray69[local_counter];
-		uint16 param = mem_value + 0x40;
-
-		adlibWriteReg(param, 0xFF);
-
-		// l0017_281A
-		local_counter++;
-	} while (local_counter <= 0x11); // cmp 11h, jnz 281Ah
+	for (uint16 i = 0; i <= 8; i++) {
+		uint8 val = adlibGetOperator(i + 0xB0);
+		adlibWriteReg(i + 0xB0, val & 0xDF); // clear key-on bit
+	}
+	for (uint16 i = 0; i <= 0x11; i++) {
+		adlibWriteReg(_opSlotTable[i] + 0x40, 0xFF);
+	}
 }
 
-uint16 Adlib::adlibStopMusic() {
-	// Ignoring this code for now, maybe just fancy sync stuff not needed on the emulator
-	// Reset all register to 0
-	for (int i = 2; i < 256; i++) {
-		adlibWriteReg(i, 0);
+// --- adlibSetFrequency (1000:2839) ---
+// Load 11 instrument parameters from stream into OPL registers for a voice
+void Adlib::adlibSetFrequency(uint8 voiceIndex, StreamHandler *sh) {
+	uint8 op1 = _opMap1[voiceIndex];
+	uint8 op2 = _opMap2[voiceIndex];
+
+	adlibWriteReg(op1 + 0x20, sh->peekByteAtOffset(0, SEEK_CUR));
+	adlibWriteReg(op2 + 0x20, sh->peekByteAtOffset(1, SEEK_CUR));
+	adlibWriteReg(op1 + 0x40, sh->peekByteAtOffset(2, SEEK_CUR));
+	adlibWriteReg(op2 + 0x40, sh->peekByteAtOffset(3, SEEK_CUR));
+	adlibWriteReg(op1 + 0x60, sh->peekByteAtOffset(4, SEEK_CUR));
+	adlibWriteReg(op2 + 0x60, sh->peekByteAtOffset(5, SEEK_CUR));
+	adlibWriteReg(op1 + 0x80, sh->peekByteAtOffset(6, SEEK_CUR));
+	adlibWriteReg(op2 + 0x80, sh->peekByteAtOffset(7, SEEK_CUR));
+	adlibWriteReg(op1 + 0xE0, sh->peekByteAtOffset(8, SEEK_CUR));
+	adlibWriteReg(op2 + 0xE0, sh->peekByteAtOffset(9, SEEK_CUR));
+	adlibWriteReg(voiceIndex + 0xC0, sh->peekByteAtOffset(0xA, SEEK_CUR));
+}
+
+// --- adlibSetupChannel (1000:294e) ---
+// Set frequency registers with key-on (bit 0x20 in B0)
+void Adlib::adlibSetupChannel(uint16 voiceIndex, uint8 note, uint16 pitchBend) {
+	uint16 freq = (_freqTableHi[note] << 8) | _freqTableLo[note];
+
+	if (pitchBend != 0) {
+		if (pitchBend < 0x80) {
+			uint8 nextNote = (note < 0x7F) ? note + 1 : 0x7F;
+			uint16 nextFreq = (_freqTableHi[nextNote] << 8) | _freqTableLo[nextNote];
+			uint64 product = (uint64)pitchBend * (nextFreq - freq);
+			freq += (uint16)(product >> 7);
+		} else {
+			uint8 prevNote = (note > 0) ? note - 1 : 0;
+			uint16 prevFreq = (_freqTableHi[prevNote] << 8) | _freqTableLo[prevNote];
+			uint64 product = (uint64)pitchBend * (freq - prevFreq);
+			freq -= (uint16)(product >> 7);
+		}
 	}
 
-	// Waveform select of register 1
-	adlibWriteReg(0x1, 0x20);
-	return 0;
+	adlibWriteReg(voiceIndex + 0xA0, freq & 0xFF);
+	adlibWriteReg(voiceIndex + 0xB0, (freq >> 8) | 0x20); // key-on
 }
 
-uint8 Adlib::adlibGetOperator(uint8 arg1) {
-	return gArray229C[arg1];
+// --- adlibProcessEvent (1000:2a80) ---
+// Set frequency registers WITHOUT key-on (used for note-off)
+void Adlib::adlibProcessEvent(uint8 pitchBend, uint8 note, uint8 voiceIndex) {
+	uint16 freq = (_freqTableHi[note] << 8) | _freqTableLo[note];
+
+	if (pitchBend != 0) {
+		if (pitchBend < 0x80) {
+			uint8 nextNote = (note < 0x7F) ? note + 1 : 0x7F;
+			uint16 nextFreq = (_freqTableHi[nextNote] << 8) | _freqTableLo[nextNote];
+			uint64 product = (uint64)pitchBend * (nextFreq - freq);
+			freq += (uint16)(product >> 7);
+		} else {
+			uint8 prevNote = (note > 0) ? note - 1 : 0;
+			uint16 prevFreq = (_freqTableHi[prevNote] << 8) | _freqTableLo[prevNote];
+			uint64 product = (uint64)pitchBend * (freq - prevFreq);
+			freq -= (uint16)(product >> 7);
+		}
+	}
+
+	adlibWriteReg(voiceIndex + 0xA0, freq & 0xFF);
+	adlibWriteReg(voiceIndex + 0xB0, (freq >> 8) & 0xDF); // key-off (clear bit 5)
 }
 
+// --- adlibTickHandler (1000:24fd) — initialization ---
 uint16 Adlib::adlibTickHandler() {
-	// Local variables (BP-2 = return value, BP-4/BG-6 temps)
-	uint16 return_value;
-	// uint16 temp_var;
-	uint16 loop_counter;
+	if (_isInitialized != 0)
+		return 3;
 
-	if (_isInitialized != 0) {
-		return_value = 3;
-		goto CLEANUP_2648;
-	}
+	// Waveform select enable
+	adlibWriteReg(0x01, 0x20);
 
-	// [Original label: l0017_2510]
-	return_value = adlibStopMusic();
-	if (return_value != 0) {
-		goto CLEANUP_2648;
-	}
-
-	// [Original label: l0017_2527]
-	// Following code corresponds to the memory/port operations
-	adlibWriteReg(0x1, 0x20);
-	// for now
-
-	// Original clears interrupts here
-	shMem2250 = shMem2244;
+	_playbackPos = _songStartPtr;
 	_masterVolume = 0;
-	_streamBytesConsumed = _streamBytesConsumedHi = 0;
+	_streamBytesConsumed = 0;
+	_streamBytesConsumedHi = 0;
 	_loopCount = 0;
 	_numOplChannels = 9;
 	adlibWriteReg(0xBD, 0);
 	_currentEventStatus = 0;
 	_currentEventStatusHi = 0;
 
-	for (loop_counter = 0; loop_counter <= 0x0F; ++loop_counter) {
-		_channelPrograms[loop_counter] = 0;
-		_channelPitchBend[loop_counter] = 0;
+	for (uint16 i = 0; i <= 0x0F; i++) {
+		_channelPrograms[i] = 0;
+		_channelPitchBend[i] = 0;
 	}
 
-	// Loop 2: Initialize array elements [Original labels: 259A-25C3]
-	for (loop_counter = 0; loop_counter <= 8; ++loop_counter) {
-		_voiceAge[loop_counter] = 1;
-		_voiceMidiChannel[loop_counter] = 0xFF;
-		_voiceInstrument[loop_counter] = 0xFF;
-		_voiceNote[loop_counter] = 0xFF;
+	for (uint16 i = 0; i <= 8; i++) {
+		_voiceAge[i] = 1;
+		_voiceMidiChannel[i] = 0xFF;
+		_voiceInstrument[i] = 0xFF;
+		_voiceNote[i] = 0xFF;
 	}
 
 	adlibReadDeltaTime();
 
-	// Device/hardware operations (timer/speaker?)
-	if ((_timerFrequency > 0x12) && (_timerFrequency != 0)) {
+	if (_timerFrequency > 0x12 && _timerFrequency != 0) {
 		_timerFrequency += 9;
-		uint32 temp = _timerFrequency;
-		temp = temp % 0x12;
-		_timerFrequency -= temp;
+		_timerFrequency -= _timerFrequency % 0x12;
 		_timerSubdivCounter = 0;
-		// Original: _timerSubdivThreshold = _timerFrequency / 0x12, then PIT is reprogrammed so that
-		// Since our OPL callback fires at a fixed 120 Hz, we compute _timerSubdivThreshold
-		// to produce the same effective rate: 120 / _timerSubdivThreshold = ~20 Hz → _timerSubdivThreshold = 6.
-		_timerSubdivThreshold = CALLBACKS_PER_SECOND / 20;
-
-		// The original reprograms the PIT here: divisor = 0x10AE3C / _timerFrequency.
-		// This changes the ISR rate, but the _timerSubdivThreshold divider compensates so the
-		// effective music event rate is always ~19.65 Hz regardless of tempo.
-		// We achieve the same by fixing _timerSubdivThreshold = CALLBACKS_PER_SECOND / 20 above.
+		// Binary: threshold = timerFrequency / 18
+		// ScummVM OPL callback fires at CALLBACKS_PER_SECOND Hz.
+		// Original PIT divisor = 0x10AE3C / timerFrequency, giving ISR rate = 1193180 / divisor Hz.
+		// Effective music rate = ISR rate / threshold.
+		// We need: CALLBACKS_PER_SECOND / our_threshold = ISR_rate / binary_threshold
+		// our_threshold = CALLBACKS_PER_SECOND * binary_threshold / ISR_rate
+		// Simplified: since binary ISR rate ≈ timerFrequency * 18 / something,
+		// and the effective event rate = 18 Hz always, we need our_threshold = CALLBACKS_PER_SECOND / 18.
+		_timerSubdivThreshold = _timerFrequency / 0x12;
+		// Scale for our fixed callback rate: binary threshold assumes PIT-rate ISR.
+		// PIT divisor = 0x10AE3C / timerFrequency → ISR Hz = 1193180*timerFrequency/0x10AE3C
+		// Our rate is fixed at CALLBACKS_PER_SECOND. Ratio:
+		// our_threshold = binary_threshold * CALLBACKS_PER_SECOND * 0x10AE3C / (1193180 * timerFrequency)
+		// This simplifies to: CALLBACKS_PER_SECOND / (1193180 / (0x10AE3C / timerFrequency))
+		// = CALLBACKS_PER_SECOND * (0x10AE3C / timerFrequency) / 1193180
+		// For typical timerFrequency=108: PIT divisor=0x10AE3C/108=10120, ISR=1193180/10120≈117.9Hz
+		// binary threshold=108/18=6, effective rate=117.9/6≈19.65Hz
+		// our threshold = 120/19.65 ≈ 6.1 → 6
+		// General formula: our_threshold = CALLBACKS_PER_SECOND * 0x10AE3C / (1193180 * timerFrequency) * (timerFrequency/18)
+		// = CALLBACKS_PER_SECOND * 0x10AE3C / (1193180 * 18)
+		// = 120 * 1093180 / 21477240 ≈ 6.1
+		// So for any valid timerFrequency, threshold ≈ 6. Use the direct ratio:
+		uint32 pitDivisor = 0x10AE3C / _timerFrequency;
+		uint32 isrHz = 1193180 / pitDivisor;
+		_timerSubdivThreshold = CALLBACKS_PER_SECOND * (_timerFrequency / 0x12) / isrHz;
+		if (_timerSubdivThreshold < 1)
+			_timerSubdivThreshold = 1;
 	}
 
-	// This part sets an interrupt
 	_isInitialized = 1;
 	_statusFlags = 0x10;
-	return_value = 0;
-
-CLEANUP_2648:
-	return return_value;
+	return 0;
 }
 
-void Adlib::adlibSetFrequency(uint8 bpp0A, StreamHandler *sh) {
-	uint8 bp1 = gArray8d[bpp0A];
-	uint8 bp2 = gArray96[bpp0A];
-
-	uint8 value = sh->peekByteAtOffset(0, SEEK_CUR);
-	adlibWriteReg(bp1 + 0x20, value);
-
-	value = sh->peekByteAtOffset(1, SEEK_CUR);
-	adlibWriteReg(bp2 + 0x20, value);
-
-	value = sh->peekByteAtOffset(2, SEEK_CUR);
-	adlibWriteReg(bp1 + 0x40, value);
-
-	value = sh->peekByteAtOffset(3, SEEK_CUR);
-	adlibWriteReg(bp2 + 0x40, value);
-
-	value = sh->peekByteAtOffset(4, SEEK_CUR);
-	adlibWriteReg(bp1 + 0x60, value);
-
-	value = sh->peekByteAtOffset(5, SEEK_CUR);
-	adlibWriteReg(bp2 + 0x60, value);
-
-	value = sh->peekByteAtOffset(6, SEEK_CUR);
-	adlibWriteReg(bp1 + 0x80, value);
-
-	value = sh->peekByteAtOffset(7, SEEK_CUR);
-	adlibWriteReg(bp2 + 0x80, value);
-
-	value = sh->peekByteAtOffset(8, SEEK_CUR);
-	adlibWriteReg(bp1 + 0xE0, value);
-
-	value = sh->peekByteAtOffset(9, SEEK_CUR);
-	adlibWriteReg(bp2 + 0xE0, value);
-
-	value = sh->peekByteAtOffset(0xA, SEEK_CUR);
-	adlibWriteReg(bpp0A + 0xC0, value);
+// --- adlibReadDeltaTime ---
+// Read variable-length delta time from stream (same as MIDI VLQ)
+void Adlib::adlibReadDeltaTime() {
+	_nextEventTimer = 0;
+	uint8 b;
+	do {
+		b = _playbackPos->peekByte();
+		_nextEventTimer = (_nextEventTimer << 7) + (b & 0x7F);
+		_playbackPos = adlibSeekStream(_playbackPos, 1);
+		_streamBytesConsumed++;
+	} while (b & 0x80);
 }
 
-void Adlib::adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6) {
-	uint16 bp4;
-	uint8 bp6;
-	uint8 al = gArray9F[bpp8];
-	uint16 dx = al;
-	al = gArray11F[bpp8];
-	uint16 bp2 = (al << 0x8) + dx;
-	if (bpp6 != 0) {
-		if (bpp6 < 0x80) {
-			if (bpp8 < 0x7F) {
-				bp6 = bpp8 + 1;
-			} else {
-				bp6 = 0x7F;
-			}
-			dx = gArray9F[bp6];
-			bp4 = (gArray11F[bp6] << 0x8) + dx;
-			// eax:edx = eax:edx * ebx:ecx
-			uint64 product = bpp6 * (bp4 - bp2);
-			// Right shift done by 0D7A proc
-			product = product >> 0x7;
-			bp2 = bp2 + product;
-		} else {
-			if (bpp8 > 0) {
-			} else {
-				bp6 = 0;
-			}
-
-			bp4 = (gArray11F[bp6] << 0x8) + gArray9F[bp6];
-			// eax:edx = eax:edx * ebx:ecx
-			uint64 product = bpp6 * (bp2 - bp4);
-			// Right shift done by 0D7A proc
-			product = product >> 0x7;
-			bp2 = bp2 - product;
-		}
-	}
-
-	// My version relies on the 16 bit value being correctly cast to 8 bit
-	adlibWriteReg(bppA + 0xA0, bp2 & 0xFF);
-	adlibWriteReg(bppA + 0xB0, (bp2 >> 0x8) | 0x20);
-}
-
-void Adlib::OnTimer() {
-
-	// Original ISR always runs; skips event processing via _statusFlags check.
-	if (shMem2250 == nullptr) {
-		return;
-	}
-
-	_timerSubdivCounter++;
-
-	if (_timerSubdivCounter >= _timerSubdivThreshold) {
-		// Every nth time we execute this code
-		_timerSubdivCounter = 0;
-
-		_isTimerTick = true;
-	} else {
-		_isTimerTick = false;
-	}
-	if (!_isTimerTick) {
-		// interrupt
-	}
-	_statusFlags = _statusFlags & 0xDF;
-	if (_statusFlags & 0x2) {
-		// [2258] & 2 was not zero
-		_statusFlags |= 0x40;
-	}
-
-	if (!(_statusFlags & 0xC3)) {
-		if (_nextEventTimer != 0) {
-			_nextEventTimer--;
-			// we don't need
-			return;
-		}
-
-		for (;;) {
-			uint8 current = shMem2250->peekByte();
-
-			if (current & 0x80) {
-				// The first bit of the read value was 0
-				_currentMidiStatus = _currentEventStatus = shMem2250->peekByte();
-				shMem2250 = adlibSeekStream(shMem2250, 1);
-				_streamBytesConsumed++;
-			}
-			uint8 bp1;
-			uint8 bp2;
-			uint8 bp3 = _currentMidiStatus & 0x0F;
-			uint8 bp6 = _currentMidiStatus;
-			uint8 bp4 = shMem2250->peekByte();
-			StreamHandler *bp10 = adlibSeekStream(shMem2250, 1);
-			StreamHandler *bp12;
-			uint8 bp5 = bp10->peekByte();
-
-			if ((bp6 & 0xF0) == 0x90) {
-				if (bp5 != 0) {
-					shMem2250 = adlibSeekStream(shMem2250, 0x2);
-					_streamBytesConsumed += 2;
-
-					if (_numOplChannels == 0x09 || bp3 < 0x0B) {
-						uint8 bp8 = 0;
-						do {
-							if (_numOplChannels <= bp8) {
-								break;
-							}
-							if (_voiceAge[bp8] == 0) {
-								uint8 v = _voiceMidiChannel[bp8];
-								if (v == bp3) {
-									uint8 v2 = _voiceNote[bp8];
-									if (v2 == bp4) {
-										break;
-									}
-								}
-							}
-							bp8++;
-						} while (true);
-						if (_numOplChannels == bp8) {
-							uint16 bp0C = 0;
-							bp8 = _numOplChannels;
-							uint16 bp16 = _numOplChannels - 1;
-							if (bp16 > 0) {
-								uint16 bp0A = 0;
-								do {
-									if (_voiceAge[bp0A] != 0) {
-										_voiceAge[bp0A]++;
-									}
-									if (_voiceAge[bp0A] > bp0C) {
-										bp0C = _voiceAge[bp0A];
-										bp8 = bp0A;
-									}
-									if (bp0A == bp16) {
-										break;
-									}
-									// Original has this at the top but skips
-									// it for the first round
-									bp0A++;
-								} while (true);
-							}
-							if (bp0C != 0) {
-								_voiceAge[bp8] = 0;
-								_voiceMidiChannel[bp8] = bp3;
-								if (_channelPrograms[bp3] != _voiceInstrument[bp8]) {
-									_voiceInstrument[bp8] = _channelPrograms[bp3];
-									StreamHandler *shBP12 = adlibSeekStream(shMem2248, _voiceInstrument[bp8] << 0x4);
-									adlibSetFrequency(bp8, shBP12);
-								}
-							}
-						}
-						if (_numOplChannels != bp8) {
-							_voiceNote[bp8] = bp4;
-							uint8 value = _channelPrograms[bp3];
-							bp10 = adlibSeekStream(shMem2248, value << 0x4);
-							uint8 temp = bp5;
-							temp &= 0x7F;
-							// dx
-							uint8 temp2 = temp >> 0x1;
-							temp = 0x3F;
-							temp -= temp2;
-							temp = temp >> 0x1;
-							bp1 = temp;
-							bp1 = bp1 >> 1;
-
-							bp12 = adlibSeekStream(bp10, 0x2);
-
-							temp = _masterVolume;
-							// bx
-							temp2 = temp;
-							temp = bp12->peekByte();
-							temp &= 0x3F;
-							// dx
-							uint8 temp3 = temp;
-							temp = 0x3F;
-							temp -= temp3;
-							temp3 = temp;
-							uint16 tempW = bp1;
-							tempW *= temp3;
-							tempW /= 0x3F;
-							tempW += temp2;
-							// dx word
-							uint16 temp2W = tempW;
-							// ax
-							temp = bp12->peekByte() & 0x3F;
-							bp2 = temp2W + temp;
-
-							bp12 = adlibSeekStream(bp10, 0x3);
-							temp = _masterVolume;
-							// bx
-							temp2 = temp;
-							temp = bp12->peekByte();
-							temp &= 0x3F;
-							// dx
-							temp3 = temp;
-							temp = 0x3F;
-							temp -= temp3;
-							temp3 = temp;
-							tempW = bp1;
-							tempW *= temp3;
-							tempW /= 0x3F;
-							tempW += temp2;
-							// dx word
-							temp2W = tempW;
-							// ax
-							temp = bp12->peekByte() & 0x3F;
-							bp1 = temp2W + temp;
-							if (bp1 > 0x3F) {
-								bp1 = 0x3F;
-							}
-							if (bp2 > 0x3F) {
-								bp2 = 0x3F;
-							}
-							adlibWriteReg(bp8 + 0xb0, 0);
-
-							uint8 result = adlibGetOperator(gArray96[bp8] + 0x40);
-							adlibWriteReg(gArray96[bp8] + 0x40, (result & 0xC0) + bp1);
-							result = adlibGetOperator(gArray8d[bp8] + 0x40);
-
-							adlibWriteReg(gArray8d[bp8] + 0x40,
-										  (result & 0xC0) + bp2);
-
-							_channelPitchBend[bp3] = 0;
-							adlibSetupChannel(bp8, bp4, _channelPitchBend[bp3]);
-						}
-					} else {
-						// Percussion mode (channels >= 0xB)
-						StreamHandler *shI = adlibSeekStream(shMem2248, _channelPrograms[bp3] << 0x4);
-						uint8 opIdx = gArray57[bp3 - 0xB]; // operator index
-
-						if (bp3 == 0xB) {
-							// Bass drum: just set frequency
-							adlibSetFrequency(gArray5C[bp3 - 0xB], shI);
-						} else {
-							// Other percussion: load instrument registers
-							adlibWriteReg(opIdx + 0x20, shI->peekByte());
-							StreamHandler *sh2 = adlibSeekStream(shI, 2);
-							adlibWriteReg(opIdx + 0x40, sh2->peekByte());
-							StreamHandler *sh4 = adlibSeekStream(shI, 4);
-							adlibWriteReg(opIdx + 0x60, sh4->peekByte());
-							StreamHandler *sh6 = adlibSeekStream(shI, 6);
-							adlibWriteReg(opIdx + 0x80, sh6->peekByte());
-							StreamHandler *sh8 = adlibSeekStream(shI, 8);
-							adlibWriteReg(opIdx + 0xE0, sh8->peekByte());
-						}
-
-						// Volume calculation for percussion
-						StreamHandler *sh3 = adlibSeekStream(shMem2248, (_channelPrograms[bp3] << 0x4) + 3);
-						uint8 volIdx = ((sh3->peekByte() & 0x3F) >> 4) * 8 + (bp5 >> 4);
-						if (volIdx < gArray37.size()) {
-							bp1 = gArray37[volIdx] + _masterVolume;
-							if (bp1 > 0x3F)
-								bp1 = 0x3F;
-						} else {
-							bp1 = _masterVolume;
-						}
-
-						// Key off, set volume, trigger
-						adlibWriteReg(gArray5C[bp3 - 0xB] + 0xB0, 0);
-						uint8 reg40val = adlibGetOperator(opIdx + 0x40);
-						adlibWriteReg(opIdx + 0x40, bp1 + (reg40val & 0xC0));
-						adlibSetupChannel(gArray5C[bp3 - 0xB], bp4, 0);
-
-						// Set percussion bit in register 0xBD
-						uint8 bdVal = adlibGetOperator(0xBD);
-						adlibWriteReg(0xBD, bdVal | (1 << (0xF - bp3)));
-					}
-				} else {
-					// l0017_2097
-					bp6 = 0x80;
-				}
-			}
-			if ((bp6 & 0xF0) == 0x80) {
-				shMem2250 = adlibSeekStream(shMem2250, 0x2);
-				_streamBytesConsumed += 2;
-				uint8 bp16 = _numOplChannels - 1;
-				if (_numOplChannels > 0) {
-					for (uint8 bp0A = 0; bp0A <= bp16; bp0A++) {
-						if (_voiceAge[bp0A] != 0) {
-							_voiceAge[bp0A]++;
-						}
-					}
-				}
-				if (_numOplChannels == 0x09 || bp3 < 0x0B) {
-					uint8 bp8 = 0;
-					while (_numOplChannels > bp8) {
-						if (_voiceAge[bp8] == 0 && _voiceMidiChannel[bp8] == bp3 && _voiceNote[bp8] == bp4) {
-							break;
-						}
-						bp8++;
-					}
-					if (_numOplChannels != bp8) {
-						adlibSetupChannel(bp8, bp4, _channelPitchBend[bp3]);
-						_voiceAge[bp8] = 1;
-					}
-				} else {
-					// Percussion note-off: clear bit in register 0xBD
-					uint8 bdVal = adlibGetOperator(0xBD);
-					adlibWriteReg(0xBD, bdVal & ~(1 << (0xF - bp3)));
-				}
-			}
-			if (((bp6 & 0xF0) == 0xE0) || (bp6 & 0xF0) == 0xA0) {
-				shMem2250 = adlibSeekStream(shMem2250, 0x2);
-				_streamBytesConsumed += 0x2;
-			}
-			if ((bp6 & 0xF0) == 0xB0) { // Scope ends 231E
-				shMem2250 = adlibSeekStream(shMem2250, 0x2);
-				_streamBytesConsumed += 0x2;
-
-				// Big if-else that ends at 231E
-				if (bp4 == 0x66) {
-					_loopCount = bp5;
-					_statusFlags = _statusFlags | 0x20;
-				} else if (bp4 == 0x67) {
-					if (bp5 != 0) {
-						_numOplChannels = 6;
-						adlibWriteReg(0xBD, 0x20);
-					} else {
-						_numOplChannels = 9;
-						adlibWriteReg(0xBD, 0);
-					}
-					//				// TODO: Continue from here
-					//				if (bp5 != 0) {
-					//					_numOplChannels = 0x6;
-					//					adlibWriteReg(0xBD, 0x20);
-					//				} else {
-					//					_numOplChannels = 0x9;
-					//					adlibWriteReg(0xBD, 0);
-				} else if (bp4 == 0x69) {
-					{
-						uint8 bv = (uint8)(-(int8)bp5);
-						_channelPitchBend[bp3] = bv;
-						for (uint8 i = 0; i < _numOplChannels; i++) {
-							if (_voiceMidiChannel[i] == bp3 && _voiceAge[i] == 0)
-								adlibSetupChannel(i, _voiceNote[i], bv);
-						}
-					}
-					//					bp5 = -bp5;
-					//					_channelPitchBend[bp3] = bp5;
-					//					uint8 bp16 = _numOplChannels - 1;
-					//					if (0 <= bp16) {
-					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-					//							if (_voiceMidiChannel[bp8] != bp3) {
-					//								continue;
-					//							}
-					//							if (_voiceAge[bp8] != 0) {
-					//								continue;
-					//							}
-
-					//							adlibSetupChannel(bp8, _voiceNote[bp8], bp5);
-					//						}
-					//					}
-				} else if (bp4 == 0x68) {
-					{
-						_channelPitchBend[bp3] = bp5;
-						for (uint8 i = 0; i < _numOplChannels; i++) {
-							if (_voiceMidiChannel[i] == bp3 && _voiceAge[i] == 0)
-								adlibSetupChannel(i, _voiceNote[i], bp5);
-						}
-					}
-					//					_channelPitchBend[bp3] = bp5;
-					//					uint16 bp16 = _numOplChannels - 1;
-					//					if (0 <= bp16) {
-					//						for (uint8 bp8 = 0; bp8 != bp16; bp8++) {
-					//							if (_voiceMidiChannel[bp8] != bp3) {
-					//								continue;
-					//							}
-					//							if (_voiceAge[bp8] != 0) {
-					//								continue;
-					//							}
-					//							adlibSetupChannel(bp8, _voiceNote[bp8], bp5);
-					//						}
-					//					}
-					//				}
-					//
-				}
-			}
-			if ((bp6 & 0xF0) == 0xC0) {
-				shMem2250 = adlibSeekStream(shMem2250, 0x1);
-				_streamBytesConsumed++;
-				_channelPrograms[bp3] = bp4;
-			}
-			if ((bp6 & 0xF0) == 0xD0) {
-				shMem2250 = adlibSeekStream(shMem2250, 0x1);
-				_streamBytesConsumed++;
-				//		Macs2::StreamHandler *sh2252;
-				//		Macs2::StreamHandler *sh225A;
-				//		Macs2::StreamHandler *shResult = adlibSeekStream(sh2252, 0x1);
-				//		sh2252 = shResult;
-				//		// TODO: Check if this is the right way to handle the plus operation
-				//		sh225A->seek(1, SEEK_CUR);
-			}
-			if ((bp6 & 0xF0) == 0xF0) {
-				if (bp4 == 0x2F) {
-					shMem2250 = shMem2244;
-					_streamBytesConsumed = 0;
-					_masterVolume = 0;
-					_loopCount = 0;
-					_playbackReady = 1;
-					adlibReadDeltaTime();
-				} else {
-					shMem2250 = adlibSeekStream(shMem2250, 0x1);
-					_streamBytesConsumed++;
-				}
-				//		if (bp4 == 0x2F) {
-				//			Macs2::StreamHandler *sh2244;
-				//			Macs2::StreamHandler *sh2250;
-				//			sh2250 = sh2244;
-				//			// TODO: Setting 225C and 225A to 0 - ?
-				//			// TODO: Setting 2259 and 2242 to 1 - Probably understood these wrong
-				//			adlibReadDeltaTime();
-				//		} else {
-				//		}
-			} else {
-				adlibReadDeltaTime();
-			}
-
-			// this inequality by using the msw and lsw
-			if (_nextEventTimer > 0x0FFF) {
-				shMem2250 = shMem2244;
-				_streamBytesConsumed = 0;
-				_loopCount = 0;
-				_playbackReady = 1;
-				adlibReadDeltaTime();
-			}
-
-			if (_nextEventTimer != 0) {
-				break;
-			}
-		}
-	} else {
-		// This is the jump target from 1B00 from before the big loop
-		if ((_statusFlags & 0xC2) != 0) {
-			_statusFlags &= ~0xC2;
-			// Original calls sbFillBuffer() here - not needed for OPL emulation
-			// Func1A74();
-		}
-		adlibSetInstrument();
-	}
-
-	// l0017_2422
-
-	if (_isTimerTick == 0) {
-		// l0017_243F
-		// Original sends EOI (out 0x20, 0x20) if not a timer tick
-	}
-	// Just epilogue and interrupt return
-}
-
+// --- adlibSeekStream ---
 StreamHandler *Adlib::adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta) {
 	StreamHandler *result = new StreamHandler(*inHandler);
 	uint16 pos = result->pos();
-	if (seekDelta > 0xFFF8) {
-		// the actual game
+	if (seekDelta > 0xFFF8)
 		pos &= 0xF;
-	}
-	// l0017_19EA
 	pos += seekDelta;
 	result->seek(pos, SEEK_SET);
-
 	return result;
 }
 
-void Adlib::adlibPlaySong(StreamHandler *song) {
-	StreamHandler *sh = adlibSeekStream(song, 0x6);
-	uint16 delta = sh->peekWord();
-	shMem2248 = adlibSeekStream(song, delta);
-	sh = adlibSeekStream(song, 0x8);
-	delta = sh->peekWord();
-	shMem2244 = adlibSeekStream(song, delta);
-	sh = adlibSeekStream(song, 0x24);
-	_currentEventStatusHi = sh->peekWord();
-	sh = adlibSeekStream(song, 0xC);
-	_timerFrequency = sh->peekWord();
-	adlibTickHandler();
-}
+// --- OnTimer (ISR handler, 1000:1a9f) ---
+void Adlib::OnTimer() {
+	if (_playbackPos == nullptr)
+		return;
 
-void Adlib::adlibReadDeltaTime() {
+	_timerSubdivCounter++;
+	bool timerTick = (_timerSubdivCounter >= _timerSubdivThreshold);
+	if (timerTick)
+		_timerSubdivCounter = 0;
+	_isTimerTick = timerTick;
 
-	_nextEventTimer = 0;
-	uint8 bp1;
-	uint8 continueCondition;
-	do {
-		bp1 = shMem2250->peekByte();
+	_statusFlags &= 0xDF;
+	if (_statusFlags & 0x02)
+		_statusFlags |= 0x40;
 
-		_nextEventTimer = _nextEventTimer << 7;
-		_nextEventTimer += bp1 & 0x7F;
-		shMem2250 = adlibSeekStream(shMem2250, 1);
-		_streamBytesConsumed++;
-		continueCondition = bp1 & 0x80;
-	} while (continueCondition != 0);
-}
-
-void Adlib::adlibProcessEvent(uint8 blend_param, uint8 index, uint8 reg_base) {
-	// Initial value calculation
-	uint16 base_value = (gArray11F[index] << 8) | gArray9F[index];
-	if (blend_param != 0) {
-		if (blend_param < 0x80) { // Forward blend case
-			// Calculate next index with clamping
-			uint8 next_idx = (index < 0x7F) ? index + 1 : 0x7F;
-			uint16 next_value = (gArray11F[next_idx] << 8) | gArray9F[next_idx];
-			int16 delta = next_value - base_value;
-			base_value += static_cast<uint16>((delta * blend_param) / 7);
-		} else { // Reverse blend case
-			// Calculate previous index with clamping
-			uint8 prev_idx = (index > 0) ? index - 1 : 0;
-			uint16 prev_value = (gArray11F[prev_idx] << 8) | gArray9F[prev_idx];
-
-			// Reverse interpolation
-			int16 delta = base_value - prev_value;
-			base_value -= static_cast<uint16>((delta * blend_param) / 7);
-		}
+	if ((_statusFlags & 0xC3) != 0) {
+		// Stop requested or busy: silence all and return
+		if ((_statusFlags & 0xC2) != 0)
+			_statusFlags &= ~0xC2;
+		adlibSetInstrument();
+		return;
 	}
 
-	// Write results to sound chip registers
-	uint8 low_reg = 0xA0 + reg_base;  // Low byte register
-	uint8 high_reg = 0xB0 + reg_base; // High byte register
+	if (_nextEventTimer != 0) {
+		_nextEventTimer--;
+		return;
+	}
 
-	// Write low byte (raw value)
-	adlibWriteReg(low_reg, static_cast<uint8>(base_value & 0xFF));
+	// Process events until next non-zero delta
+	for (;;) {
+		// Running status: if high bit set, update status byte
+		uint8 peek = _playbackPos->peekByte();
+		if (peek & 0x80) {
+			_currentMidiStatus = peek;
+			_currentEventStatus = peek;
+			_currentEventStatusHi = 0;
+			_playbackPos = adlibSeekStream(_playbackPos, 1);
+			_streamBytesConsumed++;
+		}
 
-	// Write high byte (masked to clear bit 5)
-	adlibWriteReg(high_reg, static_cast<uint8>((base_value >> 8) & 0xDF));
+		uint8 status = _currentMidiStatus;
+		uint8 channel = status & 0x0F;
+		uint8 eventType = status; // tracks note-on→note-off conversion
+
+		uint8 data1 = _playbackPos->peekByte();
+		StreamHandler *afterData1 = adlibSeekStream(_playbackPos, 1);
+		uint8 data2 = afterData1->peekByte();
+
+		// --- Note On (0x90) ---
+		if ((status & 0xF0) == 0x90) {
+			if (data2 == 0) {
+				// Velocity 0 = note off
+				eventType = 0x80;
+			} else {
+				_playbackPos = adlibSeekStream(_playbackPos, 2);
+				_streamBytesConsumed += 2;
+
+				if (_numOplChannels == 9 || channel < 0x0B) {
+					// --- Melodic note-on ---
+					uint8 voice = 0;
+					// Find existing voice with same channel+note (age==0)
+					while (voice < _numOplChannels) {
+						if (_voiceAge[voice] == 0 && _voiceMidiChannel[voice] == channel && _voiceNote[voice] == data1)
+							break;
+						voice++;
+					}
+					// If not found, steal oldest voice
+					if (voice == _numOplChannels) {
+						uint8 maxAge = 0;
+						voice = _numOplChannels; // sentinel
+						for (uint8 v = 0; v < _numOplChannels; v++) {
+							if (_voiceAge[v] != 0)
+								_voiceAge[v]++;
+							if (_voiceAge[v] > maxAge) {
+								maxAge = _voiceAge[v];
+								voice = v;
+							}
+						}
+						if (maxAge != 0) {
+							_voiceAge[voice] = 0;
+							_voiceMidiChannel[voice] = channel;
+							if (_channelPrograms[channel] != _voiceInstrument[voice]) {
+								_voiceInstrument[voice] = _channelPrograms[channel];
+								StreamHandler *instData = adlibSeekStream(_instrumentDataPtr, _voiceInstrument[voice] << 4);
+								adlibSetFrequency(voice, instData);
+							}
+						}
+					}
+					// Play the note
+					if (voice < _numOplChannels) {
+						_voiceNote[voice] = data1;
+						StreamHandler *instData = adlibSeekStream(_instrumentDataPtr, _channelPrograms[channel] << 4);
+						// Volume calculation: velocity → attenuation
+						uint8 velAtten = (uint8)((0x3F - ((data2 & 0x7F) >> 1)) >> 1) >> 1;
+
+						// Operator 2 volume (carrier)
+						StreamHandler *op2Data = adlibSeekStream(instData, 2);
+						uint8 op2Base = op2Data->peekByte() & 0x3F;
+						uint8 vol2 = op2Base + (uint8)((uint16)(velAtten * (0x3F - op2Base)) / 0x3F) + _masterVolume;
+
+						// Operator 1 volume (modulator)
+						StreamHandler *op1Data = adlibSeekStream(instData, 3);
+						uint8 op1Base = op1Data->peekByte() & 0x3F;
+						uint8 vol1 = op1Base + (uint8)((uint16)(velAtten * (0x3F - op1Base)) / 0x3F) + _masterVolume;
+
+						if (vol1 > 0x3F) vol1 = 0x3F;
+						if (vol2 > 0x3F) vol2 = 0x3F;
+
+						// Key off, set volumes, then key on with note
+						adlibWriteReg(voice + 0xB0, 0);
+						uint8 reg2 = adlibGetOperator(_opMap2[voice] + 0x40);
+						adlibWriteReg(_opMap2[voice] + 0x40, (reg2 & 0xC0) + vol1);
+						uint8 reg1 = adlibGetOperator(_opMap1[voice] + 0x40);
+						adlibWriteReg(_opMap1[voice] + 0x40, (reg1 & 0xC0) + vol2);
+
+						_channelPitchBend[channel] = 0;
+						adlibSetupChannel(voice, data1, _channelPitchBend[channel]);
+					}
+				} else {
+					// --- Percussion note-on (channels >= 0xB) ---
+					StreamHandler *instData = adlibSeekStream(_instrumentDataPtr, _channelPrograms[channel] << 4);
+					uint8 opIdx = _percOpMap[channel - 0xB];
+
+					if (channel == 0xB) {
+						// Bass drum: load full instrument
+						StreamHandler *bdInst = adlibSeekStream(_instrumentDataPtr, _channelPrograms[0xB] << 4);
+						adlibSetFrequency(_percFreqChannel[channel - 0xB], bdInst);
+					} else {
+						// Other percussion: load individual operator registers
+						adlibWriteReg(opIdx + 0x20, instData->peekByte());
+						StreamHandler *sh2 = adlibSeekStream(instData, 2);
+						adlibWriteReg(opIdx + 0x40, sh2->peekByte());
+						StreamHandler *sh4 = adlibSeekStream(instData, 4);
+						adlibWriteReg(opIdx + 0x60, sh4->peekByte());
+						StreamHandler *sh6 = adlibSeekStream(instData, 6);
+						adlibWriteReg(opIdx + 0x80, sh6->peekByte());
+						StreamHandler *sh8 = adlibSeekStream(instData, 8);
+						adlibWriteReg(opIdx + 0xE0, sh8->peekByte());
+					}
+
+					// Percussion volume
+					StreamHandler *volData = adlibSeekStream(_instrumentDataPtr, (_channelPrograms[channel] << 4) + 3);
+					uint8 volIdx = ((volData->peekByte() & 0x3F) >> 4) * 8 + (data2 >> 4);
+					uint8 vol = _masterVolume;
+					if (volIdx < _percVolTable.size())
+						vol = _percVolTable[volIdx] + _masterVolume;
+					if (vol > 0x3F) vol = 0x3F;
+
+					// Key off, set volume, set frequency, trigger percussion
+					adlibWriteReg(_percFreqChannel[channel - 0xB] + 0xB0, 0);
+					uint8 regVal = adlibGetOperator(opIdx + 0x40);
+					adlibWriteReg(opIdx + 0x40, vol + (regVal & 0xC0));
+					adlibSetupChannel(_percFreqChannel[channel - 0xB], data1, 0);
+
+					// Set percussion bit in 0xBD
+					uint8 bdVal = adlibGetOperator(0xBD);
+					adlibWriteReg(0xBD, bdVal | (1 << (0xF - channel)));
+				}
+			}
+		}
+
+		// --- Note Off (0x80) ---
+		if ((eventType & 0xF0) == 0x80) {
+			_playbackPos = adlibSeekStream(_playbackPos, 2);
+			_streamBytesConsumed += 2;
+
+			// Age all voices
+			for (uint8 v = 0; v < _numOplChannels; v++) {
+				if (_voiceAge[v] != 0)
+					_voiceAge[v]++;
+			}
+
+			if (_numOplChannels == 9 || channel < 0x0B) {
+				// Find the voice playing this note
+				uint8 voice = 0;
+				while (voice < _numOplChannels) {
+					if (_voiceAge[voice] == 0 && _voiceMidiChannel[voice] == channel && _voiceNote[voice] == data1)
+						break;
+					voice++;
+				}
+				if (voice < _numOplChannels) {
+					// Note off: write frequency WITHOUT key-on
+					adlibProcessEvent(_channelPitchBend[channel], data1, voice);
+					_voiceAge[voice] = 1;
+				}
+			} else {
+				// Percussion note-off: clear bit in 0xBD
+				uint8 bdVal = adlibGetOperator(0xBD);
+				adlibWriteReg(0xBD, bdVal & ~(1 << (0xF - channel)));
+			}
+		}
+
+		// --- Pitch Wheel / Aftertouch (0xE0, 0xA0) ---
+		if ((eventType & 0xF0) == 0xE0 || (eventType & 0xF0) == 0xA0) {
+			_playbackPos = adlibSeekStream(_playbackPos, 2);
+			_streamBytesConsumed += 2;
+		}
+
+		// --- Control Change (0xB0) ---
+		if ((eventType & 0xF0) == 0xB0) {
+			_playbackPos = adlibSeekStream(_playbackPos, 2);
+			_streamBytesConsumed += 2;
+
+			if (data1 == 0x66) {
+				_loopCount = data2;
+				_statusFlags |= 0x20;
+			} else if (data1 == 0x67) {
+				if (data2 != 0) {
+					_numOplChannels = 6;
+					adlibWriteReg(0xBD, 0x20);
+				} else {
+					_numOplChannels = 9;
+					adlibWriteReg(0xBD, 0);
+				}
+			} else if (data1 == 0x69) {
+				_channelPitchBend[channel] = (uint8)(-(int8)data2);
+				for (uint8 v = 0; v < _numOplChannels; v++) {
+					if (_voiceMidiChannel[v] == channel && _voiceAge[v] == 0)
+						adlibSetupChannel(v, _voiceNote[v], (uint8)(-(int8)data2));
+				}
+			} else if (data1 == 0x68) {
+				_channelPitchBend[channel] = data2;
+				for (uint8 v = 0; v < _numOplChannels; v++) {
+					if (_voiceMidiChannel[v] == channel && _voiceAge[v] == 0)
+						adlibSetupChannel(v, _voiceNote[v], data2);
+				}
+			}
+		}
+
+		// --- Program Change (0xC0) ---
+		if ((eventType & 0xF0) == 0xC0) {
+			_playbackPos = adlibSeekStream(_playbackPos, 1);
+			_streamBytesConsumed++;
+			_channelPrograms[channel] = data1;
+		}
+
+		// --- Channel Pressure (0xD0) ---
+		if ((eventType & 0xF0) == 0xD0) {
+			_playbackPos = adlibSeekStream(_playbackPos, 1);
+			_streamBytesConsumed++;
+		}
+
+		// --- System/Meta (0xF0) ---
+		if ((eventType & 0xF0) == 0xF0) {
+			// Binary: BOTH 0x2F and other meta events reset to song start
+			_playbackPos = _songStartPtr;
+			_streamBytesConsumed = 0;
+			_streamBytesConsumedHi = 0;
+			_loopCount = 0;
+			_playbackReady = 1;
+			adlibReadDeltaTime();
+		} else {
+			adlibReadDeltaTime();
+		}
+
+		// Safety: if delta > 0xFFF, reset to start (corrupted stream)
+		if (_nextEventTimer > 0x0FFF) {
+			_playbackPos = _songStartPtr;
+			_streamBytesConsumed = 0;
+			_streamBytesConsumedHi = 0;
+			_loopCount = 0;
+			_playbackReady = 1;
+			adlibReadDeltaTime();
+		}
+
+		if (_nextEventTimer != 0)
+			break;
+	}
 }
+
+// --- Public API ---
 
 void Adlib::Init() {
 	_opl = OPL::Config::create();
 	_opl->init();
 
-	gArray229C.resize(256);
-
+	_regShadow.resize(256);
 	_channelPrograms.resize(0x10);
 	_channelPitchBend.resize(0x10);
-
-	_voiceAge.resize(0x9);
-	_voiceMidiChannel.resize(0x9);
-	_voiceInstrument.resize(0x9);
-	_voiceNote.resize(0x9);
+	_voiceAge.resize(9);
+	_voiceMidiChannel.resize(9);
+	_voiceInstrument.resize(9);
+	_voiceNote.resize(9);
 
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
-
-	// adlibReadDeltaTime();
-
-	/* _opl->writeReg(0x20, 0x01);
-	_opl->writeReg(0x40, 0x10);
-	_opl->writeReg(0x60, 0xF0);
-	_opl->writeReg(0x80, 0x77);
-	_opl->writeReg(0xA0, 0x98);
-	_opl->writeReg(0x23, 0x01);
-	_opl->writeReg(0x43, 0x00);
-	_opl->writeReg(0x63, 0xF0);
-	_opl->writeReg(0x83, 0x77);
-	_opl->writeReg(0xB0, 0x31); */
-
-	// return;
-
-	// Stop any previous playback before reinitializing
-	adlibStopMusic();
-	// adlibTickHandler();
-	// adlibSetFrequency(0, 0);
-
-	// Test tone registers (from Adlib programming guide, not from game):
-	// Probably this https://bespin.org/~qz/pc-gpe/adlib.txt
-	adlibWriteRegr(0x92, 0x20);
-	adlibWriteRegr(0x01, 0x23);
-	adlibWriteRegr(0x52, 0x40);
-	adlibWriteRegr(0x00, 0x43);
-	adlibWriteRegr(0xdc, 0x60);
-	adlibWriteRegr(0xf5, 0x63);
-	adlibWriteRegr(0x23, 0x80);
-	adlibWriteRegr(0x13, 0x83);
-	adlibWriteRegr(0x80, 0xe0);
-	adlibWriteRegr(0x81, 0xe3);
-	adlibWriteRegr(0x0c, 0xc0);
-	adlibWriteRegr(0x00, 0xb0);
-	adlibWriteRegr(0x04, 0x43);
-	adlibWriteRegr(0x54, 0x40);
-	adlibWriteRegr(0x98, 0xa0);
-	adlibWriteRegr(0x29, 0xb0);
-
-	// End of test tone setup
-	// Trying to hardcode the delta
-	/*  adlibWriteReg(0xb0, 0x00);
-	adlibWriteReg(0x43, 0x04);
-	adlibWriteReg(0x40, 0x54);
-
-	// Just for the hell of it, try to send the first note on to see if it works
-	adlibWriteReg(0xa0, 0x98);
-	adlibWriteReg(0xb0, 0x29);
-	_opl->writeReg(0xB0, 0x31); */
 }
 
 void Adlib::Deinit() {
@@ -792,61 +505,79 @@ void Adlib::Deinit() {
 	delete _opl;
 }
 
-void Adlib::SetSong(Macs2::StreamHandler *sh) {
-	shMem2250 = sh;
-	adlibPlaySong(shMem2250);
-}
-
 void Adlib::PlaySongData(const Common::Array<uint8> &data) {
+	// Stop previous playback
+	_isInitialized = 0;
 	delete _activeSongStream;
+
 	_activeSongData = data;
 	_activeSongStream = new StreamHandler(&_activeSongData);
-	SetSong(_activeSongStream);
+
+	// Parse song header (adlibPlaySong, 1000:244d)
+	StreamHandler *sh6 = adlibSeekStream(_activeSongStream, 0x6);
+	uint16 instOffset = sh6->peekWord();
+	_instrumentDataPtr = adlibSeekStream(_activeSongStream, instOffset);
+
+	StreamHandler *sh8 = adlibSeekStream(_activeSongStream, 0x8);
+	uint16 dataOffset = sh8->peekWord();
+	_songStartPtr = adlibSeekStream(_activeSongStream, dataOffset);
+
+	StreamHandler *sh24 = adlibSeekStream(_activeSongStream, 0x24);
+	_currentEventStatusHi = sh24->peekWord();
+
+	StreamHandler *shC = adlibSeekStream(_activeSongStream, 0xC);
+	_timerFrequency = shC->peekWord();
+
+	adlibTickHandler();
 }
 
 void Adlib::StopMusic() {
-	shMem2250 = nullptr;
+	// Binary adlibStopMusic (1000:264d): set stop flag, ISR handles cleanup
+	_statusFlags |= 2;
+	// In ScummVM we can't spin-wait for ISR, so directly clean up
+	_playbackPos = nullptr;
 	delete _activeSongStream;
 	_activeSongStream = nullptr;
 	_activeSongData.clear();
-	SetVolume(0);
+	_isInitialized = 0;
+	_masterVolume = 0;
 }
 
 void Adlib::SetVolume(uint16 volume) {
-	if (volume > 100)
-		volume = 100;
-
-	// Volume is handled by the mixer
+	// Binary adlibSetVolume (1000:2663): g_bAdlibMasterVolume = param & 0x3F
+	_masterVolume = volume & 0x3F;
 }
 
 void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	constexpr uint32 size = 255;
-	gArray69.resize(size);
-	LoadData(fileStream, 0x0001B669, size, gArray69.data());
 
-	gArray8d.resize(size);
-	LoadData(fileStream, 0x0001B68D, size, gArray8d.data());
+	_opSlotTable.resize(size);
+	LoadData(fileStream, 0x0001B669, size, _opSlotTable.data());
 
-	gArray96.resize(size);
-	LoadData(fileStream, 0x0001B696, size, gArray96.data());
+	_opMap1.resize(size);
+	LoadData(fileStream, 0x0001B68D, size, _opMap1.data());
 
-	gArray9F.resize(size);
-	LoadData(fileStream, 0x0001B69F, size, gArray9F.data());
+	_opMap2.resize(size);
+	LoadData(fileStream, 0x0001B696, size, _opMap2.data());
 
-	gArray11F.resize(size);
-	LoadData(fileStream, 0x0001B71F, size, gArray11F.data());
+	_freqTableLo.resize(size);
+	LoadData(fileStream, 0x0001B69F, size, _freqTableLo.data());
 
-	// Percussion lookup tables (hardcoded in data segment)
-	gArray37 = {28, 25, 23, 18, 14, 11, 8, 2, 50, 42, 37, 35, 34, 32, 30, 2, 55, 50, 49, 48, 45, 43, 40, 2, 60, 60, 58, 56, 54, 52, 50, 2};
-	// gArray4c[ch] for ch>=0xB == gArray57[ch-0xB], gArray51[ch] for ch>=0xB == gArray5C[ch-0xB]
-	gArray57 = {19, 20, 18, 21, 17}; // percussion alternate channel
-	gArray5C = {6, 7, 8, 8, 7};      // percussion frequency channel
+	_freqTableHi.resize(size);
+	LoadData(fileStream, 0x0001B71F, size, _freqTableHi.data());
+
+	// Percussion lookup tables
+	_percVolTable = {28, 25, 23, 18, 14, 11, 8, 2, 50, 42, 37, 35, 34, 32, 30, 2, 55, 50, 49, 48, 45, 43, 40, 2, 60, 60, 58, 56, 54, 52, 50, 2};
+	_percOpMap = {19, 20, 18, 21, 17};
+	_percFreqChannel = {6, 7, 8, 8, 7};
 }
 
 void Adlib::LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
 	fileStream->seek(pos, SEEK_SET);
 	fileStream->read(target, size);
 }
+
+// --- StreamHandler implementation ---
 
 inline StreamHandler::StreamHandler(Common::MemorySeekableReadWriteStream *s) : _stream(s), _pos(s->pos()) {
 }
