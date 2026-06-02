@@ -142,11 +142,14 @@ void View1::closeInventory() {
 
 void View1::setInventorySource(GameObject *newInventorySource) {
 	_inventorySource = newInventorySource;
-	// TODO: Make sure the assignment per object is saved correctly
+	// Rebuild inventory list from all objects whose SceneIndex matches.
+	// Binary (readObjectFromFile at 1008:071e) checks: object.sceneIndex == actorIndex + 0x400.
+	// The +0x400 offset encodes "inside this container/actor's inventory".
 	_inventoryItems.clear();
 
+	const uint16 inventorySceneId = _inventorySource->_index + 0x400;
 	for (GameObject *currentObject : GameObjects::instance()._objects) {
-		if (currentObject->SceneIndex == _inventorySource->_index) {
+		if (currentObject != nullptr && currentObject->SceneIndex == inventorySceneId) {
 			_inventoryItems.push_back(currentObject);
 		}
 	}
@@ -157,7 +160,7 @@ bool View1::isInventorySourceProtagonist() const {
 void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer) {
 	int index = findInventoryItem(item);
 	_inventoryItems.remove_at(index);
-	item->SceneIndex = targetContainer->_index;
+	item->SceneIndex = targetContainer->_index + 0x400;
 }
 
 int View1::findInventoryItem(GameObject *item) {
