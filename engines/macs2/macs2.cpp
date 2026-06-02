@@ -130,7 +130,17 @@ void Macs2Engine::readResourceFile() {
 
 	// Full implementation here
 
-	// Read the image resources (33 cursor/icon entries)
+	// File layout (from loadResourceFile at 1008:2e8d):
+	//   0x00: 12-byte magic header "AHFFMCSR0100"
+	//   0x0C: 2 bytes actor index + 2 bytes initial scene index (loaded below)
+	//   0x10: 0x3000 bytes scene table (512 entries * 12 bytes, accessed via seek per scene)
+	//   0x3010: 0x300 bytes vanilla palette (global default, overwritten per-scene by changeScene)
+	//   0x3310: 0x800 bytes shading table -> sceneData+0x53D3 (global, 256-entry * 8-byte lookup)
+	//   0x3B10: 33 cursor/icon image entries (4-byte size + blob data each)
+	//   Then: Font 1 (4-byte size + glyph data)
+	//   Then: Font 2 (4-byte size + glyph data)
+	//   Then: 0x400 bytes map scene offsets -> sceneData+0x5DDB
+	// We skip to the cursor images; palette/shading are loaded per-scene in changeScene.
 	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300 + 0x800);
 	readImageResources(_fileStream);
 	// Font 1 follows immediately after the 33 image resource entries.
