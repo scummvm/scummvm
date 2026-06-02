@@ -105,9 +105,9 @@ public:
 
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b);
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
-	// True on touchscreen devices (e.g. Android). RA1 then aims from the on-screen gamepad
-	// joystick instead of the DOS absolute-mouse model, and skips cursor warping/locking,
-	// which otherwise inject spurious motion that drifts the reticle and on-screen buttons.
+	// True on touchscreen devices (e.g. Android). RA1 skips DOS-style cursor
+	// warping/locking there; direct touch uses absolute aiming, while on-screen
+	// gamepad/joystick input continues through the joystick path.
 	bool isTouchscreenActive() const;
 	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
 	int getCurrentLevel() const { return _currentLevel; }

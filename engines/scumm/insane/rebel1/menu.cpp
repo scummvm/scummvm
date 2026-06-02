@@ -612,11 +612,20 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (_vm->isPaused())
 		return false;
 
-	// On touchscreen devices, finger drags arrive as mouse-move events; do not let them
-	// hijack RA1 into absolute-cursor aiming (aiming there comes from the on-screen gamepad).
-	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering && !isTouchscreenActive()) {
-		_activeInputSource = kInputSourceMouse;
+	if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive &&
+			(event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
+		_vm->_smushVideoShouldFinish = true;
+		return true;
 	}
+
+	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering)
+		_activeInputSource = kInputSourceMouse;
+
+	// Android direct touch reports taps as left-clicks. Treat those as mouse input
+	// during gameplay so tap-to-aim-and-fire works even if a joystick event was last.
+	if (isTouchscreenActive() && _interactiveVideoActive && !_menuActive &&
+			event.type == Common::EVENT_LBUTTONDOWN && !_mouseRecentering)
+		_activeInputSource = kInputSourceMouse;
 
 	// ScummVM-exclusive feature: mouse navigation/clicking of the RA1 front-end menus.
 	if (handleMenuMouse(event))
@@ -730,6 +739,10 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		if (event.customType == kScummActionInsaneBack) {
 			if (!pressed)
 				return true;
+			if (_player && !_interactiveVideoActive && !_menuActive) {
+				_vm->_smushVideoShouldFinish = true;
+				return true;
+			}
 			if (_player) {
 				const bool wasPaused = _player->_paused;
 				if (!wasPaused)
@@ -745,6 +758,14 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			(event.customType == kScummActionInsaneAttack ||
 			 event.customType == kScummActionInsaneSwitch ||
 			 event.customType == kScummActionInsaneSkip)) {
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
+
+		if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive && pressed &&
+				(event.customType == kScummActionInsaneAttack ||
+				 event.customType == kScummActionInsaneSwitch ||
+				 event.customType == kScummActionInsaneSkip)) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
@@ -778,10 +799,14 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	// Shooting: mouse button during interactive gameplay — FUN_1CCA0 (0x1CCA0)
 	if (_interactiveVideoActive && !_menuActive) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
 			_playerFired = true;
 			return true;
 		}
 		if (event.type == Common::EVENT_LBUTTONUP) {
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
 			_playerFired = false;
 			return true;
 		}
@@ -795,6 +820,11 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	}
 
 	if (event.type == Common::EVENT_MAINMENU) {
+		if (_player && !_interactiveVideoActive && !_menuActive) {
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
+
 		if (_menuActive || _highScoresActive)
 			return true;
 

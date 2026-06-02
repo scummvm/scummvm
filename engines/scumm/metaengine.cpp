@@ -1179,6 +1179,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("RA1FIRE", _("Fire / select"));
 		act->setCustomEngineActionEvent(kScummActionInsaneAttack);
+		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
 		rebel1Keymap->addAction(act);
 

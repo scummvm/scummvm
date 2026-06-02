@@ -1672,9 +1672,9 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 	// Level 7 route splices happen inside one original gameplay loop, so keep
 	// the current input state instead of recentering between route clips.
 	if (!level7RouteSplice) {
-		// On touchscreen devices the DOS recenter-the-cursor aiming model does not apply
-		// (aiming uses the on-screen gamepad); warping/locking the system mouse there only
-		// injects spurious motion that drifts the reticle and on-screen buttons.
+		// On touchscreen devices the DOS recenter-the-cursor aiming model does not apply;
+		// warping/locking the system mouse there injects spurious motion that drifts
+		// direct touch aiming and on-screen controls.
 		if (!isTouchscreenActive())
 			smush_warpMouse(160, 100, -1);
 		_mouseVirtualRawX = 0x140;
