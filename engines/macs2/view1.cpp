@@ -1026,6 +1026,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			// Original logic from handleInput (1008:e8bf):
 			// If direct path is walkable, walk directly. Otherwise use pathfinding network.
 			if (g_engine->isPathWalkable(charPos.y, charPos.x, target.y, target.x)) {
+				protagonist->_pathFinalDestination = target;
 				protagonist->startLerpTo(target, 1000);
 			} else {
 				protagonist->_pathFinalDestination = target;
@@ -2253,9 +2254,13 @@ uint16 Character::getVerticalOffset() const {
 
 bool Character::walkAlongPath() {
 	// Binary walkAlongPath (1008:1b8f) path node advancement:
-	// When arrived at current waypoint, advance _currentPathIndex.
-	// If past end of path array: target = finalDest (last segment, no more path following).
-	// Otherwise: target = next node position.
+	// When arrived at current waypoint, snap position to node coords, then advance.
+	// Binary: if (pathNodeIndex != 0) posX/Y = nodeCoords[pathNodes[pathNodeIndex]]
+	if (_currentPathIndex >= 0 && _currentPathIndex < (int16)_path.size()) {
+		const uint16 snapIdx = _path[_currentPathIndex];
+		const Common::Point &snapPos = g_engine->pathfindingPoints[snapIdx - 1]._position;
+		_gameObject->Position = snapPos;
+	}
 	_currentPathIndex++;
 	if (_currentPathIndex >= (int16)_path.size()) {
 		// Past end of path - walk to final destination, then stop
@@ -2486,8 +2491,15 @@ void Character::update() {
 
 	// Proximity arrival check from walkAlongPath (1008:1b8f):
 	// Original checks if character is within walkSpeed pixels of target in both axes.
+	// Additionally requires vertical offset to have reached target (binary: runtime+0x21D == object+0x08)
 	bool arrived = (abs(pos.x - _endPosition.x) <= walkSpeed) &&
 	               (abs(pos.y - _endPosition.y) <= walkSpeed);
+	// Binary: arrival also requires vertical offset interpolation to be complete
+	if (arrived && _hasMotionVerticalOffset &&
+		(int16)_motionTargetVerticalOffset >= 0 &&
+		_motionTargetVerticalOffset != _gameObject->Unknown) {
+		arrived = false;
+	}
 	if (arrived) {
 		// _snapToTarget (runtime+0x22F): when set, snap character to exact target
 		// position on arrival. When clear, leave character at last stepped pixel
@@ -2497,6 +2509,10 @@ void Character::update() {
 			setPosition(pos);
 		} else {
 			_endPosition = pos;
+			_pathFinalDestination = pos;
+			if (_hasMotionVerticalOffset && (int16)_motionTargetVerticalOffset >= 0) {
+				_motionTargetVerticalOffset = _gameObject->Unknown;
+			}
 		}
 		if (_isFollowingPath) {
 			_isFollowingPath = walkAlongPath();
@@ -2582,8 +2598,9 @@ void Character::update() {
 
 	// Step pixels (Bresenham line algorithm)
 	int pixelsMoved = 0;
+	Common::Point savedPos = pos; // savedX/savedY from binary
 	for (int step = 0; step < walkSpeed; step++) {
-		Common::Point prevPos = pos;
+		savedPos = pos; // Binary: savedX = posX, savedY = posY at start of each iteration
 		if (_stepError < _stepDeltaX) {
 			// Step along X axis
 			if (_endPosition.x != pos.x)
@@ -2619,7 +2636,7 @@ void Character::update() {
 		}
 		// Check walkability after each step
 		if (!isWalkable(pos)) {
-			pos = prevPos;
+			pos = savedPos;
 			// Wall-sliding from walkAlongPath (1008:1b8f):
 			// Sample ±1 and ±2 pixels to build a push vector, then slide.
 			int pushX = 0, pushY = 0;
@@ -2662,12 +2679,11 @@ void Character::update() {
 					pushY--;
 				}
 			}
-			// Binary: cancel entire path (target=finalDest=currentPos)
+			// Binary: cancel path (target=finalDest=currentPos) but DON'T break — continue loop
 			_endPosition = pos;
 			_pathFinalDestination = pos;
 			_isFollowingPath = false;
 			_path.clear();
-			break;
 		}
 		// Check if we reached the target
 		if (pos == _endPosition)
@@ -2675,9 +2691,12 @@ void Character::update() {
 	}
 
 	// Binary: if pixelsMoved != walkSpeed after step loop, revert position and cancel path
-	if (pixelsMoved != walkSpeed && pixelsMoved > 0) {
-		// Character was blocked - position is already handled above via wall-sliding
-		// The break above already cancelled the path
+	if (pixelsMoved != walkSpeed) {
+		pos = savedPos;
+		_endPosition = pos;
+		_pathFinalDestination = pos;
+		_isFollowingPath = false;
+		_path.clear();
 	}
 
 	// Binary: walkSpeed==0 special case - still run vertical offset once
