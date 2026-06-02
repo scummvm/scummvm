@@ -727,6 +727,39 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy10
 	},
+	{ // v1.01, MD5 by eientei95
+		{
+			"nancy10", nullptr,
+			{
+				{ "data1.hdr", 0, "f8a023c14d04ffdae08f1a0bb8a1fd2a", 394956 },
+				{ "data1.cab", 0, "829ab79c4a5c49f918b7c22186eb7365", 7510894 },
+				{ "data2.cab", 0, "a4af0fb92bd2d91d5ec7b2f9233a7355", 150997862 },
+				{ "ciftree.dat", 0, "270133c5e89b8538caef08041598d049", 29413095 }, // ciftree is outside of cabfiles
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM | GF_COMPRESSED,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy10
+	},
+	{ // v1.01 from Nancy Drew: Ultimate Dare, MD5 by eientei95
+		{
+			"nancy10", nullptr,
+			{
+				{ "data1.hdr", 0, "0f9223c701af38398f101e4c29c71d27", 392284 },
+				{ "data1.cab", 0, "752ccf625189520d8221eafd5c896845", 7513583 },
+				{ "data2.cab", 0, "8b481aac1b07838bdb4d578a8aeb9676", 574477161 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy10
+	},
 	{
 		{
 			"nancy11", nullptr,
