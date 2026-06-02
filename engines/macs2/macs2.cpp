@@ -174,13 +174,10 @@ void Macs2Engine::readResourceFile() {
 		// This loading happens around the l0037_082D: mark
 		uint16 x = _fileStream->readUint16LE();
 		uint16 y = _fileStream->readUint16LE();
-		uint16 sceneIndex = _fileStream->readUint16LE();
-		uint16 orientation = _fileStream->readUint16LE();
-		uint16 verticalOffsetScale = _fileStream->readUint16LE();
 		gameObject->_position = Common::Point(x, y);
-		gameObject->_sceneIndex = sceneIndex;
-		gameObject->_orientation = orientation;
-		gameObject->_verticalOffsetScale = verticalOffsetScale;
+		gameObject->_sceneIndex = _fileStream->readUint16LE();
+		gameObject->_orientation = _fileStream->readUint16LE();
+		gameObject->_verticalOffsetScale = _fileStream->readUint16LE();
 
 		for (int j = 1; j <= 0x15; j++) {
 			// Per-slot data in file: 2 bytes unknown1, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
@@ -213,7 +210,7 @@ void Macs2Engine::readResourceFile() {
 		}
 		// Per-object rendering flags (after all 21 animation slots):
 		// Binary loadSceneObjects reads these into runtime+0x184, +0x185, +0x186
-		_fileStream->readByte(); // TODO: runtime+0x184: unknown/unused
+		_fileStream->readByte(); // runtime+0x184: hasInventoryIcon (container flag) - derived dynamically from _blobs[0x13] presence
 		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
 		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
 
