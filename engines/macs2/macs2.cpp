@@ -855,7 +855,7 @@ void Macs2Engine::setPathfindingOverride(uint16 index, uint16 overrideValue) {
 	_pathfindingOverrides.push_back(override);
 }
 
-uint8 Macs2Engine::getPathfindingOverride2(uint16 index) {
+uint16 Macs2Engine::getPathfindingOverride2(uint16 index) {
 	if (index < AREA_OVERRIDE_MIN || index > AREA_OVERRIDE_MAX) {
 		return 0;
 	}
