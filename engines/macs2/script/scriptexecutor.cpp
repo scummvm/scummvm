@@ -380,7 +380,7 @@ Common::Point ScriptExecutor::getCharPosition() {
 	const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (!actor)
 		actor = GameObjects::getProtagonistObject();
-	return actor ? actor->Position : Common::Point();
+	return actor ? actor->_position : Common::Point();
 }
 
 bool ScriptExecutor::isRelevantObject(const GameObject *obj) const {
@@ -474,7 +474,7 @@ bool ScriptExecutor::loadNextScript() {
 
 		// TODO: Check if this is a valid option
 		if (candidateObject && isRelevantObject(candidateObject)) {
-			if (candidateObject->Script.size() != 0) {
+			if (candidateObject->_script.size() != 0) {
 				_stream = candidateObject->getScriptStream();
 				_executingScriptObjectID = candidateObject->_index;
 				debug("----- Switching execution to script for object: %.4x", candidateObject->_index);
@@ -694,13 +694,13 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	// Original checks: object in current scene, OR in protagonist's inventory,
 	// OR inside a container that is in the current scene.
 	if (objectID != actorIndex) {
-		bool wasInCurrentScene = (object->SceneIndex == currentScene);
-		if (!wasInCurrentScene && object->SceneIndex == actorIndex + 0x400) {
+		bool wasInCurrentScene = (object->_sceneIndex == currentScene);
+		if (!wasInCurrentScene && object->_sceneIndex == actorIndex + 0x400) {
 			wasInCurrentScene = true; // was in protagonist's inventory
 		}
-		if (!wasInCurrentScene && object->SceneIndex > 0x400) {
-			GameObject *parent = GameObjects::getObjectByIndex(object->SceneIndex - 0x400);
-			if (parent != nullptr && parent->SceneIndex == currentScene) {
+		if (!wasInCurrentScene && object->_sceneIndex > 0x400) {
+			GameObject *parent = GameObjects::getObjectByIndex(object->_sceneIndex - 0x400);
+			if (parent != nullptr && parent->_sceneIndex == currentScene) {
 				wasInCurrentScene = true; // was in a container in current scene
 			}
 		}
@@ -715,8 +715,8 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	}
 
 	// Step 2: Update object fields
-	object->SceneIndex = sceneID;
-	object->Position = Common::Point(x, y);
+	object->_sceneIndex = sceneID;
+	object->_position = Common::Point(x, y);
 
 	// Step 3: Add to render list if object is now visible in current scene.
 	if (objectID != actorIndex) {
@@ -726,7 +726,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 		}
 		if (!isInCurrentScene && sceneID > 0x400) {
 			GameObject *parent = GameObjects::getObjectByIndex(sceneID - 0x400);
-			if (parent != nullptr && parent->SceneIndex == currentScene) {
+			if (parent != nullptr && parent->_sceneIndex == currentScene) {
 				isInCurrentScene = true; // now in a container in current scene
 			}
 		}
@@ -766,7 +766,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 
 	// Step 5: If object has no runtime data and was the UseInventory target,
 	// reset cursor to Use (0x15)
-	if (object->Blobs.empty()) {
+	if (object->_blobs.empty()) {
 		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
 			_engine->setCursorMode(MouseMode::Use);
 			currentView->updateCursor();
@@ -933,7 +933,7 @@ ExecutionResult Script::ScriptExecutor::scriptWaitForWalk() {
 		return ExecutionResult::ScriptFinished;
 	}
 	// Original checks runtime+0x231 (frozen/attached flag) → error 0x1F
-	if (walkObject->HasBoundsAttachment) {
+	if (walkObject->_hasBoundsAttachment) {
 		warning("Opcode 0x11: object %u is frozen (bounds attached)", objectID);
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
@@ -1051,11 +1051,11 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 		warning("Invalid pickup request for actor %u target %u", actorIndex, objectIndex);
 		return false;
 	}
-	if (actorIndex == objectIndex || targetObject->SceneIndex == actor->_gameObject->_index) {
+	if (actorIndex == objectIndex || targetObject->_sceneIndex == actor->_gameObject->_index) {
 		warning("Ignoring invalid pickup request for actor %u target %u", actorIndex, objectIndex);
 		return false;
 	}
-	if (targetObject->SceneIndex != actor->_gameObject->SceneIndex) {
+	if (targetObject->_sceneIndex != actor->_gameObject->_sceneIndex) {
 		warning("Ignoring pickup across scenes for actor %u target %u", actorIndex, objectIndex);
 		return false;
 	}
@@ -1111,12 +1111,12 @@ bool Script::ScriptExecutor::scriptSetupObject() {
 		return false;
 	}
 
-	if (slotID < 1 || slotID > ARRAYSIZE(object->RuntimeSlotValues)) {
+	if (slotID < 1 || slotID > ARRAYSIZE(object->_runtimeSlotValues)) {
 		warning("Ignoring object slot setup for invalid slot %u on object %d", slotID, objectID);
 		return false;
 	}
 
-	object->RuntimeSlotValues[slotID - 1] = value;
+	object->_runtimeSlotValues[slotID - 1] = value;
 	return true;
 }
 
@@ -1155,11 +1155,11 @@ bool Script::ScriptExecutor::scriptPlayAnimation() {
 		BackgroundAnimationBlob::advanceAnimFrame(gameObject->overloadAnimation,
 												  true, frameOffset + 0x64);
 	} else {
-		if (slotID - 1 >= gameObject->Blobs.size() || gameObject->Blobs[slotID - 1].empty()) {
+		if (slotID - 1 >= gameObject->_blobs.size() || gameObject->_blobs[slotID - 1].empty()) {
 			warning("Opcode 0x1E: no blob data for object %u slot %u", objectID, slotID);
 			return false;
 		}
-		BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[slotID - 1],
+		BackgroundAnimationBlob::advanceAnimFrame(gameObject->_blobs[slotID - 1],
 												  true, frameOffset + 0x64);
 	}
 
@@ -1175,7 +1175,7 @@ void Script::ScriptExecutor::scriptTestPathfinding() {
 	if (object == nullptr) {
 		warning("Ignoring pathfinding test for invalid object %u", objectID);
 	} else {
-		_pathWalkableResult = _engine->isPathWalkable(object->Position.y, object->Position.x, y, x);
+		_pathWalkableResult = _engine->isPathWalkable(object->_position.y, object->_position.x, y, x);
 	}
 }
 
@@ -1195,7 +1195,7 @@ bool Script::ScriptExecutor::scriptSetYOffset() {
 		return false;
 	}
 
-	object->Unknown = offset;
+	object->_verticalOffsetScale = offset;
 	// Original also writes to runtime +0x21D (motion target vertical offset)
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr) {
@@ -1225,12 +1225,12 @@ bool Script::ScriptExecutor::scriptSetMotion() {
 		return false;
 	}
 
-	character->_motionStartVerticalOffset = object->Unknown;
+	character->_motionStartVerticalOffset = object->_verticalOffsetScale;
 	character->_motionTargetVerticalOffset = targetVerticalOffset;
 	character->_motionVerticalOffsetDelta = verticalOffsetDelta;
 	character->_motionDistanceUnits = motionDistance;
 	character->_motionProgress = 0;
-	character->_hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->Unknown;
+	character->_hasMotionVerticalOffset = motionDistance != 0 || targetVerticalOffset != object->_verticalOffsetScale;
 	return true;
 }
 
@@ -1253,7 +1253,7 @@ bool Script::ScriptExecutor::scriptSetOrientation() {
 		return false;
 	}
 
-	object->Orientation = animIndex;
+	object->_orientation = animIndex;
 	return true;
 }
 
@@ -1276,16 +1276,16 @@ bool Script::ScriptExecutor::scriptMoveToPosition() {
 	}
 
 	const Common::Point target(x, y);
-	if (!_engine->isPathWalkable(object->Position.y, object->Position.x, y, x) && _engine->getWalkabilityAt(target) < 0xC8) {
+	if (!_engine->isPathWalkable(object->_position.y, object->_position.x, y, x) && _engine->getWalkabilityAt(target) < 0xC8) {
 		warning("Ignoring move-to-position for blocked target (%u,%u) on object %d", x, y, objectID);
 		return false;
 	}
 
 	c->_isFollowingPath = false;
-	c->_motionStartVerticalOffset = object->Unknown;
+	c->_motionStartVerticalOffset = object->_verticalOffsetScale;
 	c->_motionTargetVerticalOffset = targetVerticalOffset;
-	c->_motionVerticalOffsetDelta = ABS<int32>((int32)object->Unknown - (int32)targetVerticalOffset);
-	c->_motionDistanceUnits = ABS<int32>((int32)x - object->Position.x) + ABS<int32>((int32)y - object->Position.y);
+	c->_motionVerticalOffsetDelta = ABS<int32>((int32)object->_verticalOffsetScale - (int32)targetVerticalOffset);
+	c->_motionDistanceUnits = ABS<int32>((int32)x - object->_position.x) + ABS<int32>((int32)y - object->_position.y);
 	c->_motionProgress = 0;
 	c->_hasMotionVerticalOffset = true;
 	c->startLerpTo(Common::Point(x, y), 2 * 1000);
@@ -1410,7 +1410,7 @@ bool Script::ScriptExecutor::scriptCheckObjectData() {
 		warning("Ignoring object refresh for invalid object %u", objectID);
 		return false;
 	}
-	if (object->Blobs.empty()) {
+	if (object->_blobs.empty()) {
 		warning("Ignoring object refresh for unloaded object %u", objectID);
 		return false;
 	}
@@ -1421,7 +1421,7 @@ bool Script::ScriptExecutor::scriptCheckObjectData() {
 
 	Character *character = currentView->getCharacterByIndex(objectID);
 	const int currentIndex = currentView->getCharacterArrayIndex(character);
-	if (object->SceneIndex != Scenes::instance()._currentSceneIndex) {
+	if (object->_sceneIndex != Scenes::instance()._currentSceneIndex) {
 		if (currentIndex >= 0) {
 			currentView->_characters.remove_at(currentIndex);
 		}
@@ -1447,7 +1447,7 @@ bool Script::ScriptExecutor::scriptCheckInventory() {
 		warning("Ignoring inventory check for invalid object %u", objectID);
 		return false;
 	}
-	_inventoryCheckResult = object->SceneIndex == parentID;
+	_inventoryCheckResult = object->_sceneIndex == parentID;
 	return true;
 }
 
@@ -1483,10 +1483,10 @@ bool Script::ScriptExecutor::scriptTestObjectAnimFrame() {
 	if (slotID == 0x15) {
 		hasBlob = !object->overloadAnimation.empty();
 		blobSourceKey = object->overloadAnimationSourceKey;
-	} else if (slotID >= 1 && slotID <= object->Blobs.size()) {
-		hasBlob = !object->Blobs[slotID - 1].empty();
-		if ((uint)(slotID - 1) < object->BlobSourceKeys.size())
-			blobSourceKey = object->BlobSourceKeys[slotID - 1];
+	} else if (slotID >= 1 && slotID <= object->_blobs.size()) {
+		hasBlob = !object->_blobs[slotID - 1].empty();
+		if ((uint)(slotID - 1) < object->_blobSourceKeys.size())
+			blobSourceKey = object->_blobSourceKeys[slotID - 1];
 	} else {
 		warning("Ignoring object animation range test for invalid slot %u on object %u", slotID, objectID);
 		return false;
@@ -1523,7 +1523,7 @@ bool Script::ScriptExecutor::scriptSetObjectClickable() {
 		warning("Ignoring clickable toggle for invalid object %u", objectID);
 		return false;
 	}
-	object->IsClickable = clickable != 0;
+	object->_isClickable = clickable != 0;
 	return true;
 }
 
@@ -1535,7 +1535,7 @@ bool Script::ScriptExecutor::scriptSetObjectVisible() {
 		warning("Ignoring visibility toggle for invalid object %u", objectID);
 		return false;
 	}
-	object->IsVisible = visible != 0;
+	object->_isVisible = visible != 0;
 	return true;
 }
 
@@ -1570,13 +1570,13 @@ bool Script::ScriptExecutor::scriptSetObjectBounds() {
 	}
 
 	if (objectID == otherObjectID) {
-		object->HasBoundsAttachment = false;
+		object->_hasBoundsAttachment = false;
 		object->BoundsAttachmentObjectID = 0;
 		object->BoundsAttachmentValue1 = 0;
 		object->BoundsAttachmentValue2 = 0;
 		object->BoundsAttachmentValue3 = 0;
 	} else {
-		object->HasBoundsAttachment = true;
+		object->_hasBoundsAttachment = true;
 		object->BoundsAttachmentObjectID = otherObjectID;
 		object->BoundsAttachmentValue1 = value1;
 		object->BoundsAttachmentValue2 = value2;
@@ -1921,7 +1921,7 @@ bool Script::ScriptExecutor::scriptGetObjectX() {
 		warning("Ignoring object X query for missing object %d", objectID);
 		return false;
 	}
-	scriptSaveVariableHelper(object->Position.x);
+	scriptSaveVariableHelper(object->_position.x);
 	return true;
 }
 
@@ -1937,7 +1937,7 @@ bool Script::ScriptExecutor::scriptGetObjectY() {
 		warning("Ignoring object Y query for missing object %d", objectID);
 		return false;
 	}
-	scriptSaveVariableHelper(object->Position.y);
+	scriptSaveVariableHelper(object->_position.y);
 	return true;
 }
 
@@ -1952,7 +1952,7 @@ bool Script::ScriptExecutor::scriptGetObjectField8() {
 		warning("Ignoring object field query for missing object %d", objectID);
 		return false;
 	}
-	scriptSaveVariableHelper(object->Unknown);
+	scriptSaveVariableHelper(object->_verticalOffsetScale);
 	return true;
 }
 
@@ -1968,14 +1968,14 @@ bool Script::ScriptExecutor::scriptGetObjectOrientation() {
 		warning("Ignoring object orientation query for missing object %d", objectID);
 		return false;
 	}
-	scriptSaveVariableHelper(object->Orientation);
+	scriptSaveVariableHelper(object->_orientation);
 	return true;
 }
 
 void Script::ScriptExecutor::scriptClearActorInventory() {
 	for (GameObject *object : GameObjects::instance()._objects) {
-		if (object != nullptr && object->SceneIndex == Scenes::instance()._currentActorIndex + 0x400) {
-			object->SceneIndex = 0;
+		if (object != nullptr && object->_sceneIndex == Scenes::instance()._currentActorIndex + 0x400) {
+			object->_sceneIndex = 0;
 		}
 	}
 
@@ -1983,7 +1983,7 @@ void Script::ScriptExecutor::scriptClearActorInventory() {
 	if (currentView != nullptr && currentView->_inventorySource != nullptr) {
 		currentView->setInventorySource(currentView->_inventorySource);
 		if (currentView->_activeInventoryItem != nullptr &&
-			currentView->_activeInventoryItem->SceneIndex != currentView->_inventorySource->_index + 0x400) {
+			currentView->_activeInventoryItem->_sceneIndex != currentView->_inventorySource->_index + 0x400) {
 			currentView->_activeInventoryItem = nullptr;
 		}
 	}
@@ -2518,12 +2518,12 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	case 0x24: {
 		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
-		out1 = actor ? actor->Position.x : 0;
+		out1 = actor ? actor->_position.x : 0;
 		break;
 	}
 	case 0x25: {
 		const GameObject *actor = GameObjects::instance().getObjectByIndex(Scenes::instance()._currentActorIndex);
-		out1 = actor ? actor->Position.y : 0;
+		out1 = actor ? actor->_position.y : 0;
 		break;
 	}
 	case 0x26:

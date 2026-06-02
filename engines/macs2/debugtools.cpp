@@ -915,11 +915,11 @@ static void showCharactersWindow() {
 				Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->_gameObject->_index, pos.x, pos.y, i);
 				if (ImGui::CollapsingHeader(header.c_str())) {
 					ImGui::Text("Orient: %u  Anim: %u  VOffset: %u",
-								c->_gameObject->Orientation, c->_animationIndex, c->getVerticalOffset());
+								c->_gameObject->_orientation, c->_animationIndex, c->getVerticalOffset());
 					ImGui::Text("Visible: %s  Clickable: %s  Frozen: %s",
-								c->_gameObject->IsVisible ? "Y" : "N",
-								c->_gameObject->IsClickable ? "Y" : "N",
-								c->_gameObject->HasBoundsAttachment ? "Y" : "N");
+								c->_gameObject->_isVisible ? "Y" : "N",
+								c->_gameObject->_isClickable ? "Y" : "N",
+								c->_gameObject->_hasBoundsAttachment ? "Y" : "N");
 
 					// Pathfinding state
 					ImGui::Separator();
@@ -940,9 +940,9 @@ static void showCharactersWindow() {
 						if (pos.y >= (int)g_engine->_walkDepthThresholdY)
 							depth = ((int)pos.y - (int)g_engine->_walkDepthThresholdY) * (int)g_engine->_walkDepthScaleFactor / 100;
 						uint16 animSpd = 2;
-						uint8 orient = c->_gameObject->Orientation;
-						if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < c->_gameObject->BlobSpeeds.size()) {
-							animSpd = c->_gameObject->BlobSpeeds[orient - 1];
+						uint8 orient = c->_gameObject->_orientation;
+						if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < c->_gameObject->_blobSpeeds.size()) {
+							animSpd = c->_gameObject->_blobSpeeds[orient - 1];
 							if (animSpd == 0)
 								animSpd = 2;
 						}
@@ -966,14 +966,14 @@ static void showCharactersWindow() {
 					}
 
 					// Direction availability
-					if (c->_gameObject->Blobs.size() >= 8) {
+					if (c->_gameObject->_blobs.size() >= 8) {
 						ImGui::Text("  DirAvail: ");
 						ImGui::SameLine();
 						const char *dirNames[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 						for (int d = 0; d < 8; d++) {
 							if (d > 0)
 								ImGui::SameLine(0, 4);
-							bool avail = d < (int)c->_gameObject->Blobs.size() && !c->_gameObject->Blobs[d].empty();
+							bool avail = d < (int)c->_gameObject->_blobs.size() && !c->_gameObject->_blobs[d].empty();
 							if (avail)
 								ImGui::TextColored(ImVec4(0, 1, 0, 1), "%s", dirNames[d]);
 							else
@@ -988,7 +988,7 @@ static void showCharactersWindow() {
 			uint16 sceneIdx = (uint16)Scenes::instance()._currentSceneIndex;
 			if (ImGui::CollapsingHeader("Other Scene Objects")) {
 				for (auto obj : GameObjects::instance()._objects) {
-					if (obj->SceneIndex != sceneIdx)
+					if (obj->_sceneIndex != sceneIdx)
 						continue;
 					// Skip objects already shown as active characters
 					bool isActive = false;
@@ -1001,11 +1001,11 @@ static void showCharactersWindow() {
 					if (isActive)
 						continue;
 					Common::String hdr = Common::String::format("obj=0x%x (%d,%d) vis=%s click=%s###scnobj%u",
-						obj->_index, obj->Position.x, obj->Position.y,
-						obj->IsVisible ? "Y" : "N", obj->IsClickable ? "Y" : "N", obj->_index);
+						obj->_index, obj->_position.x, obj->_position.y,
+						obj->_isVisible ? "Y" : "N", obj->_isClickable ? "Y" : "N", obj->_index);
 					if (ImGui::CollapsingHeader(hdr.c_str())) {
-						ImGui::Text("Orient: %u  Unknown: %u", obj->Orientation, obj->Unknown);
-						ImGui::Text("Blobs: %u  Script: %u bytes", (uint)obj->Blobs.size(), (uint)obj->Script.size());
+						ImGui::Text("Orient: %u  VOffsetScale: %u", obj->_orientation, obj->_verticalOffsetScale);
+						ImGui::Text("Blobs: %u  Script: %u bytes", (uint)obj->_blobs.size(), (uint)obj->_script.size());
 					}
 				}
 			}
@@ -1028,7 +1028,7 @@ static void showInventoryWindow() {
 			ImGui::Separator();
 			for (uint i = 0; i < view->_inventoryItems.size(); i++) {
 				GameObject *obj = view->_inventoryItems[i];
-				ImGui::Text("  [%u] obj 0x%x scene=%d", i, obj->_index, obj->SceneIndex);
+				ImGui::Text("  [%u] obj 0x%x scene=%d", i, obj->_index, obj->_sceneIndex);
 			}
 		}
 	}
@@ -1159,7 +1159,7 @@ static void showSceneMapsWindow() {
 			if (view) {
 				for (uint i = 0; i < view->_characters.size(); i++) {
 					Character *c = view->_characters[i];
-					if (!c || !c->_gameObject || !c->_gameObject->IsClickable)
+					if (!c || !c->_gameObject || !c->_gameObject->_isClickable)
 						continue;
 					Common::Point pos = c->getPosition();
 					if (pos.x >= 3 && pos.x < 317 && pos.y >= 3 && pos.y < 197) {
@@ -1205,16 +1205,16 @@ static void showSceneMapsWindow() {
 					// Draw all scene objects from GameObjects
 					int objCount = 0;
 					for (auto obj : GameObjects::instance()._objects) {
-						if (obj->SceneIndex != sceneIdx)
+						if (obj->_sceneIndex != sceneIdx)
 							continue;
-						Common::Point pos = obj->Position;
+						Common::Point pos = obj->_position;
 						float sx = pos.x * scale;
 						float sy = pos.y * scale;
 						ImVec2 center(imgOrigin.x + sx, imgOrigin.y + sy);
 						uint32 col;
-						if (!obj->IsVisible)
+						if (!obj->_isVisible)
 							col = IM_COL32(128, 128, 128, 200);
-						else if (obj->IsClickable)
+						else if (obj->_isClickable)
 							col = IM_COL32(0, 255, 0, 255);
 						else
 							col = IM_COL32(255, 255, 0, 255);
@@ -1230,12 +1230,12 @@ static void showSceneMapsWindow() {
 						ImVec2 mousePos2 = ImGui::GetMousePos();
 						int clickIdx = 0;
 						for (auto obj : GameObjects::instance()._objects) {
-							if (obj->SceneIndex != sceneIdx) {
+							if (obj->_sceneIndex != sceneIdx) {
 								clickIdx++;
 								continue;
 							}
-							float sx = imgOrigin.x + obj->Position.x * scale;
-							float sy = imgOrigin.y + obj->Position.y * scale;
+							float sx = imgOrigin.x + obj->_position.x * scale;
+							float sy = imgOrigin.y + obj->_position.y * scale;
 							if (fabs(mousePos2.x - sx) < 8 && fabs(mousePos2.y - sy) < 8) {
 								_selectedObjectIdx = clickIdx;
 								break;
@@ -1250,11 +1250,11 @@ static void showSceneMapsWindow() {
 							if (idx == _selectedObjectIdx) {
 								ImGui::Separator();
 								ImGui::Text("Object 0x%x  Scene:%u  Pos:(%d,%d)  Orient:%u",
-											obj->_index, obj->SceneIndex, obj->Position.x, obj->Position.y, obj->Orientation);
+											obj->_index, obj->_sceneIndex, obj->_position.x, obj->_position.y, obj->_orientation);
 								ImGui::Text("Visible:%s  Clickable:%s",
-											obj->IsVisible ? "Y" : "N", obj->IsClickable ? "Y" : "N");
+											obj->_isVisible ? "Y" : "N", obj->_isClickable ? "Y" : "N");
 								ImGui::Text("Blobs: %u  Script: %u bytes",
-											(uint)obj->Blobs.size(), (uint)obj->Script.size());
+											(uint)obj->_blobs.size(), (uint)obj->_script.size());
 								break;
 							}
 							idx++;
@@ -1535,9 +1535,9 @@ void onImGuiRender() {
 						for (GameObject *obj : GameObjects::instance()._objects) {
 							if (obj == nullptr)
 								continue;
-							if ((int16)obj->SceneIndex < 0 || obj->SceneIndex != currentScene)
+							if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != currentScene)
 								continue;
-							if (0x13 >= obj->Blobs.size() || obj->Blobs[0x13].empty())
+							if (0x13 >= obj->_blobs.size() || obj->_blobs[0x13].empty())
 								continue;
 							view->transferInventoryItem(view->_activeInventoryItem, obj);
 							view->_activeInventoryItem = nullptr;
