@@ -74,27 +74,6 @@ struct MouseMoveMessage : public MouseMessage {
 	MouseMoveMessage(Common::EventType type, const Common::Point &pos) : MouseMessage(type, pos) {}
 };
 
-struct GameMessage : public Message {
-	Common::String _name;
-	int _value;
-	Common::String _stringValue;
-
-	GameMessage() : Message(), _value(-1) {}
-	GameMessage(const Common::String &name) : Message(),
-											  _name(name), _value(-1) {}
-	GameMessage(const Common::String &name, int value) : Message(),
-														 _name(name), _value(value) {}
-	GameMessage(const Common::String &name, const Common::String &value) : Message(), _name(name), _stringValue(value) {}
-};
-
-struct ValueMessage : public Message {
-	int _value;
-
-	ValueMessage() : Message(), _value(0) {}
-	ValueMessage(int value) : Message(),
-							  _value(value) {}
-};
-
 struct ActionMessage : public Message {
 	int _action;
 	ActionMessage() : Message(), _action(0) {
