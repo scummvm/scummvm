@@ -142,8 +142,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		if (activeInventoryItemId >= 0x401 && activeInventoryItemId <= 0x600) {
 			uint16 idx = activeInventoryItemId - 0x400;
-			if (idx <= GameObjects::instance()._objects.size())
-				view1->_activeInventoryItem = GameObjects::instance()._objects[idx - 1];
+			if (idx <= GameObjects::instance()._objects.size()) {
+				GameObject *obj = GameObjects::instance()._objects[idx - 1];
+				view1->_activeInventoryItem = obj;
+			}
 		} else {
 			view1->_activeInventoryItem = nullptr;
 		}
@@ -253,7 +255,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		view1->_inventoryItems.clear();
 		for (uint16 i = 0; i < inventoryObjectCount && i < 512; i++) {
 			uint16 idx = inventoryObjectList[i];
-			if (idx > 0 && idx <= GameObjects::instance()._objects.size())
+			if (idx > 0 && idx <= GameObjects::instance()._objects.size() && GameObjects::instance()._objects[idx - 1] != nullptr)
 				view1->_inventoryItems.push_back(GameObjects::instance()._objects[idx - 1]);
 		}
 	}
@@ -366,7 +368,12 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			continue;
 		}
 		GameObject *obj = GameObjects::instance()._objects[objIdx];
-		// Original checks if object pointer is non-null (always true for us)
+		if (obj == nullptr) {
+			uint16 zero16 = 0;
+			for (int i = 0; i < 5; i++)
+				s.syncAsUint16LE(zero16);
+			continue;
+		}
 		// Base fields: pos.x(2), pos.y(2), scene(2), orientation(2), verticalOffsetScale(2)
 		uint16 posX = (uint16)obj->_position.x;
 		uint16 posY = (uint16)obj->_position.y;
@@ -665,6 +672,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		view1->_characters.clear();
 		for (auto obj : GameObjects::instance()._objects) {
+			if (obj == nullptr)
+				continue;
 			if (obj->_sceneIndex == (uint16)Scenes::instance()._currentSceneIndex) {
 				Character *c = new Character();
 				c->_gameObject = obj;

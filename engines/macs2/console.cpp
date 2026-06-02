@@ -70,6 +70,8 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	Common::String path = argv[1];
 	df.open(Common::Path(path));
 	for (auto currentObject : GameObjects::instance()._objects) {
+		if (currentObject == nullptr)
+			continue;
 		df.writeString(Common::String::format("Object %.2xh\n", currentObject->_index));
 		for (uint i = 0; i < currentObject->_blobs.size(); i++) {
 			auto currentBlob = currentObject->_blobs[i];
@@ -101,6 +103,8 @@ bool Console::Cmd_addItem(int argc, const char **argv) {
 	// TODO: Check args count
 	int index = parseHexArg(argv[1]);
 	for (GameObject *obj : GameObjects::instance()._objects) {
+		if (obj == nullptr)
+			continue;
 		if (obj->_index == index) {
 			obj->_sceneIndex = 0x1;
 		}
@@ -111,6 +115,8 @@ bool Console::Cmd_addItem(int argc, const char **argv) {
 bool Console::Cmd_removeItem(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
 	for (GameObject *obj : GameObjects::instance()._objects) {
+		if (obj == nullptr)
+			continue;
 		if (obj->_index == index) {
 			obj->_sceneIndex = 0x0;
 		}
@@ -121,7 +127,7 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 bool Console::Cmd_giveAll(int argc, const char **argv) {
 	int count = 0;
 	for (GameObject *obj : GameObjects::instance()._objects) {
-		if (obj->_index <= 1)
+		if (obj == nullptr || obj->_index <= 1)
 			continue;
 		if (!obj->_blobs.empty() && obj->_blobs.size() > 0x13 && !obj->_blobs[0x13].empty()) {
 			obj->_sceneIndex = 1;
