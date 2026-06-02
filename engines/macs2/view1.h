@@ -99,8 +99,8 @@ public:
 
 	bool isWalkable(const Common::Point &p) const;
 	bool calculatePath(Common::Point target);
-	bool findShortestPath(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount);
-	void floodFillNodes(int nodeIndex, bool *visited, int nodeCount);
+	bool canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount);
+	void floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCount);
 	// Returns false if we are at the end of the path already or the path is not valid
 	bool walkAlongPath();
 	void startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);

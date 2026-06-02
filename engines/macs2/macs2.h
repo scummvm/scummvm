@@ -240,8 +240,8 @@ public:
 	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX);
 	int getPathfindingNodeCount() const { return (int)pathfindingPoints.size(); }
 	int euclideanDistance(const Common::Point &a, const Common::Point &b);
-	int pathNodeDistance(int nodeA, int nodeB);
-	int buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest);
+	int walkableDistance(int nodeA, int nodeB);
+	int computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest);
 
 	// This is the override list living at [5BD1]
 	Common::Array<uint16> _hotspotOverrides;
