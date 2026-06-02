@@ -29,7 +29,6 @@
 namespace Common {
 class MemoryReadStream;
 class MemorySeekableReadWriteStream;
-
 } // namespace Common
 
 namespace OPL {
@@ -45,7 +44,6 @@ private:
 
 public:
 	StreamHandler(Common::MemorySeekableReadWriteStream *s);
-
 	StreamHandler(Common::Array<uint8> *data);
 
 	bool eos() const override;
@@ -59,163 +57,127 @@ public:
 };
 
 class Adlib {
-
 private:
 	OPL::OPL *_opl;
 
-	void adlibReadDeltaTime();
-
-	void OnTimer();
-
+	// --- Binary functions (segment 1000) ---
+	void adlibWriteReg(byte registerIndex, byte value);      // 1000:2792
+	uint8 adlibGetOperator(uint8 reg);                       // 1000:2779
+	void adlibSetInstrument();                               // 1000:27e4
+	void adlibSetFrequency(uint8 voiceIndex, StreamHandler *sh); // 1000:2839
+	void adlibSetupChannel(uint16 voiceIndex, uint8 note, uint16 pitchBend); // 1000:294e
+	void adlibProcessEvent(uint8 pitchBend, uint8 note, uint8 voiceIndex);   // 1000:2a80
+	uint16 adlibTickHandler();                               // 1000:24fd (init)
+	void adlibReadDeltaTime();                               // reads variable-length delta
 	StreamHandler *adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta);
 
-	void adlibPlaySong(StreamHandler *song);
+	void OnTimer(); // ISR handler (1000:1a9f)
 
-	uint16 adlibTickHandler();
+	// --- State variables (matching binary addresses) ---
 
-	uint16 adlibStopMusic();
-
-	uint8 adlibGetOperator(uint8 arg1);
-
-	// Writes a value to the target register
-	void adlibWriteReg(byte registerIndex, byte value);
-	void adlibWriteRegr(byte value, byte registerIndex) {
-		adlibWriteReg(registerIndex, value);
-	}
-
-	void adlibSetInstrument();
-
-	void adlibSetFrequency(uint8 bpp0A, StreamHandler *sh);
-
-	void adlibSetupChannel(uint16 bppA, uint8 bpp8, uint16 bpp6);
-
-	// [0036h] - Set to 1 after successful initialization
+	// [0036h] - initialized flag
 	uint8 _isInitialized = 0;
 
-	// Array accessed as [di + 37h] - volume lookup table
-	Common::Array<uint8> gArray37;
-
-	// Array accessed as [di + 8dh] - OPL operator 2 mapping per voice
-	Common::Array<uint8> gArray8d;
-
-	// Array accesed as [di + 57] - percussion operator mapping
-	Common::Array<uint8> gArray57;
-
-	// Array accessed as [di + 5C]
-	Common::Array<uint8> gArray5C;
-
-	// Array accessed as [di + 69]
-	// Used for looking up data in 27E4, loaded from the executable
-	Common::Array<uint8> gArray69;
-
-	// Array accesed as [di + 96] - OPL operator 1 mapping per voice
-	Common::Array<uint8> gArray96;
-
-	// Array accessed as [di+9Fh] - from 0x0001B69F
-	Common::Array<uint8> gArray9F;
-
-	// Array accessed as [di+11Fh] - from 0x0001B71F
-	Common::Array<uint8> gArray11F;
-
-	// [223Eh] - Current MIDI status byte (high byte of running status)
-	uint16 _currentEventStatus = 0;
-
-	// Memory being pointed to by [2244] and [2246] - song start pointer
-	StreamHandler *shMem2244 = nullptr;
-
-	// Memory being pointed to by [2248] and [224A] - instrument data pointer
-	StreamHandler *shMem2248 = nullptr;
-
-	// [2240h] - Current MIDI status high (always 0 for single-byte status)
-	uint16 _currentEventStatusHi = 0;
-
-	// [2242h] - Playback ready flag: 1 when song has looped/ended
-	uint8 _playbackReady = 1;
-
-	// [224Eh] - Timer frequency parameter from song header
-	uint16 _timerFrequency = 0;
-
-	// Memory being pointed to by [2250] and [2252] - current playback position
-	StreamHandler *shMem2250 = nullptr;
-
-	// [2254h] and [2256h] - delta time until next event (32-bit)
-	uint32 _nextEventTimer = 0;
-
-	// [2258h] - Status/control flags byte
-	// bit0: unused, bit1: stop requested, bit4: busy/processing
-	// bit5: loop event pending, bit6: stop acknowledged
-	uint8 _statusFlags = 0;
-
-	// [2259h] - Loop count from controller 0x66, reset on song end
-	uint8 _loopCount = 0;
-
-	// [225Eh] - Master volume offset (added to OPL volume calculations)
-	uint8 _masterVolume = 0;
-
-	// [226Fh] - Pitch bend value per MIDI channel (16 entries, init 0)
-	Common::Array<uint8> _channelPitchBend;
-
-	// [2291h] - Number of active OPL channels (9=melodic, 6=percussion)
-	uint16 _numOplChannels = 0;
-
-	// [2296h] - Timer subdivision counter (counts up to _timerSubdivThreshold)
-	uint16 _timerSubdivCounter = 0;
-
-	// [2298h] - Timer subdivision threshold (ISR fires music event every N ticks)
-	uint16 _timerSubdivThreshold = 5;
-
-	// [225Ah] - Stream bytes consumed counter (low word)
-	uint16 _streamBytesConsumed = 0;
-
-	// [225Ch] - Stream bytes consumed counter (high word)
-	uint16 _streamBytesConsumedHi = 0;
-
-	// [222Ch] - Voice allocation age (9 entries, 0=active, >0=idle ticks since release)
+	// [222Ch] - Voice age (9 entries, 0=active, >0=idle ticks)
 	Common::Array<uint8> _voiceAge;
 
-	// [225Fh] - MIDI program/instrument assigned per channel (16 entries, init 0)
-	Common::Array<uint8> _channelPrograms;
-
-	// [227Fh] - Which MIDI channel each OPL voice is assigned to (9 entries, init 0xFF=none)
-	Common::Array<uint8> _voiceMidiChannel;
-
-	// [2288h] - Current instrument loaded per OPL voice (9 entries, init 0xFF=none)
-	Common::Array<uint8> _voiceInstrument;
-
-	// [229Ch] - Shadow of OPL register values written
-	Common::Array<uint8> gArray229C;
-
-	// [2235h] - Current note playing per OPL voice (9 entries, init 0xFF=none)
+	// [2235h] - Current note per voice (9 entries, 0xFF=none)
 	Common::Array<uint8> _voiceNote;
 
-	// [229Ah] - Set to true when timer subdivision fires (ISR tick flag)
+	// [223Eh] - Current MIDI event status word
+	uint16 _currentEventStatus = 0;
+
+	// [2240h] - Current MIDI event status high word
+	uint16 _currentEventStatusHi = 0;
+
+	// [2242h] - Playback ready flag (1=song ended/looped)
+	uint8 _playbackReady = 1;
+
+	// [2244h] - Song start pointer
+	StreamHandler *_songStartPtr = nullptr;
+
+	// [2248h] - Instrument data pointer
+	StreamHandler *_instrumentDataPtr = nullptr;
+
+	// [224Eh] - Timer frequency from song header
+	uint16 _timerFrequency = 0;
+
+	// [2250h] - Current playback position
+	StreamHandler *_playbackPos = nullptr;
+
+	// [2254h] - Delta time until next event (32-bit)
+	uint32 _nextEventTimer = 0;
+
+	// [2258h] - Status/control flags
+	uint8 _statusFlags = 0;
+
+	// [2259h] - Loop count (from controller 0x66)
+	uint8 _loopCount = 0;
+
+	// [225Ah] - Stream bytes consumed (low)
+	uint16 _streamBytesConsumed = 0;
+
+	// [225Ch] - Stream bytes consumed (high)
+	uint16 _streamBytesConsumedHi = 0;
+
+	// [225Eh] - Master volume (0-63, added to OPL volume calcs)
+	uint8 _masterVolume = 0;
+
+	// [225Fh] - Channel program/instrument (16 entries)
+	Common::Array<uint8> _channelPrograms;
+
+	// [226Fh] - Channel pitch bend (16 entries)
+	Common::Array<uint8> _channelPitchBend;
+
+	// [227Fh] - Voice MIDI channel assignment (9 entries, 0xFF=none)
+	Common::Array<uint8> _voiceMidiChannel;
+
+	// [2288h] - Voice instrument loaded (9 entries, 0xFF=none)
+	Common::Array<uint8> _voiceInstrument;
+
+	// [2291h] - Number of OPL channels (9=melodic, 6=percussion)
+	uint16 _numOplChannels = 0;
+
+	// [2296h] - Timer subdivision counter
+	uint16 _timerSubdivCounter = 0;
+
+	// [2298h] - Timer subdivision threshold
+	uint16 _timerSubdivThreshold = 5;
+
+	// [229Ah] - Timer tick flag
 	bool _isTimerTick = false;
 
-	// [229Bh] - Current MIDI running status byte for event parsing
+	// [229Bh] - Current MIDI running status byte
 	uint8 _currentMidiStatus = 0;
 
-	// fn0017_2A80: 0017:2A80
-	void adlibProcessEvent(uint8 bpp6, uint8 bpp8, uint8 reg_base);
+	// [229Ch] - OPL register shadow (256 entries)
+	Common::Array<uint8> _regShadow;
+
+	// --- Lookup tables (loaded from executable) ---
+	Common::Array<uint8> _opSlotTable;       // [69h] - operator slot mapping for adlibSetInstrument
+	Common::Array<uint8> _opMap1;            // [8Dh] - OPL operator 1 per voice
+	Common::Array<uint8> _opMap2;            // [96h] - OPL operator 2 per voice
+	Common::Array<uint8> _freqTableLo;       // [9Fh] - frequency table low bytes
+	Common::Array<uint8> _freqTableHi;       // [11Fh] - frequency table high bytes
+	Common::Array<uint8> _percVolTable;      // [37h] - percussion volume lookup
+	Common::Array<uint8> _percOpMap;         // [57h] - percussion operator indices
+	Common::Array<uint8> _percFreqChannel;   // [5Ch] - percussion frequency channel
+
+	// --- Song data management ---
+	Common::Array<uint8> _activeSongData;
+	StreamHandler *_activeSongStream = nullptr;
 
 public:
 	void Init();
-
 	void Deinit();
-
-	void SetSong(Macs2::StreamHandler *sh);
 	void PlaySongData(const Common::Array<uint8> &data);
 	void StopMusic();
-	bool isPlaybackReady() const { return _playbackReady != 0; }
-
 	void SetVolume(uint16 volume);
-
+	bool isPlaybackReady() const { return _playbackReady != 0; }
 	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
 
-	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
-
 private:
-	Common::Array<uint8> _activeSongData;
-	StreamHandler *_activeSongStream = nullptr;
+	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
 };
 
 } // namespace Macs2
