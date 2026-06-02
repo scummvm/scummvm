@@ -1245,22 +1245,28 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 		startFading();
 		redraw();
-	} else if (msg.ascii == (uint16)'i') {
+	}
+
+	// TODO: only open ui components like inventory or main menu if the cursor is not in wait mode - otherwise this might
+	// hide the scene and you can't close those dialogs
+	if (msg.ascii == (uint16)'i') {
 		// Toggle the protagonist inventory panel.
 		if (!_isShowingInventory) {
 			openInventory(GameObjects::instance().getProtagonistObject());
 		} else {
 			closeInventory();
 		}
-	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
-		// Select a visible dialogue option by number key.
-		// Register a dialogue choice and act upon it
-		uint8 numberPressed = msg.ascii - '1' + 1;
-		triggerDialogueChoice(numberPressed);
 	} else if (msg.ascii == 'n') {
 		// Open the action menu at the current mouse position.
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		openMainMenu(mousePos);
+	}
+
+	if (msg.ascii >= '1' && msg.ascii <= '9') {
+		// Select a visible dialogue option by number key.
+		// Register a dialogue choice and act upon it
+		uint8 numberPressed = msg.ascii - '1' + 1;
+		triggerDialogueChoice(numberPressed);
 	}
 
 	return true;
