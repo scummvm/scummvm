@@ -294,8 +294,6 @@ public:
 
 	void setCursorMode(Script::MouseMode newMode);
 
-	void dumpStream(Common::MemoryReadStream *s, uint16 len);
-
 	Common::Array<uint16> _hotspotColorTable;
 	Common::Array<uint16> _pathfindingValueRemaps;
 
