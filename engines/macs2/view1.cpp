@@ -877,14 +877,14 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					} break;
 					case static_cast<int>(InventoryButtonIndex::Close): {
 						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
-							// Original button 6 with mode 0x17: preserve the selected item
-							// Sets g_wActiveInventoryItemId and g_wInteractedInventoryItemId
-							// so the item can be used on scene objects after closing
-							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+							// Binary button 6 with mode 0x17: copy objectId to inventoryItemId,
+							// then clear objectId. The inventoryItemId persists for scene use.
 							g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
 						} else {
 							_activeInventoryItem = nullptr;
+							g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 						}
+						g_engine->_scriptExecutor->_interactedObjectID = 0;
 						_isShowingInventory = false;
 						_inventoryPage = 0;
 						updateCursor();
@@ -1053,26 +1053,37 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 		if (index != 0) {
 			debug("*** New interaction started");
-			g_engine->_scriptExecutor->_interactedObjectID = index;
-			g_engine->_scriptExecutor->_interactedOtherObjectID = _activeInventoryItem != nullptr ? _activeInventoryItem->_index + 0x0400 : 0x0000;
 
-			// Binary (handleInput 1008:efd3): only clear the inventory item ID
-			// when cursor mode is NOT UseInventory (0x17). This preserves the
-			// selected item so it can be reused on other scene objects.
+			// Binary (handleInput 1008:ef2d): stop character movement before interaction.
+			// Sets runtime target/finalDest to current position, clears path state.
+			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
+			if (protagonist != nullptr) {
+				Common::Point pos = protagonist->getPosition();
+				protagonist->_endPosition = pos;
+				protagonist->_pathFinalDestination = pos;
+				protagonist->_path.clear();
+				protagonist->_currentPathIndex = 0;
+				protagonist->_isFollowingPath = false;
+				protagonist->_isLerping = false;
+			}
+
+			// Binary: if mode != 0x17, clear inventory item ID
 			if (g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::UseInventory) {
+				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				_activeInventoryItem = nullptr;
 				g_engine->_scriptExecutor->_inventoryActionFlag = false;
 			} else {
 				g_engine->_scriptExecutor->_inventoryActionFlag = true;
 			}
 
-			// Set the script
-			g_engine->_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
-			Scenes::instance()._currentSceneScript->seek(0, SEEK_SET);
+			g_engine->_scriptExecutor->_interactedObjectID = index;
+
+			// Binary: runScriptExecutor() - internally rewinds scene script when
+			// g_wScriptIsExecuting==0 (which it is here, since we're in the
+			// "not executing" branch of handleInput).
 			g_engine->runScriptExecutor(false);
+
 			// Binary: only g_wInteractedObjectId is cleared after runScriptExecutor.
-			// g_wInteractedInventoryItemId (interactedOtherObjectID) is NOT cleared,
-			// so it persists for subsequent script checks.
 			g_engine->_scriptExecutor->_interactedObjectID = 0;
 		}
 		return true;
