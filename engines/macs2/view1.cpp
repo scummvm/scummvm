@@ -193,14 +193,14 @@ void View1::updateCursor(const byte *palette) {
 		mode = (int)Script::MouseMode::Walk - 1;
 	}
 
-	if (g_engine->_cursorData[mode] == nullptr || g_engine->_cursorWidths[mode] == 0 || g_engine->_cursorHeights[mode] == 0) {
+	if (mode >= (int)g_engine->_imageResources.size() || g_engine->_imageResources[mode]._data == nullptr || g_engine->_imageResources[mode]._width == 0) {
 		warning("Cursor data for mode %d is invalid", mode);
 		return;
 	}
 
-	const uint16 width = g_engine->_cursorWidths[mode];
-	const uint16 height = g_engine->_cursorHeights[mode];
-	const byte *cursorData = g_engine->_cursorData[mode];
+	const uint16 width = g_engine->_imageResources[mode]._width;
+	const uint16 height = g_engine->_imageResources[mode]._height;
+	const byte *cursorData = g_engine->_imageResources[mode]._data;
 	const Graphics::PixelFormat rgbaCursorFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Common::Array<uint32> rgbaCursor;
 	rgbaCursor.resize(width * height);
@@ -285,7 +285,7 @@ void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
 }
 
 void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
-	for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
+	for (int i = 0; i < (int)g_engine->_backgroundAnimations.size(); i++) {
 		BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 		BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
 		AnimFrame currentFrame = currentBlob.getCurrentFrame();
@@ -968,12 +968,12 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					// Original copies item icon frame into cursor array slot 0x17 (UseInventory)
 					// so the cursor shows the picked-up item
 					int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
-					delete[] g_engine->_cursorData[cursorSlot];
 					uint32 pixelSize = icon->_width * icon->_height;
-					g_engine->_cursorData[cursorSlot] = new byte[pixelSize];
-					memcpy(g_engine->_cursorData[cursorSlot], icon->_data, pixelSize);
-					g_engine->_cursorWidths[cursorSlot] = icon->_width;
-					g_engine->_cursorHeights[cursorSlot] = icon->_height;
+					delete[] g_engine->_imageResources[cursorSlot]._data;
+					g_engine->_imageResources[cursorSlot]._data = new byte[pixelSize];
+					memcpy(g_engine->_imageResources[cursorSlot]._data, icon->_data, pixelSize);
+					g_engine->_imageResources[cursorSlot]._width = icon->_width;
+					g_engine->_imageResources[cursorSlot]._height = icon->_height;
 				}
 				g_engine->setCursorMode(Script::MouseMode::UseInventory);
 				updateCursor();
@@ -1943,11 +1943,11 @@ void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, 
 	// Texture: border sprite from cursor image array at offset 0x1f0 (mode 1)
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const Sprite &sprite = g_engine->_borderSprite;
+	const AnimFrame &sprite = g_engine->_imageResources[31];
 
 	while (currentY < clippingRect.bottom) {
 		while (currentX < clippingRect.right) {
-			drawSpriteClipped(currentX, currentY, clippingRect, sprite, s);
+			drawSpriteClipped(currentX, currentY, clippingRect, sprite._width, sprite._height, sprite._data, s);
 			currentX += sprite._width;
 		}
 		currentX = clippingRect.left;
@@ -1977,11 +1977,11 @@ void View1::drawPressedBorderOuterHighlights(const Common::Point &pos, const Com
 	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
 }
 
-Macs2::Sprite *View1::getUISprite(uint32 offset) {
+Macs2::AnimFrame *View1::getUISprite(uint32 offset) {
 	if (offset == 0x1012) {
-		return &g_engine->_borderHighlightSprite;
+		return &g_engine->_imageResources[30];
 	} else if (offset == 0x1011) {
-		return &g_engine->_borderShadowSprite;
+		return &g_engine->_imageResources[32];
 	} else if (offset == 0x1010) {
 		return nullptr;
 	}
@@ -1997,12 +1997,12 @@ void View1::drawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 
-	const Sprite *sprite = getUISprite(spriteAddress);
+	const AnimFrame *sprite = getUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
 	}
 	while (currentX < clippingRect.right) {
-		drawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
+		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data, s);
 		currentX += sprite->_width;
 	}
 }
@@ -2014,13 +2014,13 @@ void View1::drawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 
-	const Sprite *sprite = getUISprite(spriteAddress);
+	const AnimFrame *sprite = getUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
 	}
 
 	while (currentY < clippingRect.bottom) {
-		drawSpriteClipped(currentX, currentY, clippingRect, *sprite, s);
+		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data, s);
 		currentY += sprite->_height;
 	}
 }

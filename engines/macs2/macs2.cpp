@@ -237,7 +237,18 @@ void Macs2Engine::readResourceFile() {
 		GameObjects::instance()._objects.push_back(gameObject);
 	}
 
-
+	// Initialize border sprites from cursor image array entries at fixed indices.
+	// Original loadResourceFile (1008:2e8d) calls changeScene(g_wCurrentSceneIndex) before
+	// returning, ensuring all scene data (pathfinding maps, depth map, palette, background)
+	// is loaded before the game loop processes any input.
+	// The original allocates the 0x75E0-byte scene data buffer (which includes space for
+	// all RLE-decoded maps) before calling changeScene. Create the surfaces here.
+	_bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_depthMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_pathfindingMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_map.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_shadingTable.resize(256);
+	changeScene(Scenes::instance()._currentSceneIndex);
 }
 
 void Macs2Engine::readExecutable() {
@@ -266,12 +277,12 @@ void Macs2Engine::readExecutable() {
 void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 	// Offset 50F5 in scene data
 	// TODO: Remove the non-blob implementation
-	_numBackgroundAnimations = stream->readUint16LE();
+	uint16 numBackgroundAnimations = stream->readUint16LE();
 
-	_backgroundAnimations = new BackgroundAnimation[_numBackgroundAnimations];
-	_backgroundAnimationsBlobs.resize(_numBackgroundAnimations);
+	_backgroundAnimations.resize(numBackgroundAnimations);
+	_backgroundAnimationsBlobs.resize(numBackgroundAnimations);
 
-	for (int i = 0; i < _numBackgroundAnimations; i++) {
+	for (int i = 0; i < numBackgroundAnimations; i++) {
 		BackgroundAnimationBlob &currentBlob = _backgroundAnimationsBlobs[i];
 
 		BackgroundAnimation &current = _backgroundAnimations[i];
@@ -323,10 +334,16 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 }
 
 void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
-	// l0037_3355:
+	// l0037_3355: Read 33 entries, preserving index alignment (zero-length = empty placeholder).
+	// Binary uses g_pCursorImageArray[index] directly; indices must match.
 	for (int i = 0; i < 0x21; i++) {
 		uint32 length = stream->readUint32LE();
 		if (length == 0) {
+			AnimFrame empty;
+			empty._data = nullptr;
+			empty._width = 0;
+			empty._height = 0;
+			_imageResources.push_back(empty);
 			continue;
 		}
 		AnimFrame frame;
@@ -334,7 +351,6 @@ void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
 		stream->seek(0x2, SEEK_CUR);
 		frame.readFromStream(stream);
 		_imageResources.push_back(frame);
-		debug("W: %u, H: %u", frame._width, frame._height);
 	}
 }
 
@@ -373,15 +389,11 @@ void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManage
 
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources
-	if (_backgroundAnimations != nullptr) {
-		for (int i = 0; i < _numBackgroundAnimations; i++) {
-			delete[] _backgroundAnimations[i]._frames;
-		}
-		delete[] _backgroundAnimations;
-		_backgroundAnimations = nullptr;
+	for (uint i = 0; i < _backgroundAnimations.size(); i++) {
+		delete[] _backgroundAnimations[i]._frames;
 	}
+	_backgroundAnimations.clear();
 	_backgroundAnimationsBlobs.clear();
-	_numBackgroundAnimations = 0;
 	memset(_areaOverrides, 0, sizeof(_areaOverrides));
 
 	// Background image
@@ -412,7 +424,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->seek(bgImageOffset, SEEK_SET);
 
 	// TODO: Copy-pasted code here
-	// _bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	uint8 *data = new uint8[0x320];
 
@@ -462,7 +473,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Continuing with data, even if we don't know all uses yet
 	// Common::Array<uint8> unknownData1;
 	// unknownData1.resize(0x100);
-	_fileStream->read(_shadingTable, 0x100);
+	_fileStream->read(_shadingTable.data(), 0x100);
 
 	_fileStream->readByte(); // unknownByte1
 	_fileStream->readByte(); // unknownByte2
@@ -549,6 +560,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Refresh characters
 	View1 *currentView = (View1 *)findView("View1");
+	if (!currentView) {
+		// View system not yet initialized (first call from readResourceFile).
+		// Scene data is loaded; view refresh will happen on first tick.
+		return;
+	}
 
 	// Refresh the surface
 	currentView->_backgroundSurface.copyFrom(_bgImageShip);
@@ -668,7 +684,7 @@ bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 //   If override disabled (flag==0): returns 0xFF
 //   If override enabled (flag!=0): returns scene[value*5 + 0x4EA6]
 uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
-	if (x < 0 || x >= 320 || y < 0 || y >= 200) {
+	if (x < 0 || x >= 320 || y < 0 || y >= 200 || _pathfindingMap.w == 0) {
 		return 0;
 	}
 	uint16 value = _pathfindingMap.getPixel(x, y);
@@ -1040,7 +1056,7 @@ void Macs2Engine::dumpStream(Common::MemoryReadStream *s, uint16 len) {
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
 	// TODO: Abstract the screen sizes
-	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200) {
+	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200 || _map.w == 0) {
 		return result;
 	}
 
