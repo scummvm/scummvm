@@ -443,9 +443,9 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	int totalWidth = g_engine->measureStrings(sa) + 0x12;
 	int totalHeight = g_engine->measureStringsVertically(sa) + 0x10;
 	g_engine->_textLog.push_back(Common::String::format(
-		"Render text box: lines=%u pos=(%d,%d) size=(%d,%d) text=\"", sa.size(),
-		_stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight) +
-		Common::String(Common::U32String(joinDebugStrings(sa).c_str(), Common::kDos850)) + "\"");
+									 "Render text box: lines=%u pos=(%d,%d) size=(%d,%d) text=\"", sa.size(),
+									 _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight) +
+								 Common::String(Common::U32String(joinDebugStrings(sa).c_str(), Common::kDos850)) + "\"");
 
 	Graphics::ManagedSurface s = getSurface();
 	drawBorder(_stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
@@ -667,7 +667,7 @@ void View1::startFadeToBlack(uint16 speed) {
 	// Ensure current frame is on screen before fading
 	Graphics::ManagedSurface *screen = g_events->getScreen();
 	g_system->copyRectToScreen((const byte *)screen->getPixels(),
-		screen->pitch, 0, 0, 320, 200);
+							   screen->pitch, 0, 0, 320, 200);
 
 	uint fadeValue = 0;
 	while (fadeValue <= 0x40 && !g_system->getEventManager()->shouldQuit()) {
@@ -675,7 +675,7 @@ void View1::startFadeToBlack(uint16 speed) {
 
 		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
-			g_events->getScreen()->pitch, 0, 0, 320, 200);
+								   g_events->getScreen()->pitch, 0, 0, 320, 200);
 		g_system->updateScreen();
 
 		Common::Event evt;
@@ -725,7 +725,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 
 	// Copy pixels to the system screen
 	g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
-		g_events->getScreen()->pitch, 0, 0, 320, 200);
+							   g_events->getScreen()->pitch, 0, 0, 320, 200);
 	g_system->updateScreen();
 
 	// Fade from black: original starts at speed + 0x40 to guarantee first frame
@@ -737,7 +737,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
 		// Re-copy pixels so the backend redraws with the new palette
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
-			g_events->getScreen()->pitch, 0, 0, 320, 200);
+								   g_events->getScreen()->pitch, 0, 0, 320, 200);
 		g_system->updateScreen();
 
 		Common::Event evt;
@@ -853,29 +853,77 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			for (int i = 0; i < 6; i++) {
 				const Common::Rect &current = _inventoryButtonLocations[i];
 				if (current.contains(msg._pos)) {
-					switch (i) {
-					case static_cast<int>(InventoryButtonIndex::Look): {
+					InventoryButtonIndex buttonIndex = (InventoryButtonIndex)i;
+					switch (buttonIndex) {
+					case InventoryButtonIndex::Look: {
 						g_engine->setCursorMode(Script::MouseMode::Look);
 						updateCursor();
-					} break;
-					case static_cast<int>(InventoryButtonIndex::Hand): {
+						break;
+					}
+					case InventoryButtonIndex::Hand: {
 						g_engine->setCursorMode(Script::MouseMode::Use);
 						updateCursor();
-					} break;
-					case static_cast<int>(InventoryButtonIndex::Up): {
+						break;
+					}
+					case InventoryButtonIndex::Up: {
 						if (_inventoryPage > 0) {
 							_inventoryPage--;
 						}
-					} break;
-					case static_cast<int>(InventoryButtonIndex::Down): {
+						break;
+					}
+					case InventoryButtonIndex::Down: {
 						// Check how many pages we have
 						uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
 						if (_inventoryPage < numPages - 2) {
 							_inventoryPage++;
 						}
-
-					} break;
-					case static_cast<int>(InventoryButtonIndex::Close): {
+						break;
+					}
+					case InventoryButtonIndex::Drop: {
+						// Binary handleInventoryClick button 5 / handleDialogueClick button 5.
+						// Only active when mode == 0x17 (UseInventory) and an item is held.
+						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
+							if (isInventorySourceProtagonist()) {
+								// Protagonist's inventory: find a container in the current scene.
+								// Binary iterates objects 1..0x200, finds first with:
+								//   SceneIndex >= 0, SceneIndex == currentScene, hasInventoryIcon (+0x184)
+								const uint16 currentScene = Scenes::instance()._currentSceneIndex;
+								GameObject *container = nullptr;
+								for (GameObject *obj : GameObjects::instance()._objects) {
+									if (obj == nullptr)
+										continue;
+									if ((int16)obj->SceneIndex < 0)
+										continue;
+									if (obj->SceneIndex != currentScene)
+										continue;
+									// +0x184 = hasInventoryIcon: blob slot 0x13 is loaded
+									if (0x13 >= obj->Blobs.size() || obj->Blobs[0x13].empty())
+										continue;
+									container = obj;
+									break;
+								}
+								if (container != nullptr) {
+									transferInventoryItem(_activeInventoryItem, container);
+									_activeInventoryItem = nullptr;
+									g_engine->setCursorMode(Script::MouseMode::Use);
+									updateCursor();
+									g_engine->_scriptExecutor->_inventoryCombineFlag = true;
+									setInventorySource(_inventorySource);
+								}
+							} else {
+								// External inventory (another character): take item to protagonist.
+								// Binary: item.SceneIndex = g_wCurrentActorIndex + 0x400
+								transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
+								_activeInventoryItem = nullptr;
+								g_engine->setCursorMode(Script::MouseMode::Use);
+								updateCursor();
+								g_engine->_scriptExecutor->_inventoryActionFlag = true;
+								setInventorySource(_inventorySource);
+							}
+						}
+						break;
+					}
+					case InventoryButtonIndex::Close: {
 						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
 							// Binary button 6 with mode 0x17: copy objectId to inventoryItemId,
 							// then clear objectId. The inventoryItemId persists for scene use.
@@ -924,10 +972,12 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				return true;
 			}
 			if (_activeInventoryItem != nullptr && clickedObject != nullptr) {
-				// Use item on item (combine): confirmed from original handleInventoryClick button 5 + mode 0x17
+				// Use item on item (combine): from handleInventoryClick grid hit-test, mode 0x17.
+				// Binary sets interactedObjectId (source) + interactedInventoryItemId (target),
+				// then triggers runScriptExecutor via g_wHasSavedUiBackground. Does NOT set
+				// g_wInventoryCombineFlag here (that's only in the Drop button path).
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
-				g_engine->_scriptExecutor->_inventoryCombineFlag = true;
 				g_engine->runScriptExecutor(false);
 			}
 
@@ -1067,13 +1117,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				protagonist->_isLerping = false;
 			}
 
-			// Binary: if mode != 0x17, clear inventory item ID
+			// Binary (handleInput 1008:ef8f): if mode != 0x17, clear inventory item ID.
+			// Note: the binary does NOT touch g_wInventoryActionFlag here.
 			if (g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::UseInventory) {
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				_activeInventoryItem = nullptr;
-				g_engine->_scriptExecutor->_inventoryActionFlag = false;
-			} else {
-				g_engine->_scriptExecutor->_inventoryActionFlag = true;
 			}
 
 			g_engine->_scriptExecutor->_interactedObjectID = index;
@@ -1170,11 +1218,24 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	if (msg.ascii == (uint16)'t') {
 		if (_isShowingInventory && _activeInventoryItem != nullptr) {
 			if (_inventorySource->_index == 1) {
-				// TODO: Need to handle this case, the game can figure out that there is a container
-				// in the current room as seen in room 3 of the boat
+				// Debug: drop item to scene container (same as Drop button)
+				const uint16 currentScene = Scenes::instance()._currentSceneIndex;
+				for (GameObject *obj : GameObjects::instance()._objects) {
+					if (obj == nullptr)
+						continue;
+					if ((int16)obj->SceneIndex < 0 || obj->SceneIndex != currentScene)
+						continue;
+					if (0x13 >= obj->Blobs.size() || obj->Blobs[0x13].empty())
+						continue;
+					transferInventoryItem(_activeInventoryItem, obj);
+					_activeInventoryItem = nullptr;
+					setInventorySource(_inventorySource);
+					break;
+				}
 			} else {
 				transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
 				_activeInventoryItem = nullptr;
+				setInventorySource(_inventorySource);
 			}
 		}
 	}
@@ -2001,7 +2062,7 @@ uint16 View1::calculateCharacterScaling(uint16 characterY, bool updateDebugValue
 	//   scalingFactor = _walkBaseSpeedPct + depthOffset
 
 	int32 depthOffset = ((int32)characterY - (int32)g_engine->_walkDepthThresholdY) *
-	                    (int32)g_engine->_walkDepthScaleFactor / 100;
+						(int32)g_engine->_walkDepthScaleFactor / 100;
 	int32 scalingFactor = (int32)g_engine->_walkBaseSpeedPct + depthOffset;
 
 	if (updateDebugValues) {
@@ -2148,7 +2209,6 @@ bool Character::isWalkable(const Common::Point &p) const {
 	return walkability < 0xC8;
 }
 
-
 Character::Character() {
 	_pathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
 	_executeScriptOnFinishLerp = false;
@@ -2214,7 +2274,8 @@ bool Character::calculatePath(Common::Point target) {
 		}
 		currentNode = nextNode;
 		_path.push_back(currentNode);
-		if (_path.size() > MAX_NODES) break; // safety
+		if (_path.size() > MAX_NODES)
+			break; // safety
 	}
 
 	// Step 4: Validate path - consecutive nodes must be walkable to each other
@@ -2262,7 +2323,8 @@ bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Poi
 	bool anySeesTarget = false;
 	bool anySeenFromSource = false;
 	for (int i = 1; i <= nodeCount; i++) {
-		if (!visited[i]) continue;
+		if (!visited[i])
+			continue;
 		const Common::Point &p = g_engine->pathfindingPoints[i - 1]._position;
 		if (g_engine->isPathWalkable(p.y, p.x, target.y, target.x))
 			anySeesTarget = true;
@@ -2273,8 +2335,10 @@ bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Poi
 }
 
 void Character::floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCount) {
-	if (nodeIndex < 1 || nodeIndex > nodeCount) return;
-	if (visited[nodeIndex]) return;
+	if (nodeIndex < 1 || nodeIndex > nodeCount)
+		return;
+	if (visited[nodeIndex])
+		return;
 	visited[nodeIndex] = true;
 	const PathfindingPoint &pt = g_engine->pathfindingPoints[nodeIndex - 1];
 	for (uint i = 0; i < pt._adjacentPoints.size(); i++) {
@@ -2364,8 +2428,8 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 
 	// Binary: if (runtime+0x22D >= 0 && runtime+0x22D == orientation) slot = 0x15
 	bool useOverload = (_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
-		(int16)_gameObject->overloadAnimTriggerDirection >= 0 &&
-		_gameObject->overloadAnimTriggerDirection == _gameObject->Orientation);
+						(int16)_gameObject->overloadAnimTriggerDirection >= 0 &&
+						_gameObject->overloadAnimTriggerDirection == _gameObject->Orientation);
 
 	_shouldMirrorCurrentAnimation = false;
 
@@ -2544,7 +2608,7 @@ void Character::update() {
 	// Original checks if character is within walkSpeed pixels of target in both axes.
 	// Additionally requires vertical offset to have reached target (binary: runtime+0x21D == object+0x08)
 	bool arrived = (abs(pos.x - _endPosition.x) <= walkSpeed) &&
-	               (abs(pos.y - _endPosition.y) <= walkSpeed);
+				   (abs(pos.y - _endPosition.y) <= walkSpeed);
 	// Binary: arrival also requires vertical offset interpolation to be complete
 	if (arrived && _hasMotionVerticalOffset &&
 		(int16)_motionTargetVerticalOffset >= 0 &&
