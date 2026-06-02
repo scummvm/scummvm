@@ -1227,6 +1227,7 @@ void View1::draw() {
 
 	if (_isShowingInventory) {
 		// Show the ID of the hovered item
+		// TODO: IMPROVEMENT: this is an improvement (to show the name) - and should as such be hidden behind a game option
 		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
 			Common::String name = GameObjects::instance()._objectNames[hoveredObject->_index];
