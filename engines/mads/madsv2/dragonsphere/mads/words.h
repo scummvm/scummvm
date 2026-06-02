@@ -478,7 +478,7 @@ enum {
 	words_Slathan_ni_Patan     = 453,
 	words_sick                 = 454,
 	words_path_around_tower    = 455,
-	words_path_to_Hightower    = 456,
+	words_path_to_Hightower1   = 456,
 	words_spirit_plane         = 457,
 	words_spirit_tree          = 458,
 	words_walk                 = 459,
@@ -593,6 +593,7 @@ enum {
 	words_robe                 = 569,
 	words_cedar_chest          = 570,
 	words_Dragonsphere         = 571,
+	words_path_to_Hightower    = 572,
 	words_Caliph               = 573,
 };
 
