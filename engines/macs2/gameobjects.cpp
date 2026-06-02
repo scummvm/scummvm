@@ -226,7 +226,7 @@ Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index
 }
 
 Common::MemoryReadStream *Macs2::GameObject::getScriptStream() {
-	return new Common::MemoryReadStream(Script.data(), Script.size());
+	return new Common::MemoryReadStream(_script.data(), _script.size());
 }
 
 Macs2::AnimationReader::AnimationReader(const Common::Array<uint8> &blob) {

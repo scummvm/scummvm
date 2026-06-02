@@ -71,8 +71,8 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	df.open(Common::Path(path));
 	for (auto currentObject : GameObjects::instance()._objects) {
 		df.writeString(Common::String::format("Object %.2xh\n", currentObject->_index));
-		for (uint i = 0; i < currentObject->Blobs.size(); i++) {
-			auto currentBlob = currentObject->Blobs[i];
+		for (uint i = 0; i < currentObject->_blobs.size(); i++) {
+			auto currentBlob = currentObject->_blobs[i];
 			df.writeString(Common::String::format("Blob %.2xh\n", i));
 			for (const uint8 value : currentBlob) {
 				df.writeString(Common::String::format("%.2x", value));
@@ -102,7 +102,7 @@ bool Console::Cmd_addItem(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
 	for (GameObject *obj : GameObjects::instance()._objects) {
 		if (obj->_index == index) {
-			obj->SceneIndex = 0x1;
+			obj->_sceneIndex = 0x1;
 		}
 	}
 	return true;
@@ -112,7 +112,7 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
 	for (GameObject *obj : GameObjects::instance()._objects) {
 		if (obj->_index == index) {
-			obj->SceneIndex = 0x0;
+			obj->_sceneIndex = 0x0;
 		}
 	}
 	return true;
@@ -123,8 +123,8 @@ bool Console::Cmd_giveAll(int argc, const char **argv) {
 	for (GameObject *obj : GameObjects::instance()._objects) {
 		if (obj->_index <= 1)
 			continue;
-		if (!obj->Blobs.empty() && obj->Blobs.size() > 0x13 && !obj->Blobs[0x13].empty()) {
-			obj->SceneIndex = 1;
+		if (!obj->_blobs.empty() && obj->_blobs.size() > 0x13 && !obj->_blobs[0x13].empty()) {
+			obj->_sceneIndex = 1;
 			count++;
 		}
 	}
@@ -140,7 +140,7 @@ bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	if (argc > 2) {
 		index = parseHexArg(argv[2]);
 	}
-	GameObjects::instance().getObjectByIndex(index)->Orientation = orientation;
+	GameObjects::instance().getObjectByIndex(index)->_orientation = orientation;
 
 	return true;
 }
