@@ -306,7 +306,7 @@ public:
 
 	Common::Array<uint32> _sceneResourceOffsets;
 
-	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool decodeBlob = false);
+	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror = false);
 
 	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);
