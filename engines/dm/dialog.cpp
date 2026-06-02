@@ -148,12 +148,12 @@ void DialogMan::printCenteredChoice(byte *bitmap, const char *str, int16 posX, i
 }
 
 bool DialogMan::isMessageOnTwoLines(const char *str, char *part1, char *part2) {
-	uint16 strLength = strlen(str);
+	size_t strLength = strlen(str);
 	if (strLength <= 30)
 		return false;
 
 	Common::strcpy_s(part1, 70, str);
-	uint16 splitPosition = strLength >> 1;
+	size_t splitPosition = strLength >> 1;
 	while ((splitPosition < strLength) && (part1[splitPosition] != ' '))
 		splitPosition++;
 

@@ -56,7 +56,7 @@ void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 de
 
 	uint16 destPixelWidth = destByteWidth * 2;
 
-	uint16 textLength = strlen(text);
+	size_t textLength = strlen(text);
 	uint16 nextX = destX;
 	uint16 nextY = destY;
 	byte *srcBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxFont);
@@ -153,7 +153,7 @@ void TextMan::createNewRow() {
 }
 
 void TextMan::printString(Color color, const char* string) {
-	int16 stringLength = strlen(string);
+	size_t stringLength = strlen(string);
 	if (isTextScrolling(&_textScroller, false))
 		printToLogicalScreen(_messageAreaCursorColumn * 6, (_messageAreaCursorRow * 7 - 1) + 177, color, kDMColorBlack, string);
 	else {
