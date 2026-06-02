@@ -209,7 +209,7 @@ public:
 	void changeScene(uint32 newSceneIndex, bool executeScript = true);
 
 	Script::ScriptExecutor *_scriptExecutor;
-	Graphics::ManagedSurface _bgImageShip;
+	Graphics::ManagedSurface _sceneBackground;
 	Graphics::ManagedSurface _hotspotMap;
 
 	// File offset to the map mode image for the current scene (scene table entry +8).

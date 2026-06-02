@@ -228,7 +228,7 @@ void View1::updateCursor(const byte *palette) {
 }
 
 View1::View1() : UIElement("View1") {
-	_backgroundSurface.copyFrom(g_engine->_bgImageShip);
+	_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 	currentSpeechActData.onRightSide = false;
 	updateCursor();
 	setViewPaletteSafely(this, g_engine->_pal);
@@ -1099,11 +1099,6 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			g_engine->runScriptExecutor();
 			return true;
 		}
-
-		// uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
-		// uint32 value = g_engine->_hotspotMap.getPixel(msg._pos.x, msg._pos.y);
-		// g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
-		// g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
 		if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
 			Character *protagonist = getCharacterByIndex(1);
