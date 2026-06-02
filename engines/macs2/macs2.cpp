@@ -176,49 +176,46 @@ void Macs2Engine::readResourceFile() {
 		uint16 y = _fileStream->readUint16LE();
 		uint16 sceneIndex = _fileStream->readUint16LE();
 		uint16 orientation = _fileStream->readUint16LE();
-		uint16 unknown = _fileStream->readUint16LE();
-		gameObject->Position = Common::Point(x, y);
-		gameObject->SceneIndex = sceneIndex;
-		gameObject->Orientation = orientation;
-		gameObject->Unknown = unknown;
+		uint16 verticalOffsetScale = _fileStream->readUint16LE();
+		gameObject->_position = Common::Point(x, y);
+		gameObject->_sceneIndex = sceneIndex;
+		gameObject->_orientation = orientation;
+		gameObject->_verticalOffsetScale = verticalOffsetScale;
 
 		for (int j = 1; j < 0x15; j++) {
 			// Per-slot data in file: 2 bytes unknown1, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
 			_fileStream->readUint16LE(); // unknown1
-			uint16 unknown2 = _fileStream->readUint16LE();
+			uint16 blobSourceKey = _fileStream->readUint16LE();
 			uint32 dataSize = _fileStream->readUint32LE();
 			uint8 *data = new uint8[dataSize];
 			_fileStream->read(data, dataSize);
-			gameObject->Blobs.push_back(Common::Array<uint8>(data, dataSize));
-			gameObject->BlobSourceKeys.push_back(unknown2);
+			gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
+			gameObject->_blobSourceKeys.push_back(blobSourceKey);
 			// Per-animation walk speed (+0x30 in runtime)
 			uint16 blobSpeed = _fileStream->readUint16LE();
-			gameObject->BlobSpeeds.push_back(blobSpeed);
+			gameObject->_blobSpeeds.push_back(blobSpeed);
 			// Mirror flag (+0x32 in runtime)
-			uint16 unknown5 = _fileStream->readByte();
+			uint16 blobMirrorFlag = _fileStream->readByte();
 			_fileStream->readByte(); // slot loaded flag (runtime-only, discarded from file)
-			gameObject->BlobMirrorFlags.push_back(unknown5 != 0);
+			gameObject->_blobMirrorFlags.push_back(blobMirrorFlag != 0);
 
 			// In order to get to l0037_0BBA: where the blob will be mirrored,
 			// the bytes at +Eh and +Fh must be != 0
 			// +Fh is set related to the inner loop - I think it means that
 			// the blob is empty
 			// +Eh is read here
-			if (unknown5 != 0) {
+			if (blobMirrorFlag != 0) {
 				debug("Object %.4x need to mirror blob %4.x", i, j);
 				if (dataSize > 0) {
-					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->Blobs.back());
+					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->_blobs.back());
 				}
 			}
-
-			// Seek forward for the next 2+1+1 bytes reads
-			// _fileStream->seek(0x4, SEEK_CUR);
 		}
 		// Per-object rendering flags (after all 21 animation slots):
 		// Binary loadSceneObjects reads these into runtime+0x184, +0x185, +0x186
-		_fileStream->readByte(); // runtime+0x184: unknown/unused
-		gameObject->HasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
-		gameObject->HasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
+		_fileStream->readByte(); // TODO: runtime+0x184: unknown/unused
+		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
+		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
 
 		// Read the object script (resource offset table + script bytecode)
 		// Binary: scene table at +0x17F8 holds the script data file offset for each object
@@ -237,8 +234,8 @@ void Macs2Engine::readResourceFile() {
 			gameObject->_resourceOffsets[r] = _fileStream->readUint32LE();
 		}
 		uint16 scriptLength = _fileStream->readUint16LE();
-		gameObject->Script.resize(scriptLength);
-		_fileStream->read(gameObject->Script.data(), scriptLength);
+		gameObject->_script.resize(scriptLength);
+		_fileStream->read(gameObject->_script.data(), scriptLength);
 
 		GameObjects::instance()._objects.push_back(gameObject);
 	}
@@ -594,7 +591,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	}
 	currentView->_characters.clear();
 	for (auto currentObject : GameObjects::instance()._objects) {
-		if (currentObject->SceneIndex == newSceneIndex) {
+		if (currentObject->_sceneIndex == newSceneIndex) {
 			Character *c = new Character();
 			c->_gameObject = currentObject;
 			currentView->_characters.push_back(c);
@@ -1282,12 +1279,12 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 		targetBlob = &go->overloadAnimation;
 		go->overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
 		go->overloadAnimationMirrored = false;
-	} else if ((uint)(slotIndex - 1) < go->Blobs.size()) {
-		targetBlob = &go->Blobs[slotIndex - 1];
-		if ((uint)(slotIndex - 1) < go->BlobSourceKeys.size())
-			go->BlobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
-		if ((uint)(slotIndex - 1) < go->BlobMirrorFlags.size())
-			go->BlobMirrorFlags[slotIndex - 1] = false;
+	} else if ((uint)(slotIndex - 1) < go->_blobs.size()) {
+		targetBlob = &go->_blobs[slotIndex - 1];
+		if ((uint)(slotIndex - 1) < go->_blobSourceKeys.size())
+			go->_blobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
+		if ((uint)(slotIndex - 1) < go->_blobMirrorFlags.size())
+			go->_blobMirrorFlags[slotIndex - 1] = false;
 	}
 
 	if (targetBlob == nullptr) {

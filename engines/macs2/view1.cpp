@@ -150,7 +150,7 @@ void View1::setInventorySource(GameObject *newInventorySource) {
 
 	const uint16 inventorySceneId = _inventorySource->_index + 0x400;
 	for (GameObject *currentObject : GameObjects::instance()._objects) {
-		if (currentObject != nullptr && currentObject->SceneIndex == inventorySceneId) {
+		if (currentObject != nullptr && currentObject->_sceneIndex == inventorySceneId) {
 			_inventoryItems.push_back(currentObject);
 		}
 	}
@@ -161,7 +161,7 @@ bool View1::isInventorySourceProtagonist() const {
 void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer) {
 	int index = findInventoryItem(item);
 	_inventoryItems.remove_at(index);
-	item->SceneIndex = targetContainer->_index + 0x400;
+	item->_sceneIndex = targetContainer->_index + 0x400;
 }
 
 int View1::findInventoryItem(GameObject *item) {
@@ -253,15 +253,15 @@ AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 	// Inventory icon is always in blob slot 0x14 (zero-based index 0x13)
 	// Original: runtime offset +0x16c/+0x16e, validity at +0x173
 	int index = 0x13;
-	if (index >= (int)gameObject->Blobs.size() || gameObject->Blobs[index].empty()) {
+	if (index >= (int)gameObject->_blobs.size() || gameObject->_blobs[index].empty()) {
 		warning("GetInventoryIcon: no icon blob for object %u", gameObject->_index);
 		delete result;
 		return nullptr;
 	}
-	Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
+	Common::MemoryReadStream stream(gameObject->_blobs[index].data(), gameObject->_blobs[index].size());
 
 	// Original calls getAnimFrameWidth(1, ...) with mode=1 to reset to frame 1
-	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(gameObject->Blobs[index], true, 1);
+	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(gameObject->_blobs[index], true, 1);
 	// Frame data: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
 	// Skip the 6-byte header to reach width/height/pixels for ReadFromStream
 	stream.seek(offset + 6, SEEK_SET);
@@ -900,12 +900,12 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 								for (GameObject *obj : GameObjects::instance()._objects) {
 									if (obj == nullptr)
 										continue;
-									if ((int16)obj->SceneIndex < 0)
+									if ((int16)obj->_sceneIndex < 0)
 										continue;
-									if (obj->SceneIndex != currentScene)
+									if (obj->_sceneIndex != currentScene)
 										continue;
 									// +0x184 = hasInventoryIcon: blob slot 0x13 is loaded
-									if (0x13 >= obj->Blobs.size() || obj->Blobs[0x13].empty())
+									if (0x13 >= obj->_blobs.size() || obj->_blobs[0x13].empty())
 										continue;
 									container = obj;
 									break;
@@ -1449,20 +1449,20 @@ bool View1::tick() {
 		Character *speaker = currentSpeechActData.speaker;
 		if (currentSpeechActData.mouthAnimCounter < 1) {
 			// counter < 1: advance alternate blob (Blobs[18]) with mode 2
-			if (speaker->_gameObject->Blobs.size() > 18 && !speaker->_gameObject->Blobs[18].empty()) {
-				BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->Blobs[18], true, 2);
+			if (speaker->_gameObject->_blobs.size() > 18 && !speaker->_gameObject->_blobs[18].empty()) {
+				BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->_blobs[18], true, 2);
 			}
 		} else {
 			currentSpeechActData.mouthAnimCounter--;
 			if (currentSpeechActData.mouthAnimCounter < 1) {
 				// just hit 0: reset alternate blob (Blobs[18]) with mode 1
-				if (speaker->_gameObject->Blobs.size() > 18 && !speaker->_gameObject->Blobs[18].empty()) {
-					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->Blobs[18], true, 1);
+				if (speaker->_gameObject->_blobs.size() > 18 && !speaker->_gameObject->_blobs[18].empty()) {
+					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->_blobs[18], true, 1);
 				}
 			} else {
 				// counter > 0: advance primary blob (Blobs[17]) with mode 2
-				if (speaker->_gameObject->Blobs.size() > 17 && !speaker->_gameObject->Blobs[17].empty()) {
-					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->Blobs[17], true, 2);
+				if (speaker->_gameObject->_blobs.size() > 17 && !speaker->_gameObject->_blobs[17].empty()) {
+					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->_blobs[17], true, 2);
 				}
 			}
 		}
@@ -1782,18 +1782,18 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 	});
 
 	for (auto current : sorted) {
-		if (!current->_gameObject->IsVisible) {
+		if (!current->_gameObject->_isVisible) {
 			continue;
 		}
 
 		// Bounds attachment from drawAllCharacters (1008:90a2):
 		// When HasBoundsAttachment is set, position is relative to parent object.
-		if (current->_gameObject->HasBoundsAttachment) {
+		if (current->_gameObject->_hasBoundsAttachment) {
 			GameObject *parent = GameObjects::getObjectByIndex(current->_gameObject->BoundsAttachmentObjectID);
 			if (parent != nullptr) {
-				current->_gameObject->Position.x = parent->Position.x + (int16)current->_gameObject->BoundsAttachmentValue1;
-				current->_gameObject->Position.y = parent->Position.y + (int16)current->_gameObject->BoundsAttachmentValue2;
-				current->_gameObject->Unknown = parent->Unknown + (int16)current->_gameObject->BoundsAttachmentValue3;
+				current->_gameObject->_position.x = parent->_position.x + (int16)current->_gameObject->BoundsAttachmentValue1;
+				current->_gameObject->_position.y = parent->_position.y + (int16)current->_gameObject->BoundsAttachmentValue2;
+				current->_gameObject->_verticalOffsetScale = parent->_verticalOffsetScale + (int16)current->_gameObject->BoundsAttachmentValue3;
 			}
 		}
 
@@ -1827,10 +1827,10 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 			shadowIntensity = MIN<uint8>(g_engine->_shadowMap.getPixel(sx, sy), 32);
 		}
 
-		if (current->_gameObject->HasScaling) {
+		if (current->_gameObject->_hasScaling) {
 			// Scaled + depth-tested + shaded mode
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
-		} else if (current->_gameObject->HasShading) {
+		} else if (current->_gameObject->_hasShading) {
 			// Shaded mode (no scaling): draw at 100% size but apply shading
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
 		} else {
@@ -1839,7 +1839,7 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		}
 
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-			Common::String number = Common::String::format("%u", current->_gameObject->Orientation);
+			Common::String number = Common::String::format("%u", current->_gameObject->_orientation);
 			renderString(current->getPosition(), number.c_str());
 			Common::Rect screenRect(0, 0, 320, 200);
 			if (screenRect.contains(current->getPosition())) {
@@ -2137,7 +2137,7 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 
 	uint16 hitResult = 0;
 	for (auto currentCharacter : sorted) {
-		if (!currentCharacter->_gameObject->IsVisible || !currentCharacter->_gameObject->IsClickable) {
+		if (!currentCharacter->_gameObject->_isVisible || !currentCharacter->_gameObject->_isClickable) {
 			continue;
 		}
 		auto animFrame = currentCharacter->getCurrentAnimationFrame();
@@ -2272,7 +2272,7 @@ bool Character::calculatePath(Common::Point target) {
 	// Binary calculatePath (1008:1966). Params: charY, charX, finalDestY, finalDestX, actorIndex.
 	// The binary operates on the runtime struct directly; we store equivalent state in _path etc.
 	constexpr int MAX_NODES = 16;
-	const Common::Point &charPos = _gameObject->Position;
+	const Common::Point &charPos = _gameObject->_position;
 	const int nodeCount = g_engine->getPathfindingNodeCount();
 
 	// Step 1: Mark reachability anchored on FINAL DESTINATION (not character)
@@ -2401,11 +2401,11 @@ void Character::floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCo
 }
 
 Common::Point Character::getPosition() const {
-	return _gameObject->Position;
+	return _gameObject->_position;
 }
 
 void Character::setPosition(const Common::Point &newPosition) {
-	_gameObject->Position = newPosition;
+	_gameObject->_position = newPosition;
 }
 
 uint16 Character::getVerticalOffset() const {
@@ -2414,8 +2414,8 @@ uint16 Character::getVerticalOffset() const {
 		result = 0;
 	}
 
-	if (_gameObject->Unknown != 0) {
-		result = (result * _gameObject->Unknown) / 100;
+	if (_gameObject->_verticalOffsetScale != 0) {
+		result = (result * _gameObject->_verticalOffsetScale) / 100;
 	}
 
 	return result;
@@ -2428,14 +2428,14 @@ bool Character::walkAlongPath() {
 	if (_currentPathIndex >= 0 && _currentPathIndex < (int16)_path.size()) {
 		const uint16 snapIdx = _path[_currentPathIndex];
 		const Common::Point &snapPos = g_engine->pathfindingPoints[snapIdx - 1]._position;
-		_gameObject->Position = snapPos;
+		_gameObject->_position = snapPos;
 	}
 	_currentPathIndex++;
 	if (_currentPathIndex >= (int16)_path.size()) {
 		// Past end of path - walk to final destination, then stop
 		_endPosition = _pathFinalDestination;
-		_stepDeltaX = abs(_endPosition.x - _gameObject->Position.x);
-		_stepDeltaY = abs(_endPosition.y - _gameObject->Position.y);
+		_stepDeltaX = abs(_endPosition.x - _gameObject->_position.x);
+		_stepDeltaY = abs(_endPosition.y - _gameObject->_position.y);
 		_stepError = 0;
 		_stepDirectionSet = false;
 		return false; // No more path segments after this
@@ -2443,15 +2443,15 @@ bool Character::walkAlongPath() {
 	const uint16 nodeIdx = _path[_currentPathIndex];
 	const Common::Point &nodePos = g_engine->pathfindingPoints[nodeIdx - 1]._position;
 	_endPosition = nodePos;
-	_stepDeltaX = abs(_endPosition.x - _gameObject->Position.x);
-	_stepDeltaY = abs(_endPosition.y - _gameObject->Position.y);
+	_stepDeltaX = abs(_endPosition.x - _gameObject->_position.x);
+	_stepDeltaY = abs(_endPosition.y - _gameObject->_position.y);
 	_stepError = 0;
 	_stepDirectionSet = false;
 	return true;
 }
 
 bool Character::isAnimationMirrored() const {
-	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(_gameObject->Orientation);
+	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(_gameObject->_orientation);
 }
 
 uint8 Character::getMirroredAnimation(uint8 original) const {
@@ -2478,12 +2478,12 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 	// If runtime+0x22D >= 0 && runtime+0x22D == orientation, use slot 0x15 instead.
 	// No mirroring in renderer — blob data is pre-flipped at load time by mirrorAnimBlob.
 	// If slot is not loaded (flag +0x33 == 0) or blob ptr is null, original returns error.
-	int blobIndex = _gameObject->Orientation - 1;
+	int blobIndex = _gameObject->_orientation - 1;
 
 	// Binary: if (runtime+0x22D >= 0 && runtime+0x22D == orientation) slot = 0x15
 	bool useOverload = (_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
 						(int16)_gameObject->overloadAnimTriggerDirection >= 0 &&
-						_gameObject->overloadAnimTriggerDirection == _gameObject->Orientation);
+						_gameObject->overloadAnimTriggerDirection == _gameObject->_orientation);
 
 	_shouldMirrorCurrentAnimation = false;
 
@@ -2492,12 +2492,12 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 			return nullptr;
 		}
 	} else {
-		if (blobIndex < 0 || blobIndex >= (int)_gameObject->Blobs.size() || _gameObject->Blobs[blobIndex].empty()) {
+		if (blobIndex < 0 || blobIndex >= (int)_gameObject->_blobs.size() || _gameObject->_blobs[blobIndex].empty()) {
 			return nullptr;
 		}
 	}
 
-	Common::Array<uint8> &blob = useOverload ? _gameObject->overloadAnimation : _gameObject->Blobs[blobIndex];
+	Common::Array<uint8> &blob = useOverload ? _gameObject->overloadAnimation : _gameObject->_blobs[blobIndex];
 
 	// Advance and retrieve current frame (called once per draw = once per tick)
 	BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
@@ -2512,26 +2512,26 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 }
 
 Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIndex) {
-	if (_gameObject->Blobs.size() <= 17) {
+	if (_gameObject->_blobs.size() <= 17) {
 		return nullptr;
 	}
 
 	uint portraitBlobIndex = 17;
-	if (onRightSide && _gameObject->Blobs.size() > 18 && !_gameObject->Blobs[18].empty()) {
+	if (onRightSide && _gameObject->_blobs.size() > 18 && !_gameObject->_blobs[18].empty()) {
 		portraitBlobIndex = 18;
-	} else if (_gameObject->Blobs[portraitBlobIndex].empty() && _gameObject->Blobs.size() > 18 && !_gameObject->Blobs[18].empty()) {
+	} else if (_gameObject->_blobs[portraitBlobIndex].empty() && _gameObject->_blobs.size() > 18 && !_gameObject->_blobs[18].empty()) {
 		portraitBlobIndex = 18;
 	}
 
-	if (_gameObject->Blobs[portraitBlobIndex].empty()) {
+	if (_gameObject->_blobs[portraitBlobIndex].empty()) {
 		return nullptr;
 	}
 
-	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(_gameObject->Blobs[portraitBlobIndex], true, frameIndex);
+	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(_gameObject->_blobs[portraitBlobIndex], true, frameIndex);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(_gameObject->Blobs[portraitBlobIndex].data(), _gameObject->Blobs[portraitBlobIndex].size());
+	Common::MemoryReadStream stream(_gameObject->_blobs[portraitBlobIndex].data(), _gameObject->_blobs[portraitBlobIndex].size());
 	stream.seek(offset);
 	result->readFromStream(&stream);
 	return result;
@@ -2564,7 +2564,7 @@ void Character::startLerpTo(const Common::Point &target, uint32 duration, bool i
 void Character::startPickup(Macs2::GameObject *object) {
 	_pickedUpObject = object;
 	_executeScriptOnFinishLerp = true;
-	startLerpTo(_pickedUpObject->Position, 1000);
+	startLerpTo(_pickedUpObject->_position, 1000);
 }
 
 void Character::registerWaitForMovementFinishedEvent() {
@@ -2581,7 +2581,7 @@ void Character::update() {
 		// While orientation == 0x11, counter increments each frame.
 		// At _pickupFrameStart: item is transferred to inventory.
 		// At _pickupFrameEnd: animation ends, orientation/cursor restored.
-		if (_pickedUpObject != nullptr && _gameObject->Orientation == 0x11) {
+		if (_pickedUpObject != nullptr && _gameObject->_orientation == 0x11) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");
 
 			// At _pickupFrameStart: transfer item to inventory
@@ -2594,7 +2594,7 @@ void Character::update() {
 						currentView->_characters.remove_at(index);
 					}
 				}
-				_pickedUpObject->SceneIndex = _gameObject->_index + 0x400;
+				_pickedUpObject->_sceneIndex = _gameObject->_index + 0x400;
 				if (currentView->_inventorySource != nullptr && currentView->_inventorySource->_index == _gameObject->_index) {
 					currentView->_inventoryItems.push_back(_pickedUpObject);
 				}
@@ -2602,7 +2602,7 @@ void Character::update() {
 
 			// At _pickupFrameEnd: end pickup animation
 			if (_pickupFrameCounter == _gameObject->_pickupFrameEnd) {
-				_gameObject->Orientation = _previousOrientation;
+				_gameObject->_orientation = _previousOrientation;
 				if (g_engine->_scriptExecutor->_pickupInProgress) {
 					g_engine->_scriptExecutor->_pickupInProgress = false;
 					g_engine->_scriptExecutor->_pickupActorObjectID = 0;
@@ -2648,9 +2648,9 @@ void Character::update() {
 	}
 	// Per-animation speed from blob data (runtime+orientation*16+0x30)
 	uint16 animSpeed = 2; // default fallback
-	uint8 orient = _gameObject->Orientation;
-	if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < _gameObject->BlobSpeeds.size()) {
-		animSpeed = _gameObject->BlobSpeeds[orient - 1];
+	uint8 orient = _gameObject->_orientation;
+	if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < _gameObject->_blobSpeeds.size()) {
+		animSpeed = _gameObject->_blobSpeeds[orient - 1];
 		if (animSpeed == 0)
 			animSpeed = 2;
 	}
@@ -2666,7 +2666,7 @@ void Character::update() {
 	// Binary: arrival also requires vertical offset interpolation to be complete
 	if (arrived && _hasMotionVerticalOffset &&
 		(int16)_motionTargetVerticalOffset >= 0 &&
-		_motionTargetVerticalOffset != _gameObject->Unknown) {
+		_motionTargetVerticalOffset != _gameObject->_verticalOffsetScale) {
 		arrived = false;
 	}
 	if (arrived) {
@@ -2680,7 +2680,7 @@ void Character::update() {
 			_endPosition = pos;
 			_pathFinalDestination = pos;
 			if (_hasMotionVerticalOffset && (int16)_motionTargetVerticalOffset >= 0) {
-				_motionTargetVerticalOffset = _gameObject->Unknown;
+				_motionTargetVerticalOffset = _gameObject->_verticalOffsetScale;
 			}
 		}
 		if (_isFollowingPath) {
@@ -2691,18 +2691,18 @@ void Character::update() {
 		}
 		_isLerping = false;
 		if (_hasMotionVerticalOffset) {
-			_gameObject->Unknown = _motionTargetVerticalOffset;
+			_gameObject->_verticalOffsetScale = _motionTargetVerticalOffset;
 			_motionProgress = _motionDistanceUnits;
 			_hasMotionVerticalOffset = false;
 		}
 		// Standing orientation = walking direction + 8
-		if (_gameObject->Orientation < 9)
-			_gameObject->Orientation += 8;
+		if (_gameObject->_orientation < 9)
+			_gameObject->_orientation += 8;
 		if (_pickedUpObject != nullptr) {
 			_pickupFrameCounter = 0;
 			_pickupItemTransferred = false;
-			_previousOrientation = _gameObject->Orientation;
-			_gameObject->Orientation = 0x11;
+			_previousOrientation = _gameObject->_orientation;
+			_gameObject->_orientation = 0x11;
 			return;
 		}
 		if (_executeScriptOnFinishLerp) {
@@ -2725,40 +2725,40 @@ void Character::update() {
 		// Binary returns after setting direction (1-frame turn delay).
 		uint16 absDx = abs(pos.x - _endPosition.x);
 		uint16 absDy = abs(pos.y - _endPosition.y);
-		uint8 dir = _gameObject->Orientation;
+		uint8 dir = _gameObject->_orientation;
 		if (dir > 8 && dir < 17)
 			dir -= 8;
 		if (dir > 16)
 			dir = 1;
 		// Cardinal directions (only if animation available for that direction)
 		if (_endPosition.y < pos.y && absDx <= absDy &&
-			_gameObject->Blobs.size() > 0 && !_gameObject->Blobs[0].empty())
+			_gameObject->_blobs.size() > 0 && !_gameObject->_blobs[0].empty())
 			dir = 1; // North
 		if (pos.x < _endPosition.x && absDy <= absDx &&
-			_gameObject->Blobs.size() > 2 && !_gameObject->Blobs[2].empty())
+			_gameObject->_blobs.size() > 2 && !_gameObject->_blobs[2].empty())
 			dir = 3; // East
 		if (pos.y < _endPosition.y && absDx <= absDy &&
-			_gameObject->Blobs.size() > 4 && !_gameObject->Blobs[4].empty())
+			_gameObject->_blobs.size() > 4 && !_gameObject->_blobs[4].empty())
 			dir = 5; // South
 		if (_endPosition.x < pos.x && absDy <= absDx &&
-			_gameObject->Blobs.size() > 6 && !_gameObject->Blobs[6].empty())
+			_gameObject->_blobs.size() > 6 && !_gameObject->_blobs[6].empty())
 			dir = 7; // West
 		// Diagonals: absDx/4 < absDy AND absDy/2 < absDx
 		if ((absDx >> 2) < absDy && (absDy >> 1) < absDx) {
 			if (_endPosition.y < pos.y && pos.x < _endPosition.x &&
-				_gameObject->Blobs.size() > 1 && !_gameObject->Blobs[1].empty())
+				_gameObject->_blobs.size() > 1 && !_gameObject->_blobs[1].empty())
 				dir = 2; // NE
 			if (pos.x < _endPosition.x && pos.y < _endPosition.y &&
-				_gameObject->Blobs.size() > 3 && !_gameObject->Blobs[3].empty())
+				_gameObject->_blobs.size() > 3 && !_gameObject->_blobs[3].empty())
 				dir = 4; // SE
 			if (pos.y < _endPosition.y && _endPosition.x < pos.x &&
-				_gameObject->Blobs.size() > 5 && !_gameObject->Blobs[5].empty())
+				_gameObject->_blobs.size() > 5 && !_gameObject->_blobs[5].empty())
 				dir = 6; // SW
 			if (_endPosition.x < pos.x && _endPosition.y < pos.y &&
-				_gameObject->Blobs.size() > 7 && !_gameObject->Blobs[7].empty())
+				_gameObject->_blobs.size() > 7 && !_gameObject->_blobs[7].empty())
 				dir = 8; // NW
 		}
-		_gameObject->Orientation = dir;
+		_gameObject->_orientation = dir;
 		_stepDeltaX = absDx;
 		_stepDeltaY = absDy;
 		_stepError = 0;
@@ -2793,14 +2793,14 @@ void Character::update() {
 		// Vertical offset Bresenham interpolation (binary runtime+0x21D/21F/221/223)
 		// Per-pixel: accum += stepDelta; while accum >= threshold: accum -= threshold, step ±1
 		if (_hasMotionVerticalOffset &&
-			((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->Unknown)) {
+			((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->_verticalOffsetScale)) {
 			_motionProgress += _motionVerticalOffsetDelta;
 			while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
 				_motionProgress -= _motionDistanceUnits;
-				if (_motionTargetVerticalOffset < _gameObject->Unknown) {
-					_gameObject->Unknown--;
-				} else if (_motionTargetVerticalOffset > _gameObject->Unknown) {
-					_gameObject->Unknown++;
+				if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale) {
+					_gameObject->_verticalOffsetScale--;
+				} else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale) {
+					_gameObject->_verticalOffsetScale++;
 				}
 			}
 		}
@@ -2871,14 +2871,14 @@ void Character::update() {
 
 	// Binary: walkSpeed==0 special case - still run vertical offset once
 	if (walkSpeed == 0 && _hasMotionVerticalOffset &&
-		((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->Unknown)) {
+		((int16)_motionTargetVerticalOffset < 0 || _motionTargetVerticalOffset != _gameObject->_verticalOffsetScale)) {
 		_motionProgress += _motionVerticalOffsetDelta;
 		while (_motionProgress >= _motionDistanceUnits && _motionDistanceUnits > 0) {
 			_motionProgress -= _motionDistanceUnits;
-			if (_motionTargetVerticalOffset < _gameObject->Unknown) {
-				_gameObject->Unknown--;
-			} else if (_motionTargetVerticalOffset > _gameObject->Unknown) {
-				_gameObject->Unknown++;
+			if (_motionTargetVerticalOffset < _gameObject->_verticalOffsetScale) {
+				_gameObject->_verticalOffsetScale--;
+			} else if (_motionTargetVerticalOffset > _gameObject->_verticalOffsetScale) {
+				_gameObject->_verticalOffsetScale++;
 			}
 		}
 	}

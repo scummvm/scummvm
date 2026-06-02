@@ -79,8 +79,8 @@ public:
 	uint16 overloadAnimTriggerDirection = 0x7FFF;
 
 	// These are the values read by the code around l0037_082D:
-	Common::Point Position;
-	uint16 SceneIndex;
+	Common::Point _position;
+	uint16 _sceneIndex;
 	// 8-directional movement system from walkAlongPath (1008:1b8f).
 	// Direction codes 1-8 are walking directions, 9-16 are standing (idle) variants.
 	// The direction is chosen based on the angle between current and target position:
@@ -96,28 +96,32 @@ public:
 	//   17 (0x11) = Pickup animation
 	// Each direction has a validity flag at runtime offset +0x43 + (dir-1)*0x20
 	// that indicates whether the object has animation data for that direction.
-	uint16 Orientation;
-	uint16 Unknown;
+	uint16 _orientation;
+	// Per-object percentage multiplier for ground-elevation vertical offset.
+	// Walkability map values < 0xC8 represent ground height at each pixel;
+	// this factor scales how much that height displaces the object upward
+	// when drawn. 0 = no vertical offset. 100 = full elevation offset.
+	uint16 _verticalOffsetScale;
 	// Runtime +0x217: frame index during pickup animation at which the item is grabbed
 	uint16 _pickupFrameStart = 0;
 	// Runtime +0x219: frame index at which pickup animation completes
 	uint16 _pickupFrameEnd = 0;
-	uint16 RuntimeSlotValues[0x15] = {0};
+	uint16 _runtimeSlotValues[0x15] = {0};
 	// Runtime +0x22F: when set, snap character position to exact target on walk arrival
 	bool _snapToTarget = false;
-	bool IsClickable = true;
-	bool IsVisible = true;
+	bool _isClickable = true;
+	bool _isVisible = true;
 	// Runtime +0x185: per-object flag loaded from file. When set, character sprites
 	// are drawn through the shading table using the shadow map intensity.
-	bool HasShading = false;
+	bool _hasShading = false;
 	// Runtime +0x186: per-object flag loaded from file. When set, character sprites
 	// are scaled based on Y position (perspective depth scaling).
-	bool HasScaling = false;
+	bool _hasScaling = false;
 	// Runtime field +0x231: "frozen/attached" flag. Set by scriptSetObjectBounds (opcode 0x35).
 	// When set, the object cannot be walked (opcode 0x11 returns error 0x1F)
 	// and walkAlongPath skips movement for this object.
 	// Cleared when objectA == objectB in scriptSetObjectBounds.
-	bool HasBoundsAttachment = false;
+	bool _hasBoundsAttachment = false;
 	uint16 BoundsAttachmentObjectID = 0; // +0x232
 	uint16 BoundsAttachmentValue1 = 0;   // +0x234
 	uint16 BoundsAttachmentValue2 = 0;   // +0x236
@@ -125,13 +129,13 @@ public:
 
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.
-	Common::Array<Common::Array<uint8>> Blobs;
-	Common::Array<uint16> BlobSourceKeys;
-	Common::Array<bool> BlobMirrorFlags;
-	Common::Array<uint16> BlobSpeeds; // Per-animation walk speed (runtime+slot*16+0x30)
+	Common::Array<Common::Array<uint8>> _blobs;
+	Common::Array<uint16> _blobSourceKeys;
+	Common::Array<bool> _blobMirrorFlags;
+	Common::Array<uint16> _blobSpeeds; // Per-animation walk speed (runtime+slot*16+0x30)
 
 	// The object-specific script
-	Common::Array<uint8> Script;
+	Common::Array<uint8> _script;
 
 	// Per-object resource offset table (runtime +0x18D, 128 bytes = 32 dword file offsets).
 	// Loaded from file during loadSceneObjects. Used by scriptLoadObjectAnim/scriptLoadSpecialAnim

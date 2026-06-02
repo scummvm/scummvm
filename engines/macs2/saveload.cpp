@@ -367,23 +367,23 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 		GameObject *obj = GameObjects::instance()._objects[objIdx];
 		// Original checks if object pointer is non-null (always true for us)
-		// Base fields: pos.x(2), pos.y(2), scene(2), orientation(2), unknown(2)
-		uint16 posX = (uint16)obj->Position.x;
-		uint16 posY = (uint16)obj->Position.y;
+		// Base fields: pos.x(2), pos.y(2), scene(2), orientation(2), verticalOffsetScale(2)
+		uint16 posX = (uint16)obj->_position.x;
+		uint16 posY = (uint16)obj->_position.y;
 		s.syncAsUint16LE(posX);
 		s.syncAsUint16LE(posY);
-		s.syncAsUint16LE(obj->SceneIndex);
-		s.syncAsUint16LE(obj->Orientation);
-		s.syncAsUint16LE(obj->Unknown);
 		if (s.isLoading()) {
-			obj->Position.x = (int16)posX;
-			obj->Position.y = (int16)posY;
+			obj->_position.x = (int16)posX;
+			obj->_position.y = (int16)posY;
 		}
+		s.syncAsUint16LE(obj->_sceneIndex);
+		s.syncAsUint16LE(obj->_orientation);
+		s.syncAsUint16LE(obj->_verticalOffsetScale);
 
 		// Extended data: only for objects in current scene or current actor
-		bool inCurrentScene = (obj->SceneIndex == sceneIndex);
-		bool isActorScene = (obj->SceneIndex == actorIndex + 0x400);
-		bool isActor = ((objIdx + 1) == actorIndex);
+		bool inCurrentScene = obj->_sceneIndex == sceneIndex;
+		bool isActorScene = (obj->_sceneIndex == actorIndex + 0x400);
+		bool isActor = (objIdx + 1) == actorIndex;
 		bool hasExtendedData = inCurrentScene || isActorScene || isActor;
 
 		if (!hasExtendedData)
@@ -391,10 +391,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 		// --- Runtime state (0x23A bytes structure in original) ---
 		// HasBoundsAttachment [+0x231]: 2 bytes (word, but bool)
-		uint16 hasBounds = obj->HasBoundsAttachment ? 1 : 0;
+		uint16 hasBounds = obj->_hasBoundsAttachment ? 1 : 0;
 		s.syncAsUint16LE(hasBounds);
 		if (s.isLoading())
-			obj->HasBoundsAttachment = hasBounds != 0;
+			obj->_hasBoundsAttachment = hasBounds != 0;
 
 		// BoundsAttachmentObjectID [+0x232]: 2 bytes
 		s.syncAsUint16LE(obj->BoundsAttachmentObjectID);
@@ -478,10 +478,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 		// [+0x21D..+0x22B]: 8 x uint16 - sprite bounds (lastX, lastY, lastW, lastH, drawX, drawY, drawW, drawH)
 		for (int i = 0; i < 8; i++) {
-			uint16 slotVal = (i < 0x15) ? obj->RuntimeSlotValues[i] : 0;
+			uint16 slotVal = (i < 0x15) ? obj->_runtimeSlotValues[i] : 0;
 			s.syncAsUint16LE(slotVal);
 			if (s.isLoading() && i < 0x15)
-				obj->RuntimeSlotValues[i] = slotVal;
+				obj->_runtimeSlotValues[i] = slotVal;
 		}
 
 		// [+0x215]: 2 bytes - pickup frame counter
@@ -516,19 +516,19 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsByte(hasInventoryIcon);
 
 		// [+0x185]: 1 byte - isClickable (set by opcode 0x32)
-		uint8 isClickable = obj->IsClickable ? 1 : 0;
+		uint8 isClickable = obj->_isClickable ? 1 : 0;
 		s.syncAsByte(isClickable);
 		if (s.isLoading())
-			obj->IsClickable = isClickable != 0;
+			obj->_isClickable = isClickable != 0;
 
 		// [+0x186]: 1 byte - isVisible (set by opcode 0x33)
-		uint8 isVisible = obj->IsVisible ? 1 : 0;
+		uint8 isVisible = obj->_isVisible ? 1 : 0;
 		s.syncAsByte(isVisible);
 		if (s.isLoading())
-			obj->IsVisible = isVisible != 0;
+			obj->_isVisible = isVisible != 0;
 
 		// Script size [+0x18B]: 2 bytes
-		uint16 scriptSize = (uint16)obj->Script.size();
+		uint16 scriptSize = (uint16)obj->_script.size();
 		s.syncAsUint16LE(scriptSize);
 
 		// Script resource table [+0x18D]: 0x80 bytes (128 bytes = 32 dword offsets)
@@ -548,9 +548,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 		// Script data: scriptSize bytes from [+0x187] pointer
 		if (s.isLoading())
-			obj->Script.resize(scriptSize);
+			obj->_script.resize(scriptSize);
 		if (scriptSize > 0)
-			s.syncBytes(obj->Script.data(), scriptSize);
+			s.syncBytes(obj->_script.data(), scriptSize);
 
 		// --- Animation blobs (21 slots, 1-based: 1..0x15) ---
 		// Animation blob save format (binary-compatible with original 1008:6859/747e):
@@ -561,8 +561,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		for (int blobIdx = 0; blobIdx < 0x15; blobIdx++) {
 			// Active flag (2 bytes, but only low byte matters)
 			uint16 blobActive = 0;
-			if (s.isSaving() && blobIdx < (int)obj->Blobs.size())
-				blobActive = obj->Blobs[blobIdx].empty() ? 0 : 1;
+			if (s.isSaving() && blobIdx < (int)obj->_blobs.size())
+				blobActive = obj->_blobs[blobIdx].empty() ? 0 : 1;
 			s.syncAsUint16LE(blobActive);
 
 			if (blobActive) {
@@ -574,37 +574,37 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				s.syncAsUint16LE(field02);
 				// entry+0x0C: source resource key
 				uint16 blobSourceKey = 0;
-				if (s.isSaving() && blobIdx < (int)obj->BlobSourceKeys.size())
-					blobSourceKey = obj->BlobSourceKeys[blobIdx];
+				if (s.isSaving() && blobIdx < (int)obj->_blobSourceKeys.size())
+					blobSourceKey = obj->_blobSourceKeys[blobIdx];
 				s.syncAsUint16LE(blobSourceKey);
 				// entry+0x0E: speed/timing
 				uint16 blobSpeed = 0;
-				if (s.isSaving() && blobIdx < (int)obj->BlobSpeeds.size())
-					blobSpeed = obj->BlobSpeeds[blobIdx];
+				if (s.isSaving() && blobIdx < (int)obj->_blobSpeeds.size())
+					blobSpeed = obj->_blobSpeeds[blobIdx];
 				s.syncAsUint16LE(blobSpeed);
 				// entry+0x04: data size
 				uint16 blobSize = 0;
-				if (s.isSaving() && blobIdx < (int)obj->Blobs.size())
-					blobSize = (uint16)obj->Blobs[blobIdx].size();
+				if (s.isSaving() && blobIdx < (int)obj->_blobs.size())
+					blobSize = (uint16)obj->_blobs[blobIdx].size();
 				s.syncAsUint16LE(blobSize);
 				// Pixel data (blobSize bytes)
 				if (s.isSaving()) {
-					if (blobIdx < (int)obj->Blobs.size() && blobSize > 0)
-						s.syncBytes(obj->Blobs[blobIdx].data(), blobSize);
+					if (blobIdx < (int)obj->_blobs.size() && blobSize > 0)
+						s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
 				} else {
 					// Loading: allocate and read pixel data
 					if (blobSize > 0) {
-						if (blobIdx >= (int)obj->Blobs.size())
-							obj->Blobs.resize(blobIdx + 1);
-						obj->Blobs[blobIdx].resize(blobSize);
-						s.syncBytes(obj->Blobs[blobIdx].data(), blobSize);
+						if (blobIdx >= (int)obj->_blobs.size())
+							obj->_blobs.resize(blobIdx + 1);
+						obj->_blobs[blobIdx].resize(blobSize);
+						s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
 					}
-					if (blobIdx >= (int)obj->BlobSourceKeys.size())
-						obj->BlobSourceKeys.resize(blobIdx + 1);
-					obj->BlobSourceKeys[blobIdx] = blobSourceKey;
-					if (blobIdx >= (int)obj->BlobSpeeds.size())
-						obj->BlobSpeeds.resize(blobIdx + 1);
-					obj->BlobSpeeds[blobIdx] = blobSpeed;
+					if (blobIdx >= (int)obj->_blobSourceKeys.size())
+						obj->_blobSourceKeys.resize(blobIdx + 1);
+					obj->_blobSourceKeys[blobIdx] = blobSourceKey;
+					if (blobIdx >= (int)obj->_blobSpeeds.size())
+						obj->_blobSpeeds.resize(blobIdx + 1);
+					obj->_blobSpeeds[blobIdx] = blobSpeed;
 				}
 			}
 		}
@@ -614,7 +614,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		view1->_characters.clear();
 		for (auto obj : GameObjects::instance()._objects) {
-			if (obj->SceneIndex == (uint16)Scenes::instance()._currentSceneIndex) {
+			if (obj->_sceneIndex == (uint16)Scenes::instance()._currentSceneIndex) {
 				Character *c = new Character();
 				c->_gameObject = obj;
 				view1->_characters.push_back(c);
