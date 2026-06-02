@@ -267,7 +267,7 @@ uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	return result;
 }
 
-bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 objectTableOffset) {
+bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 /*objectTableOffset*/) {
 	if (resourceIndex == 0) {
 		warning("Ignoring resource load for zero resource index");
 		return false;
@@ -288,8 +288,13 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectID, resourceIndex);
 			return false;
 		}
-		g_engine->_fileStream->seek(object->_dataOffset + objectTableOffset + (resourceIndex - 1) * 4, SEEK_SET);
-		address = g_engine->_fileStream->readUint32LE();
+		// Binary reads from runtime+0x18D table (loaded during loadSceneObjects).
+		// Table is 32 dword file offsets, indexed by (resourceIndex - 1).
+		if (resourceIndex - 1 >= 32) {
+			warning("Ignoring resource load for out-of-range index %u on object %u", resourceIndex, _executingScriptObjectID);
+			return false;
+		}
+		address = object->_resourceOffsets[resourceIndex - 1];
 	}
 
 	if (address == 0) {

@@ -230,8 +230,11 @@ void Macs2Engine::readResourceFile() {
 			break;
 		}
 		_fileStream->seek(objectOffset, SEEK_SET);
-		// TODO: We read 80h bytes - to check where these are used - script variables?
-		_fileStream->seek(0x80, SEEK_CUR);
+		// Resource offset table at +0x18D equivalent in file (128 bytes = 32 dword offsets).
+		// Binary loadSceneObjects reads this into runtime+0x18D.
+		for (int r = 0; r < 32; r++) {
+			gameObject->_resourceOffsets[r] = _fileStream->readUint32LE();
+		}
 		uint16 scriptLength = _fileStream->readUint16LE();
 		gameObject->Script.resize(scriptLength);
 		_fileStream->read(gameObject->Script.data(), scriptLength);
