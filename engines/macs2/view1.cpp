@@ -2631,13 +2631,11 @@ void Character::update() {
 	// Bresenham pixel-stepping from walkAlongPath (1008:1b8f).
 	// Each frame: calculate walk speed from depth, step that many pixels.
 	Common::Point pos = getPosition();
-	// Depth-scaled walk speed from walkAlongPath (1008:1b8f):
-	// speed = animSpeed * (_walkBaseSpeedPct + depthAtPos) / 100
-	int depthAtPos = 0;
-	Common::Rect screenRect(320, 200);
-	if (screenRect.contains(pos)) {
-		depthAtPos = g_engine->_depthMap.getPixel(pos.x, pos.y);
-	}
+	// Walk speed formula from walkAlongPath (1008:1b8f):
+	//   depth = (posY - scene[0x51FD]) * scene[0x51FF] / 100
+	//   walkSpeed = animSpeed * (scene[0x5201] + depth) / 100
+	int32 depthOffset = ((int32)pos.y - (int32)g_engine->_walkDepthThresholdY) *
+						(int32)g_engine->_walkDepthScaleFactor / 100;
 	// Per-animation speed from blob data (runtime+orientation*16+0x30)
 	uint16 animSpeed = 2; // default fallback
 	uint8 orient = _gameObject->_orientation;
@@ -2646,7 +2644,7 @@ void Character::update() {
 		if (animSpeed == 0)
 			animSpeed = 2;
 	}
-	int walkSpeed = ((int)animSpeed * ((int)g_engine->_walkBaseSpeedPct + depthAtPos)) / 100;
+	int walkSpeed = ((int)animSpeed * ((int)g_engine->_walkBaseSpeedPct + (int)depthOffset)) / 100;
 	if (walkSpeed < 1)
 		walkSpeed = 1;
 
