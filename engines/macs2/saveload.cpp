@@ -550,7 +550,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading())
 			obj->useOverloadAnimation = useOverload != 0;
 
-		// [+0x184]: 1 byte - hasInventoryIcon (loaded from resource file)
+		// [+0x184]: 1 byte - hasInventoryIcon (loaded from re_runtimeSlotValuessource file)
 		// Indicates presence of inventory icon blob (slot 0x14 = index 0x13)
 		uint8 hasInventoryIcon = (obj->_blobs.size() > 0x13 && !obj->_blobs[0x13].empty()) ? 1 : 0;
 		s.syncAsByte(hasInventoryIcon);
