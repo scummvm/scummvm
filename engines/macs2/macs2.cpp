@@ -817,6 +817,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		_hotspotOverrides[i] = 0xFFFF;
 	}
 
+	saveAutosaveIfEnabled();
+
 	if (executeScript) {
 		// Start the execution
 		_scriptExecutor->run(true);
