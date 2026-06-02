@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-01 21:39+0000\n"
-"PO-Revision-Date: 2026-06-01 18:22+0000\n"
+"PO-Revision-Date: 2026-06-02 11:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13782,16 +13782,12 @@ msgid "Fire / select"
 msgstr "Tirer / Sélectionner"
 
 #: engines/scumm/metaengine.cpp:1185
-#, fuzzy
-#| msgid "Move back"
 msgid "Menu back"
-msgstr "Reculer"
+msgstr "Menu retour"
 
 #: engines/scumm/metaengine.cpp:1190
-#, fuzzy
-#| msgid "Skip / menu"
 msgid "Skip / menu back"
-msgstr "Passer / menu"
+msgstr "Passer / menu retour"
 
 #: engines/scumm/metaengine.cpp:1206
 msgid "Rebel Assault II controls"
@@ -13802,10 +13798,8 @@ msgid "Cover / back"
 msgstr "Couverture / retour"
 
 #: engines/scumm/metaengine.cpp:1267
-#, fuzzy
-#| msgid "Skip walk"
 msgid "Skip / back"
-msgstr "Passer le déplacement"
+msgstr "Passer / retour"
 
 #: engines/scumm/metaengine.cpp:1274
 msgid "Skip / menu"
