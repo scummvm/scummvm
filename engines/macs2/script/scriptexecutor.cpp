@@ -254,7 +254,7 @@ void ScriptExecutor::scriptChangeAnimation() {
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	// getAreaAtPoint (1008:101d). Reads the pathfinding map pixel and applies
 	// the area override table at sceneData + value*5 + 0x4EA8.
-	if (x >= 320 || y >= 200) {
+	if (x >= 320 || y >= 200 || _engine->_pathfindingMap.w == 0) {
 		return 0;
 	}
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);

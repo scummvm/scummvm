@@ -415,7 +415,7 @@ public:
 	// ;; fn0037_3CDE: 0037:3CDE
 	void drawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 
-	Macs2::Sprite *getUISprite(uint32 offset);
+	Macs2::AnimFrame *getUISprite(uint32 offset);
 
 	// fn0037_3737 proc
 	void drawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s);
