@@ -462,7 +462,7 @@ public:
 
 class Spell {
 public:
-	Spell() {}
+	Spell() : _symbols(0), _baseRequiredSkillLevel(0), _skillIndex(0), _attributes(0) {}
 	Spell(int32 symbols, byte baseSkillReq, byte skillIndex, uint16 attributes)
 	: _symbols(symbols), _baseRequiredSkillLevel(baseSkillReq), _skillIndex(skillIndex), _attributes(attributes) {}
 
