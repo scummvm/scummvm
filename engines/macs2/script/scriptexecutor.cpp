@@ -42,7 +42,7 @@ static Common::String joinDebugStrings(const Common::StringArray &strings) {
 	return result;
 }
 
-#define ScriptNoEntry debug("Unhandled case in script handling.");
+#define ScriptNoEntry debugC(kDebugScript, "Unhandled case in script handling.");
 #define STR_HELPER(x) #x
 
 ScriptExecutor::ScriptExecutor() {
@@ -477,7 +477,7 @@ bool ScriptExecutor::loadNextScript() {
 			if (candidateObject->_script.size() != 0) {
 				_stream = candidateObject->getScriptStream();
 				_executingScriptObjectID = candidateObject->_index;
-				debug("----- Switching execution to script for object: %.4x", candidateObject->_index);
+				debugC(kDebugScript, "----- Switching execution to script for object: %.4x", candidateObject->_index);
 				return true;
 			}
 		}
@@ -497,7 +497,7 @@ bool ScriptExecutor::loadNextScript() {
 		}
 		_stream->seek(0, SEEK_SET);
 		_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
-		debug("----- Switching execution to script for scene: %.4x", _executingObjectIndex);
+		debugC(kDebugScript, "----- Switching execution to script for scene: %.4x", _executingObjectIndex);
 		return true;
 	}
 
@@ -572,7 +572,7 @@ bool Script::ScriptExecutor::scriptCompare() {
 	// Values are treated as signed 32-bit (v2:v1 = high:low).
 	uint8 opcode2 = readByte();
 	Common::String opcodeInfo = identifyScriptOpcode(0x5, opcode2);
-	debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
+	debugC(kDebugScript, "- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
 	uint16 v1; // low word of first value
 	uint16 v2; // high word of first value
 	scriptReadValuePair(v1, v2);
@@ -2015,7 +2015,7 @@ void Script::ScriptExecutor::scriptFreePcmSound() {
 }
 
 ExecutionResult Script::ScriptExecutor::executeScript() {
-	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
+	debugC(kDebugScript, "----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
 	_isRunningScript = true;
 	// Confirmed: no interrupt mechanism exists. Wait states (frameWait, walkTarget,
 	// pcmSound, musicControl, adlibReady) are resolved by gameTick externally.
@@ -2065,7 +2065,7 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 		if (opcode1 != 0x5) {
 			opcodeInfo = identifyScriptOpcode(opcode1, 0);
 		}
-		debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
+		debugC(kDebugScript, "- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
 		byte length = readByte(); // [bp-2h]
 		_expectedEndLocation += length + 2;
 
@@ -2315,7 +2315,7 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 		endBuffering(_lastOpcodeTriggeredSkip);
 	}
 	_isRunningScript = false;
-	debug("----- Scripting function left");
+	debugC(kDebugScript, "----- Scripting function left");
 	return ExecutionResult::ScriptFinished;
 }
 
@@ -2374,7 +2374,7 @@ void ScriptExecutor::tick() {
 			_waitForSoundPlayback = false;
 			run();
 		} else {
-			debug("Waiting for sound playback to finish (handle active)");
+			debugC(kDebugScript, "Waiting for sound playback to finish (handle active)");
 		}
 		return;
 	}
