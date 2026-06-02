@@ -139,7 +139,7 @@ struct BackgroundAnimationBlob {
 	uint16 _y;
 	Common::Array<uint8> _blob;
 	uint32 _frameIndex;
-	AnimFrame GetFrame(uint32 index);
+	AnimFrame getFrame(uint32 index);
 	AnimFrame getCurrentFrame();
 	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
 	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
