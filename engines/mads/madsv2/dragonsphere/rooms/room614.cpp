@@ -1135,6 +1135,7 @@ static void process_conv_32() {
 		*conv_my_next_start = conv032_pain;
 		conv_abort();
 		local->activate_timer = true;
+		local->death_timer = 0;
 		player.commands_allowed = true;
 		break;
 
@@ -1160,10 +1161,10 @@ static void process_conv_32() {
 	case 25:
 		*conv_my_next_start = 26;
 		conv_abort();
-		local->death_timer = 0;
 		local->clock = 0;
 		local->doofus = true;
 		local->activate_timer = true;
+		local->death_timer = 0;
 		player.commands_allowed = false;
 		local->wiz_ice_action = BACK_TO_CAMERA;
 		local->wiz_float_action = BACK_TO_CAMERA;
