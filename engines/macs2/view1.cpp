@@ -1135,7 +1135,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			index = g_engine->getHotspotAtPoint(msg._pos);
 		}
 		if (index != 0) {
-			debug("*** New interaction started");
+			debugC(kDebugScript, "*** New interaction started");
 
 			// Binary (handleInput 1008:ef2d): stop character movement before interaction.
 			// Sets runtime target/finalDest to current position, clears path state.
@@ -1892,15 +1892,10 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	}
 	currentSpeechActData.mouthAnimCounter = (totalChars > 0) ? totalChars : 1;
 	_stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
-	debug("Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
+	debugC(kDebugScript, "Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
 		  characterIndex, position.x, position.y, onRightSide ? 1 : 0,
 		  currentSpeechActData.position.x, currentSpeechActData.position.y,
 		  _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
-	debugC(kDebugScript,
-		   "Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
-		   characterIndex, position.x, position.y, onRightSide ? 1 : 0,
-		   currentSpeechActData.position.x, currentSpeechActData.position.y,
-		   _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 
 	if (_autoclickActive) {
 		clearStringBox();

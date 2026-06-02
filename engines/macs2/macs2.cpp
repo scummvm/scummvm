@@ -214,7 +214,7 @@ void Macs2Engine::readResourceFile() {
 			// the blob is empty
 			// +Eh is read here
 			if (blobMirrorFlag != 0) {
-				debug("Object %.4x need to mirror blob %4.x", i, j);
+				debugC(kDebugScript, "Object %.4x need to mirror blob %4.x", i, j);
 				if (dataSize > 0) {
 					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->_blobs.back());
 				}
@@ -1057,17 +1057,6 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	_scriptExecutor->_mouseMode = newMode;
 }
 
-void Macs2Engine::dumpStream(Common::MemoryReadStream *s, uint16 len) {
-	int64 start_pos = s->pos();
-	Common::String result;
-	for (int i = 0; i < len; i++) {
-		uint8 v = s->readByte();
-		result += Common::String::format("%.2X", v);
-	}
-	debug(result.c_str());
-	s->seek(start_pos, SEEK_SET);
-}
-
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
 	// TODO: Abstract the screen sizes
@@ -1231,7 +1220,6 @@ int Macs2Engine::measureStrings(Common::StringArray sa) {
 
 Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
 	Common::StringArray result(numStrings);
-	dumpStream(stream, 64);
 	stream->seek(offset);
 
 	byte x;
