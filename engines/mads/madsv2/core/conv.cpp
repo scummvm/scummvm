@@ -581,45 +581,58 @@ static void conv_generate_text(Conv *convIn, ConvData * /*convData*/,
 	int  person = conv_control.person_speaking;
 	char textBuf[512];
 	Box *savedBox;
+	bool showBox = conv_show_boxes;
 
-	// Redirect popup operations to the conversation-private box so that the
-	// bounds recorded by popup_draw can be used later by conv_purge_any_popup.
-	savedBox = box;
-	box = &conv_box;
+	// TODO: Hook this up to ScummVM subtitles - original disabled reply boxes if in voice only mode
+	//if (speech_system_active && speech_on && speechCount > 0 && !show_subtitles) showBox = false;
 
-	// Size and position the popup from the current speaker's slot data.
-	int horiz_pieces = popup_estimate_pieces(conv_control.width[person]);
-	popup_create(horiz_pieces,
-	             conv_control.x[person],
-	             conv_control.y[person]);
+	if (showBox) {
+		// Redirect popup operations to the conversation-private box so that the
+		// bounds recorded by popup_draw can be used later by conv_purge_any_popup.
+		savedBox = box;
+		box = &conv_box;
 
-	// Attach the speaker portrait icon if a series was loaded for this slot.
-	// The icon_id is the 1-based frame stored in speaker_frame.
-	// center=0: left-aligned within the popup box.
-	if (conv_control.speaker_series[person] >= 0) {
-		popup_add_icon(series_list[conv_control.speaker_series[person]],
-		               conv_control.speaker_frame[person],
-		               0);
+		// Size and position the popup from the current speaker's slot data.
+		int horiz_pieces = popup_estimate_pieces(conv_control.width[person]);
+		popup_create(horiz_pieces,
+			conv_control.x[person],
+			conv_control.y[person]);
+
+		// Attach the speaker portrait icon if a series was loaded for this slot.
+		// The icon_id is the 1-based frame stored in speaker_frame.
+		// center=0: left-aligned within the popup box.
+		if (conv_control.speaker_series[person] >= 0) {
+			popup_add_icon(series_list[conv_control.speaker_series[person]],
+				conv_control.speaker_frame[person],
+				0);
+		}
+
+		// Copy the dialog string to a local mutable buffer, strip trailing
+		// whitespace (the raw text pool can have padding bytes), then write it.
+		Common::strlcpy(textBuf, conv_string(convIn, textIdx), sizeof(textBuf));
+		string_trim(textBuf);
+		popup_write_string(textBuf);
+
+		// Render the popup, saving the underlying screen region.
+		popup_draw(true, true);
+
+		// Restore the caller's box
+		box = savedBox;
 	}
 
-	// Copy the dialog string to a local mutable buffer, strip trailing
-	// whitespace (the raw text pool can have padding bytes), then write it.
-	Common::strlcpy(textBuf, conv_string(convIn, textIdx), sizeof(textBuf));
-	string_trim(textBuf);
-	popup_write_string(textBuf);
-
-	// Render the popup, saving the underlying screen region.
-	popup_draw(true, true);
-
-	// Restore the caller's box and record that a conversation popup is live.
-	box = savedBox;
+	// Record that a conversation popup is live.
 	conv_control.popup_is_up  = -1;
-	conv_control.popup_clock  = kernel.clock + conv_control.popup_duration;
 
 	// Play the associated speech audio when the speech system is on.
 	if (speech_system_active && speech_on && speechCount > 0) {
 		speech_play(convIn->speech_file, speechList[0]);
 	}
+
+	if (showBox)
+		conv_control.popup_clock = kernel.clock + conv_control.popup_duration;
+	else
+		// TODO: If speech is allowed with no box showing, this needs to allow time for the speech duration
+		conv_control.popup_clock = kernel.clock;
 }
 
 static int conv_next_node() {
@@ -1323,43 +1336,63 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 	int messageId;
 	int lineStart, lineCount;
 	char tempString[256];
+	bool showBox = conv_show_boxes;
 
-	if (msgListSize != 0) {
-		personSpeaking = conv_control.person_speaking;
-		if (!popup_create(popup_estimate_pieces(conv_control.width[personSpeaking]),
+	// TODO: Hook this up to ScummVM subtitles - original disabled reply boxes if in voice only mode
+	//if (speech_system_active && speech_on && speechCount > 0 && !show_subtitles) showBox = false;
+
+	if (showBox) {
+		if (msgListSize != 0) {
+			personSpeaking = conv_control.person_speaking;
+			if (!popup_create(popup_estimate_pieces(conv_control.width[personSpeaking]),
 				conv_control.x[personSpeaking], conv_control.y[personSpeaking])) {
-			if (conv_control.speaker_series[personSpeaking] >= 0) {
-				popup_add_icon(series_list[conv_control.speaker_series[personSpeaking]],
-					conv_control.speaker_frame[personSpeaking], 0);
-			}
-
-			for (int msgIndex = 0; msgIndex < msgListSize; ++msgIndex) {
-				messageId = msgList[msgIndex];
-				lineStart = convIn->messages[messageId].lineStart;
-				lineCount = convIn->messages[messageId].lineCount;
-
-				for (int lineCtr = 0; lineCtr < lineCount; ++lineCtr) {
-					Common::strcpy_s(tempString, conv_string(convIn, lineStart + lineCtr));
-					string_trim(tempString);
-					popup_write_string(tempString);
+				if (conv_control.speaker_series[personSpeaking] >= 0) {
+					popup_add_icon(series_list[conv_control.speaker_series[personSpeaking]],
+						conv_control.speaker_frame[personSpeaking], 0);
 				}
-			}
 
-			popup_next_line();
-			if (!popup_draw(-1, -1)) {
-				conv_control.popup_is_up = -1;
-				conv_control.popup_clock = kernel.clock + conv_control.popup_duration;
+				for (int msgIndex = 0; msgIndex < msgListSize; ++msgIndex) {
+					messageId = msgList[msgIndex];
+					lineStart = convIn->messages[messageId].lineStart;
+					lineCount = convIn->messages[messageId].lineCount;
 
-				if (speech_system_active && speech_on) {
-					if (voiceListSize != 0) {
-						speech_play(convIn->speech_file, *voiceList);
+					for (int lineCtr = 0; lineCtr < lineCount; ++lineCtr) {
+						Common::strcpy_s(tempString, conv_string(convIn, lineStart + lineCtr));
+						string_trim(tempString);
+						popup_write_string(tempString);
+					}
+				}
+
+				popup_next_line();
+				if (!popup_draw(-1, -1)) {
+					conv_control.popup_is_up = -1;
+					conv_control.popup_clock = kernel.clock + conv_control.popup_duration;
+
+					if (speech_system_active && speech_on) {
+						if (voiceListSize != 0) {
+							speech_play(convIn->speech_file, *voiceList);
+						}
 					}
 				}
 			}
 		}
+
+		box = priorBox;
 	}
 
-	box = priorBox;
+	// Record that a conversation popup is live.
+	conv_control.popup_is_up = -1;
+
+	// Play the associated speech audio when the speech system is on.
+	if (speech_system_active && speech_on && voiceListSize > 0) {
+		speech_play(convIn->speech_file, voiceList[0]);
+	}
+
+	if (showBox)
+		conv_control.popup_clock = kernel.clock + conv_control.popup_duration;
+	else
+		// TODO: If speech is allowed with no box showing, this needs to allow time for the speech duration
+		conv_control.popup_clock = kernel.clock;
 }
 
 // ---------------------------------------------------------------------------
