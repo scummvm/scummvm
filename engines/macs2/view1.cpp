@@ -2758,6 +2758,7 @@ void Character::update() {
 
 	// Step pixels (Bresenham line algorithm)
 	int pixelsMoved = 0;
+	bool wallSlideOccurred = false;
 	Common::Point savedPos = pos; // savedX/savedY from binary
 	for (int step = 0; step < walkSpeed; step++) {
 		savedPos = pos; // Binary: savedX = posX, savedY = posY at start of each iteration
@@ -2839,19 +2840,25 @@ void Character::update() {
 					pushY--;
 				}
 			}
-			// Binary: cancel path (target=finalDest=currentPos) but DON'T break — continue loop
+			// Binary: cancel path (target=finalDest=currentPos)
+			// In the binary, the loop continues after this (remaining iterations are no-ops
+			// since target==pos), so savedPos ends up equal to the wall-slid position.
 			_endPosition = pos;
 			_pathFinalDestination = pos;
 			_isFollowingPath = false;
 			_path.clear();
+			wallSlideOccurred = true;
+			break;
 		}
 		// Check if we reached the target
 		if (pos == _endPosition)
 			break;
 	}
 
-	// Binary: if pixelsMoved != walkSpeed after step loop, revert position and cancel path
-	if (pixelsMoved != walkSpeed) {
+	// Binary: if pixelsMoved != walkSpeed after step loop, revert position and cancel path.
+	// Exception: if wall-sliding already occurred, the character stays at the wall-slid
+	// position (binary: remaining loop iterations are no-ops, savedPos = wall-slid pos).
+	if (!wallSlideOccurred && pixelsMoved != walkSpeed) {
 		pos = savedPos;
 		_endPosition = pos;
 		_pathFinalDestination = pos;
