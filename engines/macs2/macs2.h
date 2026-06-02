@@ -209,6 +209,14 @@ public:
 	Graphics::ManagedSurface _bgImageShip;
 	Graphics::ManagedSurface _map;
 
+	// File offset to the map mode image for the current scene (scene table entry +8).
+	// When 0, the map mode is unavailable for this scene.
+	uint32 _mapImageFileOffset = 0;
+
+	// Per-depth sub-scene file offsets for map mode preview (binary: scene+0x5DD7+depth*4).
+	// File position where the sub-scene offset table starts (after map depth map).
+	int64 _mapSubSceneTableFilePos = 0;
+
 	// This is the depth map
 	Graphics::ManagedSurface _depthMap;
 

@@ -639,6 +639,16 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Addressing the background image starts at l0037_25A9
 	_fileStream->seek(0xC + 0x4 + 0xC * newSceneIndex - 0xC, SEEK_SET);
 	uint32 bgImageOffset = _fileStream->readUint32LE();
+	// Travel map sub-scene offset table starts at scene buffer +0x5DD7.
+	// Since the scene buffer is a byte-for-byte copy of the file data starting
+	// at bgImageOffset, the table is at bgImageOffset + 0x5DD7 in the file.
+	// The map overview image is at table entry [1] (offset 0x5DDB = 0x5DD7 + 4).
+	_mapImageFileOffset = 0;
+	_mapSubSceneTableFilePos = (int64)bgImageOffset + 0x5DD7;
+	if (_mapSubSceneTableFilePos + 4 < _fileStream->size()) {
+		_fileStream->seek(_mapSubSceneTableFilePos + 4, SEEK_SET); // entry[1] = map overview
+		_mapImageFileOffset = _fileStream->readUint32LE();
+	}
 	_fileStream->seek(bgImageOffset, SEEK_SET);
 
 	// TODO: Copy-pasted code here
