@@ -214,6 +214,12 @@ void Macs2Engine::readResourceFile() {
 			// Seek forward for the next 2+1+1 bytes reads
 			// _fileStream->seek(0x4, SEEK_CUR);
 		}
+		// Per-object rendering flags (after all 21 animation slots):
+		// Binary loadSceneObjects reads these into runtime+0x184, +0x185, +0x186
+		_fileStream->readByte(); // runtime+0x184: unknown/unused
+		gameObject->HasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
+		gameObject->HasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
+
 		// Read the object script (resource offset table + script bytecode)
 		// Binary: scene table at +0x17F8 holds the script data file offset for each object
 		addressOffset = 0x17F8 + (0xC + 0x04) + i * 0xC;
@@ -246,6 +252,7 @@ void Macs2Engine::readResourceFile() {
 	_bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_depthMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_pathfindingMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_shadowMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_map.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_shadingTable.resize(256);
 	changeScene(Scenes::instance()._currentSceneIndex);
@@ -489,8 +496,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Walkability/pathfinding map at scene offset 0x2017
 	_pathfindingMap.blitFrom(unknownRLE2);
 
-	// Offset 301Bh
-	Graphics::ManagedSurface unknownRLE3 = readRLEImage(_fileStream->pos(), _fileStream);
+	// Offset 301Bh - Shadow/shading intensity map for character rendering
+	Graphics::ManagedSurface shadowRLE = readRLEImage(_fileStream->pos(), _fileStream);
+	_shadowMap.blitFrom(shadowRLE);
 
 	// Offset 401Fh
 	// This is the first map used in 0037:10C4 for the lookup of interacted hotspots
