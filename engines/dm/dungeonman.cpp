@@ -1047,7 +1047,7 @@ Thing DungeonMan::getNextThing(Thing thing) {
 	return Thing(getThingData(thing)[0]);
 }
 
-void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, TextType type) {
+void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, int16 type) {
 	static char messageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
 		{'x',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
 		{'y',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
@@ -1131,7 +1131,7 @@ void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, TextT
 
 	TextString textString(_thingData[kDMstringTypeText] + thing.getIndex() * _thingDataWordCount[kDMstringTypeText]);
 	if ((textString.isVisible()) || (type & kDMMaskDecodeEvenIfInvisible)) {
-		type = (TextType)(type & ~kDMMaskDecodeEvenIfInvisible);
+		type &= ~kDMMaskDecodeEvenIfInvisible;
 		char sepChar;
 		if (type == kDMTextTypeMessage) {
 			*destString++ = '\n';

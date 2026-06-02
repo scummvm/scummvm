@@ -1948,7 +1948,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	char L0807_ac_DecodedChampionText[77];
 	char *decodedStringPtr = L0807_ac_DecodedChampionText;
 	dungeon.decodeText(decodedStringPtr, sizeof(L0807_ac_DecodedChampionText),
-			curThing, (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
+			curThing, (int16)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
 
 	uint16 charIdx = 0;
 	char tmpChar;
