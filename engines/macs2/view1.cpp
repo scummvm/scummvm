@@ -2280,7 +2280,11 @@ bool Character::calculatePath(Common::Point target) {
 		int costToChar = g_engine->euclideanDistance(nodePos, charPos);
 		if (costToDest + costToChar < bestCost) {
 			// Verify this node can connect source to target
-			if (canNodeConnectSourceToTarget(i, charPos, target, reachable, nodeCount)) {
+			// Binary calls canNodeConnectSourceToTarget(destY, destX, charY, charX, i)
+			// due to calculatePath being invoked with swapped source/dest params.
+			// This means the gate check is "can node see CHARACTER" and the flood-fill
+			// checks "any node reachable from DEST" AND "any node visible from CHARACTER".
+			if (canNodeConnectSourceToTarget(i, target, charPos, reachable, nodeCount)) {
 				// Recompute cost (binary does this twice)
 				costToDest = g_engine->euclideanDistance(nodePos, target);
 				costToChar = g_engine->euclideanDistance(nodePos, charPos);
