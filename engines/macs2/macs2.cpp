@@ -1249,7 +1249,7 @@ uint32 Macs2Engine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
-void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool decodeBlob) {
+void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror) {
 	if (arrayIndex == 0 || arrayIndex > _sceneResourceOffsets.size()) {
 		warning("Invalid animation array index %u for object %u slot %u", arrayIndex, objectIndex, slotIndex);
 		return;
@@ -1278,13 +1278,13 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	if (slotIndex == 0x15) {
 		targetBlob = &go->overloadAnimation;
 		go->overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
-		go->overloadAnimationMirrored = false;
+		go->overloadAnimationMirrored = shouldMirror;
 	} else if ((uint)(slotIndex - 1) < go->_blobs.size()) {
 		targetBlob = &go->_blobs[slotIndex - 1];
 		if ((uint)(slotIndex - 1) < go->_blobSourceKeys.size())
 			go->_blobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
 		if ((uint)(slotIndex - 1) < go->_blobMirrorFlags.size())
-			go->_blobMirrorFlags[slotIndex - 1] = false;
+			go->_blobMirrorFlags[slotIndex - 1] = shouldMirror;
 	}
 
 	if (targetBlob == nullptr) {
@@ -1293,8 +1293,8 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	}
 
 	*targetBlob = data;
-	if (decodeBlob) {
-		BackgroundAnimationBlob::advanceAnimFrame(*targetBlob, true, 2);
+	if (shouldMirror) {
+		BackgroundAnimationBlob::mirrorAnimBlob(*targetBlob);
 	}
 }
 

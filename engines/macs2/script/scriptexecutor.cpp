@@ -1326,17 +1326,20 @@ void Script::ScriptExecutor::scriptSubValues() {
 }
 
 void Script::ScriptExecutor::scriptLoadSpecialAnim() {
-	// This one loads a special animation set.
+	// This one loads a special animation set into the overload slot.
 	uint32 id = scriptReadValue32() - 0x400;
-	// scriptLoadSpecialAnim (1008:c991): 2nd value is the decode/enable flag (runtime +0x182).
-	// Non-zero -> enable the overload animation (and the original decodes the blob now).
-	uint16 decodeFlag = scriptReadValue16();
+	// scriptLoadSpecialAnim (1008:c991): 2nd value is the mirror flag (runtime +0x182).
+	// Non-zero -> set mirror flag and horizontally flip the blob.
+	// The loaded flag (+0x183) is always set to 1.
+	uint16 shouldMirror = scriptReadValue16();
 	uint8 animationID = readByte();
 	Common::Array<uint8> blob = Scenes::instance().readSpecialAnimBlob(animationID, g_engine->_fileStream);
 	GameObject *object = GameObjects::getObjectByIndex(id);
 	object->overloadAnimation = blob;
-	object->overloadAnimationMirrored = false;
-	object->useOverloadAnimation = (decodeFlag != 0);
+	object->overloadAnimationMirrored = (shouldMirror != 0);
+	if (shouldMirror != 0) {
+		BackgroundAnimationBlob::mirrorAnimBlob(object->overloadAnimation);
+	}
 }
 
 bool Script::ScriptExecutor::scriptSetDirection() {
@@ -1401,10 +1404,10 @@ bool Script::ScriptExecutor::scriptOpenInventory() {
 void Script::ScriptExecutor::scriptLoadObjectAnim() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	uint16 slotID = scriptReadValue16();
-	const bool decodeBlob = scriptReadValue16() != 0;
+	const bool shouldMirror = scriptReadValue16() != 0;
 	uint8 arrayIndex = readByte();
 
-	g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, decodeBlob);
+	g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, shouldMirror);
 }
 
 bool Script::ScriptExecutor::scriptCheckObjectData() {
