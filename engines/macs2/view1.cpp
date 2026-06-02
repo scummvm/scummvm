@@ -25,6 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/system.h"
+#include "engines/enhancements.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "macs2/adlib.h"
@@ -1294,9 +1295,7 @@ void View1::draw() {
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
-	if (_isShowingInventory) {
-		// Show the ID of the hovered item
-		// TODO: IMPROVEMENT: this is an improvement (to show the name) - and should as such be hidden behind a game option
+	if (_isShowingInventory && g_engine->enhancementEnabled(kEnhUIUX)) {
 		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
 			Common::String name = GameObjects::instance()._objectNames[hoveredObject->_index];
