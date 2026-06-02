@@ -1224,6 +1224,7 @@ void InsaneRebel1::runOptionsMenu() {
 				return;
 			case 1: // Toggle Rookie One gender
 				_optRookieOneFemale = !_optRookieOneFemale;
+				_player->_smushAudioTable[4] = _optRookieOneFemale ? 1 : 0;
 				break;
 			case 2: // Toggle music
 				_optMusicEnabled = !_optMusicEnabled;
