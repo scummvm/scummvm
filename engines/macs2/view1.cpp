@@ -1196,6 +1196,14 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 
 bool View1::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
+	case Macs2::kMacs2ActionInteract: {
+		Common::Point pos = g_system->getEventManager()->getMousePos();
+		return msgMouseDown(MouseDownMessage(MouseDownMessage::MB_LEFT, pos));
+	}
+	case Macs2::kMacs2ActionCursorMode: {
+		Common::Point pos = g_system->getEventManager()->getMousePos();
+		return msgMouseDown(MouseDownMessage(MouseDownMessage::MB_RIGHT, pos));
+	}
 	case Macs2::kMacs2ActionSkip:
 		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_ESCAPE)));
 	case Macs2::kMacs2ActionInventory:
