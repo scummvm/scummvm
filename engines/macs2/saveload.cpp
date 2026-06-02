@@ -439,23 +439,39 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 		// [+0x0C]: 0x20 bytes (path node index list)
 		byte pathBlock[32] = {0};
+		if (s.isSaving() && chr) {
+			for (uint pi = 0; pi < chr->_path.size() && pi < 32; pi++)
+				pathBlock[pi] = (byte)chr->_path[pi];
+		}
 		s.syncBytes(pathBlock, 32);
 
 		// [+0x2C]: 2 bytes - path current index
-		uint16 pathIndex = 0;
+		uint16 pathIndex = chr ? (uint16)chr->_currentPathIndex : 0;
 		s.syncAsUint16LE(pathIndex);
 
 		// [+0x2E]: 2 bytes - path length
-		uint16 pathLength = 0;
+		uint16 pathLength = chr ? (uint16)chr->_path.size() : 0;
 		s.syncAsUint16LE(pathLength);
 
-		// [+0x30]: 2 bytes - step accumulator
-		uint16 stepAccum = 0;
-		s.syncAsUint16LE(stepAccum);
+		if (s.isLoading() && chr) {
+			chr->_path.clear();
+			for (uint16 pi = 0; pi < pathLength && pi < 32; pi++)
+				chr->_path.push_back(pathBlock[pi]);
+			chr->_currentPathIndex = (int)pathIndex;
+			chr->_isFollowingPath = pathLength > 0;
+		}
 
-		// [+0x32]: 1 byte - walk step flag (Bresenham related)
-		uint8 walkStepFlag = 0;
+		// [+0x30]: 2 bytes - step accumulator (Bresenham error)
+		uint16 stepAccum = chr ? (uint16)chr->_stepError : 0;
+		s.syncAsUint16LE(stepAccum);
+		if (s.isLoading() && chr)
+			chr->_stepError = (int16)stepAccum;
+
+		// [+0x32]: 1 byte - walk step flag (isLerping)
+		uint8 walkStepFlag = chr ? (chr->_isLerping ? 1 : 0) : 0;
 		s.syncAsByte(walkStepFlag);
+		if (s.isLoading() && chr)
+			chr->_isLerping = walkStepFlag != 0;
 
 		// [+0x33]: 1 byte - direction set flag (_stepDirectionSet)
 		uint8 directionSet = chr ? (chr->_stepDirectionSet ? 1 : 0) : 0;
@@ -485,15 +501,19 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 
 		// [+0x215]: 2 bytes - pickup frame counter
-		uint16 pickupFrameCounter = 0;
+		uint16 pickupFrameCounter = chr ? chr->_pickupFrameCounter : 0;
 		s.syncAsUint16LE(pickupFrameCounter);
+		if (s.isLoading() && chr)
+			chr->_pickupFrameCounter = pickupFrameCounter;
 		// [+0x217]: 2 bytes - _pickupFrameStart
 		s.syncAsUint16LE(obj->_pickupFrameStart);
 		// [+0x219]: 2 bytes - _pickupFrameEnd
 		s.syncAsUint16LE(obj->_pickupFrameEnd);
 		// [+0x21B]: 2 bytes - previous orientation (saved before pickup)
-		uint16 prevOrientation = 0;
+		uint16 prevOrientation = chr ? chr->_previousOrientation : 0;
 		s.syncAsUint16LE(prevOrientation);
+		if (s.isLoading() && chr)
+			chr->_previousOrientation = (uint8)prevOrientation;
 
 		// overloadAnimTriggerDirection [+0x22D]: 2 bytes
 		s.syncAsUint16LE(obj->overloadAnimTriggerDirection);
@@ -515,13 +535,24 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		uint8 hasInventoryIcon = 0;
 		s.syncAsByte(hasInventoryIcon);
 
-		// [+0x185]: 1 byte - isClickable (set by opcode 0x32)
+		// [+0x185]: 1 byte - HasShading (per-object rendering flag from file)
+		uint8 hasShading = obj->_hasShading ? 1 : 0;
+		s.syncAsByte(hasShading);
+		if (s.isLoading())
+			obj->_hasShading = hasShading != 0;
+
+		// [+0x186]: 1 byte - HasScaling (per-object rendering flag from file)
+		uint8 hasScaling = obj->_hasScaling ? 1 : 0;
+		s.syncAsByte(hasScaling);
+		if (s.isLoading())
+			obj->_hasScaling = hasScaling != 0;
+
+		// IsClickable and IsVisible (set by script opcodes 0x32/0x33)
 		uint8 isClickable = obj->_isClickable ? 1 : 0;
 		s.syncAsByte(isClickable);
 		if (s.isLoading())
 			obj->_isClickable = isClickable != 0;
 
-		// [+0x186]: 1 byte - isVisible (set by opcode 0x33)
 		uint8 isVisible = obj->_isVisible ? 1 : 0;
 		s.syncAsByte(isVisible);
 		if (s.isLoading())

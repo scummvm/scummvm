@@ -43,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
 
-	// GMACS II Interpreter V1.00 - Written & Copyright (C) 1993 by Arndt Hasch — Copyright by LINEL
+	// GMACS II Interpreter V1.00 - Written & Copyright (C) 1993 by Arndt Hasch - Copyright by LINEL
 	{"sis",
 	 "Demo",
 	 AD_ENTRY1s("RESOURCE.MCS", "779c5f7d11ac61b7b941ec0f1778d837", 2376278),
