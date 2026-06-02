@@ -241,7 +241,7 @@ public:
 	int getPathfindingNodeCount() const { return (int)pathfindingPoints.size(); }
 	int euclideanDistance(const Common::Point &a, const Common::Point &b);
 	int pathNodeDistance(int nodeA, int nodeB);
-	int buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount);
+	int buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest);
 
 	// This is the override list living at [5BD1]
 	Common::Array<uint16> _hotspotOverrides;

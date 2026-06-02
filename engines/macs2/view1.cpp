@@ -2153,7 +2153,7 @@ bool Character::calculatePath(Common::Point target) {
 		int nextNode = currentNode;
 		for (uint a = 0; a < curPt._adjacentPoints.size(); a++) {
 			int adjIdx = curPt._adjacentPoints[a];
-			int cost = g_engine->buildPathFromNodesCost(adjIdx, currentNode, _gameObject->_index, reachable, nodeCount);
+			int cost = g_engine->buildPathFromNodesCost(adjIdx, 0x7fff, _gameObject->_index, reachable, nodeCount, target);
 			int edgeCost = g_engine->pathNodeDistance(adjIdx, currentNode);
 			if (cost + edgeCost < localBestCost) {
 				nextNode = adjIdx;
@@ -2531,8 +2531,7 @@ void Character::update() {
 	if (!_stepDirectionSet) {
 		_stepDirectionSet = true;
 		// Phase 0 from walkAlongPath (1008:1b8f): direction calculation.
-		// In the original this returns after setting direction (1-frame turn delay).
-		// We calculate direction but continue to stepping in the same frame.
+		// Binary returns after setting direction (1-frame turn delay).
 		uint16 absDx = abs(pos.x - _endPosition.x);
 		uint16 absDy = abs(pos.y - _endPosition.y);
 		uint8 dir = _gameObject->Orientation;
@@ -2572,6 +2571,8 @@ void Character::update() {
 		_stepDeltaX = absDx;
 		_stepDeltaY = absDy;
 		_stepError = 0;
+		// 1-frame turn delay: return after setting direction (binary Phase 0)
+		return;
 	}
 
 	// Step pixels (Bresenham line algorithm)
