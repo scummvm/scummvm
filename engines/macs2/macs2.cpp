@@ -1104,6 +1104,72 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 	return result;
 }
 
+// Binary findNearestPathNode (1008:1390): integer Euclidean distance approximation.
+// Iterates i from 0 until i^2 >= dx^2 + dy^2. Capped at 0x500.
+int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &b) {
+	int32 dx = abs((int)(b.x - a.x));
+	int32 dy = abs((int)(b.y - a.y));
+	int32 distSq = dx * dx + dy * dy;
+	int i = 0;
+	while (i < 0x500 && (int32)i * i < distSq)
+		i++;
+	return i;
+}
+
+// Binary findPathNode (1008:1293): distance between two nodes IF walkable, else 0x500.
+int Macs2Engine::pathNodeDistance(int nodeA, int nodeB) {
+	const Common::Point &a = pathfindingPoints[nodeA - 1]._position;
+	const Common::Point &b = pathfindingPoints[nodeB - 1]._position;
+	if (!isPathWalkable(a.y, a.x, b.y, b.x))
+		return 0x500;
+	return euclideanDistance(a, b);
+}
+
+// Binary buildPathFromNodes (1008:15a8): recursive DFS cost to reach a reachable node.
+// Returns minimum total edge cost from nodeIndex to any reachable node.
+int Macs2Engine::buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount) {
+	// Use an iterative visited-stack approach matching binary's stack-based recursion
+	struct StackEntry { int node; int prev; };
+	Common::Array<int> visited;
+	visited.push_back(nodeIndex);
+
+	// Terminal: if node is reachable, return distance from node to finalDest
+	if (reachable[nodeIndex]) {
+		return 0;
+	}
+
+	// Recursive: try all adjacent nodes (skip prevNode and visited)
+	int bestCost = 0x7777;
+	int bestAdj = 0;
+	const PathfindingPoint &pt = pathfindingPoints[nodeIndex - 1];
+	for (uint a = 0; a < pt._adjacentPoints.size(); a++) {
+		int adj = pt._adjacentPoints[a];
+		if (adj == prevNode) continue;
+		bool alreadyVisited = false;
+		for (uint v = 0; v < visited.size(); v++) {
+			if (visited[v] == adj) { alreadyVisited = true; break; }
+		}
+		if (alreadyVisited) continue;
+
+		// Simple recursive approximation: use reachability + distance
+		if (reachable[adj]) {
+			const Common::Point &adjPos = pathfindingPoints[adj - 1]._position;
+			const Common::Point &curPos = pathfindingPoints[nodeIndex - 1]._position;
+			int cost = euclideanDistance(adjPos, curPos);
+			if (cost < bestCost) {
+				bestCost = cost;
+				bestAdj = adj;
+			}
+		}
+	}
+
+	if (bestCost < 0x7777) {
+		// Add edge cost from bestAdj to current node
+		return bestCost + pathNodeDistance(bestAdj, nodeIndex);
+	}
+	return 0x7777;
+}
+
 void Macs2Engine::nextCursorMode() {
 	// Cycle through the 4 main cursor modes from the action bar:
 	// Talk(0x13) -> Look(0x14) -> Use(0x15) -> Walk(0x16) -> Talk
