@@ -68,10 +68,12 @@ private:
 	// Increments each frame while orientation == 0x11.
 	// At _pickupFrameStart: item is transferred to inventory.
 	// At _pickupFrameEnd: animation ends, orientation restored.
+public:
 	uint16 _pickupFrameCounter = 0;
 	bool _pickupItemTransferred = false;
 
 	uint8 _previousOrientation;
+private:
 
 	// Handle when the character has moved into a non-walkable area, push them out if
 	// they did and return true, return false otherwise
