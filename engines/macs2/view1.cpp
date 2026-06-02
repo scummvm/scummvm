@@ -2648,13 +2648,22 @@ void Character::update() {
 					pushY--;
 				}
 			}
-			// Update target to slid position
+			// Binary: cancel entire path (target=finalDest=currentPos)
 			_endPosition = pos;
+			_pathFinalDestination = pos;
+			_isFollowingPath = false;
+			_path.clear();
 			break;
 		}
 		// Check if we reached the target
 		if (pos == _endPosition)
 			break;
+	}
+
+	// Binary: if pixelsMoved != walkSpeed after step loop, revert position and cancel path
+	if (pixelsMoved != walkSpeed && pixelsMoved > 0) {
+		// Character was blocked - position is already handled above via wall-sliding
+		// The break above already cancelled the path
 	}
 
 	// Update motion vertical offset if active
