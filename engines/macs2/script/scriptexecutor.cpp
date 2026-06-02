@@ -1964,7 +1964,7 @@ void Script::ScriptExecutor::scriptClearActorInventory() {
 	if (currentView != nullptr && currentView->_inventorySource != nullptr) {
 		currentView->setInventorySource(currentView->_inventorySource);
 		if (currentView->_activeInventoryItem != nullptr &&
-			currentView->_activeInventoryItem->SceneIndex != currentView->_inventorySource->_index) {
+			currentView->_activeInventoryItem->SceneIndex != currentView->_inventorySource->_index + 0x400) {
 			currentView->_activeInventoryItem = nullptr;
 		}
 	}
