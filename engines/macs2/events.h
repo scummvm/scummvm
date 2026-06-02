@@ -243,8 +243,6 @@ public:                                                                   \
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
 	MESSAGE(Action);
-	MESSAGE(Game);
-	MESSAGE(Value);
 	MESSAGE(MouseMove);
 #undef MESSAGE
 };
