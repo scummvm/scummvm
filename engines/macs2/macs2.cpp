@@ -253,7 +253,7 @@ void Macs2Engine::readResourceFile() {
 	// is loaded before the game loop processes any input.
 	// The original allocates the 0x75E0-byte scene data buffer (which includes space for
 	// all RLE-decoded maps) before calling changeScene. Create the surfaces here.
-	_bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_sceneBackground.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_depthMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_pathfindingMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_shadowMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -444,7 +444,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 			const uint8 &value = dataPointer[0];
 			dataPointer++;
 			if (value != 0xF0) {
-				_bgImageShip.setPixel(x, y, value);
+				_sceneBackground.setPixel(x, y, value);
 				remainingPixels--;
 				x++;
 			} else {
@@ -454,7 +454,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
 				for (int i = 0; i < runlength && x < 320; i++) {
-					_bgImageShip.setPixel(x++, y, encodedValue);
+					_sceneBackground.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
 			}
@@ -570,7 +570,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	}
 
 	// Refresh the surface
-	currentView->_backgroundSurface.copyFrom(_bgImageShip);
+	currentView->_backgroundSurface.copyFrom(_sceneBackground);
 	currentView->_paletteDirty = true;
 	currentView->clearStringBox(false);
 	currentView->_drawnStringBox.clear();
