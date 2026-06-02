@@ -1008,7 +1008,7 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogueChoice() {
 	uint32 x = scriptReadValue32();
 	uint32 y = scriptReadValue32();
 	uint16 side = scriptReadValue16();
-	const uint16 speakerObjectID = _activeDialogueSpeakerObjectID != 0 ? _activeDialogueSpeakerObjectID : _executingScriptObjectID;
+	const uint16 speakerObjectID = Scenes::instance()._currentActorIndex;
 	debugC(kDebugScript,
 		   "Opcode 17 choice box: speaker=%u rawPos=(%u,%u) side=%u choiceCount=%u",
 		   speakerObjectID, x, y, side, _dialogueChoices.size());
