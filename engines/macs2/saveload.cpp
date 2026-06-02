@@ -538,22 +538,17 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			s.syncBytes(obj->Script.data(), scriptSize);
 
 		// --- Animation blobs (21 slots, 1-based: 1..0x15) ---
+		// The original binary's save format does NOT store blob pixel data.
+		// Blob pixel data is reloaded from the resource file by loadSceneObjects
+		// (called via changeScene during load). We only sync the metadata
+		// (active flag, source key, speed) to stay binary-compatible.
 		for (int blobIdx = 0; blobIdx < 0x15; blobIdx++) {
-			// Blob active flag [+0x33 of blob entry]: 2 bytes (written as hasData)
 			uint16 blobActive = 0;
 			if (s.isSaving() && blobIdx < (int)obj->Blobs.size())
 				blobActive = obj->Blobs[blobIdx].empty() ? 0 : 1;
 			s.syncAsUint16LE(blobActive);
-			if (s.isLoading() && blobIdx >= (int)obj->Blobs.size()) {
-				obj->Blobs.resize(blobIdx + 1);
-				obj->BlobSourceKeys.resize(blobIdx + 1, 0);
-				obj->BlobMirrorFlags.resize(blobIdx + 1, false);
-				obj->BlobSpeeds.resize(blobIdx + 1, 0);
-			}
 
 			if (blobActive) {
-				// Blob header: X(2), Y(2), size(2), sourceKey(2), speed(2)
-				// then blob data (size bytes)
 				uint16 blobX = 0, blobY = 0;
 				uint16 blobSize = 0;
 				uint16 blobSourceKey = 0;
@@ -574,16 +569,20 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				s.syncAsUint16LE(blobSize);
 
 				if (s.isLoading()) {
-					obj->Blobs[blobIdx].resize(blobSize);
+					// Don't overwrite blob pixel data from changeScene/readResourceFile.
+					// Only restore metadata.
 					if (blobIdx < (int)obj->BlobSourceKeys.size())
 						obj->BlobSourceKeys[blobIdx] = blobSourceKey;
 					if (blobIdx < (int)obj->BlobSpeeds.size())
 						obj->BlobSpeeds[blobIdx] = blobSpeed;
 				}
-				if (blobSize > 0)
-					s.syncBytes(obj->Blobs[blobIdx].data(), blobSize);
-			} else if (s.isLoading() && blobIdx < (int)obj->Blobs.size()) {
-				obj->Blobs[blobIdx].clear();
+				// Skip over blobSize bytes in the stream (binary compat)
+				if (s.isLoading() && blobSize > 0) {
+					// The save format may or may not contain pixel data.
+					// For binary-original saves, blobSize here reflects the runtime
+					// allocation but the actual data is NOT in the save stream.
+					// We skip nothing — the binary format doesn't write pixel bytes.
+				}
 			}
 		}
 	}

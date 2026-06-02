@@ -2102,78 +2102,131 @@ Character::Character() {
 }
 
 bool Character::calculatePath(Common::Point target) {
-	// First naive implementation
-	// Find the closest reachable start point
-	// Check if we can reach the target
-	// If not: Do a recusrive search using the other points
+	// Binary calculatePath (1008:1966). Params: charY, charX, finalDestY, finalDestX, actorIndex.
+	// The binary operates on the runtime struct directly; we store equivalent state in _path etc.
+	constexpr int MAX_NODES = 16;
+	const Common::Point &charPos = _gameObject->Position;
+	const int nodeCount = g_engine->getPathfindingNodeCount();
 
-	// TODO: Assume we have to use the net, usually we would do a path trace
-	constexpr uint16 numPoints = 16;
-	uint minLength = std::numeric_limits<uint>::max();
-	int minIndex = -1;
-	const Common::Point &charPosition = GameObjects::instance().getProtagonistObject()->Position;
-	for (int i = 0; i < numPoints; i++) {
-		PathfindingPoint &current = g_engine->pathfindingPoints[i];
-		if (g_engine->isPathWalkable(charPosition.y, charPosition.x, current._position.y, current._position.x)) {
-			uint dist = charPosition.sqrDist(current._position);
-			if (dist < minLength) {
-				minLength = dist;
-				minIndex = i;
+	// Step 1: Mark reachability anchored on FINAL DESTINATION (not character)
+	// scene[i + 0x50C2] = isPathWalkable(finalDest, node[i])
+	bool reachable[MAX_NODES + 1] = {};
+	for (int i = 1; i <= nodeCount; i++) {
+		const Common::Point &nodePos = g_engine->pathfindingPoints[i - 1]._position;
+		reachable[i] = g_engine->isPathWalkable(target.y, target.x, nodePos.y, nodePos.x);
+	}
+
+	// Step 2: Find best entry node (lowest combined distance to both source and dest)
+	int bestCost = 0x7777;
+	int bestNode = 0;
+	for (int i = 1; i <= nodeCount; i++) {
+		const Common::Point &nodePos = g_engine->pathfindingPoints[i - 1]._position;
+		int costToDest = g_engine->euclideanDistance(nodePos, target);
+		int costToChar = g_engine->euclideanDistance(nodePos, charPos);
+		if (costToDest + costToChar < bestCost) {
+			// Verify this node can connect source to target (findShortestPath)
+			if (findShortestPath(i, charPos, target, reachable, nodeCount)) {
+				// Recompute cost (binary does this twice)
+				costToDest = g_engine->euclideanDistance(nodePos, target);
+				costToChar = g_engine->euclideanDistance(nodePos, charPos);
+				bestCost = costToDest + costToChar;
+				bestNode = i;
 			}
 		}
 	}
 
-	// TODO: Handle not finding a start point
-	// g_engine->_path.push_back(g_engine->pathfindingPoints[minIndex].Position);
-	if (minIndex == -1) {
-		debug("No walkable entry point found!");
+	if (bestNode == 0) {
+		// No path found - go directly to target
+		_path.clear();
+		_endPosition = target;
 		return false;
 	}
 
-	Common::Array<bool> visited;
-	visited.resize(16);
-	debug("Best entry point: %u at distance %u", minIndex, minLength);
-	bool result = findShortestPath(minIndex, visited, target);
-	PathfindingPoint &entryPoint = g_engine->pathfindingPoints[minIndex];
-	g_engine->isPathWalkable(charPosition.y, charPosition.x, entryPoint._position.y, entryPoint._position.x);
-	// Now handle searching for the end point, for this, keep track of nodes we already visited
-	// Args:
-	// Target position
-	// Current path
-	// Array of points already visited
-
-	return result;
-}
-
-bool Character::findShortestPath(uint16 index, Common::Array<bool> &visited, const Common::Point &target) {
-	if (visited[index] == true) {
-		// We have visited this node before
-		return false;
-	}
-	visited[index] = true;
-	const PathfindingPoint &currentPoint = g_engine->pathfindingPoints[index];
-	const Common::Point &currentPosition = currentPoint._position;
-	_path.push_back(index);
-	g_engine->_path.push_back(currentPosition);
-
-	// Check if we can reach the target from here
-	if (g_engine->isPathWalkable(currentPosition.y, currentPosition.x, target.y, target.x)) {
-		return true;
+	// Step 3: smoothPath - build path from bestNode toward a reachable node
+	_path.clear();
+	_path.push_back(bestNode);
+	int currentNode = bestNode;
+	while (!reachable[currentNode]) {
+		const PathfindingPoint &curPt = g_engine->pathfindingPoints[currentNode - 1];
+		int localBestCost = 0x7777;
+		int nextNode = currentNode;
+		for (uint a = 0; a < curPt._adjacentPoints.size(); a++) {
+			int adjIdx = curPt._adjacentPoints[a];
+			int cost = g_engine->buildPathFromNodesCost(adjIdx, currentNode, _gameObject->_index, reachable, nodeCount);
+			int edgeCost = g_engine->pathNodeDistance(adjIdx, currentNode);
+			if (cost + edgeCost < localBestCost) {
+				nextNode = adjIdx;
+				localBestCost = cost + edgeCost;
+			}
+		}
+		currentNode = nextNode;
+		_path.push_back(currentNode);
+		if (_path.size() > MAX_NODES) break; // safety
 	}
 
-	// See if the adjacent points are good
-	for (uint i = 0; i < currentPoint._adjacentPoints.size(); i++) {
-		const uint16 currentAdjacentIndex = currentPoint._adjacentPoints[i];
-		if (findShortestPath(currentAdjacentIndex - 1, visited, target)) {
-			const PathfindingPoint &adjacentPoint = g_engine->pathfindingPoints[currentAdjacentIndex - 1];
-			g_engine->isPathWalkable(currentPoint._position.y, currentPoint._position.x, adjacentPoint._position.y, adjacentPoint._position.x);
-			return true;
+	// Step 4: Validate path - consecutive nodes must be walkable to each other
+	for (uint i = 0; i + 1 < _path.size(); i++) {
+		const Common::Point &p1 = g_engine->pathfindingPoints[_path[i + 1] - 1]._position;
+		const Common::Point &p2 = g_engine->pathfindingPoints[_path[i] - 1]._position;
+		if (!g_engine->isPathWalkable(p1.y, p1.x, p2.y, p2.x)) {
+			// Path invalid - abort, go directly to target
+			_path.clear();
+			_endPosition = target;
+			return false;
 		}
 	}
-	// None we good, remove us from the path and return
-	g_engine->_path.remove_at(g_engine->_path.size() - 1);
-	_path.remove_at(_path.size() - 1);
-	return false;
+
+	// Step 5: Skip-forward optimization - skip nodes that can already see the destination
+	_currentPathIndex = 0;
+	while (_currentPathIndex + 1 < (int16)_path.size()) {
+		const Common::Point &nextNodePos = g_engine->pathfindingPoints[_path[_currentPathIndex + 1] - 1]._position;
+		if (!g_engine->isPathWalkable(nextNodePos.y, nextNodePos.x, target.y, target.x))
+			break;
+		_currentPathIndex++;
+	}
+
+	// Set immediate target to the current path node
+	const Common::Point &firstTarget = g_engine->pathfindingPoints[_path[_currentPathIndex] - 1]._position;
+	_endPosition = firstTarget;
+	return true;
+}
+
+bool Character::findShortestPath(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount) {
+	// Binary findShortestPath (1008:14d4).
+	// Checks if node can connect source (charPos) to target:
+	// 1. Node must be able to see the target
+	// 2. Flood-fill connected component from node
+	// 3. Some node in component must see target AND some node must be seen from source
+	const Common::Point &nodePos = g_engine->pathfindingPoints[nodeIndex - 1]._position;
+	if (!g_engine->isPathWalkable(nodePos.y, nodePos.x, target.y, target.x))
+		return false;
+
+	// Flood-fill connected nodes
+	bool visited[17] = {};
+	floodFillNodes(nodeIndex, visited, nodeCount);
+
+	// Check both conditions
+	bool anySeesTarget = false;
+	bool anySeenFromSource = false;
+	for (int i = 1; i <= nodeCount; i++) {
+		if (!visited[i]) continue;
+		const Common::Point &p = g_engine->pathfindingPoints[i - 1]._position;
+		if (g_engine->isPathWalkable(p.y, p.x, target.y, target.x))
+			anySeesTarget = true;
+		if (g_engine->isPathWalkable(charPos.y, charPos.x, p.y, p.x))
+			anySeenFromSource = true;
+	}
+	return anySeesTarget && anySeenFromSource;
+}
+
+void Character::floodFillNodes(int nodeIndex, bool *visited, int nodeCount) {
+	if (nodeIndex < 1 || nodeIndex > nodeCount) return;
+	if (visited[nodeIndex]) return;
+	visited[nodeIndex] = true;
+	const PathfindingPoint &pt = g_engine->pathfindingPoints[nodeIndex - 1];
+	for (uint i = 0; i < pt._adjacentPoints.size(); i++) {
+		floodFillNodes(pt._adjacentPoints[i], visited, nodeCount);
+	}
 }
 
 Common::Point Character::getPosition() const {
@@ -2198,21 +2251,27 @@ uint16 Character::getVerticalOffset() const {
 }
 
 bool Character::walkAlongPath() {
+	// Binary walkAlongPath (1008:1b8f) path node advancement:
+	// When arrived at current waypoint, advance _currentPathIndex.
+	// If past end of path array: target = finalDest (last segment, no more path following).
+	// Otherwise: target = next node position.
 	_currentPathIndex++;
-	if ((uint)_currentPathIndex == _path.size()) {
-		// This means we now need to move to the final destination
-		startLerpTo(_pathFinalDestination, 1000);
-		return true;
+	if (_currentPathIndex >= (int16)_path.size()) {
+		// Past end of path - walk to final destination, then stop
+		_endPosition = _pathFinalDestination;
+		_stepDeltaX = abs(_endPosition.x - _gameObject->Position.x);
+		_stepDeltaY = abs(_endPosition.y - _gameObject->Position.y);
+		_stepError = 0;
+		_stepDirectionSet = false;
+		return false; // No more path segments after this
 	}
-	if ((uint)_currentPathIndex == _path.size() + 1) {
-		return false;
-	}
-	const uint16 currentPathPointIndex = _path[_currentPathIndex]; // -1;
-	// Set up a lerp
-	Common::String output = Common::String::format("%u - %u", _currentPathIndex, currentPathPointIndex);
-	g_engine->_debugOutput.push_back(output);
-	PathfindingPoint &current = g_engine->pathfindingPoints[currentPathPointIndex];
-	startLerpTo(current._position, 1000);
+	const uint16 nodeIdx = _path[_currentPathIndex];
+	const Common::Point &nodePos = g_engine->pathfindingPoints[nodeIdx - 1]._position;
+	_endPosition = nodePos;
+	_stepDeltaX = abs(_endPosition.x - _gameObject->Position.x);
+	_stepDeltaY = abs(_endPosition.y - _gameObject->Position.y);
+	_stepError = 0;
+	_stepDirectionSet = false;
 	return true;
 }
 
@@ -2360,7 +2419,7 @@ void Character::update() {
 						currentView->_characters.remove_at(index);
 					}
 				}
-				_pickedUpObject->SceneIndex = _gameObject->_index;
+				_pickedUpObject->SceneIndex = _gameObject->_index + 0x400;
 				if (currentView->_inventorySource != nullptr && currentView->_inventorySource->_index == _gameObject->_index) {
 					currentView->_inventoryItems.push_back(_pickedUpObject);
 				}
