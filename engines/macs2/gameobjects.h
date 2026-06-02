@@ -106,7 +106,6 @@ public:
 	uint16 _pickupFrameStart = 0;
 	// Runtime +0x219: frame index at which pickup animation completes
 	uint16 _pickupFrameEnd = 0;
-	uint16 _runtimeSlotValues[0x15] = {0};
 	// Runtime +0x22F: when set, snap character position to exact target on walk arrival
 	bool _snapToTarget = false;
 	bool _isClickable = true;
