@@ -767,8 +767,9 @@ int InsaneRebel2::runLevel5() {
 		clearBit(0);
 
 		// Play gameplay (05PLAY.SAN)
+		// Original: FUN_0041f4d0("05PLAY.SAN", 8, -1, -1, 0)
 		debug("Rebel2: Level 5 gameplay");
-		if (!playLevelSegment("LEV05/05PLAY.SAN", 0x28))
+		if (!playLevelSegment("LEV05/05PLAY.SAN", 0x08))
 			return kLevelQuit;
 
 		if (_playerShield > 0) {

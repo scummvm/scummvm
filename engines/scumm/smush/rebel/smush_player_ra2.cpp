@@ -87,6 +87,8 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_lastLoadChunkIdx = -1;
 	_totalLoadChunks = 0;
 	_ra2FrameSourceSkipY = 0;
+	_ra2FrameObjectSurfaceWidth = 0;
+	_ra2FrameObjectSurfaceHeight = 0;
 	_scrollX = 0;
 	_scrollY = 0;
 }
@@ -115,14 +117,14 @@ void SmushPlayerRebel2::initGameVideoState() {
 
 	// Handle background preservation between videos:
 	// - Cinematic videos (flags 0x20) clear the buffer for a fresh start
-	// - Gameplay videos (flags 0x28) preserve the existing screen content
+	// - Gameplay videos (flags 0x08) preserve the existing screen content
 	if (_dst != nullptr) {
 		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 		if ((_curVideoFlags & 0x08) == 0) {
 			// Cinematic mode (flags 0x20) - clear buffer for fresh video
 			memset(_dst, 0, vs->w * vs->h);
 		}
-		// Gameplay mode (flags 0x28): no-op, the existing screen content is preserved.
+		// Gameplay mode: no-op, the existing screen content is preserved.
 	}
 }
 
@@ -173,6 +175,8 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameFetch FTCH: Re-decoding stored FOBJ codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 			_storedFobjCodec, _storedFobjLeft, _storedFobjTop,
 			_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize);
+		ra2PrepareFrameObjectSurface(_storedFobjLeft, _storedFobjTop,
+			_storedFobjWidth, _storedFobjHeight);
 		decodeFrameObject(_storedFobjCodec, _storedFobjData,
 			_storedFobjLeft, _storedFobjTop,
 			_storedFobjWidth, _storedFobjHeight,
@@ -562,18 +566,40 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
  * RA2-specific buffer selection for non-standard FOBJ dimensions.
  * Returns true when the dimensions are valid and updates _dst, _width, _height as needed.
  */
+void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int width, int height) {
+	_ra2FrameObjectSurfaceWidth = width;
+	_ra2FrameObjectSurfaceHeight = height;
+
+	const int64 right = (int64)left + width;
+	const int64 bottom = (int64)top + height;
+	if (right > _ra2FrameObjectSurfaceWidth && right <= INT_MAX)
+		_ra2FrameObjectSurfaceWidth = (int)right;
+	if (bottom > _ra2FrameObjectSurfaceHeight && bottom <= INT_MAX)
+		_ra2FrameObjectSurfaceHeight = (int)bottom;
+}
+
 bool SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 	// Rebel2 uses a special buffer for all non-matching frames.
+	// Oversized FOBJ chunks are clipped against the original 424x260 surface.
 	// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
 	// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null)
-	const int64 bufSize64 = (int64)width * height;
-	if (width <= 0 || height <= 0 || bufSize64 > INT_MAX) {
+	const int screenSize = _vm->_screenWidth * _vm->_screenHeight;
+	const int64 fobjSize64 = (int64)width * height;
+	int surfaceWidth = width;
+	int surfaceHeight = height;
+
+	if (fobjSize64 > screenSize) {
+		surfaceWidth = MAX(surfaceWidth, _ra2FrameObjectSurfaceWidth);
+		surfaceHeight = MAX(surfaceHeight, _ra2FrameObjectSurfaceHeight);
+	}
+
+	const int64 bufSize64 = (int64)surfaceWidth * surfaceHeight;
+	if (width <= 0 || height <= 0 || surfaceWidth <= 0 || surfaceHeight <= 0 || bufSize64 > INT_MAX) {
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Skipping invalid FOBJ dimensions %dx%d", width, height);
 		return false;
 	}
 
 	const int bufSize = (int)bufSize64;
-	const int screenSize = _vm->_screenWidth * _vm->_screenHeight;
 	if (bufSize > screenSize) {
 		// Frame is larger than screen - need special buffer
 		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
@@ -586,18 +612,20 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 			free(_specialBuffer);
 			_specialBuffer = newSpecialBuffer;
 			_specialBufferSize = bufSize;
-			_width = width;
-			_height = height;
+			_width = surfaceWidth;
+			_height = surfaceHeight;
 			// Zero-fill the new buffer to avoid garbage in areas not written by FOBJ codec
 			memset(_specialBuffer, 0, bufSize);
-			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Allocated new _specialBuffer %dx%d (%d bytes)", width, height, bufSize);
+			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Allocated new _specialBuffer %dx%d for FOBJ %dx%d (%d bytes)",
+				surfaceWidth, surfaceHeight, width, height, bufSize);
 		}
 	}
 
 	if (bufSize > screenSize &&
 	    _specialBuffer != nullptr && _specialBufferSize >= bufSize) {
 		_dst = _specialBuffer;
-		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using _specialBuffer for oversized FOBJ %dx%d", width, height);
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using _specialBuffer %dx%d for oversized FOBJ %dx%d",
+			_width, _height, width, height);
 	} else {
 		if (_specialBuffer == nullptr) {
 			VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
@@ -702,6 +730,7 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 	// Priority bits (0x2000/0x4000/0x6000) are currently not modeled in
 	// ScummVM's SMUSH decoders. Coordinate-correct re-decode restores expected
 	// RA2 chapter preview behavior.
+	ra2PrepareFrameObjectSurface(left, top, _lastFobjWidth, _lastFobjHeight);
 	decodeFrameObject(_lastFobjCodec, _lastFobjData, left, top,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjDataSize);
 }
@@ -761,6 +790,8 @@ bool SmushPlayerRebel2::handleGameStoreFrame() {
 }
 
 void SmushPlayerRebel2::handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {
+	ra2PrepareFrameObjectSurface(left, top, width, height);
+
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameFrameObjectPre FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
 		_frame, codec, left, top, width, height, dataSize, _storeFrame, _width, _height);
 }
@@ -775,6 +806,23 @@ void SmushPlayerRebel2::handleGameFrameObjectPost(int codec, const byte *data, i
 
 void SmushPlayerRebel2::handleGameFrameStart() {
 	_hasFrameFobjForGost = false;
+
+	// FUN_00424d70 clears the target buffer before decoding a frame
+	// unless playback flags contain 0x20. Codec 21 frames in levels like
+	// LEV05/05PLAY.SAN only contain non-zero literals, so stale skipped pixels
+	// must not survive from the previous frame.
+	if ((_curVideoFlags & 0x20) == 0 && _dst != nullptr) {
+		int clearSize = 0;
+		if (_dst == _specialBuffer && _width > 0 && _height > 0) {
+			const int64 size64 = (int64)_width * _height;
+			if (size64 <= INT_MAX && size64 <= _specialBufferSize)
+				clearSize = (int)size64;
+		} else {
+			clearSize = _vm->_screenWidth * _vm->_screenHeight;
+		}
+		if (clearSize > 0)
+			memset(_dst, 0, clearSize);
+	}
 }
 
 bool SmushPlayerRebel2::handleGameSkipChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {

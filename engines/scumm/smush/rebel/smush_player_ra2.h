@@ -66,6 +66,7 @@ private:
 	void ra2HandleTextResource(const char *str, int fontId, int color,
 							   int pos_x, int pos_y, int left, int top,
 							   int width, int height, TextStyleFlags flg);
+	void ra2PrepareFrameObjectSurface(int left, int top, int width, int height);
 	bool ra2SelectFrameBuffer(int width, int height);
 	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 						int width, int height, int pitch, int dataSize);
@@ -82,6 +83,8 @@ private:
 	int16 _lastLoadChunkIdx;
 	int16 _totalLoadChunks;
 	int _ra2FrameSourceSkipY;
+	int _ra2FrameObjectSurfaceWidth;
+	int _ra2FrameObjectSurfaceHeight;
 };
 
 } // End of namespace Scumm
