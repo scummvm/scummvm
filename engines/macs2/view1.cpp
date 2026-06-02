@@ -2239,53 +2239,30 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 }
 
 Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
-	// We choose looking towards the screen first
+	// Binary (drawCharactersAndHitTest at 1008:8d65):
+	// animSlotIndex = orientation directly (piVar5[3])
+	// If runtime+0x22D >= 0 && runtime+0x22D == orientation, use slot 0x15 instead.
+	// No mirroring in renderer — blob data is pre-flipped at load time by mirrorAnimBlob.
+	// If slot is not loaded (flag +0x33 == 0) or blob ptr is null, original returns error.
 	int blobIndex = _gameObject->Orientation - 1;
-	bool mirror = false;
 
-	if (isAnimationMirrored()) {
-		const int mirroredBlobIndex = getMirroredAnimation(_gameObject->Orientation) - 1;
-		const bool hasOriginalBlob = blobIndex >= 0 && blobIndex < (int)_gameObject->Blobs.size() && !_gameObject->Blobs[blobIndex].empty();
-		const bool hasMirroredSourceBlob = mirroredBlobIndex >= 0 && mirroredBlobIndex < (int)_gameObject->Blobs.size() &&
-										   !_gameObject->Blobs[mirroredBlobIndex].empty();
-		const bool hasDistinctOriginalFacing = hasOriginalBlob &&
-											   (!hasMirroredSourceBlob || _gameObject->Blobs[blobIndex] != _gameObject->Blobs[mirroredBlobIndex]);
+	// Binary: if (runtime+0x22D >= 0 && runtime+0x22D == orientation) slot = 0x15
+	bool useOverload = (_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
+		(int16)_gameObject->overloadAnimTriggerDirection >= 0 &&
+		_gameObject->overloadAnimTriggerDirection == _gameObject->Orientation);
 
-		if (!hasDistinctOriginalFacing && hasMirroredSourceBlob) {
-			blobIndex = mirroredBlobIndex;
-			mirror = true;
+	_shouldMirrorCurrentAnimation = false;
+
+	if (useOverload) {
+		if (_gameObject->overloadAnimation.empty()) {
+			return nullptr;
 		}
-	}
-	// If we don't have this direction, try others until we find one that we have
-	// TODO: Log this properly or even assert
-	if (_gameObject->Blobs[blobIndex].size() == 0) {
-		// TODO: Consider a placeholder or an assert to figure out these cases
-		debug("No animation blob found for object %.4x with orientation %.4x", _gameObject->_index, _gameObject->Orientation);
-		for (int i = 0; i < 0x11; i++) {
-			if (_gameObject->Blobs[i].size() != 0) {
-				blobIndex = i;
-				break;
-			}
+	} else {
+		if (blobIndex < 0 || blobIndex >= (int)_gameObject->Blobs.size() || _gameObject->Blobs[blobIndex].empty()) {
+			return nullptr;
 		}
 	}
 
-	if (_gameObject->useOverloadAnimation) {
-		mirror ^= _gameObject->overloadAnimationMirrored;
-	} else if (_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
-			   _gameObject->overloadAnimTriggerDirection == _gameObject->Orientation &&
-			   !_gameObject->overloadAnimation.empty()) {
-		// runtime+0x22D match: use overload animation slot (0x15)
-		mirror ^= _gameObject->overloadAnimationMirrored;
-	} else if (blobIndex >= 0 && blobIndex < (int)_gameObject->BlobMirrorFlags.size()) {
-		mirror ^= _gameObject->BlobMirrorFlags[blobIndex];
-	}
-	_shouldMirrorCurrentAnimation = mirror;
-
-	// Select blob: overload if explicitly set OR if trigger direction matches
-	bool useOverload = _gameObject->useOverloadAnimation ||
-		(_gameObject->overloadAnimTriggerDirection != 0x7FFF &&
-		 _gameObject->overloadAnimTriggerDirection == _gameObject->Orientation &&
-		 !_gameObject->overloadAnimation.empty());
 	Common::Array<uint8> &blob = useOverload ? _gameObject->overloadAnimation : _gameObject->Blobs[blobIndex];
 
 	// Advance and retrieve current frame (called once per draw = once per tick)
