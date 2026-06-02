@@ -2527,6 +2527,11 @@ void Character::update() {
 		return;
 	}
 
+	// Binary: if target==current position, skip Phase 0 turn delay (set directionCalculated=1)
+	if (!_stepDirectionSet && _endPosition.x == pos.x && _endPosition.y == pos.y) {
+		_stepDirectionSet = true;
+	}
+
 	// Calculate direction if not yet set (first frame of movement)
 	if (!_stepDirectionSet) {
 		_stepDirectionSet = true;
