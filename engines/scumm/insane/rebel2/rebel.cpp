@@ -602,11 +602,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// every shot. We observe before ScummEngine (priority 1 > kEventManPriority), so
 	// dropping the event here prevents the clobber. Firing is driven by the
 	// kScummActionInsaneAttack action, not the pointer, so this does not affect shots.
-	// A genuine mouse/touch motion (nonzero relative delta) hands control back.
+	// A genuine mouse/touch motion (nonzero relative delta) normally hands control
+	// back; handler 0x26 keeps ownership until its gamepad reticle returns to center.
 	if (_gamepadAimActive && _gameState == kStateGameplay && !_menuInputActive) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			if (event.relMouse.x != 0 || event.relMouse.y != 0) {
+				if (_rebelHandler == 0x26)
+					return true;
 				_gamepadAimActive = false; // real pointer motion takes over
 				break;
 			}
@@ -1623,35 +1626,71 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	if (_menuInputActive || _gameState != kStateGameplay)
 		return;
 
-	// The analog stick still reports the original joystick-style centered axis range
-	// [-127,127], while the dpad follows the original keyboard handler's normal
-	// movement step (FUN_405822: 3 units, or 5 with the DOS fast modifier).
-	int deltaX = 0;
-	int deltaY = 0;
-	bool activeGamepadAim = false;
-
 	const int dpadX = (_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
 	                  (_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
 	const int dpadY = (_vm->getActionState(kScummActionInsaneDown) ? 1 : 0) -
 	                  (_vm->getActionState(kScummActionInsaneUp) ? 1 : 0);
 
-	if (dpadX || dpadY) {
+	const int16 ax = applyRebel2AnalogDeadzone(_joystickAxisX);
+	const int16 ay = applyRebel2AnalogDeadzone(_joystickAxisY);
+	const int velX = CLIP<int>((int)ax * 127 / Common::JOYAXIS_MAX, -127, 127);
+	const int velY = CLIP<int>((int)ay * 127 / Common::JOYAXIS_MAX, -127, 127);
+
+	int deltaX = 0;
+	int deltaY = 0;
+	bool activeGamepadAim = false;
+
+	if (_rebelHandler == 0x26) {
+		// Retail RA2 maps joystick axes into a small centered handler 0x26 reticle box.
+		// ScummVM deliberately exposes the full 320x200 mouse aim range for gamepads
+		// too, but preserves the original joystick feel: curved response for precise
+		// center aiming, and automatic return to screen center when the stick is released.
+		int axisX = 0;
+		int axisY = 0;
+		if (dpadX || dpadY) {
+			axisX = dpadX * 127;
+			axisY = dpadY * 127;
+		} else {
+			axisX = velX;
+			axisY = velY;
+		}
+
+		if (axisX || axisY || _gamepadAimActive) {
+			const int centerX = 160;
+			const int centerY = 100;
+			const int absAxisX = ABS(axisX);
+			const int absAxisY = ABS(axisY);
+			const int curvedX = (absAxisX * absAxisX + 126) / 127;
+			const int curvedY = (absAxisY * absAxisY + 126) / 127;
+			const int targetX = axisX < 0 ?
+				centerX - curvedX * centerX / 127 :
+				centerX + curvedX * (319 - centerX) / 127;
+			const int targetY = axisY < 0 ?
+				centerY - curvedY * centerY / 127 :
+				centerY + curvedY * (199 - centerY) / 127;
+			const int maxStep = (axisX || axisY) ? 14 : 10;
+			const int distX = targetX - _vm->_mouse.x;
+			const int distY = targetY - _vm->_mouse.y;
+
+			if (distX || distY) {
+				deltaX = CLIP<int>(distX, -maxStep, maxStep);
+				deltaY = CLIP<int>(distY, -maxStep, maxStep);
+				activeGamepadAim = true;
+			} else {
+				_gamepadAimActive = (axisX || axisY);
+				return;
+			}
+		}
+	} else if (dpadX || dpadY) {
 		const int kOriginalDigitalStep = 3;
 		deltaX = dpadX * kOriginalDigitalStep;
 		deltaY = dpadY * kOriginalDigitalStep;
 		activeGamepadAim = true;
-	} else {
-		const int16 ax = applyRebel2AnalogDeadzone(_joystickAxisX);
-		const int16 ay = applyRebel2AnalogDeadzone(_joystickAxisY);
-		const int velX = CLIP<int>((int)ax * 127 / Common::JOYAXIS_MAX, -127, 127);
-		const int velY = CLIP<int>((int)ay * 127 / Common::JOYAXIS_MAX, -127, 127);
-
-		if (velX || velY) {
-			const int kAnalogMaxStep = 8;
-			deltaX = velX * kAnalogMaxStep / 127;
-			deltaY = velY * kAnalogMaxStep / 127;
-			activeGamepadAim = true;
-		}
+	} else if (velX || velY) {
+		const int kAnalogMaxStep = 8;
+		deltaX = velX * kAnalogMaxStep / 127;
+		deltaY = velY * kAnalogMaxStep / 127;
+		activeGamepadAim = true;
 	}
 
 	if (!activeGamepadAim)
