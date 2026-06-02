@@ -2516,8 +2516,9 @@ void Character::update() {
 		}
 		if (_isFollowingPath) {
 			_isFollowingPath = walkAlongPath();
-			if (_isFollowingPath)
-				return;
+			// walkAlongPath returning true: more nodes, direction reset, return
+			// walkAlongPath returning false: target now = finalDest, keep walking
+			return;
 		}
 		_isLerping = false;
 		if (_hasMotionVerticalOffset) {
