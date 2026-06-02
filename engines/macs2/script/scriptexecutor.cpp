@@ -2544,13 +2544,15 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	case 0x2A: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
+		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, map)
+		const bool uiOpen = v != nullptr && (v->_isShowingMainMenu || v->_isShowingInventory || v->_isShowingDialogueChoice || v->_currentMode == ViewMode::VM_MAP);
 		out1 = (_inventoryCombineFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
 	case 0x2B: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		const bool uiOpen = v != nullptr && (v->_isShowingInventory || v->_isShowingStringBox || v->_isShowingMainMenu);
+		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, map)
+		const bool uiOpen = v != nullptr && (v->_isShowingMainMenu || v->_isShowingInventory || v->_isShowingDialogueChoice || v->_currentMode == ViewMode::VM_MAP);
 		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
