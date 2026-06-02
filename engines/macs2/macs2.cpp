@@ -165,7 +165,7 @@ void Macs2Engine::readResourceFile() {
 	_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
 	// Load object data (512 entries max, matching original loadResourceFile)
-	for (int i = 1; i < 0x200; i++) {
+	for (int i = 1; i <= 0x200; i++) {
 		// The formula for the seek lives at l0037_0936
 		// The global [0752h] is loaded with 3000h bytes read from offset Ch + 4h in the file
 		// Regarding the 4h offset: Before the 3000h bytes, we have the values of the two globals 0776 and 077C
