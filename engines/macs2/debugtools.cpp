@@ -1311,7 +1311,7 @@ static void showSceneMapsWindow() {
 		// Node detail table
 		if (ImGui::CollapsingHeader("Node Graph", ImGuiTreeNodeFlags_DefaultOpen)) {
 			View1 *view = (View1 *)g_engine->findView("View1");
-			Character *protagonist = view ? view->getCharacterByIndex(1) : nullptr;
+			Character *protagonist = view ? view->getCharacterByIndex(Scenes::instance()._currentActorIndex) : nullptr;
 			Common::Point charPos = protagonist ? protagonist->getPosition() : Common::Point(0, 0);
 
 			for (int i = 0; i < (int)g_engine->pathfindingPoints.size(); i++) {
