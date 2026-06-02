@@ -858,8 +858,9 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 }
 
 bool Script::ScriptExecutor::scriptWalkToPosition() {
-	// scriptWalkToPosition (1008:b843). Uses pathfinding like the original:
-	// checks direct walkability first, falls back to A* pathfinding.
+	// Binary scriptWalkToPosition (1008:b843):
+	// Sets up runtime movement state. Does NOT block — walkAlongPath handles
+	// actual movement per-frame from the game tick.
 	uint32 objectID = scriptReadValue32() - 0x400;
 	int16 x = (int16)scriptReadValue16();
 	int16 y = (int16)scriptReadValue16();
@@ -871,28 +872,40 @@ bool Script::ScriptExecutor::scriptWalkToPosition() {
 		return false;
 	}
 
-	Common::Point target(x, y);
 	Common::Point current = c->getPosition();
 
-	// Check if direct path is walkable (like isPathWalkable in the original)
-	if (_engine->isPathWalkable(current.y, current.x, target.y, target.x)) {
-		// Direct path is clear - just lerp straight there
-		c->startLerpTo(target, 1000);
-	} else if (c->isWalkable(target)) {
-		// Target is walkable but no direct path - use A* pathfinding
-		c->_path.clear();
-		c->_pathFinalDestination = target;
-		if (c->calculatePath(target)) {
-			c->_currentPathIndex = -1;
-			c->_isFollowingPath = c->walkAlongPath();
-		} else {
-			// Pathfinding failed - walk directly as fallback
-			c->startLerpTo(target, 1000);
-		}
-	} else {
-		// Target is not walkable - set position directly (no movement)
-		// Original: piVar11[0x16]=0, piVar11[0x17]=0, target=current
+	// Binary: runtime[0x16] = 0 (pathIndex = 0)
+	c->_currentPathIndex = 0;
+	c->_path.clear();
+	c->_isFollowingPath = false;
+
+	// Binary: runtime[4] = x, runtime[5] = y (finalDest)
+	c->_pathFinalDestination = Common::Point(x, y);
+
+	// Binary: isPathWalkable(finalDestY, finalDestX, currentY, currentX)
+	// = trace FROM current TOWARD finalDest
+	bool directPath = _engine->isPathWalkable(y, x, current.y, current.x);
+
+	if (!directPath && _engine->getWalkabilityAt(y, x) < 200) {
+		// Not directly walkable but destination is valid — use pathfinding
+		// Binary: calculatePath(finalDestY, finalDestX, currentY, currentX, actorIndex)
+		c->calculatePath(Common::Point(x, y));
+		c->_isFollowingPath = (c->_path.size() > 0);
 	}
+
+	// Set immediate target: either from pathfinding result or direct to finalDest
+	if (!c->_isFollowingPath) {
+		// Binary else branch: runtime[0x16]=0, runtime[0x17]=0, target=finalDest
+		c->_endPosition = c->_pathFinalDestination;
+	}
+	// If path was found, calculatePath already set _endPosition to first waypoint
+
+	// Binary: compute deltaX, deltaY, reset error and directionCalculated
+	c->_stepDeltaX = abs(c->_endPosition.x - current.x);
+	c->_stepDeltaY = abs(c->_endPosition.y - current.y);
+	c->_stepError = 0;
+	c->_stepDirectionSet = false;
+	c->_isLerping = true;
 
 	return true;
 }
