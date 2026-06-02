@@ -220,6 +220,11 @@ public:
 	// This is the depth map
 	Graphics::ManagedSurface _depthMap;
 
+	// Shadow/shading intensity map (scene+0x301B). Per-pixel values 0-32
+	// control character sprite darkening via the shading table.
+	// Only scenes with shadow regions have non-zero data.
+	Graphics::ManagedSurface _shadowMap;
+
 	// TODO: use Graphics::Palette for this
 	byte _pal[256 * 3] = {0};
 	byte _palVanilla[256 * 3] = {0};

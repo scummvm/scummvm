@@ -1064,6 +1064,10 @@ static void showSceneMapsWindow() {
 				selectedTab = 1;
 				ImGui::EndTabItem();
 			}
+			if (ImGui::BeginTabItem("Shadow Map")) {
+				selectedTab = 6;
+				ImGui::EndTabItem();
+			}
 			if (ImGui::BeginTabItem("Pathfinding Overlay")) {
 				selectedTab = 2;
 				ImGui::EndTabItem();
@@ -1142,6 +1146,8 @@ static void showSceneMapsWindow() {
 			surface = &overlayComposite;
 		} else if (selectedTab == 3) {
 			surface = &g_engine->_map;
+		} else if (selectedTab == 6) {
+			surface = &g_engine->_shadowMap;
 		} else if (selectedTab == 4) {
 			// Object Map: use background image
 			surface = &g_engine->_bgImageShip;
