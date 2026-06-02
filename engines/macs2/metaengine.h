@@ -23,6 +23,7 @@
 #define MACS2_METAENGINE_H
 
 #include "engines/advancedDetector.h"
+#include "backends/keymapper/keymap.h"
 
 class Macs2MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
@@ -33,6 +34,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 };

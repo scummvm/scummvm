@@ -1128,6 +1128,20 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 	return true;
 }
 
+bool View1::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case Macs2::kMacs2ActionSkip:
+		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_ESCAPE)));
+	case Macs2::kMacs2ActionInventory:
+		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_i, 'i')));
+	case Macs2::kMacs2ActionMenu:
+		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_n, 'n')));
+	default:
+		break;
+	}
+	return false;
+}
+
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Button 8 skip from handleInput (1008:e8bf):
 	// ESC during a skippable script section fast-forwards through opcodes
