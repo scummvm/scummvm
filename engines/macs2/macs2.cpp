@@ -1675,7 +1675,7 @@ Sprite AnimFrame::asSprite() {
 	return result;
 }
 
-AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
+AnimFrame BackgroundAnimationBlob::getFrame(uint32 index) {
 	AnimationReader animReader(_blob);
 	uint16 numAnimations = animReader.readNumAnimations();
 	debug("Number of animation frames for background object: %.4x", numAnimations);
@@ -1687,10 +1687,8 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	animReader._readStream->seek(6, SEEK_CUR);
 
 	AnimFrame result;
-
 	result.readFromStream(animReader._readStream);
 	return result;
-	// TODO: Think about proper memory management
 }
 
 AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
@@ -1965,31 +1963,3 @@ Audio::Timestamp MacsAudioStream::getLength() const {
 
 } // End of namespace Macs2
 
-/*
-private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			string[] hexValuesSplit = InputTextBox.Text.Split(' ');
-			string result = String.Empty;
-			byte index = 1;
-			foreach (string hex in hexValuesSplit)
-			{
-				byte value;
-				// Convert the number expressed in base-16 to an integer.
-				try
-				{
-					value = Convert.ToByte(hex, 16);
-				}
-				catch
-				{
-					return;
-				}
-				byte x = (byte)(index * index * 0x0c);
-				byte y = (byte)(value ^ index);
-				byte r = (byte)(x ^ y);
-				result += (char)r;
-				index++;
-			}
-			OutputTextBlock.Text = result;
-		}
-
-*/
