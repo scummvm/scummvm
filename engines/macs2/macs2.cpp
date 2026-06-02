@@ -612,6 +612,15 @@ Macs2Engine::~Macs2Engine() {
 	_adlib->Deinit();
 }
 
+void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(text, action);
+	}
+#endif
+}
+
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources
 	if (_backgroundAnimations != nullptr) {

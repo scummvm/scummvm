@@ -32,6 +32,7 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
@@ -456,6 +457,8 @@ public:
 	}
 
 	bool tick() override;
+
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
 };
 
 extern Macs2Engine *g_engine;
