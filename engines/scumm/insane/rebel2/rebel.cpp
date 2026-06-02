@@ -594,6 +594,13 @@ void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
+	// Global ScummVM dialogs pause the engine while their modal event loop runs.
+	// Do not consume those events as RA2 input: a key seen here would otherwise
+	// trip RA2's "any key unpauses gameplay" path while the Smush player must
+	// remain paused for the dialog/focus interval.
+	if (_vm->isPaused())
+		return false;
+
 	// Keep the gamepad reticle authoritative against stray pointer events. During
 	// gameplay the cursor is locked ~screen-center (levels.cpp lockMouse), so any
 	// spurious pointer event — e.g. a gamepad "fire" surfacing as a button-down —
