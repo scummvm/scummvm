@@ -1343,6 +1343,19 @@ void View1::draw() {
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
+	if (_isShowingMainMenu && g_engine->enhancementEnabled(kEnhUIUX)) {
+		for (int i = 0; i < (int)_mainMenuButtonLocations.size(); i++) {
+			if (_mainMenuButtonLocations[i].contains(mousePos)) {
+				static const char *const buttonNames[] = {
+					"Talk", "Look", "Use", "Walk", "Inventory",
+					"Use Item", "Map", "Save/Load", "Close"
+				};
+				renderString(mousePos.x + 20, mousePos.y + 20, buttonNames[i]);
+				break;
+			}
+		}
+	}
+
 	if (_isShowingInventory && g_engine->enhancementEnabled(kEnhUIUX)) {
 		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
