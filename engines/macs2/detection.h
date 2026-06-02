@@ -36,6 +36,15 @@ enum Macs2DebugChannels {
 	kDebugScript = 1 << 6,
 };
 
+enum Macs2Action {
+	kMacs2ActionNone,
+	kMacs2ActionInteract,
+	kMacs2ActionCursorMode,
+	kMacs2ActionSkip,
+	kMacs2ActionInventory,
+	kMacs2ActionMenu,
+};
+
 extern const PlainGameDescriptor macs2Games[];
 
 extern const ADGameDescription gameDescriptions[];
