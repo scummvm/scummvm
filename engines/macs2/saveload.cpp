@@ -531,16 +531,20 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		uint16 scriptSize = (uint16)obj->Script.size();
 		s.syncAsUint16LE(scriptSize);
 
-		// Script resource table [+0x18D]: 0x80 bytes (128 bytes)
-		// Read from game data file for binary-compatible saves.
+		// Script resource table [+0x18D]: 0x80 bytes (128 bytes = 32 dword offsets)
+		// Stored in GameObject::_resourceOffsets, loaded from file during readResourceFile.
 		byte scriptResourceTable[128] = {0};
-		if (s.isSaving() && obj->_dataOffset != 0) {
-			int64 oldPos = _fileStream->pos();
-			_fileStream->seek(obj->_dataOffset + 0x189, SEEK_SET);
-			_fileStream->read(scriptResourceTable, 128);
-			_fileStream->seek(oldPos, SEEK_SET);
+		if (s.isSaving()) {
+			for (int r = 0; r < 32; r++) {
+				WRITE_LE_UINT32(&scriptResourceTable[r * 4], obj->_resourceOffsets[r]);
+			}
 		}
 		s.syncBytes(scriptResourceTable, 128);
+		if (s.isLoading()) {
+			for (int r = 0; r < 32; r++) {
+				obj->_resourceOffsets[r] = READ_LE_UINT32(&scriptResourceTable[r * 4]);
+			}
+		}
 
 		// Script data: scriptSize bytes from [+0x187] pointer
 		if (s.isLoading())
