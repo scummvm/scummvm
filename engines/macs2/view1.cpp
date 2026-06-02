@@ -1708,7 +1708,7 @@ void View1::drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 he
 	drawSpriteAdvanced(pos.x, pos.y, width, height, scaling, sprite._data.data(), s);
 }
 
-void View1::drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s) {
+void View1::drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s, uint8 shadowIntensity) {
 	const uint16 &x = pos.x;
 	const uint16 &y = pos.y;
 	const uint16 &width = sprite._width;
@@ -1736,6 +1736,11 @@ void View1::drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &spri
 					// Validated against drawSpriteTransparent (1010:0ed1): *pbVar12 < param_4
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
 					if (!useDepth || bgDepth < depth) {
+						// Binary drawAnimFrameShaded/drawAnimFrameDepth: apply shading table
+						// when shadowIntensity > 0 (from getShadingValueAt, clamped to 32)
+						if (shadowIntensity > 0) {
+							val = g_engine->_shadingTable[val];
+						}
 						s.setPixel(finalX, finalY, val);
 					}
 				}
@@ -1808,11 +1813,30 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		// Only output debug values for the character
 		uint16 scalingFactor = calculateCharacterScaling(depth, current->_gameObject->_index == 1);
 		// Adjust the position based on the scale
-		// TODO: Search where this is done in the game code
-		// DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
-		// DrawSpriteAdvanced(current->GetPosition() - frame->GetBottomMiddleOffset(scalingFactor), frame->Width, frame->Height, scalingFactor, frame->AsSprite(), s);
 		Common::Point actualPosition = current->getPosition() - Common::Point(0, current->getVerticalOffset());
-		drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s);
+
+		// Binary drawAllCharacters (1008:90a2) three draw modes:
+		//   HasScaling (+0x186) ON  → drawAnimFrameDepth (scaled + depth-tested + shaded)
+		//   HasScaling OFF, HasShading (+0x185) ON → drawAnimFrameShaded (shaded, no scaling)
+		//   HasScaling OFF, HasShading OFF → drawAnimFrame (plain)
+		// Shadow intensity from getShadingValueAt (scene+0x301B), clamped to 32 max.
+		uint8 shadowIntensity = 0;
+		if (g_engine->_shadowMap.w > 0) {
+			int sx = CLIP<int>(current->getPosition().x, 0, 319);
+			int sy = CLIP<int>(current->getPosition().y, 0, 199);
+			shadowIntensity = MIN<uint8>(g_engine->_shadowMap.getPixel(sx, sy), 32);
+		}
+
+		if (current->_gameObject->HasScaling) {
+			// Scaled + depth-tested + shaded mode
+			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
+		} else if (current->_gameObject->HasShading) {
+			// Shaded mode (no scaling): draw at 100% size but apply shading
+			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
+		} else {
+			// Plain mode: no depth test, no shading, no scaling
+			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, false, depth, s, 0);
+		}
 
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 			Common::String number = Common::String::format("%u", current->_gameObject->Orientation);

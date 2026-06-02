@@ -107,6 +107,12 @@ public:
 	bool _snapToTarget = false;
 	bool IsClickable = true;
 	bool IsVisible = true;
+	// Runtime +0x185: per-object flag loaded from file. When set, character sprites
+	// are drawn through the shading table using the shadow map intensity.
+	bool HasShading = false;
+	// Runtime +0x186: per-object flag loaded from file. When set, character sprites
+	// are scaled based on Y position (perspective depth scaling).
+	bool HasScaling = false;
 	// Runtime field +0x231: "frozen/attached" flag. Set by scriptSetObjectBounds (opcode 0x35).
 	// When set, the object cannot be walked (opcode 0x11 returns error 0x1F)
 	// and walkAlongPath skips movement for this object.
