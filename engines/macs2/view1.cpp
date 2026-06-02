@@ -1178,9 +1178,8 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 }
 
 bool View1::msgMouseMove(const MouseMoveMessage &msg) {
-	// TODO: Check what we are hovering over and save this info
-	// uint16 areaID = g_engine->_scriptExecutor->Func101D(msg._pos.x, msg._pos.y);
-	// g_system->setWindowCaption(Common::String::format("Area ID: %.4x", areaID));
+	_hoverAreaId = g_engine->_scriptExecutor->getAreaAtPoint(msg._pos.x, msg._pos.y);
+	_hoverHotspotId = g_engine->getHotspotAtPoint(msg._pos);
 	return true;
 }
 
