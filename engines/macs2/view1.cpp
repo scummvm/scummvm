@@ -1056,19 +1056,21 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			g_engine->_scriptExecutor->_interactedObjectID = index;
 			g_engine->_scriptExecutor->_interactedOtherObjectID = _activeInventoryItem != nullptr ? _activeInventoryItem->_index + 0x0400 : 0x0000;
 
-			// TODO: We need to keep better track of whether the inventory item
-			// is actually gone, resetting for now like this
-			_activeInventoryItem = nullptr;
+			// Binary (handleInput 1008:efd3): only clear the inventory item ID
+			// when cursor mode is NOT UseInventory (0x17). This preserves the
+			// selected item so it can be reused on other scene objects.
+			if (g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::UseInventory) {
+				_activeInventoryItem = nullptr;
+			}
 
 			// Set the script
 			g_engine->_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
-			// TODO: Not sure where the original code rewinds the script
 			Scenes::instance()._currentSceneScript->seek(0, SEEK_SET);
 			g_engine->runScriptExecutor(false);
-			// TODO: For the case of clicking an object, this reset happens at l0037_EFD3:
-			// Not sure where and if it happens for an inventory interaction
+			// Binary: only g_wInteractedObjectId is cleared after runScriptExecutor.
+			// g_wInteractedInventoryItemId (interactedOtherObjectID) is NOT cleared,
+			// so it persists for subsequent script checks.
 			g_engine->_scriptExecutor->_interactedObjectID = 0;
-			g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 		}
 		return true;
 	} else if (msg._button == MouseMessage::MB_RIGHT) {
