@@ -2358,16 +2358,19 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 			debug("Rebel2 loadLevel2Background: Found FOBJ: codec=%d pos=(%d,%d) size=%dx%d",
 				codec, fobjX, fobjY, fobjW, fobjH);
 
-			// Decode codec 3 (RLE) into background buffer.
-			// Use smushDecodeRLEOpaque to write ALL colors including color 0 (black).
+			// Decode codec 3 (RLE) into the original 320x200 background buffer.
+			// FUN_0041CADB/FUN_00401234 draw these resources into a fixed buffer
+			// and clip them there; Level 11 backgrounds extend past the right edge.
 			if (codec == 3 && fobjX >= 0 && fobjY >= 0 && fobjW > 0 && fobjH > 0 &&
-					fobjX + fobjW <= 320 && fobjY + fobjH <= 200 && stream.pos() < subDataEnd) {
+					fobjX < 320 && fobjY < 200 && stream.pos() < subDataEnd) {
+				int drawW = MIN<int>(fobjW, 320 - fobjX);
+				int drawH = MIN<int>(fobjH, 200 - fobjY);
 				const byte *rleData = animData + stream.pos();
-				smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320,
+				smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, drawW, drawH, 320,
 					(int)(subDataEnd - stream.pos()));
 
-				debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d)",
-					fobjW, fobjH, fobjX, fobjY);
+				debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d, clipped to %dx%d)",
+					fobjW, fobjH, fobjX, fobjY, drawW, drawH);
 				_level2BackgroundLoaded = true;
 				foundBackground = true;
 

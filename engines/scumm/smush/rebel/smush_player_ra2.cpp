@@ -115,6 +115,11 @@ void SmushPlayerRebel2::initGameVideoState() {
 	// Since play() resets _palDirtyMin/Max, the palette would never be pushed otherwise.
 	setDirtyColors(0, 255);
 
+	// SmushPlayer::init() resets _dst to the virtual screen. Use matching
+	// screen dimensions until AHDR/FOBJ selects a larger gameplay surface.
+	_width = _vm->_screenWidth;
+	_height = _vm->_screenHeight;
+
 	// Handle background preservation between videos:
 	// - Cinematic videos (flags 0x20) clear the buffer for a fresh start
 	// - Gameplay videos (flags 0x08) preserve the existing screen content
@@ -441,10 +446,9 @@ void SmushPlayerRebel2::ra2HandleDeltaPalette(int32 subSize, Common::SeekableRea
 	setDirtyColors(0, 255);
 }
 
-/**
- * RA2-specific handleAnimHeader fixup: when AHDR reports 0x0 dimensions,
- * use screen dimensions instead.
- */
+// RA2-specific AHDR handling. AHDR metadata can describe the original SMUSH
+// backing bitmap, but active low-res gameplay dimensions are selected later by
+// IACT/FOBJ state; keep the virtual-screen pitch safe until then.
 bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 	int width = READ_LE_UINT16(&headerContent[4]);
 	int height = READ_LE_UINT16(&headerContent[6]);
@@ -453,10 +457,22 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
+	} else if (width != _vm->_screenWidth || height != _vm->_screenHeight) {
+		// FUN_00407FCB/FUN_0040C3CC update the active frame descriptor from
+		// IACT opcode 6. In ScummVM's low-res path the descriptor remains
+		// 320x200 and perspective is applied through FUN_00424510-equivalent
+		// FOBJ offsets. Do not let AHDR alone change pitch while _dst still
+		// points at the virtual screen; FOBJ selection will allocate a larger
+		// surface when an actual oversized frame object is decoded.
+		_width = _vm->_screenWidth;
+		_height = _vm->_screenHeight;
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameAnimHeader: RA2 AHDR %dx%d - using screen size until FOBJ selects a surface",
+			width, height);
 	} else {
 		_width = width;
 		_height = height;
 	}
+
 	return true;
 }
 
@@ -757,9 +773,24 @@ bool SmushPlayerRebel2::handleGameFrameBufferSelect(int codec, int width, int he
 
 bool SmushPlayerRebel2::handleGameDimensionOverride(int codec, int width, int height) {
 	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)) {
-		// RA2: preserve _width/_height set during buffer allocation
-		return true;
+		if (_insane != nullptr) {
+			InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
+			if (rebel2->getHandler() != 0) {
+				// RA2 gameplay preserves the dimensions selected by the
+				// current frame target instead of the individual FOBJ.
+				return true;
+			}
+		}
+
+		if (_dst == _specialBuffer && _specialBuffer != nullptr) {
+			return true;
+		}
+
+		// Handler-zero videos are menus/cinematics. Let the base player restore
+		// normal screen dimensions so menu overlays do not inherit gameplay pitch.
+		return false;
 	}
+
 	return false;
 }
 
