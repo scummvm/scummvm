@@ -155,9 +155,11 @@ void View1::setInventorySource(GameObject *newInventorySource) {
 		}
 	}
 }
+
 bool View1::isInventorySourceProtagonist() const {
 	return _inventorySource->_index == 1;
 }
+
 void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer) {
 	int index = findInventoryItem(item);
 	_inventoryItems.remove_at(index);
@@ -493,8 +495,8 @@ void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 	}
 
 	// Draw the test results
-	Macs2::Character *c = getCharacterByIndex(1);
-	// Handle the protagonist not being in the scene
+	Macs2::Character *c = getCharacterByIndex(Scenes::instance()._currentActorIndex);
+	// Handle the active actor not being in the scene
 	if (c == nullptr) {
 		return;
 	}
@@ -638,19 +640,6 @@ int View1::getCharacterArrayIndex(const Character *c) const {
 		}
 	}
 	return -1;
-}
-
-bool View1::hasDuplicateCharacters() const {
-	Common::Array<uint16> uniqueIDs;
-	for (Macs2::Character *current : _characters) {
-		for (uint16 currentID : uniqueIDs) {
-			if (currentID == current->_gameObject->_index) {
-				return true;
-			}
-		}
-		uniqueIDs.push_back(current->_gameObject->_index);
-	}
-	return false;
 }
 
 void View1::startFading(uint16 speed) {
@@ -1101,9 +1090,9 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
-			Character *protagonist = getCharacterByIndex(1);
+			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
 			if (protagonist == nullptr) {
-				warning("Ignoring walk click without protagonist character in the active scene");
+				debugC(kDebugScript, "Ignoring walk click without active actor character in the scene");
 				return true;
 			}
 

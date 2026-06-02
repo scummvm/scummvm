@@ -317,7 +317,6 @@ public:
 	Character *getCharacterByIndex(uint16 index);
 
 	int getCharacterArrayIndex(const Character *c) const;
-	bool hasDuplicateCharacters() const;
 
 	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
 	// be so separated
