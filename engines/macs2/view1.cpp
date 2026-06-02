@@ -1215,6 +1215,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
+	// Debug inventory transfer shortcut: mirrors the Drop button behavior for the held item.
 	if (msg.ascii == (uint16)'t') {
 		if (_isShowingInventory && _activeInventoryItem != nullptr) {
 			if (_inventorySource->_index == 1) {
@@ -1240,35 +1241,24 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		}
 	}
 	if (msg.ascii == (uint16)'b') {
+		// Debug background reset/fade shortcut.
 		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
 		startFading();
 		redraw();
 	} else if (msg.ascii == (uint16)'i') {
+		// Toggle the protagonist inventory panel.
 		if (!_isShowingInventory) {
 			openInventory(GameObjects::instance().getProtagonistObject());
 		} else {
 			closeInventory();
 		}
 	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
+		// Select a visible dialogue option by number key.
 		// Register a dialogue choice and act upon it
 		uint8 numberPressed = msg.ascii - '1' + 1;
 		triggerDialogueChoice(numberPressed);
-	} else if (msg.ascii == 'p') {
-		/*  characters[0]->IsFollowingPath = true;
-		characters[0]->CurrentPathIndex = -1;
-		characters[0]->Path.clear();
-		characters[0]->Path.push_back(8);
-		characters[0]->Path.push_back(11);
-		characters[0]->Path.push_back(9); */
-		const Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		Character *chr = getCharacterByIndex(1);
-		chr->_pathFinalDestination = mousePos;
-		chr->_path.clear();
-		// g_engine->_path.clear();
-		bool pathfindingResult = _characters[0]->calculatePath(mousePos);
-		chr->_isFollowingPath = pathfindingResult;
-		chr->_currentPathIndex = -1;
 	} else if (msg.ascii == 'n') {
+		// Open the action menu at the current mouse position.
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		openMainMenu(mousePos);
 	}
