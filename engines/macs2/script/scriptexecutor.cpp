@@ -1322,7 +1322,7 @@ bool Script::ScriptExecutor::scriptSetDirection() {
 	// When the character's orientation matches this value, the renderer
 	// uses animation slot 0x15 (overload animation) instead of the normal slot.
 	// Value 0x7FFF means "never match" (default from loadSceneObjects).
-	uint16 characterID = scriptReadValue16() - 0x400;
+	uint32 characterID = scriptReadValue32() - 0x400;
 	uint16 value = scriptReadValue16();
 	if (characterID < 1 || characterID > 0x200) {
 		warning("Ignoring set direction for invalid object %u", characterID);
@@ -1349,6 +1349,7 @@ void Script::ScriptExecutor::scriptStopAnimation() {
 		warning("Ignoring stop animation for missing object %u", characterID);
 		return;
 	}
+	obj->overloadAnimTriggerDirection = 0x7FFF;
 	obj->useOverloadAnimation = false;
 	obj->overloadAnimation.clear();
 }
