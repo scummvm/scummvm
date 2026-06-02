@@ -431,7 +431,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// TODO: Copy-pasted code here
 
-	uint8 *data = new uint8[0x320];
+	uint8 data[0x320];
 
 	for (int y = 0; y < 200; y++) {
 		// TODO: Use the proper read function, it seems to be available
@@ -476,9 +476,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		_pal[i] = (_pal[i] * 259 + 33) >> 6;
 	}
 
-	// Continuing with data, even if we don't know all uses yet
-	// Common::Array<uint8> unknownData1;
-	// unknownData1.resize(0x100);
 	_fileStream->read(_shadingTable.data(), 0x100);
 
 	_fileStream->readByte(); // unknownByte1
@@ -486,14 +483,14 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->readByte(); // unknownByte3
 
 	// Offset 1013h
-	Graphics::ManagedSurface unknownRLE1 = readRLEImage(_fileStream->pos(), _fileStream);
+	Graphics::ManagedSurface depthRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	// Confirmed: depth map at scene offset 0x1013
-	_depthMap.blitFrom(unknownRLE1);
+	_depthMap.blitFrom(depthRLE);
 
 	// Offset 2017h
-	Graphics::ManagedSurface unknownRLE2 = readRLEImage(_fileStream->pos(), _fileStream);
+	Graphics::ManagedSurface pathfindingRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	// Walkability/pathfinding map at scene offset 0x2017
-	_pathfindingMap.blitFrom(unknownRLE2);
+	_pathfindingMap.blitFrom(pathfindingRLE);
 
 	// Offset 301Bh - Shadow/shading intensity map for character rendering
 	Graphics::ManagedSurface shadowRLE = readRLEImage(_fileStream->pos(), _fileStream);
