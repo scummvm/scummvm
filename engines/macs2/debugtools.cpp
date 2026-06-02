@@ -1520,6 +1520,30 @@ void onImGuiRender() {
 					view->redraw();
 				}
 			}
+			if (ImGui::MenuItem("Transfer Held Item (Drop)")) {
+				View1 *view = (View1 *)g_engine->findView("View1");
+				if (view && view->_isShowingInventory && view->_activeInventoryItem != nullptr) {
+					if (view->isInventorySourceProtagonist()) {
+						const uint16 currentScene = Scenes::instance()._currentSceneIndex;
+						for (GameObject *obj : GameObjects::instance()._objects) {
+							if (obj == nullptr)
+								continue;
+							if ((int16)obj->SceneIndex < 0 || obj->SceneIndex != currentScene)
+								continue;
+							if (0x13 >= obj->Blobs.size() || obj->Blobs[0x13].empty())
+								continue;
+							view->transferInventoryItem(view->_activeInventoryItem, obj);
+							view->_activeInventoryItem = nullptr;
+							view->setInventorySource(view->_inventorySource);
+							break;
+						}
+					} else {
+						view->transferInventoryItem(view->_activeInventoryItem, GameObjects::instance().getProtagonistObject());
+						view->_activeInventoryItem = nullptr;
+						view->setInventorySource(view->_inventorySource);
+					}
+				}
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::Text("| Scene: %d | Speed: %s", Scenes::instance()._currentSceneIndex,
