@@ -2408,7 +2408,11 @@ uint16 Character::getVerticalOffset() const {
 	}
 
 	if (_gameObject->_verticalOffsetScale != 0) {
-		result = (result * _gameObject->_verticalOffsetScale) / 100;
+		// Binary (1008:9549): when _verticalOffsetScale != 0, the vertical offset is
+		// characterScalingFactor * _verticalOffsetScale / 100 (NOT walkability * scale).
+		View1 *view = (View1 *)g_engine->findView("View1");
+		uint16 scalingFactor = view ? view->calculateCharacterScaling(getPosition().y, false) : 100;
+		result = (scalingFactor * _gameObject->_verticalOffsetScale) / 100;
 	}
 
 	return result;
