@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.2.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-01 21:39+0000\n"
+"POT-Creation-Date: 2026-06-02 16:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5435,7 +5435,7 @@ msgstr ""
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
-#: engines/scumm/metaengine.cpp:1195 engines/toltecs/metaengine.cpp:252
+#: engines/scumm/metaengine.cpp:1196 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr ""
 
@@ -12423,63 +12423,63 @@ msgstr ""
 msgid "Rebel Assault controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1132 engines/scumm/metaengine.cpp:1208
+#: engines/scumm/metaengine.cpp:1132 engines/scumm/metaengine.cpp:1209
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1137 engines/scumm/metaengine.cpp:1213
+#: engines/scumm/metaengine.cpp:1137 engines/scumm/metaengine.cpp:1214
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1142 engines/scumm/metaengine.cpp:1218
+#: engines/scumm/metaengine.cpp:1142 engines/scumm/metaengine.cpp:1219
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1147 engines/scumm/metaengine.cpp:1223
+#: engines/scumm/metaengine.cpp:1147 engines/scumm/metaengine.cpp:1224
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1228
+#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1229
 msgid "Stick up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1159 engines/scumm/metaengine.cpp:1235
+#: engines/scumm/metaengine.cpp:1159 engines/scumm/metaengine.cpp:1236
 msgid "Stick down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1166 engines/scumm/metaengine.cpp:1242
+#: engines/scumm/metaengine.cpp:1166 engines/scumm/metaengine.cpp:1243
 msgid "Stick left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1173 engines/scumm/metaengine.cpp:1249
+#: engines/scumm/metaengine.cpp:1173 engines/scumm/metaengine.cpp:1250
 msgid "Stick right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1180 engines/scumm/metaengine.cpp:1256
+#: engines/scumm/metaengine.cpp:1180 engines/scumm/metaengine.cpp:1257
 msgid "Fire / select"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1185
+#: engines/scumm/metaengine.cpp:1186
 msgid "Menu back"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1190
+#: engines/scumm/metaengine.cpp:1191
 msgid "Skip / menu back"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1206
+#: engines/scumm/metaengine.cpp:1207
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1261
+#: engines/scumm/metaengine.cpp:1262
 msgid "Cover / back"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1267
+#: engines/scumm/metaengine.cpp:1268
 msgid "Skip / back"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1274
+#: engines/scumm/metaengine.cpp:1275
 msgid "Skip / menu"
 msgstr ""
 
