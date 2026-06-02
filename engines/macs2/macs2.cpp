@@ -286,8 +286,15 @@ void Macs2Engine::readExecutable() {
 }
 
 void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
-	// Offset 50F5 in scene data
-	// TODO: Remove the non-blob implementation
+	// changeScene (1008:2574): background animation loading at scene+0x50F5.
+	// Per-entry runtime struct (0x10 bytes stride):
+	//   +0x00: X position (word)
+	//   +0x02: Y position (word)
+	//   +0x04: blob data size (dword)
+	//   +0x08: blob data pointer (far ptr, allocated at runtime)
+	//   +0x0C: unknown word (read from file, not referenced at runtime)
+	//   +0x0E: unknown byte (read from file, not referenced at runtime)
+	//   +0x0F: unknown byte (read from file, not referenced at runtime)
 	uint16 numBackgroundAnimations = stream->readUint16LE();
 
 	_backgroundAnimations.resize(numBackgroundAnimations);
@@ -295,52 +302,40 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 
 	for (int i = 0; i < numBackgroundAnimations; i++) {
 		BackgroundAnimationBlob &currentBlob = _backgroundAnimationsBlobs[i];
-
 		BackgroundAnimation &current = _backgroundAnimations[i];
-		// Local offset +0h
+
+		// X position (+0x50E7 in scene data for entry 1)
 		current._x = stream->readUint16LE();
 		currentBlob._x = current._x;
-		// Local offset +2n
+		// Y position (+0x50E9)
 		current._y = stream->readUint16LE();
 		currentBlob._y = current._y;
-
-		// current.numFrames = previewNumFrames(file.pos(), file);
+		// Blob data size (+0x50EB, 4 bytes)
 		uint32 numBytes = stream->readUint32LE();
-
+		// Read raw blob data (+0x50EF points to this in runtime)
 		currentBlob._blob.resize(numBytes);
-		int64 pos = stream->pos();
 		stream->read(currentBlob._blob.data(), numBytes);
-		stream->seek(pos, SEEK_SET);
+		// Trailing per-animation fields (stored but not read at runtime by binary)
+		currentBlob._unknown0C = stream->readUint16LE();  // +0x50F3: unknown word
+		currentBlob._unknown0E = stream->readByte();      // +0x50F5: unknown byte
+		currentBlob._unknown0F = stream->readByte();      // +0x50F6: unknown byte
 
-		// Skip to the intermediary data
-		// Game loading code puts this at a pointer stored in local offset +8h
-		stream->seek(10, SEEK_CUR);
-		uint16 nextNumBytes = stream->readUint16LE();
-		stream->seek(nextNumBytes, SEEK_CUR);
-		current._numFrames = stream->readUint16LE();
+		// Parse frames for the legacy BackgroundAnimation struct
+		current._numFrames = BackgroundAnimationBlob::getAnimFrameCount(currentBlob._blob);
 		current._frameIndex = 0;
 		current._frames = new AnimFrame[current._numFrames];
+		Common::MemoryReadStream blobStream(currentBlob._blob.data(), currentBlob._blob.size());
+		// Skip blob header to first frame
+		blobStream.seek(0xA);
+		uint16 headerSize = blobStream.readUint16LE();
+		blobStream.seek(headerSize + 0xE, SEEK_SET);
 		for (int j = 0; j < current._numFrames; j++) {
-			// Skip to width and height
-			stream->seek(6, SEEK_CUR);
-			current._frames[j].readFromStream(stream);
+			blobStream.seek(6, SEEK_CUR); // skip per-frame header (6 bytes before w/h/pixels)
+			current._frames[j].readFromStream(&blobStream);
 		}
-		// TODO: This allows us to skip over a faulty implementation, but
-		// probably missing some valid data or loading wrong data
-		// file.seek(endPos);
-		// TODO: Figure out the trailing values?
-		// Data at offset +Ch
-		stream->readUint16LE(); // unknown1
-		// Data at offset +Fh
-		stream->readByte(); // unknown2
-		// Local variable [bp-5h]
-		stream->readByte(); // unknown3
 
-		// Initialize the blob
-		// TODO: There is a lot more going on in the function that does this. It is around
-		// -- Caller (1): 01e7:7a5b
-		// --Caller(2) : 01e7 : 8820
-		Macs2::BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 0x64 + current._numFrames);
+		// Initialize the blob frame pointer (original calls advanceAnimFrame with mode 0x64+numFrames)
+		BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 0x64 + current._numFrames);
 	}
 }
 
