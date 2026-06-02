@@ -1015,6 +1015,16 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						openInventory(GameObjects::instance().getProtagonistObject());
 						break;
 					}
+					case MainMenuButtonIndex::InventoryUse: {
+						// Binary button 6: sets cursor mode to 0x17 (UseInventory) and copies
+						// active item ID to interacted item, only if an item is selected.
+						_isShowingMainMenu = false;
+						if (_activeInventoryItem != nullptr) {
+							g_engine->setCursorMode(Script::MouseMode::UseInventory);
+							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+						}
+						break;
+					}
 					case MainMenuButtonIndex::Map: {
 						_isShowingMainMenu = false;
 						// Enter map mode (sets scene+0x61db equivalent)
