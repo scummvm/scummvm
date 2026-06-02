@@ -1512,6 +1512,14 @@ void onImGuiRender() {
 			ImGui::Separator();
 			if (ImGui::MenuItem("Run Script Executor"))
 				g_engine->runScriptExecutor(true);
+			if (ImGui::MenuItem("Reset Background + Fade")) {
+				View1 *view = (View1 *)g_engine->findView("View1");
+				if (view) {
+					view->_backgroundSurface.copyFrom(g_engine->_bgImageShip);
+					view->startFading();
+					view->redraw();
+				}
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::Text("| Scene: %d | Speed: %s", Scenes::instance()._currentSceneIndex,

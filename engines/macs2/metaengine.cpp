@@ -95,6 +95,11 @@ Common::KeymapArray Macs2MetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
+	act = new Action("GAMESPEED", _("Cycle game speed"));
+	act->setCustomEngineActionEvent(kMacs2ActionGameSpeed);
+	act->addDefaultInputMapping("C+t");
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 
