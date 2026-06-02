@@ -810,13 +810,11 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	const LevelDifficultyParams &flightParams =
 		kDifficultyTable[CLIP(_difficulty, 0, 5)][flightParamIndex];
 
-	// Step 1: Mouse input as offset from screen center.
+	// Step 1: Raw mouse input as offset from screen center.
 	// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100.
-	// _vm->_mouse.x/y are in virtual screen coords (0-319, 0-199)
-	// consistent with handler 8 which uses _vm->_mouse.x directly.
-	Common::Point aimPos = getGameplayAimPoint();
-	int16 inputX = (int16)(aimPos.x - 160);  // DAT_0047a7e0
-	int16 inputY = (int16)(aimPos.y - 100);  // DAT_0047a7e2
+	// Handler 7 applies DAT_0047a7fe to its local vertical input after clamping.
+	int16 inputX = (int16)(_vm->_mouse.x - 160);  // DAT_0047a7e0
+	int16 inputY = (int16)(_vm->_mouse.y - 100);  // DAT_0047a7e2
 
 	// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70).
 	if (inputX > 160)
@@ -831,7 +829,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// Step 2: Scale to [-127, 127] (lines 82-84).
 	// Mouse mode: scaledInputX = (DAT_0047a7e0 * 0x7f) / 0xa0.
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
-	int16 scaledInputY = inputY;  // Y already in [-127, 127]
+	int16 scaledInputY = _optControlsFlipped ? (int16)-inputY : inputY;  // local_14
 
 	// Step 3: Velocity history + smoothed average (lines 141-157).
 	for (int i = 24; i > 0; i--) {

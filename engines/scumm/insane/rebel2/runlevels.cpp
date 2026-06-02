@@ -294,6 +294,41 @@ void InsaneRebel2::resetLevelWaveState() {
 	_rebelWaveState = 0;
 }
 
+void InsaneRebel2::resetHandler7FlightState() {
+	_hitCooldown = 0;
+	_flyShipScreenX = 0xd4;
+	_flyShipScreenY = 0x82;
+	_smoothedVelocity = 0;
+	_verticalInput = 0;
+	_flyOverlayRepeatCount = 0;
+	_viewShift = 0;
+	_perspectiveX = 0;
+	_perspectiveY = 0;
+	_windParamX = 0;
+	_windParamY = 0;
+	_corridorLeftX = 0;
+	_corridorTopY = 0;
+	_corridorRightX = 0x1a8;
+	_corridorBottomY = 0x104;
+	_facingRight = false;
+	_spaceShotDirection = 0;
+
+	memset(_velocityHistory, 0, sizeof(_velocityHistory));
+	memset(_windHistoryX, 0, sizeof(_windHistoryX));
+	memset(_windHistoryY, 0, sizeof(_windHistoryY));
+
+	for (int i = 0; i < 2; i++) {
+		_spaceShots[i].counter = 0;
+		_spaceShots[i].targetX = 0;
+		_spaceShots[i].targetY = 0;
+		_spaceShots[i].leftGunX = 0;
+		_spaceShots[i].leftGunY = 0;
+		_spaceShots[i].rightGunX = 0;
+		_spaceShots[i].rightGunY = 0;
+		_spaceShots[i].variant = 0;
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Level 2 Handler - FUN_00418063
 // Multiple parts with P1/P2/P3 subdirectories
@@ -600,6 +635,7 @@ int InsaneRebel2::runLevel3() {
 
 		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
 		clearBit(0);
+		resetHandler7FlightState();
 
 		// Play phase 1 gameplay (03PLAY1.SAN)
 		debug("Rebel2: Level 3 Phase 1");
@@ -651,6 +687,7 @@ int InsaneRebel2::runLevel3() {
 
 		// Reset bit table before gameplay starts
 		clearBit(0);
+		resetHandler7FlightState();
 
 		// Play phase 2 gameplay (03PLAY2.SAN)
 		debug("Rebel2: Level 3 Phase 2");

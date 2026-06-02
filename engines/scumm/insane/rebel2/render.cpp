@@ -1549,11 +1549,12 @@ void InsaneRebel2::checkCollisionZones() {
 		return;
 
 	// Calculate aim position in centered coordinates.
-	// Original: local_10 = mouseOffset + 0xa0, then smoothed and clamped to [-0x34..0x34]
-	// Simplified mapping: mouse 0..320 → [-52..52], mouse 0..200 → [-45..45]
-	Common::Point aimPos = getGameplayAimPoint();
-	int16 aimX = (int16)((aimPos.x - 160) * 52 / 160);
-	int16 aimY = (int16)((100 - aimPos.y) * 45 / 100);
+	// Handler 0x26 applies the mouse-mode vertical inversion before DAT_0047a7fe
+	// (FUN_407FCB lines 108-123), so this must not use getGameplayAimPoint().
+	const int rawX = _vm->_mouse.x - 160;
+	const int rawY = _vm->_mouse.y - 100;
+	int16 aimX = (int16)(rawX * 52 / 160);
+	int16 aimY = (int16)((_optControlsFlipped ? -rawY : rawY) * 45 / 100);
 
 	// Clamp to original ranges (DAT_0047a7fc < 1 path)
 	if (aimX > 0x34)

@@ -432,6 +432,7 @@ public:
 	void resetLevelAttemptState(int initialPhase);
 	void resetLevelPhaseState(bool clearEnemies);
 	void resetLevelWaveState();
+	void resetHandler7FlightState();
 
 	// Random number helper (emulates FUN_004233a0)
 	int getRandomVariant(int max);
