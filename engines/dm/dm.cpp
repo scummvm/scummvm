@@ -123,7 +123,8 @@ DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) :
 			_thingExplFireBall(0xFF80), _thingExplSlime(0xFF81), _thingExplLightningBolt(0xFF82),
 			_thingExplHarmNonMaterial(0xFF83), _thingExplOpenDoor(0xFF84), _thingExplPoisonBolt(0xFF86),
 			_thingExplPoisonCloud(0xFF87), _thingExplSmoke(0xFFA8), _thingExplFluxcage(0xFFB2),
-			_thingExplRebirthStep1(0xFFE4), _thingExplRebirthStep2(0xFFE5), _thingParty(0xFFFF)
+			_thingExplRebirthStep1(0xFFE4), _thingExplRebirthStep2(0xFFE5), _thingParty(0xFFFF),
+			_dirIntoStepCountEast(), _dirIntoStepCountNorth()
 	{
 	// register random source
 	_rnd = new Common::RandomSource("dm");
