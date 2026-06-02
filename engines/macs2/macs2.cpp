@@ -183,25 +183,20 @@ void Macs2Engine::readResourceFile() {
 		gameObject->Unknown = unknown;
 
 		for (int j = 1; j < 0x15; j++) {
-			// We're at l0037_0A3E here
-			// TODO: Compare places and read values with the game
-			_fileStream->readUint16LE(); // unknown1 // _fileStream->readUint16LE();
+			// Per-slot data in file: 2 bytes unknown1, 2 bytes sourceKey, 4 bytes dataSize, data, 2 bytes speed, 1 byte mirrorFlag, 1 byte (discarded)
+			_fileStream->readUint16LE(); // unknown1
 			uint16 unknown2 = _fileStream->readUint16LE();
 			uint32 dataSize = _fileStream->readUint32LE();
 			uint8 *data = new uint8[dataSize];
 			_fileStream->read(data, dataSize);
-			// TODO: Place this data in the game object and create the game object
 			gameObject->Blobs.push_back(Common::Array<uint8>(data, dataSize));
 			gameObject->BlobSourceKeys.push_back(unknown2);
-			// Load three values here
-			// l0037_0B62:
-			// Data at offset +Ch - per-animation walk speed
+			// Per-animation walk speed (+0x30 in runtime)
 			uint16 blobSpeed = _fileStream->readUint16LE();
 			gameObject->BlobSpeeds.push_back(blobSpeed);
-			// Data at offset +Eh
+			// Mirror flag (+0x32 in runtime)
 			uint16 unknown5 = _fileStream->readByte();
-			// Local variable [bp-5h]
-			_fileStream->readByte(); // unknown6
+			_fileStream->readByte(); // slot loaded flag (runtime-only, discarded from file)
 			gameObject->BlobMirrorFlags.push_back(unknown5 != 0);
 
 			// In order to get to l0037_0BBA: where the blob will be mirrored,
@@ -219,13 +214,13 @@ void Macs2Engine::readResourceFile() {
 			// Seek forward for the next 2+1+1 bytes reads
 			// _fileStream->seek(0x4, SEEK_CUR);
 		}
-		// Read the object script
-		// The offset is calculated at l0037_0C9D - also see above for adjustmnets
+		// Read the object script (resource offset table + script bytecode)
+		// Binary: scene table at +0x17F8 holds the script data file offset for each object
 		addressOffset = 0x17F8 + (0xC + 0x04) + i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
-		// TODO: Not sure if this can happen or should be checked
+		// Binary loadSceneObjects checks both +0x17F4 and +0x17F6 (high word); zero means no data
 		if (objectOffset == 0) {
 			break;
 		}
@@ -242,7 +237,13 @@ void Macs2Engine::readResourceFile() {
 		GameObjects::instance()._objects.push_back(gameObject);
 	}
 
-	// Test implementations below
+	// The sections below use hardcoded file offsets that are only valid for the
+	// full game's 8.6MB RESOURCE.MCS. The demo has a 2.3MB resource file with a
+	// different layout — these data are loaded at runtime by changeScene() from
+	// the scene data buffer instead.
+	if (isDemo()) {
+		return;
+	}
 
 	_fileStream->seek(0x23BE09);
 
@@ -251,11 +252,8 @@ void Macs2Engine::readResourceFile() {
 	uint8 *lengthData = new uint8[2];
 	uint8 *data = new uint8[320];
 
-	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
-	// try to RLE something which would be better not RLE encoded.
-
+	// RLE-encoded background image (320x200, 0xF0 = run-length escape byte)
 	for (int y = 0; y < 200; y++) {
-		// TODO: Use the proper read function, it seems to be available
 		_fileStream->read(lengthData, 2);
 		uint16 length = lengthData[1] << 8 | lengthData[0];
 		_fileStream->read(data, length);
@@ -639,15 +637,25 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Addressing the background image starts at l0037_25A9
 	_fileStream->seek(0xC + 0x4 + 0xC * newSceneIndex - 0xC, SEEK_SET);
 	uint32 bgImageOffset = _fileStream->readUint32LE();
-	// Travel map sub-scene offset table starts at scene buffer +0x5DD7.
-	// Since the scene buffer is a byte-for-byte copy of the file data starting
-	// at bgImageOffset, the table is at bgImageOffset + 0x5DD7 in the file.
-	// The map overview image is at table entry [1] (offset 0x5DDB = 0x5DD7 + 4).
+	uint32 sceneTableEntry2 = _fileStream->readUint32LE();
+	uint32 sceneTableEntry3 = _fileStream->readUint32LE();
+	(void)sceneTableEntry3; // strings offset, not used here
+	_mapSubSceneTableFilePos = 0;
 	_mapImageFileOffset = 0;
-	_mapSubSceneTableFilePos = (int64)bgImageOffset + 0x5DD7;
-	if (_mapSubSceneTableFilePos + 4 < _fileStream->size()) {
-		_fileStream->seek(_mapSubSceneTableFilePos + 4, SEEK_SET); // entry[1] = map overview
-		_mapImageFileOffset = _fileStream->readUint32LE();
+	// The map image file offset is stored in the scene data block at offset +0x3C0.
+	// (sceneDataOffset2 + 0x3C0 = resource_offsets(0x80) + 0x340 of additional data).
+	if (sceneTableEntry2 != 0 && sceneTableEntry2 < (uint32)_fileStream->size()) {
+		_fileStream->seek(sceneTableEntry2 + 0x3C0, SEEK_SET);
+		uint32 mapOffset = _fileStream->readUint32LE();
+		if (mapOffset != 0 && mapOffset < (uint32)_fileStream->size()) {
+			// Validate it's actually RLE data for a 320-wide image (row len typically 50-320)
+			_fileStream->seek(mapOffset, SEEK_SET);
+			uint16 rowLen = _fileStream->readUint16LE();
+			if (rowLen >= 50 && rowLen <= 640) {
+				_mapImageFileOffset = mapOffset;
+				_mapSubSceneTableFilePos = sceneTableEntry2 + 0x3C0;
+			}
+		}
 	}
 	_fileStream->seek(bgImageOffset, SEEK_SET);
 
@@ -655,9 +663,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// _bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	uint8 *data = new uint8[0x320];
-
-	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
-	// try to RLE something which would be better not RLE encoded.
 
 	for (int y = 0; y < 200; y++) {
 		// TODO: Use the proper read function, it seems to be available
