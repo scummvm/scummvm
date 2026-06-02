@@ -249,7 +249,7 @@ public:
 	void setPathfindingOverride(uint16 index, uint16 overrideValue);
 
 	// This one implements the lookup relative to es:[di+4EA8h] vs. the other one at es:[di+4EA5h] and es:[di+4EA6h]
-	uint8 getPathfindingOverride2(uint16 index);
+	uint16 getPathfindingOverride2(uint16 index);
 	void removePathfindingOverride(uint16 index);
 
 	uint16 getWalkabilityAt(int16 y, int16 x);
