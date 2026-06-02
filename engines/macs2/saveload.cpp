@@ -463,18 +463,20 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading() && chr)
 			chr->_stepDirectionSet = directionSet != 0;
 
-		// _pickupFrameStart [+0x217]: 2 bytes
-		s.syncAsUint16LE(obj->_pickupFrameStart);
-		// _pickupFrameEnd [+0x219]: 2 bytes
-		s.syncAsUint16LE(obj->_pickupFrameEnd);
-		// [+0x211]: 2 bytes - path index/length/accumulator - walk interrupted, save 0
+		// [+0x20D]: 2 bytes - clip rect left
+		uint16 runtime20D = 0;
+		s.syncAsUint16LE(runtime20D);
+		// [+0x20F]: 2 bytes - clip rect top
+		uint16 runtime20F = 0;
+		s.syncAsUint16LE(runtime20F);
+		// [+0x211]: 2 bytes - clip rect right
 		uint16 runtime211 = 0;
 		s.syncAsUint16LE(runtime211);
-		// [+0x213]: 2 bytes - path index/length/accumulator - walk interrupted, save 0
+		// [+0x213]: 2 bytes - clip rect bottom
 		uint16 runtime213 = 0;
 		s.syncAsUint16LE(runtime213);
 
-		// RuntimeSlotValues [+0x21D..+0x22B]: 8 x uint16
+		// [+0x21D..+0x22B]: 8 x uint16 - sprite bounds (lastX, lastY, lastW, lastH, drawX, drawY, drawW, drawH)
 		for (int i = 0; i < 8; i++) {
 			uint16 slotVal = (i < 0x15) ? obj->RuntimeSlotValues[i] : 0;
 			s.syncAsUint16LE(slotVal);
@@ -482,13 +484,16 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				obj->RuntimeSlotValues[i] = slotVal;
 		}
 
-		// [+0x215..+0x21B]: 4 x uint16 - more slot values
-		for (int i = 8; i < 12; i++) {
-			uint16 slotVal = (i < 0x15) ? obj->RuntimeSlotValues[i] : 0;
-			s.syncAsUint16LE(slotVal);
-			if (s.isLoading() && i < 0x15)
-				obj->RuntimeSlotValues[i] = slotVal;
-		}
+		// [+0x215]: 2 bytes - pickup frame counter
+		uint16 pickupFrameCounter = 0;
+		s.syncAsUint16LE(pickupFrameCounter);
+		// [+0x217]: 2 bytes - _pickupFrameStart
+		s.syncAsUint16LE(obj->_pickupFrameStart);
+		// [+0x219]: 2 bytes - _pickupFrameEnd
+		s.syncAsUint16LE(obj->_pickupFrameEnd);
+		// [+0x21B]: 2 bytes - previous orientation (saved before pickup)
+		uint16 prevOrientation = 0;
+		s.syncAsUint16LE(prevOrientation);
 
 		// overloadAnimTriggerDirection [+0x22D]: 2 bytes
 		s.syncAsUint16LE(obj->overloadAnimTriggerDirection);
@@ -527,8 +532,14 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(scriptSize);
 
 		// Script resource table [+0x18D]: 0x80 bytes (128 bytes)
-		// TODO: script resource offset table not tracked separately - save zeros
+		// Read from game data file for binary-compatible saves.
 		byte scriptResourceTable[128] = {0};
+		if (s.isSaving() && obj->_dataOffset != 0) {
+			int64 oldPos = _fileStream->pos();
+			_fileStream->seek(obj->_dataOffset + 0x189, SEEK_SET);
+			_fileStream->read(scriptResourceTable, 128);
+			_fileStream->seek(oldPos, SEEK_SET);
+		}
 		s.syncBytes(scriptResourceTable, 128);
 
 		// Script data: scriptSize bytes from [+0x187] pointer
@@ -538,50 +549,58 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			s.syncBytes(obj->Script.data(), scriptSize);
 
 		// --- Animation blobs (21 slots, 1-based: 1..0x15) ---
-		// The original binary's save format does NOT store blob pixel data.
-		// Blob pixel data is reloaded from the resource file by loadSceneObjects
-		// (called via changeScene during load). We only sync the metadata
-		// (active flag, source key, speed) to stay binary-compatible.
+		// Animation blob save format (binary-compatible with original 1008:6859/747e):
+		// Per slot (1..0x15): 2-byte active flag, then if active:
+		//   +0x00: 2 bytes (frame cursor X), +0x02: 2 bytes (frame cursor Y),
+		//   +0x0C: 2 bytes (source key), +0x0E: 2 bytes (speed),
+		//   +0x04: 2 bytes (data size), then data_size bytes of pixel data.
 		for (int blobIdx = 0; blobIdx < 0x15; blobIdx++) {
+			// Active flag (2 bytes, but only low byte matters)
 			uint16 blobActive = 0;
 			if (s.isSaving() && blobIdx < (int)obj->Blobs.size())
 				blobActive = obj->Blobs[blobIdx].empty() ? 0 : 1;
 			s.syncAsUint16LE(blobActive);
 
 			if (blobActive) {
-				uint16 blobX = 0, blobY = 0;
-				uint16 blobSize = 0;
+				// entry+0x00: frame cursor/offset X (not tracked in ScummVM, save 0)
+				uint16 field00 = 0;
+				s.syncAsUint16LE(field00);
+				// entry+0x02: frame cursor/offset Y (not tracked in ScummVM, save 0)
+				uint16 field02 = 0;
+				s.syncAsUint16LE(field02);
+				// entry+0x0C: source resource key
 				uint16 blobSourceKey = 0;
-				uint16 blobSpeed = 0;
-
-				if (s.isSaving() && blobIdx < (int)obj->Blobs.size()) {
-					blobSize = (uint16)obj->Blobs[blobIdx].size();
-					blobSourceKey = (blobIdx < (int)obj->BlobSourceKeys.size()) ?
-					                obj->BlobSourceKeys[blobIdx] : 0;
-					blobSpeed = (blobIdx < (int)obj->BlobSpeeds.size()) ?
-					            obj->BlobSpeeds[blobIdx] : 0;
-				}
-
-				s.syncAsUint16LE(blobX);
-				s.syncAsUint16LE(blobY);
+				if (s.isSaving() && blobIdx < (int)obj->BlobSourceKeys.size())
+					blobSourceKey = obj->BlobSourceKeys[blobIdx];
 				s.syncAsUint16LE(blobSourceKey);
+				// entry+0x0E: speed/timing
+				uint16 blobSpeed = 0;
+				if (s.isSaving() && blobIdx < (int)obj->BlobSpeeds.size())
+					blobSpeed = obj->BlobSpeeds[blobIdx];
 				s.syncAsUint16LE(blobSpeed);
+				// entry+0x04: data size
+				uint16 blobSize = 0;
+				if (s.isSaving() && blobIdx < (int)obj->Blobs.size())
+					blobSize = (uint16)obj->Blobs[blobIdx].size();
 				s.syncAsUint16LE(blobSize);
-
-				if (s.isLoading()) {
-					// Don't overwrite blob pixel data from changeScene/readResourceFile.
-					// Only restore metadata.
-					if (blobIdx < (int)obj->BlobSourceKeys.size())
-						obj->BlobSourceKeys[blobIdx] = blobSourceKey;
-					if (blobIdx < (int)obj->BlobSpeeds.size())
-						obj->BlobSpeeds[blobIdx] = blobSpeed;
-				}
-				// Skip over blobSize bytes in the stream (binary compat)
-				if (s.isLoading() && blobSize > 0) {
-					// The save format may or may not contain pixel data.
-					// For binary-original saves, blobSize here reflects the runtime
-					// allocation but the actual data is NOT in the save stream.
-					// We skip nothing — the binary format doesn't write pixel bytes.
+				// Pixel data (blobSize bytes)
+				if (s.isSaving()) {
+					if (blobIdx < (int)obj->Blobs.size() && blobSize > 0)
+						s.syncBytes(obj->Blobs[blobIdx].data(), blobSize);
+				} else {
+					// Loading: allocate and read pixel data
+					if (blobSize > 0) {
+						if (blobIdx >= (int)obj->Blobs.size())
+							obj->Blobs.resize(blobIdx + 1);
+						obj->Blobs[blobIdx].resize(blobSize);
+						s.syncBytes(obj->Blobs[blobIdx].data(), blobSize);
+					}
+					if (blobIdx >= (int)obj->BlobSourceKeys.size())
+						obj->BlobSourceKeys.resize(blobIdx + 1);
+					obj->BlobSourceKeys[blobIdx] = blobSourceKey;
+					if (blobIdx >= (int)obj->BlobSpeeds.size())
+						obj->BlobSpeeds.resize(blobIdx + 1);
+					obj->BlobSpeeds[blobIdx] = blobSpeed;
 				}
 			}
 		}
