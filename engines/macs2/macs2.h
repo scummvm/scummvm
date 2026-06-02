@@ -142,6 +142,9 @@ struct BackgroundAnimationBlob {
 	AnimFrame getCurrentFrame();
 	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
 	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
+	// Mirrors (horizontally flips) all frames in an animation blob in-place.
+	// Matches binary decodeAnimBlob (1010:184d) which calls the row-flip at 1010:1319.
+	static void mirrorAnimBlob(Common::Array<uint8> &blob);
 };
 
 struct PathfindingPoint {

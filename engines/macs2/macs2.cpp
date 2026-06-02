@@ -211,6 +211,9 @@ void Macs2Engine::readResourceFile() {
 			// +Eh is read here
 			if (unknown5 != 0) {
 				debug("Object %.4x need to mirror blob %4.x", i, j);
+				if (dataSize > 0) {
+					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->Blobs.back());
+				}
 			}
 
 			// Seek forward for the next 2+1+1 bytes reads
@@ -1730,6 +1733,40 @@ uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, boo
 	// if we have bp+6h==1, we will mess up our posiition
 	// return stream.pos();
 	return bp12;
+}
+
+// Matches binary decodeAnimBlob (1010:184d) + mirrorAnimFrame (1010:1319).
+// Iterates each frame in the blob and horizontally flips its pixel data in-place.
+void BackgroundAnimationBlob::mirrorAnimBlob(Common::Array<uint8> &blob) {
+	if (blob.size() < 14)
+		return;
+	Common::MemoryReadStream header(blob.data(), blob.size());
+	header.seek(0xA);
+	uint16 headerSize = header.readUint16LE();
+	uint32 countOffset = 0xC + headerSize;
+	if (countOffset + 2 > blob.size())
+		return;
+	uint16 frameCount = READ_LE_UINT16(&blob[countOffset]);
+	// First frame starts at headerSize + 0xE from blob start
+	uint32 framePos = headerSize + 0xE;
+	for (uint16 f = 0; f < frameCount; f++) {
+		if (framePos + 10 > blob.size())
+			break;
+		// Frame layout: +0(2) +2(2) +4(2unknown) +6(width,2) +8(height,2) +10(pixels)
+		uint16 width = READ_LE_UINT16(&blob[framePos + 6]);
+		uint16 height = READ_LE_UINT16(&blob[framePos + 8]);
+		uint32 pixelStart = framePos + 10;
+		if (pixelStart + (uint32)width * height > blob.size())
+			break;
+		// Flip each row horizontally
+		for (uint16 row = 0; row < height; row++) {
+			uint8 *rowStart = &blob[pixelStart + row * width];
+			for (uint16 col = 0; col < width / 2; col++) {
+				SWAP(rowStart[col], rowStart[width - 1 - col]);
+			}
+		}
+		framePos += 10 + (uint32)width * height;
+	}
 }
 
 uint16 BackgroundAnimationBlob::getAnimFrameCount(Common::Array<uint8> &blob) {
