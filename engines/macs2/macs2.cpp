@@ -1702,143 +1702,116 @@ AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	return result;
 }
 
+// Animation blob frame sequencer (matches advanceAnimFrame at 1010:1480).
+// bpp6: save flag (true=write state back to blob header)
+// bpp8: mode (0=current frame, 1=reset to frame 1, 2=advance, 100+N=jump to frame N)
+//
+// Blob header (12 bytes):
+//   +0: unknown (preserved), +2: sequence position, +4: repeat counter,
+//   +6: loop start position, +8: delay counter, +10: sequence length - 1
+//
+// Sequence table (at blob+0xC, seqLen bytes):
+//   Command 1: set repeat (next byte), record loop start
+//   Command 2: set delay (next byte)
+//   Command 3: jump to position (next byte)
+//   Values >= 10: frame index (0-based = value - 10)
+//
+// Frame data (at blob+0xC+seqLen): frame count word, then per frame:
+//   offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels(w*h)
+//
+// Returns byte offset to the start of the target frame within the blob.
 uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8) {
-	uint16 s = blob.size();
-	if (s == 0x767) {
-		s = 1;
-	}
 	Common::MemorySeekableReadWriteStream stream(blob.data(), blob.size());
 
-	/* Arguments:
-	Argument - Byte value: [bp+06]: 00 - Determines if we save the result
-	Argument - Value between 0 and something around A4: [bp+08]: 0000 - The important one
-	Argument - Address: [bp+0a]: 99e0:022f
-	Argument - Address: [bp+0e]: 99e2:022f
-	Argument - Address: [bp+12]: 0000:04bf
-	*/
+	uint16 bp22 = stream.readUint16LE(); // +0: unknown (preserved on save)
+	uint16 bp6 = stream.readUint16LE();  // +2: current sequence position
+	uint16 bp8 = stream.readUint16LE();  // +4: repeat counter
+	uint16 bp0A = stream.readUint16LE(); // +6: loop start position
+	uint16 bp10 = stream.readUint16LE(); // +8: delay counter
+	uint16 bp0E = stream.readUint16LE() + 1; // +10: sequence length (stored as len-1)
 
-	// bp-22h
-	uint16 bp22 = stream.readUint16LE();
-	// bp-6h
-	uint16 bp6 = stream.readUint16LE();
-	// bp-8h
-	uint16 bp8 = stream.readUint16LE();
-	// bp-0Ah
-	uint16 bp0A = stream.readUint16LE();
-	// bp-10h
-	uint16 bp10 = stream.readUint16LE();
-	// bp-0Eh
-	uint16 bp0E = stream.readUint16LE() + 1;
-
-	stream.seek(bp6 - 1, SEEK_CUR);
-	uint8 bp0C = stream.readByte();
 	if (bpp8 == 0x1) {
-		// l00B7_14B4:
-		bp8 = 0x00;
-		bp10 = 0x00;
-		bp6 = 0x01;
-
-	} else if (bpp8 >= 0x65) {
-		if (bpp8 <= 0xA4) {
-			bp6 = bpp8 - 0x64;
-			bp8 = bp10 = 0x00;
-			if (bp6 > bp0E) {
-				bp6 = 0x01;
-			}
+		// Mode 1: reset to frame 1
+		bp8 = 0;
+		bp10 = 0;
+		bp6 = 1;
+	} else if (bpp8 >= 0x65 && bpp8 <= 0xA4) {
+		// Mode 100+N: jump to frame N
+		bp6 = bpp8 - 0x64;
+		bp8 = 0;
+		bp10 = 0;
+		if (bp6 > bp0E) {
+			bp6 = 1;
 		}
 	}
-	// l00B7_14EF:
-	// TODO: Do I have the comparisons right between bp6 and bp0E throughout the function?
+
 	if (bp6 >= bp0E) {
-		// l00B7_14F7:
 		bp6 = 1;
 	}
 
-	// l00B7_14FD:
-	// TODO: Look end condition
+	// Parse sequence commands until we hit a frame index (>= 10)
+	uint8 bp0C;
 	while (true) {
 		if (bp6 >= bp0E) {
-			// l00B7_14F7:
 			bp6 = 1;
 		}
-		// l00B7_150A:
-		stream.seek(0x0B, SEEK_SET);
-		stream.seek(bp6, SEEK_CUR);
+		stream.seek(0x0B + bp6, SEEK_SET);
 		bp0C = stream.readByte();
 		if (bp0C == 0x01) {
-			// l00B7_151F:
+			// Set repeat counter, record loop start
 			bp6++;
 			bp8 = stream.readByte();
 			bp6++;
 			bp0A = bp6;
 		} else if (bp0C == 0x02) {
-			// l00B7_1539:
-			// TODO: Continue here
+			// Set delay counter
 			bp6++;
 			bp10 = stream.readByte();
 			bp6++;
 		} else if (bp0C == 0x03) {
-			// l00B7_154B:
-			// TODO: No idea why we would increment first
-			bp6++;
+			// Jump to position
 			bp6 = stream.readByte();
 		} else {
 			break;
 		}
 	}
-	// l00B7_1554:
+
+	// Seek to frame data table (past sequence table)
 	uint16 cx = bp0C - 0xA;
-	stream.seek(0xB, SEEK_SET);
-	stream.seek(bp0E, SEEK_CUR);
-	uint16 bp24 = stream.readUint16LE();
-	if (cx > bp24) {
-		// l00B7_156A:
+	stream.seek(0xB + bp0E, SEEK_SET);
+	uint16 frameCount = stream.readUint16LE();
+	if (cx > frameCount) {
 		cx = 1;
 	}
-	// l00B7_156D:
+
+	// Skip to target frame (cx is 1-based frame number)
 	for (; cx > 1; cx--) {
-		// TODO: Check if the logic for the loop works out like this
-		stream.readUint16LE(); // bp1A
-		stream.readUint16LE(); // bp1C
-		stream.seek(0x2, SEEK_CUR);
-		uint16 bp16 = stream.readUint16LE();
-		uint16 bp18 = stream.readUint16LE();
-		// This is the amount of bytes of the frame (width * height)
-		uint16 bx = bp16 * bp18;
-		stream.seek(bx, SEEK_CUR);
+		stream.seek(0x6, SEEK_CUR); // skip offsetX, offsetY, unknown
+		uint16 w = stream.readUint16LE();
+		uint16 h = stream.readUint16LE();
+		stream.seek(w * h, SEEK_CUR);
 	}
 
-	// l00B7_158D:
-	// TODO: Due to difference in implementation of the loop, I don't need to rewind,
-	// but am probably doing a
-	// stream.seek(-6, SEEK_CUR);
 	uint16 bp12 = stream.pos();
-	// TODO: Check if indendation is right here
-	if (bpp8 == 0x02) {
-		if (bp0C >= 0xA) {
-			// l00B7_15A2:
-			bp6++;
-			if (bp10 > 0) {
-				bp10--;
-			}
-			// l00B7_15AE:
-			if (bp10 == 0) {
-				// l00B7_15B4:
-				if (bp8 > 0) {
-					// l00B7_15BA:
-					bp8--;
-					bp6 = bp0A;
-				}
-			}
+
+	// Mode 2: advance sequence position after finding current frame
+	if (bpp8 == 0x02 && bp0C >= 0xA) {
+		bp6++;
+		if (bp10 > 0) {
+			bp10--;
+		}
+		if (bp10 == 0 && bp8 > 0) {
+			bp8--;
+			bp6 = bp0A;
 		}
 	}
-	// l00B7_15C3:
+
 	if (bp6 >= bp0E) {
 		bp6 = 1;
 	}
-	// l00B7_15D0:
+
+	// Save state back to blob header
 	if (bpp6) {
-		// l00B7_15D6:
 		stream.seek(0, SEEK_SET);
 		stream.writeUint16LE(bp22);
 		stream.writeUint16LE(bp6);
@@ -1847,19 +1820,6 @@ uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, boo
 		stream.writeUint16LE(bp10);
 	}
 
-	// l00B7_15EF:
-	// TODO: Check what these writes are
-	/*
-	* mov	ax,[bp-1Ah]
-	les	di,[bp+0Eh]
-	mov	es:[di],ax
-	mov	ax,[bp-1Ch]
-	les	di,[bp+0Ah]
-	mov	es:[di],ax
-	*/
-	// TODO: Check what value exactly the original returns,
-	// if we have bp+6h==1, we will mess up our posiition
-	// return stream.pos();
 	return bp12;
 }
 
