@@ -198,7 +198,7 @@ bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool rec
 		centerGameplayAim();
 
 	splayer->setCurVideoFlags(flags);
-	splayer->play(filename, 12);
+	splayer->play(filename, 15);
 	if (recordFrame)
 		_deathFrame = splayer->_frame;
 	return !_vm->shouldQuit();
