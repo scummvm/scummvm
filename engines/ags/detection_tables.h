@@ -325,6 +325,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ghostdream", "Ghostdream" },
 	{ "ghostman", "Ghostman: The Council Calamity" },
 	{ "gigant", "Gigant" },
+	{ "gobliiins5", "Gobliiins5 - L'Invasion des Morglotons" },
 	{ "gobliiins5-1", "Gobliiins5 - L'Invasion des Morglotons Part1/Demo" },
 	{ "gobliiins5-2", "Gobliiins5 - L'Invasion des Morglotons Part2" },
 	{ "gobliiins5-3", "Gobliiins5 - L'Invasion des Morglotons Part3" },
@@ -5012,6 +5013,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("gobliiins5-1", "Gobliiins5-Part1.ags", "41513db1bd8870e43426b9e94bb26ad1", 171800863),
 	// Steam release 2023-11-16
 	GAME_ENTRY_STEAM("gobliiins5-1", "Gobliiins5-Part1.ags", "41513db1bd8870e43426b9e94bb26ad1", 171800709),
+	// Gobliiins Collection release 2026-05-27
+	GAME_ENTRY_PLATFORM("gobliiins5", "Gobliiins5.ags", "58c44c065cbdbddf83e9535ef17ed51f", 281472880, "Switch"),
+
 
 	// Itch.io v? release 2026-02-10
 	GAME_ENTRY("gobliins6", "Gobliins6.exe", "t:aac0f0616ede4ec1d4300103b008f34b", 1287053862),
