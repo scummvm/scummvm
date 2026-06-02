@@ -1184,6 +1184,10 @@ bool View1::msgAction(const ActionMessage &msg) {
 		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_i, 'i')));
 	case Macs2::kMacs2ActionMenu:
 		return msgKeypress(KeypressMessage(Common::KeyState(Common::KEYCODE_n, 'n')));
+	case Macs2::kMacs2ActionGameSpeed:
+		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
+		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
+		return true;
 	default:
 		break;
 	}
@@ -1200,13 +1204,6 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		if (g_engine->_scriptExecutor->skipToEndOfSkippableSection()) {
 			g_engine->_scriptExecutor->run();
 		}
-		return true;
-	}
-
-	// Ctrl+T cycles game speed mode 0->1->2->0 (original: g_wGameSpeedMode at 1020:0214)
-	if (msg.keycode == Common::KEYCODE_t && (msg.flags & Common::KBD_CTRL)) {
-		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
-		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
 		return true;
 	}
 
@@ -1239,12 +1236,6 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 				setInventorySource(_inventorySource);
 			}
 		}
-	}
-	if (msg.ascii == (uint16)'b') {
-		// Debug background reset/fade shortcut.
-		_backgroundSurface.copyFrom(g_engine->_bgImageShip);
-		startFading();
-		redraw();
 	}
 
 	// TODO: only open ui components like inventory or main menu if the cursor is not in wait mode - otherwise this might
