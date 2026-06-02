@@ -1107,7 +1107,7 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 	return result;
 }
 
-// Binary findNearestPathNode (1008:1390): integer Euclidean distance approximation.
+// Binary euclideanDistance (1008:1390): integer Euclidean distance approximation.
 // Iterates i from 0 until i^2 >= dx^2 + dy^2. Capped at 0x500.
 int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &b) {
 	int32 dx = abs((int)(b.x - a.x));
@@ -1119,8 +1119,8 @@ int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &
 	return i;
 }
 
-// Binary findPathNode (1008:1293): distance between two nodes IF walkable, else 0x500.
-int Macs2Engine::pathNodeDistance(int nodeA, int nodeB) {
+// Binary walkableDistance (1008:1293): distance between two nodes IF walkable, else 0x500.
+int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 	const Common::Point &a = pathfindingPoints[nodeA - 1]._position;
 	const Common::Point &b = pathfindingPoints[nodeB - 1]._position;
 	if (!isPathWalkable(a.y, a.x, b.y, b.x))
@@ -1130,9 +1130,9 @@ int Macs2Engine::pathNodeDistance(int nodeA, int nodeB) {
 
 // Binary buildPathFromNodes (1008:15a8): recursive DFS cost to reach a reachable node.
 // Full recursive DFS with visited-stack cycle detection matching binary exactly.
-// Terminal: returns pathNodeDistance(node, finalDest) when node is reachable.
-// Recursive: min(buildPathFromNodes(adj)) + pathNodeDistance(bestAdj, current).
-int Macs2Engine::buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest) {
+// Terminal: returns walkableDistance(node, finalDest) when node is reachable.
+// Recursive: min(computeMinCostToReachable(adj)) + walkableDistance(bestAdj, current).
+int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest) {
 	// Static visited stack (matches binary's stack-frame approach, max 16 nodes)
 	static int visitedStack[17];
 	static int visitedCount = 0;
@@ -1177,7 +1177,7 @@ int Macs2Engine::buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 acto
 			if (alreadyVisited) continue;
 
 			// Recursive call
-			int cost = buildPathFromNodesCost(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
+			int cost = computeMinCostToReachable(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
 			if (cost < bestCost) {
 				bestAdj = adj;
 				bestCost = cost;
@@ -1187,7 +1187,7 @@ int Macs2Engine::buildPathFromNodesCost(int nodeIndex, int prevNode, uint16 acto
 
 	if (bestCost < 0x7777) {
 		// Add edge cost: walkable distance from bestAdj to current node
-		result = bestCost + pathNodeDistance(bestAdj, nodeIndex);
+		result = bestCost + walkableDistance(bestAdj, nodeIndex);
 	} else {
 		result = 0x7777;
 	}

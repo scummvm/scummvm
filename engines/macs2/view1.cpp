@@ -2126,8 +2126,8 @@ bool Character::calculatePath(Common::Point target) {
 		int costToDest = g_engine->euclideanDistance(nodePos, target);
 		int costToChar = g_engine->euclideanDistance(nodePos, charPos);
 		if (costToDest + costToChar < bestCost) {
-			// Verify this node can connect source to target (findShortestPath)
-			if (findShortestPath(i, charPos, target, reachable, nodeCount)) {
+			// Verify this node can connect source to target
+			if (canNodeConnectSourceToTarget(i, charPos, target, reachable, nodeCount)) {
 				// Recompute cost (binary does this twice)
 				costToDest = g_engine->euclideanDistance(nodePos, target);
 				costToChar = g_engine->euclideanDistance(nodePos, charPos);
@@ -2154,8 +2154,8 @@ bool Character::calculatePath(Common::Point target) {
 		int nextNode = currentNode;
 		for (uint a = 0; a < curPt._adjacentPoints.size(); a++) {
 			int adjIdx = curPt._adjacentPoints[a];
-			int cost = g_engine->buildPathFromNodesCost(adjIdx, 0x7fff, _gameObject->_index, reachable, nodeCount, target);
-			int edgeCost = g_engine->pathNodeDistance(adjIdx, currentNode);
+			int cost = g_engine->computeMinCostToReachable(adjIdx, 0x7fff, _gameObject->_index, reachable, nodeCount, target);
+			int edgeCost = g_engine->walkableDistance(adjIdx, currentNode);
 			if (cost + edgeCost < localBestCost) {
 				nextNode = adjIdx;
 				localBestCost = cost + edgeCost;
@@ -2193,7 +2193,7 @@ bool Character::calculatePath(Common::Point target) {
 	return true;
 }
 
-bool Character::findShortestPath(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount) {
+bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount) {
 	// Binary findShortestPath (1008:14d4).
 	// Checks if node can connect source (charPos) to target:
 	// 1. Node must be able to see the target
@@ -2205,7 +2205,7 @@ bool Character::findShortestPath(uint16 nodeIndex, const Common::Point &charPos,
 
 	// Flood-fill connected nodes
 	bool visited[17] = {};
-	floodFillNodes(nodeIndex, visited, nodeCount);
+	floodFillConnectedNodes(nodeIndex, visited, nodeCount);
 
 	// Check both conditions
 	bool anySeesTarget = false;
@@ -2221,13 +2221,13 @@ bool Character::findShortestPath(uint16 nodeIndex, const Common::Point &charPos,
 	return anySeesTarget && anySeenFromSource;
 }
 
-void Character::floodFillNodes(int nodeIndex, bool *visited, int nodeCount) {
+void Character::floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCount) {
 	if (nodeIndex < 1 || nodeIndex > nodeCount) return;
 	if (visited[nodeIndex]) return;
 	visited[nodeIndex] = true;
 	const PathfindingPoint &pt = g_engine->pathfindingPoints[nodeIndex - 1];
 	for (uint i = 0; i < pt._adjacentPoints.size(); i++) {
-		floodFillNodes(pt._adjacentPoints[i], visited, nodeCount);
+		floodFillConnectedNodes(pt._adjacentPoints[i], visited, nodeCount);
 	}
 }
 
