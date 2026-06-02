@@ -1145,7 +1145,7 @@ static void showSceneMapsWindow() {
 			}
 			surface = &overlayComposite;
 		} else if (selectedTab == 3) {
-			surface = &g_engine->_map;
+			surface = &g_engine->_hotspotMap;
 		} else if (selectedTab == 6) {
 			surface = &g_engine->_shadowMap;
 		} else if (selectedTab == 4) {
@@ -1154,7 +1154,7 @@ static void showSceneMapsWindow() {
 		} else if (selectedTab == 5) {
 			// Hotspot Overlay: hotspot map with character positions and override info
 			static Graphics::ManagedSurface hotspotOverlay;
-			hotspotOverlay.copyFrom(g_engine->_map);
+			hotspotOverlay.copyFrom(g_engine->_hotspotMap);
 			View1 *view = (View1 *)g_engine->findView("View1");
 			if (view) {
 				for (uint i = 0; i < view->_characters.size(); i++) {

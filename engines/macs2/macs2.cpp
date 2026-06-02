@@ -257,7 +257,7 @@ void Macs2Engine::readResourceFile() {
 	_depthMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_pathfindingMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_shadowMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_map.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_hotspotMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_shadingTable.resize(256);
 	changeScene(Scenes::instance()._currentSceneIndex);
 }
@@ -496,10 +496,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	Graphics::ManagedSurface shadowRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	_shadowMap.blitFrom(shadowRLE);
 
-	// Offset 401Fh
-	// This is the first map used in 0037:10C4 for the lookup of interacted hotspots
+	// Offset 401Fh - Hotspot/interaction map (320x200, pixel value = hotspot color index)
 	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
-	_map.copyFrom(bgMap);
+	_hotspotMap.copyFrom(bgMap);
 
 	// Pretty sure that this is the pathfinding points. We address them starting
 	// Load pathfinding nodes (16 entries x 10 bytes at scene+0x5023)
@@ -1060,11 +1059,11 @@ void Macs2Engine::dumpStream(Common::MemoryReadStream *s, uint16 len) {
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
 	// TODO: Abstract the screen sizes
-	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200 || _map.w == 0) {
+	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200 || _hotspotMap.w == 0) {
 		return result;
 	}
 
-	uint8 firstLookup = _map.getPixel(p.x, p.y);
+	uint8 firstLookup = _hotspotMap.getPixel(p.x, p.y);
 	uint16 numHotspots = _numHotspots;
 
 	uint8 i = 1;

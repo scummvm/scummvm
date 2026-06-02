@@ -210,7 +210,7 @@ public:
 
 	Script::ScriptExecutor *_scriptExecutor;
 	Graphics::ManagedSurface _bgImageShip;
-	Graphics::ManagedSurface _map;
+	Graphics::ManagedSurface _hotspotMap;
 
 	// File offset to the map mode image for the current scene (scene table entry +8).
 	// When 0, the map mode is unavailable for this scene.
