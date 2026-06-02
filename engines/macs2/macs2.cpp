@@ -1857,29 +1857,13 @@ void BackgroundAnimationBlob::mirrorAnimBlob(Common::Array<uint8> &blob) {
 	}
 }
 
+// Returns sequence length from blob header (matches getAnimFrameCount at 1010:168c).
+// Reads word at blob+10 and adds 1.
 uint16 BackgroundAnimationBlob::getAnimFrameCount(Common::Array<uint8> &blob) {
-	// [bp-2h]
-	uint16 result;
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(blob.data(), blob.size());
-	stream->seek(0xA);
-	uint16 bp4 = stream->readUint16LE();
-	bp4++;
-	stream->seek(0xA + bp4 - 2);
-	uint8 bp6 = stream->readByte();
-	if (bp4 == 0x3) {
-		// l00B7_16AF:
-		result = 0;
-	}
-	// l00B7_16B4:
-	if (bp6 != 0x3) {
-		// l00B7_16BA:
-		result = 0;
-	}
-	// l00B7_16BF:
-	// TODO: I only realized this after finishing the function, but it looks like
-	// the calculations in between are actually superfluous
-	result = bp4;
-	return result;
+	Common::MemoryReadStream stream(blob.data(), blob.size());
+	stream.seek(0xA);
+	uint16 count = stream.readUint16LE();
+	return count + 1;
 }
 
 int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
