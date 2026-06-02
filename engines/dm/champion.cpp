@@ -59,7 +59,7 @@ void Champion::resetToZero() {
 	_directionMaximumDamageReceived = _maximumDamageReceived = _poisonEventCount = _enableActionEventIndex = 0;
 	_hideDamageReceivedIndex = _currHealth = _maxHealth = _currStamina = _maxStamina = _currMana = _maxMana = 0;
 	_actionDefense = _food = _water = _load = _shieldDefense = 0;
-	memset(_portrait, 0, 464);
+	memset(_portrait, 0, sizeof(_portrait));
 }
 
 void Champion::setWoundsFlag(ChampionWound flag, bool value) {
