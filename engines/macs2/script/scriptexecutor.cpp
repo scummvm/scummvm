@@ -511,22 +511,11 @@ bool ScriptExecutor::loadNextScript() {
 }
 
 byte Script::ScriptExecutor::readByte() {
-	const int64 pos = _stream->pos();
-	const byte result = _stream->readByte();
-	// if (isSkipping) {
-	//  TODO: This had the output channel active, to consider if I want to handle this separately
-	// debugC(DEBUG_SV,"Script read (byte): %.2x at location %.4x", result, pos);
-	//} else {
-	debug("Script read (byte): %.2x at location %.4x", result, (uint32)pos);
-	//}
-	return result;
+	return _stream->readByte();
 }
 
 uint16 Script::ScriptExecutor::readUint16() {
-	const int64 pos = _stream->pos();
-	const uint16 result = _stream->readUint16LE();
-	debug("Script read (word): %.4x at location %.4x", result, (uint32)pos);
-	return result;
+	return _stream->readUint16LE();
 }
 
 void Script::ScriptExecutor::scriptSetVar() {
