@@ -71,7 +71,6 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_bitmapCompressedByteCount = nullptr;
 	_bitmapDecompressedByteCount = nullptr;
 	_packedBitmaps = nullptr;
-	_bitmaps = nullptr;
 	_tmpBitmap = nullptr;
 	_bitmapFloor = nullptr;
 	_bitmapCeiling = nullptr;
@@ -118,8 +117,6 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_inscriptionThing = _vm->_thingNone;
 	_useByteBoxCoordinates = false;
 
-	_bitmapCeiling = nullptr;
-	_bitmapFloor = nullptr;
 	_bitmapWallSetD3L2 = nullptr;
 	_bitmapWallSetD3R2 = nullptr;
 	_bitmapWallSetD3LCR = nullptr;

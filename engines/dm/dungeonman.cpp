@@ -415,7 +415,6 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_dungeonColumCount = 0;
 	_dungeonMapsFirstColumnIndex = nullptr;
 
-	_dungeonColumCount = 0;
 	_dungeonColumnsCumulativeSquareThingCount = nullptr;
 	_squareFirstThings = nullptr;
 	_dungeonTextData = nullptr;
