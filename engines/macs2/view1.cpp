@@ -1101,7 +1101,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		// uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
-		// uint32 value = g_engine->_map.getPixel(msg._pos.x, msg._pos.y);
+		// uint32 value = g_engine->_hotspotMap.getPixel(msg._pos.x, msg._pos.y);
 		// g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
 		// g_engine->CalculatePath(Common::Point(154, 136), Common::Point(msg._pos.x, msg._pos.y));
 
