@@ -1061,6 +1061,9 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			// selected item so it can be reused on other scene objects.
 			if (g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::UseInventory) {
 				_activeInventoryItem = nullptr;
+				g_engine->_scriptExecutor->_inventoryActionFlag = false;
+			} else {
+				g_engine->_scriptExecutor->_inventoryActionFlag = true;
 			}
 
 			// Set the script
