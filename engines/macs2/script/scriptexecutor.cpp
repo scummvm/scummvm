@@ -1111,12 +1111,16 @@ bool Script::ScriptExecutor::scriptSetupObject() {
 		return false;
 	}
 
-	if (slotID < 1 || slotID > ARRAYSIZE(object->_runtimeSlotValues)) {
+	if (slotID < 1 || slotID > 0x15) {
 		warning("Ignoring object slot setup for invalid slot %u on object %d", slotID, objectID);
 		return false;
 	}
 
-	object->_runtimeSlotValues[slotID - 1] = value;
+	// Binary writes to runtime+slot*0x10+0x30 which is the per-slot animation speed.
+	// walkAlongPath reads from the same offset. This is _blobSpeeds in ScummVM.
+	if ((uint)(slotID - 1) < object->_blobSpeeds.size()) {
+		object->_blobSpeeds[slotID - 1] = value;
+	}
 	return true;
 }
 
