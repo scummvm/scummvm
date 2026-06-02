@@ -22,6 +22,10 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "macs2/detection.h"
 #include "macs2/macs2.h"
 #include "macs2/metaengine.h"
@@ -51,6 +55,47 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 const char *Macs2MetaEngine::getName() const {
 	return "macs2";
+}
+
+Common::KeymapArray Macs2MetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Macs2;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "macs2", "Macs2");
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Interact"));
+	act->setCustomEngineActionEvent(kMacs2ActionInteract);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Change cursor mode"));
+	act->setCustomEngineActionEvent(kMacs2ActionCursorMode);
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kMacs2ActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent(kMacs2ActionInventory);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MENU", _("Menu"));
+	act->setCustomEngineActionEvent(kMacs2ActionMenu);
+	act->addDefaultInputMapping("n");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 Common::Error Macs2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
