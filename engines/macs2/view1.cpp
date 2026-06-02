@@ -1726,6 +1726,15 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	_dialogueChoiceCount = 0;
 	_continueScriptAfterUI = true;
 
+	// TTS: speak the dialogue text
+	Common::String ttsText;
+	for (const Common::String &line : strings) {
+		if (!ttsText.empty())
+			ttsText += " ";
+		ttsText += line;
+	}
+	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT);
+
 	currentSpeechActData.speaker = getCharacterByIndex(characterIndex);
 	currentSpeechActData.strings = strings;
 	currentSpeechActData.position = position;
@@ -1934,6 +1943,18 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 			joinedLines.push_back(currentLine);
 		}
 	}
+
+	// TTS: speak the dialogue choices
+	Common::String ttsText;
+	for (uint i = 0; i < choices.size(); i++) {
+		if (!ttsText.empty())
+			ttsText += ". ";
+		ttsText += Common::String::format("%u: ", i + 1);
+		for (const Common::String &line : choices[i]) {
+			ttsText += line + " ";
+		}
+	}
+	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT);
 
 	showSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
 	_isShowingDialogueChoice = true;

@@ -41,6 +41,7 @@ extern const PlainGameDescriptor macs2Games[];
 extern const ADGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS GUIO_GAMEOPTIONS2
 
 } // End of namespace Macs2
 
