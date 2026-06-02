@@ -318,6 +318,7 @@ MODULE_OBJS = \
 	plugins/ags_bm_font_renderer/ags_bm_font_renderer.o \
 	plugins/ags_clipboard/ags_clipboard.o \
 	plugins/ags_collision_detector/ags_collision_detector.o \
+	plugins/ags_console_sys_plugin/ags_console_sys_plugin.o \
 	plugins/ags_consoles/ags_consoles.o \
 	plugins/ags_controller/ags_controller.o \
 	plugins/ags_controller/ags_controller_arcnor.o \

@@ -27,6 +27,7 @@
 #include "ags/plugins/ags_bm_font_renderer/ags_bm_font_renderer.h"
 #include "ags/plugins/ags_clipboard/ags_clipboard.h"
 #include "ags/plugins/ags_collision_detector/ags_collision_detector.h"
+#include "ags/plugins/ags_console_sys_plugin/ags_console_sys_plugin.h"
 #include "ags/plugins/ags_consoles/ags_consoles.h"
 #include "ags/plugins/ags_controller/ags_controller.h"
 #include "ags/plugins/ags_controller/ags_controller_arcnor.h"
@@ -95,6 +96,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSConsoles"))
 		return new AGSConsoles::AGSConsoles();
 
+	if (fname.equalsIgnoreCase("AGSConsoleSysPlugin") || fname.equalsIgnoreCase("ags_console_system_plugin"))
+		return new AGSConsoleSysPlugin::AGSConsoleSysPlugin();
+
 	if (fname.equalsIgnoreCase("AGSController") || fname.equalsIgnoreCase("agscontrollerpulp"))
 		return new AGSController::AGSController();
 
@@ -161,7 +165,7 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 		return new AGSGalaxySteam::AGSWadjetEyeSteam();
 
 	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||
-	        fname.equalsIgnoreCase("agsteam-disjoint"))
+	        fname.equalsIgnoreCase("agsteam-disjoint") || fname.equalsIgnoreCase("ags_achievements"))
 		return new AGSGalaxySteam::AGSSteam();
 
 	if (fname.equalsIgnoreCase("AGSTouch"))
