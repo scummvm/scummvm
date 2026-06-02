@@ -708,6 +708,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	object->_position = Common::Point(x, y);
 
 	// Step 3: Add to render list if object is now visible in current scene.
+	// Actor is excluded - handled separately by changeScene.
 	if (objectID != actorIndex) {
 		bool isInCurrentScene = (sceneID == currentScene);
 		if (!isInCurrentScene && sceneID == actorIndex + 0x400) {
