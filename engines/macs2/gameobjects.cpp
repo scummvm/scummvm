@@ -99,6 +99,7 @@ Common::Array<uint8> Macs2::Scenes::readSpecialAnimBlob(uint16 index, Common::Me
 void Macs2::GameObjects::init() {
 	_objectNames.resize(0xFF);
 	// TODO: Make a text file instead
+	_objectNames[0x08] = "Brett"; // leer
 	_objectNames[0x10] = "Holzfass"; // leer
 	_objectNames[0x11] = "Bowiemesser";
 	_objectNames[0x17] = "Hutschachtel"; // leer und offen
