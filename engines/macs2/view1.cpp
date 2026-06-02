@@ -1815,11 +1815,10 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		// Adjust the position based on the scale
 		Common::Point actualPosition = current->getPosition() - Common::Point(0, current->getVerticalOffset());
 
-		// Binary drawAllCharacters (1008:90a2) three draw modes:
-		//   HasScaling (+0x186) ON  → drawAnimFrameDepth (scaled + depth-tested + shaded)
-		//   HasScaling OFF, HasShading (+0x185) ON → drawAnimFrameShaded (shaded, no scaling)
-		//   HasScaling OFF, HasShading OFF → drawAnimFrame (plain)
-		// Shadow intensity from getShadingValueAt (scene+0x301B), clamped to 32 max.
+		// Binary drawAllCharacters (1008:90a2) three draw modes based on per-object flags:
+		//   HasScaling (+0x186) ON  -> depth-tested + scaled + shaded
+		//   HasScaling OFF, HasShading (+0x185) ON -> depth-tested + shaded (no scaling)
+		//   Both OFF -> plain blit (no depth test, no shading)
 		uint8 shadowIntensity = 0;
 		if (g_engine->_shadowMap.w > 0) {
 			int sx = CLIP<int>(current->getPosition().x, 0, 319);
@@ -1828,13 +1827,10 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		}
 
 		if (current->_gameObject->_hasScaling) {
-			// Scaled + depth-tested + shaded mode
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
 		} else if (current->_gameObject->_hasShading) {
-			// Shaded mode (no scaling): draw at 100% size but apply shading
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
 		} else {
-			// Plain mode: no depth test, no shading, no scaling
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, false, depth, s, 0);
 		}
 
