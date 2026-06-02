@@ -494,6 +494,39 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 	}
 }
 
+Common::Point InsaneRebel2::getHandler7ShipDrawPoint() {
+	int shipCenterX = (_flyShipScreenX - 0xd4) + _perspectiveX + 160 + _viewX;
+	int shipCenterY = (_flyShipScreenY - 0x82) + _perspectiveY + 100 + _viewY;
+
+	if (!_flyShipSprite || _flyShipSprite->getNumChars() <= 0)
+		return Common::Point(shipCenterX - 0xd4, shipCenterY - 0x82);
+
+	int spriteIndex = CLIP<int>(_shipDirectionIndex, 0, _flyShipSprite->getNumChars() - 1);
+	return Common::Point(shipCenterX - _flyShipSprite->getCharWidth(spriteIndex) / 2,
+	                     shipCenterY - _flyShipSprite->getCharHeight(spriteIndex) / 2);
+}
+
+Common::Point InsaneRebel2::getHandler7ProjectedPoint() {
+	int viewTilt = (_viewShift * 5) / 128;
+	int xSkew = (viewTilt * 9) / 4;
+	int ySkew = viewTilt * 5;
+	int relX = _flyShipScreenX - (_perspectiveX + 0xd4);
+	int relY = _flyShipScreenY - (_perspectiveY + 0x82);
+	int projectedX = (xSkew * relY) / 0x55 + relX + 0xa0 + _viewX;
+	int projectedY = relY + 0x55 - (ySkew * relX) / 0xa0 + _viewY;
+
+	return Common::Point(projectedX, projectedY);
+}
+
+Common::Point InsaneRebel2::getHandler7ShotTargetPoint() {
+	// Retail handler 7 targets the projected ship/crosshair point computed in
+	// FUN_0040d836; it does not use the generic mouse position for combat shots.
+	Common::Point projected = getHandler7ProjectedPoint();
+
+	return Common::Point(projected.x + _smoothedVelocity / 2,
+	                     projected.y + ABS(_smoothedVelocity) / 4 - _verticalInput / 2 - 0x28);
+}
+
 // spawnSpaceShot -- Handler 7 space combat shot spawn (FUN_40D836).
 void InsaneRebel2::spawnSpaceShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
@@ -502,21 +535,30 @@ void InsaneRebel2::spawnSpaceShot(int x, int y) {
 			playSfx(6, 127, 0);
 
 			_spaceShots[i].counter = getShotMaxDuration();
-			_spaceShots[i].targetX = x;  // Screen coords
-			_spaceShots[i].targetY = y;
+			Common::Point projected = getHandler7ProjectedPoint();
+			Common::Point target = getHandler7ShotTargetPoint();
+			int tableIndex = CLIP<int>(_shipDirectionIndex, 0, 34);
 
-			// Calculate gun positions from direction-based lookup tables
-			// In the original, these come from tables indexed by _shipDirectionIndex
-			// DAT_004437c2/DAT_00443808 for left gun, DAT_0044384e/DAT_00443894 for right gun
-			// Use simplified positions relative to the ship.
-			int shipScreenX = 160 + ((_shipPosX - 160) >> 3);
-			int shipScreenY = 105 + ((_shipPosY - 40) >> 2);
+			_spaceShots[i].targetX = target.x;
+			_spaceShots[i].targetY = target.y;
 
-			// Gun offsets (approximate from disassembly)
-			_spaceShots[i].leftGunX = shipScreenX - 28;
-			_spaceShots[i].leftGunY = shipScreenY + 10;
-			_spaceShots[i].rightGunX = shipScreenX + 28;
-			_spaceShots[i].rightGunY = shipScreenY + 10;
+			// FUN_0040d836 uses muzzle tables loaded by FUN_0040fcfa from opcode
+			// 8 par4=12/13. Values are centered FLY coordinates, adjusted by
+			// the projected ship point before drawing the line.
+			if (_flyLeftGunTableLoaded) {
+				_spaceShots[i].leftGunX = projected.x + _flyLeftGunX[tableIndex] - 0xd4;
+				_spaceShots[i].leftGunY = projected.y + _flyLeftGunY[tableIndex] - 0x82;
+			} else {
+				_spaceShots[i].leftGunX = projected.x - 28;
+				_spaceShots[i].leftGunY = projected.y + 10;
+			}
+			if (_flyRightGunTableLoaded) {
+				_spaceShots[i].rightGunX = projected.x + _flyRightGunX[tableIndex] - 0xd4;
+				_spaceShots[i].rightGunY = projected.y + _flyRightGunY[tableIndex] - 0x82;
+			} else {
+				_spaceShots[i].rightGunX = projected.x + 28;
+				_spaceShots[i].rightGunY = projected.y + 10;
+			}
 			_spaceShots[i].variant = _spaceShotDirection;
 			break;
 		}
@@ -975,34 +1017,6 @@ void InsaneRebel2::initLaserTexture(NutRenderer *nut, int spriteIdx) {
 
 	debug("Rebel2: Initialized laser texture %dx%d from sprite %d (xoff=%d yoff=%d src=%dx%d)",
 	      texWidth, texHeight, spriteIdx, srcXOff, srcYOff, srcWidth, srcHeight);
-
-	// Diagnostic: dump texture pixel stats to verify data is loaded correctly
-	if (_laserTexture.pixels && texWidth > 0 && texHeight > 0) {
-		int third = texWidth / 3;
-		int band1 = 0, band2 = 0, band3 = 0;
-		for (int row = 0; row < texHeight; row++) {
-			for (int col = 0; col < texWidth; col++) {
-				if (_laserTexture.pixels[row * texWidth + col] != 0) {
-					if (col < third)
-						band1++;
-					else if (col < third * 2)
-						band2++;
-					else
-						band3++;
-				}
-			}
-		}
-		debug("Rebel2: Texture non-zero pixels by band: [0-%d]=%d  [%d-%d]=%d  [%d-%d]=%d",
-			third - 1, band1, third, third * 2 - 1, band2, third * 2, texWidth - 1, band3);
-
-		// Dump first row hex (first 64 bytes)
-		Common::String hexRow;
-		int dumpLen = MIN(texWidth, (int16)64);
-		for (int col = 0; col < dumpLen; col++) {
-			hexRow += Common::String::format("%02x ", _laserTexture.pixels[col]);
-		}
-		debug("Rebel2: Texture row 0 (first %d): %s", dumpLen, hexRow.c_str());
-	}
 }
 
 // freeLaserTexture -- Emulates FUN_0040BBD1.
@@ -3052,9 +3066,9 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	if (spriteIndex >= numSprites)
 		spriteIndex = numSprites - 1;
 
-	// Simplified FUN_41C720-like transform to current render buffer coordinates.
-	int shipCenterX = (_flyShipScreenX - 0xd4) + _perspectiveX + 160 + _viewX;
-	int shipCenterY = (_flyShipScreenY - 0x82) + _perspectiveY + 100 + _viewY;
+	Common::Point shipDraw = getHandler7ShipDrawPoint();
+	int shipCenterX = shipDraw.x + 0xd4;
+	int shipCenterY = shipDraw.y + 0x82;
 
 	// FUN_40D836 lines 108-136: FLY002 proximity cues near corridor danger.
 	if (_flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
@@ -3103,11 +3117,8 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 		}
 	}
 
-	// Center the sprite on the position
-	int spriteW = _flyShipSprite->getCharWidth(spriteIndex);
-	int spriteH = _flyShipSprite->getCharHeight(spriteIndex);
-	int drawX = shipCenterX - spriteW / 2;
-	int drawY = shipCenterY - spriteH / 2;
+	int drawX = shipDraw.x;
+	int drawY = shipDraw.y;
 
 	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
 
@@ -4035,8 +4046,12 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	// Update target lock state and draw crosshair/reticle
 
 	// Target lock detection (DAT_00443676 equivalent)
-	Common::Point aimPos = getGameplayAimPoint();
-	Common::Point worldMousePos(aimPos.x + _viewX, aimPos.y + _viewY);
+	Common::Point aimPos = (_rebelHandler == 7) ? getHandler7ShotTargetPoint() : getGameplayAimPoint();
+	Common::Point worldMousePos = aimPos;
+	if (_rebelHandler != 7) {
+		worldMousePos.x += _viewX;
+		worldMousePos.y += _viewY;
+	}
 	bool targetLocked = false;
 
 	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
@@ -4083,8 +4098,12 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		int ch = _smush_iconsNut->getCharHeight(reticleIndex);
 
 		// Calculate crosshair position
-		int crosshairX = aimPos.x - cw / 2 + _viewX;
-		int crosshairY = aimPos.y - ch / 2 + _viewY;
+		int crosshairX = aimPos.x - cw / 2;
+		int crosshairY = aimPos.y - ch / 2;
+		if (_rebelHandler != 7) {
+			crosshairX += _viewX;
+			crosshairY += _viewY;
+		}
 
 		// Handler 25 (0x19): Add view offset to crosshair position
 		// From FUN_41DB5E lines 198-199: X = DAT_00457914 + DAT_0045790c, Y = DAT_00457916 + DAT_0045790e

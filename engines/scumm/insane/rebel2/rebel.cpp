@@ -347,6 +347,12 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_spaceShots[i].variant = 0;
 	}
 	_spaceShotDirection = 0;
+	memset(_flyLeftGunX, 0, sizeof(_flyLeftGunX));
+	memset(_flyLeftGunY, 0, sizeof(_flyLeftGunY));
+	memset(_flyRightGunX, 0, sizeof(_flyRightGunX));
+	memset(_flyRightGunY, 0, sizeof(_flyRightGunY));
+	_flyLeftGunTableLoaded = false;
+	_flyRightGunTableLoaded = false;
 
 	for (i = 0; i < 16; i++) {
 		_rebelEmbeddedHud[i].pixels = nullptr;
@@ -1474,7 +1480,7 @@ int32 InsaneRebel2::processMouse() {
 	// - Other gameplay handlers fire while button is held; slot counters still rate-limit.
 	bool triggerShot = (_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed;
 	if (triggerShot && isShootingAllowed()) {
-		Common::Point mousePos = getGameplayAimPoint();
+		Common::Point mousePos = (_rebelHandler == 7) ? getHandler7ShotTargetPoint() : getGameplayAimPoint();
 		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d",
 			mousePos.x, mousePos.y, _enemies.size());
 
@@ -1482,7 +1488,11 @@ int32 InsaneRebel2::processMouse() {
 		spawnShot(mousePos.x, mousePos.y);
 
 		// Calculate world position for hit testing
-		Common::Point worldMousePos(mousePos.x + _viewX, mousePos.y + _viewY);
+		Common::Point worldMousePos = mousePos;
+		if (_rebelHandler != 7) {
+			worldMousePos.x += _viewX;
+			worldMousePos.y += _viewY;
+		}
 
 		// Check for hit on any active enemy
 		Common::List<enemy>::iterator it;

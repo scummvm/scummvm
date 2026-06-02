@@ -544,6 +544,7 @@ public:
 	void scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par4);
 	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
 	bool loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
+	bool loadOpcode8Handler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
 	bool loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
 	bool loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
 	bool loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
@@ -607,6 +608,9 @@ public:
 
 	// Update target lock state and draw crosshair/reticle
 	void renderCrosshair(byte *renderBitmap, int pitch, int width, int height);
+	Common::Point getHandler7ShipDrawPoint();
+	Common::Point getHandler7ProjectedPoint();
+	Common::Point getHandler7ShotTargetPoint();
 
 	// Reset enemy active flags and collision zones at frame end
 	void frameEndCleanup();
@@ -618,6 +622,7 @@ public:
 
 	// Load Handler 7 FLY NUT sprites from IACT data
 	bool loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4);
+	bool loadHandler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
 
 	// Load turret HUD overlay NUT from ANIM data
 	bool loadTurretHudOverlay(byte *animData, int32 size, int16 par3);
@@ -985,6 +990,12 @@ public:
 	};
 	SpaceShot _spaceShots[2];
 	int16 _spaceShotDirection;  // DAT_0044374e - ship direction for gun lookup
+	int16 _flyLeftGunX[35];     // DAT_004437c2 - handler 7 left muzzle X table
+	int16 _flyLeftGunY[35];     // DAT_00443808 - handler 7 left muzzle Y table
+	int16 _flyRightGunX[35];    // DAT_0044384e - handler 7 right muzzle X table
+	int16 _flyRightGunY[35];    // DAT_00443894 - handler 7 right muzzle Y table
+	bool _flyLeftGunTableLoaded;
+	bool _flyRightGunTableLoaded;
 
 	// Handler-specific shot spawning
 	void spawnTurretShot(int x, int y);    // Handler 0x26

@@ -312,6 +312,12 @@ void InsaneRebel2::resetHandler7FlightState() {
 	_corridorBottomY = 0x104;
 	_facingRight = false;
 	_spaceShotDirection = 0;
+	memset(_flyLeftGunX, 0, sizeof(_flyLeftGunX));
+	memset(_flyLeftGunY, 0, sizeof(_flyLeftGunY));
+	memset(_flyRightGunX, 0, sizeof(_flyRightGunX));
+	memset(_flyRightGunY, 0, sizeof(_flyRightGunY));
+	_flyLeftGunTableLoaded = false;
+	_flyRightGunTableLoaded = false;
 
 	memset(_velocityHistory, 0, sizeof(_velocityHistory));
 	memset(_windHistoryX, 0, sizeof(_windHistoryX));

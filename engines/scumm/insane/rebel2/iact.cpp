@@ -1571,6 +1571,23 @@ bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, 
 	return false;
 }
 
+// ScummVM refactor helper for opcode 8 Handler 7 shot table loading, not a separate retail function.
+bool InsaneRebel2::loadOpcode8Handler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
+	// FUN_0040c3cc case 6:
+	//   par4=12 -> FUN_0040fcfa(text, DAT_004437c2, DAT_00443808)
+	//   par4=13 -> FUN_0040fcfa(text, DAT_0044384e, DAT_00443894)
+	if (_rebelHandler != 7 || (par4 != 12 && par4 != 13))
+		return false;
+
+	if (loadHandler7ShotTable(b, startPos, remaining, par4)) {
+		b.seek(startPos);
+		return true;
+	}
+
+	b.seek(startPos);
+	return false;
+}
+
 // ScummVM refactor helper for opcode 8 edge table loading, not a separate retail function.
 bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Edge Blend Table Loading (par4 == 1000)
@@ -1800,6 +1817,9 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	if (loadOpcode8Handler7FlySprites(b, startPos, remaining, par4))
 		return;
 
+	if (loadOpcode8Handler7ShotTable(b, startPos, remaining, par4))
+		return;
+
 	if (loadOpcode8EdgeTable(b, startPos, remaining, par4))
 		return;
 
@@ -1897,6 +1917,91 @@ bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, i
 
 	debug("Rebel2 Opcode 8: Loaded Handler25 shot-origin table (pairs=%d) idx5=(%d,%d) idx14=(%d,%d)",
 		count / 2, _grdShotOriginX[5], _grdShotOriginY[5], _grdShotOriginX[14], _grdShotOriginY[14]);
+	return true;
+}
+
+// loadHandler7ShotTable -- Parse handler 7 laser muzzle coordinate pairs from IACT payload.
+bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
+	// Retail FUN_0040fcfa parses 35 "%hd %hd" pairs from offset +18 in the IACT
+	// chunk into two parallel 35-entry tables. These tables are BSS globals in
+	// the EXE, so their values only exist in the SAN/IACT stream.
+	if (remaining < 12)
+		return false;
+
+	int64 savedPos = b.pos();
+	b.seek(startPos + 6);
+	uint32 textSize = b.readUint32LE();
+
+	int64 textPos = startPos + 10;
+	int64 maxAvail = remaining - 10;
+	if (maxAvail <= 0) {
+		b.seek(savedPos);
+		return false;
+	}
+
+	int64 bytesToRead = maxAvail;
+	if (textSize > 0 && (int64)textSize <= maxAvail)
+		bytesToRead = textSize;
+
+	char *buf = new char[(size_t)bytesToRead + 1];
+	b.seek(textPos);
+	b.read((byte *)buf, bytesToRead);
+	buf[bytesToRead] = '\0';
+
+	int16 vals[70];
+	int count = 0;
+	const char *p = buf;
+	const char *end = buf + bytesToRead;
+	while (p < end && count < 70) {
+		while (p < end && *p != '-' && *p != '+' && !Common::isDigit(*p))
+			++p;
+		if (p >= end)
+			break;
+
+		int sign = 1;
+		if (*p == '-' || *p == '+') {
+			if (*p == '-')
+				sign = -1;
+			++p;
+		}
+
+		if (p >= end || !Common::isDigit(*p))
+			continue;
+
+		int value = 0;
+		while (p < end && Common::isDigit(*p)) {
+			value = value * 10 + (*p - '0');
+			if (value > 32768)
+				value = 32768;
+			++p;
+		}
+
+		vals[count++] = (int16)CLIP<int>(sign * value, -32768, 32767);
+	}
+
+	delete[] buf;
+	b.seek(savedPos);
+
+	if (count < 70) {
+		debug("Rebel2 Opcode 8: Handler7 par4=%d shot table parse failed (count=%d)", par4, count);
+		return false;
+	}
+
+	int16 *tableX = (par4 == 12) ? _flyLeftGunX : _flyRightGunX;
+	int16 *tableY = (par4 == 12) ? _flyLeftGunY : _flyRightGunY;
+	for (int i = 0; i < 35; ++i) {
+		tableX[i] = vals[i * 2];
+		tableY[i] = vals[i * 2 + 1];
+	}
+
+	if (par4 == 12)
+		_flyLeftGunTableLoaded = true;
+	else
+		_flyRightGunTableLoaded = true;
+
+	debug("Rebel2 Opcode 8: Loaded Handler7 %s gun table idx0=(%d,%d) idx17=(%d,%d) idx34=(%d,%d)",
+		(par4 == 12) ? "left" : "right",
+		tableX[0], tableY[0], tableX[17], tableY[17], tableX[34], tableY[34]);
 	return true;
 }
 
