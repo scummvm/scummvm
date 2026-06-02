@@ -421,6 +421,8 @@ public:
 
 	uint32 getFeatures() const;
 
+	bool isDemo() const { return getFeatures() & ADGF_DEMO; }
+
 	/**
 	 * Returns the game Id
 	 */
