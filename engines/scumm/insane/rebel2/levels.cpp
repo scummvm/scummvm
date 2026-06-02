@@ -59,7 +59,7 @@ void InsaneRebel2::runGame() {
 
 	// Demo: just play the demo video and return
 	if (_vm->_game.features & GF_DEMO) {
-		splayer->play("OPEN/O_DEMO.SAN", 12);
+		splayer->play("OPEN/O_DEMO.SAN", 15);
 		return;
 	}
 
@@ -147,7 +147,7 @@ void InsaneRebel2::playIntroSequence() {
 	// Original: FUN_0041f4d0("OPEN/O_OPEN_A.SAN", 0x28, 0xffff, 0xffff, 0)
 	debug("Rebel2: Playing main intro (O_OPEN_A.SAN)");
 	splayer->setCurVideoFlags(0x28);
-	splayer->play("OPEN/O_OPEN_A.SAN", 12);
+	splayer->play("OPEN/O_OPEN_A.SAN", 15);
 
 	if (_vm->shouldQuit())
 		return;
@@ -157,7 +157,7 @@ void InsaneRebel2::playIntroSequence() {
 	// We play unconditionally (matches "Continue Intro" menu behavior)
 	debug("Rebel2: Playing additional intro (O_OPEN_B.SAN)");
 	splayer->setCurVideoFlags(0x28);
-	splayer->play("OPEN/O_OPEN_B.SAN", 12);
+	splayer->play("OPEN/O_OPEN_B.SAN", 15);
 }
 
 // playMissionBriefing -- Mission briefing screen (FUN_00415CF8).
@@ -167,7 +167,7 @@ void InsaneRebel2::playMissionBriefing() {
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x08);  // Briefing mode flag
-	splayer->play("OPEN/O_LEVEL.SAN", 12);
+	splayer->play("OPEN/O_LEVEL.SAN", 15);
 }
 
 // playCinematic -- Play a cinematic/cutscene video.
@@ -179,7 +179,7 @@ void InsaneRebel2::playCinematic(const char *filename) {
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve (0x20 | 0x08)
-	splayer->play(filename, 12);
+	splayer->play(filename, 15);
 }
 
 // playVideoWithText -- Video with progressive text overlay (FUN_004171c5).
@@ -201,7 +201,7 @@ void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x28);
-	splayer->play(filename, 12);
+	splayer->play(filename, 15);
 
 	_textOverlayActive = false;
 }
@@ -270,7 +270,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417327 adds | 8, so flags = 0x20 | 0x08 = 0x28
 	splayer->setCurVideoFlags(0x28);
-	splayer->play(filename.c_str(), 12);
+	splayer->play(filename.c_str(), 15);
 }
 
 // playLevelRetry -- Retry prompt video (LEVXX/XXRETRY.SAN, FUN_00417168).
@@ -288,7 +288,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
 	splayer->setCurVideoFlags(0x28);
-	splayer->play(filename.c_str(), 12);
+	splayer->play(filename.c_str(), 15);
 }
 
 // playLevelGameOver -- Game over video (FUN_00417ab2).
@@ -306,7 +306,7 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417ab2 adds | 8, so flags = 0x20 | 0x08 = 0x28
 	splayer->setCurVideoFlags(0x28);
-	splayer->play(filename.c_str(), 12);
+	splayer->play(filename.c_str(), 15);
 }
 
 // playEndingSequence -- Finale + credits + epilogue (FUN_0041bbe8).
@@ -363,7 +363,7 @@ void InsaneRebel2::playCreditsSequence() {
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x20);
-	splayer->play("OPEN/O_CREDIT.SAN", 12);
+	splayer->play("OPEN/O_CREDIT.SAN", 15);
 }
 
 void InsaneRebel2::centerGameplayAim() {
@@ -697,7 +697,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
 	splayer->setCurVideoFlags(0x28);
-	splayer->play(filename.c_str(), 12);
+	splayer->play(filename.c_str(), 15);
 }
 
 // playLevelRetryVariant -- Phase-specific retry video.
@@ -723,7 +723,7 @@ void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
 	splayer->setCurVideoFlags(0x28);
-	splayer->play(filename.c_str(), 12);
+	splayer->play(filename.c_str(), 15);
 }
 
 

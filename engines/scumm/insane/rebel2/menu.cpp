@@ -622,7 +622,7 @@ int InsaneRebel2::runMainMenu() {
 		// Play the menu video
 		// Input is processed in procPostRendering during playback
 		// When user confirms selection, _vm->_smushVideoShouldFinish is set
-		splayer->play(menuVideo.c_str(), 12);
+		splayer->play(menuVideo.c_str(), 15);
 
 		// Check for quit
 		if (_vm->shouldQuit()) {
@@ -678,9 +678,9 @@ int InsaneRebel2::runMainMenu() {
 			_menuInputActive = false;
 			// Play intro sequence again (O_OPEN_A/B)
 			splayer->setCurVideoFlags(0x20);
-			splayer->play("OPEN/O_OPEN_A.SAN", 12);
+			splayer->play("OPEN/O_OPEN_A.SAN", 15);
 			if (!_vm->shouldQuit()) {
-				splayer->play("OPEN/O_OPEN_B.SAN", 12);
+				splayer->play("OPEN/O_OPEN_B.SAN", 15);
 			}
 			// Restore menu state
 			_gameState = kStateMainMenu;
@@ -697,7 +697,7 @@ int InsaneRebel2::runMainMenu() {
 			_gameState = kStateCredits;
 			_menuInputActive = false;
 			splayer->setCurVideoFlags(0x20);
-			splayer->play("OPEN/O_CREDIT.SAN", 12);
+			splayer->play("OPEN/O_CREDIT.SAN", 15);
 			_gameState = kStateMainMenu;
 			_menuInputActive = true;
 			// Returns 1 in original -> stays at stage 1 (main menu)
@@ -780,7 +780,7 @@ int InsaneRebel2::runChapterSelect() {
 		splayer->setCurVideoFlags(0x28);
 
 		// Play O_LEVEL.SAN — preview thumbnails are rendered by FOBJ offset
-		splayer->play("OPEN/O_LEVEL.SAN", 12);
+		splayer->play("OPEN/O_LEVEL.SAN", 15);
 
 		if (_vm->shouldQuit()) {
 			setVirtualKeyboardVisible(false);
@@ -1233,7 +1233,7 @@ int InsaneRebel2::runLevelSelect() {
 
 		Common::String menuVideo = getRandomMenuVideo();
 		splayer->setCurVideoFlags(0x20);
-		splayer->play(menuVideo.c_str(), 12);
+		splayer->play(menuVideo.c_str(), 15);
 
 		if (_vm->shouldQuit()) {
 			setVirtualKeyboardVisible(false);
@@ -1732,7 +1732,7 @@ void InsaneRebel2::showTopPilots() {
 
 	Common::String menuVideo = getRandomMenuVideo();
 	splayer->setCurVideoFlags(0x20);
-	splayer->play(menuVideo.c_str(), 12);
+	splayer->play(menuVideo.c_str(), 15);
 
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
@@ -1839,7 +1839,7 @@ void InsaneRebel2::showOptionsMenu() {
 
 		Common::String menuVideo = getRandomMenuVideo();
 		splayer->setCurVideoFlags(0x20);
-		splayer->play(menuVideo.c_str(), 12);
+		splayer->play(menuVideo.c_str(), 15);
 	}
 
 	_gameState = kStateMainMenu;

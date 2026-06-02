@@ -159,7 +159,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve
 	splayer->setFastForwardFromFrame(0);
 	splayer->setFastForwardToFrame(startFrame > 0 ? startFrame : 0);
-	splayer->play(filename, 12);
+	splayer->play(filename, 15);
 
 	// Level-title text is only meant for the intro cinematic that armed it.
 	// Clear it even when the movie ended through ESC, so it cannot leak into
@@ -1693,7 +1693,7 @@ void InsaneRebel1::releaseInteractiveVideoInput() {
 }
 
 void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame) {
-	_vm->_splayer->play(filename, 12, videoOffset, videoStartFrame);
+	_vm->_splayer->play(filename, 15, videoOffset, videoStartFrame);
 	restoreInteractiveVideoAudioState();
 	_interactiveVideoActive = false;
 }
