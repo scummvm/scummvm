@@ -176,6 +176,31 @@ public:
 	bool isPlaybackReady() const { return _playbackReady != 0; }
 	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
 
+	// --- Debug state for ImGui visualization ---
+	static constexpr int kDebugRingSize = 512;
+
+	struct VoiceDebugState {
+		uint8 note = 0xFF;
+		uint8 channel = 0xFF;
+		uint8 volume = 0;
+		bool active = false;
+	};
+
+	struct DebugState {
+		VoiceDebugState voices[9];
+		uint8 masterVolume = 0;
+		uint16 activeMusicSlot = 0;
+		uint8 statusFlags = 0;
+		uint32 nextEventTimer = 0;
+		uint16 numOplChannels = 0;
+		// Ring buffer: per-voice register writes (B0 register = frequency/key)
+		float regHistory[9][kDebugRingSize] = {};
+		int ringPos = 0;
+	};
+
+	DebugState _debug;
+	void updateDebugState();
+
 private:
 	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
 };
