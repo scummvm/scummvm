@@ -36,6 +36,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	  false,
 	  0,
 	  0}},
+#ifdef USE_TTS
+	{GAMEOPTION_TTS,
+	 {_s("Enable Text to Speech"),
+	  _s("Use TTS to read the dialogue (if TTS is available)"),
+	  "tts_enabled",
+	  false,
+	  0,
+	  0}},
+#endif
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 } // End of namespace Macs2

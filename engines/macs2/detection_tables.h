@@ -33,7 +33,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
-	 GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)},
+	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
 	{"sis",
 	 nullptr,
 	 // Adjusted file
@@ -41,7 +41,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
-	 GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)},
+	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
 
 	AD_TABLE_END_MARKER};
 
