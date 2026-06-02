@@ -23,6 +23,7 @@
 #include "backends/imgui/imgui.h"
 #include "common/debug.h"
 #include "common/system.h"
+#include "macs2/adlib.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
@@ -39,6 +40,7 @@ static bool _showAnimations = false;
 static bool _showSceneMaps = false;
 static bool _showImageResources = false;
 static bool _showDebugOutput = false;
+static bool _showSound = false;
 
 static const struct {
 	uint16 id;
@@ -1458,6 +1460,8 @@ static void showTextLogWindow() {
 	ImGui::End();
 }
 
+static void showSoundWindow();
+
 void onImGuiInit() {
 	ImGui::GetIO().Fonts->AddFontDefault();
 }
@@ -1480,6 +1484,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Scene Maps", NULL, &_showSceneMaps);
 			ImGui::MenuItem("Image Resources", NULL, &_showImageResources);
 			ImGui::MenuItem("Debug Output", NULL, &_showDebugOutput);
+			ImGui::MenuItem("Sound/Music", NULL, &_showSound);
 			ImGui::MenuItem("Text Log", NULL, &_showTextLog);
 			ImGui::EndMenu();
 		}
@@ -1524,6 +1529,66 @@ void onImGuiRender() {
 	showImageResourcesWindow();
 	showDebugOutputWindow();
 	showTextLogWindow();
+	showSoundWindow();
+}
+
+static void showSoundWindow() {
+	if (!_showSound)
+		return;
+	if (!ImGui::Begin("Sound/Music", &_showSound)) {
+		ImGui::End();
+		return;
+	}
+
+	Adlib *adlib = g_engine->getAdlib();
+	const Adlib::DebugState &ds = adlib->_debug;
+
+	ImGui::Text("Master Volume: %u/63", ds.masterVolume);
+	ImGui::Text("OPL Channels: %u  Status: 0x%02X  NextEvent: %u", ds.numOplChannels, ds.statusFlags, ds.nextEventTimer);
+	ImGui::Separator();
+
+	// Channel selector
+	static int selectedVoice = 0;
+	if (ImGui::BeginCombo("Voice", Common::String::format("Voice %d", selectedVoice).c_str())) {
+		for (int i = 0; i < 9; i++) {
+			bool selected = (selectedVoice == i);
+			const char *label = ds.voices[i].active
+				? Common::String::format("Voice %d [CH%d N%02X]", i, ds.voices[i].channel, ds.voices[i].note).c_str()
+				: Common::String::format("Voice %d (idle)", i).c_str();
+			if (ImGui::Selectable(label, selected))
+				selectedVoice = i;
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	// Voice detail
+	const auto &v = ds.voices[selectedVoice];
+	ImGui::Text("Note: 0x%02X  MIDI Ch: %u  Vol: %u  Active: %s",
+		v.note, v.channel, v.volume, v.active ? "YES" : "no");
+
+	// Ring buffer waveform for selected voice
+	ImGui::Text("Activity:");
+	int ringPos = ds.ringPos;
+	float plotData[Adlib::kDebugRingSize];
+	for (int i = 0; i < Adlib::kDebugRingSize; i++) {
+		plotData[i] = ds.regHistory[selectedVoice][(ringPos + i) % Adlib::kDebugRingSize];
+	}
+	ImGui::PlotLines("##wave", plotData, Adlib::kDebugRingSize, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 60));
+
+	// All voices overview
+	ImGui::Separator();
+	ImGui::Text("All Voices:");
+	for (int i = 0; i < 9; i++) {
+		float voiceData[Adlib::kDebugRingSize];
+		for (int j = 0; j < Adlib::kDebugRingSize; j++) {
+			voiceData[j] = ds.regHistory[i][(ringPos + j) % Adlib::kDebugRingSize];
+		}
+		ImGui::PlotLines(Common::String::format("V%d", i).c_str(), voiceData, Adlib::kDebugRingSize, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 20));
+	}
+
+	ImGui::End();
 }
 
 void onImGuiCleanup() {

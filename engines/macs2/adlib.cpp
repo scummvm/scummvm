@@ -479,6 +479,26 @@ void Adlib::OnTimer() {
 		if (_nextEventTimer != 0)
 			break;
 	}
+
+	updateDebugState();
+}
+
+// --- Debug state update (called from OnTimer) ---
+void Adlib::updateDebugState() {
+	_debug.masterVolume = _masterVolume;
+	_debug.statusFlags = _statusFlags;
+	_debug.nextEventTimer = _nextEventTimer;
+	_debug.numOplChannels = _numOplChannels;
+
+	for (int i = 0; i < 9; i++) {
+		_debug.voices[i].note = _voiceNote[i];
+		_debug.voices[i].channel = _voiceMidiChannel[i];
+		_debug.voices[i].active = (_voiceAge[i] == 0);
+		_debug.voices[i].volume = _regShadow[_opMap2[i] + 0x40] & 0x3F;
+		// Record B0 register (key-on + frequency high) as waveform data
+		_debug.regHistory[i][_debug.ringPos] = (_regShadow[i + 0xB0] & 0x20) ? 1.0f - (_debug.voices[i].volume / 63.0f) : 0.0f;
+	}
+	_debug.ringPos = (_debug.ringPos + 1) % kDebugRingSize;
 }
 
 // --- Public API ---
