@@ -1212,32 +1212,6 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
-	// Debug inventory transfer shortcut: mirrors the Drop button behavior for the held item.
-	if (msg.ascii == (uint16)'t') {
-		if (_isShowingInventory && _activeInventoryItem != nullptr) {
-			if (_inventorySource->_index == 1) {
-				// Debug: drop item to scene container (same as Drop button)
-				const uint16 currentScene = Scenes::instance()._currentSceneIndex;
-				for (GameObject *obj : GameObjects::instance()._objects) {
-					if (obj == nullptr)
-						continue;
-					if ((int16)obj->SceneIndex < 0 || obj->SceneIndex != currentScene)
-						continue;
-					if (0x13 >= obj->Blobs.size() || obj->Blobs[0x13].empty())
-						continue;
-					transferInventoryItem(_activeInventoryItem, obj);
-					_activeInventoryItem = nullptr;
-					setInventorySource(_inventorySource);
-					break;
-				}
-			} else {
-				transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
-				_activeInventoryItem = nullptr;
-				setInventorySource(_inventorySource);
-			}
-		}
-	}
-
 	// TODO: only open ui components like inventory or main menu if the cursor is not in wait mode - otherwise this might
 	// hide the scene and you can't close those dialogs
 	if (msg.ascii == (uint16)'i') {
