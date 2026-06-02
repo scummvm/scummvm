@@ -554,7 +554,7 @@ void Script::ScriptExecutor::scriptIfTrue() {
 	uint16 res2;
 	scriptReadValuePair(res1, res2);
 	_expectedEndLocation = _stream->pos();
-	if (res1 | res2) {
+	if ((res1 | res2) == 0) {
 		scriptSkipBlock();
 	}
 	_expectedEndLocation = _stream->pos();
@@ -565,8 +565,7 @@ void Script::ScriptExecutor::scriptIfFalse() {
 	uint16 result2;
 	scriptReadValuePair(result1, result2);
 	_expectedEndLocation = _stream->pos();
-	// If any bit is set in the result, we skip, otherwise we fall through and continue the loop
-	if ((result1 | result2) == 0) {
+	if (result1 | result2) {
 		scriptSkipBlock();
 	}
 	_expectedEndLocation = _stream->pos();
@@ -2060,9 +2059,9 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 		} else if (opcode1 == 0x02) {
 			scriptSetVarOr();
 		} else if (opcode1 == 0x03) {
-			scriptIfTrue();
-		} else if (opcode1 == 0x04) {
 			scriptIfFalse();
+		} else if (opcode1 == 0x04) {
+			scriptIfTrue();
 		} else if (opcode1 == 0x5) {
 			if (!scriptCompare()) {
 				endBuffering(_lastOpcodeTriggeredSkip);

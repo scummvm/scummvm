@@ -82,9 +82,9 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x02:
 		return "setVarOr";
 	case 0x03:
-		return "ifTrue";
-	case 0x04:
 		return "ifFalse";
+	case 0x04:
+		return "ifTrue";
 	case 0x05:
 		return "compare";
 	case 0x06:
