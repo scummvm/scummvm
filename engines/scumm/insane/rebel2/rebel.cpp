@@ -616,12 +616,13 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// dropping the event here prevents the clobber. Firing is driven by the
 	// kScummActionInsaneAttack action, not the pointer, so this does not affect shots.
 	// A genuine mouse/touch motion (nonzero relative delta) normally hands control
-	// back; handler 0x26 keeps ownership until its gamepad reticle returns to center.
+	// back; handler 0x26 keeps ownership until its gamepad reticle returns to center,
+	// except for Level 1's relative gamepad aiming where the reticle deliberately holds.
 	if (_gamepadAimActive && _gameState == kStateGameplay && !_menuInputActive) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			if (event.relMouse.x != 0 || event.relMouse.y != 0) {
-				if (_rebelHandler == 0x26)
+				if (_rebelHandler == 0x26 && _selectedLevel != 1)
 					return true;
 				_gamepadAimActive = false; // real pointer motion takes over
 				break;
@@ -1657,7 +1658,23 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	int deltaY = 0;
 	bool activeGamepadAim = false;
 
-	if (_rebelHandler == 0x26) {
+	if (_rebelHandler == 0x26 && _selectedLevel == 1) {
+		// Level 1 plays best with the older mouse-like gamepad behavior from
+		// ec305dee371/0025c4e1086: pan the reticle directly and leave it where
+		// the player releases the stick. Later handler 0x26 levels keep the
+		// original-style centered mapping for obstacle avoidance.
+		if (dpadX || dpadY) {
+			const int kLevel1DigitalStep = 3;
+			deltaX = dpadX * kLevel1DigitalStep;
+			deltaY = dpadY * kLevel1DigitalStep;
+			activeGamepadAim = true;
+		} else if (velX || velY) {
+			const int kLevel1AnalogMaxStep = 8;
+			deltaX = velX * kLevel1AnalogMaxStep / 127;
+			deltaY = velY * kLevel1AnalogMaxStep / 127;
+			activeGamepadAim = true;
+		}
+	} else if (_rebelHandler == 0x26) {
 		// Retail RA2 maps joystick axes into a small centered handler 0x26 reticle box.
 		// ScummVM deliberately exposes the full 320x200 mouse aim range for gamepads
 		// too, but preserves the original joystick feel: curved response for precise
