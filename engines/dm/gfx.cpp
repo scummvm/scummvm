@@ -2830,7 +2830,6 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	}
 	byte byteFrame[6];
 	if (isInscription) {
-		byte *blitBitmap = ornCoordSet;
 		byte *inscrString2 = inscriptionString;
 		int16 unreadableTextLineCount = 0;
 		do {
@@ -2839,7 +2838,6 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			}
 			unreadableTextLineCount++;
 		} while (*inscrString2++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
-		ornCoordSet = blitBitmap;
 		if (unreadableTextLineCount < 4) {
 			for (uint16 i = 0; i < 6; ++i)
 				byteFrame[i] = ornCoordSet[i];
@@ -3341,7 +3339,6 @@ T0115015_DrawProjectileAsObject:
 						AL_6_box->_rect.top = MIN(AL_6_box->_rect.top, boxByteGreen._rect.top);
 						AL_6_box->_rect.bottom = MAX(AL_6_box->_rect.bottom, boxByteGreen._rect.bottom);
 					}
-					bitmapRedBanana = bitmapGreenAnt;
 					dungeon._pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
 				}
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);

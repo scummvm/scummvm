@@ -352,7 +352,7 @@ void Timeline::processTimeline() {
 				break;
 			case kDMEventTypePoisonChampion: {
 				uint16 championIndex = newEvent._priority;
-				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
+				_vm->_championMan->_champions[championIndex]._poisonEventCount--;
 				_vm->_championMan->championPoison(championIndex, newEvent._Bu._attack);
 				}
 				break;
