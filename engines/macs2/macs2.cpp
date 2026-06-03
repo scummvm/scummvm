@@ -590,10 +590,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		currentCharacter->_executeScriptOnFinishLerp = false;
 	}
 	currentView->_characters.clear();
-	// The original always loads the actor via loadSceneObjects(g_wCurrentActorIndex).
-	// Create the actor character first, regardless of scene index.
+	// The original loads the actor via loadSceneObjects(g_wCurrentActorIndex).
+	// Only add to render list if actor belongs in this scene; scene init script
+	// (opcode 0x0B) will move the actor here with the correct position if needed.
 	GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
-	if (actorObject != nullptr) {
+	if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
 		Character *actorChar = new Character();
 		actorChar->_gameObject = actorObject;
 		currentView->_characters.push_back(actorChar);

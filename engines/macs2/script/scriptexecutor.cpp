@@ -708,7 +708,6 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	object->_position = Common::Point(x, y);
 
 	// Step 3: Add to render list if object is now visible in current scene.
-	// Actor is excluded - handled separately by changeScene.
 	if (objectID != actorIndex) {
 		bool isInCurrentScene = (sceneID == currentScene);
 		if (!isInCurrentScene && sceneID == actorIndex + 0x400) {
@@ -729,6 +728,23 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 				currentView->_characters.push_back(c);
 			}
 			c->setPosition(Common::Point(x, y));
+		}
+	} else if (sceneID == currentScene) {
+		// Actor moved into current scene — add to render list if not already present
+		Character *c = currentView->getCharacterByIndex(objectID);
+		if (c == nullptr) {
+			c = new Character();
+			c->_gameObject = object;
+			currentView->_characters.push_back(c);
+		}
+		c->setPosition(Common::Point(x, y));
+	} else {
+		// Actor moved out of current scene — remove from render list
+		Character *c = currentView->getCharacterByIndex(objectID);
+		if (c != nullptr) {
+			int idx = currentView->getCharacterArrayIndex(c);
+			if (idx >= 0)
+				currentView->_characters.remove_at(idx);
 		}
 	}
 
