@@ -522,6 +522,7 @@ public:
 	uint32 _lastGameplayMenuCloseTime;
 	uint32 _lastMenuGamepadNavigationTime;
 	void openGameplayMainMenu(SmushPlayer *splayer);
+	void openMenuMainMenu(SmushPlayer *splayer);
 	bool isBitSet(int n) override;
 	void setBit(int n) override;
 

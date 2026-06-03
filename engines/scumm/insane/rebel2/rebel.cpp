@@ -97,6 +97,15 @@ bool isRebel2MenuDirectionKey(Common::KeyCode keycode) {
 	       keycode == Common::KEYCODE_RIGHT;
 }
 
+bool isRebel2MenuState(InsaneRebel2::GameState state) {
+	return state == InsaneRebel2::kStateMainMenu ||
+	       state == InsaneRebel2::kStatePilotSelect ||
+	       state == InsaneRebel2::kStateDifficultySelect ||
+	       state == InsaneRebel2::kStateChapterSelect ||
+	       state == InsaneRebel2::kStateOptions ||
+	       state == InsaneRebel2::kStateTopPilots;
+}
+
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 
@@ -600,6 +609,17 @@ void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
 	_lastGameplayMenuCloseTime = _vm->_system->getMillis();
 }
 
+void InsaneRebel2::openMenuMainMenu(SmushPlayer *splayer) {
+	if (splayer && !splayer->_paused) {
+		splayer->pause();
+		_vm->openMainMenuDialog();
+		splayer->unpause();
+		return;
+	}
+
+	_vm->openMainMenuDialog();
+}
+
 // notifyEvent -- EventObserver callback for global input dispatch.
 // Handles ESC (skip) and SPACE (pause) regardless of menu state.
 // Pause behavior matches original FUN_405A21: SPACE pauses, ANY key unpauses.
@@ -752,12 +772,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
-		const bool menuState = _gameState == kStateMainMenu ||
-		                       _gameState == kStatePilotSelect ||
-		                       _gameState == kStateDifficultySelect ||
-		                       _gameState == kStateChapterSelect ||
-		                       _gameState == kStateOptions ||
-		                       _gameState == kStateTopPilots;
+		const bool menuState = isRebel2MenuState(_gameState);
 
 		if (event.customType == kScummActionInsaneSkip) {
 			if (!pressed)
@@ -787,11 +802,8 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				return true;
 
 			if (_menuInputActive && menuState) {
-				Common::Event syntheticEvent = Common::Event();
-				syntheticEvent.type = Common::EVENT_KEYDOWN;
-				syntheticEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-				syntheticEvent.kbd.ascii = Common::ASCII_ESCAPE;
-				_menuEventQueue.push(syntheticEvent);
+				debug("Rebel2: Back/menu action in menu - opening ScummVM menu");
+				openMenuMainMenu(splayer);
 				return true;
 			}
 
@@ -903,6 +915,19 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		// consumed (and returned true for) the cases they handle.
 	}
 
+	if (_menuInputActive && isRebel2MenuState(_gameState) &&
+			(event.type == Common::EVENT_MAINMENU ||
+			 (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE))) {
+		if (event.type == Common::EVENT_KEYDOWN && event.kbdRepeat) {
+			debug("Rebel2: Ignoring repeated ESC keydown in menu");
+			return true;
+		}
+
+		debug("Rebel2: Opening ScummVM menu from menu state");
+		openMenuMainMenu(splayer);
+		return true;
+	}
+
 	if (_menuInputActive && isMenuTextInputActive() && event.type == Common::EVENT_KEYDOWN) {
 		_menuEventQueue.push(event);
 		return true;
@@ -962,21 +987,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			// ESC handling depends on game state:
-			// - In menus: Select quit option and confirm
+			// - In menus: Open the ScummVM menu (handled above)
 			// - During gameplay: Pause and open ScummVM menu
 			// - During cutscenes/intros: Skip video
 			if (splayer) {
-				if (_menuInputActive && (_gameState == kStateMainMenu ||
-				                          _gameState == kStatePilotSelect ||
-				                          _gameState == kStateDifficultySelect ||
-				                          _gameState == kStateChapterSelect)) {
-					// In menu mode: Select quit option and confirm selection
-					// This emulates the assembly behavior from FUN_0041f5ae
-					_menuSelection = _menuItemCount - 1;  // Select last item (quit/back)
-					_menuSelectionConfirmed = true;
-					debug("Rebel2: ESC pressed in menu - selecting quit (item %d)", _menuSelection);
-					_vm->_smushVideoShouldFinish = true;
-				} else if (_gameState == kStateGameplay && _rebelHandler != 0) {
+				if (_gameState == kStateGameplay && _rebelHandler != 0) {
 					// During active gameplay (handler != 0): pause and open ScummVM menu.
 					debug("Rebel2: ESC pressed during gameplay - opening ScummVM menu");
 					openGameplayMainMenu(splayer);

@@ -114,7 +114,8 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 //
 // Returns -1 (no action) or a 0-based selected menu item.
 // Events captured by notifyEvent() before ScummEngine consumes them.
-// Keyboard: Up=0x148, Down=0x150, Enter=0x0d, ESC=0x1b.
+// Keyboard: Up=0x148, Down=0x150, Enter=0x0d.
+// Physical ESC is handled by notifyEvent() and opens the ScummVM menu.
 // Mouse mode (DAT_0047a806 == 1): Y position maps to selection.
 //
 int InsaneRebel2::processMenuInput() {
@@ -167,9 +168,9 @@ int InsaneRebel2::processMenuInput() {
 				break;
 
 			case Common::KEYCODE_ESCAPE:
-				// ESC - Quit (last item) - emulates key code 0x1b
+				// Synthetic custom back action - quit/back (last item)
 				result = _menuItemCount - 1;  // Select quit option
-				debug("Menu: ESC pressed - selecting quit (item %d)", result);
+				debug("Menu: Back action - selecting quit (item %d)", result);
 				break;
 
 			default:
@@ -898,10 +899,10 @@ int InsaneRebel2::processChapterSelectInput() {
 				break;
 
 			case Common::KEYCODE_ESCAPE:
-				// ESC = Back to main menu (same as selecting BACK)
+				// Synthetic custom back action (same as selecting BACK)
 				setVirtualKeyboardVisible(false);
 				result = 16;  // BACK index
-				debug("ChapterSelect: ESC pressed - back to menu");
+				debug("ChapterSelect: Back action - back to menu");
 				break;
 
 			case Common::KEYCODE_BACKSPACE:
@@ -1395,7 +1396,7 @@ int InsaneRebel2::processLevelSelectInput() {
 						debug("PilotName: confirmed '%s'", _pilotNameInput.c_str());
 					}
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					// Cancel name entry — delete the pilot slot we created
+					// Synthetic custom back action - cancel name entry
 					if (_pilotEditIndex >= 0 && _pilotEditIndex < _numPilots) {
 						deletePilot(_pilotEditIndex);
 					}
