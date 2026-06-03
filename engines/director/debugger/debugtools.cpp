@@ -127,7 +127,7 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 
 ScriptContext *getScriptContext(CastMemberID id) {
 	const Director::Movie *movie = g_director->getCurrentMovie();;
-	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+	const Cast *cast;
 
 	if (id.castLib == SHARED_CAST_LIB)
 		cast = movie->getSharedCast();

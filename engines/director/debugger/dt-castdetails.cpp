@@ -38,6 +38,7 @@
 #include "director/score.h"
 #include "director/sound.h"
 
+#include "director/movie.h"
 #include "director/types.h"
 
 namespace Director {
@@ -544,10 +545,16 @@ void drawBaseCMprops(CastMember *member) {
 				ImGui::Text("scriptText");
 				ImGui::TableSetColumnIndex(1);
 				if (info && !info->script.empty()) {
-					ImGui::TextColored(ImVec4(0.7f, 0.7f, 1.0f, 1.0f), "...");
+					CastMemberID scriptCastId(member->getID(), cast->_castLibID);
+					bool hasCastScript = g_director->getCurrentMovie()->getScriptContext(kCastScript, scriptCastId) != nullptr;
+					ImGui::TextColored(hasCastScript ? ImVec4(0.4f, 0.8f, 0.4f, 1.0f) : ImVec4(0.7f, 0.7f, 1.0f, 1.0f), "...");
 					if (ImGui::IsItemHovered()) {
-						ImGui::SetTooltip("%s", info->script.c_str());
+						ImGui::SetTooltip(hasCastScript ? "%s\n\n(click to open script)" : "%s", info->script.c_str());
+						if (hasCastScript)
+							ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 					}
+					if (hasCastScript && ImGui::IsItemClicked(0))
+						displayScriptRef(scriptCastId);
 				} else {
 					ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "...");
 				}
