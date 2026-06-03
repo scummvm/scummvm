@@ -656,7 +656,7 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 		}
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP: {
-			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? kDMMouseButtonLeft : kDMMouseButtonRight;
+			MouseButton button = (event.type == Common::EVENT_LBUTTONUP) ? kDMMouseButtonLeft : kDMMouseButtonRight;
 			_mouseButtonStatus &= ~button;
 			resetPressingEyeOrMouth();
 			break;
