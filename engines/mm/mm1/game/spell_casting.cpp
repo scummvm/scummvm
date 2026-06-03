@@ -179,12 +179,16 @@ Common::String SpellCasting::getSpellError() const {
 	}
 
 	if (!isInCombat())
-		msg = Common::String::format("*** %s ***", msg.c_str());
+		msg = spellResultMessage(msg);
 	return msg;
 }
 
 bool SpellCasting::isInCombat() const {
 	return g_events->isPresent("Combat");
+}
+
+Common::String SpellCasting::spellResultMessage(const Common::String &msg) {
+	return Common::String::format("*** %s ***", msg.c_str());
 }
 
 } // namespace Game

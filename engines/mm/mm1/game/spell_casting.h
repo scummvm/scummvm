@@ -98,6 +98,11 @@ public:
 	 * Returns the error message
 	 */
 	Common::String getSpellError() const;
+
+	/**
+	 * Returns a spell result message formatted as in the DOS executable.
+	 */
+	static Common::String spellResultMessage(const Common::String &msg);
 };
 
 } // namespace Game

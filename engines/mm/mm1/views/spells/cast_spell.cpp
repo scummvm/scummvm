@@ -241,16 +241,20 @@ void CastSpell::spellDone() {
 }
 
 void CastSpell::spellDone(const Common::String &msg, int xp) {
+	Common::String result = msg.hasPrefix("*** ") ? msg :
+		spellResultMessage(msg);
+	xp = 20 - (result.size() / 2);
+
 	if (isInCombat()) {
 		close();
 
-		GameMessage gameMsg("SPELL_RESULT", msg);
+		GameMessage gameMsg("SPELL_RESULT", result);
 		gameMsg._value = xp;
 		g_events->focusedView()->send(gameMsg);
 
 	} else {
 		Sound::sound(SOUND_2);
-		_spellResult = msg;
+		_spellResult = result;
 		_spellResultX = xp;
 		setState(ENDING);
 	}
