@@ -29,10 +29,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-namespace Audio {
-class PCSpeaker;
-}
-
 namespace Made {
 
 class MadeEngine;
@@ -70,7 +66,7 @@ protected:
 	uint8 _gameAudioVolume;
 
 	// PlayNote/StopNote and PlayTele/StopTele wave generators
-	Audio::PCSpeaker *_pcSpeaker1, *_pcSpeaker2;
+	Audio::SoundHandle _sine1, _sine2;
 
 	Common::Array<const ExternalFunc *> _externalFuncs;
 	Common::Array<const char *> _externalFuncNames;
