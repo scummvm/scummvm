@@ -1294,7 +1294,6 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 				curChampion->_currMana = 0;
 
 			setFlag(curChampion->_attributes, kDMAttributeStatistics);
-			actionPerformed = true;
 		}
 		}
 		break;

@@ -308,7 +308,6 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 			} else {
 				if ((destinationSquareType == (int)kDMElementTypePit) && !thingLevitates && getFlag(destinationSquareData, kDMSquareMaskPitOpen) && !getFlag(destinationSquareData, kDMSquareMaskPitImaginary)) {
 					if (drawDungeonViewWhileFalling && !_useRopeToClimbDownPit) {
-						drawDungeonViewWhileFalling = true;
 						if (traversedPitCount) {
 							dungeon.setCurrentMapAndPartyMap(mapIndexDestination);
 							display.loadCurrentMapGraphics();
