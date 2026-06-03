@@ -218,9 +218,19 @@ struct TableData : public PuzzleData {
 	Common::Array<float> comboValues;
 };
 
-// Nancy 10+ cellphone state mutated by the ChangeCellPhoneInfo and
-// SetCellPhoneBatteryAndSignal action records, persisted between saves.
+// Nancy 10+ cellphone state mutated by the ChangeCellPhoneInfo,
+// SetCellPhoneBatteryAndSignal and AddSearchLink action records,
+// persisted between saves.
 struct CellPhoneData : public PuzzleData {
+	struct LinkEntry {
+		Common::String key;       // CVTX key whose looked-up text is shown in the list
+		Common::String value;     // CVTX key for the body (email only); unused for search
+		int16 extra = 0;          // search mode: page index (mode-1 only); unused for email
+		int16 flag = -1;          // stored by the AR but unused by the original; reserved
+		int16 eventFlag = -1;     // event-flag index set when the entry is opened
+		bool read = false;        // email only: set once the message is opened
+	};
+
 	CellPhoneData() {}
 	virtual ~CellPhoneData() {}
 
@@ -233,6 +243,15 @@ struct CellPhoneData : public PuzzleData {
 	// the UICL chunk; we then own it as runtime data.
 	bool seeded = false;
 	Common::Array<UICL::Contact> contacts;
+
+	// Populated by AR 131 (AddSearchLink). Mode 0 → emailMessages (each
+	// with a body-text CVTX key + read flag); any non-zero mode →
+	// searchLinks (web search topics).
+	Common::Array<LinkEntry> emailMessages;
+	Common::Array<LinkEntry> searchLinks;
+
+private:
+	void syncLinkArray(Common::Serializer &ser, Common::Array<LinkEntry> &arr);
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);

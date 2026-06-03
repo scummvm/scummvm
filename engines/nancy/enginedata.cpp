@@ -938,9 +938,12 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	readFilename(*chunkStream, overlayImageName);
 
-	// Skip shared UIButton template - the sub-fields data is read
-	// separately for each button record below.
-	chunkStream->skip(206);
+	// Shared UIButton template (206 bytes); its sub-fields are read
+	// separately per button below. The last 49 bytes of the block are
+	// the call-sound template (channel / volume / loops for the ring,
+	// pickup and invalid-number cues).
+	chunkStream->skip(157);
+	callSoundTemplate.readNormal(*chunkStream);
 
 	for (uint i = 0; i < kNumDialPadSlots; ++i) {
 		readRect(*chunkStream, dialPadSlots[i].srcRect);
@@ -974,13 +977,13 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, dirLabel.srcRect);
 	readRect(*chunkStream, dirLabel.destRect);
 
-	// Call/hang-up widget (3 rects).
-	readRect(*chunkStream, callButton.srcRectIdle);
-	readRect(*chunkStream, callButton.srcRectPressed);
-	readRect(*chunkStream, callButton.destRect);
+	// Help "?" button widget (3 rects).
+	readRect(*chunkStream, helpButton.srcRectIdle);
+	readRect(*chunkStream, helpButton.srcRectPressed);
+	readRect(*chunkStream, helpButton.destRect);
 
 	// Screen-content sprite block
-	readFilename(*chunkStream, phoneUseSound);
+	readFilename(*chunkStream, helpTextKey);
 	readRect(*chunkStream, signalSpriteSrc);
 	readRect(*chunkStream, signalSpriteSrcAlt);
 	readRect(*chunkStream, signalSpriteDest);

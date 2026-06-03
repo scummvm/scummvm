@@ -612,6 +612,12 @@ struct UICL : public EngineData {
 
 	UIPopupHeader header;
 	Common::Path overlayImageName;
+
+	// Template the call-flow sounds (ring / pickup / invalid) are played
+	// through. Only the name is swapped per call; channel / volume /
+	// loops come from here.
+	SoundDescription callSoundTemplate;
+
 	DialPadSlot dialPadSlots[kNumDialPadSlots];
 
 	// Screen-frame and label rects
@@ -625,10 +631,12 @@ struct UICL : public EngineData {
 	SrcDestRectPair webLabel;
 	SrcDestRectPair dirLabel;
 
-	ThreeRectWidget callButton;
+	// Help "?" button (original button index 15). The visible Talk/Call key
+	// is dial-pad slot 12, not a separate widget.
+	ThreeRectWidget helpButton;
 
 	// Screen-content sprite block
-	Common::Path phoneUseSound;
+	Common::String helpTextKey;               // CVTX key for the help page text
 	Common::Rect signalSpriteSrc;
 	Common::Rect signalSpriteSrcAlt;
 	Common::Rect signalSpriteDest;

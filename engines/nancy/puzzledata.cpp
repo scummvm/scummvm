@@ -331,6 +331,25 @@ void CellPhoneData::synchronize(Common::Serializer &ser) {
 
 		ser.syncBytes(c.unknownSuffix, sizeof(c.unknownSuffix));
 	}
+
+	syncLinkArray(ser, emailMessages);
+	syncLinkArray(ser, searchLinks);
+}
+
+void CellPhoneData::syncLinkArray(Common::Serializer &ser, Common::Array<LinkEntry> &arr) {
+	uint16 n = (uint16)arr.size();
+	ser.syncAsUint16LE(n);
+	if (ser.isLoading()) {
+		arr.resize(n);
+	}
+	for (uint16 i = 0; i < n; ++i) {
+		ser.syncString(arr[i].key);
+		ser.syncString(arr[i].value);
+		ser.syncAsSint16LE(arr[i].extra);
+		ser.syncAsSint16LE(arr[i].flag);
+		ser.syncAsSint16LE(arr[i].eventFlag);
+		ser.syncAsByte(arr[i].read);
+	}
 }
 
 PuzzleData *makePuzzleData(const uint32 tag) {

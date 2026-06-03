@@ -59,6 +59,12 @@ public:
 	// Used by AR 130 to add/modify entries at runtime.
 	void upsertContact(const UICL::Contact &c);
 
+	// Append an entry to the search/email results list (mode 0) or the
+	// web bookmarks list (mode 1). Driven by AR 131 (AddSearchLink).
+	void addSearchLink(int16 mode, const Common::String &key,
+						const Common::String &value, int16 extra,
+						int16 flag, int16 eventFlag);
+
 private:
 	enum ScreenState : int {
 		kWelcome          = 0,
@@ -70,7 +76,11 @@ private:
 		kConnected        = 6,
 		kInvalidNumber    = 7,
 		kWaitInvalid      = 8,
-		kDirectory        = 9
+		kDirectory        = 9,
+		kOnlineHub        = 10,  // Online heading + Email / Web sub-buttons
+		kWebList          = 11,  // web search-results list (AR-131 mode 1)
+		kEmailList        = 12,  // email message list (AR-131 mode 0)
+		kContentView      = 13   // full-text view of a single email / page
 	};
 
 	void drawChrome();
@@ -82,14 +92,39 @@ private:
 	void drawConnectedLabel();
 	void drawConnectingSprite();
 	void drawDialedNumber();
-	void drawCallButtonState(uint state);
+	void drawHelpButton(uint state);
 	void drawCloseButton(uint state);
 	void drawStatusLabels();
 	void drawDirectoryList();
-	void drawDirHeading();
 	void drawDirectoryArrows();
 	void drawWelcomeScreen();
 	void drawBackLabel();
+
+	// Generic list renderer used by web / email modes.
+	void drawLinkList();
+	// Blit a heading sprite (e.g. emailHeading) at its chunk dest. The
+	// heading sits in the title-bar strip above the LCD content.
+	void drawHeading(const UICL::SrcDestRectPair &heading);
+	// Render the opened entry's body text in the LCD area, word-wrapped.
+	void drawContentView();
+	// Enter the content view for a list entry whose AUTOTEXT key is `key`.
+	void openContentView(const Common::String &key, const UICL::SrcDestRectPair &heading);
+	// Web button: open the first url entry as the browser home page (page 0).
+	void openBrowserHome();
+
+	// Up/down scroll buttons differ by mode: subButtons[1]/[2] for the
+	// directory's narrower list area, [5]/[6] for the taller search /
+	// email / browser-content LCD area.
+	const UICL::ThreeRectWidget &scrollUpButton() const;
+	const UICL::ThreeRectWidget &scrollDownButton() const;
+
+	// True when the current screen uses the zoomed-in (no-keypad)
+	// chrome variant: search list, email list, and content view.
+	bool isZoomedChromeState() const {
+		return _screenState == kWebList ||
+				_screenState == kEmailList ||
+				_screenState == kContentView;
+	}
 
 	void resetDialPad();
 	void enterScreenState(ScreenState newState);
@@ -102,10 +137,30 @@ private:
 	uint maxDirectoryRows() const;
 	uint directoryRowAt(const Common::Point &chunkMouse) const;
 	Common::Rect directoryRowRect(uint visibleIndex) const;
+	// Row pitch and first-row Y (screen coords) from the layout data.
+	int rowPitch() const;
+	int rowTopScreen() const;
+	bool isLinkListMode() const { return _screenState == kWebList || _screenState == kEmailList; }
+	bool isOnlineMode() const { return _screenState == kOnlineHub || isLinkListMode(); }
+
+	// Section headings live in the phone's title-bar strip above the LCD,
+	// so they don't consume a list row. Kept as a hook in case a game
+	// needs an in-LCD title row.
+	uint listTitleRows() const { return 0; }
+
+	// Layout for the two clickable labels on the Online hub.
+	Common::Rect hubEmailRect() const;
+	Common::Rect hubWebRect() const;
 	void startCallToContact(uint contactIndex);
 	// Visible (deduplicated) row -> raw contact index, or -1.
 	int contactIndexForVisibleRow(uint visibleRow) const;
 	uint deduplicatedContactCount() const;
+	// Entry count for whichever list the popup is currently showing.
+	uint currentListEntryCount() const;
+	// Absolute indices into the current list's backing array that pass
+	// the active filter. Email applies the "Old Email Only" filter
+	// (no-signal -> read messages only); web shows everything.
+	Common::Array<uint> listVisibleIndices() const;
 	// True when the contact's visibility flag is currently unlocked.
 	bool isContactVisible(const UICL::Contact &c) const;
 	// Popup-local rect of the Back hotspot in directory mode.
@@ -143,6 +198,17 @@ private:
 	// First visible deduplicated contact, and the active row within the page.
 	uint _directoryScroll = 0;
 	uint _directorySelection = 0;
+
+	// Content-view (single email / page) state.
+	ScreenState _contentReturnState = kOnlineHub;
+	const UICL::SrcDestRectPair *_contentHeading = nullptr;
+	Common::String _contentKey;
+	uint _contentScroll = 0;
+
+	// In-page hyperlinks: rects (popup-local, recomputed every draw) and
+	// the target CVTX key parsed from each <H>...<L> region of the body.
+	Common::Array<Common::Rect> _contentHotspots;
+	Common::Array<Common::String> _contentHotspotTargets;
 
 	bool _noSignal = false;
 	bool _batteryLow = false;

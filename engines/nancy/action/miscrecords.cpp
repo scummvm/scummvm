@@ -279,8 +279,8 @@ void AddSearchLink::readData(Common::SeekableReadStream &stream) {
 }
 
 void AddSearchLink::execute() {
-	//NancySceneState.getCellPhonePopup().addSearchLink(
-	//	_mode, _key, _value, _extra, _flag, _eventFlag);
+	NancySceneState.getCellPhonePopup().addSearchLink(
+		_mode, _key, _value, _extra, _flag, _eventFlag);
 
 	// Cellphone taskbar badge: mode 0 = new email (sub-cat 1), mode != 0
 	// = new web search topic (sub-cat 2).
