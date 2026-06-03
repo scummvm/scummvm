@@ -1496,7 +1496,7 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 		uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
 		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 		int16 championCellIndex = _vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir));
-		if (championIconIndex == champIconIndex) {
+		if (championCellIndex >= 0 && championIconIndex == champIconIndex) {
 			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		} else {
