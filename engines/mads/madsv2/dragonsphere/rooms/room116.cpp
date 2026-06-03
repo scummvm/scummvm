@@ -406,7 +406,7 @@ static void room_116_pre_parser() {
 			player.commands_allowed = false;
 			player.ready_to_walk = false;
 			kernel_seq_delete(seq[fx_bear_morph]);
-			seq[fx_bear_morph] = kernel_seq_backward(ss[fx_bear_morph], false, 8, 1, 0, 0);
+			seq[fx_bear_morph] = kernel_seq_backward(ss[fx_bear_morph], false, 8, 0, 0, 1);
 			kernel_seq_depth(seq[fx_bear_morph], 4);
 			kernel_seq_trigger(seq[fx_bear_morph], KERNEL_TRIGGER_EXPIRE, 0, 1);
 			break;
@@ -502,7 +502,7 @@ static void room_116_parser() {
 			}
 
 			player.walker_visible = false;
-			seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], false, 8, 2, 0, 0);
+			seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], false, 8, 0, 0, 2);
 			kernel_seq_player(seq[fx_open_door], -1);
 			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_SPRITE, 2, 1);
 			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_EXPIRE, 0, 3);
@@ -511,7 +511,7 @@ static void room_116_parser() {
 		case 1:
 			kernel_seq_delete(seq[fx_door]);
 			sound_play(N_DoorOpens);
-			seq[fx_open_door] = kernel_seq_forward(ss[fx_door], false, 7, 0, 0, 0);
+			seq[fx_open_door] = kernel_seq_forward(ss[fx_door], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door], 14);
 			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 2);
 			break;
@@ -529,7 +529,7 @@ static void room_116_parser() {
 		case 4:
 			player_walk(START_X_ROOM_119, START_Y_ROOM_119, FACING_EAST);
 
-			if (global[king_status] == KING_WITH_SOUL && global[king_is_in_stairwell])
+			if (global[king_status] != KING_WITH_SOUL || global[king_is_in_stairwell])
 				player_walk_trigger(5);
 			break;
 		case 5:
@@ -637,11 +637,11 @@ static void room_116_parser() {
 
 	// Bear grabs king / gives soul to king
 	if ((player_said_2(push, king) ||
-			player_said_2(pull, king) ||
-			player_said_2(take, king) ||
-			player_said_3(put, king, cave_floor)) &&
-			global[king_status] == KING_CAPTIVE) {
-		if (local->bear_status == HAS_NEVER_BEEN_A_BEAR) {
+				player_said_2(pull, king) ||
+				player_said_2(take, king) ||
+				player_said_3(put, king, cave_floor)) &&
+				global[king_status] == KING_CAPTIVE) {
+		if (local->bear_status != HAS_NEVER_BEEN_A_BEAR) {
 			kernel_seq_delete(seq[fx_bear_morph]);
 			player.commands_allowed = false;
 			local->anim_2_running = true;
@@ -658,12 +658,12 @@ static void room_116_parser() {
 				player.walker_visible = false;
 				seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], 0, 9, 0, 0, 2);
 				kernel_seq_player(seq[fx_open_door], -1);
-				kernel_seq_trigger(seq[fx_open_door], 0, 0, 8);
+				kernel_seq_trigger(seq[fx_open_door], 0, 0, 2);
 				break;
 
 			case 2:
 				player.walker_visible = true;
-				kernel_synch(2, 0, 1, seq[fx_open_door]);
+				kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, seq[fx_open_door]);
 				kernel_timing_trigger(12, 3);
 				sound_play(N_GrabKing);
 				break;

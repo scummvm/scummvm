@@ -1805,15 +1805,14 @@ static void kernel_process_animation(int handle, int asynchronous) {
 
 				seg_id = image_list[id].segment_id;
 
-				// image_list[id].segment_id += KERNEL_SEGMENT_ANIMATION;
 				image_list[id].segment_id = (byte)(KERNEL_SEGMENT_ANIMATION + handle);
-				image_list[id].flags = series_list[image_list[id].series_id]->delta_series ? IMAGE_DELTA : IMAGE_UPDATE;
-				// if (kernel_anim[handle].anim->misc_any_packed) {
-				// if (image_list[id].series_id == (byte)kernel_anim[handle].anim->series_id[kernel_anim[handle].anim->misc_packed_series]) {
-				// series_id = image_list[id].series_id;
-				// sprite_data_load (series_list[series_id], image_list[id].sprite_id, series_list[series_id]->arena);
-				// }
-				// }
+				if (image_list[id].series_id < (SERIES_LIST_SIZE + SERIES_BONUS_SIZE) && series_list[image_list[id].series_id])
+					image_list[id].flags = series_list[image_list[id].series_id]->delta_series ? IMAGE_DELTA : IMAGE_UPDATE;
+				else
+					// WORKAROUND: For invalid series_id. This at least happens when rescuing the king from ice
+					// in Dragonsphere whilst in bear form - the series_id == 0xff
+					image_list[id].flags = IMAGE_ERASE;
+
 				if (hot >= 0) {
 					kernel_hot_check(hot, id, seg_id);
 				}
