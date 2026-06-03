@@ -186,6 +186,19 @@ void FrameTextBox::execute() {
 	if (!_text.empty()) {
 		tb.addTextLine(_text);
 	}
+
+	// Variant 74 (case 0x4a in ProcessActionRecords) opens the full-width
+	// textbox overlay that covers the taskbar buttons; the original arms a
+	// 15-second timer (DAT_005a7a7d = GetTickCount + 15000) that drops it
+	// back to the closed strip. Variant 75 (case 0x4b) is the legacy
+	// closed/strip path. Variant 81 first appears in Nancy 11; tentatively
+	// route it like 74 until its real semantics are confirmed.
+	if (_variant == kVariant74 || _variant == kVariant81) {
+		tb.setFullMode(true);
+	} else {
+		tb.setFullMode(false);
+	}
+
 	finishExecution();
 }
 

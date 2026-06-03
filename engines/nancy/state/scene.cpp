@@ -1216,9 +1216,11 @@ void Scene::handleInput() {
 
 	_actionManager.handleInput(input);
 
-	// Menu/help are disabled when a movie is active
+	// Menu/help are disabled when a movie is active. The taskbar is also
+	// skipped while the textbox is in open mode (it visually covers the
+	// buttons, so they should not receive hover/clicks).
 	if (!_activeMovie) {
-		if (_taskbar) {
+		if (_taskbar && !_textbox.isFullMode()) {
 			_taskbar->handleInput(input);
 
 			int clicked = _taskbar->getClickedButton();

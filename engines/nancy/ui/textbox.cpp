@@ -41,7 +41,9 @@ Textbox::Textbox() :
 		_scrollbarPos(0),
 		_highlightRObj(g_nancy->getGameType() >= kGameTypeNancy10 ? 11 : 7),
 		_fontIDOverride(-1),
-		_autoClearTime(0) {}
+		_autoClearTime(0),
+		_isFullMode(false),
+		_fullModeCloseTime(0) {}
 
 Textbox::~Textbox() {
 	delete _scrollbar;
@@ -55,29 +57,39 @@ void Textbox::init() {
 		auto *bsum = GetEngineData(BSUM);
 		assert(bsum);
 
-		Common::Rect textRect = bsum->textboxScreenPosition;
-
-		// Clip the bottom of the text strip to sit above the taskbar.
+		// The bsum rect spans the full taskbar strip (open mode); the
+		// closed mode clips at the taskbar's top edge so the buttons stay
+		// visible. We keep both rects so setFullMode() can toggle between
+		// them without reallocating.
+		_openRect = bsum->textboxScreenPosition;
+		_closedRect = _openRect;
 		const TASK *taskData = GetEngineData(TASK);
-		if (taskData && taskData->dstRect.top > textRect.top &&
-				taskData->dstRect.top < textRect.bottom) {
-			textRect.bottom = taskData->dstRect.top;
+		if (taskData && taskData->dstRect.top > _closedRect.top &&
+				taskData->dstRect.top < _closedRect.bottom) {
+			_closedRect.bottom = taskData->dstRect.top;
 		}
 
-		moveTo(textRect);
-		_highlightRObj.moveTo(textRect);
-
-		// No scrolling for now: the surface is sized to exactly the
-		// visible text rect, so overflow simply clips at the bottom.
-		initSurfaces(textRect.width(), textRect.height(),
+		// Size the backing surface to the OPEN rect so toggling never
+		// reallocates. The visible slice is constrained via _drawSurface.
+		initSurfaces(_openRect.width(), _openRect.height(),
 			g_nancy->_graphics->getScreenPixelFormat(),
 			tbox->textBackground, tbox->highlightTextBackground);
 
-		Common::Rect outerBoundingBox = _screenPosition;
-		outerBoundingBox.moveTo(0, 0);
-		_drawSurface.create(_fullSurface, outerBoundingBox);
+		_isFullMode = false;
+		applyDisplayMode();
 
 		RenderObject::init();
+
+		// Nancy 11+ scrollbar for the OPEN-mode text overflow. Nancy 10
+		// has no scrollbar in either state; left intentionally nullptr.
+		if (g_nancy->getGameType() >= kGameTypeNancy11
+				&& tbox->scrollbarSrcBounds.width() > 0) {
+			_scrollbar = new Scrollbar(11,
+				tbox->scrollbarSrcBounds,
+				tbox->scrollbarDefaultPos,
+				tbox->scrollbarMaxScroll - tbox->scrollbarDefaultPos.y);
+			_scrollbar->init();
+		}
 
 		setVisible(false);
 		return;
@@ -117,6 +129,13 @@ void Textbox::updateGraphics() {
 	if (_autoClearTime && g_nancy->getTotalPlayTime() > _autoClearTime)
 		clear();
 
+	// Nancy 10+ open-mode auto-close timer (mirrors the DAT_005a7a7d
+	// check in case 0x4a of ProcessActionRecords).
+	if (_isFullMode && _fullModeCloseTime &&
+			g_nancy->getTotalPlayTime() > _fullModeCloseTime) {
+		setFullMode(false);
+	}
+
 	if (_needsTextRedraw)
 		drawTextbox();
 
@@ -127,6 +146,48 @@ void Textbox::updateGraphics() {
 	}
 
 	RenderObject::updateGraphics();
+}
+
+void Textbox::applyDisplayMode() {
+	if (g_nancy->getGameType() < kGameTypeNancy10) {
+		return;
+	}
+
+	const Common::Rect &target = _isFullMode ? _openRect : _closedRect;
+	moveTo(target);
+	_highlightRObj.moveTo(target);
+
+	Common::Rect outerBoundingBox = target;
+	outerBoundingBox.moveTo(0, 0);
+	_drawSurface.create(_fullSurface, outerBoundingBox);
+
+	// Nancy 11+ scrollbar only makes sense in open mode; hide it in
+	// closed mode regardless of game version.
+	if (_scrollbar) {
+		_scrollbar->setVisible(_isFullMode);
+	}
+
+	_needsTextRedraw = true;
+	_needsRedraw = true;
+}
+
+void Textbox::setFullMode(bool open, uint32 timeoutMs) {
+	if (g_nancy->getGameType() < kGameTypeNancy10) {
+		return;
+	}
+	if (_isFullMode == open) {
+		// Re-arm the timer on a repeat open call.
+		if (open && timeoutMs) {
+			_fullModeCloseTime = g_nancy->getTotalPlayTime() + timeoutMs;
+		}
+		return;
+	}
+
+	_isFullMode = open;
+	_fullModeCloseTime = (open && timeoutMs)
+			? g_nancy->getTotalPlayTime() + timeoutMs
+			: 0;
+	applyDisplayMode();
 }
 
 void Textbox::handleInput(NancyInput &input) {
@@ -207,9 +268,15 @@ void Textbox::clear() {
 		_autoClearTime = 0;
 
 		// Nancy 10+: the text strip overlaps the taskbar buttons, so
-		// hide it whenever it has no content to show.
-		if (g_nancy->getGameType() >= kGameTypeNancy10)
+		// hide it whenever it has no content to show. Also drop the
+		// open-mode overlay so the next entry starts fresh in closed
+		// mode unless a kVariant74 AR re-opens it.
+		if (g_nancy->getGameType() >= kGameTypeNancy10) {
+			if (_isFullMode) {
+				setFullMode(false);
+			}
 			setVisible(false);
+		}
 	}
 }
 
