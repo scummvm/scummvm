@@ -235,11 +235,15 @@ bool Movie::loadArchive() {
 	g_director->_lastPalette = CastMemberID();
 
 	bool recenter = false;
-	// If the stage dimensions are different, delete it and start again.
-	// Otherwise, do not clear it so there can be a nice transition.
-	if (_window->getSurface()->w != _movieRect.width() || _window->getSurface()->h != _movieRect.height()) {
-		_window->resizeInner(_movieRect.width(), _movieRect.height());
-		recenter = true;
+	// For the stage, always resize to the movie rect.
+	// For MIAWs, only resize if the window hasn't been explicitly sized by Lingo
+	// (i.e. still at the 1x1 default from createWindow).
+	bool windowSizeIsDefault = (_window->getSurface()->w <= 1 && _window->getSurface()->h <= 1);
+	if (_window == _vm->getStage() || windowSizeIsDefault) {
+		if (_window->getSurface()->w != _movieRect.width() || _window->getSurface()->h != _movieRect.height()) {
+			_window->resizeInner(_movieRect.width(), _movieRect.height());
+			recenter = true;
+		}
 	}
 
 	// TODO: Add more options for desktop dimensions
