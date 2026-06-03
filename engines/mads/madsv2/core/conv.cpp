@@ -38,7 +38,7 @@
 #include "mads/madsv2/core/mem.h"
 #include "mads/madsv2/core/popup.h"
 #include "mads/madsv2/core/speech.h"
-#include "mads/mads.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -1312,6 +1312,11 @@ void conv_run(int convId) {
 		kernel_new_palette();
 
 	player.commands_allowed = 0;
+
+	if (g_engine->getGameID() == GType_Dragonsphere) {
+		kernel_init_dialog();
+		kernel_set_interface_mode(INTER_CONVERSATION);
+	}
 }
 
 // ---------------------------------------------------------------------------

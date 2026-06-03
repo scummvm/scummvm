@@ -1928,16 +1928,15 @@ void inter_spin_object(int object_id) {
 
 	// Update to live screen chunk of interface that selected object
 	// is on (it has been deleted in list by now)
-	if (kernel_mode == KERNEL_ACTIVE_CODE) {
-		video_update(&scr_inter, OUAF_OBJECT_X, 0,
-			OUAF_OBJECT_X, 156,
-			59, 44);
+	if (kernel_mode == KERNEL_ACTIVE_CODE && g_engine->getGameID() == GType_Forest) {
+		video_update(&scr_inter, OUAF_OBJECT_X, 0, OUAF_OBJECT_X, 156, 59, 44);
 	}
 
-	if (!inter_spinning_objects) goto done;
+	if (!inter_spinning_objects)
+		goto done;
 
-	if (inter_input_mode == INTER_BUILDING_SENTENCES ||
-		inter_input_mode == INTER_LIMITED_SENTENCES) inter_screen_update();
+	if (inter_input_mode == INTER_BUILDING_SENTENCES || inter_input_mode == INTER_LIMITED_SENTENCES)
+		inter_screen_update();
 
 	if (inter_object_routine == NULL) {
 		Common::strcpy_s(temp_buf, "*OB");
