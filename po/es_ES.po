@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-02 16:30+0000\n"
-"PO-Revision-Date: 2026-06-01 09:35+0000\n"
+"PO-Revision-Date: 2026-06-03 08:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -13757,16 +13757,12 @@ msgid "Fire / select"
 msgstr "Disparar/Seleccionar"
 
 #: engines/scumm/metaengine.cpp:1186
-#, fuzzy
-#| msgid "Move back"
 msgid "Menu back"
-msgstr "Retroceder"
+msgstr "Volver (menús)"
 
 #: engines/scumm/metaengine.cpp:1191
-#, fuzzy
-#| msgid "Skip / menu"
 msgid "Skip / menu back"
-msgstr "Omitir/Menú"
+msgstr "Omitir/Volver (menús)"
 
 #: engines/scumm/metaengine.cpp:1207
 msgid "Rebel Assault II controls"
@@ -13777,10 +13773,8 @@ msgid "Cover / back"
 msgstr "Cubrirse/Volver"
 
 #: engines/scumm/metaengine.cpp:1268
-#, fuzzy
-#| msgid "Skip walk"
 msgid "Skip / back"
-msgstr "Omitir desplazamiento"
+msgstr "Omitir/Volver"
 
 #: engines/scumm/metaengine.cpp:1275
 msgid "Skip / menu"
