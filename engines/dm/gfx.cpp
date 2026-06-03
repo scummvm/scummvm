@@ -2955,6 +2955,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	ObjectAspect *objectAspect;
 	uint32 remainingViewCellOrdinalsToProcess;
 	byte *coordinateSet;
+	byte projectileCoordinates[2];
 	int16 derivedBitmapIndex = -1;
 	bool L0135_B_DrawAlcoveObjects;
 	int16 byteWidth;
@@ -3726,7 +3727,6 @@ T0115129_DrawProjectiles:
 					blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 				} else { /* Positive value: projectile aspect is the index of a OBJECT_ASPECT */
 					useAlcoveObjectImage = false;
-					byte projectileCoordinates[2];
 					projectileCoordinates[0] = projectilePosX;
 					projectileCoordinates[1] = 47;
 					coordinateSet = projectileCoordinates;
