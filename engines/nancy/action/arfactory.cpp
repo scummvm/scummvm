@@ -104,7 +104,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new HotMultiframeMultiSceneChange();
 		else
-			return new Hot1FrSceneChange(CursorManager::kExit); // TODO: cursor
+			return new Hot1FrSceneChange(CursorManager::kHotspot);
 	case 14:
 		return new Hot1FrSceneChange(CursorManager::kExit);
 	case 15:
@@ -241,7 +241,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 66:
 		return new TableIndexPlaySound();
 	case 67:
-		return new TableIndexSetValueHS();
+		if (g_nancy->getGameType() >= kGameTypeNancy10)
+			return new Autotext();		// Moved from 61 in Nancy 10
+		else
+			return new TableIndexSetValueHS();
 	case 68:
 		return new TextScroll(false);
 	case 70:
