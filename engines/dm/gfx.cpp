@@ -2817,7 +2817,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			else if (viewWallIndex == kDMViewWallD2RFront)
 				coordinateSetOffset = -6;
 		}
-		blitPosX = (ornCoordSet + coordinateSetOffset)[1] - (ornCoordSet + coordinateSetOffset)[0];
+		byte *coords = _wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex + (coordinateSetOffset / 6)];
+		blitPosX = coords[1] - coords[0];
 		wallOrnamentIndex = kDMDerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex];
 		if (!isDerivedBitmapInCache(wallOrnamentIndex)) {
 			byte *blitBitmap = getNativeBitmapOrGraphic(ornNativeBitmapIndex);
