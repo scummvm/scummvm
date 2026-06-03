@@ -24,6 +24,10 @@
 
 #include "freescape/games/driller/driller.h"
 #include "freescape/games/eclipse/eclipse.h"
+#include "freescape/zx_tape.h"
+
+#include "common/config-manager.h"
+#include "common/file.h"
 
 namespace Freescape {
 
@@ -613,7 +617,7 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"totaleclipse2",
 		"",
-		AD_ENTRY1s("totaleclipse.zx.data", "5e80cb6a518d5ab2192b845801b1a32e", 35661),
+		AD_ENTRY1s("totaleclipse2.zx.data", "5e80cb6a518d5ab2192b845801b1a32e", 35661),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_NO_FLAGS,
@@ -1263,8 +1267,69 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
 	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
+
+private:
+	ADDetectedGames detectZxTapeGames(const Common::FSList &fslist, uint32 skipADFlags) const;
 };
+
+Common::Error FreescapeMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	Common::Error err = AdvancedMetaEngineDetection<ADGameDescription>::identifyGame(game, descriptor);
+	if (err.getCode() == Common::kNoError)
+		return err;
+
+	Common::Path path = ConfMan.hasKey("path") ? ConfMan.getPath("path") : Common::Path(".");
+	Common::FSNode dir(path);
+	Common::FSList files;
+	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll) || files.empty())
+		return err;
+
+	Common::String gameId = ConfMan.get("gameid");
+	ADDetectedGames tapeGames = detectZxTapeGames(files, 0);
+	for (const ADDetectedGame &tapeGame : tapeGames) {
+		if (tapeGame.desc->gameId == gameId) {
+			game = toDetectedGame(tapeGame, nullptr);
+			*descriptor = new ADDynamicGameDescription<ADGameDescription>(tapeGame.desc);
+			return Common::kNoError;
+		}
+	}
+
+	return err;
+}
+
+DetectedGames FreescapeMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
+	DetectedGames detectedGames = AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete);
+
+	ADDetectedGames tapeGames = detectZxTapeGames(fslist, skipADFlags);
+	for (const ADDetectedGame &game : tapeGames)
+		detectedGames.push_back(toDetectedGame(game, nullptr));
+
+	return detectedGames;
+}
+
+ADDetectedGames FreescapeMetaEngineDetection::detectZxTapeGames(const Common::FSList &fslist, uint32 skipADFlags) const {
+	ADDetectedGames detectedGames;
+
+	for (const Common::FSNode &node : fslist) {
+		Common::File file;
+		Common::String name = node.getName();
+		if ((name.hasSuffixIgnoreCase(".tap") || name.hasSuffixIgnoreCase(".tzx")) && file.open(node)) {
+			for (const ADGameDescription *desc = Freescape::gameDescriptions; desc->gameId; ++desc) {
+				if (!(desc->flags & skipADFlags) && desc->platform == Common::kPlatformZX) {
+					file.seek(0);
+					Freescape::ZxTapeFileList files;
+					if (Freescape::extractZxSpectrumTapeFiles(file, desc->gameId, files) &&
+							Freescape::matchZxSpectrumTapeFiles(files, *desc, _md5Bytes))
+						detectedGames.push_back(ADDetectedGame(desc));
+				}
+			}
+		}
+	}
+
+	return detectedGames;
+}
 
 DetectedGame FreescapeMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
 	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);

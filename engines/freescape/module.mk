@@ -72,7 +72,8 @@ MODULE_OBJS := \
 	sound/zx.o \
 	ui.o \
 	unpack.o \
-	wb.o
+	wb.o \
+	zx_tape.o
 
 ifdef USE_TINYGL
 MODULE_OBJS += \
@@ -105,4 +106,5 @@ endif
 include $(srcdir)/rules.mk
 
 # Detection objects
-DETECT_OBJS += $(MODULE)/detection.o
+DETECT_OBJS += $(MODULE)/detection.o \
+	$(MODULE)/zx_tape.o

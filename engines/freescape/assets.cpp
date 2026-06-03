@@ -23,10 +23,13 @@
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
 #include "common/file.h"
+#include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/compression/unzip.h"
 #include "image/bmp.h"
 
 #include "freescape/freescape.h"
+#include "freescape/zx_tape.h"
 
 namespace Freescape {
 
@@ -125,6 +128,9 @@ void FreescapeEngine::loadDataBundle() {
 	if (versionData != expectedVersion)
 		error("Unexpected version number for freescape.dat: expecting '%s' but found '%s'", expectedVersion.c_str(), versionData);
 	free(versionData);
+
+	if (Common::Archive *archive = makeZxSpectrumTapeArchive(*_gameDescription, ConfMan.getPath("path")))
+		SearchMan.add("freescape-zx-tape", archive, 10);
 }
 
 Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name, bool appendRenderMode) {
