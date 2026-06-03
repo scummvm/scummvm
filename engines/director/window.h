@@ -229,6 +229,7 @@ public:
 	bool _newMovieFirstDraw;
 	bool _skipFrameAdvance;
 	bool _resetScreen;
+	bool _playbackPaused;
 
 private:
 	uint32 _stageColor;

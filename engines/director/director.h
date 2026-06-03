@@ -267,7 +267,6 @@ public:
 	int _colorDepth;
 	Common::HashMap<int, int> _KeyCodes;
 	int _machineType;
-	bool _playbackPaused;
 	bool _centerStage;
 	char _dirSeparator;
 	bool _fixStageSize;

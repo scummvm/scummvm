@@ -1954,7 +1954,7 @@ void LB::b_cancelIdleLoad(int nargs) {
 }
 
 void LB::b_continue(int nargs) {
-	g_director->_playbackPaused = false;
+	g_director->getCurrentWindow()->_playbackPaused = false;
 }
 
 void LB::b_dontPassEvent(int nargs) {
@@ -2087,7 +2087,7 @@ void LB::b_pass(int nargs) {
 }
 
 void LB::b_pause(int nargs) {
-	g_director->_playbackPaused = true;
+	g_director->getCurrentWindow()->_playbackPaused = true;
 }
 
 void LB::b_play(int nargs) {

@@ -40,7 +40,7 @@
 namespace Director {
 
 void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
-	_vm->_playbackPaused = false;
+	_vm->getCurrentWindow()->_playbackPaused = false;
 
 	if (!_vm->getCurrentMovie())
 		return;
@@ -120,6 +120,7 @@ void Lingo::func_gotoloop() {
 	if (!_vm->getCurrentMovie())
 		return;
 	Window *stage = _vm->getCurrentWindow();
+	stage->_playbackPaused = false;
 	Score *score = stage->getCurrentMovie()->getScore();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoloop(): looping frame %d", score->getCurrentFrameNum());
 
@@ -133,6 +134,7 @@ void Lingo::func_gotonext() {
 		return;
 
 	Window *stage = _vm->getCurrentWindow();
+	stage->_playbackPaused = false;
 	Score *score = stage->getCurrentMovie()->getScore();
 	score->gotoNext();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotonext(): going to next frame %d", score->getNextFrame());
@@ -145,6 +147,7 @@ void Lingo::func_gotoprevious() {
 		return;
 
 	Window *stage = _vm->getCurrentWindow();
+	stage->_playbackPaused = false;
 	Score *score = stage->getCurrentMovie()->getScore();
 	score->gotoPrevious();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoprevious(): going to previous frame %d", score->getNextFrame());
