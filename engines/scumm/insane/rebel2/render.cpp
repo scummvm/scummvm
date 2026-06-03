@@ -63,7 +63,7 @@ static int countEmbeddedFramePixels(const InsaneRebel2::EmbeddedSanFrame &frame)
 	return count;
 }
 
-static bool parseRebel2TextOverlayFormat(const char *&str, NutRenderer *&curFont, int &curColor,
+bool parseRebel2TextOverlayFormat(const char *&str, NutRenderer *&curFont, int &curColor,
 		NutRenderer **fonts, int numFonts, NutRenderer *defaultFont) {
 	int fontId = InsaneRebel2::parseFormatCode(str, curColor);
 	if (fontId >= 0) {
@@ -74,7 +74,7 @@ static bool parseRebel2TextOverlayFormat(const char *&str, NutRenderer *&curFont
 	return fontId == -2;
 }
 
-static const char *getHandler8PovOverlayString(int id) {
+const char *getHandler8PovOverlayString(int id) {
 	switch (id) {
 	case 200:
 		return "^f03^c248 MODE  ^c005 INFARED";
@@ -105,7 +105,7 @@ static const char *getHandler8PovOverlayString(int id) {
 	}
 }
 
-static int getHandler8PovOverlayRandom(ScummEngine_v7 *vm, int max) {
+int getHandler8PovOverlayRandom(ScummEngine_v7 *vm, int max) {
 	if (max == 0)
 		return 0;
 	if (max < 0)
@@ -113,7 +113,7 @@ static int getHandler8PovOverlayRandom(ScummEngine_v7 *vm, int max) {
 	return vm->_rnd.getRandomNumber(max - 1);
 }
 
-static void drawHandler8PovOverlayText(const Rebel2FontSet &fontSet, byte *renderBitmap,
+void drawHandler8PovOverlayText(const Rebel2FontSet &fontSet, byte *renderBitmap,
 		int pitch, int width, int height, const char *str, int x, int y, int16 color,
 		TextStyleFlags flags) {
 	if (!str)
