@@ -1611,7 +1611,7 @@ void EventManager::commandProcessType111To115_ClickInActionArea(int16 posX, int1
 			if (mouseCommand == kDMCommandClickInActionAreaPass) {
 				commandHighlightBoxEnable(285, 319, 77, 83);
 				_vm->_menuMan->didClickTriggerAction(-1);
-			} else if ((mouseCommand - kDMCommandClickInActionAreaPass) <= _vm->_menuMan->_actionCount) {
+			} else if (mouseCommand > kDMCommandClickInActionAreaPass && (mouseCommand - kDMCommandClickInActionAreaPass) <= _vm->_menuMan->_actionCount) {
 				if (mouseCommand == kDMCommandClickInActionAreaAction0)
 					commandHighlightBoxEnable(234, 318, 86, 96);
 				else if (mouseCommand == kDMCommandClickInActionAreaAction1)
