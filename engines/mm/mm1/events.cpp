@@ -134,7 +134,7 @@ void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 }
 
 void Events::replaceView(const Common::String &name, bool replaceAllViews) {
-	replaceView(findView(name));
+	replaceView(findView(name), replaceAllViews);
 }
 
 void Events::addView(UIElement *ui) {
@@ -272,8 +272,10 @@ void UIElement::focus() {
 }
 
 void UIElement::close() {
-	assert(g_engine->focusedView() == this);
-	g_engine->popView();
+	if (g_events->focusedView() != this)
+		return;
+
+	g_events->popView();
 }
 
 bool UIElement::isFocused() const {
