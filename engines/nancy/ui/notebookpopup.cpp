@@ -30,6 +30,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/taskbar.h"
+
 #include "engines/nancy/ui/notebookpopup.h"
 
 namespace Nancy {
@@ -111,6 +113,8 @@ void NotebookPopup::open() {
 		return;
 
 	setVisible(true);
+
+	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonNotebook);
 
 	// JournalData entries may have changed since the last open (added by
 	// ModifyListEntry, marked complete, etc.) — re-render content.

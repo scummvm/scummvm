@@ -39,6 +39,9 @@ Taskbar::Taskbar() :
 	for (uint i = 0; i < TASK::kNumButtons; ++i) {
 		_buttonStates[i] = kButtonIdle;
 		_enabled[i] = true;
+		for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+			_notifications[i][s] = false;
+		}
 	}
 }
 
@@ -110,9 +113,16 @@ Taskbar::ButtonState Taskbar::restingState(uint index) const {
 	if (!_enabled[index]) {
 		return kButtonDisabled;
 	}
+	// Disable override (ControlUIItems) takes precedence over the badge —
+	// FUN_004d51c3 only draws the notify sprite when state != 3.
 	const ButtonOverride &o = _overrides[index];
 	if (o.active && _currentScene >= o.startScene && _currentScene <= o.endScene) {
-		return o.state;
+		return kButtonDisabled;
+	}
+	for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+		if (_notifications[index][s]) {
+			return kButtonNotification;
+		}
 	}
 	return kButtonIdle;
 }
@@ -131,17 +141,36 @@ void Taskbar::toggleButton(uint index, bool enabled) {
 	}
 }
 
-void Taskbar::setNotification(uint buttonIndex, int16 startScene, int16 endScene) {
+void Taskbar::setNotification(uint buttonIndex, uint subCategory) {
+	if (buttonIndex >= TASK::kNumButtons || subCategory >= kNumNotificationSubCategories) {
+		return;
+	}
+	_notifications[buttonIndex][subCategory] = true;
+
+	if ((int)buttonIndex != _hoveredButton) {
+		drawButton(buttonIndex, restingState(buttonIndex));
+	}
+}
+
+void Taskbar::clearNotification(uint buttonIndex, uint subCategory) {
+	if (buttonIndex >= TASK::kNumButtons || subCategory >= kNumNotificationSubCategories) {
+		return;
+	}
+	_notifications[buttonIndex][subCategory] = false;
+
+	if ((int)buttonIndex != _hoveredButton) {
+		drawButton(buttonIndex, restingState(buttonIndex));
+	}
+}
+
+void Taskbar::clearAllNotifications(uint buttonIndex) {
 	if (buttonIndex >= TASK::kNumButtons) {
 		return;
 	}
-	_overrides[buttonIndex].active = true;
-	_overrides[buttonIndex].state = kButtonNotification;
-	_overrides[buttonIndex].startScene = startScene;
-	_overrides[buttonIndex].endScene = endScene;
+	for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+		_notifications[buttonIndex][s] = false;
+	}
 
-	// Re-render this button immediately unless the player is currently
-	// hovering it (hover takes priority over the override sprite).
 	if ((int)buttonIndex != _hoveredButton) {
 		drawButton(buttonIndex, restingState(buttonIndex));
 	}
@@ -152,7 +181,6 @@ void Taskbar::setDisabledRange(uint buttonIndex, int16 startScene, int16 endScen
 		return;
 	}
 	_overrides[buttonIndex].active = true;
-	_overrides[buttonIndex].state = kButtonDisabled;
 	_overrides[buttonIndex].startScene = startScene;
 	_overrides[buttonIndex].endScene = endScene;
 
@@ -226,11 +254,10 @@ void Taskbar::handleInput(NancyInput &input) {
 	} else if (input.input & NancyInput::kLeftMouseButtonUp) {
 		// Mouse released over the button: trigger the click action and
 		// snap the sprite back to hover (the cursor is still over it).
-		// Acknowledging the click also clears a pending notification
-		// for this button, so re-opening the popup doesn't keep blinking.
-		// A scene-ranged disable override is left intact.
-		if (_overrides[newHovered].state == kButtonNotification) {
-			_overrides[newHovered].active = false;
+		// Acknowledging the click also clears any pending notifications
+		// for this button — the popup will read them on entry.
+		for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+			_notifications[newHovered][s] = false;
 		}
 		drawButton(newHovered, kButtonHover);
 		_clickedButton = newHovered;

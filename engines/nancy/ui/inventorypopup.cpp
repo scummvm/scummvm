@@ -29,6 +29,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/inventorypopup.h"
+#include "engines/nancy/ui/taskbar.h"
 
 namespace Nancy {
 namespace UI {
@@ -85,6 +86,8 @@ void InventoryPopup::open() {
 	refreshGrid();
 
 	setVisible(true);
+
+	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonInventory);
 
 	if (!_uiivData->header.sounds[0].name.empty()) {
 		g_nancy->_sound->loadSound(_uiivData->header.sounds[0]);

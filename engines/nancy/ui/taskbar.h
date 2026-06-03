@@ -46,16 +46,19 @@ public:
 	// in its disabled sprite and ignores clicks.
 	void toggleButton(uint index, bool enabled);
 
-	// Configure a per-button override that is active only while the player
-	// is in a scene whose ID falls in [startScene, endScene]. The button
-	// renders in its notification (badge) sprite, or its disabled sprite,
-	// for that range; outside it reverts to idle.
-	// setDisabledRange is driven by AR 29 (ControlUIItems, _flagB != 0).
-	// setNotification renders the badge sprite; the source that should drive
-	// it has not been identified yet (it is NOT ControlUIItems).
-	void setNotification(uint buttonIndex, int16 startScene, int16 endScene);
+	// Disable override: keep the disabled sprite active while the current
+	// scene is in [startScene, endScene]. Driven by AR 29 (ControlUIItems,
+	// _flagB != 0).
 	void setDisabledRange(uint buttonIndex, int16 startScene, int16 endScene);
 	void clearButtonOverride(uint buttonIndex);
+
+	// Notification badge: each button has up to 3 independent notification
+	// sub-categories. The badge shows when any sub-category is set; it
+	// persists across scene changes until cleared (or all sub-cats are
+	// cleared individually). Disabled state takes precedence over the badge.
+	void setNotification(uint buttonIndex, uint subCategory);
+	void clearNotification(uint buttonIndex, uint subCategory);
+	void clearAllNotifications(uint buttonIndex);
 
 	// Re-evaluate which buttons should currently show their override
 	// sprite. Call after a scene change so the range check kicks in.
@@ -74,15 +77,16 @@ private:
 		kButtonNotification = 4    // popup has new content (badge sprite)
 	};
 
-	// A scene-ranged sprite override for one button. While active and the
+	// A scene-ranged disable override for one button. While active and the
 	// current scene is within [startScene, endScene] the button renders in
-	// `state` (kButtonNotification or kButtonDisabled).
+	// the disabled state.
 	struct ButtonOverride {
 		bool active = false;
-		ButtonState state = kButtonIdle;
 		int16 startScene = -1;
 		int16 endScene = -1;
 	};
+
+	static const uint kNumNotificationSubCategories = 3;
 
 	void drawButton(uint index, ButtonState state);
 	ButtonState restingState(uint index) const;
@@ -97,6 +101,7 @@ private:
 	bool _enabled[5];
 	ButtonState _buttonStates[5];
 	ButtonOverride _overrides[5];
+	bool _notifications[5][kNumNotificationSubCategories];
 };
 
 } // End of namespace UI

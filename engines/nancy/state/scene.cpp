@@ -349,8 +349,12 @@ void Scene::addItemToInventory(int16 id) {
 
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
 			_inventoryBox.addItem(id);
-		} else if (_inventoryPopup.isOpen()) {
-			_inventoryPopup.refreshGrid();
+		} else {
+			if (_inventoryPopup.isOpen()) {
+				_inventoryPopup.refreshGrid();
+			} else if (_taskbar) {
+				_taskbar->setNotification(kTaskButtonInventory, 0);
+			}
 		}
 	}
 }

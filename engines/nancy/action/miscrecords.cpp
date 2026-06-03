@@ -281,6 +281,13 @@ void AddSearchLink::readData(Common::SeekableReadStream &stream) {
 void AddSearchLink::execute() {
 	//NancySceneState.getCellPhonePopup().addSearchLink(
 	//	_mode, _key, _value, _extra, _flag, _eventFlag);
+
+	// Cellphone taskbar badge: mode 0 = new email (sub-cat 1), mode != 0
+	// = new web search topic (sub-cat 2).
+	if (UI::Taskbar *taskbar = NancySceneState.getTaskbar()) {
+		taskbar->setNotification(kTaskButtonCellphone, _mode == 0 ? 1 : 2);
+	}
+
 	finishExecution();
 }
 
@@ -315,6 +322,12 @@ void ChangeCellPhoneInfo::readData(Common::SeekableReadStream &stream) {
 
 void ChangeCellPhoneInfo::execute() {
 	NancySceneState.getCellPhonePopup().upsertContact(_contact);
+
+	// Cellphone taskbar badge: a new/updated contact triggers sub-cat 0.
+	if (UI::Taskbar *taskbar = NancySceneState.getTaskbar()) {
+		taskbar->setNotification(kTaskButtonCellphone, 0);
+	}
+
 	finishExecution();
 }
 

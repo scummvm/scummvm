@@ -30,6 +30,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/taskbar.h"
+
 #include "engines/nancy/ui/cellphonepopup.h"
 
 namespace Nancy {
@@ -183,6 +185,8 @@ void CellPhonePopup::open() {
 	drawChrome();
 	drawScreenContent();
 	setVisible(true);
+
+	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonCellphone);
 
 	if (!_uiclData->header.sounds[0].name.empty()) {
 		g_nancy->_sound->loadSound(_uiclData->header.sounds[0]);

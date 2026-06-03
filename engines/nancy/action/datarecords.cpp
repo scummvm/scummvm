@@ -26,6 +26,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/taskbar.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -478,6 +480,18 @@ void ModifyListEntry::execute() {
 	// rendered list, so the new/changed entry shows up.
 	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getNotebookPopup().isVisible()) {
 		NancySceneState.getNotebookPopup().refreshContent();
+	}
+
+	// Nancy 10+: raise the notebook notification badge on the taskbar when
+	// a new entry is added to one of the tracked lists.
+	if (_type == kAdd && g_nancy->getGameType() >= kGameTypeNancy10) {
+		if (UI::Taskbar *taskbar = NancySceneState.getTaskbar()) {
+			if (_surfaceID == 4) {
+				taskbar->setNotification(kTaskButtonNotebook, 0);
+			} else if (_surfaceID == 3) {
+				taskbar->setNotification(kTaskButtonNotebook, 1);
+			}
+		}
 	}
 
 	finishExecution();
