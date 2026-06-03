@@ -157,9 +157,9 @@ void Overlay::execute() {
 			// Wait until sound stops (if present)
 			if (!g_nancy->_sound->isSoundPlaying(_sound)) {
 				// Check if we're at the last frame
-				if ((_currentFrame == _loopLastFrame) && (_playDirection == kPlayOverlayForward) && (_loop == kPlayOverlayOnce)) {
+				if (_currentFrame == _loopLastFrame && _playDirection == kPlayOverlayForward && _loop == kPlayOverlayOnce) {
 					shouldTrigger = true;
-				} else if ((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayOverlayReverse) && (_loop == kPlayOverlayOnce)) {
+				} else if (_currentFrame == _loopFirstFrame && _playDirection == kPlayOverlayReverse && _loop == kPlayOverlayOnce) {
 					shouldTrigger = true;
 				}
 			}
