@@ -1247,7 +1247,9 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 		return;
 
 	bool drawFootprints = (getFlag(floorOrnOrdinal, kDMMaskFootprints) ? true : false);
-	if (!drawFootprints || clearFlag(floorOrnOrdinal, kDMMaskFootprints)) {
+	if (drawFootprints)
+		clearFlag(floorOrnOrdinal, kDMMaskFootprints);
+	if (!drawFootprints || floorOrnOrdinal) {
 		floorOrnOrdinal--;
 		uint16 floorOrnIndex = floorOrnOrdinal;
 		int16 nativeBitmapIndex = _currMapFloorOrnInfo[floorOrnIndex].nativeIndice
