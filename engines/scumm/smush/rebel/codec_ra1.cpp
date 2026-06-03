@@ -317,6 +317,26 @@ void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int widt
 							*(dst + yo * pitch + xo) = *gs;
 					}
 			}
+
+			/* post processing of the hiquality implementations of codec4/5,
+			 * see e.g. ASSAULT.EXE 121e8 - 12242
+			 */
+			if (x <= 0 || y <= 0 || (x + 4) >= mx || (y + 4) >= my)
+				continue;		/* skip unreachable edges */
+			const uint32 dstoff = y * pitch + x;
+			if (s_ra1C4Param & 0x80) {
+				for (int k = 0; k < 4; k++)
+					*(dst + dstoff + k) = ((*(dst + dstoff + k) + *(dst + dstoff + k - pitch)) >> 1) | 0x80;
+				*(dst + dstoff + 1 * pitch) = ((*(dst + dstoff + 1 * pitch) + *(dst + dstoff + 1 * pitch - 1)) >> 1) | 0x80;
+				*(dst + dstoff + 2 * pitch) = ((*(dst + dstoff + 2 * pitch) + *(dst + dstoff + 2 * pitch - 1)) >> 1) | 0x80;
+				*(dst + dstoff + 3 * pitch) = ((*(dst + dstoff + 3 * pitch) + *(dst + dstoff + 3 * pitch - 1)) >> 1) | 0x80;
+			} else {
+				for (int k = 0; k < 4; k++)
+					*(dst + dstoff + k) = ((*(dst + dstoff + k) + *(dst + dstoff + k - pitch)) >> 1) & 0x7f;
+				*(dst + dstoff + 1 * pitch) = ((*(dst + dstoff + 1 * pitch) + *(dst + dstoff + 1 * pitch - 1)) >> 1) & 0x7f;
+				*(dst + dstoff + 2 * pitch) = ((*(dst + dstoff + 2 * pitch) + *(dst + dstoff + 2 * pitch - 1)) >> 1) & 0x7f;
+				*(dst + dstoff + 3 * pitch) = ((*(dst + dstoff + 3 * pitch) + *(dst + dstoff + 3 * pitch - 1)) >> 1) & 0x7f;
+			}
 		}
 	}
 }
