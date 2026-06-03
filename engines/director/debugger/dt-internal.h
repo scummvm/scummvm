@@ -224,7 +224,7 @@ typedef struct ImGuiState {
 		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
 	struct {
-		CastMember *_castMember;
+		CastMember *_castMember = nullptr;
 		Common::HashMap<CastMember *, int> _filmLoopCurrentFrame;
 	} _castDetails;
 

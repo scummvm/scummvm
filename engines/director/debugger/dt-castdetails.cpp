@@ -300,7 +300,7 @@ void showImageViewer() {
 			}
 
 			// text tab
-			if (!state->cachedNormalized.empty() && ImGui::BeginTabItem("Text")) {
+			if (!state->cachedNormalized.empty() && state->buffer && ImGui::BeginTabItem("Text")) {
 
 				ImGui::BeginChild("##textPanel", ImGui::GetContentRegionAvail(), false,
 					ImGuiWindowFlags_HorizontalScrollbar);

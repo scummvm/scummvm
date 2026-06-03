@@ -130,7 +130,8 @@ static void renderCallStack(uint pc) {
 
 		if (frame->sp.type != VOIDSYM) {
 			stackFrame = Common::String::format("#%d ", i);
-			stackFrame += Common::String::format("%d ", frame->sp.ctx->_scriptId);
+			if (frame->sp.ctx)
+				stackFrame += Common::String::format("%d ", frame->sp.ctx->_scriptId);
 
 			if (frame->sp.ctx && frame->sp.ctx->_id != -1) {
 				stackFrame += Common::String::format("(%d): ", frame->sp.ctx->_id);
@@ -155,6 +156,8 @@ static void renderCallStack(uint pc) {
 		if (ImGui::Selectable(stackFrame.c_str())) {
 			CFrame *head = callstack[callstack.size() - i - 1];
 			ScriptContext *scriptContext = head->sp.ctx;
+			if (!scriptContext || !movie->getCast())
+				continue;
 			int castLibID = movie->getCast()->_castLibID;
 			int castId = head->sp.ctx->_id;
 			bool childScript = false;
@@ -183,13 +186,13 @@ static bool showScriptCast(CastMemberID &id) {
 	bool closed = true;
 
 	if (ImGui::Begin(wName.c_str(), &closed)) {
-		Cast *cast = g_director->getCurrentMovie()->getCasts()->getVal(id.castLib);
+		Cast *cast = g_director->getCurrentMovie()->getCasts()->getValOrDefault(id.castLib, nullptr);
 		ScriptContext *ctx = g_director->getCurrentMovie()->getScriptContext(kScoreScript, id);
 
 		if (ctx) {
 			for (auto &handler : ctx->_functionHandlers)
 				renderCastScript(handler._value);
-		} else if (cast->_lingoArchive->factoryContexts.contains(id.member)) {
+		} else if (cast && cast->_lingoArchive->factoryContexts.contains(id.member)) {
 			for (auto &it : *cast->_lingoArchive->factoryContexts.getVal(id.member)) {
 				for (auto &handler : it._value->_functionHandlers)
 					renderCastScript(handler._value);
@@ -272,11 +275,13 @@ void showHandlers() {
 		return;
 	}
 
+	Common::Array<uint32> toClose;
 	for (auto handler : _state->_openHandlers) {
-		if (!showHandler(handler._value)) {
-			_state->_openHandlers.erase(handler._value.id.member);
-		}
+		if (!showHandler(handler._value))
+			toClose.push_back(handler._value.id.member);
 	}
+	for (uint32 key : toClose)
+		_state->_openHandlers.erase(key);
 }
 
 static void updateCurrentScript() {
@@ -291,6 +296,8 @@ static void updateCurrentScript() {
 	CFrame *head = callstack[callstack.size() - 1];
 	const Director::Movie *movie = g_director->getCurrentMovie();
 	ScriptContext *scriptContext = head->sp.ctx;
+	if (!scriptContext || !movie->getCast())
+		return;
 	int castLibID = movie->getCast()->_castLibID;
 	int castId = head->sp.ctx->_id;
 	bool childScript = false;
@@ -573,7 +580,7 @@ void showExecutionContext() {
 		ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(stage);
 		updateCurrentScript();
 
-		if (scriptData->_showScript) {
+		if (scriptData->_showScript && !scriptData->_scripts.empty() && scriptData->_current < scriptData->_scripts.size()) {
 			// disable highlighting while rendering scripts in Execution Context
 			bool oldSuppress = _state->_dbg._suppressHighlight;
 			_state->_dbg._suppressHighlight = true;
@@ -693,7 +700,7 @@ void showExecutionContext() {
 			scriptData = &_state->_functions._windowScriptData.getOrCreateVal(window);
 			updateCurrentScript();
 
-			if (scriptData->_showScript) {
+			if (scriptData->_showScript && !scriptData->_scripts.empty() && scriptData->_current < scriptData->_scripts.size()) {
 				bool oldSuppress = _state->_dbg._suppressHighlight;
 				_state->_dbg._suppressHighlight = true;
 				ImGuiScript &current = scriptData->_scripts[scriptData->_current];
