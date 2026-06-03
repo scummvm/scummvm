@@ -25,6 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -33,6 +34,8 @@ namespace Game {
 void Encounter::execute() {
 	if (!g_globals->_encountersOn)
 		return;
+
+	Sound::sound2(SOUND_1);
 
 	Maps::Map &map = *g_maps->_currentMap;
 	int comp, maxRand, maxVal;

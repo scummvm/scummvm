@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	mm.o \
 	shared/utils/bitmap_font.o \
+	shared/classic/pc_speaker.o \
 	shared/utils/strings.o \
 	shared/utils/strings_data.o \
 	shared/utils/xeen_font.o \

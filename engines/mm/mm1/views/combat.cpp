@@ -91,6 +91,7 @@ bool Combat::msgGame(const GameMessage &msg) {
 		_spellResult._lines.clear();
 		_spellResult._lines.push_back(Line(msg._value, 1, msg._stringValue));
 		_spellResult._delaySeconds = 3;
+		Sound::sound(SOUND_2);
 
 		setMode(SPELL_RESULT);
 		return true;
