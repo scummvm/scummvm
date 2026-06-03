@@ -1108,32 +1108,20 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = _vm->getStage();
 		break;
 	case kTheStageBottom:
-		{
-			Window *window = _vm->getCurrentWindow();
-			d = window->_window->getInnerDimensions().bottom;
-		}
+		d = _vm->getStage()->_window->getInnerDimensions().bottom;
 		break;
 	case kTheStageColor:
 		// TODO: Provide proper reverse transform for non-indexed color
 		d = (int)g_director->transformColor(g_director->getCurrentWindow()->getStageColor());
 		break;
 	case kTheStageLeft:
-		{
-			Window *window = _vm->getCurrentWindow();
-			d = window->_window->getInnerDimensions().left;
-		}
+		d = _vm->getStage()->_window->getInnerDimensions().left;
 		break;
 	case kTheStageRight:
-		{
-			Window *window = _vm->getCurrentWindow();
-			d = window->_window->getInnerDimensions().right;
-		}
+		d = _vm->getStage()->_window->getInnerDimensions().right;
 		break;
 	case kTheStageTop:
-		{
-			Window *window = _vm->getCurrentWindow();
-			d = window->_window->getInnerDimensions().top;
-		}
+		d = _vm->getStage()->_window->getInnerDimensions().top;
 		break;
 	case kTheStillDown:
 		if (Director::DT::isMouseInputIgnored()) {
