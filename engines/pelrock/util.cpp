@@ -189,7 +189,12 @@ void readUntilBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&b
 		byte b = stream->readByte();
 		if (pos + 1 > bufferSize) {
 			bufferSize *= 2;
-			buffer = (byte *)realloc(buffer, bufferSize);
+			byte *tmp = (byte *)realloc(buffer, bufferSize);
+			if (!tmp) {
+				free(buffer);
+				error("realloc failed in util.cpp");
+			}
+			buffer = tmp;
 		}
 		buffer[pos++] = b;
 

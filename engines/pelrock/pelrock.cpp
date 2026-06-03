@@ -2127,7 +2127,7 @@ void PelrockEngine::endingScene() {
 			idleAnim.animData[0] = new byte[sprite->stride];
 			extractSingleFrame(legsAnimData, idleAnim.animData[0], 0, sprite->w, sprite->h);
 			sprite->animData[0] = idleAnim;
-			sprite->animData[1] = mainAnim;
+			sprite->animData[1] = mainAnim; //-V557
 		} else {
 			sprite->animData[0] = mainAnim;
 		}

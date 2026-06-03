@@ -184,6 +184,7 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 	sonidosFile.read(data, sound.size);
 	sonidosFile.close();
 
+	assert(data);
 	SoundFormat format = detectFormat(data, sound.size);
 	uint32 sampleRate = getSampleRate(data, format);
 	Audio::SeekableAudioStream *stream = nullptr;
@@ -203,7 +204,6 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		uint32 pcmSize = sound.size - headerSize;
 		byte *pcmData = (byte *)malloc(pcmSize);
 		assert(pcmData);
-		assert(data);
 		memcpy(pcmData, data + headerSize, pcmSize);
 		free(data);
 
