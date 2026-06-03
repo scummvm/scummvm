@@ -33,7 +33,7 @@
 #include "scumm/scumm_v7.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/smush_font.h"
+#include "scumm/smush/rebel/font_rebel2.h"
 #include "scumm/smush/rebel/smush_multi_font.h"
 
 #include "scumm/insane/rebel2/rebel.h"
@@ -416,8 +416,7 @@ void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, in
 		if (!curFont || c >= curFont->getNumChars()) continue;
 		int charW = curFont->getCharWidth(c);
 		if (x >= 0 && y >= 0 && charW > 0)
-			curFont->drawCharV7(renderBitmap, clipRect, x, y, pitch, curColor,
-			                    kStyleAlignLeft, c, false, false);
+			drawRebel2Char(curFont, renderBitmap, clipRect, x, y, pitch, curColor, c);
 		x += charW;
 	}
 }

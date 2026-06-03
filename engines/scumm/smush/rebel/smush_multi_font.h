@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/scumm.h"
+#include "scumm/smush/rebel/font_rebel2.h"
 #include "scumm/string_v7.h"
 
 namespace Scumm {
@@ -70,10 +71,12 @@ public:
 private:
 	NutRenderer *getFont(int id);
 	NutRenderer *getCurrentFont() const;
+	Rebel2FontSet getRebel2FontSet();
 
 	ScummEngine *_vm;
 	SmushPlayer *_player;
 	TextRenderer_v7 *_textRenderer;
+	NutRenderer *_rebel2Fonts[Rebel2FontSet::kMaxFonts];
 
 	int _currentFont;
 	int _defaultFont;

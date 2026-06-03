@@ -41,7 +41,7 @@
 #include "scumm/imuse_digi/dimuse_engine.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/smush_font.h"
+#include "scumm/smush/rebel/font_rebel2.h"
 
 #include "scumm/insane/rebel2/rebel.h"
 
@@ -140,7 +140,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
-	_rebelMsgFont = new SmushFont(_vm, "SYSTM/DIHIFONT.NUT", true);
+	_rebelMsgFont = makeRebel2Font(_vm, "SYSTM/DIHIFONT.NUT");
 
 	// Load menu system fonts (from info.md - FUN_403BD0 lines 302-348)
 	// In low resolution mode, fonts are loaded as a linked list:
@@ -148,9 +148,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	//   Font 1 (^f01): SMALFONT.NUT - Small font for format code switching
 	//   Font 2 (^f02): TITLFONT.NUT - Title font
 	//   Font 3 (^f03): POVFONT.NUT - POV font (not loaded here)
-	_smush_talkfontNut = new NutRenderer(_vm, "SYSTM/TALKFONT.NUT");
-	_smush_smalfontNut = new NutRenderer(_vm, "SYSTM/SMALFONT.NUT");
-	_smush_titlefontNut = new NutRenderer(_vm, "SYSTM/TITLFONT.NUT");
+	_smush_talkfontNut = makeRebel2Font(_vm, "SYSTM/TALKFONT.NUT");
+	_smush_smalfontNut = makeRebel2Font(_vm, "SYSTM/SMALFONT.NUT");
+	_smush_titlefontNut = makeRebel2Font(_vm, "SYSTM/TITLFONT.NUT");
 
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));

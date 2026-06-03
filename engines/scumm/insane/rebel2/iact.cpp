@@ -27,8 +27,8 @@
 #include "scumm/scumm_v7.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/smush_font.h"
 #include "scumm/smush/rebel/codec_ra2.h"
+#include "scumm/smush/rebel/font_rebel2.h"
 
 #include "scumm/insane/rebel2/rebel.h"
 
@@ -2588,12 +2588,16 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	// "subtitles" setting and the in-game TEXT toggle (same ConfMan key). The chunk is
 	// still fully parsed above so stream consumption is unaffected.
 	if (ConfMan.getBool("subtitles")) {
+		Rebel2FontSet fontSet;
+		fontSet.numFonts = 1;
+		fontSet.fonts[0] = _rebelMsgFont;
+
 		if (textFlags & 0x04) {
 			// Word-wrapped text
-			_rebelMsgFont->drawStringWrap(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+			drawRebel2StringWrap(fontSet, convertedText, dstIdx, renderBitmap, clipRect, posX, posY, width, textColor, styleFlags);
 		} else {
 			// Single-line text
-			_rebelMsgFont->drawString(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+			drawRebel2String(fontSet, convertedText, dstIdx, renderBitmap, clipRect, posX, posY, width, textColor, styleFlags);
 		}
 	}
 

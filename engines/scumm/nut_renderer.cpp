@@ -196,12 +196,7 @@ void NutRenderer::loadFont(const char *filename) {
 		// If characters have transparency, then bytes just get skipped and
 		// so there may appear some garbage. That's why we have to fill it
 		// with a default color first.
-		//
-		// For codec 44: standard SCUMM v7/v8 fonts use value 2 as the
-		// transparent color. But RA2 codec 44 fonts use value 2 as an actual
-		// glyph color (medium body shade), so we must use 0 instead to avoid
-		// making those pixels invisible during rendering.
-		if (codec == 44 && _vm->_game.id != GID_REBEL2) {
+		if (codec == 44) {
 			memset(_chars[l].src, kSmush44TransparentColor, _chars[l].width * _chars[l].height);
 			_chars[l].transparency = kSmush44TransparentColor;
 		} else {
@@ -315,9 +310,7 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 
 		decodedPtr += (_chars[l].width * _chars[l].height);
 
-		// Same transparency logic as loadFont: RA2 codec 44 fonts use
-		// value 2 as a glyph color, not as transparency.
-		if (codec == 44 && _vm->_game.id != GID_REBEL2) {
+		if (codec == 44) {
 			memset(_chars[l].src, kSmush44TransparentColor, _chars[l].width * _chars[l].height);
 			_chars[l].transparency = kSmush44TransparentColor;
 		} else {
@@ -438,26 +431,7 @@ int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, 
 	int clipWdth = (_chars[chr].width - width);
 	char color = (col != -1) ? col : 1;
 
-	if (_vm->_game.id == GID_REBEL2) {
-		// RA2 codec 44 font rendering, matching the original behavior:
-		//   - Pixel value 1 → remapped to the caller's text color
-		//   - Other non-transparent values → used as-is (palette indices)
-		// The font's pixel layout: value 4 = black outline (38% of pixels),
-		// value 1 = body (11%, remapped to color), value 3 = gray AA (2%).
-		// The SMUSH video palette reserves indices 0-4 for text rendering:
-		//   0=(0,0,0), 1=(255,255,255), 2=(188,188,188), 3=(128,128,128), 4=(0,0,0).
-		for (int j = minY; j < height; j++) {
-			for (int i = minX; i < width; i++) {
-				int8 value = *src++;
-				if (value == 1)
-					dst[i] = color;
-				else if (value != _chars[chr].transparency)
-					dst[i] = value;
-			}
-			src += clipWdth;
-			dst += pitch;
-		}
-	} else if (_vm->_game.version == 7) {
+	if (_vm->_game.version == 7) {
 		if (hardcodedColors) {
 			for (int j = minY; j < height; j++) {
 				for (int i = minX; i < width; i++) {

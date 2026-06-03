@@ -156,6 +156,7 @@ MODULE_OBJS += \
 	smush/smush_player.o \
 	smush/rebel/codec_ra1.o \
 	smush/rebel/codec_ra2.o \
+	smush/rebel/font_rebel2.o \
 	smush/rebel/smush_multi_font.o \
 	smush/rebel/smush_player_rebel.o \
 	smush/rebel/smush_player_ra1.o \

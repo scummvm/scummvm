@@ -483,7 +483,7 @@ public:
 	NutRenderer *_smush_cockpitNut;
 
 	// Font used for opcode 9 text/subtitle rendering (DIHIFONT / TALKFONT)
-	SmushFont *_rebelMsgFont;
+	NutRenderer *_rebelMsgFont;
 
 	// Menu system fonts (from info.md - FUN_403BD0 font loading)
 	// Low resolution mode font list (stored in DAT_00485058 linked list):

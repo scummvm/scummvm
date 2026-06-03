@@ -28,8 +28,8 @@
 #include "scumm/scumm_v7.h"
 
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/smush_font.h"
 #include "scumm/smush/rebel/codec_ra2.h"
+#include "scumm/smush/rebel/font_rebel2.h"
 
 #include "scumm/insane/rebel2/rebel.h"
 
@@ -2806,8 +2806,7 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 				}
 				int charW = curFont->getCharWidth(c);
 				if (drawX >= 0 && drawY >= 0 && charW > 0) {
-					curFont->drawCharV7(renderBitmap, clipRect, drawX, drawY,
-					                    pitch, curColor, kStyleAlignLeft, c, false, false);
+					drawRebel2Char(curFont, renderBitmap, clipRect, drawX, drawY, pitch, curColor, c);
 				}
 				drawX += charW;
 				lineCharsDrawn++;

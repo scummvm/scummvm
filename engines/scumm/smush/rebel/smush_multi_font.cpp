@@ -28,10 +28,13 @@ namespace Scumm {
 
 SmushMultiFont::SmushMultiFont(ScummEngine *vm, SmushPlayer *player, bool useOriginalColors)
 	: _vm(vm), _player(player), _currentFont(0), _defaultFont(0), _hardcodedFontColors(useOriginalColors) {
+	memset(_rebel2Fonts, 0, sizeof(_rebel2Fonts));
 	_textRenderer = new TextRenderer_v7(vm, this);
 }
 
 SmushMultiFont::~SmushMultiFont() {
+	for (int i = 0; i < ARRAYSIZE(_rebel2Fonts); i++)
+		delete _rebel2Fonts[i];
 	delete _textRenderer;
 }
 
@@ -47,20 +50,54 @@ NutRenderer *SmushMultiFont::getCurrentFont() const {
 	return const_cast<SmushMultiFont*>(this)->getFont(_currentFont);
 }
 
+Rebel2FontSet SmushMultiFont::getRebel2FontSet() {
+	static const char *ra2Fonts[] = {
+		"SYSTM/TALKFONT.NUT",
+		"SYSTM/SMALFONT.NUT",
+		"SYSTM/TITLFONT.NUT",
+		"SYSTM/POVFONT.NUT"
+	};
+
+	Rebel2FontSet fontSet;
+	fontSet.numFonts = ARRAYSIZE(ra2Fonts);
+	fontSet.defaultFont = CLIP<int>(_defaultFont, 0, fontSet.numFonts - 1);
+	for (int i = 0; i < fontSet.numFonts; i++) {
+		if (!_rebel2Fonts[i])
+			_rebel2Fonts[i] = makeRebel2Font(_vm, ra2Fonts[i]);
+		fontSet.fonts[i] = _rebel2Fonts[i];
+	}
+	return fontSet;
+}
+
 void SmushMultiFont::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
 	// Reset to default font before drawing
 	_currentFont = _defaultFont;
+	if (_vm->_game.id == GID_REBEL2) {
+		Rebel2FontSet fontSet = getRebel2FontSet();
+		drawRebel2String(fontSet, str, strlen(str), buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+		return;
+	}
 	_textRenderer->drawString(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
 }
 
 void SmushMultiFont::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
 	_currentFont = _defaultFont;
+	if (_vm->_game.id == GID_REBEL2) {
+		Rebel2FontSet fontSet = getRebel2FontSet();
+		drawRebel2String(fontSet, str, strlen(str), buffer, clipRect, x, y, pitch, col, flags);
+		return;
+	}
 	_textRenderer->drawString(str, buffer, clipRect, x, y, pitch, col, flags);
 }
 
 void SmushMultiFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
 	// Reset to default font before drawing
 	_currentFont = _defaultFont;
+	if (_vm->_game.id == GID_REBEL2) {
+		Rebel2FontSet fontSet = getRebel2FontSet();
+		drawRebel2StringWrap(fontSet, str, strlen(str), buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+		return;
+	}
 	_textRenderer->drawStringWrap(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
 }
 
@@ -80,6 +117,11 @@ int SmushMultiFont::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y
 }
 
 int SmushMultiFont::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
+	if (_vm->_game.id == GID_REBEL2) {
+		Rebel2FontSet fontSet = getRebel2FontSet();
+		return drawRebel2Char(fontSet.getFont(_currentFont), buffer, clipRect, x, y, pitch, col, chr);
+	}
+
 	NutRenderer *font = getCurrentFont();
 	if (!font)
 		return 0;
