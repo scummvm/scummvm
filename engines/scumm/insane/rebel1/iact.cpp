@@ -102,6 +102,21 @@ inline bool ra1DispatcherHudOnlyWhenDisabled(uint32 opcode) {
 	}
 }
 
+bool ra1TargetCursorUsesProjection(uint16 opcode) {
+	switch (opcode) {
+	// FOBJ target chunks can precede the paired 0x0A GAME chunk, leaving 0x08
+	// as the active opcode in turret sections such as L1PLAY2.
+	case 0x08:
+	case 0x09:
+	case 0x0A:
+	case 0x0B:
+	case 0x1A:
+		return true;
+	default:
+		return false;
+	}
+}
+
 inline bool isLevel2DamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0003:
@@ -1108,8 +1123,9 @@ void InsaneRebel1::updateShipPhysics() {
 
 	// FUN_1DEB5 updates the curve table via FUN_22549 after SetCameraOffset.
 	// The full DOS path blends a few roll-history terms; use the current roll
-	// accumulator so side-looking still bends the gameplay projection.
-	rebuildProjectionTable(CLIP<int16>((int16)(-(_rollAccum >> 7)), -0x1A, 0x1A), 0x1A);
+	// accumulator so side-looking still bends the gameplay projection. DOS
+	// negates before the arithmetic shift.
+	rebuildProjectionTable((int16)CLIP<int32>((-_rollAccum) >> 7, -0x1A, 0x1A), 0x1A);
 
 	// --- Step 8: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
 	// Horizontal component from _74CA (rollAccum):
@@ -1272,9 +1288,9 @@ void InsaneRebel1::updateTurretShipDirection(int16 offsetY) {
 
 void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
 	// Original 0x0D/0x0E collision compares script zones transformed by
-	// FUN_2248C against the source-buffer ship center (base center +
-	// g_shipOffset). Keep this in the same 384x242 space; the final viewport
-	// crop is only a presentation step.
+	// FUN_223FE against the gameplay-window ship center (base center +
+	// g_shipOffset). This is DOS screen space; render overlays add the viewport
+	// offset separately when drawing into ScummVM's larger source buffer.
 	//
 	// In Level 1 part 2, HandleGameOp0A_TurretVariant reuses _shipPos for the
 	// targeting cursor, so collision must read the movement accumulator instead.
@@ -1409,7 +1425,8 @@ void InsaneRebel1::updateTurretPhysics() {
 
 	// FUN_1E6A7 rebuilds the side-look curve with a shallower table than the
 	// main flight handler, derived directly from roll.
-	rebuildProjectionTable((int16)(-(_rollAccum >> 9)), 0x0D);
+	// DOS negates before the arithmetic shift.
+	rebuildProjectionTable((int16)((-_rollAccum) >> 9), 0x0D);
 
 	// Regeneration + survival bonus via FUN_1BB0E call in this path.
 	if ((_frameCounter & 0x1F) == 0) {
@@ -2090,10 +2107,10 @@ void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableRea
 
 	int16 centerX = corridorLeft + corridorWidth / 2;
 	int16 centerY = corridorTop + corridorHeight / 2;
-	// DOS FUN_1C54D calls FUN_2248C here, which adds the current
-	// camera offset to the scripted rectangle center before testing it
-	// against the source-buffer ship center.
-	unprojectGameplayPoint(centerX, centerY);
+	// DOS FUN_1C54D calls FUN_223FE here, which projects the scripted
+	// rectangle center into gameplay-window space before testing it against the
+	// ship center.
+	projectGameplayPoint(centerX, centerY);
 
 	_corridorLeftX = centerX - corridorWidth / 2;
 	_corridorTopY = centerY - corridorHeight / 2;
@@ -2165,8 +2182,8 @@ void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStr
 
 	int16 centerX = zoneLeft + zoneWidth / 2;
 	int16 centerY = zoneTop + zoneHeight / 2;
-	// Same transform as opcode 0x0D/FUN_1C54D.
-	unprojectGameplayPoint(centerX, centerY);
+	// Same gameplay-window FUN_223FE transform as opcode 0x0D/FUN_1C54D.
+	projectGameplayPoint(centerX, centerY);
 
 	zoneLeft = centerX - zoneWidth / 2;
 	zoneTop = centerY - zoneHeight / 2;
@@ -2410,16 +2427,17 @@ void InsaneRebel1::processShot() {
 }
 
 // checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
-// The original compares target bounds against the cursor after UnprojectScreenPoint()
-// because g_shipPos is a screen-space cursor. Most handlers in this port draw the
-// cursor into the 384x242 source buffer before the viewport crop, so their cursor is
-// already in the same target space as raw FOBJ bounds. Opcode 0x0B remains screen-space
-// and still needs the original project/unproject conversion.
+// The original compares raw FOBJ bounds against the cursor after
+// UnprojectScreenPoint(). Keep that separate from 0x0D/0x0E collision, which projects
+// zones into gameplay-window screen space before comparing against the ship center.
 void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
 	int16 snap = _tuning.snap;
-	const bool screenSpaceCursor = (getEffectiveGameOpcode() == 0x0B);
-	int16 curX = getGameplayCursorX();
-	int16 curY = getGameplayCursorY();
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	const bool screenSpaceCursor = ra1TargetCursorUsesProjection(effectiveOpcode);
+	const int16 screenCursorX = getGameplayCursorX();
+	const int16 screenCursorY = getGameplayCursorY();
+	int16 curX = screenCursorX;
+	int16 curY = screenCursorY;
 	if (screenSpaceCursor)
 		unprojectGameplayPoint(curX, curY);
 	const int slot = _targetCount;
@@ -2446,6 +2464,11 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 			_targetProximity = 1;  // Near
 		if (slot < kMaxTargetBoxes)
 			_targetBoxVariant[slot] = CLIP<int16>((int16)(_targetBoxVariant[slot] + 3), 0, 5);
+
+		debugC(DEBUG_INSANE, "RA1 target near: opcode=0x%02x target=%d raw=[%d,%d]-[%d,%d] cursorScreen=(%d,%d) cursorTest=(%d,%d) snap=%d prox=%d view=(%d,%d)",
+			effectiveOpcode, targetIdx, left, top, right, bottom,
+			screenCursorX, screenCursorY, curX, curY, snap, _targetProximity,
+			_perspectiveX, _perspectiveY);
 
 		// Check tight lock: cursor within target + snap (no extra margin)
 		if (curX > left - snap && curX < right + snap &&

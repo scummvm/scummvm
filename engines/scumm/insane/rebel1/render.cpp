@@ -31,9 +31,8 @@ inline int ra1OverlayViewOffsetX(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
-	// In opcode 0x0B (FUN_1CDA7), marker/shot coordinates are in the gameplay
-	// window. Under ScummVM's FUN_224FD crop emulation, shift them into the
-	// 384-wide source buffer so they stay aligned after the source-window crop.
+	// Opcode 0x0B target/GOST markers are handled as raw/projected coordinates
+	// in their callers. Keep this helper scoped to that legacy path.
 	return (rebel1->getEffectiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveX() : 0;
 }
 
@@ -42,6 +41,42 @@ inline int ra1OverlayViewOffsetY(const InsaneRebel1 *rebel1) {
 		return 0;
 
 	return (rebel1->getEffectiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveY() : 0;
+}
+
+int ra1GameplayWindowOffsetX(const InsaneRebel1 *rebel1) {
+	if (!rebel1 || !rebel1->isInteractiveVideoActive())
+		return 0;
+
+	// Ship/cursor/shot coordinates are in DOS's 320x200 gameplay window. Under
+	// ScummVM's FUN_224FD crop emulation, shift them into the 384x242 source
+	// buffer so the final source-window crop presents them at the same screen
+	// position DOS used for gameplay and collision.
+	switch (rebel1->getEffectiveGameOpcode()) {
+	case 0x07:
+	case 0x08:
+	case 0x09:
+	case 0x0A:
+	case 0x0B:
+		return rebel1->getPerspectiveX();
+	default:
+		return 0;
+	}
+}
+
+int ra1GameplayWindowOffsetY(const InsaneRebel1 *rebel1) {
+	if (!rebel1 || !rebel1->isInteractiveVideoActive())
+		return 0;
+
+	switch (rebel1->getEffectiveGameOpcode()) {
+	case 0x07:
+	case 0x08:
+	case 0x09:
+	case 0x0A:
+	case 0x0B:
+		return rebel1->getPerspectiveY();
+	default:
+		return 0;
+	}
 }
 
 void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
@@ -840,8 +875,8 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
 	const char kRA1TorpedoIndicator[] = "<<d";
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
-	const int overlayX = ra1OverlayViewOffsetX(this);
-	const int overlayY = ra1OverlayViewOffsetY(this);
+	const int overlayX = ra1GameplayWindowOffsetX(this);
+	const int overlayY = ra1GameplayWindowOffsetY(this);
 	if (markerBank.numSprites > 0) {
 		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
@@ -1155,21 +1190,21 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 		0, -3, -19, -24, -30, -28, -30, -29, -20, -5
 	};
 	const int spritesPerSet = 5;
-	const int overlayX = ra1OverlayViewOffsetX(this);
-	const int overlayY = ra1OverlayViewOffsetY(this);
+	const int overlayX = ra1GameplayWindowOffsetX(this);
+	const int overlayY = ra1GameplayWindowOffsetY(this);
 	const int leftStartX = 0;
 	const int rightStartX = 0x13F; // 319
 	const uint16 effectiveOpcode = getEffectiveGameOpcode();
 	const bool onFootMode = (effectiveOpcode == 0x19 || effectiveOpcode == 0x1A);
 	const bool turretMode = (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A);
 	const bool flightVariantMode = (effectiveOpcode == 0x09);
-	int shipBaseX = _shipPosX;
-	int shipBaseY = flightVariantMode ? _shipPosY : (overlayY + _shipPosY);
+	int shipBaseX = overlayX + _shipPosX;
+	int shipBaseY = overlayY + _shipPosY;
 	if (turretMode) {
 		int16 centerX, centerY;
 		getTurretShipCenter(centerX, centerY);
-		shipBaseX = centerX;
-		shipBaseY = centerY;
+		shipBaseX = overlayX + centerX;
+		shipBaseY = overlayY + centerY;
 	}
 
 	for (int i = 0; i < kMaxShotSlots; i++) {
@@ -1589,8 +1624,8 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 		shipScreenY = centerY;
 	}
 
-	int drawX = shipScreenX - spr.width / 2;
-	int drawY = shipScreenY - spr.height / 2;
+	int drawX = ra1GameplayWindowOffsetX(this) + shipScreenX - spr.width / 2;
+	int drawY = ra1GameplayWindowOffsetY(this) + shipScreenY - spr.height / 2;
 
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 }
@@ -1601,8 +1636,8 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	if (_bangBank.numSprites <= 0)
 		return;
 
-	const int overlayX = ra1OverlayViewOffsetX(this);
-	const int overlayY = ra1OverlayViewOffsetY(this);
+	const int overlayX = ra1GameplayWindowOffsetX(this);
+	const int overlayY = ra1GameplayWindowOffsetY(this);
 	// In 0x08/0x0A turret handlers, explosion anchors use the ship center, not
 	// the targeting cursor stored in _shipPos. Flight handlers already keep the
 	// ship center in _shipPos.
@@ -1612,8 +1647,8 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	if (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A) {
 		int16 centerX, centerY;
 		getTurretShipCenter(centerX, centerY);
-		shipScreenX = centerX;
-		shipScreenY = centerY;
+		shipScreenX = overlayX + centerX;
+		shipScreenY = overlayY + centerY;
 	}
 
 	// --- Death shake explosions (FUN_1DEB5 LAB_1e0e3) ---
