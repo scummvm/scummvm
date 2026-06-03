@@ -19,7 +19,8 @@
  *
  */
 
-#include "audio/softsynth/pcspk.h"
+#include "audio/audiostream.h"
+#include "audio/sine.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/mods/universaltracker.h"
 
@@ -55,14 +56,12 @@ SoundSubsystemDialog::SoundSubsystemDialog() : TestbedInteractionDialog(80, 60, 
 
 	_mixer = g_system->getMixer();
 
-	// the three streams to be mixed
-	Audio::PCSpeakerStream *s1 = new Audio::PCSpeakerStream();
-	Audio::PCSpeakerStream *s2 = new Audio::PCSpeakerStream();
-	Audio::PCSpeakerStream *s3 = new Audio::PCSpeakerStream();
+	uint rate = _mixer->getOutputRate();
 
-	s1->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
-	s2->play(Audio::PCSpeaker::kWaveFormSine, 1200, -1);
-	s3->play(Audio::PCSpeaker::kWaveFormSine, 1400, -1);
+	// the three streams to be mixed
+	Audio::AudioStream *s1 = new Audio::SineStream(1000, rate);
+	Audio::AudioStream *s2 = new Audio::SineStream(1200, rate);
+	Audio::AudioStream *s3 = new Audio::SineStream(1400, rate);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_h1, s1);
 	_mixer->pauseHandle(_h1, true);
@@ -126,17 +125,18 @@ TestExitStatus SoundSubsystem::playBeeps() {
 		return kTestSkipped;
 	}
 
-	Audio::PCSpeakerStream *speaker = new Audio::PCSpeakerStream();
 	Audio::Mixer *mixer = g_system->getMixer();
+	uint rate = mixer->getOutputRate();
+	Audio::AudioStream *stream;
 	Audio::SoundHandle handle;
-	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, speaker);
 
 	// Left Beep
 	Testsuite::writeOnScreen("Left Beep", Common::Point(0, 100));
+	stream = new Audio::SineStream(1000, rate);
+	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
 	mixer->setChannelBalance(handle, -127);
-	speaker->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
 	g_system->delayMillis(500);
-	mixer->pauseHandle(handle, true);
+	mixer->stopHandle(handle);
 
 	if (Testsuite::handleInteractiveInput("  Were you able to hear the left beep?  ", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Left Beep couldn't be detected : Error with Mixer::setChannelBalance()\n");
@@ -145,10 +145,11 @@ TestExitStatus SoundSubsystem::playBeeps() {
 
 	// Right Beep
 	Testsuite::writeOnScreen("Right Beep", Common::Point(0, 100));
+	stream = new Audio::SineStream(1000, rate);
+	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
 	mixer->setChannelBalance(handle, 127);
-	mixer->pauseHandle(handle, false);
 	g_system->delayMillis(500);
-	mixer->stopAll();
+	mixer->stopHandle(handle);
 
 	if (Testsuite::handleInteractiveInput("Were you able to hear the right beep?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Right Beep couldn't be detected : Error with Mixer::setChannelBalance()\n");
@@ -160,7 +161,7 @@ TestExitStatus SoundSubsystem::playBeeps() {
 TestExitStatus SoundSubsystem::mixSounds() {
 	Testsuite::clearScreen();
 	TestExitStatus passed = kTestPassed;
-	Common::String info = "Testing Mixer Output by generating multichannel sound output using PC speaker emulator.\n"
+	Common::String info = "Testing Mixer Output by generating multichannel sound output using sine wave forms.\n"
 	"The mixer should be able to play them simultaneously\n";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
@@ -313,16 +314,13 @@ TestExitStatus SoundSubsystem::sampleRates() {
 
 	TestExitStatus passed = kTestPassed;
 	Audio::Mixer *mixer = g_system->getMixer();
+	uint rate = mixer->getOutputRate();
 
-	Audio::PCSpeakerStream *s1 = new Audio::PCSpeakerStream();
+	Audio::AudioStream *s1 = new Audio::SineStream(1000, rate);
 	// Stream at half sampling rate
-	Audio::PCSpeakerStream *s2 = new Audio::PCSpeakerStream(s1->getRate() - 10000);
+	Audio::AudioStream *s2 = new Audio::SineStream(1000, rate - 10000);
 	// Stream at twice sampling rate
-	Audio::PCSpeakerStream *s3 = new Audio::PCSpeakerStream(s1->getRate() + 10000);
-
-	s1->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
-	s2->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
-	s3->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
+	Audio::AudioStream *s3 = new Audio::SineStream(1000, rate + 10000);
 
 	Audio::SoundHandle handle;
 	Common::Point pt(0, 100);

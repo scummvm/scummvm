@@ -35,9 +35,6 @@ class PCSpeaker {
 public:
 	enum WaveForm {
 		kWaveFormSquare = 0,
-		kWaveFormSine,
-		kWaveFormSaw,
-		kWaveFormTriangle,
 		kWaveFormSilence
 	};
 
