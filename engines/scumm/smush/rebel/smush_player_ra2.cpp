@@ -195,6 +195,82 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 	return true;
 }
 
+bool SmushPlayerRebel2::handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
+	if (subType != MKTAG('T','E','X','T') && subType != MKTAG('T','R','E','S'))
+		return false;
+
+	if (subSize < 16) {
+		b.skip(subSize);
+		return true;
+	}
+
+	int posX = b.readSint16LE();
+	int posY = b.readSint16LE();
+	int flags = b.readSint16LE();
+	int left = b.readSint16LE();
+	int top = b.readSint16LE();
+	int width = b.readSint16LE();
+	int height = b.readSint16LE();
+	b.readUint16LE();
+
+	const char *str = nullptr;
+	char *text = nullptr;
+	int consumed = 16;
+
+	if (subType == MKTAG('T','E','X','T')) {
+		const int textSize = subSize - consumed;
+		if (textSize > 0) {
+			text = (char *)malloc(textSize + 1);
+			if (!text) {
+				b.skip(textSize);
+				return true;
+			}
+			b.read(text, textSize);
+			text[textSize] = 0;
+			consumed += textSize;
+			str = text;
+		}
+	} else if (subSize >= consumed + 2) {
+		int stringId = b.readUint16LE();
+		consumed += 2;
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameTextResource: TRES string_id=%d pos=(%d,%d) flags=0x%x clip=(%d,%d,%d,%d) _strings=%p",
+			stringId, posX, posY, flags, left, top, width, height, (void *)_strings);
+		if (_strings)
+			str = _strings->get(stringId);
+	}
+
+	if (consumed < subSize)
+		b.skip(subSize - consumed);
+
+	if (!str) {
+		free(text);
+		return true;
+	}
+
+	int color = 1;
+	int fontId = 0;
+
+	while (str[0] == '^') {
+		if (str[1] == 'f' && Common::isDigit(str[2]) && Common::isDigit(str[3])) {
+			fontId = (str[2] - '0') * 10 + str[3] - '0';
+			str += 4;
+		} else if (str[1] == 'c' && Common::isDigit(str[2]) &&
+				Common::isDigit(str[3]) && Common::isDigit(str[4])) {
+			color = (str[2] - '0') * 100 + (str[3] - '0') * 10 + str[4] - '0';
+			str += 5;
+		} else {
+			break;
+		}
+	}
+
+	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
+	if (ConfMan.getBool("subtitles"))
+		ra2HandleTextResource(str, fontId, color, posX, posY, left, top, width, height, flg);
+
+	free(text);
+	return true;
+}
+
 /**
  * RA2-specific text rendering using SmushMultiFont for inline font switching.
  */

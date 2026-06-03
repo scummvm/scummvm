@@ -38,6 +38,7 @@ protected:
 	void releaseGameVideoState() override;
 	bool shouldPreserveFrameBuffer() const override { return true; }
 	bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) override;
+	bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameTextRendering(const char *str, int fontId, int color, int pos_x, int pos_y, int left, int top, int width, int height, TextStyleFlags flg) override;
 	bool shouldAlwaysShowSubtitles() const override { return true; }
 	SmushFont *getGameFont(int font) override;
