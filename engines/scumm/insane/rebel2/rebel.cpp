@@ -56,7 +56,7 @@ const uint32 kRA2MenuGamepadNavigationDebounceMs = 250;
 const uint32 kRA2MenuGamepadMouseSuppressMs = 250;
 
 bool rebel2UsesRelativeGamepadAim(int selectedLevel) {
-	return selectedLevel == 1 || selectedLevel == 5;
+	return selectedLevel == 1 || selectedLevel == 5 || selectedLevel == 14;
 }
 
 bool isRebel2RawMenuAxis(int axis) {
@@ -1680,7 +1680,7 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	bool activeGamepadAim = false;
 
 	if (_rebelHandler == 0x26 && rebel2UsesRelativeGamepadAim(_selectedLevel)) {
-		// Levels 1 and 5 play best with the older mouse-like gamepad behavior from
+		// Levels 1, 5, and 14 play best with the older mouse-like gamepad behavior from
 		// ec305dee371/0025c4e1086: pan the reticle directly and leave it where
 		// the player releases the stick. Later handler 0x26 levels keep the
 		// original-style centered mapping for obstacle avoidance.
