@@ -2739,16 +2739,26 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 		return fc == -2;
 	};
 
-	// The TRS parser joins multi-line strings with spaces (stripping \n//),
-	// so " ^f" marks where a line break was in the original TRS file.
 	// Split into lines, then render each centered at textX (FUN_004341a0).
+	// Older RA2 text loading joined multi-line strings with spaces, leaving
+	// " ^f" as the separator; current TRES loading preserves real newlines.
 	Common::Array<Common::String> lines;
 	{
 		Common::String cur;
 		const char *s = text;
 		while (*s) {
+			if (*s == '\n' || *s == '\r') {
+				if (!cur.empty())
+					lines.push_back(cur);
+				cur.clear();
+				if (*s == '\r' && s[1] == '\n')
+					s++;
+				s++;
+				continue;
+			}
 			if (*s == ' ' && s[1] == '^' && s[2] == 'f') {
-				lines.push_back(cur);
+				if (!cur.empty())
+					lines.push_back(cur);
 				cur.clear();
 				s++; // skip the space, keep ^f for the next line
 				continue;
