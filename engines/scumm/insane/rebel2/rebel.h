@@ -468,6 +468,8 @@ public:
 
 	// Reset gameplay aim to the original centered mouse/joystick baseline.
 	void centerGameplayAim();
+	// Tracks consecutive recorded gameplay SANs so wave-loop videos do not recenter aim.
+	bool _gameplaySectionActive;
 
 	// Level state tracking for multi-phase levels
 	int _currentPhase;        // Current gameplay phase (1, 2, 3 for Level 2; 1, 2 for Level 3/6)

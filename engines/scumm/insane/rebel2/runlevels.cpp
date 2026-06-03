@@ -191,11 +191,15 @@ InsaneRebel2::WaveEndResult InsaneRebel2::processWaveEnd(int16 mask, int16 *budg
 bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool recordFrame) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Retail reset helpers clear the centered input axes before gameplay starts.
-	// Do the same for playable segments, but keep seamless continuation videos
-	// (0x40, e.g. 13PLAY_B) from snapping the aim point mid-sequence.
-	if (recordFrame && (flags & 0x08) != 0 && (flags & 0x40) == 0)
-		centerGameplayAim();
+	const bool isRecordedGameplay = recordFrame && (flags & 0x08) != 0;
+	if (isRecordedGameplay) {
+		// Center only at the section boundary; looped wave videos are continuations.
+		if (!_gameplaySectionActive && (flags & 0x40) == 0)
+			centerGameplayAim();
+		_gameplaySectionActive = true;
+	} else {
+		_gameplaySectionActive = false;
+	}
 
 	splayer->setCurVideoFlags(flags);
 	splayer->play(filename, 15);

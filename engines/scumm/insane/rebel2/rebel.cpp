@@ -519,6 +519,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
 	_gamepadAimActive = false;
+	_gameplaySectionActive = false;
 	_lastGameplayMenuCloseTime = 0;
 	_lastMenuGamepadNavigationTime = 0;
 

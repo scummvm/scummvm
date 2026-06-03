@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -33,6 +34,15 @@ namespace Scumm {
 
 static const int kRebel2GameplayAimCenterX = 160;
 static const int kRebel2GameplayAimCenterY = 100;
+
+static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
+	if (!eventMan)
+		return;
+
+	eventMan->getEventDispatcher()->clearEvents();
+	eventMan->purgeMouseEvents();
+	eventMan->purgeKeyboardEvents();
+}
 
 // ---------------------------------------------------------------------------
 // Level Loading System
@@ -174,6 +184,7 @@ void InsaneRebel2::playMissionBriefing() {
 // Resets handler to 0 (no HUD) and sets flags to 0x28 (cinematic + buffer preserve).
 // All wrapper functions (FUN_00417168/4171c5/417ab2/417327) add | 8 before calling FUN_0041f4d0.
 void InsaneRebel2::playCinematic(const char *filename) {
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
 
@@ -188,6 +199,7 @@ void InsaneRebel2::playCinematic(const char *filename) {
 void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX, int textY,
                                      int fadeInFrame, int fadeOutFrame) {
 
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
 
@@ -258,6 +270,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 // playLevelEnd -- Level completion video (FUN_00417327).
 void InsaneRebel2::playLevelEnd(int levelId) {
 
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
 
@@ -276,6 +289,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 // playLevelRetry -- Retry prompt video (LEVXX/XXRETRY.SAN, FUN_00417168).
 void InsaneRebel2::playLevelRetry(int levelId) {
 
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
 
@@ -294,6 +308,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 // playLevelGameOver -- Game over video (FUN_00417ab2).
 void InsaneRebel2::playLevelGameOver(int levelId) {
 
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
 
@@ -367,6 +382,9 @@ void InsaneRebel2::playCreditsSequence() {
 }
 
 void InsaneRebel2::centerGameplayAim() {
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	purgeRebel2GameplayInputEvents(eventMan);
+
 	_vm->_mouse.x = kRebel2GameplayAimCenterX;
 	_vm->_mouse.y = kRebel2GameplayAimCenterY;
 
@@ -375,6 +393,7 @@ void InsaneRebel2::centerGameplayAim() {
 	_gamepadAimActive = false;
 
 	smush_warpMouse(kRebel2GameplayAimCenterX, kRebel2GameplayAimCenterY, -1);
+	purgeRebel2GameplayInputEvents(eventMan);
 }
 
 // runLevel -- Main level dispatcher, calls per-level handlers.
@@ -414,7 +433,7 @@ int InsaneRebel2::runLevel(int levelId) {
 	// The original hides the cursor (ShowCursor(0)) and relies on Windows confining
 	// the mouse to the game window. Without locking, the cursor can escape the
 	// ScummVM window making the ship uncontrollable.
-	centerGameplayAim();
+	_gameplaySectionActive = false;
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
@@ -677,6 +696,7 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 // playLevelDeathVariant -- Death video with variant selection.
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
 
@@ -703,6 +723,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 // playLevelRetryVariant -- Phase-specific retry video.
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 
+	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
 
