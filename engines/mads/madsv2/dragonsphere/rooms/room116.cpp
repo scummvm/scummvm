@@ -497,7 +497,7 @@ static void room_116_parser() {
 			if (global[king_status] == KING_WITH_SOUL && !global[king_is_in_stairwell]) {
 				kernel_abort_animation(aa[1]);
 				local->anim_1_running = false;
-				aa[0] = kernel_run_animation(kernel_name('B', -1), 0);
+				aa[0] = kernel_run_animation(kernel_name('B', -1), 5);
 				local->animation_running = KING_THRU_DOOR;
 			}
 

@@ -201,7 +201,7 @@ static void room_104_init() {
 	}
 
 	// Flip MacMorn hotspot off to prevent palette fragmentation
-	kernel_flip_hotspot(350, false);  // words_MacMorn
+	kernel_flip_hotspot(words_MacMorn, false);
 
 	// Zero runtime state on fresh room entry (not when restoring a saved game)
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -378,7 +378,7 @@ static void room_104_init() {
 			kernel_dynamic_anim(id, aa[2], 0);
 		}
 
-		kernel_flip_hotspot(350, true);   // words_MacMorn — visible now
+		kernel_flip_hotspot(words_MacMorn, true);
 
 		{
 			int16 id = kernel_add_dynamic(291, 13, SYNTAX_MASC_NOT_PROPER,
