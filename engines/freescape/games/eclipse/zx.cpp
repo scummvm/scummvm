@@ -86,24 +86,28 @@ void EclipseEngine::loadHeartFramesZX(Common::SeekableReadStream *file, int rest
 
 void EclipseEngine::loadAssetsZXFullGame() {
 	Common::File file;
+	const char *prefix = isEclipse2() ? "totaleclipse2" : "totaleclipse";
+	Common::Path titleFile(Common::String::format("%s.zx.title", prefix));
+	Common::Path borderFile(Common::String::format("%s.zx.border", prefix));
+	Common::Path dataFile(Common::String::format("%s.zx.data", prefix));
 
-	file.open("totaleclipse.zx.title");
+	file.open(titleFile);
 	if (file.isOpen()) {
 		_title = loadAndConvertScrImage(&file);
 	} else
-		error("Unable to find totaleclipse.zx.title");
+		error("Unable to find %s", titleFile.toString().c_str());
 
 	file.close();
-	file.open("totaleclipse.zx.border");
+	file.open(borderFile);
 	if (file.isOpen()) {
 		_border = loadAndConvertScrImage(&file);
 	} else
-		error("Unable to find totaleclipse.zx.border");
+		error("Unable to find %s", borderFile.toString().c_str());
 	file.close();
 
-	file.open("totaleclipse.zx.data");
+	file.open(dataFile);
 	if (!file.isOpen())
-		error("Failed to open totaleclipse.zx.data");
+		error("Failed to open %s", dataFile.toString().c_str());
 
 	if (isEclipse2()) {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 30);
