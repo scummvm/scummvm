@@ -421,6 +421,7 @@ void Search::drawItem() {
 				c._name,
 				item->_name.c_str()
 			));
+			Sound::sound2(SOUND_5);
 
 			if (treasure.hasItems()) {
 				delaySeconds(2);

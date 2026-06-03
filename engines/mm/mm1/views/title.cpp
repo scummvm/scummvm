@@ -68,10 +68,16 @@ bool Title::msgFocus(const FocusMessage &msg) {
 	_screenNum = -1;
 	_fadeIndex = 0;
 
+	if (!g_engine->isEnhanced())
+		Sound::sound2(SOUND_TITLE);
+
 	return true;
 }
 
 bool Title::msgUnfocus(const UnfocusMessage & msg) {
+	if (!g_engine->isEnhanced())
+		Sound::stopSound();
+
 	for (int i = 0; i < SCREENS_COUNT; ++i)
 		_screens[i].clear();
 

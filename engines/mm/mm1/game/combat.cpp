@@ -900,6 +900,7 @@ void Combat::updateMonsterStatus() {
 	if (val <= 0) {
 		_monsterP->_hp = 0;
 		_monsterP->_status = MONFLAG_DEAD;
+		Sound::sound2(SOUND_9);
 
 	} else {
 		_monsterP->_hp = val;
@@ -1107,6 +1108,7 @@ void Combat::resetDestMonster() {
 
 void Combat::spellFailed() {
 	g_globals->_combatParty[_currentChar]->_checked = true;
+	Sound::sound(SOUND_2);
 
 	SoundMessage msg(10, 2, SpellCasting::spellResultMessage(STRING["spells.failed"]));
 	msg._delaySeconds = 3;

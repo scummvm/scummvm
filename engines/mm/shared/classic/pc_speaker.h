@@ -19,37 +19,51 @@
  *
  */
 
-#ifndef MM_MM1_SOUND_H
-#define MM_MM1_SOUND_H
+#ifndef MM_SHARED_CLASSIC_PC_SPEAKER_H
+#define MM_SHARED_CLASSIC_PC_SPEAKER_H
 
-#include "mm/shared/xeen/sound.h"
-#include "mm/shared/classic/pc_speaker.h"
+#include "common/scummsys.h"
+
+namespace Audio {
+class PCSpeaker;
+}
 
 namespace MM {
-namespace MM1 {
+namespace Shared {
+namespace Classic {
 
-enum SoundId {
-	SOUND_TITLE = 0,
-	SOUND_1 = 1, SOUND_2 = 2, SOUND_3 = 3, SOUND_4 = 4,
-	SOUND_5 = 5, SOUND_8 = 8, SOUND_9 = 9
+struct PitSequenceEntry {
+	uint16 durationTicks;
+	uint16 pitDivisor;
 };
 
-class Sound : public Shared::Xeen::Sound {
-private:
-	Shared::Classic::PcSpeaker _speaker;
+struct FrequencySequenceEntry {
+	uint32 lengthUs;
+	float frequency;
+};
 
-	static void playSequence(const Shared::Classic::PitSequenceEntry *sequence, bool append = false, bool restart = false);
+class PcSpeaker {
+private:
+	Audio::PCSpeaker *_speaker = nullptr;
+	bool _ready = false;
 
 public:
-	Sound(Audio::Mixer *mixer);
-	~Sound() override {}
+	PcSpeaker();
+	~PcSpeaker();
 
-	static void sound(SoundId soundNum);
-	static void sound2(SoundId soundNum);
-	static void stopSound();
+	bool init();
+	void stop();
+	bool isPlaying() const;
+
+	void playTone(int frequency, int32 lengthMs);
+	void queueTone(float frequency, uint32 lengthUs);
+	void queueSilence(uint32 lengthUs);
+	void playPitSequence(const PitSequenceEntry *sequence, uint32 tickMicros, bool append = false);
+	void playFrequencySequence(const FrequencySequenceEntry *sequence);
 };
 
-} // namespace MM1
+} // namespace Classic
+} // namespace Shared
 } // namespace MM
 
 #endif

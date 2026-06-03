@@ -46,6 +46,7 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 	if (_canAccept) {
 		// Open the view for display
 		Sound::sound(SOUND_2);
+		Sound::sound2(SOUND_2);
 		addView();
 
 	} else {
@@ -63,6 +64,7 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 		g_maps->_mapPos.y++;
 		map.redrawGame();
 
+		Sound::sound2(SOUND_2);
 		send(SoundMessage(
 			0, 1, STRING["maps.map35.inspectron1"],
 			0, 2, line
