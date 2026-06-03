@@ -961,7 +961,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_lingo->_state->callstack[g_lingo->_state->callstack.size() - 1]->paramCount;
 		break;
 	case kThePauseState:
-		d = (int) g_director->_playbackPaused;
+		d = (int) g_director->getCurrentWindow()->_playbackPaused;
 		break;
 	case kThePerFrameHook:
 		d = _perFrameHook;
