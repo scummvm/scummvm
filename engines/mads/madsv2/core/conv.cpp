@@ -583,6 +583,8 @@ static void conv_generate_text(Conv *convIn, ConvData * /*convData*/,
 	Box *savedBox;
 	bool showBox = conv_show_boxes;
 
+	conv_control.has_text = true;
+
 	// TODO: Hook this up to ScummVM subtitles - original disabled reply boxes if in voice only mode
 	//if (speech_system_active && speech_on && speechCount > 0 && !show_subtitles) showBox = false;
 
@@ -1338,6 +1340,10 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 	char tempString[256];
 	bool showBox = conv_show_boxes;
 
+	conv_control.has_text = false;
+	if (msgListSize == 0)
+		goto done;
+
 	// TODO: Hook this up to ScummVM subtitles - original disabled reply boxes if in voice only mode
 	//if (speech_system_active && speech_on && speechCount > 0 && !show_subtitles) showBox = false;
 
@@ -1376,8 +1382,6 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 				}
 			}
 		}
-
-		box = priorBox;
 	}
 
 	// Record that a conversation popup is live.
@@ -1393,6 +1397,9 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 	else
 		// TODO: If speech is allowed with no box showing, this needs to allow time for the speech duration
 		conv_control.popup_clock = kernel.clock;
+
+done:
+	box = priorBox;
 }
 
 // ---------------------------------------------------------------------------
