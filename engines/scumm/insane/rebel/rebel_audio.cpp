@@ -61,9 +61,11 @@ void RebelAudio::terminate() {
 	}
 }
 
-void RebelAudio::queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan) {
+void RebelAudio::queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan, int sampleRate) {
 	if (!_vm || trackIdx < 0 || trackIdx >= kMaxTracks || size <= 0 || !data)
 		return;
+
+	const int sourceRate = sampleRate > 0 ? sampleRate : _sampleRate;
 
 	if (!_streams[trackIdx]) {
 		debug(1, "RebelAudio: Creating audio stream for track %d at %d Hz", trackIdx, _sampleRate);
@@ -74,12 +76,29 @@ void RebelAudio::queueData(int trackIdx, const uint8 *data, int32 size, int volu
 			DisposeAfterUse::NO);
 	}
 
-	byte *audioCopy = (byte *)malloc(size);
+	int32 queueSize = size;
+	if (sourceRate != _sampleRate) {
+		queueSize = ((int64)size * _sampleRate + sourceRate / 2) / sourceRate;
+		if (queueSize <= 0)
+			queueSize = 1;
+	}
+
+	byte *audioCopy = (byte *)malloc(queueSize);
 	if (!audioCopy)
 		return;
-	memcpy(audioCopy, data, size);
 
-	_streams[trackIdx]->queueBuffer(audioCopy, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	if (sourceRate == _sampleRate) {
+		memcpy(audioCopy, data, queueSize);
+	} else {
+		for (int32 i = 0; i < queueSize; i++) {
+			int32 srcPos = ((int64)i * sourceRate) / _sampleRate;
+			if (srcPos >= size)
+				srcPos = size - 1;
+			audioCopy[i] = data[srcPos];
+		}
+	}
+
+	_streams[trackIdx]->queueBuffer(audioCopy, queueSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 
 	const int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
 	const int scaledPan = (pan * 127) / 128;
@@ -210,7 +229,7 @@ bool RebelAudio::processAudioCodes(SmushPlayer *player, int idx, int32 &tmpFeedS
 			buf = player->_smushDispatch[idx].headerPtr;
 			player->_smushDispatch[idx].audioRemaining = READ_BE_UINT32(buf + 2);
 			player->_smushDispatch[idx].currentOffset = READ_BE_UINT32(buf + 6);
-			player->_smushDispatch[idx].sampleRate = player->_smushAudioSampleRate;
+			player->_smushDispatch[idx].sampleRate = READ_BE_UINT32(buf + 10);
 
 			player->_smushDispatch[idx].headerPtr += player->_smushDispatch[idx].headerPtr[1] + 2;
 			if (player->_smushDispatch[idx].audioRemaining < player->_smushTracks[idx].availableSize + (player->_smushTracks[idx].availableSize >= player->_smushTracks[idx].sdatSize ? 0 : 15000) - player->_smushTracks[idx].dataSize) {
@@ -240,7 +259,7 @@ bool RebelAudio::processAudioCodes(SmushPlayer *player, int idx, int32 &tmpFeedS
 			if (player->_smushDispatch[idx].currentOffset > player->_smushDispatch[idx].audioLength)
 				player->_smushDispatch[idx].currentOffset = player->_smushDispatch[idx].audioLength;
 
-			player->_smushDispatch[idx].sampleRate = player->_smushAudioSampleRate;
+			player->_smushDispatch[idx].sampleRate = READ_BE_UINT32(buf + 10);
 
 			player->_smushDispatch[idx].audioLength -= player->_smushDispatch[idx].currentOffset;
 			player->_smushDispatch[idx].elapsedAudio += player->_smushDispatch[idx].currentOffset;
@@ -349,7 +368,8 @@ void RebelAudio::processFrame(SmushPlayer *player, int16 feedSize) {
 					int32 offset = dispatch.audioRemaining % dispatch.dataSize;
 
 					if (dispatch.sampleRate > 0 && player->_smushAudioSampleRate > 0) {
-						int32 maxFrames = dispatch.sampleRate * tmpFeedSize / player->_smushAudioSampleRate;
+						int32 maxFrames = ((int64)dispatch.sampleRate * tmpFeedSize +
+							player->_smushAudioSampleRate - 1) / player->_smushAudioSampleRate;
 						if (mixInFrameCount > maxFrames)
 							mixInFrameCount = maxFrames;
 					}
@@ -370,13 +390,14 @@ void RebelAudio::processFrame(SmushPlayer *player, int16 feedSize) {
 							break;
 
 						track.state = TRK_STATE_PLAYING;
-						queueData(i, &dispatch.dataBuf[offset], mixInFrameCount, mixVolume, track.pan);
+						queueData(i, &dispatch.dataBuf[offset], mixInFrameCount, mixVolume, track.pan, dispatch.sampleRate);
 
 						dispatch.currentOffset -= mixInFrameCount;
 						dispatch.audioRemaining += mixInFrameCount;
 
 						if (dispatch.sampleRate > 0) {
-							int32 consumedFeed = mixInFrameCount * player->_smushAudioSampleRate / dispatch.sampleRate;
+							int32 consumedFeed = ((int64)mixInFrameCount * player->_smushAudioSampleRate +
+								dispatch.sampleRate - 1) / dispatch.sampleRate;
 							tmpFeedSize -= consumedFeed;
 						} else {
 							tmpFeedSize -= mixInFrameCount;

@@ -42,7 +42,7 @@ public:
 	void terminate();
 	int sampleRate() const { return _sampleRate; }
 
-	void queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan);
+	void queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan, int sampleRate = 0);
 	void processFrame(SmushPlayer *player, int16 feedSize);
 
 private:

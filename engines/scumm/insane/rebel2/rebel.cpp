@@ -420,8 +420,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_hudOverlayNut = nullptr;    // DAT_0047fe78 - Primary HUD overlay (GRD files, animated)
 	_hudOverlay2Nut = nullptr;   // DAT_0047fe80 - Secondary HUD overlay
 
-	// Initialize audio system for RA2 (since we don't use iMUSE)
-	initAudio(11025);  // RA2 audio is 11025 Hz, not 22050 Hz
+	// Initialize audio system for RA2 (since we don't use iMUSE).
+	// Individual SMUSH audio blocks carry their own source rate.
+	initAudio(11025);
 
 	// Initialize and load sound effects (SYSTM/*.SAD files)
 	for (i = 0; i < kRA2NumSfx; i++) {

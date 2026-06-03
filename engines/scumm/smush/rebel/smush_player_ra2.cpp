@@ -772,8 +772,8 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
  * RA2 per-frame audio processing.
  */
 void SmushPlayerRebel2::handleGameParseNextFrame() {
-	// Call processDispatches directly since RA2 has no iMUSE
-	// 11025 Hz / 12 fps = ~918 samples per frame
+	// Call processDispatches directly since RA2 has no iMUSE.
+	// This is the mixer cadence; SAUD opcodes provide per-block source rates.
 	processDispatches(_smushAudioSampleRate / 12);
 }
 
