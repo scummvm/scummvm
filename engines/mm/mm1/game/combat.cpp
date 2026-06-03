@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/game/combat.h"
+#include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
@@ -1107,8 +1108,7 @@ void Combat::resetDestMonster() {
 void Combat::spellFailed() {
 	g_globals->_combatParty[_currentChar]->_checked = true;
 
-	SoundMessage msg(10, 2, Common::String::format("*** %s ***",
-		STRING["spells.failed"].c_str()));
+	SoundMessage msg(10, 2, SpellCasting::spellResultMessage(STRING["spells.failed"]));
 	msg._delaySeconds = 3;
 	displaySpellResult(msg);
 }
