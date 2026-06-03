@@ -269,9 +269,8 @@ void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
 	_grd002Sprite = nullptr;
 	_grdShotOriginTableLoaded = false;
 
-	static const int handler25FrameSlots[] = { 4, 6, 7, 10, 12, 13 };
-	for (uint i = 0; i < ARRAYSIZE(handler25FrameSlots); ++i) {
-		EmbeddedSanFrame &frame = _rebelEmbeddedHud[handler25FrameSlots[i]];
+	for (uint i = 0; i < ARRAYSIZE(_rebelEmbeddedHud); ++i) {
+		EmbeddedSanFrame &frame = _rebelEmbeddedHud[i];
 		free(frame.pixels);
 		frame.pixels = nullptr;
 		frame.width = 0;
