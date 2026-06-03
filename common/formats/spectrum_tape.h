@@ -42,7 +42,10 @@ bool parseSpectrumTape(SeekableReadStream &stream, SpectrumTapeBlocks &blocks);
 
 class SpectrumTapeArchive : public Archive {
 public:
+	SpectrumTapeArchive() {}
 	SpectrumTapeArchive(const SpectrumTapeBlocks &blocks);
+
+	void addFile(const Path &path, const Array<byte> &data);
 
 	bool hasFile(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;

@@ -471,13 +471,17 @@ SpectrumTapeArchive::SpectrumTapeArchive(const SpectrumTapeBlocks &blocks) {
 		if (!getTapBody(block, body, &flag) || flag == 0x00 || body.empty())
 			continue;
 
-		ArchiveFile entry;
-		entry.name = Path(getTapeFileName(pendingHeader, body, fileIndex++), Path::kNoSeparator);
-		entry.data = body;
-		_files.push_back(entry);
+		addFile(Path(getTapeFileName(pendingHeader, body, fileIndex++), Path::kNoSeparator), body);
 
 		pendingHeader.valid = false;
 	}
+}
+
+void SpectrumTapeArchive::addFile(const Path &path, const Array<byte> &data) {
+	ArchiveFile entry;
+	entry.name = path;
+	entry.data = data;
+	_files.push_back(entry);
 }
 
 bool SpectrumTapeArchive::hasFile(const Path &path) const {
