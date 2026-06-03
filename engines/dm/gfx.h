@@ -742,7 +742,7 @@ public:
 						   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight); // @ F0132_VIDEO_Blit
 	 /* Expects inclusive boundaries in box */
 	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
-											int16 firstUnitIndex, int16 destByteWidth, Color transparent,
+											int16 firstUnitIndex, int16 destByteWidth, int16 transparent,
 											int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
 		 // this function takes pixel widths
 	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,

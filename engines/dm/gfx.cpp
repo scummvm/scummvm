@@ -1061,14 +1061,14 @@ void DisplayMan::fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 by
 }
 
 void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box& box,
-											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
+											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, int16 transparent,
 											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 
 	// FIXME: does not produce the same effect as the original
 
 	byte nextUnitIndex = firstUnitIndex;
 	bool useMask = !(transparent & k0x0080_BlitDoNotUseMask);
-	transparent = (Color)(transparent & ~(k0x0080_BlitDoNotUseMask)); // clear flag 0x0080
+	transparent &= ~k0x0080_BlitDoNotUseMask; // clear flag 0x0080
 	for (byte next_y = box._rect.top; next_y <= box._rect.bottom; next_y++) { // '<=' for inclusive boundaries
 		for (byte next_x = box._rect.left; next_x <= box._rect.right; next_x++) { // '<=' for inclusive boundaries
 			byte *nextDestPixel = dest + next_y * destByteWidth * 2 + next_x;
@@ -2912,7 +2912,7 @@ void DisplayMan::drawField(FieldAspect *fieldAspect, Box& box) {
 	byte *bitmap = getNativeBitmapOrGraphic(kDMGraphicIdxFieldTeleporter + fieldAspect->_nativeBitmapRelativeIndex);
 	blitBoxFilledWithMaskedBitmap(bitmap, _bitmapViewport, bitmapMask, getDerivedBitmap(kDMDerivedBitmapViewport), box,
 									   _vm->getRandomNumber(2) + fieldAspect->_baseStartUnitIndex, _vm->getRandomNumber(32), k112_byteWidthViewport,
-									   (Color)fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
+									   fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
 	addDerivedBitmap(kDMDerivedBitmapViewport);
 	releaseBlock(kDMDerivedBitmapViewport | 0x8000);
 }
@@ -3796,7 +3796,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					blitToBitmapShrinkWithPalChange(bitmapRedBanana, _tmpBitmap, 48, 32, 48, 32, _palChangeSmoke);
 					bitmapRedBanana = _tmpBitmap;
 				}
-				blitBoxFilledWithMaskedBitmap(bitmapRedBanana, _bitmapViewport, nullptr, getDerivedBitmap(kDMDerivedBitmapViewport), boxExplosionPatternD0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | kDMColorFlesh), 0, 0, 136, 93);
+				blitBoxFilledWithMaskedBitmap(bitmapRedBanana, _bitmapViewport, nullptr, getDerivedBitmap(kDMDerivedBitmapViewport), boxExplosionPatternD0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, k0x0080_BlitDoNotUseMask | kDMColorFlesh, 0, 0, 136, 93);
 				addDerivedBitmap(kDMDerivedBitmapViewport);
 				warning("DISABLED CODE: f480_releaseBlock in drawObjectsCreaturesProjectilesExplosions");
 				//f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
