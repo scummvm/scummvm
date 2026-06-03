@@ -140,6 +140,19 @@ struct SortPuzzleData : public PuzzleData {
 	Common::Array<int16> solvedState;
 };
 
+// Per-magnet (left, top, right, bottom, locked) packed as 5 int16s. The
+// puzzle's two scenes (3280, 3281) are the same puzzle with the same data,
+// so a single flat array suffices.
+struct MagnetMazePuzzleData : public PuzzleData {
+	MagnetMazePuzzleData() {}
+	virtual ~MagnetMazePuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('M', 'M', 'A', 'Z'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<int16> magnetState;
+};
+
 // Per-item (inMap, inItems, mapRow, mapCol, itemsRow, itemsCol) packed as
 // 6 int16s.
 struct GridMapPuzzleData : public PuzzleData {

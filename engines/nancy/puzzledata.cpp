@@ -230,6 +230,10 @@ void SortPuzzleData::synchronize(Common::Serializer &ser) {
 	syncInt16Array(ser, solvedState);
 }
 
+void MagnetMazePuzzleData::synchronize(Common::Serializer &ser) {
+	syncInt16Array(ser, magnetState);
+}
+
 void GridMapPuzzleData::synchronize(Common::Serializer &ser) {
 	syncInt16Array(ser, itemState);
 }
@@ -349,6 +353,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new BeadPuzzleData();
 	case SortPuzzleData::getTag():
 		return new SortPuzzleData();
+	case MagnetMazePuzzleData::getTag():
+		return new MagnetMazePuzzleData();
 	case GridMapPuzzleData::getTag():
 		return new GridMapPuzzleData();
 	case JournalData::getTag():

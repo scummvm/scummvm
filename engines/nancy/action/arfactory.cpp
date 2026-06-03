@@ -47,6 +47,7 @@
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
+#include "engines/nancy/action/puzzle/magnetmazepuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/memorypuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
@@ -472,7 +473,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 241:
 		return new DotConnectPuzzle();
 	case 242:
-		// return new MagnetMazePuzzle();
+		return new MagnetMazePuzzle();
 	case 243:
 		return new BeadPuzzle();
 	case 244:
