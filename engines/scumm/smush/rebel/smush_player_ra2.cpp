@@ -41,6 +41,9 @@
 
 namespace Scumm {
 
+// FUN_00423880 is initialized at startup with a 400000-byte preload buffer.
+constexpr int kRebel2LoadBufferSize = 400000;
+
 bool isRebel2FullFrameDeltaCodec(int codec) {
 	return codec == SMUSH_CODEC_DELTA_BLOCKS || codec == SMUSH_CODEC_DELTA_GLYPHS;
 }
@@ -89,7 +92,7 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_loadBufferOffset = 0;
 	_loadReadOffset = 8;  // Original starts reading at offset 8 (skips header)
 	_lastLoadChunkIdx = -1;
-	_totalLoadChunks = 0;
+	_loadStreamId = 0;
 	_ra2FrameSourceSkipY = 0;
 	_ra2FrameObjectSurfaceWidth = 0;
 	_ra2FrameObjectSurfaceHeight = 0;
@@ -141,19 +144,16 @@ void SmushPlayerRebel2::initGameVideoState() {
 
 /**
  * RA2-specific cleanup in SmushPlayer::release().
- * Frees stored FOBJ data but preserves _frameBuffer across videos.
+ * Preserves the stored FOBJ and _frameBuffer across videos.
  */
 void SmushPlayerRebel2::releaseGameVideoState() {
-	free(_storedFobjData);
-	_storedFobjData = nullptr;
-	_storedFobjDataSize = 0;
-	_storedFobjParm2 = 0;
 	free(_lastFobjData);
 	_lastFobjData = nullptr;
 	_lastFobjDataSize = 0;
 	_hasFrameFobjForGost = false;
-	// Preserve _frameBuffer across videos so that gameplay videos (which have no
-	// background FOBJ) can use the stored background from the previous BEG video.
+	// FUN_00423880 allocates the STOR overlay buffer once for the SMUSH subsystem,
+	// and FUN_004246d0 replays the last stored FOBJ even after a new SAN starts.
+	// Level 12 wave segments depend on this when 12P01_B.SAN starts with FTCH.
 }
 
 /**
@@ -585,7 +585,7 @@ void SmushPlayerRebel2::handleGameLoad(int32 subSize, Common::SeekableReadStream
  * Handle LOAD chunk for Rebel Assault 2.
  *
  * LOAD chunks stream embedded resource data across multiple frames.
- * The data is accumulated in a buffer and consumed by the audio system.
+ * FUN_00424450 treats word 0 as the stream id and word 1 as the chunk index.
  */
 void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad()");
@@ -595,26 +595,24 @@ void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b)
 		return;
 	}
 
-	int16 totalChunks = b.readUint16LE();
+	int16 streamId = b.readUint16LE();
 	int16 chunkIndex = b.readUint16LE();
 	b.skip(6);  // Unknown/padding
 
 	int32 dataSize = subSize - 10;
 
-	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad: chunk %d/%d, dataSize=%d, bufferOffset=%d",
-		chunkIndex, totalChunks, dataSize, _loadBufferOffset);
+	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad: stream=%d chunk=%d dataSize=%d bufferOffset=%d",
+		streamId, chunkIndex, dataSize, _loadBufferOffset);
 
-	// First chunk in sequence - reset buffer state
 	if (chunkIndex == 0) {
 		_loadBufferOffset = 0;
 		_loadReadOffset = 8;
 		_lastLoadChunkIdx = -1;
-		_totalLoadChunks = totalChunks;
+		_loadStreamId = streamId;
 
-		int32 estimatedSize = totalChunks * 600;
-		if (_loadBuffer == nullptr || _loadBufferSize < estimatedSize) {
+		if (_loadBuffer == nullptr || _loadBufferSize < kRebel2LoadBufferSize) {
 			free(_loadBuffer);
-			_loadBufferSize = estimatedSize;
+			_loadBufferSize = kRebel2LoadBufferSize;
 			_loadBuffer = (byte *)malloc(_loadBufferSize);
 			if (_loadBuffer == nullptr) {
 				warning("SmushPlayerRebel2::handleLoad: Failed to allocate %d bytes for LOAD buffer",
@@ -627,31 +625,23 @@ void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b)
 		}
 	}
 
-	// Check sequential order
 	if (_lastLoadChunkIdx + 1 != chunkIndex) {
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad: Non-sequential chunk %d (expected %d), skipping",
 			chunkIndex, _lastLoadChunkIdx + 1);
 		return;
 	}
 
-	// Check buffer capacity
-	if (_loadBuffer == nullptr || _loadBufferOffset + dataSize >= _loadBufferSize) {
+	if (_loadBuffer == nullptr || _loadBufferOffset + subSize >= _loadBufferSize) {
 		warning("SmushPlayerRebel2::handleLoad: Buffer overflow - offset=%d size=%d limit=%d",
-			_loadBufferOffset, dataSize, _loadBufferSize);
+			_loadBufferOffset, subSize, _loadBufferSize);
 		return;
 	}
 
-	// Copy data to buffer
 	b.read(_loadBuffer + _loadBufferOffset, dataSize);
 	_loadBufferOffset += dataSize;
 	_lastLoadChunkIdx = chunkIndex;
 
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad: Accumulated %d bytes total", _loadBufferOffset);
-
-	if (chunkIndex == totalChunks - 1) {
-		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad: Sequence complete - %d chunks, %d bytes total",
-			totalChunks, _loadBufferOffset);
-	}
 }
 
 /**

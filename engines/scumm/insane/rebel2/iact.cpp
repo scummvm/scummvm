@@ -602,22 +602,30 @@ void InsaneRebel2::updateOpcode6Handler(int16 par2) {
 }
 
 // ScummVM refactor helper for opcode 6 Handler 8, not a separate retail function.
-void InsaneRebel2::handleOpcode6Handler8(int16 par3, int16 par4) {
+void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 8 specific logic (third-person on foot) - FUN_00401234 case 4.
-	// Set ship level mode (DAT_0043e000 = par3)
-	_shipLevelMode = par3;
+	// DAT_0043e000 = local_14[3], which maps to the IACT header's par4/userId.
+	_shipLevelMode = par4;
 
-	// If par4 == 1, enable status bar and re-render laser texture (FUN_0040bb87)
-	if (par4 == 1) {
+	// local_14[4] is the first body word after the 8-byte IACT header.
+	int16 bodyStatusFlag = 0;
+	if (b.pos() + 2 <= b.size()) {
+		int64 savedPos = b.pos();
+		bodyStatusFlag = b.readSint16LE();
+		b.seek(savedPos);
+	}
+
+	// If local_14[4] == 1, enable status bar and re-render laser texture (FUN_0040bb87)
+	if (bodyStatusFlag == 1) {
 		_rebelStatusBarSprite = 5;
 		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
 			initLaserTexture(_smush_iconsNut, 5);
 		}
 	}
 
-	// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
+	// Reset state when shipLevelMode != 0 && local_14[4] == 1 (FUN_00401234 lines 97-103)
 	// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
-	if (_shipLevelMode != 0 && par4 == 1 && !_rebelOp6Initialized) {
+	if (_shipLevelMode != 0 && bodyStatusFlag == 1 && !_rebelOp6Initialized) {
 		clearBit(0);
 		for (int i = 0; i < 512; i++) {
 			_rebelLinks[i][0] = 0;
@@ -758,8 +766,8 @@ void InsaneRebel2::handleOpcode6Handler8(int16 par3, int16 par4) {
 			_vm->getActionState(kScummActionInsaneAttack);
 	}
 
-	debug("Rebel2 Opcode 6 (Handler 8): mode=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
-		_shipLevelMode, _movementRangeLimit, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
+	debug("Rebel2 Opcode 6 (Handler 8): mode=%d bodyFlag=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
+		_shipLevelMode, bodyStatusFlag, _movementRangeLimit, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
 		_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
 }
 
@@ -1465,20 +1473,20 @@ void InsaneRebel2::scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableR
 // iactRebel2Opcode6 -- Level setup / mode switch (FUN_41CADB case 4)
 //
 // Per-wave initialization: clears bit table, resets link tables, configures
-// handler mode (ship/turret/corridor), and loads collision zones. Called once
-// per wave video on frame 0.
+// handler mode (ship/turret/corridor), and loads collision zones. The original
+// gates the reset with handler-specific IACT fields, not always frame 0.
 //
 void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
 	// Opcode 6: Level setup / mode switch
 	// Based on FUN_41CADB case 4 (switch on *local_14 - 2 == 4, meaning opcode 6)
 	//
 	// For Handler 8 (third-person on foot) - FUN_00401234 case 4:
-	// - par3 sets ship level mode (DAT_0043e000)
-	// - par4 == 1 triggers status bar display and state reset
+	// - par4 sets ship level mode (DAT_0043e000)
+	// - first body word == 1 triggers status bar display and state reset
 	// - Updates ship position based on mouse input
 	//
 	// For Handler 0x26/0x19 (turret/FPS):
-	// - Same par4 == 1 behavior
+	// - Handler-specific status/reset word
 	// - Different view offset calculations
 
 	debug("Rebel2 IACT Opcode 6: par2=%d par3=%d par4=%d", par2, par3, par4);
@@ -1486,7 +1494,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	updateOpcode6Handler(par2);
 
 	if (_rebelHandler == 8) {
-		handleOpcode6Handler8(par3, par4);
+		handleOpcode6Handler8(b, par4);
 		return;
 	}
 

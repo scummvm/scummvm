@@ -538,7 +538,7 @@ public:
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
 	void updateOpcode6Handler(int16 par2);
-	void handleOpcode6Handler8(int16 par3, int16 par4);
+	void handleOpcode6Handler8(Common::SeekableReadStream &b, int16 par4);
 	void handleOpcode6Handler7(Common::SeekableReadStream &b, int16 par4);
 	void handleOpcode6Handler25(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4);
@@ -1063,7 +1063,7 @@ public:
 	int16 _shipTargetY;              // DAT_0043e004 - Target Y
 
 	// Level mode for handler 8 (different from _rebelLevelType)
-	// Set by opcode 6 par3, affects ship rendering behavior
+	// Set by opcode 6 par4, affects ship rendering behavior
 	// Mode 0/1/3: "Shooting" - full movement range (127)
 	// Mode 2: "Covered" - restricted movement (41) - behind cover
 	// Mode 4: "Autopilot" - no shooting, scripted movement

@@ -82,7 +82,7 @@ private:
 	int32 _loadBufferOffset;
 	int32 _loadReadOffset;
 	int16 _lastLoadChunkIdx;
-	int16 _totalLoadChunks;
+	int16 _loadStreamId;
 	int _ra2FrameSourceSkipY;
 	int _ra2FrameObjectSurfaceWidth;
 	int _ra2FrameObjectSurfaceHeight;
