@@ -39,6 +39,13 @@ namespace Scumm {
 extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
+int getRebel2IndicatorScale(int width, int height) {
+	// Retail only doubles these anchors in true high-res mode (DAT_0047a808 >= 2).
+	// RA2's 424x260 low-res gameplay buffer is still displayed through a 320x200
+	// viewport, so it uses the original 320x200 indicator coordinates.
+	return (width >= 640 || height >= 400) ? 2 : 1;
+}
+
 static bool isValidEmbeddedFrame(const InsaneRebel2::EmbeddedSanFrame &frame) {
 	return frame.valid && frame.pixels && frame.width > 0 && frame.height > 0;
 }
@@ -1545,8 +1552,8 @@ void InsaneRebel2::resetCollisionZones() {
 //
 // checkCollisionZones -- Per-frame collision test against primary zones (FUN_4092D9).
 //
-void InsaneRebel2::checkCollisionZones() {
-	// Per-frame collision checking — FUN_4092D9 first loop (lines 39-202).
+void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
+	// Per-frame collision checking — FUN_4092D9.
 	// Tests aim/ship position against primary collision zone quadrilaterals.
 	//
 	// Original coordinate system:
@@ -1580,6 +1587,12 @@ void InsaneRebel2::checkCollisionZones() {
 	if (aimY < -0x2d)
 		aimY = -0x2d;
 
+	LevelDifficultyParams dparams = getDifficultyParams();
+	const bool showDirectionalWarnings = (dparams.flags & 8) != 0;
+	const bool showGenericWarnings = !showDirectionalWarnings && ((dparams.flags & 0x10) != 0);
+	const bool warningFrame = ((curFrame & 2) != 0) && _smush_iconsNut && (showDirectionalWarnings || showGenericWarnings);
+	const int indicatorScale = getRebel2IndicatorScale(width, height);
+
 	for (int i = 0; i < _primaryZoneCount; i++) {
 		CollisionZone &zone = _primaryZones[i];
 		if (!zone.active)
@@ -1588,11 +1601,6 @@ void InsaneRebel2::checkCollisionZones() {
 		// Filter: only process zones with filterValue < 1000 (par4 from IACT header)
 		// Original: *(short *)(*local_c + 6) < 1000
 		if (zone.filterValue >= 1000)
-			continue;
-
-		// Frame check: field2 - 1 == field1
-		// Original: sVar2 + -1 == (int)sVar1
-		if (zone.field2 - 1 != zone.field1)
 			continue;
 
 		// Center zone vertices by subtracting buffer center (0xD4=212, 0x82=130)
@@ -1606,64 +1614,94 @@ void InsaneRebel2::checkCollisionZones() {
 		int cx4 = zone.x4 - 0xD4;
 		int cy4 = zone.y4 - 0x82;
 
-		// Point-in-quadrilateral test — FUN_4092D9 lines 119-128
-		// Tests if aim position is OUTSIDE the safe corridor (= collision with obstacle).
-		// Original uses 4 edge interpolation tests connected by OR (any failure = collision).
-		//
-		// Edge 1: interpolate Y along top edge (v1→v2) at aim X position
-		//   if aimY < interpolated Y → outside top edge → collision
-		// Edge 2: interpolate Y along bottom edge (v4→v3) at aim X position
-		//   if interpolated Y < aimY → outside bottom edge → collision
-		// Edge 3: interpolate X along left edge (v1→v4) at aim Y position
-		//   if aimX < interpolated X → outside left edge → collision
-		// Edge 4: interpolate X along right edge (v2→v3) at aim Y position
-		//   if interpolated X < aimX → outside right edge → collision
-		bool collision = false;
+		// Frame check: field2 - 1 == field1
+		// Original: sVar2 + -1 == (int)sVar1
+		if (zone.field2 - 1 == zone.field1) {
+			// Point-in-quadrilateral test — FUN_4092D9 lines 119-128
+			// Tests if aim position is OUTSIDE the safe corridor (= collision with obstacle).
+			// Original uses 4 edge interpolation tests connected by OR (any failure = collision).
+			//
+			// Edge 1: interpolate Y along top edge (v1→v2) at aim X position
+			//   if aimY < interpolated Y → outside top edge → collision
+			// Edge 2: interpolate Y along bottom edge (v4→v3) at aim X position
+			//   if interpolated Y < aimY → outside bottom edge → collision
+			// Edge 3: interpolate X along left edge (v1→v4) at aim Y position
+			//   if aimX < interpolated X → outside left edge → collision
+			// Edge 4: interpolate X along right edge (v2→v3) at aim Y position
+			//   if interpolated X < aimX → outside right edge → collision
+			bool collision = false;
 
-		// Avoid division by zero for degenerate edges
-		if (cx2 != cx1) {
-			int interpY1 = ((aimX - cx1) * (cy2 - cy1)) / (cx2 - cx1) + cy1;
-			if (aimY < interpY1)
-				collision = true;
-		}
-		if (!collision && cx3 != cx4) {
-			int interpY2 = ((aimX - cx4) * (cy3 - cy4)) / (cx3 - cx4) + cy4;
-			if (interpY2 < aimY)
-				collision = true;
-		}
-		if (!collision && cy4 != cy1) {
-			int interpX1 = ((aimY - cy1) * (cx4 - cx1)) / (cy4 - cy1) + cx1;
-			if (aimX < interpX1)
-				collision = true;
-		}
-		if (!collision && cy3 != cy2) {
-			int interpX2 = ((aimY - cy2) * (cx3 - cx2)) / (cy3 - cy2) + cx2;
-			if (interpX2 < aimX)
-				collision = true;
-		}
-
-		if (collision) {
-			// Collision detected — apply damage from collision damage table
-			// Original: DAT_0047a7ec += DAT_0047e0f6[chapter * 0x242 + level * 0x22]
-			LevelDifficultyParams params = getDifficultyParams();
-			int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
-
-			if (!_rebelInvulnerable) {
-				_playerDamage += collisionDamage;
-				if (_playerDamage > 255)
-					_playerDamage = 255;
-				debug("Rebel2: COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
-					i, aimX, aimY, collisionDamage, _playerDamage);
+			// Avoid division by zero for degenerate edges
+			if (cx2 != cx1) {
+				int interpY1 = ((aimX - cx1) * (cy2 - cy1)) / (cx2 - cx1) + cy1;
+				if (aimY < interpY1)
+					collision = true;
 			}
-			// Visual effect — FUN_00420515 (palette flash)
-			initDamageFlash();
-			// TODO: FUN_0041189e sound based on collision direction
-		} else {
-			// Safely passed — award score bonus
-			// Original: FUN_0041bf8d(DAT_0047e100[levelIdx])
-			LevelDifficultyParams scoreParams = getDifficultyParams();
-			if (scoreParams.dodgePoints > 0) {
-				addScore(scoreParams.dodgePoints);
+			if (!collision && cx3 != cx4) {
+				int interpY2 = ((aimX - cx4) * (cy3 - cy4)) / (cx3 - cx4) + cy4;
+				if (interpY2 < aimY)
+					collision = true;
+			}
+			if (!collision && cy4 != cy1) {
+				int interpX1 = ((aimY - cy1) * (cx4 - cx1)) / (cy4 - cy1) + cx1;
+				if (aimX < interpX1)
+					collision = true;
+			}
+			if (!collision && cy3 != cy2) {
+				int interpX2 = ((aimY - cy2) * (cx3 - cx2)) / (cy3 - cy2) + cx2;
+				if (interpX2 < aimX)
+					collision = true;
+			}
+
+			if (collision) {
+				// Collision detected — apply damage from collision damage table
+				// Original: DAT_0047a7ec += DAT_0047e0f6[chapter * 0x242 + level * 0x22]
+				int collisionDamage = (dparams.dodgeDamage >= 0) ? dparams.dodgeDamage : 0;
+
+				if (!_rebelInvulnerable) {
+					_playerDamage += collisionDamage;
+					if (_playerDamage > 255)
+						_playerDamage = 255;
+					debug("Rebel2: COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
+						i, aimX, aimY, collisionDamage, _playerDamage);
+				}
+				// Visual effect — FUN_00420515 (palette flash)
+				initDamageFlash();
+				// TODO: FUN_0041189e sound based on collision direction
+			} else {
+				// Safely passed — award score bonus
+				// Original: FUN_0041bf8d(DAT_0047e100[levelIdx])
+				if (dparams.dodgePoints > 0) {
+					addScore(dparams.dodgePoints);
+				}
+			}
+		} else if (warningFrame && zone.field2 - 0x0c < zone.field1) {
+			// FUN_4092D9 near-collision indicators. Easy mode (flags bit 0x08)
+			// draws directional arrows from cockpit icon slots 0x2a..0x2d.
+			// Novice mode (flags bit 0x10) draws a generic indicator from slot 0x36.
+			const int iconChars = _smush_iconsNut->getNumChars();
+			if (showDirectionalWarnings) {
+				int avgX = (cx1 + cx2 + cx3 + cx4) / 4;
+				int avgY = (cy1 + cy2 + cy3 + cy4) / 4;
+
+				if (avgX >= 0x15 && iconChars > 0x2d) {
+					renderNutSprite(renderBitmap, pitch, width, height,
+						0xd7 * indicatorScale + _viewX, 0x55 * indicatorScale + _viewY, _smush_iconsNut, 0x2d);
+				} else if (avgX < -0x14 && iconChars > 0x2c) {
+					renderNutSprite(renderBitmap, pitch, width, height,
+						0x69 * indicatorScale + _viewX, 0x55 * indicatorScale + _viewY, _smush_iconsNut, 0x2c);
+				}
+
+				if (avgY >= 0x15 && iconChars > 0x2b) {
+					renderNutSprite(renderBitmap, pitch, width, height,
+						0xa0 * indicatorScale + _viewX, 0x82 * indicatorScale + _viewY, _smush_iconsNut, 0x2b);
+				} else if (avgY < -0x14 && iconChars > 0x2a) {
+					renderNutSprite(renderBitmap, pitch, width, height,
+						0xa0 * indicatorScale + _viewX, 0x28 * indicatorScale + _viewY, _smush_iconsNut, 0x2a);
+				}
+			} else if (showGenericWarnings && iconChars > 0x36) {
+				renderNutSprite(renderBitmap, pitch, width, height,
+					0xa0 * indicatorScale + _viewX, 0x1e * indicatorScale + _viewY, _smush_iconsNut, 0x36);
 			}
 		}
 	}
@@ -1925,7 +1963,7 @@ void InsaneRebel2::renderHandler7WarningCues(byte *renderBitmap, int pitch, int 
 	// Note: These are cue sprites (often perceived as "shadows"), not the aiming reticle.
 	LevelDifficultyParams dparams = getDifficultyParams();
 	if ((curFrame & 2) != 0 && (dparams.flags & 8) != 0 && _smush_iconsNut) {
-		int scale = (_vm->_screenWidth > 320 || _vm->_screenHeight > 200) ? 2 : 1;
+		int scale = getRebel2IndicatorScale(width, height);
 
 		if ((warningMask & 1) != 0 && _smush_iconsNut->getNumChars() > 0x2d) {
 			renderNutSprite(renderBitmap, pitch, width, height,
@@ -2340,7 +2378,7 @@ void InsaneRebel2::checkGameplayPostRenderCollisions(byte *renderBitmap, int pit
 	//   Mode 1/3: PRIMARY zones (0x0D) - wall/boundary per-edge with push-back
 	//   Uses ship position in raw buffer coords, hit cooldown, directional damage.
 	if (_rebelHandler == 0x26) {
-		checkCollisionZones();
+		checkCollisionZones(renderBitmap, pitch, width, height, curFrame);
 	} else if (_rebelHandler == 7) {
 		checkHandler7CollisionZones(renderBitmap, pitch, width, height, curFrame);
 	}

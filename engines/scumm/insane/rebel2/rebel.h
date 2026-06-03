@@ -836,10 +836,10 @@ public:
 	// Reset collision zone counters (called at end of frame)
 	void resetCollisionZones();
 
-	// Per-frame collision checking against registered zones (FUN_4092D9 first loop)
+	// Per-frame collision checking against registered zones (FUN_4092D9)
 	// Tests aim/ship position against primary zone quadrilaterals
 	// Applies collision damage from DAT_0047e0f6 when inside obstacle zone
-	void checkCollisionZones();
+	void checkCollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
 	// Handler 7 collision system (FUN_40E35E)
 	// Mode 0/2: Obstacle collision using secondary zones — inside quad = hit
