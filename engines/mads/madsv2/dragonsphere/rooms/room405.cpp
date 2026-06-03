@@ -1078,18 +1078,18 @@ static void process_conv_pid_guard() {
 	int me_trig_flag   = false;
 
 	switch (player_verb) {
-	case conv044_leave_b_b:
-		*conv_my_next_start = conv044_greet;
-		conv_abort();
-		local->pid_tent_action = LEAVE;
-		you_trig_flag = true;
-		me_trig_flag  = true;
-		break;
-
 	case conv044_enter_b_b:
 		*conv_my_next_start = conv044_repeater;
 		conv_abort();
 		local->guard_action = OPEN_TENT;
+		you_trig_flag = true;
+		me_trig_flag = true;
+		break;
+
+	case conv044_leave_b_b:
+		*conv_my_next_start = conv044_greet;
+		conv_abort();
+		local->pid_tent_action = LEAVE;
 		you_trig_flag = true;
 		me_trig_flag  = true;
 		break;

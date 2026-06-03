@@ -417,10 +417,10 @@ enum {
 };
 
 enum {
-	conv044_repeater         =  0,
-	conv044_greet            =  2,
-	conv044_leave_b_b        =  7,
-	conv044_enter_b_b        =  9
+	conv044_greet            =  0,
+	conv044_repeater         =  2,
+	conv044_enter_b_b        =  7,
+	conv044_leave_b_b        =  9
 };
 
 enum {
