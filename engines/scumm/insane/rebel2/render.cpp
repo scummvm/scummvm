@@ -63,6 +63,66 @@ static int countEmbeddedFramePixels(const InsaneRebel2::EmbeddedSanFrame &frame)
 	return count;
 }
 
+static bool parseRebel2TextOverlayFormat(const char *&str, NutRenderer *&curFont, int &curColor,
+		NutRenderer **fonts, int numFonts, NutRenderer *defaultFont) {
+	int fontId = InsaneRebel2::parseFormatCode(str, curColor);
+	if (fontId >= 0) {
+		curFont = (fontId < numFonts && fonts[fontId]) ? fonts[fontId] : defaultFont;
+		return true;
+	}
+
+	return fontId == -2;
+}
+
+static const char *getHandler8PovOverlayString(int id) {
+	switch (id) {
+	case 200:
+		return "^f03^c248 MODE  ^c005 INFARED";
+	case 201:
+		return "^f03^c248 SCANNING";
+	case 202:
+		return "^f03^c005 VHL EMM %lx";
+	case 203:
+		return "^f03^c005 SCOOBYNESS FACTOR %lx";
+	case 204:
+		return "^f03^c005 USELESS COORDINATES %lx %lx";
+	case 205:
+		return "^f03^c248 Buy Afterlife";
+	case 206:
+		return "^f03^c248 No Homework.. You must fight the bear";
+	case 207:
+		return "^f03^c248 What is that watermelon doing there?";
+	case 208:
+		return "^f03^c248 I just like to say taboo";
+	case 209:
+		return "^f03^c248 How about them Bears";
+	case 210:
+		return "^f03^c248 There is cause to be optimistic -HAL";
+	case 211:
+		return "^f03^c248 Little Darth is between his legs -LISA";
+	default:
+		return nullptr;
+	}
+}
+
+static int getHandler8PovOverlayRandom(ScummEngine_v7 *vm, int max) {
+	if (max == 0)
+		return 0;
+	if (max < 0)
+		return -vm->_rnd.getRandomNumber(-max - 1);
+	return vm->_rnd.getRandomNumber(max - 1);
+}
+
+static void drawHandler8PovOverlayText(const Rebel2FontSet &fontSet, byte *renderBitmap,
+		int pitch, int width, int height, const char *str, int x, int y, int16 color,
+		TextStyleFlags flags) {
+	if (!str)
+		return;
+
+	Common::Rect clipRect(0, 0, width, height);
+	drawRebel2String(fontSet, str, strlen(str), renderBitmap, clipRect, x, y, pitch, color, flags);
+}
+
 static void blitEmbeddedFrameRegion(byte *renderBitmap, int pitch, int clipWidth, int clipHeight,
 		const InsaneRebel2::EmbeddedSanFrame &frame, int destX, int destY,
 		int srcX, int srcY, int drawWidth, int drawHeight) {
@@ -462,8 +522,8 @@ void InsaneRebel2::spawnVehicleShot(int x, int y) {
 			// FUN_0041189e(6, local_c + 1, 0x7f, 0, 0) — HBLAST.SAD
 			playSfx(6, 127, 0);
 			_vehicleShots[i].counter = getShotMaxDuration();
-			_vehicleShots[i].targetX = x + _viewX;
-			_vehicleShots[i].targetY = y + _viewY;
+			_vehicleShots[i].targetX = x;
+			_vehicleShots[i].targetY = y;
 			break;
 		}
 	}
@@ -2187,6 +2247,16 @@ void InsaneRebel2::renderNutSpriteMirrored(byte *dst, int pitch, int width, int 
 
 // updatePostRenderScroll -- Set SmushPlayer scroll offsets for the current frame.
 void InsaneRebel2::updatePostRenderScroll(int width, int height) {
+	if (_rebelHandler == 8) {
+		// Handler 8 follows FUN_00401234/FUN_00401CCF: the camera is applied
+		// through FUN_00424510 before FOBJ decoding, not by scrolling the final
+		// buffer copied by FUN_00424540.
+		_viewX = 0;
+		_viewY = 0;
+		_player->setScrollOffset(0, 0);
+		return;
+	}
+
 	// Rebel Assault 2 uses a buffer larger (424x260) than screen (320x200).
 	// Map mouse X (0-320) to Scroll X (0-104), and Y (0-200) to Scroll Y (0-60).
 	int maxScrollX = width - _vm->_screenWidth;
@@ -2529,6 +2599,9 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// Crosshair/reticle (FUN_004089ab, FUN_0040d836).
 	renderCrosshair(renderBitmap, pitch, width, height);
 
+	// Handler 8 POV text overlay (FUN_00401CCF).
+	renderHandler8PovOverlay(renderBitmap, pitch, width, height);
+
 	// HUD score/lives rendering (FUN_0041c012).
 	renderScoreHUD(renderBitmap, pitch, width, height, statusBarY);
 
@@ -2740,13 +2813,6 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 
 	Common::Rect clipRect(0, 0, width, height);
 
-	// Wrapper around shared parseFormatCode that also updates curFont
-	auto parseFormat = [&](const char *&s, NutRenderer *&curFont, int &curColor) {
-		int fc = parseFormatCode(s, curColor);
-		if (fc >= 0) { curFont = (fonts[fc] ? fonts[fc] : defaultFont); return true; }
-		return fc == -2;
-	};
-
 	// Split into lines, then render each centered at textX (FUN_004341a0).
 	// Older RA2 text loading joined multi-line strings with spaces, leaving
 	// " ^f" as the separator; current TRES loading preserves real newlines.
@@ -2793,7 +2859,7 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 			NutRenderer *mFont = defaultFont;
 			int mColor = 1;
 			while (s < lineEnd && (visCount + lineVisCount) < displayLen) {
-				if (parseFormat(s, mFont, mColor))
+				if (parseRebel2TextOverlayFormat(s, mFont, mColor, fonts, ARRAYSIZE(fonts), defaultFont))
 					continue;
 				lineFont = mFont;
 				byte c = (byte)*s++;
@@ -2813,7 +2879,7 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 			NutRenderer *curFont = defaultFont;
 			int curColor = 1;
 			while (s < lineEnd && (visCount + lineCharsDrawn) < displayLen) {
-				if (parseFormat(s, curFont, curColor))
+				if (parseRebel2TextOverlayFormat(s, curFont, curColor, fonts, ARRAYSIZE(fonts), defaultFont))
 					continue;
 				byte c = (byte)*s++;
 				if (c >= 'a' && c <= 'z')
@@ -3285,8 +3351,8 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 	// (centered for Level 2/11 third-person, bottom for Level 12 FPS).
 	int16 spriteXOffset = _shipSprite->getCharXOffset(spriteIndex);
 	int16 spriteYOffset = _shipSprite->getCharYOffset(spriteIndex);
-	int drawX = displayOffsetX + spriteXOffset + _viewX;
-	int drawY = displayOffsetY + spriteYOffset + _viewY;
+	int drawX = displayOffsetX + spriteXOffset;
+	int drawY = displayOffsetY + spriteYOffset;
 
 	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
 
@@ -3297,8 +3363,8 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 		if (shadowIndex < _shipSprite2->getNumChars()) {
 			int16 shadowXOff = _shipSprite2->getCharXOffset(shadowIndex);
 			int16 shadowYOff = _shipSprite2->getCharYOffset(shadowIndex);
-			int shadowX = displayOffsetX + shadowXOff + _viewX;
-			int shadowY = displayOffsetY + shadowYOff + _viewY;
+			int shadowX = displayOffsetX + shadowXOff;
+			int shadowY = displayOffsetY + shadowYOff;
 			renderNutSprite(renderBitmap, pitch, width, height, shadowX, shadowY, _shipSprite2, shadowIndex);
 		}
 	}
@@ -3307,7 +3373,7 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 	int sprH = _shipSprite->getCharHeight(spriteIndex);
 	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d",
 		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
-		spriteXOffset, spriteYOffset, sprW, sprH, drawY + sprH - _viewY,
+		spriteXOffset, spriteYOffset, sprW, sprH, drawY + sprH,
 		_viewX, _viewY, spriteIndex, numSprites);
 }
 
@@ -3321,8 +3387,8 @@ void InsaneRebel2::renderVehicleShotImpacts(byte *renderBitmap, int pitch, int w
 		if (impact.counter <= 0)
 			continue;
 
-		int drawX = impact.x - _shipPosX + _viewX;
-		int drawY = impact.y - _shipPosY + _viewY;
+		int drawX = impact.x - _shipPosX;
+		int drawY = impact.y - _shipPosY;
 
 		// Original draws DAT_0047e020 repeatedly based on remaining life, then
 		// DAT_0047e018 once, both using the sampled background-mask sprite index.
@@ -3791,7 +3857,7 @@ void InsaneRebel2::renderTurretExplosions(byte *renderBitmap, int pitch, int wid
 }
 
 // renderVehicleExplosions -- Handler 8 on-foot explosion rendering (FUN_402696).
-// Position: world coords minus camera offset (DAT_0043e006/08 = _viewX/_viewY).
+// Position: world coords minus camera offset (DAT_0043e006/08 = _shipPosX/_shipPosY).
 // Scale thresholds: <11, <21. No secondary NUT.
 void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
@@ -3802,8 +3868,8 @@ void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int wi
 			continue;
 
 		// FUN_402696 line 22-23: screenX = worldX - DAT_0043e006, screenY = worldY - DAT_0043e008
-		int screenX = _explosions[i].x - _viewX;
-		int screenY = _explosions[i].y - _viewY;
+		int screenX = _explosions[i].x - _shipPosX;
+		int screenY = _explosions[i].y - _shipPosY;
 		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
 			screenX, screenY, kExplosionAdvanceAfterDraw);
 	}
@@ -4060,8 +4126,8 @@ void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int wi
 		// From FUN_402ED0: widthScale=0x14(20), heightScale=8, thickness=4
 		// Parameters: gunX, gunY -> shipScreenX, shipScreenY (NOT the stored target!)
 		drawLaserBeam(renderBitmap, pitch, width, height,
-			gunX + _viewX, gunY + _viewY,
-			shipScreenX + _viewX, shipScreenY + _viewY,
+			gunX, gunY,
+			shipScreenX, shipScreenY,
 			progress, maxDuration, 20, 8, 4);
 
 		_vehicleShots[i].counter--;
@@ -4176,6 +4242,69 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 	}
 }
 
+// renderHandler8PovOverlay -- Draw Level 12 POV text overlay (FUN_00401CCF).
+void InsaneRebel2::renderHandler8PovOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	if (_rebelHandler != 8 || !renderBitmap || !_smush_talkfontNut || !_smush_povfontNut)
+		return;
+
+	Rebel2FontSet fontSet;
+	fontSet.numFonts = 4;
+	fontSet.defaultFont = 0;
+	fontSet.fonts[0] = _smush_talkfontNut;
+	fontSet.fonts[1] = _smush_smalfontNut ? _smush_smalfontNut : _smush_talkfontNut;
+	fontSet.fonts[2] = _smush_titlefontNut ? _smush_titlefontNut : _smush_talkfontNut;
+	fontSet.fonts[3] = _smush_povfontNut;
+
+	ScummEngine_v7 *vm = (ScummEngine_v7 *)_vm;
+
+	// Original updates DAT_0047e048 with random(5)+0x23 when random(20)==0.
+	if (getHandler8PovOverlayRandom(vm, 20) == 0)
+		_handler8HudGlyph = (char)(getHandler8PovOverlayRandom(vm, 5) + 0x23);
+
+	drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
+		getHandler8PovOverlayString(200), 10, 5, 1, kStyleAlignLeft);
+
+	char buffer[128];
+	Common::sprintf_s(buffer, "^f03&#$%c", _handler8HudGlyph);
+	drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
+		buffer, 10, 150, 248, kStyleAlignLeft);
+
+	const char *text = getHandler8PovOverlayString(203);
+	if (text) {
+		Common::sprintf_s(buffer, text,
+			(unsigned long)(uint32)(int32)getHandler8PovOverlayRandom(vm, 20000));
+		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
+			buffer, 10, 170, 1, kStyleAlignLeft);
+	}
+
+	text = getHandler8PovOverlayString(202);
+	if (text) {
+		Common::sprintf_s(buffer, text,
+			(unsigned long)(uint32)(int32)getHandler8PovOverlayRandom(vm, -0xd50));
+		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
+			buffer, 220, 160, 1, kStyleAlignLeft);
+	}
+
+	text = getHandler8PovOverlayString(204);
+	if (text) {
+		Common::sprintf_s(buffer, text, (unsigned long)(uint32)(int32)(int16)_shipPosX,
+			(unsigned long)(uint32)(int32)(int16)_shipPosY);
+		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
+			buffer, 220, 170, 1, kStyleAlignLeft);
+	}
+
+	if (_handler8HudMessageTimer == 0) {
+		_handler8HudMessageIndex = getHandler8PovOverlayRandom(vm, 100);
+		if (_handler8HudMessageIndex < 7)
+			_handler8HudMessageTimer = 0x32;
+	} else {
+		_handler8HudMessageTimer--;
+		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
+			getHandler8PovOverlayString(_handler8HudMessageIndex + 0xcd),
+			200, 5, 1, kStyleAlignCenter);
+	}
+}
+
 // renderCrosshair -- Draw crosshair/reticle at the current handler's aim point.
 void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int height) {
 	// From FUN_0040d836 (Handler 7) line 167-168: crosshair only drawn when DAT_004437c0 == 2
@@ -4202,7 +4331,10 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		aimPos = getGameplayAimPoint();
 	}
 	Common::Point worldMousePos = aimPos;
-	if (_rebelHandler != 7) {
+	if (_rebelHandler == 8) {
+		worldMousePos.x += _shipPosX;
+		worldMousePos.y += _shipPosY;
+	} else if (_rebelHandler != 7) {
 		worldMousePos.x += _viewX;
 		worldMousePos.y += _viewY;
 	}

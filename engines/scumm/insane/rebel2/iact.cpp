@@ -713,6 +713,15 @@ void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 pa
 			_shipPosY = (newY < _shipTargetY) ? _shipTargetY : newY;
 		}
 
+		// FUN_00401234 calls FUN_00424510(-DAT_0043e006, -DAT_0043e008)
+		// after updating the handler-8 camera. This shifts subsequent FOBJ
+		// decoding into screen coordinates; FUN_00401CCF then draws HUD and
+		// weapon sprites without a separate final-buffer scroll.
+		if (_player) {
+			_player->_fobjOffsetX = -_shipPosX;
+			_player->_fobjOffsetY = -_shipPosY;
+		}
+
 		// Calculate ship direction indices for sprite selection
 		// Map mouse position to 5x7 direction grid (like Handler 7)
 		int16 mouseX = aimPos.x;

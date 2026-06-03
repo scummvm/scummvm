@@ -160,10 +160,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	//   Font 0 (^f00): TALKFONT.NUT - Default menu font (DAT_00485058)
 	//   Font 1 (^f01): SMALFONT.NUT - Small font for format code switching
 	//   Font 2 (^f02): TITLFONT.NUT - Title font
-	//   Font 3 (^f03): POVFONT.NUT - POV font (not loaded here)
+	//   Font 3 (^f03): POVFONT.NUT - POV font
 	_smush_talkfontNut = makeRebel2Font(_vm, "SYSTM/TALKFONT.NUT");
 	_smush_smalfontNut = makeRebel2Font(_vm, "SYSTM/SMALFONT.NUT");
 	_smush_titlefontNut = makeRebel2Font(_vm, "SYSTM/TITLFONT.NUT");
+	_smush_povfontNut = makeRebel2Font(_vm, "SYSTM/POVFONT.NUT");
 
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
@@ -543,6 +544,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_gameplaySectionActive = false;
 	_lastGameplayMenuCloseTime = 0;
 	_lastMenuGamepadNavigationTime = 0;
+	_handler8HudGlyph = '#';
+	_handler8HudMessageTimer = 0;
+	_handler8HudMessageIndex = 0;
 
 	// Initialize level state tracking for multi-phase levels
 	_currentPhase = 1;
@@ -566,6 +570,7 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _smush_talkfontNut;
 	delete _smush_smalfontNut;
 	delete _smush_titlefontNut;
+	delete _smush_povfontNut;
 
 	// Clean up Handler 8 ship sprites
 	delete _shipSprite;
@@ -1533,7 +1538,10 @@ int32 InsaneRebel2::processMouse() {
 
 		// Calculate world position for hit testing
 		Common::Point worldMousePos = mousePos;
-		if (_rebelHandler != 7) {
+		if (_rebelHandler == 8) {
+			worldMousePos.x += _shipPosX;
+			worldMousePos.y += _shipPosY;
+		} else if (_rebelHandler != 7) {
 			worldMousePos.x += _viewX;
 			worldMousePos.y += _viewY;
 		}
@@ -1634,7 +1642,8 @@ int32 InsaneRebel2::processMouse() {
 				// Play enemy death sound.
 				// Pan based on enemy center X position: (screenX - 160) mapped to [-127,127]
 				{
-					int enemyCenterX = (it->rect.left + it->rect.right) / 2 - _viewX;
+					int cameraX = (_rebelHandler == 8) ? _shipPosX : _viewX;
+					int enemyCenterX = (it->rect.left + it->rect.right) / 2 - cameraX;
 					int sfxPan = CLIP((enemyCenterX - 160) * 127 / 160, -127, 127);
 					if (_rebelHandler == 8 && it->type >= 1 && it->type <= 4) {
 						// Handler 8 soldier types 1-4: play from auxiliary buffer 0

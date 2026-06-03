@@ -43,9 +43,50 @@ namespace Scumm {
 
 // FUN_00423880 is initialized at startup with a 400000-byte preload buffer.
 constexpr int kRebel2LoadBufferSize = 400000;
+constexpr int kRebel2GameplaySurfaceWidth = 0x1a8;
+constexpr int kRebel2GameplaySurfaceHeight = 0x104;
 
 bool isRebel2FullFrameDeltaCodec(int codec) {
 	return codec == SMUSH_CODEC_DELTA_BLOCKS || codec == SMUSH_CODEC_DELTA_GLYPHS;
+}
+
+bool isRebel2GameplayActive(Insane *insane) {
+	if (insane == nullptr)
+		return false;
+
+	return static_cast<InsaneRebel2 *>(insane)->getHandler() != 0;
+}
+
+void smushDecodeRA2Uncompressed(byte *dst, const byte *src, int left, int top,
+		int width, int height, int dstPitch, int srcPitch, int dataSize,
+		int srcSkipX, int srcSkipY) {
+	if (dst == nullptr || src == nullptr || width <= 0 || height <= 0 ||
+			dstPitch <= 0 || srcPitch <= 0) {
+		return;
+	}
+
+	const int64 srcOffset = (int64)srcSkipY * srcPitch + srcSkipX;
+	if (srcOffset < 0 || (dataSize > 0 && srcOffset >= dataSize))
+		return;
+
+	if (dataSize > 0) {
+		const int64 bytesAfterOffset = (int64)dataSize - srcOffset;
+		if (bytesAfterOffset < width)
+			return;
+
+		const int maxRows = (int)((bytesAfterOffset - width) / srcPitch) + 1;
+		height = MIN(height, maxRows);
+		if (height <= 0)
+			return;
+	}
+
+	src += srcOffset;
+	dst += top * dstPitch + left;
+	while (height-- > 0) {
+		memcpy(dst, src, width);
+		src += srcPitch;
+		dst += dstPitch;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -93,7 +134,9 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_loadReadOffset = 8;  // Original starts reading at offset 8 (skips header)
 	_lastLoadChunkIdx = -1;
 	_loadStreamId = 0;
+	_ra2FrameSourceSkipX = 0;
 	_ra2FrameSourceSkipY = 0;
+	_ra2FrameObjectOriginalWidth = 0;
 	_ra2FrameObjectSurfaceWidth = 0;
 	_ra2FrameObjectSurfaceHeight = 0;
 	_ra2PendingAnimHeaderPalette = false;
@@ -670,6 +713,7 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
  * Returns true when the dimensions are valid and updates _dst, _width, _height as needed.
  */
 void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int width, int height) {
+	_ra2FrameObjectOriginalWidth = width;
 	_ra2FrameObjectSurfaceWidth = width;
 	_ra2FrameObjectSurfaceHeight = height;
 
@@ -682,15 +726,23 @@ void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int widt
 }
 
 bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
-	// Rebel2 uses a special buffer for all non-matching frames.
-	// Oversized full-frame delta codecs decode into a tightly packed surface
-	// with their own width as pitch. Other codecs honor left/top and pitch.
+	// Rebel2 allocates the low-res gameplay target as 424x260 (FUN_00424730).
+	// Use that target once an oversized gameplay FOBJ appears, then keep small
+	// overlay FOBJ chunks compositing into it. Pure 320x200 gameplay videos keep
+	// drawing their small FOBJ chunks directly onto the main screen.
 	const int screenSize = _vm->_screenWidth * _vm->_screenHeight;
 	const int64 fobjSize64 = (int64)width * height;
 	int surfaceWidth = width;
 	int surfaceHeight = height;
 
-	if (fobjSize64 > screenSize && !isRebel2FullFrameDeltaCodec(codec)) {
+	const bool useGameplaySurface = isRebel2GameplayActive(_insane) &&
+		!isRebel2FullFrameDeltaCodec(codec) &&
+		(fobjSize64 > screenSize || _specialBuffer != nullptr);
+
+	if (useGameplaySurface) {
+		surfaceWidth = kRebel2GameplaySurfaceWidth;
+		surfaceHeight = kRebel2GameplaySurfaceHeight;
+	} else if (fobjSize64 > screenSize && !isRebel2FullFrameDeltaCodec(codec)) {
 		surfaceWidth = MAX(surfaceWidth, _ra2FrameObjectSurfaceWidth);
 		surfaceHeight = MAX(surfaceHeight, _ra2FrameObjectSurfaceHeight);
 	}
@@ -752,6 +804,12 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 								 int width, int height, int pitch, int dataSize) {
 	switch (codec) {
+	case SMUSH_CODEC_UNCOMPRESSED: {
+		const int sourcePitch = (_ra2FrameObjectOriginalWidth > 0) ? _ra2FrameObjectOriginalWidth : width;
+		smushDecodeRA2Uncompressed(_dst, src, left, top, width, height, pitch, sourcePitch,
+			dataSize, _ra2FrameSourceSkipX, _ra2FrameSourceSkipY);
+		return true;
+	}
 	case SMUSH_CODEC_LINE_UPDATE:
 	case SMUSH_CODEC_LINE_UPDATE2: {
 		const uint8 *adjustedSrc = smushSkipRLELines(src, dataSize, _ra2FrameSourceSkipY);
@@ -882,11 +940,21 @@ bool SmushPlayerRebel2::handleGameDimensionOverride(int codec, int width, int he
 
 bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
 	int sourceSkipY = 0;
+	const int adjustedLeft = left + _fobjOffsetX;
+	_ra2FrameSourceSkipX = (adjustedLeft < 0) ? -adjustedLeft : 0;
 	_ra2FrameSourceSkipY = 0;
 	adjustFrameCoords(left, top, width, height, pitch, &sourceSkipY);
 	if (codec == SMUSH_CODEC_LINE_UPDATE || codec == SMUSH_CODEC_LINE_UPDATE2 ||
-			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA2_BOMP) {
+			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA2_BOMP ||
+			codec == SMUSH_CODEC_UNCOMPRESSED) {
 		_ra2FrameSourceSkipY = sourceSkipY;
+		if (srcSkipY)
+			*srcSkipY = 0;
+	} else if (isRebel2FullFrameDeltaCodec(codec)) {
+		// Codec 37/47 streams are full-frame delta streams, not row-prefixed
+		// RLE data. The original FOBJ dispatcher applies FUN_00424510 offsets
+		// to the destination coordinates passed to FUN_0042cba0; it does not
+		// advance the compressed source by clipped scanlines.
 		if (srcSkipY)
 			*srcSkipY = 0;
 	} else if (srcSkipY) {

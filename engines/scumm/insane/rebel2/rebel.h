@@ -494,6 +494,7 @@ public:
 	NutRenderer *_smush_talkfontNut;   // Font 0 - primary menu font (DAT_00485058)
 	NutRenderer *_smush_smalfontNut;   // Font 1 - small font for ^f01 switching
 	NutRenderer *_smush_titlefontNut;  // Font 2 - title font
+	NutRenderer *_smush_povfontNut;    // Font 3 - POV font for Handler 8 overlay
 
 	// Saved palette for pause overlay restoration (FUN_405A21)
 	byte _savedPausePalette[768];
@@ -612,6 +613,7 @@ public:
 
 	// Update target lock state and draw crosshair/reticle
 	void renderCrosshair(byte *renderBitmap, int pitch, int width, int height);
+	void renderHandler8PovOverlay(byte *renderBitmap, int pitch, int width, int height);
 	Common::Point getHandler7ShipDrawPoint();
 	Common::Point getHandler7ProjectedPoint();
 	Common::Point getHandler7ShotTargetPoint();
@@ -1086,6 +1088,9 @@ public:
 	// Mode 4: "Autopilot" - no shooting, scripted movement
 	// Mode 5: "Cutscene" - ship not rendered
 	int16 _shipLevelMode;            // DAT_0043e000
+	char _handler8HudGlyph;          // DAT_0047e048
+	int16 _handler8HudMessageTimer;  // DAT_0047e040
+	int16 _handler8HudMessageIndex;  // DAT_0047e044
 
 	// Movement range limiter for Handler 8 (Level 2 covered/shooting states)
 	// Controls horizontal movement range: 127 for shooting, 41 for covered
