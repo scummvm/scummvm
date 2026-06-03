@@ -150,6 +150,9 @@ static void buildContinuationData(Window *window) {
 	Score *score = window->getCurrentMovie()->getScore();
 	uint numFrames = score->_scoreCache.size();
 
+	if (numFrames == 0)
+		return;
+
 	uint numChannels = score->_scoreCache[0]->_sprites.size();
 	_state->_continuationData.resize(numChannels);
 
@@ -391,7 +394,9 @@ static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
 		CastMember *castMember = nullptr;
 		bool shape = false;
 
-		if (_state->_selectedScoreCast.frame != -1 && !_state->_selectedScoreCast.isMainChannel)
+		if (_state->_selectedScoreCast.frame != -1 && !_state->_selectedScoreCast.isMainChannel
+				&& _state->_selectedScoreCast.frame < (int)score->_scoreCache.size()
+				&& _state->_selectedScoreCast.channel < (int)score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites.size())
 			sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
 
 		if (sprite) {
@@ -975,6 +980,8 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 				case kChScript: // open script in script editor
 					if (mc.actionId.member) {
 						ScriptContext *ctx = getScriptContext(mc.actionId);
+						if (!ctx)
+							break;
 						for (auto &handler : ctx->_functionHandlers) {
 							ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, handler._key);
 							script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
@@ -1138,6 +1145,11 @@ void showScore() {
 
 		buildContinuationData(selectedWindow);
 
+		if (!selectedWindow->getCurrentMovie()) {
+			ImGui::Text("No movie loaded");
+			ImGui::End();
+			return;
+		}
 		Score *score = selectedWindow->getCurrentMovie()->getScore();
 		uint numFrames = score->_scoreCache.size();
 		Cast *cast = selectedWindow->getCurrentMovie()->getCast();
@@ -1191,6 +1203,11 @@ void showChannels() {
 	if (ImGui::Begin("Channels", &_state->_w.channels)) {
 		Window *selectedWindow = windowListCombo(&_state->_scoreWindow);
 
+		if (!selectedWindow->getCurrentMovie()) {
+			ImGui::Text("No movie loaded");
+			ImGui::End();
+			return;
+		}
 		Score *score = selectedWindow->getCurrentMovie()->getScore();
 		const Frame &frame = *score->_currentFrame;
 
@@ -1410,8 +1427,10 @@ void showChannels() {
 						if (sprite._spriteListIdx) {
 							Common::MemoryReadStreamEndian *stream = score->getSpriteDetailsStream(sprite._spriteListIdx + 2);
 							Common::String name;
-							if (stream)
+							if (stream) {
 								name = stream->readPascalString();
+								delete stream;
+							}
 							ImGui::Text("%s", name.c_str());
 						} else {
 							ImGui::Text(" ");

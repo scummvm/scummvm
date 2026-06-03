@@ -41,7 +41,8 @@ public:
 		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 		if (!callstack.empty()) {
 			CFrame *head = callstack[callstack.size() - 1];
-			_isScriptInDebug = (head->sp.ctx->_id == script.id.member) && (*head->sp.name == script.handlerId);
+			if (head->sp.ctx)
+				_isScriptInDebug = (head->sp.ctx->_id == script.id.member) && (*head->sp.name == script.handlerId);
 		}
 		_script.startOffsets.clear();
 	}
@@ -1128,6 +1129,8 @@ private:
 
 	void renderLine(uint p) {
 		bool showCurrentStatement = false;
+		if (_script.byteOffsets.empty())
+			return;
 		p = MIN(p, _script.byteOffsets.size() - 1);
 		uint pc = _script.byteOffsets[p];
 		_script.startOffsets.push_back(pc);

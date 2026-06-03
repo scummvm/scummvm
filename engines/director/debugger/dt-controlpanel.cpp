@@ -34,7 +34,7 @@ static uint32 getLineFromPC() {
 	ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
 
 	const uint pc = g_lingo->_state->pc;
-	if (scriptData->_scripts.empty())
+	if (scriptData->_scripts.empty() || scriptData->_current >= scriptData->_scripts.size())
 		return 0;
 	const Common::Array<uint> &offsets = scriptData->_scripts[scriptData->_current].startOffsets;
 	for (uint i = 0; i < offsets.size(); i++) {
@@ -128,7 +128,12 @@ void showControlPanel() {
 	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel, ImGuiWindowFlags_NoDocking)) {
+		// null guard
 		Movie *movie = g_director->getCurrentMovie();
+		if (!movie) {
+			ImGui::End();
+			return;
+		}
 		Score *score = movie->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
