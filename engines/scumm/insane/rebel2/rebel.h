@@ -613,6 +613,7 @@ public:
 
 	// Update target lock state and draw crosshair/reticle
 	void renderCrosshair(byte *renderBitmap, int pitch, int width, int height);
+	void renderHandler8MonitorEffect(byte *renderBitmap, int pitch, int width, int height);
 	void renderHandler8PovOverlay(byte *renderBitmap, int pitch, int width, int height);
 	Common::Point getHandler7ShipDrawPoint();
 	Common::Point getHandler7ProjectedPoint();

@@ -2599,6 +2599,9 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// Crosshair/reticle (FUN_004089ab, FUN_0040d836).
 	renderCrosshair(renderBitmap, pitch, width, height);
 
+	// Handler 8 monitor scanline effect (FUN_0041C6EC/FUN_0041C6C3).
+	renderHandler8MonitorEffect(renderBitmap, pitch, width, height);
+
 	// Handler 8 POV text overlay (FUN_00401CCF).
 	renderHandler8PovOverlay(renderBitmap, pitch, width, height);
 
@@ -4239,6 +4242,40 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 
 		debug("Rebel2 Handler25: Laser shot %d from (%d,%d) to (%d,%d) progress=%d/%d",
 			i, gunX, gunY, targetX, targetY, progress, maxDuration);
+	}
+}
+
+// renderHandler8MonitorEffect -- Level 12 POV monitor scanline effect.
+void InsaneRebel2::renderHandler8MonitorEffect(byte *renderBitmap, int pitch, int width, int height) {
+	if (_rebelHandler != 8 || !renderBitmap)
+		return;
+
+	const bool highRes = (width >= 640 || height >= 400);
+	const int effectWidth = MIN<int>(MIN<int>(width, pitch), highRes ? 640 : 320);
+	const int effectHeight = MIN<int>(height, highRes ? 360 : 180);
+	if (effectWidth <= 0 || effectHeight <= 1)
+		return;
+
+	if (highRes) {
+		// FUN_0041C6C3/FUN_00413EC2: fill every other gameplay row with color 4.
+		for (int y = 1; y < effectHeight; y += 2) {
+			byte *row = renderBitmap + y * pitch;
+			memset(row, 4, effectWidth);
+		}
+		return;
+	}
+
+	if (_rebelDetailMode <= 0)
+		return;
+
+	// FUN_0041C6EC/FUN_00413EFC: remap every other gameplay row through
+	// FUN_00410721()+0x400. ScummVM uses the primary edge table, matching
+	// DAT_0047a81c == 0.
+	const byte *monitorTable = _edgeTable + 0x400;
+	for (int y = 1; y < effectHeight; y += 2) {
+		byte *row = renderBitmap + y * pitch;
+		for (int x = 0; x < effectWidth; x++)
+			row[x] = monitorTable[row[x]];
 	}
 }
 
