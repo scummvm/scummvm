@@ -41,6 +41,10 @@
 
 namespace Scumm {
 
+bool isRebel2FullFrameDeltaCodec(int codec) {
+	return codec == SMUSH_CODEC_DELTA_BLOCKS || codec == SMUSH_CODEC_DELTA_GLYPHS;
+}
+
 // ---------------------------------------------------------------------------
 // SmushPlayerRebel2 — construction / destruction
 // ---------------------------------------------------------------------------
@@ -687,17 +691,16 @@ void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int widt
 		_ra2FrameObjectSurfaceHeight = (int)bottom;
 }
 
-bool SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
+bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	// Rebel2 uses a special buffer for all non-matching frames.
-	// Oversized FOBJ chunks are clipped against the original 424x260 surface.
-	// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
-	// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null)
+	// Oversized full-frame delta codecs decode into a tightly packed surface
+	// with their own width as pitch. Other codecs honor left/top and pitch.
 	const int screenSize = _vm->_screenWidth * _vm->_screenHeight;
 	const int64 fobjSize64 = (int64)width * height;
 	int surfaceWidth = width;
 	int surfaceHeight = height;
 
-	if (fobjSize64 > screenSize) {
+	if (fobjSize64 > screenSize && !isRebel2FullFrameDeltaCodec(codec)) {
 		surfaceWidth = MAX(surfaceWidth, _ra2FrameObjectSurfaceWidth);
 		surfaceHeight = MAX(surfaceHeight, _ra2FrameObjectSurfaceHeight);
 	}
@@ -721,13 +724,13 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 			free(_specialBuffer);
 			_specialBuffer = newSpecialBuffer;
 			_specialBufferSize = bufSize;
-			_width = surfaceWidth;
-			_height = surfaceHeight;
 			// Zero-fill the new buffer to avoid garbage in areas not written by FOBJ codec
 			memset(_specialBuffer, 0, bufSize);
 			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Allocated new _specialBuffer %dx%d for FOBJ %dx%d (%d bytes)",
 				surfaceWidth, surfaceHeight, width, height, bufSize);
 		}
+		_width = surfaceWidth;
+		_height = surfaceHeight;
 	}
 
 	if (bufSize > screenSize &&
@@ -859,7 +862,7 @@ void SmushPlayerRebel2::handleGameParseNextFrame() {
 
 bool SmushPlayerRebel2::handleGameFrameBufferSelect(int codec, int width, int height) {
 	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)) {
-		return ra2SelectFrameBuffer(width, height);
+		return ra2SelectFrameBuffer(codec, width, height);
 	}
 	return false;
 }

@@ -3340,7 +3340,7 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 		return;
 
 	// CRITICAL: Clip height to 180 (0xb4) + viewport Y to avoid drawing over status bar.
-	// For oversized buffers (e.g., Level 12's 640x260), the status bar is at
+	// For oversized buffers (e.g., Level 12's 424x260), the status bar is at
 	// Y = 180 + _viewY in buffer coordinates.
 	int renderHeight = MIN(height, 180 + _viewY);
 
@@ -3378,7 +3378,7 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 
 		// Add viewport offset so sprite follows the visible area.
 		// For 320x200 buffers (Level 2), _viewX/_viewY are 0 — no change.
-		// For oversized buffers (Level 12's 640x260), the viewport scrolls
+		// For oversized buffers (Level 12's 424x260), the viewport scrolls
 		// and sprites must be drawn at the correct position within it.
 		int drawX = _rebelViewOffset2X + spriteXOffset + _viewX;
 		int drawY = _rebelViewOffset2Y + spriteYOffset + _viewY;

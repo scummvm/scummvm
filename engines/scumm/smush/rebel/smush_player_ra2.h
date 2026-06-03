@@ -68,7 +68,7 @@ private:
 							   int pos_x, int pos_y, int left, int top,
 							   int width, int height, TextStyleFlags flg);
 	void ra2PrepareFrameObjectSurface(int left, int top, int width, int height);
-	bool ra2SelectFrameBuffer(int width, int height);
+	bool ra2SelectFrameBuffer(int codec, int width, int height);
 	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 						int width, int height, int pitch, int dataSize);
 	void ra2HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);

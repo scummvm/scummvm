@@ -86,7 +86,7 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// This is called at the start of handleFrame(), before any FOBJ chunks are processed.
 	//
 	// IMPORTANT: Only restore when the render buffer pitch matches the background pitch (320).
-	// Levels like Level 12 (Sewers) use oversized buffers (640x260) where FOBJ/FETCH handles
+	// Levels like Level 12 (Sewers) use oversized buffers (424x260) where FOBJ/FETCH handles
 	// background restoration. Copying the 320-wide background into a 640-wide buffer with
 	// hardcoded pitch=320 would corrupt the corridor rendering.
 	if (_rebelHandler == 8 && _level2BackgroundLoaded && _level2Background && renderBitmap) {
