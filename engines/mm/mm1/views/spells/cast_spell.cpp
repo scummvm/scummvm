@@ -183,7 +183,8 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 
 	} else if (msg._action == KEYBIND_SELECT) {
 		// Time to execute the spell
-		performSpell();
+		if (_state == PRESS_ENTER)
+			performSpell();
 
 	} else if (_state == SELECT_CHAR &&
 		msg._action >= KEYBIND_VIEW_PARTY1 &&
