@@ -55,6 +55,10 @@ const int kRA2MenuAxisThreshold = Common::JOYAXIS_MAX / 5;
 const uint32 kRA2MenuGamepadNavigationDebounceMs = 250;
 const uint32 kRA2MenuGamepadMouseSuppressMs = 250;
 
+bool rebel2UsesRelativeGamepadAim(int selectedLevel) {
+	return selectedLevel == 1 || selectedLevel == 5;
+}
+
 bool isRebel2RawMenuAxis(int axis) {
 	return axis == Common::JOYSTICK_AXIS_LEFT_STICK_X ||
 	       axis == Common::JOYSTICK_AXIS_LEFT_STICK_Y ||
@@ -618,12 +622,12 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// kScummActionInsaneAttack action, not the pointer, so this does not affect shots.
 	// A genuine mouse/touch motion (nonzero relative delta) normally hands control
 	// back; handler 0x26 keeps ownership until its gamepad reticle returns to center,
-	// except for Level 1's relative gamepad aiming where the reticle deliberately holds.
+	// except for relative gamepad aiming levels where the reticle deliberately holds.
 	if (_gamepadAimActive && _gameState == kStateGameplay && !_menuInputActive) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			if (event.relMouse.x != 0 || event.relMouse.y != 0) {
-				if (_rebelHandler == 0x26 && _selectedLevel != 1)
+				if (_rebelHandler == 0x26 && !rebel2UsesRelativeGamepadAim(_selectedLevel))
 					return true;
 				_gamepadAimActive = false; // real pointer motion takes over
 				break;
@@ -1636,7 +1640,7 @@ Common::Point InsaneRebel2::getGameplayAimPoint() {
 
 // Apply the user's configured analog deadzone so a resting stick reports no
 // motion. Mirrors RA1's applyRebel1AnalogDeadzone (iact.cpp).
-static inline int16 applyRebel2AnalogDeadzone(int16 axisValue) {
+int16 applyRebel2AnalogDeadzone(int16 axisValue) {
 	const int deadZone = MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000;
 	return (ABS((int)axisValue) <= deadZone) ? 0 : axisValue;
 }
@@ -1659,8 +1663,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	int deltaY = 0;
 	bool activeGamepadAim = false;
 
-	if (_rebelHandler == 0x26 && _selectedLevel == 1) {
-		// Level 1 plays best with the older mouse-like gamepad behavior from
+	if (_rebelHandler == 0x26 && rebel2UsesRelativeGamepadAim(_selectedLevel)) {
+		// Levels 1 and 5 play best with the older mouse-like gamepad behavior from
 		// ec305dee371/0025c4e1086: pan the reticle directly and leave it where
 		// the player releases the stick. Later handler 0x26 levels keep the
 		// original-style centered mapping for obstacle avoidance.
