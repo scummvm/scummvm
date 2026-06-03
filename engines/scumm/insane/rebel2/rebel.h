@@ -765,6 +765,7 @@ public:
 	// Render a decoded embedded frame to the video buffer
 	// Handles transparency (color 0 and 231) and boundary checks
 	void renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFrame &frame, int userId);
+	void drawHandler25CorridorOverlay(byte *renderBitmap);
 
 	int16 _rebelLinks[512][3]; // Dependency links: Slot 0 (Disable on death), Slot 1/2 (Enable on death)
 	void clearBit(int n);

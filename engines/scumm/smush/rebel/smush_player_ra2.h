@@ -85,6 +85,7 @@ private:
 	int _ra2FrameSourceSkipY;
 	int _ra2FrameObjectSurfaceWidth;
 	int _ra2FrameObjectSurfaceHeight;
+	bool _ra2PendingAnimHeaderPalette;
 };
 
 } // End of namespace Scumm

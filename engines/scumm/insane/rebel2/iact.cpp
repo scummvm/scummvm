@@ -1236,43 +1236,9 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 		_player->_fobjOffsetY = _rebelViewOffsetY;
 	}
 
-	// Draw corridor overlay OPAQUELY (FUN_00428A10 in original, line 216).
+	// Draw corridor overlay opaquely (FUN_00428a10 in original, line 216).
 	// This wipes previous frame content so codec 23 delta skip regions show clean corridor.
-	if (renderBitmap) {
-		EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
-		if (corridorOverlay.valid && corridorOverlay.pixels) {
-			int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
-			int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
-
-			int srcOffsetX = 0;
-			int srcOffsetY = 0;
-			int destX = _rebelViewOffsetX;
-			int destY = _rebelViewOffsetY;
-			int drawWidth = corridorOverlay.width;
-			int drawHeight = corridorOverlay.height;
-
-			if (destX < 0) { srcOffsetX = -destX; drawWidth -= srcOffsetX; destX = 0; }
-			if (destY < 0) { srcOffsetY = -destY; drawHeight -= srcOffsetY; destY = 0; }
-			if (destX + drawWidth > pitch)
-				drawWidth = pitch - destX;
-			if (destY + drawHeight > bufHeight)
-				drawHeight = bufHeight - destY;
-			if (drawWidth > corridorOverlay.width - srcOffsetX)
-				drawWidth = corridorOverlay.width - srcOffsetX;
-			if (drawHeight > corridorOverlay.height - srcOffsetY)
-				drawHeight = corridorOverlay.height - srcOffsetY;
-
-			if (drawWidth > 0 && drawHeight > 0) {
-				for (int y = 0; y < drawHeight; y++) {
-					memcpy(renderBitmap + (destY + y) * pitch + destX,
-						   corridorOverlay.pixels + (srcOffsetY + y) * corridorOverlay.width + srcOffsetX,
-						   drawWidth);
-				}
-			}
-			debug("Rebel2 Opcode 6: Corridor overlay drawn at (%d,%d) size(%d,%d)",
-				_rebelViewOffsetX, _rebelViewOffsetY, corridorOverlay.width, corridorOverlay.height);
-		}
-	}
+	drawHandler25CorridorOverlay(renderBitmap);
 }
 
 // ScummVM refactor helper for opcode 6 Handler 0x26, not a separate retail function.

@@ -132,13 +132,18 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 	                          _rebelHandler == 0x26 || _rebelHandler == 0x19);
 
 	// Handler 25 overlays:
-	// - userId 4 (corridor overlay): Draw during procPostRendering at view offset, NOT immediately
+	// - userId 4 (corridor overlay): draw immediately at the current view offset.
+	//   FUN_0041cadb case 6/par4=4 decodes DAT_00482268, then calls
+	//   FUN_00428a10(param_1, 0, DAT_0045790c, DAT_0045790e, DAT_00482268).
 	// - userId 6, 7 (static overlays): Draw immediately (they don't move)
+	if (_rebelHandler == 0x19 && userId == 4) {
+		drawHandler25CorridorOverlay(renderBitmap);
+		return;
+	}
 	if (_rebelHandler == 0x19 && (userId == 6 || userId == 7)) {
 		skipImmediateDraw = false;
 		debug("Rebel2: Handler 25 static overlay userId=%d - forcing immediate draw", userId);
 	}
-	// userId 4 should NOT draw immediately - it will be drawn at view offset each frame
 
 	if (!frame.valid || !renderBitmap || skipImmediateDraw) {
 		if (skipImmediateDraw && frame.valid) {
@@ -154,6 +159,56 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 	blitEmbeddedFrameRegion(renderBitmap, pitch, pitch, bufHeight, frame,
 		frame.renderX, frame.renderY, 0, 0, frame.width, frame.height);
 	debug("Rebel2: Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
+}
+
+void InsaneRebel2::drawHandler25CorridorOverlay(byte *renderBitmap) {
+	if (!renderBitmap)
+		return;
+
+	EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
+	if (!isValidEmbeddedFrame(corridorOverlay))
+		return;
+
+	int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
+	int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
+
+	int srcOffsetX = 0;
+	int srcOffsetY = 0;
+	int destX = _rebelViewOffsetX;
+	int destY = _rebelViewOffsetY;
+	int drawWidth = corridorOverlay.width;
+	int drawHeight = corridorOverlay.height;
+
+	if (destX < 0) {
+		srcOffsetX = -destX;
+		drawWidth -= srcOffsetX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcOffsetY = -destY;
+		drawHeight -= srcOffsetY;
+		destY = 0;
+	}
+	if (destX + drawWidth > pitch)
+		drawWidth = pitch - destX;
+	if (destY + drawHeight > bufHeight)
+		drawHeight = bufHeight - destY;
+	if (drawWidth > corridorOverlay.width - srcOffsetX)
+		drawWidth = corridorOverlay.width - srcOffsetX;
+	if (drawHeight > corridorOverlay.height - srcOffsetY)
+		drawHeight = corridorOverlay.height - srcOffsetY;
+
+	if (drawWidth <= 0 || drawHeight <= 0)
+		return;
+
+	for (int y = 0; y < drawHeight; y++) {
+		memcpy(renderBitmap + (destY + y) * pitch + destX,
+			   corridorOverlay.pixels + (srcOffsetY + y) * corridorOverlay.width + srcOffsetX,
+			   drawWidth);
+	}
+
+	debug("Rebel2 Handler25: Corridor overlay drawn at (%d,%d) size(%d,%d)",
+		_rebelViewOffsetX, _rebelViewOffsetY, corridorOverlay.width, corridorOverlay.height);
 }
 
 //
@@ -2866,10 +2921,9 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 		if (!isValidEmbeddedFrame(frame))
 			continue;
 
-		// Handler 25: Skip slot 4 (corridor overlay) in post-rendering.
-		// The corridor is a full background image (no color 0 transparent center).
-		// Drawing it here would cover enemies. It's already drawn in procPreRendering
-		// with transparency to preserve frame persistence for codec 23 delta.
+		// Handler 25: skip slot 4 (corridor overlay) in post-rendering.
+		// FUN_0041cadb draws it opaquely from opcode 6 and immediately after
+		// loading par4=4; drawing it here would cover enemies.
 		if (_rebelHandler == 25 && hudSlot == 4) {
 			continue;
 		}

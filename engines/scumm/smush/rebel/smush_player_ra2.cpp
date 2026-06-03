@@ -89,6 +89,7 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_ra2FrameSourceSkipY = 0;
 	_ra2FrameObjectSurfaceWidth = 0;
 	_ra2FrameObjectSurfaceHeight = 0;
+	_ra2PendingAnimHeaderPalette = false;
 	_scrollX = 0;
 	_scrollY = 0;
 }
@@ -106,10 +107,12 @@ void SmushPlayerRebel2::destroyGamePlayerFields() {
 
 /**
  * RA2-specific initialization in SmushPlayer::init().
- * Re-pushes the SMUSH palette (videos without NPAL inherit from previous),
- * and handles background preservation between cinematic and gameplay videos.
+ * Re-pushes the SMUSH palette for videos that inherit it from the previous video,
+ * and initializes the screen target state before AHDR/FOBJ selects dimensions.
  */
 void SmushPlayerRebel2::initGameVideoState() {
+	_ra2PendingAnimHeaderPalette = false;
+
 	// Re-push the SMUSH palette to the system. Videos like O_LEVEL.SAN
 	// have no NPAL chunk and inherit the palette from the previous video.
 	// Since play() resets _palDirtyMin/Max, the palette would never be pushed otherwise.
@@ -120,16 +123,15 @@ void SmushPlayerRebel2::initGameVideoState() {
 	_width = _vm->_screenWidth;
 	_height = _vm->_screenHeight;
 
-	// Handle background preservation between videos:
-	// - Cinematic videos (flags 0x20) clear the buffer for a fresh start
-	// - Gameplay videos (flags 0x08) preserve the existing screen content
+	// Keep ScummVM's virtual screen consistent with FUN_00424d70: bit 0x20
+	// controls per-frame clearing. Videos that clear every frame can also start
+	// from a cleared target; videos with bit 0x20 set preserve until their first
+	// decoded frame overwrites or composes over it.
 	if (_dst != nullptr) {
 		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
-		if ((_curVideoFlags & 0x08) == 0) {
-			// Cinematic mode (flags 0x20) - clear buffer for fresh video
+		if ((_curVideoFlags & 0x20) == 0) {
 			memset(_dst, 0, vs->w * vs->h);
 		}
-		// Gameplay mode: no-op, the existing screen content is preserved.
 	}
 }
 
@@ -397,8 +399,9 @@ void SmushPlayerRebel2::adjustGamePalette() {
 }
 
 bool SmushPlayerRebel2::shouldLoadAnimHeaderPalette() const {
-	// Original RA2 AHDR handler skips the embedded palette when video flag 0x400 is set.
-	return (_curVideoFlags & 0x400) == 0;
+	// RA2 copies the AHDR palette in handleGameAnimHeader() so it can match
+	// FUN_00424640/FUN_00424540 timing without changing the generic player.
+	return false;
 }
 
 void SmushPlayerRebel2::ra2HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b) {
@@ -450,6 +453,20 @@ void SmushPlayerRebel2::ra2HandleDeltaPalette(int32 subSize, Common::SeekableRea
 // backing bitmap, but active low-res gameplay dimensions are selected later by
 // IACT/FOBJ state; keep the virtual-screen pitch safe until then.
 bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
+	if (!_skipPalette && (_curVideoFlags & 0x400) == 0) {
+		memcpy(_pal, headerContent + 6, sizeof(_pal));
+		adjustGamePalette();
+
+		// initGameVideoState() marks the previous palette dirty for videos that
+		// inherit it. AHDR replaces _pal before the first FRME, so clear that
+		// inherited dirty range and delay the new AHDR palette until frame start.
+		// Original RA2 marks it dirty from FUN_00424640, then applies it from
+		// FUN_00424540 after FUN_00424d70 has processed a frame.
+		_palDirtyMin = 256;
+		_palDirtyMax = -1;
+		_ra2PendingAnimHeaderPalette = true;
+	}
+
 	int width = READ_LE_UINT16(&headerContent[4]);
 	int height = READ_LE_UINT16(&headerContent[6]);
 
@@ -837,6 +854,11 @@ void SmushPlayerRebel2::handleGameFrameObjectPost(int codec, const byte *data, i
 
 void SmushPlayerRebel2::handleGameFrameStart() {
 	_hasFrameFobjForGost = false;
+
+	if (_ra2PendingAnimHeaderPalette) {
+		setDirtyColors(0, 255);
+		_ra2PendingAnimHeaderPalette = false;
+	}
 
 	// FUN_00424d70 clears the target buffer before decoding a frame
 	// unless playback flags contain 0x20. Codec 21 frames in levels like
