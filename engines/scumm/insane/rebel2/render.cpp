@@ -589,6 +589,13 @@ Common::Point InsaneRebel2::getHandler7ShotTargetPoint() {
 	                     projected.y + ABS(_smoothedVelocity) / 4 - _verticalInput / 2 - 0x28);
 }
 
+Common::Point InsaneRebel2::getHandler8ShotTargetPoint() {
+	// Retail handler 8 stores and draws the shot target from the damped ship
+	// position in FUN_00401ccf, not from the current mouse/analog aim point.
+	return Common::Point(((_shipPosX - 0xa0) >> 3) + 0xa0,
+	                     ((_shipPosY - 0x28) >> 2) + 0x69);
+}
+
 // spawnSpaceShot -- Handler 7 space combat shot spawn (FUN_40D836).
 void InsaneRebel2::spawnSpaceShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
@@ -2484,6 +2491,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 		_flyShipSprite ? _flyShipSprite->getNumChars() : 0);
 
 	renderHandler7Ship(renderBitmap, pitch, width, height);
+	renderVehicleShotImpacts(renderBitmap, pitch, width, height);
 	renderHandler8Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
 
@@ -3295,35 +3303,47 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 		}
 	}
 
-	// Also render ship overlays (POV002 / POV003) if loaded.
-	// These are weapon/character overlays loaded via IACT opcode 8 par4=6,7.
-	if (_shipOverlay1) {
-		int overlayIdx = _shipFiring ? 1 : 0;
-		if (overlayIdx >= _shipOverlay1->getNumChars())
-			overlayIdx = 0;
-		int16 ovlXOff = _shipOverlay1->getCharXOffset(overlayIdx);
-		int16 ovlYOff = _shipOverlay1->getCharYOffset(overlayIdx);
-		int ovlX = displayOffsetX + ovlXOff + _viewX;
-		int ovlY = displayOffsetY + ovlYOff + _viewY;
-		renderNutSprite(renderBitmap, pitch, width, height, ovlX, ovlY, _shipOverlay1, overlayIdx);
-	}
-	if (_shipOverlay2) {
-		int overlayIdx = _shipFiring ? 1 : 0;
-		if (overlayIdx >= _shipOverlay2->getNumChars())
-			overlayIdx = 0;
-		int16 ovlXOff = _shipOverlay2->getCharXOffset(overlayIdx);
-		int16 ovlYOff = _shipOverlay2->getCharYOffset(overlayIdx);
-		int ovlX = displayOffsetX + ovlXOff + _viewX;
-		int ovlY = displayOffsetY + ovlYOff + _viewY;
-		renderNutSprite(renderBitmap, pitch, width, height, ovlX, ovlY, _shipOverlay2, overlayIdx);
-	}
-
 	int sprW = _shipSprite->getCharWidth(spriteIndex);
 	int sprH = _shipSprite->getCharHeight(spriteIndex);
 	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d",
 		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
 		spriteXOffset, spriteYOffset, sprW, sprH, drawY + sprH - _viewY,
 		_viewX, _viewY, spriteIndex, numSprites);
+}
+
+// renderVehicleShotImpacts -- Handler 8 shot impact sprites (FUN_402DA8).
+void InsaneRebel2::renderVehicleShotImpacts(byte *renderBitmap, int pitch, int width, int height) {
+	if (_rebelHandler != 8)
+		return;
+
+	for (int i = 0; i < 7; i++) {
+		VehicleShotImpact &impact = _vehicleShotImpacts[i];
+		if (impact.counter <= 0)
+			continue;
+
+		int drawX = impact.x - _shipPosX + _viewX;
+		int drawY = impact.y - _shipPosY + _viewY;
+
+		// Original draws DAT_0047e020 repeatedly based on remaining life, then
+		// DAT_0047e018 once, both using the sampled background-mask sprite index.
+		if (_shipOverlay1 && impact.spriteIndex >= 0 && impact.spriteIndex < _shipOverlay1->getNumChars()) {
+			int spriteX = drawX + _shipOverlay1->getCharXOffset(impact.spriteIndex) -
+				_shipOverlay1->getCharWidth(impact.spriteIndex) / 2;
+			int spriteY = drawY + _shipOverlay1->getCharYOffset(impact.spriteIndex) -
+				_shipOverlay1->getCharHeight(impact.spriteIndex) / 2;
+			for (int repeat = 0; repeat <= (impact.counter >> 2); repeat++)
+				renderNutSprite(renderBitmap, pitch, width, height, spriteX, spriteY, _shipOverlay1, impact.spriteIndex);
+		}
+		if (_shipOverlay2 && impact.spriteIndex >= 0 && impact.spriteIndex < _shipOverlay2->getNumChars()) {
+			int spriteX = drawX + _shipOverlay2->getCharXOffset(impact.spriteIndex) -
+				_shipOverlay2->getCharWidth(impact.spriteIndex) / 2;
+			int spriteY = drawY + _shipOverlay2->getCharYOffset(impact.spriteIndex) -
+				_shipOverlay2->getCharHeight(impact.spriteIndex) / 2;
+			renderNutSprite(renderBitmap, pitch, width, height, spriteX, spriteY, _shipOverlay2, impact.spriteIndex);
+		}
+
+		impact.counter--;
+	}
 }
 
 // Handler 25: Draw GRD001 (wall/cockpit overlay) in procPostRendering.
@@ -4045,6 +4065,32 @@ void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int wi
 			progress, maxDuration, 20, 8, 4);
 
 		_vehicleShots[i].counter--;
+
+		// FUN_402ED0 samples DAT_0047e030 after drawing the beam. Non-zero
+		// mask pixels select the POV002/POV003 impact sprite index rendered by
+		// FUN_402DA8 on following frames. Mode 2 suppresses these impacts.
+		if (_shipLevelMode != 2 && _level2BackgroundLoaded && _level2Background) {
+			int impactX = ((_shipPosX - 160) >> 3) + _shipPosX + 160;
+			int impactY = ((_shipPosY - 40) >> 2) + _shipPosY + 105;
+			int maskX = impactX - 160;
+			int maskY = impactY - 30;
+
+			if (impactX > 160 && impactX < 480 &&
+					maskX >= 0 && maskX < 320 && maskY >= 0 && maskY < 200) {
+				byte spriteIndex = _level2Background[maskY * 320 + maskX];
+				if (spriteIndex != 0) {
+					VehicleShotImpact &impact = _vehicleShotImpacts[_vehicleShotImpactIndex];
+					_vehicleShotImpactIndex++;
+					if (_vehicleShotImpactIndex >= 7)
+						_vehicleShotImpactIndex = 0;
+
+					impact.counter = 12;
+					impact.x = impactX;
+					impact.y = impactY;
+					impact.spriteIndex = spriteIndex;
+				}
+			}
+		}
 	}
 }
 
@@ -4130,7 +4176,7 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 	}
 }
 
-// renderCrosshair -- Draw crosshair/reticle at mouse position.
+// renderCrosshair -- Draw crosshair/reticle at the current handler's aim point.
 void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int height) {
 	// From FUN_0040d836 (Handler 7) line 167-168: crosshair only drawn when DAT_004437c0 == 2
 	// Don't draw crosshair when shooting is disabled (flight-only segments)
@@ -4147,7 +4193,14 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	// Update target lock state and draw crosshair/reticle
 
 	// Target lock detection (DAT_00443676 equivalent)
-	Common::Point aimPos = (_rebelHandler == 7) ? getHandler7ShotTargetPoint() : getGameplayAimPoint();
+	Common::Point aimPos;
+	if (_rebelHandler == 7) {
+		aimPos = getHandler7ShotTargetPoint();
+	} else if (_rebelHandler == 8) {
+		aimPos = getHandler8ShotTargetPoint();
+	} else {
+		aimPos = getGameplayAimPoint();
+	}
 	Common::Point worldMousePos = aimPos;
 	if (_rebelHandler != 7) {
 		worldMousePos.x += _viewX;
@@ -4199,8 +4252,8 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		int ch = _smush_iconsNut->getCharHeight(reticleIndex);
 
 		// Calculate crosshair position
-		int crosshairX = aimPos.x - cw / 2;
-		int crosshairY = aimPos.y - ch / 2;
+		int crosshairX = aimPos.x;
+		int crosshairY = aimPos.y;
 		if (_rebelHandler != 7) {
 			crosshairX += _viewX;
 			crosshairY += _viewY;
@@ -4212,6 +4265,10 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 			crosshairX += _rebelViewOffsetX;
 			crosshairY += _rebelViewOffsetY;
 		}
+
+		// FUN_004236e0 with flags=2 applies the NUT frame offsets, then centers.
+		crosshairX += _smush_iconsNut->getCharXOffset(reticleIndex) - cw / 2;
+		crosshairY += _smush_iconsNut->getCharYOffset(reticleIndex) - ch / 2;
 
 		renderNutSprite(renderBitmap, pitch, width, height,
 			crosshairX, crosshairY,

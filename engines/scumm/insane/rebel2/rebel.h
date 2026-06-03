@@ -596,6 +596,7 @@ public:
 
 	// Draw Handler 8 ship sprite (third-person on foot - POV sprites)
 	void renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height);
+	void renderVehicleShotImpacts(byte *renderBitmap, int pitch, int width, int height); // FUN_402DA8 (Handler 8)
 
 	// Draw fallback ship using embedded HUD frame
 	void renderFallbackShip(byte *renderBitmap, int pitch, int width, int height);
@@ -614,6 +615,7 @@ public:
 	Common::Point getHandler7ShipDrawPoint();
 	Common::Point getHandler7ProjectedPoint();
 	Common::Point getHandler7ShotTargetPoint();
+	Common::Point getHandler8ShotTargetPoint();
 
 	// Reset enemy active flags and collision zones at frame end
 	void frameEndCleanup();
@@ -969,6 +971,21 @@ public:
 	};
 	VehicleShot _vehicleShots[2];
 
+	// Handler 8 shot impact animation state (FUN_402DA8 / FUN_402ED0)
+	// DAT_0043f81a[7]: impact duration counter
+	// DAT_0043f828[7]: impact world X
+	// DAT_0043f836[7]: impact world Y
+	// DAT_0043f844[7]: impact sprite index from DAT_0047e030 background mask
+	// DAT_0043f852: ring-buffer index
+	struct VehicleShotImpact {
+		int16 counter;
+		int16 x;
+		int16 y;
+		int16 spriteIndex;
+	};
+	VehicleShotImpact _vehicleShotImpacts[7];
+	int16 _vehicleShotImpactIndex;
+
 	// ---------------------------------------------------------------------------
 	// Handler 7 Third-Person Ship Shot System
 	// ---------------------------------------------------------------------------
@@ -1035,16 +1052,16 @@ public:
 	// Based on FUN_00401234 and FUN_00401ccf disassembly:
 	// - DAT_0047e010: Primary ship sprite (POV001, subcase 1)
 	// - DAT_0047e028: Secondary ship sprite (POV004, subcase 3)
-	// - DAT_0047e020: Additional overlay (POV002, subcase 6)
-	// - DAT_0047e018: Additional overlay (POV003, subcase 7)
+	// - DAT_0047e020: Shot impact overlay (POV002, subcase 6)
+	// - DAT_0047e018: Shot impact overlay (POV003, subcase 7)
 	// - DAT_0043e006: Ship X position (raw, needs conversion for display)
 	// - DAT_0043e008: Ship Y position (raw, needs conversion for display)
-	// - DAT_0043e000: Level mode from opcode 6 par3
+	// - DAT_0043e000: Level mode from opcode 6 par4
 
 	NutRenderer *_shipSprite;        // DAT_0047e010 - Primary ship NUT
 	NutRenderer *_shipSprite2;       // DAT_0047e028 - Secondary ship NUT
-	NutRenderer *_shipOverlay1;      // DAT_0047e020 - Additional overlay
-	NutRenderer *_shipOverlay2;      // DAT_0047e018 - Additional overlay
+	NutRenderer *_shipOverlay1;      // DAT_0047e020 - Shot impact overlay
+	NutRenderer *_shipOverlay2;      // DAT_0047e018 - Shot impact overlay
 
 	// Level 2 background buffer (DAT_0047e030)
 	// Loaded from IACT opcode 8, par4=5 - contains 320x200 background image

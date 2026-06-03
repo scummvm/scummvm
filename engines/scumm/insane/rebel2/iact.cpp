@@ -2151,8 +2151,8 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 	// par4 values (from IACT data offset +6, NOT par3 which is always 0):
 	//   1: POV001 - Primary ship sprite (DAT_0047e010 / _shipSprite)
 	//   3: POV004 - Secondary ship sprite (DAT_0047e028 / _shipSprite2)
-	//   6: POV002 - Ship overlay 1 (DAT_0047e020 / _shipOverlay1)
-	//   7: POV003 - Ship overlay 2 (DAT_0047e018 / _shipOverlay2)
+	//   6: POV002 - Shot impact overlay (DAT_0047e020 / _shipOverlay1)
+	//   7: POV003 - Shot impact overlay (DAT_0047e018 / _shipOverlay2)
 
 	if (!animData || size <= 0) {
 		return false;
@@ -2183,11 +2183,11 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 		delete _shipSprite2;
 		_shipSprite2 = newNut;
 		break;
-	case 6:  // POV002 - Ship overlay 1
+	case 6:  // POV002 - Shot impact overlay
 		delete _shipOverlay1;
 		_shipOverlay1 = newNut;
 		break;
-	case 7:  // POV003 - Ship overlay 2
+	case 7:  // POV003 - Shot impact overlay
 		delete _shipOverlay2;
 		_shipOverlay2 = newNut;
 		break;

@@ -347,6 +347,13 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_vehicleShots[i].targetX = 0;
 		_vehicleShots[i].targetY = 0;
 	}
+	for (i = 0; i < 7; i++) {
+		_vehicleShotImpacts[i].counter = 0;
+		_vehicleShotImpacts[i].x = 0;
+		_vehicleShotImpacts[i].y = 0;
+		_vehicleShotImpacts[i].spriteIndex = 0;
+	}
+	_vehicleShotImpactIndex = 0;
 
 	// Initialize Handler 7 Space shot system (FUN_40FADF)
 	for (i = 0; i < 2; i++) {
@@ -1501,10 +1508,25 @@ int32 InsaneRebel2::processMouse() {
 	// - Handler 25 keeps edge-triggered clicks due cover-toggle/sticky input semantics.
 	// - Other gameplay handlers fire while button is held; slot counters still rate-limit.
 	bool triggerShot = (_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed;
-	if (triggerShot && isShootingAllowed()) {
-		Common::Point mousePos = (_rebelHandler == 7) ? getHandler7ShotTargetPoint() : getGameplayAimPoint();
-		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d",
-			mousePos.x, mousePos.y, _enemies.size());
+	bool canShoot = isShootingAllowed();
+	if (_rebelHandler == 8) {
+		// FUN_00401CCF uses the same per-frame fire bit both to spawn shots and
+		// to choose the POV gun sprite. Keep the sprite driven by the event-manager
+		// input that processMouse() uses during SMUSH playback.
+		_shipFiring = triggerShot && canShoot;
+	}
+	if (triggerShot && canShoot) {
+		Common::Point mousePos;
+		if (_rebelHandler == 7) {
+			mousePos = getHandler7ShotTargetPoint();
+		} else if (_rebelHandler == 8) {
+			mousePos = getHandler8ShotTargetPoint();
+		} else {
+			mousePos = getGameplayAimPoint();
+		}
+		Common::Point gameplayAim = getGameplayAimPoint();
+		debug("Rebel2 Click: Mouse=(%d,%d) Target=(%d,%d) Enemies=%d",
+			gameplayAim.x, gameplayAim.y, mousePos.x, mousePos.y, _enemies.size());
 
 		// Spawn visual shot immediately
 		spawnShot(mousePos.x, mousePos.y);
