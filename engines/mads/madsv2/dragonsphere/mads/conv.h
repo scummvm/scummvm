@@ -401,7 +401,7 @@ enum {
 	conv042_seventeen_restart= 89,
 	conv042_seventeen_abort  = 90,
 
-	conv042_exit_b_b         = 93,
+	conv042_exit_b_b         = 92,
 	conv042_later_b_b        = 94,
 	conv042_whoops_b_b       = 96,
 };

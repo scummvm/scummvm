@@ -1360,12 +1360,13 @@ static void process_conv_poem() {
 		conv_abort();
 		me_trig_flag = true;
 
-		if ((game.difficulty == EASY_MODE && local->got_it == 14) ||
-		    (local->got_it == 17)) {
+		if ((game.difficulty == EASY_MODE && local->got_it == 14) || (local->got_it == 17)) {
+			// Successfully completed the poem
 			kernel_timing_trigger(HALF_SECOND, ROOM_504_END_POEM);
 			global[player_score] += 8;
 
 		} else {
+			// Player screwed it up
 			local->working_on_line = 1;
 			local->line_1[0] = '\0';
 			local->line_2[0] = '\0';
