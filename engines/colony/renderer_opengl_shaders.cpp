@@ -106,6 +106,7 @@ private:
 	void applyLineWidth(GLenum mode);
 
 	void uploadSolid3D(const float *positions, int vertCount);
+	void setGLDepthRange(float nearVal, float farVal);
 	// allowStipple=true on the fill pass picks up _stippleActive; lines
 	// must always render unstippled (matches the fixed-function path,
 	// which only stipples GL_QUADS / GL_POLYGON, never lines).
@@ -692,8 +693,18 @@ void OpenGLShaderRenderer::setDepthState(bool testEnabled, bool writeEnabled) {
 	glDepthMask(writeEnabled ? GL_TRUE : GL_FALSE);
 }
 
-void OpenGLShaderRenderer::setDepthRange(float nearVal, float farVal) {
+void OpenGLShaderRenderer::setGLDepthRange(float nearVal, float farVal) {
+#if USE_FORCED_GLES || USE_FORCED_GLES2
 	glDepthRangef(nearVal, farVal);
+#else
+	// glDepthRangef is only core in desktop OpenGL 4.1+. The double-precision
+	// entry point is core since OpenGL 1.0, so use it for desktop GL contexts.
+	glDepthRange(nearVal, farVal);
+#endif
+}
+
+void OpenGLShaderRenderer::setDepthRange(float nearVal, float farVal) {
+	setGLDepthRange(nearVal, farVal);
 }
 
 void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY,
@@ -767,7 +778,7 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 void OpenGLShaderRenderer::end3D() {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-	glDepthRangef(0.0f, 1.0f);
+	setGLDepthRange(0.0f, 1.0f);
 	glDisable(GL_SCISSOR_TEST);
 
 	// Restore the 2D viewport so subsequent overlay draws (dashboard, menu,
