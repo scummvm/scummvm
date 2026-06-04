@@ -521,6 +521,7 @@ private:
 
 	// True only while an interactive gameplay SMUSH is running.
 	bool _interactiveVideoActive;
+	bool _preserveInteractiveRuntimeState;
 
 	// Path branching for levels with left/right alternative videos.
 	// Original sets nextSceneA/nextSceneB when GAME 0x07 counter == 394 (0x18A).

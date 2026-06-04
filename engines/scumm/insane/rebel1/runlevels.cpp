@@ -551,13 +551,35 @@ bool InsaneRebel1::runLevel4() {
 		_shieldGenHitsA = 0;
 		_shieldGenHitsB = 0;
 		_levelGameplayPhase = 1;
-		playInteractiveVideo("LVL4/L4PLAY1.ANM");
+		bool shieldGeneratorsDestroyed = false;
+		bool replayingShieldGeneratorPhase = false;
+		while (!shouldAbortGameFlow()) {
+			_preserveInteractiveRuntimeState = replayingShieldGeneratorPhase;
+			playInteractiveVideo("LVL4/L4PLAY1.ANM");
+			_preserveInteractiveRuntimeState = false;
+			if (shouldAbortGameFlow())
+				return false;
+
+			if (_health < 0)
+				break;
+
+			shieldGeneratorsDestroyed =
+				_protectedTargetA == 0 && _protectedTargetB == 0 &&
+				_shieldGenHitsA > 0x30 + 0x3C && _shieldGenHitsB > 0x30;
+			if (shieldGeneratorsDestroyed)
+				break;
+
+			debugC(DEBUG_INSANE, "RA1 L4 replaying shield-generator phase: hits=(%d,%d) protected=(%d,%d)",
+				(int)_shieldGenHitsA, (int)_shieldGenHitsB,
+				(int)_protectedTargetA, (int)_protectedTargetB);
+			replayingShieldGeneratorPhase = true;
+		}
 		_protectedTargetA = 0;
 		_protectedTargetB = 0;
 		if (shouldAbortGameFlow())
 			return false;
 
-		if (_health >= 0) {
+		if (_health >= 0 && shieldGeneratorsDestroyed) {
 			// Phase 2: torpedo run. The DOS loop enables torpedo mode at frame
 			// 0x3E and exits early as soon as killCount becomes nonzero.
 			_activeGameOpcode = 0;
@@ -572,7 +594,7 @@ bool InsaneRebel1::runLevel4() {
 				return false;
 		}
 
-		if (_health >= 0) {
+		if (_health >= 0 && shieldGeneratorsDestroyed) {
 			// L4END1 = torpedo hit, L4END2 = torpedo missed
 			const bool torpedoHit = (_killCount != 0);
 			playChapterCompleteCinematic(torpedoHit ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM",
@@ -1290,11 +1312,31 @@ bool InsaneRebel1::runLevel14() {
 		_level14SuccessFrames = 0;
 
 		// Phase 1: targeting surface cannons
-		playInteractiveVideo("LVL14/L14PLAY.ANM");
+		bool level14Phase1Complete = false;
+		bool replayingLevel14Phase1 = false;
+		while (!shouldAbortGameFlow()) {
+			_preserveInteractiveRuntimeState = replayingLevel14Phase1;
+			playInteractiveVideo("LVL14/L14PLAY.ANM");
+			_preserveInteractiveRuntimeState = false;
+			if (shouldAbortGameFlow())
+				return false;
+
+			if (_health < 0)
+				break;
+
+			level14Phase1Complete = _level14SuccessFrames >= 0x3C;
+			if (level14Phase1Complete)
+				break;
+
+			debugC(DEBUG_INSANE, "RA1 L14 replaying phase 1: successFrames=%d targetsDestroyed=%d",
+				(int)_level14SuccessFrames, areLevel14Phase1TargetsDestroyed() ? 1 : 0);
+			replayingLevel14Phase1 = true;
+		}
 		if (shouldAbortGameFlow())
 			return false;
 
-		if (_health >= 0) {
+		bool level14Phase2Complete = false;
+		if (_health >= 0 && level14Phase1Complete) {
 			// Phase 2: exhaust port approach
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
@@ -1308,25 +1350,48 @@ bool InsaneRebel1::runLevel14() {
 			_level14Play2BSpliced = false;
 			_level14Play2BSpliceFrame = 0;
 
-			playInteractiveVideo("LVL14/L14PLAY2.ANM");
-			if (shouldAbortGameFlow())
-				return false;
-
-			if (_health >= 0 && _level14Play2BSplicePending) {
-				const int32 spliceFrame = _level14Play2BSpliceFrame;
-				_level14Play2BSplicePending = false;
-
-				// DOS queues L14PLY2B from the L14PLAY2 loop with startFrame
-				// equal to L14PLAY2's old timeline frame. L14PLY2B itself is the
-				// continuation clip, so the port starts it from frame 0 but uses
-				// the non-zero frame argument to preserve gameplay/video state.
-				playInteractiveVideo("LVL14/L14PLY2B.ANM", spliceFrame);
+			const char *level14Phase2Video = "LVL14/L14PLAY2.ANM";
+			bool replayingLevel14Phase2 = false;
+			while (!shouldAbortGameFlow()) {
+				_preserveInteractiveRuntimeState = replayingLevel14Phase2;
+				playInteractiveVideo(level14Phase2Video);
+				_preserveInteractiveRuntimeState = false;
 				if (shouldAbortGameFlow())
 					return false;
+
+				if (_health < 0)
+					break;
+
+				if (_level14Play2BSplicePending) {
+					const int32 spliceFrame = _level14Play2BSpliceFrame;
+					_level14Play2BSplicePending = false;
+					level14Phase2Video = "LVL14/L14PLY2B.ANM";
+
+					// DOS queues L14PLY2B from the L14PLAY2 loop with startFrame
+					// equal to L14PLAY2's old timeline frame. L14PLY2B itself is the
+					// continuation clip, so the port starts it from frame 0 but uses
+					// the non-zero frame argument to preserve gameplay/video state.
+					playInteractiveVideo(level14Phase2Video, spliceFrame);
+					if (shouldAbortGameFlow())
+						return false;
+					if (_health < 0)
+						break;
+				}
+
+				level14Phase2Complete = _level14SuccessFrames >= 0x3C;
+				if (level14Phase2Complete)
+					break;
+
+				debugC(DEBUG_INSANE, "RA1 L14 replaying phase 2: video=%s successFrames=%d targetsDestroyed=%d",
+					level14Phase2Video, (int)_level14SuccessFrames,
+					areLevel14Phase2TargetsDestroyed() ? 1 : 0);
+				replayingLevel14Phase2 = true;
 			}
+			if (shouldAbortGameFlow())
+				return false;
 		}
 
-		if (_health >= 0) {
+		if (_health >= 0 && level14Phase2Complete) {
 			playChapterCompleteCinematic("LVL14/L14END.ANM", 14, 0x69, 5,
 				nullptr, nullptr, 0, nullptr, nullptr, 0, _difficulty + 10);
 			return !shouldAbortGameFlow();
@@ -1612,8 +1677,8 @@ void InsaneRebel1::restoreInteractiveVideoAudioState() {
 void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
 	const bool resumingRoute = startFrame > 0;
-	const bool preserveRuntimeState = resumingRoute || level7RouteSplice;
-	const bool preserveVideoState = resumingRoute && !level7RouteSplice;
+	const bool preserveRuntimeState = _preserveInteractiveRuntimeState || resumingRoute || level7RouteSplice;
+	const bool preserveVideoState = !_preserveInteractiveRuntimeState && resumingRoute && !level7RouteSplice;
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
@@ -1689,11 +1754,12 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 
 void InsaneRebel1::captureInteractiveVideoInput() {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
+	const bool preserveInputState = _preserveInteractiveRuntimeState || level7RouteSplice;
 
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window.
-	// Level 7 route splices happen inside one original gameplay loop, so keep
-	// the current input state instead of recentering between route clips.
-	if (!level7RouteSplice) {
+	// Some replays happen inside one original gameplay loop, so keep the current
+	// input state instead of recentering between route clips.
+	if (!preserveInputState) {
 		// On touchscreen devices the DOS recenter-the-cursor aiming model does not apply;
 		// warping/locking the system mouse there injects spurious motion that drifts
 		// direct touch aiming and on-screen controls.
@@ -1723,12 +1789,15 @@ void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOff
 // Play interactive gameplay video (with ship physics + HUD).
 void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
 	debugC(DEBUG_INSANE, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
-	if (shouldAbortGameFlow())
+	if (shouldAbortGameFlow()) {
+		_preserveInteractiveRuntimeState = false;
 		return;
+	}
 
 	int32 videoStartFrame = 0;
 	int32 videoOffset = 0;
-	const bool preserveRuntimeState = (startFrame > 0) || (_currentLevel == 6 && _levelRouteIndex > 0);
+	const bool preserveRuntimeState = _preserveInteractiveRuntimeState ||
+		(startFrame > 0) || (_currentLevel == 6 && _levelRouteIndex > 0);
 
 	if (!preserveRuntimeState)
 		resetInteractiveVideoAudio();
@@ -1737,6 +1806,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	captureInteractiveVideoInput();
 	playInteractiveVideoFile(filename, videoOffset, videoStartFrame);
 	releaseInteractiveVideoInput();
+	_preserveInteractiveRuntimeState = false;
 }
 
 } // End of namespace Scumm
