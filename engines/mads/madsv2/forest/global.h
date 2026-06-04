@@ -243,6 +243,17 @@ enum {
 	g210                      = 210
 };
 
+struct AnimationInfo {
+	int16 _val1;
+	int16 _val2;
+	int16 _val3;
+	int16 _val4;
+
+	void synchronize(Common::Serializer &s) {
+		s.syncMultipleLE(_val1, _val2, _val3, _val4);
+	}
+};
+
 extern int16 flags[40];
 
 extern void global_section_constructor();

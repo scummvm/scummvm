@@ -45,23 +45,12 @@ namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
-struct Struct8 {
-	int16 _val1;
-	int16 _val2;
-	int16 _val3;
-	int16 _val4;
-
-	void synchronize(Common::Serializer &s) {
-		s.syncMultipleLE(_val1, _val2, _val3, _val4);
-	}
-};
-
 struct Scratch {
 	// Tentative field definitions
 	int16 sprite[10];       // Offset 00h
 	int16 sequence[10];     // Offset 14h
 	int16 animation[11];	// Offset 28h
-	Struct8 array1[11];		// Offset 3eh
+	AnimationInfo animation_info[11];	// Offset 3eh
 	int16 _96;				// Offset 96h
 	int16 _98;				// Offset 98h
 	int16 _9a;				// Offset 9ah
@@ -86,7 +75,7 @@ static Scratch scratch;
 #define ss     scratch.sprite
 #define seq    scratch.sequence
 #define aa     scratch.animation
-#define aainfo scratch.array1
+#define aainfo scratch.animation_info
 
 static void room_101_init1() {
 	global[g009] = -1;
@@ -96,15 +85,15 @@ static void room_101_init1() {
 	player.commands_allowed = false;
 	mouse_hide();
 
-	for (auto &v : scratch.array1) {
+	for (auto &v : aainfo) {
 		v._val1 = 0;
 		v._val2 = -1;
 	}
 
 	stop_speech_on_run_animation = false;
 	aa[8] = kernel_run_animation(kernel_name('I', 1), 0);
-	scratch.array1[8]._val1 = -1;
-	scratch.array1[8]._val2 = 8;
+	aainfo[8]._val1 = -1;
+	aainfo[8]._val2 = 8;
 	kernel_reset_animation(aa[8], 8);
 }
 
@@ -136,7 +125,7 @@ static void room_101_init2() {
 	}
 
 	aa[6] = kernel_run_animation(kernel_name('b', 1), 104);
-	scratch.array1[6]._val1 = -1;
+	aainfo[6]._val1 = -1;
 	scratch._9c = 1;
 	scratch._ac = 1;	
 }
@@ -173,14 +162,14 @@ static void room_101_init3() {
 
 	if (previous_room == 104) {
 		aa[0] = kernel_run_animation(kernel_name('y', 1), 100);
-		scratch.array1[0]._val1 = -1;
+		aainfo[0]._val1 = -1;
 		scratch._9c = 57;
 		return;
 	}
 
 	if (previous_room == 106) {
 		aa[0] = kernel_run_animation(kernel_name('y', 2), 100);
-		scratch.array1[0]._val1 = -1;
+		aainfo[0]._val1 = -1;
 		scratch._9c = 77;
 		return;
 	}
@@ -208,7 +197,7 @@ static void room_101_init3() {
 		player.commands_allowed = 0;
 		player.walker_visible = 0;
 		global[g009] = 0;
-		scratch.array1[5]._val1 = -1;
+		aainfo[5]._val1 = -1;
 		aa[5] = kernel_run_animation(kernel_name('b', 8), 111);
 		scratch._ae = 4;
 		return;
@@ -234,7 +223,7 @@ static void room_101_init() {
 			player.commands_allowed = false;
 		}
 
-		for (Struct8 &s : scratch.array1) {
+		for (auto &s : aainfo) {
 			s._val1 = 0;
 			s._val2 = 1;
 			s._val3 = s._val4 = 0;
@@ -1084,7 +1073,7 @@ static void room_101_parser() {
 		player.commands_allowed = 0;
 		player.walker_visible = 0;
 		kernel.trigger_setup_mode = 1;
-		scratch.array1[5]._val1 = -1;
+		aainfo[5]._val1 = -1;
 		aa[5] = kernel_run_animation(kernel_name('b', 5), 111);
 		scratch._ae = 1;
 		goto handled;
@@ -1101,7 +1090,7 @@ void room_101_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)     s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)   s.syncAsSint16LE(v);
 	for (int16 &v : scratch.animation)  s.syncAsSint16LE(v);
-	for (auto  &v : scratch.array1)     v.synchronize(s);
+	for (auto  &v : scratch.animation_info) v.synchronize(s);
 	s.syncAsSint16LE(scratch._96);
 	s.syncAsSint16LE(scratch._98);
 	s.syncAsSint16LE(scratch._9a);
