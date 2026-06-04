@@ -745,7 +745,8 @@ T0209005_AddEventAndReturn:
 			if ((AL0447_i_Behavior != kDMBehaviorAttack) && (AL0447_i_Behavior != kDMBehaviorFlee)) {
 				if (_vm->getDistance(dungeon._partyMapX, dungeon._partyMapY, eventMapX, eventMapY) <= 1)
 					goto T0209044_SetBehavior6_Attack;
-				if (((AL0447_i_Behavior == kDMBehaviorWander) || (AL0447_i_Behavior == kDMBehaviorUnknown3)) && (AL0447_i_Behavior != kDMBehaviorApproach)) /* BUG0_00 Useless code. Behavior cannot be 3 because this value is never used. Moreover, the second condition in the && is redundant (if the value is 0 or 3, it cannot be 7). The actual condition is: if (AL0447_i_Behavior == k0_behavior_WANDER) */
+				// if (((AL0447_i_Behavior == kDMBehaviorWander) || (AL0447_i_Behavior == kDMBehaviorUnknown3)) && (AL0447_i_Behavior != kDMBehaviorApproach)) /* BUG0_00 Useless code. Behavior cannot be 3 because this value is never used. Moreover, the second condition in the && is redundant (if the value is 0 or 3, it cannot be 7). The actual condition is: if (AL0447_i_Behavior == k0_behavior_WANDER) */
+				if ((AL0447_i_Behavior == kDMBehaviorWander) || (AL0447_i_Behavior == kDMBehaviorUnknown3))
 					goto T0209054_SetBehavior7_Approach;
 			}
 			activeGroup->_targetMapX = dungeon._partyMapX;
