@@ -4065,7 +4065,7 @@ void LB::b_member(int nargs) {
 	if (res.member > g_lingo->getMembersNum(res.castLib)) {
 		// D6 and up does not error on non-existing cast members
 		if (g_director->getVersion() < 600) {
-			g_lingo->lingoError("b_member: Cast member ID out of range");
+			debugC(5, kDebugLingoExec, "b_member: Cast member ID %s out of range! In real D5 this would cause Lingo errors for some use cases", res.asString().c_str());
 		}
 	}
 	g_lingo->push(res);
