@@ -412,7 +412,7 @@ bool InsaneRebel1::runLevel1() {
 				if (_health < 0)
 					break;
 
-				if (_killCount > 4) {
+				if (_killCount > 4 || _interactiveVideoCheatSkipped) {
 					const char *pathText = _rightPathSelected ? "Path Taken: Hard" : "Path Taken: Easy";
 					const int pathBonus = _rightPathSelected ? _tuning.bonus * 3 : 0;
 					char accuracyText[80];
@@ -563,9 +563,9 @@ bool InsaneRebel1::runLevel4() {
 			if (_health < 0)
 				break;
 
-			shieldGeneratorsDestroyed =
-				_protectedTargetA == 0 && _protectedTargetB == 0 &&
-				_shieldGenHitsA > 0x30 + 0x3C && _shieldGenHitsB > 0x30;
+			shieldGeneratorsDestroyed = _interactiveVideoCheatSkipped ||
+				(_protectedTargetA == 0 && _protectedTargetB == 0 &&
+				_shieldGenHitsA > 0x30 + 0x3C && _shieldGenHitsB > 0x30);
 			if (shieldGeneratorsDestroyed)
 				break;
 
@@ -640,7 +640,7 @@ bool InsaneRebel1::runLevel5() {
 			return false;
 		}
 
-		if (_killCount <= 2) {
+		if (_killCount <= 2 && !_interactiveVideoCheatSkipped) {
 			if (_lives > 0) {
 				_lives--;
 				playCinematic("LVL5/L5RETRY.ANM");
@@ -862,6 +862,11 @@ bool InsaneRebel1::runLevel8() {
 			if (_health < 0)
 				break;
 
+			if (_interactiveVideoCheatSkipped) {
+				_walkerHealth = 0;
+				break;
+			}
+
 			if (_walkerHealth <= 0)
 				break;
 
@@ -941,6 +946,8 @@ bool InsaneRebel1::runLevel9() {
 			playInteractiveVideo(filename);
 			if (shouldAbortGameFlow() || _health < 0)
 				return -1;
+			if (_interactiveVideoCheatSkipped)
+				return (_shipPosX < kRA1CenterX) ? 0 : 1;
 			if (_killCount > 0)
 				return (_shipPosX < kRA1CenterX) ? 0 : 1;
 
@@ -1011,7 +1018,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_health < 0)
 				break;
 
-			if (_killCount < 15) {
+			if (_killCount < 15 && !_interactiveVideoCheatSkipped) {
 				playInteractiveVideo("LVL9/L9PLAY3B.ANM");
 				if (shouldAbortGameFlow())
 					return false;
@@ -1164,7 +1171,7 @@ bool InsaneRebel1::runLevel11() {
 				break;
 
 			// Original: killCount > 4 means pass
-			if (_killCount > 4)
+			if (_killCount > 4 || _interactiveVideoCheatSkipped)
 				break;
 
 			// Not enough kills — retry
@@ -1223,7 +1230,7 @@ bool InsaneRebel1::runLevel12() {
 			if (shouldAbortGameFlow())
 				return false;
 
-			if (_levelGameplayPhase == 1) {
+			if (_levelGameplayPhase == 1 && !_interactiveVideoCheatSkipped) {
 				playCinematic("LVL12/L12RETRY.ANM");
 				if (shouldAbortGameFlow())
 					return false;
@@ -1324,7 +1331,7 @@ bool InsaneRebel1::runLevel14() {
 			if (_health < 0)
 				break;
 
-			level14Phase1Complete = _level14SuccessFrames >= 0x3C;
+			level14Phase1Complete = _interactiveVideoCheatSkipped || _level14SuccessFrames >= 0x3C;
 			if (level14Phase1Complete)
 				break;
 
@@ -1362,6 +1369,11 @@ bool InsaneRebel1::runLevel14() {
 				if (_health < 0)
 					break;
 
+				if (_interactiveVideoCheatSkipped) {
+					level14Phase2Complete = true;
+					break;
+				}
+
 				if (_level14Play2BSplicePending) {
 					const int32 spliceFrame = _level14Play2BSpliceFrame;
 					_level14Play2BSplicePending = false;
@@ -1378,7 +1390,7 @@ bool InsaneRebel1::runLevel14() {
 						break;
 				}
 
-				level14Phase2Complete = _level14SuccessFrames >= 0x3C;
+				level14Phase2Complete = _interactiveVideoCheatSkipped || _level14SuccessFrames >= 0x3C;
 				if (level14Phase2Complete)
 					break;
 
@@ -1454,7 +1466,7 @@ bool InsaneRebel1::runLevel15() {
 				return false;
 		}
 
-		if (_health >= 0 && !_torpedoFired) {
+		if (_health >= 0 && !_torpedoFired && !_interactiveVideoCheatSkipped) {
 			debugC(DEBUG_INSANE, "InsaneRebel1::runLevel15: Level 15 torpedo run ended without exhaust-port hit");
 			return false;
 		}
@@ -1791,9 +1803,11 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	debugC(DEBUG_INSANE, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
 	if (shouldAbortGameFlow()) {
 		_preserveInteractiveRuntimeState = false;
+		_interactiveVideoCheatSkipped = false;
 		return;
 	}
 
+	_interactiveVideoCheatSkipped = false;
 	int32 videoStartFrame = 0;
 	int32 videoOffset = 0;
 	const bool preserveRuntimeState = _preserveInteractiveRuntimeState ||

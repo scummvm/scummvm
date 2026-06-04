@@ -318,6 +318,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_unlockAllLevels = ConfMan.getBool("rebel1_unlock_all");
 	_interactiveVideoActive = false;
 	_preserveInteractiveRuntimeState = false;
+	_interactiveVideoCheatSkipped = false;
 	_restoreInteractiveVideoAudioState = false;
 	memset(_savedInteractiveVideoTrackState, 0, sizeof(_savedInteractiveVideoTrackState));
 	memset(_savedInteractiveVideoTrackGroupId, 0, sizeof(_savedInteractiveVideoTrackGroupId));

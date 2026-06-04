@@ -895,6 +895,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		if (_interactiveVideoActive && !_menuActive &&
 			event.kbd.keycode == Common::KEYCODE_s &&
 			event.kbd.hasFlags(Common::KBD_SHIFT)) {
+			_interactiveVideoCheatSkipped = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
