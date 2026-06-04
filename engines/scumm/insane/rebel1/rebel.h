@@ -221,7 +221,11 @@ private:
 	void updateTurretPhysics();
 	void updateTurretShipDirection(int16 offsetY);
 	void getCollisionShipCenter(int16 &x, int16 &y) const;
+	bool isOp0BReticleControlLevel() const;
 	bool shouldInvertTouchYSettingForCurrentLevel() const;
+	bool usesRelativeGamepadAimForCurrentLevel() const;
+	void resetRelativeGamepadAim();
+	bool updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *usedJoystick);
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();
@@ -364,10 +368,14 @@ private:
 	uint32 _lastJoystickAxisEventTime;
 	int16 _level2JoystickFilteredX; // Smoothed Level 2 analog X input
 	int16 _level2JoystickFilteredY; // Smoothed Level 2 analog Y input
+	int16 _gamepadAimAxisX; // Relative gamepad 0x0B aim in preprocessed input space
+	int16 _gamepadAimAxisY;
+	bool _gamepadAimActive;
 	enum InputSource {
 		kInputSourceMouse,
 		kInputSourceJoystickAnalog,
-		kInputSourceJoystickDigital
+		kInputSourceJoystickDigital,
+		kInputSourceJoystickRelative
 	};
 	InputSource _activeInputSource;
 

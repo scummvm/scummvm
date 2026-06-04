@@ -632,8 +632,13 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 
-	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering)
+	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
+		if (_gamepadAimActive && usesRelativeGamepadAimForCurrentLevel() &&
+				_interactiveVideoActive && !_menuActive &&
+				(event.relMouse.x != 0 || event.relMouse.y != 0))
+			_gamepadAimActive = false;
 		_activeInputSource = kInputSourceMouse;
+	}
 
 	// Android direct touch reports taps as left-clicks. Treat those as mouse input
 	// during gameplay so tap-to-aim-and-fire works even if a joystick event was last.

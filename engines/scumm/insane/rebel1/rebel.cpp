@@ -276,6 +276,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_lastJoystickAxisEventTime = 0;
 	_level2JoystickFilteredX = 0;
 	_level2JoystickFilteredY = 0;
+	_gamepadAimAxisX = 0;
+	_gamepadAimAxisY = 0;
+	_gamepadAimActive = false;
 	_activeInputSource = kInputSourceMouse;
 
 	_currentLevel = 0;

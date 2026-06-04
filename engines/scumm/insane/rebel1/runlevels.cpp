@@ -246,6 +246,7 @@ void InsaneRebel1::resetLevelInputHistory(bool resetAxisDeltaX) {
 		_inputAxisDeltaX = 0;
 	_avgInputX = 0;
 	_avgInputY = 0;
+	resetRelativeGamepadAim();
 }
 
 void InsaneRebel1::resetLevelAttemptState(int16 flyControlMode, int16 gameplayPhase,
@@ -1603,6 +1604,7 @@ void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 	if (!preserveRuntimeState) {
 		_onFootInitialized = false;  // Reset so each segment triggers counter==0 init
 		resetFrameObjectState();
+		resetRelativeGamepadAim();
 	}
 	_vm->_smushVideoShouldFinish = false;
 	// Route resumes stay in the same gameplay flow in the original executable.

@@ -34,15 +34,39 @@ inline int16 applyRebel1AnalogDeadzone(int16 axisValue) {
 	return (ABS(axis) <= deadZone) ? 0 : axisValue;
 }
 
-inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue, int16 axisMax) {
+inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue,
+		int16 axisMax, int responseDivisor) {
 	const int delta = (int)inputValue - (int)filteredValue;
-	int step = delta / 10;
+	int step = delta / responseDivisor;
 
 	if (step == 0 && delta != 0)
 		step = (delta > 0) ? 1 : -1;
 
 	filteredValue = CLIP<int>(filteredValue + step, -axisMax, axisMax);
 	return filteredValue;
+}
+
+int16 shapeRebel1Op0BGamepadAxis(int16 inputValue, int16 axisMax) {
+	const int axis = CLIP<int>(inputValue, -axisMax, axisMax);
+	const int absAxis = ABS(axis);
+	const int precisionRadius = MAX<int>(1, (axisMax * 2) / 5);
+	const int precisionOutput = MAX<int>(1, precisionRadius / 3);
+	int shaped = 0;
+
+	if (absAxis <= precisionRadius) {
+		shaped = (absAxis * precisionOutput + precisionRadius / 2) / precisionRadius;
+	} else {
+		const int outerInput = absAxis - precisionRadius;
+		const int outerInputRange = axisMax - precisionRadius;
+		const int outerOutputRange = axisMax - precisionOutput;
+		const int linear = outerInput * outerOutputRange / outerInputRange;
+		const int accel = (outerInput * outerInput * outerOutputRange +
+			(outerInputRange * outerInputRange) / 2) /
+			(outerInputRange * outerInputRange);
+		shaped = precisionOutput + (linear + 2 * accel) / 3;
+	}
+
+	return axis < 0 ? -shaped : shaped;
 }
 
 const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
@@ -807,10 +831,7 @@ void InsaneRebel1::updateFlightVariantCursor() {
 // jump latch from FUN_231BE, plus FUN_23115's DOS mouse recenter behavior.
 // Enhanced controls are ScummVM-only: they bypass the original recentering state
 // and expose a stable absolute centered mouse axis instead.
-bool InsaneRebel1::shouldInvertTouchYSettingForCurrentLevel() const {
-	if (!isTouchscreenActive())
-		return false;
-
+bool InsaneRebel1::isOp0BReticleControlLevel() const {
 	switch (_currentLevel) {
 	case 1:  // Level 2
 	case 3:  // Level 4
@@ -826,11 +847,92 @@ bool InsaneRebel1::shouldInvertTouchYSettingForCurrentLevel() const {
 	}
 }
 
+bool InsaneRebel1::shouldInvertTouchYSettingForCurrentLevel() const {
+	return isTouchscreenActive() && isOp0BReticleControlLevel();
+}
+
+bool InsaneRebel1::usesRelativeGamepadAimForCurrentLevel() const {
+	return _optEnhancedControls &&
+		(_currentLevel == 3 ||
+		 (_currentLevel == 4 && _levelGameplayPhase == 2) ||
+		 _currentLevel == 9 ||
+		 _currentLevel == 11 ||
+		 _currentLevel == 13);
+}
+
+void InsaneRebel1::resetRelativeGamepadAim() {
+	_gamepadAimAxisX = 0;
+	_gamepadAimAxisY = 0;
+	_gamepadAimActive = false;
+}
+
+bool InsaneRebel1::updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *usedJoystick) {
+	if (!usesRelativeGamepadAimForCurrentLevel())
+		return false;
+
+	const int dpadX =
+		(_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
+	int dpadY =
+		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0);
+
+	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
+	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
+	const int analogX = CLIP<int32>(((int32)analogAxisX * 127) / Common::JOYAXIS_MAX, -127, 127);
+	int analogY = CLIP<int32>((-(int32)analogAxisY * 100) / Common::JOYAXIS_MAX, -100, 100);
+
+	if (_optControlsYFlip) {
+		dpadY = -dpadY;
+		analogY = -analogY;
+	}
+
+	int deltaX = 0;
+	int deltaY = 0;
+	bool activeGamepadAim = false;
+
+	if (dpadX || dpadY) {
+		const int kDigitalAimStep = 3;
+		deltaX = dpadX * kDigitalAimStep;
+		deltaY = dpadY * kDigitalAimStep;
+		activeGamepadAim = true;
+	} else if (analogX || analogY) {
+		const int kAnalogAimMaxStep = 8;
+		deltaX = analogX * kAnalogAimMaxStep / 127;
+		deltaY = analogY * kAnalogAimMaxStep / 100;
+		activeGamepadAim = true;
+	}
+
+	if (activeGamepadAim) {
+		if (!_gamepadAimActive) {
+			_gamepadAimAxisX = CLIP<int16>(_avgInputX, -127, 127);
+			_gamepadAimAxisY = CLIP<int16>((int16)-_avgInputY, -100, 100);
+		}
+		_gamepadAimAxisX = CLIP<int16>((int16)(_gamepadAimAxisX + deltaX), -127, 127);
+		_gamepadAimAxisY = CLIP<int16>((int16)(_gamepadAimAxisY + deltaY), -100, 100);
+		_gamepadAimActive = true;
+	}
+
+	if (!_gamepadAimActive)
+		return false;
+
+	if (usedJoystick)
+		*usedJoystick = true;
+	_activeInputSource = kInputSourceJoystickRelative;
+	_mouseVirtualValid = false;
+	inputX = _gamepadAimAxisX;
+	inputY = _gamepadAimAxisY;
+	return true;
+}
+
 void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick) {
 	if (usedJoystick)
 		*usedJoystick = false;
 
 	if (_mouseRecentering)
+		return;
+
+	if (updateRelativeGamepadAim(inputX, inputY, usedJoystick))
 		return;
 
 	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
@@ -1643,14 +1745,25 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		inputSourceName = "joystick-analog";
 	else if (_activeInputSource == kInputSourceJoystickDigital)
 		inputSourceName = "joystick-dpad";
+	else if (_activeInputSource == kInputSourceJoystickRelative)
+		inputSourceName = "joystick-relative";
 
-	if (usedJoystick && _optEnhancedControls) {
+	const bool relativeGamepadReticle = usedJoystick && _activeInputSource == kInputSourceJoystickRelative;
+	const bool preciseGamepadReticle = usedJoystick && _optEnhancedControls &&
+		isOp0BReticleControlLevel() && !relativeGamepadReticle;
+
+	if (usedJoystick && _optEnhancedControls && !relativeGamepadReticle) {
 		// The 0x0B first-person handler is shared by multiple RA1 stages. Smooth
-		// analog stick input over time so these sections keep full reach without
-		// feeling hyper-sensitive, while leaving mouse behavior untouched.
+		// analog stick input over time and shape the affected gamepad levels with
+		// a low-gain linear center plus an accelerating outer range.
 		if (op0BAnalogSmoothing) {
-			inputX = smoothRebel1Op0BAnalogInput(inputX, _level2JoystickFilteredX, 127);
-			inputY = smoothRebel1Op0BAnalogInput(inputY, _level2JoystickFilteredY, 100);
+			if (preciseGamepadReticle) {
+				inputX = shapeRebel1Op0BGamepadAxis(inputX, 127);
+				inputY = shapeRebel1Op0BGamepadAxis(inputY, 100);
+			}
+			const int analogRampDivisor = preciseGamepadReticle ? 20 : 10;
+			inputX = smoothRebel1Op0BAnalogInput(inputX, _level2JoystickFilteredX, 127, analogRampDivisor);
+			inputY = smoothRebel1Op0BAnalogInput(inputY, _level2JoystickFilteredY, 100, analogRampDivisor);
 		} else {
 			_level2JoystickFilteredX = 0;
 			_level2JoystickFilteredY = 0;
@@ -1663,11 +1776,12 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 	_inputAxisDeltaX = inputX;
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+	debugC(DEBUG_INSANE, "RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d precisionPad=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
 		_gameCounter,
 		inputSourceName,
 		_optEnhancedControls ? "enhanced" : "original",
 		gameOp0BSmoothWindow,
+		preciseGamepadReticle ? 1 : 0,
 		_perspectiveX, _perspectiveY,
 		_health, _prevDamageFlags,
 		_joystickAxisX, _joystickAxisY,
@@ -2031,6 +2145,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	_mouseVirtualValid = false;
 	_level2JoystickFilteredX = 0;
 	_level2JoystickFilteredY = 0;
+	resetRelativeGamepadAim();
 
 	_playerFired = false;
 	_fireCooldown = 0;
