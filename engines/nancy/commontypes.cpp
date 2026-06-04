@@ -126,7 +126,8 @@ void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
 	frameID = stream.readUint16LE();
 	readRect(stream, srcRect);
 	readRect(stream, destRect);
-	stream.skip(0x20);
+	if (g_nancy->getGameType() <= kGameTypeNancy10)
+		stream.skip(0x20);
 }
 
 void SoundEffectDescription::readData(Common::SeekableReadStream &stream) {
