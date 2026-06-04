@@ -56,6 +56,7 @@ class LZWdecompressor {
 
 	int16 getNextInputCode(Common::MemoryReadStream &stream, int32 *inputByteCount);
 	void outputCharacter(byte character, byte **out);
+	LZWdecompressor(const LZWdecompressor &other); // no implementation on purpose
 	void operator=(const LZWdecompressor&); // deleted
 public:
 	LZWdecompressor();
