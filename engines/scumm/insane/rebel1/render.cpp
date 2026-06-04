@@ -800,8 +800,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (_currentLevel == 4 && _levelGameplayPhase == 2)
 		renderLevel5Part2Overlay(renderBitmap, pitch, width, height, curFrame);
 
+	if (_currentLevel == 0 && _flyControlMode == 2)
+		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x04, true);
+
 	if (_currentLevel == 10)
-		renderLevel11HitsOverlay(renderBitmap, pitch, width, height);
+		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x16, false);
 
 	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
 	// In the original, RunLevel8Flow runs the walker logic inline in the per-frame
@@ -1017,16 +1020,23 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	}
 }
 
-// renderLevel11HitsOverlay — RunLevel11Flow (0x19F9F) calls FormatAndDrawText
-// each L11PLAY frame with "<<HITS %02d" at (0x119, 0x16). This helper is a
-// ScummVM-side extraction; the original keeps the draw call inline in the loop.
-void InsaneRebel1::renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height) {
+// renderLevelHitsOverlay — RunLevel1Flow (0x16421-0x16438) and RunLevel11Flow
+// (0x1A07A-0x1A090) call FormatAndDrawText with "<<HITS %02d" at x=0x119.
+void InsaneRebel1::renderLevelHitsOverlay(byte *dst, int pitch, int width, int height, int y,
+		bool screenSpace) {
 	if (_hudFontBank.numSprites <= 0 && _techFontBank.numSprites <= 0)
 		return;
 
+	int drawX = 0x119;
+	int drawY = y;
+	if (screenSpace && _player) {
+		drawX += ra1Player()->_ra1ViewportOffsetX;
+		drawY += ra1Player()->_ra1ViewportOffsetY;
+	}
+
 	char hitsStr[16];
 	Common::sprintf_s(hitsStr, "<<HITS %02d", (int)_killCount);
-	drawFontBankString(dst, pitch, width, height, 0x119, 0x16, hitsStr);
+	drawFontBankString(dst, pitch, width, height, drawX, drawY, hitsStr);
 }
 
 // renderLevel5Part2Overlay — RunLevel5Flow (0x176D0-0x1777E) draws the

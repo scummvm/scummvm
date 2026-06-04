@@ -247,7 +247,8 @@ private:
 	void handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame);
 	void renderLevel7RouteOverlays(byte *dst, int pitch, int width, int height);
 	void renderLevel5Part2Overlay(byte *dst, int pitch, int width, int height, int32 curFrame);
-	void renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height);
+	void renderLevelHitsOverlay(byte *dst, int pitch, int width, int height, int y,
+		bool screenSpace);
 	void resetEnemyShotSlots();
 	void renderLevel13EnemyShots(byte *dst, int pitch, int width, int height);
 	void getTurretShipCenter(int16 &x, int16 &y) const;
