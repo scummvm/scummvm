@@ -506,7 +506,9 @@ struct SHUI : public EngineData {
 	Common::Array<Common::Rect> _sliderRects;	// Slider rects
 };
 
-// Scheduled talk (?) UI. Introduced in Nancy 11
+// ScrollTextBox - introduced in Nancy 11. Configuration for the scrollable
+// text-box UI used for long textbox content (e.g. journal / scheduled-talk
+// panels) that needs to scroll within a fixed frame.
 struct SCTB : public EngineData {
 	SCTB(Common::SeekableReadStream *chunkStream);
 
