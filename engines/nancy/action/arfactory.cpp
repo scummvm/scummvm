@@ -178,9 +178,21 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 29:
 		// Nancy 10+
 		return new ControlUIItems();
+	case 30:	// Nancy11
+		warning("StopPlayerScrolling");	// TODO
+		return nullptr;
+	case 31:	// Nancy11
+		warning("StartPlayerScrolling");	// TODO
+		return nullptr;
 	case 32:
 		// Nancy 10+
 		return new UIPopupPrepScene();
+	case 45:	// Nancy11
+		warning("PlayRandomMovie");	// TODO
+		return nullptr;
+	case 46:	// Nancy11
+		warning("PlayRandomMovieControl");	// TODO
+		return nullptr;
 	case 40:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new LightningOn();	// Only used in TVD
@@ -248,6 +260,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new TableIndexSetValueHS();
 	case 68:
 		return new TextScroll(false);
+	case 69:	// Nancy11
+		warning("TimerControl");	// TODO
+		return nullptr;
 	case 70:
 		return new TextScroll(true); // AutotextEntryList
 	case 71:
@@ -271,8 +286,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new SetValueCombo();
 	case 79:
 		return new ValueTest();
-	//case 81: // Nancy 11+
-	//	return nullptr;	// TODO
+	case 81:	// Nancy11
+		//warning("AutotextTextBoxWrite");	// TODO
+		return nullptr;
+	case 96:	// Nancy11
+		warning("UnknownAR96");	// TODO
+		return nullptr;
 	case 97:
 		return new EventFlags(true);
 	case 98:
@@ -354,6 +373,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AddSearchLink();
 	case 140:
 		return new SetVolume();
+	case 147:	// Nancy11
+		warning("FadeSoundToSilence");	// TODO
+		return nullptr;
 	case 148:
 		// MakeScreenFile - seems to save a cropped image of the screen in a bitmap file?
 		// TODO: Used in Nancy 9, sand castle puzzle
@@ -379,6 +401,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new StopSound();
 	case 155:
 		return new StopSound(); // StopAndUnloadSound, but we always unload
+	case 156:	// Nancy11
+		warning("Update3DSound");	// TODO
+		return nullptr;
 	case 157:
 		return new PlaySoundCC();
 	case 158:
@@ -479,10 +504,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 244:
 		return new GridMapPuzzle();
 	// -- Nancy 11 and up --
-	case 245:
-		// return new TypingQuizPuzzle();
-	case 246:
-		// return new MatchPuzzle();
+	case 245:	// Nancy11
+		warning("TypingQuizPuzzle");	// TODO
+		return nullptr;
+	case 246:	// Nancy11
+		warning("MatchPuzzle246");	// TODO
+		return nullptr;
 	default:
 		warning("Unknown action record type %d", type);
 		return nullptr;
