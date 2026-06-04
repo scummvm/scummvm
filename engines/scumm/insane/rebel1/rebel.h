@@ -549,6 +549,7 @@ private:
 	int getMainMenuResultForSelection(int selection) const;
 	void playMenuBackground();
 	bool runTextEntryMenuLoop();
+	void setVirtualKeyboardVisible(bool visible);
 	void beginTextEntry(bool passcodeMode);
 	void finishTextEntry(bool canceled);
 	void selectTextEntryChar();
@@ -599,6 +600,7 @@ private:
 	bool _textEntryPasscodeMode;
 	bool _textEntryDone;
 	bool _textEntryCanceled;
+	bool _virtualKeyboardActive;
 	int _textEntryPickerIndex;
 	int _textEntryPickerOffsetX;
 	int _textEntryMaxChars;

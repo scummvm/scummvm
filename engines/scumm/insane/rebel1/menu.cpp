@@ -274,6 +274,17 @@ int InsaneRebel1::getMainMenuResultForSelection(int selection) const {
 	return selection + 2;
 }
 
+void InsaneRebel1::setVirtualKeyboardVisible(bool visible) {
+	if (!_vm->_system->hasFeature(OSystem::kFeatureVirtualKeyboard))
+		return;
+
+	if (_virtualKeyboardActive == visible)
+		return;
+
+	_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, visible);
+	_virtualKeyboardActive = visible;
+}
+
 void InsaneRebel1::beginTextEntry(bool passcodeMode) {
 	_textEntryActive = true;
 	_textEntryPasscodeMode = passcodeMode;
@@ -292,6 +303,8 @@ void InsaneRebel1::beginTextEntry(bool passcodeMode) {
 			_textEntryPickerIndex = 1;
 		}
 	}
+
+	setVirtualKeyboardVisible(true);
 }
 
 void InsaneRebel1::finishTextEntry(bool canceled) {
@@ -299,6 +312,7 @@ void InsaneRebel1::finishTextEntry(bool canceled) {
 	if (!canceled)
 		_textEntryDone = true;
 	_textEntryActive = false;
+	setVirtualKeyboardVisible(false);
 	_vm->_smushVideoShouldFinish = true;
 }
 
@@ -1134,6 +1148,7 @@ bool InsaneRebel1::runTextEntryMenuLoop() {
 	while (!shouldAbortGameFlow() && !_textEntryDone && !_textEntryCanceled)
 		playMenuBackground();
 
+	setVirtualKeyboardVisible(false);
 	return !shouldAbortGameFlow() && !_textEntryCanceled;
 }
 

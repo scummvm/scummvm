@@ -378,6 +378,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_textEntryPasscodeMode = false;
 	_textEntryDone = false;
 	_textEntryCanceled = false;
+	_virtualKeyboardActive = false;
 	_textEntryPickerIndex = 0;
 	_textEntryPickerOffsetX = 0;
 	_textEntryMaxChars = 0;
