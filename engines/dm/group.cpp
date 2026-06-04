@@ -1400,7 +1400,7 @@ void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
 	_vm->_timeline->addEventGetEventIndex(event);
 }
 
-int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX) {
+int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapX, int16 mapY) {
 	uint16 smellRange = creatureInfo->getSmellRange();
 	if (!smellRange)
 		return 0;
@@ -1408,14 +1408,14 @@ int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int
 	ChampionMan &championMan = *_vm->_championMan;
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	if ((((smellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, dungeon._partyMapX, dungeon._partyMapY, &GroupMan::isSmellPartyBlocked)) {
+	if ((((smellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapX, mapY, dungeon._partyMapX, dungeon._partyMapY, &GroupMan::isSmellPartyBlocked)) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
 		return _vm->indexToOrdinal(_currGroupPrimaryDirToParty);
 	}
 
-	int16 scentOrdinal = championMan.getScentOrdinal(mapY, mapX);
+	int16 scentOrdinal = championMan.getScentOrdinal(mapX, mapY);
 	if (scentOrdinal && ((championMan._party._scentStrengths[_vm->ordinalToIndex(scentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (smellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
-		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapY, mapX, championMan._party._scents[scentOrdinal].getMapX(), championMan._party._scents[scentOrdinal].getMapY()));
+		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapX, mapY, championMan._party._scents[scentOrdinal].getMapX(), championMan._party._scents[scentOrdinal].getMapY()));
 	}
 	return 0;
 }
