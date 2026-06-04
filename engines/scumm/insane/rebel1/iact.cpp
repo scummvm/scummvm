@@ -2110,6 +2110,8 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 		return;
 	}
 
+	const int16 walkerReplayKillCount = (_walkerRoundReplay && _currentLevel == 7) ? _killCount : 0;
+
 	_damageFlags = 0;
 	_prevDamageFlags = 0;
 	_damageCooldown = 0;
@@ -2164,6 +2166,8 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	_gostSlotIdx = 0;
 	_killCount = 0;
 	_lastHitTarget = 0;
+	if (_walkerRoundReplay && _currentLevel == 7)
+		_killCount = walkerReplayKillCount;
 
 	// Field1 == 0 corresponds to baseline recenter behavior in the original.
 	if ((int32)param1 == 0) {

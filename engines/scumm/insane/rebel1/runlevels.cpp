@@ -821,15 +821,19 @@ bool InsaneRebel1::runLevel8() {
 		_walkerHealth = 100;
 		_walkerTimer = 0;
 		_walkerBranchChoice = 0;
+		_walkerRoundReplay = false;
 
 		int route = 0;
 		int32 routeStartFrame = 0;
+		bool replayingRound = false;
 		while (!shouldAbortGameFlow()) {
 			_levelRouteIndex = route;
 			_pendingRouteIndex = -1;
 			_pendingRouteStartFrame = routeStartFrame;
 			_pendingRouteCutoverFrame = -1;
+			_walkerRoundReplay = replayingRound;
 			playInteractiveVideo(kLevel8Routes[route], routeStartFrame);
+			_walkerRoundReplay = false;
 			if (shouldAbortGameFlow())
 				return false;
 
@@ -839,23 +843,39 @@ bool InsaneRebel1::runLevel8() {
 			if (_walkerHealth <= 0)
 				break;
 
-			if (_pendingRouteIndex < 0 || _pendingRouteIndex == route)
-				break;
+			if (_pendingRouteIndex >= 0 && _pendingRouteIndex != route) {
+				// RunLevel8Flow uses PlayAnmFile(..., g_frameCounter, 1, -1)
+				// when it branches from one walker route to another. That wrapper
+				// keeps the current ANM alive for seven more gameplay frames, then
+				// opens the destination route while preserving the active state.
+				routeStartFrame = _pendingRouteStartFrame;
+				route = _pendingRouteIndex;
+				replayingRound = false;
+				continue;
+			}
 
-			// RunLevel8Flow uses PlayAnmFile(..., g_frameCounter, 1, -1)
-			// when it branches from one walker route to another. That wrapper
-			// keeps the current ANM alive for seven more gameplay frames, then
-			// opens the destination route while preserving the active state.
-			routeStartFrame = _pendingRouteStartFrame;
-			route = _pendingRouteIndex;
+			// RunLevel8Flow keeps pumping the active route while the walker
+			// shield register is nonzero. ScummVM's blocking SMUSH play returns
+			// when one route pass ends, so explicitly replay that route and
+			// preserve the accumulated walker damage.
+			debugC(DEBUG_INSANE, "RA1 L8 replaying route=%d walkerHealth=%d killCount=%d",
+				route, (int)_walkerHealth, (int)_killCount);
+			routeStartFrame = 0;
+			_walkerTimer = 0;
+			_walkerBranchChoice = 0;
+			replayingRound = true;
 		}
 
 		_levelRouteIndex = -1;
 		_pendingRouteIndex = -1;
 		_pendingRouteStartFrame = 0;
 		_pendingRouteCutoverFrame = -1;
+		_walkerRoundReplay = false;
 
-		if (_health >= 0) {
+		if (shouldAbortGameFlow())
+			return false;
+
+		if (_health >= 0 && _walkerHealth <= 0) {
 			playChapterCompleteCinematic("LVL8/L8END.ANM", 8, 0x5F, 5);
 			return !shouldAbortGameFlow();
 		}

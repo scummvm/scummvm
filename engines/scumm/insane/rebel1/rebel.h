@@ -694,6 +694,7 @@ private:
 	int16 _walkerHealth;     // Walker health percentage (0-100), init=100
 	int16 _walkerTimer;      // Attack window countdown (100→0)
 	int16 _walkerBranchChoice; // Directional choice: 0=none, 1=left, 2=right
+	bool _walkerRoundReplay; // Preserve walker damage across a replayed L8 route
 
 	// Attack window frame numbers per route (3 routes × 3 windows)
 	// Route 0: 2588/1709/262, Route 1: 2323/1444/-2, Route 2: 877/-2/-2

@@ -418,6 +418,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_walkerHealth = 100;
 	_walkerTimer = 0;
 	_walkerBranchChoice = 0;
+	_walkerRoundReplay = false;
 	resetFrameObjectState();
 
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
