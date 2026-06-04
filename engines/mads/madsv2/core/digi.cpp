@@ -25,7 +25,10 @@
 namespace MADS {
 namespace MADSV2 {
 
+bool digi_flag1;
+
 void digi_install() {
+	digi_flag1 = false;
 }
 
 void digi_uninstall() {

@@ -33,7 +33,7 @@ enum {
 	walker_timing             =   0,   /* Stop walker timing (long) */
 	walker_timing_2           =   1,
 	inventory_is_displayed    =   2,   /* T if inventory is being displayed */
-	g003                      =   3,
+	player_hyperwalked        =   3,
 	player_selected_object    =   4,
 	walker_converse_state     =   5,
 	walker_converse_now       =   6,
@@ -248,6 +248,8 @@ extern int16 flags[40];
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 
+extern void global_anim1(int arg_0, int arg_2, int arg_4, int16 *arg_6);
+extern void global_anim2(int arg_0, int arg_2, int arg_4, int16 *arg_6);
 extern void global_digi_play(int num);
 extern void global_daemon_code();
 

@@ -30,6 +30,7 @@
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/player.h"
+#include "mads/madsv2/core/sprite.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/sounds.h"
@@ -81,9 +82,10 @@ struct Scratch {
 
 static Scratch scratch;
 
-#define ss    scratch.sprite
-#define seq   scratch.sequence
-#define aa    scratch.animation
+#define ss     scratch.sprite
+#define seq    scratch.sequence
+#define aa     scratch.animation
+#define aainfo scratch.array1
 
 static void room_101_init1() {
 	global[g009] = -1;
@@ -288,8 +290,358 @@ static void room_101_init() {
 	}
 }
 
+static void room_101_anim1() {
+	int16 frame = kernel_anim[aa[6]].frame;
+	if (frame == aainfo[6]._val2)
+		return;
+	aainfo[6]._val2 = frame;
+
+	switch (scratch._ac) {
+	case 2:
+		if (frame == 1) {
+			aainfo[6]._val3 = 10;
+			digi_play_build(101, 'b', 1, 1);
+			scratch._aa = 1;
+			return;
+		}
+		if (frame == 6) {
+			if (aainfo[6]._val3 != 10) return;
+			aainfo[6]._val2 = 2;
+			kernel_reset_animation(aa[6], 2);
+			return;
+		}
+		if (frame == 10) {
+			if (aainfo[6]._val3 != 9) return;
+			aainfo[6]._val2 = 6;
+			kernel_reset_animation(aa[6], 6);
+			return;
+		}
+		if (frame == 14) {
+			if (aainfo[6]._val3 != 12) return;
+			aainfo[6]._val2 = 13;
+			kernel_reset_animation(aa[6], 13);
+		}
+		return;
+
+	case 4:
+		if (frame == 10) {
+			aainfo[6]._val3 = 9;
+			digi_play_build(101, 'r', 2, 1);
+			scratch._aa = 10;
+			return;
+		}
+		if (frame == 15) {
+			if (aainfo[6]._val3 != 9) return;
+			aainfo[6]._val2 = 11;
+			kernel_reset_animation(aa[6], 11);
+		}
+		return;
+
+	case 6:
+		if (frame == 7) {
+			aainfo[6]._val3 = 11;
+			digi_play_build(101, 'e', 1, 1);
+			scratch._aa = 20;
+			return;
+		}
+		if (frame == 12) {
+			if (aainfo[6]._val3 != 11) return;
+			aainfo[6]._val2 = 8;
+			kernel_reset_animation(aa[6], 8);
+		}
+		return;
+
+	case 9:
+		if (frame == 28) {
+			aainfo[6]._val3 = 10;
+			digi_play_build(101, 'b', 3, 1);
+			scratch._aa = 30;
+			return;
+		}
+		if (frame == 30) {
+			if (aainfo[6]._val3 != 10) return;
+			aainfo[6]._val2 = 29;
+			kernel_reset_animation(aa[6], 29);
+		}
+		return;
+
+	case 10:
+		if (frame == 88) {
+			aainfo[6]._val3 = 10;
+			digi_play_build(101, 'b', 4, 1);
+			scratch._aa = 40;
+			return;
+		}
+		if (frame == 94) {
+			if (aainfo[6]._val3 != 10) return;
+			aainfo[6]._val2 = 90;
+			kernel_reset_animation(aa[6], 90);
+		}
+		return;
+	}
+}
+
+static void room_101_anim2() {
+	int16 frame = kernel_anim[aa[7]].frame;
+	if (frame == aainfo[7]._val2)
+		return;
+	aainfo[7]._val2 = frame;
+	if (frame != 18) return;
+	if (aainfo[7]._val3 != 7) return;
+	aainfo[7]._val2 = 6;
+	kernel_reset_animation(aa[7], 6);
+}
+
+static void room_101_anim3() {
+	int16 frame = kernel_anim[aa[0]].frame;
+	if (frame != aainfo[0]._val2)
+		aainfo[0]._val2 = frame;
+	if (global[player_hyperwalked] != -1) return;
+	int16 resetFrame = scratch._9c - 1;
+	aainfo[0]._val2 = resetFrame;
+	kernel_reset_animation(aa[0], resetFrame);
+}
+
+static void room_101_anim4() {
+	int16 frame = kernel_anim[aa[4]].frame;
+	if (frame == aainfo[4]._val2)
+		return;
+	aainfo[4]._val2 = frame;
+
+	switch (aainfo[4]._val3) {
+	case 13:
+		if (frame == 37)
+			digi_play_build(101, '_', 1, 2);
+		return;
+
+	case 14:
+		if (frame == 26) {
+			digi_play_build(101, '_', 1, 2);
+			return;
+		}
+		if (frame > 26) return;
+		if (frame == 2) {
+			digi_play_build(101, 'e', 2, 1);
+			scratch._aa = 50;
+			return;
+		}
+		if (frame == 7) {
+			if (scratch._aa != 50) return;
+			aainfo[4]._val2 = 3;
+			kernel_reset_animation(aa[4], 3);
+			return;
+		}
+		if (frame == 9) {
+			if (scratch._aa != 50) return;
+			aainfo[4]._val2 = 8;
+			kernel_reset_animation(aa[4], 8);
+			return;
+		}
+		if (frame == 18) {
+			if (scratch._aa != 51) return;
+			aainfo[4]._val2 = 14;
+			kernel_reset_animation(aa[4], 14);
+		}
+		return;
+
+	case 15:
+		if (frame == 24) {
+			digi_play_build(101, 'e', 4, 1);
+			scratch._aa = 0;
+			return;
+		}
+		if (frame == 41)
+			digi_play_build(101, '_', 1, 2);
+		return;
+	}
+}
+
+static void room_101_anim5() {
+	int16 frame = kernel_anim[aa[2]].frame;
+	if (frame != aainfo[2]._val2)
+		aainfo[2]._val2 = frame;
+}
+
+static void room_101_anim6() {
+	int16 frame = kernel_anim[aa[1]].frame;
+	if (frame != aainfo[1]._val2)
+		aainfo[1]._val2 = frame;
+}
+
+static void room_101_anim7() {
+	int16 frame = kernel_anim[aa[5]].frame;
+	if (frame == aainfo[5]._val2)
+		return;
+	aainfo[5]._val2 = frame;
+	if (frame == 2) {
+		if (scratch._ae != 4) return;
+		digi_initial_volume(100);
+		digi_play_build(101, '_', 500, 2);
+		global[g009] = 0;
+		return;
+	}
+	if (frame == 78) {
+		if (scratch._ae != 5) return;
+		kernel_abort_animation(aa[5]);
+		aainfo[5]._val1 = 0;
+		player.x = 96;
+		player.y = 140;
+		player.facing = 3;
+		player.walker_visible = -1;
+		player.commands_allowed = -1;
+		mouse_show();
+		kernel_synch(4, 2, 0, 0);
+	}
+}
+
+static void room_101_anim8() {
+	int16 frame = kernel_anim[aa[8]].frame;
+	if (frame == aainfo[8]._val2)
+		return;
+	aainfo[8]._val2 = frame;
+	if (frame != 9) {
+		if (frame != 81) return;
+		dont_frag_the_palette();
+		kernel_abort_animation(aa[8]);
+		aainfo[8]._val1 = 0;
+		stop_speech_on_run_animation = false;
+		aa[9] = kernel_run_animation(kernel_name('I', 2), 0);
+		aainfo[9]._val1 = -1;
+		kernel_synch(3, 3, aa[9], aa[8]);
+	}
+	kernel_timing_trigger(1, 113);
+}
+
+static void room_101_anim9() {
+	int16 frame = kernel_anim[aa[9]].frame;
+	if (frame != aainfo[9]._val2) {
+		aainfo[9]._val2 = frame;
+		if (frame == 99) {
+			digi_play_build(101, 'r', 3, 1);
+			scratch._b4 = 99;
+		} else if (frame < 99) {
+			if (frame == 1) {
+				digi_play_build(101, 'c', 1, 1);
+				scratch._b4 = 1;
+			} else if (frame == 67) {
+				digi_play_build(101, 'e', 5, 1);
+				scratch._b4 = 67;
+			}
+		} else {
+			if (frame == 135) {
+				digi_play_build(101, 'm', 1, 1);
+				scratch._b4 = 135;
+			} else if (frame == 163) {
+				digi_play_build(101, 'b', 6, 1);
+				scratch._b4 = 163;
+			} else if (frame == 205) {
+				dont_frag_the_palette();
+				kernel_abort_animation(aa[9]);
+				aainfo[9]._val1 = 0;
+				stop_speech_on_run_animation = false;
+				aa[10] = kernel_run_animation(kernel_name('I', 3), 0);
+				aainfo[10]._val1 = -1;
+				kernel_synch(3, 3, aa[10], aa[9]);
+				kernel_timing_trigger(1, 113);
+			}
+		}
+	}
+
+	if (kernel.trigger != 7 && kernel.trigger != 28) return;
+	int16 b4 = scratch._b4;
+	if (b4 == 1 || b4 == 67 || b4 == 99 || b4 == 135 || b4 == 163)
+		scratch._b4 = -1;
+}
+
+static void room_101_anim10() {
+	int16 frame = kernel_anim[aa[10]].frame;
+	if (frame != aainfo[10]._val2) {
+		aainfo[10]._val2 = frame;
+		if (frame == 90) {
+			stop_speech_on_run_animation = true;
+			kernel_abort_animation(aa[10]);
+			aainfo[10]._val1 = 0;
+			new_room = 106;
+		} else if (frame < 90) {
+			if (frame == 35) {
+				scratch._b4 = 35;
+			} else if (frame < 35) {
+				if (frame == 5)
+					global_digi_play(11);
+				else if (frame == 30) {
+					digi_play_build(101, '_', 3, 1);
+					scratch._b4 = 30;
+				}
+			} else {
+				if (frame == 47) {
+					digi_play_build(101, 'b', 7, 1);
+					scratch._b4 = 47;
+				} else if (frame == 70) {
+					digi_play_build(101, 'e', 6, 1);
+					scratch._b4 = 70;
+				} else if (frame == 81) {
+					digi_play_build(101, '_', 4, 1);
+					scratch._b4 = 81;
+				}
+			}
+		}
+	}
+
+	if (kernel.trigger != 7 && kernel.trigger != 28) return;
+	int16 b4 = scratch._b4;
+	if (b4 > 81) return;
+	if (b4 == 30 || b4 == 35 || b4 == 47 || b4 == 70 || b4 == 81)
+		scratch._b4 = -1;
+}
+
 static void room_101_daemon() {
-	// TODO
+	if (flags[0] < 0 && global[player_hyperwalked]) {
+		flags[0] = 0;
+		flags[1] = 0;
+		flags[2] = 0;
+		flags[3] = 0;
+		new_room = 904;
+	}
+
+	switch (kernel.trigger) {
+	case 113:
+		digi_initial_volume(90);
+		digi_play_build(101, '_', 5, 3);
+		digi_flag1 = true;
+		break;
+	}
+
+	if (kernel.trigger == 9 && flags[0] != -3)
+		scratch._b0 = 0;
+
+	if (scratch._b0 == 0 && flags[0] != -3) {
+		if (imath_random(1, 150) == 1) {
+			digi_initial_volume(25);
+			digi_play_build(104, '_', 1, 3);
+			scratch._b0 = -1;
+		}
+	}
+
+	if (flags[0] != -3) {
+		global_anim1(1, scratch._a4, global[g131], &global[g132]);   // TODO: identify global_anim
+		global_anim2(3, scratch._a6, global[g141], &global[g142]); // TODO: identify global_anim_2
+		if (mouse_hidden != 0)
+			mouse_show();
+	}
+
+	if (aainfo[6]._val1)  room_101_anim1();
+	if (aainfo[7]._val1)  room_101_anim2();
+	if (aainfo[0]._val1)  room_101_anim3();
+	if (aainfo[4]._val1)  room_101_anim4();
+	if (aainfo[2]._val1)  room_101_anim5();
+	if (aainfo[1]._val1)  room_101_anim6();
+	if (aainfo[5]._val1)  room_101_anim7();
+	if (aainfo[8]._val1)  room_101_anim8();
+	if (aainfo[9]._val1)  room_101_anim9();
+	if (aainfo[10]._val1) room_101_anim10();
+
+	if (scratch._b2)
+		kernel_random_frame(scratch._a8, &global[g151], global[g154]);
 }
 
 static void room_101_pre_parser() {

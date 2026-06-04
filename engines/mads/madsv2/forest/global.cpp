@@ -23,6 +23,7 @@
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/midi.h"
 #include "mads/madsv2/forest/global.h"
@@ -164,6 +165,704 @@ void sync_room(Common::Serializer &s) {
 	case 903: Rooms::room_903_synchronize(s); break;
 	case 904: Rooms::room_904_synchronize(s); break;
 	default: break;
+	}
+}
+
+static void global_anim1_1(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_4 = -1;
+
+	if (arg_2 == 0) {
+		var_4 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g133] == 1)
+				var_4 = 0;
+			break;
+
+		case 2:
+		case 17:
+			if (global[g133] == 0) {
+				var_4 = 1;
+				global[g134]++;
+				if (global[g134] > 17) {
+					var_4 = imath_random(1, 2);
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_4 = 1;
+				global[g136] = -1;
+			}
+			break;
+
+		case 6:
+		case 8:
+		case 13:
+			if (global[g133] == 0) {
+				global[g134]++;
+				if (imath_random(5, 10) >= global[g134]) {
+					if (*arg_4 == 8)
+						var_4 = 6;
+					else
+						var_4 = *arg_4 - 1;
+				} else {
+					int16 pick = imath_random(1, 4) - 1;
+					if (pick == 0)      var_4 = 5;
+					else if (pick == 1) var_4 = 7;
+					else if (pick == 2) var_4 = 8;
+					else if (pick == 3) var_4 = 13;
+					if (*arg_4 == 13)
+						var_4 = 7;
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_4 = 13;
+			}
+			break;
+
+		case 10:
+			if (global[g133] == 0) {
+				global[g134]++;
+				if (imath_random(5, 10) >= global[g134]) {
+					var_4 = *arg_4 - 1;
+				} else {
+					var_4 = imath_random(9, 10);
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_4 = 10;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_4 >= 0) {
+		kernel_reset_animation(arg_0, var_4);
+		*arg_4 = var_4;
+	}
+}
+
+static void global_anim1_2(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g133] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 20:
+			if (global[g133] == 0) {
+				var_2 = 1;
+				global[g134]++;
+				if (global[g134] > 17) {
+					var_2 = imath_random(1, 2);
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_2 = 1;
+				global[g136] = -1;
+			}
+			break;
+
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+			if (global[g133] == 0) {
+				global[g134]++;
+				if (global[g134] > 17) {
+					var_2 = imath_random(7, 13);
+					if (var_2 == 13)
+						var_2 = 14;
+					global[g134] = 0;
+				} else {
+					var_2 = *arg_4 - 1;
+				}
+			} else if (global[g133] == 1) {
+				var_2 = 14;
+			}
+			break;
+
+		case 14:
+			var_2 = 7;
+			global[g134] = 0;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+static void global_anim1_3(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g133] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 10:
+			if (global[g133] == 0) {
+				var_2 = 1;
+				global[g134]++;
+				if (global[g134] > 17) {
+					var_2 = imath_random(1, 2);
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_2 = 1;
+				global[g136] = -1;
+			}
+			break;
+
+		case 5:
+		case 7:
+			if (global[g133] == 0) {
+				global[g134]++;
+				if (imath_random(5, 10) < global[g134]) {
+					var_2 = 7;
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_2 = 7;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+static void global_anim1_4(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g133] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 3:
+		case 4:
+			if (global[g133] == 0) {
+				global[g134]++;
+				if (imath_random(7, 15) >= global[g134]) {
+					var_2 = *arg_4 - 1;
+				} else {
+					var_2 = imath_random(1, 3);
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_2 = 4;
+			}
+			break;
+
+		case 5:
+			var_2 = 4;
+			global[g136] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+static void global_anim1_5(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g133] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 3:
+			if (global[g133] == 0) {
+				global[g134]++;
+				if (imath_random(7, 15) >= global[g134]) {
+					var_2 = *arg_4 - 1;
+				} else {
+					var_2 = imath_random(1, 2);
+					global[g134] = 0;
+				}
+			} else if (global[g133] == 1) {
+				var_2 = 3;
+			}
+			break;
+
+		case 4:
+			var_2 = 3;
+			global[g136] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+void global_anim1(int arg_0, int arg_2, int arg_4, int16 *arg_6) {
+	if (global[g150]) {
+		global[g135] = -1;
+		global[g145] = -1;
+	}
+
+	if (global[g135])
+		global[g133] = 1;
+
+	if (global[g150]) {
+		if (global[g146] && global[g136]) {
+			global[g146] = 0;
+			global[g136] = 0;
+			global[g145] = 0;
+			global[g135] = 0;
+			global[g150] = 0;
+			kernel_timing_trigger(1, 26);
+		}
+	} else {
+		if (global[g135] && global[g136]) {
+			global[g136] = 0;
+			global[g135] = 0;
+			kernel_timing_trigger(1, 24);
+		}
+	}
+
+	switch (arg_0) {
+	case 1:
+	case 3:
+		global_anim1_1(arg_2, arg_4, arg_6);
+		break;
+	case 2:
+		global_anim1_2(arg_2, arg_4, arg_6);
+		break;
+	case 4:
+	case 6:
+		global_anim1_3(arg_2, arg_4, arg_6);
+		break;
+	case 7:
+	case 9:
+		global_anim1_4(arg_2, arg_4, arg_6);
+		break;
+	case 8:
+		global_anim1_5(arg_2, arg_4, arg_6);
+
+		break;
+	default:
+		break;
+	}
+}
+
+static void global_anim2_1(int arg_0, int arg_2, int16 *arg_4);
+static void global_anim2_2(int arg_0, int arg_2, int16 *arg_4);
+static void global_anim2_3(int arg_0, int arg_2, int16 *arg_4);
+static void global_anim2_4(int arg_0, int arg_2, int16 *arg_4);
+static void global_anim2_5(int arg_0, int arg_2, int16 *arg_4);
+
+void global_anim2(int arg_0, int arg_2, int arg_4, int16 *arg_6) {
+	if (global[g150]) {
+		global[g135] = -1;
+		global[g145] = -1;
+	}
+
+	if (global[g145])
+		global[g143] = 1;
+
+	if (global[g150]) {
+		if (global[g146] && global[g136]) {
+			global[g146] = 0;
+			global[g136] = 0;
+			global[g145] = 0;
+			global[g135] = 0;
+			global[g150] = 0;
+			kernel_timing_trigger(1, 26);
+		}
+	} else {
+		if (global[g145] && global[g146]) {
+			global[g146] = 0;
+			global[g145] = 0;
+			kernel_timing_trigger(1, 25);
+		}
+	}
+
+	switch (arg_0) {
+	case 1:
+	case 3:
+		global_anim2_1(arg_2, arg_4, arg_6);
+		break;
+	case 2:
+		global_anim2_2(arg_2, arg_4, arg_6);
+		break;
+	case 4:
+	case 6:
+		global_anim2_3(arg_2, arg_4, arg_6);
+		break;
+	case 7:
+	case 9:
+		global_anim2_4(arg_2, arg_4, arg_6);
+		break;
+	case 8:
+		global_anim2_5(arg_2, arg_4, arg_6);
+		break;
+	default:
+		break;
+	}
+}
+
+static void global_anim2_1(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_4 = -1;
+
+	if (arg_2 == 0) {
+		var_4 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g143] == 1)
+				var_4 = 0;
+			break;
+
+		case 2:
+		case 3:
+		case 11:
+			if (global[g143] == 0) {
+				global[g144]++;
+				if (imath_random(10, 17) >= global[g144]) {
+					if (*arg_4 == 11)
+						var_4 = 1;
+					else
+						var_4 = *arg_4 - 1;
+				} else {
+					var_4 = imath_random(1, 3);
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				var_4 = 11;
+			}
+			break;
+
+		case 5:
+		case 6:
+		case 8:
+			if (global[g143] == 0) {
+				global[g144]++;
+				if (imath_random(1, 3) >= global[g144]) {
+					if (*arg_4 == 8)
+						var_4 = 6;
+					else if (*arg_4 == 5)
+						var_4 = 5;
+					else
+						var_4 = *arg_4 - 1;
+				} else {
+					int16 pick = imath_random(1, 3) - 1;
+					if (pick == 0)      var_4 = 5;
+					else if (pick == 1) var_4 = 6;
+					else if (pick == 2) var_4 = 8;
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				global[g144] = 0;
+				var_4 = 8;
+			}
+			break;
+
+		case 10:
+			global[g144] = 0;
+			break;
+
+		case 12:
+			var_4 = 11;
+			global[g146] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_4 >= 0) {
+		kernel_reset_animation(arg_0, var_4);
+		*arg_4 = var_4;
+	}
+}
+
+static void global_anim2_2(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g143] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 15:
+			if (global[g143] == 0) {
+				var_2 = 1;
+				global[g144]++;
+				if (global[g144] > 17) {
+					var_2 = imath_random(1, 2);
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				var_2 = 15;
+			}
+			break;
+
+		case 7:
+			digi_play_build_ii('_', 2, 3);
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			if (global[g143] == 0) {
+				global[g144]++;
+				if (imath_random(5, 10) >= global[g144]) {
+					var_2 = imath_random(8, 10);
+				} else {
+					var_2 = imath_random(8, 11);
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				var_2 = 11;
+			}
+			break;
+
+		case 16:
+			var_2 = 15;
+			global[g146] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+static void global_anim2_3(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g143] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 8:
+			if (global[g143] == 0) {
+				var_2 = 1;
+				global[g144]++;
+				if (imath_random(15, 20) < global[g144]) {
+					var_2 = imath_random(1, 2);
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				var_2 = 8;
+			}
+			break;
+
+		case 9:
+			var_2 = 8;
+			global[g146] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+static void global_anim2_4(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g143] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 7:
+			if (global[g143] == 0) {
+				global[g144]++;
+				if (imath_random(7, 15) >= global[g144]) {
+					var_2 = 1;
+				} else {
+					var_2 = imath_random(1, 2);
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				var_2 = 7;
+			}
+			break;
+
+		case 5:
+			if (imath_random(1, 2) == 1)
+				var_2 = 3;
+			break;
+
+		case 8:
+			var_2 = 7;
+			global[g146] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
+	}
+}
+
+static void global_anim2_5(int arg_0, int arg_2, int16 *arg_4) {
+	if (kernel_anim[arg_0].frame == *arg_4)
+		return;
+
+	*arg_4 = kernel_anim[arg_0].frame;
+	int16 var_2 = -1;
+
+	if (arg_2 == 0) {
+		var_2 = 0;
+	} else {
+		switch (*arg_4) {
+		case 1:
+			if (global[g143] == 1)
+				var_2 = 0;
+			break;
+
+		case 2:
+		case 3:
+			if (global[g143] == 0) {
+				global[g144]++;
+				if (imath_random(7, 15) >= global[g144]) {
+					var_2 = *arg_4 - 1;
+				} else {
+					var_2 = imath_random(1, 2);
+					global[g144] = 0;
+				}
+			} else if (global[g143] == 1) {
+				var_2 = 3;
+			}
+			break;
+
+		case 4:
+			var_2 = 3;
+			global[g146] = -1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(arg_0, var_2);
+		*arg_4 = var_2;
 	}
 }
 

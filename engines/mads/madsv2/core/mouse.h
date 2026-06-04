@@ -38,6 +38,7 @@ extern word mouse_driver;       /* True if mouse driver is currently active  */
 extern word mouse_known_mode;   /* True if mouse in a 320x200 graphics mode  */
 extern int  mouse_video_mode;   /* Rom BIOS video mode # of current cursor   */
 extern byte mouse_showing;      /* Mouse cursor showing status (0 = show)    */
+extern byte mouse_hidden;
 
 extern int mouse_button;        /* Last button pressed (0 = left, 1 = right) */
 extern int mouse_status;        /* Button status flags                       */
