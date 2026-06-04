@@ -41,7 +41,7 @@ namespace Action {
 ConversationSound::ConversationSound() :
 		RenderActionRecord(8),
 		_noResponse(g_nancy->getGameType() <= kGameTypeNancy2 ||
-					g_nancy->getGameType() >= kGameTypeNancy10 ? 10 : 20),
+					g_nancy->getGameType() == kGameTypeNancy10 ? 10 : 20),
 		_hasDrawnTextbox(false),
 		_pickedResponse(-1) {
 	_conditionalResponseCharacterID = _noResponse;
