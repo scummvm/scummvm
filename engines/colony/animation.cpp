@@ -657,10 +657,9 @@ void ColonyEngine::playAnimation() {
 	_system->getEventManager()->purgeMouseEvents();
 	_system->getEventManager()->purgeKeyboardEvents();
 
-	// Suppress collision sound on the first few wall hits after animation exit.
+	// Suppress collision sound on the first wall hit after animation exit.
 	// The player is at a door/wall boundary and held movement keys will
-	// immediately trigger checkwall collisions that play kBang — which sounds
-	// like a spurious gunshot. The flag auto-clears on the first successful move.
+	// immediately trigger a collision sound. The flag auto-clears in cCommand().
 	_suppressCollisionSound = true;
 
 	deleteAnimation();
@@ -1254,6 +1253,9 @@ void ColonyEngine::handleTeleshowClick(int item) {
 }
 
 void ColonyEngine::handleKeypadClick(int item) {
+	if (item > 0 && item <= 12)
+		_sound->play(Sound::kDit);
+
 	if (item >= 1 && item <= 10) {
 		for (int i = 5; i >= 1; i--)
 			_animDisplay[i] = _animDisplay[i - 1];

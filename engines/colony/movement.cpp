@@ -411,8 +411,6 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 					return r;
 			}
 			debugC(1, kColonyDebugMove, "Collision South at x=%d y=%d", pobject->xindex, yind2);
-			if (!_suppressCollisionSound)
-				_sound->play(Sound::kBang);
 			return -1;
 
 		}
@@ -427,8 +425,6 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				return r;
 		}
 		debugC(1, kColonyDebugMove, "Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
-		if (!_suppressCollisionSound)
-			_sound->play(Sound::kBang);
 		return -1;
 
 	}
@@ -445,8 +441,6 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 					return r;
 			}
 			debugC(1, kColonyDebugMove, "Collision East at x=%d y=%d", xind2, pobject->yindex);
-			if (!_suppressCollisionSound)
-				_sound->play(Sound::kBang);
 			return -1;
 
 		}
@@ -461,8 +455,6 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				return r;
 		}
 		debugC(1, kColonyDebugMove, "Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
-		if (!_suppressCollisionSound)
-			_sound->play(Sound::kBang);
 		return -1;
 
 	}
@@ -1128,13 +1120,33 @@ void ColonyEngine::checkCenter() {
 	}
 }
 
+void ColonyEngine::playCollisionSound() {
+	if (_suppressCollisionSound)
+		return;
+
+	const uint32 now = _system->getMillis();
+	if (_lastCollisionSoundTime != 0 && now - _lastCollisionSoundTime < 175)
+		return;
+
+	_lastCollisionSoundTime = now;
+	_sound->play(Sound::kBonk);
+}
+
 void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = 0;
 
+	const int oldXIndex = _me.xindex;
+	const int oldYIndex = _me.yindex;
+	const bool sameCellAttempt = ((xnew >> 8) == oldXIndex && (ynew >> 8) == oldYIndex);
 	const int robot = checkwall(xnew, ynew, &_me);
 	if (robot > 0 && allowInteraction)
 		interactWithObject(robot);
+	else if (robot)
+		playCollisionSound();
+	else if (sameCellAttempt && _me.xindex == oldXIndex && _me.yindex == oldYIndex &&
+			(_me.xloc != xnew || _me.yloc != ynew))
+		playCollisionSound();
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = kMeNum;

@@ -690,6 +690,7 @@ void ColonyEngine::startNewGame() {
 	_orbit = 0;
 	_allGrow = false;
 	_suppressCollisionSound = false;
+	_lastCollisionSoundTime = 0;
 	_action0 = 0;
 	_action1 = 0;
 	_creature = 0;
@@ -977,14 +978,17 @@ Common::Error ColonyEngine::run() {
 					_me.lookY = 0;
 					break;
 				case kActionToggleDashboard:
+					_sound->play(Sound::kDit);
 					_showDashBoard = !_showDashBoard;
 					break;
 				case kActionToggleWireframe:
+					_sound->play(Sound::kDit);
 					_wireframe = !_wireframe;
 					debugC(1, kColonyDebugRender, "Polyfill: %s", _wireframe ? "off (wireframe)" : "on (filled)");
 					break;
 				case kActionToggleFullscreen:
 					if (_macMenu) {
+						_sound->play(Sound::kDit);
 						_fullscreen = !_fullscreen;
 						_menuBarHeight = _fullscreen ? 0 : 20;
 						updateViewportLayout();

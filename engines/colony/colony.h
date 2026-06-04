@@ -558,6 +558,7 @@ private:
 	uint32 _lastHotfootTime = 0;  // Time-gate for HOTFOOT damage (~8fps)
 	uint32 _lastAnimUpdate = 0;
 	uint32 _lastWarningChimeTime = 0;
+	uint32 _lastCollisionSoundTime = 0;
 	int _action0 = 0, _action1 = 0;
 	int _creature = 0;
 	bool _allGrow = false;
@@ -815,6 +816,7 @@ private:
 	Common::Rect readRect(Common::SeekableReadStreamEndian &file);
 	int whichSprite(const Common::Point &p);
 	void handleAnimationClick(int item);
+	void playCollisionSound();
 	void handleDeskClick(int item);
 	void handleVanityClick(int item);
 	void handleSlidesClick(int item);
