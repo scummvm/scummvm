@@ -48,6 +48,7 @@ public:
 
 	void init() override;
 	void handleInput(NancyInput &input) override;
+	void updateGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;

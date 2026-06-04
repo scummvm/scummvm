@@ -73,6 +73,26 @@ void Overlay::handleInput(NancyInput &input) {
 	}
 }
 
+void Overlay::updateGraphics() {
+	// Update inactive animated overlays
+	if (!_isActive && _state == kRun && !_blitDescriptions.empty() && _overlayType == kPlayOverlayAnimated) {
+		uint16 newFrame = NancySceneState.getSceneInfo().frameID;
+		if (_currentViewportFrame == newFrame)
+			return;
+
+		_currentViewportFrame = (int16)newFrame;
+		setVisible(false);
+
+		for (auto &blit : _blitDescriptions) {
+			if (_currentViewportFrame == blit.frameID) {
+				moveTo(blit.dest);
+				setVisible(true);
+				break;
+			}
+		}
+	}
+}
+
 void Overlay::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
