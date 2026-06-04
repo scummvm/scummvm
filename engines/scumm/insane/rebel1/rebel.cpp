@@ -309,6 +309,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_deathTimer = 0;
 	_screenFlash = 0;
 	_frameCounter = 0;
+	_currentSmushFrame = 0;
 	_screenShakeEnabled = false;
 	memset(_screenFlashBasePalette, 0, sizeof(_screenFlashBasePalette));
 	_screenFlashBasePaletteValid = false;
@@ -472,6 +473,10 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_smush_icons2Nut = nullptr;
 
 	_vm->_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);
+}
+
+void InsaneRebel1::setCurrentSmushFrame(int32 frame) {
+	_currentSmushFrame = frame;
 }
 
 InsaneRebel1::~InsaneRebel1() {

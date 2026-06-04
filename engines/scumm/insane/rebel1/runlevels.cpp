@@ -210,6 +210,7 @@ void InsaneRebel1::resetLevelDamageState() {
 
 void InsaneRebel1::resetLevelFrameState() {
 	_frameCounter = 0;
+	_currentSmushFrame = 0;
 	_gameCounter = 0;
 	_activeGameOpcode = 0;
 	_gameLatch5D = 0;
@@ -578,8 +579,8 @@ bool InsaneRebel1::runLevel4() {
 			return false;
 
 		if (_health >= 0 && shieldGeneratorsDestroyed) {
-			// Phase 2: torpedo run. The DOS loop enables torpedo mode at frame
-			// 0x3E and exits early as soon as killCount becomes nonzero.
+			// Phase 2: torpedo run. The DOS loop enables torpedo mode at
+			// frontend/movie frame 0x3E and exits early as soon as killCount becomes nonzero.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -1448,7 +1449,7 @@ bool InsaneRebel1::runLevel15() {
 				return false;
 
 			// Phase 2: final approach and torpedo shot. The DOS flow enables
-			// torpedo mode at frame 0x18A and completes only after object-state
+			// torpedo mode at frontend/movie frame 0x18A and completes only after object-state
 			// bit 0x7602 & 2 is set by the exhaust-port hit.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;

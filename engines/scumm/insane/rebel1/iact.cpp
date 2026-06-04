@@ -1869,10 +1869,10 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			_vm->_smushVideoShouldFinish = true;
 	}
 
-	// Level 4 Phase 2: enable torpedo mode at frame 0x3E and finish as
-	// soon as the torpedo registers a hit. The DOS loop exits on killCount.
+	// Level 4 Phase 2: enable torpedo mode at frontend/movie frame 0x3E and
+	// finish as soon as the torpedo registers a hit. The DOS loop exits on killCount.
 	if (_currentLevel == 3 && _levelGameplayPhase == 2) {
-		if (_frameCounter == 0x3E)
+		if (_currentSmushFrame == 0x3E)
 			_gameplayFlags75ff |= 2;
 		if (_killCount > 0)
 			_vm->_smushVideoShouldFinish = true;
@@ -1912,11 +1912,11 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			_vm->_smushVideoShouldFinish = true;
 	}
 
-	// Level 15 Phase 2: enable torpedo at frame 0x18A, expose the protected
-	// target IDs used by the original flow, and finish when
+	// Level 15 Phase 2: enable torpedo at frontend/movie frame 0x18A, expose
+	// the protected target IDs used by the original flow, and finish when
 	// g_gameplayPhaseFlags & 2 becomes set.
 	if (_currentLevel == 14 && _levelGameplayPhase == 2) {
-		if (_frameCounter == 0x18A) {
+		if (_currentSmushFrame == 0x18A) {
 			// Original writes the 16-bit flags word: g_hudDisableFlags |= 0x210.
 			// Low byte bit 0x10 suppresses normal hit feedback in the torpedo phase;
 			// high byte bit 0x02 switches targeting/shot rendering to torpedoes.

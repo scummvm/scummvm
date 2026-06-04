@@ -111,6 +111,7 @@ public:
 	// gamepad/joystick input continues through the joystick path.
 	bool isTouchscreenActive() const;
 	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
+	void setCurrentSmushFrame(int32 frame);
 	int getCurrentLevel() const { return _currentLevel; }
 	int getLevelGameplayPhase() const { return _levelGameplayPhase; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
@@ -490,6 +491,7 @@ private:
 	int16 _deathTimer;           // 0x756A: death animation countdown (30 on death)
 	int16 _screenFlash;          // 0x7736: screen flash timer on hit
 	uint32 _frameCounter;        // Gameplay handler frame accumulator
+	int32 _currentSmushFrame;    // Current frontend/movie frame (original DAT_7740)
 	bool _screenShakeEnabled;    // 0x41AC: when true, SetCameraOffset adds ±2 random jitter
 	byte _screenFlashBasePalette[0x300];
 	bool _screenFlashBasePaletteValid;

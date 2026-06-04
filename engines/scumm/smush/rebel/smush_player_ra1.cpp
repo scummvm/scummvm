@@ -904,6 +904,7 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 	bool preserveFrameHistory = false;
 	if (_insane) {
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+		rebel1->setCurrentSmushFrame(_frame);
 		bool interactive = rebel1->isInteractiveVideoActive();
 		const bool frameHasGameChunk = interactive && ra1FrameHasGameChunk(b, frameSize);
 		rebel1->setFrameHasGameChunk(frameHasGameChunk);
