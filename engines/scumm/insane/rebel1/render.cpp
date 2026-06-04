@@ -797,6 +797,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	renderExplosions(renderBitmap, pitch, width, height);
 	handleLevel14Play2BSplice(curFrame, maxFrame);
 
+	if (_currentLevel == 4 && _levelGameplayPhase == 2)
+		renderLevel5Part2Overlay(renderBitmap, pitch, width, height, curFrame);
+
 	if (_currentLevel == 10)
 		renderLevel11HitsOverlay(renderBitmap, pitch, width, height);
 
@@ -1024,6 +1027,35 @@ void InsaneRebel1::renderLevel11HitsOverlay(byte *dst, int pitch, int width, int
 	char hitsStr[16];
 	Common::sprintf_s(hitsStr, "<<HITS %02d", (int)_killCount);
 	drawFontBankString(dst, pitch, width, height, 0x119, 0x16, hitsStr);
+}
+
+// renderLevel5Part2Overlay — RunLevel5Flow (0x176D0-0x1777E) draws the
+// part-2 instruction reveal, then switches to the live target count.
+void InsaneRebel1::renderLevel5Part2Overlay(byte *dst, int pitch, int width, int height, int32 curFrame) {
+	if (_hudFontBank.numSprites <= 0 && _techFontBank.numSprites <= 0)
+		return;
+
+	const int viewportX = _player ? ra1Player()->_ra1ViewportOffsetX : 0;
+	const int viewportY = _player ? ra1Player()->_ra1ViewportOffsetY : 0;
+	int16 overlayX = 0x88;
+	int16 overlayY = 0x8C;
+	projectGameplayPoint(overlayX, overlayY);
+	overlayX = (int16)(0x88 - ((overlayX - 0x88) >> 2));
+	overlayY = (int16)(0x8C - ((overlayY - 0x8C) >> 2));
+
+	if (curFrame < 0x32) {
+		const char instructionText[] = "<<SHOOT TARGETS FOR BONUS";
+		const int revealChars = CLIP<int>((int)curFrame, 0, (int)sizeof(instructionText) - 1);
+		char revealedText[sizeof(instructionText)];
+		Common::strlcpy(revealedText, instructionText, revealChars + 1);
+		drawFontBankString(dst, pitch, width, height,
+			viewportX + overlayX - 0x27, viewportY + overlayY, revealedText);
+	} else {
+		char hitsStr[16];
+		Common::sprintf_s(hitsStr, "<<HITS: %d", (int)_killCount);
+		drawFontBankString(dst, pitch, width, height,
+			viewportX + overlayX, viewportY + overlayY, hitsStr);
+	}
 }
 
 void InsaneRebel1::resetEnemyShotSlots() {

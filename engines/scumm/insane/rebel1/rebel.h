@@ -111,6 +111,7 @@ public:
 	bool isTouchscreenActive() const;
 	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
 	int getCurrentLevel() const { return _currentLevel; }
+	int getLevelGameplayPhase() const { return _levelGameplayPhase; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	uint16 getEffectiveGameOpcode() const;
 	bool hasFrameGameOpcode(uint16 opcode) const {
@@ -245,6 +246,7 @@ private:
 		bool drawTargetBoxes);
 	void handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame);
 	void renderLevel7RouteOverlays(byte *dst, int pitch, int width, int height);
+	void renderLevel5Part2Overlay(byte *dst, int pitch, int width, int height, int32 curFrame);
 	void renderLevel11HitsOverlay(byte *dst, int pitch, int width, int height);
 	void resetEnemyShotSlots();
 	void renderLevel13EnemyShots(byte *dst, int pitch, int width, int height);
