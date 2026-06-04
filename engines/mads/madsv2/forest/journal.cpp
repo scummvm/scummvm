@@ -37,7 +37,7 @@ void open_journal() {
 	// TODO
 }
 
-void close_journal() {
+void close_journal(int mode) {
 	// TODO
 }
 

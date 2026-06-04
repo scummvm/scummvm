@@ -31,7 +31,7 @@ namespace Forest {
 extern void display_journal();
 extern void leave_journal();
 extern void open_journal();
-extern void close_journal();
+extern void close_journal(int mode);
 
 } // namespace Forest
 } // namespace MADSV2
