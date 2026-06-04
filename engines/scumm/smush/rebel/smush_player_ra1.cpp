@@ -41,6 +41,8 @@
 namespace Scumm {
 
 enum {
+	kRA1DecodeWidth = 384,
+	kRA1DecodeHeight = 242,
 	kRA1PresentationBorder = 4,
 	kRA1PresentationScreenWidth = 320,
 	kRA1PresentationScreenHeight = 200,
@@ -326,12 +328,17 @@ bool SmushPlayerRebel1::handleGameTextResource(uint32 subType, int32 subSize, Co
 	if (subType != MKTAG('T','E','X','T'))
 		return false;
 
-	// RA1 dialogue subtitles. Only render them when subtitles are enabled — this honors
-	// both ScummVM's global "subtitles" setting and the in-game DIALOGUE TEXT toggle
-	// (which writes the same ConfMan key). Still return true so the base handler doesn't
-	// try to parse RA1's custom TEXT format. Querying ConfMan per chunk also lets the
-	// setting take effect mid-video.
-	if (ConfMan.getBool("subtitles"))
+	bool forceText = false;
+	if (subSize > 8) {
+		const int64 textStart = b.pos();
+		b.seek(textStart + 8, SEEK_SET);
+		forceText = (b.readByte() == '.');
+		b.seek(textStart, SEEK_SET);
+	}
+
+	// Original FUN_1FDBC draws RA1 TEXT when the text starts with '.' regardless
+	// of the DIALOGUE TEXT option. O1OPEN uses that path for the opening lines.
+	if (forceText || ConfMan.getBool("subtitles"))
 		ra1HandleText(subSize, b);
 	return true;
 }
@@ -479,9 +486,9 @@ void SmushPlayerRebel1::ra1HandleFade(int32 subSize, Common::SeekableReadStream 
 
 bool SmushPlayerRebel1::handleGameAnimHeader(byte *headerContent) {
 	(void)headerContent;
-	_width = 0;
-	_height = 0;
-	const int bufSize = 384 * 242;
+	_width = kRA1DecodeWidth;
+	_height = kRA1DecodeHeight;
+	const int bufSize = kRA1DecodeWidth * kRA1DecodeHeight;
 	if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
 		free(_specialBuffer);
 		_specialBuffer = (byte *)calloc(bufSize, 1);
@@ -499,7 +506,7 @@ void SmushPlayerRebel1::handleGameParseNextFrame() {
 
 bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int height) {
 	// RA1 sub-fullscreen frames render into _specialBuffer at their (left, top) offset position.
-	int bufSize = 384 * 242;
+	int bufSize = kRA1DecodeWidth * kRA1DecodeHeight;
 	if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
 		free(_specialBuffer);
 		_specialBuffer = (byte *)calloc(bufSize, 1);
@@ -512,10 +519,8 @@ bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int he
 bool SmushPlayerRebel1::handleGameDimensionOverride(int codec, int width, int height) {
 	if (_dst == _specialBuffer) {
 		// RA1: sub-fullscreen FOBJs should not override the 384x242 dimensions.
-		if (_width == 0 || _height == 0) {
-			_width = 384;
-			_height = 242;
-		}
+		_width = kRA1DecodeWidth;
+		_height = kRA1DecodeHeight;
 		return true;
 	}
 	return false;

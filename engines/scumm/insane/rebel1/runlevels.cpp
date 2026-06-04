@@ -144,7 +144,6 @@ static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillT
 // ---------------------------------------------------------------------------
 
 // Play a passive cinematic (no game callback, skippable).
-// Reuses RA2's pattern: reset handler, set cinematic flags, play video.
 // startFrame > 0: fast-forward (decode without display/audio) to that frame.
 void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	debugC(DEBUG_INSANE, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
@@ -156,7 +155,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	restoreScreenFlashPalette();
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
-	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve
+	splayer->setCurVideoFlags(0x420);
 	splayer->setFastForwardFromFrame(0);
 	splayer->setFastForwardToFrame(startFrame > 0 ? startFrame : 0);
 	splayer->play(filename, 15);
@@ -320,7 +319,6 @@ void InsaneRebel1::playIntroSequence() {
 	playCinematic("OPEN/O1LOGO.ANM");
 	if (shouldAbortGameFlow())
 		return;
-	clearVideoBuffer();
 
 	// Star Wars opening crawl (original: PUSH 0x5800, CALL FUN_1BA32)
 	playCinematic("OPEN/O1OPEN.ANM");
