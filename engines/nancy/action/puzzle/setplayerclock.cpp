@@ -82,6 +82,10 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip(2);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		stream.skip(2);
+	}
+
 	_buttonSound.readNormal(stream);
 	_alarmSetScene.readData(stream);
 	_alarmSoundDelay = stream.readUint16LE();
