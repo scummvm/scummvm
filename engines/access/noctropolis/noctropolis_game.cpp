@@ -46,7 +46,7 @@ _stilFlag2(_flags[234])
 NoctropolisEngine::~NoctropolisEngine() {
 	delete _invScript;
 	// _midi will be deleted in parent.
-}
+} //-V773
 
 void NoctropolisEngine::initObjects() {
 	_room = new NoctropolisRoom(this);

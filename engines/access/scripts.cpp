@@ -214,7 +214,8 @@ void Scripts::charLoop() {
 	bool endFlag = _endFlag;
 	_continuenceFlag = false;
 
-	int64 pos = _data->pos();
+	// Data should never be null here, but might be after running script.
+	int64 pos = _data->pos(); // -V595
 
 	_sequence = ROOM_SCRIPT;
 	searchForSequence();
@@ -289,7 +290,8 @@ int Scripts::executeScript() {
 	_endFlag = false;
 	_returnCode = 0;
 
-	debugC(1, kDebugScripts, "** Start script execution (at %d/%d bytes) **", (int)_data->pos(), (int)_data->size());
+	// Data should never be null here but may be after running script
+	debugC(1, kDebugScripts, "** Start script execution (at %d/%d bytes) **", (int)_data->pos(), (int)_data->size()); // -V595
 	do {
 		// Get next command, skipping over script start start if it's being pointed to
 		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)

@@ -40,7 +40,8 @@ _creditsStream(nullptr)
 MartianEngine::~MartianEngine() {
 	_skipStart = false;
 	_creditsStream = nullptr;
-}
+	// _video will be deleted in the parent
+} // -V773
 
 void MartianEngine::initObjects() {
 	_inventory = new MartianInventory(this);
