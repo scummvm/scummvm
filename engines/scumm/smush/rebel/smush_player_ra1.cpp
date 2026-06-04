@@ -740,7 +740,7 @@ void SmushPlayerRebel1::ra1HandleFrameAudioChunk(int32 subSize, Common::Seekable
 void SmushPlayerRebel1::ra1HandleGameFrameChunk(int32 subSize, Common::SeekableReadStream &b, bool fastForwarding) {
 	if (!fastForwarding && _insane) {
 		InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
-		rebel1->handleGameChunk(subSize, b);
+		rebel1->handleGameChunk(subSize, b, _dst, _width, _height);
 	}
 }
 

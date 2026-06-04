@@ -103,7 +103,8 @@ public:
 		int16 par1, int16 par2, int16 par3, int16 par4) override;
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b) override;
 
-	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b);
+	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
+		byte *renderBitmap = nullptr, int width = 0, int height = 0);
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
 	// True on touchscreen devices (e.g. Android). RA1 skips DOS-style cursor
 	// warping/locking there; direct touch uses absolute aiming, while on-screen
@@ -243,7 +244,8 @@ private:
 							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
 	void renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
-		bool drawTargetBoxes);
+		bool drawTargetBoxes, bool drawTargeting = true);
+	void renderGameOp0BOverlayDuringChunk(byte *dst, int pitch, int width, int height);
 	void handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame);
 	void renderLevel7RouteOverlays(byte *dst, int pitch, int width, int height);
 	void renderLevel5Part2Overlay(byte *dst, int pitch, int width, int height, int32 curFrame);
@@ -447,6 +449,7 @@ private:
 	bool _frameHasGameChunk;
 	uint16 _frameDispatchFlags;
 	bool _gameOp0BPhysicsUpdatedThisFrame;
+	bool _gameOp0BOverlayRenderedThisFrame;
 
 	// Difficulty (0=easy, 1=normal, 2=hard) — matches original DAT_22BC
 	int _difficulty;

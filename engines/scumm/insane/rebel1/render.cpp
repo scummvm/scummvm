@@ -524,6 +524,7 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameDispatchFlags = 0;
 	_hudRenderFlag = 0;
 	_gameOp0BPhysicsUpdatedThisFrame = false;
+	_gameOp0BOverlayRenderedThisFrame = false;
 	_turretFrameShipCenterValid = false;
 	_frameObjectHitRevealPending = false;
 
@@ -630,6 +631,8 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		(allowImplicitGameplayMode &&
 			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
 	bool shotOverlayHandled = false;
+	bool drawShipAfterGameplayOverlays = false;
+	bool drawGameOp0BTargetingAfterFetch = false;
 	if (gameOp0BMode) {
 		// GAME 0x0B scrolling cockpit/surface handler — FUN_1CDA7.
 		if (!_gameOp0BPhysicsUpdatedThisFrame) {
@@ -647,6 +650,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			_vm->_smushVideoShouldFinish = true;
 			return;
 		}
+
+		shotOverlayHandled = _gameOp0BOverlayRenderedThisFrame;
+		drawGameOp0BTargetingAfterFetch = _gameOp0BOverlayRenderedThisFrame;
 	} else if (onFootMode) {
 		// On-foot handler — opcodes 0x19/0x1A (Level 9 Stormtroopers)
 		if (_currentLevel == 8 && onFootAimMode && !onFootSequenceMode && _killCount > 0) {
@@ -721,9 +727,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			return;
 		}
 
-		// Ship sprite is present in both flight (0x07 family) and 0x08 turret path.
-		if (flightMode || turretMode)
-			renderShip(renderBitmap, pitch, width, height);
+		// The paired GAME 0x09/0x0A handlers draw target boxes, shots and
+		// reticles before the 0x07/0x08 ship/cockpit pass.
+		drawShipAfterGameplayOverlays = (flightMode || turretMode);
 	}
 
 	// GAME handlers in the original update FUN_224FD during the same frame that
@@ -795,6 +801,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderLevel7RouteOverlays(renderBitmap, pitch, width, height);
 
 	renderExplosions(renderBitmap, pitch, width, height);
+
+	if (drawShipAfterGameplayOverlays)
+		renderShip(renderBitmap, pitch, width, height);
+
+	if (drawGameOp0BTargetingAfterFetch)
+		renderTargeting(renderBitmap, pitch, width, height);
+
 	handleLevel14Play2BSplice(curFrame, maxFrame);
 
 	if (_currentLevel == 4 && _levelGameplayPhase == 2)
@@ -823,9 +836,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 // ScummVM helper that groups the common shot/lock overlay calls used by the
 // original GAME handlers. GAME 0x1A uses the same pipeline without the target
-// box draw; 0x09/0x0A/0x0B include DrawTargetIndicators first.
+// box draw; 0x09/0x0A/0x0B include DrawTargetIndicators first. GAME 0x0B
+// defers FUN_1CB22 targeting until post-render so FTCH can restore cockpit
+// pixels over shots/boxes while the lock/fire indicator remains visible.
 void InsaneRebel1::renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
-		bool drawTargetBoxes) {
+		bool drawTargetBoxes, bool drawTargeting) {
 	if (drawTargetBoxes) {
 		renderTargetBoxes(dst, pitch, width, height);
 	} else {
@@ -842,7 +857,16 @@ void InsaneRebel1::renderShotOverlayPipeline(byte *dst, int pitch, int width, in
 			_shotSlots[i].timer--;
 	}
 	renderGostSlots(dst, pitch, width, height);
-	renderTargeting(dst, pitch, width, height);
+	if (drawTargeting)
+		renderTargeting(dst, pitch, width, height);
+}
+
+void InsaneRebel1::renderGameOp0BOverlayDuringChunk(byte *dst, int pitch, int width, int height) {
+	if (_gameOp0BOverlayRenderedThisFrame || !dst || width <= 0 || height <= 0 || _health < 0)
+		return;
+
+	renderShotOverlayPipeline(dst, pitch, width, height, true, false);
+	_gameOp0BOverlayRenderedThisFrame = true;
 }
 
 // renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.

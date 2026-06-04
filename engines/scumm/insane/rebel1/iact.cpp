@@ -2433,7 +2433,8 @@ void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common:
 
 // handleGameChunk — FUN_1BE1B (0x1BE1B). Central GAME opcode dispatcher.
 // Reads 7x32-bit BE integers from GAME chunk, routes to per-opcode handlers.
-void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b) {
+void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
+		byte *renderBitmap, int width, int height) {
 	if (subSize < 8)
 		return;
 
@@ -2484,6 +2485,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	case 0x0B:
 		handleGameOpcode0BFirstPerson(subSize, b, param1);
+		renderGameOp0BOverlayDuringChunk(renderBitmap, width, width, height);
 		break;
 
 	case 0x5A:

@@ -295,6 +295,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_frameHasGameChunk = false;
 	_frameDispatchFlags = 0;
 	_gameOp0BPhysicsUpdatedThisFrame = false;
+	_gameOp0BOverlayRenderedThisFrame = false;
 
 	_health = kMaxHealth;
 	_lives = 3;
