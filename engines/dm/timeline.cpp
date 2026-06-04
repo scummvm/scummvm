@@ -308,8 +308,8 @@ void Timeline::processTimeline() {
 			case kDMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
 					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
-					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
-					((Explosion *)curEvent)->setNextThing(_vm->_thingNone);
+					Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
+					explosion->setNextThing(_vm->_thingNone);
 				}
 				break;
 			case kDMEventTypeEnableChampionAction:
