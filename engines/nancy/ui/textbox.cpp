@@ -118,6 +118,11 @@ void Textbox::init() {
 }
 
 void Textbox::registerGraphics() {
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		// TODO: Textbox for Nancy11+
+		return;
+	}
+
 	RenderObject::registerGraphics();
 	if (_scrollbar)
 		_scrollbar->registerGraphics();
