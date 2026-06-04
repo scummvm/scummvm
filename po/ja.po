@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-02 16:30+0000\n"
-"PO-Revision-Date: 2026-04-26 07:22+0000\n"
+"PO-Revision-Date: 2026-06-04 07:22+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6768,8 +6768,6 @@ msgid "Game keymappings"
 msgstr "ゲームのキーマップ"
 
 #: engines/agos/metaengine.cpp:155 engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Yes/No keymapping"
 msgid "Yes/No keymappings"
 msgstr "Yes / Noキーマップ"
 
@@ -6787,17 +6785,13 @@ msgstr "BGMの音量アップ"
 
 #: engines/agos/metaengine.cpp:194 engines/sherlock/metaengine.cpp:687
 #: engines/ultima/nuvie/metaengine.cpp:101 engines/vcruise/metaengine.cpp:201
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle music"
-msgstr "消音の切替"
+msgstr "BGMの切替"
 
 #: engines/agos/metaengine.cpp:199 engines/sherlock/metaengine.cpp:702
 #: engines/vcruise/metaengine.cpp:206
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggle sound effects"
-msgstr "SE ON/OFFの切替"
+msgstr "SEの切替"
 
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
@@ -6843,10 +6837,8 @@ msgid "Turn right"
 msgstr "右へ"
 
 #: engines/agos/metaengine.cpp:241
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "高速モードの切り替え"
+msgstr "戦闘モード切替"
 
 #: engines/agos/metaengine.cpp:250
 msgid "Text speed - Fast"
@@ -6865,10 +6857,8 @@ msgid "Show objects to interact"
 msgstr "相互作用オブジェクトの表示"
 
 #: engines/agos/metaengine.cpp:272
-#, fuzzy
-#| msgid "Toggle background sounds on/off"
 msgid "Toggle background sounds"
-msgstr "環境音 ON/OFFの切替"
+msgstr "環境音の切替"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:281
@@ -6876,10 +6866,8 @@ msgid "Switch characters"
 msgstr "キャラを切り替え"
 
 #: engines/agos/metaengine.cpp:287
-#, fuzzy
-#| msgid "Toggle hitbox names on/off"
 msgid "Toggle hitbox names"
-msgstr "判定名 ON/OFFの切替"
+msgstr "判定名の切り替え"
 
 #: engines/agos/metaengine.cpp:294
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6997,15 +6985,9 @@ msgstr ""
 "使用しています。"
 
 #: engines/ags/ags.cpp:157
-#, fuzzy
-#| msgid ""
-#| "The selected game uses a pre-2.5 version of the AGS engine, which is not "
-#| "supported."
 msgid ""
 "The selected game uses version 4 of the AGS engine, which is not supported."
-msgstr ""
-"このゲームは、Scumm VMでサポートされていないバージョン2.5以前のAGSエンジンを"
-"使用しています。"
+msgstr "Scumm VMで未サポートのバージョン4のAGSエンジンを使用しています。"
 
 #: engines/ags/ags.cpp:165
 msgid ""
@@ -7089,16 +7071,12 @@ msgid "Old OpenGL detected, some graphical errors will occur."
 msgstr "古いOpenGLが検出され、映像エラーが発生します。"
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "音質："
+msgstr "高品質"
 
 #: engines/alcachofa/metaengine.cpp:41
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggles some optional graphical effects"
-msgstr "SE ON/OFFの切替"
+msgstr "その他画像エフェクトの切り替え"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
@@ -7109,10 +7087,8 @@ msgid "Whether to render the game in 16-bit color"
 msgstr "ゲームを16bitカラーでレンダリング"
 
 #: engines/alcachofa/metaengine.cpp:62
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Filter textures"
-msgstr "画像フィルター"
+msgstr "テクスチャーフィルター"
 
 #: engines/alcachofa/metaengine.cpp:63
 msgid "Whether textures should be linearly filtered"
@@ -7192,10 +7168,8 @@ msgid "Open character inventory"
 msgstr "キャラインベントリーを開く"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on/off"
 msgid "Toggle animation"
-msgstr "アニメ ON/OFFの切替"
+msgstr "アニメの切り替え"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
