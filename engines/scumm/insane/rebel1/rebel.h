@@ -221,6 +221,7 @@ private:
 	void updateTurretPhysics();
 	void updateTurretShipDirection(int16 offsetY);
 	void getCollisionShipCenter(int16 &x, int16 &y) const;
+	bool shouldInvertTouchYSettingForCurrentLevel() const;
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();

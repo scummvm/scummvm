@@ -807,6 +807,25 @@ void InsaneRebel1::updateFlightVariantCursor() {
 // jump latch from FUN_231BE, plus FUN_23115's DOS mouse recenter behavior.
 // Enhanced controls are ScummVM-only: they bypass the original recentering state
 // and expose a stable absolute centered mouse axis instead.
+bool InsaneRebel1::shouldInvertTouchYSettingForCurrentLevel() const {
+	if (!isTouchscreenActive())
+		return false;
+
+	switch (_currentLevel) {
+	case 1:  // Level 2
+	case 3:  // Level 4
+	case 7:  // Level 8
+	case 8:  // Level 9
+	case 9:  // Level 10
+	case 11: // Level 12
+	case 13: // Level 14
+	case 14: // Level 15
+		return true;
+	default:
+		return false;
+	}
+}
+
 void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick) {
 	if (usedJoystick)
 		*usedJoystick = false;
@@ -888,7 +907,12 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		inputX = (int16)CLIP<int32>(((int32)(logicalX - kRA1CenterX) * 127) / kRA1CenterX, -127, 127);
 		inputY = (int16)CLIP<int32>(((int32)(logicalY - kRA1CenterY) * 127) / kRA1CenterY, -127, 127);
 
-		if (_optControlsYFlip)
+		// These handlers negate DAT_756E internally, so direct touch needs the
+		// opposite baseline while the menu option still toggles the result.
+		bool flipY = _optControlsYFlip;
+		if (shouldInvertTouchYSettingForCurrentLevel())
+			flipY = !flipY;
+		if (flipY)
 			inputY = -inputY;
 
 		return;
