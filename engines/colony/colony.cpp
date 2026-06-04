@@ -53,6 +53,9 @@ namespace Colony {
 
 namespace {
 
+const float kMouseLookSensitivity = 0.25f;
+const float kKeyboardTurnSpeed = 30.0f; // angle units per second
+
 class OwnedCursor final : public Graphics::Cursor {
 public:
 	OwnedCursor(uint16 width, uint16 height, uint16 hotspotX, uint16 hotspotY, byte keyColor,
@@ -139,7 +142,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_height = 350;
 	_centerX = _width / 2;
 	_centerY = _height / 2;
-	_mouseSensitivity = 1;
+	_mouseSensitivity = kMouseLookSensitivity;
 	_mouseLocked = false;
 	_mousePos = Common::Point(_centerX, _centerY);
 	_showDashBoard = true;
@@ -841,6 +844,7 @@ Common::Error ColonyEngine::run() {
 	updateMouseCapture(true);
 
 	int mouseDX = 0, mouseDY = 0;
+	float mouseLookAccumX = 0.0f, mouseLookAccumY = 0.0f;
 	bool mouseMoved = false;
 	uint32 lastMoveTick = _system->getMillis();
 	uint32 lastColonyTick = lastMoveTick;
@@ -930,6 +934,7 @@ Common::Error ColonyEngine::run() {
 					updateMouseCapture(true);
 					if (_mouseLocked) {
 						mouseDX = mouseDY = 0;
+						mouseLookAccumX = mouseLookAccumY = 0.0f;
 						mouseMoved = false;
 					}
 				}
@@ -995,6 +1000,7 @@ Common::Error ColonyEngine::run() {
 						updateMouseCapture(true);
 						if (_mouseLocked) {
 							mouseDX = mouseDY = 0;
+							mouseLookAccumX = mouseLookAccumY = 0.0f;
 							mouseMoved = false;
 						}
 					}
@@ -1009,6 +1015,9 @@ Common::Error ColonyEngine::run() {
 					openMainMenuDialog();
 					_gfx->computeScreenViewport();
 					updateMouseCapture(true);
+					mouseDX = mouseDY = 0;
+					mouseLookAccumX = mouseLookAccumY = 0.0f;
+					mouseMoved = false;
 					break;
 				default:
 					break;
@@ -1073,13 +1082,27 @@ Common::Error ColonyEngine::run() {
 
 		if (mouseMoved && _mouseLocked) {
 			if (mouseDX != 0) {
-				_me.look = (uint8)((int)_me.look - (mouseDX * _mouseSensitivity));
-				// In battle mode, body always faces look direction
-				if (_gameMode == kModeBattle)
-					_me.ang = _me.look;
+				mouseLookAccumX -= mouseDX * _mouseSensitivity;
+				const int lookDelta = (int)mouseLookAccumX;
+				if (lookDelta != 0) {
+					mouseLookAccumX -= lookDelta;
+					_me.look = (uint8)((int)_me.look + lookDelta);
+					// In battle mode, body always faces look direction
+					if (_gameMode == kModeBattle)
+						_me.ang = _me.look;
+				}
 			}
-			if (mouseDY != 0 && !_fl) {
-				_me.lookY = (int8)CLIP<int>((int)_me.lookY - (mouseDY * _mouseSensitivity), -64, 64);
+			if (mouseDY != 0) {
+				if (!_fl) {
+					mouseLookAccumY -= mouseDY * _mouseSensitivity;
+					const int lookYDelta = (int)mouseLookAccumY;
+					if (lookYDelta != 0) {
+						mouseLookAccumY -= lookYDelta;
+						_me.lookY = (int8)CLIP<int>((int)_me.lookY + lookYDelta, -64, 64);
+					}
+				} else {
+					mouseLookAccumY = 0.0f;
+				}
 			}
 			// Warp back to center and purge remaining mouse events
 			// to prevent the warp from generating phantom deltas (Freescape pattern)
@@ -1145,7 +1168,7 @@ Common::Error ColonyEngine::run() {
 			}
 
 			if (_rotateLeft || _rotateRight) {
-				const float rotSpeed = (float)(1 << (_speedShift - 1)) * 15.0f;
+				const float rotSpeed = kKeyboardTurnSpeed;
 				_rotAccum += (_rotateLeft ? rotSpeed : -rotSpeed) * dt;
 				const int rint = (int)_rotAccum;
 				_rotAccum -= rint;

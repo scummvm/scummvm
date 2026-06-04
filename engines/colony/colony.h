@@ -507,7 +507,7 @@ private:
 	int _cost[256];
 	int _centerX, _centerY;
 	int _width, _height;
-	int _mouseSensitivity;
+	float _mouseSensitivity;
 	bool _mouseLocked;
 	bool _soundOn = true;
 	bool _showDashBoard;
