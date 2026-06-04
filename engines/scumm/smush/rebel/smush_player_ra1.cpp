@@ -241,11 +241,13 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 			if (rebel1->isInteractiveVideoActive()) {
 				const uint16 gameOp = rebel1->getActiveGameOpcode();
 				const bool fullWidthStoredPatch = (_storedFobjWidth == _vm->_screenWidth);
-				// 0x0B (asteroid/surface) and 0x19/0x1A (on-foot) use SetCameraOffset
-				// directly — no projection-based FTCH placement. Level 4 phase 2
-				// also stores a full-width screen-space patch (320x180) that DOS
-				// restores without the centered 1/4 projection warp.
-				if (fullWidthStoredPatch || gameOp == 0x0B ||
+				const bool level8WalkerPatch = (gameOp == 0x0B && rebel1->getCurrentLevel() == 7);
+				// Keep the direct viewport placement used by the existing 0x0B
+				// compatibility path, except for Level 8's walker cockpit patch.
+				// DOS FTCH goes through FUN_28D0A, which sets DispatchFobjCodec
+				// flag 0x800; Level 8 depends on that quarter-projection so the
+				// cockpit and RunLevel8Flow indicators move together.
+				if (fullWidthStoredPatch || (gameOp == 0x0B && !level8WalkerPatch) ||
 						gameOp == 0x19 || gameOp == 0x1A) {
 					left += _ra1ViewportOffsetX;
 					top += _ra1ViewportOffsetY;
