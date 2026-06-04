@@ -1983,7 +1983,6 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	newEvent._Cu._slot = unusedThing.toUint16();
 	newEvent._Bu._location._mapX = mapX;
 	newEvent._Bu._location._mapY = mapY;
-	newEvent._Bu._location._mapY = mapY;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	int16 fluxcageCount;
 	if (isLordChaosOnSquare(mapX, mapY - 1)) {

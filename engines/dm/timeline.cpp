@@ -760,7 +760,6 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 						newEvent._priority = 0;
 						newEvent._Bu._location._mapX = mapX;
 						newEvent._Bu._location._mapY = mapY;
-						newEvent._Bu._location._mapY = mapY;
 						addEventGetEventIndex(&newEvent);
 					}
 				}
