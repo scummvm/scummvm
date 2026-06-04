@@ -753,7 +753,8 @@ T0209005_AddEventAndReturn:
 		}
 		if (AL0447_i_Behavior == kDMBehaviorAttack) {
 			AL0446_i_CreatureAspectIndex = eventType - kDMEventTypeUpdateAspectCreature0; /* Value -1 for event 32, meaning aspect will be updated for all creatures in the group */
-			nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0446_i_CreatureAspectIndex, getFlag(activeGroup->_aspect[AL0446_i_CreatureAspectIndex], kDMAspectMaskActiveGroupIsAttacking));
+			bool isAttacking = (AL0446_i_CreatureAspectIndex >= 0 && AL0446_i_CreatureAspectIndex < 4) ? getFlag(activeGroup->_aspect[AL0446_i_CreatureAspectIndex], kDMAspectMaskActiveGroupIsAttacking) : false;
+			nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0446_i_CreatureAspectIndex, isAttacking);
 			goto T0209136;
 		}
 		if ((AL0450_i_DistanceXToParty > 3) || (AL0451_i_DistanceYToParty > 3)) {
