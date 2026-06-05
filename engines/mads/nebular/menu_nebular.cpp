@@ -136,6 +136,7 @@ void MainMenu::doFrame() {
 			addSpriteSlot();
 		}
 
+		_vm->_screen->markAllDirty();
 		_vm->_events->showCursor();
 		showBonusItems();
 	} else {
