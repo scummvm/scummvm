@@ -23,6 +23,7 @@
 #define MADS_CORE_KERNEL_H
 
 #include "common/serializer.h"
+#include "common/textconsole.h"
 #include "mads/madsv2/core/general.h"
 #include "mads/madsv2/core/anim.h"
 #include "mads/madsv2/core/color.h"
@@ -629,6 +630,10 @@ extern void init_kernel();
 extern void kernel_random_frame(int handle, int16 *frame, int mode);
 extern void kernel_translate_anim(int handle, int delta_x, int delta_y, int delta_scale);
 extern void kernel_position_anim(int handle, int x, int y, int scale, int depth);
+
+inline void kernel_save_game(const char *buf) {
+	error("TODO: refactor to ScummVM savegame code");
+}
 
 } // namespace MADSV2
 } // namespace MADS

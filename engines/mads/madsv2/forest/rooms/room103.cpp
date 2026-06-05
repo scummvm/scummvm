@@ -423,8 +423,14 @@ void room_103_preload() {
 	room_parser_code_pointer = room_103_parser;
 	room_daemon_code_pointer = room_103_daemon;
 
-	section_1_walker();
-	section_1_interface();
+	if (flags[1] == -4)
+		global[g016] = -1;
+	if (previous_room != 199) {
+		section_1_walker();
+		section_1_interface();
+	}
+
+	player.walker_must_reload = true;
 }
 
 } // namespace Rooms

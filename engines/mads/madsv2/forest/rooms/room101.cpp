@@ -1116,8 +1116,12 @@ void room_101_preload() {
 	room_parser_code_pointer = room_101_parser;
 	room_daemon_code_pointer = room_101_daemon;
 
+	if (flags[0] == -4)
+		global[g016] = -1;
+
 	section_1_walker();
 	section_1_interface();
+	player.walker_must_reload = true;
 }
 
 } // namespace Rooms
