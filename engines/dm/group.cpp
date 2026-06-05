@@ -1126,8 +1126,8 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 		Thing curThing = dungeon.getSquareFirstThing(mapX, mapY);
 		while (curThing != _vm->_thingEndOfList) {
 			if ((curThing).getType() == kDMThingTypeExplosion) {
-				Teleporter *curTeleporter = (Teleporter *)dungeon.getThingData(curThing);
-				if (((Explosion *)curTeleporter)->setType(kDMExplosionTypeFluxcage)) {
+				Explosion *explosion = (Explosion *)dungeon.getThingData(curThing);
+				if (explosion->getType() == kDMExplosionTypeFluxcage) {
 					_fluxCages[dir] = true;
 					_fluxCageCount++;
 					_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
