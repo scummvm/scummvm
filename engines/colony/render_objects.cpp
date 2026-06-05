@@ -1452,6 +1452,180 @@ void ColonyEngine::drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, 
 	drawPrismOval3D(thing, pupilDef, useLook, pupilColorOverride, true);
 }
 
+namespace {
+
+int interpolatedRobotPoint(int from, int to, float progress) {
+	return (int)roundf((float)from + ((float)to - (float)from) * progress);
+}
+
+bool robotGrowShapeAndStage(int type, int &shape, int &stage) {
+	if (type < kRobEye || type > kRobMUPyramid)
+		return false;
+
+	shape = (type - kRobEye) & 3;
+	stage = (type - kRobEye) >> 2;
+	return true;
+}
+
+const ColonyEngine::PrismPartDef *growPrismDefForStage(int shape, int stage) {
+	switch (shape) {
+	case 1:
+		switch (stage) {
+		case 0: return &kPyramidBodyDef;
+		case 1: return &kFPyramidBodyDef;
+		case 2: return &kSPyramidBodyDef;
+		case 3: return &kMPyramidBodyDef;
+		default: return nullptr;
+		}
+	case 2:
+		switch (stage) {
+		case 0: return &kCubeBodyDef;
+		case 1: return &kFCubeBodyDef;
+		case 2: return &kSCubeBodyDef;
+		case 3: return &kMCubeBodyDef;
+		default: return nullptr;
+		}
+	case 3:
+		switch (stage) {
+		case 0: return &kUPyramidBodyDef;
+		case 1: return &kFUPyramidBodyDef;
+		case 2: return &kSUPyramidBodyDef;
+		case 3: return &kMUPyramidBodyDef;
+		default: return nullptr;
+		}
+	default:
+		return nullptr;
+	}
+}
+
+const ColonyEngine::PrismPartDef &growEyeIrisDefForStage(int stage) {
+	switch (stage) {
+	case 0: return kEyeIrisDef;
+	case 1: return kFEyeIrisDef;
+	case 2: return kSEyeIrisDef;
+	case 3:
+	default:
+		return kMEyeIrisDef;
+	}
+}
+
+const ColonyEngine::PrismPartDef &growEyePupilDefForStage(int stage) {
+	switch (stage) {
+	case 0: return kEyePupilDef;
+	case 1: return kFEyePupilDef;
+	case 2: return kSEyePupilDef;
+	case 3:
+	default:
+		return kMEyePupilDef;
+	}
+}
+
+} // namespace
+
+float ColonyEngine::growRenderTickFraction() const {
+	const uint32 kColonyThinkIntervalMs = 125;
+	const uint32 now = _system->getMillis();
+
+	if (_lastColonyThinkTime == 0 || now <= _lastColonyThinkTime)
+		return 0.0f;
+
+	const uint32 elapsed = now - _lastColonyThinkTime;
+	if (elapsed >= kColonyThinkIntervalMs)
+		return 1.0f;
+
+	return (float)elapsed / (float)kColonyThinkIntervalMs;
+}
+
+void ColonyEngine::drawInterpolatedGrowPrism(Thing &obj, const PrismPartDef &fromDef, const PrismPartDef &toDef, float progress) {
+	if (fromDef.pointCount != toDef.pointCount || fromDef.surfaceCount != toDef.surfaceCount)
+		return;
+
+	int points[8][3];
+	assert(fromDef.pointCount <= ARRAYSIZE(points));
+	for (int i = 0; i < fromDef.pointCount; ++i) {
+		points[i][0] = interpolatedRobotPoint(fromDef.points[i][0], toDef.points[i][0], progress);
+		points[i][1] = interpolatedRobotPoint(fromDef.points[i][1], toDef.points[i][1], progress);
+		points[i][2] = interpolatedRobotPoint(fromDef.points[i][2], toDef.points[i][2], progress);
+	}
+
+	const PrismPartDef def = {fromDef.pointCount, points, fromDef.surfaceCount, fromDef.surfaces};
+	draw3DPrism(obj, def, false, -1, true, false);
+}
+
+void ColonyEngine::drawInterpolatedGrowEye(Thing &obj, int fromStage, int toStage, float progress, int eyeballColor, int pupilColor) {
+	const int sphereZ[4][2] = {
+		{100, 200},
+		{0, 100},
+		{0, 50},
+		{0, 25}
+	};
+	int irisPoints[4][3];
+	int pupilPoints[4][3];
+
+	fromStage = CLIP(fromStage, 0, 3);
+	toStage = CLIP(toStage, 0, 3);
+
+	const int z0 = interpolatedRobotPoint(sphereZ[fromStage][0], sphereZ[toStage][0], progress);
+	const int z1 = interpolatedRobotPoint(sphereZ[fromStage][1], sphereZ[toStage][1], progress);
+	draw3DSphere(obj, 0, 0, z0, 0, 0, z1, eyeballColor, kColorBlack, true);
+
+	const PrismPartDef &fromIris = growEyeIrisDefForStage(fromStage);
+	const PrismPartDef &toIris = growEyeIrisDefForStage(toStage);
+	const PrismPartDef &fromPupil = growEyePupilDefForStage(fromStage);
+	const PrismPartDef &toPupil = growEyePupilDefForStage(toStage);
+	for (int i = 0; i < 4; ++i) {
+		irisPoints[i][0] = interpolatedRobotPoint(fromIris.points[i][0], toIris.points[i][0], progress);
+		irisPoints[i][1] = interpolatedRobotPoint(fromIris.points[i][1], toIris.points[i][1], progress);
+		irisPoints[i][2] = interpolatedRobotPoint(fromIris.points[i][2], toIris.points[i][2], progress);
+		pupilPoints[i][0] = interpolatedRobotPoint(fromPupil.points[i][0], toPupil.points[i][0], progress);
+		pupilPoints[i][1] = interpolatedRobotPoint(fromPupil.points[i][1], toPupil.points[i][1], progress);
+		pupilPoints[i][2] = interpolatedRobotPoint(fromPupil.points[i][2], toPupil.points[i][2], progress);
+	}
+
+	const PrismPartDef irisDef = {4, irisPoints, fromIris.surfaceCount, fromIris.surfaces};
+	const PrismPartDef pupilDef = {4, pupilPoints, fromPupil.surfaceCount, fromPupil.surfaces};
+	const int irisColor = (toStage == 3 && progress >= 0.5f) ? kColorMiniEyeIris : -1;
+	drawEyeOverlays3D(obj, irisDef, irisColor, pupilDef, pupilColor, false);
+}
+
+bool ColonyEngine::drawInterpolatedGrowRobot(Thing &obj, int eyeballColor, int pupilColor) {
+	int shape = 0;
+	int stage = 0;
+	if (obj.grow == 0 || !robotGrowShapeAndStage(obj.type, shape, stage))
+		return false;
+
+	int targetStage = stage;
+	if (obj.grow > 0) {
+		if (stage <= 0 || stage >= 3)
+			return false;
+		targetStage = stage - 1;
+	} else {
+		if (stage <= 0 || stage >= 3)
+			return false;
+		targetStage = stage + 1;
+	}
+
+	const int count = CLIP(obj.count, 0, 3);
+	float progress = ((float)count + growRenderTickFraction()) * 0.25f;
+	if (progress < 0.0f)
+		progress = 0.0f;
+	if (progress > 1.0f)
+		progress = 1.0f;
+
+	if (shape == 0) {
+		drawInterpolatedGrowEye(obj, stage, targetStage, progress, eyeballColor, pupilColor);
+		return true;
+	}
+
+	const PrismPartDef *fromDef = growPrismDefForStage(shape, stage);
+	const PrismPartDef *toDef = growPrismDefForStage(shape, targetStage);
+	if (!fromDef || !toDef)
+		return false;
+
+	drawInterpolatedGrowPrism(obj, *fromDef, *toDef, progress);
+	return true;
+}
+
 bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	const int eyeballColor = (_level == 1 || _level == 7) ? kColorPupil : kColorEyeball;
 	const int pupilColor = (_level == 1 || _level == 7) ? kColorEyeball : kColorPupil;
@@ -1774,42 +1948,66 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kRobFEye:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DSphere(obj, 0, 0, 0, 0, 0, 100, eyeballColor, kColorBlack, true);
 		drawEyeOverlays3D(obj, kFEyeIrisDef, -1, kFEyePupilDef, pupilColor, false);
 		break;
 	case kRobFPyramid:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kFPyramidBodyDef, false, -1, true, false);
 		break;
 	case kRobFCube:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kFCubeBodyDef, false, -1, true, false);
 		break;
 	case kRobFUPyramid:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kFUPyramidBodyDef, false, -1, true, false);
 		break;
 	case kRobSEye:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DSphere(obj, 0, 0, 0, 0, 0, 50, eyeballColor, kColorBlack, true);
 		drawEyeOverlays3D(obj, kSEyeIrisDef, -1, kSEyePupilDef, pupilColor, false);
 		break;
 	case kRobSPyramid:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kSPyramidBodyDef, false, -1, true, false);
 		break;
 	case kRobSCube:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kSCubeBodyDef, false, -1, true, false);
 		break;
 	case kRobSUPyramid:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kSUPyramidBodyDef, false, -1, true, false);
 		break;
 	case kRobMEye:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DSphere(obj, 0, 0, 0, 0, 0, 25, eyeballColor, kColorBlack, true);
 		drawEyeOverlays3D(obj, kMEyeIrisDef, kColorMiniEyeIris, kMEyePupilDef, pupilColor, false);
 		break;
 	case kRobMPyramid:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kMPyramidBodyDef, false, -1, true, false);
 		break;
 	case kRobMCube:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kMCubeBodyDef, false, -1, true, false);
 		break;
 	case kRobMUPyramid:
+		if (drawInterpolatedGrowRobot(obj, eyeballColor, pupilColor))
+			break;
 		draw3DPrism(obj, kMUPyramidBodyDef, false, -1, true, false);
 		break;
 	case kRobQueen:

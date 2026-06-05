@@ -849,6 +849,7 @@ Common::Error ColonyEngine::run() {
 	bool mouseMoved = false;
 	uint32 lastMoveTick = _system->getMillis();
 	uint32 lastColonyTick = lastMoveTick;
+	_lastColonyThinkTime = lastColonyTick;
 	uint32 lastBattleTick = lastMoveTick;
 	uint32 lastCenterTick = lastMoveTick;
 	while (!shouldQuit()) {
@@ -876,6 +877,7 @@ Common::Error ColonyEngine::run() {
 		// 125ms (~8fps) matches the original balance for robot aggression.
 		if (_gameMode == kModeColony && now - lastColonyTick >= 125) {
 			lastColonyTick = now;
+			_lastColonyThinkTime = now;
 			cThink();
 		}
 

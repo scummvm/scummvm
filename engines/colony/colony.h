@@ -557,6 +557,7 @@ private:
 	uint32 _blackoutColor = 0;
 	uint32 _lastClickTime = 0;
 	uint32 _displayCount = 0; // Frame counter for COLOR wall animation (Mac: count)
+	uint32 _lastColonyThinkTime = 0; // Last 125ms CThink tick, for render-only interpolation
 	uint32 _lastHotfootTime = 0;  // Time-gate for HOTFOOT damage (~8fps)
 	uint32 _lastAnimUpdate = 0;
 	uint32 _lastWarningChimeTime = 0;
@@ -654,6 +655,10 @@ private:
 	void drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible = false);
 	void drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, int irisColorOverride,
 		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook);
+	float growRenderTickFraction() const;
+	bool drawInterpolatedGrowRobot(Thing &obj, int eyeballColor, int pupilColor);
+	void drawInterpolatedGrowPrism(Thing &obj, const PrismPartDef &fromDef, const PrismPartDef &toDef, float progress);
+	void drawInterpolatedGrowEye(Thing &obj, int fromStage, int toStage, float progress, int eyeballColor, int pupilColor);
 	bool drawStaticObjectPrisms3D(Thing &obj);
 	void initRobots();
 	void renderCorridor3D();
