@@ -19,16 +19,12 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
-#include "mads/madsv2/core/imath.h"
-#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/core/sound.h"
-#include "mads/madsv2/core/text.h"
-#include "mads/madsv2/forest/mads/inventory.h"
-#include "mads/madsv2/forest/mads/sounds.h"
-#include "mads/madsv2/forest/mads/words.h"
+#include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mouse.h"
+#include "mads/madsv2/core/player.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/rooms/room107.h"
@@ -39,14 +35,12 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[15];       /* Sprite series handles */
-	int16 sequence[15];     /* Sequence handles      */
-	int16 animation[4];     /* Animation handles     */
-
-	int16 dragon_frame;     /* frame animation is on */
-
-	int16 done_with_conv;   /* T if done with conv   */
-	int16 prev_room;
+	int16 sprite[10];            /* 0x00 — sprite series handles  */
+	int16 sequence[10];          /* 0x14 — sequence handles       */
+	int16 animation[10];         /* 0x28 — animation handles      */
+	AnimationInfo animation_info[10]; /* 0x3C */
+	int16 _8c;                        /* 0x8C */
+	int16 _8e;                        /* 0x8C */
 };
 
 static Scratch scratch;
@@ -55,12 +49,99 @@ static Scratch scratch;
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
+#define aainfo scratch.animation_info
 
+static void room_107_anim1();
 
 static void room_107_init() {
+	flags[8] = 5;
+
+	ss[0] = kernel_load_series(kernel_name('b', 1), 0);
+	seq[0] = kernel_seq_stamp(ss[0], false, KERNEL_FIRST);
+	kernel_seq_depth(seq[0], 1);
+	kernel_seq_loc(seq[0], 274, 147);
+	kernel_seq_scale(seq[0], 100);
+
+	ss[1] = kernel_load_series(kernel_name('e', 1), 0);
+	seq[1] = kernel_seq_stamp(ss[1], false, KERNEL_FIRST);
+	kernel_seq_depth(seq[1], 1);
+	kernel_seq_loc(seq[1], 167, 115);
+	kernel_seq_scale(seq[1], 100);
+
+	ss[2] = kernel_load_series(kernel_name('r', 1), 0);
+	seq[2] = kernel_seq_stamp(ss[2], false, KERNEL_FIRST);
+	kernel_seq_depth(seq[2], 1);
+	kernel_seq_loc(seq[2], 75, 149);
+	kernel_seq_scale(seq[2], 100);
+
+	viewing_at_y = 22;
+	global[player_score] = 0;
+	global[g009] = 0;
+	player.walker_visible = 0;
+	player.commands_allowed = 0;
+	mouse_hide();
+
+	for (int16 i = 0; i < 10; i++) {
+		aainfo[i]._val1 = 0;
+		aainfo[i]._val2 = -1;
+	}
+
+	kernel_timing_trigger(5, 100);
+}
+
+static void room_107_anim1() {
+	int16 prev_frame = aainfo[0]._val2;
+	int16 frame = kernel_anim[aa[0]].frame;
+
+	if (frame != prev_frame) {
+		aainfo[0]._val2 = frame;
+
+		if (frame == 30) {
+			new_room = 104;
+		} else if (frame < 30) {
+			if (frame == 1) {
+				kernel_seq_delete(seq[0]);
+				kernel_seq_delete(seq[1]);
+				kernel_seq_delete(seq[2]);
+			} else if (frame == 21) {
+				aainfo[0]._val3 = 1;
+				digi_play_build(107, 'b', 1, 1);
+				scratch._8e = 21;
+			} else if (frame == 26) {
+				if (aainfo[0]._val3 == 1) {
+					aainfo[0]._val2 = 21;
+					kernel_reset_animation(aa[0], 21);
+				}
+			}
+		}
+	}
+
+	if (kernel.trigger == 7 || kernel.trigger == 28) {
+		if (scratch._8e == 21) {
+			aainfo[0]._val3 = 2;
+			scratch._8e = -1;
+			global_digi_play(4);
+			aainfo[0]._val2 = 26;
+			kernel_reset_animation(aa[0], 26);
+		}
+	}
 }
 
 static void room_107_daemon() {
+	if (global[player_hyperwalked] == -1) {
+		game_save_name(0);
+		kernel_save_game(save_game_buf);
+		new_room = 904;
+	}
+
+	if (kernel.trigger == 100) {
+		aa[0] = kernel_run_animation(kernel_name('T', 1), 0);
+		aainfo[0]._val1 = -1;
+		scratch._8c = 30;
+	}
+
+	if (aainfo[0]._val1 != 0)
+		room_107_anim1();
 }
 
 static void room_107_pre_parser() {
@@ -73,6 +154,8 @@ void room_107_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
 	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	for (AnimationInfo &ai : scratch.animation_info) ai.synchronize(s);
+	s.syncAsSint16LE(scratch._8c);
 }
 
 void room_107_preload() {
@@ -83,6 +166,7 @@ void room_107_preload() {
 
 	section_1_walker();
 	section_1_interface();
+	player.walker_must_reload = true;
 }
 
 } // namespace Rooms
