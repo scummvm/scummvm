@@ -1309,15 +1309,11 @@ void ColonyEngine::drawStaticObjects() {
 		if (ox < 0 || ox >= 32 || oy < 0 || oy >= 32 || !_visibleCell[ox][oy])
 			continue;
 		drawStaticObjectPrisms3D(obj);
-		// MAKEROBO.C: if shootable robot straddles centerX, set insight
-		// (narrows crosshair brackets to indicate a target is in the line of fire)
-		int t = obj.type;
-		if ((t >= kRobEye && t <= kRobUPyramid) ||
-			(t >= kRobQueen && t <= kRobSoldier)) {
-			if (obj.where.xmn < _centerX && obj.where.xmx > _centerX)
-				_insight = true;
-		}
 	}
+
+	// Use the same rendered-bounds target selection as cShoot() so the
+	// narrowed crosshair only appears for a shot that would select a robot.
+	_insight = _weapons > 0 && hasAimedRobotTarget();
 }
 
 void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible) {

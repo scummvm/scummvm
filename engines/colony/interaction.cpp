@@ -342,6 +342,62 @@ void ColonyEngine::setPower(int p0, int p1, int p2) {
 	}
 }
 
+bool ColonyEngine::isShootableRobotType(int type) const {
+	return (type >= kRobEye && type <= kRobUPyramid) ||
+		type == kRobQueen || type == kRobDrone || type == kRobSoldier;
+}
+
+bool ColonyEngine::isShotBlockingObjectType(int type) const {
+	return type == kObjForkLift || type == kObjTeleport || type == kObjPToilet ||
+		type == kObjBox2 || type == kObjReactor || type == kObjScreen;
+}
+
+int ColonyEngine::findAimedObject(const Common::Point &aim, bool *isBlocker, int *targetDist) const {
+	int bestIdx = -1;
+	int bestDist = INT_MAX;
+	bool bestIsBlocker = false;
+
+	for (uint i = 0; i < _objects.size(); i++) {
+		const Thing &obj = _objects[i];
+		if (!obj.alive)
+			continue;
+
+		if (obj.where.xmn > obj.where.xmx || obj.where.zmn > obj.where.zmx)
+			continue;
+		if (obj.where.xmn > aim.x || obj.where.xmx < aim.x ||
+			obj.where.zmn > aim.y || obj.where.zmx < aim.y)
+			continue;
+
+		const int type = obj.type;
+		const bool isRobot = isShootableRobotType(type);
+		const bool isBlockerObject = isShotBlockingObjectType(type);
+		if (!isRobot && !isBlockerObject)
+			continue;
+
+		const int dx = obj.where.xloc - _me.xloc;
+		const int dy = obj.where.yloc - _me.yloc;
+		const int dist = (int)sqrtf((float)(dx * dx + dy * dy));
+
+		if (dist < bestDist) {
+			bestDist = dist;
+			bestIdx = (int)i + 1; // 1-based object index
+			bestIsBlocker = isBlockerObject;
+		}
+	}
+
+	if (isBlocker)
+		*isBlocker = bestIsBlocker;
+	if (targetDist)
+		*targetDist = bestDist;
+	return bestIdx;
+}
+
+bool ColonyEngine::hasAimedRobotTarget() const {
+	bool blocker = false;
+	const int target = findAimedObject(getAimPoint(), &blocker);
+	return target > 0 && !blocker && isShootableRobotType(_objects[target - 1].type);
+}
+
 // shoot.c CShoot(): player fires weapon at the cursor or screen center.
 // Original hit detection uses the rendered object bounds on screen.
 void ColonyEngine::cShoot() {
@@ -368,39 +424,9 @@ void ColonyEngine::cShoot() {
 	// Drain weapons power: -(1 << level) per shot
 	setPower(-(1 << _level), 0, 0);
 
-	int bestIdx = -1;
-	int bestDist = INT_MAX;
 	bool bestIsBlocker = false;
-
-	for (uint i = 0; i < _objects.size(); i++) {
-		const Thing &obj = _objects[i];
-		if (!obj.alive)
-			continue;
-
-		if (obj.where.xmn > obj.where.xmx || obj.where.zmn > obj.where.zmx)
-			continue;
-		if (obj.where.xmn > cx || obj.where.xmx < cx ||
-			obj.where.zmn > cy || obj.where.zmx < cy)
-			continue;
-
-		int t = obj.type;
-		bool isRobot = (t >= kRobEye && t <= kRobUPyramid) ||
-			t == kRobQueen || t == kRobDrone || t == kRobSoldier;
-		bool blocksShot = (t == kObjForkLift || t == kObjTeleport || t == kObjPToilet ||
-			t == kObjBox2 || t == kObjReactor || t == kObjScreen);
-		if (!isRobot && !blocksShot)
-			continue;
-
-		int dx = obj.where.xloc - _me.xloc;
-		int dy = obj.where.yloc - _me.yloc;
-		int dist = (int)sqrtf((float)(dx * dx + dy * dy));
-
-		if (dist < bestDist) {
-			bestDist = dist;
-			bestIdx = (int)i + 1; // 1-based robot index
-			bestIsBlocker = blocksShot;
-		}
-	}
+	int bestDist = INT_MAX;
+	const int bestIdx = findAimedObject(aim, &bestIsBlocker, &bestDist);
 
 	if (bestIdx > 0 && !bestIsBlocker) {
 		const Thing &target = _objects[bestIdx - 1];
