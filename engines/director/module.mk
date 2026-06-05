@@ -190,10 +190,10 @@ MODULE_OBJS = \
 	lingo/xtras/d/directsound.o \
 	lingo/xtras/d/displayres.o \
 	lingo/xtras/f/filextra.o \
+	lingo/xtras/g/getdir.o \
 	lingo/xtras/k/keypoll.o \
 	lingo/xtras/m/masterapp.o \
 	lingo/xtras/m/mui.o \
-	lingo/xtras/g/getdir.o \
 	lingo/xtras/o/openurl.o \
 	lingo/xtras/o/oscheck.o \
 	lingo/xtras/q/qtvrxtra.o \
