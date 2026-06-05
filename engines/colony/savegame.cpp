@@ -581,6 +581,8 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_lastWarningChimeTime = 0;
 	_battledx = _width / 59;
 	updateViewportLayout();
+	if (_gameMode == kModeBattle)
+		normalizeBattlePlayerPosition();
 
 	return Common::kNoError;
 }

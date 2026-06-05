@@ -693,6 +693,7 @@ private:
 	void battleInit();
 	void battleSet();
 	void battleThink();
+	void normalizeBattlePlayerPosition();
 	void enterColonyFromBattle(int mapNum, int xloc, int yloc);
 	void battleCommand(int xnew, int ynew);
 	void battleShoot();

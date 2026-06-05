@@ -599,6 +599,7 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 		_me.yloc = targetY << 8;
 		_me.xindex = targetX;
 		_me.yindex = targetY;
+		normalizeBattlePlayerPosition();
 		return 2;
 	}
 

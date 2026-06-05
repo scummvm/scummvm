@@ -515,6 +515,16 @@ void ColonyEngine::battleSet() {
 	}
 }
 
+void ColonyEngine::normalizeBattlePlayerPosition() {
+	// The original stored battle coordinates in 16-bit ints. Airlock map
+	// targets such as 253<<8 wrap to negative world coordinates there; keep
+	// the same representation before battle culling and camera math run.
+	_me.xloc = battleNormalizeCoord(_me.xloc);
+	_me.yloc = battleNormalizeCoord(_me.yloc);
+	_me.xindex = wrapBattleCoord(_me.xloc) >> 8;
+	_me.yindex = wrapBattleCoord(_me.yloc) >> 8;
+}
+
 // =====================================================================
 // battleBackdrop: Draw 2D sky gradient and ground fill.
 // Called before 3D rendering begins.
@@ -1187,6 +1197,7 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 // Called from the main loop when _gameMode == kModeBattle.
 // =====================================================================
 void ColonyEngine::renderBattle() {
+	normalizeBattlePlayerPosition();
 	_battleMaxP = 0;
 
 	// Phase 1: 2D backdrop (sky gradient, mountains, sun) follows camera pitch
