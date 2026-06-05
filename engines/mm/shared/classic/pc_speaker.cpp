@@ -42,6 +42,9 @@ bool PcSpeaker::init() {
 }
 
 void PcSpeaker::stop() {
+	_loopingPitSequence = nullptr;
+	_loopingPitTickMicros = 0;
+
 	if (_ready)
 		_speaker->stop();
 }
@@ -65,13 +68,7 @@ void PcSpeaker::queueSilence(uint32 lengthUs) {
 		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0.0f, lengthUs);
 }
 
-void PcSpeaker::playPitSequence(const PitSequenceEntry *sequence, uint32 tickMicros, bool append) {
-	if (!_ready || !sequence)
-		return;
-
-	if (!append)
-		stop();
-
+void PcSpeaker::queuePitSequence(const PitSequenceEntry *sequence, uint32 tickMicros) {
 	for (const PitSequenceEntry *entry = sequence; entry->durationTicks != 0; ++entry) {
 		const uint32 lengthUs = entry->durationTicks * tickMicros;
 		if (entry->pitDivisor == 0) {
@@ -80,6 +77,18 @@ void PcSpeaker::playPitSequence(const PitSequenceEntry *sequence, uint32 tickMic
 			queueTone(kPitBaseFrequency / entry->pitDivisor, lengthUs);
 		}
 	}
+}
+
+void PcSpeaker::playPitSequence(const PitSequenceEntry *sequence, uint32 tickMicros, bool append, bool loop) {
+	if (!_ready || !sequence)
+		return;
+
+	if (!append)
+		stop();
+
+	_loopingPitSequence = loop ? sequence : nullptr;
+	_loopingPitTickMicros = loop ? tickMicros : 0;
+	queuePitSequence(sequence, tickMicros);
 }
 
 void PcSpeaker::playFrequencySequence(const FrequencySequenceEntry *sequence) {
@@ -94,6 +103,11 @@ void PcSpeaker::playFrequencySequence(const FrequencySequenceEntry *sequence) {
 		else
 			queueTone(entry->frequency, entry->lengthUs);
 	}
+}
+
+void PcSpeaker::update() {
+	if (_loopingPitSequence && !isPlaying())
+		queuePitSequence(_loopingPitSequence, _loopingPitTickMicros);
 }
 
 } // namespace Classic

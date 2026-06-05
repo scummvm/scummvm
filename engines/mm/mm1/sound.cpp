@@ -115,7 +115,7 @@ Sound::Sound(Audio::Mixer *mixer) : Shared::Xeen::Sound(mixer) {
 	_speaker.init();
 }
 
-void Sound::playSequence(const Shared::Classic::PitSequenceEntry *sequence, bool append, bool restart) {
+void Sound::playSequence(const Shared::Classic::PitSequenceEntry *sequence, bool append, bool restart, bool loop) {
 	if (!g_engine->_sound || !g_engine->_sound->_fxOn)
 		return;
 	if (g_engine->isEnhanced())
@@ -127,7 +127,7 @@ void Sound::playSequence(const Shared::Classic::PitSequenceEntry *sequence, bool
 	if (!append && !restart && g_engine->_sound->_speaker.isPlaying())
 		return;
 
-	g_engine->_sound->_speaker.playPitSequence(sequence, kBiosTimerTickMicros, append);
+	g_engine->_sound->_speaker.playPitSequence(sequence, kBiosTimerTickMicros, append, loop);
 }
 
 void Sound::sound(SoundId soundNum) {
@@ -161,10 +161,10 @@ void Sound::sound(SoundId soundNum) {
 void Sound::sound2(SoundId soundNum) {
 	switch (soundNum) {
 	case SOUND_TITLE:
-		playSequence(kMM1Sound0, true);
+		playSequence(kMM1Sound0, false, false, true);
 		break;
 	case SOUND_1:
-		playSequence(kMM1Sound1, true);
+		playSequence(kMM1Sound1, false, true);
 		break;
 	case SOUND_2:
 		playSequence(kMM1Sound2, true);
@@ -189,9 +189,15 @@ void Sound::sound2(SoundId soundNum) {
 	}
 }
 
-void Sound::stopSound() {
+void Sound::update() {
 	if (g_engine->_sound)
+		g_engine->_sound->_speaker.update();
+}
+
+void Sound::stopSound() {
+	if (g_engine->_sound) {
 		g_engine->_sound->_speaker.stop();
+	}
 }
 
 } // namespace MM1

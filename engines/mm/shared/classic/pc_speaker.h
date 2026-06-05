@@ -45,7 +45,11 @@ struct FrequencySequenceEntry {
 class PcSpeaker {
 private:
 	Audio::PCSpeaker *_speaker = nullptr;
+	const PitSequenceEntry *_loopingPitSequence = nullptr;
+	uint32 _loopingPitTickMicros = 0;
 	bool _ready = false;
+
+	void queuePitSequence(const PitSequenceEntry *sequence, uint32 tickMicros);
 
 public:
 	PcSpeaker();
@@ -58,8 +62,9 @@ public:
 	void playTone(int frequency, int32 lengthMs);
 	void queueTone(float frequency, uint32 lengthUs);
 	void queueSilence(uint32 lengthUs);
-	void playPitSequence(const PitSequenceEntry *sequence, uint32 tickMicros, bool append = false);
+	void playPitSequence(const PitSequenceEntry *sequence, uint32 tickMicros, bool append = false, bool loop = false);
 	void playFrequencySequence(const FrequencySequenceEntry *sequence);
+	void update();
 };
 
 } // namespace Classic

@@ -38,7 +38,7 @@ class Sound : public Shared::Xeen::Sound {
 private:
 	Shared::Classic::PcSpeaker _speaker;
 
-	static void playSequence(const Shared::Classic::PitSequenceEntry *sequence, bool append = false, bool restart = false);
+	static void playSequence(const Shared::Classic::PitSequenceEntry *sequence, bool append = false, bool restart = false, bool loop = false);
 
 public:
 	Sound(Audio::Mixer *mixer);
@@ -46,6 +46,7 @@ public:
 
 	static void sound(SoundId soundNum);
 	static void sound2(SoundId soundNum);
+	static void update();
 	static void stopSound();
 };
 
