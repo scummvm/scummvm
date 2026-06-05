@@ -57,6 +57,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed holomap model rendering.
    - Disable autosaves while driving a vehicle.
 
+ PS3 port:
+   - Added support for running ScummVM engines as separate modules/executables.
+     This saves about 90 MB of RAM. It is enabled only for release packages.
 
 #### 2026.2.0 "Railmonicon" (2026-03-28)
 
