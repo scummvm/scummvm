@@ -323,6 +323,7 @@ protected:
 
 private:
 	GroupedListWidget *_list;
+	bool _listInitialized; // Whether the list has already been initialized
 };
 
 } // End of namespace GUI

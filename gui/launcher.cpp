@@ -1111,7 +1111,7 @@ static const int kSelPosGroupingChange = -2;
 
 LauncherSimple::LauncherSimple(const Common::String &title)
 	: LauncherDialog(title),
-	_list(nullptr) {
+	_list(nullptr), _listInitialized(false) {
 	build();
 }
 
@@ -1255,10 +1255,13 @@ void LauncherSimple::updateListing(int selPos) {
 		savedSelection = _list->saveSelection();
 	}
 
-	// Preserve the current collapsed groups before rebuilding the grouped list
-	if (_groupBy != kGroupByNone) {
+	/* Preserve the current collapsed groups before rebuilding the grouped list
+	 * Skip this on the very first call as it would overwrite the config state
+	 * saved by the previous view's destructor */
+	if (_groupBy != kGroupByNone && _listInitialized) {
 		_list->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 	}
+	_listInitialized = true;
 
 	_list->setList(l);
 
