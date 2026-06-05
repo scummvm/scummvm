@@ -140,7 +140,7 @@ public:
 };
 
 int ColonyEngine::runMacEndgameDialog(const Common::String &message) {
-	if (_renderMode != Common::kRenderMacintosh || !_wm || !_menuSurface || !_gfx)
+	if (!isMacRenderMode() || !_wm || !_menuSurface || !_gfx)
 		return Graphics::kMacDialogQuitRequested;
 
 	if (_macMenu && _wm->isMenuActive())
@@ -502,7 +502,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	// Set up gradient palette entries (200-213) for story text
 	// Mac original: tColor.blue starts at 0xFFFF and decreases by 4096 per visible line
 	// B&W Mac: white gradient instead of blue
-	const bool bwMac = (macFont && !_hasMacColors);
+	const bool bwMac = (macFont && !isMacColorMode());
 	byte pal[14 * 3]; // storyLength entries
 	memset(pal, 0, sizeof(pal));
 	for (int i = 0; i < storyLength; i++) {
@@ -968,7 +968,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 
 	int centery = _height / 2 - 10;
 
-	const bool bwMac = (macFont && !_hasMacColors);
+	const bool bwMac = (macFont && !isMacColorMode());
 	const bool macStyle = (macFont != nullptr);
 	const uint32 grayIndex = 160;
 	const uint32 textIndex = 176;
@@ -1214,7 +1214,7 @@ void ColonyEngine::terminateGame(bool blowup) {
 	_centerX = savedCenterX;
 	_centerY = savedCenterY;
 
-	if (_renderMode == Common::kRenderMacintosh) {
+	if (isMacRenderMode()) {
 		while (!shouldQuit()) {
 			switch (runMacEndgameDialog(_("You have been terminated."))) {
 			case 0:

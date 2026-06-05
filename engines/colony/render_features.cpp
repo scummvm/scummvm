@@ -252,8 +252,8 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 	if (!data || data[0] == 0)
 		return;
 
-	const bool macMode = (_renderMode == Common::kRenderMacintosh);
-	const bool macColors = (macMode && _hasMacColors);
+	const bool macMode = isMacRenderMode();
+	const bool macColors = isMacColorMode();
 	const uint32 fillColor = macColors ? packMacColor(_macColors[8 + _level - 1].bg) : 0;
 	const uint32 lineColor = macColors ? (uint32)0xFF000000 : 0;
 
@@ -354,7 +354,7 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 	}
 
 	if (macMode) {
-		const uint32 wallFill = _hasMacColors
+		const uint32 wallFill = macColors
 			? packMacColor(_macColors[8 + _level - 1].fg)
 			: (uint32)255;
 		_gfx->setWireframe(true, wallFill);
@@ -393,8 +393,8 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	bool lit = (_corePower[_coreIndex] > 0);
 	uint32 holeColor = lit ? 0 : 7;
 
-	const bool macMode = (_renderMode == Common::kRenderMacintosh);
-	const bool macColors = (macMode && _hasMacColors);
+	const bool macMode = isMacRenderMode();
+	const bool macColors = isMacColorMode();
 
 	// Helper lambda: draw a filled hole polygon with Mac color or B&W fallback
 	auto drawHolePoly = [&](const float *u, const float *v, int cnt, int macIdx) {
@@ -484,8 +484,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 	float corners[4][3];
 	getWallFace3D(cellX, cellY, direction, corners);
-	const bool macMode = (_renderMode == Common::kRenderMacintosh);
-	const bool macColors = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool macMode = isMacRenderMode();
+	const bool macColors = isMacColorMode();
 	const bool lit = (_corePower[_coreIndex] > 0);
 	const uint32 wallFeatureFill = macColors
 		? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
@@ -653,7 +653,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
 
 		// Mac: fill entire wall face (c_upstairs)
-		if (_renderMode == Common::kRenderMacintosh) {
+		if (isMacRenderMode()) {
 			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 			float vf2[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 			if (macColors) {
@@ -726,7 +726,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
 
 		// Mac: fill entire wall face (c_dnstairs)
-		if (_renderMode == Common::kRenderMacintosh) {
+		if (isMacRenderMode()) {
 			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 			float vf2[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 			if (macColors) {
@@ -830,7 +830,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// Tunnel: hexagonal opening from Grid (0,0 0,5 1,6 5,6 6,5 6,0)
 		const float uT[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
 		const float vT[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
-		if (_renderMode == Common::kRenderMacintosh) {
+		if (isMacRenderMode()) {
 			if (macColors) {
 				macFillPoly(uT, vT, 6, 24); // c_tunnel
 			} else {
@@ -894,7 +894,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// map[1..4] = pattern ID per band (0=WHITE, 1=LTGRAY, 2=GRAY, 3=DKGRAY, 4=BLACK).
 		// Values >= 5 trigger animation: color = (map[i+1] + _displayCount) % 5.
 		// Band 0 (top): v=0.75..1.0, Band 1: v=0.5..0.75, Band 2: v=0.25..0.5, Band 3: v=0..0.25.
-		if (_renderMode == Common::kRenderMacintosh) {
+		if (isMacRenderMode()) {
 			if (macColors) {
 				// Mac drawColor: map[i+1] selects color (0→c_color0..3→c_color3, 4→BLACK).
 				// Values >= 5: animated = (map[i+1] + _displayCount) % 5.

@@ -451,6 +451,8 @@ public:
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
 	bool isSoundEnabled() const { return _soundOn; }
 	const Graphics::Surface *getSavedScreen() const { return _savedScreen; }
+	bool isMacRenderMode() const { return _renderMode == Common::kRenderMacintosh || _renderMode == Common::kRenderMacintoshBW; }
+	bool isMacColorMode() const { return _renderMode == Common::kRenderMacintosh && _hasMacColors; }
 
 	void initTrig();
 	void loadMacColors();

@@ -1271,7 +1271,7 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		pz[i] = centerZ + ca * axisHZ + sa * axisVZ;
 	}
 
-	if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
+	if (isMacColorMode()) {
 		const int macColorIdx = mapEyeOverlayColorToMacColor(fillColorIdx, _level);
 		int pattern = _macColors[macColorIdx].pattern;
 		uint32 fg = packEyeOverlayMacColor(_macColors[macColorIdx].fg);
@@ -1288,7 +1288,7 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		if (stipple)
 			_gfx->setStippleData(nullptr);
 	} else if (lit) {
-		if (_renderMode == Common::kRenderMacintosh) {
+		if (isMacRenderMode()) {
 			int pattern = mapEyeOverlayColorToMacPattern(fillColorIdx);
 			if (pattern == kPatternClear)
 				return;
@@ -1375,13 +1375,13 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjFWall:
-		if (_renderMode == Common::kRenderMacintosh)
+		if (isMacRenderMode())
 			draw3DPrism(obj, kFWallPart, false, kColorCorridorWall, true, true);
 		else
 			draw3DPrism(obj, kFWallPart, false, -1, true, true);
 		break;
 	case kObjCWall:
-		if (_renderMode == Common::kRenderMacintosh)
+		if (isMacRenderMode())
 			draw3DPrism(obj, kCWallPart, false, kColorCorridorWall, true, true);
 		else
 			draw3DPrism(obj, kCWallPart, false, -1, true, true);
@@ -1715,7 +1715,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			Thing &nearEye = leftFirst ? rightEye : leftEye;
 			const PrismPartDef &farWing = leftFirst ? kQLWingDef : kQRWingDef;
 			const PrismPartDef &nearWing = leftFirst ? kQRWingDef : kQLWingDef;
-			const int wingColor = (_renderMode != Common::kRenderMacintosh && _level == 7) ? kColorQueenWingRed : kColorClear;
+			const int wingColor = (!isMacRenderMode() && _level == 7) ? kColorQueenWingRed : kColorClear;
 
 			// DOS draweyes(): queen eyeball is RED fill + WHITE outline
 			// (hardcoded, not from color table). Iris is GREEN.

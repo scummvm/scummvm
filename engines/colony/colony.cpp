@@ -166,7 +166,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 			_renderMode = Common::kRenderEGA;
 	}
 
-	_wireframe = (_renderMode != Common::kRenderMacintosh);
+	_wireframe = !isMacRenderMode();
 	_fullscreen = false;
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
 	_moveForward = false;
@@ -487,7 +487,7 @@ void ColonyEngine::updateMouseCapture(bool recenter) {
 
 	int cursorMode = 0;
 
-	if (!_mouseLocked && _renderMode == Common::kRenderMacintosh && _wm) {
+	if (!_mouseLocked && isMacRenderMode() && _wm) {
 		if (_macCrossCursor) {
 			cursorMode = 1;
 			_wm->replaceCursor(Graphics::kMacCursorCustom, _macCrossCursor);
@@ -585,7 +585,7 @@ void ColonyEngine::handleMenuAction(int action) {
 }
 
 void ColonyEngine::initMacMenus() {
-	if (_renderMode != Common::kRenderMacintosh) {
+	if (!isMacRenderMode()) {
 		_menuBarHeight = 0;
 		return;
 	}
@@ -775,7 +775,7 @@ Common::Error ColonyEngine::run() {
 	// Original Mac Colony: rScreen capped at 640x480 (inits.c lines 111-112).
 	// DOS EGA: 640x350 with non-square pixels displayed at 4:3.
 	// Mac uses square pixels at native 640x480.
-	if (_renderMode == Common::kRenderMacintosh) {
+	if (isMacRenderMode()) {
 		_width = 640;
 		_height = 480;
 	} else {
@@ -791,6 +791,7 @@ Common::Error ColonyEngine::run() {
 	if (!_gfx)
 		return Common::kUserCanceled;
 
+	loadMacColors();
 	updateViewportLayout();
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	debugC(1, kColonyDebugRender, "Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
@@ -814,8 +815,7 @@ Common::Error ColonyEngine::run() {
 		pal[i * 3 + 2] = i;
 	}
 
-	loadMacColors();
-	if (_hasMacColors) {
+	if (isMacColorMode()) {
 		for (int i = 0; i < 145; i++) {
 			pal[(100 + i) * 3 + 0] = _macColors[i].fg[0] >> 8;
 			pal[(100 + i) * 3 + 1] = _macColors[i].fg[1] >> 8;

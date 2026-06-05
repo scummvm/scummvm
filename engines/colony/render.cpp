@@ -522,7 +522,7 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 				continue;
 			}
 
-			if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
+			if (isMacColorMode()) {
 				// Mac color rendering: follows SuperPoly() from calcrobo.c:429-505.
 				int pattern;
 				uint32 fg;
@@ -574,7 +574,7 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 					_gfx->setStippleData(nullptr);
 				}
 			} else if (lit) {
-				if (_renderMode == Common::kRenderMacintosh) {
+				if (isMacRenderMode()) {
 					// Mac B&W: stipple dither pattern fill + black outline
 					int pattern;
 					if (colorIdx == kColorCorridorWall) {
@@ -632,10 +632,10 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 	const bool lit = (_corePower[_coreIndex] > 0);
 	// Mac color: c_plant bg; Mac B&W: black; EGA: green; unlit: white/black
 	uint32 color;
-	if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
+	if (isMacColorMode()) {
 		color = lit ? packMacColor(_macColors[63].bg) : 0xFF000000; // c_plant
 	} else {
-		color = lit ? (_renderMode == Common::kRenderMacintosh ? 0 : 2) : 15;
+		color = lit ? (isMacRenderMode() ? 0 : 2) : 15;
 	}
 
 	for (int i = 0; i < def.surfaceCount; i++) {
@@ -740,7 +740,7 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 		}
 	}
 
-	if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
+	if (isMacColorMode()) {
 		// Mac color: map fillColor to Mac color index and use RGB
 		// fillColor is an ObjColor enum value passed by the caller
 		const int fillIdx = mapObjColorToMacColor((int)fillColor, _level);
@@ -760,7 +760,7 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 		if (stipple)
 			_gfx->setStippleData(nullptr);
 	} else if (lit) {
-		if (_renderMode == Common::kRenderMacintosh) {
+		if (isMacRenderMode()) {
 			int pattern = lookupMacPattern((int)fillColor, _level);
 			if (pattern == kPatternClear)
 				pattern = kPatternGray;
@@ -872,11 +872,11 @@ void ColonyEngine::renderCorridor3D() {
 	computeVisibleCells();
 
 	bool lit = (_corePower[_coreIndex] > 0);
-	bool macMode = (_renderMode == Common::kRenderMacintosh);
+	bool macMode = isMacRenderMode();
 
 	uint32 wallFill, wallLine, floorColor, ceilColor;
 
-	if (macMode && _hasMacColors) {
+	if (isMacColorMode()) {
 		if (lit) {
 			// Mac Display(): wallColor = cColor[c_char0+level-1].f (level-specific color).
 			// SuperPoly(c_lwall) uses wallColor as fill, giving all walls the level tint.
@@ -928,7 +928,7 @@ void ColonyEngine::renderCorridor3D() {
 	// Mac color mode: original corridor renderer only showed ceiling edges at wall
 	// boundaries (via 2D perspective), not a full-map grid. Wall tops from draw3DWall
 	// already provide the ceiling lines where walls exist.
-	if (!(macMode && _hasMacColors)) {
+	if (!isMacColorMode()) {
 		for (int i = 0; i <= 32; i++) {
 			float d = i * 256.0f;
 			float maxD = 32.0f * 256.0f;

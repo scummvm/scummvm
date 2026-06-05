@@ -475,7 +475,7 @@ void ColonyEngine::destroyRobot(int num) {
 // bottom-left and bottom-right corners of the viewport converging at the aim
 // point, plus a small filled oval at center. Simulates a rifle-barrel perspective.
 void ColonyEngine::doShootCircles(int cx, int cy) {
-	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+	const bool isMac = isMacRenderMode();
 
 	if (isMac) {
 		// Mac shoot.c CShoot(): patXor diagonal lines radiating from aim point
@@ -541,7 +541,7 @@ void ColonyEngine::doShootCircles(int cx, int cy) {
 // SHOOT.C doBurnHole(): expanding concentric random rays in blue/yellow/white
 // when a robot is hit. Creates an "explosion" effect at the hit location.
 void ColonyEngine::doBurnHole(int cx, int cy, int radius) {
-	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+	const bool isMac = isMacRenderMode();
 
 	if (isMac) {
 		// Mac: InvertOval at robot bounds
@@ -605,7 +605,7 @@ void ColonyEngine::meGetShot() {
 	if (vw <= 0 || vh <= 0)
 		return;
 
-	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+	const bool isMac = isMacRenderMode();
 
 	if (isMac) {
 		// Mac shoot.c: InvertRect(&Clip) — full viewport flash

@@ -786,7 +786,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 
 void ColonyEngine::playTunnelAirlockEffect() {
 	const Common::Rect effectRect(0, _menuBarHeight, _width, _height);
-	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool macColor = isMacColorMode();
 	const int tunnelColor = 24; // c_tunnel
 	const uint32 fillFg = macColor ? packMacColor(_macColors[tunnelColor].fg) : 0;
 	const uint32 fillBg = macColor ? packMacColor(_macColors[tunnelColor].bg) : 0;
@@ -883,7 +883,7 @@ void ColonyEngine::playTunnelEffect(bool falling) {
 	// Original TUNNEL.C: falling into the reactor reuses the tunnel renderer
 	// with the falling flag set, which removes the tracks and shortens the run.
 	const Common::Rect effectRect(0, _menuBarHeight, _width, _height);
-	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool macColor = isMacColorMode();
 	const int tunnelColor = 24; // c_tunnel
 	const int tunnelFrames = falling ? 10 : 49;
 	const uint32 fillFg = macColor ? packMacColor(_macColors[tunnelColor].fg) : 0;

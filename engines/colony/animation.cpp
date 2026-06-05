@@ -398,7 +398,7 @@ void ColonyEngine::playAnimation() {
 	_system->lockMouse(false);
 	warpMouseLogical(_centerX, _centerY);
 	const char *cursorName = "default arrow cursor";
-	if (_renderMode == Common::kRenderMacintosh && _macArrowCursor) {
+	if (isMacRenderMode() && _macArrowCursor) {
 		cursorName = "Mac arrow cursor";
 		CursorMan.replaceCursor(_macArrowCursor);
 	} else {
@@ -713,7 +713,7 @@ void ColonyEngine::drawAnimation() {
 	ox = (ox / 8) * 8;
 	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 
-	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh
+	const bool useColor = (isMacColorMode()
 		&& !_animBMColors.empty());
 
 	// Fill background patterns (416x264 area).
@@ -728,7 +728,7 @@ void ColonyEngine::drawAnimation() {
 	// did 416*264 = 109,824 individual setPixel calls per drawAnimation, each
 	// issuing its own glBegin/glEnd; on the OpenGL backend that took tens of
 	// milliseconds per frame and starved the cursor of refreshes.
-	const int patternMode = useColor ? 2 : (_renderMode == Common::kRenderMacintosh ? 1 : 0);
+	const int patternMode = useColor ? 2 : (isMacRenderMode() ? 1 : 0);
 	uint32 topColor = 0, botColor = 0;
 	if (useColor) {
 		const bool powered = (_corePower[_coreIndex] > 0);
@@ -833,7 +833,7 @@ void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 
 	// Resolve fill color from BMColor[index+2] (ganimate.c DrawlSprite).
 	uint32 fillColor = 0xFFFFFFFF; // B&W default: white
-	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh
+	const bool useColor = (isMacColorMode()
 		&& !_animBMColors.empty());
 	if (useColor) {
 		int bmIdx = index + 2;
@@ -857,8 +857,8 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y, uin
 	//   fg bit=0   -> BackColor (fillColor from BMColor)
 	// Mac B&W: same — fg bit=1 is black (0), fg bit=0 is white (15).
 	// DOS MetaWINDOW: OPPOSITE — fg bit=1 is white (15), fg bit=0 is black (0).
-	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh);
-	const bool isMacMode = (_renderMode == Common::kRenderMacintosh);
+	const bool useColor = isMacColorMode();
+	const bool isMacMode = isMacRenderMode();
 
 	// Pixels written into the alpha-keyed RGBA cache. mask=0 → alpha 0
 	// (transparent), so drawSurface's alpha-blend skips them naturally.
