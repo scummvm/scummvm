@@ -150,7 +150,7 @@ public:
 	bool isVisible() { return _isVisible; }
 	void setVisible(bool visible, bool silent = false) override { _isVisible = visible; _contentIsDirty = true; }
 
-	void setFont(const Font *font) { _font = font; }
+	void setFont(uint16 fontID, uint16 fontSize);
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
@@ -231,6 +231,8 @@ private:
 	MacMenuItem *findMenuItem(int menuId, int itemId);
 
 
+	uint16 _fontID;
+	uint16 _fontSize;
 	const Font *_font;
 	Font *_loadedFont;
 

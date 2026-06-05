@@ -84,8 +84,7 @@ void MacMenuSubMenu::enableAllItems() {
 MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 		: BaseMacWindow(id, false, wm) {
 	_loadedFont = NULL;
-
-	_font = getMenuFont();
+	setFont(kMacFontSystem, 12);
 
 	_align = kTextAlignLeft;
 
@@ -262,6 +261,12 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager
 		menu->enableAllMenus();
 
 	return menu;
+}
+
+void MacMenu::setFont(uint16 fontID, uint16 fontSize) {
+	_fontID = fontID;
+	_fontSize = fontSize;
+	_font = getMenuFont();
 }
 
 void MacMenu::printMenu(int level, MacMenuSubMenu *submenu) {
@@ -804,7 +809,7 @@ const Font *MacMenu::getMenuFont(int slant) {
 	}
 #endif
 
-	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12, slant));
+	return _wm->_fontMan->getFont(Graphics::MacFont(_fontID, _fontSize, slant));
 }
 
 Common::CodePage MacMenu::getMenuEncoding() const {
