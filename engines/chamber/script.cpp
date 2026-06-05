@@ -1517,6 +1517,13 @@ If go through a door, play door's opening animation
 uint16 SCR_42_LoadZone(void) {
 	byte index;
 	bool door_animated = false;
+	// Freeze the ordeal timer (timer_ticks2) while we load the zone and play the
+	// room transition. These are far slower under ScummVM than on DOS and would
+	// otherwise bleed real seconds into the one-hour ordeal budget. timer_ticks
+	// (animation pacing) keeps running. Save/restore so we don't unpause an
+	// already-paused state (e.g. a zone load during the game-over sequence).
+	byte saved_paused = script_byte_vars.game_paused;
+	script_byte_vars.game_paused = 1;
 
 	script_ptr++;
 	index = *script_ptr++;
@@ -1558,6 +1565,7 @@ uint16 SCR_42_LoadZone(void) {
 	if (door_animated)
 		g_vm->_renderer->backBufferToRealFull();
 
+	script_byte_vars.game_paused = saved_paused;
 	return 0;
 }
 
