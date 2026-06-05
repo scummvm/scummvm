@@ -43,6 +43,8 @@ int mapEyeOverlayColorToMacColor(int colorIdx, int level) {
 	case kColorIris:         return 35; // c_iris
 	case kColorEyeIris:      return 32; // c_eye
 	case kColorMiniEyeIris:  return 33; // c_meye
+	case kColorDroneEye:     return 51; // c_edrone
+	case kColorSoldierEye:   return 53; // c_esoldier
 	case kColorQueenEye:     return 49; // c_equeen
 	default:                 return 6;  // c_dwall fallback
 	}
@@ -58,6 +60,8 @@ uint8 mapEyeOverlayColorToDOSFill(int colorIdx, int level) {
 	case kColorIris:
 	case kColorEyeIris:
 	case kColorMiniEyeIris:
+	case kColorDroneEye:
+	case kColorSoldierEye:
 	case kColorQueenEye:
 		return 1;
 	default:
@@ -79,6 +83,8 @@ int mapEyeOverlayColorToMacPattern(int colorIdx) {
 	case kColorIris:
 	case kColorEyeIris:
 	case kColorMiniEyeIris:
+	case kColorDroneEye:
+	case kColorSoldierEye:
 	case kColorQueenEye: // fallthrough: explicitly grouped with default
 	default:
 		return kPatternGray;
@@ -1100,7 +1106,7 @@ const int kDAbdomenSurf[8][8] = {
 	{kColorDrone, 3, 5, 2, 1, 5, 0, 0}, {kColorDrone, 3, 5, 3, 2, 5, 0, 0},
 	{kColorDrone, 3, 5, 4, 3, 5, 0, 0}, {kColorDrone, 3, 5, 1, 4, 5, 0, 0}
 };
-// Drone static pincers (llPincer/rrPincer)
+// Base jaw points used by the Soldier pincer animation.
 const int kDLLPincerPts[4][3] = {
 	{0, 0, 130}, {50, -2, 130}, {35, -20, 140}, {35, -20, 120}
 };
@@ -1115,25 +1121,8 @@ const int kDRPincerSurf[4][8] = {
 	{kColorClaw1, 3, 0, 1, 2, 0, 0, 0}, {kColorClaw1, 3, 0, 3, 1, 0, 0, 0},
 	{kColorClaw2, 3, 0, 2, 3, 0, 0, 0}, {kColorClaw2, 3, 1, 3, 2, 1, 0, 0}
 };
-// Drone eyes
-const int kDLEyePts[3][3] = {
-	{60, 0, 150}, {60, 50, 130}, {60, 25, 150}
-};
-const int kDLEyeSurf[2][8] = {
-	{kColorDroneEye, 3, 0, 1, 2, 0, 0, 0}, {kColorDroneEye, 3, 0, 2, 1, 0, 0, 0}
-};
-const int kDREyePts[3][3] = {
-	{60, 0, 150}, {60, -50, 130}, {60, -25, 150}
-};
-const int kDREyeSurf[2][8] = {
-	{kColorDroneEye, 3, 0, 1, 2, 0, 0, 0}, {kColorDroneEye, 3, 0, 2, 1, 0, 0, 0}
-};
 
 const Colony::ColonyEngine::PrismPartDef kDAbdomenDef = {6, kDAbdomenPts, 8, kDAbdomenSurf};
-const Colony::ColonyEngine::PrismPartDef kDLLPincerDef = {4, kDLLPincerPts, 4, kDLPincerSurf};
-const Colony::ColonyEngine::PrismPartDef kDRRPincerDef = {4, kDRRPincerPts, 4, kDRPincerSurf};
-const Colony::ColonyEngine::PrismPartDef kDLEyeDef = {3, kDLEyePts, 2, kDLEyeSurf};
-const Colony::ColonyEngine::PrismPartDef kDREyeDef = {3, kDREyePts, 2, kDREyeSurf};
 
 // --- Snoop (type 20) ---
 const int kSnoopAbdomenPts[4][3] = {
@@ -1171,6 +1160,142 @@ void resetObjectBounds(const Common::Rect &screenR, Locate &loc) {
 	loc.xmx = screenR.left;
 	loc.zmn = screenR.bottom;
 	loc.zmx = screenR.top;
+}
+
+void mergeObjectBounds(Locate &dst, const Locate &src) {
+	dst.xmn = MIN(dst.xmn, src.xmn);
+	dst.xmx = MAX(dst.xmx, src.xmx);
+	dst.zmn = MIN(dst.zmn, src.zmn);
+	dst.zmx = MAX(dst.zmx, src.zmx);
+}
+
+bool prismSurfaceVisible(const Common::Rect &screenR, const Colony::Thing &thing,
+		const Colony::ColonyEngine::PrismPartDef &def, int surfaceIndex,
+		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
+		const int *sint, const int *cost) {
+	return isProjectedPrismSurfaceVisible(screenR, thing, def, false, surfaceIndex,
+		cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+}
+
+int droneBodyOrder(const Common::Rect &screenR, const Colony::Thing &thing,
+		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
+		const int *sint, const int *cost) {
+	const bool v0 = prismSurfaceVisible(screenR, thing, kDAbdomenDef, 0, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const bool v1 = prismSurfaceVisible(screenR, thing, kDAbdomenDef, 1, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const bool v2 = prismSurfaceVisible(screenR, thing, kDAbdomenDef, 2, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const bool v3 = prismSurfaceVisible(screenR, thing, kDAbdomenDef, 3, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+
+	int body = 1;
+	if (v0 && v1)
+		body = 1;
+	if (v2 && v3)
+		body = 1;
+	if (v0 && v3)
+		body = 0;
+	if (v1 && v2)
+		body = 2;
+	return body;
+}
+
+int queenBodyOrder(const Common::Rect &screenR, const Colony::Thing &thing,
+		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
+		const int *sint, const int *cost) {
+	const bool v0 = prismSurfaceVisible(screenR, thing, kQAbdomenDef, 0, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const bool v1 = prismSurfaceVisible(screenR, thing, kQAbdomenDef, 1, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const bool v4 = prismSurfaceVisible(screenR, thing, kQAbdomenDef, 4, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const bool v5 = prismSurfaceVisible(screenR, thing, kQAbdomenDef, 5, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+
+	int body = 1;
+	if (v0 && v4)
+		body = 1;
+	if (v1 && v5)
+		body = 1;
+	if (v0 && v1)
+		body = 0;
+	if (v4 && v5)
+		body = 2;
+	return body;
+}
+
+float prismPointForwardDepth(const Colony::Thing &thing, const Colony::ColonyEngine::PrismPartDef &def, int pointIndex,
+		uint8 cameraLook, int cameraX, int cameraY, const int *sint, const int *cost) {
+	if (pointIndex < 0 || pointIndex >= def.pointCount)
+		return 0.0f;
+
+	const uint8 objAng = thing.where.ang + 32;
+	const int32 rotCos = cost[objAng];
+	const int32 rotSin = sint[objAng];
+	const int ox = def.points[pointIndex][0];
+	const int oy = def.points[pointIndex][1];
+	const int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+	const int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
+	const float dx = (float)(rx + thing.where.xloc - cameraX);
+	const float dy = (float)(ry + thing.where.yloc - cameraY);
+
+	return dx * (cost[cameraLook] / 128.0f) + dy * (sint[cameraLook] / 128.0f);
+}
+
+struct EnemyEyePair {
+	Thing left;
+	Thing right;
+	bool leftFirst;
+};
+
+int projectedEnemyEyeDiameter(const Common::Rect &screenR, const Colony::Thing &eye,
+		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
+		const int *sint, const int *cost) {
+	int bottomX = 0;
+	int bottomY = 0;
+	int centerX = 0;
+	int centerY = 0;
+	if (!projectCorridorPointRaw(screenR, cameraLook, cameraLookY, sint, cost, cameraX, cameraY,
+			(float)eye.where.xloc, (float)eye.where.yloc, 130.0f - 160.0f, bottomX, bottomY)) {
+		return -1;
+	}
+	if (!projectCorridorPointRaw(screenR, cameraLook, cameraLookY, sint, cost, cameraX, cameraY,
+			(float)eye.where.xloc, (float)eye.where.yloc, 155.0f - 160.0f, centerX, centerY)) {
+		return -1;
+	}
+	return ABS(bottomY - centerY);
+}
+
+EnemyEyePair buildEnemyEyePair(const Common::Rect &screenR, const Colony::Thing &obj,
+		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
+		const int *sint, const int *cost) {
+	EnemyEyePair eyes;
+	eyes.left = obj;
+	eyes.right = obj;
+
+	const int32 s1 = sint[obj.where.ang] >> 1;
+	const int32 c1 = cost[obj.where.ang] >> 1;
+	const int32 s2 = s1 >> 1;
+	const int32 c2 = c1 >> 1;
+	const int32 eyeBaseX = obj.where.xloc + c1;
+	const int32 eyeBaseY = obj.where.yloc + s1;
+
+	eyes.left.where.xloc = (int)(eyeBaseX - s2);
+	eyes.left.where.yloc = (int)(eyeBaseY + c2);
+	resetObjectBounds(screenR, eyes.left.where);
+
+	eyes.right.where.xloc = (int)(eyeBaseX + s2);
+	eyes.right.where.yloc = (int)(eyeBaseY - c2);
+	resetObjectBounds(screenR, eyes.right.where);
+
+	const int leftDiameter = projectedEnemyEyeDiameter(screenR, eyes.left, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	const int rightDiameter = projectedEnemyEyeDiameter(screenR, eyes.right, cameraLook, cameraLookY, cameraX, cameraY, sint, cost);
+	if (leftDiameter >= 0 && rightDiameter >= 0) {
+		eyes.leftFirst = leftDiameter < rightDiameter;
+	} else {
+		const int32 leftDx = eyes.left.where.xloc - cameraX;
+		const int32 leftDy = eyes.left.where.yloc - cameraY;
+		const int32 rightDx = eyes.right.where.xloc - cameraX;
+		const int32 rightDy = eyes.right.where.yloc - cameraY;
+		const int64 leftDist = (int64)leftDx * leftDx + (int64)leftDy * leftDy;
+		const int64 rightDist = (int64)rightDx * rightDx + (int64)rightDy * rightDy;
+		eyes.leftFirst = leftDist >= rightDist;
+	}
+
+	return eyes;
 }
 
 void ColonyEngine::drawStaticObjects() {
@@ -1689,101 +1814,98 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobQueen:
 		{
-			const int32 s1 = _sint[obj.where.ang] >> 1;
-			const int32 c1 = _cost[obj.where.ang] >> 1;
-			const int32 s2 = s1 >> 1;
-			const int32 c2 = c1 >> 1;
-			const int32 eyeBaseX = obj.where.xloc + c1;
-			const int32 eyeBaseY = obj.where.yloc + s1;
-
-			Thing leftEye = obj;
-			leftEye.where.xloc = (int)(eyeBaseX - s2);
-			leftEye.where.yloc = (int)(eyeBaseY + c2);
-			resetObjectBounds(_screenR, leftEye.where);
-
-			Thing rightEye = obj;
-			rightEye.where.xloc = (int)(eyeBaseX + s2);
-			rightEye.where.yloc = (int)(eyeBaseY - c2);
-			resetObjectBounds(_screenR, rightEye.where);
-
-			const int32 leftDist = (leftEye.where.xloc - _me.xloc) * (leftEye.where.xloc - _me.xloc) +
-				(leftEye.where.yloc - _me.yloc) * (leftEye.where.yloc - _me.yloc);
-			const int32 rightDist = (rightEye.where.xloc - _me.xloc) * (rightEye.where.xloc - _me.xloc) +
-				(rightEye.where.yloc - _me.yloc) * (rightEye.where.yloc - _me.yloc);
-			const bool leftFirst = leftDist >= rightDist;
-			Thing &farEye = leftFirst ? leftEye : rightEye;
-			Thing &nearEye = leftFirst ? rightEye : leftEye;
-			const PrismPartDef &farWing = leftFirst ? kQLWingDef : kQRWingDef;
-			const PrismPartDef &nearWing = leftFirst ? kQRWingDef : kQLWingDef;
+			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			Thing &firstEye = eyes.leftFirst ? eyes.left : eyes.right;
+			Thing &secondEye = eyes.leftFirst ? eyes.right : eyes.left;
+			const PrismPartDef &firstWing = eyes.leftFirst ? kQLWingDef : kQRWingDef;
+			const PrismPartDef &secondWing = eyes.leftFirst ? kQRWingDef : kQLWingDef;
 			const int wingColor = (!isMacRenderMode() && _level == 7) ? kColorQueenWingRed : kColorClear;
+			const int enemyEyeballColor = isMacRenderMode() ? eyeballColor : 5;
+			int layer = 12;
+			auto setNextDepthRange = [&]() {
+				_gfx->setDepthRange((layer--) * 0.002f, 1.0f);
+			};
 
-			// DOS draweyes(): queen eyeball is RED fill + WHITE outline
-			// (hardcoded, not from color table). Iris is GREEN.
-			const int queenEyeballColor = 5; // vRED (EGA index 4 = kColorRed... use raw 5 = cRED index)
-			draw3DPrism(obj, farWing, false, wingColor, true, true);
-			draw3DSphere(farEye, 0, 0, 130, 0, 0, 155, queenEyeballColor, kColorBlack, true);
-			drawEyeOverlays3D(farEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
-			if (farEye.where.xmn < obj.where.xmn)
-				obj.where.xmn = farEye.where.xmn;
-			if (farEye.where.xmx > obj.where.xmx)
-				obj.where.xmx = farEye.where.xmx;
-			if (farEye.where.zmn < obj.where.zmn)
-				obj.where.zmn = farEye.where.zmn;
-			if (farEye.where.zmx > obj.where.zmx)
-				obj.where.zmx = farEye.where.zmx;
+			auto drawEye = [&](Thing &eye) {
+				draw3DSphere(eye, 0, 0, 130, 0, 0, 155, enemyEyeballColor, kColorBlack, true);
+				drawEyeOverlays3D(eye, kQIrisDef, kColorQueenEye, kQPupilDef, pupilColor, true);
+				mergeObjectBounds(obj.where, eye.where);
+			};
+			auto drawWingEye = [&](Thing &eye, const PrismPartDef &wing) {
+				setNextDepthRange();
+				draw3DPrism(obj, wing, false, wingColor, true, true);
+				setNextDepthRange();
+				drawEye(eye);
+			};
+			auto drawThorax = [&]() {
+				setNextDepthRange();
+				draw3DPrism(obj, kQThoraxDef, false, -1, true, false);
+			};
+			auto drawAbdomen = [&]() {
+				setNextDepthRange();
+				draw3DPrism(obj, kQAbdomenDef, false, -1, true, false);
+			};
 
-			draw3DPrism(obj, kQThoraxDef, false, -1, true, false);
-			draw3DPrism(obj, kQAbdomenDef, false, -1, true, false);
-
-			draw3DPrism(obj, nearWing, false, wingColor, true, true);
-			draw3DSphere(nearEye, 0, 0, 130, 0, 0, 155, queenEyeballColor, kColorBlack, true);
-			drawEyeOverlays3D(nearEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
-			if (nearEye.where.xmn < obj.where.xmn)
-				obj.where.xmn = nearEye.where.xmn;
-			if (nearEye.where.xmx > obj.where.xmx)
-				obj.where.xmx = nearEye.where.xmx;
-			if (nearEye.where.zmn < obj.where.zmn)
-				obj.where.zmn = nearEye.where.zmn;
-			if (nearEye.where.zmx > obj.where.zmx)
-				obj.where.zmx = nearEye.where.zmx;
+			const int body = queenBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			if (body == 0) {
+				drawThorax();
+				drawAbdomen();
+			}
+			drawWingEye(firstEye, firstWing);
+			if (body == 1) {
+				const bool abdomenBackVisible = prismSurfaceVisible(_screenR, obj, kQAbdomenDef, 8,
+					_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+				if (abdomenBackVisible) {
+					drawAbdomen();
+					drawThorax();
+				} else {
+					drawThorax();
+					drawAbdomen();
+				}
+			}
+			drawWingEye(secondEye, secondWing);
+			if (body == 2) {
+				drawAbdomen();
+				drawThorax();
+			}
+			_gfx->setDepthRange(0.0f, 1.0f);
 		}
 		break;
 	case kRobDrone:
 		{
-			// DOS DRONE.C: body + seteyes()/draweyes() — same two-eye
-			// system as Queen, positioned at offsets from body center.
-			const int32 s1 = _sint[obj.where.ang] >> 1;
-			const int32 c1 = _cost[obj.where.ang] >> 1;
-			const int32 s2 = s1 >> 1;
-			const int32 c2 = c1 >> 1;
-			const int32 eyeBaseX = obj.where.xloc + c1;
-			const int32 eyeBaseY = obj.where.yloc + s1;
+			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			Thing &firstEye = eyes.leftFirst ? eyes.left : eyes.right;
+			Thing &secondEye = eyes.leftFirst ? eyes.right : eyes.left;
+			const int enemyEyeballColor = isMacRenderMode() ? eyeballColor : 5;
+			int layer = 6;
+			auto setNextDepthRange = [&]() {
+				_gfx->setDepthRange((layer--) * 0.002f, 1.0f);
+			};
+			auto drawBody = [&]() {
+				setNextDepthRange();
+				draw3DPrism(obj, kDAbdomenDef, false, -1, true, false);
+			};
+			auto drawEye = [&](Thing &eye) {
+				setNextDepthRange();
+				draw3DSphere(eye, 0, 0, 130, 0, 0, 155, enemyEyeballColor, kColorBlack, true);
+				drawEyeOverlays3D(eye, kQIrisDef, kColorDroneEye, kQPupilDef, pupilColor, true);
+				mergeObjectBounds(obj.where, eye.where);
+			};
 
-			Thing leftEye = obj;
-			leftEye.where.xloc = (int)(eyeBaseX - s2);
-			leftEye.where.yloc = (int)(eyeBaseY + c2);
-			resetObjectBounds(_screenR, leftEye.where);
-			Thing rightEye = obj;
-			rightEye.where.xloc = (int)(eyeBaseX + s2);
-			rightEye.where.yloc = (int)(eyeBaseY - c2);
-			resetObjectBounds(_screenR, rightEye.where);
-
-			// DOS draweyes(): shared with Queen — RED eyeball, GREEN iris
-			draw3DPrism(obj, kDAbdomenDef, false, -1, true, false);
-			draw3DPrism(obj, kDLLPincerDef, false, -1, true, false);
-			draw3DPrism(obj, kDRRPincerDef, false, -1, true, false);
-			draw3DPrism(obj, kDLEyeDef, false, -1, true, false);
-			draw3DPrism(obj, kDREyeDef, false, -1, true, false);
-			draw3DSphere(leftEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
-			drawEyeOverlays3D(leftEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
-			draw3DSphere(rightEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
-			drawEyeOverlays3D(rightEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
+			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			if (body == 0)
+				drawBody();
+			drawEye(firstEye);
+			if (body == 1)
+				drawBody();
+			drawEye(secondEye);
+			if (body == 2)
+				drawBody();
+			_gfx->setDepthRange(0.0f, 1.0f);
 		}
 		break;
 	case kRobSoldier:
 		{
-			// DOS DRONE.C MakeSoldier(): body + animated pincers +
-			// seteyes()/draweyes() — same two-eye system as Queen.
 			int leftPincerPts[4][3];
 			int rightPincerPts[4][3];
 			const int lookAmount = (obj.where.lookx < 0) ? -obj.where.lookx : obj.where.lookx;
@@ -1800,32 +1922,63 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			const PrismPartDef leftPincerDef = {4, leftPincerPts, 4, kDLPincerSurf};
 			const PrismPartDef rightPincerDef = {4, rightPincerPts, 4, kDRPincerSurf};
 
-			const int32 s1 = _sint[obj.where.ang] >> 1;
-			const int32 c1 = _cost[obj.where.ang] >> 1;
-			const int32 s2 = s1 >> 1;
-			const int32 c2 = c1 >> 1;
-			const int32 eyeBaseX = obj.where.xloc + c1;
-			const int32 eyeBaseY = obj.where.yloc + s1;
+			EnemyEyePair eyes = buildEnemyEyePair(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			Thing &firstEye = eyes.leftFirst ? eyes.left : eyes.right;
+			Thing &secondEye = eyes.leftFirst ? eyes.right : eyes.left;
+			const int enemyEyeballColor = isMacRenderMode() ? eyeballColor : 5;
+			const float leftPincerDepth = prismPointForwardDepth(obj, leftPincerDef, 1, _me.look, _me.xloc, _me.yloc, _sint, _cost);
+			const float rightPincerDepth = prismPointForwardDepth(obj, rightPincerDef, 1, _me.look, _me.xloc, _me.yloc, _sint, _cost);
+			int layer = 8;
+			auto setNextDepthRange = [&]() {
+				_gfx->setDepthRange((layer--) * 0.002f, 1.0f);
+			};
+			auto drawBody = [&]() {
+				setNextDepthRange();
+				draw3DPrism(obj, kDAbdomenDef, false, kColorSoldierBody, true, false);
+			};
+			auto drawEye = [&](Thing &eye) {
+				setNextDepthRange();
+				draw3DSphere(eye, 0, 0, 130, 0, 0, 155, enemyEyeballColor, kColorBlack, true);
+				drawEyeOverlays3D(eye, kQIrisDef, kColorSoldierEye, kQPupilDef, pupilColor, true);
+				mergeObjectBounds(obj.where, eye.where);
+			};
+			auto drawPincers = [&]() {
+				if (leftPincerDepth < rightPincerDepth) {
+					setNextDepthRange();
+					draw3DPrism(obj, rightPincerDef, false, -1, true, false);
+					setNextDepthRange();
+					draw3DPrism(obj, leftPincerDef, false, -1, true, false);
+				} else {
+					setNextDepthRange();
+					draw3DPrism(obj, leftPincerDef, false, -1, true, false);
+					setNextDepthRange();
+					draw3DPrism(obj, rightPincerDef, false, -1, true, false);
+				}
+			};
 
-			Thing leftEye = obj;
-			leftEye.where.xloc = (int)(eyeBaseX - s2);
-			leftEye.where.yloc = (int)(eyeBaseY + c2);
-			resetObjectBounds(_screenR, leftEye.where);
-			Thing rightEye = obj;
-			rightEye.where.xloc = (int)(eyeBaseX + s2);
-			rightEye.where.yloc = (int)(eyeBaseY - c2);
-			resetObjectBounds(_screenR, rightEye.where);
-
-			draw3DPrism(obj, kDAbdomenDef, false, kColorSoldierBody, true, false);
-			draw3DPrism(obj, leftPincerDef, false, -1, true, false);
-			draw3DPrism(obj, rightPincerDef, false, -1, true, false);
-			// DOS draweyes(): shared with Queen — RED eyeball, GREEN iris
-			draw3DPrism(obj, kDLEyeDef, false, kColorSoldierEye, true, false);
-			draw3DPrism(obj, kDREyeDef, false, kColorSoldierEye, true, false);
-			draw3DSphere(leftEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
-			drawEyeOverlays3D(leftEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
-			draw3DSphere(rightEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
-			drawEyeOverlays3D(rightEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
+			const int body = droneBodyOrder(_screenR, obj, _me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
+			switch (body) {
+			case 0:
+				drawBody();
+				drawEye(firstEye);
+				drawEye(secondEye);
+				drawPincers();
+				break;
+			case 1:
+				drawEye(firstEye);
+				drawBody();
+				drawPincers();
+				drawEye(secondEye);
+				break;
+			case 2:
+			default:
+				drawEye(firstEye);
+				drawEye(secondEye);
+				drawPincers();
+				drawBody();
+				break;
+			}
+			_gfx->setDepthRange(0.0f, 1.0f);
 		}
 		break;
 	case kRobSnoop:

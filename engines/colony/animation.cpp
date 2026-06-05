@@ -610,12 +610,18 @@ void ColonyEngine::playAnimation() {
 					needsDraw = true;
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+					// Original Mac AnimControl(): Return closes the animation window.
+					_animationRunning = false;
+					continue;
+				}
+
 				int item = 0;
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9) {
 					item = 1 + (event.kbd.keycode - Common::KEYCODE_0);
 				} else if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 					item = 1 + (event.kbd.keycode - Common::KEYCODE_KP0);
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+				} else if (event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					item = 12; // Enter
 				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE || event.kbd.keycode == Common::KEYCODE_DELETE) {
 					item = 11; // Clear
