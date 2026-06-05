@@ -175,8 +175,15 @@ void gameLoop(byte *target) {
 				continue;
 
 			the_command = Swap16(script_word_vars.next_protozorqs_cmd);
-			if (the_command)
+			if (the_command) {
+				// Consume the queued command so a terminal command (e.g. the
+				// "failed the ordeals" death scene queued by checkGameTimeLimit)
+				// fires once instead of every frame. updateProtozorqs() re-queues
+				// live protozorq AI each frame, but it early-returns once
+				// bvar_26 >= 63 and would otherwise leave this set forever.
+				script_word_vars.next_protozorqs_cmd = 0;
 				goto process;
+			}
 
 			if (Swap16(next_vorts_ticks) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks3 is LE*/
 				the_command = next_vorts_cmd;
@@ -467,8 +474,13 @@ Common::Error ChamberEngine::execute() {
 	//ResetInput();
 
 	/* Play introduction sequence and initialize game */
+	// Freeze the ordeal timer during the intro/setup: it is installed before this
+	// point (initTimer), so the non-interactive intro would otherwise start the
+	// player's one-hour ordeal budget early.
+	script_byte_vars.game_paused = 1;
 	the_command = 0xC001;
 	runCommand();
+	script_byte_vars.game_paused = 0;
 
 	if (_shouldQuit)
 		return Common::kNoError;
