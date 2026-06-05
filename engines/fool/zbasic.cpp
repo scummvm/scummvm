@@ -801,9 +801,8 @@ Common::String ZBasic::indexRaw(int16 table, int16 index) {
 	return _index[table][index];
 }
 
-void ZBasic::setMenuFont(uint16 font, uint16 size, uint16 slant) {
-	Graphics::MacFont macFont = Graphics::MacFont(font, size, slant);
-	_menu->setFont(g_engine->_wm._fontMan->getFont(&macFont));
+void ZBasic::setMenuFont(uint16 font, uint16 size) {
+	_menu->setFont(font, size);
 }
 
 } // namespace Fool
