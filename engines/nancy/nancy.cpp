@@ -137,15 +137,15 @@ Common::Error NancyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 }
 
 bool NancyEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return canSaveGameStateCurrently();
+	return NancySceneState.getActiveConversation() == nullptr &&
+		   NancySceneState.getActiveMovie() == nullptr &&
+		   !NancySceneState.isRunningAd();
 }
 
 bool NancyEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return State::Scene::hasInstance() &&
 		   NancySceneState.getState() == State::Scene::kRun &&
-			NancySceneState.getActiveConversation() == nullptr &&
-			NancySceneState.getActiveMovie() == nullptr &&
-			!NancySceneState.isRunningAd();
+		   canLoadGameStateCurrently();
 }
 
 void NancyEngine::secondChance() {

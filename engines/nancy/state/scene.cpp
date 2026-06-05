@@ -662,6 +662,9 @@ void Scene::registerGraphics() {
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
+	if (_flags.eventFlags.empty())
+		init();
+
 	ser.syncAsUint16LE(_sceneState.currentScene.sceneID);
 	ser.syncAsUint16LE(_sceneState.currentScene.frameID);
 	ser.syncAsUint16LE(_sceneState.currentScene.verticalOffset);
