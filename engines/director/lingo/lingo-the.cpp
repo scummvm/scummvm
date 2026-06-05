@@ -2314,7 +2314,7 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 		return d;
 	}
 
-	CastMemberID id = id1.asMemberID();
+	CastMemberID id = id1.asMemberID(kCastText);
 
 	CastMember *member = movie->getCastMember(id);
 	if (!member) {
