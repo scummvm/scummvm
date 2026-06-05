@@ -653,7 +653,10 @@ void GridWidget::sortGroups() {
 
 	if (_filter.empty()) {
 		// No filter -> display everything with group headers
-		Common::sort(_groupHeaders.begin(), _groupHeaders.end());
+		Common::sort(_groupHeaders.begin(), _groupHeaders.end(),
+			[](const Common::U32String &first, const Common::U32String &second) {
+				return first.empty() ? 0 : second.empty() ? 1 : first < second;
+			});
 
 		// Avoid reallocation during iteration: that would invalidate our _sortedEntryList items
 		_headerEntryList.reserve(_groupHeaders.size());
