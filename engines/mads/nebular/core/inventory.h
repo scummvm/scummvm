@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_INVENTORY_H
+#ifdef DEPRECATED_MADS_INVENTORY_H
 #define MADS_INVENTORY_H
 
 #include "common/scummsys.h"

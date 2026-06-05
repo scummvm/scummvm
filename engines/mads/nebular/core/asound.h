@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_NEBULAR_CORE_ASOUND_H
+#ifdef DEPRECATED_MADS_NEBULAR_CORE_ASOUND_H
 #define MADS_NEBULAR_CORE_ASOUND_H
 
 #include "mads/core/sound_manager.h"

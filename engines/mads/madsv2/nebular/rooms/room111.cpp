@@ -1,0 +1,192 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/scummsys.h"
+#include "math/utils.h"
+#include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/rooms/room102.h"
+
+namespace MADS {
+namespace MADSV2 {
+namespace RexNebular {
+
+Room111::Room111(RexNebularEngine *vm) : Room1xx(vm) {
+	_stampedFl = false;
+	_launch1Fl = false;
+	_launched2Fl = false;
+	_rexDivingFl = false;
+}
+
+void Room111::synchronize(Common::Serializer &s) {
+	Room1xx::synchronize(s);
+
+	s.syncAsByte(_stampedFl);
+	s.syncAsByte(_launch1Fl);
+	s.syncAsByte(_launched2Fl);
+	s.syncAsByte(_rexDivingFl);
+}
+
+void Room111::setup() {
+	_scene->addActiveVocab(NOUN_BATS);
+
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Room111::enter() {
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
+
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('B', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('B', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('B', 2));
+
+	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 8, 0, 0, 0);
+	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, 9, 73);
+	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, 13, 73);
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 0, 0);
+	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 71, 71);
+
+	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 0, 0, 0);
+	_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
+
+	int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+
+	_launch1Fl = false;
+	_launched2Fl = false;
+	_stampedFl = false;
+
+	if ((_scene->_priorSceneId < 201) && (_scene->_priorSceneId != RETURNING_FROM_DIALOG)) {
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_scene->loadAnimation(Resources::formatName(111, 'A', 0, EXT_AA, ""), 70);
+		_game._player._playerPos = Common::Point(234, 116);
+		_game._player._facing = FACING_EAST;
+
+		_launch1Fl = true;
+		_launched2Fl = true;
+
+		_vm->_sound->command(36);
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		_game._player._playerPos = Common::Point(300, 130);
+		_game._player._facing = FACING_WEST;
+	}
+
+	_rexDivingFl = false;
+
+	sceneEntrySound();
+}
+
+void Room111::step() {
+	if (_game._trigger == 70) {
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+		_launch1Fl = false;
+		_launched2Fl = false;
+	}
+
+	if ((_game._trigger == 71) && !_stampedFl) {
+		_stampedFl = true;
+		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 18, 1, 0, 0);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+	}
+
+	if (_game._trigger == 72) {
+		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 20);
+	}
+
+	if (!_launch1Fl && (_vm->getRandomNumber(1, 5000) == 1)) {
+		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
+		_launch1Fl = true;
+		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+	}
+
+	if (!_launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
+		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
+		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 0, 0);
+		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+		_launched2Fl = true;
+	}
+
+	if (_game._trigger == 73)
+		_vm->_sound->command(37);
+
+	if (_rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
+		_vm->_sound->command(36);
+		_rexDivingFl = false;
+	}
+}
+
+void Room111::preActions() {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_CAVE_ENTRANCE))
+		_game._player._walkOffScreenSceneId = 212;
+}
+
+void Room111::actions() {
+	if (_action.isAction(VERB_DIVE_INTO, NOUN_POOL) && _game._objects.isInInventory(OBJ_REBREATHER)) {
+		switch (_game._trigger) {
+		case 0:
+			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
+			_rexDivingFl = true;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			break;
+
+		case 1:
+			_scene->_nextSceneId = 110;
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(VERB_LOOK, NOUN_CAVE_FLOOR))
+		_vm->_dialogs->show(11101);
+	else if (_action.isAction(VERB_LOOK, NOUN_POOL))
+		_vm->_dialogs->show(11102);
+	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_ENTRANCE))
+		_vm->_dialogs->show(11103);
+	else if (_action.isAction(VERB_LOOK, NOUN_STALAGMITES))
+		_vm->_dialogs->show(11104);
+	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_STALAGMITE))
+		_vm->_dialogs->show(11105);
+	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isObject(NOUN_STALAGMITES) || _action.isObject(NOUN_LARGE_STALAGMITE)))
+		_vm->_dialogs->show(11106);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+} // namespace RexNebular
+} // namespace MADSV2
+} // namespace MADS

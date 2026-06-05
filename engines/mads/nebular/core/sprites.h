@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_SPRITES_H
+#ifdef DEPRECATED_MADS_SPRITES_H
 #define MADS_SPRITES_H
 
 #include "common/scummsys.h"

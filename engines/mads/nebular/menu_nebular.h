@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_MENU_NEBULAR_H
+#ifdef DEPRECATED_MADS_MENU_NEBULAR_H
 #define MADS_MENU_NEBULAR_H
 
 #include "common/scummsys.h"

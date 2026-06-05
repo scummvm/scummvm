@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_GLOBALS_NEBULAR_H
+#ifdef DEPRECATED_MADS_GLOBALS_NEBULAR_H
 #define MADS_GLOBALS_NEBULAR_H
 
 #include "common/scummsys.h"

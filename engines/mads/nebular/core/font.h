@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_FONT_H
+#ifdef DEPRECATED_MADS_FONT_H
 #define MADS_FONT_H
 
 #include "common/scummsys.h"

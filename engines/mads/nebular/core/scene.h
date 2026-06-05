@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_SCENE_H
+#ifdef DEPRECATED_MADS_SCENE_H
 #define MADS_SCENE_H
 
 #include "common/scummsys.h"

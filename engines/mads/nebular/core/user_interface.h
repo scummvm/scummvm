@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_USER_INTERFACE_H
+#ifdef DEPRECATED_MADS_USER_INTERFACE_H
 #define MADS_USER_INTERFACE_H
 
 #include "common/scummsys.h"

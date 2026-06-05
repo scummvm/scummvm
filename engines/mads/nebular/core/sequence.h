@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_SEQUENCE_H
+#ifdef DEPRECATED_MADS_SEQUENCE_H
 #define MADS_SEQUENCE_H
 
 #include "common/scummsys.h"

@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_AUDIO_H
+#ifdef DEPRECATED_MADS_AUDIO_H
 #define MADS_AUDIO_H
 
 #include "mads/nebular/core/resources.h"

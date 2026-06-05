@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef MADS_NEBULAR_H
-#define MADS_NEBULAR_H
+#if 0
 
 #include "common/scummsys.h"
 #include "common/system.h"

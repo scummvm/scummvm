@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_COMPRESSION_H
+#ifdef DEPRECATED_MADS_COMPRESSION_H
 #define MADS_COMPRESSION_H
 
 #include "common/memstream.h"

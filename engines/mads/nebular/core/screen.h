@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_SCREEN_H
+#ifdef DEPRECATED_MADS_SCREEN_H
 #define MADS_SCREEN_H
 
 #include "common/scummsys.h"

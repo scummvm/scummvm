@@ -2423,7 +2423,7 @@ void kernel_refresh_dynamic() {
 	kernel_dynamic_changed = false;
 }
 
-char *kernel_full_name(int my_room, char type, int num, char *text, int ext) {
+char *kernel_full_name(int my_room, char type, int num, const char *text, int ext) {
 	char temp[2];
 
 	if (my_room > 0) {

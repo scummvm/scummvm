@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_ACTION_H
+#ifdef DEPRECATED_MADS_ACTION_H
 #define MADS_ACTION_H
 
 #include "common/serializer.h"
@@ -41,21 +41,6 @@ enum InterAwaiting {
 	AWAITING_THIS = 2,			// Waiting for object
 	AWAITING_THAT = 3,			// Waiting for a second object
 	AWAITING_RIGHT_MOUSE = 4	// Waiting for mouse button release
-};
-
-enum {
-	VERB_NONE = 0,
-	VERB_LOOK = 3,
-	VERB_TAKE = 4,
-	VERB_PUSH = 5,
-	VERB_OPEN = 6,
-	VERB_PUT = 7,
-	VERB_TALKTO = 8,
-	VERB_GIVE = 9,
-	VERB_PULL = 10,
-	VERB_CLOSE = 11,
-	VERB_THROW = 12,
-	VERB_WALKTO = 13
 };
 
 enum VerbType {

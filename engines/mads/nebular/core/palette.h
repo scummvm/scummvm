@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_PALETTE_H
+#ifdef DEPRECATED_MADS_PALETTE_H
 #define MADS_PALETTE_H
 
 #include "common/scummsys.h"

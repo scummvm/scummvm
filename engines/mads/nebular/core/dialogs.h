@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_DIALOGS_H
+#ifdef DEPRECATED_MADS_DIALOGS_H
 #define MADS_DIALOGS_H
 
 #include "common/scummsys.h"

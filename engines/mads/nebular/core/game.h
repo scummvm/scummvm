@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_GAME_H
+#ifdef DEPRECATED_MADS_GAME_H
 #define MADS_GAME_H
 
 #include "common/scummsys.h"
@@ -51,15 +51,6 @@ enum SyncType {
 
 
 #define MADS_SAVEGAME_VERSION 1
-
-struct MADSSavegameHeader {
-	uint8 _version;
-	Common::String _saveName;
-	Graphics::Surface *_thumbnail;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-};
 
 class Game {
 private:

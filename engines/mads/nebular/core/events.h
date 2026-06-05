@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_EVENTS_H
+#ifdef DEPRECATED_MADS_EVENTS_H
 #define MADS_EVENTS_H
 
 #include "common/scummsys.h"

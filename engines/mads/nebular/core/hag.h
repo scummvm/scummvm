@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_HAG_H
+#ifdef DEPRECATED_MADS_HAG_H
 #define MADS_HAG_H
 
 #include "common/archive.h"

@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_STATICRES_H
+#ifdef DEPRECATED_MADS_STATICRES_H
 #define MADS_STATICRES_H
 
 namespace MADS {

@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_MSURFACE_H
+#ifdef DEPRECATED_MADS_MSURFACE_H
 #define MADS_MSURFACE_H
 
 #include "common/scummsys.h"

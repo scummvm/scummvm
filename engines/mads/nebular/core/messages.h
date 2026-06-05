@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_MESSAGES_H
+#ifdef DEPRECATED_MADS_MESSAGES_H
 #define MADS_MESSAGES_H
 
 #include "common/scummsys.h"

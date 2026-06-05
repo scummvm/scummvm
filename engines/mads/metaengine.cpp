@@ -36,10 +36,9 @@
 #include "common/translation.h"
 #include "graphics/surface.h"
 
-#include "mads/nebular/core/events.h"
-#include "mads/nebular/core/game.h"
 #include "mads/detection.h"
 #ifdef ENABLE_MADSV2
+#include "mads/madsv2/nebular/nebular.h"
 #include "mads/madsv2/phantom/phantom.h"
 #include "mads/madsv2/dragonsphere/dragonsphere.h"
 #include "mads/madsv2/forest/forest.h"
@@ -222,7 +221,9 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 
 Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
 #ifdef ENABLE_MADSV2
-	if (desc->gameID == MADS::GType_Phantom)
+	if (desc->gameID == MADS::GType_RexNebular)
+		*engine = new MADS::MADSV2::RexNebular::RexNebularEngine(syst, desc);
+	else if (desc->gameID == MADS::GType_Phantom)
 		*engine = new MADS::MADSV2::Phantom::PhantomEngine(syst, desc);
 	else if (desc->gameID == MADS::GType_Forest)
 		*engine = new MADS::MADSV2::Forest::ForestEngine(syst, desc);
@@ -230,24 +231,25 @@ Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 		*engine = new MADS::MADSV2::Dragonsphere::DragonsphereEngine(syst, desc);
 	else
 #endif
+		error("Unsupported game specified");
 
-	*engine = new MADS::Nebular::RexNebularEngine(syst,desc);
 	return Common::kNoError;
 }
 
 SaveStateList MADSMetaEngine::listSaves(const char *target) const {
-	if (getGameId(target) != "nebular")
+//	if (getGameId(target) != "nebular")
 		return AdvancedMetaEngine<MADS::MADSGameDescription>::listSaves(target);
+#if 0
+	SaveStateList saveList;
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
-	MADS::Nebular::MADSSavegameHeader header;
+	MADS::MADSV2::RexNebular::MADSSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
-	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		const char *ext = strrchr(file->c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
@@ -266,6 +268,7 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+#endif
 }
 
 int MADSMetaEngine::getMaximumSaveSlot() const {
@@ -273,18 +276,20 @@ int MADSMetaEngine::getMaximumSaveSlot() const {
 }
 
 bool MADSMetaEngine::removeSaveState(const char *target, int slot) const {
+#if 0
 	if (getGameId(target) == "nebular") {
 		Common::String filename = Common::String::format("%s.%03d", target, slot);
 		return g_system->getSavefileManager()->removeSavefile(filename);
 	} else {
+#endif
 		return AdvancedMetaEngine<MADS::MADSGameDescription>::removeSaveState(target, slot);
-	}
+//	}
 }
 
 SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	if (getGameId(target) != "nebular")
+//	if (getGameId(target) != "nebular")
 		return AdvancedMetaEngine<MADS::MADSGameDescription>::querySaveMetaInfos(target, slot);
-
+#if 0
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
@@ -307,6 +312,7 @@ SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int s
 	}
 
 	return SaveStateDescriptor();
+#endif
 }
 
 Common::KeymapArray MADSMetaEngine::initKeymaps(const char *target) const {

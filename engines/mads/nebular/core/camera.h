@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_CAMERA_H
+#ifdef DEPRECATED_MADS_CAMERA_H
 #define MADS_CAMERA_H
 
 #include "mads/nebular/core/scene.h"

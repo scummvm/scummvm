@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_ASSETS_H
+#ifdef DEPRECATED_MADS_ASSETS_H
 #define MADS_ASSETS_H
 
 #include "common/array.h"

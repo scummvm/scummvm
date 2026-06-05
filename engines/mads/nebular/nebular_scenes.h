@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_NEBULAR_SCENES_H
+#ifdef DEPRECATED_MADS_NEBULAR_SCENES_H
 #define MADS_NEBULAR_SCENES_H
 
 #include "common/scummsys.h"
@@ -32,10 +32,6 @@
 namespace MADS {
 
 namespace Nebular {
-
-enum {
-	SEX_MALE = 0, SEX_UNKNOWN = 1, SEX_FEMALE = 2
-};
 
 enum Verb {
 	VERB_ACTIVATE       = 0x00E,

@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_MENU_VIEWS_H
+#ifdef DEPRECATED_MADS_MENU_VIEWS_H
 #define MADS_MENU_VIEWS_H
 
 #include "common/scummsys.h"

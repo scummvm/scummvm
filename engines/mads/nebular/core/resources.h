@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_RESOURCES_H
+#ifdef DEPRECATED_MADS_RESOURCES_H
 #define MADS_RESOURCES_H
 
 #include "common/scummsys.h"

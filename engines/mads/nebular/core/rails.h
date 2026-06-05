@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_RAILS_H
+#ifdef DEPRECATED_MADS_RAILS_H
 #define MADS_RAILS_H
 
 #include "common/scummsys.h"

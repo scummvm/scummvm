@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_SOUND_NEBULAR_H
+#ifdef DEPRECATED_MADS_SOUND_NEBULAR_H
 #define MADS_SOUND_NEBULAR_H
 
 #include "mads/nebular/core/asound.h"

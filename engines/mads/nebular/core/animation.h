@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_ANIMATION_H
+#ifdef DEPRECATED_MADS_ANIMATION_H
 #define MADS_ANIMATION_H
 
 #include "common/array.h"

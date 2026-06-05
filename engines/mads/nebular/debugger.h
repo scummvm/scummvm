@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_NEBULAR_DEBUGGER_H
+#ifdef DEPRECATED_MADS_NEBULAR_DEBUGGER_H
 #define MADS_NEBULAR_DEBUGGER_H
 
 #include "common/scummsys.h"

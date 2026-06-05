@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_GAME_DATA_H
+#ifdef DEPRECATED_MADS_GAME_DATA_H
 #define MADS_GAME_DATA_H
 
 #include "common/scummsys.h"

@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_HOTSPOTS_H
+#ifdef DEPRECATED_MADS_HOTSPOTS_H
 #define MADS_HOTSPOTS_H
 
 #include "common/scummsys.h"

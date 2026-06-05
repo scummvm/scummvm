@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef MADS_PLAYER_H
+#ifdef DEPRECATED_MADS_PLAYER_H
 #define MADS_PLAYER_H
 
 #include "common/scummsys.h"
@@ -35,15 +35,6 @@ class MADSAction;
 #define PLAYER_SPRITES_FILE_COUNT 8
 #define MAX_ROUTE_NODES 22
 
-/**
- * Player facings
- */
-enum Facing {
-	FACING_NORTH = 8, FACING_SOUTH = 2, FACING_EAST = 6, FACING_WEST = 4,
-	FACING_NORTHEAST = 9, FACING_SOUTHEAST = 3,
-	FACING_SOUTHWEST = 1, FACING_NORTHWEST = 7,
-	FACING_NONE = 5, FACING_DUMMY = 0
-};
 
 struct StopWalkerEntry {
 	int _stack;

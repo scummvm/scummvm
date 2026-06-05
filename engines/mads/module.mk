@@ -3,53 +3,6 @@ MODULE := engines/mads
 MODULE_OBJS := \
 	core/mps_installer.o \
 	core/sound_manager.o \
-	nebular/nebular.o \
-	nebular/debugger.o \
-	nebular/dialogs_nebular.o \
-	nebular/game_nebular.o \
-	nebular/globals_nebular.o \
-	nebular/menu_nebular.o \
-	nebular/sound_nebular.o \
-	nebular/nebular_scenes.o \
-	nebular/nebular_scenes1.o \
-	nebular/nebular_scenes2.o \
-	nebular/nebular_scenes3.o \
-	nebular/nebular_scenes4.o \
-	nebular/nebular_scenes5.o \
-	nebular/nebular_scenes6.o \
-	nebular/nebular_scenes7.o \
-	nebular/nebular_scenes8.o \
-	nebular/core/action.o \
-	nebular/core/animation.o \
-	nebular/core/assets.o \
-	nebular/core/asound.o \
-	nebular/core/audio.o \
-	nebular/core/camera.o \
-	nebular/core/compression.o \
-	nebular/core/conversations.o \
-	nebular/core/dialogs.o \
-	nebular/core/events.o \
-	nebular/core/font.o \
-	nebular/core/game.o \
-	nebular/core/game_data.o \
-	nebular/core/globals.o \
-	nebular/core/hag.o \
-	nebular/core/hotspots.o \
-	nebular/core/inventory.o \
-	nebular/core/menu_views.o \
-	nebular/core/messages.o \
-	nebular/core/msurface.o \
-	nebular/core/palette.o \
-	nebular/core/player.o \
-	nebular/core/rails.o \
-	nebular/core/resources.o \
-	nebular/core/scene.o \
-	nebular/core/scene_data.o \
-	nebular/core/screen.o \
-	nebular/core/sequence.o \
-	nebular/core/sprites.o \
-	nebular/core/staticres.o \
-	nebular/core/user_interface.o \
 	metaengine.o \
 	mads.o
 
@@ -117,6 +70,12 @@ MODULE_OBJS += \
 	madsv2/core/vocab.o \
 	madsv2/core/window.o \
 	madsv2/core/xms.o \
+	madsv2/nebular/nebular.o \
+	madsv2/nebular/global.o \
+	madsv2/nebular/mads/mads.o \
+	madsv2/nebular/rooms/thunks.o \
+	madsv2/nebular/rooms/room101.o \
+	madsv2/nebular/rooms/section1.o \
 	madsv2/phantom/mads/mads.o \
 	madsv2/phantom/rooms/section1.o \
 	madsv2/phantom/rooms/room101.o \

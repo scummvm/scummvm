@@ -567,7 +567,7 @@ extern void kernel_purge_dynamic();
 extern void kernel_init_dynamic();
 extern int kernel_dynamic_consecutive(int id);
 extern void kernel_refresh_dynamic();
-extern char *kernel_full_name(int my_room, char type, int num, char *text, int ext);
+extern char *kernel_full_name(int my_room, char type, int num, const char *text, int ext);
 extern char *kernel_name(char type, int num);
 extern char *kernel_interface_name(int num);
 extern void kernel_unload_sound_driver();
