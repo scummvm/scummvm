@@ -258,11 +258,11 @@ void Textbox::drawTextbox() {
 
 	HypertextParser::drawAllText(textBounds, 0, baseFontID, highlightFontID);
 
-	setVisible(true);
+	setVisible(g_nancy->getGameType() <= kGameTypeNancy9 || _isFullMode);
 }
 
 void Textbox::clear() {
-	if (_textLines.size()) {
+	if (!_textLines.empty() || g_nancy->getGameType() >= kGameTypeNancy10) {
 		HypertextParser::clear();
 		if (_scrollbar) {
 			_scrollbar->resetPosition();

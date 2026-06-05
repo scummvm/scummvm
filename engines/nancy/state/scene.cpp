@@ -1378,7 +1378,7 @@ void Scene::clearSceneData() {
 		_lightning->endLightning();
 	}
 
-	if (_textbox.hasBeenDrawn()) {
+	if (_textbox.hasBeenDrawn() || g_nancy->getGameType() >= kGameTypeNancy10) {
 		// Improvement: the dog portrait scenes in nancy7 queue a piece of text,
 		// then immediately change the scene. This makes the text disappear instantly;
 		// instead, we check if the textbox has been drawn, and don't clear it if it hasn't.
