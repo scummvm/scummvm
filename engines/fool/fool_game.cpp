@@ -83,7 +83,7 @@ void FoolGame::run() {
 		error("FoolGame::run: Fool's Errand program not found");
 	}
 	// Fool's Errand has an embedded version of Chicago with custom characters
-	_zbasic->setMenuFont(_fontChicago, 12, 0);
+	_zbasic->setMenuFont(_fontChicago, 12);
 	foolRun();
 	delete _zbasic;
 }
