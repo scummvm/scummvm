@@ -45,8 +45,6 @@
 namespace Colony {
 
 // Phase 3: 2D primitives + the 3D corridor draw path are programmable.
-// XOR mode and polygon stipple are intentionally left stubbed — see the
-// renderer audit for why those are deferred.
 class OpenGLShaderRenderer : public Renderer {
 public:
 	OpenGLShaderRenderer(OSystem *system, int width, int height);
@@ -77,7 +75,7 @@ public:
 
 	void copyToScreen() override;
 	void setWireframe(bool enable, int64_t fillColor) override;
-	void setXorMode(bool enable) override {}
+	void setXorMode(bool enable) override;
 	void setStippleData(const byte *data) override;
 	void setMacColors(uint32 fg, uint32 bg) override;
 	void setDepthState(bool testEnabled, bool writeEnabled) override;
@@ -147,6 +145,7 @@ private:
 
 	bool _wireframe = true;
 	int64_t _wireframeFillColor = 0; // -1 = no fill, else color (palette idx or ARGB)
+	bool _xorMode = false;
 
 	// Stipple state. The shader emulates glPolygonStipple via a 128-int
 	// uniform array (Freescape pattern, GLES2-safe). _stippleActive is
@@ -348,6 +347,17 @@ void OpenGLShaderRenderer::drawSolid(GLenum mode, const float *positions, int ve
 		const float rgba[4]) {
 	if (vertCount <= 0)
 		return;
+	if (_xorMode) {
+		// QuickDraw's patXor effects are drawn with white mask pixels in the
+		// reimplementation. This blend state turns those pixels into
+		// 1 - destination, which matches the visible Mac B&W shoot/invert flash
+		// behavior and works on shader renderers without GL logic ops.
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFuncSeparate(GL_ONE_MINUS_DST_COLOR, GL_ZERO, GL_ZERO, GL_ONE);
+	} else {
+		glDisable(GL_BLEND);
+	}
 	uploadSolid(positions, vertCount);
 	// "projection" is set once by uploadProjectionUniform() — it persists in
 	// the program object across draws. Shader stays bound between draws so
@@ -663,6 +673,12 @@ Graphics::Surface *OpenGLShaderRenderer::getScreenshot() {
 void OpenGLShaderRenderer::setWireframe(bool enable, int64_t fillColor) {
 	_wireframe = enable;
 	_wireframeFillColor = fillColor;
+}
+
+void OpenGLShaderRenderer::setXorMode(bool enable) {
+	_xorMode = enable;
+	if (!enable)
+		glDisable(GL_BLEND);
 }
 
 void OpenGLShaderRenderer::setStippleData(const byte *data) {
