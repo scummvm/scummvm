@@ -458,8 +458,9 @@ void ColonyEngine::battleInit() {
 	_projon = false;
 	_pcount = 0;
 
-	// Mountain parallax
-	_battledx = _width / 59;
+	// Mountain parallax. battleBackdrop() recomputes this once the viewport
+	// layout is final; keep a sane initial value for freshly initialized state.
+	_battledx = MAX<int>(1, _screenR.width() / 59);
 
 	// Generate mountain height profile (smoothed random)
 	int temp[257];
@@ -548,7 +549,13 @@ void ColonyEngine::battleBackdrop() {
 	// Mountain silhouette
 	uint32 mtColor = 0xFF606060;
 	uint8 ang = _me.look;
-	int xloc = -_battledx;
+	// Original battle.c draws the mountain profile under ClipRect(&Clip).
+	// Align the first sample to the active viewport, not to logical x=0
+	// where the Mac dashboard/sidebar lives in ScummVM.
+	_battledx = MAX<int>(1, _screenR.width() / 59);
+	if (!isMacRenderMode())
+		_battledx++;
+	int xloc = _screenR.left - _battledx;
 	if (ang & 0x01) {
 		xloc += _battledx;
 		ang--;
@@ -569,7 +576,12 @@ void ColonyEngine::battleBackdrop() {
 			sunon = true;
 		}
 		int curY = horizonY - _mountains[ang];
-		_gfx->drawLine(prevX, prevY, xloc, curY, mtColor);
+		int x1 = prevX;
+		int y1 = prevY;
+		int x2 = xloc;
+		int y2 = curY;
+		if (clipLineToRect(x1, y1, x2, y2, _screenR))
+			_gfx->drawLine(x1, y1, x2, y2, mtColor);
 		prevX = xloc;
 		prevY = curY;
 	}
