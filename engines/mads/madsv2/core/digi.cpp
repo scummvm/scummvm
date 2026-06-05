@@ -26,6 +26,7 @@ namespace MADS {
 namespace MADSV2 {
 
 bool digi_flag1;
+int digi_val1;
 
 void digi_install() {
 	digi_flag1 = false;

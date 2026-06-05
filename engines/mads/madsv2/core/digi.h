@@ -28,6 +28,7 @@ namespace MADS {
 namespace MADSV2 {
 
 extern bool digi_flag1;
+extern int digi_val1;
 
 extern void digi_install();
 extern void digi_play(const char *name, int slot);
