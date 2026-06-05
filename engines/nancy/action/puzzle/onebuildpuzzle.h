@@ -84,6 +84,22 @@ protected:
 	bool _orderedPlacement = false; // Pieces must be placed in a specific order
 	Common::Array<int16> _placementOrder; // 1-indexed piece IDs in required placement order
 
+	// --- Nancy 10 additions ---
+
+	// TODO: runtime role unknown; parsed for round-trip but not consumed.
+	bool _legacyOrderedFlag = false;
+	Common::Array<int16> _legacyPlacementOrder;
+
+	// Filename only (no SoundDescription metadata).
+	Common::String _extraSoundName;
+
+	// Completion sprite-sheet animation; TODO: not wired up.
+	Common::Rect _animRectA;
+	Common::Rect _animRectB;
+	int16 _animLayout[6] = {}; // cols, framesPerStep, baseX, baseY, spacing, totalRows
+	SoundDescription _animSound1;
+	SoundDescription _animSound2;
+
 	Common::Array<Piece> _pieces;
 
 	SoundDescription _pickupSound;

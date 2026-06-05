@@ -91,6 +91,8 @@ void OneBuildPuzzle::registerGraphics() {
 }
 
 void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
+	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+
 	readFilename(stream, _imageName);
 
 	_numPieces = stream.readUint16LE();
@@ -98,33 +100,66 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_canRotateAll = stream.readByte();
 	stream.skip(6); // rotationMode, zoneHeight, zoneWidth, mouse-clamping flag
 	_slotTolerance = stream.readSint16LE();
+
+	if (isNancy10) {
+		// TODO: purpose of this duplicate placement-order block is unknown.
+		_legacyOrderedFlag = stream.readByte() != 0;
+		_legacyPlacementOrder.resize(20);
+		for (uint i = 0; i < 20; ++i)
+			_legacyPlacementOrder[i] = stream.readSint16LE();
+	}
+
 	_orderedPlacement = stream.readByte();
 
 	_placementOrder.resize(20);
 	for (uint i = 0; i < 20; ++i)
 		_placementOrder[i] = stream.readSint16LE();
 
+	// Nancy 10 piece records add an alternative source rect at the front.
+	const uint pieceSize = isNancy10 ? 66 : 50;
+
 	_pieces.resize(_numPieces);
 	for (uint i = 0; i < 20; ++i) {
-		if (i < _numPieces) {
-			Piece &p = _pieces[i];
-			readRect(stream, p.srcRect);
-			readRect(stream, p.slotRect);
-			readRect(stream, p.homeRect);
-			p.defaultRotation = stream.readByte();
-			p.isPreRotated = stream.readByte();
-		} else {
-			stream.skip(50);
+		if (i >= _numPieces) {
+			stream.skip(pieceSize);
+			continue;
 		}
+
+		Piece &p = _pieces[i];
+		if (isNancy10) {
+			// Fall back to the alt rect when the primary one is empty.
+			Common::Rect altSrc;
+			readRect(stream, altSrc);
+			readRect(stream, p.srcRect);
+			if (p.srcRect.isEmpty())
+				p.srcRect = altSrc;
+		} else {
+			readRect(stream, p.srcRect);
+		}
+		readRect(stream, p.slotRect);
+		readRect(stream, p.homeRect);
+		p.defaultRotation = stream.readByte();
+		p.isPreRotated = stream.readByte();
 	}
 
-	_pickupSound.readNormal(stream);  // +0x43e: played when rotating a placed piece
-	_rotateSound.readNormal(stream);  // +0x46f: played when picking up an unplaced piece
-	_dropSound.readNormal(stream);    // +0x4a0: played when dropping a piece
+	if (isNancy10) {
+		stream.skip(32); // TODO: 32 post-piece bytes, layout undecoded.
+		readFilename(stream, _extraSoundName);
+		readRect(stream, _animRectA);
+		readRect(stream, _animRectB);
+		for (uint i = 0; i < 6; ++i)
+			_animLayout[i] = stream.readSint16LE();
+		_animSound1.readNormal(stream);
+		_animSound2.readNormal(stream);
+	}
+
+	_pickupSound.readNormal(stream);
+	_rotateSound.readNormal(stream);
+	_dropSound.readNormal(stream);
 	readFilename(stream, _dropAlt1Filename);
 	readFilename(stream, _dropAlt2Filename);
 
-	_goodPlacementSound.readNormal(stream); // +0x513
+	_goodPlacementSound.readNormal(stream);
 	readFilename(stream, _goodAlt1Filename);
 	readFilename(stream, _goodAlt2Filename);
 
@@ -145,7 +180,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < 3; ++i)
 		readFilename(stream, unusedKey);
 
-	_badPlacementSound.readNormal(stream);  // +0x841
+	_badPlacementSound.readNormal(stream);
 	readFilename(stream, _badAlt1Filename);
 	readFilename(stream, _badAlt2Filename);
 
@@ -159,7 +194,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < 3; ++i)
 		readFilename(stream, unusedKey);
 
-	stream.skip(4); // unknown bytes at +0xb6f
+	stream.skip(4); // TODO: 4 bytes before solveScene, unknown.
 	_solveScene.readData(stream);
 	_completionSound.readNormal(stream);
 	readFilename(stream, unusedKey);
