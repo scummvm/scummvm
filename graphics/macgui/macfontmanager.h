@@ -187,6 +187,7 @@ public:
 
 	void loadFonts(Common::SeekableReadStream *stream);
 	void loadFonts(const Common::Path &fileName);
+	void loadMacFont(Common::MacResManager *fontFile, const Common::String &family, Common::SeekableReadStream *fond);
 	void loadFonts(Common::MacResManager *fontFile);
 	void loadWindowsFont(const Common::Path &fileName);
 
