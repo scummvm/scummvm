@@ -39,7 +39,7 @@ VideoManager::VideoManager(
 	SoundManager *sound) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont), _dialog(dialog), _sound(sound) {
 	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
-	if (!_introSndFile.open("introsnd.dat")) {
+	if (!_introSndFile.open("introsnd.dat") && !_introSndFile.open("DATA/introsnd.dat")) {
 		error("VideoManager::VideoManager(): Could not open introsnd.dat");
 	}
 }
@@ -53,7 +53,7 @@ VideoManager::~VideoManager() {
 void VideoManager::playIntro() {
 	initMetadata();
 	Common::File videoFile;
-	if (!videoFile.open("ESCENAX.SSN")) {
+	if (!videoFile.open("ESCENAX.SSN") && !videoFile.open("DATA/ESCENAX.SSN")) {
 		error("VideoManager::playIntro(): Could not open ESCENAX.SSN");
 		return;
 	}
@@ -264,7 +264,7 @@ void VideoManager::presentFrame() {
 
 void VideoManager::initMetadata() {
 	Common::File metadataFile;
-	if (!metadataFile.open("ESCENAX.SCR")) {
+	if (!metadataFile.open("ESCENAX.SCR") && !metadataFile.open("DATA/ESCENAX.SCR")) {
 		error("VideoManager::initMetadata(): Could not open ESCENAX.SCR");
 		return;
 	}
