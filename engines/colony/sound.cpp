@@ -34,8 +34,6 @@
 
 namespace Colony {
 
-namespace {
-
 struct MelodyStep {
 	uint32 divider;
 	uint8 ticks;
@@ -98,8 +96,6 @@ const uint kIntroStarsRepeats = 2;
 const int kBeamMeRamp1Steps = 20;
 const int kBeamMeRamp2Steps = 20;
 const int kBeamMeRamp3Steps = 80;
-
-} // namespace
 
 Sound::Sound(ColonyEngine *vm) : _vm(vm), _resMan(nullptr), _appResMan(nullptr) {
 	_speaker = new Audio::PCSpeaker();

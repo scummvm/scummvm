@@ -1448,8 +1448,6 @@ void ColonyEngine::drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, 
 	drawPrismOval3D(thing, pupilDef, useLook, pupilColorOverride, true);
 }
 
-namespace {
-
 int interpolatedRobotPoint(int from, int to, float progress) {
 	return (int)roundf((float)from + ((float)to - (float)from) * progress);
 }
@@ -1515,8 +1513,6 @@ const ColonyEngine::PrismPartDef &growEyePupilDefForStage(int stage) {
 		return kMEyePupilDef;
 	}
 }
-
-} // namespace
 
 float ColonyEngine::growRenderTickFraction() const {
 	const uint32 kColonyThinkIntervalMs = 125;

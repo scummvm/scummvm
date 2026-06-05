@@ -175,10 +175,10 @@ void ColonyEngine::interactWithObject(int objNum) {
 		_me.xloc = (targetX << 8) + 128;
 		_me.yloc = (targetY << 8) + 128;
 		_me.ang = _me.look;
-		if (oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32)
+		if (oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32 &&
+				_robotArray[oldX][oldY] == kMeNum)
 			_robotArray[oldX][oldY] = 0;
-		if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-			_robotArray[_me.xindex][_me.yindex] = kMeNum;
+		setPlayerCellMarker();
 		break;
 	}
 	case kObjDrawer:

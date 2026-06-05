@@ -51,8 +51,6 @@
 
 namespace Colony {
 
-namespace {
-
 const float kMouseLookSensitivity = 0.25f;
 const float kKeyboardTurnSpeed = 30.0f; // angle units per second
 
@@ -130,8 +128,6 @@ Graphics::Cursor *cloneAndScaleCursor(const Graphics::Cursor &src, int scale) {
 		src.getHotspotX(), src.getHotspotY(), src.getKeyColor(), src.getPalette(),
 		src.getPaletteStartIndex(), src.getPaletteCount(), scale);
 }
-
-} // anonymous namespace
 
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd), _randomSource("colony") {
 	_level = 0;

@@ -466,6 +466,9 @@ public:
 	int checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Locate *pobject, uint8 trailCode);
 	int checkwallTryFeature(int xnew, int ynew, int xind2, int yind2, Locate *pobject, int dir);
 	int checkwall(int xnew, int ynew, Locate *pobject);
+	void clearPlayerCellMarker();
+	void setPlayerCellMarker();
+	bool playerIntersectsObjectFootprint(const Thing &obj, int xloc, int yloc) const;
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	bool scrollInfo(const Graphics::Font *macFont = nullptr);
 	bool checkSkipRequested();
@@ -668,7 +671,7 @@ private:
 	void getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]);
 	void getCellFace3D(int cellX, int cellY, bool ceiling, float corners[4][3]);
 
-	int occupiedObjectAt(int x, int y, const Locate *pobject);
+	int occupiedObjectAt(int xnew, int ynew, int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);
 
 	// Convert a mouse coord delivered by the event manager into engine

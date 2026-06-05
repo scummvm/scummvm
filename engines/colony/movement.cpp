@@ -151,6 +151,118 @@ int tunnelClipCode(const Common::Rect &rect, int x, int y) {
 	return code;
 }
 
+struct ObjectFootprint {
+	int centerX;
+	int centerY;
+	int halfX;
+	int halfY;
+};
+
+bool objectFootprintForType(int type, ObjectFootprint &fp) {
+	fp.centerX = 0;
+	fp.centerY = 0;
+	fp.halfX = 128;
+	fp.halfY = 128;
+
+	switch (type) {
+	case kObjPlant:
+		fp.halfX = 45;
+		fp.halfY = 45;
+		return true;
+	case kObjCChair:
+		fp.halfX = 55;
+		fp.halfY = 65;
+		return true;
+	case kObjChair:
+		fp.centerX = -15;
+		fp.halfX = 70;
+		fp.halfY = 75;
+		return true;
+	case kObjCouch:
+		fp.centerX = -15;
+		fp.halfX = 80;
+		fp.halfY = 128;
+		return true;
+	case kObjTV:
+		fp.halfX = 35;
+		fp.halfY = 65;
+		return true;
+	case kObjScreen:
+		fp.halfX = 20;
+		fp.halfY = 70;
+		return true;
+	case kObjConsole:
+		fp.centerX = -55;
+		fp.halfX = 55;
+		fp.halfY = 75;
+		return true;
+	case kObjDrawer:
+		fp.centerX = -40;
+		fp.halfX = 45;
+		fp.halfY = 75;
+		return true;
+	case kObjTub:
+		fp.centerX = -64;
+		fp.halfX = 70;
+		fp.halfY = 128;
+		return true;
+	case kObjSink:
+		fp.centerX = -90;
+		fp.halfX = 45;
+		fp.halfY = 60;
+		return true;
+	case kObjToilet:
+		fp.centerX = -75;
+		fp.halfX = 60;
+		fp.halfY = 50;
+		return true;
+	case kObjBench:
+		fp.halfX = 65;
+		fp.halfY = 128;
+		return true;
+	case kObjCBench:
+		fp.centerX = 35;
+		fp.centerY = -35;
+		fp.halfX = 100;
+		fp.halfY = 100;
+		return true;
+	case kObjProjector:
+		fp.halfX = 60;
+		fp.halfY = 60;
+		return true;
+	case kObjPowerSuit:
+		fp.halfX = 120;
+		fp.halfY = 120;
+		return true;
+	case kObjBox1:
+	case kObjBox2:
+		fp.halfX = 55;
+		fp.halfY = 55;
+		return true;
+	case kObjForkLift:
+		fp.halfX = 100;
+		fp.halfY = 120;
+		return true;
+	case kObjCryo:
+		fp.halfX = 128;
+		fp.halfY = 75;
+		return true;
+	case kObjTeleport:
+		fp.halfX = 105;
+		fp.halfY = 105;
+		return true;
+	case kObjDesk:
+	case kObjBed:
+	case kObjBBed:
+	case kObjTable:
+	case kObjReactor:
+	case kObjPToilet:
+		return true;
+	default:
+		return false;
+	}
+}
+
 void drawTunnelLine(Renderer *gfx, const Common::Rect &rect, int x1, int y1, int x2, int y2, uint32 color) {
 	if (rect.isEmpty())
 		return;
@@ -208,7 +320,44 @@ void drawTunnelLine(Renderer *gfx, const Common::Rect &rect, int x1, int y1, int
 	}
 }
 
-int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
+void ColonyEngine::clearPlayerCellMarker() {
+	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32 &&
+			_robotArray[_me.xindex][_me.yindex] == kMeNum)
+		_robotArray[_me.xindex][_me.yindex] = 0;
+}
+
+void ColonyEngine::setPlayerCellMarker() {
+	if (_me.xindex < 0 || _me.xindex >= 32 || _me.yindex < 0 || _me.yindex >= 32)
+		return;
+
+	const int rnum = _robotArray[_me.xindex][_me.yindex];
+	if (rnum > 0 && rnum != kMeNum && rnum <= (int)_objects.size()) {
+		const Thing &obj = _objects[rnum - 1];
+		if (obj.alive && obj.where.xindex == _me.xindex && obj.where.yindex == _me.yindex)
+			return;
+	}
+
+	_robotArray[_me.xindex][_me.yindex] = kMeNum;
+}
+
+bool ColonyEngine::playerIntersectsObjectFootprint(const Thing &obj, int xloc, int yloc) const {
+	ObjectFootprint fp;
+	if (!objectFootprintForType(obj.type, fp))
+		return true;
+
+	const int kPlayerObjectPad = 32;
+	const int objAng = (obj.where.ang + 32) & 0xFF;
+	const uint8 invAng = (uint8)(0 - objAng);
+	const int wx = xloc - obj.where.xloc;
+	const int wy = yloc - obj.where.yloc;
+	const int lx = (int)(((int32)wx * _cost[invAng] - (int32)wy * _sint[invAng]) >> 7) - fp.centerX;
+	const int ly = (int)(((int32)wx * _sint[invAng] + (int32)wy * _cost[invAng]) >> 7) - fp.centerY;
+
+	return ABS(lx) <= fp.halfX + kPlayerObjectPad &&
+		ABS(ly) <= fp.halfY + kPlayerObjectPad;
+}
+
+int ColonyEngine::occupiedObjectAt(int xnew, int ynew, int x, int y, const Locate *pobject) {
 	if (x < 0 || x >= 32 || y < 0 || y >= 32)
 		return -1;
 	const int rnum = _robotArray[x][y];
@@ -216,6 +365,12 @@ int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
 		return 0;
 	if (pobject == &_me && rnum <= (int)_objects.size()) {
 		Thing &obj = _objects[rnum - 1];
+		// Only the player gets tight static-object footprints. Robots,
+		// snoops, and scan rays keep full-cell blocking so enemies cannot
+		// enter or path through cells occupied by objects.
+		if (obj.type > kBaseObject && obj.type != kObjCWall && obj.type != kObjFWall &&
+				!playerIntersectsObjectFootprint(obj, xnew, ynew))
+			return 0;
 		if (obj.type <= kBaseObject)
 			obj.where.look = obj.where.ang = _me.ang + 128;
 	}
@@ -320,7 +475,7 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 }
 
 int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Locate *pobject, uint8 trailCode) {
-	const int rnum = occupiedObjectAt(xind2, yind2, pobject);
+	const int rnum = occupiedObjectAt(xnew, ynew, xind2, yind2, pobject);
 	if (rnum)
 		return rnum;
 	if (trailCode != 0 && pobject->type == kMeNum &&
@@ -345,7 +500,7 @@ int ColonyEngine::checkwallTryFeature(int xnew, int ynew, int xind2, int yind2, 
 	if (r == 2)
 		return 0; // teleported  position already updated by the feature
 	if (r == 1) {
-		const int rnum = occupiedObjectAt(xind2, yind2, pobject);
+		const int rnum = occupiedObjectAt(xnew, ynew, xind2, yind2, pobject);
 		if (rnum) {
 			const bool showDoorText = (pobject == &_me && feature &&
 				(feature[0] == kWallFeatureDoor || feature[0] == kWallFeatureAirlock));
@@ -392,11 +547,18 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 	if (xind2 == pobject->xindex) {
 		if (yind2 == pobject->yindex) {
+			if (pobject == &_me) {
+				const int rnum = occupiedObjectAt(xnew, ynew, xind2, yind2, pobject);
+				if (rnum)
+					return rnum;
+			}
 			pobject->dx = xnew - pobject->xloc;
 			pobject->dy = ynew - pobject->yloc;
 			pobject->xloc = xnew;
 			pobject->yloc = ynew;
 			clampToWalls(pobject);
+			if (pobject == &_me)
+				clampToDiagonalWalls(pobject);
 			return 0;
 		}
 
@@ -588,9 +750,7 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 			return 0;
 		}
 
-		if (_me.xindex >= 0 && _me.xindex < 32 &&
-			_me.yindex >= 0 && _me.yindex < 32)
-			_robotArray[_me.xindex][_me.yindex] = 0;
+		clearPlayerCellMarker();
 
 		_gameMode = kModeBattle;
 		_projon = false;
@@ -1041,7 +1201,7 @@ void ColonyEngine::fallThroughHole() {
 		if (targetMap == 0 && _robotArray[targetX][targetY] != 0)
 			return;
 
-		_robotArray[_me.xindex][_me.yindex] = 0;
+		clearPlayerCellMarker();
 
 		// Preserve sub-cell offset (DOS: xmod = xloc - (xindex<<8))
 		int xmod = _me.xloc - (_me.xindex << 8);
@@ -1051,7 +1211,7 @@ void ColonyEngine::fallThroughHole() {
 		_me.yloc = (targetY << 8) + ymod;
 		_me.yindex = targetY;
 
-		_robotArray[targetX][targetY] = kMeNum;
+		setPlayerCellMarker();
 	}
 
 	// DOS: if(map) load_mapnum(map, TRUE)  always reload when map != 0
@@ -1134,8 +1294,7 @@ void ColonyEngine::playCollisionSound() {
 }
 
 void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
-	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-		_robotArray[_me.xindex][_me.yindex] = 0;
+	clearPlayerCellMarker();
 
 	const int oldXIndex = _me.xindex;
 	const int oldYIndex = _me.yindex;
@@ -1149,8 +1308,7 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 			(_me.xloc != xnew || _me.yloc != ynew))
 		playCollisionSound();
 
-	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-		_robotArray[_me.xindex][_me.yindex] = kMeNum;
+	setPlayerCellMarker();
 
 	_suppressCollisionSound = false;
 }

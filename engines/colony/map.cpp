@@ -164,8 +164,7 @@ void ColonyEngine::loadMap(int mnum) {
 	doPatch();  // apply object relocations from patch table
 	initRobots();  // spawn robot objects for this level
 
-	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-		_robotArray[_me.xindex][_me.yindex] = kMeNum;
+	setPlayerCellMarker();
 	debugC(1, kColonyDebugMap, "Successfully loaded map %d (objects: %d)", mnum, (int)_objects.size());
 }
 

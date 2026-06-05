@@ -28,8 +28,6 @@
 
 namespace Colony {
 
-namespace {
-
 const uint32 kSaveVersion = 1;
 const uint32 kMaxSaveObjects = 4096;
 const uint32 kMaxSavePatches = 100;
@@ -273,8 +271,6 @@ bool findInvalidActiveObjectSlot(const Common::Array<Thing> &objects, uint32 &in
 
 	return false;
 }
-
-} // anonymous namespace
 
 bool ColonyEngine::hasFeature(EngineFeature f) const {
 	return f == kSupportsReturnToLauncher ||
