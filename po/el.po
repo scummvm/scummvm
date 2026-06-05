@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-02 16:30+0000\n"
+"POT-Creation-Date: 2026-06-05 19:36+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -8414,11 +8414,11 @@ msgstr "Μενού / Παράκαμψη"
 msgid "Fire weapon"
 msgstr "Πυροβολισμός"
 
-#: engines/colony/savegame.cpp:295
+#: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
 msgstr "Η αποθήκευση είναι διαθέσιμη μόνο σε οπτική πρώτου προσώπου."
 
-#: engines/colony/savegame.cpp:304
+#: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
 msgstr "Η φόρτωση είναι διαθέσιμη μόνο σε οπτική πρώτου προσώπου."
 

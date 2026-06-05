@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-02 16:30+0000\n"
+"POT-Creation-Date: 2026-06-05 19:36+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8091,11 +8091,11 @@ msgstr "메뉴 / 인트로 건너뛰기"
 msgid "Fire weapon"
 msgstr "무기 발사"
 
-#: engines/colony/savegame.cpp:295
+#: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
 msgstr "저장 기능은 1인칭 시점에서만 사용할 수 있습니다."
 
-#: engines/colony/savegame.cpp:304
+#: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
 msgstr "로딩은 1인칭 시점에서만 가능합니다."
 

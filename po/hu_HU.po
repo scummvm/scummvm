@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-02 16:30+0000\n"
+"POT-Creation-Date: 2026-06-05 19:36+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -8589,11 +8589,11 @@ msgstr "Menü / Ugrás"
 msgid "Fire weapon"
 msgstr "Következő művelet"
 
-#: engines/colony/savegame.cpp:295
+#: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
 msgstr ""
 
-#: engines/colony/savegame.cpp:304
+#: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-02 16:30+0000\n"
+"POT-Creation-Date: 2026-06-05 19:36+0000\n"
 "PO-Revision-Date: 2026-02-09 20:22+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -8064,11 +8064,11 @@ msgstr "Přeskočit řádek"
 msgid "Fire weapon"
 msgstr "~P~ředchozí"
 
-#: engines/colony/savegame.cpp:295
+#: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
 msgstr ""
 
-#: engines/colony/savegame.cpp:304
+#: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
 msgstr ""
 

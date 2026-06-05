@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-02 16:30+0000\n"
+"POT-Creation-Date: 2026-06-05 19:36+0000\n"
 "PO-Revision-Date: 2026-04-17 00:22+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -8219,11 +8219,11 @@ msgstr "Menu / Pomiń"
 msgid "Fire weapon"
 msgstr "Wystrzel z broni"
 
-#: engines/colony/savegame.cpp:295
+#: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
 msgstr "Zapisywanie jest możliwe tylko w widoku pierwszej osoby."
 
-#: engines/colony/savegame.cpp:304
+#: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
 msgstr "Wczytywanie jest możliwe tylko w widoku pierwszej osoby."
 
