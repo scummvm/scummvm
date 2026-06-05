@@ -138,7 +138,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("demo/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 145796),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DEMO,
+			ADGF_TESTING | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
 		kGameNoctropolis,
@@ -146,14 +146,14 @@ static const AccessGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Noctropolis (Sum from GOG Windows and macOS versions)
+		// Noctropolis - sum of this file is the same in all known verisons
 		{
 			"noctropolis",
 			nullptr,
 			AD_ENTRY1s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		kGameNoctropolis,
