@@ -145,7 +145,9 @@ void MapNavigatorXObj::m_new(int nargs) {
 	me->_filename = g_lingo->pop().asString();
 	Common::File file;
 
-	if (!file.open(Common::Path(me->_filename))) {
+	Common::Path resPath = findPath(me->_filename, true, true, false);
+
+	if (!file.open(resPath)) {
 		warning("MapNavigatorXObj::m_new(): Cannot open file %s", me->_filename.c_str());
 		g_lingo->push(g_lingo->_state->me);
 		return;
