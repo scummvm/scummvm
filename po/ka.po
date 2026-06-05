@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-02 16:30+0000\n"
-"PO-Revision-Date: 2026-05-09 12:22+0000\n"
+"PO-Revision-Date: 2026-06-05 10:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -8285,10 +8285,8 @@ msgstr "ინფორმაციის მენიუ"
 
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
 #: engines/freescape/movement.cpp:119
-#, fuzzy
-#| msgid "Toggle resizable window"
 msgid "Toggle red/blue 3D"
-msgstr "ზომაშეცვლადი ფანჯრის გადართვა"
+msgstr "წითელი/ლურჯი 3D-ის გადართვა"
 
 #: engines/freescape/games/castle/castle.cpp:463
 msgid "Select prince"
@@ -12419,20 +12417,16 @@ msgid "Enable ambience sounds."
 msgstr "გარემოს ხმების ჩართვა."
 
 #: engines/scumm/metaengine.cpp:882
-#, fuzzy
-#| msgid "Enable high resolution"
 msgid "High resolution mode"
-msgstr "მაღალი გაფართოების ჩართვა"
+msgstr "მაღალი გაფართოების რეჟიმი"
 
 #: engines/scumm/metaengine.cpp:883
 msgid "Run the game in 640x400 high resolution mode instead of 320x200"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:892 engines/scumm/metaengine.cpp:901
-#, fuzzy
-#| msgid "All levels will be available to play."
 msgid "All levels will be available without requiring passwords"
-msgstr "სათამაშოდ ხელმისაწვდომი იქნება ყველა დონე."
+msgstr "სათამაშოდ ხელმისაწვდომი იქნება ყველა დონე პაროლის მოთხოვნის გარეშე"
 
 #: engines/scumm/metaengine.cpp:1049
 msgid "Down left"
@@ -12480,46 +12474,32 @@ msgid "Aim right / menu right"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1229
-#, fuzzy
-#| msgid "Pick up"
 msgid "Stick up"
 msgstr "აღება"
 
 #: engines/scumm/metaengine.cpp:1159 engines/scumm/metaengine.cpp:1236
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Stick down"
-msgstr "დაბლა ჩამოწევა"
+msgstr "ჩამოწევა"
 
 #: engines/scumm/metaengine.cpp:1166 engines/scumm/metaengine.cpp:1243
-#, fuzzy
-#| msgid "Slide left"
 msgid "Stick left"
-msgstr "გასრიალება მარცხნივ"
+msgstr "მიმაგრება მარცხნივ"
 
 #: engines/scumm/metaengine.cpp:1173 engines/scumm/metaengine.cpp:1250
-#, fuzzy
-#| msgid "Slide right"
 msgid "Stick right"
-msgstr "გასრიალება მარჯვნივ"
+msgstr "მიმაგრება მარჯვნივ"
 
 #: engines/scumm/metaengine.cpp:1180 engines/scumm/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Fire / select"
-msgstr "გადაადგილება / მონიშვნა"
+msgstr "ცეცხლი / მონიშვნა"
 
 #: engines/scumm/metaengine.cpp:1186
-#, fuzzy
-#| msgid "Move back"
 msgid "Menu back"
-msgstr "უკან გადასვლა"
+msgstr "მენიუ უკან"
 
 #: engines/scumm/metaengine.cpp:1191
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu back"
-msgstr "მთავარი მენიუს გამოტოვება"
+msgstr "გამოტოვება / მენიუ უკან"
 
 #: engines/scumm/metaengine.cpp:1207
 msgid "Rebel Assault II controls"
