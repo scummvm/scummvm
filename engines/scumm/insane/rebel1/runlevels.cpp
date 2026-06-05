@@ -1774,8 +1774,11 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 		// On touchscreen devices the DOS recenter-the-cursor aiming model does not apply;
 		// warping/locking the system mouse there injects spurious motion that drifts
 		// direct touch aiming and on-screen controls.
-		if (!isTouchscreenActive())
+		if (!isTouchscreenActive()) {
+			_vm->_mouse.x = kRA1CenterX;
+			_vm->_mouse.y = kRA1CenterY;
 			smush_warpMouse(160, 100, -1);
+		}
 		_mouseVirtualRawX = 0x140;
 		_mouseVirtualRawY = 100;
 		_mouseVirtualPrevLogicalX = kRA1CenterX;

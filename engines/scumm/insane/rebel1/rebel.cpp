@@ -238,8 +238,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_turretFrameShipCenterValid = false;
 	_driftParam = 0;
 
-	// Original startup initializes the options difficulty/tuning index to 1.
-	_difficulty = 1;
+	// Start new games on the least punishing original tuning by default.
+	_difficulty = 0;
 	loadTuningForLevel(0);
 
 	_perspectiveX = 0;
