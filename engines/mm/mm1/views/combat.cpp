@@ -190,6 +190,9 @@ void Combat::draw() {
 }
 
 void Combat::timeout() {
+	if (!isFocused())
+		return;
+
 	switch (_mode) {
 	case NEXT_ROUND:
 		nextRound2();
