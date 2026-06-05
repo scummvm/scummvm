@@ -673,7 +673,7 @@ void Combat::checkMonsterActions() {
 	_monsterP->_counterFlags--;
 
 	// Pick a random character to shoot at
-	int charNum = getRandomNumber(g_globals->_party.size()) - 1;
+	int charNum = CLIP<int>(getRandomNumber(g_globals->_party.size()) - 1, 0, (int)g_globals->_party.size() - 1);
 	Character &c = g_globals->_party[charNum];
 	g_globals->_currCharacter = &c;
 
