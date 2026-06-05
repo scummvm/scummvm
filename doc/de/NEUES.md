@@ -7,6 +7,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Nancy Drew: The Haunted Carousel hinzugefügt.
    - Unterstützung für Nancy Drew: Danger on Deception Island hinzugefügt.
    - Unterstützung für Cartoon Carnival hinzugefügt.
+   - Unterstützung für Alfred Pelrock: En Busca de un Sueño hinzugefügt.
 
  Allgemein:
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
@@ -61,6 +62,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Darstellung des Holomap-Modells korrigiert.
    - Automatische Speicherung beim Fahren eines Fahrzeugs deaktiviert.
 
+ PS3-Portierung:
+   - ScummVM-Engines können jetzt als separate Module/Programmdateien ausgeführt werden.
+     Dadurch werden etwa 90 MB RAM eingespart. Die Option wird nur in Release-Paketen aktiviert.
 
 #### 2026.2.0 "Railmonicon" (28.03.2026)
 
