@@ -54,6 +54,12 @@ namespace Scumm {
 const int kRA2MenuAxisThreshold = Common::JOYAXIS_MAX / 5;
 const uint32 kRA2MenuGamepadNavigationDebounceMs = 250;
 const uint32 kRA2MenuGamepadMouseSuppressMs = 250;
+const int kRA2Handler7MouseSettleJumpThreshold = 40;
+const int kRA2Handler7MouseSettleRelativeThreshold = 40;
+const int kRA2Handler7MouseSettleEdgeMargin = 16;
+const int kRA2GameplayMouseMaxX = 319;
+const int kRA2GameplayMouseMaxY = 199;
+const uint32 kRA2Handler7MouseSettleExtendMs = 1000;
 
 bool rebel2UsesRelativeGamepadAim(int selectedLevel) {
 	return selectedLevel == 1 || selectedLevel == 5 || selectedLevel == 14;
@@ -542,6 +548,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_joystickAxisY = 0;
 	_gamepadAimActive = false;
 	_gameplaySectionActive = false;
+	_gameplayMouseSettleUntil = 0;
 	_lastGameplayMenuCloseTime = 0;
 	_lastMenuGamepadNavigationTime = 0;
 	_handler8HudGlyph = '#';
@@ -644,6 +651,46 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// remain paused for the dialog/focus interval.
 	if (_vm->isPaused())
 		return false;
+
+	if (_gameState == kStateGameplay && _rebelHandler == 7 &&
+			event.type == Common::EVENT_MOUSEMOVE) {
+		if (_gameplayMouseSettleUntil != 0) {
+			const uint32 now = _vm->_system->getMillis();
+			if (now < _gameplayMouseSettleUntil) {
+				const int jumpX = event.mouse.x - _vm->_mouse.x;
+				const int jumpY = event.mouse.y - _vm->_mouse.y;
+				const bool largeAbsoluteJump =
+					ABS(jumpX) >= kRA2Handler7MouseSettleJumpThreshold ||
+					ABS(jumpY) >= kRA2Handler7MouseSettleJumpThreshold;
+				const bool smallRelativeMove =
+					ABS((int)event.relMouse.x) < kRA2Handler7MouseSettleRelativeThreshold &&
+					ABS((int)event.relMouse.y) < kRA2Handler7MouseSettleRelativeThreshold;
+				const bool nearWindowEdge =
+					event.mouse.x <= kRA2Handler7MouseSettleEdgeMargin ||
+					event.mouse.x >= kRA2GameplayMouseMaxX - kRA2Handler7MouseSettleEdgeMargin ||
+					event.mouse.y <= kRA2Handler7MouseSettleEdgeMargin ||
+					event.mouse.y >= kRA2GameplayMouseMaxY - kRA2Handler7MouseSettleEdgeMargin;
+
+				if (largeAbsoluteJump && smallRelativeMove && nearWindowEdge) {
+					const int recenterX = _vm->_mouse.x;
+					const int recenterY = _vm->_mouse.y;
+					_gameplayMouseSettleUntil = now + kRA2Handler7MouseSettleExtendMs;
+					warpGameplayMouseNow(recenterX, recenterY);
+
+					debugC(DEBUG_INSANE, "Rebel2 H7 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u",
+						event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
+						_vm->_mouse.x, _vm->_mouse.y, _gameplayMouseSettleUntil);
+					return true;
+				}
+			}
+
+			_gameplayMouseSettleUntil = 0;
+		}
+
+		debugC(DEBUG_INSANE, "Rebel2 H7 mouse event: pos=(%d,%d) rel=(%d,%d) gamepadAim=%d menuInput=%d",
+			event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
+			_gamepadAimActive ? 1 : 0, _menuInputActive ? 1 : 0);
+	}
 
 	// Keep the gamepad reticle authoritative against stray pointer events. During
 	// gameplay the cursor is locked ~screen-center (levels.cpp lockMouse), so any

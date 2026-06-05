@@ -119,6 +119,7 @@ public:
 	bool hasFrameGameOpcode(uint16 opcode) const {
 		return opcode < 32 && (_frameGameOpcodeMask & (1u << opcode)) != 0;
 	}
+	void warpGameplayMouseNow(int x, int y);
 	int16 getPerspectiveX() const { return _perspectiveX; }
 	int16 getPerspectiveY() const { return _perspectiveY; }
 	void projectGameplayPoint(int16 &x, int16 &y) const;
@@ -377,6 +378,8 @@ private:
 	int16 _gamepadAimAxisX; // Relative gamepad 0x0B aim in preprocessed input space
 	int16 _gamepadAimAxisY;
 	bool _gamepadAimActive;
+	// Suppress delayed lock/warp mousemove artifacts after centering interactive gameplay.
+	uint32 _gameplayMouseSettleUntil;
 	enum InputSource {
 		kInputSourceMouse,
 		kInputSourceJoystickAnalog,

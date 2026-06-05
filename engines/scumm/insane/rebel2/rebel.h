@@ -509,6 +509,7 @@ public:
 	// (on-screen/physical gamepad dpad, keyboard arrows) instead of snapping it to a screen
 	// edge. Call once per frame; getGameplayAimPoint() stays a pure getter.
 	void updateGameplayAimFromGamepad();
+	void warpGameplayMouseNow(int x, int y);
 
 	// Analog stick state, ingested from EVENT_CUSTOM_BACKEND_ACTION_AXIS in notifyEvent()
 	// and read (with a deadzone) by updateGameplayAimFromGamepad(). Signed; 0 = centered.
@@ -520,6 +521,8 @@ public:
 	// recenter the reticle (the cursor is locked ~center during gameplay, so a gamepad
 	// "click" lands at center). See notifyEvent()/updateGameplayAimFromGamepad().
 	bool _gamepadAimActive;
+	// Suppress delayed lock/warp mousemove artifacts after centering Handler 7 gameplay.
+	uint32 _gameplayMouseSettleUntil;
 	uint32 _lastGameplayMenuCloseTime;
 	uint32 _lastMenuGamepadNavigationTime;
 	void openGameplayMainMenu(SmushPlayer *splayer);

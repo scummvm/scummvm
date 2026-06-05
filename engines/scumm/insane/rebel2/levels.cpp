@@ -34,6 +34,7 @@ namespace Scumm {
 
 static const int kRebel2GameplayAimCenterX = 160;
 static const int kRebel2GameplayAimCenterY = 100;
+static const uint32 kRebel2GameplayMouseSettleMs = 1000;
 
 static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
 	if (!eventMan)
@@ -385,15 +386,32 @@ void InsaneRebel2::centerGameplayAim() {
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	purgeRebel2GameplayInputEvents(eventMan);
 
-	_vm->_mouse.x = kRebel2GameplayAimCenterX;
-	_vm->_mouse.y = kRebel2GameplayAimCenterY;
-
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
 	_gamepadAimActive = false;
 
-	smush_warpMouse(kRebel2GameplayAimCenterX, kRebel2GameplayAimCenterY, -1);
+	warpGameplayMouseNow(kRebel2GameplayAimCenterX, kRebel2GameplayAimCenterY);
 	purgeRebel2GameplayInputEvents(eventMan);
+	_gameplayMouseSettleUntil = _vm->_system->getMillis() + kRebel2GameplayMouseSettleMs;
+
+	debugC(DEBUG_INSANE, "Rebel2 centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u",
+		_vm->_mouse.x, _vm->_mouse.y,
+		_joystickAxisX, _joystickAxisY, _gamepadAimActive ? 1 : 0,
+		_gameplayMouseSettleUntil);
+}
+
+void InsaneRebel2::warpGameplayMouseNow(int x, int y) {
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	if (eventMan)
+		eventMan->purgeMouseEvents();
+
+	_vm->_mouse.x = x;
+	_vm->_mouse.y = y;
+	_vm->_system->warpMouse(_vm->_macScreen ? x * 2 : x,
+		_vm->_macScreen ? y * 2 + 2 * _vm->_macScreenDrawOffset : y);
+
+	if (eventMan)
+		eventMan->purgeMouseEvents();
 }
 
 // runLevel -- Main level dispatcher, calls per-level handlers.

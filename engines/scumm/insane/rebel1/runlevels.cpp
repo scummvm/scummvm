@@ -33,6 +33,8 @@
 
 namespace Scumm {
 
+static const uint32 kRA1GameplayMouseSettleMs = 1000;
+
 int32 findAnimFrameChunkOffset(ScummEngine_v7 *vm, const char *filename, int32 targetFrame) {
 	if (targetFrame <= 0)
 		return 0;
@@ -1771,26 +1773,34 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 	// Some replays happen inside one original gameplay loop, so keep the current
 	// input state instead of recentering between route clips.
 	if (!preserveInputState) {
+		_gameplayMouseSettleUntil = 0;
 		// On touchscreen devices the DOS recenter-the-cursor aiming model does not apply;
 		// warping/locking the system mouse there injects spurious motion that drifts
 		// direct touch aiming and on-screen controls.
 		if (!isTouchscreenActive()) {
-			_vm->_mouse.x = kRA1CenterX;
-			_vm->_mouse.y = kRA1CenterY;
-			smush_warpMouse(160, 100, -1);
+			warpGameplayMouseNow(kRA1CenterX, kRA1CenterY);
+			_gameplayMouseSettleUntil = _vm->_system->getMillis() + kRA1GameplayMouseSettleMs;
 		}
 		_mouseVirtualRawX = 0x140;
 		_mouseVirtualRawY = 100;
 		_mouseVirtualPrevLogicalX = kRA1CenterX;
 		_mouseVirtualPrevLogicalY = kRA1CenterY;
 		_mouseVirtualValid = false;
+	} else {
+		_gameplayMouseSettleUntil = 0;
 	}
 	CursorMan.showMouse(false);
 	if (!isTouchscreenActive())
 		g_system->lockMouse(true);
+
+	debugC(DEBUG_INSANE, "RA1 centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u preserve=%d",
+		_vm->_mouse.x, _vm->_mouse.y, _joystickAxisX, _joystickAxisY,
+		_gamepadAimActive ? 1 : 0, _gameplayMouseSettleUntil,
+		preserveInputState ? 1 : 0);
 }
 
 void InsaneRebel1::releaseInteractiveVideoInput() {
+	_gameplayMouseSettleUntil = 0;
 	g_system->lockMouse(false);
 }
 

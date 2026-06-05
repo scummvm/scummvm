@@ -34,6 +34,9 @@
 
 namespace Scumm {
 
+const int kRA2Handler7DirectInputNumerator = 4;
+const int kRA2Handler7DirectInputDenominator = 5;
+
 static bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, int64 containerEnd, const char *context,
 		uint32 &tag, uint32 &chunkSize, int64 &dataEnd, int64 &nextChunkPos) {
 	const int64 headerPos = stream.pos();
@@ -830,8 +833,10 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// Step 1: Raw mouse input as offset from screen center.
 	// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100.
 	// Handler 7 applies DAT_0047a7fe to its local vertical input after clamping.
-	int16 inputX = (int16)(_vm->_mouse.x - 160);  // DAT_0047a7e0
-	int16 inputY = (int16)(_vm->_mouse.y - 100);  // DAT_0047a7e2
+	const int16 mouseX = _vm->_mouse.x;
+	const int16 mouseY = _vm->_mouse.y;
+	int16 inputX = (int16)(mouseX - 160);  // DAT_0047a7e0
+	int16 inputY = (int16)(mouseY - 100);  // DAT_0047a7e2
 
 	// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70).
 	if (inputX > 160)
@@ -847,6 +852,14 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// Mouse mode: scaledInputX = (DAT_0047a7e0 * 0x7f) / 0xa0.
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = _optControlsFlipped ? (int16)-inputY : inputY;  // local_14
+
+	// ScummVM direct mouse/touch/gamepad aiming can hold the cursor at an edge
+	// indefinitely. Keep this sensitivity concession local to Handler 7
+	// third-person ship steering.
+	scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
+		kRA2Handler7DirectInputDenominator);
+	scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
+		kRA2Handler7DirectInputDenominator);
 
 	// Step 3: Velocity history + smoothed average (lines 141-157).
 	for (int i = 24; i > 0; i--) {
@@ -1063,7 +1076,9 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		((_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
 		 _vm->getActionState(kScummActionInsaneAttack));
 
-	debug("Rebel2 H7: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d mode=%d",
+	debugC(DEBUG_INSANE, "Rebel2 H7: mouse=(%d,%d) raw=(%d,%d) scaled=(%d,%d) pos=(%d,%d) "
+		"vel=%d vIn=%d dx=%d dir=%d mode=%d",
+		mouseX, mouseY, inputX, inputY, scaledInputX, scaledInputY,
 		_flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
 		_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode);
 }

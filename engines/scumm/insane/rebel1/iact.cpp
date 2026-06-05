@@ -46,6 +46,10 @@ inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue,
 	return filteredValue;
 }
 
+inline int16 scaleRebel1CenteredMouseAxis(int16 value, int16 center, int axisMax) {
+	return (int16)CLIP<int32>(((int32)(value - center) * axisMax) / center, -axisMax, axisMax);
+}
+
 int16 shapeRebel1Op0BGamepadAxis(int16 inputValue, int16 axisMax) {
 	const int axis = CLIP<int>(inputValue, -axisMax, axisMax);
 	const int absAxis = ABS(axis);
@@ -77,6 +81,10 @@ const int kRA1DosMouseSafeLeft = 0x0AA;
 const int kRA1DosMouseSafeRight = 0x1D6;
 const int kRA1DosMouseSafeTop = 0x32;
 const int kRA1DosMouseSafeBottom = 0x96;
+const int kRA1DosFlightMouseMaxX = kRA1DosMouseCenterX >> 2;
+const int kRA1DosFlightMouseMaxY = kRA1DosMouseCenterY >> 1;
+const int kRA1EnhancedFlightDirectMaxX = (kRA1DosFlightMouseMaxX * 4) / 5;
+const int kRA1EnhancedFlightDirectMaxY = (kRA1DosFlightMouseMaxY * 4) / 5;
 
 // Level 15 final approach 0x5D damage/event codes consumed by
 // RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
@@ -950,8 +958,9 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (usedJoystick)
 			*usedJoystick = true;
 
-		inputX = joyX * 127;
-		inputY = joyY * 127;
+		const bool enhancedFlightInput = _optEnhancedControls && getEffectiveGameOpcode() == 0x07;
+		inputX = joyX * (enhancedFlightInput ? kRA1EnhancedFlightDirectMaxX : 127);
+		inputY = joyY * (enhancedFlightInput ? kRA1EnhancedFlightDirectMaxY : 127);
 
 		if (_optControlsYFlip)
 			inputY = -inputY;
@@ -965,8 +974,11 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 			*usedJoystick = true;
 
 		if (analogAxisX != 0 || analogAxisY != 0) {
-			inputX = CLIP<int32>(((int32)analogAxisX * 127) / Common::JOYAXIS_MAX, -127, 127);
-			inputY = CLIP<int32>(((int32)analogAxisY * 127) / Common::JOYAXIS_MAX, -127, 127);
+			const bool enhancedFlightInput = _optEnhancedControls && getEffectiveGameOpcode() == 0x07;
+			const int axisMaxX = enhancedFlightInput ? kRA1EnhancedFlightDirectMaxX : 127;
+			const int axisMaxY = enhancedFlightInput ? kRA1EnhancedFlightDirectMaxY : 127;
+			inputX = CLIP<int32>(((int32)analogAxisX * axisMaxX) / Common::JOYAXIS_MAX, -axisMaxX, axisMaxX);
+			inputY = CLIP<int32>(((int32)analogAxisY * axisMaxY) / Common::JOYAXIS_MAX, -axisMaxY, axisMaxY);
 		} else {
 			inputX = 0;
 			inputY = 0;
@@ -1006,8 +1018,15 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		_mousePrevBiasX = 0;
 		_mousePrevBiasY = 0;
 
-		inputX = (int16)CLIP<int32>(((int32)(logicalX - kRA1CenterX) * 127) / kRA1CenterX, -127, 127);
-		inputY = (int16)CLIP<int32>(((int32)(logicalY - kRA1CenterY) * 127) / kRA1CenterY, -127, 127);
+		if (getEffectiveGameOpcode() == 0x07) {
+			// Direct flight input lacks the DOS recenter path's offset decay, so keep
+			// held-edge steering below the raw DOS full-deflection bias.
+			inputX = scaleRebel1CenteredMouseAxis(logicalX, kRA1CenterX, kRA1EnhancedFlightDirectMaxX);
+			inputY = scaleRebel1CenteredMouseAxis(logicalY, kRA1CenterY, kRA1EnhancedFlightDirectMaxY);
+		} else {
+			inputX = (int16)CLIP<int32>(((int32)(logicalX - kRA1CenterX) * 127) / kRA1CenterX, -127, 127);
+			inputY = (int16)CLIP<int32>(((int32)(logicalY - kRA1CenterY) * 127) / kRA1CenterY, -127, 127);
+		}
 
 		// These handlers negate DAT_756E internally, so direct touch needs the
 		// opposite baseline while the menu option still toggles the result.
@@ -1053,9 +1072,7 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		_mouseVirtualRawY = rawY;
 		_mouseVirtualPrevLogicalX = kRA1CenterX;
 		_mouseVirtualPrevLogicalY = kRA1CenterY;
-		_vm->_mouse.x = kRA1CenterX;
-		_vm->_mouse.y = kRA1CenterY;
-		smush_warpMouse(kRA1CenterX, kRA1CenterY, -1);
+		warpGameplayMouseNow(kRA1CenterX, kRA1CenterY);
 		debug(2, "RA1 original input virtual recenter: offset=(%d,%d) mouse=(%d,%d)",
 			_mouseOffsetX, _mouseOffsetY, logicalX, logicalY);
 	}

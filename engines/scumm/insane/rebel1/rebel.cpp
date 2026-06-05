@@ -279,6 +279,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_gamepadAimAxisX = 0;
 	_gamepadAimAxisY = 0;
 	_gamepadAimActive = false;
+	_gameplayMouseSettleUntil = 0;
 	_activeInputSource = kInputSourceMouse;
 
 	_currentLevel = 0;
@@ -477,6 +478,20 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 void InsaneRebel1::setCurrentSmushFrame(int32 frame) {
 	_currentSmushFrame = frame;
+}
+
+void InsaneRebel1::warpGameplayMouseNow(int x, int y) {
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	if (eventMan)
+		eventMan->purgeMouseEvents();
+
+	_vm->_mouse.x = x;
+	_vm->_mouse.y = y;
+	_vm->_system->warpMouse(_vm->_macScreen ? x * 2 : x,
+		_vm->_macScreen ? y * 2 + 2 * _vm->_macScreenDrawOffset : y);
+
+	if (eventMan)
+		eventMan->purgeMouseEvents();
 }
 
 InsaneRebel1::~InsaneRebel1() {

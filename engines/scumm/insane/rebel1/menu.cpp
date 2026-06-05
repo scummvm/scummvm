@@ -54,6 +54,12 @@ const int kRA1LevelSelectLeftX      = 20;
 const int kRA1LevelSelectRightX     = 170;
 const int kRA1LevelSelectColW       = 130;
 const uint32 kRA1JoystickAxisEscGuardMs = 250;
+const int kRA1GameplayMouseSettleJumpThreshold = 40;
+const int kRA1GameplayMouseSettleRelativeThreshold = 40;
+const int kRA1GameplayMouseSettleEdgeMargin = 16;
+const int kRA1GameplayMouseMaxX = 319;
+const int kRA1GameplayMouseMaxY = 199;
+const uint32 kRA1GameplayMouseSettleExtendMs = 1000;
 // Original picker traversal uses fixed max indices, not strlen(): passcodes
 // stop at 0x1d and high-score names stop at 0x37.
 const char kRA1TextEntryPickerChars[] = "^`_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -630,6 +636,42 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			(event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
 		_vm->_smushVideoShouldFinish = true;
 		return true;
+	}
+
+	if (_interactiveVideoActive && !_menuActive && !isTouchscreenActive() &&
+			getEffectiveGameOpcode() == 0x07 &&
+			event.type == Common::EVENT_MOUSEMOVE && _gameplayMouseSettleUntil != 0) {
+		const uint32 now = _vm->_system->getMillis();
+		if (now < _gameplayMouseSettleUntil) {
+			const int jumpX = event.mouse.x - _vm->_mouse.x;
+			const int jumpY = event.mouse.y - _vm->_mouse.y;
+			const bool largeAbsoluteJump =
+				ABS(jumpX) >= kRA1GameplayMouseSettleJumpThreshold ||
+				ABS(jumpY) >= kRA1GameplayMouseSettleJumpThreshold;
+			const bool smallRelativeMove =
+				ABS((int)event.relMouse.x) < kRA1GameplayMouseSettleRelativeThreshold &&
+				ABS((int)event.relMouse.y) < kRA1GameplayMouseSettleRelativeThreshold;
+			const bool nearWindowEdge =
+				event.mouse.x <= kRA1GameplayMouseSettleEdgeMargin ||
+				event.mouse.x >= kRA1GameplayMouseMaxX - kRA1GameplayMouseSettleEdgeMargin ||
+				event.mouse.y <= kRA1GameplayMouseSettleEdgeMargin ||
+				event.mouse.y >= kRA1GameplayMouseMaxY - kRA1GameplayMouseSettleEdgeMargin;
+
+			if (largeAbsoluteJump && smallRelativeMove && nearWindowEdge) {
+				const int recenterX = _vm->_mouse.x;
+				const int recenterY = _vm->_mouse.y;
+				_gameplayMouseSettleUntil = now + kRA1GameplayMouseSettleExtendMs;
+				warpGameplayMouseNow(recenterX, recenterY);
+
+				debugC(DEBUG_INSANE, "RA1 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u opcode=0x%X",
+					event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
+					_vm->_mouse.x, _vm->_mouse.y, _gameplayMouseSettleUntil,
+					getEffectiveGameOpcode());
+				return true;
+			}
+		}
+
+		_gameplayMouseSettleUntil = 0;
 	}
 
 	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
