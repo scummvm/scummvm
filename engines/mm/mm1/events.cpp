@@ -24,6 +24,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/gfx/gfx.h"
+#include "mm/mm1/sound.h"
 #include "mm/mm1/views/dialogs.h"
 #include "mm/mm1/views_enh/dialogs.h"
 
@@ -74,6 +75,7 @@ void Events::runGame() {
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
 			tick();
+			Sound::update();
 			drawElements();
 			_screen->update();
 		}
