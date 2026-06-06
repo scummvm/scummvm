@@ -93,15 +93,18 @@ protected:
 	Common::Rect _itemsItemSrcRects[kMaxItems];
 	Common::Rect _resultSrcRects[kMaxResultRects];
 
-	int16 _leftHalfIdx[kMaxItems];
-	int16 _rightHalfIdx[kMaxItems];
-	int16 _resultSlot[kMaxItems];
+	// Result-letter lookups are indexed by the placed item's MAP coordinates,
+	// not by its item index. _letterByMapCol[mapCol] is rendered as the left
+	// half of the item's letter pair; _letterByMapRow[mapRow] as the right.
+	int16 _letterByMapRow[kMaxItems] = {};
+	int16 _letterByMapCol[kMaxItems] = {};
+	int16 _resultSlot[kMaxItems] = {};
 
-	int16 _autoPlaceFlag[kMaxItems];
+	int16 _autoPlaceFlag[kMaxItems] = {};
 
 	uint16 _numSolutions = 0;
-	int16 _solutionRows[kMaxSolutions][kMaxItems];
-	int16 _solutionCols[kMaxSolutions][kMaxItems];
+	int16 _solutionRows[kMaxSolutions][kMaxItems] = {};
+	int16 _solutionCols[kMaxSolutions][kMaxItems] = {};
 
 	SoundDescription _pickupSound;
 	SoundDescription _placeSound;
@@ -129,9 +132,14 @@ protected:
 	ItemSlot _items[kMaxItems];
 	int      _heldItem = -1;
 	Common::Point _heldDrawPos;
+	// Set on a swap (drop onto an occupied cell) so the freshly-placed
+	// glyph isn't covered by the picked-up one drawn at the cursor.
+	// Cleared on the next mouse move.
+	bool     _skipHeldDraw = false;
 	bool     _isSolved = false;
 
 	Graphics::ManagedSurface _boardImage;
+	Graphics::ManagedSurface _cursorImage; // item sprite atlas (right-side panel)
 
 	void initState();
 	void persistState();
@@ -143,7 +151,7 @@ protected:
 	bool hitTestItems(const Common::Point &p, int &outRow, int &outCol) const;
 	int findItemInMap(int row, int col) const;
 	int findItemInItems(int row, int col) const;
-	bool isCorrectMapPlacement(int item, int row, int col) const;
+	bool isValidMapSlot(int row, int col) const;
 	void checkSolved();
 };
 

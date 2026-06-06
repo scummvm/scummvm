@@ -78,9 +78,9 @@ void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 
 	for (int i = 0; i < kMaxItems; ++i)
-		_leftHalfIdx[i] = stream.readSint16LE();
+		_letterByMapRow[i] = stream.readSint16LE();
 	for (int i = 0; i < kMaxItems; ++i)
-		_rightHalfIdx[i] = stream.readSint16LE();
+		_letterByMapCol[i] = stream.readSint16LE();
 	for (int i = 0; i < kMaxItems; ++i)
 		_resultSlot[i] = stream.readSint16LE();
 
@@ -131,6 +131,7 @@ void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void GridMapPuzzle::initState() {
 	GridMapPuzzleData *gmd = (GridMapPuzzleData *)NancySceneState.getPuzzleData(GridMapPuzzleData::getTag());
+
 	if (_retainState && gmd && gmd->itemState.size() >= (uint)_numItems * 6) {
 		const Common::Array<int16> &state = gmd->itemState;
 		for (int i = 0; i < (int)_numItems; ++i) {
@@ -141,17 +142,18 @@ void GridMapPuzzle::initState() {
 			_items[i].itemsRow = state[i * 6 + 4];
 			_items[i].itemsCol = state[i * 6 + 5];
 		}
-		return;
+	} else {
+		for (int i = 0; i < kMaxItems; ++i)
+			_items[i] = ItemSlot();
 	}
 
-	for (int i = 0; i < kMaxItems; ++i)
-		_items[i] = ItemSlot();
-
-	// Items with their autoplace flag set start placed in the items grid
-	// (acting as the source/inventory). Other items stay hidden until released
-	// by gameplay events outside this puzzle.
+	// Always re-check autoplace flags: items released after the last save
+	// (e.g. discovered by examining a wall between visits) should appear in
+	// the items grid even when restoring a previous state.
 	const int itemsCols = MAX<int>(1, (int)_itemsCols);
 	for (int i = 0; i < (int)_numItems; ++i) {
+		if (_items[i].inMap || _items[i].inItems)
+			continue;
 		if (_autoPlaceFlag[i] != -1 && NancySceneState.getEventFlag(_autoPlaceFlag[i], g_nancy->_true)) {
 			_items[i].inItems = true;
 			_items[i].itemsRow = (int16)(i / itemsCols);
@@ -188,6 +190,9 @@ void GridMapPuzzle::init() {
 
 	g_nancy->_resource->loadImage(_boardImageName, _boardImage);
 	_boardImage.setTransparentColor(_drawSurface.getTransparentColor());
+
+	g_nancy->_resource->loadImage(_cursorImageName, _cursorImage);
+	_cursorImage.setTransparentColor(_drawSurface.getTransparentColor());
 
 	initState();
 
@@ -256,14 +261,16 @@ void GridMapPuzzle::execute() {
 }
 
 Common::Rect GridMapPuzzle::mapCellRect(int row, int col) const {
-	int x = (int)_mapOriginX + col * ((int)_mapSpacingX + _mapCellW);
-	int y = (int)_mapOriginY + row * ((int)_mapSpacingY + _mapCellH);
+	// Stride uses the raw src-rect dimensions (right - left, before readRect's
+	// inclusive→exclusive +1), to match the original's cell layout.
+	int x = (int)_mapOriginX + col * ((int)_mapSpacingX + _mapCellW - 1);
+	int y = (int)_mapOriginY + row * ((int)_mapSpacingY + _mapCellH - 1);
 	return Common::Rect(x, y, x + _mapCellW, y + _mapCellH);
 }
 
 Common::Rect GridMapPuzzle::itemsCellRect(int row, int col) const {
-	int x = (int)_itemsOriginX + col * ((int)_itemsSpacingX + _itemsCellW);
-	int y = (int)_itemsOriginY + row * ((int)_itemsSpacingY + _itemsCellH);
+	int x = (int)_itemsOriginX + col * ((int)_itemsSpacingX + _itemsCellW - 1);
+	int y = (int)_itemsOriginY + row * ((int)_itemsSpacingY + _itemsCellH - 1);
 	return Common::Rect(x, y, x + _itemsCellW, y + _itemsCellH);
 }
 
@@ -309,18 +316,22 @@ int GridMapPuzzle::findItemInItems(int row, int col) const {
 	return -1;
 }
 
-Common::Rect GridMapPuzzle::resultsCellRect(int row, int col) const {
-	int x = (int)_resultsOriginX + col * ((int)_resultsSpacingX + _resultsCellW);
-	int y = (int)_resultsOriginY + row * ((int)_resultsSpacingY + _resultsCellH);
-	return Common::Rect(x, y, x + _resultsCellW, y + _resultsCellH);
-}
-
-bool GridMapPuzzle::isCorrectMapPlacement(int item, int row, int col) const {
+bool GridMapPuzzle::isValidMapSlot(int row, int col) const {
+	// A map cell is a real placement slot iff at least one solution places
+	// some item there. Empty map cells outside any solution reject drops.
 	for (int s = 0; s < (int)_numSolutions; ++s) {
-		if (_solutionRows[s][item] == (int16)row && _solutionCols[s][item] == (int16)col)
-			return true;
+		for (int i = 0; i < (int)_numItems; ++i) {
+			if (_solutionRows[s][i] == (int16)row && _solutionCols[s][i] == (int16)col)
+				return true;
+		}
 	}
 	return false;
+}
+
+Common::Rect GridMapPuzzle::resultsCellRect(int row, int col) const {
+	int x = (int)_resultsOriginX + col * ((int)_resultsSpacingX + _resultsCellW - 1);
+	int y = (int)_resultsOriginY + row * ((int)_resultsSpacingY + _resultsCellH - 1);
+	return Common::Rect(x, y, x + _resultsCellW, y + _resultsCellH);
 }
 
 void GridMapPuzzle::handleInput(NancyInput &input) {
@@ -332,6 +343,7 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 
 	if (_heldItem != -1 && _heldDrawPos != mouseVP) {
 		_heldDrawPos = mouseVP;
+		_skipHeldDraw = false;
 		redraw();
 	}
 
@@ -359,6 +371,16 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;
 
+	// Reset the held-draw suppression flag on every click; the swap branch
+	// below sets it back to true when appropriate.
+	_skipHeldDraw = false;
+
+	// Sync the held draw position to the click point. Mouse-move tracking
+	// only runs while something is held, so without this a pickup right
+	// after a plain drop would render the new held glyph at the previous
+	// drop's coordinates for one frame.
+	_heldDrawPos = mouseVP;
+
 	int existingItem = hitMap ? findItemInMap(row, col) : findItemInItems(iRow, iCol);
 
 	if (_heldItem == -1) {
@@ -374,23 +396,27 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_sound->playSound(_pickupSound);
 		}
 	} else {
-		// Drops onto the map grid only succeed when the cell is the correct
-		// placement for the held item per any solution; otherwise the cell
-		// rejects the drop and the item stays held.
-		if (hitMap && !isCorrectMapPlacement(_heldItem, row, col))
+		// Drop. Map cells only accept the held item if they are real
+		// placement slots (i.e. used by some solution); items cells always
+		// accept. An occupied cell sends its current occupant back to the
+		// cursor so the player can swap.
+		if (hitMap && !isValidMapSlot(row, col))
 			return;
 
 		if (existingItem != -1) {
-			// Items-grid cells allow swap: the existing item becomes the new
-			// held one. Map cells are gated by the correctness check above, so
-			// they can't be occupied by anything except the held item itself.
-			if (hitMap)
-				return;
-			_items[existingItem].inItems = false;
-			_items[_heldItem].inItems = true;
-			_items[_heldItem].itemsRow = (int16)iRow;
-			_items[_heldItem].itemsCol = (int16)iCol;
+			if (hitMap) {
+				_items[existingItem].inMap = false;
+				_items[_heldItem].inMap = true;
+				_items[_heldItem].mapRow = (int16)row;
+				_items[_heldItem].mapCol = (int16)col;
+			} else {
+				_items[existingItem].inItems = false;
+				_items[_heldItem].inItems = true;
+				_items[_heldItem].itemsRow = (int16)iRow;
+				_items[_heldItem].itemsCol = (int16)iCol;
+			}
 			_heldItem = existingItem;
+			_skipHeldDraw = true;
 			if (_pickupSound.name != "NO SOUND") {
 				g_nancy->_sound->loadSound(_pickupSound);
 				g_nancy->_sound->playSound(_pickupSound);
@@ -446,6 +472,8 @@ void GridMapPuzzle::redraw() {
 
 	for (int i = 0; i < (int)_numItems; ++i) {
 		const ItemSlot &slot = _items[i];
+		// Small map-glyph atlas is on the board image; large items-grid
+		// sprites and the drag cursor are on the cursor image.
 		if (slot.inMap && slot.mapRow >= 0 && slot.mapCol >= 0) {
 			const Common::Rect &src = _mapItemSrcRects[i];
 			if (!src.isEmpty()) {
@@ -457,14 +485,16 @@ void GridMapPuzzle::redraw() {
 			const Common::Rect &src = _itemsItemSrcRects[i];
 			if (!src.isEmpty()) {
 				Common::Rect dst = itemsCellRect(slot.itemsRow, slot.itemsCol);
-				_drawSurface.blitFrom(_boardImage, src, Common::Point(dst.left, dst.top));
+				_drawSurface.blitFrom(_cursorImage, src, Common::Point(dst.left, dst.top));
 			}
 		}
 	}
 
 	// Each item placed in the map contributes two letter halves to the results
-	// bar (its assigned slot indexes a pair of adjacent cells). When all items
-	// are correctly placed the letters spell out the solution sentence.
+	// bar at the item's fixed slot. The letters themselves are looked up from
+	// the placement coordinates: column picks the left half, row the right.
+	// When the right items end up at the right cells the strip spells out
+	// the solution sentence.
 	const int resultsCols = MAX<int>(1, (int)_resultsCols);
 	for (int i = 0; i < (int)_numItems; ++i) {
 		if (!_items[i].inMap)
@@ -475,8 +505,10 @@ void GridMapPuzzle::redraw() {
 		const int base = slot * 2;
 		const int row  = base / resultsCols;
 		const int col  = base % resultsCols;
-		const int li = _leftHalfIdx[i];
-		const int ri = _rightHalfIdx[i];
+		const int mapRow = (int)_items[i].mapRow;
+		const int mapCol = (int)_items[i].mapCol;
+		const int li = (mapCol >= 0 && mapCol < kMaxItems) ? _letterByMapCol[mapCol] : -1;
+		const int ri = (mapRow >= 0 && mapRow < kMaxItems) ? _letterByMapRow[mapRow] : -1;
 		if (li >= 0 && li < kMaxResultRects && !_resultSrcRects[li].isEmpty()) {
 			Common::Rect dst = resultsCellRect(row, col);
 			_drawSurface.blitFrom(_boardImage, _resultSrcRects[li], Common::Point(dst.left, dst.top));
@@ -487,14 +519,14 @@ void GridMapPuzzle::redraw() {
 		}
 	}
 
-	if (_heldItem >= 0 && _heldItem < (int)_numItems) {
+	if (_heldItem >= 0 && _heldItem < (int)_numItems && !_skipHeldDraw) {
 		const Common::Rect &src = _itemsItemSrcRects[_heldItem].isEmpty()
 		                          ? _mapItemSrcRects[_heldItem]
 		                          : _itemsItemSrcRects[_heldItem];
 		if (!src.isEmpty()) {
 			int x = _heldDrawPos.x - src.width()  / 2;
 			int y = _heldDrawPos.y - src.height() / 2;
-			_drawSurface.blitFrom(_boardImage, src, Common::Point(x, y));
+			_drawSurface.blitFrom(_cursorImage, src, Common::Point(x, y));
 		}
 	}
 
