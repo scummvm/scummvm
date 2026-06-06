@@ -87,7 +87,7 @@ const int kRA1CenteredAxisMax = 127;
 const int kRA1Op0BVerticalAxisMax = 100;
 const int kRA1EnhancedFlightDirectMaxX = 64;
 const int kRA1EnhancedFlightDirectMaxY = 40;
-const int kRA1Op09MouseRollTargetScale = 16;
+const int kRA1MouseFlightRollTargetScale = 16;
 const int kRA1ControlPadAxisStep = 0x1E;
 const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
 const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
@@ -1104,11 +1104,12 @@ void InsaneRebel1::updateShipPhysics() {
 		inputSourceName = "joystick-dpad";
 
 	// --- Step 2: Roll accumulator (_74CA) ---
-	// Normal mode: accumulate. For ScummVM's absolute mouse in GAME 0x09, steer
-	// toward a bounded roll target so holding the cursor off center does not
-	// continue accelerating the ship until it clamps.
-	if (effectiveOpcode == 0x09 && _activeInputSource == kInputSourceMouse && !usedJoystick) {
-		const int32 targetRoll = (int32)inputX * kRA1Op09MouseRollTargetScale;
+	// Normal mode: accumulate. For ScummVM's absolute mouse in flight handlers,
+	// steer toward a bounded roll target so holding the cursor off center does
+	// not continue accelerating the ship until it clamps.
+	if ((effectiveOpcode == 0x07 || effectiveOpcode == 0x09) &&
+			_activeInputSource == kInputSourceMouse && !usedJoystick) {
+		const int32 targetRoll = (int32)inputX * kRA1MouseFlightRollTargetScale;
 		_rollAccum += (targetRoll - _rollAccum) >> 2;
 	} else {
 		_rollAccum += (_tuning.roll * (int32)inputX) >> 5;
