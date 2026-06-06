@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "scumm/insane/insane.h"
 #include "scumm/insane/rebel/rebel_audio.h"
+#include "scumm/insane/rebel/rebel_gamepad.h"
 #include "scumm/smush/rebel/smush_player_ra1.h"
 
 namespace Scumm {
@@ -210,6 +211,9 @@ private:
 	void captureInteractiveVideoInput();
 	void releaseInteractiveVideoInput();
 	void playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame);
+	void enableIOSGamepadController();
+	void restoreIOSGamepadController();
+	void openGameplayMainMenu();
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank, bool warnIfMissing = true);
 	void loadLevelSprites(int level);
 	void handleGameOpcode5EReset(uint32 param1);
@@ -521,6 +525,7 @@ private:
 	bool _interactiveVideoActive;
 	bool _preserveInteractiveRuntimeState;
 	bool _interactiveVideoCheatSkipped;
+	RebelIOSGamepadControllerState _iosGamepadControllerState;
 
 	// Path branching for levels with left/right alternative videos.
 	// Original sets nextSceneA/nextSceneB when GAME 0x07 counter == 394 (0x18A).

@@ -483,7 +483,16 @@ void InsaneRebel1::warpGameplayMouseNow(int x, int y) {
 		eventMan->purgeMouseEvents();
 }
 
+void InsaneRebel1::enableIOSGamepadController() {
+	_iosGamepadControllerState.enable();
+}
+
+void InsaneRebel1::restoreIOSGamepadController() {
+	_iosGamepadControllerState.restore();
+}
+
 InsaneRebel1::~InsaneRebel1() {
+	restoreIOSGamepadController();
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	terminateAudio();
 	freeSfx();

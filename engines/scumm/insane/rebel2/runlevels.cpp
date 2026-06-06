@@ -197,12 +197,16 @@ bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool rec
 		if (!_gameplaySectionActive && (flags & 0x40) == 0)
 			centerGameplayAim();
 		_gameplaySectionActive = true;
+		enableIOSGamepadController();
 	} else {
 		_gameplaySectionActive = false;
+		restoreIOSGamepadController();
 	}
 
 	splayer->setCurVideoFlags(flags);
 	splayer->play(filename, 15);
+	if (isRecordedGameplay)
+		restoreIOSGamepadController();
 	if (recordFrame)
 		_deathFrame = splayer->_frame;
 	restoreDamageFlashPalette();

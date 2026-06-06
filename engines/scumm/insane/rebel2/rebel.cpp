@@ -568,6 +568,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 
 InsaneRebel2::~InsaneRebel2() {
+	restoreIOSGamepadController();
 	setVirtualKeyboardVisible(false);
 
 	// Unregister EventObserver
@@ -625,7 +626,11 @@ void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
 	if (!splayer->_paused)
 		splayer->pause();
 
+	const bool restoreGamepad = _iosGamepadControllerState.isEnabled();
+	restoreIOSGamepadController();
 	_vm->openMainMenuDialog();
+	if (restoreGamepad && _gameState == kStateGameplay && _rebelHandler != 0 && !_vm->shouldQuit())
+		enableIOSGamepadController();
 	splayer->unpause();
 	_lastGameplayMenuCloseTime = _vm->_system->getMillis();
 }
@@ -639,6 +644,14 @@ void InsaneRebel2::openMenuMainMenu(SmushPlayer *splayer) {
 	}
 
 	_vm->openMainMenuDialog();
+}
+
+void InsaneRebel2::enableIOSGamepadController() {
+	_iosGamepadControllerState.enable();
+}
+
+void InsaneRebel2::restoreIOSGamepadController() {
+	_iosGamepadControllerState.restore();
 }
 
 // notifyEvent -- EventObserver callback for global input dispatch.

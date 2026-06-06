@@ -525,6 +525,7 @@ int InsaneRebel2::runLevel(int levelId) {
 	}
 
 	// Unlock the mouse when returning to menu
+	restoreIOSGamepadController();
 	g_system->lockMouse(false);
 	CursorMan.showMouse(true);
 

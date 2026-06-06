@@ -593,6 +593,24 @@ bool InsaneRebel1::handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY) {
 	return false;
 }
 
+void InsaneRebel1::openGameplayMainMenu() {
+	if (!_player)
+		return;
+
+	const bool wasPaused = _player->_paused;
+	if (!wasPaused)
+		_player->pause();
+
+	const bool restoreGamepad = _iosGamepadControllerState.isEnabled();
+	restoreIOSGamepadController();
+	_vm->openMainMenuDialog();
+	if (restoreGamepad && _interactiveVideoActive && !_menuActive && !_vm->shouldQuit())
+		enableIOSGamepadController();
+
+	if (!wasPaused)
+		_player->unpause();
+}
+
 // ScummVM-exclusive feature (not in the original game): let the player navigate and
 // activate the front-end menus with the mouse. Hovering highlights an item and a left
 // click activates it (same as pressing accept). The item hit-rectangles mirror the
@@ -841,12 +859,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 				return true;
 			}
 			if (_player) {
-				const bool wasPaused = _player->_paused;
-				if (!wasPaused)
-					_player->pause();
-				_vm->openMainMenuDialog();
-				if (!wasPaused)
-					_player->unpause();
+				openGameplayMainMenu();
 			}
 			return true;
 		}
@@ -942,12 +955,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			}
 
 			if (_player) {
-				const bool wasPaused = _player->_paused;
-				if (!wasPaused)
-					_player->pause();
-				_vm->openMainMenuDialog();
-				if (!wasPaused)
-					_player->unpause();
+				openGameplayMainMenu();
 				return true;
 			}
 		}
@@ -966,12 +974,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 				return true;
 			}
 
-			const bool wasPaused = _player->_paused;
-			if (!wasPaused)
-				_player->pause();
-			_vm->openMainMenuDialog();
-			if (!wasPaused)
-				_player->unpause();
+			openGameplayMainMenu();
 			return true;
 		}
 

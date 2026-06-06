@@ -134,6 +134,7 @@ MODULE_OBJS += \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
 	insane/rebel/rebel_audio.o \
+	insane/rebel/rebel_gamepad.o \
 	insane/rebel1/rebel.o \
 	insane/rebel1/audio.o \
 	insane/rebel1/iact.o \

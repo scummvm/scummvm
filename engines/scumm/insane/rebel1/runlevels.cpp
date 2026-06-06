@@ -1774,6 +1774,8 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
 	const bool preserveInputState = _preserveInteractiveRuntimeState || level7RouteSplice;
 
+	enableIOSGamepadController();
+
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window.
 	// Some replays happen inside one original gameplay loop, so keep the current
 	// input state instead of recentering between route clips.
@@ -1802,6 +1804,7 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 void InsaneRebel1::releaseInteractiveVideoInput() {
 	_gameplayMouseSettleUntil = 0;
 	g_system->lockMouse(false);
+	restoreIOSGamepadController();
 }
 
 void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame) {

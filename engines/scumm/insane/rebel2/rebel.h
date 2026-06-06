@@ -28,6 +28,7 @@
 
 #include "scumm/insane/insane.h"
 #include "scumm/insane/rebel/rebel_audio.h"
+#include "scumm/insane/rebel/rebel_gamepad.h"
 
 #include "common/keyboard.h"
 #include "common/list.h"
@@ -424,6 +425,8 @@ public:
 	// flags and when to call processWaveEnd(). recordFrame preserves the original
 	// split between gameplay/wave calls and transition/init-only segments.
 	bool playLevelSegment(const char *filename, uint16 flags, bool recordFrame = true);
+	void enableIOSGamepadController();
+	void restoreIOSGamepadController();
 
 	int calculateAccuracy(int kills, int misses) const;
 
@@ -470,6 +473,7 @@ public:
 	void centerGameplayAim();
 	// Tracks consecutive recorded gameplay SANs so wave-loop videos do not recenter aim.
 	bool _gameplaySectionActive;
+	RebelIOSGamepadControllerState _iosGamepadControllerState;
 
 	// Level state tracking for multi-phase levels
 	int _currentPhase;        // Current gameplay phase (1, 2, 3 for Level 2; 1, 2 for Level 3/6)
