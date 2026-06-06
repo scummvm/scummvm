@@ -26,13 +26,18 @@
 
 namespace Twp {
 
-struct DateTime {
-	int year, month, day;
-	int hour, min;
-};
+/// @brief Convert a time value (number of seconds since the Unix epoch) to a human-readable string format.
+/// @param t The time value to format, as a number of seconds since the Unix epoch (1970-01-01 00:00:00 UTC).
+/// @return A formatted string representing the date and time, in the format "Mon DD at HH:MM", where Mon is the three-letter month abbreviation, DD is the day of the month, HH is the hour (00-23), and MM is the minute (00-59).
+Common::String formatTime(int64 t);
 
-Common::String formatTime(int64 time, const char *format);
-DateTime toDateTime(int64 time);
+/// @brief Convert a time value (number of seconds since the Unix epoch) to a TimeDate struct representing the corresponding date and time components.
+/// @param t The time value to convert, as a number of seconds since the Unix epoch (1970-01-01 00:00:00 UTC).
+/// @return A TimeDate struct representing the date and time components.
+TimeDate intToTimeDate(int64 t);
+
+/// @brief Get the current time as a time value (number of seconds since the Unix epoch).
+/// @return The current time as a number of seconds since the Unix epoch (1970-01-01 00:00:00 UTC).
 int64 getTime();
 
 } // namespace Twp
