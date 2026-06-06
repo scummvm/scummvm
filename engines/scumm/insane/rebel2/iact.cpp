@@ -36,6 +36,7 @@ namespace Scumm {
 
 const int kRA2Handler7DirectInputNumerator = 4;
 const int kRA2Handler7DirectInputDenominator = 5;
+const int kRA2Handler7MouseTargetRangeX = 0xc0;
 
 static bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, int64 containerEnd, const char *context,
 		uint32 &tag, uint32 &chunkSize, int64 &dataEnd, int64 &nextChunkPos) {
@@ -860,6 +861,12 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		kRA2Handler7DirectInputDenominator);
 	scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
 		kRA2Handler7DirectInputDenominator);
+	const bool useMouseFlightTarget = !_gamepadAimActive;
+	int16 mouseFlightTargetX = _flyShipScreenX;
+	if (useMouseFlightTarget) {
+		mouseFlightTargetX = (int16)(0xd4 + (scaledInputX * kRA2Handler7MouseTargetRangeX) / 127);
+		mouseFlightTargetX = CLIP<int16>(mouseFlightTargetX, 0x14, 0x194);
+	}
 
 	// Step 3: Velocity history + smoothed average (lines 141-157).
 	for (int i = 24; i > 0; i--) {
@@ -919,6 +926,16 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		positionDeltaX = -12;
 	if (positionDeltaX > 11)
 		positionDeltaX = 12;
+
+	// Retail integrates relative flight axes. ScummVM's real mouse is an
+	// absolute position, so steer toward a bounded position target instead of
+	// letting a held off-center cursor keep pushing the ship until it bounces.
+	if (useMouseFlightTarget) {
+		int targetDeltaX = mouseFlightTargetX - _flyShipScreenX;
+		positionDeltaX = (int16)CLIP<int>(targetDeltaX / 4, -12, 12);
+		if (positionDeltaX == 0 && targetDeltaX != 0)
+			positionDeltaX = (targetDeltaX < 0) ? -1 : 1;
+	}
 
 	// Apply X delta (line 193 / 237).
 	_flyShipScreenX += positionDeltaX;
@@ -1076,11 +1093,12 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		((_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
 		 _vm->getActionState(kScummActionInsaneAttack));
 
-	debugC(DEBUG_INSANE, "Rebel2 H7: mouse=(%d,%d) raw=(%d,%d) scaled=(%d,%d) pos=(%d,%d) "
-		"vel=%d vIn=%d dx=%d dir=%d mode=%d",
+	debugC(DEBUG_INSANE, "Rebel2 H7: mouse=(%d,%d) raw=(%d,%d) scaled=(%d,%d) targetX=%d pos=(%d,%d) "
+		"vel=%d vIn=%d dx=%d dir=%d mode=%d mouseTarget=%d",
 		mouseX, mouseY, inputX, inputY, scaledInputX, scaledInputY,
-		_flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
-		_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode);
+		mouseFlightTargetX, _flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
+		_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode,
+		useMouseFlightTarget ? 1 : 0);
 }
 
 // ScummVM refactor helper for opcode 6 Handler 25, not a separate retail function.
