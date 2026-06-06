@@ -36,6 +36,7 @@ protected:
 	void initGamePlayerFields() override;
 	void destroyGamePlayerFields() override;
 	void resetGameVideoState() override;
+	void initGameVideoState() override;
 	void releaseGameVideoState() override;
 	bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;

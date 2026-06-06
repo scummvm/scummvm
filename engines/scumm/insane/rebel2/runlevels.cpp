@@ -205,6 +205,7 @@ bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool rec
 	splayer->play(filename, 15);
 	if (recordFrame)
 		_deathFrame = splayer->_frame;
+	restoreDamageFlashPalette();
 	return !_vm->shouldQuit();
 }
 

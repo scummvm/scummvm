@@ -193,6 +193,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_damageHighFlashCounter = 0;
 	_damageShakeCounter = 0;
 	memset(_damageSavedPalette, 0, sizeof(_damageSavedPalette));
+	memset(_damageRestorePalette, 0, sizeof(_damageRestorePalette));
+	_damageRestorePaletteValid = false;
 
 	// Text overlay state (FUN_004171c5 chapter title rendering)
 	_textOverlayActive = false;

@@ -185,6 +185,7 @@ void InsaneRebel2::playMissionBriefing() {
 // Resets handler to 0 (no HUD) and sets flags to 0x28 (cinematic + buffer preserve).
 // All wrapper functions (FUN_00417168/4171c5/417ab2/417327) add | 8 before calling FUN_0041f4d0.
 void InsaneRebel2::playCinematic(const char *filename) {
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
@@ -200,6 +201,7 @@ void InsaneRebel2::playCinematic(const char *filename) {
 void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX, int textY,
                                      int fadeInFrame, int fadeOutFrame) {
 
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
@@ -271,6 +273,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 // playLevelEnd -- Level completion video (FUN_00417327).
 void InsaneRebel2::playLevelEnd(int levelId) {
 
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
@@ -290,6 +293,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 // playLevelRetry -- Retry prompt video (LEVXX/XXRETRY.SAN, FUN_00417168).
 void InsaneRebel2::playLevelRetry(int levelId) {
 
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
@@ -309,6 +313,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 // playLevelGameOver -- Game over video (FUN_00417ab2).
 void InsaneRebel2::playLevelGameOver(int levelId) {
 
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
@@ -714,6 +719,7 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 // playLevelDeathVariant -- Death video with variant selection.
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
@@ -741,6 +747,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 // playLevelRetryVariant -- Phase-specific retry video.
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 
+	restoreDamageFlashPalette();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed

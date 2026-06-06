@@ -2667,8 +2667,27 @@ void InsaneRebel2::resetDamageFlash() {
 	_damageFlashCounter = 0;
 }
 
+void InsaneRebel2::restoreDamageFlashPalette() {
+	if (_player) {
+		if (_damageRestorePaletteValid)
+			_player->setPalette(_damageRestorePalette);
+		else if (_damageFlashCounter != 0 || _damageHighFlashCounter != 0)
+			_player->setPalette(_damageSavedPalette);
+	}
+
+	_damageFlashCounter = 0;
+	_damageHighFlashCounter = 0;
+	_damageShakeCounter = 0;
+	_damageRestorePaletteValid = false;
+}
+
 // initDamageFlash -- Save palette and initiate 5-frame flash (FUN_00420515).
 void InsaneRebel2::initDamageFlash() {
+	if (!_damageRestorePaletteValid && _player) {
+		memcpy(_damageRestorePalette, _player->_pal, 0x300);
+		_damageRestorePaletteValid = true;
+	}
+
 	if (_damageFlashCounter == 0) {
 		// Save current SMUSH palette before modifying it
 		memcpy(_damageSavedPalette, _player->_pal, 0x300);
@@ -2698,6 +2717,10 @@ void InsaneRebel2::updateDamageFlashPalette() {
 		_damageHighFlashCounter = 0;
 	} else {
 		if (_damageHighFlashCounter == 0) {
+			if (!_damageRestorePaletteValid) {
+				memcpy(_damageRestorePalette, _player->_pal, 0x300);
+				_damageRestorePaletteValid = true;
+			}
 			// Save palette on first frame of high-damage mode
 			memcpy(_damageSavedPalette, _player->_pal, 0x300);
 		}
@@ -2719,6 +2742,8 @@ void InsaneRebel2::updateDamageFlashPalette() {
 					modPal[i] = 0xFF - (((0xFF - _damageSavedPalette[i]) * blend) >> 4);
 				}
 				_player->setPalette(modPal);
+				if (_damageFlashCounter == 0 && _damageHighFlashCounter == 0)
+					_damageRestorePaletteValid = false;
 			}
 		}
 	} else {

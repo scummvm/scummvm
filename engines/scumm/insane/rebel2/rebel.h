@@ -900,11 +900,14 @@ public:
 	void updateDamageFlashPalette();     // FUN_00420562
 	void updateDamageEffect(byte *renderBitmap, int pitch, int width, int height); // FUN_00420754
 	void resetDamageFlash();             // FUN_00420501
+	void restoreDamageFlashPalette();
 
 	int16 _damageFlashCounter;           // DAT_00482404 - palette flash countdown (0..5)
 	int16 _damageHighFlashCounter;       // DAT_00482408 - high-damage red flash (0..16)
 	int16 _damageShakeCounter;           // DAT_0048240c - screen shake countdown (0..10)
 	byte _damageSavedPalette[0x300];     // DAT_00459990 - palette snapshot before flash
+	byte _damageRestorePalette[0x300];   // ScummVM boundary restore snapshot
+	bool _damageRestorePaletteValid;
 
 	// Rebel per-level counters / flags mapped from retail globals
 	bool _rebelOp6Initialized; // Guard: opcode 6 init block (clearBit/links/wave) runs once per video

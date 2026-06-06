@@ -1806,6 +1806,7 @@ void InsaneRebel1::releaseInteractiveVideoInput() {
 
 void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame) {
 	_vm->_splayer->play(filename, 15, videoOffset, videoStartFrame);
+	restoreScreenFlashPalette();
 	restoreInteractiveVideoAudioState();
 	_interactiveVideoActive = false;
 }

@@ -187,6 +187,13 @@ void SmushPlayerRebel1::resetGameVideoState() {
 	_ra1UseFadeFrame = false;
 }
 
+void SmushPlayerRebel1::initGameVideoState() {
+	// Some RA1 ANMs inherit the current SMUSH palette. SmushPlayer::play()
+	// clears the dirty range before init(), so re-push the palette that was
+	// restored or inherited before this video starts.
+	setDirtyColors(0, 255);
+}
+
 void SmushPlayerRebel1::releaseGameVideoState() {
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
