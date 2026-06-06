@@ -310,7 +310,8 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		result = Common::String::format(" %s(%s, %s, %s)", s == 2 ? "NOT " : "", i.c_str(), a.c_str(), b.c_str());
 		break;
 	}
-	case 0x0A: {
+	case 0x0A:
+	case 0x30: {
 		if (length >= 10) {
 			script->seek(dataStart + 6);
 			uint16 o = script->readUint16LE(), n = script->readUint16LE();
@@ -559,7 +560,6 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 	case 0x1C:
 	case 0x1D:
 	case 0x28:
-	case 0x30:
 	case 0x36:
 	case 0x37:
 	case 0x39:
