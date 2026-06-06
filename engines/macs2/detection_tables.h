@@ -55,6 +55,34 @@ const ADGameDescription gameDescriptions[] = {
 	 ADGF_DEMO | ADGF_UNSTABLE,
 	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
 
+	// English fan translation (original + macs2_translation.dat)
+	{"sis",
+	 "w/translation",
+	 AD_ENTRY2s("RESOURCE.MCS", "b8646d5cc2e45442a414220b1a65ba73", 8621636,
+	            "macs2_translation.dat", nullptr, AD_NO_SIZE),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 GF_TRANSLATED | ADGF_UNSTABLE,
+	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	{"sis",
+	 "w/translation",
+	 AD_ENTRY2s("RESOURCE.MCS", "5a6cdeecdabae42872ab9278ab895bad", 8621636,
+	            "macs2_translation.dat", nullptr, AD_NO_SIZE),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 GF_TRANSLATED | ADGF_UNSTABLE,
+	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+
+	// Demo - English fan translation
+	{"sis",
+	 "Demo/w/translation",
+	 AD_ENTRY2s("RESOURCE.MCS", "779c5f7d11ac61b7b941ec0f1778d837", 2376278,
+	            "macs2_translation.dat", nullptr, AD_NO_SIZE),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 GF_TRANSLATED | ADGF_DEMO | ADGF_UNSTABLE,
+	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+
 	AD_TABLE_END_MARKER};
 
 } // End of namespace Macs2
