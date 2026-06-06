@@ -163,6 +163,39 @@ static int getRebel1PasscodeStartLevel(int passwordIndex) {
 	}
 }
 
+// 3DO Launchme_ARMv4 FUN_000092c4 compares the entered passcode against 45
+// XOR-0xAA encoded 20-byte slots at 0x262FC. The caller's Ghidra disassembly at
+// 0x12A58 maps those slots in three-code difficulty groups to the next chapter.
+const char *const kRebel1ThreeDOPasswords[] = {
+	"BOSSK", "BOTHAN", "BORDOK",
+	"ENGRET", "HERGLIC", "SKYNX",
+	"RALRRA", "LEENI", "DEFEL",
+	"FRIJA", "THRAWN", "JEDGAR",
+	"LAFRA", "LWYLL", "MADINE",
+	"DERLIN", "MAZZIC", "TARKIN",
+	"MOLTOK", "JULPA", "MOTHMA",
+	"MORAG", "MORRT", "GLAYYD",
+	"TANTISS", "MUFTAK", "OTTEGA",
+	"OSWAFL", "RASKAR", "RISHII",
+	"KLAATU", "JHOFF", "IZRINA",
+	"IRENEZ", "ITHOR", "KARRDE",
+	"LIANNA", "UMWAK", "VONZEL",
+	"PAKKA", "ORLOK", "OSSUS",
+	"NORVAL", "NKLLON", "MALANI"
+};
+
+int getRebel1ThreeDOPasscodeDifficulty(int passwordIndex) {
+	return (passwordIndex - 1) % 3;
+}
+
+int getRebel1ThreeDOPasscodeStartLevel(int passwordIndex) {
+	const int group = (passwordIndex - 1) / 3;
+	if (group < 0 || group > 14)
+		return 0;
+
+	return group == 14 ? kRA1NumLevels + 1 : group + 2;
+}
+
 static char normalizeRebel1PasscodeChar(char c) {
 	if (c >= 'a' && c <= 'z')
 		return c - ('a' - 'A');
@@ -1233,6 +1266,22 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 			if (targetLevel <= kRA1NumLevels)
 				_startLevel = targetLevel;
 			debugC(DEBUG_INSANE, "RA1 passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+				i, password, _difficulty, targetLevel);
+			return targetLevel;
+		}
+	}
+
+	for (int i = 1; i <= (int)ARRAYSIZE(kRebel1ThreeDOPasswords); i++) {
+		const char *password = kRebel1ThreeDOPasswords[i - 1];
+		if (!scumm_stricmp(_textEntryBuffer, password)) {
+			const int targetLevel = getRebel1ThreeDOPasscodeStartLevel(i);
+			if (targetLevel == 0)
+				return 0;
+
+			_difficulty = getRebel1ThreeDOPasscodeDifficulty(i);
+			if (targetLevel <= kRA1NumLevels)
+				_startLevel = targetLevel;
+			debugC(DEBUG_INSANE, "RA1 3DO passcode accepted: slot=%d password=%s difficulty=%d target=%d",
 				i, password, _difficulty, targetLevel);
 			return targetLevel;
 		}
