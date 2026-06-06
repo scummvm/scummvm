@@ -948,7 +948,7 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.top = coordSetRedEagle[2];
 			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.bottom = coordSetRedEagle[3];
 		} else {
-			doorButtonOrdinal = kDMDerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((doorButton != kDMDoorButtonD3R) ? 0 : (int16)doorButton - 1);
+			doorButtonOrdinal = kDMDerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((!doorButton) ? 0 : doorButton - 1);
 			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
 				uint16 *coordSetBlueGoat = _doorButtonCoordSets[coordSet][kDMDoorButtonD1C];
 				byte *bitmapNative = getNativeBitmapOrGraphic(nativeBitmapIndex);
