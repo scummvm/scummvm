@@ -21,12 +21,6 @@
 
 #include "macs2/detection.h"
 #include "base/plugins.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/md5.h"
-#include "common/str-array.h"
-#include "common/translation.h"
-#include "common/util.h"
 #include "macs2/detection_tables.h"
 
 const DebugChannelDef Macs2MetaEngineDetection::debugFlagList[] = {
