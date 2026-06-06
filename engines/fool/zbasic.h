@@ -28,7 +28,6 @@
 #include "common/stream.h"
 #include "common/ustr.h"
 #include "graphics/macgui/macwindow.h"
-#include "graphics/surface.h"
 
 #include "fool/toolbox.h"
 
@@ -306,6 +305,7 @@ public:
 	Common::U32String index(int16 table, int16 index);
 	Common::String indexRaw(int16 table, int16 index);
 
+	void injectFOND(const byte *data, const size_t size, const Common::String &name);
 	void setMenuFont(uint16 font, uint16 size);
 };
 

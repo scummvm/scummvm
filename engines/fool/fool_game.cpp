@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/ustr.h"
 #include "common/util.h"
 #include "fool/fool.h"
@@ -33,7 +34,7 @@ extern Toolbox *g_toolbox;
 
 // Based on m68k disassembly of the Fool's Errand v2.0, (c) 1988 Cliff Johnson.
 
-// v1.0 - original release, single-density disks, different about menu
+// v1.1 - original release, single-density disks, different about menu
 // v2.0 - fixes full-screen rendering on higher-resolution displays, new about menu, can disable sounds
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
@@ -52,13 +53,66 @@ static const int fool30ZStrOffset[] = {
 	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 317,
 };
 
+// Fool's Errand v1.1 is missing FOND data, below is taken from 2.0
+static const byte fondChicago[] = {
+	96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 0, 12, 0, 0, 0, 12
+};
+static const byte fondFool[] = {
+	96, 0, 0, 250, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 1, 0, 12, 0, 0, 125, 12, 0, 24, 0, 0,
+	125, 24
+};
+static const byte fondLarge[] = {
+	96, 0, 0, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 0, 24, 0, 0, 127, 24
+};
+static const byte fondPuzzle[] = {
+	96, 0, 0, 251, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 2, 0, 12, 0, 0, 125, 140, 0, 24, 0, 0,
+	125, 152, 0, 48, 0, 0, 125, 176
+};
+
+// v1.1 includes all fonts except Small
+static const byte fondSmall[] = {
+	96, 0, 0, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 126, 9
+};
+
 void FoolGame::run() {
+	_zbasic = new ZBasic(g_toolbox);
+
+	Common::MacFinderInfo finfo;
+	if (g_toolbox->GetFInfo(Common::U32String("The Fool's Errand"), 0, finfo) == kNoErr) {
+		_zbasic->loadProgram(Common::Path("The Fool's Errand", ':'));
+	// v1.0 filename ends with "tm"
+	} else if (g_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == kNoErr) {
+		_zbasic->loadProgram(Common::Path("xn--The Fool's Errand-306j", ':'));
+	} else {
+		error("FoolGame::run: Fool's Errand program not found");
+		return;
+	}
+
 	switch (_version) {
 	case kFool11:
 		_zstrOffset = fool11ZStrOffset;
-		// v1.1 and v2.0 provide overrides for "Chicago".
-		// v1.1 doesn't include a FOND chunk, so we have to manufacture one.
+		// v1.1 and v2.0 provide direct overrides for "Chicago".
+		// v1.1 doesn't include any FOND chunks, so we have to provide them here.
 		_fontChicago = 0;
+		_zbasic->injectFOND(fondChicago, sizeof(fondChicago), Common::String("Chicago"));
+		_zbasic->injectFOND(fondFool, sizeof(fondFool), Common::String("fool"));
+		_zbasic->injectFOND(fondLarge, sizeof(fondLarge), Common::String("Large"));
+		_zbasic->injectFOND(fondPuzzle, sizeof(fondPuzzle), Common::String("Puzzle"));
 		break;
 	case kFool30:
 		_zstrOffset = fool30ZStrOffset;
@@ -72,18 +126,10 @@ void FoolGame::run() {
 		break;
 	}
 
-	_zbasic = new ZBasic(g_toolbox);
-	Common::MacFinderInfo finfo;
-	if (g_toolbox->GetFInfo(Common::U32String("The Fool's Errand"), 0, finfo) == kNoErr) {
-		_zbasic->loadProgram(Common::Path("The Fool's Errand", ':'));
-	// v1.0 filename ends with "tm"
-	} else if (g_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == kNoErr) {
-		_zbasic->loadProgram(Common::Path("xn--The Fool's Errand-306j", ':'));
-	} else {
-		error("FoolGame::run: Fool's Errand program not found");
-	}
 	// Fool's Errand has an embedded version of Chicago with custom characters
 	_zbasic->setMenuFont(_fontChicago, 12);
+
+	// Start the game
 	foolRun();
 	delete _zbasic;
 }
@@ -878,7 +924,7 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 		int menuNo = 3 + ((this->var_i16_30 - 1) / 0x10);
 		int itemNo = 1 + ((this->var_i16_30 - 1) % 0x10);
 		// add the wadjet eye next to the chapter name
-		_zbasic->menu(menuNo, itemNo, 1, _puzzleName[this->var_i16_30] + _zbasic->str(9));
+		_zbasic->menu(menuNo, itemNo, 1, _puzzleName[this->var_i16_30] + Common::U32String(" ~ ")); // was: str(9)
 	}
 	// 128:188a
 	this->sub_128_4da(0);
@@ -1177,7 +1223,7 @@ void FoolGame::menuClickMessage() {
 	g_toolbox->SetPort(this->var_i32_8);
 	fillRect(0, 7, 0x13, _windowWidth-7, 0);
 	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
-	Common::U32String message = _zbasic->str(15); // click mouse to continue
+	Common::U32String message = Common::U32String("Click Mouse to Continue"); // was: str(15)
 	int16 width = g_toolbox->StringWidth(message);
 	g_toolbox->MoveTo((_windowWidth / 2) - (width / 2), 0xf);
 	g_toolbox->DrawString(message);
@@ -1234,7 +1280,7 @@ void FoolGame::sub_128_2808() {
 	// 128:2812: MOVE.L - A0,-0x8ee(A5)
 	_zbasic->openR(2, this->var_str_588, 0x400, this->var_i16_688);
 	this->var_str_7e8 = _zbasic->readFileStr(2, 0x11);
-	if (this->var_str_7e8 == _zbasic->str(16)) { // The Fool's Errand
+	if (this->var_str_7e8 == Common::U32String("The Fool's Errand")) { // str(16)
 		this->var_i16_8e8 = _zbasic->readFileInt(2);
 		this->var_i16_8e8 = _zbasic->readFileInt(2);
 		this->var_i16_8e8 = _zbasic->readFileInt(2);
@@ -1259,10 +1305,10 @@ void FoolGame::sub_128_2808() {
 	// 128:28f8: LEA - [0x3818],A0
 	// 128:28fc: MOVE.L - A0,-0x8ee(A5)
 	if (this->var_i16_7e6 != 0) {
-		_modalText[0] = _zbasic->str(17) + this->var_str_588 + _zbasic->str(18);
-		_modalText[1] = _zbasic->str(19);
+		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", this->var_str_588.c_str()); // was: str(17), str(18)
+		_modalText[1] = Common::U32String("Okay"); // was: str(19)
 		this->showChoiceModal(0, 0, 1, 1);
-		this->var_str_588 = _zbasic->str(20);
+		this->var_str_588.clear(); // was: str(20)
 		this->var_i16_7e6 = 0;
 	}
 }
@@ -1270,7 +1316,7 @@ void FoolGame::sub_128_2808() {
 void FoolGame::menuOpenGame() {
 	// 128:2988
 	// File -> Open
-	this->sub_128_1e4(_zbasic->str(21)); // FOOL
+	this->sub_128_1e4(Common::U32String("FOOL")); // was: str(21)
 	if (this->var_str_588.empty()) { // was: str(22)
 		return;
 	}
@@ -1301,10 +1347,10 @@ void FoolGame::saveGameAs() {
 	// 128:2a0e
 	if (_saveFileName.empty()) { // was: str(24)
 		// 128:2a28
-		this->openSaveFileDialog(_zbasic->str(25), _zbasic->str(26)); // name of game, blank
+		this->openSaveFileDialog(Common::U32String("Name of game?"), Common::U32String()); // was: str(25), str(26)
 	} else {
 		// 128:2a48
-		this->openSaveFileDialog(_zbasic->str(27), _saveFileName); // New Name?, old filename
+		this->openSaveFileDialog(Common::U32String("New Name?"), _saveFileName); // was: str(27)
 	}
 	// 128:2a60
 	if (!this->var_str_486.empty()) { // was: str(28)
@@ -1472,8 +1518,8 @@ void FoolGame::openGame() {
 	// 128:2f84
 	_zbasic->close(2);
 	if (this->var_i16_7e6 != 0) {
-		_modalText[0] = _zbasic->str(34) + _saveFileName + _zbasic->str(35); // file cannot be opened
-		_modalText[1] = _zbasic->str(36);
+		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", _saveFileName.c_str()); // was: str(34), str(35)
+		_modalText[1] = Common::U32String("Okay"); // was: str(36)
 		this->var_i16_7e6 = 0;
 		if ((this->var_i16_7ce & 1) == 0) {
 			setStateBits(kStateNewGame | kStateReturn);
@@ -1634,11 +1680,11 @@ void FoolGame::saveGame() {
 		this->var_i16_7e6 = 0;
 		// 128:359e: LEA - [0x3808],A0
 		// 128:35a2: MOVE.L - A0,-0x8ee(A5)
-		_zbasic->defOpen(_zbasic->str(59)); // FOOLgf87
+		_zbasic->defOpen(Common::U32String("FOOLgf87")); // str(59)
 		_zbasic->openW(2, _saveFileName, 0x400, this->var_i16_9ec);
 
 		if (this->var_i16_7e6 != 0xa) {
-			this->var_str_af4 = _zbasic->str(60); // The Fool's Errand
+			this->var_str_af4 = Common::U32String("The Fool's Errand"); // str(60)
 			_zbasic->writeFileStr(2, this->var_str_af4.encode(Common::kMacRoman));
 			_zbasic->writeFileInt(2, _storyNextPage);
 			_zbasic->writeFileInt(2, _activePuzzle);
@@ -2637,7 +2683,7 @@ void FoolGame::sub_129_068() {
 		_screenOversized = true;
 	}
 	// 129:0166
-	_zbasic->window(1, _zbasic->str(112), 0, 0, _windowWidth, _windowHeight, kWindowDialogOneLine);
+	_zbasic->window(1, Common::String(), 0, 0, _windowWidth, _windowHeight, kWindowDialogOneLine);
 	_zbasic->coordinateWindow();
 	g_toolbox->ClearMenuBar();
 	g_toolbox->DrawMenuBar();
@@ -2700,11 +2746,13 @@ void FoolGame::sub_129_068() {
 
 	if (false) {
 	//if (this->var_i16_372.red + this->var_i16_372.blue + this->var_i16_372.green != 0) {
-		// we're in colour mode, chide the user
-		_modalText[0] = _zbasic->str(113);
-		_modalText[1] = _zbasic->str(114);
-		_modalText[2] = _zbasic->str(115);
-		_modalText[3] = _zbasic->str(116);
+		// we're in colour mode, chide the user.
+		// removed in v3.0
+		// was: str(113) to str(116)
+		_modalText[0] =Common::U32String("Set your monitor to");
+		_modalText[1] = Common::U32String("2 color black and white");
+		_modalText[2] = Common::U32String("and start the game again.");
+		_modalText[3] = Common::U32String("Okay");
 		this->showChoiceModal(0, 2, 1, 0);
 		_zbasic->unk_4();
 	}
@@ -2713,13 +2761,14 @@ void FoolGame::sub_129_068() {
 	this->var_i32_37c = _zbasic->mem(-1);
 	if (this->var_i32_37c < 0x1d4c0) {
 		// not enough memory, chide the user
-		_modalText[0] = _zbasic->str(117);
-		_modalText[1] = _zbasic->str(118);
-		_modalText[2] = _zbasic->str(119);
-		_modalText[3] = _zbasic->str(120);
-		_modalText[4] = _zbasic->str(121);
-		_modalText[5] = _zbasic->str(122);
-		_modalText[6] = _zbasic->str(123);
+		// was: str(117) to str(123)
+		_modalText[0] = Common::U32String("There is not enough available memory");
+		_modalText[1] = Common::U32String("to run the program at this time.");
+		_modalText[2] = Common::U32String();
+		_modalText[3] = Common::U32String("Check your instruction manual for");
+		_modalText[4] = Common::U32String("for possible solutions.");
+		_modalText[5] = Common::U32String();
+		_modalText[6] = Common::U32String("Quit");
 		this->showChoiceModal(0, 5, 1, 1);
 		_zbasic->unk_4();
 	}
@@ -2773,12 +2822,11 @@ void FoolGame::sub_129_068() {
 			// prompt to locate the fool's puzzles file
 			// 129:0690: CLR.W - -0x772(A5)
 			this->sub_128_4da(1);
-			Common::U32String PUZZ = _zbasic->str(137);
-			this->sub_128_1e4(PUZZ);
+			this->sub_128_1e4(Common::U32String("PUZZ")); // was: str(137)
 			// 129:06a6: CLR.W - -0x772(A5)
 			fillRect(0x17, 0x92, 0x31, 0x16e, 1);
 			this->sub_128_4da(0);
-			if (this->var_str_588 == _zbasic->str(138)) {
+			if (this->var_str_588.empty()) { // was: str(138)
 				_zbasic->unk_4();
 			}
 			this->var_str_e22 = this->var_str_588;
@@ -2991,7 +3039,7 @@ void FoolGame::sub_129_068() {
 				if (_pageToChapter[i] == j) {
 					this->var_i16_484++;
 					// - X of N
-					_pageNumberText[i] = Common::U32String::format("%s %d%s %d", _zbasic->str(141).encode().c_str(), this->var_i16_484, _zbasic->str(142).encode().c_str(), this->var_i16_1040);
+					_pageNumberText[i] = Common::U32String::format(" - %d of %d", this->var_i16_484, this->var_i16_1040); // was: str(141), str(142)
 				}
 				// 129:0fb6
 				if (_pageToChapter[i] > j) {
@@ -3147,9 +3195,8 @@ void FoolGame::sub_144_004() {
 	_modalText[2] = Common::U32String("Has not the fool gained the gift of wisdom?");
 	_modalText[3] = Common::U32String();
 	_modalText[4] = Common::U32String("Congratulations!");
-	_modalText[5] = Common::U32String("And now it is time to show the Finale for the Fool's Errand.");
-	_modalText[6] = Common::U32String();
-	_modalText[7] = Common::U32String("Continue");
+	_modalText[5] = Common::U32String("You may now view the finale.");
+	_modalText[7] = Common::U32String("Okay");
 	showChoiceModal(0xfa, 6, 1, 0);
 	if (!_screenOversized) {
 		g_toolbox->ClearMenuBar();
