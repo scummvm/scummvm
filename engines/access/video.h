@@ -111,6 +111,8 @@ protected:
 public:
 	VideoPlayer_v1(AccessEngine *vm);
 
+	~VideoPlayer_v1();
+
 	void playVideo() override;
 
 	void copyVideo() override;
@@ -159,6 +161,8 @@ protected:
 	void delayToNextFrame() override;
 public:
 	VideoPlayer_v2(AccessEngine *vm, bool setPal = false);
+
+	~VideoPlayer_v2();
 
 	void playVideo() override;
 

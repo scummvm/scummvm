@@ -32,7 +32,6 @@ _vidSurface(nullptr) {
 }
 
 VideoPlayer::~VideoPlayer() {
-	closeVideo();
 }
 
 void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::Path &filename, int rate) {
@@ -91,6 +90,9 @@ VideoPlayer_v1::VideoPlayer_v1(AccessEngine *vm) : VideoPlayer(vm) {
 	_header._flags = VIDEOFLAG_NONE;
 }
 
+VideoPlayer_v1::~VideoPlayer_v1() {
+	VideoPlayer_v1::closeVideo();
+}
 
 void VideoPlayer_v1::setVideo(const Common::Point &pt) {
 	_vidSurface->_orgX1 = pt.x;
@@ -251,6 +253,10 @@ _frame(nullptr), _nextFrameTime(0), _setPal(setPal), _startMs(0), _drawBorder(fa
 	_header._width = _header._height = 0;
 	_header._unk = 0;
 	_header._flags = VIDEOFLAG_NONE;
+}
+
+VideoPlayer_v2::~VideoPlayer_v2() {
+	VideoPlayer_v2::closeVideo();
 }
 
 void VideoPlayer_v2::setVideo(const Common::Point &pt) {
