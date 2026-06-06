@@ -382,6 +382,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 	// Shooting/targeting state
 	_playerFired = false;
+	_playerSecondaryHeld = false;
 	_fireCooldown = 0;
 	_rapidFirePhase = 0;
 	_gameplayFlags75fe = 0;

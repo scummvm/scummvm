@@ -830,6 +830,9 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			_activeInputSource = kInputSourceJoystickDigital;
 		}
 
+		if (!pressed && event.customType == kScummActionInsaneSwitch)
+			_playerSecondaryHeld = false;
+
 		if (event.customType == kScummActionInsaneBack) {
 			if (!pressed)
 				return true;
@@ -879,6 +882,11 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 
 		if (_interactiveVideoActive && !_menuActive && event.customType == kScummActionInsaneAttack) {
 			_playerFired = pressed;
+			return true;
+		}
+
+		if (_interactiveVideoActive && !_menuActive && event.customType == kScummActionInsaneSwitch) {
+			_playerSecondaryHeld = pressed;
 			return true;
 		}
 	}

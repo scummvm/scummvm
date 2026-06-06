@@ -1886,7 +1886,7 @@ void InsaneRebel1::updateOnFootSequence() {
 		// Right edge: snap to center, step character right
 		_shipDirIndex = 15;
 		_onFootCharX += 0x3A;
-	} else if (_onFootAnimCounter < 5 && !(_playerFired && _fireCooldown == 0)) {
+	} else if (_onFootAnimCounter < 5 && !_playerSecondaryHeld) {
 		// Original calls QuantizeDirection8Way with the cursor and character
 		// center, but the DOS on-foot axis is mirrored relative to the screen
 		// coordinates used by this port. Use the visual screen-space vector so
@@ -1897,12 +1897,13 @@ void InsaneRebel1::updateOnFootSequence() {
 			(int16)ra1ShotDirection(centerX, centerY, _shipPosX, _shipPosY), -4, 4);
 		_shipDirIndex = aimDir + 15;
 	} else {
-		// Walking based on mouse input direction
+		// Walking based on input direction. The 3DO second held button skips the
+		// early aim-pose branch above and reaches these walk tests immediately.
 		int16 inputX = 0, inputY = 0;
 		preprocessMouseAxes(inputX, inputY);
-		if (inputX > 0x1E && _onFootCharX < 0x72)
+		if (inputX > 0x1E && _onFootCharX < 0x73)
 			_shipDirIndex = 6;  // Walk right
-		else if (inputX < -0x1E && _onFootCharX > -0x72)
+		else if (inputX < -0x1E && _onFootCharX > -0x73)
 			_shipDirIndex = 4;  // Walk left
 	}
 
@@ -2014,6 +2015,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	resetGamepadReticleAim();
 
 	_playerFired = false;
+	_playerSecondaryHeld = false;
 	_fireCooldown = 0;
 	_rapidFirePhase = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));

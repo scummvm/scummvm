@@ -617,6 +617,8 @@ private:
 
 	// Shooting state — FUN_1CCA0 (0x1CCA0)
 	bool _playerFired;       // 0x7570: current fire-button state
+	// 3DO ControlB/second held button used by L9 on-foot controls.
+	bool _playerSecondaryHeld;
 	int16 _fireCooldown;     // 0x757C: previous-frame fire-button state (edge gate when rapid fire is off)
 	int16 _rapidFirePhase;   // 3DO FUN_0000c3a4: held-fire modulo-3 shot gate
 	uint16 _gameplayFlags75fe; // 0x75FE: gameplay mode flags

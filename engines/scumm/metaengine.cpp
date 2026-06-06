@@ -1183,14 +1183,14 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		rebel1Keymap->addAction(act);
 
-		act = new Action("RA1CANCEL", _("Menu back"));
+		act = new Action("RA1CANCEL", _("Walk / menu back"));
 		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
-		act->addDefaultInputMapping("JOY_X");
+		act->addDefaultInputMapping("JOY_B");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1SKIP", _("Skip / menu back"));
 		act->setCustomEngineActionEvent(kScummActionInsaneSkip);
-		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_X");
 		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1BACK", _("Menu"));
