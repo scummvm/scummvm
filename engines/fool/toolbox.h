@@ -1303,6 +1303,8 @@ public:
 	// the speciﬁed number of points.
 	void TextSize(uint16 size);
 
+	void _injectFOND(int16 resID, const byte *data, const size_t size, const Common::String &name);
+
 private:
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
 	Common::Array<int16> _resOrder;

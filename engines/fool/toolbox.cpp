@@ -183,6 +183,7 @@ Toolbox::~Toolbox() {
 	_swSynth = nullptr;
 }
 
+
 void Toolbox::_pumpEvents() {
 	Common::Event event;
 	Common::EventManager *manager = g_system->getEventManager();

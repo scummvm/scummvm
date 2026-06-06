@@ -19,12 +19,20 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/system.h"
 
 #include "fool/fool.h"
 #include "fool/toolbox.h"
 
 namespace Fool {
+
+void Toolbox::_injectFOND(int16 resID, const byte *data, const size_t size, const Common::String &name) {
+	if (_resMap.contains(resID)) {
+		Common::MemoryReadStream stream(data, size);
+		g_engine->_wm._fontMan->loadMacFont(_resMap[resID].get(), name, &stream);
+	}
+}
 
 int16 Toolbox::CurResFile() {
 	// Return whatever the first resource file is
