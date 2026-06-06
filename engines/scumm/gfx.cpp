@@ -1754,6 +1754,11 @@ void ScummEngine::moveScreen(int dx, int dy, int height) {
 		screen->fillRect(Common::Rect(0, 0, screen->pitch, _macScreenDrawOffset * 2), 0);
 		screen->fillRect(Common::Rect(0, screen->h - _macScreenDrawOffset * 2, screen->pitch, screen->h), 0);
 	} else {
+		if (_enableEGADithering) {
+			dx <<= 1;
+			dy <<= 1;
+			height <<= 1;
+		}
 		screen->move(dx, dy, height);
 	}
 
@@ -4815,13 +4820,11 @@ void ScummEngine::scrollEffect(int dir) {
 		delay *= 10;
 	}
 
-	byte *src;
+	const byte *src;
 	int m = _textSurfaceMultiplier;
 
 	if (m == 1 && _game.platform == Common::kPlatformMacintosh && _macScreen)
 		m = 2;
-
-	int vsPitch = vs->pitch;
 
 	switch (dir) {
 	case 0:
@@ -4836,13 +4839,21 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(0, y - step);
+				int vsPitch = vs->pitch;
 				if (_macScreen) {
 					mac_drawBufferToScreen(src, vsPitch, 0, (vs->h - step), vs->w, step, false);
 				} else {
-					_system->copyRectToScreen(src,
-											  vsPitch * m,
-											  0, (vs->h - step) * m,
-											  vs->w * m, step * m);
+					int wd = vs->w;
+					int ht = step;
+					int tx = 0;
+					int ty = vs->h - step;
+
+					if (_enableEGADithering) {
+						memcpy(_compositeBuf, src, ht * vsPitch);
+						src = ditherVGAtoEGA(vsPitch, tx, ty, wd, ht);
+					}
+
+					_system->copyRectToScreen(src, vsPitch * m, tx, ty * m, wd, ht * m);
 				}
 			}
 
@@ -4862,14 +4873,21 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(0, vs->h - y);
-
+				int vsPitch = vs->pitch;
 				if (_macScreen) {
 					mac_drawBufferToScreen(src, vsPitch, 0, 0, vs->w, step, false);
 				} else {
-					_system->copyRectToScreen(src,
-											  vsPitch * m,
-											  0, 0,
-											  vs->w * m, step * m);
+					int wd = vs->w;
+					int ht = step;
+					int tx = 0;
+					int ty = 0;
+
+					if (_enableEGADithering) {
+						memcpy(_compositeBuf, src, ht * vsPitch);	
+						src = ditherVGAtoEGA(vsPitch, tx, ty, wd, ht);
+					}
+
+					_system->copyRectToScreen(src, vsPitch * m, 0, 0, wd * m, ht * m);
 				}
 			}
 
@@ -4889,10 +4907,24 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(x - step, 0);
+				int vsPitch = vs->pitch;
 				if (_macScreen) {
 					mac_drawBufferToScreen(src, vsPitch, (vs->w - step), 0, step, vs->h, false);
 				} else {
-					_system->copyRectToScreen(src, vsPitch * m, (vs->w - step) * m, 0, step * m, vs->h * m);
+					int wd = step;
+					int ht = vs->h;
+					int tx = vs->w - step;
+					int ty = 0;
+
+					if (_enableEGADithering) {
+						for (int ii = 0; ii < ht; ++ii) {
+							memcpy(_compositeBuf + ii * wd, src, wd);
+							src += vsPitch;
+						}
+						src = ditherVGAtoEGA(vsPitch, tx, ty, wd, ht);
+					}
+
+					_system->copyRectToScreen(src, vsPitch * m, tx * m, 0, wd * m, ht * m);
 				}
 			}
 			waitForTimer(delay, true);
@@ -4911,10 +4943,24 @@ void ScummEngine::scrollEffect(int dir) {
 #endif
 			{
 				src = vs->getPixels(vs->w - x, 0);
+				int vsPitch = vs->pitch;
 				if (_macScreen) {
 					mac_drawBufferToScreen(src, vsPitch, 0, 0, step, vs->h, false);
 				} else {
-					_system->copyRectToScreen(src, vsPitch * m, 0, 0, step * m, vs->h * m);
+					int wd = step;
+					int ht = vs->h;
+					int tx = 0;
+					int ty = 0;
+
+					if (_enableEGADithering) {
+						for (int ii = 0; ii < ht; ++ii) {
+							memcpy(_compositeBuf + ii * wd, src, wd);
+							src += vsPitch;
+						}
+						src = ditherVGAtoEGA(vsPitch, tx, ty, wd, ht);
+					}
+
+					_system->copyRectToScreen(src, vsPitch * m, 0, 0, wd * m, ht * m);
 				}
 			}
 
