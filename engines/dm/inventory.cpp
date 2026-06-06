@@ -207,7 +207,7 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 	static Box boxWater(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 	static Box boxPoisoned(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
-	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
+	Champion &champ = _vm->_championMan->_champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)];
 	closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
 
