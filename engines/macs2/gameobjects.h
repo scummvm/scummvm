@@ -140,10 +140,10 @@ public:
 	// and walkAlongPath skips movement for this object.
 	// Cleared when objectA == objectB in scriptSetObjectBounds.
 	bool _hasBoundsAttachment = false;
-	uint16 BoundsAttachmentObjectID = 0; // +0x232
-	uint16 BoundsAttachmentValue1 = 0;   // +0x234
-	uint16 BoundsAttachmentValue2 = 0;   // +0x236
-	uint16 BoundsAttachmentValue3 = 0;   // +0x238
+	uint16 _boundsAttachmentObjectID = 0; // +0x232
+	uint16 _boundsAttachmentValue1 = 0;   // +0x234
+	uint16 _boundsAttachmentValue2 = 0;   // +0x236
+	uint16 _boundsAttachmentValue3 = 0;   // +0x238
 
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.

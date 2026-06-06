@@ -29,20 +29,20 @@ namespace Macs2 {
 
 class Console : public GUI::Debugger {
 private:
-	bool Cmd_toggleAutoClick(int argc, const char **argv);
-	bool Cmd_dumpBlobs(int argc, const char **argv);
-	bool Cmd_marker(int argc, const char **argv);
-	bool Cmd_addItem(int argc, const char **argv);
-	bool Cmd_removeItem(int argc, const char **argv);
-	bool Cmd_giveAll(int argc, const char **argv);
-	bool Cmd_listScenes(int argc, const char **argv);
-	bool Cmd_changeScene(int argc, const char **argv);
-	bool Cmd_scene(int argc, const char **argv);
-	bool Cmd_setOrientation(int argc, const char **argv);
-	bool Cmd_set(int argc, const char **argv);
-	bool Cmd_inputRecord(int argc, const char **argv);
-	bool Cmd_inputPlayback(int argc, const char **argv);
-	bool Cmd_inputStop(int argc, const char **argv);
+	bool toggleAutoClick(int argc, const char **argv);
+	bool dumpBlobs(int argc, const char **argv);
+	bool marker(int argc, const char **argv);
+	bool addItem(int argc, const char **argv);
+	bool removeItem(int argc, const char **argv);
+	bool giveAll(int argc, const char **argv);
+	bool listScenes(int argc, const char **argv);
+	bool changeScene(int argc, const char **argv);
+	bool scene(int argc, const char **argv);
+	bool setOrientation(int argc, const char **argv);
+	bool set(int argc, const char **argv);
+	bool inputRecord(int argc, const char **argv);
+	bool inputPlayback(int argc, const char **argv);
+	bool inputStop(int argc, const char **argv);
 
 public:
 	Console();

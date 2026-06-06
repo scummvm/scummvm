@@ -503,7 +503,7 @@ void Adlib::updateDebugState() {
 
 // --- Public API ---
 
-void Adlib::Init() {
+void Adlib::init() {
 	_opl = OPL::Config::create();
 	_opl->init();
 
@@ -518,14 +518,14 @@ void Adlib::Init() {
 	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
 }
 
-void Adlib::Deinit() {
+void Adlib::deinit() {
 	_opl->stop();
 	delete _activeSongStream;
 	_activeSongStream = nullptr;
 	delete _opl;
 }
 
-void Adlib::PlaySongData(const Common::Array<uint8> &data) {
+void Adlib::playSongData(const Common::Array<uint8> &data) {
 	// Stop previous playback
 	_isInitialized = 0;
 	delete _activeSongStream;
@@ -551,7 +551,7 @@ void Adlib::PlaySongData(const Common::Array<uint8> &data) {
 	adlibTickHandler();
 }
 
-void Adlib::StopMusic() {
+void Adlib::stopMusic() {
 	// Binary adlibStopMusic (1000:264d): set stop flag, ISR handles cleanup
 	_statusFlags |= 2;
 	// In ScummVM we can't spin-wait for ISR, so directly clean up
@@ -563,28 +563,28 @@ void Adlib::StopMusic() {
 	_masterVolume = 0;
 }
 
-void Adlib::SetVolume(uint16 volume) {
+void Adlib::setVolume(uint16 volume) {
 	// Binary adlibSetVolume (1000:2663): g_bAdlibMasterVolume = param & 0x3F
 	_masterVolume = volume & 0x3F;
 }
 
-void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
+void Adlib::readDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	constexpr uint32 size = 255;
 
 	_opSlotTable.resize(size);
-	LoadData(fileStream, 0x0001B669, size, _opSlotTable.data());
+	loadData(fileStream, 0x0001B669, size, _opSlotTable.data());
 
 	_opMap1.resize(size);
-	LoadData(fileStream, 0x0001B68D, size, _opMap1.data());
+	loadData(fileStream, 0x0001B68D, size, _opMap1.data());
 
 	_opMap2.resize(size);
-	LoadData(fileStream, 0x0001B696, size, _opMap2.data());
+	loadData(fileStream, 0x0001B696, size, _opMap2.data());
 
 	_freqTableLo.resize(size);
-	LoadData(fileStream, 0x0001B69F, size, _freqTableLo.data());
+	loadData(fileStream, 0x0001B69F, size, _freqTableLo.data());
 
 	_freqTableHi.resize(size);
-	LoadData(fileStream, 0x0001B71F, size, _freqTableHi.data());
+	loadData(fileStream, 0x0001B71F, size, _freqTableHi.data());
 
 	// Percussion lookup tables
 	_percVolTable = {28, 25, 23, 18, 14, 11, 8, 2, 50, 42, 37, 35, 34, 32, 30, 2, 55, 50, 49, 48, 45, 43, 40, 2, 60, 60, 58, 56, 54, 52, 50, 2};
@@ -592,7 +592,7 @@ void Adlib::ReadDataFromExecutable(Common::MemoryReadStream *fileStream) {
 	_percFreqChannel = {6, 7, 8, 8, 7};
 }
 
-void Adlib::LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
+void Adlib::loadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
 	fileStream->seek(pos, SEEK_SET);
 	fileStream->read(target, size);
 }
