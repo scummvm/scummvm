@@ -280,7 +280,7 @@ void Macs2Engine::readExecutable() {
 		exeFileStream = new Common::MemoryReadStream(fileData, size);
 	}
 
-	_adlib->ReadDataFromExecutable(exeFileStream);
+	_adlib->readDataFromExecutable(exeFileStream);
 
 	exeFileStream->seek(0x0001B610, SEEK_SET);
 	inventoryIconIndices.resize(6);
@@ -383,7 +383,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 Macs2Engine::~Macs2Engine() {
 	stopInputRecording();
 	clearCurrentSoundData();
-	_adlib->Deinit();
+	_adlib->deinit();
 }
 
 void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
@@ -1308,7 +1308,7 @@ void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
 	Common::Array<uint8> data;
 	data.resize(size);
 	_fileStream->read(data.data(), size);
-	_adlib->PlaySongData(data);
+	_adlib->playSongData(data);
 }
 
 void Macs2Engine::setCurrentSoundData(const Common::Array<uint8> &data) {
@@ -1355,7 +1355,7 @@ Common::Error Macs2Engine::run() {
 	initGraphics(320, 200);
 
 	// Initialize Adlib
-	_adlib->Init();
+	_adlib->init();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

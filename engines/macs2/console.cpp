@@ -34,26 +34,26 @@ static int parseHexArg(const char *arg) {
 }
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("dumpblobs", WRAP_METHOD(Console, Cmd_dumpBlobs));
-	registerCmd("autoclick", WRAP_METHOD(Console, Cmd_toggleAutoClick));
-	registerCmd("marker", WRAP_METHOD(Console, Cmd_marker));
-	registerCmd("addItem", WRAP_METHOD(Console, Cmd_addItem));
-	registerCmd("removeItem", WRAP_METHOD(Console, Cmd_removeItem));
-	registerCmd("giveAll", WRAP_METHOD(Console, Cmd_giveAll));
-	registerCmd("listScenes", WRAP_METHOD(Console, Cmd_listScenes));
-	registerCmd("changeScene", WRAP_METHOD(Console, Cmd_changeScene));
-	registerCmd("scene", WRAP_METHOD(Console, Cmd_scene));
-	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
-	registerCmd("set", WRAP_METHOD(Console, Cmd_set));
-	registerCmd("record", WRAP_METHOD(Console, Cmd_inputRecord));
-	registerCmd("playback", WRAP_METHOD(Console, Cmd_inputPlayback));
-	registerCmd("stoprecord", WRAP_METHOD(Console, Cmd_inputStop));
+	registerCmd("dumpblobs", WRAP_METHOD(Console, dumpBlobs));
+	registerCmd("autoclick", WRAP_METHOD(Console, toggleAutoClick));
+	registerCmd("marker", WRAP_METHOD(Console, marker));
+	registerCmd("addItem", WRAP_METHOD(Console, addItem));
+	registerCmd("removeItem", WRAP_METHOD(Console, removeItem));
+	registerCmd("giveAll", WRAP_METHOD(Console, giveAll));
+	registerCmd("listScenes", WRAP_METHOD(Console, listScenes));
+	registerCmd("changeScene", WRAP_METHOD(Console, changeScene));
+	registerCmd("scene", WRAP_METHOD(Console, scene));
+	registerCmd("setOrientation", WRAP_METHOD(Console, setOrientation));
+	registerCmd("set", WRAP_METHOD(Console, set));
+	registerCmd("record", WRAP_METHOD(Console, inputRecord));
+	registerCmd("playback", WRAP_METHOD(Console, inputPlayback));
+	registerCmd("stoprecord", WRAP_METHOD(Console, inputStop));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_toggleAutoClick(int argc, const char **argv) {
+bool Console::toggleAutoClick(int argc, const char **argv) {
 	View1 *currentView = (View1 *)g_engine->findView("View1");
 	currentView->_autoclickActive = !currentView->_autoclickActive;
 	debugPrintf("Auto clicking set to %s.\n",
@@ -61,7 +61,7 @@ bool Console::Cmd_toggleAutoClick(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
+bool Console::dumpBlobs(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: dumpblobs <path>\n");
 		return true;
@@ -87,7 +87,7 @@ bool Console::Cmd_dumpBlobs(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_marker(int argc, const char **argv) {
+bool Console::marker(int argc, const char **argv) {
 	// TODO: I tried implementing a CLS command but it's non-trivial, so using this marker instead
 	Common::String marker;
 	for (int i = 0; i < argc; i++) {
@@ -98,7 +98,7 @@ bool Console::Cmd_marker(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_addItem(int argc, const char **argv) {
+bool Console::addItem(int argc, const char **argv) {
 	// TODO: Just realizing this - can we have multiple of an item in the inventory?
 	// TODO: Check args count
 	int index = parseHexArg(argv[1]);
@@ -112,7 +112,7 @@ bool Console::Cmd_addItem(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_removeItem(int argc, const char **argv) {
+bool Console::removeItem(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
 	for (GameObject *obj : GameObjects::instance()._objects) {
 		if (obj == nullptr)
@@ -124,7 +124,7 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_giveAll(int argc, const char **argv) {
+bool Console::giveAll(int argc, const char **argv) {
 	int count = 0;
 	for (GameObject *obj : GameObjects::instance()._objects) {
 		if (obj == nullptr || obj->_index <= 1)
@@ -140,7 +140,7 @@ bool Console::Cmd_giveAll(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_setOrientation(int argc, const char **argv) {
+bool Console::setOrientation(int argc, const char **argv) {
 	int orientation = parseHexArg(argv[1]);
 	int index = 1;
 	if (argc > 2) {
@@ -151,7 +151,7 @@ bool Console::Cmd_setOrientation(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_set(int argc, const char **argv) {
+bool Console::set(int argc, const char **argv) {
 	int index = parseHexArg(argv[1]);
 	int v1 = parseHexArg(argv[2]);
 	int v2 = parseHexArg(argv[3]);
@@ -159,7 +159,7 @@ bool Console::Cmd_set(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_inputRecord(int argc, const char **argv) {
+bool Console::inputRecord(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: record <filename>\n");
 		return true;
@@ -169,7 +169,7 @@ bool Console::Cmd_inputRecord(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_inputPlayback(int argc, const char **argv) {
+bool Console::inputPlayback(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: playback <filename>\n");
 		return true;
@@ -179,13 +179,13 @@ bool Console::Cmd_inputPlayback(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_inputStop(int argc, const char **argv) {
+bool Console::inputStop(int argc, const char **argv) {
 	g_engine->stopInputRecording();
 	debugPrintf("Input recording/playback stopped\n");
 	return true;
 }
 
-bool Console::Cmd_listScenes(int argc, const char **argv) {
+bool Console::listScenes(int argc, const char **argv) {
 	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance()._currentSceneIndex, Scenes::instance()._currentSceneIndex);
 	debugPrintf("Scenes with data:\n");
 	for (int i = 1; i <= 512; i++) {
@@ -199,7 +199,7 @@ bool Console::Cmd_listScenes(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_changeScene(int argc, const char **argv) {
+bool Console::changeScene(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: changeScene <sceneIndex>\n");
 		debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance()._currentSceneIndex, Scenes::instance()._currentSceneIndex);
@@ -211,7 +211,7 @@ bool Console::Cmd_changeScene(int argc, const char **argv) {
 	return false; // close debugger to let scene load
 }
 
-bool Console::Cmd_scene(int argc, const char **argv) {
+bool Console::scene(int argc, const char **argv) {
 	debugPrintf("Current scene: %d (0x%x)\n", Scenes::instance()._currentSceneIndex, Scenes::instance()._currentSceneIndex);
 	debugPrintf("Previous scene: %d (0x%x)\n", Scenes::instance()._lastSceneIndex, Scenes::instance()._lastSceneIndex);
 	return true;

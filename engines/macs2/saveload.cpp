@@ -405,13 +405,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			obj->_hasBoundsAttachment = hasBounds != 0;
 
 		// BoundsAttachmentObjectID [+0x232]: 2 bytes
-		s.syncAsUint16LE(obj->BoundsAttachmentObjectID);
+		s.syncAsUint16LE(obj->_boundsAttachmentObjectID);
 		// BoundsAttachmentValue1 [+0x234]: 2 bytes
-		s.syncAsUint16LE(obj->BoundsAttachmentValue1);
+		s.syncAsUint16LE(obj->_boundsAttachmentValue1);
 		// BoundsAttachmentValue2 [+0x236]: 2 bytes
-		s.syncAsUint16LE(obj->BoundsAttachmentValue2);
+		s.syncAsUint16LE(obj->_boundsAttachmentValue2);
 		// BoundsAttachmentValue3 [+0x238]: 2 bytes
-		s.syncAsUint16LE(obj->BoundsAttachmentValue3);
+		s.syncAsUint16LE(obj->_boundsAttachmentValue3);
 
 		// Runtime walk state [+0x00..+0x0A]: targetX, targetY, deltaX, deltaY, finalX, finalY
 		// Find the Character for this object (exists after changeScene on load too)

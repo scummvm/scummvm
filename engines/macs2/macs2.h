@@ -19,15 +19,15 @@
  *
  */
 
-#ifndef MACS2_H
-#define MACS2_H
+#ifndef MACS2_MACS2_H
+#define MACS2_MACS2_H
 
+#include "advancedDetector.h"
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -35,11 +35,8 @@
 #include "common/text-to-speech.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/screen.h"
 
 #include "audio/audiostream.h"
-#include "macs2/detection.h"
 #include "macs2/events.h"
 #include "macs2/script/scriptexecutor.h"
 #include <common/memstream.h>
@@ -442,4 +439,4 @@ extern Macs2Engine *g_engine;
 
 } // End of namespace Macs2
 
-#endif // MACS2_H
+#endif // MACS2_MACS2H

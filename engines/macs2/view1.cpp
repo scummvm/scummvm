@@ -1384,17 +1384,17 @@ bool View1::tick() {
 			} else {
 				se->_musicControlVolume = vol;
 			}
-			g_engine->getAdlib()->SetVolume(se->_musicControlVolume);
+			g_engine->getAdlib()->setVolume(se->_musicControlVolume);
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
 			int vol = (int)se->_musicControlVolume + (int)se->_musicControlParam;
 			if (vol >= 0x3F) {
 				se->_musicControlMode = 0;
 				se->_activeMusicSlot = 0;
-				g_engine->getAdlib()->StopMusic();
+				g_engine->getAdlib()->stopMusic();
 			} else {
 				se->_musicControlVolume = vol;
-				g_engine->getAdlib()->SetVolume(se->_musicControlVolume);
+				g_engine->getAdlib()->setVolume(se->_musicControlVolume);
 			}
 		}
 	}
@@ -1787,11 +1787,11 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		// Bounds attachment from drawAllCharacters (1008:90a2):
 		// When HasBoundsAttachment is set, position is relative to parent object.
 		if (current->_gameObject->_hasBoundsAttachment) {
-			GameObject *parent = GameObjects::getObjectByIndex(current->_gameObject->BoundsAttachmentObjectID);
+			GameObject *parent = GameObjects::getObjectByIndex(current->_gameObject->_boundsAttachmentObjectID);
 			if (parent != nullptr) {
-				current->_gameObject->_position.x = parent->_position.x + (int16)current->_gameObject->BoundsAttachmentValue1;
-				current->_gameObject->_position.y = parent->_position.y + (int16)current->_gameObject->BoundsAttachmentValue2;
-				current->_gameObject->_verticalOffsetScale = parent->_verticalOffsetScale + (int16)current->_gameObject->BoundsAttachmentValue3;
+				current->_gameObject->_position.x = parent->_position.x + (int16)current->_gameObject->_boundsAttachmentValue1;
+				current->_gameObject->_position.y = parent->_position.y + (int16)current->_gameObject->_boundsAttachmentValue2;
+				current->_gameObject->_verticalOffsetScale = parent->_verticalOffsetScale + (int16)current->_gameObject->_boundsAttachmentValue3;
 			}
 		}
 
