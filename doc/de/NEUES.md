@@ -8,11 +8,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Nancy Drew: Danger on Deception Island hinzugefügt.
    - Unterstützung für Cartoon Carnival hinzugefügt.
    - Unterstützung für Alfred Pelrock: En Busca de un Sueño hinzugefügt.
+   - Unterstützung für Noctropolis hinzugefügt.
 
  Allgemein:
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
    - Die Fenstergröße wird jetzt korrekt wiederhergestellt, wenn in 3D-Engines von Vollbild zurück zum Fenster-Modus gewechselt wird.
    - NULL OPL-Treiber für schwächere Systeme implementiert.
+
+ ACCESS:
+   - Mehrere Skript-Fehler in Martian Memorandum behoben.
 
  AGOS:
    - Unterstützung für die von der Amiga- und Macintosh-Versionen von Simon2 verwendeten
