@@ -34,6 +34,7 @@ namespace MADSV2 {
 namespace Forest {
 
 int16 flags[40];
+bool room_203_flag;
 
 namespace Rooms {
 

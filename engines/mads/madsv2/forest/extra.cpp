@@ -34,6 +34,10 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+void display_interface() {
+	error("TODO: display_interface");
+}
+
 void fly_on_screen(int flying_object) {
 	error("TODO: fly_on_screen");
 }

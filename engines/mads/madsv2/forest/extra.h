@@ -48,6 +48,7 @@ namespace Forest {
 extern void fly_on_screen(int flying_object);
 extern void fly_off_screen(int flying_object);
 
+extern void display_interface();
 extern void display_inventory(void);
 extern void solve_me_selected(void);
 extern void door_selected(void);
