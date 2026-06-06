@@ -395,6 +395,26 @@ void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManage
 #endif
 }
 
+void Macs2Engine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	// Scale Adlib music volume (0-63) by user's music_volume setting (0-255)
+	if (_adlib && _scriptExecutor) {
+		int musicVolume = ConfMan.getInt("music_volume");
+		bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+		uint16 scaledVolume = mute ? 0 : (_scriptExecutor->_musicControlVolume * musicVolume / 255);
+		_adlib->setVolume(scaledVolume);
+	}
+}
+
+uint16 Macs2Engine::scaledMusicVolume(uint16 volume) const {
+	bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	if (mute)
+		return 0;
+	int musicVolume = ConfMan.getInt("music_volume");
+	return volume * musicVolume / 255;
+}
+
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources
 	for (uint i = 0; i < _backgroundAnimations.size(); i++) {

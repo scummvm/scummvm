@@ -1526,7 +1526,7 @@ void Script::ScriptExecutor::scriptSetVolume() {
 		volume = 0;
 	if (volume > 100)
 		volume = 100;
-	g_engine->getAdlib()->setVolume((uint16)volume);
+	g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume((uint16)volume));
 }
 
 bool Script::ScriptExecutor::scriptSetObjectClickable() {
@@ -1855,7 +1855,7 @@ bool Script::ScriptExecutor::scriptPlayMusicSlot() {
 		_musicControlMode = 1;
 		_musicControlParam = fadeParam;
 		_musicControlVolume = 0x3F;
-		_engine->getAdlib()->setVolume(_musicControlVolume);
+		_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
 	} else {
 		_musicControlMode = 0;
 		_musicControlParam = 0;
@@ -2370,7 +2370,7 @@ void ScriptExecutor::tick() {
 		const uint16 step = MAX<uint16>(_musicControlParam, 1);
 		if (_musicControlMode == 1) {
 			_musicControlVolume = (_musicControlVolume > step) ? _musicControlVolume - step : 0;
-			_engine->getAdlib()->setVolume(_musicControlVolume);
+			_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
 			if (_musicControlVolume == 0) {
 				_musicControlMode = 0;
 			}
@@ -2378,7 +2378,7 @@ void ScriptExecutor::tick() {
 			const uint16 nextVolume = MIN<uint16>(_musicControlVolume + step, 0x3F);
 			_musicControlVolume = nextVolume;
 			if (_musicControlVolume < 0x3F) {
-				_engine->getAdlib()->setVolume(_musicControlVolume);
+				_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
 			} else {
 				_musicControlMode = 0;
 				_activeMusicSlot = 0;
