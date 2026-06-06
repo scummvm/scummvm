@@ -87,6 +87,7 @@ const int kRA1CenteredAxisMax = 127;
 const int kRA1Op0BVerticalAxisMax = 100;
 const int kRA1EnhancedFlightDirectMaxX = 64;
 const int kRA1EnhancedFlightDirectMaxY = 40;
+const int kRA1Op09MouseRollTargetScale = 16;
 const int kRA1ControlPadAxisStep = 0x1E;
 const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
 const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
@@ -972,7 +973,9 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 	if (updateGamepadReticleAim(inputX, inputY, usedJoystick))
 		return;
 
-	const bool directFlightInput = getEffectiveGameOpcode() == 0x07;
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	const bool directFlightInput = effectiveOpcode == 0x07;
+	const bool flightVariantInput = effectiveOpcode == 0x09;
 
 	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
 	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
@@ -1034,7 +1037,7 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
 
-	if (directFlightInput) {
+	if (directFlightInput || flightVariantInput) {
 		inputX = scaleRebel1CenteredMouseAxis(logicalX, kRA1CenterX, kRA1EnhancedFlightDirectMaxX);
 		inputY = scaleRebel1CenteredMouseAxis(logicalY, kRA1CenterY, kRA1EnhancedFlightDirectMaxY);
 	} else {
@@ -1085,6 +1088,7 @@ void InsaneRebel1::updateShipPhysics() {
 	// --- Step 1: Gameplay axes from FUN_231BE ---
 	// HandleGameOp07_ShipFlight consumes the preprocessed axes in DAT_756C/756E,
 	// not raw mouse coordinates. Reuse the same centered-axis law here.
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
 	int16 inputX = 0;
 	int16 inputY = 0;
 	bool usedJoystick = false;
@@ -1100,8 +1104,15 @@ void InsaneRebel1::updateShipPhysics() {
 		inputSourceName = "joystick-dpad";
 
 	// --- Step 2: Roll accumulator (_74CA) ---
-	// Normal mode: accumulate; mode 0x10: snap to input
-	_rollAccum += (_tuning.roll * (int32)inputX) >> 5;
+	// Normal mode: accumulate. For ScummVM's absolute mouse in GAME 0x09, steer
+	// toward a bounded roll target so holding the cursor off center does not
+	// continue accelerating the ship until it clamps.
+	if (effectiveOpcode == 0x09 && _activeInputSource == kInputSourceMouse && !usedJoystick) {
+		const int32 targetRoll = (int32)inputX * kRA1Op09MouseRollTargetScale;
+		_rollAccum += (targetRoll - _rollAccum) >> 2;
+	} else {
+		_rollAccum += (_tuning.roll * (int32)inputX) >> 5;
+	}
 	_rollAccum = CLIP<int32>(_rollAccum, -0x47F, 0x47F);
 
 	// --- Step 3: Vertical smoothing (_74CE) ---
