@@ -1233,6 +1233,9 @@ bool View1::msgAction(const ActionMessage &msg) {
 		g_engine->_gameSpeedMode = (g_engine->_gameSpeedMode + 1) % 3;
 		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
 		return true;
+	case Macs2::kMacs2ActionOpenGMM:
+		g_engine->openMainMenuDialog();
+		return true;
 	default:
 		break;
 	}
