@@ -340,10 +340,10 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 
 	Common::StringArray strings;
 	if (_executingScriptObjectID == 0) {
-		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, bp2, bp4);
+		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, bp2, bp4, Scenes::instance()._currentSceneIndex, 0);
 	} else {
 		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = g_engine->decodeStrings(s, bp2, bp4);
+		strings = g_engine->decodeStrings(s, bp2, bp4, 0, _executingScriptObjectID);
 	}
 
 	if (alignRight) {
@@ -848,10 +848,10 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 
 	Common::Array<Common::String> strings;
 	if (_executingScriptObjectID == 0) {
-		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
+		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines, Scenes::instance()._currentSceneIndex, 0);
 	} else {
 		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = g_engine->decodeStrings(s, offset, numLines);
+		strings = g_engine->decodeStrings(s, offset, numLines, 0, _executingScriptObjectID);
 	}
 
 	debugC(kDebugScript,
@@ -1003,10 +1003,10 @@ void Script::ScriptExecutor::scriptAddDialogueChoice() {
 	uint16 numLines = readUint16();
 	Common::StringArray lines;
 	if (_executingScriptObjectID == 0) {
-		lines = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines);
+		lines = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines, Scenes::instance()._currentSceneIndex, 0);
 	} else {
 		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		lines = _engine->decodeStrings(stringsStream, offset, numLines);
+		lines = _engine->decodeStrings(stringsStream, offset, numLines, 0, _executingScriptObjectID);
 	}
 	debugC(kDebugScript,
 		   "Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
@@ -1675,10 +1675,10 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptAddOverl
 
 	Common::StringArray strings;
 	if (_executingScriptObjectID == 0) {
-		strings = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, stringOffset, 1);
+		strings = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, stringOffset, 1, Scenes::instance()._currentSceneIndex, 0);
 	} else {
 		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = _engine->decodeStrings(stringsStream, stringOffset, 1);
+		strings = _engine->decodeStrings(stringsStream, stringOffset, 1, 0, _executingScriptObjectID);
 	}
 	if (strings.empty()) {
 		warning("Ignoring empty overlay text entry at offset %u", stringOffset);

@@ -28,6 +28,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/hashmap.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -381,7 +382,17 @@ public:
 	int measureStrings(Common::StringArray sa);
 	int measureStringsVertically(Common::StringArray sa);
 
-	Common::StringArray decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings);
+	Common::StringArray decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings, int sceneId = 0, int objectId = 0);
+
+	// --- Translation support ---
+	struct TranslationEntry {
+		Common::StringArray strings;
+	};
+	Common::HashMap<uint32, TranslationEntry> _sceneTranslations;
+	Common::HashMap<uint32, TranslationEntry> _objectTranslations;
+	void loadTranslation();
+	// Compute the sequential string index at the given byte offset in a string blob
+	int computeStringIndex(Common::MemoryReadStream *stream, int targetOffset);
 
 	uint32 getFeatures() const;
 
