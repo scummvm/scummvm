@@ -83,7 +83,7 @@ const Common::AchievementDescriptionList *TwpMetaEngine::getAchievementDescripti
 }
 
 static Common::String getDesc(const Twp::SaveGame &savegame) {
-	Common::String desc = Twp::formatTime(savegame.time, "%b %d at %H:%M");
+	Common::String desc = Twp::formatTime(savegame.time);
 	if (savegame.easyMode)
 		desc += " (casual)";
 	return desc;
@@ -115,11 +115,11 @@ SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int sl
 		Twp::SaveGame savegame;
 		Twp::SaveGameManager::getSaveGame(f, savegame);
 		Common::String savegameDesc(getDesc(savegame));
-		Twp::DateTime dt = Twp::toDateTime(savegame.time);
+		TimeDate dt = Twp::intToTimeDate(savegame.time);
 		desc.setDescription(savegameDesc);
 		desc.setPlayTime(savegame.gameTime * 1000);
-		desc.setSaveDate(dt.year, dt.month, dt.day);
-		desc.setSaveTime(dt.hour, dt.min);
+		desc.setSaveDate(dt.tm_year, dt.tm_mon, dt.tm_mday);
+		desc.setSaveTime(dt.tm_hour, dt.tm_min);
 
 		return desc;
 	}
