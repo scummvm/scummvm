@@ -220,6 +220,7 @@ void InsaneRebel1::resetLevelFrameState() {
 	_currentSmushFrame = 0;
 	_gameCounter = 0;
 	_activeGameOpcode = 0;
+	_frameGameOpcodeHintMask = 0;
 	_gameLatch5D = 0;
 	_gameLatch5F = 0;
 }

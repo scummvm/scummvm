@@ -145,6 +145,25 @@ inline bool ra1DispatcherHudOnlyWhenDisabled(uint32 opcode) {
 	}
 }
 
+inline uint16 ra1PrioritizedFrameOpcode(uint32 opcodeMask) {
+	if (opcodeMask & (1u << 0x1A))
+		return 0x1A;
+	if (opcodeMask & (1u << 0x19))
+		return 0x19;
+	if (opcodeMask & (1u << 0x0B))
+		return 0x0B;
+	if (opcodeMask & (1u << 0x0A))
+		return 0x0A;
+	if (opcodeMask & (1u << 0x09))
+		return 0x09;
+	if (opcodeMask & (1u << 0x08))
+		return 0x08;
+	if (opcodeMask & (1u << 0x07))
+		return 0x07;
+
+	return 0;
+}
+
 bool ra1TargetCursorUsesProjection(uint16 opcode) {
 	switch (opcode) {
 	// FOBJ target chunks can precede the paired 0x0A GAME chunk, leaving 0x08
@@ -783,40 +802,49 @@ void InsaneRebel1::unprojectGameplayPoint(int16 &x, int16 &y) const {
 }
 
 uint16 InsaneRebel1::getEffectiveGameOpcode() const {
-	if (hasFrameGameOpcode(0x1A))
-		return 0x1A;
-	if (hasFrameGameOpcode(0x19))
-		return 0x19;
-	if (hasFrameGameOpcode(0x0B))
-		return 0x0B;
-	if (hasFrameGameOpcode(0x0A))
-		return 0x0A;
-	if (hasFrameGameOpcode(0x09))
-		return 0x09;
-	if (hasFrameGameOpcode(0x08))
-		return 0x08;
-	if (hasFrameGameOpcode(0x07))
-		return 0x07;
+	const uint16 frameOpcode = ra1PrioritizedFrameOpcode(_frameGameOpcodeMask);
+	if (frameOpcode != 0)
+		return frameOpcode;
 
 	return _activeGameOpcode;
 }
 
+uint16 InsaneRebel1::getTargetHitGameOpcode() const {
+	const uint16 frameOpcode = ra1PrioritizedFrameOpcode(_frameGameOpcodeMask | _frameGameOpcodeHintMask);
+	if (frameOpcode != 0)
+		return frameOpcode;
+
+	return _activeGameOpcode;
+}
+
+int16 InsaneRebel1::getGameplayCursorX(uint16 opcode) const {
+	return (opcode == 0x09) ? _flightAimX : _shipPosX;
+}
+
 int16 InsaneRebel1::getGameplayCursorX() const {
-	return (getEffectiveGameOpcode() == 0x09) ? _flightAimX : _shipPosX;
+	return getGameplayCursorX(getEffectiveGameOpcode());
+}
+
+int16 InsaneRebel1::getGameplayCursorY(uint16 opcode) const {
+	return (opcode == 0x09) ? _flightAimY : _shipPosY;
 }
 
 int16 InsaneRebel1::getGameplayCursorY() const {
-	return (getEffectiveGameOpcode() == 0x09) ? _flightAimY : _shipPosY;
+	return getGameplayCursorY(getEffectiveGameOpcode());
 }
 
-void InsaneRebel1::setGameplayCursor(int16 x, int16 y) {
-	if (getEffectiveGameOpcode() == 0x09) {
+void InsaneRebel1::setGameplayCursor(uint16 opcode, int16 x, int16 y) {
+	if (opcode == 0x09) {
 		_flightAimX = x;
 		_flightAimY = y;
 	} else {
 		_shipPosX = x;
 		_shipPosY = y;
 	}
+}
+
+void InsaneRebel1::setGameplayCursor(int16 x, int16 y) {
+	setGameplayCursor(getEffectiveGameOpcode(), x, y);
 }
 
 void InsaneRebel1::updateFlightVariantCursor() {
@@ -2537,10 +2565,10 @@ void InsaneRebel1::processShot() {
 // zones into gameplay-window screen space before comparing against the ship center.
 void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
 	int16 snap = _tuning.snap;
-	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	const uint16 effectiveOpcode = getTargetHitGameOpcode();
 	const bool screenSpaceCursor = ra1TargetCursorUsesProjection(effectiveOpcode);
-	const int16 screenCursorX = getGameplayCursorX();
-	const int16 screenCursorY = getGameplayCursorY();
+	const int16 screenCursorX = getGameplayCursorX(effectiveOpcode);
+	const int16 screenCursorY = getGameplayCursorY(effectiveOpcode);
 	int16 curX = screenCursorX;
 	int16 curY = screenCursorY;
 	if (screenSpaceCursor)
@@ -2584,7 +2612,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 				int16 snappedY = (top + bottom) / 2;
 				if (screenSpaceCursor)
 					projectGameplayPoint(snappedX, snappedY);
-				setGameplayCursor(snappedX, snappedY);
+				setGameplayCursor(effectiveOpcode, snappedX, snappedY);
 			}
 
 			// DOS uses g_recentKillObjectIdPlus1 as a frame-wide latch. Once one

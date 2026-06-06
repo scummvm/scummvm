@@ -279,6 +279,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_turretEmitterRightX = 0;
 	_turretEmitterRightY = 0;
 	_activeGameOpcode = 0;
+	_frameGameOpcodeHintMask = 0;
 	_frameGameOpcodeMask = 0;
 	_frameHasGameChunk = false;
 	_frameDispatchFlags = 0;

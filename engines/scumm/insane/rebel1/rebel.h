@@ -117,9 +117,11 @@ public:
 	int getLevelGameplayPhase() const { return _levelGameplayPhase; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	uint16 getEffectiveGameOpcode() const;
+	uint16 getTargetHitGameOpcode() const;
 	bool hasFrameGameOpcode(uint16 opcode) const {
 		return opcode < 32 && (_frameGameOpcodeMask & (1u << opcode)) != 0;
 	}
+	void setFrameGameOpcodeHintMask(uint32 opcodeMask) { _frameGameOpcodeHintMask = opcodeMask; }
 	void warpGameplayMouseNow(int x, int y);
 	int16 getPerspectiveX() const { return _perspectiveX; }
 	int16 getPerspectiveY() const { return _perspectiveY; }
@@ -127,7 +129,10 @@ public:
 	void unprojectGameplayPoint(int16 &x, int16 &y) const;
 	int16 getGameplayCursorX() const;
 	int16 getGameplayCursorY() const;
+	int16 getGameplayCursorX(uint16 opcode) const;
+	int16 getGameplayCursorY(uint16 opcode) const;
 	void setGameplayCursor(int16 x, int16 y);
+	void setGameplayCursor(uint16 opcode, int16 x, int16 y);
 	void updateFlightVariantCursor();
 	bool handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
 		int codec, uint8 &ra1Param);
@@ -441,6 +446,8 @@ private:
 	// Last per-frame GAME opcode observed in the current playback stream.
 	// Kept for legacy call sites; frame-accurate dispatch uses _frameGameOpcodeMask.
 	uint16 _activeGameOpcode;
+	// GAME opcodes pre-scanned from the current frame before FOBJ dispatch.
+	uint32 _frameGameOpcodeHintMask;
 	uint32 _frameGameOpcodeMask;
 	bool _frameHasGameChunk;
 	uint16 _frameDispatchFlags;

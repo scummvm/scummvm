@@ -717,18 +717,24 @@ void SmushPlayerRebel1::handleFrameObject(int32 subSize, Common::SeekableReadStr
 // handleFrame override — RA1 frame parsing with alignment, OBJ chunks, clean frame
 // ---------------------------------------------------------------------------
 
-static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize) {
+static bool ra1ScanFrameGameChunks(Common::SeekableReadStream &b, int32 frameSize, uint32 &opcodeMask) {
+	opcodeMask = 0;
 	const int64 frameStart = b.pos();
 	int32 remaining = frameSize;
 	RA1FrameChunkIterator chunks(b, remaining);
 	RA1AnimChunk chunk;
+	bool hasGameChunk = false;
 	while (chunks.next(chunk)) {
 		if (chunk.tag == MKTAG('F', 'R', 'M', 'E'))
 			break;
 		if (chunk.tag == MKTAG('G', 'A', 'M', 'E') ||
 				chunk.tag == MKTAG('G', 'A', 'M', '2')) {
-			b.seek(frameStart, SEEK_SET);
-			return true;
+			hasGameChunk = true;
+			if (chunks.fits(chunk) && chunk.size >= 4) {
+				const uint32 opcode = b.readUint32BE();
+				if (opcode < 32)
+					opcodeMask |= (1u << opcode);
+			}
 		}
 
 		if (!chunks.fits(chunk))
@@ -737,7 +743,7 @@ static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize)
 	}
 
 	b.seek(frameStart, SEEK_SET);
-	return false;
+	return hasGameChunk;
 }
 
 void SmushPlayerRebel1::ra1HandleFrameAudioChunk(int32 subSize, Common::SeekableReadStream &b) {
@@ -922,8 +928,11 @@ void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream 
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 		rebel1->setCurrentSmushFrame(_frame);
 		bool interactive = rebel1->isInteractiveVideoActive();
-		const bool frameHasGameChunk = interactive && ra1FrameHasGameChunk(b, frameSize);
+		uint32 frameGameOpcodeHintMask = 0;
+		const bool frameHasGameChunk = interactive &&
+			ra1ScanFrameGameChunks(b, frameSize, frameGameOpcodeHintMask);
 		rebel1->setFrameHasGameChunk(frameHasGameChunk);
+		rebel1->setFrameGameOpcodeHintMask(frameGameOpcodeHintMask);
 		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
 		bool forceClear = interactive &&
 			(activeOpcode == 0x0B ||
