@@ -347,7 +347,7 @@ void Overlay::execute() {
 						} else {
 							// nancy3 added a per-frame flag for hotspots. This allows the overlay to be clickable
 							// even without a scene change (useful for setting flags).
-							if (_blitDescriptions[i].hasHotspot == kPlayOverlayWithHotspot) {
+							if (_blitDescriptions[blitsForThisFrame[i]].hasHotspot == kPlayOverlayWithHotspot) {
 								_hotspot = _screenPosition;
 								_hasHotspot = true;
 							}
