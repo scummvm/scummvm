@@ -1077,39 +1077,45 @@ void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int
 	const int titleW = getFontBankStringWidth("LEVEL SELECT");
 	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
 
-	const char *kLevelItems[kRA1LevelSelectItemCount] = {
-		" 1 TRAINING",
-		" 2 ASTEROIDS",
-		" 3 KOLAADOR",
-		" 4 STAR DESTR",
-		" 5 TATOOINE",
-		" 6 AST CHASE",
-		" 7 PROBES",
-		" 8 WALKERS",
-		" 9 TROOPERS",
-		"10 TRANSPORT",
-		"11 YAVIN",
-		"12 TIE ATK",
+	const char *const kLevelItems[kRA1NumLevels] = {
+		"1  TRAINING  ",
+		"2  ASTEROIDS ",
+		"3  KOLAADOR  ",
+		"4  STAR DESTR",
+		"5  TATOOINE  ",
+		"6  AST CHASE ",
+		"7  PROBES    ",
+		"8  WALKERS   ",
+		"9  TROOPERS  ",
+		"10 TRANSPORT ",
+		"11 YAVIN     ",
+		"12 TIE ATK   ",
 		"13 DS SURFACE",
-		"14 CANNON",
-		"15 DS TRENCH",
-		"BACK"
+		"14 CANNON    ",
+		"15 DS TRENCH "
 	};
+	const char *const kBackItem = "BACK";
 
 	const int menuY = 0x2d;
 	const int leftFrameX = kRA1LevelSelectLeftX;
 	const int rightFrameX = kRA1LevelSelectRightX;
 	const int columnW = kRA1LevelSelectColW;
+	int levelTextW = 0;
+
+	for (int i = 0; i < kRA1NumLevels; i++)
+		levelTextW = MAX(levelTextW, getMenuTalkTextWidth(kLevelItems[i]));
 
 	for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
 		const int col = i / kRA1LevelSelectRowsPerCol;
 		const int row = i % kRA1LevelSelectRowsPerCol;
 		const int frameX = (col == 0) ? leftFrameX : rightFrameX;
 		const int y = menuY + row * kRA1MenuRowH;
-		const int textW = getMenuTalkTextWidth(kLevelItems[i]);
+		const bool levelItem = i < kRA1NumLevels;
+		const char *text = levelItem ? kLevelItems[i] : kBackItem;
+		const int textW = levelItem ? levelTextW : getMenuTalkTextWidth(text);
 		const int textX = frameX + (columnW - textW) / 2;
 
-		drawMenuTalkText(dst, pitch, width, height, textX, y, kLevelItems[i]);
+		drawMenuTalkText(dst, pitch, width, height, textX, y, text);
 
 		if (i == _levelSelectSel)
 			drawRebel1MenuFrame(dst, pitch, width, height,
