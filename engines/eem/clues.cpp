@@ -41,24 +41,24 @@ namespace EEM {
 
 // _DoChoosePartner @ 1a35:0756.
 const uint kPicChooseBackground = 0x8c; // _GetBackground(0x8c)
-const uint kAniBoy  = 8;                // Jake
-const uint kAniGirl = 9;                // Jenny
+const uint kAniJake  = 8;
+const uint kAniJenny = 9;
 
 // _DoHappiness @ 172b:27b5 — cursor X picks one of 4 rects @ 29be:030f.
 // Past rect 3 = level 4. Constexpr (Point, w, h) form to avoid a global
 // constructor (-Wglobal-constructors).
 constexpr Common::Rect kHappyZones[4] = {
-	Common::Rect(Common::Point(  0, 0),  70, 200), // far left — girl very happy, boy neutral
-	Common::Rect(Common::Point( 70, 0),  56, 200), // girl's column
+	Common::Rect(Common::Point(  0, 0),  70, 200), // far left — Jenny very happy, Jake neutral
+	Common::Rect(Common::Point( 70, 0),  56, 200), // Jenny's column
 	Common::Rect(Common::Point(126, 0),  56, 200), // middle
-	Common::Rect(Common::Point(182, 0),  53, 200), // boy's column
+	Common::Rect(Common::Point(182, 0),  53, 200), // Jake's column
 };
 
 // _NewAnimation positions @ 1a35:07b9 / 07d5.
-const int kBoyX  = 0xe2; // 226
-const int kBoyY  = 0x62; // 98
-const int kGirlX = 0x42; // 66
-const int kGirlY = 0x60; // 96
+const int kJakeX  = 0xe2; // 226
+const int kJakeY  = 0x62; // 98
+const int kJennyX = 0x42; // 66
+const int kJennyY = 0x60; // 96
 
 uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock) {
 	if (!clueBlock)
@@ -84,16 +84,16 @@ uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock) {
 }
 
 // _DoHappiness @ 172b:27b5 — per-zone sequence scripts.
-// Boy seqs @ 29be:0337 (5 × 0x14 bytes), girl seqs @ 29be:039b. 9 frames each;
+// Jake seqs @ 29be:0337 (5 × 0x14 bytes), Jenny seqs @ 29be:039b. 9 frames each;
 // the anim cells contain 10 cells = pairs of (neutral, smile) at 5 intensities.
-const uint8 kBoySeqs[5][9] = {
+const uint8 kJakeSeqs[5][9] = {
 	{ 0,0,0,0,0,0,0,1,0 }, // level 0
 	{ 2,2,2,2,2,2,2,3,2 }, // level 1
 	{ 4,4,4,4,4,4,4,5,4 }, // level 2
 	{ 6,6,6,6,6,6,7,6,6 }, // level 3
 	{ 8,8,8,8,8,8,8,8,9 }, // level 4 (cursor past zone 3)
 };
-const uint8 kGirlSeqs[5][9] = {
+const uint8 kJennySeqs[5][9] = {
 	{ 8,9,8,8,8,8,8,8,8 },
 	{ 6,6,6,7,6,6,6,6,6 },
 	{ 4,4,5,4,4,4,4,4,4 },
@@ -139,7 +139,7 @@ void blitRawToScreen(const Picture &p, int x, int y) {
 							   x, y, w, h);
 }
 
-// _DoChoosePartner @ 1a35:0756. The original places boy + girl animations
+// _DoChoosePartner @ 1a35:0756. The original places Jake + Jenny animations
 // on a backdrop and polls four click rectangles (two per character); we
 // approximate with a single split at x=160 (left=Jenny, right=Jake).
 void EEMEngine::doChoosePartner() {
@@ -149,14 +149,14 @@ void EEMEngine::doChoosePartner() {
 		return;
 	}
 
-	Animation boyAnim;
-	if (!_aniArchive.loadAnimation(kAniBoy, boyAnim) || boyAnim.empty()) {
-		warning("Boy animation (%u) load failed", kAniBoy);
+	Animation jakeAnim;
+	if (!_aniArchive.loadAnimation(kAniJake, jakeAnim) || jakeAnim.empty()) {
+		warning("Jake animation (%u) load failed", kAniJake);
 		return;
 	}
-	Animation girlAnim;
-	if (!_aniArchive.loadAnimation(kAniGirl, girlAnim) || girlAnim.empty()) {
-		warning("Girl animation (%u) load failed", kAniGirl);
+	Animation jennyAnim;
+	if (!_aniArchive.loadAnimation(kAniJenny, jennyAnim) || jennyAnim.empty()) {
+		warning("Jenny animation (%u) load failed", kAniJenny);
 		return;
 	}
 
@@ -168,16 +168,16 @@ void EEMEngine::doChoosePartner() {
 	uint seqIdx = 0;
 
 	blitAt(background, 0, 0);
-	blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
-		   kGirlX, kGirlY);
-	blitAt(boyAnim [kBoySeqs [level][seqIdx % 9] % boyAnim.size()],
-		   kBoyX, kBoyY);
+	blitAt(jennyAnim[kJennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+		   kJennyX, kJennyY);
+	blitAt(jakeAnim [kJakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+		   kJakeX, kJakeY);
 	g_system->updateScreen();
 
-	debugC(1, kDebugGeneral, "ChoosePartner: %u boy frames at (%d,%d), "
-		   "%u girl frames at (%d,%d)",
-		   (uint)boyAnim.size(), kBoyX, kBoyY,
-		   (uint)girlAnim.size(), kGirlX, kGirlY);
+	debugC(1, kDebugGeneral, "ChoosePartner: %u Jake frames at (%d,%d), "
+		   "%u Jenny frames at (%d,%d)",
+		   (uint)jakeAnim.size(), kJakeX, kJakeY,
+		   (uint)jennyAnim.size(), kJennyX, kJennyY);
 
 	uint32 lastTick = g_system->getMillis();
 	while (!shouldQuit()) {
@@ -189,10 +189,10 @@ void EEMEngine::doChoosePartner() {
 			lastTick = g_system->getMillis();
 			seqIdx = (seqIdx + 1) % 9;
 			blitAt(background, 0, 0);
-			blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
-				   kGirlX, kGirlY);
-			blitAt(boyAnim [kBoySeqs [level][seqIdx % 9] % boyAnim.size()],
-				   kBoyX, kBoyY);
+			blitAt(jennyAnim[kJennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+				   kJennyX, kJennyY);
+			blitAt(jakeAnim [kJakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+				   kJakeX, kJakeY);
 			g_system->updateScreen();
 		}
 
@@ -211,10 +211,10 @@ void EEMEngine::doChoosePartner() {
 					level = newLevel;
 					seqIdx = 0; // restart cycle so the gesture pops
 					blitAt(background, 0, 0);
-					blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
-						   kGirlX, kGirlY);
-					blitAt(boyAnim [kBoySeqs [level][seqIdx % 9] % boyAnim.size()],
-						   kBoyX, kBoyY);
+					blitAt(jennyAnim[kJennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+						   kJennyX, kJennyY);
+					blitAt(jakeAnim [kJakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+						   kJakeX, kJakeY);
 					g_system->updateScreen();
 				}
 			}
