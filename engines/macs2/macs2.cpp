@@ -1329,7 +1329,7 @@ void Macs2Engine::playCurrentSound() {
 	MacsAudioStream *audioStream = new MacsAudioStream();
 	audioStream->_pos = 2; // Skip 2-byte header (original: size = stored_size - 2)
 	audioStream->_data = _currentSoundData;
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_currentSoundHandle, audioStream);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_currentSoundHandle, audioStream);
 }
 
 void Macs2Engine::stopCurrentSound() {
