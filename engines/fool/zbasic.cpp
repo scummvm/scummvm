@@ -801,6 +801,10 @@ Common::String ZBasic::indexRaw(int16 table, int16 index) {
 	return _index[table][index];
 }
 
+void ZBasic::injectFOND(const byte *data, const size_t size, const Common::String &name) {
+	_toolbox->_injectFOND(_fileId, data, size, name);
+}
+
 void ZBasic::setMenuFont(uint16 font, uint16 size) {
 	_menu->setFont(font, size);
 }
