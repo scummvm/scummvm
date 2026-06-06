@@ -144,6 +144,8 @@ void MazeChasePuzzle::updateGraphics() {
 }
 
 void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
+	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+
 	readFilename(stream, _imageName);
 
 	uint width = stream.readUint16LE();
@@ -152,6 +154,10 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_exitPos.x = stream.readUint16LE();
 	_exitPos.y = stream.readUint16LE();
+
+	if (isNancy10) {
+		stream.skip(1); // TODO: unknown byte before the grid.
+	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
 	for (uint y = 0; y < height; ++y) {
@@ -166,6 +172,14 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < _startLocations.size(); ++i) {
 		_startLocations[i].x = stream.readUint16LE();
 		_startLocations[i].y = stream.readUint16LE();
+	}
+
+	if (isNancy10) {
+		// Fixed 3 slots (player + up to 2 enemies); skip the unused tail.
+		const uint kMaxSlots = 3;
+		const uint used = numEnemies + 1;
+		if (used < kMaxSlots)
+			stream.skip((kMaxSlots - used) * 4);
 	}
 
 	readRect(stream, _playerSrc);
