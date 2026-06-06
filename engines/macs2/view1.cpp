@@ -1387,7 +1387,7 @@ bool View1::tick() {
 			} else {
 				se->_musicControlVolume = vol;
 			}
-			g_engine->getAdlib()->setVolume(se->_musicControlVolume);
+			g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
 			int vol = (int)se->_musicControlVolume + (int)se->_musicControlParam;
@@ -1397,7 +1397,7 @@ bool View1::tick() {
 				g_engine->getAdlib()->stopMusic();
 			} else {
 				se->_musicControlVolume = vol;
-				g_engine->getAdlib()->setVolume(se->_musicControlVolume);
+				g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
 			}
 		}
 	}
