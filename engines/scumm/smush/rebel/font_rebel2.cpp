@@ -27,12 +27,34 @@
 #include "scumm/file.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/scumm.h"
+#include "scumm/smush/rebel/codec_ra2.h"
 
 namespace Scumm {
 
 enum {
-	kRebel2MaxStrings = 80
+	kRebel2MaxStrings = 80,
+	kRebel2MaxSpritePixels = 16 * 1024 * 1024,
+	kRebel2MaxDecodedSpriteBytes = 32 * 1024 * 1024
 };
+
+struct Rebel2NutFrameInfo {
+	Rebel2NutFrameInfo() : codec(0), xoffs(0), yoffs(0), width(0), height(0), data(nullptr), dataSize(0) {}
+
+	int codec;
+	int16 xoffs;
+	int16 yoffs;
+	uint16 width;
+	uint16 height;
+	const byte *data;
+	int32 dataSize;
+};
+
+static void decodeRebel2RawSprite(byte *dst, const byte *src, int width, int height, int dataSize) {
+	const int32 totalSize = width * height;
+	const int32 copySize = MIN<int32>(totalSize, dataSize);
+	if (copySize > 0)
+		memcpy(dst, src, copySize);
+}
 
 class Rebel2NutRenderer : public NutRenderer {
 public:
@@ -40,9 +62,15 @@ public:
 		loadRebel2Font(filename);
 	}
 
+	Rebel2NutRenderer(ScummEngine *vm, const byte *data, int32 dataSize) : NutRenderer(vm, nullptr) {
+		loadRebel2SpriteFromData(data, dataSize);
+	}
+
 private:
 	void codec44(byte *dst, const byte *src, int width, int height, int pitch);
 	void loadRebel2Font(const char *filename);
+	void loadRebel2SpriteFromData(const byte *data, int32 dataSize);
+	void decodeRebel2Frame(byte *dst, const Rebel2NutFrameInfo &frame, byte *codec45Palette, byte *codec45Lookup);
 };
 
 void Rebel2NutRenderer::codec44(byte *dst, const byte *src, int width, int height, int pitch) {
@@ -189,8 +217,174 @@ void Rebel2NutRenderer::loadRebel2Font(const char *filename) {
 	delete[] dataSrc;
 }
 
+void Rebel2NutRenderer::decodeRebel2Frame(byte *dst, const Rebel2NutFrameInfo &frame, byte *codec45Palette, byte *codec45Lookup) {
+	switch (frame.codec) {
+	case 1:
+	case 3:
+		codec1(dst, frame.data, frame.width, frame.height, frame.width);
+		break;
+	case 20:
+		decodeRebel2RawSprite(dst, frame.data, frame.width, frame.height, frame.dataSize);
+		break;
+	case 21:
+		smushDecodeLineUpdate(dst, frame.data, 0, 0, frame.width, frame.height, frame.width, frame.dataSize);
+		break;
+	case 23:
+		smushDecodeSkipRLE(dst, frame.data, 0, 0, frame.width, frame.height, frame.width, frame.dataSize);
+		break;
+	case 44:
+		codec44(dst, frame.data, frame.width, frame.height, frame.width);
+		break;
+	case 45:
+		smushDecodeRA2Blur(dst, frame.data, 0, 0, frame.width, frame.height, frame.width, frame.dataSize,
+			codec45Palette, codec45Lookup);
+		break;
+	default:
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: unknown codec: %d", frame.codec);
+		break;
+	}
+}
+
+void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSize) {
+	if (!data || dataSize < 16) {
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: data too small (%d bytes)", dataSize);
+		return;
+	}
+
+	if (READ_BE_UINT32(data) != MKTAG('A','N','I','M')) {
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: no ANIM chunk");
+		return;
+	}
+
+	uint32 length = READ_BE_UINT32(data + 4);
+	if (length > (uint32)(dataSize - 8)) {
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: ANIM size (%u) exceeds data size (%d)", length, dataSize);
+		length = dataSize - 8;
+	}
+
+	const int64 animEnd = 8 + (int64)length;
+	if (animEnd < 16 || READ_BE_UINT32(data + 8) != MKTAG('A','H','D','R')) {
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: no AHDR chunk in font data");
+		return;
+	}
+
+	int declaredChars = READ_LE_UINT16(data + 18);
+	if (declaredChars > (int)ARRAYSIZE(_chars)) {
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: numChars (%d) exceeds max, clamping", declaredChars);
+		declaredChars = ARRAYSIZE(_chars);
+	}
+
+	Rebel2NutFrameInfo frames[ARRAYSIZE(_chars)];
+	uint64 decodedLength = 0;
+	int frameCount = 0;
+
+	for (int64 offset = 8; offset + 8 <= animEnd && frameCount < declaredChars;) {
+		const uint32 tag = READ_BE_UINT32(data + offset);
+		const uint32 chunkSize = READ_BE_UINT32(data + offset + 4);
+		const int64 chunkDataStart = offset + 8;
+		if ((int64)chunkSize > animEnd - chunkDataStart) {
+			warning("Rebel2NutRenderer::loadRebel2SpriteFromData: truncated chunk 0x%08x at offset %llx", tag, (long long)offset);
+			break;
+		}
+
+		const int64 chunkDataEnd = chunkDataStart + chunkSize;
+		int64 nextChunk = chunkDataEnd + (chunkSize & 1);
+		if (nextChunk > animEnd)
+			nextChunk = chunkDataEnd;
+
+		if (tag == MKTAG('F','R','M','E')) {
+			Rebel2NutFrameInfo &frame = frames[frameCount];
+			if (chunkSize >= 8 && chunkDataStart + 8 <= chunkDataEnd &&
+					READ_BE_UINT32(data + chunkDataStart) == MKTAG('F','O','B','J')) {
+				const uint32 fobjSize = READ_BE_UINT32(data + chunkDataStart + 4);
+				const int64 fobjDataStart = chunkDataStart + 8;
+				const int64 fobjDataEnd = fobjDataStart + fobjSize;
+
+				if (fobjSize >= 14 && fobjDataEnd <= chunkDataEnd) {
+					frame.codec = READ_LE_UINT16(data + fobjDataStart);
+					frame.xoffs = READ_LE_INT16(data + fobjDataStart + 2);
+					frame.yoffs = READ_LE_INT16(data + fobjDataStart + 4);
+					frame.width = READ_LE_UINT16(data + fobjDataStart + 6);
+					frame.height = READ_LE_UINT16(data + fobjDataStart + 8);
+					frame.data = data + fobjDataStart + 14;
+					frame.dataSize = fobjSize - 14;
+
+					const uint64 pixels = (uint64)frame.width * frame.height;
+					if (pixels == 0) {
+						frame.width = 0;
+						frame.height = 0;
+						frame.data = nullptr;
+						frame.dataSize = 0;
+					} else if (pixels > kRebel2MaxSpritePixels || decodedLength + pixels > kRebel2MaxDecodedSpriteBytes) {
+						warning("Rebel2NutRenderer::loadRebel2SpriteFromData: invalid sprite dimensions %ux%u at frame %d",
+							frame.width, frame.height, frameCount);
+						frame.width = 0;
+						frame.height = 0;
+						frame.data = nullptr;
+						frame.dataSize = 0;
+					} else {
+						decodedLength += pixels;
+					}
+				}
+			}
+			frameCount++;
+		}
+
+		offset = nextChunk;
+	}
+
+	_numChars = frameCount;
+	if (_numChars <= 0) {
+		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: no decodable frames");
+		return;
+	}
+
+	delete[] _decodedData;
+	_decodedData = decodedLength ? new byte[(uint32)decodedLength] : nullptr;
+	memset(_chars, 0, sizeof(_chars));
+	_fontHeight = 0;
+
+	byte *decodedPtr = _decodedData;
+	byte codec45Palette[0x300];
+	byte codec45Lookup[0x8000];
+	memset(codec45Palette, 0, sizeof(codec45Palette));
+	memset(codec45Lookup, 0, sizeof(codec45Lookup));
+
+	for (int i = 0; i < _numChars; i++) {
+		const Rebel2NutFrameInfo &frame = frames[i];
+		_chars[i].xoffs = frame.xoffs;
+		_chars[i].yoffs = frame.yoffs;
+		_chars[i].width = frame.width;
+		_chars[i].height = frame.height;
+		_chars[i].transparency = kDefaultTransparentColor;
+
+		if (frame.width == 0 || frame.height == 0 || frame.data == nullptr)
+			continue;
+
+		const uint32 pixels = frame.width * frame.height;
+		_chars[i].src = decodedPtr;
+		decodedPtr += pixels;
+		_fontHeight = MAX<int>(_fontHeight, frame.height);
+
+		memset(_chars[i].src, kDefaultTransparentColor, pixels);
+		decodeRebel2Frame(_chars[i].src, frame, codec45Palette, codec45Lookup);
+	}
+
+	debug(1, "Rebel2NutRenderer::loadRebel2SpriteFromData() - numChars=%d decodedLength=%u", _numChars, (uint32)decodedLength);
+}
+
 NutRenderer *makeRebel2Font(ScummEngine *vm, const char *filename) {
 	return new Rebel2NutRenderer(vm, filename);
+}
+
+NutRenderer *makeRebel2SpriteFromData(ScummEngine *vm, const byte *data, int32 dataSize) {
+	Rebel2NutRenderer *renderer = new Rebel2NutRenderer(vm, data, dataSize);
+	if (renderer->getNumChars() <= 0) {
+		delete renderer;
+		return nullptr;
+	}
+
+	return renderer;
 }
 
 Rebel2FontSet::Rebel2FontSet() : numFonts(0), defaultFont(0) {

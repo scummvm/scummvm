@@ -434,6 +434,7 @@ public:
 	bool handleLevelDeath(int levelId, int phase, const char *deathVideo, const char *retryVideo, int &levelResult);
 	void resetLevelAttemptState(int initialPhase);
 	void resetLevelPhaseState(bool clearEnemies);
+	void clearEmbeddedHudFrames();
 	void resetLevelWaveState();
 	void resetHandler7FlightState();
 

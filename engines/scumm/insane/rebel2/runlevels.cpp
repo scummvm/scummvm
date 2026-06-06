@@ -278,6 +278,17 @@ void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
 	_grd002Sprite = nullptr;
 	_grdShotOriginTableLoaded = false;
 
+	clearEmbeddedHudFrames();
+
+	free(_level2Background);
+	_level2Background = nullptr;
+	_level2BackgroundLoaded = false;
+
+	if (clearEnemies)
+		_enemies.clear();
+}
+
+void InsaneRebel2::clearEmbeddedHudFrames() {
 	for (uint i = 0; i < ARRAYSIZE(_rebelEmbeddedHud); ++i) {
 		EmbeddedSanFrame &frame = _rebelEmbeddedHud[i];
 		free(frame.pixels);
@@ -288,13 +299,6 @@ void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
 		frame.renderY = 0;
 		frame.valid = false;
 	}
-
-	free(_level2Background);
-	_level2Background = nullptr;
-	_level2BackgroundLoaded = false;
-
-	if (clearEnemies)
-		_enemies.clear();
 }
 
 void InsaneRebel2::resetLevelWaveState() {
@@ -647,6 +651,8 @@ int InsaneRebel2::runLevel3() {
 		_playerDamage = 0;
 		_currentPhase = 1;
 
+		clearEmbeddedHudFrames();
+
 		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
 		clearBit(0);
 		resetHandler7FlightState();
@@ -698,6 +704,8 @@ int InsaneRebel2::runLevel3() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_playerScore = phase1Score;
+
+		clearEmbeddedHudFrames();
 
 		// Reset bit table before gameplay starts
 		clearBit(0);
