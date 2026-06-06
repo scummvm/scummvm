@@ -168,13 +168,13 @@ private:
 	StreamHandler *_activeSongStream = nullptr;
 
 public:
-	void Init();
-	void Deinit();
-	void PlaySongData(const Common::Array<uint8> &data);
-	void StopMusic();
-	void SetVolume(uint16 volume);
+	void init();
+	void deinit();
+	void playSongData(const Common::Array<uint8> &data);
+	void stopMusic();
+	void setVolume(uint16 volume);
 	bool isPlaybackReady() const { return _playbackReady != 0; }
-	void ReadDataFromExecutable(Common::MemoryReadStream *fileStream);
+	void readDataFromExecutable(Common::MemoryReadStream *fileStream);
 
 	// --- Debug state for ImGui visualization ---
 	static constexpr int kDebugRingSize = 512;
@@ -202,7 +202,7 @@ public:
 	void updateDebugState();
 
 private:
-	void LoadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
+	void loadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target);
 };
 
 } // namespace Macs2

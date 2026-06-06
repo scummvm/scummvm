@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "macs2/adlib.h"
+#include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
 #include "macs2/debugtools.h"
@@ -1525,7 +1526,7 @@ void Script::ScriptExecutor::scriptSetVolume() {
 		volume = 0;
 	if (volume > 100)
 		volume = 100;
-	g_engine->getAdlib()->SetVolume((uint16)volume);
+	g_engine->getAdlib()->setVolume((uint16)volume);
 }
 
 bool Script::ScriptExecutor::scriptSetObjectClickable() {
@@ -1584,16 +1585,16 @@ bool Script::ScriptExecutor::scriptSetObjectBounds() {
 
 	if (objectID == otherObjectID) {
 		object->_hasBoundsAttachment = false;
-		object->BoundsAttachmentObjectID = 0;
-		object->BoundsAttachmentValue1 = 0;
-		object->BoundsAttachmentValue2 = 0;
-		object->BoundsAttachmentValue3 = 0;
+		object->_boundsAttachmentObjectID = 0;
+		object->_boundsAttachmentValue1 = 0;
+		object->_boundsAttachmentValue2 = 0;
+		object->_boundsAttachmentValue3 = 0;
 	} else {
 		object->_hasBoundsAttachment = true;
-		object->BoundsAttachmentObjectID = otherObjectID;
-		object->BoundsAttachmentValue1 = value1;
-		object->BoundsAttachmentValue2 = value2;
-		object->BoundsAttachmentValue3 = value3;
+		object->_boundsAttachmentObjectID = otherObjectID;
+		object->_boundsAttachmentValue1 = value1;
+		object->_boundsAttachmentValue2 = value2;
+		object->_boundsAttachmentValue3 = value3;
 	}
 	return true;
 }
@@ -1840,7 +1841,7 @@ bool Script::ScriptExecutor::scriptPlayMusicSlot() {
 	}
 
 	if (_activeMusicSlot != 0) {
-		_engine->getAdlib()->StopMusic();
+		_engine->getAdlib()->stopMusic();
 		_activeMusicSlot = 0;
 	}
 
@@ -1849,17 +1850,17 @@ bool Script::ScriptExecutor::scriptPlayMusicSlot() {
 		return false;
 	}
 
-	_engine->getAdlib()->PlaySongData(_musicSlots[slotID - 1]);
+	_engine->getAdlib()->playSongData(_musicSlots[slotID - 1]);
 	if (startMuted == 0) {
 		_musicControlMode = 1;
 		_musicControlParam = fadeParam;
 		_musicControlVolume = 0x3F;
-		_engine->getAdlib()->SetVolume(_musicControlVolume);
+		_engine->getAdlib()->setVolume(_musicControlVolume);
 	} else {
 		_musicControlMode = 0;
 		_musicControlParam = 0;
 		_musicControlVolume = 0;
-		_engine->getAdlib()->SetVolume(0);
+		_engine->getAdlib()->setVolume(0);
 	}
 
 	_activeMusicSlot = slotID;
@@ -1888,7 +1889,7 @@ bool Script::ScriptExecutor::scriptStopMusicSlot() {
 			_musicControlVolume = 0;
 		} else {
 			// Binary: adlibStopMusic(), activeSlot=0 (no mode/param clear)
-			_engine->getAdlib()->StopMusic();
+			_engine->getAdlib()->stopMusic();
 			_activeMusicSlot = 0;
 		}
 	}
@@ -1914,7 +1915,7 @@ bool Script::ScriptExecutor::scriptFreeMusicSlot() {
 
 	if (_activeMusicSlot == slotID) {
 		if (_musicEnabled && _soundSystemActive) {
-			_engine->getAdlib()->StopMusic();
+			_engine->getAdlib()->stopMusic();
 		}
 		_activeMusicSlot = 0;
 	}
@@ -2369,7 +2370,7 @@ void ScriptExecutor::tick() {
 		const uint16 step = MAX<uint16>(_musicControlParam, 1);
 		if (_musicControlMode == 1) {
 			_musicControlVolume = (_musicControlVolume > step) ? _musicControlVolume - step : 0;
-			_engine->getAdlib()->SetVolume(_musicControlVolume);
+			_engine->getAdlib()->setVolume(_musicControlVolume);
 			if (_musicControlVolume == 0) {
 				_musicControlMode = 0;
 			}
@@ -2377,11 +2378,11 @@ void ScriptExecutor::tick() {
 			const uint16 nextVolume = MIN<uint16>(_musicControlVolume + step, 0x3F);
 			_musicControlVolume = nextVolume;
 			if (_musicControlVolume < 0x3F) {
-				_engine->getAdlib()->SetVolume(_musicControlVolume);
+				_engine->getAdlib()->setVolume(_musicControlVolume);
 			} else {
 				_musicControlMode = 0;
 				_activeMusicSlot = 0;
-				_engine->getAdlib()->StopMusic();
+				_engine->getAdlib()->stopMusic();
 			}
 		}
 	}
