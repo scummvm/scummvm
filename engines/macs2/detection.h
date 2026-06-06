@@ -54,6 +54,10 @@ extern const ADGameDescription gameDescriptions[];
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 #define GAMEOPTION_TTS GUIO_GAMEOPTIONS2
 
+enum {
+	GF_TRANSLATED = 1 << 0,
+};
+
 } // End of namespace Macs2
 
 class Macs2MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {

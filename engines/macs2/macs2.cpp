@@ -23,6 +23,7 @@
 #include "adlib.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
@@ -1242,7 +1243,99 @@ int Macs2Engine::measureStrings(Common::StringArray sa) {
 	return max;
 }
 
-Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings) {
+int Macs2Engine::computeStringIndex(Common::MemoryReadStream *stream, int targetOffset) {
+	stream->seek(0);
+	int index = 0;
+	while (stream->pos() < targetOffset && !stream->eos()) {
+		uint16 len = stream->readUint16LE();
+		if (len == 0)
+			break;
+		stream->skip(len);
+		index++;
+	}
+	return index;
+}
+
+void Macs2Engine::loadTranslation() {
+	Common::SeekableReadStream *f = SearchMan.createReadStreamForMember("macs2_translation.dat");
+	if (!f) {
+		warning("Cannot open macs2_translation.dat");
+		return;
+	}
+
+	// Read and verify header
+	char magic[4];
+	f->read(magic, 4);
+	if (memcmp(magic, "MCS2", 4) != 0) {
+		warning("Invalid macs2_translation.dat magic");
+		delete f;
+		return;
+	}
+
+	uint16 version = f->readUint16LE();
+	if (version != 1) {
+		warning("Unsupported macs2_translation.dat version %u", version);
+		delete f;
+		return;
+	}
+
+	uint16 numScenes = f->readUint16LE();
+	uint16 numObjects = f->readUint16LE();
+
+	// Read index tables
+	struct IndexEntry {
+		uint16 id;
+		uint16 numStrings;
+		uint32 dataOffset;
+	};
+
+	Common::Array<IndexEntry> sceneIndex(numScenes);
+	for (uint16 i = 0; i < numScenes; i++) {
+		sceneIndex[i].id = f->readUint16LE();
+		sceneIndex[i].numStrings = f->readUint16LE();
+		sceneIndex[i].dataOffset = f->readUint32LE();
+	}
+
+	Common::Array<IndexEntry> objectIndex(numObjects);
+	for (uint16 i = 0; i < numObjects; i++) {
+		objectIndex[i].id = f->readUint16LE();
+		objectIndex[i].numStrings = f->readUint16LE();
+		objectIndex[i].dataOffset = f->readUint32LE();
+	}
+
+	// Read string data for scenes
+	for (uint16 i = 0; i < numScenes; i++) {
+		f->seek(sceneIndex[i].dataOffset);
+		TranslationEntry entry;
+		for (uint16 j = 0; j < sceneIndex[i].numStrings; j++) {
+			uint16 len = f->readUint16LE();
+			Common::String s;
+			for (uint16 k = 0; k < len; k++)
+				s += (char)f->readByte();
+			entry.strings.push_back(s);
+		}
+		_sceneTranslations[sceneIndex[i].id] = entry;
+	}
+
+	// Read string data for objects
+	for (uint16 i = 0; i < numObjects; i++) {
+		f->seek(objectIndex[i].dataOffset);
+		TranslationEntry entry;
+		for (uint16 j = 0; j < objectIndex[i].numStrings; j++) {
+			uint16 len = f->readUint16LE();
+			Common::String s;
+			for (uint16 k = 0; k < len; k++)
+				s += (char)f->readByte();
+			entry.strings.push_back(s);
+		}
+		_objectTranslations[objectIndex[i].id] = entry;
+	}
+
+	delete f;
+	debug("Loaded macs2_translation.dat: %u scenes, %u objects", numScenes, numObjects);
+}
+
+Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings, int sceneId, int objectId) {
 	Common::StringArray result(numStrings);
 	stream->seek(offset);
 
@@ -1262,6 +1355,25 @@ Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream,
 			currentLine += (char)r;
 		}
 		result[i] = currentLine;
+	}
+
+	// Apply translation if available
+	if (getFeatures() & GF_TRANSLATED) {
+		int baseIndex = computeStringIndex(stream, offset);
+		const TranslationEntry *entry = nullptr;
+		if (objectId != 0 && _objectTranslations.contains(objectId)) {
+			entry = &_objectTranslations[objectId];
+		} else if (sceneId != 0 && _sceneTranslations.contains(sceneId)) {
+			entry = &_sceneTranslations[sceneId];
+		}
+		if (entry) {
+			for (int i = 0; i < numStrings; i++) {
+				int idx = baseIndex + i;
+				if (idx >= 0 && idx < (int)entry->strings.size() && !entry->strings[idx].empty()) {
+					result[i] = entry->strings[idx];
+				}
+			}
+		}
 	}
 
 	return result;
@@ -1370,6 +1482,11 @@ Common::Error Macs2Engine::run() {
 	GameObjects::instance().init();
 	readResourceFile();
 	readExecutable();
+
+	// Load translation data if available
+	if (getFeatures() & GF_TRANSLATED) {
+		loadTranslation();
+	}
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
