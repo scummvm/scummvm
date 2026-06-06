@@ -441,8 +441,6 @@ void NotebookPopup::buildTextLines() {
 		return;
 
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	if (!autotext)
-		return;
 
 	// Senior-detective Tasks page: hide the to-do list and show the
 	// AUTOTEXT placeholder body instead.
@@ -459,13 +457,8 @@ void NotebookPopup::buildTextLines() {
 
 	const Common::Array<JournalData::Entry> &entries = journalData->journalEntries[surfaceID];
 	for (uint i = 0; i < entries.size(); ++i) {
-		const Common::String &stringID = entries[i].stringID;
-		if (!autotext->texts.contains(stringID))
-			continue;
-
-		Common::String body = autotext->texts[stringID];
-		if (body.empty())
-			continue;
+		Common::String stringID = entries[i].stringID;
+		Common::String body = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
 
 		// Tasks are prefixed with a checkbox showing completion state.
 		// mark % 10 == 8 means "complete".

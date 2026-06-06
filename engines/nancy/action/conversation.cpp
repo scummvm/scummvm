@@ -185,24 +185,7 @@ void ConversationSound::readTerseCaptionText(Common::SeekableReadStream &stream)
 	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
 	assert(convo);
 
-	if (convo->texts.contains(key)) {
-		_text = convo->texts[key];
-	} else {
-		// Nancy10+ searched convo texts in a key insensitive way, but
-		// the possible permutations involve mainly the last character
-		// being upper or lower case, so just try that before giving up.
-		if (key[key.size() - 1] == toupper(key[key.size() - 1]))
-			key[key.size() - 1] = tolower(key[key.size() - 1]);
-		else
-			key[key.size() - 1] = toupper(key[key.size() - 1]);
-
-		if (convo->texts.contains(key)) {
-			_text = convo->texts[key];
-		} else {
-			warning("Convo key not found: %s", key.c_str());
-			_text = "";
-		}
-	}
+	_text = getTextFromCaseInsensitiveKey(convo->texts, key);
 }
 
 void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
@@ -212,7 +195,7 @@ void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream
 	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
 	assert(convo);
 
-	response.text = convo->texts[key];
+	response.text = getTextFromCaseInsensitiveKey(convo->texts, key);
 }
 
 void ConversationSound::execute() {

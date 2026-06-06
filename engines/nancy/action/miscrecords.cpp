@@ -116,7 +116,7 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
-		_text = autotext->texts[stringID];
+		_text = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
 	} else {
 		char *buf = new char[size];
 		stream.read(buf, size);
@@ -159,10 +159,7 @@ void FrameTextBox::readData(Common::SeekableReadStream &stream) {
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
-		// TODO: we probably ought to be doing something more robust here
-		// to detect missing keys, but for now just return an empty string
-		// if the key isn't found.
-		_text = autotext->texts.getValOrDefault(stringID, "");
+		_text = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
 	} else if (size > 0) {
 		char *buf = new char[size];
 		stream.read(buf, size);

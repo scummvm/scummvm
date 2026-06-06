@@ -728,10 +728,8 @@ void CellPhonePopup::drawLinkList() {
 		}
 
 		Common::String lookupKey = list[absolute].key;
-		lookupKey.toUppercase();
-		Common::String rowText = (autotext && autotext->texts.contains(lookupKey))
-			? autotext->texts[lookupKey]
-			: lookupKey;
+		Common::String rowText = getTextFromCaseInsensitiveKey(autotext->texts, lookupKey);
+
 		// Single-line draw — drop every <n> markup so they don't render as
 		// literal "<n>" glyphs and crowd the row.
 		while (rowText.contains("<n>")) {
@@ -765,9 +763,6 @@ void CellPhonePopup::drawContentView() {
 	}
 
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-	if (!autotext || !autotext->texts.contains(_contentKey)) {
-		return;
-	}
 
 	const Font *font = g_nancy->_graphics->getFont(_uiclData->fontId2);
 	if (!font) {
@@ -792,7 +787,7 @@ void CellPhonePopup::drawContentView() {
 
 	// Render the engine's hypertext markup into a tall scratch surface,
 	// then blit a vertically-scrolled window of it into the LCD.
-	const Common::String renderText = autotext->texts[_contentKey];
+	const Common::String renderText = getTextFromCaseInsensitiveKey(autotext->texts, _contentKey);
 
 	// Find this page in the UIBW chunk (browser pages only); its hotspot
 	// records are the per-page image table the article references.
