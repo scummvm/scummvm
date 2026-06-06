@@ -221,7 +221,6 @@ void ControlUIItems::execute() {
 			break;
 		case kUITypeCellphone: {
 			UI::CellPhonePopup &phone = NancySceneState.getCellPhonePopup();
-			phone.open();
 
 			if (_startScene != (int16)kNoScene) {
 				SceneChangeDescription scene;
@@ -230,11 +229,10 @@ void ControlUIItems::execute() {
 				scene.verticalOffset = 0;
 				// The destination scene's sound carries the conversation audio.
 				scene.continueSceneSound = kLoadSceneSound;
-
-				// Save the pre-call scene on the popup so AR 128 returns
-				// there without touching the global push slot.
-				phone.setReturnScene(NancySceneState.getSceneInfo());
-				NancySceneState.changeScene(scene);
+				// Phone rings, picks up, and changeScenes into `scene`.
+				phone.startIncomingCall(scene);
+			} else {
+				phone.open();
 			}
 			break;
 		}

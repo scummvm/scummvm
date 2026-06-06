@@ -265,6 +265,21 @@ void CellPhonePopup::open() {
 	}
 }
 
+void CellPhonePopup::startIncomingCall(const SceneChangeDescription &scene) {
+	// open() resets state, so save the pending scene afterwards. Joining
+	// kPlaceCall hands off to the existing ring / pickup / connect chain;
+	// kLookupContact skips the contact lookup when _hasPendingCallScene
+	// is set, and kConnected uses the stored scene for changeScene.
+	if (!_isVisible) {
+		open();
+	}
+	_pendingCallScene = scene;
+	_hasPendingCallScene = true;
+	_resolvedContact = -1;
+	resetDialPad();
+	enterScreenState(kPlaceCall);
+}
+
 void CellPhonePopup::close() {
 	if (!_isVisible) {
 		return;
@@ -273,6 +288,9 @@ void CellPhonePopup::close() {
 	if (!_callSound.name.empty()) {
 		g_nancy->_sound->stopSound(_callSound);
 	}
+
+	// Closing the phone while ringing declines the call.
+	_hasPendingCallScene = false;
 
 	setVisible(false);
 
@@ -314,14 +332,19 @@ void CellPhonePopup::updateGraphics() {
 		break;
 
 	case kLookupContact: {
-		// Directory-mode calls pre-resolve the contact, so only fall back
-		// to dial-buffer lookup when the contact isn't already known.
-		if (_resolvedContact == -1) {
-			_resolvedContact = findContactByDialBuffer();
+		// Incoming calls already know the destination scene, so the
+		// contact lookup is skipped. Directory-mode outgoing calls
+		// pre-resolve the contact, leaving only dial-buffer lookup.
+		if (!_hasPendingCallScene) {
+			if (_resolvedContact == -1) {
+				_resolvedContact = findContactByDialBuffer();
+			}
+			if (_resolvedContact == -1) {
+				enterScreenState(kInvalidNumber);
+				break;
+			}
 		}
-		if (_resolvedContact == -1) {
-			enterScreenState(kInvalidNumber);
-		} else if (playSoundIfPresent(_uiclData->pickupSound)) {
+		if (playSoundIfPresent(_uiclData->pickupSound)) {
 			enterScreenState(kWaitPickup);
 		} else {
 			enterScreenState(kConnected);
@@ -340,7 +363,15 @@ void CellPhonePopup::updateGraphics() {
 		// Trigger the scene change once, then sit in kConnected so the
 		// connecting sprite stays on screen for the duration of the
 		// conversation. AR 128 closes the popup when the call ends.
-		if (_resolvedContact >= 0 &&
+		// Incoming calls carry their destination in _pendingCallScene;
+		// outgoing calls resolve it from the active contact.
+		if (_hasPendingCallScene) {
+			SceneChangeDescription scene = _pendingCallScene;
+			_hasPendingCallScene = false;
+			setReturnScene(NancySceneState.getSceneInfo());
+			NancySceneState.changeScene(scene);
+			resetDialPad();
+		} else if (_resolvedContact >= 0 &&
 				_resolvedContact < (int)_contacts.size()) {
 			triggerContactCallSceneChange((uint)_resolvedContact);
 			_resolvedContact = -1;

@@ -71,6 +71,12 @@ public:
 	void setReturnScene(const SceneChangeDescription &scene);
 	bool consumeReturnScene(SceneChangeDescription &out);
 
+	// Start an incoming-call sequence: opens the popup, stores the
+	// destination scene, and joins the kPlaceCall state chain so it
+	// rings, picks up, shows the connecting sprite, and changeScenes
+	// into `scene` (AR 128 returns via the setReturnScene slot).
+	void startIncomingCall(const SceneChangeDescription &scene);
+
 private:
 	enum ScreenState : int {
 		kWelcome          = 0,
@@ -218,6 +224,11 @@ private:
 
 	bool _noSignal = false;
 	bool _batteryLow = false;
+
+	// Incoming-call destination (set by startIncomingCall, consumed by the
+	// kConnected handler once the player has answered).
+	SceneChangeDescription _pendingCallScene;
+	bool _hasPendingCallScene = false;
 
 	SceneChangeDescription _returnScene;
 	bool _hasReturnScene = false;
