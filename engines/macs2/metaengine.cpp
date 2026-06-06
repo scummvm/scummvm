@@ -100,6 +100,11 @@ Common::KeymapArray Macs2MetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("C+t");
 	engineKeyMap->addAction(act);
 
+	act = new Action("GMM", _("Open options menu"));
+	act->setCustomEngineActionEvent(kMacs2ActionOpenGMM);
+	act->addDefaultInputMapping("F5");
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 
