@@ -225,134 +225,99 @@ void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width
 	}
 }
 
+bool smushPrepareRA2BlurData(const byte *src, int dataSize, byte *palette, byte *lookup, const byte *&maskData, int &maskSize) {
+	maskData = nullptr;
+	maskSize = 0;
+
+	if (src == nullptr || dataSize < 6 || palette == nullptr || lookup == nullptr)
+		return false;
+
+	// FUN_0042B530 only processes this codec body when byte +4 is 1.
+	if (src[4] != 1)
+		return false;
+
+	const int tableMode = READ_LE_INT16(src + 2);
+	maskData = src + 6;
+	maskSize = dataSize - 6;
+
+	if (tableMode == 0) {
+		if (dataSize < 0x306)
+			return false;
+
+		memcpy(palette, src + 6, 0x300);
+
+		const byte *p = src + 0x306;
+		int remaining = dataSize - 0x306;
+		int lookupIndex = 0;
+		while (lookupIndex < 0x8000 && remaining >= 2) {
+			int count = p[0];
+			const byte color = p[1];
+			p += 2;
+			remaining -= 2;
+
+			while (count-- > 0 && lookupIndex < 0x8000)
+				lookup[lookupIndex++] = color;
+		}
+
+		if (lookupIndex < 0x8000)
+			return false;
+
+		maskData = p;
+		maskSize = remaining;
+	}
+
+	return maskSize > 3;
+}
+
 /**
- * Codec 45: RA2-specific BOMP RLE with variable header
- * Used for embedded ANIM frames, particularly small animation elements.
- * Has a variable-length header (commonly 6 bytes starting with 01 FE).
- * Note: For overlay sprites, color 0 is treated as transparent.
+ * Codec 45: RA2 blur/wipe mask.
+ * Original path: FUN_0042B460 -> FUN_0042B530 -> FUN_0042DDF0.
  */
-void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
-	dst += top * pitch + left;
+void smushDecodeRA2Blur(byte *dst, const byte *src, int left, int top, int dstWidth, int dstHeight, int pitch, int dataSize, byte *palette, byte *lookup) {
+	const byte *maskData = nullptr;
+	int maskSize = 0;
+	if (dst == nullptr || dstWidth <= 2 || dstHeight <= 2 || pitch <= 0 ||
+			!smushPrepareRA2BlurData(src, dataSize, palette, lookup, maskData, maskSize))
+		return;
 
-	// Detect header pattern and find RLE data start
-	int headerSkip = 0;
-	bool foundValidOffset = false;
+	int x = left;
+	int y = top;
 
-	// Check for common 6-byte header pattern: 01 FE XX XX XX XX
-	if (dataSize > 6 && src[0] == 0x01 && src[1] == 0xFE) {
-		headerSkip = 6;
-		foundValidOffset = true;
-	} else {
-		// Probe offsets to find valid RLE start
-		// Valid start should have reasonable line size values
-		for (int testOffset = 0; testOffset <= 6 && testOffset + 2 <= dataSize; testOffset += 2) {
-			int testLineSize = READ_LE_INT16(src + testOffset);
-			// A valid line size should be positive and reasonable for the width
-			if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
-				// Further validation: try to count valid line sizes
-				int linesTest = 0;
-				const byte *testPtr = src + testOffset;
-				bool validSum = true;
+	while (maskSize > 3) {
+		const int dx = READ_LE_INT16(maskData);
+		const int dy = maskData[2];
+		const int count = maskData[3];
+		maskData += 4;
+		maskSize -= 4;
 
-				while (linesTest < height && testPtr + 2 <= src + dataSize) {
-					int ls = READ_LE_INT16(testPtr);
-					if (ls <= 0 || ls > width * 2) {
-						validSum = false;
-						break;
-					}
-					testPtr += ls + 2;
-					linesTest++;
-				}
+		x += dx;
+		y += dy;
 
-				if (validSum && linesTest >= height - 1) {
-					headerSkip = testOffset;
-					foundValidOffset = true;
-					break;
-				}
+		for (int i = 0; i <= count; ++i) {
+			if (x > 0 && y > 0 && x < dstWidth - 1) {
+				if (y >= dstHeight - 1)
+					return;
+
+				byte *pixel = dst + y * pitch + x;
+				const byte leftColor = pixel[-1];
+				const byte rightColor = pixel[1];
+				const byte topColor = pixel[-pitch];
+				const byte bottomColor = pixel[pitch];
+
+				const int red = palette[leftColor * 3] + palette[rightColor * 3] +
+					palette[topColor * 3] + palette[bottomColor * 3];
+				const int green = palette[leftColor * 3 + 1] + palette[rightColor * 3 + 1] +
+					palette[topColor * 3 + 1] + palette[bottomColor * 3 + 1];
+				const int blue = palette[leftColor * 3 + 2] + palette[rightColor * 3 + 2] +
+					palette[topColor * 3 + 2] + palette[bottomColor * 3 + 2];
+
+				const int lookupIndex = ((red << 5) & 0x7c00) + (green & 0x3e0) + (blue >> 5);
+				*pixel = lookup[lookupIndex & 0x7fff];
 			}
+
+			++x;
 		}
-	}
-
-	if (!foundValidOffset) {
-		warning("smushDecodeRA2Bomp: Codec 45 couldn't find valid RLE offset, using offset 0");
-	}
-
-	src += headerSkip;
-	const byte *dataEnd = src + (dataSize - headerSkip);
-
-	// Check first value to determine per-line vs continuous mode
-	int firstVal = (src + 2 <= dataEnd) ? READ_LE_INT16(src) : 0;
-	bool perLineMode = (firstVal > 0 && firstVal <= width * 2);
-
-	if (perLineMode) {
-		// Per-line RLE with 2-byte size headers
-		for (int row = 0; row < height && src < dataEnd; row++) {
-			int lineSize = READ_LE_INT16(src);
-			src += 2;
-			if (lineSize <= 0 || lineSize > (int)(dataEnd - src))
-				break;
-
-			const byte *lineEnd = src + lineSize;
-			byte *rowDst = dst + row * pitch;
-			int x = 0;
-
-			while (src < lineEnd && x < width) {
-				byte ctrl = *src++;
-				int count = (ctrl >> 1) + 1;
-
-				if (ctrl & 1) {
-					// RLE fill - color 0 is transparent for overlay sprites
-					byte color = (src < lineEnd) ? *src++ : 0;
-					if (color != 0) {
-						int num = (count > width - x) ? width - x : count;
-						memset(rowDst + x, color, num);
-					}
-					x += count;
-					if (x > width)
-						x = width;
-				} else {
-					// Literal copy - color 0 is transparent for overlay sprites
-					for (int i = 0; i < count && x < width && src < lineEnd; i++) {
-						byte color = *src++;
-						if (color != 0)
-							rowDst[x] = color;
-						x++;
-					}
-				}
-			}
-			src = lineEnd;
-		}
-	} else {
-		// Continuous BOMP RLE (no per-line headers)
-		for (int row = 0; row < height && src < dataEnd; row++) {
-			byte *rowDst = dst + row * pitch;
-			int x = 0;
-
-			while (x < width && src < dataEnd) {
-				byte ctrl = *src++;
-				int count = (ctrl >> 1) + 1;
-
-				if (ctrl & 1) {
-					// RLE fill - color 0 is transparent for overlay sprites
-					byte color = (src < dataEnd) ? *src++ : 0;
-					if (color != 0) {
-						int num = (count > width - x) ? width - x : count;
-						memset(rowDst + x, color, num);
-					}
-					x += count;
-					if (x > width)
-						x = width;
-				} else {
-					// Literal copy - color 0 is transparent for overlay sprites
-					for (int i = 0; i < count && x < width && src < dataEnd; i++) {
-						byte color = *src++;
-						if (color != 0)
-							rowDst[x] = color;
-						x++;
-					}
-				}
-			}
-		}
+		--x;
 	}
 }
 

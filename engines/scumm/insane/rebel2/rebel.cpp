@@ -174,6 +174,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
+	memset(_rebelEmbeddedCodec45Palette, 0, sizeof(_rebelEmbeddedCodec45Palette));
+	memset(_rebelEmbeddedCodec45Lookup, 0, sizeof(_rebelEmbeddedCodec45Lookup));
 
 	_enemies.clear();
 	_rebelHandler = 0;  // Not set yet - will be set by IACT opcode 6
@@ -1097,6 +1099,20 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			    event.kbd.hasFlags(Common::KBD_SHIFT)) {
 				_skipSectionRequested = true;
 				debug("Rebel2: Shift+S pressed - requesting gameplay section skip");
+				_vm->_smushVideoShouldFinish = true;
+				return true;  // Consume the event
+			}
+			break;
+
+		case Common::KEYCODE_d:
+			// Debug shortcut: Shift+D forces the current gameplay section to end in death.
+			if (splayer &&
+			    _gameState == kStateGameplay &&
+			    _rebelHandler != 0 &&
+			    event.kbd.hasFlags(Common::KBD_SHIFT)) {
+				_playerDamage = 255;
+				_playerShield = 0;
+				debug("Rebel2: Shift+D pressed - forcing player death");
 				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}

@@ -140,6 +140,8 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_ra2FrameObjectSurfaceWidth = 0;
 	_ra2FrameObjectSurfaceHeight = 0;
 	_ra2PendingAnimHeaderPalette = false;
+	memset(_ra2Codec45Palette, 0, sizeof(_ra2Codec45Palette));
+	memset(_ra2Codec45Lookup, 0, sizeof(_ra2Codec45Lookup));
 	_scrollX = 0;
 	_scrollY = 0;
 }
@@ -726,6 +728,18 @@ void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int widt
 }
 
 bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
+	if (codec == SMUSH_CODEC_RA2_BOMP) {
+		if (_specialBuffer != nullptr) {
+			_dst = _specialBuffer;
+			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using _specialBuffer for codec 45 mask");
+		} else {
+			VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+			_dst = vs->getPixels(0, 0);
+			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using virtual screen for codec 45 mask");
+		}
+		return true;
+	}
+
 	// Rebel2 allocates the low-res gameplay target as 424x260 (FUN_00424730).
 	// Use that target once an oversized gameplay FOBJ appears, then keep small
 	// overlay FOBJ chunks compositing into it. Pure 320x200 gameplay videos keep
@@ -802,8 +816,20 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
  * Returns true if the codec was handled, false for standard codecs.
  */
 bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
-								 int width, int height, int pitch, int dataSize) {
+									 int width, int height, int pitch, int dataSize) {
 	switch (codec) {
+	case SMUSH_CODEC_RLE_ALT:
+		// RA2 codec 3 dispatches directly to FUN_0042CAA0, the opaque RLE path.
+		smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch, dataSize);
+		return true;
+	case SMUSH_CODEC_RLE:
+		if ((_curVideoFlags & 0x100) != 0) {
+			// Original RA2 RLE dispatch selects the opaque renderer only when
+			// render flag 0x100 is set. Cinematic wipe masks use transparent 0.
+			smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch, dataSize);
+			return true;
+		}
+		return false;
 	case SMUSH_CODEC_UNCOMPRESSED: {
 		const int sourcePitch = (_ra2FrameObjectOriginalWidth > 0) ? _ra2FrameObjectOriginalWidth : width;
 		smushDecodeRA2Uncompressed(_dst, src, left, top, width, height, pitch, sourcePitch,
@@ -822,8 +848,8 @@ bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, in
 		return true;
 	}
 	case SMUSH_CODEC_RA2_BOMP: {
-		const uint8 *adjustedSrc = smushSkipRLELines(src, dataSize, _ra2FrameSourceSkipY);
-		smushDecodeRA2Bomp(_dst, adjustedSrc, left, top, width, height, pitch, dataSize);
+		smushDecodeRA2Blur(_dst, src, left, top, pitch, _height, pitch, dataSize,
+			_ra2Codec45Palette, _ra2Codec45Lookup);
 		return true;
 	}
 	default:
@@ -943,10 +969,18 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 	const int adjustedLeft = left + _fobjOffsetX;
 	_ra2FrameSourceSkipX = (adjustedLeft < 0) ? -adjustedLeft : 0;
 	_ra2FrameSourceSkipY = 0;
+
+	if (codec == SMUSH_CODEC_RA2_BOMP) {
+		left = adjustedLeft;
+		top += _fobjOffsetY;
+		if (srcSkipY)
+			*srcSkipY = 0;
+		return true;
+	}
+
 	adjustFrameCoords(left, top, width, height, pitch, &sourceSkipY);
 	if (codec == SMUSH_CODEC_LINE_UPDATE || codec == SMUSH_CODEC_LINE_UPDATE2 ||
-			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA2_BOMP ||
-			codec == SMUSH_CODEC_UNCOMPRESSED) {
+			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_UNCOMPRESSED) {
 		_ra2FrameSourceSkipY = sourceSkipY;
 		if (srcSkipY)
 			*srcSkipY = 0;

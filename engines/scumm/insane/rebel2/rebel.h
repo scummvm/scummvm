@@ -772,6 +772,8 @@ public:
 	};
 
 	EmbeddedSanFrame _rebelEmbeddedHud[16];  // HUD overlay slots (userId 0-15)
+	byte _rebelEmbeddedCodec45Palette[0x300];
+	byte _rebelEmbeddedCodec45Lookup[0x8000];
 
 	// Load and decode an embedded SAN animation from IACT chunk data
 	// userId: HUD slot (1-4), animData: raw ANIM data, size: data size, renderBitmap: current frame buffer

@@ -403,8 +403,9 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec %d/line update): %dx%d", codec, width, height);
 							} else if (codec == 45) {
-								// Codec 45: RA2-specific BOMP RLE (FUN_0042B5F0)
-								smushDecodeRA2Bomp(frame.pixels, fobjData, 0, 0, width, height, width, dataSize);
+								// Codec 45: blur/wipe mask (FUN_0042B460 -> FUN_0042B530 -> FUN_0042DDF0)
+								smushDecodeRA2Blur(frame.pixels, fobjData, 0, 0, width, height, width, dataSize,
+									_rebelEmbeddedCodec45Palette, _rebelEmbeddedCodec45Lookup);
 								frame.valid = true;
 							} else if (codec == 23) {
 								// Codec 23: Skip/copy with embedded RLE (FUN_0042BBF0)
