@@ -386,6 +386,7 @@ private:
 
 	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
 	void initOnFootSequence();
+	void preprocessOnFootAim(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void updateOnFootSequence();
 	void updateOnFootAimVariant();
 	void finishOnFootFrame();

@@ -88,6 +88,14 @@ const int kRA1Op0BVerticalAxisMax = 100;
 const int kRA1EnhancedFlightDirectMaxX = 64;
 const int kRA1EnhancedFlightDirectMaxY = 40;
 const int kRA1ControlPadAxisStep = 0x1E;
+const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
+const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
+const int16 kOnFootCursorBaseY = kOnFootCenterY - 0x32;
+const int16 kOnFootGamepadStep = 7;
+const int16 kOnFootCursorMinX = 0;
+const int16 kOnFootCursorMaxX = 319;
+const int16 kOnFootCursorMinY = 0;
+const int16 kOnFootCursorMaxY = 199;
 
 // Level 15 final approach 0x5D damage/event codes consumed by
 // RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
@@ -1837,9 +1845,6 @@ bool InsaneRebel1::isTorpedoModeActive() const {
 //   g_perspectiveX/Y  = crosshair center (on-foot targeting)
 // Our _perspectiveX/_perspectiveY maps to the camera offset (DAT_000041a0/41a2).
 // The crosshair center (0xA3, 0x82) is a separate constant for on-foot mode.
-const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
-const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
-
 // Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
 // this implementation; the original code dispatches the opcode handler directly.
 void InsaneRebel1::initOnFootSequence() {
@@ -1859,6 +1864,74 @@ void InsaneRebel1::initOnFootSequence() {
 		_perspectiveY = 0;
 		resetProjectionTable();
 	}
+}
+
+void InsaneRebel1::preprocessOnFootAim(int16 &inputX, int16 &inputY, bool *usedJoystick) {
+	if (usedJoystick)
+		*usedJoystick = false;
+
+	const int dpadX =
+		(_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
+	int dpadY =
+		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0);
+
+	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
+	int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
+	if (_optControlsYFlip) {
+		dpadY = -dpadY;
+		analogAxisY = (int16)-analogAxisY;
+	}
+
+	int deltaX = 0;
+	int deltaY = 0;
+	bool activeGamepadAim = false;
+
+	if (dpadX || dpadY) {
+		deltaX = dpadX * kOnFootGamepadStep;
+		deltaY = dpadY * kOnFootGamepadStep;
+		activeGamepadAim = true;
+	} else if (_activeInputSource == kInputSourceJoystickAnalog && (analogAxisX || analogAxisY)) {
+		const int analogX = CLIP<int32>(((int32)analogAxisX * kRA1CenteredAxisMax) / Common::JOYAXIS_MAX,
+			-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+		const int analogY = CLIP<int32>(((int32)analogAxisY * kRA1CenteredAxisMax) / Common::JOYAXIS_MAX,
+			-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+		deltaX = stepRebel1Op0BReticleAxis(analogX);
+		deltaY = stepRebel1Op0BReticleAxis(analogY);
+		activeGamepadAim = (deltaX != 0 || deltaY != 0);
+	}
+
+	if (activeGamepadAim) {
+		if (!_gamepadAimActive) {
+			_gamepadAimAxisX = CLIP<int16>(_shipPosX, kOnFootCursorMinX, kOnFootCursorMaxX);
+			_gamepadAimAxisY = CLIP<int16>(_shipPosY, kOnFootCursorMinY, kOnFootCursorMaxY);
+		}
+
+		_gamepadAimAxisX = CLIP<int16>((int16)(_gamepadAimAxisX + deltaX), kOnFootCursorMinX, kOnFootCursorMaxX);
+		_gamepadAimAxisY = CLIP<int16>((int16)(_gamepadAimAxisY + deltaY), kOnFootCursorMinY, kOnFootCursorMaxY);
+		_gamepadAimActive = true;
+
+		if (usedJoystick)
+			*usedJoystick = true;
+		inputX = (int16)(_gamepadAimAxisX - kOnFootCenterX);
+		inputY = (int16)(_gamepadAimAxisY - kOnFootCursorBaseY);
+		return;
+	}
+
+	if (_gamepadAimActive && _activeInputSource != kInputSourceMouse) {
+		if (usedJoystick)
+			*usedJoystick = true;
+		inputX = (int16)(_gamepadAimAxisX - kOnFootCenterX);
+		inputY = (int16)(_gamepadAimAxisY - kOnFootCursorBaseY);
+		return;
+	}
+
+	_gamepadAimActive = false;
+	const int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, kOnFootCursorMinX, kOnFootCursorMaxX);
+	const int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, kOnFootCursorMinY, kOnFootCursorMaxY);
+	inputX = (int16)(logicalX - kOnFootCenterX);
+	inputY = (int16)(logicalY - kOnFootCursorBaseY);
 }
 
 // Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
@@ -1899,8 +1972,10 @@ void InsaneRebel1::updateOnFootSequence() {
 	} else {
 		// Walking based on input direction. The 3DO second held button skips the
 		// early aim-pose branch above and reaches these walk tests immediately.
-		int16 inputX = 0, inputY = 0;
-		preprocessMouseAxes(inputX, inputY);
+		int16 inputX = (int16)(_shipPosX - kOnFootCenterX);
+		int16 inputY = (int16)(_shipPosY - kOnFootCursorBaseY);
+		if (!hasFrameGameOpcode(0x1A))
+			preprocessOnFootAim(inputX, inputY);
 		if (inputX > 0x1E && _onFootCharX < 0x73)
 			_shipDirIndex = 6;  // Walk right
 		else if (inputX < -0x1E && _onFootCharX > -0x73)
@@ -1940,13 +2015,13 @@ void InsaneRebel1::updateOnFootSequence() {
 // this implementation; the original code dispatches the opcode handler directly.
 void InsaneRebel1::updateOnFootAimVariant() {
 	// --- 0x1A: Crosshair positioning (HandleGameOp1A_OnFootVariant) ---
-	// shipPosX/Y = mouse_input + crosshair_center + character_offset
+	// DOS used virtual-mouse axes relative to the character offset. ScummVM's
+	// mouse and gamepad reticle are screen-space controls so the cursor remains
+	// able to cross the whole playfield while Luke is standing at either side.
 	int16 inputX = 0, inputY = 0;
-	preprocessMouseAxes(inputX, inputY);
-	inputX = CLIP<int16>(inputX, -100, 100);
-	int16 inputYNeg = CLIP<int16>((int16)(-inputY), -0x4B, 0x0F);
-	_shipPosX = inputX + kOnFootCenterX + _onFootCharX;
-	_shipPosY = inputYNeg + kOnFootCenterY + _onFootCharY - 0x32;
+	preprocessOnFootAim(inputX, inputY);
+	_shipPosX = CLIP<int16>((int16)(inputX + kOnFootCenterX), kOnFootCursorMinX, kOnFootCursorMaxX);
+	_shipPosY = CLIP<int16>((int16)(inputY + kOnFootCursorBaseY), kOnFootCursorMinY, kOnFootCursorMaxY);
 }
 
 void InsaneRebel1::finishOnFootFrame() {
