@@ -66,37 +66,6 @@ const byte kSaveBodyVer = 1;
 // option or changing save format. Set false before release.
 const bool kDebugPopulateScrapbook1AtStartup = false;
 
-// Fallback 11x16 cursor used if PIC pointer load fails.
-//   0 = transparent, 1 = black outline, 2 = white fill
-const byte kCursorBitmap[11 * 16] = {
-	1,1,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,1,0,1,2,2,1,0,0,0,
-	1,1,0,0,1,2,2,1,0,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0
-};
-const byte kCursorPalette[] = {
-	0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00,
-	0xFF, 0xFF, 0xFF
-};
-const byte kCursorInteractivePalette[] = {
-	0x00, 0x00, 0x00,
-	0xFF, 0x00, 0x00,
-	0xFF, 0xFF, 0xFF
-};
-
 void fadeCurrentPaletteToBlack(uint delayMs = 8) {
 	byte start[kPalSize];
 	byte stepPal[kPalSize];
@@ -173,23 +142,15 @@ void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 
 void installMouseCursor(DBDArchive &pics, bool interactive) {
 	Picture cursor;
-	if (pics.getPicture(kPicMousePointer, cursor) && !cursor.surface.empty()) {
-		const byte transparent = (byte)(cursor.flags >> 8);
-		CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0,
-								transparent);
-		if (interactive)
-			setInteractiveCursorPalette(cursor, transparent);
-		else
-			CursorMan.replaceCursorPalette(nullptr, 0, 0);
-		return;
-	}
+	if (!pics.getPicture(kPicMousePointer, cursor) || cursor.surface.empty())
+		error("EEM: mouse cursor PIC 0x%x missing", kPicMousePointer);
 
-	warning("EEM: mouse cursor PIC 0x%x missing; using fallback cursor",
-			kPicMousePointer);
-	CursorMan.replaceCursor(kCursorBitmap, 11, 16, 0, 0, 0);
-	CursorMan.replaceCursorPalette(interactive ? kCursorInteractivePalette
-											   : kCursorPalette,
-								   0, 3);
+	const byte transparent = (byte)(cursor.flags >> 8);
+	CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0, transparent);
+	if (interactive)
+		setInteractiveCursorPalette(cursor, transparent);
+	else
+		CursorMan.replaceCursorPalette(nullptr, 0, 0);
 }
 
 EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
