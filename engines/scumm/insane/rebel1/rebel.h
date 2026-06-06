@@ -227,9 +227,9 @@ private:
 	void getCollisionShipCenter(int16 &x, int16 &y) const;
 	bool isOp0BReticleControlLevel() const;
 	bool shouldInvertTouchYSettingForCurrentLevel() const;
-	bool usesRelativeGamepadAimForCurrentLevel() const;
-	void resetRelativeGamepadAim();
-	bool updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *usedJoystick);
+	bool usesGamepadReticleAimForCurrentFrame() const;
+	void resetGamepadReticleAim();
+	bool updateGamepadReticleAim(int16 &inputX, int16 &inputY, bool *usedJoystick);
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();
@@ -357,19 +357,6 @@ private:
 	int16 _inputAxisDeltaX; // Current 0x0B horizontal input sample, before history averaging
 	int16 _avgInputX;    // smoothed horizontal input (clamped to [-0xA0, 0xA0])
 	int16 _avgInputY;    // smoothed vertical input (clamped to [-0x46, 0x41])
-	int16 _mouseOffsetX; // 0x9762-style accumulated recenter offset in DOS 640-space
-	int16 _mouseOffsetY; // 0x9760-style accumulated recenter offset in DOS 200-space
-	int16 _mouseBiasX;   // 0x9774: current preprocessed horizontal bias
-	int16 _mouseBiasY;   // 0x9772: current preprocessed vertical bias
-	int16 _mousePrevBiasX; // 0x9770: previous-frame biasX
-	int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
-	bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
-	bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
-	int16 _mouseVirtualRawX; // Virtual DOS mouse X used by original-input recentering
-	int16 _mouseVirtualRawY; // Virtual DOS mouse Y used by original-input recentering
-	int16 _mouseVirtualPrevLogicalX;
-	int16 _mouseVirtualPrevLogicalY;
-	bool _mouseVirtualValid;
 	int16 _joystickAxisX;   // Rebel-specific left-stick X captured from keymapper axis events
 	int16 _joystickAxisY;   // Rebel-specific left-stick Y captured from keymapper axis events
 	uint32 _lastJoystickAxisEventTime;
@@ -384,7 +371,7 @@ private:
 		kInputSourceMouse,
 		kInputSourceJoystickAnalog,
 		kInputSourceJoystickDigital,
-		kInputSourceJoystickRelative
+		kInputSourceJoystickReticle
 	};
 	InputSource _activeInputSource;
 
@@ -581,9 +568,9 @@ private:
 	int _menuFrameCounter;
 
 	// Options submenu state — RunGameOptionsMenu (0x14B42)
-	static const int kOptionsItemCount = 9;
+	static const int kOptionsItemCount = 8;
 	bool _optionsActive;     // True when showing options instead of main menu
-	int _optionsSel;         // 0..8 selected option row
+	int _optionsSel;         // 0..7 selected option row
 	bool _levelSelectActive; // True when showing level-select submenu
 	int _levelSelectSel;     // 0=Level1 ... N-1=Back
 	int _startLevel;         // 1-based start level for "Start New Game"
@@ -593,7 +580,6 @@ private:
 	bool _optMusicEnabled;    // DAT_22b7: music on/off
 	bool _optSfxEnabled;      // DAT_22b8: sfx+voice on/off
 	bool _optTextEnabled;     // DAT_22b9: dialogue text on/off
-	bool _optEnhancedControls; // ScummVM option: current responsive controls vs original control law
 	bool _optControlsYFlip;   // DAT_22be: Y-axis inversion
 	int  _optVolume;          // DAT_22c1: master volume 0..127
 

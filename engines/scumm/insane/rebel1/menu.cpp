@@ -469,11 +469,11 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
 			return true;
 		case kRA1MenuCommandLeft:
-			if (_optionsSel == 7)
+			if (_optionsSel == 6)
 				setRebel1Volume(_vm, _optVolume, -5);
 			return true;
 		case kRA1MenuCommandRight:
-			if (_optionsSel == 7)
+			if (_optionsSel == 6)
 				setRebel1Volume(_vm, _optVolume, 5);
 			return true;
 		case kRA1MenuCommandCancel:
@@ -674,8 +674,8 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		_gameplayMouseSettleUntil = 0;
 	}
 
-	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
-		if (_gamepadAimActive && usesRelativeGamepadAimForCurrentLevel() &&
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_gamepadAimActive && usesGamepadReticleAimForCurrentFrame() &&
 				_interactiveVideoActive && !_menuActive &&
 				(event.relMouse.x != 0 || event.relMouse.y != 0))
 			_gamepadAimActive = false;
@@ -685,7 +685,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	// Android direct touch reports taps as left-clicks. Treat those as mouse input
 	// during gameplay so tap-to-aim-and-fire works even if a joystick event was last.
 	if (isTouchscreenActive() && _interactiveVideoActive && !_menuActive &&
-			event.type == Common::EVENT_LBUTTONDOWN && !_mouseRecentering)
+			event.type == Common::EVENT_LBUTTONDOWN)
 		_activeInputSource = kInputSourceMouse;
 
 	// ScummVM-exclusive feature: mouse navigation/clicking of the RA1 front-end menus.
@@ -1009,8 +1009,7 @@ void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int hei
 		_optRookieOneFemale ? "ROOKIE1 IS FEMALE" : "ROOKIE1 IS MALE",
 		_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
 		_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
-		_optTextEnabled   ? "DIALOGUE TEXT IS ON"      : "DIALOGUE TEXT IS OFF",
-		_optEnhancedControls ? "INPUT STYLE ENHANCED" : "INPUT STYLE ORIGINAL",
+		_optTextEnabled   ? "DIALOGUE TEXT IS ON"     : "DIALOGUE TEXT IS OFF",
 		_optControlsYFlip ? "Y AXIS IS INVERTED"      : "Y AXIS IS NORMAL",
 		volLine,
 		diffLine
@@ -1302,15 +1301,12 @@ void InsaneRebel1::runOptionsMenu() {
 				_optTextEnabled = !ConfMan.getBool("subtitles");
 				ConfMan.setBool("subtitles", _optTextEnabled);
 				break;
-			case 5: // Toggle enhanced/original input style
-				_optEnhancedControls = !_optEnhancedControls;
-				break;
-			case 6: // Toggle Y-flip controls
+			case 5: // Toggle Y-flip controls
 				_optControlsYFlip = !_optControlsYFlip;
 				break;
-			case 7: // Volume — adjusted via left/right in notifyEvent
+			case 6: // Volume — adjusted via left/right in notifyEvent
 				break;
-			case 8: // Cycle difficulty
+			case 7: // Cycle difficulty
 				_difficulty = (_difficulty + 1) % 3;
 				loadTuningForLevel(0);
 				break;

@@ -258,19 +258,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_inputAxisDeltaX = 0;
 	_avgInputX = 0;
 	_avgInputY = 0;
-	_mouseOffsetX = 0;
-	_mouseOffsetY = 0;
-	_mouseBiasX = 0;
-	_mouseBiasY = 0;
-	_mousePrevBiasX = 0;
-	_mousePrevBiasY = 0;
-	_mouseBiasLatch = false;
-	_mouseRecentering = false;
-	_mouseVirtualRawX = 0x140;
-	_mouseVirtualRawY = 100;
-	_mouseVirtualPrevLogicalX = kRA1CenterX;
-	_mouseVirtualPrevLogicalY = kRA1CenterY;
-	_mouseVirtualValid = false;
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
 	_lastJoystickAxisEventTime = 0;
@@ -365,7 +352,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	// game and the in-game DIALOGUE TEXT menu label reflect it. The menu toggle writes the
 	// same "subtitles" key, and ra1HandleText() gates rendering on it.
 	_optTextEnabled = ConfMan.getBool("subtitles");
-	_optEnhancedControls = true;
 	_optControlsYFlip = false;
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 

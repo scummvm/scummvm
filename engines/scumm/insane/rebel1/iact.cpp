@@ -50,6 +50,14 @@ inline int16 scaleRebel1CenteredMouseAxis(int16 value, int16 center, int axisMax
 	return (int16)CLIP<int32>(((int32)(value - center) * axisMax) / center, -axisMax, axisMax);
 }
 
+inline int16 stepRebel1Op0BReticleAxis(int axisValue) {
+	if (axisValue >= 0)
+		return (int16)(axisValue >> 4);
+
+	// The 3DO ARM code integrates the standard control-pad path with ASR #4.
+	return (int16)-((-axisValue + 15) >> 4);
+}
+
 int16 shapeRebel1Op0BGamepadAxis(int16 inputValue, int16 axisMax) {
 	const int axis = CLIP<int>(inputValue, -axisMax, axisMax);
 	const int absAxis = ABS(axis);
@@ -75,16 +83,11 @@ int16 shapeRebel1Op0BGamepadAxis(int16 inputValue, int16 axisMax) {
 
 const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
 const int16 kRA1Op09AimYScale[5] = { 256, 252, 240, 221, 196 };
-const int kRA1DosMouseCenterX = 0x140;
-const int kRA1DosMouseCenterY = 100;
-const int kRA1DosMouseSafeLeft = 0x0AA;
-const int kRA1DosMouseSafeRight = 0x1D6;
-const int kRA1DosMouseSafeTop = 0x32;
-const int kRA1DosMouseSafeBottom = 0x96;
-const int kRA1DosFlightMouseMaxX = kRA1DosMouseCenterX >> 2;
-const int kRA1DosFlightMouseMaxY = kRA1DosMouseCenterY >> 1;
-const int kRA1EnhancedFlightDirectMaxX = (kRA1DosFlightMouseMaxX * 4) / 5;
-const int kRA1EnhancedFlightDirectMaxY = (kRA1DosFlightMouseMaxY * 4) / 5;
+const int kRA1CenteredAxisMax = 127;
+const int kRA1Op0BVerticalAxisMax = 100;
+const int kRA1EnhancedFlightDirectMaxX = 64;
+const int kRA1EnhancedFlightDirectMaxY = 40;
+const int kRA1ControlPadAxisStep = 0x1E;
 
 // Level 15 final approach 0x5D damage/event codes consumed by
 // RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
@@ -834,11 +837,10 @@ void InsaneRebel1::updateFlightVariantCursor() {
 }
 
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
-// ScummVM's absolute 320x200 mouse space.
-// Original-input mode preserves the DOS bias/offset persistence and one-frame
-// jump latch from FUN_231BE, plus FUN_23115's DOS mouse recenter behavior.
-// Enhanced controls are ScummVM-only: they bypass the original recentering state
-// and expose a stable absolute centered mouse axis instead.
+// ScummVM's absolute 320x200 mouse space. The old DOS virtual-mouse/recenter
+// control path is intentionally not used. For opcode 0x0B, gamepad input uses
+// the 3DO standard-pad reticle model: axis samples move the reticle, and
+// releasing the pad holds the last reticle position.
 bool InsaneRebel1::isOp0BReticleControlLevel() const {
 	switch (_currentLevel) {
 	case 1:  // Level 2
@@ -859,23 +861,18 @@ bool InsaneRebel1::shouldInvertTouchYSettingForCurrentLevel() const {
 	return isTouchscreenActive() && isOp0BReticleControlLevel();
 }
 
-bool InsaneRebel1::usesRelativeGamepadAimForCurrentLevel() const {
-	return _optEnhancedControls &&
-		(_currentLevel == 3 ||
-		 (_currentLevel == 4 && _levelGameplayPhase == 2) ||
-		 _currentLevel == 9 ||
-		 _currentLevel == 11 ||
-		 _currentLevel == 13);
+bool InsaneRebel1::usesGamepadReticleAimForCurrentFrame() const {
+	return getEffectiveGameOpcode() == 0x0B;
 }
 
-void InsaneRebel1::resetRelativeGamepadAim() {
+void InsaneRebel1::resetGamepadReticleAim() {
 	_gamepadAimAxisX = 0;
 	_gamepadAimAxisY = 0;
 	_gamepadAimActive = false;
 }
 
-bool InsaneRebel1::updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *usedJoystick) {
-	if (!usesRelativeGamepadAimForCurrentLevel())
+bool InsaneRebel1::updateGamepadReticleAim(int16 &inputX, int16 &inputY, bool *usedJoystick) {
+	if (!usesGamepadReticleAimForCurrentFrame())
 		return false;
 
 	const int dpadX =
@@ -887,8 +884,10 @@ bool InsaneRebel1::updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *
 
 	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
 	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
-	const int analogX = CLIP<int32>(((int32)analogAxisX * 127) / Common::JOYAXIS_MAX, -127, 127);
-	int analogY = CLIP<int32>((-(int32)analogAxisY * 100) / Common::JOYAXIS_MAX, -100, 100);
+	const int analogX = CLIP<int32>(((int32)analogAxisX * kRA1CenteredAxisMax) / Common::JOYAXIS_MAX,
+		-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+	int analogY = CLIP<int32>((-(int32)analogAxisY * kRA1Op0BVerticalAxisMax) / Common::JOYAXIS_MAX,
+		-kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
 
 	if (_optControlsYFlip) {
 		dpadY = -dpadY;
@@ -900,24 +899,22 @@ bool InsaneRebel1::updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *
 	bool activeGamepadAim = false;
 
 	if (dpadX || dpadY) {
-		const int kDigitalAimStep = 3;
-		deltaX = dpadX * kDigitalAimStep;
-		deltaY = dpadY * kDigitalAimStep;
+		deltaX = stepRebel1Op0BReticleAxis(dpadX * kRA1ControlPadAxisStep);
+		deltaY = stepRebel1Op0BReticleAxis(dpadY * kRA1ControlPadAxisStep);
 		activeGamepadAim = true;
 	} else if (analogX || analogY) {
-		const int kAnalogAimMaxStep = 8;
-		deltaX = analogX * kAnalogAimMaxStep / 127;
-		deltaY = analogY * kAnalogAimMaxStep / 100;
+		deltaX = stepRebel1Op0BReticleAxis(analogX);
+		deltaY = stepRebel1Op0BReticleAxis(analogY);
 		activeGamepadAim = true;
 	}
 
 	if (activeGamepadAim) {
 		if (!_gamepadAimActive) {
-			_gamepadAimAxisX = CLIP<int16>(_avgInputX, -127, 127);
-			_gamepadAimAxisY = CLIP<int16>((int16)-_avgInputY, -100, 100);
+			_gamepadAimAxisX = CLIP<int16>(_avgInputX, -kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+			_gamepadAimAxisY = CLIP<int16>((int16)-_avgInputY, -kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
 		}
-		_gamepadAimAxisX = CLIP<int16>((int16)(_gamepadAimAxisX + deltaX), -127, 127);
-		_gamepadAimAxisY = CLIP<int16>((int16)(_gamepadAimAxisY + deltaY), -100, 100);
+		_gamepadAimAxisX = CLIP<int16>((int16)(_gamepadAimAxisX + deltaX), -kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+		_gamepadAimAxisY = CLIP<int16>((int16)(_gamepadAimAxisY + deltaY), -kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
 		_gamepadAimActive = true;
 	}
 
@@ -926,8 +923,7 @@ bool InsaneRebel1::updateRelativeGamepadAim(int16 &inputX, int16 &inputY, bool *
 
 	if (usedJoystick)
 		*usedJoystick = true;
-	_activeInputSource = kInputSourceJoystickRelative;
-	_mouseVirtualValid = false;
+	_activeInputSource = kInputSourceJoystickReticle;
 	inputX = _gamepadAimAxisX;
 	inputY = _gamepadAimAxisY;
 	return true;
@@ -937,11 +933,10 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 	if (usedJoystick)
 		*usedJoystick = false;
 
-	if (_mouseRecentering)
+	if (updateGamepadReticleAim(inputX, inputY, usedJoystick))
 		return;
 
-	if (updateRelativeGamepadAim(inputX, inputY, usedJoystick))
-		return;
+	const bool directFlightInput = getEffectiveGameOpcode() == 0x07;
 
 	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
 	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
@@ -958,14 +953,12 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (usedJoystick)
 			*usedJoystick = true;
 
-		const bool enhancedFlightInput = _optEnhancedControls && getEffectiveGameOpcode() == 0x07;
-		inputX = joyX * (enhancedFlightInput ? kRA1EnhancedFlightDirectMaxX : 127);
-		inputY = joyY * (enhancedFlightInput ? kRA1EnhancedFlightDirectMaxY : 127);
+		inputX = joyX * kRA1ControlPadAxisStep;
+		inputY = joyY * kRA1ControlPadAxisStep;
 
 		if (_optControlsYFlip)
 			inputY = -inputY;
 
-		_mouseVirtualValid = false;
 		return;
 	}
 
@@ -974,9 +967,8 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 			*usedJoystick = true;
 
 		if (analogAxisX != 0 || analogAxisY != 0) {
-			const bool enhancedFlightInput = _optEnhancedControls && getEffectiveGameOpcode() == 0x07;
-			const int axisMaxX = enhancedFlightInput ? kRA1EnhancedFlightDirectMaxX : 127;
-			const int axisMaxY = enhancedFlightInput ? kRA1EnhancedFlightDirectMaxY : 127;
+			const int axisMaxX = directFlightInput ? kRA1EnhancedFlightDirectMaxX : kRA1CenteredAxisMax;
+			const int axisMaxY = directFlightInput ? kRA1EnhancedFlightDirectMaxY : kRA1CenteredAxisMax;
 			inputX = CLIP<int32>(((int32)analogAxisX * axisMaxX) / Common::JOYAXIS_MAX, -axisMaxX, axisMaxX);
 			inputY = CLIP<int32>(((int32)analogAxisY * axisMaxY) / Common::JOYAXIS_MAX, -axisMaxY, axisMaxY);
 		} else {
@@ -987,7 +979,6 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (_optControlsYFlip)
 			inputY = -inputY;
 
-		_mouseVirtualValid = false;
 		return;
 	}
 
@@ -1001,156 +992,26 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (_optControlsYFlip)
 			inputY = -inputY;
 
-		_mouseVirtualValid = false;
 		return;
 	}
 
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
 
-	// Touchscreens cannot support the DOS recenter/warp model, so use the
-	// non-warping absolute axis path even when original input style is selected.
-	if (_optEnhancedControls || isTouchscreenActive()) {
-		_mouseVirtualValid = false;
-		_mouseBiasLatch = false;
-		_mouseBiasX = 0;
-		_mouseBiasY = 0;
-		_mousePrevBiasX = 0;
-		_mousePrevBiasY = 0;
-
-		if (getEffectiveGameOpcode() == 0x07) {
-			// Direct flight input lacks the DOS recenter path's offset decay, so keep
-			// held-edge steering below the raw DOS full-deflection bias.
-			inputX = scaleRebel1CenteredMouseAxis(logicalX, kRA1CenterX, kRA1EnhancedFlightDirectMaxX);
-			inputY = scaleRebel1CenteredMouseAxis(logicalY, kRA1CenterY, kRA1EnhancedFlightDirectMaxY);
-		} else {
-			inputX = (int16)CLIP<int32>(((int32)(logicalX - kRA1CenterX) * 127) / kRA1CenterX, -127, 127);
-			inputY = (int16)CLIP<int32>(((int32)(logicalY - kRA1CenterY) * 127) / kRA1CenterY, -127, 127);
-		}
-
-		// These handlers negate DAT_756E internally, so direct touch needs the
-		// opposite baseline while the menu option still toggles the result.
-		bool flipY = _optControlsYFlip;
-		if (shouldInvertTouchYSettingForCurrentLevel())
-			flipY = !flipY;
-		if (flipY)
-			inputY = -inputY;
-
-		return;
-	}
-
-	int16 rawX = (int16)(logicalX << 1);
-	int16 rawY = logicalY;
-
-	if (!_mouseVirtualValid) {
-		_mouseVirtualRawX = rawX;
-		_mouseVirtualRawY = rawY;
-		_mouseVirtualValid = true;
+	if (directFlightInput) {
+		inputX = scaleRebel1CenteredMouseAxis(logicalX, kRA1CenterX, kRA1EnhancedFlightDirectMaxX);
+		inputY = scaleRebel1CenteredMouseAxis(logicalY, kRA1CenterY, kRA1EnhancedFlightDirectMaxY);
 	} else {
-		_mouseVirtualRawX = (int16)CLIP<int>(
-			_mouseVirtualRawX + ((logicalX - _mouseVirtualPrevLogicalX) << 1),
-			-32768, 32767);
-		_mouseVirtualRawY = (int16)CLIP<int>(
-			_mouseVirtualRawY + (logicalY - _mouseVirtualPrevLogicalY),
-			-32768, 32767);
-	}
-	_mouseVirtualPrevLogicalX = logicalX;
-	_mouseVirtualPrevLogicalY = logicalY;
-
-	rawX = _mouseVirtualRawX;
-	rawY = _mouseVirtualRawY;
-
-	if (rawX < kRA1DosMouseSafeLeft || rawX > kRA1DosMouseSafeRight ||
-		rawY < kRA1DosMouseSafeTop || rawY > kRA1DosMouseSafeBottom) {
-		_mouseOffsetX = (int16)CLIP<int>(
-			(int)_mouseOffsetX + rawX - kRA1DosMouseCenterX, -32768, 32767);
-		_mouseOffsetY = (int16)CLIP<int>(
-			(int)_mouseOffsetY + rawY - kRA1DosMouseCenterY, -32768, 32767);
-		rawX = kRA1DosMouseCenterX;
-		rawY = kRA1DosMouseCenterY;
-		_mouseVirtualRawX = rawX;
-		_mouseVirtualRawY = rawY;
-		_mouseVirtualPrevLogicalX = kRA1CenterX;
-		_mouseVirtualPrevLogicalY = kRA1CenterY;
-		warpGameplayMouseNow(kRA1CenterX, kRA1CenterY);
-		debug(2, "RA1 original input virtual recenter: offset=(%d,%d) mouse=(%d,%d)",
-			_mouseOffsetX, _mouseOffsetY, logicalX, logicalY);
+		inputX = (int16)CLIP<int32>(((int32)(logicalX - kRA1CenterX) * kRA1CenteredAxisMax) / kRA1CenterX,
+			-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+		inputY = (int16)CLIP<int32>(((int32)(logicalY - kRA1CenterY) * kRA1CenteredAxisMax) / kRA1CenterY,
+			-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
 	}
 
-	int16 biasX = (int16)((rawX + _mouseOffsetX - kRA1DosMouseCenterX) >> 2);
-	int16 biasY = (int16)((rawY + _mouseOffsetY - kRA1DosMouseCenterY) >> 1);
-
-	if (biasY < 0x65) {
-		const bool largeJump =
-			(_mousePrevBiasX + 0x14 < biasX) ||
-			(_mousePrevBiasY + 0x14 < biasY) ||
-			(biasX < _mousePrevBiasX - 0x14) ||
-			(biasY < _mousePrevBiasY - 0x14);
-		if (largeJump) {
-			if (!_mouseBiasLatch) {
-				biasX = _mousePrevBiasX;
-				biasY = _mousePrevBiasY;
-				_mouseBiasLatch = true;
-			}
-		} else {
-			_mouseBiasLatch = false;
-		}
-	} else {
-		biasX = _mousePrevBiasX;
-		biasY = _mousePrevBiasY;
-		_mouseBiasLatch = true;
-	}
-
-	_mouseBiasX = biasX;
-	_mouseBiasY = biasY;
-	_mousePrevBiasX = biasX;
-	_mousePrevBiasY = biasY;
-
-	int accumX = rawX + _mouseOffsetX;
-	if (accumX < 0xC0)
-		_mouseOffsetX = (int16)(0xC0 - rawX);
-	else if (accumX > 0x1C0)
-		_mouseOffsetX = (int16)(0x1C0 - rawX);
-
-	int accumY = rawY + _mouseOffsetY;
-	if (accumY < -0x1C)
-		_mouseOffsetY = (int16)(-0x1C - rawY);
-	else if (accumY > 0xE4)
-		_mouseOffsetY = (int16)(0xE4 - rawY);
-
-	accumX = rawX + _mouseOffsetX;
-	if (accumX < 0x145) {
-		if (accumX < 0x142) {
-			if (accumX < 0x13C)
-				_mouseOffsetX += 4;
-			else if (accumX < 0x13F)
-				_mouseOffsetX += 1;
-		} else {
-			_mouseOffsetX -= 1;
-		}
-	} else {
-		_mouseOffsetX -= 4;
-	}
-
-	accumY = rawY + _mouseOffsetY;
-	if (accumY < 0x69) {
-		if (accumY < 0x66) {
-			if (accumY < 0x60)
-				_mouseOffsetY += 4;
-			else if (accumY < 99)
-				_mouseOffsetY += 1;
-		} else {
-			_mouseOffsetY -= 1;
-		}
-	} else {
-		_mouseOffsetY -= 4;
-	}
-
-	inputX = CLIP<int16>(biasX, -0xA0, 0xA0);
-	inputY = CLIP<int16>(biasY, -127, 127);
-
-	// Controls Y-flip option (DAT_22be in original)
-	if (_optControlsYFlip)
+	bool flipY = _optControlsYFlip;
+	if (shouldInvertTouchYSettingForCurrentLevel())
+		flipY = !flipY;
+	if (flipY)
 		inputY = -inputY;
 }
 
@@ -1194,8 +1055,8 @@ void InsaneRebel1::updateShipPhysics() {
 	preprocessMouseAxes(inputX, inputY, &usedJoystick);
 	const int16 rawInputX = inputX;
 	const int16 rawInputY = inputY;
-	inputX = CLIP<int16>(inputX, -127, 127);
-	inputY = CLIP<int16>(inputY, -127, 127);
+	inputX = CLIP<int16>(inputX, -kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+	inputY = CLIP<int16>(inputY, -kRA1CenteredAxisMax, kRA1CenteredAxisMax);
 	const char *inputSourceName = "mouse";
 	if (_activeInputSource == kInputSourceJoystickAnalog)
 		inputSourceName = "joystick-analog";
@@ -1214,8 +1075,7 @@ void InsaneRebel1::updateShipPhysics() {
 
 	// --- Step 4: Position accumulator deltas ---
 	// X delta: drift + slide coupling - cross-coupling
-	const bool originalTurbulence = !_optEnhancedControls;
-	int32 rng = originalTurbulence ? (int32)_vm->_rnd.getRandomNumber(199) : 100;  // RandScaleByte(200), centered at 100
+	int32 rng = 100;  // RandScaleByte(200), centered at 100
 	int32 crossTermX;
 	if (_liftSmooth < 0)
 		crossTermX = ((int32)_tuning.lift * _liftSmooth * _rollAccum) >> 11;
@@ -1293,7 +1153,7 @@ void InsaneRebel1::updateShipPhysics() {
 
 	debugC(DEBUG_INSANE, "RA1 ship input: frame=%d source=%s controls=%s turbulence=%d usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
 		_gameCounter, inputSourceName,
-		_optEnhancedControls ? "enhanced" : "original", originalTurbulence, usedJoystick,
+		"enhanced", 0, usedJoystick,
 		rawInputX, rawInputY, inputX, inputY,
 		_joystickAxisX, _joystickAxisY,
 		_vm->getActionState(kScummActionInsaneLeft),
@@ -1521,12 +1381,12 @@ void InsaneRebel1::updateTurretPhysics() {
 		int16 inputY = 0;
 		bool usedJoystick = false;
 		preprocessMouseAxes(inputX, inputY, &usedJoystick);
-		inputX = CLIP<int16>(inputX, -127, 127);
-		inputY = CLIP<int16>(inputY, -127, 127);
+		inputX = CLIP<int16>(inputX, -kRA1CenteredAxisMax, kRA1CenteredAxisMax);
+		inputY = CLIP<int16>(inputY, -kRA1CenteredAxisMax, kRA1CenteredAxisMax);
 		const int16 rawInputX = inputX;
 		const int16 rawInputY = inputY;
 
-		if (usedJoystick && _optEnhancedControls && _flyControlMode == 2) {
+		if (usedJoystick && _flyControlMode == 2) {
 			// ScummVM-only concession for Level 1 part 2. The original 0x08 handler
 			// uses raw axes directly; do not damp Level 13's surface controls.
 			inputX /= 2;
@@ -1535,7 +1395,7 @@ void InsaneRebel1::updateTurretPhysics() {
 
 		debugC(DEBUG_INSANE, "RA1 turret input: source=%s controls=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
 			usedJoystick ? "joystick-actions" : "mouse-path",
-			_optEnhancedControls ? "enhanced" : "original",
+			"enhanced",
 			_vm->_mouse.x, _vm->_mouse.y,
 			_vm->getActionState(kScummActionInsaneLeft),
 			_vm->getActionState(kScummActionInsaneRight),
@@ -1627,9 +1487,9 @@ void InsaneRebel1::updateScreenFlashPalette() {
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
 void InsaneRebel1::updateGameOp0BPhysics() {
-	// Original FUN_1CDA7 uses the full 10-sample history. Enhanced controls keep
-	// the same pipeline but average fewer samples for responsiveness.
-	const int gameOp0BSmoothWindow = _optEnhancedControls ? 2 : kInputHistorySize;
+	// Enhanced controls keep the original 0x0B pipeline but average fewer
+	// samples for responsiveness.
+	const int gameOp0BSmoothWindow = 2;
 
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
@@ -1752,7 +1612,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	bool usedJoystick = false;
 	preprocessMouseAxes(inputX, inputY, &usedJoystick);
 	inputX = CLIP<int16>(inputX, -0xA0, 0xA0);
-	inputY = CLIP<int16>(inputY, -100, 100);
+	inputY = CLIP<int16>(inputY, -kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
 	const int16 rawInputX = inputX;
 	const int16 rawInputY = inputY;
 	const bool op0BAnalogSmoothing = (_activeInputSource == kInputSourceJoystickAnalog);
@@ -1762,25 +1622,25 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		inputSourceName = "joystick-analog";
 	else if (_activeInputSource == kInputSourceJoystickDigital)
 		inputSourceName = "joystick-dpad";
-	else if (_activeInputSource == kInputSourceJoystickRelative)
-		inputSourceName = "joystick-relative";
+	else if (_activeInputSource == kInputSourceJoystickReticle)
+		inputSourceName = "joystick-reticle";
 
-	const bool relativeGamepadReticle = usedJoystick && _activeInputSource == kInputSourceJoystickRelative;
-	const bool preciseGamepadReticle = usedJoystick && _optEnhancedControls &&
-		isOp0BReticleControlLevel() && !relativeGamepadReticle;
+	const bool relativeGamepadReticle = usedJoystick && _activeInputSource == kInputSourceJoystickReticle;
+	const bool preciseGamepadReticle = usedJoystick && isOp0BReticleControlLevel() &&
+		!relativeGamepadReticle;
 
-	if (usedJoystick && _optEnhancedControls && !relativeGamepadReticle) {
+	if (usedJoystick && !relativeGamepadReticle) {
 		// The 0x0B first-person handler is shared by multiple RA1 stages. Smooth
 		// analog stick input over time and shape the affected gamepad levels with
 		// a low-gain linear center plus an accelerating outer range.
 		if (op0BAnalogSmoothing) {
 			if (preciseGamepadReticle) {
-				inputX = shapeRebel1Op0BGamepadAxis(inputX, 127);
-				inputY = shapeRebel1Op0BGamepadAxis(inputY, 100);
+				inputX = shapeRebel1Op0BGamepadAxis(inputX, kRA1CenteredAxisMax);
+				inputY = shapeRebel1Op0BGamepadAxis(inputY, kRA1Op0BVerticalAxisMax);
 			}
 			const int analogRampDivisor = preciseGamepadReticle ? 20 : 10;
-			inputX = smoothRebel1Op0BAnalogInput(inputX, _level2JoystickFilteredX, 127, analogRampDivisor);
-			inputY = smoothRebel1Op0BAnalogInput(inputY, _level2JoystickFilteredY, 100, analogRampDivisor);
+			inputX = smoothRebel1Op0BAnalogInput(inputX, _level2JoystickFilteredX, kRA1CenteredAxisMax, analogRampDivisor);
+			inputY = smoothRebel1Op0BAnalogInput(inputY, _level2JoystickFilteredY, kRA1Op0BVerticalAxisMax, analogRampDivisor);
 		} else {
 			_level2JoystickFilteredX = 0;
 			_level2JoystickFilteredY = 0;
@@ -1796,7 +1656,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	debugC(DEBUG_INSANE, "RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d precisionPad=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
 		_gameCounter,
 		inputSourceName,
-		_optEnhancedControls ? "enhanced" : "original",
+		"enhanced",
 		gameOp0BSmoothWindow,
 		preciseGamepadReticle ? 1 : 0,
 		_perspectiveX, _perspectiveY,
@@ -2149,22 +2009,9 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	_inputAxisDeltaX = 0;
 	_avgInputX = 0;
 	_avgInputY = 0;
-	_mouseOffsetX = 0;
-	_mouseOffsetY = 0;
-	_mouseBiasX = 0;
-	_mouseBiasY = 0;
-	_mousePrevBiasX = 0;
-	_mousePrevBiasY = 0;
-	_mouseBiasLatch = false;
-	_mouseRecentering = false;
-	_mouseVirtualRawX = kRA1DosMouseCenterX;
-	_mouseVirtualRawY = kRA1DosMouseCenterY;
-	_mouseVirtualPrevLogicalX = kRA1CenterX;
-	_mouseVirtualPrevLogicalY = kRA1CenterY;
-	_mouseVirtualValid = false;
 	_level2JoystickFilteredX = 0;
 	_level2JoystickFilteredY = 0;
-	resetRelativeGamepadAim();
+	resetGamepadReticleAim();
 
 	_playerFired = false;
 	_fireCooldown = 0;
