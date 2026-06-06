@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef MACS2_DETECTION_TABLES_H
+#define MACS2_DETECTION_TABLES_H
+
 namespace Macs2 {
 
 const PlainGameDescriptor macs2Games[] = {
@@ -55,3 +58,5 @@ const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER};
 
 } // End of namespace Macs2
+
+#endif // MACS2_DETECTION_TABLES_H
