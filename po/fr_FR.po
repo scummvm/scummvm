@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-06-02 11:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -13782,8 +13782,10 @@ msgid "Fire / select"
 msgstr "Tirer / Sélectionner"
 
 #: engines/scumm/metaengine.cpp:1186
-msgid "Menu back"
-msgstr "Menu retour"
+#, fuzzy
+#| msgid "Skip / menu back"
+msgid "Walk / menu back"
+msgstr "Passer / menu retour"
 
 #: engines/scumm/metaengine.cpp:1191
 msgid "Skip / menu back"
@@ -17400,6 +17402,9 @@ msgstr ""
 "contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
 "résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
 "titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
+
+#~ msgid "Menu back"
+#~ msgstr "Menu retour"
 
 #~ msgid "Back / skip"
 #~ msgstr "Retour / passer"

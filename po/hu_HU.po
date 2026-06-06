@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -14502,9 +14502,9 @@ msgstr "Mozgás balra"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move Back"
-msgid "Menu back"
-msgstr "Mozgás hátra"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "Fő menü átugrása"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -18593,6 +18593,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Menu back"
+#~ msgstr "Mozgás hátra"
 
 #, fuzzy
 #~| msgid "Backspace"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -14042,9 +14042,9 @@ msgstr "תזוזה שמאלה"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move Back"
-msgid "Menu back"
-msgstr "לחזור"
+#| msgid "Open main menu"
+msgid "Walk / menu back"
+msgstr "פתיחת תפריט ראשי"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -18165,6 +18165,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Menu back"
+#~ msgstr "לחזור"
 
 #, fuzzy
 #~| msgid "Backend"

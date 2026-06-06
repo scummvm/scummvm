@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-06-05 10:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -12494,8 +12494,10 @@ msgid "Fire / select"
 msgstr "ცეცხლი / მონიშვნა"
 
 #: engines/scumm/metaengine.cpp:1186
-msgid "Menu back"
-msgstr "მენიუ უკან"
+#, fuzzy
+#| msgid "Skip / menu back"
+msgid "Walk / menu back"
+msgstr "გამოტოვება / მენიუ უკან"
 
 #: engines/scumm/metaengine.cpp:1191
 msgid "Skip / menu back"
@@ -15915,6 +15917,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Menu back"
+#~ msgstr "მენიუ უკან"
 
 #, fuzzy
 #~| msgid "Backspace"

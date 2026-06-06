@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-04-17 00:22+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -13965,9 +13965,9 @@ msgstr "Ruch / Zaznacz"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move back"
-msgid "Menu back"
-msgstr "Ruch do tyłu"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "Pomijaj menu główne"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -17667,6 +17667,11 @@ msgstr ""
 "Nemesis zawiera kilka łamigłówek muzycznych, które wymagają dźwięku MIDI do "
 "rozwiązania. Te łamigłówki można również rozwiązać za pomocą napisów, jeśli "
 "są obsługiwane. Kontynuować uruchamianie gry?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Menu back"
+#~ msgstr "Ruch do tyłu"
 
 #, fuzzy
 #~| msgid "Backspace"

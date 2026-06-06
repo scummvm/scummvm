@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -13786,9 +13786,9 @@ msgstr "Verplaatsen / Selecteren"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move back"
-msgid "Menu back"
-msgstr "Teruggaan"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "Hoofdmenu overslaan"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -17412,6 +17412,11 @@ msgstr ""
 "opgelost te kunnen worden. Deze puzzels kunnen ook worden opgelost met "
 "behulp van ondertitels, indien ondersteund. Doorgaan met het starten van het "
 "spel?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Menu back"
+#~ msgstr "Teruggaan"
 
 #, fuzzy
 #~| msgid "Backspace"

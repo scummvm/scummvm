@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-06-03 08:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -13757,8 +13757,10 @@ msgid "Fire / select"
 msgstr "Disparar/Seleccionar"
 
 #: engines/scumm/metaengine.cpp:1186
-msgid "Menu back"
-msgstr "Volver (menús)"
+#, fuzzy
+#| msgid "Skip / menu back"
+msgid "Walk / menu back"
+msgstr "Omitir/Volver (menús)"
 
 #: engines/scumm/metaengine.cpp:1191
 msgid "Skip / menu back"
@@ -17350,6 +17352,9 @@ msgstr ""
 "que es imprescindible tener audio en MIDI para poder resolverlos.  También "
 "se podrían resolver estos acertijos con subtítulos, si están disponibles. "
 "¿Quieres seguir ejecutando el juego?"
+
+#~ msgid "Menu back"
+#~ msgstr "Volver (menús)"
 
 #~ msgid "Back / skip"
 #~ msgstr "Volver/Omitir"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -13840,9 +13840,8 @@ msgstr "Mover para a esquerda"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move Back"
-msgid "Menu back"
-msgstr "Retroceder"
+msgid "Walk / menu back"
+msgstr "~M~enu principal"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -17843,6 +17842,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Menu back"
+#~ msgstr "Retroceder"
 
 #, fuzzy
 #~| msgid "Backend"

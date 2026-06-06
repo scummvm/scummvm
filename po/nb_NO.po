@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -14593,9 +14593,9 @@ msgstr "Gå til venstre"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move Back"
-msgid "Menu back"
-msgstr "Beveg Bakover"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "Hopp over hovedmeny"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -18769,6 +18769,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Menu back"
+#~ msgstr "Beveg Bakover"
 
 #, fuzzy
 #~| msgid "Backspace"

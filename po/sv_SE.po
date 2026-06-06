@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-04-19 13:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -13683,9 +13683,9 @@ msgstr "Flytta / Välj"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move back"
-msgid "Menu back"
-msgstr "Stega bakåt"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "Hoppa över huvudmeny"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -17237,6 +17237,11 @@ msgstr ""
 "Nemesis innehåller flera musikpussel som kräver MIDI-ljud för att kunna "
 "lösas. Dessa pussel kan alternativt lösas med hjälp av undertexter, om detta "
 "stöds. Vill du fortsätta spela?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Menu back"
+#~ msgstr "Stega bakåt"
 
 #, fuzzy
 #~| msgid "Backspace"

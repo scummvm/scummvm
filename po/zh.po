@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -13162,9 +13162,9 @@ msgstr "向下"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Backend"
-msgid "Menu back"
-msgstr "后端"
+#| msgid "Skip autosave"
+msgid "Walk / menu back"
+msgstr "跳过自动保存"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -16983,6 +16983,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Backend"
+#~ msgid "Menu back"
+#~ msgstr "后端"
 
 #, fuzzy
 #~| msgid "Backspace"

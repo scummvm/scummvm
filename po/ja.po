@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-06-04 07:22+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -14120,9 +14120,9 @@ msgstr "左に行く"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move Back"
-msgid "Menu back"
-msgstr "去る"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "メインメニューをスキップ"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -18220,6 +18220,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Menu back"
+#~ msgstr "去る"
 
 #, fuzzy
 #~| msgid "Backspace"

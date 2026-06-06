@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-05 19:36+0000\n"
+"POT-Creation-Date: 2026-06-06 11:26+0000\n"
 "PO-Revision-Date: 2026-05-06 08:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -13634,9 +13634,9 @@ msgstr "Идти / Выбрать"
 
 #: engines/scumm/metaengine.cpp:1186
 #, fuzzy
-#| msgid "Move back"
-msgid "Menu back"
-msgstr "Идти назад"
+#| msgid "Skip main menu"
+msgid "Walk / menu back"
+msgstr "Пропустить главное меню"
 
 #: engines/scumm/metaengine.cpp:1191
 #, fuzzy
@@ -17202,6 +17202,11 @@ msgstr ""
 "содержит несколько музыкальных головоломок, для решения которых требуется "
 "MIDI-аудио. Эти головоломки также можно решить с помощью субтитров, если они "
 "поддерживаются. Продолжить запуск игры?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Menu back"
+#~ msgstr "Идти назад"
 
 #, fuzzy
 #~| msgid "Backspace"
