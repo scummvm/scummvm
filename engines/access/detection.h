@@ -29,7 +29,9 @@ namespace Access {
 enum AccessGameType {
 	kGameAmazon = 1,
 	kGameMartianMemorandum = 2,
-	kGameNoctropolis = 3
+	kGameNoctropolis = 3,
+	kGameCountdown = 4,
+	kGameSynnergist = 5,
 };
 
 struct AccessGameDescription {
