@@ -45,7 +45,7 @@ void RebelAudio::init(ScummEngine_v7 *vm, int sampleRate) {
 	}
 }
 
-void RebelAudio::terminate() {
+void RebelAudio::reset() {
 	if (!_vm)
 		return;
 
@@ -56,9 +56,14 @@ void RebelAudio::terminate() {
 		}
 		if (_streams[i]) {
 			_streams[i]->finish();
+			delete _streams[i];
 			_streams[i] = nullptr;
 		}
 	}
+}
+
+void RebelAudio::terminate() {
+	reset();
 }
 
 void RebelAudio::queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan, int sampleRate) {

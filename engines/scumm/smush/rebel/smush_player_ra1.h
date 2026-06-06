@@ -94,6 +94,7 @@ private:
 	int _ra1ViewportOffsetX;
 	int _ra1ViewportOffsetY;
 	int _ra1FrameSourceSkipY;
+	bool _ra1LastFrameObjectVisible;
 
 	// RA1 FADE chunks update the visible 320x200 screen through a sparse
 	// copy mask, separate from the decoded frame buffer.

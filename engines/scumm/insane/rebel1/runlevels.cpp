@@ -155,6 +155,11 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
 	restoreScreenFlashPalette();
+	// DOS PlayFrontendAnmAndWait keeps pumping until frontend audio clears.
+	// ScummVM's Rebel queues outlive SmushPlayer::play(), so clear stale
+	// passive-cinematic audio before chaining the next ANM.
+	_audio.reset();
+	splayer->resetAudioTracks();
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x420);

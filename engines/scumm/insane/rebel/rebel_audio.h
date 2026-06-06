@@ -39,6 +39,7 @@ public:
 	RebelAudio();
 
 	void init(ScummEngine_v7 *vm, int sampleRate);
+	void reset();
 	void terminate();
 	int sampleRate() const { return _sampleRate; }
 

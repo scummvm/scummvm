@@ -149,6 +149,7 @@ void SmushPlayerRebel1::initGamePlayerFields() {
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
 	_ra1FrameSourceSkipY = 0;
+	_ra1LastFrameObjectVisible = true;
 	_ra1FadeFrame = nullptr;
 	_ra1FadeFrameSize = 0;
 	_ra1FadeFrameWidth = 0;
@@ -184,6 +185,7 @@ void SmushPlayerRebel1::resetGameVideoState() {
 	_ra1ObjOverlayHeight = 0;
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
+	_ra1LastFrameObjectVisible = true;
 	_ra1UseFadeFrame = false;
 }
 
@@ -649,6 +651,7 @@ void SmushPlayerRebel1::handleFrameObject(int32 subSize, Common::SeekableReadStr
 	assert(subSize >= 14);
 	if (_skipNext) {
 		_skipNext = false;
+		_ra1LastFrameObjectVisible = false;
 		return;
 	}
 
@@ -699,11 +702,13 @@ void SmushPlayerRebel1::handleFrameObject(int32 subSize, Common::SeekableReadStr
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 		if (!rebel1->handleFrameObjectTarget((int16)ra1ObjectId, (int16)rawLeft, (int16)rawTop,
 				(int16)width, (int16)height, codec, ra1Param)) {
+			_ra1LastFrameObjectVisible = false;
 			free(chunk_buffer);
 			return;
 		}
 	}
 
+	_ra1LastFrameObjectVisible = true;
 	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size, ra1Param, ra1Parm2);
 	free(chunk_buffer);
 }
@@ -850,6 +855,10 @@ bool SmushPlayerRebel1::ra1DispatchFrameChunk(uint32 subType, int32 subSize, int
 	case MKTAG('P','V','O','C'):
 		ra1HandleFrameAudioChunk(subSize, b);
 		break;
+	case MKTAG('P','S','D','2'):
+		if (_ra1LastFrameObjectVisible)
+			ra1HandleFrameAudioChunk(subSize, b);
+		break;
 	case MKTAG('T','R','E','S'):
 	case MKTAG('T','E','X','T'):
 		handleTextResource(subType, subSize, b);
@@ -888,7 +897,6 @@ bool SmushPlayerRebel1::ra1DispatchFrameChunk(uint32 subType, int32 subSize, int
 	case MKTAG('A','D','L','2'):
 	case MKTAG('S','B','L',' '):
 	case MKTAG('S','B','L','2'):
-	case MKTAG('P','S','D','2'):
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame: skipping chunk %s (%d bytes)", tag2str(subType), subSize);
 		break;
 	default:
@@ -905,6 +913,7 @@ bool SmushPlayerRebel1::ra1DispatchFrameChunk(uint32 subType, int32 subSize, int
 void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame(%d)", _frame);
 	_skipNext = false;
+	_ra1LastFrameObjectVisible = true;
 	handleGameFrameStart();
 	const bool fastForwarding = isFastForwardingCurrentFrame();
 
