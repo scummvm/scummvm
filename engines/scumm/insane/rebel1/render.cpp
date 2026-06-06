@@ -817,7 +817,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x04, true);
 
 	if (_currentLevel == 10)
-		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x16, false);
+		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x16, true);
 
 	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
 	// In the original, RunLevel8Flow runs the walker logic inline in the per-frame
