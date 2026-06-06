@@ -353,6 +353,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	// same "subtitles" key, and ra1HandleText() gates rendering on it.
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optControlsYFlip = false;
+	_optRapidFire = true;
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
 	// Default high scores — from DS:0x1D0/0x298/0x2C0
@@ -382,6 +383,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	// Shooting/targeting state
 	_playerFired = false;
 	_fireCooldown = 0;
+	_rapidFirePhase = 0;
 	_gameplayFlags75fe = 0;
 	_gameplayFlags75ff = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));

@@ -2015,6 +2015,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 
 	_playerFired = false;
 	_fireCooldown = 0;
+	_rapidFirePhase = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));
 	_shotAlternator = 0;
 	_shotSideToggle = false;
@@ -2373,8 +2374,21 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 // processShot — FUN_1CCA0 (0x1CCA0). Spawns shot into explosion slot when fired.
 // Called once per frame during interactive rendering.
 void InsaneRebel1::processShot() {
-	if (!_playerFired || _fireCooldown != 0)
+	if (_optRapidFire) {
+		// 3DO FUN_0000c3a4 advances this before testing fire state; a fresh press
+		// fires immediately, while held repeats are gated to phase 0.
+		_rapidFirePhase++;
+		if (_rapidFirePhase > 2)
+			_rapidFirePhase = 0;
+	}
+
+	if (!_playerFired)
 		return;
+
+	if (_fireCooldown != 0) {
+		if (!_optRapidFire || _rapidFirePhase != 0)
+			return;
+	}
 
 	// On-foot mode: only spawn when in aiming stance (dirIndex 11-19) or flags force it.
 	// Original: if (((10 < g_shipDirIndex) && (g_shipDirIndex < 0x14)) || ((DAT_000075fe & 8) != 0))

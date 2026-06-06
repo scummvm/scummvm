@@ -568,9 +568,9 @@ private:
 	int _menuFrameCounter;
 
 	// Options submenu state — RunGameOptionsMenu (0x14B42)
-	static const int kOptionsItemCount = 8;
+	static const int kOptionsItemCount = 9;
 	bool _optionsActive;     // True when showing options instead of main menu
-	int _optionsSel;         // 0..7 selected option row
+	int _optionsSel;         // 0..8 selected option row
 	bool _levelSelectActive; // True when showing level-select submenu
 	int _levelSelectSel;     // 0=Level1 ... N-1=Back
 	int _startLevel;         // 1-based start level for "Start New Game"
@@ -581,6 +581,7 @@ private:
 	bool _optSfxEnabled;      // DAT_22b8: sfx+voice on/off
 	bool _optTextEnabled;     // DAT_22b9: dialogue text on/off
 	bool _optControlsYFlip;   // DAT_22be: Y-axis inversion
+	bool _optRapidFire;       // ScummVM option: held fire keeps shooting
 	int  _optVolume;          // DAT_22c1: master volume 0..127
 
 	// High scores / TOP PILOTS display — data at DS:0x1D0
@@ -616,7 +617,8 @@ private:
 
 	// Shooting state — FUN_1CCA0 (0x1CCA0)
 	bool _playerFired;       // 0x7570: current fire-button state
-	int16 _fireCooldown;     // 0x757C: previous-frame fire-button state (edge gate)
+	int16 _fireCooldown;     // 0x757C: previous-frame fire-button state (edge gate when rapid fire is off)
+	int16 _rapidFirePhase;   // 3DO FUN_0000c3a4: held-fire modulo-3 shot gate
 	uint16 _gameplayFlags75fe; // 0x75FE: gameplay mode flags
 	uint16 _gameplayFlags75ff; // 0x75FF: targeting / shot-style flags
 

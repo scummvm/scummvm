@@ -469,11 +469,11 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
 			return true;
 		case kRA1MenuCommandLeft:
-			if (_optionsSel == 6)
+			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, -5);
 			return true;
 		case kRA1MenuCommandRight:
-			if (_optionsSel == 6)
+			if (_optionsSel == 7)
 				setRebel1Volume(_vm, _optVolume, 5);
 			return true;
 		case kRA1MenuCommandCancel:
@@ -1011,6 +1011,7 @@ void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int hei
 		_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
 		_optTextEnabled   ? "DIALOGUE TEXT IS ON"     : "DIALOGUE TEXT IS OFF",
 		_optControlsYFlip ? "Y AXIS IS INVERTED"      : "Y AXIS IS NORMAL",
+		_optRapidFire     ? "RAPID FIRE IS ON"        : "RAPID FIRE IS OFF",
 		volLine,
 		diffLine
 	};
@@ -1304,9 +1305,12 @@ void InsaneRebel1::runOptionsMenu() {
 			case 5: // Toggle Y-flip controls
 				_optControlsYFlip = !_optControlsYFlip;
 				break;
-			case 6: // Volume — adjusted via left/right in notifyEvent
+			case 6: // Toggle held-fire shooting
+				_optRapidFire = !_optRapidFire;
 				break;
-			case 7: // Cycle difficulty
+			case 7: // Volume — adjusted via left/right in notifyEvent
+				break;
+			case 8: // Cycle difficulty
 				_difficulty = (_difficulty + 1) % 3;
 				loadTuningForLevel(0);
 				break;
