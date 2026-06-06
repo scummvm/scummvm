@@ -436,6 +436,11 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 }
 
 void Window::sendWindowEvent(LEvent event) {
+	// Built-in window events introduced in D5.
+	// Could fire if lower-version has a similarly named event.
+	if (_vm->getVersion() < 500)
+		return;
+
 	if (_currentMovie && _window->isVisible() && !_isStage) {
 		// We cannot call processEvent here directly because it might
 		// be called from within another event processing (like 'on startMovie'	)
