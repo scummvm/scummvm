@@ -1907,9 +1907,11 @@ void InsaneRebel1::updateOnFootSequence() {
 			_shipDirIndex = 4;  // Walk left
 	}
 
-	// --- Scripted damage latches → damageFlags (matching FUN_1B297 pattern) ---
-	// GAME 0x5D/0x5F set latches; convert to damage flags before the check.
-	if (_gameLatch5D == 0xFFFF)
+	// --- Scripted damage latches → damageFlags ---
+	// L9 on-foot trooper shots use ordinary 0x5D event ids, gated by the
+	// 0x5D object bitmask handler, then consumed by FUN_1ED95 through 0x74D4.
+	// The ship loops keep narrower level-specific 0x5D damage rules.
+	if (_gameLatch5D != 0)
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 &&
 		_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
@@ -1919,6 +1921,7 @@ void InsaneRebel1::updateOnFootSequence() {
 	// On-foot damage uses the same heavy-damage tuning byte as ship shot/collision
 	// damage in the original, not the miss penalty.
 	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
+		const int16 oldHealth = _health;
 		_health -= _tuning.shot;
 		if (_health < 0) {
 			_deathTimer = 15;
@@ -1928,6 +1931,8 @@ void InsaneRebel1::updateOnFootSequence() {
 		_damageCooldown = 3;
 		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 5;
+		debugC(DEBUG_INSANE, "RA1 on-foot player hit: frame=%u latch=%u flags=0x%02x health=%d->%d",
+			(unsigned)(uint16)_gameCounter, (unsigned)_gameLatch5D, _damageFlags, oldHealth, _health);
 	}
 }
 
