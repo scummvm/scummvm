@@ -39,14 +39,10 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[15];       /* Sprite series handles */
-	int16 sequence[15];     /* Sequence handles      */
-	int16 animation[4];     /* Animation handles     */
-
-	int16 dragon_frame;     /* frame animation is on */
-
-	int16 done_with_conv;   /* T if done with conv   */
-	int16 prev_room;
+	int16 sprite[10];       /* Sprite series handles */
+	int16 sequence[10];     /* Sequence handles      */
+	int16 animation[10];     /* Animation handles     */
+	AnimationInfo animation_info[10];
 };
 
 static Scratch scratch;
@@ -55,6 +51,7 @@ static Scratch scratch;
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
+#define aainfo scratch.animation_info
 
 
 static void room_303_init() {

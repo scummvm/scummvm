@@ -37,11 +37,6 @@ namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
 /* Triggers */
 #define TRIGGER0 100
 #define TRIGGER1 101

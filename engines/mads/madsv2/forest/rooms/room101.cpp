@@ -77,6 +77,7 @@ static Scratch scratch;
 #define aa     scratch.animation
 #define aainfo scratch.animation_info
 
+
 static void room_101_init1() {
 	global[g009] = -1;
 	viewing_at_y = 22;
