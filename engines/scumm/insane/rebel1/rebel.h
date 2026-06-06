@@ -210,7 +210,7 @@ private:
 	void captureInteractiveVideoInput();
 	void releaseInteractiveVideoInput();
 	void playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame);
-	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
+	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank, bool warnIfMissing = true);
 	void loadLevelSprites(int level);
 	void handleGameOpcode5EReset(uint32 param1);
 	void handleGameOpcode5DLinkLatch(uint32 param1);

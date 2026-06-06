@@ -43,13 +43,14 @@ void resetSpriteBank(RA1SpriteBank &bank) {
 // RA1 NUTs can have odd-size FOBJ chunks padded to 2-byte alignment within
 // FRME containers. This loader handles that padding properly, unlike the
 // shared NutRenderer::loadFont which assumes even-size chunks.
-bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
+bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank, bool warnIfMissing) {
 	resetSpriteBank(bank);
 
 	ScummFile *file = _vm->instantiateScummFile();
 	_vm->openFile(*file, filename);
 	if (!file->isOpen()) {
-		warning("InsaneRebel1::loadRA1Nut: can't open %s", filename);
+		if (warnIfMissing)
+			warning("InsaneRebel1::loadRA1Nut: can't open %s", filename);
 		delete file;
 		return false;
 	}
@@ -164,18 +165,18 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 void InsaneRebel1::loadLevelSprites(int level) {
 	// Ship/character direction bank — try BANK1, BANK, then PILOT (Level 9 on-foot)
 	Common::String bankFile = Common::String::format("LVL%d/L%dBANK1.NUT", level, level);
-	if (!loadRA1Nut(bankFile.c_str(), _shipBank)) {
+	if (!loadRA1Nut(bankFile.c_str(), _shipBank, false)) {
 		Common::String legacyBankFile = Common::String::format("LVL%d/L%dBANK.NUT", level, level);
-		if (!loadRA1Nut(legacyBankFile.c_str(), _shipBank)) {
+		if (!loadRA1Nut(legacyBankFile.c_str(), _shipBank, false)) {
 			Common::String pilotFile = Common::String::format("LVL%d/L%dPILOT.NUT", level, level);
-			if (!loadRA1Nut(pilotFile.c_str(), _shipBank))
+			if (!loadRA1Nut(pilotFile.c_str(), _shipBank, false))
 				debugC(DEBUG_INSANE, "InsaneRebel1::loadLevelSprites: No BANK1/BANK/PILOT for level %d", level);
 		}
 	}
 
 	// Secondary ship bank used by some level-specific handlers (e.g. LVL1 mode-2).
 	Common::String bankFileAlt = Common::String::format("LVL%d/L%dBANK2.NUT", level, level);
-	if (!loadRA1Nut(bankFileAlt.c_str(), _shipBankAlt)) {
+	if (!loadRA1Nut(bankFileAlt.c_str(), _shipBankAlt, false)) {
 		debugC(DEBUG_INSANE, "InsaneRebel1::loadLevelSprites: No BANK2 for level %d", level);
 	}
 
@@ -183,9 +184,10 @@ void InsaneRebel1::loadLevelSprites(int level) {
 
 	// Explosion sprites — try BANG first, then EXPLD
 	Common::String bangFile = Common::String::format("LVL%d/L%dBANG.NUT", level, level);
-	if (!loadRA1Nut(bangFile.c_str(), _bangBank)) {
+	if (!loadRA1Nut(bangFile.c_str(), _bangBank, false)) {
 		Common::String expldFile = Common::String::format("LVL%d/L%dEXPLD.NUT", level, level);
-		loadRA1Nut(expldFile.c_str(), _bangBank);
+		if (!loadRA1Nut(expldFile.c_str(), _bangBank, false))
+			debugC(DEBUG_INSANE, "InsaneRebel1::loadLevelSprites: No BANG/EXPLD for level %d", level);
 	}
 
 	// Laser/shot effect sprites
