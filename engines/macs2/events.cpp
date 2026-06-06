@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 #include "graphics/screen.h"
 #include "macs2/macs2.h"
-#include "macs2/views.h"
+#include "macs2/view1.h"
 
 namespace Macs2 {
 
@@ -39,14 +39,13 @@ Events::~Events() {
 
 void Events::runGame() {
 	_screen = new Graphics::Screen();
-	Views views; // Loads all views in the structure
+	View1 view1;
+	addView(&view1);
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		g_engine->loadGameState(saveSlot);
-
-	addView("View1");
 
 	// DOS timer ISR fires at ~21.6Hz (PIT divisor 0xD7B0 = 55216, 1193182/55216).
 	// Main loop processes a game frame when g_wTimerTickCounter > 1 (every ~2 ticks).
