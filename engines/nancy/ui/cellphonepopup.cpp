@@ -1116,12 +1116,26 @@ void CellPhonePopup::triggerContactCallSceneChange(uint contactIndex) {
 										eventFlagValue ? g_nancy->_true : g_nancy->_false);
 	}
 
-	// Pushed so AR 128 in the conversation scene can return the player here.
-	NancySceneState.pushScene();
+	// Save the pre-call scene on the popup so AR 128 can return there
+	// without clobbering the global push slot (used by closeups, etc).
+	setReturnScene(NancySceneState.getSceneInfo());
 
 	NancySceneState.changeScene(scene);
 
 	// Phone stays on screen through the conversation; AR 128 closes it.
+}
+
+void CellPhonePopup::setReturnScene(const SceneChangeDescription &scene) {
+	_returnScene = scene;
+	_hasReturnScene = true;
+}
+
+bool CellPhonePopup::consumeReturnScene(SceneChangeDescription &out) {
+	if (!_hasReturnScene)
+		return false;
+	out = _returnScene;
+	_hasReturnScene = false;
+	return true;
 }
 
 // --------------------------------------------------------------------

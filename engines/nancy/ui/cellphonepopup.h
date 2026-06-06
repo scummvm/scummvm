@@ -65,6 +65,12 @@ public:
 						const Common::String &value, int16 extra,
 						int16 flag, int16 eventFlag);
 
+	// Phone-call return scene. Set before jumping into a conversation scene
+	// so AR 128 (CellPhonePopCellSceneFromStack) can return there without
+	// trampling the global push slot used by closeups/inventory views.
+	void setReturnScene(const SceneChangeDescription &scene);
+	bool consumeReturnScene(SceneChangeDescription &out);
+
 private:
 	enum ScreenState : int {
 		kWelcome          = 0,
@@ -212,6 +218,9 @@ private:
 
 	bool _noSignal = false;
 	bool _batteryLow = false;
+
+	SceneChangeDescription _returnScene;
+	bool _hasReturnScene = false;
 };
 
 } // End of namespace UI

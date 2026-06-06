@@ -219,8 +219,9 @@ void ControlUIItems::execute() {
 		case kUITypeNotebook:
 			NancySceneState.getNotebookPopup().open();
 			break;
-		case kUITypeCellphone:
-			NancySceneState.getCellPhonePopup().open();
+		case kUITypeCellphone: {
+			UI::CellPhonePopup &phone = NancySceneState.getCellPhonePopup();
+			phone.open();
 
 			if (_startScene != (int16)kNoScene) {
 				SceneChangeDescription scene;
@@ -230,11 +231,13 @@ void ControlUIItems::execute() {
 				// The destination scene's sound carries the conversation audio.
 				scene.continueSceneSound = kLoadSceneSound;
 
-				// Pushed so AR 128 in the conversation scene can return here.
-				NancySceneState.pushScene();
+				// Save the pre-call scene on the popup so AR 128 returns
+				// there without touching the global push slot.
+				phone.setReturnScene(NancySceneState.getSceneInfo());
 				NancySceneState.changeScene(scene);
 			}
 			break;
+		}
 		default:
 			break;
 		}
@@ -346,14 +349,22 @@ void CellPhonePopCellSceneFromStack::readData(Common::SeekableReadStream &stream
 }
 
 void CellPhonePopCellSceneFromStack::execute() {
-	if (_sceneChange.sceneID == kNoScene) {
-		NancySceneState.popScene(false);
-	} else {
+	UI::CellPhonePopup &phone = NancySceneState.getCellPhonePopup();
+
+	if (_sceneChange.sceneID != kNoScene) {
 		NancySceneState.changeScene(_sceneChange);
+	} else {
+		// Restore the pre-call scene if one was saved. If there's no saved
+		// scene (e.g. the conversation was entered without a phone call),
+		// do nothing — popping the global scene stack here would clobber
+		// closeup / inventory pushes that have nothing to do with the phone.
+		SceneChangeDescription returnScene;
+		if (phone.consumeReturnScene(returnScene))
+			NancySceneState.changeScene(returnScene);
 	}
 
 	// Conversation is over; take the phone down.
-	NancySceneState.getCellPhonePopup().close();
+	phone.close();
 
 	finishExecution();
 }
