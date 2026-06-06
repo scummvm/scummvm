@@ -635,10 +635,6 @@ bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHead
 	// Read Totalframes
 	header._totalFrames = in->readUint32LE();
 
-	// Read the Total PlayTime (if available)
-	if (header._version > 1)
-		header._totalPlayTime = in->readUint32LE();
-
 	return true;
 }
 
