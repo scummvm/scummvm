@@ -287,6 +287,10 @@ void Macs2Engine::readExecutable() {
 	exeFileStream->seek(0x0001B610, SEEK_SET);
 	inventoryIconIndices.resize(6);
 	exeFileStream->read(inventoryIconIndices.data(), 12);
+
+	exeFileStream->seek(0x0001B61C, SEEK_SET);
+	containerInventoryIconIndices.resize(6);
+	exeFileStream->read(containerInventoryIconIndices.data(), 12);
 }
 
 void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
