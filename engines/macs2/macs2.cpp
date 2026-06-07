@@ -157,9 +157,16 @@ void Macs2Engine::readResourceFile() {
 	}
 	numGlyphs = font1GlyphCount;
 
-	// Font 2: skip (4-byte size + data)
+	// Font 2: clean sans-serif font used by save/load panel (scene data offset 0x1044)
 	uint32 font2SizeField = _fileStream->readUint32LE();
-	_fileStream->seek(font2SizeField, SEEK_CUR);
+	(void)font2SizeField;
+	uint16 font2GlyphCount = _fileStream->readUint16LE();
+	maxPanelGlyphHeight = 0;
+	for (uint i = 0; i < font2GlyphCount && i < 256; i++) {
+		_panelGlyphs[i].readFromMemory(_fileStream);
+		maxPanelGlyphHeight = MAX(maxPanelGlyphHeight, _panelGlyphs[i]._height);
+	}
+	numPanelGlyphs = font2GlyphCount;
 
 	// Map scene offsets: 0x400 bytes (256 entries x 4 bytes) -> scene+0x5DDB
 	// First entry is the help screen image offset.

@@ -716,7 +716,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	// Draw the new scene to the screen surface (invisible because palette is black)
 	Graphics::ManagedSurface s = getSurface();
 	s.blitFrom(_backgroundSurface);
-	if (_currentMode != ViewMode::VM_MAP) {
+	if (_currentMode != ViewMode::VM_HELP) {
 		drawBackgroundAnimations(s);
 		drawCharacters(s);
 	}
@@ -801,9 +801,9 @@ bool View1::msgFocus(const FocusMessage &msg) {
 
 bool View1::msgMouseDown(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
-		// Map mode (depth-based scene preview) from handleInput (1008:e8bf).
-		// When currentMode == VM_MAP, clicking on the depth map previews scenes.
-		if (_currentMode == ViewMode::VM_MAP) {
+		// Help mode (depth-based scene preview) from handleInput (1008:e8bf).
+		// When currentMode == VM_HELP, clicking on the depth map previews scenes.
+		if (_currentMode == ViewMode::VM_HELP) {
 			Common::Rect screenRect(320, 200);
 			if (screenRect.contains(msg._pos)) {
 				uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
@@ -847,7 +847,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		// Handle original save/load panel clicks
-		if (_isMapPanelActive) {
+		if (_isSaveLoadPanelActive) {
 			handleOriginalSaveLoadClick(msg._pos);
 			return true;
 		}
@@ -1066,7 +1066,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						g_engine->_depthMap.blitFrom(mapDepth);
 						// Save file position of the sub-scene offset table (follows depth map).
 						g_engine->_mapSubSceneTableFilePos = g_engine->_fileStream->pos();
-						_currentMode = ViewMode::VM_MAP;
+						_currentMode = ViewMode::VM_HELP;
 						g_engine->setCursorMode(Script::MouseMode::PanelUse);
 						updateCursor();
 						startFading();
@@ -1197,7 +1197,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		return true;
 	} else if (msg._button == MouseMessage::MB_RIGHT) {
 		// Map mode: right-click does nothing (binary: only left-click processed in map mode)
-		if (_currentMode == ViewMode::VM_MAP) {
+		if (_currentMode == ViewMode::VM_HELP) {
 			return true;
 		}
 		// Handle no other interactions during a script
@@ -1323,7 +1323,7 @@ void View1::draw() {
 	s.blitFrom(_backgroundSurface);
 
 	// In map mode, only the background (map image) is shown — no characters/animations/UI.
-	if (_currentMode == ViewMode::VM_MAP) {
+	if (_currentMode == ViewMode::VM_HELP) {
 		return;
 	}
 
@@ -1350,7 +1350,7 @@ void View1::draw() {
 		drawMainMenu(s);
 	}
 
-	if (_isMapPanelActive) {
+	if (_isSaveLoadPanelActive) {
 		drawOriginalSaveLoadPanel(s);
 	}
 
@@ -1394,7 +1394,7 @@ bool View1::tick() {
 	}
 
 	// Map mode: no game logic runs (binary: handleInput skips everything when 0x61db set)
-	if (_currentMode == ViewMode::VM_MAP) {
+	if (_currentMode == ViewMode::VM_HELP) {
 		redraw();
 		return true;
 	}
@@ -2946,197 +2946,377 @@ void Button::render(Graphics::ManagedSurface &s) {
 }
 
 void View1::openOriginalSaveLoadPanel() {
-	_isMapPanelActive = true;
+	// Exact translation of drawDialoguePanel (1008:6184)
+	_isSaveLoadPanelActive = true;
+
+	// g_wHasSavedUiBackground = 0
+	// g_wUiPanelState = 4
 	_uiPanelState = kUiPanelSaveLoad;
-	_mapPanelSubMode = MapPanelSubMode::None;
+
+	// setCursorMode(0x19) - PanelCursor (save previous mode for restore on close)
+	_cursorModeBeforeMenu = g_engine->_scriptExecutor->_mouseMode;
+	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
+
+	// g_wActionBarButtonWidth = 0; g_wActionBarButtonHeight = 0
+	uint16 maxW = 0;
+	uint16 maxH = 0;
+
+	// g_wSaveConfirmArmed = 0; g_wLoadConfirmArmed = 0
 	_saveConfirmArmed = false;
 	_loadConfirmArmed = false;
 
-	// Load existing save slot names
+	// if (g_wMusicEnabled && sceneData[g_wActiveMusicSlot] != 0) adlibStopMusic()
+	if (g_engine->_scriptExecutor->_musicEnabled &&
+		g_engine->_scriptExecutor->_activeMusicSlot != 0) {
+		g_engine->getAdlib()->stopMusic();
+	}
+
+	// Button lookup table at data segment offset 0x26, 1-indexed
+	// Binary: local_4 = 1..7, each iteration reads *(local_4 * 2 + 0x26) as index into cursor array
+	static const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9}; // index 0 unused
+
+	// First loop: calculate max icon width/height from the 7 button images
+	for (int i = 1; i <= 7; i++) {
+		int imgIdx = kLookupTable[i] - 1; // convert to 0-based
+		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size())
+			continue;
+		AnimFrame &frame = g_engine->_imageResources[imgIdx];
+		if (frame._data == nullptr && frame._width == 0) {
+			// Binary: if no data, sets width/height fields to 0
+			continue;
+		}
+		// Binary: getFrameWidth/getFrameHeight then updates max
+		if (frame._width > maxW)
+			maxW = frame._width;
+		if (frame._height > maxH)
+			maxH = frame._height;
+	}
+
+	// g_wUiPanelWidth = (g_wActionBarButtonWidth + 10) * 7 + 4
+	uint16 panelWidth = (maxW + 10) * 7 + 4;
+	// if (g_wUiPanelWidth < 0xD4) g_wUiPanelWidth = 0xD4
+	if (panelWidth < 0xD4)
+		panelWidth = 0xD4;
+	// g_wUiPanelHeight = g_wActionBarButtonHeight + 0x8A
+	uint16 panelHeight = maxH + 0x8A;
+	// g_wUiPanelX = (g_wScreenWidth >> 1) - (g_wUiPanelWidth >> 1)
+	int panelX = 160 - (panelWidth >> 1);
+	// g_wUiPanelY = (g_wScreenHeight >> 1) - (g_wUiPanelHeight >> 1)
+	int panelY = 100 - (panelHeight >> 1);
+
+	// g_wActionBarButtonWidth = g_wActionBarButtonWidth + 6
+	_saveLoadButtonWidth = maxW + 6;
+	// g_wActionBarButtonHeight = g_wActionBarButtonHeight + 6
+	_saveLoadButtonHeight = maxH + 6;
+
+	_saveLoadPanelRect = Common::Rect(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
+
+	// local_6 = ((g_wScreenWidth >> 1) - (g_wActionBarButtonWidth + 4) * 7 / 2) + 2
+	int buttonRowX = (160 - (int)((_saveLoadButtonWidth + 4) * 7) / 2) + 2;
+	// local_8 = (g_wUiPanelY + g_wUiPanelHeight - 4) - g_wActionBarButtonHeight
+	int buttonRowY = (panelY + panelHeight - 4) - _saveLoadButtonHeight;
+
+	// Second loop: store button positions and draw them
+	for (int i = 1; i <= 7; i++) {
+		// Store position into button rect (binary stores into cursor array entry x/y fields)
+		_saveLoadButtonRects[i - 1] = Common::Rect(
+			buttonRowX, buttonRowY,
+			buttonRowX + _saveLoadButtonWidth, buttonRowY + _saveLoadButtonHeight);
+		buttonRowX += _saveLoadButtonWidth + 4;
+	}
+
+	// Load save slot names (ScummVM equivalent of binary's file reading loop)
+	// Convert UTF-8 descriptions to DOS CP850 since the glyph table uses DOS encoding
 	for (int idx = 0; idx < 30; idx++) {
 		SaveStateDescriptor desc = g_engine->getMetaEngine()->querySaveMetaInfos(
 			g_engine->getGameId().c_str(), idx);
 		if (desc.getSaveSlot() != -1) {
-			_saveSlotNames[idx] = desc.getDescription();
+			Common::String utf8Name = desc.getDescription();
+			Common::U32String u32Name = utf8Name.decode(Common::kUtf8);
+			_saveSlotNames[idx] = Common::String(u32Name, Common::kDos850);
 		} else {
 			_saveSlotNames[idx] = "";
 		}
 	}
+
+	_clickedButtonIndex = 0;
+	_saveLoadSubMode = SaveLoadSubMode::None;
+	_saveLoadPageIndex = 0;
 	redraw();
 }
 
 void View1::closeOriginalSaveLoadPanel() {
-	_isMapPanelActive = false;
+	_isSaveLoadPanelActive = false;
 	_uiPanelState = kUiPanelNone;
-	_mapPanelSubMode = MapPanelSubMode::None;
+	_saveLoadSubMode = SaveLoadSubMode::None;
+	g_engine->setCursorMode(_cursorModeBeforeMenu);
+	updateCursor();
 	redraw();
 }
 
 void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
-	if (!_isMapPanelActive)
+	if (!_isSaveLoadPanelActive)
 		return;
 
-	// Panel dimensions matching original: centered, 10 slots of 12px + button bar
-	const int panelW = 200;
-	const int panelH = 156; // 10*12 + 8 padding + 28 button area
-	const int panelX = (320 - panelW) / 2;
-	const int panelY = (200 - panelH) / 2;
+	// Exact translation of drawSaveLoadPanel (1008:6592)
+	const int panelX = _saveLoadPanelRect.left;
+	const int panelY = _saveLoadPanelRect.top;
+	const int panelW = _saveLoadPanelRect.width();
+	const uint16 btnW = _saveLoadButtonWidth;
+	const uint16 btnH = _saveLoadButtonHeight;
 
-	// Draw panel background
-	drawDarkRectangle(panelX, panelY, panelW, panelH);
-	drawBorder(Common::Point(panelX, panelY), Common::Point(panelW, panelH), s);
+	// drawBorderSide + drawBorderOuterHighlights for panel
+	drawBorderSide(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), s);
+	drawBorderOuterHighlights(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), s);
 
-	// Draw 10 save slots for current page
-	for (int slot = 0; slot < 10; slot++) {
-		int idx = _mapPanelPageIndex * 10 + slot;
-		int slotY = panelY + 4 + slot * 12;
-		int slotX = panelX + 4;
-		int slotW = panelW - 8;
+	// Button loop: local_4 = 1..7
+	// Lookup table at 0x26 (1-indexed): {_, 15, 14, 27, 29, 16, 17, 9}
+	static const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9};
+	// Alternate music icon is at cursor array offset 0x1B0 = entry 27 (0-based)
+	static const int kAltMusicIconIdx = 27; // 0-based into _imageResources
 
-		// Slot background
-		drawDarkRectangle(slotX, slotY, slotW, 12);
+	uint16 subMode = (uint16)_saveLoadSubMode;
 
-		// Slot text
-		Common::String label;
-		if (_saveSlotNames[idx].empty()) {
-			label = Common::String::format("- Slot %d -", idx + 1);
+	for (int i = 1; i <= 7; i++) {
+		int imgIdx = kLookupTable[i] - 1; // 0-based
+		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
+
+		// Binary: if (local_4 < 0 || local_4 != g_wSaveLoadSubMode) → normal border
+		// else → pressed border
+		bool pressed = (i >= 0 && (uint16)i == subMode);
+		if (!pressed) {
+			drawBorderOuterHighlights(btnPos, Common::Point(btnW, btnH), s);
 		} else {
-			label = _saveSlotNames[idx];
+			drawPressedBorderOuterHighlights(btnPos, Common::Point(btnW, btnH), s);
 		}
-		renderString(slotX + 2, slotY + 2, label);
-	}
 
-	// Draw bottom button bar
-	int btnY = panelY + 4 + 10 * 12 + 4;
-	int btnW = 26;
-	int btnH = 16;
-	int btnX = panelX + 4;
+		// Check if image has valid data (binary: check size fields > 0)
+		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size())
+			continue;
+		AnimFrame &frame = g_engine->_imageResources[imgIdx];
+		if (frame._data == nullptr || frame._width == 0)
+			continue;
 
-	const char *btnLabels[] = {"Ld", "Sv", "Mu", "Pg", "OK", "OK", "X"};
-	for (int i = 0; i < 7; i++) {
-		Common::Point bPos(btnX + i * (btnW + 2), btnY);
-		Common::Point bSize(btnW, btnH);
+		// Determine which icon to draw
+		AnimFrame *iconFrame = &frame;
 
-		bool pressed = false;
-		if (i == 0 && _mapPanelSubMode == MapPanelSubMode::SaveSlots)
-			pressed = true;
-		if (i == 1 && _mapPanelSubMode == MapPanelSubMode::MapTravel)
-			pressed = true;
+		// Button 3 with sound off: use alternate icon at index 0x1B0/0x10 = 27
+		if (i == 3 && !g_engine->_scriptExecutor->_soundSystemActive) {
+			if (kAltMusicIconIdx < (int)g_engine->_imageResources.size()) {
+				AnimFrame &altFrame = g_engine->_imageResources[kAltMusicIconIdx];
+				if (altFrame._data != nullptr && altFrame._width > 0) {
+					iconFrame = &altFrame;
+				}
+			}
+		}
 
+		// Binary icon centering:
+		// y = (btnH/2 + buttonY) - (iconH/2)
+		// x = (btnW/2 + buttonX) - (iconW/2)
+		int iconX = ((btnW >> 1) + btnPos.x) - (iconFrame->_width >> 1);
+		int iconY = ((btnH >> 1) + btnPos.y) - (iconFrame->_height >> 1);
+
+		// Pressed: +1 offset
 		if (pressed) {
-			drawPressedBorderOuterHighlights(bPos, bSize, s);
-		} else {
-			drawBorderOuterHighlights(bPos, bSize, s);
+			iconX++;
+			iconY++;
 		}
-		renderString(bPos.x + 4, bPos.y + 4, btnLabels[i]);
+
+		drawSprite(iconX, iconY, iconFrame->_width, iconFrame->_height, iconFrame->_data, s, false);
 	}
 
-	// Page indicator
-	Common::String pageStr = Common::String::format("Page %d/3", _mapPanelPageIndex + 1);
-	renderString(panelX + panelW - 60, btnY + 4, pageStr);
+	// if (g_wMapPanelPageIndex == 1) drawSaveLoadScrollArrows()
+	if (_saveLoadPageIndex == 1) {
+		// TODO: drawSaveLoadScrollArrows - draws scaled animation frame over slot area
+	}
+
+	// Slot loop: local_4 = 0..9
+	for (int slot = 0; slot <= 9; slot++) {
+		// drawPanelSlot(0xc, g_wUiPanelWidth - 8, g_wUiPanelY + 4 + slot * 0xc, g_wUiPanelX + 4)
+		int slotX = panelX + 4;
+		int slotY = panelY + 4 + slot * 0xc;
+		int slotW = panelW - 8;
+		int slotH = 0xc;
+		drawPressedBorderOuterHighlights(Common::Point(slotX, slotY), Common::Point(slotW, slotH), s);
+
+		// drawText at (g_wUiPanelX + 6, g_wUiPanelY + 6 + slot * 0xc)
+		int idx = _saveLoadPageIndex * 10 + slot;
+		Common::String label;
+		if (idx < 30 && !_saveSlotNames[idx].empty()) {
+			label = _saveSlotNames[idx];
+		} else {
+			label = "NONE";
+		}
+		const GlyphData *font = g_engine->numPanelGlyphs > 0 ? g_engine->_panelGlyphs : g_engine->_glyphs;
+		uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
+		label.toUppercase();
+		renderStringWithFont(panelX + 6, panelY + 6 + slot * 0xc, label, font, fontCount);
+	}
 }
 
 void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
-	const int panelW = 200;
-	const int panelH = 156;
-	const int panelX = (320 - panelW) / 2;
-	const int panelY = (200 - panelH) / 2;
+	// Exact translation of handleSaveLoadPanelClick (1008:86a4)
+	// Binary takes (clickY, clickX) - note reversed parameter order
+	int clickX = pos.x;
+	int clickY = pos.y;
 
-	// Check if click is outside panel → close
-	if (pos.x < panelX || pos.x > panelX + panelW ||
-		pos.y < panelY || pos.y > panelY + panelH) {
-		closeOriginalSaveLoadPanel();
+	// if (g_wClickedButtonIndex == 0) { ... entire function body }
+	if (_clickedButtonIndex != 0)
 		return;
+
+	const int panelX = _saveLoadPanelRect.left;
+	const int panelY = _saveLoadPanelRect.top;
+	const int panelW = _saveLoadPanelRect.width();
+	const uint16 btnW = _saveLoadButtonWidth;
+	const uint16 btnH = _saveLoadButtonHeight;
+
+	bool bPageScroll = false;
+
+	// Binary redraws panel inline during click handling
+	// (We skip the redraw here since ScummVM handles it via draw() cycle)
+
+	// if (g_wMapPanelPageIndex == 1) drawSaveLoadScrollArrows()
+	if (_saveLoadPageIndex == 1) {
+		// TODO: drawSaveLoadScrollArrows
 	}
 
-	// Check slot clicks
-	for (int slot = 0; slot < 10; slot++) {
-		int slotY = panelY + 4 + slot * 12;
-		int slotX = panelX + 4;
-		int slotW = panelW - 8;
+	// Slot loop: local_4 = 0..9
+	for (int slot = 0; slot <= 9; slot++) {
+		// Slot hit test for sub-mode 2 (save): editSaveSlotName
+		if (_saveLoadSubMode == SaveLoadSubMode::Save &&
+			(int)(panelX + 6) <= clickX &&
+			clickX <= (int)(panelX + panelW - 0xc) &&
+			(int)(panelY + 6 + slot * 0xc) <= clickY &&
+			clickY <= (int)(panelY + slot * 0xc + 0x10)) {
+			// editSaveSlotName(slot) - ScummVM: save to slot
+			int idx = _saveLoadPageIndex * 10 + slot;
+			Common::String name = Common::String::format("Save %d", idx + 1);
+			g_engine->saveGameState(idx, name);
+			_saveSlotNames[idx] = name;
+			redraw();
+			return;
+		}
 
-		if (pos.x >= slotX && pos.x <= slotX + slotW &&
-			pos.y >= slotY && pos.y <= slotY + 12) {
-			int idx = _mapPanelPageIndex * 10 + slot;
-
-			if (_mapPanelSubMode == MapPanelSubMode::SaveSlots) {
-				// Load from this slot
-				if (!_saveSlotNames[idx].empty()) {
-					if (_loadConfirmArmed) {
-						closeOriginalSaveLoadPanel();
-						g_engine->loadGameState(idx);
-					} else {
-						_loadConfirmArmed = true;
-						_saveConfirmArmed = false;
-					}
-				}
-			} else if (_mapPanelSubMode == MapPanelSubMode::MapTravel) {
-				// Save to this slot
-				if (_saveConfirmArmed) {
-					Common::String name = _saveSlotNames[idx].empty()
-											  ? Common::String::format("Save %d", idx + 1)
-											  : _saveSlotNames[idx];
-					closeOriginalSaveLoadPanel();
-					g_engine->saveGameState(idx, name);
-				} else {
-					_saveConfirmArmed = true;
-					_loadConfirmArmed = false;
-				}
+		// Slot hit test for sub-mode 1 (load): loadGameFromFile
+		if (_saveLoadSubMode == SaveLoadSubMode::Load &&
+			(int)(panelX + 6) <= clickX &&
+			clickX <= (int)(panelX + panelW - 0xc) &&
+			(int)(panelY + 6 + slot * 0xc) <= clickY &&
+			clickY <= (int)(panelY + slot * 0xc + 0x10)) {
+			int idx = _saveLoadPageIndex * 10 + slot;
+			if (idx < 30 && !_saveSlotNames[idx].empty()) {
+				// Binary: loadGameFromFile then:
+				// g_wUiPanelState = 4; g_wClickedButtonIndex = 0;
+				// g_wHasSavedUiBackground = 4; g_wSaveLoadSubMode = 0
+				g_engine->loadGameState(idx);
+				_uiPanelState = kUiPanelSaveLoad;
+				_clickedButtonIndex = 0;
+				_saveLoadSubMode = SaveLoadSubMode::None;
 			}
 			redraw();
 			return;
 		}
 	}
 
-	// Check button bar clicks
-	int btnY = panelY + 4 + 10 * 12 + 4;
-	int btnW = 26;
-	int btnH = 16;
-	int btnX = panelX + 4;
+	// Button loop: local_4 = 1..7
+	static const uint16 kLookupTable[8] = {9, 15, 14, 27, 29, 16, 17, 9};
+	for (int i = 1; i <= 7; i++) {
+		int imgIdx = kLookupTable[i] - 1; // 0-based
+		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
 
-	if (pos.y >= btnY && pos.y <= btnY + btnH) {
-		for (int i = 0; i < 7; i++) {
-			int bx = btnX + i * (btnW + 2);
-			if (pos.x >= bx && pos.x <= bx + btnW) {
-				switch (i) {
-				case 0: // Load mode
-					_mapPanelSubMode = MapPanelSubMode::SaveSlots;
-					_saveConfirmArmed = false;
-					_loadConfirmArmed = false;
-					break;
-				case 1: // Save mode
-					_mapPanelSubMode = MapPanelSubMode::MapTravel;
-					_saveConfirmArmed = false;
-					_loadConfirmArmed = false;
-					break;
-				case 2: // Toggle music
-					g_engine->_scriptExecutor->_soundSystemActive =
-						!g_engine->_scriptExecutor->_soundSystemActive;
-					break;
-				case 3: // Page scroll
-					_mapPanelPageIndex = (_mapPanelPageIndex + 1) % 3;
-					_saveConfirmArmed = false;
-					_loadConfirmArmed = false;
-					break;
-				case 4: // Confirm save (double-click)
-					if (_mapPanelSubMode == MapPanelSubMode::MapTravel) {
-						_saveConfirmArmed = true;
-					}
-					break;
-				case 5: // Confirm load (double-click)
-					if (_mapPanelSubMode == MapPanelSubMode::SaveSlots) {
-						_loadConfirmArmed = true;
-					}
-					break;
-				case 6: // Close
-					closeOriginalSaveLoadPanel();
-					return;
-				}
+		// Hit test: clickX > btnPos.x && clickY > btnPos.y &&
+		//           clickX < btnPos.x + btnW && clickY < btnPos.y + btnH
+		// AND has valid image data
+		// AND (mapDisabledFlag == 0 || i > 2)
+		bool hasData = false;
+		if (imgIdx >= 0 && imgIdx < (int)g_engine->_imageResources.size()) {
+			AnimFrame &frame = g_engine->_imageResources[imgIdx];
+			hasData = (frame._data != nullptr && frame._width > 0);
+		}
+
+		bool isHit = (btnPos.x < clickX && btnPos.y < clickY &&
+			clickX < btnPos.x + btnW && clickY < btnPos.y + btnH &&
+			hasData &&
+			(!_helpButtonDisabled || i > 2));
+
+		if (isHit) {
+			// Button was clicked - draw pressed and process
+			_clickedButtonIndex = i;
+
+			if (i != 5)
+				_saveConfirmArmed = false;
+			if (i != 6)
+				_loadConfirmArmed = false;
+
+			// Process button action
+			if (i == 3) {
+				// Toggle music, reset clickedButton, redraw
+				g_engine->_scriptExecutor->_soundSystemActive =
+					!g_engine->_scriptExecutor->_soundSystemActive;
+				_clickedButtonIndex = 0;
 				redraw();
-				return;
+			} else if (i == 4) {
+				bPageScroll = true;
+			} else if (i == 5) {
+				if (!_saveConfirmArmed) {
+					_saveConfirmArmed = true;
+				} else {
+					// Binary: g_wScriptErrorCode = 0x1c; g_wClickedButtonIndex = 7
+					// In ScummVM: force close (confirm save triggers close)
+					_clickedButtonIndex = 7;
+				}
+			} else if (i == 6) {
+				if (!_loadConfirmArmed) {
+					_loadConfirmArmed = true;
+				} else {
+					// Binary: g_wScriptErrorCode = 0x1b; g_wClickedButtonIndex = 7
+					_clickedButtonIndex = 7;
+				}
+			} else if (i == 7) {
+				// Binary: if music enabled AND sound active, play active music
+				if (g_engine->_scriptExecutor->_musicEnabled &&
+					g_engine->_scriptExecutor->_soundSystemActive) {
+					uint16 slot = g_engine->_scriptExecutor->_activeMusicSlot;
+					if (slot != 0 && !g_engine->_scriptExecutor->_musicSlots[slot - 1].empty()) {
+						g_engine->getAdlib()->playSongData(g_engine->_scriptExecutor->_musicSlots[slot - 1]);
+					}
+				}
 			}
+		} else {
+			// Button NOT hit - reset confirm flags for buttons 5/6
+			if (i == 6)
+				_loadConfirmArmed = false;
+			if (i == 5)
+				_saveConfirmArmed = false;
 		}
 	}
+
+	// After button loop: set subMode based on clickedButtonIndex
+	// Binary: if (g_wClickedButtonIndex < 3) g_wSaveLoadSubMode = g_wClickedButtonIndex
+	//         else g_wSaveLoadSubMode = 0
+	if (_clickedButtonIndex < 3) {
+		_saveLoadSubMode = (SaveLoadSubMode)_clickedButtonIndex;
+	} else {
+		_saveLoadSubMode = SaveLoadSubMode::None;
+	}
+
+	// Binary: if (g_wClickedButtonIndex == 7) g_wHasSavedUiBackground = 0 (close)
+	//         else g_wHasSavedUiBackground = 4 (stay open)
+	if (_clickedButtonIndex == 7) {
+		closeOriginalSaveLoadPanel();
+		return;
+	}
+
+	// Binary: if (bPageScroll && ++g_wMapPanelPageIndex == 3) g_wMapPanelPageIndex = 0
+	if (bPageScroll) {
+		_saveLoadPageIndex++;
+		if (_saveLoadPageIndex == 3)
+			_saveLoadPageIndex = 0;
+	}
+
+	// Reset for next click
+	_clickedButtonIndex = 0;
+	redraw();
 }
 
 } // namespace Macs2

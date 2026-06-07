@@ -32,7 +32,7 @@ class GameObject;
 // TODO: Implement the different view modes
 enum class ViewMode {
 	VM_GAME,
-	VM_MAP
+	VM_HELP
 };
 
 enum class FadeMode {
@@ -220,37 +220,39 @@ public:
 	uint16 _dialogueChoiceCount = 0;
 
 
-	// Map/Save/Load panel from handleMapPanelClick (1008:86a4).
-	// This is a combined panel opened by right-click during script execution
-	// or by action bar button 8. It has two areas:
+	// Save/Load panel from handleSaveLoadPanelClick (1008:86a4).
+	// Opened by right-click during script execution or action bar button 8.
 	//
-	// 1. Text slot list (10 slots, 12px tall each, max 21 chars):
-	//    - Sub-mode 1 (save): clicking a slot opens text input for save name
-	//    - Sub-mode 2 (map/travel): clicking a slot triggers travel
-	//    Slot names stored at scene data offset 0x1f52 + slot*0x15 (Pascal strings)
+	// Sub-mode 1 (Load): clicking a slot loads the game from that file
+	// Sub-mode 2 (Save): clicking a slot opens text input for save name
 	//
-	// 2. Bottom button bar (7 buttons):
-	//    Button 1 = Enter save mode (sub-mode=1)
-	//    Button 2 = Enter map/travel mode (sub-mode=2)
-	//    Button 3 = Toggle music on/off
-	//    Button 4 = Page scroll (cycles 0->1->2->0)
-	//    Button 5 = Confirm save (double-click pattern)
-	//    Button 6 = Confirm load (double-click pattern)
-	//    Button 7 = Play music / close panel
-	//
-	// The panel also supports the "map mode" (scene+0x61db != 0) where
-	// clicking on the depth map previews/selects scenes.
-	enum class MapPanelSubMode {
+	// Button bar (7 buttons):
+	//   Button 1 = Enter load mode (sub-mode=1)
+	//   Button 2 = Enter save mode (sub-mode=2)
+	//   Button 3 = Toggle music on/off
+	//   Button 4 = Page scroll (cycles 0->1->2->0)
+	//   Button 5 = Confirm save (double-click pattern)
+	//   Button 6 = Confirm load (double-click pattern)
+	//   Button 7 = Play music / close panel
+	enum class SaveLoadSubMode {
 		None = 0,
-		SaveSlots = 1,
-		MapTravel = 2
+		Load = 1,
+		Save = 2
 	};
-	bool _isMapPanelActive = false;
-	MapPanelSubMode _mapPanelSubMode = MapPanelSubMode::None;
-	uint16 _mapPanelPageIndex = 0;
+	bool _isSaveLoadPanelActive = false;
+	SaveLoadSubMode _saveLoadSubMode = SaveLoadSubMode::None;
+	uint16 _saveLoadPageIndex = 0;
 	bool _saveConfirmArmed = false;
 	bool _loadConfirmArmed = false;
+	bool _helpButtonDisabled = false;     // g_wMapDisabledFlag (1020:23b4): disables action bar help button AND save/load panel buttons 1-2
+	uint16 _clickedButtonIndex = 0;       // g_wClickedButtonIndex: last clicked button (0=none)
 	Common::String _saveSlotNames[30]; // 3 pages x 10 slots
+
+	// Save/Load panel geometry (binary globals: g_wUiPanelX/Y/Width/Height, g_wActionBarButtonWidth/Height)
+	Common::Rect _saveLoadPanelRect;
+	Common::Rect _saveLoadButtonRects[7];
+	uint16 _saveLoadButtonWidth = 0;      // g_wActionBarButtonWidth (after +6)
+	uint16 _saveLoadButtonHeight = 0;     // g_wActionBarButtonHeight (after +6)
 
 	void openOriginalSaveLoadPanel();
 	void drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s);
