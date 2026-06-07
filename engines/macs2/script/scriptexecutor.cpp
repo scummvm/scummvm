@@ -818,6 +818,8 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 	if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
 		currentView->startFadingWithSpeed(transitionSpeed);
 	}
+	// Binary step 8: set cursor to Walk (0x16) after scene change
+	_engine->setCursorMode(Script::MouseMode::Walk);
 	// Confirmed: executeOpcodes jumps to end-execution path after scriptChangeScene
 	// in the game code
 	// Confirmed: scriptChangeScene resets interactedObjectID and interactedInventoryItemId
