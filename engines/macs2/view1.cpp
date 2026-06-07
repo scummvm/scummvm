@@ -657,7 +657,7 @@ void View1::startFadeToBlack(uint16 speed) {
 	// Ensure current frame is on screen before fading
 	Graphics::ManagedSurface *screen = g_events->getScreen();
 	g_system->copyRectToScreen((const byte *)screen->getPixels(),
-							   screen->pitch, 0, 0, 320, 200);
+							   screen->pitch, 0, 0, screen->w, screen->h);
 
 	uint fadeValue = 0;
 	while (fadeValue <= 0x40 && !g_system->getEventManager()->shouldQuit()) {
@@ -665,7 +665,7 @@ void View1::startFadeToBlack(uint16 speed) {
 
 		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
-								   g_events->getScreen()->pitch, 0, 0, 320, 200);
+								   g_events->getScreen()->pitch, 0, 0, g_events->getScreen()->w, g_events->getScreen()->h);
 		g_system->updateScreen();
 
 		Common::Event evt;
@@ -715,7 +715,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 
 	// Copy pixels to the system screen
 	g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
-							   g_events->getScreen()->pitch, 0, 0, 320, 200);
+							   g_events->getScreen()->pitch, 0, 0, g_events->getScreen()->w, g_events->getScreen()->h);
 	g_system->updateScreen();
 
 	// Fade from black: original starts at speed + 0x40 to guarantee first frame
@@ -727,7 +727,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
 		// Re-copy pixels so the backend redraws with the new palette
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
-								   g_events->getScreen()->pitch, 0, 0, 320, 200);
+								   g_events->getScreen()->pitch, 0, 0, g_events->getScreen()->w, g_events->getScreen()->h);
 		g_system->updateScreen();
 
 		Common::Event evt;
