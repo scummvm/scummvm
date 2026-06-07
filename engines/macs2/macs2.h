@@ -311,7 +311,7 @@ public:
 	void loadSongFromSceneData(uint8 dataIndex);
 	Adlib *getAdlib() const { return _adlib; }
 	// Returns the Adlib volume (0-63) scaled by the user's music_volume setting
-	uint16 scaledMusicVolume(uint16 volume) const;
+	uint16 scaledMusicVolume(uint16 gameAttenuation) const;
 	void setCurrentSoundData(const Common::Array<uint8> &data);
 	void clearCurrentSoundData();
 	void playCurrentSound();

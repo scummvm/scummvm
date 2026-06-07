@@ -404,21 +404,27 @@ void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManage
 void Macs2Engine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	// Scale Adlib music volume (0-63) by user's music_volume setting (0-255)
 	if (_adlib && _scriptExecutor) {
 		int musicVolume = ConfMan.getInt("music_volume");
-		bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
-		uint16 scaledVolume = mute ? 0 : (_scriptExecutor->_musicControlVolume * musicVolume / 255);
-		_adlib->setVolume(scaledVolume);
+		// OPL emulator is registered as kPlainSoundType; mute it at mixer level
+		// when user sets music volume to 0 (OPL attenuation 0x3F is not true silence).
+		_mixer->muteSoundType(Audio::Mixer::kPlainSoundType,
+			(musicVolume == 0) || (ConfMan.hasKey("mute") && ConfMan.getBool("mute")));
+		_adlib->setVolume(scaledMusicVolume(_scriptExecutor->_musicControlVolume));
 	}
 }
 
-uint16 Macs2Engine::scaledMusicVolume(uint16 volume) const {
+uint16 Macs2Engine::scaledMusicVolume(uint16 gameAttenuation) const {
+	// _masterVolume in Adlib is OPL register-level attenuation: 0 = loudest, 0x3F = silent.
+	// _musicControlVolume (gameAttenuation) is also attenuation (0 = loud, 0x3F = silent).
+	// Convert user's music_volume (0-255) to an attenuation (0x3F..0) and add both.
 	bool mute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
 	if (mute)
-		return 0;
+		return 0x3F;
 	int musicVolume = ConfMan.getInt("music_volume");
-	return volume * musicVolume / 255;
+	uint16 userAttenuation = 0x3F - (musicVolume * 0x3F / 255);
+	uint16 total = gameAttenuation + userAttenuation;
+	return (total > 0x3F) ? 0x3F : total;
 }
 
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
@@ -1500,6 +1506,7 @@ Common::Error Macs2Engine::run() {
 
 	// Initialize Adlib
 	_adlib->init();
+	syncSoundSettings();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
