@@ -104,8 +104,9 @@ typedef struct ImGuiWindows {
 
 enum SearchMode {
 	kSearchAll = 0,
-	kSearchHandlerNames,
-	kSearchScriptBody,
+	kSearchHandlers,
+	kSearchVariables,
+	kSearchBody,
 };
 
 typedef struct ScriptData {
@@ -329,6 +330,7 @@ typedef struct ImGuiState {
 } ImGuiState;
 
 // debugtools.cpp
+const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Common::String &handlerId);
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
 ScriptContext *getScriptContext(CastMemberID id);
 ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID castId, Common::String handler);
