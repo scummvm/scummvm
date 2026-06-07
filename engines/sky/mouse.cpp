@@ -306,6 +306,8 @@ void Mouse::mouseEngine() {
 			case INVENTORY:
 				if (isLincInv())
 					lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+				else
+					invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 
 			case INVENTORY_USE_ON:
 			case TEXT_CHOOSER:
@@ -2361,6 +2363,27 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 		}
 	}
 
+}
+
+void Mouse::invMouse(uint16 xPos, uint16 yPos) {
+
+	Compact *itemData;
+
+	// if clicked somewhere outside the inventory, close the inventory
+	if (!_touchId && _mouseB) {
+		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
+
+			M_MODE = MUST_RELEASE; // MUST_RELEASE because if we go straight to GAMEPLAY, robert will move to the place of clicking
+			_skyLogic->killInventory(); // stop rendering the inventory items
+			return;
+		}
+	}
+
+	// reset
+	if (Logic::_scriptVariables[GET_OFF]) {
+		_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+		Logic::_scriptVariables[GET_OFF] = 0;
+	}
 }
 
 } // End of namespace Sky
