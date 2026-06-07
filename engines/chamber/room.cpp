@@ -1309,7 +1309,7 @@ void prepareAspirant(void) {
 	if (aspirant_ptr->flags & PERSFLG_40)
 		return;
 
-	hostility = script_byte_vars.rand_value;
+	hostility = getRand();
 	appearance = getRand();
 	flags = 0;
 	/*

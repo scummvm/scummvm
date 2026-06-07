@@ -111,15 +111,10 @@ uint16 benchmarkCpu(void) {
 }
 
 void randomize(void) {
-	warning("STUB: Randomize()");
-#if 0
-	union REGS reg;
-
-	reg.h.ah = 0;
-	int86(0x1A, &reg, &reg);
-	rand_seed = reg.h.dl;
-	Rand();
-#endif
+	// Original read the low byte of the BIOS timer-tick count (int 0x1A) into
+	// rand_seed. Use the host millisecond timer as an equivalent entropy source.
+	rand_seed = (byte)(g_system->getMillis());
+	getRand();
 }
 
 void TRAP() {
