@@ -1860,7 +1860,7 @@ bool Script::ScriptExecutor::scriptPlayMusicSlot() {
 		_musicControlMode = 0;
 		_musicControlParam = 0;
 		_musicControlVolume = 0;
-		_engine->getAdlib()->setVolume(0);
+		_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(0));
 	}
 
 	_activeMusicSlot = slotID;
