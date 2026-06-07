@@ -1024,7 +1024,7 @@ static void showInventoryWindow() {
 			ImGui::Text("Source: obj %u | Active: %s | Showing: %s",
 						view->_inventorySource ? view->_inventorySource->_index : 0,
 						view->_activeInventoryItem ? Common::String::format("0x%x", view->_activeInventoryItem->_index).c_str() : "None",
-						view->_isShowingInventory ? "Y" : "N");
+						view->_uiPanelState == View1::kUiPanelInventory ? "Y" : "N");
 			ImGui::Separator();
 			for (uint i = 0; i < view->_inventoryItems.size(); i++) {
 				GameObject *obj = view->_inventoryItems[i];
@@ -1533,7 +1533,7 @@ void onImGuiRender() {
 			}
 			if (ImGui::MenuItem("Transfer Held Item (Drop)")) {
 				View1 *view = (View1 *)g_engine->findView("View1");
-				if (view && view->_isShowingInventory && view->_activeInventoryItem != nullptr) {
+				if (view && view->_uiPanelState == View1::kUiPanelInventory && view->_activeInventoryItem != nullptr) {
 					if (view->isInventorySourceProtagonist()) {
 						const uint16 currentScene = Scenes::instance()._currentSceneIndex;
 						for (GameObject *obj : GameObjects::instance()._objects) {

@@ -97,7 +97,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 	}
 
 	setInventorySource(newInventorySource);
-	_isShowingInventory = true;
+	_uiPanelState = kUiPanelInventory;
 	_inventoryPage = 0;
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
@@ -109,12 +109,12 @@ void View1::openInventory(GameObject *newInventorySource) {
 }
 
 void View1::closeInventory() {
-	if (!_isShowingInventory) {
+	if (_uiPanelState != kUiPanelInventory) {
 		return;
 	}
 
 	const bool shouldResumeExternalInventory = !isInventorySourceProtagonist() && g_engine->_scriptExecutor->_hasPendingExternalInventoryResume;
-	_isShowingInventory = false;
+	_uiPanelState = kUiPanelNone;
 	_inventoryPage = 0;
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
@@ -139,6 +139,9 @@ void View1::closeInventory() {
 	if (!isInventorySourceProtagonist()) {
 		setInventorySource(GameObjects::instance().getProtagonistObject());
 	}
+
+	g_engine->setCursorMode(_cursorModeBeforeMenu);
+	updateCursor();
 }
 
 void View1::setInventorySource(GameObject *newInventorySource) {
@@ -531,9 +534,9 @@ void View1::drawPath(Graphics::ManagedSurface &s) {
 }
 
 void View1::openMainMenu(Common::Point clickedPosition) {
-	_isShowingMainMenu = true;
+	_uiPanelState = kUiPanelActionBar;
 	// Binary handleInput: save cursor and set to PanelCursor (0x19)
-	g_engine->_scriptExecutor->_cursorModeBeforeWait = g_engine->_scriptExecutor->_mouseMode;
+	_cursorModeBeforeMenu = g_engine->_scriptExecutor->_mouseMode;
 	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 	// Calculate button size from actual icon dimensions (matching original)
 	uint16 maxW = 0, maxH = 0;
@@ -564,7 +567,7 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 	lowerRight = upperLeft + inventorySize;
 	_mainMenuRect = Common::Rect(upperLeft, lowerRight);
 	assert(_mainMenuRect.width() == inventorySize.x && _mainMenuRect.height() == inventorySize.y);
-	_isShowingMainMenu = true;
+	_uiPanelState = kUiPanelActionBar;
 }
 
 void View1::drawMainMenu(Graphics::ManagedSurface &s) {
@@ -607,7 +610,7 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 
 void View1::setStringBox(const Common::StringArray &sa) {
 	_drawnStringBox = sa;
-	_isShowingStringBox = true;
+	_isShowingTextBox = true;
 	_continueScriptAfterUI = true;
 
 	// TODO: Change cursor, stop animations, hide again
@@ -620,8 +623,8 @@ void View1::setStringBoxAt(const Common::StringArray &sa, const Common::Point &p
 }
 
 void View1::clearStringBox(bool continueScript) {
-	_isShowingStringBox = false;
-	_isShowingDialogueChoice = false;
+	_isShowingTextBox = false;
+	_uiPanelState = kUiPanelNone;
 	_dialogueChoiceCount = 0;
 	currentSpeechActData.speaker = nullptr;
 	currentSpeechActData.mouthAnimActive = false;
@@ -713,8 +716,10 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	// Draw the new scene to the screen surface (invisible because palette is black)
 	Graphics::ManagedSurface s = getSurface();
 	s.blitFrom(_backgroundSurface);
-	drawBackgroundAnimations(s);
-	drawCharacters(s);
+	if (_currentMode != ViewMode::VM_MAP) {
+		drawBackgroundAnimations(s);
+		drawCharacters(s);
+	}
 
 	// Copy pixels to the system screen
 	g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
@@ -803,12 +808,10 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			if (screenRect.contains(msg._pos)) {
 				uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
 				if (depth > 0 && depth < 0xFA) {
-					// Preview sub-scene at depth index.
-					// Binary: fileSeek(scene + 0x5DD7 + depth*4). Table starts at scene+0x5DD7.
-					g_engine->_fileStream->seek(g_engine->_mapSubSceneTableFilePos + depth * 4, SEEK_SET);
-					uint32 subSceneOffset = g_engine->_fileStream->readUint32LE();
+					// Binary: fileSeek(scene + 0x5DD7 + depth*4) = _mapSceneOffsets[depth-1]
+					uint32 subSceneOffset = g_engine->_mapSceneOffsets[depth - 1];
 					if (subSceneOffset != 0 && subSceneOffset < (uint32)g_engine->_fileStream->size()) {
-						startFadeToBlack();
+						startFadeToBlack(8);
 						Graphics::ManagedSurface preview = g_engine->readRLEImage(subSceneOffset, g_engine->_fileStream);
 						_backgroundSurface.copyFrom(preview);
 						// Read sub-scene palette
@@ -817,20 +820,27 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						for (int p = 0; p < 256 * 3; p++) {
 							g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
 						}
-						_paletteDirty = true;
 						// Read sub-scene depth map
 						Graphics::ManagedSurface subDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
 						g_engine->_depthMap.blitFrom(subDepth);
-						startFading();
+						startFading(8);
 						redraw();
 					}
 				} else if (depth == 0xFF) {
-					// Return to normal mode: reload current scene, clear map flag
+					// Return to normal mode: restore scene visuals without resetting characters
 					_currentMode = ViewMode::VM_GAME;
-					g_engine->setCursorMode(Script::MouseMode::Walk);
+					g_engine->setCursorMode(_cursorModeBeforeMenu);
 					updateCursor();
-					g_engine->changeScene(Scenes::instance()._currentSceneIndex, false);
-					g_engine->scheduleRun(true);
+					startFadeToBlack(8);
+					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+					memcpy(g_engine->_palVanilla, _savedPalVanilla, 256 * 3);
+					memcpy(g_engine->_pal, g_engine->_palVanilla, 256 * 3);
+					for (int p = 0; p < 256 * 3; p++) {
+						g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
+					}
+					g_engine->_depthMap.copyFrom(_savedDepthMap);
+					startFading(8);
+					redraw();
 				}
 			}
 			return true;
@@ -843,12 +853,12 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		// Handle string boxes
-		if (_isShowingStringBox) {
+		if (_isShowingTextBox) {
 			clearStringBox();
 			return true;
 		}
 
-		if (_isShowingInventory) {
+		if (_uiPanelState == kUiPanelInventory) {
 
 			for (int i = 0; i < 6; i++) {
 				const Common::Rect &current = _inventoryButtonLocations[i];
@@ -933,8 +943,9 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 							g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 						}
 						g_engine->_scriptExecutor->_interactedObjectID = 0;
-						_isShowingInventory = false;
+						_uiPanelState = kUiPanelNone;
 						_inventoryPage = 0;
+						g_engine->setCursorMode(_cursorModeBeforeMenu);
 						updateCursor();
 						return true;
 					}
@@ -984,7 +995,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			return true;
 		}
 
-		if (_isShowingMainMenu) {
+		if (_uiPanelState == kUiPanelActionBar) {
 			for (int i = 0; i < 9; i++) {
 				const Common::Rect &current = _mainMenuButtonLocations[i];
 				if (current.contains(msg._pos)) {
@@ -992,51 +1003,57 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					switch (buttonIndex) {
 					case MainMenuButtonIndex::Talk: {
 						g_engine->setCursorMode(Script::MouseMode::Talk);
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						break;
 					}
 					case MainMenuButtonIndex::Look: {
 						g_engine->setCursorMode(Script::MouseMode::Look);
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						break;
 					}
 					case MainMenuButtonIndex::Use: {
 						g_engine->setCursorMode(Script::MouseMode::Use);
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						break;
 					}
 					case MainMenuButtonIndex::Walk: {
 						g_engine->setCursorMode(Script::MouseMode::Walk);
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						break;
 					}
 					case MainMenuButtonIndex::Inventory: {
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						openInventory(GameObjects::instance().getProtagonistObject());
 						break;
 					}
 					case MainMenuButtonIndex::InventoryUse: {
 						// Binary button 6: sets cursor mode to 0x17 (UseInventory) and copies
 						// active item ID to interacted item, only if an item is selected.
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						if (_activeInventoryItem != nullptr) {
 							g_engine->setCursorMode(Script::MouseMode::UseInventory);
 							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+						} else {
+							g_engine->setCursorMode(_cursorModeBeforeMenu);
 						}
 						break;
 					}
 					case MainMenuButtonIndex::Map: {
-						_isShowingMainMenu = false;
+						_uiPanelState = kUiPanelNone;
 						// Enter map mode from handleActionBarClick (1008:42dc) button 7.
-						if (g_engine->_mapImageFileOffset == 0 ||
-							g_engine->_mapImageFileOffset >= (uint32)g_engine->_fileStream->size()) {
+						// Binary uses scene+0x5DDB which is _mapSceneOffsets[0].
+						uint32 helpOffset = g_engine->_mapSceneOffsets[0];
+						if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
 							break;
 						}
+						// Save scene visuals before overwriting with help screen
+						memcpy(_savedPalVanilla, g_engine->_palVanilla, 256 * 3);
+						_savedDepthMap.copyFrom(g_engine->_depthMap);
 						// Load map background image, palette, and depth map from file.
 						// Binary: fileSeek(scene+0x5DDB), decodeRLERows, fileRead palette,
 						// decodeRLERows depth, drawRLEImage, setCursorMode(0x18).
-						startFadeToBlack();
-						Graphics::ManagedSurface mapBg = g_engine->readRLEImage(g_engine->_mapImageFileOffset, g_engine->_fileStream);
+						startFadeToBlack(8);
+						Graphics::ManagedSurface mapBg = g_engine->readRLEImage(helpOffset, g_engine->_fileStream);
 						_backgroundSurface.copyFrom(mapBg);
 						// Read map palette (0x300 bytes immediately after the RLE image)
 						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
@@ -1044,7 +1061,6 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						for (int p = 0; p < 256 * 3; p++) {
 							g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
 						}
-						_paletteDirty = true;
 						// Read map depth map (RLE image after palette)
 						Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
 						g_engine->_depthMap.blitFrom(mapDepth);
@@ -1058,13 +1074,19 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						break;
 					}
 					case MainMenuButtonIndex::SaveLoad: {
-						_isShowingMainMenu = false;
-						g_engine->openMainMenuDialog();
+						_uiPanelState = kUiPanelNone;
+						if (ConfMan.getBool("original_menus")) {
+							g_engine->setCursorMode(_cursorModeBeforeMenu);
+							openOriginalSaveLoadPanel();
+						} else {
+							g_engine->openMainMenuDialog();
+							g_engine->setCursorMode(_cursorModeBeforeMenu);
+						}
 						break;
 					}
 					case MainMenuButtonIndex::Close: {
-						_isShowingMainMenu = false;
-						g_engine->setCursorMode(g_engine->_scriptExecutor->_cursorModeBeforeWait);
+						_uiPanelState = kUiPanelNone;
+						g_engine->setCursorMode(_cursorModeBeforeMenu);
 						break;
 					}
 					}
@@ -1078,10 +1100,10 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// From handleInput (1008:f0ad): clicks during script execution set the
 		// click state variables and resume the script executor.
 		if (g_engine->_scriptExecutor->isExecuting()) {
-			if (_isShowingStringBox) {
+			if (_isShowingTextBox) {
 				clearStringBox();
 			}
-			if (_isShowingDialogueChoice) {
+			if (_uiPanelState == kUiPanelDialogue) {
 				// Handle dialogue choice click
 			}
 			// Set script click state (original: g_wScriptClickFlag=0, X=mouseX, Y=mouseY, Result=1)
@@ -1183,7 +1205,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			// From handleInput: right-click during script execution opens the
 			// map/save panel ONLY if none of these are active:
 			// - IsSceneInitRun, text box, dialogue, overlay, sound/music waits
-			if (!_isShowingStringBox && !_isShowingDialogueChoice &&
+			if (!_isShowingTextBox && _uiPanelState != kUiPanelDialogue &&
 				!g_engine->_scriptExecutor->_overlayTextStageActive &&
 				!g_engine->_scriptExecutor->_waitForSoundPlayback &&
 				!g_engine->_scriptExecutor->_waitForMusicControl &&
@@ -1200,10 +1222,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 		// From handleInput (1008:e8bf): right-click when not executing
 		// opens the action bar at the mouse position.
-		if (!_isShowingMainMenu) {
+		if (_uiPanelState != kUiPanelActionBar) {
 			openMainMenu(msg._pos);
 		} else {
-			_isShowingMainMenu = false;
+			_uiPanelState = kUiPanelNone;
+			g_engine->setCursorMode(_cursorModeBeforeMenu);
 		}
 		updateCursor();
 		return true;
@@ -1239,6 +1262,7 @@ bool View1::msgAction(const ActionMessage &msg) {
 		return true;
 	case Macs2::kMacs2ActionOpenGMM:
 		g_engine->openMainMenuDialog();
+		updateCursor();
 		return true;
 	default:
 		break;
@@ -1259,7 +1283,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
-	if (_isShowingStringBox && !_isShowingDialogueChoice) {
+	if (_isShowingTextBox && _uiPanelState != kUiPanelDialogue) {
 		clearStringBox();
 		return true;
 	}
@@ -1267,7 +1291,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Binary (handleInput 1008:edff): UI panels only open when not executing and cursor != Disabled.
 	if (!g_engine->_scriptExecutor->isExecuting() && g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::Disabled) {
 		if (msg.ascii == (uint16)'i') {
-			if (!_isShowingInventory) {
+			if (_uiPanelState != kUiPanelInventory) {
 				openInventory(GameObjects::instance().getProtagonistObject());
 			} else {
 				closeInventory();
@@ -1309,7 +1333,7 @@ void View1::draw() {
 	drawCharacters(s);
 	drawOverlayTextEntries();
 
-	if (_isShowingStringBox) {
+	if (_isShowingTextBox) {
 		showStringBox(_drawnStringBox);
 		if (currentSpeechActData.speaker != nullptr) {
 			drawCurrentSpeaker(s);
@@ -1318,11 +1342,11 @@ void View1::draw() {
 
 	// We keep the inventory on but don't draw it in case we display a string
 	// i.e. a description of an item
-	if (_isShowingInventory && !_isShowingStringBox) {
+	if (_uiPanelState == kUiPanelInventory && !_isShowingTextBox) {
 		drawInventory(s);
 	}
 
-	if (_isShowingMainMenu) {
+	if (_uiPanelState == kUiPanelActionBar) {
 		drawMainMenu(s);
 	}
 
@@ -1335,7 +1359,7 @@ void View1::draw() {
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
-	if (_isShowingMainMenu && g_engine->enhancementEnabled(kEnhUIUX)) {
+	if (_uiPanelState == kUiPanelActionBar && g_engine->enhancementEnabled(kEnhUIUX)) {
 		for (int i = 0; i < (int)_mainMenuButtonLocations.size(); i++) {
 			if (_mainMenuButtonLocations[i].contains(mousePos)) {
 				static const char *const buttonNames[] = {
@@ -1348,7 +1372,7 @@ void View1::draw() {
 		}
 	}
 
-	if (_isShowingInventory && g_engine->enhancementEnabled(kEnhUIUX)) {
+	if (_uiPanelState == kUiPanelInventory && g_engine->enhancementEnabled(kEnhUIUX)) {
 		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
 			Common::String name = GameObjects::instance()._objectNames[hoveredObject->_index];
@@ -1449,7 +1473,7 @@ bool View1::tick() {
 	}
 
 	// Advance portrait animation once per tick (matching handleDialogueInput 1008:b4bd)
-	if (_isShowingStringBox && currentSpeechActData.speaker != nullptr && currentSpeechActData.mouthAnimActive) {
+	if (_isShowingTextBox && currentSpeechActData.speaker != nullptr && currentSpeechActData.mouthAnimActive) {
 		Character *speaker = currentSpeechActData.speaker;
 		if (currentSpeechActData.mouthAnimCounter < 1) {
 			// counter < 1: advance alternate blob (Blobs[18]) with mode 2
@@ -1472,7 +1496,11 @@ bool View1::tick() {
 		}
 	}
 
-	drawAllCharacters();
+	// Binary gameTick: drawScene(1) (which calls walkAlongPath for all characters)
+	// is only called when g_wUiPanelState == 0 and no dialogue panel is showing. TODO: change to one var
+	if (_uiPanelState == kUiPanelNone) {
+		drawAllCharacters();
+	}
 
 	redraw();
 	return true;
@@ -1871,7 +1899,7 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 
 void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
 	setStringBox(strings);
-	_isShowingDialogueChoice = false;
+	_uiPanelState = kUiPanelNone;
 	_dialogueChoiceCount = 0;
 	_continueScriptAfterUI = true;
 
@@ -2101,12 +2129,12 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT);
 
 	showSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
-	_isShowingDialogueChoice = true;
+	_uiPanelState = kUiPanelDialogue;
 	_dialogueChoiceCount = choices.size();
 }
 
 void View1::triggerDialogueChoice(uint8 index) {
-	if (!_isShowingDialogueChoice || index < 1 || index > _dialogueChoiceCount) {
+	if (_uiPanelState != kUiPanelDialogue || index < 1 || index > _dialogueChoiceCount) {
 		warning("Ignoring dialogue choice %u without an active matching choice UI", index);
 		return;
 	}
@@ -2525,8 +2553,11 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 
 	Common::Array<uint8> &blob = useOverload ? _gameObject->overloadAnimation : _gameObject->_blobs[blobIndex];
 
-	// Advance and retrieve current frame (called once per draw = once per tick)
-	BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
+	// Binary: animation only advances when drawScene(1) is called (g_wUiPanelState == 0)
+	View1 *view = (View1 *)g_engine->findView("View1");
+	if (view == nullptr || view->_uiPanelState == View1::kUiPanelNone) {
+		BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
+	}
 	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(blob, false, 0x0);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
@@ -2916,6 +2947,7 @@ void Button::render(Graphics::ManagedSurface &s) {
 
 void View1::openOriginalSaveLoadPanel() {
 	_isMapPanelActive = true;
+	_uiPanelState = kUiPanelSaveLoad;
 	_mapPanelSubMode = MapPanelSubMode::None;
 	_saveConfirmArmed = false;
 	_loadConfirmArmed = false;
@@ -2935,6 +2967,7 @@ void View1::openOriginalSaveLoadPanel() {
 
 void View1::closeOriginalSaveLoadPanel() {
 	_isMapPanelActive = false;
+	_uiPanelState = kUiPanelNone;
 	_mapPanelSubMode = MapPanelSubMode::None;
 	redraw();
 }
