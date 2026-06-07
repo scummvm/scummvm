@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-06 11:26+0000\n"
-"PO-Revision-Date: 2026-06-02 11:22+0000\n"
+"PO-Revision-Date: 2026-06-07 13:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13782,10 +13782,8 @@ msgid "Fire / select"
 msgstr "Tirer / Sélectionner"
 
 #: engines/scumm/metaengine.cpp:1186
-#, fuzzy
-#| msgid "Skip / menu back"
 msgid "Walk / menu back"
-msgstr "Passer / menu retour"
+msgstr "Marcher / menu retour"
 
 #: engines/scumm/metaengine.cpp:1191
 msgid "Skip / menu back"
