@@ -186,9 +186,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// g_bMovementFinishedFlag [0x1020]: 1 byte
 	// Per-frame latch: cleared by drawAllCharacters, set by walkAlongPath when a
-	// character reaches destination, checked at end of frame. Always 0 is safe on load.
-	uint8 movementFinishedFlag = 0;
+	// character reaches destination, checked at end of frame.
+	uint8 movementFinishedFlag = _movementFinishedFlag ? 1 : 0;
 	s.syncAsByte(movementFinishedFlag);
+	if (s.isLoading())
+		_movementFinishedFlag = (movementFinishedFlag != 0);
 
 	// g_wInteractedObjectId [0x1024]: 2 bytes
 	s.syncAsUint16LE(_scriptExecutor->_interactedObjectID);
