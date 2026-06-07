@@ -377,10 +377,10 @@ public:
 
 	uint16 getWalkabilityAt(const Common::Point &p);
 
-	int measureString(Common::String &s);
+	int measureString(const Common::String &s);
 
-	int measureStrings(Common::StringArray sa);
-	int measureStringsVertically(Common::StringArray sa);
+	int measureStrings(const Common::StringArray &sa);
+	int measureStringsVertically(const Common::StringArray &sa);
 
 	Common::StringArray decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings, int sceneId = 0, int objectId = 0);
 

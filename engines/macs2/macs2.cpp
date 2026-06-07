@@ -1207,7 +1207,7 @@ uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
 	return remappedValue != 0 ? remappedValue : 0xFF;
 }
 
-int Macs2Engine::measureString(Common::String &s) {
+int Macs2Engine::measureString(const Common::String &s) {
 	int sum = 0;
 	GlyphData currentGlyph;
 	bool found = false;
@@ -1230,12 +1230,12 @@ int Macs2Engine::measureString(Common::String &s) {
 	return sum;
 }
 
-int Macs2Engine::measureStringsVertically(Common::StringArray sa) {
+int Macs2Engine::measureStringsVertically(const Common::StringArray &sa) {
 	// This is implemented around l0037_B318:
 	return sa.size() * (maxGlyphHeight + 2);
 }
 
-int Macs2Engine::measureStrings(Common::StringArray sa) {
+int Macs2Engine::measureStrings(const Common::StringArray &sa) {
 	int max = -1;
 	for (auto iter = sa.begin(); iter != sa.end(); iter++) {
 		max = MAX(measureString(*iter), max);
@@ -1543,23 +1543,19 @@ bool Macs2Engine::tick() {
 }
 
 void GlyphData::readFromeFile(Common::File &file) {
-	int64 stride = file.pos();
 	_ascii = file.readByte();
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
 	_data = new byte[_width * _height];
 	file.read(_data, _width * _height);
-	stride = file.pos() - stride;
 }
 
 void GlyphData::readFromMemory(Common::MemoryReadStream *stream) {
-	int64 stride = stream->pos();
 	_ascii = stream->readByte();
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
 	_data = new byte[_width * _height];
 	stream->read(_data, _width * _height);
-	stride = stream->pos() - stride;
 }
 
 void AnimFrame::readFromeFile(Common::File &file) {

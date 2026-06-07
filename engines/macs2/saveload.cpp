@@ -31,18 +31,18 @@ namespace Macs2 {
 // Save files are interchangeable between ScummVM and the original game.
 
 Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
-	const char *SAVE_MAGIC = "AHFFMSGM0100";
+	const byte SAVE_MAGIC[12] = {'A','H','F','F','M','S','G','M','0','1','0','0'};
 	View1 *view1 = (View1 *)findView("View1");
 
 	// --- Header: 12-byte magic ---
 	if (s.isSaving()) {
 		byte magic[12];
-		memcpy(magic, SAVE_MAGIC, 12);
+		memcpy(magic, SAVE_MAGIC, sizeof(SAVE_MAGIC));
 		s.syncBytes(magic, 12);
 	} else {
-		char magic[12];
-		s.syncBytes((byte *)magic, 12);
-		if (memcmp(magic, SAVE_MAGIC, 12) != 0)
+		byte magic[12];
+		s.syncBytes(magic, 12);
+		if (memcmp(magic, SAVE_MAGIC, sizeof(SAVE_MAGIC)) != 0)
 			return Common::kReadingFailed;
 	}
 
