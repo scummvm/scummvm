@@ -49,12 +49,6 @@ extern void room_221_preload();
 void section_2_init() {
 }
 
-void section_2_walker() {
-}
-
-void section_2_interface() {
-}
-
 void section_2_music() {
 }
 

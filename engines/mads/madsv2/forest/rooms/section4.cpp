@@ -46,12 +46,6 @@ extern void room_420_preload();
 void section_4_init() {
 }
 
-void section_4_walker() {
-}
-
-void section_4_interface() {
-}
-
 void section_4_music() {
 }
 

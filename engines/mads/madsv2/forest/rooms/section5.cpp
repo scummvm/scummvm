@@ -46,12 +46,6 @@ void section_5_init() {
 	player.scaling_velocity = true;
 }
 
-void section_5_walker() {
-}
-
-void section_5_interface() {
-}
-
 void section_5_music() {
 }
 

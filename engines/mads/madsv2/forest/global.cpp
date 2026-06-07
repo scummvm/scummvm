@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/extra.h"
 
@@ -168,6 +169,30 @@ void sync_room(Common::Serializer &s) {
 	default: break;
 	}
 }
+
+void global_section_walker() {
+	char buf[80];
+
+	Common::strcpy_s(buf, player.series_name);
+	global[g017] = -1;
+
+	if (global[g016]) {
+		*player.series_name = '\0';
+	} else if (!player.force_series) {
+		Common::strcpy_s(player.series_name, "B");
+	}
+
+	if (strcmp(player.series_name, buf))
+		player.walker_must_reload = true;
+
+	player.scaling_velocity = true;
+}
+
+void global_section_interface() {
+	Common::strcpy_s(kernel.interface, kernel_interface_name(0));
+	pal_change_color(254, 56, 47, 32);
+}
+
 
 static void global_anim1_1(int arg_0, int arg_2, int16 *arg_4) {
 	if (kernel_anim[arg_0].frame == *arg_4)

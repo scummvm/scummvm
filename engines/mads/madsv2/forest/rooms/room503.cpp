@@ -78,8 +78,9 @@ void room_503_preload() {
 	room_parser_code_pointer = room_503_parser;
 	room_daemon_code_pointer = room_503_daemon;
 
-	section_1_walker();
-	section_1_interface();
+	global_section_walker();
+	global_section_interface();
+	player.walker_must_reload = true;
 }
 
 } // namespace Rooms

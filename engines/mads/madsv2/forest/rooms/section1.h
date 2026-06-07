@@ -30,8 +30,6 @@ namespace MADSV2 {
 namespace Forest {
 namespace Rooms {
 
-extern void section_1_walker();
-extern void section_1_interface();
 extern void section_1_music();
 
 } // namespace Rooms

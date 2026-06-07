@@ -569,8 +569,8 @@ void room_199_preload() {
 
 	global[g016] = -1;
 	player.walker_visible = false;
-	section_1_walker();
-	section_1_interface();
+	global_section_walker();
+	global_section_interface();
 }
 
 } // namespace Rooms

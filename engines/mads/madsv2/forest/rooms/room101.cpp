@@ -1120,8 +1120,8 @@ void room_101_preload() {
 	if (flags[0] == -4)
 		global[g016] = -1;
 
-	section_1_walker();
-	section_1_interface();
+	global_section_walker();
+	global_section_interface();
 	player.walker_must_reload = true;
 }
 

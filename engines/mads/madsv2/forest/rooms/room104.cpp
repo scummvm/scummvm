@@ -974,8 +974,8 @@ void room_104_preload() {
 	room_daemon_code_pointer     = room_104_daemon;
 
 	global[g016] = (global[g101] || room_id == 103) ? -1 : 0;
-	section_1_walker();
-	section_1_interface();
+	global_section_walker();
+	global_section_interface();
 	player.walker_must_reload = true;
 }
 

@@ -50,12 +50,6 @@ extern void room_322_preload();
 void section_3_init() {
 }
 
-void section_3_walker() {
-}
-
-void section_3_interface() {
-}
-
 void section_3_music() {
 }
 

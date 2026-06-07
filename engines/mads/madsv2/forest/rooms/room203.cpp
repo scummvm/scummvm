@@ -1858,8 +1858,9 @@ void room_203_preload() {
 	room_pre_parser_code_pointer = room_203_pre_parser;
 	room_parser_code_pointer     = room_203_parser;
 	room_daemon_code_pointer     = room_203_daemon;
-	section_2_walker();
-	section_2_interface();
+
+	global_section_walker();
+	global_section_interface();
 	player.walker_must_reload = true;
 }
 

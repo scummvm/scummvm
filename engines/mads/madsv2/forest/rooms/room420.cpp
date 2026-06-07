@@ -78,8 +78,12 @@ void room_420_preload() {
 	room_parser_code_pointer = room_420_parser;
 	room_daemon_code_pointer = room_420_daemon;
 
-	section_1_walker();
-	section_1_interface();
+	if (flags[31] == -4)
+		global[g016] = -1;
+
+	global_section_walker();
+	global_section_interface();
+	player.walker_must_reload = true;
 }
 
 } // namespace Rooms
