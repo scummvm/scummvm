@@ -36,28 +36,24 @@ namespace Sky {
 // time till hotspot fades out after stopped touching
 #define HOTSPOT_FADEOUT 36
 // hotspot icon size
-#define HOTSPOT_dim 36
+#define HOTSPOT_DIM 36
 // exit is just one icon, so half width as straddles centre point
-#define HOTSPOT_ExitDim (HOTSPOT_dim >> 1)
-// closed hotspot radius
-#define HOTSPOT_RADx 8
-#define HOTSPOT_RAD 16
-
+#define HOTSPOT_EXIT_DIM (HOTSPOT_DIM >> 1)
 // how far the popup icons sit above the midy
-#define HOTSPOT_yoff 48
+#define HOTSPOT_YOFF 48
 // differentiate exits, just incase
-#define HOTSPOT_exit_yoff 48
+#define HOTSPOT_EXIT_YOFF 48
 
 // use on cursor offset
-#define HOTSPOT_useon_yoff (-55)
+#define HOTSPOT_USE_ON_YOFF (-55)
 
 // inv button (bottom left)
-#define HOTSPOT_invx (TOP_LEFT_X + 40)
-#define HOTSPOT_invy (TOP_LEFT_Y + FULL_SCREEN_HEIGHT-35)
+#define HOTSPOT_INVX (TOP_LEFT_X + 40)
+#define HOTSPOT_INVY (TOP_LEFT_Y + FULL_SCREEN_HEIGHT-35)
 
 // control panel button (top left)
-#define HOTSPOT_optionsx (TOP_LEFT_X + 30)
-#define HOTSPOT_optionsy (TOP_LEFT_Y + 30)
+#define HOTSPOT_OPTIONSX (TOP_LEFT_X + 30)
+#define HOTSPOT_OPTIONSY (TOP_LEFT_Y + 30)
 
 // help button (top right)
 #define HOTSPOT_helpx (TOP_LEFT_X + FULL_SCREEN_WIDTH-30)
