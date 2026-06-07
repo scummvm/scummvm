@@ -49,6 +49,7 @@ Common::Array<WindowFlag> getWindowFlags() {
 		{ "Settings",			&_state->_w.settings		 },
 		{ "Vars",				&_state->_w.vars			 },
 		{ "Watched Vars",		&_state->_w.watchedVars		 },
+		{ "Windows",			&_state->_w.windows			 },
 	};
 }
 

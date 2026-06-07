@@ -99,6 +99,7 @@ typedef struct ImGuiWindows {
 	bool executionContext = false;
 	bool search = false;
 	bool imageViewer = false;
+	bool windows = false;
 } ImGuiWindows;
 
 
@@ -373,6 +374,7 @@ void showVars();
 void showWatchedVars();
 void showBreakpointList();
 void showArchive();
+void showWindows();
 
 // dt-score.cpp
 void showScore();
