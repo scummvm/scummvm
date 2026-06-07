@@ -1468,12 +1468,26 @@ bool View1::tick() {
 		}
 	}
 
+	drawAllCharacters();
+
+	redraw();
+	return true;
+}
+
+void View1::drawAllCharacters() {
+	// Binary drawAllCharacters (1008:90a2): g_bMovementFinishedFlag = 0 at start
+	g_engine->_movementFinishedFlag = false;
+
 	for (auto currentCharacter : _characters) {
 		currentCharacter->update();
 	}
 
-	redraw();
-	return true;
+	// Binary drawAllCharacters (1008:90a2): after all characters processed,
+	// if g_bMovementFinishedFlag != 0 → runScriptExecutor with _isRepeatRun=1
+	if (g_engine->_movementFinishedFlag) {
+		g_engine->_scriptExecutor->_isRepeatRun = true;
+		g_engine->scheduleRun();
+	}
 }
 
 void View1::drawInventory(Graphics::ManagedSurface &s) {
@@ -2707,7 +2721,9 @@ void Character::update() {
 			_hasMotionVerticalOffset = false;
 		}
 		// Standing orientation = walking direction + 8
-		if (_gameObject->_orientation < 9)
+		// Binary: g_bMovementFinishedFlag is only set when orientation < 9 (was walking)
+		bool wasWalking = (_gameObject->_orientation < 9);
+		if (wasWalking)
 			_gameObject->_orientation += 8;
 		if (_pickedUpObject != nullptr) {
 			_pickupFrameCounter = 0;
@@ -2716,11 +2732,12 @@ void Character::update() {
 			_gameObject->_orientation = 0x11;
 			return;
 		}
-		if (_executeScriptOnFinishLerp) {
-			_executeScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->_isRepeatRun = true;
-			g_engine->scheduleRun();
+		// Binary walkAlongPath (1008:1b8f): g_bMovementFinishedFlag = 1
+		// only when orientation was < 9 (character was actively walking).
+		if (wasWalking) {
+			g_engine->_movementFinishedFlag = true;
 		}
+		_executeScriptOnFinishLerp = false;
 		return;
 	}
 
