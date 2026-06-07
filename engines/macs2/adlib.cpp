@@ -288,7 +288,7 @@ void Adlib::onTimer() {
 					if (voice == _numOplChannels) {
 						uint8 maxAge = 0;
 						voice = _numOplChannels; // sentinel
-						for (uint8 v = 0; v < _numOplChannels; v++) {
+						for (uint16 v = 0; v < _numOplChannels; v++) {
 							if (_voiceAge[v] != 0)
 								_voiceAge[v]++;
 							if (_voiceAge[v] > maxAge) {
@@ -385,7 +385,7 @@ void Adlib::onTimer() {
 			_streamBytesConsumed += 2;
 
 			// Age all voices
-			for (uint8 v = 0; v < _numOplChannels; v++) {
+			for (uint16 v = 0; v < _numOplChannels; v++) {
 				if (_voiceAge[v] != 0)
 					_voiceAge[v]++;
 			}
@@ -434,13 +434,13 @@ void Adlib::onTimer() {
 				}
 			} else if (data1 == 0x69) {
 				_channelPitchBend[channel] = (uint8)(-(int8)data2);
-				for (uint8 v = 0; v < _numOplChannels; v++) {
+				for (uint16 v = 0; v < _numOplChannels; v++) {
 					if (_voiceMidiChannel[v] == channel && _voiceAge[v] == 0)
 						adlibSetupChannel(v, _voiceNote[v], (uint8)(-(int8)data2));
 				}
 			} else if (data1 == 0x68) {
 				_channelPitchBend[channel] = data2;
-				for (uint8 v = 0; v < _numOplChannels; v++) {
+				for (uint16 v = 0; v < _numOplChannels; v++) {
 					if (_voiceMidiChannel[v] == channel && _voiceAge[v] == 0)
 						adlibSetupChannel(v, _voiceNote[v], data2);
 				}
