@@ -503,6 +503,7 @@ static void room_204_anim5() {
 		scratch._a4 = -1;
 	}
 }
+
 static void room_204_anim6() {
 	if (kernel_anim[aa[5]].frame != aainfo[5]._frame) {
 		aainfo[5]._frame = kernel_anim[aa[5]].frame;

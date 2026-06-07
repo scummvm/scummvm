@@ -1083,6 +1083,7 @@ static void room_203_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g150] = -1;
 			local->_90 = global[g046] ? 16 : 15;
+			break;
 
 		case 31:
 			kernel_timing_trigger(40, 106);
