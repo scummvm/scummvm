@@ -1480,9 +1480,15 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	// First, draw the whole background
 	// Happens around l0037_47A1:
 
+	// Original uses two separate icon index tables:
+	// DS:0x0E for protagonist inventory, DS:0x1A for container inventory
+	const Common::Array<uint16> &iconIndices = isInventorySourceProtagonist()
+		? g_engine->inventoryIconIndices
+		: g_engine->containerInventoryIconIndices;
+
 	uint16 maxWidthButtonIcon = 0;  // [0FE0h]
 	uint16 maxHeightButtonIcon = 0; // [0FE2h]
-	for (uint16 index : g_engine->inventoryIconIndices) {
+	for (uint16 index : iconIndices) {
 		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
 		maxWidthButtonIcon = MAX(maxWidthButtonIcon, currentFrame._width);
 		// TODO: Not sure if this one is needed
@@ -1536,7 +1542,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 
 	// Draw the buttons at the bottom
 	for (int i = 0; i < 6; i++) {
-		uint16 index = g_engine->inventoryIconIndices[i];
+		uint16 index = iconIndices[i];
 		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
 		drawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
 		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame._width / 2;

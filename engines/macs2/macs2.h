@@ -336,6 +336,7 @@ public:
 	uint16 getHotspotAtPoint(const Common::Point &p);
 
 	Common::Array<uint16> inventoryIconIndices;
+	Common::Array<uint16> containerInventoryIconIndices;
 
 	void runScriptExecutor(bool firstRun = false) {
 		_scriptExecutor->run(firstRun);
