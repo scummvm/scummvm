@@ -35,6 +35,7 @@
 #include "common/util.h"
 #include "engines/util.h"
 #include "gameobjects.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -1490,6 +1491,8 @@ Common::Error Macs2Engine::run() {
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
+
+	CursorMan.showMouse(false);
 
 	// Initialize Adlib
 	_adlib->init();
