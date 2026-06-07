@@ -22,8 +22,9 @@
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
 
+#include "director/archive.h"
 #include "director/cast.h"
-#include "director/castmember/text.h"
+#include "director/castmember/castmember.h"
 #include "director/movie.h"
 
 namespace Director {
@@ -31,57 +32,82 @@ namespace DT {
 
 static const char *searchModeNames[] = {
 	"All",
-	"Handler Names",
-	"Script Body",
+	"Handlers",
+	"Variables",
+	"Body",
 };
 
+static bool containsQuery(const Common::String &s, const Common::String &query) {
+	Common::String lower = s;
+	lower.toLowercase();
+	return lower.contains(query.c_str());
+}
+
 static void searchCast(Cast *cast, int castLibID, const Common::String &query, Director::Lingo *lingo, Movie *movie, SearchMode mode) {
-	if (!cast) return;
-	if (!cast->_lingoArchive) return;
+	if (!cast || !cast->_lingoArchive)
+		return;
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
 		if (cast->_lingoArchive->scriptContexts[i].empty())
 			continue;
 
 		for (auto &scriptContext : cast->_lingoArchive->scriptContexts[i]) {
+			// check property names once per script context, shared across all its handlers
+			bool propertyMatch = false;
+			if (mode == kSearchAll || mode == kSearchVariables) {
+				for (const Common::String &name : scriptContext._value->getPropertyNames()) {
+					if (containsQuery(name, query)) {
+						propertyMatch = true;
+						break;
+					}
+				}
+			}
+
+			// also search the cast member name itself
+			bool castNameMatch = false;
+			if (mode == kSearchAll || mode == kSearchHandlers) {
+				CastMember *cm = cast->getCastMember(scriptContext._key, false);
+				if (cm && containsQuery(cm->getName(), query))
+					castNameMatch = true;
+			}
+
 			for (auto &functionHandler : scriptContext._value->_functionHandlers) {
 				bool found = false;
 
-				// Search handler name
-				if (mode == kSearchAll || mode == kSearchHandlerNames) {
-					Common::String handlerLower = functionHandler._key;
-					handlerLower.toLowercase();
-					if (handlerLower.contains(query.c_str()))
+				// handler name and cast member name
+				if (mode == kSearchAll || mode == kSearchHandlers) {
+					if (castNameMatch || containsQuery(functionHandler._key, query))
 						found = true;
+				}
 
-					// Search property and global names
-					if (!found) {
+				// variable names -> property (from ScriptContext), argument and global (from lingodec handler)
+				if (!found && (mode == kSearchAll || mode == kSearchVariables)) {
+					if (propertyMatch) {
+						found = true;
+					} else {
 						CastMemberID memberID(scriptContext._key, castLibID);
-						ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
-						for (auto &name : script.propertyNames) {
-							Common::String n = name;
-							n.toLowercase();
-							if (n.contains(query.c_str())) { found = true; break; }
-						}
-						if (!found) {
-							for (auto &name : script.globalNames) {
-								Common::String n = name;
-								n.toLowercase();
-								if (n.contains(query.c_str())) { found = true; break; }
+						const LingoDec::Handler *ldHandler = getHandler(cast, memberID, functionHandler._key);
+						if (ldHandler) {
+							for (const Common::String &name : ldHandler->argumentNames) {
+								if (containsQuery(name, query)) { found = true; break; }
+							}
+							if (!found) {
+								for (const Common::String &name : ldHandler->globalNames) {
+									if (containsQuery(name, query)) { found = true; break; }
+								}
 							}
 						}
 					}
 				}
 
-				// Search script body via decodeInstruction
-				if (!found && lingo && (mode == kSearchAll || mode == kSearchScriptBody)) {
+				// acript body via decoded bytecode
+				if (!found && lingo && (mode == kSearchAll || mode == kSearchBody)) {
 					Symbol &sym = functionHandler._value;
 					if (sym.type == HANDLER && sym.u.defn) {
 						uint pc = 0;
 						while (pc < sym.u.defn->size()) {
 							Common::String line = lingo->decodeInstruction(sym.u.defn, pc, &pc);
-							line.toLowercase();
-							if (line.contains(query.c_str())) {
+							if (containsQuery(line, query)) {
 								found = true;
 								break;
 							}
@@ -130,7 +156,7 @@ void showSearchBar() {
 	auto &search = _state->_search;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(560, 320), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Search", &_state->_w.search)) {
 		_state->_dbg._highlightQuery = "";
@@ -144,6 +170,9 @@ void showSearchBar() {
 
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(-80);
+	// focus the input field when the window first opens
+	if (ImGui::IsWindowAppearing())
+		ImGui::SetKeyboardFocusHere();
 	if (ImGui::InputText("##search", search.input, sizeof(search.input),
 			ImGuiInputTextFlags_EnterReturnsTrue))
 		search.dirty = true;
@@ -156,35 +185,62 @@ void showSearchBar() {
 		search.dirty = false;
 		Common::String query(search.input);
 		query.toLowercase();
-		if (!query.empty())
+		if (query.empty()) {
+			// clear results immediately when the input is erased
+			search.results.clear();
+			_state->_dbg._highlightQuery = "";
+		} else {
 			runSearch(query, (SearchMode)search.mode);
+		}
 	}
 
-	// display results
 	ImGui::Separator();
 	ImGui::Text("Results: %d", (int)search.results.size());
 	ImGui::Separator();
 
-	if (ImGui::BeginTable("##results", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
-		ImGui::TableSetupColumn("Handler", 0, 240.f);
-		ImGui::TableSetupColumn("Cast", ImGuiTableColumnFlags_WidthStretch, 240.f);
+	ImVec2 tableSize = ImGui::GetContentRegionAvail();
+	if (ImGui::BeginTable("##results", 3,
+			ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit |
+			ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg |
+			ImGuiTableFlags_ScrollY, tableSize)) {
+		ImGui::TableSetupScrollFreeze(0, 1);
+		ImGui::TableSetupColumn("Handler", 0, 200.f);
+		ImGui::TableSetupColumn("Type", 0, 75.f);
+		ImGui::TableSetupColumn("Cast Member", ImGuiTableColumnFlags_WidthStretch, 200.f);
 		ImGui::TableHeadersRow();
 
 		for (int i = 0; i < (int)search.results.size(); i++) {
-			auto &script = search.results[i];
+			ImGuiScript &script = search.results[i];
 			ImGui::PushID(i);
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			if (ImGui::Selectable(script.handlerName.c_str())) {
+
+			if (ImGui::Selectable(script.handlerName.c_str(), false,
+					ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap)) {
 				Common::String q(search.input);
 				q.toLowercase();
 				_state->_dbg._highlightQuery = q;
-
 				addToOpenHandlers(script);
 				_state->_dbg._goToDefinition = true;
 			}
+
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", script.id.asString().c_str());
+			ImGui::TextUnformatted(scriptType2str(script.type));
+
+			ImGui::TableNextColumn();
+			// show human-readable cast member name, falling back to the ID string
+			Common::String castLabel = script.id.asString();
+			Cast *resCast = nullptr;
+			if (script.id.castLib == SHARED_CAST_LIB)
+				resCast = movie->getSharedCast();
+			else
+				resCast = movie->getCasts()->getValOrDefault(script.id.castLib, nullptr);
+			if (resCast) {
+				CastMember *cm = resCast->getCastMember(script.id.member, false);
+				if (cm) castLabel = getDisplayName(cm);
+			}
+			ImGui::TextUnformatted(castLabel.c_str());
+
 			ImGui::PopID();
 		}
 		ImGui::EndTable();
