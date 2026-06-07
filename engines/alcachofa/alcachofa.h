@@ -162,6 +162,7 @@ public:
 			(f == kSupportsReturnToLauncher);
 	};
 
+	bool isInSpecialGameLoop() const { return !_eventLoopSemaphore.isReleased(); }
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return canLoadGameStateCurrently(msg);

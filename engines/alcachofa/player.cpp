@@ -354,9 +354,11 @@ void Player::setActiveCharacter(MainCharacterKind kind) {
 }
 
 bool Player::isAllowedToOpenMenu() {
-	return !g_engine->menu().isOpen() &&
-		   g_engine->game().isAllowedToOpenMenu() &&
-		   !_isInTemporaryRoom; // we cannot reliably store this state across multiple room changes
+	return
+		!g_engine->menu().isOpen() &&
+		!g_engine->isInSpecialGameLoop() &&
+		!_isInTemporaryRoom && // we cannot reliably store this state across multiple room changes
+		g_engine->game().isAllowedToOpenMenu();
 }
 
 Room *Player::lastGameRoom() const {

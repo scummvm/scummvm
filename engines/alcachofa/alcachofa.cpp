@@ -226,6 +226,9 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 		g_system->delayMillis(decoder->getTimeToNextFrame());
 	}
 	decoder->stop();
+
+	_input.nextFrame(); // otherwise the menu might open after just cancelling a video
+	_renderer->begin(); // we were within a frame, this resets the state
 }
 
 void AlcachofaEngine::fadeExit() {
@@ -317,7 +320,7 @@ void AlcachofaEngine::pauseEngineIntern(bool pause) {
 bool AlcachofaEngine::canLoadGameStateCurrently(U32String *msg) {
 	if (_menu == nullptr)
 		return false; // the autosave wants to trigger even during error() while starting the game
-	if (!_eventLoopSemaphore.isReleased())
+	if (!isInSpecialGameLoop())
 		return false;
 	return
 		(menu().isOpen() && menu().interactionSemaphore().isReleased()) ||
