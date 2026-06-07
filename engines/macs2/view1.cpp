@@ -1562,7 +1562,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	for (int i = 0; i < 6; i++) {
 		uint16 index = iconIndices[i];
 		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
-		drawPressedBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
+		drawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
 		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame._width / 2;
 		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame._height / 2;
 		_inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
@@ -1573,7 +1573,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 							(slotW + 4) * 5 + 2, (slotH + 4) * 2 + 2);
 	s.rawBlitFrom(*buffer, sourceRect, Common::Point(sourceRect.left, sourceRect.top));
 
-	drawBorderOuterHighlights(Common::Point(
+	drawPressedBorderOuterHighlights(Common::Point(
 								  (s.w / 2) - ((slotW + 4) * 5 + 4) / 2,
 								  y + 4),
 							  Common::Point(
@@ -2012,14 +2012,14 @@ void View1::drawPressedBorderOuterHighlights(const Common::Point &pos, const Com
 	drawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
 	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1011, s);
 	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1011, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
-	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1012, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1012, s);
 }
 
 Macs2::AnimFrame *View1::getUISprite(uint32 offset) {
-	if (offset == 0x1012) {
+	if (offset == 0x1011) {
 		return &g_engine->_imageResources[30];
-	} else if (offset == 0x1011) {
+	} else if (offset == 0x1012) {
 		return &g_engine->_imageResources[32];
 	} else if (offset == 0x1010) {
 		return nullptr;
