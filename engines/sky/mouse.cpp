@@ -349,7 +349,7 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 		proxFrame = 0;
 
 	// near inv button?
-	if (yPos > HOTSPOT_invy && xPos < HOTSPOT_invx)
+	if (yPos > HOTSPOT_INVY && xPos < HOTSPOT_INVX)
 		return  0;
 
 	// not on same as last time, or was not on anything previously, so re-scan all objects
@@ -561,14 +561,84 @@ bool Mouse::hasSingleInteractIcon(uint32 id) {
 }
 
 uint16 Mouse::giveXCood(Compact *itemData, uint32 id) {
+
+	struct MouseXMap {
+		int id;
+		int mid;
+	} mouseXMap[] = {
+		{ 4112, 258 }, // cupboard door
+		{ 4113, 254 }, // sandwich
+		{ 4114, 254 }, // spanner
+		{ 12358, 428 }, // bellevue - missing exit
+		{ 12681, 428 }, // bellevue
+		{ 12349, 142 }, // bellevue
+		{ 12347, 428 }, // bellevue
+		{ 90, 404 }, // first room, door
+		{ 97, 190 }, // ledge room, door
+		{ 4116, 269 }, // elevator
+		{ 4119, 269 }, // hole
+		{ 4110, 356 }, // lathe
+		{ 8248, 357 }, // walkway to security lobby
+		{ 8238, 181 }, // walkway to power
+		{ 8317, 426 }, // walkway to crash
+		{ 8341, 173 }, // factory to walkway
+		{ 8344, 433 }, // factory to factory 2
+		{ 8500, 224 }, // sensors
+		{ 8355, 428 }, // factory 2 to factory 3
+		{ 8446, 226 }, // putty
+		{ 8438, 226 }, // gangway
+		{ 12680, 201 }, // exit
+		{ 12679, 307 }, // exit
+		{ 12678, 179 }, // exit
+		{ 12677, 319 }, // exit
+		{ 12324, 191 }, // exit
+		{ 12336, 182 }, // exit
+		{ 12442, 376 }, // exit
+		{ 8483, 225 }, // console
+		{ 12641, 158 }, // exit
+		// linc
+		{ 12633, 190 }, // maze
+		{ 24586, 210 }, // maze
+		{ 24592, 288 }, // maze
+		{ 24593, 400 }, // maze
+		{ 24594, 203 }, // maze
+		{ 24595, 299 }, // maze
+		// hyde
+		{ 16496, 263 }, // plant
+		// cathedral
+		{ 16462, 168 }, // exit
+		// lockers
+		{ 16576, 246 }, // body == 16569
+		{ 16577, 271 }, // body == 16570
+		{ 16578, 296 }, // body == 16571
+		{ 16579, 321 }, // body == 16572
+		{ 16580, 346 }, // body == 16573
+		// underworld
+		{ 20506, 389 }, // metal door
+		// pit world
+		{ 20600, 283 }, // cover
+		{ 20648, 283 }, // pit
+		{ 20570, 247 }, // exit to medical droid room
+		{ 20575, 277 }, // slot
+		{ 20577, 297 }, // recharge unit
+		{ 24786, 288 }, // linc crystal
+		{ 24787, 288 }, // virus
+		{ 20712, 305 }, // console
+		{ 20713, 356 }, // console
+		{ 20728, 388 }, // exit from door room
+		{ 8272, 278 }, // power room chair
+		{ 12390, 187 }, // burke door
+		{ 12541, 187 }, // burke exit
+		{ 0, 0 }
+	};
+
 	uint16 mid, midy;
 
 	mid = itemData->xcood + ((int16)itemData->mouseRelX) + (itemData->mouseSizeX >> 1);
 	midy = itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY >> 1);
 
-	if (mid < HOTSPOT_invx && midy > HOTSPOT_invy)
-		return  HOTSPOT_invx + 16;
-
+	if (mid < HOTSPOT_INVX && midy > HOTSPOT_INVY)
+		return  HOTSPOT_INVX + 16;
 
 	// not lamb
 	if (id != 16) {
@@ -578,242 +648,17 @@ uint16 Mouse::giveXCood(Compact *itemData, uint32 id) {
 			return  142;
 	}
 
-	switch (id) {
-	case 4112:
-		mid = 258; // cupboard door
-		break;
+	Common::HashMap<int, int> hotspotMap;
+	bool mapInitialized = false;
 
-	case 4113:
-		mid = 254; // sandwich
-		break;
-
-	case 4114:
-		mid = 254; // spanner
-		break;
-
-
-	case 12358:
-		mid = 428; // bellevue - missing exit
-		break;
-
-	case 12681:
-		mid = 428; // bellevue
-		break;
-
-	case 12349:
-		mid = 142; // bellevue
-		break;
-
-	case 12347:
-		mid = 428; // bellevue
-		break;
-
-	case 90:
-		mid = 404; // first room, door
-		break;
-
-	case 97:
-		mid = 190; // ledge room, door
-		break;
-
-	case 4116:
-		mid = 269; // elevator
-		break;
-
-	case 4119:
-		mid = 269; // hole
-		break;
-
-	case 4110:
-		mid = 356; // lathe
-		break;
-
-	case 8248:
-		mid = 357; // walkway to security lobby
-		break;
-
-	case 8238:
-		mid = 181; // walkway to power
-		break;
-
-	case 8317:
-		mid = 426; // walkway to crash
-		break;
-
-	case 8341:
-		mid = 173; // factory to walkway
-		break;
-
-	case 8344:
-		mid = 433; // factory to factory 2
-		break;
-
-	case 8500:
-		mid = 224; // sensors
-		break;
-
-	case 8355:
-		mid = 428; // factory 2 to factory 3
-		break;
-
-	case 8446:
-		mid = 226; // putty
-		break;
-
-	case 8438:
-		mid = 226; // gangway
-		break;
-
-	case 12680:
-		mid = 201; // exit
-		break;
-
-	case 12679:
-		mid = 307; // exit
-		break;
-
-	case 12678:
-		mid = 179; // exit
-		break;
-
-	case 12677:
-		mid = 319; // exit
-		break;
-
-	case 12324:
-		mid = 191; // exit
-		break;
-
-	case 12336:
-		mid = 182; // exit
-		break;
-
-	case 12442:
-		mid = 376; // exit
-		break;
-
-	case 8483:
-		mid = 225; // console
-		break;
-
-	case 12641:
-		mid = 158; // exit
-		break;
-
-	// linc
-	case 12633:
-		mid = 190; // maze
-		break;
-
-	case 24586:
-		mid = 210; // maze
-		break;
-
-	case 24592:
-		mid = 288; // maze mid-bot
-		break;
-
-	case 24593:
-		mid = 400; // maze mid-bot
-		break;
-
-	case 24594:
-		mid = 203; // maze left-mid
-		break;
-
-	case 24595:
-		mid = 299; // maze left-mid
-		break;
-
-	// hyde
-	case 16496:
-		mid = 263; // plant
-		break;
-
-	// cathedral
-	case 16462:
-		mid = 168; // exit
-		break;
-
-	// lockers
-	case 16576:
-		mid = 246; // body == 16569
-		break;
-
-	case 16577:
-		mid = 271; // body == 16570
-		break;
-
-	case 16578:
-		mid = 296; // body == 16571
-		break;
-
-	case 16579:
-		mid = 321; // body == 16572
-		break;
-
-	case 16580:
-		mid = 346; // body == 16573
-		break;
-
-	// underworld
-	case 20506:
-		mid = 389; // metal door
-		break;
-
-	// pit room
-	case 20600:
-		mid = 283; // cover
-		break;
-
-	case 20648:
-		mid = 283; // pit
-		break;
-
-	case 20570:
-		mid = 247; // exit to medical droid room
-		break;
-
-	case 20575:
-		mid = 277; // slot
-		break;
-
-	case 20577:
-		mid = 297; // recharge unit
-		break;
-
-	case 24786:
-		mid = 288; // linc crystal
-		break;
-
-	case 24787:
-		mid = 288; // virus
-		break;
-
-	case 20712:
-		mid = 305; // console
-		break;
-
-	case 20713:
-		mid = 356; // console
-		break;
-
-	case 20728:
-		mid = 388; // exit from door room
-		break;
-
-	case 8272:
-		mid = 278; // power room chair
-		break;
-
-	case 12390:
-		mid = 187; // burke door
-		break;
-
-	case 12541:
-		mid = 187; // burke exit
-		break;
+	if (!mapInitialized) {
+		for (MouseXMap *m = mouseXMap; m->id != 0; m++)
+			hotspotMap[m->id] = m->mid;
+		mapInitialized = true;
 	}
+
+	if (hotspotMap.contains(id))
+		return hotspotMap[id];
 
 	return  mid;
 }
@@ -1465,7 +1310,7 @@ int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
 	uint16 itemNum;
 
 	// do not detect floors beyond a certain depth
-	if (yPos > (HOTSPOT_invy + 8)) return 0;
+	if (yPos > (HOTSPOT_INVY + 8)) return 0;
 	if (yPos < (20 + TOP_LEFT_Y)) return 0;
 
 	do {
@@ -1534,11 +1379,11 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 					// some left hand edge adjust for twin-hotspot non-exits
 					if (!hasSingleInteractIcon(_touchId) && !_isExit)
-						if ((midx - HOTSPOT_dim) < TOP_LEFT_X)
-							midx = TOP_LEFT_X + HOTSPOT_dim;
+						if ((midx - HOTSPOT_DIM) < TOP_LEFT_X)
+							midx = TOP_LEFT_X + HOTSPOT_DIM;
 
 					// still touching a normal hotspot?
-					if (!_isExit && midx - HOTSPOT_dim < xPos && midx + HOTSPOT_dim > xPos && midy - HOTSPOT_yoff < yPos && midy/*+HOTSPOT_yoff*/ > yPos) {
+					if (!_isExit && midx - HOTSPOT_DIM < xPos && midx + HOTSPOT_DIM > xPos && midy - HOTSPOT_YOFF < yPos && midy/*+HOTSPOT_YOFF*/ > yPos) {
 						// if newly touching, and same item as last time, then inc the click count
 						if (_prevMouseOn == false) {
 
@@ -1550,7 +1395,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 						} else
 							_timeOn++;
 
-						int icony = midy - HOTSPOT_yoff;
+						int icony = midy - HOTSPOT_YOFF;
 						icony -= TOP_LEFT_Y; // normalise for renderer
 						if (icony < 0)
 							icony = 0;
@@ -1558,7 +1403,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 						if (hasSingleInteractIcon(_touchId)) {
 							// update the coordinate of the hotspot
 							midx -= TOP_LEFT_X;
-							midx -= HOTSPOT_ExitDim;
+							midx -= HOTSPOT_EXIT_DIM;
 
 							// draw the icons
 							_skyScreen->setIcon(getInteractIcon(_touchId), midx + 4, icony);
@@ -1568,17 +1413,17 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 						} else { // 2 icons
 							midx -= TOP_LEFT_X;
-							midx -= HOTSPOT_dim;
+							midx -= HOTSPOT_DIM;
 
 							_actionFlashY = icony;
 
-							if (xPos <= (midx + HOTSPOT_dim + TOP_LEFT_X)) {
+							if (xPos <= (midx + HOTSPOT_DIM + TOP_LEFT_X)) {
 								Logic::_scriptVariables[BUTTON] = 2;
 								_actionFlashX = midx;
 								_actionFlashIcon = UI_ICON_LOOK;
 							} else {
 								Logic::_scriptVariables[BUTTON] = 1;
-								_actionFlashX = midx + HOTSPOT_dim + 4;
+								_actionFlashX = midx + HOTSPOT_DIM + 4;
 								_actionFlashIcon = getInteractIcon(_touchId);
 							}
 						}
@@ -1588,7 +1433,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 						// end here, when button held on something
 						return;
-					} else if (_isExit && midx - HOTSPOT_dim < xPos && midx + HOTSPOT_dim > xPos && midy - HOTSPOT_yoff < yPos && midy/*+HOTSPOT_yoff*/ > yPos) {
+					} else if (_isExit && midx - HOTSPOT_DIM < xPos && midx + HOTSPOT_DIM > xPos && midy - HOTSPOT_YOFF < yPos && midy/*+HOTSPOT_YOFF*/ > yPos) {
 						// still touching the poped up exit
 						// which action
 						Logic::_scriptVariables[BUTTON] = 1;
@@ -1603,12 +1448,12 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 						} else {
 							_timeOn++; // one more cycle
 							// update the coordinate of the hotspot
-							int iconx = midx - HOTSPOT_ExitDim;
+							int iconx = midx - HOTSPOT_EXIT_DIM;
 							iconx -= TOP_LEFT_X; // normalise for renderer
 							if (iconx < 0)
 								iconx = 0;
 
-							int icony = midy - HOTSPOT_exit_yoff;
+							int icony = midy - HOTSPOT_EXIT_YOFF;
 							icony -= TOP_LEFT_Y; // normalise for renderer
 							if (icony < 0)
 								icony = 0;
@@ -1712,12 +1557,12 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 					// exit, or hotspot?
 					if (_isExit) {
 
-						int iconx = midx - HOTSPOT_ExitDim;
+						int iconx = midx - HOTSPOT_EXIT_DIM;
 						iconx -= TOP_LEFT_X; // normalise for renderer
 						if (iconx < 0)
 							iconx = 0;
 
-						int icony = midy - HOTSPOT_exit_yoff;
+						int icony = midy - HOTSPOT_EXIT_YOFF;
 						icony -= TOP_LEFT_Y; // normalise for renderer
 						if (icony < 0)
 							icony = 0;
@@ -1725,14 +1570,14 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 						// draw the icon
 						initExitIcon(_exitType, iconx, icony);
 					} else {
-						int icony = midy - HOTSPOT_yoff;
+						int icony = midy - HOTSPOT_YOFF;
 						icony -= TOP_LEFT_Y;// normalise for renderer
 						if (icony < 0)
 							icony = 0;
 
 						if (hasSingleInteractIcon(_touchId)) {
 							// update the coordinate of the hotspot
-							int iconx = midx - HOTSPOT_ExitDim;
+							int iconx = midx - HOTSPOT_EXIT_DIM;
 							iconx -= TOP_LEFT_X;// normalise for renderer
 							if (iconx < 0)
 								iconx = 0;
@@ -1751,14 +1596,14 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 						} else { // 2 icons
 							// update the coordinate of the hotspot
-							int iconx = midx - HOTSPOT_dim;
+							int iconx = midx - HOTSPOT_DIM;
 							iconx -= TOP_LEFT_X;// normalise for renderer
 							if (iconx < 0)
 								iconx = 0;
 
 							// draw the icons
 							_skyScreen->setIcon(UI_ICON_LOOK, iconx, icony);
-							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + HOTSPOT_dim + 4, icony);
+							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + HOTSPOT_DIM + 4, icony);
 						}
 					}
 				} else if (!_floorLock) { // no mouseOn script, which probably always means this is a floor?
@@ -1784,7 +1629,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 			}
 			// not touching a game object - but what about HU buttons, such as Inv?
 			if (!_prevMouseOn && 101 != Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO] != 24765) {
-				if (xPos < HOTSPOT_invx && yPos > HOTSPOT_invy) {
+				if (xPos < HOTSPOT_INVX && yPos > HOTSPOT_INVY) {
 					_skyLogic->startInventory();
 					_touchId = 0;
 					_holding = false;
@@ -1794,7 +1639,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 					return;
 				}
 				// control panel
-				if (xPos < HOTSPOT_optionsx && yPos < HOTSPOT_optionsy) {
+				if (xPos < HOTSPOT_OPTIONSX && yPos < HOTSPOT_OPTIONSY) {
 					_skyControl->doControlPanel();
 					_skyScreen->clearAllProximityIcons(false);
 					_skyScreen->clearAllIbassIcons(false);
@@ -1991,14 +1836,14 @@ void Mouse::updateHotspotCoordinate(uint16 xPos) {
 		midx = giveXCood(itemData, _touchIdLegacy);
 		midy = giveYCood(itemData, _touchIdLegacy);
 
-		int icony = midy - HOTSPOT_yoff;
+		int icony = midy - HOTSPOT_YOFF;
 		icony -= TOP_LEFT_Y; // normalise for renderer
 		if (icony < 0)
 			icony = 0;
 
 		if (hasSingleInteractIcon(_touchIdLegacy)) {
 			// update the coordinate of the hotspot
-			int iconx = midx - HOTSPOT_ExitDim;
+			int iconx = midx - HOTSPOT_EXIT_DIM;
 			iconx -= TOP_LEFT_X;//normalise for renderer
 			if (iconx < 0)
 				iconx = 0;
@@ -2007,14 +1852,14 @@ void Mouse::updateHotspotCoordinate(uint16 xPos) {
 			_skyScreen->setIcon(getInteractIcon(_touchIdLegacy), iconx + 4, icony);
 		} else {
 			// update the coordinate of the hotspot
-			int iconx = midx - HOTSPOT_dim;
+			int iconx = midx - HOTSPOT_DIM;
 			iconx -= TOP_LEFT_X;//normalise for renderer
 			if (iconx < 0)
 				iconx = 0;
 
 			// draw the icons
 			_skyScreen->setIcon(UI_ICON_LOOK, iconx, icony);
-			_skyScreen->setIcon(getInteractIcon(_touchIdLegacy), iconx + HOTSPOT_dim + 4, icony);
+			_skyScreen->setIcon(getInteractIcon(_touchIdLegacy), iconx + HOTSPOT_DIM + 4, icony);
 
 			// still touching the poped up area
 			// which action
@@ -2311,7 +2156,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 
 				if (Logic::_scriptVariables[OBJECT_HELD]) {
 					// just render offset - cursor is still beneath the finger
-					_mouseYOff = HOTSPOT_useon_yoff;
+					_mouseYOff = HOTSPOT_USE_ON_YOFF;
 					_holding = true;
 					_touchIdLegacy = _touchId;
 					_skyLogic->startInventory(_touchId); // highlight touched item
