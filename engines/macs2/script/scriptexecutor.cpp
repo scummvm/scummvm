@@ -1617,6 +1617,7 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 
 		if (currentView->_isShowingMainMenu) {
 			currentView->_isShowingMainMenu = false;
+			_engine->setCursorMode(_cursorModeBeforeWait);
 			currentView->redraw();
 		}
 	}
