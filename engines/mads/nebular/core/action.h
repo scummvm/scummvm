@@ -52,12 +52,6 @@ enum PrepType {
 	PREP_UNDER, PREP_BEHIND, PREP_RELATIONAL = 0xff
 };
 
-enum ScrCategory {
-	CAT_NONE = 0, CAT_COMMAND = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
-	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_TALK_ENTRY = 6, CAT_INV_SCROLLER = 7,
-	CAT_12 = 12
-};
-
 class RexNebularEngine;
 
 struct ActionDetails {

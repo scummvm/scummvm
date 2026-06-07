@@ -203,8 +203,28 @@ enum GlobalId {
 	kTeleporterCode         = 200
 };
 
+enum StoryMode {
+	STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2
+};
+
+enum Difficulty {
+	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+};
+
 enum {
 	SEX_MALE = 0, SEX_UNKNOWN = 1, SEX_FEMALE = 2
+};
+
+enum ScrCategory {
+	CAT_NONE = 0,
+	CAT_COMMAND = 1,
+	CAT_INV_LIST = 2,
+	CAT_INV_VOCAB = 3,
+	CAT_HOTSPOT = 4,
+	CAT_INV_ANIM = 5,
+	CAT_TALK_ENTRY = 6,
+	CAT_INV_SCROLLER = 7,
+	CAT_12 = 12
 };
 
 extern void global_section_constructor();

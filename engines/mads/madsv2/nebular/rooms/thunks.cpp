@@ -62,7 +62,15 @@ bool Game::Objects::isInRoom(int object_id) const {
 }
 
 bool Game::Objects::isInInventory(int object_id) const {
-	return !object_is_here(object_id);
+	return player_has(object_id);
+}
+
+int Game::Objects::getIdFromDesc(int desc_id) const {
+	return object_named(desc_id);
+}
+
+bool Game::VisitedScenes::exists(int roomNum) const {
+	return player_has_been_in_room(roomNum);
 }
 
 void Game::loadQuoteSet(int quote1, ...) {
@@ -111,9 +119,17 @@ void Scene::Hotspots::activate(int hotspot, int active) {
 	kernel_flip_hotspot(hotspot, active);
 }
 
+int Scene::KernelMessages::TalkFont::getWidth(const Common::String &message, int spacing) const {
+	return font_string_width(kernel_message_font, message.c_str(), spacing);
+}
+
 int Scene::KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 		uint32 timeout, const Common::String &msg) {
 	return kernel_message_add(const_cast<char *>(msg.c_str()), pt.x, pt.y, fontColor, timeout, endTrigger, 0);
+}
+
+void Scene::KernelMessages::reset() {
+	kernel_message_purge();
 }
 
 int16 Scene::Sprites::addSprites(const char *name, int load_flags) {
@@ -159,6 +175,10 @@ int16 Scene::Sequences::addSubEntry(int sequence_id, int trigger_type, int trigg
 	return kernel_seq_trigger(sequence_id, trigger_type, trigger_sprite, trigger_code);
 }
 
+void Scene::Sequences::setMsgLayout(int sequence_id) {
+	kernel_seq_player(sequence_id, false);
+}
+
 int Scene::loadAnimation(const char *name, int trigger_code) {
 	return kernel_run_animation(name, trigger_code);
 }
@@ -177,6 +197,10 @@ void VM::Palette::setEntry(int color, int r, int g, int b) {
 
 void VM::Sound::command(int num) {
 	g_engine->_soundManager->command(num);
+}
+
+int VM::getRandomNumber(int min, int max) {
+	return g_engine->getRandomNumber(min, max);
 }
 
 char *formAnimName(char type, int num) {

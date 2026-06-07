@@ -58,6 +58,14 @@ enum SpriteAnimType {
 };
 
 struct Action {
+	struct ActiveAction {
+		int &_verbId = player2.words[0];
+		int &_objectNameId = player2.words[1];
+		int &_indirectObjectId = player2.words[2];
+	};
+	ActiveAction _activeAction;
+	int &_mainObjectSource = player.main_object_source;
+
 	bool isAction(int word1) const;
 	bool isAction(int word1, int word2) const;
 	bool isAction(int word1, int word2, int word3) const;
@@ -83,6 +91,7 @@ struct Game {
 		void addToInventory(int object_id);
 		bool isInRoom(int object_id) const;
 		bool isInInventory(int object_id) const;
+		int getIdFromDesc(int desc_id) const;
 	};
 	Objects _objects;
 
@@ -95,6 +104,10 @@ struct Game {
 				x = pt.x;
 				y = pt.y;
 				return *this;
+			}
+
+			bool operator==(const Common::Point &rhs) const {
+				return x == rhs.x && y == rhs.y;
 			}
 		};
 		PlayerPoint _playerPos;
@@ -113,9 +126,15 @@ struct Game {
 	};
 	Player _player;
 
+	struct VisitedScenes {
+		bool exists(int roomNum) const;
+	};
+	VisitedScenes _visitedScenes;
+
 	int &_trigger = kernel.trigger;
 	int &_triggerSetupMode = kernel.trigger_setup_mode;
 	char *const _aaName = kernel.interface;
+	int8 &_difficulty = game.difficulty;
 
 	void loadQuoteSet(int quote1, ...);
 	char *getQuote(int quote_id);
@@ -158,8 +177,20 @@ struct Scene {
 	Hotspots _hotspots;
 
 	struct KernelMessages {
+		struct TalkFont {
+			TalkFont *operator->() {
+				return this;
+			}
+			const TalkFont *operator->() const {
+				return this;
+			}
+			int getWidth(const Common::String &message, int spacing) const;
+		};
+		TalkFont _talkFont;
+
 		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 			uint32 timeout, const Common::String &msg);
+		void reset();
 	};
 	KernelMessages _kernelMessages;
 
@@ -177,6 +208,7 @@ struct Scene {
 		void setScale(int sequence_id, int scale);
 		void setAnimRange(int sequence_id, int first, int last);
 		void addTimer(int ticks, int trigger_code);
+		void setMsgLayout(int sequence_id);
 	};
 	Sequences _sequences;
 
@@ -230,6 +262,8 @@ struct VM {
 		void command(int num);
 	};
 	Sound _sound;
+
+	int getRandomNumber(int min, int max);
 };
 
 extern Game _game;

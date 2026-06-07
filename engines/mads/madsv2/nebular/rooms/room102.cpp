@@ -19,54 +19,42 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room102::Room102(RexNebularEngine *vm) : Room1xx(vm) {
-	_fridgeOpenedFl = false;
-	_fridgeOpenedDescr = false;
-	_fridgeFirstOpenFl = false;
-	_chairDescrFl = false;
-	_drawerDescrFl = false;
-	_activeMsgFl = false;
-	_fridgeCommentCount = 0;
-}
+struct Scratch {
+	byte _fridgeOpenedFl;
+	byte _fridgeOpenedDescr;
+	byte _fridgeFirstOpenFl;
+	byte _chairDescrFl;
+	byte _drawerDescrFl;
+	byte _activeMsgFl;
 
-void Room102::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+	int16 _fridgeCommentCount;
+};
 
-	s.syncAsByte(_fridgeOpenedFl);
-	s.syncAsByte(_fridgeOpenedDescr);
-	s.syncAsByte(_fridgeFirstOpenFl);
-	s.syncAsByte(_chairDescrFl);
-	s.syncAsByte(_drawerDescrFl);
-	s.syncAsByte(_activeMsgFl);
+static Scratch local;
 
-	s.syncAsSint16LE(_fridgeCommentCount);
-}
-
-void Room102::setup() {
-	_scene->_animationData->preLoad(formAnimName('A', -1), 3);
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room102::addRandomMessage() {
+static void addRandomMessage() {
 	_scene->_kernelMessages.reset();
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	int quoteId = _vm->getRandomNumber(65, 69);
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 73, 120, _game.getQuote(quoteId));
-	_activeMsgFl = true;
+	local._activeMsgFl = true;
 }
 
-void Room102::enter() {
-	sceneEntrySound();
+static void room_102_init() {
+	section_1_music();
 
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
@@ -127,12 +115,12 @@ void Room102::enter() {
 		_vm->_sound->command(28);
 	}
 
-	_fridgeOpenedFl = false;
-	_fridgeOpenedDescr = false;
-	_fridgeCommentCount = 0;
-	_fridgeFirstOpenFl = true;
-	_chairDescrFl = false;
-	_activeMsgFl = false;
+	local._fridgeOpenedFl = false;
+	local._fridgeOpenedDescr = false;
+	local._fridgeCommentCount = 0;
+	local._fridgeFirstOpenFl = true;
+	local._chairDescrFl = false;
+	local._activeMsgFl = false;
 
 	_game.loadQuoteSet(0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x45, 0x43, 0);
 
@@ -140,7 +128,7 @@ void Room102::enter() {
 		_vm->_sound->command(20);
 }
 
-void Room102::step() {
+static void room_102_daemon() {
 	if (_game._trigger == 70)
 		_game._player._stepEnabled = true;
 
@@ -171,30 +159,30 @@ void Room102::step() {
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 	}
 
-	if (_fridgeOpenedFl && !_fridgeOpenedDescr) {
-		_fridgeCommentCount++;
-		if (_fridgeCommentCount > 16384) {
-			_fridgeOpenedDescr = true;
+	if (local._fridgeOpenedFl && !local._fridgeOpenedDescr) {
+		local._fridgeCommentCount++;
+		if (local._fridgeCommentCount > 16384) {
+			local._fridgeOpenedDescr = true;
 			_vm->_dialogs->show(10213);
 		}
 	}
 
-	if (!_activeMsgFl && (_game._player._playerPos == Common::Point(177, 114)) && (_game._player._facing == FACING_NORTH)
+	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(177, 114)) && (_game._player._facing == FACING_NORTH)
 		&& (_vm->getRandomNumber(1, 5000) == 1)) {
 		_scene->_kernelMessages.reset();
-		_activeMsgFl = false;
+		local._activeMsgFl = false;
 		addRandomMessage();
 	}
 
 	if (_game._trigger == 73)
-		_activeMsgFl = false;
+		local._activeMsgFl = false;
 }
 
-void Room102::preActions() {
+static void room_102_pre_parser() {
 	if (_action.isObject(NOUN_REFRIGERATOR) || _action.isObject(NOUN_POSTER))
 		_game._player._needToWalk = _game._player._readyToWalk;
 
-	if (_fridgeOpenedFl && !_action.isObject(NOUN_REFRIGERATOR)) {
+	if (local._fridgeOpenedFl && !_action.isObject(NOUN_REFRIGERATOR)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
@@ -212,7 +200,7 @@ void Room102::preActions() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 				_scene->_hotspots.activate(NOUN_BURGER, false);
 			}
-			_fridgeOpenedFl = false;
+			local._fridgeOpenedFl = false;
 			_game._player._stepEnabled = true;
 			break;
 
@@ -225,7 +213,7 @@ void Room102::preActions() {
 		_scene->_kernelMessages.reset();
 }
 
-void Room102::actions() {
+static void room_102_parser() {
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(10234);
 		_action._inProgress = false;
@@ -233,7 +221,7 @@ void Room102::actions() {
 	}
 
 	bool justOpenedFl = false;
-	if (_action.isObject(NOUN_REFRIGERATOR) && !_fridgeOpenedFl) {
+	if (_action.isObject(NOUN_REFRIGERATOR) && !local._fridgeOpenedFl) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
@@ -253,7 +241,7 @@ void Room102::actions() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], -2, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
 			int delay;
-			if (_action.isAction(VERB_WALKTO) && !_fridgeFirstOpenFl)
+			if (_action.isAction(VERB_WALKTO) && !local._fridgeFirstOpenFl)
 				delay = 0;
 			else
 				delay = 48;
@@ -262,9 +250,9 @@ void Room102::actions() {
 			return;
 
 		case 2:
-			_fridgeOpenedFl = true;
-			_fridgeOpenedDescr = false;
-			_fridgeCommentCount = 0;
+			local._fridgeOpenedFl = true;
+			local._fridgeOpenedDescr = false;
+			local._fridgeCommentCount = 0;
 			_game._player._stepEnabled = true;
 			justOpenedFl = true;
 			if (_game._objects.isInRoom(OBJ_BURGER))
@@ -282,13 +270,13 @@ void Room102::actions() {
 		else
 			_vm->_dialogs->show(10229);
 
-		_fridgeFirstOpenFl = false;
+		local._fridgeFirstOpenFl = false;
 		_action._inProgress = false;
 		return;
 	}
 
 	if (_action.isAction(VERB_WALKTO, NOUN_REFRIGERATOR) && justOpenedFl) {
-		_fridgeFirstOpenFl = false;
+		local._fridgeFirstOpenFl = false;
 		int quoteId = _vm->getRandomNumber(59, 63);
 		Common::String curQuote = _game.getQuote(quoteId);
 		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, -1);
@@ -296,7 +284,7 @@ void Room102::actions() {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_kernelMessages.add(Common::Point(210, 60), 0x1110, 0, 73, 120, curQuote);
 		_scene->_kernelMessages.add(Common::Point(214 + width, 60), 0x1110, 0, 73, 120, _game.getQuote(64));
-		_activeMsgFl = true;
+		local._activeMsgFl = true;
 		_action._inProgress = false;
 		return;
 	}
@@ -481,9 +469,9 @@ void Room102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_DRAWER) || ((_action.isAction(VERB_CLOSE, NOUN_DRAWER) || _action.isAction(VERB_PUSH, NOUN_DRAWER)) && !_drawerDescrFl)) {
+	if (_action.isAction(VERB_LOOK, NOUN_DRAWER) || ((_action.isAction(VERB_CLOSE, NOUN_DRAWER) || _action.isAction(VERB_PUSH, NOUN_DRAWER)) && !local._drawerDescrFl)) {
 		_vm->_dialogs->show(10220);
-		_drawerDescrFl = true;
+		local._drawerDescrFl = true;
 		_action._inProgress = false;
 		return;
 	}
@@ -500,8 +488,8 @@ void Room102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_CHAIR) || (_action.isAction(VERB_SIT_IN, NOUN_CHAIR) && !_chairDescrFl)) {
-		_chairDescrFl = true;
+	if (_action.isAction(VERB_LOOK, NOUN_CHAIR) || (_action.isAction(VERB_SIT_IN, NOUN_CHAIR) && !local._chairDescrFl)) {
+		local._chairDescrFl = true;
 		_vm->_dialogs->show(10210);
 		_action._inProgress = false;
 		return;
@@ -654,13 +642,38 @@ void Room102::actions() {
 	}
 }
 
-void Room102::postActions() {
+static void room_102_error() {
 	if (_action.isAction(VERB_PUT, NOUN_ROBO_KITCHEN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		_vm->_dialogs->show(10217);
 		_action._inProgress = false;
 	}
 }
 
+void room_102_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._fridgeOpenedFl);
+	s.syncAsByte(local._fridgeOpenedDescr);
+	s.syncAsByte(local._fridgeFirstOpenFl);
+	s.syncAsByte(local._chairDescrFl);
+	s.syncAsByte(local._drawerDescrFl);
+	s.syncAsByte(local._activeMsgFl);
+
+	s.syncAsSint16LE(local._fridgeCommentCount);
+}
+
+void room_102_preload() {
+	room_init_code_pointer = room_102_init;
+	room_pre_parser_code_pointer = room_102_pre_parser;
+	room_parser_code_pointer = room_102_parser;
+	room_daemon_code_pointer = room_102_daemon;
+	room_error_code_pointer = room_102_error;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

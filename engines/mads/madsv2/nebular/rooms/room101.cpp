@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
@@ -45,6 +43,7 @@ struct Scratch {
 };
 
 static Scratch local;
+
 
 static void room_101_say_dang() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -77,7 +76,7 @@ static void room_101_say_dang() {
 	}
 }
 
-void room_101_init() {
+static void room_101_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
@@ -147,7 +146,7 @@ void room_101_init() {
 	section_1_music();
 }
 
-void room_101_daemon() {
+static void room_101_daemon() {
 	if (local._oldSpecial != _game._player._special) {
 		local._oldSpecial = _game._player._special;
 		if (local._oldSpecial)

@@ -75,6 +75,7 @@ MODULE_OBJS += \
 	madsv2/nebular/mads/mads.o \
 	madsv2/nebular/rooms/thunks.o \
 	madsv2/nebular/rooms/room101.o \
+	madsv2/nebular/rooms/room102.o \
 	madsv2/nebular/rooms/section1.o \
 	madsv2/phantom/mads/mads.o \
 	madsv2/phantom/rooms/section1.o \

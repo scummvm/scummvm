@@ -30,12 +30,6 @@
 namespace MADS {
 namespace Nebular {
 
-enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
-
-enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
-};
-
 
 enum ProtectionResult {
 	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
