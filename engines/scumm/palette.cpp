@@ -1501,6 +1501,8 @@ void ScummEngine::setCurrentPalette(int palindex) {
 				_egaColorMap[1][i] = *pals++ >> 4;
 			}
 		}
+		_virtscr[kMainVirtScreen].setDirtyRange(0, _virtscr[kMainVirtScreen].h);
+		_virtscr[kVerbVirtScreen].setDirtyRange(0, _virtscr[kVerbVirtScreen].h);
 	} else {
 		setPaletteFromPtr(pals);
 	}
