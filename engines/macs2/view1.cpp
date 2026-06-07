@@ -1383,7 +1383,6 @@ bool View1::tick() {
 			if (vol < 1) {
 				se->_musicControlMode = 0;
 				se->_musicControlVolume = 0;
-				vol = 0;
 			} else {
 				se->_musicControlVolume = vol;
 			}
