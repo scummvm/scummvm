@@ -9,6 +9,8 @@
 lib*.a
 .deps
 *_pch.cpp
+*.*.orig
+*.*.rej
 
 /config.log
 /scummvm
