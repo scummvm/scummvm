@@ -71,6 +71,7 @@ private:
 	bool ra1HandleUnknownFrameChunk(uint32 subType, int32 subSize);
 	bool ra1DispatchFrameChunk(uint32 subType, int32 subSize, int32 &frameSize,
 		Common::SeekableReadStream &b, bool fastForwarding);
+	void ra1InitAudioTrackSizes();
 
 	// RA1 clean frame buffer for delta source restoration
 	byte *_ra1CleanFrame;

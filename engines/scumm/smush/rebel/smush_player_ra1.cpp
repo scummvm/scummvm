@@ -47,7 +47,8 @@ enum {
 	kRA1PresentationScreenWidth = 320,
 	kRA1PresentationScreenHeight = 200,
 	kRA1PresentationWidth = kRA1PresentationScreenWidth - kRA1PresentationBorder * 2,
-	kRA1PresentationHeight = kRA1PresentationScreenHeight - kRA1PresentationBorder * 2
+	kRA1PresentationHeight = kRA1PresentationScreenHeight - kRA1PresentationBorder * 2,
+	kRebel1LongAudioTrackSize = 500000
 };
 
 static void ra1ApplyCenteredFetchPlacement(InsaneRebel1 *rebel1, int width, int height, int &left, int &top) {
@@ -127,6 +128,7 @@ static void ra1RememberDisplayedFrame(byte *&buffer, int32 &bufferSize, int &sto
 SmushPlayerRebel1::SmushPlayerRebel1(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane)
 	: SmushPlayer(scumm, imuseDigital, insane) {
 	initGamePlayerFields();
+	ra1InitAudioTrackSizes();
 }
 
 SmushPlayerRebel1::~SmushPlayerRebel1() {
@@ -171,6 +173,23 @@ void SmushPlayerRebel1::destroyGamePlayerFields() {
 	free(_ra1FadeFrame);
 	_ra1FadeFrame = nullptr;
 	_ra1FadeFrameSize = 0;
+}
+
+void SmushPlayerRebel1::ra1InitAudioTrackSizes() {
+	const int longAudioTrack = SMUSH_MAX_TRACKS - 1;
+	if (_smushNumTracks <= longAudioTrack || _smushTracks[longAudioTrack].blockSize >= kRebel1LongAudioTrackSize)
+		return;
+
+	uint8 *blockPtr = (uint8 *)realloc(_smushTracks[longAudioTrack].blockPtr, kRebel1LongAudioTrackSize);
+	if (!blockPtr) {
+		warning("SmushPlayerRebel1::ra1InitAudioTrackSizes: failed to allocate %d-byte long audio track",
+			kRebel1LongAudioTrackSize);
+		return;
+	}
+
+	_smushTracks[longAudioTrack].blockPtr = blockPtr;
+	_smushTracks[longAudioTrack].blockSize = kRebel1LongAudioTrackSize;
+	memset(_smushTracks[longAudioTrack].blockPtr, 127, _smushTracks[longAudioTrack].blockSize);
 }
 
 void SmushPlayerRebel1::resetGameVideoState() {
