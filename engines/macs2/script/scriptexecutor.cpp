@@ -813,8 +813,13 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 	uint32 newSceneID = scriptReadValue32();
 	const uint16 transitionMode = scriptReadValue16();
 	const uint16 transitionSpeed = scriptReadValue16();
-	g_engine->changeScene(newSceneID, false);
 	View1 *currentView = (View1 *)_engine->findView("View1");
+	// Binary: mode 0 fades old palette to black BEFORE loading new scene
+	if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
+		currentView->startFadeToBlack(transitionSpeed);
+	}
+	g_engine->changeScene(newSceneID, false);
+	// Binary: then fades from black to new palette after loading
 	if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
 		currentView->startFadingWithSpeed(transitionSpeed);
 	}
@@ -1606,20 +1611,21 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 	// was pending, clears panel state, redraws scene, clears timer flag.
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr) {
-		if (currentView->_isShowingStringBox || currentView->_isShowingDialogueChoice) {
+		if (currentView->_isShowingTextBox || currentView->_uiPanelState == View1::kUiPanelDialogue) {
 			currentView->_continueScriptAfterUI = false;
 			currentView->clearStringBox(false);
 		}
 
-		if (currentView->_isShowingInventory) {
+		if (currentView->_uiPanelState == View1::kUiPanelInventory) {
 			_hasPendingExternalInventoryResume = false;
 			_externalInventorySourceObjectID = 0;
 			currentView->closeInventory();
 		}
 
-		if (currentView->_isShowingMainMenu) {
-			currentView->_isShowingMainMenu = false;
-			_engine->setCursorMode(_cursorModeBeforeWait);
+		if (currentView->_uiPanelState == View1::kUiPanelActionBar) {
+			currentView->_uiPanelState = View1::kUiPanelNone;
+			_engine->setCursorMode(currentView->_cursorModeBeforeMenu);
+			currentView->updateCursor();
 			currentView->redraw();
 		}
 	}
@@ -2562,14 +2568,14 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	case 0x2A: {
 		View1 *v = (View1 *)_engine->findView("View1");
 		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, map)
-		const bool uiOpen = v != nullptr && (v->_isShowingMainMenu || v->_isShowingInventory || v->_isShowingDialogueChoice || v->_currentMode == ViewMode::VM_MAP);
+		const bool uiOpen = v != nullptr && (v->_uiPanelState != View1::kUiPanelNone || v->_currentMode == ViewMode::VM_MAP);
 		out1 = (_inventoryCombineFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
 	case 0x2B: {
 		View1 *v = (View1 *)_engine->findView("View1");
 		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, map)
-		const bool uiOpen = v != nullptr && (v->_isShowingMainMenu || v->_isShowingInventory || v->_isShowingDialogueChoice || v->_currentMode == ViewMode::VM_MAP);
+		const bool uiOpen = v != nullptr && (v->_uiPanelState != View1::kUiPanelNone || v->_currentMode == ViewMode::VM_MAP);
 		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
