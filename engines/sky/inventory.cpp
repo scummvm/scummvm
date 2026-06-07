@@ -124,15 +124,11 @@ void Logic::startInventory(uint32	highlightedId) {
 }
 
 void Logic::killInventory() {
-
 	// shut down displayed inv objects
-
 	int j;
 	Compact *itemData;
 
-
 	if (_liveInv) {
-
 		for (j = 0; j < _scriptVariables[MENU_LENGTH]; j++) {
 			// fetch the compact
 			itemData = _skyCompact->fetchCpt(_objectList[j]);
@@ -140,14 +136,11 @@ void Logic::killInventory() {
 			itemData->status = 0;
 		}
 	}
-
-
 	_liveInv = false;
 
 	// kill inv bg
 	_skyScreen->hideInventory();
 	_skyScreen->clearAllInvIcons();
-
 }
 
 }
