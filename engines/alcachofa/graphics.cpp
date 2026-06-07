@@ -1196,10 +1196,12 @@ Task *fade(Process &process, FadeType fadeType,
 	int32 duration, EasingType easingType,
 	int8 order,
 	PermanentFadeAction permanentFadeAction) {
-	if (duration <= 0)
-		return new DelayTask(process, 0);
 	if (!process.isActiveForPlayer())
 		return new DelayTask(process, (uint32)duration);
+	if (duration <= 0) {
+		g_engine->globalUI().isPermanentFaded() = permanentFadeAction == PermanentFadeAction::SetFaded;
+		return new DelayTask(process, 0);
+	}
 	return new FadeTask(process, fadeType, from, to, duration, easingType, order, permanentFadeAction);
 }
 
