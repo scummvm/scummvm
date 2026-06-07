@@ -123,8 +123,8 @@ public:
 		return	_system;
 	}
 	int	doProximityHighlights(uint16 xPos, uint16 yPos);
-	uint16 giveXcood(Compact *itemData, uint32 id);
-	uint16 giveYcood(Compact *itemData, uint32 id);
+	uint16 giveXCood(Compact *itemData, uint32 id);
+	uint16 giveYCood(Compact *itemData, uint32 id);
 	void setLincInv(bool inv) {
 		_isLincInv = inv;
 	}
@@ -214,7 +214,7 @@ protected:
 		TEXT_CHOOSER,
 		MUST_RELEASE,
 		ALERT_TO_GAME, // new game alert box
-	} M_MODE;
+	} _mMode;
 };
 
 } // End of namespace Sky

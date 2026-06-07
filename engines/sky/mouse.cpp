@@ -118,7 +118,7 @@ void Mouse::resetUI() {
 	_holding = false;
 	_timeOn = 0;
 	_fadeOut = 0;
-	M_MODE = GAMEPLAY; // master ui mode
+	_mMode = GAMEPLAY; // master ui mode
 	_isFloor = false;
 	_isExit = false;
 	_actionFlash = false;
@@ -145,8 +145,8 @@ bool Mouse::fnAddHuman() {
 	//reintroduce the mouse so that the human can control the player
 	//could still be switched out at high-level
 
-	if (M_MODE == GAMEPLAY)
-		M_MODE = MUST_RELEASE;
+	if (_mMode == GAMEPLAY)
+		_mMode = MUST_RELEASE;
 
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
 		Logic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
@@ -275,13 +275,13 @@ void Mouse::mouseEngine() {
 				_skyScreen->setIcon(_actionFlashIcon, _actionFlashX, _actionFlashY);
 		}
 
-		switch (M_MODE) {
+		switch (_mMode) {
 			case ALERT_TO_GAME:
 				if (!_mouseB)
 					return;
 
 				_skyScreen->hideInventory();
-				M_MODE = MUST_RELEASE;
+				_mMode = MUST_RELEASE;
 				break;
 
 			case MUST_RELEASE:
@@ -289,7 +289,7 @@ void Mouse::mouseEngine() {
 					return;
 
 				resetUI();
-				M_MODE = GAMEPLAY;
+				_mMode = GAMEPLAY;
 				break;
 
 			case GAMEPLAY:
@@ -300,7 +300,7 @@ void Mouse::mouseEngine() {
 				if (_mouseB)
 					return;
 
-				M_MODE = INVENTORY;
+				_mMode = INVENTORY;
 				break;
 
 			case INVENTORY:
@@ -339,8 +339,8 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 	int nearestId = 0;
 	_nearestProximityIconId = 0;
 
-	static int  proxFrame = 0;
-	static int  proxFrameSpeed = 0;
+	int proxFrame = 0;
+	int proxFrameSpeed = 0;
 
 	proxFrameSpeed++;
 	if (proxFrameSpeed & 1)
@@ -362,8 +362,8 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (itemData->status & 16)) {
 				// hotspot, if a non-floor object
 				if (itemData->mouseOn && yPos > (20 + TOP_LEFT_Y)) {
-					midx = giveXcood(itemData, itemNum);
-					midy = giveYcood(itemData, itemNum);
+					midx = giveXCood(itemData, itemNum);
+					midy = giveYCood(itemData, itemNum);
 
 					// skip very high hotspots - eg the old inventory catch object
 					if (midy < (TOP_LEFT_Y + 5))
@@ -560,7 +560,7 @@ bool Mouse::hasSingleInteractIcon(uint32 id) {
 	return  false;
 }
 
-uint16 Mouse::giveXcood(Compact *itemData, uint32 id) {
+uint16 Mouse::giveXCood(Compact *itemData, uint32 id) {
 	uint16 mid, midy;
 
 	mid = itemData->xcood + ((int16)itemData->mouseRelX) + (itemData->mouseSizeX >> 1);
@@ -579,923 +579,880 @@ uint16 Mouse::giveXcood(Compact *itemData, uint32 id) {
 	}
 
 	switch (id) {
-	case 4112: {
+	case 4112:
 		mid = 258; // cupboard door
 		break;
-	}
-	case 4113: {
+
+	case 4113:
 		mid = 254; // sandwich
 		break;
-	}
-	case 4114: {
+
+	case 4114:
 		mid = 254; // spanner
 		break;
-	}
 
-	case 12358:  {
+
+	case 12358:
 		mid = 428; // bellevue - missing exit
 		break;
-	}
-	case 12681:  {
+
+	case 12681:
 		mid = 428; // bellevue
 		break;
-	}
-	case 12349:  {
+
+	case 12349:
 		mid = 142; // bellevue
 		break;
-	}
-	case 12347:  {
+
+	case 12347:
 		mid = 428; // bellevue
 		break;
-	}
-	case 90: {
+
+	case 90:
 		mid = 404; // first room, door
 		break;
-	}
-	case 97: {
+
+	case 97:
 		mid = 190; // ledge room, door
 		break;
-	}
-	case 4116: {
+
+	case 4116:
 		mid = 269; // elevator
 		break;
-	}
-	case 4119: {
+
+	case 4119:
 		mid = 269; // hole
 		break;
-	}
-	case 4110: {
+
+	case 4110:
 		mid = 356; // lathe
 		break;
-	}
-	case 8248: {
+
+	case 8248:
 		mid = 357; // walkway to security lobby
 		break;
-	}
-	case 8238: {
+
+	case 8238:
 		mid = 181; // walkway to power
 		break;
-	}
-	case 8317: {
+
+	case 8317:
 		mid = 426; // walkway to crash
 		break;
-	}
-	case 8341: {
+
+	case 8341:
 		mid = 173; // factory to walkway
 		break;
-	}
-	case 8344: {
+
+	case 8344:
 		mid = 433; // factory to factory 2
 		break;
-	}
-	case 8500: {
+
+	case 8500:
 		mid = 224; // sensors
 		break;
-	}
-	case 8355: {
+
+	case 8355:
 		mid = 428; // factory 2 to factory 3
 		break;
-	}
-	case 8446: {
+
+	case 8446:
 		mid = 226; // putty
 		break;
-	}
-	case 8438: {
+
+	case 8438:
 		mid = 226; // gangway
 		break;
-	}
-	case 12680: {
+
+	case 12680:
 		mid = 201; // exit
 		break;
-	}
-	case 12679: {
+
+	case 12679:
 		mid = 307; // exit
 		break;
-	}
-	case 12678: {
+
+	case 12678:
 		mid = 179; // exit
 		break;
-	}
-	case 12677: {
+
+	case 12677:
 		mid = 319; // exit
 		break;
-	}
-	case 12324: {
+
+	case 12324:
 		mid = 191; // exit
 		break;
-	}
-	case 12336: {
+
+	case 12336:
 		mid = 182; // exit
 		break;
-	}
-	case 12442: {
+
+	case 12442:
 		mid = 376; // exit
 		break;
-	}
-	case 8483: {
+
+	case 8483:
 		mid = 225; // console
 		break;
-	}
-	case 12641: {
+
+	case 12641:
 		mid = 158; // exit
 		break;
-	}
 
 	// linc
-	case 12633: {
+	case 12633:
 		mid = 190; // maze
 		break;
-	}
-	case 24586: {
+
+	case 24586:
 		mid = 210; // maze
 		break;
-	}
-	case 24592: {
+
+	case 24592:
 		mid = 288; // maze mid-bot
 		break;
-	}
-	case 24593: {
+
+	case 24593:
 		mid = 400; // maze mid-bot
 		break;
-	}
-	case 24594: {
+
+	case 24594:
 		mid = 203; // maze left-mid
 		break;
-	}
-	case 24595: {
+
+	case 24595:
 		mid = 299; // maze left-mid
 		break;
-	}
-
 
 	// hyde
-	case 16496: {
+	case 16496:
 		mid = 263; // plant
 		break;
-	}
+
 	// cathedral
-	case 16462: {
+	case 16462:
 		mid = 168; // exit
 		break;
-	}
 
 	// lockers
-	case 16576: {
+	case 16576:
 		mid = 246; // body == 16569
 		break;
-	}
-	case 16577: {
+
+	case 16577:
 		mid = 271; // body == 16570
 		break;
-	}
-	case 16578: {
+
+	case 16578:
 		mid = 296; // body == 16571
 		break;
-	}
-	case 16579: {
+
+	case 16579:
 		mid = 321; // body == 16572
 		break;
-	}
-	case 16580: {
+
+	case 16580:
 		mid = 346; // body == 16573
 		break;
-	}
 
 	// underworld
-	case 20506: {
+	case 20506:
 		mid = 389; // metal door
 		break;
-	}
+
 	// pit room
-	case 20600: {
+	case 20600:
 		mid = 283; // cover
 		break;
-	}
-	case 20648: {
+
+	case 20648:
 		mid = 283; // pit
 		break;
-	}
-	case 20570: {
+
+	case 20570:
 		mid = 247; // exit to medical droid room
 		break;
-	}
 
-	case 20575: {
+	case 20575:
 		mid = 277; // slot
 		break;
-	}
-	case 20577: {
+
+	case 20577:
 		mid = 297; // recharge unit
 		break;
-	}
 
-	case 24786: {
+	case 24786:
 		mid = 288; // linc crystal
 		break;
-	}
-	case 24787: {
+
+	case 24787:
 		mid = 288; // virus
 		break;
-	}
 
-	case 20712: {
+	case 20712:
 		mid = 305; // console
 		break;
-	}
-	case 20713: {
+
+	case 20713:
 		mid = 356; // console
 		break;
-	}
 
-	case 20728: {
+	case 20728:
 		mid = 388; // exit from door room
 		break;
-	}
 
-	case 8272: {
+	case 8272:
 		mid = 278; // power room chair
 		break;
-	}
 
-	case 12390: {
+	case 12390:
 		mid = 187; // burke door
 		break;
-	}
-	case 12541: {
+
+	case 12541:
 		mid = 187; // burke exit
 		break;
-	}
-
 	}
 
 	return  mid;
 }
 
-uint16 Mouse::giveYcood(Compact *itemData, uint32 id) {
+uint16 Mouse::giveYCood(Compact *itemData, uint32 id) {
 	// push objects that are too far to left, or to the right, back onto the screen
 	uint16 mid;
 
 	mid = itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY >> 1);
 
 	switch (id) {
-	case 4112: { // cupboard door - not if open
+	case 4112: // cupboard door - not if open
 		if (Logic::_scriptVariables[112]) // cupb_flag
 			return  0;
 		mid = 221;
 		break;
-	}
-	case 4113: {
+
+	case 4113:
 		mid = 218; // sandwich
 		break;
-	}
-	case 4114: {
+
+	case 4114:
 		mid = 226; // spanner
 		break;
-	}
 
-	case 4108: {
+	case 4108:
 		mid = 0; // remove monitor screen
 		break;
-	}
-	case 4111: {
+
+	case 4111:
 		mid = 0; // remove lazer
 		break;
-	}
-	case 4115: {
+
+	case 4115:
 		mid = 0; // remove monitor screen
 		break;
-	}
-	case 4117: {
+
+	case 4117:
 		mid = 0; // remove monitor screen
 		break;
-	}
-	case 4154: {
+
+	case 4154:
 		mid = 0; // remove right sign
 		break;
-	}
+
 	case 12349:
 	// fall through
 	case 12347:
-	case 12358:  {
+	case 12358:
 		mid = TWEEKY_EXIT_ADJUST; // bellevue
 		break;
-	}
-	case 90: {
+
+	case 90:
 		mid = 208; // first room, door
 		break;
-	}
-	case 97: {
+
+	case 97:
 		mid = 216; // ledge room, door
 		break;
-	}
-	case 4116: {
+
+	case 4116:
 		mid = 259; // elevator
 		break;
-	}
-	case 4119: {
+
+	case 4119:
 		mid = 259; // hole
 		break;
-	}
-	case 4315: {
+
+	case 4315:
 		mid = 261; // exit left from junk room
 		break;
-	}
-	case 4103: {
+
+	case 4103:
 		mid = 242; // exit right from junk room
 		break;
-	}
-	case 4105: {
+
+	case 4105:
 		mid = 241; // exit left from hobbins room
 		break;
-	}
-	case 4110: {
+
+	case 4110:
 		mid = 230; // lathe
 		break;
-	}
-	case 8248: {
+
+	case 8248:
 		mid = 222;  // walkway to security lobby
 		break;
-	}
-	case 8238: {
+
+	case 8238:
 		mid = 222; // walkway to power
 		break;
-	}
-	case 8310: {
+
+	case 8310:
 		mid = 222; // walkway to first room
 		break;
-	}
-	case 8246: {
+
+	case 8246:
 		mid = 273; // power exit
 		break;
-	}
-	case 8317: {
+
+	case 8317:
 		mid = 273; // walkway to crash
 		break;
-	}
-	case 8331: {
+
+	case 8331:
 		mid = 230; // walkway to factory
 		break;
-	}
-	case 8341: {
+
+	case 8341:
 		mid = 239; // factory to walkway
 		break;
-	}
-	case 8344: {
+
+	case 8344:
 		mid = 282; // factory to factory 2
 		break;
-	}
-	case 8500: {
+
+	case 8500:
 		mid = 197; // sensors
 		break;
-	}
-	case 8355: {
+
+	case 8355:
 		mid = 255; // factory 2 to factory 3
 		break;
-	}
-	case 8366: {
+
+	case 8366:
 		mid = 227; // factory 2 to storeroom
 		break;
-	}
-	case 8375: {
+
+	case 8375:
 		mid = 238; // storeroom to factory 2
 		break;
-	}
-	case 8446: {
+
+	case 8446:
 		mid = 247; // putty
 		break;
-	}
-	case 8438: {
+
+	case 8438:
 		mid = 247; // gangway
 		break;
-	}
-	case 8364: {
+
+	case 8364:
 		mid = 252; // exit
 		break;
-	}
-	case 8459: {
+
+	case 8459:
 		mid = 252; // exit
 		break;
-	}
-	case 8256: {
+
+	case 8256:
 		mid = 297; // exit
 		break;
-	}
 
 	// bellevue
-	case 12304: {
+	case 12304:
 		mid = 252; // exit
 		break;
-	}
-	case 12338: {
+
+	case 12338:
 		mid = 286; // exit
 		break;
-	}
-	case 12681: {
+
+	case 12681:
 		mid = 250; // exit
 		break;
-	}
-	case 12370: {
+
+	case 12370:
 		mid = 289; // exit
 		break;
-	}
-	case 12361: {
+
+	case 12361:
 		mid = 267; // exit
 		break;
-	}
-	case 12679: {
+
+	case 12679:
 		mid = 179; // exit
 		break;
-	}
-	case 12678: {
+
+	case 12678:
 		mid = 179; // exit
 		break;
-	}
-	case 12677: {
+
+	case 12677:
 		mid = 179; // exit
 		break;
-	}
-	case 12313: {
+
+	case 12313:
 		mid = 284; // exit
 		break;
-	}
-	case 12676: {
+
+	case 12676:
 		mid = 241; // exit
 		break;
-	}
-	case 12327: {
+
+	case 12327:
 		mid = 244; // exit
 		break;
-	}
-	case 12315: {
+
+	case 12315:
 		mid = 286; // exit
 		break;
-	}
-	case 12324: {
+
+	case 12324:
 		mid = 308; // exit
 		break;
-	}
-	case 12336: {
+
+	case 12336:
 		mid = 306; // exit
 		break;
-	}
-	case 12442: {
+
+	case 12442:
 		mid = 246; // exit
 		break;
-	}
-	case 12447: {
+
+	case 12447:
 		mid = 242; // exit
 		break;
-	}
-	case 12680: {
+
+	case 12680:
 		mid = 179; // exit
 		break;
-	}
-	case 12459: {
+
+	case 12459:
 		mid = 281; // exit
 		break;
-	}
-	case 12471: {
+
+	case 12471:
 		mid = 302; // exit
 		break;
-	}
-	case 12399: {
+
+	case 12399:
 		mid = 257; // exit
 		break;
-	}
-	case 12390: {
+
+	case 12390:
 		mid = 264; // burke door
 		break;
-	}
-	case 12541: {
+
+	case 12541:
 		mid = 264; // burke exit
 		break;
-	}
 
-	case 12630: {
+	case 12630:
 		mid += 4; // slot
 		break;
-	}
-	case 12616: {
-		mid += 4; // slot
-		break;
-	}
-	case 12629: {
-		mid += 4; // slot
-		break;
-	}
-	case 12628: {
-		mid += 4; // slot
-		break;
-	}
-	case 12627: {
-		mid += 4; // slot
-		break;
-	}
-	case 12626: {
-		mid += 4; // slot
-		break;
-	}
 
-	case 12620: {
-		mid = 220; // locker
+	case 12616:
+		mid += 4; // slot
 		break;
-	}
-	case 12621: {
-		mid = 220; // locker
-		break;
-	}
-	case 12622: {
-		mid = 220; // locker
-		break;
-	}
-	case 12623: {
-		mid = 220; // locker
-		break;
-	}
-	case 12613: {
-		mid = 220; // locker
-		break;
-	}
-	case 12624: {
-		mid = 220; // locker
-		break;
-	}
 
-	case 12631: {
+	case 12629:
+		mid += 4; // slot
+		break;
+
+	case 12628:
+		mid += 4; // slot
+		break;
+
+	case 12627:
+		mid += 4; // slot
+		break;
+
+	case 12626:
+		mid += 4; // slot
+		break;
+
+	case 12620:
+		mid = 220; // locker
+		break;
+
+	case 12621:
+		mid = 220; // locker
+		break;
+
+	case 12622:
+		mid = 220; // locker
+		break;
+
+	case 12623:
+		mid = 220; // locker
+		break;
+
+	case 12613:
+		mid = 220; // locker
+		break;
+
+	case 12624:
+		mid = 220; // locker
+		break;
+
+	case 12631:
 		mid = 273; // exit
 		break;
-	}
-	case 12641: {
+
+	case 12641:
 		mid = 290; // exit
 		break;
-	}
-	case 12642: {
+
+	case 12642:
 		mid = 273; // exit
 		break;
-	}
 
-	case 12474: {
+	case 12474:
 		mid = 282; // lamb door
 		break;
-	}
-	case 12486: {
+
+	case 12486:
 		mid = 298; // lamb door
 		break;
-	}
 
 	// security room
-	case 8295: {
+	case 8295:
 		mid = 299; // exit
 		break;
-	}
 
 	// hyde
-	case 16415: {
+	case 16415:
 		mid = 261; // exit
 		break;
-	}
-	case 16403: {
+
+	case 16403:
 		mid = 261; // exit
 		break;
-	}
-	case 16393: {
+
+	case 16393:
 		mid = 246; // exit
 		break;
-	}
-	case 16487: {
+
+	case 16487:
 		mid = 256; // exit
 		break;
-	}
-	case 16492: {
+
+	case 16492:
 		mid = 287; // exit
 		break;
-	}
-	case 16394: {
+
+	case 16394:
 		mid = 313; // exit
 		break;
-	}
-	case 16412: {
+
+	case 16412:
 		mid = 276; // exit
 		break;
-	}
-	case 16428: {
+
+	case 16428:
 		mid = 233; // exit
 		break;
-	}
-	case 16424: {
+
+	case 16424:
 		mid = 236; // exit
 		break;
-	}
-
 
 	// cathedral
-	case 16462: {
+	case 16462:
 		mid = 296; // exit
 		break;
-	}
-	case 16464: {
+
+	case 16464:
 		mid = 250; // exit
 		break;
-	}
-	case 16465: {
+
+	case 16465:
 		mid = 226; // exit
 		break;
-	}
-	case 16474: {
+
+	case 16474:
 		mid = 263; // exit
 		break;
-	}
 
-	case 16576: {
+	case 16576:
 		mid = 229; // body == 16569
 		break;
-	}
-	case 16577: {
+
+	case 16577:
 		mid = 229; // body == 16570
 		break;
-	}
-	case 16578: {
+
+	case 16578:
 		mid = 229; // body == 16571
 		break;
-	}
-	case 16579: {
+
+	case 16579:
 		mid = 229; // body == 16572
 		break;
-	}
-	case 16580: {
+
+	case 16580:
 		mid = 229; // body == 16573
 		break;
-	}
 
 	// reactor
-	case 8478: {
+	case 8478:
 		mid = 291; // exit
 		break;
-	}
-	case 8481: {
+
+	case 8481:
 		mid = 253; // exit
 		break;
-	}
-	case 8511: {
+
+	case 8511:
 		mid = 271; // exit
 		break;
-	}
 
 	// club
-	case 16538: {
+	case 16538:
 		mid = 279; // exit
 		break;
-	}
 
 	// abandoned subway
-	case 16439: {
+	case 16439:
 		mid = 267; // exit
 		break;
-	}
 
 	// entrance to underworld
-	case 16592: {
+	case 16592:
 		mid = 267; // exit
 		break;
-	}
 
 	// underworld
-	case 16649: {
+	case 16649:
 		mid = 291; // exit
 		break;
-	}
-	case 16660: {
+
+	case 16660:
 		mid = 285; // exit
 		break;
-	}
-	case 16662: {
+
+	case 16662:
 		mid = 254; // exit
 		break;
-	}
-	case 16661: {
+
+	case 16661:
 		mid = 291; // exit
 		break;
-	}
-	case 16671: {
+
+	case 16671:
 		mid = 291; // exit
 		break;
-	}
-	case 16681: {
+
+	case 16681:
 		mid = 282; // exit
 		break;
-	}
-	case 16682: {
+
+	case 16682:
 		mid = 282; // exit
 		break;
-	}
-	case 16719: {
+
+	case 16719:
 		mid = 287; // exit
 		break;
-	}
-	case 16720: {
+
+	case 16720:
 		mid = 287; // exit
 		break;
-	}
-	case 16729: {
+
+	case 16729:
 		mid = 291; // exit
 		break;
-	}
-	case 16730: {
+
+	case 16730:
 		mid = 301; // exit
 		break;
-	}
-	case 20506: {
+
+	case 20506:
 		mid = 276; // metal door
 		break;
-	}
+
 	// underworld main
-	case 20518: {
+	case 20518:
 		mid = 276; // metal door
 		break;
-	}
-	case 20532: {
+
+	case 20532:
 		mid = 264; // exit
 		break;
-	}
-	case 20558: {
+
+	case 20558:
 		mid = 296; // exit
 		break;
-	}
-	case 20598: {
+
+	case 20598:
 		mid = 237; // exit
 		break;
-	}
-	case 20601: {
+
+	case 20601:
 		mid = 183; // metal bar
 		break;
-	}
-	case 20600: {
+
+	case 20600:
 		mid = 237; // cover
 		break;
-	}
-	case 20648: {
+
+	case 20648:
 		mid = 237; // pit
 		break;
-	}
-	case 20570: {
+
+	case 20570:
 		mid = 268; // exit to medical droid room
 		break;
-	}
 
-	case 20573: {
+	case 20573:
 		mid = 290; // droid room exit
 		break;
-	}
-	case 20579: {
+
+	case 20579:
 		mid = 272; // droid room exit
 		break;
-	}
-	case 20572: {
+
+	case 20572:
 		mid = 277; // droid room exit
 		break;
-	}
-	case 20578: {
+
+	case 20578:
 		mid = 286; // console
 		break;
-	}
-	case 20674: {
+
+	case 20674:
 		mid = 279; // droid room exit
 		break;
-	}
 
-	case 20675: {
+	case 20675:
 		mid = 238; // robot
 		break;
-	}
-	case 20511: {
+
+	case 20511:
 		mid = 259; // slot
 		break;
-	}
 
-	case 20583: {
+	case 20583:
 		mid = 291; // tank room exit
 		break;
-	}
-	case 20604: {
+
+	case 20604:
 		mid = 264; // tank room exit
 		break;
-	}
-	case 20676: {
+
+	case 20676:
 		mid = 294; // exit
 		break;
-	}
-	case 20619: {
+
+	case 20619:
 		mid = 269; // exit
 		break;
-	}
-	case 20628: {
+
+	case 20628:
 		mid = 284; // exit
 		break;
-	}
-	case 20617: {
+
+	case 20617:
 		mid = 295; // exit
 		break;
-	}
 
-	case 24786: {
+	case 24786:
 		mid = 256; // linc crystal
 		break;
-	}
-	case 24787: {
+
+	case 24787:
 		mid = 256; // linc crystal
 		break;
-	}
 
-	case 20672: {
+	case 20672:
 		mid = 265; // android room exit
 		break;
-	}
-	case 20696: {
-		mid = 265; // android room exit
-		break;
-	}
-	case 20697: {
-		mid = 265; // android room exit
-		break;
-	}
-	case 20715: {
-		mid = 265; // android room exit
-		break;
-	}
 
-	case 20711: {
+	case 20696:
+		mid = 265; // android room exit
+		break;
+
+	case 20697:
+		mid = 265; // android room exit
+		break;
+
+	case 20715:
+		mid = 265; // android room exit
+		break;
+
+	case 20711:
 		mid = 219; // console
 		break;
-	}
-	case 20712: {
-		mid = 219; // console
-		break;
-	}
-	case 20713: {
-		mid = 219; // console
-		break;
-	}
 
-	case 20725: {
+	case 20712:
+		mid = 219; // console
+		break;
+
+	case 20713:
+		mid = 219; // console
+		break;
+
+	case 20725:
 		mid = 268; // exit
 		break;
-	}
 
-	case 20726: {
+	case 20726:
 		mid = 270; // exit from door room
 		break;
-	}
-	case 20728: {
+
+	case 20728:
 		mid = 219; // exit from door room
 		break;
-	}
 
-	case 20741: {
+	case 20741:
 		mid = 254; // exit from first vein room
 		break;
-	}
-	case 20743: {
+
+	case 20743:
 		mid = 279; // exit from first vein room
 		break;
-	}
-	case 20752: {
+
+	case 20752:
 		mid = 279; // exit near end
 		break;
-	}
-	case 20886: {
+
+	case 20886:
 		mid = 243; // exit orifice to linc
 		break;
-	}
 
-	case 20874: {
+	case 20874:
 		mid = 0; // pipe support - removed as appears to have no interaction
 		break;
-	}
 
 	// linc
-	case 24592: {
+	case 24592:
 		mid = 306; // maze mid-bot
 		break;
-	}
-	case 24634: {
+
+	case 24634:
 		mid = 306; // maze mid-bot
 		break;
-	}
-	case 24594: {
+
+	case 24594:
 		mid = 278; // maze left-mid
 		break;
-	}
 
-	case 8272: {
+	case 8272:
 		mid = 0; // REMOVE power room chair
 		break;
-	}
 
 	case 8290:
-	case 8291: { // power room switches
+	case 8291: // power room switches
 		if (!Logic::_scriptVariables[429])
 			return  0;
-	}
 	}
 
 	return mid;
@@ -1538,7 +1495,6 @@ int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
 }
 
 void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
-
 	if (SkyEngine::isIbass()) {
 		int midx, midy; // open hotspot dimensions
 		Compact *itemData;
@@ -1571,8 +1527,8 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 				if (itemData->mouseOn) {
 					_skyScreen->setProximityNotAnimate(_nearestProximityIconId);//we want this one remaining one to not animate
 
-					midx = giveXcood(itemData, _touchId);
-					midy = giveYcood(itemData, _touchId);
+					midx = giveXCood(itemData, _touchId);
+					midy = giveYCood(itemData, _touchId);
 					// calc dist
 					d = abs(xPos - midx) + abs(yPos - midy);
 
@@ -1688,8 +1644,8 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 			if (itemProx) {
 				itemData = _skyCompact->fetchCpt(itemProx);
-				midx = giveXcood(itemData, itemProx);
-				midy = giveYcood(itemData, itemProx);
+				midx = giveXCood(itemData, itemProx);
+				midy = giveYCood(itemData, itemProx);
 				// calc dist
 				d = abs(xPos - midx) + abs(yPos - midy);
 			}
@@ -1785,7 +1741,10 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + 4, icony);
 
-							if (_touchId == 70 || _touchId == 69 || _touchId == 24633 || _touchId == 24634 || _touchId == 4119 || _touchId == 8210) // stairs on screen 1 - normal object turned into exit - need to hack the button - the rest are either talk-to, which doesnt seem to matter, or look-at, like posters on walls
+							// stairs on screen 1 - normal object turned into exit - need to hack the button -
+							// the rest are either talk-to, which doesnt seem to matter, or look-at, like posters on walls
+							if (_touchId == 70 || _touchId == 69 || _touchId == 24633
+								|| _touchId == 24634 || _touchId == 4119 || _touchId == 8210)
 								Logic::_scriptVariables[BUTTON] = 1;
 							else
 								Logic::_scriptVariables[BUTTON] = 2;
@@ -1829,7 +1788,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 					_skyLogic->startInventory();
 					_touchId = 0;
 					_holding = false;
-					M_MODE = PRE_INVENTORY;
+					_mMode = PRE_INVENTORY;
 					_skyScreen->clearAllProximityIcons(false);
 					_skyScreen->clearAllIbassIcons(false);
 					return;
@@ -1864,8 +1823,8 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 					_skyScreen->clearAllProximityIcons();
 					// clear all but the one relating to the highlighted hotspot - hmmm
 					itemData = _skyCompact->fetchCpt(_touchId);
-					midx = giveXcood(itemData, _touchId);
-					midy = giveYcood(itemData, _touchId); //itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
+					midx = giveXCood(itemData, _touchId);
+					midy = giveYCood(itemData, _touchId); //itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
 					_skyScreen->setProximityIcon(0, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), 1.0, 0);
 					_skyScreen->setProximityNotAnimate(0);//we want this one remaining one to not animate
 				}
@@ -1989,30 +1948,30 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 void Mouse::initExitIcon(uint32 type, int iconx, int icony) {
 	switch (type) {
-	case MOUSE_LEFT: {
+	case MOUSE_LEFT:
 		_actionFlashIcon = UI_ICON_LEFT;
 		_actionFlashX = iconx + 8;
 		_skyScreen->setIcon(UI_ICON_LEFT, iconx + 8, icony);
 		break;
-	}
-	case MOUSE_RIGHT: {
+
+	case MOUSE_RIGHT:
 		_actionFlashIcon = UI_ICON_RIGHT;
 		_actionFlashX = iconx + 4;
 		_skyScreen->setIcon(UI_ICON_RIGHT, iconx + 4, icony);
 		break;
-	}
-	case MOUSE_UP: {
+
+	case MOUSE_UP:
 		_actionFlashIcon = UI_ICON_UP;
 		_actionFlashX = iconx + 5;
 		_skyScreen->setIcon(UI_ICON_UP, iconx + 5, icony);
 		break;
-	}
-	case MOUSE_DOWN: {
+
+	case MOUSE_DOWN:
 		_actionFlashIcon = UI_ICON_DOWN;
 		_actionFlashX = iconx + 5;
 		_skyScreen->setIcon(UI_ICON_DOWN, iconx + 5, icony);
 		break;
-	}
+
 	}
 }
 
@@ -2029,8 +1988,8 @@ void Mouse::updateHotspotCoordinate(uint16 xPos) {
 	// if not a floor
 	if (itemData->mouseOn && !_isExit) {
 
-		midx = giveXcood(itemData, _touchIdLegacy);
-		midy = giveYcood(itemData, _touchIdLegacy);
+		midx = giveXCood(itemData, _touchIdLegacy);
+		midy = giveYCood(itemData, _touchIdLegacy);
 
 		int icony = midy - HOTSPOT_yoff;
 		icony -= TOP_LEFT_Y; // normalise for renderer
@@ -2159,7 +2118,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
 
 			// dragged off of the inv
-			M_MODE = INVENTORY_USE_ON;
+			_mMode = INVENTORY_USE_ON;
 			// remove inv items from screen/logic processing
 			_skyLogic->killInventory();
 			// got to tidy the inv item
@@ -2373,7 +2332,7 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 	if (!_touchId && _mouseB) {
 		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
 
-			M_MODE = MUST_RELEASE; // MUST_RELEASE because if we go straight to GAMEPLAY, robert will move to the place of clicking
+			_mMode = MUST_RELEASE; // MUST_RELEASE because if we go straight to GAMEPLAY, robert will move to the place of clicking
 			_skyLogic->killInventory(); // stop rendering the inventory items
 			return;
 		}
