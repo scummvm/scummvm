@@ -303,6 +303,10 @@ public:
 	uint16 _bgAnimMode;
 	uint16 _bgAnimParam;
 
+	// Binary g_bMovementFinishedFlag [1020:0000]: set by walkAlongPath on final arrival
+	// (orientation < 9), checked after all characters processed in drawAllCharacters.
+	bool _movementFinishedFlag = false;
+
 	Common::Array<uint32> _sceneResourceOffsets;
 
 	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror = false);

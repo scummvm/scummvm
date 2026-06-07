@@ -407,6 +407,7 @@ public:
 	void drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s, uint8 shadowIntensity = 0);
 
 	void drawCharacters(Graphics::ManagedSurface &s);
+	void drawAllCharacters();
 
 	void showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 	void drawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
