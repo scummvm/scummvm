@@ -106,5 +106,11 @@ endif
 include $(srcdir)/rules.mk
 
 # Detection objects
-DETECT_OBJS += $(MODULE)/detection.o \
-	$(MODULE)/zx_tape.o
+DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_FREESCAPE), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/zx_tape.o
+endif
