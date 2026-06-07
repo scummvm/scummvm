@@ -26,32 +26,13 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "engines/enhancements.h"
+
 #include "macs2/detection.h"
+#include "macs2/dialogs.h"
 #include "macs2/macs2.h"
 #include "macs2/metaengine.h"
 
-namespace Macs2 {
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{GAMEOPTION_ORIGINAL_SAVELOAD,
-	 {_s("Use original save/load screens"),
-	  _s("Use the original save/load screens instead of the ScummVM ones"),
-	  "original_menus",
-	  false,
-	  0,
-	  0}},
-#ifdef USE_TTS
-	{GAMEOPTION_TTS,
-	 {_s("Enable Text to Speech"),
-	  _s("Use TTS to read the dialogue (if TTS is available)"),
-	  "tts_enabled",
-	  false,
-	  0,
-	  0}},
-#endif
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
-
-} // End of namespace Macs2
 
 const char *Macs2MetaEngine::getName() const {
 	return "macs2";
@@ -118,8 +99,16 @@ bool Macs2MetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSupportsLoadingDuringStartup);
 }
 
-const ADExtraGuiOptionsMap *Macs2MetaEngine::getAdvancedExtraGuiOptions() const {
-	return Macs2::optionsList;
+GUI::OptionsContainerWidget *Macs2MetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new Macs2::Macs2OptionsWidget(boss, name, target);
+}
+
+void Macs2MetaEngine::registerDefaultSettings(const Common::String &target) const {
+	ConfMan.registerDefault("original_menus", false);
+	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1);
+#ifdef USE_TTS
+	ConfMan.registerDefault("tts_enabled", false);
+#endif
 }
 
 SaveStateList Macs2MetaEngine::listSaves(const char *target) const {
