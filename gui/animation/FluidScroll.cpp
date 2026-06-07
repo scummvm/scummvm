@@ -26,6 +26,7 @@
 
 #include "common/system.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 #include "gui/animation/FluidScroll.h"
 
 namespace GUI {
@@ -127,6 +128,10 @@ void FluidScroller::stopAnimation() {
 
 void FluidScroller::feedDrag(uint32 time, int deltaY) {
 	_scrollPosRaw += (float)deltaY;
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_scrollPosRaw = CLIP(_scrollPosRaw, 0.0f, _maxScroll);
+		return;
+	}
 	_velocityTracker.addPoint(time, _scrollPosRaw);
 }
 
@@ -142,7 +147,7 @@ void FluidScroller::startFling() {
 }
 
 void FluidScroller::startFling(float velocity) {
-	if (fabsf(velocity) < 0.1f) {
+	if (!ConfMan.getBool("gui_kinetic_scrolling") || fabsf(velocity) < 0.1f) {
 		checkBoundaries();
 		return;
 	}
@@ -183,6 +188,11 @@ void FluidScroller::handleMouseWheel(int direction, float multiplier) {
 	if (stepping == 0.0f)
 		return;
 
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_scrollPosRaw = CLIP(_scrollPosRaw + stepping, 0.0f, _maxScroll);
+		_mode = kModeNone;
+		return;
+	}
 	feedWheel(g_system->getMillis(), stepping);
 }
 
@@ -198,8 +208,15 @@ void FluidScroller::absorb(float velocity, float distance) {
 }
 
 bool FluidScroller::update(uint32 time, float &outVisualPos) {
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_mode = kModeNone;
+	}
 	if (_mode == kModeNone) {
-		outVisualPos = getVisualPosition();
+		float visualPos = getVisualPosition();
+		if (outVisualPos != visualPos) {
+			outVisualPos = visualPos;
+			return true;
+		}
 		return false;
 	}
 
@@ -248,6 +265,8 @@ bool FluidScroller::update(uint32 time, float &outVisualPos) {
 }
 
 float FluidScroller::getVisualPosition() const {
+	if (!ConfMan.getBool("gui_kinetic_scrolling"))
+		return CLIP(_scrollPosRaw, 0.0f, _maxScroll);
 	float rubberBandRange = (float)_viewportHeight * kRubberBandStretchFraction;
 
 	if (_scrollPosRaw < 0)
@@ -259,6 +278,11 @@ float FluidScroller::getVisualPosition() const {
 }
 
 void FluidScroller::checkBoundaries() {
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_scrollPosRaw = CLIP(_scrollPosRaw, 0.0f, _maxScroll);
+		_mode = kModeNone;
+		return;
+	}
 	if (_scrollPosRaw < 0) {
 		absorb(0, _scrollPosRaw);
 		_animationOffset = 0;
