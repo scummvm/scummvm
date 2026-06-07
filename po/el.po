@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-06 11:26+0000\n"
+"POT-Creation-Date: 2026-06-07 21:08+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1067,7 +1067,7 @@ msgstr "Αλληλεπίδραση"
 #: engines/dragons/metaengine.cpp:158 engines/freescape/movement.cpp:35
 #: engines/got/metaengine.cpp:70 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:563 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1088
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1100
 #: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/ultima/ultima0/metaengine.cpp:45
@@ -1088,7 +1088,7 @@ msgstr "Πάνω"
 #: engines/dragons/metaengine.cpp:164 engines/freescape/movement.cpp:44
 #: engines/got/metaengine.cpp:71 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:568 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:1055
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:1067
 #: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/ultima/ultima0/metaengine.cpp:46
@@ -1109,7 +1109,7 @@ msgstr "Κάτω"
 #: engines/dragons/metaengine.cpp:170 engines/glk/dialogs.cpp:371
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1068
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1080
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:141
@@ -1129,7 +1129,7 @@ msgstr "Αριστερά"
 #: engines/dragons/metaengine.cpp:176 engines/glk/dialogs.cpp:373
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1075
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1087
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:142
@@ -4000,7 +4000,7 @@ msgid "Game not implemented"
 msgstr "Το παιχνίδι δεν έχει υλοποιηθεί"
 
 #: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
-#: engines/scumm/metaengine.cpp:1038
+#: engines/scumm/metaengine.cpp:1050
 msgid "Default game keymappings"
 msgstr "Αρχικές αντιστοιχίσεις πλήκτρων παιχνιδιού"
 
@@ -6268,7 +6268,7 @@ msgstr "R2"
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
-#: engines/scumm/metaengine.cpp:1196 engines/toltecs/metaengine.cpp:252
+#: engines/scumm/metaengine.cpp:1208 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "Μενού"
 
@@ -7755,7 +7755,7 @@ msgstr "Εναλλαγή ετοιμότητας για μάχη"
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
 #: engines/phoenixvr/metaengine.cpp:85 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1114 engines/supernova/metaengine.cpp:309
+#: engines/scumm/metaengine.cpp:1126 engines/supernova/metaengine.cpp:309
 #: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -8429,7 +8429,7 @@ msgstr "Μίλα / Αλληλεπίδρασε"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1101
+#: engines/mm/mm1/metaengine.cpp:70 engines/scumm/metaengine.cpp:1113
 #: engines/ultima/ultima0/metaengine.cpp:82
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
@@ -10425,7 +10425,7 @@ msgid "Player ammo will never decrease."
 msgstr "Τα πυρομαχικά του παίκτη δεν θα μειωθούν ποτέ."
 
 #: engines/hypno/metaengine.cpp:70 engines/scumm/metaengine.cpp:891
-#: engines/scumm/metaengine.cpp:900
+#: engines/scumm/metaengine.cpp:909
 msgid "Unlock all levels"
 msgstr "Ξεκλείδωμα όλων των επιπέδων"
 
@@ -13867,116 +13867,128 @@ msgstr "Ενεργοποίηση υψηλής ανάλυσης"
 msgid "Run the game in 640x400 high resolution mode instead of 320x200"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:892 engines/scumm/metaengine.cpp:901
+#: engines/scumm/metaengine.cpp:892 engines/scumm/metaengine.cpp:910
 #, fuzzy
 #| msgid "All levels will be available to play."
 msgid "All levels will be available without requiring passwords"
 msgstr "Όλα τα επίπεδα θα γίνουν διαθέσιμα στο παιχνίδι."
 
-#: engines/scumm/metaengine.cpp:1049
+#: engines/scumm/metaengine.cpp:900
+#, fuzzy
+#| msgid "No date saved"
+msgid "No damage"
+msgstr "Χωρίς αποθηκ. ημ/νία"
+
+#: engines/scumm/metaengine.cpp:901
+#, fuzzy
+#| msgid "Disable save menu"
+msgid "Disable player damage"
+msgstr "Απενεργοποίηση μενού αποθήκευσης"
+
+#: engines/scumm/metaengine.cpp:1061
 msgid "Down left"
 msgstr "Κάτω αριστερά"
 
-#: engines/scumm/metaengine.cpp:1062
+#: engines/scumm/metaengine.cpp:1074
 msgid "Down right"
 msgstr "Κάτω δεξιά"
 
-#: engines/scumm/metaengine.cpp:1082
+#: engines/scumm/metaengine.cpp:1094
 msgid "Up left"
 msgstr "Πάνω αριστερά"
 
-#: engines/scumm/metaengine.cpp:1095
+#: engines/scumm/metaengine.cpp:1107
 msgid "Up right"
 msgstr "Πάνω δεξιά"
 
-#: engines/scumm/metaengine.cpp:1107
+#: engines/scumm/metaengine.cpp:1119
 msgid "Switch weapon"
 msgstr "Αλλαγή όπλου"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1121
+#: engines/scumm/metaengine.cpp:1133
 msgid "Win the bike fight cheat"
 msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
 
-#: engines/scumm/metaengine.cpp:1130
+#: engines/scumm/metaengine.cpp:1142
 msgid "Rebel Assault controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1132 engines/scumm/metaengine.cpp:1209
+#: engines/scumm/metaengine.cpp:1144 engines/scumm/metaengine.cpp:1221
 msgid "Aim up / menu up"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1137 engines/scumm/metaengine.cpp:1214
+#: engines/scumm/metaengine.cpp:1149 engines/scumm/metaengine.cpp:1226
 msgid "Aim down / menu down"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1142 engines/scumm/metaengine.cpp:1219
+#: engines/scumm/metaengine.cpp:1154 engines/scumm/metaengine.cpp:1231
 msgid "Aim left / menu left"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1147 engines/scumm/metaengine.cpp:1224
+#: engines/scumm/metaengine.cpp:1159 engines/scumm/metaengine.cpp:1236
 msgid "Aim right / menu right"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1152 engines/scumm/metaengine.cpp:1229
+#: engines/scumm/metaengine.cpp:1164 engines/scumm/metaengine.cpp:1241
 #, fuzzy
 #| msgid "Pick up"
 msgid "Stick up"
 msgstr "Μάζεψε"
 
-#: engines/scumm/metaengine.cpp:1159 engines/scumm/metaengine.cpp:1236
+#: engines/scumm/metaengine.cpp:1171 engines/scumm/metaengine.cpp:1248
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Stick down"
 msgstr "Κύλιση κάτω"
 
-#: engines/scumm/metaengine.cpp:1166 engines/scumm/metaengine.cpp:1243
+#: engines/scumm/metaengine.cpp:1178 engines/scumm/metaengine.cpp:1255
 #, fuzzy
 #| msgid "Slide left"
 msgid "Stick left"
 msgstr "Ολίσθηση αριστερά"
 
-#: engines/scumm/metaengine.cpp:1173 engines/scumm/metaengine.cpp:1250
+#: engines/scumm/metaengine.cpp:1185 engines/scumm/metaengine.cpp:1262
 #, fuzzy
 #| msgid "Slide right"
 msgid "Stick right"
 msgstr "Ολίσθηση δεξιά"
 
-#: engines/scumm/metaengine.cpp:1180 engines/scumm/metaengine.cpp:1257
+#: engines/scumm/metaengine.cpp:1192 engines/scumm/metaengine.cpp:1269
 #, fuzzy
 #| msgid "Move / Select"
 msgid "Fire / select"
 msgstr "Κίνηση / Επιλογή"
 
-#: engines/scumm/metaengine.cpp:1186
+#: engines/scumm/metaengine.cpp:1198
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Walk / menu back"
 msgstr "Παράκαμψη κεντρικού μενού"
 
-#: engines/scumm/metaengine.cpp:1191
+#: engines/scumm/metaengine.cpp:1203
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu back"
 msgstr "Παράκαμψη κεντρικού μενού"
 
-#: engines/scumm/metaengine.cpp:1207
+#: engines/scumm/metaengine.cpp:1219
 msgid "Rebel Assault II controls"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:1262
+#: engines/scumm/metaengine.cpp:1274
 #, fuzzy
 #| msgid "Move Back"
 msgid "Cover / back"
 msgstr "Προχώρησε Πίσω"
 
-#: engines/scumm/metaengine.cpp:1268
+#: engines/scumm/metaengine.cpp:1280
 #, fuzzy
 #| msgid "Skip walk"
 msgid "Skip / back"
 msgstr "Παράκαμψη περιπάτου"
 
-#: engines/scumm/metaengine.cpp:1275
+#: engines/scumm/metaengine.cpp:1287
 #, fuzzy
 #| msgid "Skip main menu"
 msgid "Skip / menu"
