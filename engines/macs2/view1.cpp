@@ -532,6 +532,9 @@ void View1::drawPath(Graphics::ManagedSurface &s) {
 
 void View1::openMainMenu(Common::Point clickedPosition) {
 	_isShowingMainMenu = true;
+	// Binary handleInput: save cursor and set to PanelCursor (0x19)
+	g_engine->_scriptExecutor->_cursorModeBeforeWait = g_engine->_scriptExecutor->_mouseMode;
+	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 	// Calculate button size from actual icon dimensions (matching original)
 	uint16 maxW = 0, maxH = 0;
 	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
@@ -1061,6 +1064,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					}
 					case MainMenuButtonIndex::Close: {
 						_isShowingMainMenu = false;
+						g_engine->setCursorMode(g_engine->_scriptExecutor->_cursorModeBeforeWait);
 						break;
 					}
 					}
