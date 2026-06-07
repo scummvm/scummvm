@@ -896,6 +896,15 @@ static const ExtraGuiOption enableRebel2UnlockAll = {
 	0
 };
 
+static const ExtraGuiOption enableRebel2NoDamage = {
+	_s("No damage"),
+	_s("Disable player damage"),
+	"rebel2_no_damage",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOption enableRebel1UnlockAll = {
 	_s("Unlock all levels"),
 	_s("All levels will be available without requiring passwords"),
@@ -951,6 +960,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_UNLOCK_ALL)) {
 		options.push_back(enableRebel2UnlockAll);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_NO_DAMAGE)) {
+		options.push_back(enableRebel2NoDamage);
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_UNLOCK_ALL)) {
 		options.push_back(enableRebel1UnlockAll);

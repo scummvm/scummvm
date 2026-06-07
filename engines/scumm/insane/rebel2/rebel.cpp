@@ -187,6 +187,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_playerShield = 255; // Full shields by default (255)
 	_playerLives = 3;
 	_playerScore = 0;
+	_noDamage = false;
 	_viewX = 0;
 	_viewY = 0;
 
@@ -491,6 +492,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Based on original debug mode (DAT_0047ab34 == 'd') from FUN_00415CF8
 	// Set to true to bypass normal unlock progression
 	_debugUnlockAll = ConfMan.getBool("rebel2_unlock_all");
+	_noDamage = ConfMan.getBool("rebel2_no_damage");
 
 	for (i = 0; i < 16; i++) {
 		// If debug unlock is enabled, unlock all chapters
@@ -1110,10 +1112,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			    _gameState == kStateGameplay &&
 			    _rebelHandler != 0 &&
 			    event.kbd.hasFlags(Common::KBD_SHIFT)) {
-				_playerDamage = 255;
-				_playerShield = 0;
-				debug("Rebel2: Shift+D pressed - forcing player death");
-				_vm->_smushVideoShouldFinish = true;
+				if (!_noDamage) {
+					_playerDamage = 255;
+					_playerShield = 0;
+					debug("Rebel2: Shift+D pressed - forcing player death");
+					_vm->_smushVideoShouldFinish = true;
+				} else {
+					debug("Rebel2: Shift+D pressed - no damage mode prevents forced death");
+				}
 				return true;  // Consume the event
 			}
 			break;
@@ -1309,6 +1315,17 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 
 	lvIdx = CLIP(lvIdx, 0, 16);
 	return kDifficultyTable[diff][lvIdx];
+}
+
+bool InsaneRebel2::applyPlayerDamage(int damage) {
+	if (_noDamage || _rebelInvulnerable || damage <= 0)
+		return false;
+
+	_playerDamage += damage;
+	if (_playerDamage > 255)
+		_playerDamage = 255;
+
+	return true;
 }
 
 // addScore -- Score system with bonus life awards (FUN_0041bf8d).

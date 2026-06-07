@@ -45,6 +45,7 @@ namespace Scumm {
 constexpr int kRebel2LoadBufferSize = 400000;
 constexpr int kRebel2GameplaySurfaceWidth = 0x1a8;
 constexpr int kRebel2GameplaySurfaceHeight = 0x104;
+constexpr int kRebel2MusicTrackSize = 800000;
 
 bool isRebel2FullFrameDeltaCodec(int codec) {
 	return codec == SMUSH_CODEC_DELTA_BLOCKS || codec == SMUSH_CODEC_DELTA_GLYPHS;
@@ -96,6 +97,7 @@ void smushDecodeRA2Uncompressed(byte *dst, const byte *src, int left, int top,
 SmushPlayerRebel2::SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane)
 	: SmushPlayer(scumm, imuseDigital, insane) {
 	initGamePlayerFields();
+	ra2InitAudioTrackSizes();
 }
 
 SmushPlayerRebel2::~SmushPlayerRebel2() {
@@ -155,6 +157,23 @@ void SmushPlayerRebel2::destroyGamePlayerFields() {
 	_lastFobjData = nullptr;
 	free(_loadBuffer);
 	_loadBuffer = nullptr;
+}
+
+void SmushPlayerRebel2::ra2InitAudioTrackSizes() {
+	const int musicTrack = SMUSH_MAX_TRACKS - 1;
+	if (_smushNumTracks <= musicTrack || _smushTracks[musicTrack].blockSize >= kRebel2MusicTrackSize)
+		return;
+
+	uint8 *blockPtr = (uint8 *)realloc(_smushTracks[musicTrack].blockPtr, kRebel2MusicTrackSize);
+	if (!blockPtr) {
+		warning("SmushPlayerRebel2::ra2InitAudioTrackSizes: failed to allocate %d-byte music track",
+			kRebel2MusicTrackSize);
+		return;
+	}
+
+	_smushTracks[musicTrack].blockPtr = blockPtr;
+	_smushTracks[musicTrack].blockSize = kRebel2MusicTrackSize;
+	memset(_smushTracks[musicTrack].blockPtr, 127, _smushTracks[musicTrack].blockSize);
 }
 
 /**

@@ -75,6 +75,7 @@ private:
 	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 						  int left, int top, int width, int height);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
+	void ra2InitAudioTrackSizes();
 
 	// LOAD chunk streaming buffer (embedded resource data)
 	byte *_loadBuffer;

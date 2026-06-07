@@ -1781,15 +1781,13 @@ void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width,
 				// Original: DAT_0047a7ec += DAT_0047e0f6[chapter * 0x242 + level * 0x22]
 				int collisionDamage = (dparams.dodgeDamage >= 0) ? dparams.dodgeDamage : 0;
 
-				if (!_rebelInvulnerable) {
-					_playerDamage += collisionDamage;
-					if (_playerDamage > 255)
-						_playerDamage = 255;
+				if (applyPlayerDamage(collisionDamage)) {
 					debug("Rebel2: COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
 						i, aimX, aimY, collisionDamage, _playerDamage);
 				}
 				// Visual effect — FUN_00420515 (palette flash)
-				initDamageFlash();
+				if (!_noDamage)
+					initDamageFlash();
 				// TODO: FUN_0041189e sound based on collision direction
 			} else {
 				// Safely passed — award score bonus
@@ -1884,13 +1882,10 @@ void InsaneRebel2::applyHandler7ObstacleHit(const InsaneRebel2::CollisionZone &z
 
 	LevelDifficultyParams params = getDifficultyParams();
 	int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
-	if (!_rebelInvulnerable) {
-		_playerDamage += collisionDamage;
-		if (_playerDamage > 255)
-			_playerDamage = 255;
-	}
+	applyPlayerDamage(collisionDamage);
 	_rebelHitCounter++;
-	initDamageFlash();
+	if (!_noDamage)
+		initDamageFlash();
 	// Pan based on ship X position relative to screen center.
 	playSfx(1, 127, CLIP((_flyShipScreenX - 212) * 127 / 160, -127, 127));
 	debug("Rebel2: Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
@@ -1946,12 +1941,10 @@ void InsaneRebel2::checkHandler7ObstacleZones(uint16 &warningMask) {
 
 bool InsaneRebel2::applyHandler7WallDamage(int wallDamage) {
 	if (_hitCooldown < 5 && !_rebelInvulnerable) {
-		_playerDamage += wallDamage;
-		if (_playerDamage > 255)
-			_playerDamage = 255;
+		const bool damageApplied = applyPlayerDamage(wallDamage);
 		_rebelHitCounter++;
 		_hitCooldown = 10;
-		return true;
+		return damageApplied;
 	}
 
 	return false;
@@ -1972,14 +1965,16 @@ void InsaneRebel2::checkHandler7TopBoundary(const InsaneRebel2::CollisionZone &z
 		int16 edgeY = (int16)((_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + y1 + vMargin);
 		if (_flyShipScreenY < edgeY) {
 			// Ship above top wall - push down.
-			if (applyHandler7WallDamage(wallDamage)) {
+			const bool damageApplied = applyHandler7WallDamage(wallDamage);
+			if (damageApplied) {
 				debug("Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeY, wallDamage);
 			}
 			_spaceShotDirection = 2;  // Direction: pushed down
 			_flyShipScreenY = edgeY;  // Push-back
 			playSfx(1, 127, 0);  // CRASH.SAD, top wall -> center pan (always)
-			initDamageFlash();
+			if (!_noDamage)
+				initDamageFlash();
 		} else if (_flyShipScreenY < edgeY + 0x28) {
 			warningMask |= 4;
 		}
@@ -1996,14 +1991,16 @@ void InsaneRebel2::checkHandler7BottomBoundary(const InsaneRebel2::CollisionZone
 		_corridorBottomY = vMargin + edgeY;  // DAT_00443b10 update
 		if (edgeY < _flyShipScreenY) {
 			// Ship below bottom wall - push up.
-			if (applyHandler7WallDamage(wallDamage)) {
+			const bool damageApplied = applyHandler7WallDamage(wallDamage);
+			if (damageApplied) {
 				debug("Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeY, wallDamage);
 			}
 			_spaceShotDirection = 3;  // Direction: pushed up
 			_flyShipScreenY = edgeY;  // Push-back
 			playSfx(1, 127, 0);  // CRASH.SAD, bottom wall -> center pan (always)
-			initDamageFlash();
+			if (!_noDamage)
+				initDamageFlash();
 		} else if (edgeY - 0x28 < _flyShipScreenY) {
 			warningMask |= 8;
 		}
@@ -2024,13 +2021,15 @@ void InsaneRebel2::checkHandler7LeftBoundary(const InsaneRebel2::CollisionZone &
 			// FUN_40E35E resets horizontal history to force immediate rightward correction.
 			resetHandler7HorizontalVelocity(127);
 
-			if (applyHandler7WallDamage(wallDamage)) {
+			const bool damageApplied = applyHandler7WallDamage(wallDamage);
+			if (damageApplied) {
 				debug("Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeX, wallDamage);
 			}
 			_spaceShotDirection = 0;  // Direction: pushed right
 			playSfx(1, 127, -100);  // CRASH.SAD, left wall -> pan left (always)
-			initDamageFlash();
+			if (!_noDamage)
+				initDamageFlash();
 		}
 	}
 }
@@ -2049,13 +2048,15 @@ void InsaneRebel2::checkHandler7RightBoundary(const InsaneRebel2::CollisionZone 
 			// FUN_40E35E resets horizontal history to force immediate leftward correction.
 			resetHandler7HorizontalVelocity(-127);
 
-			if (applyHandler7WallDamage(wallDamage)) {
+			const bool damageApplied = applyHandler7WallDamage(wallDamage);
+			if (damageApplied) {
 				debug("Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeX, wallDamage);
 			}
 			_spaceShotDirection = 1;  // Direction: pushed left
 			playSfx(1, 127, 100);  // CRASH.SAD, right wall -> pan right (always)
-			initDamageFlash();
+			if (!_noDamage)
+				initDamageFlash();
 		}
 	}
 }

@@ -149,6 +149,7 @@ public:
 	Common::String _passwordInput; // Current password input string (max 8 chars)
 	bool _chapterUnlocked[16];    // Which chapters are unlocked
 	bool _debugUnlockAll;         // Debug flag to unlock all chapters for testing
+	bool _noDamage;               // Game option: disable player damage
 
 	// Unlock all chapters for testing (debug mode)
 	// Call this to enable access to all chapters without passwords
@@ -870,6 +871,7 @@ public:
 	void applyHandler7ObstacleHit(const CollisionZone &zone, int zoneIndex);
 	void awardHandler7DodgeScore();
 	void checkHandler7ObstacleZones(uint16 &warningMask);
+	bool applyPlayerDamage(int damage);
 	bool applyHandler7WallDamage(int wallDamage);
 	void resetHandler7HorizontalVelocity(int16 velocity);
 	void checkHandler7TopBoundary(const CollisionZone &zone, int16 vMargin, int wallDamage, uint16 &warningMask);

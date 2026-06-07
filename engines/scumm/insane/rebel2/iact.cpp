@@ -484,15 +484,13 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 				if (roll < probability) {
-					if (!_rebelInvulnerable) {
-						int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
-						_playerDamage += damageAmount;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
+					int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
+					if (applyPlayerDamage(damageAmount)) {
 						debug("Rebel2: H25 PROBABILISTIC damage from %d. Damage=%d total=%d",
 							srcIdBody1, damageAmount, _playerDamage);
 					}
-					initDamageFlash();
+					if (!_noDamage)
+						initDamageFlash();
 				}
 			} else {
 				debug("Rebel2 Opcode3: H25 par3=5 BLOCKED (damageLevel=%d isBitSet=%d)",
@@ -509,16 +507,14 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 
 		// Direct damage: par4==100, separate from par3 branches (lines 99-111)
 		if (par4 == 100 && !isBitSet(srcIdBody0)) {
-			if (!_rebelInvulnerable) {
-				LevelDifficultyParams dparams = getDifficultyParams();
-				int directHitDamage = (dparams.missDamage >= 0) ? dparams.missDamage : 0;
-				_playerDamage += directHitDamage;
-				if (_playerDamage > 255)
-					_playerDamage = 255;
+			LevelDifficultyParams dparams = getDifficultyParams();
+			int directHitDamage = (dparams.missDamage >= 0) ? dparams.missDamage : 0;
+			if (applyPlayerDamage(directHitDamage)) {
 				debug("Rebel2: H25 DIRECT HIT par4=100 damage=%d total=%d",
 					directHitDamage, _playerDamage);
 			}
-			initDamageFlash();
+			if (!_noDamage)
+				initDamageFlash();
 		}
 	} else if (par3 == 1 || par3 == 2) {
 		// Non-Handler-25 direct hit path — FUN_4092D9 lines 209-227
@@ -546,14 +542,12 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				}
 
 				if (shouldDamage) {
-					if (!_rebelInvulnerable) {
-						_playerDamage += directHitDamage;
-						if (_playerDamage > 255)
-							_playerDamage = 255;
+					if (applyPlayerDamage(directHitDamage)) {
 						debug("Rebel2: DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
 							srcId, par3, par4, directHitDamage, _playerDamage);
 					}
-					initDamageFlash();
+					if (!_noDamage)
+						initDamageFlash();
 				}
 			}
 		}
@@ -572,18 +566,17 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 			debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 			if (roll < probability) {
-				if (!_rebelInvulnerable) {
-					int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
-					_playerDamage += damageAmount;
-					if (_playerDamage > 255)
-						_playerDamage = 255;
+				int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
+				if (applyPlayerDamage(damageAmount)) {
 					debug("Rebel2: PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
 						srcId, damageAmount, _playerDamage);
 				}
-				if (_rebelHandler == 8) {
-					triggerDamageEffect();
-				} else {
-					initDamageFlash();
+				if (!_noDamage) {
+					if (_rebelHandler == 8) {
+						triggerDamageEffect();
+					} else {
+						initDamageFlash();
+					}
 				}
 			}
 		}
@@ -985,12 +978,9 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 					_velocityHistory[i] = -127;
 				_hitCooldown = 10;
 				_spaceShotDirection = 1;
-				initDamageFlash();
-				if (!_rebelInvulnerable) {
-					_playerDamage += corridorWallDmg;
-					if (_playerDamage > 255)
-						_playerDamage = 255;
-				}
+				applyPlayerDamage(corridorWallDmg);
+				if (!_noDamage)
+					initDamageFlash();
 				_rebelHitCounter++;
 				playSfx(1, 127, 100);  // CRASH.SAD, right wall, pan right
 			}
@@ -1004,12 +994,9 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 					_velocityHistory[i] = 127;
 				_hitCooldown = 10;
 				_spaceShotDirection = 0;
-				initDamageFlash();
-				if (!_rebelInvulnerable) {
-					_playerDamage += corridorWallDmg;
-					if (_playerDamage > 255)
-						_playerDamage = 255;
-				}
+				applyPlayerDamage(corridorWallDmg);
+				if (!_noDamage)
+					initDamageFlash();
 				_rebelHitCounter++;
 				playSfx(1, 127, -100);  // CRASH.SAD, left wall, pan left
 			}
