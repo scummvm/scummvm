@@ -368,7 +368,7 @@ void Sounds::startMusic(int musicId) {
 	auto path = g_engine->game().getMusicPath(musicId);
 	_musicSoundID = playSoundInternal(path, Mixer::kMaxChannelVolume, Mixer::kMusicSoundType);
 	_isMusicPlaying = true;
-	_nextMusicID = musicId;
+	_nextMusicID = g_engine->game().shouldMusicLoop() ? musicId : -1;
 }
 
 void Sounds::queueMusic(int musicId) {

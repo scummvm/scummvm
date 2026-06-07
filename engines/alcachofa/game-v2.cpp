@@ -232,6 +232,12 @@ public:
 			return Game::unknownCamLerpTarget(action, name);
 		return nullptr;
 	}
+
+	bool shouldMusicLoop() override {
+		// The credits cutscene is slightly longer than the
+		// so we just disable looping and keep the last couple seconds quiet
+		return !g_engine->player().currentRoom()->name().equalsIgnoreCase("CREDITOS");
+	}
 };
 
 static constexpr const char *kMapFilesSecta[] = {
@@ -280,7 +286,7 @@ public:
 	String getMusicPath(int32 trackId) override {
 		const Room *room = g_engine->player().lastGameRoom();
 		const char *dirName = room != nullptr && room->mapIndex() == 1 ? "Music_Cleopatra" : "Music";
-		return String::format("%s/Track%02d", dirName, trackId);
+		return String::format("%s/Track%02d", dirName, trackId); // 1-based indexing
 	}
 
 private:
@@ -298,7 +304,7 @@ public:
 	}
 
 	String getMusicPath(int32 trackId) override {
-		return String::format("track%d", trackId);
+		return String::format("track%d", trackId - 1); // 0-based indexing
 	}
 
 	bool isKnownBadVideo(int32 videoId) override {
@@ -321,7 +327,7 @@ public:
 	}
 
 	String getMusicPath(int32 trackId) override {
-		return String::format("track%d", trackId);
+		return String::format("track%d", trackId - 1); // 0-based indexing
 	}
 
 	bool isKnownBadVideo(int32 videoId) override {

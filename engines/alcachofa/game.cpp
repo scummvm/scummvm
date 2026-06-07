@@ -84,6 +84,10 @@ void Game::tooManyDrawRequests(int order) {
 	_message("Too many draw requests in order %d", order);
 }
 
+bool Game::shouldMusicLoop() {
+	return true;
+}
+
 bool Game::shouldCharacterTrigger(const Character *character, const char *action) {
 	return true;
 }
