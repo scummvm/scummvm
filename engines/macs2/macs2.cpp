@@ -157,6 +157,16 @@ void Macs2Engine::readResourceFile() {
 	}
 	numGlyphs = font1GlyphCount;
 
+	// Font 2: skip (4-byte size + data)
+	uint32 font2SizeField = _fileStream->readUint32LE();
+	_fileStream->seek(font2SizeField, SEEK_CUR);
+
+	// Map scene offsets: 0x400 bytes (256 entries x 4 bytes) -> scene+0x5DDB
+	// First entry is the help screen image offset.
+	for (int i = 0; i < 256; i++) {
+		_mapSceneOffsets[i] = _fileStream->readUint32LE();
+	}
+
 	_fileStream->seek(0xC, SEEK_SET);
 	Scenes::instance()._currentActorIndex = _fileStream->readUint16LE();
 	uint16 firstSceneIndex = _fileStream->readUint16LE();
@@ -610,9 +620,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->_drawnStringBox.clear();
 	currentView->_continueScriptAfterUI = false;
 	currentView->currentSpeechActData = SpeechActData();
-	currentView->_isShowingInventory = false;
+	currentView->_uiPanelState = View1::kUiPanelNone;
 	currentView->_activeInventoryItem = nullptr;
-	currentView->_isShowingMainMenu = false;
+	currentView->_uiPanelState = View1::kUiPanelNone;
 	currentView->clearOverlayTextEntries();
 	_scriptExecutor->_inventoryActionFlag = false;
 	_scriptExecutor->_inventoryCombineFlag = false;

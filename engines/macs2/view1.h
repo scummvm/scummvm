@@ -180,6 +180,10 @@ public:
 
 	ViewMode _currentMode = ViewMode::VM_GAME;
 
+	// Saved scene visuals for help screen restore (avoids changeScene on exit)
+	byte _savedPalVanilla[256 * 3] = {0};
+	Graphics::ManagedSurface _savedDepthMap;
+
 	AnimFrame *getInventoryIcon(GameObject *gameObject);
 
 	// TODO: use Graphics::Palette
@@ -203,13 +207,11 @@ public:
 	uint32 _guyFrameIndex = 0;
 
 	// TODO: Probably the start of a mode enum
-	bool _isShowingStringBox = false;
+	bool _isShowingTextBox = false;
 	Common::StringArray _drawnStringBox;
 	bool _continueScriptAfterUI = false;
-	bool _isShowingDialogueChoice = false;
 	uint16 _dialogueChoiceCount = 0;
 
-	bool _isShowingInventory = false;
 
 	// Map/Save/Load panel from handleMapPanelClick (1008:86a4).
 	// This is a combined panel opened by right-click during script execution
@@ -375,7 +377,18 @@ public:
 
 	Common::Rect _mainMenuRect;
 
-	bool _isShowingMainMenu = false;
+	// Binary g_wUiPanelState: 0=none, 1=action bar, 2=inventory, 3=dialogue, 4=save/load
+	enum UiPanelState : uint16 {
+		kUiPanelNone = 0,
+		kUiPanelActionBar = 1,
+		kUiPanelInventory = 2,
+		kUiPanelDialogue = 3,
+		kUiPanelSaveLoad = 4
+	};
+	UiPanelState _uiPanelState = kUiPanelNone;
+
+	// Binary g_wSavedCursorMode [scene+0xFEA]: saved before opening action bar panel
+	Script::MouseMode _cursorModeBeforeMenu = Script::MouseMode::Walk;
 
 	void openMainMenu(Common::Point clickedPosition);
 
@@ -461,7 +474,7 @@ public:
 		Walk = 3,         // Sets cursor mode to 0x16 (Walk)
 		Inventory = 4,    // Opens inventory panel (g_wHasSavedUiBackground=1)
 		InventoryUse = 5, // Uses selected inventory item (cursor 0x17), only if item selected
-		Map = 6,          // Enters map mode (sets scene+0x61db=1), only if not disabled
+		Map = 6,          // Opens help/info screen (sets scene+0x61db=1 for map panel mode)
 		SaveLoad = 7,     // Opens dialogue/save panel (g_wHasSavedUiBackground=3)
 		Close = 8         // Implicit close (clicking outside any button)
 	};
