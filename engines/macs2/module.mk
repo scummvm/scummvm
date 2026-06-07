@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	macs2.o \
 	saveload.o \
 	console.o \
+	dialogs.o \
 	events.o \
 	messages.o \
 	metaengine.o \
