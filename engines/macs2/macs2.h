@@ -264,9 +264,12 @@ public:
 	Common::Array<Macs2::AnimFrame> _imageResources;
 
 	GlyphData _glyphs[256];
+	GlyphData _panelGlyphs[256];   // Font 2: clean sans-serif font used by save/load panel
 	GlyphData _overlayGlyphs[256];
 	uint16 numOverlayGlyphs = 0;
 	uint16 maxOverlayGlyphHeight = 0;
+	uint16 numPanelGlyphs = 0;
+	uint16 maxPanelGlyphHeight = 0;
 	bool loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID);
 	// Font glyph count (79 glyphs in the resource file's font data)
 	uint16 numGlyphs = 79;

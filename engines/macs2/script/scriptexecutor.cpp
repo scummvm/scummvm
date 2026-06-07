@@ -2567,15 +2567,15 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	case 0x2A: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, map)
-		const bool uiOpen = v != nullptr && (v->_uiPanelState != View1::kUiPanelNone || v->_currentMode == ViewMode::VM_MAP);
+		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, help)
+		const bool uiOpen = v != nullptr && (v->_uiPanelState != View1::kUiPanelNone || v->_currentMode == ViewMode::VM_HELP);
 		out1 = (_inventoryCombineFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
 	case 0x2B: {
 		View1 *v = (View1 *)_engine->findView("View1");
-		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, map)
-		const bool uiOpen = v != nullptr && (v->_uiPanelState != View1::kUiPanelNone || v->_currentMode == ViewMode::VM_MAP);
+		// Binary: g_wUiPanelState != 0 (any panel open: action bar, inventory, dialogue, help)
+		const bool uiOpen = v != nullptr && (v->_uiPanelState != View1::kUiPanelNone || v->_currentMode == ViewMode::VM_HELP);
 		out1 = (_inventoryActionFlag && !uiOpen) ? 1 : 0;
 		break;
 	}
