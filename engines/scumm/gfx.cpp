@@ -5004,9 +5004,11 @@ void ScummEngine::updateScreenShakeEffect() {
 	if (!_shakeNextTick)
 		_shakeNextTick = now;
 
+	int multiplier = (_enableEGADithering ? 2 : 1) * _textSurfaceMultiplier;
+
 	while (now >= _shakeNextTick) {
 		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
-		_system->setShakePos(0, -shake_positions[_shakeFrame] * _textSurfaceMultiplier);
+		_system->setShakePos(0, -shake_positions[_shakeFrame] * multiplier);
 		// In DOTT (and probably all other imuse games) this runs on the imuse timer which is a PIT 0 Timer at 291.304 Hz.
 		// Apparently it is the same timer setting for all sound drivers although it is set up not in the main executable
 		// but inside each respective ims driver during the driver load/init process. The screen shakes update every 8 ticks.
