@@ -36,7 +36,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::DE_DEU,
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
-	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 	{"sis",
 	 nullptr,
 	 // Adjusted file
@@ -44,7 +44,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::DE_DEU,
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
-	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 
 	// GMACS II Interpreter V1.00 - Written & Copyright (C) 1993 by Arndt Hasch - Copyright by LINEL
 	{"sis",
@@ -53,7 +53,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::DE_DEU,
 	 Common::kPlatformDOS,
 	 ADGF_DEMO | ADGF_UNSTABLE,
-	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 
 	// English fan translation (original + macs2_translation.dat)
 	{"sis",
@@ -63,7 +63,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 GF_TRANSLATED | ADGF_UNSTABLE,
-	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 	{"sis",
 	 "w/translation",
 	 AD_ENTRY2s("RESOURCE.MCS", "5a6cdeecdabae42872ab9278ab895bad", 8621636,
@@ -71,7 +71,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 GF_TRANSLATED | ADGF_UNSTABLE,
-	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 
 	// Demo - English fan translation
 	{"sis",
@@ -81,7 +81,7 @@ const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 GF_TRANSLATED | ADGF_DEMO | ADGF_UNSTABLE,
-	 GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS)},
+	 GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TTS, GAMEOPTION_ENHANCEMENTS)},
 
 	AD_TABLE_END_MARKER};
 

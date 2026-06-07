@@ -1363,8 +1363,8 @@ void View1::draw() {
 		for (int i = 0; i < (int)_mainMenuButtonLocations.size(); i++) {
 			if (_mainMenuButtonLocations[i].contains(mousePos)) {
 				static const char *const buttonNames[] = {
-					"Talk", "Look", "Use", "Walk", "Inventory",
-					"Use Item", "Map", "Save/Load", "Close"
+					"Reden", "Schauen", "Benutzen", "Gehen", "Inventar",
+					"Gegenstand benutzen", "Hilfe", "Speichern/Laden", "Schliessen"
 				};
 				renderString(mousePos.x + 20, mousePos.y + 20, buttonNames[i]);
 				break;
@@ -1373,6 +1373,16 @@ void View1::draw() {
 	}
 
 	if (_uiPanelState == kUiPanelInventory && g_engine->enhancementEnabled(kEnhUIUX)) {
+		for (int i = 0; i < 6; i++) {
+			if (_inventoryButtonLocations[i].contains(mousePos)) {
+				static const char *const buttonNames[] = {
+					"Schauen", "Benutzen", "Hoch", "Runter", "Ablegen", "Schliessen"
+				};
+				renderString(mousePos.x + 20, mousePos.y + 20, buttonNames[i]);
+				break;
+			}
+		}
+
 		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
 			Common::String name = GameObjects::instance()._objectNames[hoveredObject->_index];
@@ -1380,6 +1390,19 @@ void View1::draw() {
 				renderString(mousePos.x + 20, mousePos.y + 20, name);
 			} else {
 				renderString(mousePos.x + 20, mousePos.y + 20, Common::String::format("%2.x", hoveredObject->_index));
+			}
+		}
+	}
+
+	if (_isSaveLoadPanelActive && g_engine->enhancementEnabled(kEnhUIUX)) {
+		for (int i = 0; i < 7; i++) {
+			if (_saveLoadButtonRects[i].contains(mousePos)) {
+				static const char *const buttonNames[] = {
+					"Laden", "Speichern", "Musik an/aus",
+					"Textur Men\x81 \x84ndern", "Zur\x81""ck zum Spielbeginn", "Exit to DOS", "Schliessen"
+				};
+				renderString(mousePos.x + 20, mousePos.y + 20, buttonNames[i]);
+				break;
 			}
 		}
 	}
