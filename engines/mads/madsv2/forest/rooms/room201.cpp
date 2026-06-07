@@ -36,29 +36,29 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];                /* 0x00 — sprite series handles  */
-	int16 sequence[10];              /* 0x14 — sequence handles       */
-	int16 animation[10];             /* 0x28 — animation handles      */
-	AnimationInfo animation_info[10];/* 0x3C */
-	int16 _8c;                       /* 0x8C */
-	int16 _8e;                       /* 0x8E */
-	int16 _pad90;                    /* 0x90 */
-	int16 _92;                       /* 0x92 */
-	int16 _94;                       /* 0x94 — animation slot index for 'R' anim */
-	int16 _96;                       /* 0x96 — animation slot index for 'F' anim */
-	int16 _98;                       /* 0x98 */
-	int16 _9a;                       /* 0x9A — animation handle */
-	int16 _9c;                       /* 0x9C — animation handle */
-	int16 _pad9e;                    /* 0x9E */
-	int16 _a0;                       /* 0xA0 — talk animation handle */
-	int16 _a2;                       /* 0xA2 — animation handle for random-frame walk */
-	int16 _a4;                       /* 0xA4 */
-	int16 _a6;                       /* 0xA6 */
-	int16 _a8;                       /* 0xA8 */
-	int16 _aa;                       /* 0xAA — cached frame for anim5 */
-	int16 _ac;                       /* 0xAC */
-	int16 _ae;                       /* 0xAE — cached frame for anim6 */
-	int16 _b0;                       /* 0xB0 */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
+	AnimationInfo animation_info[10];
+	int16 _8c;
+	int16 _8e;
+	int16 _90;
+	int16 _92;
+	int16 _94;
+	int16 _96;
+	int16 _98;
+	int16 _9a;
+	int16 _9c;
+	int16 _9e;
+	int16 _a0;
+	int16 _a2;
+	int16 _a4;
+	int16 _a6;
+	int16 _a8;
+	int16 _aa;
+	int16 _ac;
+	int16 _ae;
+	int16 _b0;
 };
 
 static Scratch scratch;
@@ -149,6 +149,32 @@ static void room_201_init1() {
 		player.walker_visible = -1;
 		return;
 	}
+}
+
+static void room_201_init() {
+	scratch._a6 = 0;
+	scratch._a4 = -1;
+
+	if (previous_room != KERNEL_RESTORING_GAME && previous_room != 199) {
+		player.walker_visible = 0;
+		player.commands_allowed = 0;
+	}
+
+	scratch._ac = 0;
+	scratch._b0 = 0;
+	for (int i = 0; i < 10; i++) {
+		aainfo[i]._active = 0;
+		aainfo[i]._frame = 1;
+		aainfo[i]._val3 = 0;
+		aainfo[i]._val4 = 0;
+	}
+
+	if (previous_room != 199 && flags[7] != 3)
+		flags[7]++;
+
+	if (flags[7] == -3)
+		flags[7] = 1;
+	room_201_init1();
 }
 
 static void room_201_anim1() {
@@ -337,32 +363,6 @@ static void room_201_anim6() {
 		kernel_reset_animation(aa[3], var_2);
 		scratch._ae = var_2;
 	}
-}
-
-static void room_201_init() {
-	scratch._a6 = 0;
-	scratch._a4 = -1;
-
-	if (previous_room != KERNEL_RESTORING_GAME && previous_room != 199) {
-		player.walker_visible = 0;
-		player.commands_allowed = 0;
-	}
-
-	scratch._ac = 0;
-	scratch._b0 = 0;
-	for (int i = 0; i < 10; i++) {
-		aainfo[i]._active = 0;
-		aainfo[i]._frame = 1;
-		aainfo[i]._val3 = 0;
-		aainfo[i]._val4 = 0;
-	}
-
-	if (previous_room != 199 && flags[7] != 3)
-		flags[7]++;
-
-	if (flags[7] == -3)
-		flags[7] = 1;
-	room_201_init1();
 }
 
 static void room_201_daemon() {
@@ -664,14 +664,14 @@ void room_201_synchronize(Common::Serializer &s) {
 	for (AnimationInfo &ai : scratch.animation_info) ai.synchronize(s);
 	s.syncAsSint16LE(scratch._8c);
 	s.syncAsSint16LE(scratch._8e);
-	s.syncAsSint16LE(scratch._pad90);
+	s.syncAsSint16LE(scratch._90);
 	s.syncAsSint16LE(scratch._92);
 	s.syncAsSint16LE(scratch._94);
 	s.syncAsSint16LE(scratch._96);
 	s.syncAsSint16LE(scratch._98);
 	s.syncAsSint16LE(scratch._9a);
 	s.syncAsSint16LE(scratch._9c);
-	s.syncAsSint16LE(scratch._pad9e);
+	s.syncAsSint16LE(scratch._9e);
 	s.syncAsSint16LE(scratch._a0);
 	s.syncAsSint16LE(scratch._a2);
 	s.syncAsSint16LE(scratch._a4);
