@@ -101,6 +101,10 @@ void Screen::hideInventory() {
 }
 
 void Screen::clearAllInvIcons() {
+
+	for (int i = 0; i < NUM_INV_ICONS; i++)
+		_invIcon[i]._visible = false;
+
 	_invIconsInUse = 0;
 }
 
