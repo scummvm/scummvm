@@ -916,6 +916,7 @@ void onImGuiRender() {
 			ImGui::MenuItem("Watched Vars", NULL, &_state->_w.watchedVars);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
+			ImGui::MenuItem("Windows", NULL, &_state->_w.windows);
 			ImGui::MenuItem("Execution Context", NULL, &_state->_w.executionContext);
 
 			ImGui::SeparatorText("Misc");
@@ -949,6 +950,7 @@ void onImGuiRender() {
 	showBreakpointList();
 	showSettings();
 	showArchive();
+	showWindows();
 	showWatchedVars();
 	_state->_logger->draw("Logger", &_state->_w.logger);
 }

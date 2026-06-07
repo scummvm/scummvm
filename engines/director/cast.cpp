@@ -314,7 +314,8 @@ void Cast::setArchive(Common::SharedPtr<Archive> archive) {
 }
 
 void Cast::loadArchive() {
-	loadConfig();
+	if (!loadConfig())
+		return;
 	loadCast();
 }
 
@@ -527,8 +528,11 @@ bool Cast::loadConfig() {
 		//Calculation and verification of checksum
 		uint32 check = computeChecksum();
 
-		if (check != _checksum)
-			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, _checksum);
+		if (check != _checksum) {
+			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %08x, but expected %08x", check, _checksum);
+			delete stream;
+			return false;
+		}
 
 		if (_version >= kFileVer400 && _version < kFileVer500) {
 			_field30 = stream->readSint16();
