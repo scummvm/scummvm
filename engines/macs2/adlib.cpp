@@ -125,7 +125,7 @@ uint16 Adlib::adlibTickHandler() {
 	// Waveform select enable
 	adlibWriteReg(0x01, 0x20);
 
-	_playbackPos = _songStartPtr;
+	_playbackPos = new StreamHandler(*_songStartPtr);
 	_masterVolume = 0;
 	_streamBytesConsumed = 0;
 	_streamBytesConsumedHi = 0;
@@ -195,7 +195,7 @@ void Adlib::adlibReadDeltaTime() {
 	do {
 		b = _playbackPos->peekByte();
 		_nextEventTimer = (_nextEventTimer << 7) + (b & 0x7F);
-		_playbackPos = adlibSeekStream(_playbackPos, 1);
+		advancePlaybackPos(1);
 		_streamBytesConsumed++;
 	} while (b & 0x80);
 }
@@ -203,16 +203,24 @@ void Adlib::adlibReadDeltaTime() {
 // --- adlibSeekStream ---
 StreamHandler *Adlib::adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta) {
 	StreamHandler *result = new StreamHandler(*inHandler);
-	uint16 pos = result->pos();
+	uint16 p = result->pos();
 	if (seekDelta > 0xFFF8)
-		pos &= 0xF;
-	pos += seekDelta;
-	result->seek(pos, SEEK_SET);
+		p &= 0xF;
+	p += seekDelta;
+	result->seek(p, SEEK_SET);
 	return result;
 }
 
+void Adlib::advancePlaybackPos(uint16 seekDelta) {
+	uint16 p = _playbackPos->pos();
+	if (seekDelta > 0xFFF8)
+		p &= 0xF;
+	p += seekDelta;
+	_playbackPos->seek(p, SEEK_SET);
+}
+
 // --- OnTimer (ISR handler, 1000:1a9f) ---
-void Adlib::OnTimer() {
+void Adlib::onTimer() {
 	if (_playbackPos == nullptr)
 		return;
 
@@ -247,7 +255,7 @@ void Adlib::OnTimer() {
 			_currentMidiStatus = peek;
 			_currentEventStatus = peek;
 			_currentEventStatusHi = 0;
-			_playbackPos = adlibSeekStream(_playbackPos, 1);
+			advancePlaybackPos(1);
 			_streamBytesConsumed++;
 		}
 
@@ -256,8 +264,7 @@ void Adlib::OnTimer() {
 		uint8 eventType = status; // tracks note-on→note-off conversion
 
 		uint8 data1 = _playbackPos->peekByte();
-		StreamHandler *afterData1 = adlibSeekStream(_playbackPos, 1);
-		uint8 data2 = afterData1->peekByte();
+		uint8 data2 = _playbackPos->peekByteAtOffset(_playbackPos->pos() + 1, SEEK_SET);
 
 		// --- Note On (0x90) ---
 		if ((status & 0xF0) == 0x90) {
@@ -265,7 +272,7 @@ void Adlib::OnTimer() {
 				// Velocity 0 = note off
 				eventType = 0x80;
 			} else {
-				_playbackPos = adlibSeekStream(_playbackPos, 2);
+				advancePlaybackPos(2);
 				_streamBytesConsumed += 2;
 
 				if (_numOplChannels == 9 || channel < 0x0B) {
@@ -296,6 +303,7 @@ void Adlib::OnTimer() {
 								_voiceInstrument[voice] = _channelPrograms[channel];
 								StreamHandler *instData = adlibSeekStream(_instrumentDataPtr, _voiceInstrument[voice] << 4);
 								adlibSetFrequency(voice, instData);
+								delete instData;
 							}
 						}
 					}
@@ -307,14 +315,14 @@ void Adlib::OnTimer() {
 						uint8 velAtten = (uint8)((0x3F - ((data2 & 0x7F) >> 1)) >> 1) >> 1;
 
 						// Operator 2 volume (carrier)
-						StreamHandler *op2Data = adlibSeekStream(instData, 2);
-						uint8 op2Base = op2Data->peekByte() & 0x3F;
+						uint8 op2Base = instData->peekByteAtOffset(instData->pos() + 2, SEEK_SET) & 0x3F;
 						uint8 vol2 = op2Base + (uint8)((uint16)(velAtten * (0x3F - op2Base)) / 0x3F) + _masterVolume;
 
 						// Operator 1 volume (modulator)
-						StreamHandler *op1Data = adlibSeekStream(instData, 3);
-						uint8 op1Base = op1Data->peekByte() & 0x3F;
+						uint8 op1Base = instData->peekByteAtOffset(instData->pos() + 3, SEEK_SET) & 0x3F;
 						uint8 vol1 = op1Base + (uint8)((uint16)(velAtten * (0x3F - op1Base)) / 0x3F) + _masterVolume;
+
+						delete instData;
 
 						if (vol1 > 0x3F) vol1 = 0x3F;
 						if (vol2 > 0x3F) vol2 = 0x3F;
@@ -338,22 +346,19 @@ void Adlib::OnTimer() {
 						// Bass drum: load full instrument
 						StreamHandler *bdInst = adlibSeekStream(_instrumentDataPtr, _channelPrograms[0xB] << 4);
 						adlibSetFrequency(_percFreqChannel[channel - 0xB], bdInst);
+						delete bdInst;
 					} else {
 						// Other percussion: load individual operator registers
 						adlibWriteReg(opIdx + 0x20, instData->peekByte());
-						StreamHandler *sh2 = adlibSeekStream(instData, 2);
-						adlibWriteReg(opIdx + 0x40, sh2->peekByte());
-						StreamHandler *sh4 = adlibSeekStream(instData, 4);
-						adlibWriteReg(opIdx + 0x60, sh4->peekByte());
-						StreamHandler *sh6 = adlibSeekStream(instData, 6);
-						adlibWriteReg(opIdx + 0x80, sh6->peekByte());
-						StreamHandler *sh8 = adlibSeekStream(instData, 8);
-						adlibWriteReg(opIdx + 0xE0, sh8->peekByte());
+						adlibWriteReg(opIdx + 0x40, instData->peekByteAtOffset(instData->pos() + 2, SEEK_SET));
+						adlibWriteReg(opIdx + 0x60, instData->peekByteAtOffset(instData->pos() + 4, SEEK_SET));
+						adlibWriteReg(opIdx + 0x80, instData->peekByteAtOffset(instData->pos() + 6, SEEK_SET));
+						adlibWriteReg(opIdx + 0xE0, instData->peekByteAtOffset(instData->pos() + 8, SEEK_SET));
 					}
 
 					// Percussion volume
-					StreamHandler *volData = adlibSeekStream(_instrumentDataPtr, (_channelPrograms[channel] << 4) + 3);
-					uint8 volIdx = ((volData->peekByte() & 0x3F) >> 4) * 8 + (data2 >> 4);
+					uint8 volByte = _instrumentDataPtr->peekByteAtOffset(_instrumentDataPtr->pos() + (_channelPrograms[channel] << 4) + 3, SEEK_SET);
+					uint8 volIdx = ((volByte & 0x3F) >> 4) * 8 + (data2 >> 4);
 					uint8 vol = _masterVolume;
 					if (volIdx < _percVolTable.size())
 						vol = _percVolTable[volIdx] + _masterVolume;
@@ -368,13 +373,15 @@ void Adlib::OnTimer() {
 					// Set percussion bit in 0xBD
 					uint8 bdVal = adlibGetOperator(0xBD);
 					adlibWriteReg(0xBD, bdVal | (1 << (0xF - channel)));
+
+					delete instData;
 				}
 			}
 		}
 
 		// --- Note Off (0x80) ---
 		if ((eventType & 0xF0) == 0x80) {
-			_playbackPos = adlibSeekStream(_playbackPos, 2);
+			advancePlaybackPos(2);
 			_streamBytesConsumed += 2;
 
 			// Age all voices
@@ -405,13 +412,13 @@ void Adlib::OnTimer() {
 
 		// --- Pitch Wheel / Aftertouch (0xE0, 0xA0) ---
 		if ((eventType & 0xF0) == 0xE0 || (eventType & 0xF0) == 0xA0) {
-			_playbackPos = adlibSeekStream(_playbackPos, 2);
+			advancePlaybackPos(2);
 			_streamBytesConsumed += 2;
 		}
 
 		// --- Control Change (0xB0) ---
 		if ((eventType & 0xF0) == 0xB0) {
-			_playbackPos = adlibSeekStream(_playbackPos, 2);
+			advancePlaybackPos(2);
 			_streamBytesConsumed += 2;
 
 			if (data1 == 0x66) {
@@ -442,21 +449,21 @@ void Adlib::OnTimer() {
 
 		// --- Program Change (0xC0) ---
 		if ((eventType & 0xF0) == 0xC0) {
-			_playbackPos = adlibSeekStream(_playbackPos, 1);
+			advancePlaybackPos(1);
 			_streamBytesConsumed++;
 			_channelPrograms[channel] = data1;
 		}
 
 		// --- Channel Pressure (0xD0) ---
 		if ((eventType & 0xF0) == 0xD0) {
-			_playbackPos = adlibSeekStream(_playbackPos, 1);
+			advancePlaybackPos(1);
 			_streamBytesConsumed++;
 		}
 
 		// --- System/Meta (0xF0) ---
 		if ((eventType & 0xF0) == 0xF0) {
 			// Binary: BOTH 0x2F and other meta events reset to song start
-			_playbackPos = _songStartPtr;
+			_playbackPos->seek(_songStartPtr->pos(), SEEK_SET);
 			_streamBytesConsumed = 0;
 			_streamBytesConsumedHi = 0;
 			_loopCount = 0;
@@ -468,7 +475,7 @@ void Adlib::OnTimer() {
 
 		// Safety: if delta > 0xFFF, reset to start (corrupted stream)
 		if (_nextEventTimer > 0x0FFF) {
-			_playbackPos = _songStartPtr;
+			_playbackPos->seek(_songStartPtr->pos(), SEEK_SET);
 			_streamBytesConsumed = 0;
 			_streamBytesConsumedHi = 0;
 			_loopCount = 0;
@@ -515,11 +522,17 @@ void Adlib::init() {
 	_voiceInstrument.resize(9);
 	_voiceNote.resize(9);
 
-	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::OnTimer), CALLBACKS_PER_SECOND);
+	_opl->start(new Common::Functor0Mem<void, Adlib>(this, &Adlib::onTimer), CALLBACKS_PER_SECOND);
 }
 
 void Adlib::deinit() {
 	_opl->stop();
+	delete _playbackPos;
+	_playbackPos = nullptr;
+	delete _instrumentDataPtr;
+	_instrumentDataPtr = nullptr;
+	delete _songStartPtr;
+	_songStartPtr = nullptr;
 	delete _activeSongStream;
 	_activeSongStream = nullptr;
 	delete _opl;
@@ -529,24 +542,25 @@ void Adlib::playSongData(const Common::Array<uint8> &data) {
 	// Stop previous playback
 	_isInitialized = 0;
 	delete _activeSongStream;
+	delete _instrumentDataPtr;
+	delete _songStartPtr;
+	_instrumentDataPtr = nullptr;
+	_songStartPtr = nullptr;
+	_playbackPos = nullptr;
 
 	_activeSongData = data;
 	_activeSongStream = new StreamHandler(&_activeSongData);
 
 	// Parse song header (adlibPlaySong, 1000:244d)
-	StreamHandler *sh6 = adlibSeekStream(_activeSongStream, 0x6);
-	uint16 instOffset = sh6->peekWord();
+	uint16 instOffset = _activeSongStream->peekWordAtOffset(0x6, SEEK_SET);
 	_instrumentDataPtr = adlibSeekStream(_activeSongStream, instOffset);
 
-	StreamHandler *sh8 = adlibSeekStream(_activeSongStream, 0x8);
-	uint16 dataOffset = sh8->peekWord();
+	uint16 dataOffset = _activeSongStream->peekWordAtOffset(0x8, SEEK_SET);
 	_songStartPtr = adlibSeekStream(_activeSongStream, dataOffset);
 
-	StreamHandler *sh24 = adlibSeekStream(_activeSongStream, 0x24);
-	_currentEventStatusHi = sh24->peekWord();
+	_currentEventStatusHi = _activeSongStream->peekWordAtOffset(0x24, SEEK_SET);
 
-	StreamHandler *shC = adlibSeekStream(_activeSongStream, 0xC);
-	_timerFrequency = shC->peekWord();
+	_timerFrequency = _activeSongStream->peekWordAtOffset(0xC, SEEK_SET);
 
 	adlibTickHandler();
 }
@@ -555,7 +569,12 @@ void Adlib::stopMusic() {
 	// Binary adlibStopMusic (1000:264d): set stop flag, ISR handles cleanup
 	_statusFlags |= 2;
 	// In ScummVM we can't spin-wait for ISR, so directly clean up
+	delete _playbackPos;
 	_playbackPos = nullptr;
+	delete _instrumentDataPtr;
+	_instrumentDataPtr = nullptr;
+	delete _songStartPtr;
+	_songStartPtr = nullptr;
 	delete _activeSongStream;
 	_activeSongStream = nullptr;
 	_activeSongData.clear();
@@ -649,6 +668,14 @@ byte StreamHandler::peekByteAtOffset(int64 offset, int whence) {
 uint16 StreamHandler::peekWord() {
 	_stream->seek(_pos, SEEK_SET);
 	uint16 result = readUint16LE();
+	return result;
+}
+
+uint16 StreamHandler::peekWordAtOffset(int64 offset, int whence) {
+	int64 oldPos = _pos;
+	seek(offset, whence);
+	uint16 result = peekWord();
+	seek(oldPos, SEEK_SET);
 	return result;
 }
 

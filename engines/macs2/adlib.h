@@ -54,6 +54,7 @@ public:
 	byte peekByte();
 	byte peekByteAtOffset(int64 offset, int whence);
 	uint16 peekWord();
+	uint16 peekWordAtOffset(int64 offset, int whence);
 };
 
 class Adlib {
@@ -70,8 +71,9 @@ private:
 	uint16 adlibTickHandler();                               // 1000:24fd (init)
 	void adlibReadDeltaTime();                               // reads variable-length delta
 	StreamHandler *adlibSeekStream(StreamHandler *inHandler, uint16 seekDelta);
+	void advancePlaybackPos(uint16 seekDelta);
 
-	void OnTimer(); // ISR handler (1000:1a9f)
+	void onTimer(); // ISR handler (1000:1a9f)
 
 	// --- State variables (matching binary addresses) ---
 
