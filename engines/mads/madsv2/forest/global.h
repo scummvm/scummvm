@@ -244,13 +244,13 @@ enum {
 };
 
 struct AnimationInfo {
-	int16 _val1;
-	int16 _val2;
+	int16 _active;
+	int16 _frame;
 	int16 _val3;
 	int16 _val4;
 
 	void synchronize(Common::Serializer &s) {
-		s.syncMultipleLE(_val1, _val2, _val3, _val4);
+		s.syncMultipleLE(_active, _frame, _val3, _val4);
 	}
 };
 

@@ -92,10 +92,10 @@ static void room_199_init1() {
 		seq[3] = kernel_load_series("*rm199n14", 0); aa[9] = kernel_seq_stamp(seq[3], false, 1); kernel_seq_depth(aa[9], 5);
 	}
 	if (flags[32] >= 1) {
-		seq[4] = kernel_load_series("*rm199n15", 0); aainfo[0]._val1 = kernel_seq_stamp(seq[4], false, 1); kernel_seq_depth(aainfo[0]._val1, 5);
+		seq[4] = kernel_load_series("*rm199n15", 0); aainfo[0]._active = kernel_seq_stamp(seq[4], false, 1); kernel_seq_depth(aainfo[0]._active, 5);
 	}
 	if (flags[33] >= 1) {
-		seq[5] = kernel_load_series("*rm199n16", 0); aainfo[0]._val2 = kernel_seq_stamp(seq[5], false, 1); kernel_seq_depth(aainfo[0]._val2, 5);
+		seq[5] = kernel_load_series("*rm199n16", 0); aainfo[0]._frame = kernel_seq_stamp(seq[5], false, 1); kernel_seq_depth(aainfo[0]._frame, 5);
 	}
 }
 
@@ -106,50 +106,50 @@ static void room_199_init() {
 
 	aainfo[2]._val3 = -1;
 	aainfo[2]._val4 = 0;
-	aainfo[3]._val1 = 0;
-	aainfo[3]._val2 = -1;
+	aainfo[3]._active = 0;
+	aainfo[3]._frame = -1;
 
 	if (previous_room == 304 || previous_room == 402) {
 		if (global[g070] != 0) {
-			aainfo[2]._val2 = 1;
+			aainfo[2]._frame = 1;
 			ss[1] = kernel_load_series("*rm199z1", 0);
 			kernel_flip_hotspot(99, false);
 			kernel_flip_hotspot(174, false);
-			int16 slot = aainfo[2]._val2;
+			int16 slot = aainfo[2]._frame;
 			seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 			kernel_seq_depth(seq[6 + slot], 1);
-			aainfo[2]._val1 = slot;
+			aainfo[2]._active = slot;
 			player.commands_allowed = 0;
 			kernel_timing_trigger(300, 111);
 			return;
 		}
 		room_199_init1();
-		aainfo[2]._val2 = 0;
+		aainfo[2]._frame = 0;
 		ss[0] = kernel_load_series("*rm199n1", 0);
 	} else if (previous_room == 503) {
-		aainfo[2]._val2 = 3;
+		aainfo[2]._frame = 3;
 		ss[3] = kernel_load_series("*rm199v1", 0);
 		kernel_flip_hotspot(99, false);
 		kernel_flip_hotspot(174, false);
-		int16 slot = aainfo[2]._val2;
+		int16 slot = aainfo[2]._frame;
 		seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 		kernel_seq_depth(seq[6 + slot], 5);
-		aainfo[2]._val1 = slot;
+		aainfo[2]._active = slot;
 		player.commands_allowed = 0;
 		kernel_timing_trigger(2, 112);
 		return;
 	} else {
 		room_199_init1();
-		aainfo[2]._val2 = 0;
+		aainfo[2]._frame = 0;
 		ss[0] = kernel_load_series("*rm199n1", 0);
 	}
 
 	kernel_flip_hotspot(99, false);
 	kernel_flip_hotspot(174, false);
-	int16 slot = aainfo[2]._val2;
+	int16 slot = aainfo[2]._frame;
 	seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 	kernel_seq_depth(seq[6 + slot], 1);
-	aainfo[2]._val1 = slot;
+	aainfo[2]._active = slot;
 }
 
 static int room_199_anim1() {
@@ -224,7 +224,7 @@ static void room_199_anim2() {
 	case 14:
 		aainfo[2]._val4 = 0;
 		aainfo[2]._val3 = -1;
-		aainfo[3]._val1 = 0;
+		aainfo[3]._active = 0;
 		kernel_timing_trigger(2, 113);
 		return;
 	default:
@@ -350,10 +350,10 @@ static void room_199_anim4() {
 	case 11:
 		if (player_has(7)) {
 			seq[4] = kernel_load_series("*ob007i", 0);
-			aainfo[0]._val1 = kernel_seq_stamp(seq[4], false, 1);
-			kernel_seq_depth(aainfo[0]._val1, 1);
-			kernel_seq_loc(aainfo[0]._val1, 270, 144);
-			kernel_seq_scale(aainfo[0]._val1, 85);
+			aainfo[0]._active = kernel_seq_stamp(seq[4], false, 1);
+			kernel_seq_depth(aainfo[0]._active, 1);
+			kernel_seq_loc(aainfo[0]._active, 270, 144);
+			kernel_seq_scale(aainfo[0]._active, 85);
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 12:
@@ -370,8 +370,8 @@ static void room_199_daemon() {
 	int16 trig = kernel.trigger;
 
 	if (trig == 7) {
-		if (aainfo[3]._val2 == 11) {
-			aainfo[3]._val2 = -1;
+		if (aainfo[3]._frame == 11) {
+			aainfo[3]._frame = -1;
 			kernel_timing_trigger(30, 113);
 		}
 	} else if (trig == 111) {
@@ -390,10 +390,10 @@ static void room_199_daemon() {
 		global[g100] = result;
 		if (result) {
 			digi_play_build(521, 'e', 11, 1);
-			aainfo[3]._val2 = 11;
+			aainfo[3]._frame = 11;
 		} else {
 			aainfo[2]._val3 = 1;
-			aainfo[3]._val1 = -1;
+			aainfo[3]._active = -1;
 			digi_play_build(521, 'e', 12, 1);
 			room_199_anim2();
 		}
@@ -403,7 +403,7 @@ static void room_199_daemon() {
 
 	if (aainfo[2]._val4 != 0)
 		room_199_anim4();
-	if (aainfo[3]._val1 != 0)
+	if (aainfo[3]._active != 0)
 		room_199_anim2();
 }
 
@@ -413,10 +413,10 @@ static void room_199_pre_parser() {
 
 static void room_199_parser2() {
 	if (flags[33] >= 1) {
-		kernel_seq_delete(aainfo[0]._val2); matte_deallocate_series(seq[5], -1);
+		kernel_seq_delete(aainfo[0]._frame); matte_deallocate_series(seq[5], -1);
 	}
 	if (flags[32] >= 1) {
-		kernel_seq_delete(aainfo[0]._val1); matte_deallocate_series(seq[4], -1);
+		kernel_seq_delete(aainfo[0]._active); matte_deallocate_series(seq[4], -1);
 	}
 	if (flags[30] >= 1) {
 		kernel_seq_delete(aa[9]);            matte_deallocate_series(seq[3], -1);
@@ -460,19 +460,19 @@ static void room_199_parser2() {
 }
 
 static void room_199_parser1() {
-	if (aainfo[2]._val1 == 2)
+	if (aainfo[2]._active == 2)
 		kernel_flip_hotspot(99, 0);
-	if (aainfo[2]._val1 == 3)
+	if (aainfo[2]._active == 3)
 		kernel_flip_hotspot(174, 0);
 
-	int16 old_slot = aainfo[2]._val1;
+	int16 old_slot = aainfo[2]._active;
 	kernel_seq_delete(seq[6 + old_slot]);
 	matte_deallocate_series(ss[old_slot], -1);
 
-	if (aainfo[2]._val1 == 0)
+	if (aainfo[2]._active == 0)
 		room_199_parser2();
 
-	int16 new_slot = aainfo[2]._val2;
+	int16 new_slot = aainfo[2]._frame;
 	switch (new_slot) {
 	case 0:
 		room_199_init1();
@@ -493,7 +493,7 @@ static void room_199_parser1() {
 
 	seq[6 + new_slot] = kernel_seq_stamp(ss[new_slot], false, 1);
 	kernel_seq_depth(seq[6 + new_slot], 1);
-	aainfo[2]._val1 = aainfo[2]._val2;
+	aainfo[2]._active = aainfo[2]._frame;
 	digi_play_build_ii('_', 1, 2);
 }
 
@@ -528,21 +528,21 @@ static void room_199_parser() {
 	}
 
 	if (player_parse(156, 0)) {
-		if (aainfo[2]._val1 != 3) {
-			aainfo[2]._val1 = aainfo[2]._val2;
-			aainfo[2]._val2++;
+		if (aainfo[2]._active != 3) {
+			aainfo[2]._active = aainfo[2]._frame;
+			aainfo[2]._frame++;
 		}
-		if (aainfo[2]._val2 != aainfo[2]._val1)
+		if (aainfo[2]._frame != aainfo[2]._active)
 			room_199_parser1();
 		goto handled;
 	}
 
 	if (player_parse(90, 0)) {
-		if (aainfo[2]._val1 != 0) {
-			aainfo[2]._val1 = aainfo[2]._val2;
-			aainfo[2]._val2--;
+		if (aainfo[2]._active != 0) {
+			aainfo[2]._active = aainfo[2]._frame;
+			aainfo[2]._frame--;
 		}
-		if (aainfo[2]._val2 != aainfo[2]._val1)
+		if (aainfo[2]._frame != aainfo[2]._active)
 			room_199_parser1();
 		goto handled;
 	}

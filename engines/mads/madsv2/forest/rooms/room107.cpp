@@ -82,19 +82,19 @@ static void room_107_init() {
 	mouse_hide();
 
 	for (int16 i = 0; i < 10; i++) {
-		aainfo[i]._val1 = 0;
-		aainfo[i]._val2 = -1;
+		aainfo[i]._active = 0;
+		aainfo[i]._frame = -1;
 	}
 
 	kernel_timing_trigger(5, 100);
 }
 
 static void room_107_anim1() {
-	int16 prev_frame = aainfo[0]._val2;
+	int16 prev_frame = aainfo[0]._frame;
 	int16 frame = kernel_anim[aa[0]].frame;
 
 	if (frame != prev_frame) {
-		aainfo[0]._val2 = frame;
+		aainfo[0]._frame = frame;
 
 		if (frame == 30) {
 			new_room = 104;
@@ -109,7 +109,7 @@ static void room_107_anim1() {
 				scratch._8e = 21;
 			} else if (frame == 26) {
 				if (aainfo[0]._val3 == 1) {
-					aainfo[0]._val2 = 21;
+					aainfo[0]._frame = 21;
 					kernel_reset_animation(aa[0], 21);
 				}
 			}
@@ -121,7 +121,7 @@ static void room_107_anim1() {
 			aainfo[0]._val3 = 2;
 			scratch._8e = -1;
 			global_digi_play(4);
-			aainfo[0]._val2 = 26;
+			aainfo[0]._frame = 26;
 			kernel_reset_animation(aa[0], 26);
 		}
 	}
@@ -136,11 +136,11 @@ static void room_107_daemon() {
 
 	if (kernel.trigger == 100) {
 		aa[0] = kernel_run_animation(kernel_name('T', 1), 0);
-		aainfo[0]._val1 = -1;
+		aainfo[0]._active = -1;
 		scratch._8c = 30;
 	}
 
-	if (aainfo[0]._val1 != 0)
+	if (aainfo[0]._active != 0)
 		room_107_anim1();
 }
 

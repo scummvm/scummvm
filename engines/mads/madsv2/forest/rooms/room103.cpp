@@ -67,8 +67,8 @@ static void room_103_init() {
 	scratch._92 = -1;
 
 	for (int count = 0; count < 10; count++) {
-		aainfo[count]._val1 = 0;
-		aainfo[count]._val2 = 1;
+		aainfo[count]._active = 0;
+		aainfo[count]._frame = 1;
 		aainfo[count]._val3 = 0;
 		aainfo[count]._val4 = 0;
 	}
@@ -80,18 +80,18 @@ static void room_103_init() {
 	player.commands_allowed = 0;
 
 	for (int count = 0; count < 10; count++) {
-		aainfo[count]._val1 = 0;
-		aainfo[count]._val2 = -1;
+		aainfo[count]._active = 0;
+		aainfo[count]._frame = -1;
 	}
 
 	aa[0] = kernel_run_animation(kernel_name('F', 1), 0);
-	aainfo[0]._val1 = -1;
+	aainfo[0]._active = -1;
 }
 
 static void room_103_anim1() {
-	if (kernel_anim[aa[0]].frame != aainfo[0]._val2) {
+	if (kernel_anim[aa[0]].frame != aainfo[0]._frame) {
 		int16 frame = kernel_anim[aa[0]].frame;
-		aainfo[0]._val2 = frame;
+		aainfo[0]._frame = frame;
 
 		if (frame == 1) {
 			digi_initial_volume(20);
@@ -100,10 +100,10 @@ static void room_103_anim1() {
 			digi_flag1 = true;
 		} else if (frame == 273) {
 			kernel_abort_animation(aa[0]);
-			aainfo[0]._val1 = 0;
+			aainfo[0]._active = 0;
 			stop_speech_on_run_animation = false;
 			aa[1] = kernel_run_animation(kernel_name('F', 2), 0);
-			aainfo[1]._val1 = -1;
+			aainfo[1]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_ANIM, aa[0]);
 		}
 	}
@@ -119,9 +119,9 @@ static void room_103_anim1() {
 }
 
 static void room_103_anim2() {
-	if (kernel_anim[aa[1]].frame != aainfo[1]._val2) {
+	if (kernel_anim[aa[1]].frame != aainfo[1]._frame) {
 		int16 frame = kernel_anim[aa[1]].frame;
-		aainfo[1]._val2 = frame;
+		aainfo[1]._frame = frame;
 
 		if (frame == 165) {
 			digi_flag1 = false;
@@ -132,16 +132,16 @@ static void room_103_anim2() {
 				scratch._90 = 186;
 			} else if (frame == 195) {
 				if (aainfo[1]._val3 == 11) {
-					aainfo[1]._val2 = 186;
+					aainfo[1]._frame = 186;
 					kernel_reset_animation(aa[1], 186);
 				}
 			} else if (frame == 196) {
 				dont_frag_the_palette();
 				kernel_abort_animation(aa[1]);
-				aainfo[1]._val1 = 0;
+				aainfo[1]._active = 0;
 				stop_speech_on_run_animation = false;
 				aa[2] = kernel_run_animation(kernel_name('F', 3), 0);
-				aainfo[2]._val1 = -1;
+				aainfo[2]._active = -1;
 				kernel_reset_animation(aa[2], 3);
 				kernel_synch(KERNEL_ANIM, aa[2], KERNEL_ANIM, aa[1]);
 			}
@@ -166,7 +166,7 @@ static void room_103_anim2() {
 		} else if (scratch._90 == 186) {
 			scratch._90 = -1;
 			aainfo[1]._val3 = 13;
-			aainfo[1]._val2 = 195;
+			aainfo[1]._frame = 195;
 			kernel_reset_animation(aa[1], 195);
 		}
 	}
@@ -182,9 +182,9 @@ static void room_103_anim2() {
 }
 
 static void room_103_anim3() {
-	if (kernel_anim[aa[2]].frame != aainfo[2]._val2) {
+	if (kernel_anim[aa[2]].frame != aainfo[2]._frame) {
 		int16 frame = kernel_anim[aa[2]].frame;
-		aainfo[2]._val2 = frame;
+		aainfo[2]._frame = frame;
 
 		switch (frame) {
 		case 29:
@@ -194,7 +194,7 @@ static void room_103_anim3() {
 			break;
 		case 38:
 			if (aainfo[2]._val3 == 12) {
-				aainfo[2]._val2 = 29;
+				aainfo[2]._frame = 29;
 				kernel_reset_animation(aa[2], 29);
 			}
 			break;
@@ -205,7 +205,7 @@ static void room_103_anim3() {
 			break;
 		case 50:
 			if (aainfo[2]._val3 == 10) {
-				aainfo[2]._val2 = 44;
+				aainfo[2]._frame = 44;
 				kernel_reset_animation(aa[2], 44);
 			}
 			break;
@@ -216,7 +216,7 @@ static void room_103_anim3() {
 			break;
 		case 60:
 			if (aainfo[2]._val3 == 12) {
-				aainfo[2]._val2 = 54;
+				aainfo[2]._frame = 54;
 				kernel_reset_animation(aa[2], 54);
 			}
 			break;
@@ -227,7 +227,7 @@ static void room_103_anim3() {
 			break;
 		case 81:
 			if (aainfo[2]._val3 == 14) {
-				aainfo[2]._val2 = 72;
+				aainfo[2]._frame = 72;
 				kernel_reset_animation(aa[2], 72);
 			}
 			break;
@@ -238,7 +238,7 @@ static void room_103_anim3() {
 			break;
 		case 91:
 			if (aainfo[2]._val3 == 14) {
-				aainfo[2]._val2 = 85;
+				aainfo[2]._frame = 85;
 				kernel_reset_animation(aa[2], 85);
 			}
 			break;
@@ -249,7 +249,7 @@ static void room_103_anim3() {
 			break;
 		case 113:
 			if (aainfo[2]._val3 == 14) {
-				aainfo[2]._val2 = 109;
+				aainfo[2]._frame = 109;
 				kernel_reset_animation(aa[2], 109);
 			}
 			break;
@@ -264,10 +264,10 @@ static void room_103_anim3() {
 		case 166:
 			dont_frag_the_palette();
 			kernel_abort_animation(aa[2]);
-			aainfo[2]._val1 = 0;
+			aainfo[2]._active = 0;
 			stop_speech_on_run_animation = false;
 			aa[3] = kernel_run_animation(kernel_name('F', 4), 0);
-			aainfo[3]._val1 = -1;
+			aainfo[3]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_ANIM, aa[2]);
 			break;
 		}
@@ -278,25 +278,25 @@ static void room_103_anim3() {
 		case 29:
 			scratch._90 = -1;
 			aainfo[2]._val3 = 13;
-			aainfo[2]._val2 = 40;
+			aainfo[2]._frame = 40;
 			kernel_reset_animation(aa[2], 40);
 			break;
 		case 44:
 			scratch._90 = -1;
 			aainfo[2]._val3 = 13;
-			aainfo[2]._val2 = 50;
+			aainfo[2]._frame = 50;
 			kernel_reset_animation(aa[2], 50);
 			break;
 		case 54:
 			scratch._90 = -1;
 			aainfo[2]._val3 = 13;
-			aainfo[2]._val2 = 60;
+			aainfo[2]._frame = 60;
 			kernel_reset_animation(aa[2], 60);
 			break;
 		case 72:
 			scratch._90 = -1;
 			aainfo[2]._val3 = 13;
-			aainfo[2]._val2 = 81;
+			aainfo[2]._frame = 81;
 			kernel_reset_animation(aa[2], 81);
 			break;
 		case 85:
@@ -304,13 +304,13 @@ static void room_103_anim3() {
 			global[player_score] = 0;
 			midi_stop();
 			aainfo[2]._val3 = 13;
-			aainfo[2]._val2 = 92;
+			aainfo[2]._frame = 92;
 			kernel_reset_animation(aa[2], 92);
 			break;
 		case 109:
 			scratch._90 = -1;
 			aainfo[2]._val3 = 13;
-			aainfo[2]._val2 = 113;
+			aainfo[2]._frame = 113;
 			kernel_reset_animation(aa[2], 113);
 			break;
 		}
@@ -322,14 +322,14 @@ static void room_103_anim3() {
 }
 
 static void room_103_anim4() {
-	if (kernel_anim[aa[3]].frame != aainfo[3]._val2) {
+	if (kernel_anim[aa[3]].frame != aainfo[3]._frame) {
 		int16 frame = kernel_anim[aa[3]].frame;
-		aainfo[3]._val2 = frame;
+		aainfo[3]._frame = frame;
 
 		if (frame == 50) {
 			stop_speech_on_run_animation = true;
 			kernel_abort_animation(aa[3]);
-			aainfo[3]._val1 = 0;
+			aainfo[3]._active = 0;
 			new_room = 104;
 		} else if (frame < 50) {
 			switch (frame) {
@@ -341,7 +341,7 @@ static void room_103_anim4() {
 				break;
 			case 21:
 				if (aainfo[3]._val3 == 15) {
-					aainfo[3]._val2 = 16;
+					aainfo[3]._frame = 16;
 					kernel_reset_animation(aa[3], 16);
 				}
 				break;
@@ -352,7 +352,7 @@ static void room_103_anim4() {
 				break;
 			case 40:
 				if (aainfo[3]._val3 == 15) {
-					aainfo[3]._val2 = 37;
+					aainfo[3]._frame = 37;
 					kernel_reset_animation(aa[3], 37);
 				}
 				break;
@@ -364,12 +364,12 @@ static void room_103_anim4() {
 		if (scratch._90 == 16) {
 			scratch._90 = -1;
 			aainfo[3]._val3 = 13;
-			aainfo[3]._val2 = 21;
+			aainfo[3]._frame = 21;
 			kernel_reset_animation(aa[3], 21);
 		} else if (scratch._90 == 37) {
 			scratch._90 = -1;
 			aainfo[3]._val3 = 13;
-			aainfo[3]._val2 = 40;
+			aainfo[3]._frame = 40;
 			kernel_reset_animation(aa[3], 40);
 		} else {
 			scratch._90 = -1;
@@ -390,10 +390,10 @@ static void room_103_daemon() {
 		new_room = 904;
 	}
 
-	if (aainfo[0]._val1 != 0) room_103_anim1();
-	if (aainfo[1]._val1 != 0) room_103_anim2();
-	if (aainfo[2]._val1 != 0) room_103_anim3();
-	if (aainfo[3]._val1 != 0) room_103_anim4();
+	if (aainfo[0]._active != 0) room_103_anim1();
+	if (aainfo[1]._active != 0) room_103_anim2();
+	if (aainfo[2]._active != 0) room_103_anim3();
+	if (aainfo[3]._active != 0) room_103_anim4();
 }
 
 static void room_103_pre_parser() {
