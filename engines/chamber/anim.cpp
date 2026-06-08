@@ -55,10 +55,16 @@ extern void loadLutinSprite(uint16 lutidx);
 void getScratchBuffer(byte mode) {
 	byte *buffer = scratch_mem2;
 	uint16 offs = 0;
+	// EGA decodes each lutin to CLUT8 (1 byte per pixel = 4 bytes per CGA byte),
+	// so a slot is twice the CGA footprint. Double the partition strides in EGA,
+	// otherwise a large lutin overruns its slot into the next one - and the top
+	// slot overruns the end of scratch_mem1 into the adjacent sprites_list[],
+	// corrupting it (later crashing in blitSpritesToBackBuffer/restoreImage).
+	uint16 slot = (g_vm->_videoMode == Common::kRenderEGA) ? 3200 : 1600;
 	if (mode & 0x80)
-		offs += 3200;
+		offs += slot * 2;
 	if (mode & 0x40)
-		offs += 1600;
+		offs += slot;
 	lutin_mem = buffer + offs;
 }
 
