@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-08 11:04+0000\n"
-"PO-Revision-Date: 2026-06-07 13:22+0000\n"
+"PO-Revision-Date: 2026-06-08 16:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13717,16 +13717,12 @@ msgid "All levels will be available without requiring passwords"
 msgstr "Tous les niveaux seront disponibles sans demander de mots de passe"
 
 #: engines/scumm/metaengine.cpp:900
-#, fuzzy
-#| msgid "No date saved"
 msgid "No damage"
-msgstr "Date inconnue"
+msgstr "Aucun dégât"
 
 #: engines/scumm/metaengine.cpp:901
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable player damage"
-msgstr "Désactiver le menu sauvegarde"
+msgstr "Désactive les dégâts reçus par le joueur"
 
 #: engines/scumm/metaengine.cpp:1061
 msgid "Down left"
