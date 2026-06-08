@@ -1544,6 +1544,15 @@ uint16 SCR_42_LoadZone(void) {
 	}
 	beforeChangeZone(index);
 	changeZone(index);
+
+	// End any in-flight interaction when going through a door: an Aspirant trade
+	// can still be mid-flight (runCommand ScriptRerun loop, CurrentPers still on
+	// the old room's actor), so abort the chain and drop the stale actor here.
+	// prepareVorts/Turkey/Aspirant below repopulate CurrentPers. Done here, not in
+	// changeZone(), since SCR_25_ChangeZoneOnly's in-place swaps must keep both.
+	the_command = 0;
+	script_vars[kScrPool8_CurrentPers] = pers_list;
+
 	script_byte_vars.zone_area_copy = script_byte_vars.zone_area;
 	script_byte_vars.cur_spot_idx = findInitialSpot();
 	skip_zone_transition |= script_byte_vars.cur_spot_idx;
@@ -4441,8 +4450,12 @@ uint16 RunScript(byte *code) {
 #endif
 
 #ifdef DEBUG_QUEST
-		if (script_ptr - templ_data == 0x4F) {
+		if (script_ptr - templ_data == 0x5B) {
 			/*manipulate rand_value to get a quest item we need*/
+			// 0x5B is the EGA (kultega.bin) offset of the quest-selection branch
+			// 'if rand_value < 0x40'; the old 0x4F was mid-instruction so it never
+			// fired. Forcing rand_value here picks the quest: 0x00=Rope/De Profundis,
+			// 0x40=Knife/The Wall, 0x80=Goblet/Twins, 0xC0=Fly/Scorpion's.
 			script_byte_vars.rand_value = DEBUG_QUEST;
 		}
 #endif
