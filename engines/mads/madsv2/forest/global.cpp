@@ -909,6 +909,107 @@ void global_daemon_code() {
 	}
 }
 
+void global_anim3(int handle, int16 *frame) {
+	if (kernel_anim[handle].frame == *frame)
+		return;
+	int16 var_2 = -1;
+	*frame = (int16)kernel_anim[handle].frame;
+	int16 f = *frame;
+
+	switch (f) {
+	case 18:
+		digi_play_build(301, '_', 1, 2);
+		break;
+	case 39:
+		global[walker_converse_now] = 3;
+		break;
+	case 40:
+		if (global[walker_converse_now] == 3) {
+			kernel_timing_trigger(6, 27);
+			global[walker_converse_now] = 0;
+		}
+		var_2 = 39;
+		break;
+	case 43:
+		var_2 = 3;
+		break;
+	case 44:
+		if (global[g007] == 3) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		} else if (global[g007] != 6) {
+			var_2 = 45;
+		}
+		break;
+	case 45:
+		if (global[g007] == 6) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		}
+		break;
+	case 46:
+		if (global[g007] == 9) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		}
+		break;
+	case 47:
+		if (global[g007] == 1) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		} else if (global[g007] != 4) {
+			var_2 = 48;
+		}
+		break;
+	case 48:
+		if (global[g007] == 4) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		}
+		break;
+	case 49:
+		if (global[g007] == 7) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		}
+		break;
+	case 50:
+		if (global[g007] == 8) {
+			if (global[walker_converse_now] == 2) {
+				kernel_timing_trigger(6, 27);
+				global[walker_converse_now] = 3;
+			}
+			var_2 = f - 1;
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (var_2 >= 0) {
+		kernel_reset_animation(handle, var_2);
+		*frame = var_2;
+	}
+}
+
 } // namespace Forest
 } // namespace MADSV2
 } // namespace MADS
