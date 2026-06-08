@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-07 22:09+0000\n"
+"POT-Creation-Date: 2026-06-08 11:04+0000\n"
 "PO-Revision-Date: 2026-06-07 13:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3969,7 +3969,7 @@ msgstr "Conf. de touches par défaut"
 #: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:505
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:137
-#: engines/mads/metaengine.cpp:318 engines/mm/metaengine.cpp:186
+#: engines/mads/metaengine.cpp:322 engines/mm/metaengine.cpp:186
 #: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:181
 #: engines/parallaction/metaengine.cpp:138 engines/saga/metaengine.cpp:278
 #: engines/sludge/keymapper_tables.h:561 engines/sludge/keymapper_tables.h:580
@@ -4002,7 +4002,7 @@ msgstr "Clic Milieu"
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:141
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:370
 #: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:324
+#: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:328
 #: engines/mm/metaengine.cpp:192 engines/mtropolis/metaengine.cpp:167
 #: engines/nancy/input.cpp:188 engines/parallaction/metaengine.cpp:144
 #: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:567
@@ -6381,7 +6381,7 @@ msgstr "Recherche des mises à jour..."
 #: engines/hugo/metaengine.cpp:129 engines/hypno/metaengine.cpp:128
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
-#: engines/mads/metaengine.cpp:312 engines/neverhood/metaengine.cpp:185
+#: engines/mads/metaengine.cpp:316 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:127
 #: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
@@ -6944,7 +6944,7 @@ msgstr "AGOS principal"
 #: engines/hypno/metaengine.cpp:267 engines/hypno/metaengine.cpp:311
 #: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:133
-#: engines/mads/metaengine.cpp:313 engines/neverhood/metaengine.cpp:186
+#: engines/mads/metaengine.cpp:317 engines/neverhood/metaengine.cpp:186
 #: engines/queen/metaengine.cpp:147 engines/saga/metaengine.cpp:268
 #: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
 #: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
@@ -7443,7 +7443,7 @@ msgstr "Triche 'Soldier 714 Eye'"
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:107 engines/got/metaengine.cpp:78
 #: engines/hugo/metaengine.cpp:197 engines/lure/metaengine.cpp:209
-#: engines/mads/metaengine.cpp:330 engines/mm/mm1/metaengine.cpp:42
+#: engines/mads/metaengine.cpp:334 engines/mm/mm1/metaengine.cpp:42
 #: engines/mm/mm1/metaengine.cpp:48 engines/saga/metaengine.cpp:328
 #: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
 #: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
@@ -7750,7 +7750,7 @@ msgstr "Act. / Désact. indice privé"
 #: engines/freescape/games/eclipse/eclipse.cpp:330
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:343 engines/mohawk/myst.cpp:583
+#: engines/mads/metaengine.cpp:347 engines/mohawk/myst.cpp:583
 #: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
@@ -7826,7 +7826,7 @@ msgstr "Panneau des indices"
 #: engines/freescape/games/dark/dark.cpp:236
 #: engines/freescape/games/driller/driller.cpp:129
 #: engines/freescape/games/eclipse/eclipse.cpp:340
-#: engines/mads/metaengine.cpp:399 engines/phoenixvr/metaengine.cpp:80
+#: engines/mads/metaengine.cpp:403 engines/phoenixvr/metaengine.cpp:80
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
 #: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:852
 #: engines/stark/metaengine.cpp:280 engines/sword1/metaengine.cpp:295
@@ -10211,7 +10211,7 @@ msgid "Repeat last line"
 msgstr "Répéter la dernière ligne"
 
 #: engines/hugo/metaengine.cpp:172 engines/lure/metaengine.cpp:197
-#: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:247
+#: engines/mads/metaengine.cpp:353 engines/tsage/metaengine.cpp:247
 msgid "Restore game"
 msgstr "Restaurer"
 
@@ -10403,7 +10403,7 @@ msgstr "Conf. des touches Pause"
 msgid "Direction keymappings"
 msgstr "Conf. des touches Directions"
 
-#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:387
+#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:391
 #: engines/tsage/metaengine.cpp:259
 msgid "Show credits"
 msgstr "Afficher les crédits"
@@ -11064,39 +11064,39 @@ msgstr "Interface du jeu animée"
 msgid "Naughty game mode"
 msgstr "Mode coquin"
 
-#: engines/mads/metaengine.cpp:314
+#: engines/mads/metaengine.cpp:318
 msgid "Start menu keymappings"
 msgstr "Conf. des touches Menu Démarrage"
 
-#: engines/mads/metaengine.cpp:337
+#: engines/mads/metaengine.cpp:341
 msgid "Open game menu"
 msgstr "Ouvrir le menu du jeu"
 
-#: engines/mads/metaengine.cpp:355
+#: engines/mads/metaengine.cpp:359
 msgid "Scroll bar up"
 msgstr "Barre de défilement haut"
 
-#: engines/mads/metaengine.cpp:361
+#: engines/mads/metaengine.cpp:365
 msgid "Scroll bar down"
 msgstr "Barre de défilement bas"
 
-#: engines/mads/metaengine.cpp:369
+#: engines/mads/metaengine.cpp:373
 msgid "Start game"
 msgstr "Démarrer une partie"
 
-#: engines/mads/metaengine.cpp:375
+#: engines/mads/metaengine.cpp:379
 msgid "Resume game"
 msgstr "Reprendre la partie"
 
-#: engines/mads/metaengine.cpp:381
+#: engines/mads/metaengine.cpp:385
 msgid "Show intro"
 msgstr "Afficher l'introduction"
 
-#: engines/mads/metaengine.cpp:393
+#: engines/mads/metaengine.cpp:397
 msgid "Show quotes"
 msgstr "Afficher les citations"
 
-#: engines/mads/metaengine.cpp:406
+#: engines/mads/metaengine.cpp:410
 msgid "Restart animation"
 msgstr "Redémarrer l'animation"
 
