@@ -3272,12 +3272,15 @@ uint16 SCR_67_Unused(void) {
 /*
 Play Sfx
 NB! Do nothing in EU PC/CGA version
+EGA (kultega.bin) encodes this as a single operand byte (the sfx index) - unlike
+SCR_69 below which has a trailing pad byte. Reading a pad here too would consume
+the following opcode and desync script_ptr (e.g. eats the setVar that unlocks the
+Scorpion ordeal door, leaving its speech bubble stuck on screen).
 */
 uint16 SCR_68_PlaySfx(void) {
 	byte index;
 	script_ptr++;
 	index = *script_ptr++;
-	script_ptr++;
 	IFGM_PlaySfx(index);
 	return 0;
 }
