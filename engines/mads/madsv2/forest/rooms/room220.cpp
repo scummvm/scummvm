@@ -1,4 +1,4 @@
-﻿/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -19,16 +19,12 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
-#include "mads/madsv2/core/imath.h"
-#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/core/sound.h"
-#include "mads/madsv2/core/text.h"
-#include "mads/madsv2/forest/mads/inventory.h"
-#include "mads/madsv2/forest/mads/sounds.h"
-#include "mads/madsv2/forest/mads/words.h"
+#include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/core/player.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/rooms/room220.h"
@@ -39,10 +35,20 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];       /* Sprite series handles */
-	int16 sequence[10];     /* Sequence handles      */
-	int16 animation[10];     /* Animation handles     */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
 	AnimationInfo animation_info[10];
+	int16 _8c;
+	int16 _8e;
+	int16 _90;
+	int16 _92;
+	int16 _94;
+	int16 _96;
+	int16 _98;
+	int16 _9a;
+	int16 _9c;
+	int16 _9e;
 };
 
 static Scratch scratch;
@@ -55,21 +61,192 @@ static Scratch scratch;
 
 
 static void room_220_init() {
+	global[player_score] = -1;
+	global[g009] = -1;
+	global_digi_play(10);
+	viewing_at_y = 22;
+	player.walker_visible = 0;
+	player.commands_allowed = 0;
+
+	for (int i = 0; i < 10; i++) {
+		aainfo[i]._active = 0;
+		aainfo[i]._frame = -1;
+	}
+
+	aa[0] = kernel_run_animation("*RM220Y11", 0);
+	aainfo[0]._active = -1;
+	scratch._92 = 121;
+}
+
+static void room_220_anim1() {
+	int16 result = -1;
+
+	if (kernel_anim[aa[0]].frame == aainfo[0]._frame)
+		return;
+	aainfo[0]._frame = kernel_anim[aa[0]].frame;
+	int16 f = aainfo[0]._frame;
+
+	if (f == 121) {
+		kernel_abort_animation(aa[0]);
+		aainfo[0]._active = 0;
+		global[g009] = -1;
+		global_digi_play(15);
+		aa[1] = kernel_run_animation("*RM220Y12", 0);
+		aainfo[1]._active = -1;
+		scratch._92 = 55;
+		kernel_synch(KERNEL_ANIM, aa[0], KERNEL_ANIM, aa[1]);
+	} else if (f < 121) {
+		if (f == 52) {
+			result = 51;
+		} else if (f < 52) {
+			if (f == 43) {
+				result = 41;
+			} else if (f < 43) {
+				if (f == 41) {
+					digi_play_build(220, 'E', 1, 1);
+					scratch._9e = 3;
+				}
+			} else {
+				if (f == 45) {
+					result = 44;
+				} else if (f == 47) {
+					digi_play_build(220, 'R', 1, 1);
+					scratch._9e = 1;
+				} else if (f == 50) {
+					result = 47;
+				}
+			}
+		} else {
+			if (f == 53) {
+				digi_play_build(220, 'B', 1, 1);
+				scratch._9e = 4;
+			} else if (f == 57) {
+				result = 53;
+			} else if (f == 58) {
+				result = 57;
+			} else if (f == 85 || f == 92 || f == 98 || f == 103) {
+				digi_play_build(220, '_', 1, 2);
+			} else if (f == 115) {
+				midi_stop();
+			}
+		}
+	}
+
+	if (result >= 0) {
+		aainfo[0]._frame = result;
+		kernel_reset_animation(aa[0], result);
+	}
+}
+
+static void room_220_anim2() {
+	int16 result = -1;
+
+	if (kernel_anim[aa[1]].frame == aainfo[1]._frame)
+		return;
+	aainfo[1]._frame = kernel_anim[aa[1]].frame;
+	int16 f = aainfo[1]._frame;
+
+	if (f == 55) {
+		new_room = 221;
+	} else if (f < 55) {
+		if (f == 28) {
+			digi_play_build(220, '_', 1, 2);
+		} else if (f > 28) {
+			if (f == 30) {
+				digi_play_build(220, 'R', 1, 2);
+				scratch._9e = 2;
+			} else if (f == 46 || f == 54) {
+				digi_play_build(220, '_', 1, 2);
+			}
+		} else {
+			if (f == 4) {
+				digi_play_build(220, '_', 2, 2);
+			} else if (f == 9) {
+				digi_play_build(103, '_', 3, 2);
+			} else if (f == 15) {
+				digi_play_build(220, '_', 3, 2);
+			}
+		}
+	}
+
+	if (result >= 0) {
+		aainfo[1]._frame = result;
+		kernel_reset_animation(aa[1], result);
+	}
 }
 
 static void room_220_daemon() {
+	switch (kernel.trigger) {
+	case 7:
+		kernel_timing_trigger(40, 102);
+		switch (scratch._9e) {
+		case 1:
+			aainfo[0]._frame = 51;
+			kernel_reset_animation(aa[0], 51);
+			break;
+		case 3:
+			aainfo[0]._frame = 44;
+			kernel_reset_animation(aa[0], 44);
+			break;
+		case 4:
+			aainfo[0]._frame = 57;
+			kernel_reset_animation(aa[0], 57);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 102:
+		switch (scratch._9e) {
+		case 1:
+			aainfo[0]._frame = 52;
+			kernel_reset_animation(aa[0], 52);
+			break;
+		case 3:
+			aainfo[0]._frame = 46;
+			kernel_reset_animation(aa[0], 46);
+			break;
+		case 4:
+			aainfo[0]._frame = 58;
+			kernel_reset_animation(aa[0], 58);
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (aainfo[0]._active != 0)
+		room_220_anim1();
+	if (aainfo[1]._active != 0)
+		room_220_anim2();
 }
 
 static void room_220_pre_parser() {
+	// No implementation
 }
 
 static void room_220_parser() {
+	// No implementation
 }
 
 void room_220_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
 	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	for (AnimationInfo &ai : scratch.animation_info) ai.synchronize(s);
+	s.syncAsSint16LE(scratch._8c);
+	s.syncAsSint16LE(scratch._8e);
+	s.syncAsSint16LE(scratch._90);
+	s.syncAsSint16LE(scratch._92);
+	s.syncAsSint16LE(scratch._94);
+	s.syncAsSint16LE(scratch._96);
+	s.syncAsSint16LE(scratch._98);
+	s.syncAsSint16LE(scratch._9a);
+	s.syncAsSint16LE(scratch._9c);
+	s.syncAsSint16LE(scratch._9e);
 }
 
 void room_220_preload() {

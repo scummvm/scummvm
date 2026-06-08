@@ -19,16 +19,12 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
-#include "mads/madsv2/core/imath.h"
-#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/core/sound.h"
-#include "mads/madsv2/core/text.h"
-#include "mads/madsv2/forest/mads/inventory.h"
-#include "mads/madsv2/forest/mads/sounds.h"
-#include "mads/madsv2/forest/mads/words.h"
+#include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/core/player.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/rooms/room211.h"
@@ -39,10 +35,11 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];       /* Sprite series handles */
-	int16 sequence[10];     /* Sequence handles      */
-	int16 animation[10];     /* Animation handles     */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
 	AnimationInfo animation_info[10];
+	int16 _8c;
 };
 
 static Scratch scratch;
@@ -55,21 +52,75 @@ static Scratch scratch;
 
 
 static void room_211_init() {
+	midi_stop();
+	global[player_score] = -1;
+	viewing_at_y = 22;
+	global[g009] = 0;
+	player.walker_visible = 0;
+	player.commands_allowed = 0;
+
+	for (int i = 0; i < 10; i++) {
+		aainfo[i]._active = 0;
+		aainfo[i]._frame = -1;
+	}
+
+	kernel_timing_trigger(5, 100);
+}
+
+static void room_211_anim1() {
+	if (kernel_anim[aa[0]].frame == aainfo[0]._frame)
+		return;
+	aainfo[0]._frame = kernel_anim[aa[0]].frame;
+	int16 f = aainfo[0]._frame;
+
+	if (f == 75) {
+		new_room = 221;
+		return;
+	}
+	if (f > 75)
+		return;
+
+	if (f == 3) {
+		digi_play_build(211, '_', 500, 1);
+	} else if (f == 13 || f == 19 || f == 23 || f == 28) {
+		digi_play_build(220, '_', 1, 2);
+	} else if (f == 34) {
+		digi_play_build(211, '_', 700, 1);
+	}
 }
 
 static void room_211_daemon() {
+	switch (kernel.trigger) {
+	case 100:
+		aa[0] = kernel_run_animation(kernel_name('y', 1), 0);
+		aainfo[0]._active = -1;
+		scratch._8c = 75;
+		break;
+	case 101:
+		digi_play_build(221, 'e', 6, 1);
+		break;
+	default:
+		break;
+	}
+
+	if (aainfo[0]._active != 0)
+		room_211_anim1();
 }
 
 static void room_211_pre_parser() {
+	// No implementation
 }
 
 static void room_211_parser() {
+	// No implementation
 }
 
 void room_211_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
 	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	for (AnimationInfo &ai : scratch.animation_info) ai.synchronize(s);
+	s.syncAsSint16LE(scratch._8c);
 }
 
 void room_211_preload() {
