@@ -1245,7 +1245,8 @@ void game_control() {
 		// Get difficulty level if new game
 		if (!kernel.teleported_in && (game.difficulty == -1)) {
 			// Difficulty menu
-			if (g_engine->getGameID() == GType_Phantom)
+			int gameId = g_engine->getGameID();
+			if (gameId == GType_Phantom || gameId == GType_Dragonsphere)
 				kernel.activate_menu = GAME_DIFFICULTY_MENU;
 			game_exec_function(game_menu_routine);
 			if (!game.going)

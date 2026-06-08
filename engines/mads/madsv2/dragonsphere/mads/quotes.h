@@ -29,6 +29,9 @@ namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
+	quote_difficulty_title    =  49,
+	quote_difficulty_item1    =  50,
+	quote_difficulty_item2    =  51,
 	quote_poem_one_how        =  74,
 	quote_poem_one_thou       =  75,
 	quote_poem_one_soft       =  76,

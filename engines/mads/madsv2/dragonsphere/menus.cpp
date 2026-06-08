@@ -32,6 +32,7 @@
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/dragonsphere/menus.h"
 #include "mads/madsv2/dragonsphere/global.h"
+#include "mads/madsv2/dragonsphere/mads/quotes.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -40,7 +41,7 @@ namespace Dragonsphere {
 #define SAVE_MENU_PIXEL_WIDTH           200
 #define MAX_SAVES_ON_SCREEN             10
 
-#define SPACE_BETWEEN                   -1
+#define SPACE_BETWEEN                   1
 
 #define MAIN_MENU_ITEM_WIDTH            140
 #define MAIN_MENU_FORCE_WIDTH           160
@@ -91,6 +92,15 @@ static int global_restore(int id) {
 }
 
 void global_menu_system_init() {
+	menu_quotes = quote_load(
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		11, 12, 13, 15, 17, 18, 14, 16, 19, 20,
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+		31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+		41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+		51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+		61, 0
+	);
 }
 
 void global_menu_system_shutdown() {
@@ -396,7 +406,6 @@ static void global_menu_options() {
 }
 
 static void global_menu_difficulty() {
-#if 0
 	PopupItem *easy_item;
 	PopupItem *result;
 
@@ -414,7 +423,6 @@ static void global_menu_difficulty() {
 	(void)popup_menu(menu_quote(quote_difficulty_item2),
 		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
 		0, 0, 0);
-
 
 	popup_width_force(DIFFICULTY_MENU_FORCE_WIDTH);
 
@@ -445,7 +453,6 @@ static void global_menu_difficulty() {
 	}
 
 	popup_dialog_destroy();
-#endif
 }
 
 static void global_menu_main() {
