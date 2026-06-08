@@ -32,6 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      which means that some rare issues concerning characters behavior
      should now be gone.
 
+ MADS:
+   - In Rex Nebular fix game being semi-stuck while using binoculars.
+
  MM:
    - Reworked keymapper for MM1.
    - Fixed MM1 Enhanced allowing trading more than the character owned.
