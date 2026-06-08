@@ -127,7 +127,6 @@ static void global_menu_score() {
 }
 
 static void global_menu_save_restore(int save) {
-#if 0
 	int status = -1;
 	int selection;
 	char *save_game_name;
@@ -235,7 +234,6 @@ static void global_menu_save_restore(int save) {
 	if (status >= 0) {
 		global_alert(status);
 	}
-#endif
 }
 
 static void global_menu_options() {

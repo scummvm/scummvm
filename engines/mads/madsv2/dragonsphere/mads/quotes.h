@@ -29,6 +29,12 @@ namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
+	quote_menu_cancel         =   2,
+	quote_menu_save           =   3,
+	quote_menu_restore        =   4,
+	quote_menu_clear          =   5,
+	quote_menu_empty          =   9,
+	quote_menu_unnamed        =  10,
 	quote_main_item1          =  12,
 	quote_main_item2          =  13,
 	quote_main_item6          =  14,
@@ -36,6 +42,8 @@ enum {
 	quote_main_item7          =  16,
 	quote_main_item4          =  17,
 	quote_main_item5          =  18,
+	quote_save_title          =  47,
+	quote_restore_title       =  48,
 	quote_difficulty_title    =  49,
 	quote_difficulty_item1    =  50,
 	quote_difficulty_item2    =  51,
