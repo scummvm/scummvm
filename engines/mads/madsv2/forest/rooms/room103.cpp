@@ -97,7 +97,7 @@ static void room_103_anim1() {
 			digi_initial_volume(20);
 			digi_play_build(101, '_', 5, 3);
 			scratch._92 = 1;
-			digi_flag1 = true;
+			digi_val2 = -1;
 		} else if (frame == 273) {
 			kernel_abort_animation(aa[0]);
 			aainfo[0]._active = 0;
@@ -113,7 +113,7 @@ static void room_103_anim1() {
 			digi_initial_volume(20);
 			scratch._92 = 1;
 			digi_play_build(101, '_', 5, 3);
-			digi_flag1 = true;
+			digi_val2 = -1;
 		}
 	}
 }
@@ -124,7 +124,7 @@ static void room_103_anim2() {
 		aainfo[1]._frame = frame;
 
 		if (frame == 165) {
-			digi_flag1 = false;
+			digi_val2 = 0;
 		} else if (frame > 165) {
 			if (frame == 186) {
 				aainfo[1]._val3 = 11;
@@ -150,12 +150,12 @@ static void room_103_anim2() {
 				digi_initial_volume(50);
 				digi_play_build(101, '_', 5, 3);
 				scratch._92 = 1;
-				digi_flag1 = true;
+				digi_val2 = -1;
 			} else if (frame == 160) {
 				digi_initial_volume(60);
 				digi_play_build(103, '_', 1, 1);
 				scratch._90 = 160;
-				digi_flag1 = true;
+				digi_val2 = -1;
 			}
 		}
 	}
@@ -176,7 +176,7 @@ static void room_103_anim2() {
 			digi_initial_volume(90);
 			scratch._92++;
 			digi_play_build(101, '_', 5, 3);
-			digi_flag1 = true;
+			digi_val2 = -1;
 		}
 	}
 }

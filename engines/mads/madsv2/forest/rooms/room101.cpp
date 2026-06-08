@@ -984,7 +984,7 @@ static void room_101_daemon() {
 	case 113:
 		digi_initial_volume(90);
 		digi_play_build(101, '_', 5, 3);
-		digi_flag1 = true;
+		digi_val2 = -1;
 		break;
 
 	}
