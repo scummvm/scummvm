@@ -83,6 +83,7 @@ public:
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
 	bool isDemo() const;
+	bool isCDROM() const;
 
 	int getRandomNumber(int maxNumber);
 	int getRandomNumber(int minNumber, int maxNumber);

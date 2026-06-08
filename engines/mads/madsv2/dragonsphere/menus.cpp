@@ -456,14 +456,17 @@ static void global_menu_difficulty() {
 }
 
 static void global_menu_main() {
-#if 0
 	PopupItem *save_item;
 	PopupItem *restore_item;
 	PopupItem *score_item;
 	PopupItem *options_item;
+	PopupItem *cdrom_item;
 	PopupItem *resume_item;
 	PopupItem *quit_item;
 	PopupItem *result;
+
+	box_param.menu_text_y_offset = 3;
+	box_param.menu_text_x_bonus = 0;
 
 	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
@@ -471,26 +474,30 @@ static void global_menu_main() {
 	popup_blank(6);
 
 	save_item = popup_menu(menu_quote(quote_main_item1),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
+		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0, 0, 0, 0);
 
 	popup_blank(SPACE_BETWEEN);
 
 	restore_item = popup_menu(menu_quote(quote_main_item2),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
+		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0, 0, 0, 0);
 
 	popup_blank(SPACE_BETWEEN);
 
 	score_item = popup_menu(menu_quote(quote_main_item6),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
+		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0, 0, 0, 0);
 
 	popup_blank(SPACE_BETWEEN);
 
 	options_item = popup_menu(menu_quote(quote_main_item3),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
+		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0, 0, 0, 0);
+
+	cdrom_item = nullptr;
+	if (g_engine->isCDROM()) {
+		popup_blank(SPACE_BETWEEN);
+
+		cdrom_item = popup_menu(menu_quote(quote_main_item7),
+			POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0, 0, 0, 0);
+	}
 
 	popup_blank(SPACE_BETWEEN);
 
@@ -517,6 +524,8 @@ static void global_menu_main() {
 		kernel.activate_menu = GAME_OPTIONS_MENU;
 	} else if (result == score_item) {
 		kernel.activate_menu = GAME_SCORE_MENU;
+	} else if (result == cdrom_item) {
+		kernel.activate_menu = GAME_CD_MENU;
 	} else {
 		kernel.activate_menu = GAME_NO_MENU;
 	}
@@ -551,7 +560,6 @@ static void global_menu_main() {
 	default:
 		break;
 	}
-#endif
 }
 
 void global_game_menu() {

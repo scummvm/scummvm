@@ -167,6 +167,10 @@ bool MADSEngine::isDemo() const {
 	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
 }
 
+bool MADSEngine::isCDROM() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_CD);
+}
+
 Common::Language MADSEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
