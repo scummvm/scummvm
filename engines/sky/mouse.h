@@ -24,6 +24,7 @@
 
 
 #include "common/scummsys.h"
+#include "common/hashmap.h"
 
 class OSystem;
 
@@ -190,6 +191,12 @@ protected:
 
 	byte *_miceData;	//address of mouse sprites
 	byte *_objectMouseData;	//address of object mouse sprites
+	
+	int _proxFrame;
+	int _proxFrameSpeed;
+
+	Common::HashMap<int, int> _hotspotXMap;
+	bool _mapInitialized = false;
 
 	static uint32 _mouseMainObjects[24];
 	static uint32 _mouseLincObjects[21];

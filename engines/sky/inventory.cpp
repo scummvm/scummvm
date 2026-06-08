@@ -114,7 +114,7 @@ int Screen::getInventoryAnimIdx(int frame) {
 			return i;
 	}
 
-	debug("Couldn't find inventory item%d\n", frame);
+	debug(1, "Couldn't find inventory item%d", frame);
 	return 0; // fallback
 }
 
@@ -143,4 +143,4 @@ void Logic::killInventory() {
 	_skyScreen->clearAllInvIcons();
 }
 
-}
+} // End of namespace Sky
