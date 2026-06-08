@@ -52,6 +52,9 @@ namespace Dragonsphere {
 #define OPTIONS_MENU_FORCE_WIDTH        170
 #define OPTIONS_MENU_OFF_CENTER         10
 
+#define CDROM_MENU_ITEM_WIDTH           160
+#define CDROM_MENU_FORCE_WIDTH          170
+#define CDROM_MENU_OFF_CENTER           10
 
 #define SAVE_SUCCESSFUL                 1
 #define RESTORE_SUCCESSFUL              2
@@ -482,6 +485,106 @@ static void global_menu_difficulty() {
 	popup_dialog_destroy();
 }
 
+static void global_menu_cdrom() {
+	int initial_1, initial_2;
+	int former_speech;
+	int former_text;
+	PopupItem *speech_item;
+	PopupItem *text_item;
+	PopupItem *done_button, *cancel_button;
+	PopupItem *result;
+
+	global_unload_config_parameters();
+
+	box_param.menu_text_y_offset = 3;
+	box_param.menu_text_x_bonus = 0;
+
+	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
+
+	popup_sprite(box_param.logo, 1, POPUP_CENTER, POPUP_FILL);
+	popup_blank(2);
+
+	former_speech = config_file.speech_flag;
+	former_text = config_file.show_speech_boxes;
+
+	initial_1 = config_file.speech_flag ? 0 : 1;
+	initial_2 = config_file.show_speech_boxes ? 0 : 1;
+
+	speech_item = popup_menu(menu_quote(quote_cdrom_item1),
+		POPUP_CENTER, POPUP_FILL, CDROM_MENU_ITEM_WIDTH,
+		CDROM_MENU_OFF_CENTER, 2, 40, initial_1);
+	popup_menu_option(speech_item, menu_quote(quote_cdrom_item1a));
+	popup_menu_option(speech_item, menu_quote(quote_cdrom_item1b));
+
+	popup_blank(SPACE_BETWEEN);
+
+	text_item = popup_menu(menu_quote(quote_cdrom_item2),
+		POPUP_CENTER, POPUP_FILL, CDROM_MENU_ITEM_WIDTH,
+		CDROM_MENU_OFF_CENTER, 2, 40, initial_2);
+	popup_menu_option(text_item, menu_quote(quote_cdrom_item2a));
+	popup_menu_option(text_item, menu_quote(quote_cdrom_item2b));
+
+	done_button = popup_button(menu_quote(quote_menu_done), POPUP_LEFT);
+	cancel_button = popup_cancel_button(menu_quote(quote_menu_cancel));
+
+	popup_width_force(CDROM_MENU_FORCE_WIDTH);
+
+	result = popup_execute();
+
+	kernel.activate_menu = GAME_MAIN_MENU;
+
+	if (result == cancel_button) {
+		switch (game_menu_popup->key) {
+		case alt_x_key:
+		case ctrl_x_key:
+		case alt_q_key:
+		case ctrl_q_key:
+			game.going = false;
+			kernel.activate_menu = GAME_NO_MENU;
+			break;
+
+		case f1_key:
+			kernel.activate_menu = GAME_MAIN_MENU;
+			break;
+
+		case f2_key:
+			kernel.activate_menu = GAME_SAVE_MENU;
+			break;
+
+		case f3_key:
+			kernel.activate_menu = GAME_RESTORE_MENU;
+			break;
+
+		case f4_key:
+			kernel.activate_menu = GAME_SCORE_MENU;
+			break;
+
+		case f5_key:
+			kernel.activate_menu = GAME_MAIN_MENU;
+			break;
+
+		default:
+			kernel.activate_menu = GAME_MAIN_MENU;
+			break;
+		}
+	}
+
+	if (result == done_button) {
+		config_file.speech_flag = !speech_item->list->picked_element;
+		config_file.show_speech_boxes = !text_item->list->picked_element;
+
+		global_write_config_file();
+		global_load_config_parameters();
+
+		kernel.activate_menu = GAME_NO_MENU;
+	}
+
+	if (former_speech != config_file.speech_flag)
+		speech_all_off();
+
+	popup_dialog_destroy();
+}
+
 static void global_menu_main() {
 	PopupItem *save_item;
 	PopupItem *restore_item;
@@ -633,6 +736,9 @@ void global_game_menu() {
 			break;
 		case GAME_SCORE_MENU:
 			global_menu_score();
+			break;
+		case GAME_CD_MENU:
+			global_menu_cdrom();
 			break;
 		default:
 			kernel.activate_menu = GAME_NO_MENU;

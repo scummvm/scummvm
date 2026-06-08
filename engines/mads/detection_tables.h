@@ -193,6 +193,21 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Dragonsphere DOS English CD
+		{
+			"dragonsphere",
+			"CD",
+			AD_ENTRY2s("section1.hag", "2770e441d296be5e806194693eebd95a", 2061199, "speech.idx", "80d36ba3ca88e9d078cc19a7678aeb87", 1250),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_CD,
+			GUIO3(GUIO_NOMIDI, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ORIGINAL_SAVELOAD)
+		},
+		GType_Dragonsphere,
+		0
+	},
+
+	{
 		// Dragonsphere DOS English
 		{
 			"dragonsphere",
