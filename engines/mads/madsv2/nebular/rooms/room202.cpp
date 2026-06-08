@@ -574,6 +574,7 @@ void Scene202::actions() {
 		if (!_ladderTopFl) {
 			switch (_game._trigger) {
 			case 0:
+				_toTeleportFl = true;
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
