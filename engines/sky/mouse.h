@@ -66,7 +66,7 @@ namespace Sky {
 #define USE_ON_DIST 40
 
 // fix super deep exits
-#define TWEEKY_EXIT_ADJUST (FULL_SCREEN_HEIGHT + TOP_LEFT_Y - 40);
+#define TWEEKY_EXIT_ADJUST (FULL_SCREEN_HEIGHT + TOP_LEFT_Y - 40)
 
 
 // inv item sizes
@@ -196,7 +196,9 @@ protected:
 	int _proxFrameSpeed;
 
 	Common::HashMap<int, int> _hotspotXMap;
-	bool _mapInitialized = false;
+	Common::HashMap<int, int> _hotspotYMap;
+	bool _xMapInitialized = false;
+	bool _yMapInitialized = false;
 
 	static uint32 _mouseMainObjects[24];
 	static uint32 _mouseLincObjects[21];
