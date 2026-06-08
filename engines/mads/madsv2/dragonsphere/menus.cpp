@@ -237,7 +237,6 @@ static void global_menu_save_restore(int save) {
 }
 
 static void global_menu_options() {
-#if 0
 	int initial_1, initial_2, initial_3;
 	int initial_4, initial_5, initial_6;
 	int former_music;
@@ -400,7 +399,6 @@ static void global_menu_options() {
 	}
 
 	popup_dialog_destroy();
-#endif
 }
 
 static void global_menu_difficulty() {
