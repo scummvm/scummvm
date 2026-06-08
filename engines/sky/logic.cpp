@@ -1948,6 +1948,9 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 				didX++;
 		}
 
+		_skyMouse->setInvDims(TOP_LEFT_X + XWIDTH, 236, didX * XWIDTH, didY * YDEPTH);
+		_skyScreen->showInventory(XWIDTH, 236 - TOP_LEFT_Y, XWIDTH + 8 * XWIDTH, (236 - TOP_LEFT_Y) + (didY * YDEPTH));
+
 		return true;
 
 	}

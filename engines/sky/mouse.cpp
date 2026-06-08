@@ -1714,14 +1714,78 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 
 void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 
+	uint32 *objList;
 	Compact *itemData;
+	int j, num;
+
+	debug(1, "xPos = %d, yPos = %d, _invX = %d, _invY = %d, _invW = %d, _invH = %d", xPos, yPos, _invX, _invY, _invW, _invH);
+
+	bool buttonHeld = (_system->getEventManager()->getButtonState() != 0); // mouseEngine() consumes the click at the end so using _mouseB would increment the timer at each click not on hold
+
+	objList = _skyLogic->giveInvList();
+
+	num = (int)Logic::_scriptVariables[MENU_LENGTH];
 
 	// if clicked somewhere outside the inventory, close the inventory
-	if (!_touchId && _mouseB) {
+	if (!_touchId && buttonHeld) {
 		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
 
 			_mMode = MUST_RELEASE; // MUST_RELEASE because if we go straight to GAMEPLAY, robert will move to the place of clicking
 			_skyLogic->killInventory(); // stop rendering the inventory items
+			return;
+		}
+	}
+
+	if (buttonHeld) {
+		for (j = 0; j < num; j++) {
+			itemData = _skyCompact->fetchCpt(objList[j]);
+
+			if (itemData->xcood + (int16)itemData->mouseRelX > xPos)
+				continue;
+			if (itemData->xcood + (int16)itemData->mouseRelX + XWIDTH < xPos)
+				continue;
+			if (itemData->ycood + (int16)itemData->mouseRelY > yPos)
+				continue;
+			if (itemData->ycood + (int16)itemData->mouseRelY + YDEPTH < yPos)
+				continue;
+
+			// record what we are touching
+			Logic::_scriptVariables[SPECIAL_ITEM] = objList[j];
+
+			// if we are on an object that is different from the object we were over just a moment ago
+			if (_touchId != objList[j] && !_holding) {
+				debug(1, "Entered the if block");
+				if (Logic::_scriptVariables[GET_OFF])
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+
+				// update GET_OFF
+				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+
+				_touchId = objList[j];
+				_hoverId = objList[j];
+				// run the mouseOn script
+				_skyLogic->mouseScript(itemData->mouseOn, itemData);
+				// reset hold counter
+				_timeOn = 0;
+				_skyLogic->startInventory(_touchId);
+			} else {
+				// holding
+				_timeOn++;
+				debug(1, "Holding item - %d, timer - %d", _touchId, _timeOn);
+
+				// if held long enough
+				if (_timeOn == USEON_THRESHOLD) {
+					debug(1, "Threshold crossed");
+					_skyScreen->setDragIcon(itemData->frame, true);
+
+					// hold the item
+					Logic::_scriptVariables[OBJECT_HELD] = _touchId;
+
+					_mouseYOff = HOTSPOT_USE_ON_YOFF;
+
+					_holding = true;
+				}
+			}
 			return;
 		}
 	}

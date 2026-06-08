@@ -114,6 +114,12 @@ public:
 	bool wasClicked();
 	void logicClick() { _logicClick = true; }
 	void resetCursor();
+	void setInvDims(uint16 x, uint16 y, uint16 w, uint16 h) {
+		_invX = x;
+		_invY = y;
+		_invW = w;
+		_invH = h;
+	}
 	bool isUILive();
 	void resetUI();
 	OSystem *giveSystem(){
