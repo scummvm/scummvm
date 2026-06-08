@@ -124,6 +124,37 @@ static void global_alert(int status) {
 }
 
 static void global_menu_score() {
+	int score;
+
+	score = global[player_score];
+	if (score > 250) score = 250;
+
+	text_index[0] = score;
+	text_index[1] = 250;
+
+	if (score <= 25) {
+		text_index[2] = 1;          /* Stage sweeper */
+	} else if (score <= 50) {
+		text_index[2] = 2;          /* Dresser */
+	} else if (score <= 75) {
+		text_index[2] = 3;          /* Usher */
+	} else if (score <= 100) {
+		text_index[2] = 4;          /* Stagehand */
+	} else if (score <= 150) {
+		text_index[2] = 5;          /* Chorus Member */
+	} else if (score <= 200) {
+		text_index[2] = 6;          /* Supporting Player */
+	} else if (score <= 249) {
+		text_index[2] = 7;          /* Star Player */
+	} else if (score <= 250) {
+		text_index[2] = 8;          /* Director */
+	} else {
+		text_index[2] = 9;          /* Bug Finder! */
+	}
+
+	text_show(99);
+
+	kernel.activate_menu = GAME_NO_MENU;
 }
 
 static void global_menu_save_restore(int save) {
