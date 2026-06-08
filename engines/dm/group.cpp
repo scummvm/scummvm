@@ -539,7 +539,7 @@ uint16 GroupMan::getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 c
 	creatureVal &= 0x0003;
 	creatureIndex <<= 1;
 	creatureVal <<= creatureIndex;
-	return creatureVal | (groupVal & ~(3 << creatureVal));
+	return creatureVal | (groupVal & ~(3 << creatureIndex));
 }
 
 int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving) {
