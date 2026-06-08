@@ -107,6 +107,11 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact, Screen *sky
 	//load in the object mouse file
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1);
 
+	_proxFrame = 0;
+	_proxFrameSpeed = 0;
+
+	_mapInitialized = false;
+
 	resetUI();
 }
 
@@ -233,7 +238,7 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	_currentCursor = frameNum;
 
 	if (SkyEngine::isIbass()) {
-		debug("ibass cursor path executed\n");
+		debug(1, "ibass cursor path executed\n");
 		CursorMan.setDefaultArrowCursor();
 		CursorMan.showMouse(true);
 		return;
@@ -276,42 +281,42 @@ void Mouse::mouseEngine() {
 		}
 
 		switch (_mMode) {
-			case ALERT_TO_GAME:
-				if (!_mouseB)
-					return;
+		case ALERT_TO_GAME:
+			if (!_mouseB)
+				return;
 
-				_skyScreen->hideInventory();
-				_mMode = MUST_RELEASE;
-				break;
+			_skyScreen->hideInventory();
+			_mMode = MUST_RELEASE;
+			break;
 
-			case MUST_RELEASE:
-				if (_mouseB)
-					return;
+		case MUST_RELEASE:
+			if (_mouseB)
+				return;
 
-				resetUI();
-				_mMode = GAMEPLAY;
-				break;
+			resetUI();
+			_mMode = GAMEPLAY;
+			break;
 
-			case GAMEPLAY:
-				pointerEngine(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
-				break;
+		case GAMEPLAY:
+			pointerEngine(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+			break;
 
-			case PRE_INVENTORY:
-				if (_mouseB)
-					return;
+		case PRE_INVENTORY:
+			if (_mouseB)
+				return;
 
-				_mMode = INVENTORY;
-				break;
+			_mMode = INVENTORY;
+			break;
 
-			case INVENTORY:
-				if (isLincInv())
-					lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
-				else
-					invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+		case INVENTORY:
+			if (isLincInv())
+				lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+			else
+				invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 
-			case INVENTORY_USE_ON:
-			case TEXT_CHOOSER:
-				break;
+		case INVENTORY_USE_ON:
+		case TEXT_CHOOSER:
+			break;
 		}
 
 		_mouseB = 0;
@@ -339,14 +344,11 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 	int nearestId = 0;
 	_nearestProximityIconId = 0;
 
-	int proxFrame = 0;
-	int proxFrameSpeed = 0;
-
-	proxFrameSpeed++;
-	if (proxFrameSpeed & 1)
-		proxFrame++;
-	if (proxFrame == 3)
-		proxFrame = 0;
+	_proxFrameSpeed++;
+	if (_proxFrameSpeed & 1)
+		_proxFrame++;
+	if (_proxFrame == 3)
+		_proxFrame = 0;
 
 	// near inv button?
 	if (yPos > HOTSPOT_INVY && xPos < HOTSPOT_INVX)
@@ -372,7 +374,7 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 					int d = abs(xPos - midx) + abs(yPos - midy);
 					if (d < GLOW_DIST) {
 						float opacity = 1.0 - ((d * 1.0) / GLOW_DIST);
-						_skyScreen->setProximityIcon(found++, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), opacity, proxFrame);
+						_skyScreen->setProximityIcon(found++, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), opacity, _proxFrame);
 					}
 
 					if (d < nearestDist) {
@@ -385,10 +387,9 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 		}
 		if (*currentList == 0xFFFF)
 			currentListNum = currentList[1];
-	}
-	while (*currentList != 0);
+	} while (*currentList != 0);
 
-	return	nearestId;
+	return  nearestId;
 }
 
 UIIcon Mouse::getInteractIcon(uint32 id) {
@@ -560,78 +561,77 @@ bool Mouse::hasSingleInteractIcon(uint32 id) {
 	return  false;
 }
 
+struct MouseXMap {
+	int id;
+	int mid;
+} mouseXMap[] = {
+	{ 4112, 258 }, // cupboard door
+	{ 4113, 254 }, // sandwich
+	{ 4114, 254 }, // spanner
+	{ 12358, 428 }, // bellevue - missing exit
+	{ 12681, 428 }, // bellevue
+	{ 12349, 142 }, // bellevue
+	{ 12347, 428 }, // bellevue
+	{ 90, 404 }, // first room, door
+	{ 97, 190 }, // ledge room, door
+	{ 4116, 269 }, // elevator
+	{ 4119, 269 }, // hole
+	{ 4110, 356 }, // lathe
+	{ 8248, 357 }, // walkway to security lobby
+	{ 8238, 181 }, // walkway to power
+	{ 8317, 426 }, // walkway to crash
+	{ 8341, 173 }, // factory to walkway
+	{ 8344, 433 }, // factory to factory 2
+	{ 8500, 224 }, // sensors
+	{ 8355, 428 }, // factory 2 to factory 3
+	{ 8446, 226 }, // putty
+	{ 8438, 226 }, // gangway
+	{ 12680, 201 }, // exit
+	{ 12679, 307 }, // exit
+	{ 12678, 179 }, // exit
+	{ 12677, 319 }, // exit
+	{ 12324, 191 }, // exit
+	{ 12336, 182 }, // exit
+	{ 12442, 376 }, // exit
+	{ 8483, 225 }, // console
+	{ 12641, 158 }, // exit
+	// linc
+	{ 12633, 190 }, // maze
+	{ 24586, 210 }, // maze
+	{ 24592, 288 }, // maze
+	{ 24593, 400 }, // maze
+	{ 24594, 203 }, // maze
+	{ 24595, 299 }, // maze
+	// hyde
+	{ 16496, 263 }, // plant
+	// cathedral
+	{ 16462, 168 }, // exit
+	// lockers
+	{ 16576, 246 }, // body == 16569
+	{ 16577, 271 }, // body == 16570
+	{ 16578, 296 }, // body == 16571
+	{ 16579, 321 }, // body == 16572
+	{ 16580, 346 }, // body == 16573
+	// underworld
+	{ 20506, 389 }, // metal door
+	// pit world
+	{ 20600, 283 }, // cover
+	{ 20648, 283 }, // pit
+	{ 20570, 247 }, // exit to medical droid room
+	{ 20575, 277 }, // slot
+	{ 20577, 297 }, // recharge unit
+	{ 24786, 288 }, // linc crystal
+	{ 24787, 288 }, // virus
+	{ 20712, 305 }, // console
+	{ 20713, 356 }, // console
+	{ 20728, 388 }, // exit from door room
+	{ 8272, 278 }, // power room chair
+	{ 12390, 187 }, // burke door
+	{ 12541, 187 }, // burke exit
+	{ 0, 0 }
+};
+
 uint16 Mouse::giveXCood(Compact *itemData, uint32 id) {
-
-	struct MouseXMap {
-		int id;
-		int mid;
-	} mouseXMap[] = {
-		{ 4112, 258 }, // cupboard door
-		{ 4113, 254 }, // sandwich
-		{ 4114, 254 }, // spanner
-		{ 12358, 428 }, // bellevue - missing exit
-		{ 12681, 428 }, // bellevue
-		{ 12349, 142 }, // bellevue
-		{ 12347, 428 }, // bellevue
-		{ 90, 404 }, // first room, door
-		{ 97, 190 }, // ledge room, door
-		{ 4116, 269 }, // elevator
-		{ 4119, 269 }, // hole
-		{ 4110, 356 }, // lathe
-		{ 8248, 357 }, // walkway to security lobby
-		{ 8238, 181 }, // walkway to power
-		{ 8317, 426 }, // walkway to crash
-		{ 8341, 173 }, // factory to walkway
-		{ 8344, 433 }, // factory to factory 2
-		{ 8500, 224 }, // sensors
-		{ 8355, 428 }, // factory 2 to factory 3
-		{ 8446, 226 }, // putty
-		{ 8438, 226 }, // gangway
-		{ 12680, 201 }, // exit
-		{ 12679, 307 }, // exit
-		{ 12678, 179 }, // exit
-		{ 12677, 319 }, // exit
-		{ 12324, 191 }, // exit
-		{ 12336, 182 }, // exit
-		{ 12442, 376 }, // exit
-		{ 8483, 225 }, // console
-		{ 12641, 158 }, // exit
-		// linc
-		{ 12633, 190 }, // maze
-		{ 24586, 210 }, // maze
-		{ 24592, 288 }, // maze
-		{ 24593, 400 }, // maze
-		{ 24594, 203 }, // maze
-		{ 24595, 299 }, // maze
-		// hyde
-		{ 16496, 263 }, // plant
-		// cathedral
-		{ 16462, 168 }, // exit
-		// lockers
-		{ 16576, 246 }, // body == 16569
-		{ 16577, 271 }, // body == 16570
-		{ 16578, 296 }, // body == 16571
-		{ 16579, 321 }, // body == 16572
-		{ 16580, 346 }, // body == 16573
-		// underworld
-		{ 20506, 389 }, // metal door
-		// pit world
-		{ 20600, 283 }, // cover
-		{ 20648, 283 }, // pit
-		{ 20570, 247 }, // exit to medical droid room
-		{ 20575, 277 }, // slot
-		{ 20577, 297 }, // recharge unit
-		{ 24786, 288 }, // linc crystal
-		{ 24787, 288 }, // virus
-		{ 20712, 305 }, // console
-		{ 20713, 356 }, // console
-		{ 20728, 388 }, // exit from door room
-		{ 8272, 278 }, // power room chair
-		{ 12390, 187 }, // burke door
-		{ 12541, 187 }, // burke exit
-		{ 0, 0 }
-	};
-
 	uint16 mid, midy;
 
 	mid = itemData->xcood + ((int16)itemData->mouseRelX) + (itemData->mouseSizeX >> 1);
@@ -648,17 +648,14 @@ uint16 Mouse::giveXCood(Compact *itemData, uint32 id) {
 			return  142;
 	}
 
-	Common::HashMap<int, int> hotspotMap;
-	bool mapInitialized = false;
-
-	if (!mapInitialized) {
+	if (!_mapInitialized) {
 		for (MouseXMap *m = mouseXMap; m->id != 0; m++)
-			hotspotMap[m->id] = m->mid;
-		mapInitialized = true;
+			_hotspotXMap[m->id] = m->mid;
+		_mapInitialized = true;
 	}
 
-	if (hotspotMap.contains(id))
-		return hotspotMap[id];
+	if (_hotspotXMap.contains(id))
+		return _hotspotXMap[id];
 
 	return  mid;
 }
@@ -1351,7 +1348,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 		// mouse must be down to search for stuff
 		if (_mouseB) {
-			// debug("Clicked");
+			debug(1, "Clicked");
 			// what are we near?
 			itemProx = doProximityHighlights(xPos, yPos);
 
@@ -1544,7 +1541,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 
 					// reset fade out timer
 					_fadeOut = HOTSPOT_FADEOUT;
-					debug("Fadeout det to 36, mouseOn = %d, dist = %d", itemData->mouseOn, d);
+					debug(1, "Fadeout det to 36, mouseOn = %d, dist = %d", itemData->mouseOn, d);
 
 					_skyScreen->setProximityNotAnimate(_nearestProximityIconId); // we want this one remaining one to not animate
 
@@ -1622,7 +1619,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 				// we're done
 				return;
 			} else {
-				debug("nothing");
+				debug(1, "nothing");
 				// not touching anything, force open hotspot to close
 				if (_fadeOut)
 					_fadeOut = 0;
@@ -1657,7 +1654,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 			_prevMouseOn = true;
 
 
-			debug("floor returned = %d", floor);
+			debug(1, "floor returned = %d", floor);
 		} else { // not touching screen
 			if (_prevMouseOn) {
 
@@ -2105,7 +2102,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 			Logic::_scriptVariables[SPECIAL_ITEM] = objList[j];
 
 			if (_touchId != objList[j] && !_holding) {
-				debug("New touch\n");
+				debug(1, "New touch\n");
 				// run previous items get-off, if there was one (gone straight from one object onto another)
 				if (Logic::_scriptVariables[GET_OFF])
 					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
@@ -2141,7 +2138,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 
 				// special stuff for quit-linc
 				if (_touchId == 24582) {
-					debug("QUIT LINC\n");
+					debug(1, "QUIT LINC\n");
 					itemData->frame--;
 
 					// remove inventory items from screen/logic processing

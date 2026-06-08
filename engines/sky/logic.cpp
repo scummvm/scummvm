@@ -1877,7 +1877,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	if (SkyEngine::isIbass()) {
 		Compact *cpt;
 
-		debug("init inv menu %d", firstObject);
+		debug(1, "init inv menu %d", firstObject);
 
 		// safety flag
 		_liveInv = true;
@@ -1905,7 +1905,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 		}
 		_scriptVariables[MENU_LENGTH] = menuLength;
 
-		debug("Menu length = %d", menuLength);
+		debug(1, "Menu length = %d", menuLength);
 
 		uint16 rollingX = TOP_LEFT_X + XWIDTH;
 		int xx = 0;
@@ -1923,7 +1923,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 			}
 
 			cpt = _skyCompact->fetchCpt(_objectList[i]);
-			debug("Init i = %d ob = %d fr = %d\n", i, _objectList[i], cpt->frame);
+			debug(1, "Init i = %d ob = %d fr = %d\n", i, _objectList[i], cpt->frame);
 
 			cpt->status = ST_MOUSE + ST_FOREGROUND + /*ST_LOGIC +*/ ST_RECREATE;
 			cpt->screen = 999;
