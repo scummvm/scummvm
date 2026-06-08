@@ -24,7 +24,7 @@
 
 #include "graphics/opengl/context.h"
 
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(__MORPHOS__)
 #define OPENGL_DEBUG
 #endif
 
