@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-07 22:09+0000\n"
-"PO-Revision-Date: 2026-06-03 08:30+0000\n"
+"PO-Revision-Date: 2026-06-08 08:48+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -13692,16 +13692,12 @@ msgid "All levels will be available without requiring passwords"
 msgstr "Desbloquea todos los niveles sin necesitar contraseñas"
 
 #: engines/scumm/metaengine.cpp:900
-#, fuzzy
-#| msgid "No date saved"
 msgid "No damage"
-msgstr "No hay fecha guardada"
+msgstr "Sin daños"
 
 #: engines/scumm/metaengine.cpp:901
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable player damage"
-msgstr "Desactivar menú de guardado"
+msgstr "Desactiva los daños recibidos por el jugador"
 
 #: engines/scumm/metaengine.cpp:1061
 msgid "Down left"
@@ -13769,10 +13765,8 @@ msgid "Fire / select"
 msgstr "Disparar/Seleccionar"
 
 #: engines/scumm/metaengine.cpp:1198
-#, fuzzy
-#| msgid "Skip / menu back"
 msgid "Walk / menu back"
-msgstr "Omitir/Volver (menús)"
+msgstr "Andar/Volver (menús)"
 
 #: engines/scumm/metaengine.cpp:1203
 msgid "Skip / menu back"
