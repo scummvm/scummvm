@@ -268,6 +268,7 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	if (button == 1) {
 		_dragStartY = y;
 		_dragLastY = y;
+		_wasAnimating = _fluidScroller->isAnimating();
 		_fluidScroller->stopAnimation();
 	}
 
@@ -283,7 +284,7 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 		if (_isMouseDown && button == 1 && _isDragging)
 			_fluidScroller->startFling();
 
-		if (_isMouseDown && !_isDragging) {
+		if (_isMouseDown && !_isDragging && !_wasAnimating) {
 			int newSelectedItem = findItem(x, y);
 			if (newSelectedItem != -1) {
 				if (isGroupHeader(_listIndex[newSelectedItem])) {
@@ -349,12 +350,13 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
-	if (clickCount == 2 && (_selectedItem == findItem(x, y))) {
+	if (!_wasAnimating && clickCount == 2 && (_selectedItem == findItem(x, y))) {
 		int selectID = getSelected();
 		if (selectID >= 0) {
 			sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 		}
 	}
+	_wasAnimating = false;
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {

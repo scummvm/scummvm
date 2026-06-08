@@ -539,6 +539,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_dragLastY = 0;
 
 	_fluidScroller = new FluidScroller();
+	_wasAnimating = false;
 
 	_filterMatcher = GridWidgetDefaultMatcher;
 	_filterMatcherArg = nullptr;
@@ -1046,6 +1047,7 @@ void GridWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		_dragLastY = y;
 	}
 	_selectionPending = true;
+	_wasAnimating = _fluidScroller->isAnimating();
 	_fluidScroller->stopAnimation();
 }
 
@@ -1057,7 +1059,7 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_isDragging = false;
 	_selectionPending = false;
 
-	if (wasPending && !wasDragging) {
+	if (wasPending && !wasDragging && !_wasAnimating) {
 		// Find which item was clicked and select it
 		Widget *w = findWidget(x, y);
 		if (w && w != this && w->getType() == kContainerWidget)
@@ -1066,6 +1068,7 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	if (wasDragging)
 		_fluidScroller->startFling();
+	_wasAnimating = false;
 }
 
 void GridWidget::handleMouseMoved(int x, int y, int button) {
@@ -1117,6 +1120,7 @@ bool GridWidget::handleKeyUp(Common::KeyState state) {
 void GridWidget::lostFocusWidget() {
 	_isMouseDown = _isDragging = false;
 	_dragStartY = _dragLastY = 0;
+	_wasAnimating = false;
 }
 
 void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
