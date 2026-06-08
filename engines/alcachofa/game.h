@@ -133,6 +133,9 @@ public:
 	static Game *createForSecta(); // V2
 	static Game *createForMoscu(); // V2
 	static Game *createForEscarabajo(); // V2
+	static Game *createForCorvino(); // V2
+	static Game *createForBalones(); // V2
+	static Game *createForMamelucos(); // V2
 
 	const Message _message;
 };

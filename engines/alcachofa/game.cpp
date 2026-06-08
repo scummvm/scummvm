@@ -242,6 +242,16 @@ Game *Game::create() {
 			return createForEscarabajo();
 		}
 		break;
+	case EngineVersion::V2_1:
+		switch (*desc.desc.gameId) {
+		case 'c':
+			return createForCorvino();
+		case 'b':
+			return createForBalones();
+		case 'm':
+			return createForMamelucos();
+		}
+		break;
 	case EngineVersion::V3_0:
 	case EngineVersion::V3_1:
 		return createForMovieAdventureSpecial();
