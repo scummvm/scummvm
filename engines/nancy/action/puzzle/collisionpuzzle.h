@@ -88,7 +88,7 @@ protected:
 	Common::Rect _blockSrc;
 
 	Common::Point _tileMoveExitPos = Common::Point(-1, -1);
-	uint _tileMoveExitSize = 0;
+	uint _tileMoveExitIndex = 0;
 
 	bool _usesExitButton = false;
 	Common::Rect _exitButtonSrc;
