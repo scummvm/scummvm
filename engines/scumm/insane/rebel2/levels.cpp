@@ -186,6 +186,7 @@ void InsaneRebel2::playMissionBriefing() {
 // All wrapper functions (FUN_00417168/4171c5/417ab2/417327) add | 8 before calling FUN_0041f4d0.
 void InsaneRebel2::playCinematic(const char *filename) {
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
@@ -202,6 +203,7 @@ void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX
                                      int fadeInFrame, int fadeOutFrame) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
@@ -274,6 +276,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 void InsaneRebel2::playLevelEnd(int levelId) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
@@ -294,6 +297,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 void InsaneRebel2::playLevelRetry(int levelId) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
@@ -314,6 +318,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 void InsaneRebel2::playLevelGameOver(int levelId) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
@@ -381,6 +386,7 @@ void InsaneRebel2::playEndingSequence() {
 void InsaneRebel2::playCreditsSequence() {
 
 	debug("Rebel2: Playing menu credits");
+	resetVideoAudio();
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x20);
@@ -721,6 +727,7 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
@@ -749,6 +756,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed

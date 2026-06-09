@@ -48,6 +48,14 @@ void InsaneRebel2::terminateAudio() {
 	_audio.terminate();
 }
 
+void InsaneRebel2::resetVideoAudio() {
+	_audio.reset();
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (splayer)
+		splayer->resetAudioTracks();
+}
+
 // queueAudioData -- Queue raw PCM data for playback on a track.
 // Creates the queuing stream on first use. RA2 audio is 8-bit unsigned mono.
 void InsaneRebel2::queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan) {

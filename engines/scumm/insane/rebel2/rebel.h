@@ -1312,6 +1312,9 @@ public:
 	// Terminate audio system
 	void terminateAudio();
 
+	// Reset streamed SAN audio at independent video boundaries.
+	void resetVideoAudio();
+
 	// Process audio dispatches - called from SmushPlayer when iMUSE is null
 	// This replaces the iMUSE audio path for RA2
 	void processAudioFrame(int16 feedSize);

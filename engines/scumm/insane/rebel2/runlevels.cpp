@@ -199,6 +199,8 @@ bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool rec
 		_gameplaySectionActive = true;
 		enableIOSGamepadController();
 	} else {
+		if (_gameplaySectionActive)
+			resetVideoAudio();
 		_gameplaySectionActive = false;
 		restoreIOSGamepadController();
 	}
