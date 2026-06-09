@@ -147,7 +147,7 @@ private:
 	bool scriptSetSnapToTarget();
 	bool scriptTestObjectAnimFrame();
 	void scriptPrintStringRight();
-	void scriptSetVolume();
+	void scriptSetPaletteDarkness();
 	bool scriptSetObjectClickable();
 	bool scriptSetObjectVisible();
 	bool scriptSetHotspotOverride();

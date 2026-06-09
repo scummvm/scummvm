@@ -1528,14 +1528,19 @@ void Script::ScriptExecutor::scriptPrintStringRight() {
 	endBuffering(_lastOpcodeTriggeredSkip);
 }
 
-void Script::ScriptExecutor::scriptSetVolume() {
-	// scriptSetVolume (1008:ce0b): clamp the value to 0..100 (signed), as the original does.
-	int16 volume = (int16)scriptReadValue16();
-	if (volume < 0)
-		volume = 0;
-	if (volume > 100)
-		volume = 100;
-	g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume((uint16)volume));
+void Script::ScriptExecutor::scriptSetPaletteDarkness() {
+	// Binary (1008:ce0b): clamps value to 0..100, writes to sceneData+0x5205
+	// (darkenPercent), then calls applyPaletteInterpolation to update displayed palette.
+	int16 darkenPercent = (int16)scriptReadValue16();
+	if (darkenPercent < 0)
+		darkenPercent = 0;
+	if (darkenPercent > 100)
+		darkenPercent = 100;
+	g_engine->_paletteDarkenPercent = (uint16)darkenPercent;
+	g_engine->applyPaletteDarkening();
+	View1 *view = (View1 *)g_engine->findView("View1");
+	if (view)
+		view->_paletteDirty = true;
 }
 
 bool Script::ScriptExecutor::scriptSetObjectClickable() {
@@ -2234,7 +2239,7 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 			scriptPrintStringRight();
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
-			scriptSetVolume();
+			scriptSetPaletteDarkness();
 		} else if (opcode1 == 0x32) {
 			if (!scriptSetObjectClickable()) {
 				continue;

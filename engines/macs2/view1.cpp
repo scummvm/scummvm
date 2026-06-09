@@ -59,8 +59,13 @@ void logRenderedText(const char *kind, int x, int y, const Common::String &text)
 void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
 	// Original fadePaletteToBlack/FromBlack: subtracts fadeValue from raw 6-bit VGA
 	// palette values (0-63), clamping to 0. Then scales to 8-bit for ScummVM.
+	// Apply palette darkening if active (scenes with _scenePaletteMode != 1).
+	uint16 darkenPercent = (g_engine->_scenePaletteMode == 1) ? 0 : g_engine->_paletteDarkenPercent;
+	if (darkenPercent > 100)
+		darkenPercent = 100;
+	uint16 brightnessFactor = 100 - darkenPercent;
 	for (uint i = 0; i < 256 * 3; ++i) {
-		int raw = sourcePalette[i]; // 6-bit value (0-63)
+		int raw = (sourcePalette[i] * brightnessFactor) / 100; // darken first
 		int faded = raw - fadeValue;
 		if (faded < 0)
 			faded = 0;
@@ -816,10 +821,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						_backgroundSurface.copyFrom(preview);
 						// Read sub-scene palette
 						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
-						memcpy(g_engine->_pal, g_engine->_palVanilla, 0x300);
-						for (int p = 0; p < 256 * 3; p++) {
-							g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
-						}
+						g_engine->applyPaletteDarkening();
 						// Read sub-scene depth map
 						Graphics::ManagedSurface subDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
 						g_engine->_depthMap.blitFrom(subDepth);
@@ -834,10 +836,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 					startFadeToBlack(8);
 					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 					memcpy(g_engine->_palVanilla, _savedPalVanilla, 256 * 3);
-					memcpy(g_engine->_pal, g_engine->_palVanilla, 256 * 3);
-					for (int p = 0; p < 256 * 3; p++) {
-						g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
-					}
+					g_engine->applyPaletteDarkening();
 					g_engine->_depthMap.copyFrom(_savedDepthMap);
 					startFading(8);
 					redraw();
@@ -1057,10 +1056,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						_backgroundSurface.copyFrom(mapBg);
 						// Read map palette (0x300 bytes immediately after the RLE image)
 						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
-						memcpy(g_engine->_pal, g_engine->_palVanilla, 0x300);
-						for (int p = 0; p < 256 * 3; p++) {
-							g_engine->_pal[p] = (g_engine->_pal[p] * 259 + 33) >> 6;
-						}
+						g_engine->applyPaletteDarkening();
 						// Read map depth map (RLE image after palette)
 						Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
 						g_engine->_depthMap.blitFrom(mapDepth);
@@ -1460,12 +1456,12 @@ bool View1::tick() {
 
 	// Update the flag
 	// Background animation advance - matching original gameTick (1008:e556):
-	// g_wBgAnimTickCounter is incremented once per game frame (~10.8fps).
-	// Mode 3 (_bgAnimMode==3): advance when counter > 1 (every 2 game frames ≈ 185ms)
-	// Mode 2 (_bgAnimMode==2): advance when counter > 0x27 (every 39 game frames ≈ 3.6s)
+	// Background animation speed is also controlled by _scenePaletteMode:
+	//   Mode 3: advance every 2 game frames (~185ms)
+	//   Mode 2: advance every 39 game frames (~3.6s)
 	_bgAnimTickCounter++;
 
-	if (_bgAnimTickCounter > 1 && g_engine->_bgAnimMode == 3) {
+	if (_bgAnimTickCounter > 1 && g_engine->_scenePaletteMode == 3) {
 		_bgAnimTickCounter = 0;
 		_flagFrameIndex++;
 		if (_flagFrameIndex == 3) {
@@ -1480,7 +1476,7 @@ bool View1::tick() {
 		redraw();
 	}
 
-	if (_bgAnimTickCounter > 0x27 && g_engine->_bgAnimMode == 2) {
+	if (_bgAnimTickCounter > 0x27 && g_engine->_scenePaletteMode == 2) {
 		_bgAnimTickCounter = 0;
 		_flagFrameIndex++;
 		if (_flagFrameIndex == 3) {
