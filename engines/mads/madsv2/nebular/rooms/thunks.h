@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
+#include "mads/madsv2/core/sprite.h"
 #include "mads/madsv2/nebular/global.h"
 
 namespace MADS {
@@ -147,6 +148,7 @@ struct Scene {
 	struct DynamicHotspots {
 		int add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r);
 		void remove(int dyn_id);
+		void setPosition(int id, const Common::Point &pt, int facing);
 	};
 	DynamicHotspots _dynamicHotspots;
 
@@ -196,11 +198,38 @@ struct Scene {
 		void addTimer(int ticks, int trigger_code);
 		void setMsgLayout(int sequence_id);
 		void setPosition(int sequence_id, const Common::Point &pt);
+		void updateTimeout(int old_sequence_id, int new_sequence_id);
 	};
 	Sequences _sequences;
 
+	struct Sprite {
+		struct CharInfo {
+			CharInfo *operator->() {
+				return this;
+			}
+			const CharInfo *operator->() const {
+				return this;
+			}
+			WalkerInfoPtr _info;
+		};
+		CharInfo _charInfo;
+
+		Sprite *operator->() {
+			return this;
+		}
+		const Sprite *operator->() const {
+			return this;
+		}
+		int _index;
+
+		void setIndex(int index);
+	};
+
 	struct Sprites {
+		Sprite _sprites[51];
+
 		int16 addSprites(const char *name, int load_flags = 0);
+		Sprite &operator[](int idx);
 	};
 	Sprites _sprites;
 
@@ -208,12 +237,14 @@ struct Scene {
 	int16 &_nextSceneId = new_room;
 	long &_frameStartTime = kernel.clock;
 	byte &_reloadSceneFlag = kernel.force_restart;
+	byte &_roomChanged = kernel.teleported_in;
 
 	int loadAnimation(const char *name, int trigger_code);
 	void freeAnimation();
 	void changeVariant(int num);
 	void drawElements(int transitionType, bool surfaceFlag);
 	void resetScene();
+	void clearSequenceList();
 };
 extern Scene _scene;
 
@@ -252,7 +283,28 @@ struct Game {
 			}
 		};
 		PlayerPoint _playerPos;
+
+		struct PlayerPrepare {
+			int &x = player.prepare_walk_x;
+			int &y = player.prepare_walk_y;
+
+			PlayerPrepare &operator=(const Common::Point &pt) {
+				x = pt.x;
+				y = pt.y;
+				return *this;
+			}
+			operator Common::Point() {
+				return Common::Point(x, y);
+			}
+
+			bool operator==(const Common::Point &rhs) const {
+				return x == rhs.x && y == rhs.y;
+			}
+		};
+		PlayerPrepare _prepareWalkPos;
+
 		int &_facing = player.facing;
+		int &_prepareFacing = player.prepare_walk_facing;
 		bool &_visible = player.walker_visible;
 		bool &_stepEnabled = player.commands_allowed;
 		char *const q = &player.series_name[0];
@@ -266,6 +318,8 @@ struct Game {
 		char *const _spritesPrefix = &player.series_name[0];
 		int &_moving = player.walking;
 		int &_walkOffScreenSceneId = player.walk_off_edge_to_room;
+		int &_prepareWalkFacing = player.prepare_walk_facing;
+		int &_spritesStart = player.series_base;
 
 		void startWalking(const Common::Point &pt, int facing);
 		void cancelCommand();
@@ -315,7 +369,7 @@ struct VM {
 		}
 
 		void show(int id);
-		void showItem(int object_id, int message);
+		void showItem(int object_id, int message, int speech = 0);
 	};
 	Dialogs _dialogs;
 

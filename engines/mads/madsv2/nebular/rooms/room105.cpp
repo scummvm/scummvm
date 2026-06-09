@@ -19,32 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room105::Room105(RexNebularEngine *vm) : Room1xx(vm) {
-	_explosionFl = false;
-}
+struct Scratch {
+	bool _explosionFl;
+};
 
-void Room105::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_explosionFl);
-}
 
-void Room105::setup() {
-	// Preloading has been skipped
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room105::enter() {
+static void room_105_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('m', 1));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 4));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
@@ -63,14 +58,14 @@ void Room105::enter() {
 		_game._player._playerPos = Common::Point(116, 147);
 
 	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
-	_explosionFl = false;
+	local._explosionFl = false;
 
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room105::step() {
-	if ((_game._player._playerPos == Common::Point(170, 87)) && (_game._trigger || !_explosionFl)) {
-		_explosionFl = true;
+static void room_105_daemon() {
+	if ((_game._player._playerPos == Common::Point(170, 87)) && (_game._trigger || !local._explosionFl)) {
+		local._explosionFl = true;
 		switch (_game._trigger) {
 		case 0:
 			_scene->_kernelMessages.reset();
@@ -135,7 +130,7 @@ void Room105::step() {
 		_game._player._stepEnabled = false;
 }
 
-void Room105::preActions() {
+static void room_105_pre_parser() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_WESTERN_CLIFF_FACE))
 		_game._player._walkOffScreenSceneId = 104;
 
@@ -146,7 +141,7 @@ void Room105::preActions() {
 		_game._player._needToWalk = false;
 }
 
-void Room105::actions() {
+static void room_105_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10512);
 	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn105]) {
@@ -186,6 +181,23 @@ void Room105::actions() {
 	_action._inProgress = false;
 }
 
+void room_105_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._explosionFl);
+}
+
+void room_105_preload() {
+	room_init_code_pointer = room_105_init;
+	room_pre_parser_code_pointer = room_105_pre_parser;
+	room_parser_code_pointer = room_105_parser;
+	room_daemon_code_pointer = room_105_daemon;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

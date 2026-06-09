@@ -19,42 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room106::Room106(RexNebularEngine *vm) : Room1xx(vm) {
-	_backToShipFl = false;
-	_shadowFl = false;
-	_firstEmergingFl = false;
-	_positionY = 0;
-}
+struct Scratch {
+	bool _backToShipFl = false;
+	bool _shadowFl = false;
+	bool _firstEmergingFl = false;
+	long _positionY = 0;
+};
 
-void Room106::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_backToShipFl);
-	s.syncAsByte(_shadowFl);
-	s.syncAsByte(_firstEmergingFl);
-	s.syncAsSint32LE(_positionY);
-}
 
-void Room106::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	if ((_scene->_priorSceneId == 102) && !_game._objects.isInInventory(OBJ_REBREATHER) && !_scene->_roomChanged)
-		_game._player._spritesPrefix = "";
-
-	_vm->_dialogs->_defaultPosition.y = 100;
-}
-
-void Room106::enter() {
+static void room_106_init() {
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('H', -1));
 
 	if (_game._objects.isInInventory(OBJ_REBREATHER) || (_scene->_priorSceneId != 102) || _scene->_roomChanged) {
@@ -95,9 +83,9 @@ void Room106::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	}
 
-	_backToShipFl = false;
-	_shadowFl = false;
-	_firstEmergingFl = false;
+	local._backToShipFl = false;
+	local._shadowFl = false;
+	local._firstEmergingFl = false;
 
 	_game.loadQuoteSet(0x31, 0x32, 0x34, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0);
 	sceneEntrySound();
@@ -128,13 +116,13 @@ void Room106::step() {
 			_game._player._stepEnabled = true;
 		} else {
 			_game._player._prepareWalkFacing = FACING_SOUTHWEST;
-			_firstEmergingFl = true;
+			local._firstEmergingFl = true;
 			_scene->loadAnimation(Resources::formatName(106, 'B', -1, EXT_AA, ""), 80);
 		}
 	}
 
-	if (_firstEmergingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
-		_firstEmergingFl = false;
+	if (local._firstEmergingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
+		local._firstEmergingFl = false;
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
 	}
 
@@ -143,7 +131,7 @@ void Room106::step() {
 		int msgId = -1;
 		switch (tmpVal) {
 		case 0:
-			_positionY = 26;
+			local._positionY = 26;
 			msgId = 49;
 			break;
 
@@ -167,16 +155,16 @@ void Room106::step() {
 
 		if (msgId >= 0) {
 			int nextTrigger = _game._trigger + 1;
-			_scene->_kernelMessages.add(Common::Point(15, _positionY), 0x1110, 0, 0, 360, _game.getQuote(msgId));
+			_scene->_kernelMessages.add(Common::Point(15, local._positionY), 0x1110, 0, 0, 360, _game.getQuote(msgId));
 			_scene->_sequences.addTimer(150, nextTrigger);
-			_positionY += 14;
+			local._positionY += 14;
 		}
 	}
 
-	if (_backToShipFl) {
-		if (!_shadowFl) {
+	if (local._backToShipFl) {
+		if (!local._shadowFl) {
 			if (_game._player._playerPos.x < 204) {
-				_shadowFl = true;
+				local._shadowFl = true;
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 4, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
@@ -216,7 +204,7 @@ void Room106::actions() {
 		_game._player._needToWalk = true;
 		_game._player._readyToWalk = true;
 		_game._player._frameNumber = 9;
-		_backToShipFl = true;
+		local._backToShipFl = true;
 	} else if (_action.isAction(VERB_LOOK, NOUN_ANEMONE) || _action.isAction(VERB_LOOK_AT, NOUN_ANEMONE))
 		_vm->_dialogs->show(10601);
 	else if (_action.isAction(VERB_TAKE, NOUN_ANEMONE))
@@ -249,6 +237,30 @@ void Room106::actions() {
 	_action._inProgress = false;
 }
 
+void room_106_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._backToShipFl);
+	s.syncAsByte(local._shadowFl);
+	s.syncAsByte(local._firstEmergingFl);
+	s.syncAsSint32LE(local._positionY);
+}
+
+void room_106_preload() {
+	room_init_code_pointer = room_106_init;
+	room_pre_parser_code_pointer = room_106_pre_parser;
+	room_parser_code_pointer = room_106_parser;
+	room_daemon_code_pointer = room_106_daemon;
+
+	section_1_walker();
+	section_1_interface();
+
+	if ((_scene->_priorSceneId == 102) && !_game._objects.isInInventory(OBJ_REBREATHER) && !_scene->_roomChanged)
+		_game._player._spritesPrefix = "";
+
+	_vm->_dialogs->_defaultPosition.y = 100;
+
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

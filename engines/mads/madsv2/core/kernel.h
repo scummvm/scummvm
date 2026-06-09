@@ -481,6 +481,7 @@ extern void kernel_flip_hotspot_loc(int vocab_code, int active, int x, int y);
 extern Sequence sequence_list[KERNEL_MAX_SEQUENCES];
 extern void kernel_seq_init();
 extern void kernel_seq_correction(long old_clock, long new_clock);
+extern void kernel_seq_copy_timeout(int old_sequence_id, int new_sequence_id);
 extern int kernel_seq_add(int series_id, int mirror, int initial_sprite,
 	int low_sprite, int high_sprite, int loop_mode, int loop_direction,
 	int depth, int scale, int auto_locating, int x, int y,

@@ -1135,6 +1135,15 @@ void kernel_seq_correction(long old_clock, long new_clock) {
 	}
 }
 
+void kernel_seq_timeout(int old_sequence_id, int new_sequence_id) {
+	long time = (old_sequence_id >= 0) ? sequence_list[old_sequence_id].base_time : player.clock + player.frame_delay;
+
+	if (new_sequence_id >= 0)
+		sequence_list[new_sequence_id].base_time = time;
+	else
+		player.clock = time - player.frame_delay;
+}
+
 void kernel_draw_to_background(int series_id, int sprite_id,
 	int x, int y,
 	int depth, int scale) {

@@ -127,6 +127,10 @@ void Scene::DynamicHotspots::remove(int dyn_id) {
 	kernel_delete_dynamic(dyn_id);
 }
 
+void Scene::DynamicHotspots::setPosition(int id, const Common::Point &pt, int facing) {
+	kernel_dynamic_walk(id, pt.x, pt.y, facing);
+}
+
 void Scene::Hotspots::activate(int hotspot, int active) {
 	kernel_flip_hotspot(hotspot, active);
 }
@@ -158,6 +162,16 @@ void Scene::Rails::resetNext() {
 
 int16 Scene::Sprites::addSprites(const char *name, int load_flags) {
 	return kernel_load_series(name, load_flags);
+}
+
+Scene::Sprite &Scene::Sprites::operator[](int idx) {
+	_sprites[idx].setIndex(idx);
+	return _sprites[idx];
+}
+
+void Scene::Sprite::setIndex(int index) {
+	_index = index;
+	_charInfo._info = series_list[index]->walker;
 }
 
 int16 Scene::Sequences::addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
@@ -207,6 +221,10 @@ void Scene::Sequences::setPosition(int sequence_id, const Common::Point &pt) {
 	kernel_seq_loc(sequence_id, pt.x, pt.y);
 }
 
+void Scene::Sequences::updateTimeout(int old_sequence_id, int new_sequence_id) {
+	kernel_seq_copy_timeout(old_sequence_id, new_sequence_id);
+}
+
 int Scene::loadAnimation(const char *name, int trigger_code) {
 	return kernel_run_animation(name, trigger_code);
 }
@@ -227,12 +245,16 @@ void Scene::resetScene() {
 	kernel_dump_all();
 }
 
+void Scene::clearSequenceList() {
+	kernel_seq_init();
+}
+
 void VM::Dialogs::show(int id) {
 	text_show(id);
 }
 
-void VM::Dialogs::showItem(int object_id, int message) {
-	object_examine(object_id, message, 0);
+void VM::Dialogs::showItem(int object_id, int message, int speech) {
+	object_examine(object_id, message, speech);
 }
 
 void VM::Palette::setEntry(int color, int r, int g, int b) {
