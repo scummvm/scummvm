@@ -73,7 +73,7 @@ void RebelAudio::queueData(int trackIdx, const uint8 *data, int32 size, int volu
 	const int sourceRate = sampleRate > 0 ? sampleRate : _sampleRate;
 
 	if (!_streams[trackIdx]) {
-		debug(1, "RebelAudio: Creating audio stream for track %d at %d Hz", trackIdx, _sampleRate);
+		debugC(DEBUG_INSANE, "RebelAudio: Creating audio stream for track %d at %d Hz", trackIdx, _sampleRate);
 		_streams[trackIdx] = Audio::makeQueuingAudioStream(_sampleRate, false);
 		_trackActive[trackIdx] = true;
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[trackIdx],

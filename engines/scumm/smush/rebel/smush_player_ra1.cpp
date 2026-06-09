@@ -856,7 +856,7 @@ bool SmushPlayerRebel1::ra1HandleUnknownFrameChunk(uint32 subType, int32 subSize
 	byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
 	if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
 	    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
-		debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
+		debugC(DEBUG_SMUSH, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
 		return true;
 	}
 

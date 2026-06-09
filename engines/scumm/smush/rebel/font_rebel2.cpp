@@ -154,7 +154,7 @@ void Rebel2NutRenderer::loadRebel2Font(const char *filename) {
 	if (_numChars <= 0 || decodedLength == 0)
 		error("Rebel2NutRenderer::loadRebel2Font(%s) no decodable characters", filename);
 
-	debug(1, "Rebel2NutRenderer::loadRebel2Font('%s') - decodedLength = %d", filename, decodedLength);
+	debugC(DEBUG_SMUSH, "Rebel2NutRenderer::loadRebel2Font('%s') - decodedLength = %d", filename, decodedLength);
 
 	_decodedData = new byte[decodedLength];
 	byte *decodedPtr = _decodedData;
@@ -370,7 +370,7 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 		decodeRebel2Frame(_chars[i].src, frame, codec45Palette, codec45Lookup);
 	}
 
-	debug(1, "Rebel2NutRenderer::loadRebel2SpriteFromData() - numChars=%d decodedLength=%u", _numChars, (uint32)decodedLength);
+	debugC(DEBUG_SMUSH, "Rebel2NutRenderer::loadRebel2SpriteFromData() - numChars=%d decodedLength=%u", _numChars, (uint32)decodedLength);
 }
 
 NutRenderer *makeRebel2Font(ScummEngine *vm, const char *filename) {

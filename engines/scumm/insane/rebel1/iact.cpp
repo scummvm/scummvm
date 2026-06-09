@@ -636,7 +636,7 @@ bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top
 		// replacement/death frame. This is used heavily by Level 9 troopers.
 		_frameObjectState[byteIndex] &= ~bit;
 		_frameObjectHitRevealPending = false;
-		debug(5, "RA1 FOBJ reveal: object=%d frameObjectByte=%d bit=0x%02x",
+		debugC(DEBUG_INSANE, "RA1 FOBJ reveal: object=%d frameObjectByte=%d bit=0x%02x",
 			objectId, byteIndex, bit);
 	}
 
@@ -1293,7 +1293,7 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_currentLevel != 6)
 		checkDynamicLevelBranch();
 
-	debug(7, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
+	debugC(DEBUG_INSANE, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
 		_shipPosX, _shipPosY, _rollAccum, _liftSmooth,
 		_posAccumX, _posAccumY, _shipDirIndex, _health,
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
@@ -1858,7 +1858,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 
 	checkDynamicLevelBranch();
 
-	debug(7, "RA1 GAME 0x0B: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
+	debugC(DEBUG_INSANE, "RA1 GAME 0x0B: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
 		_shipPosX, _shipPosY, _avgInputX, _avgInputY,
 		_perspectiveX, _perspectiveY, _health, _screenFlash);
 }
@@ -2103,7 +2103,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
 	// This is not a pure control-mode assignment.
 	if (_frameDispatchFlags & 0x40) {
-		debug(7, "RA1 GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
+		debugC(DEBUG_INSANE, "RA1 GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
 			_frameDispatchFlags);
 		return;
 	}
@@ -2177,7 +2177,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	if (_currentLevel == 7)
 		memset(_frameObjectState + 150, 0xFF, 150);
 
-	debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
+	debugC(DEBUG_INSANE, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
 }
 
 void InsaneRebel1::handleGameOpcode5DLinkLatch(uint32 param1) {
@@ -2192,7 +2192,7 @@ void InsaneRebel1::handleGameOpcode5DLinkLatch(uint32 param1) {
 		}
 	}
 
-	debug(5, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
+	debugC(DEBUG_INSANE, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
 }
 
 void InsaneRebel1::handleGameOpcode5FRandomHitLatch(uint32 param1) {
@@ -2205,7 +2205,7 @@ void InsaneRebel1::handleGameOpcode5FRandomHitLatch(uint32 param1) {
 		}
 	}
 
-	debug(5, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
+	debugC(DEBUG_INSANE, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
 }
 
 void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
@@ -2219,7 +2219,7 @@ void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableR
 		b.readUint32BE(); // f2 (max frames, unused in physics)
 		_driftParam = (int16)(int32)b.readUint32BE();
 		b.readUint32BE(); // f4 (unused in original assembly)
-		debug(7, "RA1 GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
+		debugC(DEBUG_INSANE, "RA1 GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
 	}
 }
 
@@ -2291,7 +2291,7 @@ void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableRea
 			_damageFlags, suppressDirectionalDamage ? 1 : 0);
 	}
 
-	debug(5, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
+	debugC(DEBUG_INSANE, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
 		corridorLeft, corridorTop, corridorWidth, corridorHeight,
 		_perspectiveX, _perspectiveY,
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
@@ -2332,7 +2332,7 @@ void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStr
 			rawZoneLeft, rawZoneTop, zoneWidth, zoneHeight,
 			_perspectiveX, _perspectiveY, _damageFlags);
 	}
-	debug(7, "RA1 GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
+	debugC(DEBUG_INSANE, "RA1 GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
 		collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
 		_perspectiveX, _perspectiveY, _damageFlags);
 }
@@ -2356,7 +2356,7 @@ void InsaneRebel1::handleGameOpcode0BFirstPerson(int32 subSize, Common::Seekable
 			debugC(DEBUG_INSANE, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
 		}
 	}
-	debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
+	debugC(DEBUG_INSANE, "RA1 GAME 0x0B: counter=%d", _gameCounter);
 	if (!_gameOp0BPhysicsUpdatedThisFrame) {
 		updateGameOp0BPhysics();
 		_gameOp0BPhysicsUpdatedThisFrame = true;
@@ -2396,7 +2396,7 @@ void InsaneRebel1::handleGameOpcode5ATarget(int32 subSize, Common::SeekableReadS
 			checkTargetHit(targetIdx, left, top, right, bottom);
 		}
 	}
-	debug(5, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
+	debugC(DEBUG_INSANE, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
 		targetIdx, left, top, right, bottom, _targetProximity);
 }
 
@@ -2412,7 +2412,7 @@ void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common:
 			debugC(DEBUG_INSANE, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
 				_gameCounter, param2, param3, param4, _frameGameOpcodeMask);
 		} else {
-			debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
+			debugC(DEBUG_INSANE, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
 				opcode, _gameCounter, param2, param3, param4);
 		}
 	}
@@ -2433,14 +2433,14 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 	// g_combatModeFlags skips gameplay dispatch entirely; bit 5 of g_hudDisableFlags
 	// suppresses the handlers while still requesting HUD refresh for a few opcodes.
 	if (_gameplayFlags75ff & 1) {
-		debug(7, "RA1 GAME 0x%02x: skipped by combat mode flags=0x%02x",
+		debugC(DEBUG_INSANE, "RA1 GAME 0x%02x: skipped by combat mode flags=0x%02x",
 			opcode, _gameplayFlags75ff);
 		return;
 	}
 	if (_gameplayFlags75fe & 0x20) {
 		if (ra1DispatcherHudOnlyWhenDisabled(opcode))
 			_hudRenderFlag = 0xFF;
-		debug(7, "RA1 GAME 0x%02x: skipped by HUD disable flags=0x%02x",
+		debugC(DEBUG_INSANE, "RA1 GAME 0x%02x: skipped by HUD disable flags=0x%02x",
 			opcode, _gameplayFlags75fe);
 		return;
 	}
@@ -2488,7 +2488,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 		break;
 
 	default:
-		debug(7, "RA1 GAME unknown 0x%02x size=%d", opcode, subSize);
+		debugC(DEBUG_INSANE, "RA1 GAME unknown 0x%02x size=%d", opcode, subSize);
 		break;
 	}
 }
@@ -2566,7 +2566,7 @@ void InsaneRebel1::processShot() {
 			effectiveOpcode, _gameCounter, slot, cursorX, cursorY, originX, originY,
 			_shipDirIndex, _flyControlMode);
 	} else {
-		debug(5, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
+		debugC(DEBUG_INSANE, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
 			cursorX, cursorY, originX, originY);
 	}
 }
@@ -2678,7 +2678,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						if ((_gameplayFlags75fe & 0x10) == 0)
 							playSfx(kSfxExplode, 127, sfxPan);
 
-						debug(3, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
+						debugC(DEBUG_INSANE, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
 							targetIdx, gi, _gostSlots[gi].posX, _gostSlots[gi].posY,
 							_score, _killCount, _bangBank.numSprites);
 						return;
