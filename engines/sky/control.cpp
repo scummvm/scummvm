@@ -91,7 +91,6 @@ void ConResource::drawToScreen(bool doMask) {
 			spriteData += _spriteData->s_width;
 		}
 	}
-	_system->copyRectToScreen(updatePos, GAME_SCREEN_WIDTH, _x, _y, _spriteData->s_width, _spriteData->s_height);
 }
 
 TextResource::TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) :
@@ -129,7 +128,6 @@ void TextResource::drawToScreen(bool doMask) {
 			cpHeight = PAN_CHAR_HEIGHT;
 		for (cnty = 0; cnty < cpHeight; cnty++)
 			memcpy(_screen + (cnty + _oldY) * GAME_SCREEN_WIDTH + _oldX, _oldScreen + cnty * PAN_LINE_WIDTH, cpWidth);
-		_system->copyRectToScreen(_screen + _oldY * GAME_SCREEN_WIDTH + _oldX, GAME_SCREEN_WIDTH, _oldX, _oldY, cpWidth, PAN_CHAR_HEIGHT);
 	}
 	if (!_spriteData) {
 		_oldX = GAME_SCREEN_WIDTH;
@@ -153,7 +151,6 @@ void TextResource::drawToScreen(bool doMask) {
 		copyDest += PAN_LINE_WIDTH;
 		screenPos += GAME_SCREEN_WIDTH;
 	}
-	_system->copyRectToScreen(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, cpHeight);
 }
 
 ControlStatus::ControlStatus(Text *skyText, OSystem *system, uint8 *scrBuf) {
@@ -519,6 +516,7 @@ void Control::doControlPanel() {
 
 	while (!quitPanel && !Engine::shouldQuit()) {
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(ANIM_DELAY);
@@ -934,6 +932,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		}
 
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(ANIM_DELAY);
