@@ -278,6 +278,8 @@ void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
 	_grd001Sprite = nullptr;
 	delete _grd002Sprite;
 	_grd002Sprite = nullptr;
+	delete _grd005Sprite;
+	_grd005Sprite = nullptr;
 	_grdShotOriginTableLoaded = false;
 
 	clearEmbeddedHudFrames();

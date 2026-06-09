@@ -2346,11 +2346,12 @@ void InsaneRebel2::updatePostRenderScroll(int width, int height) {
 		return;
 	}
 
-	if (_rebelHandler == 25 && !isHiRes()) {
-		// Handler 25's low-res L2 corridor layers are authored for the 320x200
-		// viewport. The backing buffer may be larger to decode unclipped FOBJ
-		// data, but panning the final copy exposes unfilled columns/rows and
-		// breaks the corridor perspective.
+	if (_rebelHandler == 25) {
+		// Handler 25's L2 corridor layers are authored for the 320x200 viewport.
+		// The backing buffer may be larger to decode unclipped FOBJ data, but
+		// panning the final copy exposes unfilled columns/rows and breaks the
+		// corridor perspective. High-res mode must scale that same locked native
+		// viewport instead of selecting a different region of the 424x260 buffer.
 		_viewX = 0;
 		_viewY = 0;
 		_player->setScrollOffset(0, 0);
@@ -3684,6 +3685,27 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 		debug("Rebel2 Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d clip=[%d,%d) scale=%d",
 			drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y,
 			spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel, useHalfWidth ? 1 : 0, useRightHalf ? 1 : 0, scaledClipLeft, scaledClipRight, renderScale);
+
+		if (_grdSpriteMode == 3 && _grd005Sprite && _grd005Sprite->getNumChars() > 1) {
+			const int overlayIdx = 1;
+			int overlayW = _grd005Sprite->getCharWidth(overlayIdx);
+			int overlayH = _grd005Sprite->getCharHeight(overlayIdx);
+			int16 overlayXOffset = _grd005Sprite->getCharXOffset(overlayIdx);
+			int16 overlayYOffset = _grd005Sprite->getCharYOffset(overlayIdx);
+
+			int nativeOverlayX = _rebelViewOffset2X + overlayXOffset + nativeBufferViewX;
+			int nativeOverlayY = _rebelViewOffset2Y + overlayYOffset + nativeBufferViewY;
+			int overlayDrawX = renderHiRes ? (nativeOverlayX - nativeViewX) * renderScale : nativeOverlayX;
+			int overlayDrawY = renderHiRes ? (nativeOverlayY - nativeViewY) * renderScale : nativeOverlayY;
+
+			renderNutSpriteScaledClipped(renderBitmap, pitch, width, renderHeight,
+				0, 0, width, renderHeight,
+				overlayDrawX, overlayDrawY, _grd005Sprite, overlayIdx, false, renderScale, false);
+
+			debug("Rebel2 Handler25 PRE: GRD005 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d scale=%d",
+				overlayDrawX, overlayDrawY, overlayXOffset, overlayYOffset,
+				_rebelViewOffset2X, _rebelViewOffset2Y, overlayW, overlayH, _grdSpriteMode, renderScale);
+		}
 	}
 }
 

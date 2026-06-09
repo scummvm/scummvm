@@ -1191,6 +1191,7 @@ public:
 	// Based on FUN_0041cadb case 6 and FUN_0041db5e disassembly:
 	// - DAT_00482240: Primary ship sprite (GRD001, par4=1)
 	// - DAT_00482238: Secondary ship sprite (GRD002, par4=2)
+	// - DAT_00482258: Mode 3 overlay sprite (GRD005, par4=10)
 	// - DAT_00457900: Sprite mode (1,2,3,4) controls which sprite to draw
 	// - DAT_00457910: Ship X screen position
 	// - DAT_00457912: Ship Y screen position
@@ -1199,6 +1200,7 @@ public:
 
 	NutRenderer *_grd001Sprite;      // DAT_00482240 - GRD001 primary ship NUT
 	NutRenderer *_grd002Sprite;      // DAT_00482238 - GRD002 secondary ship NUT
+	NutRenderer *_grd005Sprite;      // DAT_00482258 - GRD005 mode 3 overlay NUT
 
 	// Handler 25 shot-origin lookup tables from opcode 8/par4=8 text payload.
 	// Indices 5..19 are filled by the retail "%hd %hd ..." parser (FUN_0041CADB case 6).

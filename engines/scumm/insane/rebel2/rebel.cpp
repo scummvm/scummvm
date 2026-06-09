@@ -440,6 +440,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Initialize Handler 25 GRD ship system
 	_grd001Sprite = nullptr;     // DAT_00482240 - GRD001 primary ship
 	_grd002Sprite = nullptr;     // DAT_00482238 - GRD002 secondary ship
+	_grd005Sprite = nullptr;     // DAT_00482258 - GRD005 mode 3 overlay
 	_grdSpriteMode = 0;          // DAT_00457900 - sprite mode (1,2,3,4)
 	memset(_grdShotOriginX, 0, sizeof(_grdShotOriginX));
 	memset(_grdShotOriginY, 0, sizeof(_grdShotOriginY));
@@ -604,6 +605,7 @@ InsaneRebel2::~InsaneRebel2() {
 	// Clean up Handler 25 GRD ship sprites
 	delete _grd001Sprite;
 	delete _grd002Sprite;
+	delete _grd005Sprite;
 
 	// Clean up Handler 0x26 turret HUD overlays
 	delete _hudOverlayNut;

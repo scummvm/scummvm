@@ -1769,8 +1769,9 @@ bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData,
 	//   par4=5: 320x200 background -> DAT_0048226c
 	//   par4=6: Overlay -> DAT_00482250, draws immediately
 	//   par4=7: Overlay -> DAT_00482248, draws immediately
+	//   par4=10: GRD005 - Mode 3 overlay -> DAT_00482258 / _grd005Sprite
 	if (!handled && _rebelHandler == 25) {
-		if (par4 == 1 || par4 == 2) {
+		if (par4 == 1 || par4 == 2 || par4 == 10) {
 			handled = loadHandler25GrdSprites(animData, animDataSize, par4);
 		} else if (par4 == 5) {
 			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
@@ -2242,13 +2243,14 @@ bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par
 	// par4 values (from IACT data offset +6):
 	//   1: GRD001 - Primary ship sprite (DAT_00482240 / _grd001Sprite)
 	//   2: GRD002 - Secondary ship sprite (DAT_00482238 / _grd002Sprite)
+	//   10: GRD005 - Mode 3 overlay sprite (DAT_00482258 / _grd005Sprite)
 
 	if (!animData || size <= 0) {
 		return false;
 	}
 
 	// Only handle valid GRD sprite slots
-	if (par4 != 1 && par4 != 2) {
+	if (par4 != 1 && par4 != 2 && par4 != 10) {
 		return false;
 	}
 
@@ -2272,6 +2274,11 @@ bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par
 		delete _grd002Sprite;
 		_grd002Sprite = newNut;
 		debug("Rebel2: _grd002Sprite set with %d sprites", newNut->getNumChars());
+		break;
+	case 10: // GRD005 - Mode 3 overlay sprite
+		delete _grd005Sprite;
+		_grd005Sprite = newNut;
+		debug("Rebel2: _grd005Sprite set with %d sprites", newNut->getNumChars());
 		break;
 	default:
 		delete newNut;
