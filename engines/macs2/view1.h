@@ -209,6 +209,7 @@ public:
 	bool _isShowingTextBox = false;
 	Common::StringArray _drawnStringBox;
 	bool _continueScriptAfterUI = false;
+	bool _reopenInventoryAfterText = false;
 	uint16 _dialogueChoiceCount = 0;
 
 
