@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetThreeShips] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // three freakin' ships
 void FoolGame::shipsRun() {
@@ -46,7 +46,7 @@ void FoolGame::shipsRun() {
 	this->var_i16_d0a = _zbasic->rndInt(5) - 0xa;
 	for (int16 i = 0; i <= 5; i++) {
 		_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
-		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
+		_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
 		this->sub_128_5a6c();
 	}
 	// 128:5274
@@ -59,7 +59,7 @@ void FoolGame::shipsRun() {
 	_keyLastPressed = 0;
 	while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved)) {
 		this->getNextEvent(-1);
-		if (g_toolbox->PtInRect(_event.where, this->arr_rect_19114) != 0) {
+		if (_toolbox->PtInRect(_event.where, this->arr_rect_19114) != 0) {
 			this->sub_128_55ac();
 		}
 		// 128:5348
@@ -80,7 +80,7 @@ void FoolGame::shipsRun() {
 		_event.where.x += 5;
 		_event.where.y -= 5;
 		if (_activePuzzleStatus < 0x64) {
-			g_toolbox->SetCursor(_cursors[0x10]);
+			_toolbox->SetCursor(_cursors[0x10]);
 		}
 		for (int16 i = 1; i <= 1; i++) {
 			// 128:541c
@@ -99,7 +99,7 @@ void FoolGame::shipsRun() {
 				temp.left = this->arr_i16_4758[1];
 				temp.bottom = this->arr_i16_4758[2];
 				temp.right = this->arr_i16_4758[3];
-				g_toolbox->InvertOval(temp);
+				_toolbox->InvertOval(temp);
 			}
 		}
 		// 128:5514
@@ -162,7 +162,7 @@ void FoolGame::sub_128_55ac() {
 	// 128:56a0
 	for (this->var_i16_68a = 0; this->var_i16_68a <= 0x5; this->var_i16_68a++) {
 		_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kSrcCopy);
-		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
+		_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
 		this->sub_128_5a6c();
 	}
 	// 128:5708
@@ -193,7 +193,7 @@ void FoolGame::sub_128_57a2() {
 		if (this->var_str_d12 == _zbasic->str(OFF(6))) { // E
 			this->var_i16_d08 = 0x18;
 		}
-		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
+		_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
 		this->var_i16_d08 = 0;
 		this->var_i16_d0a = 0;
 		// 128:58c2
@@ -215,7 +215,7 @@ void FoolGame::sub_128_57a2() {
 			this->arr_rect_1910c.right = 0x18;
 		}
 		this->sub_128_5a6c();
-		if (g_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
+		if (_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
 			_activePuzzleSolved = true;
 		}
 	}
@@ -230,14 +230,14 @@ void FoolGame::sub_128_57a2() {
 
 void FoolGame::sub_128_5a6c() {
 	// 128:5a6c
-	this->var_i32_692 = g_toolbox->TickCount();
+	this->var_i32_692 = _toolbox->TickCount();
 	_zbasic->get(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_rect_1910c.right, this->arr_rect_1910c.bottom, this->arr_bmp_bbbc);
 	//warning("sub_128_5a6c: bbbc surface");
 	//byte fakePal[768];
 	//Common::fill(fakePal, fakePal+3, 0xff);
 	//Common::fill(fakePal+3, fakePal+768, 0x00);
 	//this->arr_bmp_bbbc->rawSurface().debugPrint(5, 0, 0,0, 0, -1, 160, fakePal);
-	g_toolbox->EraseRoundRect(this->arr_rect_1910c, 8, 7);
+	_toolbox->EraseRoundRect(this->arr_rect_1910c, 8, 7);
 	_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_b3ec, kSrcXor);
 	this->sub_128_406(0);
 }

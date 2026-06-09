@@ -35,7 +35,9 @@ class ZBasic;
 
 enum FoolPrologueFontID : uint16 {
 	kPrologueFontFool = 250,
-	kPrologueFontSmall = 251,
+	// The original prologue uses 251 for Small,
+	// however we need this to be the same as the main game.
+	kPrologueFontSmall = 252,
 };
 
 class FoolPrologue {
@@ -50,21 +52,21 @@ public:
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
 	void delayFromMarker(int16 numTicks); // sub_128_24a
-	void drawTextRightAlign(int16 y, int16 x); // sub_128_26c
-	void drawTextCenterAlign(int16 unk1, int16 unk2); // sub_128_2a6
+	void drawTextRightAlign(int16 x, int16 y); // sub_128_26c
+	void drawTextCenterAlign(int16 x, int16 y); // sub_128_2a6
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_2f0
-	void sub_128_354(PatternMode mode, uint16 unk2);
-	void sub_128_3ee(int16 unk1);
-	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
+	void zoomClose(int16 patternID, PatternMode mode); // sub_128_354
+	void drawTreasurePhaseIn(int16 unk1); // sub_128_3ee
+	void sub_128_50a(int16 unk1, int16 left, int16 right, int16 screenPage);
 	void blitPageToScreen(int16 screenPage); // sub_128_610
 	void scanlineTransition(int16 patternID); // sub_128_64a
 	void zoomTransition(int16 screenPage); // sub_128_6e4
 	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
-	void drawText(int16_t y, int16_t x); // sub_128_a6c
+	void drawText(int16_t x, int16_t y); // sub_128_a6c
 	void drawRainRecycle(int16_t unk); // sub_128_a8c
 	void sub_128_c8a();
 	void shuffleScanlines(); // sub_128_ccc
-	void sub_128_de2();
+	void drawClickMessage(); // sub_128_de2
 	void sub_128_e1c();
 	void sub_128_e58();
 	void sub_128_e80();
@@ -83,14 +85,15 @@ public:
 	void drawRainDrop(); // sub_130_e82
 	void prologueRenderNextText(); // sub_130_f48
 
+	// fool_finale.cpp
 	void finaleRun(); // sub_131_004
-
 	void sub_131_4dc0();
 	void sub_131_4e48();
-	void sub_131_4e98();
+	void finaleStartText(); // sub_131_4e98
 	void sub_131_4f96();
 
 private:
+	Toolbox *_toolbox;
 	ZBasic *_zbasic;
 	bool _quit = false;
 

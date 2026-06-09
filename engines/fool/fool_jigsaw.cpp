@@ -30,7 +30,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetJigsaw] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // jigsaw puzzle game
 void FoolGame::jigsawRun() {
@@ -48,9 +48,9 @@ void FoolGame::jigsawRun() {
 		this->arr_i16_3738[i] = puzzlesReadByte();
 	}
 	// 132:00a2
-	this->arr_i32_192c0[0] = g_toolbox->GetPicture(picID);
+	this->arr_i32_192c0[0] = _toolbox->GetPicture(picID);
 	_zbasic->picture(0, 0x14, this->arr_i32_192c0[0]);
-	g_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
+	_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
 	this->var_i16_1aa0 = 4 + ((this->arr_i16_1eb8[12] + 1)*2) * ((this->arr_i16_1eb8[13]+0x10)/0x10);
 	// 132:0136
 	this->var_i16_1aa0 = (this->var_i16_1aa0 / 2) + 1;
@@ -60,7 +60,7 @@ void FoolGame::jigsawRun() {
 		this->var_i16_68a = this->arr_i16_1eb8[10];
 		do {
 			this->var_i16_484++;
-			g_toolbox->SetRect(
+			_toolbox->SetRect(
 				_screenGrid[this->var_i16_484],
 				this->var_i16_68a + 1,
 				this->var_i16_68c + 1,
@@ -114,7 +114,7 @@ void FoolGame::jigsawRun() {
 	// 132:0464
 	_stateFlags = kStateNull;
 	_zbasic->menu(8, 3, 0, Common::U32String());
-	g_toolbox->InitCursor();
+	_toolbox->InitCursor();
 	this->jigsawCheckIfSolved();
 	// JMP 0x4d8
 
@@ -157,9 +157,9 @@ void FoolGame::jigsawOnClick() {
 	// 132:059c
 	_menuDisabled = true;
 	_zbasic->menu(8, 3, 0, Common::U32String());
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(3, 3);
-	g_toolbox->PenMode(kPatXor);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(3, 3);
+	_toolbox->PenMode(kPatXor);
 	// 132:05c4
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
@@ -168,7 +168,7 @@ void FoolGame::jigsawOnClick() {
 	this->jigsawDragSelect();
 	// leave an XOR outline on the page for the selected block
 	Common::Rect temp(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
-	g_toolbox->FrameRect(temp);
+	_toolbox->FrameRect(temp);
 	this->arr_i16_4758[0] -= this->var_i16_68a;
 	this->arr_i16_4758[1] -= this->var_i16_68c;
 
@@ -177,7 +177,7 @@ void FoolGame::jigsawOnClick() {
 	this->jigsawMoveSelected();
 	// remove XOR outline
 	temp = Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
-	g_toolbox->FrameRect(temp);
+	_toolbox->FrameRect(temp);
 
 	this->jigsawDropSelected();
 	this->jigsawCheckIfSolved();
@@ -217,9 +217,9 @@ void FoolGame::jigsawDragSelect() {
 		this->arr_i16_4758[14] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
 		Common::Rect temp(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
 		// 132:092e
-		g_toolbox->FrameRect(temp);
+		_toolbox->FrameRect(temp);
 		this->delay(2);
-		g_toolbox->FrameRect(temp);
+		_toolbox->FrameRect(temp);
 		this->delay(1);
 	} while (_event.what != kMouseUp);
 }
@@ -276,9 +276,9 @@ void FoolGame::jigsawMoveSelected() {
 		this->arr_rect_4776.bottom = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].bottom;
 		this->arr_rect_4776.right = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].right;
 		// 132:0e0e
-		g_toolbox->FrameRect(this->arr_rect_4776);
+		_toolbox->FrameRect(this->arr_rect_4776);
 		this->delay(2);
-		g_toolbox->FrameRect(this->arr_rect_4776);
+		_toolbox->FrameRect(this->arr_rect_4776);
 		this->delay(1);
 	}
 	while (!((_event.what == kMouseDown) && (_event.where.y > 0x14)));
@@ -408,7 +408,7 @@ void FoolGame::jigsawSuccess() {
 		_activePuzzleStatus = 0x64;
 		for (int j = 0; j <= 1; j++) {
 			for (int i = 1; i <= this->_jigsawPieceCount; i++) {
-				g_toolbox->InvertRect(_screenGrid[i]);
+				_toolbox->InvertRect(_screenGrid[i]);
 				this->delay(1);
 			}
 		}

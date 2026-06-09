@@ -26,14 +26,14 @@
 
 namespace Fool {
 
-extern Toolbox *g_toolbox;
+
 
 // Death challenge
 void FoolGame::deathRun() {
 	// 141:0004
 	_zbasic->get(0x6c, 0x127, 0x84, 0x127, this->arr_bmp_c38c);
 	this->drawPuzzleButton(Common::U32String("~")); // was: str(334)
-	g_toolbox->InvertRect(this->arr_rect_1910c);
+	_toolbox->InvertRect(this->arr_rect_1910c);
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kSrcCopy);
 	this->deathDrawZoom();
@@ -55,7 +55,7 @@ void FoolGame::deathRun() {
 			// 141:01cc
 			this->getNextEvent(-1);
 			this->deathMoveBlackEye();
-			if (g_toolbox->PtInRect(_event.where, _deathBlackEye)) {
+			if (_toolbox->PtInRect(_event.where, _deathBlackEye)) {
 				this->deathCaught();
 				// 141:09f6
 				this->deathDrawWhiteEye();
@@ -93,13 +93,13 @@ void FoolGame::deathRun() {
 		}
 		// 141:02c6
 		this->getNextEvent(0);
-		if (g_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
-			this->var_i32_692 = g_toolbox->TickCount();
+		if (_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
+			this->var_i32_692 = _toolbox->TickCount();
 			// 141:02fa
 			do {
 				this->getNextEvent(0);
 				if (((_event.modifiers & kModMouseButtonUp) == 0) &&
-					g_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
+					_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
 					// JMP 0x9a2
 					// 141:09a2
 					this->deathDrawWhiteEye();
@@ -112,22 +112,22 @@ void FoolGame::deathRun() {
 					return;
 				}
 				// 141:0342
-			} while (g_toolbox->TickCount() <= (this->var_i32_692 + 0x2d));
+			} while (_toolbox->TickCount() <= (this->var_i32_692 + 0x2d));
 		}
 		// 141:035a
 		// mouse moved out from menu, zap the white eye
-		g_toolbox->PenNormal();
-		g_toolbox->PenMode(kNotPatXor);
-		g_toolbox->PenPat(_patterns[1]);
-		g_toolbox->PenSize(0x17, 0x10);
+		_toolbox->PenNormal();
+		_toolbox->PenMode(kNotPatXor);
+		_toolbox->PenPat(_patterns[1]);
+		_toolbox->PenSize(0x17, 0x10);
 		for (int i = 0; i <= 5; i++) {
-			g_toolbox->MoveTo(_deathBlackEye.left, _deathBlackEye.top);
-			g_toolbox->LineTo(0x6c, 0x127);
-			g_toolbox->Delay(0);
+			_toolbox->MoveTo(_deathBlackEye.left, _deathBlackEye.top);
+			_toolbox->LineTo(0x6c, 0x127);
+			_toolbox->Delay(0);
 		}
 		// 141:03bc
 		this->deathDrawWhiteEye();
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 	}
 	// 141:03c2
 	this->deathMoveBlackEye();

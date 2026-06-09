@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetCards] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // v1.1 and v2.0 have the winning score set to 700.
 // v3.0 revises this to be 666, which I can't dispute is a much cooler score.
@@ -45,15 +45,15 @@ void FoolGame::cardsRun() {
 	this->fetchPuzzleData();
 	this->var_i16_c00 = 1;
 	// set up card bounding boxes
-	g_toolbox->SetRect(_screenGrid[1], 0x78, 0x19, 0xd1, 0xae);
-	g_toolbox->SetRect(_screenGrid[2], 0xd3, 0x19, 0x12c, 0xae);
-	g_toolbox->SetRect(_screenGrid[3], 0x12e, 0x19, 0x187, 0xae);
-	g_toolbox->SetRect(_screenGrid[4],1, 0x2a, 0x5a, 0xbf);
-	g_toolbox->SetRect(_screenGrid[5],0x1a6, 0x2a, 0x1ff, 0xbf);
-	g_toolbox->SetRect(_screenGrid[6], 0x1, 0xc0, 0x5a, 0x155);
-	g_toolbox->SetRect(_screenGrid[7],0x1a6, 0xc0, 0x1ff, 0x155);
-	g_toolbox->SetRect(_screenGrid[8],0x5b, 0xc0, 0xb4, 0x155);
-	g_toolbox->SetRect(_screenGrid[9],0x14c, 0xc0, 0x1a5, 0x155);
+	_toolbox->SetRect(_screenGrid[1], 0x78, 0x19, 0xd1, 0xae);
+	_toolbox->SetRect(_screenGrid[2], 0xd3, 0x19, 0x12c, 0xae);
+	_toolbox->SetRect(_screenGrid[3], 0x12e, 0x19, 0x187, 0xae);
+	_toolbox->SetRect(_screenGrid[4],1, 0x2a, 0x5a, 0xbf);
+	_toolbox->SetRect(_screenGrid[5],0x1a6, 0x2a, 0x1ff, 0xbf);
+	_toolbox->SetRect(_screenGrid[6], 0x1, 0xc0, 0x5a, 0x155);
+	_toolbox->SetRect(_screenGrid[7],0x1a6, 0xc0, 0x1ff, 0x155);
+	_toolbox->SetRect(_screenGrid[8],0x5b, 0xc0, 0xb4, 0x155);
+	_toolbox->SetRect(_screenGrid[9],0x14c, 0xc0, 0x1a5, 0x155);
 
 	// 139:011c
 	for (int i = 0; i <= 0x25; i++) {
@@ -63,7 +63,7 @@ void FoolGame::cardsRun() {
 	this->var_i16_484 = 0x5e;
 	for (int i = 0x17; i >= 0; i--) {
 		this->var_i16_484++;
-		this->arr_i32_192c0[i] = g_toolbox->GetPicture(this->var_i16_484);
+		this->arr_i32_192c0[i] = _toolbox->GetPicture(this->var_i16_484);
 	}
 	// 139:0184
 	this->sub_128_bde(1, 1, 0, 1, 1, 1);
@@ -147,7 +147,7 @@ void FoolGame::cardsRun() {
 	// JMP 1d7e
 	// 139:1d7e
 	for (int i = 0; i <= 0x17; i++) {
-		g_toolbox->ReleaseResource(this->arr_i32_192c0[i]);
+		_toolbox->ReleaseResource(this->arr_i32_192c0[i]);
 	}
 }
 
@@ -192,8 +192,8 @@ void FoolGame::cardsDrawTable() {
 	this->sub_128_918(_zbasic->str(OFF(0))); // Select a card above
 	this->var_i16_7a2 = 0xd4;
 	this->sub_128_918(_zbasic->str(OFF(1))); // or
-	g_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, _patterns[0]);
-	g_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
+	_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, _patterns[0]);
+	_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
 	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7a2 = 0xe9;
 	this->sub_128_918(_zbasic->str(OFF(2))); // Yield
@@ -208,11 +208,11 @@ void FoolGame::cardsOnClick() {
 	if (!((_event.where.x >= 0x78) && (_event.where.y >= 0x19) && (_event.where.x <= 0x187) && (_event.where.y <= 0xae))) {
 		// 139:06fc
 		// didn't click in the three cards area
-		if (g_toolbox->PtInRect(_event.where, this->arr_rect_4338)) {
-			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
+		if (_toolbox->PtInRect(_event.where, this->arr_rect_4338)) {
+			_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
 			this->waitForMouseUp();
-			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
-			if (!g_toolbox->PtInRect(_event.where, this->arr_rect_4338))
+			_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
+			if (!_toolbox->PtInRect(_event.where, this->arr_rect_4338))
 				return;
 			// 139:0778
 			// player clicked the yield button (bad choice)
@@ -500,9 +500,9 @@ void FoolGame::cardsRevealHands() {
 	if (this->var_i16_2016 == 2) {
 		_zbasic->swapStr(this->var_str_167c, this->var_str_2222);
 	}
-	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
-	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_167c);
-	this->var_i16_9f2 = g_toolbox->StringWidth(this->var_str_2222);
+	this->var_i16_484 = _toolbox->StringWidth(this->var_str_384);
+	this->var_i16_7e4 = _toolbox->StringWidth(this->var_str_167c);
+	this->var_i16_9f2 = _toolbox->StringWidth(this->var_str_2222);
 	this->var_i16_2322 = 0;
 	if (this->var_i16_484 > this->var_i16_2322) {
 		this->var_i16_2322 = this->var_i16_484;
@@ -677,16 +677,16 @@ void FoolGame::cardsDrawScores() {
 	this->fillRect(0x14, 0, 0x29, 0x5a, 2);
 	// Old Man
 	this->var_str_384 = _zbasic->str(OFF(20)) + Common::U32String::format(" %d", this->arr_i16_1eb8[6]);
-	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
-	g_toolbox->MoveTo(0x2d - (this->var_i16_484 / 2), 0x23);
-	g_toolbox->DrawString(this->var_str_384);
+	this->var_i16_484 = _toolbox->StringWidth(this->var_str_384);
+	_toolbox->MoveTo(0x2d - (this->var_i16_484 / 2), 0x23);
+	_toolbox->DrawString(this->var_str_384);
 
 	// 139:1c30
 	this->fillRect(0x14, 0x1a6, 0x29, 0x200, 2);
 	this->var_str_384 = _zbasic->str(OFF(21)) + Common::U32String::format(" %d", this->arr_i16_1eb8[5]);
-	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
-	g_toolbox->MoveTo(0x1d3 - (this->var_i16_484 / 2), 0x23);
-	g_toolbox->DrawString(this->var_str_384);
+	this->var_i16_484 = _toolbox->StringWidth(this->var_str_384);
+	_toolbox->MoveTo(0x1d3 - (this->var_i16_484 / 2), 0x23);
+	_toolbox->DrawString(this->var_str_384);
 }
 
 void FoolGame::cardsStoreState() {

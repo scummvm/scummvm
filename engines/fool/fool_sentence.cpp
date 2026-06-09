@@ -29,7 +29,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetSentence] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // sentence join game
 void FoolGame::sentenceRun() {
@@ -51,7 +51,7 @@ void FoolGame::sentenceRun() {
 
 	// 135:00ce
 	this->var_i16_1066 = puzzlesReadShort();
-	this->arr_i32_192c0[0] = g_toolbox->GetPicture(this->var_i16_1066);
+	this->arr_i32_192c0[0] = _toolbox->GetPicture(this->var_i16_1066);
 	this->arr_i16_1eb8[0] = puzzlesReadShort();
 	_zbasic->indexRawSet(puzzlesReadString(), 1, 0);
 	_sentenceGoal = puzzlesReadString().decode(Common::kMacRoman);
@@ -79,9 +79,9 @@ void FoolGame::sentenceRun() {
 	}
 	// 135:0348
 	_zbasic->picture(0, 0x14, this->arr_i32_192c0[0]);
-	g_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
+	_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
 	Common::Rect temp(this->arr_i16_3738[5], this->arr_i16_3738[4], this->arr_i16_3738[7], this->arr_i16_3738[6]);
-	g_toolbox->FillRect(temp, _patterns[2]);
+	_toolbox->FillRect(temp, _patterns[2]);
 	this->arr_i16_1eb8[4] = 0;
 	for (this->var_i16_68a = 1; this->var_i16_68a <= this->arr_i16_1eb8[0]; this->var_i16_68a++) {
 		// 135:03a4
@@ -153,7 +153,7 @@ void FoolGame::sentenceOnClick() {
 		return;
 	// 135:0676
 	this->arr_i16_4338[this->var_i16_103a] = 0;
-	g_toolbox->FillOval(_screenGrid[this->var_i16_103a], _patterns[2]);
+	_toolbox->FillOval(_screenGrid[this->var_i16_103a], _patterns[2]);
 	// 135:06aa
 	switch (this->arr_i16_4338[this->var_i16_103a + this->arr_i16_1eb8[0]]-1) {
 	case 0:
@@ -258,7 +258,7 @@ void FoolGame::sentenceUndo() {
 	// 135:09ba
 	this->arr_i16_1eb8[4] = 0;
 	Common::Rect temp(this->arr_i16_3738[5], this->arr_i16_3738[4], this->arr_i16_3738[7], this->arr_i16_3738[6]);
-	g_toolbox->FillRect(temp, _patterns[2]);
+	_toolbox->FillRect(temp, _patterns[2]);
 	for (this->var_i16_68a = 1; this->var_i16_68a <= this->arr_i16_1eb8[0]; this->var_i16_68a++) {
 		this->arr_i16_4338[this->var_i16_68a] = 1;
 		this->sentenceDrawButton();
@@ -271,17 +271,17 @@ void FoolGame::sentenceDrawButton() {
 	// 135:0a34
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 	this->var_str_384 = Common::U32String::format("%d", this->var_i16_68a) + _zbasic->str(OFF(6)); // ' '
-	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_384);
-	g_toolbox->FillOval(_screenGrid[this->var_i16_68a], _patterns[0]);
-	g_toolbox->FrameOval(_screenGrid[this->var_i16_68a]);
-	g_toolbox->MoveTo(_screenGrid[this->var_i16_68a].left + (this->arr_i16_1eb8[1] / 2) - (this->var_i16_7e4 / 2), 0x129);
-	g_toolbox->DrawString(this->var_str_384);
+	this->var_i16_7e4 = _toolbox->StringWidth(this->var_str_384);
+	_toolbox->FillOval(_screenGrid[this->var_i16_68a], _patterns[0]);
+	_toolbox->FrameOval(_screenGrid[this->var_i16_68a]);
+	_toolbox->MoveTo(_screenGrid[this->var_i16_68a].left + (this->arr_i16_1eb8[1] / 2) - (this->var_i16_7e4 / 2), 0x129);
+	_toolbox->DrawString(this->var_str_384);
 }
 
 void FoolGame::sentenceDrawBuffer() {
 	// 135:0b16
 	_zbasic->text(kFontLarge, 0x18, 0, kSrcOr);
-	this->var_i16_484 = g_toolbox->StringWidth(_sentenceBuffer);
+	this->var_i16_484 = _toolbox->StringWidth(_sentenceBuffer);
 	if (this->var_i16_484 < this->arr_i16_1eb8[4]) {
 		this->var_i16_484 = this->arr_i16_1eb8[4];
 	} else {
@@ -291,9 +291,9 @@ void FoolGame::sentenceDrawBuffer() {
 	this->arr_i16_3738[1] = 0xf6 - (this->var_i16_484 / 2);
 	this->arr_i16_3738[3] = 0x109 + (this->var_i16_484 / 2);
 	Common::Rect temp(this->arr_i16_3738[1], this->arr_i16_3738[0], this->arr_i16_3738[3], this->arr_i16_3738[2]);
-	g_toolbox->FillRect(temp, _patterns[0]);
-	g_toolbox->MoveTo(0x100 - (this->var_i16_484 / 2), 0xd9);
-	g_toolbox->DrawString(_sentenceBuffer);
+	_toolbox->FillRect(temp, _patterns[0]);
+	_toolbox->MoveTo(0x100 - (this->var_i16_484 / 2), 0xd9);
+	_toolbox->DrawString(_sentenceBuffer);
 }
 
 void FoolGame::sentenceStoreState() {

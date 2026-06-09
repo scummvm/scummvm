@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetReveal] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // mask reveal puzzle
 void FoolGame::revealRun() {
@@ -47,31 +47,31 @@ void FoolGame::revealRun() {
 	}
 	// 134:00ce
 	// rack up polygon information
-	g_toolbox->SetPort(this->var_i32_f24);
+	_toolbox->SetPort(this->var_i32_f24);
 	this->arr_i16_1eb8[20] = 0;
 
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		this->var_i16_103a = puzzlesReadShort();
-		_revealPoly[i] = g_toolbox->OpenPoly();
+		_revealPoly[i] = _toolbox->OpenPoly();
 		// 134:010e
 		for (int j = 5; j <= this->var_i16_103a - 1; j += 2) {
 			this->var_i16_484 = puzzlesReadShort();
 			this->var_i16_7e4 = puzzlesReadShort();
 			if (j == 5) {
-				g_toolbox->MoveTo(this->var_i16_7e4, this->var_i16_484 + 0xf);
+				_toolbox->MoveTo(this->var_i16_7e4, this->var_i16_484 + 0xf);
 			} else {
-				g_toolbox->LineTo(this->var_i16_7e4, this->var_i16_484 + 0xf);
+				_toolbox->LineTo(this->var_i16_7e4, this->var_i16_484 + 0xf);
 			}
 			// 134:015c
 		}
-		g_toolbox->ClosePoly();
+		_toolbox->ClosePoly();
 		if (i <= this->arr_i16_1eb8[16]) {
 			this->arr_i16_1eb8[20] |= _bitLUT[i - 1];
 		}
 		// 134:01ce
 	}
 	// 134:01ea
-	g_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(this->var_i32_0);
 
 	this->arr_i16_1eb8[17] = (0x1c2 / this->arr_i16_1eb8[15]);
 	this->arr_i16_1eb8[18] = 0x100 - ((this->arr_i16_1eb8[15] * this->arr_i16_1eb8[17]) / 2);
@@ -97,16 +97,16 @@ void FoolGame::revealRun() {
 
 		this->var_i16_1aba += this->arr_i16_1eb8[17];
 		// 134:03fc
-		g_toolbox->FillRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19, _patterns[0]);
-		g_toolbox->FrameRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
+		_toolbox->FillRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19, _patterns[0]);
+		_toolbox->FrameRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
 		// 134:0448
 		this->var_str_384 = _zbasic->midStr(this->var_str_1272, this->var_i16_7be, 1);
-		this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_384);
-		g_toolbox->MoveTo(
+		this->var_i16_7ba = _toolbox->StringWidth(this->var_str_384);
+		_toolbox->MoveTo(
 			_screenGrid[this->var_i16_7be].left + (this->arr_i16_1eb8[17] / 2) - (this->var_i16_7ba / 2),
 			0x127
 		);
-		g_toolbox->DrawString(this->var_str_384);
+		_toolbox->DrawString(this->var_str_384);
 		// 134:04d6
 		if (this->arr_i16_1eb8[19] & _bitLUT[this->arr_i16_3738[this->var_i16_7be] - 1]) {
 			this->revealSelectButton();
@@ -120,7 +120,7 @@ void FoolGame::revealRun() {
 		// 134:0572
 		_activePuzzleSolved = false;
 	}
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	// 134:057a
 	// 134:057a: JMP - [0x61e]
 	// main event loop
@@ -153,7 +153,7 @@ void FoolGame::revealRun() {
 	_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[19]);
 	// 134:0678: JMP - [0x8ae]
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
-		g_toolbox->KillPoly(_revealPoly[i]);
+		_toolbox->KillPoly(_revealPoly[i]);
 	}
 }
 
@@ -161,7 +161,7 @@ void FoolGame::revealOnClick() {
 	// 134:067c
 	this->var_i16_7be = 0;
 	for (int j = 1; j <= this->arr_i16_1eb8[15]; j++) {
-		if (g_toolbox->PtInRect(_event.where, _screenGrid[j])) {
+		if (_toolbox->PtInRect(_event.where, _screenGrid[j])) {
 			this->var_i16_7be = j;
 			j = this->arr_i16_1eb8[15];
 		}
@@ -180,12 +180,12 @@ void FoolGame::revealOnClick() {
 void FoolGame::revealSelectButton() {
 	// 134:074a
 	// invert the button
-	g_toolbox->InvertRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
-	g_toolbox->PenPat(_patterns[this->arr_i16_1eb8[21]]);
+	_toolbox->InvertRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
+	_toolbox->PenPat(_patterns[this->arr_i16_1eb8[21]]);
 	// fill the polygon
-	g_toolbox->PenMode(kPatXor);
-	g_toolbox->PaintPoly(_revealPoly[this->arr_i16_3738[this->var_i16_7be]]);
-	g_toolbox->PenNormal();
+	_toolbox->PenMode(kPatXor);
+	_toolbox->PaintPoly(_revealPoly[this->arr_i16_3738[this->var_i16_7be]]);
+	_toolbox->PenNormal();
 }
 
 void FoolGame::revealReset() {
@@ -193,7 +193,7 @@ void FoolGame::revealReset() {
 	this->fillRect(0x37, 0x13, 0xff, 0x1ee, 0);
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		if (this->arr_i16_1eb8[19] & _bitLUT[this->arr_i16_3738[i]-1]) {
-			g_toolbox->InvertRoundRect(_screenGrid[i], 0x19, 0x19);
+			_toolbox->InvertRoundRect(_screenGrid[i], 0x19, 0x19);
 		}
 	}
 	// 134:085c

@@ -1305,6 +1305,8 @@ public:
 
 	void _injectFOND(int16 resID, const byte *data, const size_t size, const Common::String &name);
 
+	void _loadFonts(int16 resID);
+
 private:
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
 	Common::Array<int16> _resOrder;

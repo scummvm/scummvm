@@ -34,6 +34,12 @@ void Toolbox::_injectFOND(int16 resID, const byte *data, const size_t size, cons
 	}
 }
 
+void Toolbox::_loadFonts(int16 resID) {
+	if (_resMap.contains(resID)) {
+		g_engine->_wm._fontMan->loadFonts(_resMap[resID].get());
+	}
+}
+
 int16 Toolbox::CurResFile() {
 	// Return whatever the first resource file is
 	if (_resOrder.empty())
@@ -145,7 +151,6 @@ int16 Toolbox::OpenResFile(const Common::Path &fileName) {
 	_resOrder.insert_at(0, result);
 	_nextResId++;
 	_resIndexStart = 0;
-	g_engine->_wm._fontMan->loadFonts(res.get());
 	return result;
 }
 

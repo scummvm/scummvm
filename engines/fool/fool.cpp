@@ -37,16 +37,13 @@
 namespace Fool {
 
 FoolEngine *g_engine;
-Toolbox *g_toolbox;
 
 FoolEngine::FoolEngine(OSystem *syst, const FOOLGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Fool") {
 	g_engine = this;
-	g_toolbox = new Toolbox();
 }
 
 FoolEngine::~FoolEngine() {
-	delete g_toolbox;
 }
 
 uint32 FoolEngine::getFeatures() const {
