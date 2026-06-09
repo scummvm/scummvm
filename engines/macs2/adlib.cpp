@@ -568,7 +568,10 @@ void Adlib::playSongData(const Common::Array<uint8> &data) {
 void Adlib::stopMusic() {
 	// Binary adlibStopMusic (1000:264d): set stop flag, ISR handles cleanup
 	_statusFlags |= 2;
-	// In ScummVM we can't spin-wait for ISR, so directly clean up
+	// In ScummVM we can't spin-wait for ISR, so directly clean up.
+	// The original's ISR calls adlibSetInstrument() to key-off all channels
+	// and silence all operators. We must do it here before tearing down state.
+	adlibSetInstrument();
 	delete _playbackPos;
 	_playbackPos = nullptr;
 	delete _instrumentDataPtr;
