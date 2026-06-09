@@ -1223,7 +1223,7 @@ void InsaneRebel1::updateShipPhysics() {
 
 	// Damage guard/mask from FUN_1DEB5: (_damageFlags & 0x96) != 0
 	// damageFlags & 0x96 = bits 1,2,4,7 = wall collisions (0x16) + projectile hit (0x80)
-	if ((_damageFlags & 0x96) != 0 && _damageCooldown == 0 &&
+	if (!_noDamage && (_damageFlags & 0x96) != 0 && _damageCooldown == 0 &&
 		_health >= 0 && _deathTimer <= 0) {
 		// Projectile hit (bit 7 = 0x80)
 		if (_damageFlags & 0x80)
@@ -1392,7 +1392,7 @@ void InsaneRebel1::updateTurretPhysics() {
 	_turretFrameShipCenterValid = true;
 
 	// Damage gate from FUN_1E6A7.
-	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer <= 0) {
+	if (!_noDamage && _damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer <= 0) {
 		if (_damageFlags == 0x80)
 			_health -= _tuning.shot;
 		else
@@ -1603,7 +1603,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	// Damage application (FUN_1CDA7 lines 20-41)
 	// Original 0x0B mapping: 0x80 -> +0x13, 0x40 -> +0x0F, 0x20 -> +0x11.
 	// No cooldown — all three damage types can stack each frame
-	if (_damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
+	if (!_noDamage && _damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
 		const int16 oldHealth = _health;
 		const byte appliedDamageFlags = _damageFlags;
 		_screenFlash = 5;
@@ -2035,7 +2035,7 @@ void InsaneRebel1::updateOnFootSequence() {
 	// --- Damage handling (from HandleGameOp19_OnFootSequence) ---
 	// On-foot damage uses the same heavy-damage tuning byte as ship shot/collision
 	// damage in the original, not the miss penalty.
-	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
+	if (!_noDamage && _damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
 		const int16 oldHealth = _health;
 		_health -= _tuning.shot;
 		if (_health < 0) {

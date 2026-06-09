@@ -502,6 +502,7 @@ private:
 	byte _hudDirtyFlag;          // 0x7601: 0xFF after HUD redraw (set by renderHUD)
 	int16 _maxChapterUnlocked;   // 0x7730: highest unlocked passcode slot (0=none)
 	bool _unlockAllLevels;       // ScummVM option: expose level select without passcodes
+	bool _noDamage;              // ScummVM option: suppress player damage
 
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;

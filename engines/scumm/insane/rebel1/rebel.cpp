@@ -307,6 +307,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_hudDirtyFlag = 0;
 	_maxChapterUnlocked = 0;
 	_unlockAllLevels = ConfMan.getBool("rebel1_unlock_all");
+	_noDamage = ConfMan.getBool("rebel1_no_damage");
 	_interactiveVideoActive = false;
 	_preserveInteractiveRuntimeState = false;
 	_interactiveVideoCheatSkipped = false;

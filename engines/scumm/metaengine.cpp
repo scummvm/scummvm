@@ -923,6 +923,15 @@ const ExtraGuiOption enableRebel1UnlockAll = {
 	0
 };
 
+const ExtraGuiOption enableRebel1NoDamage = {
+	_s("No damage"),
+	_s("Disable player damage"),
+	"rebel1_no_damage",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -978,6 +987,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_UNLOCK_ALL)) {
 		options.push_back(enableRebel1UnlockAll);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_NO_DAMAGE)) {
+		options.push_back(enableRebel1NoDamage);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
