@@ -122,12 +122,11 @@ int InsaneRebel2::processMenuInput() {
 
 	int result = -1;
 
-	// Menu item Y positions (low-res 320x200 mode):
-	// From FUN_0041f5ae: baseY = numItems * -5 + 0x68
-	// With 7 selectable items: 7 * -5 + 104 = 69
-	// Items at Y = 69, 79, 89, 99, 109, 119, 129 with spacing of 10
-	const int baseY = _menuItemCount * -5 + 0x68;
-	const int itemSpacing = 10;
+	const bool highRes = isHiRes();
+	const int baseY = highRes ? (_menuItemCount * -5 + 0x5a) * 2 + 0x1c : _menuItemCount * -5 + 0x68;
+	const int itemSpacing = highRes ? 20 : 10;
+	const int itemHitTop = highRes ? 2 : 1;
+	const int itemHitHeight = highRes ? 18 : 10;
 
 	// Process events from the queue (populated by notifyEvent)
 	while (!_menuEventQueue.empty()) {
@@ -184,7 +183,7 @@ int InsaneRebel2::processMenuInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < _menuItemCount; i++) {
 				int itemY = baseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+				if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 					_menuSelection = i;
 					result = _menuSelection;
 					debug("Menu: Item %d selected (mouse)", _menuSelection);
@@ -198,7 +197,8 @@ int InsaneRebel2::processMenuInput() {
 				int mouseY = event.mouse.y;
 				for (int i = 0; i < _menuItemCount; i++) {
 					int itemY = baseY + i * itemSpacing;
-					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+					if (mouseY >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
+							mouseY < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
 						if (i != _menuSelection) {
 							_menuSelection = i;
 							debug(5, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
@@ -258,10 +258,13 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	//   Item Y:      param_3 * -5 + i * 10 + 0x68
 	//   Box Y:       param_3 * -5 + i * 10 + 0x67  (1px above text)
 
-	const int centerX = width / 2;
-	const int titleY = numItems * -5 + (leftAligned ? 0x56 : 0x51);
-	const int itemBaseY = numItems * -5 + 0x68;
-	const int itemSpacing = 10;
+	const bool highRes = isHiRes();
+	const int centerX = highRes ? 0x140 : width / 2;
+	const int titleY = highRes ?
+		(numItems * -5 + 0x5a) * 2 + (leftAligned ? -8 : -0x12) :
+		numItems * -5 + (leftAligned ? 0x56 : 0x51);
+	const int itemBaseY = highRes ? (numItems * -5 + 0x5a) * 2 + 0x1c : numItems * -5 + 0x68;
+	const int itemSpacing = highRes ? 20 : 10;
 
 	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
@@ -286,7 +289,7 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	// -------------------------------------------------------------------
 	{
 		int titleWidth = getStringWidth(items[0]);
-		int titleX = leftAligned ? 40 : (centerX - titleWidth / 2);
+		int titleX = leftAligned ? (highRes ? 0x50 : 0x28) : (centerX - titleWidth / 2);
 		drawString(items[0], titleX, titleY);
 	}
 
@@ -300,25 +303,25 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 		const char *text = items[i + 1];
 
 		int textWidth = getStringWidth(text);
-		int textX = leftAligned ? 23 : (centerX - textWidth / 2);
+		int textX = leftAligned ? (highRes ? 0x2e : 0x17) : (centerX - textWidth / 2);
 		drawString(text, textX, itemY);
 
 		// Selection highlight box - FUN_004292d0
 		if (i == selection) {
 			// Width: textWidth + ((DAT_0047a808 < 2) - 1 & 6) + 6 = textWidth + 6
-			int bracketWidth = textWidth + 6;
+			int bracketWidth = textWidth + (highRes ? 12 : 6);
 			// Height: ((DAT_0047a808 < 2) - 1 & 10) + 10 = 10
-			int bracketHeight = 10;
+			int bracketHeight = highRes ? 20 : 10;
 
 			// Flash color: (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
 			// bit0==0: 8-16=248(0xF8), bit0==1: 0-16=240(0xF0)
 			byte highlightColor = ((_vm->_system->getMillis() / 133) & 1) ? 248 : 240;
 
 			// Box position: Y = itemY - 1 (0x67 vs 0x68)
-			int leftX = leftAligned ? 20 : (centerX - bracketWidth / 2);
+			int leftX = leftAligned ? (highRes ? 0x28 : 0x14) : (centerX - bracketWidth / 2);
 			int rightX = leftX + bracketWidth;
-			int topY = itemY - 1;
-			int bottomY = itemY + bracketHeight - 1;
+			int topY = highRes ? itemY - 2 : itemY - 1;
+			int bottomY = topY + bracketHeight - 1;
 
 			int screenW = _vm->_screenWidth;
 			int screenH = _vm->_screenHeight;
@@ -929,10 +932,14 @@ int InsaneRebel2::processChapterSelectInput() {
 			_vm->_mouse.x = event.mouse.x;
 			_vm->_mouse.y = event.mouse.y;
 			{
-				int baseY = _chapterItemCount * -5 + 0x68;
+				const bool highRes = isHiRes();
+				const int baseY = highRes ? (_chapterItemCount * -5 + 0x5a) * 2 + 0x1c : _chapterItemCount * -5 + 0x68;
+				const int itemSpacing = highRes ? 20 : 10;
+				const int itemHitTop = highRes ? 2 : 1;
+				const int itemHitHeight = highRes ? 18 : 10;
 				for (int i = 0; i < _chapterItemCount; i++) {
-					int itemY = baseY + i * 10;
-					if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+					int itemY = baseY + i * itemSpacing;
+					if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 						_chapterSelection = i;
 						_previewOffsetY = _chapterSelection * -50 + 75;
 						updateMenuVirtualKeyboard();
@@ -948,12 +955,17 @@ int InsaneRebel2::processChapterSelectInput() {
 			{
 				// Mouse hover changes highlight (original FUN_0041f5ae mouse mode).
 				// Item Y = numItems * -5 + i * 10 + 0x68
-				int baseY = _chapterItemCount * -5 + 0x68;
+				const bool highRes = isHiRes();
+				const int baseY = highRes ? (_chapterItemCount * -5 + 0x5a) * 2 + 0x1c : _chapterItemCount * -5 + 0x68;
+				const int itemSpacing = highRes ? 20 : 10;
+				const int itemHitTop = highRes ? 2 : 1;
+				const int itemHitHeight = highRes ? 18 : 10;
 				int mouseY = event.mouse.y;
 
 				for (int i = 0; i < _chapterItemCount; i++) {
-					int itemY = baseY + i * 10;
-					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+					int itemY = baseY + i * itemSpacing;
+					if (mouseY >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
+							mouseY < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
 						if (i != _chapterSelection) {
 							_chapterSelection = i;
 							_previewOffsetY = _chapterSelection * -50 + 75;
@@ -1442,8 +1454,11 @@ int InsaneRebel2::processLevelSelectInput() {
 	if (itemCount <= 0)
 		return -1;
 
-	const int itemBaseY = itemCount * -5 + 0x68;
-	const int itemSpacing = 10;
+	const bool highRes = isHiRes();
+	const int itemBaseY = highRes ? (itemCount * -5 + 0x5a) * 2 + 0x1c : itemCount * -5 + 0x68;
+	const int itemSpacing = highRes ? 20 : 10;
+	const int itemHitTop = highRes ? 2 : 1;
+	const int itemHitHeight = highRes ? 18 : 10;
 
 	while (!_menuEventQueue.empty()) {
 		Common::Event event = _menuEventQueue.pop();
@@ -1494,7 +1509,7 @@ int InsaneRebel2::processLevelSelectInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < itemCount; i++) {
 				int itemY = itemBaseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+				if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 					selection = i;
 					result = selection;
 					break;
@@ -1507,7 +1522,8 @@ int InsaneRebel2::processLevelSelectInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < itemCount; i++) {
 				int itemY = itemBaseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - 4 && event.mouse.y < itemY + 6) {
+				if (event.mouse.y >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
+						event.mouse.y < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
 					selection = i;
 					break;
 				}
@@ -1759,52 +1775,54 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 	if (!splayer)
 		return;
 
+	const int scale = isHiRes() ? 2 : 1;
+
 	// Title centered at X=152, Y=10 (TITLFONT)
-	drawMenuStringCentered(renderBitmap, "^f02Top Pilots", 152, 10);
+	drawMenuStringCentered(renderBitmap, "^f02Top Pilots", 152 * scale, 10 * scale);
 
 	// Column headers at Y=30 (SMALFONT), positioned to match data columns
-	int headerY = 30;
+	int headerY = 30 * scale;
 	int headerColor = 5;
-	drawMenuStringCentered(renderBitmap, "^f01Rank", 43, headerY, headerColor);
-	drawMenuString(renderBitmap, "^f01Name", 88, headerY, headerColor);
-	drawMenuStringCentered(renderBitmap, "^f01Difficulty", 195, headerY, headerColor);
-	drawMenuStringCentered(renderBitmap, "^f01Chapter", 245, headerY, headerColor);
-	drawMenuStringRight(renderBitmap, "^f01Score", 295, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Rank", 43 * scale, headerY, headerColor);
+	drawMenuString(renderBitmap, "^f01Name", 88 * scale, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Difficulty", 195 * scale, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Chapter", 245 * scale, headerY, headerColor);
+	drawMenuStringRight(renderBitmap, "^f01Score", 295 * scale, headerY, headerColor);
 
 	// Animated reveal: show up to _topPilotsFrameCount entries
 	int showCount = MIN(_topPilotsFrameCount, _numRankings);
 
 	for (int row = 0; row < showCount; row++) {
 		const RankingEntry &r = _rankings[row];
-		int rowY = row * 10 + 42;
+		int rowY = (row * 10 + 42) * scale;
 		int color = 244;  // 0xF4
 
 		// Column 1: Rank medals at X=43, centered (font 0 = TALKFONT)
 		Common::String rankStr = getRankString(r.rating);
 		if (!rankStr.empty()) {
 			Common::String rankFmt = Common::String::format("^f00%s", rankStr.c_str());
-			drawMenuStringCentered(renderBitmap, rankFmt.c_str(), 43, rowY, color);
+			drawMenuStringCentered(renderBitmap, rankFmt.c_str(), 43 * scale, rowY, color);
 		}
 
 		// Column 2: Pilot name at X=88, left-aligned (font 1 = SMALFONT)
 		Common::String nameFmt = Common::String::format("^f01%s", r.name);
-		drawMenuString(renderBitmap, nameFmt.c_str(), 88, rowY, color);
+		drawMenuString(renderBitmap, nameFmt.c_str(), 88 * scale, rowY, color);
 
 		// Column 3: Difficulty at X=195, centered - TRS (difficulty + 155)
 		int trsIdx = CLIP((int)r.difficulty, 0, 5) + 155;
 		const char *diffStr = splayer->getString(trsIdx);
 		if (diffStr && diffStr[0]) {
 			Common::String diffFmt = Common::String::format("^f01%s", diffStr);
-			drawMenuStringCentered(renderBitmap, diffFmt.c_str(), 195, rowY, color);
+			drawMenuStringCentered(renderBitmap, diffFmt.c_str(), 195 * scale, rowY, color);
 		}
 
 		// Column 4: Highest chapter at X=245, centered
 		Common::String chFmt = Common::String::format("^f01%d", (int)r.chapter);
-		drawMenuStringCentered(renderBitmap, chFmt.c_str(), 245, rowY, color);
+		drawMenuStringCentered(renderBitmap, chFmt.c_str(), 245 * scale, rowY, color);
 
 		// Column 5: Total score at X=295, right-aligned
 		Common::String scoreFmt = Common::String::format("^f01%ld", (long)r.score);
-		drawMenuStringRight(renderBitmap, scoreFmt.c_str(), 295, rowY, color);
+		drawMenuStringRight(renderBitmap, scoreFmt.c_str(), 295 * scale, rowY, color);
 	}
 
 	_topPilotsFrameCount++;
@@ -1938,10 +1956,14 @@ int InsaneRebel2::processOptionsInput() {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			// Mouse click on items — match drawMenuItems Y positions
 			int mouseY = event.mouse.y;
-			int baseY = _optionsItemCount * -5 + 0x68;
+			const bool highRes = isHiRes();
+			const int baseY = highRes ? (_optionsItemCount * -5 + 0x5a) * 2 + 0x1c : _optionsItemCount * -5 + 0x68;
+			const int itemSpacing = highRes ? 20 : 10;
+			const int itemHitTop = highRes ? 2 : 1;
+			const int itemHitHeight = highRes ? 18 : 10;
 			for (int i = 0; i < _optionsItemCount; i++) {
-				int itemY = baseY + i * 10;
-				if (mouseY >= itemY - 1 && mouseY < itemY + 9) {
+				int itemY = baseY + i * itemSpacing;
+				if (mouseY >= itemY - itemHitTop && mouseY < itemY - itemHitTop + itemHitHeight) {
 					_optionsSelection = i;
 					// Simulate enter for this item
 					Common::Event enterEvent;

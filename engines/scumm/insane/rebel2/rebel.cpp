@@ -129,15 +129,14 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_bencutNut = nullptr;
 	_smush_bensgoggNut = nullptr;
 
-	// Rebel Assault 2 specific initialization can go here
+	const bool highRes = isHiRes();
 
-	// Rebel Assault 2: Load cockpit sprites NUT which contains crosshairs, explosions, status bar
-	// CPITIMAG.NUT = low-res (320x200), CPITIMHI.NUT = high-res (640x480)
-	// The current renderer runs at 320x200, so use the low-res assets.
-	_smush_iconsNut = new NutRenderer(_vm, "SYSTM/CPITIMAG.NUT");
+	// Rebel Assault 2: Load cockpit sprites NUT which contains crosshairs,
+	// explosions, reticles, and warning cues.
+	_smush_iconsNut = new NutRenderer(_vm, highRes ? "SYSTM/CPITIMHI.NUT" : "SYSTM/CPITIMAG.NUT");
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 
-	// Initialize laser texture buffer (DAT_0047fee4) from sprite 5 of CPITIMAG.NUT
+	// Initialize laser texture buffer (DAT_0047fee4) from sprite 5 of CPITIMAG/CPITIMHI.NUT
 	// This is done by FUN_0040BAB0/FUN_0040BB87 in the original with sprite index 5
 	// Sprite 5 is 136x13 pixels - a wide, thin texture perfect for laser beams
 	_laserTexture.pixels = nullptr;
@@ -156,7 +155,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	//   >= 0: Edge highlights enabled, >= 1: high-detail (secondary NUTs, widescreen)
 	// Always use high detail in ScummVM.
 	_rebelDetailMode = 1;
-	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
+	_smush_cockpitNut = new NutRenderer(_vm, highRes ? "SYSTM/DIHIFONT.NUT" : "SYSTM/DISPFONT.NUT");
 
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
 	_rebelMsgFont = makeRebel2Font(_vm, "SYSTM/DIHIFONT.NUT");
@@ -167,10 +166,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	//   Font 1 (^f01): SMALFONT.NUT - Small font for format code switching
 	//   Font 2 (^f02): TITLFONT.NUT - Title font
 	//   Font 3 (^f03): POVFONT.NUT - POV font
-	_smush_talkfontNut = makeRebel2Font(_vm, "SYSTM/TALKFONT.NUT");
-	_smush_smalfontNut = makeRebel2Font(_vm, "SYSTM/SMALFONT.NUT");
-	_smush_titlefontNut = makeRebel2Font(_vm, "SYSTM/TITLFONT.NUT");
-	_smush_povfontNut = makeRebel2Font(_vm, "SYSTM/POVFONT.NUT");
+	_smush_talkfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/TKHIFONT.NUT" : "SYSTM/TALKFONT.NUT");
+	_smush_smalfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/SMHIFONT.NUT" : "SYSTM/SMALFONT.NUT");
+	_smush_titlefontNut = makeRebel2Font(_vm, highRes ? "SYSTM/TIHIFONT.NUT" : "SYSTM/TITLFONT.NUT");
+	_smush_povfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/POHIFONT.NUT" : "SYSTM/POVFONT.NUT");
 
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
@@ -190,6 +189,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_noDamage = false;
 	_viewX = 0;
 	_viewY = 0;
+	_hiResPresentationViewX = 0;
+	_hiResPresentationViewY = 0;
 
 	// Damage visual effect counters (FUN_420515/420562/420754/42073B)
 	_damageFlashCounter = 0;
@@ -618,6 +619,10 @@ InsaneRebel2::~InsaneRebel2() {
 	}
 }
 
+bool InsaneRebel2::isHiRes() const {
+	return _vm->_screenWidth >= 640 && _vm->_screenHeight >= 400;
+}
+
 void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
 	if (!splayer)
 		return;
@@ -676,25 +681,25 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		if (_gameplayMouseSettleUntil != 0) {
 			const uint32 now = _vm->_system->getMillis();
 			if (now < _gameplayMouseSettleUntil) {
+				const int mouseScale = isHiRes() ? 2 : 1;
 				const int jumpX = event.mouse.x - _vm->_mouse.x;
 				const int jumpY = event.mouse.y - _vm->_mouse.y;
 				const bool largeAbsoluteJump =
-					ABS(jumpX) >= kRA2Handler7MouseSettleJumpThreshold ||
-					ABS(jumpY) >= kRA2Handler7MouseSettleJumpThreshold;
+					ABS(jumpX) >= kRA2Handler7MouseSettleJumpThreshold * mouseScale ||
+					ABS(jumpY) >= kRA2Handler7MouseSettleJumpThreshold * mouseScale;
 				const bool smallRelativeMove =
-					ABS((int)event.relMouse.x) < kRA2Handler7MouseSettleRelativeThreshold &&
-					ABS((int)event.relMouse.y) < kRA2Handler7MouseSettleRelativeThreshold;
+					ABS((int)event.relMouse.x) < kRA2Handler7MouseSettleRelativeThreshold * mouseScale &&
+					ABS((int)event.relMouse.y) < kRA2Handler7MouseSettleRelativeThreshold * mouseScale;
 				const bool nearWindowEdge =
-					event.mouse.x <= kRA2Handler7MouseSettleEdgeMargin ||
-					event.mouse.x >= kRA2GameplayMouseMaxX - kRA2Handler7MouseSettleEdgeMargin ||
-					event.mouse.y <= kRA2Handler7MouseSettleEdgeMargin ||
-					event.mouse.y >= kRA2GameplayMouseMaxY - kRA2Handler7MouseSettleEdgeMargin;
+					event.mouse.x <= kRA2Handler7MouseSettleEdgeMargin * mouseScale ||
+					event.mouse.x >= kRA2GameplayMouseMaxX * mouseScale - kRA2Handler7MouseSettleEdgeMargin * mouseScale ||
+					event.mouse.y <= kRA2Handler7MouseSettleEdgeMargin * mouseScale ||
+					event.mouse.y >= kRA2GameplayMouseMaxY * mouseScale - kRA2Handler7MouseSettleEdgeMargin * mouseScale;
 
 				if (largeAbsoluteJump && smallRelativeMove && nearWindowEdge) {
-					const int recenterX = _vm->_mouse.x;
-					const int recenterY = _vm->_mouse.y;
+					const Common::Point recenter = getGameplayAimPoint();
 					_gameplayMouseSettleUntil = now + kRA2Handler7MouseSettleExtendMs;
-					warpGameplayMouseNow(recenterX, recenterY);
+					warpGameplayMouseNow(recenter.x, recenter.y);
 
 					debugC(DEBUG_INSANE, "Rebel2 H7 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u",
 						event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
@@ -1371,11 +1376,12 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	char scoreStr[16];
 	Common::sprintf_s(scoreStr, "%07d", _playerScore);
 
-	// Score position from FUN_0041c012 assembly (low-res mode):
-	//   X = ((DAT_0047a808 < 2) - 1 & 0x101) + 0x101 = 0x101 = 257
-	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 (within status bar)
-	int scoreX = 257 + _viewX;
-	int scoreY = statusBarY + 4 + _viewY;
+	// Score position from FUN_0041c012 assembly:
+	//   X = 0x101 low-res, 0x202 high-res
+	//   Y = 4 low-res, 8 high-res (within status bar)
+	const int statusScale = isHiRes() ? 2 : 1;
+	int scoreX = 257 * statusScale + _viewX;
+	int scoreY = statusBarY + 4 * statusScale + _viewY;
 
 	// Render each digit as a NUT sprite (direct pixel blit with color 0 transparency).
 	// This matches the original's FUN_00434cb0 → FUN_004341a0 text rendering which
@@ -1772,12 +1778,19 @@ Common::Point InsaneRebel2::getGameplayAimPoint() {
 	// Pure getter (queried many times per frame): the aim/reticle follows the virtual
 	// mouse position. Directional controls pan that position incrementally once per frame
 	// via updateGameplayAimFromGamepad(), rather than snapping the reticle to a screen edge.
+	int x = _vm->_mouse.x;
 	int y = _vm->_mouse.y;
+	if (isHiRes()) {
+		x /= 2;
+		y /= 2;
+	}
+	x = CLIP<int>(x, 0, 319);
+	y = CLIP<int>(y, 0, 199);
 	if (_optControlsFlipped) {
 		// Original DAT_0047a7fe reverses only the up/down gameplay axis.
 		y = CLIP<int>(200 - y, 0, 199);
 	}
-	return Common::Point(_vm->_mouse.x, y);
+	return Common::Point(x, y);
 }
 
 // Apply the user's configured analog deadzone so a resting stick reports no
@@ -1837,6 +1850,7 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 		}
 
 		if (axisX || axisY || _gamepadAimActive) {
+			const Common::Point aimPos = getGameplayAimPoint();
 			const int centerX = 160;
 			const int centerY = 100;
 			const int absAxisX = ABS(axisX);
@@ -1850,8 +1864,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 				centerY - curvedY * centerY / 127 :
 				centerY + curvedY * (199 - centerY) / 127;
 			const int maxStep = (axisX || axisY) ? 14 : 10;
-			const int distX = targetX - _vm->_mouse.x;
-			const int distY = targetY - _vm->_mouse.y;
+			const int distX = targetX - aimPos.x;
+			const int distY = targetY - aimPos.y;
 
 			if (distX || distY) {
 				deltaX = CLIP<int>(distX, -maxStep, maxStep);
@@ -1882,8 +1896,10 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	_gamepadAimActive = true;
 
 	// Integrate velocity into the reticle, clamped to the 320x200 play area.
-	_vm->_mouse.x = (int16)CLIP<int>(_vm->_mouse.x + deltaX, 0, 319);
-	_vm->_mouse.y = (int16)CLIP<int>(_vm->_mouse.y + deltaY, 0, 199);
+	Common::Point aimPos = getGameplayAimPoint();
+	const int scale = isHiRes() ? 2 : 1;
+	_vm->_mouse.x = (int16)(CLIP<int>(aimPos.x + deltaX, 0, 319) * scale);
+	_vm->_mouse.y = (int16)(CLIP<int>(aimPos.y + deltaY, 0, 199) * scale);
 }
 
 bool InsaneRebel2::isBitSet(int n) {

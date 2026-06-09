@@ -416,10 +416,14 @@ void InsaneRebel2::warpGameplayMouseNow(int x, int y) {
 	if (eventMan)
 		eventMan->purgeMouseEvents();
 
-	_vm->_mouse.x = x;
-	_vm->_mouse.y = y;
-	_vm->_system->warpMouse(_vm->_macScreen ? x * 2 : x,
-		_vm->_macScreen ? y * 2 + 2 * _vm->_macScreenDrawOffset : y);
+	const int scale = isHiRes() ? 2 : 1;
+	const int physicalX = x * scale;
+	const int physicalY = y * scale;
+
+	_vm->_mouse.x = physicalX;
+	_vm->_mouse.y = physicalY;
+	_vm->_system->warpMouse(_vm->_macScreen ? physicalX * 2 : physicalX,
+		_vm->_macScreen ? physicalY * 2 + 2 * _vm->_macScreenDrawOffset : physicalY);
 
 	if (eventMan)
 		eventMan->purgeMouseEvents();

@@ -894,6 +894,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	int pitch = _vm->_screenWidth;
 	if (_dst == _specialBuffer)
 		pitch = _width;
+	pitch = handleGameFrameObjectPitch(pitch);
 
 	// Save original FOBJ position and dimensions before clipping. Codec 37/47
 	// (delta block/glyph) decode the full frame starting at (0,0). Codec 2
@@ -948,6 +949,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			}
 		}
 	}
+
+	handleGameFrameObjectDecoded(codec, left, top, width, height);
 
 	if (_storeFrame && !handleGameStoreFrame()) {
 		if (_frameBuffer == nullptr) {

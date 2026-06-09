@@ -827,8 +827,9 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// Step 1: Raw mouse input as offset from screen center.
 	// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100.
 	// Handler 7 applies DAT_0047a7fe to its local vertical input after clamping.
-	const int16 mouseX = _vm->_mouse.x;
-	const int16 mouseY = _vm->_mouse.y;
+	const Common::Point aimPos = getGameplayAimPoint();
+	const int16 mouseX = aimPos.x;
+	const int16 mouseY = aimPos.y;
 	int16 inputX = (int16)(mouseX - 160);  // DAT_0047a7e0
 	int16 inputY = (int16)(mouseY - 100);  // DAT_0047a7e2
 
@@ -1555,8 +1556,8 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 // Handler-specific routing:
 //   Handler 7  (FLY):  FLY NUT sprites via par4 (1, 2, 3, 11)
 //   Handler 8  (POV):  POV NUT sprites via par3 (1, 3, 6, 7) or background via par4=5
-//   Handler 0x26 (turret): Turret HUD NUT via par3 (1-4)
-//   Handler 0x19: Mixed turret mode, similar to 0x26
+//   Handler 0x26 (turret): Turret HUD NUT via par3/par4 (1-4)
+//   Handler 0x19: Speeder bike GRD/HUD resources via par4
 //
 // ScummVM refactor helper for opcode 8 Handler 7 FLY loading, not a separate retail function.
 bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
@@ -1738,11 +1739,14 @@ void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableR
 bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData, int32 animDataSize, int16 par3, int16 par4) {
 	bool handled = false;
 
-	// Handler 0x26/0x19: Turret HUD Overlays.
-	// FUN_00407fcb case 8: par3 1-4 for HUD NUT loading.
-	if (!handled && (_rebelHandler == 0x26 || _rebelHandler == 0x19)) {
-		if (par3 >= 1 && par3 <= 4) {
-			handled = loadTurretHudOverlay(animData, animDataSize, par3);
+	// Handler 0x26: Turret HUD Overlays.
+	// FUN_00407fcb case 8: handler 0x26 uses par4 1-4 for HUD NUT loading.
+	// Some chunks use par3 for the same low/high selector.
+	if (!handled && _rebelHandler == 0x26) {
+		int hudSelector = (par4 >= 1 && par4 <= 4) ? par4 : par3;
+
+		if (hudSelector >= 1 && hudSelector <= 4) {
+			handled = loadTurretHudOverlay(animData, animDataSize, hudSelector);
 		}
 	}
 
@@ -1780,9 +1784,13 @@ bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData,
 	// Fallback: Embedded SAN HUD overlays.
 	// For other cases, load as embedded SAN frame to HUD overlay slots.
 	if (!handled) {
-		// Skip high-res data (par3 == 2, 4).
-		if (par3 == 2 || par3 == 4) {
-			debug("Rebel2 Opcode 8: Skipping high-res HUD par3=%d", par3);
+		const bool highRes = isHiRes();
+		const bool highResHud = (par3 == 2 || par3 == 4);
+		const bool lowResHud = (par3 == 1 || par3 == 3);
+
+		if ((!highRes && highResHud) || (highRes && lowResHud)) {
+			debug("Rebel2 Opcode 8: Skipping %s HUD par3=%d while running in %s mode",
+				highResHud ? "high-res" : "low-res", par3, highRes ? "high-res" : "low-res");
 			handled = true;
 		} else {
 			// Determine userId: Handler 0x19 uses par3, others use par4.
@@ -2126,45 +2134,48 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	return assigned;
 }
 
-// loadTurretHudOverlay -- Handler 0x26/0x19 turret HUD loading (FUN_00407fcb case 8).
-bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) {
-	// Handler 0x26/0x19 turret HUD overlay loading - FUN_00407fcb case 8
+// loadTurretHudOverlay -- Handler 0x26 turret HUD loading (FUN_00407fcb case 8).
+bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 selector) {
+	// Handler 0x26 turret HUD overlay loading - FUN_00407fcb case 8
 	// Resolution-dependent loading:
-	//   par3 == 1: Low-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
-	//   par3 == 2: High-res primary HUD (skip in 320x200 mode)
-	//   par3 == 3: Low-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
-	//   par3 == 4: High-res secondary HUD (skip in 320x200 mode)
+	//   selector == 1: Low-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
+	//   selector == 2: High-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
+	//   selector == 3: Low-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
+	//   selector == 4: High-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
 
 	if (!animData || size <= 0) {
 		return false;
 	}
 
-	// ScummVM runs at 320x200 (low-res), skip high-res data
-	if (par3 == 2 || par3 == 4) {
-		debug("Rebel2 loadTurretHudOverlay: Skipping high-res HUD par3=%d (running in low-res mode)", par3);
-		return true;  // Successfully "handled" by skipping
+	const bool highRes = isHiRes();
+	const int primarySlot = highRes ? 2 : 1;
+	const int secondarySlot = highRes ? 4 : 3;
+
+	if (selector >= 1 && selector <= 4 && selector != primarySlot && selector != secondarySlot) {
+		debug("Rebel2 loadTurretHudOverlay: Skipping %s HUD selector=%d (running in %s mode)",
+			(selector == 2 || selector == 4) ? "high-res" : "low-res", selector,
+			highRes ? "high-res" : "low-res");
+		return true;
 	}
 
-	if (par3 != 1 && par3 != 3) {
+	if (selector != primarySlot && selector != secondarySlot) {
 		return false;  // Not a turret HUD slot
 	}
 
 	NutRenderer *newNut = makeRebel2SpriteFromData(_vm, animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
-		debug("Rebel2 loadTurretHudOverlay: NUT load failed for par3=%d", par3);
+		debug("Rebel2 loadTurretHudOverlay: NUT load failed for selector=%d", selector);
 		delete newNut;
 		return false;
 	}
 
-	debug("Rebel2 loadTurretHudOverlay: Loaded turret HUD NUT par3=%d with %d sprites",
-		par3, newNut->getNumChars());
+	debug("Rebel2 loadTurretHudOverlay: Loaded turret HUD NUT selector=%d with %d sprites",
+		selector, newNut->getNumChars());
 
-	if (par3 == 1) {
-		// Low-res primary HUD overlay
+	if (selector == primarySlot) {
 		delete _hudOverlayNut;
 		_hudOverlayNut = newNut;
-	} else {  // par3 == 3
-		// Low-res secondary HUD overlay
+	} else {
 		delete _hudOverlay2Nut;
 		_hudOverlay2Nut = newNut;
 	}

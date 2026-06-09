@@ -401,6 +401,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		// #15666, #11290, and <https://forums.scummvm.org/viewtopic.php?p=97395#p97395>).
 		if (_game.id == GID_LOOM || !ConfMan.getBool("trim_fmtowns_to_200_pixels"))
 			_screenHeight = 240;
+	} else if (_game.id == GID_REBEL2 && ConfMan.getBool("rebel2_hires")) {
+		_screenWidth = 640;
+		_screenHeight = 400;
 	} else if (_game.version == 8 || _game.heversion >= 71) {
 		// COMI uses 640x480. Likewise starting from version 7.1, HE games use
 		// 640x480, too.
@@ -1826,7 +1829,7 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 
 	if (_game.id == GID_REBEL2) {
 		_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
-		initScreens(0, 200);
+		initScreens(0, _screenHeight);
 
 		_numVariables = 256;
 		_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));

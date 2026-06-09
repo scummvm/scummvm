@@ -538,6 +538,7 @@ public:
 
 	// Get current handler ID (8, 25, 38 etc.) for SMUSH player to query
 	int getHandler() const { return _rebelHandler; }
+	bool isHiRes() const;
 
 	void iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
@@ -591,7 +592,7 @@ public:
 	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
 	void checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
-	// Draw NUT-based HUD overlays for Handler 0x26/0x19 turret modes
+	// Draw NUT-based HUD overlays for Handler 0x26 turret modes
 	void renderTurretHudOverlays(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
 	// Draw embedded SAN HUD overlays from IACT chunks
@@ -642,7 +643,7 @@ public:
 	bool loadHandler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
 
 	// Load turret HUD overlay NUT from ANIM data
-	bool loadTurretHudOverlay(byte *animData, int32 size, int16 par3);
+	bool loadTurretHudOverlay(byte *animData, int32 size, int16 selector);
 
 	// Load Handler 8 ship POV NUT sprites from ANIM data (par4 = sprite type: 1,3,6,7)
 	bool loadHandler8ShipSprites(byte *animData, int32 size, int16 par4);
@@ -888,6 +889,8 @@ public:
 
 	int _viewX;
 	int _viewY;
+	int _hiResPresentationViewX;
+	int _hiResPresentationViewY;
 
 	// ---------------------------------------------------------------------------
 	// Damage Visual Effect System
