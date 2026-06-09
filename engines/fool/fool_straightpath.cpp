@@ -28,7 +28,7 @@
 
 namespace Fool {
 
-extern Toolbox *g_toolbox;
+
 
 void FoolGame::straightPathRun() {
 	// 143:0004
@@ -42,7 +42,7 @@ void FoolGame::straightPathRun() {
 		var_i16_68a = arr_i16_1eb8[10];
 		do {
 			var_i16_484++;
-			g_toolbox->SetRect(
+			_toolbox->SetRect(
 				_screenGrid[var_i16_484],
 				var_i16_68a,
 				var_i16_68c,
@@ -79,7 +79,7 @@ void FoolGame::straightPathRun() {
 		temp.left = 0;
 		temp.bottom = temp.top + arr_i16_1eb8[7] + 2;
 		temp.right = SCREEN_WIDTH;
-		g_toolbox->FillRect(temp, _patterns[0]);
+		_toolbox->FillRect(temp, _patterns[0]);
 		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
 			var_i16_1574 = (j - 1)*arr_i16_1eb8[0] + i;
 			if (arr_i16_3b38[i*32 + j] == 0) {
@@ -87,12 +87,12 @@ void FoolGame::straightPathRun() {
 				arr_i16_3b38[i*32 + j] = _zbasic->rndInt(0x1a) + 0x40;
 			}
 			// 143:03f0
-			g_toolbox->MoveTo(
+			_toolbox->MoveTo(
 				_screenGrid[var_i16_1574].left + arr_i16_1eb8[2] - 1,
 				_screenGrid[var_i16_1574].top + arr_i16_1eb8[3]
 			);
 			var_str_384 = _zbasic->chr(arr_i16_3b38[i*32 + j]);
-			g_toolbox->DrawString(var_str_384);
+			_toolbox->DrawString(var_str_384);
 		}
 	}
 	straightPathDrawText();
@@ -134,7 +134,7 @@ void FoolGame::straightPathOnClick() {
 	// 143:05c0
 	sub_128_2be(var_i16_68a, var_i16_68c);
 	if (var_i16_1574 > 0) {
-		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
+		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 		var_i16_1574 = 0;
 	}
 	// 143:05fc
@@ -152,7 +152,7 @@ void FoolGame::straightPathOnClick() {
 	straightPathDrawText();
 	if (_activePuzzleStatus < arr_i16_1eb8[15]) {
 		var_i16_1574 = (var_i16_68c - 1)*arr_i16_1eb8[0] + var_i16_68a;
-		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
+		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 	} else {
 		// 143:0766
 		if (_activePuzzleBuffer != var_str_1272.encode(Common::kMacRoman)) {
@@ -166,15 +166,15 @@ void FoolGame::straightPathOnClick() {
 void FoolGame::straightPathReset() {
 	// 143:0784
 	if (var_i16_1574 > 0) {
-		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
+		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 	}
 	// 143:07a4
 	for (int16 i = 0; i <= 0x14; i++) {
 		var_i16_1574 = _zbasic->rndInt(arr_i16_1eb8[0] * arr_i16_1eb8[1]);
-		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
+		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 		playTone(_zbasic->rndInt(0x2328) + 0xf, 0x28, 0x1);
 		// 143:0812
-		g_toolbox->InvertRect(_screenGrid[var_i16_1574]);
+		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 	}
 	_activePuzzleStatus = 0;
 	_activePuzzleBuffer.clear(); // was: str(367)
@@ -198,18 +198,18 @@ void FoolGame::straightPathClearText() {
 
 void FoolGame::straightPathSuccess() {
 	// 143:08b0
-	g_toolbox->PenMode(kPatBic);
-	g_toolbox->PenPat(_patterns[1]);
+	_toolbox->PenMode(kPatBic);
+	_toolbox->PenPat(_patterns[1]);
 	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
 		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
 			if (arr_i16_2f38[i*32 + j] == 0) {
 				var_i16_1574 = (j - 1)*arr_i16_1eb8[0] + i;
-				g_toolbox->PaintRect(_screenGrid[var_i16_1574]);
+				_toolbox->PaintRect(_screenGrid[var_i16_1574]);
 			}
 			// 143:0936
 		}
 	}
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	menuClickMessage();
 	waitForClick();
 }

@@ -42,21 +42,31 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 
 ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_memPool = new Common::MemoryPool(sizeof(int));
+
 	_window = g_engine->_wm.addWindow(false, false, false);
 	_window->disableBorder();
 	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	g_engine->_wm.setBackgroundWindow(_window);
-	_menu = g_engine->_wm.addMenu();
-	_menu->setCommandsCallback(menuCommandsCallback, nullptr);
-
 	_toolbox->_defaultWindow = _window;
-	_toolbox->_defaultMenu = _menu;
 	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 	_window->setSurface(_toolbox->_defaultBits.get(), DisposeAfterUse::NO);
-	_toolbox->_defaultMenuBits = BitMap(new Graphics::ManagedSurface());
-	_toolbox->_defaultMenuBits->copyFrom(*_menu->getWindowSurface());
-	_menu->setSurface(_toolbox->_defaultMenuBits.get(), DisposeAfterUse::NO);
+
+	g_engine->_wm.setBackgroundWindow(_window);
+	if (!g_engine->_wm.getMenu()) {
+		// no menu defined, create one for the first time
+		_menu = g_engine->_wm.addMenu();
+		_menu->setCommandsCallback(menuCommandsCallback, nullptr);
+
+		_toolbox->_defaultMenu = _menu;
+		_toolbox->_defaultMenuBits = BitMap(new Graphics::ManagedSurface());
+		_toolbox->_defaultMenuBits->copyFrom(*_menu->getWindowSurface());
+		_menu->setSurface(_toolbox->_defaultMenuBits.get(), DisposeAfterUse::NO);
+	} else {
+		// menu already exists
+		_menu = g_engine->_wm.getMenu();
+		_toolbox->_defaultMenu = _menu;
+		// we don't get the surface for directly manipulating the menu, but so far we don't need it
+	}
 	GrafPtr port(new GrafPort);
 	_toolbox->OpenPort(port);
 	_toolbox->SetPort(port);
@@ -64,6 +74,9 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 }
 
 ZBasic::~ZBasic() {
+	g_engine->_wm.removeWindow(_window);
+	_window = nullptr;
+	_toolbox->_defaultWindow = nullptr;
 	delete _memPool;
 	_memPool = nullptr;
 }
@@ -176,6 +189,11 @@ void ZBasic::loadProgram(const Common::Path &path) {
 
 	delete scot;
 
+}
+
+void ZBasic::loadFonts() {
+	// tell ScummVM to load in the font information from this file
+	_toolbox->_loadFonts(_fileId);
 }
 
 int16 ZBasic::asc(const Common::U32String &str) {
@@ -567,6 +585,10 @@ Common::U32String ZBasic::rightStr(const Common::U32String &str, int16 expressio
 
 Common::String ZBasic::rightStr(const Common::String &str, int16 expression) {
 	return str.substr(str.size() - expression, expression);
+}
+
+void ZBasic::restore(uint32 index) {
+	_dataPtr = index;
 }
 
 int16 ZBasic::rndInt(int16 max) {

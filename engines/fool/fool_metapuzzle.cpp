@@ -30,7 +30,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetMetapuzzle] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // sun's map metapuzzle
 void FoolGame::metapuzzleRun() {
@@ -54,8 +54,8 @@ void FoolGame::metapuzzleRun() {
 		}
 	}
 	// 138:00f6
-	g_toolbox->PenNormal();
-	g_toolbox->InitCursor();
+	_toolbox->PenNormal();
+	_toolbox->InitCursor();
 	copyScreen(0, arr_bmp_b3ec);
 	if (_activePuzzle == 0) {
 		metapuzzleSetupMenu();
@@ -89,10 +89,10 @@ void FoolGame::metapuzzleRun() {
 	// 138:0e7c
 	var_i16_c00 = 0;
 	if ((_stateFlags & kStateMetapuzzleComplete) == 0) {
-		var_menu_bf8 = g_toolbox->GetMHandle(8);
-		g_toolbox->DeleteMenu(8);
-		g_toolbox->DisposeMenu(var_menu_bf8);
-		g_toolbox->DrawMenuBar();
+		var_menu_bf8 = _toolbox->GetMHandle(8);
+		_toolbox->DeleteMenu(8);
+		_toolbox->DisposeMenu(var_menu_bf8);
+		_toolbox->DrawMenuBar();
 		copyScreen(1, arr_bmp_5dfc);
 		if ((_stateFlags & (kStateNewGame | kStateOpenGame | kStateQuit)) == 0) {
 			if ((var_i16_7ce & 1) != 0) {
@@ -120,7 +120,7 @@ void FoolGame::metapuzzleOnClick() {
 		temp.left = arr_i16_4d20[i*4+1];
 		temp.bottom = arr_i16_4d20[i*4+2];
 		temp.right = arr_i16_4d20[i*4+3];
-		if (g_toolbox->PtInRect(_event.where, temp) != 0) {
+		if (_toolbox->PtInRect(_event.where, temp) != 0) {
 			var_i16_7e4 = i;
 		}
 		// 138:01f8
@@ -138,7 +138,7 @@ void FoolGame::sub_138_21e() {
 	temp.left = arr_i16_4d20[offset*4+1];
 	temp.bottom = arr_i16_4d20[offset*4+2];
 	temp.right = arr_i16_4d20[offset*4+3];
-	g_toolbox->InvertRect(temp);
+	_toolbox->InvertRect(temp);
 	puzzleLoadContext();
 	puzzleSetupMenu();
 	sub_128_26f6();
@@ -174,7 +174,7 @@ void FoolGame::sub_138_21e() {
 		_stateFlags = kStateNull;
 		_activePuzzle = 0;
 		var_i16_c00 = 0;
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 		copyScreen(1, arr_bmp_b3ec);
 		metapuzzleSetupMenu();
 	}
@@ -245,7 +245,7 @@ void FoolGame::metapuzzleSecretCode() {
 	temp.left = arr_i16_1eb8[1];
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
-	g_toolbox->FillRect(temp, _patterns[2]);
+	_toolbox->FillRect(temp, _patterns[2]);
 	if (_activePuzzleBuffer.empty()) { // was: str(OFF(11))
 		metapuzzleSecretCodeReset();
 	} else {
@@ -311,8 +311,8 @@ void FoolGame::metapuzzleSecretCodeDrawText() {
 	// 138:0946
 	var_str_d12 = _zbasic->midStr(_metapuzzleSecretCodeCipher, _keyLastPressed - 0x40, 1);
 	var_str_1272 += var_str_d12;
-	var_i16_484 = g_toolbox->StringWidth(var_str_1272);
-	var_i16_7e4 = g_toolbox->StringWidth(var_str_1170);
+	var_i16_484 = _toolbox->StringWidth(var_str_1272);
+	var_i16_7e4 = _toolbox->StringWidth(var_str_1170);
 	if (var_i16_484 > var_i16_7e4) {
 		sub_138_a06();
 	} else {
@@ -328,7 +328,7 @@ void FoolGame::sub_138_9c4() {
 	temp.left = arr_i16_1eb8[1];
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
-	g_toolbox->FillRect(temp, _patterns[2]);
+	_toolbox->FillRect(temp, _patterns[2]);
 	var_i16_7a2 = 0x146;
 	sub_128_918(var_str_1272);
 }
@@ -348,7 +348,7 @@ void FoolGame::metapuzzleSecretCodeReset() {
 	temp.left = arr_i16_1eb8[1];
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
-	g_toolbox->FillRect(temp, _patterns[2]);
+	_toolbox->FillRect(temp, _patterns[2]);
 	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 	var_i16_7a2 = 0x140;
 	var_str_384 = _zbasic->str(OFF(15)); // if you know which is which, enter the letters you wish to switch
@@ -377,9 +377,9 @@ void FoolGame::metapuzzleOnOption() {
 	temp.left = arr_i16_4d20[var_i16_bfc*4+1];
 	temp.bottom = arr_i16_4d20[var_i16_bfc*4+2];
 	temp.right = arr_i16_4d20[var_i16_bfc*4+3];
-	g_toolbox->InvertRect(temp);
+	_toolbox->InvertRect(temp);
 	delay(3);
-	g_toolbox->InvertRect(temp);
+	_toolbox->InvertRect(temp);
 }
 
 void FoolGame::metapuzzleOnShift() {
@@ -403,7 +403,7 @@ void FoolGame::metapuzzleOnShift() {
 					temp.left = arr_i16_1eb8[1];
 					temp.bottom = arr_i16_1eb8[2];
 					temp.right = arr_i16_1eb8[3];
-					g_toolbox->InvertRect(temp);
+					_toolbox->InvertRect(temp);
 				}
 				// 138:0c8c
 				arr_i16_1eb8[0] = 0x1a + var_i16_68c * 0x23;
@@ -415,10 +415,10 @@ void FoolGame::metapuzzleOnShift() {
 				temp.left = arr_i16_1eb8[1];
 				temp.bottom = arr_i16_1eb8[2];
 				temp.right = arr_i16_1eb8[3];
-				g_toolbox->InvertRect(temp);
+				_toolbox->InvertRect(temp);
 
 				// 138:0d36
-				g_toolbox->SetPort(var_i32_8);
+				_toolbox->SetPort(var_i32_8);
 				fillRect(0, 7, 0x13, _windowWidth - 7, 0);
 				if (_selectedMenuChapter != 0x51) {
 					var_str_384 = _puzzleName[_selectedMenuChapter];
@@ -428,11 +428,11 @@ void FoolGame::metapuzzleOnShift() {
 				}
 				// 138:0d9e
 				_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
-				var_i16_30 = g_toolbox->StringWidth(var_str_384);
-				g_toolbox->MoveTo((_windowWidth / 2) - (var_i16_30 / 2), 0xf);
-				g_toolbox->DrawString(var_str_384);
-				g_toolbox->_defaultMenu->setOverlayDirty(true);
-				g_toolbox->SetPort(var_i32_0);
+				var_i16_30 = _toolbox->StringWidth(var_str_384);
+				_toolbox->MoveTo((_windowWidth / 2) - (var_i16_30 / 2), 0xf);
+				_toolbox->DrawString(var_str_384);
+				_toolbox->_defaultMenu->setOverlayDirty(true);
+				_toolbox->SetPort(var_i32_0);
 				var_i16_200e = _selectedMenuChapter;
 			}
 			// 138:0dfc
@@ -454,17 +454,17 @@ void FoolGame::metapuzzleOnShift() {
 	}
 	// 138:0e50
 	if (var_i16_200e > 0) {
-		g_toolbox->DrawMenuBar();
+		_toolbox->DrawMenuBar();
 		Common::Rect temp;
 		temp.top = arr_i16_1eb8[0];
 		temp.left = arr_i16_1eb8[1];
 		temp.bottom = arr_i16_1eb8[2];
 		temp.right = arr_i16_1eb8[3];
-		g_toolbox->InvertRect(temp);
+		_toolbox->InvertRect(temp);
 		var_i16_200e = 0;
 	}
 	// 138:0e70
-	g_toolbox->SetPort(var_i32_0);
+	_toolbox->SetPort(var_i32_0);
 	sub_128_61ec();
 }
 

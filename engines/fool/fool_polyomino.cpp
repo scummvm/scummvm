@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetPolyomino] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // polyomino puzzle
 void FoolGame::polyominoRun() {
@@ -51,7 +51,7 @@ void FoolGame::polyominoRun() {
 		do {
 			// 133:00b2
 			this->var_i16_484 += 1;
-			g_toolbox->SetRect(
+			_toolbox->SetRect(
 				_screenGrid[this->var_i16_484],
 				this->var_i16_68a,
 				this->var_i16_68c,
@@ -87,7 +87,7 @@ void FoolGame::polyominoRun() {
 		this->arr_i16_1eb8[i] = puzzlesReadShort();
 	}
 	// 133:0228
-	g_toolbox->SetPort(this->var_i32_f24);
+	_toolbox->SetPort(this->var_i32_f24);
 	_zbasic->text(kFontPuzzle, 0x18, Graphics::kMacFontRegular, kSrcOr);
 
 	// for each polyomino
@@ -137,12 +137,12 @@ void FoolGame::polyominoRun() {
 
 		// 133:0388
 		// create polyomino polygons from coordinates
-		PolyHandle poly = g_toolbox->OpenPoly(); // var_poly_1aac
-		g_toolbox->MoveTo(this->arr_i16_4338[1], this->arr_i16_4338[0]);
+		PolyHandle poly = _toolbox->OpenPoly(); // var_poly_1aac
+		_toolbox->MoveTo(this->arr_i16_4338[1], this->arr_i16_4338[0]);
 		for (int i = 2; i <= this->var_i16_103a; i += 2) {
-			g_toolbox->LineTo(this->arr_i16_4338[i+1], this->arr_i16_4338[i]);
+			_toolbox->LineTo(this->arr_i16_4338[i+1], this->arr_i16_4338[i]);
 		}
-		g_toolbox->ClosePoly();
+		_toolbox->ClosePoly();
 
 		// 133:0408
 		// load in letter placement information
@@ -155,63 +155,63 @@ void FoolGame::polyominoRun() {
 		// 133:044a
 		this->arr_i16_1eb8[0x1a] = puzzlesReadShort(); // polygon fill pattern index
 		this->arr_i16_1eb8[0x1b] = puzzlesReadShort(); // text source mode
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 
 		// 133:0476: JSR - "PICTURE_ON"
 		// picture handle 0: XOR text + polyomino
-		PicHandle handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_toolbox->PenMode(kPatXor);
+		PicHandle handle = _toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+		_toolbox->PenMode(kPatXor);
 		if (this->var_i16_103a >= 3) {
-			g_toolbox->TextMode(kSrcXor);
+			_toolbox->TextMode(kSrcXor);
 			for (int i = 1; i <= this->var_i16_103a; i += 3) {
-				g_toolbox->MoveTo(this->arr_i16_3738[i], this->arr_i16_3738[i+1]);
+				_toolbox->MoveTo(this->arr_i16_3738[i], this->arr_i16_3738[i+1]);
 				this->var_str_384 = _zbasic->chr(this->arr_i16_3738[i+2]);
-				g_toolbox->DrawString(this->var_str_384);
+				_toolbox->DrawString(this->var_str_384);
 			}
 		}
 		// 133:050a
-		g_toolbox->InvertPoly(poly);
-		g_toolbox->ClosePicture();
+		_toolbox->InvertPoly(poly);
+		_toolbox->ClosePicture();
 		this->_polyominoPics[j*4] = handle;
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 
 		// 133:0530: JSR - "PICTURE_ON"
 		// picture handle 1:
-		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_toolbox->FillPoly(poly, _patterns[this->arr_i16_1eb8[0x1a]]);
-		g_toolbox->PenPat(_patterns[this->arr_i16_1eb8[0xf]]);
-		g_toolbox->FramePoly(poly);
+		handle = _toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+		_toolbox->FillPoly(poly, _patterns[this->arr_i16_1eb8[0x1a]]);
+		_toolbox->PenPat(_patterns[this->arr_i16_1eb8[0xf]]);
+		_toolbox->FramePoly(poly);
 		// 133:0582
 		if (this->var_i16_103a >= 3) {
-			g_toolbox->TextMode((SourceMode)this->arr_i16_1eb8[0x1b]);
+			_toolbox->TextMode((SourceMode)this->arr_i16_1eb8[0x1b]);
 			for (int i = 1; i <= this->var_i16_103a; i += 3) {
-				g_toolbox->MoveTo(this->arr_i16_3738[i], this->arr_i16_3738[i+1]);
+				_toolbox->MoveTo(this->arr_i16_3738[i], this->arr_i16_3738[i+1]);
 				this->var_str_384 = _zbasic->chr(this->arr_i16_3738[i+2]);
-				g_toolbox->DrawString(this->var_str_384);
+				_toolbox->DrawString(this->var_str_384);
 			}
 		}
 		// 133:061a
-		g_toolbox->FramePoly(poly);
-		g_toolbox->ClosePicture();
+		_toolbox->FramePoly(poly);
+		_toolbox->ClosePicture();
 		// 133:0622
 		this->_polyominoPics[j*4 + 1] = handle;
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 
 		// 133:0642: JSR - "PICTURE_ON"
 		// picture handle 2: draw the shape without letters
-		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_toolbox->PenPat(_patterns[this->arr_i16_1eb8[0xf]]);
-		g_toolbox->FramePoly(poly);
-		g_toolbox->PaintPoly(poly);
-		g_toolbox->ClosePicture();
+		handle = _toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+		_toolbox->PenPat(_patterns[this->arr_i16_1eb8[0xf]]);
+		_toolbox->FramePoly(poly);
+		_toolbox->PaintPoly(poly);
+		_toolbox->ClosePicture();
 		this->_polyominoPics[j*4 + 2] = handle;
 
 		// clear polygon data
-		g_toolbox->KillPoly(poly);
+		_toolbox->KillPoly(poly);
 		// 133:0698
 	}
 	// 133:06b4
-	g_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(this->var_i32_0);
 	this->var_i16_484 = 0;
 	for (int j = this->arr_i16_1eb8[0x16]; j <= this->arr_i16_1eb8[0x17]; j++) {
 		for (int i = this->arr_i16_1eb8[0x18]; i <= this->arr_i16_1eb8[0x19]; i++) {
@@ -259,7 +259,7 @@ void FoolGame::polyominoRun() {
 	// exiting game, delete picture handles
 	for (int j = 1; j <= this->arr_i16_1eb8[0x10]; j++) {
 		for (int i = 0; i <= 2; i++) {
-			g_toolbox->KillPicture(this->_polyominoPics[j*4 + i]);
+			_toolbox->KillPicture(this->_polyominoPics[j*4 + i]);
 		}
 	}
 }
@@ -445,7 +445,7 @@ void FoolGame::polyominoOnClickFixed() {
 	debug(5, "FoolGame::polyominoOnClickFixed: Draw pic 0 (%d, %d)", posX, posY);
 	for (int i = 0; i <= 9; i++) {
 		_zbasic->picture(posX, posY, this->_polyominoPics[this->var_i16_7cc*4]);
-		g_toolbox->Delay(0);
+		_toolbox->Delay(0);
 	}
 	// 133:11c2
 	this->polyominoDrawFrame();
@@ -477,15 +477,15 @@ void FoolGame::polyominoReset() {
 
 void FoolGame::polyominoDrawFrame() {
 	// 133:12d4
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(3, 3);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(3, 3);
 	Common::Rect temp;
 	temp.top = this->arr_i16_1eb8[0x12];
 	temp.left = this->arr_i16_1eb8[0x13];
 	temp.bottom = this->arr_i16_1eb8[0x14];
 	temp.right = this->arr_i16_1eb8[0x15];
-	g_toolbox->FrameRect(temp);
-	g_toolbox->PenNormal();
+	_toolbox->FrameRect(temp);
+	_toolbox->PenNormal();
 }
 
 void FoolGame::polyominoCheckIfSolved() {

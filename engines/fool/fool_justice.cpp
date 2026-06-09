@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetJustice] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // justice - lights on
 void FoolGame::justiceRun() {
@@ -97,7 +97,7 @@ void FoolGame::sub_142_9be() {
 	for (int16 i = 0x24; i <= 0x11d; i += 0x32) {
 		for (int16 j = 0x8c; j <= 0x185; j += 0x32) {
 			this->var_i16_484++;
-			g_toolbox->SetRect(
+			_toolbox->SetRect(
 				_screenGrid[this->var_i16_484],
 				j,
 				i,
@@ -166,7 +166,7 @@ void FoolGame::justiceOnClick() {
 		return;
 	}
 	// 142:0d56
-	g_toolbox->InvertRoundRect(_screenGrid[this->var_i16_103a], 0x1e, 0x1e);
+	_toolbox->InvertRoundRect(_screenGrid[this->var_i16_103a], 0x1e, 0x1e);
 	if (_zbasic->index(1, this->var_i16_103a + 0x19) == _zbasic->str(OFF(11))) { // bullet
 		_zbasic->indexSet(_zbasic->str(OFF(12)), 1, this->var_i16_103a + 0x19); // wadjet
 	}
@@ -228,25 +228,25 @@ void FoolGame::justiceDrawBlock() {
 	// 142:0f96
 	this->arr_i16_3738[this->var_i16_484] = 1;
 	this->playTone(_zbasic->rndInt(0x1f4) + 0x14, 0x28, 1);
-	g_toolbox->PenNormal();
-	g_toolbox->FillRoundRect(_screenGrid[this->var_i16_484], 0x1e, 0x1e, _patterns[0]);
-	g_toolbox->FrameRoundRect(_screenGrid[this->var_i16_484], 0x1e, 0x1e);
+	_toolbox->PenNormal();
+	_toolbox->FillRoundRect(_screenGrid[this->var_i16_484], 0x1e, 0x1e, _patterns[0]);
+	_toolbox->FrameRoundRect(_screenGrid[this->var_i16_484], 0x1e, 0x1e);
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 	this->var_str_384 = _zbasic->index(1, this->var_i16_484 + 0x19);
-	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_384);
+	this->var_i16_7e4 = _toolbox->StringWidth(this->var_str_384);
 	// 142:1056
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[this->var_i16_484].left + 0x19 - (this->var_i16_7e4/2),
 		_screenGrid[this->var_i16_484].top + 0x1e
 	);
-	g_toolbox->DrawString(this->var_str_384);
+	_toolbox->DrawString(this->var_str_384);
 }
 
 void FoolGame::justiceRemoveBlock() {
 	// 142:10bc
 	this->arr_i16_3738[this->var_i16_484] = 0;
 	this->playTone(_zbasic->rndInt(0x1f4) + 0x14, 0x28, 1);
-	g_toolbox->FillRect(_screenGrid[this->var_i16_484], _patterns[_zbasic->rndInt(0x4d)+3]);
+	_toolbox->FillRect(_screenGrid[this->var_i16_484], _patterns[_zbasic->rndInt(0x4d)+3]);
 }
 
 void FoolGame::justiceStoreState() {
@@ -270,7 +270,7 @@ void FoolGame::justiceResetGrid() {
 	_activePuzzleBuffer.clear();
 	for (int16 i = 1; i <= 0x19; i++) {
 		this->playTone(_zbasic->rndInt(0x1f4) + 0x14, 0x28, 1);
-		g_toolbox->FillRect(_screenGrid[i], _patterns[2]);
+		_toolbox->FillRect(_screenGrid[i], _patterns[2]);
 	}
 	// 142:126e
 	this->zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x1a);
