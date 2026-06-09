@@ -62,7 +62,7 @@ void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::Seekabl
 		return;
 
 	const int PCM8_U_SILENCE = 0x80;
-	const int SQUELCH = 32; // Threshold of discontinuity before removing. Lower values = increased sensitivity.
+	const int SQUELCH = 8; // Threshold of discontinuity before removing. Lower values = increased sensitivity.
 	bool is_safe = false;
 
 	// Peek at the last 4 samples without permanently moving the stream pointer.
@@ -76,7 +76,7 @@ void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::Seekabl
 	// any minor fluctuation is inaudible and the sound is considered safe.
 	bool is_stable_and_quiet = true;
 	for (int i = 0; i < 4; i++) {
-		if (abs(s[i] - PCM8_U_SILENCE) > SQUELCH) {
+		if (abs(s[i] - PCM8_U_SILENCE) >= SQUELCH) {
 			is_stable_and_quiet = false;
 			break;
 		}
