@@ -19,34 +19,28 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room103.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
+
+struct Scratch {
+	long _updateClock;
+};
+
+static Scratch local;
 
 
-Room103::Room103(RexNebularEngine *vm) : Room1xx(vm) {
-	_updateClock = 0;
-}
-
-void Room103::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
-
-	byte dummy = 0;
-	s.syncAsByte(dummy); // In order to avoid to break savegame compatibility
-	s.syncAsUint32LE(_updateClock);
-}
-
-void Room103::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room103::enter() {
+static void room_103_init() {
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
@@ -102,7 +96,8 @@ void Room103::enter() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	}
 
-	sceneEntrySound();
+	section_1_music();
+
 	_vm->_game->loadQuoteSet(70, 51, 71, 7, 73, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
@@ -115,10 +110,10 @@ void Room103::enter() {
 
 	_vm->_palette->setEntry(252, 63, 63, 10);
 	_vm->_palette->setEntry(253, 45, 45, 10);
-	_updateClock = _scene->_frameStartTime;
+	local._updateClock = _scene->_frameStartTime;
 }
 
-void Room103::step() {
+static void room_103_daemon() {
 	switch (_vm->_game->_trigger) {
 	case 70:
 		_vm->_game->_player._stepEnabled = true;
@@ -144,7 +139,7 @@ void Room103::step() {
 		break;
 	}
 
-	if (_scene->_frameStartTime >= _updateClock) {
+	if (_scene->_frameStartTime >= local._updateClock) {
 		Common::Point pt = _vm->_game->_player._playerPos;
 		int dist = Math::hypotenuse(pt.x - 79, pt.y - 137);
 		_vm->_sound->command(29, (dist * -127 / 378) + 127);
@@ -157,11 +152,15 @@ void Room103::step() {
 		dist = Math::hypotenuse(pt.x - 266, pt.y - 138);
 		_vm->_sound->command(32, (dist * -127 / 378) + 127);
 
-		_updateClock = _scene->_frameStartTime + _vm->_game->_player._ticksAmount;
+		local._updateClock = _scene->_frameStartTime + _vm->_game->_player._ticksAmount;
 	}
 }
 
-void Room103::actions() {
+static void room_103_pre_parser() {
+	// No implementation
+}
+
+static void room_103_parser() {
 	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(10322);
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
@@ -341,7 +340,7 @@ void Room103::actions() {
 	_action._inProgress = false;
 }
 
-void Room103::postActions() {
+void room_103_error() {
 	if (_action.isObject(NOUN_AUXILIARY_POWER) && !_action.isAction(VERB_WALKTO)) {
 		_vm->_dialogs->show(10305);
 		_action._inProgress = false;
@@ -352,6 +351,26 @@ void Room103::postActions() {
 	}
 }
 
+void room_103_synchronize(Common::Serializer &s) {
+	byte dummy = 0;
+	s.syncAsByte(dummy); // In order to avoid to break savegame compatibility
+	s.syncAsUint32LE(local._updateClock);
+}
+
+void room_103_preload() {
+	room_init_code_pointer = room_103_init;
+	room_pre_parser_code_pointer = room_103_pre_parser;
+	room_parser_code_pointer = room_103_parser;
+	room_daemon_code_pointer = room_103_daemon;
+	room_error_code_pointer = room_103_error;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

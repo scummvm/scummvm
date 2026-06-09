@@ -57,6 +57,31 @@ enum SpriteAnimType {
 	ANIMTYPE_STAMP = AA_STAMP
 };
 
+
+enum ScreenTransition {
+	kTransitionNone = 0,
+	kTransitionFadeIn,
+	kTransitionFadeOutIn,
+	kTransitionBoxInBottomLeft,
+	kTransitionBoxInBottomRight,
+	kTransitionBoxInTopLeft,
+	kTransitionBoxInTopRight,
+	kTransitionPanLeftToRight,
+	kTransitionPanRightToLeft,
+	kTransitionCircleIn1,
+	kTransitionCircleIn2,
+	kTransitionCircleIn3,
+	kTransitionCircleIn4,
+	kVertTransition1,
+	kVertTransition2,
+	kVertTransition3,
+	kVertTransition4,
+	kVertTransition5,
+	kVertTransition6,
+	kVertTransition7,
+	kNullPaletteCopy
+};
+
 struct Action {
 	struct ActiveAction {
 		int &_verbId = player2.words[0];
@@ -64,6 +89,12 @@ struct Action {
 		int &_indirectObjectId = player2.words[2];
 	};
 	ActiveAction _activeAction;
+
+	struct SavedFields {
+		int &_lookFlag = player.look_around;
+	};
+	SavedFields _savedFields;
+
 	int &_mainObjectSource = player.main_object_source;
 
 	bool isAction(int word1) const;
@@ -86,66 +117,14 @@ struct Globals {
 };
 extern Globals _globals;
 
-struct Game {
-	struct Objects {
-		void addToInventory(int object_id);
-		bool isInRoom(int object_id) const;
-		bool isInInventory(int object_id) const;
-		int getIdFromDesc(int desc_id) const;
-	};
-	Objects _objects;
-
-	struct Player {
-		struct PlayerPoint {
-			int &x = player.x;
-			int &y = player.y;
-
-			PlayerPoint &operator=(const Common::Point &pt) {
-				x = pt.x;
-				y = pt.y;
-				return *this;
-			}
-
-			bool operator==(const Common::Point &rhs) const {
-				return x == rhs.x && y == rhs.y;
-			}
-		};
-		PlayerPoint _playerPos;
-		int &_facing = player.facing;
-		int &_visible = player.walker_visible;
-		int &_stepEnabled = player.commands_allowed;
-		char *const q = &player.series_name[0];
-		byte &_spritesChanged = player.walker_must_reload;
-		byte &_loadsFirst = player.walker_loads_first;
-		int &_needToWalk = player.need_to_walk;
-		int &_readyToWalk = player.ready_to_walk;
-		int &_special = player.special_code;
-		long &_priorTimer = player.clock;
-		int &_ticksAmount = player.frame_delay;
-		char *const _spritesPrefix = &player.series_name[0];
-	};
-	Player _player;
-
-	struct VisitedScenes {
-		bool exists(int roomNum) const;
-	};
-	VisitedScenes _visitedScenes;
-
-	int &_trigger = kernel.trigger;
-	int &_triggerSetupMode = kernel.trigger_setup_mode;
-	char *const _aaName = kernel.interface;
-	int8 &_difficulty = game.difficulty;
-
-	void loadQuoteSet(int quote1, ...);
-	char *getQuote(int quote_id);
-};
-
-struct Resources {
-	static char *formatName(int my_room, char type, int num, int ext, const char *text);
-	static char *formatAAName(int num);
-};
-
 struct Scene {
+	Scene *operator->() {
+		return this;
+	}
+	const Scene *operator->() const {
+		return this;
+	}
+
 	struct Animation {
 		int16 _id = -1;
 		bool operator!=(std::nullptr_t) const {
@@ -191,15 +170,16 @@ struct Scene {
 		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 			uint32 timeout, const Common::String &msg);
 		void reset();
+		void setQuoted(int msgIndex, int numTicks, bool quoted);
 	};
 	KernelMessages _kernelMessages;
 
 	struct Sequences {
-		int16 addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
+		int16 addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
 			word start_ticks = 0, int expire = 0);
-		int16 addReverseSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
-			word start_ticks, int expire);
-		int startPingPongCycle(int series_id, int mirror, word ticks, word interval_ticks,
+		int16 addReverseSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
+			word start_ticks = 0, int expire = 0);
+		int startPingPongCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
 			word start_ticks = 0, int expire = 0);
 		void remove(int sequence_id);
 
@@ -222,6 +202,84 @@ struct Scene {
 	long &_frameStartTime = kernel.clock;
 
 	int loadAnimation(const char *name, int trigger_code);
+	void changeVariant(int num);
+	void drawElements(int transitionType, bool surfaceFlag);
+};
+extern Scene _scene;
+
+struct Game {
+	Game *operator->() {
+		return this;
+	}
+	const Game *operator->() const {
+		return this;
+	}
+
+	struct Objects {
+		void addToInventory(int object_id);
+		bool isInRoom(int object_id) const;
+		bool isInInventory(int object_id) const;
+		int getIdFromDesc(int desc_id) const;
+	};
+	Objects _objects;
+
+	struct Player {
+		struct PlayerPoint {
+			int &x = player.x;
+			int &y = player.y;
+
+			PlayerPoint &operator=(const Common::Point &pt) {
+				x = pt.x;
+				y = pt.y;
+				return *this;
+			}
+			operator Common::Point() {
+				return Common::Point(x, y);
+			}
+
+			bool operator==(const Common::Point &rhs) const {
+				return x == rhs.x && y == rhs.y;
+			}
+		};
+		PlayerPoint _playerPos;
+		int &_facing = player.facing;
+		bool &_visible = player.walker_visible;
+		bool &_stepEnabled = player.commands_allowed;
+		char *const q = &player.series_name[0];
+		byte &_spritesChanged = player.walker_must_reload;
+		byte &_loadsFirst = player.walker_loads_first;
+		int &_needToWalk = player.need_to_walk;
+		int &_readyToWalk = player.ready_to_walk;
+		int &_special = player.special_code;
+		long &_priorTimer = player.clock;
+		int &_ticksAmount = player.frame_delay;
+		char *const _spritesPrefix = &player.series_name[0];
+	};
+	Player _player;
+
+	Scene &_scene = Rooms::_scene;
+
+	struct VisitedScenes {
+		byte &_sceneRevisited = player.been_here_before;
+
+		void add(int roomNum);
+		bool exists(int roomNum) const;
+	};
+	VisitedScenes _visitedScenes;
+
+	int &_trigger = kernel.trigger;
+	int &_triggerSetupMode = kernel.trigger_setup_mode;
+	char *const _aaName = kernel.interface;
+	int8 &_difficulty = game.difficulty;
+
+	void loadQuoteSet(int quote1, ...);
+	char *getQuote(int quote_id);
+};
+extern Game _game;
+
+struct Resources {
+	static char *formatName(int my_room, char type, int num, int ext, const char *text);
+	static char *formatAAName(int num);
 };
 
 struct VM {
@@ -245,6 +303,8 @@ struct VM {
 	};
 	Dialogs _dialogs;
 
+	Game &_game = Rooms::_game;
+
 	struct Palette {
 		void setEntry(int color, int r, int g, int b);
 	};
@@ -259,15 +319,12 @@ struct VM {
 			return this;
 		}
 
-		void command(int num);
+		void command(int num, int distance = 0);
 	};
 	Sound _sound;
 
 	int getRandomNumber(int min, int max);
 };
-
-extern Game _game;
-extern Scene *const _scene;
 extern VM _vm;
 
 extern char *formAnimName(char type, int num);

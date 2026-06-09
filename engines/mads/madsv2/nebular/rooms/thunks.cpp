@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/player.h"
@@ -36,8 +37,7 @@ namespace RexNebular {
 namespace Rooms {
 
 Action _action;
-static Scene scene;
-Scene *const _scene = &scene;
+Scene _scene;
 Globals _globals;
 VM _vm;
 
@@ -67,6 +67,10 @@ bool Game::Objects::isInInventory(int object_id) const {
 
 int Game::Objects::getIdFromDesc(int desc_id) const {
 	return object_named(desc_id);
+}
+
+void Game::VisitedScenes::add(int roomNum) {
+	player_discover_room(roomNum);
 }
 
 bool Game::VisitedScenes::exists(int roomNum) const {
@@ -132,6 +136,10 @@ void Scene::KernelMessages::reset() {
 	kernel_message_purge();
 }
 
+void Scene::KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
+	kernel_message_teletype(msgIndex, numTicks, quoted);
+}
+
 int16 Scene::Sprites::addSprites(const char *name, int load_flags) {
 	return kernel_load_series(name, load_flags);
 }
@@ -183,6 +191,14 @@ int Scene::loadAnimation(const char *name, int trigger_code) {
 	return kernel_run_animation(name, trigger_code);
 }
 
+void Scene::changeVariant(int num) {
+	kernel_load_variant(num);
+}
+
+void Scene::drawElements(int transitionType, bool surfaceFlag) {
+	matte_frame(transitionType, surfaceFlag);
+}
+
 void VM::Dialogs::show(int id) {
 	text_show(id);
 }
@@ -195,8 +211,8 @@ void VM::Palette::setEntry(int color, int r, int g, int b) {
 	pal_change_color(color, r, g, b);
 }
 
-void VM::Sound::command(int num) {
-	g_engine->_soundManager->command(num);
+void VM::Sound::command(int num, int distance) {
+	g_engine->_soundManager->command(num, distance);
 }
 
 int VM::getRandomNumber(int min, int max) {

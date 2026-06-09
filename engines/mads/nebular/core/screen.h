@@ -37,18 +37,6 @@ enum ScreenMode {
 	SCREENMODE_VGA = 19
 };
 
-enum ScreenTransition {
-	kTransitionNone = 0,
-	kTransitionFadeIn, kTransitionFadeOutIn,
-	kTransitionBoxInBottomLeft, kTransitionBoxInBottomRight,
-	kTransitionBoxInTopLeft, kTransitionBoxInTopRight,
-	kTransitionPanLeftToRight, kTransitionPanRightToLeft,
-	kTransitionCircleIn1, kTransitionCircleIn2,
-	kTransitionCircleIn3, kTransitionCircleIn4,
-	kVertTransition1, kVertTransition2, kVertTransition3,
-	kVertTransition4, kVertTransition5, kVertTransition6,
-	kVertTransition7, kNullPaletteCopy
-};
 
 enum InputMode {
 	kInputBuildingSentences = 0,		// Normal sentence building
