@@ -168,7 +168,7 @@ static bool readEmbeddedSanChunkHeader(Common::SeekableReadStream &stream, int64
 
 	const int64 dataStart = stream.pos();
 	if ((int64)chunkSize > containerEnd - dataStart) {
-		debugC(DEBUG_INSANE, "Rebel2: Truncated embedded SAN %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
+		debugC(DEBUG_INSANE, "Truncated embedded SAN %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
 			context, tag, headerPos, chunkSize, containerEnd - dataStart);
 		return false;
 	}
@@ -204,12 +204,12 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 	}
 	if (_rebelHandler == 0x19 && (userId == 6 || userId == 7)) {
 		skipImmediateDraw = false;
-		debugC(DEBUG_INSANE, "Rebel2: Handler 25 static overlay userId=%d - forcing immediate draw", userId);
+		debugC(DEBUG_INSANE, "Handler 25 static overlay userId=%d - forcing immediate draw", userId);
 	}
 
 	if (!frame.valid || !renderBitmap || skipImmediateDraw) {
 		if (skipImmediateDraw && frame.valid) {
-			debugC(DEBUG_INSANE, "Rebel2: Skipped immediate draw for Handler %d HUD %d (will render during post-processing)",
+			debugC(DEBUG_INSANE, "Skipped immediate draw for Handler %d HUD %d (will render during post-processing)",
 				_rebelHandler, userId);
 		}
 		return;
@@ -220,7 +220,7 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 
 	blitEmbeddedFrameRegion(renderBitmap, pitch, pitch, bufHeight, frame,
 		frame.renderX, frame.renderY, 0, 0, frame.width, frame.height);
-	debugC(DEBUG_INSANE, "Rebel2: Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
+	debugC(DEBUG_INSANE, "Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
 }
 
 void InsaneRebel2::drawHandler25CorridorOverlay(byte *renderBitmap) {
@@ -269,7 +269,7 @@ void InsaneRebel2::drawHandler25CorridorOverlay(byte *renderBitmap) {
 			   drawWidth);
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2 Handler25: Corridor overlay drawn at (%d,%d) size(%d,%d)",
+	debugC(DEBUG_INSANE, "Handler25: Corridor overlay drawn at (%d,%d) size(%d,%d)",
 		_rebelViewOffsetX, _rebelViewOffsetY, corridorOverlay.width, corridorOverlay.height);
 }
 
@@ -282,7 +282,7 @@ void InsaneRebel2::drawHandler25CorridorOverlay(byte *renderBitmap) {
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 	// Validate userId - Level 3 uses slots 0-11, allow up to 15 for safety
 	if (userId < 0 || userId > 15 || !animData || size < 8) {
-		debugC(DEBUG_INSANE, "Rebel2: Invalid embedded SAN: userId=%d, size=%d", userId, size);
+		debugC(DEBUG_INSANE, "Invalid embedded SAN: userId=%d, size=%d", userId, size);
 		return;
 	}
 
@@ -292,7 +292,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	// Read ANIM header
 	uint32 animTag = stream.readUint32BE();
 	if (animTag != MKTAG('A','N','I','M')) {
-		debugC(DEBUG_INSANE, "Rebel2: Embedded SAN missing ANIM tag, got 0x%08X", animTag);
+		debugC(DEBUG_INSANE, "Embedded SAN missing ANIM tag, got 0x%08X", animTag);
 		return;
 	}
 	uint32 animSize = stream.readUint32BE();
@@ -300,9 +300,9 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	if ((int64)animSize <= streamEnd - 8) {
 		animEnd = 8 + (int64)animSize;
 	} else {
-		debugC(DEBUG_INSANE, "Rebel2: Embedded ANIM truncated: reported size=%u, actual=%lld", animSize, streamEnd - 8);
+		debugC(DEBUG_INSANE, "Embedded ANIM truncated: reported size=%u, actual=%lld", animSize, streamEnd - 8);
 	}
-	debugC(DEBUG_INSANE, "Rebel2: Parsing embedded ANIM: userId=%d, reported size=%u, actual=%lld", userId, animSize, streamEnd - 8);
+	debugC(DEBUG_INSANE, "Parsing embedded ANIM: userId=%d, reported size=%u, actual=%lld", userId, animSize, streamEnd - 8);
 
 	// Iterate through chunks to find FRME -> FOBJ
 	while (!stream.eos() && stream.pos() + 8 <= animEnd) {
@@ -325,7 +325,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 
 				if (subTag == MKTAG('F','O','B','J')) {
 					if (subSize < 14) {
-						debugC(DEBUG_INSANE, "Rebel2: Embedded FOBJ too small: userId=%d, size=%u", userId, subSize);
+						debugC(DEBUG_INSANE, "Embedded FOBJ too small: userId=%d, size=%u", userId, subSize);
 						stream.seek(nextSubPos);
 						continue;
 					}
@@ -339,13 +339,13 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					stream.readUint16LE();  // unknown
 					stream.readUint16LE();  // unknown
 
-					debugC(DEBUG_INSANE, "Rebel2: Embedded HUD frame: userId=%d, %dx%d at (%d,%d), codec=%d",
+					debugC(DEBUG_INSANE, "Embedded HUD frame: userId=%d, %dx%d at (%d,%d), codec=%d",
 						userId, width, height, left, top, codec);
 
 					// High-resolution HUD frames are used when the RA2 high-res option
 					// selects a 640x400 virtual screen. Keep skipping them in low-res mode.
 					if (!isHiRes() && (width > 400 || height > 250)) {
-						debugC(DEBUG_INSANE, "Rebel2: SKIPPING high-res embedded frame: userId=%d, %dx%d (exceeds 400x250)",
+						debugC(DEBUG_INSANE, "SKIPPING high-res embedded frame: userId=%d, %dx%d (exceeds 400x250)",
 							userId, width, height);
 						stream.seek(nextSubPos);
 						continue;
@@ -383,7 +383,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 							}
 							uint32 bytesRead = stream.read(fobjData, dataSize);
 							if (bytesRead != (uint32)dataSize) {
-								debugC(DEBUG_INSANE, "Rebel2: Short embedded FOBJ read: got %u of %d bytes", bytesRead, dataSize);
+								debugC(DEBUG_INSANE, "Short embedded FOBJ read: got %u of %d bytes", bytesRead, dataSize);
 								free(fobjData);
 								return;
 							}
@@ -393,17 +393,17 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								// Codec 1/3: RLE - use existing decoder (FUN_0042C590)
 								smushDecodeRLE(frame.pixels, fobjData, 0, 0, width, height, width);
 								frame.valid = true;
-								debugC(DEBUG_INSANE, "Rebel2: Decoded embedded HUD (codec %d/RLE): %dx%d", codec, width, height);
+								debugC(DEBUG_INSANE, "Decoded embedded HUD (codec %d/RLE): %dx%d", codec, width, height);
 							} else if (codec == 20) {
 								// Codec 20: Uncompressed (FUN_0042C400)
 								smushDecodeUncompressed(frame.pixels, fobjData, 0, 0, width, height, width);
 								frame.valid = true;
-								debugC(DEBUG_INSANE, "Rebel2: Decoded embedded HUD (codec 20/raw): %dx%d", width, height);
+								debugC(DEBUG_INSANE, "Decoded embedded HUD (codec 20/raw): %dx%d", width, height);
 							} else if (codec == 21 || codec == 44) {
 								// Codec 21/44: Line update (FUN_0042BD60)
 								smushDecodeLineUpdate(frame.pixels, fobjData, 0, 0, width, height, width, dataSize);
 								frame.valid = true;
-								debugC(DEBUG_INSANE, "Rebel2: Decoded embedded HUD (codec %d/line update): %dx%d", codec, width, height);
+								debugC(DEBUG_INSANE, "Decoded embedded HUD (codec %d/line update): %dx%d", codec, width, height);
 							} else if (codec == 45) {
 								// Codec 45: blur/wipe mask (FUN_0042B460 -> FUN_0042B530 -> FUN_0042DDF0)
 								smushDecodeRA2Blur(frame.pixels, fobjData, 0, 0, width, height, width, dataSize,
@@ -413,16 +413,16 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								// Codec 23: Skip/copy with embedded RLE (FUN_0042BBF0)
 								smushDecodeSkipRLE(frame.pixels, fobjData, 0, 0, width, height, width, dataSize);
 								frame.valid = true;
-								debugC(DEBUG_INSANE, "Rebel2: Decoded embedded HUD (codec 23/skip-RLE): %dx%d", width, height);
+								debugC(DEBUG_INSANE, "Decoded embedded HUD (codec 23/skip-RLE): %dx%d", width, height);
 							} else {
-								debugC(DEBUG_INSANE, "Rebel2: Unsupported embedded HUD codec %d", codec);
+								debugC(DEBUG_INSANE, "Unsupported embedded HUD codec %d", codec);
 								frame.valid = false;
 							}
 
 							// Count non-zero pixels to verify frame has content
 							if (frame.valid) {
 								int nonZeroPixels = countEmbeddedFramePixels(frame);
-								debugC(DEBUG_INSANE, "Rebel2: Frame userId=%d has %d non-zero pixels (%d%%)",
+								debugC(DEBUG_INSANE, "Frame userId=%d has %d non-zero pixels (%d%%)",
 									userId, nonZeroPixels, (nonZeroPixels * 100) / (width * height));
 							}
 
@@ -447,7 +447,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 		}
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2: No FOBJ found in embedded SAN userId=%d", userId);
+	debugC(DEBUG_INSANE, "No FOBJ found in embedded SAN userId=%d", userId);
 }
 
 // Spawn explosion into the shared 5-slot system.
@@ -611,7 +611,7 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 				_turretShots[i].gunY = _rebelViewOffset2Y + 140 + _viewY;
 			}
 
-			debugC(DEBUG_INSANE, "Rebel2 Handler25: Spawned shot %d target (%d,%d) gun (%d,%d)",
+			debugC(DEBUG_INSANE, "Handler25: Spawned shot %d target (%d,%d) gun (%d,%d)",
 				i, _turretShots[i].targetX, _turretShots[i].targetY,
 				_turretShots[i].gunX, _turretShots[i].gunY);
 			break;
@@ -1147,7 +1147,7 @@ void InsaneRebel2::initLaserTexture(NutRenderer *nut, int spriteIdx) {
 		}
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2: Initialized laser texture %dx%d from sprite %d (xoff=%d yoff=%d src=%dx%d)",
+	debugC(DEBUG_INSANE, "Initialized laser texture %dx%d from sprite %d (xoff=%d yoff=%d src=%dx%d)",
 	      texWidth, texHeight, spriteIdx, srcXOff, srcYOff, srcWidth, srcHeight);
 }
 
@@ -1514,7 +1514,7 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	int edgeClipRight = CLIP<int>(clipRight - 1, 1, width - 2);
 	int edgeClipBottom = CLIP<int>(clipBottom - 1, 1, height - 2);
 
-	debugC(DEBUG_INSANE, "Rebel2: drawLaserBeam gun(%d,%d) tgt(%d,%d) start(%d,%d) end(%d,%d) anim=%d/%d ws=%d hs=%d th=%d",
+	debugC(DEBUG_INSANE, "drawLaserBeam gun(%d,%d) tgt(%d,%d) start(%d,%d) end(%d,%d) anim=%d/%d ws=%d hs=%d th=%d",
 		gunX, gunY, targetX, targetY, startX, startY, endX, endY,
 		animFrame, maxFrames, widthScale, heightScale, thickness);
 
@@ -1660,16 +1660,16 @@ void InsaneRebel2::registerCollisionZone(Common::SeekableReadStream &b, int16 su
 	// Register zone into appropriate table based on sub-opcode
 	if (subOpcode == 0x0D && _primaryZoneCount < kMaxCollisionZones) {
 		_primaryZones[_primaryZoneCount++] = zone;
-		debugC(DEBUG_INSANE, "Rebel2: Registered PRIMARY zone %d: filter=%d fields=[%d,%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
+		debugC(DEBUG_INSANE, "Registered PRIMARY zone %d: filter=%d fields=[%d,%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
 			_primaryZoneCount - 1, par4, field1, field2,
 			x1, y1, x2, y2, x3, y3, x4, y4);
 	} else if (subOpcode == 0x0E && _secondaryZoneCount < kMaxCollisionZones) {
 		_secondaryZones[_secondaryZoneCount++] = zone;
-		debugC(DEBUG_INSANE, "Rebel2: Registered SECONDARY zone %d: filter=%d fields=[%d,%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
+		debugC(DEBUG_INSANE, "Registered SECONDARY zone %d: filter=%d fields=[%d,%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
 			_secondaryZoneCount - 1, par4, field1, field2,
 			x1, y1, x2, y2, x3, y3, x4, y4);
 	} else {
-		debugC(DEBUG_INSANE, "Rebel2: WARNING - Could not register zone (subOpcode=%d, primary=%d, secondary=%d)",
+		debugC(DEBUG_INSANE, "WARNING - Could not register zone (subOpcode=%d, primary=%d, secondary=%d)",
 			subOpcode, _primaryZoneCount, _secondaryZoneCount);
 	}
 }
@@ -1793,7 +1793,7 @@ void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width,
 				int collisionDamage = (dparams.dodgeDamage >= 0) ? dparams.dodgeDamage : 0;
 
 				if (applyPlayerDamage(collisionDamage)) {
-					debugC(DEBUG_INSANE, "Rebel2: COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
+					debugC(DEBUG_INSANE, "COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
 						i, aimX, aimY, collisionDamage, _playerDamage);
 				}
 				// Visual effect — FUN_00420515 (palette flash)
@@ -1899,7 +1899,7 @@ void InsaneRebel2::applyHandler7ObstacleHit(const InsaneRebel2::CollisionZone &z
 		initDamageFlash();
 	// Pan based on ship X position relative to screen center.
 	playSfx(1, 127, CLIP((_flyShipScreenX - 212) * 127 / 160, -127, 127));
-	debugC(DEBUG_INSANE, "Rebel2: Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
+	debugC(DEBUG_INSANE, "Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
 		zoneIndex, _flyShipScreenX, _flyShipScreenY, collisionDamage);
 }
 
@@ -1978,7 +1978,7 @@ void InsaneRebel2::checkHandler7TopBoundary(const InsaneRebel2::CollisionZone &z
 			// Ship above top wall - push down.
 			const bool damageApplied = applyHandler7WallDamage(wallDamage);
 			if (damageApplied) {
-				debugC(DEBUG_INSANE, "Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
+				debugC(DEBUG_INSANE, "Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeY, wallDamage);
 			}
 			_spaceShotDirection = 2;  // Direction: pushed down
@@ -2004,7 +2004,7 @@ void InsaneRebel2::checkHandler7BottomBoundary(const InsaneRebel2::CollisionZone
 			// Ship below bottom wall - push up.
 			const bool damageApplied = applyHandler7WallDamage(wallDamage);
 			if (damageApplied) {
-				debugC(DEBUG_INSANE, "Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
+				debugC(DEBUG_INSANE, "Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeY, wallDamage);
 			}
 			_spaceShotDirection = 3;  // Direction: pushed up
@@ -2034,7 +2034,7 @@ void InsaneRebel2::checkHandler7LeftBoundary(const InsaneRebel2::CollisionZone &
 
 			const bool damageApplied = applyHandler7WallDamage(wallDamage);
 			if (damageApplied) {
-				debugC(DEBUG_INSANE, "Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
+				debugC(DEBUG_INSANE, "Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeX, wallDamage);
 			}
 			_spaceShotDirection = 0;  // Direction: pushed right
@@ -2061,7 +2061,7 @@ void InsaneRebel2::checkHandler7RightBoundary(const InsaneRebel2::CollisionZone 
 
 			const bool damageApplied = applyHandler7WallDamage(wallDamage);
 			if (damageApplied) {
-				debugC(DEBUG_INSANE, "Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
+				debugC(DEBUG_INSANE, "Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
 					_flyShipScreenX, _flyShipScreenY, edgeX, wallDamage);
 			}
 			_spaceShotDirection = 1;  // Direction: pushed left
@@ -2454,7 +2454,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 
 		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
-			debugC(DEBUG_INSANE, "Rebel2: Pilot selection confirmed: %d", selection);
+			debugC(DEBUG_INSANE, "Pilot selection confirmed: %d", selection);
 			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
@@ -2479,7 +2479,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 
 		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
-			debugC(DEBUG_INSANE, "Rebel2: Chapter selection confirmed: %d", selection);
+			debugC(DEBUG_INSANE, "Chapter selection confirmed: %d", selection);
 			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
@@ -2515,7 +2515,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 		// At 12fps video rate, 300 frames = ~25 seconds of inactivity.
 		// The original checks: if (local_8 > 299) return 0.
 		if (_menuInactivityTimer > 300) {
-			debugC(DEBUG_INSANE, "Rebel2: Menu inactivity timeout - resuming intro/demo loop");
+			debugC(DEBUG_INSANE, "Menu inactivity timeout - resuming intro/demo loop");
 			_menuInactivityTimer = 0;
 			_menuInactivityTimedOut = true;
 			_menuSelectionConfirmed = false;
@@ -2528,7 +2528,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 
 		// If a selection was confirmed, signal video to stop.
 		if (selection >= 0) {
-			debugC(DEBUG_INSANE, "Rebel2: Menu selection confirmed: %d", selection);
+			debugC(DEBUG_INSANE, "Menu selection confirmed: %d", selection);
 			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
@@ -2559,7 +2559,7 @@ bool InsaneRebel2::handlePostRenderIntro(byte *renderBitmap, int pitch, int widt
 		// Track state transition for debugging.
 		if (!_introCursorPushed) {
 			_introCursorPushed = true;
-			debugC(DEBUG_INSANE, "Rebel2: Intro/cinematic mode (handler=0, flags=0x%x, state=%d) - HUD disabled, mouse hidden",
+			debugC(DEBUG_INSANE, "Intro/cinematic mode (handler=0, flags=0x%x, state=%d) - HUD disabled, mouse hidden",
 				  _player->_curVideoFlags, _gameState);
 		}
 
@@ -2574,7 +2574,7 @@ bool InsaneRebel2::handlePostRenderIntro(byte *renderBitmap, int pitch, int widt
 	// Gameplay mode - handler was set by IACT opcode 6.
 	if (_introCursorPushed) {
 		_introCursorPushed = false;
-		debugC(DEBUG_INSANE, "Rebel2: Gameplay mode (handler=%d, flags=0x%x, state=%d) - HUD enabled",
+		debugC(DEBUG_INSANE, "Gameplay mode (handler=%d, flags=0x%x, state=%d) - HUD enabled",
 			  _rebelHandler, _player->_curVideoFlags, _gameState);
 	}
 
@@ -2694,7 +2694,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY);
 
 	// Ship rendering (FUN_00401ccf for Handler 8, FUN_0040d836 for Handler 7).
-	debugC(DEBUG_INSANE, "Rebel2 Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
+	debugC(DEBUG_INSANE, "Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
 		_rebelHandler, (void*)_shipSprite, (void*)_flyShipSprite, _shipLevelMode,
 		_shipSprite ? _shipSprite->getNumChars() : 0,
 		_flyShipSprite ? _flyShipSprite->getNumChars() : 0);
@@ -2974,7 +2974,7 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	const char *text = splayer->getString(_textOverlayID);
-	debugC(DEBUG_INSANE, "Rebel2: Text overlay frame %d/%d-%d textID=0x%x text='%s'",
+	debugC(DEBUG_INSANE, "Text overlay frame %d/%d-%d textID=0x%x text='%s'",
 	      curFrame, _textOverlayFadeIn, _textOverlayFadeOut, _textOverlayID,
 	      text ? text : "(null)");
 	if (!text)
@@ -3171,7 +3171,7 @@ void InsaneRebel2::renderTurretHudOverlays(byte *renderBitmap, int pitch, int wi
 			_hudOverlayNut, animFrame);
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2 HUD: Drawing NUT overlay frame %d/%d at (%d,%d) mouseOffset=(%d,%d)",
+	debugC(DEBUG_INSANE, "HUD: Drawing NUT overlay frame %d/%d at (%d,%d) mouseOffset=(%d,%d)",
 		  animFrame, numSprites, hudX, hudY, mouseOffsetX, mouseOffsetY);
 
 	// Draw secondary HUD overlay if present (DAT_0047fe80)
@@ -3204,7 +3204,7 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 
 		// Skip small frames at (0,0) - likely animation patches
 		if (frame.renderX == 0 && frame.renderY == 0 && frame.width < 50 && frame.height < 60) {
-			debugC(DEBUG_INSANE, "Rebel2: Skipping small embedded frame at (0,0): slot=%d size=%dx%d",
+			debugC(DEBUG_INSANE, "Skipping small embedded frame at (0,0): slot=%d size=%dx%d",
 				hudSlot, frame.width, frame.height);
 			continue;
 		}
@@ -3268,7 +3268,7 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 		destX += _viewX;
 		destY += _viewY;
 
-		debugC(DEBUG_INSANE, "Rebel2: Rendering embedded HUD slot=%d size=%dx%d at (%d,%d)",
+		debugC(DEBUG_INSANE, "Rendering embedded HUD slot=%d size=%dx%d at (%d,%d)",
 			hudSlot, frame.width, frame.height, destX, destY);
 
 		blitEmbeddedFrameRegion(renderBitmap, pitch, pitch, height, frame,
@@ -3560,7 +3560,7 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 			shipDraw.x, shipDraw.y, _flyTargetSprite, spriteIndex);
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2 Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",
+	debugC(DEBUG_INSANE, "Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",
 		drawX, drawY, spriteIndex, numSprites, _flyShipScreenX, _flyShipScreenY,
 		_perspectiveX, _perspectiveY, _smoothedVelocity, _verticalInput, _flyEffectAnimCounter, _flyOverlayRepeatCount);
 }
@@ -3618,7 +3618,7 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 
 	int sprW = _shipSprite->getCharWidth(spriteIndex);
 	int sprH = _shipSprite->getCharHeight(spriteIndex);
-	debugC(DEBUG_INSANE, "Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d",
+	debugC(DEBUG_INSANE, "Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d",
 		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
 		spriteXOffset, spriteYOffset, sprW, sprH, drawY + sprH,
 		_viewX, _viewY, spriteIndex, numSprites);
@@ -3749,7 +3749,7 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 			scaledClipLeft, 0, scaledClipRight, renderHeight,
 			drawX, drawY, _grd001Sprite, 0, false, renderScale, false);
 
-		debugC(DEBUG_INSANE, "Rebel2 Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d clip=[%d,%d) scale=%d",
+		debugC(DEBUG_INSANE, "Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d clip=[%d,%d) scale=%d",
 			drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y,
 			spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel, useHalfWidth ? 1 : 0, useRightHalf ? 1 : 0, scaledClipLeft, scaledClipRight, renderScale);
 
@@ -3769,7 +3769,7 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 				0, 0, width, renderHeight,
 				overlayDrawX, overlayDrawY, _grd005Sprite, overlayIdx, false, renderScale, false);
 
-			debugC(DEBUG_INSANE, "Rebel2 Handler25 PRE: GRD005 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d scale=%d",
+			debugC(DEBUG_INSANE, "Handler25 PRE: GRD005 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d scale=%d",
 				overlayDrawX, overlayDrawY, overlayXOffset, overlayYOffset,
 				_rebelViewOffset2X, _rebelViewOffset2Y, overlayW, overlayH, _grdSpriteMode, renderScale);
 		}
@@ -3924,7 +3924,7 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 			0, 0, width, renderHeight,
 			drawX, drawY, _grd002Sprite, spriteIdx, shouldMirror, renderScale, true);
 
-		debugC(DEBUG_INSANE, "Rebel2 Handler25: GRD002 at (%d,%d) nutOffset(%d,%d) viewOffset(%d,%d) size(%d,%d) spriteIdx=%d damage=%d dir=%d mirror=%d scale=%d",
+		debugC(DEBUG_INSANE, "Handler25: GRD002 at (%d,%d) nutOffset(%d,%d) viewOffset(%d,%d) size(%d,%d) spriteIdx=%d damage=%d dir=%d mirror=%d scale=%d",
 			drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y, spriteW, spriteH, spriteIdx, _rebelDamageLevel, _rebelFlightDir, shouldMirror ? 1 : 0, renderScale);
 	}
 }
@@ -3979,7 +3979,7 @@ void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, 
 	blitEmbeddedFrameRegion(renderBitmap, pitch, width, height, shipFrame,
 		drawX, drawY, srcX, srcY, spriteW, spriteH);
 
-	debugC(DEBUG_INSANE, "Rebel2: Ship (fallback) at (%d,%d) strip=(%d,%d) of (%dx%d) dir=(%d,%d)",
+	debugC(DEBUG_INSANE, "Ship (fallback) at (%d,%d) strip=(%d,%d) of (%dx%d) dir=(%d,%d)",
 		drawX, drawY, srcX, srcY, numHorizontal, numVertical, _shipDirectionH, _shipDirectionV);
 }
 
@@ -4277,7 +4277,7 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 					drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
 			}
 
-			debugC(DEBUG_INSANE, "Rebel2 H7 corridor explosion: dir=%d frame=%d pos=(%d,%d) cooldown=%d",
+			debugC(DEBUG_INSANE, "H7 corridor explosion: dir=%d frame=%d pos=(%d,%d) cooldown=%d",
 				_spaceShotDirection, spriteIndex, drawX, drawY, _hitCooldown);
 		}
 	}
@@ -4573,7 +4573,7 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 
 		_turretShots[i].counter--;
 
-		debugC(DEBUG_INSANE, "Rebel2 Handler25: Laser shot %d from (%d,%d) to (%d,%d) progress=%d/%d",
+		debugC(DEBUG_INSANE, "Handler25: Laser shot %d from (%d,%d) to (%d,%d) progress=%d/%d",
 			i, gunX, gunY, targetX, targetY, progress, maxDuration);
 	}
 }

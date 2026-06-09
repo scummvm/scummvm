@@ -115,7 +115,7 @@ Common::Error InsaneRebel1::writeSaveState(int slot, const Common::String &desc,
 		return Common::kWritingFailed;
 	}
 
-	debugC(DEBUG_INSANE, "RA1: saved slot=%d level=%d lives=%d score=%d desc='%s'",
+	debugC(DEBUG_INSANE, "saved slot=%d level=%d lives=%d score=%d desc='%s'",
 		slot, state.resumeLevel, state.lives, state.score, desc.c_str());
 	return Common::kNoError;
 }
@@ -219,7 +219,7 @@ Common::Error InsaneRebel1::loadGameState(int slot, bool startupLoad) {
 		_vm->_smushVideoShouldFinish = true;
 	}
 
-	debugC(DEBUG_INSANE, "RA1: loaded slot=%d level=%d lives=%d score=%d", slot, _resumeLevel, _lives, _score);
+	debugC(DEBUG_INSANE, "loaded slot=%d level=%d lives=%d score=%d", slot, _resumeLevel, _lives, _score);
 	return Common::kNoError;
 }
 
@@ -238,7 +238,7 @@ void InsaneRebel1::autosaveProgress() {
 	if (readSaveState(slot, oldState, &oldDesc)) {
 		if (oldState.resumeLevel > state.resumeLevel ||
 				(oldState.resumeLevel == state.resumeLevel && oldState.lives >= state.lives)) {
-			debugC(DEBUG_INSANE, "RA1: skipping autosave slot=%d level=%d lives=%d; existing level=%d lives=%d",
+			debugC(DEBUG_INSANE, "skipping autosave slot=%d level=%d lives=%d; existing level=%d lives=%d",
 				slot, state.resumeLevel, state.lives, oldState.resumeLevel, oldState.lives);
 			return;
 		}

@@ -193,7 +193,7 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
 
-	debugC(DEBUG_INSANE, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
+	debugC(DEBUG_INSANE, "Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
 		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
 		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
 		_tuning.miss, _tuning.wham, _tuning.shot, _tuning.kill,

@@ -689,7 +689,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			// Retail DAT_0047ab60: Yoda-mode Movie Mode skips playable
 			// sections and keeps the story/cutscene sequence moving.
 			_rebelMovieMode = !_rebelMovieMode;
-			debugC(DEBUG_INSANE, "Rebel2: Movie mode %s", _rebelMovieMode ? "enabled" : "disabled");
+			debugC(DEBUG_INSANE, "Movie mode %s", _rebelMovieMode ? "enabled" : "disabled");
 			if (_rebelMovieMode && splayer && _gameState == kStateGameplay && _rebelHandler != 0)
 				_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -698,7 +698,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			// Retail DAT_0047ab64: Yoda-mode Auto Play makes gameplay
 			// computer controlled.
 			_rebelAutoPlay = !_rebelAutoPlay;
-			debugC(DEBUG_INSANE, "Rebel2: Auto play %s", _rebelAutoPlay ? "enabled" : "disabled");
+			debugC(DEBUG_INSANE, "Auto play %s", _rebelAutoPlay ? "enabled" : "disabled");
 			return true;
 
 		default:
@@ -731,7 +731,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 					_gameplayMouseSettleUntil = now + kRA2Handler7MouseSettleExtendMs;
 					warpGameplayMouseNow(recenter.x, recenter.y);
 
-					debugC(DEBUG_INSANE, "Rebel2 H7 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u",
+					debugC(DEBUG_INSANE, "H7 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u",
 						event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
 						_vm->_mouse.x, _vm->_mouse.y, _gameplayMouseSettleUntil);
 					return true;
@@ -741,7 +741,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			_gameplayMouseSettleUntil = 0;
 		}
 
-		debugC(DEBUG_INSANE, "Rebel2 H7 mouse event: pos=(%d,%d) rel=(%d,%d) gamepadAim=%d menuInput=%d",
+		debugC(DEBUG_INSANE, "H7 mouse event: pos=(%d,%d) rel=(%d,%d) gamepadAim=%d menuInput=%d",
 			event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
 			_gamepadAimActive ? 1 : 0, _menuInputActive ? 1 : 0);
 	}
@@ -901,11 +901,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 
 			if (_gameState == kStateGameplay && _rebelHandler != 0) {
-				debugC(DEBUG_INSANE, "Rebel2: Skip/back action ignored during gameplay");
+				debugC(DEBUG_INSANE, "Skip/back action ignored during gameplay");
 				return true;
 			}
 
-			debugC(DEBUG_INSANE, "Rebel2: Skip/back action - skipping video");
+			debugC(DEBUG_INSANE, "Skip/back action - skipping video");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
@@ -915,7 +915,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				return true;
 
 			if (_menuInputActive && menuState) {
-				debugC(DEBUG_INSANE, "Rebel2: Back/menu action in menu - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "Back/menu action in menu - opening ScummVM menu");
 				openMenuMainMenu(splayer);
 				return true;
 			}
@@ -924,23 +924,23 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				if (_lastGameplayMenuCloseTime != 0) {
 					const uint32 elapsedSinceMenuClose = _vm->_system->getMillis() - _lastGameplayMenuCloseTime;
 					if (elapsedSinceMenuClose < 500) {
-						debugC(DEBUG_INSANE, "Rebel2: Ignoring repeated gameplay menu action (%u ms)", elapsedSinceMenuClose);
+						debugC(DEBUG_INSANE, "Ignoring repeated gameplay menu action (%u ms)", elapsedSinceMenuClose);
 						return true;
 					}
 				}
 
-				debugC(DEBUG_INSANE, "Rebel2: Back/menu action during gameplay - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "Back/menu action during gameplay - opening ScummVM menu");
 				openGameplayMainMenu(splayer);
 				return true;
 			}
 
-			debugC(DEBUG_INSANE, "Rebel2: Back/menu action - skipping video");
+			debugC(DEBUG_INSANE, "Back/menu action - skipping video");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
 
 		if (pressed && splayer && splayer->_paused && _gameState == kStateGameplay) {
-			debugC(DEBUG_INSANE, "Rebel2: Joystick action while paused - unpausing");
+			debugC(DEBUG_INSANE, "Joystick action while paused - unpausing");
 			if (_pauseOverlayActive) {
 				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
 				_pauseOverlayActive = false;
@@ -1032,11 +1032,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			(event.type == Common::EVENT_MAINMENU ||
 			 (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE))) {
 		if (event.type == Common::EVENT_KEYDOWN && event.kbdRepeat) {
-			debugC(DEBUG_INSANE, "Rebel2: Ignoring repeated ESC keydown in menu");
+			debugC(DEBUG_INSANE, "Ignoring repeated ESC keydown in menu");
 			return true;
 		}
 
-		debugC(DEBUG_INSANE, "Rebel2: Opening ScummVM menu from menu state");
+		debugC(DEBUG_INSANE, "Opening ScummVM menu from menu state");
 		openMenuMainMenu(splayer);
 		return true;
 	}
@@ -1051,14 +1051,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (gameplayMenuTrigger && _gameState == kStateGameplay && _lastGameplayMenuCloseTime != 0) {
 		const uint32 elapsedSinceMenuClose = _vm->_system->getMillis() - _lastGameplayMenuCloseTime;
 		if (elapsedSinceMenuClose < 500) {
-			debugC(DEBUG_INSANE, "Rebel2: Ignoring repeated gameplay menu trigger (%u ms)", elapsedSinceMenuClose);
+			debugC(DEBUG_INSANE, "Ignoring repeated gameplay menu trigger (%u ms)", elapsedSinceMenuClose);
 			return true;
 		}
 	}
 
 	if (event.type == Common::EVENT_MAINMENU && splayer &&
 			_gameState == kStateGameplay && _rebelHandler != 0) {
-		debugC(DEBUG_INSANE, "Rebel2: Main menu action during gameplay - opening ScummVM menu");
+		debugC(DEBUG_INSANE, "Main menu action during gameplay - opening ScummVM menu");
 		openGameplayMainMenu(splayer);
 		return true;
 	}
@@ -1068,7 +1068,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		// leaving the key repeat source to synthesize another ESC immediately after
 		// returning to gameplay. Treat repeats as part of the original press.
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE && event.kbdRepeat) {
-			debugC(DEBUG_INSANE, "Rebel2: Ignoring repeated ESC keydown");
+			debugC(DEBUG_INSANE, "Ignoring repeated ESC keydown");
 			return true;
 		}
 		if (_menuInputActive && event.kbdRepeat &&
@@ -1076,14 +1076,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				 event.kbd.keycode == Common::KEYCODE_DOWN ||
 				 event.kbd.keycode == Common::KEYCODE_LEFT ||
 				 event.kbd.keycode == Common::KEYCODE_RIGHT)) {
-			debugC(DEBUG_INSANE, "Rebel2: Ignoring repeated menu direction keydown");
+			debugC(DEBUG_INSANE, "Ignoring repeated menu direction keydown");
 			return true;
 		}
 
 		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
 		// ESC additionally opens the ScummVM menu (original: quit key exits level).
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
-			debugC(DEBUG_INSANE, "Rebel2: Key pressed while paused - unpausing");
+			debugC(DEBUG_INSANE, "Key pressed while paused - unpausing");
 			// Restore the original palette saved by showPauseOverlay
 			if (_pauseOverlayActive) {
 				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
@@ -1091,7 +1091,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 			splayer->unpause();
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _rebelHandler != 0) {
-				debugC(DEBUG_INSANE, "Rebel2: ESC during pause - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "ESC during pause - opening ScummVM menu");
 				openGameplayMainMenu(splayer);
 			}
 			return true;
@@ -1106,11 +1106,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			if (splayer) {
 				if (_gameState == kStateGameplay && _rebelHandler != 0) {
 					// During active gameplay (handler != 0): pause and open ScummVM menu.
-					debugC(DEBUG_INSANE, "Rebel2: ESC pressed during gameplay - opening ScummVM menu");
+					debugC(DEBUG_INSANE, "ESC pressed during gameplay - opening ScummVM menu");
 					openGameplayMainMenu(splayer);
 				} else {
 					// During cutscenes/intros/mission briefings: skip video
-					debugC(DEBUG_INSANE, "Rebel2: ESC pressed - skipping video");
+					debugC(DEBUG_INSANE, "ESC pressed - skipping video");
 					_vm->_smushVideoShouldFinish = true;
 				}
 				return true;  // Consume the event
@@ -1121,7 +1121,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			// SPACE pauses during gameplay (FUN_405A21).
 			// Unpausing is handled above (any key while paused).
 			if (splayer && _gameState == kStateGameplay && !splayer->_paused) {
-				debugC(DEBUG_INSANE, "Rebel2: SPACE pressed - pausing");
+				debugC(DEBUG_INSANE, "SPACE pressed - pausing");
 				splayer->pause();
 				showPauseOverlay();
 				return true;
@@ -1135,7 +1135,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			    _rebelHandler != 0 &&
 			    event.kbd.hasFlags(Common::KBD_SHIFT)) {
 				_skipSectionRequested = true;
-				debugC(DEBUG_INSANE, "Rebel2: Shift+S pressed - requesting gameplay section skip");
+				debugC(DEBUG_INSANE, "Shift+S pressed - requesting gameplay section skip");
 				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}
@@ -1150,10 +1150,10 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				if (!_noDamage) {
 					_playerDamage = 255;
 					_playerShield = 0;
-					debugC(DEBUG_INSANE, "Rebel2: Shift+D pressed - forcing player death");
+					debugC(DEBUG_INSANE, "Shift+D pressed - forcing player death");
 					_vm->_smushVideoShouldFinish = true;
 				} else {
-					debugC(DEBUG_INSANE, "Rebel2: Shift+D pressed - no damage mode prevents forced death");
+					debugC(DEBUG_INSANE, "Shift+D pressed - no damage mode prevents forced death");
 				}
 				return true;  // Consume the event
 			}
@@ -1385,13 +1385,13 @@ void InsaneRebel2::addScore(int points) {
 			// Award bonus life
 			_playerLives++;
 			// TODO: Play bonus life sound (FUN_0041189e(5, 0, 0x7f, 0, 0))
-			debugC(DEBUG_INSANE, "Rebel2: BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
+			debugC(DEBUG_INSANE, "BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
 		}
 	}
 
 	// Add points to score
 	_playerScore += points;
-	debugC(DEBUG_INSANE, "Rebel2: Score +%d = %d", points, _playerScore);
+	debugC(DEBUG_INSANE, "Score +%d = %d", points, _playerScore);
 }
 
 // Render score text to HUD (part of FUN_0041c012)
@@ -1478,7 +1478,7 @@ bool InsaneRebel2::loadPilots() {
 		_numPilots = i + 1;
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2: Loaded %d pilot(s)", _numPilots);
+	debugC(DEBUG_INSANE, "Loaded %d pilot(s)", _numPilots);
 	return _numPilots > 0;
 }
 
@@ -1520,7 +1520,7 @@ bool InsaneRebel2::savePilots() {
 		_vm->_saveFileMan->removeSavefile(filename);
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2: Saved %d pilot(s)", _numPilots);
+	debugC(DEBUG_INSANE, "Saved %d pilot(s)", _numPilots);
 	return ok;
 }
 
@@ -1671,7 +1671,7 @@ int32 InsaneRebel2::processMouse() {
 			mousePos = getGameplayAimPoint();
 		}
 		Common::Point gameplayAim = getGameplayAimPoint();
-		debugC(DEBUG_INSANE, "Rebel2 Click: Mouse=(%d,%d) Target=(%d,%d) Enemies=%d",
+		debugC(DEBUG_INSANE, "Click: Mouse=(%d,%d) Target=(%d,%d) Enemies=%d",
 			gameplayAim.x, gameplayAim.y, mousePos.x, mousePos.y, _enemies.size());
 
 		// Spawn visual shot immediately
@@ -1699,7 +1699,7 @@ int32 InsaneRebel2::processMouse() {
 				// Enemy hit!
 				it->active = false;
 				it->destroyed = true;  // Mark as destroyed so IACT won't re-activate
-				debugC(DEBUG_INSANE, "Rebel2: HIT enemy ID=%d type=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)",
+				debugC(DEBUG_INSANE, "HIT enemy ID=%d type=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)",
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
@@ -1749,7 +1749,7 @@ int32 InsaneRebel2::processMouse() {
 				// This tracks which enemy GROUPS have been killed in this wave
 				if (it->type > 0 && it->type < 32) {
 					_rebelWaveState |= (1 << it->type);
-					debugC(DEBUG_INSANE, "Rebel2: Wave state updated: 0x%x (set bit %d)", _rebelWaveState, it->type);
+					debugC(DEBUG_INSANE, "Wave state updated: 0x%x (set bit %d)", _rebelWaveState, it->type);
 				}
 
 				// Increment kill counter (DAT_0047ab88)
@@ -1766,17 +1766,17 @@ int32 InsaneRebel2::processMouse() {
 					// Slot 2: Enable (Explosion?)
 					if (_rebelLinks[id][2] != 0) {
 						clearBit(_rebelLinks[id][2]);
-						debugC(DEBUG_INSANE, "Rebel2: Enabled dependency Slot 2 (ID=%d) for Parent %d", _rebelLinks[id][2], id);
+						debugC(DEBUG_INSANE, "Enabled dependency Slot 2 (ID=%d) for Parent %d", _rebelLinks[id][2], id);
 					}
 					// Slot 1: Enable (Explosion?)
 					if (_rebelLinks[id][1] != 0) {
 						clearBit(_rebelLinks[id][1]);
-						debugC(DEBUG_INSANE, "Rebel2: Enabled dependency Slot 1 (ID=%d) for Parent %d", _rebelLinks[id][1], id);
+						debugC(DEBUG_INSANE, "Enabled dependency Slot 1 (ID=%d) for Parent %d", _rebelLinks[id][1], id);
 					}
 					// Slot 0: Disable (Shots?)
 					if (_rebelLinks[id][0] != 0) {
 						setBit(_rebelLinks[id][0]);
-						debugC(DEBUG_INSANE, "Rebel2: Disabled dependency Slot 0 (ID=%d) for Parent %d", _rebelLinks[id][0], id);
+						debugC(DEBUG_INSANE, "Disabled dependency Slot 0 (ID=%d) for Parent %d", _rebelLinks[id][0], id);
 					}
 				}
 
@@ -2061,7 +2061,7 @@ void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 		if (bit1) {
 			_player->_skipNext = true;
 		}
-		debugC(DEBUG_INSANE, "Rebel2 SKIP: single ID=%d bit=%d skip=%d frame=%d", par1, bit1 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
+		debugC(DEBUG_INSANE, "SKIP: single ID=%d bit=%d skip=%d frame=%d", par1, bit1 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
 	} else {
 		// Dual ID mode: skip if bits are different (XOR logic)
 		bool bit1 = isBitSet(par1);
@@ -2069,7 +2069,7 @@ void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 		if (bit1 != bit2) {
 			_player->_skipNext = true;
 		}
-		debugC(DEBUG_INSANE, "Rebel2 SKIP: dual ID1=%d(bit=%d) ID2=%d(bit=%d) skip=%d frame=%d", par1, bit1 ? 1 : 0, par2, bit2 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
+		debugC(DEBUG_INSANE, "SKIP: dual ID1=%d(bit=%d) ID2=%d(bit=%d) skip=%d frame=%d", par1, bit1 ? 1 : 0, par2, bit2 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
 	}
 }
 

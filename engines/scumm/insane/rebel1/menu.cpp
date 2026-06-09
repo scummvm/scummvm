@@ -714,7 +714,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 				_gameplayMouseSettleUntil = now + kRA1GameplayMouseSettleExtendMs;
 				warpGameplayMouseNow(recenterX, recenterY);
 
-				debugC(DEBUG_INSANE, "RA1 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u opcode=0x%X",
+				debugC(DEBUG_INSANE, "mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u opcode=0x%X",
 					event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
 					_vm->_mouse.x, _vm->_mouse.y, _gameplayMouseSettleUntil,
 					getEffectiveGameOpcode());
@@ -745,14 +745,14 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 
 	if (event.type == Common::EVENT_JOYAXIS_MOTION) {
 		_lastJoystickAxisEventTime = _vm->_system->getMillis();
-		debugC(DEBUG_INSANE, "RA1 input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
 			event.joystick.axis, event.joystick.position,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY);
 	}
 
 	if (event.type == Common::EVENT_JOYBUTTON_DOWN || event.type == Common::EVENT_JOYBUTTON_UP) {
-		debugC(DEBUG_INSANE, "RA1 input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
 			event.joystick.button, event.type == Common::EVENT_JOYBUTTON_DOWN,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY);
@@ -768,12 +768,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		switch (event.customType) {
 		case kScummBackendActionRebel1AxisUp:
 			if (event.joystick.position == 0 && _joystickAxisY > 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisY = -axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -782,12 +782,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisDown:
 			if (event.joystick.position == 0 && _joystickAxisY < 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisY = axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -796,12 +796,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisLeft:
 			if (event.joystick.position == 0 && _joystickAxisX > 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisX = -axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -810,12 +810,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisRight:
 			if (event.joystick.position == 0 && _joystickAxisX < 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisX = axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -831,7 +831,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
 
-		debugC(DEBUG_INSANE, "RA1 input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
+		debugC(DEBUG_INSANE, "input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
 			getRebel1ActionName(event.customType), event.customType, pressed,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY,
@@ -947,10 +947,10 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
 
 		if (_interactiveVideoActive && !_menuActive) {
-			debugC(DEBUG_INSANE, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
+			debugC(DEBUG_INSANE, "input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
 				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
 			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-				debugC(DEBUG_INSANE, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				debugC(DEBUG_INSANE, "input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
 				return true;
 			}
 
@@ -966,11 +966,11 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			const uint32 now = _vm->_system->getMillis();
 			const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
-			debugC(DEBUG_INSANE, "RA1 input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
+			debugC(DEBUG_INSANE, "input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
 				event.kbd.ascii, event.kbd.flags, event.kbdRepeat,
 				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
 			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-				debugC(DEBUG_INSANE, "RA1 input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				debugC(DEBUG_INSANE, "input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
 				return true;
 			}
 
@@ -1282,7 +1282,7 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 			_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, i);
 			if (targetLevel <= kRA1NumLevels)
 				_startLevel = targetLevel;
-			debugC(DEBUG_INSANE, "RA1 passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+			debugC(DEBUG_INSANE, "passcode accepted: slot=%d password=%s difficulty=%d target=%d",
 				i, password, _difficulty, targetLevel);
 			return targetLevel;
 		}
@@ -1298,13 +1298,13 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 			_difficulty = getRebel1ThreeDOPasscodeDifficulty(i);
 			if (targetLevel <= kRA1NumLevels)
 				_startLevel = targetLevel;
-			debugC(DEBUG_INSANE, "RA1 3DO passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+			debugC(DEBUG_INSANE, "3DO passcode accepted: slot=%d password=%s difficulty=%d target=%d",
 				i, password, _difficulty, targetLevel);
 			return targetLevel;
 		}
 	}
 
-	debugC(DEBUG_INSANE, "RA1 passcode rejected: '%s'", _textEntryBuffer);
+	debugC(DEBUG_INSANE, "passcode rejected: '%s'", _textEntryBuffer);
 	return 0;
 }
 
@@ -1331,7 +1331,7 @@ bool InsaneRebel1::runHighScoreNameEntry() {
 	Common::strlcpy(_highScores[slot].name, storedName.c_str(), sizeof(_highScores[slot].name));
 	_highScores[slot].difficulty = _difficulty;
 	_highScoreEntryIndex = -1;
-	debugC(DEBUG_INSANE, "RA1 high score inserted: slot=%d name=%s score=%ld difficulty=%d",
+	debugC(DEBUG_INSANE, "high score inserted: slot=%d name=%s score=%ld difficulty=%d",
 		slot, _highScores[slot].name, (long)_highScores[slot].score, _highScores[slot].difficulty);
 	return true;
 }

@@ -636,7 +636,7 @@ bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top
 		// replacement/death frame. This is used heavily by Level 9 troopers.
 		_frameObjectState[byteIndex] &= ~bit;
 		_frameObjectHitRevealPending = false;
-		debugC(DEBUG_INSANE, "RA1 FOBJ reveal: object=%d frameObjectByte=%d bit=0x%02x",
+		debugC(DEBUG_INSANE, "FOBJ reveal: object=%d frameObjectByte=%d bit=0x%02x",
 			objectId, byteIndex, bit);
 	}
 
@@ -717,7 +717,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			_vm->_smushVideoShouldFinish = true;
 			const int32 resumeFrame = (_currentLevel == 6 && _pendingRouteStartFrame < 0) ?
 				0 : _pendingRouteStartFrame;
-			debugC(DEBUG_INSANE, "RA1 L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
+			debugC(DEBUG_INSANE, "L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
 				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,
 				_currentLevel == 6 ? "localFrame" : "frame",
 				(unsigned)routeFrame, (int)resumeFrame);
@@ -759,7 +759,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 				: (branchX < kLevel7BranchThreshold[nextRoute]);
 			if (!takeBranch) {
 				if (routeFrame == decisionFrame)
-					debugC(DEBUG_INSANE, "RA1 L7 branch miss: route=%d candidate=%d localFrame=%u gameFrame=%d shipX=%d dir=%d threshold=%d",
+					debugC(DEBUG_INSANE, "L7 branch miss: route=%d candidate=%d localFrame=%u gameFrame=%d shipX=%d dir=%d threshold=%d",
 						route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, branchX,
 						kLevel7BranchDir[nextRoute], kLevel7BranchThreshold[nextRoute]);
 				continue;
@@ -770,7 +770,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			_pendingRouteStartFrame = (int32)routeFrame;
 			_pendingRouteVideoStartFrame = 1 + (_pendingRouteCutoverFrame - _pendingRouteStartFrame);
 			_level7WarningFrames = 0;
-			debugC(DEBUG_INSANE, "RA1 L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d destFrame=%d",
+			debugC(DEBUG_INSANE, "L7 branch: route=%d -> %d at localFrame=%u gameFrame=%d decisionFrame=%u shipX=%d resumeSourceFrame=%d cutoverFrame=%d destFrame=%d",
 				route, nextRoute, (unsigned)routeFrame, (int)_gameCounter, (unsigned)decisionFrame, branchX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame,
 				(int)_pendingRouteVideoStartFrame);
@@ -868,7 +868,7 @@ void InsaneRebel1::updateFlightVariantCursor() {
 	_flightAimY = CLIP<int32>(shipBaseY + ((liftTerm * kRA1Op09AimYScale[bucket]) >> 8),
 		kRA1MinY, kRA1MaxY);
 
-	debugC(DEBUG_INSANE, "RA1 op09 cursor: frame=%d shipBase=(%d,%d) shipPos=(%d,%d) aim=(%d,%d) roll=%d lift=%d bucket=%d dir=%d persp=(%d,%d)",
+	debugC(DEBUG_INSANE, "op09 cursor: frame=%d shipBase=(%d,%d) shipPos=(%d,%d) aim=(%d,%d) roll=%d lift=%d bucket=%d dir=%d persp=(%d,%d)",
 		_gameCounter, shipBaseX, shipBaseY, _shipPosX, _shipPosY, _flightAimX, _flightAimY,
 		_rollAccum, _liftSmooth, bucket, _shipDirIndex, _perspectiveX, _perspectiveY);
 }
@@ -1199,7 +1199,7 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_shipBank.numSprites > 0)
 		_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
 
-	debugC(DEBUG_INSANE, "RA1 ship input: frame=%d source=%s controls=%s turbulence=%d usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
+	debugC(DEBUG_INSANE, "ship input: frame=%d source=%s controls=%s turbulence=%d usedJoystick=%d raw=(%d,%d) clipped=(%d,%d) storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d) roll=%d lift=%d pos=(%d,%d) view=(%d,%d) dir=%d level=%d mode=%d opcode=0x%X",
 		_gameCounter, inputSourceName,
 		"enhanced", 0, usedJoystick,
 		rawInputX, rawInputY, inputX, inputY,
@@ -1283,9 +1283,9 @@ void InsaneRebel1::updateShipPhysics() {
 			_rightPathSelected = true;
 			preserveInteractiveVideoAudioState();
 			_vm->_smushVideoShouldFinish = true;
-			debugC(DEBUG_INSANE, "RA1: Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
+			debugC(DEBUG_INSANE, "Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		} else {
-			debugC(DEBUG_INSANE, "RA1: Left path retained (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
+			debugC(DEBUG_INSANE, "Left path retained (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		}
 		_pathBranchEnabled = false;
 	}
@@ -1293,7 +1293,7 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_currentLevel != 6)
 		checkDynamicLevelBranch();
 
-	debugC(DEBUG_INSANE, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
+	debugC(DEBUG_INSANE, "ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
 		_shipPosX, _shipPosY, _rollAccum, _liftSmooth,
 		_posAccumX, _posAccumY, _shipDirIndex, _health,
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
@@ -1441,7 +1441,7 @@ void InsaneRebel1::updateTurretPhysics() {
 			inputY /= 2;
 		}
 
-		debugC(DEBUG_INSANE, "RA1 turret input: source=%s controls=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
+		debugC(DEBUG_INSANE, "turret input: source=%s controls=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
 			usedJoystick ? "joystick-actions" : "mouse-path",
 			"enhanced",
 			_vm->_mouse.x, _vm->_mouse.y,
@@ -1623,13 +1623,13 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		// FUN_1CDA7 dispatches g_sfxDamageHit, initialized from SYS/BOOM.SAD.
 		playSfx(kSfxBoom, 127, 0);
 		if (_currentLevel == 1) {
-			debugC(DEBUG_INSANE, "RA1 L2 player hit: frame=%u view=(%d,%d) latch=%u asteroid=%d flags=0x%02x health=%d->%d",
+			debugC(DEBUG_INSANE, "L2 player hit: frame=%u view=(%d,%d) latch=%u asteroid=%d flags=0x%02x health=%d->%d",
 				(unsigned)(uint16)_gameCounter, _perspectiveX, _perspectiveY,
 				(unsigned)_gameLatch5D, level2AsteroidHit ? 1 : 0,
 				appliedDamageFlags, oldHealth, _health);
 		}
 		if (level8WalkerPlayerHit) {
-			debugC(DEBUG_INSANE, "RA1 L8 player hit by walker: route=%d frame=%u view=(%d,%d) flags=0x%02x health=%d->%d",
+			debugC(DEBUG_INSANE, "L8 player hit by walker: route=%d frame=%u view=(%d,%d) flags=0x%02x health=%d->%d",
 				CLIP<int>(_levelRouteIndex, 0, 2), (unsigned)(uint16)_gameCounter,
 				_perspectiveX, _perspectiveY, appliedDamageFlags, oldHealth, _health);
 		}
@@ -1701,7 +1701,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 	_inputAxisDeltaX = inputX;
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x0B input: frame=%d source=%s controls=%s window=%d precisionPad=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+	debugC(DEBUG_INSANE, "GAME 0x0B input: frame=%d source=%s controls=%s window=%d precisionPad=%d view=(%d,%d) health=%d prevFlags=0x%02x axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
 		_gameCounter,
 		inputSourceName,
 		"enhanced",
@@ -1774,7 +1774,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			const bool target215Destroyed = isFrameObjectPrimarySet(215);
 			if (!target211Destroyed || !target213Destroyed || !target215Destroyed) {
 				_levelGameplayPhase = 1;
-				debugC(DEBUG_INSANE, "RA1 L12 retry armed: frame=0x%04x targets=(%d,%d,%d)",
+				debugC(DEBUG_INSANE, "L12 retry armed: frame=0x%04x targets=(%d,%d,%d)",
 					_frameCounter,
 					target211Destroyed ? 1 : 0,
 					target213Destroyed ? 1 : 0,
@@ -1858,7 +1858,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 
 	checkDynamicLevelBranch();
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x0B: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
+	debugC(DEBUG_INSANE, "GAME 0x0B: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
 		_shipPosX, _shipPosY, _avgInputX, _avgInputY,
 		_perspectiveX, _perspectiveY, _health, _screenFlash);
 }
@@ -2046,7 +2046,7 @@ void InsaneRebel1::updateOnFootSequence() {
 		_damageCooldown = 3;
 		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 5;
-		debugC(DEBUG_INSANE, "RA1 on-foot player hit: frame=%u latch=%u flags=0x%02x health=%d->%d",
+		debugC(DEBUG_INSANE, "on-foot player hit: frame=%u latch=%u flags=0x%02x health=%d->%d",
 			(unsigned)(uint16)_gameCounter, (unsigned)_gameLatch5D, _damageFlags, oldHealth, _health);
 	}
 }
@@ -2103,7 +2103,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
 	// This is not a pure control-mode assignment.
 	if (_frameDispatchFlags & 0x40) {
-		debugC(DEBUG_INSANE, "RA1 GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
+		debugC(DEBUG_INSANE, "GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
 			_frameDispatchFlags);
 		return;
 	}
@@ -2177,7 +2177,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	if (_currentLevel == 7)
 		memset(_frameObjectState + 150, 0xFF, 150);
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
+	debugC(DEBUG_INSANE, "GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
 }
 
 void InsaneRebel1::handleGameOpcode5DLinkLatch(uint32 param1) {
@@ -2192,7 +2192,7 @@ void InsaneRebel1::handleGameOpcode5DLinkLatch(uint32 param1) {
 		}
 	}
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
+	debugC(DEBUG_INSANE, "GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
 }
 
 void InsaneRebel1::handleGameOpcode5FRandomHitLatch(uint32 param1) {
@@ -2205,7 +2205,7 @@ void InsaneRebel1::handleGameOpcode5FRandomHitLatch(uint32 param1) {
 		}
 	}
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
+	debugC(DEBUG_INSANE, "GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
 }
 
 void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
@@ -2219,7 +2219,7 @@ void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableR
 		b.readUint32BE(); // f2 (max frames, unused in physics)
 		_driftParam = (int16)(int32)b.readUint32BE();
 		b.readUint32BE(); // f4 (unused in original assembly)
-		debugC(DEBUG_INSANE, "RA1 GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
+		debugC(DEBUG_INSANE, "GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
 	}
 }
 
@@ -2285,13 +2285,13 @@ void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableRea
 		}
 	}
 	if ((_damageFlags & 0x0F) != oldDirectionalFlags) {
-		debugC(DEBUG_INSANE, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
+		debugC(DEBUG_INSANE, "0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
 			collisionShipX, collisionShipY,
 			_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
 			_damageFlags, suppressDirectionalDamage ? 1 : 0);
 	}
 
-	debugC(DEBUG_INSANE, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
+	debugC(DEBUG_INSANE, "GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
 		corridorLeft, corridorTop, corridorWidth, corridorHeight,
 		_perspectiveX, _perspectiveY,
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
@@ -2327,12 +2327,12 @@ void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStr
 		collisionShipX > zoneLeft && collisionShipX < zoneRight &&
 		collisionShipY > zoneTop && collisionShipY < zoneBottom) {
 		_damageFlags |= 0x10;
-		debugC(DEBUG_INSANE, "RA1 0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
+		debugC(DEBUG_INSANE, "0x0E hit: ship=(%d,%d) zone=[%d,%d]-[%d,%d] raw=[%d,%d]+(%d,%d) cam=(%d,%d) flags=0x%02x",
 			collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
 			rawZoneLeft, rawZoneTop, zoneWidth, zoneHeight,
 			_perspectiveX, _perspectiveY, _damageFlags);
 	}
-	debugC(DEBUG_INSANE, "RA1 GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
+	debugC(DEBUG_INSANE, "GAME 0x0E: ship=(%d,%d) zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
 		collisionShipX, collisionShipY, zoneLeft, zoneTop, zoneRight, zoneBottom,
 		_perspectiveX, _perspectiveY, _damageFlags);
 }
@@ -2353,10 +2353,10 @@ void InsaneRebel1::handleGameOpcode0BFirstPerson(int32 subSize, Common::Seekable
 		if (_interactiveVideoActive && maxFrames > 0 &&
 			_gameCounter >= (int32)maxFrames - 1) {
 			_vm->_smushVideoShouldFinish = true;
-			debugC(DEBUG_INSANE, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
+			debugC(DEBUG_INSANE, "finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
 		}
 	}
-	debugC(DEBUG_INSANE, "RA1 GAME 0x0B: counter=%d", _gameCounter);
+	debugC(DEBUG_INSANE, "GAME 0x0B: counter=%d", _gameCounter);
 	if (!_gameOp0BPhysicsUpdatedThisFrame) {
 		updateGameOp0BPhysics();
 		_gameOp0BPhysicsUpdatedThisFrame = true;
@@ -2396,7 +2396,7 @@ void InsaneRebel1::handleGameOpcode5ATarget(int32 subSize, Common::SeekableReadS
 			checkTargetHit(targetIdx, left, top, right, bottom);
 		}
 	}
-	debugC(DEBUG_INSANE, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
+	debugC(DEBUG_INSANE, "GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
 		targetIdx, left, top, right, bottom, _targetProximity);
 }
 
@@ -2409,10 +2409,10 @@ void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common:
 		uint32 param3 = b.readUint32BE();
 		uint32 param4 = b.readUint32BE();
 		if (opcode == 0x09) {
-			debugC(DEBUG_INSANE, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
+			debugC(DEBUG_INSANE, "GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
 				_gameCounter, param2, param3, param4, _frameGameOpcodeMask);
 		} else {
-			debugC(DEBUG_INSANE, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
+			debugC(DEBUG_INSANE, "GAME 0x%02x: counter=%d params=(%d,%d,%d)",
 				opcode, _gameCounter, param2, param3, param4);
 		}
 	}
@@ -2433,14 +2433,14 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 	// g_combatModeFlags skips gameplay dispatch entirely; bit 5 of g_hudDisableFlags
 	// suppresses the handlers while still requesting HUD refresh for a few opcodes.
 	if (_gameplayFlags75ff & 1) {
-		debugC(DEBUG_INSANE, "RA1 GAME 0x%02x: skipped by combat mode flags=0x%02x",
+		debugC(DEBUG_INSANE, "GAME 0x%02x: skipped by combat mode flags=0x%02x",
 			opcode, _gameplayFlags75ff);
 		return;
 	}
 	if (_gameplayFlags75fe & 0x20) {
 		if (ra1DispatcherHudOnlyWhenDisabled(opcode))
 			_hudRenderFlag = 0xFF;
-		debugC(DEBUG_INSANE, "RA1 GAME 0x%02x: skipped by HUD disable flags=0x%02x",
+		debugC(DEBUG_INSANE, "GAME 0x%02x: skipped by HUD disable flags=0x%02x",
 			opcode, _gameplayFlags75fe);
 		return;
 	}
@@ -2488,7 +2488,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 		break;
 
 	default:
-		debugC(DEBUG_INSANE, "RA1 GAME unknown 0x%02x size=%d", opcode, subSize);
+		debugC(DEBUG_INSANE, "GAME unknown 0x%02x size=%d", opcode, subSize);
 		break;
 	}
 }
@@ -2562,11 +2562,11 @@ void InsaneRebel1::processShot() {
 	playSfx(torpedoMode ? kSfxAlert : kSfxLaserShot, 127, 0);
 
 	if (effectiveOpcode == 0x09 || _currentLevel == 4) {
-		debugC(DEBUG_INSANE, "RA1 shot: opcode=0x%02x frame=%d slot=%d cursor=(%d,%d) origin=(%d,%d) dir=%d mode=%d",
+		debugC(DEBUG_INSANE, "shot: opcode=0x%02x frame=%d slot=%d cursor=(%d,%d) origin=(%d,%d) dir=%d mode=%d",
 			effectiveOpcode, _gameCounter, slot, cursorX, cursorY, originX, originY,
 			_shipDirIndex, _flyControlMode);
 	} else {
-		debugC(DEBUG_INSANE, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
+		debugC(DEBUG_INSANE, "shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
 			cursorX, cursorY, originX, originY);
 	}
 }
@@ -2610,7 +2610,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 		if (slot < kMaxTargetBoxes)
 			_targetBoxVariant[slot] = CLIP<int16>((int16)(_targetBoxVariant[slot] + 3), 0, 5);
 
-		debugC(DEBUG_INSANE, "RA1 target near: opcode=0x%02x target=%d raw=[%d,%d]-[%d,%d] cursorScreen=(%d,%d) cursorTest=(%d,%d) snap=%d prox=%d view=(%d,%d)",
+		debugC(DEBUG_INSANE, "target near: opcode=0x%02x target=%d raw=[%d,%d]-[%d,%d] cursorScreen=(%d,%d) cursorTest=(%d,%d) snap=%d prox=%d view=(%d,%d)",
 			effectiveOpcode, targetIdx, left, top, right, bottom,
 			screenCursorX, screenCursorY, curX, curY, snap, _targetProximity,
 			_perspectiveX, _perspectiveY);
@@ -2667,7 +2667,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 									damagedState += Common::String::format("%d,", objectId);
 							}
 
-							debugC(DEBUG_INSANE, "RA1 L8 armor: hitObject=%d damaged=[%s] hidden=[%s]",
+							debugC(DEBUG_INSANE, "L8 armor: hitObject=%d damaged=[%s] hidden=[%s]",
 								targetIdx + 1, damagedState.c_str(), hiddenState.c_str());
 						}
 
@@ -2678,7 +2678,7 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						if ((_gameplayFlags75fe & 0x10) == 0)
 							playSfx(kSfxExplode, 127, sfxPan);
 
-						debugC(DEBUG_INSANE, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
+						debugC(DEBUG_INSANE, "HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
 							targetIdx, gi, _gostSlots[gi].posX, _gostSlots[gi].posY,
 							_score, _killCount, _bangBank.numSprites);
 						return;

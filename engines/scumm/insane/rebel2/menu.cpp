@@ -84,7 +84,7 @@ void InsaneRebel2::updateMenuVirtualKeyboard() {
 
 // unlockAllChapters -- Debug mode unlock (FUN_00415CF8 lines 60-71, DAT_0047ab34=='d').
 void InsaneRebel2::unlockAllChapters() {
-	debugC(DEBUG_INSANE, "Rebel2: Unlocking all chapters for testing");
+	debugC(DEBUG_INSANE, "Unlocking all chapters for testing");
 	for (int i = 0; i < 16; i++) {
 		_chapterUnlocked[i] = true;
 		_levelUnlocked[i] = true;
@@ -106,7 +106,7 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 
 	// Map 0-14 to A-O (case 0/default = A, 1 = B, etc.)
 	char letter = 'A' + variant;
-	debugC(DEBUG_INSANE, "Rebel2: Selected menu variant %c", letter);
+	debugC(DEBUG_INSANE, "Selected menu variant %c", letter);
 	return Common::String::format("OPEN/O_MENU_%c.SAN", letter);
 }
 
@@ -595,7 +595,7 @@ void InsaneRebel2::showPauseOverlay() {
 // Returns kMenuNewGame, kMenuResumeDemo, or kMenuQuit.
 int InsaneRebel2::runMainMenu() {
 
-	debugC(DEBUG_INSANE, "Rebel2: Entering main menu");
+	debugC(DEBUG_INSANE, "Entering main menu");
 
 	resetMenu();
 	_gameState = kStateMainMenu;
@@ -617,7 +617,7 @@ int InsaneRebel2::runMainMenu() {
 
 		// Select and play a random menu video
 		Common::String menuVideo = getRandomMenuVideo();
-		debugC(DEBUG_INSANE, "Rebel2: Playing menu video: %s", menuVideo.c_str());
+		debugC(DEBUG_INSANE, "Playing menu video: %s", menuVideo.c_str());
 
 		// Set video flags for menu (0x20 = intro/menu flag)
 		// This tells procPostRendering we're in menu mode
@@ -635,7 +635,7 @@ int InsaneRebel2::runMainMenu() {
 		}
 
 		if (_menuInactivityTimedOut) {
-			debugC(DEBUG_INSANE, "Rebel2: Main menu inactivity - resuming intro/demo loop");
+			debugC(DEBUG_INSANE, "Main menu inactivity - resuming intro/demo loop");
 			_menuInactivityTimedOut = false;
 			_menuInputActive = false;
 			return kMenuResumeDemo;
@@ -652,7 +652,7 @@ int InsaneRebel2::runMainMenu() {
 		_menuSelectionConfirmed = false;
 
 		// A selection was made - process it
-		debugC(DEBUG_INSANE, "Rebel2: Menu video ended with selection=%d", _menuSelection);
+		debugC(DEBUG_INSANE, "Menu video ended with selection=%d", _menuSelection);
 
 		// Process the menu result based on current selection
 		// Menu items matching GAME.TRS indices 11-17 (FUN_004147B2):
@@ -665,34 +665,34 @@ int InsaneRebel2::runMainMenu() {
 		//   case 6 (TRS 17): Return to Launcher -> quit, returns 0
 		switch (_menuSelection) {
 		case 0:  // Start Game -> go to pilot selection
-			debugC(DEBUG_INSANE, "Rebel2: Start Game selected - going to pilot selection");
+			debugC(DEBUG_INSANE, "Start Game selected - going to pilot selection");
 			_gameState = kStatePilotSelect;
 			_menuInputActive = false;
 			return kMenuNewGame;  // Return 2 (kMenuNewGame)
 
 		case 1:  // Options -> show options menu (FUN_00416787)
-			debugC(DEBUG_INSANE, "Rebel2: Options selected");
+			debugC(DEBUG_INSANE, "Options selected");
 			showOptionsMenu();
 			break;
 
 		case 2:  // Calibrate Joystick
-			debugC(DEBUG_INSANE, "Rebel2: Calibrate Joystick selected - no-op for modern joystick support");
+			debugC(DEBUG_INSANE, "Calibrate Joystick selected - no-op for modern joystick support");
 			// Modern controller support uses live keymapper actions; no explicit
 			// joystick calibration flow is required here.
 			break;
 
 		case 3:  // Continue Intro -> return to intro/demo loop
-			debugC(DEBUG_INSANE, "Rebel2: Continue Intro selected - resuming intro/demo loop");
+			debugC(DEBUG_INSANE, "Continue Intro selected - resuming intro/demo loop");
 			_menuInputActive = false;
 			return kMenuResumeDemo;
 
 		case 4:  // Show Top Pilots -> high score display (FUN_00420116(-1))
-			debugC(DEBUG_INSANE, "Rebel2: Show Top Pilots selected");
+			debugC(DEBUG_INSANE, "Show Top Pilots selected");
 			showTopPilots();
 			break;
 
 		case 5:  // Show Credits -> play credits video
-			debugC(DEBUG_INSANE, "Rebel2: Show Credits selected - playing O_CREDIT.SAN");
+			debugC(DEBUG_INSANE, "Show Credits selected - playing O_CREDIT.SAN");
 			_gameState = kStateCredits;
 			_menuInputActive = false;
 			splayer->setCurVideoFlags(0x20);
@@ -703,12 +703,12 @@ int InsaneRebel2::runMainMenu() {
 			break;
 
 		case 6:  // Return to Launcher -> quit game
-			debugC(DEBUG_INSANE, "Rebel2: Return to Launcher selected");
+			debugC(DEBUG_INSANE, "Return to Launcher selected");
 			_menuInputActive = false;
 			return kMenuQuit;
 
 		default:
-			debugC(DEBUG_INSANE, "Rebel2: Unknown menu selection %d", _menuSelection);
+			debugC(DEBUG_INSANE, "Unknown menu selection %d", _menuSelection);
 			break;
 		}
 	}
@@ -725,7 +725,7 @@ int InsaneRebel2::runMainMenu() {
 // Returns kChapterSelectPlay, kChapterSelectBack, or kChapterSelectQuit.
 int InsaneRebel2::runChapterSelect() {
 
-	debugC(DEBUG_INSANE, "Rebel2: Entering chapter selection (FUN_00415CF8)");
+	debugC(DEBUG_INSANE, "Entering chapter selection (FUN_00415CF8)");
 
 	// Enable menu input capture
 	_menuInputActive = true;
@@ -769,7 +769,7 @@ int InsaneRebel2::runChapterSelect() {
 	while (!_vm->shouldQuit()) {
 		_vm->_smushVideoShouldFinish = false;
 
-		debugC(DEBUG_INSANE, "Rebel2: Playing chapter select background: OPEN/O_LEVEL.SAN");
+		debugC(DEBUG_INSANE, "Playing chapter select background: OPEN/O_LEVEL.SAN");
 
 		// Flags: 0x20 (overlay/menu rendering) | 0x08 (preserve buffer, suppress
 		// AHDR speed override). Matches original FUN_0041f4d0 parameter 8.
@@ -795,12 +795,12 @@ int InsaneRebel2::runChapterSelect() {
 		_vm->_smushVideoShouldFinish = false;
 		_menuSelectionConfirmed = false;
 
-		debugC(DEBUG_INSANE, "Rebel2: Chapter selection made: %d", _chapterSelection);
+		debugC(DEBUG_INSANE, "Chapter selection made: %d", _chapterSelection);
 
 		// Process chapter selection (lines 134-236 of FUN_00415CF8)
 		if (_chapterSelection == 16) {
 			// BACK selected (index 16 = 17th item)
-			debugC(DEBUG_INSANE, "Rebel2: BACK to main menu selected");
+			debugC(DEBUG_INSANE, "BACK to main menu selected");
 			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kChapterSelectBack;
@@ -810,7 +810,7 @@ int InsaneRebel2::runChapterSelect() {
 			if (_chapterUnlocked[_chapterSelection]) {
 				// Unlocked chapter — play it
 				_selectedChapter = _chapterSelection;
-				debugC(DEBUG_INSANE, "Rebel2: Chapter %d selected (unlocked)", _selectedChapter + 1);
+				debugC(DEBUG_INSANE, "Chapter %d selected (unlocked)", _selectedChapter + 1);
 				setVirtualKeyboardVisible(false);
 				_menuInputActive = false;
 				return kChapterSelectPlay;
@@ -834,13 +834,13 @@ int InsaneRebel2::runChapterSelect() {
 					setBit(16 - _chapterSelection);
 					_passwordInput.clear();
 					updateMenuVirtualKeyboard();
-					debugC(DEBUG_INSANE, "Rebel2: Chapter %d unlocked via password", _chapterSelection + 1);
+					debugC(DEBUG_INSANE, "Chapter %d unlocked via password", _chapterSelection + 1);
 					continue;  // Re-render with updated unlock state
 				}
 			}
 			// Wrong password or no password entered
 			_passwordInput.clear();
-			debugC(DEBUG_INSANE, "Rebel2: Password rejected for chapter %d", _chapterSelection + 1);
+			debugC(DEBUG_INSANE, "Password rejected for chapter %d", _chapterSelection + 1);
 		}
 	}
 
@@ -1222,7 +1222,7 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 // Returns kLevelSelectPlay, kLevelSelectBack, or kLevelSelectQuit.
 int InsaneRebel2::runLevelSelect() {
 
-	debugC(DEBUG_INSANE, "Rebel2: Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
+	debugC(DEBUG_INSANE, "Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
@@ -1303,7 +1303,7 @@ int InsaneRebel2::runLevelSelect() {
 					copyPilot(pilotIndex);
 					savePilots();
 					_levelSelection = pilotIndex;
-					debugC(DEBUG_INSANE, "Rebel2: Copied pilot %d, now %d pilots", pilotIndex, _numPilots);
+					debugC(DEBUG_INSANE, "Copied pilot %d, now %d pilots", pilotIndex, _numPilots);
 				} else {
 					deletePilot(pilotIndex);
 					savePilots();
@@ -1312,7 +1312,7 @@ int InsaneRebel2::runLevelSelect() {
 					} else {
 						_levelSelection = 0;
 					}
-					debugC(DEBUG_INSANE, "Rebel2: Deleted pilot %d, %d remaining", pilotIndex, _numPilots);
+					debugC(DEBUG_INSANE, "Deleted pilot %d, %d remaining", pilotIndex, _numPilots);
 				}
 			}
 			_pilotMenuMode = kPilotModeSelect;
@@ -1322,7 +1322,7 @@ int InsaneRebel2::runLevelSelect() {
 		}
 
 		// --- Normal pilot menu selection ---
-		debugC(DEBUG_INSANE, "Rebel2: Pilot selection: %d (numPilots=%d)", _levelSelection, _numPilots);
+		debugC(DEBUG_INSANE, "Pilot selection: %d (numPilots=%d)", _levelSelection, _numPilots);
 
 		if (_levelSelection < _numPilots) {
 			// Existing pilot selected — activate and go to chapter select
@@ -1334,7 +1334,7 @@ int InsaneRebel2::runLevelSelect() {
 				_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
 			}
 
-			debugC(DEBUG_INSANE, "Rebel2: Pilot '%s' selected (slot %d, difficulty %d)",
+			debugC(DEBUG_INSANE, "Pilot '%s' selected (slot %d, difficulty %d)",
 			      _pilots[_activePilot].name, _activePilot, _difficulty);
 			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
@@ -1349,7 +1349,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeNameInput;
 				_levelItemCount = _numPilots + 4;
 				updateMenuVirtualKeyboard();
-				debugC(DEBUG_INSANE, "Rebel2: NEW PILOT - entering name for slot %d", newIdx);
+				debugC(DEBUG_INSANE, "NEW PILOT - entering name for slot %d", newIdx);
 			}
 			continue;
 
@@ -1359,7 +1359,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeCopySelect;
 				_levelSelection = 0;
 				_levelItemCount = _numPilots;
-				debugC(DEBUG_INSANE, "Rebel2: COPY PILOT - selecting source");
+				debugC(DEBUG_INSANE, "COPY PILOT - selecting source");
 			}
 			continue;
 
@@ -1369,7 +1369,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeDeleteSelect;
 				_levelSelection = 0;
 				_levelItemCount = _numPilots;
-				debugC(DEBUG_INSANE, "Rebel2: DELETE PILOT - selecting target");
+				debugC(DEBUG_INSANE, "DELETE PILOT - selecting target");
 			}
 			continue;
 
@@ -1731,7 +1731,7 @@ void InsaneRebel2::insertRanking(const char *name, int32 score, int32 rating,
 }
 
 void InsaneRebel2::showTopPilots() {
-	debugC(DEBUG_INSANE, "Rebel2: Showing Top Pilots screen (FUN_00420116)");
+	debugC(DEBUG_INSANE, "Showing Top Pilots screen (FUN_00420116)");
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
@@ -1754,7 +1754,7 @@ void InsaneRebel2::showTopPilots() {
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
 
-	debugC(DEBUG_INSANE, "Rebel2: Top Pilots screen finished");
+	debugC(DEBUG_INSANE, "Top Pilots screen finished");
 }
 
 void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width, int height) {
@@ -1838,7 +1838,7 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 
 // showOptionsMenu -- Options menu loop (FUN_00416787).
 void InsaneRebel2::showOptionsMenu() {
-	debugC(DEBUG_INSANE, "Rebel2: Showing Options menu (FUN_00416787)");
+	debugC(DEBUG_INSANE, "Showing Options menu (FUN_00416787)");
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
@@ -1864,7 +1864,7 @@ void InsaneRebel2::showOptionsMenu() {
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
 
-	debugC(DEBUG_INSANE, "Rebel2: Options menu finished");
+	debugC(DEBUG_INSANE, "Options menu finished");
 }
 
 int InsaneRebel2::processOptionsInput() {

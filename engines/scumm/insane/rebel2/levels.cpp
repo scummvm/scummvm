@@ -154,7 +154,7 @@ void InsaneRebel2::runGame() {
 // We skip the easter eggs and play both O_OPEN_A + O_OPEN_B unconditionally.
 //
 void InsaneRebel2::playIntroSequence() {
-	debugC(DEBUG_INSANE, "Rebel2: Playing intro sequence");
+	debugC(DEBUG_INSANE, "Playing intro sequence");
 
 	_gameState = kStateIntro;
 	_menuInputActive = false;
@@ -163,7 +163,7 @@ void InsaneRebel2::playIntroSequence() {
 
 	// Play main intro (OPEN/O_OPEN_A.SAN)
 	// Original: FUN_0041f4d0("OPEN/O_OPEN_A.SAN", 0x28, 0xffff, 0xffff, 0)
-	debugC(DEBUG_INSANE, "Rebel2: Playing main intro (O_OPEN_A.SAN)");
+	debugC(DEBUG_INSANE, "Playing main intro (O_OPEN_A.SAN)");
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_A.SAN", 15);
 
@@ -173,7 +173,7 @@ void InsaneRebel2::playIntroSequence() {
 	// Play additional intro (OPEN/O_OPEN_B.SAN)
 	// Original: conditional on DAT_0047ab45 || DAT_0047ab47
 	// We play unconditionally (matches "Continue Intro" menu behavior)
-	debugC(DEBUG_INSANE, "Rebel2: Playing additional intro (O_OPEN_B.SAN)");
+	debugC(DEBUG_INSANE, "Playing additional intro (O_OPEN_B.SAN)");
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_B.SAN", 15);
 }
@@ -181,7 +181,7 @@ void InsaneRebel2::playIntroSequence() {
 // playMissionBriefing -- Mission briefing screen (FUN_00415CF8).
 void InsaneRebel2::playMissionBriefing() {
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing mission briefing");
+	debugC(DEBUG_INSANE, "Playing mission briefing");
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x08);  // Briefing mode flag
@@ -268,7 +268,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sBEG.SAN", dir.c_str(), prefix.c_str());
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing level %d beginning: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d beginning: %s", levelId, filename.c_str());
 
 	if (levelId >= 1 && levelId <= 15 && levelTextParams[levelId].textID >= 0) {
 		const TextOverlayParams &p = levelTextParams[levelId];
@@ -292,7 +292,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sEND.SAN", dir.c_str(), prefix.c_str());
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing level %d end: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d end: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417327 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -313,7 +313,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing level %d retry: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d retry: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -334,7 +334,7 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sOVER.SAN", dir.c_str(), prefix.c_str());
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing level %d game over: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d game over: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417ab2 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -355,7 +355,7 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 //
 void InsaneRebel2::playEndingSequence() {
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing ending sequence (difficulty=%d)", _difficulty);
+	debugC(DEBUG_INSANE, "Playing ending sequence (difficulty=%d)", _difficulty);
 
 	// Switch to gameplay state to stop menu overlay rendering
 	_gameState = kStateGameplay;
@@ -392,7 +392,7 @@ void InsaneRebel2::playEndingSequence() {
 // This is the credits accessible from the main menu, NOT the ending credits.
 void InsaneRebel2::playCreditsSequence() {
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing menu credits");
+	debugC(DEBUG_INSANE, "Playing menu credits");
 	resetVideoAudio();
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -412,7 +412,7 @@ void InsaneRebel2::centerGameplayAim() {
 	purgeRebel2GameplayInputEvents(eventMan);
 	_gameplayMouseSettleUntil = _vm->_system->getMillis() + kRebel2GameplayMouseSettleMs;
 
-	debugC(DEBUG_INSANE, "Rebel2 centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u",
+	debugC(DEBUG_INSANE, "centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u",
 		_vm->_mouse.x, _vm->_mouse.y,
 		_joystickAxisX, _joystickAxisY, _gamepadAimActive ? 1 : 0,
 		_gameplayMouseSettleUntil);
@@ -439,7 +439,7 @@ void InsaneRebel2::warpGameplayMouseNow(int x, int y) {
 // runLevel -- Main level dispatcher, calls per-level handlers.
 int InsaneRebel2::runLevel(int levelId) {
 
-	debugC(DEBUG_INSANE, "Rebel2: Starting level %d", levelId);
+	debugC(DEBUG_INSANE, "Starting level %d", levelId);
 
 	// Validate level ID
 	if (levelId < 1 || levelId > 15) {
@@ -755,7 +755,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 		filename = Common::String::format("%s/%sDIE_%s.SAN", dir.c_str(), prefix.c_str(), variant.c_str());
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing death video: %s (phase=%d, frame=%d)", filename.c_str(), phase, frame);
+	debugC(DEBUG_INSANE, "Playing death video: %s (phase=%d, frame=%d)", filename.c_str(), phase, frame);
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -784,7 +784,7 @@ void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 		filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
 	}
 
-	debugC(DEBUG_INSANE, "Rebel2: Playing retry video: %s (phase=%d)", filename.c_str(), phase);
+	debugC(DEBUG_INSANE, "Playing retry video: %s (phase=%d)", filename.c_str(), phase);
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
