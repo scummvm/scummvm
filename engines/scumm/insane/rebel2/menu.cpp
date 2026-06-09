@@ -987,9 +987,12 @@ void InsaneRebel2::drawPreviewBox(byte *renderBitmap, int pitch, int width, int 
 	// Low-res (320x200) coordinates from FUN_00415CF8:
 	// Outer box: X=0xe4 (228), Y=0x49 (73), W=0x54 (84), H=0x36 (54), color=0xF8
 	// Inner box: X=0xe5 (229), Y=0x4a (74), W=0x52 (82), H=0x34 (52), color=4
+	// High-res uses the original DAT_0047a808 >= 2 formulas, doubling the
+	// low-res anchors and dimensions.
+	const int scale = isHiRes() ? 2 : 1;
 
 	// Outer border (bright)
-	int outerX = 228, outerY = 73, outerW = 84, outerH = 54;
+	int outerX = 228 * scale, outerY = 73 * scale, outerW = 84 * scale, outerH = 54 * scale;
 	byte outerColor = 0xF8;
 
 	// Draw outer box edges
@@ -1021,7 +1024,7 @@ void InsaneRebel2::drawPreviewBox(byte *renderBitmap, int pitch, int width, int 
 	}
 
 	// Inner border (dark)
-	int innerX = 229, innerY = 74, innerW = 82, innerH = 52;
+	int innerX = 229 * scale, innerY = 74 * scale, innerW = 82 * scale, innerH = 52 * scale;
 	byte innerColor = 4;
 
 	// Top edge
@@ -1115,6 +1118,8 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 	if (!splayer)
 		return;
 
+	const int scale = isHiRes() ? 2 : 1;
+
 	if (_chapterUnlocked[_chapterSelection]) {
 		// Unlocked: show score info using TRS 80 at X=25 (0x19), Y=190 (0xbe)
 		// TRS 80 = "^f01^c248Pilots: %hd  Score: %ld  Rank: ^f00%s"
@@ -1137,7 +1142,7 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		Common::String displayStr = Common::String::format(fmtStr,
 			(short)pilotLives, (long)pilotScore, rankStr.c_str());
 
-		drawMenuString(renderBitmap, displayStr.c_str(), 25, 190);
+		drawMenuString(renderBitmap, displayStr.c_str(), 25 * scale, 190 * scale);
 	} else {
 		const char *lockStr = splayer->getString(81);
 		if (!lockStr || !lockStr[0])
@@ -1148,7 +1153,7 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		Common::String displayStr = Common::String::format("%s ^c005%s%c",
 			lockStr, _passwordInput.c_str(), cursor);
 
-		drawMenuString(renderBitmap, displayStr.c_str(), 30, 190);
+		drawMenuString(renderBitmap, displayStr.c_str(), 30 * scale, 190 * scale);
 	}
 }
 

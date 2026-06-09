@@ -1262,13 +1262,6 @@ void SmushPlayerRebel2::handleGameFrameObjectPost(int codec, const byte *data, i
 	}
 }
 
-void SmushPlayerRebel2::handleGameFrameObjectDecoded(int codec, int left, int top, int width, int height) {
-	if (!ra2IsHighResMode() || isRebel2GameplayActive(_insane))
-		return;
-
-	ra2PromoteCurrentFrameToHiRes(0, 0);
-}
-
 void SmushPlayerRebel2::handleGameFrameStart() {
 	_hasFrameFobjForGost = false;
 	_ra2NativeFrameNeedsClear = ((_curVideoFlags & 0x20) == 0);
@@ -1278,12 +1271,18 @@ void SmushPlayerRebel2::handleGameFrameStart() {
 		_ra2PendingAnimHeaderPalette = false;
 	}
 
-	if (ra2IsHighResMode() && isRebel2GameplayActive(_insane)) {
-		if (_ra2UsingGameplaySurface && _specialBuffer != nullptr &&
-				_specialBufferSize >= kRebel2GameplaySurfaceWidth * kRebel2GameplaySurfaceHeight) {
-			_dst = _specialBuffer;
-			_width = kRebel2GameplaySurfaceWidth;
-			_height = kRebel2GameplaySurfaceHeight;
+	if (ra2IsHighResMode()) {
+		if (isRebel2GameplayActive(_insane)) {
+			if (_ra2UsingGameplaySurface && _specialBuffer != nullptr &&
+					_specialBufferSize >= kRebel2GameplaySurfaceWidth * kRebel2GameplaySurfaceHeight) {
+				_dst = _specialBuffer;
+				_width = kRebel2GameplaySurfaceWidth;
+				_height = kRebel2GameplaySurfaceHeight;
+			} else if (ra2EnsureLowResVideoBuffer()) {
+				_dst = _ra2LowResVideoBuffer;
+				_width = 320;
+				_height = 200;
+			}
 		} else if (ra2EnsureLowResVideoBuffer()) {
 			_dst = _ra2LowResVideoBuffer;
 			_width = 320;

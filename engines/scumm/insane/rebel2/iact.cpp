@@ -122,7 +122,10 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// offset on frame 0 doesn't affect the STOR/FTCH mechanism.
 	if (_gameState == kStateChapterSelect && _player) {
 		if (renderBitmap) {
-			memset(renderBitmap, 0, _vm->_screenWidth * _vm->_screenHeight);
+			const int clearWidth = (_player->_width > 0) ? _player->_width : _vm->_screenWidth;
+			const int clearHeight = (_player->_height > 0) ? _player->_height : _vm->_screenHeight;
+			if (clearWidth > 0 && clearHeight > 0)
+				memset(renderBitmap, 0, (size_t)clearWidth * clearHeight);
 		}
 		_player->_fobjOffsetX = _previewOffsetX;
 		_player->_fobjOffsetY = _previewOffsetY;

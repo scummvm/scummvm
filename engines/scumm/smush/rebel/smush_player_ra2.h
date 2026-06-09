@@ -57,7 +57,6 @@ protected:
 	bool handleGameStoreFrame() override;
 	void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) override;
 	void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) override;
-	void handleGameFrameObjectDecoded(int codec, int left, int top, int width, int height) override;
 	void handleGameFrameStart() override;
 	bool handleGameSkipChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;
 	void handleGameGost(int32 subSize, Common::SeekableReadStream &b) override;
