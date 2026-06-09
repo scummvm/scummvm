@@ -228,6 +228,7 @@ public:
 
 	void loadProgram(const Common::Path &path);
 	void loadSCOT();
+	void loadFonts();
 
 	int16 asc(const Common::U32String &str);
 	void bufferFlush(const Common::U32String &str);
@@ -269,6 +270,7 @@ public:
 	int16 readFileInt(int16 fileNo);
 	Common::String readFileStr(int16 fileNo, int16 length);
 	void record(int16 fileNo, int16 recordNo, int16 location);
+	void restore(uint32 index);
 	int16 rndInt(int16 max);
 	Common::U32String space(int16 count);
 	void swapInt(int16 &a, int16 &b);

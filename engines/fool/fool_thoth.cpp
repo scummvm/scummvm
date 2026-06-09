@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetThoth] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // high priestess challenge
 void FoolGame::highPriestessRun() {
@@ -37,7 +37,7 @@ void FoolGame::highPriestessRun() {
 		this->thothAdjustPuzzleData();
 	}
 	if ((this->var_i16_7ce & 2) != 0) {
-		g_toolbox->SetCursor(_cursors[0x10]);
+		_toolbox->SetCursor(_cursors[0x10]);
 	}
 	if (_activePuzzleStatus == 0) {
 		_menuHidesPlayfield = true;
@@ -60,7 +60,7 @@ void FoolGame::highPriestessRun() {
 		_activePuzzleStatus = 2;
 	}
 	// 140:007e
-	g_toolbox->SetCursor(_cursors[0x10]);
+	_toolbox->SetCursor(_cursors[0x10]);
 	this->sub_140_2f92();
 	if (_activePuzzleStatus == 2) {
 		this->thothKey2nd();
@@ -111,15 +111,15 @@ void FoolGame::highPriestessRun() {
 	// 140:024c
 	if (_sunMapRestored == 0) {
 		// show the fake puzzle picture
-		g_toolbox->PenNormal();
-		this->arr_i32_192c0[0] = g_toolbox->GetPicture(0x78);
+		_toolbox->PenNormal();
+		this->arr_i32_192c0[0] = _toolbox->GetPicture(0x78);
 		_zbasic->picture(0, 0, this->arr_i32_192c0[0]);
-		g_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
+		_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
 		this->waitForClick();
 	}
 	// 140:02a2
 	if (!_screenOversized) {
-		g_toolbox->SetPort(this->var_i32_8_thoth);
+		_toolbox->SetPort(this->var_i32_8_thoth);
 	} else {
 		this->sub_128_1ef8();
 	}
@@ -129,17 +129,17 @@ void FoolGame::highPriestessRun() {
 		_zbasic->get(1, i, SCREEN_WIDTH, i + 1, this->arr_bmp_fa3c);
 		_zbasic->put(_zbasic->rndInt(0x14) - 0xa, i, this->arr_bmp_fa3c, kSrcCopy);
 		if (i % 2 == 0) {
-			g_toolbox->Delay(0);
+			_toolbox->Delay(0);
 		}
 	}
 	// 140:0328
 	if (_sunMapRestored == 0) {
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 		Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		for (int16 i = 0; i <= 0x22; i++) {
-			this->var_i32_692 = g_toolbox->TickCount();
-			g_toolbox->InvertRect(area);
+			this->var_i32_692 = _toolbox->TickCount();
+			_toolbox->InvertRect(area);
 			this->sub_128_406(1);
 		}
 		// 140:037e
@@ -152,10 +152,10 @@ void FoolGame::highPriestessRun() {
 			if (i > 0xf0) {
 				this->var_i16_484 += 3;
 			}
-			g_toolbox->MoveTo(this->var_i16_484 + 0x5f - _zbasic->rndInt(0x32), i);
-			g_toolbox->LineTo(0x1a1 - this->var_i16_484 + _zbasic->rndInt(0x32), i);
+			_toolbox->MoveTo(this->var_i16_484 + 0x5f - _zbasic->rndInt(0x32), i);
+			_toolbox->LineTo(0x1a1 - this->var_i16_484 + _zbasic->rndInt(0x32), i);
 			if (i % 2 == 0) {
-				g_toolbox->Delay(0);
+				_toolbox->Delay(0);
 			}
 		}
 		// 140:03f0
@@ -166,7 +166,7 @@ void FoolGame::highPriestessRun() {
 		this->sub_128_918(_zbasic->str(OFF(4))); // the book of thoth
 		this->var_i16_7a2 = 0xdc;
 		this->sub_128_918(_zbasic->str(OFF(5))); // so easily
-		g_toolbox->SetPort(this->var_i32_0);
+		_toolbox->SetPort(this->var_i32_0);
 		this->waitForClick();
 	}
 	// 140:0450
@@ -206,21 +206,21 @@ void FoolGame::thoth99Enchantments() {
 	_zbasic->picture(0, 0x14, this->var_pic_7c2);
 	this->copyScreen(0, this->arr_bmp_b3ec);
 	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-		g_toolbox->PenSize(5, 5);
-		g_toolbox->PenMode(kPatXor);
+		_toolbox->PenSize(5, 5);
+		_toolbox->PenMode(kPatXor);
 		for (int16 j = 0; j <= 1; j++) {
-			g_toolbox->MoveTo(0x104, 0xa2);
-			g_toolbox->LineTo(_screenGrid[i].left + 0x14, _screenGrid[i].top + 0x14);
-			g_toolbox->InvertRoundRect(_screenGrid[i], 0x14, 0x14);
-			g_toolbox->Delay(0);
+			_toolbox->MoveTo(0x104, 0xa2);
+			_toolbox->LineTo(_screenGrid[i].left + 0x14, _screenGrid[i].top + 0x14);
+			_toolbox->InvertRoundRect(_screenGrid[i], 0x14, 0x14);
+			_toolbox->Delay(0);
 		}
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 		// 140:06cc
 		this->arr_i16_1eb8[2] = i;
 		this->thothDrawEnchantment();
 	}
 	// 140:06fc
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	this->sub_140_e3c();
 	this->arr_i16_4758[4] = 0x14;
 	this->arr_i16_4758[5] = 0;
@@ -239,7 +239,7 @@ void FoolGame::thoth99Enchantments() {
 
 	while (((_stateFlags & kStateReturn) == 0) && !_activePuzzleSolved) {
 		// 140:0752
-		this->var_i32_692 = g_toolbox->TickCount();
+		this->var_i32_692 = _toolbox->TickCount();
 		this->arr_i16_1eb8[1]++;
 		this->arr_i16_1eb8[3]++;
 		if (this->arr_i16_1eb8[1] >= this->arr_i16_1eb8[0]) {
@@ -256,7 +256,7 @@ void FoolGame::thoth99Enchantments() {
 			temp.left = this->arr_i16_4758[5];
 			temp.bottom = this->arr_i16_4758[6];
 			temp.right = this->arr_i16_4758[7];
-			g_toolbox->InvertRect(temp);
+			_toolbox->InvertRect(temp);
 		}
 		// 140:07c4
 		// Phase 1: enchantments 99 to 34 are inverting and don't move
@@ -274,11 +274,11 @@ void FoolGame::thoth99Enchantments() {
 			// 140:0852
 			this->arr_i16_1eb8[2] = this->arr_i16_1eb8[0] - this->arr_i16_1eb8[1];
 			if (this->arr_i16_1eb8[2] == this->arr_i16_1eb8[0]) {
-				if ((this->var_i16_2328 == 1) && (g_toolbox->TickCount() > (this->var_i32_68e + 0x28))) {
+				if ((this->var_i16_2328 == 1) && (_toolbox->TickCount() > (this->var_i32_68e + 0x28))) {
 					this->var_i16_2328 = 0;
 				}
 				if (this->var_i16_2328 == 0) {
-					this->var_i32_68e = g_toolbox->TickCount();
+					this->var_i32_68e = _toolbox->TickCount();
 					this->var_i16_2328 = 1;
 					this->thothMoveEnchantment();
 				}
@@ -317,7 +317,7 @@ void FoolGame::thoth99Enchantments() {
 
 void FoolGame::thothMoveEnchantment() {
 	// 140:09f0
-	g_toolbox->FillRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14, _patterns[2]);
+	_toolbox->FillRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14, _patterns[2]);
 	_screenGrid[this->arr_i16_1eb8[2]].top = _zbasic->rndInt(0x11a) + 0x14;
 	_screenGrid[this->arr_i16_1eb8[2]].left = _zbasic->rndInt(0x1da);
 	_screenGrid[this->arr_i16_1eb8[2]].bottom = _screenGrid[this->arr_i16_1eb8[2]].top + 0x28;
@@ -327,32 +327,32 @@ void FoolGame::thothMoveEnchantment() {
 
 void FoolGame::thothDrawEnchantment() {
 	// 140:0b2c
-	g_toolbox->PenNormal();
-	g_toolbox->EraseRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
-	g_toolbox->FrameRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
+	_toolbox->PenNormal();
+	_toolbox->EraseRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
+	_toolbox->FrameRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 	this->var_str_384 = Common::U32String::format(" %d ", this->arr_i16_1eb8[2]); // was: str(OFF(10))
-	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
+	this->var_i16_484 = _toolbox->StringWidth(this->var_str_384);
 	// 140:0bd2
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[this->arr_i16_1eb8[2]].left + 0x14 - (this->var_i16_484 / 2),
 		_screenGrid[this->arr_i16_1eb8[2]].top + 0x18
 	);
-	g_toolbox->DrawString(this->var_str_384);
+	_toolbox->DrawString(this->var_str_384);
 }
 
 void FoolGame::sub_140_c4c() {
 	// 140:0c4c
 	if (_activePuzzleSolved)
 		return;
-	if (g_toolbox->PtInRect(_event.where, _screenGrid[this->arr_i16_1eb8[0]])) {
+	if (_toolbox->PtInRect(_event.where, _screenGrid[this->arr_i16_1eb8[0]])) {
 		this->arr_i16_1eb8[0]--;
 		if (this->arr_i16_1eb8[0] <= 0) {
 			_activePuzzleSolved = true;
 			return;
 		}
 		this->var_i16_484 = this->arr_i16_1eb8[0] + 1;
-		g_toolbox->FillRoundRect(_screenGrid[this->var_i16_484], 0x14, 0x14, _patterns[2]);
+		_toolbox->FillRoundRect(_screenGrid[this->var_i16_484], 0x14, 0x14, _patterns[2]);
 		this->zoomRect(
 			_screenGrid[this->var_i16_484].top,
 			_screenGrid[this->var_i16_484].left,
@@ -375,15 +375,15 @@ void FoolGame::thothScrambleScreen() {
 	if (this->var_i16_2326 < 0) {
 		this->var_i16_2326 = 0;
 	}
-	g_toolbox->InvertRect(this->thothRandomSquare());
-	g_toolbox->InvertRect(this->thothRandomHRect());
-	g_toolbox->InvertRect(this->thothRandomVRect());
+	_toolbox->InvertRect(this->thothRandomSquare());
+	_toolbox->InvertRect(this->thothRandomHRect());
+	_toolbox->InvertRect(this->thothRandomVRect());
 	Common::Rect temp;
 	temp.top = this->arr_i16_4758[4];
 	temp.left = this->arr_i16_4758[5];
 	temp.bottom = this->arr_i16_4758[6];
 	temp.right = this->arr_i16_4758[7];
-	g_toolbox->InvertRect(temp);
+	_toolbox->InvertRect(temp);
 	this->var_i16_2326++;
 	if (this->var_i16_2326 >= 4)
 		this->var_i16_2326 = 0;
@@ -412,8 +412,8 @@ void FoolGame::sub_140_e3c() {
 
 void FoolGame::sub_140_f84() {
 	// 140:0f84
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(5, 5);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(5, 5);
 	this->arr_i16_4758[4] = (_screenGrid[1].top / 0x19) + 1;
 	this->arr_i16_4758[5] = (_screenGrid[1].left / 0x19) + 1;
 	// 140:0fea
@@ -428,7 +428,7 @@ void FoolGame::sub_140_f84() {
 		area.left -= this->arr_i16_4758[5];
 		area.bottom += this->arr_i16_4758[6];
 		area.right += this->arr_i16_4758[7];
-		g_toolbox->FrameRect(area);
+		_toolbox->FrameRect(area);
 		this->delay(1);
 	}
 	// 140:11ae
@@ -440,7 +440,7 @@ void FoolGame::sub_140_f84() {
 		area.left -= this->arr_i16_4758[5];
 		area.bottom += this->arr_i16_4758[6];
 		area.right += this->arr_i16_4758[7];
-		g_toolbox->InvertRect(area);
+		_toolbox->InvertRect(area);
 		this->delay(1);
 	}
 	// 140:12f6
@@ -452,11 +452,11 @@ void FoolGame::thothKey1st() {
 	this->fillRect(0, 0, 0x14, SCREEN_WIDTH, 2);
 	_zbasic->picture(0, 0x14, this->var_pic_7c2);
 	if ((this->var_i16_7ce & 2) != 0) {
-		g_toolbox->SetCursor(_cursors[0x10]);
+		_toolbox->SetCursor(_cursors[0x10]);
 	}
 	// 140:1346
-	g_toolbox->PenSize(5, 5);
-	g_toolbox->PenMode(kPatXor);
+	_toolbox->PenSize(5, 5);
+	_toolbox->PenMode(kPatXor);
 	_event.where = Common::Point(0, 0);
 	// 140:139a
 	while (!(
@@ -467,14 +467,14 @@ void FoolGame::thothKey1st() {
 	)) {
 		// 140:1366
 		this->getNextEvent(-1); // was: 0
-		g_toolbox->MoveTo(0x105, 0xa2);
-		g_toolbox->LineTo(_event.where.x, _event.where.y);
+		_toolbox->MoveTo(0x105, 0xa2);
+		_toolbox->LineTo(_event.where.x, _event.where.y);
 		this->delay(2);
-		g_toolbox->MoveTo(0x105, 0xa2);
-		g_toolbox->LineTo(_event.where.x, _event.where.y);
+		_toolbox->MoveTo(0x105, 0xa2);
+		_toolbox->LineTo(_event.where.x, _event.where.y);
 	}
 	// 140:13dc
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	if ((this->var_i16_7ce & 2) == 0) {
 		_stateFlags = kStateReturn;
 		this->zoomRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 1, kPatXor, 0x19);
@@ -531,28 +531,28 @@ void FoolGame::thothKey2nd() {
 		switch (this->var_i16_232e-1) {
 		case 0:
 			// 140:31b0
-			g_toolbox->InvertRect(this->thothRandomSquare());
+			_toolbox->InvertRect(this->thothRandomSquare());
 			break;
 		case 1:
 			// 140:31c4
-			g_toolbox->InvertRect(this->thothRandomHRect());
+			_toolbox->InvertRect(this->thothRandomHRect());
 			break;
 		case 2:
 			// 140:31d8
-			g_toolbox->InvertRect(this->thothRandomVRect());
-			g_toolbox->InvertRect(playArea);
+			_toolbox->InvertRect(this->thothRandomVRect());
+			_toolbox->InvertRect(playArea);
 			break;
 		case 3:
 			// 140:31fa
-			g_toolbox->FillRect(this->thothRandomSquare(), _patterns[2]);
+			_toolbox->FillRect(this->thothRandomSquare(), _patterns[2]);
 			break;
 		case 4:
 			// 140:321a
-			g_toolbox->FillRect(this->thothRandomHRect(), _patterns[2]);
+			_toolbox->FillRect(this->thothRandomHRect(), _patterns[2]);
 			break;
 		case 5:
 			// 140:323a
-			g_toolbox->FillRect(this->thothRandomVRect(), _patterns[2]);
+			_toolbox->FillRect(this->thothRandomVRect(), _patterns[2]);
 			break;
 		default:
 			warning("thothKey2nd: breaking out of switch statement");
@@ -564,7 +564,7 @@ void FoolGame::thothKey2nd() {
 			temp.left = this->arr_i16_2f38[(this->var_i16_103a + 1)*32+1];
 			temp.bottom = this->arr_i16_2f38[(this->var_i16_103a + 1)*32+2];
 			temp.right = this->arr_i16_2f38[(this->var_i16_103a + 1)*32+3];
-			g_toolbox->FillRect(temp, _patterns[1]);
+			_toolbox->FillRect(temp, _patterns[1]);
 		}
 		// 140:159e
 		this->getNextEvent(-1);
@@ -593,7 +593,7 @@ void FoolGame::sub_140_15fc() {
 		temp.bottom = this->arr_i16_2f38[i*32+2];
 		temp.right = this->arr_i16_2f38[i*32+3];
 
-		if (g_toolbox->PtInRect(_event.where, temp)) {
+		if (_toolbox->PtInRect(_event.where, temp)) {
 			this->var_i16_7e4 = i;
 		}
 	}
@@ -607,7 +607,7 @@ void FoolGame::sub_140_15fc() {
 			temp.left = this->arr_i16_4758[5];
 			temp.bottom = this->arr_i16_4758[6];
 			temp.right = this->arr_i16_4758[7];
-			g_toolbox->InvertRect(temp);
+			_toolbox->InvertRect(temp);
 		}
 	} else {
 		// 140:1698
@@ -618,7 +618,7 @@ void FoolGame::sub_140_15fc() {
 				temp.left = this->arr_i16_2f38[32*i+1];
 				temp.bottom = this->arr_i16_2f38[32*i+2];
 				temp.right = this->arr_i16_2f38[32*i+3];
-				g_toolbox->EraseRect(temp);
+				_toolbox->EraseRect(temp);
 			}
 			// 140:16ce
 			for (int16 i = 1; i <= 0xc; i++) {
@@ -628,7 +628,7 @@ void FoolGame::sub_140_15fc() {
 					temp.left = this->arr_i16_2f38[32*j+1];
 					temp.bottom = this->arr_i16_2f38[32*j+2];
 					temp.right = this->arr_i16_2f38[32*j+3];
-					g_toolbox->InvertRect(temp);
+					_toolbox->InvertRect(temp);
 				}
 				this->delay(2);
 			}
@@ -639,7 +639,7 @@ void FoolGame::sub_140_15fc() {
 			temp.bottom = this->arr_i16_2f38[32*this->var_i16_7e4+2];
 			temp.right = this->arr_i16_2f38[32*this->var_i16_7e4+3];
 			for (int16 i = 1; i <= 0x19; i++) {
-				g_toolbox->InvertRect(temp);
+				_toolbox->InvertRect(temp);
 
 			}
 			// 140:173a
@@ -676,7 +676,7 @@ void FoolGame::sub_140_15fc() {
 				temp.left = this->arr_i16_4758[1];
 				temp.bottom = this->arr_i16_4758[2];
 				temp.right = this->arr_i16_4758[3];
-				g_toolbox->InvertRect(temp);
+				_toolbox->InvertRect(temp);
 			}
 		}
 	}
@@ -737,15 +737,15 @@ void FoolGame::thothKey3rd() {
 			switch (this->var_i16_232e-1) {
 			case 0:
 				// 140:325a
-				g_toolbox->InvertRect(this->thothRandomSquare());
+				_toolbox->InvertRect(this->thothRandomSquare());
 				break;
 			case 1:
 				// 140:326e
-				g_toolbox->InvertRect(this->thothRandomHRect());
+				_toolbox->InvertRect(this->thothRandomHRect());
 				break;
 			case 2:
 				// 140:3282
-				g_toolbox->InvertRect(this->thothRandomVRect());
+				_toolbox->InvertRect(this->thothRandomVRect());
 				break;
 			default:
 				warning("thothKey3rd: broke out of switch");
@@ -760,7 +760,7 @@ void FoolGame::thothKey3rd() {
 			if (this->var_i16_232e > 0x10) {
 				this->var_i16_232e = 1;
 			}
-			g_toolbox->FillRect(_screenGrid[this->var_i16_103a], _patterns[this->arr_i16_4338[this->var_i16_232e]]);
+			_toolbox->FillRect(_screenGrid[this->var_i16_103a], _patterns[this->arr_i16_4338[this->var_i16_232e]]);
 		}
 		// 140:1b66
 		this->getNextEvent(-1);
@@ -787,7 +787,7 @@ void FoolGame::thothKey3rdOnClick() {
 		}
 	} else {
 		// 140:1c22
-		if (g_toolbox->PtInRect(_event.where, _screenGrid[this->var_i16_103a]) == 0) {
+		if (_toolbox->PtInRect(_event.where, _screenGrid[this->var_i16_103a]) == 0) {
 			this->var_i16_2332 = 0;
 		}
 	}
@@ -838,7 +838,7 @@ void FoolGame::thothKey3rdOnClick() {
 		if (area.top < 0x14) {
 			area.top = 0x14;
 		}
-		g_toolbox->FillRect(area, _patterns[this->arr_i16_2f38[this->var_i16_1de6*32+ this->var_i16_103a]]);
+		_toolbox->FillRect(area, _patterns[this->arr_i16_2f38[this->var_i16_1de6*32+ this->var_i16_103a]]);
 		// 140:1e2e
 		if ((area.left <= 0) && (area.top <= 0x14) && (area.right >= SCREEN_WIDTH) && (area.bottom >= SCREEN_HEIGHT)) {
 			_event.modifiers = kModMouseButtonUp;
@@ -860,19 +860,19 @@ void FoolGame::sub_140_1f68() {
 	// 140:1f68
 	this->playTone(0xf, 0x64, 1);
 	this->var_i16_103a = 0;
-	g_toolbox->PenSize(0x14, 0x14);
-	g_toolbox->PenPat(_patterns[3]);
+	_toolbox->PenSize(0x14, 0x14);
+	_toolbox->PenPat(_patterns[3]);
 	Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int16 i = 0; i <= 0x104; i += 0x14) {
 		area.top = 0x14 + i;
 		area.left = i;
 		area.bottom = SCREEN_HEIGHT - i;
 		area.right = SCREEN_WIDTH - i;
-		g_toolbox->FrameRect(area);
-		g_toolbox->Delay(0);
+		_toolbox->FrameRect(area);
+		_toolbox->Delay(0);
 	}
 	// 140:2056
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	this->waitForMouseUp();
 }
 
@@ -880,7 +880,7 @@ void FoolGame::sub_140_205e() {
 	// 140:205e
 	this->var_i16_103a++;
 	this->waitForMouseUp();
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 }
 
 void FoolGame::thothKeyLast() {
@@ -902,24 +902,24 @@ void FoolGame::thothKeyLast() {
 				int hermitPathEndIndex = this->arr_i16_3b38[_hermitPathStage + 0x20]; // var_i16_2336
 				do {
 					this->getNextEvent(-1);
-					g_toolbox->FillRect(_screenGrid[this->arr_i16_3738[hermitPathStartIndex]], _patterns[this->var_i16_2338]);
+					_toolbox->FillRect(_screenGrid[this->arr_i16_3738[hermitPathStartIndex]], _patterns[this->var_i16_2338]);
 					hermitPathStartIndex++;
 					// we're updating the screen in the event handler, this has no effect
 					/*if (_hermitPathStage == 5) {
 						if (hermitPathStartIndex % 4 == 0)
-							g_toolbox->Delay(0);
+							_toolbox->Delay(0);
 					} else {
 						if (hermitPathStartIndex % 8 == 0)
-							g_toolbox->Delay(0);
+							_toolbox->Delay(0);
 					}*/
 				// 140:2168
 				} while (!((_event.what == 1) || (hermitPathStartIndex > hermitPathEndIndex) || ((_stateFlags & kStateReturn) != 0)));
 				// 140:219e
 				if ((_event.what == 0) && ((_stateFlags & kStateReturn) == 0)) {
 					if (_hermitPathStage != 5) {
-						g_toolbox->Delay(0x7d*60/1000);
+						_toolbox->Delay(0x7d*60/1000);
 					} else {
-						g_toolbox->Delay(0xfa*60/1000);
+						_toolbox->Delay(0xfa*60/1000);
 					}
 				}
 				// 140:21e8
@@ -930,7 +930,7 @@ void FoolGame::thothKeyLast() {
 				this->var_i16_68a = _zbasic->rndInt(0x14) - 1;
 				this->var_i16_68c = _zbasic->rndInt(0xe) - 1;
 				// 140:2222
-				g_toolbox->FillRect(_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]], _patterns[this->var_i16_484]);
+				_toolbox->FillRect(_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]], _patterns[this->var_i16_484]);
 				this->getNextEvent(-1);
 			}
 			if (_event.what == 1) {
@@ -962,7 +962,7 @@ void FoolGame::thothKeyLastOnClick() {
 				// 140:23aa
 				this->arr_i16_1eb8[1] = this->arr_i16_1eb8[0];
 				this->playTone(0x32 + (this->var_i16_1de6 * 5), 0x28, 0);
-				g_toolbox->FillRect(_screenGrid[this->arr_i16_1eb8[0]], _patterns[2]);
+				_toolbox->FillRect(_screenGrid[this->arr_i16_1eb8[0]], _patterns[2]);
 				this->var_i16_1de6++;
 				warning("thothKeyLastOnClick: 1de6: %d, target: %d", this->var_i16_1de6, (this->arr_i16_3b38[0x20 + _hermitPathStage] + 1));
 			}
@@ -984,7 +984,7 @@ void FoolGame::thothBadSelect() {
 		// 140:24c4
 		this->getNextEvent(-1);
 		this->var_i16_484 = _zbasic->rndInt(0x50);
-		g_toolbox->FillRect(_screenGrid[this->arr_i16_1eb8[0]], _patterns[this->var_i16_484]);
+		_toolbox->FillRect(_screenGrid[this->arr_i16_1eb8[0]], _patterns[this->var_i16_484]);
 	}
 	// 140:2520
 	if (_activePuzzle != 0x34) {
@@ -992,7 +992,7 @@ void FoolGame::thothBadSelect() {
 	} else {
 		for (int16 i = this->var_i16_1de6; i >= this->arr_i16_3b38[_hermitPathStage]; i--) {
 			this->var_i16_484 = _zbasic->rndInt(0x4e) + 2;
-			g_toolbox->FillRect(_screenGrid[this->arr_i16_3738[i]], _patterns[this->var_i16_484]);
+			_toolbox->FillRect(_screenGrid[this->arr_i16_3738[i]], _patterns[this->var_i16_484]);
 		}
 	}
 	// 140:25b4
@@ -1036,7 +1036,7 @@ void FoolGame::hermitScreenFlash() {
 	// limit the amount of continuous full-screen flashing to WCAG
 	// recommendation of 3/second
 	for (int16 i = 0; i <= 6; i++) { // was: 0x10
-		g_toolbox->InvertRect(area);
+		_toolbox->InvertRect(area);
 		this->delay(10); // was: 1
 	}
 }
@@ -1044,7 +1044,7 @@ void FoolGame::hermitScreenFlash() {
 void FoolGame::hermitScreenZoom() {
 	// 140:26ca
 	this->sub_128_4da(0);
-	g_toolbox->PenSize(0xa, 0x7);
+	_toolbox->PenSize(0xa, 0x7);
 
 	for (int16 j = 0; j <= 2; j++) {
 		// 140:26e0
@@ -1054,7 +1054,7 @@ void FoolGame::hermitScreenZoom() {
 			area.left += 0xa;
 			area.bottom -= 7;
 			area.right -= 0xa;
-			g_toolbox->InvertRect(area);
+			_toolbox->InvertRect(area);
 			this->delay(1);
 		}
 		for (int16 i = 0; i <= 0x13; i++) {
@@ -1062,12 +1062,12 @@ void FoolGame::hermitScreenZoom() {
 			area.left -= 0xa;
 			area.bottom += 7;
 			area.right += 0xa;
-			g_toolbox->InvertRect(area);
+			_toolbox->InvertRect(area);
 			this->delay(1);
 		}
 	}
-	g_toolbox->PenNormal();
-	g_toolbox->PenPat(_patterns[1]);
+	_toolbox->PenNormal();
+	_toolbox->PenPat(_patterns[1]);
 	this->var_i16_1de6 = 0;
 	this->sub_128_4da(1);
 }
@@ -1172,7 +1172,7 @@ void FoolGame::thothKeyLastSetup() {
 		this->var_i16_68a = this->arr_i16_1eb8[0xa];
 		do {
 			this->var_i16_484++;
-			g_toolbox->SetRect(
+			_toolbox->SetRect(
 				_screenGrid[this->var_i16_484],
 				this->var_i16_68a,
 				this->var_i16_68c,
@@ -1193,13 +1193,13 @@ void FoolGame::thothKeyLastSetup() {
 	}
 	// 140:2d94
 	if (_hermitPathStage != 6) {
-		g_toolbox->PenPat(_patterns[1]);
+		_toolbox->PenPat(_patterns[1]);
 		for (int16 j = 0; j <= 0x13; j++) {
 			for (int16 i = 0; i <= 0xd; i++) {
-				g_toolbox->EraseRect(_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[j]*32 + this->arr_i16_5cbc[i]]]);
-				g_toolbox->FrameRect(_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[j]*32 + this->arr_i16_5cbc[i]]]);
+				_toolbox->EraseRect(_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[j]*32 + this->arr_i16_5cbc[i]]]);
+				_toolbox->FrameRect(_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[j]*32 + this->arr_i16_5cbc[i]]]);
 				if (((i + j*0xd) % 6) == 0)
-					g_toolbox->Delay(0);
+					_toolbox->Delay(0);
 			}
 		}
 	} else {
@@ -1209,12 +1209,12 @@ void FoolGame::thothKeyLastSetup() {
 			for (int16 j = 0; j <= 0xd; j++) {
 				// 140:2e8c
 				this->var_i16_484 = _zbasic->rndInt(0x4e) + 2;
-				g_toolbox->FillRect(
+				_toolbox->FillRect(
 					_screenGrid[this->arr_i16_2f38[this->arr_i16_5bbc[this->var_i16_68a]*32 + this->arr_i16_5cbc[j]]],
 					_patterns[this->var_i16_484]
 				);
 				if (((j + k*0xd) % 6) == 0)
-					g_toolbox->Delay(0);
+					_toolbox->Delay(0);
 				this->var_i16_68a++;
 				if (this->var_i16_68a > 0x13) {
 					this->var_i16_68a = 0;
@@ -1280,7 +1280,7 @@ Common::Rect FoolGame::thothRandomVRect() {
 void FoolGame::sub_140_3296() {
 	// 140:3296
 	if (!_screenOversized) {
-		g_toolbox->SetPort(this->var_i32_8_thoth);
+		_toolbox->SetPort(this->var_i32_8_thoth);
 	} else {
 		this->sub_128_1ef8();
 	}
@@ -1290,24 +1290,24 @@ void FoolGame::sub_140_3296() {
 void FoolGame::sub_140_32ac() {
 	// 140:33ac
 	this->sub_128_4da(0);
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	for (int16 j = 0; j <= 0x22; j++) {
 		for (int16 i = -5; i <= 0x159; i += 0xa) {
-			g_toolbox->MoveTo(0, _zbasic->rndInt(0xa) + i);
-			g_toolbox->LineTo(SCREEN_WIDTH, _zbasic->rndInt(0xa) + i);
+			_toolbox->MoveTo(0, _zbasic->rndInt(0xa) + i);
+			_toolbox->LineTo(SCREEN_WIDTH, _zbasic->rndInt(0xa) + i);
 		}
 	}
 	// 140:3300
 	Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int16 i = 1; i <= 0xd; i++) {
-		this->var_i32_692 = g_toolbox->TickCount();
-		g_toolbox->InvertRect(area);
+		this->var_i32_692 = _toolbox->TickCount();
+		_toolbox->InvertRect(area);
 		this->sub_128_406(1);
 	}
 	// 140:334a
-	g_toolbox->FillRect(area, _patterns[2]);
+	_toolbox->FillRect(area, _patterns[2]);
 	this->sub_128_4da(1);
-	g_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(this->var_i32_0);
 }
 
 void FoolGame::thothAdjustPuzzleData() {
@@ -1325,9 +1325,9 @@ void FoolGame::thothAdjustPuzzleData() {
 
 void FoolGame::sub_140_3412() {
 	// 140:3412
-	g_toolbox->PenNormal();
+	_toolbox->PenNormal();
 	if ((this->var_i16_7ce & 2) == 0) {
-		g_toolbox->InitCursor();
+		_toolbox->InitCursor();
 	}
 }
 

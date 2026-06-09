@@ -450,6 +450,7 @@ private:
 	FoolVersion _version;
 	const int *_zstrOffset;
 	int _fontChicago;
+	Toolbox *_toolbox;
 	ZBasic *_zbasic;
 	bool _quit = false;
 

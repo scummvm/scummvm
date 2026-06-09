@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetHumbug] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // the humbug - "irritating stick" style challenge
 void FoolGame::humbugRun() {
@@ -91,7 +91,7 @@ void FoolGame::humbugTrail() {
 		);
 		// Simulate slow draw speed
 		if ((i % 42) == 0)
-			g_toolbox->Delay(0);
+			_toolbox->Delay(0);
 	}
 	// 142:026e
 	this->sub_128_4da(1);
@@ -200,7 +200,7 @@ void FoolGame::sub_142_630() {
 	this->thothKey2nd();
 	if (_activePuzzleSolved) {
 		// 142:066e
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 		_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
 		for (int16 i = 1; i <= 4; i++) {
 			Common::Rect temp;
@@ -208,17 +208,17 @@ void FoolGame::sub_142_630() {
 			temp.left = this->arr_i16_2f38[i*32+1];
 			temp.bottom = this->arr_i16_2f38[i*32+2];
 			temp.right = this->arr_i16_2f38[i*32+3];
-			g_toolbox->FillRect(temp, _patterns[2]);
-			g_toolbox->FrameRect(temp);
+			_toolbox->FillRect(temp, _patterns[2]);
+			_toolbox->FrameRect(temp);
 			this->var_str_384 = Common::U32String::format(" %d ", i);
-			this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_384);
+			this->var_i16_7e4 = _toolbox->StringWidth(this->var_str_384);
 			this->var_i16_9f2 = (this->arr_i16_2f38[i*32+3] - this->arr_i16_2f38[i*32+1])/2;
 			// 142:0756
-			g_toolbox->MoveTo(
+			_toolbox->MoveTo(
 				this->arr_i16_2f38[i*32+1] + this->var_i16_9f2 - (this->var_i16_7e4 / 2),
 				this->arr_i16_2f38[i*32 + 2] - 0x1e
 			);
-			g_toolbox->DrawString(this->var_str_384);
+			_toolbox->DrawString(this->var_str_384);
 		}
 		// 142:07ca
 		_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
@@ -242,7 +242,7 @@ void FoolGame::sub_142_630() {
 				temp.left = this->arr_i16_2f38[this->var_i16_9f2*32+1];
 				temp.bottom = this->arr_i16_2f38[this->var_i16_9f2*32+2];
 				temp.right = this->arr_i16_2f38[this->var_i16_9f2*32+3];
-				g_toolbox->InvertRect(temp);
+				_toolbox->InvertRect(temp);
 			}
 		}
 	}

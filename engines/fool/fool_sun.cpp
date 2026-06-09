@@ -26,7 +26,7 @@
 
 namespace Fool {
 
-extern Toolbox *g_toolbox;
+
 
 // The Sun's map
 void FoolGame::sunMapRun() {
@@ -43,7 +43,7 @@ void FoolGame::sunMapRun() {
 	for (int16 j = 0x1a; j <= 0x132; j += 0x23) {
 		for (int16 i = 0x6e; i <= 0x186; i += 0x23) {
 			this->var_i16_484++;
-			g_toolbox->SetRect(_screenGrid[this->var_i16_484], i, j, i+0x24, j+0x24);
+			_toolbox->SetRect(_screenGrid[this->var_i16_484], i, j, i+0x24, j+0x24);
 		}
 	}
 	// 137:00fa
@@ -82,7 +82,7 @@ void FoolGame::sunMapRun() {
 	// 137:0336
 	_stateFlags = kStateNull;
 	_zbasic->menu(8, 3, 0, Common::U32String());
-	g_toolbox->InitCursor();
+	_toolbox->InitCursor();
 	this->sunMapCheckIfSolved();
 	while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved)) {
 		while ((_stateFlags == kStateNull) && (!_activePuzzleSolved)) {
@@ -107,7 +107,7 @@ void FoolGame::sunMapRun() {
 	this->var_i16_68c = 0;
 	for (int j = 0; j <= 5; j++) {
 		for (int i = 1; i <= 0x51; i++) {
-			g_toolbox->InvertRect(_screenGrid[i]);
+			_toolbox->InvertRect(_screenGrid[i]);
 		}
 	}
 	// 137:1654
@@ -135,9 +135,9 @@ void FoolGame::sunMapOnClick() {
 	// 137:0466
 	_menuDisabled = true;
 	_zbasic->menu(8, 3, 0, Common::U32String());
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(3, 3);
-	g_toolbox->PenMode(kPatXor);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(3, 3);
+	_toolbox->PenMode(kPatXor);
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
 	if (_puzzleFlags[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & kFlagMapTile) {
@@ -146,11 +146,11 @@ void FoolGame::sunMapOnClick() {
 	}
 	this->sunMapDragSelect();
 	// 137:0506
-	g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
+	_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 	this->arr_i16_4758[0] -= this->var_i16_68a;
 	this->arr_i16_4758[1] -= this->var_i16_68c;
 	this->sunMapMoveSelected();
-	g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
+	_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 	this->sunMapDropSelected();
 	this->sunMapCheckIfSolved();
 	this->waitForMouseUp();
@@ -187,9 +187,9 @@ void FoolGame::sunMapDragSelect() {
 		this->arr_i16_4758[13] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].bottom;
 		this->arr_i16_4758[14] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
 		// 137:084c
-		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
+		_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 		this->delay(2);
-		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
+		_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 		this->delay(1);
 	} while (_event.what != kMouseUp);
 	// 137:087e
@@ -243,9 +243,9 @@ void FoolGame::sunMapMoveSelected() {
 		this->arr_rect_4776.left = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].left;
 		this->arr_rect_4776.bottom = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].bottom;
 		this->arr_rect_4776.right = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].right;
-		g_toolbox->FrameRect(this->arr_rect_4776);
+		_toolbox->FrameRect(this->arr_rect_4776);
 		this->delay(2);
-		g_toolbox->FrameRect(this->arr_rect_4776);
+		_toolbox->FrameRect(this->arr_rect_4776);
 		this->delay(1);
 	} while (_event.what != kMouseDown);
 }
@@ -358,7 +358,7 @@ void FoolGame::sunMapRevealPiece() {
 		temp.left = this->arr_i16_4758[1];
 		temp.bottom = this->arr_i16_4758[2];
 		temp.right = this->arr_i16_4758[3];
-		g_toolbox->FrameRect(temp);
+		_toolbox->FrameRect(temp);
 		this->delay(1);
 	}
 	// 137:1550

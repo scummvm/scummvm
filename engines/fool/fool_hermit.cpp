@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetHermit] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 // hermit key trace
 void FoolGame::hermitRun() {

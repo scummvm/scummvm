@@ -28,7 +28,7 @@ namespace Fool {
 
 #define OFF(x) (_zstrOffset[kOffsetMaze] + (x))
 
-extern Toolbox *g_toolbox;
+
 
 void FoolGame::mazeRun() {
 	// 136:0004
@@ -43,7 +43,7 @@ void FoolGame::mazeRun() {
 		var_i16_68a = arr_i16_1eb8[10];
 		do {
 			var_i16_484++;
-			g_toolbox->SetRect(
+			_toolbox->SetRect(
 				_screenGrid[var_i16_484],
 				var_i16_68a,
 				var_i16_68c,
@@ -54,7 +54,7 @@ void FoolGame::mazeRun() {
 		} while (_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[11], arr_i16_1eb8[6]));
 	} while (_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
 	if (this->arr_i16_1eb8[20] != 0) {
-		var_i32_1ac0 = g_toolbox->GetPicture(arr_i16_1eb8[20]);
+		var_i32_1ac0 = _toolbox->GetPicture(arr_i16_1eb8[20]);
 		_zbasic->picture(arr_i16_1eb8[18], arr_i16_1eb8[19], var_i32_1ac0);
 	}
 	// 136:018c
@@ -86,10 +86,10 @@ void FoolGame::mazeRun() {
 	playArea.left = _screenGrid[1].left + 3;
 	playArea.bottom = _screenGrid[arr_i16_1eb8[0] * arr_i16_1eb8[1] - 1].bottom - 3;
 	playArea.right = _screenGrid[arr_i16_1eb8[0] * arr_i16_1eb8[1] - 1].right - 3;
-	g_toolbox->FillRect(playArea, _patterns[2]);
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(5, 5);
-	g_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
+	_toolbox->FillRect(playArea, _patterns[2]);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(5, 5);
+	_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
 	// 136:042c
 	var_i16_1ac4 = arr_i16_1eb8[17];
 	var_i16_1574 = 0;
@@ -117,7 +117,7 @@ void FoolGame::mazeRun() {
 			temp.left = _screenGrid[var_i16_1574].left - 3;
 			temp.bottom = _screenGrid[var_i16_1574].bottom - 3;
 			temp.right = SCREEN_WIDTH;
-			g_toolbox->FillRect(temp, _patterns[2]);
+			_toolbox->FillRect(temp, _patterns[2]);
 		}
 		// 136:05d0
 	}
@@ -237,10 +237,10 @@ void FoolGame::mazeOnClick() {
 
 void FoolGame::mazeFlashWall() {
 	// 136:0994
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(5, 5);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(5, 5);
 	if (arr_i16_1eb8[21] == 0) {
-		g_toolbox->PenMode(kPatXor);
+		_toolbox->PenMode(kPatXor);
 		switch (_mazePlayerDirection-1) {
 		case 0:
 			mazeAddWallLeft();
@@ -258,10 +258,10 @@ void FoolGame::mazeFlashWall() {
 			warning("mazeFlashWall: breaking out of switch");
 			break;
 		}
-		g_toolbox->Delay(0);
+		_toolbox->Delay(0);
 	} else {
 		// 136:09de
-		g_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
+		_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
 	}
 	// 136:0a00
 	switch (_mazePlayerDirection-1) {
@@ -281,15 +281,15 @@ void FoolGame::mazeFlashWall() {
 		warning("mazeFlashWall: breaking out of switch");
 		break;
 	}
-	g_toolbox->Delay(0);
+	_toolbox->Delay(0);
 }
 
 void FoolGame::mazeMovePlayer() {
 	// 136:0a22
 	if (var_i16_1bd6 != 0) {
-		g_toolbox->PenNormal();
-		g_toolbox->PenPat(_patterns[2]);
-		g_toolbox->PenSize(5, 5);
+		_toolbox->PenNormal();
+		_toolbox->PenPat(_patterns[2]);
+		_toolbox->PenSize(5, 5);
 		switch (var_i16_1bd6 - 1) {
 		case 0:
 			mazeDrawWallLeft();
@@ -310,9 +310,9 @@ void FoolGame::mazeMovePlayer() {
 	}
 	// 136:0a66
 	if (var_i16_1bd4 != 0) {
-		g_toolbox->PenNormal();
-		g_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
-		g_toolbox->PenSize(5, 5);
+		_toolbox->PenNormal();
+		_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
+		_toolbox->PenSize(5, 5);
 		switch (var_i16_1bd4 - 1) {
 		case 0:
 			mazeDrawWallLeft();
@@ -341,7 +341,7 @@ void FoolGame::mazeMovePlayer() {
 		temp.left = arr_i16_1eb8[25];
 		temp.bottom = arr_i16_1eb8[26];
 		temp.right = arr_i16_1eb8[27];
-		g_toolbox->InvertOval(temp); // erase current spot
+		_toolbox->InvertOval(temp); // erase current spot
 		mazeDrawPlayer();
 		var_i16_1bda = var_i16_1574;
 		mazeHotspot();
@@ -364,7 +364,7 @@ void FoolGame::sub_136_ade() {
 		temp.left = arr_i16_1eb8[25];
 		temp.bottom = arr_i16_1eb8[26];
 		temp.right = arr_i16_1eb8[27];
-		g_toolbox->InvertOval(temp);
+		_toolbox->InvertOval(temp);
 		mazeDrawPlayer();
 		var_i16_1bda = var_i16_1574;
 		mazeHotspot();
@@ -500,7 +500,7 @@ void FoolGame::mazePrintMessage() {
 	fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
 	if (!var_str_1ce2.empty()) { // was: str(OFF(7))
 		_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
-		int16 width = g_toolbox->StringWidth(var_str_1ce2);
+		int16 width = _toolbox->StringWidth(var_str_1ce2);
 		fillRect(0x13b, 0xf1 - (width / 2), 0x14f, 0x10f + (width / 2), 2);
 		var_i16_7a2 = 0x149;
 		sub_128_918(var_str_1ce2.decode(Common::kMacRoman));
@@ -562,7 +562,7 @@ void FoolGame::mazeWanderingWinds() {
 	temp.left = arr_i16_1eb8[25];
 	temp.bottom = arr_i16_1eb8[26];
 	temp.right = arr_i16_1eb8[27];
-	g_toolbox->InvertOval(temp);
+	_toolbox->InvertOval(temp);
 	var_i16_1dea = var_i16_1574;
 	var_i16_1dec = 2;
 	mazeMovementTrail();
@@ -616,12 +616,12 @@ void FoolGame::mazeDrawLetter() {
 	}
 	// 136:12e4
 	_zbasic->text(kFontPuzzle, 0xc, 0, var_src_1dee);
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1dea].left + arr_i16_1eb8[2],
 		_screenGrid[var_i16_1dea].top + arr_i16_1eb8[3]
 	);
 	var_str_384 = _zbasic->chr(var_i16_106e);
-	g_toolbox->DrawString(var_str_384);
+	_toolbox->DrawString(var_str_384);
 }
 
 void FoolGame::sub_136_137c() {
@@ -714,9 +714,9 @@ void FoolGame::mazeHiddenDoorOpen() {
 	// 136:1756
 	var_i16_1bd8 = var_i16_1574;
 	var_i16_1bd4 = _zbasic->decodeInt(var_str_1ce2);
-	g_toolbox->PenNormal();
-	g_toolbox->PenPat(_patterns[2]);
-	g_toolbox->PenSize(5, 5);
+	_toolbox->PenNormal();
+	_toolbox->PenPat(_patterns[2]);
+	_toolbox->PenSize(5, 5);
 	switch (var_i16_1bd4-1) {
 	case 0:
 		mazeDrawWallLeft();
@@ -740,9 +740,9 @@ void FoolGame::mazeHiddenDoorShut() {
 	// 136:17a4
 	var_i16_1bd8 = var_i16_1574;
 	var_i16_1bd6 = _zbasic->decodeInt(var_str_1ce2);
-	g_toolbox->PenNormal();
-	g_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
-	g_toolbox->PenSize(5, 5);
+	_toolbox->PenNormal();
+	_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
+	_toolbox->PenSize(5, 5);
 	switch (var_i16_1bd6-1) {
 	case 0:
 		mazeDrawWallLeft();
@@ -813,22 +813,22 @@ void FoolGame::mazeFireDemon() {
 	temp.bottom = arr_i16_4758[2];
 	temp.right = arr_i16_4758[3];
 	for (int16 i = 1; i <= var_i16_1de4; i++) {
-		g_toolbox->InvertRect(temp);
-		g_toolbox->Delay(0);
+		_toolbox->InvertRect(temp);
+		_toolbox->Delay(0);
 		if (mazeToneFreq > 0) {
 			mazePlayTone();
 		}
-		g_toolbox->InvertRect(temp);
-		g_toolbox->Delay(0);
+		_toolbox->InvertRect(temp);
+		_toolbox->Delay(0);
 	}
 }
 
 void FoolGame::sub_136_19d2() {
 	warning(__func__);
 	// 136:19d2
-	g_toolbox->PenNormal();
-	g_toolbox->PenMode(kPatXor);
-	g_toolbox->PenSize(6, 6);
+	_toolbox->PenNormal();
+	_toolbox->PenMode(kPatXor);
+	_toolbox->PenSize(6, 6);
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	var_i16_1de4 = var_i16_1de4 * 2 - 1;
 	var_i16_1dea = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 3, 2));
@@ -845,26 +845,26 @@ void FoolGame::sub_136_19d2() {
 	// 136:1c32
 	for (int16 i = 0; i <= var_i16_1de4; i++) {
 		if (var_i16_1dec == 1) {
-			g_toolbox->InvertRect(_screenGrid[var_i16_1dea]);
+			_toolbox->InvertRect(_screenGrid[var_i16_1dea]);
 		}
 		// 136:1c5a
 		if (var_i16_1dec == 2) {
-			g_toolbox->InvertOval(_screenGrid[var_i16_1dea]);
+			_toolbox->InvertOval(_screenGrid[var_i16_1dea]);
 		}
-		g_toolbox->MoveTo(var_i16_1df8, var_i16_1dfa);
-		g_toolbox->LineTo(var_i16_1dfc, var_i16_1dfe);
+		_toolbox->MoveTo(var_i16_1df8, var_i16_1dfa);
+		_toolbox->LineTo(var_i16_1dfc, var_i16_1dfe);
 		if (var_i16_1df6 == 1) {
-			g_toolbox->InvertRect(_screenGrid[var_i16_1de8]);
+			_toolbox->InvertRect(_screenGrid[var_i16_1de8]);
 		}
 		// 136:1cb2
 		if (var_i16_1df6 == 2) {
-			g_toolbox->InvertOval(_screenGrid[var_i16_1de8]);
+			_toolbox->InvertOval(_screenGrid[var_i16_1de8]);
 
 		}
 		if (mazeToneFreq > 0) {
 			mazePlayTone();
 		}
-		g_toolbox->Delay(0);
+		_toolbox->Delay(0);
 	}
 }
 
@@ -881,16 +881,16 @@ void FoolGame::mazeNoisySprite() {
 			mazePlayTone();
 		}
 		if (var_i16_1dec == 1) {
-			g_toolbox->InvertRect(_screenGrid[var_i16_1dea]);
-			g_toolbox->Delay(0);
-			g_toolbox->InvertRect(_screenGrid[var_i16_1dea]);
-			g_toolbox->Delay(0);
+			_toolbox->InvertRect(_screenGrid[var_i16_1dea]);
+			_toolbox->Delay(0);
+			_toolbox->InvertRect(_screenGrid[var_i16_1dea]);
+			_toolbox->Delay(0);
 		} else {
 			// 136:1d98
-			g_toolbox->InvertOval(_screenGrid[var_i16_1dea]);
-			g_toolbox->Delay(0);
-			g_toolbox->InvertOval(_screenGrid[var_i16_1dea]);
-			g_toolbox->Delay(0);
+			_toolbox->InvertOval(_screenGrid[var_i16_1dea]);
+			_toolbox->Delay(0);
+			_toolbox->InvertOval(_screenGrid[var_i16_1dea]);
+			_toolbox->Delay(0);
 		}
 		// 136:1dc8
 	}
@@ -900,7 +900,7 @@ void FoolGame::mazeDelay() {
 	warning(__func__);
 	// 136:1ddc
 	var_i16_484 = _zbasic->decodeInt(var_str_1ce2);
-	g_toolbox->Delay(var_i16_484*60/1000);
+	_toolbox->Delay(var_i16_484*60/1000);
 }
 
 void FoolGame::mazeYeetObject() {
@@ -919,9 +919,9 @@ void FoolGame::mazeThornsGetScroll() {
 	var_i16_1dec = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 3, 2));
 	var_i16_1e00 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 5, 2));
 	mazeLoadTone(7);
-	g_toolbox->PenNormal();
-	g_toolbox->PenSize(4, 4);
-	g_toolbox->PenMode(kPatXor);
+	_toolbox->PenNormal();
+	_toolbox->PenSize(4, 4);
+	_toolbox->PenMode(kPatXor);
 	// 136:1eb0
 	if (var_i16_1e00 == 1) {
 		arr_i16_4758[0] = 0x14;
@@ -978,17 +978,17 @@ void FoolGame::mazeThornsGetScroll() {
 			temp.bottom = arr_i16_4758[2];
 			temp.right = arr_i16_4758[3];
 			if (var_i16_1dec == 1) {
-				g_toolbox->FrameRect(temp);
+				_toolbox->FrameRect(temp);
 			}
 			// 136:21b8
 			if (var_i16_1dec == 2) {
-				g_toolbox->FrameOval(temp);
+				_toolbox->FrameOval(temp);
 			}
 			// 136:21d0
 			if (mazeToneFreq > 0) {
 				mazePlayTone();
 			}
-			g_toolbox->Delay(0);
+			_toolbox->Delay(0);
 		}
 	}
 }
@@ -1020,7 +1020,7 @@ void FoolGame::mazeMovementTrail() {
 		arr_bcd_5dbc[2] = _screenGrid[var_i16_1dea].bottom - 4.0f;
 		arr_bcd_5dbc[3] = _screenGrid[var_i16_1dea].right - 4.0f;
 		for (int16 j = 1; j <= 0x19; j++) {
-			var_i32_692 = g_toolbox->TickCount();
+			var_i32_692 = _toolbox->TickCount();
 			for (int16 i = 0; i <= 3; i++) {
 				// 136:23c4
 				arr_bcd_5dbc[i] += arr_bcd_5dbc[i + 4];
@@ -1034,11 +1034,11 @@ void FoolGame::mazeMovementTrail() {
 			temp.right = arr_i16_4758[3];
 
 			if (var_i16_1dec == 1) {
-				g_toolbox->InvertRect(temp);
+				_toolbox->InvertRect(temp);
 			}
 			// 136:2472
 			if (var_i16_1dec == 2) {
-				g_toolbox->InvertOval(temp);
+				_toolbox->InvertOval(temp);
 			}
 			sub_128_406(0);
 		}
@@ -1096,13 +1096,13 @@ void FoolGame::mazeDrawPlayer() {
 	temp.left = arr_i16_1eb8[25];
 	temp.bottom = arr_i16_1eb8[26];
 	temp.right = arr_i16_1eb8[27];
-	g_toolbox->InvertOval(temp); // draw new player pos
+	_toolbox->InvertOval(temp); // draw new player pos
 }
 
 void FoolGame::mazeSetupMenu() {
-	this->var_menu_bf8 = g_toolbox->GetMHandle(8);
-	g_toolbox->DeleteMenu(8);
-	g_toolbox->DisposeMenu(this->var_menu_bf8);
+	this->var_menu_bf8 = _toolbox->GetMHandle(8);
+	_toolbox->DeleteMenu(8);
+	_toolbox->DisposeMenu(this->var_menu_bf8);
 
 	// 136:274e
 	_zbasic->menu(8, 0, 1, _puzzleName[_activePuzzle]);
@@ -1159,11 +1159,11 @@ void FoolGame::mazeAddWallLeft() {
 	warning(__func__);
 	// 136:2a7c
 	arr_i16_3738[var_i16_1574] |= 0x100;
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1574].left - 2,
 		_screenGrid[var_i16_1574].top - 2
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1574].left - 2,
 		_screenGrid[var_i16_1574].bottom - 3
 	);
@@ -1173,11 +1173,11 @@ void FoolGame::mazeAddWallTop() {
 	warning(__func__);
 	// 136:2b30
 	arr_i16_3738[var_i16_1574] |= 0x200;
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1574].left - 2,
 		_screenGrid[var_i16_1574].top - 2
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1574].right - 3,
 		_screenGrid[var_i16_1574].top - 2
 	);
@@ -1187,11 +1187,11 @@ void FoolGame::mazeAddWallRight() {
 	warning(__func__);
 	// 136:2be2
 	arr_i16_3738[var_i16_1574] |= 0x400;
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1574].right - 3,
 		_screenGrid[var_i16_1574].top - 2
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1574].right - 3,
 		_screenGrid[var_i16_1574].bottom - 3
 	);
@@ -1201,11 +1201,11 @@ void FoolGame::mazeAddWallBottom() {
 	warning(__func__);
 	// 136:2c96
 	arr_i16_3738[var_i16_1574] |= 0x800;
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1574].left - 2,
 		_screenGrid[var_i16_1574].bottom - 3
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1574].right - 3,
 		_screenGrid[var_i16_1574].bottom - 3
 	);
@@ -1214,11 +1214,11 @@ void FoolGame::mazeAddWallBottom() {
 void FoolGame::mazeDrawWallLeft() {
 	warning(__func__);
 	// 136:2d4c
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].left - 2,
 		_screenGrid[var_i16_1bd8].top + 3
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1bd8].left - 2,
 		_screenGrid[var_i16_1bd8].bottom - 8
 	);
@@ -1227,11 +1227,11 @@ void FoolGame::mazeDrawWallLeft() {
 void FoolGame::mazeDrawWallTop() {
 	warning(__func__);
 	// 136:2dd0
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].left + 3,
 		_screenGrid[var_i16_1bd8].top - 2
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1bd8].right - 8,
 		_screenGrid[var_i16_1bd8].top - 2
 	);
@@ -1240,11 +1240,11 @@ void FoolGame::mazeDrawWallTop() {
 void FoolGame::mazeDrawWallRight() {
 	warning(__func__);
 	// 136:2e52
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].right - 3,
 		_screenGrid[var_i16_1bd8].top + 3
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1bd8].right - 3,
 		_screenGrid[var_i16_1bd8].bottom - 8
 	);
@@ -1253,11 +1253,11 @@ void FoolGame::mazeDrawWallRight() {
 void FoolGame::mazeDrawWallBottom() {
 	warning(__func__);
 	// 136:2ed6
-	g_toolbox->MoveTo(
+	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].left + 3,
 		_screenGrid[var_i16_1bd8].bottom - 3
 	);
-	g_toolbox->LineTo(
+	_toolbox->LineTo(
 		_screenGrid[var_i16_1bd8].right - 8,
 		_screenGrid[var_i16_1bd8].bottom - 3
 	);
@@ -1377,9 +1377,9 @@ void FoolGame::mazeLoadState() {
 	var_i16_1bd8 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, 0xb, 2));
 	if (var_i16_1bd6 > 0) {
 		// 136:3500
-		g_toolbox->PenNormal();
-		g_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
-		g_toolbox->PenSize(5, 5);
+		_toolbox->PenNormal();
+		_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
+		_toolbox->PenSize(5, 5);
 		switch (var_i16_1bd6 - 1) {
 		case 0:
 			mazeDrawWallLeft();
@@ -1400,9 +1400,9 @@ void FoolGame::mazeLoadState() {
 	}
 	// 136:354e
 	if (var_i16_1bd4 > 0) {
-		g_toolbox->PenNormal();
-		g_toolbox->PenPat(_patterns[2]);
-		g_toolbox->PenSize(5, 5);
+		_toolbox->PenNormal();
+		_toolbox->PenPat(_patterns[2]);
+		_toolbox->PenSize(5, 5);
 		switch (var_i16_1bd4 - 1) {
 		case 0:
 			mazeDrawWallLeft();
@@ -1438,14 +1438,14 @@ void FoolGame::mazeLoadState() {
 			var_i16_106e = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, var_i16_1f0a, 2));
 			var_i16_1f0a += 2;
 			// 136:366e
-			g_toolbox->MoveTo(
+			_toolbox->MoveTo(
 				_screenGrid[var_i16_1dea].left + arr_i16_1eb8[2],
 				_screenGrid[var_i16_1dea].top + arr_i16_1eb8[3]
 			);
 			_zbasic->unk_8();
 			// the one place that used ZBasic's print API,
 			// easier to cut out the middleman and use DrawString
-			g_toolbox->DrawString(_zbasic->chr(var_i16_106e));
+			_toolbox->DrawString(_zbasic->chr(var_i16_106e));
 			//_zbasic->print(_zbasic->chr(var_i16_106e));
 			//_zbasic->printNewline();
 			arr_i16_4338[var_i16_1dea] = var_i16_106e;
@@ -1453,9 +1453,9 @@ void FoolGame::mazeLoadState() {
 	}
 	// 136:3710
 	// draw walls that are added by the visibility mask
-	g_toolbox->PenNormal();
-	g_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
-	g_toolbox->PenSize(5, 5);
+	_toolbox->PenNormal();
+	_toolbox->PenPat(_patterns[arr_i16_1eb8[17]]);
+	_toolbox->PenSize(5, 5);
 	var_i16_1574 = 0;
 	var_i16_1de6 = 0;
 	var_i16_1f08 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, var_i16_1f0a, 2));
@@ -1537,12 +1537,12 @@ void FoolGame::sub_136_3a70() {
 		var_i16_484 = 1 + (arr_i16_1eb8[24] - 0x14) / 0x23;
 		var_i16_7e4 = 1 + (arr_i16_1eb8[25]) / 0x23;
 		var_i16_9f2 = 1 + (SCREEN_HEIGHT - arr_i16_1eb8[26]) / 0x23;
-		g_toolbox->PenNormal();
+		_toolbox->PenNormal();
 		// 136:3b0e
 		for (int16 j = 0; j <= 1; j++) {
 			if (j == 1) {
-				g_toolbox->PenMode(kNotPatOr);
-				g_toolbox->PenPat(_patterns[1]);
+				_toolbox->PenMode(kNotPatOr);
+				_toolbox->PenPat(_patterns[1]);
 			}
 			// 136:3b32
 			for (int16 i = 4; i <= 7; i++) {
@@ -1564,13 +1564,13 @@ void FoolGame::sub_136_3a70() {
 				}
 
 				if (j == 0) {
-					g_toolbox->InvertRect(temp);
+					_toolbox->InvertRect(temp);
 				} else {
 					// 136:3c48
-					g_toolbox->PaintRect(temp);
+					_toolbox->PaintRect(temp);
 				}
 				// 136:3c56
-				g_toolbox->Delay(0);
+				_toolbox->Delay(0);
 			}
 			// 136:3c64
 		}
