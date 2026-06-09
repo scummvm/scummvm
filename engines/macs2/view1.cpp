@@ -107,10 +107,9 @@ void View1::openInventory(GameObject *newInventorySource) {
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
-	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
-		g_engine->setCursorMode(Script::MouseMode::Use);
-		updateCursor();
-	}
+	// Binary drawProtagonistInventoryPanel (1008:45aa): unconditionally calls setCursorMode(0x15)
+	g_engine->setCursorMode(Script::MouseMode::Use);
+	updateCursor();
 }
 
 void View1::closeInventory() {
@@ -933,12 +932,16 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 						break;
 					}
 					case InventoryButtonIndex::Close: {
+						// Binary handleInventoryClick (1008:4d07) button 6:
 						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
-							// Binary button 6 with mode 0x17: copy objectId to inventoryItemId,
-							// then clear objectId. The inventoryItemId persists for scene use.
+							// mode == 0x17: g_wSavedCursorMode = 0x17, persist item
+							_cursorModeBeforeMenu = Script::MouseMode::UseInventory;
 							g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
 						} else {
-							_activeInventoryItem = nullptr;
+							// mode != 0x17: if savedCursorMode was 0x17, reset to 0x15
+							if (_cursorModeBeforeMenu == Script::MouseMode::UseInventory) {
+								_cursorModeBeforeMenu = Script::MouseMode::Use;
+							}
 							g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 						}
 						g_engine->_scriptExecutor->_interactedObjectID = 0;
@@ -957,6 +960,9 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
 				// Look at item: object ID uses 0x400 prefix (confirmed from original handleInventoryClick)
+				// Original (handleInventoryClick at 1008:4d07): sets interactedObjectId,
+				// g_wClickedButtonIndex=5, g_wPendingPanelRequest=1, then at end calls
+				// runScriptExecutor() which runs the scene+object scripts.
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				g_engine->runScriptExecutor(false);
