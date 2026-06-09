@@ -1790,6 +1790,27 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 		}
 	}
 
+	// made a quick click and release
+	if (!buttonHeld && _touchId && _timeOn < CLICK_THRESHOLD) {
+		Logic::_scriptVariables[BUTTON] = 2;
+		Logic::_scriptVariables[SPECIAL_ITEM] = _touchId;
+
+		itemData = _skyCompact->fetchCpt(_touchId);
+
+		uint16 tempY = itemData->ycood;
+		pushInvY(tempY);
+		itemData->ycood = 136;
+
+		_mMode = INV_TEMP_EXAMINE;
+
+		_skyLogic->mouseScript(itemData->mouseClick, itemData);
+
+		_mMode = INVENTORY;
+
+		_skyScreen->clearDragIcon();
+		_skyLogic->startInventory();
+	}
+
 	// reset
 	if (Logic::_scriptVariables[GET_OFF]) {
 		_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
