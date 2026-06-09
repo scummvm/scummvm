@@ -591,8 +591,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_walkDepthScaleFactor = _fileStream->readUint16LE();
 	_walkBaseSpeedPct = _fileStream->readUint16LE();
 
-	_bgAnimMode = _fileStream->readUint16LE();
-	_bgAnimParam = _fileStream->readUint16LE();
+	_scenePaletteMode = _fileStream->readUint16LE();
+	_paletteDarkenPercent = _fileStream->readUint16LE();
 
 	// Seek to next place
 	// TODO: Duplicated seek address calculation code
@@ -611,6 +611,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_fileStream->read(_sceneResourceOffsets.data(), 0x80);
 
 	// TODO: There are some more data points missing from the function
+
+	// Apply palette darkening if this scene has it (binary: sceneData+0x5203 != 1)
+	applyPaletteDarkening();
 
 	// Refresh characters
 	View1 *currentView = (View1 *)findView("View1");
@@ -1857,6 +1860,21 @@ bool MacsAudioStream::seek(const Audio::Timestamp &where) {
 
 Audio::Timestamp MacsAudioStream::getLength() const {
 	return Audio::Timestamp(0, _data.size(), getRate());
+}
+
+void Macs2Engine::applyPaletteDarkening() {
+	// Binary: sceneData+0x5203 == 1 means copy source palette as-is to display;
+	// otherwise darken: display[i] = source[i] * (100 - darkenPercent) / 100.
+	// _palVanilla = raw 6-bit source palette (unchanged).
+	// _pal = 8-bit display palette (darkened + expanded).
+	uint16 darkenPercent = (_scenePaletteMode == 1) ? 0 : _paletteDarkenPercent;
+	if (darkenPercent > 100)
+		darkenPercent = 100;
+	uint16 brightnessFactor = 100 - darkenPercent;
+	for (int i = 0; i < 256 * 3; i++) {
+		uint8 darkened = (_palVanilla[i] * brightnessFactor) / 100;
+		_pal[i] = (darkened * 259 + 33) >> 6;
+	}
 }
 
 } // End of namespace Macs2

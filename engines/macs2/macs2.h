@@ -303,8 +303,16 @@ public:
 	uint16 _walkDepthScaleFactor;
 	uint16 _walkBaseSpeedPct;
 
-	uint16 _bgAnimMode;
-	uint16 _bgAnimParam;
+	// Scene palette/animation mode at sceneData+0x5203:
+	//   1 = normal (no darkening, no bg animation)
+	//   2 = slow bg animation + palette darkening
+	//   3 = fast bg animation + palette darkening
+	uint16 _scenePaletteMode;
+	// Palette darken percentage (0-100) at sceneData+0x5205.
+	// Formula: displayedPal[i] = sourcePal[i] * (100 - _paletteDarkenPercent) / 100
+	uint16 _paletteDarkenPercent;
+
+	void applyPaletteDarkening();
 
 	// Binary g_bMovementFinishedFlag [1020:0000]: set by walkAlongPath on final arrival
 	// (orientation < 9), checked after all characters processed in drawAllCharacters.
