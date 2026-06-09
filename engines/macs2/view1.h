@@ -292,6 +292,9 @@ public:
 	void beginFadeCursorSuppression();
 	void endFadeCursorSuppression(const byte *palette);
 
+	bool handleInventoryClick(const MouseDownMessage &msg);
+	bool handleActionBarClick(const MouseDownMessage &msg);
+
 public:
 	View1();
 	virtual ~View1() {}
