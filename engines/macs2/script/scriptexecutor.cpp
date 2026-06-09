@@ -1638,7 +1638,10 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 	// was pending, clears panel state, redraws scene, clears timer flag.
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr) {
-		if (currentView->_isShowingTextBox || currentView->_uiPanelState == View1::kUiPanelDialogue) {
+		// Binary: g_wPendingPanelRequest = 0
+		currentView->_pendingPanelRequest = View1::kPanelRequestNone;
+
+		if (currentView->_isShowingTextBox || currentView->_isShowingDialogueChoicePanel) {
 			currentView->_continueScriptAfterUI = false;
 			currentView->clearStringBox(false);
 		}

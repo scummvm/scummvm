@@ -381,15 +381,30 @@ public:
 
 	Common::Rect _mainMenuRect;
 
-	// Binary g_wUiPanelState: 0=none, 1=action bar, 2=inventory, 3=dialogue, 4=save/load
+	// Binary g_wUiPanelState: 0=none, 1=action bar, 2=protagonist inv, 3=container inv, 4=save/load
 	enum UiPanelState : uint16 {
 		kUiPanelNone = 0,
 		kUiPanelActionBar = 1,
 		kUiPanelInventory = 2,
-		kUiPanelDialogue = 3,
+		kUiPanelContainerInventory = 3,
 		kUiPanelSaveLoad = 4
 	};
 	UiPanelState _uiPanelState = kUiPanelNone;
+
+	// Binary g_wIsShowingDialoguePanel (1020:1008)
+	bool _isShowingDialogueChoicePanel = false;
+
+	// Binary g_wPendingPanelRequest (1020:1034): deferred panel open request.
+	// Set while action bar is active; processed by gameTick when _uiPanelState returns to kUiPanelNone.
+	// Values: 0=none, 1=protagonist inventory, 2=container inventory, 3=save/load
+	enum PendingPanelRequest : uint16 {
+		kPanelRequestNone = 0,
+		kPanelRequestInventory = 1,
+		kPanelRequestContainerInventory = 2,
+		kPanelRequestSaveLoad = 3,
+		kPanelRequestSaveLoadActive = 4   // Set by handleSaveLoadPanelClick to keep panel alive
+	};
+	PendingPanelRequest _pendingPanelRequest = kPanelRequestNone;
 
 	// Binary g_wSavedCursorMode [scene+0xFEA]: saved before opening action bar panel
 	Script::MouseMode _cursorModeBeforeMenu = Script::MouseMode::Walk;
