@@ -102,6 +102,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 	}
 
 	setInventorySource(newInventorySource);
+	_pendingPanelRequest = kPanelRequestNone;  // Binary: g_wPendingPanelRequest = 0
 	_uiPanelState = kUiPanelInventory;
 	_inventoryPage = 0;
 	_activeInventoryItem = nullptr;
@@ -628,6 +629,7 @@ void View1::setStringBoxAt(const Common::StringArray &sa, const Common::Point &p
 
 void View1::clearStringBox(bool continueScript) {
 	_isShowingTextBox = false;
+	_isShowingDialogueChoicePanel = false;
 	// Preserve inventory panel state across text dismissal — the draw cycle
 	// already handles hiding the inventory when text is showing.
 	// Only clear to kUiPanelNone if we're not in the inventory panel.
@@ -975,8 +977,10 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 				break;
 			}
 			case MainMenuButtonIndex::Inventory: {
+				// Binary: handleActionBarClick button 5 sets g_wPendingPanelRequest = 1
+				// Panel opened by gameTick on next frame when state returns to kUiPanelNone.
+				_pendingPanelRequest = kPanelRequestInventory;
 				_uiPanelState = kUiPanelNone;
-				openInventory(GameObjects::instance().getProtagonistObject());
 				break;
 			}
 			case MainMenuButtonIndex::InventoryUse: {
@@ -1024,10 +1028,11 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 				break;
 			}
 			case MainMenuButtonIndex::SaveLoad: {
+				// Binary: handleActionBarClick button 8 sets g_wPendingPanelRequest = 3
+				// Panel opened by gameTick on next frame when state returns to kUiPanelNone.
 				_uiPanelState = kUiPanelNone;
 				if (ConfMan.getBool("original_menus")) {
-					g_engine->setCursorMode(_cursorModeBeforeMenu);
-					openOriginalSaveLoadPanel();
+					_pendingPanelRequest = kPanelRequestSaveLoad;
 				} else {
 					g_engine->openMainMenuDialog();
 					g_engine->setCursorMode(_cursorModeBeforeMenu);
@@ -1114,8 +1119,19 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			if (_isShowingTextBox) {
 				clearStringBox();
 			}
-			if (_uiPanelState == kUiPanelDialogue) {
-				// Handle dialogue choice click
+			if (_isShowingDialogueChoicePanel) {
+				// Binary handleDialogueInput: determines choice from click Y position.
+				// Lines start at _stringBoxPosition.y + 9, spaced by maxGlyphHeight + 2.
+				int lineHeight = g_engine->maxGlyphHeight + 2;
+				int firstLineY = _stringBoxPosition.y + 9;
+				int relY = msg._pos.y - firstLineY;
+				if (relY >= 0 && lineHeight > 0) {
+					uint8 choiceIndex = (uint8)(relY / lineHeight) + 1;
+					if (choiceIndex >= 1 && choiceIndex <= _dialogueChoiceCount) {
+						triggerDialogueChoice(choiceIndex);
+						return true;
+					}
+				}
 			}
 			// Set script click state (original: g_wScriptClickFlag=0, X=mouseX, Y=mouseY, Result=1)
 			g_engine->_scriptExecutor->_scriptClickFlag = 0;
@@ -1216,13 +1232,15 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			// From handleInput: right-click during script execution opens the
 			// map/save panel ONLY if none of these are active:
 			// - IsSceneInitRun, text box, dialogue, overlay, sound/music waits
-			if (!_isShowingTextBox && _uiPanelState != kUiPanelDialogue &&
+			if (!_isShowingTextBox && !_isShowingDialogueChoicePanel &&
 				!g_engine->_scriptExecutor->_overlayTextStageActive &&
 				!g_engine->_scriptExecutor->_waitForSoundPlayback &&
 				!g_engine->_scriptExecutor->_waitForMusicControl &&
 				!g_engine->_scriptExecutor->_waitForAdlibReady &&
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
 				if (ConfMan.getBool("original_menus")) {
+					// Binary handleInput (1008:f2af): saves cursor mode before opening panel
+					_cursorModeBeforeMenu = g_engine->_scriptExecutor->_mouseMode;
 					openOriginalSaveLoadPanel();
 				} else {
 					g_engine->openMainMenuDialog();
@@ -1294,7 +1312,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
-	if (_isShowingTextBox && _uiPanelState != kUiPanelDialogue) {
+	if (_isShowingTextBox && !_isShowingDialogueChoicePanel) {
 		clearStringBox();
 		return true;
 	}
@@ -1527,6 +1545,27 @@ bool View1::tick() {
 					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->_blobs[17], true, 2);
 				}
 			}
+		}
+	}
+
+	// Binary gameTick (1008:e556): process pending panel requests when state is idle.
+	if (_uiPanelState == kUiPanelNone && _pendingPanelRequest != kPanelRequestNone) {
+		switch (_pendingPanelRequest) {
+		case kPanelRequestInventory:
+			_pendingPanelRequest = kPanelRequestNone;
+			openInventory(GameObjects::instance().getProtagonistObject());
+			break;
+		case kPanelRequestContainerInventory:
+			// TODO: container inventory not yet implemented
+			_pendingPanelRequest = kPanelRequestNone;
+			break;
+		case kPanelRequestSaveLoad:
+			_pendingPanelRequest = kPanelRequestNone;
+			openOriginalSaveLoadPanel();
+			break;
+		default:
+			_pendingPanelRequest = kPanelRequestNone;
+			break;
 		}
 	}
 
@@ -2170,12 +2209,12 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT);
 
 	showSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
-	_uiPanelState = kUiPanelDialogue;
+	_isShowingDialogueChoicePanel = true;
 	_dialogueChoiceCount = choices.size();
 }
 
 void View1::triggerDialogueChoice(uint8 index) {
-	if (_uiPanelState != kUiPanelDialogue || index < 1 || index > _dialogueChoiceCount) {
+	if (!_isShowingDialogueChoicePanel || index < 1 || index > _dialogueChoiceCount) {
 		warning("Ignoring dialogue choice %u without an active matching choice UI", index);
 		return;
 	}
@@ -2987,14 +3026,10 @@ void Button::render(Graphics::ManagedSurface &s) {
 }
 
 void View1::openOriginalSaveLoadPanel() {
-	// Exact translation of drawDialoguePanel (1008:6184)
+	// Exact translation of initSaveLoadPanel (1008:6184)
+	_pendingPanelRequest = kPanelRequestNone;  // Binary: g_wPendingPanelRequest = 0
+	_uiPanelState = kUiPanelSaveLoad;          // Binary: g_wUiPanelState = 4
 
-	// g_wHasSavedUiBackground = 0
-	// g_wUiPanelState = 4
-	_uiPanelState = kUiPanelSaveLoad;
-
-	// setCursorMode(0x19) - PanelCursor (save previous mode for restore on close)
-	_cursorModeBeforeMenu = g_engine->_scriptExecutor->_mouseMode;
 	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 
 	// g_wActionBarButtonWidth = 0; g_wActionBarButtonHeight = 0
@@ -3246,10 +3281,11 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 			if (idx < 30 && !_saveSlotNames[idx].empty()) {
 				// Binary: loadGameFromFile then:
 				// g_wUiPanelState = 4; g_wClickedButtonIndex = 0;
-				// g_wHasSavedUiBackground = 4; g_wSaveLoadSubMode = 0
+				// g_wPendingPanelRequest = 4; g_wSaveLoadSubMode = 0
 				g_engine->loadGameState(idx);
 				_uiPanelState = kUiPanelSaveLoad;
 				_clickedButtonIndex = 0;
+				_pendingPanelRequest = kPanelRequestSaveLoadActive;
 				_saveLoadSubMode = SaveLoadSubMode::None;
 			}
 			redraw();
@@ -3351,11 +3387,14 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		_saveLoadSubMode = SaveLoadSubMode::None;
 	}
 
-	// Binary: if (g_wClickedButtonIndex == 7) g_wHasSavedUiBackground = 0 (close)
-	//         else g_wHasSavedUiBackground = 4 (stay open)
+	// Binary: if (g_wClickedButtonIndex == 7) g_wPendingPanelRequest = 0 (close)
+	//         else g_wPendingPanelRequest = 4 (stay open)
 	if (_clickedButtonIndex == 7) {
+		_pendingPanelRequest = kPanelRequestNone;
 		closeOriginalSaveLoadPanel();
 		return;
+	} else {
+		_pendingPanelRequest = kPanelRequestSaveLoadActive;
 	}
 
 	// Binary: if (bPageScroll && ++g_wMapPanelPageIndex == 3) g_wMapPanelPageIndex = 0
