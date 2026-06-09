@@ -503,7 +503,9 @@ bool ScriptExecutor::loadNextScript() {
 	}
 
 	if (_repeatRunFlag) {
-		// We are done
+		// Repeat run pass completed. Clear the flag (matching binary behavior:
+		// scriptChangeScene sets g_wRepeatRunFlag=1 before runScriptExecutor,
+		// then clears it to 0 immediately after).
 		_repeatRunFlag = false;
 		return false;
 	}
