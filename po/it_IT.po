@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-08 11:04+0000\n"
-"PO-Revision-Date: 2026-06-04 19:00+0000\n"
+"PO-Revision-Date: 2026-06-09 10:24+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -13663,16 +13663,12 @@ msgstr ""
 "Permette l'accesso a qualsiasi livello del gioco senza richiedere password"
 
 #: engines/scumm/metaengine.cpp:900
-#, fuzzy
-#| msgid "No date saved"
 msgid "No damage"
-msgstr "Nessuna data salvata"
+msgstr "Nessun danno"
 
 #: engines/scumm/metaengine.cpp:901
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable player damage"
-msgstr "Disabilita menù di salvataggio"
+msgstr "Disabilita i danni al giocatore"
 
 #: engines/scumm/metaengine.cpp:1061
 msgid "Down left"
@@ -13740,10 +13736,8 @@ msgid "Fire / select"
 msgstr "Spara / seleziona"
 
 #: engines/scumm/metaengine.cpp:1198
-#, fuzzy
-#| msgid "Skip / menu back"
 msgid "Walk / menu back"
-msgstr "Salta / indietro (menù)"
+msgstr "Cammina / Menù indietro"
 
 #: engines/scumm/metaengine.cpp:1203
 msgid "Skip / menu back"
