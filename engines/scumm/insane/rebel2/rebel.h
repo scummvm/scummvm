@@ -590,6 +590,7 @@ public:
 	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
 								 int videoWidth, int videoHeight, int statusBarY, int32 curFrame);
 	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
+	void updateGameplayDamageRecovery(int32 curFrame);
 	void checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
 	// Draw NUT-based HUD overlays for Handler 0x26 turret modes

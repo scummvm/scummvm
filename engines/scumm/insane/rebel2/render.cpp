@@ -2602,6 +2602,21 @@ void InsaneRebel2::updateGameplayDamageEffects(byte *renderBitmap, int pitch, in
 	}
 }
 
+// updateGameplayDamageRecovery -- Apply RA2's damage auto-reduction.
+void InsaneRebel2::updateGameplayDamageRecovery(int32 curFrame) {
+	// Handler 0x26 (FUN_4089AB), Handler 8 (FUN_401CCF), and Handler 7
+	// (FUN_40D836) decrement DAT_0047a7ec once every 16 frames after
+	// gameplay collision processing. Handler 25's FUN_41DB5E only awards the
+	// timed score tick in the same slot and does not reduce damage.
+	if ((_rebelHandler != 0x26 && _rebelHandler != 8 && _rebelHandler != 7) ||
+			(curFrame & 0xf) != 0 || _playerDamage <= 0) {
+		return;
+	}
+
+	_playerDamage--;
+	_playerShield = 255 - _playerDamage;
+}
+
 // checkGameplayPostRenderCollisions -- Run handler-specific collision checks.
 void InsaneRebel2::checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
 	// Per-frame collision checking against registered zones.
@@ -2717,6 +2732,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 
 	updateGameplayDamageEffects(renderBitmap, pitch, width, height);
 	checkGameplayPostRenderCollisions(renderBitmap, pitch, width, height, curFrame);
+	updateGameplayDamageRecovery(curFrame);
 
 	// Crosshair/reticle (FUN_004089ab, FUN_0040d836).
 	renderCrosshair(renderBitmap, pitch, width, height);
