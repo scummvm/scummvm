@@ -394,6 +394,8 @@ public:
 	void setExecutingObjectId(uint16 id) { _executingObjectIndex = id; }
 	uint16 getFrameWaitCounter() const { return _frameWaitTicksRemaining; }
 	void setFrameWaitCounter(uint16 val) { _frameWaitTicksRemaining = val; }
+	bool getRepeatRunFlag() const { return _repeatRunFlag; }
+	void setRepeatRunFlag(bool val) { _repeatRunFlag = val; }
 	uint32 getVariableValue(int index) const;
 
 	// Computes the read-only runtime value for a type 0xFF special
