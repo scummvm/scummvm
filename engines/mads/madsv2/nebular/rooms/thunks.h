@@ -174,6 +174,12 @@ struct Scene {
 	};
 	KernelMessages _kernelMessages;
 
+	struct Rails {
+		int getNext() const;
+		void resetNext();
+	};
+	Rails _rails;
+
 	struct Sequences {
 		int16 addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
 			word start_ticks = 0, int expire = 0);
@@ -189,6 +195,7 @@ struct Scene {
 		void setAnimRange(int sequence_id, int first, int last);
 		void addTimer(int ticks, int trigger_code);
 		void setMsgLayout(int sequence_id);
+		void setPosition(int sequence_id, const Common::Point &pt);
 	};
 	Sequences _sequences;
 
@@ -200,10 +207,13 @@ struct Scene {
 	int16 &_priorSceneId = previous_room;
 	int16 &_nextSceneId = new_room;
 	long &_frameStartTime = kernel.clock;
+	byte &_reloadSceneFlag = kernel.force_restart;
 
 	int loadAnimation(const char *name, int trigger_code);
+	void freeAnimation();
 	void changeVariant(int num);
 	void drawElements(int transitionType, bool surfaceFlag);
+	void resetScene();
 };
 extern Scene _scene;
 
@@ -254,6 +264,11 @@ struct Game {
 		long &_priorTimer = player.clock;
 		int &_ticksAmount = player.frame_delay;
 		char *const _spritesPrefix = &player.series_name[0];
+		int &_moving = player.walking;
+		int &_walkOffScreenSceneId = player.walk_off_edge_to_room;
+
+		void startWalking(const Common::Point &pt, int facing);
+		void cancelCommand();
 	};
 	Player _player;
 
@@ -271,6 +286,7 @@ struct Game {
 	int &_triggerSetupMode = kernel.trigger_setup_mode;
 	char *const _aaName = kernel.interface;
 	int8 &_difficulty = game.difficulty;
+	int8 _storyMode = 0;
 
 	void loadQuoteSet(int quote1, ...);
 	char *getQuote(int quote_id);
@@ -307,6 +323,7 @@ struct VM {
 
 	struct Palette {
 		void setEntry(int color, int r, int g, int b);
+		void refreshSceneColors();
 	};
 	Palette _paletteInstance;
 	Palette *const _palette = &_paletteInstance;

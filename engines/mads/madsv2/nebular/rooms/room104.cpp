@@ -19,34 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room104::Room104(RexNebularEngine *vm) : Room1xx(vm) {
-	_kargShootingFl = false;
-	_loseFl = false;
-}
+struct Scratch {
+	bool _kargShootingFl;
+	bool _loseFl;
+};
 
-void Room104::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_kargShootingFl);
-	s.syncAsByte(_loseFl);
-}
-
-void Room104::setup() {
-	// Preloading has been skipped
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room104::enter() {
+static void room_104_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
@@ -56,20 +49,20 @@ void Room104::enter() {
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(160, 134);
 
-	_loseFl = false;
+	local._loseFl = false;
 	_game.loadQuoteSet(0x35, 0x34, 0);
-	_kargShootingFl = false;
+	local._kargShootingFl = false;
 
 	if (_vm->getRandomNumber(1, 3) == 1) {
 		_scene->loadAnimation(Resources::formatName(104, 'B', -1, EXT_AA, ""), 0);
-		_kargShootingFl = true;
+		local._kargShootingFl = true;
 	}
 
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room104::step() {
-	if ((_game._player._playerPos == Common::Point(189, 70)) && (_game._trigger || !_loseFl)) {
+static void room_104_daemon() {
+	if ((_game._player._playerPos == Common::Point(189, 70)) && (_game._trigger || !local._loseFl)) {
 		if (_game._player._facing == FACING_SOUTHWEST || _game._player._facing == FACING_SOUTHEAST)
 			_game._player._facing = FACING_SOUTH;
 
@@ -82,7 +75,7 @@ void Room104::step() {
 			mirrorFl = true;
 		}
 
-		_loseFl = true;
+		local._loseFl = true;
 
 		switch (_game._player._facing) {
 		case FACING_EAST:
@@ -211,13 +204,13 @@ void Room104::step() {
 	if ((_game._player._special > 0) && _game._player._stepEnabled)
 		_game._player._stepEnabled = false;
 
-	if (_kargShootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
+	if (local._kargShootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
-		_kargShootingFl = false;
+		local._kargShootingFl = false;
 	}
 }
 
-void Room104::preActions() {
+static void room_104_pre_parser() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_EASTERN_CLIFF_FACE))
 		_game._player._walkOffScreenSceneId = 105;
 
@@ -225,7 +218,7 @@ void Room104::preActions() {
 		_game._player._walkOffScreenSceneId = 106;
 }
 
-void Room104::actions() {
+static void room_104_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10405);
 	else if (_action.isAction(VERB_LOOK, NOUN_CURIOUS_WEED_PATCH))
@@ -242,6 +235,24 @@ void Room104::actions() {
 	_action._inProgress = false;
 }
 
+void room_104_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._kargShootingFl);
+	s.syncAsByte(local._loseFl);
+}
+
+void room_104_preload() {
+	room_init_code_pointer = room_104_init;
+	room_pre_parser_code_pointer = room_104_pre_parser;
+	room_parser_code_pointer = room_104_parser;
+	room_daemon_code_pointer = room_104_daemon;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

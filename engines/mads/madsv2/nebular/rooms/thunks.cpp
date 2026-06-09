@@ -98,6 +98,14 @@ int16 &Globals::operator[](int idx) {
 	return global[idx];
 }
 
+void Game::Player::startWalking(const Common::Point &pt, int facing) {
+	player_start_walking(pt.x, pt.y, facing);
+}
+
+void Game::Player::cancelCommand() {
+	player_cancel_command();
+}
+
 char *Resources::formatName(int my_room, char type, int num, int ext, const char *text) {
 	return kernel_full_name(my_room, type, num, text, ext);
 }
@@ -138,6 +146,14 @@ void Scene::KernelMessages::reset() {
 
 void Scene::KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 	kernel_message_teletype(msgIndex, numTicks, quoted);
+}
+
+int Scene::Rails::getNext() const {
+	return player.next_special_code;
+}
+
+void Scene::Rails::resetNext() {
+	player.next_special_code = 0;
 }
 
 int16 Scene::Sprites::addSprites(const char *name, int load_flags) {
@@ -187,8 +203,16 @@ void Scene::Sequences::setMsgLayout(int sequence_id) {
 	kernel_seq_player(sequence_id, false);
 }
 
+void Scene::Sequences::setPosition(int sequence_id, const Common::Point &pt) {
+	kernel_seq_loc(sequence_id, pt.x, pt.y);
+}
+
 int Scene::loadAnimation(const char *name, int trigger_code) {
 	return kernel_run_animation(name, trigger_code);
+}
+
+void Scene::freeAnimation() {
+	error("TODO: freeAnimation");
 }
 
 void Scene::changeVariant(int num) {
@@ -197,6 +221,10 @@ void Scene::changeVariant(int num) {
 
 void Scene::drawElements(int transitionType, bool surfaceFlag) {
 	matte_frame(transitionType, surfaceFlag);
+}
+
+void Scene::resetScene() {
+	kernel_dump_all();
 }
 
 void VM::Dialogs::show(int id) {
@@ -209,6 +237,10 @@ void VM::Dialogs::showItem(int object_id, int message) {
 
 void VM::Palette::setEntry(int color, int r, int g, int b) {
 	pal_change_color(color, r, g, b);
+}
+
+void VM::Palette::refreshSceneColors() {
+	kernel_new_palette();
 }
 
 void VM::Sound::command(int num, int distance) {
