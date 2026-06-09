@@ -808,6 +808,244 @@ bool View1::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
+bool View1::handleInventoryClick(const MouseDownMessage &msg) {
+	for (int i = 0; i < 6; i++) {
+		const Common::Rect &current = _inventoryButtonLocations[i];
+		if (current.contains(msg._pos)) {
+			InventoryButtonIndex buttonIndex = (InventoryButtonIndex)i;
+			switch (buttonIndex) {
+			case InventoryButtonIndex::Look: {
+				g_engine->setCursorMode(Script::MouseMode::Look);
+				updateCursor();
+				break;
+			}
+			case InventoryButtonIndex::Hand: {
+				g_engine->setCursorMode(Script::MouseMode::Use);
+				updateCursor();
+				break;
+			}
+			case InventoryButtonIndex::Up: {
+				if (_inventoryPage > 0) {
+					_inventoryPage--;
+				}
+				break;
+			}
+			case InventoryButtonIndex::Down: {
+				// Check how many pages we have
+				uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
+				if (_inventoryPage < numPages - 2) {
+					_inventoryPage++;
+				}
+				break;
+			}
+			case InventoryButtonIndex::Drop: {
+				// Binary handleInventoryClick button 5 / handleDialogueClick button 5.
+				// Only active when mode == 0x17 (UseInventory) and an item is held.
+				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
+					if (isInventorySourceProtagonist()) {
+						// Protagonist's inventory: find a container in the current scene.
+						// Binary iterates objects 1..0x200, finds first with:
+						//   SceneIndex >= 0, SceneIndex == currentScene, hasInventoryIcon (+0x184)
+						const uint16 currentScene = Scenes::instance()._currentSceneIndex;
+						GameObject *container = nullptr;
+						for (GameObject *obj : GameObjects::instance()._objects) {
+							if (obj == nullptr)
+								continue;
+							if ((int16)obj->_sceneIndex < 0)
+								continue;
+							if (obj->_sceneIndex != currentScene)
+								continue;
+							// +0x184 = hasInventoryIcon: blob slot 0x13 is loaded
+							if (0x13 >= obj->_blobs.size() || obj->_blobs[0x13].empty())
+								continue;
+							container = obj;
+							break;
+						}
+						if (container != nullptr) {
+							transferInventoryItem(_activeInventoryItem, container);
+							_activeInventoryItem = nullptr;
+							g_engine->setCursorMode(Script::MouseMode::Use);
+							updateCursor();
+							g_engine->_scriptExecutor->_inventoryCombineFlag = true;
+							setInventorySource(_inventorySource);
+						}
+					} else {
+						// External inventory (another character): take item to protagonist.
+						// Binary: item.SceneIndex = g_wCurrentActorIndex + 0x400
+						transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
+						_activeInventoryItem = nullptr;
+						g_engine->setCursorMode(Script::MouseMode::Use);
+						updateCursor();
+						g_engine->_scriptExecutor->_inventoryActionFlag = true;
+						setInventorySource(_inventorySource);
+					}
+				}
+				break;
+			}
+			case InventoryButtonIndex::Close: {
+				// Binary handleInventoryClick (1008:4d07) button 6:
+				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
+					// mode == 0x17: g_wSavedCursorMode = 0x17, persist item
+					_cursorModeBeforeMenu = Script::MouseMode::UseInventory;
+					g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
+				} else {
+					// mode != 0x17: if savedCursorMode was 0x17, reset to 0x15
+					if (_cursorModeBeforeMenu == Script::MouseMode::UseInventory) {
+						_cursorModeBeforeMenu = Script::MouseMode::Use;
+					}
+					g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+				}
+				g_engine->_scriptExecutor->_interactedObjectID = 0;
+				_uiPanelState = kUiPanelNone;
+				_inventoryPage = 0;
+				g_engine->setCursorMode(_cursorModeBeforeMenu);
+				updateCursor();
+				return true;
+			}
+			}
+		}
+	}
+
+	// Check if we hit an inventory item
+	GameObject *clickedObject = getClickedInventoryItem(msg._pos);
+
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
+		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
+		g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+		g_engine->runScriptExecutor(false);
+		return true;
+	}
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
+		_activeInventoryItem = clickedObject;
+		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
+		AnimFrame *icon = getInventoryIcon(_activeInventoryItem);
+		if (icon != nullptr) {
+			// Original copies item icon frame into cursor array slot 0x17 (UseInventory)
+			// so the cursor shows the picked-up item
+			int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
+			uint32 pixelSize = icon->_width * icon->_height;
+			delete[] g_engine->_imageResources[cursorSlot]._data;
+			g_engine->_imageResources[cursorSlot]._data = new byte[pixelSize];
+			memcpy(g_engine->_imageResources[cursorSlot]._data, icon->_data, pixelSize);
+			g_engine->_imageResources[cursorSlot]._width = icon->_width;
+			g_engine->_imageResources[cursorSlot]._height = icon->_height;
+		}
+		g_engine->setCursorMode(Script::MouseMode::UseInventory);
+		updateCursor();
+		return true;
+	}
+	if (_activeInventoryItem != nullptr && clickedObject != nullptr) {
+		// Use item on item (combine): from handleInventoryClick grid hit-test, mode 0x17.
+		// Binary sets interactedObjectId (source) + interactedInventoryItemId (target),
+		// then triggers runScriptExecutor via g_wHasSavedUiBackground. Does NOT set
+		// g_wInventoryCombineFlag here (that's only in the Drop button path).
+		// Panel state stays at 2 (inventory) — draw cycle hides panel when text shows.
+		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+		g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
+		g_engine->runScriptExecutor(false);
+	}
+
+	return true;
+}
+
+bool View1::handleActionBarClick(const MouseDownMessage &msg) {
+	for (int i = 0; i < 9; i++) {
+		const Common::Rect &current = _mainMenuButtonLocations[i];
+		if (current.contains(msg._pos)) {
+			MainMenuButtonIndex buttonIndex = (MainMenuButtonIndex)i;
+			switch (buttonIndex) {
+			case MainMenuButtonIndex::Talk: {
+				g_engine->setCursorMode(Script::MouseMode::Talk);
+				_uiPanelState = kUiPanelNone;
+				break;
+			}
+			case MainMenuButtonIndex::Look: {
+				g_engine->setCursorMode(Script::MouseMode::Look);
+				_uiPanelState = kUiPanelNone;
+				break;
+			}
+			case MainMenuButtonIndex::Use: {
+				g_engine->setCursorMode(Script::MouseMode::Use);
+				_uiPanelState = kUiPanelNone;
+				break;
+			}
+			case MainMenuButtonIndex::Walk: {
+				g_engine->setCursorMode(Script::MouseMode::Walk);
+				_uiPanelState = kUiPanelNone;
+				break;
+			}
+			case MainMenuButtonIndex::Inventory: {
+				_uiPanelState = kUiPanelNone;
+				openInventory(GameObjects::instance().getProtagonistObject());
+				break;
+			}
+			case MainMenuButtonIndex::InventoryUse: {
+				// Binary button 6: sets cursor mode to 0x17 (UseInventory) and copies
+				// active item ID to interacted item, only if an item is selected.
+				_uiPanelState = kUiPanelNone;
+				if (_activeInventoryItem != nullptr) {
+					g_engine->setCursorMode(Script::MouseMode::UseInventory);
+					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
+				} else {
+					g_engine->setCursorMode(_cursorModeBeforeMenu);
+				}
+				break;
+			}
+			case MainMenuButtonIndex::Map: {
+				_uiPanelState = kUiPanelNone;
+				// Enter map mode from handleActionBarClick (1008:42dc) button 7.
+				// Binary uses scene+0x5DDB which is _mapSceneOffsets[0].
+				uint32 helpOffset = g_engine->_mapSceneOffsets[0];
+				if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
+					break;
+				}
+				// Save scene visuals before overwriting with help screen
+				memcpy(_savedPalVanilla, g_engine->_palVanilla, 256 * 3);
+				_savedDepthMap.copyFrom(g_engine->_depthMap);
+				// Load map background image, palette, and depth map from file.
+				// Binary: fileSeek(scene+0x5DDB), decodeRLERows, fileRead palette,
+				// decodeRLERows depth, drawRLEImage, setCursorMode(0x18).
+				startFadeToBlack(8);
+				Graphics::ManagedSurface mapBg = g_engine->readRLEImage(helpOffset, g_engine->_fileStream);
+				_backgroundSurface.copyFrom(mapBg);
+				// Read map palette (0x300 bytes immediately after the RLE image)
+				g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
+				g_engine->applyPaletteDarkening();
+				// Read map depth map (RLE image after palette)
+				Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
+				g_engine->_depthMap.blitFrom(mapDepth);
+				// Save file position of the sub-scene offset table (follows depth map).
+				g_engine->_mapSubSceneTableFilePos = g_engine->_fileStream->pos();
+				_currentMode = ViewMode::VM_HELP;
+				g_engine->setCursorMode(Script::MouseMode::PanelUse);
+				updateCursor();
+				startFading();
+				redraw();
+				break;
+			}
+			case MainMenuButtonIndex::SaveLoad: {
+				_uiPanelState = kUiPanelNone;
+				if (ConfMan.getBool("original_menus")) {
+					g_engine->setCursorMode(_cursorModeBeforeMenu);
+					openOriginalSaveLoadPanel();
+				} else {
+					g_engine->openMainMenuDialog();
+					g_engine->setCursorMode(_cursorModeBeforeMenu);
+				}
+				break;
+			}
+			case MainMenuButtonIndex::Close: {
+				_uiPanelState = kUiPanelNone;
+				g_engine->setCursorMode(_cursorModeBeforeMenu);
+				break;
+			}
+			}
+		}
+	}
+	updateCursor();
+	return true;
+}
+
 bool View1::msgMouseDown(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
 		// Help mode (depth-based scene preview) from handleInput (1008:e8bf).
@@ -862,242 +1100,11 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		if (_uiPanelState == kUiPanelInventory) {
-
-			for (int i = 0; i < 6; i++) {
-				const Common::Rect &current = _inventoryButtonLocations[i];
-				if (current.contains(msg._pos)) {
-					InventoryButtonIndex buttonIndex = (InventoryButtonIndex)i;
-					switch (buttonIndex) {
-					case InventoryButtonIndex::Look: {
-						g_engine->setCursorMode(Script::MouseMode::Look);
-						updateCursor();
-						break;
-					}
-					case InventoryButtonIndex::Hand: {
-						g_engine->setCursorMode(Script::MouseMode::Use);
-						updateCursor();
-						break;
-					}
-					case InventoryButtonIndex::Up: {
-						if (_inventoryPage > 0) {
-							_inventoryPage--;
-						}
-						break;
-					}
-					case InventoryButtonIndex::Down: {
-						// Check how many pages we have
-						uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
-						if (_inventoryPage < numPages - 2) {
-							_inventoryPage++;
-						}
-						break;
-					}
-					case InventoryButtonIndex::Drop: {
-						// Binary handleInventoryClick button 5 / handleDialogueClick button 5.
-						// Only active when mode == 0x17 (UseInventory) and an item is held.
-						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
-							if (isInventorySourceProtagonist()) {
-								// Protagonist's inventory: find a container in the current scene.
-								// Binary iterates objects 1..0x200, finds first with:
-								//   SceneIndex >= 0, SceneIndex == currentScene, hasInventoryIcon (+0x184)
-								const uint16 currentScene = Scenes::instance()._currentSceneIndex;
-								GameObject *container = nullptr;
-								for (GameObject *obj : GameObjects::instance()._objects) {
-									if (obj == nullptr)
-										continue;
-									if ((int16)obj->_sceneIndex < 0)
-										continue;
-									if (obj->_sceneIndex != currentScene)
-										continue;
-									// +0x184 = hasInventoryIcon: blob slot 0x13 is loaded
-									if (0x13 >= obj->_blobs.size() || obj->_blobs[0x13].empty())
-										continue;
-									container = obj;
-									break;
-								}
-								if (container != nullptr) {
-									transferInventoryItem(_activeInventoryItem, container);
-									_activeInventoryItem = nullptr;
-									g_engine->setCursorMode(Script::MouseMode::Use);
-									updateCursor();
-									g_engine->_scriptExecutor->_inventoryCombineFlag = true;
-									setInventorySource(_inventorySource);
-								}
-							} else {
-								// External inventory (another character): take item to protagonist.
-								// Binary: item.SceneIndex = g_wCurrentActorIndex + 0x400
-								transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
-								_activeInventoryItem = nullptr;
-								g_engine->setCursorMode(Script::MouseMode::Use);
-								updateCursor();
-								g_engine->_scriptExecutor->_inventoryActionFlag = true;
-								setInventorySource(_inventorySource);
-							}
-						}
-						break;
-					}
-					case InventoryButtonIndex::Close: {
-						// Binary handleInventoryClick (1008:4d07) button 6:
-						if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
-							// mode == 0x17: g_wSavedCursorMode = 0x17, persist item
-							_cursorModeBeforeMenu = Script::MouseMode::UseInventory;
-							g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
-						} else {
-							// mode != 0x17: if savedCursorMode was 0x17, reset to 0x15
-							if (_cursorModeBeforeMenu == Script::MouseMode::UseInventory) {
-								_cursorModeBeforeMenu = Script::MouseMode::Use;
-							}
-							g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
-						}
-						g_engine->_scriptExecutor->_interactedObjectID = 0;
-						_uiPanelState = kUiPanelNone;
-						_inventoryPage = 0;
-						g_engine->setCursorMode(_cursorModeBeforeMenu);
-						updateCursor();
-						return true;
-					}
-					}
-				}
-			}
-
-			// Check if we hit an inventory item
-			GameObject *clickedObject = getClickedInventoryItem(msg._pos);
-
-			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
-				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
-				g_engine->runScriptExecutor(false);
-				return true;
-			}
-			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
-				_activeInventoryItem = clickedObject;
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
-				AnimFrame *icon = getInventoryIcon(_activeInventoryItem);
-				if (icon != nullptr) {
-					// Original copies item icon frame into cursor array slot 0x17 (UseInventory)
-					// so the cursor shows the picked-up item
-					int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
-					uint32 pixelSize = icon->_width * icon->_height;
-					delete[] g_engine->_imageResources[cursorSlot]._data;
-					g_engine->_imageResources[cursorSlot]._data = new byte[pixelSize];
-					memcpy(g_engine->_imageResources[cursorSlot]._data, icon->_data, pixelSize);
-					g_engine->_imageResources[cursorSlot]._width = icon->_width;
-					g_engine->_imageResources[cursorSlot]._height = icon->_height;
-				}
-				g_engine->setCursorMode(Script::MouseMode::UseInventory);
-				updateCursor();
-				return true;
-			}
-			if (_activeInventoryItem != nullptr && clickedObject != nullptr) {
-				// Use item on item (combine): from handleInventoryClick grid hit-test, mode 0x17.
-				// Binary sets interactedObjectId (source) + interactedInventoryItemId (target),
-				// then triggers runScriptExecutor via g_wHasSavedUiBackground. Does NOT set
-				// g_wInventoryCombineFlag here (that's only in the Drop button path).
-				// Panel state stays at 2 (inventory) — draw cycle hides panel when text shows.
-				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
-				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
-				g_engine->runScriptExecutor(false);
-			}
-
-			return true;
+			return handleInventoryClick(msg);
 		}
 
 		if (_uiPanelState == kUiPanelActionBar) {
-			for (int i = 0; i < 9; i++) {
-				const Common::Rect &current = _mainMenuButtonLocations[i];
-				if (current.contains(msg._pos)) {
-					MainMenuButtonIndex buttonIndex = (MainMenuButtonIndex)i;
-					switch (buttonIndex) {
-					case MainMenuButtonIndex::Talk: {
-						g_engine->setCursorMode(Script::MouseMode::Talk);
-						_uiPanelState = kUiPanelNone;
-						break;
-					}
-					case MainMenuButtonIndex::Look: {
-						g_engine->setCursorMode(Script::MouseMode::Look);
-						_uiPanelState = kUiPanelNone;
-						break;
-					}
-					case MainMenuButtonIndex::Use: {
-						g_engine->setCursorMode(Script::MouseMode::Use);
-						_uiPanelState = kUiPanelNone;
-						break;
-					}
-					case MainMenuButtonIndex::Walk: {
-						g_engine->setCursorMode(Script::MouseMode::Walk);
-						_uiPanelState = kUiPanelNone;
-						break;
-					}
-					case MainMenuButtonIndex::Inventory: {
-						_uiPanelState = kUiPanelNone;
-						openInventory(GameObjects::instance().getProtagonistObject());
-						break;
-					}
-					case MainMenuButtonIndex::InventoryUse: {
-						// Binary button 6: sets cursor mode to 0x17 (UseInventory) and copies
-						// active item ID to interacted item, only if an item is selected.
-						_uiPanelState = kUiPanelNone;
-						if (_activeInventoryItem != nullptr) {
-							g_engine->setCursorMode(Script::MouseMode::UseInventory);
-							g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
-						} else {
-							g_engine->setCursorMode(_cursorModeBeforeMenu);
-						}
-						break;
-					}
-					case MainMenuButtonIndex::Map: {
-						_uiPanelState = kUiPanelNone;
-						// Enter map mode from handleActionBarClick (1008:42dc) button 7.
-						// Binary uses scene+0x5DDB which is _mapSceneOffsets[0].
-						uint32 helpOffset = g_engine->_mapSceneOffsets[0];
-						if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
-							break;
-						}
-						// Save scene visuals before overwriting with help screen
-						memcpy(_savedPalVanilla, g_engine->_palVanilla, 256 * 3);
-						_savedDepthMap.copyFrom(g_engine->_depthMap);
-						// Load map background image, palette, and depth map from file.
-						// Binary: fileSeek(scene+0x5DDB), decodeRLERows, fileRead palette,
-						// decodeRLERows depth, drawRLEImage, setCursorMode(0x18).
-						startFadeToBlack(8);
-						Graphics::ManagedSurface mapBg = g_engine->readRLEImage(helpOffset, g_engine->_fileStream);
-						_backgroundSurface.copyFrom(mapBg);
-						// Read map palette (0x300 bytes immediately after the RLE image)
-						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
-						g_engine->applyPaletteDarkening();
-						// Read map depth map (RLE image after palette)
-						Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
-						g_engine->_depthMap.blitFrom(mapDepth);
-						// Save file position of the sub-scene offset table (follows depth map).
-						g_engine->_mapSubSceneTableFilePos = g_engine->_fileStream->pos();
-						_currentMode = ViewMode::VM_HELP;
-						g_engine->setCursorMode(Script::MouseMode::PanelUse);
-						updateCursor();
-						startFading();
-						redraw();
-						break;
-					}
-					case MainMenuButtonIndex::SaveLoad: {
-						_uiPanelState = kUiPanelNone;
-						if (ConfMan.getBool("original_menus")) {
-							g_engine->setCursorMode(_cursorModeBeforeMenu);
-							openOriginalSaveLoadPanel();
-						} else {
-							g_engine->openMainMenuDialog();
-							g_engine->setCursorMode(_cursorModeBeforeMenu);
-						}
-						break;
-					}
-					case MainMenuButtonIndex::Close: {
-						_uiPanelState = kUiPanelNone;
-						g_engine->setCursorMode(_cursorModeBeforeMenu);
-						break;
-					}
-					}
-				}
-			}
-			updateCursor();
-			return true;
+			return handleActionBarClick(msg);
 		}
 
 		// Handle interactions during script execution
