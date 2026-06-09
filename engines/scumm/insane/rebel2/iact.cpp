@@ -1142,7 +1142,7 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 	// Autopilot logic (lines 123-146).
 	// From original FUN_0041cadb - NO damageLevel check, toggle happens immediately.
 	// The damage level counter provides the smooth visual transition.
-	if (!_rebelInvulnerable) {
+	if (!_rebelAutoPlay) {
 		if (_rebelAutopilot == 0) {
 			// Uncovered: RIGHT button enters cover.
 			if ((_rebelControlMode & 2) != 0) {
@@ -1160,7 +1160,7 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 		// Clear control mode after processing (sticky flags consumed).
 		_rebelControlMode = 0;
 	} else {
-		// Invulnerable mode: random autopilot changes.
+		// Auto play: random autopilot changes.
 		if (_rebelAutopilot == 0) {
 			if (_vm->_rnd.getRandomNumber(100) == 0) {
 				_rebelAutopilot = 1;
@@ -1345,7 +1345,7 @@ void InsaneRebel2::handleOpcode6GenericInit(int16 par4) {
 void InsaneRebel2::updateOpcode6GenericFlightState() {
 	// Step 3: Autopilot/control mode logic (lines 123-146)
 	// This determines whether the ship flies on autopilot or manual control.
-	if (!_rebelInvulnerable) {
+	if (!_rebelAutoPlay) {
 		// Normal mode: check control mode flags.
 		if (_rebelAutopilot == 0) {
 			if ((_rebelControlMode & 2) != 0) {
@@ -1357,7 +1357,7 @@ void InsaneRebel2::updateOpcode6GenericFlightState() {
 			}
 		}
 	} else {
-		// Invulnerable mode: random autopilot changes.
+		// Auto play: random autopilot changes.
 		if (_rebelAutopilot == 0) {
 			if (_vm->_rnd.getRandomNumber(100) == 0) {
 				_rebelAutopilot = 1;

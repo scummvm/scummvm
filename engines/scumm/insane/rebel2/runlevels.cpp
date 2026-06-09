@@ -100,6 +100,16 @@ InsaneRebel2::WaveEndResult InsaneRebel2::processWaveEnd(int16 mask, int16 *budg
 
 	WaveEndResult result;
 
+	if (_rebelMovieMode) {
+		_skipSectionRequested = false;
+		_rebelPhaseState = mask;
+		_rebelWaveState = mask;
+		debug("Rebel2 processWaveEnd: movie mode completed gameplay wave (mask=0x%x)", (uint16)mask);
+		result.completed = true;
+		result.skipped = true;
+		return result;
+	}
+
 	// Debug shortcut path: force-end current section when requested via Shift+S.
 	if (_skipSectionRequested) {
 		_skipSectionRequested = false;
@@ -192,6 +202,16 @@ bool InsaneRebel2::playLevelSegment(const char *filename, uint16 flags, bool rec
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
 	const bool isRecordedGameplay = recordFrame && (flags & 0x08) != 0;
+	if (isRecordedGameplay && _rebelMovieMode) {
+		debug("Rebel2: Movie mode skipping gameplay segment: %s", filename);
+		_gameplaySectionActive = false;
+		restoreIOSGamepadController();
+		if (recordFrame)
+			_deathFrame = 0;
+		restoreDamageFlashPalette();
+		return true;
+	}
+
 	if (isRecordedGameplay) {
 		// Center only at the section boundary; looped wave videos are continuations.
 		if (!_gameplaySectionActive && (flags & 0x40) == 0)

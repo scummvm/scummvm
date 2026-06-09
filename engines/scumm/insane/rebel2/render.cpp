@@ -1951,7 +1951,7 @@ void InsaneRebel2::checkHandler7ObstacleZones(uint16 &warningMask) {
 }
 
 bool InsaneRebel2::applyHandler7WallDamage(int wallDamage) {
-	if (_hitCooldown < 5 && !_rebelInvulnerable) {
+	if (_hitCooldown < 5 && !_rebelAutoPlay) {
 		const bool damageApplied = applyPlayerDamage(wallDamage);
 		_rebelHitCounter++;
 		_hitCooldown = 10;
@@ -2515,13 +2515,11 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 		// At 12fps video rate, 300 frames = ~25 seconds of inactivity.
 		// The original checks: if (local_8 > 299) return 0.
 		if (_menuInactivityTimer > 300) {
-			debug("Rebel2: Menu inactivity timeout - ending video to loop");
-			// Signal video to end so menu loop plays new video.
-			// This emulates the attract mode behavior where a new random
-			// menu video is selected after inactivity.
+			debug("Rebel2: Menu inactivity timeout - resuming intro/demo loop");
 			_menuInactivityTimer = 0;
-			// Don't set _smushVideoShouldFinish here - let video end naturally.
-			// This will cause runMainMenu to loop and play a new random video.
+			_menuInactivityTimedOut = true;
+			_menuSelectionConfirmed = false;
+			_vm->_smushVideoShouldFinish = true;
 		}
 
 		// Draw menu selection overlay.

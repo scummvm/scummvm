@@ -905,6 +905,15 @@ static const ExtraGuiOption enableRebel2NoDamage = {
 	0
 };
 
+static const ExtraGuiOption enableRebel2YodaMode = {
+	_s("Yoda mode"),
+	_s("Enable original Yoda mode shortcuts, including movie mode and auto play"),
+	"rebel2_yoda_mode",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOption enableRebel1UnlockAll = {
 	_s("Unlock all levels"),
 	_s("All levels will be available without requiring passwords"),
@@ -963,6 +972,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_NO_DAMAGE)) {
 		options.push_back(enableRebel2NoDamage);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_YODA_MODE)) {
+		options.push_back(enableRebel2YodaMode);
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_UNLOCK_ALL)) {
 		options.push_back(enableRebel1UnlockAll);

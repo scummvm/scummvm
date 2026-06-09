@@ -208,11 +208,13 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_textOverlayFadeIn = 0;
 	_textOverlayFadeOut = 0;
 
-	// Retail globals mapped: hit counter, cooldown, invulnerability flag
+	// Retail globals mapped: hit counter, cooldown, movie/auto-play flags
 	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
 	_rebelKillCounter = 0;
-	_rebelInvulnerable = false;
+	_rebelYodaMode = false;
+	_rebelMovieMode = false;
+	_rebelAutoPlay = false;
 	_rebelWaveState = 0;
 	_rebelPhaseState = 0;
 
@@ -476,6 +478,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// FUN_0041f5ae uses the selectable item count for Y position calculation.
 	_menuItemCount = 7;
 	_menuInactivityTimer = 0;
+	_menuInactivityTimedOut = false;
 	_lastMenuVariant = -1;        // No previous menu video
 	_menuRepeatDelay = 0;
 	_menuSelectionConfirmed = false;
@@ -495,6 +498,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Set to true to bypass normal unlock progression
 	_debugUnlockAll = ConfMan.getBool("rebel2_unlock_all");
 	_noDamage = ConfMan.getBool("rebel2_no_damage");
+	_rebelYodaMode = ConfMan.getBool("rebel2_yoda_mode");
 
 	for (i = 0; i < 16; i++) {
 		// If debug unlock is enabled, unlock all chapters
@@ -533,7 +537,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Initialize options menu state (FUN_004167A6 defaults)
 	_optionsSelection = 0;
-	_optionsItemCount = 9;
+	_optionsItemCount = 8;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
 	_optVoicesEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
@@ -677,6 +681,29 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// remain paused for the dialog/focus interval.
 	if (_vm->isPaused())
 		return false;
+
+	if (_rebelYodaMode && event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && event.kbd.hasFlags(Common::KBD_ALT)) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_m:
+			// Retail DAT_0047ab60: Yoda-mode Movie Mode skips playable
+			// sections and keeps the story/cutscene sequence moving.
+			_rebelMovieMode = !_rebelMovieMode;
+			debug("Rebel2: Movie mode %s", _rebelMovieMode ? "enabled" : "disabled");
+			if (_rebelMovieMode && splayer && _gameState == kStateGameplay && _rebelHandler != 0)
+				_vm->_smushVideoShouldFinish = true;
+			return true;
+
+		case Common::KEYCODE_p:
+			// Retail DAT_0047ab64: Yoda-mode Auto Play makes gameplay
+			// computer controlled.
+			_rebelAutoPlay = !_rebelAutoPlay;
+			debug("Rebel2: Auto play %s", _rebelAutoPlay ? "enabled" : "disabled");
+			return true;
+
+		default:
+			break;
+		}
+	}
 
 	if (_gameState == kStateGameplay && _rebelHandler == 7 &&
 			event.type == Common::EVENT_MOUSEMOVE) {
@@ -1325,7 +1352,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 }
 
 bool InsaneRebel2::applyPlayerDamage(int damage) {
-	if (_noDamage || _rebelInvulnerable || damage <= 0)
+	if (_noDamage || _rebelAutoPlay || damage <= 0)
 		return false;
 
 	_playerDamage += damage;
@@ -1615,8 +1642,16 @@ int32 InsaneRebel2::processMouse() {
 	// Shot trigger behavior:
 	// - Handler 25 keeps edge-triggered clicks due cover-toggle/sticky input semantics.
 	// - Other gameplay handlers fire while button is held; slot counters still rate-limit.
-	bool triggerShot = (_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed;
 	bool canShoot = isShootingAllowed();
+	bool autoFire = _rebelAutoPlay && canShoot && _gameState == kStateGameplay && _rebelHandler != 0;
+	if (autoFire && _player) {
+		const int autoFirePeriod = (_rebelHandler == 8) ? 6 : 7;
+		autoFire = (_player->_frame % autoFirePeriod) == 0;
+	}
+	if (autoFire)
+		_rebelControlMode |= 1;
+
+	bool triggerShot = ((_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed) || autoFire;
 	if (_rebelHandler == 8) {
 		// FUN_00401CCF uses the same per-frame fire bit both to spawn shots and
 		// to choose the POV gun sprite. Keep the sprite driven by the event-manager
@@ -1625,7 +1660,9 @@ int32 InsaneRebel2::processMouse() {
 	}
 	if (triggerShot && canShoot) {
 		Common::Point mousePos;
-		if (_rebelHandler == 7) {
+		if (autoFire) {
+			mousePos = getRebelAutoPlayAimPoint();
+		} else if (_rebelHandler == 7) {
 			mousePos = getHandler7ShotTargetPoint();
 		} else if (_rebelHandler == 8) {
 			mousePos = getHandler8ShotTargetPoint();
@@ -1776,10 +1813,47 @@ int32 InsaneRebel2::processMouse() {
 	return buttons;
 }
 
+Common::Point InsaneRebel2::getRebelAutoPlayAimPoint() {
+	Common::Point target(160, 100);
+	int bestDistance = 0x7fffffff;
+
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (!it->active || it->destroyed)
+			continue;
+
+		int x = (it->rect.left + it->rect.right) / 2;
+		int y = (it->rect.top + it->rect.bottom) / 2;
+		if (_rebelHandler == 8) {
+			x -= _shipPosX;
+			y -= _shipPosY;
+		} else if (_rebelHandler != 7) {
+			x -= _viewX;
+			y -= _viewY;
+		}
+
+		if (x < -32 || x > 351 || y < -32 || y > 231)
+			continue;
+
+		const int dx = x - 160;
+		const int dy = y - 100;
+		const int distance = dx * dx + dy * dy;
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			target.x = CLIP<int>(x, 0, 319);
+			target.y = CLIP<int>(y, 0, 199);
+		}
+	}
+
+	return target;
+}
+
 Common::Point InsaneRebel2::getGameplayAimPoint() {
 	// Pure getter (queried many times per frame): the aim/reticle follows the virtual
 	// mouse position. Directional controls pan that position incrementally once per frame
 	// via updateGameplayAimFromGamepad(), rather than snapping the reticle to a screen edge.
+	if (_rebelAutoPlay && _gameState == kStateGameplay && !_menuInputActive)
+		return getRebelAutoPlayAimPoint();
+
 	int x = _vm->_mouse.x;
 	int y = _vm->_mouse.y;
 	if (isHiRes()) {
@@ -1803,7 +1877,7 @@ int16 applyRebel2AnalogDeadzone(int16 axisValue) {
 }
 
 void InsaneRebel2::updateGameplayAimFromGamepad() {
-	if (_menuInputActive || _gameState != kStateGameplay)
+	if (_menuInputActive || _gameState != kStateGameplay || _rebelAutoPlay)
 		return;
 
 	const int dpadX = (_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -

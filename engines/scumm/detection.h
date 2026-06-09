@@ -42,6 +42,7 @@ namespace Scumm {
 #define GAMEOPTION_REBEL2_UNLOCK_ALL                         GUIO_GAMEOPTIONS11
 #define GAMEOPTION_REBEL1_UNLOCK_ALL                         GUIO_GAMEOPTIONS12
 #define GAMEOPTION_REBEL2_NO_DAMAGE                          GUIO_GAMEOPTIONS13
+#define GAMEOPTION_REBEL2_YODA_MODE                          GUIO_GAMEOPTIONS14
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store

@@ -79,19 +79,17 @@ public:
 
 	// Menu selection results (return values from FUN_004147B2)
 	enum MenuResult {
-		kMenuNewGame = 2,     // case 0: New Game
-		kMenuContinue = 4,    // case 1: Continue
-		kMenuOptions = 0,     // case 2: Options (stays in menu)
-		kMenuExit = 0,        // case 3: Exit to title
-		kMenuUnknown = 0,     // case 4: Unknown function
+		kMenuQuit = -1,       // case 6: Return to Launcher
+		kMenuResumeDemo = 0,  // case 3 / inactivity: Continue Intro
 		kMenuCredits = 1,     // case 5: Show credits
-		kMenuQuit = 0         // case 6: Quit game
+		kMenuNewGame = 2      // case 0: Start Game
 	};
 
 	GameState _gameState;           // Current game state
 	int _menuSelection;             // Current menu item (0-6), mirrors DAT_00459988
 	int _menuItemCount;             // Number of menu items (7 for main menu)
 	int _menuInactivityTimer;       // Timeout counter (300 frames = ~10 sec)
+	bool _menuInactivityTimedOut;   // Main menu should return to the intro/demo loop
 	int _lastMenuVariant;           // Last random menu video shown (DAT_00482400)
 	int _menuRepeatDelay;           // Delay for key repeat (DAT_00459ce0)
 	bool _menuSelectionConfirmed;   // True only when user explicitly confirmed a selection
@@ -219,8 +217,8 @@ public:
 	// ---------------------------------------------------------------------------
 	// TRS strings: 89 (title), 90-101 (toggle labels), 103 (volume), 107/109 (back)
 	// Original settings array at DAT_00482e20[0..4]:
-	//   [0]=auto control, [1]=music, [2]=voices, [3]=sound
-	// Additional flags: DAT_0047a7fe (text/indicators), DAT_0047a80a (rapid fire/arrows)
+	//   [0]=text, [1]=music, [2]=voices, [3]=sound, [4]=hidden abort flag
+	// Additional flags: DAT_0047a7fe (controls normal/flipped), DAT_0047a80a (rapid fire)
 	// Volume: DAT_0047a804 (0-127), SFX vol: DAT_0047a802 (127-768)
 
 	void showOptionsMenu();
@@ -511,6 +509,7 @@ public:
 
 	int32 processMouse() override;
 	Common::Point getGameplayAimPoint();
+	Common::Point getRebelAutoPlayAimPoint();
 	// Per-frame: pan the gameplay reticle incrementally from the held directional controls
 	// (on-screen/physical gamepad dpad, keyboard arrows) instead of snapping it to a screen
 	// edge. Call once per frame; getGameplayAimPoint() stays a pure getter.
@@ -929,7 +928,9 @@ public:
 	bool _rebelOp6Initialized; // Guard: opcode 6 init block (clearBit/links/wave) runs once per video
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
 	int _rebelKillCounter;   // DAT_0047ab88 - enemies destroyed this phase
-	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
+	bool _rebelYodaMode;     // DAT_0047ab5a > 2 - unlocks Yoda-mode shortcuts
+	bool _rebelMovieMode;    // DAT_0047ab60 - Alt+M skips playable sections
+	bool _rebelAutoPlay;     // DAT_0047ab64 - Alt+P computer-controlled play
 
 	// Enemy wave/phase state tracking (FUN_004028c5 / FUN_00417b61)
 	// DAT_0047ab98: Per-wave enemy kill state. Bits set when enemy types are destroyed.

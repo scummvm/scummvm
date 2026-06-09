@@ -48,6 +48,7 @@ namespace Scumm {
 void InsaneRebel2::resetMenu() {
 	_menuSelection = 0;
 	_menuInactivityTimer = 0;
+	_menuInactivityTimedOut = false;
 	_menuRepeatDelay = 0;
 	_menuSelectionConfirmed = false;
 	setVirtualKeyboardVisible(false);
@@ -591,7 +592,7 @@ void InsaneRebel2::showPauseOverlay() {
 }
 
 // runMainMenu -- Main menu loop (FUN_004147B2).
-// Returns kMenuNewGame, kMenuContinue, kMenuCredits, or 0 (quit).
+// Returns kMenuNewGame, kMenuResumeDemo, or kMenuQuit.
 int InsaneRebel2::runMainMenu() {
 
 	debug("Rebel2: Entering main menu");
@@ -630,7 +631,14 @@ int InsaneRebel2::runMainMenu() {
 		// Check for quit
 		if (_vm->shouldQuit()) {
 			_menuInputActive = false;
-			return 0;
+			return kMenuQuit;
+		}
+
+		if (_menuInactivityTimedOut) {
+			debug("Rebel2: Main menu inactivity - resuming intro/demo loop");
+			_menuInactivityTimedOut = false;
+			_menuInputActive = false;
+			return kMenuResumeDemo;
 		}
 
 		// Only process selection if user explicitly confirmed (ENTER/ESC),
@@ -651,7 +659,7 @@ int InsaneRebel2::runMainMenu() {
 		//   case 0 (TRS 11): Start Game -> pilot selection, returns 2
 		//   case 1 (TRS 12): Options -> FUN_00416787 options screen
 		//   case 2 (TRS 13): Calibrate Joystick -> FUN_00425820
-		//   case 3 (TRS 14): Continue Intro -> replay O_OPEN videos
+		//   case 3 (TRS 14): Continue Intro -> return to intro/demo loop
 		//   case 4 (TRS 15): Show Top Pilots -> FUN_00420116(-1)
 		//   case 5 (TRS 16): Show Credits -> play O_CREDIT.SAN, returns 1
 		//   case 6 (TRS 17): Return to Launcher -> quit, returns 0
@@ -673,22 +681,10 @@ int InsaneRebel2::runMainMenu() {
 			// joystick calibration flow is required here.
 			break;
 
-		case 3:  // Continue Intro -> replay intro videos
-			debug("Rebel2: Continue Intro selected - replaying intro");
-			// Temporarily switch to intro state to disable menu overlay
-			// This emulates FUN_004142BD case 0 behavior
-			_gameState = kStateIntro;
+		case 3:  // Continue Intro -> return to intro/demo loop
+			debug("Rebel2: Continue Intro selected - resuming intro/demo loop");
 			_menuInputActive = false;
-			// Play intro sequence again (O_OPEN_A/B)
-			splayer->setCurVideoFlags(0x20);
-			splayer->play("OPEN/O_OPEN_A.SAN", 15);
-			if (!_vm->shouldQuit()) {
-				splayer->play("OPEN/O_OPEN_B.SAN", 15);
-			}
-			// Restore menu state
-			_gameState = kStateMainMenu;
-			_menuInputActive = true;
-			break;
+			return kMenuResumeDemo;
 
 		case 4:  // Show Top Pilots -> high score display (FUN_00420116(-1))
 			debug("Rebel2: Show Top Pilots selected");
@@ -709,7 +705,7 @@ int InsaneRebel2::runMainMenu() {
 		case 6:  // Return to Launcher -> quit game
 			debug("Rebel2: Return to Launcher selected");
 			_menuInputActive = false;
-			return 0;  // Return 0 to exit
+			return kMenuQuit;
 
 		default:
 			debug("Rebel2: Unknown menu selection %d", _menuSelection);
@@ -718,7 +714,7 @@ int InsaneRebel2::runMainMenu() {
 	}
 
 	_menuInputActive = false;
-	return 0;
+	return kMenuQuit;
 }
 
 // ---------------------------------------------------------------------------

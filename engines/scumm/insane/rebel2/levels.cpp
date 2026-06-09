@@ -81,10 +81,17 @@ void InsaneRebel2::runGame() {
 	while (!_vm->shouldQuit()) {
 		int menuResult = runMainMenu();
 
-		if (menuResult == 0 || _vm->shouldQuit())
+		if (menuResult == kMenuQuit || _vm->shouldQuit())
 			break;
 
-		if (menuResult == kMenuNewGame || menuResult == kMenuContinue) {
+		if (menuResult == kMenuResumeDemo) {
+			playIntroSequence();
+			if (!_vm->shouldQuit())
+				showTopPilots();
+			continue;
+		}
+
+		if (menuResult == kMenuNewGame) {
 			int pilotResult = runLevelSelect();
 
 			if (pilotResult == kLevelSelectQuit || _vm->shouldQuit())
