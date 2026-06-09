@@ -3284,16 +3284,23 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 				if (!_saveConfirmArmed) {
 					_saveConfirmArmed = true;
 				} else {
-					// Binary: g_wScriptErrorCode = 0x1c; g_wClickedButtonIndex = 7
-					// In ScummVM: force close (confirm save triggers close)
-					_clickedButtonIndex = 7;
+					// Restart game: return to launcher
+					closeOriginalSaveLoadPanel();
+					Common::Event event;
+					event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+					g_system->getEventManager()->pushEvent(event);
+					return;
 				}
 			} else if (i == 6) {
 				if (!_loadConfirmArmed) {
 					_loadConfirmArmed = true;
 				} else {
-					// Binary: g_wScriptErrorCode = 0x1b; g_wClickedButtonIndex = 7
-					_clickedButtonIndex = 7;
+					// Exit to DOS: return to launcher
+					closeOriginalSaveLoadPanel();
+					Common::Event event;
+					event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+					g_system->getEventManager()->pushEvent(event);
+					return;
 				}
 			} else if (i == 7) {
 				// Binary: if music enabled AND sound active, play active music
