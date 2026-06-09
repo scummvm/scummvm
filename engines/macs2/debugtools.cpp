@@ -176,7 +176,7 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x30:
 		return "printStringRight";
 	case 0x31:
-		return "setVolume";
+		return "setPaletteDarkness";
 	case 0x32:
 		return "setObjectClickable";
 	case 0x33:
