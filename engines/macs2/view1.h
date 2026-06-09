@@ -239,7 +239,6 @@ public:
 		Load = 1,
 		Save = 2
 	};
-	bool _isSaveLoadPanelActive = false;
 	SaveLoadSubMode _saveLoadSubMode = SaveLoadSubMode::None;
 	uint16 _saveLoadPageIndex = 0;
 	bool _saveConfirmArmed = false;
