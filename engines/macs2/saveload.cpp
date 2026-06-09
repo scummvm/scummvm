@@ -114,10 +114,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// --- Game state globals ---
 	// g_wRepeatRunFlag [0x1012]: 1 byte
-	uint8 repeatRunFlag = _scriptExecutor->_isRepeatRun ? 1 : 0;
+	uint8 repeatRunFlag = _scriptExecutor->getRepeatRunFlag() ? 1 : 0;
 	s.syncAsByte(repeatRunFlag);
 	if (s.isLoading())
-		_scriptExecutor->_isRepeatRun = repeatRunFlag != 0;
+		_scriptExecutor->setRepeatRunFlag(repeatRunFlag != 0);
 
 	// g_wFrameWaitCounter [0x100a]: 2 bytes
 	uint16 frameWaitCounter = _scriptExecutor->getFrameWaitCounter();
