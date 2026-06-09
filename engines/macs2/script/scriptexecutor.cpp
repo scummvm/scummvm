@@ -467,13 +467,14 @@ bool ScriptExecutor::loadNextScript() {
 	}
 
 	// We always try to advance to the next object's script until we reach the end
-	// of the objects list
+	// of the objects list. Original iterates 1..0x200, skipping null/irrelevant objects.
 	GameObject *candidateObject = nullptr;
 	do {
 		_executingObjectIndex++;
+		if (_executingObjectIndex > 0x200)
+			break;
 		candidateObject = GameObjects::getObjectByIndex(_executingObjectIndex);
 
-		// TODO: Check if this is a valid option
 		if (candidateObject && isRelevantObject(candidateObject)) {
 			if (candidateObject->_script.size() != 0) {
 				_stream = candidateObject->getScriptStream();
@@ -482,7 +483,7 @@ bool ScriptExecutor::loadNextScript() {
 				return true;
 			}
 		}
-	} while (candidateObject != nullptr);
+	} while (_executingObjectIndex <= 0x200);
 
 	_executingScriptObjectID = 0;
 
@@ -2373,9 +2374,6 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 }
 
 void ScriptExecutor::run(bool firstRun) {
-	// Scene initialization run
-	// TODO: Need to better encapsulate this down the road
-	// TODO: Not sure which order is really right, need to check in SIS logs
 	const bool resumingAfterCallback = (_state == ExecutorState::WaitingForCallback) && !firstRun;
 	if (!resumingAfterCallback) {
 		// TODO: Not sure if this is the right place and condition to reset this

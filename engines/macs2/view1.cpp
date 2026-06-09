@@ -628,14 +628,19 @@ void View1::setStringBoxAt(const Common::StringArray &sa, const Common::Point &p
 
 void View1::clearStringBox(bool continueScript) {
 	_isShowingTextBox = false;
-	_uiPanelState = kUiPanelNone;
+	// Preserve inventory panel state across text dismissal — the draw cycle
+	// already handles hiding the inventory when text is showing.
+	// Only clear to kUiPanelNone if we're not in the inventory panel.
+	const bool wasInventory = (_uiPanelState == kUiPanelInventory);
+	if (!wasInventory) {
+		_uiPanelState = kUiPanelNone;
+	}
 	_dialogueChoiceCount = 0;
 	currentSpeechActData.speaker = nullptr;
 	currentSpeechActData.mouthAnimActive = false;
 	redraw();
 	if (continueScript && _continueScriptAfterUI) {
 		_continueScriptAfterUI = false;
-		// TODO: Check which one it should be
 		g_engine->runScriptExecutor(false);
 	} else if (!continueScript) {
 		_continueScriptAfterUI = false;
@@ -959,10 +964,6 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			GameObject *clickedObject = getClickedInventoryItem(msg._pos);
 
 			if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
-				// Look at item: object ID uses 0x400 prefix (confirmed from original handleInventoryClick)
-				// Original (handleInventoryClick at 1008:4d07): sets interactedObjectId,
-				// g_wClickedButtonIndex=5, g_wPendingPanelRequest=1, then at end calls
-				// runScriptExecutor() which runs the scene+object scripts.
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				g_engine->runScriptExecutor(false);
@@ -992,6 +993,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 				// Binary sets interactedObjectId (source) + interactedInventoryItemId (target),
 				// then triggers runScriptExecutor via g_wHasSavedUiBackground. Does NOT set
 				// g_wInventoryCombineFlag here (that's only in the Drop button path).
+				// Panel state stays at 2 (inventory) — draw cycle hides panel when text shows.
 				g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
 				g_engine->runScriptExecutor(false);
