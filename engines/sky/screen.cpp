@@ -251,15 +251,15 @@ Screen::~Screen() {
 	_iconSurface.free();
 }
 
-void Screen::update32BitScreen() {
-	if (!_currentScreen)
+void Screen::update32BitScreen(uint8 *overrideBuffer) {
+	if (!overrideBuffer)
 		return;
 
 	uint32 *dstPixels = (uint32 *)_screen32.getPixels();
 	uint32 dstPitch = _screen32.pitch / 4;
 
 	for (int y = 0; y < GAME_SCREEN_HEIGHT; y++) {
-		uint8 *srcRow = _currentScreen + (y * GAME_SCREEN_WIDTH);
+		uint8 *srcRow = overrideBuffer + (y * GAME_SCREEN_WIDTH);
 		uint32 *dstRow = dstPixels + (y * dstPitch);
 
 		for (int x = 0; x < GAME_SCREEN_WIDTH; x++) {
@@ -275,7 +275,7 @@ void Screen::update32BitScreen() {
 }
 
 void Screen::renderFinalFrame() {
-	update32BitScreen();
+	update32BitScreen(_currentScreen);
 
 	if (SkyEngine::isIbass()) {
 
@@ -289,6 +289,13 @@ void Screen::renderFinalFrame() {
 		_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
 		_system->updateScreen();
 	}
+}
+
+void Screen::renderControlPanel(uint8 *buffer) {
+	update32BitScreen(buffer);
+
+	if (_screen32.getPixels())
+		_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
 }
 
 void Screen::clearScreen(bool fullscreen) {

@@ -119,7 +119,8 @@ public:
 	Graphics::Surface _screen32;
 	Graphics::Surface _iconSurface;
 	void renderFinalFrame();
-	void update32BitScreen();
+	void renderControlPanel(uint8 *buffer);
+	void update32BitScreen(uint8 *overrideBuffer);
 	Icon _uiIcon[NUM_UI_ICONS];
 	Icon _proximityIcon[NUM_PROXIMITY_ICONS];
 	Icon _invIcon[NUM_INV_ICONS];
