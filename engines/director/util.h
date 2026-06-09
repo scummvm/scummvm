@@ -81,7 +81,7 @@ public:
 		_seed = _mask = _len = 0;
 	}
 
-	void setSeed(int seed);
+	void setSeed(int seed, bool runInit = true);
 	uint32 getSeed() { return _seed; }
 	int32 getRandom(int32 range);
 

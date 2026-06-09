@@ -1203,8 +1203,9 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 	return Common::Path(Common::String::format("./dumps/%s-factory-%s.%s", prefix, name, ext), '/');
 }
 
-void RandomState::setSeed(int seed) {
-	init(32);
+void RandomState::setSeed(int seed, bool runInit) {
+	if (runInit)
+		init(32);
 
 	// If we a GUI override, use that instead of the provided seed
 	if (ConfMan.hasKey("random_seed")) {
@@ -1246,7 +1247,7 @@ void RandomState::init(int len) {
 
 	// The original is _always_ initalized with a seed of 1. It is hardcoded and is by design
 	// The developers were offered to use `set the randomSeed` Lingo
-	setSeed(1);
+	setSeed(1, false);
 	_mask = masks[len - 2];
 }
 
