@@ -2870,11 +2870,12 @@ void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitm
 
 	uint32 scaleX = (kScaleThreshold * srcPixelWidth) / destPixelWidth;
 	uint32 scaleY = (kScaleThreshold * srcHeight) / destHeight;
+	uint32 destStride = getNormalizedByteWidth(destPixelWidth / 2) * 2;
 
 	// Loop through drawing output lines
 	for (uint32 destY = 0, scaleYCtr = 0; destY < (uint32)destHeight; ++destY, scaleYCtr += scaleY) {
 		const byte *srcLine = &srcBitmap[(scaleYCtr / kScaleThreshold) * srcPixelWidth];
-		byte *destLine = &destBitmap[destY * destPixelWidth];
+		byte *destLine = &destBitmap[destY * destStride];
 
 		// Loop through drawing the pixels of the row
 		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < (uint32)destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX)
