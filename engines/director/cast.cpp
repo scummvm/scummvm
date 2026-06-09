@@ -78,6 +78,7 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint1
 	_lingoArchive = new LingoArchive(this);
 
 	_castArrayStart = _castArrayEnd = 0;
+	_castArrayStartForChecksum = _castArrayEndForChecksum = 0;
 
 	_castIDoffset = 0;
 
@@ -403,15 +404,15 @@ bool Cast::loadConfig() {
 		// For D4 and below, and for external castlibs,
 		// the config chunk is the source of truth about
 		// where the members start and end.
-		_castArrayStart = stream->readUint16();
-		_castArrayEnd = stream->readUint16();
+		_castArrayStart = _castArrayStartForChecksum = stream->readUint16();
+		_castArrayEnd = _castArrayEndForChecksum = stream->readUint16();
 	} else {
 		// castArrayStart and castArrayEnd are defined
 		// in the MCsL chunk read by Movie::loadCastLibMapping,
 		// the one in the config chunk is likely to be incorrect
 		// (e.g. multiple internal casts)
-		stream->readUint16();
-		stream->readUint16();
+		_castArrayStartForChecksum = stream->readUint16();
+		_castArrayEndForChecksum = stream->readUint16();
 	}
 
 	// D3 and below use this, override for D4 and over
@@ -625,9 +626,9 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
 
-	writeStream->writeUint16BE(_castArrayStart);    // 12
+	writeStream->writeUint16BE(_castArrayStartForChecksum);    // 12
 	// This will change
-	writeStream->writeUint16BE(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14
+	writeStream->writeUint16BE(_castArrayStartForChecksum + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
@@ -1171,8 +1172,8 @@ uint32 Cast::computeChecksum() {
 	check *= _checkRect.left + 4;
 	check /= _checkRect.bottom + 5;
 	check *= _checkRect.right + 6;
-	check -= _castArrayStart + 7;
-	check *= _castArrayEnd + 8;
+	check -= _castArrayStartForChecksum + 7;
+	check *= _castArrayEndForChecksum + 8;
 	check -= (int8)_readRate + 9;
 	check -= _lightswitch + 10;
 
