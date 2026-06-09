@@ -773,16 +773,35 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 		}
 	}
 
-	// Step 5: If object has no runtime data and was the UseInventory target,
-	// reset cursor to Use (0x15)
-	if (object->_blobs.empty()) {
-		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
+	// Check from sortObjectsByDepth (1008:0da6): if the moved object is the active
+	// inventory item cursor, clear it and reset cursor mode from UseInventory to Use.
+	if (currentView->_activeInventoryItem != nullptr &&
+		currentView->_activeInventoryItem->_index == objectID) {
+		currentView->_activeInventoryItem = nullptr;
+		if (currentView->_cursorModeBeforeMenu == Script::MouseMode::UseInventory) {
+			currentView->_cursorModeBeforeMenu = Script::MouseMode::Use;
+		}
+		if (_cursorModeBeforeWait == MouseMode::UseInventory) {
+			_cursorModeBeforeWait = MouseMode::Use;
+		}
+		if (_mouseMode == MouseMode::UseInventory) {
 			_engine->setCursorMode(MouseMode::Use);
 			currentView->updateCursor();
 		}
+	}
+
+	// Step 5: If object has no runtime data (original: puVar5[5]==0 && puVar5[6]==0)
+	// and was the UseInventory target, reset cursor to Use (0x15).
+	// Also clear _activeInventoryItem if it was this object.
+	if (object->_dataOffset == 0) {
+		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
+			_engine->setCursorMode(MouseMode::Use);
+			currentView->_activeInventoryItem = nullptr;
+			currentView->updateCursor();
+		}
 		// Original also rewrites the saved (pre-wait) cursor mode: 0x17 -> 0x15.
-		if (_interactedObjectID == objectID + 0x400 && _savedPickupMouseMode == MouseMode::UseInventory) {
-			_savedPickupMouseMode = MouseMode::Use;
+		if (_interactedObjectID == objectID + 0x400 && _cursorModeBeforeWait == MouseMode::UseInventory) {
+			_cursorModeBeforeWait = MouseMode::Use;
 		}
 	}
 
