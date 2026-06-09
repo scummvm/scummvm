@@ -1088,7 +1088,7 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		}
 
 		// Handle original save/load panel clicks
-		if (_isSaveLoadPanelActive) {
+		if (_uiPanelState == kUiPanelSaveLoad) {
 			handleOriginalSaveLoadClick(msg._pos);
 			return true;
 		}
@@ -1361,7 +1361,7 @@ void View1::draw() {
 		drawMainMenu(s);
 	}
 
-	if (_isSaveLoadPanelActive) {
+	if (_uiPanelState == kUiPanelSaveLoad) {
 		drawOriginalSaveLoadPanel(s);
 	}
 
@@ -1405,7 +1405,7 @@ void View1::draw() {
 		}
 	}
 
-	if (_isSaveLoadPanelActive && g_engine->enhancementEnabled(kEnhUIUX)) {
+	if (_uiPanelState == kUiPanelSaveLoad && g_engine->enhancementEnabled(kEnhUIUX)) {
 		for (int i = 0; i < 7; i++) {
 			if (_saveLoadButtonRects[i].contains(mousePos)) {
 				static const char *const buttonNames[] = {
@@ -2988,7 +2988,6 @@ void Button::render(Graphics::ManagedSurface &s) {
 
 void View1::openOriginalSaveLoadPanel() {
 	// Exact translation of drawDialoguePanel (1008:6184)
-	_isSaveLoadPanelActive = true;
 
 	// g_wHasSavedUiBackground = 0
 	// g_wUiPanelState = 4
@@ -3087,7 +3086,6 @@ void View1::openOriginalSaveLoadPanel() {
 }
 
 void View1::closeOriginalSaveLoadPanel() {
-	_isSaveLoadPanelActive = false;
 	_uiPanelState = kUiPanelNone;
 	_saveLoadSubMode = SaveLoadSubMode::None;
 	g_engine->setCursorMode(_cursorModeBeforeMenu);
@@ -3096,7 +3094,7 @@ void View1::closeOriginalSaveLoadPanel() {
 }
 
 void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
-	if (!_isSaveLoadPanelActive)
+	if (_uiPanelState != kUiPanelSaveLoad)
 		return;
 
 	// Exact translation of drawSaveLoadPanel (1008:6592)
