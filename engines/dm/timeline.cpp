@@ -835,7 +835,7 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 	curChampion->_enableActionEventIndex = -1;
 	clearFlag(curChampion->_attributes, kDMAttributeDisableAction);
 	if (curChampion->_actionIndex != kDMActionNone) {
-		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
+		curChampion->_actionDefense -= _actionDefense[curChampion->_actionIndex];
 	}
 	if (curChampion->_currHealth) {
 		if ((curChampion->_actionIndex == kDMActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == _vm->_thingNone)) {
