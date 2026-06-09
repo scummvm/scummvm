@@ -22,6 +22,8 @@
 #include "macs2/debugtools.h"
 #include "backends/imgui/imgui.h"
 #include "common/debug.h"
+#include "common/memstream.h"
+#include "common/str-enc.h"
 #include "common/system.h"
 #include "macs2/adlib.h"
 #include "macs2/detection.h"
@@ -33,6 +35,7 @@
 namespace Macs2 {
 
 static bool _showScript = false;
+static bool _showObjectScripts = false;
 static bool _showVariables = false;
 static bool _showCharacters = false;
 static bool _showInventory = false;
@@ -264,8 +267,11 @@ static Common::String decodeScriptValue(Common::MemoryReadStream *script) {
 		return "?";
 	uint8 type = script->readByte();
 	uint16 val = script->readUint16LE();
-	if (type == 0x00)
+	if (type == 0x00) {
+		if (val > 0x400 && val <= 0x600)
+			return Common::String::format("obj_0x%x", val - 0x400);
 		return Common::String::format("%u", val);
+	}
 	if (type == 0xFF) {
 		const char *name = getSpecialName(val);
 		if (name)
@@ -276,6 +282,9 @@ static Common::String decodeScriptValue(Common::MemoryReadStream *script) {
 	}
 	return Common::String::format("var[%u]", val);
 }
+
+// String stream context for decodeParams - set before calling decompileScript
+static Common::MemoryReadStream *_decompileStringStream = nullptr;
 
 static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcode, int64 dataStart, uint8 length) {
 	if (length == 0)
@@ -315,10 +324,10 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		if (length >= 10) {
 			script->seek(dataStart + 6);
 			uint16 o = script->readUint16LE(), n = script->readUint16LE();
-			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
-				auto ss = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, o, n);
+			if (n > 0 && n < 50 && _decompileStringStream) {
+				auto ss = g_engine->decodeStrings(_decompileStringStream, o, n);
 				if (!ss.empty())
-					result = Common::String::format(" \"%s\"", ss[0].c_str());
+					result = Common::String::format(" \"%s\"", Common::convertFromU32String(Common::convertToU32String(ss[0].c_str(), Common::kDos850), Common::kUtf8).c_str());
 			}
 		}
 		break;
@@ -337,10 +346,10 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		Common::String o = decodeScriptValue(script), x = decodeScriptValue(script), y = decodeScriptValue(script), sd = decodeScriptValue(script);
 		if (script->pos() + 4 <= dataStart + length) {
 			uint16 off = script->readUint16LE(), n = script->readUint16LE();
-			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
-				auto ss = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, off, n);
+			if (n > 0 && n < 50 && _decompileStringStream) {
+				auto ss = g_engine->decodeStrings(_decompileStringStream, off, n);
 				if (!ss.empty()) {
-					result = Common::String::format(" obj=%s \"%s\"", o.c_str(), ss[0].c_str());
+					result = Common::String::format(" obj=%s \"%s\"", o.c_str(), Common::convertFromU32String(Common::convertToU32String(ss[0].c_str(), Common::kDos850), Common::kUtf8).c_str());
 					break;
 				}
 			}
@@ -396,10 +405,10 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		Common::String idx = decodeScriptValue(script);
 		if (script->pos() + 4 <= dataStart + length) {
 			uint16 off = script->readUint16LE(), n = script->readUint16LE();
-			if (n > 0 && n < 50 && Scenes::instance()._currentSceneStrings) {
-				auto ss = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, off, n);
+			if (n > 0 && n < 50 && _decompileStringStream) {
+				auto ss = g_engine->decodeStrings(_decompileStringStream, off, n);
 				if (!ss.empty()) {
-					result = Common::String::format(" idx=%s \"%s\"", idx.c_str(), ss[0].c_str());
+					result = Common::String::format(" idx=%s \"%s\"", idx.c_str(), Common::convertFromU32String(Common::convertToU32String(ss[0].c_str(), Common::kDos850), Common::kUtf8).c_str());
 					break;
 				}
 			}
@@ -747,7 +756,9 @@ static void showScriptWindow() {
 		Common::MemoryReadStream *script = Scenes::instance()._currentSceneScript;
 		if (script) {
 			if (_cachedSceneIndex != currentScene) {
+				_decompileStringStream = Scenes::instance()._currentSceneStrings;
 				_cachedDecompile = decompileScript(script);
+				_decompileStringStream = nullptr;
 				_cachedSceneIndex = currentScene;
 				_collapsedBlocks.clear();
 			}
@@ -1471,6 +1482,130 @@ static void showTextLogWindow() {
 	ImGui::End();
 }
 
+static void showObjectScriptsWindow() {
+	if (!_showObjectScripts)
+		return;
+	ImGui::SetNextWindowSize(ImVec2(700, 500), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Object Scripts", &_showObjectScripts)) {
+		uint16 sceneIdx = (uint16)Scenes::instance()._currentSceneIndex;
+		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
+
+		static int selectedObj = -1;
+		static Common::Array<DecompiledLine> objDecompile;
+		static uint16 lastSelectedObjIndex = 0xFFFF;
+
+		if (ImGui::BeginChild("ObjList", ImVec2(200, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX)) {
+			// Scene objects
+			if (ImGui::TreeNodeEx("Scene Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
+				int idx = 0;
+				for (auto obj : GameObjects::instance()._objects) {
+					if (obj == nullptr || obj->_script.empty() || obj->_sceneIndex != sceneIdx) {
+						idx++;
+						continue;
+					}
+					bool isExecuting = exec->isExecuting() && exec->getExecutingObjectId() == obj->_index;
+					Common::String label = Common::String::format("%s0x%x (%u bytes)###obj%d",
+						isExecuting ? "> " : "", obj->_index, (uint)obj->_script.size(), idx);
+					if (isExecuting)
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
+					if (ImGui::Selectable(label.c_str(), selectedObj == idx))
+						selectedObj = idx;
+					if (isExecuting)
+						ImGui::PopStyleColor();
+					idx++;
+				}
+				ImGui::TreePop();
+			}
+			// Inventory/global objects (scene == 0)
+			if (ImGui::TreeNodeEx("Inventory/Global", ImGuiTreeNodeFlags_None)) {
+				int idx = 0;
+				for (auto obj : GameObjects::instance()._objects) {
+					if (obj == nullptr || obj->_script.empty() || obj->_sceneIndex != 0) {
+						idx++;
+						continue;
+					}
+					bool isExecuting = exec->isExecuting() && exec->getExecutingObjectId() == obj->_index;
+					Common::String label = Common::String::format("%s0x%x (%u bytes)###obj%d",
+						isExecuting ? "> " : "", obj->_index, (uint)obj->_script.size(), idx);
+					if (isExecuting)
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
+					if (ImGui::Selectable(label.c_str(), selectedObj == idx))
+						selectedObj = idx;
+					if (isExecuting)
+						ImGui::PopStyleColor();
+					idx++;
+				}
+				ImGui::TreePop();
+			}
+		}
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		if (ImGui::BeginChild("ObjScript", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
+			GameObject *selObj = nullptr;
+			if (selectedObj >= 0 && selectedObj < (int)GameObjects::instance()._objects.size())
+				selObj = GameObjects::instance()._objects[selectedObj];
+
+			if (selObj && !selObj->_script.empty()) {
+				if (selObj->_index != lastSelectedObjIndex) {
+					Common::MemoryReadStream *s = selObj->getScriptStream();
+					_decompileStringStream = GameObjects::readGameObjectStrings(selObj->_index, g_engine->_fileStream);
+					objDecompile = decompileScript(s);
+					delete _decompileStringStream;
+					_decompileStringStream = nullptr;
+					delete s;
+					lastSelectedObjIndex = selObj->_index;
+				}
+
+				if (ImGui::Button("Copy")) {
+					Common::String full;
+					for (uint i = 0; i < objDecompile.size(); i++) {
+						const DecompiledLine &l = objDecompile[i];
+						for (int j = 0; j < l.indent; j++)
+							full += "  ";
+						full += Common::String::format("%04x: %s\n", l.offset, l.text.c_str());
+					}
+					g_system->setTextInClipboard(Common::U32String(full));
+				}
+				ImGui::SameLine();
+				ImGui::Text("Object 0x%x%s | %u bytes | %u opcodes",
+					selObj->_index,
+					selObj->_sceneIndex == 0 ? " [inventory]" : "",
+					(uint)selObj->_script.size(), (uint)objDecompile.size());
+				ImGui::Separator();
+
+				uint32 currentPos = 0xFFFFFFFF;
+				if (exec->isExecuting() && exec->getExecutingObjectId() == selObj->_index)
+					currentPos = exec->getScriptPosition();
+
+				for (uint i = 0; i < objDecompile.size(); i++) {
+					const DecompiledLine &l = objDecompile[i];
+					uint32 nextOff = (i + 1 < objDecompile.size()) ? objDecompile[i + 1].offset : (uint32)selObj->_script.size();
+					bool isCurrent = (currentPos >= l.offset && currentPos < nextOff);
+
+					if (isCurrent)
+						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
+
+					Common::String ind;
+					for (int j = 0; j < l.indent; j++)
+						ind += "  ";
+					ImGui::Text("%04x: %s%s", l.offset, ind.c_str(), l.text.c_str());
+
+					if (isCurrent) {
+						ImGui::PopStyleColor();
+						ImGui::SetScrollHereY(0.5f);
+					}
+				}
+			} else {
+				ImGui::Text("Select an object with a script from the list.");
+			}
+		}
+		ImGui::EndChild();
+	}
+	ImGui::End();
+}
+
 static void showSoundWindow();
 
 void onImGuiInit() {
@@ -1487,6 +1622,7 @@ void onImGuiRender() {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("Debug")) {
 			ImGui::MenuItem("Script", NULL, &_showScript);
+			ImGui::MenuItem("Object Scripts", NULL, &_showObjectScripts);
 			ImGui::MenuItem("Variables", NULL, &_showVariables);
 			ImGui::MenuItem("Breakpoints", NULL, &_showBreakpoints);
 			ImGui::MenuItem("Scene Objects", NULL, &_showCharacters);
@@ -1563,6 +1699,7 @@ void onImGuiRender() {
 	}
 
 	showScriptWindow();
+	showObjectScriptsWindow();
 	showBreakpointsWindow();
 	showVariablesWindow();
 	showCharactersWindow();
