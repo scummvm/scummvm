@@ -200,6 +200,9 @@ Macs2::GameObject *Macs2::GameObjects::getObjectByIndex(uint16 index) {
 }
 
 Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index, Common::MemoryReadStream *fileStream) {
+	// TODO: The original binary caches the last loaded object's string data in memory
+	// (g_wStringDecodeCacheObjectId at DS:0f86 / g_pSavedScriptState). It skips the file
+	// read if the same object is requested again. We re-read from file every time.
 	// TODO: Copy&Pasted code from ReadSceneStrings
 	// Calculate the offset of the script data offset
 	// This addressing can be found in the l0037_2856 code block
