@@ -68,6 +68,16 @@ public:
 	uint16 _onHoverEndLastFrame = 0;
 	SceneChangeDescription _sceneChange;
 
+	// Nancy 10+: push current scene before the sceneChange target.
+	bool _pushSceneOnTrigger = false;
+
+	// Nancy 10+: set an event flag when playback reaches frameID.
+	struct FlagAtFrame {
+		int16 frameID;
+		FlagDescription flagDesc;
+	};
+	Common::Array<FlagAtFrame> _frameFlags;
+
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
 	bool canHaveHotspot() const override { return true; }
