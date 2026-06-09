@@ -894,6 +894,7 @@ public:
 	int _viewY;
 	int _hiResPresentationViewX;
 	int _hiResPresentationViewY;
+	int _gameplayPresentationClipBottom;
 
 	// ---------------------------------------------------------------------------
 	// Damage Visual Effect System
@@ -1053,7 +1054,8 @@ public:
 
 	// Handler-specific explosion rendering
 	void renderExplosionFrame(byte *renderBitmap, int pitch, int width, int height,
-	                          Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance);
+	                          Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance,
+	                          bool resolutionDependentScale);
 	void renderTurretExplosions(byte *renderBitmap, int pitch, int width, int height);     // FUN_409FBC (Handler 0x26)
 	void renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height);    // FUN_402696 (Handler 8)
 	void renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height);      // FUN_40F1C5 (Handler 7)

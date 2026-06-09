@@ -1506,7 +1506,7 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	int clipLeft = renderHiRes ? 0 : CLIP<int>(_viewX, 0, width - 1);
 	int clipTop = renderHiRes ? 0 : CLIP<int>(_viewY, 0, height - 1);
 	int clipRight = renderHiRes ? MIN(width - 1, 639) : CLIP<int>(_viewX + 319, 0, width - 1);
-	int clipBottom = renderHiRes ? MIN(height - 1, 359) : CLIP<int>(_viewY + 179, 0, height - 1);
+	int clipBottom = renderHiRes ? MIN(height - 1, _gameplayPresentationClipBottom) : CLIP<int>(_viewY + 179, 0, height - 1);
 	if (clipLeft > clipRight || clipTop > clipBottom)
 		return;
 	int edgeClipLeft = CLIP<int>(clipLeft + 1, 1, width - 2);
@@ -2641,6 +2641,10 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0.
 	processMouse();
 
+	_gameplayPresentationClipBottom = statusBarY - 1;
+	if (isHiRes() && _rebelHandler == 7 && curFrame != 0)
+		_gameplayPresentationClipBottom = MIN(_gameplayPresentationClipBottom, 170 * 2 - 1);
+
 	_hiResPresentationViewX = 0;
 	_hiResPresentationViewY = 0;
 	if (isHiRes()) {
@@ -2916,10 +2920,13 @@ void InsaneRebel2::updateDamageEffect(byte *renderBitmap, int pitch, int width, 
 
 		// Temporary buffer for scanline rotation (case 1 in original)
 		byte tempLine[640];
+		const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
+		const int maxY = MIN(height, renderHiRes ? 360 : 180);
 
 		for (int n = numLines; n > 0; n--) {
-			// Pick a random scanline within the gameplay area (0..179, not status bar)
-			int maxY = MIN(height, 180);
+			// Pick a random scanline within the gameplay area, not the status bar.
+			if (maxY <= 0)
+				continue;
 			int scanline = _vm->_rnd.getRandomNumber(maxY - 1);
 
 			byte *linePtr = renderBitmap + pitch * scanline;
@@ -3425,8 +3432,9 @@ void InsaneRebel2::renderHandler7FlySprite(byte *renderBitmap, int pitch, int wi
 	int dstY = renderHiRes ? (nativeY - nativeViewY) * renderScale : nativeY;
 
 	if (renderHiRes) {
+		const int clipBottom = MIN(height, _gameplayPresentationClipBottom + 1);
 		renderNutSpriteScaledClipped(renderBitmap, pitch, width, height,
-			0, 0, width, height, dstX, dstY, nut, spriteIndex, false, renderScale, true);
+			0, 0, width, clipBottom, dstX, dstY, nut, spriteIndex, false, renderScale, true);
 	} else {
 		renderNutSprite(renderBitmap, pitch, width, height, dstX, dstY, nut, spriteIndex);
 	}
@@ -4093,12 +4101,13 @@ void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, in
 	}
 }
 
-// renderExplosionFrame -- Shared low-res explosion sprite path.
+// renderExplosionFrame -- Shared explosion sprite path.
 // The original handlers reach this through separate retail functions. In the
-// 320x200 path used here, they share the same scale buckets and centered NUT
-// draw; callers keep their coordinate transforms and frame timing explicit.
+// 320x200 path used here, they share centered NUT drawing; callers keep their
+// coordinate transforms, frame timing, and scale bucket rules explicit.
 void InsaneRebel2::renderExplosionFrame(byte *renderBitmap, int pitch, int width, int height,
-		InsaneRebel2::Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance) {
+		InsaneRebel2::Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance,
+		bool resolutionDependentScale) {
 	if (!explosion.active)
 		return;
 
@@ -4110,14 +4119,16 @@ void InsaneRebel2::renderExplosionFrame(byte *renderBitmap, int pitch, int width
 	if (advance == kExplosionAdvanceBeforeDraw)
 		explosion.counter--;
 
-	// Fixed low-res thresholds (0x0b=11, 0x15=21).
+	const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
+	const int mediumThreshold = (resolutionDependentScale && renderHiRes) ? 20 : 10;
+	const int largeThreshold = (resolutionDependentScale && renderHiRes) ? 40 : 20;
 	int baseIndex;
-	if (explosion.scale < 11) {
-		baseIndex = 9;
-	} else if (explosion.scale < 21) {
+	if (explosion.scale > largeThreshold) {
+		baseIndex = 29;
+	} else if (explosion.scale > mediumThreshold) {
 		baseIndex = 19;
 	} else {
-		baseIndex = 29;
+		baseIndex = 9;
 	}
 
 	int spriteIndex = baseIndex + (12 - explosion.counter);
@@ -4125,15 +4136,20 @@ void InsaneRebel2::renderExplosionFrame(byte *renderBitmap, int pitch, int width
 	if (_smush_iconsNut->getNumChars() > spriteIndex) {
 		int ew = _smush_iconsNut->getCharWidth(spriteIndex);
 		int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-		const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
 		int drawX = screenX;
 		int drawY = screenY;
 		if (renderHiRes) {
 			drawX = (screenX - _hiResPresentationViewX) * 2;
 			drawY = (screenY - _hiResPresentationViewY) * 2;
 		}
-		renderNutSprite(renderBitmap, pitch, width, height,
-			drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+		if (renderHiRes) {
+			renderNutSpriteClipped(renderBitmap, pitch, height,
+				0, 0, MIN(width, pitch), _gameplayPresentationClipBottom + 1,
+				drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+		} else {
+			renderNutSprite(renderBitmap, pitch, width, height,
+				drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+		}
 	}
 
 	if (advance == kExplosionAdvanceAfterDraw)
@@ -4156,7 +4172,7 @@ void InsaneRebel2::renderTurretExplosions(byte *renderBitmap, int pitch, int wid
 		int screenX = _explosions[i].x;
 		int screenY = _explosions[i].y;
 		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
-			screenX, screenY, kExplosionAdvanceAfterDraw);
+			screenX, screenY, kExplosionAdvanceAfterDraw, false);
 	}
 }
 
@@ -4175,13 +4191,13 @@ void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int wi
 		int screenX = _explosions[i].x - _shipPosX;
 		int screenY = _explosions[i].y - _shipPosY;
 		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
-			screenX, screenY, kExplosionAdvanceAfterDraw);
+			screenX, screenY, kExplosionAdvanceAfterDraw, false);
 	}
 }
 
 // renderSpaceExplosions -- Handler 7 space explosion rendering (FUN_40F1C5).
 // Position: FUN_0041c720 3D->2D projection.
-// Original scale thresholds are resolution-dependent; current low-res path uses <11/<21.
+// Original scale thresholds are resolution-dependent (<11/<21, doubled in high-res).
 // Secondary NUT: DAT_0047ff00 (FLY004, if DAT_0047a7fc >= 0).
 void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
@@ -4197,7 +4213,7 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 		int screenX = _explosions[i].x;
 		int screenY = _explosions[i].y;
 		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
-			screenX, screenY, kExplosionAdvanceAfterDraw);
+			screenX, screenY, kExplosionAdvanceAfterDraw, true);
 	}
 
 	// --- Part 2: Corridor/zone hit explosion (FUN_40F1C5 lines 61-85) ---
@@ -4252,8 +4268,14 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 
 			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
 			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-			renderNutSprite(renderBitmap, pitch, width, height,
-				drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+			if (renderHiRes) {
+				renderNutSpriteClipped(renderBitmap, pitch, height,
+					0, 0, MIN(width, pitch), _gameplayPresentationClipBottom + 1,
+					drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+			} else {
+				renderNutSprite(renderBitmap, pitch, width, height,
+					drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+			}
 
 			debug("Rebel2 H7 corridor explosion: dir=%d frame=%d pos=(%d,%d) cooldown=%d",
 				_spaceShotDirection, spriteIndex, drawX, drawY, _hitCooldown);
@@ -4263,7 +4285,7 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 
 // renderHandler25Explosions -- Handler 25 FPS explosion rendering (FUN_41F29A).
 // Position: world coords + view offset (DAT_0045790c/0e = _rebelViewOffsetX/Y).
-// Original scale thresholds follow Handler 7; current low-res path uses <11/<21. No sound panning.
+// Original scale thresholds follow Handler 7 (<11/<21, doubled in high-res). No sound panning.
 void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
@@ -4276,7 +4298,7 @@ void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int 
 		int screenX = _explosions[i].x + _rebelViewOffsetX;
 		int screenY = _explosions[i].y + _rebelViewOffsetY;
 		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
-			screenX, screenY, kExplosionAdvanceBeforeDraw);
+			screenX, screenY, kExplosionAdvanceBeforeDraw, true);
 	}
 }
 
@@ -4604,25 +4626,26 @@ void InsaneRebel2::renderHandler8PovOverlay(byte *renderBitmap, int pitch, int w
 	fontSet.fonts[3] = _smush_povfontNut;
 
 	ScummEngine_v7 *vm = (ScummEngine_v7 *)_vm;
+	const int povScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);
 
 	// Original updates DAT_0047e048 with random(5)+0x23 when random(20)==0.
 	if (getHandler8PovOverlayRandom(vm, 20) == 0)
 		_handler8HudGlyph = (char)(getHandler8PovOverlayRandom(vm, 5) + 0x23);
 
 	drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
-		getHandler8PovOverlayString(200), 10, 5, 1, kStyleAlignLeft);
+		getHandler8PovOverlayString(200), 10 * povScale, 5 * povScale, 1, kStyleAlignLeft);
 
 	char buffer[128];
 	Common::sprintf_s(buffer, "^f03&#$%c", _handler8HudGlyph);
 	drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
-		buffer, 10, 150, 248, kStyleAlignLeft);
+		buffer, 10 * povScale, 150 * povScale, 248, kStyleAlignLeft);
 
 	const char *text = getHandler8PovOverlayString(203);
 	if (text) {
 		Common::sprintf_s(buffer, text,
 			(unsigned long)(uint32)(int32)getHandler8PovOverlayRandom(vm, 20000));
 		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
-			buffer, 10, 170, 1, kStyleAlignLeft);
+			buffer, 10 * povScale, 170 * povScale, 1, kStyleAlignLeft);
 	}
 
 	text = getHandler8PovOverlayString(202);
@@ -4630,7 +4653,7 @@ void InsaneRebel2::renderHandler8PovOverlay(byte *renderBitmap, int pitch, int w
 		Common::sprintf_s(buffer, text,
 			(unsigned long)(uint32)(int32)getHandler8PovOverlayRandom(vm, -0xd50));
 		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
-			buffer, 220, 160, 1, kStyleAlignLeft);
+			buffer, 220 * povScale, 160 * povScale, 1, kStyleAlignLeft);
 	}
 
 	text = getHandler8PovOverlayString(204);
@@ -4638,7 +4661,7 @@ void InsaneRebel2::renderHandler8PovOverlay(byte *renderBitmap, int pitch, int w
 		Common::sprintf_s(buffer, text, (unsigned long)(uint32)(int32)(int16)_shipPosX,
 			(unsigned long)(uint32)(int32)(int16)_shipPosY);
 		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
-			buffer, 220, 170, 1, kStyleAlignLeft);
+			buffer, 220 * povScale, 170 * povScale, 1, kStyleAlignLeft);
 	}
 
 	if (_handler8HudMessageTimer == 0) {
@@ -4649,7 +4672,7 @@ void InsaneRebel2::renderHandler8PovOverlay(byte *renderBitmap, int pitch, int w
 		_handler8HudMessageTimer--;
 		drawHandler8PovOverlayText(fontSet, renderBitmap, pitch, width, height,
 			getHandler8PovOverlayString(_handler8HudMessageIndex + 0xcd),
-			200, 5, 1, kStyleAlignCenter);
+			200 * povScale, 5 * povScale, 1, kStyleAlignCenter);
 	}
 }
 

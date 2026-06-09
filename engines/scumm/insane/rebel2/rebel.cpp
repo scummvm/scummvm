@@ -191,6 +191,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_viewY = 0;
 	_hiResPresentationViewX = 0;
 	_hiResPresentationViewY = 0;
+	_gameplayPresentationClipBottom = 179;
 
 	// Damage visual effect counters (FUN_420515/420562/420754/42073B)
 	_damageFlashCounter = 0;
