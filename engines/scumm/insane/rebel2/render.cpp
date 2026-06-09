@@ -3403,6 +3403,21 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 	}
 }
 
+// renderHandler7FlySprite -- Draw a native Handler 7 FLY sprite into the current presentation target.
+void InsaneRebel2::renderHandler7FlySprite(byte *renderBitmap, int pitch, int width, int height,
+		bool renderHiRes, int renderScale, int nativeViewX, int nativeViewY,
+		int nativeX, int nativeY, NutRenderer *nut, int spriteIndex) {
+	int dstX = renderHiRes ? (nativeX - nativeViewX) * renderScale : nativeX;
+	int dstY = renderHiRes ? (nativeY - nativeViewY) * renderScale : nativeY;
+
+	if (renderHiRes) {
+		renderNutSpriteScaledClipped(renderBitmap, pitch, width, height,
+			0, 0, width, height, dstX, dstY, nut, spriteIndex, false, renderScale, true);
+	} else {
+		renderNutSprite(renderBitmap, pitch, width, height, dstX, dstY, nut, spriteIndex);
+	}
+}
+
 // renderHandler7Ship -- Handler 7 third-person ship rendering (FUN_0040d836).
 void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height) {
 	// Handler 7 Ship Rendering (Third-Person Ship - FLY sprites)
@@ -3421,7 +3436,20 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	if (spriteIndex >= numSprites)
 		spriteIndex = numSprites - 1;
 
+	const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
+	const int renderScale = renderHiRes ? 2 : 1;
+	const int nativeViewX = renderHiRes ? _hiResPresentationViewX : 0;
+	const int nativeViewY = renderHiRes ? _hiResPresentationViewY : 0;
+
 	Common::Point shipDraw = getHandler7ShipDrawPoint();
+	if (renderHiRes) {
+		// Low-res draws into the native source buffer with _viewX/_viewY baked in,
+		// then SmushPlayer copies the scrolled viewport. High-res promotion has
+		// already consumed those offsets, so reconstruct the same native source
+		// position before applying the 2x presentation transform.
+		shipDraw.x += nativeViewX;
+		shipDraw.y += nativeViewY;
+	}
 	int shipCenterX = shipDraw.x + 0xd4;
 	int shipCenterY = shipDraw.y + 0x82;
 
@@ -3436,7 +3464,9 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 				int cueIndex = _flyEffectAnimCounter % 10;
 				if (cueIndex >= 0 && cueIndex < laserChars) {
 					int cueX = ((shipCenterX - 0x28) - leftDist) - leftDist / 2;
-					renderNutSprite(renderBitmap, pitch, width, height, cueX, shipCenterY, _flyLaserSprite, cueIndex);
+					renderHandler7FlySprite(renderBitmap, pitch, width, height,
+						renderHiRes, renderScale, nativeViewX, nativeViewY,
+						cueX, shipCenterY, _flyLaserSprite, cueIndex);
 				}
 			}
 
@@ -3445,44 +3475,57 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 				int cueIndex = (_flyEffectAnimCounter % 10) + 10;
 				if (cueIndex >= 0 && cueIndex < laserChars) {
 					int cueX = rightDist / 2 + rightDist + shipCenterX + 0x28;
-					renderNutSprite(renderBitmap, pitch, width, height, cueX, shipCenterY, _flyLaserSprite, cueIndex);
+					renderHandler7FlySprite(renderBitmap, pitch, width, height,
+						renderHiRes, renderScale, nativeViewX, nativeViewY,
+						cueX, shipCenterY, _flyLaserSprite, cueIndex);
 				}
 			}
 		} else {
 			int16 bottomDist = _corridorBottomY - _flyShipScreenY;
 			int bottomX = shipCenterX;
-			int bottomY = (_corridorBottomY - 0x82) + _perspectiveY + 100 + _viewY;
+			int bottomY = (_corridorBottomY - 0x82) + _perspectiveY + 100 +
+				(renderHiRes ? nativeViewY : _viewY);
 
 			if (bottomDist < 0x19) {
 				_flyEffectAnimCounter++;
 				int cueIndex = _flyEffectAnimCounter % 10;
 				if (cueIndex >= 0 && cueIndex < laserChars)
-					renderNutSprite(renderBitmap, pitch, width, height, bottomX, bottomY, _flyLaserSprite, cueIndex);
+					renderHandler7FlySprite(renderBitmap, pitch, width, height,
+						renderHiRes, renderScale, nativeViewX, nativeViewY,
+						bottomX, bottomY, _flyLaserSprite, cueIndex);
 			}
 			if (bottomDist < 0x32) {
 				_flyEffectAnimCounter++;
 				int cueIndex = _flyEffectAnimCounter % 10;
 				if (cueIndex >= 0 && cueIndex < laserChars)
-					renderNutSprite(renderBitmap, pitch, width, height, bottomX, bottomY, _flyLaserSprite, cueIndex);
+					renderHandler7FlySprite(renderBitmap, pitch, width, height,
+						renderHiRes, renderScale, nativeViewX, nativeViewY,
+						bottomX, bottomY, _flyLaserSprite, cueIndex);
 			}
 
 			int cueIndex = _flyEffectAnimCounter % 10;
 			if (cueIndex >= 0 && cueIndex < laserChars)
-				renderNutSprite(renderBitmap, pitch, width, height, bottomX, bottomY, _flyLaserSprite, cueIndex);
+				renderHandler7FlySprite(renderBitmap, pitch, width, height,
+					renderHiRes, renderScale, nativeViewX, nativeViewY,
+					bottomX, bottomY, _flyLaserSprite, cueIndex);
 		}
 	}
 
-	int drawX = shipDraw.x;
-	int drawY = shipDraw.y;
+	int drawX = renderHiRes ? (shipDraw.x - nativeViewX) * renderScale : shipDraw.x;
+	int drawY = renderHiRes ? (shipDraw.y - nativeViewY) * renderScale : shipDraw.y;
 
-	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
+	renderHandler7FlySprite(renderBitmap, pitch, width, height,
+		renderHiRes, renderScale, nativeViewX, nativeViewY,
+		shipDraw.x, shipDraw.y, _flyShipSprite, spriteIndex);
 
 	// FUN_40D836 lines 176-180: optional FLY002 overlay pass at ship position.
 	if (_flyLaserSprite && _flyOverlayRepeatCount > 0) {
 		int overlayIndex = spriteIndex + 0x14;
 		if (overlayIndex >= 0 && overlayIndex < _flyLaserSprite->getNumChars()) {
 			for (int i = 0; i < _flyOverlayRepeatCount; i++) {
-				renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, overlayIndex);
+				renderHandler7FlySprite(renderBitmap, pitch, width, height,
+					renderHiRes, renderScale, nativeViewX, nativeViewY,
+					shipDraw.x, shipDraw.y, _flyLaserSprite, overlayIndex);
 			}
 		}
 	}
@@ -3490,7 +3533,9 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	// FUN_40D836 lines 181-183: optional FLY003 overlay in high detail mode.
 	if (_flyTargetSprite && _rebelDetailMode >= 0 &&
 		spriteIndex >= 0 && spriteIndex < _flyTargetSprite->getNumChars()) {
-		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyTargetSprite, spriteIndex);
+		renderHandler7FlySprite(renderBitmap, pitch, width, height,
+			renderHiRes, renderScale, nativeViewX, nativeViewY,
+			shipDraw.x, shipDraw.y, _flyTargetSprite, spriteIndex);
 	}
 
 	debug("Rebel2 Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",
@@ -4623,6 +4668,9 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	if (_rebelHandler == 8) {
 		worldMousePos.x += _shipPosX;
 		worldMousePos.y += _shipPosY;
+	} else if (_rebelHandler == 7 && isHiRes() && width >= 640 && height >= 400) {
+		worldMousePos.x += _hiResPresentationViewX;
+		worldMousePos.y += _hiResPresentationViewY;
 	} else if (_rebelHandler != 7) {
 		worldMousePos.x += _viewX;
 		worldMousePos.y += _viewY;

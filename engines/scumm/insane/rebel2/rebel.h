@@ -604,6 +604,9 @@ public:
 
 	// Draw Handler 7 ship sprite (third-person ship - FLY sprites)
 	void renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height);
+	void renderHandler7FlySprite(byte *renderBitmap, int pitch, int width, int height,
+		bool renderHiRes, int renderScale, int nativeViewX, int nativeViewY,
+		int nativeX, int nativeY, NutRenderer *nut, int spriteIndex);
 
 	// Draw Handler 8 ship sprite (third-person on foot - POV sprites)
 	void renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height);
