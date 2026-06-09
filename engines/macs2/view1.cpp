@@ -1618,7 +1618,13 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	}
 	Common::Rect sourceRect(Common::Point((s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 1, y + 5),
 							(slotW + 4) * 5 + 2, (slotH + 4) * 2 + 2);
-	s.rawBlitFrom(*buffer, sourceRect, Common::Point(sourceRect.left, sourceRect.top));
+	// Restore the scene background in the items area, darkened through the shading table
+	for (int dy = sourceRect.top; dy < sourceRect.bottom; dy++) {
+		for (int dx = sourceRect.left; dx < sourceRect.right; dx++) {
+			uint8 pixel = g_engine->_shadingTable[((const byte *)buffer->getBasePtr(dx, dy))[0]];
+			s.setPixel(dx, dy, pixel);
+		}
+	}
 
 	drawPressedBorderOuterHighlights(Common::Point(
 								  (s.w / 2) - ((slotW + 4) * 5 + 4) / 2,
@@ -1661,6 +1667,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		itemX = itemXStart;
 		itemY += slotH + 4;
 	}
+	delete buffer;
 }
 
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
