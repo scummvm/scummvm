@@ -162,6 +162,7 @@
 #include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/d/datetime.h"
 #include "director/lingo/xtras/f/filextra.h"
+#include "director/lingo/xtras/f/filextra4.h"
 #include "director/lingo/xtras/g/getdir.h"
 #include "director/lingo/xtras/k/keypoll.h"
 #include "director/lingo/xtras/m/masterapp.h"
@@ -300,6 +301,7 @@ static const struct XLibProto {
 	XLIBDEF(FileExists,			kXObj,			300),	// D3
 	XLIBDEF(FileIO,				kXObj | kXtraObj,200),	// D2
 	XLIBDEF(FileXtra,			kXtraObj,		500),	// D5
+	XLIBDEF(FileXtra4Xtra,			kXtraObj,					500),	// D5
 	XLIBDEF(FindFolder,			kXObj,			300),	// D3
 	XLIBDEF(FindSys,			kXObj,			400),	// D4
 	XLIBDEF(FindWin,			kXObj,			400),	// D4
