@@ -630,6 +630,17 @@ void ScummEngine::resetRoomSubBlocks() {
 	// We need to setup the current palette before initCycl for Indy4 Amiga.
 	if (_PALS_offs || _CLUT_offs)
 		setCurrentPalette(0);
+	
+	if (_game.id == GID_TENTACLE && VAR(VAR_VIDEOMODE) == 13) {
+		// This is a hack to avoid color glitches caused by incomplete EGA mode handling in the scripts.
+		// The original DOTT interpreter (executable and scripts) has various EGA mode handling leftovers
+		// from SCUMM5 in it, but the mode isn't supported. We always set VAR_VIDEOMODE to VGA setting for
+		// SCUMM6, so this codepath here is currently never executed. But it would be if we (for whatever reason)
+		// decided to change that.
+		const byte *room = getResourceAddress(rtRoom, _roomResource);
+		if (findPalInPals(room + _PALS_offs, 1))
+			setCurrentPalette(1);
+	}
 
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.

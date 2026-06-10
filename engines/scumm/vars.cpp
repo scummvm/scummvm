@@ -849,7 +849,9 @@ void ScummEngine::setVideoModeVarToCurrentConfig() {
 		VAR(VAR_VIDEOMODE) = 6;
 	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
 		VAR(VAR_VIDEOMODE) = 30;
-	else if (_renderMode == Common::kRenderEGA)
+	else if (_renderMode == Common::kRenderEGA && _game.version < 6)
+		// DOTT has leftover handling for VAR_VIDEOMODE in some of its scripts (room entry and verb scripts). But this hasn't been updated to work
+		// correctly, it's really just leftover from MI2. It is easier to prevent graphics glitches by just setting the var to VGA in that case.
 		VAR(VAR_VIDEOMODE) = 13;
 	else
 		VAR(VAR_VIDEOMODE) = 19;
