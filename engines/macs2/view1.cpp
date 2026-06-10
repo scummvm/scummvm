@@ -1130,6 +1130,13 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return handleInventoryClick(msg);
 		}
 
+		if (_uiPanelState == kUiPanelContainerInventory && !g_engine->_scriptExecutor->isExecuting()) {
+			// TODO: Implement handleContainerInventoryClick (binary 1008:5b0a)
+			// Container inventory has different button layout and item ownership logic
+			// than protagonist inventory. For now, treat close button (6) same as protagonist.
+			return handleInventoryClick(msg);
+		}
+
 		if (_uiPanelState == kUiPanelActionBar && !g_engine->_scriptExecutor->isExecuting()) {
 			return handleActionBarClick(msg);
 		}
