@@ -3183,30 +3183,42 @@ void Character::update() {
 				pos = savedPos;
 				// Wall-sliding: build push vector from ±1 and ±2 samples
 				int pushX = 0, pushY = 0;
-				if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200) pushX--;
-				if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200) pushX++;
-				if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200) pushY--;
-				if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200) pushY++;
-				if (lookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200) pushX--;
-				if (lookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200) pushX++;
-				if (lookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200) pushY--;
-				if (lookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200) pushY++;
+				if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200)
+					pushX--;
+				if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200)
+					pushX++;
+				if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200)
+					pushY--;
+				if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200)
+					pushY++;
+				if (lookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200)
+					pushX--;
+				if (lookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200)
+					pushX++;
+				if (lookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200)
+					pushY--;
+				if (lookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200)
+					pushY++;
 				// Apply push vector
 				while (pushX != 0 || pushY != 0) {
 					if (pushX < 0) {
-						if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200) pos.x--;
+						if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200)
+							pos.x--;
 						pushX++;
 					}
 					if (pushX > 0) {
-						if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200) pos.x++;
+						if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200)
+							pos.x++;
 						pushX--;
 					}
 					if (pushY < 0) {
-						if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200) pos.y--;
+						if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200)
+							pos.y--;
 						pushY++;
 					}
 					if (pushY > 0) {
-						if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200) pos.y++;
+						if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200)
+							pos.y++;
 						pushY--;
 					}
 				}
