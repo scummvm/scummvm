@@ -627,26 +627,42 @@ void View1::setStringBoxAt(const Common::StringArray &sa, const Common::Point &p
 	setStringBox(sa);
 }
 
-void View1::clearStringBox(bool continueScript) {
+void View1::handleTextBoxInput() {
+	// Binary handleTextBoxInput (1008:a8b2): redraws background over text box,
+	// then sets g_wIsShowingTextBox = 0. Nothing else.
 	_isShowingTextBox = false;
-	_isShowingDialogueChoicePanel = false;
-	// Preserve inventory panel state across text dismissal — the draw cycle
-	// already handles hiding the inventory when text is showing.
-	// Only clear to kUiPanelNone if we're not in the inventory panel.
-	const bool wasInventory = (_uiPanelState == kUiPanelInventory);
-	if (!wasInventory) {
-		_uiPanelState = kUiPanelNone;
-	}
-	_dialogueChoiceCount = 0;
-	currentSpeechActData.speaker = nullptr;
-	currentSpeechActData.mouthAnimActive = false;
 	redraw();
-	if (continueScript && _continueScriptAfterUI) {
-		_continueScriptAfterUI = false;
-		g_engine->runScriptExecutor(false);
-	} else if (!continueScript) {
-		_continueScriptAfterUI = false;
+}
+
+void View1::dismissDialoguePanel() {
+	// Binary dismissDialoguePanel (1008:b66d): redraws background over dialogue rect,
+	// then sets g_wIsShowingDialoguePanel = 0. Nothing else.
+	_isShowingDialogueChoicePanel = false;
+	redraw();
+}
+
+bool View1::handleDialogueChoiceClick(int clickY, int clickX) {
+	// Binary handleDialogueChoiceClick (1008:d53b):
+	// Checks if click is within text box bounds. If yes, iterates through
+	// choice entries to find which line was clicked. Stores result at scene+0x53B7
+	// and clears scene+0x53B9. Returns true if choice was made.
+	int lineHeight = g_engine->maxGlyphHeight + 2;
+	int firstLineY = _stringBoxPosition.y + 9;
+	int relY = clickY - firstLineY;
+	debug("handleDialogueChoiceClick: clickY=%d firstLineY=%d relY=%d lineHeight=%d clickedLine=%d",
+		  clickY, firstLineY, relY, (relY >= 0 && lineHeight > 0) ? relY / lineHeight : -1, lineHeight);
+	if (relY >= 0 && lineHeight > 0) {
+		int clickedLine = relY / lineHeight;
+		int cumulativeLines = 0;
+		for (uint i = 0; i < _dialogueChoiceLineCounts.size(); i++) {
+			cumulativeLines += _dialogueChoiceLineCounts[i];
+			if (clickedLine < cumulativeLines) {
+				triggerDialogueChoice(i + 1);
+				return true;
+			}
+		}
 	}
+	return false;
 }
 
 int View1::getCharacterArrayIndex(const Character *c) const {
@@ -1098,17 +1114,19 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 			return true;
 		}
 
-		// Handle string boxes
-		if (_isShowingTextBox) {
-			clearStringBox();
-			return true;
+		// Binary (handleInput 1008:e8bf): when g_wScriptIsExecuting==0 there is NO
+		// text-box-dismiss gate before the interaction check. The text box (if any)
+		// is cleared as a side-effect of the script rerunning. Clear it here so the
+		// UI updates immediately, but do NOT consume the click.
+		if (_isShowingTextBox && !g_engine->_scriptExecutor->isExecuting()) {
+			handleTextBoxInput();
 		}
 
-		if (_uiPanelState == kUiPanelInventory) {
+		if (_uiPanelState == kUiPanelInventory && !g_engine->_scriptExecutor->isExecuting()) {
 			return handleInventoryClick(msg);
 		}
 
-		if (_uiPanelState == kUiPanelActionBar) {
+		if (_uiPanelState == kUiPanelActionBar && !g_engine->_scriptExecutor->isExecuting()) {
 			return handleActionBarClick(msg);
 		}
 
@@ -1116,21 +1134,23 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		// From handleInput (1008:f0ad): clicks during script execution set the
 		// click state variables and resume the script executor.
 		if (g_engine->_scriptExecutor->isExecuting()) {
+			// Binary handleInput (1008:f1d4-f225):
+			// 1. handleTextBoxInput() clears text box visual
+			// 2. dismissDialoguePanel() clears g_wIsShowingDialoguePanel visual
+			// 3. handleDialogueChoiceClick() checks bounds, stores choice, clears scene+0x53B9
+			// 4. if scene+0x53B9 == 0: set click state + runScriptExecutor()
 			if (_isShowingTextBox) {
-				clearStringBox();
+				handleTextBoxInput();
 			}
+			// Binary: g_wIsShowingDialoguePanel and scene+0x53B9 are separate flags.
+			// dismissDialoguePanel clears the visual; handleDialogueChoiceClick clears the input flag.
+			bool dialogueChoiceWasActive = _isShowingDialogueChoicePanel;
 			if (_isShowingDialogueChoicePanel) {
-				// Binary handleDialogueInput: determines choice from click Y position.
-				// Lines start at _stringBoxPosition.y + 9, spaced by maxGlyphHeight + 2.
-				int lineHeight = g_engine->maxGlyphHeight + 2;
-				int firstLineY = _stringBoxPosition.y + 9;
-				int relY = msg._pos.y - firstLineY;
-				if (relY >= 0 && lineHeight > 0) {
-					uint8 choiceIndex = (uint8)(relY / lineHeight) + 1;
-					if (choiceIndex >= 1 && choiceIndex <= _dialogueChoiceCount) {
-						triggerDialogueChoice(choiceIndex);
-						return true;
-					}
+				dismissDialoguePanel();
+			}
+			if (dialogueChoiceWasActive) {
+				if (!handleDialogueChoiceClick(msg._pos.y, msg._pos.x)) {
+					return true;
 				}
 			}
 			// Set script click state (original: g_wScriptClickFlag=0, X=mouseX, Y=mouseY, Result=1)
@@ -1313,7 +1333,8 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	if (_isShowingTextBox && !_isShowingDialogueChoicePanel) {
-		clearStringBox();
+		handleTextBoxInput();
+		g_engine->runScriptExecutor();
 		return true;
 	}
 
@@ -1335,7 +1356,14 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// Select a visible dialogue option by number key.
 		// Register a dialogue choice and act upon it
 		uint8 numberPressed = msg.ascii - '1' + 1;
-		triggerDialogueChoice(numberPressed);
+		if (numberPressed >= 1 && numberPressed <= _dialogueChoiceCount && _isShowingDialogueChoicePanel) {
+			handleTextBoxInput();
+			_isShowingDialogueChoicePanel = false;
+			triggerDialogueChoice(numberPressed);
+			g_engine->_scriptExecutor->_scriptClickFlag = 0;
+			g_engine->_scriptExecutor->_scriptClickResult = 1;
+			g_engine->runScriptExecutor();
+		}
 	}
 
 	return true;
@@ -1362,8 +1390,28 @@ void View1::draw() {
 	drawCharacters(s);
 	drawOverlayTextEntries();
 
+	// Get mouse position
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+
 	if (_isShowingTextBox) {
 		showStringBox(_drawnStringBox);
+		if (_isShowingDialogueChoicePanel && g_engine->enhancementEnabled(kEnhUIUX)) {
+			int lineHeight = g_engine->maxGlyphHeight + 2;
+			int firstLineY = _stringBoxPosition.y + 9;
+			int relY = mousePos.y - firstLineY;
+			if (relY >= 0 && lineHeight > 0) {
+				int hoveredLine = relY / lineHeight;
+				int cumulativeLines = 0;
+				for (uint i = 0; i < _dialogueChoiceLineCounts.size(); i++) {
+					if (hoveredLine < cumulativeLines + _dialogueChoiceLineCounts[i]) {
+						int highlightY = firstLineY + cumulativeLines * lineHeight;
+						renderString(_stringBoxPosition.x + 2, highlightY, ".");
+						break;
+					}
+					cumulativeLines += _dialogueChoiceLineCounts[i];
+				}
+			}
+		}
 		if (currentSpeechActData.speaker != nullptr) {
 			drawCurrentSpeaker(s);
 		}
@@ -1384,9 +1432,6 @@ void View1::draw() {
 	}
 
 	// Active inventory item is now shown via the cursor (UpdateCursor uses _cursorData slot 0x16)
-
-	// Get mouse position
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
 	if (_uiPanelState == kUiPanelActionBar && g_engine->enhancementEnabled(kEnhUIUX)) {
 		for (int i = 0; i < (int)_mainMenuButtonLocations.size(); i++) {
@@ -2033,7 +2078,8 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 		  _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 
 	if (_autoclickActive) {
-		clearStringBox();
+		handleTextBoxInput();
+		g_engine->runScriptExecutor();
 	}
 }
 
@@ -2211,25 +2257,28 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 	showSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
 	_isShowingDialogueChoicePanel = true;
 	_dialogueChoiceCount = choices.size();
+	_dialogueChoiceLineCounts.clear();
+	for (const auto &c : choices) {
+		_dialogueChoiceLineCounts.push_back(c.size());
+	}
 }
 
 void View1::triggerDialogueChoice(uint8 index) {
-	if (!_isShowingDialogueChoicePanel || index < 1 || index > _dialogueChoiceCount) {
+	if (index < 1 || index > _dialogueChoiceCount) {
 		warning("Ignoring dialogue choice %u without an active matching choice UI", index);
 		return;
 	}
 
-	// TODO: Confirm that these two are really set accordingly
-	g_engine->_scriptExecutor->setVariableValue(0x0d, index, 0);
-	g_engine->_scriptExecutor->_chosenDialogueOption = index;
-
-	// TODO: Should check where this happens, but seems like we need to close the
-	// options ourselves
-	// TODO: Check if the run script after UI needs to be overridden here to not
-	// schedule an unnecessary run
-	clearStringBox(false);
-	// TODO: Not sure about the first run variable here
-	g_engine->runScriptExecutor();
+	// Binary handleTimerClick (1008:d53b): stores the script-provided index value
+	// from the choice entry (scene+0x5351+choice*6), NOT the 1-based array position.
+	// It does NOT resume the script — that happens in handleInput after setting click state.
+	uint16 scriptIndex = index;
+	if ((uint)(index - 1) < g_engine->_scriptExecutor->_dialogueChoiceScriptIndices.size()) {
+		scriptIndex = g_engine->_scriptExecutor->_dialogueChoiceScriptIndices[index - 1];
+	}
+	g_engine->_scriptExecutor->setVariableValue(0x0d, scriptIndex, 0);
+	g_engine->_scriptExecutor->_chosenDialogueOption = scriptIndex;
+	debug("triggerDialogueChoice: index=%u scriptIndex=%u executing=%d", index, scriptIndex, g_engine->_scriptExecutor->isExecuting() ? 1 : 0);
 }
 
 uint16 View1::calculateCharacterScaling(uint16 characterY, bool updateDebugValues) {

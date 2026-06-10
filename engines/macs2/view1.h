@@ -218,6 +218,7 @@ public:
 	bool _continueScriptAfterUI = false;
 	bool _reopenInventoryAfterText = false;
 	uint16 _dialogueChoiceCount = 0;
+	Common::Array<uint16> _dialogueChoiceLineCounts;
 
 
 	// Save/Load panel from handleSaveLoadPanelClick (1008:86a4).
@@ -422,7 +423,9 @@ public:
 
 	void setStringBox(const Common::StringArray &sa);
 	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
-	void clearStringBox(bool continueScript = true);
+	void handleTextBoxInput();
+	void dismissDialoguePanel();
+	bool handleDialogueChoiceClick(int clickY, int clickX);
 
 	void startFading(uint16 speed = 4);
 	void startFadeToBlack(uint16 speed = 4);

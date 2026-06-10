@@ -626,7 +626,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Refresh the surface
 	currentView->_backgroundSurface.copyFrom(_sceneBackground);
 	currentView->_paletteDirty = true;
-	currentView->clearStringBox(false);
+	currentView->handleTextBoxInput();
 	currentView->_drawnStringBox.clear();
 	currentView->_continueScriptAfterUI = false;
 	currentView->currentSpeechActData = SpeechActData();
