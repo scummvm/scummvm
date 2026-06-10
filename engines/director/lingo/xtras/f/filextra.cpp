@@ -33,6 +33,9 @@
  *
  * USED IN:
  * I Spy
+ * Loewenzahn 2 / 3 / 4 / 8 / Adventskalender
+ * TKKG 7 / 8 / 9 / 10
+ * Oscar the Balloonist Discovers the Sea
  *
  **************************************************/
 
@@ -155,9 +158,7 @@ XOBJSTUB(FileXtra::m_RenameFile, 0)
 XOBJSTUB(FileXtra::m_DeleteFile, 0)
 XOBJSTUB(FileXtra::m_CopyFile, 0)
 XOBJSTUB(FileXtra::m_GetFileModDate, 0)
-// DirectoryExists string dirName
-// FileXtra convention: returns 0 if the directory exists, a negative error
-// code otherwise.
+
 void FileXtra::m_DirectoryExists(int nargs) {
 	ARGNUMCHECK(1)
 	Common::String dirName = g_lingo->pop().asString();
@@ -166,10 +167,6 @@ void FileXtra::m_DirectoryExists(int nargs) {
 	g_lingo->push(Datum(path.empty() ? -1 : 0));
 }
 
-// DirectoryToList string dirName
-// Returns a Lingo list of the files and folders in dirName. Folder names are
-// suffixed with the platform path delimiter. Returns VOID if dirName is not a
-// valid directory (matching the original FileXtra behaviour).
 void FileXtra::m_DirectoryToList(int nargs) {
 	ARGNUMCHECK(1)
 	Common::String dirName = g_lingo->pop().asString();
@@ -183,7 +180,10 @@ void FileXtra::m_DirectoryToList(int nargs) {
 		return;
 	}
 
-	Common::FSNode dir(path);
+	Common::Path absPath = Common::Path(g_director->getGameDataDir()->getPath());
+	absPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
+	absPath.appendInPlace(path);
+	Common::FSNode dir(absPath);
 	Common::FSList fslist;
 	if (!dir.isDirectory() || !dir.getChildren(fslist, Common::FSNode::kListAll)) {
 		g_lingo->push(result);
