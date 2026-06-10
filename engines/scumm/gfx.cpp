@@ -33,7 +33,7 @@
 #include "scumm/he/wiz_he.h"
 #include "scumm/util.h"
 
-#ifdef USE_ARM_GFX_ASM
+#if defined(USE_ARM_GFX_ASM)
 
 #ifndef IPHONE
 #define asmDrawStripToScreen _asmDrawStripToScreen
@@ -43,6 +43,12 @@
 extern "C" void asmDrawStripToScreen(int height, int width, void const* text, void const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height, uint8 bitDepth);
+
+#elif defined(USE_M68K_GFX_ASM)
+
+extern "C" void asmDrawStripToScreen(int height, int width, const uint32 *src32, uint32 *dst32, int vsPitch,
+		const uint32 *text32, const int textPitch);
+
 #endif /* USE_ARM_GFX_ASM */
 
 namespace Scumm {
@@ -732,6 +738,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 			const uint32 *text32 = (const uint32 *)text;
 			const int textPitch = (_textSurface.pitch - width * m) >> 2;
+#ifdef USE_M68K_GFX_ASM
+			asmDrawStripToScreen(height * m, width * m, src32, dst32, vsPitch, text32, textPitch);
+#else
 			for (int h = height * m; h > 0; --h) {
 				for (int w = width * m; w > 0; w -= 4) {
 					uint32 temp = *text32++;
@@ -754,7 +763,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				src32 += vsPitch;
 				text32 += textPitch;
 			}
-#endif
+#endif // USE_M68K_GFX_ASM
+#endif // USE_ARM_GFX_ASM
 		}
 		src = _compositeBuf;
 		pitch = width * vs->format.bytesPerPixel;
@@ -1390,18 +1400,8 @@ static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitD
 #else
 
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8 bitDepth) {
-
 	do {
-#if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8 * bitDepth);
-#else
-		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
-		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
-		if (bitDepth == 2) {
-			((uint32 *)dst)[2] = ((const uint32 *)src)[2];
-			((uint32 *)dst)[3] = ((const uint32 *)src)[3];
-		}
-#endif
 		dst += dstPitch;
 		src += dstPitch;
 	} while (--height);
@@ -1411,23 +1411,10 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 	do {
-#if defined(SCUMM_NEED_ALIGNMENT)
 		if (g_scumm->_game.platform == Common::kPlatformNES)
 			memset(dst, 0x1d, 8 * bitDepth);
 		else
 			memset(dst, 0, 8 * bitDepth);
-#else
-		if (g_scumm->_game.platform == Common::kPlatformNES) {
-			memset(dst, 0x1d, 8 * bitDepth);
-		} else {
-			((uint32*)dst)[0] = 0;
-			((uint32*)dst)[1] = 0;
-			if (bitDepth == 2) {
-				((uint32*)dst)[2] = 0;
-				((uint32*)dst)[3] = 0;
-			}
-		}
-#endif
 		dst += dstPitch;
 	} while (--height);
 }

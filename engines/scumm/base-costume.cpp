@@ -20,6 +20,9 @@
  */
 
 
+#define FORCE_TEXT_CONSOLE
+
+#include "common/textconsole.h"
 #include "scumm/base-costume.h"
 #include "scumm/util.h"
 
@@ -57,6 +60,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const
 	return result;
 }
 
+#ifndef SCUMM_OPTIMISED_CODE
 byte BaseCostumeRenderer::paintCelByleRLECommon(
 	int xMoveCur,
 	int yMoveCur,
@@ -282,8 +286,19 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 
 	return drawFlag;
 }
+#endif
 
 void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, int16 actorHitY, bool *actorHitResult, const uint8 *xmap) {
+#ifdef SCUMM_OPTIMISED_CODE
+	if ((_vm->_bytesPerPixel == 1) &&
+		(!(_vm->_game.features & GF_16BIT_COLOR)) &&
+		(actorHitResult == NULL) &&
+		(compData.maskPtr != NULL)) {
+		byleRLEDecodeFast(compData, xmap);
+		return;
+	}
+	warning("%s: unoptimised version is being executed", __FUNCTION__);
+#endif
 	const byte *src = _srcPtr;
 	byte *dst = compData.destPtr;
 
@@ -431,10 +446,10 @@ void BaseCostumeRenderer::skipCelLines(ByleRLEData &compData, int num) {
 		if (!compData.repLen)
 			compData.repLen = *_srcPtr++;
 
-		do {
-			if (!--num)
-				return;
-		} while (--compData.repLen);
+		if ((num -= compData.repLen) <= 0) {
+			compData.repLen = 1 - num;
+			return;
+		}
 	} while (true);
 }
 
