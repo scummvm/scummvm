@@ -765,18 +765,83 @@ static bool ra1ScanFrameGameChunks(Common::SeekableReadStream &b, int32 frameSiz
 	return hasGameChunk;
 }
 
-void SmushPlayerRebel1::ra1HandleFrameAudioChunk(int32 subSize, Common::SeekableReadStream &b) {
+static int16 getRA1AudioChunkTypeFlags(uint32 subType) {
+	switch (subType) {
+	case MKTAG('P','V','O','C'):
+		return IS_SPEECH;
+	case MKTAG('P','S','A','D'):
+		return IS_BKG_MUSIC;
+	case MKTAG('P','S','D','2'):
+	case MKTAG('S','A','U','D'):
+	default:
+		return IS_SFX;
+	}
+}
+
+void SmushPlayerRebel1::ra1HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
 	if (_compressedFileMode || isFastForwardingCurrentFrame())
+		return;
+	if (subSize <= 0)
 		return;
 
 	uint8 *audioChunk = (uint8 *)malloc(subSize + 8);
 	if (audioChunk == nullptr)
 		return;
 
-	b.seek(-8, SEEK_CUR);
-	b.read(audioChunk, subSize + 8);
-	feedAudio(audioChunk, 0, 127, 0, 0);
+	WRITE_BE_UINT32(audioChunk, subType);
+	WRITE_BE_UINT32(audioChunk + 4, subSize);
+	b.read(audioChunk + 8, subSize);
+	ra1FeedAudio(subType, audioChunk, 0, 127, 0, 0);
 	free(audioChunk);
+}
+
+void SmushPlayerRebel1::ra1FeedAudio(uint32 subType, uint8 *srcBuf, int groupId, int volume, int pan, int16 flags) {
+	if (!_smushAudioInitialized)
+		return;
+
+	const uint32 chunkSize = READ_BE_UINT32(&srcBuf[4]);
+	const int16 typeFlags = getRA1AudioChunkTypeFlags(subType);
+
+	if (chunkSize >= 12 &&
+			srcBuf[8] == 0 && srcBuf[9] == 0 && srcBuf[12] == 0 &&
+			srcBuf[13] == 0 && srcBuf[16] == 0 && srcBuf[17] == 0) {
+		const uint16 trkId = READ_BE_INT16(&srcBuf[10]);
+		const uint16 index = READ_BE_INT16(&srcBuf[14]);
+		const int32 maxFrames = READ_BE_INT16(&srcBuf[18]);
+		flags = (flags & ~TRK_TYPE_MASK) | typeFlags;
+
+		handleSAUDChunk(
+			srcBuf + 20,
+			chunkSize - 12,
+			groupId,
+			volume,
+			pan,
+			flags,
+			trkId,
+			index,
+			maxFrames);
+	} else if (chunkSize >= 10) {
+		const uint16 trkId = READ_LE_INT16(&srcBuf[8]);
+		const uint16 index = READ_LE_INT16(&srcBuf[10]);
+		const int32 maxFrames = READ_LE_INT16(&srcBuf[12]);
+		flags |= READ_LE_INT16(&srcBuf[14]);
+		flags = (flags & ~TRK_TYPE_MASK) | typeFlags;
+		volume = (volume * srcBuf[16]) >> 7;
+
+		const int panDelta = (int8)srcBuf[17];
+		const int effPan = (panDelta == -128) ? 128 : pan + panDelta;
+
+		handleSAUDChunk(
+			srcBuf + 18,
+			chunkSize - 10,
+			groupId,
+			volume,
+			effPan,
+			flags,
+			trkId,
+			index,
+			maxFrames);
+	}
 }
 
 void SmushPlayerRebel1::ra1HandleGameFrameChunk(int32 subSize, Common::SeekableReadStream &b, bool fastForwarding) {
@@ -837,7 +902,7 @@ void SmushPlayerRebel1::ra1HandleObjOverlayFrameChunk(int32 objDataSize, Common:
 				if (audioBuf == nullptr)
 					break;
 				memcpy(audioBuf, objBuf + objPos, embSize + 8);
-				feedAudio(audioBuf, 0, 127, 0, 0);
+				ra1FeedAudio(embTag, audioBuf, 0, 127, 0, 0);
 				free(audioBuf);
 			}
 		}
@@ -878,11 +943,11 @@ bool SmushPlayerRebel1::ra1DispatchFrameChunk(uint32 subType, int32 subSize, int
 		break;
 	case MKTAG('P','S','A','D'):
 	case MKTAG('P','V','O','C'):
-		ra1HandleFrameAudioChunk(subSize, b);
+		ra1HandleFrameAudioChunk(subType, subSize, b);
 		break;
 	case MKTAG('P','S','D','2'):
 		if (_ra1LastFrameObjectVisible)
-			ra1HandleFrameAudioChunk(subSize, b);
+			ra1HandleFrameAudioChunk(subType, subSize, b);
 		break;
 	case MKTAG('T','R','E','S'):
 	case MKTAG('T','E','X','T'):

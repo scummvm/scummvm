@@ -349,7 +349,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	// Options — read initial state from ScummVM mixer
 	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
-	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
+	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType) &&
+		!_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
 	// Initialize the dialogue-text (subtitles) toggle from ScummVM's global setting so the
 	// game and the in-game DIALOGUE TEXT menu label reflect it. The menu toggle writes the
 	// same "subtitles" key, and ra1HandleText() gates rendering on it.

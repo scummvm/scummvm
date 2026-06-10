@@ -160,6 +160,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	// passive-cinematic audio before chaining the next ANM.
 	_audio.reset();
 	splayer->resetAudioTracks();
+	applyAudioOptions();
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x420);
@@ -1701,6 +1702,7 @@ void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
+	applyAudioOptions();
 	restoreScreenFlashPalette();
 	if (!preserveRuntimeState)
 		clearBit(0);

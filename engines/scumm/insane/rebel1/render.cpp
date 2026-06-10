@@ -907,6 +907,12 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const int overlayX = ra1GameplayWindowOffsetX(this);
 	const int overlayY = ra1GameplayWindowOffsetY(this);
+
+	if (_targetProximity > 0 && _prevTargetProx == 0)
+		playSfx(kSfxLockOn, 127, 0);
+	else if (_targetProximity == 0 && _prevTargetProx != 0)
+		stopSfx(kSfxLockOn);
+
 	if (markerBank.numSprites > 0) {
 		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
@@ -1771,6 +1777,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	// Extra life bonus: every 10,000 points (FUN_1BBCB lines 11-27)
 	if (_score / 10000 > _prevScore / 10000) {
 		_lives++;
+		playSfx(kSfxBonus, 127, 0);
 	}
 	_prevScore = _score;
 
@@ -1897,6 +1904,8 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 			// FUN_1BBCB pushes string pointers 0x671b ("<<[") or 0x671f ("<<\\") into FUN_221B7.
 			const char *warningStr = aboveCritical ? "<<[" : "<<\\";
 			drawFontBankString(dst, pitch, width, height, hudX + 0x49, hudY + 0x07, warningStr);
+			if (!aboveCritical && ((_frameCounter & 0x7) == 0))
+				playSfx(kSfxKlaxon, 127, 0);
 		}
 	}
 

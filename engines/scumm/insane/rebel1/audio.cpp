@@ -67,6 +67,18 @@ void InsaneRebel1::processAudioFrame(int16 feedSize) {
 	_audio.processFrame(_player, feedSize);
 }
 
+void InsaneRebel1::applyAudioOptions() {
+	_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
+	_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
+	_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);
+
+	if (_player) {
+		_player->setChanFlag(CHN_BKGMUS, _optMusicEnabled ? 1 : 0);
+		_player->setChanFlag(CHN_OTHER, _optSfxEnabled ? 1 : 0);
+		_player->setChanFlag(CHN_SPEECH, _optSfxEnabled ? 1 : 0);
+	}
+}
+
 void InsaneRebel1::loadSfx() {
 	for (int i = 0; i < kNumSfx; i++) {
 		if (_sfxData[i] || _sfxSize[i] != 0)
@@ -131,6 +143,13 @@ void InsaneRebel1::freeSfx() {
 		_sfxData[i] = nullptr;
 		_sfxSize[i] = 0;
 	}
+}
+
+void InsaneRebel1::stopSfx(int slot) {
+	if (slot < 0 || slot >= kNumSfx)
+		return;
+
+	_vm->_mixer->stopHandle(_sfxHandles[slot]);
 }
 
 void InsaneRebel1::playSfx(int slot, int volume, int pan) {

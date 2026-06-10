@@ -1359,12 +1359,11 @@ void InsaneRebel1::runOptionsMenu() {
 				break;
 			case 2: // Toggle music
 				_optMusicEnabled = !_optMusicEnabled;
-				_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
+				applyAudioOptions();
 				break;
 			case 3: // Toggle SFX + Voice
 				_optSfxEnabled = !_optSfxEnabled;
-				_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
-				_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);
+				applyAudioOptions();
 				break;
 			case 4: // Toggle dialogue text
 				_optTextEnabled = !ConfMan.getBool("subtitles");

@@ -291,6 +291,8 @@ private:
 	void loadSfx();
 	void freeSfx();
 	void playSfx(int slot, int volume, int pan);
+	void stopSfx(int slot);
+	void applyAudioOptions();
 	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 public:
 	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
