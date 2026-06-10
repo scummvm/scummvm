@@ -2567,7 +2567,6 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	case 0x0D:
 		out1 = _chosenDialogueOption;
-		debug("getSpecialValue FF:0D = %d", _chosenDialogueOption);
 		break;
 	case 0x23:
 		out1 = _pathWalkableResult ? 1 : 0;
