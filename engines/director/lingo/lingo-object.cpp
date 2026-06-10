@@ -166,6 +166,7 @@
 #include "director/lingo/xtras/k/keypoll.h"
 #include "director/lingo/xtras/m/masterapp.h"
 #include "director/lingo/xtras/m/mui.h"
+#include "director/lingo/xtras/n/netlingo.h"
 #include "director/lingo/xtras/o/openurl.h"
 #include "director/lingo/xtras/o/oscheck.h"
 #include "director/lingo/xtras/q/qtvrxtra.h"
@@ -342,6 +343,7 @@ static const struct XLibProto {
 	XLIBDEF(MuiXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(MyFolderXObj,			kXObj,					400),	// D4
 	XLIBDEF(MystIsleXObj,		kXObj,			400),	// D4
+	XLIBDEF(NetLingoXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(OSCheckXtra,		kXtraObj,		400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
 	XLIBDEF(OpenURLXtra,		kXtraObj,		500),	// D5
