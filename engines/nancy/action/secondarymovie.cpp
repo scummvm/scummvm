@@ -56,7 +56,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(_videoType, kGameTypeNancy7);
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9); // videoPlaySource
 	ser.syncAsUint16LE(_videoFormat);
-	if (g_nancy->getGameType() >= kGameTypeNancy11)
+	if (g_nancy->getGameType() >= kGameTypeNancy10)
 		_videoFormat = kLargeVideoFormat;
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9);  // hasBitmapOverlaySurface
