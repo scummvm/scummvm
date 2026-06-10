@@ -1068,7 +1068,7 @@ static void showCharactersWindow() {
 static void showInventoryWindow() {
 	if (!_showInventory)
 		return;
-	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Inventory", &_showInventory)) {
 		View1 *view = (View1 *)g_engine->findView("View1");
 		if (view) {
@@ -1077,9 +1077,55 @@ static void showInventoryWindow() {
 						view->_activeInventoryItem ? Common::String::format("0x%x", view->_activeInventoryItem->_index).c_str() : "None",
 						view->_uiPanelState == View1::kUiPanelInventory ? "Y" : "N");
 			ImGui::Separator();
-			for (uint i = 0; i < view->_inventoryItems.size(); i++) {
-				GameObject *obj = view->_inventoryItems[i];
-				ImGui::Text("  [%u] obj 0x%x scene=%d", i, obj->_index, obj->_sceneIndex);
+
+			if (ImGui::CollapsingHeader("Current Inventory", ImGuiTreeNodeFlags_DefaultOpen)) {
+				for (uint i = 0; i < view->_inventoryItems.size(); i++) {
+					GameObject *obj = view->_inventoryItems[i];
+					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
+						? GameObjects::instance()._objectNames[obj->_index]
+						: "???";
+					ImGui::PushID(obj->_index);
+					if (ImGui::Button("Remove")) {
+						obj->_sceneIndex = 0;
+						view->setInventorySource(view->_inventorySource);
+					}
+					ImGui::SameLine();
+					ImGui::Text("[%u] 0x%02x %s", i, obj->_index, name.c_str());
+					ImGui::PopID();
+				}
+			}
+
+			if (ImGui::CollapsingHeader("All Items")) {
+				static char filterBuf[64] = "";
+				ImGui::InputText("Filter", filterBuf, sizeof(filterBuf));
+				const uint16 protagonistInvScene = view->_inventorySource ? view->_inventorySource->_index + 0x400 : 0x401;
+				for (GameObject *obj : GameObjects::instance()._objects) {
+					if (obj == nullptr || obj->_index <= 1)
+						continue;
+					if (obj->_blobs.size() <= 0x13 || obj->_blobs[0x13].empty())
+						continue;
+					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
+						? GameObjects::instance()._objectNames[obj->_index]
+						: "???";
+					if (filterBuf[0] != '\0' && !name.contains(filterBuf))
+						continue;
+					bool inInventory = (obj->_sceneIndex == protagonistInvScene);
+					ImGui::PushID(0x1000 + obj->_index);
+					if (inInventory) {
+						if (ImGui::Button("Remove")) {
+							obj->_sceneIndex = 0;
+							view->setInventorySource(view->_inventorySource);
+						}
+					} else {
+						if (ImGui::Button("  Add ")) {
+							obj->_sceneIndex = protagonistInvScene;
+							view->setInventorySource(view->_inventorySource);
+						}
+					}
+					ImGui::SameLine();
+					ImGui::Text("0x%02x %s%s", obj->_index, name.c_str(), inInventory ? " [IN]" : "");
+					ImGui::PopID();
+				}
 			}
 		}
 	}

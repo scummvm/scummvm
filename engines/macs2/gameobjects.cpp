@@ -98,14 +98,32 @@ Common::Array<uint8> Macs2::Scenes::readSpecialAnimBlob(uint16 index, Common::Me
 
 void Macs2::GameObjects::init() {
 	_objectNames.resize(0xFF);
-	// TODO: Make a text file instead
+	// TODO: Make a text file instead - demo and full game differ
+	_objectNames[0x02] = "Laib Brot"; // aufgeschnitten
+	_objectNames[0x03] = "Laib Brot";
+	_objectNames[0x04] = "Schnapsflasche"; // umwickelt
+	_objectNames[0x05] = "Schnapsflasche";
+	_objectNames[0x07] = "Spitzhacke";
 	_objectNames[0x08] = "Brett"; // leer
+	_objectNames[0x09] = "Kerze"; // an
+	_objectNames[0x0A] = "Kerze"; // aus
+	_objectNames[0x0B] = "Kerzen"; // 4 Kerzen
+	_objectNames[0x0D] = "Korkenzieher";
+	_objectNames[0x0E] = "Lampe";
 	_objectNames[0x10] = "Holzfass"; // leer
 	_objectNames[0x11] = "Bowiemesser";
+	_objectNames[0x12] = "Wagenrad";
+	_objectNames[0x14] = "Salpeterpulver";
+	_objectNames[0x15] = "Schaufelspitze";
+	_objectNames[0x16] = "Lampenschirm";
 	_objectNames[0x17] = "Hutschachtel"; // leer und offen
 	_objectNames[0x18] = "Damenhut";     // Mit Schleier
+	_objectNames[0x19] = "Schwarzpulver";
 	_objectNames[0x1a] = "Eimer";        // leer
 	_objectNames[0x1b] = "Feuerhaken";
+	_objectNames[0x1c] = "Topflappen";
+	_objectNames[0x1d] = "Windlicht";
+	_objectNames[0x1e] = "Wolle"; // getränkt
 	_objectNames[0x23] = "Tasse"; // leer
 	_objectNames[0x24] = "Axt";
 	_objectNames[0x24] = "Whiskyglas"; // leer
@@ -114,6 +132,7 @@ void Macs2::GameObjects::init() {
 	_objectNames[0x43] = "Koffer"; // geschlossen
 	_objectNames[0x47] = "Messer";
 	_objectNames[0x49] = "Kartonschachtel";
+	_objectNames[0x51] = "Stoffbeutel"; // leer
 	_objectNames[0x52] = "Stoffbeutel"; // Mit Murmeln
 	_objectNames[0x53] = "Blasebalg";
 	_objectNames[0x54] = "Brennholz";
@@ -122,11 +141,15 @@ void Macs2::GameObjects::init() {
 	_objectNames[0x57] = "Brot";
 	_objectNames[0x58] = "Bücher";
 	_objectNames[0x59] = "Clownpuppe";
+	_objectNames[0x5A] = "Blechdose"; // grün, mit Schwefel
 	_objectNames[0x5B] = "Blechdose";
+	_objectNames[0x5C] = "Papierdrachen";
 	_objectNames[0x5D] = "Papierdrache";
 	_objectNames[0x5E] = "Blecheimer";
+	_objectNames[0x5F] = "Blecheimer"; // gefüllt
 	_objectNames[0x61] = "Schnapsflasche";
 	_objectNames[0x62] = "Kerze"; // mit Flamme
+	_objectNames[0x64] = "Kartoffeln";
 	_objectNames[0x65] = "Spitzhacke";
 	_objectNames[0x66] = "Kerze";
 	_objectNames[0x67] = "Kerzen";
@@ -135,24 +158,28 @@ void Macs2::GameObjects::init() {
 	_objectNames[0x6B] = "Korkenzieher";
 	_objectNames[0x6C] = "Kronleuchter"; // ohne Schirme
 	_objectNames[0x6D] = "Kronleuchter"; // mit Schirmen
+	_objectNames[0x6F] = "Murmeln";
 	_objectNames[0x70] = "Musketen";
 	_objectNames[0x72] = "Rad";
-	_objectNames[0x74] = "Schaufel";
+	_objectNames[0x74] = "Spaten";
 	_objectNames[0x70] = "Musketen";
 	_objectNames[0x73] = "Salpeter";
-	_objectNames[0x74] = "Schüssel"; // mit Teig
 	_objectNames[0x76] = "Lampenschirm";
 	_objectNames[0x77] = "Lampenschirme";
 	_objectNames[0x78] = "Messingschlüssel";
 	_objectNames[0x7C] = "Schüssel"; // mit Schwefel
+	_objectNames[0x7D] = "Schüssel";
 	_objectNames[0x7E] = "Schwarzpulver";
 	_objectNames[0x7F] = "Schwefel";
+	_objectNames[0x80] = "Hanfseil";
+	_objectNames[0x81] = "Hanfschnur";
 	_objectNames[0x82] = "Seil";
 	_objectNames[0x83] = "Socken";
 	_objectNames[0x84] = "Spachtel";
 	_objectNames[0x85] = "Holzente";
 	_objectNames[0x86] = "Streichholz";
 	_objectNames[0x82] = "Seil";
+	_objectNames[0x87] = "Tasse"; // leer
 	_objectNames[0x88] = "Tasse"; // mit Öl
 	_objectNames[0x89] = "Teig";
 	_objectNames[0x8A] = "Topflappen";
