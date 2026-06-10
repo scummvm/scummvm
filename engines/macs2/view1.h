@@ -117,6 +117,21 @@ public:
 	// Set by opcode 11h
 	bool _executeScriptOnFinishLerp = false;
 
+	// Runtime[+0x20D..+0x213]: per-character dirty rectangle for partial redraws.
+	// Tracks the screen region covered by the character's sprite (old + new position union).
+	// Uses inclusive coordinates matching the original binary's convention.
+	int16 _dirtyLeft = 0;
+	int16 _dirtyTop = 0;
+	int16 _dirtyRight = 0;
+	int16 _dirtyBottom = 0;
+
+	// Runtime[+0x225..+0x22B]: last frame's sprite draw bounds (x, y, width, height).
+	// Used at frame start to initialize _dirtyRect before erasing.
+	int16 _lastDrawX = 0;
+	int16 _lastDrawY = 0;
+	uint16 _lastDrawWidth = 0;
+	uint16 _lastDrawHeight = 0;
+
 	// TODO: Handle properly
 	uint8 _animationIndex = 1;
 	uint16 _motionTargetVerticalOffset = 0;
