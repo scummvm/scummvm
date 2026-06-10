@@ -2496,6 +2496,10 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			d = obj.u.farr->arr[2];
 		} else if (propName.equalsIgnoreCase("bottom")) {
 			d = obj.u.farr->arr[3];
+		} else if (propName.equalsIgnoreCase("width")) {
+			d = obj.u.farr->arr[2].asInt() - obj.u.farr->arr[0].asInt();
+		} else if (propName.equalsIgnoreCase("height")) {
+			d = obj.u.farr->arr[3].asInt() - obj.u.farr->arr[1].asInt();
 		} else {
 			g_lingo->lingoError("Lingo::getObjectProp: Rect <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
@@ -2656,6 +2660,10 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 			obj.u.farr->arr[2] = val.asInt();
 		} else if (propName.equalsIgnoreCase("bottom")) {
 			obj.u.farr->arr[3] = val.asInt();
+		} else if (propName.equalsIgnoreCase("width")) {
+			obj.u.farr->arr[2] = obj.u.farr->arr[0].asInt() + val.asInt();
+		} else if (propName.equalsIgnoreCase("height")) {
+			obj.u.farr->arr[3] = obj.u.farr->arr[1].asInt() + val.asInt();
 		} else {
 			g_lingo->lingoError("Lingo::setObjectProp: Rect <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
