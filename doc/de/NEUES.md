@@ -32,6 +32,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      sodass einige seltene Probleme mit Charakteren nun nicht mehr auftreten
 	 sollten.
 
+ MADS:
+   - Fehler in Rex Nebular behoben, der dazu führt, dass das Spiel einfriert, wenn
+     das Fernglas benutzt wird.
+
  MM:
    - Verbesserte Unterstützung für Tastenkürzel in MM1.
    - Charaktere können in MM1 Enhanced nur die Gegenstände verkaufen, die sie besitzen.
