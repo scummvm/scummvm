@@ -103,7 +103,9 @@ void View1::openInventory(GameObject *newInventorySource) {
 
 	setInventorySource(newInventorySource);
 	_pendingPanelRequest = kPanelRequestNone;  // Binary: g_wPendingPanelRequest = 0
-	_uiPanelState = kUiPanelInventory;
+	// Binary: g_wUiPanelState = 2 for protagonist, 3 for container
+	_uiPanelState = (newInventorySource->_index == Scenes::instance()._currentActorIndex)
+		? kUiPanelInventory : kUiPanelContainerInventory;
 	_inventoryPage = 0;
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
@@ -114,7 +116,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 }
 
 void View1::closeInventory() {
-	if (_uiPanelState != kUiPanelInventory) {
+	if (_uiPanelState != kUiPanelInventory && _uiPanelState != kUiPanelContainerInventory) {
 		return;
 	}
 
@@ -966,6 +968,100 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 	return true;
 }
 
+// Binary: handleContainerInventoryClick (1008:5b0a)
+// Container inventory uses the same 6-button layout as protagonist inventory but
+// button 5 (Take) and button 6 (Close) have different semantics:
+// - Button 5: Always transfers held item to protagonist (no container-in-scene search)
+// - Button 6: Simple close — clears interaction IDs, no cursor mode save/restore
+// Item clicks also differ: Look triggers runScriptExecutor immediately; no combine path.
+bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
+	for (int i = 0; i < 6; i++) {
+		const Common::Rect &current = _inventoryButtonLocations[i];
+		if (current.contains(msg._pos)) {
+			InventoryButtonIndex buttonIndex = (InventoryButtonIndex)i;
+			switch (buttonIndex) {
+			case InventoryButtonIndex::Look: {
+				g_engine->setCursorMode(Script::MouseMode::Look);
+				updateCursor();
+				break;
+			}
+			case InventoryButtonIndex::Hand: {
+				g_engine->setCursorMode(Script::MouseMode::Use);
+				updateCursor();
+				break;
+			}
+			case InventoryButtonIndex::Up: {
+				if (_inventoryPage > 0) {
+					_inventoryPage--;
+				}
+				break;
+			}
+			case InventoryButtonIndex::Down: {
+				uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
+				if (_inventoryPage < numPages - 2) {
+					_inventoryPage++;
+				}
+				break;
+			}
+			case InventoryButtonIndex::Drop: {
+				// Binary button 5 (Take): transfers held item to protagonist.
+				// Only active when mode == UseInventory (0x17) and an item is held.
+				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
+					transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
+					_activeInventoryItem = nullptr;
+					g_engine->setCursorMode(Script::MouseMode::Use);
+					updateCursor();
+					g_engine->_scriptExecutor->_inventoryActionFlag = true;
+					setInventorySource(_inventorySource);
+				}
+				break;
+			}
+			case InventoryButtonIndex::Close: {
+				// Binary button 6: clears interaction IDs and closes panel.
+				// The actual script resume happens via closeInventory() which restores
+				// saved script state (binary handleInput state==3, button==6 path).
+				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+				g_engine->_scriptExecutor->_interactedObjectID = 0;
+				closeInventory();
+				return true;
+			}
+			}
+		}
+	}
+
+	// Item click handling — container has Look and Use but NO combine path.
+	GameObject *clickedObject = getClickedInventoryItem(msg._pos);
+
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
+		// Binary: Look on container item triggers runScriptExecutor immediately
+		// (g_wPendingPanelRequest = 1 path in original)
+		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
+		g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+		g_engine->runScriptExecutor(false);
+		return true;
+	}
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
+		// Binary: Use on container item picks up item as UseInventory cursor
+		_activeInventoryItem = clickedObject;
+		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
+		AnimFrame *icon = getInventoryIcon(_activeInventoryItem);
+		if (icon != nullptr) {
+			int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
+			uint32 pixelSize = icon->_width * icon->_height;
+			delete[] g_engine->_imageResources[cursorSlot]._data;
+			g_engine->_imageResources[cursorSlot]._data = new byte[pixelSize];
+			memcpy(g_engine->_imageResources[cursorSlot]._data, icon->_data, pixelSize);
+			g_engine->_imageResources[cursorSlot]._width = icon->_width;
+			g_engine->_imageResources[cursorSlot]._height = icon->_height;
+		}
+		g_engine->setCursorMode(Script::MouseMode::UseInventory);
+		updateCursor();
+		return true;
+	}
+
+	return true;
+}
+
 bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 	for (int i = 0; i < 9; i++) {
 		const Common::Rect &current = _mainMenuButtonLocations[i];
@@ -1131,10 +1227,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		}
 
 		if (_uiPanelState == kUiPanelContainerInventory && !g_engine->_scriptExecutor->isExecuting()) {
-			// TODO: Implement handleContainerInventoryClick (binary 1008:5b0a)
-			// Container inventory has different button layout and item ownership logic
-			// than protagonist inventory. For now, treat close button (6) same as protagonist.
-			return handleInventoryClick(msg);
+			return handleContainerInventoryClick(msg);
 		}
 
 		if (_uiPanelState == kUiPanelActionBar && !g_engine->_scriptExecutor->isExecuting()) {
@@ -1433,7 +1526,7 @@ void View1::draw() {
 
 	// We keep the inventory on but don't draw it in case we display a string
 	// i.e. a description of an item
-	if (_uiPanelState == kUiPanelInventory && !_isShowingTextBox) {
+	if ((_uiPanelState == kUiPanelInventory || _uiPanelState == kUiPanelContainerInventory) && !_isShowingTextBox) {
 		drawInventory(s);
 	}
 
@@ -1615,8 +1708,8 @@ bool View1::tick() {
 			openInventory(GameObjects::instance().getProtagonistObject());
 			break;
 		case kPanelRequestContainerInventory:
-			// TODO: container inventory not yet implemented
 			_pendingPanelRequest = kPanelRequestNone;
+			openInventory(_inventorySource);
 			break;
 		case kPanelRequestSaveLoad:
 			_pendingPanelRequest = kPanelRequestNone;
