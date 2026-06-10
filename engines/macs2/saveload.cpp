@@ -687,16 +687,43 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// --- Post-load: rebuild view state ---
 	if (s.isLoading()) {
 		view1->_characters.clear();
-		for (auto obj : GameObjects::instance()._objects) {
+		const uint16 currentScene = (uint16)Scenes::instance()._currentSceneIndex;
+		const uint16 actorIdx = (uint16)Scenes::instance()._currentActorIndex;
+		for (uint objIdx = 0; objIdx < GameObjects::instance()._objects.size(); objIdx++) {
+			GameObject *obj = GameObjects::instance()._objects[objIdx];
 			if (obj == nullptr)
 				continue;
-			if (obj->_sceneIndex == (uint16)Scenes::instance()._currentSceneIndex) {
+			// Original (loadGameFromFile) creates runtime data for objects matching:
+			// 1) sceneIndex == currentScene, OR
+			// 2) sceneIndex == actorIndex + 0x400 (in protagonist inventory), OR
+			// 3) objectIndex == actorIndex (IS the protagonist)
+			bool inCurrentScene = (obj->_sceneIndex == currentScene);
+			bool isActorAttached = (obj->_sceneIndex == actorIdx + 0x400);
+			bool isActor = (obj->_index == actorIdx);
+			if (inCurrentScene || isActorAttached || isActor) {
 				Character *c = new Character();
 				c->_gameObject = obj;
 				view1->_characters.push_back(c);
 			}
 		}
 		view1->setInventorySource(GameObjects::instance().getProtagonistObject());
+
+		// Restore UseInventory cursor image after load.
+		// The cursor slot is only populated when clicking an inventory item in the panel;
+		// after loading a save with mouseMode==UseInventory, the slot is empty.
+		if (_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && view1->_activeInventoryItem != nullptr) {
+			AnimFrame *icon = view1->getInventoryIcon(view1->_activeInventoryItem);
+			if (icon != nullptr) {
+				int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
+				uint32 pixelSize = icon->_width * icon->_height;
+				delete[] _imageResources[cursorSlot]._data;
+				_imageResources[cursorSlot]._data = new byte[pixelSize];
+				memcpy(_imageResources[cursorSlot]._data, icon->_data, pixelSize);
+				_imageResources[cursorSlot]._width = icon->_width;
+				_imageResources[cursorSlot]._height = icon->_height;
+			}
+		}
+
 		view1->updateCursor();
 		view1->_paletteDirty = true;
 
