@@ -160,11 +160,11 @@
 #include "director/lingo/xtras/b/budapi.h"
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
+#include "director/lingo/xtras/d/datetime.h"
 #include "director/lingo/xtras/f/filextra.h"
 #include "director/lingo/xtras/g/getdir.h"
 #include "director/lingo/xtras/k/keypoll.h"
 #include "director/lingo/xtras/m/masterapp.h"
-#include "director/lingo/xtras/m/mui.h"
 #include "director/lingo/xtras/m/mui.h"
 #include "director/lingo/xtras/o/openurl.h"
 #include "director/lingo/xtras/o/oscheck.h"
@@ -276,6 +276,7 @@ static const struct XLibProto {
 	XLIBDEF(DPWAVIXObj,			kXObj,			300),	// D3
 	XLIBDEF(DPWQTWXObj,			kXObj,			300),	// D3
 	XLIBDEF(DarkenScreen,		kXObj,			300),	// D3
+	XLIBDEF(DateTimeXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DateUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(DeveloperStack,		kXObj,			300),	// D3
 	XLIBDEF(DialogsXObj,		kXObj,			400),	// D4
