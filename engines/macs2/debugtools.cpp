@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/str-enc.h"
+#include "common/ustr.h"
 #include "common/system.h"
 #include "macs2/adlib.h"
 #include "macs2/detection.h"
@@ -1084,13 +1085,14 @@ static void showInventoryWindow() {
 					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
 						? GameObjects::instance()._objectNames[obj->_index]
 						: "???";
+					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					ImGui::PushID(obj->_index);
 					if (ImGui::Button("Remove")) {
 						obj->_sceneIndex = 0;
 						view->setInventorySource(view->_inventorySource);
 					}
 					ImGui::SameLine();
-					ImGui::Text("[%u] 0x%02x %s", i, obj->_index, name.c_str());
+					ImGui::Text("[%u] 0x%02x %s", i, obj->_index, utf8Name.c_str());
 					ImGui::PopID();
 				}
 			}
@@ -1107,7 +1109,8 @@ static void showInventoryWindow() {
 					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
 						? GameObjects::instance()._objectNames[obj->_index]
 						: "???";
-					if (filterBuf[0] != '\0' && !name.contains(filterBuf))
+					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
+					if (filterBuf[0] != '\0' && !utf8Name.contains(filterBuf))
 						continue;
 					bool inInventory = (obj->_sceneIndex == protagonistInvScene);
 					ImGui::PushID(0x1000 + obj->_index);
@@ -1123,7 +1126,7 @@ static void showInventoryWindow() {
 						}
 					}
 					ImGui::SameLine();
-					ImGui::Text("0x%02x %s%s", obj->_index, name.c_str(), inInventory ? " [IN]" : "");
+					ImGui::Text("0x%02x %s%s", obj->_index, utf8Name.c_str(), inInventory ? " [IN]" : "");
 					ImGui::PopID();
 				}
 			}
