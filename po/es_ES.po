@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-09 13:22+0000\n"
-"PO-Revision-Date: 2026-06-08 08:48+0000\n"
+"PO-Revision-Date: 2026-06-10 11:58+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -13700,14 +13700,14 @@ msgid "Disable player damage"
 msgstr "Desactiva los daños recibidos por el jugador"
 
 #: engines/scumm/metaengine.cpp:909
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Yoda mode"
-msgstr "Modo rápido"
+msgstr "Modo Yoda"
 
 #: engines/scumm/metaengine.cpp:910
 msgid "Enable original Yoda mode shortcuts, including movie mode and auto play"
 msgstr ""
+"Activa los accesos directos originales del modo Yoda, que incluyen el modo "
+"película y la reproducción automática"
 
 #: engines/scumm/metaengine.cpp:1085
 msgid "Down left"
