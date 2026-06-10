@@ -45,8 +45,11 @@ enum BlitMode {
 	kUncompressedTransparentBlit = 0x08,
 	kPartialDissolve = 0x10,
 	kFullDissolve = 0x20,
-	kCccBlit = 0x40,
-	kCccTransparentBlit = 0x80
+	// These are variants of Color Cell Compression to compress low framerate
+	// "videos" as opposed to just animations. They seem only to be used in
+	// the Lamb Chop cutscenes.
+	kColorCellCompressionBlit = 0x40,
+	kColorCellCompressionTransparentBlit = 0x80
 };
 
 enum TransitionType {
@@ -195,6 +198,20 @@ public:
 		const Graphics::ManagedSurface *keyFrame = nullptr,
 		const Common::Point *keyFrameOffset = nullptr);
 
+	const int16 CCC_BLOCK_DIMENSION = 4;
+	Graphics::ManagedSurface decompressCccBitmap(const PixMapImage *source);
+	Graphics::ManagedSurface decompressCccTransparentBitmap(const PixMapImage *source);
+	void decompressCccBlock(
+		Graphics::ManagedSurface &dest,
+		int16_t blockX,
+		int16_t blockY,
+		uint8_t backgroundColor,
+		uint8_t foregroundColor,
+		uint16_t bitMask,
+		int16_t blockWidth,
+		int16_t blockHeight,
+		const uint8_t *transparencyColor = nullptr);
+
 	void effectTransition(Common::Array<ScriptValue> &args);
 	void setTransitionOnSync(Common::Array<ScriptValue> &args) { _scheduledTransitionOnSync = args; }
 	void doTransitionOnSync();
@@ -230,6 +247,16 @@ private:
 		const Common::Array<Common::Rect> &dirtyRegion,
 		bool useTransBlit = false);
 	void rleBlitRectsClip(
+		Graphics::ManagedSurface *dest,
+		const Common::Point &destLocation,
+		const PixMapImage *source,
+		const Common::Array<Common::Rect> &dirtyRegion);
+	void cccBlitRectsClip(
+		Graphics::ManagedSurface *dest,
+		const Common::Point &destLocation,
+		const PixMapImage *source,
+		const Common::Array<Common::Rect> &dirtyRegion);
+	void cccTransparentBlitRectsClip(
 		Graphics::ManagedSurface *dest,
 		const Common::Point &destLocation,
 		const PixMapImage *source,

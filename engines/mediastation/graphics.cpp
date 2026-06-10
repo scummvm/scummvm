@@ -865,11 +865,11 @@ void VideoDisplayManager::imageBlit(
 		break;
 
 	case kCccBitmapCompression:
-		blitFlags |= kCccBlit;
+		blitFlags |= kColorCellCompressionBlit;
 		break;
 
 	case kCccTransparentBitmapCompression:
-		blitFlags |= kCccTransparentBlit;
+		blitFlags |= kColorCellCompressionTransparentBlit;
 		break;
 
 	case kUncompressedTransparentBitmap:
@@ -928,10 +928,12 @@ void VideoDisplayManager::imageBlit(
 		rleBlitRectsClip(targetImage, destinationPoint, sourceImage, dirtyRegion);
 		break;
 
-	case kCccBlit | kClipEnabled:
-	case kCccTransparentBlit | kClipEnabled:
-		// CCC blitting is unimplemented for now because few, if any, titles actually use it.
-		warning("%s: CCC blitting not implemented yet", __func__);
+	case kColorCellCompressionBlit | kClipEnabled:
+		cccBlitRectsClip(targetImage, destinationPoint, sourceImage, dirtyRegion);
+		break;
+
+	case kColorCellCompressionTransparentBlit | kClipEnabled:
+		cccTransparentBlitRectsClip(targetImage, destinationPoint, sourceImage, dirtyRegion);
 		break;
 
 	case kPartialDissolve | kClipEnabled:
@@ -989,6 +991,46 @@ void VideoDisplayManager::rleBlitRectsClip(
 			Common::Point originOnScreen(areaToRedraw.origin());
 			areaToRedraw.translate(-destLocation.x, -destLocation.y);
 			dest->simpleBlitFrom(surface, areaToRedraw, originOnScreen);
+		}
+	}
+}
+
+void VideoDisplayManager::cccBlitRectsClip(
+	Graphics::ManagedSurface *dest,
+	const Common::Point &destLocation,
+	const PixMapImage *source,
+	const Common::Array<Common::Rect> &dirtyRegion) {
+
+	Graphics::ManagedSurface surface = decompressCccBitmap(source);
+	Common::Rect destRect(destLocation, source->width(), source->height());
+	for (const Common::Rect &dirtyRect : dirtyRegion) {
+		Common::Rect areaToRedraw = dirtyRect.findIntersectingRect(destRect);
+
+		if (!areaToRedraw.isEmpty()) {
+			// Calculate source coordinates (relative to source image).
+			Common::Point originOnScreen(areaToRedraw.origin());
+			areaToRedraw.translate(-destLocation.x, -destLocation.y);
+			dest->simpleBlitFrom(surface, areaToRedraw, originOnScreen);
+		}
+	}
+}
+
+void VideoDisplayManager::cccTransparentBlitRectsClip(
+	Graphics::ManagedSurface *dest,
+	const Common::Point &destLocation,
+	const PixMapImage *source,
+	const Common::Array<Common::Rect> &dirtyRegion) {
+
+	Graphics::ManagedSurface surface = decompressCccTransparentBitmap(source);
+	Common::Rect destRect(destLocation, source->width(), source->height());
+	for (const Common::Rect &dirtyRect : dirtyRegion) {
+		Common::Rect areaToRedraw = dirtyRect.findIntersectingRect(destRect);
+
+		if (!areaToRedraw.isEmpty()) {
+			// Calculate source coordinates (relative to source image).
+			Common::Point originOnScreen(areaToRedraw.origin());
+			areaToRedraw.translate(-destLocation.x, -destLocation.y);
+			dest->transBlitFrom(surface, areaToRedraw, originOnScreen);
 		}
 	}
 }
@@ -1283,6 +1325,157 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 		sourcePos.y++;
 		if (imageFullyRead) {
 			break;
+		}
+	}
+
+	return dest;
+}
+
+Graphics::ManagedSurface VideoDisplayManager::decompressCccBitmap(const PixMapImage *source) {
+	// In CCC (Color Cell Compression), the image is divided into 4x4 pixel blocks.
+	// Each block consists of color 1 (1 byte), color 2 (1 byte), and 4x4 bitmask (2 bytes).
+	// Each bit in the mask specifies which color to use.
+
+	// Create a surface to hold the decompressed bitmap.
+	Graphics::ManagedSurface dest;
+	dest.create(source->width(), source->height(), Graphics::PixelFormat::createFormatCLUT8());
+	dest.setTransparentColor(0);
+
+	Common::SeekableReadStream *compressedData = source->_compressedStream;
+	if (compressedData == nullptr) {
+		warning("%s: No image to decompress", __func__);
+		return dest;
+	}
+	compressedData->seek(0);
+
+	// Process each block of the image.
+	for (int16 blockY = 0; blockY < source->height(); blockY += CCC_BLOCK_DIMENSION) {
+		for (int16 blockX = 0; blockX < source->width(); blockX += CCC_BLOCK_DIMENSION) {
+			// Read the compressed block data.
+			byte color1 = compressedData->readByte();
+			byte color2 = compressedData->readByte();
+			uint16 bitmask = compressedData->readUint16BE();
+
+			// Calculate actual block dimensions and handle cases where the image boundary
+			// forces blocks smaller than 4x4.
+			int16 blockHeight = MIN<int16>(source->height() - blockY, CCC_BLOCK_DIMENSION);
+			int16 blockWidth = MIN<int16>(source->width() - blockX, CCC_BLOCK_DIMENSION);
+
+			// Decompress the block. In the original, a separate decompression method didn't exist.
+			// However, to reduce code duplication between the non-transparent and transparent CCC
+			// versions, we will use this helper.
+			decompressCccBlock(dest, blockX, blockY, color1, color2, bitmask, blockWidth, blockHeight);
+		}
+	}
+
+	return dest;
+}
+
+void VideoDisplayManager::decompressCccBlock(
+	Graphics::ManagedSurface &dest,
+	int16 blockX,
+	int16 blockY,
+	byte color1,
+	byte color2,
+	uint16 bitMask,
+	int16 blockWidth,
+	int16 blockHeight,
+	const byte *transparencyColor) {
+
+	// In CCC (Color Cell Compression), the image is divided into 4x4 pixel blocks (CCC blocks).
+	// The compressed stream consists of color 1 (1 byte), color 2 (1 byte), and 4x4 bitmask (2 bytes).
+	// Each bit in the mask specifies which color to use for each pixel. If transparency is enabled
+	// and we are requesting color 1, nothing is drawn.
+	bool backgroundIsTransparent = (transparencyColor != nullptr && color1 == *transparencyColor);
+
+	// Decompress the block.
+	for (int16 y = 0; y < blockHeight; y++) {
+		byte *rowPtr = static_cast<byte *>(dest.getBasePtr(blockX, blockY + y));
+
+		for (int16 x = 0; x < blockWidth; x++) {
+			// Check top bit of the bitmask.
+			if (bitMask & 0x8000) {
+				rowPtr[x] = color2;
+			} else if (!backgroundIsTransparent) {
+				rowPtr[x] = color1;
+			}
+
+			// Shift bitmask left so we can always check the top bit.
+			bitMask <<= 1;
+		}
+
+		// Skip unused bits in the mask for partial blocks.
+		int16 unusedBits = 4 - blockWidth;
+		bitMask <<= unusedBits;
+	}
+}
+
+Graphics::ManagedSurface VideoDisplayManager::decompressCccTransparentBitmap(const PixMapImage *source) {
+	// The CCC transparent format encodes CCC blocks framed in a command stream:
+	//   FF 00 00 00              End of image
+	//   FE ?? CC 00              Set transparency color to CC
+	//   ZZ ZZ YY XX              Position/count
+	//                              - ZZ: Number of CCC blocks following
+	//                              - YY: New Y position in 4x4 block units
+	//                              - XX: New X position in 4x4 block units
+	// Block data, as described above, follows each command.
+
+	// Create a surface to hold the decompressed bitmap.
+	Graphics::ManagedSurface dest;
+	dest.create(source->width(), source->height(), Graphics::PixelFormat::createFormatCLUT8());
+	byte transparencyColor = 0;
+	dest.setTransparentColor(transparencyColor);
+
+	Common::SeekableReadStream *compressedData = source->_compressedStream;
+	if (compressedData == nullptr) {
+		warning("%s: No image to decompress", __func__);
+		return dest;
+	}
+	compressedData->seek(0);
+
+	// Process command stream.
+	Common::Point blockPos;
+	while (true) {
+		// Check for end command.
+		uint32_t command = compressedData->readUint32BE();
+		if (command == 0xFF000000) {
+			break;
+		}
+
+		// Check for a new transparency color.
+		if ((command & 0xFF000000) == 0xFE000000) {
+			transparencyColor = (command >> 16) & 0xFF;
+			continue;
+		}
+
+		// Update drawing position.
+		uint16 blockCount = (command >> 16) & 0xFFFF;
+		byte yDelta = (command >> 8) & 0xFF;
+		byte xDelta = command & 0xFF;
+		if (yDelta == 0) {
+			// Do NOT change row position. Only skip xDelta blocks horizontally.
+			blockPos.x += xDelta * CCC_BLOCK_DIMENSION;
+		} else {
+			// Move to new row and column.
+			blockPos.y += yDelta * CCC_BLOCK_DIMENSION;
+			blockPos.x = xDelta * CCC_BLOCK_DIMENSION;
+		}
+
+		// Process each block in this run.
+		for (uint16 i = 0; i < blockCount; i++) {
+			// Read block data.
+			byte color1 = compressedData->readByte();
+			byte color2 = compressedData->readByte();
+			uint16 bitMask = compressedData->readUint16BE();
+
+			// Calculate actual block dimensions and handle cases where the image boundary
+			// forces blocks smaller than 4x4.
+			int16 blockHeight = MIN<int16>(source->height() - blockPos.y, CCC_BLOCK_DIMENSION);
+			int16 blockWidth = MIN<int16>(source->width() - blockPos.x, CCC_BLOCK_DIMENSION);
+
+			// Move to next block horizontally.
+			decompressCccBlock(dest, blockPos.x, blockPos.y, color1, color2, bitMask, blockWidth, blockHeight, &transparencyColor);
+			blockPos.x += CCC_BLOCK_DIMENSION;
 		}
 	}
 
