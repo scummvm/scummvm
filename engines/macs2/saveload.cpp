@@ -152,11 +152,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// g_wSavedCursorMode [0xfea]: 2 bytes
-	View1 *saveView = (View1 *)findView("View1");
-	uint16 savedCursorMode = saveView ? (uint16)saveView->_cursorModeBeforeMenu : (uint16)Script::MouseMode::Walk;
+	uint16 savedCursorMode = view1 ? (uint16)view1->_cursorModeBeforeMenu : (uint16)Script::MouseMode::Walk;
 	s.syncAsUint16LE(savedCursorMode);
-	if (s.isLoading() && saveView)
-		saveView->_cursorModeBeforeMenu = (Script::MouseMode)savedCursorMode;
+	if (s.isLoading() && view1)
+		view1->_cursorModeBeforeMenu = (Script::MouseMode)savedCursorMode;
 
 	// g_wClipRectDirty [0xfec]: 1 byte - flags clip region needs full-screen reset
 	uint8 clipRectDirty = _clipRectDirty ? 1 : 0;
