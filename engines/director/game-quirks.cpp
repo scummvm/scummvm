@@ -123,6 +123,30 @@ struct CachedFile {
 		"PATH.INI",
 		(const byte *)"[cd-path]\r\npath=d:\\\r\n", -1
 	},
+	{"tkkg5", Common::kPlatformWindows,
+		"TKKG_5.ini",
+		(const byte *)"[CD]\r\npath=d\r\n", -1
+	},
+	{"tkkg6", Common::kPlatformWindows,
+		"TKKG_6.ini",
+		(const byte *)"[CD]\r\npath=d\r\n", -1
+	},
+	{"tkkg7", Common::kPlatformWindows,
+		"TKKG_7.ini",
+		(const byte *)"[CDpath]\r\npath=d:\\\r\n", -1
+	},
+	{"tkkg8", Common::kPlatformWindows,
+		"TKKG_8.ini",
+		(const byte *)"[CDpath]\r\npath=d:\\\r\n", -1
+	},
+	{"tkkg9", Common::kPlatformWindows,
+		"TKKG_9.ini",
+		(const byte *)"[CDpath]\r\npath=d:\\\r\n", -1
+	},
+	{"oscar5", Common::kPlatformWindows,
+		"Oscar_Be.ini",
+		(const byte *)"[CDpath]\r\npath=d:\\\r\n", -1
+	},
 
 	// Professor Finkle's Times Table Factory has an installer that copies a bunch of empty files,
 	// which the game gets upset about if they don't exist.
