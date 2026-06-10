@@ -76,8 +76,10 @@ static int getRebel1MenuAxisDirection(int16 axisValue) {
 
 static void setRebel1Volume(ScummEngine_v7 *vm, int &volume, int delta) {
 	volume = CLIP<int>(volume + delta, 0, 127);
-	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-		(volume * Audio::Mixer::kMaxChannelVolume) / 127);
+	const int mixerVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mixerVolume);
 	ConfMan.setInt("music_volume", (volume * 256) / 127);
 	ConfMan.setInt("sfx_volume", (volume * 256) / 127);
 	ConfMan.setInt("speech_volume", (volume * 256) / 127);

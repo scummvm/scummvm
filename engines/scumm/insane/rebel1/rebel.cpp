@@ -356,7 +356,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optControlsYFlip = false;
 	_optRapidFire = true;
-	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
+	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
 	// Default high scores — from DS:0x1D0/0x298/0x2C0
 	const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
