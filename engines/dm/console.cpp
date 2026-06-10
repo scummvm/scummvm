@@ -30,6 +30,7 @@
 #include "dm/dungeonman.h"
 #include "dm/movesens.h"
 #include "dm/objectman.h"
+#include "dm/group.h"
 
 
 namespace DM {
@@ -67,6 +68,7 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	registerCmd("map", WRAP_METHOD(Console, Cmd_map));
 	registerCmd("listItems", WRAP_METHOD(Console, Cmd_listItems));
 	registerCmd("gimme", WRAP_METHOD(Console, Cmd_gimme));
+	registerCmd("nuke", WRAP_METHOD(Console, Cmd_nuke));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
@@ -286,6 +288,22 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 	}
 
 	debugPrintf("No item found with name '%s'\n", requestedItemName.c_str());
+	return true;
+}
+
+bool Console::Cmd_nuke(int argc, const char** argv) {
+	DungeonMan &dm = *_vm->_dungeonMan;
+	int16 mapX = dm._partyMapX;
+	int16 mapY = dm._partyMapY;
+	dm.mapCoordsAfterRelMovement(dm._partyDir, 1, 0, mapX, mapY);
+
+	Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
+	if (groupThing != _vm->_thingNone && groupThing != _vm->_thingEndOfList) {
+		_vm->_groupMan->groupDelete(mapX, mapY);
+		debugPrintf("Creatures in front have been nuked!\n");
+	} else {
+		debugPrintf("No creatures found in front of you.\n");
+	}
 	return true;
 }
 
