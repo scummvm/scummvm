@@ -1977,6 +1977,25 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 			continue;
 		}
 
+		// Binary pass 1 (1008:90a2): initialize dirty rect from previous frame's draw bounds
+		// +0x20D = +0x225, +0x20F = +0x227, +0x211 = +0x20D + +0x229 + 1, +0x213 = +0x20F + +0x22B + 1
+		// All coordinates are inclusive (matching binary's setClipRect/drawRLEImage convention).
+		current->_dirtyLeft = current->_lastDrawX;
+		current->_dirtyTop = current->_lastDrawY;
+		current->_dirtyRight = current->_lastDrawX + current->_lastDrawWidth + 1;
+		current->_dirtyBottom = current->_lastDrawY + current->_lastDrawHeight + 1;
+
+#if 0 // TODO: dirty rect handling
+		// Erase previous frame's character sprite by restoring background in dirty rect.
+		// Inclusive [left..right, top..bottom] → exclusive Common::Rect needs right+1, bottom+1.
+		Common::Rect eraseRect(current->_dirtyLeft, current->_dirtyTop,
+		                       current->_dirtyRight + 1, current->_dirtyBottom + 1);
+		eraseRect.clip(Common::Rect(0, 0, _backgroundSurface.w, _backgroundSurface.h));
+		if (eraseRect.isValidRect() && !eraseRect.isEmpty()) {
+			s.blitFrom(_backgroundSurface, eraseRect, Common::Point(eraseRect.left, eraseRect.top));
+		}
+#endif
+
 		// Bounds attachment from drawAllCharacters (1008:90a2):
 		// When HasBoundsAttachment is set, position is relative to parent object.
 		if (current->_gameObject->_hasBoundsAttachment) {
@@ -1991,7 +2010,6 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		AnimFrame *frame = current->getCurrentAnimationFrame();
 		bool mirror = current->_shouldMirrorCurrentAnimation;
 
-		// AnimFrame *frame = current->GetCurrentPortrait();
 		uint8 depth = current->getPosition().y;
 		if (depth == 0) {
 			// TODO: This is a quick fix for the issue of the gangster at the beginning not being removed properly
@@ -2001,9 +2019,7 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 			g_system->setWindowCaption(Common::String::format("Depth %u vs. %u", depth, bgDepth));
 		}
-		// Only output debug values for the character
 		uint16 scalingFactor = calculateCharacterScaling(depth, current->_gameObject->_index == 1);
-		// Adjust the position based on the scale
 		Common::Point actualPosition = current->getPosition() - Common::Point(0, current->getVerticalOffset());
 
 		// Binary drawAllCharacters (1008:90a2) three draw modes based on per-object flags:
@@ -2017,13 +2033,69 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 			shadowIntensity = MIN<uint8>(g_engine->_shadowMap.getPixel(sx, sy), 32);
 		}
 
+		// Compute draw position for dirty rect tracking
+		uint16 frameWidth, frameHeight;
+		Common::Point drawPos;
 		if (current->_gameObject->_hasScaling) {
+			frameWidth = (frame->asSprite()._width * scalingFactor) / 100;
+			frameHeight = (frame->asSprite()._height * scalingFactor) / 100;
+			drawPos = actualPosition - frame->getBottomMiddleOffset(scalingFactor);
+#if 0
+			drawSpriteSuperAdvanced(drawPos, frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
+#else
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
+#endif
 		} else if (current->_gameObject->_hasShading) {
+			frameWidth = frame->asSprite()._width;
+			frameHeight = frame->asSprite()._height;
+			drawPos = actualPosition - frame->getBottomMiddleOffset(100);
+#if 0
+			drawSpriteSuperAdvanced(drawPos, frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
+#else
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
+#endif
 		} else {
+			frameWidth = frame->asSprite()._width;
+			frameHeight = frame->asSprite()._height;
+			drawPos = actualPosition - frame->getBottomMiddleOffset(100);
+#if 0
+			drawSpriteSuperAdvanced(drawPos, frame->asSprite(), 100, mirror, false, depth, s, 0);
+#else
 			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, false, depth, s, 0);
+#endif
 		}
+
+		// Binary pass 2 (1008:90a2): record new draw bounds (+0x225..+0x22B)
+		current->_lastDrawX = drawPos.x;
+		current->_lastDrawY = drawPos.y;
+		current->_lastDrawWidth = frameWidth;
+		current->_lastDrawHeight = frameHeight;
+
+		// Expand dirty rect to encompass new draw position (inclusive coords, 1px margin).
+		// Binary formulas from drawAllCharacters (1008:90a2):
+		//   left:   charX - halfWidth - 1     = drawPos.x - 1
+		//   top:    charY - height - 1 - voff = drawPos.y - 1
+		//   right:  charX + halfWidth + 1     (= drawPos.x + 2*(frameWidth>>1) + 1)
+		//   bottom: charY + 1 - voff          (= drawPos.y + frameHeight + 1)
+		int16 newLeft = drawPos.x - 1;
+		int16 newTop = drawPos.y - 1;
+		int16 newRight = drawPos.x + 2 * (frameWidth >> 1) + 1;
+		int16 newBottom = drawPos.y + frameHeight + 1;
+
+		if (newLeft < current->_dirtyLeft)
+			current->_dirtyLeft = newLeft;
+		if (newTop < current->_dirtyTop)
+			current->_dirtyTop = newTop;
+		if (current->_dirtyRight < newRight)
+			current->_dirtyRight = newRight;
+		if (current->_dirtyBottom < newBottom)
+			current->_dirtyBottom = newBottom;
+
+		// Binary clamp: if top < 0 then left = 0; if bottom < 0 then bottom = 0
+		if (current->_dirtyTop < 0)
+			current->_dirtyLeft = 0;
+		if (current->_dirtyBottom < 0)
+			current->_dirtyBottom = 0;
 
 		if (DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 			Common::String number = Common::String::format("%u", current->_gameObject->_orientation);

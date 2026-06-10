@@ -489,18 +489,21 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading() && chr)
 			chr->_stepDirectionSet = directionSet != 0;
 
-		// [+0x20D]: 2 bytes - clip rect left
-		uint16 runtime20D = 0;
-		s.syncAsUint16LE(runtime20D);
-		// [+0x20F]: 2 bytes - clip rect top
-		uint16 runtime20F = 0;
-		s.syncAsUint16LE(runtime20F);
-		// [+0x211]: 2 bytes - clip rect right
-		uint16 runtime211 = 0;
-		s.syncAsUint16LE(runtime211);
-		// [+0x213]: 2 bytes - clip rect bottom
-		uint16 runtime213 = 0;
-		s.syncAsUint16LE(runtime213);
+		// [+0x20D..+0x213]: 4 x uint16 - per-character dirty rect (inclusive coords)
+		uint16 clipLeft = chr ? (uint16)chr->_dirtyLeft : 0;
+		uint16 clipTop = chr ? (uint16)chr->_dirtyTop : 0;
+		uint16 clipRight = chr ? (uint16)chr->_dirtyRight : 0;
+		uint16 clipBottom = chr ? (uint16)chr->_dirtyBottom : 0;
+		s.syncAsUint16LE(clipLeft);
+		s.syncAsUint16LE(clipTop);
+		s.syncAsUint16LE(clipRight);
+		s.syncAsUint16LE(clipBottom);
+		if (s.isLoading() && chr) {
+			chr->_dirtyLeft = (int16)clipLeft;
+			chr->_dirtyTop = (int16)clipTop;
+			chr->_dirtyRight = (int16)clipRight;
+			chr->_dirtyBottom = (int16)clipBottom;
+		}
 
 		// [+0x21D..+0x22B]: 8 x uint16 - motion vertical offset state + sprite draw bounds
 		// +0x21D: motion target vertical offset
@@ -524,10 +527,20 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(motionProgress);
 		if (s.isLoading() && chr)
 			chr->_motionProgress = motionProgress;
-		// +0x225..+0x22B: transient sprite bounds (recalculated, save for format compat)
-		for (int i = 0; i < 4; i++) {
-			uint16 boundsVal = 0;
-			s.syncAsUint16LE(boundsVal);
+		// +0x225..+0x22B: sprite draw bounds from previous frame
+		uint16 lastDrawX = chr ? (uint16)chr->_lastDrawX : 0;
+		uint16 lastDrawY = chr ? (uint16)chr->_lastDrawY : 0;
+		uint16 lastDrawW = chr ? chr->_lastDrawWidth : 0;
+		uint16 lastDrawH = chr ? chr->_lastDrawHeight : 0;
+		s.syncAsUint16LE(lastDrawX);
+		s.syncAsUint16LE(lastDrawY);
+		s.syncAsUint16LE(lastDrawW);
+		s.syncAsUint16LE(lastDrawH);
+		if (s.isLoading() && chr) {
+			chr->_lastDrawX = (int16)lastDrawX;
+			chr->_lastDrawY = (int16)lastDrawY;
+			chr->_lastDrawWidth = lastDrawW;
+			chr->_lastDrawHeight = lastDrawH;
 		}
 
 		// [+0x215]: 2 bytes - pickup frame counter
