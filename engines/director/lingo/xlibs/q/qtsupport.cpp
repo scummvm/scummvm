@@ -23,6 +23,8 @@
  *
  * USED IN:
  * The Legend of Lotus Spring
+ * Löwenzahn 2&3
+ * Oscar the Balloonist Drops into the Countryside
  *
  *************************************/
 
@@ -65,6 +67,7 @@ namespace Director {
 const char *QTSupport::xlibName = "QuickTimeSupport";
 const XlibFileDesc QTSupport::fileNames[] = {
 	{ "QuickTime Asset",	nullptr },
+	{ "QTASSET",			nullptr },
 	{ nullptr,		nullptr },
 };
 
