@@ -49,7 +49,7 @@ static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
 // Level Loading System
 // ---------------------------------------------------------------------------
 // Emulates the level handler functions from FUN_00417E53 through FUN_0041BBE8.
-// Based on disassembly analysis of the retail Rebel Assault 2 executable.
+// Based on disassembly analysis of the Rebel Assault 2 executable.
 
 Common::String InsaneRebel2::getLevelDir(int levelId) {
 	return Common::String::format("LEV%02d", levelId);
@@ -472,7 +472,7 @@ int InsaneRebel2::runLevel(int levelId) {
 	// Lock the mouse to the game window during gameplay.
 	// The original hides the cursor (ShowCursor(0)) and relies on Windows confining
 	// the mouse to the game window. Without locking, the cursor can escape the
-	// ScummVM window making the ship uncontrollable.
+	// window making the ship uncontrollable.
 	_gameplaySectionActive = false;
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
@@ -563,7 +563,7 @@ int InsaneRebel2::getRandomVariant(int max) {
 //
 // Returns variant suffix ("A", "B", "C", etc.) based on level, phase,
 // and the frame where the player died. Emulates the per-level frame
-// threshold tables in the retail level handlers.
+// threshold tables in the original level handlers.
 //
 Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int frame) {
 

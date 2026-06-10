@@ -286,7 +286,7 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 					top += _ra1ViewportOffsetY;
 				} else {
 					ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
-					// ScummVM currently emulates the RA1 camera with a source-window crop
+					// RA1 camera emulation currently uses a source-window crop
 					// for interactive scenes. FTCH placement from the original executable
 					// is computed in fixed presentation space, so convert it back into the
 					// cropped buffer space used by the current renderer.
@@ -347,7 +347,7 @@ void SmushPlayerRebel1::ra1HandleGost(int32 subSize, Common::SeekableReadStream 
 
 	// DOS reuses the most recent FOBJ payload for RA1 GOST and places it at the
 	// absolute BE32 coordinates stored in the chunk. Priority bits are identified
-	// here but not yet modeled in the generic ScummVM decode path.
+	// here but not yet modeled in the generic decode path.
 	decodeFrameObject(_lastFobjCodec, _lastFobjData, ghostX, ghostY,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjDataSize);
 }
@@ -416,7 +416,7 @@ void SmushPlayerRebel1::ra1HandleDeltaPalette(int32 subSize, Common::SeekableRea
 			b.skip(remaining);
 
 		// Command 2 in the DOS dispatcher first restores the palette state before
-		// loading a new delta table. ScummVM keeps the active palette in _pal, so
+		// loading a new delta table. The active palette lives in _pal, so
 		// marking it dirty is the corresponding visible-side effect.
 		if (command == 2)
 			setDirtyColors(0, 255);

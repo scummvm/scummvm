@@ -229,7 +229,7 @@ void SmushPlayerRebel2::initGameVideoState() {
 	_width = _vm->_screenWidth;
 	_height = _vm->_screenHeight;
 
-	// Keep ScummVM's virtual screen consistent with FUN_00424d70: bit 0x20
+	// Keep the virtual screen consistent with FUN_00424d70: bit 0x20
 	// controls per-frame clearing. Videos that clear every frame can also start
 	// from a cleared target; videos with bit 0x20 set preserve until their first
 	// decoded frame overwrites or composes over it.
@@ -451,7 +451,7 @@ bool SmushPlayerRebel2::handleGameTextRendering(const char *str, int fontId, int
 												int pos_x, int pos_y, int left, int top,
 												int width, int height, TextStyleFlags flg) {
 	// RA2 dialogue subtitles. Only render them when subtitles are enabled — this honors
-	// both ScummVM's global "subtitles" setting and the in-game TEXT toggle (which writes
+	// both the global "subtitles" setting and the in-game TEXT toggle (which writes
 	// the same ConfMan key). Still return true so the base handler treats the chunk as
 	// handled. Querying ConfMan per chunk also lets the setting take effect mid-video.
 	if (ConfMan.getBool("subtitles"))
@@ -732,7 +732,7 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
 	} else if (width != _vm->_screenWidth || height != _vm->_screenHeight) {
 		// FUN_00407FCB/FUN_0040C3CC update the active frame descriptor from
-		// IACT opcode 6. In ScummVM's low-res path the descriptor remains
+		// IACT opcode 6. In the low-res path the descriptor remains
 		// 320x200 and perspective is applied through FUN_00424510-equivalent
 		// FOBJ offsets. Do not let AHDR alone change pitch while _dst still
 		// points at the virtual screen; FOBJ selection will allocate a larger
@@ -1123,7 +1123,7 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
 
 	// Priority bits (0x2000/0x4000/0x6000) are currently not modeled in
-	// ScummVM's SMUSH decoders. Coordinate-correct re-decode restores expected
+	// the SMUSH decoders. Coordinate-correct re-decode restores expected
 	// RA2 chapter preview behavior.
 	ra2PrepareFrameObjectSurface(left, top, _lastFobjWidth, _lastFobjHeight);
 	decodeFrameObject(_lastFobjCodec, _lastFobjData, left, top,

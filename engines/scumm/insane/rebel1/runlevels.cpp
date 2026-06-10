@@ -156,7 +156,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	_player = splayer;
 	restoreScreenFlashPalette();
 	// DOS PlayFrontendAnmAndWait keeps pumping until frontend audio clears.
-	// ScummVM's Rebel queues outlive SmushPlayer::play(), so clear stale
+	// Rebel queues outlive SmushPlayer::play(), so clear stale
 	// passive-cinematic audio before chaining the next ANM.
 	_audio.reset();
 	splayer->resetAudioTracks();
@@ -795,7 +795,7 @@ bool InsaneRebel1::runLevel7() {
 			routeSourceFrame = _pendingRouteStartFrame;
 			routeVideoStartFrame = _pendingRouteVideoStartFrame;
 			// DOS does not seek the destination route ANM here. The ANM-local
-			// decision frame is used by the playback gate/cutoff; ScummVM
+			// decision frame is used by the playback gate/cutoff; this implementation
 			// starts at the already-advanced gate target after the cutover.
 			routeStartFrame = 0;
 		}
@@ -890,7 +890,7 @@ bool InsaneRebel1::runLevel8() {
 			}
 
 			// RunLevel8Flow keeps pumping the active route while the walker
-			// shield register is nonzero. ScummVM's blocking SMUSH play returns
+			// shield register is nonzero. Blocking SMUSH play returns
 			// when one route pass ends, so explicitly replay that route and
 			// preserve the accumulated walker damage.
 			debugC(DEBUG_INSANE, "L8 replaying route=%d walkerHealth=%d killCount=%d",
@@ -927,7 +927,7 @@ bool InsaneRebel1::runLevel8() {
 bool InsaneRebel1::runLevel9() {
 	// DOS RunLevel9Flow calls RandScaleByte(2) three times before the intro.
 	// That helper advances a byte seed with seed = seed * 9 + 0x35 and returns
-	// (2 * seed) >> 8. Do not use ScummVM's session RNG here: it can turn the
+	// (2 * seed) >> 8. Do not use the session RNG here: it can turn the
 	// original right-side route into the capture/restart branch.
 	uint8 originalRouteSeed = 0;
 	auto getOriginalRouteBit = [&originalRouteSeed]() {
@@ -1629,7 +1629,7 @@ void InsaneRebel1::runGame() {
 			break;
 		}
 		case 4: {
-			// Level Select — ScummVM-only start point. Continue through the
+			// Level Select: extra start point. Continue through the
 			// original successor flow so post-level cinematics still play.
 			int selectedLevel = runLevelSelectMenu();
 			if (selectedLevel >= 1 && selectedLevel <= numLevels)
@@ -1731,7 +1731,7 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 
 	if (_currentLevel == 6 && level7RouteSplice) {
 		// DOS opens the route ANM from the beginning, then the armed frame gate
-		// suppresses until the adjusted target. With ScummVM's delayed cutover,
+		// suppresses until the adjusted target. With the delayed cutover,
 		// the destination must advance by the source tail already displayed.
 		videoStartFrame = (_pendingRouteVideoStartFrame > 0) ?
 			_pendingRouteVideoStartFrame : 1;

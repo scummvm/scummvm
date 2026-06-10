@@ -153,7 +153,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Set from param_10 of FUN_403BD0 (main game init). Values:
 	//   < 0: Edge highlights disabled (low-detail mode)
 	//   >= 0: Edge highlights enabled, >= 1: high-detail (secondary NUTs, widescreen)
-	// Always use high detail in ScummVM.
+	// Always use high detail.
 	_rebelDetailMode = 1;
 	_smush_cockpitNut = new NutRenderer(_vm, highRes ? "SYSTM/DIHIFONT.NUT" : "SYSTM/DISPFONT.NUT");
 
@@ -209,7 +209,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_textOverlayFadeIn = 0;
 	_textOverlayFadeOut = 0;
 
-	// Retail globals mapped: hit counter, cooldown, movie/auto-play flags
+	// Original globals mapped: hit counter, cooldown, movie/auto-play flags.
 	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
 	_rebelKillCounter = 0;
@@ -232,7 +232,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelViewMode1 = 0;
 	_rebelViewMode2 = 0;
 
-	// Initialize mirrored retail counters
+	// Initialize mirrored original counters.
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
 		_rebelMaskCounters[i] = 0;
@@ -542,7 +542,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
 	_optVoicesEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
-	// Initialize the dialogue-text (subtitles) toggle from ScummVM's global setting so the
+	// Initialize the dialogue-text (subtitles) toggle from the global setting so the
 	// game and the in-game TEXT menu label reflect it. The menu toggle writes the same
 	// "subtitles" key, which the text-render paths gate on.
 	_optTextEnabled = ConfMan.getBool("subtitles");
@@ -676,7 +676,7 @@ void InsaneRebel2::restoreIOSGamepadController() {
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Global ScummVM dialogs pause the engine while their modal event loop runs.
+	// Global dialogs pause the engine while their modal event loop runs.
 	// Do not consume those events as RA2 input: a key seen here would otherwise
 	// trip RA2's "any key unpauses gameplay" path while the Smush player must
 	// remain paused for the dialog/focus interval.
@@ -686,7 +686,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (_rebelYodaMode && event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && event.kbd.hasFlags(Common::KBD_ALT)) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_m:
-			// Retail DAT_0047ab60: Yoda-mode Movie Mode skips playable
+			// DAT_0047ab60: Yoda-mode Movie Mode skips playable
 			// sections and keeps the story/cutscene sequence moving.
 			_rebelMovieMode = !_rebelMovieMode;
 			debugC(DEBUG_INSANE, "Movie mode %s", _rebelMovieMode ? "enabled" : "disabled");
@@ -695,7 +695,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			return true;
 
 		case Common::KEYCODE_p:
-			// Retail DAT_0047ab64: Yoda-mode Auto Play makes gameplay
+			// DAT_0047ab64: Yoda-mode Auto Play makes gameplay
 			// computer controlled.
 			_rebelAutoPlay = !_rebelAutoPlay;
 			debugC(DEBUG_INSANE, "Auto play %s", _rebelAutoPlay ? "enabled" : "disabled");
@@ -915,7 +915,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				return true;
 
 			if (_menuInputActive && menuState) {
-				debugC(DEBUG_INSANE, "Back/menu action in menu - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "Back/menu action in menu - opening global menu");
 				openMenuMainMenu(splayer);
 				return true;
 			}
@@ -929,7 +929,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 					}
 				}
 
-				debugC(DEBUG_INSANE, "Back/menu action during gameplay - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "Back/menu action during gameplay - opening global menu");
 				openGameplayMainMenu(splayer);
 				return true;
 			}
@@ -1036,7 +1036,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			return true;
 		}
 
-		debugC(DEBUG_INSANE, "Opening ScummVM menu from menu state");
+		debugC(DEBUG_INSANE, "Opening global menu from menu state");
 		openMenuMainMenu(splayer);
 		return true;
 	}
@@ -1058,7 +1058,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 
 	if (event.type == Common::EVENT_MAINMENU && splayer &&
 			_gameState == kStateGameplay && _rebelHandler != 0) {
-		debugC(DEBUG_INSANE, "Main menu action during gameplay - opening ScummVM menu");
+		debugC(DEBUG_INSANE, "Main menu action during gameplay - opening global menu");
 		openGameplayMainMenu(splayer);
 		return true;
 	}
@@ -1081,7 +1081,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		}
 
 		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
-		// ESC additionally opens the ScummVM menu (original: quit key exits level).
+		// ESC additionally opens the global menu (original: quit key exits level).
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
 			debugC(DEBUG_INSANE, "Key pressed while paused - unpausing");
 			// Restore the original palette saved by showPauseOverlay
@@ -1091,7 +1091,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 			splayer->unpause();
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _rebelHandler != 0) {
-				debugC(DEBUG_INSANE, "ESC during pause - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "ESC during pause - opening global menu");
 				openGameplayMainMenu(splayer);
 			}
 			return true;
@@ -1100,13 +1100,13 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			// ESC handling depends on game state:
-			// - In menus: Open the ScummVM menu (handled above)
-			// - During gameplay: Pause and open ScummVM menu
+			// - In menus: Open the global menu (handled above)
+			// - During gameplay: Pause and open the global menu
 			// - During cutscenes/intros: Skip video
 			if (splayer) {
 				if (_gameState == kStateGameplay && _rebelHandler != 0) {
-					// During active gameplay (handler != 0): pause and open ScummVM menu.
-					debugC(DEBUG_INSANE, "ESC pressed during gameplay - opening ScummVM menu");
+					// During active gameplay (handler != 0): pause and open the global menu.
+					debugC(DEBUG_INSANE, "ESC pressed during gameplay - opening global menu");
 					openGameplayMainMenu(splayer);
 				} else {
 					// During cutscenes/intros/mission briefings: skip video
@@ -1327,7 +1327,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	int diff = CLIP(_difficulty, 0, 5);
 	int lvIdx = 0;
 
-	// Retail uses DAT_0047a7f8 as the per-segment difficulty table index.
+	// DAT_0047a7f8 is the per-segment difficulty table index.
 	// This is NOT the same as handler 0x26's gun "levelType" from opcode 6.
 	//
 	// Index mapping reconstructed from level handlers:
@@ -1435,7 +1435,7 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 // ---------------------------------------------------------------------------
 // Pilot Data System
 // ---------------------------------------------------------------------------
-// Save/load pilot profiles using ScummVM's save file system.
+// Save/load pilot profiles using the save file system.
 // Original: FUN_00411980 (load) / FUN_00411A5D (save).
 
 const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
@@ -1703,7 +1703,7 @@ int32 InsaneRebel2::processMouse() {
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
-				// Explosion scale is handler-specific in retail:
+				// Explosion scale is handler-specific in the original:
 				// - H8/H7/H26 use object half-width
 				// - H25 uses half-width + snapDistance (and type 100 doubles it)
 				int explosionHalfWidth = it->rect.width() / 2;
@@ -1912,8 +1912,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 			activeGamepadAim = true;
 		}
 	} else if (_rebelHandler == 0x26) {
-		// Retail RA2 maps joystick axes into a small centered handler 0x26 reticle box.
-		// ScummVM deliberately exposes the full 320x200 mouse aim range for gamepads
+		// Original RA2 maps joystick axes into a small centered handler 0x26 reticle box.
+		// Gamepad aiming deliberately exposes the full 320x200 mouse aim range
 		// too, but preserves the original joystick feel: curved response for precise
 		// center aiming, and automatic return to screen center when the stick is released.
 		int axisX = 0;

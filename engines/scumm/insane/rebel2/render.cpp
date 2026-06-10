@@ -42,7 +42,7 @@ extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int wi
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 int getRebel2IndicatorScale(int width, int height) {
-	// Retail only doubles these anchors in true high-res mode (DAT_0047a808 >= 2).
+	// Original only doubles these anchors in true high-res mode (DAT_0047a808 >= 2).
 	// RA2's 424x260 low-res gameplay buffer is still displayed through a 320x200
 	// viewport, so it uses the original 320x200 indicator coordinates.
 	return (width >= 640 || height >= 400) ? 2 : 1;
@@ -555,7 +555,7 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 			_turretShots[i].targetX = x + _viewX;
 			_turretShots[i].targetY = y + _viewY;
 
-			// Compute gun position from retail lookup tables.
+			// Compute gun position from original lookup tables.
 			// Original (FUN_41DB5E) stores:
 			//   DAT_0045791c[i] = gunXTable[spriteIdx] + DAT_00457910 - DAT_0045790c
 			//   DAT_00457920[i] = gunYTable[spriteIdx] + DAT_00457912 - DAT_0045790e
@@ -598,7 +598,7 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 				int16 gunXTable = _grdShotOriginX[spriteIdx];
 				int16 gunYTable = _grdShotOriginY[spriteIdx];
 
-				// Mirrored X when DAT_00457902 != 0 in retail.
+				// Mirrored X when DAT_00457902 != 0.
 				if (_rebelFlightDir != 0) {
 					gunXTable = 320 - gunXTable;
 				}
@@ -644,7 +644,7 @@ Common::Point InsaneRebel2::getHandler7ProjectedPoint() {
 }
 
 Common::Point InsaneRebel2::getHandler7ShotTargetPoint() {
-	// Retail handler 7 targets the projected ship/crosshair point computed in
+	// Handler 7 targets the projected ship/crosshair point computed in
 	// FUN_0040d836; it does not use the generic mouse position for combat shots.
 	Common::Point projected = getHandler7ProjectedPoint();
 
@@ -653,7 +653,7 @@ Common::Point InsaneRebel2::getHandler7ShotTargetPoint() {
 }
 
 Common::Point InsaneRebel2::getHandler8ShotTargetPoint() {
-	// Retail handler 8 stores and draws the shot target from the damped ship
+	// Handler 8 stores and draws the shot target from the damped ship
 	// position in FUN_00401ccf, not from the current mouse/analog aim point.
 	return Common::Point(((_shipPosX - 0xa0) >> 3) + 0xa0,
 	                     ((_shipPosY - 0x28) >> 2) + 0x69);
@@ -1845,8 +1845,8 @@ void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width,
 // Two modes: obstacle collision (secondary zones) and wall/boundary
 // collision (primary zones with per-edge push-back).
 //
-// The helpers in this block are ScummVM refactor helpers split out of
-// checkHandler7CollisionZones; they are not separate retail functions.
+// The helpers in this block are split out of checkHandler7CollisionZones;
+// they are not separate original functions.
 //
 bool InsaneRebel2::isHandler7ShipInsideObstacleZone(const InsaneRebel2::CollisionZone &zone, int margin) {
 	int x1 = zone.x1, y1 = zone.y1;
@@ -1936,7 +1936,7 @@ void InsaneRebel2::checkHandler7ObstacleZones(uint16 &warningMask) {
 		}
 
 		// FUN_40E35E line 104: mark near-danger proximity for shadow cue rendering.
-		// Uses the low byte of zone.filterValue (retail local_1c) to pick direction bits.
+		// Uses the low byte of zone.filterValue (original local_1c) to pick direction bits.
 		if (zone.field2 - 13 < zone.field1) {
 			uint32 bit = 4u << ((byte)zone.filterValue & 0x1f);
 			warningMask = (uint16)(warningMask | (uint16)bit);
@@ -4102,7 +4102,7 @@ void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, in
 }
 
 // renderExplosionFrame -- Shared explosion sprite path.
-// The original handlers reach this through separate retail functions. In the
+// The original handlers reach this through separate functions. In the
 // 320x200 path used here, they share centered NUT drawing; callers keep their
 // coordinate transforms, frame timing, and scale bucket rules explicit.
 void InsaneRebel2::renderExplosionFrame(byte *renderBitmap, int pitch, int width, int height,
@@ -4555,7 +4555,7 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 		pan = CLIP<int16>(pan, -127, 127);
 		// TODO: Apply panning to sound channel i+1
 
-		// Retail adds DAT_0045790c/0e at render time to both gun and target.
+		// FUN_00407FCB adds DAT_0045790c/0e at render time to both gun and target.
 		int16 targetX = _turretShots[i].targetX + _rebelViewOffsetX;
 		int16 targetY = _turretShots[i].targetY + _rebelViewOffsetY;
 
@@ -4602,7 +4602,7 @@ void InsaneRebel2::renderHandler8MonitorEffect(byte *renderBitmap, int pitch, in
 		return;
 
 	// FUN_0041C6EC/FUN_00413EFC: remap every other gameplay row through
-	// FUN_00410721()+0x400. ScummVM uses the primary edge table, matching
+	// FUN_00410721()+0x400. Use the primary edge table, matching
 	// DAT_0047a81c == 0.
 	const byte *monitorTable = _edgeTable + 0x400;
 	for (int y = 1; y < effectHeight; y += 2) {

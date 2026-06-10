@@ -46,7 +46,7 @@ const int kRA1MenuFrameH = 0x0f;
 const int kRA1MenuRowH = 0x0f;
 const byte kRA1MenuFrameColor = 0xdf;
 // Highlight-frame geometry shared by the render*Overlay drawing and the mouse hit-testing
-// (clicking menu items is a ScummVM-exclusive feature, so the rects must stay in sync).
+// (clicking menu items is an extra feature, so the rects must stay in sync).
 const int kRA1MainMenuFrameYBase    = 0x2c;  // frame Y = (item + 1) * kRA1MenuRowH + this
 const int kRA1OptionsFrameYBase     = 0x1d;  // frame Y = (item + 1) * kRA1MenuRowH + this
 const int kRA1LevelSelectFrameYBase = 0x2c;  // frame Y = row * kRA1MenuRowH + this
@@ -613,7 +613,7 @@ void InsaneRebel1::openGameplayMainMenu() {
 		_player->unpause();
 }
 
-// ScummVM-exclusive feature (not in the original game): let the player navigate and
+// Extra feature, not in the original game: let the player navigate and
 // activate the front-end menus with the mouse. Hovering highlights an item and a left
 // click activates it (same as pressing accept). The item hit-rectangles mirror the
 // highlight frames drawn by the render*Overlay() functions, so they share the
@@ -679,7 +679,7 @@ bool InsaneRebel1::handleMenuMouse(const Common::Event &event) {
 }
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
-	// Global ScummVM dialogs pause the engine while their modal event loop runs.
+	// Global dialogs pause the engine while their modal event loop runs.
 	// Do not consume those mouse/key events as RA1 gameplay/menu input, or the
 	// dialog buttons cannot receive clicks while an interactive video is active.
 	if (_vm->isPaused())
@@ -741,7 +741,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			event.type == Common::EVENT_LBUTTONDOWN)
 		_activeInputSource = kInputSourceMouse;
 
-	// ScummVM-exclusive feature: mouse navigation/clicking of the RA1 front-end menus.
+	// Extra feature: mouse navigation/clicking of the RA1 front-end menus.
 	if (handleMenuMouse(event))
 		return true;
 
@@ -1075,7 +1075,7 @@ void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int hei
 }
 
 void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int height) {
-	// --- ScummVM level select submenu, styled like the original frontend menus ---
+	// --- Extra level select submenu, styled like the original frontend menus ---
 	const int titleW = getFontBankStringWidth("LEVEL SELECT");
 	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
 
@@ -1167,7 +1167,7 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
 	_menuFrameCounter++;
 
-	// ScummVM-exclusive feature: the menus are mouse-clickable, so keep the default
+	// The menus are mouse-clickable, so keep the default
 	// arrow cursor visible. SmushPlayer::play() hides the system cursor for the whole
 	// video (and re-hides it every video), so re-assert visibility each rendered frame
 	// while a menu overlay is on screen. The arrow bitmap/palette is set in
@@ -1233,7 +1233,7 @@ void InsaneRebel1::playMenuBackground() {
 	_menuActive = true;
 	_menuConfirmed = false;
 	_menuFrameCounter = 0;
-	// Show ScummVM's built-in arrow pointer for the (mouse-clickable) menus. Set it once
+	// Show the built-in arrow pointer for the mouse-clickable menus. Set it once
 	// here; renderMainMenuOverlay() re-asserts showMouse() each frame because the SMUSH
 	// player forces the cursor off while a video plays. disableCursorPalette(false) ensures
 	// the arrow's own CLUT palette is used rather than the game palette.

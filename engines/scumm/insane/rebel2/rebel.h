@@ -63,7 +63,7 @@ public:
 	// ---------------------------------------------------------------------------
 	// Menu System
 	// ---------------------------------------------------------------------------
-	// Main game states (emulates retail state machine from FUN_004142BD)
+	// Main game states (emulates original state machine from FUN_004142BD)
 	enum GameState {
 		kStateIntro = 0,        // Stage 0: Intro/Credits sequence
 		kStateMainMenu = 1,     // Stage 1: Main menu (FUN_004147B2)
@@ -339,7 +339,7 @@ public:
 	};
 
 	// Main game entry point — full game loop (intro, menu, pilot, chapter, levels)
-	// Emulates the retail game flow from FUN_004142BD
+	// Emulates the original game flow from FUN_004142BD
 	void runGame();
 
 	// Play the intro sequence (CREDITS/O_OPEN_C, O_OPEN_D, OPEN/O_OPEN_A, O_OPEN_B)
@@ -419,8 +419,8 @@ public:
 	WaveEndResult processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags);
 
 	// Play a raw SAN segment from a scripted level handler.
-	// Retail reaches these call sites through different wrappers/direct paths; this
-	// only collapses ScummVM's shared dispatch step. Callers still choose the original
+	// The original reaches these call sites through different wrappers/direct paths; this
+	// only collapses the shared dispatch step. Callers still choose the original
 	// flags and when to call processWaveEnd(). recordFrame preserves the original
 	// split between gameplay/wave calls and transition/init-only segments.
 	bool playLevelSegment(const char *filename, uint16 flags, bool recordFrame = true);
@@ -655,7 +655,7 @@ public:
 	bool loadHandler25GrdSprites(byte *animData, int32 size, int16 par4);
 
 	// Parse Handler 25 shot-origin table text from opcode 8 (par4 = 8).
-	// Retail stores values into DAT_004578a6 / DAT_004578c6 (indices 5..19).
+	// FUN_0041CADB stores values into DAT_004578a6 / DAT_004578c6 (indices 5..19).
 	bool loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining);
 
 	// Load Level 2 background from embedded ANIM
@@ -838,7 +838,7 @@ public:
 		bool active;
 	};
 
-	// Two zone tables matching retail DAT_0043fb00 (primary) and DAT_0043f9c8 (secondary)
+	// Two zone tables matching DAT_0043fb00 (primary) and DAT_0043f9c8 (secondary)
 	static const int kMaxCollisionZones = 5;
 	CollisionZone _primaryZones[kMaxCollisionZones];    // Sub-opcode 0x0D zones
 	CollisionZone _secondaryZones[kMaxCollisionZones];  // Sub-opcode 0x0E zones
@@ -922,10 +922,10 @@ public:
 	int16 _damageHighFlashCounter;       // DAT_00482408 - high-damage red flash (0..16)
 	int16 _damageShakeCounter;           // DAT_0048240c - screen shake countdown (0..10)
 	byte _damageSavedPalette[0x300];     // DAT_00459990 - palette snapshot before flash
-	byte _damageRestorePalette[0x300];   // ScummVM boundary restore snapshot
+	byte _damageRestorePalette[0x300];   // Boundary restore snapshot
 	bool _damageRestorePaletteValid;
 
-	// Rebel per-level counters / flags mapped from retail globals
+	// Rebel per-level counters / flags mapped from original globals
 	bool _rebelOp6Initialized; // Guard: opcode 6 init block (clearBit/links/wave) runs once per video
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
 	int _rebelKillCounter;   // DAT_0047ab88 - enemies destroyed this phase
@@ -955,7 +955,7 @@ public:
 	int _rebelViewMode1;     // DAT_00482270
 	int _rebelViewMode2;     // DAT_00482274
 
-	// Retail counters mirrored from DAT_00443618 (values 100..109) and DAT_004436e0 (mask counters 1..9)
+	// Original counters mirrored from DAT_00443618 (values 100..109) and DAT_004436e0 (mask counters 1..9)
 	short _rebelValueCounters[10]; // Index 0 -> value 100, ... Index 9 -> 109
 	short _rebelMaskCounters[10];  // Index 1..9 used; index 0 unused
 	int _rebelLastCounter;         // Mirrors DAT_0047ab90 (last updated counter)
@@ -1210,7 +1210,7 @@ public:
 	NutRenderer *_grd005Sprite;      // DAT_00482258 - GRD005 mode 3 overlay NUT
 
 	// Handler 25 shot-origin lookup tables from opcode 8/par4=8 text payload.
-	// Indices 5..19 are filled by the retail "%hd %hd ..." parser (FUN_0041CADB case 6).
+	// Indices 5..19 are filled by the "%hd %hd ..." parser in FUN_0041CADB case 6.
 	// Uncovered Level 2 firing uses indices 5..14.
 	int16 _grdShotOriginX[30];       // DAT_004578a6 equivalent
 	int16 _grdShotOriginY[30];       // DAT_004578c6 equivalent

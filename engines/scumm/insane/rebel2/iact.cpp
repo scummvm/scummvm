@@ -588,7 +588,7 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 	}
 }
 
-// ScummVM refactor helper for opcode 6, not a separate retail function.
+// Helper split out of FUN_004033CF case 6; not a separate original function.
 void InsaneRebel2::updateOpcode6Handler(int16 par2) {
 	// Update handler type if par2 is a known handler value (from FUN_4033CF case 6).
 	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
@@ -601,7 +601,7 @@ void InsaneRebel2::updateOpcode6Handler(int16 par2) {
 	}
 }
 
-// ScummVM refactor helper for opcode 6 Handler 8, not a separate retail function.
+// Helper split out of FUN_00401234 case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 8 specific logic (third-person on foot) - FUN_00401234 case 4.
 	// DAT_0043e000 = local_14[3], which maps to the IACT header's par4/userId.
@@ -780,7 +780,7 @@ void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 pa
 		_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
 }
 
-// ScummVM refactor helper for opcode 6 Handler 7, not a separate retail function.
+// Helper split out of FUN_0040C3CC case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 7 specific logic (third-person ship) - FUN_0040d836 / FUN_0040c3cc
 	// Used for Level 3 and similar space combat levels.
@@ -851,7 +851,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = _optControlsFlipped ? (int16)-inputY : inputY;  // local_14
 
-	// ScummVM direct mouse/touch/gamepad aiming can hold the cursor at an edge
+	// Direct mouse/touch/gamepad aiming can hold the cursor at an edge
 	// indefinitely. Keep this sensitivity concession local to Handler 7
 	// third-person ship steering.
 	scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
@@ -924,7 +924,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	if (positionDeltaX > 11)
 		positionDeltaX = 12;
 
-	// Retail integrates relative flight axes. ScummVM's real mouse is an
+	// FUN_0040C3CC integrates relative flight axes. The real mouse is an
 	// absolute position, so steer toward a bounded position target instead of
 	// letting a held off-center cursor keep pushing the ship until it bounces.
 	if (useMouseFlightTarget) {
@@ -1092,7 +1092,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		useMouseFlightTarget ? 1 : 0);
 }
 
-// ScummVM refactor helper for opcode 6 Handler 25, not a separate retail function.
+// Helper split out of FUN_0041CADB case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// Handler 25 (0x19) specific logic (mixed mode - speeder bike).
 	// Based on FUN_0041cadb case 4 (opcode 6) lines 113-229.
@@ -1132,7 +1132,7 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 
 	// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render.
 	// From FUN_0041cadb line 122: DAT_00457900 = local_14[3].
-	// In ScummVM's IACT parsing: local_14[3] = offset 6-7 = par4.
+	// In this IACT parser: local_14[3] = offset 6-7 = par4.
 	// Mode 1: Uncovered, shooting position - sprite on left
 	// Mode 2: Covered, vertical shift
 	// Mode 3: Transition between covered/uncovered - sprite position depends on direction
@@ -1282,7 +1282,7 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 	drawHandler25CorridorOverlay(renderBitmap);
 }
 
-// ScummVM refactor helper for opcode 6 Handler 0x26, not a separate retail function.
+// Helper split out of FUN_00407FCB case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 0x26: FUN_407FCB line 77-79 - set level type from par4, read par5 for init trigger.
 	// param_5[3] = par4 = levelType, param_5[4] = par5 = init flag.
@@ -1320,7 +1320,7 @@ void InsaneRebel2::handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4
 	}
 }
 
-// ScummVM refactor helper for opcode 6 generic init, not a separate retail function.
+// Helper split out of generic opcode 6 initialization; not a separate original function.
 void InsaneRebel2::handleOpcode6GenericInit(int16 par4) {
 	// Other handlers: par4 == 1 triggers init (NOT level type).
 	if (_rebelHandler != 0x26 && par4 == 1) {
@@ -1344,7 +1344,7 @@ void InsaneRebel2::handleOpcode6GenericInit(int16 par4) {
 	}
 }
 
-// ScummVM refactor helper for opcode 6 generic flight state, not a separate retail function.
+// Helper split out of generic opcode 6 flight state; not a separate original function.
 void InsaneRebel2::updateOpcode6GenericFlightState() {
 	// Step 3: Autopilot/control mode logic (lines 123-146)
 	// This determines whether the ship flies on autopilot or manual control.
@@ -1462,7 +1462,7 @@ void InsaneRebel2::updateOpcode6GenericFlightState() {
 		_rebelLevelType, _rebelAutopilot, _rebelDamageLevel, _rebelViewOffsetX, _rebelViewOffsetY);
 }
 
-// ScummVM refactor helper for opcode 6 embedded ANIM scan, not a separate retail function.
+// Helper split out of opcode 6 embedded ANIM scanning; not a separate original function.
 void InsaneRebel2::scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par4) {
 	// Detect and load embedded ANIM (SAN) within the remaining IACT payload.
 	// Note: chunkSize is the remaining IACT payload size after par1-par4 header.
@@ -1562,7 +1562,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 //   Handler 0x26 (turret): Turret HUD NUT via par3/par4 (1-4)
 //   Handler 0x19: Speeder bike GRD/HUD resources via par4
 //
-// ScummVM refactor helper for opcode 8 Handler 7 FLY loading, not a separate retail function.
+// Helper split out of FUN_0040C3CC case 6; not a separate original function.
 bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Handler 7: FLY NUT Loading (Third-Person Ship)
 	// FUN_0040c3cc case 6: par4 determines FLY sprite slot.
@@ -1578,7 +1578,7 @@ bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, 
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 Handler 7 shot table loading, not a separate retail function.
+// Helper split out of FUN_0040C3CC case 6 shot-table loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8Handler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// FUN_0040c3cc case 6:
 	//   par4=12 -> FUN_0040fcfa(text, DAT_004437c2, DAT_00443808)
@@ -1595,14 +1595,14 @@ bool InsaneRebel2::loadOpcode8Handler7ShotTable(Common::SeekableReadStream &b, i
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 edge table loading, not a separate retail function.
+// Helper split out of FUN_00405663 edge-table loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Edge Blend Table Loading (par4 == 1000)
 	// FUN_405663: After all handler-specific opcode 8 processing, checks if par4==1000.
 	// If so, loads a per-level 256x256 color blend table from the IACT chunk data.
 	// This table controls the edge glow color of laser beams (e.g. red vs green).
 	// Data starts at byte offset 18 in the IACT chunk (in_stack_00000014 + 9 shorts).
-	// The stream is positioned after par1..par4 (8 bytes), so retail's +18 is startPos + 10.
+	// The stream is positioned after par1..par4 (8 bytes), so FUN_00405663's +18 is startPos + 10.
 	if (par4 == 1000 && remaining >= 10 + 8 + 32896) {
 		byte *edgeData = (byte *)malloc(8 + 32896);
 		if (edgeData) {
@@ -1619,7 +1619,7 @@ bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 sta
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 aux SFX loading, not a separate retail function.
+// Helper split out of opcode 8 aux SFX loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Auxiliary Sound Buffer Loading (par4 20-47)
 	// FUN_401234 case 6 (handler 8): par4 0x14-0x1b (20-27) -> aux buffer 0
@@ -1663,7 +1663,7 @@ bool InsaneRebel2::loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startP
 	return true;
 }
 
-// ScummVM refactor helper for opcode 8 Handler 25 shot-origin loading, not a separate retail function.
+// Helper split out of FUN_0041CADB case 6 shot-origin loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8)
 	// FUN_0041CADB case 6 pushes 30 short pointers into sscanf with format at 0x482360:
@@ -1679,7 +1679,7 @@ bool InsaneRebel2::loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 embedded ANIM scanning, not a separate retail function.
+// Helper split out of opcode 8 embedded ANIM scanning; not a separate original function.
 void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par3, int16 par4) {
 	// Remaining handlers require finding ANIM tag in the stream.
 	debugC(DEBUG_INSANE, "Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
@@ -1738,7 +1738,7 @@ void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableR
 	b.seek(startPos);
 }
 
-// ScummVM refactor helper for opcode 8 embedded ANIM routing, not a separate retail function.
+// Helper split out of opcode 8 embedded ANIM routing; not a separate original function.
 bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData, int32 animDataSize, int16 par3, int16 par4) {
 	bool handled = false;
 
@@ -1851,7 +1851,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining) {
 	// IACT layout at this point:
 	// - stream is positioned after par1..par4 (8 bytes consumed by caller)
-	// - retail parser reads from offset +18 relative to IACT start -> startPos + 10
+	// - FUN_0041CADB reads from offset +18 relative to IACT start -> startPos + 10
 	// - payload size for this opcode family is at offset +14 -> startPos + 6
 	if (remaining < 12)
 		return false;
@@ -1918,7 +1918,7 @@ bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, i
 		return false;
 	}
 
-	// Retail mapping (from FUN_41CADB disassembly):
+	// FUN_0041CADB mapping:
 	// token1->0x4578b0 (X index 5), token2->0x4578d0 (Y index 5), ...
 	// token29->0x4578cc (X index 19), token30->0x4578ec (Y index 19).
 	for (int i = 0; i < 15; ++i) {
@@ -1937,7 +1937,7 @@ bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, i
 
 // loadHandler7ShotTable -- Parse handler 7 laser muzzle coordinate pairs from IACT payload.
 bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
-	// Retail FUN_0040fcfa parses 35 "%hd %hd" pairs from offset +18 in the IACT
+	// FUN_0040FCFA parses 35 "%hd %hd" pairs from offset +18 in the IACT
 	// chunk into two parallel 35-entry tables. These tables are BSS globals in
 	// the EXE, so their values only exist in the SAN/IACT stream.
 	if (remaining < 12)
@@ -2024,7 +2024,7 @@ bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 st
 // Opcode 8 Helper Functions
 // ---------------------------------------------------------------------------
 // Extracted from the original monolithic iactRebel2Opcode8 to match
-// the retail FUN_* function structure.
+// the original FUN_* function structure.
 
 // loadHandler7FlySprites -- Handler 7 FLY NUT loading (FUN_0040c3cc case 6).
 bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4) {
@@ -2394,7 +2394,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 				_level2BackgroundLoaded = true;
 				foundBackground = true;
 
-				// Handler 25 uses this buffer as a lookup mask; the retail code does not
+				// Handler 25 uses this buffer as a lookup mask; FUN_0041CADB does not
 				// copy it to the live screen. Handler 8 still uses it as a restore source.
 				if (renderBitmap && _rebelHandler != 25) {
 					int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
@@ -2523,7 +2523,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 
 	// Check difficulty gate (flag bit 3 = 0x08)
 	// If set, only show text if difficulty check passes (we skip this check for simplicity)
-	// In retail: FUN_00425d30(0) is called
+	// FUN_00425D30(0) is called.
 
 	// Get render buffer dimensions
 	int width = (_player && _player->_width > 0) ? _player->_width : 320;
@@ -2638,7 +2638,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	convertedText[dstIdx] = '\0';
 
 	// Draw the text string (with converted character indices), but only when subtitles are
-	// enabled — opcode 9 is a subtitle/message path, so it honors ScummVM's global
+	// enabled: opcode 9 is a subtitle/message path, so it honors the global
 	// "subtitles" setting and the in-game TEXT toggle (same ConfMan key). The chunk is
 	// still fully parsed above so stream consumption is unaffected.
 	if (ConfMan.getBool("subtitles")) {

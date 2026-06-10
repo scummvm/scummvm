@@ -43,7 +43,7 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 // Menu System Implementation
 // ---------------------------------------------------------------------------
-// Emulates retail menu system from FUN_004147B2 and FUN_0041FDC8.
+// Emulates original menu system from FUN_004147B2 and FUN_0041FDC8.
 
 static void setRebel2MixerVolume(ScummEngine_v7 *vm, int volumeLevel) {
 	const int mixerVolume = CLIP<int>(volumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume);
@@ -123,7 +123,7 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 // Returns -1 (no action) or a 0-based selected menu item.
 // Events captured by notifyEvent() before ScummEngine consumes them.
 // Keyboard: Up=0x148, Down=0x150, Enter=0x0d.
-// Physical ESC is handled by notifyEvent() and opens the ScummVM menu.
+// Physical ESC is handled by notifyEvent() and opens the global menu.
 // Mouse mode (DAT_0047a806 == 1): Y position maps to selection.
 //
 int InsaneRebel2::processMenuInput() {

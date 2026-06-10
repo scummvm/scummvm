@@ -736,7 +736,7 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			return;
 		const uint32 routeFrame = (uint32)curFrame;
 		// GAME 0x09 publishes its branch-tested position in g_shipPosX.
-		// ScummVM keeps the drawn ship center and the 0x09 aim cursor split,
+		// Keep the drawn ship center and the 0x09 aim cursor split,
 		// so compare the effective gameplay cursor here.
 		const int16 branchX = getGameplayCursorX();
 		const int route = CLIP<int>(_levelRouteIndex, 0, 5);
@@ -860,7 +860,7 @@ void InsaneRebel1::updateFlightVariantCursor() {
 	// Assembly-verified 0x09 layout:
 	//   ship sprite center = (_74B6 + _74BA, _74B8 + _74BC)
 	//   cursor center      = (_74BE, _74C0)
-	// In ScummVM the flight sprite center already lives in _shipPos.
+	// The flight sprite center already lives in _shipPos.
 	const int16 shipBaseX = _shipPosX;
 	const int16 shipBaseY = _shipPosY;
 	const int32 liftTerm = (int32)_liftSmooth - 0x0F;
@@ -874,7 +874,7 @@ void InsaneRebel1::updateFlightVariantCursor() {
 }
 
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
-// ScummVM's absolute 320x200 mouse space. The old DOS virtual-mouse/recenter
+// the absolute 320x200 mouse space. The old DOS virtual-mouse/recenter
 // control path is intentionally not used. For opcode 0x0B, gamepad input uses
 // the 3DO standard-pad reticle model: axis samples move the reticle, and
 // releasing the pad holds the last reticle position.
@@ -1104,7 +1104,7 @@ void InsaneRebel1::updateShipPhysics() {
 		inputSourceName = "joystick-dpad";
 
 	// --- Step 2: Roll accumulator (_74CA) ---
-	// Normal mode: accumulate. For ScummVM's absolute mouse in flight handlers,
+	// Normal mode: accumulate. For absolute mouse input in flight handlers,
 	// steer toward a bounded roll target so holding the cursor off center does
 	// not continue accelerating the ship until it clamps.
 	if ((effectiveOpcode == 0x07 || effectiveOpcode == 0x09) &&
@@ -1341,7 +1341,7 @@ void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
 	// Original 0x0D/0x0E collision compares script zones transformed by
 	// FUN_223FE against the gameplay-window ship center (base center +
 	// g_shipOffset). This is DOS screen space; render overlays add the viewport
-	// offset separately when drawing into ScummVM's larger source buffer.
+	// offset separately when drawing into the larger source buffer.
 	//
 	// In Level 1 part 2, HandleGameOp0A_TurretVariant reuses _shipPos for the
 	// targeting cursor, so collision must read the movement accumulator instead.
@@ -1435,7 +1435,7 @@ void InsaneRebel1::updateTurretPhysics() {
 		const int16 rawInputY = inputY;
 
 		if (usedJoystick && _flyControlMode == 2) {
-			// ScummVM-only concession for Level 1 part 2. The original 0x08 handler
+			// Extra concession for Level 1 part 2. The original 0x08 handler
 			// uses raw axes directly; do not damp Level 13's surface controls.
 			inputX /= 2;
 			inputY /= 2;
@@ -1876,7 +1876,7 @@ bool InsaneRebel1::isTorpedoModeActive() const {
 }
 
 
-// ScummVM-side splits for the original on-foot GAME handlers:
+// Helper splits for the original on-foot GAME handlers:
 // HandleGameOp19_OnFootSequence (0x19) and HandleGameOp1A_OnFootVariant (0x1A).
 // On-foot handler for Level 9 (Stormtroopers). Character walks left/right, crosshair tracks mouse.
 //
@@ -2055,7 +2055,7 @@ void InsaneRebel1::updateOnFootSequence() {
 // this implementation; the original code dispatches the opcode handler directly.
 void InsaneRebel1::updateOnFootAimVariant() {
 	// --- 0x1A: Crosshair positioning (HandleGameOp1A_OnFootVariant) ---
-	// DOS used virtual-mouse axes relative to the character offset. ScummVM's
+	// DOS used virtual-mouse axes relative to the character offset. The
 	// mouse and gamepad reticle are screen-space controls so the cursor remains
 	// able to cross the whole playfield while Luke is standing at either side.
 	int16 inputX = 0, inputY = 0;
