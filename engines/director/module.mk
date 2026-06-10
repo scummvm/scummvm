@@ -198,6 +198,7 @@ MODULE_OBJS = \
 	lingo/xtras/m/masterapp.o \
 	lingo/xtras/m/mui.o \
 	lingo/xtras/d/datetime.o \
+	lingo/xtras/n/netlingo.o \
 	lingo/xtras/o/openurl.o \
 	lingo/xtras/o/oscheck.o \
 	lingo/xtras/q/qtvrxtra.o \
