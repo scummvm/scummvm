@@ -31,6 +31,9 @@
  *
  * USED IN:
  * I Spy Spooky Mansion
+ * Loewenzahn 2 / 3 / 4 / 5 / 6 / 7 / 8 / Adventskalender / Spielebox
+ * TKKG 6 / 7 / 8 / 9 / 11 / 13 / 14
+ * Oscar the Balloonist Flies into the Mountains
  *
  **************************************************/
 

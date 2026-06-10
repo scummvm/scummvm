@@ -31,6 +31,8 @@
  *
  * USED IN:
  * I Spy Spooky Mansion
+ * TKKG 8 / 9 / 10 / 11 / 13 / 14
+ * Oscar the Balloonist Discovers the Sea
  *
  **************************************************/
 
