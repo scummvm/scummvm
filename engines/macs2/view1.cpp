@@ -1067,45 +1067,49 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 	return true;
 }
 
-bool View1::msgMouseDown(const MouseDownMessage &msg) {
+bool View1::handleHelpClick(const MouseDownMessage &msg) {
+	Common::Rect screenRect(320, 200);
+	if (screenRect.contains(msg._pos)) {
+		uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
+		if (depth > 0 && depth < 0xFA) {
+			// Binary: fileSeek(scene + 0x5DD7 + depth*4) = _mapSceneOffsets[depth-1]
+			uint32 subSceneOffset = g_engine->_mapSceneOffsets[depth - 1];
+			if (subSceneOffset != 0 && subSceneOffset < (uint32)g_engine->_fileStream->size()) {
+				startFadeToBlack(8);
+				Graphics::ManagedSurface preview = g_engine->readRLEImage(subSceneOffset, g_engine->_fileStream);
+				_backgroundSurface.copyFrom(preview);
+				// Read sub-scene palette
+				g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
+				g_engine->applyPaletteDarkening();
+				// Read sub-scene depth map
+				Graphics::ManagedSurface subDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
+				g_engine->_depthMap.blitFrom(subDepth);
+				startFading(8);
+				redraw();
+			}
+		} else if (depth == 0xFF) {
+			// Return to normal mode: restore scene visuals without resetting characters
+			_currentMode = ViewMode::VM_GAME;
+			g_engine->setCursorMode(_cursorModeBeforeMenu);
+			updateCursor();
+			startFadeToBlack(8);
+			_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+			memcpy(g_engine->_palVanilla, _savedPalVanilla, 256 * 3);
+			g_engine->applyPaletteDarkening();
+			g_engine->_depthMap.copyFrom(_savedDepthMap);
+			startFading(8);
+			redraw();
+		}
+	}
+	return true;
+}
+
+bool View1::handleInput(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
 		// Help mode (depth-based scene preview) from handleInput (1008:e8bf).
 		// When currentMode == VM_HELP, clicking on the depth map previews scenes.
 		if (_currentMode == ViewMode::VM_HELP) {
-			Common::Rect screenRect(320, 200);
-			if (screenRect.contains(msg._pos)) {
-				uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
-				if (depth > 0 && depth < 0xFA) {
-					// Binary: fileSeek(scene + 0x5DD7 + depth*4) = _mapSceneOffsets[depth-1]
-					uint32 subSceneOffset = g_engine->_mapSceneOffsets[depth - 1];
-					if (subSceneOffset != 0 && subSceneOffset < (uint32)g_engine->_fileStream->size()) {
-						startFadeToBlack(8);
-						Graphics::ManagedSurface preview = g_engine->readRLEImage(subSceneOffset, g_engine->_fileStream);
-						_backgroundSurface.copyFrom(preview);
-						// Read sub-scene palette
-						g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
-						g_engine->applyPaletteDarkening();
-						// Read sub-scene depth map
-						Graphics::ManagedSurface subDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
-						g_engine->_depthMap.blitFrom(subDepth);
-						startFading(8);
-						redraw();
-					}
-				} else if (depth == 0xFF) {
-					// Return to normal mode: restore scene visuals without resetting characters
-					_currentMode = ViewMode::VM_GAME;
-					g_engine->setCursorMode(_cursorModeBeforeMenu);
-					updateCursor();
-					startFadeToBlack(8);
-					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
-					memcpy(g_engine->_palVanilla, _savedPalVanilla, 256 * 3);
-					g_engine->applyPaletteDarkening();
-					g_engine->_depthMap.copyFrom(_savedDepthMap);
-					startFading(8);
-					redraw();
-				}
-			}
-			return true;
+			return handleHelpClick(msg);
 		}
 
 		// Handle original save/load panel clicks
@@ -1281,6 +1285,9 @@ bool View1::msgMouseDown(const MouseDownMessage &msg) {
 		return true;
 	}
 	return false;
+}
+bool View1::msgMouseDown(const MouseDownMessage &msg) {
+	return handleInput(msg);
 }
 
 bool View1::msgMouseMove(const MouseMoveMessage &msg) {

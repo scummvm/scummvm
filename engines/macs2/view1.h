@@ -295,6 +295,38 @@ public:
 	bool handleInventoryClick(const MouseDownMessage &msg);
 	bool handleActionBarClick(const MouseDownMessage &msg);
 
+	// Input state machine from handleInput (1008:e8bf).
+	// The original game's input handler has two major branches:
+	//
+	// 1. NORMAL MODE (scene data offset 0x61db == 0):
+	//    Two sub-modes based on whether a script is executing (0f88):
+	//    a) Script NOT executing: Full interaction
+	//       - Left click + Walk mode (0x16): pathfind to click position
+	//       - Left click + other modes: hit-test hotspots/characters, run script
+	//       - Right click: open action bar popup (g_wUiPanelState=1)
+	//       - Button flag 8 (skip): fast-forward script to opcode 0x1D
+	//    b) Script IS executing: Limited interaction
+	//       - Left click: dismiss text boxes, dialogue choices, timer clicks
+	//       - Right click: open map/save panel (state=4) if no UI is blocking
+	//
+	// 2. MAP MODE (scene data offset 0x61db != 0):
+	//    - Left click: getDepthAtPoint() at click position
+	//      depth 1..0xF9: preview that scene image
+	//      depth 0xFF: full scene change back to main scene
+	//
+	// UI Panel States (g_wUiPanelState):
+	//   0 = Normal gameplay
+	//   1 = Action bar (right-click popup)
+	//   2 = Inventory panel
+	//   3 = Dialogue/save panel
+	//   4 = Map panel
+	//
+	// Panel dismissal uses keyboard scancode in PTR_LOOP_1020_0fe8:
+	//   6 = close inventory/dialogue panels
+	//   7 = close map panel
+	bool handleInput(const MouseDownMessage &msg);
+	bool handleHelpClick(const MouseDownMessage &msg);
+
 public:
 	View1();
 	virtual ~View1() {}
@@ -345,35 +377,6 @@ public:
 	uint16 _hoverAreaId = 0;
 	uint16 _hoverHotspotId = 0;
 
-	// Input state machine from handleInput (1008:e8bf).
-	// The original game's input handler has two major branches:
-	//
-	// 1. NORMAL MODE (scene data offset 0x61db == 0):
-	//    Two sub-modes based on whether a script is executing (0f88):
-	//    a) Script NOT executing: Full interaction
-	//       - Left click + Walk mode (0x16): pathfind to click position
-	//       - Left click + other modes: hit-test hotspots/characters, run script
-	//       - Right click: open action bar popup (g_wUiPanelState=1)
-	//       - Button flag 8 (skip): fast-forward script to opcode 0x1D
-	//    b) Script IS executing: Limited interaction
-	//       - Left click: dismiss text boxes, dialogue choices, timer clicks
-	//       - Right click: open map/save panel (state=4) if no UI is blocking
-	//
-	// 2. MAP MODE (scene data offset 0x61db != 0):
-	//    - Left click: getDepthAtPoint() at click position
-	//      depth 1..0xF9: preview that scene image
-	//      depth 0xFF: full scene change back to main scene
-	//
-	// UI Panel States (g_wUiPanelState):
-	//   0 = Normal gameplay
-	//   1 = Action bar (right-click popup)
-	//   2 = Inventory panel
-	//   3 = Dialogue/save panel
-	//   4 = Map panel
-	//
-	// Panel dismissal uses keyboard scancode in PTR_LOOP_1020_0fe8:
-	//   6 = close inventory/dialogue panels
-	//   7 = close map panel
 	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	void draw() override;
