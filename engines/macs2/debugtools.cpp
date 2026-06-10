@@ -942,7 +942,7 @@ static void showVariablesWindow() {
 					}
 				}
 			} else {
-				ImGui::Text("Showing: N");
+				ImGui::TextUnformatted("Showing: N");
 			}
 			ImGui::Text("chosenDialogueOption (FF:0D): %d", g_engine->_scriptExecutor->_chosenDialogueOption);
 		}
@@ -975,7 +975,7 @@ static void showCharactersWindow() {
 
 					// Pathfinding state
 					ImGui::Separator();
-					ImGui::Text("Movement:");
+					ImGui::TextUnformatted("Movement:");
 					ImGui::Text("  Lerping: %s  DirSet: %s  FollowPath: %s",
 								c->_isLerping ? "Y" : "N",
 								c->_stepDirectionSet ? "Y" : "N",
@@ -1019,7 +1019,7 @@ static void showCharactersWindow() {
 
 					// Direction availability
 					if (c->_gameObject->_blobs.size() >= 8) {
-						ImGui::Text("  DirAvail: ");
+						ImGui::TextUnformatted("  DirAvail: ");
 						ImGui::SameLine();
 						const char *dirNames[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 						for (int d = 0; d < 8; d++) {
@@ -1396,7 +1396,7 @@ static void showSceneMapsWindow() {
 		// Hotspot override table for Hotspot Overlay tab
 		if (selectedTab == 5) {
 			ImGui::Separator();
-			ImGui::Text("Hotspot Overrides:");
+			ImGui::TextUnformatted("Hotspot Overrides:");
 			for (uint i = 0; i < g_engine->_hotspotOverrides.size(); i++) {
 				if (g_engine->_hotspotOverrides[i] != 0xFFFF) {
 					ImGui::SameLine();
@@ -1451,12 +1451,12 @@ static void showSceneMapsWindow() {
 			}
 			if (protagonist && !protagonist->_path.empty()) {
 				ImGui::Separator();
-				ImGui::Text("Active path: ");
+				ImGui::TextUnformatted("Active path: ");
 				ImGui::SameLine();
 				for (uint p = 0; p < protagonist->_path.size(); p++) {
 					if (p > 0) {
 						ImGui::SameLine(0, 2);
-						ImGui::Text("->");
+						ImGui::TextUnformatted("->");
 						ImGui::SameLine(0, 2);
 					}
 					ImGui::Text("%u", protagonist->_path[p]);
@@ -1687,7 +1687,7 @@ static void showObjectScriptsWindow() {
 					}
 				}
 			} else {
-				ImGui::Text("Select an object with a script from the list.");
+				ImGui::TextUnformatted("Select an object with a script from the list.");
 			}
 		}
 		ImGui::EndChild();
@@ -1838,7 +1838,7 @@ static void showSoundWindow() {
 		v.note, v.channel, v.volume, v.active ? "YES" : "no");
 
 	// Ring buffer waveform for selected voice
-	ImGui::Text("Activity:");
+	ImGui::TextUnformatted("Activity:");
 	int ringPos = ds.ringPos;
 	float plotData[Adlib::kDebugRingSize];
 	for (int i = 0; i < Adlib::kDebugRingSize; i++) {
@@ -1848,7 +1848,7 @@ static void showSoundWindow() {
 
 	// All voices overview
 	ImGui::Separator();
-	ImGui::Text("All Voices:");
+	ImGui::TextUnformatted("All Voices:");
 	for (int i = 0; i < 9; i++) {
 		float voiceData[Adlib::kDebugRingSize];
 		for (int j = 0; j < Adlib::kDebugRingSize; j++) {
