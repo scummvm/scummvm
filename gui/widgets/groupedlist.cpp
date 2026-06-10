@@ -541,8 +541,6 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 	if (_filter == filt) // Filter was not changed
 		return;
 
-	int selectedItem = getSelected();
-
 	_filter = filt;
 
 	if (_filter.empty()) {
@@ -582,9 +580,7 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 	_scrollPos = 0.0f;
 	_fluidScroller->setPosition(_scrollPos);
 	_selectedItem = -1;
-	// Try to preserve the previous selection
-	if (selectedItem != -1)
-		setSelected(selectedItem);
+	_lastSelectionStartItem = -1;
 
 	if (redraw) {
 		scrollBarRecalc();
