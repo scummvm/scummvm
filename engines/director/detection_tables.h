@@ -8600,7 +8600,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("garygadget1", "",	  "Autos bauen mit Willy Werkel", "r:d251e21d690ba5ad35509e83d45dd0d0",  1032378, Common::DE_DEU, 602),
 	MACGAME2_l("garygadget1", "",	  "Program",					  "rt:02afd6d4d73e63517688ca8373df5d57", 1032442,
 									  "Movies/LBStart.dxr",			  "d:d3147a37ac1c86964755ab0e72d07d1d",  1075838, Common::NL_NLD, 602),
+	MACGAME1_l("garygadget1", "",	  "Bygg bilar med Mulle Meck",	  "r:04af7a8f667716cd9a364ae1b0c375b1",  1028937, Common::SV_SWE, 600),
 	WINGAME1_l("garygadget1", "",	  "DATA/Willy32.exe",			  "t:c55bbee037d85462b515712bfa88e7f0",  1518423, Common::DE_DEU, 650),
+	WINGAME1_l("garygadget1", "",	  "DATA/MULLE32.EXE",			  "t:a559c8b9d3bce8dd94d168d74509506d",  1512594, Common::SV_SWE, 600),
 	WINDEMO1_l("garygadget1", "Demo", "miel.exe",          "t:f8700f728df75744a96b6d7111e5725e", 1512519, Common::NL_NLD, 602),
 	MACDEMO1_l("garygadget1", "Demo", "Miel Monteur demo", "329aab81c0d74c5d3f31ddad26bcc639", 1029165, Common::NL_NLD, 600),
 
