@@ -228,7 +228,6 @@ private:
 	uint16 _frameWaitTicksRemaining = 0;
 
 	// We use this array to gather the dialogue choices as they come in
-	Common::Array<Common::StringArray> _dialogueChoices;
 
 	Common::String identifyScriptOpcode(uint8 opcode, uint8 opcode2);
 	Common::String identifyHelperOpcode(uint8 opcode, uint16 value);
@@ -276,6 +275,9 @@ public:
 	ScriptExecutor();
 
 	void setWaitingForCallback() { _state = ExecutorState::WaitingForCallback; }
+
+	Common::Array<uint16> _dialogueChoiceScriptIndices;
+	Common::Array<Common::StringArray> _dialogueChoices;
 
 	// This is where a secondary inventory was last opened,
 	// when it is closed, we need to execute from here

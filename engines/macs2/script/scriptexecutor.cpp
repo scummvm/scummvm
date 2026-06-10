@@ -1016,11 +1016,15 @@ void Script::ScriptExecutor::scriptSkipWord() {
 void Script::ScriptExecutor::scriptClearDialogueChoices() {
 	// Mark that we are gathering strings for setting up a dialogue choice.
 	_dialogueChoices.clear();
+	_dialogueChoiceScriptIndices.clear();
 }
 
 void Script::ScriptExecutor::scriptAddDialogueChoice() {
 	// Add a dialogue choice.
 	uint16 index = scriptReadValue16();
+	// Binary stores this index at scene+0x5351+choiceIndex*6 (first field of each 6-byte entry).
+	// handleTimerClick (1008:d53b) stores it at scene+0x53B7 as the chosen result.
+	_dialogueChoiceScriptIndices.push_back(index);
 	// We don't save the index, instead we make sure that we add them in the right
 	// order and use the array to keep track.
 	// TODO: Removed this assert, during the dialogue in the beginning of chapter
@@ -1643,7 +1647,7 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 
 		if (currentView->_isShowingTextBox || currentView->_isShowingDialogueChoicePanel) {
 			currentView->_continueScriptAfterUI = false;
-			currentView->clearStringBox(false);
+			currentView->handleTextBoxInput();
 		}
 
 		if (currentView->_uiPanelState == View1::kUiPanelInventory) {
@@ -2562,6 +2566,7 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	case 0x0D:
 		out1 = _chosenDialogueOption;
+		debug("getSpecialValue FF:0D = %d", _chosenDialogueOption);
 		break;
 	case 0x23:
 		out1 = _pathWalkableResult ? 1 : 0;
