@@ -8411,9 +8411,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("catseyeview", "Vol. 7", "Cat'sEyeView7", "55d01cca925752c170ac1e9c01d1f87e", 1030462, 601),
 	WINGAME1t("catseyeview", "Vol. 7", "Cat'sEyeView7.exe", "1c8ec55a7a65ba13890697e0e92670a5", 6017657, 600),
 
+	// German title is "Hexentanz und Firlefanz", published by Tivola
 	// Bilingual English/German
 	MACGAME1("catshats", "", "Cats and Hats", "r:cc27aab06406e53f53bcf7efd154ac1c", 1033729, 602),
 	WINGAME1("catshats", "", "HEXEN32.EXE",	  "t:a6d98f124483409c0aa060fe0cfec013", 1661593, 602),
+	// Dutch title is "Speurtocht in Heksenstad", published by Lannoo
+	// Bilingual English/Dutch
+	MACGAME1("catshats", "", "Speurtocht in Heksenstad", "r:8efda43c2eac46f285b30638b366de4a",  115391, 602),
+	WINGAME1("catshats", "", "HEXEN32.EXE",				 "t:b15281937090355d004776b1a702f04e", 1660530, 602),
 
 	// Developed by Real World Multimedia, Wiltshire, England (1997)
 	// Distributed in Germany by Funware, Hamburg
