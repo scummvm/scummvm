@@ -279,6 +279,7 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 						newThingData[thingCount * thingTypeSize + i] = newThingData[thingIndex * thingTypeSize + i];
 					_vm->_dungeonMan->_dungeonFileHeader._thingCounts[thingType]++;
 					_vm->_dungeonMan->_thingData[thingType] = newThingData;
+					dummyThing.setIndex(thingCount);
 					_vm->_championMan->addObjectInSlot((ChampionIndex)0, dummyThing, (ChampionSlot)29);
 					debugPrintf("Item gimmed to the first champion, last slot\n");
 					return true;
