@@ -1818,6 +1818,12 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	if (funcSym.type != HANDLER) {
 		g_debugger->builtinHook(funcSym);
 		uint stackSizeBefore = g_lingo->_state->stack.size() - nargs;
+		// Remember which execution state (hence which stack) we are accounting
+		// against. A builtin like `go`/`play` can synchronously change the movie
+		// or frame and, via the events that fires, freeze Lingo and swap _state
+		// for a brand-new (empty) stack. If that happens the post-call balance
+		// check below would compare sizes taken from two different stacks.
+		const void *stateBefore = (const void *)g_lingo->_state;
 
 		if (target.type != VOID) {
 			// Only need to update the me obj
@@ -1846,6 +1852,21 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		uint stackSize = g_lingo->_state->stack.size();
 
 		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_value) {
+			// A builtin that changes the play state (e.g. `go`/`play` to another
+			// movie or frame) can freeze Lingo execution and switch _state to a
+			// different execution stack -- sometimes synchronously via the events
+			// the change fires (e.g. an `endSprite` handler that freezes), after
+			// which the freeze flags are already cleared again. When that happens
+			// `stackSizeBefore` and the post-call `stackSize` come from two
+			// different stacks, so the balance check below is meaningless and
+			// would raise a spurious fatal "popped extra values" error (observed
+			// in Loewenzahn 2's `go("Flugzeug")`). Detect the swap directly by
+			// comparing the state pointer, and skip the check then -- this mirrors
+			// the abort tolerance in popContext().
+			if ((const void *)g_lingo->_state != stateBefore ||
+					g_lingo->_freezeState || g_lingo->_freezePlay || g_lingo->_abort) {
+				return;
+			}
 			if (stackSize == stackSizeBefore + 1) {
 				if (!allowRetVal) {
 					Datum extra = g_lingo->pop();
