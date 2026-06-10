@@ -905,6 +905,46 @@ static void showVariablesWindow() {
 					ImGui::Text("[%03x] = %u (0x%x)", i, val, val);
 			}
 		}
+		if (ImGui::CollapsingHeader("Dialogue Choices", ImGuiTreeNodeFlags_DefaultOpen)) {
+			View1 *view = (View1 *)g_engine->findView("View1");
+			if (view && view->_isShowingDialogueChoicePanel) {
+				ImGui::Text("Showing: Y | Count: %u", view->_dialogueChoiceCount);
+				ImGui::Text("BoxPos: (%d,%d)", view->_stringBoxPosition.x, view->_stringBoxPosition.y);
+				Common::Point mousePos = g_system->getEventManager()->getMousePos();
+				int lineHeight = g_engine->maxGlyphHeight + 2;
+				int firstLineY = view->_stringBoxPosition.y + 9;
+				int relY = mousePos.y - firstLineY;
+				int hoveredChoice = -1;
+				if (relY >= 0 && lineHeight > 0) {
+					int hoveredLine = relY / lineHeight;
+					int cumulativeLines = 0;
+					for (uint i = 0; i < view->_dialogueChoiceLineCounts.size(); i++) {
+						if (hoveredLine < cumulativeLines + (int)view->_dialogueChoiceLineCounts[i]) {
+							hoveredChoice = i + 1;
+							break;
+						}
+						cumulativeLines += view->_dialogueChoiceLineCounts[i];
+					}
+				}
+				ImGui::Text("Mouse: (%d,%d) | Hovered: %d", mousePos.x, mousePos.y, hoveredChoice);
+				ImGui::Text("LineHeight: %d | FirstLineY: %d", lineHeight, firstLineY);
+				for (uint i = 0; i < view->_dialogueChoiceLineCounts.size(); i++) {
+					uint16 scriptIdx = (i < g_engine->_scriptExecutor->_dialogueChoiceScriptIndices.size())
+						? g_engine->_scriptExecutor->_dialogueChoiceScriptIndices[i] : 0;
+					ImGui::Text("  Choice %u: %u lines, scriptIndex=%u", i + 1, view->_dialogueChoiceLineCounts[i], scriptIdx);
+				}
+				ImGui::Separator();
+				for (uint i = 0; i < g_engine->_scriptExecutor->_dialogueChoices.size(); i++) {
+					ImGui::Text("  Choice %u:", i + 1);
+					for (uint j = 0; j < g_engine->_scriptExecutor->_dialogueChoices[i].size(); j++) {
+						ImGui::Text("    [%u] \"%s\"", j, g_engine->_scriptExecutor->_dialogueChoices[i][j].c_str());
+					}
+				}
+			} else {
+				ImGui::Text("Showing: N");
+			}
+			ImGui::Text("chosenDialogueOption (FF:0D): %d", g_engine->_scriptExecutor->_chosenDialogueOption);
+		}
 	}
 	ImGui::End();
 }
