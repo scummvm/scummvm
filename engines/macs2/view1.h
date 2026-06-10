@@ -301,6 +301,7 @@ public:
 	void endFadeCursorSuppression(const byte *palette);
 
 	bool handleInventoryClick(const MouseDownMessage &msg);
+	bool handleContainerInventoryClick(const MouseDownMessage &msg);
 	bool handleActionBarClick(const MouseDownMessage &msg);
 
 	// Input state machine from handleInput (1008:e8bf).

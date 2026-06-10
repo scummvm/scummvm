@@ -1650,7 +1650,8 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 			currentView->handleTextBoxInput();
 		}
 
-		if (currentView->_uiPanelState == View1::kUiPanelInventory) {
+		if (currentView->_uiPanelState == View1::kUiPanelInventory ||
+			currentView->_uiPanelState == View1::kUiPanelContainerInventory) {
 			_hasPendingExternalInventoryResume = false;
 			_externalInventorySourceObjectID = 0;
 			currentView->closeInventory();
