@@ -1083,8 +1083,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "zwergnase",			"Zwerg Nase: Ein interaktives Märchen" },
 
 	// Hebrew titles
-	{ "petel",				"מיץ פטל" },
 	{ "harating",			"בתככי הרייטינג" },  // BeTchachey HaRating - TV Ratings Intrigue
+	{ "petel",				"מיץ פטל" },
+	{ "piposh1",			"פיפוש" },  // aka Piposh: Hollywood
+	{ "piposh2",			"פיפוש 2" },
+	{ "piposh3d",			"3D פיפוש" },
+	{ "piposhdream",		"פיפוש בחלום שהתגשם" }, // Piposh in: A Dream Come True
 
 	// Italian titles
 	{ "brillo",				"Brillo: I Segreti del Bosco Antico" },
@@ -10369,6 +10373,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 									"AAA_MOOV/dlia.mov", "f:23c8cfcda5128d9fcd3f9dd617d008e6", 1156049, Common::PL_POL, 800),
 	WINGAME2_l("peppi", "",			"PIPPI.EXE",		 "t:acf172e5effe2f5c15e50f3c781aef40", 1274514,
 									"AAA_MOOV/dlia.mov", "f:e6f6ef6ba73332210aee3f9d9cf408fd",  480186, Common::RU_RUS, 800),
+
+	// "Piposh" series developed by Guillotine, published by Hed Arzi Multimedia
+	WINGAME2_l("piposh1", "", "piposh.exe",			  "t:9d33c0d6a4cfb70c33f87f6e8a1f23fd", 5665996,
+							  "PIPDATA/AFTRUMB1.DXR", "f:04529141e3c6e027331bd2da8e328a7c", 886670, Common::HE_ISR, 850),
+
+	WINGAME2_l("piposh2", "", "piposh2.exe",	   "t:9d33c0d6a4cfb70c33f87f6e8a1f23fd", 5665996,
+							  "PIP2DATA/AIR1.DXR", "f:cc6c9bb1acf76a0697a30d626e89543c", 2119111, Common::HE_ISR, 850),
+
+	// Only launcher is Director. Actual game uses 3D GameStudio / A5 engine
+	WINGAME1_l("piposh3d", "Launcher", "piposh3d.exe", "t:4dfd8c52d8cff6d1b7a9435a966f4e78", 5427592, Common::HE_ISR, 850),
+
+	WINGAME2_l("piposhdream", "", "dream.exe",	   "t:786558a29a117ff446a2419df3fa6756", 5120988,
+								  "COMEIN.dxr",	   "f:cd6f2b3a7768a6c8052b2ed1868f8c48", 3298134, Common::HE_ISR, 850),
 
 	// Original name is "Syng, lær og leg"
 	MACGAME1_l("pixeline1", "", "xn--syng, lr og leg-3lb",		"a44511b8ff0e46b4f9c85dd1cb58d458", 157815, Common::DA_DNK, 851),
