@@ -1717,6 +1717,7 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 	uint32 *objList;
 	Compact *itemData;
 	int j, num;
+	bool touched = false;
 
 	debug(1, "xPos = %d, yPos = %d, _invX = %d, _invY = %d, _invW = %d, _invH = %d", xPos, yPos, _invX, _invY, _invW, _invH);
 
@@ -1726,14 +1727,104 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 
 	num = (int)Logic::_scriptVariables[MENU_LENGTH];
 
-	// if clicked somewhere outside the inventory, close the inventory
-	if (!_touchId && buttonHeld) {
-		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
+	// held for more than the threshold time
+	if (_holding) {
+		debug(1, "Holding an object");
 
-			_mMode = MUST_RELEASE; // MUST_RELEASE because if we go straight to GAMEPLAY, robert will move to the place of clicking
-			_skyLogic->killInventory(); // stop rendering the inventory items
+		// if moved(i.e., taken out of the item's original dimension)
+		if (xPos < _invX || yPos < _invY || xPos > _invX + _invW || yPos > _invY + _invH) {
+
+			// for invUseOn() to drag object around the screen
+			_mMode = INVENTORY_USE_ON;
+
+			// remove all the inv items from the screen when one is being dragged
+			_skyLogic->killInventory();
+
+			_touchId = 0;
+			_skyScreen->setDragIconHighlight(false);
+
 			return;
 		}
+
+		// still holding the button, just update the hover text for the item it is dragging over and stop
+		if (buttonHeld) {
+			for (j = 0; j < num; j++) {
+				itemData = _skyCompact->fetchCpt(objList[j]);
+				debug("itemData->xcood = %d, itemData->mouseRelX = %d, itemData->ycood = %d, itemData->mouseRelY = %d", itemData->xcood, itemData->mouseRelX, itemData->ycood, itemData->mouseRelY);
+
+				if (itemData->xcood + (uint16)itemData->mouseRelX > xPos)
+					continue;
+				if (itemData->xcood + (uint16)itemData->mouseRelX + XWIDTH < xPos)
+					continue;
+				if (itemData->ycood + (uint16)itemData->mouseRelY > yPos)
+					continue;
+				if (itemData->ycood + (uint16)itemData->mouseRelY + YDEPTH < yPos)
+					continue;
+
+				touched = true;
+
+				if (_hoverId == objList[j]) // still on previous
+					continue;
+
+				// run previous item's GET_OFF, if there was one
+				if (Logic::_scriptVariables[GET_OFF])
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], _skyCompact->fetchCpt(_hoverId));
+
+				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+				_hoverId = objList[j];
+
+				// run the mouseOn script
+				if (itemData->mouseOn) {
+					uint16 tempY = itemData->ycood;
+					itemData->ycood = 136;
+					Logic::_scriptVariables[BUTTON] = 2;
+
+					// record what we are touching
+					Logic::_scriptVariables[SPECIAL_ITEM] = _hoverId;
+					_skyLogic->mouseScript(itemData->mouseOn, itemData);
+
+					// reset the render position to original
+					itemData->ycood = tempY;
+				}
+
+				_skyLogic->startInventory(_hoverId);
+			}
+			if (!touched) {
+				// touching nothin
+				_hoverId = 0;
+				if (Logic::_scriptVariables[GET_OFF]) {
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], _skyCompact->fetchCpt(_hoverId));
+					Logic::_scriptVariables[GET_OFF] = 0;
+				}
+			}
+			return;
+		}
+
+		// dropped on another item
+		// fetch the compact
+		itemData = _skyCompact->fetchCpt(_touchId);
+		// cancel cursor
+		Logic::_scriptVariables[OBJECT_HELD] = 0;
+
+		// check for the actual two objects that can combine like touhchId == 37 and hoverId == 74 etc.
+		if ((_touchId == 74 && _hoverId == 37) || (_touchId == 37 && _hoverId == 74)) {
+			Logic::_scriptVariables[83] = 0;
+			Logic::_scriptVariables[89] = 0;
+			Logic::_scriptVariables[90] = 39;
+			debug(1, "Combined");
+
+			_skyLogic->killInventory();
+			_skyLogic->startInventory();
+
+			_touchId = 0;
+		} else {
+			// dropping on an item that can't combine
+			_touchId = 0;
+			debug(1, "Using on invalid item");
+		}
+
+		_skyScreen->clearDragIcon();
+		_skyLogic->startInventory();
 	}
 
 	if (buttonHeld) {
@@ -1810,6 +1901,19 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 		_skyScreen->clearDragIcon();
 		_skyLogic->startInventory();
 	}
+
+	// if clicked somewhere outside the inventory, close the inventory
+	if (!_touchId && buttonHeld) {
+		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
+
+			_mMode = MUST_RELEASE; // MUST_RELEASE because if we go straight to GAMEPLAY, robert will move to the place of clicking
+			_skyLogic->killInventory(); // stop rendering the inventory items
+			return;
+		}
+	}
+
+	_holding = false;
+	_touchId = false;
 
 	// reset
 	if (Logic::_scriptVariables[GET_OFF]) {
