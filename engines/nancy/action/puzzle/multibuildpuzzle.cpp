@@ -86,12 +86,18 @@ void MultiBuildPuzzle::registerGraphics() {
 }
 
 void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
+	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+
 	readFilename(stream, _primaryImageName);
 
 	Common::String secName;
 	readFilename(stream, secName);
 	_closeupImageName = Common::Path(secName);
 	_hasCloseupImage = (secName != "NO_FILE" && !secName.empty());
+
+	if (isNancy10) {
+		_retainState = stream.readByte() != 0;	// TODO: state isn't saved yet
+	}
 
 	_numPieces = stream.readUint16LE();
 	_requiredPieces = stream.readUint16LE();
@@ -108,29 +114,60 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_allowAltZoneSnap = stream.readByte() != 0;
 	_checkOverlapOnDrop = stream.readByte() != 0;
 
+	if (isNancy10) {
+		// Completion-animation block: image name + sprite-sheet rect + 4 layout
+		// shorts (cols, framesPerStep, spacing, totalRows). TODO: not wired up.
+		Common::String animName;
+		readFilename(stream, animName);
+		_animImageName = Common::Path(animName);
+		_hasAnimImage = (animName != "NO_FILE" && !animName.empty());
+		readRect(stream, _animRect);
+		for (uint i = 0; i < 4; ++i)
+			_animLayout[i] = stream.readSint16LE();
+	}
+
 	// Pieces: data file always has 20 × 67-byte slots; only _numPieces are used.
 	// Reserve up-front so counter-spawn push_back doesn't reallocate (pieces are
 	// RenderObjects already registered with the graphics manager).
+	// In Nancy 10, the pieces have been bumped up to 83.
 	_pieces.reserve(80);
 	_pieces.resize(_numPieces);
 	for (uint i = 0; i < 20; ++i) {
 		if (i < _numPieces) {
 			Piece &p = _pieces[i];
-			readRect(stream, p.srcRect);
-			readRect(stream, p.homeRect);
-			readRect(stream, p.altSrcRect);
-			readRect(stream, p.cuSrcRect);
-			p.counterByte  = stream.readByte();
-			p.mustPlace    = stream.readByte();
-			p.mustNotPlace = stream.readByte();
+			if (isNancy10) {
+				stream.skip(16); // TODO: leading reserved rect, empty in cake puzzle.
+				readRect(stream, p.srcRect);
+				readRect(stream, p.altSrcRect);
+				readRect(stream, p.cuSrcRect);
+				readRect(stream, p.placedDstRect);
+				p.counterByte  = stream.readByte();
+				p.mustPlace    = stream.readByte();
+				p.mustNotPlace = stream.readByte();
+				p.homeRect = p.srcRect;
+			} else {
+				readRect(stream, p.srcRect);
+				readRect(stream, p.homeRect);
+				readRect(stream, p.altSrcRect);
+				readRect(stream, p.cuSrcRect);
+				p.counterByte  = stream.readByte();
+				p.mustPlace    = stream.readByte();
+				p.mustNotPlace = stream.readByte();
+			}
 		} else {
-			stream.skip(67);
+			stream.skip(isNancy10 ? 83 : 67);
 		}
 	}
 
 	_rotationSound.readNormal(stream);
 	_pickupSound.readNormal(stream);
 	_dropSound.readNormal(stream);
+
+	if (isNancy10) {
+		_animSound.readNormal(stream);
+		stream.skip(7 * 33);	// TODO: 7 unknown strings
+		stream.skip(2); // TODO: 4th cursor id at the front of the block; role TBD.
+	}
 
 	_dragCursorID  = stream.readSint16LE();
 	_exitCursorID1 = stream.readSint16LE();
@@ -369,6 +406,16 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	if (!viewData)
 		return;
 	Common::Rect vpScreen = viewData->screenPosition;
+
+	// Exit hotspots are checked against full-screen coords, so they work even
+	// when the cursor strays below the viewport (cake mixing's bottom-edge
+	// exit at y=340 sits outside the viewport in Nancy 10).
+	if (!_isDragging && _selectedPiece == -1 && !vpScreen.contains(input.mousePos)) {
+		if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
+			checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
+		return;
+	}
+
 	if (!vpScreen.contains(input.mousePos))
 		return;
 
@@ -621,6 +668,20 @@ void MultiBuildPuzzle::updatePieceRender(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];
 	bool isSelected = (!_isDragging && pieceIdx == _selectedPiece);
 	bool isDragging  = (_isDragging  && pieceIdx == _pickedUpPiece);
+
+	// Nancy 10: at-rest pieces are already painted into the primary scene
+	// overlay at their home positions, so the engine doesn't draw them.
+	// Hide the placed piece too when a completion-animation overlay handles
+	// the visual (cake mixing).
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && !isDragging && !isSelected) {
+		if (!p.isPlaced || _hasAnimImage) {
+			p.setVisible(false);
+			p.moveTo(p.gameRect);
+			return;
+		}
+	}
+
+	p.setVisible(true);
 
 	if (p.isPlaced || isDragging) {
 		// Placed or being dragged: show rotation sprite.
