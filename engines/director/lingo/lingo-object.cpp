@@ -169,6 +169,7 @@
 #include "director/lingo/xtras/n/netlingo.h"
 #include "director/lingo/xtras/o/openurl.h"
 #include "director/lingo/xtras/o/oscheck.h"
+#include "director/lingo/xtras/p/paintx.h"
 #include "director/lingo/xtras/q/qtvrxtra.h"
 #include "director/lingo/xtras/r/registryreader.h"
 #include "director/lingo/xtras/r/rtk.h"
@@ -349,6 +350,7 @@ static const struct XLibProto {
 	XLIBDEF(OpenURLXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(OrthoPlayXObj,		kXObj,			400),	// D4
 	XLIBDEF(PACoXObj,			kXObj,			300),	// D3
+	XLIBDEF(PaintXXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(PalXObj,			kXObj,			400),	// D4
 	XLIBDEF(PanelXObj,			kXObj,			200),	// D2
 	XLIBDEF(PharaohsXObj,		kXObj,			400),	// D4
