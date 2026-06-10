@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sprite.h"
+#include "mads/madsv2/core/text.h"
 #include "mads/madsv2/nebular/global.h"
 
 namespace MADS {
@@ -104,6 +105,9 @@ struct Action {
 	bool isObject(int word) const {
 		return isAction(word);
 	}
+	bool isTarget(int word) const {
+		return isAction(word);
+	}
 
 	int &_lookFlag = player.look_around;
 	int &_inProgress = player.command_ready;
@@ -142,6 +146,7 @@ struct Scene {
 		}
 
 		int getCurrentFrame() const;
+		void setNextFrameTimer(long time);
 	};
 	Animation _animation[10];
 
@@ -169,6 +174,17 @@ struct Scene {
 		};
 		TalkFont _talkFont;
 
+		struct KernelMessageProxy {
+			long &_frameTimer;
+
+			KernelMessageProxy(KernelMessagePtr kmsg) : _frameTimer(kmsg->update_time) {
+			}
+		};
+		struct Entries {
+			KernelMessageProxy operator[](uint handle);
+		};
+		Entries _entries;
+
 		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 			uint32 timeout, const Common::String &msg);
 		void reset();
@@ -182,6 +198,18 @@ struct Scene {
 	};
 	Rails _rails;
 
+	struct SequenceProxy {
+		struct SequencePosition {
+			int &x;
+			int &y;
+			SequencePosition(int &sx, int &sy) : x(sx), y(sy) {}
+		};
+		SequencePosition _position;
+
+		SequenceProxy(SequencePtr seqPtr) : _position(seqPtr->x, seqPtr->y) {
+		}
+	};
+
 	struct Sequences {
 		int16 addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
 			word start_ticks = 0, int expire = 0);
@@ -190,6 +218,7 @@ struct Scene {
 		int startPingPongCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
 			word start_ticks = 0, int expire = 0);
 		void remove(int sequence_id);
+		SequenceProxy operator[](uint sequence_id);
 
 		int16 addSubEntry(int sequence_id, int trigger_type, int trigger_sprite, int trigger_code);
 		void setDepth(int sequence_id, int depth);
@@ -198,7 +227,10 @@ struct Scene {
 		void addTimer(int ticks, int trigger_code);
 		void setMsgLayout(int sequence_id);
 		void setPosition(int sequence_id, const Common::Point &pt);
+		void setMotion(int sequence_id, int flags, int delta_x_times_100, int delta_y_times_100);
 		void updateTimeout(int old_sequence_id, int new_sequence_id);
+		void scan();
+		int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 	};
 	Sequences _sequences;
 
@@ -210,34 +242,43 @@ struct Scene {
 			const CharInfo *operator->() const {
 				return this;
 			}
-			WalkerInfoPtr _info;
+
+			int16 &_velocity;
+
+			CharInfo(WalkerInfoPtr info) : _velocity(info->velocity) {
+			}
 		};
 		CharInfo _charInfo;
 
+		Sprite(SeriesPtr series) : _charInfo(series->walker) {
+		}
 		Sprite *operator->() {
 			return this;
 		}
 		const Sprite *operator->() const {
 			return this;
 		}
-		int _index;
-
-		void setIndex(int index);
 	};
 
 	struct Sprites {
-		Sprite _sprites[51];
-
 		int16 addSprites(const char *name, int load_flags = 0);
-		Sprite &operator[](int idx);
+		void remove(int sprite_id);
+		Sprite operator[](int idx);
 	};
 	Sprites _sprites;
+
+	struct SpriteSlots {
+		void clear();
+		void fullRefresh();
+	};
+	SpriteSlots _spriteSlots;
 
 	int16 &_priorSceneId = previous_room;
 	int16 &_nextSceneId = new_room;
 	long &_frameStartTime = kernel.clock;
 	byte &_reloadSceneFlag = kernel.force_restart;
 	byte &_roomChanged = kernel.teleported_in;
+	int &_currentSceneId = room_id;
 
 	int loadAnimation(const char *name, int trigger_code);
 	void freeAnimation();
@@ -245,6 +286,7 @@ struct Scene {
 	void drawElements(int transitionType, bool surfaceFlag);
 	void resetScene();
 	void clearSequenceList();
+	void addActiveVocab(int vocab_id);
 };
 extern Scene _scene;
 
@@ -261,6 +303,7 @@ struct Game {
 		bool isInRoom(int object_id) const;
 		bool isInInventory(int object_id) const;
 		int getIdFromDesc(int desc_id) const;
+		void setRoom(int object_id, int roomNum);
 	};
 	Objects _objects;
 
@@ -320,9 +363,13 @@ struct Game {
 		int &_walkOffScreenSceneId = player.walk_off_edge_to_room;
 		int &_prepareWalkFacing = player.prepare_walk_facing;
 		int &_spritesStart = player.series_base;
+		int &_frameNumber = player.sprite;
+		int &_forceRefresh = player.sprite_changed;
 
 		void startWalking(const Common::Point &pt, int facing);
+		void walk(const Common::Point &pt, int facing);
 		void cancelCommand();
+		void update();
 	};
 	Player _player;
 
@@ -333,6 +380,7 @@ struct Game {
 
 		void add(int roomNum);
 		bool exists(int roomNum) const;
+		void pop_back();
 	};
 	VisitedScenes _visitedScenes;
 
@@ -361,6 +409,25 @@ struct VM {
 	}
 
 	struct Dialogs {
+		struct DefaultPosition {
+			int &x = text_default_x;
+			int &y = text_default_y;
+
+			DefaultPosition &operator=(const Common::Point &pt) {
+				x = pt.x;
+				y = pt.y;
+				return *this;
+			}
+			operator Common::Point() {
+				return Common::Point(x, y);
+			}
+
+			bool operator==(const Common::Point &rhs) const {
+				return x == rhs.x && y == rhs.y;
+			}
+		};
+		DefaultPosition _defaultPosition;
+
 		Dialogs *operator->() {
 			return this;
 		}

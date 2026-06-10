@@ -19,33 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room107::Room107(RexNebularEngine *vm) : Room1xx(vm) {
-	_shootingFl = false;
-}
+struct Scratch {
+	bool _shootingFl;
+};
 
-void Room107::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_shootingFl);
-}
 
-void Room107::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_MANTA_RAY);
-}
-
-void Room107::enter() {
+static void room_107_init() {
 	for (int i = 0; i < 3; i++)
 		_globals._spriteIndexes[i + 1] = _scene->_sprites.addSprites(formAnimName('G', i));
 
@@ -83,24 +77,24 @@ void Room107::enter() {
 	}
 
 	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
-	_shootingFl = false;
+	local._shootingFl = false;
 
 	if (_vm->getRandomNumber(1, 3) == 1) {
 		_scene->loadAnimation(Resources::formatName(107, 'B', -1, EXT_AA, ""), 0);
-		_shootingFl = true;
+		local._shootingFl = true;
 	}
 
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room107::step() {
-	if (_shootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
+static void room_107_daemon() {
+	if (local._shootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
-		_shootingFl = false;
+		local._shootingFl = false;
 	}
 }
 
-void Room107::preActions() {
+static void room_107_pre_parser() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_WEST))
 		_game._player._walkOffScreenSceneId = 106;
 
@@ -108,7 +102,7 @@ void Room107::preActions() {
 		_game._player._walkOffScreenSceneId = 108;
 }
 
-void Room107::actions() {
+static void room_107_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10708);
 	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn107]) {
@@ -148,6 +142,22 @@ void Room107::actions() {
 	_action._inProgress = false;
 }
 
+void room_107_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._shootingFl);
+}
+
+void room_107_preload() {
+	room_init_code_pointer = room_107_init;
+	room_pre_parser_code_pointer = room_107_pre_parser;
+	room_parser_code_pointer = room_107_parser;
+	room_daemon_code_pointer = room_107_daemon;
+
+	section_1_walker();
+	section_1_interface();
+	vocab_make_active(NOUN_MANTA_RAY);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

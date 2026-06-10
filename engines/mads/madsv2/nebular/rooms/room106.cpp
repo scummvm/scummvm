@@ -88,10 +88,10 @@ static void room_106_init() {
 	local._firstEmergingFl = false;
 
 	_game.loadQuoteSet(0x31, 0x32, 0x34, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0);
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room106::step() {
+static void room_106_daemon() {
 	if (_game._trigger == 70) {
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -2, -2);
@@ -183,7 +183,7 @@ void Room106::step() {
 	}
 }
 
-void Room106::preActions() {
+static void room_106_pre_parser() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_SEA_CLIFF) || _action.isAction(VERB_SWIM_TOWARDS, NOUN_SEAWEED_BANK)) {
 		_game._player._stepEnabled = false;
 		_scene->_sprites[_game._player._spritesStart + 1]->_charInfo->_velocity = 24;
@@ -194,7 +194,7 @@ void Room106::preActions() {
 		_game._player._walkOffScreenSceneId = 107;
 }
 
-void Room106::actions() {
+static void room_106_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10614);
 	else if (_action.isAction(VERB_SWIM_TO, NOUN_MAIN_AIRLOCK)) {
@@ -254,7 +254,7 @@ void room_106_preload() {
 	section_1_interface();
 
 	if ((_scene->_priorSceneId == 102) && !_game._objects.isInInventory(OBJ_REBREATHER) && !_scene->_roomChanged)
-		_game._player._spritesPrefix = "";
+		*player.series_name = '\0';
 
 	_vm->_dialogs->_defaultPosition.y = 100;
 

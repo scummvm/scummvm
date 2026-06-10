@@ -19,21 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Room108::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room108::enter() {
+static void room_108_init() {
 	if (_globals[kHoovicSated] == 2)
 		_globals[kHoovicSated] = 0;
 
@@ -64,15 +63,19 @@ void Room108::enter() {
 		_game._player._playerPos = Common::Point(305, 98);
 
 	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room108::preActions() {
+static void room_108_daemon() {
+	// No implementation
+}
+
+static void room_108_pre_parser() {
 	if (_action.isAction(VERB_SWIM_UNDER, NOUN_OVERHANG_TO_EAST))
 		_game._player._walkOffScreenSceneId = 109;
 }
 
-void Room108::actions() {
+static void room_108_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10812);
 	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn108]) {
@@ -114,6 +117,21 @@ void Room108::actions() {
 	_action._inProgress = false;
 }
 
+void room_108_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_108_preload() {
+	room_init_code_pointer = room_108_init;
+	room_pre_parser_code_pointer = room_108_pre_parser;
+	room_parser_code_pointer = room_108_parser;
+	room_daemon_code_pointer = room_108_daemon;
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

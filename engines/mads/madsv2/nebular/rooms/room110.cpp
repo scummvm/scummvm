@@ -19,39 +19,33 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room110::Room110(RexNebularEngine *vm) : Room1xx(vm) {
-	_crabsFl = false;
-}
+struct Scratch {
+	bool _crabsFl;
+};
 
-void Room110::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_crabsFl);
-}
 
-void Room110::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_CRAB);
-}
-
-void Room110::enter() {
+static void room_110_init() {
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('X', 3));
 
-	_crabsFl = false;
+	local._crabsFl = false;
 
 	if (_scene->_priorSceneId == 109) {
 		_game._player._playerPos = Common::Point(59, 71);
@@ -61,7 +55,7 @@ void Room110::enter() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 
-		_crabsFl = true;
+		local._crabsFl = true;
 
 		int idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
@@ -79,26 +73,26 @@ void Room110::enter() {
 		_scene->loadAnimation(Resources::formatName(110, 'T', 1, EXT_AA, ""), 70);
 	}
 
-	sceneEntrySound();
+	section_1_music();
 	_game.loadQuoteSet(0x59, 0);
 
 	if (!_game._visitedScenes._sceneRevisited && (_scene->_priorSceneId == 109))
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(109));
 }
 
-void Room110::step() {
+static void room_110_daemon() {
 	if (_game._trigger == 70) {
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
 	}
 }
 
-void Room110::preActions() {
+static void room_110_pre_parser() {
 	if (_action.isAction(VERB_SWIM_THROUGH, NOUN_CAVE_ENTRANCE))
 		_game._player._walkOffScreenSceneId = 109;
 
-	if (_crabsFl) {
-		_crabsFl = false;
+	if (local._crabsFl) {
+		local._crabsFl = false;
 
 		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -121,7 +115,7 @@ void Room110::preActions() {
 	}
 }
 
-void Room110::actions() {
+static void room_110_parser() {
 	if (_action.isAction(VERB_SWIM_THROUGH, NOUN_TUNNEL)) {
 		switch (_game._trigger) {
 		case 0:
@@ -160,6 +154,22 @@ void Room110::actions() {
 	_action._inProgress = false;
 }
 
+void room_110_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._crabsFl);
+}
+
+void room_110_preload() {
+	room_init_code_pointer = room_110_init;
+	room_pre_parser_code_pointer = room_110_pre_parser;
+	room_parser_code_pointer = room_110_parser;
+	room_daemon_code_pointer = room_110_daemon;
+
+	section_1_walker();
+	section_1_interface();
+	_scene->addActiveVocab(NOUN_CRAB);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -273,6 +273,12 @@ extern int player_has_been_in_room(int id);
  */
 extern void player_discover_room(int id);
 
+
+/**
+ * Removes the most recently visited room from the list of rooms that have been visted.
+ */
+extern void player_undiscover_room();
+
 /**
  * Returns true if the player is carrying the specified object number.
  * Negative(invalid) object numbers are permitted (they return false),

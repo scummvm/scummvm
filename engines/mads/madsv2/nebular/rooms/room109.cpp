@@ -19,49 +19,36 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/himem.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room109::Room109(RexNebularEngine *vm) : Room1xx(vm) {
-	_rexThrowingObject = false;
-	_hoovicDifficultFl = false;
-	_beforeEatingRex = false;
-	_eatingRex = false;
-	_hungryFl = false;
-	_eatingFirstFish = false;
+struct Scratch {
+	byte _rexThrowingObject;
+	byte _hoovicDifficultFl;
+	byte _beforeEatingRex;
+	byte _eatingRex;
+	byte _hungryFl;
+	byte _eatingFirstFish;
 
-	_throwingObjectId = -1;
-	_hoovicTrigger = 0;
-}
+	int16 _throwingObjectId;
+	int16 _hoovicTrigger;
+};
 
-void Room109::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_rexThrowingObject);
-	s.syncAsByte(_hoovicDifficultFl);
-	s.syncAsByte(_beforeEatingRex);
-	s.syncAsByte(_eatingRex);
-	s.syncAsByte(_hungryFl);
-	s.syncAsByte(_eatingFirstFish);
-	s.syncAsSint32LE(_throwingObjectId);
-	s.syncAsSint32LE(_hoovicTrigger);
-}
 
-void Room109::setup() {
-	_scene->addActiveVocab(NOUN_DEAD_PURPLE_MONSTER);
-	_scene->addActiveVocab(NOUN_MONSTER_SLUDGE);
-
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room109::enter() {
+static void room_109_init() {
 	_globals[kFishIn105] = true;
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RXSWRC_6");
@@ -70,11 +57,11 @@ void Room109::enter() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('O', 0));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('H', 4));
 
-	_rexThrowingObject = false;
-	_throwingObjectId = 0;
-	_beforeEatingRex = false;
-	_eatingRex = false;
-	_hungryFl = false;
+	local._rexThrowingObject = false;
+	local._throwingObjectId = 0;
+	local._beforeEatingRex = false;
+	local._eatingRex = false;
+	local._hungryFl = false;
 
 	if (_scene->_priorSceneId == 110) {
 		_game._player._playerPos = Common::Point(248, 38);
@@ -117,9 +104,9 @@ void Room109::enter() {
 	_vm->_palette->setEntry(253, 30, 30, 50);
 
 	_game.loadQuoteSet(0x53, 0x52, 0x54, 0x55, 0x56, 0x57, 0x58, 0);
-	_eatingFirstFish = (!_game._visitedScenes._sceneRevisited) && (_scene->_priorSceneId < 110);
+	local._eatingFirstFish = (!_game._visitedScenes._sceneRevisited) && (_scene->_priorSceneId < 110);
 
-	if (_eatingFirstFish) {
+	if (local._eatingFirstFish) {
 		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(Resources::formatName(105, 'F', 1, EXT_SS, ""));
 		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('H', 1));
 
@@ -131,19 +118,19 @@ void Room109::enter() {
 		_game._player._stepEnabled = false;
 	}
 
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room109::step() {
-	if (_beforeEatingRex) {
-		if (!_eatingRex) {
+static void room_109_daemon() {
+	if (local._beforeEatingRex) {
+		if (!local._eatingRex) {
 			if (_game._player._playerPos.x > 205) {
 				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 70);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 
-				_eatingRex = true;
+				local._eatingRex = true;
 				_vm->_sound->command(34);
 			}
 		} else {
@@ -162,30 +149,30 @@ void Room109::step() {
 		}
 	}
 
-	if (_hungryFl && (_game._player._playerPos == Common::Point(160, 32)) && (_game._player._facing == FACING_EAST)) {
+	if (local._hungryFl && (_game._player._playerPos == Common::Point(160, 32)) && (_game._player._facing == FACING_EAST)) {
 		_game._player.walk(Common::Point(226, 24), FACING_EAST);
 		_game._player._stepEnabled = false;
-		_hungryFl = false;
-		_beforeEatingRex = true;
+		local._hungryFl = false;
+		local._beforeEatingRex = true;
 		_scene->_sprites.remove(_globals._spriteIndexes[6]);
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('H', 0));
 		_vm->_palette->refreshSceneColors();
 	}
 
-	if (_game._player._moving && (_scene->_rails.getNext() > 0) && _globals[kHoovicAlive] && !_globals[kHoovicSated] && !_hungryFl && !_beforeEatingRex) {
+	if (_game._player._moving && (_scene->_rails.getNext() > 0) && _globals[kHoovicAlive] && !_globals[kHoovicSated] && !local._hungryFl && !local._beforeEatingRex) {
 		_game._player.cancelCommand();
 		_game._player.startWalking(Common::Point(160, 32), FACING_EAST);
 		_scene->_rails.resetNext();
-		_hungryFl = true;
+		local._hungryFl = true;
 	}
 
-	if (_eatingFirstFish && (_scene->_sequences[_globals._sequenceIndexes[10]]._position.x >= 178)) {
+	if (local._eatingFirstFish && (_scene->_sequences[_globals._sequenceIndexes[10]]._position.x >= 178)) {
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 4, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_SPRITE, 29, 72);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 29, 73);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[10], _globals._sequenceIndexes[9]);
-		_eatingFirstFish = false;
+		local._eatingFirstFish = false;
 		_game._player._stepEnabled = true;
 		_vm->_sound->command(34);
 	}
@@ -208,7 +195,7 @@ void Room109::step() {
 	}
 }
 
-void Room109::preActions() {
+static void room_109_pre_parser() {
 	if (_action.isAction(VERB_SWIM_UNDER, NOUN_OVERHANG_TO_WEST))
 		_game._player._walkOffScreenSceneId = 108;
 
@@ -228,10 +215,10 @@ void Room109::preActions() {
 		&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(NOUN_TUNNEL)))
 		_game._player._walkOffScreenSceneId = 110;
 
-	_hungryFl = false;
+	local._hungryFl = false;
 }
 
-void Room109::actions() {
+static void room_109_parser() {
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(10912);
 		_action._inProgress = false;
@@ -240,29 +227,29 @@ void Room109::actions() {
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))) {
 		if (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER)) {
-			_throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
-			if (_throwingObjectId >= 0) {
-				if ((_game._objects.isInInventory(_throwingObjectId) && _globals[kHoovicAlive]) || _rexThrowingObject) {
+			local._throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
+			if (local._throwingObjectId >= 0) {
+				if ((_game._objects.isInInventory(local._throwingObjectId) && _globals[kHoovicAlive]) || local._rexThrowingObject) {
 					switch (_game._trigger) {
 					case 0:
-						_rexThrowingObject = true;
-						_hoovicDifficultFl = false;
-						_game._objects.setRoom(_throwingObjectId, NOWHERE);
+						local._rexThrowingObject = true;
+						local._hoovicDifficultFl = false;
+						_game._objects.setRoom(local._throwingObjectId, NOWHERE);
 						_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 4, 1, 0, 0);
 						_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[0]);
 						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 						_game._player._visible = false;
 						_game._player._stepEnabled = false;
 
-						switch (_throwingObjectId) {
+						switch (local._throwingObjectId) {
 						case OBJ_DEAD_FISH:
 						case OBJ_STUFFED_FISH:
 							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', 1));
 							break;
 
 						case OBJ_BURGER:
-							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_HARD);
-							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (_hoovicDifficultFl ? 3 : 1)));
+							local._hoovicDifficultFl = (_game._difficulty == DIFFICULTY_HARD);
+							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (local._hoovicDifficultFl ? 3 : 1)));
 							break;
 
 						default:
@@ -274,18 +261,18 @@ void Room109::actions() {
 
 					case 1:
 						_game._player._visible = true;
-						_hoovicTrigger = 4;
-						switch (_throwingObjectId) {
+						local._hoovicTrigger = 4;
+						switch (local._throwingObjectId) {
 						case OBJ_BURGER:
-							_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, (_hoovicDifficultFl ? 4 : 6), 1, 0, 0);
+							_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, (local._hoovicDifficultFl ? 4 : 6), 1, 0, 0);
 							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 2, 2);
-							if (_hoovicDifficultFl) {
+							if (local._hoovicDifficultFl) {
 								_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 30);
 								_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
 							} else {
 								_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 								_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
-								_hoovicTrigger = 3;
+								local._hoovicTrigger = 3;
 							}
 							break;
 						case OBJ_DEAD_FISH:
@@ -295,7 +282,7 @@ void Room109::actions() {
 						case OBJ_STUFFED_FISH:
 							_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
 							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 2);
-							_hoovicTrigger = 3;
+							local._hoovicTrigger = 3;
 							break;
 						default:
 							break;
@@ -303,13 +290,13 @@ void Room109::actions() {
 						break;
 
 					case 2:
-						if (_hoovicDifficultFl)
+						if (local._hoovicDifficultFl)
 							_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 4, 2, 0, 0);
 						else
 							_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 4, 1, 0, 0);
 
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 4);
-						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, _hoovicTrigger);
+						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, local._hoovicTrigger);
 						_vm->_sound->command(34);
 						break;
 
@@ -332,7 +319,7 @@ void Room109::actions() {
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 							_scene->changeVariant(1);
 						} else {
-							if (_throwingObjectId == OBJ_DEAD_FISH) {
+							if (local._throwingObjectId == OBJ_DEAD_FISH) {
 								++_globals[kHoovicFishEaten];
 								int threshold;
 								switch (_game._difficulty) {
@@ -368,7 +355,7 @@ void Room109::actions() {
 						}
 
 						_game._player._stepEnabled = true;
-						_rexThrowingObject = false;
+						local._rexThrowingObject = false;
 						break;
 
 					case 5:
@@ -413,7 +400,7 @@ void Room109::actions() {
 					}
 					_action._inProgress = false;
 					return;
-				} else if (_game._objects.isInInventory(_throwingObjectId)) {
+				} else if (_game._objects.isInInventory(local._throwingObjectId)) {
 					// Nothing.
 				}
 			}
@@ -454,6 +441,35 @@ void Room109::actions() {
 	_action._inProgress = false;
 }
 
+void room_109_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._rexThrowingObject);
+	s.syncAsByte(local._hoovicDifficultFl);
+	s.syncAsByte(local._beforeEatingRex);
+	s.syncAsByte(local._eatingRex);
+	s.syncAsByte(local._hungryFl);
+	s.syncAsByte(local._eatingFirstFish);
+	s.syncAsSint32LE(local._throwingObjectId);
+	s.syncAsSint32LE(local._hoovicTrigger);
+}
+
+void room_109_preload() {
+	room_init_code_pointer = room_109_init;
+	room_pre_parser_code_pointer = room_109_pre_parser;
+	room_parser_code_pointer = room_109_parser;
+	room_daemon_code_pointer = room_109_daemon;
+
+	for (int count = 0; count < 4; ++count) {
+		himem_preload_series(kernel_full_name(109, 'H', count, nullptr, 0), 3);
+	}
+
+	_scene->addActiveVocab(NOUN_DEAD_PURPLE_MONSTER);
+	_scene->addActiveVocab(NOUN_MONSTER_SLUDGE);
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

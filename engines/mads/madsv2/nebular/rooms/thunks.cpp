@@ -69,12 +69,20 @@ int Game::Objects::getIdFromDesc(int desc_id) const {
 	return object_named(desc_id);
 }
 
+void Game::Objects::setRoom(int object_id, int roomNum) {
+	inter_move_object(object_id, roomNum);
+}
+
 void Game::VisitedScenes::add(int roomNum) {
 	player_discover_room(roomNum);
 }
 
 bool Game::VisitedScenes::exists(int roomNum) const {
 	return player_has_been_in_room(roomNum);
+}
+
+void Game::VisitedScenes::pop_back() {
+	player_undiscover_room();
 }
 
 void Game::loadQuoteSet(int quote1, ...) {
@@ -102,8 +110,16 @@ void Game::Player::startWalking(const Common::Point &pt, int facing) {
 	player_start_walking(pt.x, pt.y, facing);
 }
 
+void Game::Player::walk(const Common::Point &pt, int facing) {
+	player_walk(pt.x, pt.y, facing);
+}
+
 void Game::Player::cancelCommand() {
 	player_cancel_command();
+}
+
+void Game::Player::update() {
+	player_set_image();
 }
 
 char *Resources::formatName(int my_room, char type, int num, int ext, const char *text) {
@@ -116,6 +132,10 @@ char *Resources::formatAAName(int num) {
 
 int Scene::Animation::getCurrentFrame() const {
 	error("TODO: Animation::getCurrentFrame");
+}
+
+void Scene::Animation::setNextFrameTimer(long time) {
+	kernel_anim[_id].next_clock = time;
 }
 
 int Scene::DynamicHotspots::add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r) {
@@ -152,6 +172,10 @@ void Scene::KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 	kernel_message_teletype(msgIndex, numTicks, quoted);
 }
 
+Scene::KernelMessages::KernelMessageProxy Scene::KernelMessages::Entries::operator[](uint handle) {
+	return KernelMessageProxy(&kernel_message[handle]);
+}
+
 int Scene::Rails::getNext() const {
 	return player.next_special_code;
 }
@@ -164,14 +188,20 @@ int16 Scene::Sprites::addSprites(const char *name, int load_flags) {
 	return kernel_load_series(name, load_flags);
 }
 
-Scene::Sprite &Scene::Sprites::operator[](int idx) {
-	_sprites[idx].setIndex(idx);
-	return _sprites[idx];
+void Scene::Sprites::remove(int sprite_id) {
+	matte_deallocate_series(sprite_id, true);
 }
 
-void Scene::Sprite::setIndex(int index) {
-	_index = index;
-	_charInfo._info = series_list[index]->walker;
+Scene::Sprite Scene::Sprites::operator[](int idx) {
+	return Scene::Sprite(series_list[idx]);
+}
+
+void Scene::SpriteSlots::clear() {
+	image_marker = 0;
+}
+
+void Scene::SpriteSlots::fullRefresh() {
+	matte_refresh_work();
 }
 
 int16 Scene::Sequences::addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
@@ -191,6 +221,10 @@ int Scene::Sequences::startPingPongCycle(int series_id, int mirror, word ticks, 
 
 void Scene::Sequences::remove(int sequence_id) {
 	kernel_seq_delete(sequence_id);
+}
+
+Scene::SequenceProxy Scene::Sequences::operator[](uint sequence_id) {
+	return SequenceProxy(&sequence_list[sequence_id]);
 }
 
 void Scene::Sequences::setDepth(int sequence_id, int depth) {
@@ -221,8 +255,21 @@ void Scene::Sequences::setPosition(int sequence_id, const Common::Point &pt) {
 	kernel_seq_loc(sequence_id, pt.x, pt.y);
 }
 
+void Scene::Sequences::setMotion(int sequence_id, int flags,
+		int delta_x_times_100, int delta_y_times_100) {
+	kernel_seq_motion(sequence_id, flags, delta_x_times_100, delta_y_times_100);
+}
+
 void Scene::Sequences::updateTimeout(int old_sequence_id, int new_sequence_id) {
 	kernel_seq_copy_timeout(old_sequence_id, new_sequence_id);
+}
+
+void Scene::Sequences::scan() {
+	kernel_seq_full_update();
+}
+
+int Scene::Sequences::startCycle(int srcSpriteIdx, bool flipped, int cycleIndex) {
+	return kernel_seq_stamp(srcSpriteIdx, flipped, cycleIndex);
 }
 
 int Scene::loadAnimation(const char *name, int trigger_code) {
@@ -247,6 +294,10 @@ void Scene::resetScene() {
 
 void Scene::clearSequenceList() {
 	kernel_seq_init();
+}
+
+void Scene::addActiveVocab(int vocab_id) {
+	vocab_make_active(vocab_id);
 }
 
 void VM::Dialogs::show(int id) {

@@ -868,6 +868,10 @@ void player_discover_room(int id) {
 	}
 }
 
+void player_undiscover_room() {
+	player.num_rooms_been_in--;
+}
+
 int player_has(int object_id) {
 	int has_flag = false;
 
