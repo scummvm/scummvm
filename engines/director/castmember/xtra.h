@@ -42,6 +42,10 @@ public:
 	Datum getField(int field) override;
 	void setField(int field, const Datum &value) override;
 
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override;
+
 	Common::String formatInfo() override;
 
 	uint32 getCastDataSize() override;
@@ -50,6 +54,10 @@ public:
 private:
 	Common::String _xtraSymbol;
 	Common::Array<byte> _xtraData;
+	// Shockwave Audio (".swa") Xtra members are sounds; scripts set/read their
+	// volume even though we don't play the underlying media. Stored so get/set
+	// stay consistent. 0-255, matching Lingo's sound-volume range.
+	int _volume = 255;
 };
 
 } // End of namespace Director

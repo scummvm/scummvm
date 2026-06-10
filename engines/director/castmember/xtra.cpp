@@ -95,6 +95,7 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 
 XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source)
 		: CastMember(cast, castId) {
+	_volume = source._volume;
 }
 
 CastMember *XtraCastMember::promote(Cast *cast, uint16 castId, XtraCastMember *xtra) {
@@ -139,6 +140,40 @@ void XtraCastMember::setField(int field, const Datum &d) {
 	}
 
 	CastMember::setField(field, d);
+}
+
+bool XtraCastMember::hasProp(const Common::String &propName) {
+	// Xtra media members (e.g. Shockwave Audio ".swa") expose playback-progress
+	// properties. We don't stream/play the underlying Xtra media yet, but scripts
+	// commonly poll these in an `on exitFrame` wait-loop before advancing, so we
+	// answer them to avoid an "unknown property" Lingo error.
+	if (propName.equalsIgnoreCase("percentPlayed") || propName.equalsIgnoreCase("percentStreamed")
+			|| propName.equalsIgnoreCase("volume"))
+		return true;
+	return CastMember::hasProp(propName);
+}
+
+Datum XtraCastMember::getProp(const Common::String &propName) {
+	// The Xtra media isn't actually played, so report it as "fully played" (100).
+	// Intro/logo frames typically loop until `the percentPlayed of member X`
+	// reaches 100; returning 100 lets them proceed instead of hanging forever
+	// (returning 0) or erroring (property unknown).
+	if (propName.equalsIgnoreCase("percentPlayed") || propName.equalsIgnoreCase("percentStreamed"))
+		return Datum(100);
+	if (propName.equalsIgnoreCase("volume"))
+		return Datum(_volume);
+	return CastMember::getProp(propName);
+}
+
+void XtraCastMember::setProp(const Common::String &propName, const Datum &value, bool force) {
+	// Accept `set the volume of member X` on Shockwave Audio members. We don't
+	// play the media, but the assignment must not raise a Lingo error; store it
+	// so a subsequent read is consistent.
+	if (propName.equalsIgnoreCase("volume")) {
+		_volume = value.asInt();
+		return;
+	}
+	CastMember::setProp(propName, value, force);
 }
 
 Common::String XtraCastMember::formatInfo() {
