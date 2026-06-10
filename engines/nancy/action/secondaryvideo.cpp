@@ -241,6 +241,18 @@ void PlaySecondaryVideo::execute() {
 				_currentViewportFrame = -1;
 			}
 
+			// HACK: Checks for character availability in Nancy10. These are
+			// currently not handled correctly, so we hardcode them here at the moment.
+			// TODO: Find out why these are not handled correctly and implement a
+			// proper solution for them.
+			if (g_nancy->getGameType() == kGameTypeNancy10) {
+				uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
+				if ((sceneId == 2307 && NancySceneState.getEventFlag(556, g_nancy->_false)) || // EV_ST_Available
+					(sceneId == 2605 && NancySceneState.getEventFlag(588, g_nancy->_false)) || // EV_TB_Available
+					(sceneId == 2915 && NancySceneState.getEventFlag(156, g_nancy->_false))) // EV_DG_Available
+					_currentViewportFrame = -1;
+			}
+
 			if (_currentViewportFrame != -1) {
 				if (!_isInFrame) {
 					_decoder.start();
