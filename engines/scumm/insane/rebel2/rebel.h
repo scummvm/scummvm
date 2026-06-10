@@ -219,7 +219,7 @@ public:
 	// Original settings array at DAT_00482e20[0..4]:
 	//   [0]=text, [1]=music, [2]=voices, [3]=sound, [4]=hidden abort flag
 	// Additional flags: DAT_0047a7fe (controls normal/flipped), DAT_0047a80a (rapid fire)
-	// Volume: DAT_0047a804 (0-127), SFX vol: DAT_0047a802 (127-768)
+	// Volume: DAT_0047a804 (0-127), brightness/gamma: DAT_0047a802 (127-768)
 
 	void showOptionsMenu();
 	void drawOptionsOverlay(byte *renderBitmap, int pitch, int width, int height);

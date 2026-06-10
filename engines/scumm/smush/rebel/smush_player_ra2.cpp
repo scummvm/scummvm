@@ -217,6 +217,7 @@ void SmushPlayerRebel2::ra2InitAudioTrackSizes() {
 void SmushPlayerRebel2::initGameVideoState() {
 	_ra2PendingAnimHeaderPalette = false;
 	_ra2UsingGameplaySurface = false;
+	_smushAudioTable[100] = 0;
 
 	// Re-push the SMUSH palette to the system. Videos like O_LEVEL.SAN
 	// have no NPAL chunk and inherit the palette from the previous video.
@@ -1308,12 +1309,80 @@ bool SmushPlayerRebel2::handleGameSkipChunk(uint32 subType, int32 subSize, Commo
 		return true;
 	}
 
+	if (subType == MKTAG('P','S','A','D')) {
+		if (!_compressedFileMode && !isFastForwardingCurrentFrame())
+			ra2HandleFrameAudioChunk(subType, subSize, b);
+		return true;
+	}
+
 	if (subType == MKTAG('X','P','A','L')) {
 		ra2HandleDeltaPalette(subSize, b);
 		return true;
 	}
 
 	return false;
+}
+
+void SmushPlayerRebel2::ra2HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize <= 0)
+		return;
+
+	uint8 *audioChunk = (uint8 *)malloc(subSize + 8);
+	if (!audioChunk) {
+		b.skip(subSize);
+		return;
+	}
+
+	WRITE_BE_UINT32(audioChunk, subType);
+	WRITE_BE_UINT32(audioChunk + 4, subSize);
+	b.read(audioChunk + 8, subSize);
+	ra2FeedAudio(audioChunk, 0, 127, 0, 0);
+	free(audioChunk);
+}
+
+void SmushPlayerRebel2::ra2FeedAudio(uint8 *srcBuf, int groupId, int volume, int pan, int16 flags) {
+	int32 maxFrames;
+	uint16 trkId, index;
+
+	if (!_smushAudioInitialized)
+		return;
+
+	if (srcBuf[8] == 0 && srcBuf[9] == 0 && srcBuf[12] == 0 && srcBuf[13] == 0 && srcBuf[16] == 0 && srcBuf[17] == 0) {
+		trkId = READ_BE_INT16(&srcBuf[10]);
+		index = READ_BE_INT16(&srcBuf[14]);
+		maxFrames = READ_BE_INT16(&srcBuf[18]);
+
+		handleSAUDChunk(
+			srcBuf + 20,
+			READ_BE_UINT32(&srcBuf[4]) - 12,
+			groupId,
+			volume,
+			pan,
+			flags,
+			trkId,
+			index,
+			maxFrames);
+	} else {
+		trkId = READ_LE_INT16(&srcBuf[8]);
+		index = READ_LE_INT16(&srcBuf[10]);
+		maxFrames = READ_LE_INT16(&srcBuf[12]);
+		flags |= READ_LE_INT16(&srcBuf[14]);
+		volume = (volume * srcBuf[16]) >> 7;
+
+		const int panDelta = (int8)srcBuf[17];
+		const int effPan = (panDelta == -128) ? 128 : pan + panDelta;
+
+		handleSAUDChunk(
+			srcBuf + 18,
+			READ_BE_UINT32(&srcBuf[4]) - 10,
+			groupId,
+			volume,
+			effPan,
+			flags,
+			trkId,
+			index,
+			maxFrames);
+	}
 }
 
 void SmushPlayerRebel2::handleGameGost(int32 subSize, Common::SeekableReadStream &b) {

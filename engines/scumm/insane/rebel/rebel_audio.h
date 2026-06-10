@@ -45,16 +45,31 @@ public:
 
 	void queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan, int sampleRate = 0);
 	void processFrame(SmushPlayer *player, int16 feedSize);
+	void setGroupVolume(SmushPlayer *player, int groupId, int volume);
+	void setGroupPan(SmushPlayer *player, int groupId, int pan);
 
 private:
 	static const int kMaxTracks = 4;
 
 	bool processAudioCodes(SmushPlayer *player, int idx, int32 &tmpFeedSize, int &mixVolume);
+	int computeMixVolume(SmushPlayer *player, int idx) const;
+	Audio::Mixer::SoundType getSoundType(int flags) const;
+	int getTrackPan(SmushPlayer *player, int idx) const;
+	void updateTrackMixerState(SmushPlayer *player, int idx);
+	void stopStream(int trackIdx);
+	void stopFadeStream(int trackIdx);
+	void queueData(int trackIdx, const uint8 *data, int32 size, int volume, int pan, int sampleRate, Audio::Mixer::SoundType soundType);
+	void queueFadeData(int trackIdx, const uint8 *data, int32 size, int volume, int pan, int sampleRate, Audio::Mixer::SoundType soundType);
 
 	ScummEngine_v7 *_vm;
 	Audio::QueuingAudioStream *_streams[kMaxTracks];
+	Audio::QueuingAudioStream *_fadeStreams[kMaxTracks];
 	Audio::SoundHandle _handles[kMaxTracks];
+	Audio::SoundHandle _fadeHandles[kMaxTracks];
 	bool _trackActive[kMaxTracks];
+	bool _fadeTrackActive[kMaxTracks];
+	Audio::Mixer::SoundType _streamTypes[kMaxTracks];
+	Audio::Mixer::SoundType _fadeStreamTypes[kMaxTracks];
 	int _sampleRate;
 };
 

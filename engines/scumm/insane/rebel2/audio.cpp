@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/util.h"
 
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
@@ -175,6 +176,8 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	if (slot < 0 || slot >= kRA2NumSfx || !_sfxData[slot] || _sfxSize[slot] == 0) {
 		return;
 	}
+	if (_player && !_player->isChanActive(CHN_OTHER))
+		return;
 
 	// Stop any previous instance of this SFX slot
 	_vm->_mixer->stopHandle(_sfxHandles[slot]);
@@ -190,13 +193,18 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
 		pcmCopy, _sfxSize[slot], 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
-	// Scale volume from 0-127 to ScummVM's 0-255 range
-	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	int mixVolume = CLIP(volume, 0, 127);
+	if (_player) {
+		const int baseVolume = (_player->_smushTrackVols[1] * mixVolume) >> 7;
+		mixVolume = (baseVolume * _player->_smushTrackVols[0]) / 127;
+	}
+	const int scaledVolume = (mixVolume * Audio::Mixer::kMaxChannelVolume) / 127;
+	const int clampedPan = CLIP(pan, -127, 127);
 
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[slot],
-		stream, -1, scaledVolume, pan);
+		stream, -1, scaledVolume, clampedPan);
 
-	debugC(DEBUG_INSANE, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, volume, pan, _sfxSize[slot]);
+	debugC(DEBUG_INSANE, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, mixVolume, clampedPan, _sfxSize[slot]);
 }
 
 // loadAuxSfx -- Load sound data into auxiliary buffer (FUN_004118df).
@@ -222,6 +230,8 @@ void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !_auxSfxData[buffer] || _auxSfxSize[buffer] == 0) {
 		return;
 	}
+	if (_player && !_player->isChanActive(CHN_OTHER))
+		return;
 
 	_vm->_mixer->stopHandle(_auxSfxHandles[buffer]);
 
@@ -255,12 +265,18 @@ void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
 		pcmCopy, pcmSize, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
-	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	int mixVolume = CLIP(volume, 0, 127);
+	if (_player) {
+		const int baseVolume = (_player->_smushTrackVols[1] * mixVolume) >> 7;
+		mixVolume = (baseVolume * _player->_smushTrackVols[0]) / 127;
+	}
+	const int scaledVolume = (mixVolume * Audio::Mixer::kMaxChannelVolume) / 127;
+	const int clampedPan = CLIP(pan, -127, 127);
 
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_auxSfxHandles[buffer],
-		stream, -1, scaledVolume, pan);
+		stream, -1, scaledVolume, clampedPan);
 
-	debugC(DEBUG_INSANE, "InsaneRebel2::playAuxSfx: buffer=%d vol=%d pan=%d pcmSize=%d", buffer, volume, pan, pcmSize);
+	debugC(DEBUG_INSANE, "InsaneRebel2::playAuxSfx: buffer=%d vol=%d pan=%d pcmSize=%d", buffer, mixVolume, clampedPan, pcmSize);
 }
 
 } // End of namespace Scumm

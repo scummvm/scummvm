@@ -81,6 +81,8 @@ private:
 						  int left, int top, int width, int height);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2InitAudioTrackSizes();
+	void ra2HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b);
+	void ra2FeedAudio(uint8 *srcBuf, int groupId, int volume, int pan, int16 flags);
 
 	// LOAD chunk streaming buffer (embedded resource data)
 	byte *_loadBuffer;

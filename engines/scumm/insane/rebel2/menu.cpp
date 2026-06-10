@@ -45,6 +45,13 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 // Emulates retail menu system from FUN_004147B2 and FUN_0041FDC8.
 
+static void setRebel2MixerVolume(ScummEngine_v7 *vm, int volumeLevel) {
+	const int mixerVolume = CLIP<int>(volumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mixerVolume);
+}
+
 void InsaneRebel2::resetMenu() {
 	_menuSelection = 0;
 	_menuInactivityTimer = 0;
@@ -1891,10 +1898,7 @@ int InsaneRebel2::processOptionsInput() {
 				// Volume slider: decrease by 4 (original step size)
 				if (_optionsSelection == 6) {
 					_optVolumeLevel = MAX(0, _optVolumeLevel - 4);
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+					setRebel2MixerVolume(_vm, _optVolumeLevel);
 				}
 				return -1;
 
@@ -1902,10 +1906,7 @@ int InsaneRebel2::processOptionsInput() {
 				// Volume slider: increase by 4
 				if (_optionsSelection == 6) {
 					_optVolumeLevel = MIN(127, _optVolumeLevel + 4);
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+					setRebel2MixerVolume(_vm, _optVolumeLevel);
 				}
 				return -1;
 
