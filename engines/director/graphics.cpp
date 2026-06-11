@@ -334,8 +334,12 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		}
 
 		if (p->ms->tile) {
-			int x1 = p->ms->tileRect->left + (p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
-			int y1 = p->ms->tileRect->top  + (p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
+			int x1 = (p->ms->tileRect->left + p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
+			if (x1 < 0)
+				x1 += p->ms->tileRect->width();
+			int y1 = (p->ms->tileRect->top  + p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
+			if (y1 < 0)
+				y1 += p->ms->tileRect->height();
 
 			src = p->ms->tile->_surface.getPixel(x1, y1);
 		} else {
