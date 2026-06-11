@@ -934,6 +934,7 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	const bool highRes = ra2IsHighResMode();
 	const bool gameplayActive = isRebel2GameplayActive(_insane);
 	const bool fullFrameDelta = isRebel2FullFrameDeltaCodec(codec);
+	const int64 currentSurfaceSize64 = (int64)_width * _height;
 
 	if (!gameplayActive && fobjSize64 <= nativeScreenSize) {
 		if (highRes) {
@@ -958,6 +959,22 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 		return true;
 	}
 
+	if (gameplayActive && !fullFrameDelta &&
+			isRebel2Handler25CorridorMode(_insane) &&
+			_dst == _specialBuffer && _specialBuffer != nullptr &&
+			_width == 350 && _height == 200 &&
+			_ra2FrameObjectSurfaceWidth <= _width &&
+			_ra2FrameObjectSurfaceHeight <= _height &&
+			currentSurfaceSize64 > 0 && currentSurfaceSize64 <= _specialBufferSize) {
+		if (_ra2NativeFrameNeedsClear) {
+			ra2ClearCurrentTarget();
+			_ra2NativeFrameNeedsClear = false;
+		}
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using current Handler25 corridor _specialBuffer %dx%d for FOBJ %dx%d",
+			_width, _height, width, height);
+		return true;
+	}
+
 	const bool oversizedNative = fobjSize64 > nativeScreenSize ||
 		width > 320 || height > 200 ||
 		_ra2FrameObjectSurfaceWidth > 320 || _ra2FrameObjectSurfaceHeight > 200;
@@ -973,7 +990,6 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 		surfaceHeight = MAX(surfaceHeight, _ra2FrameObjectSurfaceHeight);
 	}
 
-	const int64 currentSurfaceSize64 = (int64)_width * _height;
 	if (highRes && gameplayActive && !useGameplaySurface && !oversizedNative &&
 			width > 0 && height > 0 &&
 			_dst == _specialBuffer && _specialBuffer != nullptr &&
