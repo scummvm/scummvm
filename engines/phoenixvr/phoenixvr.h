@@ -175,6 +175,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void drawSlot(int idx, int face, int x, int y);
+	void drawSaveCard(int idx);
 	void captureContext();
 
 	void setContextLabel(const Common::String &contextLabel) {

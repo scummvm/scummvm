@@ -64,12 +64,237 @@ static Common::CodePage getTextCodePage(Common::Language language) {
 	}
 }
 
+static bool isAmerzoneGame(const ADGameDescription *gameDesc) {
+	return !strcmp(gameDesc->gameId, "amerzone");
+}
+
+static Common::String getAmerzoneLevelLabel(const Common::String &script) {
+	static const struct {
+		const char *prefix;
+		const char *label;
+	} levels[] = {
+		{"01VR_PHARE", "Le Phare"},
+		{"02VR_ILE", "L'Ile"},
+		{"03VR_PUEBLO", "Le Pueblo"},
+		{"04VR_FLEUVE", "Le Fleuve"},
+		{"05VR_VILLAGEMARAIS", "Le Village"},
+		{"07VRTEMPLE_VOLCAN", "Le Temple"}
+	};
+
+	for (const auto &level : levels) {
+		if (script.hasPrefixIgnoreCase(level.prefix))
+			return level.label;
+	}
+
+	return "Amerzone";
+}
+
+static const char *mfull[] = {
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December"
+};
+
+static const char *wday[] = {
+	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+};
+
+static Common::String makeSaveText(const Common::String &firstLine, const Common::String &secondLine) {
+	Common::String result = firstLine;
+	result += '\0';
+	result += secondLine;
+	return result;
+}
+
+static Common::String makeSaveText(const Common::String &firstLine, const Common::String &secondLine, const Common::String &thirdLine) {
+	Common::String result = makeSaveText(firstLine, secondLine);
+	result += '\0';
+	result += thirdLine;
+	return result;
+}
+
+static Common::String formatSaveInfo(const TimeDate &td, bool longDate, const Common::String &place = Common::String()) {
+	if (longDate) {
+		return makeSaveText(
+			Common::String::format("%s, %s %d, %04d", wday[td.tm_wday], mfull[td.tm_mon], td.tm_mday, td.tm_year + 1900),
+			Common::String::format("%02d:%02d:%02d %s", td.tm_hour, td.tm_min, td.tm_sec, td.tm_hour < 12 ? "AM" : "PM"),
+			place);
+	}
+
+	return makeSaveText(
+		Common::String::format("%s %02d %02d %04d", wday[td.tm_wday], td.tm_mday, td.tm_mon + 1, td.tm_year + 1900),
+		Common::String::format("%02d h %02d", td.tm_hour, td.tm_min));
+}
+
+static int mapSaveSlotY(int y, bool splitV, int tileY) {
+	int splitLine = (tileY + 1) * 256;
+	if (splitV && y >= splitLine)
+		return (tileY + 3) * 256 + y - splitLine;
+	return y;
+}
+
+static void fillSaveSlotRect(Graphics::Surface &dst, const Common::Rect &rect, uint32 color, bool splitV, int tileY) {
+	if (splitV) {
+		int splitLine = (tileY + 1) * 256;
+		int topH = CLIP<int>(splitLine - rect.top, 0, rect.height());
+		if (topH > 0) {
+			Common::Rect top = rect;
+			top.bottom = rect.top + topH;
+			dst.fillRect(top, color);
+		}
+		if (topH < rect.height()) {
+			int bottomY = (tileY + 3) * 256 + MAX(rect.top - splitLine, 0);
+			Common::Rect bottom(rect.left, bottomY, rect.right, bottomY + rect.height() - topH);
+			dst.fillRect(bottom, color);
+		}
+	} else {
+		dst.fillRect(rect, color);
+	}
+}
+
+static int drawSaveTextBlock(Graphics::Surface &dst, const Graphics::Font *font, const Common::String &text,
+		int x, int y, int width, uint32 color, Graphics::TextAlign align, int lineHeight, bool splitV, int tileY,
+		bool reserveEmptyFinalLine = false) {
+	bool hasText = false;
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] != '\n' && text[i] != '\0') {
+			hasText = true;
+			break;
+		}
+	}
+	if (!hasText)
+		return y;
+
+	uint start = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] == '\n' || text[i] == '\0') {
+			if (i > start) {
+				Common::String line;
+				for (uint j = start; j < i; ++j)
+					line += text[j];
+				font->drawString(&dst, line, x, mapSaveSlotY(y, splitV, tileY), width, color, align);
+				y += lineHeight;
+			} else if (reserveEmptyFinalLine && i == text.size() - 1) {
+				y += lineHeight;
+			}
+			start = i + 1;
+		}
+	}
+	if (start < text.size()) {
+		Common::String line;
+		for (uint j = start; j < text.size(); ++j)
+			line += text[j];
+		font->drawString(&dst, line, x, mapSaveSlotY(y, splitV, tileY), width, color, align);
+		y += lineHeight;
+	}
+
+	return y;
+}
+
+static int saveCardTileId(int face, int x, int y) {
+	return (face << 2) + ((y < 256) ? (x < 256 ? 0 : 1) : (x < 256 ? 3 : 2));
+}
+
+static void copyCubeFaceToSurface(Graphics::ManagedSurface &faceSurface, const Graphics::Surface &vrSurface, int face) {
+	for (int y = 0; y < 512; ++y) {
+		for (int x = 0; x < 512; ++x) {
+			const int tileId = saveCardTileId(face, x, y);
+			faceSurface.setPixel(x, y, vrSurface.getPixel(x & 0xff, (tileId << 8) + (y & 0xff)));
+		}
+	}
+}
+
+static void copySurfaceToCubeFace(Graphics::Surface &vrSurface, const Graphics::ManagedSurface &faceSurface, int face) {
+	for (int y = 0; y < 512; ++y) {
+		for (int x = 0; x < 512; ++x) {
+			const int tileId = saveCardTileId(face, x, y);
+			vrSurface.setPixel(x & 0xff, (tileId << 8) + (y & 0xff), faceSurface.getPixel(x, y));
+		}
+	}
+}
+
+static void projectSaveCard(Graphics::ManagedSurface &faceSurface, const Graphics::ManagedSurface &card, float angle) {
+	struct Vertex {
+		float x;
+		float y;
+		float invW;
+		float uOverW;
+		float vOverW;
+	};
+
+	const float srcW = static_cast<float>(card.w);
+	const float srcH = static_cast<float>(card.h);
+	const float distance = srcW / 8.0f + srcW * 8.0f / 6.283100128173828f;
+	const float cosA = cosf(angle);
+	const float sinA = sinf(angle);
+
+	auto makeVertex = [&](float modelU, float modelV, float textureU, float textureV) {
+		const float modelX = modelU - srcW / 2.0f;
+		const float modelY = distance;
+		const float modelZ = srcH / 2.0f - modelV + 32.0f;
+		const float projectedW = (modelX * sinA - modelY * cosA) / 256.0f;
+		const float invW = 1.0f / projectedW;
+
+		Vertex vertex;
+		vertex.x = (modelX * (cosA + sinA) + modelY * (sinA - cosA)) * invW;
+		vertex.y = (modelX * sinA - modelY * cosA - modelZ) * invW;
+		vertex.invW = invW;
+		vertex.uOverW = textureU * invW;
+		vertex.vOverW = textureV * invW;
+		return vertex;
+	};
+
+	Vertex vertices[4] = {
+		makeVertex(0.0f, 0.0f, srcW, srcH),
+		makeVertex(static_cast<float>(card.w), 0.0f, 0.0f, srcH),
+		makeVertex(static_cast<float>(card.w), static_cast<float>(card.h), 0.0f, 0.0f),
+		makeVertex(0.0f, static_cast<float>(card.h), srcW, 0.0f)
+	};
+
+	auto rasterizeTriangle = [&](const Vertex &a, const Vertex &b, const Vertex &c) {
+		const float area = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+		if (ABS(area) < 0.0001f)
+			return;
+
+		int minX = CLIP<int>(static_cast<int>(floorf(MIN(a.x, MIN(b.x, c.x)))), 0, faceSurface.w - 1);
+		int maxX = CLIP<int>(static_cast<int>(ceilf(MAX(a.x, MAX(b.x, c.x)))), 0, faceSurface.w - 1);
+		int minY = CLIP<int>(static_cast<int>(floorf(MIN(a.y, MIN(b.y, c.y)))), 0, faceSurface.h - 1);
+		int maxY = CLIP<int>(static_cast<int>(ceilf(MAX(a.y, MAX(b.y, c.y)))), 0, faceSurface.h - 1);
+
+		for (int y = minY; y <= maxY; ++y) {
+			for (int x = minX; x <= maxX; ++x) {
+				const float px = static_cast<float>(x) + 0.5f;
+				const float py = static_cast<float>(y) + 0.5f;
+				const float w0 = ((b.x - px) * (c.y - py) - (b.y - py) * (c.x - px)) / area;
+				const float w1 = ((c.x - px) * (a.y - py) - (c.y - py) * (a.x - px)) / area;
+				const float w2 = 1.0f - w0 - w1;
+				if (w0 < 0.0f || w1 < 0.0f || w2 < 0.0f)
+					continue;
+
+				const float invW = w0 * a.invW + w1 * b.invW + w2 * c.invW;
+				if (ABS(invW) < 0.0001f)
+					continue;
+				const float u = (w0 * a.uOverW + w1 * b.uOverW + w2 * c.uOverW) / invW;
+				const float v = (w0 * a.vOverW + w1 * b.vOverW + w2 * c.vOverW) / invW;
+				if (u < 0.0f || u > srcW || v < 0.0f || v > srcH)
+					continue;
+
+				const int srcX = CLIP<int>(static_cast<int>(floorf(u)), 0, card.w - 1);
+				const int srcY = CLIP<int>(static_cast<int>(floorf(v)), 0, card.h - 1);
+				faceSurface.setPixel(x, y, card.getPixel(srcX, srcY));
+			}
+		}
+	};
+
+	rasterizeTriangle(vertices[0], vertices[1], vertices[2]);
+	rasterizeTriangle(vertices[0], vertices[2], vertices[3]);
+}
+
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																					 _frameLimiter(g_system, kFPSLimit),
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
 																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
-																					 _thumbnail(139, 103, _rgb565),
+																					 _thumbnail(isAmerzoneGame(gameDesc) ? 232 : 139, isAmerzoneGame(gameDesc) ? 174 : 103, _rgb565),
 																					 _lockKey(13),
 																					 _fov(kPi2),
 																					 _angleX(0),
@@ -1415,14 +1640,16 @@ Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *slot, bool is
 	GameState state;
 	state.script = _contextScript;
 	state.game = _contextLabel;
-
-	static const char *wday[] = {
-		"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+	const bool isAmerzone = gameIdMatches("amerzone");
+	Common::String amerzoneLevelLabel;
+	if (isAmerzone) {
+		amerzoneLevelLabel = getAmerzoneLevelLabel(state.script);
+		state.game.clear();
+	}
 
 	TimeDate td = {};
 	g_system->getTimeAndDate(td);
-	// Saturday 03 01 2026[\x00]23 h 17
-	state.info = Common::String::format("%s %02d %02d %04d%c%02d h %02d", wday[td.tm_wday], td.tm_mday, td.tm_mon + 1, td.tm_year + 1900, 0, td.tm_hour, td.tm_min);
+	state.info = formatSaveInfo(td, isAmerzone, amerzoneLevelLabel);
 
 	state.thumbWidth = _thumbnail.w;
 	state.thumbHeight = _thumbnail.h;
@@ -1458,11 +1685,60 @@ Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *slot, bool is
 	return Common::kNoError;
 }
 
+void PhoenixVREngine::drawSaveCard(int idx) {
+	if (!gameIdMatches("amerzone")) {
+		static const int faces[] = {4, 3, 5, 1};
+		const int face = faces[(idx - 1) / 2];
+		const bool odd = (idx - 1) & 1;
+		drawSlot(idx, face, odd ? 275 : 97, 200);
+		return;
+	}
+
+	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
+	if (!slot)
+		return;
+
+	auto state = GameState::load(*slot);
+	auto &dst = _vr.getSurface();
+	Graphics::Surface *thumbnail = state.getThumbnail(dst.format, 232);
+	const int cardW = thumbnail->w + 6;
+	const int cardH = thumbnail->w + 30;
+
+	Graphics::ManagedSurface card(cardW, cardH, dst.format);
+	const uint32 white = dst.format.RGBToColor(0xff, 0xff, 0xff);
+	const uint32 black = dst.format.RGBToColor(0, 0, 0);
+	card.fillRect(Common::Rect(0, 0, cardW, cardH), white);
+	card.fillRect(Common::Rect(0, 0, cardW, 1), black);
+	card.fillRect(Common::Rect(0, cardH - 1, cardW, cardH), black);
+	card.fillRect(Common::Rect(0, 0, 1, cardH), black);
+	card.fillRect(Common::Rect(cardW - 1, 0, cardW, cardH), black);
+	card.copyRectToSurface(*thumbnail, 3, 6, thumbnail->getRect());
+
+	const Graphics::Font *font = getFont(16, true);
+	if (font) {
+		int textY = thumbnail->h + 18;
+		textY = drawSaveTextBlock(*card.surfacePtr(), font, state.game, 0, textY, cardW, black, Graphics::kTextAlignCenter, 18, false, 0);
+		drawSaveTextBlock(*card.surfacePtr(), font, state.info, 0, textY, cardW, black, Graphics::kTextAlignCenter, 18, false, 0);
+	}
+
+	static const int faces[] = {4, 3, 5, 1};
+	const int face = faces[(idx - 1) / 2];
+	const float angle = ((idx - 1) & 1) ? -kPi / 8.0f : kPi / 8.0f;
+	Graphics::ManagedSurface faceSurface(512, 512, dst.format);
+	copyCubeFaceToSurface(faceSurface, dst, face);
+	projectSaveCard(faceSurface, card, angle);
+	copySurfaceToCubeFace(dst, faceSurface, face);
+
+	thumbnail->free();
+	delete thumbnail;
+}
+
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
 	if (!slot)
 		return;
 	auto state = GameState::load(*slot);
+	const bool isAmerzone = gameIdMatches("amerzone");
 
 	y += face * 4 * 256;
 	bool splitV = true;
@@ -1473,8 +1749,24 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	}
 
 	auto &dst = _vr.getSurface();
-	auto *src = state.getThumbnail(dst.format);
+	auto *src = state.getThumbnail(dst.format, isAmerzone ? 232 : 0);
 	int tileY = y / 256;
+	if (isAmerzone) {
+		const int cardX = x - 3;
+		const int cardY = y - 6;
+		const int cardW = src->w + 6;
+		const int cardH = src->w + 30;
+		uint32 white = dst.format.RGBToColor(0xff, 0xff, 0xff);
+		uint32 black = dst.format.RGBToColor(0, 0, 0);
+		fillSaveSlotRect(dst, Common::Rect(cardX, cardY, cardX + cardW, cardY + cardH), white, splitV, tileY);
+		fillSaveSlotRect(dst, Common::Rect(cardX, cardY, cardX + cardW, cardY + 1), black, splitV, tileY);
+		fillSaveSlotRect(dst, Common::Rect(cardX, cardY + cardH - 1, cardX + cardW, cardY + cardH), black, splitV, tileY);
+		fillSaveSlotRect(dst, Common::Rect(cardX, cardY, cardX + 1, cardY + cardH), black, splitV, tileY);
+		fillSaveSlotRect(dst, Common::Rect(cardX + cardW - 1, cardY, cardX + cardW, cardY + cardH), black, splitV, tileY);
+		x = cardX + 3;
+		y = cardY + 6;
+		tileY = y / 256;
+	}
 	auto srcRect = src->getRect();
 	short srcSplitY = MIN(y + src->h, (tileY + 1) * 256) - y;
 	if (splitV)
@@ -1485,12 +1777,26 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 		srcRect.bottom = src->h;
 		dst.copyRectToSurface(*src, x, (tileY + 3) * 256, srcRect);
 	}
-	auto *font = getFont(12, false);
-	static int kMargin = 14;
+	auto *font = getFont(isAmerzone ? 10 : 12, isAmerzone);
 	if (font) {
 		auto color = dst.format.RGBToColor(0, 0, 0);
-		auto dstY = splitV ? (tileY + 3) * 256 - srcSplitY : y;
-		font->drawString(&dst, state.info, x, dstY + kMargin + src->h, src->w, color, Graphics::TextAlign::kTextAlignCenter);
+		int textX = x;
+		int textW = src->w;
+		Graphics::TextAlign textAlign = Graphics::kTextAlignLeft;
+		int textY = y + 0x72;
+		int lineHeight = 14;
+		if (isAmerzone) {
+			textX = x - 3;
+			textW = src->w + 6;
+			textY = y - 6 + src->h + 14;
+			textAlign = Graphics::kTextAlignCenter;
+
+			textY = drawSaveTextBlock(dst, font, state.game, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY);
+			drawSaveTextBlock(dst, font, state.info, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY);
+		} else {
+			textY = drawSaveTextBlock(dst, font, state.game, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY, true);
+			drawSaveTextBlock(dst, font, state.info, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY);
+		}
 	}
 
 	src->free();

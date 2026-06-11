@@ -33,6 +33,15 @@
 
 namespace PhoenixVR {
 
+static Common::String flattenSaveText(const Common::String &text) {
+	Common::String result = text;
+	for (uint i = 0; i < result.size(); ++i) {
+		if (result[i] == '\n')
+			result.setChar(' ', i);
+	}
+	return result;
+}
+
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{GAMEOPTION_ORIGINAL_SAVELOAD,
 	 {_s("Use original save/load screens"),
@@ -150,7 +159,7 @@ SaveStateDescriptor PhoenixVRMetaEngine::querySaveMetaInfos(const char *target, 
 	SaveStateDescriptor desc;
 	desc.setSaveSlot(slotIdx);
 	desc.setDeletableFlag(true);
-	desc.setDescription(state.game + " " + state.info);
+	desc.setDescription(PhoenixVR::flattenSaveText(state.game) + " " + PhoenixVR::flattenSaveText(state.info));
 	Graphics::PixelFormat rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	desc.setThumbnail(state.getThumbnail(rgb565, 160));
 	return desc;
