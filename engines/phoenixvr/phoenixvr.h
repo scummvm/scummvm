@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/keyboard.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -46,6 +47,10 @@
 
 namespace Graphics {
 class Font;
+}
+
+namespace Video {
+class Subtitles;
 }
 
 namespace PhoenixVR {
@@ -96,6 +101,7 @@ public:
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||
 			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsSubtitleOptions) ||
 			   (f == kSupportsReturnToLauncher);
 	};
 
@@ -217,6 +223,10 @@ private:
 	void renderFade(int color);
 	void resetState();
 	const Graphics::Font *getFont(int size, bool bold) const;
+	Common::Path getSubtitlePath(const Common::String &path) const;
+	Common::SharedPtr<Video::Subtitles> loadSubtitles(const Common::String &path) const;
+	void setupSubtitles(Video::Subtitles &subtitles) const;
+	void drawAudioSubtitles();
 
 private:
 	bool _hasFocus = true;
@@ -244,6 +254,7 @@ private:
 		float angle;
 		uint8 volume;
 		int loops;
+		Common::SharedPtr<Video::Subtitles> subtitles;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
