@@ -512,13 +512,7 @@ struct LoadSave : public Script::Command {
 		if (!status)
 			return false;
 
-		static const int faces[] = {4, 3, 5, 1};
-		int face = faces[(slot - 1) / 2];
-		bool odd = (slot - 1) & 1;
-		// taken from necronomicon - misaligned
-		int x = odd ? 275 : 97;
-		int y = 200;
-		g_engine->drawSlot(slot, face, x, y);
+		g_engine->drawSaveCard(slot);
 		return true;
 	}
 
