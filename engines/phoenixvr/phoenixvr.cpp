@@ -29,6 +29,7 @@
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
+#include "common/str-enc.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/font.h"
@@ -53,6 +54,15 @@
 namespace PhoenixVR {
 
 PhoenixVREngine *g_engine;
+
+static Common::CodePage getTextCodePage(Common::Language language) {
+	switch (language) {
+	case Common::RU_RUS:
+		return Common::kWindows1251;
+	default:
+		return Common::kWindows1252;
+	}
+}
 
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																					 _frameLimiter(g_system, kFPSLimit),
@@ -758,12 +768,16 @@ void PhoenixVREngine::loadVariables() {
 
 const Graphics::Font *PhoenixVREngine::getFont(int size, bool bold) const {
 #ifdef USE_FREETYPE2
-	if (size < 14)
-		return _font12.get();
-	else if (size < 18)
-		return _font14.get();
-	else
-		return _font18.get();
+	const int fontMaxSizes[] = {10, 12, 14, 16, 18, INT_MAX};
+
+	for (uint i = 0; i < ARRAYSIZE(fontMaxSizes); ++i) {
+		if (size < fontMaxSizes[i]) {
+			const Graphics::Font *font = bold ? _boldFonts[i].get() : nullptr;
+			return font ? font : _regularFonts[i].get();
+		}
+	}
+
+	return _regularFonts[ARRAYSIZE(fontMaxSizes) - 1].get();
 #else
 	return FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 #endif
@@ -822,9 +836,9 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 		return;
 	}
 	auto &text = _textes.getVal(textId);
-	debug("rollover %s, %s font size: %d, bold: %d, color: %02x", dstRect.toString().c_str(), text.c_str(), size, bold, color);
+	debug("rollover %s, %s font size: %d, bold: %d, color: %02x", dstRect.toString().c_str(), text.encode(Common::kUtf8).c_str(), size, bold, color);
 
-	Common::Array<Common::String> lines;
+	Common::Array<Common::U32String> lines;
 	font->wordWrapText(text, dstRect.width(), lines, Graphics::kWordWrapDefault);
 
 	auto fontH = font->getFontHeight();
@@ -983,10 +997,13 @@ Common::Error PhoenixVREngine::run() {
 
 	_arn.reset(ARN::create());
 #ifdef USE_FREETYPE2
-	static const Common::String family("NotoSerif-Bold.ttf");
-	_font12.reset(Graphics::loadTTFFontFromArchive(family, 12));
-	_font14.reset(Graphics::loadTTFFontFromArchive(family, 14));
-	_font18.reset(Graphics::loadTTFFontFromArchive(family, 18));
+	static const Common::String regular("NotoSans-Regular.ttf");
+	static const Common::String bold("NotoSans-Bold.ttf");
+	const int fontSizes[] = {8, 10, 12, 14, 16, 18};
+	for (uint i = 0; i < ARRAYSIZE(fontSizes); ++i) {
+		_regularFonts[i].reset(Graphics::loadTTFFontFromArchive(regular, fontSizes[i]));
+		_boldFonts[i].reset(Graphics::loadTTFFontFromArchive(bold, fontSizes[i]));
+	}
 #endif
 
 	setCursorDefault(0, "Cursor1.pcx");
@@ -1010,6 +1027,7 @@ Common::Error PhoenixVREngine::run() {
 	{
 		Common::File textes;
 		if (textes.open(Common::Path("textes.txt"))) {
+			Common::CodePage textCodePage = getTextCodePage(_gameDescription->language);
 			while (!textes.eos()) {
 				auto text = textes.readLine();
 				if (text.empty() || text[0] != '*')
@@ -1022,7 +1040,7 @@ Common::Error PhoenixVREngine::run() {
 					++pos;
 				while (pos < text.size() && Common::isSpace(text[pos]))
 					++pos;
-				_textes.setVal(textId, text.substr(pos));
+				_textes.setVal(textId, Common::convertToU32String(text.c_str() + pos, textCodePage));
 			}
 			debug("loaded %u textes", _textes.size());
 		}

@@ -272,11 +272,11 @@ private:
 	Common::Array<byte> _capturedState;
 	Common::Array<byte> _loadedState;
 
-	Common::HashMap<int, Common::String> _textes;
+	Common::HashMap<int, Common::U32String> _textes;
 
-	Common::ScopedPtr<Graphics::Font> _font12;
-	Common::ScopedPtr<Graphics::Font> _font14;
-	Common::ScopedPtr<Graphics::Font> _font18;
+	static const int kFontSizeCount = 6;
+	Common::ScopedPtr<Graphics::Font> _regularFonts[kFontSizeCount];
+	Common::ScopedPtr<Graphics::Font> _boldFonts[kFontSizeCount];
 
 	Common::ScopedPtr<Graphics::ManagedSurface> _text;
 	Common::Rect _textRect;
