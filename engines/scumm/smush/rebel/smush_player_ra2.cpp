@@ -841,10 +841,10 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
 
 	if (flg & kStyleWordWrap) {
 		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
-		_multiFont->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		_multiFont->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, _width, color, flg);
 	} else {
 		Common::Rect clipRect(0, 0, _width, _height);
-		_multiFont->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		_multiFont->drawString(str, _dst, clipRect, pos_x, pos_y, _width, color, flg);
 	}
 }
 
