@@ -198,7 +198,11 @@ process:
 			;
 			updateUndrawCursor(target);
 			refreshSpritesData();
-			runCommand();
+			// Drain priority commands at this main-loop baseline too: a queued
+			// AI command (e.g. the timed "failed the ordeals" death scene) may
+			// fire a priority command, which runCommand now propagates up to a
+			// runCommandKeepSp anchor instead of running it nested.
+			runCommandKeepSp();
 			if (g_vm->_shouldRestart)
 				return;
 			blitSpritesToBackBuffer();
