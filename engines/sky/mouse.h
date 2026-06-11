@@ -93,6 +93,7 @@ public:
 	~Mouse();
 
 	void mouseEngine();
+	void mouseEngineIBASS();
 	void replaceMouseCursors(uint16 fileNo);
 	bool fnAddHuman();
 	void fnSaveCoods();
@@ -151,6 +152,7 @@ public:
 protected:
 
 	void pointerEngine(uint16 xPos, uint16 yPos);
+	void pointerEngineIBASS(uint16 xPos, uint16 yPos);
 	void buttonEngine1();
 	void invMouse(uint16 xPos, uint16 yPos);
 	void lincInvMouse(uint16 xPos, uint16 yPos);
@@ -203,8 +205,6 @@ protected:
 
 	Common::HashMap<int, int> _hotspotXMap;
 	Common::HashMap<int, int> _hotspotYMap;
-	bool _xMapInitialized = false;
-	bool _yMapInitialized = false;
 
 	static uint32 _mouseMainObjects[24];
 	static uint32 _mouseLincObjects[21];

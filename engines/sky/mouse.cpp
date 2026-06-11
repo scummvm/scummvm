@@ -109,9 +109,6 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact, Screen *sky
 
 	_proxFrame = 0;
 	_proxFrameSpeed = 0;
-
-	_xMapInitialized = false;
-
 	resetUI();
 }
 
@@ -268,61 +265,6 @@ bool Mouse::isUILive() {
 void Mouse::mouseEngine() {
 	_logicClick = (_mouseB > 0); // click signal is available for Logic for one gamecycle
 
-	if (SkyEngine::isIbass()) {
-		if (_actionFlash) {
-			_actionFlashTime--;
-			if (!_actionFlashTime)
-				_actionFlash = false;
-
-			if (!(_actionFlashTime & 1))
-				_skyScreen->clearIbassIcon(_actionFlashIcon, false);
-			else
-				_skyScreen->setIcon(_actionFlashIcon, _actionFlashX, _actionFlashY);
-		}
-
-		switch (_mMode) {
-		case ALERT_TO_GAME:
-			if (!_mouseB)
-				return;
-
-			_skyScreen->hideInventory();
-			_mMode = MUST_RELEASE;
-			break;
-
-		case MUST_RELEASE:
-			if (_mouseB)
-				return;
-
-			resetUI();
-			_mMode = GAMEPLAY;
-			break;
-
-		case GAMEPLAY:
-			pointerEngine(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
-			break;
-
-		case PRE_INVENTORY:
-			if (_mouseB)
-				return;
-
-			_mMode = INVENTORY;
-			break;
-
-		case INVENTORY:
-			if (isLincInv())
-				lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
-			else
-				invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
-
-		case INVENTORY_USE_ON:
-		case TEXT_CHOOSER:
-			break;
-		}
-
-		_mouseB = 0;
-		return;
-	}
-
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
 		if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
 			pointerEngine(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
@@ -331,6 +273,57 @@ void Mouse::mouseEngine() {
 		}
 	}
 	_mouseB = 0;	//don't save up buttons
+}
+
+void Mouse::mouseEngineIBASS() {
+	_logicClick = (_mouseB > 0);
+
+	if (_actionFlash) {
+		_actionFlashTime--;
+		if (!_actionFlashTime)
+			_actionFlash = false;
+
+		if (!(_actionFlashTime & 1))
+			_skyScreen->clearIbassIcon(_actionFlashIcon, false);
+		else
+			_skyScreen->setIcon(_actionFlashIcon, _actionFlashX, _actionFlashY);
+	}
+
+	switch (_mMode) {
+	case ALERT_TO_GAME:
+		if (!_mouseB)
+			return;
+
+		_skyScreen->hideInventory();
+		_mMode = MUST_RELEASE;
+		break;
+	case MUST_RELEASE:
+		if (_mouseB)
+			return;
+		resetUI();
+		_mMode = GAMEPLAY;
+		break;
+	case GAMEPLAY:
+		pointerEngineIBASS(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+		break;
+	case PRE_INVENTORY:
+		if (_mouseB)
+			return;
+
+		_mMode = INVENTORY;
+		break;
+	case INVENTORY:
+		if (isLincInv())
+			lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+		else
+			invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+		break;
+	case INVENTORY_USE_ON:
+	case TEXT_CHOOSER:
+		break;
+	}
+	_mouseB = 0;
+	return;
 }
 
 int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
@@ -352,7 +345,7 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 
 	// near inv button?
 	if (yPos > HOTSPOT_INVY && xPos < HOTSPOT_INVX)
-		return  0;
+		return 0;
 
 	// not on same as last time, or was not on anything previously, so re-scan all objects
 	do {
@@ -393,7 +386,6 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 }
 
 UIIcon Mouse::getInteractIcon(uint32 id) {
-
 	switch (id) {
 	case 70: // screen 1 stairs
 	case 4119: // elevator hole
@@ -648,16 +640,15 @@ uint16 Mouse::giveXCood(Compact *itemData, uint32 id) {
 			return  142;
 	}
 
-	if (!_xMapInitialized) {
+	if (_hotspotXMap.size() == 0) {
 		for (MouseXMap *m = mouseXMap; m->id != 0; m++)
 			_hotspotXMap[m->id] = m->mid;
-		_xMapInitialized = true;
 	}
 
 	if (_hotspotXMap.contains(id))
 		return _hotspotXMap[id];
 
-	return  mid;
+	return mid;
 }
 
 struct MouseYMap {
@@ -834,10 +825,9 @@ uint16 Mouse::giveYCood(Compact *itemData, uint32 id) {
 			return 0;
 	}
 
-	if (!_yMapInitialized) {
+	if (_hotspotYMap.size() == 0) {
 		for (MouseYMap *m = mouseYMap; m->id != 0; m++)
 			_hotspotYMap[m->id] = m->mid;
-		_yMapInitialized = true;
 	}
 
 	if (_hotspotYMap.contains(id))
@@ -883,416 +873,6 @@ int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
 }
 
 void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
-	if (SkyEngine::isIbass()) {
-		int midx, midy; // open hotspot dimensions
-		Compact *itemData;
-		int itemProx;
-		int d = 0;
-
-		if (yPos < (TOP_LEFT_Y + 5))
-			return;
-
-		// mouse must be down to search for stuff
-		if (_mouseB) {
-			debug(1, "Clicked");
-			// what are we near?
-			itemProx = doProximityHighlights(xPos, yPos);
-
-			// seems we need to clear this, but only safe to do so when a new click occurs as player is still live when walking to interact after a use-on interaction
-			// but not in linc terminal
-			if (101 != Logic::_scriptVariables[SCREEN])
-				Logic::_scriptVariables[OBJECT_HELD] = 0;
-
-			// need to check if still touching any currently popped up hotspot
-			if (_touchId && _touchId != 32767 && _timeOn < CLICK_THRESHOLD) {
-				if (_prevMouseOn == false)
-					_timeOn = 1;
-
-				// fetch the compact
-				itemData = _skyCompact->fetchCpt(_touchId);
-
-				// if not a floor
-				if (itemData->mouseOn) {
-					_skyScreen->setProximityNotAnimate(_nearestProximityIconId);//we want this one remaining one to not animate
-
-					midx = giveXCood(itemData, _touchId);
-					midy = giveYCood(itemData, _touchId);
-					// calc dist
-					d = abs(xPos - midx) + abs(yPos - midy);
-
-					// some left hand edge adjust for twin-hotspot non-exits
-					if (!hasSingleInteractIcon(_touchId) && !_isExit)
-						if ((midx - HOTSPOT_DIM) < TOP_LEFT_X)
-							midx = TOP_LEFT_X + HOTSPOT_DIM;
-
-					// still touching a normal hotspot?
-					if (!_isExit && midx - HOTSPOT_DIM < xPos && midx + HOTSPOT_DIM > xPos && midy - HOTSPOT_YOFF < yPos && midy/*+HOTSPOT_YOFF*/ > yPos) {
-						// if newly touching, and same item as last time, then inc the click count
-						if (_prevMouseOn == false) {
-
-							_clickedNum++;  // one more click
-							// reset fade out timer to max
-							_fadeOut = HOTSPOT_FADEOUT;
-							// reset hover time
-							_timeOn = 1;
-						} else
-							_timeOn++;
-
-						int icony = midy - HOTSPOT_YOFF;
-						icony -= TOP_LEFT_Y; // normalise for renderer
-						if (icony < 0)
-							icony = 0;
-
-						if (hasSingleInteractIcon(_touchId)) {
-							// update the coordinate of the hotspot
-							midx -= TOP_LEFT_X;
-							midx -= HOTSPOT_EXIT_DIM;
-
-							// draw the icons
-							_skyScreen->setIcon(getInteractIcon(_touchId), midx + 4, icony);
-							_actionFlashX = midx + 4;
-							_actionFlashIcon = getInteractIcon(_touchId);
-							_actionFlashY = icony;
-
-						} else { // 2 icons
-							midx -= TOP_LEFT_X;
-							midx -= HOTSPOT_DIM;
-
-							_actionFlashY = icony;
-
-							if (xPos <= (midx + HOTSPOT_DIM + TOP_LEFT_X)) {
-								Logic::_scriptVariables[BUTTON] = 2;
-								_actionFlashX = midx;
-								_actionFlashIcon = UI_ICON_LOOK;
-							} else {
-								Logic::_scriptVariables[BUTTON] = 1;
-								_actionFlashX = midx + HOTSPOT_DIM + 4;
-								_actionFlashIcon = getInteractIcon(_touchId);
-							}
-						}
-
-						// mouse on
-						_prevMouseOn = true;
-
-						// end here, when button held on something
-						return;
-					} else if (_isExit && midx - HOTSPOT_DIM < xPos && midx + HOTSPOT_DIM > xPos && midy - HOTSPOT_YOFF < yPos && midy/*+HOTSPOT_YOFF*/ > yPos) {
-						// still touching the poped up exit
-						// which action
-						Logic::_scriptVariables[BUTTON] = 1;
-
-						// if newly touching, and same item as last time, then inc the click count
-						if (_prevMouseOn == false) {
-							_clickedNum++;  // one more click
-							// reset fade out timer to max
-							_fadeOut = HOTSPOT_FADEOUT;
-							// reset hover time
-							_timeOn = 0;
-						} else {
-							_timeOn++; // one more cycle
-							// update the coordinate of the hotspot
-							int iconx = midx - HOTSPOT_EXIT_DIM;
-							iconx -= TOP_LEFT_X; // normalise for renderer
-							if (iconx < 0)
-								iconx = 0;
-
-							int icony = midy - HOTSPOT_EXIT_YOFF;
-							icony -= TOP_LEFT_Y; // normalise for renderer
-							if (icony < 0)
-								icony = 0;
-
-							// draw the icon
-							initExitIcon(_exitType, iconx, icony);
-
-							_actionFlashY = icony;
-						}
-
-						// mouse on
-						_prevMouseOn = true;
-
-						// end here, when button held on something
-						return;
-					} else {
-						_touchId = 0;
-						_clickedNum = 0;
-					}
-				} else { // else if floor
-					// floors just count time - we only want clicks(jabs)
-					// still touching it?
-					if ((itemData->xcood + ((int16)itemData->mouseRelX) < xPos) && (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX > xPos) && (itemData->ycood + ((int16)itemData->mouseRelY) < yPos) && (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY > yPos))
-						_timeOn++; // one more cycle
-					else {
-						_touchId = 0;
-						_clickedNum = 0;
-					}
-				}
-			}
-			// find if we're touching a floor
-			int floor = touchingFloor(xPos, yPos);
-
-			if (itemProx) {
-				itemData = _skyCompact->fetchCpt(itemProx);
-				midx = giveXCood(itemData, itemProx);
-				midy = giveYCood(itemData, itemProx);
-				// calc dist
-				d = abs(xPos - midx) + abs(yPos - midy);
-			}
-
-			// not close enough to real hotspot, and still touching previous floor
-			if (floor && (d >= USE_ON_DIST) && floor == _touchId)
-				// if we skip floor, and dont hit another hotspot, then we quit after this search, because there is no fadeOut on floors, so the system resets the couter
-				// floorSkip=true;
-				// continue;
-				return;
-
-			if ((itemProx && d < USE_ON_DIST) || floor) {
-				// we've hit a new object
-
-				// floor or object?
-				if (itemProx && d < USE_ON_DIST) {
-					// record what we're touching
-					Logic::_scriptVariables[SPECIAL_ITEM] = itemProx; // put in here now, for mouseOn script
-					_touchId = itemProx;
-					_touchIdLegacy = itemProx; // remembered when mouse off
-				} else {
-					// record what we're touching
-					Logic::_scriptVariables[SPECIAL_ITEM] = floor; // put in here now, for mouseOn script
-					_touchId = floor;
-					_touchIdLegacy = floor; // remembered when mouse off
-				}
-
-				itemData = _skyCompact->fetchCpt(_touchId);
-
-				// jumping straight from one object to another?
-				if (Logic::_scriptVariables[SPECIAL_ITEM]) {
-					// remove hotspot icons
-					_skyScreen->clearAllIbassIcons(false);
-				}
-
-				// reset hover time to max
-				_timeOn = 1;
-				_clickedNum = 0;
-
-				// run previous items get-off, if there was one (gone straight from one object onto another!)
-				if (Logic::_scriptVariables[GET_OFF])
-					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
-
-				// write mouse off script number
-				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
-
-				// run the mouse on script
-				if (itemData->mouseOn) {
-					// disallow sliding back onto floors
-					_floorLock = true;
-
-					// reset fade out timer
-					_fadeOut = HOTSPOT_FADEOUT;
-					debug(1, "Fadeout det to 36, mouseOn = %d, dist = %d", itemData->mouseOn, d);
-
-					_skyScreen->setProximityNotAnimate(_nearestProximityIconId); // we want this one remaining one to not animate
-
-					// assume not
-					_isExit = false;
-					_isFloor = false;
-
-					_skyLogic->mouseScript(itemData->mouseOn, itemData);
-
-					// exit, or hotspot?
-					if (_isExit) {
-
-						int iconx = midx - HOTSPOT_EXIT_DIM;
-						iconx -= TOP_LEFT_X; // normalise for renderer
-						if (iconx < 0)
-							iconx = 0;
-
-						int icony = midy - HOTSPOT_EXIT_YOFF;
-						icony -= TOP_LEFT_Y; // normalise for renderer
-						if (icony < 0)
-							icony = 0;
-
-						// draw the icon
-						initExitIcon(_exitType, iconx, icony);
-					} else {
-						int icony = midy - HOTSPOT_YOFF;
-						icony -= TOP_LEFT_Y;// normalise for renderer
-						if (icony < 0)
-							icony = 0;
-
-						if (hasSingleInteractIcon(_touchId)) {
-							// update the coordinate of the hotspot
-							int iconx = midx - HOTSPOT_EXIT_DIM;
-							iconx -= TOP_LEFT_X;// normalise for renderer
-							if (iconx < 0)
-								iconx = 0;
-
-							// draw the icons
-
-							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + 4, icony);
-
-							// stairs on screen 1 - normal object turned into exit - need to hack the button -
-							// the rest are either talk-to, which doesnt seem to matter, or look-at, like posters on walls
-							if (_touchId == 70 || _touchId == 69 || _touchId == 24633
-								|| _touchId == 24634 || _touchId == 4119 || _touchId == 8210)
-								Logic::_scriptVariables[BUTTON] = 1;
-							else
-								Logic::_scriptVariables[BUTTON] = 2;
-
-						} else { // 2 icons
-							// update the coordinate of the hotspot
-							int iconx = midx - HOTSPOT_DIM;
-							iconx -= TOP_LEFT_X;// normalise for renderer
-							if (iconx < 0)
-								iconx = 0;
-
-							// draw the icons
-							_skyScreen->setIcon(UI_ICON_LOOK, iconx, icony);
-							_skyScreen->setIcon(getInteractIcon(_touchId), iconx + HOTSPOT_DIM + 4, icony);
-						}
-					}
-				} else if (!_floorLock) { // no mouseOn script, which probably always means this is a floor?
-					// set action
-					Logic::_scriptVariables[BUTTON] = 1;
-					// non graphical hotspots - floors - can interact first click
-					_clickedNum = 1;
-					// reset hover time to max
-					_timeOn = 1;
-					_isFloor = true;
-				} else
-					_touchId = 0; // locked floor
-
-				// mouse on
-				_prevMouseOn = true;
-				// we're done
-				return;
-			} else {
-				debug(1, "nothing");
-				// not touching anything, force open hotspot to close
-				if (_fadeOut)
-					_fadeOut = 0;
-			}
-			// not touching a game object - but what about HU buttons, such as Inv?
-			if (!_prevMouseOn && 101 != Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO] != 24765) {
-				if (xPos < HOTSPOT_INVX && yPos > HOTSPOT_INVY) {
-					_skyLogic->startInventory();
-					_touchId = 0;
-					_holding = false;
-					_mMode = PRE_INVENTORY;
-					_skyScreen->clearAllProximityIcons(false);
-					_skyScreen->clearAllIbassIcons(false);
-					return;
-				}
-				// control panel
-				if (xPos < HOTSPOT_OPTIONSX && yPos < HOTSPOT_OPTIONSY) {
-					_skyControl->doControlPanel();
-					_skyScreen->clearAllProximityIcons(false);
-					_skyScreen->clearAllIbassIcons(false);
-					_mouseB = 0;
-				}
-				// help screen
-				if (xPos > HOTSPOT_helpx && yPos < HOTSPOT_helpy) {
-					_skyScreen->clearAllProximityIcons(false);
-					_skyScreen->clearAllIbassIcons(false);
-					_mouseB = 0;
-				}
-			}
-
-			// mouse on
-			_prevMouseOn = true;
-
-
-			debug(1, "floor returned = %d", floor);
-		} else { // not touching screen
-			if (_prevMouseOn) {
-
-				if (!_touchId || _isFloor)
-					_skyScreen->clearAllProximityIcons();
-
-				else if (_touchId) {
-					_skyScreen->clearAllProximityIcons();
-					// clear all but the one relating to the highlighted hotspot - hmmm
-					itemData = _skyCompact->fetchCpt(_touchId);
-					midx = giveXCood(itemData, _touchId);
-					midy = giveYCood(itemData, _touchId); //itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
-					_skyScreen->setProximityIcon(0, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), 1.0, 0);
-					_skyScreen->setProximityNotAnimate(0);//we want this one remaining one to not animate
-				}
-			}
-
-			// let go
-			_prevMouseOn = false;
-			_floorLock = false;
-
-			// if 2nd or more click on this item
-			if (_timeOn && _clickedNum) {
-
-
-				// faking the click so that the engine scripts execute correctly
-				_logicClick = true;
-				if (Logic::_scriptVariables[BUTTON] == 0)
-					Logic::_scriptVariables[BUTTON] = 1;
-
-				// first, some autosaving incase this is a fatal, yes FATAL, interaction
-				if (g_engine->canSaveGameStateCurrently())
-					g_engine->saveGameState(0, "Autosave", true);
-
-				// an sfx
-
-				_fadeOut = 0;   // force getOff script to run also
-
-				// setup action flash
-				if (!_isFloor) {
-					_actionFlash = true;
-					_actionFlashTime = ACTION_FLASH_TIME;
-				}
-				// set this again, as there's a chance some other random script may have cleared it since we first touched this hotspot
-				Logic::_scriptVariables[SPECIAL_ITEM] = _touchId;
-
-
-				// over anything?
-				Compact *item = _skyCompact->fetchCpt(Logic::_scriptVariables[SPECIAL_ITEM]);
-				if (item->mouseClick/* && item->cursorText*/)// not floors
-					_skyLogic->mouseScript(item->mouseClick, item);
-			}
-
-			// reset ready for next stab
-			_timeOn = 0;
-		}
-
-		// mouse is not pressed, or not touching anything
-
-		// count down to fade out and run get-off
-		if (_fadeOut) {
-			_fadeOut--;
-			// update coordinate, so hotspot follows walking megas
-			updateHotspotCoordinate(xPos);
-		}
-
-		if (!_fadeOut) {
-			_skyScreen->clearAllProximityIcons();
-
-			// reset number of times we clicked on this
-			_clickedNum = 0;
-			_touchId = 0;
-
-			// process get-off script, if we were touching, and there is one
-			if (Logic::_scriptVariables[SPECIAL_ITEM] != 0) {
-				// close the hotspot popup
-
-				// remove hotspot icons
-				_skyScreen->clearAllIbassIcons(true);
-
-				Logic::_scriptVariables[SPECIAL_ITEM] = 0;
-
-				// get off
-				if (Logic::_scriptVariables[GET_OFF])
-					_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF], (uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
-
-				Logic::_scriptVariables[GET_OFF] = 0;
-			}
-		}
-		return;
-	}
-
 	uint32 currentListNum = Logic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
 	do {
@@ -1334,6 +914,371 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 	}
 }
 
+void Mouse::pointerEngineIBASS(uint16 xPos, uint16 yPos) {
+	int midx, midy; // open hotspot dimensions
+	Compact *itemData;
+	int itemProx;
+	int d = 0;
+	if (yPos < (TOP_LEFT_Y + 5))
+		return;
+	// mouse must be down to search for stuff
+	if (_mouseB) {
+		debug(1, "Clicked");
+		// what are we near?
+		itemProx = doProximityHighlights(xPos, yPos);
+
+		// seems we need to clear this, but only safe to do so when a new click occurs as player is still live when walking to interact after a use-on interaction
+		// but not in linc terminal
+		if (101 != Logic::_scriptVariables[SCREEN])
+			Logic::_scriptVariables[OBJECT_HELD] = 0;
+		// need to check if still touching any currently popped up hotspot
+		if (_touchId && _touchId != 32767 && _timeOn < CLICK_THRESHOLD) {
+			if (_prevMouseOn == false)
+				_timeOn = 1;
+			// fetch the compact
+			itemData = _skyCompact->fetchCpt(_touchId);
+			// if not a floor
+			if (itemData->mouseOn) {
+				_skyScreen->setProximityNotAnimate(_nearestProximityIconId);//we want this one remaining one to not animate
+
+				midx = giveXCood(itemData, _touchId);
+				midy = giveYCood(itemData, _touchId);
+				// calc dist
+				d = abs(xPos - midx) + abs(yPos - midy);
+				// some left hand edge adjust for twin-hotspot non-exits
+				if (!hasSingleInteractIcon(_touchId) && !_isExit)
+					if ((midx - HOTSPOT_DIM) < TOP_LEFT_X)
+						midx = TOP_LEFT_X + HOTSPOT_DIM;
+				// still touching a normal hotspot?
+				if (!_isExit && midx - HOTSPOT_DIM < xPos && midx + HOTSPOT_DIM > xPos && midy - HOTSPOT_YOFF < yPos && midy/*+HOTSPOT_YOFF*/ > yPos) {
+					// if newly touching, and same item as last time, then inc the click count
+					if (_prevMouseOn == false) {
+						_clickedNum++;  // one more click
+						// reset fade out timer to max
+						_fadeOut = HOTSPOT_FADEOUT;
+						// reset hover time
+						_timeOn = 1;
+					} else
+						_timeOn++;
+
+					int icony = midy - HOTSPOT_YOFF;
+					icony -= TOP_LEFT_Y; // normalise for renderer
+					if (icony < 0)
+						icony = 0;
+
+					if (hasSingleInteractIcon(_touchId)) {
+						// update the coordinate of the hotspot
+						midx -= TOP_LEFT_X;
+						midx -= HOTSPOT_EXIT_DIM;
+
+						// draw the icons
+						_skyScreen->setIcon(getInteractIcon(_touchId), midx + 4, icony);
+						_actionFlashX = midx + 4;
+						_actionFlashIcon = getInteractIcon(_touchId);
+						_actionFlashY = icony;
+					} else { // 2 icons
+						midx -= TOP_LEFT_X;
+						midx -= HOTSPOT_DIM;
+
+						_actionFlashY = icony;
+
+						if (xPos <= (midx + HOTSPOT_DIM + TOP_LEFT_X)) {
+							Logic::_scriptVariables[BUTTON] = 2;
+							_actionFlashX = midx;
+							_actionFlashIcon = UI_ICON_LOOK;
+						} else {
+							Logic::_scriptVariables[BUTTON] = 1;
+							_actionFlashX = midx + HOTSPOT_DIM + 4;
+							_actionFlashIcon = getInteractIcon(_touchId);
+						}
+					}
+					// mouse on
+					_prevMouseOn = true;
+					// end here, when button held on something
+					return;
+				} else if (_isExit && midx - HOTSPOT_DIM < xPos && midx + HOTSPOT_DIM > xPos && midy - HOTSPOT_YOFF < yPos && midy/*+HOTSPOT_YOFF*/ > yPos) {
+					// still touching the poped up exit
+					// which action
+					Logic::_scriptVariables[BUTTON] = 1;
+
+					// if newly touching, and same item as last time, then inc the click count
+					if (_prevMouseOn == false) {
+						_clickedNum++;  // one more click
+						// reset fade out timer to max
+						_fadeOut = HOTSPOT_FADEOUT;
+						// reset hover time
+						_timeOn = 0;
+					} else {
+						_timeOn++; // one more cycle
+						// update the coordinate of the hotspot
+						int iconx = midx - HOTSPOT_EXIT_DIM;
+						iconx -= TOP_LEFT_X; // normalise for renderer
+						if (iconx < 0)
+							iconx = 0;
+
+						int icony = midy - HOTSPOT_EXIT_YOFF;
+						icony -= TOP_LEFT_Y; // normalise for renderer
+						if (icony < 0)
+							icony = 0;
+
+						// draw the icon
+						initExitIcon(_exitType, iconx, icony);
+
+						_actionFlashY = icony;
+					}
+					// mouse on
+					_prevMouseOn = true;
+					// end here, when button held on something
+					return;
+				} else {
+					_touchId = 0;
+					_clickedNum = 0;
+				}
+			} else { // else if floor
+				// floors just count time - we only want clicks(jabs)
+				// still touching it?
+				if ((itemData->xcood + ((int16)itemData->mouseRelX) < xPos) && (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX > xPos) && (itemData->ycood + ((int16)itemData->mouseRelY) < yPos) && (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY > yPos))
+					_timeOn++; // one more cycle
+				else {
+					_touchId = 0;
+					_clickedNum = 0;
+				}
+			}
+		}
+		// find if we're touching a floor
+		int floor = touchingFloor(xPos, yPos);
+
+		if (itemProx) {
+			itemData = _skyCompact->fetchCpt(itemProx);
+			midx = giveXCood(itemData, itemProx);
+			midy = giveYCood(itemData, itemProx);
+			// calc dist
+			d = abs(xPos - midx) + abs(yPos - midy);
+		}
+		// not close enough to real hotspot, and still touching previous floor
+		if (floor && (d >= USE_ON_DIST) && floor == _touchId)
+			// if we skip floor, and dont hit another hotspot, then we quit after this search, because there is no fadeOut on floors, so the system resets the couter
+			return;
+
+		if ((itemProx && d < USE_ON_DIST) || floor) {
+			// we've hit a new object
+			// floor or object?
+			if (itemProx && d < USE_ON_DIST) {
+				// record what we're touching
+				Logic::_scriptVariables[SPECIAL_ITEM] = itemProx; // put in here now, for mouseOn script
+				_touchId = itemProx;
+				_touchIdLegacy = itemProx; // remembered when mouse off
+			} else {
+				// record what we're touching
+				Logic::_scriptVariables[SPECIAL_ITEM] = floor; // put in here now, for mouseOn script
+				_touchId = floor;
+				_touchIdLegacy = floor; // remembered when mouse off
+			}
+			itemData = _skyCompact->fetchCpt(_touchId);
+
+			// jumping straight from one object to another?
+			if (Logic::_scriptVariables[SPECIAL_ITEM]) {
+				// remove hotspot icons
+				_skyScreen->clearAllIbassIcons(false);
+			}
+			// reset hover time to max
+			_timeOn = 1;
+			_clickedNum = 0;
+
+			// run previous items get-off, if there was one (gone straight from one object onto another!)
+			if (Logic::_scriptVariables[GET_OFF])
+				_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+
+			// write mouse off script number
+			Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+			// run the mouse on script
+			if (itemData->mouseOn) {
+				// disallow sliding back onto floors
+				_floorLock = true;
+				// reset fade out timer
+				_fadeOut = HOTSPOT_FADEOUT;
+				debug(1, "Fadeout det to 36, mouseOn = %d, dist = %d", itemData->mouseOn, d);
+				_skyScreen->setProximityNotAnimate(_nearestProximityIconId); // we want this one remaining one to not animate
+
+				// assume not
+				_isExit = false;
+				_isFloor = false;
+
+				_skyLogic->mouseScript(itemData->mouseOn, itemData);
+
+				// exit, or hotspot?
+				if (_isExit) {
+					int iconx = midx - HOTSPOT_EXIT_DIM;
+					iconx -= TOP_LEFT_X; // normalise for renderer
+					if (iconx < 0)
+						iconx = 0;
+
+					int icony = midy - HOTSPOT_EXIT_YOFF;
+					icony -= TOP_LEFT_Y; // normalise for renderer
+					if (icony < 0)
+						icony = 0;
+
+					// draw the icon
+					initExitIcon(_exitType, iconx, icony);
+				} else {
+					int icony = midy - HOTSPOT_YOFF;
+					icony -= TOP_LEFT_Y;// normalise for renderer
+					if (icony < 0)
+						icony = 0;
+					if (hasSingleInteractIcon(_touchId)) {
+						// update the coordinate of the hotspot
+						int iconx = midx - HOTSPOT_EXIT_DIM;
+						iconx -= TOP_LEFT_X;// normalise for renderer
+						if (iconx < 0)
+							iconx = 0;
+
+						// draw the icons
+						_skyScreen->setIcon(getInteractIcon(_touchId), iconx + 4, icony);
+						// stairs on screen 1 - normal object turned into exit - need to hack the button -
+						// the rest are either talk-to, which doesnt seem to matter, or look-at, like posters on walls
+						if (_touchId == 70 || _touchId == 69 || _touchId == 24633
+						        || _touchId == 24634 || _touchId == 4119 || _touchId == 8210)
+							Logic::_scriptVariables[BUTTON] = 1;
+						else
+							Logic::_scriptVariables[BUTTON] = 2;
+
+					} else { // 2 icons
+						// update the coordinate of the hotspot
+						int iconx = midx - HOTSPOT_DIM;
+						iconx -= TOP_LEFT_X;// normalise for renderer
+						if (iconx < 0)
+							iconx = 0;
+
+						// draw the icons
+						_skyScreen->setIcon(UI_ICON_LOOK, iconx, icony);
+						_skyScreen->setIcon(getInteractIcon(_touchId), iconx + HOTSPOT_DIM + 4, icony);
+					}
+				}
+			} else if (!_floorLock) { // no mouseOn script, which probably always means this is a floor?
+				// set action
+				Logic::_scriptVariables[BUTTON] = 1;
+				// non graphical hotspots - floors - can interact first click
+				_clickedNum = 1;
+				// reset hover time to max
+				_timeOn = 1;
+				_isFloor = true;
+			} else
+				_touchId = 0; // locked floor
+
+			// mouse on
+			_prevMouseOn = true;
+			// we're done
+			return;
+		} else {
+			debug(1, "nothing");
+			// not touching anything, force open hotspot to close
+			if (_fadeOut)
+				_fadeOut = 0;
+		}
+		// not touching a game object - but what about HU buttons, such as Inv?
+		if (!_prevMouseOn && 101 != Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO] != 24765) {
+			if (xPos < HOTSPOT_INVX && yPos > HOTSPOT_INVY) {
+				_skyLogic->startInventory();
+				_touchId = 0;
+				_holding = false;
+				_mMode = PRE_INVENTORY;
+				_skyScreen->clearAllProximityIcons(false);
+				_skyScreen->clearAllIbassIcons(false);
+				return;
+			}
+			// control panel
+			if (xPos < HOTSPOT_OPTIONSX && yPos < HOTSPOT_OPTIONSY) {
+				_skyControl->doControlPanel();
+				_skyScreen->clearAllProximityIcons(false);
+				_skyScreen->clearAllIbassIcons(false);
+				_mouseB = 0;
+			}
+			// help screen
+			if (xPos > HOTSPOT_helpx && yPos < HOTSPOT_helpy) {
+				_skyScreen->clearAllProximityIcons(false);
+				_skyScreen->clearAllIbassIcons(false);
+				_mouseB = 0;
+			}
+		}
+		// mouse on
+		_prevMouseOn = true;
+		debug(1, "floor returned = %d", floor);
+	} else { // not touching screen
+		if (_prevMouseOn) {
+			if (!_touchId || _isFloor)
+				_skyScreen->clearAllProximityIcons();
+			else if (_touchId) {
+				_skyScreen->clearAllProximityIcons();
+				// clear all but the one relating to the highlighted hotspot - hmmm
+				itemData = _skyCompact->fetchCpt(_touchId);
+				midx = giveXCood(itemData, _touchId);
+				midy = giveYCood(itemData, _touchId); //itemData->ycood + ((int16)itemData->mouseRelY) + (itemData->mouseSizeY>>1);
+				_skyScreen->setProximityIcon(0, midx - TOP_LEFT_X - 4, ((midy - TOP_LEFT_Y) - 4), 1.0, 0);
+				_skyScreen->setProximityNotAnimate(0);//we want this one remaining one to not animate
+			}
+		}
+		// let go
+		_prevMouseOn = false;
+		_floorLock = false;
+
+		// if 2nd or more click on this item
+		if (_timeOn && _clickedNum) {
+			// faking the click so that the engine scripts execute correctly
+			_logicClick = true;
+			if (Logic::_scriptVariables[BUTTON] == 0)
+				Logic::_scriptVariables[BUTTON] = 1;
+
+			// first, some autosaving incase this is a fatal, yes FATAL, interaction
+			if (g_engine->canSaveGameStateCurrently())
+				g_engine->saveGameState(0, "Autosave", true);
+			_fadeOut = 0;   // force getOff script to run also
+
+			// setup action flash
+			if (!_isFloor) {
+				_actionFlash = true;
+				_actionFlashTime = ACTION_FLASH_TIME;
+			}
+			// set this again, as there's a chance some other random script may have cleared it since we first touched this hotspot
+			Logic::_scriptVariables[SPECIAL_ITEM] = _touchId;
+			// over anything?
+			Compact *item = _skyCompact->fetchCpt(Logic::_scriptVariables[SPECIAL_ITEM]);
+			if (item->mouseClick/* && item->cursorText*/)// not floors
+				_skyLogic->mouseScript(item->mouseClick, item);
+		}
+		// reset ready for next stab
+		_timeOn = 0;
+	}
+	// mouse is not pressed, or not touching anything
+	// count down to fade out and run get-off
+	if (_fadeOut) {
+		_fadeOut--;
+		// update coordinate, so hotspot follows walking megas
+		updateHotspotCoordinate(xPos);
+	}
+
+	if (!_fadeOut) {
+		_skyScreen->clearAllProximityIcons();
+
+		// reset number of times we clicked on this
+		_clickedNum = 0;
+		_touchId = 0;
+
+		// process get-off script, if we were touching, and there is one
+		if (Logic::_scriptVariables[SPECIAL_ITEM] != 0) {
+			// close the hotspot popup
+			// remove hotspot icons
+			_skyScreen->clearAllIbassIcons(true);
+			Logic::_scriptVariables[SPECIAL_ITEM] = 0;
+			// get off
+			if (Logic::_scriptVariables[GET_OFF])
+				_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF], (uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
+
+			Logic::_scriptVariables[GET_OFF] = 0;
+		}
+	}
+	return;
+}
+
 void Mouse::initExitIcon(uint32 type, int iconx, int icony) {
 	switch (type) {
 	case MOUSE_LEFT:
@@ -1364,18 +1309,16 @@ void Mouse::initExitIcon(uint32 type, int iconx, int icony) {
 }
 
 void Mouse::updateHotspotCoordinate(uint16 xPos) {
-	Compact *itemData;
 	int midx,  midy;
 
 	// fetch the compact
-	itemData = _skyCompact->fetchCpt(_touchIdLegacy);
+	Compact *itemData = _skyCompact->fetchCpt(_touchIdLegacy);
 
 	if (!itemData)
 		return;
 
 	// if not a floor
 	if (itemData->mouseOn && !_isExit) {
-
 		midx = giveXCood(itemData, _touchIdLegacy);
 		midy = giveYCood(itemData, _touchIdLegacy);
 
@@ -1429,7 +1372,7 @@ void Mouse::buttonEngine1() {
 
 	if (_mouseB) {	//anything pressed?
 		Logic::_scriptVariables[BUTTON] = _mouseB;
-		if (Logic::_scriptVariables[SPECIAL_ITEM] && Logic::_scriptVariables[SPECIAL_ITEM] != 0xFFFFFFFF) { //over anything?
+		if (Logic::_scriptVariables[SPECIAL_ITEM] && Logic::_scriptVariables[SPECIAL_ITEM] != 0xFFFFFFFF) { // over anything?
 			Compact *item = _skyCompact->fetchCpt(Logic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)
 				_skyLogic->mouseScript(item->mouseClick, item);
@@ -1501,10 +1444,8 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 	num = (int)Logic::_scriptVariables[MENU_LENGTH];
 
 	if (_holding) {
-
 		// dragged off of inv? Quit inv mode
 		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
-
 			// dragged off of the inv
 			_mMode = INVENTORY_USE_ON;
 			// remove inv items from screen/logic processing
@@ -1525,8 +1466,6 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 		if (_mouseB) {
 			// keep scanning objects to run geton/off
 			for (j = 0; j < num; j++) {
-
-
 				// fetch the compact
 				itemData = _skyCompact->fetchCpt(objList[j]);
 
@@ -1544,16 +1483,11 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 				// on previous?
 				if (_hoverId == objList[j])
 					continue; // still on previous, so skip
-
-
 				// run previous items get-off, if there was one (gone straight from one object onto another!)
 				if (Logic::_scriptVariables[GET_OFF])
 					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], _skyCompact->fetchCpt(_hoverId));
-
-
 				// write new mouse off script number
 				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
-
 				_hoverId = objList[j];
 
 				// new item
@@ -1571,9 +1505,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 					// and bring back render position
 					itemData->ycood = tempY;
 				}
-
 			}
-
 			// if we didn't register any hit then run the get off - we're sitting on blank inventory space
 			if (!touched) {
 				// touching nothing
@@ -1582,9 +1514,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], _skyCompact->fetchCpt(_hoverId));
 					Logic::_scriptVariables[GET_OFF] = 0;
 				}
-
 			}
-
 			// we're done
 			return;
 		}
@@ -1592,12 +1522,10 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 		if (_hoverId == 24584 || _hoverId == 24630 || _hoverId == 24732 || _hoverId == 24643) {
 			// fetch the compact
 			itemData = _skyCompact->fetchCpt(_touchId);
-
 			// set button
 			Logic::_scriptVariables[BUTTON] = 3;
 			// record what we're touching
 			Logic::_scriptVariables[SPECIAL_ITEM] = _hoverId;
-
 			// fight internal logic's impulse to slide back up
 			uint16 tempY = itemData->ycood;
 			itemData->ycood = 136;
@@ -1606,12 +1534,10 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 			// and bring back render position
 			itemData->ycood = tempY; // itemData->invY;
 
-
 			if (menuRef != _lincMenuRef) {
 				itemData = _skyCompact->fetchCpt(_touchId);
 				itemData->frame--;
 				itemData->getToFlag = 0;
-			} else {
 			}
 		} else {
 			// wont combine
@@ -1709,11 +1635,9 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 			return;
 		}
 	}
-
 }
 
 void Mouse::invMouse(uint16 xPos, uint16 yPos) {
-
 	uint32 *objList;
 	Compact *itemData;
 	int j, num;

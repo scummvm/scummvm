@@ -65,7 +65,6 @@ void Screen::hideInventory() {
 }
 
 void Screen::clearAllInvIcons() {
-
 	for (int i = 0; i < NUM_INV_ICONS; i++)
 		_invIcon[i]._visible = false;
 
@@ -82,7 +81,7 @@ int Screen::getInventoryAnimIdx(int frame) {
 	return 0; // fallback
 }
 
-void Logic::startInventory(uint32	highlightedId) {
+void Logic::startInventory(uint32 highlightedId) {
 	// normal gameplay inv
 	fnStartMenu(Logic::_scriptVariables[FIRST_ICON], highlightedId, 0);
 }

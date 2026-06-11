@@ -275,27 +275,29 @@ void Screen::update32BitScreen(uint8 *overrideBuffer) {
 }
 
 void Screen::renderFinalFrame() {
-	update32BitScreen(_currentScreen);
-
 	if (SkyEngine::isIbass()) {
-
+		update32BitScreen(_currentScreen);
 		setIcon(UI_ICON_INV, 0, GAME_SCREEN_HEIGHT - 35);
-	}
-
-	drawIbassIcon();
-	drawIbassInventory();
-
-	if (_screen32.getPixels()) {
-		_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
+		drawIbassIcon();
+		drawIbassInventory();
+		if (_screen32.getPixels()) {
+			_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
+			_system->updateScreen();
+		}
+	} else {
+		_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		_system->updateScreen();
 	}
 }
 
 void Screen::renderControlPanel(uint8 *buffer) {
-	update32BitScreen(buffer);
-
-	if (_screen32.getPixels())
-		_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
+	if (SkyEngine::isIbass()) {
+		update32BitScreen(buffer);
+		if (_screen32.getPixels())
+			_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
+	} else {
+		_system->copyRectToScreen(buffer, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	}
 }
 
 void Screen::clearScreen(bool fullscreen) {
@@ -315,8 +317,8 @@ void Screen::setFocusRectangle(const Common::Rect& rect) {
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 	convertPalette(pal, _palette);
-	if (SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
+	if (_system->getScreenFormat().bytesPerPixel == 1)
+	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
 
@@ -329,8 +331,8 @@ void Screen::setPaletteEndian(uint8 *pal) {
 #else
 	convertPalette(pal, _palette);
 #endif
-	if (SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
+	if (_system->getScreenFormat().bytesPerPixel == 1)
+	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
 
@@ -342,7 +344,7 @@ void Screen::halvePalette() {
 		halfPalette[cnt * 3 + 1] = _palette[cnt * 3 + 1] >> 1;
 		halfPalette[cnt * 3 + 2] = _palette[cnt * 3 + 2] >> 1;
 	}
-	if (SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
+	if (_system->getScreenFormat().bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(halfPalette, 0, GAME_COLORS);
 }
 
