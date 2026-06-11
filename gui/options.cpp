@@ -1350,8 +1350,8 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 	if (_guioptions.contains(GUIO_NOMIDI))
 		enabled = false;
 
-	_gmDevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
-	_gmDevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_gmDevicePopUpDesc->setEnabled(enabled);
+	_gmDevicePopUp->setEnabled(enabled);
 
 	_enableMIDISettings = enabled;
 
@@ -1372,8 +1372,8 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 void OptionsDialog::setMT32SettingsState(bool enabled) {
 	_enableMT32Settings = enabled;
 
-	_mt32DevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
-	_mt32DevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_mt32DevicePopUpDesc->setEnabled(enabled);
+	_mt32DevicePopUp->setEnabled(enabled);
 
 	_mt32Checkbox->setEnabled(enabled);
 	_enableGSCheckbox->setEnabled(enabled);
