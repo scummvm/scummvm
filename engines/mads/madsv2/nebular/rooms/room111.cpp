@@ -19,39 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Room111::Room111(RexNebularEngine *vm) : Room1xx(vm) {
-	_stampedFl = false;
-	_launch1Fl = false;
-	_launched2Fl = false;
-	_rexDivingFl = false;
-}
+struct Scratch {
+	bool _stampedFl;
+	bool _launch1Fl;
+	bool _launched2Fl;
+	bool _rexDivingFl;
+};
 
-void Room111::synchronize(Common::Serializer &s) {
-	Room1xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_stampedFl);
-	s.syncAsByte(_launch1Fl);
-	s.syncAsByte(_launched2Fl);
-	s.syncAsByte(_rexDivingFl);
-}
 
-void Room111::setup() {
-	_scene->addActiveVocab(NOUN_BATS);
-
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room111::enter() {
+static void room_111_init() {
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
@@ -78,9 +69,9 @@ void Room111::enter() {
 	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 
-	_launch1Fl = false;
-	_launched2Fl = false;
-	_stampedFl = false;
+	local._launch1Fl = false;
+	local._launched2Fl = false;
+	local._stampedFl = false;
 
 	if ((_scene->_priorSceneId < 201) && (_scene->_priorSceneId != RETURNING_FROM_DIALOG)) {
 		_game._player._stepEnabled = false;
@@ -89,8 +80,8 @@ void Room111::enter() {
 		_game._player._playerPos = Common::Point(234, 116);
 		_game._player._facing = FACING_EAST;
 
-		_launch1Fl = true;
-		_launched2Fl = true;
+		local._launch1Fl = true;
+		local._launched2Fl = true;
 
 		_vm->_sound->command(36);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
@@ -98,21 +89,21 @@ void Room111::enter() {
 		_game._player._facing = FACING_WEST;
 	}
 
-	_rexDivingFl = false;
+	local._rexDivingFl = false;
 
-	sceneEntrySound();
+	section_1_music();
 }
 
-void Room111::step() {
+static void room_111_daemon() {
 	if (_game._trigger == 70) {
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
-		_launch1Fl = false;
-		_launched2Fl = false;
+		local._launch1Fl = false;
+		local._launched2Fl = false;
 	}
 
-	if ((_game._trigger == 71) && !_stampedFl) {
-		_stampedFl = true;
+	if ((_game._trigger == 71) && !local._stampedFl) {
+		local._stampedFl = true;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 18, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 	}
@@ -122,42 +113,42 @@ void Room111::step() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 20);
 	}
 
-	if (!_launch1Fl && (_vm->getRandomNumber(1, 5000) == 1)) {
+	if (!local._launch1Fl && (_vm->getRandomNumber(1, 5000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
-		_launch1Fl = true;
+		local._launch1Fl = true;
 		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
-	if (!_launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
+	if (!local._launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-		_launched2Fl = true;
+		local._launched2Fl = true;
 	}
 
 	if (_game._trigger == 73)
 		_vm->_sound->command(37);
 
-	if (_rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
+	if (local._rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
 		_vm->_sound->command(36);
-		_rexDivingFl = false;
+		local._rexDivingFl = false;
 	}
 }
 
-void Room111::preActions() {
+static void room_111_pre_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_CAVE_ENTRANCE))
 		_game._player._walkOffScreenSceneId = 212;
 }
 
-void Room111::actions() {
+static void room_111_parser() {
 	if (_action.isAction(VERB_DIVE_INTO, NOUN_POOL) && _game._objects.isInInventory(OBJ_REBREATHER)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
-			_rexDivingFl = true;
+			local._rexDivingFl = true;
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			break;
@@ -187,6 +178,25 @@ void Room111::actions() {
 	_action._inProgress = false;
 }
 
+void room_111_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._stampedFl);
+	s.syncAsByte(local._launch1Fl);
+	s.syncAsByte(local._launched2Fl);
+	s.syncAsByte(local._rexDivingFl);
+}
+
+void room_111_preload() {
+	room_init_code_pointer = room_111_init;
+	room_pre_parser_code_pointer = room_111_pre_parser;
+	room_parser_code_pointer = room_111_parser;
+	room_daemon_code_pointer = room_111_daemon;
+
+	_scene->addActiveVocab(NOUN_BATS);
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

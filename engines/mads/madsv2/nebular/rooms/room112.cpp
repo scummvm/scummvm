@@ -19,22 +19,21 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room102.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Room112::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Room112::enter() {
-	sceneEntrySound();
+static void room_112_init() {
+	section_1_music();
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
@@ -54,7 +53,7 @@ void Room112::enter() {
 	_scene->loadAnimation(Resources::formatName(112, 'X', -1, EXT_AA, ""), 70);
 }
 
-void Room112::step() {
+static void room_112_daemon() {
 	if ((_scene->_animation[0] != nullptr) && (_game._storyMode == STORYMODE_NICE)) {
 		if (_scene->_animation[0]->getCurrentFrame() >= 54) {
 			_scene->freeAnimation();
@@ -75,6 +74,25 @@ void Room112::step() {
 	}
 }
 
+static void room_112_pre_parser() {
+	// No implementation
+}
+
+static void room_112_parser() {
+	// No implementation
+}
+
+void room_112_preload() {
+	room_init_code_pointer = room_112_init;
+	room_pre_parser_code_pointer = room_112_pre_parser;
+	room_parser_code_pointer = room_112_parser;
+	room_daemon_code_pointer = room_112_daemon;
+
+	section_1_walker();
+	section_1_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

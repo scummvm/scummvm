@@ -23,6 +23,7 @@
 #define MADS_NEBULAR_ROOMS_THUNKS_H
 
 #include "common/rect.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sprite.h"
@@ -37,6 +38,12 @@ namespace Rooms {
 enum EXTTYPE {
 	EXT_NONE = -1, EXT_SS = 1, EXT_AA = 2, EXT_DAT = 3, EXT_HH = 4,
 	EXT_ART = 5, EXT_INT = 6
+};
+
+enum InputMode {
+	kInputBuildingSentences = INTER_BUILDING_SENTENCES,
+	kInputConversation = INTER_CONVERSATION,
+	kInputLimitedSentences = INTER_LIMITED_SENTENCES
 };
 
 enum SequenceTrigger {
@@ -272,6 +279,12 @@ struct Scene {
 		void fullRefresh();
 	};
 	SpriteSlots _spriteSlots;
+
+	struct UserInterface {
+		void emptyConversationList();
+		void setup(int inputMode);
+	};
+	UserInterface _userInterface;
 
 	int16 &_priorSceneId = previous_room;
 	int16 &_nextSceneId = new_room;

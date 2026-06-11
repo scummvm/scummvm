@@ -204,6 +204,14 @@ void Scene::SpriteSlots::fullRefresh() {
 	matte_refresh_work();
 }
 
+void Scene::UserInterface::emptyConversationList() {
+	inter_reset_dialog();
+}
+
+void Scene::UserInterface::setup(int inputMode) {
+	kernel_set_interface_mode(inputMode);
+}
+
 int16 Scene::Sequences::addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
 	word start_ticks, int expire) {
 	return kernel_seq_forward(series_id, mirror, ticks, interval_ticks, start_ticks, expire);
