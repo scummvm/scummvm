@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "scumm/file.h"
@@ -68,6 +69,16 @@ void InsaneRebel1::processAudioFrame(int16 feedSize) {
 }
 
 void InsaneRebel1::applyAudioOptions() {
+	const int musicVolume = ConfMan.getInt("music_volume");
+	const int sfxVolume = ConfMan.getInt("sfx_volume");
+	const int speechVolume = ConfMan.getInt("speech_volume");
+
+	_optVolume = CLIP<int>(musicVolume / 2, 0, 127);
+
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfxVolume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
+
 	_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
 	_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
 	_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);

@@ -504,12 +504,16 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
 			return true;
 		case kRA1MenuCommandLeft:
-			if (_optionsSel == 7)
+			if (_optionsSel == 7) {
 				setRebel1Volume(_vm, _optVolume, -5);
+				applyAudioOptions();
+			}
 			return true;
 		case kRA1MenuCommandRight:
-			if (_optionsSel == 7)
+			if (_optionsSel == 7) {
 				setRebel1Volume(_vm, _optVolume, 5);
+				applyAudioOptions();
+			}
 			return true;
 		case kRA1MenuCommandCancel:
 			_optionsSel = 0;
@@ -1037,6 +1041,7 @@ void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int 
 void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int height) {
 	// --- Options submenu (matching original RunGameOptionsMenu) ---
 	_optTextEnabled = ConfMan.getBool("subtitles");
+	_optVolume = CLIP<int>(ConfMan.getInt("music_volume") / 2, 0, 127);
 
 	const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 

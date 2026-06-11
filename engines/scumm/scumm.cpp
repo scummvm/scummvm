@@ -2696,6 +2696,14 @@ void ScummEngine_v7::syncSoundSettings() {
 		_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
 		_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
 		_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
+	} else if (_game.id == GID_REBEL1) {
+		const int musicVolume = ConfMan.getInt("music_volume");
+		const int sfxVolume = ConfMan.getInt("sfx_volume");
+		const int speechVolume = ConfMan.getInt("speech_volume");
+
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfxVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
 	}
 }
 #endif
