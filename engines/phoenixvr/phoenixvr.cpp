@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/language.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
@@ -50,6 +51,7 @@
 #include "phoenixvr/vr.h"
 #include "video/4xm_decoder.h"
 #include "video/smk_decoder.h"
+#include "video/subtitles.h"
 
 namespace PhoenixVR {
 
@@ -589,6 +591,7 @@ void PhoenixVREngine::until(const Common::String &var, int value) {
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		_frameLimiter.delayBeforeSwap();
+		drawAudioSubtitles();
 		_screen->update();
 		frameDuration = _frameLimiter.startFrame();
 	}
@@ -620,6 +623,7 @@ void PhoenixVREngine::wait(float seconds) {
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		_frameLimiter.delayBeforeSwap();
+		drawAudioSubtitles();
 		_screen->update();
 		frameDuration = _frameLimiter.startFrame();
 	}
@@ -751,7 +755,11 @@ void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::Sound
 	_mixer->playStream(type, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume);
 	if (loops < 0 || music)
 		_mixer->loopChannel(h);
-	_sounds[sound] = Sound{h, spatial, angle, volume, loops};
+	Common::SharedPtr<Video::Subtitles> subtitles;
+	if (!music)
+		subtitles = loadSubtitles(sound);
+
+	_sounds[sound] = Sound{h, spatial, angle, volume, loops, subtitles};
 }
 
 void PhoenixVREngine::stopSound(const Common::String &sound) {
@@ -761,6 +769,8 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 	auto it = _sounds.find(sound);
 	if (it != _sounds.end()) {
 		_mixer->stopHandle(it->_value.handle);
+		if (it->_value.subtitles)
+			it->_value.subtitles->clearSubtitle();
 		_sounds.erase(it);
 	}
 }
@@ -768,7 +778,62 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 void PhoenixVREngine::stopAllSounds() {
 	_mixer->stopAll();
 	_currentMusic.clear();
+	for (auto &kv : _sounds) {
+		if (kv._value.subtitles)
+			kv._value.subtitles->clearSubtitle();
+	}
 	_sounds.clear();
+}
+
+Common::Path PhoenixVREngine::getSubtitlePath(const Common::String &path) const {
+	Common::Path assetPath(removeDrive(path), '\\');
+	Common::String filename = assetPath.toString('/') + ".srt";
+	filename.replace('/', '_');
+	filename.replace('\\', '_');
+
+	Common::String language = Common::getLanguageCode(_gameDescription->language);
+	if (language == "us")
+		language = "en";
+
+	return Common::Path("subtitle").appendComponent(language).appendComponent(filename);
+}
+
+Common::SharedPtr<Video::Subtitles> PhoenixVREngine::loadSubtitles(const Common::String &path) const {
+	Common::SharedPtr<Video::Subtitles> subtitles;
+	if (!ConfMan.getBool("subtitles"))
+		return subtitles;
+
+	subtitles = Common::SharedPtr<Video::Subtitles>(new Video::Subtitles());
+	subtitles->loadSRTFile(getSubtitlePath(path));
+	if (!subtitles->isLoaded())
+		return Common::SharedPtr<Video::Subtitles>();
+
+	setupSubtitles(*subtitles);
+	return subtitles;
+}
+
+void PhoenixVREngine::setupSubtitles(Video::Subtitles &subtitles) const {
+	// Subtitle positioning constants (as percentages of screen height)
+	const int HORIZONTAL_MARGIN = 20;
+	const int MIN_BOTTOM_MARGIN = 4;
+	const int MIN_SUBTITLE_HEIGHT = 90;
+	const float BOTTOM_MARGIN_PERCENT = 0.01f;
+	const float SUBTITLE_HEIGHT_PERCENT = 0.2f;
+
+	// Font sizing constants (as percentage of screen height)
+	const int MIN_FONT_SIZE = 18;
+	const float BASE_FONT_SIZE_PERCENT = 1.0f / 36.0f;
+
+	int16 h = g_system->getOverlayHeight();
+	int16 w = g_system->getOverlayWidth();
+	int bottomMargin = MAX<int>(MIN_BOTTOM_MARGIN, int(h * BOTTOM_MARGIN_PERCENT));
+	int topOffset = MAX<int>(MIN_SUBTITLE_HEIGHT, int(h * SUBTITLE_HEIGHT_PERCENT));
+	int fontSize = MAX<int>(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
+
+	subtitles.setBBox(Common::Rect(HORIZONTAL_MARGIN, h - topOffset, w - HORIZONTAL_MARGIN, h - bottomMargin));
+	subtitles.setColor(0xff, 0xff, 0x80);
+	subtitles.setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+	subtitles.setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
 }
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
@@ -796,6 +861,12 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	_mixer->pauseAll(true);
 	_system->lockMouse(false);
 	dec->start();
+
+	Common::SharedPtr<Video::Subtitles> subtitles = loadSubtitles(movie);
+	if (subtitles) {
+		g_system->showOverlay(false);
+		g_system->clearOverlay();
+	}
 
 	bool playing = true;
 	Common::ScopedPtr<Graphics::Palette> palette;
@@ -828,9 +899,13 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		_frameLimiter.delayBeforeSwap();
+		if (subtitles && !dec->isPaused())
+			subtitles->drawSubtitle(dec->getTime(), false);
 		_screen->update();
 		_frameLimiter.startFrame();
 	}
+	if (subtitles)
+		g_system->hideOverlay();
 	_system->lockMouse(_vr.isVR());
 	_mixer->pauseAll(false);
 }
@@ -1134,7 +1209,12 @@ void PhoenixVREngine::tick(float dt) {
 	}
 	for (auto &sound : finishedSounds) {
 		debug("sound %s stopped", sound.c_str());
-		_sounds.erase(sound);
+		auto it = _sounds.find(sound);
+		if (it != _sounds.end()) {
+			if (it->_value.subtitles)
+				it->_value.subtitles->clearSubtitle();
+			_sounds.erase(it);
+		}
 	}
 
 	if (!_nextScript.empty()) {
@@ -1224,6 +1304,17 @@ void PhoenixVREngine::tick(float dt) {
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
 		paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+	}
+}
+
+void PhoenixVREngine::drawAudioSubtitles() {
+	if (!ConfMan.getBool("subtitles"))
+		return;
+
+	for (auto &kv : _sounds) {
+		auto &sound = kv._value;
+		if (sound.subtitles && _mixer->isSoundHandleActive(sound.handle))
+			sound.subtitles->drawSubtitle(_mixer->getElapsedTime(sound.handle).msecs(), false);
 	}
 }
 
@@ -1426,6 +1517,7 @@ Common::Error PhoenixVREngine::run() {
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
 		_frameLimiter.delayBeforeSwap();
+		drawAudioSubtitles();
 		_screen->update();
 		frameDuration = _frameLimiter.startFrame();
 	}
