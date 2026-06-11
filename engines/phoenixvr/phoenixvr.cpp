@@ -341,6 +341,20 @@ bool PhoenixVREngine::gameIdMatches(const char *gameId) const {
 	return strcmp(_gameDescription->gameId, gameId) == 0;
 }
 
+uint PhoenixVREngine::currentAmerzoneLevel() const {
+	if (!gameIdMatches("amerzone"))
+		return 0;
+
+	uint index = 0;
+	for (const Common::String &level : _levels) {
+		++index;
+		if (_contextScript.hasPrefixIgnoreCase(level))
+			return index;
+	}
+
+	return _currentLevel;
+}
+
 Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 	if (path.size() < 2 || path[1] != ':')
 		return path;
@@ -1613,7 +1627,7 @@ Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) 
 			auto &level = _levels[i];
 			if (state.script.hasPrefixIgnoreCase(level)) {
 				debug("current level is %u", i);
-				_currentLevel = i + 1;
+				_currentLevel = i;
 				break;
 			}
 		}

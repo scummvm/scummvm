@@ -186,6 +186,7 @@ public:
 
 	bool wasRestarted() const { return _restarted; }
 	bool wasLoaded() const { return _loaded; }
+	uint currentAmerzoneLevel() const;
 
 	void saveVariables();
 	void loadVariables();

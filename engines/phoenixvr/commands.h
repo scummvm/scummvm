@@ -548,6 +548,15 @@ struct LoadSave : public Script::Command {
 		} else if (n == 2) {
 			auto &srcVar = args[0];
 			auto &dstVar = args[1];
+			if (!dstVar.empty() && Common::isDigit(dstVar[0])) {
+				uint level = atoi(dstVar.c_str());
+				uint currentLevel = g_engine->currentAmerzoneLevel();
+				if (currentLevel != 0) {
+					g_engine->setVariable(srcVar, currentLevel == level);
+					return;
+				}
+			}
+
 			auto value = g_engine->getVariable(srcVar);
 			g_engine->setVariable(srcVar, 0);
 			g_engine->setVariable(dstVar, value);
