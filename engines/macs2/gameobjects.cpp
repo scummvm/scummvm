@@ -166,7 +166,7 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x14] = "Eimer";           // bucket, full of water
 		_objectNames[0x17] = "Hutschachtel";    // hatbox, empty and open
 		_objectNames[0x18] = "Damenhut";        // lady's hat with veil
-		_objectNames[0x19] = "Schwarzpulver";   // gunpowder
+		_objectNames[0x19] = "Huzschachtel";    // hatbox, closed
 		_objectNames[0x1A] = "Metalleimer";     // metal bucket, empty
 		_objectNames[0x1B] = "Feuerhaken";      // fire poker
 		_objectNames[0x1C] = "Topflappen";      // pot holder
