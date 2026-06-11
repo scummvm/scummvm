@@ -416,10 +416,13 @@ void ScriptExecutor::step() {
 					_state = ExecutorState::WaitingForCallback;
 					if (!_debugPaused) {
 						// Original: save cursor mode, then set to Disabled 0x1A (hourglass)
-						if (_mouseMode != MouseMode::Disabled) {
+						// But NOT when a clickable text box or dialogue choice is showing —
+						// those waits expect the player to click, so cursor stays as cross.
+						View1 *v = (View1 *)_engine->findView("View1");
+						bool clickableWait = v && (v->_isShowingTextBox || v->_isShowingDialogueChoicePanel);
+						if (!clickableWait && _mouseMode != MouseMode::Disabled) {
 							_cursorModeBeforeWait = _mouseMode;
 							_engine->setCursorMode(MouseMode::Disabled);
-							View1 *v = (View1 *)_engine->findView("View1");
 							if (v)
 								v->updateCursor();
 						}
@@ -1102,9 +1105,12 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 	_pickupInProgress = true;
 	_pickupActorObjectID = actorIndex;
 	_pickupTargetObjectID = objectIndex;
-	_savedPickupMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
 	currentView->_activeInventoryItem = nullptr;
-	_engine->setCursorMode(_savedPickupMouseMode);
+	// Binary: save current cursor mode, then set to Disabled (hourglass) during walk+pickup
+	if (_mouseMode != MouseMode::Disabled) {
+		_cursorModeBeforeWait = _mouseMode;
+	}
+	_engine->setCursorMode(MouseMode::Disabled);
 	currentView->updateCursor();
 	actor->startPickup(targetObject);
 	_requestCallback = false;

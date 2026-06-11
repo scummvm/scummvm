@@ -170,7 +170,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	uint16 mouseMode = (uint16)_scriptExecutor->_mouseMode;
 	s.syncAsUint16LE(mouseMode);
 	if (s.isLoading())
-		_scriptExecutor->_mouseMode = (Script::MouseMode)mouseMode;
+		setCursorMode((Script::MouseMode)mouseMode);
 
 	// 0x101a: 2 bytes - reserved/unused
 	uint16 reserved101a = 0;

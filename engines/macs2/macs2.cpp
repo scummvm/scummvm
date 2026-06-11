@@ -1088,26 +1088,8 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 	return result;
 }
 
-void Macs2Engine::nextCursorMode() {
-	// Cycle through the 4 main cursor modes from the action bar:
-	// Talk(0x13) -> Look(0x14) -> Use(0x15) -> Walk(0x16) -> Talk
-	switch (_scriptExecutor->_mouseMode) {
-	case Script::MouseMode::Talk:
-		_scriptExecutor->_mouseMode = Script::MouseMode::Look;
-		break;
-	case Script::MouseMode::Look:
-		_scriptExecutor->_mouseMode = Script::MouseMode::Use;
-		break;
-	case Script::MouseMode::Use:
-		_scriptExecutor->_mouseMode = Script::MouseMode::Walk;
-		break;
-	default:
-		_scriptExecutor->_mouseMode = Script::MouseMode::Talk;
-		break;
-	}
-}
-
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
+	debug("Cursor mode set to %i", (int)newMode);
 	_scriptExecutor->_mouseMode = newMode;
 }
 
