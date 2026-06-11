@@ -3332,6 +3332,7 @@ uint16 CMD_2_PsiPowers(void) {
 	/*Psi powers bar*/
 	g_vm->_renderer->backupAndShowSprite(3, 280 / 4, 40);
 	processInput();
+	clearButtons();
 	do {
 		pollInput();
 		g_vm->_renderer->selectCursor(CURSOR_FINGER);
@@ -4535,9 +4536,17 @@ again:;
 		break;
 	case 0xF000:
 		/*restore sp from keep_sp then run script*/
-		/*currently only supposed to work correctly from the SCR_4D_PriorityCommand handler*/
+		// A priority command (SCR_4D_PriorityCommand) discards the current
+		// callchain. The original restored the script stack pointer to the
+		// main-loop baseline (keep_sp); here that baseline is an empty stack.
+		// Without this, a priority command fired from inside a call'd
+		// subroutine breaks out via ScriptRerun before the matching ret runs,
+		// leaking a script_stack frame each time. In the endgame confrontation
+		// repeated PSI POWERS use overflows the 5-frame script_stack array,
+		// corrupting adjacent globals (sprite/rendering glitches) and script
+		// state (looping menu + forced game-over).
 		debug("Restore: $%X 0x%X", the_command, cmd);
-	/*TODO("SCR_RESTORE\n");*/
+		script_stack_ptr = script_stack;
 	/*fall through*/
 	default:
 		res = RunScript(getScriptSubroutine(cmd - 1));
@@ -4559,11 +4568,17 @@ again:;
 	if (g_vm->_shouldRestart)
 		return runCommandKeepSp();
 
-	if (g_vm->_prioritycommand_1 && !(g_vm->_prioritycommand_2))
+	// A priority command (SCR_4D_PriorityCommand) discards the entire current
+	// callchain and re-runs from the main-loop baseline. Propagate the pending
+	// flag straight up to the runCommandKeepSp anchor instead of re-entering
+	// here: re-entering at this (possibly deeply nested) level ran the priority
+	// script but left the outer ActionsMenu frames alive on the C stack. In the
+	// endgame confrontation each PSI POWERS use fired a priority command and
+	// nested one menu level deeper; after the winning flask the stack unwound
+	// only one level into a stale confrontation menu, which re-prompted and (the
+	// win state already consumed) forced a game-over.
+	if (g_vm->_prioritycommand_1)
 		return res;
-
-	if (g_vm->_prioritycommand_1 && g_vm->_prioritycommand_2)
-		return runCommandKeepSp();
 
 	/*TODO: this is pretty hacky, original code manipulates the stack to discard old script invocation*/
 	if (res == ScriptRerun)
@@ -4574,11 +4589,21 @@ again:;
 
 uint16 runCommandKeepSp(void) {
 	/*keep_sp = sp;*/
-	g_vm->_prioritycommand_1 = false;
-	g_vm->_prioritycommand_2 = false;
-	if (g_vm->_shouldRestart)
-		return RUNCOMMAND_RESTART;
-	return runCommand();
+	// Anchor for priority commands. The original engine restored the stack
+	// pointer to this baseline (keep_sp) on every priority command, collapsing
+	// any nested script/menu callchain. Emulate that by draining every pending
+	// priority command here in a loop: nested frames propagate the flag up to
+	// this point (see runCommand) and we re-run from the baseline until none
+	// remain, so menu frames never accumulate on the call stack.
+	uint16 res = 0;
+	do {
+		g_vm->_prioritycommand_1 = false;
+		g_vm->_prioritycommand_2 = false;
+		if (g_vm->_shouldRestart)
+			return RUNCOMMAND_RESTART;
+		res = runCommand();
+	} while (g_vm->_prioritycommand_1);
+	return res;
 }
 
 } // End of namespace Chamber
