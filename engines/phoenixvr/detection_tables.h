@@ -128,8 +128,8 @@ const ADGameDescription gameDescriptions[] = {
 	{"lochness",
 		nullptr,
 		AD_ENTRY2s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
-				   "textes.txt", "3f2deea06efed98a355ea03d69fd15ce", 1608),
-		Common::EN_USA,
+				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763),
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_CD,
 		GUIO1(GUIO_NONE)}
