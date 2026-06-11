@@ -869,7 +869,18 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	if (codec == SMUSH_CODEC_RA2_BOMP) {
 		const bool highRes = ra2IsHighResMode();
 		const bool gameplayActive = isRebel2GameplayActive(_insane);
-		if (highRes && (!gameplayActive || !_ra2UsingGameplaySurface || _specialBuffer == nullptr)) {
+		const int64 currentSurfaceSize64 = (int64)_width * _height;
+		if (highRes && gameplayActive &&
+				_dst == _specialBuffer && _specialBuffer != nullptr &&
+				_width > 320 && _height > 200 &&
+				currentSurfaceSize64 > 0 && currentSurfaceSize64 <= _specialBufferSize) {
+			if (_ra2NativeFrameNeedsClear) {
+				ra2ClearCurrentTarget();
+				_ra2NativeFrameNeedsClear = false;
+			}
+			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using current _specialBuffer %dx%d for high-res codec 45 mask",
+				_width, _height);
+		} else if (highRes && (!gameplayActive || !_ra2UsingGameplaySurface || _specialBuffer == nullptr)) {
 			if (!ra2EnsureLowResVideoBuffer())
 				return false;
 			_dst = _ra2LowResVideoBuffer;
@@ -944,6 +955,21 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	} else if (!highRes && fobjSize64 > screenSize && !fullFrameDelta) {
 		surfaceWidth = MAX(surfaceWidth, _ra2FrameObjectSurfaceWidth);
 		surfaceHeight = MAX(surfaceHeight, _ra2FrameObjectSurfaceHeight);
+	}
+
+	const int64 currentSurfaceSize64 = (int64)_width * _height;
+	if (highRes && gameplayActive && !useGameplaySurface && !oversizedNative &&
+			width > 0 && height > 0 &&
+			_dst == _specialBuffer && _specialBuffer != nullptr &&
+			_width > 320 && _height > 200 &&
+			currentSurfaceSize64 > 0 && currentSurfaceSize64 <= _specialBufferSize) {
+		if (_ra2NativeFrameNeedsClear) {
+			ra2ClearCurrentTarget();
+			_ra2NativeFrameNeedsClear = false;
+		}
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using current _specialBuffer %dx%d for high-res gameplay FOBJ %dx%d",
+			_width, _height, width, height);
+		return true;
 	}
 
 	if (highRes && !useGameplaySurface && !oversizedNative) {
