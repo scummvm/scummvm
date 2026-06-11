@@ -620,15 +620,14 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 }
 
 Common::Point InsaneRebel2::getHandler7ShipDrawPoint() {
-	int shipCenterX = (_flyShipScreenX - 0xd4) + _perspectiveX + 160 + _viewX;
-	int shipCenterY = (_flyShipScreenY - 0x82) + _perspectiveY + 100 + _viewY;
+	Common::Point projected = getHandler7ProjectedPoint();
 
 	if (!_flyShipSprite || _flyShipSprite->getNumChars() <= 0)
-		return Common::Point(shipCenterX - 0xd4, shipCenterY - 0x82);
+		return Common::Point(projected.x - 0xd4, projected.y - 0x82);
 
 	int spriteIndex = CLIP<int>(_shipDirectionIndex, 0, _flyShipSprite->getNumChars() - 1);
-	return Common::Point(shipCenterX - _flyShipSprite->getCharWidth(spriteIndex) / 2,
-	                     shipCenterY - _flyShipSprite->getCharHeight(spriteIndex) / 2);
+	return Common::Point(projected.x - 0xd4 + _flyShipSprite->getCharXOffset(spriteIndex),
+	                     projected.y - 0x82 + _flyShipSprite->getCharYOffset(spriteIndex));
 }
 
 Common::Point InsaneRebel2::getHandler7ProjectedPoint() {
@@ -2693,13 +2692,13 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// STEP 0: Fill status bar background (FUN_004288c0).
 	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY);
 
-	// Ship rendering (FUN_00401ccf for Handler 8, FUN_0040d836 for Handler 7).
+	// Ship rendering. Handler 7 is drawn later, after its lasers, matching
+	// FUN_0040d836's order so the ship covers the muzzle end of the beams.
 	debugC(DEBUG_INSANE, "Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
 		_rebelHandler, (void*)_shipSprite, (void*)_flyShipSprite, _shipLevelMode,
 		_shipSprite ? _shipSprite->getNumChars() : 0,
 		_flyShipSprite ? _flyShipSprite->getNumChars() : 0);
 
-	renderHandler7Ship(renderBitmap, pitch, width, height);
 	renderVehicleShotImpacts(renderBitmap, pitch, width, height);
 	renderHandler8Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
@@ -2712,6 +2711,8 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 
 	// Laser shot beams - drawn BEFORE cockpit/HUD overlays so cockpit covers beam edges.
 	renderLaserShots(renderBitmap, pitch, width, height);
+
+	renderHandler7Ship(renderBitmap, pitch, width, height);
 
 	// Handler 25 GRD sprites drawn AFTER enemies/explosions/lasers per original FUN_0041DB5E:
 	//   Line 193: FUN_0041f29a (enemies)
@@ -3463,17 +3464,20 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	const int nativeViewX = renderHiRes ? _hiResPresentationViewX : 0;
 	const int nativeViewY = renderHiRes ? _hiResPresentationViewY : 0;
 
+	Common::Point projected = getHandler7ProjectedPoint();
 	Common::Point shipDraw = getHandler7ShipDrawPoint();
 	if (renderHiRes) {
 		// Low-res draws into the native source buffer with _viewX/_viewY baked in,
 		// then SmushPlayer copies the scrolled viewport. High-res promotion has
 		// already consumed those offsets, so reconstruct the same native source
 		// position before applying the 2x presentation transform.
+		projected.x += nativeViewX;
+		projected.y += nativeViewY;
 		shipDraw.x += nativeViewX;
 		shipDraw.y += nativeViewY;
 	}
-	int shipCenterX = shipDraw.x + 0xd4;
-	int shipCenterY = shipDraw.y + 0x82;
+	int shipCenterX = projected.x;
+	int shipCenterY = projected.y;
 
 	// FUN_40D836 lines 108-136: FLY002 proximity cues near corridor danger.
 	if (_flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
