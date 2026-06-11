@@ -243,7 +243,10 @@ Common::Error SkyEngine::go() {
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
 		_skySound->checkFxQueue();
-		_skyMouse->mouseEngine();
+		if (SkyEngine::isIbass())
+			_skyMouse->mouseEngineIBASS();
+		else
+			_skyMouse->mouseEngine();
 		handleKey();
 		if (_systemVars->paused) {
 			do {
@@ -350,8 +353,14 @@ bool SkyEngine::loadChineseTraditional() {
 }
 
 Common::Error SkyEngine::init() {
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(320, 200, &format);
+	if (SkyEngine::isIbass()) {
+		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		initGraphics(320, 200, &format);
+	} else {
+		initGraphics(320, 200);
+	}
+
+	debug(1, "%d bytes per pixel", _system->getScreenFormat().bytesPerPixel);
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
