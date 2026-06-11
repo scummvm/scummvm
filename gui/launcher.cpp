@@ -1099,7 +1099,30 @@ int LauncherChooser::runModal() {
 	do {
 		ret = _impl->run();
 		if (ret == kSwitchLauncherDialog) {
+			Common::StringArray selectedDomains;
+			const Common::Array<bool> &selections = _impl->getSelectedItems();
+			const Common::StringArray &domains = _impl->getDomains();
+			for (uint i = 0; i < selections.size() && i < domains.size(); ++i) {
+				if (selections[i]) {
+					selectedDomains.push_back(domains[i]);
+				}
+			}
+
 			selectLauncher();
+
+			if (_impl && !selectedDomains.empty()) {
+				const Common::StringArray &newDomains = _impl->getDomains();
+				Common::Array<bool> &newSelections = const_cast<Common::Array<bool>&>(_impl->getSelectedItems());
+				for (const auto &domain : selectedDomains) {
+					for (uint i = 0; i < newDomains.size(); ++i) {
+						if (newDomains[i] == domain) {
+							if (i < newSelections.size())
+								newSelections[i] = true;
+							break;
+						}
+					}
+				}
+			}
 		}
 	} while (ret < -1);
 	return ret;
