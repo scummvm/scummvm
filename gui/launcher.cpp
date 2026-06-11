@@ -1730,7 +1730,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 				}
 				++mode;
 			}
-			updateListing();
+			updateListing(kSelPosGroupingChange);
 		}
 		break;
 	}
@@ -1785,12 +1785,18 @@ void LauncherGrid::updateListing(int selPos) {
 
 	const int oldSel = _grid->getSelected();
 
+	Common::Array<bool> savedSelection;
+	const bool restoringGroupedSelection = (selPos == kSelPosGroupingChange);
+	if (restoringGroupedSelection)
+		savedSelection = _grid->getSelectedItems();
 	_grid->setEntryList(&gridList);
 	groupEntries(domainList);
 
-	if (_groupBy != kGroupByNone && selPos != -1) {
+	if (restoringGroupedSelection)
+		const_cast<Common::Array<bool>&>(_grid->getSelectedItems()) = savedSelection;
+	else if (_groupBy != kGroupByNone && selPos != -1)
 		_grid->setSelected(_grid->getNewSel(selPos));
-	} else if (oldSel < (int)gridList.size() && oldSel >= 0)
+	else if (oldSel < (int)gridList.size() && oldSel >= 0)
 		_grid->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
