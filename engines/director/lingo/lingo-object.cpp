@@ -132,6 +132,7 @@
 #include "director/lingo/xlibs/s/stagetc.h"
 #include "director/lingo/xlibs/s/syscolor.h"
 #include "director/lingo/xlibs/s/savenrestorexobj.h"
+#include "director/lingo/xlibs/s/stagectl.h"
 #include "director/lingo/xlibs/t/tengu.h"
 #include "director/lingo/xlibs/t/temnotaxobj.h"
 #include "director/lingo/xlibs/u/unittest.h"
@@ -142,7 +143,7 @@
 #include "director/lingo/xlibs/v/vmpresent.h"
 #include "director/lingo/xlibs/v/volumelist.h"
 #include "director/lingo/xlibs/v/voyagerxsound.h"
-#include "director/lingo/xlibs/w/widgetxobj.h"
+#include "director/lingo/xlibs/w/widget.h"
 #include "director/lingo/xlibs/w/window.h"
 #include "director/lingo/xlibs/w/wininfo.h"
 #include "director/lingo/xlibs/w/winxobj.h"
@@ -369,6 +370,7 @@ static const struct XLibProto {
 	XLIBDEF(SmallUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
+	XLIBDEF(StageControlXObj,			kXObj,					300),	// D3
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
 	XLIBDEF(StayToonedBallXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(StayToonedGlopXtra,			kXtraObj,					500),	// D5
@@ -388,8 +390,8 @@ static const struct XLibProto {
 	XLIBDEF(VideodiscXObj,		kXObj,			200),	// D2
 	XLIBDEF(VolumeList,			kXObj,			300),	// D3
 	XLIBDEF(VoyagerXSoundXObj,	kXObj,			400),	// D4
+	XLIBDEF(WidgetXObj,			kXObj,					300),	// D3
 	XLIBDEF(WinInfoXObj,		kXObj,			400),	// D4
-	XLIBDEF(WidgetXObj, 		kXObj,			400),	// D4
 	XLIBDEF(WindowXObj,			kXObj,			200),	// D2
 	XLIBDEF(XCMDGlueXObj,		kXObj,			200),	// D2
 	XLIBDEF(XPlayPACoXFCN,		kXObj,			300),	// D3

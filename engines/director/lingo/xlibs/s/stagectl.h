@@ -19,19 +19,19 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_XLIBS_WIDGETXOBJ_H
-#define DIRECTOR_LINGO_XLIBS_WIDGETXOBJ_H
+#ifndef DIRECTOR_LINGO_XLIBS_S_STAGECTL_H
+#define DIRECTOR_LINGO_XLIBS_S_STAGECTL_H
 
 namespace Director {
 
-class WidgetXObject : public Object<WidgetXObject> {
+class StageControlXObject : public Object<StageControlXObject> {
 public:
-	WidgetXObject(ObjectType objType);
+	StageControlXObject(ObjectType objType);
 };
 
-namespace WidgetXObj {
+namespace StageControlXObj {
 
-extern const char *const xlibName;
+extern const char *xlibName;
 extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);
@@ -39,10 +39,12 @@ void close(ObjectType type);
 
 void m_new(int nargs);
 void m_dispose(int nargs);
-void m_getPro(int nargs);
-void m_askQuit(int nargs);
+void m_name(int nargs);
+void m_noisy(int nargs);
+void m_numberOfInstances(int nargs);
+void m_becomeSystemModal(int nargs);
 
-} // End of namespace WidgetXObj
+} // End of namespace StageControlXObj
 
 } // End of namespace Director
 
