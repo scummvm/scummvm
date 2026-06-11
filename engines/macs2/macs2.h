@@ -291,8 +291,6 @@ public:
 
 	Common::MemoryReadStream *_fileStream;
 
-	void nextCursorMode();
-
 	void setCursorMode(Script::MouseMode newMode);
 
 	Common::Array<uint16> _hotspotColorTable;

@@ -343,7 +343,6 @@ public:
 	bool _pickupInProgress = false;
 	uint16 _pickupActorObjectID = 0;
 	uint16 _pickupTargetObjectID = 0;
-	MouseMode _savedPickupMouseMode = MouseMode::Use;
 
 	// Legacy flag for script callback scheduling. Marked for removal.
 	bool _requestCallback = false;
