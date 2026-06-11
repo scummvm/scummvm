@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-11 13:12+0000\n"
+"POT-Creation-Date: 2026-06-11 22:10+0000\n"
 "PO-Revision-Date: 2026-05-06 08:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6108,7 +6108,7 @@ msgstr "R2"
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
-#: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
+#: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:110
 #: engines/scumm/metaengine.cpp:1232 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "Меню"
@@ -6484,7 +6484,7 @@ msgstr "Поднять"
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/petka/metaengine.cpp:173
-#: engines/phoenixvr/metaengine.cpp:73 engines/scumm/help.cpp:228
+#: engines/phoenixvr/metaengine.cpp:82 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
 #: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
 #: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
@@ -6626,7 +6626,7 @@ msgstr ""
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/mads/metaengine.cpp:116
 #: engines/nancy/metaengine.cpp:104 engines/neverhood/dialogs.cpp:47
-#: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:38
+#: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:47
 #: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:47
 #: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:56 engines/waynesworld/metaengine.cpp:37
@@ -6641,7 +6641,7 @@ msgstr "Использовать оригинальные экраны запи�
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/mads/metaengine.cpp:117
 #: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:48
-#: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:39
+#: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:48
 #: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:48
 #: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:57 engines/waynesworld/metaengine.cpp:38
@@ -7244,7 +7244,7 @@ msgid "Show version"
 msgstr "Показать версию"
 
 #: engines/asylum/metaengine.cpp:120 engines/crab/input/input.cpp:271
-#: engines/phoenixvr/metaengine.cpp:96 engines/queen/metaengine.cpp:253
+#: engines/phoenixvr/metaengine.cpp:105 engines/queen/metaengine.cpp:253
 #: engines/sludge/keymapper_tables.h:308 engines/sludge/keymapper_tables.h:404
 #: engines/sludge/keymapper_tables.h:471 engines/sludge/keymapper_tables.h:502
 #: engines/ultima/nuvie/metaengine.cpp:92
@@ -7253,7 +7253,7 @@ msgid "Quick load"
 msgstr "Быстрая загрузка"
 
 #: engines/asylum/metaengine.cpp:125 engines/crab/input/input.cpp:266
-#: engines/phoenixvr/metaengine.cpp:91 engines/queen/metaengine.cpp:247
+#: engines/phoenixvr/metaengine.cpp:100 engines/queen/metaengine.cpp:247
 #: engines/sludge/keymapper_tables.h:64 engines/sludge/keymapper_tables.h:303
 #: engines/sludge/keymapper_tables.h:410 engines/sludge/keymapper_tables.h:465
 #: engines/sludge/keymapper_tables.h:496 engines/ultima/nuvie/metaengine.cpp:91
@@ -7565,7 +7565,7 @@ msgstr "Переключить бой"
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
-#: engines/phoenixvr/metaengine.cpp:85 engines/scumm/help.cpp:79
+#: engines/phoenixvr/metaengine.cpp:94 engines/scumm/help.cpp:79
 #: engines/scumm/metaengine.cpp:1150 engines/supernova/metaengine.cpp:309
 #: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:304
@@ -7745,7 +7745,7 @@ msgstr "База улик"
 #: engines/freescape/games/dark/dark.cpp:236
 #: engines/freescape/games/driller/driller.cpp:129
 #: engines/freescape/games/eclipse/eclipse.cpp:340
-#: engines/mads/metaengine.cpp:403 engines/phoenixvr/metaengine.cpp:80
+#: engines/mads/metaengine.cpp:403 engines/phoenixvr/metaengine.cpp:89
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
 #: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:852
 #: engines/stark/metaengine.cpp:280 engines/sword1/metaengine.cpp:295
@@ -8384,7 +8384,7 @@ msgstr "Звуковые эффекты только с дискеты"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
-#: engines/phoenixvr/metaengine.cpp:66 engines/tinsel/metaengine.cpp:294
+#: engines/phoenixvr/metaengine.cpp:75 engines/tinsel/metaengine.cpp:294
 #: engines/twp/metaengine.cpp:150
 msgid "Action"
 msgstr "Действие"
@@ -11897,7 +11897,7 @@ msgstr "Показать / Убрать экран настроек"
 msgid "Close current interface"
 msgstr "Закрыть текущий интерфейс"
 
-#: engines/phoenixvr/metaengine.cpp:107
+#: engines/phoenixvr/metaengine.cpp:116
 #: engines/wintermute/keymapper_tables.h:239
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:313
