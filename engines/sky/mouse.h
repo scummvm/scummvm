@@ -156,6 +156,7 @@ protected:
 	void buttonEngine1();
 	void invMouse(uint16 xPos, uint16 yPos);
 	void lincInvMouse(uint16 xPos, uint16 yPos);
+	void invUseOn(uint16 xPos, uint16 yPos);
 
 	bool _logicClick;
 

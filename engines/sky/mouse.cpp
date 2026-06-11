@@ -319,6 +319,9 @@ void Mouse::mouseEngineIBASS() {
 			invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 		break;
 	case INVENTORY_USE_ON:
+		invUseOn(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+		break;
+
 	case TEXT_CHOOSER:
 		break;
 	}
@@ -1843,6 +1846,85 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 	if (Logic::_scriptVariables[GET_OFF]) {
 		_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
 		Logic::_scriptVariables[GET_OFF] = 0;
+	}
+}
+
+// dragging the inventory items around the screen and releasing to use
+void Mouse::invUseOn(uint16 xPos, uint16 yPos) {
+	Compact *itemData;
+	uint32 itemNum;
+	uint16 midX, midY;
+	bool buttonHeld = (_system->getEventManager()->getButtonState() != 0);
+
+	if (buttonHeld)
+		_logicClick++;
+	else
+		_logicClick = 0;
+
+	if (buttonHeld) {
+		itemNum = doProximityHighlights(xPos, yPos);
+		// without this, it would calculate Compact 0 if hovering over a non interactive item
+		if (!itemNum)
+			return;
+		debug("Item %d is being dragged", _touchId);
+		// what are we near
+		itemNum = doProximityHighlights(xPos, yPos);
+		itemData = _skyCompact->fetchCpt(itemNum);
+		midX = giveXCood(itemData, itemNum);
+		midY = giveYCood(itemData, itemNum);
+		int d = abs(xPos - midX) + abs(yPos - midY);
+		if (d < USE_ON_DIST) {
+			if (_touchId != itemNum) {
+				// run previous item's GET_OFF
+				if (Logic::_scriptVariables[GET_OFF])
+					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+
+				Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+				// record what we're touching
+				Logic::_scriptVariables[SPECIAL_ITEM] = itemNum;
+				_touchId = itemNum;
+				if (itemData->mouseOn) {
+					_skyLogic->mouseScript(itemData->mouseOn, itemData);
+					_skyScreen->setDragIconHighlight(true);
+				} else {
+					_skyScreen->setDragIconHighlight(false);
+				}
+			}
+			// touching something
+			_skyScreen->setProximityNotAnimate(_nearestProximityIconId);
+			return;
+		}
+		// touching nothing
+		// run previous item's GET_OFF if there was one
+		if (Logic::_scriptVariables[GET_OFF]) {
+			_skyScreen->setDragIconHighlight(false); // highlight off
+			itemData = _skyCompact->fetchCpt(_touchId);
+			_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+			Logic::_scriptVariables[GET_OFF] = 0;
+		}
+		_touchId = 0; // clear
+	} else { // release on another object
+		_skyScreen->clearAllProximityIcons();
+		// run previous item's GET_OFF if there was one
+		if (Logic::_scriptVariables[GET_OFF]) {
+			itemData = _skyCompact->fetchCpt(_touchId);
+			_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+			Logic::_scriptVariables[GET_OFF] = 0;
+		}
+		if (_touchId) {
+			if (g_engine->canSaveGameStateCurrently())
+				g_engine->saveGameState(0, "Autosave", true);
+			Logic::_scriptVariables[BUTTON] = 3;
+			itemData = _skyCompact->fetchCpt(_touchId);
+			if (itemData->mouseClick && itemData->mouseOn) {
+				Logic::_scriptVariables[SAFE_LOGIC_LIST] = Logic::_scriptVariables[LOGIC_LIST_NO];
+				_skyLogic->mouseScript(itemData->mouseClick, itemData);
+			}
+		}
+		resetUI();
+		_touchId = 0;
+		_mMode = GAMEPLAY;
+		_skyScreen->clearDragIcon();
 	}
 }
 
