@@ -194,6 +194,7 @@ Character *View1::getCharacterByIndex(uint16 index) {
 	}
 	return nullptr;
 }
+
 void View1::updateCursor(const byte *palette) {
 	CursorMan.showMouse(true);
 
@@ -620,7 +621,13 @@ void View1::setStringBox(const Common::StringArray &sa) {
 	_isShowingTextBox = true;
 	_continueScriptAfterUI = true;
 
-	// TODO: Change cursor, stop animations, hide again
+	// Binary: if (g_wCursorMode == 0x1a) setCursorMode(0x16);
+	// When cursor is Disabled (hourglass/hidden during script wait), restore to Walk (crosshair)
+	// so the player can click to dismiss the text box or select a dialogue choice.
+	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Disabled) {
+		g_engine->setCursorMode(Script::MouseMode::Walk);
+		updateCursor();
+	}
 	redraw();
 }
 
@@ -1235,9 +1242,11 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		}
 
 		// Handle interactions during script execution
-		// From handleInput (1008:f0ad): clicks during script execution set the
-		// click state variables and resume the script executor.
-		if (g_engine->_scriptExecutor->isExecuting()) {
+		// From handleInput (1008:f1d4): clicks during script execution are ONLY processed
+		// if cursor is not Disabled (0x1A). When cursor is Disabled (walk/wait in progress),
+		// clicks are completely ignored.
+		if (g_engine->_scriptExecutor->isExecuting() &&
+			g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::Disabled) {
 			// Binary handleInput (1008:f1d4-f225):
 			// 1. handleTextBoxInput() clears text box visual
 			// 2. dismissDialoguePanel() clears g_wIsShowingDialoguePanel visual
@@ -2972,7 +2981,7 @@ void Character::update() {
 					g_engine->_scriptExecutor->_pickupInProgress = false;
 					g_engine->_scriptExecutor->_pickupActorObjectID = 0;
 					g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
-					g_engine->setCursorMode(g_engine->_scriptExecutor->_savedPickupMouseMode);
+					g_engine->setCursorMode(g_engine->_scriptExecutor->_cursorModeBeforeWait);
 					currentView->updateCursor();
 				}
 				g_engine->_scriptExecutor->_walkTargetObjectIndex = 0;
@@ -3078,6 +3087,7 @@ void Character::update() {
 		// Binary walkAlongPath (1008:1b8f): g_bMovementFinishedFlag = 1
 		// only when orientation was < 9 (character was actively walking).
 		if (wasWalking) {
+			debug("Movement finished, setting flag");
 			g_engine->_movementFinishedFlag = true;
 		}
 		_executeScriptOnFinishLerp = false;
