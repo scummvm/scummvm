@@ -861,10 +861,11 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
 			kRA2Handler7DirectInputDenominator);
 	}
-	// ScummVM's controller path drives a virtual absolute aim point, like mouse/touch.
-	// Use the same bounded target steering for it; the original relative-axis
-	// integration is too sluggish for L10's low slide/lift parameters.
-	const bool useTargetSteering = true;
+	// Mouse/touch can hold an absolute cursor at an edge indefinitely, so they use
+	// bounded target steering. Gamepad input for Handler 7 now feeds the original
+	// center-relative flight axes and lets the assembly-derived velocity history,
+	// lift/slide tables, wind, and clamps produce the ship movement.
+	const bool useTargetSteering = !_gamepadAimActive;
 	int16 mouseFlightTargetX = _flyShipScreenX;
 	if (useTargetSteering) {
 		mouseFlightTargetX = (int16)(0xd4 + (scaledInputX * kRA2Handler7MouseTargetRangeX) / 127);
