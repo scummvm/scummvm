@@ -686,7 +686,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		return false;
 
 	if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive &&
-			(event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
+			event.type == Common::EVENT_LBUTTONDOWN) {
 		_vm->_smushVideoShouldFinish = true;
 		return true;
 	}
@@ -875,9 +875,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		}
 
 		if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive && pressed &&
-				(event.customType == kScummActionInsaneAttack ||
-				 event.customType == kScummActionInsaneSwitch ||
-				 event.customType == kScummActionInsaneSkip)) {
+				event.customType == kScummActionInsaneSkip) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
