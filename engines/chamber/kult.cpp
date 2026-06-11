@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "engines/advancedDetector.h"
@@ -113,7 +114,10 @@ uint16 benchmarkCpu(void) {
 void randomize(void) {
 	// Original read the low byte of the BIOS timer-tick count (int 0x1A) into
 	// rand_seed. Use the host millisecond timer as an equivalent entropy source.
-	rand_seed = (byte)(g_system->getMillis());
+	if (ConfMan.hasKey("random_seed"))
+		rand_seed = (byte)ConfMan.getInt("random_seed");
+	else
+		rand_seed = (byte)(g_system->getMillis());
 	getRand();
 }
 
