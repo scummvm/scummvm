@@ -998,8 +998,8 @@ private:
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 				if (acceptSelection) {
-					int mouseX = kWidth * event.mouse.x / g_system->getWidth();
-					key = mouseX < selectionSplitX() ? 1 : 2;
+					Common::Point mouse = _engine->getNormalizedPosition(event.mouse);
+					key = mouse.x < selectionSplitX() ? 1 : 2;
 				} else if (acceptAnyKey) {
 					key = 3;
 				}

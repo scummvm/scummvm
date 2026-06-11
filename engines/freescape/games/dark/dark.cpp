@@ -1125,6 +1125,12 @@ void DarkEngine::drawInfoMenu() {
 			case Common::EVENT_SCREEN_CHANGED:
 				_gfx->computeScreenViewport();
 				break;
+			case Common::EVENT_RBUTTONDOWN:
+			// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (isTouchscreenActive())
+					cont = false;
+				break;
 
 			default:
 				break;
