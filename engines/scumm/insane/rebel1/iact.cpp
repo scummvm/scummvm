@@ -97,6 +97,9 @@ const int16 kOnFootCursorMinX = 0;
 const int16 kOnFootCursorMaxX = 319;
 const int16 kOnFootCursorMinY = 0;
 const int16 kOnFootCursorMaxY = 199;
+const int16 kRA1Level12TargetA = 195;
+const int16 kRA1Level12TargetB = 197;
+const int16 kRA1Level12TargetC = 199;
 
 // Level 15 final approach 0x5D damage/event codes consumed by
 // RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
@@ -1763,22 +1766,22 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	_frameCounter++;
 
 	if (_currentLevel == 11) {
-		// RunLevel12Flow checks DAT_761A bits 0x20, 0x08, and 0x02 at frame
-		// 0x550. These map to destroyed object IDs 211, 213, and 215 in the
-		// port's one-based frame-object helper. On failure the original keeps
+		// RunLevel12Flow checks the three attackers around frame 0x550. The
+		// event-mask bits map to L12PLAY's one-based FOBJ IDs 195, 197, and 199
+		// in the port's frame-object helper. On failure the original keeps
 		// pumping L12PLAY until frame 0x564, plays L12RETRY, then restarts
 		// L12PLAY without resetting health.
 		if (_levelGameplayPhase == 0 && _frameCounter == 0x550) {
-			const bool target211Destroyed = isFrameObjectPrimarySet(211);
-			const bool target213Destroyed = isFrameObjectPrimarySet(213);
-			const bool target215Destroyed = isFrameObjectPrimarySet(215);
-			if (!target211Destroyed || !target213Destroyed || !target215Destroyed) {
+			const bool targetADestroyed = isFrameObjectPrimarySet(kRA1Level12TargetA);
+			const bool targetBDestroyed = isFrameObjectPrimarySet(kRA1Level12TargetB);
+			const bool targetCDestroyed = isFrameObjectPrimarySet(kRA1Level12TargetC);
+			if (!targetADestroyed || !targetBDestroyed || !targetCDestroyed) {
 				_levelGameplayPhase = 1;
 				debugC(DEBUG_INSANE, "L12 retry armed: frame=0x%04x targets=(%d,%d,%d)",
 					_frameCounter,
-					target211Destroyed ? 1 : 0,
-					target213Destroyed ? 1 : 0,
-					target215Destroyed ? 1 : 0);
+					targetADestroyed ? 1 : 0,
+					targetBDestroyed ? 1 : 0,
+					targetCDestroyed ? 1 : 0);
 			}
 		}
 		if (_levelGameplayPhase == 1 && _frameCounter >= 0x564)
