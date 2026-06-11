@@ -869,6 +869,7 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 
 ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 	// Show a dialogue option.
+	debugC(kDebugScript, "scriptShowDialogue: walkTarget=%d isLerping check needed", _walkTargetObjectIndex);
 	uint32 objectID = scriptReadValue32() - 0x400;
 	uint16 x = scriptReadValue16();
 	uint16 y = scriptReadValue16();
@@ -986,6 +987,7 @@ ExecutionResult Script::ScriptExecutor::scriptWaitForWalk() {
 		return ExecutionResult::ScriptFinished;
 	}
 	c->registerWaitForMovementFinishedEvent();
+	_walkTargetObjectIndex = objectID;
 	_requestCallback = false;
 	_isAwaitingCallback = true;
 	endTimer();
@@ -1113,6 +1115,7 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 	_engine->setCursorMode(MouseMode::Disabled);
 	currentView->updateCursor();
 	actor->startPickup(targetObject);
+	_walkTargetObjectIndex = actorIndex;
 	_requestCallback = false;
 	_isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
@@ -2388,6 +2391,18 @@ ExecutionResult Script::ScriptExecutor::executeScript() {
 }
 
 void ScriptExecutor::run(bool firstRun) {
+	// Binary runScriptExecutor (1008:e50c) entry guard:
+	// Returns immediately if ANY wait condition is active.
+	if (_frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
+		_waitForSoundPlayback || _waitForMusicControl || _waitForAdlibReady ||
+		_pickupInProgress) {
+		debugC(kDebugScript, "run() blocked by entry guard: frameWait=%d walkTarget=%d sound=%d music=%d adlib=%d pickup=%d",
+			   _frameWaitTicksRemaining, _walkTargetObjectIndex,
+			   _waitForSoundPlayback ? 1 : 0, _waitForMusicControl ? 1 : 0,
+			   _waitForAdlibReady ? 1 : 0, _pickupInProgress ? 1 : 0);
+		return;
+	}
+
 	const bool resumingAfterCallback = (_state == ExecutorState::WaitingForCallback) && !firstRun;
 	if (!resumingAfterCallback) {
 		// TODO: Not sure if this is the right place and condition to reset this

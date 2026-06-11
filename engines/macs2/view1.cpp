@@ -1731,9 +1731,29 @@ bool View1::tick() {
 	}
 
 	// Binary gameTick: drawScene(1) (which calls walkAlongPath for all characters)
-	// is only called when g_wUiPanelState == 0 and no dialogue panel is showing. TODO: change to one var
+	// is only called when g_wUiPanelState == 0 and no dialogue panel is showing.
 	if (_uiPanelState == kUiPanelNone) {
 		drawAllCharacters();
+
+		// Binary gameTick (1008:e752) walk-wait polling:
+		// When g_wWalkTargetObjectIndex > 0, check each frame if the character
+		// has reached its target position. Only resume script when arrived.
+		uint16 walkTarget = g_engine->_scriptExecutor->_walkTargetObjectIndex;
+		if (walkTarget > 0) {
+			Character *c = getCharacterByIndex(walkTarget);
+			if (c != nullptr) {
+				Common::Point pos = c->getPosition();
+				// Binary checks: charPos == runtime.target (offset 8,10)
+				// In ScummVM, _endPosition is the immediate walk target.
+				if (pos.x == c->_pathFinalDestination.x && pos.y == c->_pathFinalDestination.y) {
+					if (!g_engine->_scriptExecutor->_pickupInProgress) {
+						g_engine->_scriptExecutor->_walkTargetObjectIndex = 0;
+						g_engine->_scriptExecutor->_isRepeatRun = true;
+						g_engine->scheduleRun();
+					}
+				}
+			}
+		}
 	}
 
 	redraw();
@@ -1741,18 +1761,8 @@ bool View1::tick() {
 }
 
 void View1::drawAllCharacters() {
-	// Binary drawAllCharacters (1008:90a2): g_bMovementFinishedFlag = 0 at start
-	g_engine->_movementFinishedFlag = false;
-
 	for (auto currentCharacter : _characters) {
 		currentCharacter->update();
-	}
-
-	// Binary drawAllCharacters (1008:90a2): after all characters processed,
-	// if g_bMovementFinishedFlag != 0 → runScriptExecutor with _isRepeatRun=1
-	if (g_engine->_movementFinishedFlag) {
-		g_engine->_scriptExecutor->_isRepeatRun = true;
-		g_engine->scheduleRun();
 	}
 }
 
@@ -2942,11 +2952,15 @@ void Character::startPickup(Macs2::GameObject *object) {
 }
 
 void Character::registerWaitForMovementFinishedEvent() {
-
-	// For now, we are treating this one as a flag to send an event
-	// even if we are not lerping, so that we have a delay between action 0x11
-	// and the new execution
+	// Binary gameTick (1008:e752): checks if character position == target position
+	// each frame. Only resumes script when actually arrived.
+	// If already at destination (not lerping), trigger immediately via flag.
+	// If still walking, the flag will fire when walk completes in update().
 	_executeScriptOnFinishLerp = true;
+	if (!_isLerping && !_isFollowingPath) {
+		// Already at destination - don't schedule, let the normal movement-finished
+		// path in update() handle it next frame (it checks this flag)
+	}
 }
 
 void Character::update() {
@@ -3000,14 +3014,8 @@ void Character::update() {
 			return;
 		}
 
-		// We might have gotten the 0x11 command after we stopped moving
-		// TODO: Check if the code handles this similarly
-		// TODO: Consider which run function to use
-		if (_executeScriptOnFinishLerp) {
-			_executeScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->_isRepeatRun = true;
-			g_engine->scheduleRun();
-		}
+		// Position polling in tick() handles walk-wait completion.
+		_executeScriptOnFinishLerp = false;
 		return;
 	}
 	// Bresenham pixel-stepping from walkAlongPath (1008:1b8f).
@@ -3072,8 +3080,8 @@ void Character::update() {
 			_motionProgress = _motionDistanceUnits;
 			_hasMotionVerticalOffset = false;
 		}
-		// Standing orientation = walking direction + 8
-		// Binary: g_bMovementFinishedFlag is only set when orientation < 9 (was walking)
+		// Walk arrival: orientation changes to standing (walking dir + 8).
+		// Script resumption is handled by position polling in View1::tick().
 		bool wasWalking = (_gameObject->_orientation < 9);
 		if (wasWalking)
 			_gameObject->_orientation += 8;
@@ -3083,12 +3091,6 @@ void Character::update() {
 			_previousOrientation = _gameObject->_orientation;
 			_gameObject->_orientation = 0x11;
 			return;
-		}
-		// Binary walkAlongPath (1008:1b8f): g_bMovementFinishedFlag = 1
-		// only when orientation was < 9 (character was actively walking).
-		if (wasWalking) {
-			debug("Movement finished, setting flag");
-			g_engine->_movementFinishedFlag = true;
 		}
 		_executeScriptOnFinishLerp = false;
 		return;
