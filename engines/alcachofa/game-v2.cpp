@@ -102,7 +102,12 @@ static constexpr const ScriptKernelTask kScriptKernelTaskMap[] = {
 	ScriptKernelTask::PlayMusic,
 	ScriptKernelTask::StopMusic,
 	ScriptKernelTask::WaitForMusicToEnd,
-	ScriptKernelTask::SayTextV2
+	ScriptKernelTask::SayTextV2, // *might* be used in secta, unused in corvino
+	ScriptKernelTask::AnimateCharacter, // from here on only corvino
+	ScriptKernelTask::AnimateTalking,
+	ScriptKernelTask::ClearInventory,
+	ScriptKernelTask::WaitForMouseClick,
+	ScriptKernelTask::ResetCharacter
 };
 
 class GameWithVersion2 : public Game {
@@ -155,10 +160,6 @@ public:
 		Script &script = g_engine->script();
 		script.variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();
 		script.variable("textoson") = g_engine->config().subtitles() ? 1 : 0;
-	}
-
-	Path getVideoPath(int32 videoId) override {
-		return Path(String::format("Bin/DATA%02d.BIN", videoId));
 	}
 
 	String getSoundPath(const char *filename) override {
@@ -241,6 +242,10 @@ public:
 		auto &script = g_engine->script();
 		script.fixNestedMenuPop(5921); // Mortadelo talking to ARQUEOLOGOS in CARRETERA
 		script.fixNestedMenuPop(20898); // Filemon talking to MANOLO in FILE_PIRAMIDE
+	}
+
+	Path getVideoPath(int32 videoId) override {
+		return Path(String::format("Bin/DATA%02d.BIN", videoId));
 	}
 
 	char getTextFileKey() override {
@@ -361,12 +366,22 @@ public:
 
 class GameWithVersion2_1 : public GameWithVersion2 {
 public:
+	Path getVideoPath(int32 videoId) override {
+		return Path(String::format("Data/DATA%02d.BIN", videoId));
+	}
+
 	char getTextFileKey() override {
 		return static_cast<char>(0x60);
 	}
 
 	String getMusicPath(int32 trackId) override {
-		return String::format("Sonidos/T%02d", trackId);
+		return String::format("Sonidos/T%d", trackId);
+	}
+
+	void missingAnimation(const Common::String &fileName) override {
+		if (fileName == "VARITA.ANI") // this one seems bad, it is the inventory icon for I_RAMAS
+			return;
+		return GameWithVersion2::missingAnimation(fileName);
 	}
 };
 
@@ -378,6 +393,11 @@ public:
 
 	const char *const *getMapFiles() override {
 		return kMapFilesCorvino;
+	}
+
+	bool isKnownBadVideo(int32 videoId) override {
+		// These use DV codec in the steam release
+		return videoId < 2;
 	}
 };
 
