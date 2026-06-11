@@ -74,6 +74,8 @@ private:
 	bool ra2EnsureLowResVideoBuffer();
 	void ra2ClearCurrentTarget();
 	bool ra2IsHighResMode() const;
+	bool ra2DecodePlacedDeltaCodec(int codec, const uint8 *src, int left, int top,
+								   int width, int height, int pitch, int dataSize);
 	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 						int width, int height, int pitch, int dataSize);
 	void ra2HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);
@@ -94,8 +96,13 @@ private:
 	int _ra2FrameSourceSkipX;
 	int _ra2FrameSourceSkipY;
 	int _ra2FrameObjectOriginalWidth;
+	int _ra2FrameObjectOriginalHeight;
 	int _ra2FrameObjectSurfaceWidth;
 	int _ra2FrameObjectSurfaceHeight;
+	int _ra2DeltaBlocksWidth;
+	int _ra2DeltaBlocksHeight;
+	int _ra2DeltaGlyphsWidth;
+	int _ra2DeltaGlyphsHeight;
 	byte *_ra2LowResVideoBuffer;
 	int _ra2LowResVideoBufferSize;
 	bool _ra2NativeFrameNeedsClear;

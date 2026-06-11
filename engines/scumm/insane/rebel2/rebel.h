@@ -537,6 +537,7 @@ public:
 
 	// Get current handler ID (8, 25, 38 etc.) for SMUSH player to query
 	int getHandler() const { return _rebelHandler; }
+	int getHandler25GrdSpriteMode() const { return _grdSpriteMode; }
 	bool isHiRes() const;
 
 	void iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,

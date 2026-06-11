@@ -33,6 +33,8 @@
 
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/smush/codec37.h"
+#include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/rebel/smush_multi_font.h"
 #include "scumm/smush/rebel/codec_ra2.h"
@@ -58,6 +60,14 @@ bool isRebel2GameplayActive(Insane *insane) {
 		return false;
 
 	return static_cast<InsaneRebel2 *>(insane)->getHandler() != 0;
+}
+
+bool isRebel2Handler25CorridorMode(Insane *insane) {
+	if (insane == nullptr)
+		return false;
+
+	InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(insane);
+	return rebel2->getHandler() == 25 && rebel2->getHandler25GrdSpriteMode() == 3;
 }
 
 static void scaleNativeViewportToHiRes(byte *dst, int dstPitch, int dstWidth, int dstHeight,
@@ -165,8 +175,13 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_ra2FrameSourceSkipX = 0;
 	_ra2FrameSourceSkipY = 0;
 	_ra2FrameObjectOriginalWidth = 0;
+	_ra2FrameObjectOriginalHeight = 0;
 	_ra2FrameObjectSurfaceWidth = 0;
 	_ra2FrameObjectSurfaceHeight = 0;
+	_ra2DeltaBlocksWidth = 0;
+	_ra2DeltaBlocksHeight = 0;
+	_ra2DeltaGlyphsWidth = 0;
+	_ra2DeltaGlyphsHeight = 0;
 	_ra2LowResVideoBuffer = nullptr;
 	_ra2LowResVideoBufferSize = 0;
 	_ra2NativeFrameNeedsClear = false;
@@ -854,6 +869,7 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
  */
 void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int width, int height) {
 	_ra2FrameObjectOriginalWidth = width;
+	_ra2FrameObjectOriginalHeight = height;
 	_ra2FrameObjectSurfaceWidth = width;
 	_ra2FrameObjectSurfaceHeight = height;
 
@@ -1002,17 +1018,36 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	if (needsSpecialBuffer) {
 		// Frame is larger than the native target - need special buffer.
 		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+			byte *oldDst = _dst;
+			const int oldWidth = _width;
+			const int oldHeight = _height;
+			int oldPitch = oldWidth;
+			if (oldDst != _specialBuffer && oldDst != _ra2LowResVideoBuffer)
+				oldPitch = _vm->_screenWidth;
+			const bool oldTargetIsNative = oldDst == _specialBuffer || oldDst == _ra2LowResVideoBuffer ||
+				(oldWidth <= 320 && oldHeight <= 200);
+
 			byte *newSpecialBuffer = (byte *)malloc(bufSize);
 			if (newSpecialBuffer == nullptr) {
 				warning("SmushPlayerRebel2::ra2SelectFrameBuffer: Failed to allocate %d bytes for FOBJ %dx%d",
 					bufSize, width, height);
 				return false;
 			}
+			memset(newSpecialBuffer, 0, bufSize);
+
+			if (oldTargetIsNative && oldDst != nullptr && oldWidth > 0 && oldHeight > 0 && oldPitch > 0) {
+				const int copyWidth = MIN<int>(surfaceWidth, MIN<int>(oldWidth, oldPitch));
+				const int copyHeight = MIN<int>(surfaceHeight, oldHeight);
+				for (int y = 0; y < copyHeight; y++) {
+					memcpy(newSpecialBuffer + y * surfaceWidth,
+						   oldDst + y * oldPitch,
+						   copyWidth);
+				}
+			}
+
 			free(_specialBuffer);
 			_specialBuffer = newSpecialBuffer;
 			_specialBufferSize = bufSize;
-			// Zero-fill the new buffer to avoid garbage in areas not written by FOBJ codec
-			memset(_specialBuffer, 0, bufSize);
 			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Allocated new _specialBuffer %dx%d for FOBJ %dx%d (%d bytes)",
 				surfaceWidth, surfaceHeight, width, height, bufSize);
 		}
@@ -1043,6 +1078,122 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 		}
 	}
 
+	return true;
+}
+
+/**
+ * Decode RA2 full-frame delta FOBJ streams into a tight/padded scratch frame,
+ * then place the visible rectangle at the FOBJ coordinates.
+ */
+bool SmushPlayerRebel2::ra2DecodePlacedDeltaCodec(int codec, const uint8 *src, int left, int top,
+									 int width, int height, int pitch, int dataSize) {
+	if (!src || !_dst || width <= 0 || height <= 0 || pitch <= 0 || dataSize <= 0)
+		return true;
+
+	const int visibleWidth = (_ra2FrameObjectOriginalWidth > 0) ? _ra2FrameObjectOriginalWidth : width;
+	const int visibleHeight = (_ra2FrameObjectOriginalHeight > 0) ? _ra2FrameObjectOriginalHeight : height;
+	if (visibleWidth <= 0 || visibleHeight <= 0)
+		return true;
+
+	const int blockSize = (codec == SMUSH_CODEC_DELTA_BLOCKS) ? 4 : 8;
+	const int decodeWidth = (visibleWidth + blockSize - 1) & ~(blockSize - 1);
+	const int decodeHeight = (visibleHeight + blockSize - 1) & ~(blockSize - 1);
+	const int64 decodeSize64 = (int64)decodeWidth * decodeHeight;
+	if (decodeSize64 <= 0 || decodeSize64 > INT_MAX) {
+		warning("SmushPlayerRebel2::ra2DecodePlacedDeltaCodec: invalid codec %d frame size %dx%d",
+			codec, decodeWidth, decodeHeight);
+		return true;
+	}
+
+	byte *deltaFrame = (byte *)malloc((size_t)decodeSize64);
+	if (deltaFrame == nullptr) {
+		warning("SmushPlayerRebel2::ra2DecodePlacedDeltaCodec: failed to allocate %d-byte scratch frame",
+			(int)decodeSize64);
+		return true;
+	}
+
+	if (codec == SMUSH_CODEC_DELTA_BLOCKS) {
+		if (_deltaBlocksCodec != nullptr &&
+				(_ra2DeltaBlocksWidth != decodeWidth || _ra2DeltaBlocksHeight != decodeHeight)) {
+			delete _deltaBlocksCodec;
+			_deltaBlocksCodec = nullptr;
+			_ra2DeltaBlocksWidth = 0;
+			_ra2DeltaBlocksHeight = 0;
+		}
+		if (_deltaBlocksCodec == nullptr) {
+			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(decodeWidth, decodeHeight);
+			_ra2DeltaBlocksWidth = decodeWidth;
+			_ra2DeltaBlocksHeight = decodeHeight;
+		}
+		_deltaBlocksCodec->decode(deltaFrame, src);
+	} else {
+		if (_deltaGlyphsCodec != nullptr &&
+				(_ra2DeltaGlyphsWidth != decodeWidth || _ra2DeltaGlyphsHeight != decodeHeight)) {
+			delete _deltaGlyphsCodec;
+			_deltaGlyphsCodec = nullptr;
+			_ra2DeltaGlyphsWidth = 0;
+			_ra2DeltaGlyphsHeight = 0;
+		}
+		if (_deltaGlyphsCodec == nullptr) {
+			_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(decodeWidth, decodeHeight);
+			_ra2DeltaGlyphsWidth = decodeWidth;
+			_ra2DeltaGlyphsHeight = decodeHeight;
+		}
+		_deltaGlyphsCodec->decode(deltaFrame, src);
+	}
+
+	int srcX = CLIP<int>(_ra2FrameSourceSkipX, 0, visibleWidth);
+	int srcY = CLIP<int>(_ra2FrameSourceSkipY, 0, visibleHeight);
+	int copyWidth = MIN<int>(width, visibleWidth - srcX);
+	int copyHeight = MIN<int>(height, visibleHeight - srcY);
+	int dstX = left;
+	int dstY = top;
+
+	if (dstX < 0) {
+		const int skip = -dstX;
+		srcX += skip;
+		copyWidth -= skip;
+		dstX = 0;
+	}
+	if (dstY < 0) {
+		const int skip = -dstY;
+		srcY += skip;
+		copyHeight -= skip;
+		dstY = 0;
+	}
+
+	const int dstHeight = (_height > 0) ? _height : _vm->_screenHeight;
+	if (dstX + copyWidth > pitch)
+		copyWidth = pitch - dstX;
+	if (dstY + copyHeight > dstHeight)
+		copyHeight = dstHeight - dstY;
+
+	const bool transparentZero = codec == SMUSH_CODEC_DELTA_BLOCKS &&
+		visibleWidth == 350 && visibleHeight == 200 &&
+		isRebel2Handler25CorridorMode(_insane);
+
+	if (copyWidth > 0 && copyHeight > 0) {
+		for (int y = 0; y < copyHeight; y++) {
+			byte *dstLine = _dst + (dstY + y) * pitch + dstX;
+			const byte *srcLine = deltaFrame + (srcY + y) * decodeWidth + srcX;
+
+			if (transparentZero) {
+				for (int x = 0; x < copyWidth; x++) {
+					if (srcLine[x] != 0)
+						dstLine[x] = srcLine[x];
+				}
+			} else {
+				memcpy(dstLine, srcLine, copyWidth);
+			}
+		}
+	}
+
+	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2DecodePlacedDeltaCodec: codec=%d pos=(%d,%d) visible=%dx%d decode=%dx%d copy=%dx%d skip=(%d,%d) transparent=%d",
+		codec, left, top, visibleWidth, visibleHeight, decodeWidth, decodeHeight,
+		MAX<int>(0, copyWidth), MAX<int>(0, copyHeight), _ra2FrameSourceSkipX, _ra2FrameSourceSkipY,
+		transparentZero ? 1 : 0);
+
+	free(deltaFrame);
 	return true;
 }
 
@@ -1255,6 +1406,7 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 		// RLE data. The original FOBJ dispatcher applies FUN_00424510 offsets
 		// to the destination coordinates passed to FUN_0042cba0; it does not
 		// advance the compressed source by clipped scanlines.
+		_ra2FrameSourceSkipY = sourceSkipY;
 		if (srcSkipY)
 			*srcSkipY = 0;
 	} else if (srcSkipY) {
@@ -1264,8 +1416,11 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 }
 
 bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2) {
+	if (isRebel2FullFrameDeltaCodec(codec))
+		return ra2DecodePlacedDeltaCodec(codec, src, left, top, width, height, pitch, dataSize);
+
 	// Handle RA2-specific codecs (21, 23, 44, 45); return false for standard
-	// codecs (RLE, uncompressed, codec 37/47) so the base class decodes them.
+	// codecs (RLE) so the base class decodes them.
 	return ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize);
 }
 
