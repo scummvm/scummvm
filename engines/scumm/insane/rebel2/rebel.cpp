@@ -1953,6 +1953,40 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 				return;
 			}
 		}
+	} else if (_rebelHandler == 7) {
+		int axisX = 0;
+		int axisY = 0;
+		if (dpadX || dpadY) {
+			axisX = dpadX * 127;
+			axisY = dpadY * 127;
+		} else {
+			axisX = velX;
+			axisY = velY;
+		}
+
+		if (axisX || axisY) {
+			const Common::Point aimPos = getGameplayAimPoint();
+			const int centerX = 160;
+			const int centerY = 100;
+			const int kHandler7HorizontalRange = 120;
+			const int targetX = CLIP<int>(centerX + axisX * kHandler7HorizontalRange / 127, 0, 319);
+			const int targetY = (axisY < 0) ?
+				centerY + axisY * centerY / 127 :
+				centerY + axisY * (199 - centerY) / 127;
+			const int kHandler7HorizontalMaxStep = 24;
+			const int kHandler7VerticalMaxStep = 32;
+			const int distX = targetX - aimPos.x;
+			const int distY = targetY - aimPos.y;
+
+			if (distX || distY) {
+				deltaX = CLIP<int>(distX, -kHandler7HorizontalMaxStep, kHandler7HorizontalMaxStep);
+				deltaY = CLIP<int>(distY, -kHandler7VerticalMaxStep, kHandler7VerticalMaxStep);
+				activeGamepadAim = true;
+			} else {
+				_gamepadAimActive = true;
+				return;
+			}
+		}
 	} else if (dpadX || dpadY) {
 		const int kOriginalDigitalStep = 3;
 		deltaX = dpadX * kOriginalDigitalStep;

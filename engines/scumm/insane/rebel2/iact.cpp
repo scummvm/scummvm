@@ -853,14 +853,20 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 
 	// Direct mouse/touch/gamepad aiming can hold the cursor at an edge
 	// indefinitely. Keep this sensitivity concession local to Handler 7
-	// third-person ship steering.
-	scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
-		kRA2Handler7DirectInputDenominator);
-	scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
-		kRA2Handler7DirectInputDenominator);
-	const bool useMouseFlightTarget = !_gamepadAimActive;
+	// third-person ship steering. A held analog stick is already bounded by its
+	// physical range, so keep its full logical range for more responsive L10 flight.
+	if (!_gamepadAimActive) {
+		scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
+			kRA2Handler7DirectInputDenominator);
+		scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
+			kRA2Handler7DirectInputDenominator);
+	}
+	// ScummVM's controller path drives a virtual absolute aim point, like mouse/touch.
+	// Use the same bounded target steering for it; the original relative-axis
+	// integration is too sluggish for L10's low slide/lift parameters.
+	const bool useTargetSteering = true;
 	int16 mouseFlightTargetX = _flyShipScreenX;
-	if (useMouseFlightTarget) {
+	if (useTargetSteering) {
 		mouseFlightTargetX = (int16)(0xd4 + (scaledInputX * kRA2Handler7MouseTargetRangeX) / 127);
 		mouseFlightTargetX = CLIP<int16>(mouseFlightTargetX, 0x14, 0x194);
 	}
@@ -927,9 +933,10 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// FUN_0040C3CC integrates relative flight axes. The real mouse is an
 	// absolute position, so steer toward a bounded position target instead of
 	// letting a held off-center cursor keep pushing the ship until it bounces.
-	if (useMouseFlightTarget) {
+	if (useTargetSteering) {
 		int targetDeltaX = mouseFlightTargetX - _flyShipScreenX;
-		positionDeltaX = (int16)CLIP<int>(targetDeltaX / 4, -12, 12);
+		const int targetSteeringDivisor = _gamepadAimActive ? 2 : 4;
+		positionDeltaX = (int16)CLIP<int>(targetDeltaX / targetSteeringDivisor, -12, 12);
 		if (positionDeltaX == 0 && targetDeltaX != 0)
 			positionDeltaX = (targetDeltaX < 0) ? -1 : 1;
 	}
@@ -1085,11 +1092,11 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		 _vm->getActionState(kScummActionInsaneAttack));
 
 	debugC(DEBUG_INSANE, "H7: mouse=(%d,%d) raw=(%d,%d) scaled=(%d,%d) targetX=%d pos=(%d,%d) "
-		"vel=%d vIn=%d dx=%d dir=%d mode=%d mouseTarget=%d",
+		"vel=%d vIn=%d dx=%d dir=%d mode=%d targetSteer=%d padAim=%d",
 		mouseX, mouseY, inputX, inputY, scaledInputX, scaledInputY,
 		mouseFlightTargetX, _flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
 		_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode,
-		useMouseFlightTarget ? 1 : 0);
+		useTargetSteering ? 1 : 0, _gamepadAimActive ? 1 : 0);
 }
 
 // Helper split out of FUN_0041CADB case 4; not a separate original function.
