@@ -410,7 +410,7 @@ void ScriptExecutor::step() {
 				shouldContinue = loadNextScript();
 			} else {
 				// Let the current script continue
-				ExecutionResult result = executeScript();
+				ExecutionResult result = executeOpcodes();
 				if (result == ExecutionResult::WaitingForCallback) {
 					// We need to change our state as well now
 					_state = ExecutorState::WaitingForCallback;
@@ -858,7 +858,7 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 	// Confirmed: scriptChangeScene resets interactedObjectID and interactedInventoryItemId
 	// or if there is another mechanism for this
 	_interactedObjectID = 0;
-	_interactedOtherObjectID = 0;
+	_interactedInventoryItemId = 0;
 	_requestCallback = false;
 	g_engine->scheduleRun(true);
 	_isAwaitingCallback = true;
@@ -1853,7 +1853,7 @@ bool Script::ScriptExecutor::scriptPlayPcmSound() {
 
 bool Script::ScriptExecutor::scriptWaitForSound() {
 	if (_soundEnabled && _soundSystemActive) {
-		_waitForSoundPlayback = true;
+		_waitForPcmSound = true;
 		endTimer();
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return true;
@@ -1909,12 +1909,12 @@ bool Script::ScriptExecutor::scriptPlayMusicSlot() {
 	_engine->getAdlib()->playSongData(_musicSlots[slotID - 1]);
 	if (startMuted == 0) {
 		_musicControlMode = 1;
-		_musicControlParam = fadeParam;
+		_musicControlStep = fadeParam;
 		_musicControlVolume = 0x3F;
 		_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
 	} else {
 		_musicControlMode = 0;
-		_musicControlParam = 0;
+		_musicControlStep = 0;
 		_musicControlVolume = 0;
 		_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(0));
 	}
@@ -1941,7 +1941,7 @@ bool Script::ScriptExecutor::scriptStopMusicSlot() {
 		if (stopImmediately == 0) {
 			// Binary: sets mode=2 (fade-out), step=fadeParam, volume=0
 			_musicControlMode = 2;
-			_musicControlParam = fadeParam;
+			_musicControlStep = fadeParam;
 			_musicControlVolume = 0;
 		} else {
 			// Binary: adlibStopMusic(), activeSlot=0 (no mode/param clear)
@@ -2088,7 +2088,7 @@ void Script::ScriptExecutor::scriptFreePcmSound() {
 	_engine->clearCurrentSoundData();
 }
 
-ExecutionResult Script::ScriptExecutor::executeScript() {
+ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 	debugC(kDebugScript, "----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
 	_isRunningScript = true;
 	// Confirmed: no interrupt mechanism exists. Wait states (frameWait, walkTarget,
@@ -2397,11 +2397,11 @@ void ScriptExecutor::run(bool firstRun) {
 	// Binary runScriptExecutor (1008:e50c) entry guard:
 	// Returns immediately if ANY wait condition is active.
 	if (_frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
-		_waitForSoundPlayback || _waitForMusicControl || _waitForAdlibReady ||
+		_waitForPcmSound || _waitForMusicControl || _waitForAdlibReady ||
 		_pickupInProgress) {
 		debugC(kDebugScript, "run() blocked by entry guard: frameWait=%d walkTarget=%d sound=%d music=%d adlib=%d pickup=%d",
 			   _frameWaitTicksRemaining, _walkTargetObjectIndex,
-			   _waitForSoundPlayback ? 1 : 0, _waitForMusicControl ? 1 : 0,
+			   _waitForPcmSound ? 1 : 0, _waitForMusicControl ? 1 : 0,
 			   _waitForAdlibReady ? 1 : 0, _pickupInProgress ? 1 : 0);
 		return;
 	}
@@ -2432,7 +2432,7 @@ void ScriptExecutor::setCurrentSceneScriptAt(uint32 offset) {
 
 void ScriptExecutor::tick() {
 	if (_musicControlMode != 0 && _activeMusicSlot != 0) {
-		const uint16 step = MAX<uint16>(_musicControlParam, 1);
+		const uint16 step = MAX<uint16>(_musicControlStep, 1);
 		if (_musicControlMode == 1) {
 			_musicControlVolume = (_musicControlVolume > step) ? _musicControlVolume - step : 0;
 			_engine->getAdlib()->setVolume(_engine->scaledMusicVolume(_musicControlVolume));
@@ -2452,9 +2452,9 @@ void ScriptExecutor::tick() {
 		}
 	}
 
-	if (_waitForSoundPlayback) {
+	if (_waitForPcmSound) {
 		if (!_engine->isCurrentSoundPlaying()) {
-			_waitForSoundPlayback = false;
+			_waitForPcmSound = false;
 			run();
 		} else {
 			debugC(kDebugScript, "Waiting for sound playback to finish (handle active)");
@@ -2555,8 +2555,8 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		if (_cursorMode == MouseMode::Use) {
 			out1 = _interactedObjectID;
 		} else if (_cursorMode == MouseMode::UseInventory) {
-			out1 = _interactedObjectID | (_interactedOtherObjectID << 16);
-			out2 = _interactedOtherObjectID;
+			out1 = _interactedObjectID | (_interactedInventoryItemId << 16);
+			out2 = _interactedInventoryItemId;
 		}
 		break;
 	case 0x02:

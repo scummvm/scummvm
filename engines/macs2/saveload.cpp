@@ -196,7 +196,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint16LE(_scriptExecutor->_interactedObjectID);
 
 	// g_wInteractedInventoryItemId [0x1026]: 2 bytes
-	s.syncAsUint16LE(_scriptExecutor->_interactedOtherObjectID);
+	s.syncAsUint16LE(_scriptExecutor->_interactedInventoryItemId);
 
 	// g_wScriptSkippable [0x102a]: 1 byte
 	uint8 scriptSkippable = _scriptExecutor->_scriptSkippable ? 1 : 0;

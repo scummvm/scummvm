@@ -303,11 +303,14 @@ public:
 	// All zeroed on init by memsetBytes in loadResourceFile.
 	Common::Array<ScriptVariable> _variables;
 
+	// g_wCursorMode (1020:0fe6): the active cursor mode (0x13..0x1A).
 	MouseMode _cursorMode = MouseMode::Walk;
 	MouseMode _cursorModeBeforeWait = MouseMode::Walk;
 
 	uint16 _interactedObjectID = 0;
-	uint16 _interactedOtherObjectID = 0;
+	// g_wInteractedInventoryItemId [1026h]: inventory item involved in a
+	// use-inventory-item-on-object interaction (0x400 + item object index).
+	uint16 _interactedInventoryItemId = 0;
 	uint16 _walkTargetObjectIndex = 0;
 	// Script click state: set by handleInput when user clicks during script execution.
 	// Saved/restored by scriptOpenInventory across UI interactions.
@@ -336,9 +339,13 @@ public:
 	Common::Array<uint8> _musicSlots[2];
 	uint16 _activeMusicSlot = 0;
 	uint16 _musicControlMode = 0;
-	uint16 _musicControlParam = 0;
+	// g_wMusicControlStep: per-tick volume fade step for the music fade in gameTick.
+	uint16 _musicControlStep = 0;
 	uint16 _musicControlVolume = 0;
-	bool _waitForSoundPlayback = false;
+	// g_wWaitForPcmSound [100Ch] (opcode 0x41), g_wWaitForMusicControl [100Eh]
+	// (opcode 0x47), g_wWaitForAdlibReady [1010h] (opcode 0x4E): wait flags
+	// polled by the gameTick wait cascade (View1::tick).
+	bool _waitForPcmSound = false;
 	bool _waitForMusicControl = false;
 	bool _waitForAdlibReady = false;
 	bool _debugPaused = false;
@@ -367,7 +374,8 @@ public:
 
 	Common::Point getCharPosition();
 
-	ExecutionResult executeScript();
+	// executeOpcodes (1008:db56): the opcode dispatch loop for the current script.
+	ExecutionResult executeOpcodes();
 
 	// Will execute the script and any object scripts until execution should be stopped
 	// TODO: Consider if we should let the executor also figure out where to get the
