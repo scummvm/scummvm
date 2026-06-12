@@ -98,7 +98,6 @@ void ESPER::open(Graphics::Surface *surface) {
 		return;
 	}
 
-	_surfacePhoto.create(kPhotoWidth, kPhotoHeight, gameDataPixelFormat());
 	_surfaceViewport.create(_screen.width(), _screen.height(), screenPixelFormat());
 
 	_viewportNext = _viewport;
@@ -1162,13 +1161,15 @@ void ESPER::copyImageScale(Graphics::Surface &src, Common::Rect srcRect, Graphic
 				dstX = CLIP(dstX, 0, dst.w - 1);
 				dstY = CLIP(dstY, 0, dst.h - 1);
 
-				uint8 r, g, b;
-				src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
+				uint32 pixel = READ_UINT32(src.getBasePtr(srcX, srcY));
 				if (_flash) {
+					uint8 r, g, b;
+					src.format.colorToRGB(pixel, r, g, b);
 					// add blue-ish tint
 					b *= 2;
+					pixel = dst.format.RGBToColor(r, g, b);
 				}
-				drawPixel(dst, dst.getBasePtr(dstX, dstY), dst.format.RGBToColor(r, g, b));
+				drawPixel(dst, dst.getBasePtr(dstX, dstY), pixel);
 
 				srcX += srcDstWidthRatio;
 				srcXCounter += srcDstWidthRest;
@@ -1205,13 +1206,15 @@ void ESPER::copyImageScale(Graphics::Surface &src, Common::Rect srcRect, Graphic
 				dstX = CLIP(dstX, 0, dst.w - 1);
 				dstY = CLIP(dstY, 0, dst.h - 1);
 
-				uint8 r, g, b;
-				src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
+				uint32 pixel = READ_UINT32(src.getBasePtr(srcX, srcY));
 				if (_flash) {
+					uint8 r, g, b;
+					src.format.colorToRGB(pixel, r, g, b);
 					// add blue-ish tint
 					b *= 2;
+					pixel = dst.format.RGBToColor(r, g, b);
 				}
-				drawPixel(dst, dst.getBasePtr(dstX, dstY), dst.format.RGBToColor(r, g, b));
+				drawPixel(dst, dst.getBasePtr(dstX, dstY), pixel);
 			}
 
 			srcYCounter += srcRect.height();
@@ -1270,13 +1273,15 @@ void ESPER::copyImageBlur(Graphics::Surface &src, Common::Rect srcRect, Graphics
 						dstX = CLIP(dstX, 0, dst.w - 1);
 						dstY = CLIP(dstY, 0, dst.h - 1);
 
-						uint8 r, g, b;
-						src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
+						uint32 pixel = READ_UINT32(src.getBasePtr(srcX, srcY));
 						if (_flash) {
+							uint8 r, g, b;
+							src.format.colorToRGB(pixel, r, g, b);
 							// add blue-ish tint
 							b *= 2;
+							dst.format.RGBToColor(r, g, b);
 						}
-						drawPixel(dst, dst.getBasePtr(dstX, dstY), dst.format.RGBToColor(r, g, b));
+						drawPixel(dst, dst.getBasePtr(dstX, dstY), pixel);
 
 						++dstX;
 						++skipX;
@@ -1340,13 +1345,15 @@ void ESPER::copyImageBlur(Graphics::Surface &src, Common::Rect srcRect, Graphics
 						dstX = CLIP(dstX, 0, dst.w - 1);
 						dstY = CLIP(dstY, 0, dst.h - 1);
 
-						uint8 r, g, b;
-						src.format.colorToRGB(READ_UINT32(src.getBasePtr(srcX, srcY)), r, g, b);
+						uint32 pixel = READ_UINT32(src.getBasePtr(srcX, srcY));
 						if (_flash) {
+							uint8 r, g, b;
+							src.format.colorToRGB(pixel, r, g, b);
 							// add blue-ish tint
 							b *= 2;
+							pixel = dst.format.RGBToColor(r, g, b);
 						}
-						drawPixel(dst, dst.getBasePtr(dstX, dstY), dst.format.RGBToColor(r, g, b));
+						drawPixel(dst, dst.getBasePtr(dstX, dstY), pixel);
 
 						++dstX;
 						++skipX;
@@ -1370,9 +1377,8 @@ void ESPER::copyImageBlur(Graphics::Surface &src, Common::Rect srcRect, Graphics
 void ESPER::copyImageBlit(Graphics::Surface &src, Common::Rect srcRect, Graphics::Surface &dst, Common::Rect dstRect) {
 	for (int y = 0; y < dstRect.height(); ++y) {
 		for (int x = 0; x < dstRect.width(); ++x) {
-			uint8 r, g, b;
-			src.format.colorToRGB(READ_UINT32(src.getBasePtr(CLIP(srcRect.left + x, 0, src.w - 1), CLIP(srcRect.top + y, 0, src.h - 1))), r, g, b);
-			drawPixel(dst, dst.getBasePtr(CLIP(dstRect.left + x, 0, dst.w - 1), CLIP(dstRect.top + y, 0, dst.h - 1)), dst.format.RGBToColor(r, g, b));
+			uint32 pixel = READ_UINT32(src.getBasePtr(CLIP(srcRect.left + x, 0, src.w - 1), CLIP(srcRect.top + y, 0, src.h - 1)));
+			drawPixel(dst, dst.getBasePtr(CLIP(dstRect.left + x, 0, dst.w - 1), CLIP(dstRect.top + y, 0, dst.h - 1)), pixel);
 		}
 	}
 }
@@ -1428,19 +1434,22 @@ void ESPER::selectPhoto(int photoId) {
 
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(_photos[photoId].name));
 
-	uint photoSize = _surfacePhoto.w * _surfacePhoto.h * _surfacePhoto.format.bytesPerPixel;
+	_surfacePhoto.free();
+
+	uint photoSize = kPhotoWidth * kPhotoHeight * 2;
+	uint8 *rawData = (uint8 *)malloc(photoSize);
+	assert(rawData);
 
 	s->skip(3); // not used, but there is compression type
 	uint width  = s->readUint32LE();
 	uint height = s->readUint32LE();
 	uint photoCompressedSize = s->size() - s->pos();
-	uint8 *photoCompressed = (uint8 *)_surfacePhoto.getPixels() + photoSize - photoCompressedSize;
+	uint8 *photoCompressed = rawData + photoSize - photoCompressedSize;
 	s->read(photoCompressed, photoCompressedSize);
 
-	decompress_lcw(photoCompressed, photoCompressedSize, (uint8 *)_surfacePhoto.getPixels(), photoSize);
+	decompress_lcw(photoCompressed, photoCompressedSize, rawData, photoSize);
 #ifdef SCUMM_BIG_ENDIAN
 	// As the compression is working with 8-bit data, on big-endian architectures we have to switch order of bytes in uncompressed data
-	uint8 *rawData = (uint8 *)_surfacePhoto.getPixels();
 	for (size_t i = 0; i < photoSize - 1; i += 2) {
 		SWAP(rawData[i], rawData[i + 1]);
 	}
@@ -1450,6 +1459,9 @@ void ESPER::selectPhoto(int photoId) {
 	for (uint j = 0; j < width * height; ++j) {
 		// _surfacePhoto[j] = Palette[_surfacePhoto[j]];
 	}
+
+	_surfacePhoto.init(kPhotoWidth, kPhotoHeight, kPhotoWidth * 2, rawData, gameDataPixelFormat());
+	_surfacePhoto.convertToInPlace(screenPixelFormat());
 
 	_shapeThumbnail = _shapesPhotos->get(_photos[photoId].shapeId);
 	_buttons->resetImages();
