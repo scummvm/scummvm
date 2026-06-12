@@ -266,10 +266,12 @@ private:
 	void beginBuffering();
 	void endBuffering(bool shouldMark = false);
 
-	// Global [0F92h], seems to be 0 if we execute the script of the scene
-	// Global [0F92h] g_wExecutingScriptObjectId: 0 when executing the
-	// scene script, otherwise the object index whose script is running.
-	uint16 _executingScriptObjectID;
+	// g_wExecutingScriptObjectId [0F92h]: 0 when executing the scene script,
+	// 1..0x200 the object index whose script is running, > 0x200 when the
+	// object iteration in run() is exhausted (or a script terminated the run,
+	// e.g. opcode 0x29). The binary drives the whole script-selection flow off
+	// this single value; there is no separate scene-vs-object state flag.
+	uint16 _executingScriptObjectId;
 
 public:
 	ScriptExecutor();
