@@ -435,6 +435,7 @@ public:
 	void resetLevelPhaseState(bool clearEnemies);
 	void clearEmbeddedHudFrames();
 	void resetLevelWaveState();
+	void resetExplosions();
 	void resetHandler7FlightState();
 
 	// Random number helper (emulates FUN_004233a0)

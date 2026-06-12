@@ -46,6 +46,7 @@ int InsaneRebel2::runLevel1() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
 		// This ensures all enemies are visible (not skipped by SKIP chunks)
@@ -280,6 +281,7 @@ void InsaneRebel2::resetLevelAttemptState(int initialPhase) {
 	_rebelAutopilot = 0;
 	_rebelDamageLevel = 0;
 	_rebelControlMode = 0;
+	resetExplosions();
 
 	_enemies.clear();
 	for (int i = 0; i < 512; i++) {
@@ -328,6 +330,18 @@ void InsaneRebel2::clearEmbeddedHudFrames() {
 void InsaneRebel2::resetLevelWaveState() {
 	_rebelPhaseState = 0;
 	_rebelWaveState = 0;
+}
+
+void InsaneRebel2::resetExplosions() {
+	for (uint i = 0; i < ARRAYSIZE(_explosions); ++i) {
+		_explosions[i].active = false;
+		_explosions[i].counter = 0;
+		_explosions[i].x = 0;
+		_explosions[i].y = 0;
+		_explosions[i].width = 0;
+		_explosions[i].height = 0;
+		_explosions[i].scale = 0;
+	}
 }
 
 void InsaneRebel2::resetHandler7FlightState() {
@@ -674,6 +688,7 @@ int InsaneRebel2::runLevel3() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_currentPhase = 1;
+		resetExplosions();
 
 		clearEmbeddedHudFrames();
 
@@ -728,6 +743,7 @@ int InsaneRebel2::runLevel3() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_playerScore = phase1Score;
+		resetExplosions();
 
 		clearEmbeddedHudFrames();
 
@@ -791,6 +807,7 @@ int InsaneRebel2::runLevel4() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_currentPhase = 1;
+		resetExplosions();
 
 		// Reset bit table before gameplay starts
 		clearBit(0);
@@ -845,6 +862,7 @@ int InsaneRebel2::runLevel5() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_currentPhase = 1;
+		resetExplosions();
 
 		// Reset bit table before gameplay starts
 		clearBit(0);
@@ -910,6 +928,7 @@ int InsaneRebel2::runLevel6() {
 	while (!_vm->shouldQuit()) {
 		// FUN_00407d10 — reset shot/hit counters
 		clearBit(0);
+		resetExplosions();
 
 		// DAT_0047ab9c = 0xffffffff — init phase state
 		_rebelPhaseState = 0xffffffff;
@@ -958,6 +977,7 @@ int InsaneRebel2::runLevel6() {
 			_currentPhase = 2;
 			_playerScore = phase1Score;
 			clearBit(0);  // FUN_00407d10
+			resetExplosions();
 
 			debugC(DEBUG_INSANE, "Level 6 Phase 2");
 			if (!playLevelSegment("LEV06/06PLAY2.SAN", 0x28))
@@ -1023,6 +1043,7 @@ int InsaneRebel2::runLevel7() {
 		_playerDamage = 0;
 		_deathFrame = 0;
 		reachedFork = false;
+		resetExplosions();
 
 		clearBit(0);
 
@@ -1088,6 +1109,7 @@ int InsaneRebel2::runLevel8() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		clearBit(0);
 
@@ -1147,6 +1169,7 @@ int InsaneRebel2::runLevel9() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		clearBit(0);
 
@@ -1215,6 +1238,7 @@ int InsaneRebel2::runLevel10() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		clearBit(0);
 
@@ -1494,9 +1518,7 @@ int InsaneRebel2::runLevel11() {
 
 		// ----- PHASE 3 SECOND HALF: P3/11P03_X (G-L) -----
 		// Reset shots/explosions (FUN_0041ca6a equivalent)
-		for (int i = 0; i < 5; i++) {
-			_explosions[i].active = false;
-		}
+		resetExplosions();
 		_enemies.clear();
 
 		// Preserve only bits 1-3 of phase state (original: DAT_0047ab9c &= 0xe)
@@ -1885,6 +1907,7 @@ int InsaneRebel2::runLevel13() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		clearBit(0);
 
@@ -1954,6 +1977,7 @@ int InsaneRebel2::runLevel14() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		clearBit(0);
 
@@ -2021,6 +2045,7 @@ int InsaneRebel2::runLevel15() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
+		resetExplosions();
 
 		clearBit(0);
 
