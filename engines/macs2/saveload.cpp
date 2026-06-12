@@ -152,10 +152,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// g_wSavedCursorMode [0xfea]: 2 bytes
-	uint16 savedCursorMode = view1 ? (uint16)view1->_cursorModeBeforeMenu : (uint16)Script::MouseMode::Walk;
+	uint16 savedCursorMode = view1 ? (uint16)view1->_savedCursorMode : (uint16)Script::MouseMode::Walk;
 	s.syncAsUint16LE(savedCursorMode);
 	if (s.isLoading() && view1)
-		view1->_cursorModeBeforeMenu = (Script::MouseMode)savedCursorMode;
+		view1->_savedCursorMode = (Script::MouseMode)savedCursorMode;
 
 	// g_wClipRectDirty [0xfec]: 1 byte - flags clip region needs full-screen reset
 	uint8 clipRectDirty = _clipRectDirty ? 1 : 0;
@@ -167,7 +167,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint16LE(_scriptExecutor->_walkTargetObjectIndex);
 
 	// PTR_LOOP_1020_1018 [0x1018]: 2 bytes - mouse mode
-	uint16 mouseMode = (uint16)_scriptExecutor->_mouseMode;
+	uint16 mouseMode = (uint16)_scriptExecutor->_cursorMode;
 	s.syncAsUint16LE(mouseMode);
 	if (s.isLoading())
 		setCursorMode((Script::MouseMode)mouseMode);
@@ -426,8 +426,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				}
 			}
 		}
-		uint16 targetX = chr ? (uint16)chr->_endPosition.x : 0;
-		uint16 targetY = chr ? (uint16)chr->_endPosition.y : 0;
+		uint16 targetX = chr ? (uint16)chr->_targetPosition.x : 0;
+		uint16 targetY = chr ? (uint16)chr->_targetPosition.y : 0;
 		uint16 deltaX = chr ? (uint16)chr->_stepDeltaX : 0;
 		uint16 deltaY = chr ? (uint16)chr->_stepDeltaY : 0;
 		uint16 finalX = chr ? (uint16)chr->_pathFinalDestination.x : 0;
@@ -439,8 +439,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(finalX);
 		s.syncAsUint16LE(finalY);
 		if (s.isLoading() && chr) {
-			chr->_endPosition.x = (int16)targetX;
-			chr->_endPosition.y = (int16)targetY;
+			chr->_targetPosition.x = (int16)targetX;
+			chr->_targetPosition.y = (int16)targetY;
 			chr->_stepDeltaX = (int16)deltaX;
 			chr->_stepDeltaY = (int16)deltaY;
 			chr->_pathFinalDestination.x = (int16)finalX;
@@ -711,7 +711,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// Restore UseInventory cursor image after load.
 		// The cursor slot is only populated when clicking an inventory item in the panel;
 		// after loading a save with mouseMode==UseInventory, the slot is empty.
-		if (_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && view1->_activeInventoryItem != nullptr) {
+		if (_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory && view1->_activeInventoryItem != nullptr) {
 			AnimFrame *icon = view1->getInventoryIcon(view1->_activeInventoryItem);
 			if (icon != nullptr) {
 				int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
