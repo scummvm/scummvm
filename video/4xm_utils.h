@@ -26,6 +26,32 @@
 namespace Video {
 namespace FourXM {
 
+struct RawDeltaReader {
+	const byte *data = nullptr;
+	uint32 size = 0;
+	uint32 mode = 0;
+	uint32 wordBitsLeft = 16;
+	uint32 wordIndex = 1;
+	uint32 controlWord = 0;
+	uint32 pairIndex = 0;
+	uint32 byteIndex = 0;
+	uint32 nibbleBitsLeft = 8;
+	uint32 nibbleWordIndex = 1;
+	uint32 nibbleWord = 0;
+	uint32 pairOffset = 0;
+	uint32 byteOffset = 0;
+	uint32 nibbleOffset = 0;
+
+	RawDeltaReader(const byte *ptr, uint32 len);
+
+	bool valid() const;
+	uint32 readControl2();
+	uint16 readPair();
+	byte readByteIndex();
+	int8 readSignedByte();
+	uint32 readNibble();
+};
+
 template<typename HuffmanType>
 HuffmanType loadStatistics(const byte *&huff, uint &offset) {
 	Common::Array<uint32> freqs, symbols;
@@ -52,6 +78,12 @@ HuffmanType loadStatistics(const byte *&huff, uint &offset) {
 }
 
 void idct(int16_t block[64], int shift = 6);
+void buildRawMotionTables(int width, Common::Array<int> &fullOffsets, Common::Array<int> &expOffsets);
+void copyRawBlock(uint16 *dst, const uint16 *src, int stride, int width, int height, uint32 mode, int add = 0);
+void readRawCoefficients(RawDeltaReader &reader, int coeffs[3][64]);
+void transformRawCoefficients(int coeff[64], int dst[64], int scaleCode, bool chroma);
+void writeRawDctBlock(const int yBlock[64], const int cbBlock[64], const int crBlock[64],
+					  uint16 *dst, int stride);
 
 inline int readInt(int value, unsigned n) {
 	if (n == 0)

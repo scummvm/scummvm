@@ -22,6 +22,7 @@
 #include "video/4xm_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
+#include "audio/decoders/adpcm_intern.h"
 #include "audio/decoders/raw.h"
 #include "common/bitstream.h"
 #include "common/debug.h"
@@ -55,41 +56,316 @@ static const int8_t mv[256][2] = {
 
 } // namespace
 
-class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
-	uint _audioType;
-	uint _audioChannels;
-	Common::ScopedPtr<Audio::PacketizedAudioStream> _output;
+namespace {
 
-public:
-	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _audioType(audioType), _audioChannels(audioChannels) {
-		switch (_audioType) {
-		case 0: {
-			// Raw PCM data
-			byte flags = Audio::FLAG_16BITS;
-#ifdef SCUMM_LITTLE_ENDIAN
-			flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
-			if (_audioChannels > 1)
-				flags |= Audio::FLAG_STEREO;
-			_output.reset(Audio::makePacketizedRawStream(sampleRate, flags));
-			break;
+enum Raw4XMChunkId {
+	kRaw4XMFile = 0xfb814000,
+	kRaw4XMFrameContainer = 0xfb814100,
+	kRaw4XMFullFrame = 0xfb814210,
+	kRaw4XMDeltaFrame = 0xfb814220,
+	kRaw4XMCompressedAudio = 0xfb814230,
+	kRaw4XMCachedFrame = 0xfb814240,
+	kRaw4XMRawAudio = 0xfb814250
+};
+
+struct Raw4XMCacheEntry {
+	int32 frame = -1;
+	uint32 declaredSize = 0;
+	Common::Array<byte> data;
+};
+
+struct Raw4XMDeltaDecoder {
+	FourXM::RawDeltaReader reader;
+	uint16 *dst = nullptr;
+	const uint16 *src = nullptr;
+	int frameWidth = 0;
+	int frameHeight = 0;
+	const Common::Array<int> &fullOffsets;
+	const Common::Array<int> &expOffsets;
+
+	Raw4XMDeltaDecoder(const byte *data, uint32 size, uint16 *dstPixels, const uint16 *srcPixels,
+					   int width, int height, const Common::Array<int> &fullMotionOffsets, const Common::Array<int> &expMotionOffsets) : reader(data, size), dst(dstPixels), src(srcPixels), frameWidth(width), frameHeight(height),
+																																		 fullOffsets(fullMotionOffsets), expOffsets(expMotionOffsets) {}
+
+	bool copyLeaf(int dstOffset, int blockWidth, int blockHeight, uint32 op) {
+		uint32 motionIndex = 0;
+		uint32 transform = 0;
+		uint32 addFlag = 0;
+		if (reader.mode == 0) {
+			uint16 packed = reader.readPair();
+			motionIndex = packed & 0xfff;
+			transform = (packed >> 12) & 7;
+			addFlag = packed >> 15;
+		} else {
+			motionIndex = reader.readByteIndex();
+			uint32 packed = reader.readNibble();
+			transform = packed & 7;
+			addFlag = (packed & 0xf) >> 3;
 		}
-		case 1:
-			_output.reset(Audio::makePacketizedADPCMStream(Audio::ADPCMType::kADPCM4XM, sampleRate, audioChannels));
-			break;
-		default:
-			error("FourXMAudioTrack: unknown audio type: %d", _audioType);
+
+		int add = 0;
+		if (op == 3 && !addFlag)
+			return true;
+
+		if (addFlag) {
+			uint16 packed = reader.readPair();
+			if (op == 3)
+				add = (((int8)(((packed >> 5) & 0x1f) - 0x10) & 0xf) * 0x40 +
+					   ((int8)(((packed >> 10) & 0x1f) - 0x10) & 0xf) * 0x800 +
+					   ((byte)((((byte)packed & 0x1f) - 0x10) * 2) & 0x1f));
+			else
+				add = ((((int8)(((packed >> 10) & 0x1f) - 0x10)) & 0x1f) * 0x20 +
+					   (((int8)(((packed >> 5) & 0x1f) - 0x10)) & 0x1f)) *
+						  0x20 +
+					  (((int8)((packed & 0x1f) - 0x10)) & 0x1f);
+		}
+
+		const Common::Array<int> &motionTable = reader.mode == 0 ? fullOffsets : expOffsets;
+		int srcOffset = dstOffset;
+		if (motionIndex < motionTable.size())
+			srcOffset += motionTable[motionIndex];
+		const int sourceWidth = transform < 4 ? blockWidth : blockHeight;
+		const int sourceHeight = transform < 4 ? blockHeight : blockWidth;
+		if (srcOffset < 0 || srcOffset + frameWidth * (sourceHeight - 1) + sourceWidth - 1 >= frameWidth * frameHeight)
+			return false;
+
+		FourXM::copyRawBlock(dst + dstOffset, src + srcOffset, frameWidth, blockWidth, blockHeight, transform, add);
+		return true;
+	}
+
+	bool decodeDctBlock(int dstOffset) {
+		byte scaleY = reader.readNibble();
+		byte scaleCb = reader.readNibble();
+		byte scaleCr = reader.readNibble();
+		int coeffs[3][64] = {};
+		int blocks[3][64] = {};
+		FourXM::readRawCoefficients(reader, coeffs);
+		FourXM::transformRawCoefficients(coeffs[0], blocks[0], scaleY, false);
+		FourXM::transformRawCoefficients(coeffs[1], blocks[1], scaleCb, true);
+		FourXM::transformRawCoefficients(coeffs[2], blocks[2], scaleCr, true);
+		FourXM::writeRawDctBlock(blocks[0], blocks[1], blocks[2], dst + dstOffset, frameWidth);
+		return true;
+	}
+
+	bool decodeCopyBlock(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		return copyLeaf(dstOffset, blockWidth, blockHeight, 0);
+	}
+
+	bool decodeVerticalSplit(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		if (blockHeight < 2)
+			return false;
+		decodeBlock(dstOffset, blockWidth, blockHeight / 2, false);
+		decodeBlock(dstOffset + frameWidth * (blockHeight / 2), blockWidth, blockHeight / 2, false);
+		return true;
+	}
+
+	bool decodeHorizontalSplit(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		if (blockWidth < 2)
+			return false;
+		decodeBlock(dstOffset, blockWidth / 2, blockHeight, false);
+		decodeBlock(dstOffset + blockWidth / 2, blockWidth / 2, blockHeight, false);
+		return true;
+	}
+
+	bool decodeDctOrCopyBlock(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		uint32 subOp = reader.readControl2();
+		if (subOp == 0 && allowDct)
+			return decodeDctBlock(dstOffset);
+		if (subOp == 2)
+			return copyLeaf(dstOffset, blockWidth, blockHeight, 3);
+		return false;
+	}
+
+	bool decodeBlock(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		typedef bool (Raw4XMDeltaDecoder::*BlockOp)(int, int, int, bool);
+		static const BlockOp kBlockOps[4] = {
+			&Raw4XMDeltaDecoder::decodeCopyBlock,
+			&Raw4XMDeltaDecoder::decodeVerticalSplit,
+			&Raw4XMDeltaDecoder::decodeHorizontalSplit,
+			&Raw4XMDeltaDecoder::decodeDctOrCopyBlock};
+
+		return (this->*kBlockOps[reader.readControl2() & 3])(dstOffset, blockWidth, blockHeight, allowDct);
+	}
+};
+
+static bool applyRaw4XMDelta(const byte *data, uint32 size, uint16 *dst, const uint16 *src,
+							 int width, int height, const Common::Array<int> &fullOffsets, const Common::Array<int> &expOffsets) {
+	Raw4XMDeltaDecoder decoder(data, size, dst, src, width, height, fullOffsets, expOffsets);
+	if (!decoder.reader.valid())
+		return false;
+
+	const int blocksX = (width + 7) / 8;
+	const int blocksY = (height + 7) / 8;
+	int blockOffset = 0;
+
+	for (int y = 0; y < blocksY; ++y) {
+		for (int x = 0; x < blocksX; ++x) {
+			decoder.decodeBlock(blockOffset, 8, 8, true);
+			blockOffset += 8;
+		}
+		blockOffset += width * 7;
+	}
+
+	return true;
+}
+
+static Raw4XMCacheEntry &raw4XMFindCacheEntry(Common::Array<Raw4XMCacheEntry> &cache, int32 frame) {
+	for (uint i = 0; i < cache.size(); ++i) {
+		if (cache[i].frame == frame)
+			return cache[i];
+	}
+
+	for (uint i = 0; i < cache.size(); ++i) {
+		if (cache[i].frame == -1) {
+			cache[i].frame = frame;
+			cache[i].declaredSize = 0;
+			cache[i].data.clear();
+			return cache[i];
 		}
 	}
 
+	cache[0].frame = frame;
+	cache[0].declaredSize = 0;
+	cache[0].data.clear();
+	return cache[0];
+}
+
+Audio::PacketizedAudioStream *makeAudioStream(byte audioType, uint audioChannels, uint sampleRate) {
+	switch (audioType) {
+	case 0: {
+		byte flags = Audio::FLAG_16BITS;
+#ifdef SCUMM_LITTLE_ENDIAN
+		flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+		if (audioChannels > 1)
+			flags |= Audio::FLAG_STEREO;
+		return Audio::makePacketizedRawStream(sampleRate, flags);
+	}
+	case 1:
+		return Audio::makePacketizedADPCMStream(Audio::ADPCMType::kADPCM4XM, sampleRate, audioChannels);
+	default:
+		error("FourXMAudioTrack: unknown audio type: %d", audioType);
+	}
+}
+
+} // namespace
+
+class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
+	uint _audioType;
+	Common::ScopedPtr<Audio::PacketizedAudioStream> _output;
+
+public:
+	FourXMAudioTrack(byte audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _audioType(audioType),
+																			_output(makeAudioStream(audioType, audioChannels, sampleRate)) {}
+
 	byte getAudioType() const { return _audioType; }
 
-	void decode(byte *buf, uint size) {
-		auto *input = new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
+	void decode(Common::SeekableReadStream *input) {
 		_output->queuePacket(input);
 	}
 
 private:
+	Audio::AudioStream *getAudioStream() const override { return _output.get(); }
+};
+
+class FourXMDecoder::FourXMRawAudioTrack : public AudioTrack {
+	uint _audioType;
+	uint _channels;
+	uint _bits;
+	int16 _predictor[2] = {0, 0};
+	int _stepIndex[2] = {0, 0};
+	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
+
+public:
+	FourXMRawAudioTrack(uint audioType, uint channels, uint sampleRate, uint bits) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _audioType(audioType),
+																					 _channels(channels), _bits(bits) {
+		if ((audioType == 0 || audioType == 1) && sampleRate > 0 && (channels == 1 || channels == 2) && bits == 16)
+			_output.reset(Audio::makeQueuingAudioStream(sampleRate, channels == 2));
+	}
+
+	void queueRaw(const byte *payload, uint32 payloadSize) {
+		if (!_output || payloadSize < 4)
+			return;
+
+		byte *data = (byte *)malloc(payloadSize - 4);
+		if (!data)
+			return;
+
+		Common::copy(payload + 4, payload + payloadSize, data);
+		_output->queueBuffer(data, payloadSize - 4, DisposeAfterUse::YES, audioFlags());
+	}
+
+	void queueADPCM(const byte *payload, uint32 payloadSize) {
+		if (!_output || _audioType != 1 || _bits != 16 || payloadSize < 4)
+			return;
+
+		const uint32 decodedBytes = READ_LE_UINT32(payload);
+		if (decodedBytes == 0)
+			return;
+
+		const uint32 samplesPerChannel = decodedBytes / (_channels * 2);
+		if (samplesPerChannel == 0)
+			return;
+
+		byte *out = (byte *)malloc(decodedBytes);
+		if (!out)
+			return;
+		Common::fill(out, out + decodedBytes, 0);
+		int16 *pcm = (int16 *)out;
+
+		const byte *src = payload + 4;
+		const uint32 srcSize = payloadSize - 4;
+		if (_channels == 1) {
+			decodeADPCMChannel(src, srcSize, 0, pcm, samplesPerChannel);
+		} else {
+			Common::Array<int16> left;
+			Common::Array<int16> right;
+			left.resize(samplesPerChannel);
+			right.resize(samplesPerChannel);
+
+			const uint32 compressedChannelSize = ((samplesPerChannel + 7) / 8) * 4;
+			decodeADPCMChannel(src, MIN<uint32>(srcSize, compressedChannelSize), 0, left.data(), samplesPerChannel);
+			if (srcSize > compressedChannelSize)
+				decodeADPCMChannel(src + compressedChannelSize, srcSize - compressedChannelSize, 1, right.data(), samplesPerChannel);
+
+			for (uint32 i = 0; i < samplesPerChannel; ++i) {
+				pcm[i * 2] = left[i];
+				pcm[i * 2 + 1] = right[i];
+			}
+		}
+
+		_output->queueBuffer(out, decodedBytes, DisposeAfterUse::YES, audioFlags());
+	}
+
+private:
+	byte audioFlags() const {
+		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		if (_channels == 2)
+			flags |= Audio::FLAG_STEREO;
+		return flags;
+	}
+
+	int16 decodeNibble(byte nibble, uint channel) {
+		const int step = Audio::Ima_ADPCMStream::_imaTable[_stepIndex[channel]];
+		const int diff = ((step / 2) + (nibble & 7) * step) >> 3;
+		const int sample = CLIP<int>(_predictor[channel] + ((nibble & 8) ? -diff : diff), -32768, 32767);
+		_predictor[channel] = sample;
+		_stepIndex[channel] = CLIP<int>(_stepIndex[channel] + Audio::ADPCMStream::_stepAdjustTable[nibble], 0, 88);
+		return _predictor[channel];
+	}
+
+	void decodeADPCMChannel(const byte *src, uint32 srcSize, uint channel, int16 *dst, uint32 samples) {
+		for (uint32 i = 0; i < samples; ++i) {
+			uint32 byteOffset = (i >> 3) * 4 + ((i & 7) >> 1);
+			if (byteOffset >= srcSize)
+				break;
+
+			byte packed = src[byteOffset];
+			byte nibble = (i & 1) ? (packed >> 4) : (packed & 0xf);
+			dst[i] = decodeNibble(nibble, channel);
+		}
+	}
+
 	Audio::AudioStream *getAudioStream() const override { return _output.get(); }
 };
 
@@ -125,7 +401,7 @@ public:
 	int getFrameCount() const override;
 	const Graphics::Surface *decodeNextFrame() override;
 
-	void decode(uint32 tag, byte *buf, uint size);
+	void decode(uint32 tag, Common::SeekableReadStream *stream);
 	void decode_ifrm(Common::SeekableReadStream *stream);
 	void decode_pfrm(Common::SeekableReadStream *stream);
 	void decode_cfrm(Common::SeekableReadStream *stream);
@@ -162,6 +438,149 @@ int FourXMDecoder::FourXMVideoTrack::getFrameCount() const {
 }
 
 FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() = default;
+
+class FourXMDecoder::FourXMRawVideoTrack : public FixedRateVideoTrack {
+	FourXMDecoder *_dec;
+	Common::Rational _frameRate;
+	uint _w, _h;
+	Common::ScopedPtr<Graphics::ManagedSurface> _surface;
+	Common::Array<uint16> _frameBuffer1;
+	Common::Array<uint16> _frameBuffer2;
+	Common::Array<uint16> *_frame = nullptr;
+	Common::Array<uint16> *_previousFrame = nullptr;
+	Common::Array<int> _fullMotionOffsets;
+	Common::Array<int> _expMotionOffsets;
+	Common::Array<Raw4XMCacheEntry> _cache;
+
+public:
+	FourXMRawVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h) {
+		_surface.reset(new Graphics::ManagedSurface());
+		_surface->create(w, h, getPixelFormat());
+		_frameBuffer1.resize(w * h);
+		_frameBuffer2.resize(w * h);
+		_frame = &_frameBuffer1;
+		_previousFrame = &_frameBuffer2;
+		_cache.resize(256);
+		FourXM::buildRawMotionTables(w, _fullMotionOffsets, _expMotionOffsets);
+	}
+
+	uint16 getWidth() const override { return _w; }
+	uint16 getHeight() const override { return _h; }
+
+	Graphics::PixelFormat getPixelFormat() const override {
+		return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	}
+
+	int getCurFrame() const override { return _dec->_curFrame; }
+	int getFrameCount() const override { return _dec->_frames.size(); }
+
+	const Graphics::Surface *decodeNextFrame() override {
+		if (_dec->_curFrame >= _dec->_frames.size())
+			return _surface->surfacePtr();
+
+		const FourXMDecoder::Frame &frameInfo = _dec->_frames[_dec->_curFrame];
+		_dec->_stream->seek(frameInfo.offset);
+		const uint32 chunkId = _dec->_stream->readUint32LE();
+		const uint32 chunkSize = _dec->_stream->readUint32LE();
+		if (chunkId != kRaw4XMFrameContainer || chunkSize < 8 || frameInfo.offset + chunkSize > frameInfo.end) {
+			warning("invalid raw 4XM frame at offset %" PRId64, frameInfo.offset);
+			++_dec->_curFrame;
+			return _surface->surfacePtr();
+		}
+
+		Common::Array<byte> payload;
+		payload.resize(chunkSize - 8);
+		_dec->_stream->read(payload.data(), payload.size());
+		const bool changed = decodeContainerPayload(payload.data(), payload.size(), _dec->_curFrame);
+		if (changed) {
+			copyFrameToSurface();
+			SWAP(_frame, _previousFrame);
+		}
+
+		++_dec->_curFrame;
+		return _surface->surfacePtr();
+	}
+
+private:
+	Common::Rational getFrameRate() const override { return _frameRate; }
+
+	void copyFrameToSurface() {
+		Graphics::Surface frame;
+		frame.init(_w, _h, _w * sizeof(uint16), _frame->data(), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		_surface->convertFrom(frame, getPixelFormat());
+	}
+
+	bool decodeFullFrame(const byte *payload, uint32 payloadSize) {
+		if (payloadSize < _w * _h * 2)
+			return false;
+
+		Common::MemoryReadStream fullFrameStream(payload, payloadSize);
+		for (uint i = 0; i < _w * _h; ++i)
+			(*_frame)[i] = fullFrameStream.readUint16LE();
+		return true;
+	}
+
+	bool decodeCachedFrame(const byte *payload, uint32 payloadSize, uint32 currentFrame) {
+		if (payloadSize < 8)
+			return false;
+
+		const int32 cacheFrame = (int32)READ_LE_UINT32(payload);
+		const uint32 declaredSize = READ_LE_UINT32(payload + 4);
+		Raw4XMCacheEntry &entry = findCacheEntry(cacheFrame);
+		entry.declaredSize = declaredSize;
+		const uint oldSize = entry.data.size();
+		entry.data.resize(oldSize + payloadSize - 8);
+		Common::copy(payload + 8, payload + payloadSize, entry.data.begin() + oldSize);
+
+		if (cacheFrame != (int32)currentFrame || entry.data.size() < 8 ||
+			READ_LE_UINT32(entry.data.data()) != kRaw4XMFrameContainer)
+			return false;
+
+		const uint32 nestedDeclaredSize = entry.declaredSize >= 8 ? entry.declaredSize : READ_LE_UINT32(entry.data.data() + 4);
+		const uint32 nestedPayloadSize = MIN<uint32>(entry.data.size() - 8, nestedDeclaredSize - 8);
+		const bool changed = decodeContainerPayload(entry.data.data() + 8, nestedPayloadSize, currentFrame);
+
+		entry.frame = -1;
+		entry.declaredSize = 0;
+		entry.data.clear();
+		return changed;
+	}
+
+	bool decodeContainerPayload(const byte *payload, uint32 payloadSize, uint32 currentFrame) {
+		bool changed = false;
+		uint32 pos = 0;
+		while (pos + 8 <= payloadSize) {
+			const uint32 subChunkId = READ_LE_UINT32(payload + pos);
+			const uint32 subChunkSize = READ_LE_UINT32(payload + pos + 4);
+			if (subChunkSize < 8 || pos + subChunkSize > payloadSize)
+				break;
+
+			const byte *subPayload = payload + pos + 8;
+			const uint32 subPayloadSize = subChunkSize - 8;
+			if (subChunkId == kRaw4XMFullFrame) {
+				changed = decodeFullFrame(subPayload, subPayloadSize) || changed;
+			} else if (subChunkId == kRaw4XMDeltaFrame) {
+				changed = applyRaw4XMDelta(subPayload, subPayloadSize, _frame->data(), _previousFrame->data(), _w, _h,
+										   _fullMotionOffsets, _expMotionOffsets) ||
+						  changed;
+			} else if (subChunkId == kRaw4XMCachedFrame) {
+				changed = decodeCachedFrame(subPayload, subPayloadSize, currentFrame) || changed;
+			} else if (subChunkId == kRaw4XMCompressedAudio && _dec->_rawAudio) {
+				_dec->_rawAudio->queueADPCM(subPayload, subPayloadSize);
+			} else if (subChunkId == kRaw4XMRawAudio && _dec->_rawAudio) {
+				_dec->_rawAudio->queueRaw(subPayload, subPayloadSize);
+			}
+
+			pos += subChunkSize;
+		}
+
+		return changed;
+	}
+
+	Raw4XMCacheEntry &findCacheEntry(int32 frame) {
+		return raw4XMFindCacheEntry(_cache, frame);
+	}
+};
 
 namespace {
 static const uint8_t iquant[64] = {
@@ -487,17 +906,17 @@ void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *st
 	}
 }
 
-void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, byte *buf, uint size) {
-	Common::MemoryReadStream ms(buf, size, DisposeAfterUse::YES);
+void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, Common::SeekableReadStream *stream) {
+	Common::ScopedPtr<Common::SeekableReadStream> ms(stream);
 	switch (tag) {
 	case MKTAG('i', 'f', 'r', 'm'):
-		decode_ifrm(&ms);
+		decode_ifrm(ms.get());
 		break;
 	case MKTAG('p', 'f', 'r', 'm'):
-		decode_pfrm(&ms);
+		decode_pfrm(ms.get());
 		break;
 	case MKTAG('c', 'f', 'r', 'm'):
-		decode_cfrm(&ms);
+		decode_cfrm(ms.get());
 		break;
 	default:
 		warning("uknown video frame %s", tagName(tag).c_str());
@@ -520,14 +939,6 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		uint32 size = _stream->readUint32LE();
 		auto pos = _stream->pos();
 
-		auto loadBuf = [this](uint bufSize) {
-			byte *buf = static_cast<byte *>(malloc(bufSize));
-			if (!buf)
-				error("failed to allocate %u bytes", bufSize);
-			if (_stream->read(buf, bufSize) != bufSize)
-				error("loadBuf: short read");
-			return buf;
-		};
 		switch (tag) {
 		case MKTAG('s', 'n', 'd', '_'): {
 			if (!_audio)
@@ -539,7 +950,7 @@ void FourXMDecoder::decodeNextFrameImpl() {
 					auto trackIdx = _stream->readUint32LE();
 					auto packetSize = _stream->readUint32LE();
 					if (trackIdx == 0 && _audio) {
-						_audio->decode(loadBuf(packetSize), packetSize);
+						_audio->decode(_stream->readStream(packetSize));
 					} else {
 						_stream->skip(packetSize);
 					}
@@ -550,7 +961,7 @@ void FourXMDecoder::decodeNextFrameImpl() {
 				auto trackIdx = _stream->readUint32LE();
 				_stream->skip(4);
 				if (trackIdx == 0 && _audio) {
-					_audio->decode(loadBuf(size - 8), size - 8);
+					_audio->decode(_stream->readStream(size - 8));
 				}
 			} break;
 			default:
@@ -562,7 +973,7 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		case MKTAG('c', 'f', 'r', 'm'): {
 			auto trackIdx = _stream->readUint32LE();
 			if (trackIdx == 0)
-				_video->decode(tag, loadBuf(size - 4), size - 4);
+				_video->decode(tag, _stream->readStream(size - 4));
 		} break;
 		default:
 			warning("unknown frame type %s", tagName(tag).c_str());
@@ -626,7 +1037,7 @@ void FourXMDecoder::readList(uint32 listEnd) {
 				debug("audio track idx: %u type: %u channels: %u sample rate: %u bits: %u", trackIdx, audioType, audioChannels, sampleRate, sampleResolution);
 				if (sampleResolution != 16)
 					error("only 16 bit audio is supported");
-				addTrack(_audio = new FourXMAudioTrack(this, trackIdx, audioType, audioChannels, sampleRate));
+				addTrack(_audio = new FourXMAudioTrack(audioType, audioChannels, sampleRate));
 			} break;
 			default:
 				break;
@@ -639,11 +1050,65 @@ void FourXMDecoder::readList(uint32 listEnd) {
 	}
 }
 
+bool FourXMDecoder::loadRawStream() {
+	_stream->seek(0);
+	if (_stream->readUint32LE() != kRaw4XMFile || _stream->readUint32LE() != 0x01000000)
+		return false;
+
+	const uint32 width = _stream->readUint32LE();
+	const uint32 height = _stream->readUint32LE();
+	_stream->skip(8);
+	_stream->skip(4);
+	const float frameRate = _stream->readFloatLE();
+	const uint16 audioCodec = _stream->readUint16LE();
+	const uint16 audioChannels = _stream->readUint16LE();
+	const uint32 sampleRate = _stream->readUint32LE();
+	_stream->skip(6);
+	const uint16 bits = _stream->readUint16LE();
+
+	if (width == 0 || height == 0)
+		return false;
+
+	_frameRate = floatToRational(frameRate > 0.0f ? frameRate : 15.0f);
+	debug("raw 4XM video %ux%u, frame rate: %d/%d", width, height, _frameRate.getNumerator(), _frameRate.getDenominator());
+
+	_frames.clear();
+	_stream->seek(0x88);
+	while (_stream->pos() + 8 <= _stream->size()) {
+		const int64 frameOffset = _stream->pos();
+		const uint32 chunkId = _stream->readUint32LE();
+		const uint32 chunkSize = _stream->readUint32LE();
+		const int64 frameEnd = frameOffset + chunkSize;
+		if (chunkSize < 8 || frameEnd > _stream->size())
+			break;
+
+		if (chunkId == kRaw4XMFrameContainer)
+			_frames.push_back({frameOffset, frameEnd});
+		_stream->seek(frameEnd);
+	}
+
+	if (_frames.empty())
+		return false;
+
+	addTrack(_rawVideo = new FourXMRawVideoTrack(this, _frameRate, width, height));
+	if ((audioCodec == 0 || audioCodec == 1) && sampleRate > 0 &&
+		(audioChannels == 1 || audioChannels == 2) && bits == 16) {
+		_rawAudio = new FourXMRawAudioTrack(audioCodec, audioChannels, sampleRate, bits);
+		addTrack(_rawAudio);
+	}
+
+	return getNumTracks() != 0;
+}
+
 bool FourXMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_stream.reset(stream);
 	if (!stream->size()) {
 		return false;
 	}
+
+	if (stream->readUint32LE() == kRaw4XMFile)
+		return loadRawStream();
+	stream->seek(0);
 
 	uint32 riffTag = stream->readUint32BE();
 	if (riffTag != MKTAG('R', 'I', 'F', 'F')) {

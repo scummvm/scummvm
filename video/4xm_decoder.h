@@ -45,9 +45,12 @@ private:
 
 	class FourXMVideoTrack;
 	class FourXMAudioTrack;
+	class FourXMRawVideoTrack;
+	class FourXMRawAudioTrack;
 
 	void readList(uint32 size);
 	void decodeNextFrameImpl();
+	bool loadRawStream();
 
 	uint32 _dataRate = 0;
 	Common::Rational _frameRate;
@@ -56,6 +59,8 @@ private:
 	uint _curFrame = 0;
 	FourXMVideoTrack *_video = nullptr;
 	FourXMAudioTrack *_audio = nullptr;
+	FourXMRawVideoTrack *_rawVideo = nullptr;
+	FourXMRawAudioTrack *_rawAudio = nullptr;
 };
 
 } // namespace Video
