@@ -86,7 +86,7 @@ public:
 	Character();
 
 	// Walk state from walkAlongPath (1008:1b8f) - runtime offsets +0x00..+0x0A, +0x18, +0x33
-	Common::Point _endPosition;          // runtime[+0x00, +0x02]: next waypoint
+	Common::Point _targetPosition;      // runtime[+0x00, +0x02]: next waypoint
 	int16 _stepDeltaX = 0;              // runtime[+0x04]: abs(endX - startX)
 	int16 _stepDeltaY = 0;              // runtime[+0x06]: abs(endY - startY)
 	int16 _stepError = 0;               // runtime[+0x18]: Bresenham error accumulator
@@ -427,7 +427,7 @@ public:
 	PendingPanelRequest _pendingPanelRequest = kPanelRequestNone;
 
 	// Binary g_wSavedCursorMode [scene+0xFEA]: saved before opening action bar panel
-	Script::MouseMode _cursorModeBeforeMenu = Script::MouseMode::Walk;
+	Script::MouseMode _savedCursorMode = Script::MouseMode::Walk;
 
 	void openMainMenu(Common::Point clickedPosition);
 

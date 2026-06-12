@@ -301,7 +301,7 @@ public:
 	// All zeroed on init by memsetBytes in loadResourceFile.
 	Common::Array<ScriptVariable> _variables;
 
-	MouseMode _mouseMode = MouseMode::Walk;
+	MouseMode _cursorMode = MouseMode::Walk;
 	MouseMode _cursorModeBeforeWait = MouseMode::Walk;
 
 	uint16 _interactedObjectID = 0;

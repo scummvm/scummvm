@@ -420,8 +420,8 @@ void ScriptExecutor::step() {
 						// those waits expect the player to click, so cursor stays as cross.
 						View1 *v = (View1 *)_engine->findView("View1");
 						bool clickableWait = v && (v->_isShowingTextBox || v->_isShowingDialogueChoicePanel);
-						if (!clickableWait && _mouseMode != MouseMode::Disabled) {
-							_cursorModeBeforeWait = _mouseMode;
+						if (!clickableWait && _cursorMode != MouseMode::Disabled) {
+							_cursorModeBeforeWait = _cursorMode;
 							_engine->setCursorMode(MouseMode::Disabled);
 							if (v)
 								v->updateCursor();
@@ -449,7 +449,7 @@ void ScriptExecutor::step() {
 	_state = ExecutorState::Idle;
 	g_engine->_scriptExecutor->_isRepeatRun = false;
 	// Original: restore cursor from Disabled when all scripts finish
-	if (_mouseMode == MouseMode::Disabled) {
+	if (_cursorMode == MouseMode::Disabled) {
 		_engine->setCursorMode(_cursorModeBeforeWait);
 		View1 *v = (View1 *)_engine->findView("View1");
 		if (v)
@@ -782,13 +782,13 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	if (currentView->_activeInventoryItem != nullptr &&
 		currentView->_activeInventoryItem->_index == objectID) {
 		currentView->_activeInventoryItem = nullptr;
-		if (currentView->_cursorModeBeforeMenu == Script::MouseMode::UseInventory) {
-			currentView->_cursorModeBeforeMenu = Script::MouseMode::Use;
+		if (currentView->_savedCursorMode == Script::MouseMode::UseInventory) {
+			currentView->_savedCursorMode = Script::MouseMode::Use;
 		}
 		if (_cursorModeBeforeWait == MouseMode::UseInventory) {
 			_cursorModeBeforeWait = MouseMode::Use;
 		}
-		if (_mouseMode == MouseMode::UseInventory) {
+		if (_cursorMode == MouseMode::UseInventory) {
 			_engine->setCursorMode(MouseMode::Use);
 			currentView->updateCursor();
 		}
@@ -798,7 +798,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	// and was the UseInventory target, reset cursor to Use (0x15).
 	// Also clear _activeInventoryItem if it was this object.
 	if (object->_dataOffset == 0) {
-		if (_interactedObjectID == objectID + 0x400 && _mouseMode == MouseMode::UseInventory) {
+		if (_interactedObjectID == objectID + 0x400 && _cursorMode == MouseMode::UseInventory) {
 			_engine->setCursorMode(MouseMode::Use);
 			currentView->_activeInventoryItem = nullptr;
 			currentView->updateCursor();
@@ -941,13 +941,13 @@ bool Script::ScriptExecutor::scriptWalkToPosition() {
 	// Set immediate target: either from pathfinding result or direct to finalDest
 	if (!c->_isFollowingPath) {
 		// Binary else branch: runtime[0x16]=0, runtime[0x17]=0, target=finalDest
-		c->_endPosition = c->_pathFinalDestination;
+		c->_targetPosition = c->_pathFinalDestination;
 	}
 	// If path was found, calculatePath already set _endPosition to first waypoint
 
 	// Binary: compute deltaX, deltaY, reset error and directionCalculated
-	c->_stepDeltaX = abs(c->_endPosition.x - current.x);
-	c->_stepDeltaY = abs(c->_endPosition.y - current.y);
+	c->_stepDeltaX = abs(c->_targetPosition.x - current.x);
+	c->_stepDeltaY = abs(c->_targetPosition.y - current.y);
 	c->_stepError = 0;
 	c->_stepDirectionSet = false;
 	c->_isLerping = true;
@@ -1109,8 +1109,8 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 	_pickupTargetObjectID = objectIndex;
 	currentView->_activeInventoryItem = nullptr;
 	// Binary: save current cursor mode, then set to Disabled (hourglass) during walk+pickup
-	if (_mouseMode != MouseMode::Disabled) {
-		_cursorModeBeforeWait = _mouseMode;
+	if (_cursorMode != MouseMode::Disabled) {
+		_cursorModeBeforeWait = _cursorMode;
 	}
 	_engine->setCursorMode(MouseMode::Disabled);
 	currentView->updateCursor();
@@ -1437,7 +1437,7 @@ bool Script::ScriptExecutor::scriptOpenInventory() {
 		warning("Invalid inventory source object %u", objectID);
 		return false;
 	}
-	_savedExternalInventoryMouseMode = _mouseMode == MouseMode::UseInventory ? MouseMode::Use : _mouseMode;
+	_savedExternalInventoryMouseMode = _cursorMode == MouseMode::UseInventory ? MouseMode::Use : _cursorMode;
 	_hasPendingExternalInventoryResume = true;
 	_externalInventorySourceObjectID = objectID;
 	_secondaryInventoryLocation = _stream->pos();
@@ -1668,7 +1668,7 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 
 		if (currentView->_uiPanelState == View1::kUiPanelActionBar) {
 			currentView->_uiPanelState = View1::kUiPanelNone;
-			_engine->setCursorMode(currentView->_cursorModeBeforeMenu);
+			_engine->setCursorMode(currentView->_savedCursorMode);
 			currentView->updateCursor();
 			currentView->redraw();
 		}
@@ -2549,18 +2549,18 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	uint16 out2 = 0;
 	switch (value) {
 	case 0x01:
-		if (_mouseMode == MouseMode::Use) {
+		if (_cursorMode == MouseMode::Use) {
 			out1 = _interactedObjectID;
-		} else if (_mouseMode == MouseMode::UseInventory) {
+		} else if (_cursorMode == MouseMode::UseInventory) {
 			out1 = _interactedObjectID | (_interactedOtherObjectID << 16);
 			out2 = _interactedOtherObjectID;
 		}
 		break;
 	case 0x02:
-		out1 = (_mouseMode == MouseMode::Look) ? _interactedObjectID : 0;
+		out1 = (_cursorMode == MouseMode::Look) ? _interactedObjectID : 0;
 		break;
 	case 0x03:
-		out1 = (_mouseMode == MouseMode::Talk) ? _interactedObjectID : 0;
+		out1 = (_cursorMode == MouseMode::Talk) ? _interactedObjectID : 0;
 		break;
 	case 0x04: {
 		const Common::Point &charPos = getCharPosition();
@@ -2633,7 +2633,7 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 		break;
 	}
 	case 0x2C:
-		out1 = (_mouseMode == MouseMode::PanelUse) ? _interactedObjectID : 0;
+		out1 = (_cursorMode == MouseMode::PanelUse) ? _interactedObjectID : 0;
 		break;
 	case 0x2D:
 		out1 = Scenes::instance()._currentSceneIndex;

@@ -147,7 +147,7 @@ void View1::closeInventory() {
 		setInventorySource(GameObjects::instance().getProtagonistObject());
 	}
 
-	g_engine->setCursorMode(_cursorModeBeforeMenu);
+	g_engine->setCursorMode(_savedCursorMode);
 	updateCursor();
 }
 
@@ -200,7 +200,7 @@ void View1::updateCursor(const byte *palette) {
 
 	// Original indexes cursor array as: base + mode * 16 - 16, i.e. 0-based index = mode - 1.
 	// The array has 33 entries (indices 0-32). Cursor modes 0x13-0x1A map to entries 18-25.
-	int mode = (int)g_engine->_scriptExecutor->_mouseMode - 1;
+	int mode = (int)g_engine->_scriptExecutor->_cursorMode - 1;
 	if (mode < 0 || mode >= kNumLoadedCursors) {
 		warning("Invalid cursor mode %d, falling back to Walk cursor", mode);
 		mode = (int)Script::MouseMode::Walk - 1;
@@ -544,7 +544,7 @@ void View1::drawPath(Graphics::ManagedSurface &s) {
 void View1::openMainMenu(Common::Point clickedPosition) {
 	_uiPanelState = kUiPanelActionBar;
 	// Binary handleInput: save cursor and set to PanelCursor (0x19)
-	_cursorModeBeforeMenu = g_engine->_scriptExecutor->_mouseMode;
+	_savedCursorMode = g_engine->_scriptExecutor->_cursorMode;
 	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 	// Calculate button size from actual icon dimensions (matching original)
 	uint16 maxW = 0, maxH = 0;
@@ -624,7 +624,7 @@ void View1::setStringBox(const Common::StringArray &sa) {
 	// Binary: if (g_wCursorMode == 0x1a) setCursorMode(0x16);
 	// When cursor is Disabled (hourglass/hidden during script wait), restore to Walk (crosshair)
 	// so the player can click to dismiss the text box or select a dialogue choice.
-	if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Disabled) {
+	if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled) {
 		g_engine->setCursorMode(Script::MouseMode::Walk);
 		updateCursor();
 	}
@@ -868,7 +868,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 			case InventoryButtonIndex::Drop: {
 				// Binary handleInventoryClick button 5 / handleDialogueClick button 5.
 				// Only active when mode == 0x17 (UseInventory) and an item is held.
-				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
+				if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
 					if (isInventorySourceProtagonist()) {
 						// Protagonist's inventory: find a container in the current scene.
 						// Binary iterates objects 1..0x200, finds first with:
@@ -911,21 +911,21 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 			}
 			case InventoryButtonIndex::Close: {
 				// Binary handleInventoryClick (1008:4d07) button 6:
-				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory) {
+				if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory) {
 					// mode == 0x17: g_wSavedCursorMode = 0x17, persist item
-					_cursorModeBeforeMenu = Script::MouseMode::UseInventory;
+					_savedCursorMode = Script::MouseMode::UseInventory;
 					g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
 				} else {
 					// mode != 0x17: if savedCursorMode was 0x17, reset to 0x15
-					if (_cursorModeBeforeMenu == Script::MouseMode::UseInventory) {
-						_cursorModeBeforeMenu = Script::MouseMode::Use;
+					if (_savedCursorMode == Script::MouseMode::UseInventory) {
+						_savedCursorMode = Script::MouseMode::Use;
 					}
 					g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				}
 				g_engine->_scriptExecutor->_interactedObjectID = 0;
 				_uiPanelState = kUiPanelNone;
 				_inventoryPage = 0;
-				g_engine->setCursorMode(_cursorModeBeforeMenu);
+				g_engine->setCursorMode(_savedCursorMode);
 				updateCursor();
 				return true;
 			}
@@ -936,13 +936,13 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 	// Check if we hit an inventory item
 	GameObject *clickedObject = getClickedInventoryItem(msg._pos);
 
-	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Look) {
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 		g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 		g_engine->runScriptExecutor(false);
 		return true;
 	}
-	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Use) {
 		_activeInventoryItem = clickedObject;
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 		AnimFrame *icon = getInventoryIcon(_activeInventoryItem);
@@ -1013,7 +1013,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 			case InventoryButtonIndex::Drop: {
 				// Binary button 5 (Take): transfers held item to protagonist.
 				// Only active when mode == UseInventory (0x17) and an item is held.
-				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
+				if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory && _activeInventoryItem != nullptr) {
 					transferInventoryItem(_activeInventoryItem, GameObjects::instance().getProtagonistObject());
 					_activeInventoryItem = nullptr;
 					g_engine->setCursorMode(Script::MouseMode::Use);
@@ -1039,7 +1039,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 	// Item click handling — container has Look and Use but NO combine path.
 	GameObject *clickedObject = getClickedInventoryItem(msg._pos);
 
-	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Look) {
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Look) {
 		// Binary: Look on container item triggers runScriptExecutor immediately
 		// (g_wPendingPanelRequest = 1 path in original)
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
@@ -1047,7 +1047,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		g_engine->runScriptExecutor(false);
 		return true;
 	}
-	if (clickedObject != nullptr && g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Use) {
+	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Use) {
 		// Binary: Use on container item picks up item as UseInventory cursor
 		_activeInventoryItem = clickedObject;
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
@@ -1110,7 +1110,7 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 					g_engine->setCursorMode(Script::MouseMode::UseInventory);
 					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
 				} else {
-					g_engine->setCursorMode(_cursorModeBeforeMenu);
+					g_engine->setCursorMode(_savedCursorMode);
 				}
 				break;
 			}
@@ -1154,13 +1154,13 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 					_pendingPanelRequest = kPanelRequestSaveLoad;
 				} else {
 					g_engine->openMainMenuDialog();
-					g_engine->setCursorMode(_cursorModeBeforeMenu);
+					g_engine->setCursorMode(_savedCursorMode);
 				}
 				break;
 			}
 			case MainMenuButtonIndex::Close: {
 				_uiPanelState = kUiPanelNone;
-				g_engine->setCursorMode(_cursorModeBeforeMenu);
+				g_engine->setCursorMode(_savedCursorMode);
 				break;
 			}
 			}
@@ -1193,7 +1193,7 @@ bool View1::handleHelpClick(const MouseDownMessage &msg) {
 		} else if (depth == 0xFF) {
 			// Return to normal mode: restore scene visuals without resetting characters
 			_currentMode = ViewMode::VM_GAME;
-			g_engine->setCursorMode(_cursorModeBeforeMenu);
+			g_engine->setCursorMode(_savedCursorMode);
 			updateCursor();
 			startFadeToBlack(8);
 			_backgroundSurface.copyFrom(g_engine->_sceneBackground);
@@ -1246,7 +1246,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		// if cursor is not Disabled (0x1A). When cursor is Disabled (walk/wait in progress),
 		// clicks are completely ignored.
 		if (g_engine->_scriptExecutor->isExecuting() &&
-			g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::Disabled) {
+			g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::Disabled) {
 			// Binary handleInput (1008:f1d4-f225):
 			// 1. handleTextBoxInput() clears text box visual
 			// 2. dismissDialoguePanel() clears g_wIsShowingDialoguePanel visual
@@ -1275,7 +1275,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return true;
 		}
 
-		if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Walk) {
+		if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Walk) {
 			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
 			if (protagonist == nullptr) {
 				debugC(kDebugScript, "Ignoring walk click without active actor character in the scene");
@@ -1329,7 +1329,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
 			if (protagonist != nullptr) {
 				Common::Point pos = protagonist->getPosition();
-				protagonist->_endPosition = pos;
+				protagonist->_targetPosition = pos;
 				protagonist->_pathFinalDestination = pos;
 				protagonist->_path.clear();
 				protagonist->_currentPathIndex = 0;
@@ -1339,7 +1339,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 
 			// Binary (handleInput 1008:ef8f): if mode != 0x17, clear inventory item ID.
 			// Note: the binary does NOT touch g_wInventoryActionFlag here.
-			if (g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::UseInventory) {
+			if (g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::UseInventory) {
 				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
 				_activeInventoryItem = nullptr;
 			}
@@ -1373,7 +1373,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
 				if (ConfMan.getBool("original_menus")) {
 					// Binary handleInput (1008:f2af): saves cursor mode before opening panel
-					_cursorModeBeforeMenu = g_engine->_scriptExecutor->_mouseMode;
+					_savedCursorMode = g_engine->_scriptExecutor->_cursorMode;
 					openOriginalSaveLoadPanel();
 				} else {
 					g_engine->openMainMenuDialog();
@@ -1388,7 +1388,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			openMainMenu(msg._pos);
 		} else {
 			_uiPanelState = kUiPanelNone;
-			g_engine->setCursorMode(_cursorModeBeforeMenu);
+			g_engine->setCursorMode(_savedCursorMode);
 		}
 		updateCursor();
 		return true;
@@ -1455,7 +1455,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	// Binary (handleInput 1008:edff): UI panels only open when not executing and cursor != Disabled.
-	if (!g_engine->_scriptExecutor->isExecuting() && g_engine->_scriptExecutor->_mouseMode != Script::MouseMode::Disabled) {
+	if (!g_engine->_scriptExecutor->isExecuting() && g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::Disabled) {
 		if (msg.ascii == (uint16)'i') {
 			if (_uiPanelState != kUiPanelInventory) {
 				openInventory(GameObjects::instance().getProtagonistObject());
@@ -2679,7 +2679,7 @@ bool Character::calculatePath(Common::Point target) {
 	if (bestNode == 0) {
 		// No path found - go directly to target
 		_path.clear();
-		_endPosition = target;
+		_targetPosition = target;
 		return false;
 	}
 
@@ -2713,7 +2713,7 @@ bool Character::calculatePath(Common::Point target) {
 		if (!g_engine->isPathWalkable(p1.y, p1.x, p2.y, p2.x)) {
 			// Path invalid - abort, go directly to target
 			_path.clear();
-			_endPosition = target;
+			_targetPosition = target;
 			return false;
 		}
 	}
@@ -2732,7 +2732,7 @@ bool Character::calculatePath(Common::Point target) {
 
 	// Set immediate target to the current path node
 	const Common::Point &firstTarget = g_engine->pathfindingPoints[_path[_currentPathIndex] - 1]._position;
-	_endPosition = firstTarget;
+	_targetPosition = firstTarget;
 	return true;
 }
 
@@ -2814,18 +2814,18 @@ bool Character::walkAlongPath() {
 	_currentPathIndex++;
 	if (_currentPathIndex >= (int16)_path.size()) {
 		// Past end of path - walk to final destination, then stop
-		_endPosition = _pathFinalDestination;
-		_stepDeltaX = abs(_endPosition.x - _gameObject->_position.x);
-		_stepDeltaY = abs(_endPosition.y - _gameObject->_position.y);
+		_targetPosition = _pathFinalDestination;
+		_stepDeltaX = abs(_targetPosition.x - _gameObject->_position.x);
+		_stepDeltaY = abs(_targetPosition.y - _gameObject->_position.y);
 		_stepError = 0;
 		_stepDirectionSet = false;
 		return false; // No more path segments after this
 	}
 	const uint16 nodeIdx = _path[_currentPathIndex];
 	const Common::Point &nodePos = g_engine->pathfindingPoints[nodeIdx - 1]._position;
-	_endPosition = nodePos;
-	_stepDeltaX = abs(_endPosition.x - _gameObject->_position.x);
-	_stepDeltaY = abs(_endPosition.y - _gameObject->_position.y);
+	_targetPosition = nodePos;
+	_stepDeltaX = abs(_targetPosition.x - _gameObject->_position.x);
+	_stepDeltaY = abs(_targetPosition.y - _gameObject->_position.y);
 	_stepError = 0;
 	_stepDirectionSet = false;
 	return true;
@@ -2932,7 +2932,7 @@ Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIn
 // be replaced with the original pixel-stepping for accurate movement speed.
 void Character::startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	_startPosition = getPosition();
-	_endPosition = target;
+	_targetPosition = target;
 	_startTime = g_events->currentMillis;
 	_duration = duration;
 	_isLerping = true;
@@ -2940,8 +2940,8 @@ void Character::startLerpTo(const Common::Point &target, uint32 duration, bool i
 
 	// Reset Bresenham state - direction will be calculated on first Update()
 	_stepDirectionSet = false;
-	_stepDeltaX = abs(_endPosition.x - _startPosition.x);
-	_stepDeltaY = abs(_endPosition.y - _startPosition.y);
+	_stepDeltaX = abs(_targetPosition.x - _startPosition.x);
+	_stepDeltaY = abs(_targetPosition.y - _startPosition.y);
 	_stepError = 0;
 }
 
@@ -3041,8 +3041,8 @@ void Character::update() {
 	// Proximity arrival check from walkAlongPath (1008:1b8f):
 	// Original checks if character is within walkSpeed pixels of target in both axes.
 	// Additionally requires vertical offset to have reached target (binary: runtime+0x21D == object+0x08)
-	bool arrived = (abs(pos.x - _endPosition.x) <= walkSpeed) &&
-				   (abs(pos.y - _endPosition.y) <= walkSpeed);
+	bool arrived = (abs(pos.x - _targetPosition.x) <= walkSpeed) &&
+				   (abs(pos.y - _targetPosition.y) <= walkSpeed);
 	// Binary: arrival also requires vertical offset interpolation to be complete
 	if (arrived && _hasMotionVerticalOffset &&
 		(int16)_motionTargetVerticalOffset >= 0 &&
@@ -3051,8 +3051,8 @@ void Character::update() {
 	}
 	if (arrived) {
 		// Binary (22cd): check if target == finalDest (at final destination)
-		bool atFinalDest = (_endPosition.x == _pathFinalDestination.x &&
-						    _endPosition.y == _pathFinalDestination.y);
+		bool atFinalDest = (_targetPosition.x == _pathFinalDestination.x &&
+						    _targetPosition.y == _pathFinalDestination.y);
 
 		if (!atFinalDest && _isFollowingPath) {
 			// Mid-path waypoint arrival: advance to next node
@@ -3063,11 +3063,11 @@ void Character::update() {
 
 		// Final destination arrival (or direct walk arrival)
 		if (_gameObject->_snapToTarget) {
-			pos = _endPosition;
+			pos = _targetPosition;
 			setPosition(pos);
 			_pathFinalDestination = pos;
 		} else {
-			_endPosition = pos;
+			_targetPosition = pos;
 			_pathFinalDestination = pos;
 			if (_hasMotionVerticalOffset && (int16)_motionTargetVerticalOffset >= 0) {
 				_motionTargetVerticalOffset = _gameObject->_verticalOffsetScale;
@@ -3097,7 +3097,7 @@ void Character::update() {
 	}
 
 	// Binary: if target==current position, skip Phase 0 turn delay (set directionCalculated=1)
-	if (!_stepDirectionSet && _endPosition.x == pos.x && _endPosition.y == pos.y) {
+	if (!_stepDirectionSet && _targetPosition.x == pos.x && _targetPosition.y == pos.y) {
 		_stepDirectionSet = true;
 	}
 
@@ -3106,38 +3106,38 @@ void Character::update() {
 		_stepDirectionSet = true;
 		// Phase 0 from walkAlongPath (1008:1b8f): direction calculation.
 		// Binary returns after setting direction (1-frame turn delay).
-		uint16 absDx = abs(pos.x - _endPosition.x);
-		uint16 absDy = abs(pos.y - _endPosition.y);
+		uint16 absDx = abs(pos.x - _targetPosition.x);
+		uint16 absDy = abs(pos.y - _targetPosition.y);
 		uint8 dir = _gameObject->_orientation;
 		if (dir > 8 && dir < 17)
 			dir -= 8;
 		if (dir > 16)
 			dir = 1;
 		// Cardinal directions (only if animation available for that direction)
-		if (_endPosition.y < pos.y && absDx <= absDy &&
+		if (_targetPosition.y < pos.y && absDx <= absDy &&
 			_gameObject->_blobs.size() > 0 && !_gameObject->_blobs[0].empty())
 			dir = 1; // North
-		if (pos.x < _endPosition.x && absDy <= absDx &&
+		if (pos.x < _targetPosition.x && absDy <= absDx &&
 			_gameObject->_blobs.size() > 2 && !_gameObject->_blobs[2].empty())
 			dir = 3; // East
-		if (pos.y < _endPosition.y && absDx <= absDy &&
+		if (pos.y < _targetPosition.y && absDx <= absDy &&
 			_gameObject->_blobs.size() > 4 && !_gameObject->_blobs[4].empty())
 			dir = 5; // South
-		if (_endPosition.x < pos.x && absDy <= absDx &&
+		if (_targetPosition.x < pos.x && absDy <= absDx &&
 			_gameObject->_blobs.size() > 6 && !_gameObject->_blobs[6].empty())
 			dir = 7; // West
 		// Diagonals: absDx/4 < absDy AND absDy/2 < absDx
 		if ((absDx >> 2) < absDy && (absDy >> 1) < absDx) {
-			if (_endPosition.y < pos.y && pos.x < _endPosition.x &&
+			if (_targetPosition.y < pos.y && pos.x < _targetPosition.x &&
 				_gameObject->_blobs.size() > 1 && !_gameObject->_blobs[1].empty())
 				dir = 2; // NE
-			if (pos.x < _endPosition.x && pos.y < _endPosition.y &&
+			if (pos.x < _targetPosition.x && pos.y < _targetPosition.y &&
 				_gameObject->_blobs.size() > 3 && !_gameObject->_blobs[3].empty())
 				dir = 4; // SE
-			if (pos.y < _endPosition.y && _endPosition.x < pos.x &&
+			if (pos.y < _targetPosition.y && _targetPosition.x < pos.x &&
 				_gameObject->_blobs.size() > 5 && !_gameObject->_blobs[5].empty())
 				dir = 6; // SW
-			if (_endPosition.x < pos.x && _endPosition.y < pos.y &&
+			if (_targetPosition.x < pos.x && _targetPosition.y < pos.y &&
 				_gameObject->_blobs.size() > 7 && !_gameObject->_blobs[7].empty())
 				dir = 8; // NW
 		}
@@ -3160,20 +3160,20 @@ void Character::update() {
 			// Bresenham: if error >= deltaX → step Y, else step X
 			if (_stepError >= _stepDeltaX) {
 				// Step Y axis
-				if (_endPosition.y != pos.y)
+				if (_targetPosition.y != pos.y)
 					pixelsMoved++;
-				if (_endPosition.y < pos.y)
+				if (_targetPosition.y < pos.y)
 					pos.y--;
-				else if (_endPosition.y > pos.y)
+				else if (_targetPosition.y > pos.y)
 					pos.y++;
 				_stepError -= _stepDeltaX;
 			} else {
 				// Step X axis
-				if (_endPosition.x != pos.x)
+				if (_targetPosition.x != pos.x)
 					pixelsMoved++;
-				if (_endPosition.x < pos.x)
+				if (_targetPosition.x < pos.x)
 					pos.x--;
-				else if (_endPosition.x > pos.x)
+				else if (_targetPosition.x > pos.x)
 					pos.x++;
 				_stepError += _stepDeltaY;
 			}
@@ -3235,7 +3235,7 @@ void Character::update() {
 					}
 				}
 				// Binary: target = finalDest = pos (cancel path, but loop continues)
-				_endPosition = pos;
+				_targetPosition = pos;
 				_pathFinalDestination = pos;
 				_isFollowingPath = false;
 				_path.clear();
@@ -3247,7 +3247,7 @@ void Character::update() {
 	// Binary (2280): if pixelsMoved != walkSpeed → revert and cancel
 	if (pixelsMoved != walkSpeed) {
 		pos = savedPos;
-		_endPosition = pos;
+		_targetPosition = pos;
 		_pathFinalDestination = pos;
 		_isFollowingPath = false;
 		_path.clear();
@@ -3375,7 +3375,7 @@ void View1::openOriginalSaveLoadPanel() {
 void View1::closeOriginalSaveLoadPanel() {
 	_uiPanelState = kUiPanelNone;
 	_saveLoadSubMode = SaveLoadSubMode::None;
-	g_engine->setCursorMode(_cursorModeBeforeMenu);
+	g_engine->setCursorMode(_savedCursorMode);
 	updateCursor();
 	redraw();
 }
