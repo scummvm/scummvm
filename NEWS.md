@@ -6,9 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
    - Added support for Nancy Drew: The Haunted Carousel.
    - Added support for Nancy Drew: Danger on Deception Island.
-   - Added support for Cartoon Carnival.
-   - Added support for Alfred Pelrock: En Busca de un Sueño.
    - Added support for Noctropolis.
+   - Added support for Alfred Pelrock: En Busca de un Sueño.
+   - Added support for Cartoon Carnival.
 
  General:
    - Highlight clickable links in the GUI with a cursor change.
