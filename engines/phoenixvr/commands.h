@@ -31,6 +31,15 @@
 namespace PhoenixVR {
 
 namespace {
+struct MultiCD_Use_Install_Path : public Script::Command {
+	Common::String path;
+
+	MultiCD_Use_Install_Path(const Common::Array<Common::String> &args) : path(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("MultiCD_Use_Install_Path %s", path.c_str());
+	}
+};
+
 struct MultiCD_Set_Transition_Script : public Script::Command {
 	Common::String path;
 
@@ -47,6 +56,16 @@ struct MultiCD_Set_Next_Script : public Script::Command {
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("MultiCD_Set_Next_Script %s", filename.c_str());
 		g_engine->setNextScript(filename);
+	}
+};
+
+struct MultiCD_If_Next_Script : public Script::Command {
+	Common::String cd;
+	Common::String var;
+
+	MultiCD_If_Next_Script(const Common::Array<Common::String> &args) : cd(args[0]), var(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("MultiCD_If_Next_Script %s %s", cd.c_str(), var.c_str());
 	}
 };
 
@@ -193,6 +212,18 @@ struct Sub : public Script::Command {
 	}
 };
 
+struct CopyVar : public Script::Command {
+	Common::String srcVar;
+	Common::String dstVar;
+
+	CopyVar(const Common::Array<Common::String> &args) : srcVar(args[0]), dstVar(args[1]) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("copyvar %s %s", srcVar.c_str(), dstVar.c_str());
+		g_engine->setVariable(dstVar, g_engine->getVariable(srcVar));
+	}
+};
+
 struct Not : public Script::Command {
 	Common::String var;
 
@@ -272,8 +303,15 @@ struct Cmp : public Script::Command {
 	Common::String op;
 	Common::String arg1;
 
-	Cmp(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]),
-													 arg0(args[2]), op(args[3]), arg1(args[4]) {}
+	Cmp(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]), arg0(args[2]), op(args[3]) {
+		if (args.size() == 5) {
+			arg1 = args[4];
+		} else {
+			uint opLength = (op.size() > 1 && op[1] == '=') ? 2 : 1;
+			arg1 = op.substr(opLength);
+			op = op.substr(0, opLength);
+		}
+	}
 
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("cmp %s %s %s %s %s", var.c_str(), negativeVar.c_str(), arg0.c_str(), op.c_str(), arg1.c_str());
@@ -282,6 +320,8 @@ struct Cmp : public Script::Command {
 		auto value1 = valueOf(arg1);
 		if (op == "==") {
 			r = value0 == value1;
+		} else if (op == "!=") {
+			r = value0 != value1;
 		} else if (op == "<") {
 			r = value0 < value1;
 		} else if (op == "<=") {
@@ -346,6 +386,72 @@ struct SaveCoffre : public Script::Command {
 	SaveCoffre(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		warning("SaveCoffre");
+	}
+};
+
+struct ExeDemo : public Script::Command {
+	Common::String var;
+
+	ExeDemo(const Common::Array<Common::String> &args) : var(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("ExeDemo %s", var.c_str());
+		g_engine->setVariable(var, 1);
+	}
+};
+
+struct AfficheImage : public Script::Command {
+	Common::String image;
+	int x;
+	int y;
+
+	AfficheImage(const Common::Array<Common::String> &args) : image(args[0]), x(atoi(args[1].c_str())), y(atoi(args[2].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->showImageOverlay(image, x, y);
+	}
+};
+
+struct StopAffiche : public Script::Command {
+	StopAffiche(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->stopImageOverlay();
+	}
+};
+
+struct UpdateStage : public Script::Command {
+	UpdateStage(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->updateStage();
+	}
+};
+
+struct StartCible : public Script::Command {
+	Common::String name;
+	int periodSeconds;
+	Common::Array<int> bounds;
+
+	StartCible(const Common::Array<Common::String> &args) : name(args[0]), periodSeconds(atoi(args[1].c_str())) {
+		for (uint i = 2; i < args.size(); ++i)
+			bounds.push_back(atoi(args[i].c_str()));
+	}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->startCible(name, periodSeconds, bounds);
+	}
+};
+
+struct StopCible : public Script::Command {
+	StopCible(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->stopCible();
+	}
+};
+
+struct TestCible : public Script::Command {
+	Common::String xVar;
+	Common::String yVar;
+
+	TestCible(const Common::Array<Common::String> &args) : xVar(args[0]), yVar(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->testCible(xVar, yVar);
 	}
 };
 
@@ -752,14 +858,17 @@ struct End : public Script::Command {
 	E(AddCoffreObject)               \
 	E(AddObject)                     \
 	E(AfficheCoffre)                 \
+	E(AfficheImage)                  \
 	E(AffichePorteF)                 \
 	E(AfficheSelection)              \
 	E(CarteDestination)              \
 	E(ChangeCurseur)                 \
+	E(CopyVar)                       \
 	E(Cmp)                           \
 	E(Discocier)                     \
 	E(DrawTextSelection)             \
 	E(End)                           \
+	E(ExeDemo)                       \
 	E(GetMonde4)                     \
 	E(SetMonde4)                     \
 	E(IsPresent)                     \
@@ -787,6 +896,8 @@ struct End : public Script::Command {
 	E(LoadVariable)                  \
 	E(MemoryRelease)                 \
 	E(MultiCD_Set_Transition_Script) \
+	E(MultiCD_If_Next_Script)        \
+	E(MultiCD_Use_Install_Path)      \
 	E(MultiCD_Set_Next_Script)       \
 	E(PauseTimer)                    \
 	E(Play_AnimBloc)                 \
@@ -804,11 +915,16 @@ struct End : public Script::Command {
 	E(Set_Global_Pan)                \
 	E(Set_Global_Volume)             \
 	E(Scroll)                        \
+	E(StartCible)                    \
+	E(StopAffiche)                   \
 	E(Stop_AnimBloc)                 \
+	E(StopCible)                     \
+	E(TestCible)                     \
 	E(DoAction)                      \
 	E(StartTimer)                    \
 	E(Sub)                           \
 	E(Until)                         \
+	E(UpdateStage)                   \
 	E(While)                         \
 	E(Waves)                         \
 	/* */
@@ -1097,6 +1213,15 @@ struct Fade : public Script::Command {
 	Fade(int a0, int a1, int a2) : start(a0), stop(a1), speed(a2) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->fade(start, stop, speed);
+	}
+};
+
+struct Transfade : public Script::Command {
+	int speed;
+
+	Transfade(int a0) : speed(a0) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->transFade(speed);
 	}
 };
 

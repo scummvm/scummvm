@@ -80,8 +80,7 @@ static Common::String getAmerzoneLevelLabel(const Common::String &script) {
 		{"03VR_PUEBLO", "Le Pueblo"},
 		{"04VR_FLEUVE", "Le Fleuve"},
 		{"05VR_VILLAGEMARAIS", "Le Village"},
-		{"07VRTEMPLE_VOLCAN", "Le Temple"}
-	};
+		{"07VRTEMPLE_VOLCAN", "Le Temple"}};
 
 	for (const auto &level : levels) {
 		if (script.hasPrefixIgnoreCase(level.prefix))
@@ -93,12 +92,10 @@ static Common::String getAmerzoneLevelLabel(const Common::String &script) {
 
 static const char *mfull[] = {
 	"January", "February", "March", "April", "May", "June",
-	"July", "August", "September", "October", "November", "December"
-};
+	"July", "August", "September", "October", "November", "December"};
 
 static const char *wday[] = {
-	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-};
+	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 static Common::String makeSaveText(const Common::String &firstLine, const Common::String &secondLine) {
 	Common::String result = firstLine;
@@ -154,8 +151,8 @@ static void fillSaveSlotRect(Graphics::Surface &dst, const Common::Rect &rect, u
 }
 
 static int drawSaveTextBlock(Graphics::Surface &dst, const Graphics::Font *font, const Common::String &text,
-		int x, int y, int width, uint32 color, Graphics::TextAlign align, int lineHeight, bool splitV, int tileY,
-		bool reserveEmptyFinalLine = false) {
+							 int x, int y, int width, uint32 color, Graphics::TextAlign align, int lineHeight, bool splitV, int tileY,
+							 bool reserveEmptyFinalLine = false) {
 	bool hasText = false;
 	for (uint i = 0; i < text.size(); ++i) {
 		if (text[i] != '\n' && text[i] != '\0') {
@@ -249,8 +246,7 @@ static void projectSaveCard(Graphics::ManagedSurface &faceSurface, const Graphic
 		makeVertex(0.0f, 0.0f, srcW, srcH),
 		makeVertex(static_cast<float>(card.w), 0.0f, 0.0f, srcH),
 		makeVertex(static_cast<float>(card.w), static_cast<float>(card.h), 0.0f, 0.0f),
-		makeVertex(0.0f, static_cast<float>(card.h), srcW, 0.0f)
-	};
+		makeVertex(0.0f, static_cast<float>(card.h), srcW, 0.0f)};
 
 	auto rasterizeTriangle = [&](const Vertex &a, const Vertex &b, const Vertex &c) {
 		const float area = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
@@ -319,6 +315,9 @@ void PhoenixVREngine::resetState() {
 	_angleX.set(0);
 	_angleY.resetRange();
 	_angleY.set(-kPi2);
+	_imageOverlay.reset();
+	_cibleActive = false;
+	_cibleBounds.clear();
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
@@ -573,6 +572,62 @@ void PhoenixVREngine::fade(int start, int stop, int speed) {
 		_screen->update();
 		dt = _frameLimiter.startFrame() / 1000.0f;
 	}
+}
+
+static uint32 transFadePixel(const Graphics::PixelFormat &format, uint32 left, int leftAmount, uint32 right, int rightAmount) {
+	uint8 lr, lg, lb, rr, rg, rb;
+	format.colorToRGB(left, lr, lg, lb);
+	format.colorToRGB(right, rr, rg, rb);
+	return format.RGBToColor(
+		CLIP(CLIP(static_cast<int>(lr) + leftAmount, 0, 255) + CLIP(static_cast<int>(rr) + rightAmount, 0, 255), 0, 255),
+		CLIP(CLIP(static_cast<int>(lg) + leftAmount, 0, 255) + CLIP(static_cast<int>(rg) + rightAmount, 0, 255), 0, 255),
+		CLIP(CLIP(static_cast<int>(lb) + leftAmount, 0, 255) + CLIP(static_cast<int>(rb) + rightAmount, 0, 255), 0, 255));
+}
+
+void PhoenixVREngine::transFade(int speed) {
+	debug("transfade speed: %d", speed);
+
+	Graphics::ManagedSurface oldFrame(_screen->w, _screen->h, _screen->format);
+	Graphics::ManagedSurface newFrame(_screen->w, _screen->h, _screen->format);
+	Graphics::ManagedSurface workFrame(_screen->w, _screen->h, _screen->format);
+
+	oldFrame.simpleBlitFrom(*_screen);
+	renderVR(0);
+	newFrame.simpleBlitFrom(*_screen);
+
+	bool waiting = true;
+	float dt = 0;
+
+	auto renderTransition = [&](int oldAmount, int newAmount) {
+		for (int y = 0; y < _screen->h; ++y) {
+			for (int x = 0; x < _screen->w; ++x) {
+				workFrame.setPixel(x, y, transFadePixel(_screen->format, oldFrame.getPixel(x, y), oldAmount, newFrame.getPixel(x, y), newAmount));
+			}
+		}
+		_screen->simpleBlitFrom(workFrame);
+	};
+
+	auto runTransition = [&](int pos, int direction) {
+		while (!shouldQuit() && waiting && (direction > 0 ? pos < 0 : pos > -256)) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN && event.kbd.ascii == ' ')
+					waiting = false;
+			}
+
+			renderTransition(direction > 0 ? 0 : pos, direction > 0 ? pos : 0);
+			_frameLimiter.delayBeforeSwap();
+			_screen->update();
+			dt = _frameLimiter.startFrame() / 1000.0f;
+
+			pos += direction * static_cast<int>(dt * speed * 1000.0f / 16);
+			if (direction > 0 ? pos < 0 : pos > -256)
+				pos += direction;
+		}
+	};
+
+	runTransition(-255, 1);
+	runTransition(0, -1);
 }
 
 void PhoenixVREngine::until(const Common::String &var, int value) {
@@ -923,6 +978,57 @@ void PhoenixVREngine::resetLockKey() {
 	_prevWarp = -1; // original game does only this o_O
 }
 
+void PhoenixVREngine::showImageOverlay(const Common::String &image, int x, int y) {
+	debug("AfficheImage %s %d %d", image.c_str(), x, y);
+	_imageOverlay.reset(loadSurface(image));
+	_imageOverlayPos = Common::Point(x, y);
+}
+
+void PhoenixVREngine::stopImageOverlay() {
+	debug("StopAffiche");
+	_imageOverlay.reset();
+	updateStage();
+}
+
+void PhoenixVREngine::updateStage() {
+	renderVR(0);
+	_screen->update();
+}
+
+void PhoenixVREngine::startCible(const Common::String &name, int periodSeconds, const Common::Array<int> &bounds) {
+	debug("StartCible %s %d", name.c_str(), periodSeconds);
+	_cibleActive = true;
+	_cibleStartMillis = g_system->getMillis();
+	_ciblePeriodSeconds = periodSeconds;
+	_cibleBounds = bounds;
+}
+
+void PhoenixVREngine::stopCible() {
+	debug("StopCible");
+	_cibleActive = false;
+}
+
+void PhoenixVREngine::testCible(const Common::String &insideVar, const Common::String &outsideVar) {
+	debug("TestCible %s %s", insideVar.c_str(), outsideVar.c_str());
+	if (!_cibleActive)
+		return;
+
+	bool inside = false;
+	int periodMillis = _ciblePeriodSeconds * 1000;
+	if (periodMillis > 0) {
+		int elapsed = (g_system->getMillis() - _cibleStartMillis) % periodMillis;
+		for (uint i = 0; i + 1 < _cibleBounds.size() && _cibleBounds[i] != 0; i += 2) {
+			if (_cibleBounds[i] * 1000 < elapsed && elapsed < _cibleBounds[i + 1] * 1000) {
+				inside = true;
+				break;
+			}
+		}
+	}
+
+	setVariable(insideVar, inside ? 1 : 0);
+	setVariable(outsideVar, inside ? 0 : 1);
+}
+
 void PhoenixVREngine::lockKey(int idx, const Common::String &warp) {
 	_lockKey[idx] = warp;
 }
@@ -1056,7 +1162,13 @@ void PhoenixVREngine::renderVR(float dt) {
 		int16 y = _textRect.top + (_textRect.height() - _text->h) / 2;
 		_screen->blitFrom(*_text, {x, y});
 	}
+	renderImageOverlay();
 	renderTimer();
+}
+
+void PhoenixVREngine::renderImageOverlay() {
+	if (_imageOverlay)
+		paint(*_imageOverlay, _imageOverlayPos);
 }
 
 void PhoenixVREngine::saveVariables() {

@@ -154,6 +154,7 @@ public:
 	}
 	void interpolateAngle(float x, float y, float speed, float zoom);
 	void fade(int start, int stop, int speed);
+	void transFade(int speed);
 
 	void setXMax(float max) {
 		_angleY.setRange(-max, max);
@@ -203,6 +204,12 @@ public:
 	bool setNextLevel();
 
 	void setGlobalVolume(int vol);
+	void showImageOverlay(const Common::String &image, int x, int y);
+	void stopImageOverlay();
+	void updateStage();
+	void startCible(const Common::String &name, int periodSeconds, const Common::Array<int> &bounds);
+	void stopCible();
+	void testCible(const Common::String &insideVar, const Common::String &outsideVar);
 
 private:
 	static Common::String removeDrive(const Common::String &path);
@@ -219,6 +226,7 @@ private:
 	void tickTimer(float dt);
 	void loadNextScript();
 	void renderVR(float dt);
+	void renderImageOverlay();
 	void renderTimer();
 	void renderFade(int color);
 	void resetState();
@@ -293,6 +301,12 @@ private:
 
 	Common::ScopedPtr<Graphics::ManagedSurface> _text;
 	Common::Rect _textRect;
+	Common::ScopedPtr<Graphics::Surface> _imageOverlay;
+	Common::Point _imageOverlayPos;
+	bool _cibleActive = false;
+	uint32 _cibleStartMillis = 0;
+	int _ciblePeriodSeconds = 0;
+	Common::Array<int> _cibleBounds;
 
 	Common::Array<Common::String> _levels;
 	uint _currentLevel = 0;
