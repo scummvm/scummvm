@@ -72,8 +72,8 @@ void Screen::drawIbassIcon() {
 
 			// get the current animation frame
 			Graphics::Surface *currentFrame = _uiIcon[i]._anim->_frames[_uiIcon[i]._curFrame];
-
-			_screen32.copyRectToSurfaceWithKey(*currentFrame, _uiIcon[i]._x, _uiIcon[i]._y, Common::Rect(currentFrame->w, currentFrame->h), _screen32.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF));
+			if ((_uiIcon[i]._x + currentFrame->w) <= _screen32.w)
+				_screen32.copyRectToSurfaceWithKey(*currentFrame, _uiIcon[i]._x, _uiIcon[i]._y, Common::Rect(currentFrame->w, currentFrame->h), _screen32.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF));
 		}
 
 	}
