@@ -886,7 +886,7 @@ static void showVariablesWindow() {
 		if (ImGui::CollapsingHeader("Internal State", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("Mouse Mode: 0x%x", (int)exec->_cursorMode);
 			ImGui::Text("Interacted Object: 0x%x", exec->_interactedObjectID);
-			ImGui::Text("Interacted Other: 0x%x", exec->_interactedOtherObjectID);
+			ImGui::Text("Interacted Other: 0x%x", exec->_interactedInventoryItemId);
 			ImGui::Text("Script Skippable: %s", exec->_scriptSkippable ? "Y" : "N");
 			ImGui::Text("Inventory Action/Combine: %s/%s", exec->_inventoryActionFlag ? "Y" : "N", exec->_inventoryCombineFlag ? "Y" : "N");
 			ImGui::Text("Path Walkable Result: %s", exec->_pathWalkableResult ? "Y" : "N");

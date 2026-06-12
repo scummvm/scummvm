@@ -914,13 +914,13 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 				if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory) {
 					// mode == 0x17: g_wSavedCursorMode = 0x17, persist item
 					_savedCursorMode = Script::MouseMode::UseInventory;
-					g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + _activeInventoryItem->_index;
+					g_engine->_scriptExecutor->_interactedInventoryItemId = 0x400 + _activeInventoryItem->_index;
 				} else {
 					// mode != 0x17: if savedCursorMode was 0x17, reset to 0x15
 					if (_savedCursorMode == Script::MouseMode::UseInventory) {
 						_savedCursorMode = Script::MouseMode::Use;
 					}
-					g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+					g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 				}
 				g_engine->_scriptExecutor->_interactedObjectID = 0;
 				_uiPanelState = kUiPanelNone;
@@ -938,7 +938,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 
 	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Look) {
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
-		g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+		g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 		g_engine->runScriptExecutor(false);
 		return true;
 	}
@@ -968,7 +968,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 		// g_wInventoryCombineFlag here (that's only in the Drop button path).
 		// Panel state stays at 2 (inventory) — draw cycle hides panel when text shows.
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
-		g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->_index;
+		g_engine->_scriptExecutor->_interactedInventoryItemId = 0x400 + clickedObject->_index;
 		g_engine->runScriptExecutor(false);
 	}
 
@@ -1027,7 +1027,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 				// Binary button 6: clears interaction IDs and closes panel.
 				// The actual script resume happens via closeInventory() which restores
 				// saved script state (binary handleInput state==3, button==6 path).
-				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+				g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 				g_engine->_scriptExecutor->_interactedObjectID = 0;
 				closeInventory();
 				return true;
@@ -1043,7 +1043,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		// Binary: Look on container item triggers runScriptExecutor immediately
 		// (g_wPendingPanelRequest = 1 path in original)
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
-		g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+		g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 		g_engine->runScriptExecutor(false);
 		return true;
 	}
@@ -1340,7 +1340,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			// Binary (handleInput 1008:ef8f): if mode != 0x17, clear inventory item ID.
 			// Note: the binary does NOT touch g_wInventoryActionFlag here.
 			if (g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::UseInventory) {
-				g_engine->_scriptExecutor->_interactedOtherObjectID = 0;
+				g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 				_activeInventoryItem = nullptr;
 			}
 
@@ -1367,7 +1367,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			// - IsSceneInitRun, text box, dialogue, overlay, sound/music waits
 			if (!_isShowingTextBox && !_isShowingDialogueChoicePanel &&
 				!g_engine->_scriptExecutor->_overlayTextStageActive &&
-				!g_engine->_scriptExecutor->_waitForSoundPlayback &&
+				!g_engine->_scriptExecutor->_waitForPcmSound &&
 				!g_engine->_scriptExecutor->_waitForMusicControl &&
 				!g_engine->_scriptExecutor->_waitForAdlibReady &&
 				g_engine->_scriptExecutor->canOpenSaveMenu()) {
@@ -1620,7 +1620,7 @@ bool View1::tick() {
 	if (se->_activeMusicSlot != 0 && se->_musicControlMode != 0) {
 		if (se->_musicControlMode == 1) {
 			// Fade out: volume -= step
-			int vol = (int)se->_musicControlVolume - (int)se->_musicControlParam;
+			int vol = (int)se->_musicControlVolume - (int)se->_musicControlStep;
 			if (vol < 1) {
 				se->_musicControlMode = 0;
 				se->_musicControlVolume = 0;
@@ -1630,7 +1630,7 @@ bool View1::tick() {
 			g_engine->getAdlib()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
-			int vol = (int)se->_musicControlVolume + (int)se->_musicControlParam;
+			int vol = (int)se->_musicControlVolume + (int)se->_musicControlStep;
 			if (vol >= 0x3F) {
 				se->_musicControlMode = 0;
 				se->_activeMusicSlot = 0;
@@ -3001,7 +3001,7 @@ void Character::update() {
 				g_engine->_scriptExecutor->_walkTargetObjectIndex = 0;
 				_pickedUpObject = nullptr;
 				g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
-				g_engine->_scriptExecutor->_interactedOtherObjectID = 0x0000;
+				g_engine->_scriptExecutor->_interactedInventoryItemId = 0x0000;
 				if (_executeScriptOnFinishLerp) {
 					_executeScriptOnFinishLerp = false;
 					g_engine->_scriptExecutor->_isRepeatRun = true;
