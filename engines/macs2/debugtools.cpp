@@ -884,7 +884,7 @@ static void showVariablesWindow() {
 	if (ImGui::Begin("Script Variables", &_showVariables)) {
 		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 		if (ImGui::CollapsingHeader("Internal State", ImGuiTreeNodeFlags_DefaultOpen)) {
-			ImGui::Text("Mouse Mode: 0x%x", (int)exec->_mouseMode);
+			ImGui::Text("Mouse Mode: 0x%x", (int)exec->_cursorMode);
 			ImGui::Text("Interacted Object: 0x%x", exec->_interactedObjectID);
 			ImGui::Text("Interacted Other: 0x%x", exec->_interactedOtherObjectID);
 			ImGui::Text("Script Skippable: %s", exec->_scriptSkippable ? "Y" : "N");
@@ -981,7 +981,7 @@ static void showCharactersWindow() {
 								c->_stepDirectionSet ? "Y" : "N",
 								c->_isFollowingPath ? "Y" : "N");
 					if (c->_isLerping) {
-						Common::Point end = c->_endPosition;
+						Common::Point end = c->_targetPosition;
 						ImGui::Text("  Target: (%d,%d)  Final: (%d,%d)",
 									end.x, end.y, c->_pathFinalDestination.x, c->_pathFinalDestination.y);
 						ImGui::Text("  Bresenham: dX=%d dY=%d err=%d",

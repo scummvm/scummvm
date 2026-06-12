@@ -1090,7 +1090,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	debug("Cursor mode set to %i", (int)newMode);
-	_scriptExecutor->_mouseMode = newMode;
+	_scriptExecutor->_cursorMode = newMode;
 }
 
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
