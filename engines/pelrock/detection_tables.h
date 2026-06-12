@@ -22,7 +22,7 @@
 namespace Pelrock {
 
 const PlainGameDescriptor pelrockGames[] = {
-	{ "pelrock", "Alfred Pelrock: En Busca de un Sueño" },
+	{ "pelrock", "Alfred Pelrock: En Busca de un Sue\303\261o" },
 	{ 0, 0 }
 };
 
