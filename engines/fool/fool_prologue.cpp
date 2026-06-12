@@ -39,11 +39,11 @@ namespace Fool {
 // v2.0 - fixes full-screen rendering on higher-resolution displays
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
-void FoolPrologue::run() {
+void FoolPrologue::run(bool finale) {
 	_toolbox = new Toolbox();
 	_zbasic = new ZBasic(_toolbox);
 	_zbasic->loadProgram(Common::Path("Prologue - Finale"));
-	this->sub_128_004(false);
+	this->sub_128_004(finale);
 	delete _zbasic;
 	_zbasic = nullptr;
 	delete _toolbox;
@@ -93,6 +93,12 @@ void FoolPrologue::sub_128_004(bool finale) {
 	this->var_str_76 = _zbasic->str(1);
 	this->var_str_76 = _zbasic->str(2);
 
+	// fill graphics pages with white
+	for (int16 i = 0; i < 12; i++) {
+		setPortBitsToPage(i);
+		fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
+	}
+
 	// 128:01b6
 	// JMP 0x1f0
 	// JMP 0x21a
@@ -129,7 +135,7 @@ void FoolPrologue::sub_128_004(bool finale) {
 	_toolbox->ShowCursor();
 }
 
-void FoolPrologue::sub_128_1ba(int16 screenPage) {
+void FoolPrologue::copyScreenToPage(int16 screenPage) {
 	// 128:01ba
 	this->var_i32_40 = this->arr_i32_41296[screenPage];
 	_toolbox->CopyBits(this->var_i32_32, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
@@ -183,11 +189,9 @@ void FoolPrologue::zoomClose(int16 patternID, PatternMode mode) {
 	_toolbox->PenSize(6, 4);
 
 	for (int i = 0; i <= 130; i += 3) {
-		this->var_i32_2 = _toolbox->TickCount();
-
 		_toolbox->FrameRect(this->arr_i16_1bc);
 		_toolbox->InsetRect(this->arr_i16_1bc, 6, 4);
-		this->delayFromMarker(1);
+		this->delay(0);
 	}
 	_toolbox->PenNormal();
 }
@@ -222,22 +226,22 @@ void FoolPrologue::drawTreasurePhaseIn(int16 unk1) {
 
 }
 
-void FoolPrologue::sub_128_50a(int16 unk1, int16 left, int16 right, int16 screenPage) {
+void FoolPrologue::sub_128_50a(int16 screenPage, int16 left, int16 right, int16 updatePeriod) {
 	// 128:050a
 	this->var_i32_40 = this->arr_i32_41296[screenPage];
 	this->var_i16_5c.left = left;
 	this->var_i16_5c.right = right;
-	if (unk1 == 0) {
-		unk1 = 0x14;
+	if (updatePeriod == 0) {
+		updatePeriod = 0x14;
 	}
-	if (unk1 == 1) {
-		unk1 = 0x8;
+	if (updatePeriod == 1) {
+		updatePeriod = 0x8;
 	}
-	if (unk1 == 2) {
-		unk1 = 0x6;
+	if (updatePeriod == 2) {
+		updatePeriod = 0x6;
 	}
-	if (unk1 == 3) {
-		unk1 = 0x5;
+	if (updatePeriod == 3) {
+		updatePeriod = 0x5;
 	}
 	// 128:0584
 	for (int i = 0; i < SCREEN_HEIGHT; i++) {
@@ -245,7 +249,7 @@ void FoolPrologue::sub_128_50a(int16 unk1, int16 left, int16 right, int16 screen
 		this->var_i16_5c.top = this->arr_i16_412ea[i];
 		this->var_i16_5c.bottom = this->arr_i16_412ea[i] + 1;
 		_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
-		if (i % unk1 == 0) {
+		if (i % updatePeriod == 0) {
 			this->delayFromMarker(0);
 		}
 	}
@@ -291,14 +295,14 @@ void FoolPrologue::zoomTransition(int16 screenPage) {
 
 void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9) {
 	// 128:0800
-	this->arr_i16_41af4.top = unk9;
-	this->arr_i16_41af4.left = unk8;
-	this->arr_i16_41af4.bottom = unk7;
-	this->arr_i16_41af4.right = unk6;
+	this->arr_i16_41af4.top = unk1;
+	this->arr_i16_41af4.left = unk2;
+	this->arr_i16_41af4.bottom = unk3;
+	this->arr_i16_41af4.right = unk4;
 	this->arr_i16_41afc.top = unk5;
-	this->arr_i16_41afc.left = unk4;
-	this->arr_i16_41afc.bottom = unk3;
-	this->arr_i16_41afc.right = unk2;
+	this->arr_i16_41afc.left = unk6;
+	this->arr_i16_41afc.bottom = unk7;
+	this->arr_i16_41afc.right = unk8;
 	_toolbox->PenNormal();
 	_toolbox->PenMode(kPatXor);
 
@@ -307,23 +311,25 @@ void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t
 	this->arr_f64_41bbe[1] = (double)this->arr_i16_41af4.left;
 	this->arr_f64_41bbe[2] = (double)this->arr_i16_41af4.bottom;
 	this->arr_f64_41bbe[3] = (double)this->arr_i16_41af4.right;
-	this->arr_f64_41bbe[4] = (double)(this->arr_i16_41af4.top - this->arr_i16_41afc.top)/(double)(this->var_i32_182);
-	this->arr_f64_41bbe[5] = (double)(this->arr_i16_41af4.left - this->arr_i16_41afc.left)/(double)(this->var_i32_182);
-	this->arr_f64_41bbe[6] = (double)(this->arr_i16_41af4.bottom - this->arr_i16_41afc.bottom)/(double)(this->var_i32_182);
-	this->arr_f64_41bbe[7] = (double)(this->arr_i16_41af4.right - this->arr_i16_41afc.right)/(double)(this->var_i32_182);
+	this->arr_f64_41bbe[4] = (double)(this->arr_i16_41afc.top - this->arr_i16_41af4.top)/(double)(unk9);
+	this->arr_f64_41bbe[5] = (double)(this->arr_i16_41afc.left - this->arr_i16_41af4.left)/(double)(unk9);
+	this->arr_f64_41bbe[6] = (double)(this->arr_i16_41afc.bottom - this->arr_i16_41af4.bottom)/(double)(unk9);
+	this->arr_f64_41bbe[7] = (double)(this->arr_i16_41afc.right - this->arr_i16_41af4.right)/(double)(unk9);
 
 	// 128:096e
 	_toolbox->PaintRect(this->arr_i16_41af4);
-	for (int i = 1; i < unk1 + 1; i++) {
+	for (int i = 1; i <= (unk9 - 1); i++) {
 		this->var_i32_2 = _toolbox->TickCount();
 
-		for (int j = 0; j < 4; j++) {
-			this->arr_f64_41bbe[j] = this->arr_f64_41bbe[j] + this->arr_f64_41bbe[j+4];
+		// 128:098c
+		for (int j = 0; j <= 3; j++) {
+			this->arr_f64_41bbe[j] += this->arr_f64_41bbe[j+4];
 		}
-		this->arr_i16_41b0a.top = (int16_t)this->arr_f64_41bbe[0];
-		this->arr_i16_41b0a.left = (int16_t)this->arr_f64_41bbe[1];
-		this->arr_i16_41b0a.bottom = (int16_t)this->arr_f64_41bbe[2];
-		this->arr_i16_41b0a.right = (int16_t)this->arr_f64_41bbe[3];
+		this->arr_i16_41b0a.top = (int16)this->arr_f64_41bbe[0];
+		this->arr_i16_41b0a.left = (int16)this->arr_f64_41bbe[1];
+		this->arr_i16_41b0a.bottom = (int16)this->arr_f64_41bbe[2];
+		this->arr_i16_41b0a.right = (int16)this->arr_f64_41bbe[3];
+		// 128:0a2e
 		_toolbox->PaintRect(this->arr_i16_41b0a);
 		this->delayFromMarker(0);
 	}
@@ -1105,7 +1111,7 @@ void FoolPrologue::prologueRun() {
 	if (_quit)
 		return;
 
-	this->sub_128_50a(0x0, 0, SCREEN_WIDTH, 7);
+	this->sub_128_50a(7, 0, SCREEN_WIDTH, 0);
 	this->delay(0xa);
 	// "I dare"
 	this->blitPageToScreen(0x8);
@@ -1133,7 +1139,7 @@ void FoolPrologue::prologueBufferNextPicture() {
 
 void FoolPrologue::prologueDrawLoadingMsg() {
 	// FIXME: we don't share the menu surface here yet
-	return
+	return;
 	// 130:0d28
 	_toolbox->SetPort(this->var_i32_c);
 	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
