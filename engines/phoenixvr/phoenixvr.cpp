@@ -368,6 +368,8 @@ Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name, C
 	if (s->open(name)) {
 		auto nameStr = name.toString();
 		debug("opened %s", nameStr.c_str());
+		if (nameStr.hasSuffixIgnoreCase(".pak"))
+			return unpack(*s, origName);
 		return s.release();
 	}
 	auto pakName = name.toString();
@@ -440,6 +442,10 @@ void PhoenixVREngine::loadNextScript() {
 		declareVariable(var);
 	if (gameIdMatches("amerzone"))
 		declareVariable("oeuf_pose"); // crash in chapter 7
+	if (gameIdMatches("dracula1")) {
+		declareVariable("P_Alliance"); // Referenced by 0M1Script.lst, declared by 0M2Script.lst
+		declareVariable("reloaddone"); // Referenced by InsertCD.lst, declared by chapter scripts
+	}
 
 	int numWarps = _script->numWarps();
 	_cursors.clear();
@@ -1821,6 +1827,9 @@ bool PhoenixVREngine::enterScript() {
 
 Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) {
 	auto state = GameState::load(*slot);
+	while (!state.script.empty() &&
+		   (state.script.lastChar() == '\n' || state.script.lastChar() == '\r'))
+		state.script = state.script.substr(0, state.script.size() - 1);
 
 	_loaded = true;
 	killTimer();
