@@ -12,6 +12,8 @@ MODULE_OBJS = \
 	livingbooks_bookinfo.o \
 	livingbooks_code.o \
 	livingbooks_graphics.o \
+	livingbooks_item.o \
+	livingbooks_itemscript.o \
 	livingbooks_itemtypes.o \
 	livingbooks_lbx.o \
 	livingbooks_menus.o \
