@@ -165,6 +165,8 @@ public:
 			expect(',');
 			auto arg2 = nextInt();
 			return CommandPtr(new Fade(arg0, arg1, arg2));
+		} else if (keyword("transfade")) {
+			return CommandPtr(new Transfade(nextInt()));
 		} else if (maybe("setzoom=")) {
 			return CommandPtr(new SetZoom(toRadian(nextInt())));
 		} else if (maybe("setangle=") || keyword("setangle")) {
