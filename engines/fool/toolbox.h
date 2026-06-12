@@ -1336,7 +1336,7 @@ private:
 	void _drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight);
 	void _drawBitsRect(Common::SeekableReadStream &stream, const Common::Rect &picFrame, bool compressed);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
-	void _addDirtyRect(const Common::Rect &rect);
+	void _addDirtyRect(const BitMap &dest, const Common::Rect &rect);
 };
 
 } // namespace Fool

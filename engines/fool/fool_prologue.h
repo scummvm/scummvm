@@ -45,10 +45,10 @@ public:
 	FoolPrologue() {}
 	~FoolPrologue() {}
 
-	void run();
+	void run(bool finale);
 
 	void sub_128_004(bool finale);
-	void sub_128_1ba(int16 screenPage);
+	void copyScreenToPage(int16 screenPage); // sub_128_1ba
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
 	void delayFromMarker(int16 numTicks); // sub_128_24a
@@ -57,7 +57,7 @@ public:
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_2f0
 	void zoomClose(int16 patternID, PatternMode mode); // sub_128_354
 	void drawTreasurePhaseIn(int16 unk1); // sub_128_3ee
-	void sub_128_50a(int16 unk1, int16 left, int16 right, int16 screenPage);
+	void sub_128_50a(int16 screenPage, int16 left, int16 right, int16 updatePeriod);
 	void blitPageToScreen(int16 screenPage); // sub_128_610
 	void scanlineTransition(int16 patternID); // sub_128_64a
 	void zoomTransition(int16 screenPage); // sub_128_6e4
@@ -87,10 +87,10 @@ public:
 
 	// fool_finale.cpp
 	void finaleRun(); // sub_131_004
-	void sub_131_4dc0();
-	void sub_131_4e48();
+	void finaleDrawLoadingMsg(); // sub_131_4dc0
+	void finaleDrawFoolUhOh(); // sub_131_4e48
 	void finaleStartText(); // sub_131_4e98
-	void sub_131_4f96();
+	void sub_131_4f96(int16 offset);
 
 private:
 	Toolbox *_toolbox;
@@ -172,6 +172,7 @@ private:
 	int16 var_i16_3dc;
 	int16 var_i16_3e0;
 	int16 var_i16_3e2;
+	int16 var_i16_3e6;
 
 	int16 var_i16_3fc;
 
