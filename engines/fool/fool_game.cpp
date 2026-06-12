@@ -2376,7 +2376,7 @@ void FoolGame::menuPrologue() {
 	// this is brand new
 	this->copyScreen(0, this->arr_bmp_138bc);
 	FoolPrologue fp;
-	fp.run();
+	fp.run(true);
 	this->copyScreen(1, this->arr_bmp_138bc);
 	_toolbox->DrawMenuBar();
 }

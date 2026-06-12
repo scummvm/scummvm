@@ -94,6 +94,15 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 	if (maskRgn) {
 		warning("Toolbox::_copyBits: maskRgn unimplemented");
 	}
+	if (!srcRect.isValidRect()) {
+		warning("Toolbox::_copyBits: invalid src rectangle");
+		return;
+	}
+	if (!dstRect.isValidRect()) {
+		warning("Toolbox::_copyBits: invalid dst rectangle");
+		return;
+	}
+
 	Common::Rect clipSrcRect = srcRect;
 	Common::Rect clipDstRect = dstRect;
 
@@ -132,7 +141,7 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 		}
 	}
 	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(clipDstRect.left, clipDstRect.top), mode);
-	_addDirtyRect(result);
+	_addDirtyRect(dstBits, result);
 }
 
 // maybe the better way of refactoring this would be to fork the Primitives
@@ -191,12 +200,12 @@ void Toolbox::EndUpdate(WindowRecord &theWindow) {
 	warning("STUB: Toolbox::EndUpdate");
 }
 
-void Toolbox::_addDirtyRect(const Common::Rect &rect) {
-	if (_port->portBits == _defaultBits) {
+void Toolbox::_addDirtyRect(const BitMap &dest, const Common::Rect &rect) {
+	if (dest == _defaultBits) {
 		_defaultWindow->addDirtyRect(rect);
 		_defaultWindow->setDirty(true);
 	}
-	if (_port->portBits == _defaultMenuBits) {
+	if (dest == _defaultMenuBits) {
 	//	_defaultMenu->addDirtyRect(dstRect);
 		_defaultMenu->setDirty(true);
 	}
@@ -234,7 +243,7 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 		//mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
-		_addDirtyRect(dstRect);
+		_addDirtyRect(_port->portBits, dstRect);
 	}
 }
 
@@ -298,7 +307,7 @@ void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode 
 			debugC(5, kDebugGraphics, "Toolbox::_drawPoly: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
 		}
 
-		_addDirtyRect(dstRect);
+		_addDirtyRect(_port->portBits, dstRect);
 	}
 }
 
@@ -342,7 +351,7 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 			debugC(5, kDebugGraphics, "Toolbox::_drawRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
 		}
 
-		_addDirtyRect(dstRect);
+		_addDirtyRect(_port->portBits, dstRect);
 	}
 }
 
@@ -381,7 +390,7 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 			debugC(5, kDebugGraphics, "Toolbox::_drawRoundRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x, ovalWidth %d, ovalHeight %d", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor, ovalWidth, ovalHeight);
 		}
 
-		_addDirtyRect(dstRect);
+		_addDirtyRect(_port->portBits, dstRect);
 	}
 }
 
@@ -607,7 +616,7 @@ void Toolbox::LineTo(int16 h, int16 v) {
 		pm.drawLine(startPos.x, startPos.y, endPos.x, endPos.y, _port->fgColor, &pd);
 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
-		_addDirtyRect(dstRect);
+		_addDirtyRect(_port->portBits, dstRect);
 
 		if (debugChannelSet(5, kDebugGraphics)) {
 			debugC(5, kDebugGraphics, "Toolbox::LineTo: startPos(%d, %d), endPos(%d, %d), dstRect (%d, %d) %dx%d, pattern %s, mode %d, fgColor %08x, bkColor %08x", _port->pnLoc.x, _port->pnLoc.y, h, v, dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), _port->pnPat.format().c_str(), _port->pnMode, _port->fgColor, _port->bkColor);
