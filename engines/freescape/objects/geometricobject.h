@@ -60,6 +60,7 @@ public:
 	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx, float offset = 0.0) override;
 	void setColor(uint idx, int color);
+	bool isFullyTransparent() const;
 	bool isDrawable() override;
 	bool isPlanar() override;
 	bool _cyclingColors;

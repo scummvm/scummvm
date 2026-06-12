@@ -751,19 +751,23 @@ bool Area::hasActiveGroups() {
 	return false;
 }
 
-Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
+Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize, bool skipTransparent) {
 	float distance = 1.0;
 	float size = 16.0 * 8192.0; // TODO: check if this is the max size
 	Math::AABB boundingBox(ray.getOrigin(), ray.getOrigin());
 	Object *collided = nullptr;
 	for (auto &obj : _drawableObjects) {
-		if (obj->getType() == kLineType)
+		if (obj->getType() == kLineType) {
 			// If the line is not along an axis, the AABB is wildly inaccurate so we skip it
 			if (((GeometricObject *)obj)->isLineButNotStraight())
 				continue;
+		}
 
 		if (!obj->isDestroyed() && !obj->isInvisible() && obj->isGeometric()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
+			if (skipTransparent && gobj->isFullyTransparent())
+				continue;
+
 			Math::Vector3d collidedNormal;
 			float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, raySize * ray.getDirection(), collidedNormal);
 			debugC(1, kFreescapeDebugMove, "reached obj id: %d with distance %f", obj->getObjectID(), collidedDistance);
