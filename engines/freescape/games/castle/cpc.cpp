@@ -203,7 +203,7 @@ void CastleEngine::loadAssetsCPCFullGame() {
 			loadRiddles(&file, 0x1470 - 4 - 2 - 9 * 2, 9);
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
-			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
+			_sound = loadSpeakerFxZX(&file, 0xca0, 0xcdc, 25);
 
 			file.seek(0x1218 + 16);
 			for (int i = 0; i < 90; i++) {
@@ -238,7 +238,7 @@ void CastleEngine::loadAssetsCPCFullGame() {
 	loadMessagesVariableSize(&file, messagesOffset, 75);
 	loadRiddles(&file, riddlesOffset, 9);
 	load8bitBinary(&file, 0x791a, 16);
-	loadSoundsCPC(&file, 0x21E2, 48, 0x2212, 204, 0x2179, 105);
+	_sound = loadSoundsCPC(&file, 0x21E2, 48, 0x2212, 204, 0x2179, 105);
 
 	file.seek(0x2724);
 	for (int i = 0; i < 90; i++) {

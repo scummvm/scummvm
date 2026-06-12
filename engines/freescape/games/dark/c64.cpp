@@ -353,14 +353,10 @@ void DarkEngine::loadAssetsC64FullGame() {
 	_playerMusic = new DarkSideC64MusicPlayer();
 }
 
-void DarkEngine::playSoundC64(int index) {
-	debugC(1, kFreescapeDebugMedia, "Playing Dark Side C64 SFX %d", index);
-	if (_playerC64Sfx && _c64UseSFX)
-		_playerC64Sfx->playSfx(index);
-}
-
 void DarkEngine::toggleC64Sound() {
 	if (_c64UseSFX) {
+		if (_sound == _playerC64Sfx)
+			_sound = nullptr;
 		if (_playerC64Sfx)
 			_playerC64Sfx->destroySID();
 		if (_playerMusic)
@@ -371,6 +367,8 @@ void DarkEngine::toggleC64Sound() {
 			_playerMusic->stopMusic();
 		if (_playerC64Sfx)
 			_playerC64Sfx->initSID();
+		if (_sound == nullptr)
+			_sound = _playerC64Sfx;
 		_c64UseSFX = true;
 	}
 }

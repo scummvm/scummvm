@@ -96,7 +96,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 		}
 
 		load8bitBinary(&file, 0x6682, 16);
-		loadSpeakerFxZX(&file, 0x0bbf, 0x0bfb);
+		_sound = loadSpeakerFxZX(&file, 0x0bbf, 0x0bfb, 25);
 
 		file.seek(0x1147);
 		for (int i = 0; i < 90; i++) {
@@ -113,7 +113,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 			case Common::ES_ESP:
 				loadRiddles(&file, 0x1458, 9);
 				load8bitBinary(&file, 0x6aa9, 16);
-				loadSpeakerFxZX(&file, 0xca0, 0xcdc);
+				_sound = loadSpeakerFxZX(&file, 0xca0, 0xcdc, 25);
 
 				file.seek(0x1228);
 				for (int i = 0; i < 90; i++) {
@@ -130,12 +130,12 @@ void CastleEngine::loadAssetsZXFullGame() {
 				if (_variant & GF_ZX_RETAIL) {
 					loadRiddles(&file, 0x1448, 9);
 					load8bitBinary(&file, 0x6a3b, 16);
-					loadSpeakerFxZX(&file, 0xc91, 0xccd);
+					_sound = loadSpeakerFxZX(&file, 0xc91, 0xccd, 25);
 					file.seek(0x1219);
 				} else if (_variant & GF_ZX_DISC) {
 					loadRiddles(&file, 0x1457, 9);
 					load8bitBinary(&file, 0x6a9b, 16);
-					loadSpeakerFxZX(&file, 0xca0, 0xcdc);
+					_sound = loadSpeakerFxZX(&file, 0xca0, 0xcdc, 25);
 					file.seek(0x1228);
 				} else {
 					error("Unknown Castle Master ZX variant");

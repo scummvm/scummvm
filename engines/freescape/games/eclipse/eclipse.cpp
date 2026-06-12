@@ -127,6 +127,8 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_atariAreaDark = false;
 	_resting = false;
 	_flashlightOn = false;
+
+	_soundFx = nullptr;
 }
 
 void EclipseEngine::stopBackgroundMusic() {
@@ -164,8 +166,11 @@ EclipseEngine::~EclipseEngine() {
 		_compassBackground->free();
 		delete _compassBackground;
 	}
+	if (_soundFx)
+		delete _soundFx;
 	delete _playerMusic;
-	delete _playerC64Sfx;
+	if (_sound != _playerC64Sfx)
+		delete _playerC64Sfx;
 }
 
 void EclipseEngine::initGameState() {
@@ -260,7 +265,7 @@ bool EclipseEngine::checkIfGameEnded() {
 			if (isDOS())
 				playSoundFx(4, false);
 			else
-				playSound(_soundIndexStartFalling, false, _soundFxHandle);
+				playSound(_soundIndexStartFalling, false);
 
 			stopMovement();
 			// If shield is less than 11 after a fall, the game ends
@@ -317,7 +322,7 @@ void EclipseEngine::endGame() {
 
 	if (_endGameKeyPressed && (_countdown == 0 || _countdown == -3600)) {
 		if (isSpectrum())
-			playSound(5, true, _soundFxHandle);
+			playSound(5, true);
 		_gameStateControl = kFreescapeGameStateRestart;
 	}
 	_endGameKeyPressed = false;
@@ -427,7 +432,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (_pitch >= 180)
 			_pitch = 360 - _pitch;
-		playSound(_soundIndexStart, false, _soundFxHandle);
+		playSound(_soundIndexStart, false);
 		if (isEclipse2()) {
 			_gameStateControl = kFreescapeGameStateStart;
 			_pitch = -10;
@@ -440,7 +445,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		else
 			_pitch = 10;
 	} else {
-		playSound(_soundIndexAreaChange, false, _soundFxHandle);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	_gfx->_keyColor = 0;
@@ -609,7 +614,7 @@ void EclipseEngine::drawInfoMenu() {
 						toggleC64Sound();
 						_eventManager->purgeKeyboardEvents();
 					} else {
-						playSound(_soundIndexMenu, false, _soundFxHandle);
+						playSound(_soundIndexMenu, false);
 					}
 				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
@@ -1013,7 +1018,7 @@ void EclipseEngine::drawHeartIndicator(Graphics::Surface *surface, int x, int y)
 		_lastHeartIndicatorFrame = frame;
 
 		if (!isPaused() && phase == beatStart && _lastHeartbeatSoundTick != _ticks) {
-			playSound(1, false, _soundFxHandle);
+			playSound(1, false);
 			_lastHeartbeatSoundTick = _ticks;
 		}
 	}

@@ -50,7 +50,6 @@ public:
 	DrillerC64SFXPlayer *_playerC64Sfx;
 	bool _c64UseSFX;
 
-	void playSoundC64(int index) override;
 	void toggleC64Sound();
 
 	// Only used for Amiga and Atari ST
@@ -69,7 +68,6 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
-	void playSoundZX(int index, Audio::SoundHandle &handle) override;
 	void drawInfoMenu() override;
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, double fov, uint32 color);

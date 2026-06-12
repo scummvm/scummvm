@@ -38,7 +38,6 @@ MODULE_OBJS := \
 	games/driller/dos.o \
 	games/driller/driller.o \
 	games/driller/opl.music.o \
-	games/driller/sounds.o \
 	games/driller/zx.o \
 	games/eclipse/amiga.o \
 	games/eclipse/atari.o \
@@ -69,6 +68,8 @@ MODULE_OBJS := \
 	sound/common.o \
 	sound/cpc.o \
 	sound/dos.o \
+	sound/fx.o \
+	sound/fx_dos.o \
 	sound/zx.o \
 	ui.o \
 	unpack.o \

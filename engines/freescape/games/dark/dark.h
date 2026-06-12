@@ -149,7 +149,7 @@ public:
 	bool _c64CompassInitialized;
 	int _c64CompassPosition;
 	Common::Array<byte> _c64CompassTable;
-	void playSoundC64(int index) override;
+
 	void toggleC64Sound();
 
 	Common::Array<byte> _musicData; // HDSMUSIC.AM TEXT segment (Amiga)

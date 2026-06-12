@@ -226,7 +226,7 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 		loadGlobalObjects(&file, 0xbd62, 8);
 		load8bitBinary(&file, 0x29c16, 16);
 		loadPalettes(&file, 0x297d4);
-		loadSoundsFx(&file, 0x30e80, 25);
+		_sound = loadSoundsFx(&file, 0x30e80, 25);
 
 		byte *palette = getPaletteFromNeoImage(&file, 0x137f4);
 		loadRigSprites(&file, 0x2407A);
@@ -282,7 +282,7 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 		if (!file.isOpen())
 			error("Failed to open 'soundfx' executable for Amiga");
 
-		loadSoundsFx(&file, 0, 25);
+		_sound = loadSoundsFx(&file, 0, 25);
 	} else
 		error("Invalid or unknown Amiga release");
 
@@ -374,7 +374,7 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'soundfx' executable for Amiga");
 
-	loadSoundsFx(&file, 0, 25);
+	_sound = loadSoundsFx(&file, 0, 25);
 
 	_indicators.push_back(loadBundledImage("driller_tank_indicator_0"));
 	_indicators.push_back(loadBundledImage("driller_tank_indicator_1"));

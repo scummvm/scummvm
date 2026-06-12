@@ -87,6 +87,8 @@ void DrillerEngine::loadAssetsZXFullGame() {
 
 	else
 		error("Unknown ZX spectrum variant");
+
+	_sound = loadSpeakerFxDrillerZX();
 }
 
 void DrillerEngine::drawZXUI(Graphics::Surface *surface) {

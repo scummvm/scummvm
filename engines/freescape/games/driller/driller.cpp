@@ -100,7 +100,8 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 DrillerEngine::~DrillerEngine() {
 	delete _playerMusic;
-	delete _playerC64Sfx;
+	if (_sound != _playerC64Sfx)
+		delete _playerC64Sfx;
 
 	if (_borderExtra) {
 		delete _borderExtra;
@@ -264,9 +265,9 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		if (isC64()) {
 			if (!_c64UseSFX && _playerMusic)
 				_playerMusic->startMusic();
-			playSound(_soundIndexStart, true, _soundFxHandle);
+			playSound(_soundIndexStart, true);
 		} else {
-			playSound(_soundIndexStart, true, _soundFxHandle);
+			playSound(_soundIndexStart, true);
 			if (_playerMusic)
 				_playerMusic->startMusic();
 			else
@@ -280,7 +281,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		// Show the number of completed areas
 		_areaMap[127]->_name.replace(0, isAmiga() || isAtariST() ? 4 : 3, Common::String::format("%4d", _gameStateVars[32]));
 	} else
-		playSound(_soundIndexAreaChange, false, _soundFxHandle);
+		playSound(_soundIndexAreaChange, false);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
@@ -601,7 +602,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		// RIG POSITIONED / NO GAS FOUND messages are displayed and
 		// before subsequent state changes can clobber the channel).
 		if (isDOS() || isAmiga() || isAtariST())
-			playSound(_soundIndexAreaChange, false, _soundFxHandle);
+			playSound(_soundIndexAreaChange, false);
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 		addDrill(drill, success > 0);
 		if (success <= 0) {
@@ -678,7 +679,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_drillSuccessByArea[areaID] = 0;
 		executeMovementConditions();
 		if (isDOS() || isAmiga() || isAtariST())
-			playSound(_soundIndexAreaChange, false, _soundFxHandle);
+			playSound(_soundIndexAreaChange, false);
 	}
 }
 
@@ -1005,7 +1006,7 @@ void DrillerEngine::endGame() {
 			// The original routine is blocking, so keep the redraw pacing in the
 			// engine's wait loop instead of stretching it across separate frames.
 			const int areaScale = MAX<int>(_currentArea ? _currentArea->getScale() : 1, 1);
-			playSound(11, false, _soundFxHandle);
+			playSound(11, false);
 			_position.z() -= 8000.0f / areaScale;
 			_position.y() += 3000.0f / areaScale;
 			_lastPosition = _position;
@@ -1077,7 +1078,7 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 void DrillerEngine::drawSensorShoot(Sensor *sensor) {
 	if (_underFireFrames == 1 && _gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
-		playSound(_soundIndexHit, true, _soundFxHandle);
+		playSound(_soundIndexHit, true);
 	}
 
 	Math::Vector3d sensorPos = sensor->getOrigin();
