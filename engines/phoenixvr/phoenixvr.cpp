@@ -1088,6 +1088,8 @@ Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name, C
 	if (s->open(name)) {
 		auto nameStr = name.toString();
 		debug("opened %s", nameStr.c_str());
+		if (nameStr.hasSuffixIgnoreCase(".pak"))
+			return unpack(*s, origName);
 		return s.release();
 	}
 	auto pakName = name.toString();
@@ -1160,6 +1162,28 @@ void PhoenixVREngine::loadNextScript() {
 		declareVariable(var);
 	if (gameIdMatches("amerzone"))
 		declareVariable("oeuf_pose"); // crash in chapter 7
+	if (gameIdMatches("dracula1")) {
+		declareVariable("P_Alliance"); // Referenced by 0M1Script.lst, declared by 0M2Script.lst
+		declareVariable("reloaddone"); // Referenced by InsertCD.lst, declared by chapter scripts
+	}
+	if (gameIdMatches("dracula2")) {
+		for (const char *var : {
+			"ComeFromCombinaison",
+			"Diag_Seward_Intro",
+			"Etat_CarnetDracCode",
+			"Etat_Inventaire_ValeurRoue1",
+			"Etat_Inventaire_ValeurRoue2",
+			"Etat_Inventaire_ValeurRoue3",
+			"Etat_Inventaire_ValeurRoue4",
+			"Etat_Passerelle",
+			"Etat_TelChateau",
+			"InventairePos50",
+			"ResObj",
+			"ResObj_inverse",
+			"Resultat_inventaire"
+		})
+			declareVariable(var);
+	}
 
 	int numWarps = _script->numWarps();
 	_cursors.clear();
@@ -1503,6 +1527,8 @@ void PhoenixVREngine::setVariable(const Common::String &name, int value) {
 int PhoenixVREngine::getVariable(const Common::String &name) const {
 	if (gameIdMatches("lochness") && name == "tumuAccpet")
 		return _variables.getVal("tumuAccept");
+	if (gameIdMatches("dracula1") && name == "Resultay_inverse")
+		return _variables.getVal("resultat_inverse");
 	return _variables.getVal(name);
 }
 
