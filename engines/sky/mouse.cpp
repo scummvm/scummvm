@@ -1613,7 +1613,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 
 				// special stuff for quit-linc
 				if (_touchId == 24582) {
-					debug(1, "QUIT LINC\n");
+					debug(1, "QUIT LINC");
 					itemData->frame--;
 
 					// remove inventory items from screen/logic processing
@@ -1677,7 +1677,7 @@ void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 		if (buttonHeld) {
 			for (j = 0; j < num; j++) {
 				itemData = _skyCompact->fetchCpt(objList[j]);
-				debug("itemData->xcood = %d, itemData->mouseRelX = %d, itemData->ycood = %d, itemData->mouseRelY = %d", itemData->xcood, itemData->mouseRelX, itemData->ycood, itemData->mouseRelY);
+				debug(1, "itemData->xcood = %d, itemData->mouseRelX = %d, itemData->ycood = %d, itemData->mouseRelY = %d", itemData->xcood, itemData->mouseRelX, itemData->ycood, itemData->mouseRelY);
 
 				if (itemData->xcood + (uint16)itemData->mouseRelX > xPos)
 					continue;
@@ -1866,7 +1866,7 @@ void Mouse::invUseOn(uint16 xPos, uint16 yPos) {
 		// without this, it would calculate Compact 0 if hovering over a non interactive item
 		if (!itemNum)
 			return;
-		debug("Item %d is being dragged", _touchId);
+		debug(1, "Item %d is being dragged", _touchId);
 		// what are we near
 		itemNum = doProximityHighlights(xPos, yPos);
 		itemData = _skyCompact->fetchCpt(itemNum);
