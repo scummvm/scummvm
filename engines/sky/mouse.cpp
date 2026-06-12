@@ -234,13 +234,6 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	_currentCursor = frameNum;
 
-	if (SkyEngine::isIbass()) {
-		debug(1, "ibass cursor path executed\n");
-		CursorMan.setDefaultArrowCursor();
-		CursorMan.showMouse(true);
-		return;
-	}
-
 	byte *newCursor = _miceData;
 	newCursor += ((DataFileHeader *)_miceData)->s_sp_size * frameNum;
 	newCursor += sizeof(DataFileHeader);
