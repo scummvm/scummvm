@@ -28,6 +28,8 @@ const PlainGameDescriptor phoenixvrGames[] = {
 	{"necrono", "Necronomicon: The Dawning of Darkness"},
 	{"lochness", "The Cameron Files: The Secret at Loch Ness"},
 	{"messenger", "The Messenger/Louvre: The Final Curse"},
+	{"dracula1", "Dracula: Resurrection"},
+	{"dracula2", "Dracula 2: The Last Sanctuary"},
 	{"amerzone", "Amerzone: The Explorer's Legacy"},
 	{0, 0}
 };
@@ -202,6 +204,26 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula1",
+		nullptr,
+		AD_ENTRY2s("script.lst", "78060b78cf403ddb7e22903ba7b269d6", 548,
+				   "Compiler.dat", "0f330d5d674bf01a1bc8512e4c5321cc", 58688),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		nullptr,
+		AD_ENTRY2s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
