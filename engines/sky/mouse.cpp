@@ -1631,6 +1631,22 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 			return;
 		}
 	}
+	// clicked outside the inventory, close it
+	if (!_touchId && _mouseB) {
+		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
+			_mMode = MUST_RELEASE;
+			_skyLogic->killInventory();
+			return;
+		}
+	}
+	_holding = false;
+	_touchId = 0;
+	_timeOn = 0;
+
+	if (Logic::_scriptVariables[GET_OFF]) {
+		_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+		Logic::_scriptVariables[GET_OFF] = 0;
+	}
 }
 
 void Mouse::invMouse(uint16 xPos, uint16 yPos) {
