@@ -3605,7 +3605,16 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 	int drawX = displayOffsetX + spriteXOffset;
 	int drawY = displayOffsetY + spriteYOffset;
 
-	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
+	const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
+	const int renderScale = renderHiRes ? 2 : 1;
+	if (renderHiRes) {
+		renderNutSpriteScaledClipped(renderBitmap, pitch, width, height,
+			0, 0, width, height,
+			drawX * renderScale, drawY * renderScale, _shipSprite, spriteIndex,
+			false, renderScale, true);
+	} else {
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
+	}
 
 	// Shadow sprite (POV004 / DAT_0047e028): drawn at same position as primary ship.
 	// Original FUN_401CCF lines 91-92 uses param_5 & 1 (firing flag) as sprite index.
@@ -3616,16 +3625,23 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 			int16 shadowYOff = _shipSprite2->getCharYOffset(shadowIndex);
 			int shadowX = displayOffsetX + shadowXOff;
 			int shadowY = displayOffsetY + shadowYOff;
-			renderNutSprite(renderBitmap, pitch, width, height, shadowX, shadowY, _shipSprite2, shadowIndex);
+			if (renderHiRes) {
+				renderNutSpriteScaledClipped(renderBitmap, pitch, width, height,
+					0, 0, width, height,
+					shadowX * renderScale, shadowY * renderScale, _shipSprite2, shadowIndex,
+					false, renderScale, true);
+			} else {
+				renderNutSprite(renderBitmap, pitch, width, height, shadowX, shadowY, _shipSprite2, shadowIndex);
+			}
 		}
 	}
 
 	int sprW = _shipSprite->getCharWidth(spriteIndex);
 	int sprH = _shipSprite->getCharHeight(spriteIndex);
-	debugC(DEBUG_INSANE, "Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d",
+	debugC(DEBUG_INSANE, "Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d scale=%d",
 		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
 		spriteXOffset, spriteYOffset, sprW, sprH, drawY + sprH,
-		_viewX, _viewY, spriteIndex, numSprites);
+		_viewX, _viewY, spriteIndex, numSprites, renderScale);
 }
 
 // renderVehicleShotImpacts -- Handler 8 shot impact sprites (FUN_402DA8).
