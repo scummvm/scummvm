@@ -5621,7 +5621,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Murder In Tehran's Alleys 2016 (Steam, June 2017) (English)
 	WME_WINENTRY("tehran2016", "",
-		WME_ENTRY1s("data.dcp", "952346c4d7a08986688b3cc583215d33", 1163612836), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "952346c4d7a08986688b3cc583215d33", 1163612836), Common::EN_ANY, GF_3D, WME_1_9_3),
 
 	// The Ancient Mark - Episode 1
 	WME_WINENTRY("theancientmark1", "",
