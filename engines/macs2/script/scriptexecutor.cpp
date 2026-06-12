@@ -277,22 +277,22 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 	const int64 oldPos = g_engine->_fileStream->pos();
 	uint32 address = 0;
 
-	if (_executingScriptObjectID == 0) {
+	if (_executingScriptObjectId == 0) {
 		if (resourceIndex > _engine->_sceneResourceOffsets.size()) {
 			warning("Ignoring resource load for missing scene resource %u", resourceIndex);
 			return false;
 		}
 		address = _engine->_sceneResourceOffsets[resourceIndex - 1];
 	} else {
-		GameObject *object = GameObjects::getObjectByIndex(_executingScriptObjectID);
+		GameObject *object = GameObjects::getObjectByIndex(_executingScriptObjectId);
 		if (object == nullptr || object->_dataOffset == 0) {
-			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectID, resourceIndex);
+			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectId, resourceIndex);
 			return false;
 		}
 		// Binary reads from runtime+0x18D table (loaded during loadSceneObjects).
 		// Table is 32 dword file offsets, indexed by (resourceIndex - 1).
 		if (resourceIndex - 1 >= 32) {
-			warning("Ignoring resource load for out-of-range index %u on object %u", resourceIndex, _executingScriptObjectID);
+			warning("Ignoring resource load for out-of-range index %u on object %u", resourceIndex, _executingScriptObjectId);
 			return false;
 		}
 		address = object->_resourceOffsets[resourceIndex - 1];
@@ -339,11 +339,11 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 	// TODO: Implement naive string printing here, refine later
 
 	Common::StringArray strings;
-	if (_executingScriptObjectID == 0) {
+	if (_executingScriptObjectId == 0) {
 		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, bp2, bp4, Scenes::instance()._currentSceneIndex, 0);
 	} else {
-		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = g_engine->decodeStrings(s, bp2, bp4, 0, _executingScriptObjectID);
+		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
+		strings = g_engine->decodeStrings(s, bp2, bp4, 0, _executingScriptObjectId);
 	}
 
 	if (alignRight) {
@@ -481,14 +481,14 @@ bool ScriptExecutor::loadNextScript() {
 		if (candidateObject && isRelevantObject(candidateObject)) {
 			if (candidateObject->_script.size() != 0) {
 				_stream = candidateObject->getScriptStream();
-				_executingScriptObjectID = candidateObject->_index;
+				_executingScriptObjectId = candidateObject->_index;
 				debugC(kDebugScript, "----- Switching execution to script for object: %.4x", candidateObject->_index);
 				return true;
 			}
 		}
 	} while (_executingObjectIndex <= 0x200);
 
-	_executingScriptObjectID = 0;
+	_executingScriptObjectId = 0;
 
 	// We are done executing all relevant objects
 	if (_isSceneInitRun) {
@@ -811,7 +811,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 
 	// Step 6: If moved object is the one whose script is currently executing,
 	// terminate its script (original: sets scriptEndPosition=0, scriptPosition=0)
-	if ((int)objectID == _executingScriptObjectID) {
+	if ((int)objectID == _executingScriptObjectId) {
 		_stream->seek(0, SEEK_END);
 	}
 
@@ -835,6 +835,9 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 	//  10. If script was NOT already executing: run repeat pass
 	//      (repeatRunFlag=1) -> runScriptExecutor -> (repeatRunFlag=0)
 	//  11. If script WAS executing: error 0x17
+	// Binary: g_wRepeatRunFlag = 0, g_wIsSceneInitRun = 0 at entry.
+	_repeatRunFlag = false;
+	_isSceneInitRun = false;
 	uint32 newSceneID = scriptReadValue32();
 	const uint16 transitionMode = scriptReadValue16();
 	const uint16 transitionSpeed = scriptReadValue16();
@@ -880,16 +883,16 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 	View1 *currentView = (View1 *)_engine->findView("View1");
 
 	Common::Array<Common::String> strings;
-	if (_executingScriptObjectID == 0) {
+	if (_executingScriptObjectId == 0) {
 		strings = g_engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines, Scenes::instance()._currentSceneIndex, 0);
 	} else {
-		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = g_engine->decodeStrings(s, offset, numLines, 0, _executingScriptObjectID);
+		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
+		strings = g_engine->decodeStrings(s, offset, numLines, 0, _executingScriptObjectId);
 	}
 
 	debugC(kDebugScript,
 		   "Opcode 0D dialogue: speaker=%u rawPos=(%u,%u) side=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
-		   objectID, x, y, side, offset, numLines, _executingScriptObjectID, joinDebugStrings(strings).c_str());
+		   objectID, x, y, side, offset, numLines, _executingScriptObjectId, joinDebugStrings(strings).c_str());
 
 	_activeDialogueSpeakerObjectID = objectID;
 	currentView->showSpeechAct(objectID, strings, Common::Point(x, y), side);
@@ -1040,15 +1043,15 @@ void Script::ScriptExecutor::scriptAddDialogueChoice() {
 	uint16 offset = readUint16();
 	uint16 numLines = readUint16();
 	Common::StringArray lines;
-	if (_executingScriptObjectID == 0) {
+	if (_executingScriptObjectId == 0) {
 		lines = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines, Scenes::instance()._currentSceneIndex, 0);
 	} else {
-		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		lines = _engine->decodeStrings(stringsStream, offset, numLines, 0, _executingScriptObjectID);
+		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
+		lines = _engine->decodeStrings(stringsStream, offset, numLines, 0, _executingScriptObjectId);
 	}
 	debugC(kDebugScript,
 		   "Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
-		   index, offset, numLines, _executingScriptObjectID, joinDebugStrings(lines).c_str());
+		   index, offset, numLines, _executingScriptObjectId, joinDebugStrings(lines).c_str());
 	_dialogueChoices.push_back(lines);
 }
 
@@ -1678,7 +1681,7 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 void Script::ScriptExecutor::scriptResetToSceneScript() {
 	// scriptResetToSceneScript (1008:ad3e). Resets script execution
 	// context back to the current scene script at position 0.
-	_executingScriptObjectID = 0;
+	_executingScriptObjectId = 0;
 	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_activeDialogueSpeakerObjectID = 0;
@@ -1690,7 +1693,7 @@ void Script::ScriptExecutor::scriptLoadOverlayFont() {
 	// overlay text into the overlay font buffer.
 	uint8 resourceIndex = readByte();
 	_overlayTextStageActive = true;
-	if (!_engine->loadOverlayFont(resourceIndex, _executingScriptObjectID)) {
+	if (!_engine->loadOverlayFont(resourceIndex, _executingScriptObjectId)) {
 		warning("Opcode 0x38: failed to load overlay font resource %u", resourceIndex);
 	}
 }
@@ -1727,11 +1730,11 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptAddOverl
 	}
 
 	Common::StringArray strings;
-	if (_executingScriptObjectID == 0) {
+	if (_executingScriptObjectId == 0) {
 		strings = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, stringOffset, 1, Scenes::instance()._currentSceneIndex, 0);
 	} else {
-		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectID, g_engine->_fileStream);
-		strings = _engine->decodeStrings(stringsStream, stringOffset, 1, 0, _executingScriptObjectID);
+		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
+		strings = _engine->decodeStrings(stringsStream, stringOffset, 1, 0, _executingScriptObjectId);
 	}
 	if (strings.empty()) {
 		warning("Ignoring empty overlay text entry at offset %u", stringOffset);
@@ -1739,7 +1742,7 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptAddOverl
 	}
 	debugC(kDebugScript,
 		   "Opcode 3A overlay text: rawPos=(%u,%u) align=%u textOffset=%u entryType=%u scriptObject=%u text=\"%s\"",
-		   x, y, alignment, stringOffset, entryType, _executingScriptObjectID, strings[0].c_str());
+		   x, y, alignment, stringOffset, entryType, _executingScriptObjectId, strings[0].c_str());
 
 	View1::OverlayTextEntry entry;
 	entry.position = Common::Point(x, y);
@@ -2410,7 +2413,7 @@ void ScriptExecutor::run(bool firstRun) {
 		// description strings in a row, and we would disable the executing object
 		// if we always reset this object
 		// TODO: Watch out for issues caused by this
-		_executingScriptObjectID = 0;
+		_executingScriptObjectId = 0;
 		_repeatRunFlag = false;
 		_isSceneInitRun = firstRun;
 	}
