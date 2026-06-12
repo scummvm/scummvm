@@ -36,6 +36,7 @@ namespace Forest {
 
 int16 flags[40];
 bool room_203_flag;
+bool inv_enable_command;
 
 namespace Rooms {
 

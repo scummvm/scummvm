@@ -256,6 +256,7 @@ struct AnimationInfo {
 
 extern int16 flags[40];
 extern bool room_203_flag;
+extern bool inv_enable_command;
 
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
