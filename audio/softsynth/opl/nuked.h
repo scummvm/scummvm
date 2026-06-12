@@ -1,30 +1,40 @@
-//
-// Copyright (C) 2013-2018 Alexey Khokholov (Nuke.YKT)
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-//
-//  Nuked OPL3 emulator.
-//  Thanks:
-//      MAME Development Team(Jarek Burczynski, Tatsuyuki Satoh):
-//          Feedback and Rhythm part calculation information.
-//      forums.submarine.org.uk(carbon14, opl3):
-//          Tremolo and phase generator calculation information.
-//      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
-//          OPL2 ROMs.
-//      siliconpr0n.org(John McMaster, digshadow):
-//          YMF262 and VRC VII decaps and die shots.
-//
-// version: 1.8
-//
+/* Nuked OPL3 emulator.
+ *
+ * Copyright (C) 2013-2020 Nuke.YKT
+ * Copyright (C) 2026 Tony Gies (Nuked-OPL3-fast modifications)
+ *
+ * This file is part of Nuked OPL3.
+ *
+ * Nuked OPL3 is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1
+ * of the License, or (at your option) any later version.
+ *
+ * Nuked OPL3 is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Nuked OPL3. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Thanks:
+ *     MAME Development Team(Jarek Burczynski, Tatsuyuki Satoh):
+ *         Feedback and Rhythm part calculation information.
+ *     forums.submarine.org.uk(carbon14, opl3):
+ *         Tremolo and phase generator calculation information.
+ *     OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
+ *         OPL2 ROMs.
+ *     siliconpr0n.org(John McMaster, digshadow):
+ *         YMF262 and VRC VII decaps and die shots.
+ *
+ * Upstream version: 1.8 (commit cfedb09)
+ * Fork version:    1.8-fast.1
+ * Fork home:       https://github.com/tgies/Nuked-OPL3-fast
+ *
+ * Nuked-OPL3-fast is a bit-exact performance-optimized fork of Nuked-OPL3.
+ * Audio output is identical to upstream for the same register stream.
+ */
 
 #ifndef AUDIO_SOFTSYNTH_OPL_NUKED_H
 #define AUDIO_SOFTSYNTH_OPL_NUKED_H
@@ -51,33 +61,40 @@ typedef struct _opl3_chip opl3_chip;
 struct _opl3_slot {
     opl3_channel *channel;
     opl3_chip *chip;
+    int16_t *mod;
+    uint8_t *trem;
+    uint32_t pg_reset;
+    uint32_t pg_phase;
+    uint32_t pg_inc;
     int16_t out;
     int16_t fbmod;
-    int16_t *mod;
     int16_t prout;
     uint16_t eg_rout;
     uint16_t eg_out;
-    uint8_t eg_inc;
+    /* Cached (reg_tl << 2) + (eg_ksl >> kslshift[reg_ksl]); maintained by
+     * OPL3_EnvelopeUpdateKSL whenever any of those inputs change. Hoists
+     * a load + lookup + shift out of the per-sample envelope hot path. */
+    uint16_t eg_tl_ksl;
+    uint16_t pg_phase_out;
+    uint8_t key;
     uint8_t eg_gen;
-    uint8_t eg_rate;
-    uint8_t eg_ksl;
-    uint8_t *trem;
     uint8_t reg_vib;
+    uint8_t reg_mult;
+    uint8_t reg_wf;
+    uint8_t slot_num;
+    uint8_t eg_ksl;
+    uint8_t eg_ks;
     uint8_t reg_type;
     uint8_t reg_ksr;
-    uint8_t reg_mult;
     uint8_t reg_ksl;
     uint8_t reg_tl;
     uint8_t reg_ar;
     uint8_t reg_dr;
     uint8_t reg_sl;
     uint8_t reg_rr;
-    uint8_t reg_wf;
-    uint8_t key;
-    uint32_t pg_reset;
-    uint32_t pg_phase;
-    uint16_t pg_phase_out;
-    uint8_t slot_num;
+    uint8_t eg_rates[4];
+    uint8_t eg_rate_hi[4];
+    uint8_t eg_rate_lo[4];
 };
 
 struct _opl3_channel {
@@ -85,6 +102,7 @@ struct _opl3_channel {
     opl3_channel *pair;
     opl3_chip *chip;
     int16_t *out[4];
+    uint8_t out_cnt;
 
 #if OPL_ENABLE_STEREOEXT
     int32_t leftpan;
@@ -126,6 +144,7 @@ struct _opl3_chip {
     uint8_t tremolo;
     uint8_t tremolopos;
     uint8_t tremoloshift;
+    uint8_t tremolo_dirty;
     uint32_t noise;
     int16_t zeromod;
     int32_t mixbuff[4];
