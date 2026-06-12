@@ -106,7 +106,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 	// Binary: g_wUiPanelState = 2 for protagonist, 3 for container
 	_uiPanelState = (newInventorySource->_index == Scenes::instance()._currentActorIndex)
 		? kUiPanelInventory : kUiPanelContainerInventory;
-	_inventoryPage = 0;
+	_inventoryScrollOffset = 0;
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
@@ -122,7 +122,7 @@ void View1::closeInventory() {
 
 	const bool shouldResumeExternalInventory = !isInventorySourceProtagonist() && g_engine->_scriptExecutor->_hasPendingExternalInventoryResume;
 	_uiPanelState = kUiPanelNone;
-	_inventoryPage = 0;
+	_inventoryScrollOffset = 0;
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
@@ -852,16 +852,16 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 				break;
 			}
 			case InventoryButtonIndex::Up: {
-				if (_inventoryPage > 0) {
-					_inventoryPage--;
+				if (_inventoryScrollOffset > 0) {
+					_inventoryScrollOffset--;
 				}
 				break;
 			}
 			case InventoryButtonIndex::Down: {
 				// Check how many pages we have
 				uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
-				if (_inventoryPage < numPages - 2) {
-					_inventoryPage++;
+				if (_inventoryScrollOffset < numPages - 2) {
+					_inventoryScrollOffset++;
 				}
 				break;
 			}
@@ -924,7 +924,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 				}
 				g_engine->_scriptExecutor->_interactedObjectID = 0;
 				_uiPanelState = kUiPanelNone;
-				_inventoryPage = 0;
+				_inventoryScrollOffset = 0;
 				g_engine->setCursorMode(_savedCursorMode);
 				updateCursor();
 				return true;
@@ -998,15 +998,15 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 				break;
 			}
 			case InventoryButtonIndex::Up: {
-				if (_inventoryPage > 0) {
-					_inventoryPage--;
+				if (_inventoryScrollOffset > 0) {
+					_inventoryScrollOffset--;
 				}
 				break;
 			}
 			case InventoryButtonIndex::Down: {
 				uint16 numPages = (uint16)ceil((double)_inventoryItems.size() / 5.0);
-				if (_inventoryPage < numPages - 2) {
-					_inventoryPage++;
+				if (_inventoryScrollOffset < numPages - 2) {
+					_inventoryScrollOffset++;
 				}
 				break;
 			}
@@ -1871,7 +1871,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	_inventorySlotSize.x = slotW;
 	_inventorySlotSize.y = slotH;
 	// Original: local_12 counts from 10 down, showing up to 10 items (5 per row, 2 rows)
-	uint16 itemIndex = _inventoryPage * 10;
+	uint16 itemIndex = _inventoryScrollOffset * 10;
 	uint16 itemXStart = itemX;
 	// Now the inventory icons themselves
 	for (int iy = 0; iy < 2; iy++) {
@@ -1898,7 +1898,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	Common::Rect currentInventorySlot(_inventoryGridUpperLeft, _inventoryGridUpperLeft + _inventorySlotSize);
 
-	uint16 itemIndex = _inventoryPage * 10;
+	uint16 itemIndex = _inventoryScrollOffset * 10;
 	for (int iy = 0; iy < 2; iy++) {
 		for (int ix = 0; ix < 5; ix++) {
 			if (itemIndex >= _inventoryItems.size()) {

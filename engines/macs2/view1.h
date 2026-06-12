@@ -357,6 +357,7 @@ public:
 	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
 	void setInventorySource(GameObject *newInventorySource);
 	void openInventory(GameObject *newInventorySource);
+	// Binary handleInput (1008:e8bf) close path for the inventory panels.
 	void closeInventory();
 
 	bool isInventorySourceProtagonist() const;
@@ -529,7 +530,7 @@ public:
 
 	Common::Array<Common::Rect> _mainMenuButtonLocations;
 
-	uint16 _inventoryPage = 0;
+	uint16 _inventoryScrollOffset = 0;
 };
 
 } // namespace Macs2
