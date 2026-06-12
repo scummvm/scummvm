@@ -129,6 +129,7 @@ public:
 	void stopSound(const Common::String &sound);
 	void stopAllSounds();
 	void playMovie(const Common::String &movie);
+	bool playRaw4XMMovie(Common::SeekableReadStream &stream, const Common::String &movie);
 
 	void declareVariable(const Common::String &name);
 	void setVariable(const Common::String &name, int value);

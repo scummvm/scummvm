@@ -21,9 +21,11 @@
 
 #include "phoenixvr/phoenixvr.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
 #include "common/config-manager.h"
+#include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/language.h"
@@ -52,6 +54,7 @@
 #include "video/4xm_decoder.h"
 #include "video/smk_decoder.h"
 #include "video/subtitles.h"
+#include <math.h>
 
 namespace PhoenixVR {
 
@@ -89,6 +92,719 @@ static Common::String getAmerzoneLevelLabel(const Common::String &script) {
 	}
 
 	return "Amerzone";
+}
+
+enum Raw4XMChunkId {
+	kRaw4XMFile = 0xfb814000,
+	kRaw4XMFrameContainer = 0xfb814100,
+	kRaw4XMFullFrame = 0xfb814210,
+	kRaw4XMDeltaFrame = 0xfb814220,
+	kRaw4XMCompressedAudio = 0xfb814230,
+	kRaw4XMCachedFrame = 0xfb814240,
+	kRaw4XMRawAudio = 0xfb814250
+};
+
+struct Raw4XMAudioState {
+	int channels = 0;
+	int bits = 0;
+	int sampleRate = 0;
+	int16 predictor[2] = { 0, 0 };
+	int stepIndex[2] = { 0, 0 };
+};
+
+struct Raw4XMTransform {
+	bool swapAxes;
+	bool flipX;
+	bool flipY;
+};
+
+struct Raw4XMCoefficientToken {
+	byte zeroes;
+	int8 values[2];
+	byte valueCount;
+};
+
+struct Raw4XMCacheEntry {
+	int32 frame = -1;
+	uint32 declaredSize = 0;
+	Common::Array<byte> data;
+};
+
+struct Raw4XMDeltaReader {
+	const byte *data = nullptr;
+	uint32 size = 0;
+	uint32 mode = 0;
+	uint32 wordBitsLeft = 16;
+	uint32 wordIndex = 1;
+	uint32 controlWord = 0;
+	uint32 pairIndex = 0;
+	uint32 byteIndex = 0;
+	uint32 nibbleBitsLeft = 8;
+	uint32 nibbleWordIndex = 1;
+	uint32 nibbleWord = 0;
+	uint32 pairOffset = 0;
+	uint32 byteOffset = 0;
+	uint32 nibbleOffset = 0;
+
+	Raw4XMDeltaReader(const byte *ptr, uint32 len) : data(ptr), size(len) {
+		mode = READ_LE_UINT32(data);
+		pairOffset = READ_LE_UINT32(data + 8) + 0x18;
+		byteOffset = READ_LE_UINT32(data + 12) + 0x18;
+		nibbleOffset = READ_LE_UINT32(data + 16) + 0x18;
+		controlWord = READ_LE_UINT32(data + 0x18);
+		if (nibbleOffset + 4 <= size)
+			nibbleWord = READ_LE_UINT32(data + nibbleOffset);
+	}
+
+	bool valid() const {
+		return size >= 0x18;
+	}
+
+	uint32 readControl2() {
+		uint32 result = controlWord & 3;
+		if (--wordBitsLeft == 0) {
+			uint32 off = 0x18 + wordIndex * 4;
+			controlWord = off + 4 <= size ? READ_LE_UINT32(data + off) : 0;
+			++wordIndex;
+			wordBitsLeft = 16;
+		} else {
+			controlWord >>= 2;
+		}
+		return result;
+	}
+
+	uint16 readPair() {
+		uint32 off = pairOffset + pairIndex * 2;
+		++pairIndex;
+		return off + 2 <= size ? READ_LE_UINT16(data + off) : 0;
+	}
+
+	byte readByteIndex() {
+		uint32 off = byteOffset + byteIndex;
+		++byteIndex;
+		return off < size ? data[off] : 0;
+	}
+
+	int8 readSignedByte() {
+		return (int8)readByteIndex();
+	}
+
+	uint32 readNibble() {
+		uint32 result = nibbleWord & 0xf;
+		if (--nibbleBitsLeft == 0) {
+			uint32 off = nibbleOffset + nibbleWordIndex * 4;
+			nibbleWord = off + 4 <= size ? READ_LE_UINT32(data + off) : 0;
+			++nibbleWordIndex;
+			nibbleBitsLeft = 8;
+		} else {
+			nibbleWord >>= 4;
+		}
+		return result;
+	}
+};
+
+static const int kRaw4XMAudioIndexDelta[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
+
+static const int kRaw4XMAudioStepTable[89] = {
+	    7,     8,     9,    10,    11,    12,    13,    14,
+	   16,    17,    19,    21,    23,    25,    28,    31,
+	   34,    37,    41,    45,    50,    55,    60,    66,
+	   73,    80,    88,    97,   107,   118,   130,   143,
+	  157,   173,   190,   209,   230,   253,   279,   307,
+	  337,   371,   408,   449,   494,   544,   598,   658,
+	  724,   796,   876,   963,  1060,  1166,  1282,  1411,
+	 1552,  1707,  1878,  2066,  2272,  2499,  2749,  3024,
+	 3327,  3660,  4026,  4428,  4871,  5358,  5894,  6484,
+	 7132,  7845,  8630,  9493, 10442, 11487, 12635, 13899,
+	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
+	32767
+};
+
+static const Raw4XMTransform kRaw4XMTransforms[8] = {
+	{ false, false, false },
+	{ false, true,  false },
+	{ false, false, true  },
+	{ false, true,  true  },
+	{ true,  true,  true  },
+	{ true,  false, true  },
+	{ true,  true,  false },
+	{ true,  false, false }
+};
+
+static const int kRaw4XMCoefficientOrder[64] = {
+	 0,  1,  8,  9,  2,  3, 10, 11,
+	16, 17, 24, 25, 18, 19, 26, 27,
+	 4,  5, 12, 20, 13,  6,  7, 14,
+	21, 28, 29, 22, 15, 23, 30, 31,
+	32, 33, 40, 48, 41, 34, 35, 42,
+	49, 56, 57, 50, 43, 51, 58, 59,
+	36, 37, 44, 52, 45, 38, 39, 46,
+	53, 60, 61, 54, 47, 55, 62, 63
+};
+
+static const Raw4XMCoefficientToken kRaw4XMCoefficientTokens[8] = {
+	{ 64, {  0,  0 }, 0 },
+	{  5, {  0,  0 }, 0 },
+	{  1, {  1,  0 }, 1 },
+	{  1, { -1,  0 }, 1 },
+	{  2, {  1,  0 }, 1 },
+	{  1, {  0, -1 }, 2 },
+	{  2, {  0,  1 }, 2 },
+	{  3, { -1,  0 }, 1 }
+};
+
+static int raw4XMSign2(byte value) {
+	return (value & 2) ? (value | ~3) : (value + 1);
+}
+
+static int raw4XMSign4(byte value) {
+	return (value & 8) ? (value | ~15) : (value + 1);
+}
+
+static byte raw4XMAudioFlags(const Raw4XMAudioState &state) {
+	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	if (state.channels == 2)
+		flags |= Audio::FLAG_STEREO;
+	return flags;
+}
+
+static void raw4XMQueueOwnedAudio(Audio::QueuingAudioStream *audioStream, byte *data, uint32 size, const Raw4XMAudioState &state) {
+	if (audioStream && data)
+		audioStream->queueBuffer(data, size, DisposeAfterUse::YES, raw4XMAudioFlags(state));
+	else
+		free(data);
+}
+
+static int16 raw4XMDecodeNibble(byte nibble, int16 &predictor, int &stepIndex) {
+	const int step = kRaw4XMAudioStepTable[stepIndex];
+	int diff = ((step / 2) + (nibble & 7) * step) >> 3;
+	if (nibble & 8) {
+		diff = -diff;
+	}
+
+	predictor = (int16)(predictor + diff);
+	stepIndex = CLIP(stepIndex + kRaw4XMAudioIndexDelta[nibble & 7], 0, 88);
+	return predictor;
+}
+
+static void raw4XMDecodeADPCMChannel(const byte *src, uint32 srcSize, Raw4XMAudioState &state,
+		int channel, int16 *dst, uint32 samples) {
+	for (uint32 i = 0; i < samples; ++i) {
+		uint32 byteOffset = (i >> 3) * 4 + ((i & 7) >> 1);
+		if (byteOffset >= srcSize)
+			break;
+
+		byte packed = src[byteOffset];
+		byte nibble = (i & 1) ? (packed >> 4) : (packed & 0xf);
+		dst[i] = raw4XMDecodeNibble(nibble, state.predictor[channel], state.stepIndex[channel]);
+	}
+}
+
+static void raw4XMQueueAudio(Audio::QueuingAudioStream *audioStream, Raw4XMAudioState &state,
+		const byte *src, uint32 srcSize, uint32 decodedBytes) {
+	if (!audioStream || state.channels <= 0 || state.bits != 16 || decodedBytes == 0)
+		return;
+
+	const uint32 samplesPerChannel = decodedBytes / (state.channels * 2);
+	if (samplesPerChannel == 0)
+		return;
+
+	byte *out = (byte *)malloc(decodedBytes);
+	if (!out)
+		return;
+	Common::fill(out, out + decodedBytes, 0);
+	int16 *pcm = (int16 *)out;
+
+	if (state.channels == 1) {
+		raw4XMDecodeADPCMChannel(src, srcSize, state, 0, pcm, samplesPerChannel);
+	} else if (state.channels == 2) {
+		Common::Array<int16> left;
+		Common::Array<int16> right;
+		left.resize(samplesPerChannel);
+		right.resize(samplesPerChannel);
+
+		const uint32 compressedChannelSize = ((samplesPerChannel + 7) / 8) * 4;
+		raw4XMDecodeADPCMChannel(src, MIN<uint32>(srcSize, compressedChannelSize), state, 0, left.data(), samplesPerChannel);
+		if (srcSize > compressedChannelSize)
+			raw4XMDecodeADPCMChannel(src + compressedChannelSize, srcSize - compressedChannelSize, state, 1, right.data(), samplesPerChannel);
+
+		for (uint32 i = 0; i < samplesPerChannel; ++i) {
+			pcm[i * 2] = left[i];
+			pcm[i * 2 + 1] = right[i];
+		}
+	}
+
+	raw4XMQueueOwnedAudio(audioStream, out, decodedBytes, state);
+}
+
+static void buildRaw4XMMotionTables(int width, Common::Array<int> &fullOffsets, Common::Array<int> &expOffsets) {
+	Common::Array<int> sorted;
+	sorted.reserve(0x1000);
+	for (int radius = 0; radius < 0x801; ++radius) {
+		for (int y = -0x20; y < 0x20; ++y) {
+			for (int x = -0x20; x < 0x20; ++x) {
+				if (x * x + y * y == radius)
+					sorted.push_back(y * width + x);
+			}
+		}
+	}
+
+	fullOffsets.resize(sorted.size());
+	for (uint i = 0; i < sorted.size(); ++i)
+		fullOffsets[i] = sorted[i];
+
+	static const float kExpMotionScale = 0.021327873691916466f;
+	expOffsets.resize(0x100);
+	int lastIndex = -1;
+	uint out = 0;
+	for (int i = 0; out < expOffsets.size(); ++i) {
+		int index = static_cast<int>(floorf(expf(i * kExpMotionScale))) - 1;
+		if (index >= (int)fullOffsets.size())
+			index = fullOffsets.size() - 1;
+		if (lastIndex < index) {
+			expOffsets[out++] = fullOffsets[index];
+			lastIndex = index;
+		}
+	}
+}
+
+static void raw4XMTransformPixel(int sx, int sy, int width, int height, uint32 mode, int &dx, int &dy) {
+	const Raw4XMTransform &transform = kRaw4XMTransforms[mode & 7];
+	dx = transform.swapAxes ? sy : sx;
+	dy = transform.swapAxes ? sx : sy;
+	if (transform.flipX)
+		dx = width - 1 - dx;
+	if (transform.flipY)
+		dy = height - 1 - dy;
+}
+
+static void copyRaw4XMBlock(uint16 *dst, const uint16 *src, int stride, int width, int height, uint32 mode, int add = 0) {
+	const int sourceWidth = (mode >= 4) ? height : width;
+	const int sourceHeight = (mode >= 4) ? width : height;
+
+	for (int sy = 0; sy < sourceHeight; ++sy) {
+		for (int sx = 0; sx < sourceWidth; ++sx) {
+			int dx, dy;
+			raw4XMTransformPixel(sx, sy, width, height, mode, dx, dy);
+			if (dx >= 0 && dx < width && dy >= 0 && dy < height)
+				dst[dy * stride + dx] = src[sy * stride + sx] + add;
+		}
+	}
+}
+
+static void raw4XMReadCoefficientToken(Raw4XMDeltaReader &reader, int coeff[64], int &index) {
+	auto zero = [&](int count) {
+		for (int i = 0; i < count && index < 64; ++i, ++index)
+			coeff[kRaw4XMCoefficientOrder[index]] = 0;
+	};
+	auto write = [&](int value) {
+		if (index < 64)
+			coeff[kRaw4XMCoefficientOrder[index++]] = value;
+	};
+	auto writeSigned2 = [&](byte value) {
+		write(raw4XMSign2(value));
+	};
+	auto writeSigned4 = [&]() {
+		write(raw4XMSign4(reader.readNibble()));
+	};
+
+	byte code = reader.readNibble();
+	if (code <= 7) {
+		const Raw4XMCoefficientToken &token = kRaw4XMCoefficientTokens[code];
+
+		zero(code == 0 ? 64 - index : token.zeroes);
+		for (byte i = 0; i < token.valueCount; ++i)
+			write(token.values[i]);
+		return;
+	}
+
+	if (code == 8) {
+		byte header = reader.readNibble();
+		byte pair = reader.readNibble();
+		zero((header >> 2) + 1);
+		writeSigned2(pair >> 2);
+		writeSigned2(pair & 3);
+
+		int valueCount = header & 3;
+		if (valueCount > 0) {
+			byte extra = reader.readNibble();
+			writeSigned2(extra >> 2);
+			if (valueCount > 1)
+				writeSigned2(extra & 3);
+			if (valueCount > 2)
+				writeSigned2(reader.readNibble() >> 2);
+		}
+	} else if (code == 9) {
+		byte header = reader.readNibble();
+		zero((header >> 2) + 1);
+		for (int i = 0; i <= (header & 3); ++i)
+			writeSigned4();
+	} else if (code == 10) {
+		byte value = reader.readNibble();
+		writeSigned2(value >> 2);
+		writeSigned2(value & 3);
+	} else if (code >= 11 && code <= 13) {
+		for (byte i = 0; i < code - 10; ++i)
+			writeSigned4();
+	} else if (code == 14) {
+		write(0);
+	} else {
+		write(reader.readSignedByte());
+	}
+}
+
+static void raw4XMReadCoefficients(Raw4XMDeltaReader &reader, int coeffs[3][64]) {
+	for (int channel = 0; channel < 3; ++channel) {
+		int *coeff = coeffs[channel];
+		int index = 1;
+		coeff[0] = reader.readSignedByte();
+
+		while (index <= 63)
+			raw4XMReadCoefficientToken(reader, coeff, index);
+	}
+}
+
+static void raw4XMTransformCoefficients(int coeff[64], int dst[64], int scaleCode, bool chroma) {
+	if (!chroma)
+		coeff[0] <<= 1;
+
+	int temp[64] = {};
+	const int dcScale = 1 << scaleCode;
+	const int stage1Scale = 1 << (scaleCode + 2);
+	const int stage2Scale = 1 << (scaleCode + 4);
+
+	int first[10] = {};
+	int base0 = (coeff[8] + coeff[0]) * dcScale;
+	int base1 = (coeff[0] - coeff[8]) * dcScale;
+	int base2 = (coeff[1] + coeff[9]) * dcScale;
+	int base3 = (coeff[1] - coeff[9]) * dcScale;
+	first[0] = base2 + base0;
+	first[1] = base0 - base2;
+	first[8] = base3 + base1;
+	first[9] = base1 - base3;
+
+	for (int y = 0; y < 4; y += 2) {
+		for (int x = 0; x < 4; x += 2) {
+			int index = (x >> 1) + (y >> 1) * 8;
+			int v0 = first[index] + coeff[index + 0x10] * stage1Scale;
+			int v1 = first[index] - coeff[index + 0x10] * stage1Scale;
+			int v2 = coeff[index + 2] + coeff[index + 0x12];
+			int v3 = coeff[index + 2] * stage1Scale - coeff[index + 0x12] * stage1Scale;
+			temp[y * 8 + x] = v2 * stage1Scale + v0;
+			temp[y * 8 + x + 1] = v0 - v2 * stage1Scale;
+			temp[(y + 1) * 8 + x] = v3 + v1;
+			temp[(y + 1) * 8 + x + 1] = v1 - v3;
+		}
+	}
+
+	for (int y = 0; y < 8; y += 2) {
+		for (int x = 0; x < 8; x += 2) {
+			int index = (x >> 1) + (y >> 1) * 8;
+			int v0 = coeff[index + 0x20] * stage2Scale + temp[index];
+			int v1 = temp[index] - coeff[index + 0x20] * stage2Scale;
+			int v2 = coeff[index + 4] + coeff[index + 0x24];
+			int v3 = coeff[index + 4] * stage2Scale - coeff[index + 0x24] * stage2Scale;
+			dst[y * 8 + x] = (v0 + v2 * stage2Scale) >> 6;
+			dst[y * 8 + x + 1] = (v0 - v2 * stage2Scale) >> 6;
+			dst[(y + 1) * 8 + x] = (v3 + v1) >> 6;
+			dst[(y + 1) * 8 + x + 1] = (v1 - v3) >> 6;
+		}
+	}
+}
+
+static void raw4XMWriteDctBlock(const int yBlock[64], const int cbBlock[64], const int crBlock[64],
+		uint16 *dst, int stride) {
+	for (int y = 0; y < 8; ++y) {
+		uint16 *dstPixel = dst + y * stride;
+		for (int x = 0; x < 8; ++x) {
+			int index = y * 8 + x;
+			int luma = yBlock[index] + 0x80;
+			int cr = crBlock[index];
+			int cb = cbBlock[index];
+			int red = (cr + luma) >> 3;
+			int green = (luma - ((cr + cb) >> 1)) >> 3;
+			int blue = (luma + cb * 2) >> 3;
+			red = CLIP(red, 0, 0x1f);
+			green = CLIP(green, 0, 0x1f);
+			blue = CLIP(blue, 0, 0x1f);
+			dstPixel[x] = (red << 10) | (green << 5) | blue;
+		}
+	}
+}
+
+static void raw4XMCopyFrameToScreen(Graphics::ManagedSurface &screenFrame, const Common::Array<uint16> &rawFrame,
+		const Graphics::PixelFormat &format, int width, int height) {
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			uint16 pixel = rawFrame[y * width + x];
+			byte r = ((pixel >> 10) & 0x1f) << 3;
+			byte g = ((pixel >> 5) & 0x1f) << 3;
+			byte b = (pixel & 0x1f) << 3;
+			screenFrame.setPixel(x, y, format.RGBToColor(r | (r >> 5), g | (g >> 5), b | (b >> 5)));
+		}
+	}
+}
+
+struct Raw4XMDeltaDecoder {
+	Raw4XMDeltaReader reader;
+	uint16 *dst = nullptr;
+	const uint16 *src = nullptr;
+	int frameWidth = 0;
+	int frameHeight = 0;
+	const Common::Array<int> &fullOffsets;
+	const Common::Array<int> &expOffsets;
+
+	Raw4XMDeltaDecoder(const byte *data, uint32 size, uint16 *dstPixels, const uint16 *srcPixels,
+			int width, int height, const Common::Array<int> &fullMotionOffsets, const Common::Array<int> &expMotionOffsets) :
+			reader(data, size), dst(dstPixels), src(srcPixels), frameWidth(width), frameHeight(height),
+			fullOffsets(fullMotionOffsets), expOffsets(expMotionOffsets) {}
+
+	bool copyLeaf(int dstOffset, int blockWidth, int blockHeight, uint32 op) {
+		uint32 motionIndex = 0;
+		uint32 transform = 0;
+		uint32 addFlag = 0;
+		if (reader.mode == 0) {
+			uint16 packed = reader.readPair();
+			motionIndex = packed & 0xfff;
+			transform = (packed >> 12) & 7;
+			addFlag = packed >> 15;
+		} else {
+			motionIndex = reader.readByteIndex();
+			uint32 packed = reader.readNibble();
+			transform = packed & 7;
+			addFlag = (packed & 0xf) >> 3;
+		}
+
+		int add = 0;
+		if (op == 3 && !addFlag)
+			return true;
+
+		if (addFlag) {
+			uint16 packed = reader.readPair();
+			if (op == 3)
+				add = (((int8)(((packed >> 5) & 0x1f) - 0x10) & 0xf) * 0x40 +
+						((int8)(((packed >> 10) & 0x1f) - 0x10) & 0xf) * 0x800 +
+						((byte)((((byte)packed & 0x1f) - 0x10) * 2) & 0x1f));
+			else
+				add = ((((int8)(((packed >> 10) & 0x1f) - 0x10)) & 0x1f) * 0x20 +
+						(((int8)(((packed >> 5) & 0x1f) - 0x10)) & 0x1f)) * 0x20 +
+						(((int8)((packed & 0x1f) - 0x10)) & 0x1f);
+		}
+
+		const Common::Array<int> &motionTable = reader.mode == 0 ? fullOffsets : expOffsets;
+		int srcOffset = dstOffset;
+		if (motionIndex < motionTable.size())
+			srcOffset += motionTable[motionIndex];
+		const int sourceWidth = transform < 4 ? blockWidth : blockHeight;
+		const int sourceHeight = transform < 4 ? blockHeight : blockWidth;
+		if (srcOffset < 0 || srcOffset + frameWidth * (sourceHeight - 1) + sourceWidth - 1 >= frameWidth * frameHeight)
+			return false;
+
+		copyRaw4XMBlock(dst + dstOffset, src + srcOffset, frameWidth, blockWidth, blockHeight, transform, add);
+		return true;
+	}
+
+	bool decodeDctBlock(int dstOffset) {
+		byte scaleY = reader.readNibble();
+		byte scaleCb = reader.readNibble();
+		byte scaleCr = reader.readNibble();
+		int coeffs[3][64] = {};
+		int blocks[3][64] = {};
+		raw4XMReadCoefficients(reader, coeffs);
+		raw4XMTransformCoefficients(coeffs[0], blocks[0], scaleY, false);
+		raw4XMTransformCoefficients(coeffs[1], blocks[1], scaleCb, true);
+		raw4XMTransformCoefficients(coeffs[2], blocks[2], scaleCr, true);
+		raw4XMWriteDctBlock(blocks[0], blocks[1], blocks[2], dst + dstOffset, frameWidth);
+		return true;
+	}
+
+	bool decodeCopyBlock(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		return copyLeaf(dstOffset, blockWidth, blockHeight, 0);
+	}
+
+	bool decodeVerticalSplit(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		if (blockHeight < 2)
+			return false;
+		decodeBlock(dstOffset, blockWidth, blockHeight / 2, false);
+		decodeBlock(dstOffset + frameWidth * (blockHeight / 2), blockWidth, blockHeight / 2, false);
+		return true;
+	}
+
+	bool decodeHorizontalSplit(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		if (blockWidth < 2)
+			return false;
+		decodeBlock(dstOffset, blockWidth / 2, blockHeight, false);
+		decodeBlock(dstOffset + blockWidth / 2, blockWidth / 2, blockHeight, false);
+		return true;
+	}
+
+	bool decodeDctOrCopyBlock(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		uint32 subOp = reader.readControl2();
+		if (subOp == 0 && allowDct)
+			return decodeDctBlock(dstOffset);
+		if (subOp == 2)
+			return copyLeaf(dstOffset, blockWidth, blockHeight, 3);
+		return false;
+	}
+
+	bool decodeBlock(int dstOffset, int blockWidth, int blockHeight, bool allowDct) {
+		typedef bool (Raw4XMDeltaDecoder::*BlockOp)(int, int, int, bool);
+		static const BlockOp kBlockOps[4] = {
+			&Raw4XMDeltaDecoder::decodeCopyBlock,
+			&Raw4XMDeltaDecoder::decodeVerticalSplit,
+			&Raw4XMDeltaDecoder::decodeHorizontalSplit,
+			&Raw4XMDeltaDecoder::decodeDctOrCopyBlock
+		};
+
+		return (this->*kBlockOps[reader.readControl2() & 3])(dstOffset, blockWidth, blockHeight, allowDct);
+	}
+};
+
+static bool applyRaw4XMDelta(const byte *data, uint32 size, uint16 *dst, const uint16 *src,
+		int width, int height, const Common::Array<int> &fullOffsets, const Common::Array<int> &expOffsets) {
+	Raw4XMDeltaDecoder decoder(data, size, dst, src, width, height, fullOffsets, expOffsets);
+	if (!decoder.reader.valid())
+		return false;
+
+	const int blocksX = (width + 7) / 8;
+	const int blocksY = (height + 7) / 8;
+	int blockOffset = 0;
+
+	for (int y = 0; y < blocksY; ++y) {
+		for (int x = 0; x < blocksX; ++x) {
+			decoder.decodeBlock(blockOffset, 8, 8, true);
+			blockOffset += 8;
+		}
+		blockOffset += width * 7;
+	}
+
+	return true;
+}
+
+static Raw4XMCacheEntry &raw4XMFindCacheEntry(Common::Array<Raw4XMCacheEntry> &cache, int32 frame) {
+	for (uint i = 0; i < cache.size(); ++i) {
+		if (cache[i].frame == frame)
+			return cache[i];
+	}
+
+	for (uint i = 0; i < cache.size(); ++i) {
+		if (cache[i].frame == -1) {
+			cache[i].frame = frame;
+			cache[i].declaredSize = 0;
+			cache[i].data.clear();
+			return cache[i];
+		}
+	}
+
+	cache[0].frame = frame;
+	cache[0].declaredSize = 0;
+	cache[0].data.clear();
+	return cache[0];
+}
+
+static bool decodeRaw4XMContainerPayload(const byte *payload, uint32 payloadSize, uint32 currentFrame,
+		Common::Array<uint16> &frame, const Common::Array<uint16> &previousFrame,
+		int width, int height, const Common::Array<int> &fullMotionOffsets,
+		const Common::Array<int> &expMotionOffsets, Common::Array<Raw4XMCacheEntry> &cache,
+		Audio::QueuingAudioStream *audioStream, Raw4XMAudioState &audioState);
+
+static bool raw4XMDecodeFullFrame(const byte *payload, uint32 payloadSize, Common::Array<uint16> &frame,
+		int width, int height) {
+	if (payloadSize < (uint32)(width * height * 2))
+		return false;
+
+	Common::MemoryReadStream fullFrameStream(payload, payloadSize);
+	for (int i = 0; i < width * height; ++i)
+		frame[i] = fullFrameStream.readUint16LE();
+	return true;
+}
+
+static void raw4XMDecodeCompressedAudio(const byte *payload, uint32 payloadSize, Audio::QueuingAudioStream *audioStream,
+		Raw4XMAudioState &audioState) {
+	if (payloadSize < 4)
+		return;
+
+	const uint32 decodedBytes = READ_LE_UINT32(payload);
+	raw4XMQueueAudio(audioStream, audioState, payload + 4, payloadSize - 4, decodedBytes);
+}
+
+static bool raw4XMDecodeCachedFrame(const byte *payload, uint32 payloadSize, uint32 currentFrame,
+		Common::Array<uint16> &frame, const Common::Array<uint16> &previousFrame,
+		int width, int height, const Common::Array<int> &fullMotionOffsets,
+		const Common::Array<int> &expMotionOffsets, Common::Array<Raw4XMCacheEntry> &cache,
+		Audio::QueuingAudioStream *audioStream, Raw4XMAudioState &audioState) {
+	if (payloadSize < 8)
+		return false;
+
+	const int32 cacheFrame = (int32)READ_LE_UINT32(payload);
+	const uint32 declaredSize = READ_LE_UINT32(payload + 4);
+	Raw4XMCacheEntry &entry = raw4XMFindCacheEntry(cache, cacheFrame);
+	entry.declaredSize = declaredSize;
+	const uint oldSize = entry.data.size();
+	entry.data.resize(oldSize + payloadSize - 8);
+	Common::copy(payload + 8, payload + payloadSize, entry.data.begin() + oldSize);
+
+	if (cacheFrame != (int32)currentFrame || entry.data.size() < 8 ||
+			READ_LE_UINT32(entry.data.data()) != kRaw4XMFrameContainer)
+		return false;
+
+	const uint32 nestedDeclaredSize = entry.declaredSize >= 8 ? entry.declaredSize : READ_LE_UINT32(entry.data.data() + 4);
+	const uint32 nestedPayloadSize = MIN<uint32>(entry.data.size() - 8, nestedDeclaredSize - 8);
+	const bool changed = decodeRaw4XMContainerPayload(entry.data.data() + 8, nestedPayloadSize, currentFrame,
+		frame, previousFrame, width, height, fullMotionOffsets, expMotionOffsets, cache, audioStream, audioState);
+
+	entry.frame = -1;
+	entry.declaredSize = 0;
+	entry.data.clear();
+	return changed;
+}
+
+static void raw4XMDecodeRawAudio(const byte *payload, uint32 payloadSize, Audio::QueuingAudioStream *audioStream,
+		Raw4XMAudioState &audioState) {
+	if (payloadSize < 4 || !audioStream)
+		return;
+
+	byte *rawAudio = (byte *)malloc(payloadSize - 4);
+	if (!rawAudio)
+		return;
+
+	Common::copy(payload + 4, payload + payloadSize, rawAudio);
+	raw4XMQueueOwnedAudio(audioStream, rawAudio, payloadSize - 4, audioState);
+}
+
+static bool decodeRaw4XMContainerPayload(const byte *payload, uint32 payloadSize, uint32 currentFrame,
+		Common::Array<uint16> &frame, const Common::Array<uint16> &previousFrame,
+		int width, int height, const Common::Array<int> &fullMotionOffsets,
+		const Common::Array<int> &expMotionOffsets, Common::Array<Raw4XMCacheEntry> &cache,
+		Audio::QueuingAudioStream *audioStream, Raw4XMAudioState &audioState) {
+	bool changed = false;
+	uint32 pos = 0;
+	while (pos + 8 <= payloadSize) {
+		uint32 subChunkId = READ_LE_UINT32(payload + pos);
+		uint32 subChunkSize = READ_LE_UINT32(payload + pos + 4);
+		if (subChunkSize < 8 || pos + subChunkSize > payloadSize)
+			break;
+
+		const byte *subPayload = payload + pos + 8;
+		const uint32 subPayloadSize = subChunkSize - 8;
+		if (subChunkId == kRaw4XMFullFrame) {
+			changed = raw4XMDecodeFullFrame(subPayload, subPayloadSize, frame, width, height) || changed;
+		} else if (subChunkId == kRaw4XMDeltaFrame) {
+			changed = applyRaw4XMDelta(subPayload, subPayloadSize, frame.data(), previousFrame.data(), width, height,
+				fullMotionOffsets, expMotionOffsets) || changed;
+		} else if (subChunkId == kRaw4XMCachedFrame) {
+			changed = raw4XMDecodeCachedFrame(subPayload, subPayloadSize, currentFrame, frame, previousFrame,
+				width, height, fullMotionOffsets, expMotionOffsets, cache, audioStream, audioState) || changed;
+		} else if (subChunkId == kRaw4XMCompressedAudio) {
+			raw4XMDecodeCompressedAudio(subPayload, subPayloadSize, audioStream, audioState);
+		} else if (subChunkId == kRaw4XMRawAudio) {
+			raw4XMDecodeRawAudio(subPayload, subPayloadSize, audioStream, audioState);
+		}
+
+		pos += subChunkSize;
+	}
+
+	return changed;
 }
 
 static const char *mfull[] = {
@@ -838,9 +1554,27 @@ void PhoenixVREngine::setupSubtitles(Video::Subtitles &subtitles) const {
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
 	debug("playMovie %s", movie.c_str());
+	Common::ScopedPtr<Common::SeekableReadStream> stream(open(movie));
+	if (!stream) {
+		warning("can't open movie %s", movie.c_str());
+		return;
+	}
+
 	Common::ScopedPtr<Video::VideoDecoder> dec;
 	if (movie.hasSuffixIgnoreCase(".4xm")) {
-		dec.reset(new Video::FourXMDecoder);
+		uint32 magic = stream->readUint32BE();
+		stream->seek(0);
+		if (magic == MKTAG('R', 'I', 'F', 'F')) {
+			dec.reset(new Video::FourXMDecoder);
+		} else if (stream->readUint32LE() == kRaw4XMFile) {
+			stream->seek(0);
+			if (!playRaw4XMMovie(*stream, movie))
+				warning("loading movie stream %s failed", movie.c_str());
+			return;
+		} else {
+			warning("unknown 4xm movie stream %s", movie.c_str());
+			return;
+		}
 	} else if (movie.hasSuffixIgnoreCase(".smk")) {
 		dec.reset(new Video::SmackerDecoder);
 	} else {
@@ -848,11 +1582,6 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		return;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(open(movie));
-	if (!stream) {
-		warning("can't open movie %s", movie.c_str());
-		return;
-	}
 	if (!dec->loadStream(stream.release())) {
 		warning("loading movie stream %s failed", movie.c_str());
 		return;
@@ -908,6 +1637,151 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		g_system->hideOverlay();
 	_system->lockMouse(_vr.isVR());
 	_mixer->pauseAll(false);
+}
+
+bool PhoenixVREngine::playRaw4XMMovie(Common::SeekableReadStream &stream, const Common::String &movie) {
+	stream.seek(0);
+	if (stream.readUint32LE() != kRaw4XMFile || stream.readUint32LE() != 0x01000000)
+		return false;
+
+	const int width = stream.readUint32LE();
+	const int height = stream.readUint32LE();
+	stream.skip(8);
+	stream.skip(4);
+	const uint32 frameRateBits = stream.readUint32LE();
+	const float frameRate = frameRateBits == 0x41700000 ? 15.0f : 15.0f;
+	Raw4XMAudioState audioState;
+	const uint16 audioCodec = stream.readUint16LE();
+	audioState.channels = stream.readUint16LE();
+	audioState.sampleRate = stream.readUint32LE();
+	stream.skip(6);
+	audioState.bits = stream.readUint16LE();
+	stream.seek(0x88);
+
+	if (width <= 0 || height <= 0)
+		return false;
+
+	debug("play raw 4xm %s, %dx%d %.2f fps", movie.c_str(), width, height, frameRate);
+	_mixer->pauseAll(true);
+	_system->lockMouse(false);
+	Audio::SoundHandle audioHandle;
+	Common::ScopedPtr<Audio::QueuingAudioStream> audioStream;
+	Audio::QueuingAudioStream *queuedAudioStream = nullptr;
+	Audio::QueuingAudioStream *playingAudioStream = nullptr;
+	if ((audioCodec == 0 || audioCodec == 1) && audioState.sampleRate > 0 &&
+			(audioState.channels == 1 || audioState.channels == 2) && audioState.bits == 16) {
+		audioStream.reset(Audio::makeQueuingAudioStream(audioState.sampleRate, audioState.channels == 2));
+		queuedAudioStream = audioStream.get();
+	}
+
+	Common::Array<uint16> frameBuffer1;
+	Common::Array<uint16> frameBuffer2;
+	frameBuffer1.resize(width * height);
+	frameBuffer2.resize(width * height);
+	Common::Array<uint16> *frame = &frameBuffer1;
+	Common::Array<uint16> *previousFrame = &frameBuffer2;
+	Graphics::ManagedSurface screenFrame(width, height, _pixelFormat);
+	Common::Array<int> fullMotionOffsets;
+	Common::Array<int> expMotionOffsets;
+	Common::Array<Raw4XMCacheEntry> cache;
+	cache.resize(256);
+	buildRaw4XMMotionTables(width, fullMotionOffsets, expMotionOffsets);
+	uint32 frameDelay = 1000 / MAX<int>(1, static_cast<int>(frameRate));
+	uint32 nextFrameTime = g_system->getMillis();
+	uint32 currentFrame = 0;
+	bool playing = true;
+	bool endOfMovie = false;
+
+	struct Raw4XMDecodedFrame {
+		Common::Array<byte> pixels;
+		bool changed = false;
+	};
+	Common::Array<Raw4XMDecodedFrame> frameQueue;
+	const uint prebufferFrames = audioStream ? 6 : 1;
+	const uint frameBytes = width * height * _pixelFormat.bytesPerPixel;
+	const uint framePitch = width * _pixelFormat.bytesPerPixel;
+
+	auto pollMovieEvents = [&]() {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.ascii == ' ')
+				playing = false;
+		}
+	};
+
+	auto decodeNextFrame = [&]() -> bool {
+		uint32 chunkStart = stream.pos();
+		uint32 chunkId = stream.readUint32LE();
+		uint32 chunkSize = stream.readUint32LE();
+		if (chunkId != kRaw4XMFrameContainer || chunkSize < 8 || chunkStart + chunkSize > (uint32)stream.size())
+			return false;
+
+		uint32 chunkEnd = chunkStart + chunkSize;
+		Common::Array<byte> payload;
+		payload.resize(chunkSize - 8);
+		stream.read(payload.data(), payload.size());
+
+		bool changed = decodeRaw4XMContainerPayload(payload.data(), payload.size(), currentFrame,
+			*frame, *previousFrame, width, height, fullMotionOffsets, expMotionOffsets, cache,
+			queuedAudioStream, audioState);
+
+		Raw4XMDecodedFrame queuedFrame;
+		queuedFrame.changed = changed;
+		if (changed) {
+			raw4XMCopyFrameToScreen(screenFrame, *frame, _pixelFormat, width, height);
+			queuedFrame.pixels.resize(frameBytes);
+			const byte *src = (const byte *)screenFrame.getPixels();
+			byte *dst = queuedFrame.pixels.data();
+			for (int y = 0; y < height; ++y)
+				Common::copy(src + y * screenFrame.pitch, src + y * screenFrame.pitch + framePitch, dst + y * framePitch);
+			SWAP(frame, previousFrame);
+		}
+		frameQueue.push_back(queuedFrame);
+
+		stream.seek(chunkEnd);
+		++currentFrame;
+		return true;
+	};
+
+	while (!shouldQuit() && playing && (!endOfMovie || !frameQueue.empty())) {
+		pollMovieEvents();
+		while (playing && !endOfMovie && frameQueue.size() < prebufferFrames && stream.pos() + 8 <= stream.size()) {
+			if (!decodeNextFrame()) {
+				endOfMovie = true;
+				break;
+			}
+			pollMovieEvents();
+		}
+		if (!playing || frameQueue.empty())
+			break;
+
+		if (audioStream) {
+			playingAudioStream = audioStream.get();
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &audioHandle, audioStream.release(), -1,
+				Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+			nextFrameTime = g_system->getMillis();
+		}
+
+		Raw4XMDecodedFrame queuedFrame = frameQueue.remove_at(0);
+		if (queuedFrame.changed) {
+			Graphics::Surface frameSurface;
+			frameSurface.init(width, height, framePitch, queuedFrame.pixels.data(), _pixelFormat);
+			_screen->simpleBlitFrom(frameSurface);
+			_screen->update();
+		}
+
+		nextFrameTime += frameDelay;
+		const uint32 now = g_system->getMillis();
+		if (nextFrameTime > now)
+			g_system->delayMillis(nextFrameTime - now);
+		_frameLimiter.startFrame();
+	}
+
+	if (playingAudioStream)
+		playingAudioStream->finish();
+	_system->lockMouse(_vr.isVR());
+	_mixer->pauseAll(false);
+	return true;
 }
 
 void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed) {
