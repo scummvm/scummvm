@@ -1427,8 +1427,9 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 	int j, num;
 	Compact *itemData;
 	bool touched = false;
+	bool buttonHeld = (_system->getEventManager()->getButtonState() != 0); // mouseEngine() consumes the click at the end so using _mouseB would increment the timer at each click not on hold
 
-	if (_mouseB)
+	if (buttonHeld)
 		_logicClick++;
 	else
 		_logicClick = 0;
@@ -1440,6 +1441,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 	num = (int)Logic::_scriptVariables[MENU_LENGTH];
 
 	if (_holding) {
+		debug(1, "Object held = %d", _touchId);
 		// dragged off of inv? Quit inv mode
 		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
 			// dragged off of the inv
@@ -1450,7 +1452,6 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 			itemData = _skyCompact->fetchCpt(_touchId);
 			itemData->frame--;
 			itemData->getToFlag = 0;
-
 			// start fresh
 			_touchId = 0;
 
@@ -1459,7 +1460,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 			return;
 		}
 		// else, wait for release, and see if release on another item
-		if (_mouseB) {
+		if (buttonHeld) {
 			// keep scanning objects to run geton/off
 			for (j = 0; j < num; j++) {
 				// fetch the compact
@@ -1556,21 +1557,21 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 	//---------------------------------------------------------------------------------------------------------------------------------------------
 
 	// touching screen, but not an object yet
-	if (_mouseB) {
+	if (buttonHeld) {
 		for (j = 0; j < num; j++) {
 			// fetch the compact
 			itemData = _skyCompact->fetchCpt(objList[j]);
 
 			if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
 			if (itemData->xcood + ((uint16)itemData->mouseRelX) + XWIDTH < xPos) continue;
-			if (itemData->ycood + ((uint16)itemData->mouseRelX) > yPos) continue;
-			if (itemData->ycood + ((uint16)itemData->mouseRelX) + YDEPTH < yPos) continue;
+			if (itemData->ycood + ((uint16)itemData->mouseRelY) > yPos) continue;
+			if (itemData->ycood + ((uint16)itemData->mouseRelY) + YDEPTH < yPos) continue;
 
 			// record what we're touching
 			Logic::_scriptVariables[SPECIAL_ITEM] = objList[j];
 
 			if (_touchId != objList[j] && !_holding) {
-				debug(1, "New touch\n");
+				debug(1, "New touch");
 				// run previous items get-off, if there was one (gone straight from one object onto another)
 				if (Logic::_scriptVariables[GET_OFF])
 					_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
@@ -1632,7 +1633,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 		}
 	}
 	// clicked outside the inventory, close it
-	if (!_touchId && _mouseB) {
+	if (!_touchId && buttonHeld) {
 		if (xPos < _invX || xPos > _invX + _invW || yPos < _invY || yPos > _invY + _invH) {
 			_mMode = MUST_RELEASE;
 			_skyLogic->killInventory();
