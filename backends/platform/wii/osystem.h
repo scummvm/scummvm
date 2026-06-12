@@ -32,6 +32,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
+#include "graphics/blit.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
@@ -62,7 +63,7 @@ private:
 
 	bool _gameRunning;
 	u16 _gameWidth, _gameHeight;
-	u8 *_gamePixels;
+	u8 *_gamePixels, *_gamePixelsTexture;
 	Graphics::Surface _surface;
 	gfx_screen_coords_t _coordsGame;
 	gfx_tex_t _texGame;
@@ -77,6 +78,7 @@ private:
 	bool _overlayDirty;
 	bool _overlayInGUI;
 
+	Graphics::FastBlitFunc _blitFunc;
 	u32 _lastScreenUpdate;
 	u16 _currentWidth, _currentHeight;
 	f32 _currentXScale, _currentYScale;
@@ -86,11 +88,9 @@ private:
 	bool _bilinearFilter;
 	const Graphics::PixelFormat _pfRGB565;
 	const Graphics::PixelFormat _pfRGB3444;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _pfGame;
 	Graphics::PixelFormat _pfGameTexture;
 	Graphics::PixelFormat _pfCursor;
-#endif
 
 	bool _consoleVisible;
 	bool _optionsDlgActive;

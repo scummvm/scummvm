@@ -50,6 +50,7 @@ OSystem_Wii::OSystem_Wii() :
 	_gameWidth(0),
 	_gameHeight(0),
 	_gamePixels(NULL),
+	_gamePixelsTexture(NULL),
 	_gameDirty(false),
 
 	_overlayVisible(true),
@@ -59,6 +60,7 @@ OSystem_Wii::OSystem_Wii() :
 	_overlayPixels(NULL),
 	_overlayDirty(false),
 
+	_blitFunc(NULL),
 	_lastScreenUpdate(0),
 	_currentWidth(0),
 	_currentHeight(0),
@@ -70,11 +72,9 @@ OSystem_Wii::OSystem_Wii() :
 	_bilinearFilter(false),
 	_pfRGB565(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
 	_pfRGB3444(Graphics::PixelFormat(2, 4, 4, 4, 3, 8, 4, 0, 12)),
-#ifdef USE_RGB_COLOR
 	_pfGame(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfGameTexture(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfCursor(Graphics::PixelFormat::createFormatCLUT8()),
-#endif
 
 	_optionsDlgActive(false),
 	_consoleVisible(false),
