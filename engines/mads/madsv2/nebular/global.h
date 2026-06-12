@@ -24,6 +24,7 @@
 
 #include "common/serializer.h"
 #include "mads/madsv2/core/vocabh.h"
+#include "mads/madsv2/nebular/conversation.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -215,17 +216,116 @@ enum {
 	SEX_MALE = 0, SEX_UNKNOWN = 1, SEX_FEMALE = 2
 };
 
-enum ScrCategory {
-	CAT_NONE = 0,
-	CAT_COMMAND = 1,
-	CAT_INV_LIST = 2,
-	CAT_INV_VOCAB = 3,
-	CAT_HOTSPOT = 4,
-	CAT_INV_ANIM = 5,
-	CAT_TALK_ENTRY = 6,
-	CAT_INV_SCROLLER = 7,
-	CAT_12 = 12
+
+// Enums used for specific individual globals
+// Section #1
+// Rex's sex/swimming state
+enum {
+	REX_MALE = 0, REX_MALE_SWIMMER = 1, REX_FEMALE = 2
 };
+
+// Section #2
+// State of Meteorologist in the outpost
+enum {
+	METEOROLOGIST_ABSENT = 0, METEOROLOGIST_PRESENT = 1, METEOROLOGIST_GONE = 2
+};
+
+// State of watching the Meteorologist
+enum {
+	METEOROLOGIST_NORMAL = 0, METEOROLOGIST_GROUND = 1, METEOROLOGIST_TOWER = 2
+};
+
+// The fat bouncy lady that can squish you on the plains
+enum {
+	RHOTUNDA_HUNGRY = 0, RHOTUNDA_STUCK = 1, RHOTUNDA_GONE = 2
+};
+
+// Flags for the bones you can take
+enum {
+	BONE_202_LEFT_GONE = 1, BONE_202_RIGHT_GONE = 2
+};
+
+// Leaves used to cover the trap
+enum {
+	LEAVES_ON_GROUND = 0, LEAVES_WITH_PLAYER = 1, LEAVES_ON_TRAP = 2
+};
+
+// Monkey ambush state
+enum {
+	MONKEY_AMBUSH_READY = 0, MONKEY_HAS_BINOCULARS = 1, MONKEY_IS_GONE = 2
+};
+
+// Teleporter status flags
+enum {
+	TELEPORTER_NONE = 0, TELEPORTER_BEAM_IN = 1, TELEPORTER_BEAM_OUT = 2,
+	TELEPORTER_STEP_OUT = 3, TELEPORTER_WRONG = 4
+};
+
+// Twinkles status
+enum {
+	TWINKLES_AT_HOME = 0, TWINKLES_GONE = 1
+};
+
+// Section #4
+// Status of the explosives
+enum {
+	EXPLOSIVES_INSIDE = 3
+};
+
+// Section #5
+// Dog status (room 602, outside Abdul's garage)
+enum {
+	DOG_PRESENT = 1, DOG_LEFT = 2, DOG_GONE = 3, DOG_DEAD = 4
+};
+
+// Dog status (room 608, inside Abdul's garage)
+enum {
+	CAR_UP = 0, CAR_SQUASHES_DOG = 1, CAR_SQUASHES_DOG_AGAIN = 2, CAR_DOWN = 3, CAR_DOWN_ON_SQUASHED_DOG = 4
+};
+
+enum {
+	SAFE_CLOSED = 0, SAFE_OPENED = 1, SAFE_CLOSED_WITH_HOLE = 2, SAFE_OPENED_WITH_HOLE = 3
+};
+
+enum {
+	LINE_NOT_DROPPED = 1, LINE_DROPPED = 2, LINE_TIED = 3, LINE_NOW_UNTIED = 4
+};
+
+// Section #6
+enum {
+	NO_CELLS = 0,				// Handset doesn't contain any cells
+	CHARGED_DURAFAIL = 1,		// Handset has charged durafail cells
+	UNCHARGED_DURAFAIL = 2,		// Handset has uncharged durafail cells */
+	PHONE_CELLS = 3,			// Handset has already charged phone cells
+	FIRST_TIME_PHONE_CELLS = 4,	// First time phone cells are in the handset
+	FIRST_TIME_UNCHARGED_DURAFAIL = 5,	// First time uncharged cells are in penlight
+	FIRST_TIME_CHARGED_DURAFAIL = 6		// First time charged cells are in penlight
+};
+
+// Time bomb status
+enum {
+	TIMEBOMB_DEACTIVATED = 0, TIMEBOMB_ACTIVATED = 1,
+	TIMEBOMB_BLOW_UP = 2, TIMEBOMB_DEAD = 3
+};
+
+/* Section #7 */
+// Status of the bottle
+enum {
+	BOTTLE_EMPTY = 0, BOTTLE_ONE_QUARTER_FULL = 1, BOTTLE_HALF_FULL = 2,
+	BOTTLE_THREE_QUARTERS_FULL = 3, BOTTLE_FULL = 4
+};
+
+// Status of the boat
+enum {
+	BOAT_UNFLOODED = 0, BOAT_ADRIFT = 1, BOAT_TIED_FLOATING = 2,
+	BOAT_TIED = 3, BOAT_GONE = 4
+};
+
+/* Miscellaneous defines */
+#define TELEPORTER_COUNT 10      // Total number of teleporters
+#define TELEPORTER_WORK_COUNT 6  // Total number that actually work
+
+extern Conversation _dialog1;
 
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);

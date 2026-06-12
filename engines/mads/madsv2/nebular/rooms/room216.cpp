@@ -19,14 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
 void Scene216::setup() {
 	setPlayerSpritesPrefix();
@@ -41,7 +45,7 @@ void Scene216::enter() {
 	_scene->_userInterface.setup(kInputConversation);
 	_scene->loadAnimation(formAnimName('A', -1), 60);
 
-	sceneEntrySound();
+	section_2_music();
 }
 
 void Scene216::step() {
@@ -49,6 +53,19 @@ void Scene216::step() {
 		_scene->_nextSceneId = 215;
 }
 
+void room_216_preload() {
+	room_init_code_pointer = room_216_init;
+	room_pre_parser_code_pointer = room_216_pre_parser;
+	room_parser_code_pointer = room_216_parser;
+	room_daemon_code_pointer = room_216_daemon;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_2_walker();
+	section_2_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

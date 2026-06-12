@@ -19,35 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"	q	
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene201::Scene201(RexNebularEngine *vm) : Scene2xx(vm) {
-	_pterodactylFlag = false;
-}
+struct Scratch {
+	bool _pterodactylFlag;
+};
 
-void Scene201::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_pterodactylFlag);
-}
 
-void Scene201::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_SWOOPING_CREATURE);
-	_scene->addActiveVocab(NOUN_BIRDS);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene201::enter() {
+static void room_201_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', -1));
@@ -113,28 +105,28 @@ void Scene201::enter() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -1, 12);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 12, 70);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
-		_pterodactylFlag = false;
+		local._pterodactylFlag = false;
 		_game._player.walk(Common::Point(157, 143), FACING_NORTH);
 		_vm->_palette->setEntry(252, 45, 63, 45);
 		_vm->_palette->setEntry(253, 20, 45, 20);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));
 	} else
-		_pterodactylFlag = true;
+		local._pterodactylFlag = true;
 
 	if (_globals[kTeleporterUnderstood])
 		_scene->_hotspots.activate(NOUN_STRANGE_DEVICE, false);
 
-	sceneEntrySound();
+	section_2_music();
 }
 
-void Scene201::step() {
-	if (_pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
+static void room_201_daemon() {
+	if (local._pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
 		int idx = _scene->_dynamicHotspots.add(351, 13, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
 		_vm->_sound->command(14);
-		_pterodactylFlag = false;
+		local._pterodactylFlag = false;
 	}
 
 	if (_game._trigger == 70) {
@@ -201,7 +193,7 @@ void Scene201::step() {
 	}
 }
 
-void Scene201::actions() {
+static void room_201_parser() {
 	if (_action._lookFlag == false) {
 		if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH))
 			_scene->_nextSceneId = 202;
@@ -247,6 +239,24 @@ void Scene201::actions() {
 	_action._inProgress = false;
 }
 
+void room_201_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._pterodactylFlag);
+}
+
+void room_201_preload() {
+	room_init_code_pointer = room_201_init;
+	room_parser_code_pointer = room_201_parser;
+	room_daemon_code_pointer = room_201_daemon;
+
+	section_2_walker();
+	section_2_interface();
+
+	_scene->addActiveVocab(NOUN_SWOOPING_CREATURE);
+	_scene->addActiveVocab(NOUN_BIRDS);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

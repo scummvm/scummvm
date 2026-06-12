@@ -589,6 +589,9 @@ extern void kernel_random_messages_init(int max_messages_at_once,
 	int min_x, int max_x, int min_y, int max_y,
 	int min_y_spacing, int teletype_rate, int color,
 	int duration, int quote_id, ...);
+extern void kernel_random_messages_vinit(int max_messages_at_once,
+	int min_x, int max_x, int min_y, int max_y, int min_y_spacing,
+	int teletype_rate, int color, int duration, int quote_id, va_list marker);
 
 /**
  * Returns the number of idle chatter messages currently being displayed.

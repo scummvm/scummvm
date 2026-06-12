@@ -2599,10 +2599,9 @@ void kernel_random_purge() {
 	}
 }
 
-void kernel_random_messages_init(int max_messages_at_once,
+void kernel_random_messages_vinit(int max_messages_at_once,
 		int min_x, int max_x, int min_y, int max_y, int min_y_spacing,
-		int teletype_rate, int color, int duration, int quote_id, ...) {
-	va_list marker;
+		int teletype_rate, int color, int duration, int quote_id, va_list marker) {
 	int my_quote = quote_id;
 
 	random_max_messages = max_messages_at_once;
@@ -2617,7 +2616,6 @@ void kernel_random_messages_init(int max_messages_at_once,
 
 	random_quote_list_size = 0;
 
-	va_start(marker, quote_id);
 	while (my_quote > 0) {
 		if (random_quote_list_size < KERNEL_MAX_RANDOM_QUOTES) {
 			random_quote_list[random_quote_list_size++] = my_quote;
@@ -2628,6 +2626,16 @@ void kernel_random_messages_init(int max_messages_at_once,
 
 	va_end(marker);
 	kernel_random_purge();
+}
+
+void kernel_random_messages_init(int max_messages_at_once,
+	int min_x, int max_x, int min_y, int max_y, int min_y_spacing,
+	int teletype_rate, int color, int duration, int quote_id, ...) {
+	va_list marker;
+	va_start(marker, quote_id);
+	kernel_random_messages_vinit(max_messages_at_once, min_x, max_x, min_y, max_y,
+		min_y_spacing, teletype_rate, color, duration, quote_id, marker);
+	va_end(marker);
 }
 
 int kernel_check_random() {

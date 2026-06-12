@@ -19,14 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
 Scene209::Scene209(RexNebularEngine *vm) : Scene2xx(vm) {
 	_dodgeFl = false;
@@ -1065,7 +1069,7 @@ void Scene209::enter() {
 
 	_scene->_hotspots.activate(227, false);
 
-	sceneEntrySound();
+	section_2_music();
 }
 
 void Scene209::step() {
@@ -1782,6 +1786,19 @@ void Scene209::actions() {
 	}
 }
 
+void room_209_preload() {
+	room_init_code_pointer = room_209_init;
+	room_pre_parser_code_pointer = room_209_pre_parser;
+	room_parser_code_pointer = room_209_parser;
+	room_daemon_code_pointer = room_209_daemon;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_2_walker();
+	section_2_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

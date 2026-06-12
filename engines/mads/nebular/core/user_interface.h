@@ -97,42 +97,6 @@ public:
 	void draw(bool updateFlag, bool delFlag);
 };
 
-class Conversation {
-private:
-	static RexNebularEngine *_vm;
-public:
-	static void init(RexNebularEngine *vm);
-public:
-	int _globalId;
-	Common::Array<int> _quotes;
-
-	/**
-	 * Set up a conversation sequence
-	 */
-	void setup(int globalId, ...);
-
-	/**
-	 * Activates the passed set of quotes in the given conversation node
-	 */
-	void set(int quoteId, ...);
-
-	/**
-	 * Returns the bit for a given quote to indicate whether it's active or not or,
-	 * if 0 is passed, returns the number of currently active quotes
-	 */
-	int read(int quoteId);
-
-	/**
-	 * Activates or deactivates the specified quote in the given conversation node
-	 */
-	void write(int quoteId, bool flag);
-
-	/**
-	 * Starts the conversation
-	 */
-	void start();
-};
-
 class UserInterface : public MSurface {
 	friend class UISlots;
 private:

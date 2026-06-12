@@ -23,6 +23,7 @@
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/player.h"
@@ -73,6 +74,17 @@ void Game::Objects::setRoom(int object_id, int roomNum) {
 	inter_move_object(object_id, roomNum);
 }
 
+void Game::Objects::removeFromInventory(int objectId, int newScene) {
+
+}
+
+Game::Object Game::Objects::operator[](int idx) {
+	return Game::Object(idx);
+}
+
+Game::Object::Object(int idx) : _roomNumber(object[idx].location) {
+}
+
 void Game::VisitedScenes::add(int roomNum) {
 	player_discover_room(roomNum);
 }
@@ -87,13 +99,9 @@ void Game::VisitedScenes::pop_back() {
 
 void Game::loadQuoteSet(int quote1, ...) {
 	va_list va;
-	int id = quote1;
 	va_start(va, quote1);
 
-	while (id) {
-		quote_load(id, 0);
-		id = va_arg(va, int);
-	}
+	kernel.quotes = quote_vload(quote1, va);
 
 	va_end(va);
 }
@@ -122,6 +130,10 @@ void Game::Player::update() {
 	player_set_image();
 }
 
+void Game::Player::removePlayerSprites() {
+	kernel_dump_walker_only();
+}
+
 char *Resources::formatName(int my_room, char type, int num, int ext, const char *text) {
 	return kernel_full_name(my_room, type, num, text, ext);
 }
@@ -138,6 +150,14 @@ void Scene::Animation::setNextFrameTimer(long time) {
 	kernel_anim[_id].next_clock = time;
 }
 
+void Scene::Animation::setCurrentFrame(int frameNum) {
+	kernel_anim[_id].frame = frameNum;
+}
+
+void Scene::Animation::resetSpriteSetsCount() {
+	error("TODO: resetSpriteSetsCount");
+}
+
 int Scene::DynamicHotspots::add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r) {
 	return kernel_add_dynamic(vocab_id, verb_id, 0, auto_sequence,
 		r.left, r.top, r.width(), r.height());
@@ -149,6 +169,10 @@ void Scene::DynamicHotspots::remove(int dyn_id) {
 
 void Scene::DynamicHotspots::setPosition(int id, const Common::Point &pt, int facing) {
 	kernel_dynamic_walk(id, pt.x, pt.y, facing);
+}
+
+int Scene::DynamicHotspots::setCursor(int index, int cursor) {
+
 }
 
 void Scene::Hotspots::activate(int hotspot, int active) {
@@ -164,12 +188,42 @@ int Scene::KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 fl
 	return kernel_message_add(const_cast<char *>(msg.c_str()), pt.x, pt.y, fontColor, timeout, endTrigger, 0);
 }
 
+void Scene::KernelMessages::remove(int msgIndex) {
+	kernel_message_delete(msgIndex);
+}
+
 void Scene::KernelMessages::reset() {
 	kernel_message_purge();
 }
 
 void Scene::KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 	kernel_message_teletype(msgIndex, numTicks, quoted);
+}
+
+void Scene::KernelMessages::setSeqIndex(int msgIndex, int seqIndex) {
+	kernel_message_attach(msgIndex, seqIndex);
+}
+
+void Scene::KernelMessages::initRandomMessages(int maxSimultaneousMessages,
+		const Common::Rect &bounds, int minYSpacing, int scrollRate,
+		int color, int duration, int quoteId, ...) {
+	va_list marker;
+	va_start(marker, quoteId);
+	kernel_random_messages_vinit(maxSimultaneousMessages, bounds.left, bounds.right,
+		bounds.top, bounds.bottom, minYSpacing, scrollRate, color, duration, quoteId, marker);
+	va_end(marker);
+}
+
+void Scene::KernelMessages::randomServer() {
+	kernel_random_message_server();
+}
+
+int Scene::KernelMessages::checkRandom() {
+	return kernel_check_random();
+}
+
+bool Scene::KernelMessages::generateRandom(int major, int minor) {
+	return kernel_generate_random_message(major, minor);
 }
 
 Scene::KernelMessages::KernelMessageProxy Scene::KernelMessages::Entries::operator[](uint handle) {
@@ -316,6 +370,11 @@ void VM::Dialogs::showItem(int object_id, int message, int speech) {
 	object_examine(object_id, message, speech);
 }
 
+void VM::Events::setCursor2(int cursorNum) {
+	cursor_id = cursorNum;
+	mouse_cursor_sprite(cursor, cursorNum);
+}
+
 void VM::Palette::setEntry(int color, int r, int g, int b) {
 	pal_change_color(color, r, g, b);
 }
@@ -324,12 +383,20 @@ void VM::Palette::refreshSceneColors() {
 	kernel_new_palette();
 }
 
+void VM::Palette::lock() {
+	pal_lock();
+}
+
 void VM::Sound::command(int num, int distance) {
 	g_engine->_soundManager->command(num, distance);
 }
 
 int VM::getRandomNumber(int min, int max) {
 	return g_engine->getRandomNumber(min, max);
+}
+
+int VM::getRandomNumber(int max) {
+	return g_engine->getRandomNumber(max);
 }
 
 char *formAnimName(char type, int num) {

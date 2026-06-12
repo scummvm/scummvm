@@ -19,39 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene205::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_CHICKEN);
-	_scene->addActiveVocab(NOUN_PIRANHA);
-}
+struct Scratch {
+	long _lastFishTime;
+	long _chickenTime;
+	bool _beingKicked;
+	int16 _kernelMessage;
+};
 
-Scene205::Scene205(RexNebularEngine *vm) : Scene2xx(vm) {
-	_lastFishTime = _scene->_frameStartTime;
-	_chickenTime = _scene->_frameStartTime;
+static Scratch local;
 
-	_beingKicked = false;
-	_kernelMessage = -1;
-}
 
-void Scene205::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-
-	s.syncAsByte(_beingKicked);
-	s.syncAsSint16LE(_kernelMessage);
-}
-
-void Scene205::enter() {
+static void room_205_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2));
@@ -87,7 +78,7 @@ void Scene205::enter() {
 		_scene->_hotspots.activate(450, false);
 	}
 
-	_beingKicked = false;
+	local._beingKicked = false;
 	_game.loadQuoteSet(0x6B, 0x70, 0x71, 0x72, 0x5A, 0x74, 0x75, 0x76, 0x77, 0x78, 0x73, 0x79, 0x7A, 0x7B, 0x7C,
 		0x7D, 0x7E, 0x7F, 0x80, 0xAC, 0xAD, 0xAE, 0x6C, 0x6D, 0x6E, 0x6F, 0x2, 0);
 	_dialog1.setup(0x2A, 0x5A, 0x78, 0x74, 0x75, 0x76, 0x77, 0);
@@ -100,7 +91,7 @@ void Scene205::enter() {
 	_vm->_palette->setEntry(252, 63, 63, 40);
 	_vm->_palette->setEntry(253, 50, 50, 30);
 
-	_chickenTime = _vm->_game->_scene._frameStartTime;
+	local._chickenTime = _vm->_game->_scene._frameStartTime;
 
 	if (_globals[kSexOfRex] == SEX_FEMALE)
 		_scene->_kernelMessages.initRandomMessages(3,
@@ -114,7 +105,7 @@ void Scene205::enter() {
 		_scene->loadAnimation(formAnimName('a', -1));
 		_scene->_animation[0]->_resetFlag = true;
 	} else {
-		_beingKicked = true;
+		local._beingKicked = true;
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
@@ -123,29 +114,29 @@ void Scene205::enter() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_SPRITE, 11, 74);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
-	sceneEntrySound();
+	section_2_music();
 }
 
-void Scene205::step() {
+static void room_205_daemon() {
 	if (_globals[kSexOfRex] == SEX_FEMALE) {
 		_scene->_kernelMessages.randomServer();
 
-		if (_vm->_game->_scene._frameStartTime >= _chickenTime) {
+		if (_vm->_game->_scene._frameStartTime >= local._chickenTime) {
 			int chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
 			if (_scene->_kernelMessages.generateRandom(100, chanceMinor))
 				_vm->_sound->command(28);
 
-			_chickenTime = _vm->_game->_scene._frameStartTime + 2;
+			local._chickenTime = _vm->_game->_scene._frameStartTime + 2;
 		}
 	}
 
-	if (_vm->_game->_scene._frameStartTime - _lastFishTime > 1300) {
+	if (_vm->_game->_scene._frameStartTime - local._lastFishTime > 1300) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(
 			_globals._spriteIndexes[6], false, 5, 1, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6],
 			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
-		_lastFishTime = _vm->_game->_scene._frameStartTime;
+		local._lastFishTime = _vm->_game->_scene._frameStartTime;
 	}
 
 	if (_game._trigger == 73)
@@ -168,15 +159,15 @@ void Scene205::step() {
 		_scene->_nextSceneId = 211;
 }
 
-void Scene205::handleWomanSpeech(int quote) {
-	_kernelMessage = _scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(quote));
+static void handleWomanSpeech(int quote) {
+	local._kernelMessage = _scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(quote));
 }
 
-void Scene205::actions() {
+static void room_205_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation) {
-		if (_kernelMessage >= 0)
-			_scene->_kernelMessages.remove(_kernelMessage);
-		_kernelMessage = -1;
+		if (local._kernelMessage >= 0)
+			_scene->_kernelMessages.remove(local._kernelMessage);
+		local._kernelMessage = -1;
 
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
@@ -323,6 +314,29 @@ void Scene205::actions() {
 	_action._inProgress = false;
 }
 
+void room_205_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._beingKicked);
+	s.syncAsSint16LE(local._kernelMessage);
+}
+
+void room_205_preload() {
+	local._lastFishTime = _scene->_frameStartTime;
+	local._chickenTime = _scene->_frameStartTime;
+	local._beingKicked = false;
+	local._kernelMessage = -1;
+
+	room_init_code_pointer = room_205_init;
+	room_parser_code_pointer = room_205_parser;
+	room_daemon_code_pointer = room_205_daemon;
+
+	section_2_walker();
+	section_2_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_CHICKEN);
+	_scene->addActiveVocab(NOUN_PIRANHA);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -35,6 +35,12 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
+#define CURSOR_ARROW CURSOR_NORMAL
+#define CURSOR_GO_DOWN CURSOR_DOWN
+#define CURSOR_GO_UP CURSOR_UP
+#define CURSOR_GO_LEFT CURSOR_LEFT
+#define CURSOR_GO_RIGHT CURSOR_RIGHT
+
 enum EXTTYPE {
 	EXT_NONE = -1, EXT_SS = 1, EXT_AA = 2, EXT_DAT = 3, EXT_HH = 4,
 	EXT_ART = 5, EXT_INT = 6
@@ -66,6 +72,11 @@ enum SpriteAnimType {
 	ANIMTYPE_STAMP = AA_STAMP
 };
 
+enum ScrCategory {
+	CAT_NONE = 0, CAT_COMMAND = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
+	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_TALK_ENTRY = 6, CAT_INV_SCROLLER = 7,
+	CAT_12 = 12
+};
 
 enum ScreenTransition {
 	kTransitionNone = 0,
@@ -101,6 +112,7 @@ struct Action {
 
 	struct SavedFields {
 		int &_lookFlag = player.look_around;
+		int &_mainObjectSource = player.main_object_source;
 	};
 	SavedFields _savedFields;
 
@@ -118,6 +130,7 @@ struct Action {
 
 	int &_lookFlag = player.look_around;
 	int &_inProgress = player.command_ready;
+	int &_commandSource = player.command_source;
 };
 extern Action _action;
 
@@ -138,13 +151,6 @@ struct Scene {
 	}
 
 	struct Animation {
-		int16 _id = -1;
-		bool operator!=(std::nullptr_t) const {
-			return _id != -1;
-		}
-		bool operator==(std::nullptr_t) const {
-			return _id == -1;
-		}
 		Animation *operator->() {
 			return this;
 		}
@@ -152,8 +158,27 @@ struct Scene {
 			return this;
 		}
 
+		int16 _id = -1;
+		bool operator!() const {
+			return _id == -1;
+		}
+		bool operator!=(std::nullptr_t) const {
+			return _id != -1;
+		}
+		bool operator==(std::nullptr_t) const {
+			return _id == -1;
+		}
+		explicit operator bool() const {
+			return _id != -1;
+		}
+
+		// TODO: Not sure what to map this to
+		bool _resetFlag;
+
 		int getCurrentFrame() const;
 		void setNextFrameTimer(long time);
+		void setCurrentFrame(int frameNum);
+		void resetSpriteSetsCount();
 	};
 	Animation _animation[10];
 
@@ -161,6 +186,7 @@ struct Scene {
 		int add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r);
 		void remove(int dyn_id);
 		void setPosition(int id, const Common::Point &pt, int facing);
+		int setCursor(int index, int cursor);
 	};
 	DynamicHotspots _dynamicHotspots;
 
@@ -194,8 +220,17 @@ struct Scene {
 
 		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 			uint32 timeout, const Common::String &msg);
+		void remove(int msgIndex);
 		void reset();
 		void setQuoted(int msgIndex, int numTicks, bool quoted);
+		void setSeqIndex(int msgIndex, int seqIndex);
+
+		void initRandomMessages(int maxSimultaneousMessages,
+			const Common::Rect &bounds, int minYSpacing, int scrollRate,
+			int color, int duration, int quoteId, ...);
+		void randomServer();
+		int checkRandom();
+		bool generateRandom(int major, int minor);
 	};
 	KernelMessages _kernelMessages;
 
@@ -293,7 +328,7 @@ struct Scene {
 	byte &_roomChanged = kernel.teleported_in;
 	int &_currentSceneId = room_id;
 
-	int loadAnimation(const char *name, int trigger_code);
+	int loadAnimation(const char *name, int trigger_code = 0);
 	void freeAnimation();
 	void changeVariant(int num);
 	void drawElements(int transitionType, bool surfaceFlag);
@@ -311,12 +346,21 @@ struct Game {
 		return this;
 	}
 
+	struct Object {
+		int16 &_roomNumber;
+
+		Object(int objectNum);
+	};
+
 	struct Objects {
 		void addToInventory(int object_id);
 		bool isInRoom(int object_id) const;
 		bool isInInventory(int object_id) const;
 		int getIdFromDesc(int desc_id) const;
 		void setRoom(int object_id, int roomNum);
+		void removeFromInventory(int objectId, int newScene);
+
+		Object operator[](int idx);
 	};
 	Objects _objects;
 
@@ -336,6 +380,9 @@ struct Game {
 
 			bool operator==(const Common::Point &rhs) const {
 				return x == rhs.x && y == rhs.y;
+			}
+			bool operator!=(const Common::Point &rhs) const {
+				return x != rhs.x || y != rhs.y;
 			}
 		};
 		PlayerPoint _playerPos;
@@ -365,6 +412,7 @@ struct Game {
 		bool &_stepEnabled = player.commands_allowed;
 		char *const q = &player.series_name[0];
 		byte &_spritesChanged = player.walker_must_reload;
+		int &_beenVisible = player.walker_been_visible;
 		byte &_loadsFirst = player.walker_loads_first;
 		int &_needToWalk = player.need_to_walk;
 		int &_readyToWalk = player.ready_to_walk;
@@ -383,10 +431,16 @@ struct Game {
 		void walk(const Common::Point &pt, int facing);
 		void cancelCommand();
 		void update();
+		void removePlayerSprites();
 	};
 	Player _player;
 
 	Scene &_scene = Rooms::_scene;
+
+	struct ScreenObjects {
+		int &_inputMode = inter_input_mode;
+	};
+	ScreenObjects _screenObjects;
 
 	struct VisitedScenes {
 		byte &_sceneRevisited = player.been_here_before;
@@ -453,11 +507,24 @@ struct VM {
 	};
 	Dialogs _dialogs;
 
+	struct Events {
+		Events *operator->() {
+			return this;
+		}
+		const Events *operator->() const {
+			return this;
+		}
+
+		void setCursor2(int cursorNum);
+	};
+	Events _events;
+
 	Game &_game = Rooms::_game;
 
 	struct Palette {
 		void setEntry(int color, int r, int g, int b);
 		void refreshSceneColors();
+		void lock();
 	};
 	Palette _paletteInstance;
 	Palette *const _palette = &_paletteInstance;
@@ -475,6 +542,7 @@ struct VM {
 	Sound _sound;
 
 	int getRandomNumber(int min, int max);
+	int getRandomNumber(int max);
 };
 extern VM _vm;
 

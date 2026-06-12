@@ -19,14 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
 Scene214::Scene214(RexNebularEngine *vm) : Scene2xx(vm) {
 	_devilTime = 0;
@@ -75,7 +79,7 @@ void Scene214::enter() {
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(191, 152);
 
-	sceneEntrySound();
+	section_2_music();
 }
 
 void Scene214::step() {
@@ -252,6 +256,19 @@ void Scene214::actions() {
 	_action._inProgress = false;
 }
 
+void room_214_preload() {
+	room_init_code_pointer = room_214_init;
+	room_pre_parser_code_pointer = room_214_pre_parser;
+	room_parser_code_pointer = room_214_parser;
+	room_daemon_code_pointer = room_214_daemon;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_2_walker();
+	section_2_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

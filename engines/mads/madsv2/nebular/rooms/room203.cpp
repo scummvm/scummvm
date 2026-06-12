@@ -19,34 +19,28 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene203::Scene203(RexNebularEngine *vm) : Scene2xx(vm) {
-	_rhotundaEat2Fl = false;
-	_rhotundaEatFl = false;
-}
+struct Scratch {
+	bool _rhotundaEat2Fl;
+	bool _rhotundaEatFl;
+};
 
-void Scene203::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_rhotundaEat2Fl);
-	s.syncAsByte(_rhotundaEatFl);
-}
 
-void Scene203::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(477);
-}
-
-void Scene203::enter() {
+static void room_203_init() {
 	if (_scene->_priorSceneId == 202) {
 		_game._player._playerPos = Common::Point(187, 99);
 		_game._player._facing = FACING_SOUTH;
@@ -58,18 +52,18 @@ void Scene203::enter() {
 		_game._player._facing = FACING_NORTH;
 	}
 
-	_rhotundaEatFl = false;
-	_rhotundaEat2Fl = false;
+	local._rhotundaEatFl = false;
+	local._rhotundaEat2Fl = false;
 
 	if ((_globals[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
-		_rhotundaEatFl = true;
+		local._rhotundaEatFl = true;
 		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(155, 152), FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
 
-	if (!_rhotundaEatFl) {
+	if (!local._rhotundaEatFl) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1));
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
@@ -81,24 +75,24 @@ void Scene203::enter() {
 
 	_game.loadQuoteSet(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
 
-	if (_rhotundaEatFl) {
+	if (local._rhotundaEatFl) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(_vm->getRandomNumber(103, 106)));
 	}
 
-	sceneEntrySound();
+	section_2_music();
 }
 
-void Scene203::step() {
-	if (!_rhotundaEatFl)
+static void room_203_daemon() {
+	if (!local._rhotundaEatFl)
 		return;
 
-	if ((_game._trigger == 0) && _rhotundaEat2Fl)
+	if ((_game._trigger == 0) && local._rhotundaEat2Fl)
 		return;
 
 	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._facing != FACING_SOUTH))
 		return;
 
-	_rhotundaEat2Fl = true;
+	local._rhotundaEat2Fl = true;
 
 	if (_game._trigger == 0) {
 		_game._player._visible = false;
@@ -114,8 +108,8 @@ void Scene203::step() {
 	}
 }
 
-void Scene203::preActions() {
-	if (_rhotundaEatFl && !_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
+static void room_203_pre_parser() {
+	if (local._rhotundaEatFl && !_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
 		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
@@ -125,7 +119,7 @@ void Scene203::preActions() {
 		_game._player._walkOffScreenSceneId = 209;
 }
 
-void Scene203::actions() {
+static void room_203_parser() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(20307);
 	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
@@ -150,6 +144,23 @@ void Scene203::actions() {
 	_action._inProgress = false;
 }
 
+void room_203_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._rhotundaEat2Fl);
+	s.syncAsByte(local._rhotundaEatFl);
+}
+
+void room_203_preload() {
+	room_init_code_pointer = room_203_init;
+	room_pre_parser_code_pointer = room_203_pre_parser;
+	room_parser_code_pointer = room_203_parser;
+	room_daemon_code_pointer = room_203_daemon;
+
+	section_2_walker();
+	section_2_interface();
+	_scene->addActiveVocab(477);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

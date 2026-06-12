@@ -19,14 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
 void Scene213::setup() {
 	_game._player._spritesPrefix = "";
@@ -45,7 +49,7 @@ void Scene213::enter() {
 
 	teleporterEnter();
 
-	// The original is calling Scene2xx::sceneEntrySound()
+	// The original is calling Scene2xx::section_2_music()
 	if (_vm->_musicFlag) {
 		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 			_vm->_sound->command(1);
@@ -90,6 +94,19 @@ void Scene213::actions() {
 	_action._inProgress = false;
 }
 
+void room_213_preload() {
+	room_init_code_pointer = room_213_init;
+	room_pre_parser_code_pointer = room_213_pre_parser;
+	room_parser_code_pointer = room_213_parser;
+	room_daemon_code_pointer = room_213_daemon;
+
+	anim_himem_preload(formAnimName('A', -1), 3);
+
+	section_2_walker();
+	section_2_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

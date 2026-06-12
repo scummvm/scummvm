@@ -71,6 +71,7 @@ MODULE_OBJS += \
 	madsv2/core/window.o \
 	madsv2/core/xms.o \
 	madsv2/nebular/nebular.o \
+	madsv2/nebular/conversation.o \
 	madsv2/nebular/global.o \
 	madsv2/nebular/mads/mads.o \
 	madsv2/nebular/rooms/thunks.o \
@@ -86,6 +87,20 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/room110.o \
 	madsv2/nebular/rooms/room111.o \
 	madsv2/nebular/rooms/room112.o \
+	madsv2/nebular/rooms/room201.o \
+	madsv2/nebular/rooms/room202.o \
+	madsv2/nebular/rooms/room203.o \
+	madsv2/nebular/rooms/room205.o \
+	madsv2/nebular/rooms/room207.o \
+	madsv2/nebular/rooms/room208.o \
+	madsv2/nebular/rooms/room209.o \
+	madsv2/nebular/rooms/room210.o \
+	madsv2/nebular/rooms/room211.o \
+	madsv2/nebular/rooms/room212.o \
+	madsv2/nebular/rooms/room213.o \
+	madsv2/nebular/rooms/room214.o \
+	madsv2/nebular/rooms/room215.o \
+	madsv2/nebular/rooms/room216.o \
 	madsv2/nebular/rooms/section1.o \
 	madsv2/phantom/mads/mads.o \
 	madsv2/phantom/rooms/section1.o \

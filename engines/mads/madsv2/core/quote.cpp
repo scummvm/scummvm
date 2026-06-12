@@ -34,6 +34,14 @@ int quote_emergency = false;
 
 char *quote_load(int quote_id, ...) {
 	va_list marker;
+	va_start(marker, quote_id);
+	char *result = quote_vload(quote_id, marker);
+	va_end(marker);
+
+	return result;
+}
+
+char *quote_load(int quote_id, va_list marker) {
 	int quote_error = 0;
 	int id;
 	int mark;

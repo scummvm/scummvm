@@ -19,65 +19,39 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/room201.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene202::Scene202(RexNebularEngine *vm) : Scene2xx(vm) {
-	_activeMsgFl = false;
-	_ladderTopFl = false;
-	_waitingMeteoFl = false;
-	_ladderHotspotId = -1;
-	_meteoClock1 = 0;
-	_meteoClock2 = 0;
-	_toStationFl = false;
-	_toTeleportFl = false;
-	_lastRoute = 0;
-	_stationCounter = 0;
-	_meteoFrame = 0;
-	_startTime = 0;
-	_meteorologistSpecial = false;
-}
+struct Scratch {
+	bool _activeMsgFl;
+	bool _ladderTopFl;
+	bool _waitingMeteoFl;
+	bool _toStationFl;
+	bool _toTeleportFl;
+	long _ladderHotspotId;
+	long _lastRoute;
+	long _stationCounter;
+	long _meteoFrame;
+	long _meteoClock1;
+	long _meteoClock2;
+	long _startTime;
+	byte _meteorologistSpecial;
+};
 
-void Scene202::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_activeMsgFl);
-	s.syncAsByte(_ladderTopFl);
-	s.syncAsByte(_waitingMeteoFl);
-	s.syncAsByte(_toStationFl);
-	s.syncAsByte(_toTeleportFl);
 
-	s.syncAsSint32LE(_ladderHotspotId);
-	s.syncAsSint32LE(_lastRoute);
-	s.syncAsSint32LE(_stationCounter);
-	s.syncAsSint32LE(_meteoFrame);
-
-	s.syncAsUint32LE(_meteoClock1);
-	s.syncAsUint32LE(_meteoClock2);
-	s.syncAsUint32LE(_startTime);
-
-	s.syncAsByte(_meteorologistSpecial);
-}
-
-void Scene202::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_LADDER);
-	_scene->addActiveVocab(VERB_CLIMB_DOWN);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_BONE);
-	_scene->addActiveVocab(NOUN_SKULL);
-	_scene->addActiveVocab(NOUN_BROKEN_LADDER);
-}
-
-void Scene202::enter() {
+static void room_202_init() {
 	_game._player._beenVisible = true;
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
@@ -136,19 +110,19 @@ void Scene202::enter() {
 	}
 
 	_game.loadQuoteSet(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
-	_activeMsgFl = false;
+	local._activeMsgFl = false;
 
 	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
-		if (_waitingMeteoFl) {
+		if (local._waitingMeteoFl) {
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 			_game._player._visible = false;
 		}
 	} else {
-		_waitingMeteoFl = false;
-		_ladderTopFl = false;
+		local._waitingMeteoFl = false;
+		local._ladderTopFl = false;
 	}
 
-	_meteoClock1 = _meteoClock2 = _scene->_frameStartTime;
+	local._meteoClock1 = local._meteoClock2 = _scene->_frameStartTime;
 
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BINOCULARS);
@@ -156,9 +130,9 @@ void Scene202::enter() {
 	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		_ladderTopFl = (_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER);
+		local._ladderTopFl = (_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER);
 
-		if (_ladderTopFl) {
+		if (local._ladderTopFl) {
 			_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 8);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
 
@@ -178,7 +152,7 @@ void Scene202::enter() {
 		_scene->loadAnimation(formAnimName('M', -1), 71);
 		_scene->_animation[0]->setCurrentFrame(200);
 	} else {
-		if (_ladderTopFl) {
+		if (local._ladderTopFl) {
 			_game._player._visible = false;
 			_scene->_sequences.startCycle(_globals._sequenceIndexes[9], true, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
@@ -188,38 +162,38 @@ void Scene202::enter() {
 		}
 	}
 
-	_meteorologistSpecial = false;
+	local._meteorologistSpecial = false;
 }
 
-void Scene202::setRandomKernelMessage() {
+static void setRandomKernelMessage() {
 	int vocabId = _vm->getRandomNumber(92, 96);
 	_scene->_kernelMessages.reset();
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 70, 120, _game.getQuote(vocabId));
-	_activeMsgFl = true;
+	local._activeMsgFl = true;
 }
 
-void Scene202::step() {
-	if (!_activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH) && (_vm->getRandomNumber(999) == 0)) {
+static void room_202_daemon() {
+	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH) && (_vm->getRandomNumber(999) == 0)) {
 		_scene->_kernelMessages.reset();
-		_activeMsgFl = false;
+		local._activeMsgFl = false;
 		if (_vm->getRandomNumber(4) == 0)
 			setRandomKernelMessage();
 	}
 
 	if (_game._trigger == 70)
-		_activeMsgFl = false;
+		local._activeMsgFl = false;
 
 	if (_game._trigger == 71) {
 		_vm->_sound->command(3);
 		_vm->_sound->command(9);
 
-		_meteoClock1 = _scene->_frameStartTime + 15 * 60;
+		local._meteoClock1 = _scene->_frameStartTime + 15 * 60;
 
 		if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL) {
 			Common::Point msgPos;
 			int msgFlag;
-			if (!_ladderTopFl) {
+			if (!local._ladderTopFl) {
 				msgPos = Common::Point(0, 0);
 				msgFlag = 2;
 			} else {
@@ -235,7 +209,7 @@ void Scene202::step() {
 				_action._activeAction._indirectObjectId = NOUN_STRANGE_DEVICE;
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
 				_scene->_sequences.addTimer(2 * 60, 2);
-				_meteorologistSpecial = true;
+				local._meteorologistSpecial = true;
 			} else if (_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER) {
 				_scene->_sequences.addTimer(2 * 60, 90);
 			}
@@ -281,7 +255,7 @@ void Scene202::step() {
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[11]);
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
-		_ladderTopFl = false;
+		local._ladderTopFl = false;
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(99));
 	}
@@ -290,29 +264,29 @@ void Scene202::step() {
 		break;
 	}
 
-	if (!_scene->_animation[0] && (_globals[kMeteorologistStatus] != METEOROLOGIST_GONE) && (_meteoClock2 <= _scene->_frameStartTime) && (_meteoClock1 <= _scene->_frameStartTime)) {
+	if (!_scene->_animation[0] && (_globals[kMeteorologistStatus] != METEOROLOGIST_GONE) && (local._meteoClock2 <= _scene->_frameStartTime) && (local._meteoClock1 <= _scene->_frameStartTime)) {
 		int randVal = _vm->getRandomNumber(1, 500);
 		int threshold = 1;
-		if (_ladderTopFl)
+		if (local._ladderTopFl)
 			threshold += 25;
 		if (!_globals[kMeteorologistEverSeen])
 			threshold += 25;
 		if (threshold >= randVal) {
 			_vm->_sound->command(17);
 			_scene->loadAnimation(formAnimName('M', -1), 71);
-			_toStationFl = true;
-			_toTeleportFl = false;
+			local._toStationFl = true;
+			local._toTeleportFl = false;
 			_globals[kMeteorologistEverSeen] = true;
-			_lastRoute = 0;
-			_stationCounter = 0;
-			_meteoClock2 = _scene->_frameStartTime + 2;
+			local._lastRoute = 0;
+			local._stationCounter = 0;
+			local._meteoClock2 = _scene->_frameStartTime + 2;
 		}
 	}
 
 	if (!_scene->_animation[0])
 		return;
 
-	if (_waitingMeteoFl) {
+	if (local._waitingMeteoFl) {
 		if (_scene->_animation[0]->getCurrentFrame() >= 200) {
 			if ((_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER) || _globals[kLadderBroken]) {
 				_scene->_nextSceneId = 213;
@@ -322,10 +296,10 @@ void Scene202::step() {
 			}
 		}
 
-		if ((_scene->_animation[0]->getCurrentFrame() == 160) && (_meteoFrame != _scene->_animation[0]->getCurrentFrame())) {
+		if ((_scene->_animation[0]->getCurrentFrame() == 160) && (local._meteoFrame != _scene->_animation[0]->getCurrentFrame())) {
 			Common::Point msgPos;
 			int msgFlag;
-			if (!_ladderTopFl) {
+			if (!local._ladderTopFl) {
 				msgPos = Common::Point(0, 0);
 				msgFlag = 2;
 			} else {
@@ -337,15 +311,15 @@ void Scene202::step() {
 		}
 	}
 
-	if (_meteoClock2 + 120 * 60 <= _scene->_frameStartTime) {
-		_toTeleportFl = true;
+	if (local._meteoClock2 + 120 * 60 <= _scene->_frameStartTime) {
+		local._toTeleportFl = true;
 	}
 
-	if (_scene->_animation[0]->getCurrentFrame() == _meteoFrame) {
+	if (_scene->_animation[0]->getCurrentFrame() == local._meteoFrame) {
 		return;
 	}
 
-	_meteoFrame = _scene->_animation[0]->getCurrentFrame();
+	local._meteoFrame = _scene->_animation[0]->getCurrentFrame();
 	int randVal = _vm->getRandomNumber(1, 1000);
 	int frameStep = -1;
 
@@ -353,12 +327,12 @@ void Scene202::step() {
 	case 42:
 	case 77:
 	case 96:
-		_stationCounter = 0;
+		local._stationCounter = 0;
 		frameStep = subStep1(randVal);
 		break;
 	case 51:
 	case 74:
-		_toStationFl = false;
+		local._toStationFl = false;
 		frameStep = subStep2(randVal);
 		break;
 	case 27:
@@ -370,18 +344,18 @@ void Scene202::step() {
 		frameStep = subStep4(randVal);
 		break;
 	case 59:
-		_lastRoute = 3;
-		++_stationCounter;
+		local._lastRoute = 3;
+		++local._stationCounter;
 		if (randVal <= 800)
 			frameStep = 55;
 		break;
 	case 89:
-		_lastRoute = 1;
+		local._lastRoute = 1;
 		if (randVal <= 700)
 			frameStep = 83;
 		break;
 	case 137:
-		_lastRoute = 2;
+		local._lastRoute = 2;
 		if (randVal <= 700)
 			frameStep = 126;
 		break;
@@ -391,28 +365,28 @@ void Scene202::step() {
 
 	if (frameStep >= 0 && frameStep != _scene->_animation[0]->getCurrentFrame() + 1) {
 		_scene->_animation[0]->setCurrentFrame(frameStep);
-		_meteoFrame = frameStep;
+		local._meteoFrame = frameStep;
 	}
 }
 
-int Scene202::subStep1(int randVal) {
-	if ((randVal <= 100) || _toStationFl)
+static int subStep1(int randVal) {
+	if ((randVal <= 100) || local._toStationFl)
 		return 42;
 
-	if ((randVal <= 200) || _toTeleportFl)
+	if ((randVal <= 200) || local._toTeleportFl)
 		return 96;
 
-	if ((randVal <= 300) && (_lastRoute != 1))
+	if ((randVal <= 300) && (local._lastRoute != 1))
 		return 77;
 
 	return 76;
 }
 
-int Scene202::subStep2(int randVal) {
-	if ((randVal <= 150) && (_stationCounter < 5))
+static int subStep2(int randVal) {
+	if ((randVal <= 150) && (local._stationCounter < 5))
 		return 51;
 
-	if ((randVal <= 300) || _toTeleportFl)
+	if ((randVal <= 300) || local._toTeleportFl)
 		return 74;
 
 	if (randVal <= 400)
@@ -421,21 +395,21 @@ int Scene202::subStep2(int randVal) {
 	return 44;
 }
 
-int Scene202::subStep3(int randVal) {
-	if ((randVal <= 100) || _toStationFl)
+static int subStep3(int randVal) {
+	if ((randVal <= 100) || local._toStationFl)
 		return 27;
 
-	if ((randVal <= 200) || _toTeleportFl)
+	if ((randVal <= 200) || local._toTeleportFl)
 		return 159;
 
-	if ((randVal <= 300) && (_lastRoute != 2))
+	if ((randVal <= 300) && (local._lastRoute != 2))
 		return 119;
 
 	return 110;
 }
 
-int Scene202::subStep4(int randVal) {
-	if ((randVal <= 100) || _toTeleportFl)
+static int subStep4(int randVal) {
+	if ((randVal <= 100) || local._toTeleportFl)
 		return 176;
 
 	if (randVal <= 200)
@@ -444,13 +418,13 @@ int Scene202::subStep4(int randVal) {
 	return 166;
 }
 
-void Scene202::preActions() {
-	Player &player = _vm->_game->_player;
+static void room_202_pre_parser() {
+	auto &player = _vm->_game->_player;
 
 	if (player._needToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (_ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || player._needToWalk)) {
+	if (local._ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || player._needToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			player._readyToWalk = false;
@@ -461,26 +435,26 @@ void Scene202::preActions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 		} else if (_game._trigger == 1) {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[8]);
-			_scene->_dynamicHotspots.remove(_ladderHotspotId);
+			_scene->_dynamicHotspots.remove(local._ladderHotspotId);
 			player._visible = true;
 			player._readyToWalk = true;
 			player._stepEnabled = true;
-			_ladderTopFl = false;
+			local._ladderTopFl = false;
 		}
 	}
 
 	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS) && (_action._activeAction._indirectObjectId > 0)) {
-		if (!player._readyToWalk || _ladderTopFl)
+		if (!player._readyToWalk || local._ladderTopFl)
 			player._needToWalk = false;
 		else
 			player._needToWalk = true;
 
-		if (!_ladderTopFl)
+		if (!local._ladderTopFl)
 			player.walk(Common::Point(171, 122), FACING_NORTH);
 	}
 }
 
-void Scene202::actions() {
+static void room_202_parser() {
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(20219);
 		return;
@@ -544,12 +518,12 @@ void Scene202::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(29);
-			_meteoClock1 = _scene->_frameStartTime;
+			local._meteoClock1 = _scene->_frameStartTime;
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
 
-			_ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, 78, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
-			_scene->_dynamicHotspots.setPosition(_ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
+			local._ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, 78, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
+			_scene->_dynamicHotspots.setPosition(local._ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -560,7 +534,7 @@ void Scene202::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[8], _globals._sequenceIndexes[9]);
-			_ladderTopFl = true;
+			local._ladderTopFl = true;
 			_game._player._stepEnabled = true;
 			int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, _game.getQuote(97));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
@@ -571,10 +545,10 @@ void Scene202::actions() {
 			return;
 		}
 	} else if ((_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_FIELD_TO_NORTH) || (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_STRANGE_DEVICE))) && (_globals[kSexOfRex] == SEX_MALE)) {
-		if (!_ladderTopFl) {
+		if (!local._ladderTopFl) {
 			switch (_game._trigger) {
 			case 0:
-				_toTeleportFl = true;
+				local._toTeleportFl = true;
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
@@ -589,14 +563,14 @@ void Scene202::actions() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[10], Common::Point(172, 123));
 				if (_scene->_animation[0]) {
-					_waitingMeteoFl = true;
+					local._waitingMeteoFl = true;
 					_globals[kMeteorologistWatch] = METEOROLOGIST_GROUND;
 				} else {
 					_scene->_sequences.addTimer(120, 2);
 				}
 				break;
 			case 2:
-				if (!_scene->_animation[0] && !_meteorologistSpecial) {
+				if (!_scene->_animation[0] && !local._meteorologistSpecial) {
 					_vm->_dialogs->show(20222);
 				}
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
@@ -618,7 +592,7 @@ void Scene202::actions() {
 		} else {
 			switch (_game._trigger) {
 			case 0:
-				_toTeleportFl = true;
+				local._toTeleportFl = true;
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[9]);
 				_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
@@ -634,7 +608,7 @@ void Scene202::actions() {
 					if (_scene->_animation[0]->getCurrentFrame() > 200) {
 						_scene->_sequences.addTimer(120, 2);
 					} else {
-						_waitingMeteoFl = true;
+						local._waitingMeteoFl = true;
 						_globals[kMeteorologistWatch] = METEOROLOGIST_GONE;
 						if ((_scene->_animation[0]->getCurrentFrame() >= 44) && (_scene->_animation[0]->getCurrentFrame() <= 75)) {
 							_scene->_kernelMessages.reset();
@@ -652,7 +626,7 @@ void Scene202::actions() {
 			case 2:
 				if (!_scene->_animation[0])
 					_vm->_dialogs->show(20222);
-				_meteorologistSpecial = false;
+				local._meteorologistSpecial = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 				_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
 				_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
@@ -715,6 +689,43 @@ void Scene202::actions() {
 	_action._inProgress = false;
 }
 
+void room_202_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._activeMsgFl);
+	s.syncAsByte(local._ladderTopFl);
+	s.syncAsByte(local._waitingMeteoFl);
+	s.syncAsByte(local._toStationFl);
+	s.syncAsByte(local._toTeleportFl);
+
+	s.syncAsSint32LE(local._ladderHotspotId);
+	s.syncAsSint32LE(local._lastRoute);
+	s.syncAsSint32LE(local._stationCounter);
+	s.syncAsSint32LE(local._meteoFrame);
+
+	s.syncAsUint32LE(local._meteoClock1);
+	s.syncAsUint32LE(local._meteoClock2);
+	s.syncAsUint32LE(local._startTime);
+
+	s.syncAsByte(local._meteorologistSpecial);
+}
+
+void room_202_preload() {
+	room_init_code_pointer = room_202_init;
+	room_pre_parser_code_pointer = room_202_pre_parser;
+	room_parser_code_pointer = room_202_parser;
+	room_daemon_code_pointer = room_202_daemon;
+
+	section_2_walker();
+	section_2_interface();
+
+	_scene->addActiveVocab(NOUN_LADDER);
+	_scene->addActiveVocab(VERB_CLIMB_DOWN);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_BONE);
+	_scene->addActiveVocab(NOUN_SKULL);
+	_scene->addActiveVocab(NOUN_BROKEN_LADDER);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

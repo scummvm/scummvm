@@ -19,25 +19,52 @@
  *
  */
 
-#ifndef MADS_CORE_QUOTE_H
-#define MADS_CORE_QUOTE_H
+#ifndef MADS_NEBULAR_CONVERATION_H
+#define MADS_NEBULAR_CONVERATION_H
 
-#include "mads/madsv2/core/general.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
+namespace RexNebular {
 
-#define QUOTE_MAX_LIST_LENGTH           200
+#define MAX_CONV_MESSAGE 10
+#define INDEFINITE_TIMEOUT 9999999
 
-extern int quote_emergency;
+class Conversation {
+public:
+	int _globalId;
+	int _count;
+	int16 _quotes[MAX_CONV_MESSAGE];
 
-extern char *quote_load(int quote_id, ...);
-extern char *quote_vload(int quote_id, va_list args);
-extern char *quote_string(char *quote_list, int quote_id);
-extern void quote_split_string(const char *source, char *target1, char *target2);
+	/**
+	 * Set up a conversation sequence
+	 */
+	void setup(int globalId, ...);
 
-extern void init_quote();
+	/**
+	 * Activates the passed set of quotes in the given conversation node
+	 */
+	void set(int quoteId, ...);
 
+	/**
+	 * Returns the bit for a given quote to indicate whether it's active or not or,
+	 * if 0 is passed, returns the number of currently active quotes
+	 */
+	int read(int quoteId);
+
+	/**
+	 * Activates or deactivates the specified quote in the given conversation node
+	 */
+	void write(int quoteId, bool flag);
+
+	/**
+	 * Starts the conversation
+	 */
+	void start();
+};
+
+} // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
 
