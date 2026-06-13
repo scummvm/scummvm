@@ -22,8 +22,10 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
+#include "graphics/screen.h"
 
 #include "pelrock/pelrock.h"
+#include "pelrock/chrono.h"
 #include "pelrock/types.h"
 #include "pelrock/util.h"
 

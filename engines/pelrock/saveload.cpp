@@ -21,6 +21,8 @@
 #include "common/savefile.h"
 
 #include "pelrock/pelrock.h"
+#include "pelrock/room.h"
+#include "pelrock/resources.h"
 #include "pelrock/types.h"
 
 namespace Pelrock {

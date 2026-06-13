@@ -27,8 +27,13 @@
 #include "pelrock/actions.h"
 #include "pelrock/backgroundbook.h"
 #include "pelrock/cdplayer.h"
+#include "pelrock/chrono.h"
+#include "pelrock/dialog.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/resources.h"
+#include "pelrock/room.h"
+#include "pelrock/sound.h"
 #include "pelrock/spellbook.h"
 #include "pelrock/util.h"
 

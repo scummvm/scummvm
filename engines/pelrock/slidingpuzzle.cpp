@@ -20,7 +20,9 @@
  */
 
 #include "common/system.h"
+
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 
 #include "pelrock/events.h"
 #include "pelrock/pelrock.h"

@@ -20,10 +20,14 @@
  */
 #include "common/stack.h"
 
+#include "pelrock/chrono.h"
 #include "pelrock/dialog.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/resources.h"
+#include "pelrock/room.h"
 #include "pelrock/util.h"
+#include "pelrock/fonts/small_font_double.h"
 
 namespace Pelrock {
 

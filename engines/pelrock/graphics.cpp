@@ -21,11 +21,16 @@
 
 #include "common/scummsys.h"
 #include "engines/util.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 
+#include "pelrock/chrono.h"
+#include "pelrock/events.h"
 #include "pelrock/graphics.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/room.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {

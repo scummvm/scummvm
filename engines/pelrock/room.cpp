@@ -20,7 +20,10 @@
  */
 #include "common/scummsys.h"
 
+#include "graphics/screen.h"
+
 #include "pelrock/pelrock.h"
+#include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
 #include "pelrock/room.h"

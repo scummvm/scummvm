@@ -26,10 +26,16 @@
 #include "graphics/paletteman.h"
 #include "graphics/thumbnail.h"
 
+#include "pelrock/events.h"
+#include "pelrock/graphics.h"
 #include "pelrock/menu.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/resources.h"
+#include "pelrock/room.h"
+#include "pelrock/sound.h"
 #include "pelrock/util.h"
+#include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {
 

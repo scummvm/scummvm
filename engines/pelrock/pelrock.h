@@ -22,39 +22,35 @@
 #ifndef PELROCK_H
 #define PELROCK_H
 
-#include "common/error.h"
-#include "common/file.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
-#include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/system.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/managed_surface.h"
-#include "graphics/screen.h"
-#include "image/png.h"
 
-#include "pelrock/chrono.h"
+#include "graphics/managed_surface.h"
+
 #include "pelrock/detection.h"
-#include "pelrock/dialog.h"
-#include "pelrock/events.h"
-#include "pelrock/fonts/large_font.h"
-#include "pelrock/fonts/small_font.h"
-#include "pelrock/fonts/small_font_double.h"
-#include "pelrock/graphics.h"
-#include "pelrock/menu.h"
-#include "pelrock/resources.h"
-#include "pelrock/room.h"
-#include "pelrock/sound.h"
 #include "pelrock/types.h"
-#include "pelrock/video.h"
+
+namespace Graphics {
+class Screen;
+}
 
 namespace Pelrock {
 
 struct PelrockGameDescription;
+
+class ChronoManager;
+class DialogManager;
+class DoubleSmallFont;
+class GraphicsManager;
+class LargeFont;
+class MenuManager;
+class PelrockEventManager;
+class RoomManager;
+class ResourceManager;
+class SmallFont;
+class SoundManager;
+class VideoManager;
+
 
 class PelrockEngine : public Engine {
 private:

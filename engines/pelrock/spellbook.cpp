@@ -22,10 +22,13 @@
 #include "common/events.h"
 #include "graphics/paletteman.h"
 
+#include "pelrock/events.h"
 #include "pelrock/graphics.h"
 #include "pelrock/room.h"
+#include "pelrock/resources.h"
 #include "pelrock/spellbook.h"
 #include "pelrock/util.h"
+#include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {
 
