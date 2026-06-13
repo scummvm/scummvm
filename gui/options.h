@@ -317,6 +317,7 @@ protected:
 	CheckboxWidget *_guiReturnToLauncherAtExit;
 	CheckboxWidget *_guiConfirmExit;
 	CheckboxWidget *_guiDisableBDFScaling;
+	CheckboxWidget *_guiKineticScrolling;
 
 	void addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
