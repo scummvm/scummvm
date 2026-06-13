@@ -509,11 +509,67 @@ const uint8 kImpatientSequence[] = { 0,1,0,1,0,1,0,1,2,1 };
 // behavior but makes the feature observable during normal testing.
 const uint32 kImpatienceDelayMs = 60 * 1000;
 
+// EEM2 ("Eagle Eye Mysteries in London") animation scripts. EEM2 ships its own
+// `_AnimationSequences @ 2bca:2e2e` (read from EEM2CD.EXE) and MANY partner/KD
+// scripts differ from EEM1's — e.g. 0x18 is a plain count-up 0..16 in EEM2 but
+// "0..8, hold, 9..15" in EEM1 (`kScript18`); 0x14 is 0..10 vs 0..8; the PDA /
+// gesture / gallery scripts (0x01/0x03/0x04/0x05/0x06/0x0b/0x0c/0x0d/0x0e) are
+// all different lengths. Using EEM1's scripts on EEM2's cells plays the wrong
+// frame sequence (visible corruption). These override the EEM1 tables when the
+// London variant is active; any seqnum not listed falls through to the shared
+// EEM1 scripts below. Only the scripts that actually differ are listed.
+const uint8 kScript06London[] = {
+	0,1,2,3,4,5,6,7,8,9,10,11,11,11,5,6,7,8,9,10,11,11,11,
+	5,6,7,8,9,10,11,11,11,5,4,3,2,1,0
+};
+const AnimScript kAnimScriptsLondon[] = {
+	{ 0x01,  6, { 0,1,2,3,4,5 } },                                  // PDA idle
+	{ 0x03, 15, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 } },           // gesture
+	{ 0x04, 23, { 0,1,2,3,4,5,5,5,6,5,5,5,5,6,5,5,5,5,4,3,2,1,0 } },// big gesture
+	{ 0x05, 11, { 0,1,2,3,4,4,4,3,2,1,0 } },
+	{ 0x0b,  6, { 0,1,2,3,4,5 } },                                  // Jenny PDA
+	{ 0x0c, 15, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 } },           // Jenny gesture
+	{ 0x0d, 23, { 0,1,2,3,4,5,5,5,6,5,5,5,5,6,5,5,5,5,4,3,2,1,0 } },
+	{ 0x0e, 22, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,20 } },
+	{ 0x14, 11, { 0,1,2,3,4,5,6,7,8,9,10 } },                       // BigMap walk
+	{ 0x18, 17, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 } },     // case-intro entrance
+	{ 0x19,  2, { 0,1 } },
+	{ 0x1a,  4, { 0,1,2,3 } },
+};
+const AnimScriptLong kAnimScriptsLondonLong[] = {
+	{ 0x06, 38, kScript06London },
+};
+
+// Set true for the London variant so findAnimScript uses the EEM2 tables.
+bool g_londonAnimScripts = false;
+
+void setLondonAnimScripts(bool enabled) {
+	g_londonAnimScripts = enabled;
+}
+
 struct AnimScriptRef {
 	const uint8 *frames;
 	uint16 len;
 };
 AnimScriptRef findAnimScript(uint16 seqnum) {
+	if (g_londonAnimScripts) {
+		for (uint i = 0; i < ARRAYSIZE(kAnimScriptsLondon); i++) {
+			if (kAnimScriptsLondon[i].seqnum == seqnum) {
+				AnimScriptRef r;
+				r.frames = kAnimScriptsLondon[i].frames;
+				r.len = kAnimScriptsLondon[i].len;
+				return r;
+			}
+		}
+		for (uint i = 0; i < ARRAYSIZE(kAnimScriptsLondonLong); i++) {
+			if (kAnimScriptsLondonLong[i].seqnum == seqnum) {
+				AnimScriptRef r;
+				r.frames = kAnimScriptsLondonLong[i].frames;
+				r.len = kAnimScriptsLondonLong[i].len;
+				return r;
+			}
+		}
+	}
 	for (uint i = 0; i < ARRAYSIZE(kAnimScripts); i++) {
 		if (kAnimScripts[i].seqnum == seqnum) {
 			AnimScriptRef r;

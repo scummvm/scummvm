@@ -165,10 +165,13 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 				Common::String(gameDesc->extra).contains("Floppy"))
 				 ? kVariantFloppy : kVariantCD;
 	// EEM2 ("...in London") ships as a separate detection entry (gameId
-	// "eem2"); it reuses this engine but only the opening screens work.
+	// "eem2"); it reuses this engine with London-specific data.
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
+	// EEM2 ships its own `_AnimationSequences` — many partner/KD scripts
+	// differ from EEM1's, so route `findAnimScript` to the EEM2 table.
+	setLondonAnimScripts(isLondon());
 	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
 }
 
