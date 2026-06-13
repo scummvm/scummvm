@@ -178,6 +178,20 @@ const uint16 kKdAnimTable[6][6] = {
 	{ 0x06, 0x06, 6, 6, 80, 80 }, // 5 — same anim both partners
 };
 
+// EEM2 `_DoKDAnim @ 1717:05bf` table @ 2bca:0238 (read from EEM2CD.EXE).
+// Same { animJake, animJenny, xJake, xJenny, yJake, yJenny } layout. Positions
+// differ (x≈2, y≈78 vs EEM1's 6/80) and Jenny's reactions 4/5 use distinct
+// anims 0x55/0x2d (EEM1 reused 0x05/0x06 for both partners). Selected by
+// `playKdAnim` when the London variant is active.
+const uint16 kKdAnimTableLondon[6][6] = {
+	{ 0x03, 0x0c, 3, 2, 66, 65 }, // 0
+	{ 0x01, 0x0b, 2, 2, 78, 78 }, // 1
+	{ 0x04, 0x0d, 2, 2, 78, 78 }, // 2
+	{ 0x02, 0x10, 2, 2, 78, 78 }, // 3
+	{ 0x05, 0x55, 2, 2, 78, 78 }, // 4 — Jenny uses 0x55
+	{ 0x06, 0x2d, 2, 2, 78, 78 }, // 5 — Jenny uses 0x2d
+};
+
 // Animation script table — mirrors `_AnimationSequences @ 29be:22d4`
 // (55-entry table of far ptrs, each pointing to a u16-frame-index
 // stream). `_NewAnimation @ 172b:06e1` reads the script via
@@ -510,17 +524,62 @@ const uint8 kImpatientSequence[] = { 0,1,0,1,0,1,0,1,2,1 };
 const uint32 kImpatienceDelayMs = 60 * 1000;
 
 // EEM2 ("Eagle Eye Mysteries in London") animation scripts. EEM2 ships its own
-// `_AnimationSequences @ 2bca:2e2e` (read from EEM2CD.EXE) and MANY partner/KD
-// scripts differ from EEM1's — e.g. 0x18 is a plain count-up 0..16 in EEM2 but
-// "0..8, hold, 9..15" in EEM1 (`kScript18`); 0x14 is 0..10 vs 0..8; the PDA /
-// gesture / gallery scripts (0x01/0x03/0x04/0x05/0x06/0x0b/0x0c/0x0d/0x0e) are
-// all different lengths. Using EEM1's scripts on EEM2's cells plays the wrong
+// `_AnimationSequences @ 2bca:2e2e` (read from EEM2CD.EXE); essentially every
+// non-trivial partner / KD / site script differs from EEM1's — e.g. 0x18 is a
+// plain count-up 0..16 in EEM2 vs "0..8, hold, 9..15" in EEM1 (`kScript18`),
+// 0x14 is 0..10 vs 0..8. Using EEM1's scripts on EEM2's cells plays the wrong
 // frame sequence (visible corruption). These override the EEM1 tables when the
 // London variant is active; any seqnum not listed falls through to the shared
-// EEM1 scripts below. Only the scripts that actually differ are listed.
+// EEM1 scripts below. Only the seqnums that actually differ are listed.
+//
+// NOTE: EEM2 scripts 0x27/0x2e/0x30 end with a `0x81 N` jump (loop back to
+// entry N) rather than a 0x80 restart. `frameFromScriptAtTick` has no jump
+// support (EEM1 never used it), so the flat frame list is stored: correct for a
+// one-shot play-through, but a looped play replays the intro instead of just
+// the post-jump tail. Acceptable for these site NPC fidgets; revisit if needed.
 const uint8 kScript06London[] = {
-	0,1,2,3,4,5,6,7,8,9,10,11,11,11,5,6,7,8,9,10,11,11,11,
-	5,6,7,8,9,10,11,11,11,5,4,3,2,1,0
+	0,1,2,3,4,5,6,7,8,9,10,11,11,11,5,6,7,8,9,10,
+	11,11,11,5,6,7,8,9,10,11,11,11,5,4,3,2,1,0,
+};
+const uint8 kScript1dLondon[] = {
+	0,1,0,1,1,0,0,2,3,4,5,6,7,8,9,1,1,1,1,0,
+	0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+	2,2,2,2,2,2,
+};
+const uint8 kScript1eLondon[] = {
+	0,1,0,1,0,1,1,0,0,2,2,2,2,3,3,4,4,5,6,6,
+	4,3,2,1,0,1,0,1,0,1,1,0,0,
+};
+const uint8 kScript1fLondon[] = {
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,1,1,1,1,2,1,3,3,4,5,6,5,6,4,1,1,1,
+};
+const uint8 kScript23London[] = {
+	0,0,0,0,1,1,2,2,3,3,3,4,4,3,3,3,4,4,1,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+};
+const uint8 kScript25London[] = {
+	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+	19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,
+	19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,
+};
+const uint8 kScript27London[] = {  // 0x81 jump->22
+	0,0,0,0,0,0,0,0,0,0,1,0,1,2,3,2,4,5,6,6,
+	7,6,8,6,7,7,7,7,8,
+};
+const uint8 kScript2bLondon[] = {
+	0,1,0,1,1,1,0,1,2,2,2,2,3,4,3,4,3,2,1,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+};
+const uint8 kScript2dLondon[] = {
+	0,1,2,3,4,5,6,7,8,9,10,11,11,11,5,6,7,8,9,10,
+	11,11,11,5,6,7,8,9,10,11,11,11,5,4,3,2,1,0,
+};
+const uint8 kScript31London[] = {
+	32,32,32,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,
+	17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,
+	37,38,39,40,41,42,43,44,45,46,32,32,32,32,32,32,32,32,32,32,
+	32,32,
 };
 const AnimScript kAnimScriptsLondon[] = {
 	{ 0x01,  6, { 0,1,2,3,4,5 } },                                  // PDA idle
@@ -535,9 +594,38 @@ const AnimScript kAnimScriptsLondon[] = {
 	{ 0x18, 17, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 } },     // case-intro entrance
 	{ 0x19,  2, { 0,1 } },
 	{ 0x1a,  4, { 0,1,2,3 } },
+	{ 0x1b, 12, { 0,0,1,1,2,2,3,3,4,4,5,5 } },
+	{ 0x1c, 19, { 11,11,11,0,1,2,3,4,5,6,7,8,9,10,11,11,11,11,11 } },
+	{ 0x20, 19, { 0,1,1,2,3,3,0,0,1,1,1,0,3,2,0,1,4,4,4 } },
+	{ 0x21,  5, { 0,0,1,1,2 } },
+	{ 0x22, 10, { 0,0,0,1,0,1,0,1,1,1 } },
+	{ 0x24, 18, { 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 } },
+	{ 0x26, 20, { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,1,3 } },
+	{ 0x28, 16, { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7 } },
+	{ 0x29, 14, { 0,1,2,3,4,4,3,4,3,4,3,2,1,0 } },
+	{ 0x2a, 23, { 0,0,0,1,2,3,2,1,0,0,0,0,1,2,3,2,1,0,1,2,3,2,1 } },
+	{ 0x2c, 22, { 15,15,15,15,15,15,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 } },
+	{ 0x2e, 16, { 0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,12 } },          // 0x81 jump->15
+	{ 0x2f,  6, { 0,1,2,3,4,5 } },
+	{ 0x30, 26, { 18,18,18,18,18,18,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,18 } }, // 0x81 jump->25
+	{ 0x32, 27, { 0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1 } },
+	{ 0x33, 27, { 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0,1,2,3,4,4,4,0,1,2,3 } },
+	{ 0x34,  4, { 0,1,2,3 } },
+	{ 0x35, 21, { 9,9,9,9,9,9,9,9,9,9,9,9,0,1,2,3,4,5,6,7,8 } },
+	{ 0x36, 12, { 0,0,0,0,0,1,2,3,4,5,6,6 } },
+	{ 0x55, 11, { 0,1,2,3,4,4,4,3,2,1,0 } },                        // KD Jenny reaction-4
 };
 const AnimScriptLong kAnimScriptsLondonLong[] = {
 	{ 0x06, 38, kScript06London },
+	{ 0x1d, 46, kScript1dLondon },
+	{ 0x1e, 33, kScript1eLondon },
+	{ 0x1f, 38, kScript1fLondon },
+	{ 0x23, 39, kScript23London },
+	{ 0x25, 59, kScript25London },
+	{ 0x27, 29, kScript27London },
+	{ 0x2b, 39, kScript2bLondon },
+	{ 0x2d, 38, kScript2dLondon },
+	{ 0x31, 62, kScript31London },
 };
 
 // Set true for the London variant so findAnimScript uses the EEM2 tables.
@@ -1805,14 +1893,16 @@ void EEMEngine::playKdAnim(uint16 num) {
 	// (blocking) and resume normal idle rendering when the caller
 	// returns — matches the visible effect (partner gesture finishes
 	// before the speaker portrait + speech balloon appear).
-	// `kKdAnimTable` and `kAnimScripts` live at file scope above.
+	// `kKdAnimTable` and `kAnimScripts` live at file scope above. EEM2 ships a
+	// different table (positions + Jenny reactions) — use it for London.
 	if (num >= ARRAYSIZE(kKdAnimTable))
 		return;
 
+	const uint16 (*kdTable)[6] = isLondon() ? kKdAnimTableLondon : kKdAnimTable;
 	const uint partner = (_partner == kPartnerJake) ? 0 : 1;
-	const uint16 animId = kKdAnimTable[num][partner];
-	const int    px     = (int)kKdAnimTable[num][2 + partner];
-	const int    py     = (int)kKdAnimTable[num][4 + partner];
+	const uint16 animId = kdTable[num][partner];
+	const int    px     = (int)kdTable[num][2 + partner];
+	const int    py     = (int)kdTable[num][4 + partner];
 
 	Animation anim;
 	if (!_aniArchive.loadAnimation(animId, anim) || anim.empty()) {
