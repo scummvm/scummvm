@@ -28,11 +28,33 @@
 
 #define MAX_FILES_IN_LIST 60
 
+#define MAX_FRAMES 16 // Maximum number of frames per animation in ibass
+
 namespace Common {
 class File;
 }
 
+namespace Graphics {
+class Surface;
+class PixelFormat;
+}
+
+struct FileEntry {
+	uint32 _fileNum;
+	uint32 _offset;
+	uint32 _size;
+	uint32 _compressedSize;
+	FileEntry() : _fileNum(0), _offset(0), _size(0), _compressedSize(0) {}
+};
+
 namespace Sky {
+
+struct Animation {
+	Graphics::Surface **_frames;
+	int _numFrames;
+	int _width;
+	int _height;
+};
 
 class Disk {
 public:
@@ -54,15 +76,22 @@ public:
 	void fnFlushBuffers();
 	uint32 *giveLoadedFilesList() { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
+	Animation *loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat);
 
 protected:
 	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);
 
+	uint32 _numFiles;
+	FileEntry *_entry;
+
 	uint32 _dinnerTableEntries;
 	uint8 *_dinnerTableArea;
 	Common::File *_dataDiskHandle;
 	Common::RncDecoder _rncDecoder;
+
+	uint32 getFileSize(uint32 filenum);
+	FileEntry *getEntry(uint32 filenum);
 
 	uint16 _buildList[MAX_FILES_IN_LIST];
 	uint32 _loadedFilesList[MAX_FILES_IN_LIST];

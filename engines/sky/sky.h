@@ -99,6 +99,7 @@ public:
 
 	static bool isDemo();
 	static bool isCDVersion();
+	static bool isIbass();
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
@@ -115,6 +116,9 @@ public:
 	uint32 _chineseTraditionalOffsets[8];
 	char *_chineseTraditionalBlock;
 	Graphics::Big5Font *_big5Font;
+
+	bool canSaveGameStateCurrently();
+	int	giveCurrentScreen();
 
 protected:
 	// Engine APIs

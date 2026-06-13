@@ -32,6 +32,9 @@
 static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
 
+static const PlainGameDescriptor ibassSetting =
+	{ "ibass", "Beneath a Steel Sky iOS remastered" };
+
 struct SkyVersion {
 	int dinnerTableEntries;
 	int dataDiskSize;
@@ -95,12 +98,15 @@ const char *SkyMetaEngineDetection::getOriginalCopyright() const {
 PlainGameList SkyMetaEngineDetection::getSupportedGames() const {
 	PlainGameList games;
 	games.push_back(skySetting);
+	games.push_back(ibassSetting);
 	return games;
 }
 
 PlainGameDescriptor SkyMetaEngineDetection::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
+	else if (0 == scumm_stricmp(gameid, ibassSetting.gameId))
+		return ibassSetting;
 	return PlainGameDescriptor::empty();
 }
 
@@ -116,6 +122,8 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
 	int dataDiskSize = -1;
+	bool hasIbassDat = false;
+	int ibassDiskSize = -1;
 	Common::String dataDiskHeadMD5 = "";
 	int exeSize = -1; 
 	const Common::Language langs[] = {
@@ -142,6 +150,16 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 					dataDiskSize = dataDisk.size();
 					if (dataDiskSize == 73123264 || dataDiskSize == 75893200)
 						dataDiskHeadMD5 = Common::computeStreamMD5AsString(dataDisk, 5000);
+				}
+			}
+
+			if (0 == scumm_stricmp("bass.dat", file->getName().c_str())) {
+				Common::File ibassDisk;
+				if (ibassDisk.open(*file)) {
+					hasIbassDat = true;
+					ibassDiskSize = ibassDisk.size();
+					if (ibassDiskSize == 9737168)
+						dataDiskHeadMD5 = Common::computeStreamMD5AsString(ibassDisk, 5000);
 				}
 			}
 
@@ -208,6 +226,13 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		} else
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(lang));
 
+		detectedGames.push_back(game);
+	}
+
+	if (hasIbassDat) {
+		DetectedGame game;
+		Common::Language lang = Common::Language::UNK_LANG;
+		game = DetectedGame(getName(), ibassSetting.gameId, ibassSetting.description, lang);
 		detectedGames.push_back(game);
 	}
 
