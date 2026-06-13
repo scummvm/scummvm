@@ -20,9 +20,12 @@
  */
 
 #include "common/events.h"
+#include "common/file.h"
+
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 
+#include "pelrock/pelrock.h"
 #include "pelrock/cdplayer.h"
 #include "pelrock/events.h"
 #include "pelrock/resources.h"

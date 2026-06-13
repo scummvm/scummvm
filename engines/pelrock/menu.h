@@ -21,9 +21,6 @@
 #ifndef PELROCK_MENU_H
 #define PELROCK_MENU_H
 
-#include "common/keyboard.h"
-
-#include "graphics/screen.h"
 namespace Graphics {
 class Screen;
 }

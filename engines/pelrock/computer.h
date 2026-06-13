@@ -22,13 +22,9 @@
 #ifndef PELROCK_COMPUTER_H
 #define PELROCK_COMPUTER_H
 
-#include "common/array.h"
-#include "common/str.h"
-#include "graphics/managed_surface.h"
-
-#include "pelrock/events.h"
-
 namespace Pelrock {
+
+class PelrockEventManager;
 
 // Book data location in ALFRED.7
 static const uint32 kBookDataOffset = 0x309E0;

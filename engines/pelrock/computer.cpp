@@ -20,6 +20,7 @@
  */
 
 #include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -27,6 +28,7 @@
 #include "graphics/screen.h"
 
 #include "pelrock/computer.h"
+#include "pelrock/events.h"
 #include "pelrock/graphics.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/resources.h"

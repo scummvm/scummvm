@@ -21,13 +21,11 @@
 #ifndef PELROCK_CDPLAYER_H
 #define PELROCK_CDPLAYER_H
 
-#include "common/rect.h"
-#include "common/str.h"
-#include "graphics/managed_surface.h"
-
-#include "pelrock/pelrock.h"
-
 namespace Pelrock {
+
+class PelrockEventManager;
+class ResourceManager;
+class SoundManager;
 
 class CDPlayer {
 

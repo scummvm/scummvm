@@ -21,15 +21,11 @@
 #ifndef PELROCK_GRAPHICS_H
 #define PELROCK_GRAPHICS_H
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/str-array.h"
-
-#include "graphics/font.h"
-#include "graphics/managed_surface.h"
-#include "graphics/screen.h"
-
 #include "pelrock/types.h"
+
+namespace Graphics {
+class Font;
+}
 
 namespace Pelrock {
 

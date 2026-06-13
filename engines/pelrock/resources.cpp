@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "pelrock/dialog.h"
 #include "pelrock/resources.h"
 #include "pelrock/offsets.h"

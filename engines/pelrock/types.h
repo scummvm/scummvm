@@ -21,11 +21,8 @@
 #ifndef PELROCK_TYPES_H
 #define PELROCK_TYPES_H
 
-#include "common/debug.h"
 #include "common/rect.h"
-#include "common/scummsys.h"
 #include "common/system.h"
-#include "common/types.h"
 
 namespace Pelrock {
 

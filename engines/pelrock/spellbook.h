@@ -22,10 +22,6 @@
 #ifndef PELROCK_SPELLBOOK_H
 #define PELROCK_SPELLBOOK_H
 
-#include "graphics/managed_surface.h"
-
-#include "pelrock/pelrock.h"
-
 namespace Pelrock {
 
 struct Spell {

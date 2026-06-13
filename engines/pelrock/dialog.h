@@ -21,18 +21,20 @@
 #ifndef PELROCK_DIALOG_H
 #define PELROCK_DIALOG_H
 
-#include "common/scummsys.h"
 #include "common/stack.h"
-#include "graphics/managed_surface.h"
-#include "graphics/screen.h"
 
-#include "pelrock/events.h"
-#include "pelrock/fonts/large_font.h"
-#include "pelrock/fonts/small_font.h"
-#include "pelrock/graphics.h"
+#include "graphics/font.h"
+
 #include "pelrock/types.h"
 
+namespace Graphics {
+class Screen;
+}
+
 namespace Pelrock {
+
+class GraphicsManager;
+class PelrockEventManager;
 
 // Control character codes
 const byte kCtrlSpace                = 0x20; /* ' ' */

@@ -21,11 +21,9 @@
 #ifndef PELROCK_ROOM_H
 #define PELROCK_ROOM_H
 
-#include "common/array.h"
-#include "common/file.h"
-#include "common/scummsys.h"
-
-#include "pelrock/types.h"
+namespace Common {
+class File;
+}
 
 namespace Pelrock {
 

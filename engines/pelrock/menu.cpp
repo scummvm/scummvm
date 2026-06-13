@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "engines/metaengine.h"
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 #include "graphics/thumbnail.h"
 
 #include "pelrock/events.h"

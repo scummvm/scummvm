@@ -22,7 +22,6 @@
 #define PELROCK_EVENTS_H
 
 #include "common/events.h"
-#include "common/scummsys.h"
 
 namespace Pelrock {
 static const int kDoubleClickDelay = 300; // in milliseconds

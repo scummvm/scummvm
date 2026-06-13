@@ -19,6 +19,7 @@
  *
  */
 #include "common/scummsys.h"
+#include "common/file.h"
 
 #include "graphics/screen.h"
 

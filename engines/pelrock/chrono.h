@@ -21,8 +21,6 @@
 #ifndef PELROCK_CHRONO_H
 #define PELROCK_CHRONO_H
 
-#include "common/scummsys.h"
-
 namespace Pelrock {
 
 const uint32 kTickMs = 55;

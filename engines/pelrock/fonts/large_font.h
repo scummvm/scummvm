@@ -21,10 +21,7 @@
 #ifndef PELROCK_LARGEFONT_H
 #define PELROCK_LARGEFONT_H
 
-#include "common/file.h"
-#include "common/str.h"
 #include "graphics/font.h"
-#include "graphics/surface.h"
 
 namespace Pelrock {
 class LargeFont : public Graphics::Font {

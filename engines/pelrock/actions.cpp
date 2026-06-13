@@ -22,13 +22,19 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
+
+#include "common/file.h"
+
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 
 #include "pelrock/actions.h"
 #include "pelrock/backgroundbook.h"
 #include "pelrock/cdplayer.h"
 #include "pelrock/chrono.h"
 #include "pelrock/dialog.h"
+#include "pelrock/events.h"
+#include "pelrock/graphics.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/resources.h"
@@ -36,6 +42,7 @@
 #include "pelrock/sound.h"
 #include "pelrock/spellbook.h"
 #include "pelrock/util.h"
+#include "pelrock/fonts/large_font.h"
 
 namespace Pelrock {
 

@@ -19,6 +19,10 @@
  *
  */
 
+#include "common/file.h"
+
+#include "graphics/surface.h"
+
 #include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {

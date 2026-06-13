@@ -21,12 +21,6 @@
 #ifndef PELROCK_RESOURCES_H
 #define PELROCK_RESOURCES_H
 
-#include "common/scummsys.h"
-#include "common/stream.h"
-
-#include "pelrock/offsets.h"
-#include "pelrock/types.h"
-
 namespace Pelrock {
 
 static const int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array

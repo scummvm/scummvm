@@ -23,9 +23,12 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/scummsys.h"
+
 #include "engines/util.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 
 #include "pelrock/actions.h"
 #include "pelrock/chrono.h"
@@ -33,8 +36,11 @@
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
 #include "pelrock/dialog.h"
+#include "pelrock/events.h"
+#include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/fonts/small_font_double.h"
+#include "pelrock/graphics.h"
 #include "pelrock/menu.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pathfinding.h"
@@ -42,6 +48,7 @@
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/slidingpuzzle.h"
+#include "pelrock/sound.h"
 #include "pelrock/util.h"
 #include "pelrock/video.h"
 

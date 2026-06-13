@@ -25,6 +25,7 @@
 
 #include "pelrock/chrono.h"
 #include "pelrock/dialog.h"
+#include "pelrock/events.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
 #include "pelrock/util.h"
