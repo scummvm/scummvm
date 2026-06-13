@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-13 06:14+0000\n"
-"PO-Revision-Date: 2026-06-10 20:26+0000\n"
+"PO-Revision-Date: 2026-06-13 09:55+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -12093,11 +12093,12 @@ msgstr "Evidenzia le aree cliccabili nelle schermate delle decisioni."
 
 #: engines/private/metaengine.cpp:61
 msgid "Increased contrast for small print"
-msgstr ""
+msgstr "Testi piccoli a contrasto aumentato"
 
 #: engines/private/metaengine.cpp:62
 msgid "Enhance small printed paper close-ups for improved readability."
 msgstr ""
+"Aumenta il contrasto dei testi dei giornali per migliorarne la leggibilità."
 
 #: engines/private/metaengine.cpp:147 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
