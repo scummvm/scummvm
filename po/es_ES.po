@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-13 10:20+0000\n"
-"PO-Revision-Date: 2026-06-10 11:58+0000\n"
+"PO-Revision-Date: 2026-06-13 11:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -10334,32 +10334,24 @@ msgid "Secondary shoot"
 msgstr "Disparo secundario"
 
 #: engines/hypno/metaengine.cpp:149
-#, fuzzy
-#| msgid "Map hide toolbar action"
 msgid "Rapid fire / secondary action"
-msgstr "Asignar acción 'Ocultar barra de tareas'"
+msgstr "Disparo automático/Acción secundaria"
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide left"
 msgid "Aim left"
-msgstr "Deslizarse a la izquierda"
+msgstr "Apuntar hacia la izquierda"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Stick down"
 msgid "Aim down"
-msgstr "Stick hacia abajo"
+msgstr "Apuntar hacia abajo"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up right"
 msgid "Aim right"
-msgstr "Subir a la derecha"
+msgstr "Apuntar hacia la derecha"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Apuntar hacia arriba"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
@@ -10456,28 +10448,20 @@ msgid "Show credits"
 msgstr "Mostrar créditos"
 
 #: engines/hypno/metaengine.cpp:417
-#, fuzzy
-#| msgid "Move left"
 msgid "Menu left"
-msgstr "Mover hacia la izquierda"
+msgstr "Menú hacia la izquierda"
 
 #: engines/hypno/metaengine.cpp:425
-#, fuzzy
-#| msgid "Move down"
 msgid "Menu down"
-msgstr "Mover hacia abajo"
+msgstr "Menú hacia abajo"
 
 #: engines/hypno/metaengine.cpp:433
-#, fuzzy
-#| msgid "Move right"
 msgid "Menu right"
-msgstr "Mover hacia la derecha"
+msgstr "Menú hacia la derecha"
 
 #: engines/hypno/metaengine.cpp:441
-#, fuzzy
-#| msgid "Menu"
 msgid "Menu up"
-msgstr "Menú"
+msgstr "Menú hacia arriba"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -12188,11 +12172,12 @@ msgstr "Resalta las zonas interactuables durante las escenas de decisión."
 
 #: engines/private/metaengine.cpp:61
 msgid "Increased contrast for small print"
-msgstr ""
+msgstr "Aumentar contraste para letras pequeñas"
 
 #: engines/private/metaengine.cpp:62
 msgid "Enhance small printed paper close-ups for improved readability."
 msgstr ""
+"Amplifica los primeros planos de los periódicos para mejorar su legibilidad."
 
 #: engines/private/metaengine.cpp:147 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
