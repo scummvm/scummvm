@@ -1998,9 +1998,10 @@ void EEMEngine::doActionScreen() {
 }
 
 void EEMEngine::doCaseSelection() {
-	// `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @ 1c33:0a87` —
-	// loads BOOK<stage>.NME, draws PIC 0x41 + centered "Book N" title.
-	const uint kMaxMystery = 54;
+	// `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @ 1c33:0a87`
+	// (EEM2 @ 1abf:022a / 1cd3:0a9d): load BOOK<stage>.NME, draw PIC 0x41
+	// + centered "Book N" title, then read the chosen M*.BIN.
+	const uint kMaxMystery = isLondon() ? 50 : 54;
 
 	CursorMan.showMouse(true);
 	setSitePalette(0);
@@ -2021,20 +2022,30 @@ void EEMEngine::doCaseSelection() {
 	const int kKdAnimX = 0x112;
 	const int kKdAnimY = 0x50;
 
-	// stage 1 (Junior, BOOK1.NME) = 1..24, stage 2 (Senior, BOOK2.NME) =
-	// 25..48, stage 3 (Master, BOOK3.NME) = 49..54.
-	uint stageLo = 1, stageHi = 0x18;
+	// EEM1: stage 1 (Junior, BOOK1.NME) = 1..24, stage 2 (Senior,
+	// BOOK2.NME) = 25..48, stage 3 (Master, BOOK3.NME) = 49..54.
+	// EEM2/London: only BOOK1.NME and BOOK2.NME ship, each with 25 cases.
+	uint stageLo = 1, stageHi = isLondon() ? 0x19 : 0x18;
 	uint book = 1;
 	switch (_chainStage) {
 	case 2:
-		stageLo = 0x19;
-		stageHi = 0x30;
+		stageLo = isLondon() ? 0x1a : 0x19;
+		stageHi = isLondon() ? 0x32 : 0x30;
 		book = 2;
 		break;
 	case 3:
-		stageLo = 0x31;
-		stageHi = 0x36;
-		book = 3;
+		if (isLondon()) {
+			// London has no BOOK3.NME. Until the London progression path is
+			// fully split from EEM1, keep the picker on the second book rather
+			// than attempting to open missing data.
+			stageLo = 0x1a;
+			stageHi = 0x32;
+			book = 2;
+		} else {
+			stageLo = 0x31;
+			stageHi = 0x36;
+			book = 3;
+		}
 		break;
 	default:
 		break;
@@ -2233,14 +2244,6 @@ void EEMEngine::doCaseSelection() {
 		return;
 
 	const uint mn = stageLo + selRow;
-	if (isLondon()) {
-		// EEM2: the menu (PIC 0x41, ANI 0x15/0x16, BOOK*.NME) is shared with
-		// EEM1, but loading a chosen mystery from the menu isn't wired up yet
-		// (the training case is started directly from run()), so stop here.
-		debugC(1, kDebugMystery,
-			   "London: selected mystery %u (menu load not implemented yet)", mn);
-		return;
-	}
 	if (!_mystery.load(mn, &_rng)) {
 		warning("doCaseSelection: failed to load mystery %u", mn);
 		_mystery.clear();
