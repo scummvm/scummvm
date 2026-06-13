@@ -32,38 +32,20 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-Scene207::Scene207(RexNebularEngine *vm) : Scene2xx(vm) {
-	_vultureFl = false;
-	_spiderFl = false;
-	_eyeFl = false;
-	_spiderHotspotId = -1;
-	_vultureHotspotId = -1;
+struct Scratch {
+	bool _vultureFl;
+	bool _spiderFl;
+	bool _eyeFl;
+	int16 _spiderHotspotId;
+	int16 _vultureHotspotId;
+	long _spiderTime;
+	long _vultureTime;
+};
 
-	_spiderTime = _game._player._priorTimer;
-	_vultureTime = _game._player._priorTimer;
-}
+static Scratch local;
 
-void Scene207::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
 
-	s.syncAsByte(_vultureFl);
-	s.syncAsByte(_spiderFl);
-	s.syncAsByte(_eyeFl);
-
-	s.syncAsSint32LE(_spiderHotspotId);
-	s.syncAsSint32LE(_vultureHotspotId);
-}
-
-void Scene207::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_VULTURE);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_SPIDER);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene207::enter() {
+static void room_207_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('h', 1));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1));
@@ -82,26 +64,26 @@ void Scene207::enter() {
 	}
 
 	if (var2 > 2)
-		_vultureFl = false;
+		local._vultureFl = false;
 	else
-		_vultureFl = true;
+		local._vultureFl = true;
 
-	_spiderFl = (var2 & 1);
+	local._spiderFl = (var2 & 1);
 
-	if (_vultureFl) {
+	if (local._vultureFl) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
-		_vultureHotspotId = _scene->_dynamicHotspots.add(389, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_vultureHotspotId, Common::Point(254, 94), FACING_WEST);
+		local._vultureHotspotId = _scene->_dynamicHotspots.add(389, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._vultureHotspotId, Common::Point(254, 94), FACING_WEST);
 	}
 
-	if (_spiderFl) {
+	if (local._spiderFl) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -1);
-		_spiderHotspotId = _scene->_dynamicHotspots.add(333, 13, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
+		local._spiderHotspotId = _scene->_dynamicHotspots.add(333, 13, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
 	}
 
-	_eyeFl = false;
+	local._eyeFl = false;
 	if (_scene->_priorSceneId == 211) {
 		_game._player._playerPos = Common::Point(13, 105);
 		_game._player._facing = FACING_EAST;
@@ -118,33 +100,33 @@ void Scene207::enter() {
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 }
 
-void Scene207::moveVulture() {
+static void moveVulture() {
 	_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 	_vm->_sound->command(43);
-	_vultureFl = false;
-	_vultureTime = _game._player._priorTimer;
-	_scene->_dynamicHotspots.remove(_vultureHotspotId);
+	local._vultureFl = false;
+	local._vultureTime = _game._player._priorTimer;
+	_scene->_dynamicHotspots.remove(local._vultureHotspotId);
 }
 
-void Scene207::moveSpider() {
+static void moveSpider() {
 	_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
-	_spiderFl = false;
-	_spiderTime = _game._player._priorTimer;
-	_scene->_dynamicHotspots.remove(_spiderHotspotId);
+	local._spiderFl = false;
+	local._spiderTime = _game._player._priorTimer;
+	_scene->_dynamicHotspots.remove(local._spiderHotspotId);
 }
 
-void Scene207::step() {
-	Player &player = _game._player;
+static void room_207_daemon() {
+	auto &player = _game._player;
 
-	if (_vultureFl) {
-		if (((int32)player._priorTimer - _vultureTime) > 1700)
+	if (local._vultureFl) {
+		if (((int32)player._priorTimer - local._vultureTime) > 1700)
 			moveVulture();
 	}
 
-	if (_spiderFl) {
-		if (((int32)player._priorTimer - _spiderTime) > 800)
+	if (local._spiderFl) {
+		if (((int32)player._priorTimer - local._spiderTime) > 800)
 			moveSpider();
 	}
 
@@ -155,9 +137,9 @@ void Scene207::step() {
 	}
 
 	if (_game._trigger == 71)
-		_eyeFl = false;
+		local._eyeFl = false;
 
-	if (_eyeFl)
+	if (local._eyeFl)
 		return;
 
 	if ((_game._player._playerPos.x >= 124) && (_game._player._playerPos.x <= 201)) {
@@ -166,11 +148,11 @@ void Scene207::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 6);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 6);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		_eyeFl = true;
+		local._eyeFl = true;
 	}
 }
 
-void Scene207::preActions() {
+static void room_207_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_WEST))
 		_game._player._walkOffScreenSceneId = 211;
 
@@ -179,14 +161,14 @@ void Scene207::preActions() {
 
 	if (_action.isAction(VERB_WALKTO) || _action.isAction(VERB_LOOK)) {
 		if (_action.isObject(NOUN_VULTURE)) {
-			_vultureTime = -9999;
+			local._vultureTime = -9999;
 		} else if (_action.isObject(NOUN_SPIDER)) {
-			_spiderTime = -9999;
+			local._spiderTime = -9999;
 		}
 	}
 }
 
-void Scene207::actions() {
+static void room_207_parser() {
 	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(20711);
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
@@ -201,10 +183,10 @@ void Scene207::actions() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 6);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 6);
 			}
-		} else if (_eyeFl) {
+		} else if (local._eyeFl) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
-			_eyeFl = false;
+			local._eyeFl = false;
 		}
 
 		if (_action.isAction(VERB_LOOK, NOUN_DENSE_FOREST))
@@ -242,16 +224,30 @@ void Scene207::actions() {
 	_action._inProgress = false;
 }
 
+void room_207_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._vultureFl);
+	s.syncAsByte(local._spiderFl);
+	s.syncAsByte(local._eyeFl);
+
+	s.syncAsSint32LE(local._spiderHotspotId);
+	s.syncAsSint32LE(local._vultureHotspotId);
+}
+
 void room_207_preload() {
+	local._spiderTime = _game._player._priorTimer;
+	local._vultureTime = _game._player._priorTimer;
+
 	room_init_code_pointer = room_207_init;
 	room_pre_parser_code_pointer = room_207_pre_parser;
 	room_parser_code_pointer = room_207_parser;
 	room_daemon_code_pointer = room_207_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
 	section_2_walker();
 	section_2_interface();
+	_scene->addActiveVocab(NOUN_VULTURE);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_SPIDER);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 } // namespace Rooms

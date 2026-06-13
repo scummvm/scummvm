@@ -23,6 +23,7 @@
 #define MADS_NEBULAR_ROOMS_THUNKS_H
 
 #include "common/rect.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
@@ -182,11 +183,25 @@ struct Scene {
 	};
 	Animation _animation[10];
 
+	struct CustomDest {
+		int &x = inter_point_x;
+		int &y = inter_point.y;
+	};
+	CustomDest _customDest;
+
+	struct DynamicHotspot {
+		byte &_articleNumber;
+
+		DynamicHotspot(int index);
+	};
+
 	struct DynamicHotspots {
 		int add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r);
 		void remove(int dyn_id);
 		void setPosition(int id, const Common::Point &pt, int facing);
 		int setCursor(int index, int cursor);
+
+		DynamicHotspot operator[](int idx);
 	};
 	DynamicHotspots _dynamicHotspots;
 
@@ -220,6 +235,7 @@ struct Scene {
 
 		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 			uint32 timeout, const Common::String &msg);
+		int addQuote(int quoteId, int endTrigger, uint32 timeout);
 		void remove(int msgIndex);
 		void reset();
 		void setQuoted(int msgIndex, int numTicks, bool quoted);
@@ -316,8 +332,11 @@ struct Scene {
 	SpriteSlots _spriteSlots;
 
 	struct UserInterface {
+		int &_selectedInvIndex = active_inv;
+
 		void emptyConversationList();
 		void setup(int inputMode);
+		void selectObject(int item_id);
 	};
 	UserInterface _userInterface;
 
@@ -327,6 +346,7 @@ struct Scene {
 	byte &_reloadSceneFlag = kernel.force_restart;
 	byte &_roomChanged = kernel.teleported_in;
 	int &_currentSceneId = room_id;
+	int &_textSpacing = kernel_message_spacing;
 
 	int loadAnimation(const char *name, int trigger_code = 0);
 	void freeAnimation();
@@ -353,6 +373,16 @@ struct Game {
 	};
 
 	struct Objects {
+		struct InventoryList {
+			int size() const {
+				return inven_num_objects;
+			}
+			int &operator[](int index) {
+				return inven[index];
+			}
+		};
+		InventoryList _inventoryList;
+
 		void addToInventory(int object_id);
 		bool isInRoom(int object_id) const;
 		bool isInInventory(int object_id) const;
@@ -455,10 +485,12 @@ struct Game {
 	int &_triggerSetupMode = kernel.trigger_setup_mode;
 	char *const _aaName = kernel.interface;
 	int8 &_difficulty = game.difficulty;
+	byte &_widepipeCtr = kernel.cheating;
 	int8 _storyMode = 0;
 
 	void loadQuoteSet(int quote1, ...);
 	char *getQuote(int quote_id);
+	void splitQuote(const Common::String &source, Common::String &line1, Common::String &line2);
 };
 extern Game _game;
 
@@ -540,6 +572,8 @@ struct VM {
 		void command(int num, int distance = 0);
 	};
 	Sound _sound;
+
+	bool &_musicFlag = config_file.music_flag;
 
 	int getRandomNumber(int min, int max);
 	int getRandomNumber(int max);

@@ -38,6 +38,7 @@ int  mcga_retrace_max_bytes = 768;
 
 word mcga_palette_update = false;
 int  mcga_palette_fast = true;
+word mcga_shakes = 0;
 
 
 void mcga_put_pixel(word x, word y, byte c) {

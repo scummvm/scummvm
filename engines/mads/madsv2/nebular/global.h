@@ -24,7 +24,6 @@
 
 #include "common/serializer.h"
 #include "mads/madsv2/core/vocabh.h"
-#include "mads/madsv2/nebular/conversation.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -325,7 +324,9 @@ enum {
 #define TELEPORTER_COUNT 10      // Total number of teleporters
 #define TELEPORTER_WORK_COUNT 6  // Total number that actually work
 
-extern Conversation _dialog1;
+#define FONT_CONVERSATION "*FONTCONV.FF"
+#define FONT_INTERFACE "*FONTINTR.FF"
+
 
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);

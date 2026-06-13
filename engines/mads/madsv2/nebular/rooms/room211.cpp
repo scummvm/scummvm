@@ -32,42 +32,27 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-Scene211::Scene211(RexNebularEngine *vm) : Scene2xx(vm) {
-	_ambushFl = false;
-	_wakeFl = false;
-	_monkeyFrame = 0;
-	_scrollY = 0;
-	_monkeyTime = 0;
-}
+struct Scratch {
+	bool _ambushFl;
+	bool _wakeFl;
+	int32 _monkeyFrame;
+	int32 _scrollY;
+	int32 _monkeyTime;
+};
 
-void Scene211::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_ambushFl);
-	s.syncAsByte(_wakeFl);
 
-	s.syncAsSint32LE(_monkeyFrame);
-	s.syncAsSint32LE(_scrollY);
-	s.syncAsUint32LE(_monkeyTime);
-}
-
-void Scene211::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_SLITHERING_SNAKE);
-}
-
-void Scene211::enter() {
+static void room_211_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC002Z2");
-	_wakeFl = false;
+	local._wakeFl = false;
 
 	if (_scene->_priorSceneId == 210)
 		_game._player._playerPos = Common::Point(25, 148);
 	else if (_scene->_priorSceneId == 205) {
 		_game._player._playerPos = Common::Point(49, 133);
 		_game._player._facing = FACING_WEST;
-		_wakeFl = true;
+		local._wakeFl = true;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->loadAnimation(formAnimName('A', -1), 100);
@@ -97,34 +82,34 @@ void Scene211::enter() {
 			Common::Rect(0, 0, 54, 30), 13, 2, 0xFDFC, 60,
 			151, 152, 153, 154, 0);
 
-	_monkeyTime = _vm->_game->_scene._frameStartTime;
-	_scrollY = 30;
+	local._monkeyTime = _vm->_game->_scene._frameStartTime;
+	local._scrollY = 30;
 
-	_ambushFl = false;
-	_monkeyFrame = 0;
+	local._ambushFl = false;
+	local._monkeyFrame = 0;
 
 	section_2_music();
 }
 
-void Scene211::step() {
+static void room_211_daemon() {
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 		_scene->_kernelMessages.randomServer();
 
-		if (!_ambushFl && !_wakeFl && (_vm->_game->_scene._frameStartTime >= _monkeyTime)) {
+		if (!local._ambushFl && !local._wakeFl && (_vm->_game->_scene._frameStartTime >= local._monkeyTime)) {
 			int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
 			if (_scene->_kernelMessages.generateRandom(80, chanceMinor))
 				_vm->_sound->command(18);
 
-			_monkeyTime = _vm->_game->_scene._frameStartTime + 2;
+			local._monkeyTime = _vm->_game->_scene._frameStartTime + 2;
 		}
 
 		if ((_game._player._playerPos == Common::Point(52, 132)) && (_game._player._facing == FACING_WEST) && !_game._player._moving &&
-			(_game._trigger || !_ambushFl)) {
+			(_game._trigger || !local._ambushFl)) {
 			switch (_game._trigger) {
 			case 0:
 				if (_game._objects.isInInventory(OBJ_BINOCULARS)) {
-					_ambushFl = true;
-					_monkeyFrame = 0;
+					local._ambushFl = true;
+					local._monkeyFrame = 0;
 					_game._player._stepEnabled = false;
 					_game._player._visible = false;
 					_scene->_kernelMessages.reset();
@@ -143,7 +128,7 @@ void Scene211::step() {
 				_game._player._stepEnabled = true;
 				_game._player._visible = true;
 				_game._player._playerPos = Common::Point(49, 133);
-				_ambushFl = false;
+				local._ambushFl = false;
 				_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
 				break;
 
@@ -153,9 +138,9 @@ void Scene211::step() {
 		}
 	}
 
-	if (_ambushFl && (_scene->_animation[0]->getCurrentFrame() > _monkeyFrame)) {
-		_monkeyFrame = _scene->_animation[0]->getCurrentFrame();
-		switch (_monkeyFrame) {
+	if (local._ambushFl && (_scene->_animation[0]->getCurrentFrame() > local._monkeyFrame)) {
+		local._monkeyFrame = _scene->_animation[0]->getCurrentFrame();
+		switch (local._monkeyFrame) {
 		case 2:
 		{
 			int msgIndex = _scene->_kernelMessages.add(Common::Point(12, 4), 0xFDFC, 0, 0, 60, _game.getQuote(157));
@@ -195,33 +180,33 @@ void Scene211::step() {
 
 		case 177:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(161));
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(161));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-			_scrollY += 14;
+			local._scrollY += 14;
 		}
 		break;
 
 		case 181:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(162));
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(162));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-			_scrollY += 14;
+			local._scrollY += 14;
 		}
 		break;
 
 		case 188:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(163));
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(163));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-			_scrollY += 14;
+			local._scrollY += 14;
 		}
 		break;
 
 		case 200:
 		{
-			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(164));
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(164));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-			_scrollY += 14;
+			local._scrollY += 14;
 		}
 		break;
 
@@ -230,45 +215,45 @@ void Scene211::step() {
 		}
 	}
 
-	if (_wakeFl) {
+	if (local._wakeFl) {
 		if (_game._trigger == 100) {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_wakeFl = false;
+			local._wakeFl = false;
 		}
 
-		if (_scene->_animation[0]->getCurrentFrame() > _monkeyFrame) {
-			_monkeyFrame = _scene->_animation[0]->getCurrentFrame();
+		if (_scene->_animation[0]->getCurrentFrame() > local._monkeyFrame) {
+			local._monkeyFrame = _scene->_animation[0]->getCurrentFrame();
 			switch (_scene->_animation[0]->getCurrentFrame()) {
 			case 177:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(165));
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(165));
 				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-				_scrollY += 14;
+				local._scrollY += 14;
 			}
 			break;
 
 			case 181:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(166));
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(166));
 				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-				_scrollY += 14;
+				local._scrollY += 14;
 			}
 			break;
 
 			case 188:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(167));
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(167));
 				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-				_scrollY += 14;
+				local._scrollY += 14;
 			}
 			break;
 
 			case 200:
 			{
-				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(168));
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, local._scrollY), 0x1110, 0, 0, 180, _game.getQuote(168));
 				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-				_scrollY += 14;
+				local._scrollY += 14;
 			}
 			break;
 
@@ -279,7 +264,7 @@ void Scene211::step() {
 	}
 }
 
-void Scene211::preActions() {
+static void room_211_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_JUNGLE_PATH) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
 		_game._player.walk(Common::Point(52, 132), FACING_WEST);
@@ -295,7 +280,7 @@ void Scene211::preActions() {
 		_game._player._walkOffScreenSceneId = 207;
 }
 
-void Scene211::actions() {
+static void room_211_parser() {
 	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		_vm->_dialogs->show(21111);
 	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_PALM_TREE))
@@ -336,16 +321,24 @@ void Scene211::actions() {
 	_action._inProgress = false;
 }
 
+void room_211_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._ambushFl);
+	s.syncAsByte(local._wakeFl);
+
+	s.syncAsSint32LE(local._monkeyFrame);
+	s.syncAsSint32LE(local._scrollY);
+	s.syncAsUint32LE(local._monkeyTime);
+}
+
 void room_211_preload() {
 	room_init_code_pointer = room_211_init;
 	room_pre_parser_code_pointer = room_211_pre_parser;
 	room_parser_code_pointer = room_211_parser;
 	room_daemon_code_pointer = room_211_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
 	section_2_walker();
 	section_2_interface();
+	_scene->addActiveVocab(NOUN_SLITHERING_SNAKE);
 }
 
 } // namespace Rooms

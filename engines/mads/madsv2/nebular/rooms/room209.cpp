@@ -32,92 +32,59 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-Scene209::Scene209(RexNebularEngine *vm) : Scene2xx(vm) {
-	_dodgeFl = false;
-	_forceDodgeFl = false;
-	_pitchFl = false;
-	_fallFl = false;
-	_forceFallFl = false;
-	_playingAnimFl = false;
-	_shouldFallFl = false;
-	_shouldDodgeFl = false;
-	_monkeyPosition = 0;
-	_counter = 0;
-	_pauseMode = 0;
-	_binocularsDroppedFl = false;
-	_startShootingInTimerFl = false;
-	_dialogAbortVal = 0;
-	_playingDialogFl = false;
-	_shootMissedLastFl = false;
-	_removeMonkeyFl = false;
-	_shootReadyFl = false;
-	_pauseCounterThreshold = 0;
-	_pauseCounter = 0;
-}
+struct Scratch {
+	bool _dodgeFl;
+	bool _forceDodgeFl;
+	bool _pitchFl;
+	bool _fallFl;
+	bool _forceFallFl;
+	bool _playingAnimFl;
+	bool _shouldFallFl;
+	bool _shouldDodgeFl;
+	int32 _monkeyPosition;
+	int32 _counter;
+	int32 _pauseMode;
+	bool _binocularsDroppedFl;
+	bool _startShootingInTimerFl;
+	bool _dialogAbortVal;
+	bool _playingDialogFl;
+	bool _shootMissedLastFl;
+	bool _removeMonkeyFl;
+	bool _shootReadyFl;
+	int32 _pauseCounterThreshold;
+	int32 _pauseCounter;
+};
 
-void Scene209::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_dodgeFl);
-	s.syncAsByte(_forceDodgeFl);
-	s.syncAsByte(_shouldDodgeFl);
-	s.syncAsByte(_pitchFl);
-	s.syncAsByte(_fallFl);
-	s.syncAsByte(_forceFallFl);
-	s.syncAsByte(_shouldFallFl);
-	s.syncAsByte(_playingAnimFl);
-	s.syncAsByte(_playingDialogFl);
 
-	s.syncAsSint32LE(_pauseMode);
-	s.syncAsSint32LE(_pauseCounterThreshold);
-	s.syncAsSint32LE(_pauseCounter);
-
-	s.syncAsByte(_removeMonkeyFl);
-
-	s.syncAsSint32LE(_monkeyPosition);
-
-	s.syncAsByte(_shootReadyFl);
-	s.syncAsByte(_startShootingInTimerFl);
-	s.syncAsByte(_shootMissedLastFl);
-	s.syncAsByte(_binocularsDroppedFl);
-
-	s.syncAsSint32LE(_dialogAbortVal);
-	s.syncAsSint32LE(_counter);
-}
-
-void Scene209::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_PLANT_STALK);
-}
-
-void Scene209::handlePause() {
+static void handlePause() {
 	switch (_game._trigger) {
 	case 124:
-		if (++_pauseCounter <= _pauseCounterThreshold)
+		if (++local._pauseCounter <= local._pauseCounterThreshold)
 			_scene->_sequences.addTimer(60, 124);
 		else
-			_pauseMode = 0;
+			local._pauseMode = 0;
 		break;
 	default:
 		break;
 	}
 }
 
-void Scene209::initPauseCounterThreshold() {
+static void initPauseCounterThreshold() {
 	switch (_game._trigger) {
 	case 226:
 		_scene->_sequences.addTimer(1, 124);
-		_pauseCounterThreshold = _vm->getRandomNumber(7, 12);
-		_pauseMode = 2;
-		_pauseCounter = 0;
+		local._pauseCounterThreshold = _vm->getRandomNumber(7, 12);
+		local._pauseMode = 2;
+		local._pauseCounter = 0;
 		break;
 	default:
 		break;
 	}
 }
 
-void Scene209::handlePeek() {
+static void handlePeek() {
 	switch (_game._trigger) {
 	case 133:
 		_vm->_sound->command(18);
@@ -155,9 +122,9 @@ void Scene209::handlePeek() {
 		break;
 
 	case 138:
-		_pauseMode = 1;
+		local._pauseMode = 1;
 		_scene->_hotspots.activate(227, false);
-		_playingAnimFl = false;
+		local._playingAnimFl = false;
 		break;
 
 	default:
@@ -165,7 +132,7 @@ void Scene209::handlePeek() {
 	}
 }
 
-void Scene209::handleVerticalMove() {
+static void handleVerticalMove() {
 	switch (_game._trigger) {
 	case 140:
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 8, 0, 1);
@@ -191,8 +158,8 @@ void Scene209::handleVerticalMove() {
 		break;
 
 	case 143:
-		_pauseMode = 1;
-		_playingAnimFl = false;
+		local._pauseMode = 1;
+		local._playingAnimFl = false;
 		_scene->_hotspots.activate(227, false);
 		break;
 
@@ -201,11 +168,11 @@ void Scene209::handleVerticalMove() {
 	}
 }
 
-void Scene209::handleLookStay() {
+static void handleLookStay() {
 	switch (_game._trigger) {
 	case 145:
 		_vm->_sound->command(18);
-		_monkeyPosition = 2;
+		local._monkeyPosition = 2;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 51, 52);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 146);
@@ -230,16 +197,16 @@ void Scene209::handleLookStay() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 6);
 
-		if (!_dodgeFl) {
+		if (!local._dodgeFl) {
 			_scene->_sequences.addTimer(90, 149);
 		} else {
 			_scene->_sequences.addTimer(1, 149);
-			_shouldDodgeFl = true;
+			local._shouldDodgeFl = true;
 		}
 		break;
 
 	case 149:
-		_playingAnimFl = false;
+		local._playingAnimFl = false;
 		break;
 
 	default:
@@ -247,7 +214,7 @@ void Scene209::handleLookStay() {
 	}
 }
 
-void Scene209::handleLookRight() {
+static void handleLookRight() {
 	switch (_game._trigger) {
 	case 151:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -266,9 +233,9 @@ void Scene209::handleLookRight() {
 	break;
 
 	case 153:
-		_playingAnimFl = false;
-		if (_dodgeFl)
-			_shouldDodgeFl = true;
+		local._playingAnimFl = false;
+		if (local._dodgeFl)
+			local._shouldDodgeFl = true;
 		break;
 
 	default:
@@ -276,7 +243,7 @@ void Scene209::handleLookRight() {
 	}
 }
 
-void Scene209::handleBlink() {
+static void handleBlink() {
 	switch (_game._trigger) {
 	case 155:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -297,9 +264,9 @@ void Scene209::handleBlink() {
 		break;
 
 	case 158:
-		_playingAnimFl = false;
-		if (_dodgeFl)
-			_shouldDodgeFl = true;
+		local._playingAnimFl = false;
+		if (local._dodgeFl)
+			local._shouldDodgeFl = true;
 		break;
 
 	default:
@@ -307,16 +274,16 @@ void Scene209::handleBlink() {
 	}
 }
 
-void Scene209::handleGetBinoculars() {
+static void handleGetBinoculars() {
 	switch (_game._trigger) {
 	case 161:
 		_vm->_sound->command(18);
-		_monkeyPosition = 3;
+		local._monkeyPosition = 3;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 8, 24);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 20, 165);
-		if (!_fallFl && !_dodgeFl) {
+		if (!local._fallFl && !local._dodgeFl) {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 162);
 		} else {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
@@ -344,9 +311,9 @@ void Scene209::handleGetBinoculars() {
 	break;
 
 	case 164:
-		_playingAnimFl = false;
-		if (_fallFl)
-			_shouldFallFl = true;
+		local._playingAnimFl = false;
+		if (local._fallFl)
+			local._shouldFallFl = true;
 		break;
 
 	case 165:
@@ -358,7 +325,7 @@ void Scene209::handleGetBinoculars() {
 	}
 }
 
-void Scene209::handleBinocularBlink() {
+static void handleBinocularBlink() {
 	switch (_game._trigger) {
 	case 167:
 	{
@@ -382,9 +349,9 @@ void Scene209::handleBinocularBlink() {
 	break;
 
 	case 169:
-		_playingAnimFl = false;
-		if (_fallFl)
-			_shouldFallFl = true;
+		local._playingAnimFl = false;
+		if (local._fallFl)
+			local._shouldFallFl = true;
 		break;
 
 	default:
@@ -392,7 +359,7 @@ void Scene209::handleBinocularBlink() {
 	}
 }
 
-void Scene209::handleBinocularScan() {
+static void handleBinocularScan() {
 	switch (_game._trigger) {
 	case 171:
 	{
@@ -446,9 +413,9 @@ void Scene209::handleBinocularScan() {
 	break;
 
 	case 175:
-		_playingAnimFl = false;
-		if (_fallFl)
-			_shouldFallFl = true;
+		local._playingAnimFl = false;
+		if (local._fallFl)
+			local._shouldFallFl = true;
 		break;
 
 	default:
@@ -456,20 +423,20 @@ void Scene209::handleBinocularScan() {
 	}
 }
 
-void Scene209::handleJumpInTree() {
+static void handleJumpInTree() {
 	switch (_game._trigger) {
 	case 178:
 	{
 		int oldIdx = 0;
-		_monkeyPosition = 1;
-		if (_removeMonkeyFl)
+		local._monkeyPosition = 1;
+		if (local._removeMonkeyFl)
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		else
 			oldIdx = _globals._sequenceIndexes[3];
 
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 46, 49);
-		if (!_removeMonkeyFl)
+		if (!local._removeMonkeyFl)
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 179);
@@ -488,9 +455,9 @@ void Scene209::handleJumpInTree() {
 	break;
 
 	case 180:
-		_removeMonkeyFl = true;
-		_pauseMode = 1;
-		_playingAnimFl = false;
+		local._removeMonkeyFl = true;
+		local._pauseMode = 1;
+		local._playingAnimFl = false;
 		_scene->_hotspots.activate(227, false);
 		break;
 
@@ -499,7 +466,7 @@ void Scene209::handleJumpInTree() {
 	}
 }
 
-void Scene209::handleTongue() {
+static void handleTongue() {
 	switch (_game._trigger) {
 	case 182:
 	{
@@ -550,7 +517,7 @@ void Scene209::handleTongue() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 40, 41);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 178);
-		_removeMonkeyFl = false;
+		local._removeMonkeyFl = false;
 	}
 	break;
 
@@ -559,10 +526,10 @@ void Scene209::handleTongue() {
 	}
 }
 
-void Scene209::handleStandFromPeek() {
+static void handleStandFromPeek() {
 	switch (_game._trigger) {
 	case 189:
-		_monkeyPosition = 4;
+		local._monkeyPosition = 4;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 50);
 		_scene->_sequences.addTimer(8, 190);
@@ -598,8 +565,8 @@ void Scene209::handleStandFromPeek() {
 		break;
 
 	case 194:
-		_playingAnimFl = false;
-		_counter = 0;
+		local._playingAnimFl = false;
+		local._counter = 0;
 		break;
 
 	default:
@@ -607,7 +574,7 @@ void Scene209::handleStandFromPeek() {
 	}
 }
 
-void Scene209::handleStandBlink() {
+static void handleStandBlink() {
 	switch (_game._trigger) {
 	case 246:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
@@ -628,7 +595,7 @@ void Scene209::handleStandBlink() {
 		break;
 
 	case 249:
-		_playingAnimFl = false;
+		local._playingAnimFl = false;
 		break;
 
 	default:
@@ -636,11 +603,11 @@ void Scene209::handleStandBlink() {
 	}
 }
 
-void Scene209::handleJumpAndHide() {
+static void handleJumpAndHide() {
 	switch (_game._trigger) {
 	case 196:
 		_vm->_sound->command(18);
-		_monkeyPosition = 1;
+		local._monkeyPosition = 1;
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 16);
@@ -648,9 +615,9 @@ void Scene209::handleJumpAndHide() {
 		break;
 
 	case 197:
-		_pauseMode = 1;
+		local._pauseMode = 1;
 		_scene->_hotspots.activate(227, false);
-		_playingAnimFl = false;
+		local._playingAnimFl = false;
 		break;
 
 	default:
@@ -658,7 +625,7 @@ void Scene209::handleJumpAndHide() {
 	}
 }
 
-void Scene209::handleMonkeyEating() {
+static void handleMonkeyEating() {
 	switch (_game._trigger) {
 	case 199:
 		_vm->_sound->command(18);
@@ -722,7 +689,7 @@ void Scene209::handleMonkeyEating() {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 22, 25);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
-		if (!_dodgeFl && !_fallFl)
+		if (!local._dodgeFl && !local._fallFl)
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 207);
 		else
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 209);
@@ -764,7 +731,7 @@ void Scene209::handleMonkeyEating() {
 	break;
 
 	case 210:
-		_playingAnimFl = false;
+		local._playingAnimFl = false;
 		break;
 
 	default:
@@ -772,7 +739,7 @@ void Scene209::handleMonkeyEating() {
 	}
 }
 
-void Scene209::handleMonkeyFall() {
+static void handleMonkeyFall() {
 	switch (_game._trigger) {
 	case 219:
 	{
@@ -787,7 +754,7 @@ void Scene209::handleMonkeyFall() {
 		_scene->_sequences.addTimer(40, 100);
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = _globals._sequenceIndexes[3];
-		_monkeyPosition = 1;
+		local._monkeyPosition = 1;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 1, 35);
@@ -803,7 +770,7 @@ void Scene209::handleMonkeyFall() {
 		_scene->_kernelMessages.add(Common::Point(182, 109), 0xFDFC, 0, 0, 90, _game.getQuote(159));
 		_scene->_hotspots.activate(227, false);
 		int oldIdx = _globals._sequenceIndexes[3];
-		_monkeyPosition = 1;
+		local._monkeyPosition = 1;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 36, 42);
@@ -816,7 +783,7 @@ void Scene209::handleMonkeyFall() {
 	case 221:
 	{
 		_game._objects.setRoom(OBJ_BINOCULARS, 209);
-		_binocularsDroppedFl = true;
+		local._binocularsDroppedFl = true;
 		int oldIdx = _globals._sequenceIndexes[8];
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
@@ -848,10 +815,10 @@ void Scene209::handleMonkeyFall() {
 		break;
 
 	case 224:
-		_playingAnimFl = false;
-		_fallFl = false;
-		_counter = 0;
-		_pauseMode = 0;
+		local._playingAnimFl = false;
+		local._fallFl = false;
+		local._counter = 0;
+		local._pauseMode = 0;
 		_vm->_dialogs->show(20910);
 		_game._player._stepEnabled = true;
 		break;
@@ -861,7 +828,7 @@ void Scene209::handleMonkeyFall() {
 	}
 }
 
-void Scene209::handleMonkey1() {
+static void handleMonkey1() {
 	switch (_game._trigger) {
 	case 212:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
@@ -914,9 +881,9 @@ void Scene209::handleMonkey1() {
 	break;
 
 	case 217:
-		_pitchFl = false;
-		_counter = 0;
-		_pauseMode = 0;
+		local._pitchFl = false;
+		local._counter = 0;
+		local._pauseMode = 0;
 		_scene->_sequences.addTimer(1, 196);
 		break;
 
@@ -925,7 +892,7 @@ void Scene209::handleMonkey1() {
 	}
 }
 
-void Scene209::handleMonkey2() {
+static void handleMonkey2() {
 	switch (_game._trigger) {
 	case 251:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(137));
@@ -964,7 +931,7 @@ void Scene209::handleMonkey2() {
 	}
 }
 
-void Scene209::handleDodge() {
+static void handleDodge() {
 	switch (_game._trigger) {
 	case 241:
 		_scene->_hotspots.activate(227, true);
@@ -984,13 +951,13 @@ void Scene209::handleDodge() {
 		_vm->_sound->command(18);
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 6);
-		_playingAnimFl = false;
-		_pauseMode = 0;
+		local._playingAnimFl = false;
+		local._pauseMode = 0;
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 90, _game.getQuote(155));
-		if (!_shootMissedLastFl) {
+		if (!local._shootMissedLastFl) {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(135));
-			_shootMissedLastFl = true;
+			local._shootMissedLastFl = true;
 		} else {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(136));
 		}
@@ -1001,7 +968,7 @@ void Scene209::handleDodge() {
 	}
 }
 
-void Scene209::enter() {
+static void room_209_init() {
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('a', 1));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
@@ -1048,163 +1015,163 @@ void Scene209::enter() {
 		_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
 	}
 
-	_pitchFl = false;
-	_fallFl = false;
-	_dodgeFl = false;
-	_playingAnimFl = false;
-	_monkeyPosition = 1;
-	_counter = 0;
-	_pauseMode = 0;
-	_forceFallFl = false;
-	_shouldFallFl = false;
-	_forceDodgeFl = false;
-	_binocularsDroppedFl = false;
-	_shouldDodgeFl = false;
-	_startShootingInTimerFl = false;
-	_dialogAbortVal = 5;
-	_playingDialogFl = false;
-	_shootMissedLastFl = false;
-	_removeMonkeyFl = true;
-	_shootReadyFl = false;
+	local._pitchFl = false;
+	local._fallFl = false;
+	local._dodgeFl = false;
+	local._playingAnimFl = false;
+	local._monkeyPosition = 1;
+	local._counter = 0;
+	local._pauseMode = 0;
+	local._forceFallFl = false;
+	local._shouldFallFl = false;
+	local._forceDodgeFl = false;
+	local._binocularsDroppedFl = false;
+	local._shouldDodgeFl = false;
+	local._startShootingInTimerFl = false;
+	local._dialogAbortVal = 5;
+	local._playingDialogFl = false;
+	local._shootMissedLastFl = false;
+	local._removeMonkeyFl = true;
+	local._shootReadyFl = false;
 
 	_scene->_hotspots.activate(227, false);
 
 	section_2_music();
 }
 
-void Scene209::step() {
-	if (!_playingAnimFl && !_pitchFl && !_fallFl && !_dodgeFl && (_pauseMode == 0) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
+static void room_209_daemon() {
+	if (!local._playingAnimFl && !local._pitchFl && !local._fallFl && !local._dodgeFl && (local._pauseMode == 0) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
 		int randAction = _vm->getRandomNumber(1, 50);
 		switch (randAction) {
 		case 1:
-			if ((_monkeyPosition == 1) && (_counter < 2)) {
+			if ((local._monkeyPosition == 1) && (local._counter < 2)) {
 				_scene->_sequences.addTimer(1, 133);
-				_playingAnimFl = true;
+				local._playingAnimFl = true;
 				_scene->_hotspots.activate(227, true);
-				++_counter;
+				++local._counter;
 			}
 			break;
 
 		case 2:
-			if ((_monkeyPosition == 1) && (_counter < 2)) {
+			if ((local._monkeyPosition == 1) && (local._counter < 2)) {
 				_scene->_sequences.addTimer(1, 140);
 				_scene->_hotspots.activate(227, true);
-				_playingAnimFl = true;
-				++_counter;
+				local._playingAnimFl = true;
+				++local._counter;
 			}
 			break;
 
 		case 3:
-			if (_monkeyPosition == 1) {
+			if (local._monkeyPosition == 1) {
 				_scene->_sequences.addTimer(1, 145);
 				_scene->_hotspots.activate(227, true);
-				_playingAnimFl = true;
-				_counter = 0;
+				local._playingAnimFl = true;
+				local._counter = 0;
 			}
 			break;
 
 		case 4:
-			if ((_monkeyPosition == 2) && (_counter < 2)) {
+			if ((local._monkeyPosition == 2) && (local._counter < 2)) {
 				_scene->_sequences.addTimer(1, 151);
 				_scene->_hotspots.activate(227, true);
-				++_counter;
-				_playingAnimFl = true;
+				++local._counter;
+				local._playingAnimFl = true;
 			}
 			break;
 
 		case 5:
-			if (_monkeyPosition == 2) {
+			if (local._monkeyPosition == 2) {
 				_scene->_sequences.addTimer(1, 161);
 				_scene->_hotspots.activate(227, true);
-				_counter = 0;
-				_playingAnimFl = true;
+				local._counter = 0;
+				local._playingAnimFl = true;
 			}
 			break;
 
 		case 6:
-			if (_monkeyPosition == 2) {
+			if (local._monkeyPosition == 2) {
 				_scene->_sequences.addTimer(1, 189);
 				_scene->_hotspots.activate(227, true);
-				_counter = 0;
-				_playingAnimFl = true;
+				local._counter = 0;
+				local._playingAnimFl = true;
 			}
 			break;
 		case 7:
-			if (_monkeyPosition == 3) {
+			if (local._monkeyPosition == 3) {
 				_scene->_hotspots.activate(227, true);
 				_scene->_sequences.addTimer(1, 167);
-				_playingAnimFl = true;
+				local._playingAnimFl = true;
 			}
 			break;
 
 		case 8:
-			if (_monkeyPosition == 3) {
+			if (local._monkeyPosition == 3) {
 				_scene->_sequences.addTimer(1, 178);
-				_playingAnimFl = true;
+				local._playingAnimFl = true;
 				_scene->_hotspots.activate(227, true);
-				_counter = 0;
+				local._counter = 0;
 			}
 			break;
 
 		case 9:
-			if ((_monkeyPosition == 3) && (_game._player._playerPos.x < 120)) {
+			if ((local._monkeyPosition == 3) && (_game._player._playerPos.x < 120)) {
 				_scene->_sequences.addTimer(1, 182);
 				_scene->_hotspots.activate(227, true);
-				_counter = 0;
-				_playingAnimFl = true;
+				local._counter = 0;
+				local._playingAnimFl = true;
 			}
 			break;
 
 		case 10:
-			if (_monkeyPosition == 4) {
+			if (local._monkeyPosition == 4) {
 				_scene->_sequences.addTimer(1, 196);
 				_scene->_hotspots.activate(227, true);
-				_playingAnimFl = true;
-				_counter = 0;
+				local._playingAnimFl = true;
+				local._counter = 0;
 			}
 			break;
 
 		case 11:
-			if ((_monkeyPosition == 4) && (_counter < 3)) {
+			if ((local._monkeyPosition == 4) && (local._counter < 3)) {
 				_scene->_sequences.addTimer(1, 199);
 				_scene->_hotspots.activate(227, true);
-				++_counter;
-				_playingAnimFl = true;
+				++local._counter;
+				local._playingAnimFl = true;
 			}
 			break;
 
 		case 30:
-			if (_monkeyPosition == 4) {
+			if (local._monkeyPosition == 4) {
 				_scene->_sequences.addTimer(1, 246);
 				_scene->_hotspots.activate(227, true);
-				_counter = 0;
-				_playingAnimFl = true;
+				local._counter = 0;
+				local._playingAnimFl = true;
 			}
 			break;
 
 		default:
-			if ((randAction >= 12) && (randAction <= 20) && (_monkeyPosition == 2) && (_counter < 5)) {
+			if ((randAction >= 12) && (randAction <= 20) && (local._monkeyPosition == 2) && (local._counter < 5)) {
 				_scene->_sequences.addTimer(1, 155);
-				++_counter;
-				_playingAnimFl = true;
+				++local._counter;
+				local._playingAnimFl = true;
 			}
 
-			if ((randAction >= 21) && (randAction <= 29) && (_monkeyPosition == 3) && (_counter < 3)) {
+			if ((randAction >= 21) && (randAction <= 29) && (local._monkeyPosition == 3) && (local._counter < 3)) {
 				_scene->_sequences.addTimer(1, 171);
-				_playingAnimFl = true;
-				++_counter;
+				local._playingAnimFl = true;
+				++local._counter;
 			}
 			break;
 		}
 	}
 
-	if (!_dodgeFl && !_pitchFl && !_fallFl && (_pauseMode == 1))
+	if (!local._dodgeFl && !local._pitchFl && !local._fallFl && (local._pauseMode == 1))
 		_scene->_sequences.addTimer(1, 226);
 
-	if (!_dodgeFl && !_pitchFl && !_fallFl && (_pauseMode == 2))
+	if (!local._dodgeFl && !local._pitchFl && !local._fallFl && (local._pauseMode == 2))
 		handlePause();
 
-	if (!_dodgeFl && !_pitchFl && !_fallFl && (_pauseMode == 1))
+	if (!local._dodgeFl && !local._pitchFl && !local._fallFl && (local._pauseMode == 1))
 		initPauseCounterThreshold();
 
 	handlePeek();
@@ -1226,72 +1193,72 @@ void Scene209::step() {
 	handleStandBlink();
 	handleMonkey2();
 
-	if ((_monkeyPosition == 1) && !_playingAnimFl && _fallFl) {
+	if ((local._monkeyPosition == 1) && !local._playingAnimFl && local._fallFl) {
 		_scene->_sequences.addTimer(1, 145);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 2) && !_playingAnimFl && _fallFl) {
+	if ((local._monkeyPosition == 2) && !local._playingAnimFl && local._fallFl) {
 		_scene->_sequences.addTimer(1, 161);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 4) && !_playingAnimFl && _fallFl) {
+	if ((local._monkeyPosition == 4) && !local._playingAnimFl && local._fallFl) {
 		_scene->_sequences.addTimer(1, 196);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 3) && !_playingAnimFl && _fallFl && _forceFallFl) {
+	if ((local._monkeyPosition == 3) && !local._playingAnimFl && local._fallFl && local._forceFallFl) {
 		_scene->_sequences.addTimer(1, 219);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 1) && !_playingAnimFl && _pitchFl) {
+	if ((local._monkeyPosition == 1) && !local._playingAnimFl && local._pitchFl) {
 		_scene->_sequences.addTimer(1, 145);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 2) && !_playingAnimFl && _pitchFl) {
+	if ((local._monkeyPosition == 2) && !local._playingAnimFl && local._pitchFl) {
 		_scene->_sequences.addTimer(1, 189);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 4) && !_playingAnimFl && _pitchFl) {
+	if ((local._monkeyPosition == 4) && !local._playingAnimFl && local._pitchFl) {
 		_scene->_sequences.addTimer(1, 212);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 3) && !_playingAnimFl && _pitchFl) {
+	if ((local._monkeyPosition == 3) && !local._playingAnimFl && local._pitchFl) {
 		_scene->_sequences.addTimer(1, 178);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 1) && !_playingAnimFl && _dodgeFl) {
+	if ((local._monkeyPosition == 1) && !local._playingAnimFl && local._dodgeFl) {
 		_scene->_sequences.addTimer(1, 145);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 4) && !_playingAnimFl && _dodgeFl) {
+	if ((local._monkeyPosition == 4) && !local._playingAnimFl && local._dodgeFl) {
 		_scene->_sequences.addTimer(1, 196);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 3) && !_playingAnimFl && _dodgeFl) {
+	if ((local._monkeyPosition == 3) && !local._playingAnimFl && local._dodgeFl) {
 		_scene->_sequences.addTimer(1, 178);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if ((_monkeyPosition == 2) && !_playingAnimFl && _dodgeFl && _forceDodgeFl) {
+	if ((local._monkeyPosition == 2) && !local._playingAnimFl && local._dodgeFl && local._forceDodgeFl) {
 		_scene->_sequences.addTimer(1, 241);
-		_playingAnimFl = true;
+		local._playingAnimFl = true;
 	}
 
-	if (_dodgeFl || _fallFl) { /* if want to dodge or fall */
-		if (!_playingAnimFl && (_monkeyPosition == 2))
-			_shouldDodgeFl = true;
+	if (local._dodgeFl || local._fallFl) { /* if want to dodge or fall */
+		if (!local._playingAnimFl && (local._monkeyPosition == 2))
+			local._shouldDodgeFl = true;
 
-		if (!_playingAnimFl && (_monkeyPosition == 3))
-			_shouldFallFl = true;
+		if (!local._playingAnimFl && (local._monkeyPosition == 3))
+			local._shouldFallFl = true;
 
 		switch (_game._trigger) {
 		case 228:
@@ -1347,15 +1314,15 @@ void Scene209::step() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addTimer(2, 233);
 			_scene->_kernelMessages.reset();
-			if (_dodgeFl && (_monkeyPosition != 1) && (_monkeyPosition != 2))
+			if (local._dodgeFl && (local._monkeyPosition != 1) && (local._monkeyPosition != 2))
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, _game.getQuote(138));
-			if (_fallFl && (_monkeyPosition != 3))
+			if (local._fallFl && (local._monkeyPosition != 3))
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 34463, _game.getQuote(138));
 		}
 		break;
 
 		case 233:
-			_shootReadyFl = true;
+			local._shootReadyFl = true;
 			break;
 
 		case 234:
@@ -1386,8 +1353,8 @@ void Scene209::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addTimer(12, 236);
-			_forceFallFl = true;
-			_forceDodgeFl = true;
+			local._forceFallFl = true;
+			local._forceDodgeFl = true;
 		}
 		break;
 
@@ -1408,21 +1375,21 @@ void Scene209::step() {
 
 		case 238:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			if (_dodgeFl)
+			if (local._dodgeFl)
 				_game._player._stepEnabled = true;
 
-			_startShootingInTimerFl = false;
+			local._startShootingInTimerFl = false;
 
-			if (_fallFl) {
+			if (local._fallFl) {
 				_globals[kMonkeyStatus] = MONKEY_IS_GONE;
 				_game._objects.setRoom(OBJ_POISON_DARTS, NOWHERE);
 			}
-			_dodgeFl = false;
-			_fallFl = false;
-			_forceFallFl = false;
-			_forceDodgeFl = false;
-			_shouldFallFl = false;
-			_shouldDodgeFl = false;
+			local._dodgeFl = false;
+			local._fallFl = false;
+			local._forceFallFl = false;
+			local._forceDodgeFl = false;
+			local._shouldFallFl = false;
+			local._shouldDodgeFl = false;
 			break;
 
 		case 239:
@@ -1437,13 +1404,13 @@ void Scene209::step() {
 	if (_game._trigger == 100)
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(134));
 
-	if (_shootReadyFl && (_shouldFallFl || _shouldDodgeFl)) {
+	if (local._shootReadyFl && (local._shouldFallFl || local._shouldDodgeFl)) {
 		_scene->_sequences.addTimer(4, 234);
-		_shootReadyFl = false;
+		local._shootReadyFl = false;
 	}
 }
 
-void Scene209::preActions() {
+static void room_209_pre_parser() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_WEST))
 		_game._player._walkOffScreenSceneId = 208;
 
@@ -1465,7 +1432,7 @@ void Scene209::preActions() {
 	}
 }
 
-void Scene209::actions() {
+static void room_209_parser() {
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(20912);
 		_action._inProgress = false;
@@ -1478,9 +1445,9 @@ void Scene209::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TALKTO, NOUN_MONKEY) && !_pitchFl && !_playingDialogFl) {
-		_scene->_sequences.addTimer(1, _dialogAbortVal);
-		_playingDialogFl = true;
+	if (_action.isAction(VERB_TALKTO, NOUN_MONKEY) && !local._pitchFl && !local._playingDialogFl) {
+		_scene->_sequences.addTimer(1, local._dialogAbortVal);
+		local._playingDialogFl = true;
 		_game._player._stepEnabled = false;
 		_action._inProgress = false;
 		return;
@@ -1489,7 +1456,7 @@ void Scene209::actions() {
 	switch (_game._trigger) {
 	case 130:
 		_game._player._stepEnabled = true;
-		_playingDialogFl = false;
+		local._playingDialogFl = false;
 		_action._inProgress = false;
 		return;
 
@@ -1502,7 +1469,7 @@ void Scene209::actions() {
 	case 6:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(151));
 		_scene->_sequences.addTimer(60, 130);
-		_dialogAbortVal = 7;
+		local._dialogAbortVal = 7;
 		_action._inProgress = false;
 		return;
 
@@ -1515,7 +1482,7 @@ void Scene209::actions() {
 	case 8:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(149));
 		_scene->_sequences.addTimer(60, 130);
-		_dialogAbortVal = 9;
+		local._dialogAbortVal = 9;
 		_action._inProgress = false;
 		return;
 
@@ -1534,7 +1501,7 @@ void Scene209::actions() {
 	case 11:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(152));
 		_scene->_sequences.addTimer(60, 130);
-		_dialogAbortVal = 12;
+		local._dialogAbortVal = 12;
 		_action._inProgress = false;
 		return;
 
@@ -1553,7 +1520,7 @@ void Scene209::actions() {
 	case 14:
 		_scene->_kernelMessages.add(Common::Point(180, 21), 0xFDFC, 0, 0, 60, _game.getQuote(151));
 		_scene->_sequences.addTimer(60, 130);
-		_dialogAbortVal = 15;
+		local._dialogAbortVal = 15;
 		_action._inProgress = false;
 		return;
 
@@ -1570,16 +1537,16 @@ void Scene209::actions() {
 
 	case 17:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 130, 60, _game.getQuote(147));
-		_dialogAbortVal = 18;
+		local._dialogAbortVal = 18;
 		_action._inProgress = false;
 		return;
 
 	case 18:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(148));
-		_pitchFl = true;
-		_playingDialogFl = false;
-		_dialogAbortVal = 5;
+		local._pitchFl = true;
+		local._playingDialogFl = false;
+		local._dialogAbortVal = 5;
 		_action._inProgress = false;
 		return;
 
@@ -1590,29 +1557,29 @@ void Scene209::actions() {
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
 			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
-			if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
+			if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !local._startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
-				_startShootingInTimerFl = true;
+				local._startShootingInTimerFl = true;
 				_game._player._stepEnabled = false;
-				_dodgeFl = true;
+				local._dodgeFl = true;
 				_action._inProgress = false;
 				return;
 			}
 
-			if (_action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
+			if (_action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY) && !local._startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 228);
 				_game._player._stepEnabled = false;
-				_fallFl = true;
-				_startShootingInTimerFl = true;
+				local._fallFl = true;
+				local._startShootingInTimerFl = true;
 				_action._inProgress = false;
 				return;
 			}
 		}
 
 		if (_action.isAction(VERB_LOOK, NOUN_MONKEY)) {
-			_pitchFl = true;
+			local._pitchFl = true;
 			_game._player._stepEnabled = false;
 			_vm->_dialogs->show(20914);
 			_action._inProgress = false;
@@ -1673,7 +1640,7 @@ void Scene209::actions() {
 		case 2:
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_binocularsDroppedFl = false;
+			local._binocularsDroppedFl = false;
 			_scene->_sequences.addTimer(4, 3);
 			break;
 
@@ -1759,7 +1726,7 @@ void Scene209::actions() {
 
 	if (_action.isAction(VERB_LOOK, NOUN_PALM_TREE)) {
 		if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
-			if (_monkeyPosition == 1)
+			if (local._monkeyPosition == 1)
 				_vm->_dialogs->show(20917);
 			else
 				_vm->_dialogs->show(20918);
@@ -1786,16 +1753,43 @@ void Scene209::actions() {
 	}
 }
 
+void room_209_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._dodgeFl);
+	s.syncAsByte(local._forceDodgeFl);
+	s.syncAsByte(local._shouldDodgeFl);
+	s.syncAsByte(local._pitchFl);
+	s.syncAsByte(local._fallFl);
+	s.syncAsByte(local._forceFallFl);
+	s.syncAsByte(local._shouldFallFl);
+	s.syncAsByte(local._playingAnimFl);
+	s.syncAsByte(local._playingDialogFl);
+
+	s.syncAsSint32LE(local._pauseMode);
+	s.syncAsSint32LE(local._pauseCounterThreshold);
+	s.syncAsSint32LE(local._pauseCounter);
+
+	s.syncAsByte(local._removeMonkeyFl);
+
+	s.syncAsSint32LE(local._monkeyPosition);
+
+	s.syncAsByte(local._shootReadyFl);
+	s.syncAsByte(local._startShootingInTimerFl);
+	s.syncAsByte(local._shootMissedLastFl);
+	s.syncAsByte(local._binocularsDroppedFl);
+
+	s.syncAsSint32LE(local._dialogAbortVal);
+	s.syncAsSint32LE(local._counter);
+}
+
 void room_209_preload() {
 	room_init_code_pointer = room_209_init;
 	room_pre_parser_code_pointer = room_209_pre_parser;
 	room_parser_code_pointer = room_209_parser;
 	room_daemon_code_pointer = room_209_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
 	section_2_walker();
 	section_2_interface();
+	_scene->addActiveVocab(NOUN_PLANT_STALK);
 }
 
 } // namespace Rooms

@@ -32,16 +32,7 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void Scene212::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_BOUNCING_REPTILE);
-}
-
-void Scene212::enter() {
-	// CHECKME: Some useless variables have been remove here
-
+static void room_212_init() {
 	if (_scene->_priorSceneId == 208) {
 		_game._player._playerPos = Common::Point(195, 85);
 		_game._player._facing = FACING_SOUTH;
@@ -53,16 +44,16 @@ void Scene212::enter() {
 	section_2_music();
 }
 
-void Scene212::step() {
-	// CHECKME: Could we move the dino?
+static void room_212_daemon() {
+	// No implementation
 }
 
-void Scene212::preActions() {
+static void room_212_pre_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_CAVE_ENTRANCE))
 		_game._player._walkOffScreenSceneId = 111;
 }
 
-void Scene212::actions() {
+static void room_212_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21209);
 	else if (_action.isAction(VERB_WALK_TOWARDS) && (_action.isObject(NOUN_FIELD_TO_NORTH) || _action.isObject(NOUN_MOUNTAINS)))
@@ -91,16 +82,19 @@ void Scene212::actions() {
 	_action._inProgress = false;
 }
 
+void room_212_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
 void room_212_preload() {
 	room_init_code_pointer = room_212_init;
 	room_pre_parser_code_pointer = room_212_pre_parser;
 	room_parser_code_pointer = room_212_parser;
 	room_daemon_code_pointer = room_212_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
 	section_2_walker();
 	section_2_interface();
+	_scene->addActiveVocab(NOUN_BOUNCING_REPTILE);
 }
 
 } // namespace Rooms

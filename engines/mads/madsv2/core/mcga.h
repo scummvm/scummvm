@@ -35,6 +35,7 @@ extern int  mcga_retrace_max_bytes;
 
 extern word mcga_palette_update;
 extern int  mcga_palette_fast;
+extern word mcga_shakes;
 
 /**
  * Given X and Y, sets pixel to color C

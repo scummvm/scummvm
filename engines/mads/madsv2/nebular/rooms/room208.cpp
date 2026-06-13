@@ -32,30 +32,16 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-Scene208::Scene208(RexNebularEngine *vm) : Scene2xx(vm) {
-	_rhotundaTurnFl = false;
-	_boundingFl = false;
-	_rhotundaTime = 0;
-}
+struct Scratch {
+	bool _rhotundaTurnFl;
+	bool _boundingFl;
+	long _rhotundaTime;
+};
 
-void Scene208::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_rhotundaTurnFl);
-	s.syncAsByte(_boundingFl);
-	s.syncAsSint32LE(_rhotundaTime);
-}
 
-void Scene208::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_HUGE_LEGS);
-	_scene->addActiveVocab(NOUN_LEAF_COVERED_PIT);
-	_scene->addActiveVocab(NOUN_PILE_OF_LEAVES);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene208::updateTrap() {
+static void updateTrap() {
 	if (_globals[kRhotundaStatus] == 1) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 24);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
@@ -89,7 +75,7 @@ void Scene208::updateTrap() {
 	}
 }
 
-void Scene208::enter() {
+static void room_208_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1));
@@ -98,9 +84,9 @@ void Scene208::enter() {
 
 	updateTrap();
 
-	_rhotundaTurnFl = false;
-	_boundingFl = false;
-	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_INTERFACE);
+	local._rhotundaTurnFl = false;
+	local._boundingFl = false;
+	_scene->_kernelMessages._talkFont = font_inter;
 	_scene->_textSpacing = 0;
 
 	if (_scene->_priorSceneId == 207) {
@@ -129,30 +115,30 @@ void Scene208::enter() {
 	section_2_music();
 }
 
-void Scene208::step() {
-	if (_boundingFl && _scene->_animation[0] &&
-		(_rhotundaTime <= _scene->_animation[0]->getCurrentFrame())) {
-		_rhotundaTime = _scene->_animation[0]->getCurrentFrame();
+static void room_208_daemon() {
+	if (local._boundingFl && _scene->_animation[0] &&
+		(local._rhotundaTime <= _scene->_animation[0]->getCurrentFrame())) {
+		local._rhotundaTime = _scene->_animation[0]->getCurrentFrame();
 
-		if (_rhotundaTime == 125)
+		if (local._rhotundaTime == 125)
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 	}
 
-	if (!_rhotundaTurnFl)
+	if (!local._rhotundaTurnFl)
 		return;
 
 	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != FACING_EAST))
 		return;
 
-	if ((_game._trigger == 0) && _boundingFl)
+	if ((_game._trigger == 0) && local._boundingFl)
 		return;
 
-	_boundingFl = true;
+	local._boundingFl = true;
 
 	switch (_game._trigger) {
 	case 0:
 		_scene->loadAnimation(formAnimName('A', -1), 81);
-		_rhotundaTime = 0;
+		local._rhotundaTime = 0;
 		break;
 	case 81:
 		_scene->_sequences.remove(_globals._spriteIndexes[15]);
@@ -168,8 +154,8 @@ void Scene208::step() {
 	}
 }
 
-void Scene208::preActions() {
-	Player &player = _vm->_game->_player;
+static void room_208_pre_parser() {
+	auto &player = _vm->_game->_player;
 
 	if (_action.isAction(VERB_LOOK) && player._readyToWalk)
 		player._needToWalk = true;
@@ -181,7 +167,7 @@ void Scene208::preActions() {
 		player._walkOffScreenSceneId = 207;
 }
 
-void Scene208::subAction(int mode) {
+static void subAction(int mode) {
 	switch (_game._trigger) {
 	case 0:
 	{
@@ -266,7 +252,7 @@ void Scene208::subAction(int mode) {
 	}
 }
 
-void Scene208::actions() {
+static void room_208_parser() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_LOWLANDS_TO_NORTH)) {
 		if (_globals[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
@@ -288,7 +274,7 @@ void Scene208::actions() {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
-			_rhotundaTurnFl = true;
+			local._rhotundaTurnFl = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
 	} else if (_action.isAction(VERB_PUT, NOUN_BURGER, NOUN_LEAF_COVERED_PIT)) {
@@ -342,16 +328,24 @@ void Scene208::actions() {
 	_action._inProgress = false;
 }
 
+void room_208_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._rhotundaTurnFl);
+	s.syncAsByte(local._boundingFl);
+	s.syncAsSint32LE(local._rhotundaTime);
+}
+
 void room_208_preload() {
 	room_init_code_pointer = room_208_init;
 	room_pre_parser_code_pointer = room_208_pre_parser;
 	room_parser_code_pointer = room_208_parser;
 	room_daemon_code_pointer = room_208_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
 	section_2_walker();
 	section_2_interface();
+	_scene->addActiveVocab(NOUN_HUGE_LEGS);
+	_scene->addActiveVocab(NOUN_LEAF_COVERED_PIT);
+	_scene->addActiveVocab(NOUN_PILE_OF_LEAVES);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 } // namespace Rooms

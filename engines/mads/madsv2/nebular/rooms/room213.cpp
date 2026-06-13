@@ -32,20 +32,20 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void Scene213::setup() {
-	_game._player._spritesPrefix = "";
+struct Scratch {
+	int16 _handSpriteId;
+};
 
-	// The original is calling Scene2xx::setAAName()
-	_game._aaName = Resources::formatAAName(2);
-}
+static Scratch local;
 
-void Scene213::enter() {
+
+static void room_213_init() {
 	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
-		_handSpriteId = _scene->_sprites.addSprites("*METHAND");
+		local._handSpriteId = _scene->_sprites.addSprites("*METHAND");
 	else if (_globals[kSexOfRex] == REX_MALE)
-		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+		local._handSpriteId = _scene->_sprites.addSprites("*REXHAND");
 	else
-		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+		local._handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
 
 	teleporterEnter();
 
@@ -60,11 +60,11 @@ void Scene213::enter() {
 	}
 }
 
-void Scene213::step() {
+static void room_213_daemon() {
 	teleporterStep();
 }
 
-void Scene213::actions() {
+static void room_213_parser() {
 	if (teleporterActions()) {
 		_action._inProgress = false;
 		return;
@@ -96,13 +96,10 @@ void Scene213::actions() {
 
 void room_213_preload() {
 	room_init_code_pointer = room_213_init;
-	room_pre_parser_code_pointer = room_213_pre_parser;
 	room_parser_code_pointer = room_213_parser;
 	room_daemon_code_pointer = room_213_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
-	section_2_walker();
+	Common::strcpy_s(player.series_name, "");
 	section_2_interface();
 }
 

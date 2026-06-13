@@ -102,6 +102,8 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/room215.o \
 	madsv2/nebular/rooms/room216.o \
 	madsv2/nebular/rooms/section1.o \
+	madsv2/nebular/rooms/section2.o \
+	madsv2/nebular/rooms/teleporter_room.o \
 	madsv2/phantom/mads/mads.o \
 	madsv2/phantom/rooms/section1.o \
 	madsv2/phantom/rooms/room101.o \

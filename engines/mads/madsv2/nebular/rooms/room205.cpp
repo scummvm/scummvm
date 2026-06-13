@@ -22,6 +22,7 @@
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/conversation.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section2.h"
@@ -37,6 +38,7 @@ struct Scratch {
 	long _chickenTime;
 	bool _beingKicked;
 	int16 _kernelMessage;
+	Conversation _dialog1;
 };
 
 static Scratch local;
@@ -81,10 +83,10 @@ static void room_205_init() {
 	local._beingKicked = false;
 	_game.loadQuoteSet(0x6B, 0x70, 0x71, 0x72, 0x5A, 0x74, 0x75, 0x76, 0x77, 0x78, 0x73, 0x79, 0x7A, 0x7B, 0x7C,
 		0x7D, 0x7E, 0x7F, 0x80, 0xAC, 0xAD, 0xAE, 0x6C, 0x6D, 0x6E, 0x6F, 0x2, 0);
-	_dialog1.setup(0x2A, 0x5A, 0x78, 0x74, 0x75, 0x76, 0x77, 0);
+	local._dialog1.setup(0x2A, 0x5A, 0x78, 0x74, 0x75, 0x76, 0x77, 0);
 
 	if (!_game._visitedScenes._sceneRevisited)
-		_dialog1.set(0x5A, 0x74, 0x75, 0x77, 0);
+		local._dialog1.set(0x5A, 0x74, 0x75, 0x77, 0);
 
 	_vm->_palette->setEntry(250, 63, 50, 20);
 	_vm->_palette->setEntry(251, 50, 40, 15);
@@ -179,20 +181,20 @@ static void room_205_parser() {
 			switch (_action._activeAction._verbId) {
 			case 0x5A:
 				handleWomanSpeech(0x7A);
-				_dialog1.write(0x78, true);
-				_dialog1.write(0x5A, false);
+				local._dialog1.write(0x78, true);
+				local._dialog1.write(0x5A, false);
 				break;
 
 			case 0x74:
 				handleWomanSpeech(0x7C);
-				_dialog1.write(0x74, false);
-				_dialog1.write(0x76, true);
+				local._dialog1.write(0x74, false);
+				local._dialog1.write(0x76, true);
 				break;
 
 			case 0x75:
 			case 0x78:
 				handleWomanSpeech(0x7B);
-				_dialog1.write(_action._activeAction._verbId, false);
+				local._dialog1.write(_action._activeAction._verbId, false);
 				_vm->_dialogs->show(20501);
 				break;
 
@@ -202,7 +204,7 @@ static void room_205_parser() {
 					_scene->_sequences.addTimer(120, 2);
 				} else if (_game._trigger == 2) {
 					handleWomanSpeech(0x7E);
-					_dialog1.write(0x76, false);
+					local._dialog1.write(0x76, false);
 					_globals[kChickenPermitted] = true;
 				}
 				break;
@@ -217,7 +219,7 @@ static void room_205_parser() {
 			}
 
 			if (_action._activeAction._verbId != 0x77)
-				_dialog1.start();
+				local._dialog1.start();
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(20502);
@@ -230,9 +232,9 @@ static void room_205_parser() {
 		} else if (_game._trigger == 1) {
 			_game._player._stepEnabled = true;
 			handleWomanSpeech(0x79);
-			_dialog1.write(0x5A, true);
-			_dialog1.write(0x75, true);
-			_dialog1.start();
+			local._dialog1.write(0x5A, true);
+			local._dialog1.write(0x75, true);
+			local._dialog1.start();
 		}
 	} else if (_action.isAction(VERB_GIVE, NOUN_NATIVE_WOMAN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		if (_game._trigger == 0) {

@@ -110,6 +110,18 @@ char *Game::getQuote(int quote_id) {
 	return quote_string(kernel.quotes, quote_id);
 }
 
+void Game::splitQuote(const Common::String &source, Common::String &line1, Common::String &line2) {
+	// Make the first line up the end of the word at the half-way point
+	const char *strP = source.c_str() + source.size() / 2;
+	while (*strP != ' ') ++strP;
+
+	line1 = Common::String(source.c_str(), strP);
+
+	// The rest of the string goes in the second line
+	while (*strP == ' ') ++strP;
+	line2 = Common::String(strP);
+}
+
 int16 &Globals::operator[](int idx) {
 	return global[idx];
 }
@@ -172,7 +184,14 @@ void Scene::DynamicHotspots::setPosition(int id, const Common::Point &pt, int fa
 }
 
 int Scene::DynamicHotspots::setCursor(int index, int cursor) {
+	error("TODO: DynamicHotspots::setCursor");
+}
 
+Scene::DynamicHotspot Scene::DynamicHotspots::operator[](int idx) {
+	return Scene::DynamicHotspot(idx);
+}
+
+Scene::DynamicHotspot::DynamicHotspot(int index) : _articleNumber(kernel_dynamic_hot[index].prep) {
 }
 
 void Scene::Hotspots::activate(int hotspot, int active) {
@@ -186,6 +205,10 @@ int Scene::KernelMessages::TalkFont::getWidth(const Common::String &message, int
 int Scene::KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 		uint32 timeout, const Common::String &msg) {
 	return kernel_message_add(const_cast<char *>(msg.c_str()), pt.x, pt.y, fontColor, timeout, endTrigger, 0);
+}
+
+int Scene::KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {
+	return kernel_message_player(quoteId, timeout, endTrigger);
 }
 
 void Scene::KernelMessages::remove(int msgIndex) {
@@ -260,6 +283,10 @@ void Scene::SpriteSlots::fullRefresh() {
 
 void Scene::UserInterface::emptyConversationList() {
 	inter_reset_dialog();
+}
+
+void Scene::UserInterface::selectObject(int item_id) {
+	inter_set_active_inven(item_id);
 }
 
 void Scene::UserInterface::setup(int inputMode) {
