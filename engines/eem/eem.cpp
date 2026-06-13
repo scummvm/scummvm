@@ -59,6 +59,15 @@ const uint kPalHighScore       = 0x27;
 const uint kPalStormLogo       = 0x26;  // Floppy FUN_23d2_0605
 const uint kPicMousePointer    = 0x50;  // 0x51 is the wait cursor
 
+// EEM2 cursor table — `_main @ 1abf:0faf` loads seven cursor PICs into
+// `_AnimationObjects`-adjacent slots and `_SwitchMouse @ 17ee:2c83` activates
+// one by index. Order matches the slot order: 0 arrow, 1 wait, 2/3 examine,
+// 4 Jake hand, 5 Jenny hand, 6 approach. Indexed by the site search-record
+// cursor id (row +0xc).
+const uint16 kLondonCursorPics[7] = {
+	0x50, 0x51, 0x206, 0xa1, 0x207, 0x20b, 0x35e
+};
+
 const byte kSaveBodyVer = 1;
 
 // Test switch: populate ScrapBook 1 at startup without exposing a game
@@ -634,7 +643,42 @@ void EEMEngine::setInteractiveMouseCursor(bool active) {
 }
 
 void EEMEngine::setHotspotMouseCursor(bool active) {
+	// EEM2 swaps the cursor SHAPE per hotspot (see setSiteHotspotCursorId), so
+	// the EEM1 red-outline recolor doesn't apply. The bool path only resets to
+	// the default arrow (cursor 0) when leaving a hotspot / the site loop.
+	if (isLondon()) {
+		if (!active)
+			setSiteHotspotCursorId(0);
+		return;
+	}
 	setInteractiveMouseCursor(active);
+}
+
+void EEMEngine::setSiteHotspotCursorId(int cursorId) {
+	if (!isLondon())
+		return;
+	// `_SwitchMouse @ 17ee:2c83`: cursor 4 (Jake hand) becomes 5 for Jenny.
+	if (cursorId == 4 && _partner == kPartnerJenny)
+		cursorId = 5;
+	if (cursorId < 0 || cursorId >= (int)ARRAYSIZE(kLondonCursorPics))
+		cursorId = 0;
+	if (cursorId == _siteCursorId)
+		return;
+
+	Picture cursor;
+	if (!_picsArchive.getPicture(kLondonCursorPics[cursorId], cursor) ||
+		cursor.surface.empty()) {
+		warning("EEM2: cursor %d (PIC 0x%x) missing", cursorId,
+				kLondonCursorPics[cursorId]);
+		return;
+	}
+	// Each cursor carries its own transparent colour (flags >> 8) and uses the
+	// active screen palette (no separate cursor palette, unlike the EEM1
+	// red-outline highlight). Hotspot is the top-left (rowoff/misc are 0).
+	const byte transparent = (byte)(cursor.flags >> 8);
+	CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0, transparent);
+	CursorMan.replaceCursorPalette(nullptr, 0, 0);
+	_siteCursorId = cursorId;
 }
 
 bool EEMEngine::openArchives() {
