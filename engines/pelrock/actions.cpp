@@ -21,7 +21,6 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/mixer.h"
 
 #include "common/file.h"
 
@@ -36,7 +35,6 @@
 #include "pelrock/events.h"
 #include "pelrock/graphics.h"
 #include "pelrock/offsets.h"
-#include "pelrock/pelrock.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/sound.h"

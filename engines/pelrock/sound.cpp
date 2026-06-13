@@ -25,17 +25,13 @@
 #include "audio/mixer.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/scummsys.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
-#include "sound.h"
 
 namespace Pelrock {
 

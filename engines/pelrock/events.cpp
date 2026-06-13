@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/events.h"
-
 #include "graphics/screen.h"
 
 #include "pelrock/events.h"

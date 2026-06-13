@@ -20,7 +20,6 @@
  */
 
 #include "common/events.h"
-#include "common/system.h"
 
 #include "graphics/screen.h"
 

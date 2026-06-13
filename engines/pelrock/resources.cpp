@@ -24,8 +24,6 @@
 #include "pelrock/dialog.h"
 #include "pelrock/resources.h"
 #include "pelrock/offsets.h"
-#include "pelrock/pelrock.h"
-#include "pelrock/room.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {

@@ -19,8 +19,6 @@
  *
  */
 
-#include "console.h"
-
 #include "pelrock/console.h"
 #include "pelrock/room.h"
 #include "pelrock/types.h"

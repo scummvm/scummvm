@@ -20,9 +20,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/file.h"
-#include "engines/metaengine.h"
+
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "graphics/thumbnail.h"
@@ -30,7 +29,6 @@
 #include "pelrock/events.h"
 #include "pelrock/graphics.h"
 #include "pelrock/menu.h"
-#include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"

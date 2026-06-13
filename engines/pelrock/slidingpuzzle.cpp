@@ -19,14 +19,10 @@
  *
  */
 
-#include "common/system.h"
-
-#include "graphics/paletteman.h"
 #include "graphics/screen.h"
 
 #include "pelrock/events.h"
 #include "pelrock/pelrock.h"
-#include "pelrock/room.h"
 #include "pelrock/slidingpuzzle.h"
 #include "pelrock/sound.h"
 

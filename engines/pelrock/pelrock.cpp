@@ -20,9 +20,7 @@
  */
 
 #include "common/config-manager.h"
-#include "common/events.h"
 #include "common/file.h"
-#include "common/scummsys.h"
 
 #include "engines/util.h"
 
@@ -34,7 +32,6 @@
 #include "pelrock/chrono.h"
 #include "pelrock/computer.h"
 #include "pelrock/console.h"
-#include "pelrock/detection.h"
 #include "pelrock/dialog.h"
 #include "pelrock/events.h"
 #include "pelrock/fonts/large_font.h"
@@ -44,7 +41,6 @@
 #include "pelrock/menu.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pathfinding.h"
-#include "pelrock/pelrock.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/slidingpuzzle.h"

@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/events.h"
 #include "common/file.h"
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"

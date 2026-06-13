@@ -19,10 +19,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "engines/util.h"
-
-#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 

@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 
@@ -28,7 +29,6 @@
 #include "pelrock/events.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
-#include "pelrock/util.h"
 #include "pelrock/video.h"
 
 namespace Pelrock {

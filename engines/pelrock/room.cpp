@@ -18,16 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/scummsys.h"
 #include "common/file.h"
 
 #include "graphics/screen.h"
 
 #include "pelrock/pelrock.h"
+#include "pelrock/room.h"
 #include "pelrock/resources.h"
-#include "pelrock/room.h"
 #include "pelrock/util.h"
-#include "pelrock/room.h"
 
 namespace Pelrock {
 
