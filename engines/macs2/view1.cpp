@@ -120,14 +120,25 @@ void View1::closeInventory() {
 		return;
 	}
 
-	const bool shouldResumeExternalInventory = !isInventorySourceProtagonist() && g_engine->_scriptExecutor->_hasPendingExternalInventoryResume;
+	const bool wasContainerPanel = _uiPanelState == kUiPanelContainerInventory;
 	_uiPanelState = kUiPanelNone;
 	_inventoryScrollOffset = 0;
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
 
-	if (shouldResumeExternalInventory) {
+	if (!isInventorySourceProtagonist()) {
+		setInventorySource(GameObjects::instance().getProtagonistObject());
+	}
+
+	g_engine->setCursorMode(_savedCursorMode);
+	updateCursor();
+
+	if (wasContainerPanel) {
+		// Binary handleInput, panel state 3 + close button (6): restore the
+		// script context saved by scriptOpenInventory (g_wScriptIsExecuting = 1),
+		// then runScriptExecutor resumes right after the openInventory opcode.
+		// TODO: this is not yet matching the binary 1:1
 		g_engine->setCursorMode(g_engine->_scriptExecutor->_savedExternalInventoryMouseMode);
 		updateCursor();
 		setInventorySource(GameObjects::instance().getProtagonistObject());
@@ -140,15 +151,7 @@ void View1::closeInventory() {
 		g_engine->_scriptExecutor->_scriptClickResult = g_engine->_scriptExecutor->_savedScriptClickResult;
 		g_engine->_scriptExecutor->setCurrentSceneScriptAt(g_engine->_scriptExecutor->_secondaryInventoryLocation);
 		g_engine->runScriptExecutor();
-		return;
 	}
-
-	if (!isInventorySourceProtagonist()) {
-		setInventorySource(GameObjects::instance().getProtagonistObject());
-	}
-
-	g_engine->setCursorMode(_savedCursorMode);
-	updateCursor();
 }
 
 void View1::setInventorySource(GameObject *newInventorySource) {
@@ -1761,8 +1764,18 @@ bool View1::tick() {
 }
 
 void View1::drawAllCharacters() {
+	g_engine->_movementFinishedFlag = false;
 	for (auto currentCharacter : _characters) {
 		currentCharacter->update();
+	}
+	// Binary drawAllCharacters (1008:90a2): after all characters walked,
+	// if g_bMovementFinishedFlag is set (a walking character arrived at final dest),
+	// run the script executor with g_wIsRepeatRun=1 so the scene script can check
+	// getAreaAtPoint (case 0x27) and trigger scene transitions.
+	if (g_engine->_movementFinishedFlag) {
+		g_engine->_scriptExecutor->_isRepeatRun = true;
+		g_engine->runScriptExecutor();
+		g_engine->_scriptExecutor->_isRepeatRun = false;
 	}
 }
 
@@ -3083,8 +3096,13 @@ void Character::update() {
 		// Walk arrival: orientation changes to standing (walking dir + 8).
 		// Script resumption is handled by position polling in View1::tick().
 		bool wasWalking = (_gameObject->_orientation < 9);
-		if (wasWalking)
+		if (wasWalking) {
 			_gameObject->_orientation += 8;
+			// Binary walkAlongPath (1008:1b8f): sets g_bMovementFinishedFlag=1
+			// when orientation < 9 at final arrival. This triggers the scene script
+			// to check getAreaAtPoint (case 0x27) for scene transitions.
+			g_engine->_movementFinishedFlag = true;
+		}
 		if (_pickedUpObject != nullptr) {
 			_pickupFrameCounter = 0;
 			_pickupItemTransferred = false;
