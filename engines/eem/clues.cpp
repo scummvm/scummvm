@@ -61,7 +61,8 @@ const int kJakeY  = 0x62; // 98
 const int kJennyX = 0x42; // 66
 const int kJennyY = 0x60; // 96
 
-uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock) {
+uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock,
+								  bool isLondon) {
 	if (!clueBlock)
 		return 0;
 
@@ -69,11 +70,15 @@ uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock) {
 	if (number == 0 || number > 32)
 		return 0;
 
+	// EEM2 entries are 84 bytes (0x54) with the notebook list at entry+0x40;
+	// EEM1 entries are 62 bytes with the list at entry+0x30. See displayClue.
+	const uint stride    = isLondon ? 0x54 : 62;
+	const uint noteOffat = isLondon ? 0x3c : 0x30;
 	uint marked = 0;
 	for (uint i = 0; i < number; i++) {
-		const byte *entry = clueBlock + 4 + i * 62;
+		const byte *entry = clueBlock + 4 + i * stride;
 		for (uint j = 0; j < 5; j++) {
-			const uint16 note = READ_LE_UINT16(entry + 0x30 + j * 2);
+			const uint16 note = READ_LE_UINT16(entry + noteOffat + j * 2);
 			if (note != 0xFFFF && note < Mystery::kCluesFoundCap &&
 				mystery._cluesFound[note] == 0) {
 				mystery._cluesFound[note] = 1;
@@ -611,7 +616,8 @@ void EEMEngine::doInitClues() {
 		const byte *briefingClues = ib + 4;
 		// _DisplayClue calls _AddNotebook for each ClueEntry note list at
 		// +0x30..+0x39. Mark starting notes before the first PDA visit.
-		const uint marked = markClueBlockNotebookEntries(_mystery, briefingClues);
+		const uint marked = markClueBlockNotebookEntries(_mystery, briefingClues,
+														 isLondon());
 		if (marked != 0)
 			debugC(1, kDebugScript,
 				   "doInitClues: marked %u CD briefing notebook entries",
@@ -717,6 +723,37 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 }
 
 void EEMEngine::applyClueSideEffects(const byte *c) {
+	if (isLondon()) {
+		// EEM2 `_DisplayClue @ 2542:05bd` per-entry side effects. With the
+		// shared `c = entryBase + 4` convention the EEM2 fields land at:
+		//   onsite  entry+0x22 (= c+0x1e), 5 × u16, high bit = CONSITE flag
+		//   offsite entry+0x2c (= c+0x28), 5 × u16, clears the site
+		//   notebook entry+0x40 (= c+0x3c), 5 × u16 -> _AddNotebook
+		// (EEM2 has no gallery list here — that region is the onsite array.)
+		for (uint j = 0; j < 5; j++) {
+			const uint16 note = READ_LE_UINT16(c + 0x3c + j * 2);
+			if (note != 0xFFFF && note < Mystery::kCluesFoundCap)
+				_mystery._cluesFound[note] = 1;
+
+			const uint16 onIdx = READ_LE_UINT16(c + 0x1e + j * 2);
+			if (onIdx != 0xFFFF) {
+				const uint16 siteVal = onIdx & 0x7FFF;
+				if (siteVal < Mystery::kVisitedSiteCap)
+					_mystery._onSites[siteVal] = 1;
+				if (onIdx & 0x8000)
+					_mystery._sawCONSITEs = true;
+			}
+
+			const uint16 offIdx = READ_LE_UINT16(c + 0x28 + j * 2);
+			if (offIdx != 0xFFFF && (offIdx & 0x8000) == 0) {
+				const uint16 siteVal = offIdx & 0x7FFF;
+				if (siteVal < Mystery::kVisitedSiteCap)
+					_mystery._onSites[siteVal] = 0;
+			}
+		}
+		return;
+	}
+
 	for (uint j = 0; j < 5; j++) {
 		const uint16 note = READ_LE_UINT16(c + 0x30 + j * 2);
 		if (note != 0xFFFF && note < Mystery::kCluesFoundCap)
@@ -754,6 +791,13 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	if (number == 0 || number > 32)
 		return;
 
+	// ClueEntry stride. EEM1 `_DisplayClue @ 2404:05e6` packs 62-byte entries;
+	// EEM2 `_DisplayClue @ 2542:05bd` indexes `theClue + i*0x54` (84 bytes). The
+	// per-entry fields up to +0x1e are layout-identical (so entry 0 — at the
+	// shared base clueBlock+4 — reads the same either way); only the stride and
+	// the tail fields (KD anim, notebook, onsite) move. See applyClueSideEffects.
+	const uint stride = isLondon() ? 0x54 : 62;
+
 	// Snapshot BG so per-entry character pics don't stack.
 	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -781,11 +825,12 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	// Partner 0 always uses field 0.
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, kScreenWidth, kScreenHeight);
-		const byte *c = clueBlock + 4 + i * 62;
+		const byte *c = clueBlock + 4 + i * stride;
 
 		// _DisplayClue @ 2404:0635-064b: _DoKDAnim(num) runs before the
-		// speaker portrait.
-		const int16 kdAnimNum = (int16)READ_LE_UINT16(c + 0x3a);
+		// speaker portrait. EEM1 stores the KD-anim number at +0x3a; EEM2
+		// `_DisplayClue @ 2542:05bd` reads it at entry+0x52 (= c+0x4e).
+		const int16 kdAnimNum = (int16)READ_LE_UINT16(c + (isLondon() ? 0x4e : 0x3a));
 		if (kdAnimNum != -1) {
 			playKdAnim((uint16)kdAnimNum);
 			// _UpdateAnimations @ 172b:09c1 reactivates the wait anim.
@@ -884,10 +929,17 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			_font.drawWordWrapped(&scratch, textX, textY,
 				MAX<int>(8, textW), text, 0);
 
-			g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
-				scratch.pitch, 0, copyY, kScreenWidth,
-				MIN<int>(copyH, kScreenHeight - copyY));
-			g_system->updateScreen();
+			// Clamp to the screen: a malformed entry (e.g. a clue-format
+			// mismatch) must never hand copyRectToScreen a negative height,
+			// which would underflow to a multi-GB memcpy.
+			copyY = CLIP<int>(copyY, 0, kScreenHeight - 1);
+			const int copyRows = CLIP<int>(MIN<int>(copyH, kScreenHeight - copyY),
+										   0, kScreenHeight - copyY);
+			if (copyRows > 0) {
+				g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
+					scratch.pitch, 0, copyY, kScreenWidth, copyRows);
+				g_system->updateScreen();
+			}
 		}
 
 		// _DisplayClue @ 2404:0833-085a — per-clue voice gate. The gate is on
@@ -948,7 +1000,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			if (skipAll) {
 				// Apply remaining side-effects without rendering.
 				for (uint k = i; k < number; k++)
-					applyClueSideEffects(clueBlock + 4 + k * 62);
+					applyClueSideEffects(clueBlock + 4 + k * stride);
 				return;
 			}
 		}
