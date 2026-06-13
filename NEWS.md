@@ -7,8 +7,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Nancy Drew: The Haunted Carousel.
    - Added support for Nancy Drew: Danger on Deception Island.
    - Added support for Noctropolis.
-   - Added support for Alfred Pelrock: En Busca de un Sueño.
    - Added support for Cartoon Carnival.
+   - Added support for Alfred Pelrock: En Busca de un Sueño.
 
  General:
    - Highlight clickable links in the GUI with a cursor change.
