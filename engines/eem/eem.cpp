@@ -1113,14 +1113,22 @@ void EEMEngine::runLondonScreensPoc() {
 }
 
 void EEMEngine::showLondonCharSelect() {
-	// `_NewPlayer` @ 1cd3:0f27 — the character-creation screen: palette 0 +
-	// background PIC 0xc, type a name, then pick Jake/Jenny with the
-	// left/right arrows (stored at DAT_4c4c) and confirm with Enter. The
-	// original's name-field / Jake-Jenny box rects are runtime-initialised
-	// (BSS, beyond the EXE image), so the overlay positions here are
-	// approximate over EEM2's PIC 0xc artwork — tune once visible. Text
-	// uses the shared engine font.
+	// `_NewPlayer` @ 1cd3:0f27 — character creation over background PIC 0xc
+	// (palette 0). Two text fields then a Jake/Jenny pick (left/right arrow
+	// 0x4b/0x4d -> DAT_4c4c, Enter confirms). The field/box rects are
+	// constants in EEM2's data segment (read at 2bca:0e3a); they map to the
+	// `pr` player record's FirstName[12] / LastName[20]:
+	//   first name : (54,75)-(151,85)    last name : (167,75)-(266,85)
+	//   Jake box   : (110,116)-(120,122) Jenny box : (190,116)-(200,122)
 	debugC(1, kDebugGeneral, "EEM2 (London) PoC: character creation");
+
+	const Common::Rect kFirstRect(54, 75, 151, 85);
+	const Common::Rect kLastRect(167, 75, 266, 85);
+	const Common::Rect kJakeBox(110, 116, 120, 122);
+	const Common::Rect kJennyBox(190, 116, 200, 122);
+	const uint kMaxFirst = 12, kMaxLast = 20;
+	const uint8 kInkColor = 0x0F;     // typed-name ink
+	const uint8 kHiBox    = 0x0F;     // selected-partner box highlight
 
 	Picture bg;
 	const bool haveBg = _picsArchive.getPicture(0xc, bg) && !bg.surface.empty();
@@ -1133,12 +1141,12 @@ void EEMEngine::showLondonCharSelect() {
 
 	CursorMan.showMouse(false);
 
-	Common::String name;
-	const uint kMaxName = 12;
+	enum { kFieldFirst = 0, kFieldLast = 1, kFieldPartner = 2 };
+	int field = kFieldFirst;
+	Common::String first, last;
 	uint8 partner = kPartnerJake;
-	bool nameDone = false, blink = true, fadedIn = false;
+	bool blink = true, fadedIn = false, done = false, needRedraw = true;
 	uint32 blinkMs = g_system->getMillis();
-	bool done = false, needRedraw = true;
 
 	while (!done && !shouldQuit()) {
 		if (needRedraw) {
@@ -1148,24 +1156,22 @@ void EEMEngine::showLondonCharSelect() {
 			if (haveBg)
 				scratch.simpleBlitFrom(bg.surface);
 			if (getFont().isLoaded()) {
-				getFont().drawString(&scratch,
-					isSpanish() ? "Escribe tu nombre:" : "Type your name:",
-					80, 36, 240, 0xF);
-				Common::String shown = name;
-				if (!nameDone && blink)
-					shown += "_";
-				getFont().drawString(&scratch, shown, 80, 52, 240, 0xF);
-				getFont().drawString(&scratch, "Jake", 104, 116, 80,
-					partner == kPartnerJake ? 0xF : 0x8);
-				getFont().drawString(&scratch, "Jenny", 184, 116, 80,
-					partner == kPartnerJenny ? 0xF : 0x8);
-				getFont().drawString(&scratch,
-					nameDone ? (isSpanish() ? "Flechas eligen - Enter juega"
-											: "Arrows choose - Enter to play")
-							 : (isSpanish() ? "Enter para continuar"
-											: "Enter to continue"),
-					80, 150, 240, 0x7);
+				Common::String f = first;
+				if (field == kFieldFirst && blink)
+					f += "_";
+				Common::String l = last;
+				if (field == kFieldLast && blink)
+					l += "_";
+				getFont().drawString(&scratch, f, kFirstRect.left + 2,
+									 kFirstRect.top + 1, kFirstRect.width(),
+									 kInkColor);
+				getFont().drawString(&scratch, l, kLastRect.left + 2,
+									 kLastRect.top + 1, kLastRect.width(),
+									 kInkColor);
 			}
+			// Highlight the selected partner's indicator box.
+			scratch.fillRect(partner == kPartnerJake ? kJakeBox : kJennyBox,
+							 kHiBox);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, kScreenWidth, kScreenHeight);
 			if (!fadedIn) {
@@ -1185,29 +1191,34 @@ void EEMEngine::showLondonCharSelect() {
 			if (ev.type != Common::EVENT_KEYDOWN)
 				continue;
 			const Common::KeyCode k = ev.kbd.keycode;
-			if (!nameDone) {
-				if ((k == Common::KEYCODE_RETURN ||
-					 k == Common::KEYCODE_KP_ENTER) && !name.empty())
-					nameDone = true;
-				else if (k == Common::KEYCODE_BACKSPACE && !name.empty())
-					name.deleteLastChar();
+			const bool enter = (k == Common::KEYCODE_RETURN ||
+								k == Common::KEYCODE_KP_ENTER);
+			if (field == kFieldFirst || field == kFieldLast) {
+				Common::String &buf = (field == kFieldFirst) ? first : last;
+				const uint cap = (field == kFieldFirst) ? kMaxFirst : kMaxLast;
+				if ((enter || k == Common::KEYCODE_TAB) &&
+					(field == kFieldLast || !first.empty()))
+					field++;  // advance to last name, then to partner pick
+				else if (k == Common::KEYCODE_BACKSPACE && !buf.empty())
+					buf.deleteLastChar();
 				else if (ev.kbd.ascii >= ' ' && ev.kbd.ascii < 127 &&
-						 name.size() < kMaxName)
-					name += (char)ev.kbd.ascii;
-			} else {
+						 buf.size() < cap)
+					buf += (char)ev.kbd.ascii;
+			} else {  // partner pick
 				if (k == Common::KEYCODE_LEFT)
 					partner = kPartnerJake;
 				else if (k == Common::KEYCODE_RIGHT)
 					partner = kPartnerJenny;
-				else if (k == Common::KEYCODE_RETURN ||
-						 k == Common::KEYCODE_KP_ENTER)
+				else if (k == Common::KEYCODE_BACKSPACE)
+					field = kFieldLast;  // back to editing
+				else if (enter)
 					done = true;
 			}
 			needRedraw = true;
 		}
 
 		const uint32 now = g_system->getMillis();
-		if (!nameDone && now - blinkMs >= 400) {
+		if (field != kFieldPartner && now - blinkMs >= 400) {
 			blinkMs = now;
 			blink = !blink;
 			needRedraw = true;
@@ -1218,9 +1229,11 @@ void EEMEngine::showLondonCharSelect() {
 		return;
 
 	// Commit the profile so the reused case-selection menu has valid state
-	// (player name shown in clue text, partner greeter ANI 0x15/0x16,
-	// Junior chain stage -> BOOK1.NME, nothing solved yet).
-	_playerName = name.empty() ? Common::String("Detective") : name;
+	// (player name in clue text, partner greeter ANI 0x15/0x16, Junior
+	// chain stage -> BOOK1.NME, nothing solved yet).
+	if (first.empty())
+		first = "Detective";
+	_playerName = last.empty() ? first : (first + " " + last);
 	_partner = partner;
 	_chainStage = 1;
 	for (uint i = 0; i < sizeof(_mysteriesSolved); i++)
