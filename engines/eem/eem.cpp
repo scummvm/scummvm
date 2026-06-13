@@ -390,8 +390,9 @@ Common::Error EEMEngine::run() {
 		goto screenLoop;
 
 	// EEM2 ("Eagle Eye Mysteries in London"): opening sequence, then screen
-	// 8 profile selection. A freshly-created detective starts the training
-	// case (M0); an existing profile resumes its saved menu/map state.
+	// 8 profile selection, screen 9 partner selection. A freshly-created
+	// detective starts the training case (M0) after choosing Jake/Jennifer;
+	// an existing profile resumes its saved menu/map state.
 	if (isLondon()) {
 		runLondonStartup();
 		if (!shouldQuit()) {
@@ -400,11 +401,15 @@ Common::Error EEMEngine::run() {
 			applySkipRepeatedCasesOption();
 			if (_mystery.isLoaded()) {
 				_nextScreen = kScreenMap;
-			} else if (_profileCreatedThisSession) {
-				_nextScreen = startLondonTrainingMystery()
-					? kScreenInitClues : kScreenInvalid;
 			} else {
-				_nextScreen = kScreenAction;
+				doChoosePartner();
+				(void)saveProfile(_playerName);
+				if (_profileCreatedThisSession) {
+					_nextScreen = startLondonTrainingMystery()
+						? kScreenInitClues : kScreenInvalid;
+				} else {
+					_nextScreen = kScreenAction;
+				}
 			}
 		}
 		goto screenLoop;
@@ -648,8 +653,10 @@ screenLoop:
 				applyStartupTestOverrides();
 			if (!shouldQuit())
 				applySkipRepeatedCasesOption();
-			if (!shouldQuit() && !isLondon())
+			if (!shouldQuit() && (!isLondon() || !_mystery.isLoaded()))
 				doChoosePartner();
+			if (!shouldQuit() && isLondon() && !_mystery.isLoaded())
+				(void)saveProfile(_playerName);
 			if (!shouldQuit()) {
 				if (_mystery.isLoaded())
 					_nextScreen = kScreenMap;
@@ -1240,41 +1247,59 @@ void EEMEngine::runLondonStartup() {
 
 void EEMEngine::showLondonCharSelect() {
 	// `_NewPlayer` @ 1cd3:0f27 — character creation over background PIC 0xc
-	// (palette 0). Two text fields then a Jake/Jenny pick (left/right arrow
-	// 0x4b/0x4d -> DAT_4c4c, Enter confirms). The field/box rects are
-	// constants in EEM2's data segment (read at 2bca:0e3a); they map to the
-	// `pr` player record's FirstName[12] / LastName[20]:
+	// (palette 0). Two text fields then a male/female player-gender pick
+	// (left/right arrow 0x4b/0x4d -> DAT_4c4c, Enter confirms). The
+	// field/box rects are constants in EEM2's data segment (read at
+	// 2bca:0e3a); they map to the `pr` player record's FirstName[12] /
+	// LastName[20]:
 	//   first name : (54,75)-(151,85)    last name : (167,75)-(266,85)
-	//   Jake box   : (110,116)-(120,122) Jenny box : (190,116)-(200,122)
+	//   male       : (110,116)-(120,122) female       : (190,116)-(200,122)
 	debugC(1, kDebugGeneral, "EEM2 (London): character creation");
 
 	const Common::Rect kFirstRect(54, 75, 151, 85);
 	const Common::Rect kLastRect(167, 75, 266, 85);
-	const Common::Rect kJakeBox(110, 116, 120, 122);
-	const Common::Rect kJennyBox(190, 116, 200, 122);
+	const Common::Rect kMaleBox(110, 116, 120, 122);
+	const Common::Rect kFemaleBox(190, 116, 200, 122);
 	const uint kMaxFirst = 12, kMaxLast = 20;
 	const uint8 kInkColor = 0x0F;     // typed-name ink
-	const uint8 kHiBox    = 0x0F;     // selected-partner box highlight
 
 	Picture bg;
 	const bool haveBg = _picsArchive.getPicture(0xc, bg) && !bg.surface.empty();
+	if (!haveBg)
+		warning("London: passport background PIC 0xc failed to load");
+	const uint8 boxBlankColor = haveBg
+		? (uint8)bg.surface.getPixel(kFirstRect.left, kFirstRect.top)
+		: 0x38;
+	const uint8 boxMarkColor = haveBg
+		? (uint8)bg.surface.getPixel(109, 115)
+		: 0x22;
 
 	byte pal[kPalSize];
 	byte black[kPalSize] = {};
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 	const bool havePal = getSitePalette(0, pal);
+	if (!havePal)
+		warning("London: passport palette 0 failed to load");
 
-	CursorMan.showMouse(false);
+	Common::Event staleEvent;
+	while (g_system->getEventManager()->pollEvent(staleEvent)) {
+		if (staleEvent.type == Common::EVENT_QUIT ||
+			staleEvent.type == Common::EVENT_RETURN_TO_LAUNCHER)
+			return;
+	}
+
+	CursorMan.showMouse(true);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	_profileCreatedThisSession = false;
 
-	enum { kFieldFirst = 0, kFieldLast = 1, kFieldPartner = 2 };
+	enum { kFieldFirst = 0, kFieldLast = 1, kFieldGender = 2 };
 	int field = kFieldFirst;
 	Common::String first, last;
-	uint8 partner = kPartnerJake;
+	bool female = false;
 	bool blink = true, fadedIn = false, done = false, needRedraw = true;
-	bool partnerReady = false;
-	bool partnerCanConfirm = true;
+	bool genderReady = false;
+	bool genderCanConfirm = true;
 	uint32 blinkMs = g_system->getMillis();
 
 	while (!done && !shouldQuit()) {
@@ -1298,9 +1323,15 @@ void EEMEngine::showLondonCharSelect() {
 									 kLastRect.top + 1, kLastRect.width(),
 									 kInkColor);
 			}
-			// Highlight the selected partner's indicator box.
-			scratch.fillRect(partner == kPartnerJake ? kJakeBox : kJennyBox,
-							 kHiBox);
+			if (field == kFieldGender) {
+				// DOS restores both boxes, then fills the active one with the
+				// darker passport border color sampled at (109,115).
+				scratch.fillRect(kMaleBox, boxBlankColor);
+				scratch.fillRect(kFemaleBox, boxBlankColor);
+				scratch.fillRect(female ? kFemaleBox : kMaleBox,
+								 boxMarkColor);
+			}
+			CursorMan.showMouse(true);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, kScreenWidth, kScreenHeight);
 			if (!fadedIn) {
@@ -1310,27 +1341,30 @@ void EEMEngine::showLondonCharSelect() {
 			}
 			g_system->updateScreen();
 			needRedraw = false;
-			if (field == kFieldPartner)
-				partnerReady = true;
+			if (field == kFieldGender)
+				genderReady = true;
 		}
 
 		Common::Event ev;
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				CursorMan.showMouse(true);
+				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 				return;
-			if (field == kFieldPartner && ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (!partnerReady)
+			}
+			if (field == kFieldGender && ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (!genderReady)
 					continue;
-				partner = (ev.mouse.x < 160) ? kPartnerJake : kPartnerJenny;
+				female = ev.mouse.x >= 160;
 				done = true;
 				needRedraw = true;
 				break;
 			}
-			if (field == kFieldPartner && ev.type == Common::EVENT_KEYUP &&
+			if (field == kFieldGender && ev.type == Common::EVENT_KEYUP &&
 				(ev.kbd.keycode == Common::KEYCODE_RETURN ||
 				 ev.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
-				partnerCanConfirm = true;
+				genderCanConfirm = true;
 				continue;
 			}
 			if (ev.type != Common::EVENT_KEYDOWN)
@@ -1345,10 +1379,10 @@ void EEMEngine::showLondonCharSelect() {
 					Common::String clean = buf;
 					clean.trim();
 					if (!clean.empty()) {
-						field++;  // advance to last name, then to partner pick
-						if (field == kFieldPartner) {
-							partnerReady = false;
-							partnerCanConfirm = false;
+						field++;  // advance to last name, then to gender pick
+						if (field == kFieldGender) {
+							genderReady = false;
+							genderCanConfirm = false;
 						}
 					}
 				} else if (k == Common::KEYCODE_BACKSPACE && !buf.empty()) {
@@ -1357,42 +1391,49 @@ void EEMEngine::showLondonCharSelect() {
 						   buf.size() < cap) {
 					buf += (char)ev.kbd.ascii;
 				}
-			} else {  // partner pick
+			} else {  // gender pick
 				if (k == Common::KEYCODE_LEFT) {
-					partner = kPartnerJake;
-					partnerCanConfirm = true;
+					female = false;
+					genderCanConfirm = true;
 				} else if (k == Common::KEYCODE_RIGHT) {
-					partner = kPartnerJenny;
-					partnerCanConfirm = true;
+					female = true;
+					genderCanConfirm = true;
 				} else if (k == Common::KEYCODE_BACKSPACE) {
 					field = kFieldLast;  // back to editing
-					partnerCanConfirm = true;
-				} else if (enter && partnerReady && partnerCanConfirm) {
+					genderCanConfirm = true;
+				} else if (enter && genderReady && genderCanConfirm) {
 					done = true;
 				}
 			}
 			needRedraw = true;
-			if (field == kFieldPartner && !partnerReady)
+			if (field == kFieldGender && !genderReady)
 				break;
 		}
 
 		const uint32 now = g_system->getMillis();
-		if (field != kFieldPartner && now - blinkMs >= 400) {
+		if (field != kFieldGender && now - blinkMs >= 400) {
 			blinkMs = now;
 			blink = !blink;
 			needRedraw = true;
 		}
 		g_system->delayMillis(15);
 	}
-	if (shouldQuit())
+	if (shouldQuit()) {
+		CursorMan.showMouse(true);
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		return;
+	}
 
-	Common::Event staleEvent;
 	while (g_system->getEventManager()->pollEvent(staleEvent)) {
 		if (staleEvent.type == Common::EVENT_QUIT ||
-			staleEvent.type == Common::EVENT_RETURN_TO_LAUNCHER)
+			staleEvent.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+			CursorMan.showMouse(true);
+			g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			return;
+		}
 	}
+	CursorMan.showMouse(true);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	const Common::String displayName =
 		makeLondonProfileDisplayName(first, last);
@@ -1418,7 +1459,6 @@ void EEMEngine::showLondonCharSelect() {
 	// New profile. EEM2 `_NewPlayer @ 1cd3:0f27` initializes the player
 	// record only when `_LoadPlayerRecord` failed, then immediately saves it.
 	_playerName = displayName.empty() ? "Detective" : displayName;
-	_partner = partner;
 	_chainStage = 1;
 	_voiceOn = true;
 	if (_audio)
@@ -1432,9 +1472,9 @@ void EEMEngine::showLondonCharSelect() {
 	if (err.getCode() != Common::kNoError)
 		warning("London: failed to save new profile '%s': %s",
 				_playerName.c_str(), err.getDesc().c_str());
-	debugC(1, kDebugGeneral, "London: new player='%s' key=%s partner=%s",
+	debugC(1, kDebugGeneral, "London: new player='%s' key=%s gender=%s",
 		   _playerName.c_str(), profileKey.c_str(),
-		   partner == kPartnerJake ? "Jake" : "Jenny");
+		   female ? "female" : "male");
 }
 
 void EEMEngine::showFloppyStormLogo() {

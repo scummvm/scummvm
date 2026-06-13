@@ -45,9 +45,10 @@ const uint kPicChooseBackground = 0x8c; // _GetBackground(0x8c)
 const uint kAniJake  = 8;
 const uint kAniJenny = 9;
 
-// _DoHappiness @ 172b:27b5 — cursor X picks one of 4 rects @ 29be:030f.
+// EEM1 `_DoHappiness` — cursor X picks one of 4 rects @ 29be:030f.
 // Past rect 3 = level 4. Constexpr (Point, w, h) form to avoid a global
-// constructor (-Wglobal-constructors).
+// constructor (-Wglobal-constructors). EEM2 uses a different 10-band table
+// at 2bca:035c, handled by `happinessLevel`.
 constexpr Common::Rect kHappyZones[4] = {
 	Common::Rect(Common::Point(  0, 0),  70, 200), // far left — Jenny very happy, Jake neutral
 	Common::Rect(Common::Point( 70, 0),  56, 200), // Jenny's column
@@ -60,6 +61,13 @@ const int kJakeX  = 0xe2; // 226
 const int kJakeY  = 0x62; // 98
 const int kJennyX = 0x42; // 66
 const int kJennyY = 0x60; // 96
+
+// EEM2 `_DoChoosePartner @ 1abf:0728`: Jake is on the left and Jennifer
+// on the right, unlike the first game's partner screen.
+const int kLondonJakeX  = 0x05;
+const int kLondonJakeY  = 0x3a;
+const int kLondonJennyX = 0xac;
+const int kLondonJennyY = 0x3a;
 
 uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock,
 								  bool isLondon) {
@@ -107,7 +115,49 @@ const uint8 kJennySeqs[5][9] = {
 	{ 0,0,0,0,0,1,0,0,0 },
 };
 
-uint happinessLevel(int x) {
+// EEM2 `FUN_17ee_26f6`: 10 rects @ 2bca:035c and 10 sequence rows for
+// Jennifer @ 2bca:03ac / Jake @ 2bca:0474. The portrait cells are 20-frame
+// ramps, so using the EEM1 5-level tables makes both characters smile in the
+// wrong places.
+const int kLondonHappyRightEdges[10] = {
+	35, 70, 98, 126, 156, 182, 208, 235, 277, 320
+};
+
+const uint8 kLondonJennySeqs[10][9] = {
+	{  0,  0,  0,  0,  0,  0,  0,  1,  0 },
+	{  2,  2,  2,  2,  2,  2,  2,  3,  2 },
+	{  4,  4,  4,  4,  4,  4,  4,  5,  4 },
+	{  6,  6,  6,  6,  6,  6,  7,  6,  6 },
+	{  8,  8,  8,  8,  8,  8,  8,  8,  9 },
+	{ 10, 10, 10, 10, 10, 10, 10, 11, 10 },
+	{ 12, 12, 12, 12, 12, 12, 12, 13, 12 },
+	{ 14, 14, 14, 14, 14, 14, 14, 15, 14 },
+	{ 16, 16, 16, 16, 16, 16, 17, 16, 16 },
+	{ 18, 18, 18, 18, 18, 18, 18, 18, 19 },
+};
+
+const uint8 kLondonJakeSeqs[10][9] = {
+	{ 18, 19, 18, 18, 18, 18, 18, 18, 18 },
+	{ 16, 16, 16, 17, 16, 16, 16, 16, 16 },
+	{ 14, 14, 15, 14, 14, 14, 14, 14, 14 },
+	{ 12, 12, 12, 12, 12, 12, 13, 12, 12 },
+	{ 10, 10, 10, 10, 10, 11, 10, 10, 10 },
+	{  8,  9,  8,  8,  8,  8,  8,  8,  8 },
+	{  6,  6,  6,  7,  6,  6,  6,  6,  6 },
+	{  4,  4,  5,  4,  4,  4,  4,  4,  4 },
+	{  2,  2,  2,  2,  2,  2,  3,  2,  2 },
+	{  0,  0,  0,  0,  0,  1,  0,  0,  0 },
+};
+
+uint happinessLevel(int x, bool london) {
+	if (london) {
+		for (uint i = 0; i < ARRAYSIZE(kLondonHappyRightEdges); i++) {
+			if (x <= kLondonHappyRightEdges[i])
+				return i;
+		}
+		return ARRAYSIZE(kLondonHappyRightEdges) - 1;
+	}
+
 	for (uint i = 0; i < ARRAYSIZE(kHappyZones); i++) {
 		if (kHappyZones[i].contains(x, 100))
 			return i;
@@ -145,10 +195,13 @@ void blitRawToScreen(const Picture &p, int x, int y) {
 							   x, y, w, h);
 }
 
-// _DoChoosePartner @ 1a35:0756. The original places Jake + Jenny animations
-// on a backdrop and polls four click rectangles (two per character); we
-// approximate with a single split at x=160 (left=Jenny, right=Jake).
+// _DoChoosePartner @ 1a35:0756 / EEM2 @ 1abf:0728. The original places
+// Jake + Jenny animations on a backdrop and polls two broad character rects;
+// we approximate those with a single split at x=160. EEM1 has Jenny left /
+// Jake right; EEM2 has Jake left / Jennifer right.
 void EEMEngine::doChoosePartner() {
+	_partner = kPartnerJake;
+
 	Picture background;
 	if (!_picsArchive.getPicture(kPicChooseBackground, background)) {
 		warning("ChoosePartner background (%u) load failed", kPicChooseBackground);
@@ -166,24 +219,31 @@ void EEMEngine::doChoosePartner() {
 		return;
 	}
 
-	setAnmPalette(Common::Path("TITLE.ANM"));
+	setSitePalette(0);
+	CursorMan.showMouse(true);
 
 	// _DoChoosePartner opens with _SetMousePos(0xa0, 0x96).
+	const int jakeX = isLondon() ? kLondonJakeX : kJakeX;
+	const int jakeY = isLondon() ? kLondonJakeY : kJakeY;
+	const int jennyX = isLondon() ? kLondonJennyX : kJennyX;
+	const int jennyY = isLondon() ? kLondonJennyY : kJennyY;
+	const uint8 (*jakeSeqs)[9] = isLondon() ? kLondonJakeSeqs : kJakeSeqs;
+	const uint8 (*jennySeqs)[9] = isLondon() ? kLondonJennySeqs : kJennySeqs;
 	int curMouseX = 0xa0;
-	uint level = happinessLevel(curMouseX);
+	uint level = happinessLevel(curMouseX, isLondon());
 	uint seqIdx = 0;
 
 	blitAt(background, 0, 0);
-	blitAt(jennyAnim[kJennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-		   kJennyX, kJennyY);
-	blitAt(jakeAnim [kJakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-		   kJakeX, kJakeY);
+	blitAt(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+		   jennyX, jennyY);
+	blitAt(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+		   jakeX, jakeY);
 	g_system->updateScreen();
 
 	debugC(1, kDebugGeneral, "ChoosePartner: %u Jake frames at (%d,%d), "
 		   "%u Jenny frames at (%d,%d)",
-		   (uint)jakeAnim.size(), kJakeX, kJakeY,
-		   (uint)jennyAnim.size(), kJennyX, kJennyY);
+		   (uint)jakeAnim.size(), jakeX, jakeY,
+		   (uint)jennyAnim.size(), jennyX, jennyY);
 
 	uint32 lastTick = g_system->getMillis();
 	while (!shouldQuit()) {
@@ -195,10 +255,10 @@ void EEMEngine::doChoosePartner() {
 			lastTick = g_system->getMillis();
 			seqIdx = (seqIdx + 1) % 9;
 			blitAt(background, 0, 0);
-			blitAt(jennyAnim[kJennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-				   kJennyX, kJennyY);
-			blitAt(jakeAnim [kJakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-				   kJakeX, kJakeY);
+			blitAt(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+				   jennyX, jennyY);
+			blitAt(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+				   jakeX, jakeY);
 			g_system->updateScreen();
 		}
 
@@ -212,20 +272,23 @@ void EEMEngine::doChoosePartner() {
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
 				curMouseX = ev.mouse.x;
-				const uint newLevel = happinessLevel(curMouseX);
+				const uint newLevel = happinessLevel(curMouseX, isLondon());
 				if (newLevel != level) {
 					level = newLevel;
 					seqIdx = 0; // restart cycle so the gesture pops
 					blitAt(background, 0, 0);
-					blitAt(jennyAnim[kJennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-						   kJennyX, kJennyY);
-					blitAt(jakeAnim [kJakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-						   kJakeX, kJakeY);
+					blitAt(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+						   jennyX, jennyY);
+					blitAt(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+						   jakeX, jakeY);
 					g_system->updateScreen();
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				_partner = (ev.mouse.x >= 160) ? kPartnerJake : kPartnerJenny;
+				const bool leftHalf = ev.mouse.x < 160;
+				_partner = isLondon()
+					? (leftHalf ? kPartnerJake : kPartnerJenny)
+					: (leftHalf ? kPartnerJenny : kPartnerJake);
 				debugC(1, kDebugGeneral, "Partner picked: %s",
 					   _partner == kPartnerJake ? "Jake" : "Jennifer");
 				done = true;
@@ -233,10 +296,12 @@ void EEMEngine::doChoosePartner() {
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
-					_partner = kPartnerJenny; done = true; break;
+					_partner = isLondon() ? kPartnerJake : kPartnerJenny;
+					done = true; break;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_partner = kPartnerJake; done = true; break;
+					_partner = isLondon() ? kPartnerJenny : kPartnerJake;
+					done = true; break;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_RETURN ||
 					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {

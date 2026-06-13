@@ -427,13 +427,13 @@ private:
 	/// Opening sequence + character creation — EEM2's `_DoOpeningAnims`
 	/// @ 2721:08e6 then screen 8 profile selection.
 	void runLondonStartup();
-	/// Start London mystery 0 for a freshly-created detective.
+	/// Start London mystery 0 after a freshly-created detective chooses a partner.
 	bool startLondonTrainingMystery();
 	/// Blit a full-screen still PIC and fade it in / hold / out using the
 	/// given SITEPALS. palette index.
 	void showLondonLogo(uint picId, uint palId, uint holdMs);
 	/// EEM2 character creation (`_NewPlayer`: palette 0 + background PIC 0xc):
-	/// first/last name entry + Jake/Jenny selection.
+	/// first/last name entry + male/female player-gender selection.
 	void showLondonCharSelect();
 	/// EEM2 case-intro animation (`_DoInitClues` @ 1abf:03b3): single partner
 	/// anim (Jake 0x18 / Jenny 0x71) faded in, then phone1.voc on caseType 1.
