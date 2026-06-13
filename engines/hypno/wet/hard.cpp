@@ -91,6 +91,7 @@ void WetEngine::runLevelMenu(Code *code) {
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
 	keymapper->getKeymap("menu")->setEnabled(true);
 
 	while (!shouldQuit() && cont) {
@@ -137,6 +138,7 @@ void WetEngine::runLevelMenu(Code *code) {
 	}
 
 	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(true);
 	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	menu->free();
@@ -276,6 +278,7 @@ void WetEngine::runMainMenu(Code *code) {
 
 	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
 	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
 	keymapper->getKeymap("menu")->setEnabled(true);
 
 	while (!shouldQuit() && cont) {
@@ -336,6 +339,7 @@ void WetEngine::runMainMenu(Code *code) {
 	}
 
 	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(true);
 	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 	keymapper->getKeymap("pause")->setEnabled(true);
 
