@@ -22,6 +22,9 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/file.h"
+#include "common/path.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -55,6 +58,30 @@ private:
 	Common::EventDispatcher *_dispatcher;
 	Common::EventObserver *_observer;
 };
+
+const uint kLondonTravelMatrixDim = 60;
+const uint kLondonTravelFrameDelayMs = 120;
+const uint16 kLondonTravelLastSiteSentinel = 0x1b;
+
+bool londonTravelSitePic(const Mystery *mystery, uint siteNum, uint16 &sitePic) {
+	if (!mystery || !mystery->isLoaded())
+		return false;
+
+	if (siteNum < mystery->numSites()) {
+		const byte *sd = mystery->siteData(siteNum);
+		if (!sd)
+			return false;
+		sitePic = READ_LE_UINT16(sd);
+		return true;
+	}
+
+	if (siteNum == kLondonTravelLastSiteSentinel || siteNum == 0xffff) {
+		sitePic = kLondonTravelLastSiteSentinel;
+		return true;
+	}
+
+	return false;
+}
 
 // Masked blit using `transp` = high byte of `pic.flags` (`_Rect_Move_Mask @ 1000:03fc`).
 void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
@@ -848,6 +875,61 @@ uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
 									  numFrames, elapsedMs);
 }
 
+bool SiteScreen::playLondonTravelAnimation(uint fromSite, uint toSite) {
+	if (!_vm || !_mystery || !_vm->isLondon())
+		return false;
+
+	uint16 fromPic = 0;
+	uint16 toPic = 0;
+	if (!londonTravelSitePic(_mystery, fromSite, fromPic) ||
+		!londonTravelSitePic(_mystery, toSite, toPic))
+		return false;
+	if (fromPic >= kLondonTravelMatrixDim || toPic >= kLondonTravelMatrixDim)
+		return false;
+
+	Common::File matrix;
+	if (!matrix.open(Common::Path("TRAVEL.BIN"))) {
+		warning("London travel: TRAVEL.BIN missing");
+		return false;
+	}
+
+	const uint32 matrixOff = (uint32)fromPic * kLondonTravelMatrixDim + toPic;
+	if (!matrix.seek(matrixOff)) {
+		warning("London travel: seek to matrix offset %u failed", matrixOff);
+		return false;
+	}
+
+	byte travelKind = 0;
+	if (matrix.read(&travelKind, 1) != 1) {
+		warning("London travel: short read at matrix offset %u", matrixOff);
+		return false;
+	}
+	if (travelKind == 0)
+		return false;
+	if (travelKind > 3) {
+		warning("London travel: invalid matrix value %u for pic %u -> %u",
+				travelKind, fromPic, toPic);
+		return false;
+	}
+
+	// EEM2 `_DoTravel @ 1717:06ed`: kind 3 forces partner suffix 0,
+	// so the shipped set is TRAVEL00/01/10/11/20.ANM.
+	const uint partnerSuffix = (travelKind == 3) ? 0 : _vm->getPartnerIndex();
+	const Common::String name = Common::String::format("TRAVEL%u%u.ANM",
+		(uint)travelKind - 1, partnerSuffix);
+
+	debugC(1, kDebugSite,
+		   "London travel: site %u/pic %u -> site %u/pic %u, kind=%u, anim=%s",
+		   fromSite, fromPic, toSite, toPic, travelKind, name.c_str());
+	_vm->startLondonTravelMusic(travelKind);
+	fadeCurrentPaletteToBlack();
+	_vm->playAnm(Common::Path(name), kLondonTravelFrameDelayMs,
+				 /* holdLastFrame= */ false, /* fadeIn= */ true,
+				 /* setSkipIntroOnEsc= */ false);
+	_vm->stopMusic();
+	return true;
+}
+
 void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	if (!_mystery || !_mystery->isLoaded()) {
 		warning("SiteScreen::enter: no mystery loaded");
@@ -878,9 +960,16 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 
 	const bool playArrival = _vm->shouldPlaySiteArrival(siteNum);
 
-	// `_DoTravel @ 168d:02da` calls `_StartTravelMusic`.
-	if (playArrival)
-		_vm->startTravelMusic();
+	if (playArrival) {
+		if (_vm->isLondon()) {
+			// EEM2 `HandleLondonSiteLoop @ 1717:083a` calls `_DoTravel`
+			// before `_BuildBackground` for the destination site.
+			playLondonTravelAnimation(_mystery->_lastSite, siteNum);
+		} else {
+			// `_DoTravel @ 168d:02da` calls `_StartTravelMusic`.
+			_vm->startTravelMusic();
+		}
+	}
 
 	// `_BuildBackground` calls `GetPalette(sitenum + 1)` — sitenum is the
 	// global SITES.DBD index (per-mystery `sitepic` field).
@@ -930,7 +1019,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 		renderAnimatedDrops(siteNum, g_system->getMillis());
 		const bool skippedArrival = enterSiteAnim();
 		_vm->markSiteArrivalPlayed(siteNum);
-		if (!_vm->isFloppy()) {
+		if (!_vm->isFloppy() && !_vm->isLondon()) {
 			if (skippedArrival)
 				_vm->stopMusic();
 			else
