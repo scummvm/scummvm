@@ -250,14 +250,6 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 		return;
 	}
 
-	// HACK: The event flag for meeting Dave in the cellar is not set
-	// correctly in Nancy 10, so we hardcode the flag change here to
-	// avoid talking with him over and over again.
-	// TODO: Find out why this flag is not set correctly and implement a
-	// proper solution for it.
-	if (g_nancy->getGameType() == kGameTypeNancy10 && sceneDescription.sceneID == 3996)
-		NancySceneState.setEventFlag(314, g_nancy->_true);	// EV_Met_DG_Cellar
-
 	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
 }
