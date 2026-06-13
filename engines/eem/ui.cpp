@@ -3581,13 +3581,14 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	if (_picsArchive.getPicture(0x42, frame))
 		scratch.simpleBlitFrom(frame.surface);
 
-	// Marker PICs from `_main @ 1a35:0f59`:
-	//   _DoneMarker = 0x20d, _SiteMarker = 0xc5, _CrimeMarker = 0xc6.
-	// 0x20d is CD-only (floppy PICS.DBX has 524 entries).
+	// Marker PICs from `_main`:
+	//   EEM1 CD @ 1a35:0f59: Done=0x20d, Site=0xc5, Crime=0xc6.
+	//   EEM2 CD @ 1abf:11a6: Done=0x006, Site=0xc5, Crime=0xc6.
+	// In EEM2, 0x20d is a normal scene/character frame, not a map marker.
 	Picture done;
 	Picture normal;
 	Picture crimeM;
-	const bool haveDone   = _picsArchive.getPicture(0x20d, done);
+	const bool haveDone   = _picsArchive.getPicture(isLondon() ? 0x006 : 0x20d, done);
 	const bool haveNormal = _picsArchive.getPicture(0xc5,  normal);
 	const bool haveCrime  = _picsArchive.getPicture(0xc6,  crimeM);
 
