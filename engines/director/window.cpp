@@ -406,7 +406,8 @@ void Window::setModal(bool modal) {
 		_wm->setLockedWidget(nullptr);
 		_isModal = false;
 	} else if (!_isModal && modal) {
-		_wm->setLockedWidget(this->_window);
+		if (_window->isVisible())
+			_wm->setLockedWidget(this->_window);
 		_isModal = true;
 	}
 }
