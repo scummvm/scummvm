@@ -1099,41 +1099,134 @@ void EEMEngine::runLondonScreensPoc() {
 		_music->stop();
 	_skipIntro = false;
 
-	// Character-selection screen.
+	// Character creation (name + Jake/Jenny), then the case-selection menu.
 	if (!shouldQuit())
 		showLondonCharSelect();
+	// Reuse EEM1's `doCaseSelection()` verbatim — EEM2 shares its assets
+	// (background PIC 0x41, partner greeter ANI 0x15/0x16, BOOK*.NME, the
+	// generic chooser). The mystery load at the end is guarded out for
+	// London since EEM2's case data isn't ported yet.
+	if (!shouldQuit())
+		doCaseSelection();
 
 	debugC(1, kDebugGeneral, "EEM2 (London) PoC: done");
 }
 
 void EEMEngine::showLondonCharSelect() {
-	// `_NewPlayer` @ 1cd3:0f27 opens the character-creation screen with
-	// `_GetPalette(0)` + `_GetBackground(0xc)` (PICS picture 0xc), then
-	// reads a name and toggles Jake/Jenny (left/right arrow -> DAT_4c4c,
-	// Enter confirms). This PoC renders the screen; wiring up the
-	// interactive name + partner entry is the next step.
-	const uint32 kHoldForever = 0xFFFFFFFFu;
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: character-selection screen");
+	// `_NewPlayer` @ 1cd3:0f27 — the character-creation screen: palette 0 +
+	// background PIC 0xc, type a name, then pick Jake/Jenny with the
+	// left/right arrows (stored at DAT_4c4c) and confirm with Enter. The
+	// original's name-field / Jake-Jenny box rects are runtime-initialised
+	// (BSS, beyond the EXE image), so the overlay positions here are
+	// approximate over EEM2's PIC 0xc artwork — tune once visible. Text
+	// uses the shared engine font.
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: character creation");
 
 	Picture bg;
-	if (!_picsArchive.getPicture(0xc, bg) || bg.surface.empty()) {
-		warning("London char-select background PIC 0xc load failed");
-		return;
-	}
-	blitAt(bg, 0, 0);
+	const bool haveBg = _picsArchive.getPicture(0xc, bg) && !bg.surface.empty();
 
-	byte target[kPalSize];
+	byte pal[kPalSize];
 	byte black[kPalSize] = {};
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
-	if (getSitePalette(0, target))
-		fadePaletteFromBlack(target);
-	else
-		warning("London char-select: palette 0 unavailable");
+	const bool havePal = getSitePalette(0, pal);
 
-	CursorMan.showMouse(true);
-	setInteractiveMouseCursor(true);
-	waitForInput(kHoldForever);
+	CursorMan.showMouse(false);
+
+	Common::String name;
+	const uint kMaxName = 12;
+	uint8 partner = kPartnerJake;
+	bool nameDone = false, blink = true, fadedIn = false;
+	uint32 blinkMs = g_system->getMillis();
+	bool done = false, needRedraw = true;
+
+	while (!done && !shouldQuit()) {
+		if (needRedraw) {
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+				Graphics::PixelFormat::createFormatCLUT8());
+			scratch.clear();
+			if (haveBg)
+				scratch.simpleBlitFrom(bg.surface);
+			if (getFont().isLoaded()) {
+				getFont().drawString(&scratch,
+					isSpanish() ? "Escribe tu nombre:" : "Type your name:",
+					80, 36, 240, 0xF);
+				Common::String shown = name;
+				if (!nameDone && blink)
+					shown += "_";
+				getFont().drawString(&scratch, shown, 80, 52, 240, 0xF);
+				getFont().drawString(&scratch, "Jake", 104, 116, 80,
+					partner == kPartnerJake ? 0xF : 0x8);
+				getFont().drawString(&scratch, "Jenny", 184, 116, 80,
+					partner == kPartnerJenny ? 0xF : 0x8);
+				getFont().drawString(&scratch,
+					nameDone ? (isSpanish() ? "Flechas eligen - Enter juega"
+											: "Arrows choose - Enter to play")
+							 : (isSpanish() ? "Enter para continuar"
+											: "Enter to continue"),
+					80, 150, 240, 0x7);
+			}
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, kScreenWidth, kScreenHeight);
+			if (!fadedIn) {
+				if (havePal)
+					fadePaletteFromBlack(pal);
+				fadedIn = true;
+			}
+			g_system->updateScreen();
+			needRedraw = false;
+		}
+
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type != Common::EVENT_KEYDOWN)
+				continue;
+			const Common::KeyCode k = ev.kbd.keycode;
+			if (!nameDone) {
+				if ((k == Common::KEYCODE_RETURN ||
+					 k == Common::KEYCODE_KP_ENTER) && !name.empty())
+					nameDone = true;
+				else if (k == Common::KEYCODE_BACKSPACE && !name.empty())
+					name.deleteLastChar();
+				else if (ev.kbd.ascii >= ' ' && ev.kbd.ascii < 127 &&
+						 name.size() < kMaxName)
+					name += (char)ev.kbd.ascii;
+			} else {
+				if (k == Common::KEYCODE_LEFT)
+					partner = kPartnerJake;
+				else if (k == Common::KEYCODE_RIGHT)
+					partner = kPartnerJenny;
+				else if (k == Common::KEYCODE_RETURN ||
+						 k == Common::KEYCODE_KP_ENTER)
+					done = true;
+			}
+			needRedraw = true;
+		}
+
+		const uint32 now = g_system->getMillis();
+		if (!nameDone && now - blinkMs >= 400) {
+			blinkMs = now;
+			blink = !blink;
+			needRedraw = true;
+		}
+		g_system->delayMillis(15);
+	}
+	if (shouldQuit())
+		return;
+
+	// Commit the profile so the reused case-selection menu has valid state
+	// (player name shown in clue text, partner greeter ANI 0x15/0x16,
+	// Junior chain stage -> BOOK1.NME, nothing solved yet).
+	_playerName = name.empty() ? Common::String("Detective") : name;
+	_partner = partner;
+	_chainStage = 1;
+	for (uint i = 0; i < sizeof(_mysteriesSolved); i++)
+		_mysteriesSolved[i] = 0;
+	debugC(1, kDebugGeneral, "London PoC: player='%s' partner=%s",
+		   _playerName.c_str(), partner == kPartnerJake ? "Jake" : "Jenny");
 }
 
 void EEMEngine::showFloppyStormLogo() {
