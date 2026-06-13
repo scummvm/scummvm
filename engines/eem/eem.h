@@ -198,6 +198,12 @@ public:
 	/// Interactive cursor over searchable hotspots.
 	void setHotspotMouseCursor(bool active);
 
+	/// EEM2 `_SwitchMouse @ 17ee:2c83`: swap the cursor SHAPE to one of the
+	/// seven loaded cursors by ID (0 arrow, 1 wait, 2/3 examine, 4/5 partner
+	/// hand, 6 approach). London site hotspots carry a cursor ID at row +0xc;
+	/// EEM1 cursors are all 0 so this is a no-op there.
+	void setSiteHotspotCursorId(int cursorId);
+
 	/// `_DisplayClue @ 2404:05e6`. @p clueBlock points at the u16 frame
 	/// count followed by 62-byte ClueEntries.
 	void displayClue(const byte *clueBlock);
@@ -563,6 +569,9 @@ private:
 	Graphics::ManagedSurface _partnerEraseBg;
 
 	bool _interactiveMouseCursor = false;
+	/// Active EEM2 cursor shape (index into `kLondonCursorPics`). -1 forces a
+	/// reload on the next `setSiteHotspotCursorId`.
+	int _siteCursorId = 0;
 
 	/// Site whose entrance animation has already played this mystery.
 	/// Lives on the engine because PDA/gallery destroys+recreates SiteScreen.

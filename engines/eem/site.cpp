@@ -1777,13 +1777,31 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 	return -1;
 }
 
+// CD hotspot row +0xc..d: cursor id for `_SwitchMouse` (EEM1 ships 0; EEM2
+// uses 2/3 examine, etc.). Floppy rows are 8-byte rects with no cursor field.
+int SiteScreen::hotspotCursorId(uint siteNum, int idx) const {
+	if (idx < 0 || (_vm && _vm->isFloppy()))
+		return 0;
+	const byte *spots = _mystery->hotspots(siteNum);
+	if (!spots || (uint)idx >= _mystery->hotspotCount(siteNum))
+		return 0;
+	return (int)READ_LE_UINT16(spots + idx * 14 + 0xc);
+}
+
 void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
 	if (!_vm)
 		return;
+	const int idx = hotspotAtPoint(siteNum, x, y);
+	if (_vm->isLondon()) {
+		// EEM2 (`_DoSiteLoop` @ FUN_1717_07ab) swaps the cursor shape to the
+		// hovered hotspot's own cursor id; off any hotspot it is the arrow (0).
+		_vm->setSiteHotspotCursorId(idx >= 0 ? hotspotCursorId(siteNum, idx) : 0);
+		return;
+	}
 	const bool siteControl = kPdaSiteRect.contains(x, y) ||
 							 kPdaPartnerFootMapRect.contains(x, y) ||
 							 kPdaPartnerHeadHintRect.contains(x, y);
-	_vm->setHotspotMouseCursor(siteControl || hotspotAtPoint(siteNum, x, y) >= 0);
+	_vm->setHotspotMouseCursor(siteControl || idx >= 0);
 }
 
 void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {

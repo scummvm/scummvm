@@ -111,6 +111,8 @@ private:
 	void renderBackground(uint siteNum);
 	void renderHotspots(uint siteNum);
 	int  hotspotAtPoint(uint siteNum, int x, int y) const;
+	/// EEM2 cursor id at CD hotspot row +0xc (0 for floppy / EEM1).
+	int  hotspotCursorId(uint siteNum, int idx) const;
 	void updateHotspotCursor(uint siteNum, int x, int y);
 	void onHotspotClicked(uint siteNum, uint hotIdx);
 	void initImpatienceCounter();
