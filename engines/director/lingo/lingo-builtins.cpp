@@ -633,7 +633,7 @@ void LB::b_integer(int nargs) {
 		//   put i & " = " & integer("12345" & numToChar(i))
 		// end repeat
 		if (endPtr && endPtr != src.c_str() && (
-			(*endPtr >= 0 && *endPtr < 45) ||
+			(*endPtr < 45) ||
 			(*endPtr == 47) ||
 			(*endPtr >= 58 && *endPtr < 65) ||
 			(*endPtr >= 91 && *endPtr < 95) ||
