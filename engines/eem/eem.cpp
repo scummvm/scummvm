@@ -165,6 +165,11 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_variant = (gameDesc && gameDesc->extra &&
 				Common::String(gameDesc->extra).contains("Floppy"))
 				 ? kVariantFloppy : kVariantCD;
+	// EEM2 ("...in London") ships as a separate detection entry (gameId
+	// "eem2"); it reuses this engine but only the opening screens work.
+	if (gameDesc && gameDesc->gameId &&
+		Common::String(gameDesc->gameId) == "eem2")
+		_variant = kVariantLondonCD;
 	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
 }
 
@@ -295,6 +300,17 @@ Common::Error EEMEngine::run() {
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
 
 	debugC(1, kDebugGeneral, "EEM engine starting");
+
+	// EEM2 ("Eagle Eye Mysteries in London") proof of concept. The archives,
+	// SITEPALS. palettes, font and mouse cursor above all load from EEM2's
+	// data using the same code paths as EEM1, which already proves the
+	// shared resource formats. Everything below here (saves, mystery/site
+	// state machine) is EEM1-specific, so the PoC just renders EEM2's
+	// opening logo screens and exits.
+	if (isLondon()) {
+		runLondonScreensPoc();
+		return Common::kNoError;
+	}
 
 	// Resume from save: mystery in progress → MAP (handler 0 @ 1a35:0e1d);
 	// otherwise → ACTION.
@@ -630,8 +646,11 @@ bool EEMEngine::openArchives() {
 
 bool EEMEngine::loadSitePalettes() {
 	Common::File f;
-	if (!f.open(Common::Path("SITEPALS"))) {
-		warning("SITEPALS missing");
+	// EEM1 ships "SITEPALS" (40 palettes); EEM2/London ships "SITEPALS."
+	// with a trailing dot (63 palettes). _ReadPalettes @ 17ee:0cdb.
+	const char *palFile = isLondon() ? "SITEPALS." : "SITEPALS";
+	if (!f.open(Common::Path(palFile))) {
+		warning("%s missing", palFile);
 		return false;
 	}
 	_sitePals.resize(f.size());
@@ -645,7 +664,9 @@ bool EEMEngine::loadSitePalettes() {
 }
 
 bool EEMEngine::getSitePalette(uint num, byte *out) const {
-	if (num >= kNumSitePals || _sitePals.size() < (num + 1) * kPalSize)
+	// EEM1 SITEPALS has kNumSitePals (40) entries; EEM2/London SITEPALS.
+	// has 63. Validate against the actual loaded buffer so both work.
+	if (_sitePals.size() < (num + 1) * kPalSize)
 		return false;
 	// SITEPALS stores 6-bit VGA-DAC values (0..63); ScummVM expects
 	// 8-bit (0..255), so left-shift by 2 like the original VGA hardware.
@@ -997,6 +1018,65 @@ void EEMEngine::showHighScoreLogo() {
 	waitForInput(2000);
 
 	fadeCurrentPaletteToBlack();
+}
+
+void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
+	// Parameterised twin of `showHighScoreLogo` for EEM2's opening logos
+	// (`_ShowEAKids` @ 2721:05e3 and `_ShowHScoreLogo` @ 2721:084d both do
+	// _GetPicture(pic) -> blit -> _GetPalette(pal) -> fade in -> hold ->
+	// fade out).
+	Picture pic;
+	if (!_picsArchive.getPicture(picId, pic) || pic.surface.empty()) {
+		warning("London logo PIC 0x%x load failed", picId);
+		return;
+	}
+	blitAt(pic, 0, 0);
+
+	byte target[kPalSize];
+	if (!getSitePalette(palId, target)) {
+		warning("London palette 0x%x load failed", palId);
+		return;
+	}
+	byte black[kPalSize] = {};
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	g_system->updateScreen();
+	fadePaletteFromBlack(target);
+
+	waitForInput(holdMs);
+	fadeCurrentPaletteToBlack();
+}
+
+void EEMEngine::runLondonScreensPoc() {
+	// EEM2 opening logos — still-image portion of `_DoOpeningAnims`
+	// @ 2721:08e6. Picture/palette IDs come from RE of EEM2CD.EXE:
+	//   _ShowEAKids     @ 2721:05e3 — _GetPicture(0x54),  _GetPalette(0x3c)
+	//   _ShowStormLogo  @ 2721:0729 — BOLT.ANM + THUNDER.VOC
+	//   _ShowHScoreLogo @ 2721:084d — _GetPicture(0x356), _GetPalette(0x3d)
+	CursorMan.showMouse(false);
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: rendering opening screens");
+
+	// EA Kids logo.
+	if (!shouldQuit())
+		showLondonLogo(0x54, 0x3c, 2500);
+
+	// Storm Software lightning-bolt animation with thunder (same BOLT.ANM
+	// container as EEM1 CD; the palette lives in the ANM file header).
+	if (!shouldQuit()) {
+		if (_audio)
+			_audio->playVoc(Common::Path("THUNDER.VOC"));
+		playAnm(Common::Path("BOLT.ANM"), 120, /* holdLastFrame= */ false,
+				/* fadeIn= */ true);
+		waitForInput(1500);
+		fadeCurrentPaletteToBlack();
+		if (_audio)
+			_audio->stopVoice();
+	}
+
+	// High Score Productions logo.
+	if (!shouldQuit())
+		showLondonLogo(0x356, 0x3d, 2500);
+
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: opening screens done");
 }
 
 void EEMEngine::showFloppyStormLogo() {

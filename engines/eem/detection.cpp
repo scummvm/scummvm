@@ -28,6 +28,7 @@ namespace EEM {
 
 const PlainGameDescriptor eemGames[] = {
 	{ "eem", "Eagle Eye Mysteries" },
+	{ "eem2", "Eagle Eye Mysteries in London" },
 	{ nullptr, nullptr }
 };
 
@@ -65,6 +66,20 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUI_OPTIONS_EEM_FLOPPY
+	},
+	{
+		// Eagle Eye Mysteries in London (EEM2CD.EXE) — proof of concept.
+		// The sequel reuses this engine's resource formats (DBD/DBX
+		// archives, SITEPALS palettes, FONT.FNT), so only the opening
+		// screens load for now; flagged unstable until properly supported.
+		"eem2",
+		"CD",
+		AD_ENTRY2s("EEM2CD.EXE", "211a376b23a1b6259d0c36cf46d26ed4", 172560,
+				   "PICS.DBD",   "da0b13a117bc3a207aec907c05769cd8", 2972988),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_MIDIADLIB, GUIO_MIDIMT32)
 	},
 
 	AD_TABLE_END_MARKER

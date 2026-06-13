@@ -101,8 +101,9 @@ enum ScreenId {
 /// ANIM01..20.A), and per-variant SFX (DING.VOC / NEWSCAN.VOC ship only
 /// with floppy).
 enum Variant {
-	kVariantCD     = 0,
-	kVariantFloppy = 1,
+	kVariantCD       = 0,
+	kVariantFloppy   = 1,
+	kVariantLondonCD = 2, ///< Eagle Eye Mysteries in London (EEM2CD.EXE) — PoC.
 };
 
 /// `_Partner @ 29be:7918`. Selected at the partner-pick screen
@@ -134,6 +135,10 @@ public:
 	Common::Platform getPlatform() const;
 	Variant getVariant() const { return _variant; }
 	bool isFloppy() const { return _variant == kVariantFloppy; }
+	/// EEM2 ("Eagle Eye Mysteries in London"). Proof-of-concept variant:
+	/// same DBD/palette/font formats, but a 63-entry "SITEPALS." file and
+	/// different opening picture/palette IDs.
+	bool isLondon() const { return _variant == kVariantLondonCD; }
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
@@ -402,6 +407,15 @@ private:
 	void showEAKidsLogo();
 	void showHighScoreLogo();
 	void showFloppyStormLogo();
+
+	// --- EEM2 ("...in London") proof of concept ---
+	/// Reproduce the opening-logo portion of EEM2's `_DoOpeningAnims`
+	/// (@ 2721:08e6): EA Kids (PIC 0x54, pal 0x3c) -> Storm (BOLT.ANM) ->
+	/// High Score (PIC 0x356, pal 0x3d), then stop.
+	void runLondonScreensPoc();
+	/// Blit a full-screen still PIC and fade it in / hold / out using the
+	/// given SITEPALS. palette index.
+	void showLondonLogo(uint picId, uint palId, uint holdMs);
 
 	/// `screen8_handler @ 1c33:1012`. Profile selector — walks
 	/// `listProfiles()`, falls through to `doNewPlayer()` if "New" or
