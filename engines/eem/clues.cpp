@@ -737,6 +737,7 @@ void EEMEngine::applyClueSideEffects(const byte *c) {
 		//   onsite  entry+0x22 (= c+0x1e), 5 × u16, high bit = CONSITE flag
 		//   offsite entry+0x2c (= c+0x28), 5 × u16, clears the site
 		//   notebook entry+0x40 (= c+0x3c), 5 × u16 -> _AddNotebook
+		//   jump    entry+0x4a (= c+0x46), destination site for direct travel
 		// (EEM2 has no gallery list here — that region is the onsite array.)
 		for (uint j = 0; j < 5; j++) {
 			const uint16 note = READ_LE_UINT16(c + 0x3c + j * 2);
@@ -759,6 +760,9 @@ void EEMEngine::applyClueSideEffects(const byte *c) {
 					_mystery._onSites[siteVal] = 0;
 			}
 		}
+		const uint16 jumpSite = READ_LE_UINT16(c + 0x46);
+		if (jumpSite != 0xFFFF)
+			_mystery._pendingSiteJump = jumpSite;
 		return;
 	}
 

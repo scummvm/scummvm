@@ -1028,6 +1028,9 @@ void SiteScreen::run() {
 	uint cur = _mystery->_siteNumber;
 	if (cur >= _mystery->numSites())
 		cur = 0;
+	_mystery->_pendingSiteJump = 0;
+	if (_mystery->_siteReturnDepth > Mystery::kVisitedSiteCap)
+		_mystery->_siteReturnDepth = 0;
 	_snapshotSite = -1;
 	SiteBackendActionObserverRegistration backendActionRegistration(this);
 	enter(cur);
@@ -1067,6 +1070,25 @@ void SiteScreen::run() {
 				if (kPdaPartnerFootMapRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
+					if (_vm->isLondon() && _mystery->_siteReturnDepth != 0) {
+						const uint16 depth = --_mystery->_siteReturnDepth;
+						const uint16 returnSite = _mystery->_siteReturnStack[depth];
+						_mystery->_siteReturnStack[depth] = 0;
+						if (returnSite < _mystery->numSites()) {
+							debugC(1, kDebugSite,
+								   "London: returning from site %u to site %u",
+								   cur, returnSite);
+							_mystery->_lastSite = (uint16)cur;
+							_mystery->_siteNumber = returnSite;
+							cur = returnSite;
+							enter(cur);
+							mouse = g_system->getEventManager()->getMousePos();
+							updateHotspotCursor(cur, mouse.x, mouse.y);
+							break;
+						}
+						warning("London site return target %u out of range",
+								returnSite);
+					}
 					// CD: _NextScreen=1, floppy=2.
 					_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
 													   : kScreenMap);
@@ -1086,9 +1108,35 @@ void SiteScreen::run() {
 				const int idx = hotspotAtPoint(cur, event.mouse.x, event.mouse.y);
 				if (idx >= 0) {
 					_vm->setHotspotMouseCursor(false);
+					_mystery->_pendingSiteJump = 0;
 					onHotspotClicked(cur, (uint)idx);
 					notePartnerActivity();
-					enter(cur, false);
+					const uint16 jumpSite = _mystery->_pendingSiteJump;
+					_mystery->_pendingSiteJump = 0;
+					if (_vm->isLondon() && jumpSite != 0) {
+						if (jumpSite < _mystery->numSites()) {
+							if (_mystery->_siteReturnDepth < Mystery::kVisitedSiteCap) {
+								_mystery->_siteReturnStack[_mystery->_siteReturnDepth++] =
+									(uint16)cur;
+							} else {
+								warning("London site return stack full; "
+										"jumping without return site");
+							}
+							debugC(1, kDebugSite,
+								   "London: hotspot jump from site %u to site %u",
+								   cur, jumpSite);
+							_mystery->_lastSite = (uint16)cur;
+							_mystery->_siteNumber = jumpSite;
+							cur = jumpSite;
+							enter(cur);
+						} else {
+							warning("London hotspot jump target %u out of range",
+									jumpSite);
+							enter(cur, false);
+						}
+					} else {
+						enter(cur, false);
+					}
 					// Use CURRENT pointer position (click pos still in rect).
 					mouse = g_system->getEventManager()->getMousePos();
 					updateHotspotCursor(cur, mouse.x, mouse.y);

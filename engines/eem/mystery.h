@@ -172,6 +172,9 @@ public:
 	uint16 _searchLocationNumber = 0xFFFF;
 	uint16 _siteNumber           = 0xFFFF;
 	uint16 _lastSite             = 0xFFFF;
+	uint16 _pendingSiteJump      = 0;      ///< EEM2 _DisplayClue destination site (DAT_2bca_0282).
+	uint16 _siteReturnDepth      = 0;      ///< EEM2 nested site return stack depth (DAT_2bca_0280).
+	uint16 _siteReturnStack[kVisitedSiteCap] = {};
 
 private:
 	Common::Array<byte> _data;
