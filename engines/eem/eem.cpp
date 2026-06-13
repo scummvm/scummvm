@@ -301,17 +301,6 @@ Common::Error EEMEngine::run() {
 
 	debugC(1, kDebugGeneral, "EEM engine starting");
 
-	// EEM2 ("Eagle Eye Mysteries in London") proof of concept. The archives,
-	// SITEPALS. palettes, font and mouse cursor above all load from EEM2's
-	// data using the same code paths as EEM1, which already proves the
-	// shared resource formats. Everything below here (saves, mystery/site
-	// state machine) is EEM1-specific, so the PoC just renders EEM2's
-	// opening logo screens and exits.
-	if (isLondon()) {
-		runLondonScreensPoc();
-		return Common::kNoError;
-	}
-
 	// Resume from save: mystery in progress → MAP (handler 0 @ 1a35:0e1d);
 	// otherwise → ACTION.
 	const int wantedSave = ConfMan.hasKey("save_slot")
@@ -341,6 +330,31 @@ Common::Error EEMEngine::run() {
 
 	if (resumed)
 		goto screenLoop;
+
+	// EEM2 ("Eagle Eye Mysteries in London") proof of concept: opening
+	// sequence + character creation, then start the training case (mystery
+	// 0 — what a new detective plays first) and reuse the engine's gameplay
+	// screen loop. EEM2's mystery data format matches EEM1-CD, so the shared
+	// Mystery parser + InitClues (case intro) / BigMap / Site handlers apply.
+	if (isLondon()) {
+		runLondonScreensPoc();
+		if (!shouldQuit()) {
+			CursorMan.showMouse(true);
+			if (_mystery.load(0, &_rng)) {
+				resetSiteArrivalState();
+				if (_audio)
+					_audio->initMysterySounds(0);
+				debugC(1, kDebugMystery,
+					   "London: training mystery 0 loaded — %u sites, %u suspects",
+					   _mystery.numSites(), _mystery.numSuspects());
+				_nextScreen = kScreenInitClues;
+			} else {
+				warning("London: training mystery 0 (M0.BIN) failed to load");
+				_nextScreen = kScreenInvalid;
+			}
+		}
+		goto screenLoop;
+	}
 
 	// _DoOpeningAnims @ 2520:082a:
 	//   EA Kids logo (PIC) -> HighScore logo (PIC) -> Storm logo
@@ -1099,17 +1113,14 @@ void EEMEngine::runLondonScreensPoc() {
 		_music->stop();
 	_skipIntro = false;
 
-	// Character creation (name + Jake/Jenny), then the case-selection menu.
+	// Character creation (name + Jake/Jenny). The caller then loads the
+	// training case (mystery 0) and enters the shared gameplay screen loop
+	// (case intro -> map -> site); the case-selection menu is reachable
+	// later via the action screen.
 	if (!shouldQuit())
 		showLondonCharSelect();
-	// Reuse EEM1's `doCaseSelection()` verbatim — EEM2 shares its assets
-	// (background PIC 0x41, partner greeter ANI 0x15/0x16, BOOK*.NME, the
-	// generic chooser). The mystery load at the end is guarded out for
-	// London since EEM2's case data isn't ported yet.
-	if (!shouldQuit())
-		doCaseSelection();
 
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: done");
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: intro + character creation done");
 }
 
 void EEMEngine::showLondonCharSelect() {

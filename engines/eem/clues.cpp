@@ -300,7 +300,12 @@ void EEMEngine::doInitClues() {
 		_mystery._lastSite = 0;
 	}
 
-	setSitePalette(0x22);
+	// Case-briefing palette. EEM1 `_DoInitClues` uses SITEPALS index 0x22;
+	// EEM2 `_DoInitClues` @ 1abf:03b3 does `_GetBackground(0x52)` then
+	// `_GetPalette(0x39)` (its 63-entry SITEPALS. shifts the UI palettes).
+	// The briefing partner animation is an ANI sprite drawn under the screen
+	// palette, so the same index fixes both the background and the anim.
+	setSitePalette(isLondon() ? 0x39 : 0x22);
 	Picture bg;
 	const bool haveBriefingBg = _picsArchive.getPicture(0x52, bg);
 	if (haveBriefingBg)
