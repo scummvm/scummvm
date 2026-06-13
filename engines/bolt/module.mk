@@ -3,8 +3,8 @@ MODULE := engines/bolt
 MODULE_OBJS = \
 	anim.o \
 	av.o \
-	carnival/barker.o \
 	bolt.o \
+	carnival/barker.o \
 	carnival/booth.o \
 	carnival/booths/fred.o \
 	carnival/booths/george.o \
