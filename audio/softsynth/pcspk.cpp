@@ -31,9 +31,7 @@ PCSpeakerStream::Command::Command(PCSpeaker::WaveForm aWaveForm, float aFrequenc
 	waveForm(aWaveForm), frequency(aFrequency), length(aLength) { }
 
 const PCSpeakerStream::generatorFunc PCSpeakerStream::generateWave[] =
-	{&PCSpeakerStream::generateSquare, &PCSpeakerStream::generateSine,
-	 &PCSpeakerStream::generateSaw,    &PCSpeakerStream::generateTriangle,
-	 &PCSpeakerStream::generateSilence};
+	{&PCSpeakerStream::generateSquare, &PCSpeakerStream::generateSilence};
 
 PCSpeakerStream::PCSpeakerStream(int rate) {
 	_rate = rate;
@@ -55,7 +53,7 @@ PCSpeakerStream::~PCSpeakerStream() {
 void PCSpeakerStream::play(PCSpeaker::WaveForm wave, int freq, int32 length) {
 	Common::StackLock lock(_mutex);
 
-	assert((wave >= PCSpeaker::kWaveFormSquare) && (wave <= PCSpeaker::kWaveFormTriangle));
+	assert(wave == PCSpeaker::kWaveFormSquare);
 
 	if (_commandActive || !_commandQueue->empty())
 		// Currently playing back a queued instruction. Stop playback and clear
@@ -156,30 +154,6 @@ int PCSpeakerStream::readBuffer(int16 *buffer, const int numSamples) {
 
 int8 PCSpeakerStream::generateSquare(uint32 x, uint32 oscLength) {
 	return (x < (oscLength / 2)) ? 127 : -128;
-}
-
-int8 PCSpeakerStream::generateSine(uint32 x, uint32 oscLength) {
-	if (oscLength == 0)
-		return 0;
-
-	// TODO: Maybe using a look-up-table would be better?
-	return CLIP<int16>((int16) (128 * sin(2.0 * M_PI * x / oscLength)), -128, 127);
-}
-
-int8 PCSpeakerStream::generateSaw(uint32 x, uint32 oscLength) {
-	if (oscLength == 0)
-		return 0;
-
-	return ((x * (65536 / oscLength)) >> 8) - 128;
-}
-
-int8 PCSpeakerStream::generateTriangle(uint32 x, uint32 oscLength) {
-	if (oscLength == 0)
-		return 0;
-
-	int y = ((x * (65536 / (oscLength / 2))) >> 8) - 128;
-
-	return (x <= (oscLength / 2)) ? y : (256 - y);
 }
 
 int8 PCSpeakerStream::generateSilence(uint32 x, uint32 oscLength) {

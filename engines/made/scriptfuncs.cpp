@@ -26,7 +26,7 @@
 #include "made/database.h"
 #include "made/pmvplayer.h"
 
-#include "audio/softsynth/pcspk.h"
+#include "audio/sine.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -39,11 +39,6 @@
 namespace Made {
 
 ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false), _gameAudioVolume(Audio::Mixer::kMaxChannelVolume) {
-	// Initialize the two tone generators
-	_pcSpeaker1 = new Audio::PCSpeaker();
-	_pcSpeaker2 = new Audio::PCSpeaker();
-	_pcSpeaker1->init();
-	_pcSpeaker2->init();
 	_soundResource = nullptr;
 	_soundWasPlaying = false;
 }
@@ -51,9 +46,6 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 ScriptFunctions::~ScriptFunctions() {
 	for (uint i = 0; i < _externalFuncs.size(); ++i)
 		delete _externalFuncs[i];
-
-	delete _pcSpeaker1;
-	delete _pcSpeaker2;
 }
 
 typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScriptFunc;
@@ -338,10 +330,14 @@ int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
 
 	debug(4, "sfPlayNote: Note = %d, Volume(?) = %d", argv[0] - 1, argv[1]);
 
-	_pcSpeaker1->play(Audio::PCSpeaker::kWaveFormSine, freqTable[argv[0] - 1], -1);
+	_vm->_mixer->stopHandle(_sine1);
+
+	Audio::AudioStream *sine = new Audio::SineStream(freqTable[argv[0] - 1], _vm->_mixer->getOutputRate());
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sine1, sine);
 
 	// TODO: Figure out what to do with the second parameter
-	//_pcSpeaker1->setVolume(argv[1]);
+	//_pcSpeaker1->setChannelVolume(_sine1, argv[1]);
 
 	return 0;
 }
@@ -349,7 +345,7 @@ int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfStopNote(int16 argc, int16 *argv) {
 	// Used in the same place as sfPlayNote, with the same parameters
 	// We just stop the wave generator here
-	_pcSpeaker1->stop();
+	_vm->_mixer->stopHandle(_sine1);
 	return 0;
 }
 
@@ -375,16 +371,23 @@ int16 ScriptFunctions::sfPlayTele(int16 argc, int16 *argv) {
 
 	debug(4, "sfPlayTele: Button = %d", argv[0]);
 
-	_pcSpeaker1->play(Audio::PCSpeaker::kWaveFormSine, freqTable1[argv[0]], -1);
-	_pcSpeaker2->play(Audio::PCSpeaker::kWaveFormSine, freqTable2[argv[0]], -1);
+	_vm->_mixer->stopHandle(_sine1);
+	_vm->_mixer->stopHandle(_sine2);
+
+	Audio::AudioStream *sine1 = new Audio::SineStream(freqTable1[argv[0]], _vm->_mixer->getOutputRate());
+	Audio::AudioStream *sine2 = new Audio::SineStream(freqTable2[argv[0]], _vm->_mixer->getOutputRate());
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sine1, sine1);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sine2, sine2);
+
 	return 0;
 }
 
 int16 ScriptFunctions::sfStopTele(int16 argc, int16 *argv) {
 	// Used in the same place as sfPlayTele, with the same parameters
 	// We just stop both wave generators here
-	_pcSpeaker1->stop();
-	_pcSpeaker2->stop();
+	_vm->_mixer->stopHandle(_sine1);
+	_vm->_mixer->stopHandle(_sine2);
 	return 0;
 }
 
