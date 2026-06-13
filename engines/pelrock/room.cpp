@@ -612,7 +612,7 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 		debug("Could not open ALFRED.B to reset conversation states!");
 		return;
 	}
-	bool roomDone = false;
+	//bool roomDone = false;
 	while (!alfredB.eos()) {
 		ResetEntry entry;
 		entry.room = alfredB.readUint16LE();
@@ -622,7 +622,7 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 		alfredB.read(entry.data, entry.dataSize);
 		if (roomNumber < entry.room) {
 			// We've passed the room we care about
-			roomDone = true;
+			//roomDone = true;
 			delete[] entry.data;
 			break;
 		}
@@ -1157,7 +1157,7 @@ void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 	if (!alfred8.open("ALFRED.8")) {
 		error("RoomManager::resetMetadataDefaults(): Couldnt find file ALFRED.8");
 	}
-	bool roomDone = false;
+	//bool roomDone = false;
 	while (!alfred8.eos()) {
 		ResetEntry entry;
 		entry.room = alfred8.readUint16LE();
@@ -1167,7 +1167,7 @@ void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 		alfred8.read(entry.data, entry.dataSize);
 		if (room < entry.room) {
 			// We've passed the room we care about
-			roomDone = true;
+			//roomDone = true;
 			delete[] entry.data;
 			break;
 		}
