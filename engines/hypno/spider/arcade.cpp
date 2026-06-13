@@ -106,16 +106,18 @@ void SpiderEngine::pressedKey(const int keycode) {
 		return;
 	} else if (keycode == kActionKillPlayer) { // Added for testing
 		_health = 0;
-	} else if (keycode == kActionLeft) {
+	} else if (keycode == kActionPause) {
+		openMainMenuDialog();
+	} else if (keycode == kActionLeft && (_arcadeMode == "YC" || _arcadeMode == "YD")) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerLeft;
-	} else if (keycode == kActionDown) {
+	} else if (keycode == kActionDown && (_arcadeMode == "YC" || _arcadeMode == "YD")) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerBottom;
-	} else if (keycode == kActionRight) {
+	} else if (keycode == kActionRight && (_arcadeMode == "YC" || _arcadeMode == "YD")) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerRight;
-	} else if (keycode == kActionUp) {
+	} else if (keycode == kActionUp && (_arcadeMode == "YC" || _arcadeMode == "YD")) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerTop;
 	}

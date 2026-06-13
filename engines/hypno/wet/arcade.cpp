@@ -772,9 +772,12 @@ void WetEngine::pressedKey(const int keycode) {
 }
 
 Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	Common::Point mousePos = HypnoEngine::getPlayerPosition(false);
 	if (_arcadeMode == "YT") {
 		if (needsUpdate) {
+			if (isGamepadAimActive() && _c33PlayerDirection.empty())
+				_c33UseMouse = true;
+
 			if (!_c33UseMouse) {
 				disableCursor();
 				if (_c33PlayerDirection.size() == 0)
@@ -805,7 +808,7 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 					diff.x = (diff.x / abs(diff.x)) * 10;
 
 				if (abs(diff.y) >= 10)
-					diff.y = (diff.x / abs(diff.x)) * 10;
+					diff.y = (diff.y / abs(diff.y)) * 10;
 
 				_c33PlayerPosition = _c33PlayerPosition + diff;
 
@@ -819,6 +822,8 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
 			}
 		}
+		_c33PlayerPosition.x = CLIP<int>(_c33PlayerPosition.x, 0, _screenW - 1);
+		_c33PlayerPosition.y = CLIP<int>(_c33PlayerPosition.y, 0, _screenH - 1);
 		uint32 c = _compositeSurface->getPixel(_c33PlayerPosition.x, _c33PlayerPosition.y);
 		if (c >= 225 && c <= 231) {
 			if (!_infiniteHealthCheat)
@@ -827,7 +832,7 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 		}
 		return _c33PlayerPosition;
 	}
-	return mousePos;
+	return HypnoEngine::getPlayerPosition(needsUpdate);
 }
 
 void WetEngine::drawCursorArcade(const Common::Point &mousePos) {

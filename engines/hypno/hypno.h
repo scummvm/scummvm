@@ -107,6 +107,11 @@ enum HYPNOActions {
 	kActionQuit,
 	kActionCredits,
 	kActionSelect,
+	kActionSecondaryShoot,
+	kActionAimLeft,
+	kActionAimDown,
+	kActionAimRight,
+	kActionAimUp,
 };
 
 class HypnoEngine;
@@ -316,6 +321,12 @@ public:
 	virtual void pressedKey(const int keycode);
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
+	void resetGamepadAim(const Common::Rect &mouseBox);
+	void setGamepadAimActive(bool active);
+	bool isGamepadAimActive() const;
+	bool handleGamepadAimAction(const int action, bool pressed);
+	bool handleGamepadAxisAction(const int action, int16 position);
+	bool updateGamepadAim(const Common::Rect &mouseBox);
 	virtual void drawShoot(const Common::Point &mousePos);
 	virtual bool shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary);
 	virtual void hitPlayer();
@@ -361,6 +372,14 @@ public:
 	bool _loseLevel;
 	bool _skipDefeatVideo;
 	bool _skipNextVideo;
+	Common::Point _gamepadAimPosition;
+	int16 _gamepadAxisX;
+	int16 _gamepadAxisY;
+	bool _gamepadAimActive;
+	bool _gamepadAimLeft;
+	bool _gamepadAimDown;
+	bool _gamepadAimRight;
+	bool _gamepadAimUp;
 
 	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();

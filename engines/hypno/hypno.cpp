@@ -94,6 +94,15 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("subtitles"), _useSubtitles))
 		warning("Failed to parse bool from subtitles options");
 
+	_gamepadAimPosition = Common::Point(0, 0);
+	_gamepadAxisX = 0;
+	_gamepadAxisY = 0;
+	_gamepadAimActive = false;
+	_gamepadAimLeft = false;
+	_gamepadAimDown = false;
+	_gamepadAimRight = false;
+	_gamepadAimUp = false;
+
 	// Add quit level
 	Hotspot q(MakeMenu);
 	Action *a = new Quit();
