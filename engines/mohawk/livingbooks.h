@@ -262,6 +262,8 @@ class LBPage;
 class LBGraphics;
 class LBAnimation;
 
+bool tryOpenPage(Archive *archive, const Common::String &fileName);
+
 struct LBScriptEntry {
 	LBScriptEntry();
 	~LBScriptEntry();

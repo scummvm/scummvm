@@ -285,7 +285,7 @@ static Common::String replaceColons(const Common::String &in, char replace) {
 }
 
 // Helper function to assist in opening pages
-static bool tryOpenPage(Archive *archive, const Common::String &fileName) {
+bool tryOpenPage(Archive *archive, const Common::String &fileName) {
 	// Try the plain file name first
 	if (archive->openFile(Common::Path(fileName)))
 		return true;
