@@ -2118,11 +2118,11 @@ void EEMEngine::doCaseSelection() {
 
 	const uint mn = stageLo + selRow;
 	if (isLondon()) {
-		// EEM2 PoC: the menu (PIC 0x41, ANI 0x15/0x16, BOOK*.NME) is shared
-		// with EEM1, but EEM2's mystery data (M*.BIN/E*.BIN) isn't ported,
-		// so stop here instead of parsing it with the EEM1 loader.
+		// EEM2: the menu (PIC 0x41, ANI 0x15/0x16, BOOK*.NME) is shared with
+		// EEM1, but loading a chosen mystery from the menu isn't wired up yet
+		// (the training case is started directly from run()), so stop here.
 		debugC(1, kDebugMystery,
-			   "London PoC: selected mystery %u (load not implemented)", mn);
+			   "London: selected mystery %u (menu load not implemented yet)", mn);
 		return;
 	}
 	if (!_mystery.load(mn, &_rng)) {

@@ -29,6 +29,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
+#include "graphics/paletteman.h"
 
 #include "eem/audio.h"
 #include "eem/detection.h"
@@ -261,56 +262,87 @@ void EEMEngine::doChoosePartner() {
 	}
 }
 
-// _DoInitClues @ 1a35:0411. Sequence:
-//   1. BG 0x52, palette 0x22
-//   2. anims: game @ (0xcd, 0x6c), book @ (0, 99), nancy @ (0x68, 0x8b) on caseType=1
-//   3. cycle game anim once (click skips)
-//   4. _PlayInSequence per partner+caseType
-//   5. _DisplayClue(InitBlock + 2, 1) — briefing dialogue
-//   6. _OnSites[startSite] = 1
-// Anim IDs: gameAni = 0x17 (Jake) / 0x3b (Jenny);
-// bookAni = 0x18 / 0x3c; nancyAni = 0x19 (caseType 1 only).
-void EEMEngine::doInitClues() {
-	if (!_mystery.isLoaded())
-		return;
+// EEM2 case-intro animation — `_DoInitClues` @ 1abf:03b3. Ghidra-confirmed
+// flow (decompiled prologue):
+//   _AllBlack(); _GetBackground(0x52); _GetPalette(0x39);
+//   anim = _GetAnimation(DAT_4bd4 ? 0x71 : 0x18);   // Jake 0x18 / Jenny 0x71
+//   _NewAnimation(0xd2, 0x3f, anim, ...);            // registered at (210,63)
+//   _UpdateAnimations(); _FadeIn();                  // draw frame 0, then fade
+//   while (i != _max()) { _CheckFrameRate(); _UpdateAnimations(); kbhit->skip }
+//   if (caseType == 1) { _LoadSoundName("phone1.voc"); _PlayVoice; _Wait... }
+// So, unlike EEM1's game/book/nancy cycle + `_PlayInSequence`, EEM2 registers
+// ONE partner animation drawn by `_UpdateAnimations` — hence we anchor frames
+// with `blitAnimFrameAnchored` ((0xd2 - miscflags, 0x3f - rowoff), per
+// `_UpdateAnimations @ 172b:09c1`), the same helper the map/site screens use.
+void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
+										bool haveBriefingBg) {
+	const uint introAni = (_partner == kPartnerJake) ? 0x18 : 0x71;
+	const int kAnchorX = 0xd2, kAnchorY = 0x3f;  // _NewAnimation(0xd2, 0x3f)
+	Animation anim;
+	const bool haveAnim =
+		_aniArchive.loadAnimation(introAni, anim) && !anim.empty();
 
-	const byte *ib = _mystery.initBlock();
-	if (!ib)
-		return;
+	// _AllBlack(): blank the palette so the _FadeIn after frame 0 reveals the
+	// briefing (palette 0x39 — EEM2's 63-entry SITEPALS. shifts EEM1's UI set).
+	byte pal[kPalSize];
+	const bool havePal = getSitePalette(0x39, pal);
+	byte black[kPalSize] = {};
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	g_system->updateScreen();
 
-	// CD InitBlock: u16 caseType; u16 startSite; <clue block>.
-	// Floppy InitBlock (FUN_19bb_042f): u8 caseType; u8 nSubjects;
-	// subjects[]; u8 nDialog; dialog_records[]. No startSite.
-	const bool floppy = isFloppy();
-	const uint16 caseType = floppy ? (uint16)ib[0] : READ_LE_UINT16(ib);
+	bool skip = false;
+	const uint frames = haveAnim ? (uint)anim.size() : 1;
+	for (uint frame = 0; frame < frames && !shouldQuit() && !skip; frame++) {
+		if (haveBriefingBg)
+			blitAt(bg, 0, 0);
+		if (haveAnim) {
+			Graphics::Surface *scr = g_system->lockScreen();
+			if (scr) {
+				blitAnimFrameAnchored(scr, anim[frame], kAnchorX, kAnchorY);
+				g_system->unlockScreen();
+			}
+		}
+		if (frame == 0 && havePal)
+			fadePaletteFromBlack(pal);  // _FadeIn @ 1abf:03b3
+		else
+			g_system->updateScreen();
 
-	if (!floppy) {
-		const uint16 startSite = READ_LE_UINT16(ib + 2);
-		if (startSite < Mystery::kVisitedSiteCap)
-			_mystery._onSites[startSite] = 1;
-		_mystery._siteNumber = startSite;
-		_mystery._lastSite = startSite;
-	} else {
-		// Floppy _DoMapScreen @ 1fed:1060 (FUN_1fed_07ed) walks every
-		// site unconditionally — mirror that by marking all visible.
-		const uint sites = _mystery.numSites();
-		for (uint s = 0; s < sites && s < Mystery::kVisitedSiteCap; s++)
-			_mystery._onSites[s] = 1;
-		_mystery._siteNumber = 0;
-		_mystery._lastSite = 0;
+		const uint32 wakeup = g_system->getMillis() + 140;
+		while (g_system->getMillis() < wakeup && !shouldQuit() && !skip) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_KEYDOWN &&
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					interruptAudio(/* stopMusicToo= */ false);
+					skip = true;
+					break;
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN ||
+					ev.type == Common::EVENT_KEYDOWN) {
+					skip = true;
+					break;
+				}
+			}
+			g_system->delayMillis(10);
+		}
 	}
 
-	// Case-briefing palette. EEM1 `_DoInitClues` uses SITEPALS index 0x22;
-	// EEM2 `_DoInitClues` @ 1abf:03b3 does `_GetBackground(0x52)` then
-	// `_GetPalette(0x39)` (its 63-entry SITEPALS. shifts the UI palettes).
-	// The briefing partner animation is an ANI sprite drawn under the screen
-	// palette, so the same index fixes both the background and the anim.
-	setSitePalette(isLondon() ? 0x39 : 0x22);
-	Picture bg;
-	const bool haveBriefingBg = _picsArchive.getPicture(0x52, bg);
-	if (haveBriefingBg)
-		blitAt(bg, 0, 0);
+	// caseType 1 rings phone1.voc (EEM1's PHONE.VOC fires on caseType 2).
+	if (_audio && caseType == 1) {
+		_audio->playVoc(Common::Path("phone1.voc"));
+		_audio->waitForVoiceDone();
+	}
+}
 
+// EEM1 CD/floppy case-intro animation — `_DoInitClues @ 1a35:0411`:
+//   anims registered: game @ (0xcd,0x6c) [0x17 Jake / 0x3b Jenny],
+//   book @ (0,99) [0x18 / 0x3c], nancy @ (0x68,0x8b) [0x19, caseType 1 only];
+//   cycle the game anim once (click skips), then `_PlayInSequence @ 172b:2d03`
+//   plays the partner entrance per partner+caseType. A phone/news voice rings
+//   first on CD caseType 2 / floppy caseType 2-3. (London: see
+//   playLondonInitCluesAnim.)
+void EEMEngine::playCdFloppyInitCluesAnim(uint16 caseType, bool floppy,
+										  const Picture &bg, bool haveBriefingBg) {
 	const uint gameAni = _partner == kPartnerJake ? 0x17 : 0x3b;
 	const uint bookAni = _partner == kPartnerJake ? 0x18 : 0x3c;
 	Animation game, book, nancy;
@@ -513,6 +545,62 @@ void EEMEngine::doInitClues() {
 			}
 		}
 	}
+}
+
+// _DoInitClues @ 1a35:0411 (EEM1) / 1abf:03b3 (EEM2). Sequence:
+//   1. mark the start site / visited sites from the InitBlock
+//   2. BG PIC 0x52 + briefing palette (EEM1 0x22 / EEM2 0x39)
+//   3. partner entrance animation (CD/floppy or London variant)
+//   4. _DisplayClue(InitBlock + 2) — briefing dialogue
+void EEMEngine::doInitClues() {
+	if (!_mystery.isLoaded())
+		return;
+
+	const byte *ib = _mystery.initBlock();
+	if (!ib)
+		return;
+
+	// CD InitBlock: u16 caseType; u16 startSite; <clue block>.
+	// Floppy InitBlock (FUN_19bb_042f): u8 caseType; u8 nSubjects;
+	// subjects[]; u8 nDialog; dialog_records[]. No startSite.
+	const bool floppy = isFloppy();
+	const uint16 caseType = floppy ? (uint16)ib[0] : READ_LE_UINT16(ib);
+
+	if (!floppy) {
+		const uint16 startSite = READ_LE_UINT16(ib + 2);
+		if (startSite < Mystery::kVisitedSiteCap)
+			_mystery._onSites[startSite] = 1;
+		_mystery._siteNumber = startSite;
+		_mystery._lastSite = startSite;
+	} else {
+		// Floppy _DoMapScreen @ 1fed:1060 (FUN_1fed_07ed) walks every
+		// site unconditionally — mirror that by marking all visible.
+		const uint sites = _mystery.numSites();
+		for (uint s = 0; s < sites && s < Mystery::kVisitedSiteCap; s++)
+			_mystery._onSites[s] = 1;
+		_mystery._siteNumber = 0;
+		_mystery._lastSite = 0;
+	}
+
+	// Case-briefing palette. EEM1 `_DoInitClues` uses SITEPALS index 0x22;
+	// EEM2 `_DoInitClues` @ 1abf:03b3 does `_GetBackground(0x52)` then
+	// `_GetPalette(0x39)` (its 63-entry SITEPALS. shifts the UI palettes).
+	// The briefing partner animation is an ANI sprite drawn under the screen
+	// palette, so the same index fixes both the background and the anim.
+	setSitePalette(isLondon() ? 0x39 : 0x22);
+	Picture bg;
+	const bool haveBriefingBg = _picsArchive.getPicture(0x52, bg);
+	if (haveBriefingBg)
+		blitAt(bg, 0, 0);
+
+	// Case-intro partner animation. EEM2 (`_DoInitClues` @ 1abf:03b3) plays a
+	// single partner anim (Jake 0x18 / Jenny 0x71); EEM1 CD/floppy runs a
+	// game/book/nancy cycle + `_PlayInSequence` entrance. Both then feed the
+	// shared briefing dialogue below.
+	if (isLondon())
+		playLondonInitCluesAnim(caseType, bg, haveBriefingBg);
+	else
+		playCdFloppyInitCluesAnim(caseType, floppy, bg, haveBriefingBg);
 
 	// Briefing dialogue. CD: clue block @ ib+4 (after caseType,startSite).
 	// Floppy: dialog records dispatched via FUN_22dc_05c8 @ 22dc:05c8
