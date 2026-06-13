@@ -425,8 +425,10 @@ private:
 
 	// --- EEM2 ("Eagle Eye Mysteries in London") — reimplementation in progress ---
 	/// Opening sequence + character creation — EEM2's `_DoOpeningAnims`
-	/// @ 2721:08e6 then `_NewPlayer` @ 1cd3:0f27.
+	/// @ 2721:08e6 then screen 8 profile selection.
 	void runLondonStartup();
+	/// Start London mystery 0 for a freshly-created detective.
+	bool startLondonTrainingMystery();
 	/// Blit a full-screen still PIC and fade it in / hold / out using the
 	/// given SITEPALS. palette index.
 	void showLondonLogo(uint picId, uint palId, uint holdMs);
@@ -553,6 +555,10 @@ private:
 	/// every `_PlayVoice` / `_SpoolSound` call site (clue voices,
 	/// partner speech, intro VO).
 	bool _voiceOn = true;
+
+	/// Set by the profile/new-player screens. London uses it to decide whether
+	/// to start the training mystery or resume the loaded profile's menu/state.
+	bool _profileCreatedThisSession = false;
 
 	Common::RandomSource _rng;
 

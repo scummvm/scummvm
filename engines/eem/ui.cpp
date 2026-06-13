@@ -836,18 +836,25 @@ void EEMEngine::doProfilePicker() {
 	// `screen8_handler @ 1c33:1012` — walks *.PLR (max 25), reads 12-byte
 	// player-name field, hands list to `_DoChoose`. No profiles or
 	// 0xfffe/0xffff sentinel enters `_NewPlayer`.
+	_profileCreatedThisSession = false;
 
 	// `screen8_handler` does `_FadeOut(); _GetPalette(0); _GetBackground(0x104)`.
 	setSitePalette(0);
 
 	const SaveStateList saves = listProfiles();
 	if (saves.empty()) {
-		doNewPlayer();
+		if (isLondon())
+			showLondonCharSelect();
+		else
+			doNewPlayer();
 		return;
 	}
 
 	if (!_font.isLoaded()) {
-		doNewPlayer();
+		if (isLondon())
+			showLondonCharSelect();
+		else
+			doNewPlayer();
 		return;
 	}
 
@@ -1011,22 +1018,31 @@ void EEMEngine::doProfilePicker() {
 	}
 
 	if (createNew) {
-		doNewPlayer();
+		if (isLondon())
+			showLondonCharSelect();
+		else
+			doNewPlayer();
 		return;
 	}
 
 	// `_LoadPlayerRecord @ 1c33:1281`.
 	const ProfilePickerEntry &e = entries[sel];
-	if (!loadProfile(e.label)) {
+	if (loadProfile(e.label)) {
+		_profileCreatedThisSession = false;
+	} else {
 		warning("doProfilePicker: failed to load profile '%s' at slot %d",
 				e.label.c_str(), e.slot);
-		doNewPlayer();
+		if (isLondon())
+			showLondonCharSelect();
+		else
+			doNewPlayer();
 	}
 }
 
 void EEMEngine::doNewPlayer() {
 	// `_NewPlayer @ 1c33:0dda` — BG 0x104 + peek pic 0x107, prompt for
 	// up to 12 chars.
+	_profileCreatedThisSession = false;
 	if (!_font.isLoaded()) {
 		_playerName = "Detective";
 		return;
@@ -1070,7 +1086,9 @@ void EEMEngine::doNewPlayer() {
 					name = "Detective";
 				// `_NewPlayer @ 1c33:0fa0+`: `_LoadPlayerRecord` → if
 				// missing, zero state and `_SavePlayerRecord`.
-				if (!loadProfile(name)) {
+				if (loadProfile(name)) {
+					_profileCreatedThisSession = false;
+				} else {
 					_playerName = name;
 					memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
 					_mystery.clear();
@@ -1078,6 +1096,7 @@ void EEMEngine::doNewPlayer() {
 					// `_NewPlayer @ 1c33:0fa3`: DAT_2d5d_3f99 = 1 (Junior).
 					_chainStage = 1;
 					saveProfile(name);
+					_profileCreatedThisSession = true;
 				}
 				done = true;
 				break;
