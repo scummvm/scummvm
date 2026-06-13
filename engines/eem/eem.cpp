@@ -1047,36 +1047,93 @@ void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
 }
 
 void EEMEngine::runLondonScreensPoc() {
-	// EEM2 opening logos — still-image portion of `_DoOpeningAnims`
-	// @ 2721:08e6. Picture/palette IDs come from RE of EEM2CD.EXE:
-	//   _ShowEAKids     @ 2721:05e3 — _GetPicture(0x54),  _GetPalette(0x3c)
-	//   _ShowStormLogo  @ 2721:0729 — BOLT.ANM + THUNDER.VOC
-	//   _ShowHScoreLogo @ 2721:084d — _GetPicture(0x356), _GetPalette(0x3d)
+	// Full opening sequence — EEM2 `_DoOpeningAnims` @ 2721:08e6:
+	//   _ShowEAKids   @ 2721:05e3 — PIC 0x54,  palette 0x3c
+	//   FUN_2721_07be @ 2721:07be — PIC 0x20c, palette 0x3e (publisher logo)
+	//   _ShowStormLogo@ 2721:0729 — anim 0 ("bolt.anm") + "thunder.voc"
+	//   _MIDIPlay(0x65)=MUS00101.XMI; anim 1 ("movie.anm")
+	//   _MIDIPlay(0x66)=MUS00102.XMI (loop); anim 2 ("wave.anm"), looped
+	//   _MIDIPlay(0x67)=MUS00103.XMI; fade out
+	// Anim names come from the table @ DS:1b54 -> {bolt,movie,wave}.anm;
+	// _MIDIPlay(n) maps to MUS%05d.XMI (n).
+	const uint32 kHoldForever = 0xFFFFFFFFu;
 	CursorMan.showMouse(false);
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: rendering opening screens");
+	_skipIntro = false;
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: opening sequence");
 
-	// EA Kids logo.
-	if (!shouldQuit())
-		showLondonLogo(0x54, 0x3c, 2500);
+	// Two still logos.
+	if (!shouldQuit() && !_skipIntro)
+		showLondonLogo(0x54, 0x3c, 2500);   // EA Kids
+	if (!shouldQuit() && !_skipIntro)
+		showLondonLogo(0x20c, 0x3e, 2500);  // publisher logo (FUN_2721_07be)
 
-	// Storm Software lightning-bolt animation with thunder (same BOLT.ANM
-	// container as EEM1 CD; the palette lives in the ANM file header).
-	if (!shouldQuit()) {
+	// Storm Software — bolt.anm with the thunder roar.
+	if (!shouldQuit() && !_skipIntro) {
 		if (_audio)
 			_audio->playVoc(Common::Path("THUNDER.VOC"));
 		playAnm(Common::Path("BOLT.ANM"), 120, /* holdLastFrame= */ false,
 				/* fadeIn= */ true);
-		waitForInput(1500);
-		fadeCurrentPaletteToBlack();
 		if (_audio)
 			_audio->stopVoice();
+		fadeCurrentPaletteToBlack();
 	}
 
-	// High Score Productions logo.
-	if (!shouldQuit())
-		showLondonLogo(0x356, 0x3d, 2500);
+	// Intro movie with its theme (MUS00101.XMI).
+	if (!shouldQuit() && !_skipIntro && _music)
+		_music->playFile(Common::Path("MUS00101.XMI"), /* loop= */ false);
+	if (!shouldQuit() && !_skipIntro)
+		playAnm(Common::Path("MOVIE.ANM"), 120, /* holdLastFrame= */ false,
+				/* fadeIn= */ true);
 
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: opening screens done");
+	// Animated title (wave.anm) over the looping theme (MUS00102.XMI);
+	// a click / key advances to character creation. The original loops
+	// wave.anm; the PoC plays it once, holds the last frame and waits.
+	if (!shouldQuit() && !_skipIntro && _music)
+		_music->playFile(Common::Path("MUS00102.XMI"), /* loop= */ true);
+	if (!shouldQuit() && !_skipIntro)
+		playAnm(Common::Path("WAVE.ANM"), 120, /* holdLastFrame= */ true,
+				/* fadeIn= */ true);
+	if (!shouldQuit() && !_skipIntro)
+		waitForInput(kHoldForever);
+	if (_music)
+		_music->stop();
+	_skipIntro = false;
+
+	// Character-selection screen.
+	if (!shouldQuit())
+		showLondonCharSelect();
+
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: done");
+}
+
+void EEMEngine::showLondonCharSelect() {
+	// `_NewPlayer` @ 1cd3:0f27 opens the character-creation screen with
+	// `_GetPalette(0)` + `_GetBackground(0xc)` (PICS picture 0xc), then
+	// reads a name and toggles Jake/Jenny (left/right arrow -> DAT_4c4c,
+	// Enter confirms). This PoC renders the screen; wiring up the
+	// interactive name + partner entry is the next step.
+	const uint32 kHoldForever = 0xFFFFFFFFu;
+	debugC(1, kDebugGeneral, "EEM2 (London) PoC: character-selection screen");
+
+	Picture bg;
+	if (!_picsArchive.getPicture(0xc, bg) || bg.surface.empty()) {
+		warning("London char-select background PIC 0xc load failed");
+		return;
+	}
+	blitAt(bg, 0, 0);
+
+	byte target[kPalSize];
+	byte black[kPalSize] = {};
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	g_system->updateScreen();
+	if (getSitePalette(0, target))
+		fadePaletteFromBlack(target);
+	else
+		warning("London char-select: palette 0 unavailable");
+
+	CursorMan.showMouse(true);
+	setInteractiveMouseCursor(true);
+	waitForInput(kHoldForever);
 }
 
 void EEMEngine::showFloppyStormLogo() {
