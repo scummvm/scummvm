@@ -67,7 +67,7 @@ float FluidScroller::VelocityTracker::calculateVelocity() const {
 	for (int i = 0; i < 4 && i < count - 1; ++i) {
 		int i1 = (index + kHistorySize - 1 - i) % kHistorySize; // current point
 		int i2 = (index + kHistorySize - 2 - i) % kHistorySize; // previous point
-		
+
 		uint32 dt = samples[i1].time - samples[i2].time;
 
 		if (dt > 0)
@@ -78,7 +78,7 @@ float FluidScroller::VelocityTracker::calculateVelocity() const {
 
 	if (validVelocities == 0)
 		return 0.0f;
-	
+
 	// Weighted average of historical velocities
 	float totalVelocity = 0.0f;
 	float totalWeight = 0.0f;
@@ -91,12 +91,12 @@ float FluidScroller::VelocityTracker::calculateVelocity() const {
 	return totalVelocity / totalWeight;
 }
 
-FluidScroller::FluidScroller() : 
-	_mode(kModeNone), 
-	_startTime(0), 
-	_scrollPosRaw(0.0f), 
-	_animationOffset(0.0f), 
-	_maxScroll(0.0f), 
+FluidScroller::FluidScroller() :
+	_mode(kModeNone),
+	_startTime(0),
+	_scrollPosRaw(0.0f),
+	_animationOffset(0.0f),
+	_maxScroll(0.0f),
 	_stepSize(1.0f),
 	_viewportHeight(0),
 	_lastWheelTime(0),
@@ -165,7 +165,7 @@ void FluidScroller::feedWheel(uint32 time, float deltaY) {
 	/*
 	 * Cap the duration to prevent extreme high/low velocity
 	 * Otherwise use the actual interval
-	 */ 
+	 */
 	uint32 effectiveDt = dt;
 	if (dt > 200)
 		effectiveDt = 200;
@@ -199,7 +199,7 @@ void FluidScroller::handleMouseWheel(int direction, float multiplier) {
 void FluidScroller::absorb(float velocity, float distance) {
 	_mode = kModeSpringBack;
 	_startTime = g_system->getMillis();
-	
+
 	_lambda = 2.0f * (float)M_PI / kDefaultSpringResponse;
 	_stretchDistance = distance;
 
@@ -273,7 +273,7 @@ float FluidScroller::getVisualPosition() const {
 		return -calculateRubberBandOffset(-_scrollPosRaw, rubberBandRange);
 	else if (_scrollPosRaw > _maxScroll)
 		return _maxScroll + calculateRubberBandOffset(_scrollPosRaw - _maxScroll, rubberBandRange);
-	
+
 	return _scrollPosRaw;
 }
 
