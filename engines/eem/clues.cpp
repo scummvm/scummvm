@@ -295,15 +295,23 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 
+	// Drive the cells through the animation script (`_NewAnimation` prior
+	// 0x18 -> `_AnimationSequences[0x18]`), not a raw 0..N-1 sweep — the
+	// frame shown each tick is `script[tick]`, not `tick`. For EEM2 that
+	// script is the count-up {0..16}, but routing through `partnerFrameAtTick`
+	// keeps this faithful if the cells/script ever diverge and matches the map/
+	// site partner rendering. One pass = one script cell per ~140 ms tick.
 	bool skip = false;
 	const uint frames = haveAnim ? (uint)anim.size() : 1;
 	for (uint frame = 0; frame < frames && !shouldQuit() && !skip; frame++) {
 		if (haveBriefingBg)
 			blitAt(bg, 0, 0);
 		if (haveAnim) {
+			const uint cell =
+				partnerFrameAtTick(0x18, (uint)anim.size(), frame * 140);
 			Graphics::Surface *scr = g_system->lockScreen();
 			if (scr) {
-				blitAnimFrameAnchored(scr, anim[frame], kAnchorX, kAnchorY);
+				blitAnimFrameAnchored(scr, anim[cell], kAnchorX, kAnchorY);
 				g_system->unlockScreen();
 			}
 		}

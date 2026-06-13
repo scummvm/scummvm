@@ -43,6 +43,11 @@ class Mystery;
 /// Mirrors the looping path of `_UpdateAnimations @ 172b:09c1`.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 
+/// Select the EEM2 ("London") animation-script table inside `findAnimScript`.
+/// EEM2 ships its own `_AnimationSequences`; many partner/KD scripts differ
+/// from EEM1's, so the engine must use the EEM2 sequences for that variant.
+void setLondonAnimScripts(bool enabled);
+
 /// bigMapPartnerFrameAtTick: count-up 0..8 once, then loop `_BigMapWaitSeq`
 /// (9,9,9,9,10,9,9,9,9). Mirrors `_DoBigMap @ 20fe:09e7` two-phase swap from
 /// script 0x14 (count-up @ 29be:196a) to `_BigMapWaitSeq @ 29be:1574`.
