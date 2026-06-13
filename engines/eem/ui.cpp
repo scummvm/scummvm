@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -48,6 +49,33 @@ const GallerySlot kGallerySlots[5] = {
 	{ 227,  14 }, // 2
 	{ 119,  90 }, // 3
 	{ 191,  90 }  // 4
+};
+
+struct LondonApproachData {
+	uint16 videoId = 0;
+	uint16 videoX = 0;
+	uint16 videoY = 0;
+	Common::Rect textRect;
+	Common::Array<Common::String> pages;
+};
+
+struct LondonApproachButton {
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+	int x;
+	int y;
+	uint16 picId;
+
+	Common::Rect rect() const { return Common::Rect(x1, y1, x2, y2); }
+};
+
+const LondonApproachButton kLondonApproachButtons[4] = {
+	{  10, 139,  35, 157,  11, 139, 0x361 }, // Done
+	{  10, 172,  35, 190,  11, 172, 0x362 }, // Play
+	{ 287, 172, 307, 190, 287, 172, 0x35f }, // Next
+	{ 287, 139, 307, 157, 287, 139, 0x360 }, // Previous
 };
 
 byte mapVisitedMarkerColor(byte color) {
@@ -85,6 +113,75 @@ void blitBigMapMarker(Graphics::ManagedSurface &dstSurface, const Picture &marke
 											  : src[col];
 		}
 	}
+}
+
+bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
+	Common::File f;
+	const Common::String name = Common::String::format("A%u.BIN", approachId);
+	if (!f.open(Common::Path(name))) {
+		warning("London approach: cannot open %s", name.c_str());
+		return false;
+	}
+
+	const uint32 size = f.size();
+	if (size < 16) {
+		warning("London approach: %s is too short", name.c_str());
+		return false;
+	}
+
+	Common::Array<byte> data;
+	data.resize(size);
+	if (f.read(data.data(), size) != size) {
+		warning("London approach: short read on %s", name.c_str());
+		return false;
+	}
+
+	out.videoId = READ_LE_UINT16(data.data() + 0);
+	out.videoX = READ_LE_UINT16(data.data() + 2);
+	out.videoY = READ_LE_UINT16(data.data() + 4);
+	const int16 x1 = (int16)READ_LE_UINT16(data.data() + 6);
+	const int16 y1 = (int16)READ_LE_UINT16(data.data() + 8);
+	const int16 x2 = (int16)READ_LE_UINT16(data.data() + 10);
+	const int16 y2 = (int16)READ_LE_UINT16(data.data() + 12);
+	out.textRect = Common::Rect(x1, y1, x2, y2);
+
+	const uint16 pageCount = READ_LE_UINT16(data.data() + 14);
+	out.pages.clear();
+	uint32 pos = 16;
+	for (uint16 i = 0; i < pageCount && pos < size; i++) {
+		const uint32 start = pos;
+		while (pos < size && data[pos] != 0)
+			pos++;
+		out.pages.push_back(Common::String((const char *)data.data() + start,
+										   pos - start));
+		if (pos < size)
+			pos++;
+	}
+	return out.videoId != 0 && !out.pages.empty();
+}
+
+bool decodeLondonApproachFirstFrame(uint16 videoId,
+									Graphics::ManagedSurface &base,
+									byte *palette) {
+	const Common::String name = Common::String::format("VIDEO%02u.A", videoId);
+	ANMDecoder anm;
+	if (!anm.open(Common::Path(name))) {
+		warning("London approach: cannot open %s", name.c_str());
+		return false;
+	}
+
+	anm.getPalette8(palette);
+	const byte *frame = anm.nextFrame();
+	if (!frame) {
+		warning("London approach: %s has no first frame", name.c_str());
+		return false;
+	}
+
+	base.clear();
+	const int w = MIN<int>(anm.width(), kScreenWidth);
+	const int h = MIN<int>(anm.height(), kScreenHeight);
+	base.copyRectToSurface(frame, anm.width(), 0, 0, w, h);
+	return true;
 }
 
 // Setup-screen highlight rects (referenced by both `doSetup` and the
@@ -2979,7 +3076,8 @@ void EEMEngine::doBigMap() {
 		const Common::Rect kBigMapWindow(0, 0, 247, 192);
 		const Common::Rect kSetupBtnRect = isFloppy()
 			? Common::Rect(251, 3, 315, 42)
-			: Common::Rect(252, 4, 315, 42);
+			: (isLondon() ? Common::Rect(252, 1, 315, 42)
+						  : Common::Rect(252, 4, 315, 42));
 
 		bool wantZoom = false;
 		int zoomX = 0;
@@ -3022,8 +3120,13 @@ void EEMEngine::doBigMap() {
 			if (now - mapLastTick >= 100) {
 				mapLastTick = now;
 				drawBigMapOverview(now - mapStartTick);
-				cyclePaletteRange(0xf7, 0xfa);
-				cyclePaletteRange(0xfb, 0xfe);
+				if (isLondon()) {
+					cyclePaletteRange(0xf4, 0xf9);
+					cyclePaletteRange(0xfa, 0xff);
+				} else {
+					cyclePaletteRange(0xf7, 0xfa);
+					cyclePaletteRange(0xfb, 0xfe);
+				}
 			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
@@ -3068,12 +3171,17 @@ void EEMEngine::doBigMap() {
 		const Common::Rect kArrowYDown(237, 163, 247, 172);
 		const Common::Rect kArrowXLeft(2, 175, 12, 185);
 		const Common::Rect kArrowXRight(224, 175, 234, 185);
-		const Common::Rect kXSlider(15, 175, 221, 185);
-		const Common::Rect kYSlider(237, 14, 247, 160);
+		const Common::Rect kXSlider = isLondon()
+			? Common::Rect(15, 176, 220, 184)
+			: Common::Rect(15, 175, 221, 185);
+		const Common::Rect kYSlider = isLondon()
+			? Common::Rect(238, 16, 246, 158)
+			: Common::Rect(237, 14, 247, 160);
 		const Common::Rect kDetailSetupBtn = isFloppy()
 			? Common::Rect(251, 3, 315, 42)
-			: Common::Rect(252, 4, 315, 42);
-		const int kArrowStep = 16;
+			: (isLondon() ? Common::Rect(251, 3, 315, 42)
+						  : Common::Rect(252, 4, 315, 42));
+		const int kArrowStep = isLondon() ? 8 : 16;
 		const int kSliderRange = mapW - kMapWinW;
 		const int kSliderRangeY = mapH - kMapWinH;
 		const Common::Point detailMouse =
@@ -3085,6 +3193,7 @@ void EEMEngine::doBigMap() {
 		while (!shouldQuit() && !returnToOverview) {
 			Common::Event ev;
 			bool dirty = false;
+			bool frameTick = false;
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_QUIT ||
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -3097,7 +3206,7 @@ void EEMEngine::doBigMap() {
 						dirty = true;
 						continue;
 					}
-					const int kStep = 16;
+					const int kStep = isLondon() ? 8 : 16;
 					if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
 						scrollX = MAX<int>(0, scrollX - kStep);
 						dirty = true;
@@ -3167,6 +3276,11 @@ void EEMEngine::doBigMap() {
 							   ev.mouse.y < kMapWinY + kMapWinH) {
 						// Per-site bbox from `_StampButtons` (SmallMap +8/+0xa).
 						const bool fmap = _mystery.isLoaded() && isFloppy();
+						struct DetailMapHit {
+							uint site;
+							Common::Rect rect;
+						};
+						Common::Array<DetailMapHit> hits;
 						for (uint i = 0; i < _mystery.numSites(); i++) {
 							if (!_mystery._onSites[i] &&
 								i != _mystery._siteNumber)
@@ -3197,10 +3311,23 @@ void EEMEngine::doBigMap() {
 							}
 							const int sx = (int)mx - scrollX + kMapWinX;
 							const int sy = (int)my - scrollY + kMapWinY;
-							if (ev.mouse.x >= sx && ev.mouse.x < sx + bw &&
-								ev.mouse.y >= sy && ev.mouse.y < sy + bh) {
+							const Common::Rect r(sx, sy, sx + bw, sy + bh);
+							if (r.intersects(Common::Rect(kMapWinX, kMapWinY,
+									kMapWinX + kMapWinW, kMapWinY + kMapWinH))) {
+								DetailMapHit hit = { i, r };
+								hits.push_back(hit);
+							}
+						}
+						Common::sort(hits.begin(), hits.end(),
+							[](const DetailMapHit &a, const DetailMapHit &b) {
+								if (a.rect.top != b.rect.top)
+									return a.rect.top < b.rect.top;
+								return a.rect.left < b.rect.left;
+							});
+						for (uint i = 0; i < hits.size(); i++) {
+							if (hits[i].rect.contains(ev.mouse.x, ev.mouse.y)) {
 								_mystery._lastSite = _mystery._siteNumber;
-								_mystery._siteNumber = (uint16)i;
+								_mystery._siteNumber = (uint16)hits[i].site;
 								setInteractiveMouseCursor(false);
 								return;
 							}
@@ -3216,16 +3343,230 @@ void EEMEngine::doBigMap() {
 			if (now - detailLastTick >= 100) {
 				detailLastTick = now;
 				dirty = true;
+				frameTick = true;
 			}
 			if (dirty)
 				drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
 					now - detailStartTick);
+			if (frameTick && isLondon()) {
+				cyclePaletteRange(0xee, 0xf2);
+				cyclePaletteRange(0xea, 0xed);
+			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 		if (!returnToOverview)
 			return;
 	}
+}
+
+bool EEMEngine::doLondonApproach(uint16 approachId) {
+	if (!isLondon())
+		return false;
+
+	LondonApproachData data;
+	if (!loadLondonApproachData(approachId, data))
+		return false;
+
+	Graphics::ManagedSurface base(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	byte palette[768] = {};
+	const bool haveVideo =
+		decodeLondonApproachFirstFrame(data.videoId, base, palette);
+	if (!haveVideo)
+		base.clear();
+
+	Picture buttonPics[ARRAYSIZE(kLondonApproachButtons)];
+	bool haveButtons[ARRAYSIZE(kLondonApproachButtons)] = {};
+	for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++)
+		haveButtons[i] = _picsArchive.getPicture(
+			kLondonApproachButtons[i].picId, buttonPics[i]);
+
+	auto drawButtonFallback = [&](Graphics::ManagedSurface &dst, uint idx) {
+		static const char *const kLabels[4] = { "OK", "PLAY", ">", "<" };
+		const Common::Rect r = kLondonApproachButtons[idx].rect();
+		dst.fillRect(r, 0);
+		_font.drawString(&dst, kLabels[idx], r.left + 1, r.top + 5,
+						 r.width(), 0x0f);
+	};
+
+	auto drawScreen = [&](uint page) {
+		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.simpleBlitFrom(base);
+
+		const Common::Rect textRect =
+			data.textRect.findIntersectingRect(Common::Rect(kScreenWidth, kScreenHeight));
+		if (!textRect.isEmpty()) {
+			scratch.fillRect(textRect, 0);
+			if (page < data.pages.size()) {
+				Common::Array<Common::String> wrapped;
+				_font.wordWrapText(data.pages[page], MAX<int>(8, textRect.width()),
+								   wrapped);
+				const int lineH = _font.getFontHeight();
+				const int maxLines = MAX<int>(1, textRect.height() / lineH);
+				for (uint i = 0; i < wrapped.size() && (int)i < maxLines; i++) {
+					_font.drawString(&scratch, wrapped[i], textRect.left,
+									 textRect.top + (int)i * lineH,
+									 textRect.width(), 0x0f);
+				}
+			}
+		}
+
+		for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
+			const LondonApproachButton &b = kLondonApproachButtons[i];
+			if (haveButtons[i]) {
+				scratch.transBlitFrom(buttonPics[i].surface,
+									  Common::Point(b.x, b.y),
+									  (uint32)(byte)(buttonPics[i].flags >> 8));
+			} else {
+				drawButtonFallback(scratch, i);
+			}
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, kScreenWidth, kScreenHeight);
+		g_system->updateScreen();
+	};
+
+	auto playVideo = [&]() {
+		const Common::String name =
+			Common::String::format("VIDEO%02u.A", data.videoId);
+		ANMDecoder anm;
+		if (!anm.open(Common::Path(name))) {
+			warning("London approach: cannot open %s", name.c_str());
+			return;
+		}
+
+		// Frame 0 is already the static background. Replay frames 1..end
+		// into the upper video area, leaving text/buttons untouched.
+		(void)anm.nextFrame();
+		const int copyW = MIN<int>(anm.width(), kScreenWidth - (int)data.videoX);
+		const int copyH = MIN<int>(0x82, MIN<int>(anm.height(),
+			kScreenHeight - (int)data.videoY));
+		if (copyW <= 0 || copyH <= 0)
+			return;
+
+		while (!shouldQuit()) {
+			const byte *frame = anm.nextFrame();
+			if (!frame)
+				break;
+			g_system->copyRectToScreen(
+				frame + data.videoY * anm.width() + data.videoX,
+				anm.width(), data.videoX, data.videoY, copyW, copyH);
+			g_system->updateScreen();
+
+			const uint32 start = g_system->getMillis();
+			bool skip = false;
+			while (g_system->getMillis() - start < 120 && !skip) {
+				Common::Event ev;
+				while (g_system->getEventManager()->pollEvent(ev)) {
+					if (ev.type == Common::EVENT_QUIT ||
+						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+						return;
+					}
+					if (ev.type == Common::EVENT_LBUTTONDOWN ||
+						ev.type == Common::EVENT_KEYDOWN) {
+						skip = true;
+						break;
+					}
+				}
+				g_system->delayMillis(5);
+			}
+			if (skip)
+				break;
+		}
+	};
+
+	fadeCurrentPaletteToBlack();
+	CursorMan.showMouse(true);
+	setSiteHotspotCursorId(6);
+	if (_music && _voiceOn)
+		_music->playMus(0x27, /* loop= */ false);
+
+	uint page = 0;
+	drawScreen(page);
+	if (haveVideo)
+		fadePaletteFromBlack(palette);
+	else
+		setSitePalette(0x3b);
+	bool done = false;
+	while (!shouldQuit() && !done) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				done = true;
+				break;
+			}
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				bool overButton = false;
+				for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
+					if (kLondonApproachButtons[i].rect().contains(ev.mouse.x,
+																 ev.mouse.y)) {
+						overButton = true;
+						break;
+					}
+				}
+				setInteractiveMouseCursor(overButton);
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE ||
+					ev.kbd.keycode == Common::KEYCODE_RETURN ||
+					ev.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					done = true;
+					break;
+				}
+				if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
+					playVideo();
+					drawScreen(page);
+				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT ||
+						   ev.kbd.keycode == Common::KEYCODE_DOWN) {
+					if (page + 1 < data.pages.size()) {
+						page++;
+						drawScreen(page);
+					}
+				} else if (ev.kbd.keycode == Common::KEYCODE_LEFT ||
+						   ev.kbd.keycode == Common::KEYCODE_UP) {
+					if (page > 0) {
+						page--;
+						drawScreen(page);
+					}
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (kLondonApproachButtons[0].rect().contains(ev.mouse.x,
+															 ev.mouse.y)) {
+					done = true;
+					break;
+				}
+				if (kLondonApproachButtons[1].rect().contains(ev.mouse.x,
+															 ev.mouse.y)) {
+					playVideo();
+					drawScreen(page);
+				} else if (kLondonApproachButtons[2].rect().contains(ev.mouse.x,
+																	ev.mouse.y)) {
+					if (page + 1 < data.pages.size()) {
+						page++;
+						drawScreen(page);
+					}
+				} else if (kLondonApproachButtons[3].rect().contains(ev.mouse.x,
+																	ev.mouse.y)) {
+					if (page > 0) {
+						page--;
+						drawScreen(page);
+					}
+				}
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	setInteractiveMouseCursor(false);
+	setSiteHotspotCursorId(0);
+	stopMusic();
+	return true;
 }
 
 void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {

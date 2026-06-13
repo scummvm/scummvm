@@ -958,13 +958,19 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	debugC(1, kDebugSite, "Entering site %u (%u hotspots)",
 		   siteNum, _mystery->hotspotCount(siteNum));
 
+	const byte *sd = _mystery->siteData(siteNum);
 	const bool playArrival = _vm->shouldPlaySiteArrival(siteNum);
 
 	if (playArrival) {
 		if (_vm->isLondon()) {
 			// EEM2 `HandleLondonSiteLoop @ 1717:083a` calls `_DoTravel`
 			// before `_BuildBackground` for the destination site.
-			playLondonTravelAnimation(_mystery->_lastSite, siteNum);
+			bool showedApproach = false;
+			const uint16 approachId = sd ? READ_LE_UINT16(sd + 2) : 0xffff;
+			if (firstVisit && approachId != 0xffff)
+				showedApproach = _vm->doLondonApproach(approachId);
+			if (!showedApproach)
+				playLondonTravelAnimation(_mystery->_lastSite, siteNum);
 		} else {
 			// `_DoTravel @ 168d:02da` calls `_StartTravelMusic`.
 			_vm->startTravelMusic();
@@ -975,7 +981,6 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	// global SITES.DBD index (per-mystery `sitepic` field).
 	// Floppy (`_DoSiteLoop_Floppy @ 1652:03f4`): first u16 of site_data is
 	// an offset to a drops sub-struct whose byte 0 is the SITES.DBD picID.
-	const byte *sd = _mystery->siteData(siteNum);
 	uint16 sitepic = 0;
 	if (sd) {
 		if (_vm->isFloppy()) {
