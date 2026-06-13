@@ -48,7 +48,6 @@
 
 namespace EEM {
 
-const uint kPalSize = 768;
 const uint kNumSitePals = 40;  // SITEPALS: 40 * 768 = 30720
 
 // 1-based picture/palette IDs.
@@ -66,7 +65,7 @@ const byte kSaveBodyVer = 1;
 // option or changing save format. Set false before release.
 const bool kDebugPopulateScrapbook1AtStartup = false;
 
-void fadeCurrentPaletteToBlack(uint delayMs = 8) {
+void fadeCurrentPaletteToBlack(uint delayMs) {
 	byte start[kPalSize];
 	byte stepPal[kPalSize];
 	g_system->getPaletteManager()->grabPalette(start, 0, 256);
@@ -81,7 +80,7 @@ void fadeCurrentPaletteToBlack(uint delayMs = 8) {
 	}
 }
 
-void fadePaletteFromBlack(const byte *target, uint delayMs = 8) {
+void fadePaletteFromBlack(const byte *target, uint delayMs) {
 	byte stepPal[kPalSize];
 
 	for (uint step = 1; step <= 16; step++) {
@@ -331,13 +330,13 @@ Common::Error EEMEngine::run() {
 	if (resumed)
 		goto screenLoop;
 
-	// EEM2 ("Eagle Eye Mysteries in London") proof of concept: opening
-	// sequence + character creation, then start the training case (mystery
-	// 0 — what a new detective plays first) and reuse the engine's gameplay
-	// screen loop. EEM2's mystery data format matches EEM1-CD, so the shared
-	// Mystery parser + InitClues (case intro) / BigMap / Site handlers apply.
+	// EEM2 ("Eagle Eye Mysteries in London"): opening sequence + character
+	// creation, then start the training case (mystery 0 — what a new
+	// detective plays first) and reuse the engine's gameplay screen loop.
+	// EEM2's mystery data format matches EEM1-CD, so the shared Mystery
+	// parser + InitClues (case intro) / BigMap / Site handlers apply.
 	if (isLondon()) {
-		runLondonScreensPoc();
+		runLondonStartup();
 		if (!shouldQuit()) {
 			CursorMan.showMouse(true);
 			if (_mystery.load(0, &_rng)) {
@@ -1060,7 +1059,7 @@ void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
 	fadeCurrentPaletteToBlack();
 }
 
-void EEMEngine::runLondonScreensPoc() {
+void EEMEngine::runLondonStartup() {
 	// Full opening sequence — EEM2 `_DoOpeningAnims` @ 2721:08e6:
 	//   _ShowEAKids   @ 2721:05e3 — PIC 0x54,  palette 0x3c
 	//   FUN_2721_07be @ 2721:07be — PIC 0x20c, palette 0x3e (publisher logo)
@@ -1073,7 +1072,7 @@ void EEMEngine::runLondonScreensPoc() {
 	const uint32 kHoldForever = 0xFFFFFFFFu;
 	CursorMan.showMouse(false);
 	_skipIntro = false;
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: opening sequence");
+	debugC(1, kDebugGeneral, "EEM2 (London): opening sequence");
 
 	// Two still logos.
 	if (!shouldQuit() && !_skipIntro)
@@ -1101,7 +1100,7 @@ void EEMEngine::runLondonScreensPoc() {
 
 	// Animated title (wave.anm) over the looping theme (MUS00102.XMI);
 	// a click / key advances to character creation. The original loops
-	// wave.anm; the PoC plays it once, holds the last frame and waits.
+	// wave.anm; we play it once, hold the last frame and wait.
 	if (!shouldQuit() && !_skipIntro && _music)
 		_music->playFile(Common::Path("MUS00102.XMI"), /* loop= */ true);
 	if (!shouldQuit() && !_skipIntro)
@@ -1120,7 +1119,7 @@ void EEMEngine::runLondonScreensPoc() {
 	if (!shouldQuit())
 		showLondonCharSelect();
 
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: intro + character creation done");
+	debugC(1, kDebugGeneral, "EEM2 (London): intro + character creation done");
 }
 
 void EEMEngine::showLondonCharSelect() {
@@ -1131,7 +1130,7 @@ void EEMEngine::showLondonCharSelect() {
 	// `pr` player record's FirstName[12] / LastName[20]:
 	//   first name : (54,75)-(151,85)    last name : (167,75)-(266,85)
 	//   Jake box   : (110,116)-(120,122) Jenny box : (190,116)-(200,122)
-	debugC(1, kDebugGeneral, "EEM2 (London) PoC: character creation");
+	debugC(1, kDebugGeneral, "EEM2 (London): character creation");
 
 	const Common::Rect kFirstRect(54, 75, 151, 85);
 	const Common::Rect kLastRect(167, 75, 266, 85);
@@ -1249,7 +1248,7 @@ void EEMEngine::showLondonCharSelect() {
 	_chainStage = 1;
 	for (uint i = 0; i < sizeof(_mysteriesSolved); i++)
 		_mysteriesSolved[i] = 0;
-	debugC(1, kDebugGeneral, "London PoC: player='%s' partner=%s",
+	debugC(1, kDebugGeneral, "London: player='%s' partner=%s",
 		   _playerName.c_str(), partner == kPartnerJake ? "Jake" : "Jenny");
 }
 

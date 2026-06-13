@@ -47,6 +47,14 @@ namespace EEM {
 class AudioPlayer;
 class MusicPlayer;
 
+/// VGA palette size in bytes (256 colours × RGB). Defined in eem.cpp.
+const uint kPalSize = 768;
+
+/// Palette fade helpers (defined in eem.cpp): ramp the VGA palette to / from
+/// black over 16 steps, matching `_FadeToBlack` / `_OpenFadeIn`.
+void fadeCurrentPaletteToBlack(uint delayMs = 8);
+void fadePaletteFromBlack(const byte *target, uint delayMs = 8);
+
 /// _ScreenDriver dispatch table @ 1a35:0e5e (fallback @ 1a35:0e54).
 /// 14 entries total: each is a screen ID + near fn ptr at +0x1c; driver
 /// tail-calls via `JMP word ptr CS:[BX + 0x1c]`. Handler bodies update
@@ -103,7 +111,7 @@ enum ScreenId {
 enum Variant {
 	kVariantCD       = 0,
 	kVariantFloppy   = 1,
-	kVariantLondonCD = 2, ///< Eagle Eye Mysteries in London (EEM2CD.EXE) — PoC.
+	kVariantLondonCD = 2, ///< Eagle Eye Mysteries in London (EEM2CD.EXE).
 };
 
 /// `_Partner @ 29be:7918`. Selected at the partner-pick screen
@@ -135,9 +143,9 @@ public:
 	Common::Platform getPlatform() const;
 	Variant getVariant() const { return _variant; }
 	bool isFloppy() const { return _variant == kVariantFloppy; }
-	/// EEM2 ("Eagle Eye Mysteries in London"). Proof-of-concept variant:
-	/// same DBD/palette/font formats, but a 63-entry "SITEPALS." file and
-	/// different opening picture/palette IDs.
+	/// EEM2 ("Eagle Eye Mysteries in London") — reimplementation in progress.
+	/// Shares the EEM1 DBD/palette/font formats, but ships a 63-entry
+	/// "SITEPALS." file and uses different picture/palette IDs per screen.
 	bool isLondon() const { return _variant == kVariantLondonCD; }
 
 	bool hasFeature(EngineFeature f) const override;
@@ -408,17 +416,24 @@ private:
 	void showHighScoreLogo();
 	void showFloppyStormLogo();
 
-	// --- EEM2 ("...in London") proof of concept ---
-	/// Full opening sequence + character-selection screen — EEM2's
-	/// `_DoOpeningAnims` @ 2721:08e6 then `_NewPlayer` @ 1cd3:0f27.
-	void runLondonScreensPoc();
+	// --- EEM2 ("Eagle Eye Mysteries in London") — reimplementation in progress ---
+	/// Opening sequence + character creation — EEM2's `_DoOpeningAnims`
+	/// @ 2721:08e6 then `_NewPlayer` @ 1cd3:0f27.
+	void runLondonStartup();
 	/// Blit a full-screen still PIC and fade it in / hold / out using the
 	/// given SITEPALS. palette index.
 	void showLondonLogo(uint picId, uint palId, uint holdMs);
-	/// Render EEM2's character-creation screen (`_NewPlayer`: palette 0 +
-	/// background PIC 0xc, where the player types a name and picks
-	/// Jake/Jenny). PoC display; interactive entry is still TODO.
+	/// EEM2 character creation (`_NewPlayer`: palette 0 + background PIC 0xc):
+	/// first/last name entry + Jake/Jenny selection.
 	void showLondonCharSelect();
+	/// EEM2 case-intro animation (`_DoInitClues` @ 1abf:03b3): single partner
+	/// anim (Jake 0x18 / Jenny 0x71) faded in, then phone1.voc on caseType 1.
+	void playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
+								 bool haveBriefingBg);
+	/// EEM1 CD/floppy case-intro animation (`_DoInitClues` @ 1a35:0411):
+	/// game/book/nancy cycle + `_PlayInSequence` partner entrance.
+	void playCdFloppyInitCluesAnim(uint16 caseType, bool floppy,
+								   const Picture &bg, bool haveBriefingBg);
 
 	/// `screen8_handler @ 1c33:1012`. Profile selector — walks
 	/// `listProfiles()`, falls through to `doNewPlayer()` if "New" or
