@@ -192,6 +192,18 @@ const uint16 kKdAnimTableLondon[6][6] = {
 	{ 0x06, 0x2d, 2, 2, 78, 78 }, // 5 — Jenny uses 0x2d
 };
 
+// EEM2 `_WaitAnims @ 2bca:022c`. Entry 0 precedes `_DoKDAnim`'s
+// table; entries 1..6 overlap `kKdAnimTableLondon`, same as EEM1.
+const uint16 kWaitAnimsLondon[7][6] = {
+	{ 0x00, 0x0a, 2, 2, 78, 78 }, // 0
+	{ 0x03, 0x0c, 3, 2, 66, 65 }, // 1
+	{ 0x01, 0x0b, 2, 2, 78, 78 }, // 2
+	{ 0x04, 0x0d, 2, 2, 78, 78 }, // 3
+	{ 0x02, 0x10, 2, 2, 78, 78 }, // 4
+	{ 0x05, 0x55, 2, 2, 78, 78 }, // 5
+	{ 0x06, 0x2d, 2, 2, 78, 78 }, // 6
+};
+
 // Animation script table — mirrors `_AnimationSequences @ 29be:22d4`
 // (55-entry table of far ptrs, each pointing to a u16-frame-index
 // stream). `_NewAnimation @ 172b:06e1` reads the script via
@@ -1215,6 +1227,39 @@ bool SiteScreen::enterSiteAnim() {
 	bg.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
 
+	if (_vm->isLondon()) {
+		// EEM2 `_EnterSiteAnim @ 17ee:27a4`: no skateboard phase.
+		// It plays the partner-specific slide-in animation at anchor
+		// (0, 0x50/0x4e), using `_CheckFrameRate` between cells.
+		const uint animId = (partner == 0) ? 7 : 0xf;
+		const int anchorY = (partner == 0) ? 0x50 : 0x4e;
+		Animation anim;
+		if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
+			return false;
+		for (uint frameIdx = 0;
+			 frameIdx < anim.size() && !_vm->shouldQuit();
+			 frameIdx++) {
+			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+				Graphics::PixelFormat::createFormatCLUT8());
+			scratch.simpleBlitFrom(bg);
+			blitAnimFrameAnchored(scratch.surfacePtr(), anim[frameIdx],
+								  0, anchorY);
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, kScreenWidth, kScreenHeight);
+			g_system->updateScreen();
+
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_KEYDOWN ||
+					ev.type == Common::EVENT_LBUTTONDOWN) {
+					return true;
+				}
+			}
+			g_system->delayMillis(kFramePeriodMs);
+		}
+		return false;
+	}
+
 	// Phase 1 — skateboard scroll.
 	Animation skate;
 	if (_vm->getAni().loadAnimation(kSkateAni, skate) && !skate.empty()) {
@@ -1312,9 +1357,12 @@ void SiteScreen::renderStaticDrops(uint siteNum) {
 
 	for (uint i = 0; i < numStatic; i++) {
 		const uint dropOff = 0xc + i * 6;
-		const uint16 picId = READ_LE_UINT16(site + dropOff + 0);
+		uint16 picId = READ_LE_UINT16(site + dropOff + 0);
 		const int16  x     = (int16)READ_LE_UINT16(site + dropOff + 2);
 		const int16  y     = (int16)READ_LE_UINT16(site + dropOff + 4);
+		if (_vm->isLondon() && picId == 0x140 &&
+			_vm->getPartnerIndex() == kPartnerJake)
+			picId = 0x141;
 		if (picId == 0)
 			continue;
 		Picture pic;
@@ -1562,14 +1610,16 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 		}
 	} else {
 		const uint16 speaker = READ_LE_UINT16(site + 8);
+		const uint16 (*waitTable)[6] = _vm->isLondon()
+			? kWaitAnimsLondon : kWaitAnims;
 		if (speaker >= ARRAYSIZE(kWaitAnims)) {
 			warning("renderPartner: site %u has speakerIdx=%u out of range",
 					siteNum, speaker);
 			return;
 		}
-		animId = kWaitAnims[speaker][0 + partner];
-		x      = (int)(int16)kWaitAnims[speaker][2 + partner];
-		y      = (int)(int16)kWaitAnims[speaker][4 + partner];
+		animId = waitTable[speaker][0 + partner];
+		x      = (int)(int16)waitTable[speaker][2 + partner];
+		y      = (int)(int16)waitTable[speaker][4 + partner];
 	}
 
 	Animation anim;
