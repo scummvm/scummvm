@@ -442,6 +442,10 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 				FontMan.assignFontToName(fontName, font);
 				macfont->setFont(font, false);
+				if (_fontRegistry.contains(fontName)) {
+					warning("MacFontManager: Overwriting font %s", fontName.c_str());
+					delete _fontRegistry.getVal(fontName);
+				}
 				_fontRegistry.setVal(fontName, macfont);
 
 				debugC(5, kDebugLevelMacGUI, " %s", fontName.c_str());
