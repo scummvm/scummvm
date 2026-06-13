@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-11 22:10+0000\n"
+"POT-Creation-Date: 2026-06-13 06:14+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6465,7 +6465,7 @@ msgstr "Tarkista päivitykset..."
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
 #: engines/mads/metaengine.cpp:316 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
-#: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:127
+#: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:138
 #: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
 #: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
 #: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
@@ -7961,7 +7961,7 @@ msgstr "Inventaarion näppäinkartoitukset"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
+#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:141
 #: engines/sherlock/metaengine.cpp:1187
 msgid "Select / Interact"
 msgstr "Valitse / Käytä"
@@ -12356,7 +12356,15 @@ msgstr "Korosta esineitä"
 msgid "Highlight clickable areas in decision scenes."
 msgstr "Korosta klikattavia alueita päätöksentekonäkymissä."
 
-#: engines/private/metaengine.cpp:136 engines/trecision/metaengine.cpp:137
+#: engines/private/metaengine.cpp:61
+msgid "Increased contrast for small print"
+msgstr ""
+
+#: engines/private/metaengine.cpp:62
+msgid "Enhance small printed paper close-ups for improved readability."
+msgstr ""
+
+#: engines/private/metaengine.cpp:147 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
 msgstr "Ohita video"
 
