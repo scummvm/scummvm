@@ -576,6 +576,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 				queue.push(LingoEvent(kEventMouseUp, mouseUpEventId, kCastHandler, false, pos, spriteId));
 				break;
 			}
+			// fall through
 		case kEventRightMouseUp:
 		case kEventRightMouseDown:
 		case kEventBeginSprite:
