@@ -128,6 +128,7 @@ delete object me -- deletes the open file
 #include "image/pict.h"
 
 #include "director/director.h"
+#include "director/archive.h"
 #include "director/picture.h"
 #include "director/types.h"
 #include "director/util.h"
@@ -323,6 +324,8 @@ void FileObject::clear() {
 			Common::OutSaveFile *outFile = saves->openForSaving(*_filename, false);
 			outFile->write(_outStream->getData(), _outStream->size());
 			outFile->finalize();
+			// Add to search index
+			((SavedArchive *)SearchMan.getArchive(kSavedFilesArchive))->_addFile(*_filename);
 			delete outFile;
 		}
 		delete _outStream;

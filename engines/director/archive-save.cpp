@@ -189,6 +189,8 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	} else {
 		warning("RIFXArchive::writeStream: Error saving the file %s", saveFileName.c_str());
 	}
+	// Add to search index
+	((SavedArchive *)SearchMan.getArchive(kSavedFilesArchive))->_addFile(saveFileName);
 
 	delete saveFile;
 	for (auto it : builtResources) {
@@ -691,17 +693,13 @@ uint32 RIFXArchive::findParentIndex(uint32 tag, uint16 index) {
 	return 0;
 }
 
-SavedArchive::SavedArchive(Common::String target) {
+SavedArchive::SavedArchive(const Common::String &target) {
+	_target = target;
 	Common::StringArray saveFileList = g_engine->getSaveFileManager()->listSavefiles(target + "-*");
 
 	debugC(3, kDebugLoading, "DirectorEngine:: loadSaveFiles: Loading save files");
-	for (auto saveFileName : saveFileList) {
-		// Derive the original file name from the save file name
-		// Save files are named target_name-save_filename
-		Common::String origFileName = saveFileName.substr(target.size() + 1);
-		debugC(3, kDebugLoading, "Found save file: %s -> %s", saveFileName.c_str(), origFileName.c_str());
-
-		_files[origFileName] = saveFileName;
+	for (auto &saveFileName : saveFileList) {
+		_addFile(saveFileName);
 	}
 }
 
@@ -732,7 +730,33 @@ Common::SeekableReadStream *SavedArchive::createReadStreamForMember(const Common
 	if (fDesc == _files.end())
 		return nullptr;
 
-	return g_engine->getSaveFileManager()->openForLoading(fDesc->_value);
+	// Buffer the save file data into memory.
+	// We have to do this because openForLoading will return a stream backed by a
+	// FSNode, and subsequently calling openForSaving on the same file will cause
+	// that stream to become completely empty. RIFXArchive::writeToFile needs to
+	// be able to read from that stream while saving!
+	Common::SeekableReadStream *stream = g_engine->getSaveFileManager()->openForLoading(fDesc->_value);
+	if (!stream)
+		return nullptr;
+
+	byte *data = (byte *)calloc(stream->size(), sizeof(byte));
+	stream->read(data, stream->size());
+	Common::MemoryReadStream *result = new Common::MemoryReadStream(data, stream->size(), DisposeAfterUse::YES);
+	delete stream;
+	return result;
+}
+
+bool SavedArchive::_addFile(const Common::String &fileName) {
+	// Derive the original file name from the save file name
+	// Save files are named target_name-save_filename
+	Common::String origFileName = fileName.substr(_target.size() + 1);
+	if (!_files.contains(origFileName)) {
+		debugC(3, kDebugLoading, "Found save file: %s -> %s", fileName.c_str(), fileName.c_str());
+
+		_files[origFileName] = fileName;
+		return true;
+	}
+	return false;
 }
 
 } // End of namespace Director
