@@ -2954,6 +2954,12 @@ void EEMEngine::doBigMap() {
 	if (!_mystery.isLoaded())
 		return;
 
+	if (isLondon()) {
+		_mystery._pendingSiteJump = 0;
+		_mystery._siteReturnDepth = 0;
+		memset(_mystery._siteReturnStack, 0, sizeof(_mystery._siteReturnStack));
+	}
+
 	CursorMan.showMouse(true);
 
 	while (!shouldQuit()) {

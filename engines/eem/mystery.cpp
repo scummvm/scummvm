@@ -64,6 +64,9 @@ void Mystery::clear() {
 	_firstTry = true;
 	_searchLocationNumber = _siteNumber = 0xFFFF;
 	_lastSite = 0x1B;
+	_pendingSiteJump = 0;
+	_siteReturnDepth = 0;
+	memset(_siteReturnStack, 0, sizeof(_siteReturnStack));
 }
 
 bool Mystery::load(uint num, Common::RandomSource *rng) {
@@ -154,6 +157,9 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_firstTry = true;
 		_searchLocationNumber = _siteNumber = 0xFFFF;
 		_lastSite = 0x1B;
+		_pendingSiteJump = 0;
+		_siteReturnDepth = 0;
+		memset(_siteReturnStack, 0, sizeof(_siteReturnStack));
 		loadFloppySiteAnimData();
 
 		debugC(1, kDebugMystery,
@@ -213,6 +219,9 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_firstTry = true;
 	_searchLocationNumber = _siteNumber = 0xFFFF;
 	_lastSite = 0x1B; // _ReadMystery _LastSite sentinel.
+	_pendingSiteJump = 0;
+	_siteReturnDepth = 0;
+	memset(_siteReturnStack, 0, sizeof(_siteReturnStack));
 
 	debugC(1, kDebugMystery, "Loaded %s (%d B): %u sites, %u suspects, "
 		   "CON=%u COFF=%u, init=0x%04x site=0x%04x text=0x%04x",
@@ -606,6 +615,13 @@ void Mystery::syncState(Common::Serializer &s) {
 	s.syncAsUint16LE(_searchLocationNumber);
 	s.syncAsUint16LE(_siteNumber);
 	s.syncAsUint16LE(_lastSite);
+	if (s.isLoading())
+		_pendingSiteJump = 0;
+	s.syncAsUint16LE(_siteReturnDepth);
+	s.syncArray(_siteReturnStack, kVisitedSiteCap,
+				Common::Serializer::Uint16LE);
+	if (_siteReturnDepth > kVisitedSiteCap)
+		_siteReturnDepth = 0;
 }
 
 } // End of namespace EEM
