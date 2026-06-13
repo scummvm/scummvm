@@ -74,6 +74,53 @@ const byte kSaveBodyVer = 1;
 // option or changing save format. Set false before release.
 const bool kDebugPopulateScrapbook1AtStartup = false;
 
+Common::String makeLondonProfileDisplayName(const Common::String &first,
+											 const Common::String &last) {
+	Common::String cleanFirst = first;
+	Common::String cleanLast = last;
+	cleanFirst.trim();
+	cleanLast.trim();
+	if (cleanLast.empty())
+		return cleanFirst;
+	if (cleanFirst.empty())
+		return cleanLast;
+	return cleanFirst + " " + cleanLast;
+}
+
+Common::String makeLondonProfileKey(const Common::String &first,
+									 const Common::String &last) {
+	// EEM2 `_GenerateFilename @ 1cd3:02fe`: copy the first 7 bytes of
+	// FirstName, pad to 8 from LastName, then replace spaces/dots with '_'.
+	Common::String cleanFirst = first;
+	Common::String cleanLast = last;
+	cleanFirst.trim();
+	cleanLast.trim();
+	Common::String key;
+	for (uint i = 0; i < cleanFirst.size() && key.size() < 7; i++)
+		key += cleanFirst[i];
+	for (uint i = 0; i < cleanLast.size() && key.size() < 8; i++)
+		key += cleanLast[i];
+	for (uint i = 0; i < key.size(); i++) {
+		if (key[i] == ' ' || key[i] == '.')
+			key.setChar('_', i);
+	}
+	key.toUppercase();
+	return key;
+}
+
+Common::String londonProfileKeyFromDisplayName(const Common::String &name) {
+	Common::String clean = name;
+	clean.trim();
+	const size_t split = clean.findFirstOf(' ');
+	if (split == Common::String::npos)
+		return makeLondonProfileKey(clean, Common::String());
+
+	Common::String first = clean.substr(0, split);
+	Common::String last = clean.substr(split + 1);
+	last.trim();
+	return makeLondonProfileKey(first, last);
+}
+
 void fadeCurrentPaletteToBlack(uint delayMs) {
 	byte start[kPalSize];
 	byte stepPal[kPalSize];
@@ -342,26 +389,22 @@ Common::Error EEMEngine::run() {
 	if (resumed)
 		goto screenLoop;
 
-	// EEM2 ("Eagle Eye Mysteries in London"): opening sequence + character
-	// creation, then start the training case (mystery 0 — what a new
-	// detective plays first) and reuse the engine's gameplay screen loop.
-	// EEM2's mystery data format matches EEM1-CD, so the shared Mystery
-	// parser + InitClues (case intro) / BigMap / Site handlers apply.
+	// EEM2 ("Eagle Eye Mysteries in London"): opening sequence, then screen
+	// 8 profile selection. A freshly-created detective starts the training
+	// case (M0); an existing profile resumes its saved menu/map state.
 	if (isLondon()) {
 		runLondonStartup();
 		if (!shouldQuit()) {
 			CursorMan.showMouse(true);
-			if (_mystery.load(0, &_rng)) {
-				resetSiteArrivalState();
-				if (_audio)
-					_audio->initMysterySounds(0);
-				debugC(1, kDebugMystery,
-					   "London: training mystery 0 loaded — %u sites, %u suspects",
-					   _mystery.numSites(), _mystery.numSuspects());
-				_nextScreen = kScreenInitClues;
+			applyStartupTestOverrides();
+			applySkipRepeatedCasesOption();
+			if (_mystery.isLoaded()) {
+				_nextScreen = kScreenMap;
+			} else if (_profileCreatedThisSession) {
+				_nextScreen = startLondonTrainingMystery()
+					? kScreenInitClues : kScreenInvalid;
 			} else {
-				warning("London: training mystery 0 (M0.BIN) failed to load");
-				_nextScreen = kScreenInvalid;
+				_nextScreen = kScreenAction;
 			}
 		}
 		goto screenLoop;
@@ -605,11 +648,17 @@ screenLoop:
 				applyStartupTestOverrides();
 			if (!shouldQuit())
 				applySkipRepeatedCasesOption();
-			if (!shouldQuit())
+			if (!shouldQuit() && !isLondon())
 				doChoosePartner();
-			if (!shouldQuit())
-				_nextScreen = _mystery.isLoaded() ? kScreenMap
-												  : kScreenAction;
+			if (!shouldQuit()) {
+				if (_mystery.isLoaded())
+					_nextScreen = kScreenMap;
+				else if (isLondon() && _profileCreatedThisSession)
+					_nextScreen = startLondonTrainingMystery()
+						? kScreenInitClues : kScreenInvalid;
+				else
+					_nextScreen = kScreenAction;
+			}
 			break;
 
 		case kScreenAccuse:
@@ -1111,6 +1160,21 @@ void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
 	fadeCurrentPaletteToBlack();
 }
 
+bool EEMEngine::startLondonTrainingMystery() {
+	if (_mystery.load(0, &_rng)) {
+		resetSiteArrivalState();
+		if (_audio)
+			_audio->initMysterySounds(0);
+		debugC(1, kDebugMystery,
+			   "London: training mystery 0 loaded — %u sites, %u suspects",
+			   _mystery.numSites(), _mystery.numSuspects());
+		return true;
+	}
+
+	warning("London: training mystery 0 (M0.BIN) failed to load");
+	return false;
+}
+
 void EEMEngine::runLondonStartup() {
 	// Full opening sequence — EEM2 `_DoOpeningAnims` @ 2721:08e6:
 	//   _ShowEAKids   @ 2721:05e3 — PIC 0x54,  palette 0x3c
@@ -1164,14 +1228,14 @@ void EEMEngine::runLondonStartup() {
 		_music->stop();
 	_skipIntro = false;
 
-	// Character creation (name + Jake/Jenny). The caller then loads the
-	// training case (mystery 0) and enters the shared gameplay screen loop
-	// (case intro -> map -> site); the case-selection menu is reachable
-	// later via the action screen.
-	if (!shouldQuit())
-		showLondonCharSelect();
+	// Screen 8 profile selection. If no profile exists or the player chooses
+	// the bottom "new player" sentinel, this opens London `_NewPlayer`.
+	if (!shouldQuit()) {
+		CursorMan.showMouse(true);
+		doProfilePicker();
+	}
 
-	debugC(1, kDebugGeneral, "EEM2 (London): intro + character creation done");
+	debugC(1, kDebugGeneral, "EEM2 (London): intro + profile selection done");
 }
 
 void EEMEngine::showLondonCharSelect() {
@@ -1202,12 +1266,15 @@ void EEMEngine::showLondonCharSelect() {
 	const bool havePal = getSitePalette(0, pal);
 
 	CursorMan.showMouse(false);
+	_profileCreatedThisSession = false;
 
 	enum { kFieldFirst = 0, kFieldLast = 1, kFieldPartner = 2 };
 	int field = kFieldFirst;
 	Common::String first, last;
 	uint8 partner = kPartnerJake;
 	bool blink = true, fadedIn = false, done = false, needRedraw = true;
+	bool partnerReady = false;
+	bool partnerCanConfirm = true;
 	uint32 blinkMs = g_system->getMillis();
 
 	while (!done && !shouldQuit()) {
@@ -1243,6 +1310,8 @@ void EEMEngine::showLondonCharSelect() {
 			}
 			g_system->updateScreen();
 			needRedraw = false;
+			if (field == kFieldPartner)
+				partnerReady = true;
 		}
 
 		Common::Event ev;
@@ -1250,6 +1319,20 @@ void EEMEngine::showLondonCharSelect() {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
+			if (field == kFieldPartner && ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (!partnerReady)
+					continue;
+				partner = (ev.mouse.x < 160) ? kPartnerJake : kPartnerJenny;
+				done = true;
+				needRedraw = true;
+				break;
+			}
+			if (field == kFieldPartner && ev.type == Common::EVENT_KEYUP &&
+				(ev.kbd.keycode == Common::KEYCODE_RETURN ||
+				 ev.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
+				partnerCanConfirm = true;
+				continue;
+			}
 			if (ev.type != Common::EVENT_KEYDOWN)
 				continue;
 			const Common::KeyCode k = ev.kbd.keycode;
@@ -1258,25 +1341,39 @@ void EEMEngine::showLondonCharSelect() {
 			if (field == kFieldFirst || field == kFieldLast) {
 				Common::String &buf = (field == kFieldFirst) ? first : last;
 				const uint cap = (field == kFieldFirst) ? kMaxFirst : kMaxLast;
-				if ((enter || k == Common::KEYCODE_TAB) &&
-					(field == kFieldLast || !first.empty()))
-					field++;  // advance to last name, then to partner pick
-				else if (k == Common::KEYCODE_BACKSPACE && !buf.empty())
+				if (enter || k == Common::KEYCODE_TAB) {
+					Common::String clean = buf;
+					clean.trim();
+					if (!clean.empty()) {
+						field++;  // advance to last name, then to partner pick
+						if (field == kFieldPartner) {
+							partnerReady = false;
+							partnerCanConfirm = false;
+						}
+					}
+				} else if (k == Common::KEYCODE_BACKSPACE && !buf.empty()) {
 					buf.deleteLastChar();
-				else if (ev.kbd.ascii >= ' ' && ev.kbd.ascii < 127 &&
-						 buf.size() < cap)
+				} else if (ev.kbd.ascii >= ' ' && ev.kbd.ascii < 127 &&
+						   buf.size() < cap) {
 					buf += (char)ev.kbd.ascii;
+				}
 			} else {  // partner pick
-				if (k == Common::KEYCODE_LEFT)
+				if (k == Common::KEYCODE_LEFT) {
 					partner = kPartnerJake;
-				else if (k == Common::KEYCODE_RIGHT)
+					partnerCanConfirm = true;
+				} else if (k == Common::KEYCODE_RIGHT) {
 					partner = kPartnerJenny;
-				else if (k == Common::KEYCODE_BACKSPACE)
+					partnerCanConfirm = true;
+				} else if (k == Common::KEYCODE_BACKSPACE) {
 					field = kFieldLast;  // back to editing
-				else if (enter)
+					partnerCanConfirm = true;
+				} else if (enter && partnerReady && partnerCanConfirm) {
 					done = true;
+				}
 			}
 			needRedraw = true;
+			if (field == kFieldPartner && !partnerReady)
+				break;
 		}
 
 		const uint32 now = g_system->getMillis();
@@ -1290,18 +1387,54 @@ void EEMEngine::showLondonCharSelect() {
 	if (shouldQuit())
 		return;
 
-	// Commit the profile so the reused case-selection menu has valid state
-	// (player name in clue text, partner greeter ANI 0x15/0x16, Junior
-	// chain stage -> BOOK1.NME, nothing solved yet).
-	if (first.empty())
-		first = "Detective";
-	_playerName = last.empty() ? first : (first + " " + last);
+	Common::Event staleEvent;
+	while (g_system->getEventManager()->pollEvent(staleEvent)) {
+		if (staleEvent.type == Common::EVENT_QUIT ||
+			staleEvent.type == Common::EVENT_RETURN_TO_LAUNCHER)
+			return;
+	}
+
+	const Common::String displayName =
+		makeLondonProfileDisplayName(first, last);
+	const Common::String profileKey = makeLondonProfileKey(first, last);
+
+	for (const SaveStateDescriptor &s : listProfiles()) {
+		if (londonProfileKeyFromDisplayName(s.getDescription()) != profileKey)
+			continue;
+
+		const Common::Error err = loadGameState(s.getSaveSlot());
+		if (err.getCode() == Common::kNoError) {
+			_profileCreatedThisSession = false;
+			debugC(1, kDebugGeneral,
+				   "London: existing player key=%s loaded from slot %d (%s)",
+				   profileKey.c_str(), s.getSaveSlot(),
+				   s.getDescription().c_str());
+			return;
+		}
+		warning("London: failed to load existing profile '%s' at slot %d",
+				s.getDescription().c_str(), s.getSaveSlot());
+	}
+
+	// New profile. EEM2 `_NewPlayer @ 1cd3:0f27` initializes the player
+	// record only when `_LoadPlayerRecord` failed, then immediately saves it.
+	_playerName = displayName.empty() ? "Detective" : displayName;
 	_partner = partner;
 	_chainStage = 1;
+	_voiceOn = true;
+	if (_audio)
+		_audio->setVoiceEnabled(_voiceOn);
 	for (uint i = 0; i < sizeof(_mysteriesSolved); i++)
 		_mysteriesSolved[i] = 0;
-	debugC(1, kDebugGeneral, "London: player='%s' partner=%s",
-		   _playerName.c_str(), partner == kPartnerJake ? "Jake" : "Jenny");
+	_mystery.clear();
+	resetSiteArrivalState();
+	_profileCreatedThisSession = true;
+	const Common::Error err = saveProfile(_playerName);
+	if (err.getCode() != Common::kNoError)
+		warning("London: failed to save new profile '%s': %s",
+				_playerName.c_str(), err.getDesc().c_str());
+	debugC(1, kDebugGeneral, "London: new player='%s' key=%s partner=%s",
+		   _playerName.c_str(), profileKey.c_str(),
+		   partner == kPartnerJake ? "Jake" : "Jenny");
 }
 
 void EEMEngine::showFloppyStormLogo() {
@@ -1565,11 +1698,15 @@ Common::Error EEMEngine::saveProfile(const Common::String &name) {
 		return Common::kCreatingFileFailed;
 
 	const SaveStateList saves = listProfiles();
+	const Common::String londonKey =
+		isLondon() ? londonProfileKeyFromDisplayName(name) : Common::String();
 
 	// Overwrite on matching description.
 	int slot = -1;
 	for (auto &s : saves) {
-		if (s.getDescription() == name) {
+		if (s.getDescription() == name ||
+			(isLondon() &&
+			 londonProfileKeyFromDisplayName(s.getDescription()) == londonKey)) {
 			slot = s.getSaveSlot();
 			break;
 		}
@@ -1606,8 +1743,12 @@ bool EEMEngine::loadProfile(const Common::String &name) {
 		return false;
 
 	const SaveStateList saves = listProfiles();
+	const Common::String londonKey =
+		isLondon() ? londonProfileKeyFromDisplayName(name) : Common::String();
 	for (auto &s : saves) {
-		if (s.getDescription() == name) {
+		if (s.getDescription() == name ||
+			(isLondon() &&
+			 londonProfileKeyFromDisplayName(s.getDescription()) == londonKey)) {
 			const Common::Error err = loadGameState(s.getSaveSlot());
 			if (err.getCode() == Common::kNoError) {
 				debugC(1, kDebugGeneral, "loadProfile(%s) <- slot %d",
