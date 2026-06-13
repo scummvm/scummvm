@@ -257,6 +257,7 @@ private:
 public:
 	bool _shouldHighlightMasks;
 	bool _highlightMasks;
+	bool _readingMaterialContrast;
 	PrivateEngine(OSystem *syst, const ADGameDescription *gd);
 	~PrivateEngine();
 
@@ -335,6 +336,7 @@ public:
 	void remapImage(uint16 ncolors, const Graphics::Surface *oldImage, const byte *oldPalette, Graphics::Surface *newImage, const byte *currentPalette);
 	static uint32 findMaskTransparentColor(const byte *palette, uint32 defaultColor);
 	static void swapImageColors(Graphics::Surface *image, byte *palette, uint32 a, uint32 b);
+	void setPaperScanFiltering(bool enabled);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame(const byte *videoPalette);
 
@@ -365,6 +367,8 @@ public:
 	Common::Point _origin;
 	void drawScreen();
 	bool _needToDrawScreenFrame;
+	bool _paperScanFilteringActive;
+	bool _paperScanPreviousFiltering;
 
 	// settings
 	Common::String _nextSetting;

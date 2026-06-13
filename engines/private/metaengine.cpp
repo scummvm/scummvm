@@ -55,6 +55,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_READING_MATERIAL_CONTRAST,
+		{
+			_s("Increased contrast for small print"),
+			_s("Enhance small printed paper close-ups for improved readability."),
+			"readingMaterialContrast",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

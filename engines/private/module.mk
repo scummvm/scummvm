@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	grammar.o \
 	lexer.o \
 	metaengine.o \
+	paper.o \
 	private.o \
 	savegame.o \
 	symbol.o
