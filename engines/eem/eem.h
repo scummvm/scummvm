@@ -517,6 +517,10 @@ public:
 	/// `_StopMIDI @ 20a2:0512`.
 	void stopMusic();
 
+	/// EEM2 `_DoApproach @ 1717:009b`: London-only place information
+	/// screen with a short VIDEOnn.A clip and text pages from Ann.BIN.
+	bool doLondonApproach(uint16 approachId);
+
 	/// `Engine::syncSoundSettings` override. Re-pulls `music_volume`
 	/// into the MIDI player's `_masterVolume`.
 	void syncSoundSettings() override;
