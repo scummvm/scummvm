@@ -2958,7 +2958,9 @@ void EEMEngine::doBigMap() {
 
 	while (!shouldQuit()) {
 		setInteractiveMouseCursor(false);
-		setSitePalette(0x24); // `_GetPalette(0x24)` @ `_DoBigMap`.
+		// `_GetPalette(0x24)` @ EEM1 `_DoBigMap`; EEM2 `_DoBigMap`
+		// @ 2237:0a04 uses `_GetPalette(0x3b)` (shifted UI palettes).
+		setSitePalette(isLondon() ? 0x3b : 0x24);
 
 		// Stage 1: Overview. mapStartTick anchors partner timeline;
 		// `_NewAnimation` seeds frame to 0xffff so unfold plays once then
