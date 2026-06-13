@@ -400,7 +400,6 @@ private:
 
 public:
 	void waitForInput(uint32 maxMs);
-private:
 
 	/// Play a difference-encoded animation file (.ANM / .A) on the full
 	/// 320x200 screen. Mirrors the data flow of `OpenDifferenceAnimation
@@ -412,8 +411,10 @@ private:
 	/// If @p fadeIn is true the first decoded frame is copied while the
 	/// palette is black, then ramped in like `_OpenFadeIn`.
 	void playAnm(const Common::Path &path, uint frameDelayMs = 120,
-				 bool holdLastFrame = false, bool fadeIn = false);
+				 bool holdLastFrame = false, bool fadeIn = false,
+				 bool setSkipIntroOnEsc = true);
 
+private:
 	/// `_CleanMysterySounds @ 202f:05a5` + `_StopMIDI @ 20a2:0512`.
 	/// `stopMusicToo=false` keeps MIDI playing across dialog skips.
 	void interruptAudio(bool stopMusicToo = true);
@@ -519,6 +520,10 @@ public:
 	/// `Engine::syncSoundSettings` override. Re-pulls `music_volume`
 	/// into the MIDI player's `_masterVolume`.
 	void syncSoundSettings() override;
+
+	/// EEM2 `_DoTravel @ 1717:0622` transition music. The matrix entry
+	/// (1..3) chooses one of three short one-shot MUS tracks at random.
+	void startLondonTravelMusic(uint8 travelKind);
 private:
 
 	Common::String _playerName;  ///< Substituted into 0x80 placeholders.

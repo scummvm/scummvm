@@ -780,7 +780,8 @@ void EEMEngine::interruptAudio(bool stopMusicToo) {
 }
 
 void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
-						bool holdLastFrame, bool fadeIn) {
+						bool holdLastFrame, bool fadeIn,
+						bool setSkipIntroOnEsc) {
 	ANMDecoder anm;
 	if (!anm.open(path)) {
 		warning("playAnm: %s missing", path.toString().c_str());
@@ -832,8 +833,10 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 				}
 				if (event.type == Common::EVENT_KEYDOWN) {
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						_skipIntro = true;
-						interruptAudio();
+						if (setSkipIntroOnEsc) {
+							_skipIntro = true;
+							interruptAudio();
+						}
 					}
 					aborted = true;
 					break;
@@ -864,8 +867,10 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 				}
 				if (ev.type == Common::EVENT_KEYDOWN) {
 					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						_skipIntro = true;
-						interruptAudio();
+						if (setSkipIntroOnEsc) {
+							_skipIntro = true;
+							interruptAudio();
+						}
 					}
 					clicked = true;
 					break;
@@ -1359,6 +1364,23 @@ void EEMEngine::startTravelMusic() {
 		return;
 	const uint num = _mystery._siteNumber % 5;
 	_music->playMus(num, /* loop= */ false);
+}
+
+void EEMEngine::startLondonTravelMusic(uint8 travelKind) {
+	// EEM2 `_DoTravel @ 1717:06ae`: travelKind * 6 indexes this table,
+	// then rand() picks one of three u16 MUS IDs.
+	static const uint16 kLondonTravelMusic[4][3] = {
+		{ 0,  0,  0 },
+		{ 3, 22, 25 },
+		{ 7, 23, 17 },
+		{ 10, 21, 24 },
+	};
+	if (!_music || !_voiceOn || travelKind == 0 ||
+		travelKind >= ARRAYSIZE(kLondonTravelMusic))
+		return;
+
+	const uint track = kLondonTravelMusic[travelKind][_rng.getRandomNumber(2)];
+	_music->playMus(track, /* loop= */ false);
 }
 
 void EEMEngine::waitForMusicDone(uint32 maxMs) {

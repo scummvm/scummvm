@@ -118,6 +118,7 @@ private:
 	void initImpatienceCounter();
 	bool checkImpatienceCounter();
 	void notePartnerActivity();
+	bool playLondonTravelAnimation(uint fromSite, uint toSite);
 
 	/// Partner site-arrival sequence (when `_LastSite != _SiteNumber`).
 	/// Mirrors `_EnterSiteAnim @ 1000:9b21`: anim 6/14 (Jake/Jenny) skateboards
