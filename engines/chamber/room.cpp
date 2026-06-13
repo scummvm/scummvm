@@ -40,7 +40,12 @@
 
 namespace Chamber {
 
-byte scratch_mem1[8010];
+// 1500-byte spot-backup region, then the lutin/anim scratch (scratch_mem2).
+// The scratch holds up to four simultaneous lutin slots (see getScratchBuffer).
+// CGA needs 4*1600 = 6400 there; EGA decodes lutins to CLUT8 (4 bytes per CGA
+// byte) so it needs 4*3200 = 12800. Sized for the EGA worst case so a big lutin
+// can't overrun into the adjacent sprites_list[].
+byte scratch_mem1[14400];
 byte *scratch_mem2 = scratch_mem1 + 1500;
 
 rect_t room_bounds_rect = {0, 0, 0, 0};
@@ -1309,7 +1314,7 @@ void prepareAspirant(void) {
 	if (aspirant_ptr->flags & PERSFLG_40)
 		return;
 
-	hostility = script_byte_vars.rand_value;
+	hostility = getRand();
 	appearance = getRand();
 	flags = 0;
 	/*
