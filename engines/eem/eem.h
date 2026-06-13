@@ -409,13 +409,16 @@ private:
 	void showFloppyStormLogo();
 
 	// --- EEM2 ("...in London") proof of concept ---
-	/// Reproduce the opening-logo portion of EEM2's `_DoOpeningAnims`
-	/// (@ 2721:08e6): EA Kids (PIC 0x54, pal 0x3c) -> Storm (BOLT.ANM) ->
-	/// High Score (PIC 0x356, pal 0x3d), then stop.
+	/// Full opening sequence + character-selection screen — EEM2's
+	/// `_DoOpeningAnims` @ 2721:08e6 then `_NewPlayer` @ 1cd3:0f27.
 	void runLondonScreensPoc();
 	/// Blit a full-screen still PIC and fade it in / hold / out using the
 	/// given SITEPALS. palette index.
 	void showLondonLogo(uint picId, uint palId, uint holdMs);
+	/// Render EEM2's character-creation screen (`_NewPlayer`: palette 0 +
+	/// background PIC 0xc, where the player types a name and picks
+	/// Jake/Jenny). PoC display; interactive entry is still TODO.
+	void showLondonCharSelect();
 
 	/// `screen8_handler @ 1c33:1012`. Profile selector — walks
 	/// `listProfiles()`, falls through to `doNewPlayer()` if "New" or
