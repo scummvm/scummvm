@@ -865,9 +865,12 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		// ClueBlock +2; entries N>0 read (entry-1)+0x3c (last word).
 		const uint16 charX  = READ_LE_UINT16(c + (useP1 ? 4 : 0));
 		const uint16 charY  = READ_LE_UINT16(c + (useP1 ? 6 : 2));
-		const uint16 charPicId = (i == 0)
+		uint16 charPicId = (i == 0)
 			? READ_LE_UINT16(clueBlock + 2)
 			: READ_LE_UINT16(c - 2);
+		if (isLondon() && charPicId == 0x13e &&
+			_partner == kPartnerJake)
+			charPicId = 0x13f;
 		if (charPicId != 0 && charPicId != 0xFFFF) {
 			Picture charPic;
 			if (_picsArchive.getPicture(charPicId, charPic) &&
