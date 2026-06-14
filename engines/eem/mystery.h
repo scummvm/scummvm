@@ -83,10 +83,18 @@ public:
 	/// u8 nameLen, nameLen bytes of name.
 	const byte *floppySuspectEntry(uint suspectIdx) const;
 
-	/// NoteIndex array (4 bytes per entry: u16 textOff + u16 pts).
+	/// NoteIndex array. EEM1 CD: 4 bytes/entry (u16 textOff + u16 pts).
+	/// EEM2/London CD: 2 bytes/entry (u16 textOff only — no points field;
+	/// `_DrawNotes @ 16a0:01de` reads `noteIndex[clueId*2]`). Floppy: 7
+	/// bytes/entry.
 	const byte *noteIndex() const;
 
 	uint16 noteIndexCount() const;
+
+	/// Raw byte size of the CD NoteIndex section [_noteOffset, _galleryOffset).
+	/// The notebook divides this by the variant stride (EEM1 4 / London 2) to
+	/// get the clue count, since `noteIndexCount()` assumes the 4-byte stride.
+	uint noteSectionSize() const;
 
 	/// True when clueId has a notebook text entry. Floppy dialog records
 	/// may be spoken-only with zero notebook offset, skipped by _DrawNotes_Floppy.

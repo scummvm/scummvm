@@ -402,6 +402,12 @@ uint16 Mystery::noteIndexCount() const {
 	return (uint16)((_galleryOffset - _noteOffset) / stride);
 }
 
+uint Mystery::noteSectionSize() const {
+	if (!isLoaded() || _galleryOffset <= _noteOffset)
+		return 0;
+	return _galleryOffset - _noteOffset;
+}
+
 bool Mystery::noteHasNotebookText(uint clueId) const {
 	const byte *ni = noteIndex();
 	const uint16 cnt = noteIndexCount();
