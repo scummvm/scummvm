@@ -1465,7 +1465,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553), Common::FR_FRA, ADGF_UNSTABLE, WME_1_8_11),
 
 	// The Golden Calf (Spanish fanmade)
-	WME_WINENTRY("goldencalf", "",
+	WME_WINENTRY("goldencalf", "Fanmade",
 		WME_ENTRY2s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553,
 					"string.tab", "639e54d5d5392e56785c1f6cb7d0d5e8", 122759), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_11),
 
@@ -1691,12 +1691,12 @@ static const WMEGameDescription gameDescriptions[] = {
 					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam) (Spanish fanmade translation)
-	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam/Fanmade",
 		WME_ENTRY2s("data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
 					"data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam) (Spanish fanmade translation)
-	WME_WINENTRY("juliastars", "Full HD Version/Steam",
+	WME_WINENTRY("juliastars", "Full HD Version/Steam/Fanmade",
 		WME_ENTRY2s("data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
 					"data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
@@ -1721,12 +1721,12 @@ static const WMEGameDescription gameDescriptions[] = {
 					"german_hd.dcp", "19a771b1a933b71b889026d53734b0c0", 152500044), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (Spanish fanmade translation)
-	WME_WINENTRY("juliastars", "HD Ready Version/GOG.com",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG.com/Fanmade",
 		WME_ENTRY2s("data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
 					"data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (Spanish fanmade translation)
-	WME_WINENTRY("juliastars", "Full HD Version/GOG.com",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG.com/Fanmade",
 		WME_ENTRY2s("data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
 					"data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
@@ -1854,7 +1854,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Monday Starts on Saturday (Spanish fanmade)
-	WME_WINENTRY("msos", "",
+	WME_WINENTRY("msos", "Fanmade",
 		WME_ENTRY2s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074,
 					"string.tab", "0f3bd71ea07a32fc74d10bddd0a0c953", 173787), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
 
@@ -1863,7 +1863,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Mukhtar and his Team (Spanish fanmade)
-	WME_WINENTRY("mukhtar", "",
+	WME_WINENTRY("mukhtar", "Fanmade",
 		WME_ENTRY2s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292,
 					"string.tab", "c2d40757013199ce68831e0b2e903291", 298927), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
@@ -4310,7 +4310,7 @@ static const WMEGameDescription gameDescriptions[] = {
 					"string3.tab", "e9d0e6341e8994be5fa6d70d39ac630b", 813982), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_8_6),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Spanish fanmade)
-	WME_WINENTRY("ritter", "",
+	WME_WINENTRY("ritter", "Fanmade",
 		WME_ENTRY2s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278,
 					"string3.tab", "a20120c9a45f189321924adb54f3515f", 527627), Common::ES_ESP, ADGF_NO_FLAGS, WME_1_8_6),
 
@@ -4320,7 +4320,7 @@ static const WMEGameDescription gameDescriptions[] = {
 					"string3.tab", "413ee9f47f52567d0ac22e34485cacfa", 513012), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_6),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (Czech fanmade)
-	WME_WINENTRY("ritter", "",
+	WME_WINENTRY("ritter", "Fanmade",
 		WME_ENTRY1s("data.dcp", "1138bca234b7e81e11128c4da2c283b0", 364067513), Common::CS_CZE, ADGF_NO_FLAGS, WME_1_8_6),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German demo)
@@ -5557,7 +5557,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "d0c9ac5a61b37ae9fcedb58fa1c98cd5", 135504102), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
 	// Sunrise: The game (Spanish fanmade)
-	WME_WINENTRY("sunrise", "",
+	WME_WINENTRY("sunrise", "Fanmade",
 		WME_ENTRY2s("data.dcp", "d06744fc60982a30e82d96075698c8bc", 134409552,
 					"string.tab", "596b3be0d09d41be8d0999ca536d810a", 334279), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
@@ -5570,7 +5570,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "bc607fe93d6751de2d0d0b7f4b2c90f8", 798965082), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
 	// Susan Rose: Mysterious Child (Spanish fanmade)
-	WME_WINENTRY("susanrose1", "",
+	WME_WINENTRY("susanrose1", "Fanmade",
 		WME_ENTRY2s("data.dcp", "bc607fe93d6751de2d0d0b7f4b2c90f8", 798965082,
 					"string.tab", "41f5d904edf5f1fd3d80d8f8e6ebd35c", 255118), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
@@ -5579,7 +5579,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "789660631a79ed76d95446d1f1e6e694", 922032035), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_11),
 
 	// Susan Rose: Delicate Murder (Spanish fanmade)
-	WME_WINENTRY("susanrose2", "",
+	WME_WINENTRY("susanrose2", "Fanmade",
 		WME_ENTRY2s("data.dcp", "789660631a79ed76d95446d1f1e6e694", 922032035,
 					"string.tab", "8d4a6bed924051c864b78e3401da40fe", 181897), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_11),
 
@@ -5589,7 +5589,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Tanya Grotter and the Magical Double Bass (Spanish fanmade)
 	// The same translation file is used for both games
-	WME_WINENTRY("tanya1", "",
+	WME_WINENTRY("tanya1", "Fanmade",
 		WME_ENTRY2s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786,
 					"string.tab", "877d03e4befb75eb638af8bc1005df8e", 220659), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_0),
 
@@ -5604,7 +5604,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Tanya Grotter and the Disappearing Floor (Spanish fanmade)
 	// The same translation file is used for both games
-	WME_WINENTRY("tanya2", "",
+	WME_WINENTRY("tanya2", "Fanmade",
 		WME_ENTRY2s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767,
 					"string.tab", "877d03e4befb75eb638af8bc1005df8e", 220659), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_3),
 
@@ -5722,7 +5722,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_2),
 
 	// Fairy Tales About Toshechka and Boshechka (Spanish fanmade)
-	WME_WINENTRY("tib", "",
+	WME_WINENTRY("tib", "Fanmade",
 		WME_ENTRY2s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526,
 					"string.tab", "2b6bad7874220f412d146a3086046490", 59697), Common::ES_ESP, ADGF_UNSTABLE, WME_1_7_2),
 
