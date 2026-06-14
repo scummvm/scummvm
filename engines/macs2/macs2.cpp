@@ -28,10 +28,12 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/system.h"
+#include "common/types.h"
 #include "common/util.h"
 #include "engines/util.h"
 #include "gameobjects.h"
@@ -284,8 +286,7 @@ void Macs2Engine::readResourceFile() {
 }
 
 void Macs2Engine::readExecutable() {
-	Common::MemoryReadStream *exeFileStream;
-	// TODO: Memory management
+	Common::ScopedPtr<Common::MemoryReadStream> exeFileStream;
 	{
 		// Extra scope in order to make sure no code tries to read from the file directly.
 		Common::File file;
@@ -296,10 +297,10 @@ void Macs2Engine::readExecutable() {
 		byte *fileData = new byte[size];
 		file.read(fileData, size);
 
-		exeFileStream = new Common::MemoryReadStream(fileData, size);
+		exeFileStream.reset(new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES));
 	}
 
-	_adlib->readDataFromExecutable(exeFileStream);
+	_adlib->readDataFromExecutable(exeFileStream.get());
 
 	exeFileStream->seek(0x0001B610, SEEK_SET);
 	inventoryIconIndices.resize(6);
