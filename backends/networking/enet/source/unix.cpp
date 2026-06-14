@@ -160,11 +160,7 @@ enet_address_set_host (ENetAddress * address, const char * name)
     hostEntry = gethostbyname_r (name, & hostData, buffer, sizeof (buffer), & errnum);
 #endif
 #else
-#ifdef __MORPHOS__
-    hostEntry = gethostbyname ((const UBYTE*)name);
-#else
     hostEntry = gethostbyname (name);
-#endif
 #endif
 
     if (hostEntry != NULL && hostEntry -> h_addrtype == AF_INET)
@@ -237,11 +233,8 @@ enet_address_get_host (const ENetAddress * address, char * name, size_t nameLeng
 #endif
 #else
     in.s_addr = address -> host;
-#ifdef __MORPHOS__
-    hostEntry = gethostbyaddr ((const UBYTE*) & in, sizeof (struct in_addr), AF_INET);
-#else
+
     hostEntry = gethostbyaddr ((char *) & in, sizeof (struct in_addr), AF_INET);
-#endif
 #endif
 
     if (hostEntry != NULL)

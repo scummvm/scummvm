@@ -252,12 +252,11 @@ void Context::initialize(ContextType contextType) {
 		}
 
 		// In GLES2, texture lookup is done using lowp (and mediump is not always available)
-#ifndef __MORPHOS__
 		GLint range[2];
 		GLint precision = 0;
 		glGetShaderPrecisionFormat(GL_FRAGMENT_SHADER, GL_LOW_FLOAT, range, &precision);
 		textureLookupPrecision = precision;
-#endif
+
 		debug(5, "OpenGL: GLES2 context initialized");
 	} else if (type == kContextGLES) {
 		// GLES doesn't support shaders natively
