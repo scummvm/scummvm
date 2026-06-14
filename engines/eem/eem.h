@@ -302,6 +302,22 @@ public:
 private:
 	void applyStartupTestOverrides();
 	bool areMysteriesSolved(uint lo, uint hi) const;
+
+	/// True if *any* mystery in the inclusive 1-based range [lo, hi] is
+	/// marked solved.
+	bool anyMysterySolved(uint lo, uint hi) const;
+
+	/// Number of case "books"/tiers in this variant. EEM1 ships three
+	/// (BOOK1..3.NME — 24/24/6 cases); EEM2/London ships two (BOOK1..2.NME —
+	/// 25 cases each, no BOOK3.NME). See `mysteryTierRange`.
+	uint mysteryTierCount() const { return isLondon() ? 2 : 3; }
+
+	/// Inclusive 1-based mystery range [lo, hi] for chain `stage` (1-based).
+	/// Returns false when `stage` is not a real tier in this variant.
+	/// EEM1 `_DisplayCorrect @ 1df2:073c` (1..24 / 25..48 / 49..54);
+	/// EEM2/London `_DisplayCorrect @ 1ea1:0619` (1..25 / 26..50).
+	bool mysteryTierRange(uint stage, uint &lo, uint &hi) const;
+
 	void advanceChainStageAfterSolve(uint mysteryNum);
 	void applySkipRepeatedCasesOption();
 
@@ -467,9 +483,10 @@ private:
 	///   +1 → next mystery (RIGHT/SPACE/Enter/click on last page).
 	int doShowEnding(uint num, bool firstPage = true);
 
-	/// `_ShowScrapbook(stage, 0) @ 1f78:0642`. Mystery range
-	/// `(stage-1)*0x18+1 .. (stage-1)*0x18+0x18`; skips unsolved
-	/// entries in the current chain stage.
+	/// EEM1 `_ShowScrapbook(stage, 0) @ 1f78:0642`; EEM2/London scrapbook
+	/// `FUN_2046_09dd`. Walks the `mysteryTierRange(stage)` cases, skipping
+	/// unsolved entries in the current chain stage. Tier sizes are
+	/// variant-specific (EEM1 24/24/6; London 25/25, no stage 3).
 	void doShowScrapbook(uint stage);
 
 	void doActionScreen();
