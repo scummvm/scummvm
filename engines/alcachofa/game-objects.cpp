@@ -1051,7 +1051,9 @@ void MainCharacter::walkToMouse() {
 
 	// this camera follow is not original, but fixes a bug in CORVINO and should be
 	// indempotent for all other games and situations as it only affects user interaction
-	g_engine->camera().setFollow(this);
+	// we still need to check to prevent the camera jumping when it already follows us
+	if (g_engine->isV2() && g_engine->cameraV1().followTarget() != this)
+		g_engine->camera().setFollow(this);
 
 	const uint minDistance = (uint)(50 * _graphicNormal.depthScale());
 	if (_sourcePos.sqrDist(targetPos) > minDistance * minDistance)

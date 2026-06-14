@@ -92,6 +92,8 @@ public:
 	void syncGame(Common::Serializer &s) override;
 	void lerpOrSet(Common::Point target, int32 mode);
 
+	WalkingCharacter *followTarget() const { return _followTarget; }
+
 	Task *disguise(Process &process, int32 duration);
 
 protected:
