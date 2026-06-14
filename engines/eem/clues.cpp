@@ -34,6 +34,7 @@
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/music.h"
 #include "eem/site.h"
 
 // Clue / briefing pipeline (SCRIPT.C + KD.C).
@@ -928,6 +929,18 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, kScreenWidth, kScreenHeight);
 		const byte *c = clueBlock + 4 + i * stride;
+
+		// EEM2 `_DisplayClue @ 2542:05bd` opens each clue with a per-entry MIDI
+		// cue read at entry+0x20 (= c+0x1c, the u16 right after the two voice
+		// slots), replacing any current track (`playMus`→`playFile` calls
+		// `stop()`). 0 = no cue; EEM1 clue entries have no such field. Gated on
+		// `_voiceOn` like `startTravelMusic` — the DOS gate is the separate
+		// music-on / MIDI-available flags (DAT_3036_4cc0 && DAT_2bca_146a).
+		if (isLondon() && _music && _voiceOn) {
+			const uint16 clueMusic = READ_LE_UINT16(c + 0x1c);
+			if (clueMusic != 0)
+				_music->playMus(clueMusic, /* loop= */ false);
+		}
 
 		// _DisplayClue @ 2404:0635-064b: _DoKDAnim(num) runs before the
 		// speaker portrait. EEM1 stores the KD-anim number at +0x3a; EEM2
