@@ -383,6 +383,22 @@ public:
 			return;
 		return GameWithVersion2::missingAnimation(fileName);
 	}
+
+	void unknownDropItem(const char *name) override {
+		// an original bug, the item will just stay in the inventory unusable
+		if (scumm_stricmp(name, "I_ELECTROCHOCK") == 0)
+			return;
+		return GameWithVersion2::unknownDropItem(name);
+	}
+
+	bool shouldTriggerDoor(const Door *door) override {
+		// an original bug, a door left active to a non-existant target
+		// probably the room layout was different during development
+		if (door->name().equalsIgnoreCase("a_SALA_DE_TROFEOS_desde_ENFERMERIA"))
+			return false;
+
+		return GameWithVersion2::shouldTriggerDoor(door);
+	}
 };
 
 class GameCorvino : public GameWithVersion2_1 {

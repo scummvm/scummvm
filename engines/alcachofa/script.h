@@ -183,7 +183,8 @@ private:
 	friend struct ScriptTask;
 	friend struct ScriptTimerTask;
 	Common::HashMap<Common::String, uint32> _variableNames;
-	Common::HashMap<Common::String, uint32> _procedures;
+	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>
+		_procedures; // In CORVINO there are some mixed-case character names but upper-case procedures
 	Common::Array<ScriptInstruction> _instructions;
 	Common::Array<int32> _variables;
 	Common::SpanOwner<Common::Span<char>> _strings;
