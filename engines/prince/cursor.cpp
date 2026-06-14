@@ -91,7 +91,7 @@ void PrinceEngine::changeCursor(uint16 curId) {
 		curSurface->getBasePtr(0, 0),
 		curSurface->w, curSurface->h,
 		0, 0,
-		255, false,
+		255,
 		&curSurface->format
 	);
 	CursorMan.showMouse(true);

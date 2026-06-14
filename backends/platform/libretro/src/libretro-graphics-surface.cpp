@@ -30,7 +30,8 @@
 
 LibretroGraphics::LibretroGraphics() : _cursorPaletteEnabled(false),
 	_cursorKeyColor(0),
-	_cursorDontScale(false),
+	_cursorScaleX(0),
+	_cursorScaleY(0),
 	_screenUpdatePending(false),
 	_gamePalette(256),
 	_cursorPalette(256),
@@ -168,16 +169,20 @@ void LibretroGraphics::warpMouse(int x, int y) {
 }
 
 void LibretroGraphics::overrideCursorScaling() {
-	const frac_t screenScaleFactor = (_cursorDontScale || ! _overlayVisible) ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
+	const float screenScaleFactorX = (_cursorScaleX == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
+	const float screenScaleFactorY = (_cursorScaleY == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
 
-	_cursorHotspotXScaled = fracToInt(_cursorHotspotX * screenScaleFactor);
-	_cursorWidthScaled    = fracToDouble(_cursor.w * screenScaleFactor);
+	const float cursorScaleFactorX = screenScaleFactorX * _cursorScaleX;
+	const float cursorScaleFactorY = screenScaleFactorY * _cursorScaleY;
 
-	_cursorHotspotYScaled = fracToInt(_cursorHotspotY * screenScaleFactor);
-	_cursorHeightScaled   = fracToDouble(_cursor.h * screenScaleFactor);
+	_cursorHotspotXScaled = fracToInt(_cursorHotspotX * cursorScaleFactorX);
+	_cursorWidthScaled    = fracToDouble(_cursor.w * cursorScaleFactorX);
+
+	_cursorHotspotYScaled = fracToInt(_cursorHotspotY * cursorScaleFactorY);
+	_cursorHeightScaled   = fracToDouble(_cursor.h * cursorScaleFactorY);
 }
 
-void LibretroGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void LibretroGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	if (!buf || !w || !h)
 		return;
 
@@ -191,7 +196,8 @@ void LibretroGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotsp
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
 	_cursorKeyColor = keycolor;
-	_cursorDontScale = dontScale;
+	_cursorScaleX = fracToDouble(scaleX);
+	_cursorScaleY = fracToDouble(scaleY);
 
 	overrideCursorScaling();
 }

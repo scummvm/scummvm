@@ -164,7 +164,7 @@ void GraphicManager::loadMouse(byte which) {
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255);
 	cursor.free();
 }
 

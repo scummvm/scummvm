@@ -128,7 +128,7 @@ public:
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
@@ -450,9 +450,14 @@ protected:
 	bool _cursorUseKey;
 
 	/**
-	 * Whether no cursor scaling should be applied.
+	 * The X scaling factor for the cursor.
 	 */
-	bool _cursorDontScale;
+	float _cursorScaleX;
+
+	/**
+	 * The Y scaling factor for the cursor.
+	 */
+	float _cursorScaleY;
 
 	/**
 	 * Whether the special cursor palette is enabled.

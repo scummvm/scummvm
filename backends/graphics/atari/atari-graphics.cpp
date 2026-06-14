@@ -966,7 +966,7 @@ void AtariGraphicsManager::warpMouse(int x, int y) {
 }
 
 void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor,
-										  bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+										  const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	//debug("setMouseCursor: %d, %d, %d, %d, %d, %d; ignored: %d",
 	//	w, h, hotspotX, hotspotY, keycolor, format ? format->bytesPerPixel : 1, _ignoreCursorChanges);
 

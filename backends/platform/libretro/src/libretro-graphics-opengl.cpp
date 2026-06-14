@@ -38,14 +38,14 @@ void LibretroOpenGLGraphics::setMousePosition(int x, int y) {
 	OpenGL::OpenGLGraphicsManager::setMousePosition(x, y);
 }
 
-void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void LibretroOpenGLGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	/* Workaround to fix a cursor glitch (e.g. GUI with Classic theme) occurring when any overlay is activated from retroarch (e.g. keyboard overlay).
 	   Currently no feedback is available from frontend to detect if overlays are toggled to delete _cursor only if needed.
 	   @TODO: root cause to be investigated. */
 	delete _cursor;
 	_cursor = nullptr;
 
-	OpenGL::OpenGLGraphicsManager::setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+	OpenGL::OpenGLGraphicsManager::setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, format, mask, scaleX, scaleY);
 
 	overrideCursorScaling();
 
@@ -55,13 +55,17 @@ void LibretroOpenGLGraphics::overrideCursorScaling() {
 	OpenGL::OpenGLGraphicsManager::recalculateCursorScaling();
 
 	if (_cursor) {
-		const frac_t screenScaleFactor = (_cursorDontScale || ! _overlayVisible) ? intToFrac(1) : intToFrac(getWindowHeight()) / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
+		const float screenScaleFactorX = (_cursorScaleX == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
+		const float screenScaleFactorY = (_cursorScaleY == 0 || ! _overlayVisible) ? 1.0f : (float)getWindowHeight() / 200; /* hard coded as base resolution 320x200 is hard coded upstream */
 
-		_cursorHotspotXScaled = fracToInt(_cursorHotspotX * screenScaleFactor);
-		_cursorWidthScaled    = fracToDouble(_cursor->getWidth() * screenScaleFactor);
+		const float cursorScaleFactorX = screenScaleFactorX * _cursorScaleX;
+		const float cursorScaleFactorY = screenScaleFactorY * _cursorScaleY;
 
-		_cursorHotspotYScaled = fracToInt(_cursorHotspotY * screenScaleFactor);
-		_cursorHeightScaled   = fracToDouble(_cursor->getHeight() * screenScaleFactor);
+		_cursorHotspotXScaled = _cursorHotspotX * cursorScaleFactorX;
+		_cursorWidthScaled    = _cursor->getWidth() * cursorScaleFactorX;
+
+		_cursorHotspotYScaled = _cursorHotspotY * cursorScaleFactorY;
+		_cursorHeightScaled   = _cursor->getHeight() * cursorScaleFactorY;
 	}
 }
 

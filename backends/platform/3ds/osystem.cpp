@@ -60,7 +60,6 @@ OSystem_3DS::OSystem_3DS():
 	_focusClearTime(0),
 	_cursorPaletteEnabled(false),
 	_cursorVisible(false),
-	_cursorScalable(false),
 	_cursorScreenX(0),
 	_cursorScreenY(0),
 	_cursorOverlayX(0),

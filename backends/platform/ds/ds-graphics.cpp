@@ -625,7 +625,7 @@ void OSystem_DS::warpMouse(int x, int y) {
 		_cursorPos = _screen->scaledToReal(x, y);
 }
 
-void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	if (!buf || w == 0 || h == 0)
 		return;
 

@@ -175,7 +175,7 @@ void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool cent
 	Graphics::Surface *entry = _cursorCache->getCursor(cursor, n, &palette);
 	uint32 hotspotX = centerCursor ? entry->w / 2 : 0;
 	uint32 hotspotY = centerCursor ? entry->h / 2 : 0;
-	CursorMan.replaceCursor(*entry, hotspotX, hotspotY, 0, false);
+	CursorMan.replaceCursor(*entry, hotspotX, hotspotY, 0);
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 	CursorMan.showMouse(true);
 }
@@ -183,7 +183,7 @@ void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool cent
 void HypnoEngine::changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor) {
 	uint32 hotspotX = centerCursor ? entry.w / 2 : 0;
 	uint32 hotspotY = centerCursor ? entry.h / 2 : 0;
-	CursorMan.replaceCursor(entry, hotspotX, hotspotY, 0, false);
+	CursorMan.replaceCursor(entry, hotspotX, hotspotY, 0);
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 	CursorMan.showMouse(true);
 }
