@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-13 13:52+0000\n"
-"PO-Revision-Date: 2026-06-13 09:55+0000\n"
+"PO-Revision-Date: 2026-06-14 09:41+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -2360,28 +2360,20 @@ msgid "Disable fixed font scaling"
 msgstr "Disabilita ridimensionamento dei caratteri monospazio"
 
 #: gui/options.cpp:2667
-#, fuzzy
-#| msgid ""
-#| "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
-#| "resolution screens"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens."
 msgstr ""
 "Non ingrandisce i caratteri monospazio dell'interfaccia, prevenendo "
-"artefatti su schermi a bassa risoluzione"
+"artefatti su schermi a bassa risoluzione."
 
 #: gui/options.cpp:2673
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable kinetic scrolling in lists"
-msgstr "Attiva lo scorrimento fluido durante gli spostamenti"
+msgstr "Abilita scorrimento cinetico nelle liste"
 
 #: gui/options.cpp:2674
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth, momentum-based scrolling in list widgets."
-msgstr "Attiva lo scorrimento fluido durante gli spostamenti"
+msgstr "Attiva lo scorrimento fluido (con momento) dei widget a lista"
 
 #: gui/options.cpp:2680
 msgid "GUI language:"
@@ -10315,32 +10307,24 @@ msgid "Secondary shoot"
 msgstr "Sparo arma secondaria"
 
 #: engines/hypno/metaengine.cpp:149
-#, fuzzy
-#| msgid "Map hide toolbar action"
 msgid "Rapid fire / secondary action"
-msgstr "Mappa l'azione 'Nascondi barra degli strumenti'"
+msgstr "Fuoco rapido / azione secondaria"
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide left"
 msgid "Aim left"
-msgstr "Scorri a sinistra"
+msgstr "Mira a sinistra"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Stick down"
 msgid "Aim down"
-msgstr "Joystick giù"
+msgstr "Mira in basso"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up right"
 msgid "Aim right"
-msgstr "Su destra"
+msgstr "Mira a destra"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Mira in alto"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
@@ -10437,28 +10421,20 @@ msgid "Show credits"
 msgstr "Mostra riconoscimenti"
 
 #: engines/hypno/metaengine.cpp:417
-#, fuzzy
-#| msgid "Move left"
 msgid "Menu left"
-msgstr "Movimento verso sinistra"
+msgstr "Menù sinistra"
 
 #: engines/hypno/metaengine.cpp:425
-#, fuzzy
-#| msgid "Move down"
 msgid "Menu down"
-msgstr "Movimento verso il basso"
+msgstr "Menù giù"
 
 #: engines/hypno/metaengine.cpp:433
-#, fuzzy
-#| msgid "Move right"
 msgid "Menu right"
-msgstr "Movimento verso destra"
+msgstr "Menù destra"
 
 #: engines/hypno/metaengine.cpp:441
-#, fuzzy
-#| msgid "Menu"
 msgid "Menu up"
-msgstr "Menu"
+msgstr "Menù su"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
