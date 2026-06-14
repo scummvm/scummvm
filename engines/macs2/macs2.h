@@ -319,6 +319,7 @@ public:
 	Common::Array<uint32> _sceneResourceOffsets;
 
 	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror = false);
+	void loadSceneObjects(GameObject *obj);
 
 	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);
