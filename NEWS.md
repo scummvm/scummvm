@@ -14,6 +14,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Highlight clickable links in the GUI with a cursor change.
    - Fixed window size when switching out of fullscreen mode on 3D engines.
    - Implemented NULL OPL driver for lower-base systems.
+   - Implemented kinetic scolling in GUI lists.
 
  ACCESS:
    - Fixed various script issues in Martian Memorandum.
