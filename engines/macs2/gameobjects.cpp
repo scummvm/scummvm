@@ -19,7 +19,7 @@
  *
  */
 
-#include "gameobjects.h"
+#include "macs2/gameobjects.h"
 #include "common/memstream.h"
 #include "macs2/macs2.h"
 

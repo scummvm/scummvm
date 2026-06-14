@@ -37,7 +37,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "macs2/console.h"
+#include "gui/debugger.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "macs2/music.h"
@@ -1574,7 +1574,7 @@ Common::Error Macs2Engine::run() {
 	syncSoundSettings();
 
 	// Set the engine's debugger console
-	setDebugger(new Console());
+	setDebugger(new GUI::Debugger());
 
 #ifdef USE_IMGUI
 	ImGuiCallbacks callbacks;

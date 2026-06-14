@@ -2041,6 +2041,11 @@ void onImGuiRender() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Tools")) {
+			View1 *toolsView = (View1 *)g_engine->findView("View1");
+			if (toolsView) {
+				ImGui::MenuItem("Auto-click (simulate repeated clicks)", NULL, &toolsView->_autoclickActive);
+			}
+			ImGui::Separator();
 			if (ImGui::MenuItem("Quick Start (Scene 6)"))
 				g_engine->changeScene(0x6);
 			ImGui::Separator();

@@ -20,12 +20,11 @@
  */
 
 #include "engines/macs2/music.h"
-#include "engines/macs2/midiparser_macs2.h"
-
 #include "audio/fmopl.h"
 #include "audio/midiparser.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "engines/macs2/midiparser_macs2.h"
 
 #define CALLBACKS_PER_SECOND 120
 
